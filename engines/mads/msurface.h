@@ -86,7 +86,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~BaseSurface() {}
+	~BaseSurface() override {}
 
 	/**
 	 * Return a rect containing the bounds of the surface
@@ -175,7 +175,7 @@ protected:
 	 * Override the addDirtyRect from Graphics::Screen, since for standard
 	 * surfaces we don't need dirty rects to be tracked
 	 */
-	virtual void addDirtyRect(const Common::Rect &r) {}
+	void addDirtyRect(const Common::Rect &r) override {}
 public:
 	MSurface() : BaseSurface() {}
 	MSurface(int width, int height) : BaseSurface(width, height) {}

@@ -36,7 +36,7 @@ namespace Glk {
 #define SLOP (2 * GLI_SUBPIX)
 
 
-TextBufferWindow::TextBufferWindow(Windows *windows, uint rock) : Window(windows, rock),
+TextBufferWindow::TextBufferWindow(Windows *windows, uint rock) : TextWindow(windows, rock),
 		_font(g_conf->_propInfo), _historyPos(0), _historyFirst(0), _historyPresent(0),
 		_lastSeen(0), _scrollPos(0), _scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1),
 		_inBuf(nullptr), _lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0),
@@ -1204,6 +1204,8 @@ int TextBufferWindow::acceptScroll(uint arg) {
 		else
 			_scrollPos = 0;
 		break;
+	default:
+		break;
 	}
 
 	if (_scrollPos > _scrollMax - _height + 1)
@@ -1566,7 +1568,9 @@ void TextBufferWindow::scrollOneLine(bool forced) {
 	_lines[0]._rHyper = 0;
 	
 	Common::fill(_chars, _chars + TBLINELEN, ' ');
-	memset(_attrs, 0, TBLINELEN * sizeof(Attributes));
+	Attributes *a = _attrs;
+	for (int i = 0; i < TBLINELEN; ++i, ++a)
+		a->clear();
 
 	_numChars = 0;
 

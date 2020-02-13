@@ -897,7 +897,7 @@ void cmdObjStatusF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // unk_177: Disable menus completely -- j5
 // unk_181: Deactivate keypressed control (default control of ego)
 void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (!(getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
+	if (!(getFeatures() & GF_AGI256)) {
 		// set.simple is called by Larry 1 on Apple IIgs at the store, after answering the 555-6969 phone.
 		// load.sound(16) is called right before it. Interpreter is 2.440-like.
 		// it's called with parameter 16.
@@ -2198,15 +2198,9 @@ void cmdPrintAtV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // push.script was not available until 2.425, and also not available in 2.440
 void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// We run AGIMOUSE always as a side effect
-	//if (getFeatures() & GF_AGIMOUSE || true) {
 	vm->setVar(VM_VAR_MOUSE_BUTTONSTATE, state->_vm->_mouse.button);
 	vm->setVar(VM_VAR_MOUSE_X, vm->_mouse.pos.x / 2);
 	vm->setVar(VM_VAR_MOUSE_Y, vm->_mouse.pos.y);
-	/*} else {
-	    if (vm->getVersion() >= 0x2915) {
-	        debug(0, "push.script");
-	    }
-	}*/
 }
 
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -2249,12 +2243,8 @@ void cmdShakeScreen(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// AGIPAL uses shake.screen values between 100 and 109 to set the palette
 	// (Checked the original AGIPAL-hack's shake.screen-routine's disassembly).
 	if (shakeCount >= 100 && shakeCount < 110) {
-		if (getFeatures() & GF_AGIPAL) {
-			state->_vm->_gfx->setAGIPal(shakeCount);
-			return;
-		} else {
-			warning("It looks like GF_AGIPAL flag is missing");
-		}
+		state->_vm->_gfx->setAGIPal(shakeCount);
+		return;
 	}
 
 	state->_vm->_gfx->shakeScreen(shakeCount);

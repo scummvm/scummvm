@@ -462,8 +462,6 @@ bool ScalpelJournal::handleEvents(int key) {
 }
 
 int ScalpelJournal::getSearchString(bool printError) {
-	enum Button { BTN_NONE, BTN_EXIT, BTN_BACKWARD, BTN_FORWARD };
-
 	Events    &events    = *_vm->_events;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
@@ -521,7 +519,7 @@ int ScalpelJournal::getSearchString(bool printError) {
 
 	do {
 		events._released = false;
-		Button found = BTN_NONE;
+		JournalButton found = BTN_NONE;
 
 		while (!_vm->shouldQuit() && !events.kbHit() && !events._released) {
 			found = BTN_NONE;

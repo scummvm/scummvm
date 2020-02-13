@@ -1549,6 +1549,9 @@ uint32 MidiDriver_ADLIB::property(int prop, uint32 param) {
 		_opl3Mode = (param > 0);
 #endif
 		return 1;
+
+	default:
+		break;
 	}
 
 	return 0;

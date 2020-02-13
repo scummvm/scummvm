@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/stream.h"
+#include "common/memstream.h"
+
 #include "startrek/iwfile.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
@@ -29,13 +32,16 @@ namespace StarTrek {
 void StarTrekEngine::initActors() {
 	for (int i = 0; i < NUM_ACTORS; i++)
 		_actorList[i] = Actor();
-	for (int i = 0; i < MAX_BAN_FILES; i++)
-		_banFiles[i].reset();
 
-	strcpy(_kirkActor->animationString, "kstnd");
-	strcpy(_spockActor->animationString, "sstnd");
-	strcpy(_mccoyActor->animationString, "mstnd");
-	strcpy(_redshirtActor->animationString, "rstnd");
+	for (int i = 0; i < MAX_BAN_FILES; i++) {
+		delete _banFiles[i];
+		_banFiles[i] = nullptr;
+	}
+
+	_kirkActor->animationString = "kstnd";
+	_spockActor->animationString = "sstnd";
+	_mccoyActor->animationString = "mstnd";
+	_redshirtActor->animationString = "rstnd";
 }
 
 int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed8 scale) {
@@ -91,7 +97,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 	actor->spriteDrawn = true;
 	actor->animType = 1;
 	actor->frameToStartNextAnim = _frameIndex + 1;
-	strcpy(actor->animationString2, animFile.c_str());
+	actor->animationString2 = animFile;
 
 	actor->dest.x = destX;
 	actor->dest.y = destY;
@@ -111,7 +117,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 
 		if (actor->iwSrcPosition == -1 || actor->iwDestPosition == -1) {
 			// No path exists; face south by default.
-			strcat(actor->animationString2, "S");
+			actor->animationString2 += "S";
 			actor->direction = 'S';
 
 			updateActorPositionWhileWalking(actor, srcX, srcY);
@@ -152,7 +158,7 @@ void StarTrekEngine::updateActorAnimations() {
 
 				actor->animFrame = nextAnimFrame;
 				if (actor->animFrame >= actor->numAnimFrames) {
-					if (actor->animationString[0] == '\0')
+					if (actor->animationString.empty())
 						removeActorFromScreen(i);
 					else
 						initStandAnim(i);
@@ -164,8 +170,7 @@ void StarTrekEngine::updateActorAnimations() {
 					actor->animFile->read(animFrameFilename, 16);
 					sprite->setBitmap(loadAnimationFrame(animFrameFilename, actor->scale));
 
-					memset(actor->bitmapFilename, 0, 10);
-					strncpy(actor->bitmapFilename, animFrameFilename, 9);
+					actor->bitmapFilename = animFrameFilename;
 
 					actor->animFile->seek(10 + actor->animFrame * 22, SEEK_SET);
 					uint16 xOffset = actor->animFile->readUint16();
@@ -222,7 +227,7 @@ void StarTrekEngine::updateActorAnimations() {
 					initStandAnim(i);
 				} else { // actor->iwSrcPosition != -1
 					if (actor->iwSrcPosition == actor->iwDestPosition) {
-						actor->animationString2[strlen(actor->animationString2) - 1] = '\0';
+						actor->animationString2.deleteLastChar();
 						actor->iwDestPosition = -1;
 						actor->iwSrcPosition = -1;
 						chooseActorDirectionForWalking(actor, actor->pos.x, actor->pos.y, actor->dest.x, actor->dest.y);
@@ -230,7 +235,7 @@ void StarTrekEngine::updateActorAnimations() {
 						int index = _iwFile->_iwEntries[actor->iwSrcPosition][actor->iwDestPosition];
 						actor->iwSrcPosition = index;
 						Common::Point dest = _iwFile->_keyPositions[actor->iwSrcPosition];
-						actor->animationString2[strlen(actor->animationString2) - 1] = '\0';
+						actor->animationString2.deleteLastChar();
 						chooseActorDirectionForWalking(actor, actor->pos.x, actor->pos.y, dest.x, dest.y);
 					}
 				}
@@ -266,51 +271,58 @@ void StarTrekEngine::renderBanBelowSprites() {
 		}
 
 		int16 size = _banFiles[i]->readSint16();
-		if (size != 0) {
-			_banFiles[i]->seek(_banFileOffsets[i], SEEK_SET);
-			renderBan(screenPixels, _banFiles[i]);
-
-			_banFiles[i]->seek(_banFileOffsets[i], SEEK_SET);
-			renderBan(bgPixels, _banFiles[i]);
-		}
-
+		if (size != 0)
+			renderBan(screenPixels, bgPixels, i);
 	}
 
 	_gfx->unlockScreenPixels();
 }
 
-void StarTrekEngine::renderBan(byte *destPixels, SharedPtr<FileStream> banFile) {
+void StarTrekEngine::renderBan(byte *screenPixels, byte *bgPixels, int banFileIndex) {
+	Common::MemoryReadStreamEndian *banFile = _banFiles[banFileIndex];
+	banFile->seek(_banFileOffsets[banFileIndex], SEEK_SET);
+
 	uint16 offset = banFile->readUint16();
 	int32 size = banFile->readUint16();
 
-	byte *dest = destPixels + offset;
+	byte *dest1 = screenPixels + offset;
+	byte *dest2 = bgPixels + offset;
 
 	// Skip 8 bytes (rectangle encompassing the area being drawn to)
-	banFile->readSint32();
-	banFile->readSint32();
+	banFile->skip(8);
 
 	while (--size >= 0) {
-		assert(dest >= destPixels && dest < destPixels + SCREEN_WIDTH * SCREEN_HEIGHT);
+		assert(dest1 >= screenPixels && dest1 < screenPixels + SCREEN_WIDTH * SCREEN_HEIGHT);
+		assert(dest2 >= bgPixels && dest2 < bgPixels + SCREEN_WIDTH * SCREEN_HEIGHT);
+
 		int8 b = banFile->readByte();
 
-		if (b == -128) // Add value to destination (usually jumping to next row)
-			dest += banFile->readUint16();
-		else if (b < 0) { // Repeated byte
+		if (b == -128) {	// Add value to destination (usually jumping to next row)
+			uint16 skip = banFile->readUint16();
+			dest1 += skip;
+			dest2 += skip;
+		} else if (b < 0) { // Repeated byte
 			byte c = banFile->readByte();
-			if (c == 0)
-				dest += (-b) + 1;
-			else {
-				for (int j = 0; j < (-b) + 1; j++)
-					(*dest++) = c;
+			if (c == 0) {
+				dest1 += (-b) + 1;
+				dest2 += (-b) + 1;
+			} else {
+				for (int j = 0; j < (-b) + 1; j++) {
+					(*dest1++) = c;
+					(*dest2++) = c;
+				}
 			}
 		} else { // List of bytes
 			b++;
 			while (b-- != 0) {
 				byte c = banFile->readByte();
-				if (c == 0)
-					dest++;
-				else
-					*(dest++) = c;
+				if (c == 0) {
+					dest1++;
+					dest2++;
+				} else {
+					*(dest1++) = c;
+					*(dest2++) = c;
+				}
 			}
 		}
 	}
@@ -422,7 +434,8 @@ void StarTrekEngine::actorFunc1() {
 	}
 
 	for (int i = 0; i < MAX_BAN_FILES; i++) {
-		_banFiles[i].reset();
+		delete _banFiles[i];
+		_banFiles[i] = nullptr;
 	}
 }
 
@@ -430,10 +443,10 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 	Common::String animFilename = _animName;
 	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
 		animFilename += 'j';
-	memcpy(actor->animFilename, _animName.c_str(), sizeof(actor->animFilename));
 
+	actor->animFilename = _animName;
 	actor->animType = 2;
-	actor->animFile = loadFile(animFilename + ".anm");
+	actor->animFile = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(animFilename + ".anm"));
 	actor->numAnimFrames = actor->animFile->size() / 22;
 	actor->animFrame = 0;
 	actor->pos.x = x;
@@ -454,12 +467,10 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 		_gfx->addSprite(sprite);
 
 	sprite->setBitmap(loadAnimationFrame(firstFrameFilename, scale));
-	memset(actor->bitmapFilename, 0, sizeof(char) * 10);
-	strncpy(actor->bitmapFilename, firstFrameFilename, sizeof(char) * 9);
-
+	actor->bitmapFilename = firstFrameFilename;
 	actor->scale = scale;
-
 	actor->animFile->seek(10, SEEK_SET);
+
 	uint16 xOffset = actor->animFile->readUint16();
 	uint16 yOffset = actor->animFile->readUint16();
 	uint16 basePriority = actor->animFile->readUint16();
@@ -512,9 +523,9 @@ void StarTrekEngine::initStandAnim(int actorIndex) {
 
 	Common::String animName;
 	if (actor->direction != 0)
-		animName = Common::String(actor->animationString) + (char)actor->direction;
+		animName = actor->animationString + (char)actor->direction;
 	else // Default to facing south
-		animName = Common::String(actor->animationString) + 's';
+		animName = actor->animationString + 's';
 
 	Fixed8 scale = getActorScaleAtPosition(actor->pos.y);
 	loadActorAnim(actorIndex, animName, actor->pos.x, actor->pos.y, scale);
@@ -523,11 +534,9 @@ void StarTrekEngine::initStandAnim(int actorIndex) {
 
 void StarTrekEngine::updateActorPositionWhileWalking(Actor *actor, int16 x, int16 y) {
 	actor->scale = getActorScaleAtPosition(y);
-	Common::String animName = Common::String::format("%s%02d", actor->animationString2, actor->field92 & 7);
+	Common::String animName = Common::String::format("%s%02d", actor->animationString2.c_str(), actor->field92 & 7);
 	actor->sprite.setBitmap(loadAnimationFrame(animName, actor->scale));
-
-	memset(actor->bitmapFilename, 0, 10);
-	strncpy(actor->bitmapFilename, animName.c_str(), 9);
+	actor->bitmapFilename = animName;
 
 	Sprite *sprite = &actor->sprite;
 	sprite->drawPriority = _gfx->getPriValue(0, y);
@@ -557,8 +566,7 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 			d = 'W';
 
 		// Append direction to animation string
-		actor->animationString2[strlen(actor->animationString2) + 1] = '\0';
-		actor->animationString2[strlen(actor->animationString2)] = d;
+		actor->animationString2 += d;
 
 		actor->direction = d;
 		actor->field90 = absDistX;
@@ -579,8 +587,7 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 			d = 'N';
 
 		// Append direction to animation string
-		actor->animationString2[strlen(actor->animationString2) + 1] = '\0';
-		actor->animationString2[strlen(actor->animationString2)] = d;
+		actor->animationString2 += d;
 
 		actor->direction = d;
 		actor->field90 = absDistY;
@@ -674,7 +681,7 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 	while (offset != _room->getHotspotEnd()) {
 		uint16 word = _room->readRdfWord(offset);
 		if (word & 0x8000) {
-			if ((word & actionBit) && isPointInPolygon((int16 *)(_room->_rdfData + offset + 6), x, y)) {
+			if ((word & actionBit) && _room->isPointInPolygon(offset + 6, x, y)) {
 				int actorIndex = _room->readRdfWord(offset + 6);
 				_objectHasWalkPosition = true;
 				_objectWalkPosition.x = _room->readRdfWord(offset + 2);
@@ -685,7 +692,7 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 			int numVertices = _room->readRdfWord(offset + 8);
 			offset = offset + 10 + numVertices * 4;
 		} else {
-			if (isPointInPolygon((int16 *)(_room->_rdfData + offset), x, y)) {
+			if (_room->isPointInPolygon(offset, x, y)) {
 				int actorIndex = _room->readRdfWord(offset);
 				return actorIndex;
 			}
@@ -698,8 +705,8 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 	return -1;
 }
 
-SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed8 scale) {
-	SharedPtr<Bitmap> bitmapToReturn;
+Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed8 scale) {
+	Bitmap *bitmapToReturn = nullptr;
 
 	char basename[5];
 	strncpy(basename, filename.c_str() + 1, 4);
@@ -710,24 +717,24 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 	        && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
 		if (c == 'm') {
 			// Mccoy has the "base" animations for all crewmen
-			bitmapToReturn = _gfx->loadBitmap(filename);
+			bitmapToReturn = new Bitmap(loadBitmapFile(filename));
 		} else {
 			// All crewman other than mccoy copy the animation frames from mccoy, change
 			// the colors of the uniforms, and load an "xor" file to redraw the face.
 
 			// TODO: The ".$bm" extension is a "virtual file"? Caches the changes to the
 			// file made here?
-			// bitmapToReturn = _gfx->loadBitmap(filename + ".$bm");
+			// bitmapToReturn = new Bitmap(loadBitmapFile(filename + ".$bm"));
 
 			if (bitmapToReturn == nullptr) {
 				Common::String mccoyFilename = filename;
 				mccoyFilename.setChar('m', 0);
-				SharedPtr<Bitmap> bitmap = _gfx->loadBitmap(mccoyFilename);
+				Bitmap *bitmap = new Bitmap(loadBitmapFile(mccoyFilename));
 
 				uint16 width = bitmap->width;
 				uint16 height = bitmap->height;
 
-				bitmapToReturn = SharedPtr<Bitmap>(new Bitmap(width, height));
+				bitmapToReturn = new Bitmap(width, height);
 				bitmapToReturn->xoffset = bitmap->xoffset;
 				bitmapToReturn->yoffset = bitmap->yoffset;
 
@@ -768,7 +775,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 				}
 
 				// Redraw face with xor file
-				SharedPtr<FileStream> xorFile = loadFile(filename + ".xor");
+				Common::MemoryReadStreamEndian *xorFile = loadFile(filename + ".xor");
 				xorFile->seek(0, SEEK_SET);
 				uint16 xoffset = bitmap->xoffset - xorFile->readUint16();
 				uint16 yoffset = bitmap->yoffset - xorFile->readUint16();
@@ -782,12 +789,14 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 						*dest++ ^= xorFile->readByte();
 					dest += (bitmap->width - xorWidth);
 				}
+
+				delete xorFile;
 			}
 		}
 	} else {
 		// TODO: when loading a bitmap, it passes a different argument than is standard to
 		// the "file loading with cache" function...
-		bitmapToReturn = _gfx->loadBitmap(filename);
+		bitmapToReturn = new Bitmap(loadBitmapFile(filename));
 	}
 
 	if (scale != 1.0) {
@@ -1026,7 +1035,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 		_itemIconSprite.pos.y = 10;
 		_itemIconSprite.drawPriority = 15;
 		_itemIconSprite.drawPriority2 = 8;
-		_itemIconSprite.setBitmap(_gfx->loadBitmap(itemFilename));
+		_itemIconSprite.setBitmap(loadBitmapFile(itemFilename));
 
 		_inventoryIconSprite.pos.x = 46;
 	}
@@ -1037,7 +1046,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 	_inventoryIconSprite.drawMode = 2;
 	_inventoryIconSprite.drawPriority = 15;
 	_inventoryIconSprite.drawPriority2 = 8;
-	_inventoryIconSprite.setBitmap(_gfx->loadBitmap("inv00"));
+	_inventoryIconSprite.setBitmap(loadBitmapFile("inv00"));
 }
 
 bool StarTrekEngine::isObjectUnusable(int object, int action) {
@@ -1154,7 +1163,7 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		itemSprites[i].pos.y = itemPositions[i].y;
 		itemSprites[i].drawPriority = 15;
 		itemSprites[i].drawPriority2 = 8;
-		itemSprites[i].setBitmap(_gfx->loadBitmap(itemNames[i]));
+		itemSprites[i].setBitmap(loadBitmapFile(itemNames[i]));
 	}
 
 	chooseMousePositionFromSprites(itemSprites, numItems, -1, 4);
@@ -1174,11 +1183,11 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 			itemIndex = getMenuButtonAt(itemSprites, numItems, mousePos.x, mousePos.y);
 			if (itemIndex != lastItemIndex) {
 				if (lastItemIndex != -1) {
-					drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
+					drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap.get(), 0);
 					itemSprites[lastItemIndex].bitmapChanged = true;
 				}
 				if (itemIndex != -1) {
-					drawMenuButtonOutline(itemSprites[itemIndex].bitmap, 15);
+					drawMenuButtonOutline(itemSprites[itemIndex].bitmap.get(), 15);
 					itemSprites[itemIndex].bitmapChanged = true;
 				}
 				lastItemIndex = itemIndex;
@@ -1255,9 +1264,9 @@ exitWithoutSelection:
 		removeNextEvent();
 	}
 
-	playSoundEffectIndex(0x10);
+	_sound->playSoundEffectIndex(0x10);
 	if (lastItemIndex >= 0)
-		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
+		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap.get(), 0);
 
 	for (int i = 0; i < numItems; i++)
 		itemSprites[i].dontDrawNextFrame();
@@ -1280,7 +1289,7 @@ exitWithoutSelection:
 	return lastItemIndex;
 }
 
-void StarTrekEngine::initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitmap, const Common::Rect &rect) {
+void StarTrekEngine::initStarfieldSprite(Sprite *sprite, Bitmap *bitmap, const Common::Rect &rect) {
 	sprite->setXYAndPriority(rect.left, rect.top, 0);
 	sprite->setBitmap(bitmap);
 	bitmap->xoffset = 0;
@@ -1291,7 +1300,7 @@ void StarTrekEngine::initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitma
 	sprite->drawMode = 1;
 }
 
-SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 scale) {
+Bitmap *StarTrekEngine::scaleBitmap(Bitmap *bitmap, Fixed8 scale) {
 	int scaledWidth  = scale.multToInt(bitmap->width);
 	int scaledHeight = scale.multToInt(bitmap->height);
 	int origWidth  = bitmap->width;
@@ -1302,7 +1311,7 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 s
 	if (scaledHeight < 1)
 		scaledHeight = 1;
 
-	SharedPtr<Bitmap> scaledBitmap(new Bitmap(scaledWidth, scaledHeight));
+	Bitmap *scaledBitmap = new Bitmap(scaledWidth, scaledHeight);
 	scaledBitmap->xoffset = scale.multToInt(bitmap->xoffset);
 	scaledBitmap->yoffset = scale.multToInt(bitmap->yoffset);
 
@@ -1361,6 +1370,8 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 s
 
 		delete[] rowData;
 	}
+
+	delete bitmap;
 
 	return scaledBitmap;
 }

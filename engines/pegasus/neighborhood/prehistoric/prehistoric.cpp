@@ -104,9 +104,9 @@ void Prehistoric::start() {
 class FinishPrehistoricAction : public AIPlayMessageAction {
 public:
 	FinishPrehistoricAction() : AIPlayMessageAction("Images/AI/Prehistoric/XP25W", false) {}
-	~FinishPrehistoricAction() {}
+	~FinishPrehistoricAction() override {}
 
-	void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 
 };
 
@@ -191,6 +191,8 @@ TimeValue Prehistoric::getViewTime(const RoomID room, const DirectionConstant di
 				extraID = kPre25EastViewNoLog;
 		}
 		break;
+	default:
+		break;
 	}
 
 	if (extraID == 0xffffffff)
@@ -220,6 +222,8 @@ void Prehistoric::findSpotEntry(const RoomID room, const DirectionConstant direc
 			entry.clear();
 		else
 			GameState.setPrehistoricSeenFlyer2(true);
+		break;
+	default:
 		break;
 	}
 }
@@ -260,6 +264,8 @@ void Prehistoric::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMov
 		compassMove.insertFaderKnot(exitEntry.movieStart + kPrehistoricFrameDuration * 17, angle);
 		compassMove.insertFaderKnot(exitEntry.movieStart + kPrehistoricFrameDuration * 32, angle - 90);
 		compassMove.insertFaderKnot(exitEntry.movieEnd, angle - 90);
+		break;
+	default:
 		break;
 	}
 }
@@ -304,6 +310,8 @@ void Prehistoric::turnTo(const DirectionConstant newDirection) {
 			playSpotSoundSync(kPrehistoricFlashlightClickIn, kPrehistoricFlashlightClickOut);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -320,6 +328,8 @@ void Prehistoric::checkContinuePoint(const RoomID room, const DirectionConstant 
 	case MakeRoomView(kPrehistoric21, kNorth):
 	case MakeRoomView(kPrehistoric25, kNorth):
 		makeContinuePoint();
+		break;
+	default:
 		break;
 	}
 }
@@ -397,6 +407,8 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 	case MakeRoomView(kPrehistoric25, kEast):
 		setCurrentActivation(kActivationVaultClosed);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -457,6 +469,8 @@ void Prehistoric::loadAmbientLoops() {
 		// 0 volume.
 		loadLoopSound1("");
 		break;
+	default:
+		break;
 	}
 
 	switch (room) {
@@ -508,6 +522,8 @@ void Prehistoric::loadAmbientLoops() {
 		else
 			loadLoopSound2("Sounds/Prehistoric/P24NAL00.22k.AIFF", 64);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -521,6 +537,8 @@ void Prehistoric::activateHotspots() {
 		break;
 	case MakeRoomView(kPrehistoric22North, kNorth):
 		_vm->getAllHotspots().activateOneHotspot(kPre22NorthBreakerSpotID);
+		break;
+	default:
 		break;
 	}
 }
@@ -580,6 +598,8 @@ void Prehistoric::receiveNotification(Notification *notification, const Notifica
 		case kPre25EastUnlockingVaultWithLog:
 			_vm->addItemToInventory((InventoryItem *)_vm->getAllItems().findItemByID(kJourneymanKey));
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -605,6 +625,8 @@ Common::String Prehistoric::getEnvScanMovie() {
 			case kPrehistoric23:
 			case kPrehistoric24:
 				return "Images/AI/Prehistoric/XP7WB";
+			default:
+				break;
 			}
 		}
 
@@ -628,6 +650,8 @@ uint Prehistoric::getNumHints() {
 			if (!_privateFlags.getFlag(kPrehistoricPrivateVaultOpenFlag))
 				numHints = 1;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -643,6 +667,8 @@ Common::String Prehistoric::getHintMovie(uint hintNum) {
 			return "Images/AI/Prehistoric/XP18WD";
 		case MakeRoomView(kPrehistoric25, kEast):
 			return "Images/AI/Globals/XGLOB1A";
+		default:
+			break;
 		}
 	}
 
@@ -672,6 +698,8 @@ void Prehistoric::pickedUpItem(Item *item) {
 	switch (item->getObjectID()) {
 	case kHistoricalLog:
 		GameState.setScoringGotHistoricalLog(true);
+		break;
+	default:
 		break;
 	}
 

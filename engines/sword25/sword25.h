@@ -77,8 +77,8 @@ private:
 	Sword25Console *_console;
 
 protected:
-	virtual Common::Error run();
-	bool hasFeature(EngineFeature f) const;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 // 	void pauseEngineIntern(bool pause);	// TODO: Implement this!!!
 // 	void syncSoundSettings();	// TODO: Implement this!!!
 // 	Common::Error loadGameState(int slot);	// TODO: Implement this?
@@ -86,13 +86,13 @@ protected:
 // 	bool canLoadGameStateCurrently();	// TODO: Implement this?
 // 	bool canSaveGameStateCurrently();	// TODO: Implement this?
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	void shutdown();
 
 public:
 	Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc);
-	virtual ~Sword25Engine();
+	~Sword25Engine() override;
 
 	uint32 getGameFlags() const;
 

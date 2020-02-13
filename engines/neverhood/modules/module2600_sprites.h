@@ -44,7 +44,7 @@ protected:
 class AsScene2609Water : public AnimatedSprite {
 public:
 	AsScene2609Water(NeverhoodEngine *vm);
-	virtual ~AsScene2609Water();
+	~AsScene2609Water() override;
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

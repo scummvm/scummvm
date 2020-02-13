@@ -52,7 +52,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 	switch (compressionType) {
 	case MKTAG('M','P','3',' '):
 	case MKTAG('O','G','G',' '):
-	case MKTAG('F','L','A','C'):
+	case MKTAG('F','L','A','C'): {
 		_audioCompressionType = compressionType;
 		const uint32 numEntries = fileStream->readUint32LE();
 		if (!numEntries) {
@@ -73,6 +73,10 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		}
 
 		lastEntry->size = fileStream->size() - lastEntry->offset;
+		}
+		break;
+	default:
+		break;
 	}
 
 	resMan->disposeVolumeFileStream(fileStream, this);
@@ -334,7 +338,6 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 	}
 
-	const uint32 srcSize = fileStream->size();
 	disposeVolumeFileStream(fileStream, src);
 
 	SciSpan<const byte>::const_iterator ptr = mapRes->cbegin();
@@ -448,32 +451,10 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			// works
 			if ((n & kEndOfMapFlag) == kEndOfMapFlag) {
 				const uint32 bytesLeft = mapRes->cend() - ptr;
-				if (bytesLeft >= entrySize) {
+				if (bytesLeft >= entrySize && entrySize > 0) {
 					warning("End of %s reached, but %u entries remain", mapResId.toString().c_str(), bytesLeft / entrySize);
 				}
 				break;
-			}
-
-			// GK1CD has a message whose audio36 resource has the wrong tuple and never plays.
-			//  The message tuple is 420 2 32 0 1 but the audio36 tuple is 420 2 32 3 1. bug #10819
-			if (g_sci->getGameId() == GID_GK1 && g_sci->isCD() &&
-				map->_mapNumber == 420 && n == 0x02200301) {
-				n = 0x02200001;
-			}
-
-			// QFG4CD has a message whose audio36 resource has the wrong tuple and never plays.
-			//  The message tuple is 510 23 1 0 1 but the audio36 tuple is 510 199 1 0 1. bug #10848
-			if (g_sci->getGameId() == GID_QFG4 && g_sci->isCD() &&
-				map->_mapNumber == 510 && n == 0xc7010001) {
-				n = 0x17010001;
-			}
-
-			// QFG4CD has an orphaned audio36 resource that additionally has the wrong tuple.
-			//  The audio36 tuple is 520 2 59 0 3. The message would be 520 2 59 0 2. bug #10849
-			//  We restore the missing message in message.cpp.
-			if (g_sci->getGameId() == GID_QFG4 && g_sci->isCD() &&
-				map->_mapNumber == 520 && n == 0x023b0003) {
-				n = 0x023b0002;
 			}
 
 			if (isEarly) {
@@ -491,14 +472,6 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				// FIXME: The sync36 resource seems to be two bytes too big in KQ6CD
 				// (bytes taken from the RAVE resource right after it)
 				if (syncSize > 0) {
-					// TODO: Add a mechanism to handle cases with missing resources like the ones below
-					//
-					// LB2CD is missing the sync resource for message 1885 1 6 30 2 but it's a duplicate
-					//  of 1885 1 6 16 2 which does have a sync resource so use that for both. bug #9956
-					if (g_sci->getGameId() == GID_LAURABOW2 && map->_mapNumber == 1885 && n == 0x01061002) {
-						addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, 0x01061e02), src, offset, syncSize, map->getLocationName());
-					}
-
 					addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, n & 0xffffff3f), src, offset, syncSize, map->getLocationName());
 				}
 			}
@@ -539,38 +512,42 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				continue;
 			}
 
+			// GK2 has invalid audio36 map entries on CD 1 of the German 
+			//  version and CD 6 of all versions. All are safe to ignore
+			//  because their content doesn't apply to the disc's chapter.
 			if (g_sci->getGameId() == GID_GK2) {
-				// At least version 1.00 of the US release, and the German
-				// release, of GK2 have multiple invalid audio36 map entries on
-				// CD 6
-				if (map->_volumeNumber == 6 && offset + syncSize >= srcSize) {
-					bool skip;
-					switch (g_sci->getLanguage()) {
-					case Common::EN_ANY:
-						skip = (map->_mapNumber == 22 || map->_mapNumber == 160);
-						break;
-					case Common::DE_DEU:
-						skip = (map->_mapNumber == 22);
-						break;
-					default:
-						skip = false;
-					}
-
-					if (skip) {
-						continue;
-					}
-				}
-
-				// Map 2020 on CD 1 of the German release of GK2 is invalid.
-				// This content does not appear to ever be used by the game (it
-				// does not even exist in the US release), and there is a
-				// correct copy of it on CD 6, so just ignore the bad copy on
-				// CD 1
-				if (g_sci->getLanguage() == Common::DE_DEU &&
-					map->_volumeNumber == 1 &&
+				// Map 2020 on CD 1 only exists in localized versions and
+				//  contains inventory messages from later chapters.
+				if (map->_volumeNumber == 1 &&
 					map->_mapNumber == 2020) {
 					continue;
 				}
+
+				// Maps 22 and 160 on CD 6 appear in various broken forms
+				//  in English and apparently every localized version.
+				//  These messages are for Grace's notebook and castle
+				//  secret passage rooms which aren't in chapter 6.
+				if (map->_volumeNumber == 6 &&
+					(map->_mapNumber == 22 || map->_mapNumber == 160)) {
+					continue;
+				}
+			}
+			
+			// Lighthouse German has invalid audio36 map entries for
+			//  content that was cut from the game. These resources
+			//  existed in the English version even though they were
+			//  inaccessible.
+			if (g_sci->getGameId() == GID_LIGHTHOUSE &&
+				map->_mapNumber == 800) {
+				continue;
+			}
+
+			// LSL7 French has an invalid audio36 map entry for a narrator
+			//  message that was cut from the game. This resource existed
+			//  in the English version even though it was inaccessible.
+			if (g_sci->getGameId() == GID_LSL7 &&
+				map->_mapNumber == 999) {
+				continue;
 			}
 
 			// Map 800 and 4176 contain content that was cut from the game. The
@@ -849,7 +826,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 					uint16 size = data.getUint16LEAt(4);
 
-					if (dataOffset + size > resource->size()) {
+					if ((uint32)dataOffset + size > resource->size()) {
 						warning("Invalid size inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
 						size = resource->size() - dataOffset;
 					}

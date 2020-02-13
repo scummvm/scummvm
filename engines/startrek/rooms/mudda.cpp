@@ -20,6 +20,7 @@
  *
  */
 
+#include "startrek/startrek.h"
 #include "startrek/room.h"
 
 namespace StarTrek {
@@ -28,15 +29,16 @@ namespace StarTrek {
 // mission, despite being mostly the same.
 
 void Room::muddaUseLenseOnDegrimer() {
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
+	// All of these audio files are identical, but there's one for each room.
 	const TextRef text[] = {
-		TX_MUD0N011, // All of these audio files are identical, but there's one for each room.
-		TX_MUD1N013,
-		TX_MUD2N010,
-		TX_MUD3N016,
-		TX_MUD4N009,
-		TX_MUD5N009,
+		11,	// MUDD0
+		13,	// MUDD1
+		10,	// MUDD2
+		16,	// MUDD3
+		 9,	// MUDD4
+		 9,	// MUDD5
 	};
 
 	giveItem(OBJECT_IALIENDV);
@@ -44,12 +46,12 @@ void Room::muddaUseLenseOnDegrimer() {
 	loseItem(OBJECT_ILENSES);
 
 	_awayMission->mudd.missionScore++;
-	showText(text[_roomIndex]);
+	showDescription(text[_vm->_roomIndex], true);
 }
 
 
 void Room::muddaUseAlienDevice() {
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
 	const int deviceObjectIndices[] = { // Each room's object index for the explosion is different
 		9,  // MUDD0
@@ -65,44 +67,36 @@ void Room::muddaUseAlienDevice() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
 	Common::Point pos = getActorPos(OBJECT_KIRK);
-	loadActorAnimC(deviceObjectIndices[_roomIndex], "s4cbxp", pos.x, 10, &Room::muddaFiredAlienDevice);
+	loadActorAnimC(deviceObjectIndices[_vm->_roomIndex], "s4cbxp", pos.x, 10, &Room::muddaFiredAlienDevice);
 	playVoc("EXPLO3");
 }
 
 void Room::muddaFiredAlienDevice() {
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
-
-	const TextRef text[] = {
-		TX_MUD0_002, // These audio files aren't identical, but the text is mostly the same.
-		TX_MUD1_002,
-		TX_MUD2_002,
-		TX_MUD2_002, // Rooms 3-5 reuse MUD2
-		TX_MUD2_002,
-		TX_MUD2_002,
-	};
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
 	_awayMission->disableInput = false;
 	if (!_awayMission->mudd.discoveredLenseAndDegrimerFunction) {
 		_awayMission->mudd.discoveredLenseAndDegrimerFunction = true;
 		_awayMission->mudd.missionScore += 5; // BUGFIX: didn't happen if done in MUDD5
-		showText(TX_SPEAKER_KIRK, text[_roomIndex]);
+		showText(TX_SPEAKER_KIRK, 2, true);
 	}
 }
 
 
 void Room::muddaUseDegrimer() {
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
+	// All of these audio files are identical, but there's one for each room.
 	const TextRef text[] = {
-		TX_MUD0N002, // All of these audio files are identical, but there's one for each room.
-		TX_MUD1N004,
-		TX_MUD2N001,
-		TX_MUD3N001,
-		TX_MUD4N002,
-		TX_MUD5N001,
+		2,	// MUDD0
+		4,	// MUDD1
+		1,	// MUDD2
+		1,	// MUDD3
+		2,	// MUDD4
+		1,	// MUDD5
 	};
 
-	showText(text[_roomIndex]);
+	showDescription(text[_vm->_roomIndex], true);
 }
 
 void Room::muddaTick() {
@@ -114,30 +108,17 @@ void Room::muddaTick() {
 	// To simplify things, and since it makes more sense, now they'll just collapse on the
 	// spot instead.
 
-	assert(_roomIndex >= 0 && _roomIndex <= 5);
+	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
-	/*
-	// Unused: The positions to they originally walked to before collapsing.
-	const Common::Point deathPositions[][4] = {
-	    { Common::Point(0xbb, 0x8d), Common::Point(0xd0, 0x89), Common::Point(0xaa, 0x85), Common::Point(0xbf, 0x83) },
-	    { Common::Point(0xaa, 0xa5), Common::Point(0x83, 0xac), Common::Point(-1, -1), Common::Point(-1, -1) },
-	    { Common::Point(0x108, 0xbb), Common::Point(0x118, 0xc4), Common::Point(0xfe, 0xb2), Common::Point(0x117, 0xae) },
-	    { Common::Point(0xf1, 0x95), Common::Point(0xcd, 0x87), Common::Point(0xec, 0x84), Common::Point(0x110, 0xa6) },
-	    { Common::Point(0x8b, 0xb6), Common::Point(0x69, 0xb7), Common::Point(-1, -1), Common::Point(-1, -1) },
-	    { Common::Point(0x8b, 0xac), Common::Point(0x6f, 0x99), Common::Point(-1, -1), Common::Point(-1, -1) },
+	// All of these audio files are identical, but there's one for each room.
+	const TextRef deathText[] = {
+		6,	// MUDD0
+		7,	// MUDD1
+		5,	// MUDD2
+		8,	// MUDD3
+		5,	// MUDD4
+		5	// MUDD5
 	};
-	*/
-
-	const TextRef deathText[] = { // All of these audio files are identical, but there's one for each room.
-		TX_MUD0N006, TX_MUD1N007, TX_MUD2N005, TX_MUD3N008, TX_MUD4N005, TX_MUD5N105
-	};
-
-	// UNUSED: something similar to "deathText" which would also fit in this situation.
-	/*
-	const TextRef deathText2[] = { // All of these audio files are identical, but there's one for each room.
-		TX_MUD0N009, TX_MUD1N010, TX_MUD2N009, TX_MUD3N013, TX_MUD4N007, TX_MUD5N007
-	};
-	*/
 
 	const int TIMER_LENGTH = 27000;
 
@@ -172,10 +153,10 @@ void Room::muddaTick() {
 
 			for (int i = OBJECT_KIRK; i <= OBJECT_REDSHIRT; i++) {
 				Common::String anim = getCrewmanAnimFilename(i, "getd");
-				anim += directions[i][_roomIndex];
+				anim += directions[i][_vm->_roomIndex];
 				loadActorAnim2(i, anim);
 			}
-			showText(deathText[_roomIndex]);
+			showDescription(deathText[_vm->_roomIndex], true);
 			showGameOverMenu();
 		}
 	}

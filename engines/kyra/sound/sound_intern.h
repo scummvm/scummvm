@@ -25,7 +25,7 @@
 
 
 #include "kyra/sound/sound.h"
-#include "kyra/sound/sound_adlib.h"
+#include "kyra/sound/sound_pc_v1.h"
 
 #include "audio/midiparser.h"
 #include "audio/softsynth/emumidi.h"
@@ -54,31 +54,31 @@ class MidiOutput;
 class SoundMidiPC : public Sound {
 public:
 	SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *driver, kType type);
-	virtual ~SoundMidiPC();
+	~SoundMidiPC() override;
 
-	virtual kType getMusicType() const { return _type; }
+	kType getMusicType() const override { return _type; }
 
-	virtual bool init();
+	bool init() override;
 
-	virtual void updateVolumeSettings();
+	void updateVolumeSettings() override;
 
-	virtual void initAudioResourceInfo(int set, void *info);
-	virtual void selectAudioResourceSet(int set);
-	virtual bool hasSoundFile(uint file) const;
-	virtual void loadSoundFile(uint file);
-	virtual void loadSoundFile(Common::String file);
-	virtual void loadSfxFile(Common::String file);
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override;
+	void loadSoundFile(uint file) override;
+	void loadSoundFile(Common::String file) override;
+	void loadSfxFile(Common::String file) override;
 
-	virtual void playTrack(uint8 track);
-	virtual void haltTrack();
-	virtual bool isPlaying() const;
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	bool isPlaying() const override;
 
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
-	virtual void stopAllSoundEffects();
+	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void stopAllSoundEffects() override;
 
-	virtual void beginFadeOut();
+	void beginFadeOut() override;
 
-	virtual void pause(bool paused);
+	void pause(bool paused) override;
 private:
 	static void onTimer(void *data);
 
@@ -113,28 +113,28 @@ private:
 class SoundTowns_LoK : public Sound {
 public:
 	SoundTowns_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundTowns_LoK();
+	~SoundTowns_LoK() override;
 
-	virtual kType getMusicType() const { return kTowns; }
+	kType getMusicType() const override { return kTowns; }
 
-	virtual bool init();
-	virtual void process();
+	bool init() override;
+	void process() override;
 
-	virtual void initAudioResourceInfo(int set, void *info);
-	virtual void selectAudioResourceSet(int set);
-	virtual bool hasSoundFile(uint file) const;
-	virtual void loadSoundFile(uint file);
-	virtual void loadSoundFile(Common::String) {}
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override;
+	void loadSoundFile(uint file) override;
+	void loadSoundFile(Common::String) override {}
 
-	virtual void playTrack(uint8 track);
-	virtual void haltTrack();
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
 
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
-	virtual void stopAllSoundEffects();
+	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void stopAllSoundEffects() override;
 
-	virtual void beginFadeOut();
+	void beginFadeOut() override;
 
-	virtual void updateVolumeSettings();
+	void updateVolumeSettings() override;
 
 private:
 	bool loadInstruments();
@@ -167,26 +167,26 @@ private:
 class SoundPC98_LoK : public Sound {
 public:
 	SoundPC98_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundPC98_LoK();
+	~SoundPC98_LoK() override;
 
-	virtual kType getMusicType() const override { return kPC98; }
+	kType getMusicType() const override { return kPC98; }
 
-	virtual bool init() override;
+	bool init() override;
 
-	virtual void initAudioResourceInfo(int set, void *info) override;
-	virtual void selectAudioResourceSet(int set) override;
-	virtual bool hasSoundFile(uint file) const override;
-	virtual void loadSoundFile(uint file) override;
-	virtual void loadSoundFile(Common::String file) override;
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override;
+	void loadSoundFile(uint file) override;
+	void loadSoundFile(Common::String file) override;
 
-	virtual void playTrack(uint8 track) override;
-	virtual void haltTrack() override;
-	virtual void beginFadeOut() override;
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	void beginFadeOut() override;
 
-	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) override { return -1; }
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) override { return -1; }
+	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
 
-	virtual void updateVolumeSettings() override;
+	void updateVolumeSettings() override;
 
 private:
 	int _lastTrack;
@@ -202,27 +202,27 @@ private:
 class SoundTownsPC98_v2 : public Sound {
 public:
 	SoundTownsPC98_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundTownsPC98_v2();
+	~SoundTownsPC98_v2() override;
 
-	virtual kType getMusicType() const override { return _vm->gameFlags().platform == Common::kPlatformFMTowns ? kTowns : kPC98; }
+	kType getMusicType() const override { return _vm->gameFlags().platform == Common::kPlatformFMTowns ? kTowns : kPC98; }
 
-	virtual bool init() override;
-	virtual void process() override;
+	bool init() override;
+	void process() override;
 
-	virtual void initAudioResourceInfo(int set, void *info) override;
-	virtual void selectAudioResourceSet(int set) override;
-	virtual bool hasSoundFile(uint file) const override;
-	virtual void loadSoundFile(uint file) override {}
-	virtual void loadSoundFile(Common::String file) override;
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override;
+	void loadSoundFile(uint file) override {}
+	void loadSoundFile(Common::String file) override;
 
-	virtual void playTrack(uint8 track) override;
-	virtual void haltTrack() override;
-	virtual void beginFadeOut() override;
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	void beginFadeOut() override;
 
-	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume = 255, uint8 priority = 255, bool isSfx = true) override;
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume = 255, uint8 priority = 255, bool isSfx = true) override;
+	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
 
-	virtual void updateVolumeSettings() override;
+	void updateVolumeSettings() override;
 
 private:
 	Audio::AudioStream *_currentSFX;
@@ -242,22 +242,22 @@ private:
 class MidiDriver_PCSpeaker : public MidiDriver_Emulated {
 public:
 	MidiDriver_PCSpeaker(Audio::Mixer *mixer);
-	~MidiDriver_PCSpeaker();
+	~MidiDriver_PCSpeaker() override;
 
 	// MidiDriver interface
-	virtual void close() {}
+	void close() override {}
 
-	virtual void send(uint32 data);
+	void send(uint32 data) override;
 
-	virtual MidiChannel *allocateChannel() { return 0; }
-	virtual MidiChannel *getPercussionChannel() { return 0; }
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
 
 	// MidiDriver_Emulated interface
-	void generateSamples(int16 *buffer, int numSamples);
+	void generateSamples(int16 *buffer, int numSamples) override;
 
 	// AudioStream interface
-	bool isStereo() const { return false; }
-	int getRate() const { return _rate; }
+	bool isStereo() const override { return false; }
+	int getRate() const override { return _rate; }
 private:
 	Common::Mutex _mutex;
 	Audio::PCSpeaker *_speaker;
@@ -300,7 +300,7 @@ private:
 	bool _modulationFlag;
 
 	uint8 _timerValue;
-	void onTimer();
+	void onTimer() override;
 
 	static const uint8 _noteTable1[];
 	static const uint8 _noteTable2[];
@@ -318,24 +318,24 @@ struct AmigaSfxTable {
 class SoundAmiga_LoK : public Sound {
 public:
 	SoundAmiga_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundAmiga_LoK();
+	~SoundAmiga_LoK() override;
 
-	virtual kType getMusicType() const override { return kAmiga; } //FIXME
+	kType getMusicType() const override { return kAmiga; } //FIXME
 
-	virtual bool init() override;
+	bool init() override;
 
-	virtual void initAudioResourceInfo(int set, void *info) override;
-	virtual void selectAudioResourceSet(int set) override;
-	virtual bool hasSoundFile(uint file) const override;
-	virtual void loadSoundFile(uint file) override;
-	virtual void loadSoundFile(Common::String) override {}
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override;
+	void loadSoundFile(uint file) override;
+	void loadSoundFile(Common::String) override {}
 
-	virtual void playTrack(uint8 track) override;
-	virtual void haltTrack() override;
-	virtual void beginFadeOut() override;
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	void beginFadeOut() override;
 
-	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) override { return -1; }
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) override { return -1; }
+	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
 
 protected:
 	Audio::MaxTrax *_driver;
@@ -354,34 +354,34 @@ protected:
 class SoundTowns_Darkmoon : public Sound, public TownsAudioInterfacePluginDriver {
 public:
 	SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundTowns_Darkmoon();
+	~SoundTowns_Darkmoon() override;
 
-	virtual kType getMusicType() const { return kTowns; }
+	kType getMusicType() const override { return kTowns; }
 
-	virtual bool init();
+	bool init() override;
 
-	void timerCallback(int timerId);
+	void timerCallback(int timerId) override;
 
-	virtual void initAudioResourceInfo(int set, void *info);
-	virtual void selectAudioResourceSet(int set);
-	virtual bool hasSoundFile(uint file) const;
-	virtual void loadSoundFile(uint file);
-	virtual void loadSoundFile(Common::String name);
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override;
+	void loadSoundFile(uint file) override;
+	void loadSoundFile(Common::String name) override;
 
-	virtual void playTrack(uint8 track);
-	virtual void haltTrack();
-	virtual bool isPlaying() const;
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	bool isPlaying() const override;
 
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
-	virtual void stopAllSoundEffects();
+	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void stopAllSoundEffects() override;
 
-	virtual void beginFadeOut();
+	void beginFadeOut() override;
 
-	virtual void updateVolumeSettings();
+	void updateVolumeSettings() override;
 
-	virtual int checkTrigger();
+	int checkTrigger() override;
 
-	virtual void resetTrigger();
+	void resetTrigger() override;
 
 private:
 	struct SoundTableEntry {
@@ -411,24 +411,24 @@ class AudioMaster2;
 class SoundAmiga_EoB: public Sound {
 public:
 	SoundAmiga_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundAmiga_EoB();
+	~SoundAmiga_EoB() override;
 
-	kType getMusicType() const;
+	kType getMusicType() const override;
 
-	bool init();
-	void initAudioResourceInfo(int set, void *info);
-	void selectAudioResourceSet(int set);
-	bool hasSoundFile(uint file) const { return false; }
-	void loadSoundFile(uint) {}
-	void loadSoundFile(Common::String file);
-	void unloadSoundFile(Common::String file);
-	void playTrack(uint8 track);
-	void haltTrack();
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF);
-	void beginFadeOut() { beginFadeOut(160); }
-	void beginFadeOut(int delay);
-	void updateVolumeSettings();
-	int checkTrigger();
+	bool init() override;
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override { return false; }
+	void loadSoundFile(uint) override {}
+	void loadSoundFile(Common::String file) override;
+	void unloadSoundFile(Common::String file) override;
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void beginFadeOut() override { beginFadeOut(160); }
+	void beginFadeOut(int delay) override;
+	void updateVolumeSettings() override;
+	int checkTrigger() override;
 
 private:
 	uint8 *_fileBuffer;
@@ -439,6 +439,39 @@ private:
 	Common::String _lastSound;
 
 	int _currentResourceSet;
+
+	bool _ready;
+};
+
+class MLALF98;
+class SoundPC98_EoB : public Sound {
+public:
+	SoundPC98_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	~SoundPC98_EoB() override;
+
+	kType getMusicType() const override;
+
+	bool init() override;
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override { return false; }
+	void loadSoundFile(uint file) override;
+	void loadSoundFile(Common::String file) override {}
+	void loadSfxFile(Common::String file) override;
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	void playSoundEffect(uint8 track, uint8) override;
+	void beginFadeOut() override {}
+	void updateVolumeSettings() override;
+
+private:
+	KyraEngine_v1 *_vm;
+	MLALF98 *_driver;
+
+	SoundResourceInfo_PC *_resInfo[3];
+	int _currentResourceSet;
+
+	uint32 _sfxDelay;
 
 	bool _ready;
 };

@@ -142,7 +142,7 @@ private:
 public:
 	Common::SeekableReadStream *_scriptStream;
 	ScScript(BaseGame *inGame, ScEngine *engine);
-	virtual ~ScScript();
+	~ScScript() override;
 	char *_filename;
 	bool _thread;
 	bool _methodThread;

@@ -342,6 +342,10 @@ bool Sound::isPlaying() {
 	return g_system->getMixer()->isSoundHandleActive(_soundHandle);
 }
 
+bool Sound::isLooping() {
+	return _looping;
+}
+
 // SoundMan
 
 SoundMan::SoundMan(IllusionsEngine *vm)
@@ -448,6 +452,15 @@ void SoundMan::stopSound(uint32 soundEffectId) {
 	Sound *sound = getSound(soundEffectId);
 	if (sound)
 		sound->stop();
+}
+
+void SoundMan::stopLoopingSounds() {
+	for (SoundListIterator it = _sounds.begin(); it != _sounds.end(); ++it) {
+		Sound *sound = *it;
+		if (sound->isPlaying() && sound->isLooping()) {
+			sound->stop();
+		}
+	}
 }
 
 void SoundMan::unloadSounds(uint32 soundGroupId) {

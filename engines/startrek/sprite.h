@@ -61,7 +61,8 @@ struct Sprite : Common::Serializable {
 
 	Sprite();
 
-	void setBitmap(SharedPtr<Bitmap> b);
+	void setBitmap(Bitmap *b);
+	void setBitmap(Common::MemoryReadStreamEndian *stream);
 	void setXYAndPriority(int16 x, int16 y, int16 priority);
 	void dontDrawNextFrame();
 
@@ -71,7 +72,7 @@ struct Sprite : Common::Serializable {
 	Common::Rect getRect();
 
 	/// NOTE: even after calling this, "bitmap" must be reloaded by the caller.
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 } // End of namespace StarTrek

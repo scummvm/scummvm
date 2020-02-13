@@ -24,7 +24,7 @@
 #include "scumm/he/logic_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"
-#ifdef USE_SDL_NET
+#ifdef USE_LIBCURL
 #include "scumm/he/moonbase/net_main.h"
 #include "scumm/he/moonbase/net_defines.h"
 #endif
@@ -39,9 +39,11 @@ class LogicHEmoonbase : public LogicHE {
 public:
 	LogicHEmoonbase(ScummEngine_v100he *vm) : LogicHE(vm) { _vm1 = vm; }
 
-	int versionID();
+	int versionID() override;
 
-	int32 dispatch(int op, int numArgs, int32 *args);
+	int startOfFrame() override;
+
+	int32 dispatch(int op, int numArgs, int32 *args) override;
 
 private:
 	void op_create_multi_state_wiz(int op, int numArgs, int32 *args);
@@ -58,7 +60,7 @@ private:
 	void op_ai_set_type(int op, int numArgs, int32 *args);
 	void op_ai_clean_up(int op, int numArgs, int32 *args);
 
-#ifdef USE_SDL_NET
+#ifdef USE_LIBCURL
 	void op_net_remote_start_script(int op, int numArgs, int32 *args);
 	void op_net_remote_send_array(int op, int numArgs, int32 *args);
 	int op_net_remote_start_function(int op, int numArgs, int32 *args);
@@ -162,6 +164,13 @@ int LogicHEmoonbase::versionID() {
 #define OP_NET_ENABLE_SESSION_PLAYER_JOIN	1564
 #define OP_NET_SET_AI_PLAYER_COUNT			1565
 
+int LogicHEmoonbase::startOfFrame() {
+#ifdef USE_LIBCURL
+	_vm1->_moonbase->_net->doNetworkOnceAFrame(15); // Value should be passed in...
+#endif
+
+	return 0;
+}
 
 int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 	switch (op) {
@@ -201,7 +210,7 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 		op_ai_clean_up(op, numArgs, args);
 		break;
 
-#ifdef USE_SDL_NET
+#ifdef USE_LIBCURL
 	case OP_NET_REMOTE_START_SCRIPT:
 		op_net_remote_start_script(op, numArgs, args);
 		break;
@@ -372,7 +381,7 @@ void LogicHEmoonbase::op_ai_clean_up(int op, int numArgs, int32 *args) {
 	_vm1->_moonbase->_ai->cleanUpAI();
 }
 
-#ifdef USE_SDL_NET
+#ifdef USE_LIBCURL
 void LogicHEmoonbase::op_net_remote_start_script(int op, int numArgs, int32 *args) {
 	_vm1->_moonbase->_net->remoteStartScript(args[0], args[1], args[2], numArgs - 3, &args[3]);
 }

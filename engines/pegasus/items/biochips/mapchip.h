@@ -39,17 +39,17 @@ namespace Pegasus {
 class MapChip : public BiochipItem {
 public:
 	MapChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
-	virtual ~MapChip();
+	~MapChip() override;
 
-	void select();
-	void deselect();
-	void takeSharedArea();
-	void giveUpSharedArea();
+	void select() override;
+	void deselect() override;
+	void takeSharedArea() override;
+	void giveUpSharedArea() override;
 
 	void moveToMapLocation(const NeighborhoodID, const RoomID, const DirectionConstant);
 
-	void writeToStream(Common::WriteStream *);
-	void readFromStream(Common::ReadStream *);
+	void writeToStream(Common::WriteStream *) override;
+	void readFromStream(Common::ReadStream *) override;
 
 	bool beenToMaze() { return _image.anyFlagSet(); }
 

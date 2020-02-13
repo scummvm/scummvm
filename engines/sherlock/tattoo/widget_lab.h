@@ -46,17 +46,17 @@ public:
 	Common::String _remainingText;
 public:
 	WidgetLab(SherlockEngine *vm);
-	virtual ~WidgetLab() {}
+	~WidgetLab() override {}
 
 	/**
 	 * Summon the window
 	 */
-	virtual void summonWindow();
+	void summonWindow() override;
 
 	/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 } // End of namespace Tattoo

@@ -44,7 +44,7 @@ class Scene1200 : public SceneExt {
 		class Jumper : public SceneActorExt {
 		public:
 			void init(int state);
-			virtual bool startAction(CursorType action, Event &event);
+			bool startAction(CursorType action, Event &event) override;
 		};
 
 		Jumper _jumper1;
@@ -53,8 +53,8 @@ class Scene1200 : public SceneExt {
 
 		LaserPanel();
 
-		virtual void postInit(SceneObjectList *OwnerList = NULL);
-		virtual void remove();
+		void postInit(SceneObjectList *OwnerList = NULL) override;
+		void remove() override;
 	};
 
 public:
@@ -72,15 +72,15 @@ public:
 	bool _fixupMaze;
 
 	Scene1200();
-	void synchronize(Serializer &s);
+	void synchronize(Serializer &s) override;
 
 	void startCrawling(CrawlDirection dir);
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
-	virtual void dispatch();
-	virtual void saveCharacter(int characterIndex);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
+	void process(Event &event) override;
+	void dispatch() override;
+	void saveCharacter(int characterIndex) override;
 };
 
 } // End of namespace Ringworld2

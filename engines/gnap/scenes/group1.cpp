@@ -127,6 +127,8 @@ void Scene10::run() {
 					break;
 				case PLAT_CURSOR:
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -176,6 +178,8 @@ void Scene10::run() {
 					gnap.walkTo(Common::Point(4, 8), 0, 0x107BB, 1);
 					gnap._actionStatus = kAS10AnnoyCook;
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -192,9 +196,9 @@ void Scene10::run() {
 						gnap.playScratchingHead(Common::Point(4, 3));
 					break;
 				case GRAB_CURSOR:
-					if (_vm->isFlag(kGFMudTaken))
+					if (_vm->isFlag(kGFMudTaken)) {
 						gnap.playMoan2(Common::Point(-1, -1));
-					else {
+					} else {
 						gnap.actionIdle(0x10C);
 						gnap.walkTo(Common::Point(4, 8), 0, 0x107BB, 1);
 						gnap._actionStatus = kAS10AnnoyCook;
@@ -204,15 +208,17 @@ void Scene10::run() {
 					gnap.playImpossible();
 					break;
 				case PLAT_CURSOR:
-					if (_vm->isFlag(kGFMudTaken))
+					if (_vm->isFlag(kGFMudTaken)) {
 						gnap.playMoan2(Common::Point(-1, -1));
-					else {
+					} else {
 						gnap.actionIdle(0x10C);
 						gnap.useDeviceOnPlatypus();
 						plat.walkTo(Common::Point(3, 7), -1, -1, 1);
 						gnap.walkTo(Common::Point(4, 8), 0, 0x107BB, 1);
 						gnap._actionStatus = kAS10AnnoyCook;
 					}
+					break;
+				default:
 					break;
 				}
 			}
@@ -235,9 +241,9 @@ void Scene10::run() {
 					gnap.playImpossible();
 					break;
 				case PLAT_CURSOR:
-					if (_vm->isFlag(kGFMudTaken))
+					if (_vm->isFlag(kGFMudTaken)) {
 						gnap.playMoan2(Common::Point(-1, -1));
-					else {
+					} else {
 						_vm->invAdd(kItemTongs);
 						_vm->setFlag(kGFMudTaken);
 						gnap.actionIdle(0x10C);
@@ -248,6 +254,8 @@ void Scene10::run() {
 						_vm->_largeSprite = gameSys.createSurface(0xC3);
 						gnap.playIdle(Common::Point(7, 6));
 					}
+					break;
+				default:
 					break;
 				}
 			}
@@ -275,6 +283,8 @@ void Scene10::run() {
 				case TALK_CURSOR:
 				case PLAT_CURSOR:
 					gnap.playImpossible();
+					break;
+				default:
 					break;
 				}
 			}
@@ -356,6 +366,8 @@ void Scene10::updateAnimations() {
 		case kAS10AnnoyCook:
 			_nextCookSequenceId = 0x105;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -364,6 +376,8 @@ void Scene10::updateAnimations() {
 		switch (plat._actionStatus) {
 		case kAS10PlatWithBox:
 			_nextCookSequenceId = 0x109;
+			break;
+		default:
 			break;
 		}
 	}
@@ -415,9 +429,9 @@ void Scene10::updateAnimations() {
 
 		switch (_currCookSequenceId) {
 		case 0x106:
-			if (gnap._actionStatus >= 0 || plat._actionStatus >= 0)
+			if (gnap._actionStatus >= 0 || plat._actionStatus >= 0) {
 				_nextCookSequenceId = 0x106;
-			else {
+			} else {
 				int rnd = _vm->getRandom(7);
 				switch (rnd) {
 				case 0:
@@ -432,6 +446,7 @@ void Scene10::updateAnimations() {
 					break;
 				default:
 					_nextCookSequenceId = 0x106;
+					break;
 				}
 			}
 			break;
@@ -465,6 +480,7 @@ void Scene10::updateAnimations() {
 					break;
 				default:
 					_nextCookSequenceId = 0x106;
+					break;
 				}
 			}
 			_vm->_timers[2] = _vm->getRandom(30) + 20;
@@ -476,11 +492,14 @@ void Scene10::updateAnimations() {
 			gnap._actionStatus = -1;
 			plat._actionStatus = -1;
 			break;
+		default:
+			break;
 		}
-		if (_currCookSequenceId == 0x843)
+		if (_currCookSequenceId == 0x843) {
 			gameSys.setAnimation(_currCookSequenceId | 0x10000, 301, 2);
-		else
+		} else {
 			gameSys.setAnimation(_currCookSequenceId, 100, 2);
+		}
 	}
 }
 
@@ -622,6 +641,8 @@ void Scene11::run() {
 					break;
 				case PLAT_CURSOR:
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -672,6 +693,8 @@ void Scene11::run() {
 						gnap.walkTo(Common::Point(3, 7), 0, gnap.getSequenceId(kGSBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 						gnap._actionStatus = kAS11TalkGoggleGuy;
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -701,6 +724,8 @@ void Scene11::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -722,6 +747,8 @@ void Scene11::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible(Common::Point(9, 8));
+						break;
+					default:
 						break;
 					}
 				}
@@ -750,7 +777,6 @@ void Scene11::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -807,6 +833,8 @@ void Scene11::run() {
 					break;
 				case 2:
 					gameSys.insertSequence(0x8A6 | 0x10000, 179, 0, 0, kSeqNone, 0, 0, 0);
+					break;
+				default:
 					break;
 				}
 			}
@@ -892,6 +920,8 @@ void Scene11::updateAnimations() {
 				gameSys.insertSequence(0x207, 257, 0, 0, kSeqNone, _vm->getSequenceTotalDuration(0x1FE), 0, 0);
 				gnap._actionStatus = -1;
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -1045,6 +1075,8 @@ void Scene12::run() {
 				break;
 			case PLAT_CURSOR:
 				break;
+			default:
+				break;
 			}
 			break;
 
@@ -1095,6 +1127,8 @@ void Scene12::run() {
 					plat._idleFacing = kDirIdleRight;
 					gnap.playIdle(Common::Point(2, 7));
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -1129,6 +1163,8 @@ void Scene12::run() {
 					gnap.playPullOutDevice(plat._pos);
 					gameSys.setAnimation(makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id, 0);
 					gnap._actionStatus = kAS12PlatWithBarkeeper;
+					break;
+				default:
 					break;
 				}
 			}
@@ -1165,6 +1201,8 @@ void Scene12::run() {
 					plat._idleFacing = kDirIdleLeft;
 					gnap.playIdle(Common::Point(7, 6));
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -1190,7 +1228,6 @@ void Scene12::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -1246,6 +1283,8 @@ void Scene12::run() {
 					break;
 				case 2:
 					gameSys.insertSequence(0x8A6 | 0x10000, 179, 0, 0, kSeqNone, 0, 0, 0);
+					break;
+				default:
 					break;
 				}
 			}
@@ -1360,6 +1399,8 @@ void Scene12::updateAnimations() {
 		case kAS12PlatWithBarkeeper:
 			_nextBarkeeperSequenceId = 0x1F9;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -1371,6 +1412,8 @@ void Scene12::updateAnimations() {
 			break;
 		case kAS12PlatWithBeardGuy:
 			_nextBeardGuySequenceId = 0x1F3;
+			break;
+		default:
 			break;
 		}
 	}
@@ -1558,6 +1601,8 @@ void Scene13::run() {
 				break;
 			case PLAT_CURSOR:
 				break;
+			default:
+				break;
 			}
 			break;
 
@@ -1601,6 +1646,8 @@ void Scene13::run() {
 				case PLAT_CURSOR:
 					gnap.playImpossible();
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -1617,6 +1664,8 @@ void Scene13::run() {
 					gnap.walkTo(Common::Point(6, 7), 0, 0xA9, 5);
 					gnap._actionStatus = kAS13FrontToilet;
 					gnap._idleFacing = kDirBottomRight;
+					break;
+				default:
 					break;
 				}
 			}
@@ -1642,6 +1691,8 @@ void Scene13::run() {
 				case PLAT_CURSOR:
 					gnap.playImpossible();
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -1664,6 +1715,8 @@ void Scene13::run() {
 				case PLAT_CURSOR:
 					gnap.playImpossible();
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -1685,6 +1738,8 @@ void Scene13::run() {
 				case TALK_CURSOR:
 				case PLAT_CURSOR:
 					gnap.playImpossible();
+					break;
+				default:
 					break;
 				}
 			}
@@ -1738,6 +1793,8 @@ void Scene13::run() {
 					break;
 				case 4:
 					_vm->playSound(0xD6, false);
+					break;
+				default:
 					break;
 				}
 			}
@@ -1837,6 +1894,8 @@ void Scene13::updateAnimations() {
 			gnap._pos = Common::Point(4, 6);
 			_vm->_timers[2] = 360;
 			gnap._actionStatus = kAS13Wait;
+			break;
+		default:
 			break;
 		}
 	}
@@ -1938,6 +1997,8 @@ void Scene14::run() {
 				case PLAT_CURSOR:
 					gameSys.insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - gnap._gridX, 576 - gnap._gridY);
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -1956,6 +2017,8 @@ void Scene14::run() {
 					break;
 				case PLAT_CURSOR:
 					gameSys.insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - gnap._gridX, 576 - gnap._gridY);
+					break;
+				default:
 					break;
 				}
 			}
@@ -2105,6 +2168,8 @@ void Scene15::run() {
 				case PLAT_CURSOR:
 					gameSys.insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - gnap._gridX, 576 - gnap._gridY);
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -2132,6 +2197,8 @@ void Scene15::run() {
 				case PLAT_CURSOR:
 					gameSys.insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - gnap._gridX, 576 - gnap._gridY);
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -2158,6 +2225,8 @@ void Scene15::run() {
 				case PLAT_CURSOR:
 					gameSys.insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - gnap._gridX, 576 - gnap._gridY);
 					break;
+				default:
+					break;
 				}
 			}
 			break;
@@ -2183,6 +2252,8 @@ void Scene15::run() {
 					break;
 				case PLAT_CURSOR:
 					gameSys.insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - gnap._gridX, 576 - gnap._gridY);
+					break;
+				default:
 					break;
 				}
 			}
@@ -2256,6 +2327,8 @@ void Scene15::updateAnimations() {
 					gameSys.removeSequence(_currLowerButtonSequenceId, 1, true);
 					_currLowerButtonSequenceId = -1;
 				}
+				break;
+			default:
 				break;
 			}
 		} else if (_nextRecordSequenceId != -1) {
@@ -2586,6 +2659,8 @@ void Scene17::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -2616,6 +2691,8 @@ void Scene17::run() {
 							_vm->_timers[5] = _vm->getRandom(30) + 80;
 						} else
 							gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -2657,6 +2734,8 @@ void Scene17::run() {
 							gnap._actionStatus = kAS17PlatUsePhone;
 						} else
 							gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -2701,6 +2780,8 @@ void Scene17::run() {
 							gnap._actionStatus = kAS17PlatUsePhone;
 						} else
 							gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -2773,6 +2854,8 @@ void Scene17::run() {
 					case 2:
 						gameSys.insertSequence(0x25E, 255, 0, 0, kSeqNone, 0, 0, 0);
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -2796,6 +2879,8 @@ void Scene17::run() {
 					case 5:
 						_nextWrenchSequenceId = 0x22E;
 						break;
+					default:
+						break;
 					}
 				} else {
 					--_wrenchCtr;
@@ -2818,6 +2903,8 @@ void Scene17::run() {
 							break;
 						case 5:
 							_nextWrenchSequenceId = 0x235;
+							break;
+						default:
 							break;
 						}
 					} else {
@@ -2903,6 +2990,8 @@ void Scene17::updateAnimations() {
 		case kAS17LeaveScene:
 			_vm->_sceneDone = true;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -2962,6 +3051,8 @@ void Scene17::updateAnimations() {
 			break;
 		case kAS17LeaveScene:
 			_vm->_sceneDone = true;
+			break;
+		default:
 			break;
 		}
 	}
@@ -3101,6 +3192,8 @@ void Scene17::updateAnimations() {
 			plat._actionStatus = 2;
 			updateHotspots();
 			_vm->_timers[5] = _vm->getRandom(30) + 80;
+			break;
+		default:
 			break;
 		}
 	}
@@ -3493,6 +3586,8 @@ void Scene18::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -3520,6 +3615,8 @@ void Scene18::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -3567,6 +3664,8 @@ void Scene18::run() {
 						case PLAT_CURSOR:
 							gnap.playImpossible();
 							break;
+						default:
+							break;
 						}
 					}
 				}
@@ -3607,6 +3706,8 @@ void Scene18::run() {
 							putDownGarbageCan(0);
 							gnap.playImpossible();
 							break;
+						default:
+							break;
 						}
 					}
 				} else {
@@ -3632,6 +3733,8 @@ void Scene18::run() {
 						case TALK_CURSOR:
 						case PLAT_CURSOR:
 							gnap.playImpossible();
+							break;
+						default:
 							break;
 						}
 					}
@@ -3677,6 +3780,8 @@ void Scene18::run() {
 						case TALK_CURSOR:
 						case PLAT_CURSOR:
 							gnap.playImpossible();
+							break;
+						default:
 							break;
 						}
 					}
@@ -4053,6 +4158,8 @@ void Scene18::updateAnimations() {
 			updateHotspots();
 			gnap._actionStatus = -1;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -4206,6 +4313,8 @@ void Scene19::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -4245,6 +4354,8 @@ void Scene19::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -4267,6 +4378,8 @@ void Scene19::run() {
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -4297,6 +4410,8 @@ void Scene19::run() {
 					case PLAT_CURSOR:
 						gnap.playImpossible();
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -4319,6 +4434,8 @@ void Scene19::run() {
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
 						gnap.playImpossible();
+						break;
+					default:
 						break;
 					}
 				}
@@ -4433,6 +4550,8 @@ void Scene19::updateAnimations() {
 		case kAS19LeaveScene:
 			_vm->_sceneDone = true;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -4493,6 +4612,8 @@ void Scene19::updateAnimations() {
 			gameSys.insertSequence(_nextShopAssistantSequenceId, 20, _currShopAssistantSequenceId, 20, kSeqSyncWait, 0, 0, 0);
 			_currShopAssistantSequenceId = _nextShopAssistantSequenceId;
 			_nextShopAssistantSequenceId = -1;
+			break;
+		default:
 			break;
 		}
 	}

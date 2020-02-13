@@ -103,7 +103,7 @@ public:
 
 public:
 	Sound(ScummEngine *parent, Audio::Mixer *mixer);
-	virtual ~Sound();
+	~Sound() override;
 	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
 	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
 	void processSound();
@@ -132,7 +132,7 @@ public:
 	AudioCDManager::Status getCDStatus();
 	int getCurrentCDSound() const { return _currentCDSound; }
 
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 protected:
 	void setupSfxFile();

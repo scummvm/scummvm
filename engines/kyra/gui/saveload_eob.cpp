@@ -280,7 +280,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_screen->setScreenPalette(_screen->getPalette(0));
 
 	_sceneUpdateRequired = true;
-	_screen->setFont(Screen::FID_6_FNT);
+	_screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 
 	for (int i = 0; i < 6; i++) {
 		for (int ii = 0; ii < 10; ii++) {
@@ -648,7 +648,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 
 	Common::SeekableSubReadStream test(fs, 0, fs->size(), DisposeAfterUse::NO);
 	
-	// detect source platform
+	// detect source platform (PC98 has the exact same file layout as DOS)
 	Common::Platform sourcePlatform = Common::kPlatformDOS;
 	test.seek(32);
 	uint16 testSJIS = test.readByte();
@@ -656,9 +656,9 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	int8 testStr = test.readSByte();
 	test.seek(66);
 	int8 testChr = test.readSByte();
-	test.seek(_flags.gameID == GI_EOB1 ? 48 : 70);
+	test.seek(_flags.gameID == GI_EOB1 ? 39 : 61);
 	uint32 exp = test.readUint32LE();
-	test.seek(_flags.gameID == GI_EOB1 ? 61 : 47);
+	test.seek(_flags.gameID == GI_EOB1 ? 61 : 27);
 	bool padding = !test.readByte();
 	test.seek(0);
 		
@@ -667,7 +667,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 			sourcePlatform = Common::kPlatformFMTowns;
 	}
 	
-	if (padding && sourcePlatform == Common::kPlatformDOS && exp & 0xFF000000)
+	if (sourcePlatform == Common::kPlatformDOS && padding && (exp & 0xFF000000))
 		sourcePlatform = Common::kPlatformAmiga;
 
 	Common::SeekableSubReadStreamEndian in(fs, 0, fs->size(), sourcePlatform == Common::kPlatformAmiga, DisposeAfterUse::YES);
@@ -702,7 +702,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		c->constitutionCur = in.readSByte();
 		c->constitutionMax = in.readSByte();
 		c->charismaCur = in.readSByte();
-		c->charismaMax = in.readSByte();
+		c->charismaMax = in.readSByte();		
 		if (_flags.gameID == GI_EOB2 && sourcePlatform == Common::kPlatformAmiga)
 			in.skip(1);
 		c->hitPointsCur = (_flags.gameID == GI_EOB1) ? in.readSByte() : in.readSint16();

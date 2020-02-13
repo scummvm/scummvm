@@ -23,7 +23,7 @@
 #ifndef TITANIC_BASE_STARS_H
 #define TITANIC_BASE_STARS_H
 
-#include "titanic/star_control/frange.h" // class Fvector
+#include "titanic/star_control/frange.h"
 #include "common/array.h"
 
 namespace Common {
@@ -34,7 +34,7 @@ namespace Titanic {
 
 enum StarMode { MODE_STARFIELD = 0, MODE_PHOTO = 1 };
 
-class CStarCamera;
+class CCamera;
 class CStarCloseup;
 class CString;
 class CSurfaceArea;
@@ -74,10 +74,10 @@ struct CStarPosition : public Common::Point {
  */
 class CBaseStars {
 private:
-	void draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup);
-	void draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup);
-	void draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup);
-	void draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup);
+	void draw1(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup);
+	void draw2(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup);
+	void draw3(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup);
+	void draw4(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup);
 protected:
 	FRange _minMax;
 	double _minVal;
@@ -109,14 +109,14 @@ public:
 	/**
 	 * Draw the item
 	 */
-	virtual void draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup);
+	virtual void draw(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup);
 
 	virtual bool loadYale(int v1) { return true; }
 
 	/**
 	 * Selects a star
 	 */
-	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
+	virtual bool selectStar(CSurfaceArea *surfaceArea, CCamera *camera,
 		const Common::Point &pt, void *handler = nullptr) { return false; }
 
 	/**
@@ -154,23 +154,10 @@ public:
 	 * Checks for the presence of a star at a given position on the
 	 * screen given the specified camera view, and returns it's index
 	 */
-	int findStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
+	int findStar(CSurfaceArea *surfaceArea, CCamera *camera,
 		const Common::Point &pt);
 
-	int baseFn2(CSurfaceArea *surfaceArea, CStarCamera *camera);
-};
-
-class CStarVector {
-private:
-	CStarCamera *_owner;
-	FVector _vector;
-public:
-	CStarVector(CStarCamera *owner, const FVector &v) : _owner(owner), _vector(v) {}
-
-	/**
-	 * Applies the saved vector
-	 */
-	void apply();
+	int baseFn2(CSurfaceArea *surfaceArea, CCamera *camera);
 };
 
 } // End of namespace Titanic

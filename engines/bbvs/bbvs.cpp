@@ -460,6 +460,8 @@ bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCo
 		updateCommon();
 		break;
 
+	default:
+		break;
 	}
 
 	return true;
@@ -578,6 +580,8 @@ void BbvsEngine::updateVerbs() {
 		break;
 	case kVerbShowInv:
 		_mouseCursorSpriteIndex = _gameModule->getGuiSpriteIndex(8);
+		break;
+	default:
 		break;
 	}
 

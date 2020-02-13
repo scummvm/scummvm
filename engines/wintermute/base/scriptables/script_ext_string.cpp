@@ -303,7 +303,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			uint32 ch = (i == str.size()) ? '\0' : str[i];
 			if (ch =='\0' || delims.contains(ch)) {
 				if (i != start) {
-					parts.push_back(WideString(str.c_str() + start, i - start + 1));
+					parts.push_back(WideString(str.c_str() + start, i - start));
 				} else {
 					parts.push_back(WideString());
 				}

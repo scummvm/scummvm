@@ -20,7 +20,7 @@
  *
  */
 
-/* OPL implementation for OPL2LPT through libieee1284.
+/* OPL implementation for OPL2LPT and OPL3LPT through libieee1284.
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -35,17 +35,35 @@
 #include <unistd.h>
 #include <ieee1284.h>
 
+static const uint8 OPL2LPTRegisterSelect[] = {
+	(C1284_NSELECTIN | C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED,
+	(C1284_NSELECTIN | C1284_NSTROBE) ^ C1284_INVERTED,
+	(C1284_NSELECTIN | C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED
+};
+
+static const uint8 OPL3LPTRegisterSelect[] = {
+	(C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED,
+	C1284_NSTROBE ^ C1284_INVERTED,
+	(C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED
+};
+
+static const uint8 OPL2LPTRegisterWrite[] = {
+	(C1284_NSELECTIN | C1284_NINIT) ^ C1284_INVERTED,
+	C1284_NSELECTIN ^ C1284_INVERTED,
+	(C1284_NSELECTIN | C1284_NINIT) ^ C1284_INVERTED
+};
+
 namespace OPL {
 namespace OPL2LPT {
 
 class OPL : public ::OPL::RealOPL {
 private:
 	struct parport *_pport;
+	Config::OplType _type;
 	int index;
-	static const uint8 ctrlBytes[];
 
 public:
-	OPL();
+	explicit OPL(Config::OplType type);
 	~OPL();
 
 	bool init();
@@ -57,17 +75,7 @@ public:
 	void writeReg(int r, int v);
 };
 
-const uint8 OPL::ctrlBytes[] = {
-	(C1284_NSELECTIN | C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED,
-	(C1284_NSELECTIN | C1284_NSTROBE) ^ C1284_INVERTED,
-	(C1284_NSELECTIN | C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED,
-
-	(C1284_NSELECTIN | C1284_NINIT) ^ C1284_INVERTED,
-	C1284_NSELECTIN ^ C1284_INVERTED,
-	(C1284_NSELECTIN | C1284_NINIT) ^ C1284_INVERTED
-};
-
-OPL::OPL() : _pport(nullptr) {
+OPL::OPL(Config::OplType type) : _pport(nullptr), _type(type), index(0) {
 }
 
 OPL::~OPL() {
@@ -114,6 +122,11 @@ void OPL::reset() {
 	for(int i = 0; i < 256; i ++) {
 		writeReg(i, 0);
 	}
+	if (_type == Config::kOpl3) {
+		for (int i = 0; i < 256; i++) {
+			writeReg(i + 256, 0);
+		}
+	}
 	index = 0;
 }
 
@@ -121,7 +134,17 @@ void OPL::write(int port, int val) {
 	if (port & 1) {
 		writeReg(index, val);
 	} else {
-		index = val;
+		switch (_type) {
+		case Config::kOpl2:
+			index = val & 0xff;
+			break;
+		case Config::kOpl3:
+			index = (val & 0xff) | ((port << 7) & 0x100);
+			break;
+		default:
+			warning("OPL2LPT: unsupported OPL mode %d", _type);
+			break;
+		}
 	}
 }
 
@@ -131,23 +154,34 @@ byte OPL::read(int port) {
 }
 
 void OPL::writeReg(int r, int v) {
-	r &= 0xff;
+	if (_type == Config::kOpl3) {
+		r &= 0x1ff;
+	} else {
+		r &= 0xff;
+	}
 	v &= 0xff;
-	ieee1284_write_data(_pport, r);
-	ieee1284_write_control(_pport, ctrlBytes[0]);
-	ieee1284_write_control(_pport, ctrlBytes[1]);
-	ieee1284_write_control(_pport, ctrlBytes[2]);
+
+	ieee1284_write_data(_pport, r & 0xff);
+	if (r < 0x100) {
+		ieee1284_write_control(_pport, OPL2LPTRegisterSelect[0]);
+		ieee1284_write_control(_pport, OPL2LPTRegisterSelect[1]);
+		ieee1284_write_control(_pport, OPL2LPTRegisterSelect[2]);
+	} else {
+		ieee1284_write_control(_pport, OPL3LPTRegisterSelect[0]);
+		ieee1284_write_control(_pport, OPL3LPTRegisterSelect[1]);
+		ieee1284_write_control(_pport, OPL3LPTRegisterSelect[2]);
+	}
 	usleep(4);		// 3.3 us
 
 	ieee1284_write_data(_pport, v);
-	ieee1284_write_control(_pport, ctrlBytes[3]);
-	ieee1284_write_control(_pport, ctrlBytes[4]);
-	ieee1284_write_control(_pport, ctrlBytes[5]);
+	ieee1284_write_control(_pport, OPL2LPTRegisterWrite[0]);
+	ieee1284_write_control(_pport, OPL2LPTRegisterWrite[1]);
+	ieee1284_write_control(_pport, OPL2LPTRegisterWrite[2]);
 	usleep(23);
 }
 
-OPL *create() {
-	return new OPL();
+OPL *create(Config::OplType type) {
+	return new OPL(type);
 }
 
 } // End of namespace OPL2LPT

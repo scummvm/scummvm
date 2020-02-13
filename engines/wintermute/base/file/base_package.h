@@ -47,7 +47,7 @@ public:
 
 class PackageSet : public Common::Archive {
 public:
-	virtual ~PackageSet();
+	~PackageSet() override;
 
 	PackageSet(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
 	/**
@@ -55,7 +55,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const Common::String &name) const;
+	bool hasFile(const Common::String &name) const override;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -63,23 +63,26 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int listMembers(Common::ArchiveMemberList &list) const;
+	int listMembers(Common::ArchiveMemberList &list) const override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.
 	 * @return the newly created input stream
 	 */
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 	int getPriority() const { return _priority; }
+	uint32 getVersion() const { return _version; }
+
 private:
 	byte _priority;
+	uint32 _version;
 	Common::Array<BasePackage *> _packages;
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _files;
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::iterator _filesIter;

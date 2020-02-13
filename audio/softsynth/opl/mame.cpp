@@ -40,7 +40,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#if defined(_WIN32_WCE) || defined(__SYMBIAN32__) || defined(GP2X) || defined(__MAEMO__) || defined(__DS__) || defined(__MINT__) || defined(__N64__)
+#if defined(__SYMBIAN32__) || defined(GP2X) || defined(__MAEMO__) || defined(__DS__) || defined(__MINT__) || defined(__N64__)
 #include "common/config-manager.h"
 #endif
 
@@ -408,6 +408,8 @@ inline uint OPL_CALC_SLOT(OPL_SLOT *SLOT) {
 			SLOT->evc = EG_OFF;
 			SLOT->eve = EG_OFF + 1;
 			SLOT->evs = 0;
+			break;
+		default:
 			break;
 		}
 	}
@@ -859,6 +861,8 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 				}
 			}
 			return;
+		default:
+			break;
 		}
 		break;
 	case 0x20:	/* am,vib,ksr,eg type,mul */
@@ -995,6 +999,8 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 			CH->SLOT[slot&1].wavetable = &SIN_TABLE[(v & 0x03) * SIN_ENT];
 		}
 		return;
+	default:
+		break;
 	}
 }
 
@@ -1233,7 +1239,7 @@ FM_OPL *makeAdLibOPL(int rate) {
 	// We need to emulate one YM3812 chip
 	int env_bits = FMOPL_ENV_BITS_HQ;
 	int eg_ent = FMOPL_EG_ENT_HQ;
-#if defined(_WIN32_WCE) || defined(__SYMBIAN32__) || defined(GP2X) || defined(__MAEMO__) || defined(__DS__) || defined(__MINT__) || defined(__N64__)
+#if defined(__SYMBIAN32__) || defined(GP2X) || defined(__MAEMO__) || defined(__DS__) || defined(__MINT__) || defined(__N64__)
 	if (ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) {
 		env_bits = FMOPL_ENV_BITS_HQ;
 		eg_ent = FMOPL_EG_ENT_HQ;

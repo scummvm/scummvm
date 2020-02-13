@@ -45,6 +45,14 @@ uint32 XeenEngine::getGameID() const {
 	return _gameDescription->gameID;
 }
 
+uint32 XeenEngine::getSpecificGameId() const {
+	uint gameId = g_vm->getGameID();
+	if (gameId == GType_WorldOfXeen)
+		gameId = _files->_ccNum ? GType_DarkSide : GType_Clouds;
+
+	return gameId;
+}
+
 uint32 XeenEngine::getGameFeatures() const {
 	return _gameDescription->features;
 }
@@ -68,7 +76,6 @@ bool XeenEngine::getIsCD() const {
 } // End of namespace Xeen
 
 static const PlainGameDescriptor XeenGames[] = {
-	{ "xeen", "Xeen" },
 	{ "cloudsofxeen", "Might and Magic IV: Clouds of Xeen" },
 	{ "darksideofxeen", "Might and Magic V: Dark Side of Xeen" },
 	{ "worldofxeen", "Might and Magic: World of Xeen" },
@@ -113,20 +120,24 @@ public:
 		_maxScanDepth = 3;
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "xeen";
+	}
+
+	const char *getName() const override {
 		return "Xeen";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Xeen (C) 1992-1993 New World Computing, Inc.";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool XeenMetaEngine::hasFeature(MetaEngineFeature f) const {

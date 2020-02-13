@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Entity39 : public Entity {
 public:
 	Entity39(LastExpressEngine *engine);
-	~Entity39() {}
+	~Entity39() override {}
 
 	/**
 	 * Setup Chapter 1

@@ -222,6 +222,8 @@ MPEGPSDecoder::PrivateStreamType MPEGPSDecoder::detectPrivateStreamType(Common::
 		return kPrivateStreamAC3;
 	case 0xA0:
 		return kPrivateStreamDVDPCM;
+	default:
+		break;
 	}
 
 	return kPrivateStreamUnknown;

@@ -125,6 +125,7 @@ void sceneHandler16_laughSound() {
 
 	switch (g_vars->scene16_sound) {
 	case SND_16_034:
+	default:
 		snd = SND_16_035;
 		break;
 
@@ -415,11 +416,11 @@ int sceneHandler16(ExCommand *cmd) {
 		break;
 
 	case MSG_SC16_MUGCLICK:
-		if (!g_fp->_aniMan->isIdle() || g_fp->_aniMan->_flags & 0x100)
+		if (!g_fp->_aniMan->isIdle() || g_fp->_aniMan->_flags & 0x100) {
 			cmd->_messageKind = 0;
-		else
+		} else {
 			sceneHandler16_mugClick();
-
+		}
 		break;
 
 	case MSG_SC16_SHOWMAN:
@@ -476,6 +477,10 @@ int sceneHandler16(ExCommand *cmd) {
 		g_fp->_behaviorManager->updateBehaviors();
 		g_fp->startSceneTrack();
 
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

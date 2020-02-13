@@ -581,7 +581,24 @@ protected:
 	 */
 	std::string createUUID() const;
 
+	/**
+	 * Creates a name-based UUID and returns it in string representation.
+	 *
+	 * @param name Unique name to hash.
+	 * @return A new UUID as string.
+	 */
+	std::string createUUID(const std::string &name) const;
+
 private:
+
+	/**
+	 * Returns the string representation of an existing UUID.
+	 *
+	 * @param uuid 128-bit array.
+	 * @return Existing UUID as string.
+	 */
+	std::string UUIDToString(unsigned char *uuid) const;
+
 	/**
 	 * This creates the engines/plugins_table.h file required for building
 	 * ScummVM.

@@ -152,7 +152,10 @@ class SearchSet : public Archive {
 	// Add an archive keeping the list sorted by descending priority.
 	void insert(const Node& node);
 
+	bool _ignoreClashes;
+
 public:
+	SearchSet() : _ignoreClashes(false) { }
 	virtual ~SearchSet() { clear(); }
 
 	/**
@@ -247,6 +250,12 @@ public:
 	 * opening the first file encountered that matches the name.
 	 */
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+
+	/**
+	 * Ignore clashes when adding directories. For more details see the corresponding parameter
+	 * in FSDirectory documentation
+	 */
+	void setIgnoreClashes(bool ignoreClashes) { _ignoreClashes = ignoreClashes; }
 };
 
 

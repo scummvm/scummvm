@@ -68,6 +68,8 @@ void MidiParser::property(int prop, int value) {
 	case mpSendSustainOffOnNotesOff:
 		_sendSustainOffOnNotesOff = (value != 0);
 		break;
+	default:
+		break;
 	}
 }
 

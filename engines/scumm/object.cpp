@@ -237,6 +237,8 @@ bool ScummEngine::getClass(int obj, int cls) const {
 		case kObjectClassYFlip:
 			cls = 18;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -266,6 +268,8 @@ void ScummEngine::putClass(int obj, int cls, bool set) {
 			break;
 		case kObjectClassYFlip:
 			cls = 18;
+			break;
+		default:
 			break;
 		}
 	}
@@ -391,6 +395,8 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 			}
 		}
 		return -1;
+	default:
+		break;
 	}
 	getObjectXYPos(object, x, y);
 	return 0;

@@ -47,7 +47,6 @@ void PartyDialog::execute() {
 	EventsManager &events = *_vm->_events;
 	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
-	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -64,14 +63,7 @@ void PartyDialog::execute() {
 
 		// Build up a list of available characters in the Roster that are on the
 		// same side of Xeen as the player is currently on
-		_charList.clear();
-		for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
-			Character &player = party._roster[i];
-			if (player._name.empty() || player._xeenSide != map._loadCcNum)
-				continue;
-
-			_charList.push_back(i);
-		}
+		loadCharacters();
 
 		Window &w = windows[11];
 		w.open();
@@ -254,15 +246,8 @@ void PartyDialog::execute() {
 								// Empty the character in the roster
 								c.clear();
 
-								// Rebuild the character list
-								_charList.clear();
-								for (int idx = 0; idx < XEEN_TOTAL_CHARACTERS; ++idx) {
-									Character &ch = party._roster[idx];
-									if (!ch._name.empty() && ch._savedMazeId == party._priorMazeId) {
-										_charList.push_back(idx);
-									}
-								}
-
+								loadCharacters();
+								startingChar = 0;
 								startingCharChanged(startingChar);
 							}
 						}
@@ -286,6 +271,20 @@ void PartyDialog::execute() {
 				break;
 			}
 		}
+	}
+}
+
+void PartyDialog::loadCharacters() {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+
+	_charList.clear();
+	for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
+		Character &player = party._roster[i];
+		if (player._name.empty() || player._xeenSide != map._loadCcNum)
+			continue;
+
+		_charList.push_back(i);
 	}
 }
 

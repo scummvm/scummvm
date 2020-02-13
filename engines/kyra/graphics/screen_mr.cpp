@@ -37,13 +37,17 @@ int Screen_MR::getLayer(int x, int y) {
 		x = 0;
 	else if (x >= 320)
 		x = 319;
-	if (y < 0)
-		y = 0;
-	else if (y >= 188)
-		y = 187;
 
-	if (y < _maskMinY || y > _maskMaxY)
-		return 15;
+	if (y < 0) {
+		y = 0;
+	} else if (y >= 188) {
+		y = 187;
+		// The original actually limits the _maskMin/MaxY check to cases where y has already been clipped to 187.
+		// Whether this was intentional or not: Scenes actually require that we do it that way or animations may
+		// be drawn on the wrong layer (bug #11312).
+		if (y < _maskMinY || y > _maskMaxY)
+			return 15;
+	}
 
 	uint8 pixel = *(getCPagePtr(5) + y * 320 + x);
 	pixel &= 0x7F;

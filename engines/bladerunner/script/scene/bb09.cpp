@@ -28,13 +28,31 @@ void SceneScriptBB09::InitializeScene() {
 	Setup_Scene_Information(111.2f, -8.96f, 134.65f, 0);
 	if (Game_Flag_Query(kFlagBB10toBB09)) {
 		Game_Flag_Reset(kFlagBB10toBB09);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Setup_Scene_Information(115.45f, -8.96f, 134.0f, 628);
+#else
+		Setup_Scene_Information(455.74f, -8.99f, 217.48f, 996);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	} else if (Game_Flag_Query(kFlagBB08toBB09)) {
 		Game_Flag_Reset(kFlagBB08toBB09);
 		Setup_Scene_Information(107.45f, -9.14f, 166.0f, 244);
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);
+#else
+	// in the original McCoy could run ahead of Sadik to the next room (BB10)
+	// if the player clicked quickly enough
+	// kFlagBB11SadikFight is set after Sadik exits this room in Chapter 2
+	// (and his goal is set to kGoalSadikBB11Wait)
+	// this flag will be reset before Act 3, when McCoy is ambushed at the BB roof
+	if ((Global_Variable_Query(kVariableChapter) == 2
+	       && Game_Flag_Query(kFlagBB11SadikFight))
+	    || (Global_Variable_Query(kVariableChapter) > 2)
+	) {
+		Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Scene_Exit_Add_2D_Exit(1,  75, 450, 480, 479, 2);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  20, 100, 1);
@@ -56,10 +74,18 @@ void SceneScriptBB09::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxHAUNT1,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxHAUNT2,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
 
-	Actor_Set_Targetable(kActorSadik, true); // Don't kill Sadik yet, game cannot continue. This is an original bug - fixed in ScummVM in Sadik's AI script (method ShotAtAndHit() )
+	// Original: // Don't kill Sadik yet, game cannot continue.
+	// This is an original bug - fixed in ScummVM in Sadik's AI script (method ShotAtAndHit() )
+	// Also Sadik is also set as targetable (redundant) in his AI script (method Update() )
+	Actor_Set_Targetable(kActorSadik, true);
 }
 
 void SceneScriptBB09::SceneLoaded() {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Obstacle_Object("BACKWALL1", true);
+	Obstacle_Object("BACKWALL2", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Obstacle_Object("WICKER CHAIR ", true);
 	Unobstacle_Object("ROOM03 RIGHT WALL", true);
 	Unclickable_Object("WICKER CHAIR ");
@@ -114,6 +140,14 @@ void SceneScriptBB09::SceneFrameAdvanced(int frame) {
 }
 
 void SceneScriptBB09::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// in the original McCoy could run ahead of Sadik to the next room (BB10)
+	// if the player clicked quickly enough
+	if (actorId == kActorSadik && newGoal == kGoalSadikBB11Wait) {
+		Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptBB09::PlayerWalkedIn() {

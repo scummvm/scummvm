@@ -148,6 +148,8 @@ void Logic::engine() {
 						case LOGIC_AR_animate:
 							_eventMan->checkForEvent(compact);
 							break;
+						default:
+							break;
 						}
 					}
 					debug(7, "Logic::engine: handling compact %d (%X)", currentId, currentId);

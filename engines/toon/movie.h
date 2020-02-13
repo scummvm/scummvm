@@ -28,16 +28,18 @@
 
 namespace Toon {
 
+class SubtitleRenderer;
+
 class ToonstruckSmackerDecoder : public Video::SmackerDecoder {
 public:
 	ToonstruckSmackerDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 	bool isLowRes() { return _lowRes; }
 
 protected:
-	void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
-	SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const;
+	void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) override;
+	SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const override;
 
 private:
 	bool _lowRes;
@@ -57,6 +59,7 @@ protected:
 	ToonEngine *_vm;
 	ToonstruckSmackerDecoder *_decoder;
 	bool _playing;
+	SubtitleRenderer *_subtitle;
 };
 
 } // End of namespace Toon

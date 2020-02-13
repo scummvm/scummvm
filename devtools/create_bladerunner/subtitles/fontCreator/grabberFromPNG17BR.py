@@ -6,7 +6,7 @@
 #			   FON file for the Westwood Blade Runner PC game.
 #
 # Author:	   antoniou
-#w
+#
 # Created:	   16-05-2018
 # Copyright:   (c) antoniou 2018
 # Licence:
@@ -45,22 +45,22 @@
 #           This should get rid of semi-transparent pixels while maintaining the "aliasing" effect. There could be a better way but this should work ok.
 
 
-# DONE: A way to export game fonts to png image (in order to be able to create new expanded fonts keeping glyph consistency!)
+# DONE: A way to export game fonts to PNG image (in order to be able to create new expanded fonts keeping glyph consistency!)
 #           Also override the corruption in TAHOMA18 while exporting
 # TODO: Re-Check the order of fonts in (in-game resource font files) TAHOMA18 (stored corrupted) and TAHOMA24 (in good condition).
 # TODO: print a warning for mismatch of number of letters in encoding override (or internal) and detected fonts in ROW IMAGE (especially if we expect a double exclamation mark at the start - and we ignoring one of the two)
-# TODO: Don't crash if mismatch in detected letter (fewer) in row image vs the letters in ascii list of overrideEncoding file
+# TODO: Don't crash if mismatch in detected letter (fewer) in row image vs the letters in ASCII list of overrideEncoding file
 # TODO: A more detailed readme for this tool and how to use it
 #
 # DONE: enforce overrideEncoding.txt -- this tool should no longer work without one
-# DONE: Test greek subs too
+# DONE: Test Greek subs too
 # DONE: Letter fonts should be spaced by TAB when copied into GIMP or other app to create the image row of all character glyphs
 # DONE: First character should be repeated in the ROW file (but taken into consideration once) in order to get the pixels for the TAB space between letters (left-start column to left-start column)
 # DONE: Use the tab space pixels to calculate the KERNING for each letter (x offset)
 # DONE: update the image segment size bytes in the header after having completed populating the image segment
-# DONE: allow settin explicit kerning and width addon for cases like i and l characters
+# DONE: allow setting explicit kerning and width addon for cases like i and l characters
 # DONE: entrée (boiled dog question) - has an e like goose liver pate --> TESTED
-# DONE: Tested ok "si senor" from peruvian lady / insect dealer too!
+# DONE: Tested ok "si senor" from Peruvian lady / insect dealer too!
 # DONE: ability to manually set kerning (x-offset) for fonts by letter like a list in parameters or in overrideEncoding.txt }  i:1,j:-1,l:1	 (no space or white line characters) - POSITIVE OR NEGATIVE VALUES BOTH ADMITTED
 # DONE: a value of '-' for this means ignore
 # DONE: ability to manually set extra width (additional columns at the end of glyph, with transparent color) for fonts by letter like a list in parameters or in overrideEncoding.txt }	 i:1,j:2,l:1 - POSITIVE VALUES ONLY
@@ -129,7 +129,7 @@ from struct import *
 from fonFileLib import *
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "0.80"
+APP_VERSION = "1.00"
 APP_NAME = "grabberFromPNGHHBR"
 APP_WRAPPER_NAME = "fontCreator.py"
 APP_NAME_SPACED = "Blade Runner Font Creator/Exporter"
@@ -305,12 +305,13 @@ class grabberFromPNG:
 
 			if(len(self.listOfOutOfOrderGlyphs) == 0 and self.specialGlyphMode == True):
 				# Just keep those that are needed
-				if self.originalFontName == 'SUBTLS_E':
-					self.listOfOutOfOrderGlyphs.append((u'\xed', u'\u0386')) # spanish i (si)
-					self.listOfOutOfOrderGlyphs.append((u'\xf1', u'\xa5')) # spanish n (senor)
-					self.listOfOutOfOrderGlyphs.append((u'\xe2', u'\xa6')) # a for (liver) pate
-					self.listOfOutOfOrderGlyphs.append((u'\xe9', u'\xa7')) # e for (liver) pate
-				elif self.originalFontName == 'TAHOMA': # treat TAHOMA18 and TAHOMA24 similarily here
+				#if self.originalFontName == 'SUBTLS_E':
+				#	self.listOfOutOfOrderGlyphs.append((u'\xed', u'\u0386')) # spanish i (si)
+				#	self.listOfOutOfOrderGlyphs.append((u'\xf1', u'\xa5'))   # spanish n (senor)
+				#	self.listOfOutOfOrderGlyphs.append((u'\xe2', u'\xa6'))   # a for (liver) pate
+				#	self.listOfOutOfOrderGlyphs.append((u'\xe9', u'\xa7'))   # e for (liver) pate
+				#elif self.originalFontName == 'TAHOMA': # treat TAHOMA18 and TAHOMA24 similarily here
+				if self.originalFontName == 'TAHOMA': # treat TAHOMA18 and TAHOMA24 similarily here
 					self.listOfOutOfOrderGlyphs.append((u'\xe9', u'\u0192')) 	# french e punctuated
 					self.listOfOutOfOrderGlyphs.append((u'\xfc', u'\u2013')) 	# u umlaut
 			if gTraceModeEnabled:
@@ -723,268 +724,273 @@ class grabberFromPNG:
 					print "[Debug] Max Width: %d, Max Height: %d (not necessarily for the same character glyph)." % (maxFontWidth, maxFontHeight)
 				#	print "Index\tAsciiOrd\tX Offs\tY Offs\tWidth\tHeight"
 				#	print zip(range(1, len(self.listOfXOffsets)), self.targetLangOrderAndListOfForeignLettersAsciiValues[1:], self.listOfXOffsets, self.listOfYOffsets, listOfCalcWidths, self.listOfHeights)
-				targetFontFile = None
-				try:
-					targetFontFile = open(self.targetFONFilename, 'wb')
-				except Exception as e:
-					print '[Error] Failed to create target font (FON) file: ' + self.targetFONFilename + '::' + str(e)
+				numberOfEntriesInFontTable = self.maxAsciiValueInEncoding + 1 + 1  # 0x0100 # This is actually the max ascii value + plus one (1) to get the font index value + plus another one (1) to get the count (since we have zero based indices)
+				# TODO ??? could be more than this if we need to keep other characters (not in our codeset) and expand the ascii table and offset the new characters
+				if self.maxAsciiValueInEncoding > 254:
+					print "[Error] Max ascii value is too large. Should be less than or equal to 254 (max)"
 					errorFound = True
+					retVal = -3
 				if not errorFound:
-					print '[Info] Creating target font (FON) file: ' + self.targetFONFilename 
-				# reopen the image with our Fonts because we deleted the letters in the in-mem copy
-					im = None
-					if os.access(self.imageRowFilePNG, os.F_OK) :
-						try:
-							im = Image.open(self.imageRowFilePNG)
-						except:
-							errorFound = True
-					else:
+					targetFontFile = None
+					try:
+						targetFontFile = open(self.targetFONFilename, 'wb')
+					except Exception as e:
+						print '[Error] Failed to create target font (FON) file: ' + self.targetFONFilename + '::' + str(e)
 						errorFound = True
 					if not errorFound:
-						pixReloaded = None
-						pixReloaded = im.load()
+						print '[Info] Creating target font (FON) file: ' + self.targetFONFilename 
+					# reopen the image with our Fonts because we deleted the letters in the in-mem copy
+						im = None
+						if os.access(self.imageRowFilePNG, os.F_OK) :
+							try:
+								im = Image.open(self.imageRowFilePNG)
+							except:
+								errorFound = True
+						else:
+							errorFound = True
+						if not errorFound:
+							pixReloaded = None
+							pixReloaded = im.load()
 
-						# first 4 bytes are the max ascii char value supported (it's basically the number of entries in the character index table)
-						# next 4 bytes are max font char width	(pixels)
-						# next 4 bytes are max font char height (pixels)
-						# next 4 bytes give the size of the graphic segment for the font characters (this size is in word units, so it needs *2 to get the byte size)
-						#				this size should be updated at the end (after filling the file with all font image data)
-						#
-						# pack 'I' unsigned int
-						if gTraceModeEnabled:
-							print "[Debug] Number Of Entries In Font Table: ", (self.maxAsciiValueInEncoding + 1 + 1)
-						numberOfEntriesInFontTable = self.maxAsciiValueInEncoding + 1 + 1  # 0x0100 # This is actually the max ascii value + plus one (1) to get the font index value + plus another one (1) to get the count (since we have zero based indices)
-															# TODO ??? could be more than this if we need to keep other characters (not in our codeset) and expand the ascii table and offset the new characters
-						numberOfEntriesInFontTableInFile = pack('I', numberOfEntriesInFontTable )
-						targetFontFile.write(numberOfEntriesInFontTableInFile)
-						maxFontWidthPixelsToWrite = pack('I', maxFontWidth)
-						targetFontFile.write(maxFontWidthPixelsToWrite)
-						maxFontHeightPixelsToWrite = pack('I', maxFontHeight)
-						targetFontFile.write(maxFontHeightPixelsToWrite)
-						fontImagesSegmentSize = pack('I', 0x0000) #	 - to be updated at the end!
-						targetFontFile.write(fontImagesSegmentSize)
+							# first 4 bytes are the max ascii char value supported (it's basically the number of entries in the character index table)
+							# next 4 bytes are max font char width	(pixels)
+							# next 4 bytes are max font char height (pixels)
+							# next 4 bytes give the size of the graphic segment for the font characters (this size is in word units, so it needs *2 to get the byte size)
+							#				this size should be updated at the end (after filling the file with all font image data)
+							#
+							# pack 'I' unsigned int
+							if gTraceModeEnabled:
+								print "[Debug] Number Of Entries In Font Table: ", (self.maxAsciiValueInEncoding + 1 + 1)
+							numberOfEntriesInFontTableInFile = pack('I', numberOfEntriesInFontTable )
+							targetFontFile.write(numberOfEntriesInFontTableInFile)
+							maxFontWidthPixelsToWrite = pack('I', maxFontWidth)
+							targetFontFile.write(maxFontWidthPixelsToWrite)
+							maxFontHeightPixelsToWrite = pack('I', maxFontHeight)
+							targetFontFile.write(maxFontHeightPixelsToWrite)
+							fontImagesSegmentSize = pack('I', 0x0000) #	 - to be updated at the end!
+							targetFontFile.write(fontImagesSegmentSize)
 
-						startOfImageSegmentAbs = 0x10 + 20 * numberOfEntriesInFontTable # header is 0x10 bytes. Then table of  20 bytes *	numberOfEntriesInFontTable and then the data.
-						lastImageSegmentOffset = 0
-						#targetFontFile.close() # don't close here
-						#
-						# Fonts index table - properties and offset in image segment
-						# TODO - REVISE WHEN FINISHED WITH COMPLETE TRANSCRIPT for special glyphs
-						# So far additional required characters (not included in the standard ASCII (127 chars) are:
-						# the spanish i (put it in ASCII value 0xA2 (162), font index 0xA3)? todo verify -- actual ASCII value in codepage 1252 is 0xED (237)
-						# the spanish n (put it in ASCII value 0xA5 (165), font index 0xA6)? todo verify -- actual ASCII value in codepage 1252 is 0xF1 (241)
-						# DONE we also need special fonts for liver	 pâté
-						#											a actual ASCII value is 0xE2 (226) in codepage 1252 -- put it in ASCII value 0xA6 (166) -- font index 0xA7
-						#											e actual ASCII value is 0xE9 (233) in codepage 1252 -- put it in ASCII value 0xA7 (167) -- font index 0xA8
-						# In the row png font glyphs, the letter glyphs (images) should be the actual character fonts (spanish n, i etc)
-						#				but in the overrideEncoding.txt we need the corresponding ASCII characters for the particular codepage of the text (eg here the greek windows-1253)
-						#
-						# NOTE! WARNING: We need to add the corresponding ASCII characters for our codepage (eg for Windows 1253 the characters with value 0xA2 and 0xA5 which are not the spanish characters but will act as delegates for them)
-						# the greek Ά (alpha tonoumeno) character has ASCII value 0xA2 (162) (in codeset Windows 1253) so conflict with spanish i in in-game Tahoma -- put it in 0xA3 (163) (font index 0xA4)
-						# We should fill all unused characters with "space" placeholder. Probably all of them should also point to the same area (second block) of the image segment too.
-						# First block of the image area (font index = 0) is reserved and should be the "border" gamma-like character.
-						#
-						# Kerning of the first letter font is '1' for Tahoma18 (when shadowed from every side (the left side shadow reduces the kerning), otherwise it would be 2) -- TODO for now this should be a launch parameter
-						# Y offset should be calculated from the top row of the heighest font
-						#kIncIndx = 0
-						## aux list because the order of the fonts in our overrideEncoding may not match the real order in the ascii table
-                        #listOfWriteableEntries = [ (0,0,0,0,0) for i in range(0, numberOfEntriesInFontTable)] # create a list of placeholders for the number of entries we need to write
-						#print " *************** DBG **************"
-						#print listOfWriteableEntries
-						#print " *************** DBG **************"
-						del self.properListOfLetterBoxes[:]
-						for i in range(0, numberOfEntriesInFontTable):	# blocks of 20 bytes
-							# 20 byte block
-							# 4 bytes x offset (from what ref point? is this for kerning ) - CAN THIS BE NEGATIVE?
-							# 4 bytes y offset (from what ref point? is this for the baseline?) - CAN THIS BE NEGATIVE?
-							# 4 bytes char width
-							# 4 bytes char height
-							# 4 bytes offset in image segment (units in words (2 bytes))
+							startOfImageSegmentAbs = 0x10 + 20 * numberOfEntriesInFontTable # header is 0x10 bytes. Then table of  20 bytes *	numberOfEntriesInFontTable and then the data.
+							lastImageSegmentOffset = 0
+							#targetFontFile.close() # don't close here
+							#
+							# Fonts index table - properties and offset in image segment
+							# TODO - REVISE WHEN FINISHED WITH COMPLETE TRANSCRIPT for special glyphs
+							# So far additional required characters (not included in the standard ASCII (127 chars) are:
+							# the spanish i (put it in ASCII value 0xA2 (162), font index 0xA3)? todo verify -- actual ASCII value in codepage 1252 is 0xED (237)
+							# the spanish n (put it in ASCII value 0xA5 (165), font index 0xA6)? todo verify -- actual ASCII value in codepage 1252 is 0xF1 (241)
+							# DONE we also need special fonts for liver	 pâté
+							#											a actual ASCII value is 0xE2 (226) in codepage 1252 -- put it in ASCII value 0xA6 (166) -- font index 0xA7
+							#											e actual ASCII value is 0xE9 (233) in codepage 1252 -- put it in ASCII value 0xA7 (167) -- font index 0xA8
+							# In the row png font glyphs, the letter glyphs (images) should be the actual character fonts (spanish n, i etc)
+							#				but in the overrideEncoding.txt we need the corresponding ASCII characters for the particular codepage of the text (eg here the greek windows-1253)
+							#
+							# NOTE! WARNING: We need to add the corresponding ASCII characters for our codepage (eg for Windows 1253 the characters with value 0xA2 and 0xA5 which are not the spanish characters but will act as delegates for them)
+							# the greek Ά (alpha tonoumeno) character has ASCII value 0xA2 (162) (in codeset Windows 1253) so conflict with spanish i in in-game Tahoma -- put it in 0xA3 (163) (font index 0xA4)
+							# We should fill all unused characters with "space" placeholder. Probably all of them should also point to the same area (second block) of the image segment too.
+							# First block of the image area (font index = 0) is reserved and should be the "border" gamma-like character.
+							#
+							# Kerning of the first letter font is '1' for Tahoma18 (when shadowed from every side (the left side shadow reduces the kerning), otherwise it would be 2) -- TODO for now this should be a launch parameter
+							# Y offset should be calculated from the top row of the heighest font
+							#kIncIndx = 0
+							## aux list because the order of the fonts in our overrideEncoding may not match the real order in the ascii table
+							#listOfWriteableEntries = [ (0,0,0,0,0) for i in range(0, numberOfEntriesInFontTable)] # create a list of placeholders for the number of entries we need to write
+							#print " *************** DBG **************"
+							#print listOfWriteableEntries
+							#print " *************** DBG **************"
+							del self.properListOfLetterBoxes[:]
+							for i in range(0, numberOfEntriesInFontTable):	# blocks of 20 bytes
+								# 20 byte block
+								# 4 bytes x offset (from what ref point? is this for kerning ) - CAN THIS BE NEGATIVE?
+								# 4 bytes y offset (from what ref point? is this for the baseline?) - CAN THIS BE NEGATIVE?
+								# 4 bytes char width
+								# 4 bytes char height
+								# 4 bytes offset in image segment (units in words (2 bytes))
 
-							# TODO add all standard ascii characters in the ROW IMAGE before the additional required spanish and then GREEK alphabet characters --
-							#											-- greek Ά should be at its proper place (between spanish i and spanish n).
-							# TODO check possible support issues for ώ greek character
-							if i == 0:
-								# the first entry is a special font character of max width and max height with a horizontal line across the top-most row and a vertical line across the left-most column
-								tmpXOffsetToWrite = pack('I', 0x0000)
-								targetFontFile.write(tmpXOffsetToWrite)
-								tmpYOffsetToWrite = pack('I', 0x0000)
-								targetFontFile.write(tmpYOffsetToWrite)
-								tmpWidthToWrite = pack('I', maxFontWidth)
-								targetFontFile.write(tmpWidthToWrite)
-								tmpHeightToWrite = pack('I', maxFontHeight)
-								targetFontFile.write(tmpHeightToWrite)
-								tmpDataOffsetToWrite = pack('I', 0x0000) # start of image segment means 0 offset
-								targetFontFile.write(tmpDataOffsetToWrite)
-								# TODO maybe conform more with game's format: Eg Tahoma24.fon (native game resource) does not always point to the second character font offset for dummy entries, but to the latest offset and only additionally sets the x-offset property (all others are 0) - eg look for 0x74c9 offsets (byte sequence 0xc9 0x74)
-								dummyCharFontImageConstOffset = maxFontWidth * maxFontHeight; # const. actual offset in bytes is twice that. This counts in words (2-bytes)	 - This points to the first valid entry but with properties that make it translate as a space or dummy(?)
-								lastImageSegmentOffset = maxFontWidth * maxFontHeight; # actual offset in bytes is twice that. This counts in words (2-bytes)
-                                #listOfWriteableEntries[0] = (tmpXOffsetToWrite, tmpYOffsetToWrite, tmpWidthToWrite, tmpHeightToWrite, tmpDataOffsetToWrite)
-							else:
-								if (i-1) in self.targetLangOrderAndListOfForeignLettersAsciiValues:
-									# then this is an actual entry
-									# i-1 is the order of an ascii character, that should be placed in the next slot in the output FON file
-									# but this ascii character in the input overrideEncoding could be not it the same i spot -- because of the correspondance to an out-of-order PNG row file
-									kIncIndxLst = [item for item in enumerate(self.targetLangOrderAndListOfForeignLettersAsciiValues[1:], 0) if item[1] == (i-1) ]
-									kIncIndx = kIncIndxLst[0][0]
-									#kIncIndx = self.targetLangOrderAndListOfForeignLettersAsciiValues.index(i-1)
-									#if gTraceModeEnabled:
-									#	print "[Debug] ", kIncIndxLst
-									#	print "[Debug] ", kIncIndx, i-1
-									#	print "[Debug] ", i, ": actual entry index of ascii char", (i-1)," width:", self.listOfWidths[kIncIndx]
-									#	print "[Debug] Self explicit kerning list: ", self.listOfExplicitKerning
-									if len(self.listOfExplicitKerning ) > 0:
-										keysOfExplicitKerning, valuesOfExplicitKerning = (zip(*self.listOfExplicitKerning))
-										if (i - 1) in keysOfExplicitKerning:
-											# found explicit kerning for this
-											#if gTraceModeEnabled:
-											#	print "[Debug] Explicit kerning for %d " % (i-1)
-											self.listOfXOffsets[kIncIndx] = valuesOfExplicitKerning[keysOfExplicitKerning.index(i-1)] # explicit X offset
-
-									tmpXOffsetToWrite = pack('i', self.listOfXOffsets[kIncIndx]) # x offset - from left			# TODO check if ok. Changed to signed int since it can be negative sometimes!
+								# TODO add all standard ascii characters in the ROW IMAGE before the additional required spanish and then GREEK alphabet characters --
+								#											-- greek Ά should be at its proper place (between spanish i and spanish n).
+								# TODO check possible support issues for ώ greek character
+								if i == 0:
+									# the first entry is a special font character of max width and max height with a horizontal line across the top-most row and a vertical line across the left-most column
+									tmpXOffsetToWrite = pack('I', 0x0000)
 									targetFontFile.write(tmpXOffsetToWrite)
-									tmpYOffsetToWrite = pack('I', self.listOfYOffsets[kIncIndx])   # y offset from topmost row
+									tmpYOffsetToWrite = pack('I', 0x0000)
 									targetFontFile.write(tmpYOffsetToWrite)
-
-									if len(self.listOfWidthIncrements ) > 0:
-										keysOfWidthIncrements, valuesOfWidthIncrements = (zip(*self.listOfWidthIncrements))
-										if (i - 1) in keysOfWidthIncrements:
-											#if gTraceModeEnabled:
-											#	print "[Debug] Explicit width increment for %d " % (i-1)
-											foundExplicitWidthIncrement = True
-			 								self.listOfWidths[kIncIndx] = self.listOfWidths[kIncIndx] + valuesOfWidthIncrements[keysOfWidthIncrements.index(i-1)]
-
-									tmpWidthToWrite = pack('I', self.listOfWidths[kIncIndx] )
+									tmpWidthToWrite = pack('I', maxFontWidth)
 									targetFontFile.write(tmpWidthToWrite)
-									tmpHeightToWrite = pack('I', self.listOfHeights[kIncIndx])
+									tmpHeightToWrite = pack('I', maxFontHeight)
 									targetFontFile.write(tmpHeightToWrite)
-									tmpDataOffsetToWrite = pack('I', lastImageSegmentOffset) #
+									tmpDataOffsetToWrite = pack('I', 0x0000) # start of image segment means 0 offset
 									targetFontFile.write(tmpDataOffsetToWrite)
-									lastImageSegmentOffset = lastImageSegmentOffset +  self.listOfWidths[kIncIndx]  * self.listOfHeights[kIncIndx]
-									#kIncIndx = kIncIndx + 1 # increases only for valid characters
-									#
-									# populate self.properListOfLetterBoxes here
-									#
-									self.properListOfLetterBoxes.append(self.listOfLetterBoxes[kIncIndx])
+									# TODO maybe conform more with game's format: Eg Tahoma24.fon (native game resource) does not always point to the second character font offset for dummy entries, but to the latest offset and only additionally sets the x-offset property (all others are 0) - eg look for 0x74c9 offsets (byte sequence 0xc9 0x74)
+									dummyCharFontImageConstOffset = maxFontWidth * maxFontHeight; # const. actual offset in bytes is twice that. This counts in words (2-bytes)	 - This points to the first valid entry but with properties that make it translate as a space or dummy(?)
+									lastImageSegmentOffset = maxFontWidth * maxFontHeight; # actual offset in bytes is twice that. This counts in words (2-bytes)
+									#listOfWriteableEntries[0] = (tmpXOffsetToWrite, tmpYOffsetToWrite, tmpWidthToWrite, tmpHeightToWrite, tmpDataOffsetToWrite)
 								else:
-									#
-									#if gTraceModeEnabled:
-									#	print "[Debug] ", i, ": phony entry"
-									# TODO in-game resource fonts don't point all to the first entry as dummy but to the last valid entry encountered
-									tmpXOffsetToWrite = pack('I', 0x0000)	# 0 x offset
-									targetFontFile.write(tmpXOffsetToWrite)
-									tmpYOffsetToWrite = pack('I', 0x0000)	# 0 y offset
-									targetFontFile.write(tmpYOffsetToWrite)
-									tmpWidthToWrite = pack('I', self.spaceWidthInPixels) # font width set for some pixels of space
-									targetFontFile.write(tmpWidthToWrite)
-									tmpHeightToWrite = pack('I', 0x0000)
-									targetFontFile.write(tmpHeightToWrite)
-									tmpDataOffsetToWrite = pack('I', dummyCharFontImageConstOffset) #
-									targetFontFile.write(tmpDataOffsetToWrite)
-						# end of for loop over all possible ascii values contained in the fon file
-						# print the corrected properties per glyph font:
-						if gTraceModeEnabled:
-							print "***** FINAL (Explicit kerning and width accounted) *****\nIndex\tAsciiOrd\tX Offs\tY Offs\tWidth\tHeight"
-							tmpListOfTuplesToPrintDbg = zip(range(1, len(self.listOfXOffsets)), self.targetLangOrderAndListOfForeignLettersAsciiValues[1:], self.listOfXOffsets, self.listOfYOffsets, listOfCalcWidths, self.listOfHeights)
-							for itemDbg in tmpListOfTuplesToPrintDbg:
-								print "%4d\t%8d\t%6d\t%6d\t%6d\t%6d" % (itemDbg[0], itemDbg[1], itemDbg[2], itemDbg[3], itemDbg[4], itemDbg[5])
-							#print "\n"
-						#
-						#
-						# Now fill in the image segment
-						# Fonts are written from TOP to Bottom, Left to Right. Each pixel is 16 bit (2 bytes). Highest bit seems to determine transparency (on/off flag).
-						#
-						# There seem to be 5 bits per RGB channel and the value is the corresponding 8bit value (from the 24 bit pixel color) shifting out (right) the 3 LSBs
-						# NOTE: Since we can't have transparency at channel level(?), it's best to have the input PNG not have transparent colored pixels (in Gimp merge the font layers, foreground and shadow and then from Layer settings set transparency threshold to 0 for that layer)- keep the background transparent!
-						#
-						# First font image is the special character (border of top row and left column) - color of font pixels should be "0x7FFF" for filled and "0x8000" for transparent
-						#
-						#
-						# Then follow up with the image parts for each letter!
-						#
-						#
-						#
-						# START of First special character image segment
-						#
-						for i in range(0, maxFontWidth * maxFontHeight):
-							if (i < maxFontWidth or i % maxFontWidth == 0):
-								tmpPixelColorRGB555ToWrite = pack('H', 0x7FFF) #unsigned short - 2 bytes
-								targetFontFile.write(tmpPixelColorRGB555ToWrite)
-							else:
-								tmpPixelColorRGB555ToWrite = pack('H', 0x8000)
-								targetFontFile.write(tmpPixelColorRGB555ToWrite) # unsigned short - 2 bytes
-						#
-						# END of First special character image segment
-						#
-						#
-						# Start rest of the font characters image segments
-						#
-						#
+									if (i-1) in self.targetLangOrderAndListOfForeignLettersAsciiValues:
+										# then this is an actual entry
+										# i-1 is the order of an ascii character, that should be placed in the next slot in the output FON file
+										# but this ascii character in the input overrideEncoding could be not it the same i spot -- because of the correspondance to an out-of-order PNG row file
+										kIncIndxLst = [item for item in enumerate(self.targetLangOrderAndListOfForeignLettersAsciiValues[1:], 0) if item[1] == (i-1) ]
+										kIncIndx = kIncIndxLst[0][0]
+										#kIncIndx = self.targetLangOrderAndListOfForeignLettersAsciiValues.index(i-1)
+										#if gTraceModeEnabled:
+										#	print "[Debug] ", kIncIndxLst
+										#	print "[Debug] ", kIncIndx, i-1
+										#	print "[Debug] ", i, ": actual entry index of ascii char", (i-1)," width:", self.listOfWidths[kIncIndx]
+										#	print "[Debug] Self explicit kerning list: ", self.listOfExplicitKerning
+										if len(self.listOfExplicitKerning ) > 0:
+											keysOfExplicitKerning, valuesOfExplicitKerning = (zip(*self.listOfExplicitKerning))
+											if (i - 1) in keysOfExplicitKerning:
+												# found explicit kerning for this
+												#if gTraceModeEnabled:
+												#	print "[Debug] Explicit kerning for %d " % (i-1)
+												self.listOfXOffsets[kIncIndx] = valuesOfExplicitKerning[keysOfExplicitKerning.index(i-1)] # explicit X offset
 
-						#
-						# If we have a character with explicit width increment (y) we should add columns of transparent colored pixels at the end (so since this is done by row, we should add y number of transparent pixels at the end of each row)
-						kIncIndx = 1 # start after the first glyph (which is DOUBLE)
-						for (c_startCol, c_startRow, c_endCol, c_endRow) in self.properListOfLetterBoxes[0:]:
-							#if gTraceModeEnabled:
-							#	print "[Debug] ", (c_startCol, c_startRow, c_endCol, c_endRow),' for letter ', self.targetLangOrderAndListOfForeignLettersAsciiValues[kIncIndx]
-							explicitWidthIncrementVal = 0
-							if len(self.listOfWidthIncrements ) > 0:
-								tmpOrd = self.targetLangOrderAndListOfForeignLettersAsciiValues[kIncIndx]
-								keysOfWidthIncrements, valuesOfWidthIncrements = (zip(*self.listOfWidthIncrements))
-								if tmpOrd in keysOfWidthIncrements:
-									#if gTraceModeEnabled:
-									#	print "[Debug] Explicit width increment for %d: %d" % (tmpOrd, valuesOfWidthIncrements[keysOfWidthIncrements.index(tmpOrd)])
-									explicitWidthIncrementVal = valuesOfWidthIncrements[keysOfWidthIncrements.index(tmpOrd)]
+										tmpXOffsetToWrite = pack('i', self.listOfXOffsets[kIncIndx]) # x offset - from left			# TODO check if ok. Changed to signed int since it can be negative sometimes!
+										targetFontFile.write(tmpXOffsetToWrite)
+										tmpYOffsetToWrite = pack('I', self.listOfYOffsets[kIncIndx])   # y offset from topmost row
+										targetFontFile.write(tmpYOffsetToWrite)
+
+										if len(self.listOfWidthIncrements ) > 0:
+											keysOfWidthIncrements, valuesOfWidthIncrements = (zip(*self.listOfWidthIncrements))
+											if (i - 1) in keysOfWidthIncrements:
+												#if gTraceModeEnabled:
+												#	print "[Debug] Explicit width increment for %d " % (i-1)
+												foundExplicitWidthIncrement = True
+												self.listOfWidths[kIncIndx] = self.listOfWidths[kIncIndx] + valuesOfWidthIncrements[keysOfWidthIncrements.index(i-1)]
+
+										tmpWidthToWrite = pack('I', self.listOfWidths[kIncIndx] )
+										targetFontFile.write(tmpWidthToWrite)
+										tmpHeightToWrite = pack('I', self.listOfHeights[kIncIndx])
+										targetFontFile.write(tmpHeightToWrite)
+										tmpDataOffsetToWrite = pack('I', lastImageSegmentOffset) #
+										targetFontFile.write(tmpDataOffsetToWrite)
+										lastImageSegmentOffset = lastImageSegmentOffset +  self.listOfWidths[kIncIndx]  * self.listOfHeights[kIncIndx]
+										#kIncIndx = kIncIndx + 1 # increases only for valid characters
+										#
+										# populate self.properListOfLetterBoxes here
+										#
+										self.properListOfLetterBoxes.append(self.listOfLetterBoxes[kIncIndx])
+									else:
+										#
+										#if gTraceModeEnabled:
+										#	print "[Debug] ", i, ": phony entry"
+										# TODO in-game resource fonts don't point all to the first entry as dummy but to the last valid entry encountered
+										tmpXOffsetToWrite = pack('I', 0x0000)	# 0 x offset
+										targetFontFile.write(tmpXOffsetToWrite)
+										tmpYOffsetToWrite = pack('I', 0x0000)	# 0 y offset
+										targetFontFile.write(tmpYOffsetToWrite)
+										tmpWidthToWrite = pack('I', self.spaceWidthInPixels) # font width set for some pixels of space
+										targetFontFile.write(tmpWidthToWrite)
+										tmpHeightToWrite = pack('I', 0x0000)
+										targetFontFile.write(tmpHeightToWrite)
+										tmpDataOffsetToWrite = pack('I', dummyCharFontImageConstOffset) #
+										targetFontFile.write(tmpDataOffsetToWrite)
+							# end of for loop over all possible ascii values contained in the fon file
+							# print the corrected properties per glyph font:
+							if gTraceModeEnabled:
+								print "***** FINAL (Explicit kerning and width accounted) *****\nIndex\tAsciiOrd\tX Offs\tY Offs\tWidth\tHeight"
+								tmpListOfTuplesToPrintDbg = zip(range(1, len(self.listOfXOffsets)), self.targetLangOrderAndListOfForeignLettersAsciiValues[1:], self.listOfXOffsets, self.listOfYOffsets, listOfCalcWidths, self.listOfHeights)
+								for itemDbg in tmpListOfTuplesToPrintDbg:
+									print "%4d\t%8d\t%6d\t%6d\t%6d\t%6d" % (itemDbg[0], itemDbg[1], itemDbg[2], itemDbg[3], itemDbg[4], itemDbg[5])
+								#print "\n"
+							#
+							#
+							# Now fill in the image segment
+							# Fonts are written from TOP to Bottom, Left to Right. Each pixel is 16 bit (2 bytes). Highest bit seems to determine transparency (on/off flag).
+							#
+							# There seem to be 5 bits per RGB channel and the value is the corresponding 8bit value (from the 24 bit pixel color) shifting out (right) the 3 LSBs
+							# NOTE: Since we can't have transparency at channel level(?), it's best to have the input PNG not have transparent colored pixels (in Gimp merge the font layers, foreground and shadow and then from Layer settings set transparency threshold to 0 for that layer)- keep the background transparent!
+							#
+							# First font image is the special character (border of top row and left column) - color of font pixels should be "0x7FFF" for filled and "0x8000" for transparent
+							#
+							#
+							# Then follow up with the image parts for each letter!
+							#
+							#
+							#
+							# START of First special character image segment
+							#
+							for i in range(0, maxFontWidth * maxFontHeight):
+								if (i < maxFontWidth or i % maxFontWidth == 0):
+									tmpPixelColorRGB555ToWrite = pack('H', 0x7FFF) #unsigned short - 2 bytes
+									targetFontFile.write(tmpPixelColorRGB555ToWrite)
+								else:
+									tmpPixelColorRGB555ToWrite = pack('H', 0x8000)
+									targetFontFile.write(tmpPixelColorRGB555ToWrite) # unsigned short - 2 bytes
+							#
+							# END of First special character image segment
+							#
+							#
+							# Start rest of the font characters image segments
+							#
+							#
+
+							#
+							# If we have a character with explicit width increment (y) we should add columns of transparent colored pixels at the end (so since this is done by row, we should add y number of transparent pixels at the end of each row)
+							kIncIndx = 1 # start after the first glyph (which is DOUBLE)
+							for (c_startCol, c_startRow, c_endCol, c_endRow) in self.properListOfLetterBoxes[0:]:
+								#if gTraceModeEnabled:
+								#	print "[Debug] ", (c_startCol, c_startRow, c_endCol, c_endRow),' for letter ', self.targetLangOrderAndListOfForeignLettersAsciiValues[kIncIndx]
+								explicitWidthIncrementVal = 0
+								if len(self.listOfWidthIncrements ) > 0:
+									tmpOrd = self.targetLangOrderAndListOfForeignLettersAsciiValues[kIncIndx]
+									keysOfWidthIncrements, valuesOfWidthIncrements = (zip(*self.listOfWidthIncrements))
+									if tmpOrd in keysOfWidthIncrements:
+										#if gTraceModeEnabled:
+										#	print "[Debug] Explicit width increment for %d: %d" % (tmpOrd, valuesOfWidthIncrements[keysOfWidthIncrements.index(tmpOrd)])
+										explicitWidthIncrementVal = valuesOfWidthIncrements[keysOfWidthIncrements.index(tmpOrd)]
 
 
-							for tmpRowCur in range(c_startRow, c_endRow + 1):
-								for tmpColCur in range(c_startCol, c_endCol +1):
-									#if gTraceModeEnabled:
-									#	print "[Debug] ", (tmpRowCur, tmpColCur)
-									r1,g1,b1,a1 = pixReloaded[tmpColCur, tmpRowCur] # Index col first, row second for image pixel array. TODO asdf this pix has been modified. All pixels would be transparent? - load image again?
-									if (a1 == 0):
+								for tmpRowCur in range(c_startRow, c_endRow + 1):
+									for tmpColCur in range(c_startCol, c_endCol +1):
 										#if gTraceModeEnabled:
-										#	print "[Debug] With alpha 8bit: ", (r1, g1, b1, a1)
-										#make completely transparent - write 0x8000
-										tmpPixelColorRGB555ToWrite = pack('H', 0x8000)
-										targetFontFile.write(tmpPixelColorRGB555ToWrite) # unsigned short - 2 bytes
-									else:	  # alpha should be 255 here really.
-										#if gTraceModeEnabled:
-										#	print "[Debug] 8bit:", (r1, g1, b1)
-										tmp5bitR1 = (r1 >> 3) & 0x1f
-										tmp5bitG1 = (g1 >> 3) & 0x1f
-										tmp5bitB1 = (b1 >> 3) & 0x1f
-										#if gTraceModeEnabled:
-										#	print "[Debug] 5bit: ", (tmp5bitR1, tmp5bitG1, tmp5bitB1)
-										tmpPixelColorConvertedToRGB555 = (tmp5bitR1 << 10) | (tmp5bitG1 << 5) | (tmp5bitB1)
-										#if gTraceModeEnabled:
-										#	print "[Debug] 16bit: ", tmpPixelColorConvertedToRGB555
-										tmpPixelColorRGB555ToWrite = pack('H', tmpPixelColorConvertedToRGB555)
-										targetFontFile.write(tmpPixelColorRGB555ToWrite) # unsigned short - 2 bytes
-									if (tmpColCur == c_endCol and explicitWidthIncrementVal > 0):
-										for tmpExtraColCur in range (0, explicitWidthIncrementVal):
+										#	print "[Debug] ", (tmpRowCur, tmpColCur)
+										r1,g1,b1,a1 = pixReloaded[tmpColCur, tmpRowCur] # Index col first, row second for image pixel array. TODO asdf this pix has been modified. All pixels would be transparent? - load image again?
+										if (a1 == 0):
+											#if gTraceModeEnabled:
+											#	print "[Debug] With alpha 8bit: ", (r1, g1, b1, a1)
 											#make completely transparent - write 0x8000
 											tmpPixelColorRGB555ToWrite = pack('H', 0x8000)
 											targetFontFile.write(tmpPixelColorRGB555ToWrite) # unsigned short - 2 bytes
-							kIncIndx = kIncIndx + 1 # finally increase the kIncIndx for next glyph
+										else:	  # alpha should be 255 here really.
+											#if gTraceModeEnabled:
+											#	print "[Debug] 8bit:", (r1, g1, b1)
+											tmp5bitR1 = (r1 >> 3) & 0x1f
+											tmp5bitG1 = (g1 >> 3) & 0x1f
+											tmp5bitB1 = (b1 >> 3) & 0x1f
+											#if gTraceModeEnabled:
+											#	print "[Debug] 5bit: ", (tmp5bitR1, tmp5bitG1, tmp5bitB1)
+											tmpPixelColorConvertedToRGB555 = (tmp5bitR1 << 10) | (tmp5bitG1 << 5) | (tmp5bitB1)
+											#if gTraceModeEnabled:
+											#	print "[Debug] 16bit: ", tmpPixelColorConvertedToRGB555
+											tmpPixelColorRGB555ToWrite = pack('H', tmpPixelColorConvertedToRGB555)
+											targetFontFile.write(tmpPixelColorRGB555ToWrite) # unsigned short - 2 bytes
+										if (tmpColCur == c_endCol and explicitWidthIncrementVal > 0):
+											for tmpExtraColCur in range (0, explicitWidthIncrementVal):
+												#make completely transparent - write 0x8000
+												tmpPixelColorRGB555ToWrite = pack('H', 0x8000)
+												targetFontFile.write(tmpPixelColorRGB555ToWrite) # unsigned short - 2 bytes
+								kIncIndx = kIncIndx + 1 # finally increase the kIncIndx for next glyph
 
-						#
-						# End rest of the font characters image segments
-						#
-						targetFontFile.close()
-						#
-						# Re -open and write the image segment
-						#
-						targetFontFile = None
-						try:
-							targetFontFile = open(self.targetFONFilename, 'r+b')
-						except:
-							errorFound = True
-						if not errorFound:
-							targetFontFile.seek(0x0C)	  # position to write imageSegmentSize
-							tmpImageSegmentToWrite = pack('I', lastImageSegmentOffset)
-							targetFontFile.write(tmpImageSegmentToWrite)
+							#
+							# End rest of the font characters image segments
+							#
 							targetFontFile.close()
+							#
+							# Re -open and write the image segment
+							#
+							targetFontFile = None
+							try:
+								targetFontFile = open(self.targetFONFilename, 'r+b')
+							except:
+								errorFound = True
+							if not errorFound:
+								targetFontFile.seek(0x0C)	  # position to write imageSegmentSize
+								tmpImageSegmentToWrite = pack('I', lastImageSegmentOffset)
+								targetFontFile.write(tmpImageSegmentToWrite)
+								targetFontFile.close()
 
 			else: ## if (self.lettersFound ) <= 0
 				errMsg = "[Error] No letters were found in input png!"

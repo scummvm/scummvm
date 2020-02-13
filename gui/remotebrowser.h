@@ -39,12 +39,12 @@ class CommandSender;
 class RemoteBrowserDialog : public Dialog {
 public:
 	RemoteBrowserDialog(const char *title);
-	virtual ~RemoteBrowserDialog();
+	~RemoteBrowserDialog() override;
 
-	virtual void open();
-	virtual void close();
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleTickle();
+	void open() override;
+	void close() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleTickle() override;
 
 	const Cloud::StorageFile	&getResult() { return _choice; }
 

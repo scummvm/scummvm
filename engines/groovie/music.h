@@ -94,11 +94,11 @@ protected:
 class MusicPlayerMidi : public MusicPlayer, public MidiDriver_BASE {
 public:
 	MusicPlayerMidi(GroovieEngine *vm);
-	~MusicPlayerMidi();
+	~MusicPlayerMidi() override;
 
 	// MidiDriver_BASE interface
-	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+	void send(uint32 b) override;
+	void metaEvent(byte type, byte *data, uint16 length) override;
 
 private:
 	// Channel volumes
@@ -112,9 +112,9 @@ protected:
 	MidiParser *_midiParser;
 	MidiDriver *_driver;
 
-	virtual void onTimerInternal();
-	void updateVolume();
-	void unload();
+	void onTimerInternal() override;
+	void updateVolume() override;
+	void unload() override;
 
 	bool loadParser(Common::SeekableReadStream *stream, bool loop);
 };
@@ -122,12 +122,12 @@ protected:
 class MusicPlayerXMI : public MusicPlayerMidi {
 public:
 	MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName);
-	~MusicPlayerXMI();
+	~MusicPlayerXMI() override;
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 
 protected:
-	bool load(uint32 fileref, bool loop);
+	bool load(uint32 fileref, bool loop) override;
 
 private:
 	// Channel banks
@@ -159,7 +159,7 @@ public:
 	MusicPlayerMac_t7g(GroovieEngine *vm);
 
 protected:
-	bool load(uint32 fileref, bool loop);
+	bool load(uint32 fileref, bool loop) override;
 
 private:
 	Common::SeekableReadStream *decompressMidi(Common::SeekableReadStream *stream);
@@ -170,18 +170,18 @@ public:
 	MusicPlayerMac_v2(GroovieEngine *vm);
 
 protected:
-	bool load(uint32 fileref, bool loop);
+	bool load(uint32 fileref, bool loop) override;
 };
 
 class MusicPlayerIOS : public MusicPlayer {
 public:
 	MusicPlayerIOS(GroovieEngine *vm);
-	~MusicPlayerIOS();
+	~MusicPlayerIOS() override;
 
 protected:
-	void updateVolume();
-	bool load(uint32 fileref, bool loop);
-	void unload();
+	void updateVolume() override;
+	bool load(uint32 fileref, bool loop) override;
+	void unload() override;
 
 private:
 	Audio::SoundHandle _handle;

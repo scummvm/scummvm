@@ -157,7 +157,7 @@ private:
 	void bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWidth, byte *&memoryPtr);
 	void bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr);
 
-	void setVerticalShakePos(uint16 shakePos);
+	void setShakePos(uint16 shakeXOffset, uint16 shakeYOffset);
 
 	/**
 	 * If this flag is true, undithering is enabled, otherwise disabled.

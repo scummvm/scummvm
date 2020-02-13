@@ -31,7 +31,7 @@
 namespace Titanic {
 
 class CErrorCode;
-class CStarCamera;
+class CCamera;
 class CSurfaceArea;
 
 /**
@@ -125,7 +125,7 @@ public:
 	 * Draws the star globe
 	 */
 	virtual void draw(const FPose &pose, const FVector &vector, const FVector &vector2,
-		CSurfaceArea *surfaceArea, CStarCamera *camera);
+		CSurfaceArea *surfaceArea, CCamera *camera);
 
 	virtual void proc3(CErrorCode *errorCode);
 

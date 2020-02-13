@@ -33,7 +33,7 @@ namespace Neverhood {
 class NavigationScene : public Scene {
 public:
 	NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint32 navigationListId, int navigationIndex, const byte *itemsTypes);
-	virtual ~NavigationScene();
+	~NavigationScene() override;
 	int getNavigationAreaType();
 	int getNavigationIndex() const { return _navigationIndex; }
 	bool isWalkingForward() const { return _isWalkingForward; }

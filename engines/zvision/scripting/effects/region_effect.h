@@ -35,7 +35,7 @@ class ZVision;
 class RegionNode : public ScriptingEffect {
 public:
 	RegionNode(ZVision *engine, uint32 key, GraphicsEffect *effect, uint32 delay);
-	~RegionNode();
+	~RegionNode() override;
 
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
@@ -44,7 +44,7 @@ public:
 	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	int32 _timeLeft;

@@ -192,7 +192,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 
 			Actor_Put_In_Set(kActorOfficerGrayford, kSetUG05);
 			Actor_Set_At_XYZ(kActorOfficerGrayford, 4.22f, -1.37f, -925.0f, 750);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 599);
+			Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordDead);
 			Actor_Retired_Here(kActorOfficerGrayford, 70, 36, true, -1);
 
 			int affectionTowardsActor = getAffectionTowardsActor();
@@ -200,7 +200,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 				Actor_Put_In_Set(kActorDektora, kSetUG05);
 				Actor_Set_At_XYZ(kActorDektora, -100.0f, -10.31f, -906.0f, 866);
 				Actor_Force_Stop_Walking(kActorDektora);
-			} else if (affectionTowardsActor == kActorLucy){
+			} else if (affectionTowardsActor == kActorLucy) {
 				Actor_Put_In_Set(kActorLucy, kSetUG05);
 				Actor_Set_At_XYZ(kActorLucy, -100.0f, -10.31f, -906.0f, 866);
 				Actor_Force_Stop_Walking(kActorLucy);

@@ -21,18 +21,18 @@
  */
 
 #include "titanic/star_control/star_ref.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
 
-void CBaseStarRef::process(CSurfaceArea *surface, CStarCamera *camera) {
+void CBaseStarRef::process(CSurfaceArea *surface, CCamera *camera) {
 	if (_stars->_data.empty())
 		return;
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPose pose = camera->getPose();
-	double threshold = camera->getThreshold();
+	double threshold = camera->getFrontClip();
 	double vWidth2 = (double)surface->_width * 0.5;
 	double vHeight2 = (double)surface->_height * 0.5;
 	FVector vTemp, vector1, vector2;

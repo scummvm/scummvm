@@ -605,6 +605,8 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 	case 5:
 		bompDecodeLine(_curBuf, gfx_data, READ_LE_UINT32(src + 14));
 		break;
+	default:
+		break;
 	}
 
 	memcpy(dst, _curBuf, _frameSize);

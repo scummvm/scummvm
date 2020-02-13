@@ -46,18 +46,18 @@ public:
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy() const;
+	TTword *copy() const override;
 
-	virtual bool proc14(int val) const { return _val == val; }
-	virtual int proc15() const { return _val; }
-	virtual bool proc16() const { return _val >= 7; }
-	virtual bool proc17() const { return _val <= 3; }
-	virtual bool proc18() const { return _val > 3 && _val < 7; }
+	bool proc14(int val) const override { return _val == val; }
+	int proc15() const override { return _val; }
+	bool proc16() const override { return _val >= 7; }
+	bool proc17() const override { return _val <= 3; }
+	bool proc18() const override { return _val > 3 && _val < 7; }
 
 	/**
 	 * Dumps data associated with the word to file
 	 */
-	virtual int save(SimpleFile *file) const {
+	int save(SimpleFile *file) const override {
 		return saveData(file, _val);
 	}
 };

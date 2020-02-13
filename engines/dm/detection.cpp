@@ -49,7 +49,7 @@ static const DMADGameDescription gameDescriptions[] = {
 				{"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006},
 				AD_LISTEND
 			},
-			Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
+			Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 		},
 	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAmiga,
 		{ kDMSaveTargetDM21, kDMSaveTargetEndOfList },
@@ -63,7 +63,7 @@ static const DMADGameDescription gameDescriptions[] = {
 				{"Dungeon.dat", 0, "be9468b460515741babec9a70501e2e9", 33286},
 				AD_LISTEND
 			},
-	    	Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NONE),
+	    	Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI),
 	    },
 	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAtariSt,
 	    { kDMSaveTargetDM21, kDMSaveTargetEndOfList},
@@ -78,7 +78,7 @@ static const DMADGameDescription gameDescriptions[] = {
 				{"DemoDun.dat", 0, "78848e1a2d3d5a11e5954deb8c7b772b", 1209},
 				AD_LISTEND
 			},
-			Common::EN_ANY, Common::kPlatformAmiga, ADGF_DEMO, GUIO1(GUIO_NONE),
+			Common::EN_ANY, Common::kPlatformAmiga, ADGF_DEMO, GUIO1(GUIO_NOMIDI),
 		},
 		kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAtariSt,
 		{ kDMSaveTargetDM21, kDMSaveTargetEndOfList},
@@ -98,24 +98,27 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class DMMetaEngine : public AdvancedMetaEngine {
 public:
 	DMMetaEngine() : AdvancedMetaEngine(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
-		_singleId = "dm";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "dm";
+	}
+
+	const char *getName() const override {
 		return "Dungeon Master";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Dungeon Master (C) 1987 FTL Games";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc)
 			*engine = new DM::DMEngine(syst, (const DMADGameDescription*)desc);
 		return desc != nullptr;
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const {
+	bool hasFeature(MetaEngineFeature f) const override {
 		return
 			(f == kSupportsListSaves) ||
 			(f == kSupportsLoadingDuringStartup) ||
@@ -124,9 +127,9 @@ public:
 			(f == kSavesSupportCreationDate);
 	}
 
-	virtual int getMaximumSaveSlot() const { return 99; }
+	int getMaximumSaveSlot() const override { return 99; }
 
-	virtual SaveStateList listSaves(const char *target) const {
+	SaveStateList listSaves(const char *target) const override {
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		SaveGameHeader header;
 		Common::String pattern = target;
@@ -156,7 +159,7 @@ public:
 		return saveList;
 	}
 
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Common::String filename = Common::String::format("%s.%03u", target, slot);
 		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
@@ -176,7 +179,7 @@ public:
 		return SaveStateDescriptor();
 	}
 
-	virtual void removeSaveState(const char *target, int slot) const {}
+	void removeSaveState(const char *target, int slot) const override {}
 };
 
 }

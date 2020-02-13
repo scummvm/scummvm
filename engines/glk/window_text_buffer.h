@@ -35,7 +35,7 @@ namespace Glk {
 /**
  * Text Buffer window
  */
-class TextBufferWindow : public Window, Speech {
+class TextBufferWindow : public TextWindow, Speech {
 	/**
 	 * Structure for a row within the window
 	 */
@@ -146,7 +146,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~TextBufferWindow();
+	~TextBufferWindow() override;
 
 	int acceptScroll(uint arg);
 
@@ -155,93 +155,93 @@ public:
 	/**
 	 * Get the font info structure associated with the window
 	 */
-	virtual FontInfo *getFontInfo() override { return &_font; }
+	FontInfo *getFontInfo() override { return &_font; }
 
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Rect &box) override;
+	void rearrange(const Rect &box) override;
 
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual uint getSplit(uint size, bool vertical) const override;
+	uint getSplit(uint size, bool vertical) const override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	void putCharUni(uint32 ch) override;
 
 	/**
 	 * Unput a unicode character
 	 */
-	virtual bool unputCharUni(uint32 ch) override;
+	bool unputCharUni(uint32 ch) override;
 
 	/**
 	 * Clear the window
 	 */
-	virtual void clear() override;
+	void clear() override;
 
 	/**
 	 * Click the window
 	 */
-	virtual void click(const Point &newPos) override;
+	void click(const Point &newPos) override;
 
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEvent(char *buf, uint maxlen, uint initlen) override;
+	void requestLineEvent(char *buf, uint maxlen, uint initlen) override;
 
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) override;
+	void requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) override;
 
 	/**
 	 * Cancel an input line event
 	 */
-	virtual void cancelLineEvent(Event *ev) override;
+	void cancelLineEvent(Event *ev) override;
 
 	/**
 	 * Cancel a hyperlink event
 	 */
-	virtual void cancelHyperlinkEvent() override {
+	void cancelHyperlinkEvent() override {
 		_hyperRequest = false;
 	}
 
 	/**
 	 * Redraw the window
 	 */
-	virtual void redraw() override;
+	void redraw() override;
 
-	virtual void acceptReadLine(uint32 arg) override;
+	void acceptReadLine(uint32 arg) override;
 
-	virtual void acceptReadChar(uint arg) override;
+	void acceptReadChar(uint arg) override;
 
-	virtual void getSize(uint *width, uint *height) const override;
+	void getSize(uint *width, uint *height) const override;
 
-	virtual void requestCharEvent() override;
+	void requestCharEvent() override;
 
-	virtual void requestCharEventUni() override;
+	void requestCharEventUni() override;
 
-	virtual void setEchoLineEvent(uint val) override {
+	void setEchoLineEvent(uint val) override {
 		_echoLineInput = val != 0;
 	}
 
-	virtual void requestHyperlinkEvent() override {
+	void requestHyperlinkEvent() override {
 		_hyperRequest = true;
 	}
 
-	virtual void cancelCharEvent() override {
+	void cancelCharEvent() override {
 		_charRequest = _charRequestUni = false;
 	}
 
-	virtual void flowBreak() override;
+	void flowBreak() override;
 
 	/**
 	 * Returns a pointer to the styles for the window
 	 */
-	virtual const WindowStyle *getStyles() const override {
+	const WindowStyle *getStyles() const override {
 		return _styles;
 	}
 };

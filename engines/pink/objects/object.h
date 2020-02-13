@@ -44,7 +44,7 @@ public:
 	NamedObject(const Common::String &name)
 			: _name(name) {}
 
-	void deserialize(Archive &archive) { _name = archive.readString(); }
+	void deserialize(Archive &archive) override { _name = archive.readString(); }
 
 	const Common::String &getName() const { return _name; }
 

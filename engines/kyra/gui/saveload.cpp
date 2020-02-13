@@ -173,7 +173,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 				warning("Can not load DOS CD-ROM savefile for this (non DOS CD-ROM) gameversion");
 				delete in;
 				return 0;
-			} else if ((header.flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
+			} else if (checkID && ((header.flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98))) {
 				warning("Can not load FM-TOWNS/PC98 savefile for this (non FM-TOWNS/PC98) gameversion");
 				delete in;
 				return 0;

@@ -28,6 +28,8 @@
 #include "xeen/screen.h"
 #include "xeen/sprites.h"
 
+#include "graphics/palette.h"
+
 namespace Xeen {
 
 #define SCENE_CLIP_LEFT 8
@@ -109,7 +111,87 @@ void SpriteResource::clear() {
 	_index.clear();
 }
 
-void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
+		uint flags, int scale) {
+	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
+}
+
+void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
+		uint flags, int scale) {
+	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
+}
+
+void SpriteResource::draw(int windowIndex, int frame, const Common::Point &destPos,
+		uint flags, int scale) {
+	Window &win = (*g_vm->_windows)[windowIndex];
+	draw(win, frame, destPos, flags, scale);
+}
+
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
+		const Common::Rect &bounds, uint flags, int scale) {
+	Common::Rect r = bounds;
+	if (flags & SPRFLAG_BOTTOM_CLIPPED)
+		r.clip(SCREEN_WIDTH, _clippedBottom);
+
+	// Create drawer to handle the rendering
+	SpriteDrawer *drawer;
+	switch (flags & SPRFLAG_MODE_MASK) {
+	case SPRFLAG_DRAWER1:
+		drawer = new SpriteDrawer1(_data, _filesize, flags & 0x1F);
+		break;
+	case SPRFLAG_DRAWER2:
+		error("TODO: Sprite drawer mode 2");
+	case SPRFLAG_DRAWER3:
+		drawer = new SpriteDrawer3(_data, _filesize, flags & 0x1F);
+		break;
+	case SPRFLAG_DRAWER5:
+		drawer = new SpriteDrawer5(_data, _filesize, flags & 0x1F);
+		break;
+	case SPRFLAG_DRAWER6:
+		drawer = new SpriteDrawer6(_data, _filesize, flags & 0x1F);
+		break;
+	default:
+		drawer = new SpriteDrawer(_data, _filesize);
+		break;
+	}
+
+	// Sprites can consist of separate background & foreground
+	drawer->draw(dest, _index[frame]._offset1, destPos, r, flags, scale);
+	if (_index[frame]._offset2)
+		drawer->draw(dest, _index[frame]._offset2, destPos, r, flags, scale);
+
+	delete drawer;
+}
+
+void SpriteResource::draw(XSurface &dest, int frame) {
+	draw(dest, frame, Common::Point());
+}
+
+void SpriteResource::draw(int windowIndex, int frame) {
+	draw((*g_vm->_windows)[windowIndex], frame, Common::Point());
+}
+
+Common::Point SpriteResource::getFrameSize(int frame) const {
+	Common::MemoryReadStream f(_data, _filesize);
+	Common::Point frameSize;
+
+	for (int idx = 0; idx < (_index[frame]._offset2 ? 2 : 1); ++idx) {
+		f.seek((idx == 0) ? _index[frame]._offset1 : _index[frame]._offset2);
+		int xOffset = f.readUint16LE();
+		int width = f.readUint16LE();
+		int yOffset = f.readUint16LE();
+		int height = f.readUint16LE();
+
+		frameSize.x = MAX((int)frameSize.x, xOffset + width);
+		frameSize.y = MAX((int)frameSize.y, yOffset + height);
+	}
+
+	return frameSize;
+}
+
+/*------------------------------------------------------------------------*/
+
+void SpriteDrawer::draw(XSurface &dest, uint16 offset, const Common::Point &pt,
 		const Common::Rect &clipRect, uint flags, int scale) {
 	static const uint SCALE_TABLE[] = {
 		0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
@@ -287,11 +369,11 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right) {
 						drawBounds.left = MIN(drawBounds.left, xp);
 						drawBounds.right = MAX((int)drawBounds.right, xp + 1);
-						*destP = (byte)*lineP;
+						drawPixel(destP, (byte)*lineP);
 						if (enlarge) {
-							*(destP + SCREEN_WIDTH) = (byte)*lineP;
-							*(destP + 1) = (byte)*lineP;
-							*(destP + 1 + SCREEN_WIDTH) = (byte)*lineP;
+							drawPixel(destP + SCREEN_WIDTH, (byte)*lineP);
+							drawPixel(destP + 1, (byte)*lineP);
+							drawPixel(destP + 1 + SCREEN_WIDTH, (byte)*lineP);
 						}
 					}
 
@@ -317,43 +399,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	}
 }
 
-void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		uint flags, int scale) {
-	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
-}
-
-void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
-		uint flags, int scale) {
-	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
-}
-
-void SpriteResource::draw(int windowIndex, int frame, const Common::Point &destPos,
-		uint flags, int scale) {
-	Window &win = (*g_vm->_windows)[windowIndex];
-	draw(win, frame, destPos, flags, scale);
-}
-
-void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, uint flags, int scale) {
-	Common::Rect r = bounds;
-	if (flags & SPRFLAG_BOTTOM_CLIPPED)
-		r.clip(SCREEN_WIDTH, _clippedBottom);
-
-	// Sprites can consist of separate background & foreground
-	drawOffset(dest, _index[frame]._offset1, destPos, r, flags, scale);
-	if (_index[frame]._offset2)
-		drawOffset(dest, _index[frame]._offset2, destPos, r, flags, scale);
-}
-
-void SpriteResource::draw(XSurface &dest, int frame) {
-	draw(dest, frame, Common::Point());
-}
-
-void SpriteResource::draw(int windowIndex, int frame) {
-	draw((*g_vm->_windows)[windowIndex], frame, Common::Point());
-}
-
-uint SpriteResource::getScaledVal(int xy, uint16 &scaleMask) {
+uint SpriteDrawer::getScaledVal(int xy, uint16 &scaleMask) {
 	if (!xy)
 		return 0;
 
@@ -367,22 +413,118 @@ uint SpriteResource::getScaledVal(int xy, uint16 &scaleMask) {
 	return result;
 }
 
-Common::Point SpriteResource::getFrameSize(int frame) const {
-	Common::MemoryReadStream f(_data, _filesize);
-	Common::Point frameSize;
+void SpriteDrawer::drawPixel(byte *dest, byte pixel) {
+	*dest = pixel;
+}
 
-	for (int idx = 0; idx < (_index[frame]._offset2 ? 2 : 1); ++idx) {
-		f.seek((idx == 0) ? _index[frame]._offset1 : _index[frame]._offset2);
-		int xOffset = f.readUint16LE();
-		int width = f.readUint16LE();
-		int yOffset = f.readUint16LE();
-		int height = f.readUint16LE();
+/*------------------------------------------------------------------------*/
 
-		frameSize.x = MAX((int)frameSize.x, xOffset + width);
-		frameSize.y = MAX((int)frameSize.y, yOffset + height);
+const byte DRAWER1_OFFSET[24] = {
+	0x30, 0xC0, 0xB0, 0x10, 0x41, 0x20, 0x40, 0x21, 0x48, 0x46, 0x43, 0x40,
+	0xD0, 0xD3, 0xD6, 0xD8, 0x01, 0x04, 0x07, 0x0A, 0xEA, 0xEE, 0xF2, 0xF6
+};
+
+const byte DRAWER1_MASK[24] = {
+	0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x0F, 0x07, 0x07, 0x07, 0x07,
+	0x07, 0x07, 0x07, 0x07, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x07, 0x07
+};
+
+SpriteDrawer1::SpriteDrawer1(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
+	_offset = DRAWER1_OFFSET[index];
+	_mask = DRAWER1_MASK[index];
+}
+
+void SpriteDrawer1::drawPixel(byte *dest, byte pixel) {
+	*dest = (pixel & _mask) + _offset;
+}
+
+/*------------------------------------------------------------------------*/
+
+const uint16 DRAWER3_MASK[4] = { 1, 3, 7, 15 };
+const uint16 DRAWER3_OFFSET[4] = { 1, 2, 4, 8 };
+
+SpriteDrawer3::SpriteDrawer3(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
+	_offset = DRAWER3_OFFSET[index];
+	_mask = DRAWER3_MASK[index];
+
+	g_system->getPaletteManager()->grabPalette(_palette, 0, PALETTE_COUNT);
+	_hasPalette = false;
+	for (byte *pal = _palette; pal < _palette + PALETTE_SIZE && !_hasPalette; ++pal)
+		_hasPalette = *pal != 0;
+}
+
+void SpriteDrawer3::drawPixel(byte *dest, byte pixel) {
+	// WORKAROUND: This is slightly different then the original:
+	// 1) The original has bunches of black pixels appearing. This does index increments to avoid such pixels
+	// 2) It also prevents any pixels being drawn in the single initial frame until the palette is set
+	if (_hasPalette) {
+		byte level = (pixel & _mask) - _offset + (*dest & 0xf);
+
+		if (level >= 0x80) {
+			*dest &= 0xf0;
+		} else if (level <= 0xf) {
+			*dest = (*dest & 0xf0) | level;
+		} else {
+			*dest |= 0xf;
+		}
+
+		//
+		while (*dest < 0xff && !_palette[*dest * 3] && !_palette[*dest * 3 + 1] && !_palette[*dest * 3 + 2])
+			++*dest;
 	}
+}
 
-	return frameSize;
+/*------------------------------------------------------------------------*/
+
+const byte DRAWER4_THRESHOLD[4] = { 4, 7, 10, 13 };
+
+SpriteDrawer4::SpriteDrawer4(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
+	_threshold = DRAWER4_THRESHOLD[index];
+}
+
+void SpriteDrawer4::drawPixel(byte *dest, byte pixel) {
+	if ((pixel & 0xf) >= _threshold)
+		*dest = pixel;
+}
+
+/*------------------------------------------------------------------------*/
+
+const uint16 DRAWER5_THRESHOLD[4] = { 0x3333, 0x6666, 0x999A, 0xCCCD };
+
+SpriteDrawer5::SpriteDrawer5(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
+	_threshold = DRAWER5_THRESHOLD[index];
+	_random1 = g_vm->getRandomNumber(0xffff);
+	_random2 = g_vm->getRandomNumber(0xffff);
+}
+
+void SpriteDrawer5::drawPixel(byte *dest, byte pixel) {
+	bool flag = (_random1 & 0x8000) != 0;
+	_random1 = (int)((uint16)_random1 << 1) - _random2 - (flag ? 1 : 0);
+
+	rcr(_random2, flag);
+	rcr(_random2, flag);
+	_random2 ^= _random1;
+
+	if (_random2 > _threshold)
+		*dest = pixel;
+}
+
+void SpriteDrawer5::rcr(uint16 &val, bool &cf) {
+	bool newCf = (val & 1);
+	val = (val >> 1) | (cf ? 0x8000 : 0);
+	cf = newCf;
+}
+
+/*------------------------------------------------------------------------*/
+
+const byte DRAWER6_MASK[16] = { 1, 2, 4, 8, 1, 3, 7, 15, 8, 12, 14, 15, 1, 2, 1, 2 };
+
+SpriteDrawer6::SpriteDrawer6(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
+	_mask = DRAWER6_MASK[index];
+}
+
+void SpriteDrawer6::drawPixel(byte *dest, byte pixel) {
+	*dest = pixel ^ _mask;
 }
 
 } // End of namespace Xeen

@@ -41,7 +41,7 @@ void GoogleDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	if (!response.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("GoogleDriveTokenRefresher: failed to refresh token");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "GoogleDriveTokenRefresher::tokenRefreshed: failed to refresh token", -1));
 		return;
 	}
 
@@ -77,7 +77,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 			Common::JSONObject error = result.getVal("error")->asObject();
 			bool irrecoverable = true;
 
-			uint32 code = -1;
+			uint32 code = 0xFFFFFFFF; // Invalid
 			Common::String message;
 			if (jsonContainsIntegerNumber(error, "code", "GoogleDriveTokenRefresher")) {
 				code = error.getVal("code")->asIntegerNumber();
@@ -100,7 +100,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 
 			pause();
 			delete json;
-			_parentStorage->getAccessToken(new Common::Callback<GoogleDriveTokenRefresher, Storage::BoolResponse>(this, &GoogleDriveTokenRefresher::tokenRefreshed));
+			_parentStorage->refreshAccessToken(new Common::Callback<GoogleDriveTokenRefresher, Storage::BoolResponse>(this, &GoogleDriveTokenRefresher::tokenRefreshed));
 			return;
 		}
 	}

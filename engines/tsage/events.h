@@ -153,7 +153,7 @@ public:
 	bool isInventoryIcon() const { return (_currentCursor >= 0) && (_currentCursor < 256); }
 	void proc1() { warning("TODO: EventsClass::proc1"); }
 
-	virtual void listenerSynchronize(Serializer &s);
+	void listenerSynchronize(Serializer &s) override;
 	static void loadNotifierProc(bool postFlag);
 };
 

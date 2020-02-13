@@ -83,7 +83,7 @@ namespace Pegasus {
 class AIArea : public Surface, public Idler, public InputHandler {
 public:
 	AIArea(InputHandler *);
-	virtual ~AIArea();
+	~AIArea() override;
 
 	void writeAIRules(Common::WriteStream *stream);
 	void readAIRules(Common::ReadStream *stream);
@@ -93,9 +93,9 @@ public:
 	void saveAIState();
 	void restoreAIState();
 
-	void handleInput(const Input &, const Hotspot *);
-	void activateHotspots();
-	void clickInHotspot(const Input &, const Hotspot *);
+	void handleInput(const Input &, const Hotspot *) override;
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
 
 	void setAIVolume(const uint16);
 
@@ -140,7 +140,7 @@ public:
 	void getSmallInfoSegment(TimeValue &, TimeValue &);
 
 protected:
-	void useIdleTime();
+	void useIdleTime() override;
 
 	void setLeftMovieTime(const TimeValue);
 	void setMiddleMovieTime(const LowerClientSignature, const TimeValue);

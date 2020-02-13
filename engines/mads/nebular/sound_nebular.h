@@ -421,7 +421,7 @@ private:
 public:
 	ASound1(Audio::Mixer *mixer, OPL::OPL *opl);
 
-	virtual int command(int commandId, int param);
+	int command(int commandId, int param) override;
 };
 
 class ASound2 : public ASound {
@@ -431,7 +431,7 @@ private:
 	typedef int (ASound2::*CommandPtr)();
 	static const CommandPtr _commandList[44];
 
-	virtual int command0();
+	int command0() override;
 	int command9();
 	int command10();
 	int command11();
@@ -473,7 +473,7 @@ private:
 public:
 	ASound2(Audio::Mixer *mixer, OPL::OPL *opl);
 
-	virtual int command(int commandId, int param);
+	int command(int commandId, int param) override;
 };
 
 class ASound3 : public ASound {
@@ -533,7 +533,7 @@ private:
 public:
 	ASound3(Audio::Mixer *mixer, OPL::OPL *opl);
 
-	virtual int command(int commandId, int param);
+	int command(int commandId, int param) override;
 };
 
 class ASound4 : public ASound {
@@ -571,7 +571,7 @@ private:
 public:
 	ASound4(Audio::Mixer *mixer, OPL::OPL *opl);
 
-	virtual int command(int commandId, int param);
+	int command(int commandId, int param) override;
 };
 
 class ASound5 : public ASound {
@@ -617,7 +617,7 @@ private:
 public:
 	ASound5(Audio::Mixer *mixer, OPL::OPL *opl);
 
-	virtual int command(int commandId, int param);
+	int command(int commandId, int param) override;
 };
 
 class ASound6 : public ASound {
@@ -646,7 +646,7 @@ private:
 public:
 	ASound6(Audio::Mixer *mixer, OPL::OPL *opl);
 
-	virtual int command(int commandId, int param);
+	int command(int commandId, int param) override;
 };
 
 class ASound7 : public ASound {
@@ -678,7 +678,7 @@ private:
 public:
 	ASound7(Audio::Mixer *mixer, OPL::OPL *opl);
 
-	virtual int command(int commandId, int param);
+	int command(int commandId, int param) override;
 };
 
 class ASound8 : public ASound {
@@ -721,7 +721,7 @@ private:
 public:
 	ASound8(Audio::Mixer *mixer, OPL::OPL *opl);
 
-	virtual int command(int commandId, int param);
+	int command(int commandId, int param) override;
 };
 
 class ASound9 : public ASound {
@@ -780,7 +780,7 @@ private:
 public:
 	ASound9(Audio::Mixer *mixer, OPL::OPL *opl);
 
-	virtual int command(int commandId, int param);
+	int command(int commandId, int param) override;
 };
 
 } // End of namespace Nebular

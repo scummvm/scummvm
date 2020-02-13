@@ -46,7 +46,7 @@ public:
 			error("Script bindings could not be registered.");
 	}
 
-	virtual ~Geometry() {}
+	~Geometry() override {}
 
 private:
 	bool registerScriptBindings();

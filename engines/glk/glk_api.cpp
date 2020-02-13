@@ -132,6 +132,7 @@ uint GlkAPI::glk_gestalt_ext(uint id, uint val, uint *arr, uint arrlen) {
 		return false;
 
 	case gestalt_Sound:
+	case gestalt_Sound2:
 	case gestalt_SoundVolume:
 	case gestalt_SoundMusic:
 	case gestalt_SoundNotify:
@@ -151,7 +152,6 @@ uint GlkAPI::glk_gestalt_ext(uint id, uint val, uint *arr, uint arrlen) {
 	case gestalt_GarglkText:
 		return true;
 
-	case gestalt_Sound2:
 	default:
 		return false;
 	}
@@ -498,6 +498,9 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 		i = val > 0;
 		styles[style].font = WindowStyle::makeFont(p, b, i);
 		break;
+
+	default:
+		break;
 	}
 
 	if (wintype == wintype_TextBuffer && style == style_Normal && hint == stylehint_BackColor) {
@@ -550,6 +553,9 @@ void GlkAPI::glk_stylehint_clear(uint wintype, uint style, uint hint) {
 	case stylehint_Weight:
 	case stylehint_Oblique:
 		styles[style].font = defaults[style].font;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -911,6 +917,43 @@ bool GlkAPI::glk_image_draw_scaled(winid_t win, uint image, int val1, int val2,
 	return false;
 }
 
+bool GlkAPI::glk_image_draw(winid_t win, const Graphics::Surface &image, uint transColor,
+		int xp, int yp) {
+	if (!win) {
+		warning("image_draw: invalid ref");
+	} else if (g_conf->_graphics) {
+		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
+
+		if (gfxWin)
+			gfxWin->drawPicture(image, 0xff, xp, yp, 0, 0);
+	}
+
+	return true;
+}
+
+bool GlkAPI::glk_image_draw_scaled(winid_t win, const Graphics::Surface &image, uint transColor,
+		int xp, int yp, uint width, uint height) {
+	if (!win) {
+		warning("image_draw_scaled: invalid ref");
+	} else if (g_conf->_graphics) {
+		if (image.w == width && image.h == height) {
+			return glk_image_draw(win, image, transColor, xp, yp);
+
+		} else {
+			GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
+
+			Graphics::ManagedSurface s(width, height, image.format);
+			s.transBlitFrom(image, Common::Rect(0, 0, image.w, image.h),
+				Common::Rect(0, 0, width, height));
+
+			if (gfxWin)
+				gfxWin->drawPicture(s, transColor, xp, yp, s.w, s.h);
+		}
+	}
+
+	return true;
+}
+
 bool GlkAPI::glk_image_get_info(uint image, uint *width, uint *height) {
 	if (!g_conf->_graphics)
 		return false;
@@ -961,7 +1004,7 @@ void GlkAPI::glk_window_set_background_color(winid_t win, uint color) {
 }
 
 schanid_t GlkAPI::glk_schannel_create(uint rock) {
-	return _sounds->create(rock);
+	return _sounds->create(rock, GLK_MAXVOLUME);
 }
 
 void GlkAPI::glk_schannel_destroy(schanid_t chan) {
@@ -1024,8 +1067,7 @@ void GlkAPI::glk_sound_load_hint(uint snd, uint flag) {
 }
 
 schanid_t GlkAPI::glk_schannel_create_ext(uint rock, uint volume) {
-	// No implementation
-	return nullptr;
+	return _sounds->create(rock, volume);
 }
 
 uint GlkAPI::glk_schannel_play_multi(schanid_t *chanarray, uint chancount,

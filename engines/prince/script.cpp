@@ -441,6 +441,8 @@ Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *fla
 	_mode = "fg";
 	_fgOpcodePC = _script->getStartGameOffset();
 	_bgOpcodePC = 0;
+
+	memset(_stringBuf, 1, 1024);
 }
 
 void Interpreter::debugInterpreter(const char *s, ...) {
@@ -1013,13 +1015,8 @@ void Interpreter::O_XORFLAG() {
 void Interpreter::O_GETMOBTEXT() {
 	int32 mob = readScriptFlagValue();
 	_currentString = _vm->_locationNr * 100 + mob + 60001;
-	// FIXME: UB?
-	// This casts away the constness of the pointer returned by c_str() which is
-	// stored and potentially modified later (for example in printAt()).
-	// Also, the pointer is only valid as long as _vm->_mobList[mob]
-	// is around and _vm->_mobList[mob]._examText hasn't been modified by any of its
-	// non-const member functions which also might or might not be a problem.
-	_string = (byte *)_vm->_mobList[mob]._examText.c_str();
+	strncpy((char *)_stringBuf, _vm->_mobList[mob]._examText.c_str(), 1024);
+	_string = _stringBuf;
 	debugInterpreter("O_GETMOBTEXT mob %d", mob);
 }
 
@@ -1835,13 +1832,8 @@ void Interpreter::O_DISABLENAK() {
 
 void Interpreter::O_GETMOBNAME() {
 	int32 modId = readScriptFlagValue();
-	// FIXME: UB?
-	// This casts away the constness of the pointer returned by c_str() which is
-	// stored and potentially modified later (for example in printAt()).
-	// Also, the pointer is only valid as long as _vm->_mobList[mobId]
-	// is around and _vm->_mobList[mobId]._name hasn't been modified by any of its
-	// non-const member functions which also might or might not be a problem.
-	_string = (byte *)_vm->_mobList[modId]._name.c_str();
+	strncpy((char *)_stringBuf, _vm->_mobList[modId]._name.c_str(), 1024);
+	_string = _stringBuf;
 	debugInterpreter("O_GETMOBNAME modId %d", modId);
 }
 

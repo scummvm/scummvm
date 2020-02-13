@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Ivo : public Entity {
 public:
 	Ivo(LastExpressEngine *engine);
-	~Ivo() {}
+	~Ivo() override {}
 
 	/**
 	 * Resets the entity

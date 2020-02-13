@@ -51,12 +51,12 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"sam_mmm.res", 0, NULL, -1},
 			{"sam_sam.res", 0, NULL, -1},
 			//{"unlogic.res", 0, NULL, -1}, //skipped if not present
-			{NULL, 0, NULL, 0}
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NOSPEECH)
+		GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
 	},
 	{
 		"teenagent",
@@ -71,12 +71,12 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"sam_sam.res", 0, NULL, -1},
 			{"voices.res", 0, NULL, -1},
 			{"cdlogo.res", 0, NULL, -1},
-			{NULL, 0, NULL, 0}
+			AD_LISTEND
 		},
 		Common::CZ_CZE,
 		Common::kPlatformDOS,
 		ADGF_CD,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER,
 };
@@ -88,18 +88,21 @@ enum {
 class TeenAgentMetaEngine : public AdvancedMetaEngine {
 public:
 	TeenAgentMetaEngine() : AdvancedMetaEngine(teenAgentGameDescriptions, sizeof(ADGameDescription), teenAgentGames) {
-		_singleId = "teenagent";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "teenagent";
+	}
+
+	const char *getName() const override {
 		return "TeenAgent";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "TEENAGENT (C) 1994 Metropolis";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const {
+	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSupportsListSaves:
 		case kSupportsDeleteSave:
@@ -112,7 +115,7 @@ public:
 		}
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
 			*engine = new TeenAgent::TeenAgentEngine(syst, desc);
 		}
@@ -123,7 +126,7 @@ public:
 		return Common::String::format("%s.%02d", target, slot);
 	}
 
-	virtual SaveStateList listSaves(const char *target) const {
+	SaveStateList listSaves(const char *target) const override {
 		Common::String pattern = target;
 		pattern += ".##";
 
@@ -149,16 +152,16 @@ public:
 		return saveList;
 	}
 
-	virtual int getMaximumSaveSlot() const {
+	int getMaximumSaveSlot() const override {
 		return MAX_SAVES - 1;
 	}
 
-	virtual void removeSaveState(const char *target, int slot) const {
+	void removeSaveState(const char *target, int slot) const override {
 		Common::String filename = generateGameStateFileName(target, slot);
 		g_system->getSavefileManager()->removeSavefile(filename);
 	}
 
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Common::String filename = generateGameStateFileName(target, slot);
 		Common::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(filename));
 		if (!in)

@@ -30,7 +30,7 @@ namespace Titanic {
 
 TTconcept::TTconcept() : _string1(" "), _string2(" "),
 		_nextP(nullptr), _scriptP(nullptr), _wordP(nullptr), _word2P(nullptr), _status(SS_VALID),
-		_scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field20(0), _field34(0) {
+		_scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field1C(0), _field20(0), _field30(0), _field34(0) {
 	if (setStatus())
 		setScriptType(ST_UNKNOWN_SCRIPT);
 	else
@@ -39,7 +39,8 @@ TTconcept::TTconcept() : _string1(" "), _string2(" "),
 
 TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
 		_string1(" "), _string2(" "), _nextP(nullptr), _wordP(nullptr), _word2P(nullptr), _scriptP(nullptr),
-		_status(SS_VALID), _scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field20(0), _field34(0) {
+		_status(SS_VALID), _scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field1C(0), _field20(0), _field30(0),
+		_field34(0) {
 	if (!script->getStatus()) {
 		setScriptType(scriptType);
 		_scriptP = script;
@@ -53,7 +54,7 @@ TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
 }
 
 TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
-		_string1(" "), _string2(" "), _nextP(nullptr), _wordP(nullptr), _scriptP(nullptr),
+		_string1(" "), _string2(" "), _nextP(nullptr), _wordP(nullptr), _word2P(nullptr), _scriptP(nullptr),
 		_status(SS_VALID), _scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field1C(0), _field20(0),
 		_field30(0), _field34(0), _flag(false) {
 	if (!word || !setStatus() || word->getStatus()) {
@@ -257,7 +258,7 @@ bool TTconcept::checkWordId2() const {
 
 bool TTconcept::checkWordId3() const {
 	return isWordClass(WC_ABSTRACT) || isWordClass(WC_ADJECTIVE) ||
-		(isWordClass(WC_ADVERB) && getWordId() != 910);
+		(isWordClass(WC_ADVERB) && getTheWordId() != 910);
 }
 
 bool TTconcept::checkWordClass() const {
@@ -300,16 +301,20 @@ TTconcept *TTconcept::findBy20(int val) {
 	return nullptr;
 }
 
-bool TTconcept::isWordId(int id) const {
-	if (this == nullptr)
-		return false;
+bool TTconcept::isTheWordId(int id) const {
 	return _wordP && _wordP->_id == id;
 }
 
-int TTconcept::getWordId() const {
-	if (this == nullptr)
-		return 0;
+int TTconcept::getTheWordId() const {
 	return _wordP ? _wordP->_id : 0;
+}
+
+bool isWordId(const TTconcept *concept, int id) {
+	return concept ? concept->isTheWordId(id) : 0;
+}
+
+int getWordId(const TTconcept *concept) {
+	return concept ? concept->getTheWordId() : 0;
 }
 
 } // End of namespace Titanic

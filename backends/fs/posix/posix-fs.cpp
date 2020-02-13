@@ -33,7 +33,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_srandom
 
 #include "backends/fs/posix/posix-fs.h"
-#include "backends/fs/stdiostream.h"
+#include "backends/fs/posix/posix-iostream.h"
 #include "common/algorithm.h"
 
 #include <sys/param.h>
@@ -57,6 +57,9 @@
 #include <os2.h>
 #endif
 
+#if defined(__ANDROID__) && !defined(ANDROIDSDL)
+#include "backends/platform/android/jni-android.h"
+#endif
 
 bool POSIXFilesystemNode::exists() const {
 	return access(_path.c_str(), F_OK) == 0;
@@ -91,13 +94,13 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 #endif
 
 	// Expand "~/" to the value of the HOME env variable
-	if (p.hasPrefix("~/")) {
+	if (p.hasPrefix("~/") || p == "~") {
 		const char *home = getenv("HOME");
 		if (home != NULL && strlen(home) < MAXPATHLEN) {
 			_path = home;
-			// Skip over the tilda.  We know that p contains at least
-			// two chars, so this is safe:
-			_path += p.c_str() + 1;
+			// Skip over the tilda.
+			if (p.size() > 1)
+				_path += p.c_str() + 1;
 		}
 	} else {
 		_path = p;
@@ -186,6 +189,23 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		myList.push_back(entry1);
 		POSIXFilesystemNode *entry2 = new POSIXFilesystemNode("uma0:");
 		myList.push_back(entry2);
+		return true;
+	}
+#endif
+
+#if defined(__ANDROID__) && !defined(ANDROIDSDL)
+	if (_path == "/") {
+		Common::Array<Common::String> list = JNI::getAllStorageLocations();
+		for (Common::Array<Common::String>::const_iterator it = list.begin(), end = list.end(); it != end; ++it) {
+			POSIXFilesystemNode *entry = new POSIXFilesystemNode();
+
+			entry->_isDirectory = true;
+			entry->_isValid = true;
+			entry->_displayName = *it;
+			++it;
+			entry->_path = *it;
+			myList.push_back(entry);
+		}
 		return true;
 	}
 #endif
@@ -292,40 +312,18 @@ AbstractFSNode *POSIXFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *POSIXFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	return PosixIoStream::makeFromPath(getPath(), false);
 }
 
 Common::WriteStream *POSIXFilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath(), true);
+	return PosixIoStream::makeFromPath(getPath(), true);
 }
 
-bool POSIXFilesystemNode::create(bool isDirectoryFlag) {
-	bool success;
-
-	if (isDirectoryFlag) {
-		success = mkdir(_path.c_str(), 0755) == 0;
-	} else {
-		int fd = open(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0755);
-		success = fd >= 0;
-
-		if (fd >= 0) {
-			close(fd);
-		}
-	}
-
-	if (success) {
+bool POSIXFilesystemNode::createDirectory() {
+	if (mkdir(_path.c_str(), 0755) == 0)
 		setFlags();
-		if (_isValid) {
-			if (_isDirectory != isDirectoryFlag) warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
-			return _isDirectory == isDirectoryFlag;
-		}
 
-		warning("POSIXFilesystemNode: %s() was a success, but stat indicates there is no such %s",
-			isDirectoryFlag ? "mkdir" : "creat", isDirectoryFlag ? "directory" : "file");
-		return false;
-	}
-
-	return false;
+	return _isValid && _isDirectory;
 }
 
 namespace Posix {

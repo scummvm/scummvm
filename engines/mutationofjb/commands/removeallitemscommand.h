@@ -31,15 +31,15 @@ class RemoveAllItemsCommandParser : public SeqCommandParser {
 public:
 	RemoveAllItemsCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class RemoveAllItemsCommand : public SeqCommand {
 public:
 	RemoveAllItemsCommand() {}
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 };
 

@@ -3,25 +3,23 @@ ScummVM 3DS README
 
 Table of Contents:
 ------------------
-1.0) Installation
- * 1.1 3DSX installation
- * 1.2 CIA installation
- * 1.3 Additional files
+[1.0) Installation](#10-installation)
+ * [1.1 3DSX installation](#11-3dsx-installation)
+ * [1.2 CIA installation](#12-cia-installation)
 
-2.0) Controls
- * 2.1 Default key mappings
- * 2.2 Hover mode
- * 2.3 Drag mode
+[2.0) Controls](#20-controls)
+ * [2.1 Default key mappings](#21-default-key-mappings)
+ * [2.2 Hover mode](#22-hover-mode)
+ * [2.3 Drag mode](#23-drag-mode)
+ * [2.4 Magnify mode](#24-magnify-mode)
 
-3.0) Supported Games
+[3.0) Supported Games](#30-supported-games)
 
-4.0) Compiling
- * 4.1 Prerequisites
- * * 4.1.1 Compiling third-party libraries
- * * 4.1.2 Manually setting up the environment
- * * 4.1.3 Note on FLAC
- * 4.2 Compiling ScummVM
- * 4.3 Warning for build sizes
+[4.0) Compiling](#40-compiling)
+ * [4.1 Prerequisites](#41-prerequisites)
+ * * [4.1.1 Compiling third-party libraries](#411-compiling-third-party-libraries)
+ * * [4.1.2 Manually setting up the environment](#412-manually-setting-up-the-environment)
+ * [4.2 Compiling ScummVM](#42-compiling-scummvm)
 
 1.0) Installation
 -----------------
@@ -49,36 +47,30 @@ Not having this file will cause many problems with games that need audio, someti
 even crashing, so this is NOT considered optional.
 
 Using any CIA installation software (search elsewhere for that), you need to install
-the `scummvm.cia` file. Then, just like what is done with the 3DSX installation, you
-need to extract all ScummVM 3DS files (`scummvm.cia` excluded) to the root of your SD
-card so that all files reside in the `/3ds/scummvm/` directory.
-
-1.3) Additional files
----------------------
-In order to use the Virtual Keyboard, you need to get the:
-`backends/vkeybd/packs/vkeybd_small.zip` file from ScummVM's repository, and
-place it on your SD card, in the `/3ds/scummvm/kb` folder.
-
-In case you want a translated GUI, you need to get the:
-`scummvm/gui/themes/translations.dat` file from ScummVM's repository, and place
-it on your SD card, in the `/3ds/scummvm/themes` folder.
+the `scummvm.cia` file.
 
 2.0) Controls
 -------------
 
 2.1) Default key mappings
 -------------------------
-The D-Pad and A/B/X/Y buttons have mirrored usage. So they do the same things
-depending on if you're right or left-handed.
+
+The key mappings can be customized in the options dialog for the global mappings,
+and in the edit game dialog for per-game mappings. Per-game mappings overlay the
+global mappings, so if a button is bound to an action twice, the per-game mapping
+wins.
+
+The default keymap is:
 
 |  Buttons   |   Function                     |
 |------------|--------------------------------|
-| A / D-left | Left-click                     |
-| X / D-up   | Right-click                    |
-| B / D-down | ESC (skips cutscenes and such) |
-| L          | Use virtual keyboard           |
+| A          | Left-click                     |
+| B          | Right-click                    |
+| Y          | ESC (skips cutscenes and such) |
+| X          | Use virtual keyboard           |
+| L          | Toggle magnify mode on/off     |
 | R          | Toggle hover/drag modes        |
-| Start      | Open game menu                 |
+| Start      | Open global main menu          |
 | Select     | Open 3DS config menu           |
 | Circle Pad | Move the cursor                |
 
@@ -92,6 +84,31 @@ mouse button without using buttons mapped to right/left-click.
 --------------
 Every time you touch and release the touchscreen, you are simulating the click and
 release of the mouse buttons. At the moment, this is only a left-click.
+
+2.4) Magnify mode
+-----------------
+Due to the low resolutions of the 3DS's two screens (400x240 for the top, and 320x240
+for the bottom), games that run at a higher resolution will inevitably lose some visual
+detail from being scaled down. This can result in situations where essential information
+is undiscernable, such as text. Magnify mode increases the scale factor of the top screen
+back to 1; the bottom screen remains unchanged. The touchscreen can then be used to change
+which part of the game display is being magnified. This can all be done even in situations
+where the cursor is disabled, such as during full-motion video (FMV) segments.
+
+When activating magnify mode, touchscreen controls are automatically switched to hover
+mode; this is to reduce the risk of the user accidentally inputting a click when changing
+the magnified area via dragging the stylus. Clicking can still be done at will as in normal
+hover mode. Turning off magnify mode will revert controls back to what was being used
+previously (ex: if drag mode was in use prior to activating magnify mode, drag mode will
+be reactivated upon exiting magnify mode), as well as restore the top screen's previous
+scale factor.
+
+Currently magnify mode can only be used when the following conditions are met:
+ - In the 3DS config menu, "Use Screen" is set to "Both"
+ - A game is currently being played
+ - The horizontal and/or vertical resolution in-game is greater than that of the top screen
+
+Magnify mode cannot be used in the Launcher menu.
 
 3.0) Supported Games
 --------------------
@@ -133,10 +150,17 @@ The following libraries can be downloaded with pacman:
 |  libmad       |  3ds-libmad           |
 |  libogg       |  3ds-libogg           |
 |  tremor       |  3ds-libvorbisidec    |
+|  flac         |  3ds-flac             |
+|  curl         |  3ds-curl             |
 
-At the moment of writing, `faad` and `flac` are not in the devkitPro 3DS pacman
-repository. They can be compiled by following the instructions in the section below,
-in case they cannot be found through pacman.
+At the moment of writing, the version of `freetype2` packaged by devkitPro has an issue
+where it allocates too much data on the stack when ScummVM loads GUI themes.
+As a workaround, an older version can be used. Version 2.6.5 is known to work well. The
+instructions below can be used to compile it.
+
+At the moment of writing, `faad` is not in the devkitPro 3DS pacman repository. It
+can be compiled by following the instructions in the section below, in case it cannot
+be found through pacman.
 
 The following pacman packages are also recommended:
  - `3ds-dev`
@@ -188,21 +212,6 @@ In the source directory of the library:
  $ export LDFLAGS="-L$PORTLIBS/lib"
  ```
 
-4.1.3) Note on FLAC:
---------------------
-At the moment of writing, the `libflac` library cannot be compiled for the 3DS out of the box.
-However, the following patch (for the Nintendo Switch) can be adapted and applied to it:
-https://github.com/devkitPro/pacman-packages/tree/master/switch/flac
-
-Afterwards, the library can be built with:
-```
- $  CFLAGS="${CFLAGS} -D__3DS__ " \
-    ./configure --prefix="${PORTLIBS_PREFIX}" --host=arm-none-eabi \
-    --disable-shared --enable-static \
-    --disable-xmms-plugin --disable-cpplibs \
-    --disable-sse --without-ogg
-```
-
 4.2) Compiling ScummVM
 ----------------------
 Do the following in a fresh terminal.
@@ -214,9 +223,15 @@ Note: In more recent codebases of ScummVM, you may or may not need to set the fo
 ```$ export PKG_CONFIG_LIBDIR=$PORTLIBS/lib/pkgconfig```
 See above for $PORTLIBS.
 
+ScummVM doesn't provide the CA certificates bundle required by the cloud synchronization features.
+You need to download it from the curl website: https://curl.haxx.se/ca/cacert.pem, and instruct
+the build system to package it in the binary:
+```$ export DIST_3DS_EXTRA_FILES=/path/to/cacert.pem```
+The name of the file must be `cacert.pem`.
+
 From the root of the scummvm repository:
 ```
- $ ./configure --host=3ds
+ $ ./configure --host=3ds --enable-plugins --default-dynamic
  $ make
 ```
 Additionally compile to specific formats to be used on the 3DS:
@@ -224,7 +239,6 @@ Additionally compile to specific formats to be used on the 3DS:
  $ make scummvm.3dsx
  $ make scummvm.cia
 ```
-**_Read the warning about build sizes below._**
 
 Assuming everything was successful, you'll be able to find the binary
 files in the root of your scummvm folder.
@@ -232,14 +246,5 @@ files in the root of your scummvm folder.
 Note: for the CIA format, you will need the 'makerom' and 'bannertool' tools which are
 not supplied with devkitPro.
 
-4.3) Warning for build sizes
----------------------------
-The above configuration command will include all game engines by default and will
-likely be too massive to be stable using either the 3DSX or the CIA format.
-Until dynamic modules are figured out, you should configure engines like this:
-```
- $ ./configure --host=3ds --disable-all-engines --enable-engine=scumm-7-8,myst,riven, \
-     sword1,sword2,sword25,sci,lure,sky,agi,agos
-```
-Choose whatever engines you want, but if the ELF's .text section exceeds ~10MB-12MB,
-you may experience crashes in memory-intensive games such as COMI, Broken Sword and Discworld 2.
+Note: using dynamic plugins as suggested is required when building with most or all of the
+game engines enabled in order to keep the memory usage low and avoid stability issues.

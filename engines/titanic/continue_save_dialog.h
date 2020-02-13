@@ -80,12 +80,12 @@ private:
 	Rect getSlotBounds(int index);
 public:
 	CContinueSaveDialog();
-	virtual ~CContinueSaveDialog();
+	~CContinueSaveDialog() override;
 
-	virtual void mouseMove(const Point &mousePos);
-	virtual void leftButtonDown(const Point &mousePos);
-	virtual void leftButtonUp(const Point &mousePos);
-	virtual void keyDown(Common::KeyState keyState);
+	void mouseMove(const Point &mousePos) override;
+	void leftButtonDown(const Point &mousePos) override;
+	void leftButtonUp(const Point &mousePos) override;
+	void keyDown(Common::KeyState keyState) override;
 
 	/**
 	 * Add a savegame to the list to be displayed

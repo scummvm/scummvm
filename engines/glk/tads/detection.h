@@ -56,6 +56,13 @@ public:
 	 * Check for game Id clashes with other sub-engines
 	 */
 	static void detectClashes(Common::StringMap &map);
+
+	/**
+	 * Determines whether the given game is TADS 2 or 3
+	 * @param game		Open stream pointing to game file
+	 * @returns			2 for TADS 2, 3 for TADS 3, or -1 for error
+	 */
+	static int getTADSVersion(Common::SeekableReadStream &game);
 };
 
 } // End of namespace TADS

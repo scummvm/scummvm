@@ -161,11 +161,6 @@ void OSystem_SDL_Symbian::checkMappings() {
 	GUI::Actions::Instance()->initInstanceGame();
 }
 
-// make sure we always go to normal, even if the string might be set wrong!
-bool OSystem_SDL_Symbian::setGraphicsMode(const char * /*name*/) {
-	return _graphicsManager->setGraphicsMode(0);
-}
-
 Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 	strcpy(configFile, Symbian::GetExecutablePath());

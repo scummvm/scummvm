@@ -91,8 +91,15 @@ void DreamWebEngine::startTalk() {
 	uint16 y;
 
 	_charShift = 91+91;
+
+	if (getLanguage() == Common::RU_RUS)
+		useCharsetIcons1();
+
 	y = 64;
 	printDirect(&str, 66, &y, 241, true);
+
+	if (getLanguage() == Common::RU_RUS)
+		resetCharset();
 
 	_charShift = 0;
 	y = 80;

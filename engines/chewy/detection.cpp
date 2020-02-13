@@ -67,7 +67,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOMIDI)
 		},
 	},
 
@@ -84,7 +84,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOMIDI)
 		},
 	},
 
@@ -101,7 +101,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOMIDI)
 		},
 	},
 
@@ -115,23 +115,26 @@ public:
 	ChewyMetaEngine() : AdvancedMetaEngine(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
-		_singleId = "chewy";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "chewy";
+	}
+
+	const char *getName() const override {
 		return "Chewy: Esc from F5";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Chewy: Esc from F5 (C) 1995 New Generation Software";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool ChewyMetaEngine::hasFeature(MetaEngineFeature f) const {

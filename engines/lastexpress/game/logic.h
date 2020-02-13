@@ -44,10 +44,10 @@ class State;
 class Logic : public EventHandler {
 public:
 	Logic(LastExpressEngine *engine);
-	~Logic();
+	~Logic() override;
 
-	void eventMouse(const Common::Event &ev);
-	void eventTick(const Common::Event &ev);
+	void eventMouse(const Common::Event &ev) override;
+	void eventTick(const Common::Event &ev) override;
 
 	void resetState();
 	void gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, bool showScene) const;

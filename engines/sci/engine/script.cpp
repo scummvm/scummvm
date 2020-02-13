@@ -80,7 +80,7 @@ enum {
 	kSci11ExportTableOffset = 8
 };
 
-void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher) {
+void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher, bool applyScriptPatches) {
 	freeScript();
 
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), false);
@@ -147,7 +147,8 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 	}
 
 	// Check scripts (+ possibly SCI 1.1 heap) for matching signatures and patch those, if found
-	scriptPatcher->processScript(_nr, outBuffer);
+	if (applyScriptPatches)
+		scriptPatcher->processScript(_nr, outBuffer);
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		// Some buggy game scripts contain two export tables (e.g. script 912
@@ -1067,7 +1068,7 @@ void Script::initializeClasses(SegManager *segMan) {
 	}
 }
 
-void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
+void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches) {
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	// We need to make two passes, as the objects in the script might be in the
@@ -1088,10 +1089,10 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 					Object *obj;
 					if (pass == 1) {
 						obj = scriptObjInit(addr);
-						obj->initSpecies(segMan, addr);
+						obj->initSpecies(segMan, addr, applyScriptPatches);
 					} else {
 						obj = getObject(addr.getOffset());
-						if (!obj->initBaseObject(segMan, addr)) {
+						if (!obj->initBaseObject(segMan, addr, true, applyScriptPatches)) {
 							if ((_nr == 202 || _nr == 764) && g_sci->getGameId() == GID_KQ5) {
 								// WORKAROUND: Script 202 of KQ5 French and German
 								// (perhaps Spanish too?) has an invalid object.
@@ -1119,7 +1120,7 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 	relocateSci0Sci21(segmentId);
 }
 
-void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
+void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches) {
 	SciSpan<const byte> seeker = _heap.subspan(4 + _heap.getUint16SEAt(2) * 2);
 	Common::Array<reg_t> mismatchedVarCountObjects;
 
@@ -1129,7 +1130,7 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 
 		// Copy base from species class, as we need its selector IDs
 		obj->setSuperClassSelector(
-			segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0));
+			segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0, applyScriptPatches));
 
 		// -propDict- is used by Obj::isMemberOf to determine if an object
 		// is an instance of a class. For classes, we therefore relocate
@@ -1187,12 +1188,12 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 }
 
 #ifdef ENABLE_SCI32
-void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
+void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches) {
 	SciSpan<const byte> seeker = getSci3ObjectsPointer();
 
 	while (seeker.getUint16SEAt(0) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		Object *obj = scriptObjInit(make_reg32(segmentId, seeker - *_buf));
-		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0));
+		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0, applyScriptPatches));
 		seeker += seeker.getUint16SEAt(2);
 	}
 
@@ -1200,14 +1201,14 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 }
 #endif
 
-void Script::initializeObjects(SegManager *segMan, SegmentId segmentId) {
+void Script::initializeObjects(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches) {
 	if (getSciVersion() <= SCI_VERSION_1_LATE)
-		initializeObjectsSci0(segMan, segmentId);
+		initializeObjectsSci0(segMan, segmentId, applyScriptPatches);
 	else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE)
-		initializeObjectsSci11(segMan, segmentId);
+		initializeObjectsSci11(segMan, segmentId, applyScriptPatches);
 #ifdef ENABLE_SCI32
 	else if (getSciVersion() == SCI_VERSION_3)
-		initializeObjectsSci3(segMan, segmentId);
+		initializeObjectsSci3(segMan, segmentId, applyScriptPatches);
 #endif
 }
 

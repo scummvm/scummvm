@@ -97,6 +97,7 @@ void Dialogs::setReadyLight(byte state) {
 	// TODO: Implement different patterns for green color.
 	Color color = kColorBlack;
 	switch (state) {
+	default:
 	case 0:
 		color = kColorBlack;
 		break; // Off
@@ -459,6 +460,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 
 	byte iconIndent = 0;
 	switch (_useIcon) {
+	default:
 	case 0:
 		iconIndent = 0;
 		break; // No icon.
@@ -494,6 +496,8 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 				_scroll[i].setChar(' ', 0);
 				_vm->_graphics->drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
 				_vm->_graphics->drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
+				break;
+			default:
 				break;
 			}
 
@@ -734,7 +738,7 @@ void Dialogs::displayText(Common::String text) {
 					return;
 				break;
 
-			// CHECME: The whole kControlNegative block seems completely unused, as the only use (the easter egg check) is a false positive
+			// CHECKME: The whole kControlNegative block seems completely unused, as the only use (the easter egg check) is a false positive
 			case kControlNegative:
 				switch (_param) {
 				case 1:
@@ -782,6 +786,8 @@ void Dialogs::displayText(Common::String text) {
 						if (_vm->_objects[j])
 							displayText(_vm->getItem(j) + ", " + kControlToBuffer);
 					}
+					break;
+				default:
 					break;
 				}
 				break;
@@ -1031,6 +1037,8 @@ void Dialogs::talkTo(byte whom) {
 				case 3:
 					displayScrollChain('Q', 30); // Need any help with the game?
 					return;
+				default:
+					break;
 				}
 			} else {
 				displayScrollChain('Q', 42); // Haven't talked to Crapulus. Go and talk to him.
@@ -1084,6 +1092,9 @@ void Dialogs::talkTo(byte whom) {
 					return;
 				}
 			}
+			break;
+
+		default:
 			break;
 		}
 	// On a subject. Is there any reason to block it?

@@ -35,7 +35,7 @@ class Instrument;
 
 class InstrumentInternal : public Common::Serializable {
 public:
-	virtual ~InstrumentInternal() {}
+	~InstrumentInternal() override {}
 	virtual void send(MidiChannel *mc) = 0;
 	virtual void copy_to(Instrument *dest) = 0;
 	virtual bool is_valid() = 0;
@@ -57,7 +57,7 @@ public:
 	};
 
 	Instrument() : _type(0), _instrument(0) { }
-	~Instrument() { delete _instrument; }
+	~Instrument() override { delete _instrument; }
 	static void nativeMT32(bool native);
 	static const byte _gmRhythmMap[35];
 
@@ -77,7 +77,7 @@ public:
 
 	byte getType() { return _type; }
 	bool isValid() { return (_instrument ? _instrument->is_valid() : false); }
-	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 	void send(MidiChannel *mc) {
 		if (_instrument)
 			_instrument->send(mc);

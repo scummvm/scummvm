@@ -199,7 +199,7 @@ protected:
 class MenuActionEnterMenu : public BaseMenuAction {
 public:
 	MenuActionEnterMenu(BaseMenuSystem *menuSystem, int menuId);
-	virtual void execute();
+	void execute() override;
 protected:
 	int _menuId;
 };
@@ -209,7 +209,7 @@ protected:
 class MenuActionLeaveMenu : public BaseMenuAction {
 public:
 	MenuActionLeaveMenu(BaseMenuSystem *menuSystem);
-	virtual void execute();
+	void execute() override;
 };
 
 // Type 5: Return a menu choice index and exit the menu
@@ -217,7 +217,7 @@ public:
 class MenuActionReturnChoice : public BaseMenuAction {
 public:
 	MenuActionReturnChoice(BaseMenuSystem *menuSystem, uint choiceIndex);
-	virtual void execute();
+	void execute() override;
 protected:
 	int _choiceIndex;
 };
@@ -227,7 +227,7 @@ protected:
 class MenuActionEnterQueryMenu : public BaseMenuAction {
 public:
 	MenuActionEnterQueryMenu(BaseMenuSystem *menuSystem, int menuId, uint confirmationChoiceIndex);
-	virtual void execute();
+	void execute() override;
 protected:
 	int _menuId;
 	uint _confirmationChoiceIndex;
@@ -236,7 +236,7 @@ protected:
 class MenuActionLoadGame : public BaseMenuAction {
 public:
 	MenuActionLoadGame(BaseMenuSystem *menuSystem, uint choiceIndex);
-	virtual void execute();
+	void execute() override;
 protected:
 	uint _choiceIndex;
 };
@@ -244,7 +244,7 @@ protected:
 class MenuActionSaveGame : public BaseMenuAction {
 public:
 	MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIndex);
-	virtual void execute();
+	void execute() override;
 protected:
 	uint _choiceIndex;
 };

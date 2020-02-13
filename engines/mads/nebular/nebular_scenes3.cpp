@@ -548,6 +548,9 @@ void Scene307::handlePrisonerEncounter() {
 	case 276:
 		setDialogNode(6);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -715,6 +718,9 @@ void Scene307::handlePrisonerDialog() {
 
 	case 0x122:
 		setDialogNode(15);
+		break;
+
+	default:
 		break;
 	}
 }
@@ -934,6 +940,9 @@ void Scene307::actions() {
 
 		case 1:
 			setDialogNode(node);
+			break;
+
+		default:
 			break;
 		}
 	} else if (_action.isAction(VERB_PRY, NOUN_SCALPEL, NOUN_AIR_VENT)) {
@@ -1182,6 +1191,9 @@ void Scene307::actions() {
 
 		case 3:
 			_vm->_dialogs->show(30722);
+			break;
+
+		default:
 			break;
 		}
 	} else
@@ -1523,6 +1535,9 @@ void Scene309::step() {
 			_scene->_kernelMessages.setQuoted(idx, 2, true);
 			_scene->_sequences.addTimer(120, 78);
 			}
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -2364,6 +2379,9 @@ void Scene316::actions() {
 		case 4:
 			_scene->_nextSceneId = 321;
 			break;
+
+		default:
+			break;
 		}
 	} else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
 		_vm->_dialogs->show(31610);
@@ -2538,6 +2556,9 @@ void Scene318::handleDialog() {
 				_explosionFl = true;
 				_internCounter = 3420;
 			}
+			break;
+
+		default:
 			break;
 		}
 
@@ -2760,6 +2781,9 @@ void Scene318::step() {
 					_internVisibleFl = false;
 				}
 				break;
+
+			default:
+				break;
 			}
 
 			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
@@ -2791,6 +2815,9 @@ void Scene318::step() {
 	case 64:
 		_vm->_sound->command(3);
 		_scene->_nextSceneId = 307;
+		break;
+
+	default:
 		break;
 	}
 
@@ -2923,6 +2950,9 @@ void Scene318::actions() {
 
 		case 3:
 			_game._player._stepEnabled = true;
+			break;
+
+		default:
 			break;
 		}
 		_action._inProgress = false;
@@ -4093,6 +4123,9 @@ void Scene351::actions() {
 				_game._player._stepEnabled = true;
 				_vm->_dialogs->showItem(OBJ_CREDIT_CHIP, 0x32F);
 				break;
+
+			default:
+				break;
 			}
 		}
 	} else if (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN))
@@ -4407,6 +4440,9 @@ void Scene352::actions() {
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x101));
 				_game._player._stepEnabled = true;
 				break;
+
+			default:
+				break;
 			}
 		}
 		_action._inProgress = false;
@@ -4469,6 +4505,9 @@ void Scene352::actions() {
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
 				_vm->_dialogs->showItem(OBJ_GUARDS_ARM, 0x899C);
+				break;
+
+			default:
 				break;
 			}
 			_action._inProgress = false;
@@ -4552,6 +4591,9 @@ void Scene352::actions() {
 				_lampHostpotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
 				_game._player._stepEnabled = true;
 				}
+				break;
+
+			default:
 				break;
 			}
 		}

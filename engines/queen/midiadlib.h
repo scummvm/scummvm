@@ -33,18 +33,18 @@ public:
 		_isOpen = false;
 	}
 
-	~AdLibMidiDriver() {}
+	~AdLibMidiDriver() override {}
 
 	// MidiDriver
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
-	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
-	bool isOpen() const { return _isOpen; }
-	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
+	void metaEvent(byte type, byte *data, uint16 length) override;
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
+	bool isOpen() const override { return _isOpen; }
+	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setVolume(uint32 volume);
 

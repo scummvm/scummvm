@@ -23,8 +23,9 @@
 #include "glk/frotz/windows.h"
 #include "glk/frotz/frotz.h"
 #include "glk/window_pair.h"
-#include "glk/window_text_grid.h"
+#include "glk/window_graphics.h"
 #include "glk/window_text_buffer.h"
+#include "glk/window_text_grid.h"
 #include "glk/conf.h"
 
 namespace Glk {
@@ -43,12 +44,17 @@ Window &Windows::operator[](uint idx) {
 }
 
 void Windows::setup(bool isVersion6) {
+	MonoFontInfo &mi = g_vm->_conf->_monoInfo;
+
 	if (isVersion6) {
 		// For graphic games we have a background window covering the entire screen for greater
 		// flexibility of wher we draw pictures, and the lower and upper areas sit on top of them
 		_background = g_vm->glk_window_open(0, 0, 0, wintype_Graphics, 0);
 		_background->setBackgroundColor(0xffffff);
 
+		Window &w = _windows[0];
+		w[X_SIZE] = g_vm->h_screen_width;
+		w[Y_SIZE] = g_vm->h_screen_height;
 	} else {
 		_lower = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 		_upper = g_vm->glk_window_open(_lower, winmethod_Above | winmethod_Fixed, 0, wintype_TextGrid, 0);
@@ -58,7 +64,6 @@ void Windows::setup(bool isVersion6) {
 		g_vm->glk_set_window(_lower);
 	}
 
-	MonoFontInfo &mi = g_vm->_conf->_monoInfo;
 	for (size_t idx = 0; idx < 8; ++idx) {
 		Window &w = _windows[idx];
 		w._windows = this;
@@ -81,9 +86,24 @@ void Windows::setWindow(int win) {
 		g_vm->glk_set_window(_windows[_cwin]._win);
 }
 
+void Windows::showTextWindows() {
+	// For v6, drawing graphics brings them to the front (such for title screens). So check for it
+	const PairWindow *pairWin = dynamic_cast<const PairWindow *>(g_vm->glk_window_get_root());
+	if (g_vm->h_version == V6 && pairWin && dynamic_cast<GraphicsWindow *>(pairWin->_children.back())) {
+		// Yep, it's at the forefront. So since we're now drawing text, ensure all text windows are in front of it
+		for (uint idx = 0; idx < size(); ++idx) {
+			if (_windows[idx]) {
+				winid_t win = _windows[idx];
+				if (dynamic_cast<TextWindow *>(win))
+					win->bringToFront();
+			}
+		}
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
-Window::Window() : _windows(nullptr), _win(nullptr), _quotes(0), _dashes(0), _spaces(0),
+Window::Window() : _windows(nullptr), _win(nullptr), _quotes(0), _dashes(0), _spaces(0), _index(-1),
 		_currFont(TEXT_FONT), _prevFont(TEXT_FONT), _tempFont(TEXT_FONT), _currStyle(0), _oldStyle(0) {
 	Common::fill(_properties, _properties + TRUE_BG_COLOR + 1, 0);
 	_properties[Y_POS] = _properties[X_POS] = 1;
@@ -94,22 +114,24 @@ Window::Window() : _windows(nullptr), _win(nullptr), _quotes(0), _dashes(0), _sp
 
 void Window::update() {
 	assert(_win);
+	int cellW = (g_vm->h_version < V5) ? g_vm->h_font_width : 1;
+	int cellH = (g_vm->h_version < V5) ? g_vm->h_font_height : 1;
 
-	_properties[X_POS] = _win->_bbox.left / g_conf->_monoInfo._cellW + 1;
-	_properties[Y_POS] = _win->_bbox.top / g_conf->_monoInfo._cellH + 1;
-	_properties[X_SIZE] = _win->_bbox.width() / g_conf->_monoInfo._cellW;
-	_properties[Y_SIZE] = _win->_bbox.height() / g_conf->_monoInfo._cellH;
+	_properties[X_POS] = _win->_bbox.left / cellW + 1;
+	_properties[Y_POS] = _win->_bbox.top / cellH + 1;
+	_properties[X_SIZE] = _win->_bbox.width() / cellW;
+	_properties[Y_SIZE] = _win->_bbox.height() / cellH;
 
 	Point pt = _win->getCursor();
-	_properties[X_CURSOR] = (g_vm->h_version != V6) ? pt.x + 1 : pt.x / g_conf->_monoInfo._cellW + 1;
-	_properties[Y_CURSOR] = (g_vm->h_version != V6) ? pt.y + 1 : pt.y / g_conf->_monoInfo._cellH + 1;
+	_properties[X_CURSOR] = (g_vm->h_version != V6) ? pt.x + 1 : pt.x / cellW + 1;
+	_properties[Y_CURSOR] = (g_vm->h_version != V6) ? pt.y + 1 : pt.y / cellH + 1;
 
 	TextBufferWindow *win = dynamic_cast<TextBufferWindow *>(_win);
-	_properties[LEFT_MARGIN] = (win ? win->_ladjw : 0) / g_conf->_monoInfo._cellW;
-	_properties[RIGHT_MARGIN] = (win ? win->_radjw : 0) / g_conf->_monoInfo._cellW;
+	_properties[LEFT_MARGIN] = (win ? win->_ladjw : 0) / cellW;
+	_properties[RIGHT_MARGIN] = (win ? win->_radjw : 0) / cellW;
 	_properties[FONT_SIZE] = (g_conf->_monoInfo._cellH << 8) | g_conf->_monoInfo._cellW;
 }
-
+ 
 Window &Window::operator=(winid_t win) {
 	_win = win;
 
@@ -120,6 +142,20 @@ Window &Window::operator=(winid_t win) {
 	return *this;
 }
 
+void Window::ensureTextWindow() {
+	if (_win) {
+		// There's a window present, so make sure it's textual
+		if (!dynamic_cast<TextWindow *>(_win)) {
+			g_vm->glk_window_close(_win);
+			_win = nullptr;
+			createGlkWindow();
+		}
+	} else {
+		createGlkWindow();
+	}
+
+	_windows->showTextWindows();
+}
 
 void Window::setSize(const Point &newSize) {
 	checkRepositionLower();
@@ -127,8 +163,19 @@ void Window::setSize(const Point &newSize) {
 	_properties[X_SIZE] = newSize.x;
 	_properties[Y_SIZE] = newSize.y;
 
-	if (_win)
-		_win->setSize(Point(newSize.x * g_conf->_monoInfo._cellW, newSize.y * g_conf->_monoInfo._cellH));
+	setSize();
+}
+
+void Window::setSize() {
+	if (_win) {
+		Point newSize(_properties[X_SIZE], _properties[Y_SIZE]);
+		if (g_vm->h_version < V5) {
+			newSize.x *= g_conf->_monoInfo._cellW;
+			newSize.y *= g_conf->_monoInfo._cellH;
+		}
+
+		_win->setSize(newSize);
+	}
 }
 
 void Window::setPosition(const Point &newPos) {
@@ -137,17 +184,23 @@ void Window::setPosition(const Point &newPos) {
 	_properties[X_POS] = newPos.x;
 	_properties[Y_POS] = newPos.y;
 
-	if (_win)
-		_win->setPosition(Point((newPos.x - 1) * g_conf->_monoInfo._cellW, (newPos.y - 1) * g_conf->_monoInfo._cellH));
+	setPosition();
+}
+
+void Window::setPosition() {
+	if (_win) {
+		Point newPos(_properties[X_POS] - 1, _properties[Y_POS] - 1);
+		if (g_vm->h_version < V5) {
+			newPos.x *= g_conf->_monoInfo._cellW;
+			newPos.y *= g_conf->_monoInfo._cellH;
+		}
+
+		_win->setPosition(newPos);
+	}
 }
 
 void Window::setCursor(const Point &newPos) {
 	int x = newPos.x, y = newPos.y;
-
-	if (!(_currStyle & FIXED_WIDTH_STYLE)) {
-		_currStyle |= FIXED_WIDTH_STYLE;
-		ensureGlkWindow();
-	}
 
 	if (y < 0) {
 		// Cursor on/off
@@ -167,12 +220,27 @@ void Window::setCursor(const Point &newPos) {
 			y = _properties[Y_CURSOR];
 	}
 
-	g_vm->glk_window_move_cursor(_win, x - 1, y - 1);
+	_properties[X_CURSOR] = x;
+	_properties[Y_CURSOR] = y;
+
+	setCursor();
+}
+
+void Window::setCursor() {
+	if (dynamic_cast<TextGridWindow *>(_win)) {
+		g_vm->glk_window_move_cursor(_win, (_properties[X_CURSOR] - 1) / g_vm->h_font_width,
+			(_properties[Y_CURSOR] - 1) / g_vm->h_font_height);
+	}
 }
 
 void Window::clear() {
 	if (_win)
 		g_vm->glk_window_clear(_win);
+
+	if (_windows->_background) {
+		Rect r = getBounds();
+		_windows->_background->fillRect(g_conf->_windowColor, r);
+	}
 }
 
 void Window::updateColors() {
@@ -232,10 +300,10 @@ uint Window::setFont(uint font) {
 	return result;
 }
 
-void Window::setStyle(uint style) {
+void Window::setStyle(int style) {
 	if (style == 0)
 		_currStyle = 0;
-	else if (style != 0xf000)
+	else if (style != -1)
 		// not tickle time
 		_currStyle |= style;
 
@@ -247,14 +315,15 @@ void Window::setStyle(uint style) {
 	if (g_vm->gos_linepending && _windows->currWin() == g_vm->gos_linewin)
 		return;
 
+	_currStyle = style;
 	updateStyle();
 }
 
 void Window::updateStyle() {
+	if (!_win)
+		return;
+
 	uint style = _currStyle;
-
-	ensureGlkWindow();
-
 	if (style & REVERSE_STYLE)
 		setReverseVideo(true);
 
@@ -290,18 +359,29 @@ void Window::updateStyle() {
 		setReverseVideo(false);
 }
 
+Rect Window::getBounds() const {
+	if (_win)
+		return _win->_bbox;
+
+	if (g_vm->h_version < V5)
+		return Rect((_properties[X_POS] - 1) * g_vm->h_font_width, (_properties[Y_POS] - 1) * g_vm->h_font_height,
+			(_properties[X_POS] - 1 + _properties[X_SIZE]) * g_vm->h_font_width,
+			(_properties[Y_POS] - 1 + _properties[Y_SIZE]) * g_vm->h_font_height);
+
+	return Rect(_properties[X_POS] - 1, _properties[Y_POS] - 1, _properties[X_POS] - 1 + _properties[X_SIZE],
+		_properties[Y_POS] - 1 + _properties[Y_SIZE]);
+}
+
 void Window::setReverseVideo(bool reverse) {
 	_win->_stream->setReverseVideo(reverse);
 }
 
-void Window::ensureGlkWindow() {
-	// Create a new window	
-	if (_win && (dynamic_cast<TextGridWindow *>(_win) != nullptr) != ((_currStyle & FIXED_WIDTH_STYLE) != 0)) {
-		g_vm->glk_window_close(_win);
-		_win = nullptr;
-	}
+void Window::createGlkWindow() {
+	if (g_vm->h_version == V6)
+		_windows->showTextWindows();
 
-	if (_currStyle & FIXED_WIDTH_STYLE) {
+	// Create a new window	
+	if (_index != 0 || (_currStyle & FIXED_WIDTH_STYLE)) {
 		// Text grid window
 		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextGrid, 0);
@@ -311,8 +391,10 @@ void Window::ensureGlkWindow() {
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextBuffer, 0);
 	}
 
-	setSize(Point(_properties[X_SIZE], _properties[Y_SIZE]));
-	setPosition(Point(_properties[X_POS], _properties[Y_POS]));
+	updateStyle();
+	setSize();
+	setPosition();
+	setCursor();
 
 	g_vm->glk_set_window(_win);
 }
@@ -338,7 +420,7 @@ void Window::setProperty(WindowProperty propType, uint value) {
 }
 
 void Window::checkRepositionLower() {
-	if (&_windows->_lower == this) {
+	if (&_windows->_lower == this && _win) {
 		PairWindow *parent = dynamic_cast<PairWindow *>(_win->_parent);
 		if (!parent)
 			error("Parent was not a pair window");
@@ -347,6 +429,16 @@ void Window::checkRepositionLower() {
 		// just in case it isn't already
 		parent->_dir = winmethod_Arbitrary;
 	}
+}
+
+bool Window::imageDraw(uint image, ImageAlign align, int val) {
+	ensureTextWindow();
+	return g_vm->glk_image_draw(_win, image, align, val);
+}
+
+bool Window::imageDrawScaled(uint image, int val1, int val2, uint width, uint height) {
+	ensureTextWindow();
+	return g_vm->glk_image_draw_scaled(_win, image, val1, val2, width, height);
 }
 
 } // End of namespace Frotz

@@ -40,12 +40,12 @@ class RingworldDemoGame: public Game {
 private:
 	void pauseGame();
 public:
-	virtual void start();
-	virtual Scene *createScene(int sceneNumber);
-	virtual void quitGame();
-	virtual void processEvent(Event &event);
-	virtual bool canSaveGameStateCurrently();
-	virtual bool canLoadGameStateCurrently();
+	void start() override;
+	Scene *createScene(int sceneNumber) override;
+	void quitGame() override;
+	void processEvent(Event &event) override;
+	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently() override;
 };
 
 class RingworldDemoScene: public Scene {
@@ -55,9 +55,9 @@ public:
 	SceneObject _actor4, _actor5, _actor6;
 	ASound _soundHandler;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void process(Event &event);
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void process(Event &event) override;
+	void signal() override;
 };
 
 } // End of namespace Ringworld

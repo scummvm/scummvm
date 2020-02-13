@@ -70,8 +70,8 @@ namespace Parallaction {
 
 class MidiParser_MSC : public MidiParser {
 protected:
-	virtual void parseNextEvent(EventInfo &info);
-	virtual bool loadMusic(byte *data, uint32 size);
+	void parseNextEvent(EventInfo &info) override;
+	bool loadMusic(byte *data, uint32 size) override;
 
 	uint8  read1(byte *&data) {
 		return *data++;
@@ -207,12 +207,12 @@ public:
 
 	void play(Common::SeekableReadStream *stream);
 	virtual void pause(bool p);
-	virtual void pause() { assert(0); } // overridden
-	virtual void setVolume(int volume);
-	virtual void onTimer();
+	void pause() override { assert(0); } // overridden
+	void setVolume(int volume) override;
+	void onTimer() override;
 
 	// MidiDriver_BASE interface
-	virtual void send(uint32 b);
+	void send(uint32 b) override;
 
 
 private:
@@ -301,6 +301,8 @@ void MidiPlayer_MSC::send(uint32 b) {
 	switch (b & 0xFFF0) {
 	case 0x07B0: // volume change
 		_channelsVolume[ch] = param2;
+		break;
+	default:
 		break;
 	}
 
@@ -539,6 +541,9 @@ void SoundMan_br::execute(int command, const char *parm) {
 
 	case SC_PAUSE:
 		pause(b);
+		break;
+
+	default:
 		break;
 	}
 }

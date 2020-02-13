@@ -43,9 +43,7 @@ void WRITE_SCIENDIAN_UINT16(void *ptr, uint16 val);
 uint16 READ_SCI11ENDIAN_UINT16(const void *ptr);
 uint32 READ_SCI11ENDIAN_UINT32(const void *ptr);
 void WRITE_SCI11ENDIAN_UINT16(void *ptr, uint16 val);
-#ifdef ENABLE_SCI32
 void WRITE_SCI11ENDIAN_UINT32(void *ptr, uint32 val);
-#endif
 // Wrappers for reading integer values in resources that are
 // LE in SCI1.1 Mac, but BE in SCI32 Mac
 uint16 READ_SCI32ENDIAN_UINT16(const void *ptr);
@@ -203,12 +201,10 @@ public:
 		WRITE_SCI11ENDIAN_UINT16(this->data() + index, value);
 	}
 
-#ifdef ENABLE_SCI32
 	inline void setUint32SEAt(const size_type index, uint32 value) {
 		this->validate(index, sizeof(uint32), Common::kValidateWrite);
 		WRITE_SCI11ENDIAN_UINT32(this->data() + index, value);
 	}
-#endif
 
 #pragma mark -
 #pragma mark SciSpanImpl - ForwardIterator

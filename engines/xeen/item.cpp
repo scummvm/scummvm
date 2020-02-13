@@ -366,9 +366,14 @@ void WeaponItems::enchantItem(int itemIndex, int amount) {
 		tempCharacter.makeItem(amount, 0, 1);
 		XeenItem &tempItem = tempCharacter._weapons[0];
 
-		item._material = tempItem._material;
-		item._state = tempItem._state;
-		sound.playFX(19);
+		if (tempItem._material != 0 || !tempItem._state.empty()) {
+			item._material = tempItem._material;
+			item._state = tempItem._state;
+			sound.playFX(19);
+		} else {
+			// WORKAROUND: As an improvement on the original, show an error if the enchanting failed
+			ErrorScroll::show(g_vm, Res.SPELL_FAILED);
+		}
 	} else {
 		InventoryItems::enchantItem(itemIndex, amount);
 	}
@@ -533,9 +538,14 @@ void ArmorItems::enchantItem(int itemIndex, int amount) {
 		tempCharacter.makeItem(amount, 0, 2);
 		XeenItem &tempItem = tempCharacter._armor[0];
 
-		item._material = tempItem._material;
-		item._state = tempItem._state;
-		sound.playFX(19);
+		if (tempItem._material != 0 || !tempItem._state.empty()) {
+			item._material = tempItem._material;
+			item._state = tempItem._state;
+			sound.playFX(19);
+		} else {
+			// WORKAROUND: As an improvement on the original, show an error if the enchanting failed
+			ErrorScroll::show(g_vm, Res.SPELL_FAILED);
+		}
 	} else {
 		InventoryItems::enchantItem(itemIndex, amount);
 	}
@@ -730,14 +740,16 @@ void InventoryItemsGroup::breakAllItems() {
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		if (_owner->_weapons[idx]._id < XEEN_SLAYER_SWORD) {
 			_owner->_weapons[idx]._state._broken = true;
-			_owner->_weapons[idx]._frame = 0;
+			// WORKAROUND: For consistency, we don't de-equip broken items
+			//_owner->_weapons[idx]._frame = 0;
 		}
 
 		_owner->_armor[idx]._state._broken = true;
 		_owner->_accessories[idx]._state._broken = true;
 		_owner->_misc[idx]._state._broken = true;
-		_owner->_armor[idx]._frame = 0;
-		_owner->_accessories[idx]._frame = 0;
+		// WORKAROUND: For consistency, we don't de-equip broken items
+		//_owner->_armor[idx]._frame = 0;
+		//_owner->_accessories[idx]._frame = 0;
 	}
 }
 

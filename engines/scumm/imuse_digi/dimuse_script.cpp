@@ -180,7 +180,7 @@ void IMuseDigital::flushTrack(Track *track) {
 	}
 
 	if (!_mixer->isSoundHandleActive(track->mixChanHandle)) {
-		memset(track, 0, sizeof(Track));
+		track->reset();
 	}
 }
 
@@ -191,7 +191,7 @@ void IMuseDigital::flushTracks() {
 		Track *track = _track[l];
 		if (track->used && track->toBeRemoved && !_mixer->isSoundHandleActive(track->mixChanHandle)) {
 			debug(5, "flushTracks() - soundId:%d", track->soundId);
-			memset(track, 0, sizeof(Track));
+			track->reset();
 		}
 	}
 }
@@ -438,7 +438,7 @@ void IMuseDigital::stopAllSounds() {
 			}
 
 			// Mark the track as unused
-			memset(track, 0, sizeof(Track));
+			track->reset();
 		}
 	}
 }

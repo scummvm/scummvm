@@ -84,14 +84,16 @@ protected:
 
 	ThemeEngine::FontColor _editColor;
 
+	int				_lastRead;
+
 public:
-	ListWidget(Dialog *boss, const String &name, const char *tooltip = 0, uint32 cmd = 0);
-	ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
+	ListWidget(Dialog *boss, const String &name, const char *tooltip = nullptr, uint32 cmd = 0);
+	ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip = nullptr, uint32 cmd = 0);
 
-	virtual bool containsWidget(Widget *) const;
-	virtual Widget *findWidget(int x, int y);
+	bool containsWidget(Widget *) const override;
+	Widget *findWidget(int x, int y) override;
 
-	void setList(const StringArray &list, const ColorList *colors = 0);
+	void setList(const StringArray &list, const ColorList *colors = nullptr);
 	const StringArray &getList()	const			{ return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
@@ -116,36 +118,38 @@ public:
 	void setEditColor(ThemeEngine::FontColor color) { _editColor = color; }
 
 	// Made startEditMode/endEditMode for SaveLoadChooser
-	void startEditMode();
-	void endEditMode();
+	void startEditMode() override;
+	void endEditMode() override;
 
 	void setFilter(const String &filter, bool redraw = true);
 
-	virtual void handleTickle();
-	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseWheel(int x, int y, int direction);
-	virtual bool handleKeyDown(Common::KeyState state);
-	virtual bool handleKeyUp(Common::KeyState state);
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleTickle() override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;
+	void handleMouseMoved(int x, int y, int button) override;
+	void handleMouseLeft(int button) override;
+	bool handleKeyDown(Common::KeyState state) override;
+	bool handleKeyUp(Common::KeyState state) override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
-	virtual bool wantsFocus() { return true; }
+	bool wantsFocus() override { return true; }
 
 protected:
-	void drawWidget();
+	void drawWidget() override;
 
 	/// Finds the item at position (x,y). Returns -1 if there is no item there.
 	int findItem(int x, int y) const;
 	void scrollBarRecalc();
 
-	void abortEditMode();
+	void abortEditMode() override;
 
-	Common::Rect getEditRect() const;
+	Common::Rect getEditRect() const override;
 
-	void receivedFocusWidget();
-	void lostFocusWidget();
+	void receivedFocusWidget() override;
+	void lostFocusWidget() override;
 	void checkBounds();
 	void scrollToCurrent();
 };

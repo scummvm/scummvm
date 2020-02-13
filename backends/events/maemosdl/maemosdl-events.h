@@ -26,8 +26,6 @@
 #define BACKEND_EVENTS_SDL_MAEMO_H
 
 #include "backends/events/sdl/sdl-events.h"
-#include "backends/platform/maemo/maemo.h"
-#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
 namespace Maemo {
 

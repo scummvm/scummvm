@@ -40,10 +40,24 @@ void SceneScriptCT02::InitializeScene() {
 		Game_Flag_Reset(kFlagCT03toCT02);
 		Setup_Scene_Information(-154.83f, -145.11f, 9.39f, 516);
 	} else if (Game_Flag_Query(kFlagCT02McCoyCombatReady)) {
+		// after soup dumping
 		Setup_Scene_Information(-213.82f, -145.11f, 214.43f, 82);
 	} else {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Setup_Scene_Information(-119.02f, -145.11f, 240.99f, 768);
+#else
+		// puts McCoy within the obstacle map - prevents clipping through objects
+		Setup_Scene_Information(-117.43f, -145.11f, 262.36f, 768);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
+	if (_vm->_cutContent
+	    && Global_Variable_Query(kVariableChapter) == 1
+	    && Game_Flag_Query(kFlagCT02McCoyShouldCommentOnDumpedSoup)
+	) {
+		Scene_2D_Region_Add(0, 115, 350, 430, 420);// dumped soup
+		Scene_2D_Region_Add(1, 180, 235, 255, 315);// use a region for the pot too (there's an object but it's better to have a region)
+	}
+
 	Scene_Exit_Add_2D_Exit(kCT02ExitCT01, 590, 0, 639, 479, 1);
 	if (Actor_Clue_Query(kActorMcCoy, kClueZubenRunsAway)) {
 		Scene_Exit_Add_2D_Exit(kCT02ExitCT03, 332, 163, 404, 297, 0);
@@ -70,7 +84,23 @@ void SceneScriptCT02::InitializeScene() {
 
 void SceneScriptCT02::SceneLoaded() {
 	Obstacle_Object("STOVE-1", true);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Unobstacle_Object("BACK-DOOR", true);
+#else
+	Obstacle_Object("STOVE-2", true);
+	Obstacle_Object("STOVE-4", true);
+	Obstacle_Object("BACKWALL", true);
+	// Back wall is split to two parts since there is a back door in the middle
+	Obstacle_Object("BACKWALL2", true);
+	Obstacle_Object("LFTSTOVE-1", true);
+	Obstacle_Object("FRIDGE-1", true);
+	if (Actor_Clue_Query(kActorMcCoy, kClueZubenRunsAway)) {
+		Unobstacle_Object("BACK-DOOR", true);
+	} else {
+		Obstacle_Object("BACK-DOOR", true);
+	}
+	Unclickable_Object("BACKWALL2");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Unclickable_Object("STOVE-1");
 	Unclickable_Object("STOVE-2");
 	Unclickable_Object("STOVE-3");
@@ -88,17 +118,17 @@ void SceneScriptCT02::SceneLoaded() {
 	Unclickable_Object("COFFEJUG IN FOREGRO");
 	Unclickable_Object("BACK-DOOR");
 	if (!Game_Flag_Query(kFlagCT02PotTipped)) {
-		Preload(0);
-		Preload(3);
-		Preload(3);
-		Preload(28);
+		Preload(kModelAnimationMcCoyWithGunIdle);
+		Preload(kModelAnimationMcCoyWithGunWalking);
+		Preload(kModelAnimationMcCoyWithGunWalking); // A bug? Why is this preloaded twice?
+		Preload(kModelAnimationMcCoyDodgeAndDrawGun);
 		Preload(400);
 		Preload(419);
 		Preload(420);
 	}
 	if (Game_Flag_Query(kFlagCT02McCoyCombatReady)) {
 		Game_Flag_Reset(kFlagCT02McCoyCombatReady);
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		Player_Set_Combat_Mode(true);
 		Player_Gains_Control();
 	}
@@ -217,8 +247,15 @@ void SceneScriptCT02::dialogueWithZuben() {
 	if (Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) < 44) {
 		Scene_Exits_Disable();
 		Actor_Clue_Acquire(kActorMcCoy, kClueZubenRunsAway, true, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Unobstacle_Object("BACK-DOOR", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT02PushPot);
 		Game_Flag_Set(kFlagCT02PotTipped);
+		if (_vm->_cutContent) {
+			Game_Flag_Set(kFlagCT01TalkToHowieAfterZubenMissing);
+		}
 		Scene_Loop_Set_Default(kCT02LoopMainPotTipped);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, kCT02LoopTippingPot, true);
 	}
@@ -276,6 +313,17 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptCT02::ClickedOn2DRegion(int region) {
+	if (_vm->_cutContent
+	    && Global_Variable_Query(kVariableChapter) == 1
+	    && Game_Flag_Query(kFlagCT02McCoyShouldCommentOnDumpedSoup)
+	    && (region == 0 || region == 1)
+	) {
+		Game_Flag_Reset(kFlagCT02McCoyShouldCommentOnDumpedSoup);
+		Scene_2D_Region_Remove(0);
+		Scene_2D_Region_Remove(1);
+		Actor_Voice_Over(4270, kActorVoiceOver);
+		return true;
+	}
 	return false;
 }
 

@@ -27,7 +27,15 @@ op-bundle: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/scummvm/docs/
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/data/
+ifdef DIST_FILES_ENGINEDATA
 	$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) $(bundle_name)/scummvm/data/
+endif
+ifdef DIST_FILES_NETWORKING
+	$(INSTALL) -c -m 644 $(DIST_FILES_NETWORKING) $(bundle_name)/scummvm/data/
+endif
+ifdef DIST_FILES_VKEYBD
+	$(INSTALL) -c -m 644 $(DIST_FILES_VKEYBD) $(bundle_name)/scummvm/data/
+endif
 
 	$(STRIP) $(EXECUTABLE) -o $(bundle_name)/scummvm/bin/$(EXECUTABLE)
 
@@ -63,7 +71,15 @@ op-pnd: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/scummvm/docs/
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/data/
+ifdef DIST_FILES_ENGINEDATA
 	$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) $(bundle_name)/scummvm/data/
+endif
+ifdef DIST_FILES_NETWORKING
+	$(INSTALL) -c -m 644 $(DIST_FILES_NETWORKING) $(bundle_name)/scummvm/data/
+endif
+ifdef DIST_FILES_VKEYBD
+	$(INSTALL) -c -m 644 $(DIST_FILES_VKEYBD) $(bundle_name)/scummvm/data/
+endif
 
 	$(STRIP) $(EXECUTABLE) -o $(bundle_name)/scummvm/bin/$(EXECUTABLE)
 

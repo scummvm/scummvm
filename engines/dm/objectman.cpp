@@ -178,6 +178,8 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 				if (((Weapon*)junkThing)->getChargeCount())
 					iconIndex++;
 				break;
+			default:
+				break;
 			}
 		}
 	}

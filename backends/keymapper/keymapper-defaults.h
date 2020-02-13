@@ -20,8 +20,6 @@
  *
  */
 
-#ifdef ENABLE_KEYMAPPER
-
 #ifndef KEYMAPPER_DEFAULTS_H
 #define KEYMAPPER_DEFAULTS_H
 
@@ -32,7 +30,7 @@
 
 namespace Common {
 
-class KeymapperDefaultBindings : HashMap<String, String> {
+class KeymapperDefaultBindings : public HashMap<String, String> {
 public:
 	/**
 	 * This sets a default hwInput for a given Keymap Action
@@ -47,10 +45,11 @@ public:
 	 * @param actionId String representing Action id (Action.id)
 	 * @return String representing the HardwareInput id (HardwareInput.id)
 	 */
-	String getDefaultBinding(String keymapId, String actionId) { return getVal(keymapId + "_" + actionId); }
+	const_iterator findDefaultBinding(String keymapId, String actionId) const {
+		return find(keymapId + "_" + actionId);
+	}
 };
 
 } //namespace Common
 
 #endif // #ifndef KEYMAPPER_DEFAULTS_H
-#endif // #ifdef ENABLE_KEYMAPPER

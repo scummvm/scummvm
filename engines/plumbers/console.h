@@ -27,14 +27,12 @@
 
 namespace Plumbers {
 
-class PlumbersGame;
-
 class Console : public GUI::Debugger {
 public:
 	bool _allowSkip;
 
 	explicit Console();
-	virtual ~Console(void) {}
+	~Console(void) override {}
 
 	bool Cmd_allowSkip(int argc, const char** argv);
 };

@@ -46,9 +46,9 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 0);
 		break;
 	case kClueDoorForced1:
-		if (_vm->_cutContent && _vm->_gameVars[kVariableChapter] == 1) {
-			// unfortunately this line is only available in TLK1 (so only Act 1)
-			// it will be silent in subsequent Acts
+		if (_vm->_cutContent || _vm->_gameVars[kVariableChapter] == 1) {
+			// keep in mind, this line in only available in Act 1 (1.TLK) unless _vm->_cutContent is selected (provided that cut content now loads all TLKs)
+			// Without cut content it will be silent in subsequent Acts
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1870);
 		}
 		break;
@@ -84,6 +84,16 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueLabCorpses:
 		KIA_Play_Actor_Dialogue(kActorKlein, 140);
+		// Similar fix to PS07:
+		// quote 150 is *boop* in ENG version
+		// it is redundant in DEU and FRA versions (identical to second half of quote 140)
+		// it is required in ESP and ITA versions. It is the missing second half of quote 140.
+		if (_vm->_cutContent
+		    && (_vm->_language == Common::ES_ESP
+		        || _vm->_language == Common::IT_ITA)
+		) {
+			KIA_Play_Actor_Dialogue(kActorKlein, 150);
+		}
 		break;
 	case kClueLabShellCasings:
 		KIA_Play_Actor_Dialogue(kActorKlein, 50);
@@ -108,7 +118,18 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorRunciter, 290);
 		break;
 	case kClueCrowdInterviewA:
-		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 100);
+		if (_vm->_cutContent
+		    && (_vm->_language == Common::ES_ESP
+		        || _vm->_language == Common::IT_ITA)
+		) {
+			// Same fix as in RC01:
+			// Quote 110 is the second half of the sentence about Lucy hanging around with Zuben ("a fat guy")
+			// in ENG, DEU and FRA it is redundant, but it's needed in ESP and ITA
+			KIA_Play_Actor_Dialogue(kActorOfficerLeary, 100);
+			KIA_Play_Actor_Dialogue(kActorOfficerLeary, 110);
+		} else {
+			KIA_Play_Actor_Dialogue(kActorOfficerLeary, 100);
+		}
 		break;
 	case kClueCrowdInterviewB:
 		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 120);
@@ -121,7 +142,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorMcCoy, 410);
 		KIA_Play_Actor_Dialogue(kActorZuben, 50);
 		break;
-	case kClueZuben:
+	case kClueZubenSquadPhoto:
 		KIA_Play_Photograph(33);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
 		break;
@@ -375,6 +396,9 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueMaggieBracelet:
 		KIA_Play_Slice_Model(kModelAnimationMaggieBracelet);
+		if (_vm->_cutContent) {
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4030);
+		}
 		break;
 	case kClueEnvelope:
 		KIA_Play_Slice_Model(kModelAnimationEnvelope);
@@ -489,7 +513,17 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueGordosLighterReplicant:
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterReplicant);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+		if (_vm->_cutContent) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueZubenSquadPhoto)) {
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1450);
+			} else {
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+			}
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1460);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1470);
+		} else {
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+		}
 		break;
 	case kClueGordosLighterHuman:
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterHuman);
@@ -663,11 +697,11 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		{
 			int dnaEvidences = Global_Variable_Query(kVariableDNAEvidence);
 			if (dnaEvidences == 1) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceOnePart);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidence01OutOf6);
 			} else if (dnaEvidences == 2) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceTwoParts);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidence03OutOf6);
 			} else if (dnaEvidences == 3) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceThreeParts);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidence04OutOf6);
 			} else if (dnaEvidences >= 4) {
 				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceComplete);
 			}
@@ -764,7 +798,25 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 	case kClueCrimeSceneNotes:
 		KIA_Play_Actor_Dialogue(kActorSteele, 3310);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3320);
-		KIA_Play_Actor_Dialogue(kActorSteele, 3330);
+		if (_vm->_cutContent
+		    && (_vm->_language == Common::ES_ESP
+		        || _vm->_language == Common::IT_ITA)
+		) {
+			//
+			// in ITA and ESP the 3340 quote is the second half of the sentence starting in previous quote (3330)
+			KIA_Play_Actor_Dialogue(kActorSteele, 3330);
+			KIA_Play_Actor_Dialogue(kActorSteele, 3340);
+		} else if (_vm->_cutContent
+		           && _vm->_language == Common::FR_FRA
+		) {
+			// in FRA the 3340 quote has the full sentence rendering the previous quote (3330) redundant
+			// FRA (Restored Content) version needs only 3340
+			KIA_Play_Actor_Dialogue(kActorSteele, 3340);
+		} else {
+			// ENG and DEU and non-restored content versions need only 3330
+			// the 3340 quote is *BOOP* in the ENG and DEU versions
+			KIA_Play_Actor_Dialogue(kActorSteele, 3330);
+		}
 		KIA_Play_Actor_Dialogue(kActorSteele, 3350);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3360);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3370);
@@ -785,7 +837,19 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorSteele, 3470);
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1300);
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1310);
-		KIA_Play_Actor_Dialogue(kActorSteele, 3480);
+		if (_vm->_cutContent
+		    && (_vm->_language == Common::ES_ESP
+		        || _vm->_language == Common::IT_ITA)
+		) {
+			//
+			// in ITA and ESP the 3490 quote is the second half of the sentence starting in previous quote (3480)
+			KIA_Play_Actor_Dialogue(kActorSteele, 3480);
+			KIA_Play_Actor_Dialogue(kActorSteele, 3490);
+		} else {
+			// the 3490 quote is *BOOP* in the ENG and DEU versions
+			// the 3490 quote is also redundant in FRA version, since it's only the first half of the previous quote (3480)
+			KIA_Play_Actor_Dialogue(kActorSteele, 3480);
+		}
 		KIA_Play_Actor_Dialogue(kActorSteele, 3500);
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1320);
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1330);
@@ -797,26 +861,35 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorSteele, 3540);
 		break;
 	case kClueGrigorianInterviewB1:
-		KIA_Play_Actor_Dialogue(kActorSteele, 3550);
-		KIA_Play_Actor_Dialogue(kActorGrigorian, 1360);
+		// Izo is a Replicant
+		KIA_Play_Actor_Dialogue(kActorSteele, 3550); // Describe them to me again.
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1360); // Just the Rastafarian fellow. And that-- that friend of his. A slim blond man, Asian. With-- with a ponytail.
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1370);
-		KIA_Play_Actor_Dialogue(kActorSteele, 3560);
+		if (_vm->_cutContent) {
+			KIA_Play_Actor_Dialogue(kActorSteele, 3620); // Let me ask you a question.
+			KIA_Play_Actor_Dialogue(kActorSteele, 3630);
+			KIA_Play_Actor_Dialogue(kActorGrigorian, 1380);
+			KIA_Play_Actor_Dialogue(kActorSteele, 3640);  // such as
+			KIA_Play_Actor_Dialogue(kActorGrigorian, 1390);
+		}
+		KIA_Play_Actor_Dialogue(kActorSteele, 3560); // Bravo, Spencer.
 		KIA_Play_Actor_Dialogue(kActorSteele, 3570);
 		break;
 	case kClueGrigorianInterviewB2:
-		KIA_Play_Actor_Dialogue(kActorSteele, 3580);
-		KIA_Play_Actor_Dialogue(kActorGrigorian, 1400);
+		// Izo is a human
+		KIA_Play_Actor_Dialogue(kActorSteele, 3580); // Describe them for me again.
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1400); // There was that Rastafarian fellow and one of our ex members showed up.
 		KIA_Play_Actor_Dialogue(kActorSteele, 3590);
-		KIA_Play_Actor_Dialogue(kActorGrigorian, 1410);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1410); // A Japanese man named Izo.
 		KIA_Play_Actor_Dialogue(kActorSteele, 3600);
-		KIA_Play_Actor_Dialogue(kActorGrigorian, 1420);
-		KIA_Play_Actor_Dialogue(kActorGrigorian, 1430);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1420); // We're a pacifist organization and we have rules
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1430); // Izo refused to check in his samurai sword
 		KIA_Play_Actor_Dialogue(kActorSteele, 3610);
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1440);
-		KIA_Play_Actor_Dialogue(kActorSteele, 3620);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3620); // Let me ask you a question.
 		KIA_Play_Actor_Dialogue(kActorSteele, 3630);
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1450);
-		KIA_Play_Actor_Dialogue(kActorSteele, 3640);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3640);  // such as
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1460);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3650);
 		break;
@@ -963,6 +1036,8 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorRunciter, 630);
 		KIA_Play_Actor_Dialogue(kActorRunciter, 640);
 		KIA_Play_Actor_Dialogue(kActorRunciter, 650);
+		break;
+	default:
 		break;
 	}
 }

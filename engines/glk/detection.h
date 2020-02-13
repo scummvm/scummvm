@@ -37,37 +37,41 @@ private:
 public:
 	GlkMetaEngine() : MetaEngine() {}
 
-	virtual const char *getName() const {
-		return "ScummGlk";
+	const char *getName() const override {
+		return "Glk";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getEngineId() const override {
+		return "glk";
+	}
+
+	const char *getOriginalCopyright() const override {
 		return "Infocom games (C) Infocom\nScott Adams games (C) Scott Adams";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	/**
 	 * Returns a list of games supported by this engine.
 	 */
-	virtual PlainGameList getSupportedGames() const override;
+	PlainGameList getSupportedGames() const override;
 
 	/**
 	 * Runs the engine's game detector on the given list of files, and returns a
 	 * (possibly empty) list of games supported by the engine which it was able
 	 * to detect amongst the given files.
 	 */
-	virtual DetectedGames detectGames(const Common::FSList &fslist) const override;
+	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
 	/**
 	 * Query the engine for a PlainGameDescriptor for the specified gameid, if any.
 	 */
-	virtual PlainGameDescriptor findGame(const char *gameId) const override;
+	PlainGameDescriptor findGame(const char *gameId) const override;
 
 	/**
 	 * Calls each sub-engine in turn to ensure no game Id accidentally shares the same Id
@@ -101,6 +105,38 @@ struct GameDescriptor {
 		return pd;
 	}
 };
+
+/**
+ * Derived game descriptor class to simplifying setting up needed properties
+ */
+class GlkDetectedGame : public DetectedGame {
+public:
+	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename);
+	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
+		Common::Language lang);
+	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
+		const Common::String &md5, size_t filesize);
+	GlkDetectedGame(const char *id, const char *desc, const char *extra, const Common::String &filename,
+		Common::Language lang);
+};
+
+/**
+ * Game detection entry
+ */
+struct GlkDetectionEntry {
+	const char *const _gameId;
+	const char *const _extra;
+	const char *const _md5;
+	size_t _filesize;
+	Common::Language _language;
+};
+
+#define DT_ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY }
+#define DT_ENTRY1(ID, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, Common::EN_ANY }
+#define DT_ENTRYL0(ID, LANG, MD5, FILESIZE) { ID, "", MD5, FILESIZE, LANG }
+#define DT_ENTRYL1(ID, LANG, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, LANG }
+
+#define DT_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
 
 } // End of namespace Glk
 

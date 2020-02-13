@@ -381,6 +381,9 @@ void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
 			if (coord1)
 				*coord1 = *coord1 * 2 + 1;
 			break;
+
+		default:
+			break;
 	}
 }
 

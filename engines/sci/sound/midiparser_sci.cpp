@@ -644,6 +644,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					"MidiParser_SCI::parseNextEvent: Unsupported event code %x",
 					info.event);
 		} // // System Common, Meta or SysEx event
+
+	default:
+		break;
 	}// switch (info.command())
 }
 

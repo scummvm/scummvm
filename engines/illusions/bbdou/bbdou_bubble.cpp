@@ -241,16 +241,16 @@ void BbdouBubble::calcBubbleTrail(Common::Point &sourcePt, Common::Point &destPt
 
 	if (!swapY) {
 		if (destPt.y < sourcePt.y) {
-			currentAngle = M_PI * 0.5;
+			currentAngle = (float)M_PI * 0.5F;
 		} else {
-			currentAngle = M_PI * 1.5;
+			currentAngle = (float)M_PI * 1.5F;
 			partAngle = -partAngle;
 		}
 		if (destPt.x < sourcePt.x)
 			partAngle = -partAngle;
 	} else {
 		if (destPt.x <= sourcePt.x) {
-			currentAngle = M_PI;
+			currentAngle = (float)M_PI;
 		} else {
 			currentAngle = 0.0;
 			partAngle = -partAngle;

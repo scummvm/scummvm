@@ -128,7 +128,6 @@ class ToucheMetaEngine : public AdvancedMetaEngine {
 public:
 	ToucheMetaEngine() : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
 		_md5Bytes = 4096;
-		_singleId = "touche";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -137,19 +136,23 @@ public:
 		return detectGameFilebased(allFiles, fslist, Touche::fileBasedFallback);
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "touche";
+	}
+
+	const char *getName() const override {
 		return "Touche: The Adventures of the Fifth Musketeer";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Touche: The Adventures of the Fifth Musketeer (C) Clipper Software";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 bool ToucheMetaEngine::hasFeature(MetaEngineFeature f) const {

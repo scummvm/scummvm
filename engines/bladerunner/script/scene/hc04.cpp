@@ -78,6 +78,10 @@ void SceneScriptHC04::SceneLoaded() {
 	Obstacle_Object("CAN FIRE", true);
 	Unobstacle_Object("ASIANMALE01", true);
 	Clickable_Object("CAN FIRE");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("CAN FIRE");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptHC04::MouseClick(int x, int y) {

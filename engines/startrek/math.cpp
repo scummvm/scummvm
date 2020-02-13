@@ -83,7 +83,7 @@ Angle StarTrekEngine::atan2(int32 deltaX, int32 deltaY) {
 
 	int16 endIndex = 128;
 	int16 index = 0;
-	int16 angle;
+	int16 angle = 0;
 	while (index <= endIndex) {
 		angle = (index + endIndex) / 2;
 		Fixed14 tableValue = Fixed14::fromRaw(atanTable[angle]);

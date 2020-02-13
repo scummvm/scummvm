@@ -418,8 +418,10 @@ void SceneScriptPS10::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE3,  5, 100, 17, 27, -100, 100, -101, -101, 0, 0);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	// Moved here from PS15
-	Sound_Play(kSfxLABBUZZ1, 90, 0, 0, 50);
+	if (!Game_Flag_Query(kFlagPS11toPS10)) {
+		// Moved here from PS15
+		Sound_Play(kSfxLABBUZZ1, 90, 0, 0, 50);
+	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
@@ -446,11 +448,11 @@ void SceneScriptPS10::SceneLoaded() {
 	Unobstacle_Object("E.SM.WIRE01", true);
 
 	if (!Query_System_Currently_Loading_Game()) {
-		bool targetStateMZ = true;
 #if BLADERUNNER_ORIGINAL_BUGS
+		bool targetStateMZ = true;
 #else
 // every maze target begins as NON-targetable
-		targetStateMZ = false;
+		bool targetStateMZ = false;
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		Item_Add_To_World(kItemPS10Target1, kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13,  -240.0f, -80.74f, 145.0f, 989, 72, 36, targetStateMZ, false, false, true);
 		Item_Add_To_World(kItemPS10Target2, kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13,  -240.0f,  -8.74f, 145.0f, 740, 72, 36, targetStateMZ, false, false, true);

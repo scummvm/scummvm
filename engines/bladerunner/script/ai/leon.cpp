@@ -122,7 +122,7 @@ void AIScriptLeon::OtherAgentEnteredThisScene(int otherActorId) {
 
 void AIScriptLeon::OtherAgentExitedThisScene(int otherActorId) {
 	if (otherActorId == kActorMcCoy
-	 && Actor_Query_Which_Set_In(kActorLeon) == kSetCT11
+	 && Actor_Query_Which_Set_In(kActorLeon) != kSetCT11
 	) {
 		AI_Movement_Track_Flush(kActorLeon);
 		ADQ_Flush();
@@ -250,6 +250,9 @@ bool AIScriptLeon::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return false;
 
 	case kGoalLeonLeave:
+		if (_vm->_cutContent) {
+			Scene_Exits_Enable();
+		}
 		Actor_Force_Stop_Walking(kActorLeon);
 		AI_Movement_Track_Flush(kActorLeon);
 		AI_Movement_Track_Append(kActorLeon, 351, 0);

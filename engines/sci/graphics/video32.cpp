@@ -66,7 +66,7 @@ bool VideoPlayer::open(const Common::String &fileName) {
 	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on a
 	// system with no RGB support
 	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
-		void showScummVMDialog(const Common::String &message);
+		void showScummVMDialog(const Common::String &message, const char* altButton = nullptr, bool alignCenter = true);
 		showScummVMDialog(Common::String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
 		_decoder->close();
 		return false;
@@ -126,7 +126,9 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 
 	EventFlags stopFlag = kEventFlagNone;
 	for (;;) {
-		g_sci->sleep(MIN(_decoder->getTimeToNextFrame(), maxSleepMs));
+		if (!_needsUpdate) {
+			g_sci->sleep(MIN(_decoder->getTimeToNextFrame(), maxSleepMs));
+		}
 
 		const Graphics::Surface *nextFrame = nullptr;
 		// If a decoder needs more than one update per loop, this means we are
@@ -140,9 +142,20 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 		}
 
 		// Some frames may contain only audio and/or palette data; this occurs
-		// with Duck videos and is not an error
+		// with Duck videos and is not an error.
+		// If _needsUpdate has been set but it's not time to render the next frame
+		// then the current frame is rendered again. This reduces the delay between
+		// a script adding or removing censorship blobs and the screen reflecting
+		// this upon resuming playback.
 		if (nextFrame) {
 			renderFrame(*nextFrame);
+			_currentFrame = nextFrame;
+			_needsUpdate = false;
+		} else if (_needsUpdate) {
+			if (_currentFrame) {
+				renderFrame(*_currentFrame);
+			}
+			_needsUpdate = false;
 		}
 
 		// Event checks must only happen *after* the decoder is updated (1) and
@@ -578,13 +591,13 @@ void VMDPlayer::init(int16 x, int16 y, const PlayFlags flags, const int16 boostP
 	_doublePixels = (flags & kPlayFlagDoublePixels) || upscaleVideos;
 	_stretchVertical = flags & kPlayFlagStretchVertical;
 
-	const int16 width = _decoder->getWidth() << _doublePixels;
-	const int16 height = _decoder->getHeight() << (_doublePixels || _stretchVertical);
+	const int16 width = _decoder->getWidth() << (_doublePixels ? 1 : 0);
+	const int16 height = _decoder->getHeight() << (_doublePixels || _stretchVertical ? 1 : 0);
 
 	if (getSciVersion() < SCI_VERSION_3) {
 		x &= ~1;
 	}
-	
+
 	if (upscaleVideos) {
 		x = (screenWidth - width) / 2;
 		y = (screenHeight - height) / 2;
@@ -647,6 +660,9 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 	_planeIsOwned = true;
 	_priority = 0;
 	_drawRect = Common::Rect();
+	_blobs.clear();
+	_needsUpdate = false;
+	_currentFrame = nullptr;
 	return kIOSuccess;
 }
 
@@ -671,7 +687,7 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 
 	const int32 maxFrameNo = _decoder->getFrameCount() - 1;
 
-	if (flags & kEventFlagToFrame) {
+	if ((flags & kEventFlagToFrame) && lastFrameNo) {
 		_yieldFrame = MIN<int32>(lastFrameNo, maxFrameNo);
 	} else {
 		_yieldFrame = maxFrameNo;
@@ -731,7 +747,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags, const ui
 VMDPlayer::EventFlags VMDPlayer::checkForEvent(const EventFlags flags) {
 	const int currentFrameNo = _decoder->getCurFrame();
 
-	if (currentFrameNo == _yieldFrame) {
+	if (currentFrameNo >= _yieldFrame) {
 		return kEventFlagEnd;
 	}
 
@@ -754,6 +770,43 @@ VMDPlayer::EventFlags VMDPlayer::checkForEvent(const EventFlags flags) {
 	}
 
 	return kEventFlagNone;
+}
+
+int16 VMDPlayer::addBlob(int16 blockSize, int16 top, int16 left, int16 bottom, int16 right) {
+	if (_blobs.size() >= kMaxBlobs) {
+		return -1;
+	}
+
+	int16 blobNumber = 0;
+	Common::List<Blob>::iterator prevBlobIterator = _blobs.begin();
+	for (; prevBlobIterator != _blobs.end(); ++prevBlobIterator, ++blobNumber) {
+		if (blobNumber < prevBlobIterator->blobNumber) {
+			break;
+		}
+	}
+
+	Blob blob = { blobNumber, blockSize, top, left, bottom, right };
+	_blobs.insert(prevBlobIterator, blob);
+
+	_needsUpdate = true;
+	return blobNumber;
+}
+
+void VMDPlayer::deleteBlobs() {
+	if (!_blobs.empty()) {
+		_blobs.clear();
+		_needsUpdate = true;
+	}
+}
+
+void VMDPlayer::deleteBlob(int16 blobNumber) {
+	for (Common::List<Blob>::iterator b = _blobs.begin(); b != _blobs.end(); ++b) {
+		if (b->blobNumber == blobNumber) {
+			_blobs.erase(b);
+			_needsUpdate = true;
+			break;
+		}
+	}
 }
 
 void VMDPlayer::initOverlay() {
@@ -883,7 +936,9 @@ void VMDPlayer::closeOverlay() {
 	}
 #endif
 
-	g_sci->_gfxFrameout->frameOut(true, _drawRect);
+	if (!_leaveLastFrame && _leaveScreenBlack) {
+		g_sci->_gfxFrameout->frameOut(true, _drawRect);
+	}
 }
 
 void VMDPlayer::initComposited() {
@@ -977,7 +1032,28 @@ void VMDPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 	if (_isComposited) {
 		renderComposited();
 	} else {
-		renderOverlay(nextFrame);
+		if (_blobs.empty()) {
+			renderOverlay(nextFrame);
+		} else {
+			Graphics::Surface censoredFrame;
+			censoredFrame.create(nextFrame.w, nextFrame.h, nextFrame.format);
+			censoredFrame.copyFrom(nextFrame);
+			drawBlobs(censoredFrame);
+			renderOverlay(censoredFrame);
+			censoredFrame.free();
+		}
+	}
+}
+
+void VMDPlayer::drawBlobs(Graphics::Surface& frame) const {
+	for (Common::List<Blob>::const_iterator blob = _blobs.begin(); blob != _blobs.end(); ++blob) {
+		for (int16 blockLeft = blob->left; blockLeft < blob->right; blockLeft += blob->blockSize) {
+			for (int16 blockTop = blob->top; blockTop < blob->bottom; blockTop += blob->blockSize) {
+				byte color = *(byte *)frame.getBasePtr(blockLeft, blockTop);
+				Common::Rect block(blockLeft, blockTop, blockLeft + blob->blockSize, blockTop + blob->blockSize);
+				frame.fillRect(block, color);
+			}
+		}
 	}
 }
 
@@ -1052,8 +1128,8 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 	// SSCI seems to incorrectly calculate the draw rect by scaling the origin
 	// in addition to the width/height for the BR point
 	setDrawRect(x, y,
-				(_decoder->getWidth() << _doublePixels),
-				(_decoder->getHeight() << _doublePixels));
+				(_decoder->getWidth() << (_doublePixels ? 1 : 0)),
+				(_decoder->getHeight() << (_doublePixels ? 1 : 0)));
 
 	g_sci->_gfxCursor32->hide();
 

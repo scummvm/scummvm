@@ -33,8 +33,8 @@ class CallMacroCommandParser : public CommandParser {
 public:
 	CallMacroCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
 };
 
 class CallMacroCommand : public Command {
@@ -44,9 +44,9 @@ public:
 
 	Command *getReturnCommand() const;
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Command *next() const override;
-	virtual Common::String debugString() const override;
+	Common::String debugString() const override;
 private:
 	Common::String _macroName;
 	Command *_returnCommand;

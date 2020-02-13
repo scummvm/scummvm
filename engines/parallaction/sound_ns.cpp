@@ -43,8 +43,8 @@ public:
 
 	void play(Common::SeekableReadStream *stream);
 	void pause(bool p);
-	virtual void pause() { assert(0); } // overridden
-	virtual void onTimer();
+	void pause() override { assert(0); } // overridden
+	void onTimer() override;
 
 private:
 	bool _paused;
@@ -377,6 +377,9 @@ void SoundMan_ns::execute(int command, const char *parm = 0) {
 
 	case SC_PAUSE:
 		pause(b);
+		break;
+
+	default:
 		break;
 	}
 }

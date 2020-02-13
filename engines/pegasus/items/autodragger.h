@@ -35,15 +35,15 @@ class DisplayElement;
 class AutoDragger : private Idler, private TimeBase, private TimeBaseCallBack {
 public:
 	AutoDragger();
-	virtual ~AutoDragger() {}
+	~AutoDragger() override {}
 
 	void autoDrag(DisplayElement *, const Common::Point &, const Common::Point &, TimeValue, TimeScale);
 	bool isDragging();
 	void stopDragging();
 
 protected:
-	void useIdleTime();
-	void callBack();
+	void useIdleTime() override;
+	void callBack() override;
 
 	DisplayElement *_draggingElement;
 	Common::Point _startLocation, _stopLocation;

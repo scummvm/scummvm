@@ -444,6 +444,8 @@ bool Picture::load(MfcArchive &file) {
 	_width = file.readUint32LE();
 	_height = file.readUint32LE();
 
+	debug(7, "Picture::load: x: %d y: %d, w: %d, h: %d", _x, _y, _width, _height);
+
 	_mflags |= 1;
 
 	_memoryObject2.reset(new MemoryObject2);

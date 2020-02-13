@@ -114,7 +114,7 @@ public:
 	MSprite();
 	MSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette,
 		const Common::Rect &bounds);
-	virtual ~MSprite();
+	~MSprite() override;
 
 	Common::Point _offset;
 	int _transparencyIndex;

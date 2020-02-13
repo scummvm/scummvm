@@ -1812,6 +1812,8 @@ void Scene280::Action1::signal() {
 		scene->_jake.remove();
 		scene->_mum.animate(ANIM_MODE_5, NULL);
 		break;
+	default:
+		break;
 	}
 }
 

@@ -95,10 +95,10 @@ private:
 
 public:
 	OptionsDialog(Sword2Engine *vm);
-	~OptionsDialog();
+	~OptionsDialog() override;
 
-	virtual void paint();
-	virtual void onAction(Widget *widget, int result = 0);
+	void paint() override;
+	void onAction(Widget *widget, int result = 0) override;
 };
 
 class SaveRestoreDialog : public Dialog {
@@ -121,15 +121,15 @@ private:
 
 public:
 	SaveRestoreDialog(Sword2Engine *vm, int mode);
-	~SaveRestoreDialog();
+	~SaveRestoreDialog() override;
 
 	void updateSlots();
 	void drawEditBuffer(Slot *slot);
 
-	virtual void onAction(Widget *widget, int result = 0);
-	virtual void paint();
-	virtual void setResult(int result);
-	virtual int runModal();
+	void onAction(Widget *widget, int result = 0) override;
+	void paint() override;
+	void setResult(int result) override;
+	int runModal() override;
 };
 
 /**
@@ -149,27 +149,27 @@ private:
 
 public:
 	MiniDialog(Sword2Engine *vm, uint32 headerTextId, uint32 okTextId = TEXT_OK, uint32 cancelTextId = TEXT_CANCEL);
-	virtual ~MiniDialog();
-	virtual void paint();
-	virtual void onAction(Widget *widget, int result = 0);
+	~MiniDialog() override;
+	void paint() override;
+	void onAction(Widget *widget, int result = 0) override;
 };
 
 class StartDialog : public MiniDialog {
 public:
 	StartDialog(Sword2Engine *vm);
-	virtual int runModal();
+	int runModal() override;
 };
 
 class RestartDialog : public MiniDialog {
 public:
 	RestartDialog(Sword2Engine *vm);
-	virtual int runModal();
+	int runModal() override;
 };
 
 class QuitDialog : public MiniDialog {
 public:
 	QuitDialog(Sword2Engine *vm);
-	virtual int runModal();
+	int runModal() override;
 };
 
 class SaveDialog : public SaveRestoreDialog {

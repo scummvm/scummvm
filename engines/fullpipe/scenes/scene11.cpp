@@ -631,8 +631,9 @@ int sceneHandler11(ExCommand *cmd) {
 		break;
 
 	case 107:
-		if (g_vars->scene11_arcadeIsOn)
+		if (g_vars->scene11_arcadeIsOn) {
 			sceneHandler11_swingLogic();
+		}
 		break;
 
 	case 33:
@@ -729,6 +730,7 @@ int sceneHandler11(ExCommand *cmd) {
 			g_fp->startSceneTrack();
 			return res;
 		}
+		break;
 
 	case 29:
 		if (g_vars->scene11_swingIsSwinging) {
@@ -757,12 +759,16 @@ int sceneHandler11(ExCommand *cmd) {
 						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);
 
-						return 0;
+						break;
 					}
 				}
 			}
-			return 0;
+			break;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

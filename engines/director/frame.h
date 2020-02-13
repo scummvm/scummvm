@@ -23,74 +23,27 @@
 #ifndef DIRECTOR_FRAME_H
 #define DIRECTOR_FRAME_H
 
-#include "graphics/managed_surface.h"
-
 namespace Image {
 	class ImageDecoder;
 }
 
+namespace Graphics {
+	class ManagedSurface;
+	struct Surface;
+}
+
+namespace Common {
+	class ReadStreamEndian;
+}
+
 namespace Director {
 
+class Score;
 class Sprite;
+class TextCast;
 
 enum {
 	kChannelDataSize = (25 * 50)
-};
-
-enum TransitionType {
-	kTransNone,
-	kTransWipeRight,
-	kTransWipeLeft,
-	kTransWipeDown,
-	kTransWipeUp,
-	kTransCenterOutHorizontal,
-	kTransEdgesInHorizontal,
-	kTransCenterOutVertical,
-	kTransEdgesInVertical,
-	kTransCenterOutSquare,
-	kTransEdgesInSquare,
-	kTransPushLeft,
-	kTransPushRight,
-	kTransPushDown,
-	kTransPushUp,
-	kTransRevealUp,
-	kTransRevealUpRight,
-	kTransRevealRight,
-	kTransRevealDown,
-	kTransRevealDownRight,
-	kTransRevealDownLeft,
-	kTransRevealLeft,
-	kTransRevealUpLeft,
-	kTransDissolvePixelsFast,
-	kTransDissolveBoxyRects,
-	kTransDissolveBoxySquares,
-	kTransDissolvePatterns,
-	kTransRandomRows,
-	kTransRandomColumns,
-	kTransCoverDown,
-	kTransCoverDownLeft,
-	kTransCoverDownRight,
-	kTransCoverLeft,
-	kTransCoverRight,
-	kTransCoverUp,
-	kTransCoverUpLeft,
-	kTransCoverUpRight,
-	kTransTypeVenitianBlind,
-	kTransTypeCheckerboard,
-	kTransTypeStripsBottomBuildLeft,
-	kTransTypeStripsBottomBuildRight,
-	kTransTypeStripsLeftBuildDown,
-	kTransTypeStripsLeftBuildUp,
-	kTransTypeStripsRightBuildDown,
-	kTransTypeStripsRightBuildUp,
-	kTransTypeStripsTopBuildLeft,
-	kTransTypeStripsTopBuildRight,
-	kTransZoomOpen,
-	kTransZoomClose,
-	kTransVerticalBinds,
-	kTransDissolveBitsTrans,
-	kTransDissolvePixels,
-	kTransDissolveBits
 };
 
 struct PaletteInfo {
@@ -110,7 +63,7 @@ struct FrameEntity {
 
 class Frame {
 public:
-	Frame(DirectorEngine *vm);
+	Frame(DirectorEngine *vm, int numChannels);
 	Frame(const Frame &frame);
 	~Frame();
 	void readChannels(Common::ReadStreamEndian *stream);
@@ -118,6 +71,7 @@ public:
 	void prepareFrame(Score *score);
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
+	Common::Rect *getSpriteRect(uint16 spriteId);
 
 	void executeImmediateScripts();
 
@@ -137,10 +91,11 @@ private:
 	void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, uint16 spriteId, Common::Rect drawRect);
+	void inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect);
 	void addDrawRect(uint16 entityId, Common::Rect &rect);
 
 public:
+	int _numChannels;
 	byte _channelData[kChannelDataSize];
 	uint8 _actionId;
 	uint8 _transDuration;

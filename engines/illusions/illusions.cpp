@@ -318,6 +318,8 @@ uint32 IllusionsEngine::clipTextDuration(uint32 duration) {
 		if (duration > _fieldA)
 			duration = _fieldA;
 		break;
+	default:
+		break;
 	}
 	return duration;
 }

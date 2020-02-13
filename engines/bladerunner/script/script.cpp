@@ -43,6 +43,10 @@
 #include "bladerunner/set.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/set_effects.h"
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+#include "bladerunner/screen_effects.h"
+#endif // BLADERUNNER_ORIGINAL_BUGS
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/police_maze.h"
@@ -292,6 +296,11 @@ void ScriptBase::Actor_Says(int actorId, int sentenceId, int animationMode) {
 	Actor_Says_With_Pause(actorId, sentenceId, 0.5f, animationMode);
 }
 
+/**
+* Actor actorId says the sentenceId, and then
+* if pause > 0.0f there will be a delay for "pause" seconds.
+* pause can be 0.0f
+*/
 void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause, int animationMode) {
 	debugC(kDebugScript, "Actor_Says_With_Pause(%d, %d, %f, %d)", actorId, sentenceId, pause, animationMode);
 	_vm->gameWaitForActive();
@@ -339,7 +348,7 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 	}
 
 	if (pause > 0.0f && !_vm->_actorSpeakStopIsRequested) {
-		Delay(pause * 1000);
+		Delay(pause * 1000u);
 	}
 
 	Player_Gains_Control();
@@ -485,15 +494,29 @@ bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int pro
 		run = true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
@@ -510,15 +533,29 @@ bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int proximity,
 		run = true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToItem(itemId, proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
@@ -535,15 +572,29 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 		run = true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToSceneObject(objectName, proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
@@ -560,15 +611,29 @@ bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int pr
 		run = true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToWaypoint(waypointId, proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
@@ -588,15 +653,30 @@ bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, 
 			run = true;
 		}
 	}
+
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToXYZ(Vector3(x, y, z), proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
@@ -740,14 +820,14 @@ bool ScriptBase::Actor_Clue_Query(int actorId, int clueId) {
 	return _vm->_actors[actorId]->hasClue(clueId);
 }
 
-void ScriptBase::Actor_Clues_Transfer_New_To_Mainframe(int actorId) {
+bool ScriptBase::Actor_Clues_Transfer_New_To_Mainframe(int actorId) {
 	debugC(kDebugScript, "Actor_Clues_Transfer_New_To_Mainframe(%d)", actorId);
-	_vm->_actors[actorId]->copyClues(kActorVoiceOver);
+	return _vm->_actors[actorId]->copyClues(kActorVoiceOver);
 }
 
-void ScriptBase::Actor_Clues_Transfer_New_From_Mainframe(int actorId) {
+bool ScriptBase::Actor_Clues_Transfer_New_From_Mainframe(int actorId) {
 	debugC(kDebugScript, "Actor_Clues_Transfer_New_From_Mainframe(%d)", actorId);
-	_vm->_actors[kActorVoiceOver]->copyClues(actorId);
+	return _vm->_actors[kActorVoiceOver]->copyClues(actorId);
 }
 
 void ScriptBase::Actor_Set_Invisible(int actorId, bool isInvisible) {
@@ -795,6 +875,13 @@ void ScriptBase::Item_Pickup_Spin_Effect(int animationId, int x, int y) {
 	_vm->_itemPickup->setup(animationId, x, y);
 }
 
+void ScriptBase::Item_Pickup_Spin_Effect_From_Actor(int animationId, int actorId, int xOffset, int yOffset) {
+	debugC(kDebugScript, "Item_Pickup_Spin_Effect_From_Actor(%d, %d, %d, %d)", animationId, actorId, xOffset, yOffset);
+
+	const Common::Rect &rect = _vm->_actors[actorId]->getScreenRectangle();
+	_vm->_itemPickup->setup(animationId, CLIP((rect.right + rect.left) / 2 + xOffset, 0, 639), CLIP((rect.bottom + rect.top) / 2 + yOffset, 0, 479));
+}
+
 bool ScriptBase::Item_Query_Visible(int itemId) {
 	debugC(kDebugScript, "Item_Query_Visible(%d)", itemId);
 	return _vm->_items->isVisible(itemId);
@@ -807,6 +894,42 @@ void ScriptBase::Set_Subtitle_Text_On_Screen(Common::String displayText) {
 	_vm->_subtitles->setGameSubsText(displayText, true);
 	_vm->_subtitles->show();
 }
+
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+/**
+* USE WITH CAUTION
+* Methods to remove a rogue effect from a scene
+*
+* In UG01 we need a forced frame skip to make the effect disappear properly (without delay)
+* However other times we might not need this extra frame skip (eg. in transition pan from DR04 to DR01)
+* -- especially in scenes where events, effects, sounds etc are triggered at specific frames
+* TODO: Is there a better way to update the effect state without force skipping a frame?
+*/
+void ScriptBase::Screen_Effect_Skip(int effectInc, bool forceExtraFrameSkip) {
+	debugC(kDebugScript, "Screen_Effect_Skip(%d)", effectInc);
+	_vm->_screenEffects->toggleEntry(effectInc, true);
+	if (forceExtraFrameSkip) {
+		_vm->_scene->advanceFrame(false);
+	}
+}
+
+void ScriptBase::Screen_Effect_Restore(int effectInc, bool forceExtraFrameSkip) {
+	debugC(kDebugScript, "Screen_Effect_Restore(%d)", effectInc);
+	_vm->_screenEffects->toggleEntry(effectInc, false);
+	if (forceExtraFrameSkip) {
+		_vm->_scene->advanceFrame(false);
+	}
+}
+
+void ScriptBase::Screen_Effect_Restore_All(bool forceExtraFrameSkip) {
+	debugC(kDebugScript, "Screen_Effect_Restore_All()");
+	_vm->_screenEffects->toggleEntry(-1, false);
+	if (forceExtraFrameSkip) {
+		_vm->_scene->advanceFrame(false);
+	}
+}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 int ScriptBase::Animation_Open() {
 	//This is not implemented in game
@@ -833,11 +956,12 @@ int ScriptBase::Animation_Skip_To_Frame() {
 	return 0;
 }
 
-void ScriptBase::Delay(int miliseconds) {
-	debugC(kDebugScript, "Delay(%d)", miliseconds);
+void ScriptBase::Delay(uint32 miliseconds) {
+	debugC(kDebugScript, "Delay(%u)", miliseconds);
 	Player_Loses_Control();
-	int endTime = _vm->_time->current() + miliseconds;
-	while (_vm->_gameIsRunning && (_vm->_time->current() < endTime)) {
+	uint32 startTime = _vm->_time->current();
+	// unsigned difference is intentional
+	while (_vm->_gameIsRunning && (_vm->_time->current() - startTime < miliseconds)) {
 		_vm->gameTick();
 	}
 	Player_Gains_Control();
@@ -1042,18 +1166,18 @@ void ScriptBase::Footstep_Sound_Override_Off() {
 	_vm->_scene->_set->resetFoodstepSoundOverride();
 }
 
-bool ScriptBase::Music_Play(int musicId, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut) {
+bool ScriptBase::Music_Play(int musicId, int volume, int pan, int32 timeFadeIn, int32 timePlay, int loop, int32 timeFadeOut) {
 	debugC(kDebugScript, "Music_Play(%d, %d, %d, %d, %d, %d, %d)", musicId, volume, pan, timeFadeIn, timePlay, loop, timeFadeOut);
 	return _vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), volume, pan, timeFadeIn, timePlay, loop, timeFadeOut);
 }
 
-void ScriptBase::Music_Adjust(int volume, int pan, int delay) {
-	debugC(kDebugScript, "Music_Adjust(%d, %d, %d)", volume, pan, delay);
+void ScriptBase::Music_Adjust(int volume, int pan, uint32 delay) {
+	debugC(kDebugScript, "Music_Adjust(%d, %d, %u)", volume, pan, delay);
 	_vm->_music->adjust(volume, pan, delay);
 }
 
-void ScriptBase::Music_Stop(int delay) {
-	debugC(kDebugScript, "Music_Stop(%d)", delay);
+void ScriptBase::Music_Stop(uint32 delay) {
+	debugC(kDebugScript, "Music_Stop(%u)", delay);
 	_vm->_music->stop(delay);
 }
 
@@ -1093,8 +1217,8 @@ void ScriptBase::Outtake_Play(int id, int noLocalization, int container) {
 	_vm->outtakePlay(id, noLocalization, container);
 }
 
-void ScriptBase::Ambient_Sounds_Add_Sound(int sfxId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
-	debugC(kDebugScript, "Ambient_Sounds_Add_Sound(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", sfxId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
+void ScriptBase::Ambient_Sounds_Add_Sound(int sfxId, uint32 timeMin, uint32 timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
+	debugC(kDebugScript, "Ambient_Sounds_Add_Sound(%d, %u, %u, %d, %d, %d, %d, %d, %d, %d, %d)", sfxId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 	_vm->_ambientSounds->addSound(sfxId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 }
 
@@ -1103,8 +1227,8 @@ void  ScriptBase::Ambient_Sounds_Remove_Sound(int sfxId, bool stopPlaying) {
 	_vm->_ambientSounds->removeNonLoopingSound(sfxId,  stopPlaying);
 }
 
-void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk){
-	debugC(kDebugScript, "Ambient_Sounds_Add_Speech_Sound(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", actorId, sentenceId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
+void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, uint32 timeMin, uint32 timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
+	debugC(kDebugScript, "Ambient_Sounds_Add_Speech_Sound(%d, %d, %u, %u, %d, %d, %d, %d, %d, %d, %d, %d)", actorId, sentenceId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 	_vm->_ambientSounds->addSpeech(actorId, sentenceId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 }
 
@@ -1125,23 +1249,23 @@ void ScriptBase::Ambient_Sounds_Remove_All_Non_Looping_Sounds(bool stopPlaying) 
 	_vm->_ambientSounds->removeAllNonLoopingSounds(stopPlaying);
 }
 
-void ScriptBase::Ambient_Sounds_Add_Looping_Sound(int sfxId, int volume, int pan, int delay) {
-	debugC(kDebugScript, "Ambient_Sounds_Add_Looping_Sound(%d, %d, %d, %d)", sfxId, volume, pan, delay);
+void ScriptBase::Ambient_Sounds_Add_Looping_Sound(int sfxId, int volume, int pan, uint32 delay) {
+	debugC(kDebugScript, "Ambient_Sounds_Add_Looping_Sound(%d, %d, %d, %u)", sfxId, volume, pan, delay);
 	_vm->_ambientSounds->addLoopingSound(sfxId, volume, pan, delay);
 }
 
-void ScriptBase::Ambient_Sounds_Adjust_Looping_Sound(int sfxId, int volume, int pan, int delay) {
-	debugC(kDebugScript, "Ambient_Sounds_Adjust_Looping_Sound(%d, %d, %d, %d)", sfxId, volume, pan, delay);
+void ScriptBase::Ambient_Sounds_Adjust_Looping_Sound(int sfxId, int volume, int pan, uint32 delay) {
+	debugC(kDebugScript, "Ambient_Sounds_Adjust_Looping_Sound(%d, %d, %d, %u)", sfxId, volume, pan, delay);
 	_vm->_ambientSounds->adjustLoopingSound(sfxId, volume, pan, delay);
 }
 
-void ScriptBase::Ambient_Sounds_Remove_Looping_Sound(int sfxId, int delay){
-	debugC(kDebugScript, "Ambient_Sounds_Remove_Looping_Sound(%d, %d)", sfxId, delay);
+void ScriptBase::Ambient_Sounds_Remove_Looping_Sound(int sfxId, uint32 delay) {
+	debugC(kDebugScript, "Ambient_Sounds_Remove_Looping_Sound(%d, %u)", sfxId, delay);
 	_vm->_ambientSounds->removeLoopingSound(sfxId, delay);
 }
 
-void ScriptBase::Ambient_Sounds_Remove_All_Looping_Sounds(int delay) {
-	debugC(kDebugScript, "Ambient_Sounds_Remove_All_Looping_Sounds(%d)", delay);
+void ScriptBase::Ambient_Sounds_Remove_All_Looping_Sounds(uint32 delay) {
+	debugC(kDebugScript, "Ambient_Sounds_Remove_All_Looping_Sounds(%u)", delay);
 	_vm->_ambientSounds->removeAllLoopingSounds(delay);
 }
 
@@ -1197,6 +1321,11 @@ bool ScriptBase::DM_Add_To_List(int answer, int priorityPolite, int priorityNorm
 bool ScriptBase::DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int priorityPolite, int priorityNormal, int prioritySurly) {
 	debugC(kDebugScript, "DM_Add_To_List_Never_Repeat_Once_Selected(%d, %d, %d, %d)", answer, priorityPolite, priorityNormal, prioritySurly);
 	return _vm->_dialogueMenu->addToListNeverRepeatOnceSelected(answer, priorityPolite, priorityNormal, prioritySurly);
+}
+
+bool ScriptBase::Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(int answer) {
+	debugC(kDebugScript, "Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(%d)", answer);
+	return _vm->_dialogueMenu->clearNeverRepeatWasSelectedFlag(answer);
 }
 
 bool ScriptBase::Dialogue_Menu_Remove_From_List(int answer) {
@@ -1406,7 +1535,7 @@ void ScriptBase::ESPER_Flag_To_Activate() {
 	}
 }
 
-void ScriptBase::Voight_Kampff_Activate(int actorId, int calibrationRatio){
+void ScriptBase::Voight_Kampff_Activate(int actorId, int calibrationRatio) {
 	debugC(kDebugScript, "Voight_Kampff_Activate(%d, %d)", actorId, calibrationRatio);
 	_vm->_vk->open(actorId, calibrationRatio);
 	while (_vm->_vk->isOpen() && _vm->_gameIsRunning) {
@@ -1482,8 +1611,9 @@ void ScriptBase::Clickable_Object(const char *objectName) {
 void ScriptBase::Unclickable_Object(const char *objectName) {
 	debugC(kDebugScript, "Unclickable_Object(%s)", objectName);
 	int objectId = _vm->_scene->findObject(objectName);
-	if (objectId == -1)
+	if (objectId == -1) {
 		return;
+	}
 	_vm->_scene->objectSetIsClickable(objectId, false, !_vm->_sceneIsLoading);
 }
 
@@ -1554,7 +1684,7 @@ void ScriptBase::ADQ_Add(int actorId, int sentenceId, int animationMode) {
 	_vm->_actorDialogueQueue->add(actorId, sentenceId, animationMode);
 }
 
-void ScriptBase::ADQ_Add_Pause(int delay) {
+void ScriptBase::ADQ_Add_Pause(int32 delay) {
 	debugC(kDebugScript, "ADQ_Add_Pause(%d)", delay);
 	_vm->_actorDialogueQueue->addPause(delay);
 }
@@ -1581,7 +1711,7 @@ void ScriptBase::I_Sez(const char *str) {
 	_vm->ISez(str);
 }
 
-void ScriptBase::AI_Countdown_Timer_Start(int actorId, signed int timer, int seconds) {
+void ScriptBase::AI_Countdown_Timer_Start(int actorId, signed int timer, int32 seconds) {
 	debugC(kDebugScript, "AI_Countdown_Timer_Start(%d, %d, %d)", actorId, timer, seconds);
 	if (timer >= 0 && timer <= 2) {
 		_vm->_actors[actorId]->timerStart(timer, 1000 * seconds);
@@ -1611,22 +1741,22 @@ void ScriptBase::AI_Movement_Track_Repeat(int actorId) {
 	_vm->_actors[actorId]->movementTrackNext(true);
 }
 
-void ScriptBase::AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, int delay, int angle) {
+void ScriptBase::AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, int32 delay, int angle) {
 	debugC(kDebugScript, "AI_Movement_Track_Append_Run_With_Facing(%d, %d, %d, %d)", actorId, waypointId, delay, angle);
 	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, angle, true);
 }
 
-void ScriptBase::AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, int delay, int angle) {
+void ScriptBase::AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, int32 delay, int angle) {
 	debugC(kDebugScript, "AI_Movement_Track_Append_With_Facing(%d, %d, %d, %d)", actorId, waypointId, delay, angle);
 	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, angle, false);
 }
 
-void ScriptBase::AI_Movement_Track_Append_Run(int actorId, int waypointId, int delay) {
+void ScriptBase::AI_Movement_Track_Append_Run(int actorId, int waypointId, int32 delay) {
 	debugC(kDebugScript, "AI_Movement_Track_Append_Run(%d, %d, %d)", actorId, waypointId, delay);
 	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, true);
 }
 
-void ScriptBase::AI_Movement_Track_Append(int actorId, int waypointId, int delay) {
+void ScriptBase::AI_Movement_Track_Append(int actorId, int waypointId, int32 delay) {
 	debugC(kDebugScript, "AI_Movement_Track_Append(%d, %d, %d)", actorId, waypointId, delay);
 	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, false);
 }

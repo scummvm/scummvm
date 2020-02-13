@@ -99,7 +99,7 @@ enum ZVisionFeatures {
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
-	~ZVision();
+	~ZVision() override;
 
 public:
 	/**
@@ -151,8 +151,8 @@ private:
 	uint8 _cheatBuffer[KEYBUF_SIZE];
 
 public:
-	Common::Error run();
-	void pauseEngineIntern(bool pause);
+	Common::Error run() override;
+	void pauseEngineIntern(bool pause) override;
 
 	ZVisionGameId getGameId() const;
 	Common::Language getLanguage() const;
@@ -231,8 +231,8 @@ public:
 		return _fps;
 	}
 
-	GUI::Debugger *getDebugger();
-	void syncSoundSettings();
+	GUI::Debugger *getDebugger() override;
+	void syncSoundSettings() override;
 
 	void loadSettings();
 	void saveSettings();
@@ -240,11 +240,11 @@ public:
 	bool ifQuit();
 
 	// Engine features
-	bool hasFeature(EngineFeature f) const;
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 private:
 	void initialize();

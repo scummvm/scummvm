@@ -24,6 +24,7 @@
 
 #include "common/debug.h"
 #include "common/stream.h"
+#include "common/util.h"
 
 namespace BladeRunner {
 
@@ -73,8 +74,8 @@ void View::calculateCameraPosition() {
 Vector3 View::calculateScreenPosition(Vector3 worldPosition) {
 	Vector3 viewPosition = _frameViewMatrix * worldPosition;
 	return Vector3(
-		_viewportPosition.x - viewPosition.x / viewPosition.z * _viewportPosition.z,
-		_viewportPosition.y - viewPosition.y / viewPosition.z * _viewportPosition.z,
+		_viewportPosition.x - ((viewPosition.x / ABS(viewPosition.z)) * ABS(_viewportPosition.z)),
+		_viewportPosition.y - ((viewPosition.y / ABS(viewPosition.z)) * ABS(_viewportPosition.z)),
 		viewPosition.z
 	);
 }

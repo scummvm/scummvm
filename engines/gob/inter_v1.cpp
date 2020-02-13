@@ -901,6 +901,8 @@ void Inter_v1::o1_assign(OpFuncParams &params) {
 			WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
 		break;
 
+	default:
+		break;
 	}
 }
 
@@ -968,6 +970,9 @@ void Inter_v1::o1_printText(OpFuncParams &params) {
 			case TYPE_ARRAY_STR:
 				sprintf(buf + i, "%s",
 					GET_VARO_STR(_vm->_game->_script->readVarIndex()));
+				break;
+
+			default:
 				break;
 			}
 			_vm->_game->_script->skip(1);
@@ -1058,6 +1063,9 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_game->_script->skip(4);
 			return;
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -1163,6 +1171,9 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			return;
 		}
+		break;
+
+	default:
 		break;
 	}
 

@@ -84,7 +84,7 @@ public:
 	int _buttons;
 	Sprite *_busy;
 	Mouse(CGE2Engine *vm);
-	~Mouse();
+	~Mouse() override;
 	void on();
 	void off();
 	void newMouse(Common::Event &event);

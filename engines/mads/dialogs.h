@@ -127,14 +127,14 @@ protected:
 	Common::String _lines[TEXT_DIALOG_MAX_LINES];
 	int _lineXp[TEXT_DIALOG_MAX_LINES];
 	SpriteAsset *_edgeSeries;
-	MSurface *_icon;
+	MSurface *_portrait;
 	int _piecesPerCenter;
 	int _fontSpacing;
 
 	/**
 	 * Calculate the bounds for the dialog
 	 */
-	virtual void calculateBounds();
+	void calculateBounds() override;
 public:
 	/**
 	 * Constructor
@@ -151,21 +151,21 @@ public:
 	 * @param vm			Engine reference
 	 * @param fontName		Font to use for display
 	 * @param pos			Position for window top-left
-	 * @param icon			Speaker portrait to show in dialog
+	 * @param portrait		Speaker portrait to show in dialog
 	 * @param maxTextChars	Horizontal width of text portion of window in characters
 	 */
 	TextDialog(MADSEngine *vm, const Common::String &fontName, const Common::Point &pos,
-		MSurface *icon, int maxTextChars);
+		MSurface *portrait, int maxTextChars);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~TextDialog();
+	~TextDialog() override;
 
 	/**
 	 * Draw the dialog
 	 */
-	virtual void draw();
+	void draw() override;
 
 	/**
 	 * Draw the dialog along with any input box
@@ -224,7 +224,7 @@ class MessageDialog : public TextDialog {
 public:
 	MessageDialog(MADSEngine *vm, int lines, ...);
 
-	virtual ~MessageDialog() {}
+	~MessageDialog() override {}
 };
 
 enum DialogId {
@@ -286,7 +286,7 @@ public:
 	 */
 	FullScreenDialog(MADSEngine *vm);
 
-	virtual ~FullScreenDialog();
+	~FullScreenDialog() override;
 };
 
 } // End of namespace MADS

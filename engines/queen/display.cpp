@@ -299,6 +299,8 @@ void Display::palCustomColors(uint16 roomNum) {
 			palSetAmigaColor(20, 0xA58);
 			palSetAmigaColor(21, 0x845);
 			break;
+		default:
+			break;
 		}
 		return;
 	}
@@ -326,6 +328,8 @@ void Display::palCustomColors(uint16 roomNum) {
 			_pal.room[i * 3 + 0] = _pal.room[i * 3 + 0] * 80 / 100;
 			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 1] * 60 / 100;
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -357,6 +361,8 @@ void Display::palCustomScroll(uint16 roomNum) {
 			palScroll(28, 31);
 			loPal = 28;
 			hiPal = 31;
+			break;
+		default:
 			break;
 		}
 		_pal.dirtyMin = MIN(_pal.dirtyMin, loPal);
@@ -553,6 +559,8 @@ void Display::palCustomScroll(uint16 roomNum) {
 		palScroll(101, 127);
 		loPal = 101;
 		hiPal = 127;
+		break;
+	default:
 		break;
 	}
 	_pal.dirtyMin = MIN(_pal.dirtyMin, loPal);
@@ -1074,7 +1082,7 @@ void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 }
 
 void Display::shake(bool reset) {
-	_system->setShakePos(reset ? 0 : 3);
+	_system->setShakePos(0, reset ? 0 : 3);
 }
 
 void Display::blankScreen() {
@@ -1135,6 +1143,8 @@ void Display::blankScreenEffect2() {
 			break;
 		case 3:
 			c = *(p + SCREEN_W + 1);
+			break;
+		default:
 			break;
 		}
 		memset(p, c, 2);

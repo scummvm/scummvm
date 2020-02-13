@@ -329,6 +329,8 @@ void Draw_v2::printTotText(int16 id) {
 			_backColor = cmd & 0xF;
 			spriteOperation(DRAW_FILLRECTABS);
 			break;
+		default:
+			break;
 		}
 	}
 	ptr += 2;
@@ -915,6 +917,9 @@ void Draw_v2::spriteOperation(int16 operation) {
 		    _spriteRight, _spriteBottom, getColor(_backColor));
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
+		break;
+
+	default:
 		break;
 	}
 

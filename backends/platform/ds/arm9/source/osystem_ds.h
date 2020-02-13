@@ -84,11 +84,6 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
-	virtual const GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	bool setGraphicsMode(const char *name);
-	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
@@ -104,7 +99,7 @@ public:
 
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();
-	virtual void setShakePos(int shakeOffset);
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
@@ -182,10 +177,6 @@ public:
 	void setGammaValue(int gamma) { _gammaValue = gamma; }
 
 	void engineDone();
-};
-
-static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{0, 0, 0},
 };
 
 #endif

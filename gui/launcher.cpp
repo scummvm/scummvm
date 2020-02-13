@@ -66,9 +66,11 @@ enum {
 	kAboutCmd = 'ABOU',
 	kOptionsCmd = 'OPTN',
 	kAddGameCmd = 'ADDG',
+	kMassAddGameCmd = 'MADD',
 	kEditGameCmd = 'EDTG',
 	kRemoveGameCmd = 'REMG',
 	kLoadGameCmd = 'LOAD',
+	kRecordGameCmd = 'RECG',
 	kQuitCmd = 'QUIT',
 	kSearchCmd = 'SRCH',
 	kListSearchCmd = 'LSSR',
@@ -92,13 +94,9 @@ enum {
 #pragma mark -
 
 LauncherDialog::LauncherDialog()
-	: Dialog(0, 0, 320, 200) {
-	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	: Dialog("Launcher") {
 
-	_w = screenW;
-	_h = screenH;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
 
 	build();
 
@@ -125,7 +123,7 @@ LauncherDialog::~LauncherDialog() {
 
 void LauncherDialog::build() {
 #ifndef DISABLE_FANCY_THEMES
-	_logo = 0;
+	_logo = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
@@ -145,20 +143,30 @@ void LauncherDialog::build() {
 	_startButton =
 		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
 
-	_loadButton =
-		new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
+	DropdownButtonWidget *loadButton =
+	        new DropdownButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
+#ifdef ENABLE_EVENTRECORDER
+	loadButton->appendEntry(_("Record..."), kRecordGameCmd);
+#endif
+	_loadButton = loadButton;
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	if (g_system->getOverlayWidth() > 320) {
-		_addButton =
-			new ButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Hold Shift for Mass Add"), kAddGameCmd);
+		DropdownButtonWidget *addButton =
+			new DropdownButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
+		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
+		_addButton = addButton;
+
 		_editButton =
 			new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
 		_removeButton =
 			new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	} else {
-		_addButton =
-		new ButtonWidget(this, "Launcher.AddGameButton", _c("~A~dd Game...", "lowres"), _("Hold Shift for Mass Add"), kAddGameCmd);
+		DropdownButtonWidget *addButton =
+			new DropdownButtonWidget(this, "Launcher.AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
+		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
+		_addButton = addButton;
+
 		_editButton =
 		new ButtonWidget(this, "Launcher.EditGameButton", _c("~E~dit Game...", "lowres"), _("Change game options"), kEditGameCmd);
 		_removeButton =
@@ -166,9 +174,9 @@ void LauncherDialog::build() {
 	}
 
 	// Search box
-	_searchDesc = 0;
+	_searchDesc = nullptr;
 #ifndef DISABLE_FANCY_THEMES
-	_searchPic = 0;
+	_searchPic = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic", _("Search in game list"));
 		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
@@ -176,11 +184,11 @@ void LauncherDialog::build() {
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, 0, kSearchCmd);
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, nullptr, kSearchCmd);
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList", 0, kListSearchCmd);
+	_list = new ListWidget(this, "Launcher.GameList", nullptr, kListSearchCmd);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
@@ -269,9 +277,10 @@ void LauncherDialog::updateListing() {
 
 		if (gameid.empty())
 			gameid = iter->_key;
+
 		if (description.empty()) {
-			PlainGameDescriptor g = EngineMan.findGame(gameid);
-			if (g.description)
+			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
+			if (!g.description.empty())
 				description = g.description;
 		}
 
@@ -317,38 +326,6 @@ void LauncherDialog::updateListing() {
 }
 
 void LauncherDialog::addGame() {
-
-#ifndef DISABLE_MASS_ADD
-	const bool massAdd = checkModifier(Common::KBD_SHIFT);
-
-	if (massAdd) {
-		MessageDialog alert(_("Do you really want to run the mass game detector? "
-							  "This could potentially add a huge number of games."), _("Yes"), _("No"));
-		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
-			MassAddDialog massAddDlg(_browser->getResult());
-
-			massAddDlg.runModal();
-
-			// Update the ListWidget and force a redraw
-
-			// If new target(s) were added, update the ListWidget and move
-			// the selection to to first newly detected game.
-			Common::String newTarget = massAddDlg.getFirstAddedTarget();
-			if (!newTarget.empty()) {
-				updateListing();
-				selectTarget(newTarget);
-			}
-
-			g_gui.scheduleTopDialogRedraw();
-		}
-
-		// We need to update the buttons here, so "Mass add" will revert to "Add game"
-		// without any additional event.
-		updateButtons();
-		return;
-	}
-#endif
-
 	// Allow user to add a new game to the list.
 	// 1) show a dir selection dialog which lets the user pick the directory
 	//    the game data resides in.
@@ -380,7 +357,7 @@ void LauncherDialog::addGame() {
 					bannedDirectory += '/';
 				}
 			}
-			if (selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
+			if (selectedDirectory.size() && bannedDirectory.size() && selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
 				MessageDialog alert(_("This directory cannot be used yet, it is being downloaded into!"));
 				alert.runModal();
 				return;
@@ -389,6 +366,28 @@ void LauncherDialog::addGame() {
 			looping = !doGameDetection(_browser->getResult().getPath());
 		}
 	} while (looping);
+}
+
+void LauncherDialog::massAddGame() {
+	MessageDialog alert(_("Do you really want to run the mass game detector? "
+						  "This could potentially add a huge number of games."), _("Yes"), _("No"));
+	if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
+		MassAddDialog massAddDlg(_browser->getResult());
+
+		massAddDlg.runModal();
+
+		// Update the ListWidget and force a redraw
+
+		// If new target(s) were added, update the ListWidget and move
+		// the selection to to first newly detected game.
+		Common::String newTarget = massAddDlg.getFirstAddedTarget();
+		if (!newTarget.empty()) {
+			updateListing();
+			selectTarget(newTarget);
+		}
+
+		g_gui.scheduleTopDialogRedraw();
+	}
 }
 
 void LauncherDialog::removeGame(int item) {
@@ -416,9 +415,6 @@ void LauncherDialog::editGame(int item) {
 	// This is useful because e.g. MonkeyVGA needs AdLib music to have decent
 	// music support etc.
 	assert(item >= 0);
-	String gameId(ConfMan.get("gameid", _domains[item]));
-	if (gameId.empty())
-		gameId = _domains[item];
 
 	EditGameDialog editDialog(_domains[item]);
 	if (editDialog.runModal() > 0) {
@@ -434,26 +430,14 @@ void LauncherDialog::editGame(int item) {
 	}
 }
 
-void LauncherDialog::loadGameButtonPressed(int item) {
-#ifdef ENABLE_EVENTRECORDER
-	const bool shiftPressed = checkModifier(Common::KBD_SHIFT);
-	if (shiftPressed) {
-		recordGame(item);
-	} else {
-		loadGame(item);
-	}
-	updateButtons();
-#else
-	loadGame(item);
-#endif
-}
-
 #ifdef ENABLE_EVENTRECORDER
 void LauncherDialog::recordGame(int item) {
 	RecorderDialog recorderDialog;
 	MessageDialog alert(_("Do you want to load saved game?"),
 		_("Yes"), _("No"));
 	switch(recorderDialog.runModal(_domains[item])) {
+	default:
+		// fallthrough intended
 	case RecorderDialog::kRecordDialogClose:
 		break;
 	case RecorderDialog::kRecordDialogPlayback:
@@ -478,16 +462,14 @@ void LauncherDialog::recordGame(int item) {
 #endif
 
 void LauncherDialog::loadGame(int item) {
-	String gameId = ConfMan.get("gameid", _domains[item]);
-	if (gameId.empty())
-		gameId = _domains[item];
-
-	const Plugin *plugin = nullptr;
-
-	EngineMan.findGame(gameId, &plugin);
-
 	String target = _domains[item];
 	target.toLowercase();
+
+	EngineMan.upgradeTargetIfNecessary(target);
+
+	// Look for the plugin
+	const Plugin *plugin = nullptr;
+	EngineMan.findTarget(target, &plugin);
 
 	if (plugin) {
 		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
@@ -528,7 +510,7 @@ void LauncherDialog::handleKeyUp(Common::KeyState state) {
 	updateButtons();
 }
 
-void LauncherDialog::handleOtherEvent(Common::Event evt) {
+void LauncherDialog::handleOtherEvent(const Common::Event &evt) {
 	Dialog::handleOtherEvent(evt);
 	if (evt.type == Common::EVENT_DROP_FILE) {
 		doGameDetection(evt.path);
@@ -642,6 +624,9 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kAddGameCmd:
 		addGame();
 		break;
+	case kMassAddGameCmd:
+		massAddGame();
+		break;
 	case kRemoveGameCmd:
 		removeGame(item);
 		break;
@@ -649,8 +634,13 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		editGame(item);
 		break;
 	case kLoadGameCmd:
-		loadGameButtonPressed(item);
+		loadGame(item);
 		break;
+#ifdef ENABLE_EVENTRECORDER
+	case kRecordGameCmd:
+		recordGame(item);
+		break;
+#endif
 	case kOptionsCmd: {
 		GlobalOptionsDialog options(this);
 		options.runModal();
@@ -719,27 +709,7 @@ void LauncherDialog::updateButtons() {
 		_loadButton->setEnabled(en);
 		_loadButton->markAsDirty();
 	}
-	switchButtonsText(_addButton, "~A~dd Game...", _s("Mass Add..."));
-#ifdef ENABLE_EVENTRECORDER
-	switchButtonsText(_loadButton, "~L~oad...", _s("Record..."));
-#endif
 }
-
-// Update the label of the button depending on whether shift is pressed or not
-void LauncherDialog::switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText) {
-	const bool shiftPressed = checkModifier(Common::KBD_SHIFT);
-	const bool lowRes = g_system->getOverlayWidth() <= 320;
-
-	const char *newAddButtonLabel = shiftPressed
-		? (lowRes ? _c(shiftedText, "lowres") : _(shiftedText))
-		: (lowRes ? _c(normalText, "lowres") : _(normalText));
-
-	if (button->getLabel() != newAddButtonLabel)
-		button->setLabel(newAddButtonLabel);
-}
-
-
-
 
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
@@ -763,9 +733,9 @@ void LauncherDialog::reflowLayout() {
 
 		if (_logo) {
 			removeWidget(_logo);
-			_logo->setNext(0);
+			_logo->setNext(nullptr);
 			delete _logo;
-			_logo = 0;
+			_logo = nullptr;
 		}
 	}
 
@@ -776,9 +746,9 @@ void LauncherDialog::reflowLayout() {
 
 		if (_searchDesc) {
 			removeWidget(_searchDesc);
-			_searchDesc->setNext(0);
+			_searchDesc->setNext(nullptr);
 			delete _searchDesc;
-			_searchDesc = 0;
+			_searchDesc = nullptr;
 		}
 	} else {
 		if (!_searchDesc)
@@ -786,14 +756,14 @@ void LauncherDialog::reflowLayout() {
 
 		if (_searchPic) {
 			removeWidget(_searchPic);
-			_searchPic->setNext(0);
+			_searchPic->setNext(nullptr);
 			delete _searchPic;
-			_searchPic = 0;
+			_searchPic = nullptr;
 		}
 	}
 
 	removeWidget(_searchClearButton);
-	_searchClearButton->setNext(0);
+	_searchClearButton->setNext(nullptr);
 	delete _searchClearButton;
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 #endif

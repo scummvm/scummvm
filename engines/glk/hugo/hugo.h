@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on the Hugo interpreter version 3.3.0 */
+
 #ifndef GLK_HUGO_HUGO
 #define GLK_HUGO_HUGO
 
@@ -39,6 +41,7 @@ namespace Hugo {
  */
 class Hugo : public GlkAPI, public HTokens, public StringFunctions {
 private:
+	int _savegameSlot;
 	winid_t mainwin, currentwin;
 	winid_t secondwin, auxwin;
 	bool runtime_warnings;
@@ -73,7 +76,6 @@ private:
 	int object_size;
 	Common::SeekableReadStream *game;
 	HUGO_FILE script;
-	HUGO_FILE save;
 	HUGO_FILE playback;
 	HUGO_FILE record;
 	HUGO_FILE io; char ioblock; char ioerror;
@@ -181,7 +183,7 @@ private:
 	char parse_called_twice;
 	char reparse_everything;
 	char punc_string[64];					///< punctuation string
-	bool  full_buffer;
+	byte full_buffer;
 
 	/**
 	 * to MatchObject()
@@ -788,7 +790,7 @@ private:
 	 * 5.  If all is well, return to match the objects that were previously skipped over,
 	 * loading them into objlist[]. Once again, this is done by MatchObject().
 	 *
-	 * (The reason the objects are initially skipped is because it may be necessary to know 
+	 * (The reason the objects are initially skipped is because it may be necessary to know
 	 * where to look for them--this may require knowing what the xobject is, if the syntax
 	 * is something like:
 	 *
@@ -945,7 +947,7 @@ private:
 	/**
 	 * This is the main loop for running each line of code in sequence;
 	 * the main switch statement is based on the first token in each line.
-	 * 
+	 *
 	 * This routine is relatively complex, especially given the addition of debugger control.
 	 * Basically it is structured like this:
 	 *
@@ -971,8 +973,6 @@ private:
 	 * navigation guides.
 	 */
 	void RunRoutine(long addr);
-
-	int SaveGameData();
 
 	int RunSave();
 
@@ -1043,9 +1043,14 @@ private:
 	char *hugo_fgets(char *buf, int max, Common::SeekableReadStream *s) {
 		char *ptr = buf;
 		char c;
-		while (s->pos() < s->size() && (c = hugo_fgetc(s)) != '\n')
+		while (s->pos() < s->size() && --max > 0) {
+			c = hugo_fgetc(s);
+			if (c == '\n' || c == '\0')
+				break;
 			*ptr++ = c;
-		return buffer;
+		}
+		*ptr++ = '\0';
+		return buf;
 	}
 	char *hugo_fgets(char *buf, int max, strid_t s) {
 		Common::SeekableReadStream *rs = *s;
@@ -1133,10 +1138,7 @@ private:
 	void hugo_blockfree(void *block) { free(block); }
 
 #if defined (DEBUGGER)
-	int CheckinRange(uint v1, uint v2, const char *v3) {
-		// TODO: Where the heck is this actualy implemented in Gargoyle
-		return 1;
-	}
+	int CheckinRange(uint v1, uint v2, const char *v3) { return 1; }
 
 	/**
 	* Shorthand since many of these object functions may call CheckinRange() if the debugger
@@ -1144,7 +1146,7 @@ private:
 	*/
 	int CheckObjectRange(int obj);
 
-	void DebugRunRoutine(long addr) {}
+	void DebugRunRoutine(long addr) { RunRoutine(addr); }
 
 	void RuntimeWarning(const char *msg) {}
 
@@ -1159,7 +1161,7 @@ private:
 	void SwitchtoDebugger() {}
 
 	void Debugger() {}
-	
+
 	void UpdateDebugScreen() {}
 
 	void SwitchtoGame() {}
@@ -1183,22 +1185,23 @@ public:
 	/**
 	 * Run the game
 	 */
-	void runGame();
+	void runGame() override;
 
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_HUGO; }
+	InterpreterType getInterpreterType() const override { return INTERPRETER_HUGO; }
 
 	/**
-	 * Load a savegame from the passed stream
+	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error loadGameData(strid_t file) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
-	 * Save the game to the passed stream
+	 * Save the game. The passed write stream represents access to the UMem chunk
+	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Hugo

@@ -70,19 +70,19 @@ protected:
 	/**
 	 * Initialize the engine
 	 */
-	virtual void initialize();
+	void initialize() override;
 
-	virtual void showOpening();
+	void showOpening() override;
 
 	/**
 	 * Starting a scene within the game
 	 */
-	virtual void startScene();
+	void startScene() override;
 
 	/**
 	 * Load configuration options
 	 */
-	virtual void loadConfig();
+	void loadConfig() override;
 public:
 	bool _runningProlog;
 	bool _fastMode, _allowFastMode;
@@ -90,7 +90,7 @@ public:
 	bool _textWindowsOn;
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~TattooEngine();
+	~TattooEngine() override;
 
 	/**
 	 * Shows the foolscap puzzle
@@ -100,17 +100,17 @@ public:
 	/**
 	 * Save the game configuration
 	 */
-	virtual void saveConfig();
+	void saveConfig() override;
 
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently();
+	bool canSaveGameStateCurrently() override;
 };
 
 } // End of namespace Tattoo

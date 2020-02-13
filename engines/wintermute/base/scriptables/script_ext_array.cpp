@@ -118,8 +118,7 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// Pop
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Pop") == 0) {
-
+	else if (strcmp(name, "Pop") == 0) {
 		stack->correctParams(0);
 
 		if (_length > 0) {
@@ -133,7 +132,36 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		}
 
 		return STATUS_OK;
-	} else {
+	} 
+	
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] Delete
+	// Removes item from array by index, shifting other elements
+	// Used to shuffle arrays and delete found items in various scripts
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Delete") == 0) {
+		stack->correctParams(1);
+
+		int shiftPoint = stack->pop()->getInt(0);
+		char paramNameFrom[20];
+		char paramNameTo[20];
+
+		for (int i = shiftPoint; i < _length - 1 ; i++) {
+			sprintf(paramNameFrom, "%d", i + 1);
+			sprintf(paramNameTo, "%d", i);
+			_values->setProp(paramNameTo, _values->getProp(paramNameFrom), false);
+		}
+		_values->deleteProp(paramNameFrom);
+		_length--;
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+#endif
+
+	else {
 		return STATUS_FAILED;
 	}
 }

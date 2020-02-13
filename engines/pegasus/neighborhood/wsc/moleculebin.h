@@ -44,7 +44,7 @@ enum {
 class MoleculeBin : public DisplayElement {
 public:
 	MoleculeBin();
-	virtual ~MoleculeBin() {}
+	~MoleculeBin() override {}
 
 	void initMoleculeBin();
 	void cleanUpMoleculeBin();
@@ -58,7 +58,7 @@ public:
 	bool isMoleculeHighlighted(uint32);
 
 protected:
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 	Surface _binImages;
 	FlagsArray<byte, kMolecule6 + 1> _moleculeFlags;

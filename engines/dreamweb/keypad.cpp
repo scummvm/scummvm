@@ -440,6 +440,10 @@ void DreamWebEngine::showLeftPage() {
 	showFrame(_folderGraphics2, 0, y, 5, 0);
 	_lineSpacing = 8;
 	_charShift = 91;
+
+	if (getLanguage() == Common::RU_RUS)
+		_charShift = 182;
+
 	uint8 pageIndex = _folderPage - 2;
 	const uint8 *string = getTextInFile1(pageIndex * 2);
 	y = 48;
@@ -845,6 +849,10 @@ void DreamWebEngine::diaryKeyN() {
 void DreamWebEngine::showDiaryPage() {
 	showFrame(_diaryGraphics, kDiaryx, kDiaryy, 0, 0);
 	useTempCharset(&_diaryCharset);
+
+	if (getLanguage() == Common::RU_RUS)
+		useCharsetTempgraphics();
+
 	_charShift = 91+91;
 	const uint8 *string = getTextInFile1(_diaryPage);
 	uint16 y = kDiaryy + 16;

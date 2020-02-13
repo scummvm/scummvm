@@ -37,7 +37,7 @@ public:
 	JSpit(MohawkEngine_Riven *vm);
 
 	// RivenStack API
-	virtual void installCardTimer() override;
+	void installCardTimer() override;
 
 	// External commands - Rebel Tunnel Puzzle
 	void xreseticons(const ArgumentArray &args);

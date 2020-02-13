@@ -66,7 +66,7 @@ class DebuggerController : public ScriptMonitor {
 	bool bytecodeExists(const Common::String &filename);
 public:
 	DebuggerController(WintermuteEngine *vm);
-	~DebuggerController();
+	~DebuggerController() override;
 	Common::Array<TopEntry> getTop() const;
 	/**
 	 * Get the last line # we've stopped at
@@ -109,8 +109,8 @@ public:
 	/**
 	 * Inherited from ScriptMonitor
 	 */
-	void onBreakpoint(const Breakpoint *breakpoint, DebuggableScript *script);
-	void onWatch(const Watch *watch, DebuggableScript *script);
+	void onBreakpoint(const Breakpoint *breakpoint, DebuggableScript *script) override;
+	void onWatch(const Watch *watch, DebuggableScript *script) override;
 	void notifyStep(DebuggableScript *script) override;
 };
 }

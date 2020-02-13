@@ -31,12 +31,12 @@ namespace Sludge {
 class HSIDecoder : public Image::ImageDecoder {
 public:
 	HSIDecoder();
-	virtual ~HSIDecoder();
+	~HSIDecoder() override;
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual Graphics::Surface *getSurface() const { return _surface; }
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	Graphics::Surface *getSurface() const override { return _surface; }
 	void setReserve(bool reserve) { _reserve = reserve; }
 
 private:

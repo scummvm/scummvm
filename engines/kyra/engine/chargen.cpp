@@ -195,7 +195,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 	checkForCompleteParty();
 	initButtonsFromList(0, 5);
 
-	_vm->snd_playSong(_vm->game() == GI_EOB1 ? 20 : 13);
+	_vm->snd_playSong(_vm->game() == GI_EOB1 ? (_vm->gameFlags().platform == Common::kPlatformPC98 ? 1 : 20) : 13);
 	_activeBox = 0;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
@@ -212,6 +212,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 				// Unlike the original we allow returning to the main menu if no character has been created yet or all characters have been deleted
 				if (!_characters[0].name[0] && !_characters[1].name[0] && !_characters[2].name[0] && !_characters[3].name[0]) {
 					_vm->snd_stopSound();
+					*faceShapes = _faceShapes;
 					return false;
 				}
 			}
@@ -265,7 +266,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 }
 
 void CharacterGenerator::init() {
-	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
+	_screen->loadShapeSetBitmap("CHARGENA", 5, 3);
 	if (_faceShapes) {
 		for (int i = 0; i < 44; i++)
 			delete[] _faceShapes[i];
@@ -277,15 +278,16 @@ void CharacterGenerator::init() {
 		_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true, _vm->_cgaMappingDefault);
 	_screen->_curPage = 0;
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
 		_screen->fadeToBlack(32);
 
-	_screen->loadEoBBitmap("CHARGEN", _vm->_cgaMappingDefault, 3, 3, 0);
+	_screen->loadEoBBitmap("CHARGEN", _vm->_cgaMappingDefault, 5, 3, 0);
+	_screen->selectPC98Palette(4, _screen->getPalette(0));
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
 		_screen->fadeFromBlack(32);
 
-	_screen->loadShapeSetBitmap("CHARGENB", 3, 3);
+	_screen->loadShapeSetBitmap("CHARGENB", 5, 3);
 	if (_chargenMagicShapes) {
 		for (int i = 0; i < 10; i++)
 			delete[] _chargenMagicShapes[i];
@@ -300,7 +302,7 @@ void CharacterGenerator::init() {
 		const CreatePartyModButton *c = &_chargenModButtons[i];
 		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true, _vm->_cgaMappingDefault) : 0;
 	}
-	
+
 	_screen->convertPage(3, 2, _vm->_cgaMappingDefault);
 	_screen->_curPage = 0;
 	_screen->convertToHiColor(2);
@@ -408,7 +410,8 @@ void CharacterGenerator::toggleSpecialButton(int index, int bodyCustom, int page
 
 void CharacterGenerator::processSpecialButton(int index) {
 	toggleSpecialButton(index, 1, 0);
-	_vm->snd_playSoundEffect(76);
+	if (!(_vm->game() == GI_EOB1 && _vm->_flags.platform == Common::kPlatformPC98))
+		_vm->snd_playSoundEffect(76);
 	_vm->_system->delayMillis(80);
 	toggleSpecialButton(index, 0, 0);
 }
@@ -450,6 +453,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 				if (_characters[_activeBox].name[0]) {
 					processSpecialButton(16);
 					_characters[_activeBox].name[0] = 0;
+					_characters[_activeBox].faceShape = 0;
 					processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlack);
 					processFaceMenuSelection(_activeBox + 50);
 				}
@@ -928,8 +932,8 @@ void CharacterGenerator::printStats(int index, int mode) {
 		_screen->drawShape(2, c->faceShape, 224, 2, 0);
 
 	_screen->printShadedText(c->name, 160 + ((160 - _screen->getTextWidth(c->name)) / 2), 35, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((20 - strlen(_chargenRaceSexStrings[c->raceSex])) << 2), 45, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((20 - strlen(_chargenClassStrings[c->cClass])) << 2), 54, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((160 - _screen->getTextWidth(_chargenRaceSexStrings[c->raceSex])) / 2), 45, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((160 - _screen->getTextWidth(_chargenClassStrings[c->cClass])) / 2), 54, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	for (int i = 0; i < 6; i++)
 		_screen->printShadedText(_chargenStatStrings[i], 163, (i + 8) << 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
@@ -978,8 +982,9 @@ void CharacterGenerator::printStats(int index, int mode) {
 }
 
 void CharacterGenerator::processNameInput(int index, int textColor) {
-	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 	_screen->fillRect(_chargenNameFieldX[index], _chargenNameFieldY[index], _chargenNameFieldX[index] + 59, _chargenNameFieldY[index] + 5, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_SMALL_FNT : Screen::FID_6_FNT);
 	int xOffs = (60 - _screen->getTextWidth(_characters[index].name)) >> 1;
 	_screen->printText(_characters[index].name, _chargenNameFieldX[index] + xOffs, _chargenNameFieldY[index], textColor, 0);
 	_screen->updateScreen();

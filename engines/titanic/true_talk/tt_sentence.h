@@ -39,7 +39,7 @@ class TTsentenceConcept : public TTconceptNode {
 public:
 	TTsentenceConcept() : TTconceptNode() {}
 	TTsentenceConcept(const TTsentenceConcept &src) : TTconceptNode(src) {}
-	virtual ~TTsentenceConcept();
+	~TTsentenceConcept() override;
 
 	/**
 	 * Adds a new sibling instance

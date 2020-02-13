@@ -39,10 +39,10 @@ class Actor;
 
 class HandlerMgr : public Object {
 public:
-	virtual ~HandlerMgr();
-	virtual void deserialize(Archive &archive);
+	~HandlerMgr() override;
+	void deserialize(Archive &archive) override;
 
-	virtual void toConsole();
+	void toConsole() override;
 
 	bool isLeftClickHandler(Actor *actor);
 	bool isUseClickHandler(Actor *actor, const Common::String &itemName);

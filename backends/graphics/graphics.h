@@ -42,11 +42,14 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) = 0;
 	virtual bool getFeatureState(OSystem::Feature f) const = 0;
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const = 0;
-	virtual int getDefaultGraphicsMode() const = 0;
-	virtual bool setGraphicsMode(int mode) = 0;
-	virtual void resetGraphicsScale() = 0;
-	virtual int getGraphicsMode() const = 0;
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const {
+		static const OSystem::GraphicsMode noGraphicsModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
+		return noGraphicsModes;
+	};
+	virtual int getDefaultGraphicsMode() const { return 0; }
+	virtual bool setGraphicsMode(int mode) { return (mode == 0); }
+	virtual void resetGraphicsScale() {}
+	virtual int getGraphicsMode() const { return 0; }
 	virtual const OSystem::GraphicsMode *getSupportedShaders() const {
 		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {0, 0, 0}};
 		return no_shader;
@@ -81,7 +84,7 @@ public:
 	virtual void unlockScreen() = 0;
 	virtual void fillScreen(uint32 col) = 0;
 	virtual void updateScreen() = 0;
-	virtual void setShakePos(int shakeOffset) = 0;
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset) = 0;
 	virtual void setFocusRectangle(const Common::Rect& rect) = 0;
 	virtual void clearFocusRectangle() = 0;
 

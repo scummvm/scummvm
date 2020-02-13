@@ -466,15 +466,15 @@ class SagaEngine : public Engine {
 
 public:
 	// Engine APIs
-	virtual Common::Error run();
-	bool hasFeature(EngineFeature f) const;
-	void syncSoundSettings();
-	void pauseEngineIntern(bool pause);
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 
-	GUI::Debugger *getDebugger();
+	GUI::Debugger *getDebugger() override;
 
 	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
-	~SagaEngine();
+	~SagaEngine() override;
 
 	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);
@@ -629,10 +629,10 @@ public:
 	const ADGameFileDescription *getFilesDescriptions() const;
 
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 	const GameDisplayInfo &getDisplayInfo();
 
 	const char *getTextString(int textStringId);

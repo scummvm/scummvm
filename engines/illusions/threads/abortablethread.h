@@ -33,7 +33,7 @@ class AbortableThread : public Thread {
 public:
 	AbortableThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		uint32 scriptThreadId, byte *scriptCodeIp);
-	virtual int onUpdate();
+	int onUpdate() override;
 public:
 	int _status;
 	byte *_scriptCodeIp;

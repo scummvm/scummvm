@@ -67,8 +67,8 @@ public:
 	bool inInventory() const;
 	void setCursor();
 
-	virtual Common::String getClassName() { return "InvObject"; }
-	virtual void synchronize(Serializer &s) {
+	Common::String getClassName() override { return "InvObject"; }
+	void synchronize(Serializer &s) override {
 		s.syncAsUint16LE(_sceneNumber);
 	}
 };
@@ -83,8 +83,8 @@ public:
 	InvObject *getItem(int objectNum);
 	int getObjectScene(int objectNum);
 
-	virtual Common::String getClassName() { return "InvObjectList"; }
-	virtual void synchronize(Serializer &s);
+	Common::String getClassName() override { return "InvObjectList"; }
+	void synchronize(Serializer &s) override;
 };
 
 /*--------------------------------------------------------------------------*/
@@ -97,7 +97,7 @@ private:
 	int _ctr;
 public:
 	RefCounter() { clear(); }
-	virtual ~RefCounter() {}
+	~RefCounter() override {}
 
 	RefCounter(int v) { _ctr = v; }
 
@@ -110,7 +110,7 @@ public:
 	int incCtr() { return ++_ctr; }
 	int getCtr() const { return _ctr; }
 
-	virtual void synchronize(Serializer &s) { s.syncAsSint16LE(_ctr); }
+	void synchronize(Serializer &s) override { s.syncAsSint16LE(_ctr); }
 };
 
 class EventHandler : public SavedObject {
@@ -118,10 +118,10 @@ public:
 	Action *_action;
 
 	EventHandler() : SavedObject() { _action = NULL; }
-	virtual ~EventHandler() { destroy(); }
+	~EventHandler() override { destroy(); }
 
-	virtual void synchronize(Serializer &s) { SYNC_POINTER(_action); }
-	virtual Common::String getClassName() { return "EventHandler"; }
+	void synchronize(Serializer &s) override { SYNC_POINTER(_action); }
+	Common::String getClassName() override { return "EventHandler"; }
 	virtual void postInit(SceneObjectList *OwnerList = NULL) {}
 	virtual void remove() {}
 	virtual void signal() {}
@@ -143,11 +143,11 @@ public:
 
 	Action();
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "Action"; }
-	virtual void remove();
-	virtual void process(Event &event);
-	virtual void dispatch();
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "Action"; }
+	void remove() override;
+	void process(Event &event) override;
+	void dispatch() override;
 	virtual void attached(EventHandler *newOwner, EventHandler *endHandler, va_list va);
 
 	void attach(EventHandler *newOwner, EventHandler *endHandler, ...) {
@@ -190,12 +190,12 @@ public:
 	SceneObject *_sceneObject;
 public:
 	ObjectMover() { _action = NULL; _sceneObject = NULL; _minorDiff = 0; _majorDiff = 0; _changeCtr = 0;}
-	virtual ~ObjectMover();
+	~ObjectMover() override;
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "ObjectMover"; }
-	virtual void remove();
-	virtual void dispatch();
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "ObjectMover"; }
+	void remove() override;
+	void dispatch() override;
 	virtual void startMove(SceneObject *sceneObj, va_list va) {}
 	virtual void setup(const Common::Point &destPos);
 	virtual bool dontMove() const;
@@ -209,27 +209,27 @@ public:
 	int _maxArea;
 public:
 	ObjectMover2();
-	virtual ~ObjectMover2() {}
+	~ObjectMover2() override {}
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "ObjectMover2"; }
-	virtual void dispatch();
-	virtual void startMove(SceneObject *sceneObj, va_list va);
-	virtual void endMove();
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "ObjectMover2"; }
+	void dispatch() override;
+	void startMove(SceneObject *sceneObj, va_list va) override;
+	void endMove() override;
 };
 
 class ObjectMover3 : public ObjectMover2 {
 public:
-	virtual Common::String getClassName() { return "ObjectMover3"; }
-	virtual void dispatch();
-	virtual void startMove(SceneObject *sceneObj, va_list va);
-	virtual void endMove();
+	Common::String getClassName() override { return "ObjectMover3"; }
+	void dispatch() override;
+	void startMove(SceneObject *sceneObj, va_list va) override;
+	void endMove() override;
 };
 
 class NpcMover : public ObjectMover {
 public:
-	virtual Common::String getClassName() { return "NpcMover"; }
-	virtual void startMove(SceneObject *sceneObj, va_list va);
+	Common::String getClassName() override { return "NpcMover"; }
+	void startMove(SceneObject *sceneObj, va_list va) override;
 };
 
 #define MAX_ROUTE_SIZE 20
@@ -261,10 +261,10 @@ public:
 	Common::Point _routeList[MAX_ROUTE_SIZE];
 	int _routeIndex;
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "PlayerMover"; }
-	virtual void startMove(SceneObject *sceneObj, va_list va);
-	virtual void endMove();
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "PlayerMover"; }
+	void startMove(SceneObject *sceneObj, va_list va) override;
+	void endMove() override;
 };
 
 class PlayerMover2 : public PlayerMover {
@@ -274,11 +274,11 @@ public:
 	int _minArea;
 	PlayerMover2() : PlayerMover() { _destObject = NULL; _minArea = _maxArea = 0;}
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "PlayerMover2"; }
-	virtual void dispatch();
-	virtual void startMove(SceneObject *sceneObj, va_list va);
-	virtual void endMove();
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "PlayerMover2"; }
+	void dispatch() override;
+	void startMove(SceneObject *sceneObj, va_list va) override;
+	void endMove() override;
 };
 
 /*--------------------------------------------------------------------------*/
@@ -292,7 +292,7 @@ public:
 public:
 	PaletteModifier();
 
-	virtual void synchronize(Serializer &s) {
+	void synchronize(Serializer &s) override {
 		SYNC_POINTER(_scenePalette);
 		SYNC_POINTER(_action);
 	}
@@ -309,8 +309,8 @@ public:
 	PaletteModifierCached();
 
 	virtual void setPalette(ScenePalette *palette, int step);
-	virtual Common::String getClassName() { return "PaletteModifierCached"; }
-	virtual void synchronize(Serializer &s);
+	Common::String getClassName() override { return "PaletteModifierCached"; }
+	void synchronize(Serializer &s) override;
 };
 
 class PaletteRotation: public PaletteModifierCached {
@@ -327,10 +327,10 @@ public:
 public:
 	PaletteRotation();
 
-	virtual Common::String getClassName() { return "PaletteRotation"; }
-	virtual void synchronize(Serializer &s);
-	virtual void signal();
-	virtual void remove();
+	Common::String getClassName() override { return "PaletteRotation"; }
+	void synchronize(Serializer &s) override;
+	void signal() override;
+	void remove() override;
 
 	void setStep(int step) { _step = step; }
 	void set(ScenePalette *palette, int start, int end, int rotationMode, int duration, Action *action);
@@ -342,11 +342,11 @@ class PaletteFader: public PaletteModifierCached {
 public:
 	byte _palette[256 * 3];
 public:
-	virtual Common::String getClassName() { return "PaletteFader"; }
-	virtual void synchronize(Serializer &s);
-	virtual void signal();
-	virtual void remove();
-	virtual void setPalette(ScenePalette *palette, int step);
+	Common::String getClassName() override { return "PaletteFader"; }
+	void synchronize(Serializer &s) override;
+	void signal() override;
+	void remove() override;
+	void setPalette(ScenePalette *palette, int step) override;
 };
 
 /*--------------------------------------------------------------------------*/
@@ -368,7 +368,7 @@ public:
 public:
 	ScenePalette();
 	ScenePalette(int paletteNum);
-	~ScenePalette();
+	~ScenePalette() override;
 
 	bool loadPalette(int paletteNum);
 	void loadPalette(const byte *pSrc, int start, int count);
@@ -387,8 +387,8 @@ public:
 
 	static void changeBackground(const Rect &bounds, FadeMode fadeMode);
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "ScenePalette"; }
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "ScenePalette"; }
 };
 
 // DisplayParamType constant set. This must not be an enum
@@ -415,10 +415,10 @@ public:
 public:
 	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; _yDiff = 0;}
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "SceneItem"; }
-	virtual void remove();
-	virtual void destroy() {}
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "SceneItem"; }
+	void remove() override;
+	void destroy() override {}
 	virtual bool startAction(CursorType action, Event &event);
 	virtual void doAction(int action);
 
@@ -434,8 +434,8 @@ class SceneItemExt : public SceneItem {
 public:
 	int _state;
 
-	virtual Common::String getClassName() { return "SceneItemExt"; }
-	virtual void synchronize(Serializer &s) {
+	Common::String getClassName() override { return "SceneItemExt"; }
+	void synchronize(Serializer &s) override {
 		SceneItem::synchronize(s);
 		s.syncAsSint16LE(_state);
 	}
@@ -446,10 +446,10 @@ public:
 	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
 public:
 	SceneHotspot();
-	virtual void synchronize(Serializer &s);
-	virtual bool startAction(CursorType action, Event &event);
-	virtual Common::String getClassName() { return "SceneHotspot"; }
-	virtual void doAction(int action);
+	void synchronize(Serializer &s) override;
+	bool startAction(CursorType action, Event &event) override;
+	Common::String getClassName() override { return "SceneHotspot"; }
+	void doAction(int action) override;
 
 	void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
 	void setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
@@ -499,15 +499,15 @@ public:
 	SceneObject *_sceneObject;
 public:
 	SceneObjectWrapper() { _sceneObject = NULL; }
-	virtual ~SceneObjectWrapper() {}
+	~SceneObjectWrapper() override {}
 
 	void setSceneObject(SceneObject *so);
 	void check();
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "SceneObjectWrapper"; }
-	virtual void remove();
-	virtual void dispatch();
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "SceneObjectWrapper"; }
+	void remove() override;
+	void dispatch() override;
 };
 
 enum ObjectFlags {OBJFLAG_FIXED_PRIORITY = 1, OBJFLAG_NO_UPDATES = 2, OBJFLAG_ZOOMED = 4,
@@ -559,7 +559,7 @@ public:
 public:
 	SceneObject();
 	SceneObject(const SceneObject &so);
-	virtual ~SceneObject();
+	~SceneObject() override;
 
 	void setPosition(const Common::Point &p, int yDiff = 0);
 	void setStrip(int frameNum);
@@ -586,12 +586,12 @@ public:
 	int getFrameCount();
 	bool isNoMover() const { return !_mover || (_regionIndex > 0); }
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "SceneObject"; }
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void process(Event &event) { event.handled = true; }
-	virtual void dispatch();
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "SceneObject"; }
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void process(Event &event) override { event.handled = true; }
+	void dispatch() override;
 	virtual void calcAngle(const Common::Point &pt);
 	virtual void removeObject();
 	virtual GfxSurface getFrame();
@@ -612,10 +612,10 @@ public:
 
 class BackgroundSceneObject: public SceneObject {
 public:
-	virtual Common::String getClassName() { return "BackgroundSceneObject"; }
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void draw();
-	virtual SceneObject *clone() const;
+	Common::String getClassName() override { return "BackgroundSceneObject"; }
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void draw() override;
+	SceneObject *clone() const override;
 
 	void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int effect);
 	static void copySceneToBackground();
@@ -632,14 +632,14 @@ public:
 	GfxSurface _textSurface;
 public:
 	SceneText();
-	~SceneText();
+	~SceneText() override;
 
 	void setup(const Common::String &msg);
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "SceneText"; }
-	virtual GfxSurface getFrame() { return _textSurface; }
-	virtual void updateScreen();
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "SceneText"; }
+	GfxSurface getFrame() override { return _textSurface; }
+	void updateScreen() override;
 };
 
 #define MAX_CHARACTERS 4
@@ -661,10 +661,10 @@ public:
 public:
 	Player();
 
-	virtual Common::String getClassName() { return "Player"; }
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void process(Event &event);
+	Common::String getClassName() override { return "Player"; }
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void process(Event &event) override;
 
 	void disableControl();
 	void enableControl();
@@ -742,8 +742,8 @@ public:
 	SceneObjectList() { _listAltered = false; }
 	void sortList(Common::Array<SceneObject *> &ObjList);
 
-	virtual Common::String getClassName() { return "SceneObjectList"; }
-	virtual void synchronize(Serializer &s);
+	Common::String getClassName() override { return "SceneObjectList"; }
+	void synchronize(Serializer &s) override;
 
 	void draw();
 	void activate();
@@ -882,13 +882,13 @@ public:
 	int _nextWaitCtr;
 public:
 	GameHandler();
-	virtual ~GameHandler();
+	~GameHandler() override;
 	void execute();
 
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "GameHandler"; }
-	virtual void postInit(SceneObjectList *OwnerList = NULL) {}
-	virtual void dispatch() {}
+	void synchronize(Serializer &s) override;
+	Common::String getClassName() override { return "GameHandler"; }
+	void postInit(SceneObjectList *OwnerList = NULL) override {}
+	void dispatch() override {}
 };
 
 class SceneHandler : public GameHandler {
@@ -907,10 +907,10 @@ public:
 	void registerHandler();
 	uint32 getFrameDifference();
 
-	virtual Common::String getClassName() { return "SceneHandler"; }
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void process(Event &event);
-	virtual void dispatch();
+	Common::String getClassName() override { return "SceneHandler"; }
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void process(Event &event) override;
+	void dispatch() override;
 
 	static void dispatchObject(EventHandler *obj);
 	static void saveListener(Serializer &ser);

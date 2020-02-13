@@ -38,12 +38,16 @@
 #include "testbed/misc.h"
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
+#include "testbed/encoding.h"
 #include "testbed/testbed.h"
 #ifdef USE_CLOUD
 #include "testbed/cloud.h"
 #endif
 #ifdef USE_SDL_NET
 #include "testbed/webserver.h"
+#endif
+#ifdef USE_TTS
+#include "testbed/speech.h"
 #endif
 
 namespace Testbed {
@@ -119,8 +123,9 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	DebugMan.enableDebugChannel("LOG");
 
 	// Initialize testsuites here
+	Testsuite *ts;
 	// GFX
-	Testsuite *ts = new GFXTestSuite();
+	ts = new GFXTestSuite();
 	_testsuiteList.push_back(ts);
 	// FS
 	ts = new FSTestSuite();
@@ -140,6 +145,11 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	// Midi
 	ts = new MidiTestSuite();
 	_testsuiteList.push_back(ts);
+#ifdef USE_TTS
+	 // TextToSpeech
+	 ts = new SpeechTestSuite();
+	 _testsuiteList.push_back(ts);
+#endif
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// Cloud
 	ts = new CloudTestSuite();
@@ -150,6 +160,8 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	ts = new WebserverTestSuite();
 	_testsuiteList.push_back(ts);
 #endif
+	ts = new EncodingTestSuite();
+	_testsuiteList.push_back(ts);
 }
 
 TestbedEngine::~TestbedEngine() {

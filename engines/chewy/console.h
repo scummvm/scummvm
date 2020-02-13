@@ -32,7 +32,7 @@ class ChewyEngine;
 class Console : public GUI::Debugger {
 public:
 	Console(ChewyEngine *vm);
-	virtual ~Console(void);
+	~Console(void) override;
 
 private:
 	ChewyEngine *_vm;

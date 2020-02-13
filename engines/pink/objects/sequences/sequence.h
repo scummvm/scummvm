@@ -35,7 +35,7 @@ class SequenceContext;
 class Sequence : public NamedObject {
 public:
 	Sequence();
-	~Sequence();
+	~Sequence() override;
 
 	void deserialize(Archive &archive) override ;
 	void toConsole() override;

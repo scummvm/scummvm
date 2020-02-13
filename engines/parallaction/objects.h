@@ -474,7 +474,7 @@ public:
 	Common::String _scriptName;
 
 	Animation();
-	virtual ~Animation();
+	~Animation() override;
 	uint16 getFrameNum() const;
 	byte* getFrameData() const;
 
@@ -491,11 +491,11 @@ public:
 	void forceXYZF(int16 x, int16 y, int16 z, int16 f);
 
 	// getters/setters used by scripts
-	int16 getX()			{ return _left; }
-	void  setX(int16 value) { _left = value; }
+	int16 getX() override			{ return _left; }
+	void  setX(int16 value) override { _left = value; }
 
-	int16 getY()			{ return _top; }
-	void  setY(int16 value) { _top = value; }
+	int16 getY() override			{ return _top; }
+	void  setY(int16 value) override { _top = value; }
 
 	int16 getZ()			{ return _z; }
 	void  setZ(int16 value) { _z = value; }
@@ -539,7 +539,7 @@ class FixedTable : public Table {
 
 public:
 	FixedTable(uint32 size, uint32 fixed);
-	void clear();
+	void clear() override;
 };
 
 Table* createTableFromStream(uint32 size, Common::SeekableReadStream *stream);

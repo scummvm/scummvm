@@ -182,6 +182,8 @@ int RightClickDialog::execute() {
 		// Options dialog
 		result = 1;
 		break;
+	default:
+		break;
 	}
 
 	R2_GLOBALS._events.setCursor(cursorNum);

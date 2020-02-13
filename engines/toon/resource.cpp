@@ -273,7 +273,7 @@ void PakFile::open(Common::SeekableReadStream *rs, const Common::String &packNam
 		currentPos += 4 + nameSize;
 
 		PakFile::File newFile;
-		strcpy(newFile._name, name);
+		Common::strlcpy(newFile._name, name, sizeof(newFile._name));
 		newFile._offset = offset;
 		newFile._size = nextOffset - offset;
 		_numFiles++;

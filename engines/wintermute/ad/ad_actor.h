@@ -47,15 +47,15 @@ class AdActor : public AdTalkHolder {
 public:
 	TDirection angleToDirection(int angle);
 	DECLARE_PERSISTENT(AdActor, AdTalkHolder)
-	virtual int32 getHeight() override;
-	BaseSprite *getTalkStance(const char *stance);
+	int32 getHeight() override;
+	BaseSprite *getTalkStance(const char *stance) override;
 	virtual void goTo(int x, int y, TDirection afterWalkDir = DI_NONE);
 	BasePoint *_targetPoint;
-	virtual bool update();
-	virtual bool display();
+	bool update() override;
+	bool display() override;
 	virtual void turnTo(TDirection dir);
 	AdActor(BaseGame *inGame/*=nullptr*/);
-	virtual ~AdActor();
+	~AdActor() override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 
@@ -79,14 +79,14 @@ private:
 	Common::String _turnLeftAnimName;
 	Common::String _turnRightAnimName;
 	BaseArray<AdSpriteSet *> _anims;
-	virtual bool playAnim(const char *filename);
+	bool playAnim(const char *filename) override;
 	AdSpriteSet *getAnimByName(const Common::String &animName);
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 
 	bool setDefaultAnimNames();
 	BaseSprite *getTalkStanceOld(const char *stance);

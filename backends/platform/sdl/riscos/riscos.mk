@@ -1,7 +1,7 @@
-ifeq ($(shell echo a | iconv --to-code=RISCOS-LATIN1//TRANSLIT >/dev/null 2>&1; echo $$?),0)
-ENCODING=RISCOS-LATIN1//TRANSLIT
+ifeq ($(shell echo a | iconv --to-code=RISCOS-LATIN1//IGNORE//TRANSLIT >/dev/null 2>&1; echo $$?),0)
+ENCODING=RISCOS-LATIN1//IGNORE//TRANSLIT
 else
-ENCODING=ISO-8859-1//TRANSLIT
+ENCODING=ISO-8859-1//IGNORE//TRANSLIT
 endif
 
 APP_NAME=!ScummVM
@@ -23,6 +23,9 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(APP_NAME)/data/
 endif
+ifdef DIST_FILES_VKEYBD
+	cp $(DIST_FILES_VKEYBD) $(APP_NAME)/data/
+endif
 ifdef DYNAMIC_MODULES
 	mkdir -p $(APP_NAME)/plugins
 	cp $(PLUGINS) $(APP_NAME)/plugins/
@@ -30,7 +33,7 @@ endif
 	mkdir -p $(APP_NAME)/docs
 	cp ${srcdir}/dists/riscos/!Help,feb $(APP_NAME)/!Help,feb
 ifdef TOKENIZE
-	$(TOKENIZE) dists/riscos/FindHelp,fd1 -out $(APP_NAME)/FindHelp,ffb
+	$(TOKENIZE) ${srcdir}/dists/riscos/FindHelp,fd1 -out $(APP_NAME)/FindHelp,ffb
 endif
 	@$(foreach file, $(DIST_FILES_DOCS) $(srcdir)/doc/QuickStart, echo '   ' ICONV '  ' $(APP_NAME)/docs/$(notdir $(file)),fff;iconv --to-code=$(ENCODING) $(file) > $(APP_NAME)/docs/$(notdir $(file)),fff;)
 	@$(foreach lang, $(DIST_FILES_DOCS_languages), mkdir -p $(APP_NAME)/docs/$(lang); $(foreach file, $(DIST_FILES_DOCS_$(lang)), echo '   ' ICONV '  ' $(APP_NAME)/docs/$(lang)/$(notdir $(file)),fff;iconv --from-code=UTF-8 --to-code=$(ENCODING) $(file) > $(APP_NAME)/docs/$(lang)/$(notdir $(file)),fff;))
@@ -48,7 +51,7 @@ riscosdist: $(APP_NAME)/docs/ScummVM,3d6 # $(APP_NAME)/docs/de/ScummVM,3d6 $(APP
 README=${srcdir}/README.md
 NEWS=${srcdir}/NEWS.md
 $(APP_NAME)/docs/de/ScummVM,3d6: README=${srcdir}/doc/de/LIESMICH
-$(APP_NAME)/docs/de/ScummVM,3d6: NEWS=${srcdir}/doc/de/NEUES
+$(APP_NAME)/docs/de/ScummVM,3d6: NEWS=${srcdir}/doc/de/NEUES.md
 $(APP_NAME)/docs/cz/ScummVM,3d6: README=${srcdir}/doc/cz/PrectiMe
 $(APP_NAME)/docs/se/ScummVM,3d6: README=${srcdir}/doc/se/LasMig
 

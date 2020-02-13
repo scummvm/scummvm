@@ -29,4 +29,8 @@
     return YES;
 }
 
+- (BOOL)prefersHomeIndicatorAutoHidden {
+    return YES;
+}
+
 @end

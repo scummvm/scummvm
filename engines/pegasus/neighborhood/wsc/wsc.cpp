@@ -542,7 +542,7 @@ public:
 	PryDoorMessage() : AIPlayMessageAction("Images/AI/WSC/XW59SD3", false) {}
 
 protected:
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 };
 
 void PryDoorMessage::performAIAction(AIRule *rule) {
@@ -740,6 +740,8 @@ uint WSC::getNumHints() {
 		if (getCurrentActivation() == kActivationRobotTurning)
 			return 1;
 		break;
+	default:
+		break;
 	}
 
 	return 0;
@@ -796,6 +798,8 @@ Common::String WSC::getHintMovie(uint hintNum) {
 			// Only get here if the door is still locked and we don't have the
 			// crowbar...
 			return "Images/AI/WSC/XW59SD2";
+		default:
+			break;
 		}
 		break;
 	case MakeRoomView(kWSC03, kNorth):
@@ -838,6 +842,8 @@ Common::String WSC::getHintMovie(uint hintNum) {
 		return "Images/AI/Globals/XGLOB1C";
 	case MakeRoomView(kWSC98, kWest):
 		return "Images/AI/WSC/XW98WH2";
+	default:
+		break;
 	}
 
 	return "";
@@ -942,6 +948,8 @@ TimeValue WSC::getViewTime(const RoomID room, const DirectionConstant direction)
 			}
 		}
 		break;
+	default:
+		break;
 	}
 
 	if (viewExtra != 0xffffffff) {
@@ -960,6 +968,8 @@ void WSC::findSpotEntry(const RoomID room, const DirectionConstant direction, Sp
 			spotEntry.clear();
 			return;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -996,6 +1006,8 @@ void WSC::getZoomEntry(const HotSpotID id, ZoomTable::Entry &zoomEntry) {
 	case kWSC61SouthOutSpotID:
 		if (GameState.isTakenItemID(kMachineGun))
 			zoomExtra = kW61SouthZoomOutNoGun;
+		break;
+	default:
 		break;
 	}
 
@@ -1077,6 +1089,8 @@ CanTurnReason WSC::canTurn(TurnDirection turnDirection, DirectionConstant &nextD
 		if (_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag))
 			return kCantTurnInMoleculeGame;
 		break;
+	default:
+		break;
 	}
 
 	return Neighborhood::canTurn(turnDirection, nextDir);
@@ -1091,6 +1105,8 @@ CanOpenDoorReason WSC::canOpenDoor(DoorTable::Entry &entry) {
 	case kWSC58:
 		if (!_privateFlags.getFlag(kWSCPrivate58SouthOpenFlag))
 			return kCantOpenLocked;
+		break;
+	default:
 		break;
 	}
 
@@ -1208,6 +1224,8 @@ void WSC::doorOpened() {
 		GameState.setScoringOpenedCatwalk();
 		scheduleEvent(kGawkAtRobotTime, 1, kTimerEventPlayerGawkingAtRobot);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1231,6 +1249,8 @@ void WSC::turnLeft() {
 		break;
 	case MakeRoomView(kWSC95, kWest):
 		cancelEvent();
+		break;
+	default:
 		break;
 	}
 
@@ -1258,6 +1278,8 @@ void WSC::turnRight() {
 	case MakeRoomView(kWSC95, kWest):
 		cancelEvent();
 		break;
+	default:
+		break;
 	}
 
 	Neighborhood::turnRight();
@@ -1271,6 +1293,8 @@ void WSC::moveForward() {
 		break;
 	case MakeRoomView(kWSC95, kWest):
 		cancelEvent();
+		break;
+	default:
 		break;
 	}
 
@@ -1305,6 +1329,8 @@ void WSC::zoomTo(const Hotspot *hotspot) {
 				startExtraSequence(kW61SouthScreenOffWithGun, kExtraCompletedFlag, kFilterNoInput);
 			return;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -1356,6 +1382,8 @@ int16 WSC::getStaticCompassAngle(const RoomID room, const DirectionConstant dir)
 	case kWSC73:
 		if (dir == kEast || dir == kWest)
 			angle += kAuditoriumAngleOffset * 4;
+		break;
+	default:
 		break;
 	}
 
@@ -1446,6 +1474,8 @@ void WSC::checkContinuePoint(const RoomID room, const DirectionConstant directio
 		if (_vm->playerHasItemID(kMachineGun))
 			makeContinuePoint();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1487,6 +1517,8 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 	case MakeRoomView(kWSC75, kWest):
 		if (!GameState.getWSCBeenAtWSC93())
 			setCurrentAlternate(kAltWSCW0ZDoorOpen);
+		break;
+	default:
 		break;
 	}
 
@@ -1608,6 +1640,8 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 	case MakeRoomView(kWSCDeathRoom, kWest):
 		die(kDeathArrestedInWSC);
 		break;
+	default:
+		break;
 	}
 
 	checkPeopleCrossing();
@@ -1664,6 +1698,8 @@ void WSC::turnTo(const DirectionConstant direction) {
 	case MakeRoomView(kWSC0Z, kEast):
 		if (getCurrentAlternate() == kAltWSCW0ZDoorOpen)
 			startExtraSequence(kW0ZSpottedByWomen, kExtraCompletedFlag, kFilterNoInput);
+		break;
+	default:
 		break;
 	}
 
@@ -1962,6 +1998,8 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			_privateFlags.setFlag(kWSCPrivateRobotHeadOpenFlag, false);
 			GameState.setWSCRobotGone(true);
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -1980,6 +2018,8 @@ void WSC::timerExpired(const uint32 event) {
 		break;
 	case kTimerEventPlayerGawkingAtRobot2:
 		startExtraSequence(kW98MorphsToRobot, kExtraCompletedFlag, kFilterAllInput);
+		break;
+	default:
 		break;
 	}
 }
@@ -2026,6 +2066,8 @@ void WSC::startMoleculeGameLevel() {
 	case 3:
 		playSpotSoundSync(kWSCMolecule3In, kWSCMolecule3Out);
 		break;
+	default:
+		break;
 	}
 
 	_moleculesMovie.start();
@@ -2071,6 +2113,8 @@ void WSC::moleculeGameClick(const HotSpotID id) {
 				_moleculesMovie.releaseMovie();
 				_moleculeBin.cleanUpMoleculeBin();
 				requestExtraSequence(kW03NorthFinishSynthesis, kExtraCompletedFlag, kFilterNoInput);
+				break;
+			default:
 				break;
 			}
 		} else {
@@ -2146,6 +2190,8 @@ void WSC::activateOneHotspot(HotspotInfoTable::Entry &entry, Hotspot *hotspot) {
 		argonCanister = _vm->getAllItems().findItemByID(kArgonCanister);
 		if (argonCanister->getItemState() != kArgonFull)
 			hotspot->setInactive();
+		break;
+	default:
 		break;
 	}
 }
@@ -2425,6 +2471,8 @@ void WSC::pickedUpItem(Item *item) {
 			GameState.setScoringWSCGandhi();
 
 		recallToTSASuccess();
+		break;
+	default:
 		break;
 	}
 }

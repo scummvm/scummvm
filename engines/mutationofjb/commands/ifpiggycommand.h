@@ -33,13 +33,13 @@ class ScriptParseContext;
 
 class IfPiggyCommandParser : public ConditionalCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class IfPiggyCommand : public ConditionalCommand {
 public:
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 
 private:
 };

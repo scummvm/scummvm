@@ -25,8 +25,6 @@
 
 #include "common/rect.h"
 
-#include "graphics/wincursor.h"
-
 #include "pink/objects/object.h"
 
 namespace Pink {

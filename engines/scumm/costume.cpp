@@ -107,6 +107,9 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			ex1 = READ_LE_UINT16(_loaded._frameOffsets + ex1 * 2);
 			_srcptr = _loaded._baseptr + READ_LE_UINT16(_loaded._baseptr + ex1 + ex2 * 2) + 14;
 		}
+		break;
+	default:
+		break;
 	}
 
 	use_scaling = (_scaleX != 0xFF) || (_scaleY != 0xFF);

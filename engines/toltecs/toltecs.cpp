@@ -316,7 +316,7 @@ void ToltecsEngine::updateInput() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
-	switch (event.type) {
+		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_keyState = event.kbd;
 
@@ -374,8 +374,8 @@ void ToltecsEngine::updateInput() {
 			break;
 		default:
 			break;
-		}
-	}
+		}	// switch
+	}	// while
 
 	if (!_mouseDisabled) {
 

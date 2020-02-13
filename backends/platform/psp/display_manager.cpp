@@ -326,22 +326,6 @@ void DisplayManager::setSizeAndPixelFormat(uint width, uint height, const Graphi
 	calculateScaleParams();
 }
 
-bool DisplayManager::setGraphicsMode(const char *name) {
-	DEBUG_ENTER_FUNC();
-
-	int i = 0;
-
-	while (_supportedModes[i].name) {
-		if (!scumm_stricmp(_supportedModes[i].name, name)) {
-			setGraphicsMode(_supportedModes[i].id);
-			return true;
-		}
-		i++;
-	}
-
-	return false;
-}
-
 bool DisplayManager::setGraphicsMode(int mode) {
 	DEBUG_ENTER_FUNC();
 

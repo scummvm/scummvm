@@ -60,18 +60,23 @@ public:
 	void setTextWindowFont(const MacFont *macFont);
 	const MacFont *getTextWindowFont();
 
-	void appendText(Common::String str, const MacFont *macFont, bool skipAdd = false);
+	void appendText(Common::U32String str, const MacFont *macFont, bool skipAdd = false);
+	void appendText(const Common::String &str, const MacFont *macFont, bool skipAdd = false);
 	void clearText();
+
+	void setEditable(bool editable) { _editable = editable; }
+	void setSelectable(bool selectable) { _selectable = selectable; }
 
 	void undrawCursor();
 
-	const Common::String getInput() { return _inputText; }
+	const Common::U32String getInput() { return _inputText; }
 	void clearInput();
-	void appendInput(Common::String str);
+	void appendInput(Common::U32String str);
+	void appendInput(const Common::String &str);
 
-	Common::String getSelection(bool formatted = false, bool newlines = true);
+	Common::U32String getSelection(bool formatted = false, bool newlines = true);
 	void clearSelection();
-	Common::String cutSelection();
+	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 
 private:
@@ -94,6 +99,8 @@ public:
 	bool _cursorDirty;
 	Common::Rect *_cursorRect;
 	bool _cursorOff;
+	bool _editable;
+	bool _selectable;
 
 	int _scrollPos;
 
@@ -108,7 +115,7 @@ private:
 	SelectedText _selectedText;
 
 	int _maxWidth;
-	Common::String _inputText;
+	Common::U32String _inputText;
 	uint _inputTextHeight;
 	bool _inputIsDirty;
 

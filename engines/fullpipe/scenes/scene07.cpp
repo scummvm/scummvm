@@ -126,11 +126,11 @@ int sceneHandler07(ExCommand *ex) {
 		break;
 
 	case MSG_SC7_PULL:
-		if (g_vars->scene07_plusMinus->_statics->_staticsId == ST_PMS_MINUS)
+		if (g_vars->scene07_plusMinus->_statics->_staticsId == ST_PMS_MINUS) {
 			g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStaticsById(ST_PMS_PLUS);
-		else
+		} else {
 			g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStaticsById(ST_PMS_MINUS);
-
+		}
 		break;
 
 	case MSG_SC7_CLOSELUKE:
@@ -167,6 +167,10 @@ int sceneHandler07(ExCommand *ex) {
 
 			return res;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

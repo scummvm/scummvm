@@ -60,9 +60,9 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_dirsScanned(0),
 	_oldGamesCount(0),
 	_dirTotal(0),
-	_okButton(0),
-	_dirProgressText(0),
-	_gameProgressText(0) {
+	_okButton(nullptr),
+	_dirProgressText(nullptr),
+	_gameProgressText(nullptr) {
 
 	StringArray l;
 
@@ -86,10 +86,10 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setList(l);
 
-	_okButton = new ButtonWidget(this, "MassAdd.Ok", _("OK"), 0, kOkCmd, Common::ASCII_RETURN);
+	_okButton = new ButtonWidget(this, "MassAdd.Ok", _("OK"), nullptr, kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
 
-	new ButtonWidget(this, "MassAdd.Cancel", _("Cancel"), 0, kCancelCmd, Common::ASCII_ESCAPE);
+	new ButtonWidget(this, "MassAdd.Cancel", _("Cancel"), nullptr, kCancelCmd, Common::ASCII_ESCAPE);
 
 	// Build a map from all configured game paths to the targets using them
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
@@ -207,7 +207,7 @@ void MassAddDialog::handleTickle() {
 			while (path != "/" && path.lastChar() == '/')
 				path.deleteLastChar();
 
-			// Check for existing config entries for this path/gameid/lang/platform combination
+			// Check for existing config entries for this path/engineid/gameid/lang/platform combination
 			if (_pathToTargets.contains(path)) {
 				Common::String resultPlatformCode = Common::getPlatformCode(result.platform);
 				Common::String resultLanguageCode = Common::getLanguageCode(result.language);
@@ -215,11 +215,12 @@ void MassAddDialog::handleTickle() {
 				bool duplicate = false;
 				const StringArray &targets = _pathToTargets[path];
 				for (StringArray::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
-					// If the gameid, platform and language match -> skip it
+					// If the engineid, gameid, platform and language match -> skip it
 					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
 					assert(dom);
 
-					if ((*dom)["gameid"] == result.gameId &&
+					if ((*dom)["engineid"] == result.engineId &&
+						(*dom)["gameid"] == result.gameId &&
 					    (*dom)["platform"] == resultPlatformCode &&
 					    (*dom)["language"] == resultLanguageCode) {
 						duplicate = true;

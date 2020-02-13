@@ -26,7 +26,6 @@
 namespace ZVision {
 
 static const PlainGameDescriptor zVisionGames[] = {
-	{ "zvision", "Z-Vision Game" },
 	{ "znemesis", "Zork Nemesis: The Forbidden Lands" },
 	{ "zgi", "Zork: Grand Inquisitor" },
 	{ 0, 0 }

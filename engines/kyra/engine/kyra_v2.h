@@ -71,13 +71,13 @@ public:
 	};
 
 	KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc);
-	~KyraEngine_v2();
+	~KyraEngine_v2() override;
 
-	virtual void pauseEngineIntern(bool pause);
+	void pauseEngineIntern(bool pause) override;
 
 	virtual Screen_v2 *screen_v2() const = 0;
 
-	void delay(uint32 time, bool update = false, bool isMainLoop = false);
+	void delay(uint32 time, bool update = false, bool isMainLoop = false) override;
 
 	const EngineDesc &engineDesc() const { return _desc; }
 protected:
@@ -268,7 +268,7 @@ protected:
 	int _pathfinderFlag;
 	bool _smoothingPath;
 
-	int findWay(int curX, int curY, int dstX, int dstY, int *moveTable, int moveTableSize);
+	int findWay(int curX, int curY, int dstX, int dstY, int *moveTable, int moveTableSize) override;
 
 	bool directLinePassable(int x, int y, int toX, int toY);
 
@@ -310,8 +310,8 @@ protected:
 
 	virtual void setMouseCursor(Item item) = 0;
 
-	void setHandItem(Item item);
-	void removeHandItem();
+	void setHandItem(Item item) override;
+	void removeHandItem() override;
 
 	// character
 	struct Character {

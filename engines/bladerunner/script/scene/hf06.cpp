@@ -49,6 +49,11 @@ void SceneScriptHF06::InitializeScene() {
 void SceneScriptHF06::SceneLoaded() {
 	Unobstacle_Object("BOX22", true);
 	Unobstacle_Object("BOX34", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Obstacle_Object("FRONTBLOCK1", true);
+	Obstacle_Object("FRONTBLOCK2", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Clickable_Object("BOX19");
 	Clickable_Object("BOX21");
 	Clickable_Object("BOX23");
@@ -99,7 +104,7 @@ bool SceneScriptHF06::ClickedOn3DObject(const char *objectName, bool a2) {
 		return false;
 	}
 
-	if (Object_Query_Click("BOX13", objectName)) {
+	if (Object_Query_Click("BOX23", objectName)) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 63.0f, 367.93f, 120.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 568, true);
 			Actor_Says(kActorMcCoy, 8522, 0);
@@ -160,8 +165,8 @@ void SceneScriptHF06::SceneFrameAdvanced(int frame) {
 
 void SceneScriptHF06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	if (actorId == kActorSteele
-	 && oldGoal != 599
-	 && newGoal == 599
+	 && oldGoal != kGoalSteeleGone
+	 && newGoal == kGoalSteeleGone
 	) {
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorSteele, 24, false, false);
 		Actor_Says(kActorSteele, 250, -1);

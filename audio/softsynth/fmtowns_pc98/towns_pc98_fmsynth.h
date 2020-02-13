@@ -26,6 +26,8 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/mutex.h"
+#include "common/func.h"
+#include "common/array.h"
 
 #ifdef __DS__
 /* This disables the rhythm channel when emulating the PC-98 type 86 sound card.
@@ -34,11 +36,23 @@
  * (very rare) PC-98 versions of Legend of Kyrandia 2 and Lands of Lore. Music will
  * still be okay, just missing a couple of rhythm instruments.
  */
-#define DISABLE_PC98_RHYTHM_CHANNEL
+#define		DISABLE_PC98_RHYTHM_CHANNEL
 #endif
 
+/* Experimental code for emulation of the chip's busy flag wait cycle.
+ * Explanation: 
+ * Before attempting a port write a client application would usually read the chip's
+ * busy flag and remain in a loop until the flag is cleared. This does not work with
+ * an emulator that is on the same thread as the client code (the busy flag will never
+ * clear). Instead, I emulate a wait cycle by withholding (enqueueing) incoming register
+ * writes for the duration of the wait cycle.
+ * For now I have disabled this with an #ifdef since I haven't seen any impact on the
+ * sound.
+ */
+//#define		ENABLE_SNDTOWNS98_WAITCYCLES
+
 class TownsPC98_FmSynthOperator;
-class TownsPC98_FmSynthSquareSineSource;
+class TownsPC98_FmSynthSquareWaveSource;
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 class TownsPC98_FmSynthPercussionSource;
 #endif
@@ -54,12 +68,12 @@ enum EnvelopeState {
 class TownsPC98_FmSynth : public Audio::AudioStream {
 public:
 	enum EmuType {
-		kTypeTowns,
-		kType26,
-		kType86
+		kTypeTowns = 0,
+		kType26 = 1,
+		kType86 = 2
 	};
 
-	TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type, bool externalMutexHandling = false);
+	TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type);
 	virtual ~TownsPC98_FmSynth();
 
 	virtual bool init();
@@ -92,6 +106,7 @@ protected:
 	void setVolumeIntern(int volA, int volB);
 	void setVolumeChannelMasks(int channelMaskA, int channelMaskB);
 
+	// This allows to balance out the fm/ssg levels.
 	void setLevelSSG(int vol);
 
 	const int _numChan;
@@ -99,11 +114,16 @@ protected:
 	const bool _hasPercussion;
 
 	Common::Mutex _mutex;
-	bool _externalMutex;
+	int _mixerThreadLockCounter;
 
 private:
 	void generateTables();
+	void writeRegInternal(uint8 part, uint8 regAddress, uint8 value);
 	void nextTick(int32 *buffer, uint32 bufferSize);
+
+#ifdef ENABLE_SNDTOWNS98_WAITCYCLES
+	void startWaitCycle();
+#endif
 
 	struct ChanInternal {
 		ChanInternal();
@@ -114,6 +134,9 @@ private:
 		}
 		void frqModSensitivity(uint32 value) {
 			frqModSvty = value << 5;
+		}
+		void fbClear() {
+			feedbuf[0] = feedbuf[1] = feedbuf[2] = 0;
 		}
 
 		bool enableLeft;
@@ -128,7 +151,7 @@ private:
 		TownsPC98_FmSynthOperator *opr[4];
 	};
 
-	TownsPC98_FmSynthSquareSineSource *_ssg;
+	TownsPC98_FmSynthSquareWaveSource *_ssg;
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	TownsPC98_FmSynthPercussionSource *_prc;
 #endif
@@ -142,7 +165,10 @@ private:
 	int32 *_oprLevelOut;
 	int32 *_oprDetune;
 
-	typedef void (TownsPC98_FmSynth::*ChipTimerProc)();
+	typedef Common::Functor0Mem<void, TownsPC98_FmSynth> ChipTimerProc;
+	ChipTimerProc *_timerProcIdle;
+	ChipTimerProc *_timerProcA;
+	ChipTimerProc *_timerProcB;
 	void idleTimerCallback() {}
 
 	struct ChipTimer {
@@ -154,7 +180,7 @@ private:
 		int32 smpPerCb;
 		uint32 smpPerCbRem;
 
-		ChipTimerProc cb;
+		ChipTimerProc *cb;
 	};
 
 	ChipTimer _timers[2];
@@ -162,9 +188,30 @@ private:
 	int _volMaskA, _volMaskB;
 	uint16 _volumeA, _volumeB;
 
-	const float _baserate;
-	uint32 _timerbase;
-	uint32 _rtt;
+	int32 *_renderBuffer;
+	int _renderBufferSize;
+	int _numPending;
+	int _offsPending;
+	int _rateScale;
+	int _outRateMult;
+	int _rateConvCnt;
+	float _predSmpCount;
+	const int _internalRate;
+	const int _outputRate;
+
+#ifdef	ENABLE_SNDTOWNS98_WAITCYCLES
+	int _waitCycleRemainder;
+	const int _samplesPerWaitCycle;
+
+	struct RegEntry {
+		RegEntry(uint8 p, uint8 r, uint8 v) : part(p), reg(r), val(v) {}
+		uint8 part;
+		uint8 reg;
+		uint8 val;
+	};
+
+	Common::Array<RegEntry> _waitCycleElapsedWrites;
+#endif
 
 	uint8 _registers[255][2];
 

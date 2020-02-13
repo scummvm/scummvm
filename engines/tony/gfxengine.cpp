@@ -341,6 +341,9 @@ SKIPCLICKSINISTRO:
 			_rcWipeEllipse.right += FSTEP;
 			_rcWipeEllipse.bottom += FSTEP;
 			break;
+
+		default:
+			break;
 		}
 	}
 

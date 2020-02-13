@@ -25,7 +25,9 @@
 
 #ifdef ENABLE_HE
 
-#include "common/winexe_pe.h"
+namespace Common {
+class PEResources;
+}
 
 namespace Scumm {
 
@@ -72,7 +74,7 @@ public:
 	uint32 _fowSentinelConditionBits;
 
 	AI *_ai;
-#ifdef USE_SDL_NET
+#ifdef USE_LIBCURL
 	Net *_net;
 #endif
 
@@ -106,7 +108,7 @@ private:
 
 	int32 _fowRenderTable[32768];
 
-	Common::PEResources _exe;
+	Common::PEResources *_exe;
 	Common::String _fileName;
 };
 

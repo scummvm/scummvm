@@ -214,6 +214,8 @@ void Module1300::createScene(int sceneNum, int which) {
 		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		_childObject = new CreditsScene(_vm, this, false);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1300::updateScene);
 	_childObject->handleUpdate();
@@ -306,6 +308,8 @@ void Module1300::updateScene() {
 			break;
 		case 17:
 			leaveModule(1);
+			break;
+		default:
 			break;
 		}
 	}
@@ -470,6 +474,8 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x8001:
 		setSpriteSurfacePriority(_class595, 1015);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -508,6 +514,8 @@ uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x4826:
 		if (sender == _asBalloon && getGlobalVar(V_HAS_NEEDLE))
 			setMessageList(0x004AF9B8);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -572,6 +580,8 @@ uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entit
 			sendEntityMessage(_klaymen, 0x1014, _asKey);
 			setMessageList(0x004B9140);
 		}
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -745,6 +755,8 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(this, 0x2000, 0);
 		addCollisionSprite(_asTape);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -770,6 +782,8 @@ uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param,
 		setSurfacePriority(_sprite1->getSurface(), 80);
 		sendMessage(this, 0x2000, 0);
 		addCollisionSprite(_asTape);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -821,7 +835,6 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule)
 	}
 
 	loadSound(0, 0x68E25540);
-
 }
 
 void Scene1307::update() {
@@ -900,6 +913,8 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 		for (uint keyIndex = 0; keyIndex < 3; keyIndex++)
 			if (getSubVar(VA_IS_KEY_INSERTED, keyIndex) && _asKeys[keyIndex])
 				sendMessage(_asKeys[keyIndex], 0x2000, 0);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1089,6 +1104,8 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1145,6 +1162,8 @@ uint32 Scene1317::handleMessage(int messageNum, const MessageParam &param, Entit
 	case NM_ANIMATION_STOP:
 		stChooseKing();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1164,6 +1183,8 @@ uint32 Scene1317::hmChooseKing(int messageNum, const MessageParam &param, Entity
 			stKlaymenAsKing();
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1174,6 +1195,8 @@ uint32 Scene1317::hmHoborgAsKing(int messageNum, const MessageParam &param, Enti
 	case NM_ANIMATION_STOP:
 		stEndMovie();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1183,6 +1206,8 @@ uint32 Scene1317::hmEndMovie(int messageNum, const MessageParam &param, Entity *
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		leaveScene(0);
+		break;
+	default:
 		break;
 	}
 	return messageResult;

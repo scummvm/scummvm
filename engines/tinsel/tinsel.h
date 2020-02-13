@@ -152,7 +152,7 @@ class TinselEngine : public Engine {
 	Common::Point _mousePos;
 	uint8 _dosPlayerDir;
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	static const char *const _sampleIndices[][3];
 	static const char *const _sampleFiles[][3];
@@ -161,21 +161,21 @@ class TinselEngine : public Engine {
 protected:
 
 	// Engine APIs
-	virtual void initializePath(const Common::FSNode &gamePath);
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
-	Common::Error loadGameState(int slot);
+	void initializePath(const Common::FSNode &gamePath) override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+	Common::Error loadGameState(int slot) override;
 #if 0
 	Common::Error saveGameState(int slot, const Common::String &desc);
 #endif
-	bool canLoadGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
 #if 0
 	bool canSaveGameStateCurrently();
 #endif
 
 public:
 	TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc);
-	virtual ~TinselEngine();
+	~TinselEngine() override;
 	int getGameId() {
 		return _gameId;
 	}

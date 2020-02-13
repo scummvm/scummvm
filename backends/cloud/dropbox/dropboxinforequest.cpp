@@ -71,7 +71,7 @@ void DropboxInfoRequest::userResponseCallback(Networking::JsonResponse response)
 		return;
 	}
 
-	Networking::ErrorResponse error(this);
+	Networking::ErrorResponse error(this, "DropboxInfoRequest::userResponseCallback: unknown error");
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
@@ -125,7 +125,7 @@ void DropboxInfoRequest::quotaResponseCallback(Networking::JsonResponse response
 		return;
 	}
 
-	Networking::ErrorResponse error(this);
+	Networking::ErrorResponse error(this, "DropboxInfoRequest::quotaResponseCallback: unknown error");
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();

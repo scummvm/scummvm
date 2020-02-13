@@ -168,7 +168,7 @@ bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 		*animation = 754;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(754)) {
-			Actor_Change_Animation_Mode(kActorEarlyQBartender, 0);
+			Actor_Change_Animation_Mode(kActorEarlyQBartender, kAnimationModeIdle);
 			*animation = 752;
 			_animationFrame = 0;
 			_animationState = 0;

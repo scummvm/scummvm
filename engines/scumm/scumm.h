@@ -416,29 +416,29 @@ protected:
 public:
 	// Constructor / Destructor
 	ScummEngine(OSystem *syst, const DetectorResult &dr);
-	virtual ~ScummEngine();
+	~ScummEngine() override;
 
 	// Engine APIs
 	Common::Error init();
 	Common::Error go();
-	virtual Common::Error run() {
+	Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
-	virtual GUI::Debugger *getDebugger();
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void syncSoundSettings();
+	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
+	GUI::Debugger *getDebugger() override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
 
-	virtual Common::Error loadGameState(int slot);
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
 
-	virtual void pauseEngineIntern(bool pause);
+	void pauseEngineIntern(bool pause) override;
 
 protected:
 	virtual void setupScumm();
@@ -494,15 +494,17 @@ protected:
 	Dialog *_messageDialog;
 	Dialog *_versionDialog;
 
-	virtual int runDialog(Dialog &dialog);
+	int runDialog(Dialog &dialog) override;
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
 	void messageDialog(const char *message);
 	void versionDialog();
 
+public:
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
 
+protected:
 	byte _fastMode;
 
 	byte _numActors;
@@ -608,7 +610,7 @@ protected:
 	bool saveState(int slot, bool compat, Common::String &fileName);
 	bool loadState(int slot, bool compat);
 	bool loadState(int slot, bool compat, Common::String &fileName);
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 	void saveResource(Common::Serializer &ser, ResType type, ResId idx);
 	void loadResource(Common::Serializer &ser, ResType type, ResId idx);
 	void loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx);	// "Obsolete"
@@ -757,9 +759,9 @@ protected:
 //	void nukeResource(ResType type, ResId idx);
 	int getResourceRoomNr(ResType type, ResId idx);
 	virtual uint32 getResourceRoomOffset(ResType type, ResId idx);
-	int getResourceSize(ResType type, ResId idx);
 
 public:
+	int getResourceSize(ResType type, ResId idx);
 	byte *getResourceAddress(ResType type, ResId idx);
 	virtual byte *getStringAddress(ResId idx);
 	byte *getStringAddressVar(int i);
@@ -1212,6 +1214,7 @@ protected:
 	virtual void CHARSET_1();
 	bool newLine();
 	void drawString(int a, const byte *msg);
+	void fakeBidiString(byte *ltext, bool ignoreVerb);
 	void debugMessage(const byte *msg);
 	void showMessageDialog(const byte *msg);
 

@@ -128,10 +128,10 @@ private:
 	bool displayAdultDisclaimer();
 protected:
 	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 
-	GUI::Debugger *getDebugger() { return _debug; }
+	GUI::Debugger *getDebugger()  override{ return _debug; }
 
 public:
 	AnimationManager *_animMan;
@@ -153,7 +153,7 @@ public:
 
 public:
 	HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc);
-	virtual ~HopkinsEngine();
+	~HopkinsEngine() override;
 	void GUIError(const Common::String &msg);
 
 	uint32 getFeatures() const;
@@ -165,10 +165,10 @@ public:
 
 	int getRandomNumber(int maxNumber);
 	Common::String generateSaveName(int slotNumber);
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	int _startGameSlot;
 	/**
 	 * Run the introduction sequence
@@ -178,7 +178,7 @@ public:
 	/**
 	 * Synchronizes the sound settings from ScummVM into the engine
 	 */
-	virtual void syncSoundSettings();
+	void syncSoundSettings() override;
 };
 
 } // End of namespace Hopkins

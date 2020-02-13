@@ -179,7 +179,7 @@ public:
 
 public:
 	ScalpelUserInterface(SherlockEngine *vm);
-	virtual ~ScalpelUserInterface();
+	~ScalpelUserInterface() override;
 
 	/**
 	 * Handles counting down whilst checking for input, then clears the info line.
@@ -203,43 +203,43 @@ public:
 	/**
 	 * Resets the user interface
 	 */
-	virtual void reset();
+	void reset() override;
 
 	/**
 	 * Main input handler for the user interface
 	 */
-	virtual void handleInput();
+	void handleInput() override;
 
 	/**
 	 * Draw the user interface onto the screen's back buffers
 	 */
-	virtual void drawInterface(int bufferNum = 3);
+	void drawInterface(int bufferNum = 3) override;
 
 	/**
 	 * Displays a passed window by gradually scrolling it vertically on-screen
 	 */
-	virtual void summonWindow(const Surface &bgSurface, bool slideUp = true);
+	void summonWindow(const Surface &bgSurface, bool slideUp = true) override;
 
 	/**
 	 * Slide the window stored in the back buffer onto the screen
 	 */
-	virtual void summonWindow(bool slideUp = true, int height = CONTROLS_Y);
+	void summonWindow(bool slideUp = true, int height = CONTROLS_Y) override;
 
 	/**
 	 * Close a currently open window
 	 * @param flag	0 = slide old window down, 1 = slide prior UI back up
 	 */
-	virtual void banishWindow(bool slideUp = true);
+	void banishWindow(bool slideUp = true) override;
 
 	/**
 	 * Clears the info line of the screen
 	 */
-	virtual void clearInfo();
+	void clearInfo() override;
 
 	/**
 	 * Clear any active text window
 	 */
-	virtual void clearWindow();
+	void clearWindow() override;
 
 	/**
 	 * Print the previously selected object's decription

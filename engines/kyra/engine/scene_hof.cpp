@@ -619,7 +619,7 @@ void KyraEngine_HoF::initSceneAnims(int unk1) {
 
 			const uint8 *shape = getShapePtr(animState->shapeIndex1);
 			animState->xPos2 -= (_screen->getShapeScaledWidth(shape, objectScale) >> 1);
-			animState->yPos2 -= (_screen->getShapeScaledHeight(shape, objectScale) >> 1);
+			animState->yPos2 -= _screen->getShapeScaledHeight(shape, objectScale);
 			animState->xPos3 = animState->xPos2;
 			animState->yPos3 = animState->yPos2;
 

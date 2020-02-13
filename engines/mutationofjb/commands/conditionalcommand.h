@@ -32,8 +32,8 @@ namespace MutationOfJB {
 class ConditionalCommandParser : public CommandParser {
 public:
 	ConditionalCommandParser(bool firstHash = false) : _firstHash(firstHash) {}
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
-	virtual void finish(ScriptParseContext &parseCtx) override;
+	void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
+	void finish(ScriptParseContext &parseCtx) override;
 protected:
 	Common::Queue<char> _tags;
 private:
@@ -50,7 +50,7 @@ public:
 	void setTrueCommand(Command *command);
 	void setFalseCommand(Command *command);
 
-	virtual Command *next() const override;
+	Command *next() const override;
 protected:
 	Command *_trueCommand;
 	Command *_falseCommand;

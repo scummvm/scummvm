@@ -70,7 +70,7 @@ typedef Common::List<TextEntry> TextEntryList;
 class Text : public Resource {
 public:
 	Text();
-	virtual ~Text();
+	~Text() override;
 
 	/**
 	 * Gets a list of lines for a specific dialog entry
@@ -90,7 +90,7 @@ public:
 class ErrorMessage : public Resource {
 public:
 	ErrorMessage(Common::String filename) : Resource(filename) {}
-	virtual ~ErrorMessage() {}
+	~ErrorMessage() override {}
 
 	Common::String getErrorMessage(uint num);
 };

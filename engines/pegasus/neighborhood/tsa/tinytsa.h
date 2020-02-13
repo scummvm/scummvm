@@ -37,33 +37,33 @@ static const RoomID kTinyTSA37 = 0;
 class TinyTSA : public Neighborhood {
 public:
 	TinyTSA(InputHandler *, PegasusEngine *);
-	virtual ~TinyTSA() {}
+	~TinyTSA() override {}
 
-	virtual uint16 getDateResID() const;
+	uint16 getDateResID() const override;
 
-	void start();
+	void start() override;
 
-	void checkContinuePoint(const RoomID, const DirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
 protected:
-	Common::String getBriefingMovie();
-	Common::String getEnvScanMovie();
-	void loadAmbientLoops();
-	virtual void clickInHotspot(const Input &, const Hotspot *);
+	Common::String getBriefingMovie() override;
+	Common::String getEnvScanMovie() override;
+	void loadAmbientLoops() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
 
-	virtual int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant) override;
 
 	void arriveFromNorad();
 	void arriveFromMars();
 	void arriveFromWSC();
 
-	InputBits getInputFilter();
-	void arriveAt(const RoomID, const DirectionConstant);
+	InputBits getInputFilter() override;
+	void arriveAt(const RoomID, const DirectionConstant) override;
 	void showMainJumpMenu();
-	void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
-	Common::String getNavMovieName();
-	Common::String getSoundSpotsName() { return ""; }
+	Common::String getNavMovieName() override;
+	Common::String getSoundSpotsName() override { return ""; }
 };
 
 } // End of namespace Pegasus

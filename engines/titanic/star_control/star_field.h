@@ -27,20 +27,23 @@
 #include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_crosshairs.h"
-#include "titanic/star_control/star_points1.h"
-#include "titanic/star_control/star_points2.h"
+#include "titanic/star_control/const_boundaries.h"
+#include "titanic/star_control/constellations.h"
 
 namespace Titanic {
+
+#define STAR_SCALE 1024.0F
+#define UNIVERSE_SCALE 3000000.0f
 
 class CStarField : public CStarFieldBase {
 private:
 	CStarMarkers _markers;
 	CStarCrosshairs _crosshairs;
-	CStarPoints1 _points1;
-	CStarPoints2 _points2;
+	CConstBoundaries _constBounds;
+	CConstellations _constMap;
 	CStarCloseup _starCloseup;
-	bool _points1On;
-	bool _points2On;
+	bool _renderBoundaries;
+	bool _renderConstMap;
 	StarMode _mode;
 	bool _showBox;
 	bool _closeToMarker;
@@ -51,31 +54,39 @@ private:
 	 */
 	void drawBox(CSurfaceArea *surfaceArea);
 
-	void fn4(CSurfaceArea *surfaceArea, CStarCamera *camera);
+	/**
+	 * If the player's home photo has a selected star, and the starfield view
+	 * is close enough to it, draw a lock line
+	 */
+	void renderLockLine(CSurfaceArea *surfaceArea, CCamera *camera);
 public:
 	CStarField();
 
 	/**
 	 * Load the data for the class from file
 	 */
-	void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Save the data for the class to file
 	 */
-	void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	bool initDocument();
 
 	/**
 	 * Renders the contents of the starfield
 	 */
-	void render(CVideoSurface *surface, CStarCamera *camera);
+	void render(CVideoSurface *surface, CCamera *camera);
 
-	int get1() const;
-	void set1(int val);
-	int get2() const;
-	void set2(int val);
+	bool getBoundaryState() const;
+
+	void setBoundaryState(bool state);
+
+	bool getConstMapState() const;
+
+	void setConstMapState(bool state);
+
 	int get54() const;
 	void set54(int val);
 
@@ -137,22 +148,31 @@ public:
 	}
 
 	void fn1(CErrorCode *errorCode);
-	double fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		FVector &v1, FVector &v2, FVector &v3);
-	void fn6(CVideoSurface *surface, CStarCamera *camera);
+
+	/**
+	  * Gets the lock distance to a star
+	  */
+	double lockDistance(CSurfaceArea *surfaceArea, CCamera *camera,
+		FVector &screenCoord, FVector &worldCoord, FVector &photoPos);
+
+	void fn6(CVideoSurface *surface, CCamera *camera);
 
 	/**
 	 * Increments the number of matched markers
 	 */
-	void incMatches();
+	void incLockLevel();
 
-	void fn8(CVideoSurface *surface);
-	void fn9() { _starCloseup.fn1(); }
+	/**
+	 * Decrements the number of matched markers
+	 */
+	void decLockLevel(CVideoSurface *surface);
+
+	void ToggleSolarRendering() { _starCloseup.fn1(); }
 
 	/**
 	 * Called when the starfield is clicked
 	 */
-	bool mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
+	bool mouseButtonDown(CVideoSurface *surface, CCamera *camera,
 		int flags, const Common::Point &pt);
 
 	/**

@@ -952,6 +952,7 @@ void Scene804::step() {
 
 		switch (_game._storyMode) {
 		case STORYMODE_NAUGHTY:
+		default:
 			if (_scene->_animation[0]->getCurrentFrame() == 81) {
 				_resetFrame = 80;
 				_globals[kInSpace] = false;
@@ -1029,6 +1030,8 @@ void Scene804::step() {
 		case 31:
 			_resetFrame = 0;
 			break;
+		default:
+			break;
 		}
 	} else {
 		if ((_scene->_animation[0]->getCurrentFrame() == 36) && (!_throttleGone)) {
@@ -1043,6 +1046,8 @@ void Scene804::step() {
 				break;
 			case 3:
 				_scene->_sequences.addTimer(130, 120);
+				break;
+			default:
 				break;
 			}
 		}

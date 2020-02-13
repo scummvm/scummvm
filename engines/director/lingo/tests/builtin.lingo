@@ -23,8 +23,15 @@ puppetTempo 30
 puppetTransition 1
 puppetTransition 2,4,20
 
+-- These are D4+
 move cast 1, cast 3
 move cast 3
 put findEmpty(cast 10)
 pasteClipBoardInto cast 2
 put the width of cast 3
+
+unload
+unload ab
+unload ab, bc
+
+put framesToHMS(integer(field 3),30,false,false) into field 5

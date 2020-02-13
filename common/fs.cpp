@@ -152,22 +152,40 @@ WriteStream *FSNode::createWriteStream() const {
 	return _realNode->createWriteStream();
 }
 
-FSDirectory::FSDirectory(const FSNode &node, int depth, bool flat)
-  : _node(node), _cached(false), _depth(depth), _flat(flat) {
+bool FSNode::createDirectory() const {
+	if (_realNode == nullptr)
+		return false;
+
+	if (_realNode->exists()) {
+		if (_realNode->isDirectory()) {
+			warning("FSNode::createDirectory: '%s' already exists", getName().c_str());
+		} else {
+			warning("FSNode::createDirectory: '%s' is a file", getName().c_str());
+		}
+		return false;
+	}
+
+	return _realNode->createDirectory();
 }
 
-FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth, bool flat)
-  : _node(node), _cached(false), _depth(depth), _flat(flat) {
+FSDirectory::FSDirectory(const FSNode &node, int depth, bool flat, bool ignoreClashes)
+  : _node(node), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes) {
+}
+
+FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth, bool flat,
+                         bool ignoreClashes)
+  : _node(node), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes) {
 
 	setPrefix(prefix);
 }
 
-FSDirectory::FSDirectory(const String &name, int depth, bool flat)
-  : _node(name), _cached(false), _depth(depth), _flat(flat) {
+FSDirectory::FSDirectory(const String &name, int depth, bool flat, bool ignoreClashes)
+  : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes) {
 }
 
-FSDirectory::FSDirectory(const String &prefix, const String &name, int depth, bool flat)
-  : _node(name), _cached(false), _depth(depth), _flat(flat) {
+FSDirectory::FSDirectory(const String &prefix, const String &name, int depth, bool flat,
+                         bool ignoreClashes)
+  : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes) {
 
 	setPrefix(prefix);
 }
@@ -237,11 +255,12 @@ SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) c
 	return stream;
 }
 
-FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth, bool flat) {
-	return getSubDirectory(String(), name, depth, flat);
+FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth, bool flat, bool ignoreClashes) {
+	return getSubDirectory(String(), name, depth, flat, ignoreClashes);
 }
 
-FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth, bool flat) {
+FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth,
+        bool flat, bool ignoreClashes) {
 	if (name.empty() || !_node.isDirectory())
 		return nullptr;
 
@@ -249,7 +268,7 @@ FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &na
 	if (!node)
 		return nullptr;
 
-	return new FSDirectory(prefix, *node, depth, flat);
+	return new FSDirectory(prefix, *node, depth, flat, ignoreClashes);
 }
 
 void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const {
@@ -270,17 +289,26 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 		// since the hashmap is case insensitive, we need to check for clashes when caching
 		if (it->isDirectory()) {
 			if (!_flat && _subDirCache.contains(lowercaseName)) {
-				warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring sub-directory '%s'", name.c_str());
+				// Always warn in this case as it's when there are 2 directories at the same place with different case
+				// That means a problem in user installation as lookups are always done case insensitive
+				warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring sub-directory '%s'",
+				        name.c_str());
 			} else {
 				if (_subDirCache.contains(lowercaseName)) {
-					warning("FSDirectory::cacheDirectory: name clash when building subDirCache with subdirectory '%s'", name.c_str());
+					if (!_ignoreClashes) {
+						warning("FSDirectory::cacheDirectory: name clash when building subDirCache with subdirectory '%s'",
+						        name.c_str());
+					}
 				}
 				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : lowercaseName + "/");
 				_subDirCache[lowercaseName] = *it;
 			}
 		} else {
 			if (_fileCache.contains(lowercaseName)) {
-				warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring file '%s'", name.c_str());
+				if (!_ignoreClashes) {
+					warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring file '%s'",
+					        name.c_str());
+				}
 			} else {
 				_fileCache[lowercaseName] = *it;
 			}

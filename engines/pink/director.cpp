@@ -79,17 +79,34 @@ static const Graphics::MacMenuData menuSubItems[] = {
 };
 */
 
+static void redrawCallback(void *ref) {
+	Director *dir = (Director *)ref;
+
+	if (dir->getWndManager().isMenuActive()) {
+		dir->addDirtyRect(Common::Rect(0, 0, 640, 480));
+		dir->draw(false);
+	}
+}
+
 Director::Director()
 	: _surface(640, 480), _textRendered(false) {
-	_wm.setScreen(&_surface);
-	_wm.setMode(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode);
-	_wm.setMenuHotzone(Common::Rect(0, 0, 640, 23));
-	_wm.setMenuDelay(250000);
+	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
+		| Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts
+		| Graphics::kWMModeUnicode);
+
+	_wm->setScreen(&_surface);
+	_wm->setMenuHotzone(Common::Rect(0, 0, 640, 23));
+	_wm->setMenuDelay(250000);
+	_wm->setEngineRedrawCallback(this, redrawCallback);
+}
+
+Director::~Director() {
+	delete _wm;
 }
 
 void Director::update() {
-	if (_wm.isMenuActive()) {
-		_wm.draw();
+	if (_wm->isMenuActive()) {
+		_wm->draw();
 		g_system->updateScreen();
 		return;
 	}
@@ -103,19 +120,19 @@ void Director::update() {
 			_sprites[i]->update();
 	}
 
-	_wm.draw();
+	_wm->draw();
 
 	draw();
 }
 
 bool Director::processEvent(Common::Event &event) {
-	return _wm.processEvent(event);
+	return _wm->processEvent(event);
 }
 
 void Director::setPalette(const byte *palette) {
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
-	_wm.passPalette(palette, 256);
+	_wm->passPalette(palette, 256);
 }
 
 void Director::addTextAction(ActionText *txt) {
@@ -202,7 +219,7 @@ Actor *Director::getActorByPoint(const Common::Point point) {
 	return nullptr;
 }
 
-void Director::draw() {
+void Director::draw(bool blit) {
 	if (!_dirtyRects.empty() || !_textRendered) {
 		mergeDirtyRects();
 
@@ -218,7 +235,9 @@ void Director::draw() {
 		}
 
 		_dirtyRects.resize(0);
-		_surface.update();
+
+		if (blit)
+			_surface.update();
 	} else
 		g_system->updateScreen();
 }

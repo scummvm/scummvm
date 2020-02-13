@@ -26,7 +26,6 @@
 #include "graphics/font.h"
 
 namespace Graphics {
-class MacFont;
 class ManagedSurface;
 class MacText;
 class MacWindowManager;
@@ -39,26 +38,26 @@ class TextCast;
 class CachedMacText {
 private:
 	int _width;
-	TextCast *const _textCast;
+	const TextCast *_textCast;
 	Graphics::MacWindowManager *_wm;
-	Graphics::MacFont *_macFont;
 	Graphics::MacText *_macText;
 	Graphics::TextAlign _align;
 	bool _dirty;
 	Graphics::ManagedSurface *_surface;
 	void makeMacText();
+
 public:
 	CachedMacText(TextCast *const textCast,
-	              int version,
-	              int defaultWidth = -1,
-	              Graphics::MacWindowManager *const wm = NULL
-	             );
+					int version,
+					int defaultWidth = -1,
+					Graphics::MacWindowManager *const wm = NULL);
 	void setWm(Graphics::MacWindowManager *wm);
 	void clip(int width);
 	void forceDirty();
 	const Graphics::ManagedSurface *getSurface();
 	int getLineCount();
 
+	void setStxt(const TextCast *stxt) { _textCast = stxt; forceDirty(); }
 };
 
 } // End of namespace Director

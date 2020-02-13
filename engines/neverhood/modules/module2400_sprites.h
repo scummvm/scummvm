@@ -41,7 +41,7 @@ protected:
 class AsScene2401FlowingWater : public AnimatedSprite {
 public:
 	AsScene2401FlowingWater(NeverhoodEngine *vm);
-	virtual ~AsScene2401FlowingWater();
+	~AsScene2401FlowingWater() override;
 protected:
 	bool _isWaterFlowing;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -83,7 +83,7 @@ protected:
 class AsScene2402TV : public AnimatedSprite {
 public:
 	AsScene2402TV(NeverhoodEngine *vm, Klaymen *klaymen);
-	virtual ~AsScene2402TV();
+	~AsScene2402TV() override;
 protected:
 	Klaymen *_klaymen;
 	int _countdown1;
@@ -110,28 +110,28 @@ protected:
 	void stContSpitIntoPipe();
 	uint32 hmSpit(int messageNum, const MessageParam &param, Entity *sender);
 
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2402 : public Klaymen {
 public:
 	KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2403 : public Klaymen {
 public:
 	KmScene2403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2406 : public Klaymen {
 public:
 	KmScene2406(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 } // End of namespace Neverhood

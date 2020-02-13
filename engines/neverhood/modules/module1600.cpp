@@ -113,6 +113,8 @@ void Module1600::createScene(int sceneNum, int which) {
 		else
 			incGlobalVar(V_TALK_COUNTING_INDEX, +1);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1600::updateScene);
 	_childObject->handleUpdate();
@@ -180,6 +182,8 @@ void Module1600::updateScene() {
 			break;
 		case 1001:
 			createScene(1, 0);
+			break;
+		default:
 			break;
 		}
 	}
@@ -437,6 +441,8 @@ uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity
 		} else if (sender == _asKey)
 			setMessageList(0x004B46C8);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -457,6 +463,8 @@ uint32 Scene1608::hmUpperFloor(int messageNum, const MessageParam &param, Entity
 			setMessageList(0x004B4760);
 		}
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -475,6 +483,8 @@ uint32 Scene1608::hmRidingCar(int messageNum, const MessageParam &param, Entity 
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -487,6 +497,8 @@ uint32 Scene1608::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -568,6 +580,8 @@ uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entit
 			_changeCurrentSymbol = true;
 			_countdown1 = 1;
 		}
+		break;
+	default:
 		break;
 	}
 	return 0;

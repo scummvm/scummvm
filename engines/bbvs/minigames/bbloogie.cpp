@@ -102,6 +102,8 @@ void MinigameBbLoogie::buildDrawList(DrawList &drawList) {
 	case kGSScoreCountUp:
 		buildDrawList3(drawList);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -267,6 +269,8 @@ void MinigameBbLoogie::initObjects() {
 	case kGSScoreCountUp:
 		initObjects3();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -350,6 +354,8 @@ void MinigameBbLoogie::initVars() {
 	case kGSScoreCountUp:
 		initVars3();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -411,6 +417,8 @@ bool MinigameBbLoogie::updateStatus(int mouseX, int mouseY, uint mouseButtons) {
 		return updateStatus2(mouseX, mouseY, mouseButtons);
 	case kGSScoreCountUp:
 		return updateStatus3(mouseX, mouseY, mouseButtons);
+	default:
+		break;
 	}
 	return false;
 }
@@ -618,6 +626,8 @@ void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 		case 9:
 			updatePrincipal(i);
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -681,6 +691,8 @@ void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 		case 2:
 			obj->frameIndex = 7;
 			obj->xIncr = 1;
+			break;
+		default:
 			break;
 		}
 		_paperPlaneDelay = 400;
@@ -792,6 +804,8 @@ void MinigameBbLoogie::updatePlayer(int objIndex, uint mouseButtons) {
 		}
 		break;
 
+	default:
+		break;
 	}
 
 }
@@ -1104,6 +1118,8 @@ void MinigameBbLoogie::updatePrincipal(int objIndex) {
 				obj->status = 5;
 				++obj->frameIndex;
 				break;
+			default:
+				break;
 			}
 			obj->ticks = getAnimation(18)->frameTicks[obj->frameIndex];
 		}
@@ -1187,6 +1203,8 @@ void MinigameBbLoogie::updatePrincipal(int objIndex) {
 		}
 		break;
 
+	default:
+		break;
 	}
 
 	if (!_principalAngry) {
@@ -1220,6 +1238,8 @@ void MinigameBbLoogie::updatePrincipal(int objIndex) {
 							break;
 						case 18:
 							obj->frameIndex = 26;
+							break;
+						default:
 							break;
 						}
 						obj->ticks = getAnimation(18)->frameTicks[obj->frameIndex];

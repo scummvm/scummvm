@@ -26,15 +26,6 @@
 
 namespace StarTrek {
 
-Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2) {
-	uint16 l = MIN(r1.left, r2.left);
-	uint16 t = MIN(r1.top, r2.top);
-	uint16 r = MAX(r1.right, r2.right);
-	uint16 b = MAX(r1.bottom, r2.bottom);
-
-	return Common::Rect(l, t, r, b);
-}
-
 void serializeRect(Common::Rect rect, Common::Serializer &ser) {
 	ser.syncAsSint16LE(rect.left);
 	ser.syncAsSint16LE(rect.top);

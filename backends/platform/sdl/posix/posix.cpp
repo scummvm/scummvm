@@ -54,12 +54,11 @@
 #ifdef HAS_POSIX_SPAWN
 #include <spawn.h>
 #endif
-extern char **environ;
 
-OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
-	:
-	_baseConfigName(baseConfigName) {
-}
+#if defined(USE_SPEECH_DISPATCHER) && defined(USE_TTS)
+#include "backends/text-to-speech/linux/linux-text-to-speech.h"
+#endif
+extern char **environ;
 
 void OSystem_POSIX::init() {
 	// Initialze File System Factory
@@ -78,6 +77,11 @@ void OSystem_POSIX::initBackend() {
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new POSIXSaveFileManager();
+
+#if defined(USE_SPEECH_DISPATCHER) && defined(USE_TTS)
+	// Initialize Text to Speech manager
+	_textToSpeechManager = new SpeechDispatcherManager();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
@@ -99,16 +103,15 @@ bool OSystem_POSIX::hasFeature(Feature f) {
 }
 
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
+	const Common::String baseConfigName = "scummvm.ini";
+
 	Common::String configFile;
 
 	Common::String prefix;
-#ifdef MACOSX
-	prefix = getenv("HOME");
-#elif !defined(SAMSUNGTV)
-	const char *envVar;
+
 	// Our old configuration file path for POSIX systems was ~/.scummvmrc.
 	// If that file exists, we still use it.
-	envVar = getenv("HOME");
+	const char *envVar = getenv("HOME");
 	if (envVar && *envVar) {
 		configFile = envVar;
 		configFile += '/';
@@ -143,14 +146,13 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	if (!prefix.empty() && Posix::assureDirectoryExists("scummvm", prefix.c_str())) {
 		prefix += "/scummvm";
 	}
-#endif
 
-	if (!prefix.empty() && (prefix.size() + 1 + _baseConfigName.size()) < MAXPATHLEN) {
+	if (!prefix.empty() && (prefix.size() + 1 + baseConfigName.size()) < MAXPATHLEN) {
 		configFile = prefix;
 		configFile += '/';
-		configFile += _baseConfigName;
+		configFile += baseConfigName;
 	} else {
-		configFile = _baseConfigName;
+		configFile = baseConfigName;
 	}
 
 	return configFile;
@@ -269,55 +271,29 @@ void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
 }
 
-Common::WriteStream *OSystem_POSIX::createLogFile() {
-	// Start out by resetting _logFilePath, so that in case
-	// of a failure, we know that no log file is open.
-	_logFilePath.clear();
-
-	const char *prefix = nullptr;
+Common::String OSystem_POSIX::getDefaultLogFileName() {
 	Common::String logFile;
-#ifdef MACOSX
-	prefix = getenv("HOME");
-	if (prefix == nullptr) {
-		return 0;
-	}
 
-	logFile = "Library/Logs";
-#elif SAMSUNGTV
-	prefix = nullptr;
-	logFile = "/mtd_ram";
-#else
 	// On POSIX systems we follow the XDG Base Directory Specification for
 	// where to store files. The version we based our code upon can be found
 	// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
-	prefix = getenv("XDG_CACHE_HOME");
+	const char *prefix = getenv("XDG_CACHE_HOME");
 	if (prefix == nullptr || !*prefix) {
 		prefix = getenv("HOME");
 		if (prefix == nullptr) {
-			return 0;
+			return Common::String();
 		}
 
 		logFile = ".cache/";
 	}
 
 	logFile += "scummvm/logs";
-#endif
 
 	if (!Posix::assureDirectoryExists(logFile, prefix)) {
-		return 0;
+		return Common::String();
 	}
 
-	if (prefix) {
-		logFile = Common::String::format("%s/%s", prefix, logFile.c_str());
-	}
-
-	logFile += "/scummvm.log";
-
-	Common::FSNode file(logFile);
-	Common::WriteStream *stream = file.createWriteStream();
-	if (stream)
-		_logFilePath = logFile;
-	return stream;
+	return Common::String::format("%s/%s/scummvm.log", prefix, logFile.c_str());
 }
 
 bool OSystem_POSIX::displayLogFile() {

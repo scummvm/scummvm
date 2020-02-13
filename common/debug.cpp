@@ -78,6 +78,11 @@ bool DebugManager::enableDebugChannel(const String &name) {
 	}
 }
 
+bool DebugManager::enableDebugChannel(uint32 channel) {
+	gDebugChannelsEnabled |= channel;
+	return true;
+}
+
 bool DebugManager::disableDebugChannel(const String &name) {
 	DebugChannelMap::iterator i = gDebugChannels.find(name);
 
@@ -89,6 +94,11 @@ bool DebugManager::disableDebugChannel(const String &name) {
 	} else {
 		return false;
 	}
+}
+
+bool DebugManager::disableDebugChannel(uint32 channel) {
+	gDebugChannelsEnabled &= ~channel;
+	return true;
 }
 
 DebugManager::DebugChannelList DebugManager::listDebugChannels() {

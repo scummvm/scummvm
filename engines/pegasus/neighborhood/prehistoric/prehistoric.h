@@ -103,31 +103,31 @@ class PegasusEngine;
 class Prehistoric : public Neighborhood {
 public:
 	Prehistoric(InputHandler *, PegasusEngine *);
-	virtual ~Prehistoric() {}
+	~Prehistoric() override {}
 
-	virtual uint16 getDateResID() const;
-	virtual void init();
+	uint16 getDateResID() const override;
+	void init() override;
 
-	virtual void arriveAt(const RoomID, const DirectionConstant);
-	virtual void activateHotspots();
-	virtual void clickInHotspot(const Input &, const Hotspot *);
-	Common::String getBriefingMovie();
-	Common::String getEnvScanMovie();
-	uint getNumHints();
-	Common::String getHintMovie(uint);
+	void arriveAt(const RoomID, const DirectionConstant) override;
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	Common::String getBriefingMovie() override;
+	Common::String getEnvScanMovie() override;
+	uint getNumHints() override;
+	Common::String getHintMovie(uint) override;
 
-	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
-	void dropItemIntoRoom(Item *, Hotspot *);
-	void pickedUpItem(Item *);
+	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
+	void dropItemIntoRoom(Item *, Hotspot *) override;
+	void pickedUpItem(Item *) override;
 
-	void start();
+	void start() override;
 
-	void bumpIntoWall();
+	void bumpIntoWall() override;
 
-	void checkContinuePoint(const RoomID, const DirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
-	bool canSolve();
-	void doSolve();
+	bool canSolve() override;
+	void doSolve() override;
 
 protected:
 	enum {
@@ -136,21 +136,21 @@ protected:
 		kNumPrehistoricPrivateFlags
 	};
 
-	void setUpAIRules();
-	int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
-	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
-	virtual void receiveNotification(Notification *, const NotificationFlags);
-	void turnTo(const DirectionConstant);
+	void setUpAIRules() override;
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant) override;
+	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &) override;
+	void receiveNotification(Notification *, const NotificationFlags) override;
+	void turnTo(const DirectionConstant) override;
 	void zoomToVault();
-	TimeValue getViewTime(const RoomID, const DirectionConstant);
-	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
+	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &) override;
 
-	void loadAmbientLoops();
+	void loadAmbientLoops() override;
 
 	FlagsArray<byte, kNumPrehistoricPrivateFlags> _privateFlags;
 
-	Common::String getNavMovieName();
-	Common::String getSoundSpotsName();
+	Common::String getNavMovieName() override;
+	Common::String getSoundSpotsName() override;
 };
 
 } // End of namespace Pegasus

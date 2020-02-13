@@ -211,9 +211,8 @@ Common::WriteStream *DSFileSystemNode::createWriteStream() {
 	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
 
-bool DSFileSystemNode::create(bool isDirectoryFlag) {
-	error("Not supported");
-	return false;
+bool DSFileSystemNode::createDirectory() {
+	return _isValid && _isDirectory;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -398,9 +397,9 @@ Common::WriteStream *GBAMPFileSystemNode::createWriteStream() {
 	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
 
-bool GBAMPFileSystemNode::create(bool isDirectoryFlag) {
-	error("Not supported");
-	return false;
+bool GBAMPFileSystemNode::createDirectory() {
+	warning("GBAMPFileSystemNode::createDirectory(): Not supported");
+	return _isValid && _isDirectory;
 }
 
 

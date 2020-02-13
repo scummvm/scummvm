@@ -126,27 +126,27 @@ void Room::feather5Tick1() {
 
 void Room::feather5TouchedHotspot0() { // Approached the log
 	if (!_awayMission->feather.waterMonsterRetreated) {
-		showText(TX_SPEAKER_SPOCK, TX_FEA5_005);
+		showText(TX_SPEAKER_SPOCK, 5, true);
 		if (!_awayMission->redshirtDead)
-			showText(TX_SPEAKER_STRAGEY, TX_FEA5_033);
+			showText(TX_SPEAKER_STRAGEY, 33, true);
 	}
 }
 
 void Room::feather5UseSpockOnFern() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA5_004);
+	showText(TX_SPEAKER_SPOCK, 4, true);
 }
 
 void Room::feather5UseMccoyOnFern() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA5_009);
+	showText(TX_SPEAKER_MCCOY, 9, true);
 }
 
 void Room::feather5UseRedshirtOnFern() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA5_035);
+	showText(TX_SPEAKER_STRAGEY, 35, true);
 }
 
 void Room::feather5UseRedshirtOnLeftExit() {
 	if (!_awayMission->feather.waterMonsterRetreated) {
-		showText(TX_SPEAKER_STRAGEY, TX_FEA5_034);
+		showText(TX_SPEAKER_STRAGEY, 34, true);
 		_awayMission->disableInput = true;
 		loadMapFile("feath5b");
 		walkCrewmanC(OBJECT_REDSHIRT, 0x8f, 0x64, &Room::feather5RedshirtReachedLog);
@@ -169,32 +169,32 @@ void Room::feather5RedshirtDeathFinished() {
 
 void Room::feather5UseSpockOnLeftExit() {
 	if (!_awayMission->feather.waterMonsterRetreated)
-		showText(TX_SPEAKER_SPOCK, TX_FEA5_002);
+		showText(TX_SPEAKER_SPOCK, 2, true);
 }
 
 void Room::feather5UseMccoyOnLeftExit() {
 	if (!_awayMission->feather.waterMonsterRetreated)
-		showText(TX_SPEAKER_MCCOY, TX_FEA5_015);
+		showText(TX_SPEAKER_MCCOY, 15, true);
 }
 
 void Room::feather5UseSnakeOnKirk() {
-	showText(TX_SPEAKER_KIRK, TX_FEA5N010);
+	showText(TX_SPEAKER_KIRK, 10, true);
 }
 
 void Room::feather5UseSnakeOnSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA5_032);
+	showText(TX_SPEAKER_SPOCK, 32, true);
 }
 
 void Room::feather5UseSnakeOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA5_020);
+	showText(TX_SPEAKER_MCCOY, 20, true);
 }
 
 void Room::feather5UseSnakeOnRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA5_040);
+	showText(TX_SPEAKER_STRAGEY, 40, true);
 }
 
 void Room::feather5UseSnakeOnWater() {
-	showText(TX_FEA5N011);
+	showDescription(11, true);
 	loseItem(OBJECT_ISNAKE);
 }
 
@@ -203,36 +203,36 @@ void Room::feather5UseKnifeOnKirk() {
 	// However, there is an unused audio file for text that otherwise only appears in the
 	// mac version. (DOS floppy version has yet another variation for this text.)
 	// We'll use that unused audio file here...
-	showText(TX_SPEAKER_KIRK, TX_FEA5_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::feather5UseKnifeOnSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA5_029);
+	showText(TX_SPEAKER_SPOCK, 29, true);
 }
 
 void Room::feather5UseKnifeOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA5_008);
+	showText(TX_SPEAKER_MCCOY, 8, true);
 }
 
 void Room::feather5UseKnifeOnRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA5_039);
+	showText(TX_SPEAKER_STRAGEY, 39, true);
 }
 
 void Room::feather5UseKnifeOnWater() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA5_018);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 }
 
 void Room::feather5UseKnifeOnMonster() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA5_006);
+	showText(TX_SPEAKER_SPOCK, 6, true);
 }
 
 void Room::feather5GetFern() {
-	showText(TX_FEA5N008);
+	showDescription(8, true);
 }
 
 void Room::feather5UseKnifeOnFern() {
 	if (_awayMission->feather.gotFern)
-		showText(TX_FEA5N015);
+		showDescription(15, true);
 	else {
 		walkCrewmanC(OBJECT_KIRK, 0x106, 0x8a, &Room::feather5ReachedFern);
 		_awayMission->disableInput = true;
@@ -280,141 +280,141 @@ void Room::feather5FernFellIntoWater() {
 }
 
 void Room::feather5Timer1Expired() { // Spock explains that the creature retreated
-	showText(TX_SPEAKER_SPOCK, TX_FEA5_025);
+	showText(TX_SPEAKER_SPOCK, 25, true);
 }
 
 
 void Room::feather5UseRockOnSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA5_027);
+	showText(TX_SPEAKER_SPOCK, 27, true);
 }
 
 void Room::feather5UseRockOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA5_019);
+	showText(TX_SPEAKER_MCCOY, 19, true);
 }
 
 void Room::feather5UseRockOnRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA5_038);
+	showText(TX_SPEAKER_STRAGEY, 38, true);
 }
 
 void Room::feather5UseCrewmanOnThrownFern() {
 	// This might be unused? The object in question (OBJECT_THROWN_FERN) shouldn't be
 	// visible while player control is active.
-	showText(TX_FEA5N003);
+	showDescription(3, true);
 }
 
 void Room::feather5UseSpockOnMonster() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA5_003);
+	showText(TX_SPEAKER_SPOCK, 3, true);
 }
 
 void Room::feather5UseMccoyOnMonster() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA5_016);
+	showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::feather5UseRedshirtOnMonster() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA5_037);
+	showText(TX_SPEAKER_STRAGEY, 37, true);
 }
 
 void Room::feather5UsePhaser() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA5_028);
+	showText(TX_SPEAKER_SPOCK, 28, true);
 }
 
 void Room::feather5LookAnywhere() {
-	showText(TX_FEA5N012);
+	showDescription(12, true);
 }
 
 void Room::feather5LookAtLog() {
-	showText(TX_FEA5N007);
+	showDescription(7, true);
 }
 
 void Room::feather5LookAtWater() {
-	showText(TX_FEA5N009);
+	showDescription(9, true);
 }
 
 void Room::feather5LookAtFern() {
-	showText(TX_FEA5N014);
+	showDescription(14, true);
 }
 
 void Room::feather5LookAtInsects() {
-	showText(TX_FEA5N005);
+	showDescription(5, true);
 }
 
 void Room::feather5LookAtCave() {
-	showText(TX_FEA5N013);
+	showDescription(13, true);
 }
 
 void Room::feather5LookAtMonster() {
-	showText(TX_FEA5N000);
+	showDescription(0, true);
 }
 
 void Room::feather5LookAtSpock() {
-	showText(TX_FEA5N006);
+	showDescription(6, true);
 }
 
 void Room::feather5LookAtKirk() {
 	if (!_awayMission->feather.waterMonsterRetreated)
-		showText(TX_FEA5N001);
+		showDescription(1, true);
 	else // ENHANCEMENT: Fall back to default behaviour instead of doing nothing
 		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather5LookAtMccoy() {
 	if (!_awayMission->feather.waterMonsterRetreated)
-		showText(TX_FEA5N002);
+		showDescription(2, true);
 	else // ENHANCEMENT: Fall back to default behaviour instead of doing nothing
 		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather5LookAtRedshirt() {
 	if (!_awayMission->feather.waterMonsterRetreated)
-		showText(TX_FEA5N004);
+		showDescription(4, true);
 	else // ENHANCEMENT: Fall back to default behaviour instead of doing nothing
 		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather5TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA5_007);
+	showText(TX_SPEAKER_MCCOY, 7, true);
 }
 
 void Room::feather5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA5_022);
+	showText(TX_SPEAKER_SPOCK, 22, true);
 }
 
 void Room::feather5TalkToRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA5_036);
+	showText(TX_SPEAKER_STRAGEY, 36, true);
 }
 
 void Room::feather5UseMTricorderOnWater() {
 	if (_awayMission->feather.waterMonsterRetreated)
-		mccoyScan(DIR_W, TX_FEA5_011);
+		mccoyScan(DIR_W, 11, false, true);
 	else
-		mccoyScan(DIR_W, TX_FEA5_014);
+		mccoyScan(DIR_W, 14, false, true);
 }
 
 void Room::feather5UseMTricorderOnMonster() {
-	mccoyScan(DIR_W, TX_FEA5_013);
+	mccoyScan(DIR_W, 13, false, true);
 }
 
 void Room::feather5UseSTricorderOnMonster() {
-	spockScan(DIR_W, TX_FEA5_024);
+	spockScan(DIR_W, 24, false, true);
 }
 
 void Room::feather5UseSTricorderAnywhere() {
-	spockScan(DIR_W, TX_FEA5_026);
+	spockScan(DIR_W, 26, false, true);
 }
 
 void Room::feather5UseSTricorderOnWater() {
 	if (_awayMission->feather.waterMonsterRetreated)
-		spockScan(DIR_W, TX_FEA5_031);
+		spockScan(DIR_W, 31, false, true);
 	else
-		spockScan(DIR_W, TX_FEA5_030);
+		spockScan(DIR_W, 30, false, true);
 }
 
 void Room::feather5UseSTricorderOnFern() {
-	spockScan(DIR_N, TX_FEA5_023);
+	spockScan(DIR_N, 23, false, true);
 }
 
 void Room::feather5UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA5_010);
+	showText(TX_SPEAKER_MCCOY, 10, true);
 }
 
 }

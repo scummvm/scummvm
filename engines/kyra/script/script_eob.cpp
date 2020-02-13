@@ -1540,7 +1540,7 @@ int EoBInfProcessor::oeob_delay(int8 *data) {
 
 int EoBInfProcessor::oeob_drawScene(int8 *data) {
 	if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformAmiga)
-		_screen->setupDualPalettesSplitScreen(_screen->getPalette(6), _screen->getPalette(7));
+		_screen->setDualPalettes(_screen->getPalette(6), _screen->getPalette(7));
 	_vm->drawScene(1);
 	return 0;
 }

@@ -78,12 +78,12 @@ private:
 	void showCloseUp(int closeUpNum);
 public:
 	TattooMap(SherlockEngine *vm);
-	virtual ~TattooMap() {}
+	~TattooMap() override {}
 
 	/**
 	 * Show the map
 	 */
-	virtual int show();
+	int show() override;
 };
 
 } // End of namespace Tattoo

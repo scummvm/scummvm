@@ -33,11 +33,8 @@
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/system.h"
-#include "common/winexe.h"
-#include "common/winexe_pe.h"
 #include "engines/engine.h"
 #include "graphics/pixelformat.h"
-#include "graphics/wincursor.h"
 #include "graphics/fontman.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
@@ -49,6 +46,10 @@
 #include "gnap/music.h"
 
 struct ADGameDescription;
+
+namespace Common {
+class PEResources;
+}
 
 namespace Gnap {
 
@@ -221,11 +222,11 @@ struct GnapSavegameHeader {
 
 class GnapEngine : public Engine {
 protected:
-	Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 	GnapEngine(OSystem *syst, const ADGameDescription *gd);
-	~GnapEngine();
+	~GnapEngine() override;
 private:
 	const ADGameDescription *_gameDescription;
 	Graphics::PixelFormat _pixelFormat;
@@ -314,8 +315,8 @@ public:
 
 	int readSavegameDescription(int savegameNum, Common::String &description);
 	int loadSavegame(int savegameNum);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error loadGameState(int slot) override;
 	Common::String generateSaveName(int slot);
 	void synchronize(Common::Serializer &s);
 	void writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeader &header);

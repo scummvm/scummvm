@@ -132,6 +132,8 @@ void MenuModule::createScene(int sceneNum, int which) {
 	case QUERY_OVR_MENU:
 		_childObject = new QueryOverwriteMenu(_vm, this, _savegameDescription);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&MenuModule::updateScene);
 	_childObject->handleUpdate();
@@ -332,6 +334,8 @@ uint32 MenuButton::handleMessage(int messageNum, const MessageParam &param, Enti
 		}
 		messageResult = 1;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -389,6 +393,8 @@ uint32 MainMenu::handleMessage(int messageNum, const MessageParam &param, Entity
 	switch (messageNum) {
 	case NM_ANIMATION_UPDATE:
 		leaveScene(param.asInteger());
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -472,6 +478,8 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 	case NM_MOUSE_SHOW:
 		_ticksTime = _ticksDuration + _vm->_system->getMillis();
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -536,6 +544,8 @@ uint32 Widget::handleMessage(int messageNum, const MessageParam &param, Entity *
 	case 0x1011:
 		onClick();
 		messageResult = 1;
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -762,6 +772,8 @@ uint32 TextEditWidget::handleMessage(int messageNum, const MessageParam &param, 
 	case 0x000B:
 		handleKeyDown((Common::KeyCode)param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -870,8 +882,6 @@ void SavegameListBox::pageDown() {
 }
 
 int GameStateMenu::scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc) {
-	const Plugin *plugin = nullptr;
-	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	Common::String desc;
 	int slot;
@@ -879,7 +889,7 @@ int GameStateMenu::scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc) 
 	if (isSave) {
 		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
-		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
 
 		if (desc.empty())
@@ -891,7 +901,7 @@ int GameStateMenu::scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc) 
 		saveDesc = desc;
 	} else {
 		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		slot = dialog->runModalWithCurrentTarget();
 	}
 
 	delete dialog;
@@ -1030,6 +1040,8 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 		case 5:
 			_listBox->pageDown();
 			break;
+		default:
+			break;
 		}
 		break;
 	case NM_MOUSE_WHEELUP:
@@ -1037,6 +1049,8 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 		break;
 	case NM_MOUSE_WHEELDOWN:
 		_listBox->scrollDown();
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -1204,6 +1218,8 @@ uint32 QueryOverwriteMenu::handleMessage(int messageNum, const MessageParam &par
 	case NM_ANIMATION_UPDATE:
 		// Handle menu button click
 		leaveScene(param.asInteger());
+		break;
+	default:
 		break;
 	}
 	return 0;

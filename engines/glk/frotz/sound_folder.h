@@ -56,7 +56,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::String &name) const override;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -64,19 +64,19 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int listMembers(Common::ArchiveMemberList &list) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.
 	 * @return the newly created input stream
 	 */
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 };
 
 /**
@@ -102,14 +102,14 @@ public:
 	/**
 	 * Destructor
 	 */
-	~SoundZip();
+	~SoundZip() override;
 
 	/**
 	 * Check if a member with the given name is present in the Archive.
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::String &name) const override;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -117,19 +117,19 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int listMembers(Common::ArchiveMemberList &list) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.
 	 * @return the newly created input stream
 	 */
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 };
 
 } // End of namespace Frotz

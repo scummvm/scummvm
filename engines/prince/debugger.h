@@ -34,7 +34,7 @@ class InterpreterFlags;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(PrinceEngine *vm, InterpreterFlags *flags);
-	virtual ~Debugger() {}	// we need this for __SYMBIAN32__ archaic gcc/UIQ
+	~Debugger() override {}	// we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 	uint8 _locationNr;
 	uint8 _cursorNr;

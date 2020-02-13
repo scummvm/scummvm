@@ -56,7 +56,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
-	Common::Array<Common::String> lines, lines2, lines3;
+	Common::Array<Common::String> lines, lines2;
 	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
 	int maxlineWidth2 = g_gui.getFont().wordWrapText(message2, screenW - 2 * 20, lines2);
 
@@ -85,9 +85,9 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 
 	const char *updMessage = _("Update check:");
 
-	int updatelineWidth = g_gui.getFont().wordWrapText(updMessage, screenW - 2 * 20, lines3) + 5;
+	int updatelineWidth = g_gui.getFont().getStringWidth(updMessage) + 5;
 
-	new StaticTextWidget(this, 10, y, maxlineWidth, kLineHeight, lines3[0], Graphics::kTextAlignLeft);
+	new StaticTextWidget(this, 10, y, updatelineWidth, kLineHeight, updMessage, Graphics::kTextAlignLeft);
 
 	_updatesPopUp = new PopUpWidget(this, 10 + updatelineWidth, y, _w - 20 - updatelineWidth, g_gui.xmlEval()->getVar("Globals.PopUp.Height", kLineHeight));
 
@@ -113,7 +113,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	int buttonPos = _w - buttonWidth - 10;
 
 	_proceedButton = new ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight,
-				_("Proceed"), 0, kProceedCmd, Common::ASCII_RETURN);
+				_("Proceed"), nullptr, kProceedCmd, Common::ASCII_RETURN);
 }
 
 void UpdatesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

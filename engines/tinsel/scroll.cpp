@@ -232,6 +232,9 @@ static void NeedScroll(int direction) {
 			}
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 

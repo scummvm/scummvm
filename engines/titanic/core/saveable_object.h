@@ -49,7 +49,7 @@ class TypeTemplate : public ClassDef {
 public:
 	TypeTemplate(const char *className, ClassDef *parent) :
 		ClassDef(className, parent) {}
-	virtual CSaveableObject *create() { return new T(); }
+	CSaveableObject *create() override { return new T(); }
 };
 
 #define CLASSDEF \

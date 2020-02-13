@@ -69,6 +69,9 @@
 	#include <FGraphicsOpengl.h>
 	using namespace Tizen::Graphics::Opengl;
 	#define USE_BUILTIN_OPENGL
+#elif defined(__ANDROID__)
+	#include <GLES/gl.h>
+	#define USE_BUILTIN_OPENGL
 #else
 	#include "backends/graphics/opengl/opengl-defs.h"
 #endif

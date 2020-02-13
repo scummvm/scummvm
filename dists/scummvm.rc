@@ -12,8 +12,9 @@
 #define IDI_COUNT 1002
 #define ID_GDF_XML __GDF_XML
 
-IDI_ICON               ICON    DISCARDABLE     "icons/scummvm.ico"
-IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "dists/win32/scummvm.exe.manifest"
+IDI_ICON               ICON    "icons/scummvm.ico"
+IDI_COUNT              ICON    "icons/count.ico"
 
 ID_GDF_XML             DATA    "dists/win32/scummvm.gdf.xml"
 
@@ -31,10 +32,13 @@ fonts.dat              FILE    "dists/engine-data/fonts.dat"
 #endif
 
 #if PLUGIN_ENABLED_STATIC(ACCESS)
-access.dat           FILE    "dists/engine-data/access.dat"
+access.dat             FILE    "dists/engine-data/access.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(CRYO)
 cryo.dat               FILE    "dists/engine-data/cryo.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(CRYOMNI3D)
+cryomni3d.dat          FILE    "dists/engine-data/cryomni3d.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(DRASCULA)
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
@@ -75,11 +79,14 @@ tony.dat               FILE    "dists/engine-data/tony.dat"
 #if PLUGIN_ENABLED_STATIC(TOON)
 toon.dat               FILE    "dists/engine-data/toon.dat"
 #endif
+#if PLUGIN_ENABLED_STATIC(ULTIMA)
+ultima.dat             FILE    "dists/engine-data/ultima.dat"
+#endif
 #if PLUGIN_ENABLED_STATIC(WINTERMUTE)
 wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
 #endif
 #if PLUGIN_ENABLED_STATIC(XEEN)
-xeen.ccs         FILE    "dists/engine-data/xeen.ccs"
+xeen.ccs               FILE    "dists/engine-data/xeen.ccs"
 #endif
 #if PLUGIN_ENABLED_STATIC(AGI)
 pred.dic               FILE    "dists/pred.dic"
@@ -107,7 +114,7 @@ BEGIN
             VALUE "FileDescription", "ScummVM: A free implementation of various adventure game engines\0"
             VALUE "FileVersion", SCUMMVM_VERSION "\0"
             VALUE "InternalName", "scummvm\0"
-            VALUE "LegalCopyright", "Copyright \xA9 2001-2019 The ScummVM Team\0"
+            VALUE "LegalCopyright", "Copyright \xA9 2001-2020 The ScummVM Team\0"
             VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Beneath a Steel Sky and Broken Sword are a TM of Revolution. Flight of the Amazon Queen is a TM of John Passfield and Steve Stamatiadis. \0"
             VALUE "OriginalFilename", "scummvm.exe\0"
             VALUE "ProductName", "ScummVM\0"

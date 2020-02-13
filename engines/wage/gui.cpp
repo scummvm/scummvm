@@ -100,13 +100,14 @@ Gui::Gui(WageEngine *engine) {
 	_menu->setCommandsCallback(menuCommandsCallback, this);
 
 	_menu->addStaticMenus(menuSubItems);
-	_menu->addMenuSubItem(kMenuAbout, _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
+	_menu->addSubMenu(nullptr, kMenuAbout);
+	_menu->addMenuItem(_menu->getSubmenu(nullptr, kMenuAbout), _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
 
-	_commandsMenuId = _menu->addMenuItem(_engine->_world->_commandsMenuName.c_str());
+	_commandsMenuId = _menu->addMenuItem(nullptr, _engine->_world->_commandsMenuName);
 	regenCommandsMenu();
 
 	if (!_engine->_world->_weaponMenuDisabled) {
-		_weaponsMenuId = _menu->addMenuItem(_engine->_world->_weaponsMenuName.c_str());
+		_weaponsMenuId = _menu->addMenuItem(nullptr, _engine->_world->_weaponsMenuName);
 
 		regenWeaponsMenu();
 	} else {
@@ -114,6 +115,10 @@ Gui::Gui(WageEngine *engine) {
 	}
 
 	_menu->calcDimensions();
+
+	if (g_system->hasTextInClipboard()) {
+		_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
+	}
 
 	_sceneWindow = _wm.addWindow(false, false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
@@ -217,6 +222,10 @@ void Gui::regenWeaponsMenu() {
 
 	bool empty = true;
 
+	Graphics::MacMenuSubMenu *submenu = _menu->getSubmenu(nullptr, _weaponsMenuId);
+	if (submenu == nullptr)
+		submenu = _menu->addSubMenu(nullptr, _weaponsMenuId);
+
 	for (uint i = 0; i < weapons->size(); i++) {
 		Obj *obj = (*weapons)[i];
 		if (obj->_type == Obj::REGULAR_WEAPON ||
@@ -226,7 +235,7 @@ void Gui::regenWeaponsMenu() {
 			command += " ";
 			command += obj->_name;
 
-			_menu->addMenuSubItem(_weaponsMenuId, command.c_str(), kMenuActionCommand, 0, 0, true);
+			_menu->addMenuItem(submenu, command, kMenuActionCommand, 0, 0, true);
 
 			empty = false;
 		}
@@ -234,10 +243,14 @@ void Gui::regenWeaponsMenu() {
 	delete weapons;
 
 	if (empty)
-		_menu->addMenuSubItem(_weaponsMenuId, "You have no weapons", 0, 0, 0, false);
+		_menu->addMenuItem(submenu, "You have no weapons", 0, 0, 0, false);
 }
 
 bool Gui::processEvent(Common::Event &event) {
+	if (event.type == Common::EVENT_CLIPBOARD_UPDATE) {
+		_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
+	}
+
 	return _wm.processEvent(event);
 }
 
@@ -300,9 +313,10 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 }
 
 void Gui::loadBorders() {
-	// Do not load borders for now
-	//loadBorder(_sceneWindow, "border_inac.bmp", false);
-	//loadBorder(_sceneWindow, "border_act.bmp", true);
+	loadBorder(_sceneWindow, "wage_border_inact.bmp", false);
+	loadBorder(_sceneWindow, "wage_border_act-noscrollbar.bmp", true);
+	loadBorder(_consoleWindow, "wage_border_inact.bmp", false);
+	loadBorder(_consoleWindow, "wage_border_act.bmp", true);
 }
 
 void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active) {
@@ -317,7 +331,7 @@ void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool 
 	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
 	if (stream) {
 
-		target->loadBorder(*stream, active, 10, 10, 1, 1);
+		target->loadBorder(*stream, active);
 
 		borderfile.close();
 
@@ -347,22 +361,24 @@ void Gui::clearOutput() {
 }
 
 void Gui::actionCopy() {
-	_clipboard = _consoleWindow->getSelection();
+	g_system->setTextInClipboard(Common::convertUtf32ToUtf8(_consoleWindow->getSelection()));
 
 	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 }
 
 void Gui::actionPaste() {
-	_undobuffer = _engine->_inputText;
+	if (g_system->hasTextInClipboard()) {
+		_undobuffer = _engine->_inputText;
 
-	_consoleWindow->appendInput(_clipboard);
+		_consoleWindow->appendInput(g_system->getTextFromClipboard());
 
-	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+		_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+	}
 }
 
 void Gui::actionUndo() {
 	_consoleWindow->clearInput();
-	_consoleWindow->appendInput(_clipboard);
+	_consoleWindow->appendInput(_undobuffer);
 
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }
@@ -371,7 +387,7 @@ void Gui::actionClear() {
 	if (_consoleWindow->getSelectedText()->endY == -1)
 		return;
 
-	Common::String input = _consoleWindow->getInput();
+	Common::String input = Common::convertFromU32String(_consoleWindow->getInput());
 
 	_consoleWindow->cutSelection();
 
@@ -384,9 +400,9 @@ void Gui::actionCut() {
 	if (_consoleWindow->getSelectedText()->endY == -1)
 		return;
 
-	Common::String input = _consoleWindow->getInput();
+	Common::String input = Common::convertFromU32String(_consoleWindow->getInput());
 
-	_clipboard = _consoleWindow->cutSelection();
+	g_system->setTextInClipboard(Common::convertFromU32String(_consoleWindow->cutSelection()));
 
 	_undobuffer = input;
 

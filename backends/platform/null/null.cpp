@@ -27,6 +27,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_fputs
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "backends/modular-backend.h"
 #include "base/main.h"
@@ -69,6 +70,8 @@ public:
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const {}
 
+	virtual void quit();
+
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 };
 
@@ -97,7 +100,7 @@ void OSystem_NULL::initBackend() {
 	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
 	_graphicsManager = new NullGraphicsManager();
-	_mixer = new Audio::MixerImpl(this, 22050);
+	_mixer = new Audio::MixerImpl(22050);
 
 	((Audio::MixerImpl *)_mixer)->setReady(false);
 
@@ -117,6 +120,10 @@ uint32 OSystem_NULL::getMillis(bool skipRecord) {
 }
 
 void OSystem_NULL::delayMillis(uint msecs) {
+}
+
+void OSystem_NULL::quit() {
+	exit(0);
 }
 
 void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {

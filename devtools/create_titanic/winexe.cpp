@@ -80,4 +80,18 @@ String WinResourceID::toString() const {
 	return "";
 }
 
+bool WinResources::loadFromEXE(const String &fileName) {
+	if (fileName.empty())
+		return false;
+
+	File *file = new File();
+
+	if (!file->open(fileName.c_str())) {
+		delete file;
+		return false;
+	}
+
+	return loadFromEXE(file);
+}
+
 } // End of namespace Common

@@ -60,11 +60,6 @@ public:
 	 * Check for game Id clashes with other sub-engines
 	 */
 	static void detectClashes(Common::StringMap &map);
-
-	/**
-	 * Check a passed stream for a Quetzal save, and if so, get header information
-	 */
-	static bool readSavegameHeader(Common::SeekableReadStream *stream, Glk::SavegameHeader &header);
 };
 
 } // End of namespace Frotz

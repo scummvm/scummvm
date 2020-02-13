@@ -37,32 +37,32 @@ public:
 	/**
 	 * Setup the glyph
 	 */
-	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+	bool setup(CPetControl *petControl, CPetGlyphs *owner) override;
 
 	/**
 	 * Reset the glyph
 	 */
-	virtual bool reset();
+	bool reset() override;
 
 	/**
 	 * Handles any secondary drawing of the glyph
 	 */
-	virtual void draw2(CScreenManager *screenManager);
+	void draw2(CScreenManager *screenManager) override;
 
 	/**
 	 * Called for mouse button down messages
 	 */
-	virtual bool MouseButtonDownMsg(const Point &pt);
+	bool MouseButtonDownMsg(const Point &pt) override;
 
 	/**
 	 * Handles mouse button up messages
 	 */
-	virtual bool MouseButtonUpMsg(const Point &pt);
+	bool MouseButtonUpMsg(const Point &pt) override;
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CTextControl *text);
+	void getTooltip(CTextControl *text) override;
 
 	/**
 	 * Get a reference to the tooltip text associated with the section

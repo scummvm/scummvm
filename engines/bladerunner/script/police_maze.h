@@ -59,7 +59,7 @@ class PoliceMazeTargetTrack : ScriptBase {
 
 public:
 	PoliceMazeTargetTrack(BladeRunnerEngine *vm);
-	~PoliceMazeTargetTrack();
+	~PoliceMazeTargetTrack() override;
 
 	void reset();
 	void clear(bool isLoadingGame);
@@ -90,7 +90,7 @@ public:
 
 public:
 	PoliceMaze(BladeRunnerEngine *vm);
-	~PoliceMaze();
+	~PoliceMaze() override;
 
 	void tick();
 	void clear(bool isLoadingGame);

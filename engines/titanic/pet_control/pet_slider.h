@@ -211,27 +211,27 @@ public:
 	/**
 	 * Setup the background
 	 */
-	virtual void setupBackground(const CString &name, CPetControl *petControl);
+	void setupBackground(const CString &name, CPetControl *petControl) override;
 
 	/**
 	 * Setup the thumb
 	 */
-	virtual void setupThumb(const CString &name, CPetControl *petControl);
+	void setupThumb(const CString &name, CPetControl *petControl) override;
 
 	/**
 	 * Setup the background
 	 */
-	virtual void setupBackground2(const CString &name, CPetControl *petControl);
+	void setupBackground2(const CString &name, CPetControl *petControl) override;
 
 	/**
 	 * Setup the thumb
 	 */
-	virtual void setupThumb2(const CString &name, CPetControl *petControl);
+	void setupThumb2(const CString &name, CPetControl *petControl) override;
 
 	/**
 	 * Draw the slider
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager) override;
 };
 
 } // End of namespace Titanic

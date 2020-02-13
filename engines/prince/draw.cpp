@@ -344,6 +344,8 @@ void PrinceEngine::showBackAnims() {
 							seq._data2 = _randomSource.getRandomNumber(seq._data - 1);
 							continue; // for bug in original game
 							break;
+						default:
+							break;
 						}
 					} else {
 						_backAnimList[i].backAnims[activeSubAnim]._frame++;

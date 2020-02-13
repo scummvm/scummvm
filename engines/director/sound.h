@@ -20,12 +20,14 @@
  *
  */
 
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/softsynth/pcspk.h"
-
 #ifndef DIRECTOR_SOUND_H
 #define DIRECTOR_SOUND_H
+
+namespace Audio {
+	class AudioStream;
+	class SoundHandle;
+	class PCSpeaker;
+}
 
 namespace Director {
 

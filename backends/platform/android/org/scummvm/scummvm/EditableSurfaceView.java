@@ -53,7 +53,7 @@ public class EditableSurfaceView extends SurfaceView {
 		outAttrs.inputType = (InputType.TYPE_CLASS_TEXT |
 								InputType.TYPE_TEXT_VARIATION_NORMAL |
 								InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
-		outAttrs.imeOptions = (EditorInfo.IME_ACTION_DONE |
+		outAttrs.imeOptions = (EditorInfo.IME_ACTION_NONE |
 								EditorInfo.IME_FLAG_NO_EXTRACT_UI);
 
 		return new MyInputConnection();

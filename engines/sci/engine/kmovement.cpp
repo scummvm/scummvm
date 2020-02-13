@@ -476,6 +476,9 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			case 270:
 			case 315:
 				newX -= clientXstep;
+				break;
+			default:
+				break;
 			}
 
 			switch (newHeading) {
@@ -488,6 +491,9 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			case 180:
 			case 225:
 				newY += clientYstep;
+				break;
+			default:
+				break;
 			}
 			writeSelectorValue(segMan, client, SELECTOR(x), newX);
 			writeSelectorValue(segMan, client, SELECTOR(y), newY);

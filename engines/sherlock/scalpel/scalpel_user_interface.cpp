@@ -31,6 +31,11 @@
 #include "sherlock/scalpel/settings.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/sherlock.h"
+#include "common/config-manager.h"
+
+#ifdef USE_TTS
+#include "common/text-to-speech.h"
+#endif
 
 namespace Sherlock {
 
@@ -1738,6 +1743,8 @@ void ScalpelUserInterface::doTalkControl() {
 			case 3:
 				people._portraitSide = 120;
 				break;
+			default:
+				break;
 			}
 
 			// Check for flipping Holmes
@@ -2056,6 +2063,14 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 		screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
 			SHERLOCK_SCREEN_HEIGHT));
 	}
+
+        #ifdef USE_TTS
+	if (ConfMan.getBool("tts_narrator")) {
+            Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
+            _ttsMan->stop();
+            _ttsMan->say(str.c_str());
+	}
+        #endif 
 }
 
 void ScalpelUserInterface::printObjectDesc() {

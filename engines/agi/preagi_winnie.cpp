@@ -372,6 +372,8 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 				dropObj(_room);
 				setTakeDrop(fCanSel);
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -754,6 +756,8 @@ void WinnieEngine::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 		iRow = IDI_WTP_ROW_OPTION_4;
 		iCol = IDI_WTP_COL_DROP;
 		break;
+	default:
+		break;
 	}
 	drawStr(iRow, iCol - 1, IDA_DEFAULT, ">");
 	g_system->updateScreen();
@@ -787,6 +791,8 @@ void WinnieEngine::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
 		if (fCanSel[IDI_WTP_SEL_WEST] && (x > IDI_WTP_COL_WEST - 1) && (x < 25)) *iSel = IDI_WTP_SEL_WEST;
 		if (fCanSel[IDI_WTP_SEL_TAKE] && (x > IDI_WTP_COL_TAKE - 1) && (x < 33)) *iSel = IDI_WTP_SEL_TAKE;
 		if (fCanSel[IDI_WTP_SEL_DROP] && (x > IDI_WTP_COL_DROP - 1) && (x < 39)) *iSel = IDI_WTP_SEL_DROP;
+		break;
+	default:
 		break;
 	}
 }

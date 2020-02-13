@@ -30,6 +30,8 @@
 
 namespace GUI {
 
+class EEHandler;
+
 class AboutDialog : public Dialog {
 	typedef Common::Array<Common::String> StringArray;
 protected:
@@ -42,6 +44,8 @@ protected:
 	int _xOff, _yOff;
 
 	void addLine(const char *str);
+
+	EEHandler	*_eeHandler;
 
 public:
 	AboutDialog();

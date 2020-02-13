@@ -70,6 +70,7 @@
 #include "sci/graphics/controls32.h"
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/maccursor32.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
@@ -129,7 +130,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelDclInflate, "DCL", "DCL inflate debugging");
 	DebugMan.addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
 	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
-	DebugMan.addDebugChannel(kDebugLevelScriptPatcher, "ScriptPatcher", "Notifies when scripts are patched");
+	DebugMan.addDebugChannel(kDebugLevelPatcher, "Patcher", "Notifies when scripts or resources are patched");
 	DebugMan.addDebugChannel(kDebugLevelWorkarounds, "Workarounds", "Notifies when workarounds are triggered");
 	DebugMan.addDebugChannel(kDebugLevelVideo, "Video", "Video (SEQ, VMD, RBT) debugging");
 	DebugMan.addDebugChannel(kDebugLevelGame, "Game", "Debug calls from game scripts");
@@ -160,6 +161,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Sound Folder"); // Mac audio files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices Folder", 0, 2, true); // Mac audio36 files (recursive for Torin)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices"); // Mac audio36 files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices/AUD#"); // LSL6 Mac audio36 files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "VMD Folder"); // Mac VMD files
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
@@ -254,7 +256,7 @@ SciEngine::~SciEngine() {
 	g_sci = 0;
 }
 
-extern void showScummVMDialog(const Common::String &message);
+extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
 
 Common::Error SciEngine::run() {
 	_resMan = new ResourceManager();
@@ -308,8 +310,6 @@ Common::Error SciEngine::run() {
 	}
 
 	_kernel = new Kernel(_resMan, segMan);
-	_kernel->init();
-
 	_features = new GameFeatures(segMan, _kernel);
 	_vocabulary = hasParser() ? new Vocabulary(_resMan, false) : NULL;
 
@@ -434,6 +434,10 @@ Common::Error SciEngine::run() {
 		                  "having unexpected errors and/or issues later on."));
 	}
 
+	if (getGameId() == GID_GK2 && ConfMan.getBool("subtitles") && !_resMan->testResource(ResourceId(kResourceTypeSync, 10))) {
+		suggestDownloadGK2SubTitlesPatch();
+	}
+
 	runGame();
 
 	ConfMan.flushToDisk();
@@ -502,6 +506,36 @@ bool SciEngine::gameHasFanMadePatch() {
 	}
 
 	return false;
+}
+
+void SciEngine::suggestDownloadGK2SubTitlesPatch() {
+	const char* altButton;
+	Common::String downloadMessage;
+
+	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
+		altButton = _("Download patch");
+		downloadMessage = _("(or click 'Download patch' button. But note - it only downloads, you will have to continue from there)\n");
+	}
+	else {
+		altButton = nullptr;
+		downloadMessage = "";
+	}
+
+	int result = showScummVMDialog(_("GK2 has a fan made subtitles, available thanks to the good persons at SierraHelp.\n\n"
+		"Installation:\n"
+		"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n" +
+		downloadMessage +
+		"- extract zip file\n"
+		"- no need to run the .exe file\n"
+		"- extract the .exe file with a file archiver, like 7-zip\n"
+		"- create a PATCHES subdirectory inside your GK2 directory\n"
+		"- copy the content of GK2Subtitles\\SUBPATCH to the PATCHES subdirectory\n"
+		"- replace files with similar names\n"
+		"- restart the game\n"), altButton, false);
+	if (!result) {
+		char url[] = "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip";
+		g_system->openUrl(url);
+	}
 }
 
 bool SciEngine::initGame() {
@@ -592,7 +626,7 @@ void SciEngine::initGraphics() {
 	} else {
 #endif
 		_gfxPalette16 = new GfxPalette(_resMan, _gfxScreen);
-		if (getGameId() == GID_QFG4DEMO || getGameId() == GID_CATDATE)
+		if (getGameId() == GID_QFG4DEMO || _resMan->testResource(ResourceId(kResourceTypeVocab, 184)))
 			_gfxRemap16 = new GfxRemap(_gfxPalette16);
 #ifdef ENABLE_SCI32
 	}
@@ -603,7 +637,11 @@ void SciEngine::initGraphics() {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		// SCI32 graphic objects creation
-		_gfxCursor32 = new GfxCursor32();
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && _resMan->hasResourceType(kResourceTypeCursor)) {
+			_gfxCursor32 = new GfxMacCursor32();
+		} else {
+			_gfxCursor32 = new GfxCursor32();
+		}
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, nullptr, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
 		_gfxTransitions32 = new GfxTransitions32(_gamestate->_segMan);
@@ -615,10 +653,9 @@ void SciEngine::initGraphics() {
 	} else {
 #endif
 		// SCI0-SCI1.1 graphic objects creation
-		_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
 		_gfxPorts = new GfxPorts(_gamestate->_segMan, _gfxScreen);
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
-		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
+		_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen, _gfxCoordAdjuster, _eventMan);
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette16);
 		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette16, _gfxTransitions, _audio);
@@ -787,6 +824,14 @@ bool SciEngine::hasMacIconBar() const {
 			(getGameId() == GID_KQ6 || getGameId() == GID_FREDDYPHARKAS);
 }
 
+bool SciEngine::hasMacSaveRestoreDialogs() const {
+    return _gameDescription->platform == Common::kPlatformMacintosh &&
+			(getSciVersion() <= SCI_VERSION_2_1_EARLY ||
+			 getGameId() == GID_GK2 ||
+			 getGameId() == GID_SQ6 ||
+			 getGameId() == GID_LIGHTHOUSE);
+}
+
 Common::String SciEngine::getSavegameName(int nr) const {
 	return _targetName + Common::String::format(".%03d", nr);
 }
@@ -830,6 +875,15 @@ int SciEngine::inQfGImportRoom() const {
 		return 4;
 	}
 	return 0;
+}
+
+void SciEngine::showQfgImportMessageBox() const {
+	showScummVMDialog(_("Characters saved inside ScummVM are shown "
+			"automatically. Character files saved in the original "
+			"interpreter need to be put inside ScummVM's saved games "
+			"directory and a prefix needs to be added depending on which "
+			"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
+			"for Quest for Glory 2. Example: 'qfg2-thief.sav'."));
 }
 
 void SciEngine::sleep(uint32 msecs) {

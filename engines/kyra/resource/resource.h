@@ -506,6 +506,17 @@ enum KyraResources {
 	kEoB1IntroFilesHands,
 	kEoB1IntroFilesWdExit,
 	kEoB1IntroFilesTunnel,
+
+	kEoB1IntroStringsTower,
+	kEoB1IntroStringsOrb,
+	kEoB1IntroStringsWdEntry,
+	kEoB1IntroStringsKing,
+	kEoB1IntroStringsHands,
+	kEoB1IntroStringsWdExit,
+	kEoB1IntroStringsTunnel,
+
+	kEoB1FinaleStrings,
+
 	kEoB1IntroOpeningFrmDelay,
 	kEoB1IntroWdEncodeX,
 	kEoB1IntroWdEncodeY,
@@ -526,7 +537,11 @@ enum KyraResources {
 	kEoB1FinaleCouncilAnim4,
 	kEoB1FinaleEyesAnim,
 	kEoB1FinaleHandsAnim,
+	kEoB1FinaleHandsAnim2,
+	kEoB1FinaleHandsAnim3,
 	kEoB1FinaleTextDuration,
+	kEoB1CreditsStrings,
+	kEoB1CreditsCharWdth,
 
 	kEoB1DoorShapeDefs,
 	kEoB1DoorSwitchShapeDefs,
@@ -554,6 +569,11 @@ enum KyraResources {
 	kEoB1CgaMappingLevel3,
 	kEoB1CgaMappingLevel4,
 
+	kEoB1Palettes16c,
+	kEoB1PalCycleData,
+	kEoB1PalCycleStyle1,
+	kEoB1PalCycleStyle2,
+
 	kEoB1NpcShpData,
 	kEoB1NpcSubShpIndex1,
 	kEoB1NpcSubShpIndex2,
@@ -569,6 +589,11 @@ enum KyraResources {
 	kEoB1Npc5Strings,
 	kEoB1Npc6Strings,
 	kEoB1Npc7Strings,
+
+	kEoB1ItemNames,
+	kEoB1Ascii2SjisTable1,
+	kEoB1Ascii2SjisTable2,
+	kEoB1FontLookupTable,
 
 	kEoB2MainMenuStrings,
 	kEoB2MainMenuUtilStrings,

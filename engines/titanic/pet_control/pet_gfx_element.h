@@ -39,34 +39,34 @@ public:
 	/**
 	 * Setup the element
 	 */
-	virtual void setup(PetElementMode mode, const CString &name,
-		CPetControl *petControl);
+	void setup(PetElementMode mode, const CString &name,
+		CPetControl *petControl) override;
 
 	/**
 	 * Reset the element
 	 */
-	virtual void reset(const CString &name, CPetControl *petControl,
-		PetElementMode mode = MODE_UNSELECTED);
+	void reset(const CString &name, CPetControl *petControl,
+		PetElementMode mode = MODE_UNSELECTED) override;
 
 	/**
 	 * Draw the item
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager) override;
 
 	/**
 	 * Draw the item
 	 */
-	virtual void draw(CScreenManager *screenManager, const Common::Point &destPos);
+	void draw(CScreenManager *screenManager, const Common::Point &destPos) override;
 
 	/**
 	 * Get the bounds for the element
 	 */
-	virtual Rect getBounds() const;
+	Rect getBounds() const override;
 
 	/**
 	 * Get the game object associated with this item
 	 */
-	virtual CGameObject *getObject() const;
+	CGameObject *getObject() const override;
 
 	/**
 	 * Gets the explicit bounds set for the graphic element,

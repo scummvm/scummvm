@@ -185,6 +185,8 @@ void Scene201::enter() {
 			suffixNum = 2;
 			endTrigger = 78;
 			break;
+		default:
+			break;
 		}
 		_globals[kTeleporterCommand] = 0;
 		if (suffixNum >= 0)
@@ -690,6 +692,8 @@ void Scene202::step() {
 		_lastRoute = 2;
 		if (randVal <= 700)
 			frameStep = 126;
+		break;
+	default:
 		break;
 	}
 
@@ -1702,6 +1706,8 @@ void Scene208::updateTrap() {
 		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1778,6 +1784,8 @@ void Scene208::step() {
 		break;
 	case 82:
 		_game._player._stepEnabled = true;
+		break;
+	default:
 		break;
 	}
 }
@@ -2022,6 +2030,8 @@ void Scene209::handlePause() {
 		else
 			_pauseMode = 0;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2032,6 +2042,8 @@ void Scene209::initPauseCounterThreshold() {
 		_pauseCounterThreshold = _vm->getRandomNumber(7,12);
 		_pauseMode = 2;
 		_pauseCounter = 0;
+		break;
+	default:
 		break;
 	}
 }
@@ -2077,6 +2089,9 @@ void Scene209::handlePeek() {
 		_scene->_hotspots.activate(227, false);
 		_playingAnimFl = false;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2108,6 +2123,9 @@ void Scene209::handleVerticalMove() {
 		_pauseMode = 1;
 		_playingAnimFl = false;
 		_scene->_hotspots.activate(227, false);
+		break;
+
+	default:
 		break;
 	}
 }
@@ -2151,6 +2169,9 @@ void Scene209::handleLookStay() {
 	case 149:
 		_playingAnimFl = false;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2175,6 +2196,9 @@ void Scene209::handleLookRight() {
 		_playingAnimFl = false;
 		if (_dodgeFl)
 			_shouldDodgeFl = true;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -2203,6 +2227,9 @@ void Scene209::handleBlink() {
 		_playingAnimFl = false;
 		if (_dodgeFl)
 			_shouldDodgeFl = true;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -2250,6 +2277,9 @@ void Scene209::handleGetBinoculars() {
 	case 165:
 		_vm->_sound->command(18);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2279,6 +2309,9 @@ void Scene209::handleBinocularBlink() {
 		if (_fallFl)
 			_shouldFallFl = true;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2303,6 +2336,8 @@ void Scene209::handleBinocularScan() {
 			break;
 		case 2:
 			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 4, 0, 0);
+			break;
+		default:
 			break;
 		}
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 23, 25);
@@ -2333,6 +2368,9 @@ void Scene209::handleBinocularScan() {
 		_playingAnimFl = false;
 		if (_fallFl)
 			_shouldFallFl = true;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -2371,6 +2409,9 @@ void Scene209::handleJumpInTree() {
 		_pauseMode = 1;
 		_playingAnimFl = false;
 		_scene->_hotspots.activate(227, false);
+		break;
+
+	default:
 		break;
 	}
 }
@@ -2424,6 +2465,9 @@ void Scene209::handleTongue() {
 		_removeMonkeyFl = false;
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2468,6 +2512,9 @@ void Scene209::handleStandFromPeek() {
 		_playingAnimFl = false;
 		_counter = 0;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2494,6 +2541,9 @@ void Scene209::handleStandBlink() {
 	case 249:
 		_playingAnimFl = false;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2512,6 +2562,9 @@ void Scene209::handleJumpAndHide() {
 		_pauseMode = 1;
 		_scene->_hotspots.activate(227, false);
 		_playingAnimFl = false;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -2617,6 +2670,9 @@ void Scene209::handleMonkeyEating() {
 	case 210:
 		_playingAnimFl = false;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2699,6 +2755,9 @@ void Scene209::handleMonkeyFall() {
 		_vm->_dialogs->show(20910);
 		_game._player._stepEnabled = true;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2756,6 +2815,9 @@ void Scene209::handleMonkey1() {
 		_pauseMode = 0;
 		_scene->_sequences.addTimer(1, 196);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2791,6 +2853,9 @@ void Scene209::handleMonkey2() {
 		_game._player._visible = true;
 		_game._player._stepEnabled = true;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -2824,6 +2889,9 @@ void Scene209::handleDodge() {
 		} else {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(136));
 		}
+		break;
+
+	default:
 		break;
 	}
 }
@@ -3251,6 +3319,9 @@ void Scene209::step() {
 		case 239:
 			_vm->_sound->command(23);
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -3402,6 +3473,9 @@ void Scene209::actions() {
 		_dialogAbortVal = 5;
 		_action._inProgress = false;
 		return;
+
+	default:
+		break;
 	}
 
 	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
@@ -3462,6 +3536,9 @@ void Scene209::actions() {
 
 		case 3:
 			break;
+
+		default:
+			break;
 		}
 		_action._inProgress = false;
 		return;
@@ -3494,6 +3571,9 @@ void Scene209::actions() {
 		case 3:
 			_vm->_dialogs->showItem (OBJ_BINOCULARS, 0x51AF);
 			_scene->_sprites.remove(_globals._spriteIndexes[10]);
+			break;
+
+		default:
 			break;
 		}
 		_action._inProgress = false;
@@ -3689,6 +3769,9 @@ void Scene210::handleConversations() {
 		case 8:
 			handleConversation8();
 			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -3714,6 +3797,9 @@ void Scene210::handleConversation1() {
 	case 184:
 		setDialogNode(0);
 		break;
+
+		default:
+			break;
 	}
 }
 
@@ -3730,6 +3816,9 @@ void Scene210::handleConversation2() {
 	case 189:
 		setDialogNode(0);
 		break;
+
+		default:
+			break;
 	}
 }
 
@@ -3750,6 +3839,9 @@ void Scene210::handleConversation3() {
 	case 196:
 		setDialogNode(0);
 		break;
+
+		default:
+			break;
 	}
 }
 
@@ -3767,6 +3859,9 @@ void Scene210::handleConversation5() {
 	case 207:
 		setDialogNode(0);
 		break;
+
+		default:
+			break;
 	}
 }
 
@@ -3783,6 +3878,9 @@ void Scene210::handleConversation6() {
 	case 213:
 		setDialogNode(0);
 		break;
+
+		default:
+			break;
 	}
 }
 
@@ -3801,6 +3899,9 @@ void Scene210::handleConversation7() {
 	case 220:
 		setDialogNode(0);
 		break;
+
+		default:
+			break;
 	}
 }
 
@@ -3819,6 +3920,9 @@ void Scene210::handleConversation8() {
 	case 227:
 		setDialogNode(0);
 		break;
+
+		default:
+			break;
 	}
 }
 
@@ -4103,7 +4207,13 @@ void Scene210::setDialogNode(int node) {
 			_globals[kTwinklesStatus] = TWINKLES_GONE;
 			_scene->_nextSceneId = 216;
 			break;
+
+		default:
+			break;
 		}
+		break;
+
+	default:
 		break;
 	}
 }
@@ -4260,6 +4370,8 @@ void Scene210::enter() {
 			quote = 0xDD;
 			number = 2;
 			break;
+		default:
+			break;
 		}
 
 		restoreDialogNode(_curDialogNode, quote, number);
@@ -4393,6 +4505,9 @@ void Scene210::step() {
 					}
 				}
 				break;
+
+			default:
+				break;
 			}
 
 			if (reset_frame >= 0) {
@@ -4501,6 +4616,9 @@ void Scene210::actions() {
 			_conv1.start();
 			_curDialogNode = 1;
 			break;
+
+		default:
+			break;
 		}
 	} else if (_action.isAction(VERB_GIVE, NOUN_NATIVE_WOMAN) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		switch (_game._trigger) {
@@ -4516,6 +4634,9 @@ void Scene210::actions() {
 		case 1:
 			_game._player._stepEnabled = true;
 			_shouldMoveHead = false;
+			break;
+
+		default:
 			break;
 		}
 	} else if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_NORTH) || _action.isAction(VERB_WALK_TOWARDS, NOUN_HUT_TO_NORTH)) {
@@ -4539,6 +4660,9 @@ void Scene210::actions() {
 			_scene->_dynamicHotspots.setPosition(_doorway, Common::Point(168, 127), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(_doorway, CURSOR_GO_UP);
 			break;
+
+		default:
+			break;
 		}
 	} else if ((_action.isAction(VERB_PULL, NOUN_CURTAIN) || _action.isAction(VERB_CLOSE, NOUN_CURTAIN)) && _globals[kCurtainOpen]) {
 		switch (_game._trigger) {
@@ -4560,6 +4684,8 @@ void Scene210::actions() {
 			_scene->_dynamicHotspots.remove(_doorway);
 			_game._player._stepEnabled = true;
 			_globals[kCurtainOpen] = false;
+			break;
+		default:
 			break;
 		}
 	} else if (_action.isAction(VERB_LOOK, NOUN_HUT)) {
@@ -4721,6 +4847,9 @@ void Scene211::step() {
 				_ambushFl = false;
 				_globals[kMonkeyStatus] = MONKEY_HAS_BINOCULARS;
 				break;
+
+			default:
+				break;
 			}
 		}
 	}
@@ -4788,6 +4917,9 @@ void Scene211::step() {
 			_scrollY += 14;
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -4827,6 +4959,9 @@ void Scene211::step() {
 				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 				_scrollY += 14;
 				}
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -5101,6 +5236,9 @@ void Scene214::step() {
 			_devilRunningFl = false;
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -5138,6 +5276,9 @@ void Scene214::actions() {
 			_game._player._stepEnabled = true;
 			_vm->_dialogs->showItem(OBJ_POISON_DARTS, 0x53A5);
 			break;
+
+		default:
+			break;
 		}
 	} else if (_action.isAction(VERB_TAKE, NOUN_BLOWGUN) && (_game._trigger || _game._objects.isInRoom(OBJ_BLOWGUN))) {
 		switch (_game._trigger) {
@@ -5166,6 +5307,9 @@ void Scene214::actions() {
 		case 3:
 			_game._player._stepEnabled = true;
 			_vm->_dialogs->showItem(OBJ_BLOWGUN, 0x329);
+			break;
+
+		default:
 			break;
 		}
 	} else if (_action.isAction(VERB_LOOK, NOUN_WINDOW))
@@ -5312,6 +5456,9 @@ void Scene215::actions() {
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+				break;
+
+			default:
 				break;
 			}
 		} else {

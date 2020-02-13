@@ -1211,6 +1211,8 @@ int ScummEngine::readSoundResource(ResId idx) {
 				if (_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR)
 					pri = 11;
 				break;
+			default:
+				break;
 			}
 
 			// We only allow SPK resources for PC Speaker and PCJr here
@@ -1335,7 +1337,8 @@ int ScummEngine::readSoundResource(ResId idx) {
 		}
 	}
 
-	warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
+	if (total_size)
+		warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	_res->_types[rtSound][idx]._roomoffs = RES_INVALID_OFFSET;
 	return 0;
 }

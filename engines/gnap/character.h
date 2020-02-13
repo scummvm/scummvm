@@ -80,13 +80,13 @@ protected:
 class PlayerGnap : public Character {
 public:
 	PlayerGnap(GnapEngine *vm);
-	virtual int getSequenceId(int kind, Common::Point gridPos);
-	virtual void initPos(int gridX, int gridY, Facing facing);
-	virtual void playSequence(int sequenceId);
-	virtual void updateIdleSequence();
-	virtual void updateIdleSequence2();
-	virtual int getWalkSequenceId(int deltaX, int deltaY);
-	virtual bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
+	int getSequenceId(int kind, Common::Point gridPos) override;
+	void initPos(int gridX, int gridY, Facing facing) override;
+	void playSequence(int sequenceId) override;
+	void updateIdleSequence() override;
+	void updateIdleSequence2() override;
+	int getWalkSequenceId(int deltaX, int deltaY) override;
+	bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) override;
 
 	void actionIdle(int sequenceId);
 	bool doPlatypusAction(int gridX, int gridY, int platSequenceId, int callback);
@@ -124,14 +124,14 @@ private:
 class PlayerPlat : public Character {
 public:
 	PlayerPlat(GnapEngine *vm);
-	virtual ~PlayerPlat() {}
-	virtual int getSequenceId(int kind = 0, Common::Point gridPos = Common::Point(0, 0));
-	virtual void initPos(int gridX, int gridY, Facing facing);
-	virtual void playSequence(int sequenceId);
-	virtual void updateIdleSequence();
-	virtual void updateIdleSequence2();
-	virtual int getWalkSequenceId(int deltaX, int deltaY);
-	virtual bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
+	~PlayerPlat() override {}
+	int getSequenceId(int kind = 0, Common::Point gridPos = Common::Point(0, 0)) override;
+	void initPos(int gridX, int gridY, Facing facing) override;
+	void playSequence(int sequenceId) override;
+	void updateIdleSequence() override;
+	void updateIdleSequence2() override;
+	int getWalkSequenceId(int deltaX, int deltaY) override;
+	bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) override;
 
 	void makeRoom();
 

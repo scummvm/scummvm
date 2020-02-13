@@ -212,6 +212,10 @@ int sceneHandler10(ExCommand *ex) {
 
 			return res;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

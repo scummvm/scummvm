@@ -37,7 +37,7 @@ public:
 
 class TownsAudioInterface {
 public:
-	TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
+	TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutex = false);
 	~TownsAudioInterface();
 
 	enum ErrorCode {

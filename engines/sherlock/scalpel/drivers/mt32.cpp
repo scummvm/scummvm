@@ -48,34 +48,34 @@ public:
 
 		memset(_MIDIchannelActive, 1, sizeof(_MIDIchannelActive));
 	}
-	virtual ~MidiDriver_MT32();
+	~MidiDriver_MT32() override;
 
 	// MidiDriver
-	int open();
-	void close();
-	bool isOpen() const { return _isOpen; }
+	int open() override;
+	void close() override;
+	bool isOpen() const override { return _isOpen; }
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 
 	void newMusicData(byte *musicData, int32 musicDataSize);
 
-	MidiChannel *allocateChannel() {
+	MidiChannel *allocateChannel() override {
 		if (_driver)
 			return _driver->allocateChannel();
 		return NULL;
 	}
-	MidiChannel *getPercussionChannel() {
+	MidiChannel *getPercussionChannel() override {
 		if (_driver)
 			return _driver->getPercussionChannel();
 		return NULL;
 	}
 
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override {
 		if (_driver)
 			_driver->setTimerCallback(timer_param, timer_proc);
 	}
 
-	uint32 getBaseTempo() {
+	uint32 getBaseTempo() override {
 		if (_driver) {
 			return _driver->getBaseTempo();
 		}

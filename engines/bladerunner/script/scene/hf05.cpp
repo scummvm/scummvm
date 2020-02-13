@@ -97,7 +97,7 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 
 			Player_Loses_Control();
-			Actor_Set_Goal_Number(kActorOfficerLeary, 425);
+			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyPoliceWait60SecondsToAttackHF05);
 			Game_Flag_Set(kFlagHF05Hole);
 			Game_Flag_Set(kFlagHF07Hole);
 			Obstacle_Object("OBSTACLE_HOLE", true);
@@ -285,7 +285,7 @@ void SceneScriptHF05::SceneFrameAdvanced(int frame) {
 
 void SceneScriptHF05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	if (actorId == kActorOfficerLeary
-	 && newGoal == 430
+	 && newGoal == kGoalOfficerLearyPoliceAboutToAttackHF05
 	) {
 		Game_Flag_Set(kFlagHF05PoliceAttacked);
 		policeAttack();
@@ -325,7 +325,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 				Music_Play(kMusicBatl226M, 40, 0, 2, -1, 0, 0);
 				Actor_Says(kActorOfficerGrayford, 200, kAnimationModeTalk);
 				Actor_Says(kActorOfficerGrayford, 210, kAnimationModeTalk);
-				Actor_Set_Goal_Number(kActorOfficerLeary, 420);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyPoliceWait120SecondsToAttackHF05);
 				if (getCompanionActor() ==  kActorDektora) {
 					talkWithDektora();
 				} else if (getCompanionActor() == kActorLucy) {

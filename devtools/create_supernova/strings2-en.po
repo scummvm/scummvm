@@ -1,0 +1,2794 @@
+# Mission Supernova Translation.
+# Copyright (C) YEAR ScummVM Team
+# This file is distributed under the same license as the ScummVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Mission Supernova Part 2 1.0\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2019-06-13 00:06+0100\n"
+"PO-Revision-Date: 2019-09-13 00:00+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"Language-Team: none\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.7.1\n"
+
+#: ../../ms2/ms2.c:1641
+msgid "Gehe"
+msgstr "Go"
+
+#: ../../ms2/ms2.c:1641
+msgid "Schau"
+msgstr "Look"
+
+#: ../../ms2/ms2.c:1641
+msgid "Nimm"
+msgstr "Take"
+
+#: ../../ms2/ms2.c:1641
+msgid "ôffne"
+msgstr "Open"
+
+#: ../../ms2/ms2.c:1641
+msgid "Schlie·e"
+msgstr "Close"
+
+#: ../../ms2/ms2.c:1642
+msgid "DrÅcke"
+msgstr "Push"
+
+#: ../../ms2/ms2.c:1642
+msgid "Ziehe"
+msgstr "Pull"
+
+#: ../../ms2/ms2.c:1642
+msgid "Benutze"
+msgstr "Use"
+
+#: ../../ms2/ms2.c:1642
+msgid "Rede"
+msgstr "Talk"
+
+#: ../../ms2/ms2.c:1642
+msgid "Gib"
+msgstr "Give"
+
+#: ../../ms2/ms2.c:2199
+msgid "GesprÑch beenden"
+msgstr "End of conversation"
+
+#: ../../ms2/ms2.c:2333
+msgid "Gehe zu "
+msgstr "Go to "
+
+#: ../../ms2/ms2.c:2333
+msgid "Schau "
+msgstr "Look at "
+
+#: ../../ms2/ms2.c:2333
+msgid "Nimm "
+msgstr "Take "
+
+#: ../../ms2/ms2.c:2333
+msgid "ôffne "
+msgstr "Open "
+
+#: ../../ms2/ms2.c:2333
+msgid "Schlie·e "
+msgstr "Close "
+
+#: ../../ms2/ms2.c:2334
+msgid "DrÅcke "
+msgstr "Push "
+
+#: ../../ms2/ms2.c:2334
+msgid "Ziehe "
+msgstr "Pull "
+
+#: ../../ms2/ms2.c:2334
+msgid "Benutze "
+msgstr "Use "
+
+#: ../../ms2/ms2.c:2334
+msgid "Rede mit "
+msgstr "Talk to "
+
+#: ../../ms2/ms2.c:2334
+msgid "Gib "
+msgstr "Give "
+
+#: ../../ms2/ms2.c:2344
+msgid " an "
+msgstr " to "
+
+#: ../../ms2/ms2.c:2345
+msgid " mit "
+msgstr " with "
+
+#: ../../ms2/ms2.c:2903
+msgid "Laden"
+msgstr "Load"
+
+#: ../../ms2/ms2.c:2905
+msgid "Speichern"
+msgstr "Save"
+
+#: ../../ms2/ms2.c:2907
+msgid "ZurÅck"
+msgstr "Back"
+
+#: ../../ms2/ms2.c:2909
+msgid "Neustart"
+msgstr "Restart"
+
+#: ../../ms2/ms2.c:3002
+msgid "Schreibfehler"
+msgstr "write error"
+
+#: ../../ms2/ms2.c:3243
+msgid "Textgeschwindigkeit:"
+msgstr "Text speed:"
+
+#: ../../ms2/ms2.c:3292
+msgid "Spiel abbrechen?"
+msgstr "Leave game?"
+
+#: ../../ms2/ms2.c:3295
+msgid "Ja"
+msgstr "Yes"
+
+#: ../../ms2/ms2.c:3296
+msgid "Nein"
+msgstr "No"
+
+#: ../../ms2/ms2.c:3368
+msgid "Das trÑgst du doch bei dir."
+msgstr "You already carry this."
+
+#: ../../ms2/ms2.c:3370
+msgid "Du bist doch schon da."
+msgstr "You are already there."
+
+#: ../../ms2/ms2.c:3373
+msgid "Das ist geschlossen."
+msgstr "This is closed."
+
+#: ../../ms2/ms2.c:3383
+msgid "Das hast du doch schon."
+msgstr "You already have that."
+
+#: ../../ms2/ms2.c:3385
+msgid "Das brauchst du nicht."
+msgstr "You don't need that."
+
+#: ../../ms2/ms2.c:3387
+msgid "Das kannst du nicht nehmen."
+msgstr "You can't take that."
+
+#: ../../ms2/ms2.c:3393
+msgid "Das lÑ·t sich nicht îffnen."
+msgstr "This cannot be opened."
+
+#: ../../ms2/ms2.c:3395 ../../ms2/ms2_pyra.c:646
+msgid "Das ist schon offen."
+msgstr "This is already opened."
+
+#: ../../ms2/ms2.c:3397
+msgid "Das ist verschlossen."
+msgstr "This is locked."
+
+#: ../../ms2/ms2.c:3413
+msgid "Das lÑ·t sich nicht schlie·en."
+msgstr "This cannot be closed."
+
+#: ../../ms2/ms2.c:3415 ../../ms2/ms2_pyra.c:671
+msgid "Das ist schon geschlossen."
+msgstr "This is already closed."
+
+#: ../../ms2/ms2.c:3430
+msgid "Behalt es lieber!"
+msgstr "Better keep it!"
+
+#: ../../ms2/ms2.c:3434
+msgid "Das geht nicht."
+msgstr "You can't do that."
+
+#: ../../ms2/ms2_mod.c:533
+msgid "^(C) 1994 Thomas und Steffen Dingel#"
+msgstr "^(C) 1994 Thomas and Steffen Dingel#"
+
+#: ../../ms2/ms2_mod.c:534
+msgid "Story und Grafik:^ Thomas Dingel#"
+msgstr "Story and Graphics:^ Thomas Dingel#"
+
+#: ../../ms2/ms2_mod.c:535
+msgid "Programmierung:^ Steffen Dingel#"
+msgstr "Programming:^ Steffen Dingel#"
+
+#: ../../ms2/ms2_mod.c:536
+msgid "Musik:^ Bernd Hoffmann#"
+msgstr "Music:^ Bernd Hoffmann#"
+
+#: ../../ms2/ms2_mod.c:537
+msgid "Getestet von ...#"
+msgstr "Tested by ...#"
+
+#: ../../ms2/ms2_mod.c:548
+msgid "^Das war's.#"
+msgstr "^That's it.#"
+
+#: ../../ms2/ms2_mod.c:549
+msgid "^Schlu·!#"
+msgstr "^Over!#"
+
+#: ../../ms2/ms2_mod.c:550
+msgid "^Ende!#"
+msgstr "^End!#"
+
+#: ../../ms2/ms2_mod.c:551
+msgid "^Aus!#"
+msgstr "^Done!#"
+
+#: ../../ms2/ms2_mod.c:552
+msgid "^TschÅ·!#"
+msgstr "^Bye!#"
+
+#: ../../ms2/ms2_mod.c:603
+msgid "Oh!"
+msgstr "Oh!"
+
+#: ../../ms2/ms2_mod.c:605
+msgid "Nicht schlecht!"
+msgstr "Not bad!"
+
+#: ../../ms2/ms2_mod.c:607
+msgid "Supersound!"
+msgstr "Supersound!"
+
+#: ../../ms2/ms2_mod.c:609
+msgid "Klasse!"
+msgstr "Great!"
+
+#: ../../ms2/ms2_mod.c:611
+msgid "Nicht zu fassen!"
+msgstr "I can't believe it!"
+
+#: ../../ms2/ms2_mod.c:613
+msgid "Super, ey!"
+msgstr "Dope, yo!"
+
+#: ../../ms2/ms2_mod.c:615
+msgid "Fantastisch!"
+msgstr "Fantastic!"
+
+#: ../../ms2/ms2_mod.c:617
+msgid "Umwerfend!"
+msgstr "Stunning!"
+
+#: ../../ms2/ms2_mod.c:619
+msgid "Genial!"
+msgstr "Brilliant!"
+
+#: ../../ms2/ms2_mod.c:621
+msgid "Spitze!"
+msgstr "Awesome!"
+
+#: ../../ms2/ms2_mod.c:623
+msgid "Jawoll!"
+msgstr "Alright!"
+
+#: ../../ms2/ms2_mod.c:625
+msgid "Hervorragend!"
+msgstr "Outstanding!"
+
+#: ../../ms2/ms2_mod.c:627
+msgid "Ultragut!"
+msgstr "Ultra-good!"
+
+#: ../../ms2/ms2_mod.c:629
+msgid "Megacool!"
+msgstr "Mega cool!"
+
+#: ../../ms2/ms2_mod.c:631
+msgid "Yeah!"
+msgstr "Yeah!"
+
+#: ../../ms2/ms2_mus.c:60
+msgid "Ein WÑchter betritt den Raum.|Du wirst verhaftet."
+msgstr "A guard enters the room.|You are getting arrested."
+
+#: ../../ms2/ms2_mus.c:73
+msgid "Die nÑchsten paar Jahre|verbringst du im Knast."
+msgstr "You will spend the next|few years in jail."
+
+#: ../../ms2/ms2_mus.c:145
+msgid "Es wird Alarm ausgelîst."
+msgstr "The alarm is about to be set off."
+
+#: ../../ms2/ms2_mus.c:200
+msgid "Du hîrst Schritte."
+msgstr "You are hearing footsteps."
+
+#: ../../ms2/ms2_mus.c:232
+msgid "Um das Schloss zu îffnen,|brauchst du einige Zeit."
+msgstr "You will take some time|to pick that lock."
+
+#: ../../ms2/ms2_mus.c:238
+msgid "Du gerÑtst in Panik|und ziehst die Keycard|aus der TÅr."
+msgstr "You are panicking|and remove the keycard|from the door."
+
+#: ../../ms2/ms2_mus.c:316
+msgid "Du hast deinen Auftrag|noch nicht ausgefÅhrt."
+msgstr "You have not completed|your task yet."
+
+#: ../../ms2/ms2_mus.c:322
+msgid "Es gelingt dir, zu fliehen."
+msgstr "You manage to escape."
+
+#: ../../ms2/ms2_mus.c:330
+msgid ""
+"Obwohl du die Alarmanlage noch|nicht ausgeschaltet hast,|entscheidest du "
+"dich, zu fliehen."
+msgstr "Although you haven't|disabled the alarm yet,|you decide to escape."
+
+#: ../../ms2/ms2_mus.c:337
+msgid ""
+"Du entledigst dich der Einbruchswerkzeuge|und nimmst ein Taxi zum "
+"Kulturpalast."
+msgstr ""
+"You get rid of your burglar tools|and take a cab to the Palace of Culture."
+
+#: ../../ms2/ms2_mus.c:376 ../../ms2/ms2_mus.c:532 ../../ms2/ms2_mus.c:631
+msgid "Diese TÅr brauchst|du nicht zu îffnen."
+msgstr "You don't need|to open this door."
+
+#: ../../ms2/ms2_mus.c:394
+msgid "Uff, es hat geklappt!"
+msgstr "Phew, it worked!"
+
+#: ../../ms2/ms2_mus.c:407
+msgid "ZurÅck im Quartier der Gangster ..."
+msgstr "Back in the gangsters' hideout ..."
+
+#: ../../ms2/ms2_mus.c:417
+msgid "Das lief ja wie am SchnÅrchen!"
+msgstr "Everything went like clockwork!"
+
+#: ../../ms2/ms2_mus.c:418
+msgid "Hier, dein Anteil von 30000 Xa."
+msgstr "Here, your share of 30000 Xa."
+
+#: ../../ms2/ms2_mus.c:425
+msgid "Wo ist denn der Saurierkopf?"
+msgstr "Where's the dinosaur skull?"
+
+#: ../../ms2/ms2_mus.c:426
+msgid "Dazu hatte ich keine Zeit mehr."
+msgstr "I didn't have enough time for that."
+
+#: ../../ms2/ms2_mus.c:427
+msgid "Was? Du spinnst wohl!|Dann kriegst du auch deinen|Anteil nicht. Raus!"
+msgstr "What? You're nuts!|Then you won't get your|share. Beat it!"
+
+#: ../../ms2/ms2_mus.c:703
+msgid "Der Sauger ist schon dort."
+msgstr "The suction cup is already there."
+
+#: ../../ms2/ms2_mus.c:707
+msgid "Du heftest den Sauger an die Wand|und hÑlst dich daran fest."
+msgstr "You attach the suction cup to the wall|and hold on to it."
+
+#: ../../ms2/ms2_mus.c:718
+msgid "Du stellst dich auf den|Boden nimmst den Sauger|wieder von der Wand"
+msgstr "You stand on the floor|then remove the suction cup from the wall"
+
+#: ../../ms2/ms2_mus.c:722
+msgid "Die Alarmanlage ist|schon ausgeschaltet."
+msgstr "The alarm system is|already switched off."
+
+#: ../../ms2/ms2_mus.c:725
+msgid "Um die Anlage abzuschalten,|brauchst du einige Zeit."
+msgstr "To turn off the system,|you need some time."
+
+#: ../../ms2/ms2_mus.c:729
+msgid "Die Alarmanlage ist jetzt ausgeschaltet."
+msgstr "The alarm system is now switched off."
+
+#: ../../ms2/ms2_mus.c:746 ../../ms2/ms2_mus.c:875
+msgid "Saurier"
+msgstr "Dinosaur"
+
+#: ../../ms2/ms2_mus.c:746
+msgid "Du hast jetzt besseres zu tun,|als das Ding anzuschauen."
+msgstr "You have better things to do now|than look at that thing."
+
+#: ../../ms2/ms2_mus.c:747 ../../ms2/ms2_pyra.c:1010 ../../ms2/ms2_r1.c:805
+#: ../../ms2/ms2_r1.c:816 ../../ms2/ms2_r2.c:1203 ../../ms2/ms2_r2.c:1214
+msgid "Eingang"
+msgstr "Entrance"
+
+#: ../../ms2/ms2_mus.c:748 ../../ms2/ms2_mus.c:756 ../../ms2/ms2_mus.c:757
+#: ../../ms2/ms2_mus.c:765 ../../ms2/ms2_mus.c:766 ../../ms2/ms2_mus.c:774
+#: ../../ms2/ms2_mus.c:775 ../../ms2/ms2_mus.c:783 ../../ms2/ms2_mus.c:784
+#: ../../ms2/ms2_mus.c:792 ../../ms2/ms2_mus.c:801 ../../ms2/ms2_mus.c:802
+#: ../../ms2/ms2_mus.c:804 ../../ms2/ms2_mus.c:812 ../../ms2/ms2_mus.c:814
+#: ../../ms2/ms2_mus.c:815 ../../ms2/ms2_mus.c:823 ../../ms2/ms2_mus.c:824
+#: ../../ms2/ms2_mus.c:832 ../../ms2/ms2_mus.c:833 ../../ms2/ms2_mus.c:842
+#: ../../ms2/ms2_mus.c:844 ../../ms2/ms2_mus.c:845 ../../ms2/ms2_mus.c:854
+#: ../../ms2/ms2_mus.c:855 ../../ms2/ms2_mus.c:864 ../../ms2/ms2_mus.c:865
+#: ../../ms2/ms2_mus.c:866 ../../ms2/ms2_mus.c:872 ../../ms2/ms2_mus.c:894
+#: ../../ms2/ms2_mus.c:895 ../../ms2/ms2_mus.c:903 ../../ms2/ms2_mus.c:911
+#: ../../ms2/ms2_mus.c:912 ../../ms2/ms2_mus.c:920 ../../ms2/ms2_mus.c:921
+#: ../../ms2/ms2_mus.c:929 ../../ms2/ms2_mus.c:930 ../../ms2/ms2_mus.c:931
+#: ../../ms2/ms2_mus.c:932 ../../ms2/ms2_mus.c:940 ../../ms2/ms2_mus.c:941
+#: ../../ms2/ms2_mus.c:949 ../../ms2/ms2_mus.c:957 ../../ms2/ms2_mus.c:965
+#: ../../ms2/ms2_mus.c:966 ../../ms2/ms2_mus.c:974 ../../ms2/ms2_pyra.c:1070
+#: ../../ms2/ms2_pyra.c:1079 ../../ms2/ms2_pyra.c:1103
+#: ../../ms2/ms2_pyra.c:1111 ../../ms2/ms2_pyra.c:1135
+#: ../../ms2/ms2_pyra.c:1309 ../../ms2/ms2_r2.c:1225 ../../ms2/ms2_r2.c:1226
+#: ../../ms2/ms2_r2.c:1235 ../../ms2/ms2_r2.c:1236 ../../ms2/ms2_r2.c:1247
+msgid "TÅr"
+msgstr "Door"
+
+#: ../../ms2/ms2_mus.c:749
+msgid "Strasse zum Stadtzentrum"
+msgstr "Road to the city center"
+
+#: ../../ms2/ms2_mus.c:793
+msgid "Kamera"
+msgstr "Security camera"
+
+#: ../../ms2/ms2_mus.c:793
+msgid "Hoffentlich bemerkt dich niemand."
+msgstr "Hopefully nobody will notice you."
+
+#: ../../ms2/ms2_mus.c:856
+msgid "Haupteingang"
+msgstr "Main entrance"
+
+#: ../../ms2/ms2_mus.c:873 ../../ms2/ms2_mus.c:874 ../../ms2/ms2_mus.c:885
+#: ../../ms2/ms2_mus.c:893 ../../ms2/ms2_pyra.c:1046 ../../ms2/ms2_pyra.c:1054
+#: ../../ms2/ms2_pyra.c:1062 ../../ms2/ms2_pyra.c:1087
+#: ../../ms2/ms2_pyra.c:1095 ../../ms2/ms2_pyra.c:1222
+#: ../../ms2/ms2_pyra.c:1230 ../../ms2/ms2_pyra.c:1238
+#: ../../ms2/ms2_pyra.c:1246
+msgid "Gang"
+msgstr "Corridor"
+
+#: ../../ms2/ms2_mus.c:875
+msgid "Ziemlich gro·."
+msgstr "Quite large."
+
+#: ../../ms2/ms2_mus.c:876 ../../ms2/ms2_r1.c:787
+msgid "Saurierkopf"
+msgstr "Dinosaur head"
+
+#: ../../ms2/ms2_mus.c:876
+msgid "Dies ist der Kopf,|den du suchst."
+msgstr "This is the head|you're looking for."
+
+#: ../../ms2/ms2_mus.c:975
+msgid "Alarmanlage"
+msgstr "Alarm system"
+
+#: ../../ms2/ms2_mus.c:976 ../../ms2/ms2_r1.c:783
+msgid "Sauger"
+msgstr "Suction cup"
+
+#: ../../ms2/ms2_mus.c:977
+msgid "Wand"
+msgstr "Wall"
+
+#: ../../ms2/ms2_pyra.c:26 ../../ms2/ms2_pyra.c:1255 ../../ms2/ms2_pyra.c:1256
+#: ../../ms2/ms2_pyra.c:1274 ../../ms2/ms2_pyra.c:1284
+msgid "Loch"
+msgstr "Opening"
+
+#: ../../ms2/ms2_pyra.c:27
+msgid "Buchstabe"
+msgstr "Letter"
+
+#: ../../ms2/ms2_pyra.c:28
+msgid "Sie ist sehr massiv."
+msgstr "It is very massive."
+
+#: ../../ms2/ms2_pyra.c:29
+msgid "Hmm, X und Y, irgendwo|habe ich die Buchstaben|schon gesehen."
+msgstr "Hmm, X and Y|I have seen these letters|somewhere before."
+
+#: ../../ms2/ms2_pyra.c:34
+msgid "Deine Zeit ist um, Fremder!"
+msgstr "Your Time is up, Stranger!"
+
+#: ../../ms2/ms2_pyra.c:76
+msgid "Du hast das Seil|doch schon festgebunden."
+msgstr "You already tied the rope."
+
+#: ../../ms2/ms2_pyra.c:80
+msgid "Das wÅrde wenig bringen."
+msgstr "That would have little effect."
+
+#: ../../ms2/ms2_pyra.c:126
+msgid "Sonnenstich, oder was?"
+msgstr "Sunstroke, or what?"
+
+#: ../../ms2/ms2_pyra.c:385
+msgid "Du merkst, da· der Boden|unter dir nachgibt, und|springst zur Seite."
+msgstr ""
+"You notice that the ground|is giving way under you,|and you leap aside."
+
+#: ../../ms2/ms2_pyra.c:537
+msgid "Puzzleteil"
+msgstr "Puzzle piece"
+
+#: ../../ms2/ms2_pyra.c:570
+msgid "Neben diesem Stein|ist kein freies Feld."
+msgstr "There's no free square|next to this stone."
+
+#: ../../ms2/ms2_pyra.c:683
+msgid "Du spielst gerade ein|Adventure, kein Rollenspiel!"
+msgstr "You are currently playing an|Adventure, not a Role-Playing Game!"
+
+#: ../../ms2/ms2_pyra.c:699 ../../ms2/ms2_pyra.c:800
+msgid "Du kannst das Seil|nirgends befestigen."
+msgstr "You cannot see anything to which|you could attach the rope."
+
+#: ../../ms2/ms2_pyra.c:705 ../../ms2/ms2_pyra.c:784
+msgid "Es pa·t nicht|zwischen die Steine."
+msgstr "It does not fit|between the stones."
+
+#: ../../ms2/ms2_pyra.c:710 ../../ms2/ms2_pyra.c:741 ../../ms2/ms2_pyra.c:840
+msgid "Das ist doch|oben festgebunden!"
+msgstr "That is already|tied up above!"
+
+#: ../../ms2/ms2_pyra.c:715
+msgid "Hey, das ist|mindestens 10 Meter tief!"
+msgstr "Hey, that is|at least 10 meters deep!"
+
+#: ../../ms2/ms2_pyra.c:731
+msgid "In dem Schlitz|ist nichts mehr."
+msgstr "There is nothing|left in the slot."
+
+#: ../../ms2/ms2_pyra.c:765
+msgid "Das ist mindestens 5 Meter tief!"
+msgstr "That is at least 5 meters deep!"
+
+#: ../../ms2/ms2_pyra.c:900
+msgid ""
+"Du versuchst, den Sarg zu|îffnen, aber der Deckel bewegt|sich keinen "
+"Millimeter."
+msgstr "You try to open the coffin,|but the lid does not|move a millimeter."
+
+#: ../../ms2/ms2_pyra.c:913 ../../ms2/ms2_pyra.c:923
+msgid "Du hast die Kugel schon gedrÅckt."
+msgstr "You have already|pushed the ball."
+
+#: ../../ms2/ms2_pyra.c:944
+msgid "Die Kugel bewegt sich ein StÅck."
+msgstr "The ball moves a bit."
+
+#: ../../ms2/ms2_pyra.c:961
+msgid "Das Auge ist schon offen."
+msgstr "This eye is already open."
+
+#: ../../ms2/ms2_pyra.c:965
+msgid "Herzlichen GlÅckwunsch!"
+msgstr "Congratulations!"
+
+#: ../../ms2/ms2_pyra.c:966
+msgid "Sie haben das Spiel gelîst|und gewinnen 400 Xa!"
+msgstr "You solved the game|and won 400 Xa!"
+
+#: ../../ms2/ms2_pyra.c:967
+msgid "Vielen Dank fÅr die Benutzung eines|VIRTUAL-REALITY-SYSTEMS-Produkts!"
+msgstr "Thank you for using a|VIRTUAL-REALITY-SYSTEMS product!"
+
+#: ../../ms2/ms2_pyra.c:991
+msgid "N"
+msgstr "N"
+
+#: ../../ms2/ms2_pyra.c:991
+msgid "O"
+msgstr "E"
+
+#: ../../ms2/ms2_pyra.c:991
+msgid "S"
+msgstr "S"
+
+#: ../../ms2/ms2_pyra.c:991
+msgid "W"
+msgstr "W"
+
+#: ../../ms2/ms2_pyra.c:1008 ../../ms2/ms2_pyra.c:1200
+#: ../../ms2/ms2_pyra.c:1254 ../../ms2/ms2_pyra.c:1262
+#: ../../ms2/ms2_pyra.c:1273 ../../ms2/ms2_pyra.c:1283
+msgid "Seil"
+msgstr "Rope"
+
+#: ../../ms2/ms2_pyra.c:1009 ../../ms2/ms2_pyra.c:1043 ../../ms2/ms2_r1.c:850
+#: ../../ms2/ms2_r2.c:1223 ../../ms2/ms2_r2.c:1224 ../../ms2/ms2_r2.c:1233
+#: ../../ms2/ms2_r2.c:1234
+msgid "Schild"
+msgstr "Sign"
+
+#: ../../ms2/ms2_pyra.c:1009
+msgid ""
+"Darauf steht:|\"Willst du finden das|richtige Loch, so wage|dich in die "
+"Pyramide!\"."
+msgstr ""
+"It reads:|\"Want to find|the right hole? Then dare|to enter the pyramid!\"."
+
+#: ../../ms2/ms2_pyra.c:1010
+msgid "Es ist eine kleine ôffnung."
+msgstr "It is a small opening."
+
+#: ../../ms2/ms2_pyra.c:1011
+msgid "Pyramide"
+msgstr "Pyramid"
+
+#: ../../ms2/ms2_pyra.c:1011
+msgid ""
+"Komisch! Was soll eine Pyramide|bei den Axacussanern? Deine|eigenen Gedanken "
+"scheinen|den Spielverlauf zu beeinflussen."
+msgstr ""
+"Weird! What is a pyramid doing|at the Axacussians? Your own thoughts seem to "
+"influence|the course of the game."
+
+#: ../../ms2/ms2_pyra.c:1012
+msgid "Sonne"
+msgstr "Sun"
+
+#: ../../ms2/ms2_pyra.c:1012
+msgid "Schîn!"
+msgstr "Nice!"
+
+#: ../../ms2/ms2_pyra.c:1043
+msgid ""
+"\"Hallo Fremder, wenn du diesen|Raum betreten hast, bleibt|dir nur noch eine "
+"Stunde Zeit,|um deine Aufgabe zu erfÅllen!\""
+msgstr ""
+"\"Hello, Stranger, when you enter|this room, you have only an hour|to "
+"accomplish your task!\""
+
+#: ../../ms2/ms2_pyra.c:1044 ../../ms2/ms2_pyra.c:1052
+#: ../../ms2/ms2_pyra.c:1060 ../../ms2/ms2_pyra.c:1068
+#: ../../ms2/ms2_pyra.c:1077 ../../ms2/ms2_pyra.c:1085
+#: ../../ms2/ms2_pyra.c:1093 ../../ms2/ms2_pyra.c:1101
+#: ../../ms2/ms2_pyra.c:1109 ../../ms2/ms2_pyra.c:1133
+#: ../../ms2/ms2_pyra.c:1141 ../../ms2/ms2_pyra.c:1149
+#: ../../ms2/ms2_pyra.c:1157 ../../ms2/ms2_pyra.c:1165
+#: ../../ms2/ms2_pyra.c:1173 ../../ms2/ms2_pyra.c:1181
+#: ../../ms2/ms2_pyra.c:1190 ../../ms2/ms2_pyra.c:1198
+#: ../../ms2/ms2_pyra.c:1209 ../../ms2/ms2_pyra.c:1220
+#: ../../ms2/ms2_pyra.c:1228 ../../ms2/ms2_pyra.c:1236
+#: ../../ms2/ms2_pyra.c:1244 ../../ms2/ms2_pyra.c:1252
+#: ../../ms2/ms2_pyra.c:1270 ../../ms2/ms2_pyra.c:1281
+#: ../../ms2/ms2_pyra.c:1291
+msgid "rechte Seite"
+msgstr "right side"
+
+#: ../../ms2/ms2_pyra.c:1045 ../../ms2/ms2_pyra.c:1053
+#: ../../ms2/ms2_pyra.c:1061 ../../ms2/ms2_pyra.c:1069
+#: ../../ms2/ms2_pyra.c:1078 ../../ms2/ms2_pyra.c:1086
+#: ../../ms2/ms2_pyra.c:1094 ../../ms2/ms2_pyra.c:1102
+#: ../../ms2/ms2_pyra.c:1110 ../../ms2/ms2_pyra.c:1134
+#: ../../ms2/ms2_pyra.c:1142 ../../ms2/ms2_pyra.c:1150
+#: ../../ms2/ms2_pyra.c:1158 ../../ms2/ms2_pyra.c:1166
+#: ../../ms2/ms2_pyra.c:1174 ../../ms2/ms2_pyra.c:1182
+#: ../../ms2/ms2_pyra.c:1191 ../../ms2/ms2_pyra.c:1199
+#: ../../ms2/ms2_pyra.c:1210 ../../ms2/ms2_pyra.c:1221
+#: ../../ms2/ms2_pyra.c:1229 ../../ms2/ms2_pyra.c:1237
+#: ../../ms2/ms2_pyra.c:1245 ../../ms2/ms2_pyra.c:1253
+#: ../../ms2/ms2_pyra.c:1271 ../../ms2/ms2_pyra.c:1282
+#: ../../ms2/ms2_pyra.c:1292
+msgid "linke Seite"
+msgstr "left side"
+
+#: ../../ms2/ms2_pyra.c:1071
+msgid "Knopf"
+msgstr "Button"
+
+#: ../../ms2/ms2_pyra.c:1143 ../../ms2/ms2_pyra.c:1151
+#: ../../ms2/ms2_pyra.c:1159 ../../ms2/ms2_pyra.c:1167
+msgid "Schrift"
+msgstr "Inscription"
+
+#: ../../ms2/ms2_pyra.c:1175 ../../ms2/ms2_pyra.c:1184
+msgid "Tomate"
+msgstr "Tomato"
+
+#: ../../ms2/ms2_pyra.c:1175 ../../ms2/ms2_pyra.c:1184
+msgid "Komisch!"
+msgstr "Funny!"
+
+#: ../../ms2/ms2_pyra.c:1183 ../../ms2/ms2_pyra.c:1272
+msgid "Messer"
+msgstr "Knife"
+
+#: ../../ms2/ms2_pyra.c:1183
+msgid "Es ist ein relativ stabiles Messer."
+msgstr "It is a relatively sturdy knife."
+
+#: ../../ms2/ms2_pyra.c:1192 ../../ms2/ms2_pyra.c:1203
+#: ../../ms2/ms2_pyra.c:1214
+msgid "Monster"
+msgstr "Monster"
+
+#: ../../ms2/ms2_pyra.c:1192
+msgid "Sieht gefÑhrlich aus!"
+msgstr "Looks dangerous!"
+
+#: ../../ms2/ms2_pyra.c:1200
+msgid "Es ist dick und|ungefÑhr 15 Meter lang."
+msgstr "It is thick and|about 15 meters long."
+
+#: ../../ms2/ms2_pyra.c:1201 ../../ms2/ms2_pyra.c:1212
+msgid "Augen"
+msgstr "Eyes"
+
+#: ../../ms2/ms2_pyra.c:1202 ../../ms2/ms2_pyra.c:1213
+#: ../../ms2/ms2_pyra.c:1336
+msgid "Mund"
+msgstr "Mouth"
+
+#: ../../ms2/ms2_pyra.c:1203 ../../ms2/ms2_pyra.c:1214
+msgid "Es ist nur eine Statue."
+msgstr "It's just a statue."
+
+#: ../../ms2/ms2_pyra.c:1211 ../../ms2/ms2_pyra.c:1263
+msgid "Zettel"
+msgstr "Note"
+
+#: ../../ms2/ms2_pyra.c:1211
+msgid "Darauf steht:|\"Wenn du fast am Ziel|bist, tu folgendes:|Sauf!\""
+msgstr "It reads:|\"When you are almost there,|do the following:|Toast!\""
+
+#: ../../ms2/ms2_pyra.c:1255
+msgid "Es ist ca. 10 Meter tief."
+msgstr "It is about 10 meters deep."
+
+#: ../../ms2/ms2_pyra.c:1256
+msgid "Oben siehst du helles Licht."
+msgstr "Above you is a bright light."
+
+#: ../../ms2/ms2_pyra.c:1263
+msgid ""
+"Darauf steht:|\"Ruhe eine Minute im Raum|zwischen den Monstern,|und du wirst "
+"belohnt!\""
+msgstr ""
+"It reads:|\"Rest a minute in the room|between the monsters,|and you'll be "
+"rewarded!\""
+
+#: ../../ms2/ms2_pyra.c:1264 ../../ms2/ms2_r1.c:844 ../../ms2/ms2_r1.c:845
+#: ../../ms2/ms2_r2.c:1243
+msgid "Schlitz"
+msgstr "Slot"
+
+#: ../../ms2/ms2_pyra.c:1264
+msgid "Du kommst mit den|HÑnden nicht rein."
+msgstr "You cannot get in|with your hands."
+
+#: ../../ms2/ms2_pyra.c:1274
+msgid "Es ist ca. 5 Meter tief."
+msgstr "It is about 5 meters deep."
+
+#: ../../ms2/ms2_pyra.c:1275
+msgid "Steine"
+msgstr "Stones"
+
+#: ../../ms2/ms2_pyra.c:1285
+msgid "Platte"
+msgstr "Plate"
+
+#: ../../ms2/ms2_pyra.c:1315 ../../ms2/ms2_pyra.c:1323
+msgid "Sarg"
+msgstr "Coffin"
+
+#: ../../ms2/ms2_pyra.c:1316 ../../ms2/ms2_pyra.c:1322
+#: ../../ms2/ms2_pyra.c:1333 ../../ms2/ms2_r1.c:833 ../../ms2/ms2_r1.c:840
+#: ../../ms2/ms2_r1.c:857 ../../ms2/ms2_r2.c:1215 ../../ms2/ms2_r2.c:1248
+msgid "Ausgang"
+msgstr "Exit"
+
+#: ../../ms2/ms2_pyra.c:1323
+msgid "Unheimlich!"
+msgstr "Creepy!"
+
+#: ../../ms2/ms2_pyra.c:1324 ../../ms2/ms2_r1.c:865
+msgid "ZahnbÅrste"
+msgstr "Toothbrush"
+
+#: ../../ms2/ms2_pyra.c:1324 ../../ms2/ms2_pyra.c:1325
+msgid "Die Sache mit der|Artus GmbH scheint dir zu|Kopf gestiegen zu sein."
+msgstr "The thing with the|Artus GmbH seems to have|gotten to your head."
+
+#: ../../ms2/ms2_pyra.c:1325
+msgid "Zahnpastatube"
+msgstr "Toothpaste"
+
+#: ../../ms2/ms2_pyra.c:1326 ../../ms2/ms2_pyra.c:1327
+msgid "Kugel"
+msgstr "Sphere"
+
+#: ../../ms2/ms2_pyra.c:1326 ../../ms2/ms2_pyra.c:1327
+msgid "Hmm, die Kugel sieht lose aus."
+msgstr "Hmm, the ball looks loose."
+
+#: ../../ms2/ms2_pyra.c:1334 ../../ms2/ms2_pyra.c:1335
+msgid "Auge"
+msgstr "Eye"
+
+#: ../../ms2/ms2_pyra.c:1334 ../../ms2/ms2_pyra.c:1335
+msgid "Irgendwas stimmt damit nicht."
+msgstr "Something is wrong with that."
+
+#: ../../ms2/ms2_r1.c:11
+msgid "Es ist nichts Besonderes daran."
+msgstr "There's nothing special about it."
+
+#: ../../ms2/ms2_r1.c:12
+msgid "Sieht nach Metall aus."
+msgstr "It looks like metal."
+
+#: ../../ms2/ms2_r1.c:83
+msgid "Ein Taxi kommt angerauscht,|du steigst ein."
+msgstr "A taxi arrives, and you get in."
+
+#: ../../ms2/ms2_r1.c:90
+msgid "Du drÅckst auf den Knopf, aber nichts passiert"
+msgstr "You press the button, but nothing happens"
+
+#: ../../ms2/ms2_r1.c:94
+msgid "Es ist leer."
+msgstr "It is empty."
+
+#: ../../ms2/ms2_r1.c:97
+msgid "Du findest ein kleines GerÑt,|einen Ausweis und einen Xa."
+msgstr "You find a small device,|an ID card and one Xa."
+
+#: ../../ms2/ms2_r1.c:109
+msgid "Du heftest den|Magnet an die Stange."
+msgstr "You attach the|magnet to the rod."
+
+#: ../../ms2/ms2_r1.c:110
+msgid "Stange mit Magnet"
+msgstr "Rod with magnet"
+
+#: ../../ms2/ms2_r1.c:111
+msgid "Raffiniert!"
+msgstr "Cunning!"
+
+#: ../../ms2/ms2_r1.c:118
+msgid "Du mu·t das|GerÑt erst kaufen."
+msgstr "You must buy|this device first."
+
+#: ../../ms2/ms2_r1.c:127
+msgid "Du legst den Chip|in das GerÑt ein."
+msgstr "You insert the chip|into the device."
+
+#: ../../ms2/ms2_r1.c:137
+msgid "Du Åberspielst die CD|auf den Musikchip."
+msgstr "You transfer the CD content|to the Music chip."
+
+#: ../../ms2/ms2_r1.c:141
+msgid ""
+"Ohne einen eingelegten|Musikchip kannst du auf dem|GerÑt nichts aufnehmen."
+msgstr "Without an inserted|music chip, you can not|record on the device."
+
+#: ../../ms2/ms2_r1.c:152
+msgid "Du nimmst den Chip|aus dem GerÑt."
+msgstr "You remove the chip|from the device."
+
+#: ../../ms2/ms2_r1.c:157
+msgid "Es ist kein Chip eingelegt."
+msgstr "There is no chip inserted."
+
+#: ../../ms2/ms2_r1.c:162
+msgid "Wozu? Du hast sowieso nur die eine CD."
+msgstr "What for? You only have one CD anyway."
+
+#: ../../ms2/ms2_r1.c:166
+msgid "Die \"Mad Monkeys\"-CD. Du hast|sie schon tausendmal gehîrt."
+msgstr "The \"Mad Monkeys\" CD.|You've heard them a thousand times."
+
+#: ../../ms2/ms2_r1.c:183
+msgid "Du hîrst nichts.|Der Chip ist unbespielt."
+msgstr "All you hear is silence.|The chip is empty."
+
+#: ../../ms2/ms2_r1.c:185
+msgid "Du hîrst dir den Anfang|der Åberspielten CD an."
+msgstr "You are listening to the beginning|of the copied CD."
+
+#: ../../ms2/ms2_r1.c:187
+msgid "Es ist kein Chip einglegt."
+msgstr "There is no chip inserted."
+
+#: ../../ms2/ms2_r1.c:193
+msgid "Du trinkst etwas von den Zeug, danach|fÅhlst du dich leicht beschwipst."
+msgstr "You drink some of the stuff,|then begin to feel slightly tipsy."
+
+#: ../../ms2/ms2_r1.c:224
+#, c-format
+msgid "%d Xa"
+msgstr "%d Xa"
+
+#: ../../ms2/ms2_r1.c:242
+msgid ""
+"Als du ebenfalls aussteigst haben|die anderen Passagiere das|FluggelÑnde "
+"bereits verlassen."
+msgstr ""
+"When you get off the plane|the other passengers|have already left the "
+"airport."
+
+#: ../../ms2/ms2_r1.c:285 ../../ms2/ms2_r1.c:809
+msgid "Flughafen"
+msgstr "Airport"
+
+#: ../../ms2/ms2_r1.c:286
+msgid "Stadtzentrum"
+msgstr "Downtown"
+
+#: ../../ms2/ms2_r1.c:287 ../../ms2/ms2_r2.c:1204
+msgid "Kulturpalast"
+msgstr "Palace of Culture"
+
+#: ../../ms2/ms2_r1.c:288
+msgid "Erde"
+msgstr "Earth"
+
+#: ../../ms2/ms2_r1.c:289
+msgid "Privatwohnung"
+msgstr "Private apartment"
+
+#: ../../ms2/ms2_r1.c:290 ../../ms2/ms2_r1.c:295
+msgid "(Taxi verlassen)"
+msgstr "(Leave the taxi)"
+
+#: ../../ms2/ms2_r1.c:294
+msgid "(Bezahlen)"
+msgstr "(Pay)"
+
+#: ../../ms2/ms2_r1.c:337
+msgid "Adresse:|                              "
+msgstr "Address:|                              "
+
+#: ../../ms2/ms2_r1.c:356
+msgid ""
+"Fuddeln gilt nicht!|Zu diesem Zeitpunkt kannst du diese|Adresse noch gar "
+"nicht kennen!"
+msgstr ""
+"Fiddling with the system doesn't work!|At this time you can not|even know "
+"this address!"
+
+#: ../../ms2/ms2_r1.c:378
+msgid "Du hast nicht|mehr genug Geld."
+msgstr "You do not|have enough money left."
+
+#: ../../ms2/ms2_r1.c:389
+msgid "Du merkst, da· das Taxi stark beschleunigt."
+msgstr "You notice the taxi is accelerating rapidly."
+
+#: ../../ms2/ms2_r1.c:398
+msgid "FÅnf Minuten spÑter ..."
+msgstr "Five minutes later ..."
+
+#: ../../ms2/ms2_r1.c:433
+msgid "Du hast doch schon eine Stange"
+msgstr "You already have a rod"
+
+#: ../../ms2/ms2_r1.c:436
+msgid "Du sÑgst eine der Stangen ab."
+msgstr "You saw off one of the rods."
+
+#: ../../ms2/ms2_r1.c:444
+msgid "Du betrittst das einzige|offene GeschÑft, das|du finden kannst."
+msgstr "You enter the only|open shop that|you can find."
+
+#: ../../ms2/ms2_r1.c:507
+msgid "Die Kabine ist besetzt."
+msgstr "The cabin is occupied."
+
+#: ../../ms2/ms2_r1.c:524
+msgid "He, nimm erstmal das Geld|aus dem RÅckgabeschlitz!"
+msgstr "Hey, take the money|from the return slot!"
+
+#: ../../ms2/ms2_r1.c:526
+msgid "Du hast doch schon bezahlt."
+msgstr "You have already paid."
+
+#: ../../ms2/ms2_r1.c:528
+msgid "Du hast nicht mehr genug Geld."
+msgstr "You do not have enough money left."
+
+#: ../../ms2/ms2_r1.c:531
+msgid "Du wirfst 10 Xa in den Schlitz."
+msgstr "You put 10 Xa in the slot."
+
+#: ../../ms2/ms2_r1.c:566
+msgid "Dir wird schwarz vor Augen."
+msgstr "You are about to pass out."
+
+#: ../../ms2/ms2_r1.c:582
+msgid "Du ruhst dich eine Weile aus."
+msgstr "You rest for a while."
+
+#: ../../ms2/ms2_r1.c:598
+msgid ""
+"An der Wand steht:|\"Ich kenne eine tolle Geheimschrift:|A=Z, B=Y, C=X ...|"
+"0=0, 1=9, 2=8 ...\""
+msgstr ""
+"Something is written on the wall:|\"I know a great cipher:|A=Z, B=Y, C=X "
+"...|0=0, 1=9, 2=8 ...\""
+
+#: ../../ms2/ms2_r1.c:657
+msgid "Ok, ich nehme es."
+msgstr "OK, I'll take it."
+
+#: ../../ms2/ms2_r1.c:658
+msgid "Nein danke, das ist mir zu teuer."
+msgstr "No thanks, that's too expensive for me."
+
+#: ../../ms2/ms2_r1.c:662
+msgid "Ich wÅrde gern etwas kaufen."
+msgstr "I would like to buy something."
+
+#: ../../ms2/ms2_r1.c:663
+msgid "Ich bin's, Horst Hummel."
+msgstr "It's me, Horst Hummel."
+
+#: ../../ms2/ms2_r1.c:664
+msgid "Haben Sie auch einen Musikchip fÅr das GerÑt?"
+msgstr "Do you have a music chip for the device?"
+
+#: ../../ms2/ms2_r1.c:668
+msgid "Eine tolle Maske, nicht wahr?"
+msgstr "It's a great mask, right?"
+
+#: ../../ms2/ms2_r1.c:668
+msgid "Komisch, da· sie schon drei Jahre da steht."
+msgstr "Strange that it has been there for three years."
+
+#: ../../ms2/ms2_r1.c:669
+msgid "Ein starker Trunk. Zieht ganz schîn rein."
+msgstr "A strong drink. It hits you pretty hard."
+
+#: ../../ms2/ms2_r1.c:670
+msgid "Ein Abspiel- und AufnahmegerÑt fÅr die neuen Musikchips."
+msgstr "A playback and recording device for the new music chips."
+
+#: ../../ms2/ms2_r1.c:671
+msgid "Eine ARTUS-ZahnbÅrste. Der letzte Schrei."
+msgstr "An ARTUS toothbrush. The latest craze."
+
+#: ../../ms2/ms2_r1.c:671
+msgid "Verkaufe ich massenhaft, die Dinger."
+msgstr "I sell these things in bulk."
+
+#: ../../ms2/ms2_r1.c:672
+msgid "Das sind echte RaritÑten. BÅcher in gebundener Form."
+msgstr "These are real rarities. Books in bound form."
+
+#: ../../ms2/ms2_r1.c:673
+msgid "Die Encyclopedia Axacussana."
+msgstr "The Encyclopedia Axacussana."
+
+#: ../../ms2/ms2_r1.c:673
+msgid "Das grî·te erhÑltliche Lexikon auf 30 Speicherchips."
+msgstr "The largest available dictionary on 30 memory chips."
+
+#: ../../ms2/ms2_r1.c:673
+msgid "öber 400 Trilliarden Stichwîrter."
+msgstr "Over 400 sextillion keywords."
+
+#: ../../ms2/ms2_r1.c:674
+msgid "Die ist nicht zu verkaufen."
+msgstr "It is not for sale."
+
+#: ../../ms2/ms2_r1.c:675
+msgid "So eine habe ich meinem Enkel zum Geburtstag geschenkt."
+msgstr "I gave one to my grandson for his birthday."
+
+#: ../../ms2/ms2_r1.c:675
+msgid "Er war begeistert von dem Ding."
+msgstr "He was excited about this thing."
+
+#: ../../ms2/ms2_r1.c:676
+msgid "Der stammt aus einem bekannten Computerspiel."
+msgstr "It comes from a well-known computer game."
+
+#: ../../ms2/ms2_r1.c:677
+msgid "Robust, handlich und stromsparend."
+msgstr "Sturdy, handy and energy-saving."
+
+#: ../../ms2/ms2_r1.c:678 ../../ms2/ms2_r1.c:679 ../../ms2/ms2_r1.c:680
+#: ../../ms2/ms2_r1.c:681
+msgid "Irgendein lasches Gesîff."
+msgstr "Some cheap swill."
+
+#: ../../ms2/ms2_r1.c:682
+msgid "Das sind Protestaufkleber gegen die hohen TaxigebÅhren."
+msgstr "These are stickers protesting the high taxi fees."
+
+#: ../../ms2/ms2_r1.c:683
+msgid "Das ist Geschirr aus der neuen Umbina-Kollektion."
+msgstr "These are dishes from the new Umbina-Collection."
+
+#: ../../ms2/ms2_r1.c:683
+msgid "HÑ·lich, nicht wahr?"
+msgstr "Ugly, right?"
+
+#: ../../ms2/ms2_r1.c:683
+msgid "Aber verkaufen tut sich das Zeug gut."
+msgstr "But this stuff sells well."
+
+#: ../../ms2/ms2_r1.c:699
+#, c-format
+msgid "Das kostet %d Xa."
+msgstr "That costs %d Xa."
+
+#: ../../ms2/ms2_r1.c:726
+msgid "Schauen Sie sich ruhig um!"
+msgstr "Take a look around!"
+
+#: ../../ms2/ms2_r1.c:728
+msgid "Unsinn!"
+msgstr "Nonsense!"
+
+#: ../../ms2/ms2_r1.c:730
+msgid "Tut mir leid, die sind|schon alle ausverkauft."
+msgstr "I'm very sorry,|they are already sold out."
+
+#: ../../ms2/ms2_r1.c:743
+msgid "Guten Abend."
+msgstr "Good evening."
+
+#: ../../ms2/ms2_r1.c:744
+msgid "Hallo."
+msgstr "Hello."
+
+#: ../../ms2/ms2_r1.c:754
+msgid "Huch, Sie haben mich aber erschreckt!"
+msgstr "Yikes, you scared me!"
+
+#: ../../ms2/ms2_r1.c:755
+msgid "Wieso?"
+msgstr "How so?"
+
+#: ../../ms2/ms2_r1.c:756
+msgid "Ihre Verkleidung ist wirklich tÑuschend echt."
+msgstr "Your disguise is deceptively real-looking."
+
+#: ../../ms2/ms2_r1.c:757
+msgid "Welche Verkleidung?"
+msgstr "What disguise?"
+
+#: ../../ms2/ms2_r1.c:758
+msgid "Na, tun Sie nicht so!"
+msgstr "Don't pretend you don't know!"
+
+#: ../../ms2/ms2_r1.c:759
+msgid ""
+"Sie haben sich verkleidet wie der Au·erirdische,|dieser Horst Hummel, oder "
+"wie er hei·t."
+msgstr ""
+"You disguised yourself as that extraterrestrial guy,|Horst Hummel, or "
+"whatever his name is."
+
+#: ../../ms2/ms2_r1.c:760 ../../ms2/ms2_r2.c:419
+msgid "Ich BIN Horst Hummel!"
+msgstr "I AM Horst Hummel!"
+
+#: ../../ms2/ms2_r1.c:761
+msgid "Geben Sie's auf!"
+msgstr "In your dreams!"
+
+#: ../../ms2/ms2_r1.c:762
+msgid "An Ihrer Gestik merkt man, da· Sie|ein verkleideter Axacussaner sind."
+msgstr "I can tell from the way you move that you are|a disguised Axacussan."
+
+#: ../../ms2/ms2_r1.c:763
+msgid "Der echte Hummel bewegt sich|anders, irgendwie ruckartig."
+msgstr "The real Hummel moves|differently, kind of jerky."
+
+#: ../../ms2/ms2_r1.c:764
+msgid "Weil er ein Roboter ist! ICH bin der Echte!"
+msgstr "Because he is a robot! I am the real one!"
+
+#: ../../ms2/ms2_r1.c:765 ../../ms2/ms2_r2.c:56
+msgid "Ach, Sie spinnen ja!"
+msgstr "Oh, you are crazy!"
+
+#: ../../ms2/ms2_r1.c:766
+msgid "Sie Trottel!!!"
+msgstr "You Idiot!!!"
+
+#: ../../ms2/ms2_r1.c:767
+msgid "Seien Sie still, oder ich werfe Sie raus!"
+msgstr "Shut up or I'll kick you out!"
+
+#: ../../ms2/ms2_r1.c:780
+msgid "Taschenmesser"
+msgstr "Pocket knife"
+
+#: ../../ms2/ms2_r1.c:780
+msgid "Hey, da ist sogar eine SÑge dran."
+msgstr "Hey, there's even a saw on it."
+
+#: ../../ms2/ms2_r1.c:781
+msgid "20 Xa"
+msgstr "20 Xa"
+
+#: ../../ms2/ms2_r1.c:782
+msgid "Discman"
+msgstr "Discman"
+
+#: ../../ms2/ms2_r1.c:782
+msgid "Da ist noch die \"Mad Monkeys\"-CD drin."
+msgstr "The \"Mad Monkeys\" CD is still in there."
+
+#: ../../ms2/ms2_r1.c:783
+msgid "Mit dem Ding sollst du dich|an der Wand festhalten."
+msgstr "You should hold onto the wall|using that thing."
+
+#: ../../ms2/ms2_r1.c:785
+msgid "Spezialkeycard"
+msgstr "Special keycard"
+
+#: ../../ms2/ms2_r1.c:785
+msgid "Damit sollst du die|TÅren knacken kînnen."
+msgstr "With that you should be able to crack the doors."
+
+#: ../../ms2/ms2_r1.c:786
+msgid "Alarmknacker"
+msgstr "Alarm cracker"
+
+#: ../../ms2/ms2_r1.c:786
+msgid "Ein kleines GerÑt, um|die Alarmanlage auszuschalten."
+msgstr "A small device|to turn off the alarm."
+
+#: ../../ms2/ms2_r1.c:788
+msgid "Karte"
+msgstr "Keycard"
+
+#: ../../ms2/ms2_r1.c:795
+msgid "Raumschiff"
+msgstr "Spaceship"
+
+#: ../../ms2/ms2_r1.c:795
+msgid "Damit bist du hierhergekommen."
+msgstr "You came here with it."
+
+#: ../../ms2/ms2_r1.c:796
+msgid "Fahrzeuge"
+msgstr "Vehicles"
+
+#: ../../ms2/ms2_r1.c:796
+msgid "Du kannst von hier aus nicht erkennen,|was das fÅr Fahrzeuge sind."
+msgstr "You cannot tell from here|what those vehicles are."
+
+#: ../../ms2/ms2_r1.c:803 ../../ms2/ms2_r1.c:804
+msgid "Fahrzeug"
+msgstr "Vehicle"
+
+#: ../../ms2/ms2_r1.c:803 ../../ms2/ms2_r1.c:804
+msgid "Es scheint ein Taxi zu sein."
+msgstr "It seems to be a taxi."
+
+#: ../../ms2/ms2_r1.c:805
+msgid "Komisch, er ist verschlossen."
+msgstr "Funny, it is closed."
+
+#: ../../ms2/ms2_r1.c:806
+msgid "Portemonnaie"
+msgstr "Wallet"
+
+#: ../../ms2/ms2_r1.c:806
+msgid "Das mu· ein Axacussaner|hier verloren haben."
+msgstr "This must have been|lost by an Axacussan."
+
+#: ../../ms2/ms2_r1.c:807
+msgid "GerÑt"
+msgstr "Device"
+
+#: ../../ms2/ms2_r1.c:807
+msgid "Auf dem GerÑt steht: \"Taxi-Call\".|Es ist ein kleiner Knopf daran."
+msgstr "The device says \"Taxi Call.\"|There is a small button on it."
+
+#: ../../ms2/ms2_r1.c:808
+msgid "Ausweis"
+msgstr "ID card"
+
+#: ../../ms2/ms2_r1.c:808
+msgid "Auf dem Ausweis steht:|  Berta Tschell|  Axacuss City|  115AY2,96A,32"
+msgstr "On the card it reads: | Berta Tschell | Axacuss City | 115AY2,96A,32"
+
+#: ../../ms2/ms2_r1.c:817
+msgid "Treppe"
+msgstr "Staircase"
+
+#: ../../ms2/ms2_r1.c:817
+msgid "Sie fÅhrt zu den GeschÑften."
+msgstr "It leads to the shops."
+
+#: ../../ms2/ms2_r1.c:818
+msgid "GeschÑftsstra·e im Hintergrund"
+msgstr "Business street in the background"
+
+#: ../../ms2/ms2_r1.c:818
+msgid "Die Stra·e scheint kein Ende zu haben."
+msgstr "The road seems to have no end."
+
+#: ../../ms2/ms2_r1.c:819 ../../ms2/ms2_r1.c:820
+msgid "Stange"
+msgstr "Rod"
+
+#: ../../ms2/ms2_r1.c:821
+msgid "Pfosten"
+msgstr "Post"
+
+#: ../../ms2/ms2_r1.c:822
+msgid "GelÑnder"
+msgstr "Railing"
+
+#: ../../ms2/ms2_r1.c:829
+msgid "Plakat"
+msgstr "Poster"
+
+#: ../../ms2/ms2_r1.c:829
+msgid ""
+"Musik Pur - Der Musikwettbewerb!|Heute im Kulturpalast|Hauptpreis:|"
+"Fernsehauftritt mit Horst Hummel|Sponsored by Artus GmbH"
+msgstr ""
+"Pure Music - The Music Competition!|Today at the Palace of Culture|Main "
+"Prize:|Television appearance with Horst Hummel|Sponsored by Artus GmbH"
+
+#: ../../ms2/ms2_r1.c:830 ../../ms2/ms2_r1.c:831
+msgid "Kabine"
+msgstr "Cabin"
+
+#: ../../ms2/ms2_r1.c:830
+msgid "Sie ist frei!"
+msgstr "It is free!"
+
+#: ../../ms2/ms2_r1.c:831
+msgid "Sie ist besetzt."
+msgstr "It is occupied."
+
+#: ../../ms2/ms2_r1.c:832
+msgid "FÅ·e"
+msgstr "Feet"
+
+#: ../../ms2/ms2_r1.c:832
+msgid "Komisch, die|FÅ·e scheinen|erstarrt zu sein."
+msgstr "Strange, the|feet seem to be frozen."
+
+#: ../../ms2/ms2_r1.c:841
+msgid "Haube"
+msgstr "Hood"
+
+#: ../../ms2/ms2_r1.c:841
+msgid "Sieht aus wie beim Frisîr."
+msgstr "Looks like the hairdresser."
+
+#: ../../ms2/ms2_r1.c:842
+msgid "400 Xa"
+msgstr "400 Xa"
+
+#: ../../ms2/ms2_r1.c:843
+msgid "10 Xa"
+msgstr "10 Xa"
+
+#: ../../ms2/ms2_r1.c:844
+msgid "DarÅber steht:|\"Geldeinwurf: 10 Xa\"."
+msgstr "It says:|\"Coins: 10 Xa\"."
+
+#: ../../ms2/ms2_r1.c:845
+msgid "DarÅber steht:|\"Gewinnausgabe / GeldrÅckgabe\"."
+msgstr "It says:|\"Prize / Money Return\"."
+
+#: ../../ms2/ms2_r1.c:846 ../../ms2/ms2_r2.c:1264
+msgid "Stuhl"
+msgstr "Chair"
+
+#: ../../ms2/ms2_r1.c:846
+msgid "Etwas Entspannung kînntest du jetzt gebrauchen."
+msgstr "You could use some relaxation right about now."
+
+#: ../../ms2/ms2_r1.c:847 ../../ms2/ms2_r1.c:848
+msgid "Gekritzel"
+msgstr "Scribble"
+
+#: ../../ms2/ms2_r1.c:849 ../../ms2/ms2_r1.c:873
+msgid "Gesicht"
+msgstr "Face"
+
+#: ../../ms2/ms2_r1.c:849
+msgid "Nicht zu fassen! Die|WÑnde sind genauso beschmutzt|wie auf der Erde."
+msgstr "Unbelievable! The walls|are just as dirty|as those on Earth."
+
+#: ../../ms2/ms2_r1.c:858
+msgid "BÅcher"
+msgstr "Books"
+
+#: ../../ms2/ms2_r1.c:859
+msgid "Lexikon"
+msgstr "Dictionary"
+
+#: ../../ms2/ms2_r1.c:860
+msgid "Pflanze"
+msgstr "Plant"
+
+#: ../../ms2/ms2_r1.c:861
+msgid "Maske"
+msgstr "Mask"
+
+#: ../../ms2/ms2_r1.c:862
+msgid "Schlange"
+msgstr "Snake"
+
+#: ../../ms2/ms2_r1.c:863
+msgid "Becher"
+msgstr "Cup"
+
+#: ../../ms2/ms2_r1.c:864
+msgid "Joystick"
+msgstr "Joystick"
+
+#: ../../ms2/ms2_r1.c:865
+msgid "Eine normale ZahnbÅrste,|es steht nur \"Artus\" darauf."
+msgstr "An ordinary toothbrush.|It says \"Artus\" on it."
+
+#: ../../ms2/ms2_r1.c:866
+msgid "MusikgerÑt"
+msgstr "Music device"
+
+#: ../../ms2/ms2_r1.c:866
+msgid ""
+"Ein GerÑt zum Abspielen und|Aufnehmen von Musikchips.|Es ist ein Mikrofon "
+"daran."
+msgstr ""
+"A device for playing and recording music chips.|There is a microphone on it."
+
+#: ../../ms2/ms2_r1.c:867 ../../ms2/ms2_r1.c:868 ../../ms2/ms2_r1.c:869
+#: ../../ms2/ms2_r1.c:870 ../../ms2/ms2_r1.c:871
+msgid "Flasche"
+msgstr "Bottle"
+
+#: ../../ms2/ms2_r1.c:867
+msgid "Auf dem Etikett steht:|\"EnthÑlt 10% Hyperalkohol\"."
+msgstr "The label says: \"Contains 10% hyperalcohol\"."
+
+#: ../../ms2/ms2_r1.c:872
+msgid "Kiste"
+msgstr "Box"
+
+#: ../../ms2/ms2_r1.c:874
+msgid "VerkÑufer"
+msgstr "Seller"
+
+#: ../../ms2/ms2_r2.c:36
+msgid "Was? DafÅr wollen Sie die Karte haben?"
+msgstr "What? Do you want the ticket for that?"
+
+#: ../../ms2/ms2_r2.c:37
+msgid "Sie sind wohl nicht ganz Åber|die aktuellen Preise informiert!"
+msgstr "You are probably not completely|informed about the current prices!"
+
+#: ../../ms2/ms2_r2.c:47
+msgid "Ich bin's, Horst Hummel!"
+msgstr "It's me, Horst Hummel!"
+
+#: ../../ms2/ms2_r2.c:48
+msgid "Schînes Wetter heute!"
+msgstr "Nice weather today!"
+
+#: ../../ms2/ms2_r2.c:49
+msgid ""
+"Kînnen Sie mir sagen, von wem ich eine Eintrittskarte fÅr den "
+"Musikwettbewerb kriegen kann?"
+msgstr "Can you tell me who can get me a ticket for the music contest?"
+
+#: ../../ms2/ms2_r2.c:55
+msgid "Ok, hier haben Sie den Xa."
+msgstr "OK, here is the Xa."
+
+#: ../../ms2/ms2_r2.c:60
+msgid "Ich biete Ihnen 500 Xa."
+msgstr "I offer you 500 Xa."
+
+#: ../../ms2/ms2_r2.c:61
+msgid "Ich biete Ihnen 1000 Xa."
+msgstr "I offer you 1000 Xa."
+
+#: ../../ms2/ms2_r2.c:62
+msgid "Ich biete Ihnen 5000 Xa."
+msgstr "I offer you 5000 Xa."
+
+#: ../../ms2/ms2_r2.c:63
+msgid "Ich biete Ihnen 10000 Xa."
+msgstr "I offer you 10000 Xa."
+
+#: ../../ms2/ms2_r2.c:72
+msgid "Vielen Dank fÅr Ihren Kauf!"
+msgstr "Thank you for your purchase!"
+
+#: ../../ms2/ms2_r2.c:77
+msgid "Was bieten Sie mir|denn nun fÅr die Karte?"
+msgstr "What will you offer me|for the ticket?"
+
+#: ../../ms2/ms2_r2.c:81
+msgid "Hallo, Sie!"
+msgstr "Hello to you!"
+
+#: ../../ms2/ms2_r2.c:83 ../../ms2/ms2_r2.c:719
+msgid "Was wollen Sie?"
+msgstr "What do you want?"
+
+#: ../../ms2/ms2_r2.c:87
+msgid "Wer sind Sie?"
+msgstr "Who are you?"
+
+#: ../../ms2/ms2_r2.c:88
+msgid "Horst Hummel!"
+msgstr "Horst Hummel!"
+
+#: ../../ms2/ms2_r2.c:89
+msgid "Kenne ich nicht."
+msgstr "Never heard of him."
+
+#: ../../ms2/ms2_r2.c:90
+msgid "Was, Sie kennen den berÅhmten Horst Hummel nicht?"
+msgstr "What, you don't know the famous Horst Hummel?"
+
+#: ../../ms2/ms2_r2.c:91
+msgid "Ich bin doch der, der immer im Fernsehen zu sehen ist."
+msgstr "I'm the guy who is always on TV."
+
+#: ../../ms2/ms2_r2.c:92
+msgid "Ich kenne Sie wirklich nicht."
+msgstr "I really do not know you."
+
+#: ../../ms2/ms2_r2.c:93
+msgid "Komisch."
+msgstr "Funny."
+
+#: ../../ms2/ms2_r2.c:95 ../../ms2/ms2_r2.c:1155
+msgid "Aha."
+msgstr "Aha."
+
+#: ../../ms2/ms2_r2.c:97
+msgid "Ja, kann ich."
+msgstr "Yes, I can."
+
+#: ../../ms2/ms2_r2.c:98
+msgid "Von wem denn?"
+msgstr "From whom?"
+
+#: ../../ms2/ms2_r2.c:99
+msgid "Diese Information kostet einen Xa."
+msgstr "This information costs one Xa."
+
+#: ../../ms2/ms2_r2.c:104
+msgid "Wie Sie meinen."
+msgstr "As you say."
+
+#: ../../ms2/ms2_r2.c:110
+msgid "Sie kînnen die Karte von MIR bekommen!"
+msgstr "You can get the ticket from ME!"
+
+#: ../../ms2/ms2_r2.c:111
+msgid "Aber nur eine Teilnahmekarte,|keine Eintrittskarte."
+msgstr "But only a participation ticket,|not an entrance ticket."
+
+#: ../../ms2/ms2_r2.c:112
+msgid "Was wollen Sie dafÅr haben?"
+msgstr "What do you want for it?"
+
+#: ../../ms2/ms2_r2.c:113
+msgid "Machen Sie ein Angebot!"
+msgstr "Make an offer!"
+
+#: ../../ms2/ms2_r2.c:133
+msgid "Das ist ein gutes Angebot!"
+msgstr "That's a good offer!"
+
+#: ../../ms2/ms2_r2.c:135
+msgid "DafÅr gebe ich Ihnen meine|letzte Teilnahmekarte!"
+msgstr "For that I give you my|last participation ticket!"
+
+#: ../../ms2/ms2_r2.c:140
+msgid "(Dieser Trottel!)"
+msgstr "(That Idiot!)"
+
+#: ../../ms2/ms2_r2.c:190
+msgid "Ich wÅrde gern beim Musikwettbewerb zuschauen."
+msgstr "I would like to watch the music competition."
+
+#: ../../ms2/ms2_r2.c:191
+msgid "Ich wÅrde gern am Musikwettbewerb teilnehmen."
+msgstr "I would like to participate in the music competition."
+
+#: ../../ms2/ms2_r2.c:192
+msgid "Wieviel Uhr haben wir?"
+msgstr "What time is it?"
+
+#: ../../ms2/ms2_r2.c:196 ../../ms2/ms2_r2.c:749
+msgid "Ja."
+msgstr "Yes."
+
+#: ../../ms2/ms2_r2.c:197 ../../ms2/ms2_r2.c:379 ../../ms2/ms2_r2.c:391
+#: ../../ms2/ms2_r2.c:697
+msgid "Nein."
+msgstr "No."
+
+#: ../../ms2/ms2_r2.c:201
+msgid "Hallo, Leute!"
+msgstr "Hi guys!"
+
+#: ../../ms2/ms2_r2.c:202
+msgid "Hi, Fans!"
+msgstr "Hi, fans!"
+
+#: ../../ms2/ms2_r2.c:203
+msgid "Gute Nacht!"
+msgstr "Good night!"
+
+#: ../../ms2/ms2_r2.c:207
+msgid "éh, wie geht es euch?"
+msgstr "Uh, how are you?"
+
+#: ../../ms2/ms2_r2.c:208
+msgid "Schînes Wetter heute."
+msgstr "Nice weather today."
+
+#: ../../ms2/ms2_r2.c:212
+msgid "Hmm ..."
+msgstr "Hmm ..."
+
+#: ../../ms2/ms2_r2.c:213
+msgid "Tja ..."
+msgstr "Well ..."
+
+#: ../../ms2/ms2_r2.c:214
+msgid "Also ..."
+msgstr "So ..."
+
+#: ../../ms2/ms2_r2.c:218
+msgid "Ok, los gehts!"
+msgstr "OK let's go!"
+
+#: ../../ms2/ms2_r2.c:219
+msgid "Ich klimper mal was auf dem Keyboard hier."
+msgstr "I'll fix something on the keyboard here."
+
+#: ../../ms2/ms2_r2.c:234
+msgid "Halt, sie sind doch schon drangewesen!"
+msgstr "Stop, you have already been on it!"
+
+#: ../../ms2/ms2_r2.c:240
+msgid "He, Sie! Haben Sie|eine Eintrittskarte?"
+msgstr "Hey, you! Do you have|a ticket?"
+
+#: ../../ms2/ms2_r2.c:244
+msgid "Ja natÅrlich, hier ist meine Teilnahmekarte."
+msgstr "Yes of course, here is my participation ticket."
+
+#: ../../ms2/ms2_r2.c:245
+msgid ""
+"Sie sind Teilnehmer! Fragen|Sie bitte an der Kasse nach,|wann Sie auftreten "
+"kînnen."
+msgstr ""
+"You are a participant!|Please ask at the ticket office|when you can perform."
+
+#: ../../ms2/ms2_r2.c:247
+msgid "éh, nein."
+msgstr "Uh, no."
+
+#: ../../ms2/ms2_r2.c:252
+msgid "He, wo ist Ihr Musikchip?"
+msgstr "Hey, where's your music chip?"
+
+#: ../../ms2/ms2_r2.c:267
+msgid "Laber nicht!"
+msgstr "Stop talking!"
+
+#: ../../ms2/ms2_r2.c:270
+msgid "Fang an!"
+msgstr "Get started!"
+
+#: ../../ms2/ms2_r2.c:273
+msgid "Einen Moment, ich mu· erstmal Åberlegen, was ich|euch spiele."
+msgstr "One moment, I have to think about what I'm playing for you."
+
+#: ../../ms2/ms2_r2.c:275
+msgid "Anfangen!!!"
+msgstr "Begin!!!"
+
+#: ../../ms2/ms2_r2.c:278
+msgid "Nun denn ..."
+msgstr "Well then ..."
+
+#: ../../ms2/ms2_r2.c:279
+msgid "Raus!"
+msgstr "Out!"
+
+#: ../../ms2/ms2_r2.c:291 ../../ms2/ms2_r2.c:306
+msgid "Buh!"
+msgstr "Boo!"
+
+#: ../../ms2/ms2_r2.c:298
+msgid "Aufhîren!"
+msgstr "Stop!"
+
+#: ../../ms2/ms2_r2.c:309
+msgid "Hilfe!"
+msgstr "Help!"
+
+#: ../../ms2/ms2_r2.c:312
+msgid "Ich verziehe mich lieber."
+msgstr "I'd prefer to get lost."
+
+#: ../../ms2/ms2_r2.c:317
+msgid "Mist, auf dem Chip war|gar keine Musik drauf."
+msgstr "Damn, there was no music on the chip at all."
+
+#: ../../ms2/ms2_r2.c:319
+msgid "Das ging ja voll daneben!"
+msgstr "That went completely wrong!"
+
+#: ../../ms2/ms2_r2.c:327
+msgid "Du nÑherst dich der BÅhne,|aber dir wird mulmig zumute."
+msgstr "You approach the stage,|but you feel queasy."
+
+#: ../../ms2/ms2_r2.c:330
+msgid ""
+"Du traust dich nicht, vor|so vielen Menschen aufzutreten|und kehrst wieder "
+"um."
+msgstr "You do not dare to appear|in front of so many people|and turn around."
+
+#: ../../ms2/ms2_r2.c:347
+msgid "Oh, Sie sind Teilnehmer!|Dann sind Sie aber spÑt dran."
+msgstr "Oh, you are a participant!|But you are late."
+
+#: ../../ms2/ms2_r2.c:348
+msgid "Spielen Sie die Musik live?"
+msgstr "Do you play the music live?"
+
+#: ../../ms2/ms2_r2.c:351
+msgid ""
+"Dann geben Sie bitte Ihren Musikchip ab!|Er wird bei Ihrem Auftritt "
+"abgespielt."
+msgstr ""
+"Then please submit your music chip!|It will be played during your "
+"performance."
+
+#: ../../ms2/ms2_r2.c:357
+msgid ""
+"Oh, Sie sind sofort an der Reihe!|Beeilen Sie sich! Der BÅhneneingang|ist "
+"hinter dem Haupteingang rechts."
+msgstr ""
+"Oh, it's your turn!|Hurry! The stage entrance|is to the right behind the "
+"main entrance."
+
+#: ../../ms2/ms2_r2.c:367
+msgid "Habe ich noch einen zweiten Versuch?"
+msgstr "Can I have another try?"
+
+#: ../../ms2/ms2_r2.c:368
+msgid "Nein!"
+msgstr "No!"
+
+#: ../../ms2/ms2_r2.c:378
+msgid "Haben Sie schon eine Eintrittskarte?"
+msgstr "Do you already have a ticket?"
+
+#: ../../ms2/ms2_r2.c:380
+msgid "Tut mir leid, die Karten|sind schon alle ausverkauft."
+msgstr "I'm sorry, the tickets|are already sold out."
+
+#: ../../ms2/ms2_r2.c:381
+msgid "Mist!"
+msgstr "Crap!"
+
+#: ../../ms2/ms2_r2.c:383
+msgid "Haben Sie schon eine Teilnahmekarte?"
+msgstr "Do you already have a participation ticket?"
+
+#: ../../ms2/ms2_r2.c:386
+msgid "Ja, hier ist sie."
+msgstr "Yes, here it is."
+
+#: ../../ms2/ms2_r2.c:392
+msgid "Tut mir leid, die Teilnahmekarten|sind schon alle ausverkauft."
+msgstr "I'm sorry, the participation tickets|are already sold out."
+
+#: ../../ms2/ms2_r2.c:393
+msgid "Schei·e!"
+msgstr "Crap!"
+
+#: ../../ms2/ms2_r2.c:396
+msgid "Das kann ich Ihnen|leider nicht sagen."
+msgstr "I can not tell you that."
+
+#: ../../ms2/ms2_r2.c:401
+msgid "Wo ist denn nun Ihr Musikchip?"
+msgstr "Where is your music chip?"
+
+#: ../../ms2/ms2_r2.c:403
+msgid "Jetzt beeilen Sie sich doch!"
+msgstr "Now hurry up!"
+
+#: ../../ms2/ms2_r2.c:416
+msgid ""
+"Huch, Sie sind hier bei einem Musik-,|nicht bei einem Imitationswettbewerb"
+msgstr "Huh, you're here at a music contest,|not at an imitation contest"
+
+#: ../../ms2/ms2_r2.c:417
+msgid "Imitationswettbewerb?|Ich will niemanden imitieren."
+msgstr "Imitation contest?|I do not want to imitate anyone."
+
+#: ../../ms2/ms2_r2.c:418
+msgid "Guter Witz, wieso sehen Sie|dann aus wie Horst Hummel?"
+msgstr "Good joke. Then why do you look like Horst Hummel?"
+
+#: ../../ms2/ms2_r2.c:420
+msgid ""
+"Na, nun hîren Sie auf! So perfekt ist|ihre Verkleidung auch wieder nicht."
+msgstr "Oh come on! Your disguise isn't that good."
+
+#: ../../ms2/ms2_r2.c:421
+msgid ""
+"Ich werde Ihnen beweisen, da· ich Horst Hummel bin,|indem ich diesen "
+"Wettbewerb hier gewinne."
+msgstr ""
+"I will prove to you that I am Horst Hummel|by winning this competition."
+
+#: ../../ms2/ms2_r2.c:422
+msgid "Dann kann ich in dieser verdammten Fernsehshow|auftreten."
+msgstr "Then I can perform in this|damn TV show."
+
+#: ../../ms2/ms2_r2.c:447
+msgid ""
+"Du hampelst ein bi·chen zu|der Musik vom Chip herum.|Die Leute sind "
+"begeistert!"
+msgstr ""
+"You're rocking a little bit|to the music from the chip.|The audience is "
+"excited!"
+
+#: ../../ms2/ms2_r2.c:484
+msgid "Guten Abend. Diesmal haben wir|einen besonderen Gast bei uns."
+msgstr "Good evening. This time we have|a special guest with us."
+
+#: ../../ms2/ms2_r2.c:485
+msgid ""
+"Es ist der Gewinner des gestrigen|Musikwettbewerbs im Kulturpalast,|der dort "
+"vor allem durch seine|Verkleidung aufgefallen war."
+msgstr ""
+"He is the winner of yesterday's|music competition in the Palace of Culture.|"
+"He was particularly noteworthy|because of his disguise."
+
+#: ../../ms2/ms2_r2.c:489
+msgid "Sie haben das Wort!"
+msgstr "You have the floor!"
+
+#: ../../ms2/ms2_r2.c:490
+msgid "Nun ja, meine erste Frage lautet: ..."
+msgstr "Well, my first question is ..."
+
+#: ../../ms2/ms2_r2.c:491
+msgid ""
+"Warum haben Sie sich sofort nach|Ihrer Landung entschlossen, fÅr|die Artus-"
+"GmbH zu arbeiten?"
+msgstr ""
+"Why did you decide immediately|after your arrival to work for|Artus GmbH?"
+
+#: ../../ms2/ms2_r2.c:492
+msgid ""
+"Es war meine freie Entscheidung.|Die Artus-GmbH hat mir einfach gefallen."
+msgstr "It was a decision I made on my own.|I just decided I liked Artus-GmbH."
+
+#: ../../ms2/ms2_r2.c:493
+msgid ""
+"Wieso betonen Sie, da· es|Ihre freie Entscheidung war?|Haben Sie Angst, da· "
+"man Ihnen|nicht glaubt?"
+msgstr ""
+"Why do you stress that it was your own decision?|Are you afraid that nobody "
+"will believe you otherwise?"
+
+#: ../../ms2/ms2_r2.c:494
+msgid "Also, ich mu· doch sehr bitten!|Was soll diese unsinnige Frage?"
+msgstr "How dare you!|What is with this nonsensical question?"
+
+#: ../../ms2/ms2_r2.c:495
+msgid ""
+"Ich finde die Frage wichtig.|Nun, Herr Hummel, was haben|Sie dazu zu sagen?"
+msgstr ""
+"I think the question is important.|Well, Mr. Hummel, what do you have to say?"
+
+#: ../../ms2/ms2_r2.c:505
+msgid "Auf solch eine Frage brauche|ich nicht zu antworten!"
+msgstr "I don't feel that I have|to answer such a question!"
+
+#: ../../ms2/ms2_r2.c:506
+msgid "Gut, dann etwas anderes ..."
+msgstr "Alright, something else then ..."
+
+#: ../../ms2/ms2_r2.c:507
+msgid ""
+"Sie sind von Beruf Koch.|Wie hie· das Restaurant,|in dem Sie auf der Erde|"
+"gearbeitet haben?"
+msgstr ""
+"You are a chef by profession.|What was the name of the restaurant|where you "
+"worked on Earth?"
+
+#: ../../ms2/ms2_r2.c:508
+msgid "Hmm, da· wei· ich nicht mehr."
+msgstr "Hmm, I do not remember that."
+
+#: ../../ms2/ms2_r2.c:509
+msgid ""
+"Sie wollen mir doch nicht weismachen,|da· Sie den Namen vergessen haben!"
+msgstr "Do you really expect me to believe|you cannot remember the name?"
+
+#: ../../ms2/ms2_r2.c:510
+msgid "Schlie·lich haben Sie|zehn Jahre dort gearbeitet!"
+msgstr "After all, you worked there for ten years!"
+
+#: ../../ms2/ms2_r2.c:511
+msgid "Woher wollen Sie das wissen?"
+msgstr "How do you know that?"
+
+#: ../../ms2/ms2_r2.c:512
+msgid "Nun, ich komme von der Erde,|im Gegensatz zu Ihnen!"
+msgstr "Well, I come from Earth,|unlike you!"
+
+#: ../../ms2/ms2_r2.c:522
+msgid "Langsam gehen Sie zu weit!"
+msgstr "Now you've gone too far!"
+
+#: ../../ms2/ms2_r2.c:523
+msgid ""
+"Sie sind ein Roboter!|Das merkt man schon an|Ihrer dummen Antwort!|Sie sind "
+"nicht optimal|programmiert!"
+msgstr ""
+"You are a robot!|It is obvious from your stupid answer!|You are not even "
+"programmed correctly!"
+
+#: ../../ms2/ms2_r2.c:533
+msgid ""
+"Wenn Sie jetzt nicht mit Ihren|Beleidigungen aufhîren, mu· ich|Ihnen das "
+"Mikrofon abschalten!"
+msgstr ""
+"If you do not stop right now with your insults,|I will have to turn off the "
+"microphone!"
+
+#: ../../ms2/ms2_r2.c:534
+msgid "Ich bin der echte Horst Hummel,|und hier ist der Beweis!"
+msgstr "I am the real Horst Hummel,|and here is the proof!"
+
+#: ../../ms2/ms2_r2.c:558
+msgid ""
+"Am nÑchsten Morgen sind alle|Zeitungen voll mit deiner spektakulÑren|"
+"EnthÅllung des Schwindels."
+msgstr ""
+"The next morning, all the papers|are full of your spectacular|revelation of "
+"fraud."
+
+#: ../../ms2/ms2_r2.c:561
+msgid ""
+"Die Manager der Artus-GmbH und Commander|Sumoti wurden sofort verhaftet."
+msgstr ""
+"The managers of Artus-GmbH and Commander|Sumoti were arrested immediately."
+
+#: ../../ms2/ms2_r2.c:564
+msgid ""
+"Nach dem Stre· der letzten Tage,|entscheidest du dich, auf die|Erde "
+"zurÅckzukehren."
+msgstr "After these stressful last few days|you decide to return to Earth."
+
+#: ../../ms2/ms2_r2.c:567
+msgid "WÑhrend du dich vor Interviews|kaum noch retten kannst, ..."
+msgstr "While you can barely save|yourself from interviews, ..."
+
+#: ../../ms2/ms2_r2.c:570
+msgid ""
+"... arbeiten die Axacussanischen|Techniker an einem Raumschiff,|das dich zur "
+"Erde zurÅckbringen soll."
+msgstr ""
+"... the Axacussan|technicians are working on a spaceship|to bring you back "
+"to Earth."
+
+#: ../../ms2/ms2_r2.c:573
+msgid "Eine Woche spÑter ist der|Tag des Starts gekommen."
+msgstr "One week later, the day of the launch has arrived."
+
+#: ../../ms2/ms2_r2.c:603
+msgid ""
+"Zum dritten Mal in deinem|Leben verbringst du eine lange|Zeit im Tiefschlaf."
+msgstr "For the third time in your life,|you spend a long time|in deep sleep."
+
+#: ../../ms2/ms2_r2.c:606
+msgid "Zehn Jahre spÑter ..."
+msgstr "Ten years later ..."
+
+#: ../../ms2/ms2_r2.c:609
+msgid ""
+"Du wachst auf und beginnst,|dich schwach an deine|Erlebnisse zu erinnern."
+msgstr "You wake up and begin|to faintly remember|your experiences."
+
+#: ../../ms2/ms2_r2.c:612
+msgid "Um dich herum ist alles dunkel."
+msgstr "Everything is dark around you."
+
+#: ../../ms2/ms2_r2.c:670 ../../ms2/ms2_r2.c:900
+#, c-format
+msgid "Sie zeigt %d an."
+msgstr "It displays %d."
+
+#: ../../ms2/ms2_r2.c:680
+msgid "Ich interessiere mich fÅr den Job, bei dem man Åber Nacht"
+msgstr "I'm interested in the job where you can get"
+
+#: ../../ms2/ms2_r2.c:681
+msgid "reich werden kann."
+msgstr "rich overnight."
+
+#: ../../ms2/ms2_r2.c:682
+msgid "Ich verkaufe frische Tomaten."
+msgstr "I sell fresh tomatoes."
+
+#: ../../ms2/ms2_r2.c:683
+msgid "Ich bin der Klempner. Ich soll hier ein Rohr reparieren."
+msgstr "I am the plumber. I'm supposed to fix a pipe here."
+
+#: ../../ms2/ms2_r2.c:688
+msgid "Ja, hîrt sich gut an."
+msgstr "Yes, that sounds good."
+
+#: ../../ms2/ms2_r2.c:689
+msgid "Krumme GeschÑfte? FÅr wen halten Sie mich? Auf Wiedersehen!"
+msgstr "Crooked business? Who do you think I am? Goodbye!"
+
+#: ../../ms2/ms2_r2.c:693
+msgid "éh - kînnten Sie mir das Ganze nochmal erklÑren?"
+msgstr "Uh - could you explain that to me again?"
+
+#: ../../ms2/ms2_r2.c:694
+msgid "Wie gro· ist mein Anteil?"
+msgstr "How big is my share?"
+
+#: ../../ms2/ms2_r2.c:695
+msgid ""
+"Machen Sie es immer so, da· Sie Ihre Komplizen Åber ein Graffitti anwerben?"
+msgstr "Do you always use graffiti to recruit your accomplices?"
+
+#: ../../ms2/ms2_r2.c:722
+msgid "Hmm, Moment mal, ich frage den Boss."
+msgstr "Hmm wait, I will ask the boss."
+
+#: ../../ms2/ms2_r2.c:728
+msgid "Kurze Zeit spÑter ..."
+msgstr "A short while later ..."
+
+#: ../../ms2/ms2_r2.c:736
+msgid "Ok, der Boss will dich sprechen."
+msgstr "OK, the boss wants to talk to you."
+
+#: ../../ms2/ms2_r2.c:742
+msgid "Du betrittst die Wohnung und|wirst zu einem Tisch gefÅhrt."
+msgstr "You enter the apartment and are led to a table."
+
+#: ../../ms2/ms2_r2.c:748
+msgid "Hmm, du willst dir also|etwas Geld verdienen?"
+msgstr "Hmm, so you want to earn some money?"
+
+#: ../../ms2/ms2_r2.c:750
+msgid "Nun ja, wir planen|einen nÑchtlichen Besuch|eines bekannten Museums."
+msgstr "Well, we're planning|a nightly visit|to a well-known museum."
+
+#: ../../ms2/ms2_r2.c:751
+msgid "Wie sieht's aus, bist du interessiert?"
+msgstr "So, are you interested?"
+
+#: ../../ms2/ms2_r2.c:754
+msgid "Halt, warte!"
+msgstr "Stop, wait!"
+
+#: ../../ms2/ms2_r2.c:755
+msgid "öberleg's dir, es springen|30000 Xa fÅr dich raus!"
+msgstr "Think about it, your share would be|30000 Xa!"
+
+#: ../../ms2/ms2_r2.c:756
+msgid "30000?! Ok, ich mache mit."
+msgstr "30000?! Alright, count me in."
+
+#: ../../ms2/ms2_r2.c:758
+msgid "Gut, dann zu den Einzelheiten."
+msgstr "Good, now then to the details."
+
+#: ../../ms2/ms2_r2.c:759
+msgid "Bei dem Museum handelt es|sich um das Orzeng-Museum."
+msgstr "The museum in question is|the Orzeng Museum."
+
+#: ../../ms2/ms2_r2.c:760
+msgid "Es enthÑlt die wertvollsten|Dinosaurierfunde von ganz Axacuss."
+msgstr "It contains the most valuable|dinosaur discoveries of Axacuss."
+
+#: ../../ms2/ms2_r2.c:761
+msgid "Wir haben es auf das Sodo-Skelett|abgesehen. Es ist weltberÅhmt."
+msgstr "We're aiming to get the Sodo skeleton.|It is world-famous."
+
+#: ../../ms2/ms2_r2.c:762
+msgid "Alle bekannten PalÑontologen haben|sich schon damit beschÑftigt."
+msgstr "All known paleontologists|have already dealt with it."
+
+#: ../../ms2/ms2_r2.c:763
+msgid ""
+"Der Grund dafÅr ist, da· es allen|bis jetzt bekannten Erkenntnissen|öber die "
+"Evolution widerspricht."
+msgstr ""
+"The reason for this is that it contradicts all known|knowledge about "
+"evolution."
+
+#: ../../ms2/ms2_r2.c:764
+msgid ""
+"Irgendein verrÅckter Forscher|bietet uns 200.000 Xa,|wenn wir ihm das Ding "
+"beschaffen."
+msgstr ""
+"Some crazy researcher|will give us 200,000 Xa|if we retrieve that thing for "
+"him."
+
+#: ../../ms2/ms2_r2.c:765
+msgid "So, jetzt zu deiner Aufgabe:"
+msgstr "So, now to your task:"
+
+#: ../../ms2/ms2_r2.c:767
+msgid "Du dringst durch den Nebeneingang|in das GebÑude ein."
+msgstr "You enter the building through|the side entrance."
+
+#: ../../ms2/ms2_r2.c:768
+msgid ""
+"Dort schaltest du die Alarmanlage aus,|durch die das Sodo-Skelett gesichert "
+"wird."
+msgstr ""
+"There you switch off the alarm system,|which secures the Sodo skeleton."
+
+#: ../../ms2/ms2_r2.c:769
+msgid "Wir betreten einen anderen GebÑudeteil|und holen uns das Gerippe."
+msgstr "We'll enter another part of the building|and fetch the skeleton."
+
+#: ../../ms2/ms2_r2.c:770
+msgid "Deine Aufgabe ist nicht leicht.|Schau dir diesen Plan an."
+msgstr "Your task is not easy.|Look at this plan."
+
+#: ../../ms2/ms2_r2.c:775
+msgid ""
+"Unten siehst du die kleine Abstellkammer,|durch die du in die "
+"AustellungsrÑume kommst."
+msgstr ""
+"Below you can see the small storage room,|through which you come to the "
+"showrooms."
+
+#: ../../ms2/ms2_r2.c:776
+msgid "Bei der mit Y gekennzeichneten|Stelle ist die Alarmanlage."
+msgstr "The alarm system is at the location marked Y."
+
+#: ../../ms2/ms2_r2.c:777
+msgid ""
+"Bei dem X steht ein gro·er Dinosaurier|mit einem wertvollen SchÑdel.|Den "
+"SchÑdel nimmst du mit."
+msgstr ""
+"The X marks the spot with a big dinosaur|with a valuable skull.|You will "
+"take the skull with you."
+
+#: ../../ms2/ms2_r2.c:778
+msgid "Nun zu den Problemen:"
+msgstr "Now for the problems:"
+
+#: ../../ms2/ms2_r2.c:779
+msgid "Die wei· gekennzeichneten|TÅren sind verschlossen."
+msgstr "The marked white doors|are locked."
+
+#: ../../ms2/ms2_r2.c:780
+msgid ""
+"Sie mÅssen mit einer Spezialkeycard geîffnet|werden, was jedoch einige Zeit "
+"dauert."
+msgstr "They have to be opened with a special keycard,|which can take a while."
+
+#: ../../ms2/ms2_r2.c:781
+msgid ""
+"Au·erdem gibt es in den auf der Karte|farbigen RÑumen einen Druck-Alarm."
+msgstr ""
+"In addition, there are pressure alarms|in the rooms which are colored on the "
+"map."
+
+#: ../../ms2/ms2_r2.c:782
+msgid ""
+"Du darfst dich dort nicht lÑnger|als 16 bzw. 8 Sekunden aufhalten,|sonst "
+"wird Alarm ausgelîst."
+msgstr ""
+"You can not stay there longer than|16 or 8 seconds,|or the alarm will go off."
+
+#: ../../ms2/ms2_r2.c:783
+msgid "Im Raum oben rechts ist|eine Kamera installiert."
+msgstr "In the room at the top right|there is a camera installed."
+
+#: ../../ms2/ms2_r2.c:784
+msgid ""
+"Diese wird jedoch nur von|der 21. bis zur 40. Sekunde|einer Minute Åberwacht."
+msgstr ""
+"However, it is only monitored|between the 21st and the 40th second|of every "
+"minute."
+
+#: ../../ms2/ms2_r2.c:785
+msgid "Das grî·te Problem ist der WÑchter."
+msgstr "The biggest problem is the guard."
+
+#: ../../ms2/ms2_r2.c:786
+msgid ""
+"Er braucht fÅr seine Runde genau|eine Minute, ist also ungefÑhr|zehn "
+"Sekunden in einem Raum."
+msgstr ""
+"He needs exactly one minute for his round,|so he is in each room|for about "
+"ten seconds."
+
+#: ../../ms2/ms2_r2.c:787
+msgid ""
+"Du mÅ·test seine Schritte hîren kînnen,|wenn du in der Abstellkammer bist|"
+"und der WÑchter dort vorbeikommt."
+msgstr ""
+"You should be able to hear his footsteps|if you are in the closet|and the "
+"guard passes by."
+
+#: ../../ms2/ms2_r2.c:788
+msgid ""
+"Wenn du es bis zur Alarmanlage|geschafft hast, hÑngst du dich|mit dem Sauger "
+"an die Wand,|damit du keinen Druck-Alarm auslîst."
+msgstr ""
+"If you make it to the alarm system,|you'll use the suction cup to hang on "
+"the wall|to avoid triggering the pressure alarm."
+
+#: ../../ms2/ms2_r2.c:789
+msgid "Die Alarmanlage schaltest du|mit einem speziellen GerÑt aus."
+msgstr "You switch off the alarm system|with a special device."
+
+#: ../../ms2/ms2_r2.c:790
+msgid ""
+"Wenn du das geschafft hast, nichts|wie raus! Aber keine Panik,|du darfst "
+"keinen Alarm auslîsen."
+msgstr ""
+"Once you're done, get out of there!|But do not panic!|You must not set off "
+"the alarm."
+
+#: ../../ms2/ms2_r2.c:795
+msgid "So, noch irgendwelche Fragen?"
+msgstr "So, any more questions?"
+
+#: ../../ms2/ms2_r2.c:801
+msgid "Also gut."
+msgstr "All right then."
+
+#: ../../ms2/ms2_r2.c:803
+msgid "Du bekommst 30000 Xa."
+msgstr "You get 30,000 Xa."
+
+#: ../../ms2/ms2_r2.c:805
+msgid "Ja, die Methode hat sich bewÑhrt."
+msgstr "Yes, that method has proven itself worthy."
+
+#: ../../ms2/ms2_r2.c:808
+msgid "Hast du sonst noch Fragen?"
+msgstr "Do you have any questions?"
+
+#: ../../ms2/ms2_r2.c:811
+msgid "Nachdem wir alles geklÑrt|haben, kann es ja losgehen!"
+msgstr "Now that we are on the same page we can get started!"
+
+#: ../../ms2/ms2_r2.c:816
+msgid "Zur vereinbarten Zeit ..."
+msgstr "At the agreed upon time ..."
+
+#: ../../ms2/ms2_r2.c:834
+msgid ""
+"Du stehst vor dem Orzeng Museum,|wÑhrend die Gangster schon in einen|anderen "
+"GebÑuderteil eingedrungen sind."
+msgstr ""
+"You stand in front of the Orzeng Museum,|while the gangsters have already "
+"entered|into another part of the building."
+
+#: ../../ms2/ms2_r2.c:837
+msgid ""
+"Wichtiger Hinweis:|Hier ist die letzte Mîglichkeit,|vor dem Einbruch "
+"abzuspeichern."
+msgstr ""
+"Important note:|Here is the last possibility to save|before the break-in."
+
+#: ../../ms2/ms2_r2.c:840
+msgid "Wenn Sie das Museum betreten haben,|kînnen Sie nicht mehr speichern!"
+msgstr "Once you enter the museum|you will not be able to save!"
+
+#: ../../ms2/ms2_r2.c:848
+msgid "Stecken Sie sich Ihre|Tomaten an den Hut!"
+msgstr "You can keep your tomatoes!"
+
+#: ../../ms2/ms2_r2.c:855
+msgid "Das kann ja jeder sagen!"
+msgstr "Anyone can say that!"
+
+#: ../../ms2/ms2_r2.c:865
+msgid "Niemand îffnet."
+msgstr "Nobody answers."
+
+#: ../../ms2/ms2_r2.c:870
+msgid "Welche Zahl willst du eingeben:      "
+msgstr "What number do you want to enter:      "
+
+#: ../../ms2/ms2_r2.c:882 ../../ms2/ms2_r2.c:886
+msgid "Falsche Eingabe"
+msgstr "Invalid input"
+
+#: ../../ms2/ms2_r2.c:896
+msgid "Der Aufzug bewegt sich."
+msgstr "The elevator is moving."
+
+#: ../../ms2/ms2_r2.c:914
+msgid "Die Karte wird|nicht angenommen."
+msgstr "The card|is not accepted."
+
+#: ../../ms2/ms2_r2.c:927
+msgid "Da ist nichts mehr."
+msgstr "There is nothing left."
+
+#: ../../ms2/ms2_r2.c:930
+msgid "Da ist ein SchlÅssel unter dem Bett!"
+msgstr "There's a key under the bed!"
+
+#: ../../ms2/ms2_r2.c:936
+msgid ""
+"Hey, da ist etwas unter dem|Bett. Nach dem GerÑusch zu|urteilen, ist es aus "
+"Metall."
+msgstr ""
+"Hey, there is something under the|bed. Judging by the noise,|it is made of "
+"metal."
+
+#: ../../ms2/ms2_r2.c:939
+msgid "Mist, es gelingt dir nicht,|den Gegenstand hervorzuholen."
+msgstr "Damn, you do not succeed in getting the object out."
+
+#: ../../ms2/ms2_r2.c:945
+msgid "Die Klappe ist schon offen."
+msgstr "The flap is already open."
+
+#: ../../ms2/ms2_r2.c:979
+msgid "Der SchlÅsssel pa·t nicht."
+msgstr "The key does not fit."
+
+#: ../../ms2/ms2_r2.c:983
+msgid ""
+"Du steckst den Chip in die|Anlage, aber es passiert nichts.|Die Anlage "
+"scheint kaputt zu sein."
+msgstr ""
+"You put the chip in the stereo,|but nothing happens.|The stereo seems to be "
+"broken."
+
+#: ../../ms2/ms2_r2.c:987
+msgid "Es passiert nichts. Das Ding|scheint kaputt zu sein."
+msgstr "Nothing happens. The thing|seems to be broken."
+
+#: ../../ms2/ms2_r2.c:998
+msgid "Hochspannung ist ungesund, wie du aus|Teil 1 eigentlich wissen mÅ·test!"
+msgstr "High voltage is unhealthy, as you|should already know|from Part 1!"
+
+#: ../../ms2/ms2_r2.c:1034
+msgid "Es hÑngt ein Kabel heraus."
+msgstr "A cable hangs out."
+
+#: ../../ms2/ms2_r2.c:1035
+msgid "Irgendetwas hat hier|nicht ganz funktioniert."
+msgstr "Something did not|quite work out here."
+
+#: ../../ms2/ms2_r2.c:1059
+msgid "Du ziehst den Raumanzug an."
+msgstr "You put on your space suit."
+
+#: ../../ms2/ms2_r2.c:1061
+msgid "Du ziehst den Raumanzug aus."
+msgstr "You take off your space suit."
+
+#: ../../ms2/ms2_r2.c:1069 ../../ms2/ms2_r2.c:1099
+msgid "Das ist schon verbunden."
+msgstr "That is already connected."
+
+#: ../../ms2/ms2_r2.c:1129
+msgid "Die Leitung ist hier|schon ganz richtig."
+msgstr "The cable is already|in the right place."
+
+#: ../../ms2/ms2_r2.c:1137
+msgid "Roger W.! Wie kommen Sie denn hierher?"
+msgstr "Roger W.! How did you get here?"
+
+#: ../../ms2/ms2_r2.c:1140
+msgid "Ach, sieh mal einer an! Sie schon wieder!"
+msgstr "Oh, look at that! It's you again!"
+
+#: ../../ms2/ms2_r2.c:1141
+msgid "Wo haben Sie denn|Ihr Schiff gelassen?"
+msgstr "Where did you|leave your ship?"
+
+#: ../../ms2/ms2_r2.c:1144
+msgid "Schauen Sie mal hinter mich auf|den Turm! Da oben hÑngt es."
+msgstr "Take a look behind me, up on|the tower! It's up there."
+
+#: ../../ms2/ms2_r2.c:1145
+msgid ""
+"Ich hatte es scheinbar etwas zu|eilig, aber ich mu·te unbedingt|zu den "
+"Dreharbeiten nach Xenon!"
+msgstr ""
+"Apparently I was too much in a hurry,|but I had to be at a film shooting in "
+"Xenon!"
+
+#: ../../ms2/ms2_r2.c:1146
+msgid "Mich wundert, da· es die Leute|hier so gelassen nehmen."
+msgstr "I am surprised that people|here take things so calmly."
+
+#: ../../ms2/ms2_r2.c:1147
+msgid ""
+"Die tun gerade so, als ob der Turm|schon immer so schrÑg gestanden hÑtte!"
+msgstr "They are pretending that the tower|has always been that slanted!"
+
+#: ../../ms2/ms2_r2.c:1148
+msgid "Hat er auch, schon seit|mehreren Jahrhunderten!"
+msgstr "It has, for several|centuries actually!"
+
+#: ../../ms2/ms2_r2.c:1151
+msgid ""
+"éh ... ach so. Und von wo|kommen Sie? Sie hatten's ja|wohl auch ziemlich "
+"eilig."
+msgstr ""
+"Uh ... I see. And where|are you coming from? It seems|you were in quite a "
+"hurry as well."
+
+#: ../../ms2/ms2_r2.c:1152
+msgid "Ich komme von Axacuss."
+msgstr "I come from Axacuss."
+
+#: ../../ms2/ms2_r2.c:1156
+msgid "Hmm, was mach ich jetzt blo·?"
+msgstr "Hmm, what am I going to do now?"
+
+#: ../../ms2/ms2_r2.c:1157
+msgid ""
+"Ich kenne ein gutes Cafe nicht|weit von hier, da kînnen|wir uns erstmal "
+"erholen."
+msgstr "I know a good cafe not far from here,|where we can get some rest."
+
+#: ../../ms2/ms2_r2.c:1160
+msgid "Ok, einverstanden."
+msgstr "OK, I agree."
+
+#: ../../ms2/ms2_r2.c:1204
+msgid "Faszinierend!"
+msgstr "Fascinating!"
+
+#: ../../ms2/ms2_r2.c:1205
+msgid "Taxis"
+msgstr "Taxis"
+
+#: ../../ms2/ms2_r2.c:1205
+msgid "Hier ist ja richtig was los!"
+msgstr "There seems to be something really going on here!"
+
+#: ../../ms2/ms2_r2.c:1206
+msgid "Axacussaner"
+msgstr "Axacussan"
+
+#: ../../ms2/ms2_r2.c:1207
+msgid "Teilnahmekarte"
+msgstr "Participation ticket"
+
+#: ../../ms2/ms2_r2.c:1216
+msgid "Axacussanerin"
+msgstr "Axacussian"
+
+#: ../../ms2/ms2_r2.c:1223
+msgid "Darauf steht:|\"115AY2,96A\""
+msgstr "It reads:|\"115AY2,96A\""
+
+#: ../../ms2/ms2_r2.c:1224
+msgid "Darauf steht:|\"115AY2,96B\""
+msgstr "It reads:|\"115AY2,96B\""
+
+#: ../../ms2/ms2_r2.c:1233
+msgid "Darauf steht:|\"341,105A\""
+msgstr "It reads:|\"341,105A\""
+
+#: ../../ms2/ms2_r2.c:1234
+msgid "Darauf steht:|\"341,105B\""
+msgstr "It reads:|\"341,105B\""
+
+#: ../../ms2/ms2_r2.c:1244
+msgid "Klingel"
+msgstr "Bell"
+
+#: ../../ms2/ms2_r2.c:1245
+msgid "Anzeige"
+msgstr "Display"
+
+#: ../../ms2/ms2_r2.c:1246
+msgid "Tastenblock"
+msgstr "Keypad"
+
+#: ../../ms2/ms2_r2.c:1246
+msgid "Es sind Tasten von 0 bis 9 darauf."
+msgstr "There are keys from 0 to 9 on it."
+
+#: ../../ms2/ms2_r2.c:1255
+msgid "Chip"
+msgstr "Chip"
+
+#: ../../ms2/ms2_r2.c:1255
+msgid "Es ist ein Musikchip!"
+msgstr "It's a music chip!"
+
+#: ../../ms2/ms2_r2.c:1256
+msgid "Klappe"
+msgstr "Hatch"
+
+#: ../../ms2/ms2_r2.c:1256
+msgid "Sie ist mit einem altmodischen|Schlo· verschlossen."
+msgstr "It is secured with an old-fashioned lock."
+
+#: ../../ms2/ms2_r2.c:1258
+msgid "Musikanlage"
+msgstr "Music system"
+
+#: ../../ms2/ms2_r2.c:1258
+msgid "Toll, eine in die Wand|integrierte Stereoanlage."
+msgstr "Great, a built-in stereo|in the wall."
+
+#: ../../ms2/ms2_r2.c:1259
+msgid "Boxen"
+msgstr "Speakers"
+
+#: ../../ms2/ms2_r2.c:1259
+msgid "Ganz normale Boxen."
+msgstr "Ordinary speakers."
+
+#: ../../ms2/ms2_r2.c:1260
+msgid "Stifte"
+msgstr "Pencils"
+
+#: ../../ms2/ms2_r2.c:1260
+msgid "Ganz normale Stifte."
+msgstr "Ordinary pencils."
+
+#: ../../ms2/ms2_r2.c:1261
+msgid "Metallklîtzchen"
+msgstr "Metal blocks"
+
+#: ../../ms2/ms2_r2.c:1261
+msgid "Es ist magnetisch."
+msgstr "It is magnetic."
+
+#: ../../ms2/ms2_r2.c:1262
+msgid "Bild"
+msgstr "Image"
+
+#: ../../ms2/ms2_r2.c:1262
+msgid "Ein ungewîhnliches Bild."
+msgstr "An unusual picture."
+
+#: ../../ms2/ms2_r2.c:1263
+msgid "Schrank"
+msgstr "Cabinet"
+
+#: ../../ms2/ms2_r2.c:1263
+msgid "Er ist verschlossen"
+msgstr "It is closed"
+
+#: ../../ms2/ms2_r2.c:1265
+msgid "Aufzug"
+msgstr "Elevator"
+
+#: ../../ms2/ms2_r2.c:1266
+msgid "unter Bett"
+msgstr "under bed"
+
+#: ../../ms2/ms2_r2.c:1266
+msgid ""
+"Unter dem Bett sind bestimmt wichtige|Dinge zu finden, nur kommst du nicht "
+"darunter.|Du brÑuchtest einen Stock oder so etwas."
+msgstr ""
+"Under the bed are certainly important|things to find, only you cannot reach "
+"underneath.|You need a stick or something."
+
+#: ../../ms2/ms2_r2.c:1267
+msgid "SchlÅssel"
+msgstr "Key"
+
+#: ../../ms2/ms2_r2.c:1267
+msgid "Ein kleiner MetallschlÅssel."
+msgstr "A small metal key."
+
+#: ../../ms2/ms2_r2.c:1274 ../../ms2/ms2_r2.c:1277
+msgid "Schalter"
+msgstr "Switch"
+
+#: ../../ms2/ms2_r2.c:1275
+msgid "Griff"
+msgstr "Handle"
+
+#: ../../ms2/ms2_r2.c:1276
+msgid "Luke"
+msgstr "Hatch"
+
+#: ../../ms2/ms2_r2.c:1278
+msgid "Raumanzug"
+msgstr "Space suit"
+
+#: ../../ms2/ms2_r2.c:1278
+msgid "Ein zusammenfaltbarer Raumanzug."
+msgstr "A collapsible spacesuit."
+
+#: ../../ms2/ms2_r2.c:1279 ../../ms2/ms2_r2.c:1280
+msgid "Leitung"
+msgstr "Cable"
+
+#: ../../ms2/ms2_r2.c:1279
+msgid "Irgendetwas scheint hier|kaputtgegangen zu sein."
+msgstr "Something seems to|have broken here."
+
+#: ../../ms2/ms2_r2.c:1280
+msgid "Sie hÑngt lose von der Decke runter."
+msgstr "It hangs loose from the ceiling."
+
+#: ../../ms2/ms2_s.c:85
+msgid ""
+"Zur Erinnerung:|Dir ist es gelungen, aus den|Artus-GeheimbÅros zu fliehen."
+msgstr "Reminder:|You managed to escape from the|Artus-GmbH secret offices."
+
+#: ../../ms2/ms2_s.c:88
+msgid ""
+"Nun befindest du dich in|einem Passagierraumschiff,|das nach Axacuss City "
+"fliegt."
+msgstr "Now you are in a passenger|spaceship that|flies to Axacuss City."
+
+#: ../../ms2/ms2_s.c:91
+msgid ""
+"WÑhrend des Fluges schaust du dir|das axacussanische Fernsehprogramm an.|Du "
+"stî·t auf etwas Interessantes ..."
+msgstr ""
+"During the flight, you watch the|Axacussan TV program.|You come across "
+"something interesting ..."
+
+#: ../../ms2/ms2_s.c:119
+msgid "Herzlich willkommen!"
+msgstr "Welcome!"
+
+#: ../../ms2/ms2_s.c:123
+msgid ""
+"Heute zu Gast ist Alga Lorch.|Sie wird Fragen an den Erdling|Horst Hummel "
+"stellen."
+msgstr ""
+"Alga Lorch will be present today.|She will ask questions to the Earthling|"
+"Horst Hummel."
+
+#: ../../ms2/ms2_s.c:127
+msgid "Horst wird alle Fragen|beantworten, soweit es|ihm mîglich ist."
+msgstr "Horst will answer all|questions as fully|as possible."
+
+#: ../../ms2/ms2_s.c:128
+msgid "Sie haben das Wort, Frau Lorch!"
+msgstr "You have the floor, Mrs Lorch!"
+
+#: ../../ms2/ms2_s.c:134
+msgid "Herr Hummel, hier ist meine erste Frage: ..."
+msgstr "Mr. Hummel, here is my first question: ..."
+
+#: ../../ms2/ms2_s.c:135
+msgid ""
+"Sie sind nun ein berÅhmter Mann auf Axacuss.|Aber sicher vermissen Sie auch "
+"Ihren Heimatplaneten."
+msgstr ""
+"You are now a famous man on Axacuss.|But surely you miss your home planet."
+
+#: ../../ms2/ms2_s.c:136
+msgid ""
+"Wenn Sie wÑhlen kînnten, wÅrden Sie lieber|ein normales Leben auf der Erde "
+"fÅhren,|oder finden Sie das Leben hier gut?"
+msgstr ""
+"If you could choose, would you prefer|to lead a normal life on Earth,|or do "
+"you find life here good?"
+
+#: ../../ms2/ms2_s.c:137
+msgid ""
+"Ehrlich gesagt finde ich es schîn,|berÅhmt zu sein. Das Leben ist|"
+"aufregender als auf der Erde."
+msgstr ""
+"Honestly, I think it's nice to be|famous. Life is more exciting here|than on "
+"Earth."
+
+#: ../../ms2/ms2_s.c:138
+msgid "Au·erdem sind die Leute von der|Artus GmbH hervorragende Freunde."
+msgstr "In addition, the people at|Artus GmbH are excellent friends."
+
+#: ../../ms2/ms2_s.c:139
+msgid ""
+"Nun ja, planen Sie denn trotzdem,|irgendwann auf die Erde zurÅckzukehren?"
+msgstr "Well, are you still planning|to return to Earth someday?"
+
+#: ../../ms2/ms2_s.c:140
+msgid "Das kann ich Ihnen zum jetzigen|Zeitpunkt noch nicht genau sagen."
+msgstr "At this point in time,|I haven't made up my mind, yet."
+
+#: ../../ms2/ms2_s.c:141
+msgid "Aber ich versichere Ihnen, ich|werde noch eine Weile hierbleiben."
+msgstr "But I assure you,|I will stay here for a while."
+
+#: ../../ms2/ms2_s.c:142
+msgid ""
+"Aha, mich interessiert au·erdem,|ob es hier auf Axacuss etwas gibt,|das Sie "
+"besonders mîgen."
+msgstr ""
+"I see. I'm also interested in|whether there's anything here on Axacuss |that "
+"you particularly like."
+
+#: ../../ms2/ms2_s.c:152
+msgid ""
+"Oh mir gefÑllt der ganze Planet,|aber das Beste hier sind die|hervorragenden "
+"Artus-ZahnbÅrsten!"
+msgstr ""
+"Oh I like the whole planet,|but the best thing here are the|extraordinary "
+"Artus toothbrushes!"
+
+#: ../../ms2/ms2_s.c:153
+msgid "ZahnbÅrsten von solcher QualitÑt|gab es auf der Erde nicht."
+msgstr "Toothbrushes of such quality|do not exist on Earth."
+
+#: ../../ms2/ms2_s.c:154
+msgid "éh, ach so."
+msgstr "Um, I see."
+
+#: ../../ms2/ms2_s.c:160
+msgid "Plîtzlich lenkt dich eine|Lautsprecherstimme vom Fernseher ab."
+msgstr "Suddenly, a speaker's voice|distracts you from the television."
+
+#: ../../ms2/ms2_s.c:163
+msgid ""
+"\"Sehr geehrte Damen und Herren,|wir sind soeben auf dem Flughafen|von "
+"Axacuss City gelandet.\""
+msgstr "\"Ladies and Gentlemen,|We just landed at Axacuss City Airport.\""
+
+#: ../../ms2/ms2_s.c:166
+msgid ""
+"\"Ich hoffe, Sie hatten einen angenehmen Flug.|Bitte verlassen Sie das "
+"Raumschiff! Auf Wiedersehen!\""
+msgstr "\"I hope you had a nice flight.|Please leave the spaceship! Goodbye!\""
+
+#: ../../ms2/ms2_s.c:186
+msgid ""
+"WÑhrend die anderen Passagiere|aussteigen, versuchst du,|den Schock zu "
+"verarbeiten."
+msgstr ""
+"While the other passengers|are disembarking, you are trying|to handle the "
+"shock."
+
+#: ../../ms2/ms2_s.c:189
+msgid ""
+"\"Ich mu· beweisen, da· dieser|Roboter der falsche Horst|Hummel ist!\", "
+"denkst du."
+msgstr ""
+"\"I must prove that this robot|is not the real Horst|Hummel!\", you think to "
+"yourself."
+
+#: ../../ms2/ms2_s.c:192
+msgid ""
+"\"Diese Mistkerle von der Artus GmbH und|Commander Sumoti mÅssen entlarvt "
+"werden!\""
+msgstr ""
+"\"These bastards from Artus GmbH and|Commander Sumoti must be unmasked!\""

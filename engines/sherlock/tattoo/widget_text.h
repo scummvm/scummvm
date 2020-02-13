@@ -47,7 +47,7 @@ public:
 	Common::String _remainingText;
 public:
 	WidgetText(SherlockEngine *vm);
-	virtual ~WidgetText() {}
+	~WidgetText() override {}
 
 	/**
 	 * Load the data for the text window
@@ -60,7 +60,7 @@ private:
 	int _menuCounter;
 public:
 	WidgetMessage(SherlockEngine *vm);
-	virtual ~WidgetMessage() {}
+	~WidgetMessage() override {}
 
 	/**
 	 * Load the data for the text window
@@ -70,7 +70,7 @@ public:
 	/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 } // End of namespace Tattoo

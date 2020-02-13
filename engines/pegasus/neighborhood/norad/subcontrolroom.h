@@ -43,27 +43,27 @@ class Norad;
 class SubControlRoom : public GameInteraction, public NotificationReceiver {
 public:
 	SubControlRoom(Neighborhood *);
-	virtual ~SubControlRoom() {}
+	~SubControlRoom() override {}
 
 	void playAgainstRobot();
 
-	virtual void setSoundFXLevel(const uint16);
+	void setSoundFXLevel(const uint16) override;
 
-	bool canSolve();
-	void doSolve();
+	bool canSolve() override;
+	void doSolve() override;
 
 protected:
-	virtual void openInteraction();
-	virtual void initInteraction();
-	virtual void closeInteraction();
+	void openInteraction() override;
+	void initInteraction() override;
+	void closeInteraction() override;
 
-	virtual void activateHotspots();
-	virtual void clickInHotspot(const Input &, const Hotspot *);
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
 
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
 	void robotKillsPlayer(const uint32, Neighborhood *);
-	InputBits getInputFilter();
+	InputBits getInputFilter() override;
 
 	int findActionIndex(HotSpotID);
 	void dispatchClawAction(const int);

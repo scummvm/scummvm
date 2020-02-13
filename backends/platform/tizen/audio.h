@@ -50,7 +50,7 @@ public:
 	AudioThread(void);
 	~AudioThread(void);
 
-	Audio::MixerImpl *Construct(OSystem *system);
+	Audio::MixerImpl *Construct();
 	bool isSilentMode();
 	void setMute(bool on);
 

@@ -68,12 +68,15 @@ public:
 	virtual bool setGraphicsMode(int mode) override;
 	virtual int getGraphicsMode() const override;
 
-	virtual void resetGraphicsScale() override {}
-
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override = 0;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
+
+	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const override;
+	virtual int getDefaultStretchMode() const override;
+	virtual bool setStretchMode(int mode) override;
+	virtual int getStretchMode() const override;
 
 	virtual void beginGFXTransaction() override;
 	virtual OSystem::TransactionError endGFXTransaction() override;
@@ -87,8 +90,6 @@ public:
 
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
 	virtual void fillScreen(uint32 col) override;
-
-	virtual void setShakePos(int shakeOffset) override;
 
 	virtual void updateScreen() override;
 
@@ -229,6 +230,11 @@ private:
 	 */
 	int _screenChangeID;
 
+	/**
+	 * The current stretch mode.
+	 */
+	int _stretchMode;
+
 protected:
 	/**
 	 * Set up the requested video mode. This takes parameters which describe
@@ -301,7 +307,7 @@ protected:
 
 	virtual bool gameNeedsAspectRatioCorrection() const override;
 	virtual void recalculateDisplayAreas() override;
-	virtual void handleResizeImpl(const int width, const int height) override;
+	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) override;
 
 	/**
 	 * The default pixel format of the backend.
@@ -322,11 +328,6 @@ protected:
 	 * The game palette if in CLUT8 mode.
 	 */
 	byte _gamePalette[3 * 256];
-
-	/**
-	 * The offset by which the screen is moved vertically.
-	 */
-	int _gameScreenShakeOffset;
 
 	//
 	// Overlay

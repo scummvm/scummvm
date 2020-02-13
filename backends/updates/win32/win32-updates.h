@@ -29,9 +29,11 @@
 
 #include "common/updates.h"
 
+class SdlWindow_Win32;
+
 class Win32UpdateManager : public Common::UpdateManager {
 public:
-	Win32UpdateManager();
+	Win32UpdateManager(SdlWindow_Win32 *window);
 	virtual ~Win32UpdateManager();
 
 	virtual void checkForUpdates();
@@ -43,6 +45,10 @@ public:
 	virtual int getUpdateCheckInterval();
 
 	virtual bool getLastUpdateCheckTimeAndDate(TimeDate &t);
+
+private:
+	static int canShutdownCallback();
+	static void shutdownRequestCallback();
 };
 
 #endif

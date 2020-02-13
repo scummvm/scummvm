@@ -75,9 +75,9 @@ protected:
 class SaveLoad_Geisha : public SaveLoad {
 public:
 	SaveLoad_Geisha(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_Geisha();
+	~SaveLoad_Geisha() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	static const uint32 kSlotCount =  7;
@@ -96,21 +96,21 @@ protected:
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const Common::String &target);
-		~GameHandler();
+		~GameHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		/** Slot file construction. */
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const Common::String &base);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 		};
 
 		File _file;
@@ -118,8 +118,8 @@ protected:
 
 	static SaveFile _saveFiles[];
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);
@@ -135,9 +135,9 @@ public:
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	SaveLoad_v2(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_v2();
+	~SaveLoad_v2() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	struct SaveFile {
@@ -151,21 +151,21 @@ protected:
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const char *target);
-		~GameHandler();
+		~GameHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		/** Slot file construction. */
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 		};
 
 		byte _index[kIndexSize];
@@ -182,8 +182,8 @@ protected:
 	NotesHandler *_notesHandler;
 	TempSpriteHandler *_tempSpriteHandler;
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);
@@ -199,9 +199,9 @@ public:
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	SaveLoad_Fascination(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_Fascination();
+	~SaveLoad_Fascination() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	struct SaveFile {
@@ -216,21 +216,21 @@ protected:
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const char *target, int slot, byte *index, bool *hasIndex);
-		~GameHandler();
+		~GameHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		/** Slot file construction. */
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 		};
 
 		byte *_index;
@@ -247,8 +247,8 @@ protected:
 
 	static SaveFile _saveFiles[];
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);
@@ -258,9 +258,9 @@ protected:
 class SaveLoad_AJWorld : public SaveLoad {
 public:
 	SaveLoad_AJWorld(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_AJWorld();
+	~SaveLoad_AJWorld() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	struct SaveFile {
@@ -274,8 +274,8 @@ protected:
 
 	TempSpriteHandler *_tempSpriteHandler;
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);
@@ -297,9 +297,9 @@ public:
 	};
 
 	SaveLoad_v3(GobEngine *vm, const char *targetName, ScreenshotType sShotType);
-	virtual ~SaveLoad_v3();
+	~SaveLoad_v3() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	struct SaveFile {
@@ -317,11 +317,11 @@ protected:
 	public:
 
 		GameHandler(GobEngine *vm, const char *target, bool usesScreenshots);
-		~GameHandler();
+		~GameHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 		bool saveScreenshot(int slot, const SavePartSprite *screenshot);
 		bool loadScreenshot(int slot, SavePartSprite *screenshot);
@@ -331,10 +331,10 @@ protected:
 		public:
 			File(GobEngine *vm, const char *base);
 			File(const File &file);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 		};
 	private:
 
@@ -363,11 +363,11 @@ protected:
 	class ScreenshotHandler : public TempSpriteHandler {
 	public:
 		ScreenshotHandler(GobEngine *vm, GameHandler *gameHandler, ScreenshotType sShotType);
-		~ScreenshotHandler();
+		~ScreenshotHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		/** Slot file construction. */
@@ -375,10 +375,10 @@ protected:
 		public:
 			File(const SaveLoad_v3::GameHandler::File &file,
 					uint32 shotSize, uint32 shotIndexSize);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 
 			void buildScreenshotIndex(byte *buffer) const;
 
@@ -405,8 +405,8 @@ protected:
 	TempSpriteHandler *_tempSpriteHandler;
 	ScreenshotHandler *_screenshotHandler;
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);
@@ -419,9 +419,9 @@ public:
 	static const uint32 kPropsSize = 500;
 
 	SaveLoad_Inca2(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_Inca2();
+	~SaveLoad_Inca2() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	struct SaveFile {
@@ -435,11 +435,11 @@ protected:
 	class VoiceHandler : public SaveHandler {
 	public:
 		VoiceHandler(GobEngine *vm);
-		~VoiceHandler();
+		~VoiceHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 	};
 
 	class ScreenshotHandler;
@@ -450,11 +450,11 @@ protected:
 	public:
 
 		GameHandler(GobEngine *vm, const char *target);
-		~GameHandler();
+		~GameHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 		bool saveScreenshot(int slot, const SavePartSprite *screenshot);
 		bool loadScreenshot(int slot, SavePartSprite *screenshot);
@@ -464,10 +464,10 @@ protected:
 		public:
 			File(GobEngine *vm, const char *base);
 			File(const File &file);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 		};
 
 	private:
@@ -489,21 +489,21 @@ protected:
 	class ScreenshotHandler : public TempSpriteHandler {
 	public:
 		ScreenshotHandler(GobEngine *vm, GameHandler *gameHandler);
-		~ScreenshotHandler();
+		~ScreenshotHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		/** Slot file construction. */
 		class File : public SaveLoad_Inca2::GameHandler::File {
 		public:
 			File(const SaveLoad_Inca2::GameHandler::File &file);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 
 			void buildScreenshotIndex(byte *buffer) const;
 		};
@@ -521,8 +521,8 @@ protected:
 	GameHandler       *_gameHandler;
 	ScreenshotHandler *_screenshotHandler;
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);
@@ -539,9 +539,9 @@ public:
 	static const uint32 kIndexSize = (kSlotCount * kSlotNameLength) + 800;
 
 	SaveLoad_v4(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_v4();
+	~SaveLoad_v4() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	struct SaveFile {
@@ -558,13 +558,13 @@ protected:
 	friend class SaveLoad_v4::ScreenPropsHandler;
 	public:
 		GameHandler(GobEngine *vm, const char *target);
-		~GameHandler();
+		~GameHandler() override;
 
 		int getLastSlot() const;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 		bool saveScreenProps(int slot, const byte *props);
 		bool loadScreenProps(int slot, byte *props);
@@ -574,10 +574,10 @@ protected:
 		public:
 			File(GobEngine *vm, const char *base);
 			File(const File &file);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 		};
 
 	private:
@@ -604,11 +604,11 @@ protected:
 	friend class SaveLoad_v4::ScreenPropsHandler;
 	public:
 		CurScreenPropsHandler(GobEngine *vm);
-		~CurScreenPropsHandler();
+		~CurScreenPropsHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		byte *_props;
@@ -618,20 +618,20 @@ protected:
 	public:
 		ScreenPropsHandler(GobEngine *vm, uint32 slot,
 				CurScreenPropsHandler *curProps, GameHandler *gameHandler);
-		~ScreenPropsHandler();
+		~ScreenPropsHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		class File : public SaveLoad_v4::GameHandler::File {
 		public:
 			File(const SaveLoad_v4::GameHandler::File &file, uint32 slot);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 
 		private:
 			uint32 _slot;
@@ -650,8 +650,8 @@ protected:
 	CurScreenPropsHandler *_curProps;
 	ScreenPropsHandler *_props[10];
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);
@@ -668,9 +668,9 @@ public:
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	SaveLoad_v6(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_v6();
+	~SaveLoad_v6() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	struct SaveFile {
@@ -684,7 +684,7 @@ protected:
 	class SpriteHandler : public TempSpriteHandler {
 	public:
 		SpriteHandler(GobEngine *vm);
-		~SpriteHandler();
+		~SpriteHandler() override;
 
 		bool set(SaveReader *reader, uint32 part);
 		bool get(SaveWriter *writer, uint32 part);
@@ -694,11 +694,11 @@ protected:
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const char *target, SpriteHandler &spriteHandler);
-		~GameHandler();
+		~GameHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 		uint8 getExtraID(int slot);
 		bool loadExtra(int slot, uint8 id, int16 dataVar, int32 size, int32 offset);
@@ -709,10 +709,10 @@ protected:
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 		};
 
 		SpriteHandler *_spriteHandler;
@@ -739,17 +739,17 @@ protected:
 	class AutoHandler : public SaveHandler {
 	public:
 		AutoHandler(GobEngine *vm, const Common::String &target);
-		~AutoHandler();
+		~AutoHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		class File : public SlotFileStatic {
 		public:
 			File(GobEngine *vm, const Common::String &base);
-			~File();
+			~File() override;
 		};
 
 		File _file;
@@ -759,17 +759,17 @@ protected:
 	class AutoSpriteHandler : public TempSpriteHandler {
 	public:
 		AutoSpriteHandler(GobEngine *vm, const Common::String &target);
-		~AutoSpriteHandler();
+		~AutoSpriteHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		class File : public SlotFileStatic {
 		public:
 			File(GobEngine *vm, const Common::String &base);
-			~File();
+			~File() override;
 		};
 
 		File _file;
@@ -779,12 +779,12 @@ protected:
 	class TempHandler : public SaveHandler {
 	public:
 		TempHandler(GobEngine *vm);
-		~TempHandler();
+		~TempHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
-		bool deleteFile();
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
+		bool deleteFile() override;
 
 	private:
 		bool _empty;
@@ -796,11 +796,11 @@ protected:
 	class ExtraHandler : public SaveHandler {
 	public:
 		ExtraHandler(GobEngine *vm, GameHandler &game, uint8 id, int slot);
-		~ExtraHandler();
+		~ExtraHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		uint8 _id;
@@ -818,8 +818,8 @@ protected:
 	TempHandler       *_tmpHandler[2];
 	ExtraHandler      *_extraHandler[120];
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);
@@ -836,9 +836,9 @@ public:
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	SaveLoad_Playtoons(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_Playtoons();
+	~SaveLoad_Playtoons() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	struct SaveFile {
@@ -852,21 +852,21 @@ protected:
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const char *target);
-		~GameHandler();
+		~GameHandler() override;
 
-		int32 getSize();
-		bool load(int16 dataVar, int32 size, int32 offset);
-		bool save(int16 dataVar, int32 size, int32 offset);
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
 		/** Slot file construction. */
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
-			~File();
+			~File() override;
 
-			int getSlot(int32 offset) const;
-			int getSlotRemainder(int32 offset) const;
+			int getSlot(int32 offset) const override;
+			int getSlotRemainder(int32 offset) const override;
 		};
 
 		byte _props[kPropsSize];
@@ -882,8 +882,8 @@ protected:
 
 	GameHandler *_gameHandler;
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);
@@ -895,9 +895,9 @@ public:
 	static const uint32 kChildrenCount = 16;
 
 	SaveLoad_v7(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_v7();
+	~SaveLoad_v7() override;
 
-	SaveMode getSaveMode(const char *fileName) const;
+	SaveMode getSaveMode(const char *fileName) const override;
 
 protected:
 	struct SaveFile {
@@ -916,8 +916,8 @@ protected:
 	FakeFileHandler   *_addy4BaseHandler[2];
 	FakeFileHandler   *_addy4GrundschuleHandler[11];
 
-	SaveHandler *getHandler(const char *fileName) const;
-	const char *getDescription(const char *fileName) const;
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
 	SaveFile *getSaveFile(const char *fileName);

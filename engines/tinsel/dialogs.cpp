@@ -3509,7 +3509,13 @@ static void InvCursor(InvCursorFN fn, int CurX, int CurY) {
 		case I_BODY:
 			restoreMain = true;
 			break;
+
+		default:
+			break;
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -4489,6 +4495,9 @@ static void SlideMSlider(int x, SSFN fn) {
 		if (g_ino == INV_CONF && cd.box == subtitlesBox)
 			Select(_vm->_config->_language, false);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -4822,6 +4831,9 @@ static void InvDragStart() {
 			g_InvDragging = ID_BRIGHT;
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -5050,6 +5062,7 @@ static void MenuAction(int i, bool dbl) {
 static void ConfActionSpecial(int i) {
 	switch (i) {
 	case IB_NONE:
+	default:
 		break;
 	case IB_UP:	// Scroll up
 		if (cd.extraBase > 0) {
@@ -5291,6 +5304,9 @@ static void InvWalkTo(const Common::Point &coOrds) {
 				InvPickup(i);
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -5372,6 +5388,9 @@ static void InvAction() {
 			g_ItemsChanged = true;
 		}
 		break;
+
+	default:
+		break;
 	}
 
 }
@@ -5397,6 +5416,9 @@ static void InvLook(const Common::Point &coOrds) {
 		if (g_ino == INV_CONV)
 			ConvAction(INV_CLOSEICON);
 		KillInventory();
+		break;
+
+	default:
 		break;
 	}
 }

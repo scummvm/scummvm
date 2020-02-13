@@ -60,21 +60,21 @@ public:
 		AT_JOJO
 	};
 
-	virtual ~Animation();
+	~Animation() override;
 
 	void play();
 	void pause();
 	void stop();
 	void setFrame(uint nr);
 
-	virtual void setPos(int x, int y);
-	virtual void setX(int x);
-	virtual void setY(int y);
+	void setPos(int x, int y) override;
+	void setX(int x) override;
+	void setY(int y) override;
 
-	virtual int getX() const;
-	virtual int getY() const;
-	virtual int getAbsoluteX() const;
-	virtual int getAbsoluteY() const;
+	int getX() const override;
+	int getY() const override;
+	int getAbsoluteX() const override;
+	int getAbsoluteY() const override;
 
 	/**
 	    @brief Setzt den Alphawert der Animation.
@@ -127,10 +127,10 @@ public:
 		return _scaleFactorY;
 	}
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 
-	virtual void frameNotification(int timeElapsed);
+	void frameNotification(int timeElapsed) override;
 
 	ANIMATION_TYPES     getAnimationType() const;
 	int                 getFPS() const;
@@ -151,7 +151,7 @@ public:
 	void setCallbacks();
 
 protected:
-	virtual bool doRender(RectangleList *updateRects);
+	bool doRender(RectangleList *updateRects) override;
 
 private:
 	enum Direction {

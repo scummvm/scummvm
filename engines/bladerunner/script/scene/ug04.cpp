@@ -64,21 +64,37 @@ void SceneScriptUG04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 
-	if ((Global_Variable_Query(kVariableChapter) == 3)
-		|| (Global_Variable_Query(kVariableChapter) > 3 && Random_Query(1, 5) == 1)
-	){
-		// enhancement: don't always play the bikers after chapter 3
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kUG04LoopTrainLoop, false);
-	}
+#if BLADERUNNER_ORIGINAL_BUGS
+	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kUG04LoopTrainLoop, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Scene_Loop_Set_Default(kUG04LoopMainLoop);
 }
 
 void SceneScriptUG04::SceneLoaded() {
-	Obstacle_Object("NAV", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+	Obstacle_Object("NAV", true); // a bug? this object does not exist in the scene
+#else
+	Obstacle_Object("VAN", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Unobstacle_Object("RUBBLE", true);
 	Unobstacle_Object("FLOOR DEBRIS WADS", true);
 	Unobstacle_Object("FLOOR DEBRIS WADS01", true);
 	Unobstacle_Object("FLOOR DEBRIS WADS02", true);
+
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if ((Global_Variable_Query(kVariableChapter) == 3)
+	    || (Global_Variable_Query(kVariableChapter) > 3 && Random_Query(1, 4) == 1)
+	) {
+		// Enhancement: don't always play the overground train after chapter 3
+		// Bug fix: don't remove control from player. There is no chance to glitch into the scenery
+		// while the video is playing and rats may attack!
+		// Moved in SceneLoaded because the same code in InitializeScene
+		// resulted in a infinite loop of the special loop, when mode is set to kSceneLoopModeOnce instead of kSceneLoopModeLoseControl
+		Scene_Loop_Set_Default(kUG04LoopMainLoop);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG04LoopTrainLoop, false);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptUG04::MouseClick(int x, int y) {
@@ -139,8 +155,35 @@ void SceneScriptUG04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG04::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG06toUG04)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 60.0f, -1.74f, -976.0f, 6, false, false, false);
+#else
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 60.0f, -1.74f, -976.0f, 6, true, false, false);
+#endif
 		Game_Flag_Reset(kFlagUG06toUG04);
+	}
+	if (_vm->_cutContent
+	    && !Game_Flag_Query(kFlagUG04DispatchOnHoodooRats)
+	    && !Game_Flag_Query(kFlagMcCoyCommentsOnHoodooRats)
+	) {
+		if (Random_Query(0, 2) == 1) {
+			Game_Flag_Set(kFlagUG04DispatchOnHoodooRats);
+			ADQ_Add_Pause(Random_Query(0, 1) * 1000);
+			ADQ_Add(kActorDispatcher, 340, kAnimationModeTalk); // Southern Kipple Unit 2 LA.
+			if (Random_Query(0, 1) == 0) {
+				// Leary responds
+				ADQ_Add(kActorOfficerLeary, 240, kAnimationModeTalk); // LA, South Kipple Unit 2. Go ahead.
+				ADQ_Add(kActorDispatcher, 350, kAnimationModeTalk);
+				ADQ_Add(kActorDispatcher, 360, kAnimationModeTalk);
+				ADQ_Add(kActorOfficerLeary, 250, kAnimationModeTalk);
+			} else {
+				// Grayford responds
+				ADQ_Add(kActorOfficerGrayford, 520, kAnimationModeTalk); // LA, South Kipple Unit 2. Go ahead.
+				ADQ_Add(kActorDispatcher, 350, kAnimationModeTalk);
+				ADQ_Add(kActorDispatcher, 360, kAnimationModeTalk);
+				ADQ_Add(kActorOfficerGrayford, 530, kAnimationModeTalk);
+			}
+		}
 	}
 }
 

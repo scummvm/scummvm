@@ -437,6 +437,8 @@ void ROQPlayer::processBlockQuadVectorBlock(int baseX, int baseY, int8 Mx, int8 
 			}
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -462,6 +464,8 @@ void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, in
 		paint2(_file->readByte(), baseX + 2, baseY);
 		paint2(_file->readByte(), baseX    , baseY + 2);
 		paint2(_file->readByte(), baseX + 2, baseY + 2);
+		break;
+	default:
 		break;
 	}
 }

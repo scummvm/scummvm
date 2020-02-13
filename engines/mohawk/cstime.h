@@ -133,7 +133,7 @@ protected:
 
 public:
 	MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescription *gamedesc);
-	virtual ~MohawkEngine_CSTime();
+	~MohawkEngine_CSTime() override;
 
 	Common::RandomSource *_rnd;
 

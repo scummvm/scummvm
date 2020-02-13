@@ -33,20 +33,20 @@ namespace Scumm {
 class Player_V1 : public Player_V2 {
 public:
 	Player_V1(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr);
-	~Player_V1();
+	~Player_V1() override;
 
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	int  getMusicTimer() override;
 
 protected:
-	virtual void nextTick();
-	virtual void clear_channel(int i);
-	virtual void chainSound(int nr, byte *data);
+	void nextTick() override;
+	void clear_channel(int i) override;
+	void chainSound(int nr, byte *data) override;
 
-	virtual void generateSpkSamples(int16 *data, uint len);
-	virtual void generatePCjrSamples(int16 *data, uint len);
+	void generateSpkSamples(int16 *data, uint len) override;
+	void generatePCjrSamples(int16 *data, uint len) override;
 
 	void restartSound();
 

@@ -56,7 +56,7 @@ public:
 	bool _showMousePos;
 public:
 	Debugger(MADSEngine *vm);
-	virtual ~Debugger() {}
+	~Debugger() override {}
 };
 
 } // End of namespace MADS

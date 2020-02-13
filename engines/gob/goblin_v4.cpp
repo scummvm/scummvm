@@ -264,6 +264,9 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 			case 41:
 				animData->nextState = 31;
 				break;
+
+			default:
+				break;
 			}
 			break;
 		}
@@ -373,6 +376,8 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 			case 7:
 				animData->nextState = 31;
 				break;
+			default:
+				break;
 			}
 			break;
 		}
@@ -415,6 +420,9 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 6:
 		if (animData->frame >= framesCount)
 			animData->isPaused = 1;
+		break;
+
+	default:
 		break;
 	}
 
@@ -469,6 +477,9 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 31:
 		if (animData->pathExistence == 4)
 			animData->pathExistence = 5;
+		break;
+
+	default:
 		break;
 	}
 
@@ -595,6 +606,9 @@ int16 Goblin_v4::turnState(int16 state, uint16 dir) {
 	case 29:
 		dx = 2;
 		break;
+
+	default:
+		break;
 	}
 
 	switch (dir) {
@@ -628,6 +642,9 @@ int16 Goblin_v4::turnState(int16 state, uint16 dir) {
 
 	case kDirSE:
 		cx = 5;
+		break;
+
+	default:
 		break;
 	}
 

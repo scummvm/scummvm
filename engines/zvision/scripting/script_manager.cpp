@@ -245,6 +245,8 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 			case Puzzle::LESS_THAN:
 				criteriaMet = getStateValue(entryIter->key) < argumentValue;
 				break;
+			default:
+				break;
 			}
 
 			// If one check returns false, don't keep checking

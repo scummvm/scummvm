@@ -31,9 +31,6 @@ namespace Glk {
 #define NUMINTCONSTANTS   \
     (sizeof(intconstant_table) / sizeof(gidispatch_intconst_t))
 
-#define NUMFUNCTIONS   \
-    (sizeof(function_table) / sizeof(gidispatch_function_t))
-
 /**
  * The constants in this table must be ordered alphabetically.
  */
@@ -184,157 +181,6 @@ static const gidispatch_intconst_t intconstant_table[] = {
     { "wintype_TextGrid", (4) },
 };
 
-/**
- * The functions in this table must be ordered by id.
- */
-static gidispatch_function_t function_table[] = {
-    { 0x0001, "exit", (GlkFunction)&GlkAPI::glk_exit },
-    { 0x0002, "set_interrupt_handler", (GlkFunction)&GlkAPI::glk_set_interrupt_handler },
-    { 0x0003, "tick", (GlkFunction)&GlkAPI::glk_tick },
-    { 0x0004, "gestalt", (GlkFunction)&GlkAPI::glk_gestalt },
-    { 0x0005, "gestalt_ext", (GlkFunction)&GlkAPI::glk_gestalt_ext },
-    { 0x0020, "window_iterate", (GlkFunction)&GlkAPI::glk_window_iterate },
-    { 0x0021, "window_get_rock", (GlkFunction)&GlkAPI::glk_window_get_rock },
-    { 0x0022, "window_get_root", (GlkFunction)&GlkAPI::glk_window_get_root },
-    { 0x0023, "window_open", (GlkFunction)&GlkAPI::glk_window_open },
-    { 0x0024, "window_close", (GlkFunction)&GlkAPI::glk_window_close },
-    { 0x0025, "window_get_size", (GlkFunction)&GlkAPI::glk_window_get_size },
-    { 0x0026, "window_set_arrangement", (GlkFunction)&GlkAPI::glk_window_set_arrangement },
-    { 0x0027, "window_get_arrangement", (GlkFunction)&GlkAPI::glk_window_get_arrangement },
-    { 0x0028, "window_get_type", (GlkFunction)&GlkAPI::glk_window_get_type },
-    { 0x0029, "window_get_parent", (GlkFunction)&GlkAPI::glk_window_get_parent },
-    { 0x002A, "window_clear", (GlkFunction)&GlkAPI::glk_window_clear },
-    { 0x002B, "window_move_cursor", (GlkFunction)&GlkAPI::glk_window_move_cursor },
-    { 0x002C, "window_get_stream", (GlkFunction)&GlkAPI::glk_window_get_stream },
-    { 0x002D, "window_set_echo_stream", (GlkFunction)&GlkAPI::glk_window_set_echo_stream },
-    { 0x002E, "window_get_echo_stream", (GlkFunction)&GlkAPI::glk_window_get_echo_stream },
-    { 0x002F, "set_window", (GlkFunction)&GlkAPI::glk_set_window },
-    { 0x0030, "window_get_sibling", (GlkFunction)&GlkAPI::glk_window_get_sibling },
-    { 0x0040, "stream_iterate", (GlkFunction)&GlkAPI::glk_stream_iterate },
-    { 0x0041, "stream_get_rock", (GlkFunction)&GlkAPI::glk_stream_get_rock },
-    { 0x0042, "stream_open_file", (GlkFunction)&GlkAPI::glk_stream_open_file },
-    { 0x0043, "stream_open_memory", (GlkFunction)&GlkAPI::glk_stream_open_memory },
-    { 0x0044, "stream_close", (GlkFunction)&GlkAPI::glk_stream_close },
-    { 0x0045, "stream_set_position", (GlkFunction)&GlkAPI::glk_stream_set_position },
-    { 0x0046, "stream_get_position", (GlkFunction)&GlkAPI::glk_stream_get_position },
-    { 0x0047, "stream_set_current" , (GlkFunction)&GlkAPI::glk_stream_set_current},
-    { 0x0048, "stream_get_current", (GlkFunction)&GlkAPI::glk_stream_get_current },
-    { 0x0060, "fileref_create_temp", (GlkFunction)&GlkAPI::glk_fileref_create_temp },
-    { 0x0061, "fileref_create_by_name", (GlkFunction)&GlkAPI::glk_fileref_create_by_name },
-    { 0x0062, "fileref_create_by_prompt", (GlkFunction)&GlkAPI::glk_fileref_create_by_prompt },
-    { 0x0063, "fileref_destroy", (GlkFunction)&GlkAPI::glk_fileref_destroy },
-    { 0x0064, "fileref_iterate", (GlkFunction)&GlkAPI::glk_fileref_iterate },
-    { 0x0065, "fileref_get_rock", (GlkFunction)&GlkAPI::glk_fileref_get_rock },
-    { 0x0066, "fileref_delete_file", (GlkFunction)&GlkAPI::glk_fileref_delete_file },
-    { 0x0067, "fileref_does_file_exist", (GlkFunction)&GlkAPI::glk_fileref_does_file_exist },
-    { 0x0068, "fileref_create_from_fileref", (GlkFunction)&GlkAPI::glk_fileref_create_from_fileref },
-    { 0x0080, "put_char", (GlkFunction)&GlkAPI::glk_put_char },
-    { 0x0081, "put_char_stream", (GlkFunction)&GlkAPI::glk_put_char_stream },
-    { 0x0082, "put_string", (GlkFunction)&GlkAPI::glk_put_string },
-    { 0x0083, "put_string_stream", (GlkFunction)&GlkAPI::glk_put_string_stream },
-    { 0x0084, "put_buffer", (GlkFunction)&GlkAPI::glk_put_buffer },
-    { 0x0085, "put_buffer_stream", (GlkFunction)&GlkAPI::glk_put_buffer_stream },
-    { 0x0086, "set_style", (GlkFunction)&GlkAPI::glk_set_style },
-    { 0x0087, "set_style_stream", (GlkFunction)&GlkAPI::glk_set_style_stream },
-    { 0x0090, "get_char_stream", (GlkFunction)&GlkAPI::glk_get_char_stream },
-    { 0x0091, "get_line_stream", (GlkFunction)&GlkAPI::glk_get_line_stream},
-    { 0x0092, "get_buffer_stream", (GlkFunction)&GlkAPI::glk_get_buffer_stream },
-    { 0x00A0, "char_to_lower", (GlkFunction)&GlkAPI::glk_char_to_lower },
-    { 0x00A1, "char_to_upper", (GlkFunction)&GlkAPI::glk_char_to_upper },
-    { 0x00B0, "stylehint_set", (GlkFunction)&GlkAPI::glk_stylehint_set },
-    { 0x00B1, "stylehint_clear", (GlkFunction)&GlkAPI::glk_stylehint_clear },
-    { 0x00B2, "style_distinguish", (GlkFunction)&GlkAPI::glk_style_distinguish },
-    { 0x00B3, "style_measure", (GlkFunction)&GlkAPI::glk_style_measure},
-    { 0x00C0, "select", (GlkFunction)&GlkAPI::glk_select },
-    { 0x00C1, "select_poll", (GlkFunction)&GlkAPI::glk_select_poll },
-    { 0x00D0, "request_line_event", (GlkFunction)&GlkAPI::glk_request_line_event },
-    { 0x00D1, "cancel_line_event", (GlkFunction)&GlkAPI::glk_cancel_line_event },
-    { 0x00D2, "request_char_event", (GlkFunction)&GlkAPI::glk_request_char_event },
-    { 0x00D3, "cancel_char_event", (GlkFunction)&GlkAPI::glk_cancel_char_event },
-    { 0x00D4, "request_mouse_event", (GlkFunction)&GlkAPI::glk_request_mouse_event },
-    { 0x00D5, "cancel_mouse_event", (GlkFunction)&GlkAPI::glk_cancel_mouse_event },
-    { 0x00D6, "request_timer_events", (GlkFunction)&GlkAPI::glk_request_timer_events },
-#ifdef GLK_MODULE_IMAGE
-    { 0x00E0, "image_get_info", (GlkFunction)&GlkAPI::glk_image_get_info },
-    { 0x00E1, "image_draw", (GlkFunction)&GlkAPI::glk_image_draw },
-    { 0x00E2, "image_draw_scaled", (GlkFunction)&GlkAPI::glk_image_draw_scaled },
-    { 0x00E8, "window_flow_break", (GlkFunction)&GlkAPI::glk_window_flow_break },
-    { 0x00E9, "window_erase_rect", (GlkFunction)&GlkAPI::glk_window_erase_rect },
-    { 0x00EA, "window_fill_rect", (GlkFunction)&GlkAPI::glk_window_fill_rect },
-    { 0x00EB, "window_set_background_color", (GlkFunction)&GlkAPI::glk_window_set_background_color },
-#endif /* GLK_MODULE_IMAGE */
-#ifdef GLK_MODULE_SOUND
-    { 0x00F0, "schannel_iterate", (GlkFunction)&GlkAPI::glk_schannel_iterate },
-    { 0x00F1, "schannel_get_rock", (GlkFunction)&GlkAPI::glk_schannel_get_rock },
-    { 0x00F2, "schannel_create", (GlkFunction)&GlkAPI::glk_schannel_create },
-    { 0x00F3, "schannel_destroy", (GlkFunction)&GlkAPI::glk_schannel_destroy },
-    { 0x00F8, "schannel_play", (GlkFunction)&GlkAPI::glk_schannel_play },
-    { 0x00F9, "schannel_play_ext", (GlkFunction)&GlkAPI::glk_schannel_play_ext },
-    { 0x00FA, "schannel_stop", (GlkFunction)&GlkAPI::glk_schannel_stop },
-    { 0x00FB, "schannel_set_volume", (GlkFunction)&GlkAPI::glk_schannel_set_volume },
-    { 0x00FC, "sound_load_hint", (GlkFunction)&GlkAPI::glk_sound_load_hint },
-#ifdef GLK_MODULE_SOUND2
-    { 0x00F4, "schannel_create_ext", (GlkFunction)&GlkAPI::glk_schannel_create_ext },
-    { 0x00F7, "schannel_play_multi", (GlkFunction)&GlkAPI::glk_schannel_play_multi },
-    { 0x00FD, "schannel_set_volume_ext", (GlkFunction)&GlkAPI::glk_schannel_set_volume_ext },
-    { 0x00FE, "schannel_pause", (GlkFunction)&GlkAPI::glk_schannel_pause },
-    { 0x00FF, "schannel_unpause", (GlkFunction)&GlkAPI::glk_schannel_unpause },
-#endif /* GLK_MODULE_SOUND2 */
-#endif /* GLK_MODULE_SOUND */
-#ifdef GLK_MODULE_HYPERLINKS
-    { 0x0100, "set_hyperlink", (GlkFunction)&GlkAPI::glk_set_hyperlink },
-    { 0x0101, "set_hyperlink_stream", (GlkFunction)&GlkAPI::glk_set_hyperlink_stream },
-    { 0x0102, "request_hyperlink_event", (GlkFunction)&GlkAPI::glk_request_hyperlink_event },
-    { 0x0103, "cancel_hyperlink_event", (GlkFunction)&GlkAPI::glk_cancel_hyperlink_event },
-#endif /* GLK_MODULE_HYPERLINKS */
-#ifdef GLK_MODULE_UNICODE
-    { 0x0120, "buffer_to_lower_case_uni", (GlkFunction)&GlkAPI::glk_buffer_to_lower_case_uni },
-    { 0x0121, "buffer_to_upper_case_uni", (GlkFunction)&GlkAPI::glk_buffer_to_upper_case_uni },
-    { 0x0122, "buffer_to_title_case_uni", (GlkFunction)&GlkAPI::glk_buffer_to_title_case_uni },
-    { 0x0128, "put_char_uni", (GlkFunction)&GlkAPI::glk_put_char_uni },
-    { 0x0129, "put_string_uni", (GlkFunction)&GlkAPI::glk_put_string_uni },
-    { 0x012A, "put_buffer_uni", (GlkFunction)&GlkAPI::glk_put_buffer_uni },
-    { 0x012B, "put_char_stream_uni", (GlkFunction)&GlkAPI::glk_put_char_stream_uni },
-    { 0x012C, "put_string_stream_uni", (GlkFunction)&GlkAPI::glk_put_string_stream_uni },
-    { 0x012D, "put_buffer_stream_uni", (GlkFunction)&GlkAPI::glk_put_buffer_stream_uni },
-    { 0x0130, "get_char_stream_uni", (GlkFunction)&GlkAPI::glk_get_char_stream_uni },
-    { 0x0131, "get_buffer_stream_uni", (GlkFunction)&GlkAPI::glk_get_buffer_stream_uni },
-    { 0x0132, "get_line_stream_uni", (GlkFunction)&GlkAPI::glk_get_line_stream_uni },
-    { 0x0138, "stream_open_file_uni", (GlkFunction)&GlkAPI::glk_stream_open_file_uni },
-    { 0x0139, "stream_open_memory_uni", (GlkFunction)&GlkAPI::glk_stream_open_memory_uni },
-    { 0x0140, "request_char_event_uni", (GlkFunction)&GlkAPI::glk_request_char_event_uni },
-    { 0x0141, "request_line_event_uni", (GlkFunction)&GlkAPI::glk_request_line_event_uni },
-#endif /* GLK_MODULE_UNICODE */
-#ifdef GLK_MODULE_UNICODE_NORM
-    { 0x0123, "buffer_canon_decompose_uni", (GlkFunction)&GlkAPI::glk_buffer_canon_decompose_uni },
-    { 0x0124, "buffer_canon_normalize_uni", (GlkFunction)&GlkAPI::glk_buffer_canon_normalize_uni },
-#endif /* GLK_MODULE_UNICODE_NORM */
-#ifdef GLK_MODULE_LINE_ECHO
-    { 0x0150, "set_echo_line_event", (GlkFunction)&GlkAPI::glk_set_echo_line_event },
-#endif /* GLK_MODULE_LINE_ECHO */
-#ifdef GLK_MODULE_LINE_TERMINATORS
-    { 0x0151, "set_terminators_line_event", (GlkFunction)&GlkAPI::glk_set_terminators_line_event },
-#endif /* GLK_MODULE_LINE_TERMINATORS */
-#ifdef GLK_MODULE_DATETIME
-    { 0x0160, "current_time", (GlkFunction)&GlkAPI::glk_current_time },
-    { 0x0161, "current_simple_time", (GlkFunction)&GlkAPI::glk_current_simple_time },
-    { 0x0168, "time_to_date_utc", (GlkFunction)&GlkAPI::glk_time_to_date_utc},
-    { 0x0169, "time_to_date_local", (GlkFunction)&GlkAPI::glk_time_to_date_local },
-    { 0x016A, "simple_time_to_date_utc", (GlkFunction)&GlkAPI::glk_simple_time_to_date_utc },
-    { 0x016B, "simple_time_to_date_local", (GlkFunction)&GlkAPI::glk_simple_time_to_date_local },
-    { 0x016C, "date_to_time_utc", (GlkFunction)&GlkAPI::glk_date_to_time_utc },
-    { 0x016D, "date_to_time_local", (GlkFunction)&GlkAPI::glk_date_to_time_local },
-    { 0x016E, "date_to_simple_time_utc", (GlkFunction)&GlkAPI::glk_date_to_simple_time_utc},
-    { 0x016F, "date_to_simple_time_local", (GlkFunction)&GlkAPI::glk_date_to_simple_time_local },
-#endif /* GLK_MODULE_DATETIME */
-#ifdef GLK_MODULE_GARGLKTEXT
-    { 0x1100, "garglk_set_zcolors", (GlkFunction)&GlkAPI::garglk_set_zcolors },
-    { 0x1101, "garglk_set_zcolors_stream", (GlkFunction)&GlkAPI::garglk_set_zcolors_stream },
-    { 0x1102, "garglk_set_reversevideo", (GlkFunction)&GlkAPI::garglk_set_reversevideo },
-    { 0x1103, "garglk_set_reversevideo_stream", (GlkFunction)&GlkAPI::garglk_set_reversevideo_stream },
-#endif /* GLK_MODULE_GARGLKTEXT */
-};
-
 void GlkAPI::gidispatch_set_object_registry(gidispatch_rock_t(*regi)(void *obj, uint objclass),
 		void(*unregi)(void *obj, uint objclass, gidispatch_rock_t objrock)) {
 	Window *win;
@@ -393,40 +239,6 @@ const gidispatch_intconst_t *GlkAPI::gidispatch_get_intconst(uint32 index) const
     if (index >= NUMINTCONSTANTS)
         return nullptr;
     return &(intconstant_table[index]);
-}
-
-uint32 GlkAPI::gidispatch_count_functions() const {
-    return NUMFUNCTIONS;
-}
-
-gidispatch_function_t *GlkAPI::gidispatch_get_function(uint32 index) const {
-    if (index >= NUMFUNCTIONS)
-        return nullptr;
-    return &(function_table[index]);
-}
-
-gidispatch_function_t *GlkAPI::gidispatch_get_function_by_id(uint32 id) const {
-    int top, bot, val;
-    gidispatch_function_t *func;
-
-    bot = 0;
-    top = NUMFUNCTIONS;
-
-    for (;;) {
-        val = (top+bot) / 2;
-        func = &(function_table[val]);
-        if (func->id == id)
-            return func;
-        if (bot >= top-1)
-            break;
-        if (func->id < id) {
-            bot = val+1;
-        } else {
-            top = val;
-        }
-    }
-
-    return nullptr;
 }
 
 const char *GlkAPI::gidispatch_prototype(uint32 funcnum) const {
@@ -1038,8 +850,7 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
                 arglist[3]._opaqueref = dat.window;
                 arglist[4]._uint = dat.val1;
                 arglist[5]._uint = dat.val2;
-            }
-            else {
+            } else {
                 glk_cancel_line_event((Window *)arglist[0]._opaqueref, nullptr);
             }
             break;
@@ -1308,8 +1119,7 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
                 arglist[1]._sint = dat.high_sec;
                 arglist[2]._uint = dat.low_sec;
                 arglist[3]._sint = dat.microsec;
-            }
-            else {
+            } else {
                 glk_current_time(nullptr);
             }
             break;

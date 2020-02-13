@@ -127,8 +127,8 @@ int sceneHandler30(ExCommand *cmd) {
 
 				cmd->_messageKind = 0;
 			}
-			break;
 		}
+		break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -143,6 +143,9 @@ int sceneHandler30(ExCommand *cmd) {
 
 		g_fp->_behaviorManager->updateBehaviors();
 
+		break;
+
+	default:
 		break;
 	}
 

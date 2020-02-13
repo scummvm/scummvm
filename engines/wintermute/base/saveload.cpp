@@ -159,31 +159,35 @@ void SaveLoad::afterLoadScript(void *script, void *data) {
 }
 
 Common::String SaveLoad::getSaveSlotFilename(int slot) {
+	Common::String filename;
 	BasePersistenceManager *pm = new BasePersistenceManager();
-	Common::String filename = pm->getFilenameForSlot(slot);
-	delete pm;
+	if (pm) {
+		filename = pm->getFilenameForSlot(slot);
+		delete pm;
+	}
 	debugC(kWintermuteDebugSaveGame, "getSaveSlotFileName(%d) = %s", slot, filename.c_str());
 	return filename;
 }
 
-bool SaveLoad::getSaveSlotDescription(int slot, char *buffer) {
-	buffer[0] = '\0';
-
+Common::String SaveLoad::getSaveSlotDescription(int slot) {
+	Common::String description;
 	Common::String filename = getSaveSlotFilename(slot);
 	BasePersistenceManager *pm = new BasePersistenceManager();
-	if (!pm) {
-		return false;
+	if ((pm->initLoad(filename))) {
+		description = pm->_savedDescription;
 	}
-
-	if (!(pm->initLoad(filename))) {
-		delete pm;
-		return false;
-	}
-
-	strcpy(buffer, pm->_savedDescription);
 	delete pm;
+	return description;
+}
 
-	return true;
+void SaveLoad::getSaveSlotTimestamp(int slot, TimeDate *time) {
+	memset(time, 0, sizeof(TimeDate));
+	Common::String filename = getSaveSlotFilename(slot);
+	BasePersistenceManager *pm = new BasePersistenceManager();
+	if ((pm->initLoad(filename))) {
+		*time = pm->getSavedTimestamp();
+	}
+	delete pm;
 }
 
 bool SaveLoad::isSaveSlotUsed(int slot) {

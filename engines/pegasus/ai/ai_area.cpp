@@ -197,6 +197,8 @@ void AIArea::setAIAreaToTime(const LowerClientSignature client, const LowerAreaS
 			setRightMovieTime(time);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -268,6 +270,8 @@ void AIArea::playAIAreaSequence(const LowerClientSignature, const LowerAreaSigna
 		_rightAreaMovie.stop();
 		vm->_cursor->hideUntilMoved();
 		setAIAreaToTime(_rightAreaOwner, kRightAreaSignature, _rightBiochipTime);
+		break;
+	default:
 		break;
 	}
 
@@ -454,6 +458,8 @@ void AIArea::activateHotspots() {
 			case kOpticalBiochip:
 				((OpticalChip *)currentBiochip)->activateOpticalHotspots();
 				break;
+			default:
+				break;
 			}
 	} else if (_middleAreaOwner == kInventorySignature) {
 		InventoryItem *currentItem = ((PegasusEngine *)g_engine)->getCurrentInventoryItem();
@@ -492,6 +498,8 @@ void AIArea::clickInHotspot(const Input &input, const Hotspot *hotspot) {
 					handled = true;
 				}
 				break;
+			default:
+				break;
 			}
 		}
 	} else if (_middleAreaOwner == kInventorySignature) {
@@ -504,6 +512,8 @@ void AIArea::clickInHotspot(const Input &input, const Hotspot *hotspot) {
 					((AirMask *)currentItem)->clickInAirMaskHotspot();
 					handled = true;
 				}
+				break;
+			default:
 				break;
 			}
 		}
@@ -569,6 +579,8 @@ void AIArea::checkMiddleArea() {
 			case kPegasusBiochip:
 				((PegasusChip *)currentBiochip)->setUpPegasusChip();
 				break;
+			default:
+				break;
 			}
 		} else {
 			switch (currentBiochip->getObjectID()) {
@@ -577,6 +589,8 @@ void AIArea::checkMiddleArea() {
 				break;
 			case kPegasusBiochip:
 				((PegasusChip *)currentBiochip)->setUpPegasusChipRude();
+				break;
+			default:
 				break;
 			}
 		}

@@ -1789,16 +1789,29 @@ void DreamWebEngine::showTime() {
 	int minutes = _vars._minuteCount;
 	int hours = _vars._hourCount;
 
-	showFrame(_charset1, 282+5, 21, 91*3+10 + seconds / 10, 0);
-	showFrame(_charset1, 282+9, 21, 91*3+10 + seconds % 10, 0);
+	if (getLanguage() == Common::RU_RUS) {
+		showFrame(_icons1, 282+5, 21, 32+10 + seconds / 10, 0);
+		showFrame(_icons1, 282+9, 21, 32+10 + seconds % 10, 0);
 
-	showFrame(_charset1, 270+5, 21, 91*3 + minutes / 10, 0);
-	showFrame(_charset1, 270+11, 21, 91*3 + minutes % 10, 0);
+		showFrame(_icons1, 270+5, 21, 32 + minutes / 10, 0);
+		showFrame(_icons1, 270+11, 21, 32 + minutes % 10, 0);
 
-	showFrame(_charset1, 256+5, 21, 91*3 + hours / 10, 0);
-	showFrame(_charset1, 256+11, 21, 91*3 + hours % 10, 0);
+		showFrame(_icons1, 256+5, 21, 32 + hours / 10, 0);
+		showFrame(_icons1, 256+11, 21, 32 + hours % 10, 0);
 
-	showFrame(_charset1, 267+5, 21, 91*3+20, 0);
+		showFrame(_icons1, 267+5, 21, 32+20, 0);
+	} else {
+		showFrame(_charset1, 282+5, 21, 91*3+10 + seconds / 10, 0);
+		showFrame(_charset1, 282+9, 21, 91*3+10 + seconds % 10, 0);
+
+		showFrame(_charset1, 270+5, 21, 91*3 + minutes / 10, 0);
+		showFrame(_charset1, 270+11, 21, 91*3 + minutes % 10, 0);
+
+		showFrame(_charset1, 256+5, 21, 91*3 + hours / 10, 0);
+		showFrame(_charset1, 256+11, 21, 91*3 + hours % 10, 0);
+
+		showFrame(_charset1, 267+5, 21, 91*3+20, 0);
+	}
 }
 
 void DreamWebEngine::watchCount() {
@@ -1806,7 +1819,10 @@ void DreamWebEngine::watchCount() {
 		return;
 	++_timerCount;
 	if (_timerCount == 9) {
-		showFrame(_charset1, 268+4, 21, 91*3+21, 0);
+		if (getLanguage() == Common::RU_RUS)
+			showFrame(_icons1, 268+4, 21, 53, 0);
+		else
+			showFrame(_charset1, 268+4, 21, 91*3+21, 0);
 		_watchDump = 1;
 	} else if (_timerCount == 18) {
 		_timerCount = 0;
@@ -1827,14 +1843,14 @@ void DreamWebEngine::watchCount() {
 }
 
 void DreamWebEngine::roomName() {
-	printMessage(88, 18, 53, 240, false);
+	printMessage(88, (getLanguage() == Common::RU_RUS ? 17 : 18), 53, 240, false);
 	uint16 textIndex = _roomNum;
 	if (textIndex >= 32)
 		textIndex -= 32;
 	_lineSpacing = 7;
 	uint8 maxWidth = (_vars._watchOn == 1) ? 120 : 160;
 	const uint8 *string = (const uint8 *)_roomDesc.getString(textIndex);
-	printDirect(string, 88, 25, maxWidth, false);
+	printDirect(string, 88, (getLanguage() == Common::RU_RUS ? 26 : 25), maxWidth, false);
 	_lineSpacing = 10;
 	useCharset1();
 }
@@ -1933,6 +1949,20 @@ void DreamWebEngine::doLook() {
 
 void DreamWebEngine::useCharset1() {
 	_currentCharset = &_charset1;
+}
+
+void DreamWebEngine::resetCharset() {
+	_charShift = 0;
+	useCharset1();
+}
+
+void DreamWebEngine::useCharsetIcons1() {
+	_currentCharset = &_icons1;
+	_charShift = 182;
+}
+
+void DreamWebEngine::useCharsetTempgraphics() {
+	_currentCharset = &_diaryGraphics;
 }
 
 void DreamWebEngine::useTempCharset(GraphicsFile *charset) {
@@ -2304,7 +2334,15 @@ void DreamWebEngine::describeOb() {
 	if (_foreignRelease && _objectType == kSetObjectType1)
 		y = 82;
 	_charShift = 91 + 91;
+
+	if (getLanguage() == Common::RU_RUS)
+		useCharsetIcons1();
+
 	printDirect(&obText, 33, &y, 241, 241 & 1);
+
+	if (getLanguage() == Common::RU_RUS)
+		resetCharset();
+
 	_charShift = 0;
 	y = 104;
 	if (_foreignRelease && _objectType == kSetObjectType1)

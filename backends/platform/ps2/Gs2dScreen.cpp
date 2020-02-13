@@ -309,7 +309,8 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 	_mouseScaleY = (_tvHeight << 8) / _height;
 	setMouseXy(_width / 2, _height / 2);
 	_mTraCol = 255;
-	_shakePos = 0;
+	_shakeXOffset = 0;
+	_shakeYOffset = 0;
 
 	_overlayFormat.bytesPerPixel = 2;
 
@@ -678,10 +679,13 @@ int16 Gs2dScreen::getOverlayHeight(void) {
 	return _height; // _videoMode.overlayHeight;
 }
 
-void Gs2dScreen::setShakePos(int shake) {
-	_shakePos = (shake * _mouseScaleY) >> 8;
-	_blitCoords[0].y = SCALE(_shakePos) + ORIGIN_Y;
-	_blitCoords[1].y = SCALE(_tvHeight + _shakePos) + ORIGIN_Y;
+void Gs2dScreen::setShakePos(int shakeXOffset, int shakeYOffset) {
+	_shakeXOffset = (shakeXOffset * _mouseScaleX) >> 8;
+	_shakeYOffset = (shakeYOffset * _mouseScaleY) >> 8;
+	_blitCoords[0].x = SCALE(_shakeXOffset) + ORIGIN_X;
+	_blitCoords[0].y = SCALE(_shakeYOffset) + ORIGIN_Y;
+	_blitCoords[1].x = SCALE(_tvWidth + _shakeXOffset) + ORIGIN_X;
+	_blitCoords[1].y = SCALE(_tvHeight + _shakeYOffset) + ORIGIN_Y;
 }
 
 void Gs2dScreen::copyPrintfOverlay(const uint8 *buf) {

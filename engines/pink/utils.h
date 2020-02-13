@@ -30,7 +30,7 @@ namespace Pink {
 template <typename T>
 class Array : public Common::Array<T>, public Object {
 public:
-	void deserialize(Archive &archive) {
+	void deserialize(Archive &archive) override {
 		uint size_ = archive.readWORD();
 		this->resize(size_);
 		for (uint i = 0; i < size_; ++i) {

@@ -245,6 +245,9 @@ int Input::updateInput() {
 	case kInputModeInventory:
 		updateInventoryInput();
 		break;
+
+	default:
+		break;
 	}
 
 	// when mode changes, then consider any input consumed
@@ -453,6 +456,9 @@ void Input::setMouseState(MouseTriState state) {
 
 	case MOUSE_ENABLED_SHOW:
 		CursorMan.showMouse(true);
+		break;
+
+	default:
 		break;
 	}
 }

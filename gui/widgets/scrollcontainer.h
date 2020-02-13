@@ -34,13 +34,14 @@ class ScrollContainerWidget: public Widget, public CommandSender {
 	int16 _scrolledX, _scrolledY;
 	uint16 _limitH;
 	uint32 _reflowCmd;
-	ThemeEngine::DialogBackground _backgroundType;
+	ThemeEngine::WidgetBackground _backgroundType;
+	Common::String _dialogName;
 
 	void recalc();
 
 public:
 	ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h, uint32 reflowCmd = 0);
-	ScrollContainerWidget(GuiObject *boss, const Common::String &name, uint32 reflowCmd = 0);
+	ScrollContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogName, uint32 reflowCmd = 0);
 	~ScrollContainerWidget() override;
 
 	void init();
@@ -51,11 +52,10 @@ public:
 
 	Common::Rect getClipRect() const override;
 
-	void setBackgroundType(ThemeEngine::DialogBackground backgroundType);
+	void setBackgroundType(ThemeEngine::WidgetBackground backgroundType);
 
 	void handleMouseWheel(int x, int y, int direction) override;
 
-protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
 	int16	getChildX() const override;
@@ -63,6 +63,7 @@ protected:
 	uint16	getWidth() const override;
 	uint16	getHeight() const override;
 
+protected:
 	void drawWidget() override;
 
 	Widget *findWidget(int x, int y) override;

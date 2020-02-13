@@ -550,6 +550,9 @@ int sceneHandler08(ExCommand *cmd) {
 
 			return res;
 		}
+		break;
+	default:
+		break;
 	}
 
 	return 0;

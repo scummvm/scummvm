@@ -148,7 +148,7 @@ bool StarTrekEngine::loadGame(int slot) {
 			Actor *a = &_actorList[i];
 			if (a->spriteDrawn) {
 				if (a->animType != 1)
-					a->animFile = loadFile(Common::String(a->animFilename) + ".anm");
+					a->animFile = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(a->animFilename + ".anm"));
 				_gfx->addSprite(&a->sprite);
 				a->sprite.setBitmap(loadAnimationFrame(a->bitmapFilename, a->scale));
 			}
@@ -237,16 +237,29 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 		ser.syncAsUint32LE(_roomFrameCounter);
 		ser.syncAsUint32LE(_frameIndex); // FIXME: redundant
 
+		byte filler = 0;
+
 		// Serialize the "actor" class
 		for (int i = 0; i < NUM_ACTORS; i++) {
 			Actor *a = &_actorList[i];
 			ser.syncAsUint16LE(a->spriteDrawn);
-			ser.syncBytes((byte *)a->animFilename, 16);
+			ser.syncString(a->animFilename);
+			if (a->bitmapFilename.size() < 15) {
+				filler = 0;
+				for (uint j = 0; j < 16 - a->animFilename.size() - 1; ++j)
+					ser.syncAsByte(filler);	// make sure that exactly 16 bytes are synced
+			}
+
 			ser.syncAsUint16LE(a->animType);
 
 			a->sprite.saveLoadWithSerializer(ser);
 
-			ser.syncBytes((byte *)a->bitmapFilename, 10);
+			ser.syncString(a->bitmapFilename);
+			if (a->bitmapFilename.size() < 9) {
+				filler = 0;
+				for (uint j = 0; j < 10 - a->bitmapFilename.size() - 1; ++j)
+					ser.syncAsByte(filler);	// make sure that exactly 10 bytes are synced
+			}
 			a->scale.saveLoadWithSerializer(ser);
 			// Can't save "animFile" (will be reloaded)
 			ser.syncAsUint16LE(a->numAnimFrames);
@@ -258,7 +271,12 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			ser.syncAsUint16LE(a->field62);
 			ser.syncAsUint16LE(a->triggerActionWhenAnimFinished);
 			ser.syncAsUint16LE(a->finishedAnimActionParam);
-			ser.syncBytes((byte *)a->animationString2, 8);
+			ser.syncString(a->animationString2);
+			if (a->animationString2.size() < 7) {
+				filler = 0;
+				for (uint j = 0; j < 8 - a->animationString2.size() - 1; ++j)
+					ser.syncAsByte(filler);	// make sure that exactly 8 bytes are synced
+			}
 			ser.syncAsUint16LE(a->field70);
 			ser.syncAsUint16LE(a->field72);
 			ser.syncAsUint16LE(a->field74);
@@ -276,13 +294,19 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			ser.syncAsByte(a->direction);
 			ser.syncAsUint16LE(a->field94);
 			ser.syncAsUint16LE(a->field96);
-			ser.syncBytes((byte *)a->animationString, 10);
+			ser.syncString(a->animationString);
+			if (a->animationString.size() < 9) {
+				filler = 0;
+				for (uint j = 0; j < 10 - a->animationString.size() - 1; ++j)
+					ser.syncAsByte(filler);	// make sure that exactly 10 bytes are synced
+			}
 			ser.syncAsUint16LE(a->fielda2);
 			ser.syncAsUint16LE(a->fielda4);
 			ser.syncAsUint16LE(a->fielda6);
 		}
 
-		ser.syncString(_mapFilename);
+		Common::String unused = getScreenName();
+		ser.syncString(unused);
 
 		// Away mission struct
 		for (int i = 0; i < 8; i++)
@@ -323,6 +347,9 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 		} else if (_missionName == "SINS") {
 			_awayMission.sins.saveLoadWithSerializer(ser);
 			_room->_roomVar.sins.saveLoadWithSerializer(ser);
+		} else if (_missionName == "VENG") {
+			_awayMission.veng.saveLoadWithSerializer(ser);
+			_room->_roomVar.veng.saveLoadWithSerializer(ser);
 		}
 
 		// The action queue

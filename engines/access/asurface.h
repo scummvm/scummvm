@@ -64,7 +64,7 @@ public:
 public:
 	BaseSurface();
 
-	virtual ~BaseSurface();
+	~BaseSurface() override;
 
 	void clearBuffer();
 
@@ -125,7 +125,7 @@ protected:
 	 * Override the addDirtyRect from Graphics::Screen, since for standard
 	 * surfaces we don't need dirty rects to be tracked
 	 */
-	virtual void addDirtyRect(const Common::Rect &r) {}
+	void addDirtyRect(const Common::Rect &r) override {}
 public:
 	ASurface() : BaseSurface() {}
 };
@@ -133,7 +133,7 @@ public:
 class SpriteFrame : public ASurface {
 public:
 	SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize);
-	~SpriteFrame();
+	~SpriteFrame() override;
 };
 
 class SpriteResource {

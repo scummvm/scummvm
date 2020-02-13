@@ -99,6 +99,8 @@ bool MoviePlayer::load(const char *name) {
 	case kVideoDecoderMP2:
 		filename = Common::String::format("%s.mp2", name);
 		break;
+	default:
+		break;
 	}
 
 	// Need to switch to true color for PSX/MP2 videos
@@ -242,6 +244,8 @@ void MoviePlayer::closeTextObject(uint32 index, Graphics::Surface *screen, uint1
 		break; \
 	case 4: \
 		WRITE_UINT32(dst, (c)); \
+		break; \
+	default: \
 		break; \
 	}
 

@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/serializer.h"
 #include "engines/engine.h"
+#include "glk/debugger.h"
 #include "glk/glk_types.h"
 #include "glk/streams.h"
 #include "glk/pc_speaker.h"
@@ -79,14 +80,15 @@ protected:
 	int _loadSaveSlot;
 	Common::File _gameFile;
 	PCSpeaker *_pcSpeaker;
+	bool _quitFlag;
 
 	// Engine APIs
-	virtual Common::Error run();
+	Common::Error run() override;
 
 	/**
 	  * Returns true whether a given feature is supported by the engine
 	  */
-	virtual bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Setup the video mode
@@ -99,6 +101,13 @@ protected:
 	virtual Screen *createScreen();
 
 	/**
+	 * Creates a debugger instance
+	 */
+	virtual Debugger *createDebugger() {
+		return new Debugger();
+	}
+
+	/**
 	 * Main game loop for the individual interpreters
 	 */
 	virtual void runGame() = 0;
@@ -106,6 +115,7 @@ public:
 	Blorb *_blorb;
 	Clipboard *_clipboard;
 	Conf *_conf;
+	Debugger *_debugger;
 	Events *_events;
 	Pictures *_pictures;
 	Screen *_screen;
@@ -122,31 +132,21 @@ public:
 	void(*gli_unregister_arr)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock);
 public:
 	GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc);
-	virtual ~GlkEngine();
+	~GlkEngine() override;
 
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently() override {
 		return true;
 	}
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently() override {
 		return true;
 	}
-
-	/**
-	 * Returns the bitset of game features
-	 */
-	uint32 getFeatures() const;
-
-	/**
-	 * Returns whether the game is a demo
-	 */
-	bool isDemo() const;
 
 	/**
 	 * Returns the language
@@ -157,6 +157,11 @@ public:
 	 * Returns the running interpreter type
 	 */
 	virtual InterpreterType getInterpreterType() const = 0;
+
+	/**
+	 * Returns the game's Id
+	 */
+	const Common::String &getGameID() const { return _gameDescription._gameId; }
 
 	/**
 	 * Returns the game's md5
@@ -200,27 +205,58 @@ public:
 	/**
 	 * Load a savegame from a given slot
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save the game to a given slot
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
-	 * Load a savegame from the passed file
+	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error loadGameData(strid_t file) = 0;
+	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) = 0;
 
 	/**
-	 * Save the game to the passed file
+	 * Save the game. The passed write stream represents access to the UMem chunk
+	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) = 0;
+	virtual Common::Error writeGameData(Common::WriteStream *ws) = 0;
+
+	/**
+	 * Updates sound settings
+	 */
+	void syncSoundSettings() override;
 
 	/**
 	 * Generate a beep
 	 */
 	void beep();
+
+	/**
+	 * Get a random number
+	 */
+	uint getRandomNumber(uint max) { return _random.getRandomNumber(max); }
+
+	/**
+	 * Set a random number seed
+	 */
+	void setRandomNumberSeed(uint seed) { _random.setSeed(seed); }
+
+	/**
+	 * Flags to quit the game
+	 */
+	void quitGame() {
+		_quitFlag = true;
+		Engine::quitGame();
+	}
+
+	/**
+	 * Returns true if the game should be quit
+	 */
+	bool shouldQuit() const {
+		return _quitFlag || Engine::shouldQuit();
+	}
 };
 
 extern GlkEngine *g_vm;

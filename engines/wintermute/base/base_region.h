@@ -44,22 +44,22 @@ public:
 	bool _active;
 	int32 _editorSelectedPoint;
 	BaseRegion(BaseGame *inGame);
-	virtual ~BaseRegion();
+	~BaseRegion() override;
 	bool pointInRegion(int x, int y);
 	bool createRegion();
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	Rect32 _rect;
 	BaseArray<BasePoint *> _points;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) { return saveAsText(buffer, indent, nullptr); }
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override { return saveAsText(buffer, indent, nullptr); }
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride);
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
-	virtual Common::String debuggerToString() const override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
+	Common::String debuggerToString() const override;
 
 private:
 	float _lastMimicScale;

@@ -167,7 +167,7 @@ end;
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
-Name: portuguese; MessagesFile: compiler:Languages\BrazilianPortuguese.isl
+Name: brazilian; MessagesFile: compiler:Languages\BrazilianPortuguese.isl
 Name: catalan; MessagesFile: compiler:Languages\Catalan.isl
 Name: czech; MessagesFile: compiler:Languages\Czech.isl
 Name: danish; MessagesFile: compiler:Languages\Danish.isl
@@ -186,7 +186,7 @@ Name: dutch; MessagesFile: compiler:Languages\Dutch.isl
 Name: finnish; MessagesFile: compiler:Languages\Finnish.isl
 Name: galician; MessagesFile: compiler:Languages\Galician.isl
 Name: greek; MessagesFile: compiler:Languages\Greek.isl
-Name: polish; MessagesFile: compiler:Languages\Polish.isl
+Name: portuguese; MessagesFile: compiler:Languages\Portuguese.isl
 Name: ukrainian; MessagesFile: compiler:Languages\Ukrainian.isl
 Name: hebrew; MessagesFile: compiler:Languages\Hebrew.isl
 

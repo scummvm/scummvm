@@ -23,6 +23,8 @@
 #ifndef PLATFORM_SDL_WIN32_WRAPPER_H
 #define PLATFORM_SDL_WIN32_WRAPPER_H
 
+#include "common/scummsys.h"
+
 HRESULT SHGetFolderPathFunc(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPSTR pszPath);
 
 // Helper functions

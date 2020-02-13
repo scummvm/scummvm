@@ -181,7 +181,6 @@ int sceneHandler35(ExCommand *cmd) {
 			g_fp->playSound(SND_35_012, 1);
 
 			g_vars->scene35_flowCounter = 0;
-			break;
 		}
 		break;
 
@@ -224,8 +223,8 @@ int sceneHandler35(ExCommand *cmd) {
 					}
 				}
 			}
-			break;
 		}
+		break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -257,6 +256,9 @@ int sceneHandler35(ExCommand *cmd) {
 		g_fp->_behaviorManager->updateBehaviors();
 		g_fp->startSceneTrack();
 
+		break;
+
+	default:
 		break;
 	}
 

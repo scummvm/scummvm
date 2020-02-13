@@ -58,7 +58,7 @@ void Animation::update(Drawable *drawable, long currentTime) {
 	}
 
 	// Activate the interpolator if present
-	if (_interpolator.get() != NULL) {
+	if (_interpolator.get() != nullptr) {
 		interpolation = _interpolator->interpolate(interpolation);
 	}
 

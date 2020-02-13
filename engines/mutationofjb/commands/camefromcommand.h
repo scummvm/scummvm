@@ -31,14 +31,14 @@ namespace MutationOfJB {
 class CameFromCommandParser : public ConditionalCommandParser {
 public:
 	CameFromCommandParser() : ConditionalCommandParser(true) {}
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class CameFromCommand : public ConditionalCommand {
 public:
 	CameFromCommand(uint8 sceneId) : _sceneId(sceneId) {}
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	uint8 _sceneId;
 };
@@ -46,4 +46,3 @@ private:
 }
 
 #endif
-

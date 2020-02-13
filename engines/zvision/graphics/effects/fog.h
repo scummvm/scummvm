@@ -34,11 +34,11 @@ class FogFx : public GraphicsEffect {
 public:
 
 	FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds);
-	~FogFx();
+	~FogFx() override;
 
-	const Graphics::Surface *draw(const Graphics::Surface &srcSubRect);
+	const Graphics::Surface *draw(const Graphics::Surface &srcSubRect) override;
 
-	void update();
+	void update() override;
 
 private:
 	EffectMap *_map;

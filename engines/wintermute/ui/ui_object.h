@@ -42,30 +42,30 @@ public:
 
 	bool getTotalOffset(int *offsetX, int *offsetY);
 	bool focus();
-	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
+	bool handleMouse(TMouseEvent event, TMouseButton button) override;
 	bool isFocused();
 
 	DECLARE_PERSISTENT(UIObject, BaseObject)
 	UIObject *_parent;
-	virtual bool display() override { return display(0, 0); }
+	bool display() override { return display(0, 0); }
 	virtual bool display(int offsetX) { return display(offsetX, 0); }
 	virtual bool display(int offsetX, int offsetY);
 	virtual void correctSize();
 	void setText(const char *text);
 
 	UIObject(BaseGame *inGame = nullptr);
-	virtual ~UIObject();
+	~UIObject() override;
 	void setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam);
 	BaseScriptHolder *getListener() const;
 
 	UIObject *_focusedWidget;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 	TUIObjectType _type;
 
 	int32 getWidth() const;

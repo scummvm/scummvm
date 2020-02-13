@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on Glulxe intrepreter version 0.5.4 */
+
 #ifndef GLK_GLULXE
 #define GLK_GLULXE
 
@@ -44,14 +46,16 @@ private:
 	 * \defgroup vm fields
 	 * @{
 	 */
+
 	bool vm_exited_cleanly;
 	uint gamefile_start, gamefile_len;
+	UnicharHandler glkio_unichar_han_ptr;
 	char *init_err, *init_err2;
-	UnicharHandler stream_unichar_handler, glkio_unichar_han_ptr;
 	CharHandler stream_char_handler;
 
 	byte *memmap;
 	byte *stack;
+	UnicharHandler stream_unichar_handler;
 
 	uint ramstart;
 	uint endgamefile;
@@ -82,7 +86,6 @@ private:
 	 * to autorestore an initial game state, if the library has that capability. (Currently, only iosglk does.)
 	 */
 	void(*library_autorestore_hook)(void);
-	Common::RandomSource _random;
 
 	/**@}*/
 
@@ -398,24 +401,25 @@ public:
 	/**
 	 * Run the game
 	 */
-	void runGame();
+	void runGame() override;
 
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override {
+	InterpreterType getInterpreterType() const override {
 		return INTERPRETER_GLULXE;
 	}
 
 	/**
-	 * Load a savegame from the passed stream
+	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error loadGameData(strid_t str) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
-	 * Save the game to the passed stream
+	 * Save the game. The passed write stream represents access to the UMem chunk
+	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error saveGameData(strid_t str, const Common::String &desc) override;
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 
 	/**
 	 * \defgroup Main access methods
@@ -425,18 +429,12 @@ public:
 	/**
 	 * Display an error in the error window, and then exit.
 	 */
-	void fatal_error_handler(const char *str, const char *arg, bool useVal, int val);
+	void NORETURN_PRE fatal_error_handler(const char *str, const char *arg, bool useVal, int val);
 
 	/**
 	 * Display a warning in the error window, and then continue.
 	 */
 	void nonfatal_warning_handler(const char *str, const char *arg, bool useVal, int val);
-#define fatal_error(s)  (fatal_error_handler((s), nullptr, false, 0))
-#define fatal_error_2(s1, s2)  (fatal_error_handler((s1), (s2), false, 0))
-#define fatal_error_i(s, v)  (fatal_error_handler((s), nullptr, true, (v)))
-#define nonfatal_warning(s) (nonfatal_warning_handler((s), nullptr, false, 0))
-#define nonfatal_warning_2(s1, s2) (nonfatal_warning_handler((s1), (s2), false, 0))
-#define nonfatal_warning_i(s, v) (nonfatal_warning_handler((s), nullptr, true, (v)))
 
 	/**
 	 * \defgroup Files access methods
@@ -986,6 +984,13 @@ public:
 };
 
 extern Glulxe *g_vm;
+
+#define fatal_error(s)  (fatal_error_handler((s), nullptr, false, 0))
+#define fatal_error_2(s1, s2)  (fatal_error_handler((s1), (s2), false, 0))
+#define fatal_error_i(s, v)  (fatal_error_handler((s), nullptr, true, (v)))
+#define nonfatal_warning(s) (nonfatal_warning_handler((s), nullptr, false, 0))
+#define nonfatal_warning_2(s1, s2) (nonfatal_warning_handler((s1), (s2), false, 0))
+#define nonfatal_warning_i(s, v) (nonfatal_warning_handler((s), nullptr, true, (v)))
 
 } // End of namespace Glulxe
 } // End of namespace Glk

@@ -58,20 +58,20 @@ Common::String Console::toAscii(const Common::String &str) {
 	return ascii;
 }
 
-Common::String Console::toAppleWord(const Common::String &str) {
-	Common::String apple(str);
+Common::String Console::toNative(const Common::String &str) {
+	Common::String native(str);
 
-	if (apple.size() > IDI_WORD_SIZE)
-		apple.erase(IDI_WORD_SIZE);
-	apple.toUppercase();
+	if (native.size() > IDI_WORD_SIZE)
+		native.erase(IDI_WORD_SIZE);
+	native.toUppercase();
 
-	for (uint i = 0; i < apple.size(); ++i)
-		apple.setChar(APPLECHAR(apple[i]), i);
+	for (uint i = 0; i < native.size(); ++i)
+		native.setChar(_engine->_display->asciiToNative(native[i]), i);
 
-	while (apple.size() < IDI_WORD_SIZE)
-		apple += APPLECHAR(' ');
+	while (native.size() < IDI_WORD_SIZE)
+		native += _engine->_display->asciiToNative(' ');
 
-	return apple;
+	return native;
 }
 
 bool Console::Cmd_Verbs(int argc, const char **argv) {
@@ -182,8 +182,8 @@ void Console::prepareGame() {
 	_engine->_graphics->clearScreen();
 	_engine->loadRoom(_engine->_state.room);
 	_engine->showRoom();
-	_engine->_display->updateTextScreen();
-	_engine->_display->updateHiResScreen();
+	_engine->_display->renderText();
+	_engine->_display->renderGraphics();
 }
 
 bool Console::Cmd_Region(int argc, const char **argv) {
@@ -270,7 +270,7 @@ bool Console::Cmd_GiveItem(int argc, const char **argv) {
 	if (*end != 0) {
 		Common::Array<Item *> matches;
 
-		Common::String name = toAppleWord(argv[1]);
+		Common::String name = toNative(argv[1]);
 
 		if (!_engine->_nouns.contains(name)) {
 			debugPrintf("Item '%s' not found\n", argv[1]);
@@ -371,6 +371,9 @@ void Console::printItem(const Item &item) {
 		break;
 	case IDI_ITEM_DOESNT_MOVE:
 		state = "FIXED";
+		break;
+	default:
+		state = "UNKNOWN";
 		break;
 	}
 

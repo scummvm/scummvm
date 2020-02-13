@@ -60,15 +60,16 @@ class RenderTicket;
 class BaseRenderOSystem : public BaseRenderer {
 public:
 	BaseRenderOSystem(BaseGame *inGame);
-	~BaseRenderOSystem();
+	~BaseRenderOSystem() override;
 
 	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
 
-	Common::String getName() const;
+	Common::String getName() const override;
 
 	bool initRenderer(int width, int height, bool windowed) override;
 	bool flip() override;
-	virtual bool indicatorFlip();
+	bool indicatorFlip() override;
+	bool forcedFlip() override;
 	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
 	Graphics::PixelFormat getPixelFormat() const override;
 	void fade(uint16 alpha) override;
@@ -77,6 +78,8 @@ public:
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 
 	BaseImage *takeScreenshot() override;
+	void onWindowChange() override;
+	void setWindowed(bool windowed) override;
 
 	void invalidateTicket(RenderTicket *renderTicket);
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
@@ -107,9 +110,9 @@ public:
 	float getScaleRatioY() const override {
 		return _ratioY;
 	}
-	virtual bool startSpriteBatch() override;
-	virtual bool endSpriteBatch() override;
-	void endSaveLoad();
+	bool startSpriteBatch() override;
+	bool endSpriteBatch() override;
+	void endSaveLoad() override;
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct &transform);
 	BaseSurface *createSurface() override;
 private:

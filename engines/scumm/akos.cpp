@@ -1525,6 +1525,8 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			if (curpos != end)
 				curpos += (code & 0x8000) ? 2 : 1;
 			break;
+		default:
+			break;
 		}
 
 		code = aksq[curpos];

@@ -32,14 +32,14 @@ namespace Toon {
 class CharacterFlux : public Character {
 public:
 	CharacterFlux(ToonEngine *vm);
-	virtual ~CharacterFlux();
+	~CharacterFlux() override;
 
-	void setPosition(int16 x, int16 y);
-	void playStandingAnim();
-	void playWalkAnim(int32 start, int32 end);
-	void update(int32 timeIncrement);
-	int32 getRandomIdleAnim();
-	void setVisible(bool visible);
+	void setPosition(int16 x, int16 y) override;
+	void playStandingAnim() override;
+	void playWalkAnim(int32 start, int32 end) override;
+	void update(int32 timeIncrement) override;
+	int32 getRandomIdleAnim() override;
+	void setVisible(bool visible) override;
 	static int32 fixFacingForAnimation(int32 originalFacing, int32 animationId);
 };
 

@@ -63,30 +63,30 @@ protected:
 	/**
 	 * Display the talk interface window
 	 */
-	virtual void talkInterface(const byte *&str);
+	void talkInterface(const byte *&str) override;
 
 	/**
 	 * Pause when displaying a talk dialog on-screen
 	 */
-	virtual void talkWait(const byte *&str);
+	void talkWait(const byte *&str) override;
 
 	/**
 	 * Called when the active speaker is switched
 	 */
-	virtual void switchSpeaker();
+	void switchSpeaker() override;
 
 	/**
 	 * Called when a character being spoken to has no talk options to display
 	 */
-	virtual void nothingToSay();
+	void nothingToSay() override;
 
 	/**
 	 * Show the talk display
 	 */
-	virtual void showTalk();
+	void showTalk() override;
 public:
 	ScalpelTalk(SherlockEngine *vm);
-	virtual ~ScalpelTalk() {}
+	~ScalpelTalk() override {}
 
 	Common::String _fixedTextWindowExit;
 	Common::String _fixedTextWindowUp;
@@ -100,7 +100,7 @@ public:
 	 * Opens the talk file 'talk.tlk' and searches the index for the specified
 	 * conversation. If found, the data for that conversation is loaded
 	 */
-	virtual void loadTalkFile(const Common::String &filename);
+	void loadTalkFile(const Common::String &filename) override;
 
 	/**
 	 * Called whenever a conversation or item script needs to be run. For standard conversations,
@@ -110,29 +110,29 @@ public:
 	 *	In their case, the conversation display is simply suppressed, and control is passed on to
 	 *	doScript to implement whatever action is required.
 	 */
-	virtual void talkTo(const Common::String filename);
+	void talkTo(const Common::String filename) override;
 
 	/**
 	 * When the talk window has been displayed, waits a period of time proportional to
 	 * the amount of text that's been displayed
 	 */
-	virtual int waitForMore(int delay);
+	int waitForMore(int delay) override;
 
 	/**
 	 * Draws the interface for conversation display
 	 */
-	void drawInterface();
+	void drawInterface() override;
 
 	/**
 	 * Display a list of statements in a window at the bottom of the screen that the
 	 * player can select from.
 	 */
-	bool displayTalk(bool slamIt);
+	bool displayTalk(bool slamIt) override;
 
 	/**
 	 * Prints a single conversation option in the interface window
 	 */
-	int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt);
+	int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) override;
 
 	/**
 	 * Trigger to play a 3DO talk dialog movie
@@ -147,23 +147,23 @@ public:
 	/**
 	 * Push the details of a passed object onto the saved sequences stack
 	 */
-	virtual void pushSequenceEntry(Object *obj);
+	void pushSequenceEntry(Object *obj) override;
 
 	/**
 	 * Pulls a background object sequence from the sequence stack and restore's the
 	 * object's sequence
 	 */
-	virtual void pullSequence(int slot = -1);
+	void pullSequence(int slot = -1) override;
 
 	/**
 	 * Returns true if the script stack is empty
 	 */
-	virtual bool isSequencesEmpty() const { return _sequenceStack.empty(); }
+	bool isSequencesEmpty() const override { return _sequenceStack.empty(); }
 
 	/**
 	 * Clears the stack of pending object sequences associated with speakers in the scene
 	 */
-	virtual void clearSequences();
+	void clearSequences() override;
 };
 
 } // End of namespace Scalpel

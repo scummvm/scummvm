@@ -23,151 +23,116 @@
 #ifndef DIRECTOR_CAST_H
 #define DIRECTOR_CAST_H
 
-#include "common/rect.h"
-#include "common/substream.h"
 #include "director/archive.h"
-#include "graphics/surface.h"
+#include "director/types.h"
+
+namespace Graphics {
+struct Surface;
+}
+
+namespace Common {
+class SeekableReadStream;
+class ReadStreamEndian;
+}
 
 namespace Director {
 
 class Stxt;
 class CachedMacText;
 
-enum CastType {
-	kCastTypeNull = 0,
-	kCastBitmap = 1,
-	kCastFilmLoop = 2,
-	kCastText = 3,
-	kCastPalette = 4,
-	kCastPicture = 5,
-	kCastSound = 6,
-	kCastButton = 7,
-	kCastShape = 8,
-	kCastMovie = 9,
-	kCastDigitalVideo = 10,
-	kCastLingoScript = 11,
-	kCastRTE = 12
-};
-
 class Cast {
 public:
-	CastType type;
-	Common::Rect initialRect;
-	Common::Rect boundingRect;
-	Common::Array<Resource> children;
+	Cast();
+	virtual ~Cast();
 
-	const Graphics::Surface *surface;
+	CastType _type;
+	Common::Rect _initialRect;
+	Common::Rect _boundingRect;
+	Common::Array<Resource> _children;
 
-	byte modified;
+	const Graphics::Surface *_surface;
+
+	bool _modified;
 };
 
 class BitmapCast : public Cast {
 public:
-	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version = 2);
+	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
 
-	uint16 regX;
-	uint16 regY;
-	uint8 flags;
-	uint16 someFlaggyThing;
-	uint16 unk1, unk2;
+	uint16 _pitch;
+	uint16 _regX;
+	uint16 _regY;
+	uint8 _flags;
+	uint16 _bytes;
+	uint16 _clut;
 
-	uint16 bitsPerPixel;
+	uint16 _bitsPerPixel;
 
-	uint32 tag;
-};
-
-enum ShapeType {
-	kShapeRectangle,
-	kShapeRoundRect,
-	kShapeOval,
-	kShapeLine
+	uint32 _tag;
 };
 
 class ShapeCast : public Cast {
 public:
-	ShapeCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+	ShapeCast(Common::ReadStreamEndian &stream, uint16 version);
 
-	ShapeType shapeType;
-	uint16 pattern;
-	byte fgCol;
-	byte bgCol;
-	byte fillType;
-	byte lineThickness;
-	byte lineDirection;
-};
-
-enum TextType {
-	kTextTypeAdjustToFit,
-	kTextTypeScrolling,
-	kTextTypeFixed
-};
-
-enum TextAlignType {
-	kTextAlignRight = -1,
-	kTextAlignLeft,
-	kTextAlignCenter
-};
-
-enum TextFlag {
-	kTextFlagEditable,
-	kTextFlagAutoTab,
-	kTextFlagDoNotWrap
-};
-
-enum SizeType {
-	kSizeNone,
-	kSizeSmallest,
-	kSizeSmall,
-	kSizeMedium,
-	kSizeLarge,
-	kSizeLargest
+	ShapeType _shapeType;
+	uint16 _pattern;
+	byte _fgCol;
+	byte _bgCol;
+	byte _fillType;
+	byte _lineThickness;
+	byte _lineDirection;
+	InkType _ink;
 };
 
 class TextCast : public Cast {
 public:
-	TextCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+	TextCast(Common::ReadStreamEndian &stream, uint16 version);
 
-	SizeType borderSize;
-	SizeType gutterSize;
-	SizeType boxShadow;
+	void setText(const char *text);
 
-	byte flags1;
-	uint32 fontId;
-	uint16 fontSize;
-	TextType textType;
-	TextAlignType textAlign;
-	SizeType textShadow;
-	byte textSlant;
-	Common::Array<TextFlag> textFlags;
-	uint16 palinfo1, palinfo2, palinfo3;
+	SizeType _borderSize;
+	SizeType _gutterSize;
+	SizeType _boxShadow;
+
+	byte _flags;
+	uint32 _fontId;
+	uint16 _fontSize;
+	TextType _textType;
+	TextAlignType _textAlign;
+	SizeType _textShadow;
+	byte _textSlant;
+	byte _textFlags;
+	uint16 _palinfo1, _palinfo2, _palinfo3;
 
 	Common::String _ftext;
+	Common::String _ptext;
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte* text);
-	CachedMacText *cachedMacText;
-};
-
-enum ButtonType {
-	kTypeButton,
-	kTypeCheckBox,
-	kTypeRadio
+	CachedMacText *_cachedMacText;
 };
 
 class ButtonCast : public TextCast {
 public:
-	ButtonCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+	ButtonCast(Common::ReadStreamEndian &stream, uint16 version);
 
-	ButtonType buttonType;
+	ButtonType _buttonType;
 };
 
 class ScriptCast : public Cast {
 public:
-	ScriptCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+	ScriptCast(Common::ReadStreamEndian &stream, uint16 version);
 
-	uint32 id;
+	uint32 _id;
+	ScriptType _scriptType;
 };
 
+class RTECast : public TextCast {
+public:
+	RTECast(Common::ReadStreamEndian &stream, uint16 version);
 
+	void loadChunks();
+};
 
 struct CastInfo {
 	Common::String script;

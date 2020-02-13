@@ -44,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"study.svl", 0, "281efa3f33f6712c0f641a605f4d40fd", 2511090},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"toon", "",
@@ -54,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"study.svl", 0, "df056b94ea83f1ed92a539cf636053ab", 2542668},
 			AD_LISTEND
 		},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"toon", "",
@@ -64,7 +64,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"study.svl", 0, "72fe96a9e10967d3138e918295babc42", 2910283},
 			AD_LISTEND
 		},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"toon", "",
@@ -74,7 +74,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"study.svl", 0, "b6b1ee2d9d94d53d305856039ab7bde7", 2634620},
 			AD_LISTEND
 		},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"toon", "",
@@ -83,7 +83,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"arcaddbl.svl", 0, "1d1b96e317e03ffd3874a8ebe59556f3", 6246232},
 			{"study.svl", 0, "d4aff126ee27be3c3d25e2996369d7cb", 2324368},
 		},
-		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"toon", "",
@@ -93,7 +93,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"generic.svl", 0, "5eb99850ada22f0b8cf6392262d4dd07", 9404599},
 			AD_LISTEND
 		},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_DEMO, GUIO0()
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_DEMO, GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"toon", "",
@@ -102,7 +102,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"generic.svl", 0, "5c42724bb93b360dca7044d6b7ef26e5", 7739319},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO0()
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO1(GUIO_NOMIDI)
 	},
 	{
 		// English 2-CD "Sold out" release
@@ -112,7 +112,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"generic.svl", 0, "331eead1d20af7ee809a9e2f35b8362f", 6945180},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
 
 	AD_TABLE_END_MARKER
@@ -137,7 +137,6 @@ static const char * const directoryGlobs[] = {
 class ToonMetaEngine : public AdvancedMetaEngine {
 public:
 	ToonMetaEngine() : AdvancedMetaEngine(Toon::gameDescriptions, sizeof(ADGameDescription), toonGames) {
-		_singleId = "toon";
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -146,20 +145,24 @@ public:
 		return detectGameFilebased(allFiles, fslist, Toon::fileBasedFallback);
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "toon";
+	}
+
+	const char *getName() const override {
 		return "Toonstruck";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Toonstruck (C) 1996 Virgin Interactive";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual SaveStateList listSaves(const char *target) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	int getMaximumSaveSlot() const override;
+	SaveStateList listSaves(const char *target) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 bool ToonMetaEngine::hasFeature(MetaEngineFeature f) const {

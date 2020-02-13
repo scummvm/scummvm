@@ -93,23 +93,23 @@ void Room::sins0Tick1() {
 }
 
 void Room::sins0LookAnywhere() {
-	showText(TX_SIN0N009);
+	showDescription(9, true);
 }
 
 void Room::sins0LookAtOpenDoor() {
-	showText(TX_SIN0N005);
+	showDescription(5, true);
 }
 
 void Room::sins0LookAtClosedDoor() {
-	showText(TX_SIN0N008);
+	showDescription(8, true);
 }
 
 void Room::sins0TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_SIN0_009);
+	showText(TX_SPEAKER_SPOCK, 9, true);
 }
 
 void Room::sins0TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_SIN0_011);
+	showText(TX_SPEAKER_MCCOY, 11, true);
 }
 
 void Room::sins0TalkToRedshirt() {
@@ -118,16 +118,16 @@ void Room::sins0TalkToRedshirt() {
 	// comments on how the small moon could have an atmosphere. This is more interesting
 	// and relevant, so that implementation is used instead.
 	if (false)
-		showText(TX_SPEAKER_MOSHER, TX_SIN0_024);
+		showText(TX_SPEAKER_MOSHER, 24, true);
 	else {
-		showText(TX_SPEAKER_MOSHER, TX_SIN0_026);
-		showText(TX_SPEAKER_SPOCK,  TX_SIN0_022);
-		showText(TX_SPEAKER_KIRK,   TX_SIN0_006);
+		showText(TX_SPEAKER_MOSHER, 26, true);
+		showText(TX_SPEAKER_SPOCK,  22, true);
+		showText(TX_SPEAKER_KIRK,   6, true);
 	}
 }
 
 void Room::sins0LookAtGround() {
-	showText(TX_SIN0N006);
+	showDescription(6, true);
 }
 
 void Room::sins0GetRock() {
@@ -139,82 +139,82 @@ void Room::sins0GetRock() {
 void Room::sins0PickedUpRock() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_SIN0N010);
+	showDescription(10, true);
 	giveItem(OBJECT_IS8ROCKS);
 }
 
 void Room::sins0UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_SIN0_018);
+	spockScan(DIR_S, 18, false, true);
 }
 
 void Room::sins0UseSTricorderOnGround() {
-	spockScan(DIR_S, TX_SIN0_017);
+	spockScan(DIR_S, 17, false, true);
 	_awayMission->sins.gatheredClues |= 1;
 }
 
 void Room::sins0UseSTricorderOnPlanet() {
-	spockScan(DIR_S, TX_SIN0_016);
+	spockScan(DIR_S, 16, false, true);
 }
 
 void Room::sins0Tick40() {
 	if (!_awayMission->sins.enteredRoom0FirstTime) {
 		_awayMission->disableInput = false;
-		showText(TX_SPEAKER_UHURA, TX_SIN0U082);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_003);
-		showText(TX_SPEAKER_SCOTT, TX_SIN0_S48);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_007);
-		showText(TX_SPEAKER_SCOTT, TX_SIN0_S50);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_005);
-		showText(TX_SPEAKER_SCOTT, TX_SIN0_S49);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_001);
+		showText(TX_SPEAKER_UHURA, 82, true);
+		showText(TX_SPEAKER_KIRK,  3, true);
+		showText(TX_SPEAKER_SCOTT, 48 + SCOTTY_MESSAGE_OFFSET);
+		showText(TX_SPEAKER_KIRK,  7, true);
+		showText(TX_SPEAKER_SCOTT, 50 + SCOTTY_MESSAGE_OFFSET);
+		showText(TX_SPEAKER_KIRK,  5, true);
+		showText(TX_SPEAKER_SCOTT, 49 + SCOTTY_MESSAGE_OFFSET);
+		showText(TX_SPEAKER_KIRK,  1, true);
 		_awayMission->sins.enteredRoom0FirstTime = true;
 	}
 }
 
 void Room::sins0LookAtStatue() {
-	showText(TX_SIN0N011);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN0_015);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN0_021);
-	showText(TX_SPEAKER_MOSHER, TX_SIN0_027);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN0_014);
+	showDescription(11, true);
+	showText(TX_SPEAKER_MCCOY,  15, true);
+	showText(TX_SPEAKER_SPOCK,  21, true);
+	showText(TX_SPEAKER_MOSHER, 27, true);
+	showText(TX_SPEAKER_MCCOY,  14, true);
 }
 
 void Room::sins0LookAtPlanet() {
-	showText(TX_SIN0N007);
+	showDescription(7, true);
 }
 
 void Room::sins0LookAtSky() {
 	// This seems unused, due to HOTSPOT_SKY not being mapped anywhere?
-	showText(TX_SIN0N004);
+	showDescription(4, true);
 }
 
 void Room::sins0LookAtKirk() {
-	showText(TX_SIN0N002);
+	showDescription(2, true);
 }
 
 void Room::sins0LookAtSpock() {
-	showText(TX_SIN0N003);
+	showDescription(3, true);
 }
 
 void Room::sins0LookAtMccoy() {
-	showText(TX_SIN0N000);
+	showDescription(0, true);
 }
 
 void Room::sins0LookAtRedshirt() {
-	showText(TX_SIN0N001);
+	showDescription(1, true);
 }
 
 void Room::sins0UseSTricorderOnClosedDoor() {
-	spockScan(DIR_S, TX_SIN0_019);
-	showText(TX_SPEAKER_MOSHER, TX_SIN0_025);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN0_013);
-	showText(TX_SPEAKER_MOSHER, TX_SIN0_028);
+	spockScan(DIR_S, 19, false, true);
+	showText(TX_SPEAKER_MOSHER, 25, true);
+	showText(TX_SPEAKER_MCCOY,  13, true);
+	showText(TX_SPEAKER_MOSHER, 28, true);
 }
 
 void Room::sins0UseSTricorderOnStatue() {
-	spockScan(DIR_S, TX_SIN0_020);
-	showText(TX_SPEAKER_KIRK,  TX_SIN0_008);
-	showText(TX_SPEAKER_SPOCK, TX_SIN0_023);
+	spockScan(DIR_S, 20, false, true);
+	showText(TX_SPEAKER_KIRK,  8, true);
+	showText(TX_SPEAKER_SPOCK, 23, true);
 
 	if (!_awayMission->sins.gotPointsForScanningStatue) {
 		_awayMission->sins.gotPointsForScanningStatue = true;
@@ -223,20 +223,20 @@ void Room::sins0UseSTricorderOnStatue() {
 }
 
 void Room::sins0UseMedkitOnCrewman() {
-	showText(TX_SPEAKER_MCCOY, TX_SIN0_012);
+	showText(TX_SPEAKER_MCCOY, 12, true);
 }
 
 void Room::sins0UseMTricorderOnCrewman() {
-	mccoyScan(DIR_S, TX_SIN0_010);
+	mccoyScan(DIR_S, 10, false, true);
 }
 
 void Room::sins0UseCommunicator() {
 	if (!_awayMission->sins.scottyInformedKirkAboutVirus) {
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_004);
-		showText(TX_SPEAKER_SCOTT, TX_SIN0_S01);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_002);
+		showText(TX_SPEAKER_KIRK,  4, true);
+		showText(TX_SPEAKER_SCOTT, 1 + SCOTTY_MESSAGE_OFFSET, true);
+		showText(TX_SPEAKER_KIRK,  2, true);
 	} else
-		showText(TX_SPEAKER_UHURA, TX_SIN0U069);
+		showText(TX_SPEAKER_UHURA, 69, true);
 }
 
 void Room::sins0WalkToDoor() {

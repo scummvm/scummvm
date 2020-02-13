@@ -32,7 +32,7 @@ class Sword25Engine;
 class Sword25Console : public GUI::Debugger {
 public:
 	Sword25Console(Sword25Engine *vm);
-	virtual ~Sword25Console(void);
+	~Sword25Console(void) override;
 
 private:
 	Sword25Engine *_vm;

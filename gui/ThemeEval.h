@@ -75,7 +75,7 @@ public:
 	bool hasVar(const Common::String &name) { return _vars.contains(name) || _builtin.contains(name); }
 
 	void addDialog(const Common::String &name, const Common::String &overlays, bool enabled = true, int inset = 0);
-	void addLayout(ThemeLayout::LayoutType type, int spacing, bool center = false);
+	void addLayout(ThemeLayout::LayoutType type, int spacing, ThemeLayout::ItemAlign itemAlign);
 	void addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled = true, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	bool addImportedLayout(const Common::String &name);
 	void addSpace(int size);
@@ -83,8 +83,9 @@ public:
 	void addPadding(int16 l, int16 r, int16 t, int16 b) { _curLayout.top()->setPadding(l, r, t, b); }
 
 	void closeLayout() { _curLayout.pop(); }
-	void closeDialog() { _curLayout.pop()->reflowLayout(); _curDialog.clear(); }
+	void closeDialog() { _curLayout.pop(); _curDialog.clear(); }
 
+	void reflowDialogLayout(const Common::String &name, Widget *widgetChain);
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h);
 
 	Graphics::TextAlign getWidgetTextHAlign(const Common::String &widget);

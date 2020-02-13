@@ -27,14 +27,14 @@ namespace MutationOfJB {
 
 class DefineStructCommandParser : public SeqCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class DefineStructCommand : public SeqCommand {
 public:
 	DefineStructCommand(const ConversationInfo& convInfo) : _conversationInfo(convInfo) {}
-	virtual Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	ConversationInfo _conversationInfo;
 };

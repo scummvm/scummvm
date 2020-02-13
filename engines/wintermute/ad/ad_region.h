@@ -38,20 +38,20 @@ public:
 	DECLARE_PERSISTENT(AdRegion, BaseRegion)
 
 	AdRegion(BaseGame *inGame);
-	virtual ~AdRegion();
+	~AdRegion() override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	bool hasDecoration() const;
 	bool isBlocked() const;
 	uint32 getAlpha() const;
 	float getZoom() const;
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 private:
 	uint32 _alpha;
 	float _zoom;

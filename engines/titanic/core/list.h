@@ -40,12 +40,12 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 };
 
 /**
@@ -65,18 +65,18 @@ public:
 public:
 	PtrListItem() : _item(nullptr) {}
 	PtrListItem(T *item) : _item(item) {}
-	virtual ~PtrListItem() { delete _item; }
+	~PtrListItem() override { delete _item; }
 };
 
 template<typename T>
 class List : public CSaveableObject, public Common::List<T *> {
 public:
-	virtual ~List() { destroyContents(); }
+	~List() override { destroyContents(); }
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) {
+	void save(SimpleFile *file, int indent) override {
 		file->writeNumberLine(0, indent);
 
 		// Write out number of items
@@ -97,7 +97,7 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file) {
+	void load(SimpleFile *file) override {
 		file->readNumber();
 		file->readBuffer();
 

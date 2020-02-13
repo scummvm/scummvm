@@ -875,6 +875,7 @@ void GamePhantom::setupCatacombs() {
 		break;
 
 	case DIFFICULTY_HARD:
+	default:
 		_catacombs = _hardCatacombs;
 		_catacombSize = 62;
 

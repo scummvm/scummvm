@@ -59,6 +59,8 @@ const int MAX_HOSTNAME_SIZE = 256;
 const int MAX_IP_SIZE = 32;
 const char LOCAL_HOST[] = "127.0.0.1";	//localhost
 
+const int DATA_HEADER_SIZE = 28;
+
 #define NULL_IP "";						//no IP address (causes enumsessions to search local subnet)
 
 } // End of namespace Scumm

@@ -103,24 +103,28 @@ public:
 		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "agos";
+	}
+
+	const char *getName() const override {
 		return "AGOS";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "AGOS (C) Adventure Soft";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	bool hasFeature(MetaEngineFeature f) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override {
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
 };
 
 bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {

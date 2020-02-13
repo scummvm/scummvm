@@ -98,88 +98,83 @@ void Room::love0ReachedDoor1() {
 }
 
 void Room::love0LookAtConsole() {
-	showText(TX_LOV0N006);
+	showDescription(6, true);
 }
 
 void Room::love0LookAtViewscreen() {
-	showText(TX_LOV0N000);
+	showDescription(0, true);
 }
 
 void Room::love0LookAnywhere() {
-	showText(TX_LOV0N009);
+	showDescription(9, true);
 }
 
 void Room::love0LookAtDoor1() {
-	showText(TX_LOV0N008);
+	showDescription(8, true);
 }
 
 void Room::love0LookAtDoor2() {
-	showText(TX_LOV0N007);
+	showDescription(7, true);
 }
 
 void Room::love0LookAtKirk() {
-	showText(TX_LOV0N002);
+	showDescription(2, true);
 }
 
 void Room::love0LookAtMccoy() {
-	showText(TX_LOV0N004);
+	showDescription(4, true);
 }
 
 void Room::love0LookAtSpock() {
-	showText(TX_LOV0N005);
+	showDescription(5, true);
 }
 
 void Room::love0LookAtRedshirt() {
-	showText(TX_LOV0N003);
+	showDescription(3, true);
 }
 
 void Room::love0TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_LOV0_003);
+	showText(TX_SPEAKER_KIRK, 3, true);
 }
 
 void Room::love0TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV0_007);
+	showText(TX_SPEAKER_MCCOY, 7, true);
 }
 
 void Room::love0TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_LOV0_027);
+	showText(TX_SPEAKER_SPOCK, 27, true);
 }
 
 void Room::love0TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, TX_LOV0_038);
+	showText(TX_SPEAKER_FERRIS, 38, true);
 }
 
 void Room::love0UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
-		mccoyScan(DIR_N, TX_LOV0_008, false);
+		mccoyScan(DIR_N, 8, false, true);
 	else
-		mccoyScan(DIR_N, TX_LOV0_006, false);
+		mccoyScan(DIR_N, 6, false, true);
 }
 
 void Room::love0UseSTricorderOnConsole() {
-	spockScan(DIR_N, TX_LOV0_031, false);
+	spockScan(DIR_N, 31, false, true);
 }
 
 void Room::love0UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_LOV0_028, false);
+	spockScan(DIR_S, 28, false, true);
 }
 
 void Room::love0UseKirkOnConsole() {
-	showText(TX_SPEAKER_KIRK, TX_LOV0_002);
+	showText(TX_SPEAKER_KIRK, 2, true);
 	love0UseSpockOnConsole();
 }
 
 void Room::love0UseRedshirtOnConsole() {
-	showText(TX_SPEAKER_FERRIS, TX_LOV0_036);
+	showText(TX_SPEAKER_FERRIS, 36, true);
 }
 
 void Room::love0UseSpockOnConsole() {
-	_roomVar.love.consoleCrewman = OBJECT_SPOCK;
-	_roomVar.love.consoleSpeaker = TX_SPEAKER_SPOCK;
-	_roomVar.love.consoleText = TX_LOV0_005;
-	strcpy(_roomVar.love.consoleAnimation, "susemn");
-
-	walkCrewman(_roomVar.love.consoleCrewman, 0x9a, 0x9a, 2);
+	walkCrewman(OBJECT_SPOCK, 0x9a, 0x9a, 2);
 	if (!_awayMission->love.spockAccessedConsole) {
 		_awayMission->love.spockAccessedConsole = true;
 		_awayMission->love.missionScore += 4;
@@ -187,7 +182,7 @@ void Room::love0UseSpockOnConsole() {
 }
 
 void Room::love0SpockReachedConsole() {
-	loadActorAnim2(_roomVar.love.consoleCrewman, _roomVar.love.consoleAnimation, -1, -1, 5);
+	loadActorAnim2(OBJECT_SPOCK, "susemn", -1, -1, 5);
 }
 
 void Room::love0SpockAccessedConsole() {
@@ -196,7 +191,7 @@ void Room::love0SpockAccessedConsole() {
 		love0InteractWithConsole();
 	else {
 		showText(TX_SPEAKER_COMPUTER, TX_COMPU188);
-		showText(_roomVar.love.consoleSpeaker, _roomVar.love.consoleText);
+		showText(TX_SPEAKER_SPOCK, 5, true);
 		_roomVar.love.heardSummaryOfVirus = true;
 	}
 }
@@ -223,11 +218,11 @@ void Room::love0MccoyAccessedConsole() {
 			showText(TX_SPEAKER_COMPUTER, TX_COMPU188);
 			_roomVar.love.heardSummaryOfVirus = true;
 		}
-		showText(TX_SPEAKER_MCCOY, TX_LOV0_024);
-		showText(TX_SPEAKER_SPOCK, TX_LOV0_035);
-		showText(TX_SPEAKER_MCCOY, TX_LOV0_023);
-		showText(TX_SPEAKER_KIRK,  TX_LOV0_004);
-		showText(TX_SPEAKER_MCCOY, TX_LOV0_009);
+		showText(TX_SPEAKER_MCCOY, 24, true);
+		showText(TX_SPEAKER_SPOCK, 35, true);
+		showText(TX_SPEAKER_MCCOY, 23, true);
+		showText(TX_SPEAKER_KIRK,  4, true);
+		showText(TX_SPEAKER_MCCOY, 9, true);
 		_awayMission->love.knowAboutVirus = true;
 	}
 }
@@ -247,7 +242,7 @@ void Room::love0InteractWithConsole() {
 
 	while (true) {
 		showText(TX_SPEAKER_COMPUTER, TX_COMPU192);
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices);
 
 		switch (choice) {
 		case 0:
@@ -268,7 +263,7 @@ void Room::love0InteractWithConsole() {
 		case 5:
 			return;
 		default:
-			showText(TX_DIALOG_ERROR);
+			showDescription(TX_DIALOG_ERROR);
 			break;
 		}
 	}
@@ -278,7 +273,7 @@ void Room::love0GetDoorOrConsole() {
 	// BUGFIX: There was a problem with "get door 1" where it would execute a bit of
 	// non-code before reaching where it was supposed to be. Not sure if it had any actual
 	// effect.
-	showText(TX_LOV0N001);
+	showDescription(1, true);
 
 	// NOTE: There is an unused block of code that's jumped over in the "get door 2"
 	// function. (Spock says "that's not logical".)

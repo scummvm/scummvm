@@ -434,6 +434,8 @@ void String::deleteChar(uint32 p) {
 }
 
 void String::erase(uint32 p, uint32 len) {
+	if (p == npos || len == 0)
+		return;
 	assert(p < _size);
 
 	makeUnique();
@@ -450,6 +452,11 @@ void String::erase(uint32 p, uint32 len) {
 		_str[p] = _str[p + len];
 	}
 	_size -= len;
+}
+
+String::iterator String::erase(iterator it) {
+	this->deleteChar(it - _str);
+	return it;
 }
 
 void String::clear() {
@@ -518,7 +525,7 @@ void String::wordWrap(const uint32 maxLength) {
 
 	makeUnique();
 
-	enum { kNoSpace = 0xFFFFFFFF };
+	const uint32 kNoSpace = 0xFFFFFFFF;
 
 	uint32 i = 0;
 	while (i < _size) {
@@ -605,6 +612,31 @@ void String::replace(uint32 posOri, uint32 countOri, const char *str,
 
 }
 
+uint32 String::find(const String &str, uint32 pos) const {
+	if (pos >= _size) {
+		return npos;
+	}
+
+	const char *strP = str.c_str();
+
+	for (const_iterator cur = begin() + pos; *cur; ++cur) {
+		uint i = 0;
+		while (true) {
+			if (!strP[i]) {
+				return cur - begin();
+			}
+
+			if (cur[i] != strP[i]) {
+				break;
+			}
+
+			++i;
+		}
+	}
+
+	return npos;
+}
+
 // static
 String String::format(const char *fmt, ...) {
 	String output;
@@ -669,6 +701,95 @@ String String::vformat(const char *fmt, va_list args) {
 	return output;
 }
 
+
+size_t String::find(char c, size_t pos) const {
+	const char *p = strchr(_str + pos, c);
+	return p ? p - _str : npos;
+}
+
+size_t String::find(const char *s) const {
+	const char *str = strstr(_str, s);
+	return str ? str - _str : npos;
+}
+
+size_t String::rfind(const char *s) const {
+	int sLen = strlen(s);
+
+	for (int idx = (int)_size - sLen; idx >= 0; --idx) {
+		if (!strncmp(_str + idx, s, sLen))
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::rfind(char c, size_t pos) const {
+	for (int idx = MIN((int)_size - 1, (int)pos); idx >= 0; --idx) {
+		if ((*this)[idx] == c)
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::findFirstOf(char c, size_t pos) const {
+	const char *strP = (pos >= _size) ? 0 : strchr(_str + pos, c);
+	return strP ? strP - _str : npos;
+}
+
+size_t String::findFirstOf(const char *chars, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
+		if (strchr(chars, (*this)[idx]))
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::findFirstNotOf(char c, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
+		if ((*this)[idx] != c)
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::findFirstNotOf(const char *chars, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
+		if (!strchr(chars, (*this)[idx]))
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::findLastNotOf(char c) const {
+	for (int idx = (int)_size - 1; idx >= 0; --idx) {
+		if ((*this)[idx] != c)
+			return c;
+	}
+
+	return npos;
+}
+
+size_t String::findLastNotOf(const char *chars) const {
+	for (int idx = (int)_size - 1; idx >= 0; --idx) {
+		if (!strchr(chars, (*this)[idx]))
+			return idx;
+	}
+
+	return npos;
+}
+
+String String::substr(size_t pos, size_t len) const {
+	if (pos >= _size)
+		return String();
+	else if (len == npos)
+		return String(_str + pos);
+	else
+		return String(_str + pos, MIN((size_t)_size - pos, len));
+}
 
 #pragma mark -
 
@@ -1067,6 +1188,45 @@ size_t strnlen(const char *src, size_t maxSize) {
 	while (counter != maxSize && *src++)
 		++counter;
 	return counter;
+}
+
+String toPrintable(const String &in, bool keepNewLines) {
+	Common::String res;
+
+	const char *tr = "\x01\x01\x02\x03\x04\x05\x06" "a"
+				  //"\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
+					   "b" "t" "n" "v" "f" "r\x0e\x0f"
+					"\x10\x11\x12\x13\x14\x15\x16\x17"
+					"\x18\x19\x1a" "e\x1c\x1d\x1e\x1f";
+
+	for (const byte *p = (const byte *)in.c_str(); *p; p++) {
+		if (*p == '\n') {
+			if (keepNewLines)
+				res += *p;
+			else
+				res += "\\n";
+
+			continue;
+		}
+
+		if (*p < 0x20 || *p == '\'' || *p == '\"' || *p == '\\') {
+			res += '\\';
+
+			if (*p < 0x20) {
+				if (tr[*p] < 0x20)
+					res += Common::String::format("x%02x", *p);
+				else
+					res += tr[*p];
+			} else {
+				res += *p;	// We will escape it
+			}
+		} else if (*p > 0x7e) {
+			res += Common::String::format("\\x%02x", *p);
+		} else
+			res += *p;
+	}
+
+	return res;
 }
 
 } // End of namespace Common

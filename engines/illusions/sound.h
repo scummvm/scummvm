@@ -51,9 +51,9 @@ protected:
 class MidiPlayer : public Audio::MidiPlayer {
 public:
 	MidiPlayer();
-	~MidiPlayer();
+	~MidiPlayer() override;
 	bool play(uint32 musicId);
-	void stop();
+	void stop() override;
 	bool isIdle() const { return _isIdle; }
 protected:
 	bool _isIdle;
@@ -68,9 +68,9 @@ protected:
 	bool _isGM;
 	void sysMidiPlay(uint32 musicId);
 	void sysMidiStop();
-	virtual void send(uint32 b);
-	virtual void sendToChannel(byte channel, uint32 b);
-	virtual void endOfTrack();
+	void send(uint32 b) override;
+	void sendToChannel(byte channel, uint32 b) override;
+	void endOfTrack() override;
 };
 
 class VoicePlayer {
@@ -103,6 +103,7 @@ public:
 	void play(int16 volume, int16 pan);
 	void stop();
 	bool isPlaying();
+	bool isLooping();
 public:
 	uint32 _soundEffectId;
 	uint32 _soundGroupId;
@@ -159,6 +160,7 @@ public:
 	void loadSound(uint32 soundEffectId, uint32 soundGroupId, bool looping);
 	void playSound(uint32 soundEffectId, int16 volume, int16 pan);
 	void stopSound(uint32 soundEffectId);
+	void stopLoopingSounds();
 	void unloadSounds(uint32 soundGroupId);
 
 protected:

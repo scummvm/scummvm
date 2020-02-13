@@ -198,6 +198,8 @@ void SoundFx::handlePattern(int ch, uint32 pat) {
 				volume = 0;
 			}
 			break;
+		default:
+			break;
 		}
 		setChannelVolume(ch, volume);
 	}
@@ -217,6 +219,8 @@ void SoundFx::updateEffects(int ch) {
 		case 7: // set step up
 		case 8: // set step down
 			warning("Unhandled effect %d", _effects[ch]);
+			break;
+		default:
 			break;
 		}
 	}

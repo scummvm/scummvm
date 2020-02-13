@@ -17,7 +17,7 @@ install:
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/appdata"
@@ -39,7 +39,7 @@ install-strip:
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/appdata"
@@ -88,18 +88,22 @@ scummvm.docktileplugin: ScummVMDockTilePlugin
 	mkdir -p scummvm.docktileplugin/Contents
 	cp $(srcdir)/dists/macosx/dockplugin/Info.plist scummvm.docktileplugin/Contents
 	mkdir -p scummvm.docktileplugin/Contents/MacOS
-	cp ScummVMDockTilePlugIn scummvm.docktileplugin/Contents/MacOS/
-	chmod 644 scummvm.docktileplugin/Contents/MacOS/ScummVMDockTilePlugIn
+	cp ScummVMDockTilePlugin scummvm.docktileplugin/Contents/MacOS/
+	chmod 644 scummvm.docktileplugin/Contents/MacOS/ScummVMDockTilePlugin
+
+scummvm.docktileplugin64: ScummVMDockTilePlugin64
+	mkdir -p scummvm.docktileplugin/Contents
+	cp $(srcdir)/dists/macosx/dockplugin/Info.plist scummvm.docktileplugin/Contents
+	mkdir -p scummvm.docktileplugin/Contents/MacOS
+	mv ScummVMDockTilePlugin64 ScummVMDockTilePlugin
+	cp ScummVMDockTilePlugin scummvm.docktileplugin/Contents/MacOS/
+	chmod 644 scummvm.docktileplugin/Contents/MacOS/ScummVMDockTilePlugin
 
 endif
 
 bundle_name = ScummVM.app
 
-ifdef USE_DOCKTILEPLUGIN
-bundle: scummvm-static scummvm.docktileplugin
-else
-bundle: scummvm-static
-endif
+bundle-pack:
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
@@ -119,6 +123,9 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
 endif
+ifdef DIST_FILES_VKEYBD
+	cp $(DIST_FILES_VKEYBD) $(bundle_name)/Contents/Resources/
+endif
 	$(srcdir)/devtools/credits.pl --rtf > $(bundle_name)/Contents/Resources/AUTHORS.rtf
 	rm $(bundle_name)/Contents/Resources/AUTHORS
 	cp $(bundle_name)/Contents/Resources/COPYING.LGPL $(bundle_name)/Contents/Resources/COPYING-LGPL
@@ -134,6 +141,16 @@ ifdef USE_DOCKTILEPLUGIN
 	cp -r scummvm.docktileplugin $(bundle_name)/Contents/PlugIns/
 endif
 
+ifdef USE_DOCKTILEPLUGIN
+bundle: scummvm-static scummvm.docktileplugin bundle-pack
+
+bundle64: scummvm-static scummvm.docktileplugin64 bundle-pack
+else
+bundle: scummvm-static bundle-pack
+
+bundle64: scummvm-static bundle-pack
+endif
+
 iphonebundle: iphone
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
@@ -144,6 +161,9 @@ ifdef DIST_FILES_NETWORKING
 endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+endif
+ifdef DIST_FILES_VKEYBD
+	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
 endif
 	$(STRIP) scummvm
 	ldid -S scummvm
@@ -256,6 +276,9 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
 endif
+ifdef DIST_FILES_VKEYBD
+	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
+endif
 	$(STRIP) scummvm
 	ldid -S scummvm
 	chmod 755 scummvm
@@ -286,7 +309,7 @@ endif
 ifneq ($(BACKEND), iphone)
 ifneq ($(BACKEND), ios7)
 # Static libaries, used for the scummvm-static and iphone targets
-OSX_STATIC_LIBS := `$(SDLCONFIG) --static-libs`
+OSX_STATIC_LIBS := `$(SDLCONFIG) --prefix=$(STATICLIBPATH) --static-libs`
 ifdef USE_SDL_NET
 ifdef USE_SDL2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL2_net.a
@@ -305,6 +328,10 @@ endif
 
 ifdef USE_FREETYPE2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a
+endif
+
+ifdef USE_ICONV
+OSX_STATIC_LIBS += -liconv
 endif
 
 ifdef USE_VORBIS
@@ -326,8 +353,12 @@ OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libogg.a
 endif
 
 ifdef USE_FLUIDSYNTH
+# If iconv was not yet added, add it now as we need it for libfluidsynth
+ifndef USE_ICONV
+OSX_STATIC_LIBS += -liconv
+endif
 OSX_STATIC_LIBS += \
-                -liconv -framework CoreMIDI -framework CoreAudio\
+                -framework CoreMIDI -framework CoreAudio\
                 $(STATICLIBPATH)/lib/libfluidsynth.a \
                 $(STATICLIBPATH)/lib/libglib-2.0.a \
                 $(STATICLIBPATH)/lib/libintl.a
@@ -372,10 +403,12 @@ OSX_ZLIB ?= $(STATICLIBPATH)/lib/libz.a
 endif
 
 ifdef USE_SPARKLE
+ifdef MACOSX
 ifneq ($(SPARKLEPATH),)
 OSX_STATIC_LIBS += -F$(SPARKLEPATH)
 endif
 OSX_STATIC_LIBS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
+endif
 endif
 
 # Special target to create a static linked binary for Mac OS X.
@@ -393,7 +426,7 @@ iphone: $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework OpenGLES \
 		-framework CoreFoundation -framework QuartzCore -framework Foundation \
-		-framework AudioToolbox -framework CoreAudio -lobjc -lz
+		-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration -lobjc -lz
 
 # Special target to create a snapshot disk image for Mac OS X
 # TODO: Replace AUTHORS by Credits.rtf
@@ -439,7 +472,7 @@ osxsnap: bundle
 	rm -rf ScummVM-snapshot
 
 publish-appcast:
-	scp dists/macosx/scummvm_appcast.xml www.scummvm.org:/var/www/scummvm-web/public_html/appcasts/macosx/release.xml
+	cp dists/macosx/scummvm_appcast.xml ../scummvm-web/public_html/appcasts/macosx/release.xml
 
 
 #
@@ -463,7 +496,7 @@ endif
 	@echo Creating Code::Blocks project files...
 	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/plugins_table.h *.workspace *.cbp
 	@echo Creating MSVC project files...
-	@cd $(srcdir)/dists/msvc && ../../devtools/create_project/create_project ../.. --msvc >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
+	@cd $(srcdir)/dists/msvc && ../../devtools/create_project/create_project ../.. --msvc-version 12 --msvc >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo
 	@echo All is done.
 	@echo Now run

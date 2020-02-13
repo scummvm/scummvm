@@ -32,15 +32,15 @@ class SetObjectFrameCommandParser : public SeqCommandParser {
 public:
 	SetObjectFrameCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class SetObjectFrameCommand : public SeqCommand {
 public:
 	SetObjectFrameCommand(uint8 objectId, uint8 frame) : _objectId(objectId), _frame(frame) {}
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	uint8 _objectId;
 	uint8 _frame;

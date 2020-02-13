@@ -208,6 +208,9 @@ void CharacterInfo::execute(int charIndex) {
 
 		case Common::KEYCODE_ESCAPE:
 			goto exit;
+
+		default:
+			break;
 		}
 	} while (!_vm->shouldExit());
 exit:
@@ -359,9 +362,9 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		// Basic attributes
 		stat1 = c.getStat((Attribute)attrib, false);
 		stat2 = c.getStat((Attribute)attrib, true);
-		idx = 0;
-		while (Res.STAT_VALUES[idx] <= (int)stat1)
-			++idx;
+		for (idx = 0; idx < ARRAYSIZE(Res.STAT_VALUES) - 1; ++idx)
+			if (Res.STAT_VALUES[idx] > (int)stat1)
+				break;
 
 		msg = Common::String::format(Res.CURRENT_MAXIMUM_RATING_TEXT, Res.STAT_NAMES[attrib],
 			stat1, stat2, Res.RATING_TEXT[idx]);

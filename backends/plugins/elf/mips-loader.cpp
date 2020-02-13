@@ -279,7 +279,7 @@ bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 	// We need to take account of non-allocated segment for shorts
 	if (phdr->p_flags & PF_X) {	// This is a relocated segment
 		// Attempt to allocate memory for segment
-		_segment = (byte *)ELFMemMan.pluginAllocate(phdr->p_align, phdr->p_memsz);
+		_segment = (byte *)allocateMemory(phdr->p_align, phdr->p_memsz);
 
 		if (!_segment) {
 			warning("elfloader: Out of memory.");

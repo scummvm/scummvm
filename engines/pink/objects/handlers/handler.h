@@ -36,8 +36,8 @@ class Actor;
 
 class Handler : public Object {
 public:
-	~Handler();
-	virtual void deserialize(Archive &archive);
+	~Handler() override;
+	void deserialize(Archive &archive) override;
 	virtual void handle(Actor *actor);
 	bool isSuitable(Actor *actor);
 
@@ -52,8 +52,8 @@ class Sequence;
 
 class HandlerSequences : public Handler {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void handle(Actor *actor);
+	void deserialize(Archive &archive) override;
+	void handle(Actor *actor) override;
 
 protected:
 	virtual void execute(Sequence *sequence) = 0;
@@ -63,30 +63,30 @@ protected:
 
 class HandlerStartPage : public HandlerSequences {
 public:
-	virtual void toConsole();
+	void toConsole() override;
 
 private:
-	virtual void execute(Sequence *sequence);
+	void execute(Sequence *sequence) override;
 };
 
 class HandlerLeftClick : public HandlerSequences {
 public:
-	virtual void toConsole();
+	void toConsole() override;
 
 private:
-	virtual void execute(Sequence *sequence) {}
+	void execute(Sequence *sequence) override {}
 };
 
 class HandlerUseClick : public HandlerSequences {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
+	void deserialize(Archive &archive) override;
+	void toConsole() override;
 
 	const Common::String &getInventoryItem() const { return _inventoryItem; }
 	const Common::String &getRecepient() const { return _recepient; }
 
 private:
-	virtual void execute(Sequence *sequence) {};
+	void execute(Sequence *sequence) override {};
 
 	Common::String _inventoryItem;
 	Common::String _recepient;

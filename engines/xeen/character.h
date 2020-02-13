@@ -155,6 +155,8 @@ public:
 	SpriteResource *_faceSprites;
 	int _rosterId;
 public:
+	static int _itemType;
+public:
 	/**
 	 * Constructor
 	 */

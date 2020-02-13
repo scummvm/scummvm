@@ -53,13 +53,13 @@ public:
 class ExitGameChoice : public Choice {
 public:
 	ExitGameChoice(CGE2Engine *vm);
-	void proc();
+	void proc() override;
 };
 
 class ReturnToGameChoice : public Choice {
 public:
 	ReturnToGameChoice(CGE2Engine *vm);
-	void proc();
+	void proc() override;
 };
 
 class MenuBar : public Talk {
@@ -79,8 +79,8 @@ public:
 	MenuBar *_bar;
 
 	VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank col);
-	~VMenu();
-	void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
+	~VMenu() override;
+	void touch(uint16 mask, V2D pos, Common::KeyCode keyCode) override;
 	char *vmGather(Common::Array<Choice *> list);
 };
 

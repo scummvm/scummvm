@@ -45,21 +45,21 @@ friend class TextDisplayer_MR;
 friend class GUI_MR;
 public:
 	KyraEngine_MR(OSystem *system, const GameFlags &flags);
-	~KyraEngine_MR();
+	~KyraEngine_MR() override;
 
 	// Regarding pausing of the engine:
 	// Idle animation time, item animations and album animations should be taken
 	// care of, but since those would just produce minor glitches it's not that
 	// important.
 
-	Screen *screen() { return _screen; }
-	Screen_v2 *screen_v2() const { return _screen; }
-	GUI *gui() const { return _gui; }
+	Screen *screen() override { return _screen; }
+	Screen_v2 *screen_v2() const override { return _screen; }
+	GUI *gui() const override { return _gui; }
 	SoundDigital_MR *soundDigital() { return _soundDigital; }
 	int language() const { return _lang; }
 	bool heliumMode() const { return _configHelium; }
 
-	Common::Error go();
+	Common::Error go() override;
 
 	void playVQA(const char *name);
 
@@ -72,9 +72,9 @@ private:
 	bool _configHelium;
 	int _configVQAQuality;
 
-	void registerDefaultSettings();
-	void writeSettings();
-	void readSettings();
+	void registerDefaultSettings() override;
+	void writeSettings() override;
+	void readSettings() override;
 
 	void initStaticResource();
 
@@ -82,27 +82,27 @@ private:
 	Screen_MR *_screen;
 	SoundDigital_MR *_soundDigital;
 
-	Common::Error init();
+	Common::Error init() override;
 
 	void preinit();
 	void startup();
 	void runStartupScript(int script, int unk1);
 
-	void setupOpcodeTable();
+	void setupOpcodeTable() override;
 
 	// input
-	bool skipFlag() const;
-	void resetSkipFlag(bool removeEvent = true);
+	bool skipFlag() const override;
+	void resetSkipFlag(bool removeEvent = true) override;
 
 	// run
 	bool _menuDirectlyToLoad;
 
 	void runLoop();
 	void handleInput(int x, int y);
-	int inputSceneChange(int x, int y, int unk1, int unk2);
+	int inputSceneChange(int x, int y, int unk1, int unk2) override;
 
-	void update();
-	void updateWithText();
+	void update() override;
+	void updateWithText() override;
 	void updateMouse();
 
 	// sound specific
@@ -116,12 +116,12 @@ private:
 	const char *const *_soundList;
 	int _soundListSize;
 
-	void snd_playWanderScoreViaMap(int track, int force);
+	void snd_playWanderScoreViaMap(int track, int force) override;
 	void stopMusicTrack();
 
 	void fadeOutMusic(int ticks);
 
-	void snd_playSoundEffect(int item, int volume);
+	void snd_playSoundEffect(int item, int volume) override;
 
 	const uint8 *_sfxFileMap;
 	int _sfxFileMapSize;
@@ -131,9 +131,9 @@ private:
 	int _voiceSoundChannel;
 
 	void playVoice(int high, int low);
-	void snd_playVoiceFile(int file);
-	bool snd_voiceIsPlaying();
-	void snd_stopVoice();
+	void snd_playVoiceFile(int file) override;
+	bool snd_voiceIsPlaying() override;
+	void snd_stopVoice() override;
 
 	int _curStudioSFX;
 	void playStudioSFX(const char *str);
@@ -165,9 +165,9 @@ private:
 	WSAMovie_v2 *_menuAnim;
 
 	// timer
-	void setupTimers();
+	void setupTimers() override;
 
-	void setWalkspeed(uint8);
+	void setWalkspeed(uint8) override;
 	void setCommandLineRestoreTimer(int secs);
 
 	void timerRestoreCommandLine(int arg);
@@ -178,7 +178,7 @@ private:
 	void setNextIdleAnimTimer();
 
 	// pathfinder
-	bool lineIsPassable(int x, int y);
+	bool lineIsPassable(int x, int y) override;
 
 private:
 	// main menu
@@ -190,31 +190,31 @@ private:
 
 	// animator
 	uint8 *_gamePlayBuffer;
-	void restorePage3();
+	void restorePage3() override;
 
-	void clearAnimObjects();
+	void clearAnimObjects() override;
 
-	void animSetupPaletteEntry(AnimObj *anim);
+	void animSetupPaletteEntry(AnimObj *anim) override;
 
-	void drawAnimObjects();
-	void drawSceneAnimObject(AnimObj *obj, int x, int y, int drawLayer);
-	void drawCharacterAnimObject(AnimObj *obj, int x, int y, int drawLayer);
+	void drawAnimObjects() override;
+	void drawSceneAnimObject(AnimObj *obj, int x, int y, int drawLayer) override;
+	void drawCharacterAnimObject(AnimObj *obj, int x, int y, int drawLayer) override;
 
-	void refreshAnimObjects(int force);
+	void refreshAnimObjects(int force) override;
 
 	bool _loadingState;
 	void updateItemAnimations();
-	void updateCharacterAnim(int charId);
+	void updateCharacterAnim(int charId) override;
 
-	void updateSceneAnim(int anim, int newFrame);
+	void updateSceneAnim(int anim, int newFrame) override;
 	void setupSceneAnimObject(int anim, uint16 flags, int x, int y, int x2, int y2, int w, int h, int unk10, int specialSize, int unk14, int shape, const char *filename);
 	void removeSceneAnimObject(int anim, int refresh);
 
 	int _charBackUpWidth2, _charBackUpHeight2;
 	int _charBackUpWidth, _charBackUpHeight;
 
-	void setCharacterAnimDim(int w, int h);
-	void resetCharacterAnimDim();
+	void setCharacterAnimDim(int w, int h) override;
+	void resetCharacterAnimDim() override;
 
 	bool _nextIdleType;
 	void showIdleAnim();
@@ -312,12 +312,12 @@ private:
 
 	// -> hand item
 	void setItemMouseCursor();
-	void setMouseCursor(Item item);
+	void setMouseCursor(Item item) override;
 
 	// shapes
 	void initMouseShapes();
 
-	void loadCharacterShapes(int newShapes);
+	void loadCharacterShapes(int newShapes) override;
 	void updateMalcolmShapes();
 
 	int _malcolmShapeXOffset, _malcolmShapeYOffset;
@@ -340,7 +340,7 @@ private:
 
 	// scene
 	bool _noScriptEnter;
-	void enterNewScene(uint16 scene, int facing, int unk1, int unk2, int unk3);
+	void enterNewScene(uint16 scene, int facing, int unk1, int unk2, int unk3) override;
 	void enterNewSceneUnk1(int facing, int unk1, int unk2);
 	void enterNewSceneUnk2(int unk1);
 	int _enterNewSceneLock;
@@ -362,7 +362,7 @@ private:
 	int _sceneMinX, _sceneMaxX;
 	int _maskPageMinY, _maskPageMaxY;
 
-	int trySceneChange(int *moveTable, int unk1, int unk2);
+	int trySceneChange(int *moveTable, int unk1, int unk2) override;
 	int checkSceneChange();
 
 	int8 _sceneDatPalette[45];
@@ -378,12 +378,12 @@ private:
 
 	int getDrawLayer(int x, int y);
 
-	int getScale(int x, int y);
+	int getScale(int x, int y) override;
 	int _scaleTable[15];
 
 	// character
-	int getCharacterWalkspeed() const;
-	void updateCharAnimFrame(int *table);
+	int getCharacterWalkspeed() const override;
+	void updateCharAnimFrame(int *table) override;
 	int8 _characterAnimTable[2];
 	static const uint8 _characterFrameTable[];
 
@@ -439,7 +439,7 @@ private:
 	byte _newSceneDlgState[40];
 	int8 _conversationState[30][30];
 	bool _chatAltFlag;
-	void setDlgIndex(int index);
+	void setDlgIndex(int index) override;
 	void updateDlgIndex();
 
 	Common::SeekableReadStream *_cnvFile;
@@ -468,7 +468,7 @@ private:
 	int o3d_updateAnim(EMCState *script);
 	int o3d_delay(EMCState *script);
 
-	void randomSceneChat();
+	void randomSceneChat() override;
 	void doDialog(int dlgIndex, int funcNum);
 
 	// conscience
@@ -497,8 +497,8 @@ private:
 	int o3a_playSoundEffect(EMCState *script);
 
 	// special shape code
-	int initAnimationShapes(uint8 *filedata);
-	void uninitAnimationShapes(int count, uint8 *filedata);
+	int initAnimationShapes(uint8 *filedata) override;
+	void uninitAnimationShapes(int count, uint8 *filedata) override;
 
 	// unk
 	uint8 *_costPalBuffer;
@@ -582,8 +582,8 @@ private:
 	int albumClose(Button *caller);
 
 	// save/load
-	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
-	Common::Error loadGameState(int slot);
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
+	Common::Error loadGameState(int slot) override;
 
 	// opcodes
 	int o3_getMalcolmShapes(EMCState *script);

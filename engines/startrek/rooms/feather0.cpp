@@ -52,73 +52,73 @@ void Room::feather0Tick60() {
 void Room::feather0TalkToQuetzecoatl() {
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
-		TX_FEA0_006,
-		TX_FEA0_007,
-		TX_FEA0_011,
+		6,
+		7,
+		11,
 		TX_BLANK
 	};
 
-	showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_028);
-	int choice = showText(choices);
+	showText(TX_SPEAKER_QUETZECOATL, 28, true);
+	int choice = showMultipleTexts(choices, true);
 	bool alreadyAngered = false;
 
 	if (choice == 0) {
 		const TextRef choices0[] = {
 			TX_SPEAKER_KIRK,
-			TX_FEA0_009,
-			TX_FEA0_004,
+			9,
+			4,
 			TX_BLANK
 		};
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_032);
-		choice = showText(choices0);
+		showText(TX_SPEAKER_QUETZECOATL, 32, true);
+		choice = showMultipleTexts(choices0, true);
 	} else if (choice == 1) {
 		const TextRef choices0[] = {
 			TX_SPEAKER_KIRK,
-			TX_FEA0_002,
-			TX_FEA0_012,
+			2,
+			12,
 			TX_BLANK
 		};
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_031);
-		choice = showText(choices0);
+		showText(TX_SPEAKER_QUETZECOATL, 31, true);
+		choice = showMultipleTexts(choices0, true);
 	} else if (choice == 2) {
 		const TextRef choices0[] = {
 			TX_SPEAKER_KIRK,
-			TX_FEA0_014,
-			TX_FEA0_008,
+			14,
+			8,
 			TX_BLANK
 		};
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_033);
-		choice = showText(choices0);
+		showText(TX_SPEAKER_QUETZECOATL, 33, true);
+		choice = showMultipleTexts(choices0, true);
 
 		if (choice == 0) {
 			alreadyAngered = true;
-			showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_024);
+			showText(TX_SPEAKER_QUETZECOATL, 24, true);
 		}
 	} else
-		showText(TX_DIALOG_ERROR);
+		showDescription(TX_DIALOG_ERROR);
 
 	if (!alreadyAngered) {
 		if (choice == 0)
-			showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_030);
+			showText(TX_SPEAKER_QUETZECOATL, 30, true);
 		else // choice == 1
-			showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_101);
-		showText(TX_SPEAKER_KIRK, TX_FEA0_010);
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_026);
+			showText(TX_SPEAKER_QUETZECOATL, 101, true);
+		showText(TX_SPEAKER_KIRK, 10, true);
+		showText(TX_SPEAKER_QUETZECOATL, 26, true);
 
 		const TextRef choices1[] = {
 			TX_SPEAKER_KIRK,
-			TX_FEA0_013,
-			TX_FEA0_005,
+			13,
+			5,
 			TX_BLANK
 		};
-		choice = showText(choices1);
+		choice = showMultipleTexts(choices1, true);
 
 		if (choice == 0) {
-			showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_029);
-			showText(TX_SPEAKER_KIRK, TX_FEA0_003);
+			showText(TX_SPEAKER_QUETZECOATL, 29, true);
+			showText(TX_SPEAKER_KIRK, 3, true);
 		}
 
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_027);
+		showText(TX_SPEAKER_QUETZECOATL, 27, true);
 	}
 
 	// Quetzecoatl ultimately warps the crew away no matter what
@@ -144,81 +144,81 @@ void Room::feather0Timer1Expired() {
 }
 
 void Room::feather0UsePhaserOnQuetzecoatl() {
-	showText(TX_SPEAKER_QUETZECOATL, TX_FEA0_025);
+	showText(TX_SPEAKER_QUETZECOATL, 25, true);
 }
 
 void Room::feather0UsePhaserOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA0_016);
+	showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::feather0UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA0_108);
+	showText(TX_SPEAKER_MCCOY, 108, true);
 }
 
 void Room::feather0LookAtQuetzecoatl() {
-	showText(TX_FEA0N008);
+	showDescription(8, true);
 }
 
 void Room::feather0LookAtMoon() {
-	showText(TX_FEA0N007);
+	showDescription(7, true);
 }
 
 void Room::feather0LookAtLog() {
-	showText(TX_FEA0N006);
+	showDescription(6, true);
 }
 
 void Room::feather0LookAtHut() {
-	showText(TX_FEA0N001);
+	showDescription(1, true);
 }
 
 void Room::feather0LookAnywhere() {
-	showText(TX_FEA0N009);
+	showDescription(9, true);
 }
 
 void Room::feather0LookAtEyes() {
-	showText(TX_FEA0N000);
+	showDescription(0, true);
 }
 
 void Room::feather0LookAtTree() {
-	showText(TX_FEA0N003);
+	showDescription(3, true);
 }
 
 void Room::feather0LookAtMccoy() {
-	showText(TX_FEA0N004);
+	showDescription(4, true);
 }
 
 void Room::feather0LookAtSpock() {
-	showText(TX_FEA0N005);
+	showDescription(5, true);
 }
 
 void Room::feather0LookAtRedshirt() {
-	showText(TX_FEA0N002);
+	showDescription(2, true);
 }
 
 void Room::feather0TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA0_017);
-	showText(TX_SPEAKER_SPOCK, TX_FEA0_021);
+	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_SPOCK, 21, true);
 }
 
 void Room::feather0TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA0_022);
-	showText(TX_SPEAKER_MCCOY, TX_FEA0_018);
+	showText(TX_SPEAKER_SPOCK, 22, true);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 }
 
 void Room::feather0TalkToRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA0_023);
+	showText(TX_SPEAKER_STRAGEY, 23, true);
 }
 
 void Room::feather0UseSTricorderOnQuetzecoatl() {
-	spockScan(DIR_S, TX_FEA0_020, false);
+	spockScan(DIR_S, 20, false, true);
 }
 
 void Room::feather0UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_FEA0_019, false);
+	spockScan(DIR_S, 19, false, true);
 }
 
 void Room::feather0UseMTricorderOnQuetzecoatl() {
-	mccoyScan(DIR_S, TX_FEA0_015, false);
+	mccoyScan(DIR_S, 15, false, true);
 }
 
 }

@@ -173,6 +173,9 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_color) con
 			case 251:
 				color = kFontColor4;
 				break;
+
+			default:
+				break;
 			}
 
 			// Paint the pixel

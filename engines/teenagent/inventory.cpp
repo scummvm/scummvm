@@ -222,7 +222,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 					remove(id2);
 					debugC(0, kDebugInventory, "adding object %u", newObj);
 					add(newObj);
-					_vm->playSoundNow(69);
+					_vm->playSoundNow(&_vm->res->sam_sam, 69);
 				}
 				uint16 msg = READ_LE_UINT16(table + 3);
 				_vm->displayMessage(msg);

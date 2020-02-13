@@ -32,6 +32,8 @@ namespace Illusions {
 struct WidthHeight {
 	int16 _width, _height;
 	void load(Common::SeekableReadStream &stream);
+
+	WidthHeight() : _width(0), _height(0) {}
 };
 
 struct SurfInfo {

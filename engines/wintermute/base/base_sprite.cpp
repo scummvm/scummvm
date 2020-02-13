@@ -328,6 +328,9 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
 			break;
+
+		default:
+			break;
 		}
 	}
 

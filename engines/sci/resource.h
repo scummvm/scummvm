@@ -145,6 +145,7 @@ enum ResVersion {
 
 class ResourceManager;
 class ResourceSource;
+class ResourcePatcher;
 
 class ResourceId {
 	static inline ResourceType fixupType(ResourceType type) {
@@ -243,6 +244,7 @@ struct ResourceIdHash : public Common::UnaryFunction<ResourceId, uint> {
 /** Class for storing resources in memory */
 class Resource : public SciSpan<const byte> {
 	friend class ResourceManager;
+	friend class ResourcePatcher;
 
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
 	// ease transition to the ResourceSource class system.
@@ -323,6 +325,7 @@ class ResourceManager {
 	friend class ExtAudioMapResourceSource;
 	friend class WaveResourceSource;
 	friend class MacResourceForkResourceSource;
+	friend class ResourcePatcher;
 #ifdef ENABLE_SCI32
 	friend class ChunkResourceSource;
 #endif
@@ -387,6 +390,11 @@ public:
 	 * @return			The resource list
 	 */
 	Common::List<ResourceId> listResources(ResourceType type, int mapNumber = -1);
+
+	/**
+	 * Returns if there are any resources of the specified type.
+	 */
+	bool hasResourceType(ResourceType type);
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
@@ -624,6 +632,9 @@ protected:
 	void detectSciVersion();
 
 private:
+	// For better or worse, because the patcher is added as a ResourceSource,
+	// its destruction is managed by freeResourceSources.
+	ResourcePatcher *_patcher;
 	bool _hasBadResources;
 };
 

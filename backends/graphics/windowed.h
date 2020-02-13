@@ -34,7 +34,8 @@ enum {
 	STRETCH_CENTER = 0,
 	STRETCH_INTEGRAL = 1,
 	STRETCH_FIT = 2,
-	STRETCH_STRETCH = 3
+	STRETCH_STRETCH = 3,
+	STRETCH_FIT_FORCE_ASPECT = 4
 };
 
 class WindowedGraphicsManager : virtual public GraphicsManager {
@@ -43,10 +44,14 @@ public:
 		_windowWidth(0),
 		_windowHeight(0),
 		_overlayVisible(false),
+		_gameScreenShakeXOffset(0),
+		_gameScreenShakeYOffset(0),
 		_forceRedraw(false),
 		_cursorVisible(false),
 		_cursorX(0),
 		_cursorY(0),
+		_xdpi(90),
+		_ydpi(90),
 		_cursorNeedsRedraw(false),
 		_cursorLastInActiveArea(true) {}
 
@@ -72,6 +77,15 @@ public:
 		_forceRedraw = true;
 	}
 
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset) override {
+		if (_gameScreenShakeXOffset != shakeXOffset || _gameScreenShakeYOffset != shakeYOffset) {
+			_gameScreenShakeXOffset = shakeXOffset;
+			_gameScreenShakeYOffset = shakeYOffset;
+			recalculateDisplayAreas();
+			_cursorNeedsRedraw = true;
+		}
+	}
+
 protected:
 	/**
 	 * @returns whether or not the game screen must have aspect ratio correction
@@ -83,7 +97,7 @@ protected:
 	 * Backend-specific implementation for updating internal surfaces that need
 	 * to reflect the new window size.
 	 */
-	virtual void handleResizeImpl(const int width, const int height) = 0;
+	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) = 0;
 
 	/**
 	 * Converts the given point from the active virtual screen's coordinate
@@ -162,10 +176,12 @@ protected:
 	 * @param width The new width of the window, excluding window decoration.
 	 * @param height The new height of the window, excluding window decoration.
 	 */
-	void handleResize(const int width, const int height) {
+	void handleResize(const int width, const int height, const int xdpi, const int ydpi) {
 		_windowWidth = width;
 		_windowHeight = height;
-		handleResizeImpl(width, height);
+		_xdpi = xdpi;
+		_ydpi = ydpi;
+		handleResizeImpl(width, height, xdpi, ydpi);
 	}
 
 	/**
@@ -194,6 +210,7 @@ protected:
 			_activeArea.height = getHeight();
 		}
 	}
+
 	/**
 	 * Sets the position of the hardware mouse cursor in the host system,
 	 * relative to the window.
@@ -265,10 +282,25 @@ protected:
 	int _windowHeight;
 
 	/**
+	 * The DPI of the window.
+	 */
+	int _xdpi, _ydpi;
+
+	/**
 	 * Whether the overlay (i.e. launcher, including the out-of-game launcher)
 	 * is visible or not.
 	 */
 	bool _overlayVisible;
+
+	/**
+	 * The offset by which the screen is moved horizontally.
+	 */
+	int _gameScreenShakeXOffset;
+
+	/**
+	* The offset by which the screen is moved vertically.
+	*/
+	int _gameScreenShakeYOffset;
 
 	/**
 	 * The scaled draw rectangle for the game surface within the window.
@@ -341,6 +373,7 @@ private:
 		// Mode Integral = scale by an integral amount.
 		// Mode Fit      = scale to fit the window while respecting the aspect ratio
 		// Mode Stretch  = scale and stretch to fit the window without respecting the aspect ratio
+		// Mode Fit Force Aspect = scale to fit the window while forcing a 4:3 aspect ratio
 
 		int width = 0, height = 0;
 		if (mode == STRETCH_CENTER || mode == STRETCH_INTEGRAL) {
@@ -359,16 +392,22 @@ private:
 			frac_t windowAspect = intToFrac(_windowWidth) / _windowHeight;
 			width = _windowWidth;
 			height = _windowHeight;
-			if (mode != STRETCH_STRETCH) {
+			if (mode == STRETCH_FIT_FORCE_ASPECT) {
+				frac_t ratio = intToFrac(4) / 3;
+				if (windowAspect < ratio)
+					height = intToFrac(width) / ratio;
+				else if (windowAspect > ratio)
+					width = fracToInt(height * ratio);
+			} else if (mode != STRETCH_STRETCH) {
 				if (windowAspect < displayAspect)
 					height = intToFrac(width) / displayAspect;
 				else if (windowAspect > displayAspect)
 					width = fracToInt(height * displayAspect);
 			}
 		}
-
-		drawRect.left = (_windowWidth - width) / 2;
-		drawRect.top = (_windowHeight - height) / 2;
+		
+		drawRect.left = ((_windowWidth - width) / 2) + _gameScreenShakeXOffset * width / getWidth();
+		drawRect.top = ((_windowHeight - height) / 2) + _gameScreenShakeYOffset * height / getHeight();
 		drawRect.setWidth(width);
 		drawRect.setHeight(height);
 	}

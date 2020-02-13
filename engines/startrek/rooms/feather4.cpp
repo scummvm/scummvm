@@ -73,91 +73,91 @@ void Room::feather4Tick1() {
 }
 
 void Room::feather4UseCommunicator() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA4_005); // BUGFIX: Original played wrong audio file (TX_FEA4N008)
+	showText(TX_SPEAKER_MCCOY, 5, true); // BUGFIX: Original played wrong audio file (TX_FEA4N008)
 }
 
 void Room::feather4UsePhaser() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA4_011);
+	showText(TX_SPEAKER_SPOCK, 11, true);
 }
 
 void Room::feather4UseSTricorderOnLight() {
-	spockScan(DIR_W, TX_FEA4_010);
+	spockScan(DIR_W, 10, true);
 }
 
 void Room::feather4UseSTricorderOnMushroom() {
-	spockScan(DIR_W, TX_FEA4_012);
+	spockScan(DIR_W, 12, true);
 }
 
 void Room::feather4UseSTricorderOnFern() {
-	spockScan(DIR_W, TX_FEA4_009);
+	spockScan(DIR_W, 9, false, true);
 }
 
 void Room::feather4UseSTricorderAnywhere() {
-	spockScan(DIR_W, TX_FEA4_008);
+	spockScan(DIR_W, 8, false, true);
 }
 
 void Room::feather4UseMTricorderOnLight() {
-	mccoyScan(DIR_W, TX_FEA4_001);
+	mccoyScan(DIR_W, 1, false, true);
 }
 
 void Room::feather4UseMTricorderOnMushroom() {
-	mccoyScan(DIR_W, TX_FEA4_003);
+	mccoyScan(DIR_W, 3, false, true);
 }
 
 void Room::feather4UseMTricorderAnywhere() {
-	mccoyScan(DIR_W, TX_FEA4_006);
+	mccoyScan(DIR_W, 6, false, true);
 }
 
 void Room::feather4UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA4_002);
+	showText(TX_SPEAKER_MCCOY, 2, true);
 }
 
 void Room::feather4TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA4_004);
+	showText(TX_SPEAKER_MCCOY, 4, true);
 }
 
 void Room::feather4TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA4_007);
+	showText(TX_SPEAKER_SPOCK, 7, true);
 }
 
 void Room::feather4TalkToRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA4_013);
+	showText(TX_SPEAKER_STRAGEY, 13, true);
 }
 
 void Room::feather4LookAtEyes() {
-	showText(TX_FEA4N003);
+	showDescription(3, true);
 }
 
 void Room::feather4LookAnywhere() {
-	showText(TX_FEA4N008);
+	showDescription(8, true);
 }
 
 void Room::feather4LookAtMushroom() {
-	showText(TX_FEA4N001);
+	showDescription(1, true);
 }
 
 void Room::feather4LookAtFern() {
-	showText(TX_FEA4N000);
+	showDescription(0, true);
 }
 
 void Room::feather4LookAtLight() {
-	showText(TX_FEA4N002);
+	showDescription(2, true);
 }
 
 void Room::feather4LookAtKirk() {
-	showText(TX_FEA4N004);
+	showDescription(4, true);
 }
 
 void Room::feather4LookAtSpock() {
-	showText(TX_FEA4N007);
+	showDescription(7, true);
 }
 
 void Room::feather4LookAtMccoy() {
-	showText(TX_FEA4N006);
+	showDescription(6, true);
 }
 
 void Room::feather4LookAtRedshirt() {
-	showText(TX_FEA4N005);
+	showDescription(5, true);
 }
 
 }

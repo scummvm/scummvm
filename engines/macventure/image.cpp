@@ -150,6 +150,9 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight
 	case MacVenture::kPPIC3:
 		decodePPIC3(stream, data, bitHeight, bitWidth, rowBytes);
 		break;
+	default:
+		warning("decodePPIC(): Unknown mode!");
+		break;
 	}
 
 	delete baseStream;

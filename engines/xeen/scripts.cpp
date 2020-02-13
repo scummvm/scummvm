@@ -48,7 +48,7 @@ uint16 EventParameters::Iterator::readUint16LE() {
 }
 
 uint32 EventParameters::Iterator::readUint32LE() {
-	uint16 result = ((_index + 3) >= _data.size()) ? 0 :
+	uint32 result = ((_index + 3) >= _data.size()) ? 0 :
 		READ_LE_UINT32(&_data[_index]);
 	_index += 4;
 	return result;
@@ -115,7 +115,6 @@ bool MirrorEntry::synchronize(Common::SeekableReadStream &s) {
 
 Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_whoWill = 0;
-	_itemType = 0;
 	_treasureItems = 0;
 	_lineNum = 0;
 	_charIndex = 0;
@@ -144,7 +143,6 @@ int Scripts::checkEvents() {
 	int ccNum = files._ccNum;
 
 	_refreshIcons = false;
-	_itemType = 0;
 	_scriptExecuted = false;
 	_dirFlag = false;
 	_whoWill = 0;
@@ -793,6 +791,8 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 							// Break out of character loop
 							idx = party._activeParty.size();
 							break;
+						default:
+							break;
 						}
 						break;
 					}
@@ -802,6 +802,8 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 			if (!party.giveTake(mode1, val1, mode2, val2, _charIndex - 1)) {
 				if (mode2 == 79)
 					windows.closeAll();
+			} else {
+				return cmdExit(params);
 			}
 		}
 		break;
@@ -1311,7 +1313,7 @@ bool Scripts::cmdGiveEnchanted(ParamsIterator &params) {
 }
 
 bool Scripts::cmdItemType(ParamsIterator &params) {
-	_itemType = params.readByte();
+	Character::_itemType = params.readByte();
 
 	return true;
 }
@@ -1372,7 +1374,7 @@ bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
 	Party &party = *g_vm->_party;
 	Common::String filename = Common::String::format("aaze2%03u.txt", party._mazeId);
-	uint offset = params.readByte();
+	uint lineNumber = params.readByte();
 
 	// Get the text data for the current maze
 	File f(filename);
@@ -1380,8 +1382,11 @@ bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
 	f.read(data, f.size());
 	f.close();
 
-	// Get the message at the specified offset
-	_message = Common::String(data + offset);
+	// Get the message at the specified line
+	const char *lineP = data;
+	for (uint idx = 0; idx < lineNumber; ++idx, lineP += strlen(lineP) + 1) {}
+
+	_message = Common::String(lineP);
 	delete[] data;
 
 	// Display the message
@@ -1675,7 +1680,11 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 37:
 		// Might bonus (extra beyond base)
-		v = ps->_might._temporary;
+		if (party._mazeId == 82)
+			// WORKAROUND: Strength test opening sarcophagus in Northern Sphinx should use full might
+			v = ps->getStat(MIGHT);
+		else
+			v = ps->_might._temporary;
 		break;
 	case 38:
 		// Intellect bonus (extra beyond base)
@@ -1917,6 +1926,8 @@ void Scripts::display(bool justifyFlag, int var46) {
 
 	if (!justifyFlag)
 		_displayMessage = Common::String::format("\r\x3""c%s", _message.c_str());
+	else
+		_displayMessage = _message;
 
 	if (!w._enabled)
 		w.open();

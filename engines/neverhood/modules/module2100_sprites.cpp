@@ -51,6 +51,8 @@ uint32 AsScene2101Door::handleMessage(int messageNum, const MessageParam &param,
 	case NM_KLAYMEN_CLOSE_DOOR:
 		stCloseDoor();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -97,6 +99,8 @@ uint32 AsScene2101HitByDoorEffect::handleMessage(int messageNum, const MessagePa
 		stopAnimation();
 		setVisible(false);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -136,6 +140,8 @@ uint32 SsCommonFloorButton::handleMessage(int messageNum, const MessageParam &pa
 		loadSprite(_fileHash2, kSLFDefDrawOffset | kSLFDefPosition);
 		_countdown = 16;
 		playSound(0, _soundFileHash);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -220,6 +226,8 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x483E:
 		teleporterDisappear(0x9A28CA1C);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -242,6 +250,8 @@ uint32 KmScene2101::hmHitByDoor(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x60428026) {
 			playSound(0, 0x40608A59);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;

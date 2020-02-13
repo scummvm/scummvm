@@ -95,7 +95,7 @@ public:
 	~MystOptionsDialog() override;
 
 	enum ResultAction {
-		kActionNone = 1,
+		kActionSaveSettings = 1,
 		kActionDropPage,
 		kActionShowMap,
 		kActionGoToMenu,
@@ -105,6 +105,11 @@ public:
 	void setCanDropPage(bool canDropPage);
 	void setCanShowMap(bool canShowMap);
 	void setCanReturnToMenu(bool canReturnToMenu);
+
+	bool getZipMode() const;
+	void setZipMode(bool enabled);
+	bool getTransitions() const;
+	void setTransitions(bool enabled);
 
 	void open() override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
@@ -146,19 +151,20 @@ private:
 
 #ifdef ENABLE_RIVEN
 
-class MohawkEngine_Riven;
-
 class RivenOptionsDialog : public MohawkOptionsDialog {
 public:
-	explicit RivenOptionsDialog(MohawkEngine_Riven *vm);
+	explicit RivenOptionsDialog();
 	~RivenOptionsDialog() override;
 
-	void open() override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
+	bool getZipMode() const;
+	void setZipMode(bool enabled);
+	bool getWaterEffect() const;
+	void setWaterEffect(bool enabled);
+	uint32 getTransitions() const;
+	void setTransitions(uint32 mode);
 private:
-	MohawkEngine_Riven *_vm;
-
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_waterEffectCheckbox;
 	GUI::StaticTextWidget *_transitionModeCaption;

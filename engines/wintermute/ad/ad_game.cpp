@@ -38,6 +38,7 @@
 #include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_scene_state.h"
 #include "engines/wintermute/ad/ad_sentence.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/base_object.h"
@@ -872,6 +873,19 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] SetInventoryBoxHideSelected
+	// Used while changing cursor type at some included script
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetInventoryBoxHideSelected") == 0) {
+		stack->correctParams(1);
+		_inventoryBox->_hideSelected = stack->pop()->getBool(false);
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
 
 	else {
 		return BaseGame::scCallMethod(script, stack, thisStack, name);
@@ -1380,8 +1394,14 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 				case TOKEN_DEBUG_STARTUP_SCENE:
 					BaseUtils::setString(&_debugStartupScene, params2);
 					break;
+
+				default:
+					break;
 				}
 			}
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -1576,6 +1596,9 @@ bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 			}
 		}
 		break;
+
+		default:
+			break;
 		}
 	}
 
@@ -1647,6 +1670,9 @@ bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {
 		}
 	}
 	break;
+
+	default:
+		break;
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND || cmd == PARSERR_GENERIC) {
@@ -2173,7 +2199,13 @@ bool AdGame::onMouseLeftUp() {
 	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 
-	bool handled = /*_state==GAME_RUNNING &&*/ DID_SUCCEED(applyEvent("LeftRelease"));
+	bool handled;
+	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
+		handled = _state==GAME_RUNNING && DID_SUCCEED(applyEvent("LeftRelease"));
+	} else {
+		handled = DID_SUCCEED(applyEvent("LeftRelease"));
+	}
+	
 	if (!handled) {
 		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("LeftRelease");

@@ -61,6 +61,9 @@ bool PPCDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 		//debug(8, "elfloader: i=%05d %p +0x%04x: (0x%08x) 0x%08x ", i, src, rel[i].r_addend, sym->st_value, *src);
 
 		switch (REL_TYPE(rel[i].r_info)) {
+		case R_PPC_NONE:
+			debug(8, "elfloader: R_PPC_NONE");
+			break;
 		case R_PPC_ADDR32:
 			*src = value;
 			debug(8, "elfloader: R_PPC_ADDR32 -> 0x%08x", *src);

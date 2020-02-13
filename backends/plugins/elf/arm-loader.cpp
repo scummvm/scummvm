@@ -65,6 +65,7 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 		// Act differently based on the type of relocation
 		switch (REL_TYPE(rel[i].r_info)) {
 		case R_ARM_ABS32:
+		case R_ARM_TARGET1:
 			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
 				a = *target;							// Get full 32 bits of addend
 				relocation = a + Elf32_Addr(_segment);	// Shift by main offset
@@ -80,13 +81,36 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 			break;
 
 		case R_ARM_CALL:
-			debug(8, "elfloader: R_ARM_CALL: PC-relative jump, ld takes care of necessary relocation work for us.");
-			break;
-
 		case R_ARM_JUMP24:
-			debug(8, "elfloader: R_ARM_JUMP24: PC-relative jump, ld takes care of all relocation work for us.");
-			break;
+			if (sym->st_shndx == SHN_ABS) { // Absolute symbols used in PC-relative instructions need to be relocated
+				// Extract the PC offset from the instruction
+				int32 pcOffset = *target;
+				pcOffset = (pcOffset & 0x00ffffff) << 2;
 
+				if (pcOffset & 0x02000000)
+					pcOffset -= 0x04000000;
+
+				// Shift by the segment offset
+				pcOffset -= Elf32_Addr(_segment);
+
+				// Check the relocated offset is valid for the instruction
+				if (pcOffset <= (int32)0xfe000000 ||
+					pcOffset >= (int32)0x02000000) {
+					warning("elfloader: R_ARM_CALL/R_ARM_JUMP24: Out of range relocation i=%d, target=%p, pcOffset=%d", i, target, pcOffset);
+					free(rel);
+					return false;
+				}
+
+				// Put the relocated offset back in the instruction
+				pcOffset >>= 2;
+				pcOffset &= 0x00ffffff;
+
+				*target &= (uint32)0xff000000;
+				*target |= (uint32)pcOffset;
+
+				debug(8, "elfloader: R_ARM_CALL/R_ARM_JUMP24: i=%d, origTarget=%x, target=%x", i, origTarget, *target);
+			}
+			break;
 		case R_ARM_V4BX:
 			debug(8, "elfloader: R_ARM_V4BX: No relocation calculation necessary.");
 			break;

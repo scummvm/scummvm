@@ -62,16 +62,16 @@ class MidiMusicPlayer : public Audio::MidiPlayer {
 public:
 	MidiMusicPlayer(TinselEngine *vm);
 
-	virtual void setVolume(int volume);
+	void setVolume(int volume) override;
 
 	void playMIDI(uint32 size, bool loop);
 
 //	void stop();
-	void pause();
-	void resume();
+	void pause() override;
+	void resume() override;
 
 	// MidiDriver_BASE interface implementation
-	virtual void send(uint32 b);
+	void send(uint32 b) override;
 
 	// The original sets the "sequence timing" to 109 Hz, whatever that
 	// means. The default is 120.
@@ -87,7 +87,7 @@ private:
 class PCMMusicPlayer : public Audio::AudioStream {
 public:
 	PCMMusicPlayer();
-	~PCMMusicPlayer();
+	~PCMMusicPlayer() override;
 
 	bool isPlaying() const;
 
@@ -111,11 +111,11 @@ public:
 	void startFadeOut(int ticks);
 	void fadeOutIteration();
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	bool endOfData() const { return _end; }
-	bool endOfStream() const { return false; }
-	int getRate() const { return 22050; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return _end; }
+	bool endOfStream() const override { return false; }
+	int getRate() const override { return 22050; }
 
 protected:
 	enum State {

@@ -213,6 +213,8 @@ void Draw_v1::printTotText(int16 id) {
 			_backColor = cmd & 0xF;
 			spriteOperation(DRAW_FILLRECTABS);
 			break;
+		default:
+			break;
 		}
 	}
 	ptr += 2;
@@ -484,6 +486,9 @@ void Draw_v1::spriteOperation(int16 operation) {
 		    y + _fontToSprite[_fontIndex].height,
 		    _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 
+		break;
+
+	default:
 		break;
 	}
 

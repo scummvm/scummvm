@@ -39,16 +39,16 @@ class Neighborhood;
 class CaldoriaMessages : public GameInteraction, public Notification, public NotificationReceiver {
 public:
 	CaldoriaMessages(Neighborhood *, const NotificationID, NotificationManager *);
-	virtual ~CaldoriaMessages() {}
+	~CaldoriaMessages() override {}
 
-	void setSoundFXLevel(const uint16);
+	void setSoundFXLevel(const uint16) override;
 
 protected:
-	void openInteraction();
-	void initInteraction();
-	void closeInteraction();
-	void receiveNotification(Notification *, const NotificationFlags);
-	void clickInHotspot(const Input &, const Hotspot *);
+	void openInteraction() override;
+	void initInteraction() override;
+	void closeInteraction() override;
+	void receiveNotification(Notification *, const NotificationFlags) override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
 	void play1Message(uint);
 
 	Movie _messageMovie;

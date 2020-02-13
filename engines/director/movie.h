@@ -23,15 +23,13 @@
 #ifndef DIRECTOR_MOVIE_H
 #define DIRECTOR_MOVIE_H
 
-#include "graphics/managed_surface.h"
-
-#include "director/director.h"
-
 namespace Video {
 class VideoDecoder;
 }
 
 namespace Director {
+
+class DirectorEngine;
 
 class Movie {
 public:

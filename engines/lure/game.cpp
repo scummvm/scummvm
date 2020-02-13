@@ -333,6 +333,10 @@ void Game::handleMenuResponse(uint8 selection) {
 
 	case MENUITEM_SOUND:
 		doSound();
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -834,6 +838,10 @@ bool Game::GetTellActions() {
 						*statusLine = '\0';
 					}
 				}
+				break;
+
+			default:
+				break;
 			}
 		}
 	}

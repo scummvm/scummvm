@@ -67,21 +67,21 @@ public:
 	};
 
 	MidiDriver_PCJr(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) { }
-	~MidiDriver_PCJr() { }
+	~MidiDriver_PCJr() override { }
 
 	// MidiDriver
-	int open() { return open(kMaxChannels); }
-	void close();
-	void send(uint32 b);
-	MidiChannel *allocateChannel() { return NULL; }
-	MidiChannel *getPercussionChannel() { return NULL; }
+	int open() override { return open(kMaxChannels); }
+	void close() override;
+	void send(uint32 b) override;
+	MidiChannel *allocateChannel() override { return NULL; }
+	MidiChannel *getPercussionChannel() override { return NULL; }
 
 	// AudioStream
-	bool isStereo() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
+	bool isStereo() const override { return false; }
+	int getRate() const override { return _mixer->getOutputRate(); }
 
 	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) override;
 
 	int open(int channels);
 private:
@@ -233,11 +233,11 @@ void MidiDriver_PCJr::close() {
 class MidiPlayer_PCJr : public MidiPlayer {
 public:
 	MidiPlayer_PCJr(SciVersion version) : MidiPlayer(version) { _driver = new MidiDriver_PCJr(g_system->getMixer()); }
-	int open(ResourceManager *resMan) { return static_cast<MidiDriver_PCJr *>(_driver)->open(getPolyphony()); }
-	byte getPlayId() const;
-	int getPolyphony() const { return 3; }
-	bool hasRhythmChannel() const { return false; }
-	void setVolume(byte volume) { static_cast<MidiDriver_PCJr *>(_driver)->_global_volume = volume; }
+	int open(ResourceManager *resMan) override { return static_cast<MidiDriver_PCJr *>(_driver)->open(getPolyphony()); }
+	byte getPlayId() const override;
+	int getPolyphony() const override { return 3; }
+	bool hasRhythmChannel() const override { return false; }
+	void setVolume(byte volume) override { static_cast<MidiDriver_PCJr *>(_driver)->_global_volume = volume; }
 };
 
 byte MidiPlayer_PCJr::getPlayId() const {
@@ -259,8 +259,8 @@ class MidiPlayer_PCSpeaker : public MidiPlayer_PCJr {
 public:
 	MidiPlayer_PCSpeaker(SciVersion version) : MidiPlayer_PCJr(version) { }
 
-	byte getPlayId() const;
-	int getPolyphony() const { return 1; }
+	byte getPlayId() const override;
+	int getPolyphony() const override { return 1; }
 };
 
 byte MidiPlayer_PCSpeaker::getPlayId() const {

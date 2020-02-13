@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Kahina : public Entity {
 public:
 	Kahina(LastExpressEngine *engine);
-	~Kahina() {}
+	~Kahina() override {}
 
 	/**
 	 * Resets the entity

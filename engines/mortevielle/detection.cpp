@@ -55,24 +55,28 @@ public:
 	MortevielleMetaEngine() : AdvancedMetaEngine(Mortevielle::MortevielleGameDescriptions, sizeof(Mortevielle::MortevielleGameDescription),
 		MortevielleGame) {
 		_md5Bytes = 512;
-		_singleId = "mortevielle";
 		// Use kADFlagUseExtraAsHint to distinguish between original and improved versions
 		// (i.e. use or not of the game data file).
 		_flags = kADFlagUseExtraAsHint;
 	}
-	virtual const char *getName() const {
+
+	const char *getEngineId() const override {
+		return "mortevielle";
+	}
+
+	const char *getName() const override {
 		return "Mortville Manor";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Mortville Manor (C) 1987-89 Lankhor";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override;
+	SaveStateList listSaves(const char *target) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

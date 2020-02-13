@@ -72,17 +72,23 @@ public class ScummVMEvents implements
 		return false;
 	}
 
-	final static int MSG_MENU_LONG_PRESS = 1;
+	final static int MSG_SMENU_LONG_PRESS = 1;
+	final static int MSG_SBACK_LONG_PRESS = 2;
 
 	final private Handler keyHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			if (msg.what == MSG_MENU_LONG_PRESS) {
+			if (msg.what == MSG_SMENU_LONG_PRESS) {
+				// this displays the android keyboard (see showVirtualKeyboard() in ScummVMActivity.java)
+				// when menu key is long-pressed
 				InputMethodManager imm = (InputMethodManager)
 					_context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 				if (imm != null)
 					imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+			} else if (msg.what == MSG_SBACK_LONG_PRESS) {
+				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
+				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
 			}
 		}
 	};
@@ -98,35 +104,15 @@ public class ScummVMEvents implements
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (action != KeyEvent.ACTION_UP) {
-				// only send event from back button on up event, since down event is sent on right mouse click and
-				// cannot be caught (thus rmb click would send escape key first)
-				return true;
-			}
-
 			if (_mouseHelper != null) {
-				if (_mouseHelper.getRmbGuard()) {
-					// right mouse button was just clicked which sends an extra back button press
+				if (MouseHelper.isMouse(e)) {
+					// right mouse button was just clicked which sends an extra back button press (which should be ignored)
 					return true;
 				}
 			}
 		}
 
 		if (e.isSystem()) {
-			// filter what we handle
-			switch (keyCode) {
-			case KeyEvent.KEYCODE_BACK:
-			case KeyEvent.KEYCODE_MENU:
-			case KeyEvent.KEYCODE_CAMERA:
-			case KeyEvent.KEYCODE_SEARCH:
-			case KeyEvent.KEYCODE_MEDIA_PLAY:
-			case KeyEvent.KEYCODE_MEDIA_PAUSE:
-				break;
-
-			default:
-				return false;
-			}
-
 			// no repeats for system keys
 			if (e.getRepeatCount() > 0)
 				return false;
@@ -135,29 +121,47 @@ public class ScummVMEvents implements
 			// ourselves, since we are otherwise hijacking the menu key :(
 			// See com.android.internal.policy.impl.PhoneWindow.onKeyDownPanel()
 			// for the usual Android implementation of this feature.
-			if (keyCode == KeyEvent.KEYCODE_MENU) {
-				final boolean fired =
-					!keyHandler.hasMessages(MSG_MENU_LONG_PRESS);
+			//
+			// We adopt a similar behavior for the Back system button, as well.
+			if (keyCode == KeyEvent.KEYCODE_MENU || keyCode == KeyEvent.KEYCODE_BACK) {
+				//
+				// Upon pressing the system menu or system back key:
+				// (The example below assumes that system Back key was pressed)
+				// 1. keyHandler.hasMessages(MSG_SBACK_LONG_PRESS) = false, and thus: fired = true
+				// 2. Action will be KeyEvent.ACTION_DOWN, so a delayed message "MSG_SBACK_LONG_PRESS" will be sent to keyHandler after _longPress time
+				//    The "MSG_SBACK_LONG_PRESS" will be handled (and removed) in the keyHandler.
+				//    For the Back button, the keyHandler should forward a ACTION_UP for MENU (the alternate func of Back key!) to native)
+				//    But if the code enters this section before the "MSG_SBACK_LONG_PRESS" was handled in keyHandler (probably due to a ACTION_UP)
+				//        then fired = false and the message is removed from keyHandler, meaning we should treat the button press as a SHORT key press
+				final int typeOfLongPressMessage;
+				if (keyCode == KeyEvent.KEYCODE_MENU) {
+					typeOfLongPressMessage = MSG_SMENU_LONG_PRESS;
+				} else { // back button
+					typeOfLongPressMessage = MSG_SBACK_LONG_PRESS;
+				}
 
-				keyHandler.removeMessages(MSG_MENU_LONG_PRESS);
+				final boolean fired = !keyHandler.hasMessages(typeOfLongPressMessage);
+
+				keyHandler.removeMessages(typeOfLongPressMessage);
 
 				if (action == KeyEvent.ACTION_DOWN) {
 					keyHandler.sendMessageDelayed(keyHandler.obtainMessage(
-									MSG_MENU_LONG_PRESS), _longPress);
+									typeOfLongPressMessage), _longPress);
+					return true;
+				} else if (action != KeyEvent.ACTION_UP) {
 					return true;
 				}
 
-				if (fired)
+				if (fired) {
 					return true;
+				}
 
-				// only send up events of the menu button to the native side
-				if (action != KeyEvent.ACTION_UP)
-					return true;
+				// It's still necessary to send a key down event to the backend.
+				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, keyCode,
+							e.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
+							e.getMetaState(), e.getRepeatCount(),
+							(int)(e.getEventTime() - e.getDownTime()));
 			}
-
-			_scummvm.pushEvent(JE_SYS_KEY, action, keyCode, 0, 0, 0, 0);
-
-			return true;
 		}
 
 		// sequence of characters
@@ -178,16 +182,19 @@ public class ScummVMEvents implements
 			return true;
 		}
 
+		int type;
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_DPAD_UP:
 		case KeyEvent.KEYCODE_DPAD_DOWN:
 		case KeyEvent.KEYCODE_DPAD_LEFT:
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
 		case KeyEvent.KEYCODE_DPAD_CENTER:
-			_scummvm.pushEvent(JE_DPAD, action, keyCode,
-								(int)(e.getEventTime() - e.getDownTime()),
-								e.getRepeatCount(), 0, 0);
-			return true;
+			if (e.getSource() == InputDevice.SOURCE_DPAD) {
+				type = JE_DPAD;
+			} else {
+				type = JE_KEY;
+			}
+			break;
 		case KeyEvent.KEYCODE_BUTTON_A:
 		case KeyEvent.KEYCODE_BUTTON_B:
 		case KeyEvent.KEYCODE_BUTTON_C:
@@ -203,15 +210,21 @@ public class ScummVMEvents implements
 		case KeyEvent.KEYCODE_BUTTON_START:
 		case KeyEvent.KEYCODE_BUTTON_SELECT:
 		case KeyEvent.KEYCODE_BUTTON_MODE:
-			_scummvm.pushEvent(JE_GAMEPAD, action, keyCode,
-								(int)(e.getEventTime() - e.getDownTime()),
-								e.getRepeatCount(), 0, 0);
-			return true;
+			type = JE_GAMEPAD;
+			break;
+		default:
+			if (e.isSystem()) {
+				type = JE_SYS_KEY;
+			} else {
+				type = JE_KEY;
+			}
+			break;
 		}
 
-		_scummvm.pushEvent(JE_KEY, action, keyCode,
+		_scummvm.pushEvent(type, action, keyCode,
 					e.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
-					e.getMetaState(), e.getRepeatCount(), 0);
+					e.getMetaState(), e.getRepeatCount(),
+					(int)(e.getEventTime() - e.getDownTime()));
 
 		return true;
 	}

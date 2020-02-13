@@ -891,7 +891,7 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 		Sound &sound = *i;
 		if (sound.delay == 0) {
 			debugC(1, kDebugScene, "sound %u started", sound.id);
-			_vm->playSoundNow(sound.id);
+			_vm->playSoundNow(&_vm->res->sam_sam, sound.id);
 			i = sounds.erase(i);
 		} else {
 			sound.delay -= gameDelta;
@@ -1111,19 +1111,19 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kEffect:
 			_vm->_system->delayMillis(80); // 2 vsyncs
-			_vm->_system->setShakePos(8);
+			_vm->_system->setShakePos(0, 8);
 			_vm->_system->updateScreen();
 
 			_vm->_system->delayMillis(80); // 2 vsyncs
-			_vm->_system->setShakePos(0);
+			_vm->_system->setShakePos(0, 0);
 			_vm->_system->updateScreen();
 
 			_vm->_system->delayMillis(80); // 2 vsyncs
-			_vm->_system->setShakePos(4);
+			_vm->_system->setShakePos(0, 4);
 			_vm->_system->updateScreen();
 
 			_vm->_system->delayMillis(80); // 2 vsyncs
-			_vm->_system->setShakePos(0);
+			_vm->_system->setShakePos(0, 0);
 			_vm->_system->updateScreen();
 
 			currentEvent.clear();

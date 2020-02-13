@@ -261,7 +261,6 @@ void GfxView::initData(GuiResourceId resourceId) {
 			_isScaleable = false;
 			break;
 		case 0x40:
-		case 0x4F:	// LSL6 Polish, seems to be garbage - bug #6718
 		case 0:
 			break; // don't do anything, we already have _isScaleable set
 		default:
@@ -601,6 +600,7 @@ void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &celBitmap
 					memset(outPtr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
 				break;
 			case 0xC0: // skip the next pixels (transparency)
+			default:
 				break;
 			}
 
@@ -780,6 +780,23 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 	}
 }
 
+byte GfxView::getMappedColor(byte color, uint16 scaleSignal, const Palette *palette, int x2, int y2) {
+	byte outputColor = palette->mapping[color];
+	// SCI16 remapping (QFG4 demo)
+	if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
+		outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
+	// SCI11+ remapping (Catdate)
+	if ((scaleSignal & 0xFF00) && g_sci->_gfxRemap16 && _resMan->testResource(ResourceId(kResourceTypeVocab, 184))) {
+		if ((scaleSignal >> 8) == 1) // all black
+			outputColor = 0;
+		else if ((scaleSignal >> 8) == 2) // darken
+			outputColor = g_sci->_gfxRemap16->remapColor(253, outputColor);
+		else if ((scaleSignal >> 8) == 3) // shadow
+			outputColor = g_sci->_gfxRemap16->remapColor(253, _screen->getVisual(x2, y2));
+	}
+	return outputColor;
+}
+
 void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated,
 			int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires, uint16 scaleSignal) {
 	const Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
@@ -833,14 +850,7 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 					const int x2 = clipRectTranslated.left + x;
 					const int y2 = clipRectTranslated.top + y;
 					if (priority >= _screen->getPriority(x2, y2)) {
-						byte outputColor = palette->mapping[color];
-						// SCI16 remapping (QFG4 demo)
-						if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
-							outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
-						// SCI11+ remapping (Catdate)
-						if ((scaleSignal & 0x200) && g_sci->_gfxRemap16)
-							outputColor = g_sci->_gfxRemap16->remapColor(253, outputColor);
-						_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
+						_screen->putPixel(x2, y2, drawMask, getMappedColor(color, scaleSignal, palette, x2, y2), priority, 0);
 					}
 				}
 			}
@@ -927,14 +937,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 			const int x2 = clipRectTranslated.left + x;
 			const int y2 = clipRectTranslated.top + y;
 			if (color != clearKey && priority >= _screen->getPriority(x2, y2)) {
-				byte outputColor = palette->mapping[color];
-				// SCI16 remapping (QFG4 demo)
-				if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
-					outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
-				// SCI11+ remapping (Catdate)
-				if ((scaleSignal & 0x200) && g_sci->_gfxRemap16)
-					outputColor = g_sci->_gfxRemap16->remapColor(253, outputColor);
-				_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
+				_screen->putPixel(x2, y2, drawMask, getMappedColor(color, scaleSignal, palette, x2, y2), priority, 0);
 			}
 		}
 	}

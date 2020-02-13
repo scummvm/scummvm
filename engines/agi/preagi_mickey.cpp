@@ -327,6 +327,8 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow)
 	case 1:
 		sel = sel1;
 		break;
+	default:
+		break;
 	}
 	nWords = menu.row[iRow].count;
 	_clickToMove = false;
@@ -1887,6 +1889,8 @@ bool MickeyEngine::parse(int cmd, int arg) {
 			case 2:
 				getXtal(35);
 				break;
+			default:
+				break;
 			}
 		}
 		break;
@@ -2190,6 +2194,10 @@ bool MickeyEngine::parse(int cmd, int arg) {
 		_gameStateMickey.iRoom = arg;
 
 		return true;
+		break;
+
+	default:
+		break;
 	}
 
 	return false;

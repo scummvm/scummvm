@@ -74,7 +74,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Screen();
+	~Screen() override;
 
 	/**
 	 * Initialize the screen

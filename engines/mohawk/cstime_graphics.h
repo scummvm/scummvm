@@ -32,14 +32,14 @@ class MohawkEngine_CSTime;
 class CSTimeGraphics : public GraphicsManager {
 public:
 	CSTimeGraphics(MohawkEngine_CSTime *vm);
-	~CSTimeGraphics();
+	~CSTimeGraphics() override;
 
 	void drawRect(Common::Rect rect, byte color);
 
 protected:
-	MohawkSurface *decodeImage(uint16 id);
-	Common::Array<MohawkSurface *> decodeImages(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
+	MohawkSurface *decodeImage(uint16 id) override;
+	Common::Array<MohawkSurface *> decodeImages(uint16 id) override;
+	MohawkEngine *getVM() override { return (MohawkEngine *)_vm; }
 
 private:
 	MohawkBitmap *_bmpDecoder;

@@ -104,7 +104,7 @@ uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 	res &= _engine->getGlobalSettings()._attrMasks[attrID];
 	res >>= _engine->getGlobalSettings()._attrShifts[attrID];
 	if (res & 0x8000)
-		res = -((res ^ 0xffff) + 1);
+		res = -((int)((res ^ 0xffff) + 1));
 	debugC(5, kMVDebugMain, "Attribute %x from object %x is %x", attrID, objID, res);
 	delete objStream;
 	return res;

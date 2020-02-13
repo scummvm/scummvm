@@ -106,18 +106,6 @@ static inline uint32 roundup(uint32 v) {
 	return (v + 1) & ~1u;
 }
 
-const char *strTag(uint32 tag) {
-	static char s[5];
-
-	sprintf(s, "%c%c%c%c",
-		(tag >> 24) & 0xff,
-		(tag >> 16) & 0xff,
-		(tag >>  8) & 0xff,
-		(tag >>  0) & 0xff);
-
-	return s;
-}
-
 VQADecoder::VQADecoder() {
 	_s                   = nullptr;
 	_frameInfo           = nullptr;
@@ -191,13 +179,13 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 		case kMSCI: rc = readMSCI(s, chd.size); break;
 		case kVQHD: rc = readVQHD(s, chd.size); break;
 		default:
-			warning("Unhandled chunk '%s'", strTag(chd.id));
+			warning("Unhandled chunk '%s'", tag2str(chd.id));
 			s->skip(roundup(chd.size));
 			rc = true;
 		}
 
 		if (!rc) {
-			warning("failed to handle chunk %s", strTag(chd.id));
+			warning("failed to handle chunk %s", tag2str(chd.id));
 			return false;
 		}
 	} while (chd.id != kFINF);
@@ -264,7 +252,7 @@ void VQADecoder::readPacket(uint readFlags) {
 		}
 
 		if (!rc) {
-			warning("VQADecoder::readPacket(): Error handling chunk %s", strTag(chd.id));
+			warning("VQADecoder::readPacket(): Error handling chunk %s", tag2str(chd.id));
 			return;
 		}
 	} while (chd.id != kVQFR);
@@ -364,7 +352,7 @@ bool VQADecoder::VQAVideoTrack::readVQFR(Common::SeekableReadStream *s, uint32 s
 		}
 
 		if (!rc) {
-			error("VQADecoder::VQAVideoTrack::readVQFR(): error handling chunk %s", strTag(chd.id));
+			error("VQADecoder::VQAVideoTrack::readVQFR(): error handling chunk %s", tag2str(chd.id));
 			return false;
 		}
 	}
@@ -404,7 +392,7 @@ bool VQADecoder::readMSCI(Common::SeekableReadStream *s, uint32 size) {
 			_maxAESCChunkSize = max_size;
 			break;
 		default:
-			warning("Unknown tag in MSCT: %s", strTag(tag));
+			warning("Unknown tag in MSCT: %s", tag2str(tag));
 		}
 
 		uint32 zero;
@@ -680,7 +668,7 @@ bool VQADecoder::VQAVideoTrack::readVQFL(Common::SeekableReadStream *s, uint32 s
 		}
 
 		if (!rc) {
-			warning("VQFL: error handling chunk %s", strTag(chd.id));
+			warning("VQFL: error handling chunk %s", tag2str(chd.id));
 			return false;
 		}
 	}
@@ -846,11 +834,14 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 				src_p += 2;
 
 				uint8 a, r, g, b;
-				gameDataPixelFormat().colorToARGB(vqaColor, a, r, g, b);
-				uint16 outColor = (uint16)surface->format.ARGBToColor(a, r, g, b);
+				getGameDataColor(vqaColor, a, r, g, b);
 
 				if (!(alpha && a)) {
-					*(uint16 *)(surface->getBasePtr(dst_x + x, dst_y + y)) = outColor;
+					// clip is too slow and it is not needed
+					// void* dstPtr = surface->getBasePtr(CLIP(dst_x + x, (uint32)0, (uint32)(surface->w - 1)), CLIP(dst_y + y, (uint32)0, (uint32)(surface->h - 1)));
+					void* dstPtr = surface->getBasePtr(dst_x + x, dst_y + y);
+					// Ignore the alpha in the output as it is inversed in the input
+					drawPixel(*surface, dstPtr, surface->format.RGBToColor(r, g, b));
 				}
 			}
 		}

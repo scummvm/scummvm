@@ -44,7 +44,7 @@ protected:
 
 public:
 	Debugger();
-	virtual ~Debugger() {}
+	~Debugger() override {}
 };
 
 } // End of namespace Gnap

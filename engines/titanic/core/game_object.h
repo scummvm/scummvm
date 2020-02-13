@@ -43,10 +43,28 @@ namespace Titanic {
 enum Find { FIND_GLOBAL = 1, FIND_ROOM = 2, FIND_PET = 4, FIND_MAILMAN = 8 };
 enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FOUND_MAILMAN = 4 };
 enum RoomFlagsComparison { RFC_LOCATION = 1, RFC_CLASS_ELEVATOR = 2, RFC_TITANIA = 3 };
+
 enum StarControlAction {
-	STAR_SHOW = 0, STAR_HIDE, STAR_2, STAR_RESET_POS, STAR_4, STAR_5, STAR_6, STAR_FULL_SPEED,
-	STAR_8, STAR_TOGGLE_MODE, STAR_10, STAR_11, STAR_12, STAR_13, STAR_SET_REFERENCE, STAR_FADE_IN,
-	STAR_FADE_OUT, LOCK_STAR, UNLOCK_STAR, STAR_19
+	STAR_SHOW = 0,			///< Show the starfield
+	STAR_HIDE,				///< Hide the starfield
+	STAR_VIEW_EARTH,		///< View the solar system
+	STAR_VIEW_FROM_EARTH,	///< View from the solar system
+	STAR_VIEW_BOUNDARIES,		///< Turn on constellation boundaries
+	STAR_VIEW_CONSTELLATIONS,	///< Turn on the constellation lines
+	STAR_VIEW_RANDOM_STAR,		///< Look at a random star
+	STAR_FULL_SPEED,			///< Accellerate to full speed
+	STAR_TOGGLE_STEREO_PAIR,	///< Enable stero pair vision	
+	STAR_TOGGLE_HOME_PHOTO,		///< Turn on/off the home photo
+	STAR_TOGGLE_SOLAR_RENDERING,///< Turn on/off the solar object rendering
+	STAR_TOGGLE_POS_FRAME,		///< Turn on/off the pilot's position frame
+	STAR_STEREO_PAIR_ON,		///< Turn on Stereo Pair imaging
+	STAR_STEREO_PAIR_OFF,		///< Turn off Stero Pair imaging
+	STAR_SET_REFERENCE,			///< Take a photo of the current star line
+	STAR_FADE_IN,				///< Fade in
+	STAR_FADE_OUT,				///< Fade out
+	LOCK_STAR,					///< Lock in the currently selected sar
+	UNLOCK_STAR,				///< Unlock the last locked star
+	STAR_CLEAR_MODIFIED			///< Clear the modified flag
 };
 
 class CDontSaveFileItem;
@@ -550,37 +568,37 @@ public:
 public:
 	CLASSDEF;
 	CGameObject();
-	~CGameObject();
+	~CGameObject() override;
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Returns the clip list, if any, associated with the item
 	 */
-	virtual const CMovieClipList *getMovieClips() const { return &_movieClips; }
+	const CMovieClipList *getMovieClips() const override { return &_movieClips; }
 
 	/**
 	 * Allows the item to draw itself
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager) override;
 
 	/**
 	 * Gets the bounds occupied by the item
 	 */
-	virtual Rect getBounds() const;
+	Rect getBounds() const override;
 
 	/**
 	 * Free up any surface the object used
 	 */
-	virtual void freeSurface();
+	void freeSurface() override;
 
 	/**
 	 * Allows the item to draw itself

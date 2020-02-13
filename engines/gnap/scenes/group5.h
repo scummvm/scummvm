@@ -53,13 +53,13 @@ class GnapEngine;
 class Scene53: public Scene {
 public:
 	Scene53(GnapEngine *vm);
-	virtual ~Scene53() {}
+	~Scene53() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations() {};
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override {};
+	void updateAnimationsCb() override {};
 
 private:
 	bool _isGnapPhoning;

@@ -159,7 +159,7 @@ void Screen::startShakeScreen(int16 shakeCounter) {
 
 void Screen::stopShakeScreen() {
 	_shakeActive = false;
-	_vm->_system->setShakePos(0);
+	_vm->_system->setShakePos(0, 0);
 }
 
 bool Screen::updateShakeScreen() {
@@ -170,7 +170,7 @@ bool Screen::updateShakeScreen() {
 		if (_shakeCounter == 0) {
 			_shakeCounter = _shakeCounterInit;
 			_shakePos ^= 8;
-			_vm->_system->setShakePos(_shakePos);
+			_vm->_system->setShakePos(0, _shakePos);
 			return true;
 		}
 	}

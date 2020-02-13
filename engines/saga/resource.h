@@ -215,26 +215,26 @@ protected:
 // ITE
 class ResourceContext_RSC: public ResourceContext {
 protected:
-	virtual bool loadMacMIDI();
-	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
+	bool loadMacMIDI() override;
+	bool loadRes(uint32 contextOffset, uint32 contextSize) override {
 		return loadResV1(contextOffset, contextSize);
 	}
-	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles);
+	void processPatches(Resource *resource, const GamePatchDescription *patchFiles) override;
 };
 
 class Resource_RSC : public Resource {
 public:
 	Resource_RSC(SagaEngine *vm) : Resource(vm) {}
-	virtual uint32 convertResourceId(uint32 resourceId) {
+	uint32 convertResourceId(uint32 resourceId) override {
 		return _vm->isMacResources() ? resourceId - 2 : resourceId;
 	}
-	virtual void loadGlobalResources(int chapter, int actorsEntrance) {}
-	virtual MetaResource* getMetaResource() {
+	void loadGlobalResources(int chapter, int actorsEntrance) override {}
+	MetaResource* getMetaResource() override {
 		MetaResource *dummy = 0;
 		return dummy;
 	}
 protected:
-	virtual ResourceContext *createContext() {
+	ResourceContext *createContext() override {
 		return new ResourceContext_RSC();
 	}
 };
@@ -243,17 +243,17 @@ protected:
 // IHNM
 class ResourceContext_RES: public ResourceContext {
 protected:
-	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
+	bool loadRes(uint32 contextOffset, uint32 contextSize) override {
 		return loadResV1(0, contextSize);
 	}
 
-	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles);
+	void processPatches(Resource *resource, const GamePatchDescription *patchFiles) override;
 };
 
 // TODO: move load routines from sndres
 class VoiceResourceContext_RES: public ResourceContext {
 protected:
-	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
+	bool loadRes(uint32 contextOffset, uint32 contextSize) override {
 		return false;
 	}
 public:
@@ -266,11 +266,11 @@ public:
 class Resource_RES : public Resource {
 public:
 	Resource_RES(SagaEngine *vm) : Resource(vm) {}
-	virtual uint32 convertResourceId(uint32 resourceId) { return resourceId; }
-	virtual void loadGlobalResources(int chapter, int actorsEntrance);
-	virtual MetaResource* getMetaResource() { return &_metaResource; }
+	uint32 convertResourceId(uint32 resourceId) override { return resourceId; }
+	void loadGlobalResources(int chapter, int actorsEntrance) override;
+	MetaResource* getMetaResource() override { return &_metaResource; }
 protected:
-	virtual ResourceContext *createContext() {
+	ResourceContext *createContext() override {
 		return new ResourceContext_RES();
 	}
 private:
@@ -284,7 +284,7 @@ class ResourceContext_HRS: public ResourceContext {
 protected:
 	ResourceDataArray _categories;
 
-	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
+	bool loadRes(uint32 contextOffset, uint32 contextSize) override {
 		return loadResV2(contextSize);
 	}
 	bool loadResV2(uint32 contextSize);
@@ -297,14 +297,14 @@ protected:
 class Resource_HRS : public Resource {
 public:
 	Resource_HRS(SagaEngine *vm) : Resource(vm) {}
-	virtual uint32 convertResourceId(uint32 resourceId) { return resourceId; }
-	virtual void loadGlobalResources(int chapter, int actorsEntrance) {}
-	virtual MetaResource* getMetaResource() {
+	uint32 convertResourceId(uint32 resourceId) override { return resourceId; }
+	void loadGlobalResources(int chapter, int actorsEntrance) override {}
+	MetaResource* getMetaResource() override {
 		MetaResource *dummy = 0;
 		return dummy;
 	}
 protected:
-	virtual ResourceContext *createContext() {
+	ResourceContext *createContext() override {
 		return new ResourceContext_HRS();
 	}
 };

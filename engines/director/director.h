@@ -24,16 +24,17 @@
 #define DIRECTOR_DIRECTOR_H
 
 #include "common/random.h"
-#include "common/substream.h"
+#include "common/rect.h"
+#include "common/str-array.h"
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
-#include "director/cast.h"
-
-#define CHANNEL_COUNT 30
+#include "director/types.h"
 
 namespace Common {
 class MacResManager;
+class SeekableReadStream;
+class SeekableSubReadStreamEndian;
 }
 
 namespace Graphics {
@@ -45,7 +46,8 @@ namespace Director {
 
 enum DirectorGameID {
 	GID_GENERIC,
-	GID_TEST
+	GID_TEST,
+	GID_TESTALL
 };
 
 class Archive;
@@ -56,13 +58,18 @@ class Score;
 class Cast;
 
 enum {
-	kDebugLingoExec		= 1 << 0,
-	kDebugLingoCompile	= 1 << 1,
-	kDebugLoading		= 1 << 2,
-	kDebugImages		= 1 << 3,
-	kDebugText			= 1 << 4,
-	kDebugEvents		= 1 << 5,
-	kDebugLingoParse	= 1 << 6
+	kDebugLingoExec			= 1 << 0,
+	kDebugLingoCompile		= 1 << 1,
+	kDebugLoading			= 1 << 2,
+	kDebugImages			= 1 << 3,
+	kDebugText				= 1 << 4,
+	kDebugEvents			= 1 << 5,
+	kDebugLingoParse		= 1 << 6,
+	kDebugLingoCompileOnly	= 1 << 7,
+	kDebugSlow				= 1 << 8,
+	kDebugFast				= 1 << 9,
+	kDebugNoLoop			= 1 << 10,
+	kDebugBytecode			= 1 << 11
 };
 
 struct MovieReference {
@@ -73,12 +80,16 @@ struct MovieReference {
 	MovieReference() { frameI = -1; }
 };
 
-extern byte defaultPalette[768];
+struct PaletteV4 {
+	int id;
+	byte *palette;
+	int length;
+};
 
 class DirectorEngine : public ::Engine {
 public:
 	DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc);
-	~DirectorEngine();
+	~DirectorEngine() override;
 
 	// Detection related functions
 
@@ -93,11 +104,15 @@ public:
 	Lingo *getLingo() const { return _lingo; }
 	Score *getCurrentScore() const { return _currentScore; }
 	Score *getSharedScore() const { return _sharedScore; }
+	Common::String getCurrentPath() const { return _currentPath; }
+	void setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
+	void loadPalettes();
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
+	void clearSharedCast();
 	void loadPatterns();
 	Graphics::MacPatterns &getPatterns();
 
@@ -112,7 +127,6 @@ public:
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedDIB() const { return _sharedDIB; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedBMP() const { return _sharedBMP; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedSTXT() const { return _sharedSTXT; }
-	Common::HashMap<int, CastType> *getSharedCastTypes();
 
 	Common::HashMap<Common::String, Score *> *_movies;
 
@@ -131,7 +145,7 @@ public:
 	Common::List<MovieReference> _movieStack;
 
 protected:
-	virtual Common::Error run();
+	Common::Error run() override;
 
 private:
 	const DirectorGameDescription *_gameDescription;
@@ -159,20 +173,27 @@ private:
 	Lingo *_lingo;
 
 	Score *_currentScore;
+	Common::String _currentPath;
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
+	Common::HashMap<int, PaletteV4 *> _director4Palettes;
+
 	Common::String _sharedCastFile;
-	Common::HashMap<int, CastType> _dummyCastType;
 
 	bool _draggingSprite;
 	uint16 _draggingSpriteId;
 	Common::Point _draggingSpritePos;
 
+	Common::StringArray _movieQueue;
+
 private:
 	void testFontScaling();
 	void testFonts();
+
+	void enqueueAllMovies();
+	MovieReference getNextMovieFromQueue();
 };
 
 extern DirectorEngine *g_director;

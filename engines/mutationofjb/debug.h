@@ -34,7 +34,7 @@ class Script;
 class Console : public GUI::Debugger {
 public:
 	Console(MutationOfJBEngine *vm);
-	virtual ~Console(void) {}
+	~Console(void) override {}
 private:
 	bool cmd_showallcommands(int argc, const char **argv);
 	bool cmd_listsections(int argc, const char **argv);

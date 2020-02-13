@@ -32,15 +32,15 @@ class AddItemCommandParser : public SeqCommandParser {
 public:
 	AddItemCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class AddItemCommand : public SeqCommand {
 public:
 	AddItemCommand(const Common::String &item) : _item(item) {}
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	Common::String _item;
 };

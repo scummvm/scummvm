@@ -49,6 +49,22 @@ namespace Agi {
 		ver \
 	}
 
+#define GAME_LVFPN_PIRATED(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
+		{ \
+			id, \
+			extra, \
+			AD_ENTRY1s(fname,md5,size), \
+			lang, \
+			platform, \
+			ADGF_PIRATED, \
+			guioptions \
+		}, \
+		gid, \
+		interp, \
+		features, \
+		ver \
+	}
+
 #define GAME_LVFPNF(id,name,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
 		{ \
 			id, \
@@ -68,6 +84,7 @@ namespace Agi {
 #define BOOTER2(id,extra,fname,md5,size,ver,gid) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
 #define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
 #define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT)
+#define GAME3_PIRATED(id,extra,fname,md5,ver,gid) GAME_LVFPN_PIRATED(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT)
 
 #define GAME_P(id,extra,md5,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
 #define GAME_PO(id,extra,md5,ver,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2,guioptions)
@@ -145,7 +162,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "bc-d1.img", BooterDisk1, "1d29a82b41c9c7491e2b68d16864bd11", 368640},
 				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -166,7 +183,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "bc-d1.img", BooterDisk1, "98a51d3a372baa9df288b6c0f0232567", 368640},
 				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -187,7 +204,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "bc-d1.img", BooterDisk1, "edc0e5befbe5e44bb109cdf9137ee12d", 368640},
 				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -256,6 +273,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149]
 	GAME3("goldrush", "2.01 1988-12-22 3.5\"", "grdir", "6a285235745f69b4b421403659497216", 0x3149, GID_GOLDRUSH),
 
+	// Gold Rush!  2.01 12/22/88 - pirated copy, according to https://bugs.scummvm.org/ticket/3220
+	GAME3_PIRATED("goldrush", "2.01 1988-12-22", "grdir", "3ae052117feb483f01a9017025fbb366", 2399, GID_GOLDRUSH),
+
 	// Gold Rush! (PC 3.5", bought from The Software Farm) 3.0 1998-12-22 [AGI 3.002.149]
 	GAME3("goldrush", "3.0 1998-12-22 3.5\"", "grdir", "6882b6090473209da4cd78bb59f78dbe", 0x3149, GID_GOLDRUSH),
 
@@ -267,7 +287,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "grdir", 0, "db733d199238d4009a9e95f11ece34e9", 2399},
 				{ "vol.0", 0, "4b6423d143674d3757ab1b875d25951d", 25070},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -289,11 +309,11 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 1 (Amiga) 1.0U      # 2.082
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FPO("kq1", "1.0U 1986", "246c695324f1c514aee2b904fa352fad", 0x2440, GF_MENUS, GID_KQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	GAME_PO("kq1", "1.0U 1986", "246c695324f1c514aee2b904fa352fad", 0x2440, GID_KQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// King's Quest 1 (ST) 1.0V
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FP("kq1", "1.0V 1986", "c3a017e556c4b0eece366a4cd9abb657", 0x2272, GF_MENUS, GID_KQ1, Common::kPlatformAtariST),
+	GAME_P("kq1", "1.0V 1986", "c3a017e556c4b0eece366a4cd9abb657", 0x2272, GID_KQ1, Common::kPlatformAtariST),
 
 	// King's Quest 1 (IIgs) 1.0S-88223
 	// Menus not tested
@@ -344,11 +364,11 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 3 (Amiga) 1.01 11/8/86
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FPO("kq3", "1.01 1986-11-08", "8ab343306df0e2d98f136be4e8cfd0ef", 0x2440, GF_MENUS, GID_KQ3, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	GAME_PO("kq3", "1.01 1986-11-08", "8ab343306df0e2d98f136be4e8cfd0ef", 0x2440, GID_KQ3, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// King's Quest 3 (ST) 1.02 11/18/86
 	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
-	GAME_FP("kq3", "1.02 1986-11-18", "8846df2654302b623217ba8bd6d657a9", 0x2272, GF_ESCPAUSE, GID_KQ3, Common::kPlatformAtariST),
+	GAME_P("kq3", "1.02 1986-11-18", "8846df2654302b623217ba8bd6d657a9", 0x2272, GID_KQ3, Common::kPlatformAtariST),
 
 	// King's Quest 3 (Mac) 2.14 3/15/88
 	GAME_P("kq3", "2.14 1988-03-15", "7639c0da5ce94848227d409351fabda2", 0x2440, GID_KQ3, Common::kPlatformMacintosh),
@@ -364,10 +384,10 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]
 	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
-	GAME_FP("kq3", "1.01 1986-11-08", "9c2b34e7ffaa89c8e2ecfeb3695d444b", 0x2272, GF_ESCPAUSE, GID_KQ3, Common::kPlatformDOS),
+	GAME_P("kq3", "1.01 1986-11-08", "9c2b34e7ffaa89c8e2ecfeb3695d444b", 0x2272, GID_KQ3, Common::kPlatformDOS),
 
 	// King's Quest 3 (Russian)
-	GAME_LFPS("kq3", "", "5856dec6ccb9c4b70aee21044a19270a", 390, Common::RU_RUS, 0x2272, GF_ESCPAUSE, GID_KQ3, Common::kPlatformDOS),
+	GAME_LPS("kq3", "", "5856dec6ccb9c4b70aee21044a19270a", 390, Common::RU_RUS, 0x2272, GID_KQ3, Common::kPlatformDOS),
 
 	// King's Quest 3 (PC 5.25") 2.00 5/25/87 [AGI 2.435]
 	GAME("kq3", "2.00 1987-05-25 5.25\"", "18aad8f7acaaff760720c5c6885b6bab", 0x2440, GID_KQ3),
@@ -532,19 +552,19 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Space Quest 1 (ST) 1.1A
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FP("sq1", "1.1A 1986-02-06", "6421fb64b0e6604c9dd065975d9279e9", 0x2440, GF_MENUS, GID_SQ1, Common::kPlatformAtariST),
+	GAME_P("sq1", "1.1A 1986-02-06", "6421fb64b0e6604c9dd065975d9279e9", 0x2440, GID_SQ1, Common::kPlatformAtariST),
 
 	// Space Quest 1 (PC 360k) 1.1A [AGI 2.272]
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FP("sq1", "1.1A 1986-11-13", "8d8c20ab9f4b6e4817698637174a1cb6", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformDOS),
+	GAME_P("sq1", "1.1A 1986-11-13", "8d8c20ab9f4b6e4817698637174a1cb6", 0x2272, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (PC 720k) 1.1A [AGI 2.272]
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FP("sq1", "1.1A 720kb", "0a92b1be7daf3bb98caad3f849868aeb", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformDOS),
+	GAME_P("sq1", "1.1A 720kb", "0a92b1be7daf3bb98caad3f849868aeb", 0x2272, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (Amiga) 1.2            # 2.082
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FPO("sq1", "1.2 1986", "0b216d931e95750f1f4837d6a4b821e5", 0x2440, GF_MENUS | GF_OLDAMIGAV20, GID_SQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	GAME_FPO("sq1", "1.2 1986", "0b216d931e95750f1f4837d6a4b821e5", 0x2440, GF_OLDAMIGAV20, GID_SQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Space Quest 1 (Mac) 1.5D
 	GAME_P("sq1", "1.5D 1987-04-02", "ce88419aadd073d1c6682d859b3d8aa2", 0x2440, GID_SQ1, Common::kPlatformMacintosh),
@@ -554,10 +574,10 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Space Quest 1 (PC) 1.0X [AGI 2.089]
 	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
-	GAME_FP("sq1", "1.0X 1986-09-24", "af93941b6c51460790a9efa0e8cb7122", 0x2089, GF_ESCPAUSE, GID_SQ1, Common::kPlatformDOS),
+	GAME_P("sq1", "1.0X 1986-09-24", "af93941b6c51460790a9efa0e8cb7122", 0x2089, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (Russian)
-	GAME_LFPS("sq1", "", "a279eb8ddbdefdb1ea6adc827a1d632a", 372, Common::RU_RUS, 0x2089, GF_ESCPAUSE, GID_SQ1, Common::kPlatformDOS),
+	GAME_LPS("sq1", "", "a279eb8ddbdefdb1ea6adc827a1d632a", 372, Common::RU_RUS, 0x2089, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.426/2.917]
 	GAME("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "5d67630aba008ec5f7f9a6d0a00582f4", 0x2440, GID_SQ1),
@@ -592,7 +612,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			{
 				{ "logdir", 0, "28add5125484302d213911df60d2aded", 426},
 				{ "object", 0, "5dc52be721257719f4b311a84ce22b16", 372},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -666,15 +686,15 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE_O("AGI Mouse Demo 0.60 demo 2", "cc49d8b88ed6faf4f53ce92c84e0fe1b", GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE_O("AGI Mouse Demo 0.70", "3497c291e4afb6f758e61740678a2aec", GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE_FO("AGI Mouse Demo 1.00", "20397f0bf0ef936f416bb321fb768fc7", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
-	FANMADE_FO("AGI Mouse Demo 1.10", "f4ad396b496d6167635ad0b410312ab8", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("AGI Mouse Demo 1.10", "f4ad396b496d6167635ad0b410312ab8", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("AGI Piano (v1.0)", "8778b3d89eb93c1d50a70ef06ef10310"),
 	FANMADE("AGI Quest (v1.46-TJ0)", "1cf1a5307c1a0a405f5039354f679814"),
 	GAME("tetris", "", "7a874e2db2162e7a4ce31c9130248d8a", 0x2917, GID_FANMADE),
 	FANMADE("AGI Tetris (1998)", "1afcbc25bfafded2d5fb82de9da0bd9a"),
 	FANMADE_V("AGI Trek (Demo)", "c02882b8a8245b629c91caf7eb78eafe", 0x2440),
 	FANMADE_F("AGI256 Demo", "79261ac143b2e2773b2753674733b0d5", GF_AGI256),
-	FANMADE_F("AGI256-2 Demo", "3cad9b3aff1467cebf0c5c5b110985c5", GF_AGI256_2),
-	FANMADE_LF("Abrah: L'orphelin de l'espace (v1.2)", "b7b6d1539e14d5a26fa3088288e1badc", Common::FR_FRA, GF_AGIPAL),
+	FANMADE_F("AGI256-2 Demo", "3cad9b3aff1467cebf0c5c5b110985c5", GF_AGI256),
+	FANMADE_F("Abrah: L'orphelin de l'espace (v1.2)", "b7b6d1539e14d5a26fa3088288e1badc", Common::FR_FRA),	// AGIPAL
 	FANMADE("Acidopolis", "7017db1a4b726d0d59e65e9020f7d9f7"),
 	FANMADE("Agent 0055 (v1.0)", "c2b34a0c77acb05482781dda32895f24"),
 	FANMADE("Agent 06 vs. The Super Nazi", "136f89ca9f117c617e88a85119777529"),
@@ -704,8 +724,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Coco Coq (English) - Coco Coq In Grostesteing's Base (v.1.0.3)", "97631f8e710544a58bd6da9e780f9320"),
 	FANMADE_L("Coco Coq (French) - Coco Coq Dans la Base de Grostesteing (v1.0.2)", "ef579ebccfe5e356f9a557eb3b2d8649", Common::FR_FRA),
 	FANMADE("Corby's Murder Mystery (v1.0)", "4ebe62ac24c5a8c7b7898c8eb070efe5"),
-	FANMADE_FO("DG: The AGIMouse Adventure (English v1.1)", "efe453b92bc1487ea69fbebede4d5f26", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
-	FANMADE_LFO("DG: The AGIMouse Adventure (French v1.1)", "eb3d17ca466d672cbb95947e8d6e846a", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("DG: The AGIMouse Adventure (English v1.1)", "efe453b92bc1487ea69fbebede4d5f26", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
+	FANMADE_LFO("DG: The AGIMouse Adventure (French v1.1)", "eb3d17ca466d672cbb95947e8d6e846a", Common::FR_FRA, GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("DG: The Adventure Game (English v1.1)", "0d6376d493fa7a21ec4da1a063e12b25"),
 	FANMADE_L("DG: The Adventure Game (French v1.1)", "258bdb3bb8e61c92b71f2f456cc69e23", Common::FR_FRA),
 	FANMADE("Dashiki (16 Colors)", "9b2c7b9b0283ab9f12bedc0cb6770a07"),
@@ -758,8 +778,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Jiggy Jiggy Uh! Uh!", "bc331588a71e7a1c8840f6cc9b9487e4"),
 	FANMADE("Jimmy In: The Alien Attack (v0.1)", "a4e9db0564a494728de7873684a4307c"),
 	FANMADE("Joe McMuffin In \"What's Cooking, Doc\" (v1.0)", "8a3de7e61a99cb605fa6d233dd91c8e1"),
-	FANMADE_LVFO("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", Common::FR_FRA, 0x2936, GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
-	FANMADE_LVFO("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", Common::FR_FRA, 0x2936, GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_LVFO("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", Common::FR_FRA, 0x2936, GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
+	FANMADE_LVFO("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", Common::FR_FRA, 0x2936, GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("Journey Of Chef", "aa0a0b5a6364801ae65fdb96d6741df5"),
 	FANMADE("Jukebox (v1.0)", "c4b9c5528cc67f6ba777033830de7751"),
 	FANMADE("Justin Quest (v1.0 in development)", "103050989da7e0ffdc1c5e1793a4e1ec"),
@@ -779,14 +799,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Naturette 1 (English v1.2)", "0a75884e7f010974a230bdf269651117"),
 	FANMADE("Naturette 1 (English v1.3)", "f15bbf999ac55ebd404aa1eb84f7c1d9"),
 	FANMADE_L("Naturette 1 (French v1.2)", "d3665622cc41aeb9c7ecf4fa43f20e53", Common::FR_FRA),
-	FANMADE_FO("Naturette 2: Daughter of the Moon (v1.0)", "bdf76a45621c7f56d1c9d40292c6137a", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
-	FANMADE_FO("Naturette 3: Adventure in Treeworld (v1.0a)", "6dbb0e7fc75fec442e6d9e5a06f1530e", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("Naturette 2: Daughter of the Moon (v1.0)", "bdf76a45621c7f56d1c9d40292c6137a", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
+	FANMADE_FO("Naturette 3: Adventure in Treeworld (v1.0a)", "6dbb0e7fc75fec442e6d9e5a06f1530e", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE_FO("Naturette 4: From a Planet to Another Planet (Not Finished)", "13be8cd9cf35aeff0a39b8757057fbc8", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	// FIXME: Actually Naturette 4 has both English and French language support built into it. How to add that information?
-	FANMADE_FO("Naturette 4: From a Planet to Another Planet (2007-10-05)", "8253706b6ef5423a79413b216760297c", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("Naturette 4: From a Planet to Another Planet (2007-10-05)", "8253706b6ef5423a79413b216760297c", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("New AGI Hangman Test", "d69c0e9050ccc29fd662b74d9fc73a15"),
 	FANMADE("Nick's Quest - In Pursuit of QuakeMovie (v2.1 Gold)", "e29cbf9222551aee40397fabc83eeca0"),
-	FANMADE_FO("Open Mic Night (v0.1)", "70000a2f67aac27d1133d019df70246d", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("Open Mic Night (v0.1)", "70000a2f67aac27d1133d019df70246d", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("Operation: Recon", "0679ce8405411866ccffc8a6743370d0"),
 	FANMADE("Patrick's Quest (Demo v1.0)", "f254f5b894b98fec5f92acc07fb62841"),
 	FANMADE("Phantasmagoria", "87d20c1c11aee99a4baad3797b63146b"),
@@ -831,12 +851,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Save Santa (v1.3)", "f8afdb6efc5af5e7c0228b44633066af"),
 	FANMADE("Schiller (preview 1)", "ade39dea968c959cfebe1cf935d653e9"),
 	FANMADE("Schiller (preview 2)", "62cd1f8fc758bf6b4aa334e553624cef"),
-	GAME_FO("serguei1", "v1.0", "b86725f067e456e10cdbdf5f58e01dec", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
+	GAME_FO("serguei1", "v1.0", "b86725f067e456e10cdbdf5f58e01dec", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	// FIXME: The following two entries have identical MD5 checksums?
-	GAME_FO("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
-	GAME_FO("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
+	GAME_FO("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
+	GAME_FO("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	GAME_FO("serguei2", "v0.1.1 Demo", "906ccbc2ddedb29b63141acc6d10cd28", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
-	GAME_FO("serguei2", "v1.3.1 Demo (March 22nd 2008)", "ad1308fcb8f48723cd388e012ebf5e20", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
+	GAME_FO("serguei2", "v1.3.1 Demo (March 22nd 2008)", "ad1308fcb8f48723cd388e012ebf5e20", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("Shifty (v1.0)", "2a07984d27b938364bf6bd243ac75080"),
 	FANMADE_FO("Sliding Tile Game (v1.00)", "949bfff5d8a81c3139152eed4d84ca75", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("Snowboarding Demo (v1.0)", "24bb8f29f1eddb5c0a099705267c86e4"),
@@ -848,13 +868,13 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1", 0x2917, GID_FANMADE),
 	GAME("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910", 0x2917, GID_FANMADE),
 	GAME_PS("sqx", "", "f0a59044475a5fa37c055d8c3eb4d1a7", 768, 0x2440, GID_FANMADE, Common::kPlatformCoCo3),
-	FANMADE_FO("Space Quest 3.5", "c077bc28d7b36213dd99dc9ecb0147fc", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
-	FANMADE_F("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a", GF_CLIPCOORDS),
+	FANMADE_FO("Space Quest 3.5", "c077bc28d7b36213dd99dc9ecb0147fc", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
+	FANMADE("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a"),
 	FANMADE("Special Delivery", "88764dfe61126b8e73612c851b510a33"),
 	FANMADE("Speeder Bike Challenge (v1.0)", "2deb25bab379285ca955df398d96c1e7"),
 	FANMADE("Star Commander 1 - The Escape (v1.0)", "a7806f01e6fa14ebc029faa58f263750"),
 	FANMADE("Star Pilot: Bigger Fish", "8cb26f8e1c045b75c6576c839d4a0172"),
-	FANMADE_F("Street Quest (Demo)", "cf2aa94a7eb78dce6892c37f03e310d6", GF_AGIPAL),
+	FANMADE("Street Quest (Demo)", "cf2aa94a7eb78dce6892c37f03e310d6"),	// AGIPAL
 	FANMADE("Tales of the Tiki", "8103c9c87e3964690a14a3d0d83f7ddc"),
 	FANMADE("Tex McPhilip 1 - Quest For The Papacy", "3c74b9a24b51aa8020ac82bee3132266"),
 	FANMADE("Tex McPhilip 2 - Road To Divinity (v1.5)", "7387e8df854440bc26620ca0ea43af9a"),

@@ -25,6 +25,7 @@
 
 #include <fstream>
 #include <algorithm>
+#include <cstring>
 
 namespace CreateProjectTool {
 
@@ -46,7 +47,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	const std::string svmProjectUUID = svmUUID->second;
 	assert(!svmProjectUUID.empty());
 
-	std::string solutionUUID = createUUID();
+	std::string solutionUUID = createUUID(setup.projectName + ".sln");
 
 	std::ofstream solution((setup.outputDir + '/' + setup.projectName + ".sln").c_str());
 	if (!solution)
@@ -147,17 +148,14 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	if (!properties)
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global64" + getPropertiesExtension() + "\" for writing");
 
-	// HACK: We must disable the "nasm" feature for x64. To achieve that we must duplicate the feature list and
-	// recreate a define list.
-	FeatureList x64Features = setup.features;
-	setFeatureBuildState("nasm", x64Features, false);
-	StringList x64Defines = getFeatureDefines(x64Features);
-	StringList x64EngineDefines = getEngineDefines(setup.engines);
-	x64Defines.splice(x64Defines.end(), x64EngineDefines);
-
-	// HACK: This definitely should not be here, but otherwise we would not define SDL_BACKEND for x64.
-	x64Defines.push_back("WIN32");
-	x64Defines.push_back("SDL_BACKEND");
+	// HACK: We must disable the "nasm" feature for x64. To achieve that we must recreate the define list.
+	StringList x64Defines = setup.defines;
+	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable && i->define && i->define[0] && !strcmp(i->name, "nasm")) {
+			x64Defines.remove(i->define);
+			break;
+		}
+	}
 
 	outputGlobalPropFile(setup, properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 }

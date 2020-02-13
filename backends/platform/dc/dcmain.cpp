@@ -42,7 +42,7 @@ const char *gGameName;
 OSystem_Dreamcast::OSystem_Dreamcast()
   : _devpoll(0), screen(NULL), mouse(NULL), overlay(NULL), _softkbd(this),
     _ms_buf(NULL), _mixer(NULL),
-    _current_shake_pos(0), _aspect_stretch(false), _softkbd_on(false),
+    _current_shake_x_pos(0), _current_shake_y_pos(0), _aspect_stretch(false), _softkbd_on(false),
     _softkbd_motion(0), _enable_cursor_palette(false), _screenFormat(0)
 {
   memset(screen_tx, 0, sizeof(screen_tx));
@@ -58,7 +58,7 @@ void OSystem_Dreamcast::initBackend()
   _timerManager = new DefaultTimerManager();
 
   uint sampleRate = initSound();
-  _mixer = new Audio::MixerImpl(this, sampleRate);
+  _mixer = new Audio::MixerImpl(sampleRate);
   _mixer->setReady(true);
 
   _audiocdManager = new DCCDManager();
@@ -365,28 +365,31 @@ int main()
 
 int DCLauncherDialog::runModal()
 {
-  char *base = NULL, *dir = NULL;
+  char *engineId = NULL, *gameId = NULL, *dir = NULL;
   Common::Language language = Common::UNK_LANG;
   Common::Platform platform = Common::kPlatformUnknown;
 
-  if (!selectGame(base, dir, language, platform, icon))
+  if (!selectGame(engineId, gameId, dir, language, platform, icon))
     g_system->quit();
 
   // Set the game path.
-  ConfMan.addGameDomain(base);
+  ConfMan.addGameDomain(gameId);
+  ConfMan.set("engineid", engineId, gameId);
+  ConfMan.set("gameid", gameId, gameId);
+
   if (dir != NULL)
-    ConfMan.set("path", dir, base);
+    ConfMan.set("path", dir, gameId);
 
   // Set the game language.
   if (language != Common::UNK_LANG)
-    ConfMan.set("language", Common::getLanguageCode(language), base);
+    ConfMan.set("language", Common::getLanguageCode(language), gameId);
 
   // Set the game platform.
   if (platform != Common::kPlatformUnknown)
-    ConfMan.set("platform", Common::getPlatformCode(platform), base);
+    ConfMan.set("platform", Common::getPlatformCode(platform), gameId);
 
   // Set the target.
-  ConfMan.setActiveDomain(base);
+  ConfMan.setActiveDomain(gameId);
 
   return 0;
 }

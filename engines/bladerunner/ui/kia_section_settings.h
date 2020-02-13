@@ -58,14 +58,14 @@ class KIASectionSettings : public KIASectionBase {
 
 public:
 	KIASectionSettings(BladeRunnerEngine *vm);
-	~KIASectionSettings();
+	~KIASectionSettings() override;
 
 	void open() override;
 	void close() override;
 
 	void draw(Graphics::Surface &surface) override;
 
-	void handleKeyUp(const Common::KeyState &kbd) override;
+	void handleKeyDown(const Common::KeyState &kbd) override;
 	void handleMouseMove(int mouseX, int mouseY) override;
 	void handleMouseDown(bool mainButton) override;
 	void handleMouseUp(bool mainButton) override;
@@ -76,7 +76,7 @@ private:
 	static void mouseInCallback(int buttonId, void *callbackData);
 	static void mouseUpCallback(int buttonId, void *callbackData);
 
-	void onButtonPressed(int buttonId);
+	void onButtonPressed(int buttonId) override;
 
 	void initConversationChoices();
 };

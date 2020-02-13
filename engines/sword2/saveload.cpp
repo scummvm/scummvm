@@ -300,6 +300,8 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	case 1575:		// NicMegaC:
 		scriptNo = 10;	// script no.10 - 'player_is_nicoC'
 		break;
+	default:
+		break;
 	}
 
 	_logic->runResScript(CUR_PLAYER_ID, scriptNo);

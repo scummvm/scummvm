@@ -109,19 +109,19 @@ void Room::feather6Tick1() {
 }
 
 void Room::feather6TouchedHotspot0() { // McCoy warns you not to go back to the river
-	showText(TX_SPEAKER_MCCOY, TX_FEA6_014);
+	showText(TX_SPEAKER_MCCOY, 14, true);
 }
 
 void Room::feather6UseSpockOnCrystals() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA6_020);
+	showText(TX_SPEAKER_SPOCK, 20, true);
 }
 
 void Room::feather6UseMccoyOnCrystals() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA6_009);
+	showText(TX_SPEAKER_MCCOY, 9, true);
 }
 
 void Room::feather6UseRedshirtOnCrystals() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA6_040);
+	showText(TX_SPEAKER_STRAGEY, 40, true);
 }
 
 
@@ -146,8 +146,8 @@ void Room::feather6KirkDiedFromStalactites() {
 	_awayMission->feather.missionScore -= 3;
 	_awayMission->feather.diedFromStalactites = true;
 	_awayMission->disableInput = false;
-	showText(TX_FEA6N000);
-	showText(TX_FEA6N004);
+	showDescription(0, true);
+	showDescription(4, true);
 	loadRoomIndex(7, 5);
 }
 
@@ -174,7 +174,7 @@ void Room::feather6Tick() {
 void Room::feather6HitCrystalsWithRockFirstTime() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_SPEAKER_KIRK, TX_FEA6_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::feather6HitCrystalsWithRockSecondTime() {
@@ -184,180 +184,180 @@ void Room::feather6HitCrystalsWithRockSecondTime() {
 }
 
 void Room::feather6UseRockOnStalagmites() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA6_019);
+	showText(TX_SPEAKER_SPOCK, 19, true);
 }
 
 void Room::feather6UseRockAnywhere() {
 	// ENHANCEMENT: There were two implementations of this function. The first (which took
 	// precedence) showed TX_FEA6N009, a generic "nothing happens" text. The second is
 	// Spock advising you not to use rocks, which is more interesting.
-	showText(TX_SPEAKER_SPOCK, TX_FEA6_021);
+	showText(TX_SPEAKER_SPOCK, 21, true);
 }
 
 void Room::feather6UseKnifeOnStalagmites() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA6_028);
+	showText(TX_SPEAKER_SPOCK, 28, true);
 }
 
 void Room::feather6UseKnifeAnywhere() {
-	showText(TX_FEA6N010);
+	showDescription(10, true);
 }
 
 void Room::feather6UseKnifeOnMccoy() {
 	// BUG: Stragey could be dead...
-	showText(TX_SPEAKER_STRAGEY, TX_FEA6_039); // BUGFIX: Speaker is Stragey (not Spock)
+	showText(TX_SPEAKER_STRAGEY, 39, true); // BUGFIX: Speaker is Stragey (not Spock)
 }
 
 void Room::feather6UseKnifeOnSpock() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA6_039); // BUGFIX: Speaker is Stragey (not Spock)
+	showText(TX_SPEAKER_STRAGEY, 39, true); // BUGFIX: Speaker is Stragey (not Spock)
 }
 
 void Room::feather6UseKnifeOnRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA6_039); // BUGFIX: Speaker is Stragey (not Spock)
+	showText(TX_SPEAKER_STRAGEY, 39, true); // BUGFIX: Speaker is Stragey (not Spock)
 }
 
 void Room::feather6UseCrystalAnywhere() {
-	showText(TX_FEA6N015);
+	showDescription(15, true);
 }
 
 void Room::feather6UseSnakeAnywhere() {
-	showText(TX_FEA6N001);
+	showDescription(1, true);
 }
 
 void Room::feather6UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA6_011);
+	showText(TX_SPEAKER_MCCOY, 11, true);
 }
 
 void Room::feather6UsePhaser() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA6_023);
+	showText(TX_SPEAKER_SPOCK, 23, true);
 }
 
 void Room::feather6LookAtEastExit() {
-	showText(TX_FEA6N016);
+	showDescription(16, true);
 }
 
 void Room::feather6LookAnywhere() {
-	showText(TX_FEA6N003);
+	showDescription(3, true);
 }
 
 void Room::feather6LookAtRocks() {
-	showText(TX_FEA6N014);
+	showDescription(14, true);
 }
 
 void Room::feather6LookAtStalagmites() {
-	showText(TX_FEA6N013);
+	showDescription(13, true);
 }
 
 void Room::feather6LookAtCrystals() {
-	showText(TX_FEA6N005);
+	showDescription(5, true);
 }
 
 void Room::feather6LookAtKirk() {
-	showText(TX_FEA6N007);
+	showDescription(7, true);
 }
 
 void Room::feather6LookAtSpock() {
-	showText(TX_FEA6N011);
+	showDescription(11, true);
 }
 
 void Room::feather6LookAtMccoy() {
-	showText(TX_FEA6N002);
+	showDescription(2, true);
 }
 
 void Room::feather6LookAtRedshirt() {
-	showText(TX_FEA6N008);
+	showDescription(8, true);
 }
 
 void Room::feather6LookAtStalactites() {
-	showText(TX_FEA6N012);
-	showText(TX_SPEAKER_SPOCK, TX_FEA6_034);
-	showText(TX_SPEAKER_MCCOY, TX_FEA6_017);
-	showText(TX_SPEAKER_SPOCK, TX_FEA6_033);
+	showDescription(12, true);
+	showText(TX_SPEAKER_SPOCK, 34, true);
+	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_SPOCK, 33, true);
 
 	// BUG: Choice 2 (TX_FEA6_004) doesn't match with audio at all.
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
-		TX_FEA6_008, TX_FEA6_006, TX_FEA6_004,
+		8, 6, 4,
 		TX_BLANK
 	};
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices, true);
 
 	if (choice == 0)
-		showText(TX_SPEAKER_SPOCK, TX_FEA6_032);
+		showText(TX_SPEAKER_SPOCK, 32, true);
 	else if (choice == 1)
-		showText(TX_SPEAKER_SPOCK, TX_FEA6_036);
+		showText(TX_SPEAKER_SPOCK, 36, true);
 	else
-		showText(TX_SPEAKER_SPOCK, TX_FEA6_037);
+		showText(TX_SPEAKER_SPOCK, 37, true);
 }
 
 void Room::feather6TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA6_013);
+	showText(TX_SPEAKER_MCCOY, 13, true);
 }
 
 void Room::feather6TalkToRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA6_042);
-	showText(TX_SPEAKER_KIRK,    TX_FEA6_002);
-	showText(TX_SPEAKER_STRAGEY, TX_FEA6_041);
-	showText(TX_SPEAKER_MCCOY,   TX_FEA6_016);
-	showText(TX_SPEAKER_STRAGEY, TX_FEA6_043);
+	showText(TX_SPEAKER_STRAGEY, 42, true);
+	showText(TX_SPEAKER_KIRK,    2, true);
+	showText(TX_SPEAKER_STRAGEY, 41, true);
+	showText(TX_SPEAKER_MCCOY,   16, true);
+	showText(TX_SPEAKER_STRAGEY, 43, true);
 }
 
 void Room::feather6TalkToSpock() {
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_SPOCK, TX_FEA6_035);
+		showText(TX_SPEAKER_SPOCK, 35, true);
 	else {
-		showText(TX_SPEAKER_SPOCK, TX_FEA6_038);
+		showText(TX_SPEAKER_SPOCK, 38, true);
 
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
-			TX_FEA6_003, TX_FEA6_005, TX_FEA6_007,
+			3, 5, 7,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices, true);
 
 		if (choice == 0)
-			showText(TX_SPEAKER_SPOCK, TX_FEA6_029);
+			showText(TX_SPEAKER_SPOCK, 29, true);
 		else if (choice == 1)
-			showText(TX_SPEAKER_SPOCK, TX_FEA6_030);
+			showText(TX_SPEAKER_SPOCK, 30, true);
 		else
-			showText(TX_SPEAKER_SPOCK, TX_FEA6_031);
+			showText(TX_SPEAKER_SPOCK, 31, true);
 	}
 }
 
 void Room::feather6UseMTricorderOnEastExit() {
-	mccoyScan(DIR_E, TX_FEA6_012);
+	mccoyScan(DIR_E, 12, false, true);
 }
 
 void Room::feather6UseMTricorderOnRocks() {
 	// ENHANCEMENT: Original didn't play tricorder noise, etc
-	mccoyScan(DIR_E, TX_FEA6_015);
+	mccoyScan(DIR_E, 15, false, true);
 }
 
 void Room::feather6UseSTricorderOnEastExit() {
-	spockScan(DIR_E, TX_FEA6_024);
+	spockScan(DIR_E, 24, false, true);
 }
 
 void Room::feather6UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_FEA6_022);
+	spockScan(DIR_S, 22, false, true);
 }
 
 void Room::feather6UseSTricorderOnRocks() {
-	spockScan(DIR_N, TX_FEA6_018);
+	spockScan(DIR_N, 18, false, true);
 }
 
 void Room::feather6UseSTricorderOnCrystals() {
-	spockScan(DIR_N, TX_FEA6_027);
+	spockScan(DIR_N, 27, false, true);
 }
 
 void Room::feather6UseSTricorderOnStalactites() {
-	spockScan(DIR_N, TX_FEA6_025);
+	spockScan(DIR_N, 25, false, true);
 }
 
 void Room::feather6UseSTricorderOnStalagmites() {
-	spockScan(DIR_N, TX_FEA6_026);
+	spockScan(DIR_N, 26, false, true);
 }
 
 void Room::feather6GetCrystals() {
-	showText(TX_FEA6N020);
+	showDescription(20, true);
 }
 
 void Room::feather6UseKnifeOnCrystals() {
@@ -375,7 +375,7 @@ void Room::feather6DoneCuttingCrystals() {
 	loadActorStandAnim(OBJECT_KIRK);
 	_awayMission->feather.missionScore += 1;
 	giveItem(OBJECT_ICRYSTAL);
-	showText(TX_FEA6N017);
+	showDescription(17, true);
 }
 
 void Room::feather6Timer4Expired() { // Crystal disappears when timer 4 expires

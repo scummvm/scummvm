@@ -32,7 +32,7 @@ class LabEngine;
 class Console : public GUI::Debugger {
 public:
 	Console(LabEngine *vm);
-	virtual ~Console(void);
+	~Console(void) override;
 
 private:
 	LabEngine *_vm;

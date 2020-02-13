@@ -30,7 +30,6 @@
 #include "bladerunner/time.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
-#include "bladerunner/ui/kia_shapes.h"
 
 namespace BladeRunner {
 
@@ -129,7 +128,7 @@ UIScrollBox::UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelecte
 		_lines[i] = new Line();
 		_lines[i]->lineData = -1;
 		_lines[i]->flags = 0x00;
-		_lines[i]->checkboxFrame = 5;
+		_lines[i]->checkboxFrame = 5u;
 	}
 
 	_mouseOver = false;
@@ -172,7 +171,7 @@ void UIScrollBox::hide() {
 	_isVisible = false;
 }
 
-void UIScrollBox::clearLines(){
+void UIScrollBox::clearLines() {
 	_lineCount = 0;
 	_firstLineVisible = 0;
 
@@ -316,7 +315,7 @@ void UIScrollBox::handleMouseDown(bool alternateButton) {
 	if (!alternateButton) {
 		if (_scrollUpButtonHover) {
 			_scrollUpButtonState = 2;
-			_timeLastScroll = _vm->_time->currentSystem() - 160;
+			_timeLastScroll = _vm->_time->currentSystem() - 160u;
 		} else {
 			_scrollUpButtonState = 1;
 		}
@@ -332,13 +331,13 @@ void UIScrollBox::handleMouseDown(bool alternateButton) {
 		}
 		if (_scrollAreaUpHover) {
 			_scrollAreaUpState = 2;
-			_timeLastScroll = _vm->_time->currentSystem() - 160;
+			_timeLastScroll = _vm->_time->currentSystem() - 160u;
 		} else {
 			_scrollAreaUpState = 1;
 		}
 		if (_scrollAreaDownHover) {
 			_scrollAreaDownState = 2;
-			_timeLastScroll = _vm->_time->currentSystem() - 160;
+			_timeLastScroll = _vm->_time->currentSystem() - 160u;
 		} else {
 			_scrollAreaDownState = 1;
 		}
@@ -380,27 +379,31 @@ int UIScrollBox::getSelectedLineData() {
 }
 
 void UIScrollBox::draw(Graphics::Surface &surface) {
-	int timeNow = _vm->_time->currentSystem();
+	uint32 timeNow = _vm->_time->currentSystem();
 
 	// update scrolling
 	if (_scrollUpButtonState == 2 && _scrollUpButtonHover) {
-		if ((timeNow - _timeLastScroll) > 160) {
+		// unsigned difference is intentional
+		if ((timeNow - _timeLastScroll) > 160u) {
 			scrollUp();
 			_timeLastScroll = timeNow;
 		}
 	} else if (_scrollDownButtonState == 2 && _scrollDownButtonHover) {
-		if ((timeNow - _timeLastScroll) > 160) {
+		// unsigned difference is intentional
+		if ((timeNow - _timeLastScroll) > 160u) {
 			scrollDown();
 			_timeLastScroll = timeNow;
 		}
 	} else if (_scrollAreaUpState == 2 && _scrollAreaUpHover) {
-		if ((timeNow - _timeLastScroll) > 160) {
+		// unsigned difference is intentional
+		if ((timeNow - _timeLastScroll) > 160u) {
 			_firstLineVisible -= _maxLinesVisible - 1;
 			_firstLineVisible = CLIP(_firstLineVisible, 0, _lineCount - _maxLinesVisible);
 			_timeLastScroll = timeNow;
 		}
 	} else if (_scrollAreaDownState == 2 && _scrollAreaDownHover) {
-		if ((timeNow - _timeLastScroll) > 160) {
+		// unsigned difference is intentional
+		if ((timeNow - _timeLastScroll) > 160u) {
 			_firstLineVisible += _maxLinesVisible - 1;
 			_firstLineVisible = CLIP(_firstLineVisible, 0, _lineCount - _maxLinesVisible);
 			_timeLastScroll = timeNow;
@@ -408,24 +411,25 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 	}
 
 	// update checkboxes
-	int timeDiffCheckBox = timeNow - _timeLastCheckbox;
-	if (timeDiffCheckBox > 67) {
+	// unsigned difference is intentional
+	uint32 timeDiffCheckBox = timeNow - _timeLastCheckbox;
+	if (timeDiffCheckBox > 67u) {
 		_timeLastCheckbox = timeNow;
 		for (int i = 0; i < _lineCount; ++i) {
 			if (_lines[i]->flags & 0x01) { // has checkbox
 				if (_lines[i]->flags & 0x02) { // checkbox checked
-					if (_lines[i]->checkboxFrame < 5) {
-						_lines[i]->checkboxFrame += timeDiffCheckBox / 67;
+					if (_lines[i]->checkboxFrame < 5u) {
+						_lines[i]->checkboxFrame += timeDiffCheckBox / 67u;
 					}
-					if (_lines[i]->checkboxFrame > 5) {
-						_lines[i]->checkboxFrame = 5;
+					if (_lines[i]->checkboxFrame > 5u) {
+						_lines[i]->checkboxFrame = 5u;
 					}
 				} else { // checkbox not checked
-					if (_lines[i]->checkboxFrame > 0) {
-						_lines[i]->checkboxFrame -= timeDiffCheckBox / 67;
+					if (_lines[i]->checkboxFrame > 0u) {
+						_lines[i]->checkboxFrame =  (_lines[i]->checkboxFrame < (timeDiffCheckBox / 67u)) ? 0u : _lines[i]->checkboxFrame - (timeDiffCheckBox / 67u);
 					}
-					if (_lines[i]->checkboxFrame < 0) {
-						_lines[i]->checkboxFrame = 0;
+					if (_lines[i]->checkboxFrame == 0u) { // original was < 0, int
+						_lines[i]->checkboxFrame = 0u;
 					}
 				}
 			}
@@ -434,7 +438,8 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 
 
 	// update highlight
-	if ((timeNow - _timeLastHighlight) > 67) {
+	// unsigned difference is intentional
+	if ((timeNow - _timeLastHighlight) > 67u) {
 		_timeLastHighlight = timeNow;
 		_highlightFrame = (_highlightFrame + 1) % 8;
 	}
@@ -497,8 +502,8 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 				int checkboxShapeId = 0;
 				if (_style == 0) {
 					if (_lines[i]->checkboxFrame || v35) {
-						if (_lines[i]->checkboxFrame != 5 || v35) {
-							checkboxShapeId = _lines[i]->checkboxFrame + 62;
+						if (_lines[i]->checkboxFrame != 5u || v35) {
+							checkboxShapeId = _lines[i]->checkboxFrame + 62u;
 						} else {
 							checkboxShapeId = 61;
 						}
@@ -506,8 +511,8 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 						checkboxShapeId = 60;
 					}
 				} else if (_lines[i]->checkboxFrame || v35) {
-					if (_lines[i]->checkboxFrame != 5 || v35) {
-						checkboxShapeId = _lines[i]->checkboxFrame + 54;
+					if (_lines[i]->checkboxFrame != 5u || v35) {
+						checkboxShapeId = _lines[i]->checkboxFrame + 54u;
 					} else {
 						checkboxShapeId = 53;
 					}
@@ -540,10 +545,10 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 			}
 
 			if (_center) {
-				x = _rect.left + (_rect.width() - _vm->_mainFont->getTextWidth(_lines[i]->text)) / 2;
+				x = _rect.left + (_rect.width() - _vm->_mainFont->getStringWidth(_lines[i]->text)) / 2;
 			}
 
-			_vm->_mainFont->drawColor(_lines[i]->text, surface, x, y, color);
+			_vm->_mainFont->drawString(&surface, _lines[i]->text, x, y, surface.w, color);
 
 			y1 += kLineHeight;
 			y2 += kLineHeight;

@@ -158,7 +158,7 @@ void OSystem_iOS7::initBackend() {
 
 	_timerManager = new DefaultTimerManager();
 
-	gettimeofday(&_startTime, NULL);
+	_startTime = CACurrentMediaTime();
 
 	setupMixer();
 
@@ -172,6 +172,8 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureCursorPalette:
 	case kFeatureFilteringMode:
 	case kFeatureVirtualKeyboard:
+	case kFeatureClipboardSupport:
+	case kFeatureOpenUrl:
 		return true;
 
 	default:
@@ -240,7 +242,7 @@ void OSystem_iOS7::suspendLoop() {
 
 uint32 OSystem_iOS7::getMillis(bool skipRecord) {
 	CFTimeInterval timeInSeconds = CACurrentMediaTime();
-	return (uint32) (timeInSeconds * 1000.0);
+	return (uint32) ((timeInSeconds - _startTime) * 1000.0) - _timeSuspended;
 }
 
 void OSystem_iOS7::delayMillis(uint msecs) {
@@ -412,4 +414,7 @@ void iOS7_main(int argc, char **argv) {
 		//*stderr = NULL;
 		fclose(newfp);
 	}
+
+	// prevents hanging on exit
+	exit(0);
 }

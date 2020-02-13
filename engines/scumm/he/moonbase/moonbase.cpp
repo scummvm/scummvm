@@ -20,27 +20,32 @@
  *
  */
 
+#include "common/winexe_pe.h"
+
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"
-#ifdef USE_SDL_NET
+#ifdef USE_LIBCURL
 #include "scumm/he/moonbase/net_main.h"
 #endif
 
 namespace Scumm {
 
 Moonbase::Moonbase(ScummEngine_v100he *vm) : _vm(vm) {
+	_exe = new Common::PEResources();
+
 	initFOW();
 
 	_ai = new AI(_vm);
-#ifdef USE_SDL_NET
+#ifdef USE_LIBCURL
 	_net = new Net(_vm);
 #endif
 }
 
 Moonbase::~Moonbase() {
+	delete _exe;
 	delete _ai;
-#ifdef USE_SDL_NET
+#ifdef USE_LIBCURL
 	delete _net;
 #endif
 }
@@ -65,7 +70,7 @@ int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {
 	memset(args, 0, sizeof(args));
 
 	Common::String str;
-	str = Common::String::format("callScummFunction(%d, [", scriptNumber);
+	str = Common::String::format("Moonbase::callScummFunction(%d, [", scriptNumber);
 
 	for (int i = 0; i < paramCount; i++) {
 		args[i] = va_arg(va_params, int);
@@ -74,7 +79,7 @@ int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {
 	}
 	str += "])";
 
-	debug(0, "%s", str.c_str());
+	debug(3, "%s", str.c_str());
 
 
 	va_end(va_params);

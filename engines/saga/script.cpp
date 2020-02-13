@@ -140,6 +140,8 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 			setupIHNMScriptFuncList();
 			break;
 #endif
+		default:
+			break;
 	}
 }
 
@@ -1238,6 +1240,8 @@ int Script::getVerbType(VerbTypes verbType) {
 			return kVerbITELookOnly;
 		case kVerbOptions:
 			return kVerbITEOptions;
+		default:
+			break;
 		}
 #ifdef ENABLE_IHNM
 	} else if (_vm->getGameId() == GID_IHNM) {
@@ -1268,6 +1272,8 @@ int Script::getVerbType(VerbTypes verbType) {
 			return kVerbIHNMLookOnly;
 		case kVerbOptions:
 			return kVerbIHNMOptions;
+		default:
+			break;
 		}
 #endif
 	}

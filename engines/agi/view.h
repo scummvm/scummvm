@@ -47,6 +47,16 @@ struct AgiView {
 	byte *description;
 	int16 loopCount;
 	AgiViewLoop *loop;
+
+	void reset() {
+		headerStepSize = 0;
+		headerCycleTime = 0;
+		description = nullptr;
+		loopCount = 0;
+		loop = nullptr;
+	}
+
+	AgiView() { reset(); }
 };
 
 enum MotionType {

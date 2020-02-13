@@ -32,7 +32,7 @@ class PlayAnimationCommandParser : public SeqCommandParser {
 public:
 	PlayAnimationCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class PlayAnimationCommand : public SeqCommand {
@@ -40,8 +40,8 @@ public:
 	PlayAnimationCommand(int fromFrame, int toFrame) : _fromFrame(fromFrame), _toFrame(toFrame) {}
 	const Common::String &getName() const;
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	int _fromFrame;
 	int _toFrame;

@@ -46,6 +46,7 @@ enum {
 	ID_FORM = MKTAG('F', 'O', 'R', 'M'),
 	ID_IFRS = MKTAG('I', 'F', 'R', 'S'),
 	ID_RIdx = MKTAG('R', 'I', 'd', 'x'),
+	ID_APal = MKTAG('A', 'P', 'a', 'l'),
 
 	ID_Snd = MKTAG('S', 'n', 'd', ' '),
 	ID_Exec = MKTAG('E', 'x', 'e', 'c'),
@@ -56,6 +57,7 @@ enum {
 	ID_AUTH = MKTAG('A', 'U', 'T', 'H'),
 	ID_ANNO = MKTAG('A', 'N', 'N', 'O'),
 
+	ID_ADRI = MKTAG('A', 'D', 'R', 'I'),
 	ID_ZCOD = MKTAG('Z', 'C', 'O', 'D'),
 	ID_GLUL = MKTAG('G', 'L', 'U', 'L'),
 	ID_TAD2 = MKTAG('T', 'A', 'D', '2'),
@@ -89,6 +91,11 @@ private:
 	 * Parses the Blorb file index to load in a list of the chunks
 	 */
 	Common::ErrorCode load();
+
+	/**
+	 * Add possible Blorb filenames for Infocom games
+	 */
+	static void getInfocomBlorbFilenames(Common::StringArray &filenames, const Common::String &gameId);
 public:
 	/**
 	 * Constructor
@@ -105,7 +112,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::String &name) const override;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -113,19 +120,19 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int listMembers(Common::ArchiveMemberList &list) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.
 	 * @return the newly created input stream
 	 */
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 	/**
 	 * Read the RIdx section from the stream.
@@ -146,6 +153,12 @@ public:
 	 * Returns true if a given filename has a Blorb file extension
 	 */
 	static bool hasBlorbExt(const Common::String &filename);
+
+	/**
+	 * Return a list of possible filenames for blorb files
+	 */
+	static void getBlorbFilenames(const Common::String &srcFilename, Common::StringArray &filenames,
+		InterpreterType interpType, const Common::String &gameId);
 };
 
 } // End of namespace Glk

@@ -208,6 +208,8 @@ void Caldoria4DSystem::useIdleTime() {
 			case k4DDesert2ToMountain0:
 				_videoChoice = k4DMountainChoice;
 				break;
+			default:
+				break;
 			}
 
 			setSpritesMovie();

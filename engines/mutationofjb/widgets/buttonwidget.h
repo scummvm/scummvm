@@ -41,10 +41,10 @@ public:
 	ButtonWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &normalSurface, const Graphics::Surface &pressedSurface);
 	void setCallback(ButtonWidgetCallback *callback);
 
-	virtual void handleEvent(const Common::Event &event) override;
+	void handleEvent(const Common::Event &event) override;
 
 protected:
-	virtual void draw(Graphics::ManagedSurface &) override;
+	void draw(Graphics::ManagedSurface &) override;
 
 private:
 	Graphics::Surface _normalSurface;

@@ -67,7 +67,7 @@ void RegionManager::removeScreenRegion(int objectNum) {
 				_overRegion = nullptr;
 			delete killMe;
 			killMe = nullptr;
-			_allScreenRegions->reverse_erase(it);
+			it = _allScreenRegions->reverse_erase(it);
 		}
 	}
 }

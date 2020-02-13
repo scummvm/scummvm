@@ -46,7 +46,7 @@ public:
 	virtual void initLoop() {}
 	virtual void afterLoad() {}
 	BaseFont(BaseGame *inGame);
-	virtual ~BaseFont();
+	~BaseFont() override;
 
 	static BaseFont *createFromFile(BaseGame *game, const Common::String &filename);
 

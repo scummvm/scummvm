@@ -757,6 +757,9 @@ void Inter_v2::o2_setGoblinState() {
 				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 		*(obj.pPosX) = obj.goblinX * _vm->_map->getTilesWidth();
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -1054,6 +1057,9 @@ void Inter_v2::o2_assign(OpFuncParams &params) {
 			else
 				WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
 			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -1113,6 +1119,9 @@ void Inter_v2::o2_printText(OpFuncParams &params) {
 			case TYPE_ARRAY_STR:
 				sprintf(buf + i, "%s",
 						GET_VARO_STR(_vm->_game->_script->readVarIndex()));
+				break;
+
+			default:
 				break;
 			}
 			_vm->_game->_script->skip(1);
@@ -1282,6 +1291,9 @@ void Inter_v2::o2_getTotTextItemPart(OpFuncParams &params) {
 					case 3:
 					case 4:
 						totData += 2;
+						break;
+
+					default:
 						break;
 					}
 				}

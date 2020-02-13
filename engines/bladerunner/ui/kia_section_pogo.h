@@ -41,7 +41,7 @@ class KIASectionPogo : public KIASectionBase {
 	int         _lineTimeouts[kLineCount];
 	int         _lineOffsets[kLineCount];
 
-	int         _timeLast;
+	uint32      _timeLast;
 
 public:
 	KIASectionPogo(BladeRunnerEngine *vm);

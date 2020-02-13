@@ -31,20 +31,20 @@ namespace AGOS {
 class MidiDriver_Simon1_AdLib : public MidiDriver {
 public:
 	MidiDriver_Simon1_AdLib(const byte *instrumentData);
-	virtual ~MidiDriver_Simon1_AdLib();
+	~MidiDriver_Simon1_AdLib() override;
 
 	// MidiDriver API
-	virtual int open();
-	virtual bool isOpen() const;
-	virtual void close();
+	int open() override;
+	bool isOpen() const override;
+	void close() override;
 
-	virtual void send(uint32 b);
+	void send(uint32 b) override;
 
-	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
-	virtual uint32 getBaseTempo();
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
+	uint32 getBaseTempo() override;
 
-	virtual MidiChannel *allocateChannel() { return 0; }
-	virtual MidiChannel *getPercussionChannel() { return 0; }
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
 private:
 	bool _isOpen;
 

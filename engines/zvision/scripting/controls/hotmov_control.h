@@ -38,7 +38,7 @@ namespace ZVision {
 class HotMovControl : public Control {
 public:
 	HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
-	~HotMovControl();
+	~HotMovControl() override;
 
 private:
 	int32  _framesCount;
@@ -48,9 +48,9 @@ private:
 	Common::Rect _rectangle;
 	Common::Array<Common::Rect> _frames;
 public:
-	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool process(uint32 deltaTimeInMillis);
+	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	void readHsFile(const Common::String &fileName);

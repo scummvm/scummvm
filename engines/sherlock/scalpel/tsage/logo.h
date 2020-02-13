@@ -46,7 +46,7 @@ public:
 	Common::Point _centroid;
 public:
 	ObjectSurface() : Surface() {}
-	virtual ~ObjectSurface() {}
+	~ObjectSurface() override {}
 };
 
 class Visage {

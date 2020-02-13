@@ -225,6 +225,7 @@ void KyraEngine_MR::objectChat(const char *str, int object, int vocHigh, int voc
 	int chat = talkScriptTable[chatType + _mainCharacter.facing * 4];
 	objectChatProcess(talkFilenameTable[chat]);
 	_text->restoreScreen();
+	// _mainCharacter.facing can not be 0xFF here, so this is safe.
 	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 	updateCharacterAnim(0);
 	_chatText = 0;

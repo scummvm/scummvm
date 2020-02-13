@@ -303,6 +303,9 @@ void Scene201::handleRaoulAnimation() {
 		case 3:
 			random = 3;
 			break;
+
+		default:
+			break;
 		}
 
 		switch (random) {
@@ -1338,6 +1341,9 @@ void Scene202::handleUsherAnimation() {
 			resetFrame = 27;
 		else
 			resetFrame = 28;
+		break;
+
+	default:
 		break;
 	}
 
@@ -2444,6 +2450,8 @@ void Scene203::handleBrieAnimation() {
 		case 3:
 			random = 1;
 			break;
+		default:
+			break;
 		}
 
 		if (random == 1)
@@ -2462,6 +2470,8 @@ void Scene203::handleBrieAnimation() {
 		case 2:
 		case 3:
 			random = 3;
+			break;
+		default:
 			break;
 		}
 
@@ -2494,6 +2504,8 @@ void Scene203::handleBrieAnimation() {
 		case 3:
 			random = 1;
 			break;
+		default:
+			break;
 		}
 
 		if (random == 1)
@@ -2512,6 +2524,8 @@ void Scene203::handleBrieAnimation() {
 		case 2:
 		case 3:
 			random = 1;
+			break;
+		default:
 			break;
 		}
 
@@ -2572,6 +2586,8 @@ void Scene203::handleBrieAnimation() {
 		case 3:
 			random = 1;
 			break;
+		default:
+			break;
 		}
 
 		switch (random) {
@@ -2599,6 +2615,8 @@ void Scene203::handleBrieAnimation() {
 		case 3:
 			random = 1;
 			break;
+		default:
+			break;
 		}
 
 		if (random == 1)
@@ -2606,6 +2624,9 @@ void Scene203::handleBrieAnimation() {
 		else
 			resetFrame = 37;
 
+		break;
+
+	default:
 		break;
 	}
 
@@ -2753,6 +2774,8 @@ void Scene203::handleRichardAnimation() {
 		case 5:
 			random = 1;
 			break;
+		default:
+			break;
 		}
 
 		if (random == 1)
@@ -2772,6 +2795,8 @@ void Scene203::handleRichardAnimation() {
 		case 3:
 		case 5:
 			random = 1;
+			break;
+		default:
 			break;
 		}
 
@@ -2793,6 +2818,8 @@ void Scene203::handleRichardAnimation() {
 		case 5:
 			random = 1;
 			break;
+		default:
+			break;
 		}
 
 		if (random == 1)
@@ -2812,6 +2839,8 @@ void Scene203::handleRichardAnimation() {
 		case 3:
 		case 5:
 			random = 1;
+			break;
+		default:
 			break;
 		}
 
@@ -2833,6 +2862,8 @@ void Scene203::handleRichardAnimation() {
 		case 5:
 			random = 1;
 			break;
+		default:
+			break;
 		}
 
 		if (random == 1)
@@ -2852,6 +2883,8 @@ void Scene203::handleRichardAnimation() {
 		case 3:
 		case 5:
 			random = 1;
+			break;
+		default:
 			break;
 		}
 
@@ -2894,6 +2927,9 @@ void Scene203::handleRichardAnimation() {
 
 		case 4:
 			resetFrame = 95;
+			break;
+
+		default:
 			break;
 		}
 		break;
@@ -2953,6 +2989,8 @@ void Scene203::handleRichardAnimation() {
 		case 5:
 			random = 1;
 			break;
+		default:
+			break;
 		}
 
 		if (random == 1)
@@ -2960,6 +2998,9 @@ void Scene203::handleRichardAnimation() {
 		else
 			resetFrame = 30;
 
+		break;
+
+	default:
 		break;
 	}
 
@@ -3121,6 +3162,9 @@ void Scene203::handleRaoulAnimation() {
 		case 1:
 			random = 2;
 			break;
+
+		default:
+			break;
 		}
 
 		if (random == 1)
@@ -3236,6 +3280,9 @@ void Scene203::handleDaaeAnimation() {
 		default:
 			break;
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -3929,6 +3976,9 @@ void Scene204::handleBrieAnimation() {
 			break;
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	if (resetFrame >= 0) {
@@ -4054,6 +4104,9 @@ void Scene204::handleFlorAnimation() {
 			break;
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	if (resetFrame >= 0) {
@@ -4171,6 +4224,9 @@ void Scene204::handleRaoulAnimation() {
 
 	case 257:
 		_vm->_gameConv->release();
+		break;
+
+	default:
 		break;
 	}
 
@@ -5073,6 +5129,8 @@ void Scene205::handleConversation10() {
 		case 46:
 			_giryStatus = 0;
 			break;
+		default:
+			break;
 		}
 		_globals[kWalkerConverse] = 0;
 		heroFl = true;
@@ -5119,6 +5177,9 @@ void Scene205::handleConversation10() {
 			_giryStatus = 2;
 
 		_conversationCounter = 0;
+		break;
+
+	default:
 		break;
 	}
 
@@ -5173,6 +5234,9 @@ void Scene205::handleConversation11() {
 		_vm->_gameConv->setInterlocutorTrigger(64);
 		interlocutorFl = true;
 		break;
+
+	default:
+		break;
 	}
 
 	switch (_game._trigger) {
@@ -5184,6 +5248,8 @@ void Scene205::handleConversation11() {
 		case 13:
 		case 14:
 			_giryStatus = 0;
+			break;
+		default:
 			break;
 		}
 		_globals[kWalkerConverse] = 0;
@@ -5212,6 +5278,9 @@ void Scene205::handleConversation11() {
 			_giryStatus = 2;
 
 		_conversationCounter = 0;
+		break;
+
+	default:
 		break;
 	}
 
@@ -5475,6 +5544,9 @@ void Scene205::handleRichardAnimation() {
 		else
 			resetFrame = 64;
 
+		break;
+
+	default:
 		break;
 	}
 
@@ -5828,6 +5900,9 @@ void Scene205::handleGiryAnimation() {
 		else
 			resetFrame = 280;
 
+		break;
+
+	default:
 		break;
 	}
 

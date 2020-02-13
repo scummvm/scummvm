@@ -98,21 +98,21 @@ void Room::mudd2Timer1Expired() {
 }
 
 void Room::mudd2UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_MUD2_037, false);
+	spockScan(DIR_S, 37, false, true);
 }
 
 void Room::mudd2UseSpockOnCapsules() {
-	showText(TX_SPEAKER_MCCOY, TX_MUD2_018);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 }
 
 void Room::mudd2GetCapsules() {
 	if (!_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
 		if (!_awayMission->mudd.translatedAlienLanguage)
-			showText(TX_SPEAKER_MCCOY, TX_MUD2_024);
+			showText(TX_SPEAKER_MCCOY, 24, true);
 		else
 			walkCrewmanC(OBJECT_MCCOY, 0x9f, 0xbf, &Room::mudd2MccoyReachedCapsules);
 	} else {
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_023);
+		showText(TX_SPEAKER_MCCOY, 23, true);
 	}
 }
 
@@ -127,42 +127,42 @@ void Room::mudd2MccoyPickedUpCapsules() {
 }
 
 void Room::mudd2UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD2_009);
+	showText(TX_SPEAKER_KIRK,  TX_MUD4_018);	// originally TX_MUD4_019, this matches the audio
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
 void Room::mudd2LookAtCapsules() {
-	showText(TX_MUD2N008);
+	showDescription(8, true);
 }
 
 void Room::mudd2UseMTricorderOnCapsules() {
-	mccoyScan(DIR_W, TX_MUD2_030, false);
-	showText(TX_SPEAKER_KIRK,  TX_MUD2_004);
-	showText(TX_SPEAKER_MCCOY, TX_MUD2_019);
+	mccoyScan(DIR_W, 30, false, true);
+	showText(TX_SPEAKER_KIRK,  4, true);
+	showText(TX_SPEAKER_MCCOY, 19, true);
 }
 
 void Room::mudd2UseCapsuleOnControlPanel() {
 	if (!_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious)
 		walkCrewmanC(OBJECT_MCCOY, 0x9f, 0xbf, &Room::mudd2MccoyReachedControlPanel);
 	else
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_023);
+		showText(TX_SPEAKER_MCCOY, 23, true);
 }
 
 void Room::mudd2MccoyReachedControlPanel() {
 	if (_awayMission->mudd.translatedAlienLanguage)
 		loadActorAnimC(OBJECT_MCCOY, "musehn", -1, -1, &Room::mudd2MccoyPutCapsuleInControlPanel);
 	else // NOTE: Unused, since you can't get capsules without translating the language first
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_014);
+		showText(TX_SPEAKER_MCCOY, 14, true);
 }
 
 void Room::mudd2MccoyPutCapsuleInControlPanel() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorStandAnim(OBJECT_MCCOY);
-	showText(TX_SPEAKER_MCCOY, TX_MUD2_020);
-	showText(TX_SPEAKER_MCCOY, TX_MUD2_029);
-	showText(TX_SPEAKER_SPOCK, TX_MUD2_039);
+	showText(TX_SPEAKER_MCCOY, 20, true);
+	showText(TX_SPEAKER_MCCOY, 29, true);
+	showText(TX_SPEAKER_SPOCK, 39, true);
 	if (_awayMission->mudd.muddUnconscious)
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_034);
+		showText(TX_SPEAKER_MCCOY, 34, true);
 
 	_awayMission->mudd.putCapsuleInMedicalMachine = true;
 
@@ -181,12 +181,12 @@ void Room::mudd2UseKirkOnBed() {
 
 void Room::mudd2KirkReachedBed() {
 	// BUGFIX: Speaker is mccoy, not none
-	showText(TX_SPEAKER_MCCOY, TX_MUD2_022);
+	showText(TX_SPEAKER_MCCOY, 22, true);
 }
 
 
 void Room::mudd2MuddNoticedKirk() {
-	showText(TX_SPEAKER_MUDD, TX_MUD2_044);
+	showText(TX_SPEAKER_MUDD, 44, true);
 	playVoc("BATTYGAS");
 	loadActorAnimC(OBJECT_MUDD, "s4sbhb", 0x9f, 0xbf, &Room::mudd2MuddDroppedCapsule); // Drops the capsule
 	playMidiMusicTracks(0);
@@ -197,12 +197,12 @@ void Room::mudd2MuddDroppedCapsule() {
 	loadActorAnim2(OBJECT_CAPSULE, "s4sbvp", 0x93, 0xc3);
 	_awayMission->mudd.muddCurrentlyInsane = true;
 
-	showText(TX_SPEAKER_MCCOY, TX_MUD2_032);
-	showText(TX_SPEAKER_MUDD,  TX_MUD2_049);
-	showText(TX_SPEAKER_MCCOY, TX_MUD2_026);
-	showText(TX_SPEAKER_MUDD,  TX_MUD2_051);
-	showText(TX_SPEAKER_MCCOY, TX_MUD2_031);
-	showText(TX_SPEAKER_MUDD,  TX_MUD2_050);
+	showText(TX_SPEAKER_MCCOY, 32, true);
+	showText(TX_SPEAKER_MUDD,  49, true);
+	showText(TX_SPEAKER_MCCOY, 26, true);
+	showText(TX_SPEAKER_MUDD,  51, true);
+	showText(TX_SPEAKER_MCCOY, 31, true);
+	showText(TX_SPEAKER_MUDD,  50, true);
 
 	_awayMission->disableInput = false;
 }
@@ -210,9 +210,9 @@ void Room::mudd2MuddDroppedCapsule() {
 
 void Room::mudd2UsePhaserOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious) {
-		showText(TX_SPEAKER_BUCHERT, TX_MUD2_053);
-		showText(TX_SPEAKER_MUDD,    TX_MUD2_042);
-		showText(TX_SPEAKER_MUDD,    TX_MUD2_043);
+		showText(TX_SPEAKER_BUCHERT, 53, true);
+		showText(TX_SPEAKER_MUDD,    42, true);
+		showText(TX_SPEAKER_MUDD,    43, true);
 	}
 }
 
@@ -234,7 +234,7 @@ void Room::mudd2SpockPinchedMudd() {
 	loadActorAnim2(OBJECT_MUDD, "s4sbob", 0x9f, 0xba);
 	loadActorAnim2(OBJECT_SPOCK, "sstnde", 0xd0, 0xbd);
 
-	showText(TX_SPEAKER_SPOCK, TX_MUD2_012);
+	showText(TX_SPEAKER_SPOCK, 12, true);
 
 	_awayMission->disableInput = false;
 	_awayMission->mudd.muddUnconscious = true;
@@ -244,7 +244,7 @@ void Room::mudd2SpockPinchedMudd() {
 
 void Room::mudd2UseKirkOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious) {
-		showText(TX_SPEAKER_KIRK, TX_MUD2_001);
+		showText(TX_SPEAKER_KIRK, 1, true);
 		mudd2UseSpockOnMudd();
 	}
 }
@@ -273,7 +273,7 @@ void Room::mudd2MuddFinishedPushingRedshirt() {
 }
 
 void Room::mudd2RedshirtPushedAway() {
-	showText(TX_SPEAKER_BUCHERT, TX_MUD2_052);
+	showText(TX_SPEAKER_BUCHERT, 52, true);
 	loadActorAnim(OBJECT_REDSHIRT, "rstnds", 0xd8, 0xc3);
 	_awayMission->disableInput = false;
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_W;
@@ -287,7 +287,7 @@ void Room::mudd2RedshirtPushedAway() {
 // The function itself was also modified (ie. condition for showing text was inverted).
 void Room::mudd2UseMTricorderOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious)
-		mccoyScan(DIR_W, TX_MUD2_013, false);
+		mccoyScan(DIR_W, 13, false, true);
 }
 
 
@@ -296,13 +296,13 @@ void Room::mudd2UseMedkitOnMudd() {
 		return;
 	else if (_awayMission->mudd.muddUnconscious) {
 		if (!_awayMission->mudd.translatedAlienLanguage)
-			showText(TX_SPEAKER_MCCOY, TX_MUD2_015);
+			showText(TX_SPEAKER_MCCOY, 15, true);
 		else if (!_awayMission->mudd.putCapsuleInMedicalMachine)
-			showText(TX_SPEAKER_MCCOY, TX_MUD2_021);
+			showText(TX_SPEAKER_MCCOY, 21, true);
 		else
 			walkCrewmanC(OBJECT_MCCOY, 0xde, 0xaf, &Room::mudd2MccoyReachedMudd);
 	} else // Can't get to him since he's busy being crazy
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_016);
+		showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::mudd2MccoyReachedMudd() {
@@ -316,79 +316,79 @@ void Room::mudd2MccoyCuredMudd() {
 	_awayMission->mudd.muddCurrentlyInsane = false;
 	_awayMission->mudd.muddInhaledGas = false;
 
-	showText(TX_SPEAKER_MCCOY, TX_MUD2_033);
-	showText(TX_SPEAKER_MUDD,  TX_MUD2_045);
+	showText(TX_SPEAKER_MCCOY, 33, true);
+	showText(TX_SPEAKER_MUDD,  45, true);
 
 	_awayMission->mudd.muddUnconscious = false;
 }
 
 
 void Room::mudd2LookAtKirk() {
-	showText(TX_MUD2N003);
+	showDescription(3, true);
 }
 
 void Room::mudd2LookAtSpock() {
-	showText(TX_MUD2N006);
+	showDescription(6, true);
 }
 
 void Room::mudd2LookAtMccoy() {
-	showText(TX_MUD2N000);
+	showDescription(0, true);
 }
 
 void Room::mudd2LookAtRedshirt() {
-	showText(TX_MUD2N004);
+	showDescription(4, true);
 }
 
 void Room::mudd2LookAtMudd() {
-	showText(TX_MUD2N002);
+	showDescription(2, true);
 }
 
 void Room::mudd2LookAtControlPanel() {
-	showText(TX_MUD2N011);
+	showDescription(11, true);
 }
 
 void Room::mudd2LookAtBed() {
-	showText(TX_MUD2N007);
+	showDescription(7, true);
 }
 
 void Room::mudd2TalkToKirk() {
 	// BUGFIX: second condition in if statement changed to "must be false" instead of
 	// "must be true". (Same applies to below talk functions.)
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious)
-		showText(TX_SPEAKER_KIRK, TX_MUD2_010);
+		showText(TX_SPEAKER_KIRK, 10, true);
 	else {
-		showText(TX_SPEAKER_KIRK,  TX_MUD2_005);
-		showText(TX_SPEAKER_MUDD,  TX_MUD2_046);
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_035);
+		showText(TX_SPEAKER_KIRK,   5, true);
+		showText(TX_SPEAKER_MUDD,  46, true);
+		showText(TX_SPEAKER_MCCOY, 35, true);
 	}
 }
 
 void Room::mudd2TalkToSpock() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
-		showText(TX_SPEAKER_SPOCK, TX_MUD2_040);
-		showText(TX_SPEAKER_KIRK,  TX_MUD2_011);
+		showText(TX_SPEAKER_SPOCK, 40, true);
+		showText(TX_SPEAKER_KIRK,  11, true);
 	} else {
-		showText(TX_SPEAKER_SPOCK, TX_MUD2_038);
+		showText(TX_SPEAKER_SPOCK, 38, true);
 	}
 }
 
 void Room::mudd2TalkToMccoy() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_025);
-		showText(TX_SPEAKER_KIRK,  TX_MUD2_007);
+		showText(TX_SPEAKER_MCCOY, 25, true);
+		showText(TX_SPEAKER_KIRK,   7, true);
 	} else {
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_027);
+		showText(TX_SPEAKER_MCCOY, 27, true);
 	}
 }
 
 void Room::mudd2TalkToRedshirt() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
-		showText(TX_SPEAKER_BUCHERT, TX_MUD2_054);
-		showText(TX_SPEAKER_KIRK,    TX_MUD2_008);
+		showText(TX_SPEAKER_BUCHERT, 54, true);
+		showText(TX_SPEAKER_KIRK,     8, true);
 	} else {
-		showText(TX_SPEAKER_BUCHERT, TX_MUD2_055);
-		showText(TX_SPEAKER_KIRK,    TX_MUD2_003);
-		showText(TX_SPEAKER_MCCOY,   TX_MUD2_036);
+		showText(TX_SPEAKER_BUCHERT, 55, true);
+		showText(TX_SPEAKER_KIRK,     3, true);
+		showText(TX_SPEAKER_MCCOY,   36, true);
 	}
 }
 
@@ -396,11 +396,11 @@ void Room::mudd2TalkToMudd() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious)
 		return;
 	else if (_awayMission->mudd.muddInhaledGas) {
-		showText(TX_SPEAKER_MUDD, TX_MUD2_048);
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_028);
+		showText(TX_SPEAKER_MUDD, 48, true);
+		showText(TX_SPEAKER_MCCOY, 28, true);
 	} else { // NOTE: Unused (assumes harry is in a normal state, which doesn't happen here)
-		showText(TX_SPEAKER_MUDD, TX_MUD2_047);
-		showText(TX_SPEAKER_KIRK, TX_MUD2_006);
+		showText(TX_SPEAKER_MUDD, 47, true);
+		showText(TX_SPEAKER_KIRK,  6, true);
 	}
 }
 

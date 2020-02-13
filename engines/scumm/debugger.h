@@ -32,13 +32,13 @@ class ScummEngine;
 class ScummDebugger : public GUI::Debugger {
 public:
 	ScummDebugger(ScummEngine *s);
-	virtual ~ScummDebugger(); // we need this here for __SYMBIAN32__
+	~ScummDebugger() override; // we need this here for __SYMBIAN32__
 
 private:
 	ScummEngine *_vm;
 
-	virtual void preEnter();
-	virtual void postEnter();
+	void preEnter() override;
+	void postEnter() override;
 
 	// Commands
 	bool Cmd_Room(int argc, const char **argv);

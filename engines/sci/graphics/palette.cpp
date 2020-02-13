@@ -199,6 +199,8 @@ void GfxPalette::createFromData(const SciSpan<const byte> &data, Palette *palett
 				paletteOut->colors[colorNo].b = data[palOffset++];
 			}
 			break;
+		default:
+			break;
 	}
 }
 
@@ -304,7 +306,7 @@ void GfxPalette::setEGA() {
 	setOnScreen();
 }
 
-void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
+void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge, bool includeFirstColor) {
 	uint32 systime = _sysPalette.timestamp;
 
 	if (force || newPalette->timestamp != systime) {
@@ -313,7 +315,7 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 		if ((forceRealMerge) || (_useMerging))
 			_sysPaletteChanged |= merge(newPalette, force, forceRealMerge);
 		else
-			_sysPaletteChanged |= insert(newPalette, &_sysPalette);
+			_sysPaletteChanged |= insert(newPalette, &_sysPalette, includeFirstColor && (_palVaryResourceId == -1));
 
 		// Adjust timestamp on newPalette, so it wont get merged/inserted w/o need
 		newPalette->timestamp = _sysPalette.timestamp;
@@ -334,10 +336,10 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	}
 }
 
-bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
+bool GfxPalette::insert(Palette *newPalette, Palette *destPalette, bool includeFirstColor) {
 	bool paletteChanged = false;
 
-	for (int i = 1; i < 255; i++) {
+	for (int i = (includeFirstColor ? 0 : 1); i < 255; i++) {
 		if (newPalette->colors[i].used) {
 			if ((newPalette->colors[i].r != destPalette->colors[i].r) ||
 				(newPalette->colors[i].g != destPalette->colors[i].g) ||

@@ -47,7 +47,22 @@ namespace Common {
 #define MAXNAMELEN 63
 
 MacResManager::MacResManager() {
-	memset(this, 0, sizeof(MacResManager));
+	_stream = nullptr;
+	// _baseFileName cleared by String constructor
+
+	_mode = kResForkNone;
+
+	_resForkOffset = 0;
+	_resForkSize = 0;
+
+	_dataOffset = 0;
+	_dataLength = 0;
+	_mapOffset = 0;
+	_mapLength = 0;
+	_resMap.reset();
+	_resTypes = nullptr;
+	_resLists = nullptr;
+
 	close();
 }
 
@@ -361,7 +376,8 @@ bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 	byte infoHeader[MBI_INFOHDR];
 	int resForkOffset = -1;
 
-	stream.read(infoHeader, MBI_INFOHDR);
+	if (stream.read(infoHeader, MBI_INFOHDR) != MBI_INFOHDR)
+		return false;
 
 	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 &&
 		infoHeader[MBI_ZERO3] == 0 && infoHeader[MBI_NAMELEN] <= MAXNAMELEN) {
@@ -701,6 +717,39 @@ String MacResManager::disassembleAppleDoubleName(String name, bool *isAppleDoubl
 	}
 
 	return name;
+}
+
+void MacResManager::dumpRaw() {
+	byte *data = nullptr;
+	uint dataSize = 0;
+	Common::DumpFile out;
+
+	for (int i = 0; i < _resMap.numTypes; i++) {
+		for (int j = 0; j < _resTypes[i].items; j++) {
+			_stream->seek(_dataOffset + _resLists[i][j].dataOffset);
+			uint32 len = _stream->readUint32BE();
+
+			if (dataSize < len) {
+				free(data);
+				data = (byte *)malloc(len);
+				dataSize = len;
+			}
+
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d", _baseFileName.c_str(), tag2str(_resTypes[i].id), j);
+			_stream->read(data, len);
+
+			if (!out.open(filename)) {
+				warning("MacResManager::dumpRaw(): Can not open dump file %s", filename.c_str());
+				return;
+			}
+
+			out.write(data, len);
+
+			out.flush();
+			out.close();
+
+		}
+	}
 }
 
 } // End of namespace Common

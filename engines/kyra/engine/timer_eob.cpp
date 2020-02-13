@@ -305,7 +305,7 @@ void EoBCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		}
 
 		int od = _screen->curDimIndex();
-		Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 		_screen->setScreenDim(7);
 
 		switch (evt) {

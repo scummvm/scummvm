@@ -532,52 +532,49 @@ void KyraRpgEngine::vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src) {
 	src += 9;
 }
 
-void KyraRpgEngine::vcnDraw_fw_Amiga(uint8 *&dst, const uint8 *&src) {
+void KyraRpgEngine::vcnDraw_fw_planar(uint8 *&dst, const uint8 *&src) {
 	for (int blockX = 0; blockX < 8; blockX++) {
 		uint8 col = 0;
-		for (int i = 0; i < 5; ++i)
-			col |= (((src[i] & (0x80 >> blockX)) >> (7 - blockX)) << i);
+		for (int i = 0; i < _vcnSrcBitsPerPixel; ++i)
+			col |= ((src[i] >> (7 - blockX)) & 1) << i;
 		*dst++ = col;
 	}
-	src += 5;
+	src += _vcnSrcBitsPerPixel;
 }
 
-void KyraRpgEngine::vcnDraw_bw_Amiga(uint8 *&dst, const uint8 *&src) {
+void KyraRpgEngine::vcnDraw_bw_planar(uint8 *&dst, const uint8 *&src) {
 	for (int blockX = 7; blockX >= 0; blockX--) {
 		uint8 col = 0;
-		for (int i = 0; i < 5; ++i)
-			col |= (((src[i] & (0x80 >> blockX)) >> (7 - blockX)) << i);
+		for (int i = 0; i < _vcnSrcBitsPerPixel; ++i)
+			col |= ((src[i] >> (7 - blockX)) & 1) << i;
 		*dst++ = col;
 	}
-	src += 5;
+	src += _vcnSrcBitsPerPixel;
 }
 
-void KyraRpgEngine::vcnDraw_fw_trans_Amiga(uint8 *&dst, const uint8 *&src) {
+void KyraRpgEngine::vcnDraw_fw_trans_planar(uint8 *&dst, const uint8 *&src) {
 	for (int blockX = 0; blockX < 8; blockX++) {
 		uint8 col = 0;
-		for (int i = 0; i < 5; ++i)
-			col |= (((src[i] & (0x80 >> blockX)) >> (7 - blockX)) << i);
-
+		for (int i = 0; i < _vcnSrcBitsPerPixel; ++i)
+			col |= ((src[i] >> (7 - blockX)) & 1) << i;
 		if (col)
 			*dst = col;
 		dst++;
 	}
-	src += 5;
+	src += _vcnSrcBitsPerPixel;
 }
 
-void KyraRpgEngine::vcnDraw_bw_trans_Amiga(uint8 *&dst, const uint8 *&src) {
+void KyraRpgEngine::vcnDraw_bw_trans_planar(uint8 *&dst, const uint8 *&src) {
 	for (int blockX = 7; blockX >= 0; blockX--) {
 		uint8 col = 0;
-		for (int i = 0; i < 5; ++i)
-			col |= (((src[i] & (0x80 >> blockX)) >> (7 - blockX)) << i);
-
+		for (int i = 0; i < _vcnSrcBitsPerPixel; ++i)
+			col |= ((src[i] >> (7 - blockX)) & 1) << i;
 		if (col)
 			*dst = col;
 		dst++;
 	}
-	src += 5;
+	src += _vcnSrcBitsPerPixel;
 }
-
 
 int KyraRpgEngine::clickedWallShape(uint16 block, uint16 direction) {
 	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];

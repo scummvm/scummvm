@@ -100,6 +100,8 @@ void Sequence::callSequencer() {
 		_vm->flipRoom(_flipToWhere, _flipToPed);
 		shoveLeft();
 		break;
+	default:
+		break;
 	}
 
 	if (curSeq <= 176) {

@@ -68,27 +68,27 @@ public:
 	/**
 	 * Returns true if a response can be made
 	 */
-	virtual bool canRespond(TTnpcScript *npcScript, TTsentence *sentence, int val) const {
+	bool canRespond(TTnpcScript *npcScript, TTsentence *sentence, int val) const override {
 		return true;
 	}
 
 	/**
 	 * Returns true if further sentence processing is allowed
 	 */
-	virtual bool canProcess(TTnpcScript *npcScript, TTsentence *sentence) const {
+	bool canProcess(TTnpcScript *npcScript, TTsentence *sentence) const override {
 		return true;
 	}
 
-	virtual bool  proc8() const;
+	bool  proc8() const override;
 
-	virtual void proc9(int v);
+	void proc9(int v) override;
 
 	/**
 	 * Called when the script changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTscriptBase *npcScript, int id);
+	ScriptChangedResult scriptChanged(TTscriptBase *npcScript, int id) override;
 
-	virtual bool proc11() const;
+	bool proc11() const override;
 
 	/**
 	 * Called with the new script and id

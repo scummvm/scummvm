@@ -191,7 +191,8 @@ const char *iPhone_getDocumentsDir() {
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
 
-	_scaledShakeOffsetY = 0;
+	_scaledShakeXOffset = 0;
+	_scaledShakeYOffset = 0;
 
 	_firstTouch = NULL;
 	_secondTouch = NULL;
@@ -567,10 +568,11 @@ const char *iPhone_getDocumentsDir() {
 
 	// Scale the shake offset according to the overlay size. We need this to
 	// adjust the overlay mouse click coordinates when an offset is set.
-	_scaledShakeOffsetY = (int)(_videoContext.shakeOffsetY / (GLfloat)_videoContext.screenHeight * CGRectGetHeight(_overlayRect));
+	_scaledShakeXOffset = (int)(_videoContext.shakeXOffset / (GLfloat)_videoContext.screenWidth * CGRectGetWidth(_overlayRect));
+	_scaledShakeYOffset = (int)(_videoContext.shakeYOffset / (GLfloat)_videoContext.screenHeight * CGRectGetHeight(_overlayRect));
 
-	// Apply the shakeing to the output screen.
-	glTranslatef(0, -_scaledShakeOffsetY, 0);
+	// Apply the shaking to the output screen.
+	glTranslatef(_scaledShakeXOffset, -_scaledShakeYOffset, 0);
 }
 
 - (void)clearColorBuffer {
@@ -636,23 +638,25 @@ const char *iPhone_getDocumentsDir() {
 		return false;
 
 	CGRect *area;
-	int width, height, offsetY;
+	int width, height, offsetX, offsetY;
 	if (_videoContext.overlayVisible) {
 		area = &_overlayRect;
 		width = _videoContext.overlayWidth;
 		height = _videoContext.overlayHeight;
-		offsetY = _scaledShakeOffsetY;
+		offsetX = _scaledShakeXOffset;
+		offsetY = _scaledShakeYOffset;
 	} else {
 		area = &_gameScreenRect;
 		width = _videoContext.screenWidth;
 		height = _videoContext.screenHeight;
-		offsetY = _videoContext.shakeOffsetY;
+		offsetX = _videoContext.shakeXOffset;
+		offsetY = _videoContext.shakeYOffset;
 	}
 
 	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);
 	point.y = (point.y - CGRectGetMinY(*area)) / CGRectGetHeight(*area);
 
-	*x = (int)(point.x * width);
+	*x = (int)(point.x * width + offsetX);
 	// offsetY describes the translation of the screen in the upward direction,
 	// thus we need to add it here.
 	*y = (int)(point.y * height + offsetY);
@@ -772,6 +776,14 @@ const char *iPhone_getDocumentsDir() {
 
 	[self addEvent:InternalEvent(kInputSwipe, num, 0)];
 	return 0;
+}
+
+- (void)disableIdleTimer {
+	[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+}
+
+- (void)enableIdleTimer {
+	[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 }
 
 - (void)applicationSuspend {

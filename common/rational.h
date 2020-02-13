@@ -34,6 +34,7 @@ public:
 	Rational();
 	Rational(int num);
 	Rational(int num, int denom);
+	Rational(const Rational &rational);
 
 	Rational &operator=(const Rational &right);
 	Rational &operator=(int right);

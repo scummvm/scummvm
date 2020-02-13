@@ -36,8 +36,16 @@ class Engine;
 class OSystem;
 
 namespace Common {
+class Keymap;
 class FSList;
+class OutSaveFile;
 class String;
+
+typedef SeekableReadStream InSaveFile;
+}
+
+namespace Graphics {
+struct Surface;
 }
 
 /**
@@ -53,6 +61,28 @@ struct ExtraGuiOption {
 
 typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;
 
+#define EXTENDED_SAVE_VERSION 3
+
+struct ExtendedSavegameHeader {
+	char id[6];
+	uint8 version;
+	Common::String saveName;
+	Common::String description;
+	uint32 date;
+	uint16 time;
+	uint32 playtime;
+	Graphics::Surface *thumbnail;
+
+	ExtendedSavegameHeader() {
+		memset(id, 0, 6);
+		version = 0;
+		date = 0;
+		time = 0;
+		playtime = 0;
+		thumbnail = nullptr;
+	}
+};
+
 /**
  * A meta engine is essentially a factory for Engine instances with the
  * added ability of listing and detecting supported games.
@@ -62,8 +92,16 @@ typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;
  * and instantiate actual Engine objects.
  */
 class MetaEngine : public PluginObject {
+private:
+	/**
+	 * Converts the current screen contents to a thumbnail, and saves it
+	 */
+	static void saveScreenThumbnail(Common::OutSaveFile *saveFile);
 public:
 	virtual ~MetaEngine() {}
+
+	/** Get the engine ID */
+	virtual const char *getEngineId() const = 0;
 
 	/** Returns some copyright information about the original engine. */
 	virtual const char *getOriginalCopyright() const = 0;
@@ -111,9 +149,7 @@ public:
 	 * @param target	name of a config manager target
 	 * @return			a list of save state descriptors
 	 */
-	virtual SaveStateList listSaves(const char *target) const {
-		return SaveStateList();
-	}
+	virtual SaveStateList listSaves(const char *target) const;
 
 	/**
 	 * Return a list of extra GUI options for the specified target.
@@ -158,7 +194,7 @@ public:
 	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state to be removed
 	 */
-	virtual void removeSaveState(const char *target, int slot) const {}
+	virtual void removeSaveState(const char *target, int slot) const;
 
 	/**
 	 * Returns meta infos from the specified save state.
@@ -169,9 +205,27 @@ public:
 	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state
 	 */
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
-		return SaveStateDescriptor();
-	}
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+
+	/**
+	 * Returns name of the save file for given slot and optional target.
+	 *
+	 * @param saveGameIdx	index of the save
+	 * @param target		game target. If omitted, then the engine id is used
+	 */
+	virtual const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const;
+
+	/**
+	 * Returns pattern for save files.
+	 *
+	 * @param target		game target. If omitted, then the engine id is used
+	 */
+	virtual const char *getSavegamePattern(const char *target = nullptr) const;
+
+	/**
+	 * Return the keymap used by the target.
+	 */
+	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
 
 	/** @name MetaEngineFeature flags */
 	//@{
@@ -248,16 +302,28 @@ public:
 		* unavailable. In that case Save/Load dialog for engine's
 		* games is locked during cloud saves sync.
 		*/
-		kSimpleSavesNames
+		kSimpleSavesNames,
+
+		/**
+		 * Uses default implementation of save header and thumbnail
+		 * appended to the save.
+		 * This flag requires the following flags to be set:
+		 *   kSavesSupportMetaInfo, kSavesSupportThumbnail, kSavesSupportCreationDate,
+		 *   kSavesSupportPlayTime
+		 */
+		kSavesUseExtendedFormat
 	};
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
 	 * Used by e.g. the launcher to determine whether to enable the "Load" button.
 	 */
-	virtual bool hasFeature(MetaEngineFeature f) const {
-		return false;
-	}
+	virtual bool hasFeature(MetaEngineFeature f) const;
+
+	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc);
+	static void parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc);
+	static void fillDummyHeader(ExtendedSavegameHeader *header);
+	static WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail = true);
 
 	//@}
 };
@@ -267,10 +333,30 @@ public:
  */
 class EngineManager : public Common::Singleton<EngineManager> {
 public:
-	PlainGameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin = NULL) const;
-	PlainGameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL) const;
+	/**
+	 * Given a list of FSNodes in a given directory, detect a set of games contained within
+	 *
+	 * Returns an empty list if none are found.
+	 */
 	DetectionResults detectGames(const Common::FSList &fslist) const;
+
+	/** Find a plugin by its engine ID */
+	const Plugin *findPlugin(const Common::String &engineId) const;
+
+	/** Get the list of all engine plugins */
 	const PluginList &getPlugins() const;
+
+	/** Find a target */
+	QualifiedGameDescriptor findTarget(const Common::String &target, const Plugin **plugin = NULL) const;
+
+	/**
+	 * List games matching the specified criteria
+	 *
+	 * If the engine id is not specified, this scans all the plugins,
+	 * loading them from disk if necessary. This is a slow operation on
+	 * some platforms and should not be used for the happy path.
+	 */
+	QualifiedGameList findGamesMatching(const Common::String &engineId, const Common::String &gameId) const;
 
 	/**
 	 * Create a target from the supplied game descriptor
@@ -278,6 +364,19 @@ public:
 	 * Returns the created target name.
 	 */
 	Common::String createTargetForGame(const DetectedGame &game);
+
+	/** Upgrade a target to the current configuration format */
+	void upgradeTargetIfNecessary(const Common::String &target) const;
+
+private:
+	/** Find a game across all loaded plugins */
+	QualifiedGameList findGameInLoadedPlugins(const Common::String &gameId) const;
+
+	/** Find a loaded plugin with the given engine ID */
+	const Plugin *findLoadedPlugin(const Common::String &engineId) const;
+
+	/** Use heuristics to complete a target lacking an engine ID */
+	void upgradeTargetForEngineId(const Common::String &target) const;
 };
 
 /** Convenience shortcut for accessing the engine manager. */

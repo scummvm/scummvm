@@ -106,60 +106,60 @@ void Room::feather3Tick1() {
 
 void Room::feather3Tick40() {
 	if (!_awayMission->feather.tlaoxacTestPassed)
-		showText(TX_SPEAKER_TLAOXAC, TX_FEA3_036);
+		showText(TX_SPEAKER_TLAOXAC, 36, true);
 }
 
 void Room::feather3TouchedHotspot0() { // Tlaoxac prevents you from passing this point
 	if (!_awayMission->feather.tlaoxacTestPassed)
-		showText(TX_SPEAKER_TLAOXAC, TX_FEA3_035);
+		showText(TX_SPEAKER_TLAOXAC, 35, true);
 }
 
 void Room::feather3UseSpockOnTlaoxac() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA3_026);
-	showText(TX_SPEAKER_MCCOY, TX_FEA3_018);
-	showText(TX_SPEAKER_SPOCK, TX_FEA3_028);
-	showText(TX_SPEAKER_MCCOY, TX_FEA3_015);
+	showText(TX_SPEAKER_SPOCK, 26, true);
+	showText(TX_SPEAKER_MCCOY, 18, true);
+	showText(TX_SPEAKER_SPOCK, 28, true);
+	showText(TX_SPEAKER_MCCOY, 15, true);
 }
 
 void Room::feather3UseMccoyOnTlaoxac() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA3_016);
-	showText(TX_SPEAKER_SPOCK, TX_FEA3_027);
-	showText(TX_SPEAKER_MCCOY, TX_FEA3_017);
+	showText(TX_SPEAKER_MCCOY, 16, true);
+	showText(TX_SPEAKER_SPOCK, 27, true);
+	showText(TX_SPEAKER_MCCOY, 17, true);
 }
 
 void Room::feather3UseRedshirtOnTlaoxac() {
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_STRAGEY, TX_FEA3_029);
+		showText(TX_SPEAKER_STRAGEY, 29, true);
 }
 
 void Room::feather3UseCrewmanOnLeftExit() {
 	if (!_awayMission->feather.tlaoxacTestPassed)
-		showText(TX_SPEAKER_TLAOXAC, TX_FEA3_041);
+		showText(TX_SPEAKER_TLAOXAC, 41, true);
 }
 
 void Room::feather3UseCommunicator() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA3_024);
+	showText(TX_SPEAKER_SPOCK, 24, true);
 }
 
 void Room::feather3UseSnakeOnKirk() {
 	if (!_awayMission->feather.tlaoxacTestPassed && !_awayMission->redshirtDead) {
 		if (_roomVar.feather.showedSnakeToTlaoxac && _awayMission->feather.numRocksThrownAtTlaoxac == 0) {
-			showText(TX_SPEAKER_TLAOXAC, TX_FEA3_043);
+			showText(TX_SPEAKER_TLAOXAC, 43, true);
 			_awayMission->feather.tlaoxacTestPassed = true;
 			_awayMission->feather.missionScore += 2;
 			loadMapFile("feather3");
 			loadActorAnim(OBJECT_KNIFE, "s5r3nf", KNIFE_X, KNIFE_Y);
 			_awayMission->feather.field2e = true;
 		} else
-			showText(TX_FEA3N004);
+			showDescription(4, true);
 	}
 }
 
 void Room::feather3UseSnakeOnSpock() {
 	if (_roomVar.feather.showedSnakeToTlaoxac)
-		showText(TX_SPEAKER_SPOCK, TX_FEA3_004);
+		showText(TX_SPEAKER_SPOCK, 4, true);
 	else
-		showText(TX_SPEAKER_SPOCK, TX_FEA3_020);
+		showText(TX_SPEAKER_SPOCK, 20, true);
 }
 
 void Room::feather3UseSnakeOnRedshirt() {
@@ -168,15 +168,15 @@ void Room::feather3UseSnakeOnRedshirt() {
 			walkCrewmanC(OBJECT_KIRK, 0x7c, 0xbc, &Room::feather3KirkReachedRedshirtWithSnake);
 			_awayMission->disableInput = true;
 		} else
-			showText(TX_SPEAKER_STRAGEY, TX_FEA3_031);
+			showText(TX_SPEAKER_STRAGEY, 31, true);
 	}
 }
 
 void Room::feather3KirkReachedRedshirtWithSnake() {
 	_awayMission->disableInput = false;
 
-	showText(TX_SPEAKER_STRAGEY, TX_FEA3_034);
-	showText(TX_SPEAKER_TLAOXAC, TX_FEA3_044);
+	showText(TX_SPEAKER_STRAGEY, 34, true);
+	showText(TX_SPEAKER_TLAOXAC, 44, true);
 
 	_awayMission->feather.tlaoxacTestPassed = true;
 	_awayMission->feather.missionScore += 1;
@@ -186,12 +186,12 @@ void Room::feather3KirkReachedRedshirtWithSnake() {
 }
 
 void Room::feather3UseSnakeOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA3_007);
+	showText(TX_SPEAKER_MCCOY, 7, true);
 }
 
 void Room::feather3UseSnakeOnTlaoxac() {
 	if (!_awayMission->feather.tlaoxacTestPassed && _awayMission->feather.numRocksThrownAtTlaoxac == 0) {
-		showText(TX_SPEAKER_TLAOXAC, TX_FEA3_039);
+		showText(TX_SPEAKER_TLAOXAC, 39, true);
 		_roomVar.feather.showedSnakeToTlaoxac = true;
 		if (!_awayMission->feather.showedSnakeToTlaoxac) {
 			_awayMission->feather.showedSnakeToTlaoxac = true;
@@ -201,21 +201,21 @@ void Room::feather3UseSnakeOnTlaoxac() {
 }
 
 void Room::feather3UseKnifeOnSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA3_025);
+	showText(TX_SPEAKER_SPOCK, 25, true);
 }
 
 void Room::feather3UseKnifeOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA3_011); // BUGFIX: Speaker is Mccoy, not Spock.
+	showText(TX_SPEAKER_MCCOY, 11, true); // BUGFIX: Speaker is Mccoy, not Spock.
 }
 
 void Room::feather3UseKnifeOnRedshirt() {
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_STRAGEY, TX_FEA3_033); // BUGFIX: Speaker is Stragey, not Spock.
+		showText(TX_SPEAKER_STRAGEY, 33, true); // BUGFIX: Speaker is Stragey, not Spock.
 }
 
 void Room::feather3UseRockOnTlaoxac() {
 	if (_roomVar.feather.tlaoxacUnconscious)
-		showText(TX_SPEAKER_MCCOY, TX_FEA3_009);
+		showText(TX_SPEAKER_MCCOY, 9, true);
 	else {
 		_awayMission->feather.numRocksThrownAtTlaoxac++;
 		_awayMission->disableInput = true;
@@ -259,10 +259,10 @@ void Room::feather3Timer3Expired() {
 void Room::feather3TlaoxacKnockedOutFromRockThrow() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_FEA3N006);
+	showDescription(6, true);
 
 	if (!_awayMission->feather.tookKnife && !_awayMission->feather.field2e)
-		showText(TX_SPEAKER_MCCOY, TX_FEA3_008);
+		showText(TX_SPEAKER_MCCOY, 8, true);
 
 	_awayMission->feather.tlaoxacTestPassed = true;
 	_roomVar.feather.tlaoxacUnconscious = true;
@@ -270,49 +270,49 @@ void Room::feather3TlaoxacKnockedOutFromRockThrow() {
 }
 
 void Room::feather3UsePhaser() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA3_023);
+	showText(TX_SPEAKER_SPOCK, 23, true);
 }
 
 void Room::feather3TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA3_005);
+	showText(TX_SPEAKER_MCCOY, 5, true);
 }
 
 void Room::feather3TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA3_022);
+	showText(TX_SPEAKER_SPOCK, 22, true);
 }
 
 void Room::feather3TalkToRedshirt() {
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_STRAGEY, TX_FEA3_032);
+		showText(TX_SPEAKER_STRAGEY, 32, true);
 }
 
 void Room::feather3TalkToTlaoxac() {
 	if (!_awayMission->feather.tlaoxacTestPassed && !_awayMission->redshirtDead && !_roomVar.feather.tlaoxacUnconscious) {
 		if (!_roomVar.feather.showedSnakeToTlaoxac)
-			showText(TX_SPEAKER_TLAOXAC, TX_FEA3_038);
+			showText(TX_SPEAKER_TLAOXAC, 38, true);
 		else if (_awayMission->feather.numRocksThrownAtTlaoxac != 0)
-			showText(TX_SPEAKER_TLAOXAC, TX_FEA3_038);
+			showText(TX_SPEAKER_TLAOXAC, 38, true);
 		else {
 			const TextRef choices[] = {
 				TX_SPEAKER_KIRK,
-				TX_FEA3_001, TX_FEA3_002, TX_FEA3_003,
+				1, 2, 3,
 				TX_BLANK
 			};
-			int choice = showText(choices);
+			int choice = showMultipleTexts(choices, true);
 
 			if (choice == 0)
-				showText(TX_SPEAKER_TLAOXAC, TX_FEA3_037);
+				showText(TX_SPEAKER_TLAOXAC, 37, true);
 			else if (choice == 1)
-				showText(TX_SPEAKER_TLAOXAC, TX_FEA3_042);
+				showText(TX_SPEAKER_TLAOXAC, 42, true);
 			else if (choice == 2) { // Accidentally insulted Quetzecoatl
-				showText(TX_SPEAKER_TLAOXAC, TX_FEA3_040);
+				showText(TX_SPEAKER_TLAOXAC, 40, true);
 				_awayMission->disableInput = true;
 				loadActorAnimC(OBJECT_TLAOXAC, "s5r3aj", -1, -1, &Room::feather3TlaoxacKilledRedshirt);
 				playMidiMusicTracks(2);
 				loadActorAnim(OBJECT_REDSHIRT, "s5r3rd");
 				_awayMission->redshirtDead = true;
 			} else
-				showText(TX_DIALOG_ERROR);
+				showDescription(TX_DIALOG_ERROR);
 		}
 	}
 }
@@ -323,39 +323,35 @@ void Room::feather3TlaoxacKilledRedshirt() {
 
 void Room::feather3UseMTricorderOnTlaoxac() {
 	if (_roomVar.feather.tlaoxacUnconscious)
-		mccoyScan(DIR_W, TX_FEA3_010);
+		mccoyScan(DIR_W, 10, false, true);
 	else
-		mccoyScan(DIR_W, TX_FEA3_014);
+		mccoyScan(DIR_W, 14, false, true);
 }
 
 void Room::feather3UseMedkitOnTlaoxac() {
 	if (_awayMission->feather.knockedOutTlaoxac)
-		showText(TX_SPEAKER_MCCOY, TX_FEA3_012);
+		showText(TX_SPEAKER_MCCOY, 12, true);
 }
 
 void Room::feather3UseMedkitOnRedshirt() {
-	if (_awayMission->redshirtDead) {
-		// BUGFIX: Original voice clip (TX_FEA3_030) is someone who's clearly not Kelley
-		// saying "he's dead, Jim". He recorded the line a few other times, so use one of
-		// those instead.
-		mccoyScan(DIR_N, TX_LOVA_100);
-	}
+	if (_awayMission->redshirtDead)
+		mccoyScan(DIR_N, 30, true);
 }
 
 void Room::feather3UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA3_006);
+	showText(TX_SPEAKER_MCCOY, 6, true);
 }
 
 void Room::feather3UseMTricorderOnLight() {
-	mccoyScan(DIR_W, TX_FEA3_013);
+	mccoyScan(DIR_W, 13, false, true);
 }
 
 void Room::feather3UseSTricorderOnLight() {
-	spockScan(DIR_W, TX_FEA3_019);
+	spockScan(DIR_W, 19, false, true);
 }
 
 void Room::feather3UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_FEA3_021);
+	spockScan(DIR_S, 21, false, true);
 }
 
 void Room::feather3GetKnife() {
@@ -377,40 +373,40 @@ void Room::feather3Timer1Expired() {
 void Room::feather3PickedUpKnife() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_FEA3N010);
+	showDescription(10, true);
 }
 
 void Room::feather3LookAtSpock() {
 	if (!_awayMission->feather.knockedOutTlaoxac && !_awayMission->feather.tlaoxacTestPassed)
-		showText(TX_FEA3N002);
+		showDescription(2, true);
 	else // ENHANCEMENT: Originally did nothing here. Fall back to default behaviour in the engine.
 		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather3LookAtRedshirt() {
 	if (_awayMission->redshirtDead)
-		showText(TX_FEA3N005);
+		showDescription(5, true);
 	else
-		showText(TX_FEA3N012);
+		showDescription(12, true);
 }
 
 void Room::feather3LookAtTlaoxac() {
 	if (_awayMission->feather.knockedOutTlaoxac)
-		showText(TX_FEA3N003);
+		showDescription(3, true);
 	else
-		showText(TX_FEA3N007);
+		showDescription(7, true);
 }
 
 void Room::feather3LookAtLight() {
-	showText(TX_FEA3N001);
+	showDescription(1, true);
 }
 
 void Room::feather3LookAtMccoy() {
-	showText(TX_FEA3N000);
+	showDescription(0, true);
 }
 
 void Room::feather3LookAtKnife() {
-	showText(TX_FEA3N011);
+	showDescription(11, true);
 }
 
 }

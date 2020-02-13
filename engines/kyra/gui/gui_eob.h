@@ -46,13 +46,13 @@ class GUI_EoB : public GUI {
 	friend class CharacterGenerator;
 public:
 	GUI_EoB(EoBCoreEngine *vm);
-	virtual ~GUI_EoB();
+	~GUI_EoB() override;
 
 	void initStaticData() {}
 
 	// button specific
-	void processButton(Button *button);
-	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
+	void processButton(Button *button) override;
+	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) override;
 
 	// Non button based menu handling (main menu, character generation)
 	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing);
@@ -76,7 +76,7 @@ public:
 	bool transferFileMenu(Common::String &targetName, Common::String &selection);
 
 	// utilities for thumbnail creation
-	void createScreenThumbnail(Graphics::Surface &dst);
+	void createScreenThumbnail(Graphics::Surface &dst) override;
 
 private:
 	int simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffset);
@@ -107,7 +107,7 @@ private:
 
 	void setupSaveMenuSlots();
 	int getHighlightSlot();
-	void sortSaveSlots();
+	void sortSaveSlots() override;
 
 	void restParty_updateRestTime(int hours, bool init);
 
@@ -155,6 +155,7 @@ private:
 	static const uint8 _highlightColorTableVGA[];
 	static const uint8 _highlightColorTableEGA[];
 	static const uint8 _highlightColorTableAmiga[];
+	static const uint8 _highlightColorTablePC98[];
 
 	// FM-Towns specific
 	int checkKatakanaSelection();

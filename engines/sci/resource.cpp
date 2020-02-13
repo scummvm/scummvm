@@ -31,9 +31,11 @@
 #include "common/memstream.h"
 #endif
 
+#include "sci/engine/workarounds.h"
 #include "sci/parser/vocabulary.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
+#include "sci/resource_patcher.h"
 #include "sci/util.h"
 
 namespace Sci {
@@ -418,6 +420,9 @@ void ResourceManager::disposeVolumeFileStream(Common::SeekableReadStream *fileSt
 
 void ResourceManager::loadResource(Resource *res) {
 	res->_source->loadResource(this, res);
+	if (_patcher) {
+		_patcher->applyPatch(*res);
+	};
 }
 
 
@@ -480,7 +485,7 @@ void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStrea
 	bool canBeCompressed = !(g_sci && g_sci->getGameId() == GID_KQ6) && isCompressableResource(resource->_id.getType());
 	uint32 uncompressedSize = 0;
 
-#ifdef ENABLE_SCI32_MAC
+#ifdef ENABLE_SCI32
 	// GK2 Mac is crazy. In its Patches resource fork, picture 2315 is not
 	// compressed and it is hardcoded in the executable to say that it's
 	// not compressed. Why didn't they just add four zeroes to the end of
@@ -639,7 +644,8 @@ int ResourceManager::addAppropriateSources() {
 	} else if (Common::MacResManager::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
 		Common::StringArray files;
-		Common::MacResManager::listFiles(files, "Data?");
+		Common::MacResManager::listFiles(files, "Data#");
+		Common::MacResManager::listFiles(files, "Data##");
 
 		for (Common::StringArray::const_iterator x = files.begin(); x != files.end(); ++x) {
 			addSource(new MacResourceForkResourceSource(*x, atoi(x->c_str() + 4)));
@@ -803,7 +809,7 @@ void ResourceManager::addScriptChunkSources() {
 #endif
 }
 
-extern void showScummVMDialog(const Common::String &message);
+extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
 
 void ResourceManager::scanNewSources() {
 	_hasBadResources = false;
@@ -976,6 +982,13 @@ void ResourceManager::init() {
 #ifdef ENABLE_SCI32
 	_currentDiscNo = 1;
 #endif
+	if (g_sci) {
+		_patcher = new ResourcePatcher(g_sci->getGameId(), g_sci->getLanguage());
+		addSource(_patcher);
+	} else {
+		_patcher = NULL;
+	};
+
 	// FIXME: put this in an Init() function, so that we can error out if detection fails completely
 
 	_mapVersion = detectMapVersion();
@@ -989,6 +1002,11 @@ void ResourceManager::init() {
 	if ((_mapVersion == kResVersionUnknown) && (_volVersion != kResVersionUnknown)) {
 		warning("Map version not detected, but volume version has been detected. Setting map version to volume version");
 		_mapVersion = _volVersion;
+	}
+
+	if ((_volVersion == kResVersionSci3) && (_mapVersion < kResVersionSci2)) {
+		warning("Detected volume version is too high for detected map version. Setting volume version to map version");
+		_volVersion = _mapVersion;
 	}
 
 	debugC(1, kDebugLevelResMan, "resMan: Detected resource map version %d: %s", _mapVersion, versionDescription(_mapVersion));
@@ -1133,7 +1151,24 @@ Common::List<ResourceId> ResourceManager::listResources(ResourceType type, int m
 	return resources;
 }
 
+bool ResourceManager::hasResourceType(ResourceType type) {
+	ResourceMap::iterator itr = _resMap.begin();
+	while (itr != _resMap.end()) {
+		if (itr->_value->getType() == type) {
+			return true;
+		}
+		++itr;
+	}
+	return false;
+}
+
 Resource *ResourceManager::findResource(ResourceId id, bool lock) {
+	// remap known incorrect audio36 and sync36 resource ids
+	if (id.getType() == kResourceTypeAudio36) {
+		id = remapAudio36ResourceId(id);
+	} else if (id.getType() == kResourceTypeSync36) {
+		id = remapSync36ResourceId(id);
+	}
 	Resource *retval = testResource(id);
 
 	if (!retval)
@@ -1211,6 +1246,8 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 		return "SCI2/2.1";
 	case kResVersionSci3:
 		return "SCI3";
+	default:
+		break;
 	}
 
 	return "Version not valid";
@@ -2356,7 +2393,7 @@ ViewType ResourceManager::detectViewType() {
 					return kViewAmiga64;
 
 				return kViewVga;
-			case 0:
+			case 0: {
 				// EGA or Amiga, try to read as Amiga view
 
 				if (res->size() < 10)
@@ -2403,6 +2440,10 @@ ViewType ResourceManager::detectViewType() {
 				}
 
 				return kViewAmiga;
+			}
+
+			default:
+				break;
 			}
 		}
 	}

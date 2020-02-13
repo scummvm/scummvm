@@ -45,6 +45,7 @@ namespace Scumm {
 IMuseInternal::IMuseInternal() :
 	_native_mt32(false),
 	_enable_gs(false),
+	_isAmiga(false),
 	_midi_adlib(NULL),
 	_midi_native(NULL),
 	_sysex(NULL),
@@ -157,9 +158,11 @@ bool IMuseInternal::isMT32(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '):
-	case MKTAG('R', 'O', 'L', ' '):
-		return true;
+	case MKTAG('A', 'M', 'I', ' '): // MI2 Amiga
+		return false;
+
+	case MKTAG('R', 'O', 'L', ' '): // Unfortunately FOA Amiga also uses this resource type
+		return !_isAmiga;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		return false;
@@ -173,6 +176,9 @@ bool IMuseInternal::isMT32(int sound) {
 			return true;
 		else
 			return false;
+
+	default:
+		break;
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
@@ -199,7 +205,9 @@ bool IMuseInternal::isMIDI(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '):
+	case MKTAG('A', 'M', 'I', ' '): // Amiga (return true, since the driver is initalized as native midi)
+		return true;
+
 	case MKTAG('R', 'O', 'L', ' '):
 		return true;
 
@@ -209,6 +217,9 @@ bool IMuseInternal::isMIDI(int sound) {
 	case MKTAG('G', 'M', 'D', ' '):
 	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
 		return true;
+
+	default:
+		break;
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
@@ -236,9 +247,11 @@ bool IMuseInternal::supportsPercussion(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '):
-	case MKTAG('R', 'O', 'L', ' '):
-		return true;
+	case MKTAG('A', 'M', 'I', ' '): // MI2 Amiga
+		return false;
+
+	case MKTAG('R', 'O', 'L', ' '): // Roland LAPC/MT-32/CM32L track, but also used by INDY4 Amiga
+		return !_isAmiga;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		// This is MIDI, i.e. uses MIDI style program changes, but without a
@@ -248,6 +261,9 @@ bool IMuseInternal::supportsPercussion(int sound) {
 	case MKTAG('G', 'M', 'D', ' '):
 	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
 		return true;
+
+	default:
+		break;
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
@@ -475,6 +491,10 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 		}
 		break;
 
+	case IMuse::PROP_AMIGA:
+		_isAmiga = (value > 0);
+		break;
+
 	case IMuse::PROP_LIMIT_PLAYERS:
 		if (value > 0 && value <= ARRAYSIZE(_players))
 			_player_limit = (int)value;
@@ -490,6 +510,9 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 
 	case IMuse::PROP_PC_SPEAKER:
 		_pcSpeaker = (value != 0);
+		break;
+
+	default:
 		break;
 	}
 
@@ -1457,8 +1480,6 @@ void IMuseInternal::initMidiDriver(TimerCallbackInfo *info) {
 
 void IMuseInternal::initMT32(MidiDriver *midi) {
 	byte buffer[52];
-	char info[256] = "ScummVM ";
-	int len;
 
 	// Reset the MT-32
 	midi->sysEx((const byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
@@ -1474,15 +1495,16 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	_system->delayMillis(250);
 
 	// Compute version string (truncated to 20 chars max.)
-	strcat(info, gScummVMVersion);
-	len = strlen(info);
+	Common::String infoStr = "ScummVM ";
+	infoStr += gScummVMVersion;
+	int len = infoStr.size();
 	if (len > 20)
 		len = 20;
 
 	// Display a welcome message on MT-32 displays.
 	memcpy(&buffer[0], "\x41\x10\x16\x12\x20\x00\x00", 7);
 	memcpy(&buffer[7], "                    ", 20);
-	memcpy(buffer + 7 + (20 - len) / 2, info, len);
+	memcpy(buffer + 7 + (20 - len) / 2, infoStr.c_str(), len);
 	byte checksum = 0;
 	for (int i = 4; i < 27; ++i)
 		checksum -= buffer[i];

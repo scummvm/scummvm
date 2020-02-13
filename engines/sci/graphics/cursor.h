@@ -54,10 +54,8 @@ struct SciCursorSetPositionWorkarounds {
 
 class GfxCursor {
 public:
-	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
+	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen, GfxCoordAdjuster16 *coordAdjuster, EventManager *eventMan);
 	~GfxCursor();
-
-	void init(GfxCoordAdjuster16 *coordAdjuster, EventManager *event);
 
 	void kernelShow();
 	void kernelHide();

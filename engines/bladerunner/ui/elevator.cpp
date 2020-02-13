@@ -44,9 +44,13 @@ Elevator::Elevator(BladeRunnerEngine *vm) {
 	_vm = vm;
 	reset();
 	_imagePicker = new UIImagePicker(vm, 8);
+	_shapes = new Shapes(vm);
 }
 
 Elevator::~Elevator() {
+	delete _shapes;
+	_shapes = nullptr;
+
 	delete _imagePicker;
 	_imagePicker = nullptr;
 }
@@ -76,10 +80,7 @@ int Elevator::activate(int elevatorId) {
 	_vqaPlayer->setLoop(1, -1, kLoopSetModeJustStart, nullptr, nullptr);
 	_vm->_mouse->setCursor(0);
 
-	for (int i = 0; i != 16; ++i) {
-		_shapes.push_back(new Shape(_vm));
-		_shapes[i]->open("ELEVATOR.SHP", i);
-	}
+	_shapes->load("ELEVATOR.SHP");
 
 	_imagePicker->resetImages();
 
@@ -88,62 +89,62 @@ int Elevator::activate(int elevatorId) {
 			0,
 			Common::Rect(220, 298, 308, 392),
 			nullptr,
-			_shapes[11],
-			_shapes[14],
+			_shapes->get(11),
+			_shapes->get(14),
 			nullptr);
 		_imagePicker->defineImage(
 			1,
 			Common::Rect(259, 259, 302, 292),
 			nullptr,
-			_shapes[10],
-			_shapes[13],
+			_shapes->get(10),
+			_shapes->get(13),
 			nullptr);
 		_imagePicker->defineImage(
 			2,
 			Common::Rect(227, 398, 301, 434),
 			nullptr,
-			_shapes[12],
-			_shapes[15],
+			_shapes->get(12),
+			_shapes->get(15),
 			nullptr);
 	} else { // kElevatorPS
 		_imagePicker->defineImage(
 			4,
 			Common::Rect(395, 131, 448, 164),
 			nullptr,
-			_shapes[0],
-			_shapes[5],
+			_shapes->get(0),
+			_shapes->get(5),
 			nullptr
 		);
 		_imagePicker->defineImage(
 			3,
 			Common::Rect(395, 165, 448, 198),
 			nullptr,
-			_shapes[1],
-			_shapes[6],
+			_shapes->get(1),
+			_shapes->get(6),
 			nullptr
 		);
 		_imagePicker->defineImage(
 			5,
 			Common::Rect(395, 199, 448, 232),
 			nullptr,
-			_shapes[2],
-			_shapes[7],
+			_shapes->get(2),
+			_shapes->get(7),
 			nullptr
 		);
 		_imagePicker->defineImage(
 			6,
 			Common::Rect(395, 233, 448, 264),
 			nullptr,
-			_shapes[3],
-			_shapes[8],
+			_shapes->get(3),
+			_shapes->get(8),
 			nullptr
 		);
 		_imagePicker->defineImage(
 			7,
 			Common::Rect(395, 265, 448, 295),
 			nullptr,
-			_shapes[4],
-			_shapes[9],
+			_shapes->get(4),
+			_shapes->get(9),
 			nullptr
 		);
 	}
@@ -167,13 +168,10 @@ int Elevator::activate(int elevatorId) {
 
 	_imagePicker->deactivate();
 
-	_vqaPlayer->close();
 	delete _vqaPlayer;
+	_vqaPlayer = nullptr;
 
-	for (int i = 0; i != (int)_shapes.size(); ++i) {
-		delete _shapes[i];
-	}
-	_shapes.clear();
+	_shapes->unload();
 
 	_vm->closeArchive("MODE.MIX");
 
@@ -230,8 +228,8 @@ void Elevator::tick() {
 	_vm->_subtitles->tick(_vm->_surfaceFront);
 
 	_vm->blitToScreen(_vm->_surfaceFront);
+
 	tickDescription();
-	_vm->_system->delayMillis(10);
 }
 
 void Elevator::buttonClick(int buttonId) {
@@ -244,7 +242,7 @@ void Elevator::reset() {
 	_imagePicker = nullptr;
 	_actorId = -1;
 	_sentenceId = -1;
-	_timeSpeakDescription = 0;
+	_timeSpeakDescriptionStart = 0u;
 	_buttonClicked = false;
 }
 
@@ -283,18 +281,19 @@ void Elevator::buttonFocus(int buttonId) {
 void Elevator::setupDescription(int actorId, int sentenceId) {
 	_actorId = actorId;
 	_sentenceId = sentenceId;
-	_timeSpeakDescription = _vm->_time->current() + 600;
+	_timeSpeakDescriptionStart = _vm->_time->current();
 }
 
 void Elevator::resetDescription() {
 	_actorId = -1;
 	_sentenceId = -1;
-	_timeSpeakDescription = 0;
+	_timeSpeakDescriptionStart = 0u;
 }
 
 void Elevator::tickDescription() {
-	int now = _vm->_time->current();
-	if (_actorId <= 0 || now < _timeSpeakDescription) {
+	uint32 now = _vm->_time->current();
+	// unsigned difference is intentional
+	if (_actorId <= 0 || (now - _timeSpeakDescriptionStart < 600u)) {
 		return;
 	}
 

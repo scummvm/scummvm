@@ -44,9 +44,22 @@ void BaseUtils::swap(int *a, int *b) {
 
 //////////////////////////////////////////////////////////////////////////
 float BaseUtils::normalizeAngle(float angle) {
-	while (angle > 360) {
+	float origAngle = angle;
+
+	// The original WME engine checked against 360 here, which is an off-by one
+	// error, as when normalizing an angle, we expect the number to be between 0
+	// and 359 (since 360 is 0). This check has been fixed in ScummVM to 359. If
+	// the resulting angle is negative, it will be corrected in the while loop
+	// below. 
+	while (angle > 359) {
 		angle -= 360;
 	}
+
+	// Report cases where the above off-by-one error might occur
+	if (origAngle > 360 && angle < 0) {
+		warning("BaseUtils::normalizeAngle: off-by-one error detected while normalizing angle %f to %f", origAngle, angle);
+	}
+
 	while (angle < 0) {
 		angle += 360;
 	}

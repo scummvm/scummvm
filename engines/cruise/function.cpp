@@ -508,7 +508,7 @@ int16 Op_LoadBackground() {
 
 	bgIdx = popVar();
 
-	if (bgIdx >= 0 || bgIdx < NBSCREENS) {
+	if (bgIdx >= 0 && bgIdx < NBSCREENS) {
 		strToUpper(bgName);
 
 		gfxModuleData_gfxWaitVSync();
@@ -553,7 +553,7 @@ int16 Op_LoadFrame() {
 	param2 = popVar();
 	param3 = popVar();
 
-	if (param3 >= 0 || param3 < NUM_FILE_ENTRIES) {
+	if (param3 >= 0 && param3 < NUM_FILE_ENTRIES) {
 		strToUpper(name);
 
 		gfxModuleData_gfxWaitVSync();

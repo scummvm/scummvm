@@ -31,6 +31,7 @@
 #include "toon/audio.h"
 #include "toon/movie.h"
 #include "toon/toon.h"
+#include "toon/subtitles.h"
 
 namespace Toon {
 
@@ -67,6 +68,7 @@ Movie::Movie(ToonEngine *vm , ToonstruckSmackerDecoder *decoder) {
 	_vm = vm;
 	_playing = false;
 	_decoder = decoder;
+	_subtitle = new SubtitleRenderer(_vm);
 }
 
 Movie::~Movie() {
@@ -87,6 +89,7 @@ void Movie::play(const Common::String &video, int32 flags) {
 		_vm->getAudioManager()->setMusicVolume(0);
 	if (!_decoder->loadFile(video.c_str()))
 		error("Unable to play video %s", video.c_str());
+	_subtitle->load(video.c_str());
 	playVideo(isFirstIntroVideo);
 	_vm->flushPalette(true);
 	if (flags & 1)
@@ -103,6 +106,7 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
+			byte unused = 0;
 			if (frame) {
 				if (_decoder->isLowRes()) {
 					// handle manually 2x scaling here
@@ -115,9 +119,30 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 				} else {
 					_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
 
+					int32 currentFrame = _decoder->getCurFrame();
+
+					// find unused color key to replace with subtitles color
+					uint len = frame->w * frame->h;
+					const byte *pixels = (const byte *)frame->getPixels();
+					bool counts[256];
+					memset(counts, false, sizeof(counts));
+					for (uint i = 0; i < len; i++) {
+						counts[pixels[i]] = true;
+					}
+
+					// 0 is already used for the border color and should not be used here, so it can be skipped over.
+					for (int j = 1; j < 256; j++) {
+						if (!counts[j]) {
+							unused = j;
+							break;
+						}
+					}
+
+					_subtitle->render(*frame, currentFrame, unused);
+
 					// WORKAROUND: There is an encoding glitch in the first intro video. This hides this using the adjacent pixels.
 					if (isFirstIntroVideo) {
-						int32 currentFrame = _decoder->getCurFrame();
+						// int32 currentFrame = _decoder->getCurFrame();
 						if (currentFrame >= 956 && currentFrame <= 1038) {
 							debugC(1, kDebugMovie, "Triggered workaround for glitch in first intro video...");
 							_vm->_system->copyRectToScreen(frame->getBasePtr(frame->w-188, 123), frame->pitch, frame->w-188, 124, 188, 1);
@@ -128,7 +153,12 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 					}
 				}
 			}
+
+			byte subtitleColor[3] = {0xff, 0xff, 0x0};
 			_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);
+			if (unused) {
+				_vm->_system->getPaletteManager()->setPalette(subtitleColor, unused, 1);
+			}
 			_vm->_system->updateScreen();
 		}
 

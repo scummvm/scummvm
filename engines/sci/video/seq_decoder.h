@@ -43,27 +43,27 @@ namespace Sci {
 class SEQDecoder : public Video::VideoDecoder {
 public:
 	SEQDecoder(uint frameDelay);
-	virtual ~SEQDecoder();
+	~SEQDecoder() override;
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 
 private:
 	class SEQVideoTrack : public FixedRateVideoTrack {
 	public:
 		SEQVideoTrack(Common::SeekableReadStream *stream, uint frameDelay);
-		~SEQVideoTrack();
+		~SEQVideoTrack() override;
 
-		uint16 getWidth() const { return SEQ_SCREEN_WIDTH; }
-		uint16 getHeight() const { return SEQ_SCREEN_HEIGHT; }
-		Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const;
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		uint16 getWidth() const override { return SEQ_SCREEN_WIDTH; }
+		uint16 getHeight() const override { return SEQ_SCREEN_HEIGHT; }
+		Graphics::PixelFormat getPixelFormat() const override { return Graphics::PixelFormat::createFormatCLUT8(); }
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame() override;
+		const byte *getPalette() const override;
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 	protected:
-		Common::Rational getFrameRate() const { return Common::Rational(60, _frameDelay); }
+		Common::Rational getFrameRate() const override { return Common::Rational(60, _frameDelay); }
 
 	private:
 		enum {

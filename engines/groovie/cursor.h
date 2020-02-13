@@ -71,7 +71,7 @@ protected:
 class GrvCursorMan_t7g : public GrvCursorMan {
 public:
 	GrvCursorMan_t7g(OSystem *system, Common::MacResManager *macResFork = 0);
-	~GrvCursorMan_t7g();
+	~GrvCursorMan_t7g() override;
 
 private:
 	// Styles data
@@ -90,9 +90,9 @@ private:
 class GrvCursorMan_v2 : public GrvCursorMan {
 public:
 	GrvCursorMan_v2(OSystem *system);
-	~GrvCursorMan_v2();
+	~GrvCursorMan_v2() override;
 
-	void setStyle(uint8 newStyle);
+	void setStyle(uint8 newStyle) override;
 };
 
 } // End of Groovie namespace

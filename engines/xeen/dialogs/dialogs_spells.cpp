@@ -238,6 +238,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			if (topIndex < ((int)_spells.size() - 10))
 				++topIndex;
 			break;
+
+		default:
+			break;
 		}
 	} while (!_vm->shouldExit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
@@ -620,6 +623,9 @@ int SpellOnWho::execute(int spellId) {
 				result = _buttonValue;
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -827,6 +833,9 @@ bool LloydsBeacon::execute() {
 			c._lloydSide = ccNum;
 
 			_buttonValue = Common::KEYCODE_ESCAPE;
+			break;
+
+		default:
 			break;
 		}
 	} while (_buttonValue != Common::KEYCODE_ESCAPE);

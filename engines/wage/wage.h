@@ -114,14 +114,14 @@ class WageEngine : public Engine {
 	friend class Dialog;
 public:
 	WageEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~WageEngine();
+	~WageEngine() override;
 
-	virtual bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
-	virtual Common::Error run();
+	Common::Error run() override;
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	const char *getGameFile() const;
 	void processTurn(Common::String *textInput, Designed *clickInput);
@@ -212,8 +212,8 @@ public:
 	void redrawScene();
 	void saveGame();
 
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &description);
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &description) override;
 	bool scummVMSaveLoadDialog(bool isSave);
 
 private:
@@ -229,7 +229,7 @@ private:
 
 public:
 
-	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	GUI::Debugger *getDebugger() override { return _debugger; }
 
 private:
 	Console *_console;
@@ -245,7 +245,7 @@ private:
 class Console : public GUI::Debugger {
 public:
 	Console(WageEngine *vm) {}
-	virtual ~Console(void) {}
+	~Console(void) override {}
 };
 
 } // End of namespace Wage

@@ -47,84 +47,84 @@ private:
 	 */
 	void addButton(CPetGlyph *glyph);
 public:
-	virtual ~CPetRealLife() {}
+	~CPetRealLife() override {}
 
 	/**
 	 * Sets up the section
 	 */
-	virtual bool setup(CPetControl *petControl);
+	bool setup(CPetControl *petControl) override;
 
 	/**
 	 * Reset the section
 	 */
-	virtual bool reset();
+	bool reset() override;
 
 	/**
 	 * Draw the section
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager) override;
 
 	/**
 	 * Get the bounds for the section
 	 */
-	virtual Rect getBounds() const { return Rect(); }
+	Rect getBounds() const override { return Rect(); }
 
 	/**
 	 * Following are handlers for the various messages that the PET can
 	 * pass onto the currently active section/area
 	 */
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
-	virtual bool MouseDragStartMsg(CMouseDragStartMsg *msg);
-	virtual bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
-	virtual bool MouseDragEndMsg(CMouseDragEndMsg *msg);
-	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
-	virtual bool KeyCharMsg(CKeyCharMsg *msg);
-	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) override;
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg) override;
+	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg) override;
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg) override;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) override;
+	bool KeyCharMsg(CKeyCharMsg *msg) override;
+	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) override;
 
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any
 	 */
-	virtual CGameObject *dragEnd(const Point &pt) const { return nullptr; }
+	CGameObject *dragEnd(const Point &pt) const override { return nullptr; }
 
 	/**
 	 * Returns true if the object is in a valid state
 	 */
-	virtual bool isValid(CPetControl *petControl);
+	bool isValid(CPetControl *petControl) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file, int param) {}
+	void load(SimpleFile *file, int param) override {}
 
 	/**
 	 * Called after a game has been loaded
 	 */
-	virtual void postLoad();
+	void postLoad() override;
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) {}
+	void save(SimpleFile *file, int indent) override {}
 
 	/**
 	 * Called when a section is switched to
 	 */
-	virtual void enter(PetArea oldArea);
+	void enter(PetArea oldArea) override;
 
 	/**
 	 * Called when a section is being left, to switch to another area
 	 */
-	virtual void leave();
+	void leave() override;
 
 	/**
 	 * Called when a new room is entered
 	 */
-	virtual void enterRoom(CRoomItem *room) {}
+	void enterRoom(CRoomItem *room) override {}
 
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CTextControl *getText() { return &_text; }
+	CTextControl *getText() override { return &_text; }
 
 	/**
 	 * Handles updates to the sound levels

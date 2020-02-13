@@ -121,6 +121,8 @@ uint32 MidiDriver_MPU401::property(int prop, uint32 param) {
 	case PROP_CHANNEL_MASK:
 		_channel_mask = param & 0xFFFF;
 		return 1;
+	default:
+		break;
 	}
 
 	return 0;

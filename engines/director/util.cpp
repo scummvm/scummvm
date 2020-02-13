@@ -122,9 +122,9 @@ Common::String convertPath(Common::String &path) {
 	Common::String res;
 	uint32 idx = 0;
 
-	if (path.hasPrefix(":::")) {
+	if (path.hasPrefix("::")) {
 		res = "../";
-		idx = 3;
+		idx = 2;
 	} else {
 		res = "./";
 		idx = 1;
@@ -140,6 +140,15 @@ Common::String convertPath(Common::String &path) {
 	}
 
 	return res;
+}
+
+Common::String getPath(Common::String path, Common::String cwd) {
+	const char *s;
+	if ((s = strrchr(path.c_str(), '/'))) {
+		return Common::String(path.c_str(), s + 1);
+	}
+
+	return cwd; // The path is not altered
 }
 
 } // End of namespace Director

@@ -47,7 +47,7 @@ public:
 			_timeOut(0), _startTime(0), _fadeSteps(0) {
 	}
 
-	virtual MenuInputState* run() {
+	MenuInputState* run() override {
 		if (_fadeSteps > 0) {
 			pal.fadeTo(blackPal, 1);
 			_vm->_gfx->setPalette(pal);
@@ -67,7 +67,7 @@ public:
 		return this;
 	}
 
-	virtual void enter() {
+	void enter() override {
 		_vm->_gfx->clearScreen();
 		_vm->showSlide(_slideName.c_str(), CENTER_LABEL_HORIZONTAL, CENTER_LABEL_VERTICAL);
 		_vm->_input->setMouseState(MOUSE_DISABLED);
@@ -204,11 +204,11 @@ public:
 		_selection = 0;
 	}
 
-	~MainMenuInputState_BR() {
+	~MainMenuInputState_BR() override {
 		cleanup();
 	}
 
-	virtual MenuInputState* run() {
+	MenuInputState* run() override {
 		int event = _vm->_input->getLastButtonEvent();
 		if (!((event == kMouseLeftUp) && _selection >= 0)) {
 			redrawMenu();
@@ -241,7 +241,7 @@ public:
 		return 0;
 	}
 
-	virtual void enter() {
+	void enter() override {
 		_vm->_gfx->clearScreen();
 		int x = 0, y = 0, i = 0;
 		if (_vm->getPlatform() == Common::kPlatformDOS) {
@@ -388,13 +388,13 @@ public:
 		_sfxStatus = _mscStatus = 0;
 	}
 
-	~IngameMenuInputState_BR() {
+	~IngameMenuInputState_BR() override {
 		delete _menuObj;
 		delete _mscMenuObj;
 		delete _sfxMenuObj;
 	}
 
-	MenuInputState *run() {
+	MenuInputState *run() override {
 		if (_vm->_input->getLastButtonEvent() != kMouseLeftUp) {
 			return this;
 		}
@@ -443,6 +443,9 @@ public:
 
 		case 5:	// quit
 			return _helper->getState("quitdialog");
+
+		default:
+			break;
 		}
 
 		if (close) {
@@ -454,7 +457,7 @@ public:
 		return this;
 	}
 
-	void enter() {
+	void enter() override {
 		// TODO: find the right position of the menu object
 		_menuObjId = _vm->_gfx->setItem(_menuObj, 0, 0, 0);
 		_vm->_gfx->setItemFrame(_menuObjId, 0);
@@ -506,11 +509,11 @@ public:
 		assert(_obj);
 	}
 
-	~QuitDialogInputState_BR() {
+	~QuitDialogInputState_BR() override {
 		delete _obj;
 	}
 
-	MenuInputState *run() {
+	MenuInputState *run() override {
 		uint16 key;
 		bool e = _vm->_input->getLastKeyDown(key);
 		if (!e) {
@@ -534,7 +537,7 @@ public:
 	}
 
 
-	void enter() {
+	void enter() override {
 	//	setPaletteEntry(1, 0, 0, 0);	// text color
 	//	setPaletteEntry(15, 255, 255, 255);	// background color
 		int id = _vm->_gfx->setItem(_obj, _x, _y, 0);

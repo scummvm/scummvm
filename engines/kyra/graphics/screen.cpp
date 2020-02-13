@@ -52,19 +52,28 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 	memset(_pageMapping, 0, sizeof(_pageMapping));
+	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
 
 	_renderMode = Common::kRenderDefault;
 	_sjisMixedFontMode = false;
 
+	_screenPalette = _internFadePalette = 0;
+	_animBlockPtr = _decodeShapeBuffer = 0;
+
 	_useHiColorScreen = _vm->gameFlags().useHiColorMode;
+	_use256ColorMode = true;
 	_screenPageSize = SCREEN_PAGE_SIZE;
 	_16bitPalette = 0;
 	_16bitConversionPalette = 0;
 	_16bitShadingLevel = 0;
 	_bytesPerPixel = 1;
+	_4bitPixelPacking = false;
 
 	_currentFont = FID_8_FNT;
+	_currentFontType = FTYPE_ASCII;
 	_paletteChanged = true;
+	_textMarginRight = SCREEN_W;
+	_customDimTable = 0;
 	_curDim = 0;
 }
 
@@ -84,21 +93,24 @@ Screen::~Screen() {
 	delete[] _16bitPalette;
 	delete[] _16bitConversionPalette;
 
+	_sjisFontShared.reset();
+
 	for (uint i = 0; i < _palettes.size(); ++i)
 		delete _palettes[i];
 
-	for (int i = 0; i < _dimTableCount; ++i)
-		delete _customDimTable[i];
-	delete[] _customDimTable;
+	if (_customDimTable) {
+		for (int i = 0; i < _dimTableCount; ++i)
+			delete _customDimTable[i];
+		delete[] _customDimTable;
+	}
 }
 
 bool Screen::init() {
 	_debugEnabled = false;
-
-	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
 	_useOverlays = false;
 	_useSJIS = false;
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
+	_4bitPixelPacking = (_use16ColorMode && _vm->game() == GI_LOL);
 	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
 	// Amiga copper palette magic requires the use of more than 32 colors for some purposes.
 	_useAmigaExtraColors = (_isAmiga && _vm->game() == GI_EOB2);
@@ -158,12 +170,14 @@ bool Screen::init() {
 		}
 
 		if (_useSJIS) {
-			Graphics::FontSJIS *font = Graphics::FontSJIS::createFont(_vm->gameFlags().platform);
-
-			if (!font)
+			_sjisFontShared = Common::SharedPtr<Graphics::FontSJIS>(Graphics::FontSJIS::createFont(_vm->gameFlags().platform));
+			if (!_sjisFontShared.get())
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
 
-			_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, _use16ColorMode, !_use16ColorMode && _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns, !_use16ColorMode && _vm->game() == GI_LOL ? 1 : 0);
+			if (_use16ColorMode)
+				_fonts[FID_SJIS_TEXTMODE_FNT] = new SJISFont(_sjisFontShared, _sjisInvisibleColor, true, false, 0);
+			else
+				_fonts[FID_SJIS_FNT] = new SJISFont(_sjisFontShared, _sjisInvisibleColor, false, _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_LOL ? 1 : 0);
 		}
 	}
 
@@ -177,8 +191,9 @@ bool Screen::init() {
 	// We allow 256 color palettes in EGA mode, since original EOB II code does the same and requires it
 	const int numColors = _use16ColorMode ? 16 : (_isAmiga ? 32 : (_renderMode == Common::kRenderCGA ? 4 : 256));
 	const int numColorsInternal = _useAmigaExtraColors ? 64 : numColors;
+	_use256ColorMode = (_bytesPerPixel != 2 && !_isAmiga && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA);
 
-	_interfacePaletteEnabled = false;
+	_dualPaletteModeSplitY = 0;
 
 	_screenPalette = new Palette(numColorsInternal);
 	assert(_screenPalette);
@@ -327,7 +342,7 @@ void Screen::updateScreen() {
 
 	if (_useOverlays)
 		updateDirtyRectsOvl();
-	else if (_isAmiga && _interfacePaletteEnabled)
+	else if (_isAmiga && _dualPaletteModeSplitY)
 		updateDirtyRectsAmiga();
 	else
 		updateDirtyRects();
@@ -361,68 +376,26 @@ void Screen::updateDirtyRects() {
 
 void Screen::updateDirtyRectsAmiga() {
 	if (_forceFullUpdate) {
-		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, 136);
-
-		// Page 8 is not used by Kyra 1 AMIGA, thus we can use it to adjust the colors
-		copyRegion(0, 136, 0, 0, 320, 64, 0, 8, CR_NO_P_CHECK);
-
-		uint8 *dst = getPagePtr(8);
-		for (int y = 0; y < 64; ++y)
-			for (int x = 0; x < 320; ++x)
-				*dst++ += 32;
-
-		_system->copyRectToScreen(getCPagePtr(8), SCREEN_W, 0, 136, SCREEN_W, 64);
+		uint32 *pos = (uint32*)(_pagePtrs[0] + _dualPaletteModeSplitY * SCREEN_W);
+		uint16 h = (SCREEN_H - _dualPaletteModeSplitY) * (SCREEN_W >> 2);
+		while (h--)
+			*pos++ |= 0x20202020;
+		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 	} else {
-		const byte *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;
-
 		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-			if (it->bottom <= 136) {
-				_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
-			} else {
-				// Check whether the rectangle is part of both the screen and the interface
-				if (it->top < 136) {
-					// The rectangle covers both screen part and interface part
-
-					const int screenHeight = 136 - it->top;
-					const int interfaceHeight = it->bottom - 136;
-
-					const int width = it->width();
-					const int lineAdd = SCREEN_W - width;
-
-					// Copy the screen part verbatim
-					_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, width, screenHeight);
-
-					// Adjust the interface part
-					copyRegion(it->left, 136, 0, 0, width, interfaceHeight, 0, 8, Screen::CR_NO_P_CHECK);
-
-					uint8 *dst = getPagePtr(8);
-					for (int y = 0; y < interfaceHeight; ++y) {
-						for (int x = 0; x < width; ++x)
-							*dst++ += 32;
-						dst += lineAdd;
-					}
-
-					_system->copyRectToScreen(getCPagePtr(8), SCREEN_W, it->left, 136, width, interfaceHeight);
-				} else {
-					// The rectangle only covers the interface part
-
-					const int width = it->width();
-					const int height = it->height();
-					const int lineAdd = SCREEN_W - width;
-
-					copyRegion(it->left, it->top, 0, 0, width, height, 0, 8, Screen::CR_NO_P_CHECK);
-
-					uint8 *dst = getPagePtr(8);
-					for (int y = 0; y < height; ++y) {
-						for (int x = 0; x < width; ++x)
-							*dst++ += 32;
-						dst += lineAdd;
-					}
-
-					_system->copyRectToScreen(getCPagePtr(8), SCREEN_W, it->left, it->top, width, height);
+			if (it->bottom >= _dualPaletteModeSplitY) {
+				int16 startY = MAX<int16>(_dualPaletteModeSplitY, it->top);
+				int16 h = it->bottom - startY + 1;
+				int16 w = it->width();
+				uint8 *pos = _pagePtrs[0] + startY * SCREEN_W + it->left;
+				while (h--) {
+					for (int x = 0; x < w; ++x)
+						*pos++ |= 0x20;
+					pos += (SCREEN_W - w);
 				}
 			}
+			_system->copyRectToScreen(_pagePtrs[0] + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
 		}
 	}
 
@@ -762,12 +735,12 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, 1, 1);
 
-	if (_use16ColorMode) {
+	if (_4bitPixelPacking) {
 		color &= 0x0F;
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
 		color &= 0x03;
-	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
+	} else if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)) {
 		color &= 0x0F;
 	} 
 	
@@ -945,8 +918,8 @@ void Screen::setScreenPalette(const Palette &pal) {
 	_system->getPaletteManager()->setPalette(screenPal, 0, pal.getNumColors());
 }
 
-void Screen::enableInterfacePalette(bool e) {
-	_interfacePaletteEnabled = e;
+void Screen::enableDualPaletteMode(int splitY) {
+	_dualPaletteModeSplitY = splitY;
 
 	_forceFullUpdate = true;
 	_dirtyRects.clear();
@@ -956,28 +929,9 @@ void Screen::enableInterfacePalette(bool e) {
 	updateScreen();
 }
 
-void Screen::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) {
-	if (!_isAmiga)
-		return;
-
-	uint8 screenPal[32 * 3];
-
-	assert(32 <= pal.getNumColors());
-
-	for (int i = 0; i < pal.getNumColors(); ++i) {
-		if (i != 0x10) {
-			screenPal[3 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
-			screenPal[3 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
-			screenPal[3 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
-		} else {
-			screenPal[3 * i + 0] = (r * 0xFF) / 0x3F;
-			screenPal[3 * i + 1] = (g * 0xFF) / 0x3F;
-			screenPal[3 * i + 2] = (b * 0xFF) / 0x3F;
-		}
-	}
-
-	_paletteChanged = true;
-	_system->getPaletteManager()->setPalette(screenPal, 32, pal.getNumColors());
+void Screen::disableDualPaletteMode() {
+	_dualPaletteModeSplitY = 0;
+	_forceFullUpdate = true;
 }
 
 void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
@@ -1204,12 +1158,12 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 
 	clearOverlayRect(pageNum, x1, y1, x2-x1+1, y2-y1+1);
 
-	if (_use16ColorMode) {
+	if (_4bitPixelPacking) {
 		color &= 0x0F;
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
 		color &= 0x03;
-	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
+	} else if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)) {
 		color &= 0x0F;
 	} else if (_bytesPerPixel == 2)
 		color16 = shade16bitColor(_16bitPalette[color]);
@@ -1289,12 +1243,12 @@ void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
 void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 	uint8 *ptr = getPagePtr(_curPage) + y * SCREEN_W * _bytesPerPixel + x * _bytesPerPixel;
 
-	if (_use16ColorMode) {
+	if (_4bitPixelPacking) {
 		color &= 0x0F;
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
 		color &= 0x03;
-	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
+	} else if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)) {
 		color &= 0x0F;
 	} else if (_bytesPerPixel == 2)
 		color = shade16bitColor(_16bitPalette[color]);
@@ -1369,13 +1323,6 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	if (!fnt) {
 		if (_vm->game() == GI_KYRA1 && _isAmiga)
 			fnt = new AMIGAFont();
-#ifdef ENABLE_EOB
-		else if (_isAmiga)
-			fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
-		else if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2)
-			// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
-			fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode);
-#endif // ENABLE_EOB
 		else
 			fnt = new DOSFont();
 
@@ -1395,6 +1342,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 Screen::FontId Screen::setFont(FontId fontId) {
 	FontId prev = _currentFont;
 	_currentFont = fontId;
+	_currentFontType = _currentFont >= FID_SJIS_FNT ? FTYPE_SJIS : FTYPE_ASCII;
 
 	assert(_fonts[_currentFont]);
 	return prev;
@@ -1418,9 +1366,10 @@ int Screen::getTextWidth(const char *str) {
 	int maxLineLen = 0;
 
 	FontId curFont = _currentFont;
+	FontType curType = _currentFontType;
 
 	while (1) {
-		if (_sjisMixedFontMode && curFont != FID_SJIS_FNT && curFont != FID_SJIS_LARGE_FNT && curFont != FID_SJIS_SMALL_FNT)
+		if (_sjisMixedFontMode && curType == FTYPE_ASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
 		uint c = fetchChar(str);
@@ -1454,6 +1403,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	setTextColor(cmap8, 0, 1);
 
 	FontId curFont = _currentFont;
+	FontType curType = _currentFontType;
 
 	if (x < 0)
 		x = 0;
@@ -1467,7 +1417,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 		return;
 
 	while (1) {
-		if (_sjisMixedFontMode && curFont != FID_SJIS_FNT && curFont != FID_SJIS_LARGE_FNT && curFont != FID_SJIS_SMALL_FNT)
+		if (_sjisMixedFontMode && curType == FTYPE_ASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
 		uint8 charHeightFnt = getFontHeight();
@@ -1481,7 +1431,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 			y += (charHeightFnt + _charOffset);
 		} else {
 			int charWidth = getCharWidth(c);
-			if (x + charWidth > SCREEN_W) {
+			if (x + charWidth > _textMarginRight) {
 				x = x_start;
 				y += (charHeightFnt + _charOffset);
 				if (y >= SCREEN_H)
@@ -1495,7 +1445,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 }
 
 uint16 Screen::fetchChar(const char *&s) const {
-	if (_currentFont != FID_SJIS_FNT && _currentFont != FID_SJIS_LARGE_FNT && _currentFont != FID_SJIS_SMALL_FNT)
+	if (_currentFontType == FTYPE_ASCII)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;
@@ -1527,7 +1477,7 @@ void Screen::drawChar(uint16 c, int x, int y) {
 			return;
 		}
 
-		int bpp = (_currentFont == Screen::FID_SJIS_FNT || _currentFont == Screen::FID_SJIS_SMALL_FNT) ? 1 : 2;
+		int bpp = (_currentFont == Screen::FID_SJIS_LARGE_FNT) ? 2 : 1;
 		destPage += (y * 2) * 640 * bpp + (x * 2 * bpp);
 
 		fnt->drawChar(c, destPage, 640, bpp);
@@ -3220,13 +3170,44 @@ void Screen::rectClip(int &x, int &y, int w, int h) {
 }
 
 void Screen::shakeScreen(int times) {
+	static const int8 _shakeParaPC[] = { 32, 0, -4, 32, 0, 0 };
+	static const int8 _shakeParaFMTOWNS[] = { 32, 0, -4, 48, 0, 4, 32, -4, 0, 32, 4, 0, 32, 0, 0 };
+
+	const int8 *shakeData = _shakeParaPC;
+	int steps = ARRAYSIZE(_shakeParaPC) / 3;
+	
+	// The FM-TOWNS version has a slightly better shake animation
+	// TODO: check PC-98 version
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+		shakeData = _shakeParaFMTOWNS;
+		steps = ARRAYSIZE(_shakeParaFMTOWNS) / 3;
+	}
+
+	Common::Event event;
+
 	while (times--) {
-		// seems to be 1 line (320 pixels) offset in the original
-		// 4 looks more like dosbox though, maybe check this again
-		_system->setShakePos(4);
-		_system->updateScreen();
-		_system->setShakePos(0);
-		_system->updateScreen();
+		const int8 *data = shakeData;
+		for (int i = 0; i < steps; ++i) {
+			// The original PC version did not need an artificial delay, but we do or the shake will be
+			// too fast to be actually seen.
+			uint32 end = _system->getMillis() + data[0];
+			_system->setShakePos(data[1], data[2]);
+
+			for (uint32 now = _system->getMillis(); now < end; ) {
+				// Update the event manager to keep smooth mouse pointer movement.
+				while (_vm->getEventManager()->pollEvent(event)) {
+					if (event.type == Common::EVENT_KEYDOWN) {
+						// This is really the only thing that should be handled.
+						if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
+							_vm->quitGame();
+					}
+				}
+				_system->updateScreen();
+				now = _system->getMillis();
+				_system->delayMillis(MIN<uint>(end - now, 10));
+			}
+			data += 3;
+		}
 	}
 }
 
@@ -3768,19 +3749,12 @@ void AMIGAFont::unload() {
 	memset(_chars, 0, sizeof(_chars));
 }
 
-SJISFont::SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing)
-	: _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
+SJISFont::SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing)
+	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kFSNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
-	_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
-	_font->toggleFatPrint(fatPrint);
 	_sjisWidth = _font->getMaxFontWidth() >> 1;
 	_fontHeight = _font->getFontHeight() >> 1;
 	_asciiWidth = _font->getCharWidth('a') >> 1;
-}
-
-void SJISFont::unload() {
-	delete _font;
-	_font = 0;
 }
 
 int SJISFont::getHeight() const {
@@ -3800,19 +3774,12 @@ int SJISFont::getCharWidth(uint16 c) const {
 
 void SJISFont::setColorMap(const uint8 *src) {
 	_colorMap = src;
-
-	if (!_is16Color) {
-		if (_colorMap[0] == _invisColor)
-			_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
-		else
-			_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
-	}
 }
 
 void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	uint8 color1, color2;
 
-	if (_is16Color) {
+	if (_isTextMode) {
 		// PC98 16 color games specify a color value which is for the
 		// PC98 text mode palette, thus we need to remap it.
 		color1 = ((_colorMap[1] >> 5) & 0x7) + 16;
@@ -3822,6 +3789,12 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 		color2 = _colorMap[0];
 	}
 
+	if (!_isTextMode && _colorMap[0] == _invisColor)
+		_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
+	else
+		_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
+
+	_font->toggleFatPrint(_style == kFSFat);
 	_font->drawChar(dst, c, 640, 1, color1, color2, 640, 400);
 }
 

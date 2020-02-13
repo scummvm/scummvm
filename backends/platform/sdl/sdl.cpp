@@ -28,6 +28,7 @@
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/encoding.h"
 
 #include "backends/saves/default/default-saves.h"
 
@@ -40,6 +41,7 @@
 
 #include "backends/events/default/default-events.h"
 #include "backends/events/sdl/sdl-events.h"
+#include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
@@ -205,9 +207,9 @@ void OSystem_SDL::initBackend() {
 
 	if (_eventManager == nullptr) {
 		DefaultEventManager *eventManager = new DefaultEventManager(_eventSource);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		// SDL 2 generates its own keyboard repeat events.
-		eventManager->setGenerateKeyRepeatEvents(false);
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+		// SDL 1 does not generate its own keyboard repeat events.
+		eventManager->setGenerateKeyRepeatEvents(true);
 #endif
 		_eventManager = eventManager;
 	}
@@ -328,7 +330,7 @@ void OSystem_SDL::initSDL() {
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
 
-		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
+		// Initialize SDL (SDL Subsystems are initialized in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
 
@@ -388,6 +390,29 @@ void OSystem_SDL::fatalError() {
 	exit(1);
 }
 
+Common::KeymapArray OSystem_SDL::getGlobalKeymaps() {
+	Common::KeymapArray globalMaps = ModularBackend::getGlobalKeymaps();
+
+	SdlGraphicsManager *graphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+	globalMaps.push_back(graphicsManager->getKeymap());
+
+	return globalMaps;
+}
+
+Common::HardwareInputSet *OSystem_SDL::getHardwareInputSet() {
+	using namespace Common;
+
+	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
+	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
+	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
+
+	bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;
+	if (joystickSupportEnabled) {
+		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
+	}
+
+	return inputSet;
+}
 
 void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 	// First log to stdout/stderr
@@ -404,6 +429,22 @@ void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 	// Then log into file (via the logger)
 	if (_logger)
 		_logger->print(message);
+}
+
+Common::WriteStream *OSystem_SDL::createLogFile() {
+	// Start out by resetting _logFilePath, so that in case
+	// of a failure, we know that no log file is open.
+	_logFilePath.clear();
+
+	Common::String logFile = getDefaultLogFileName();
+	if (logFile.empty())
+		return nullptr;
+
+	Common::FSNode file(logFile);
+	Common::WriteStream *stream = file.createWriteStream();
+	if (stream)
+		_logFilePath = logFile;
+	return stream;
 }
 
 Common::String OSystem_SDL::getSystemLanguage() const {
@@ -440,18 +481,14 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 #endif // USE_DETECTLANG
 }
 
-bool OSystem_SDL::hasTextInClipboard() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+bool OSystem_SDL::hasTextInClipboard() {
 	return SDL_HasClipboardText() == SDL_TRUE;
-#else
-	return false;
-#endif
 }
 
 Common::String OSystem_SDL::getTextFromClipboard() {
 	if (!hasTextInClipboard()) return "";
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	char *text = SDL_GetClipboardText();
 	// The string returned by SDL is in UTF-8. Convert to the
 	// current TranslationManager encoding or ISO-8859-1.
@@ -468,13 +505,9 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 	SDL_free(text);
 
 	return strText;
-#else
-	return "";
-#endif
 }
 
 bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	// The encoding we need to use is UTF-8. Assume we currently have the
 	// current TranslationManager encoding or ISO-8859-1.
 #ifdef USE_TRANSLATION
@@ -488,10 +521,8 @@ bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
 		return status == 0;
 	}
 	return SDL_SetClipboardText(text.c_str()) == 0;
-#else
-	return false;
-#endif
 }
+#endif
 
 uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();
@@ -751,4 +782,51 @@ int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
 	return SDL_SetColorKey(surface, SDL_TRUE, key) ? -1 : 0;
 }
 #endif
+
+char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
+#if SDL_VERSION_ATLEAST(1, 2, 10)
+	int zeroBytes = 1;
+	if (Common::String(from).hasPrefixIgnoreCase("utf-16"))
+		zeroBytes = 2;
+	else if (Common::String(from).hasPrefixIgnoreCase("utf-32"))
+		zeroBytes = 4;
+
+	char *result;
+	// SDL_iconv_string() takes char * instead of const char * as it's third parameter
+	// with some older versions of SDL.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	result = SDL_iconv_string(to, from, string, length + zeroBytes);
+#else
+	char *stringCopy = (char *) calloc(sizeof(char), length + zeroBytes);
+	memcpy(stringCopy, string, length);
+	result = SDL_iconv_string(to, from, stringCopy, length + zeroBytes);
+	free(stringCopy);
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
+	if (result == nullptr)
+		return nullptr;
+
+	// We need to copy the result, so that we can use SDL_free()
+	// on the string returned by SDL_iconv_string() and free()
+	// can then be used on the copyed and returned string.
+	// Sometimes free() and SDL_free() aren't compatible and
+	// using free() instead of SDL_free() can cause crashes.
+	size_t newLength = Common::Encoding::stringLength(result, to);
+	zeroBytes = 1;
+	if (Common::String(to).hasPrefixIgnoreCase("utf-16"))
+		zeroBytes = 2;
+	else if (Common::String(to).hasPrefixIgnoreCase("utf-32"))
+		zeroBytes = 4;
+	char *finalResult = (char *) malloc(newLength + zeroBytes);
+	if (!finalResult) {
+		warning("Could not allocate memory for encoding conversion");
+		SDL_free(result);
+		return nullptr;
+	}
+	memcpy(finalResult, result, newLength + zeroBytes);
+	SDL_free(result);
+	return finalResult;
+#else
+	return ModularBackend::convertEncoding(to, from, string, length);
+#endif // SDL_VERSION_ATLEAST(1, 2, 10)
+}
 

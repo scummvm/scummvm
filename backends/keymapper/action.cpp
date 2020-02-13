@@ -22,36 +22,26 @@
 
 #include "backends/keymapper/action.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "backends/keymapper/keymap.h"
 
 namespace Common {
 
-Action::Action(Keymap *boss, const char *i,	String des)
-	: _boss(boss), description(des), _hwInput(0) {
+Action::Action(const char *i, const String &des) :
+		id(i),
+		description(des) {
 	assert(i);
-	assert(_boss);
-
-	Common::strlcpy(id, i, ACTION_ID_SIZE);
-
-	_boss->addAction(this);
 }
 
-void Action::mapInput(const HardwareInput *input) {
-	if (_hwInput)
-		_boss->unregisterMapping(this);
+void Action::addDefaultInputMapping(const String &hwId) {
+	if (hwId.empty()) {
+		return;
+	}
 
-	_hwInput = input;
-
-	if (_hwInput)
-		_boss->registerMapping(this, _hwInput);
-}
-
-const HardwareInput *Action::getMappedInput() const {
-	return _hwInput;
+	// Don't allow an input to map to the same action multiple times
+	Array<String>::const_iterator found = find(_defaultInputMapping.begin(), _defaultInputMapping.end(), hwId);
+	if (found == _defaultInputMapping.end()) {
+		_defaultInputMapping.push_back(hwId);
+	}
 }
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER

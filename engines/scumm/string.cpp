@@ -63,6 +63,8 @@ void ScummEngine::printString(int m, const byte *msg) {
 	case 3:
 		showMessageDialog(msg);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -150,6 +152,10 @@ void ScummEngine_v6::drawBlastTexts() {
 		_charset->setColor(_blastTextQueue[i].color);
 		_charset->_disableOffsX = _charset->_firstChar = true;
 		_charset->setCurID(_blastTextQueue[i].charset);
+
+		if (_game.version >= 7 && _language == Common::HE_ISR) {
+			fakeBidiString(buf, false);
+		}
 
 		do {
 			_charset->_left = _blastTextQueue[i].xpos;
@@ -433,8 +439,11 @@ bool ScummEngine::newLine() {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
+	} else if (_game.version >= 4 && _game.version < 7 && _language == Common::HE_ISR) {
+		if (_game.id == GID_MONKEY && _charset->getCurID() == 4) {
+			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		}
 	}
-
 	if (_game.version == 0) {
 		return false;
 	} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
@@ -452,6 +461,101 @@ bool ScummEngine::newLine() {
 		_charset->_disableOffsX = true;
 	}
 	return true;
+}
+
+void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) {
+	// Provides custom made BiDi mechanism.
+	// Reverses texts on each line marked by control characters (considering different control characters used in verbs panel)
+	// While preserving original order of numbers (also negative numbers and comma separated)
+	int32 ll = 0;
+	if (_game.id == GID_INDY4 && ltext[ll] == 0x7F) {
+		ll++;
+	}
+	while (ltext[ll] == 0xFF) {
+		ll += 4;
+	}
+	int32 ipos = 0;
+	int32 start = 0;
+	byte *text = ltext + ll;
+	byte *current = text;
+
+	int32 bufferSize = 384;
+	byte * const buff = (byte *)calloc(sizeof(byte), bufferSize);
+	assert(buff);
+	byte * const stack = (byte *)calloc(sizeof(byte), bufferSize);
+	assert(stack);
+
+	while (1) {
+		if (*current == 0x0D || *current == 0 || *current == 0xFF || *current == 0xFE) {
+
+			// ignore the line break for verbs texts
+			if (ignoreVerb && (*(current + 1) ==  8)) {
+				*(current + 1) = *current;
+				*current = 0x08;
+				ipos += 2;
+				current += 2;
+				continue;
+			}
+
+			memset(buff, 0, bufferSize);
+			memset(stack, 0, bufferSize);
+
+			// Reverse string on current line (between start and ipos).
+			int32 sthead = 0;
+			byte last = 0;
+			for (int32 j = 0; j < ipos; j++) {
+				byte *curr = text + start + ipos - j - 1;
+				// Special cases to preserve original ordering (numbers).
+				if (Common::isDigit(*curr) ||
+						(*curr == (byte)',' && j + 1 < ipos && Common::isDigit(*(curr - 1)) && Common::isDigit(last)) ||
+						(*curr == (byte)'-' && (j + 1 == ipos || Common::isSpace(*(curr - 1))) && Common::isDigit(last))) {
+					++sthead;
+					stack[sthead] = *curr;
+				} else {
+					while (sthead > 0) {
+						buff[j - sthead] = stack[sthead];
+						--sthead;
+					}
+					buff[j] = *curr;
+				}
+				last = *curr;
+			}
+			while (sthead > 0) {
+				buff[ipos - sthead] = stack[sthead];
+				--sthead;
+			}
+			memcpy(text + start, buff, ipos);
+			start += ipos + 1;
+			ipos = -1;
+			if (*current == 0xFF || *current == 0xFE) {
+				current++;
+				if (*current == 0x03 || *current == 0x02) {
+					break;
+				}
+				if (*current == 0x0A || *current == 0x0C) {
+					start += 2;
+					current += 2;
+				}
+				start++;
+				ipos++;
+				current++;
+				continue;
+			}
+		}
+		if (*current) {
+			ipos++;
+			current++;
+			continue;
+		}
+		break;
+	}
+	if (!ignoreVerb && _game.id == GID_INDY4 && ltext[0] == 0x7F) {
+		ltext[start + ipos + ll] = 0x80;
+		ltext[start + ipos + ll + 1] = 0;
+	}
+
+	free(buff);
+	free(stack);
 }
 
 void ScummEngine::CHARSET_1() {
@@ -596,11 +700,20 @@ void ScummEngine::CHARSET_1() {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
+	} else if (_game.version >= 4 && _game.version < 7 && _language == Common::HE_ISR) {
+		if (_game.id == GID_MONKEY && _charset->getCurID() == 4) {
+			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		}
 	}
 
 	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
 
 	int c = 0;
+
+	if (_game.version >= 4 && _game.version < 7 && _language == Common::HE_ISR) {
+		fakeBidiString(_charsetBuffer + _charsetBufPos, true);
+	}
+
 	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
 			// End of text reached, set _haveMsg accordingly
@@ -870,6 +983,10 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	convertMessageToString(msg, buf, sizeof(buf));
 
+	if (_game.version >= 4 && _game.version < 7 && _language == Common::HE_ISR) {
+		fakeBidiString(buf, false);
+	}
+
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
 	_charset->_right = _string[a].right;
@@ -929,6 +1046,32 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	if (_charset->_center) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
+	} else if (_game.version >= 4 && _game.version < 7 && _game.id != GID_SAMNMAX && _language == Common::HE_ISR) {
+		// Ignore INDY4 verbs (but allow dialogue)
+		if (_game.id != GID_INDY4 || buf[0] == 127) {
+			int ll = 0;
+			if (_game.id == GID_INDY4 && buf[0] == 127) {
+				buf[0] = 32;
+				ll++;
+			}
+
+			// Skip control characters as they might contain '\0' which results in incorrect string width.
+			byte *ltext = buf;
+			while (ltext[ll] == 0xFF) {
+				ll += 4;
+			}
+			byte lenbuf[270];
+			memset(lenbuf, 0, sizeof(lenbuf));
+			int pos = ll;
+			while (ltext[pos]) {
+				if ((ltext[pos] == 0xFF || (_game.version <= 6 && ltext[pos] == 0xFE)) && ltext[pos+1] == 8) {
+					break;
+				}
+				pos++;
+			}
+			memcpy(lenbuf, ltext, pos);
+			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
+		}
 	}
 
 	if (!buf[0]) {
@@ -955,6 +1098,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				}
 				_charset->_top += fontHeight;
 				break;
+			default:
+				break;
 			}
 		} else if ((c == 0xFF || (_game.version <= 6 && c == 0xFE)) && (_game.heversion <= 71)) {
 			c = buf[i++];
@@ -969,6 +1114,25 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			case 8:
 				if (_charset->_center) {
 					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
+				} else if (_game.version >= 4 && _game.version < 7 && _language == Common::HE_ISR) {
+					// Skip control characters as they might contain '\0' which results in incorrect string width.
+					int ll = 0;
+					byte *ltext = buf + i;
+					while (ltext[ll] == 0xFF) {
+						ll += 4;
+					}
+					byte lenbuf[270];
+					memset(lenbuf, 0, sizeof(lenbuf));
+					memcpy(lenbuf, ltext, ll);
+					int u = ll;
+					while (ltext[u]) {
+						if ((ltext[u] == 0xFF || (_game.version <= 6 && ltext[u] == 0xFE)) && ltext[u + 1] == 8) {
+							break;
+						}
+						u++;
+					}
+					memcpy(lenbuf, ltext, u);
+					_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
 				} else {
 					_charset->_left = _charset->_startLeft;
 				}
@@ -985,6 +1149,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					_charset->setColor(_string[a].color);
 				else
 					_charset->setColor(color);
+				break;
+			default:
 				break;
 			}
 		} else {
@@ -1481,16 +1647,15 @@ void ScummEngine_v7::playSpeech(const byte *ptr) {
 		return;
 
 	if ((_game.id == GID_DIG || _game.id == GID_CMI) && ptr[0]) {
-		char pointer[20];
-		strcpy(pointer, (const char *)ptr);
+		Common::String pointerStr((const char *)ptr);
 
 		// Play speech
 		if (!(_game.features & GF_DEMO) && (_game.id == GID_CMI)) // CMI demo does not have .IMX for voice
-			strcat(pointer, ".IMX");
+			pointerStr += ".IMX";
 
 		_sound->stopTalkSound();
 		_imuseDigital->stopSound(kTalkSoundID);
-		_imuseDigital->startVoice(kTalkSoundID, pointer);
+		_imuseDigital->startVoice(kTalkSoundID, pointerStr.c_str());
 		_sound->talkSound(0, 0, 2);
 	}
 }

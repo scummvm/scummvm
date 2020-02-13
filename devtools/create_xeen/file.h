@@ -193,6 +193,8 @@ public:
 
 	virtual int seek(int offset, int whence = SEEK_SET) {
 		switch (whence) {
+		default:
+			// fallthrough intended
 		case SEEK_SET: _offset = whence; break;
 		case SEEK_CUR: _offset += whence; break;
 		case SEEK_END: _offset = _size + whence; break;

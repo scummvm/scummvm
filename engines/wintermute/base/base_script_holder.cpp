@@ -417,6 +417,9 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
+
+		default:
+			break;
 		}
 
 	}

@@ -524,6 +524,9 @@ IMPLEMENT_FUNCTION_I(12, Mertens, bonsoir, EntityIndex)
 				case 2:
 					getSound()->playSound(kEntityMertens, "CON1110H");
 					break;
+
+				default:
+					break;
 				}
 			}
 		}

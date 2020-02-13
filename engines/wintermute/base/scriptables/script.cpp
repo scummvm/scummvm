@@ -29,8 +29,10 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "common/memstream.h"
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
@@ -618,8 +620,14 @@ bool ScScript::executeInstruction() {
 						_state = SCRIPT_WAITING_SCRIPT;
 						_waitScript->copyParameters(_stack);
 					}
+#ifdef ENABLE_FOXTAIL
+				} else if (BaseEngine::instance().isFoxTail() && strcmp(methodName, "LoadItems") == 0 && strcmp(_threadEvent,"AfterLoad") == 0) {
+					_stack->correctParams(0);
+					_gameRef->LOG(0, "Method '%s' is called in unbreakable mode of '%s' event and was ignored", methodName, _threadEvent);
+					_stack->pushNULL();
+#endif
 				} else {
-					// can call methods in unbreakable mode
+					// cannot call methods in unbreakable mode
 					_stack->correctParams(0);
 					runtimeError("Cannot call method '%s'. Ignored.", methodName);
 					_stack->pushNULL();
@@ -1411,6 +1419,405 @@ ScScript::TExternalFunction *ScScript::getExternal(char *name) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function) {
+
+	//////////////////////////////////////////////////////////////////////////
+	// getURLContent
+	// Used to download news headlines at Demo 2012 of James Peris
+	// HTTP GET result is stored in 3rd param of the call as a plain string
+	// Specification: external "geturl.dll" cdecl getURLContent(string, string, string)
+	// Known usage: getURLContent("http://www.lacosaweb.com", <DirURL>, <Buffer>)
+	// Sets 3rd param to "Request Error." on error
+	//////////////////////////////////////////////////////////////////////////
+	if (strcmp(function->name, "getURLContent") == 0 && strcmp(function->dll_name, "geturl.dll") == 0) {
+		stack->correctParams(3);
+		const char *domain = stack->pop()->getString();
+		const char *dirurl = stack->pop()->getString();
+		ScValue *buf = stack->pop();
+
+		if (strcmp(dirurl, "jpnews/demo-es1.txt") == 0) {
+			buf->setString("Ya disponible el juego completo en jamesperis.com");
+		} else if (strcmp(dirurl, "jpnews/demo-es2.txt") == 0) {
+			buf->setString("Cons\355guelo por solo 3,95 euros");
+		} else if (strcmp(dirurl, "jpnews/demo-en1.txt") == 0) {
+			buf->setString("You can get the full game in jamesperis.com");
+		} else if (strcmp(dirurl, "jpnews/demo-en2.txt") == 0) {
+			buf->setString("Get it for 3.95 euros");
+		} else {
+			warning("getURLContent(\"%s\",\"%s\",buf) is not implemented", domain, dirurl);
+			buf->setString("Request Error.");
+		}
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+		
+	//////////////////////////////////////////////////////////////////////////
+	// SetValueToReg
+	// Used to switch game's windowed/fullscreen mode at games by HeroCraft
+	// Specification: external "tools.dll" cdecl SetValueToReg(string, string, long)
+	// Known usage: SetValueToReg("Software\HeroCraft\<GameID>\Video", "Windowed", 1)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "SetValueToReg") == 0 && strcmp(function->dll_name, "tools.dll") == 0) {
+		stack->correctParams(3);
+		const char *regpath = stack->pop()->getString();
+		const char *key = stack->pop()->getString();
+		int value = stack->pop()->getInt();
+
+		if (strcmp(key, "Windowed") == 0) {
+			_gameRef->_renderer->setWindowed(value);
+		} else {
+			warning("SetValueToReg(\"%s\",\"%s\",%d) is not implemented", regpath, key, value);
+		}
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// changeWindowCaption
+	// Used to change game's window caption at games by HeroCraft
+	// Specification: external "img.dll" cdecl changeWindowCaption(long, string)
+	// Known usage: changeWindowCaption(Game.Hwnd, <Title>)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "changeWindowCaption") == 0 && strcmp(function->dll_name, "img.dll") == 0) {
+		stack->correctParams(2);
+		/*int hwnd =*/ stack->pop()->getInt();
+		/*const char *title =*/ stack->pop()->getString();
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// maximizedWindow
+	// Used to change game's window size at games by HeroCraft
+	// Specification: external "img.dll" cdecl maximizedWindow(long, long, long)
+	// Known usage: maximizedWindow(Game.Hwnd, 1024, 768)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "maximizedWindow") == 0 && strcmp(function->dll_name, "img.dll") == 0) {
+		stack->correctParams(3);
+		/*int hwnd =*/ stack->pop()->getInt();
+		/*int width =*/ stack->pop()->getInt();
+		/*int height =*/ stack->pop()->getInt();
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// ShellExecuteA
+	// Used to open URL in browser at Wilma Tetris
+	// Specification: external "shell32.dll" stdcall long ShellExecuteA(long, string, string, string, string, long)
+	// Known usage: ShellExecuteA(0, "open", <URL>, "", "", 3)
+	// Returns value >32 on success
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "ShellExecuteA") == 0 && strcmp(function->dll_name, "shell32.dll") == 0) {
+		stack->correctParams(6);
+		int hwnd = stack->pop()->getInt();
+		const char *operation = stack->pop()->getString();
+		const char *file = stack->pop()->getString();
+		const char *params = stack->pop()->getString();
+		const char *directory = stack->pop()->getString();
+		int cmd = stack->pop()->getInt();
+
+		if (strcmp(operation, "open") == 0 && !strlen(params) && !strlen(directory)) {
+			g_system->openUrl(file);
+		} else {
+			warning("ShellExecuteA(%d,\"%s\",\"%s\",\"%s\",\"%s\",%d) is not implemented", hwnd, operation, file, params, directory, cmd);
+		}
+
+		stack->pushInt(42);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// _InstallUtilAnsi@0
+	// Used to check if DVD is inserted at Art of Murder: FBI Confidential
+	// Specification: external "installutil.dll" stdcall long _InstallUtilAnsi@0()
+	// Known usage: _InstallUtilAnsi@0()
+	// Returns 1 on success, other value on fail (which leads to Game.QuitGame() in non-Debug mode)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "_InstallUtilAnsi@0") == 0 && strcmp(function->dll_name, "installutil.dll") == 0) {
+		stack->correctParams(0);
+		stack->pushInt(1);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// IRC_init
+	// Used to connect to debug IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl long IRC_init(string)
+	// Known usage: IRC_init(<PlayerName>)
+	// Known actions:
+	//  1. Connect to irc.starchat.net
+	//  2. Send "NICK ZU_<PlayerName>/"
+	//  3. Send "USER Blah ZbengHost ZbengServer ZbengRealname"
+	//  4. Send "Join #Zbeng"
+	// Returns 0 on success, other value on error
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "IRC_init") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(1);
+		/*const char *name =*/ stack->pop()->getString();
+
+		// do nothing
+
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// ChangeNick
+	// Used to update nick at debug IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl long ChangeNick(string)
+	// Known usage: ChangeNick(<PlayerName>)
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "ChangeNick") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(1);
+		/*const char *name =*/ stack->pop()->getString();
+
+		// do nothing
+
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// IRC_SendString
+	// Used to send debug and chat lines to an IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl IRC_SendString(string, string)
+	// Known usage: IRC_SendString(<Message>, <Channel>)
+	// Known Channel values are: "#Zbeng" and "#ZbengDebug"
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "IRC_SendString") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(2);
+		const char *message = stack->pop()->getString();
+		const char *channel = stack->pop()->getString();
+
+		_gameRef->LOG(0, "IRC logging: [%s] %s", channel, message);
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// IRC_GetChatStrings
+	// Used to get chat lines from an IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl IRC_GetChatStrings(string, long)
+	// Known usage: IRC_GetChatStrings(<Buffer>, 65535)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "IRC_GetChatStrings") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(2);
+		/*const char *buffer =*/ stack->pop()->getString();
+		/*int bufferMaxSize =*/ stack->pop()->getInt();
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+	
+	//////////////////////////////////////////////////////////////////////////
+	// IRC_quit
+	// Used to disconnect from debug IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl IRC_quit()
+	// Known usage: IRC_quit()
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "IRC_quit") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(0);
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// LoadLibraryA
+	// Used for checking library availability at games by Corbomite Games
+	// Specification: external "kernel32.dll" stdcall long LoadLibraryA(string)
+	// Known usage: LoadLibraryA("httpconnect.dll"), LoadLibraryA("dlltest.dll")
+	// Return values are only compared with zero and are never used in other APIs
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "LoadLibraryA") == 0 && strcmp(function->dll_name, "kernel32.dll") == 0) {
+		stack->correctParams(1);
+		const char *dllName = stack->pop()->getString();
+		int result = 0;
+
+		if (strcmp(dllName, "httpconnect.dll") == 0) {
+			result = 1; // some non-zero value
+		} else if (strcmp(dllName, "dlltest.dll") == 0) {
+			result = 2; // some other non-zero value
+		} else {
+			warning("LoadLibraryA(\"%s\") is not implemented", dllName);
+		}
+
+		stack->pushInt(result);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// FreeLibrary
+	// Declared at games by Corbomite Games
+	// Seems to be unused, probably was used for unloading IRC & HTTP libraries
+	// Specification: external "kernel32.dll" stdcall FreeLibrary(long)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "FreeLibrary") == 0 && strcmp(function->dll_name, "kernel32.dll") == 0) {
+		stack->correctParams(1);
+		/*int dllId =*/ stack->pop()->getInt();
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetEnvironmentVariableA
+	// Used for getting environment variables at Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest
+	// Specification: external "kernel32.dll" stdcall long GetEnvironmentVariableA(string, string, long)
+	// Known usage: GetEnvironmentVariableA(<EnvName>, <buffer>, 65535)
+	// Known EnvName values used in debug code: "USERKEY", "ALTUSERNAME", "ENHFINGERPRINT", "EXTRAINFO", "FINGERPRINT", "KEYSTRING", "STOLENKEY", "TRIAL"
+	// Known EnvName values used in licensing code: "FULLGAME"
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "GetEnvironmentVariableA") == 0 && strcmp(function->dll_name, "kernel32.dll") == 0) {
+		stack->correctParams(3);
+		const char *name = stack->pop()->getString();
+		/*ScValue *buf =*/ stack->pop();
+		/*int bufMaxLen =*/ stack->pop()->getInt();
+
+		warning("Assuming variable \"%s\" is not set", name);
+
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Register
+	// Used to register license key online at Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest
+	// Specification: external "httpconnect.dll" cdecl long Register(string, long, string, long)
+	// Known usage: Register(<productId>, 65535, <productKey>, 65535)
+	// Known product ID values are: "357868", "353058" and "353006"
+	// Known action: HTTP GET http://keygen.corbomitegames.com/keygen/validateKey.php?action=REGISTER&productId=productId&key=productKey
+	// Returns 1   on success
+	// Returns 0   on firewall error
+	// Returns -1  on invalid product key
+	// Returns -2  on invalid product ID
+	// Returns -3  on expired product key
+	// Returns -4  on invalid machine ID
+	// Returns -5  on number of installations exceeded
+	// Returns -6  on socket error
+	// Returns -7  on no internet connection
+	// Returns -8  on connection reset
+	// Returns -11 on validation temporary unavaliable
+	// Returns -12 on validation error
+	// For some reason always returns -7 for me in a test game
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "Register") == 0 && strcmp(function->dll_name, "httpconnect.dll") == 0) {
+		stack->correctParams(4);
+		const char *productId = stack->pop()->getString();
+		int productIdMaxLen = stack->pop()->getInt();
+		const char *productKey = stack->pop()->getString();
+		int productKeyMaxLen = stack->pop()->getInt();
+
+		warning("Register(\"%s\",%d,\"%s\",%d) is not implemented", productId , productIdMaxLen, productKey, productKeyMaxLen);
+
+		stack->pushInt(-7); // "no internet connection" error
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Validate
+	// Used to validate something at Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest
+	// Specification: external "httpconnect.dll" cdecl long Validate()
+	// Known usage: Validate()
+	// Known action: HTTP GET http://keygen.corbomitegames.com/keygen/validateKey.php?action=VALIDATE&productId=Ar&key=Ar
+	// Used only when Debug mode is active or game is started with "INVALID" cmdline parameter
+	// For some reason always returns 1 for me in a test game
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "Validate") == 0 && strcmp(function->dll_name, "httpconnect.dll") == 0) {
+		stack->correctParams(0);
+
+		// do nothing
+
+		stack->pushInt(1);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SendHTTPAsync
+	// Used to send game progress events to server at Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest
+	// Specification: external "httpconnect.dll" cdecl long SendHTTPAsync(string, long, string, long, string, long)
+	// Known usage: SendHTTPAsync("backend.pizzamorgana.com", 65535, <FullURL>, 65535, <Buffer?!>, 65535)
+	// FullURL is formed as "http://backend.pizzamorgana.com/event.php?Event=<EventName>&player=<PlayerName>&extraParams=<ExtraParams>&SN=<ProductKey>&Episode=1&GameTime=<CurrentTime>&UniqueID=<UniqueId>"
+	// Known EventName values are: "GameStart", "ChangeGoal", "EndGame" and "QuitGame"
+	// Known ExtraParams values are: "ACT0", "ACT1", "ACT2", "ACT3", "ACT4", "Ep0FindFood", "Ep0FindCellMenu", "Ep0BroRoom", "Ep0FindKey", "Ep0FindCellMenuKey", "Ep0FindMenuKey", "Ep0FindCell", "Ep0FindMenu", "Ep0OrderPizza", "Ep0GetRidOfVamp", "Ep0GetVampAttention", "Ep0License"
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "SendHTTPAsync") == 0 && strcmp(function->dll_name, "httpconnect.dll") == 0) {
+		stack->correctParams(6);
+		const char *server = stack->pop()->getString();
+		int serverMaxLen = stack->pop()->getInt();
+		const char *fullUrl = stack->pop()->getString();
+		int fullUrlMaxLen = stack->pop()->getInt();
+		const char *param5 = stack->pop()->getString();
+		int param5MaxLen = stack->pop()->getInt();
+
+		// TODO: Maybe parse URL and call some Achievements API using ExtraParams values in some late future
+		warning("SendHTTPAsync(\"%s\",%d,\"%s\",%d,\"%s\",%d) is not implemented", server, serverMaxLen, fullUrl, fullUrlMaxLen, param5, param5MaxLen);
+
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SendRecvHTTP (6 params variant)
+	// Declared at Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest
+	// Seems to be unused, probably SendRecvHTTP was initially used instead of SendHTTPAsync
+	// Specification: external "httpconnect.dll" cdecl long SendRecvHTTP(string, long, string, long, string, long)
+	// Always returns -7 for me in a test game, probably returns the same network errors as Register()
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "SendRecvHTTP") == 0 && strcmp(function->dll_name, "httpconnect.dll") == 0 && function->nu_params == 6) {
+		stack->correctParams(6);
+		const char *server = stack->pop()->getString();
+		int serverMaxLen = stack->pop()->getInt();
+		const char *fullUrl = stack->pop()->getString();
+		int fullUrlMaxLen = stack->pop()->getInt();
+		const char *param5 = stack->pop()->getString();
+		int param5MaxLen = stack->pop()->getInt();
+
+		warning("SendRecvHTTP(\"%s\",%d,\"%s\",%d,\"%s\",%d) is not implemented", server, serverMaxLen, fullUrl, fullUrlMaxLen, param5, param5MaxLen);
+
+		stack->pushInt(-7); // "no internet connection" error
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SendRecvHTTP (4 params variant)
+	// Used to call HTTP methods at Zbang! The Game
+	// Specification: external "httpconnect.dll" cdecl long SendRecvHTTP(string, long, string, long)
+	// Known usage: SendRecvHTTP("scoresshort.php?player=<PlayerName>", 65535, <Buffer>, 65535)
+	// Known usage: SendRecvHTTP("/update.php?player=<PlayerName>&difficulty=<Difficulty>&items=<CommaSeparatedItemList>", 65535, <Buffer>, 65535)
+	// My Zbang demo does not have this dll, so there is no way to actually test it with a test game
+	// Return value is never used in Zbang scripts
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "SendRecvHTTP") == 0 && strcmp(function->dll_name, "httpconnect.dll") == 0 && function->nu_params == 4) {
+		stack->correctParams(4);
+		const char *dirUrl = stack->pop()->getString();
+		int dirUrlMaxLen = stack->pop()->getInt();
+		/*ScValue *buf =*/ stack->pop();
+		int bufMaxLen = stack->pop()->getInt();
+
+		//TODO: Count items and give scores, persist those values
+		warning("SendRecvHTTP(\"%s\",%d,buf,%d) is not implemented", dirUrl, dirUrlMaxLen, bufMaxLen);
+
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
 
 	_gameRef->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);

@@ -40,7 +40,7 @@ class InventoryMgr;
 class Actor : public NamedObject {
 public:
 	Actor();
-	~Actor();
+	~Actor() override;
 
 	void deserialize(Archive &archive) override;
 

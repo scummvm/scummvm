@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Boutarel : public Entity {
 public:
 	Boutarel(LastExpressEngine *engine);
-	~Boutarel() {}
+	~Boutarel() override {}
 
 	/**
 	 * Resets the entity

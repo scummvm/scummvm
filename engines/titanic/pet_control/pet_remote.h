@@ -92,62 +92,62 @@ public:
 	/**
 	 * Sets up the section
 	 */
-	virtual bool setup(CPetControl *petControl);
+	bool setup(CPetControl *petControl) override;
 
 	/**
 	 * Reset the section
 	 */
-	virtual bool reset();
+	bool reset() override;
 
 	/**
 	 * Draw the section
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager) override;
 
 	/**
 	* Following are handlers for the various messages that the PET can
 	* pass onto the currently active section/area
 	*/
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
-	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
-	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
-	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
-	virtual bool MouseWheelMsg(CMouseWheelMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) override;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) override;
+	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) override;
+	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) override;
+	bool MouseWheelMsg(CMouseWheelMsg *msg) override;
 
 	/**
 	 * Returns true if the object is in a valid state
 	 */
-	virtual bool isValid(CPetControl *petControl);
+	bool isValid(CPetControl *petControl) override;
 
 	/**
 	 * Called after a game has been loaded
 	 */
-	virtual void postLoad();
+	void postLoad() override;
 
 	/**
 	 * Called when a section is switched to
 	 */
-	virtual void enter(PetArea oldArea);
+	void enter(PetArea oldArea) override;
 
 	/**
 	 * Called when a new room is entered
 	 */
-	virtual void enterRoom(CRoomItem *room);
+	void enterRoom(CRoomItem *room) override;
 
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CTextControl *getText();
+	CTextControl *getText() override;
 
 	/**
 	 * Get an element from the section by a designated Id
 	 */
-	virtual CPetGfxElement *getElement(uint id);
+	CPetGfxElement *getElement(uint id) override;
 
 	/**
 	 * Highlights a glyph item in the section
 	 */
-	virtual void highlight(int id);
+	void highlight(int id) override;
 
 	/**
 	 * Generates a PET message

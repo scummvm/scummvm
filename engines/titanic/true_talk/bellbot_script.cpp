@@ -156,6 +156,9 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 				result = processEntries(&_sentences[getValue(6) ? 5 : 4], 0, roomScript, sentence);
 			}
 			break;
+
+		default:
+			break;
 		}
 
 		if (result == 2)

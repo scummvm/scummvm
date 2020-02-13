@@ -469,6 +469,9 @@ void LabEngine::doActions(const ActionList &actionList) {
 			}
 
 			break;
+
+		default:
+			break;
 		}
 	}
 

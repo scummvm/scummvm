@@ -282,7 +282,7 @@ class AIBombActiveCondition : public AICondition {
 public:
 	AIBombActiveCondition() {}
 
-	bool fireCondition();
+	bool fireCondition() override;
 };
 
 // Return true if player is on 53 east and Sinclair is shot.
@@ -382,6 +382,8 @@ TimeValue Caldoria::getViewTime(const RoomID room, const DirectionConstant direc
 	case kCaldoria48:
 		if (direction == kNorth && GameState.getCaldoriaRoofDoorOpen())
 			extraID = kCa48NorthExplosion;
+		break;
+	default:
 		break;
 	}
 
@@ -488,6 +490,8 @@ void Caldoria::findSpotEntry(const RoomID room, const DirectionConstant directio
 		if (direction == kEast && GameState.getLastRoom() != kCaldoria42)
 			entry.clear();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -507,6 +511,8 @@ void Caldoria::startExitMovie(const ExitTable::Entry &exitEntry) {
 		if (GameState.getCurrentDirection() == kNorth)
 			closeCroppedMovie();
 		break;
+	default:
+		break;
 	}
 
 	Neighborhood::startExitMovie(exitEntry);
@@ -517,6 +523,8 @@ void Caldoria::startZoomMovie(const ZoomTable::Entry &zoomEntry) {
 	case kCaldoria12:
 		if (GameState.getCurrentDirection() == kNorth)
 			closeCroppedMovie();
+		break;
+	default:
 		break;
 	}
 
@@ -557,6 +565,8 @@ void Caldoria::startTurnPush(const TurnDirection turnDirection, const TimeValue 
 	case kCaldoria48:
 		if (_croppedMovie.isSurfaceValid())
 			closeCroppedMovie();
+		break;
+	default:
 		break;
 	}
 
@@ -617,6 +627,8 @@ int16 Caldoria::getStaticCompassAngle(const RoomID room, const DirectionConstant
 	case kCaldoria55:
 		result += kCaldoria55Angle;
 		break;
+	default:
+		break;
 	}
 
 	return result;
@@ -648,6 +660,8 @@ void Caldoria::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSp
 	case MakeRoomView(kCaldoria55, kNorth):
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), exitEntry.movieStart, 315, exitEntry.movieEnd, 270);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -659,6 +673,8 @@ void Caldoria::getZoomCompassMove(const ZoomTable::Entry &zoomEntry, FaderMoveSp
 		compassMove.insertFaderKnot(zoomEntry.movieStart + 4 * kCaldoriaFrameDuration, 90);
 		compassMove.insertFaderKnot(zoomEntry.movieStart + 19 * kCaldoriaFrameDuration, -90);
 		compassMove.insertFaderKnot(zoomEntry.movieEnd, -90);
+		break;
+	default:
 		break;
 	}
 }
@@ -725,6 +741,8 @@ void Caldoria::checkContinuePoint(const RoomID room, const DirectionConstant dir
 	case MakeRoomView(kCaldoria49, kNorth):
 		makeContinuePoint();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -748,6 +766,8 @@ void Caldoria::arriveAt(const RoomID room, const DirectionConstant direction) {
 	case kCaldoria55:
 		if (GameState.getCaldoriaSinclairShot())
 			setCurrentAlternate(kAltCaldoriaSinclairDown);
+		break;
+	default:
 		break;
 	}
 
@@ -841,6 +861,8 @@ void Caldoria::arriveAt(const RoomID room, const DirectionConstant direction) {
 		break;
 	case kCaldoriaDeathRoom:
 		arriveAtCaldoriaDeath();
+		break;
+	default:
 		break;
 	}
 
@@ -994,6 +1016,8 @@ void Caldoria::setUpRoofTop() {
 			setCurrentAlternate(kAltCaldoriaSinclairDown);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1085,6 +1109,8 @@ void Caldoria::turnTo(const DirectionConstant direction) {
 		} else if (GameState.getCaldoriaBombDisarmed()) {
 			_vm->playEndMessage();
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -1243,6 +1269,8 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 			updateViewFrame();
 			makeContinuePoint();
 			break;
+		default:
+			break;
 		}
 	} else if ((flags & kSpotSoundCompletedFlag) != 0) {
 		switch (GameState.getCurrentRoom()) {
@@ -1262,6 +1290,8 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 		case kCaldoriaReplicator:
 			emptyOJGlass();
 			break;
+		default:
+			break;
 		}
 	} else if ((flags & kSinclairLoopDoneFlag) != 0) {
 		if (++_sinclairLoopCount == _numSinclairLoops) {
@@ -1271,6 +1301,8 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 				break;
 			case kCaldoria54:
 				playDeathExtra(kCa54SouthDeath, kDeathShotBySinclair);
+				break;
+			default:
 				break;
 			}
 		} else {
@@ -1302,6 +1334,9 @@ InputBits Caldoria::getInputFilter() {
 	case kCaldoria48:
 		if (GameState.getCaldoriaDoorBombed())
 			result &= ~kFilterAllDirections;
+		break;
+	default:
+		break;
 	}
 
 	return result;
@@ -1352,6 +1387,8 @@ void Caldoria::activateHotspots() {
 			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRoofElevator4);
 			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRoofElevator5);
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -1541,6 +1578,8 @@ CanOpenDoorReason Caldoria::canOpenDoor(DoorTable::Entry &entry) {
 		if (GameState.getCurrentDirection() == kSouth && !_privateFlags.getFlag(kCaldoriaPrivateCanOpenElevatorDoorFlag))
 			return kCantOpenLocked;
 		break;
+	default:
+		break;
 	}
 
 	return Neighborhood::canOpenDoor(entry);
@@ -1561,6 +1600,8 @@ GameInteraction *Caldoria::makeInteraction(const InteractionID interactionID) {
 		return new CaldoriaMessages(this, kCaldoriaMessagesNotificationID, _vm);
 	case kCaldoriaMirrorInteractionID:
 		return new CaldoriaMirror(this);
+	default:
+		break;
 	}
 
 	return 0;
@@ -1594,6 +1635,8 @@ Hotspot *Caldoria::getItemScreenSpot(Item *item, DisplayElement *element) {
 	case kOrangeJuiceGlassFull:
 		destSpotID = kCaldoriaOrangeJuiceSpotID;
 		break;
+	default:
+		break;
 	}
 
 	if (destSpotID == kNoHotSpotID)
@@ -1613,6 +1656,8 @@ void Caldoria::pickedUpItem(Item *item) {
 		break;
 	case kStunGun:
 		GameState.setCaldoriaGunAimed(false);
+		break;
+	default:
 		break;
 	}
 }
@@ -1691,6 +1736,8 @@ void Caldoria::takeElevator(uint startFloor, uint endFloor) {
 			startExtraSequence(kCaldoriaGroundToRoof, kExtraCompletedFlag, false);
 			_croppedMovie.start();
 			break;
+		default:
+			break;
 		}
 		break;
 	case 4:
@@ -1719,6 +1766,8 @@ void Caldoria::takeElevator(uint startFloor, uint endFloor) {
 			_croppedMovie.setTime(k4To5Start);
 			startExtraSequence(kCaldoriaFourthToRoof, kExtraCompletedFlag, false);
 			_croppedMovie.start();
+			break;
+		default:
 			break;
 		}
 		break;
@@ -1749,7 +1798,11 @@ void Caldoria::takeElevator(uint startFloor, uint endFloor) {
 		case 5:
 			// Do nothing.
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	};
 }
@@ -1767,6 +1820,8 @@ void Caldoria::updateElevatorMovie() {
 			break;
 		case kCaldoria45:
 			time = k5FloorTime;
+			break;
+		default:
 			break;
 		}
 	}
@@ -1847,6 +1902,8 @@ void Caldoria::checkSinclairShootsOS() {
 			playSpotSoundSync(kCaldoriaSinclairShootsOSIn, kCaldoriaSinclairShootsOSOut);
 			playSpotSoundSync(kCaldoriaScreamingAfterIn, kCaldoriaScreamingAfterOut);
 			die(kDeathSinclairShotDelegate);
+			break;
+		default:
 			break;
 		}
 }
@@ -1938,6 +1995,8 @@ uint Caldoria::getNumHints() {
 		case MakeRoomView(kCaldoria49, kNorth):
 			numHints = 1;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -1973,6 +2032,8 @@ Common::String Caldoria::getHintMovie(uint hintNum) {
 #endif
 		case MakeRoomView(kCaldoria49, kNorth):
 			return "Images/AI/Caldoria/X49NB2";
+		default:
+			break;
 		}
 	}
 
@@ -1988,6 +2049,8 @@ void Caldoria::updateCursor(const Common::Point where, const Hotspot *cursorSpot
 		case kCaldoriaKioskSpotID:
 			_vm->_cursor->setCurrentFrameIndex(3);
 			return;
+		default:
+			break;
 		}
 	}
 

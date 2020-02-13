@@ -82,6 +82,8 @@ bool failSecurityCheck(const Common::String &fn) {
 			case '|':
 				fatal("Filenames may not contain the following characters: \n\n\\  /  :  \"  <  >  |  ?  *\n\nConsequently, the following filename is not allowed:", fn);
 				return true;
+			default:
+				break;
 		}
 	}
 	return false;
@@ -123,6 +125,9 @@ static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 			//debugOut ("BUILTIN: sayCore: %s (%i)\n", newText, p);
 			fun->isSpeech = true;
 			return BR_KEEP_AND_PAUSE;
+
+		default:
+			break;
 	}
 
 	fatal("Function should have either 2 or 3 parameters");
@@ -698,7 +703,7 @@ builtIn(random) {
 	trimStack(fun->stack);
 	if (num <= 0)
 		num = 1;
-	fun->reg.setVariable(SVT_INT, 0 /*rand() % num*/); //TODO:false value
+	fun->reg.setVariable(SVT_INT, g_sludge->getRandomSource()->getRandomNumber(num - 1));
 	return BR_CONTINUE;
 }
 

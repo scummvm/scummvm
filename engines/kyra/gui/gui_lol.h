@@ -96,16 +96,16 @@ public:
 	void initStaticData();
 
 	// button specific
-	void processButton(Button *button);
-	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
+	void processButton(Button *button) override;
+	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) override;
 
-	int redrawShadedButtonCallback(Button *button);
-	int redrawButtonCallback(Button *button);
+	int redrawShadedButtonCallback(Button *button) override;
+	int redrawButtonCallback(Button *button) override;
 
 	int runMenu(Menu &menu);
 
 	// utilities for thumbnail creation
-	void createScreenThumbnail(Graphics::Surface &dst);
+	void createScreenThumbnail(Graphics::Surface &dst) override;
 
 private:
 	void backupPage0();
@@ -113,8 +113,8 @@ private:
 
 	void setupSaveMenuSlots(Menu &menu, int num);
 
-	void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags);
-	int getMenuCenterStringX(const char *str, int x1, int x2);
+	void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags) override;
+	int getMenuCenterStringX(const char *str, int x1, int x2) override;
 
 	int getInput();
 
@@ -131,20 +131,20 @@ private:
 	int scrollUp(Button *button);
 	int scrollDown(Button *button);
 
-	Button *getButtonListData() { return _menuButtons; }
-	Button *getScrollUpButton() { return &_scrollUpButton; }
-	Button *getScrollDownButton() { return &_scrollDownButton; }
+	Button *getButtonListData() override { return _menuButtons; }
+	Button *getScrollUpButton() override { return &_scrollUpButton; }
+	Button *getScrollDownButton() override { return &_scrollDownButton; }
 
 
-	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
-	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
+	Button::Callback getScrollUpButtonHandler() const override { return _scrollUpFunctor; }
+	Button::Callback getScrollDownButtonHandler() const override { return _scrollDownFunctor; }
 
-	uint8 defaultColor1() const { return 0xFE; }
-	uint8 defaultColor2() const { return 0x00; }
+	uint8 defaultColor1() const override { return 0xFE; }
+	uint8 defaultColor2() const override { return 0x00; }
 
-	const char *getMenuTitle(const Menu &menu);
-	const char *getMenuItemTitle(const MenuItem &menuItem);
-	const char *getMenuItemLabel(const MenuItem &menuItem);
+	const char *getMenuTitle(const Menu &menu) override;
+	const char *getMenuItemTitle(const MenuItem &menuItem) override;
+	const char *getMenuItemLabel(const MenuItem &menuItem) override;
 
 	Button _menuButtons[10];
 	Button _scrollUpButton;
@@ -169,7 +169,7 @@ private:
 	Button::Callback _scrollUpFunctor;
 	Button::Callback _scrollDownFunctor;
 
-	virtual void sortSaveSlots();
+	void sortSaveSlots() override;
 };
 
 } // End of namespace Kyra

@@ -31,7 +31,7 @@ namespace Glk {
 /**
  * Text Grid window
  */
-class TextGridWindow : public Window {
+class TextGridWindow : public TextWindow {
 	/**
 	 * Structure for a row within the grid window
 	 */
@@ -88,17 +88,17 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~TextGridWindow();
+	~TextGridWindow() override;
 
 	/**
 	 * Get the font info structure associated with the window
 	 */
-	virtual FontInfo *getFontInfo() override { return &_font; }
+	FontInfo *getFontInfo() override { return &_font; }
 
 	/**
 	 * Set the size of a window
 	 */
-	virtual void setSize(const Point &newSize) {
+	void setSize(const Point &newSize) override {
 		Window::setSize(newSize);
 		_curX = CLIP((int16)_curX, _bbox.left, _bbox.right);
 		_curY = CLIP((int16)_curY, _bbox.top, _bbox.bottom);
@@ -107,7 +107,7 @@ public:
 	/**
 	 * Sets the position of a window
 	 */
-	virtual void setPosition(const Point &newPos) {
+	void setPosition(const Point &newPos) override {
 		_bbox.moveTo(newPos);
 		_curX = CLIP((int16)_curX, _bbox.left, _bbox.right);
 		_curY = CLIP((int16)_curY, _bbox.top, _bbox.bottom);
@@ -116,103 +116,103 @@ public:
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Rect &box) override;
+	void rearrange(const Rect &box) override;
 
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual uint getSplit(uint size, bool vertical) const override;
+	uint getSplit(uint size, bool vertical) const override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	void putCharUni(uint32 ch) override;
 
 	/**
 	 * Unput a unicode character
 	 */
-	virtual bool unputCharUni(uint32 ch) override;
+	bool unputCharUni(uint32 ch) override;
 
 	/**
 	 * Get the cursor position
 	 */
-	virtual Point getCursor() const override { return Point(_curX, _curY); }
+	Point getCursor() const override { return Point(_curX, _curY); }
 
 	/**
 	 * Move the cursor
 	 */
-	virtual void moveCursor(const Point &newPos) override;
+	void moveCursor(const Point &newPos) override;
 
 	/**
 	 * Clear the window
 	 */
-	virtual void clear() override;
+	void clear() override;
 
 	/**
 	 * Click the window
 	 */
-	virtual void click(const Point &newPos) override;
+	void click(const Point &newPos) override;
 
 	/**
 	 * Cancel a hyperlink event
 	 */
-	virtual void cancelHyperlinkEvent() override {
+	void cancelHyperlinkEvent() override {
 		_hyperRequest = false;
 	}
 
 	/**
 	 * Redraw the window
 	 */
-	virtual void redraw() override;
+	void redraw() override;
 
-	virtual void acceptReadLine(uint32 arg) override;
+	void acceptReadLine(uint32 arg) override;
 
-	virtual void acceptReadChar(uint arg) override;
+	void acceptReadChar(uint arg) override;
 
-	virtual void getSize(uint *width, uint *height) const override;
+	void getSize(uint *width, uint *height) const override;
 
-	virtual void requestCharEvent() override;
+	void requestCharEvent() override;
 
-	virtual void requestCharEventUni() override;
-
-	/**
-	 * Prepare for inputing a line
-	 */
-	virtual void requestLineEvent(char *buf, uint maxlen, uint initlen) override;
+	void requestCharEventUni() override;
 
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) override;
+	void requestLineEvent(char *buf, uint maxlen, uint initlen) override;
+
+	/**
+	 * Prepare for inputing a line
+	 */
+	void requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) override;
 
 	/**
 	 * Cancel an input line event
 	 */
-	virtual void cancelLineEvent(Event *ev) override;
+	void cancelLineEvent(Event *ev) override;
 
 	/**
 	 * Cancel a mouse event
 	 */
-	virtual void cancelMouseEvent() override {
+	void cancelMouseEvent() override {
 		_mouseRequest = false;
 	}
 
-	virtual void requestMouseEvent() override {
+	void requestMouseEvent() override {
 		_mouseRequest = true;
 	}
 
-	virtual void requestHyperlinkEvent() override {
+	void requestHyperlinkEvent() override {
 		_hyperRequest = true;
 	}
 
-	virtual void cancelCharEvent() override {
+	void cancelCharEvent() override {
 		_charRequest = _charRequestUni = false;
 	}
 
 	/**
 	 * Returns a pointer to the styles for the window
 	 */
-	virtual const WindowStyle *getStyles() const override {
+	const WindowStyle *getStyles() const override {
 		return _styles;
 	}
 };

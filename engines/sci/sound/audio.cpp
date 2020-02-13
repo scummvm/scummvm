@@ -386,6 +386,8 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			audioSeekStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
 #endif
 			break;
+		default:
+			break;
 		}
 #else
 		error("Compressed audio file encountered, but no appropriate decoder is compiled in");

@@ -45,7 +45,7 @@ class Scene1337 : public SceneExt {
 		GfxButton _continueGame;
 
 		OptionsDialog();
-		virtual ~OptionsDialog() {}
+		~OptionsDialog() override {}
 		virtual GfxButton *execute(GfxButton *defaultButton);
 	public:
 		static void show();
@@ -59,7 +59,7 @@ class Scene1337 : public SceneExt {
 		Common::Point _stationPos;
 
 		Card();
-		void synchronize(Serializer &s);
+		void synchronize(Serializer &s) override;
 		bool isIn(Common::Point pt);
 	};
 
@@ -77,7 +77,7 @@ class Scene1337 : public SceneExt {
 		int _frameNum;
 
 		GameBoardSide();
-		void synchronize(Serializer &s);
+		void synchronize(Serializer &s) override;
 	};
 
 	class Action1337: public Action {
@@ -87,55 +87,55 @@ class Scene1337 : public SceneExt {
 
 	class Action1: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action2: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action3: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action4: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action5: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action6: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action7: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action8: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action9: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action10: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action11: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action12: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action13: public Action1337 {
 	public:
-		void signal();
+		void signal() override;
 	};
 public:
 	Action1 _action1;
@@ -196,7 +196,7 @@ public:
 	SceneObject _lowerDisplayCard[8];
 
 	Scene1337();
-	virtual void synchronize(Serializer &s);
+	void synchronize(Serializer &s) override;
 
 	void actionDisplay(int resNum, int lineNum, int x, int y, int keepOnScreen, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt);
 	void setAnimationInfo(Card *card);
@@ -247,10 +247,10 @@ public:
 	void subD1940(bool flag);
 	void subD1975(int arg1, int arg2);
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void process(Event &event);
-	virtual void dispatch();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void process(Event &event) override;
+	void dispatch() override;
 };
 
 } // End of namespace Ringworld2

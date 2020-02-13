@@ -780,6 +780,10 @@ void DreamWebEngine::showNames() {
 		}
 		if (_loadingOrSave != 2) {
 			_charShift = 91;
+
+			if (getLanguage() == Common::RU_RUS)
+				_charShift = 182;
+
 			printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
 			_charShift = 0;
 			continue;

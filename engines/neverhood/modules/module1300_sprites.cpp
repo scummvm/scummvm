@@ -55,6 +55,8 @@ uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &para
 	case NM_KLAYMEN_CLOSE_DOOR:
 		stRaiseBridge();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -109,6 +111,8 @@ uint32 SsScene1302Fence::handleMessage(int messageNum, const MessageParam &param
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveUp);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -153,6 +157,8 @@ uint32 AsScene1303Balloon::handleMessage(int messageNum, const MessageParam &par
 	case NM_ANIMATION_UPDATE:
 		stPopBalloon();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -169,6 +175,8 @@ uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &p
 		stopAnimation();
 		setVisible(false);
 		SetMessageHandler(NULL);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -197,6 +205,8 @@ uint32 AsScene1304Needle::handleMessage(int messageNum, const MessageParam &para
 		setGlobalVar(V_HAS_NEEDLE, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -247,6 +257,8 @@ uint32 AsScene1306Elevator::handleMessage(int messageNum, const MessageParam &pa
 	case NM_KLAYMEN_OPEN_DOOR:
 		if (_isDown)
 			stGoingUp();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -376,6 +388,8 @@ uint32 AsScene1307Key::handleMessage(int messageNum, const MessageParam &param, 
 		playSound(2);
 		stInsert();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -489,6 +503,8 @@ uint32 AsScene1308JaggyDoor::handleMessage(int messageNum, const MessageParam &p
 	case NM_KLAYMEN_CLOSE_DOOR:
 		stCloseDoor();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -533,6 +549,8 @@ uint32 AsScene1308KeyboardDoor::handleMessage(int messageNum, const MessageParam
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -570,6 +588,8 @@ uint32 AsScene1308LightWallSymbols::handleMessage(int messageNum, const MessageP
 		break;
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -623,6 +643,8 @@ uint32 AsScene1308Mouse::handleMessage(int messageNum, const MessageParam &param
 		else if (param.asInteger() == 0x462F0410)
 			playSound(0, 0x60984E28);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -643,6 +665,8 @@ uint32 KmScene1303::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483C:
 		GotoState(&Klaymen::stPeekWall2);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -695,6 +719,8 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -720,6 +746,8 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -858,6 +886,8 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -927,6 +957,8 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
+		break;
+	default:
 		break;
 	}
 	return 0;

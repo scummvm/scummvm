@@ -43,13 +43,13 @@ public:
 	};
 
 	PartForce(BaseGame *inGame);
-	virtual ~PartForce(void);
+	~PartForce(void) override;
 
 	Vector2 _pos;
 	Vector2 _direction;
 	TForceType _type;
 
-	bool persist(BasePersistenceManager *PersistMgr);
+	bool persist(BasePersistenceManager *PersistMgr) override;
 };
 
 } // End of namespace Wintermute

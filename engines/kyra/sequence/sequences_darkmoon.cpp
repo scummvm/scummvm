@@ -193,6 +193,9 @@ int DarkMoonEngine::mainMenu() {
 			// quit
 			menuChoice = -5;
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -1450,13 +1453,11 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 }
 
 void DarkmoonSequenceHelper::fadeText() {
-	if (_vm->skipFlag() || _vm->shouldQuit())
-		return;
-
+	int rate = _vm->skipFlag() || _vm->shouldQuit() ? 16 : 8;
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		_screen->fadeTextColor(_palettes[0], 31, 8);
+		_screen->fadeTextColor(_palettes[0], 31, rate);
 	else if (_vm->_configRenderMode != Common::kRenderEGA)
-		_screen->fadeTextColor(_palettes[0], 255, 8);
+		_screen->fadeTextColor(_palettes[0], 255, rate);
 	
 	memset(_textColor, 0, 3);
 	_screen->clearCurDim();
@@ -1557,7 +1558,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	}
 
 	_screen->enableHiColorMode(false);
-	_screen->disableDualPalettesSplitScreen();
+	_screen->disableDualPaletteMode();
 	int numColors = 256;
 
 	if (_vm->_flags.platform == Common::kPlatformAmiga) {
@@ -1718,12 +1719,12 @@ void DarkmoonSequenceHelper::delay(uint32 ticks) {
 void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim) {
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 		index = _sndMarkersFMTowns[index - 1];
-	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	else if (_vm->sound()->getMusicType() != Sound::kAdLib)
 		return;
 
 	int seq = 0;
 
-	while (_vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
+	while (_vm->sound()->musicEnabled() && _vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
 		if (introUpdateAnim) {
 			animCommand(30 | seq);
 			seq ^= 1;
@@ -1737,7 +1738,7 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 }
 
 void DarkmoonSequenceHelper::updateAmigaSound() {
-	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+	if (_vm->gameFlags().platform != Common::kPlatformAmiga || !_vm->sound()->musicEnabled())
 		return;
 
 	int ct = _vm->sound()->checkTrigger();
@@ -1801,10 +1802,8 @@ const char *const DarkmoonSequenceHelper::_palFilesFinaleAmiga[] = {
 
 void DarkMoonEngine::seq_nightmare() {
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
-	if (_flags.lang == Common::JA_JPN)
-		_screen->clearCurDim();
+	_screen->clearCurDimOvl(0);
 	_screen->copyRegion(0, 0, 0, 120, 176, 24, 12, 2, Screen::CR_NO_P_CHECK);
-
 	initDialogueSequence();
 	gui_drawDialogueBox();
 

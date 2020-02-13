@@ -39,11 +39,11 @@ protected:
 
 protected:
 	void compressToType0();
-	void parseNextEvent (EventInfo &info);
+	void parseNextEvent (EventInfo &info) override;
 
 public:
-	bool loadMusic (byte *data, uint32 size);
-	uint32 getTick() { return (uint32) _markerCount * _ppqn / 2; }
+	bool loadMusic (byte *data, uint32 size) override;
+	uint32 getTick() override { return (uint32) _markerCount * _ppqn / 2; }
 };
 
 
@@ -118,6 +118,9 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 			info.ext.type = 0x7F; // Bogus META
 		}
 		info.event = 0xFF;
+		break;
+
+	default:
 		break;
 	}
 }

@@ -44,20 +44,6 @@ void PEResources::clear() {
 	delete _exe; _exe = 0;
 }
 
-bool PEResources::loadFromEXE(const String &fileName) {
-	if (fileName.empty())
-		return false;
-
-	File *file = new File();
-
-	if (!file->open(fileName.c_str())) {
-		delete file;
-		return false;
-	}
-
-	return loadFromEXE(file);
-}
-
 bool PEResources::loadFromEXE(File *stream) {
 	clear();
 
@@ -151,7 +137,7 @@ void PEResources::parseResourceLevel(Section &section, uint32 offset, int level)
 		if (level == 0)
 			_curType = id;
 		else if (level == 1)
-			_curName = id;
+			_curID = id;
 		else if (level == 2)
 			_curLang = id;
 
@@ -165,7 +151,7 @@ void PEResources::parseResourceLevel(Section &section, uint32 offset, int level)
 			resource.offset = _exe->readUint32LE() + section.offset - section.virtualAddress;
 			resource.size = _exe->readUint32LE();
 
-			_resources[_curType][_curName][_curLang] = resource;
+			_resources[_curType][_curID][_curLang] = resource;
 		}
 
 		_exe->seek(lastOffset);
@@ -184,32 +170,32 @@ const Array<WinResourceID> PEResources::getTypeList() const {
 	return array;
 }
 
-const Array<WinResourceID> PEResources::getNameList(const WinResourceID &type) const {
+const Array<WinResourceID> PEResources::getIDList(const WinResourceID &type) const {
 	Array<WinResourceID> array;
 
 	if (!_exe || !_resources.contains(type))
 		return array;
 
-	const NameMap &nameMap = _resources[type];
+	const IDMap &idMap = _resources[type];
 
-	for (NameMap::const_iterator it = nameMap.begin(); it != nameMap.end(); it++)
+	for (IDMap::const_iterator it = idMap.begin(); it != idMap.end(); it++)
 		array.push_back(it->_key);
 
 	return array;
 }
 
-const Array<WinResourceID> PEResources::getLangList(const WinResourceID &type, const WinResourceID &name) const {
+const Array<WinResourceID> PEResources::getLangList(const WinResourceID &type, const WinResourceID &id) const {
 	Array<WinResourceID> array;
 
 	if (!_exe || !_resources.contains(type))
 		return array;
 
-	const NameMap &nameMap = _resources[type];
+	const IDMap &idMap = _resources[type];
 
-	if (!nameMap.contains(name))
+	if (!idMap.contains(id))
 		return array;
 
-	const LangMap &langMap = nameMap[name];
+	const LangMap &langMap = idMap[id];
 
 	for (LangMap::const_iterator it = langMap.begin(); it != langMap.end(); it++)
 		array.push_back(it->_key);
@@ -217,13 +203,13 @@ const Array<WinResourceID> PEResources::getLangList(const WinResourceID &type, c
 	return array;
 }
 
-File *PEResources::getResource(const WinResourceID &type, const WinResourceID &name) {
-	Array<WinResourceID> langList = getLangList(type, name);
+File *PEResources::getResource(const WinResourceID &type, const WinResourceID &id) {
+	Array<WinResourceID> langList = getLangList(type, id);
 
 	if (langList.empty())
 		return 0;
 
-	const Resource &resource = _resources[type][name][langList[0]];
+	const Resource &resource = _resources[type][id][langList[0]];
 	byte *data = (byte *)malloc(resource.size);
 	_exe->seek(resource.offset);
 	_exe->read(data, resource.size);
@@ -233,16 +219,16 @@ File *PEResources::getResource(const WinResourceID &type, const WinResourceID &n
 	return file;
 }
 
-File *PEResources::getResource(const WinResourceID &type, const WinResourceID &name, const WinResourceID &lang) {
+File *PEResources::getResource(const WinResourceID &type, const WinResourceID &id, const WinResourceID &lang) {
 	if (!_exe || !_resources.contains(type))
 		return 0;
 
-	const NameMap &nameMap = _resources[type];
+	const IDMap &idMap = _resources[type];
 
-	if (!nameMap.contains(name))
+	if (!idMap.contains(id))
 		return 0;
 
-	const LangMap &langMap = nameMap[name];
+	const LangMap &langMap = idMap[id];
 
 	if (!langMap.contains(lang))
 		return 0;

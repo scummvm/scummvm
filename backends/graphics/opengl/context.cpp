@@ -82,11 +82,11 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	// We use horrible trickery to silence C++ compilers.
 	// See backends/plugins/sdl/sdl-provider.cpp for more information.
 	assert(sizeof(void (*)()) == sizeof(void *));
-	void *fn = nullptr;
 
-#define LOAD_FUNC(name, loadName) \
-	fn = getProcAddress(#loadName); \
-	memcpy(&g_context.name, &fn, sizeof(fn))
+#define LOAD_FUNC(name, loadName) { \
+	void *fn = getProcAddress(#loadName); \
+	memcpy(&g_context.name, &fn, sizeof(fn)); \
+}
 
 #define GL_EXT_FUNC_DEF(ret, name, param) LOAD_FUNC(name, name)
 
@@ -169,6 +169,10 @@ void OpenGLGraphicsManager::initializeGLContext() {
 
 	case kContextGLES2:
 		debug(5, "OpenGL: GLES2 context initialized");
+		break;
+
+	default:
+		warning("OpenGL: Unknown context initialized");
 		break;
 	}
 

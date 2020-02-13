@@ -329,6 +329,9 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 			else
 				WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
 			break;
+
+		default:
+			break;
 		}
 	}
 }

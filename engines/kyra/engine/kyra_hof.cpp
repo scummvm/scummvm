@@ -71,6 +71,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
 	_mouseX = _mouseY = 0;
+	_asciiCodeEvents = _kbEventSkip = true;
 
 	_nextIdleAnim = 0;
 	_lastIdleScript = -1;
@@ -261,7 +262,8 @@ Common::Error KyraEngine_HoF::go() {
 	_menuDirectlyToLoad &= saveFileLoadable(0);
 
 	if (menuChoice & 1) {
-		startup();
+		if (!shouldQuit())
+			startup();
 		if (!shouldQuit())
 			runLoop();
 		cleanup();
@@ -452,8 +454,8 @@ void KyraEngine_HoF::runLoop() {
 			handleInput(_mouseX, _mouseY);
 		}
 
-		//if (queryGameFlag(0x1EE) && inputFlag)
-		//	sub_13B19(inputFlag);
+		if (queryGameFlag(0x1EE) && inputFlag)
+			processKeyboardSfx(inputFlag);
 
 		_system->delayMillis(10);
 	}
@@ -1192,6 +1194,15 @@ int KyraEngine_HoF::inputSceneChange(int x, int y, int unk1, int unk2) {
 	return refreshNPC;
 }
 
+void KyraEngine_HoF::processKeyboardSfx(int inputFlag) {
+	if ((inputFlag & 0xFF) >= ARRAYSIZE(_keyboardSounds))
+		return;
+	int16 track = _keyboardSounds[inputFlag & 0xFF];
+	if (track == -1)
+		return;
+	snd_playSoundEffect(track);
+}
+
 int KyraEngine_HoF::getCharacterWalkspeed() const {
 	return _timer->getDelay(0);
 }
@@ -1408,6 +1419,16 @@ void KyraEngine_HoF::snd_playVoiceFile(int id) {
 	assert(id >= 0 && id <= 9999999);
 	sprintf(vocFile, "%07d", id);
 	if (_sound->isVoicePresent(vocFile)) {
+		// Unlike the original I have added a timeout here. I have chosen a size that makes sure that it
+		// won't get triggered in bug #11309 or similiar situations, but still avoids infinite hangups
+		// if something goes wrong.
+		uint32 timeout = _system->getMillis() + 5000;
+		while (snd_voiceIsPlaying() && _system->getMillis() < timeout && !skipFlag() && !shouldQuit())
+			delay(10);
+		_chatEndTime += (_system->getMillis() + 5000 - timeout);
+		if (_system->getMillis() >= timeout && !skipFlag())
+			debugC(3, kDebugLevelSound, "KyraEngine_HoF::snd_playVoiceFile(): Speech finish wait timeout");
+
 		snd_stopVoice();
 
 		while (!_sound->voicePlay(vocFile, &_speechHandle)) {
@@ -1436,6 +1457,9 @@ void KyraEngine_HoF::playVoice(int high, int low) {
 }
 
 void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
+	static const uint8 volTable1[] = { 223, 159, 95, 47, 15, 0 };
+	static const uint8 volTable2[] = { 100, 75, 50, 25, 12, 0 };
+
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		if (track == 10)
 			track = _lastSfxTrack;
@@ -1446,9 +1470,21 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 		_lastSfxTrack = track;
 	}
 
-	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
-	if (vocIndex != -1) {
-		_sound->voicePlay(_ingameSoundList[vocIndex], 0, 255, 255, true);
+	if (track == -1)
+		return;
+
+	int16 prio = READ_LE_INT16(&_ingameSoundIndex[track * 2 + 1]);
+	int16 file = READ_LE_INT16(&_ingameSoundIndex[track * 2]);
+	prio = prio <= 0 ? -prio : (prio * volume) >> 8;
+
+	if (file != -1 && _sound->useDigitalSfx()) {
+		for (int i = 0; i < 6; i++) {
+			if (volTable1[i] < volume) {
+				volume = volTable2[i];
+				break;
+			}
+		}
+		_sound->voicePlay(_ingameSoundList[file], 0, volume, prio, true);
 	} else if (_flags.platform == Common::kPlatformDOS) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
 			track = track < _mt32SfxMapSize ? _mt32SfxMap[track] - 1 : -1;
@@ -1458,13 +1494,9 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 			track = track < _pcSpkSfxMapSize ? _pcSpkSfxMap[track] - 1 : -1;
 
 		if (track != -1)
-			KyraEngine_v1::snd_playSoundEffect(track);
-
-		// TODO ?? Maybe there is a way to let users select whether they want
-		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
-		// The PC-98 version has support for non-pcm sound effects, but only for tracks
-		// which also have voc files. The syntax would be:
-		// KyraEngine_v1::snd_playSoundEffect(vocIndex);
+			KyraEngine_v1::snd_playSoundEffect(track, volume);
+	} else if (file != -1) {
+		KyraEngine_v1::snd_playSoundEffect(file);
 	}
 }
 

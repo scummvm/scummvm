@@ -236,6 +236,8 @@ if (true) {
 		}
 		return kTSTerminate;
 
+	default:
+		break;
 	}
 
 	return kTSTerminate;
@@ -324,6 +326,8 @@ void TalkThread::onUnpause() {
 			}
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -367,6 +371,8 @@ uint32 TalkThread::sendMessage(int msgNum, uint32 msgValue) {
 		break;
 	case kMsgClearSequenceId2:
 		_sequenceId2 = 0;
+		break;
+	default:
 		break;
 	}
 	return 0;

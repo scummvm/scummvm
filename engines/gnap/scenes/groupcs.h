@@ -33,89 +33,89 @@ class CutScene;
 class Scene16: public CutScene {
 public:
 	Scene16(GnapEngine *vm);
-	virtual ~Scene16() {}
+	~Scene16() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene471: public CutScene {
 public:
 	Scene471(GnapEngine *vm);
-	virtual ~Scene471() {}
+	~Scene471() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene472: public CutScene {
 public:
 	Scene472(GnapEngine *vm);
-	virtual ~Scene472() {}
+	~Scene472() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene473: public CutScene {
 public:
 	Scene473(GnapEngine *vm);
-	virtual ~Scene473() {}
+	~Scene473() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene474: public CutScene {
 public:
 	Scene474(GnapEngine *vm);
-	virtual ~Scene474() {}
+	~Scene474() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene475: public CutScene {
 public:
 	Scene475(GnapEngine *vm);
-	virtual ~Scene475() {}
+	~Scene475() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene476: public CutScene {
 public:
 	Scene476(GnapEngine *vm);
-	virtual ~Scene476() {}
+	~Scene476() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene477: public CutScene {
 public:
 	Scene477(GnapEngine *vm);
-	virtual ~Scene477() {}
+	~Scene477() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene48: public CutScene {
 public:
 	Scene48(GnapEngine *vm);
-	virtual ~Scene48() {}
+	~Scene48() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene541: public CutScene {
 public:
 	Scene541(GnapEngine *vm);
-	virtual ~Scene541() {}
+	~Scene541() override {}
 
-	virtual int init();
+	int init() override;
 };
 
 class Scene542: public CutScene {
 public:
 	Scene542(GnapEngine *vm);
-	virtual ~Scene542() {}
+	~Scene542() override {}
 
-	virtual int init();
+	int init() override;
 };
 } // End of namespace Gnap
 

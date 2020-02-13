@@ -35,10 +35,10 @@ namespace Pegasus {
 class OpticalChip : public BiochipItem {
 public:
 	OpticalChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
-	virtual ~OpticalChip();
+	~OpticalChip() override;
 
-	virtual void writeToStream(Common::WriteStream *);
-	virtual void readFromStream(Common::ReadStream *);
+	void writeToStream(Common::WriteStream *) override;
+	void readFromStream(Common::ReadStream *) override;
 
 	void addAries();
 	void addMercury();

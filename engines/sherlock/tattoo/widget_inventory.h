@@ -44,10 +44,10 @@ protected:
 	/**
 	* Overriden from base class, since tooltips have a completely transparent background
 	*/
-	virtual void drawBackground() {}
+	void drawBackground() override {}
 public:
 	WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner);
-	virtual ~WidgetInventoryTooltip() {}
+	~WidgetInventoryTooltip() override {}
 
 	/**
 	 * Set the text for the tooltip
@@ -57,7 +57,7 @@ public:
 	/**
 	 * Handle updating the tooltip state
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 class WidgetInventoryVerbs : public WidgetBase {
@@ -70,14 +70,14 @@ public:
 	int _invVerbSelect, _oldInvVerbSelect;
 public:
 	WidgetInventoryVerbs(SherlockEngine *vm, WidgetInventory *owner);
-	virtual ~WidgetInventoryVerbs() {}
+	~WidgetInventoryVerbs() override {}
 
 	void load();
 
 	/**
 	 * Handle updating the tooltip state
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 class WidgetInventory: public WidgetBase {
@@ -113,7 +113,7 @@ public:
 	Common::String _verb;
 public:
 	WidgetInventory(SherlockEngine *vm);
-	virtual ~WidgetInventory() {}
+	~WidgetInventory() override {}
 
 	/**
 	 * Load the inventory window
@@ -133,22 +133,22 @@ public:
 	/**
 	 * Handle events whilst the widget is on-screen
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 
 	/**
 	 * Close a currently active menu
 	 */
-	virtual void banishWindow();
+	void banishWindow() override;
 
 	/**
 	 * Erase any previous display of the widget on the screen
 	 */
-	virtual void erase();
+	void erase() override;
 
 	/**
 	 * Update the display of the widget on the screen
 	 */
-	virtual void draw();
+	void draw() override;
 };
 
 } // End of namespace Tattoo

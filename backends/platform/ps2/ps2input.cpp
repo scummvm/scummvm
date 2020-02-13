@@ -102,7 +102,7 @@ int Ps2Input::mapKey(int key, int mod) { // copied from sdl backend
 		return key;
 	} else if (key >= 'a' && key <= 'z' && mod & Common::KBD_SHIFT) {
 		return key & ~0x20;
-	} else if (key >= Common::KEYCODE_NUMLOCK && key <= Common::KEYCODE_EURO) {
+	} else if (key >= Common::KEYCODE_NUMLOCK && key < Common::KEYCODE_LAST) {
 		return 0;
 	}
 	return key;

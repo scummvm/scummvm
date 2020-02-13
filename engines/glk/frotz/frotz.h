@@ -39,12 +39,12 @@ protected:
 	/**
 	 * Setup the video mode
 	 */
-	virtual void initGraphicsMode();
+	void initGraphicsMode() override;
 
 	/**
 	 * Create the screen class
 	 */
-	virtual Screen *createScreen() override;
+	Screen *createScreen() override;
 public:
 	/**
 	 * Constructor
@@ -54,7 +54,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Frotz();
+	~Frotz() override;
 
 	/**
 	 * Initialization
@@ -64,22 +64,33 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_FROTZ; }
+	InterpreterType getInterpreterType() const override { return INTERPRETER_FROTZ; }
 
 	/**
 	 * Execute the game
 	 */
-	virtual void runGame() override;
+	void runGame() override;
 
 	/**
-	 * Load a savegame from the passed stream
+	 * Load a savegame from a given slot
 	 */
-	virtual Common::Error loadGameData(strid_t file) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
-	 * Save the game to the passed stream
+	 * Save the game to a given slot
 	 */
-	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+
+	/**
+	 * Loading method not used for Frotz sub-engine
+	 */
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override { return Common::kReadingFailed; }
+
+	/**
+	 * Saving method not used for Frotz sub-engine
+	 */
+	Common::Error writeGameData(Common::WriteStream *ws) override { return Common::kWritingFailed; }
+
 };
 
 extern Frotz *g_vm;

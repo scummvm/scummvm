@@ -95,7 +95,7 @@ private:
 
 public:
 	PackageManager(Kernel *pKernel);
-	~PackageManager();
+	~PackageManager() override;
 
 	enum FILE_TYPES {
 		FT_DIRECTORY    = (1 << 0),

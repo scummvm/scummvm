@@ -23,6 +23,8 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/error.h"
 
 #include "sci/sci.h"
 #include "sci/console.h"
@@ -72,6 +74,8 @@ void SciMusic::init() {
 #ifdef ENABLE_SCI32
 	if (g_sci->_features->generalMidiOnly()) {
 		deviceFlags = MDT_MIDI;
+	} else if (platform == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
+		deviceFlags = MDT_MIDI;
 	} else {
 #endif
 		deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
@@ -84,8 +88,9 @@ void SciMusic::init() {
 	if (g_sci->_features->useAltWinGMSound())
 		deviceFlags |= MDT_PREFER_GM;
 
-	// Currently our CMS implementation only supports SCI1(.1)
-	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_1)
+	// SCI_VERSION_0_EARLY games apparently don't support the CMS. At least there
+	// is no patch resource 101 and I also haven't seen any CMS driver file so far.
+	if (getSciVersion() > SCI_VERSION_0_EARLY && getSciVersion() <= SCI_VERSION_1_1)
 		deviceFlags |= MDT_CMS;
 
 	if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
@@ -152,6 +157,23 @@ void SciMusic::init() {
 			// of the Adlib driver (adl.drv) that it includes is unsupported. That demo
 			// doesn't have any sound anyway, so this shouldn't be fatal.
 		} else {
+			const char *missingFiles = _pMidiDrv->reportMissingFiles();
+			if (missingFiles) {
+				Common::String message = _(
+					"The selected audio driver requires the following file(s):\n\n"
+				);
+				message += missingFiles;
+				message += _("\n\n"
+					"Some audio drivers (at least for some games) were made\n"
+					"available by Sierra as aftermarket patches and thus might not\n"
+					"have been installed as part of the original game setup.\n\n"
+					"Please copy these file(s) into your game data directory.\n\n"
+					"However, please note that the file(s) might not be available\n"
+					"separately but only as content of (patched) resource bundles.\n"
+					"In that case you may need to apply the original Sierra patch.\n\n"
+				);
+				::GUI::displayErrorDialog(message.c_str());
+			}
 			error("Failed to initialize sound driver");
 		}
 	}

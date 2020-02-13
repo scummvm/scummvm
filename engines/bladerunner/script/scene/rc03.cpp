@@ -25,8 +25,8 @@
 namespace BladeRunner {
 
 enum kRC03Loops {
-	kRC03LoopInshot   = 0,
-	kRC03LoopMainLoop = 1
+	kRC03LoopInshot   = 0, // frames:  0 -  59
+	kRC03LoopMainLoop = 1  // frames: 60 - 120
 };
 
 void SceneScriptRC03::InitializeScene() {
@@ -51,7 +51,12 @@ void SceneScriptRC03::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1,   0, 0,  30, 479, 3);
 	if (Game_Flag_Query(kFlagRC03UnlockedToUG01)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Scene_Exit_Add_2D_Exit(2, 524, 350, 573, 359, 2);
+#else
+	// prevent Izo's corpse from blocking the exit hot-spot area
+		Scene_Exit_Add_2D_Exit(2, 524, 340, 573, 359, 2);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	Scene_Exit_Add_2D_Exit(3,  85, 255, 112, 315, 0);
 	Scene_Exit_Add_2D_Exit(4, 428, 260, 453, 324, 0);
@@ -90,6 +95,15 @@ void SceneScriptRC03::InitializeScene() {
 		if (Random_Query(1, 3) == 1) {
 			// enhancement: don't always play this scene when exiting Hawker's Circle
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kRC03LoopInshot, false);
+			// Pause generic walkers while special loop is playing
+			// to prevent glitching over background (walkers coming from Hawker's Circle)
+			// This is done is a similar way to CT01
+#if !BLADERUNNER_ORIGINAL_BUGS
+			Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
+			Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
+			Actor_Set_Goal_Number(kActorGenwalkerC, kGoalGenwalkerDefault);
+			Global_Variable_Set(kVariableGenericWalkerConfig, -1);
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 		}
 	}
 	Scene_Loop_Set_Default(kRC03LoopMainLoop);
@@ -124,6 +138,10 @@ void SceneScriptRC03::SceneLoaded() {
 	Unclickable_Object("BOX-BBCOLUMN02");
 	Unclickable_Object("BOX-BBCOLUMN03");
 	Unclickable_Object("BOX-BBCOLUMN04");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("PARKING METER 01");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Unclickable_Object("PARKING METER 02");
 	Unclickable_Object("PARKING METER 03");
 	Unclickable_Object("TRASH CAN WITH FIRE");
@@ -249,6 +267,15 @@ void SceneScriptRC03::SceneFrameAdvanced(int frame) {
 	if (frame == 15) {
 		Sound_Play(kSfxCHEVBY1,  Random_Query(50, 50), -100, 100, 50);
 	}
+#if !BLADERUNNER_ORIGINAL_BUGS
+	if (frame == 59) {
+		// end of special loop
+		// Resume walkers
+		if (Global_Variable_Query(kVariableGenericWalkerConfig) < 0 ) {
+			Global_Variable_Set(kVariableGenericWalkerConfig, 2);
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL
 }
 
 void SceneScriptRC03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -284,17 +311,48 @@ void SceneScriptRC03::PlayerWalkedIn() {
 			Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 			Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
 			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeCombatIdle);
-			Actor_Says_With_Pause(kActorIzo, 630, 0, -1);
-			Actor_Says_With_Pause(kActorIzo, 640, 0, -1);
-			Actor_Says_With_Pause(kActorIzo, 650, 0, -1);
+			Actor_Says_With_Pause(kActorIzo, 630, 0.0f, -1); // TODO: A bug? why is animation mode set as -1? and why is "With_Pause" version used?
+			Actor_Says_With_Pause(kActorIzo, 640, 0.0f, -1); // TODO: A bug? why is animation mode set as -1? and why is "With_Pause" version used?
+			Actor_Says_With_Pause(kActorIzo, 650, 0.0f, -1); // TODO: A bug? why is animation mode set as -1? and why is "With_Pause" version used?
 			if (Game_Flag_Query(kFlagIzoIsReplicant) ) {
+#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+#else
+				// prevent re-apprehending of Izo
+				if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDie
+				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDieHidden
+				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoRC03RanAwayDone
+				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation
+				) {
+					Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDodge);
 			Loop_Actor_Walk_To_XYZ(kActorIzo, 180.0f, -4.0f, 184.0f, 0, false, false, false);
-			Actor_Change_Animation_Mode(kActorIzo, 6);
+			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeCombatAttack);
 			if (!Game_Flag_Query(kFlagIzoIsReplicant)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+#else
+				// prevent re-apprehending of Izo
+				if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGetArrested
+				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
+				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoRC03RanAwayDone
+				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleApprehendIzo
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleArrestIzo
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation
+				) {
+					Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 			Player_Gains_Control();
 		} else {

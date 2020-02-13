@@ -364,6 +364,17 @@ void AIScriptSteele::ClickedByPlayer() {
 		return; //true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (goal == kGoalSteeleApprehendIzo
+	    || goal == kGoalSteeleArrestIzo
+	    || goal == kGoalSteeleShootIzo
+	) {
+		// don't interrupt Steele before she apprehends Izo
+		return; //true;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	AI_Movement_Track_Pause(kActorSteele);
 	Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 	Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
@@ -448,6 +459,10 @@ void AIScriptSteele::EnteredScene(int sceneId) {
 	 &&  Actor_Query_In_Set(kActorSteele, kSetCT03_CT04)
 	 &&  Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
 	 && !Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	 && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
 	) {
 		Game_Flag_Set(kFlagCT04HomelessBodyFound);
@@ -508,28 +523,42 @@ int AIScriptSteele::GetFriendlinessModifierIfGetsClue(int otherActorId, int clue
 
 	switch (clueId) {
 	case kClueMcCoyRecoveredHoldensBadge:
+		// fall through
 	case kClueMcCoyRetiredLucy:
+		// fall through
 	case kClueMcCoyRetiredDektora:
+		// fall through
 	case kClueMcCoyRetiredSadik:
+		// fall through
 	case kClueMcCoyShotZubenInTheBack:
+		// fall through
 	case kClueMcCoyRetiredLutherLance:
+		// fall through
 	case kClueClovisOrdersMcCoysDeath:
+		// fall through
 	case kClueMcCoyIsKind:
+		// fall through
 	case kClueMcCoyIsInsane:
 		return 5;
 
 	case kClueMcCoyKilledRunciter1:
+		// fall through
 	case kClueMcCoyShotGuzza:
+		// fall through
 	case kClueMcCoyKilledRunciter2:
-		return 0;
+		return 0; // TODO shouldn't this be a negative number?
 
 	case kClueMcCoyLetZubenEscape:
 		return -4;
 
 	case kClueMcCoyWarnedIzo:
+		// fall through
 	case kClueMcCoyHelpedIzoIzoIsAReplicant:
+		// fall through
 	case kClueMcCoyHelpedDektora:
+		// fall through
 	case kClueMcCoyHelpedLucy:
+		// fall through
 	case kClueMcCoyHelpedGordo:
 		return -5;
 
@@ -741,6 +770,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalSteeleShootIzo:
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Sound_Play(kSfxSMCAL3, 100, 0, 0, 50);
+		// Scene_Exits_Enable() is done in Izo's kGoalIzoDie - CompletedMovementTrack() case
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoDie);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
@@ -761,7 +791,9 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 		Actor_Says(kActorSteele, 1930, kAnimationModeTalk);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleLeaveRC03);
-		Player_Gains_Control();
+#if BLADERUNNER_ORIGINAL_BUGS
+		Player_Gains_Control(); // redundant - causes "WARNING: Unbalanced call to BladeRunnerEngine::playerGainsControl"
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 
 	case kGoalSteeleArrestIzo:
@@ -769,7 +801,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Face_Actor(kActorSteele, kActorIzo, true);
 		Actor_Change_Animation_Mode(kActorIzo, kAnimationModeIdle);
 		Actor_Face_Actor(kActorIzo, kActorSteele, true);
-		Actor_Says_With_Pause(kActorSteele, 2010, 0.0, kAnimationModeCombatIdle);
+		Actor_Says_With_Pause(kActorSteele, 2010, 0.0f, kAnimationModeCombatIdle);
 		Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
 		Loop_Actor_Walk_To_Actor(kActorSteele, kActorIzo, 60, false, false);
 		Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
@@ -798,9 +830,12 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorSteele, 2140, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 4850, kAnimationModeTalk);
 		Actor_Says(kActorSteele, 2150, kAnimationModeTalk);
+		// Scene_Exits_Enable() is done in Izo's kGoalIzoGetArrested - CompletedMovementTrack() case
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoGetArrested);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleLeaveRC03);
-		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleDefault);
+#if BLADERUNNER_ORIGINAL_BUGS
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleDefault); // TODO - a bug? why set to default here?
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 
 	case kGoalSteeleIzoBlockedByMcCoy:
@@ -886,7 +921,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		switch (Actor_Query_Goal_Number(kActorDektora)) {
 		case kGoalDektoraNR11Hiding:
 			Actor_Face_Heading(kActorMcCoy, 954, false);
-			Actor_Change_Animation_Mode(kActorSteele, 4);
+			Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
 			Delay(2000);
 			Actor_Says(kActorSteele, 1700, 58);
 			Actor_Says(kActorMcCoy, 3800, 3);
@@ -2311,9 +2346,9 @@ void AIScriptSteele::SetAnimationState(int animationState, int animationFrame, i
 bool AIScriptSteele::ReachedMovementTrackWaypoint(int waypointId) {
 	if (waypointId == 174
 	 && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleLeaveRC03
-	)
+	) {
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleGoToPoliceStation);
-
+	}
 	return true;
 }
 

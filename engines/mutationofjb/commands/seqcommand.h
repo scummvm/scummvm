@@ -30,7 +30,7 @@ namespace MutationOfJB {
 
 class SeqCommandParser : public CommandParser {
 public:
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
+	void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
 };
 
 /**
@@ -40,7 +40,7 @@ class SeqCommand : public Command {
 public:
 	SeqCommand() : _nextCommand(nullptr) {}
 	void setNextCommand(Command *nextCommand);
-	virtual Command *next() const override;
+	Command *next() const override;
 
 private:
 	Command *_nextCommand;

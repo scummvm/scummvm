@@ -102,27 +102,27 @@ private:
 protected:
 	GamePhantom(MADSEngine *vm);
 
-	virtual void startGame();
+	void startGame() override;
 
-	virtual void initializeGlobals();
+	void initializeGlobals() override;
 
-	virtual void setSectionHandler();
+	void setSectionHandler() override;
 
-	virtual void checkShowDialog();
+	void checkShowDialog() override;
 public:
 	PhantomGlobals _globals;
 	Difficulty _difficulty;
 
 
-	virtual Globals &globals() { return _globals; }
+	Globals &globals() override { return _globals; }
 
-	virtual void doObjectAction();
+	void doObjectAction() override;
 
-	virtual void unhandledAction();
+	void unhandledAction() override;
 
-	virtual void step();
+	void step() override;
 
-	virtual void synchronize(Common::Serializer &s, bool phase1);
+	void synchronize(Common::Serializer &s, bool phase1) override;
 
 	void setupCatacombs();
 	void enterCatacombs(bool val);
@@ -137,9 +137,9 @@ class Section1Handler : public SectionHandler {
 public:
 	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
 
-	virtual void preLoadSection() {}
-	virtual void sectionPtr2() {}
-	virtual void postLoadSection() {}
+	void preLoadSection() override {}
+	void sectionPtr2() override {}
+	void postLoadSection() override {}
 };
 
 typedef Section1Handler Section2Handler;

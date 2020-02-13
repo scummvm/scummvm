@@ -32,7 +32,7 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 
-#include "backends/platform/android/jni.h"
+#include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/asset-archive.h"
 
 #include <android/asset_manager.h>
@@ -71,6 +71,9 @@ AssetInputStream::AssetInputStream(AAssetManager *as, const Common::String &path
 }
 
 AssetInputStream::~AssetInputStream() {
+	if (_asset != NULL) {
+		AAsset_close(_asset);
+	}
 }
 
 void AssetInputStream::close() {

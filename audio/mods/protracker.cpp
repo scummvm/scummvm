@@ -398,7 +398,11 @@ void ProtrackerStream::updateEffects() {
 						_track[track].vol = _module.sample[_track[track].sample - 1].vol;
 				}
 				break;
+			default:
+				break;
 			}
+			break;
+		default:
 			break;
 		}
 	}

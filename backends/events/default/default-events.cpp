@@ -28,8 +28,9 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "backends/events/default/default-events.h"
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/remap-dialog.h"
+#include "backends/keymapper/remap-widget.h"
 #include "backends/vkeybd/virtual-keyboard.h"
 
 #include "engines/engine.h"
@@ -41,7 +42,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_shouldQuit(false),
 	_shouldRTL(false),
 	_confirmExitDialogActive(false),
-	_shouldGenerateKeyRepeatEvents(true) {
+	_shouldGenerateKeyRepeatEvents(false) {
 
 	assert(boss);
 
@@ -56,14 +57,10 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 #ifdef ENABLE_VKEYBD
 	_vk = nullptr;
 #endif
-#ifdef ENABLE_KEYMAPPER
 	_keymapper = new Common::Keymapper(this);
 	// EventDispatcher will automatically free the keymapper
 	_dispatcher.registerMapper(_keymapper);
 	_remap = false;
-#else
-	_dispatcher.registerMapper(new Common::DefaultEventMapper());
-#endif
 }
 
 DefaultEventManager::~DefaultEventManager() {
@@ -169,20 +166,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		}
 		break;
 #endif
-#ifdef ENABLE_KEYMAPPER
-	case Common::EVENT_KEYMAPPER_REMAP:
-		if (!_remap) {
-			_remap = true;
-			Common::RemapDialog _remapDialog;
-			if (g_engine)
-				g_engine->pauseEngine(true);
-			_remapDialog.runModal();
-			if (g_engine)
-				g_engine->pauseEngine(false);
-			_remap = false;
-		}
-		break;
-#endif
 	case Common::EVENT_RTL:
 		if (ConfMan.getBool("confirm_exit")) {
 			if (g_engine)
@@ -281,15 +264,32 @@ void DefaultEventManager::purgeMouseEvents() {
 	while (!_eventQueue.empty()) {
 		Common::Event event = _eventQueue.pop();
 		switch (event.type) {
-		case Common::EVENT_MOUSEMOVE:
+		// Update button state even when purging events to avoid desynchronisation with real button state
 		case Common::EVENT_LBUTTONDOWN:
+			_mousePos = event.mouse;
+			_buttonState |= LBUTTON;
+			break;
+
 		case Common::EVENT_LBUTTONUP:
+			_mousePos = event.mouse;
+			_buttonState &= ~LBUTTON;
+			break;
+
 		case Common::EVENT_RBUTTONDOWN:
+			_mousePos = event.mouse;
+			_buttonState |= RBUTTON;
+			break;
+
 		case Common::EVENT_RBUTTONUP:
+			_mousePos = event.mouse;
+			_buttonState &= ~RBUTTON;
+			break;
+
 		case Common::EVENT_WHEELUP:
 		case Common::EVENT_WHEELDOWN:
 		case Common::EVENT_MBUTTONDOWN:
 		case Common::EVENT_MBUTTONUP:
+		case Common::EVENT_MOUSEMOVE:
 			// do nothing
 			break;
 		default:
@@ -298,6 +298,56 @@ void DefaultEventManager::purgeMouseEvents() {
 		}
 	}
 	_eventQueue = filteredQueue;
+}
+
+Common::Keymap *DefaultEventManager::getGlobalKeymap() {
+	using namespace Common;
+
+	// Now create the global keymap
+	Keymap *globalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName, _("Global"));
+
+	Action *act;
+	act = new Action("MENU", _("Global Main Menu"));
+	act->addDefaultInputMapping("C+F5");
+	act->addDefaultInputMapping("JOY_START");
+	act->setEvent(EVENT_MAINMENU);
+	globalKeymap->addAction(act);
+
+#ifdef ENABLE_VKEYBD
+	act = new Action("VIRT", _("Display keyboard"));
+	act->addDefaultInputMapping("C+F7");
+	act->addDefaultInputMapping("JOY_BACK");
+	act->setEvent(EVENT_VIRTUAL_KEYBOARD);
+	globalKeymap->addAction(act);
+#endif
+
+	act = new Action("MUTE", _("Toggle mute"));
+	act->addDefaultInputMapping("C+u");
+	act->setEvent(EVENT_MUTE);
+	globalKeymap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setEvent(EVENT_QUIT);
+
+#if defined(MACOSX)
+	// On Macintosh, Cmd-Q quits
+	act->addDefaultInputMapping("M+q");
+#elif defined(POSIX)
+	// On other *nix systems, Control-Q quits
+	act->addDefaultInputMapping("C+q");
+#else
+	// Ctrl-z quits
+	act->addDefaultInputMapping("C+z");
+
+#ifdef WIN32
+	// On Windows, also use the default Alt-F4 quit combination
+	act->addDefaultInputMapping("A+F4");
+#endif
+#endif
+
+	globalKeymap->addAction(act);
+
+	return globalKeymap;
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

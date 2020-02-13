@@ -106,7 +106,7 @@ friend class Notification;
 
 public:
 	NotificationManager();
-	virtual ~NotificationManager();
+	~NotificationManager() override;
 
 	void checkNotifications();
 

@@ -223,38 +223,38 @@ public:
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
-	virtual void addResponse(int id);
+	void addResponse(int id) override;
 
 	/**
 	 * Chooses and adds a conversation response based on a specified tag Id.
 	 * This default implementation does a lookup into a list of known tags,
 	 * and chooses a random dialogue Id from the available ones for that tag
 	 */
-	virtual int chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag);
+	int chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) override;
 
 	/**
 	 * Does NPC specific processing of the parsed sentence
 	 */
-	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence);
+	int process(const TTroomScript *roomScript, const TTsentence *sentence) override;
 
-	virtual int proc8() const;
+	int proc8() const override;
 
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(uint id) {
+	ScriptChangedResult scriptChanged(uint id) override {
 		return SCR_2;
 	}
 
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id) {
+	ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id) override {
 		return SCR_2;
 	}
 
-	virtual int proc11() const;
-	virtual int proc12() const;
+	int proc11() const override;
+	int proc12() const override;
 
 	/**
 	 * Translate a passed Id to a dialogue Id if necessary,

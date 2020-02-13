@@ -78,7 +78,7 @@ public:
 
 public:
 	INIFile();
-	~INIFile();
+	~INIFile() {}
 
 	// TODO: Maybe add a copy constructor etc.?
 
@@ -88,7 +88,7 @@ public:
 	 * underscores. In particular, white space and "#", "=", "[", "]"
 	 * are not valid!
 	 */
-	static bool isValidName(const String &name);
+	bool isValidName(const String &name) const;
 
 	/** Reset everything stored in this ini file. */
 	void	clear();
@@ -115,8 +115,11 @@ public:
 
 	void listKeyValues(StringMap &kv);
 
+	void allowNonEnglishCharacters();
+
 private:
 	SectionList _sections;
+	bool _allowNonEnglishCharacters;
 
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;

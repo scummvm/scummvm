@@ -158,7 +158,7 @@ public:
 		return val >= f.val;
 	}
 
-	void saveLoadWithSerializer(Common::Serializer &ser) {
+	void saveLoadWithSerializer(Common::Serializer &ser) override {
 		if (totalBits == 16)
 			ser.syncAsSint16LE(val);
 		else if (totalBits == 32)

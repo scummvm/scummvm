@@ -139,7 +139,7 @@ void Debugger::debugPrintColumns(const Common::StringArray &list) {
 		for (j = 0; j < columns; j++) {
 			uint pos = i + j * lines;
 			if (pos < list.size()) {
-				debugPrintf("%*s", -columnWidth, list[pos].c_str());
+				debugPrintf("%*s", -1 * columnWidth, list[pos].c_str());
 			}
 		}
 		debugPrintf("\n");
@@ -403,6 +403,8 @@ void Debugger::splitCommand(Common::String &input, int &argc, const char **argv)
 		c = (byte)*p;
 
 		switch (state) {
+		default:
+			// fallthrough intended
 		case DULL:
 			// not in a word, not in a double quoted string
 			if (isspace(c))

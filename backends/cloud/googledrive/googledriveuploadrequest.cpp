@@ -55,7 +55,7 @@ void GoogleDriveUploadRequest::start() {
 		_workingRequest->finish();
 	if (_contentsStream == nullptr || !_contentsStream->seek(0)) {
 		warning("GoogleDriveUploadRequest: cannot restart because stream couldn't seek(0)");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "GoogleDriveUploadRequest::start: couldn't restart because failed to seek(0)", -1));
 		return;
 	}
 	_resolvedId = ""; //used to update file contents
@@ -146,33 +146,31 @@ void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse resp
 	if (_ignoreCallback)
 		return;
 
-	Networking::ErrorResponse error(this, false, true, "", -1);
+	Networking::ErrorResponse error(this, false, true, "GoogleDriveUploadRequest::startUploadCallback", -1);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
 			long code = stream->httpResponseCode();
-			Common::String headers = stream->responseHeaders();
 			if (code == 200) {
-				const char *cstr = headers.c_str();
-				const char *position = strstr(cstr, "Location: ");
-
-				if (position) {
-					Common::String result = "";
-					char c;
-					for (const char *i = position + 10; c = *i, c != 0; ++i) {
-						if (c == '\n' || c == '\r')
-							break;
-						result += c;
-					}
-					_uploadUrl = result;
+				Common::HashMap<Common::String, Common::String> headers = stream->responseHeadersMap();
+				if (headers.contains("location")) {
+					_uploadUrl = headers["location"];
 					uploadNextPart();
 					return;
+				} else {
+					error.response += ": response must provide Location header, but it's not there";
 				}
+			} else {
+				error.response += ": response is not 200 OK";
 			}
 
 			error.httpResponseCode = code;
+		} else {
+			error.response += ": missing response stream [improbable]";
 		}
+	} else {
+		error.response += ": missing request object [improbable]";
 	}
 
 	Common::JSONValue *json = response.value;
@@ -202,7 +200,7 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 	if (oldPos != _serverReceivedBytes) {
 		if (!_contentsStream->seek(_serverReceivedBytes)) {
 			warning("GoogleDriveUploadRequest: cannot upload because stream couldn't seek(%lu)", _serverReceivedBytes);
-			finishError(Networking::ErrorResponse(this, false, true, "", -1));
+			finishError(Networking::ErrorResponse(this, false, true, "GoogleDriveUploadRequest::uploadNextPart: seek() didn't work", -1));
 			return;
 		}
 		oldPos = _serverReceivedBytes;
@@ -230,25 +228,19 @@ bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream
 	if (stream->httpResponseCode() != 308)
 		return false; //seriously
 
-	Common::String headers = stream->responseHeaders();
-	const char *cstr = headers.c_str();
-	for (int rangeTry = 0; rangeTry < 2; ++rangeTry) {
-		const char *needle = (rangeTry == 0 ? "Range: 0-" : "Range: bytes=0-");
-		uint32 needleLength = (rangeTry == 0 ? 9 : 15);
+	Common::HashMap<Common::String, Common::String> headers = stream->responseHeadersMap();
+	if (headers.contains("range")) {
+		Common::String range = headers["range"];
+		for (int rangeTry = 0; rangeTry < 2; ++rangeTry) {
+			const char *needle = (rangeTry == 0 ? "0-" : "bytes=0-"); //if it lost the first part, I refuse to talk with it
+			uint32 needleLength = (rangeTry == 0 ? 2 : 8);
 
-		const char *position = strstr(cstr, needle); //if it lost the first part, I refuse to talk with it
-
-		if (position) {
-			Common::String result = "";
-			char c;
-			for (const char *i = position + needleLength; c = *i, c != 0; ++i) {
-				if (c == '\n' || c == '\r')
-					break;
-				result += c;
+			if (range.hasPrefix(needle)) {
+				range.erase(0, needleLength);
+				_serverReceivedBytes = range.asUint64() + 1;
+				uploadNextPart();
+				return true;
 			}
-			_serverReceivedBytes = result.asUint64() + 1;
-			uploadNextPart();
-			return true;
 		}
 	}
 

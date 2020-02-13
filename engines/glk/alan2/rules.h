@@ -23,27 +23,14 @@
 #ifndef GLK_ALAN2_RULES
 #define GLK_ALAN2_RULES
 
-#include "common/stack.h"
-#include "glk/alan2/alan2.h"
-#include "glk/alan2/types.h"
+/* Header file for rules handler in Alan interpreter */
 
 namespace Glk {
 namespace Alan2 {
 
-class Interpreter;
+/* TYPES */
 
-class Rules {
-public:
-	Rules(RulElem *rules, Alan2Stack *stack, Interpreter *interpreter) : _ruls(rules), _stack(stack), _interpreter(interpreter) {}
-	void parseRules();
-
-private:
-	bool endOfTable(RulElem *addr);
-
-	RulElem *_ruls;
-	Alan2Stack *_stack;
-	Interpreter *_interpreter;
-};
+extern void rules(void);
 
 } // End of namespace Alan2
 } // End of namespace Glk

@@ -75,18 +75,18 @@ class MoviePlayerDXA : public MoviePlayer, Video::DXADecoder {
 public:
 	MoviePlayerDXA(AGOSEngine_Feeble *vm, const char *name);
 
-	bool load();
-	void playVideo();
-	void nextFrame();
-	virtual void stopVideo();
+	bool load() override;
+	void playVideo() override;
+	void nextFrame() override;
+	void stopVideo() override;
 
 protected:
-	void readSoundData(Common::SeekableReadStream *stream);
+	void readSoundData(Common::SeekableReadStream *stream) override;
 
 private:
-	void handleNextFrame();
-	bool processFrame();
-	void startSound();
+	void handleNextFrame() override;
+	bool processFrame() override;
+	void startSound() override;
 	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
 };
 
@@ -94,15 +94,15 @@ class MoviePlayerSMK : public MoviePlayer, Video::SmackerDecoder {
 public:
 	MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name);
 
-	bool load();
-	void playVideo();
-	void nextFrame();
-	virtual void stopVideo();
+	bool load() override;
+	void playVideo() override;
+	void nextFrame() override;
+	void stopVideo() override;
 
 private:
-	void handleNextFrame();
-	bool processFrame();
-	void startSound();
+	void handleNextFrame() override;
+	bool processFrame() override;
+	void startSound() override;
 	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
 };
 

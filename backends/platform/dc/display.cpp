@@ -35,7 +35,8 @@
 #define OVL_H 200
 #define OVL_TXSTRIDE 512
 
-#define TOP_OFFSET (_top_offset+_yscale*_current_shake_pos)
+#define LEFT_OFFSET (_xscale*_current_shake_x_pos)
+#define TOP_OFFSET (_top_offset+_yscale*_current_shake_y_pos)
 
 static const struct {
   Graphics::PixelFormat pixelFormat;
@@ -320,9 +321,10 @@ void OSystem_Dreamcast::setMouseCursor(const void *buf, uint w, uint h,
   memcpy(_ms_buf, buf, w * h);
 }
 
-void OSystem_Dreamcast::setShakePos(int shake_pos)
+void OSystem_Dreamcast::setShakePos(int shake_x_pos, int shake_y_pos)
 {
-  _current_shake_pos = shake_pos;
+  _current_shake_x_pos = shake_x_pos;
+  _current_shake_y_pos = shake_y_pos;
 }
 
 void OSystem_Dreamcast::updateScreenTextures(void)
@@ -406,7 +408,7 @@ void OSystem_Dreamcast::updateScreenPolygons(void)
   myvertex.u = 0.0;
   myvertex.v = 0.0;
 
-  myvertex.x = 0.0;
+  myvertex.x = LEFT_OFFSET;
   myvertex.y = TOP_OFFSET;
   ta_commit_list(&myvertex);
 
@@ -461,7 +463,7 @@ void OSystem_Dreamcast::updateScreenPolygons(void)
     myvertex.u = 0.0;
     myvertex.v = 0.0;
 
-    myvertex.x = _overlay_x*_xscale;
+    myvertex.x = _overlay_x*_xscale+LEFT_OFFSET;
     myvertex.y = _overlay_y*_yscale+TOP_OFFSET;
     ta_commit_list(&myvertex);
 
@@ -600,7 +602,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   myvertex.u = 0.0;
   myvertex.v = 0.0;
 
-  myvertex.x = (xdraw-_ms_hotspot_x)*_xscale;
+  myvertex.x = (xdraw-_ms_hotspot_x)*_xscale + LEFT_OFFSET;
   myvertex.y = (ydraw-_ms_hotspot_y)*_yscale + TOP_OFFSET;
   ta_commit_list(&myvertex);
 
@@ -623,7 +625,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
 void OSystem_Dreamcast::mouseToSoftKbd(int x, int y, int &rx, int &ry) const
 {
   if (_softkbd_motion) {
-    rx = (int)(x*_xscale - (330.0*sin(0.013*_softkbd_motion) - 320.0));
+    rx = (int)(x*_xscale - (330.0*sin(0.013*_softkbd_motion) + LEFT_OFFSET - 320.0));
     ry = (int)(y*_yscale + TOP_OFFSET - 200.0);
   } else {
     rx = -1;
@@ -678,32 +680,6 @@ void OSystem_Dreamcast::copyRectToOverlay(const void *buf, int pitch,
     src += pitch;
   } while (--h);
   _overlay_dirty = true;
-}
-
-
-static const OSystem::GraphicsMode gfxmodes[] = {
-  { "default", "640x480 16bpp", 0 },
-  { NULL, NULL, 0 }
-};
-
-const OSystem::GraphicsMode *OSystem_Dreamcast::getSupportedGraphicsModes() const
-{
-  return gfxmodes;
-}
-
-int OSystem_Dreamcast::getDefaultGraphicsMode() const
-{
-  return 0;
-}
-
-bool OSystem_Dreamcast::setGraphicsMode(int mode)
-{
-  return mode == 0;
-}
-
-int OSystem_Dreamcast::getGraphicsMode() const
-{
-  return 0;
 }
 
 Graphics::Surface *OSystem_Dreamcast::lockScreen()

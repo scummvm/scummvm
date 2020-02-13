@@ -391,6 +391,8 @@ void AGOSEngine_PN::opn_opcode31() {
 			// NOTE: Is this case ever used?
 			error("opn_opcode31: case 2");
 			break;
+		default:
+			break;
 	}
 
 	if (slot == -1) {
@@ -430,6 +432,8 @@ void AGOSEngine_PN::opn_opcode32() {
 		case 2:
 			// NOTE: Is this case ever used?
 			error("opn_opcode32: case 2");
+			break;
+		default:
 			break;
 	}
 

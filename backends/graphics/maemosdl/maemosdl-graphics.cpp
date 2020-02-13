@@ -24,7 +24,6 @@
 #include "common/scummsys.h"
 
 #include "backends/platform/maemo/maemo.h"
-#include "backends/events/maemosdl/maemosdl-events.h"
 #include "backends/graphics/maemosdl/maemosdl-graphics.h"
 
 MaemoSdlGraphicsManager::MaemoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
@@ -36,8 +35,7 @@ bool MaemoSdlGraphicsManager::loadGFXMode() {
 
 	// fix the problematic zoom key capture in Maemo5/N900
 	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if (SDL_GetWMInfo(&info)) {
+	if (_window->getSDLWMInformation(&info)) {
 		Display *dpy = info.info.x11.display;
 		Window win;
 		unsigned long val = 1;

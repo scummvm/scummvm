@@ -37,6 +37,7 @@ namespace BladeRunner {
 
 static const PlainGameDescriptor bladeRunnerGames[] = {
 	{"bladerunner", "Blade Runner"},
+	{"bladerunner-final", "Blade Runner with restored content"},
 	{0, 0}
 };
 
@@ -60,12 +61,21 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
-		GAMEOPTION_CUT_CONTENT,
+		GAMEOPTION_FRAMELIMITER_NODELAYMILLIS,
 		{
-			_s("Restore cut content"),
-			_s("Restore content which was cut from the original game"),
-			"cutcontent",
-			true
+			_s("Frame limiter high performance mode"),
+			_s("This mode may result in high CPU usage! It avoids use of delayMillis() function."),
+			"nodelaymillisfl",
+			false
+		}
+	},
+	{
+		GAMEOPTION_FRAMELIMITER_FPS,
+		{
+			_s("Max frames per second limit"),
+			_s("This mode targets a maximum of 120 fps. When disabled, the game targets 60 fps"),
+			"frames_per_secondfl",
+			false
 		}
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
@@ -77,6 +87,7 @@ class BladeRunnerMetaEngine : public AdvancedMetaEngine {
 public:
 	BladeRunnerMetaEngine();
 
+	const char *getEngineId() const override;
 	const char *getName() const override;
 	const char *getOriginalCopyright() const override;
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
@@ -94,6 +105,9 @@ BladeRunnerMetaEngine::BladeRunnerMetaEngine()
 		BladeRunner::bladeRunnerGames,
 		BladeRunner::optionsList) {}
 
+const char *BladeRunnerMetaEngine::getEngineId() const {
+	return "bladerunner";
+}
 
 const char *BladeRunnerMetaEngine::getName() const {
 	return "Blade Runner";
@@ -116,6 +130,8 @@ bool BladeRunnerMetaEngine::hasFeature(MetaEngineFeature f) const {
 		f == kSupportsDeleteSave ||
 		f == kSavesSupportMetaInfo ||
 		f == kSavesSupportThumbnail ||
+		f == kSavesSupportCreationDate ||
+		f == kSavesSupportPlayTime ||
 		f == kSimpleSavesNames;
 }
 

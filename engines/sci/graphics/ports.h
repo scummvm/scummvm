@@ -53,7 +53,7 @@ typedef Common::Array<Port *> PortArray;
 class GfxPorts : public Common::Serializable {
 public:
 	GfxPorts(SegManager *segMan, GfxScreen *screen);
-	~GfxPorts();
+	~GfxPorts() override;
 
 	void init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *text16);
 	void reset();
@@ -112,7 +112,7 @@ public:
 	Common::Rect _menuLine;
 	Port *_curPort;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 private:
 	/** The list of open 'windows' (and ports), in visual order. */

@@ -544,6 +544,8 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 				return make_reg(0, t.verb);
 			case K_MESSAGE_REFNOUN:
 				return make_reg(0, t.noun);
+			default:
+				break;
 			}
 		}
 

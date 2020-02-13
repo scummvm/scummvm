@@ -155,6 +155,8 @@ Sprite *Hero::expand() {
 					case 0xFE:
 						s->_next = seqcnt - 1;
 						break;
+					default:
+						break;
 					}
 					if (s->_next > maxnxt)
 						maxnxt = s->_next;

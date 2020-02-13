@@ -511,6 +511,8 @@ void Selenitic::mazeRunnerPlayVideo(uint16 video, uint16 pos) {
 		else
 			videoName = "backl0";
 		break;
+	default:
+		break;
 	}
 
 	if (!videoName.empty()) {
@@ -615,6 +617,7 @@ void Selenitic::o_soundReceiverSigma(uint16 var, const ArgumentsArray &args) {
 			source = 3;
 			break;
 		case 1:
+		default:
 			source = 0;
 			break;
 		case 2:
@@ -799,6 +802,8 @@ MystAreaSlider *Selenitic::soundLockSliderFromVar(uint16 var) {
 		return _soundLockSlider4;
 	case 24:
 		return _soundLockSlider5;
+	default:
+		break;
 	}
 
 	return nullptr;
@@ -986,6 +991,8 @@ void Selenitic::soundReceiverIncreaseSpeed() {
 	case kSoundReceiverSpeedFaster:
 		// Can't go faster
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1080,6 +1087,8 @@ void Selenitic::soundReceiverSolution(uint16 source, uint16 &solution, bool &ena
 		enabled = _state.emitterEnabledWind;
 		solution = 2122;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1134,6 +1143,8 @@ void Selenitic::o_soundLock_init(uint16 var, const ArgumentsArray &args) {
 			case 24:
 				_soundLockSlider5 = _vm->getCard()->getResource<MystAreaSlider>(i);
 				_soundLockSlider5->setStep(_state.soundLockSliderPositions[4]);
+				break;
+			default:
 				break;
 			}
 		} else if (_vm->getCard()->_resources[i]->hasType(kMystAreaImageSwitch)

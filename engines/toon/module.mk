@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	script.o \
 	script_func.o \
 	state.o \
+	subtitles.o \
 	text.o \
 	tools.o \
 	toon.o

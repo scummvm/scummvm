@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/time.h"
+#include "bladerunner/audio_player.h"
 
 #include "audio/decoders/raw.h"
 
@@ -47,7 +48,20 @@ bool VQAPlayer::open() {
 	// TB05 has wrong end of a loop and this will load empty zbuffer from next loop, which will lead to broken pathfinding
 	if (_name.equals("TB05_2.VQA")) {
 		_decoder._loopInfo.loops[1].end = 60;
+	} else if (_name.equals("DR04OVER.VQA")) {
+		// smoke (overlay) after explosion of Dermo Labs in DR04
+		// This has still frames in the end that so it looked as if the smoke was "frozen"
+		_decoder._loopInfo.loops[0].end  = 58; // 59 up to 74 are still frames
 	}
+//	else if (_name.equals("MA05_3.VQA")) {
+//		// loops[1] 60 up to 90 (it will be followed by loops[2] which will play from 30 to 90
+//		// this is to address the issue of non-aligned headlight rotation in the
+//		// InShot transition in Act 5. However, this is still glitchy
+//		// and results in bad z-buffer for the duration of the truncated loop 1
+//		// TODO is there a way to get and use the z-buffering info from start frame without displaying it?
+//		_decoder._loopInfo.loops[1].begin = 60;
+//		_decoder._loopInfo.loops[2].begin = 30;
+//	}
 #endif
 
 	_hasAudio = _decoder.hasAudio();
@@ -134,7 +148,7 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 						queueAudioFrame(_decoder.decodeAudioFrame());
 					}
 				}
-				_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _audioStream);
+				_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
 				_audioStarted = true;
 			}
 			if (_frameNext + audioPreloadFrames < _frameEnd) {

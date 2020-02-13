@@ -73,20 +73,20 @@ private:
 
 public:
 	Player_PCE(ScummEngine *scumm, Audio::Mixer *mixer);
-	virtual ~Player_PCE();
+	~Player_PCE() override;
 
-	virtual void setMusicVolume(int vol) { _maxvol = vol; }
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getSoundStatus(int sound) const;
-	virtual int  getMusicTimer();
+	void setMusicVolume(int vol) override { _maxvol = vol; }
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	int  getSoundStatus(int sound) const override;
+	int  getMusicTimer() override;
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return true; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _sampleRate; }
 
 private:
 	ScummEngine *_vm;

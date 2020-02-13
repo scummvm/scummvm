@@ -34,8 +34,8 @@ namespace Agi {
 class MIDISound : public AgiSound {
 public:
 	MIDISound(uint8 *data, uint32 len, int resnum);
-	~MIDISound() { free(_data); }
-	virtual uint16 type() { return _type; }
+	~MIDISound() override { free(_data); }
+	uint16 type() override { return _type; }
 	uint8 *_data; ///< Raw sound resource data
 	uint32 _len;  ///< Length of the raw sound resource
 
@@ -47,17 +47,17 @@ class SoundGenMIDI : public SoundGen, public Audio::MidiPlayer {
 public:
 	SoundGenMIDI(AgiBase *vm, Audio::Mixer *pMixer);
 
-	void play(int resnum);
+	void play(int resnum) override;
 	// We must overload stop() here to implement the pure virtual
 	// stop() method of the SoundGen class.
-	void stop() { Audio::MidiPlayer::stop(); }
+	void stop() override { Audio::MidiPlayer::stop(); }
 
 	// MidiDriver_BASE interface implementation
-	virtual void send(uint32 b);
+	void send(uint32 b) override;
 
 	// Overload Audio::MidiPlayer method
-	virtual void sendToChannel(byte channel, uint32 b);
-	virtual void endOfTrack();
+	void sendToChannel(byte channel, uint32 b) override;
+	void endOfTrack() override;
 
 private:
 	bool _isGM;

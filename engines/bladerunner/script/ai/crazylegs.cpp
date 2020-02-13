@@ -82,7 +82,7 @@ void AIScriptCrazylegs::OtherAgentEnteredCombatMode(int otherActorId, int combat
 			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
 			Actor_Says(kActorCrazylegs, 430, 3);
-			Actor_Says_With_Pause(kActorCrazylegs, 440, 0.0, 3);
+			Actor_Says_With_Pause(kActorCrazylegs, 440, 0.0f, 3);
 			Actor_Says(kActorMcCoy, 1870, -1);
 			Actor_Says(kActorCrazylegs, 450, 3);
 			Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsMcCoyDrewHisGun);
@@ -375,6 +375,8 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 		case 15:
 			_flag = true;
 			break;
+		default:
+			break;
 		}
 		break;
 	case 1:
@@ -439,6 +441,8 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 			_animationState = 18;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(469) - 1;
 		}
+		break;
+	default:
 		break;
 	}
 

@@ -32,7 +32,7 @@ namespace Neverhood {
 class Module2000 : public Module {
 public:
 	Module2000(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Module2000();
+	~Module2000() override;
 protected:
 	int _sceneNum;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

@@ -56,19 +56,27 @@ if 	(not osLibFound) \
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
+
 from os import walk, errno, path
+
+pathToParent = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
+pathToCommon = os.path.join(pathToParent, "common")
+sys.path.append(pathToCommon)
+
 from xlwt import *
 from audFileLib import *
 from treFileLib import *
 from pogoTextResource import *
 from devCommentaryText import *
+from subtlsVersTextResource import *
+from vqasTextResource import *
 
 # encoding=utf8
 #reload(sys)
 #sys.setdefaultencoding('utf8')
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "0.80"
+APP_VERSION = "1.60"
 APP_NAME = "sortBladeRunnerWavs"
 APP_WRAPPER_NAME = "quotesSpreadsheetCreator.py"
 APP_NAME_SPACED = "Blade Runner Transcript Excel Creator (bare bones)"
@@ -105,36 +113,39 @@ SUPPORTED_MIX_INPUT_FOR_TRX_EXPORT_FILES = ['STARTUP.MIX']
 # 15 TRx files
 SUPPORTED_EXPORTED_TRx_FILES = ['CLUES.TR','ACTORS.TR','CRIMES.TR','CLUETYPE.TR','KIA.TR','SPINDEST.TR','VK.TR','OPTIONS.TR','DLGMENU.TR','ENDCRED.TR','HELP.TR','SCORERS.TR','KIACRED.TR','ERRORMSG.TR','AUTOSAVE.TR']
 SUPPORTED_PLACEHOLDER_VQA_ENGLISH_FILES = [
-	('WSTLGO_', 'Westwood Studios Partnership Intro'),
-	('BRLOGO_', 'Blade Runner Logo')]
+	('WSTLGO_', 'Westwood Studios Partnership Intro', '19400 ms, 291 frames'),
+	('BRLOGO_', 'Blade Runner Logo', '6000 ms, 90 frames')]
 SUPPORTED_PLACEHOLDER_VQA_LOCALIZED_FILES = [
-	('INTRO_', 'Intro cutscene - Prologue'),
-	('MW_A_', 'Eisenduller murder scene'),
-	('MW_B01_', 'Act 3 intro part - Start part'),
-	('MW_B02_', 'Act 3 intro part - Lucy is Replicant'),
-	('MW_B03_', 'Act 3 intro part - Dektora is Replicant'),
-	('MW_B04_', 'Act 3 intro part - Lucy and Dektora are human'),
-	('MW_B05_', 'Act 3 intro part - End part '),
-	('INTRGT_', 'Interrogation scene - Baker, Holloway, McCoy'),
-	('MW_C01_', 'Clovis and Sadik pay a visit to the Twins - Start Part'),
-	('MW_C02_', 'Clovis and Sadik pay a visit to the Twins - Clovis has an INCEPT PHOTO'),
-	('MW_C03_', 'Clovis and Sadik pay a visit to the Twins - Clovis DOES NOT have an INCEPT PHOTO'),
-	('MW_D_', 'Tyrell, Kolvig and Clovis meet-up at Tyrell Corp'),
-	('END01A_', 'Underground getaway - Lucy Human'),
-	('END01B_', 'Underground getaway - Lucy with DNA'),
-	('END01C_', 'Underground getaway - Lucy not enough DNA'),
-	('END01D_', 'Underground getaway - Dektora Human'),
-	('END01E_', 'Underground getaway - Dektora with DNA'),
-	('END01F_', 'Underground getaway - Dektora, not enough DNA'),
-	('END03_', 'Underground getaway - McCoy alone'),
-	('END04A_', 'Finale - McCoy on Moonbus'),
-	('END04B_', 'Finale - McCoy with Lucy on Moonbus'),
-	('END04C_', 'Finale - McCoy with Dektora on Moonbus'),
-	('END06_', 'Underground getaway - Steele Ending')
+	('INTRO_',  'Act 1 Intro - Prologue', '373267 ms, 5599 frames'),
+	('MW_A_',   'Act 2 Intro', '133134 ms, 1997 frames'),
+	('MW_B01_', 'Act 3 Intro - Start', '6733.367 ms, 101 frames'),
+	('MW_B02_', 'Act 3 Intro - Lucy is Replicant', '16000.080 ms, 240 frames'),
+	('MW_B03_', 'Act 3 Intro - Dektora is Replicant', '11000.055 ms, 165 frames'),
+	('MW_B04_', 'Act 3 Intro - Lucy and Dektora are Human', '18000.090 ms, 270 frames'),
+	('MW_B05_', 'Act 3 Intro - End', '107133.869 ms, 1607 frames'),
+	('INTRGT_', 'Interrogation scene - Baker, Holloway, McCoy', '158600 ms, 2379 frames'),
+	('MW_C01_', 'Act 4 Intro - Start', '121533.333 ms, 1823 frames'),
+	('MW_C02_', 'Act 4 Intro - Clovis with Incept Photo', '22066.667 ms, 331 frames'),
+	('MW_C03_', 'Act 4 Intro - Clovis without Incept Photo', '22066.667 ms, 331 frames'),
+	('MW_D_',   'Act 5 Intro', '160000 ms, 2400 frames'),
+	('END01A_', 'Underground Ending - Lucy Human', '31466.667 ms, 472 frames'),
+	('END01B_', 'Underground Ending - Lucy with DNA', '31466.667 ms, 472 frames'),
+	('END01C_', 'Underground Ending - Lucy not enough DNA', '31466.667 ms, 472 frames'),
+	('END01D_', 'Underground Ending - Dektora Human', '31466.667 ms, 472 frames'),
+	('END01E_', 'Underground Ending - Dektora with DNA', '31466.667 ms, 472 frames'),
+	('END01F_', 'Underground Ending - Dektora, not enough DNA', '31466.667 ms, 472 frames'),
+	('END03_',  'Underground Ending - McCoy alone', '26466.667 ms, 397 frames'),
+	('END04A_', 'Moonbus Ending - Start', '7933.333 ms, 119 frames'),
+	('END04B_', 'Moonbus Ending - With Lucy', '6533.333 ms, 98 frames'),
+	('END04C_', 'Moonbus Ending - With Dektora', '7733.333 ms, 116 frames'),
+	('END06_',  'Kipple Ending - With Steele', '36400 ms, 546 frames'),
+	('TB_FLY_',  'Fly-through to Tyrell Building', '13533.333 ms, 203 frames')
 	]
 SUPPORTED_SPECIAL_POGO_FILE = 'POGO.TR'
+SUPPORTED_DIALOGUE_VERSION_SHEET = 'SBTLVERS.TRE'
 
-SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'R', 'Russian')]
+# v0.85: Russian code (RU_RUS) now corresponds to 'E' suffix instead of 'R' since the unofficial Russian version supported uses the English resources without renaming them, and this is how the ScummVM engine handles that version currently.
+SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'E', 'Russian')]
 DEFAULT_LANG_DESC_CODE = SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST[0]
 
 gTraceModeEnabled = False
@@ -441,7 +452,7 @@ def appendVQAPlaceHolderSheets(excelOutBook = None):
 				sh = excelOutBook.add_sheet(currVQAFileNameLclzd)
 				# First Row
 				n = 0 # keeps track of rows
-				col_names = ['VQA File: %s' % (currVQAFileNameLclzd), '22050 audio sampling rate', currVQAFileNameDesc[1] ]
+				col_names = ['%s' % (currVQAFileNameLclzd), currVQAFileNameDesc[2], currVQAFileNameDesc[1], '22050 audio sampling rate', 'at 15 fps']
 				colIdx = 0
 				for colNameIt in col_names:
 					sh.write(n, colIdx, colNameIt)
@@ -449,13 +460,28 @@ def appendVQAPlaceHolderSheets(excelOutBook = None):
 
 				# Second Row
 				n = 1
-
-				col_names = ['Start (YT)', 'End (YT)', 'Subtitle', 'By Actor', 'StartTime', 'Time Diff-SF', 'TimeDiff-SF(ms)', 'TimeDiff-EF', 'TimeDiff-EF(ms)', 'Frame Start', 'Frame End', 'Notes']
+#				col_names = ['Start (YT)', 'End (YT)', 'Subtitle', 'By Actor', 'StartTime', 'Time Diff-SF', 'TimeDiff-SF(ms)', 'TimeDiff-EF', 'TimeDiff-EF(ms)', 'Frame Start', 'Frame End', 'Notes']
+				col_names = ['Frame Start', 'Frame End', 'Subtitle', 'Time Start', 'Time End', 'By Actor', 'Notes']
 				colIdx = 0
 				for colNameIt in col_names:
 					sh.write(n, colIdx, colNameIt)
 					colIdx+=1
-				#n+=1
+				# Fill in with placeholder content
+				n+=1
+				vqaTRInstance = vqasTextResource(gTraceModeEnabled)
+				
+				objUTF8Unicode = None
+				for m, e1 in enumerate(vqaTRInstance.getVqaEntriesList(currVQAFileNameDesc[0]), n):
+					sh.write(m, 0, e1[0]) # start frame
+					sh.write(m, 1, e1[1]) # end frame
+					for i1 in range(2,6):
+						objStr = e1[i1]
+						try:
+							objUTF8Unicode = unicode(objStr, 'utf-8')
+						except Exception as e:
+							print '[Error] Failed to create unicode string: ' + str(e)
+							objUTF8Unicode = unicode("???", 'utf-8')
+						sh.write(m, i1, objUTF8Unicode)
 	return
 
 def appendPOGOTextSheet(excelOutBook = None):
@@ -530,8 +556,10 @@ def auxPopulateExtraSpeechAudioRow(sh = None, n = 0, pFilenameStr = '', pTextStr
 						# checks if not empty
 						if gStringReplacementForRootFolderWithExportedFiles and gNumReplaceStartingCharacters > 0:
 							realPathOfFileNameToLink = realPathOfFileNameToLink.replace(realPathOfFileNameToLink[:gNumReplaceStartingCharacters], gStringReplacementForRootFolderWithExportedFiles)
-
-						hyperlinkAudioFormula = 'HYPERLINK("file://%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
+						# Libreoffice seems to only work with forward slashes (v6.2.8.2)
+						# Also works with MS Excel (tested with Office 2007)
+						realPathOfFileNameToLink = realPathOfFileNameToLink.replace('\\','/');
+						hyperlinkAudioFormula = 'HYPERLINK("file:///%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
 						sh.write(n, 6, Formula(hyperlinkAudioFormula))
 						break
 			foundMatch = True
@@ -816,6 +844,41 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 	global gNumReplaceStartingCharacters
 
 	book = xlwt.Workbook()
+	# first add version info sheet
+	sbtlVersTRInstance = sbtlVersTextResource(gTraceModeEnabled)
+	vrsn_sheet = book.add_sheet(SUPPORTED_DIALOGUE_VERSION_SHEET)
+	n = 0
+	col1_name = 'Subtitles Version Info'
+	vrsn_sheet.write(n, 0, col1_name)
+	# Second Row
+	n = 1
+	col1_name = 'ID'
+	col2_name = 'Value'
+	col3_name = 'Notes'
+	vrsn_sheet.write(n, 0, col1_name)
+	vrsn_sheet.write(n, 1, col2_name)
+	vrsn_sheet.write(n, 2, col3_name)
+	n += 1
+	objUTF8Unicode = None
+	for m, e1 in enumerate(sbtlVersTRInstance.getSbtlVersEntriesList(), n):
+		vrsn_sheet.write(m, 0, e1[0])
+		tmpQuoteID = int(e1[0])
+		for i1 in range(1,3):
+			objStr = e1[i1]
+			try:
+				# We assume utf-8 charset (since we get the text from a python script)
+				# populate row with quote ID == 3 and column B with the description of language used in the command's execution (or assumed)
+				if tmpQuoteID == 3 and i1 == 1:
+					objUTF8Unicode = unicode(gActiveLanguageDescriptionCodeTuple[2], 'utf-8')
+				else:
+					objUTF8Unicode = unicode(objStr, 'utf-8')
+			except Exception as e:
+				print '[Error] Failed to create unicode string: ' + str(e)
+				objUTF8Unicode = unicode("???", 'utf-8')
+			vrsn_sheet.write(m, i1, objUTF8Unicode)
+	#
+	# Add ingame quotes sheet
+	#
 	sh = book.add_sheet(sheet)
 	# First Row
 	n = 0      # keeps track of rows
@@ -887,7 +950,11 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 				# also works in Windows + LibreOffice (run from msys) -- tried something like:
 				#	python sortBladeRunnerWavs.py -op /g/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV -m "G:/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV"
 				# put real full path for each file as FILE URL, and real (or approximate shorthand file name as alias)
-				hyperlinkAudioFormula = 'HYPERLINK("file://%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
+				#
+				# Libreoffice seems to only work with forward slashes (v6.2.8.2)
+				# Also works with MS Excel (tested with Office 2007)
+				realPathOfFileNameToLink = realPathOfFileNameToLink.replace('\\','/');
+				hyperlinkAudioFormula = 'HYPERLINK("file:///%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
 				sh.write(m, 6, Formula(hyperlinkAudioFormula))
 			else:
 				sh.write(m, 0, e1)

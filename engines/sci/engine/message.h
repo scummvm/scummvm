@@ -56,6 +56,7 @@ public:
 	}
 
 	int getModule() const { return _module; }
+	void setModule(int module) { _module = module; }
 
 private:
 	int _module;
@@ -77,7 +78,7 @@ public:
 private:
 	bool getRecord(CursorStack &stack, bool recurse, MessageRecord &record);
 	void outputString(reg_t buf, const Common::String &str);
-	Common::String processString(const char *s);
+	Common::String processString(const char *s, uint32 maxLength);
 	int hexDigitToWrongInt(char h);
 	bool stringHex(Common::String &outStr, const Common::String &inStr, uint &index);
 	bool stringLit(Common::String &outStr, const Common::String &inStr, uint &index);

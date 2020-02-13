@@ -31,7 +31,7 @@ namespace BladeRunner {
 
 class ActorClues;
 class BladeRunnerEngine;
-class Shape;
+class Shapes;
 class UICheckBox;
 class UIContainer;
 class UIImagePicker;
@@ -77,16 +77,16 @@ class KIASectionSuspects : public KIASectionBase {
 	int   _mouseX;
 	int   _mouseY;
 
-	int    _suspectPhotoShapeId;
-	int    _suspectPhotoNotUsed;
-	Shape *_suspectPhotoShape;
+	int     _suspectPhotoShapeId;
+	int     _suspectPhotoNotUsed;
+	Shapes *_suspectPhotoShapes;
 
 public:
 	int                 _crimeSelected;
 
 public:
 	KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues);
-	~KIASectionSuspects();
+	~KIASectionSuspects() override;
 
 	void reset();
 
@@ -105,14 +105,12 @@ public:
 
 	void selectSuspect(int suspectId);
 
-	static const char *scrambleSuspectsName(const char *name);
-
 private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
 	static void checkBoxCallback(void *callbackData, void *source);
 	static void mouseUpCallback(int buttonId, void *callbackData);
 
-	void onButtonPressed(int buttonId);
+	void onButtonPressed(int buttonId) override;
 
 	void populateAcquiredClues();
 	void populateSuspects();

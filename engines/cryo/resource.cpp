@@ -234,13 +234,13 @@ int EdenGame::loadSound(uint16 num) {
 
 		uint32 val = 0;
 		_bigfile.read(&val, 3);
-		unsigned int chunkLen = LE32(val);
+		unsigned int chunkLen = FROM_LE_32(val);
 
 		if (chunkType == 5) {
 			_bigfile.read(_gameLipsync + 7260, chunkLen);
 			chunkType = _bigfile.readByte();
 			_bigfile.read(&val, 3);
-			chunkLen = LE32(val);
+			chunkLen = FROM_LE_32(val);
 		}
 
 		// 3. Normal sound data
@@ -259,7 +259,7 @@ void EdenGame::convertMacToPC() {
 	// Array of longs
 	int *p = (int *)_gameLipsync;
 	for (int i = 0; i < 7240 / 4; i++)
-		p[i] = BE32(p[i]);
+		p[i] = FROM_BE_32(p[i]);
 }
 
 void EdenGame::loadpermfiles() {
@@ -472,7 +472,7 @@ bool EdenGame::ReadDataSyncVOC(unsigned int num) {
 		uint32 chunkLen = 0;
 		loadpartoffile(resNum, &chunkLen, filePos, 3);
 		filePos += 3;
-		chunkLen = LE32(chunkLen);
+		chunkLen = FROM_LE_32(chunkLen);
 		loadpartoffile(resNum, _gameLipsync + 7260, filePos, chunkLen);
 		return true;
 	}

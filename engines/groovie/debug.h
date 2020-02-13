@@ -33,7 +33,7 @@ class Script;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(GroovieEngine *vm);
-	~Debugger();
+	~Debugger() override;
 
 private:
 	GroovieEngine *_vm;

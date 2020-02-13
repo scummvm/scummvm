@@ -35,7 +35,7 @@
 namespace Kyra {
 
 SoundTowns_Darkmoon::SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer) {
-	_intf = new TownsAudioInterface(mixer, this, false);
+	_intf = new TownsAudioInterface(mixer, this);
 	_pcmData = 0;
 	_pcmVol = 0;
 	_timer = 0;

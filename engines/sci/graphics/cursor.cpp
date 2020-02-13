@@ -40,8 +40,8 @@
 
 namespace Sci {
 
-GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen)
-	: _resMan(resMan), _palette(palette), _screen(screen) {
+GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen, GfxCoordAdjuster16 *coordAdjuster, EventManager *eventMan)
+	: _resMan(resMan), _palette(palette), _screen(screen), _coordAdjuster(coordAdjuster), _event(eventMan) {
 
 	_upscaledHires = _screen->getUpscaledHires();
 	_isVisible = true;
@@ -68,20 +68,11 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 		_useSilverSQ4CDCursors = ConfMan.getBool("silver_cursors");
 	else
 		_useSilverSQ4CDCursors = false;
-
-	// _coordAdjuster and _event will be initialized later on
-	_coordAdjuster = NULL;
-	_event = NULL;
 }
 
 GfxCursor::~GfxCursor() {
 	purgeCache();
 	kernelClearZoomZone();
-}
-
-void GfxCursor::init(GfxCoordAdjuster16 *coordAdjuster, EventManager *event) {
-	_coordAdjuster = coordAdjuster;
-	_event = event;
 }
 
 void GfxCursor::kernelShow() {
@@ -517,15 +508,16 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	Common::MemoryReadStream resStream(resource->toStream());
 	Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 
-	if (!macCursor->readFromStream(resStream)) {
+	// use black for mac monochrome inverted pixels so that cursor
+	//  features in FPFP and KQ6 Mac are displayed, bug #7050
+	byte macMonochromeInvertedPixelColor = 0;
+	if (!macCursor->readFromStream(resStream, false, macMonochromeInvertedPixelColor)) {
 		warning("Failed to load Mac cursor %d", viewNum);
 		delete macCursor;
 		return;
 	}
 
-	CursorMan.replaceCursor(macCursor->getSurface(), macCursor->getWidth(), macCursor->getHeight(),
-			macCursor->getHotspotX(), macCursor->getHotspotY(), macCursor->getKeyColor());
-	CursorMan.replaceCursorPalette(macCursor->getPalette(), 0, 256);
+	CursorMan.replaceCursor(macCursor);
 
 	delete macCursor;
 	kernelShow();

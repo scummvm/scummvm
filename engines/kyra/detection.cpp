@@ -156,11 +156,16 @@ public:
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
-	const char *getName() const {
+
+	const char *getEngineId() const override {
+		return "kyra";
+	}
+
+	const char *getName() const override {
 		return "Kyra";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "The Legend of Kyrandia (C) Westwood Studios"
 #ifdef ENABLE_LOL
 		       "\nLands of Lore (C) Westwood Studios"
@@ -171,12 +176,13 @@ public:
 		       ;
 	}
 
-	bool hasFeature(MetaEngineFeature f) const;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -344,6 +350,24 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 	desc.setWriteProtectedFlag((slot == 0 && !nonKyraGame) || slot >= 990);
 
 	return desc;
+}
+
+Common::KeymapArray KyraMetaEngine::initKeymaps(const char *target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
+#ifdef ENABLE_LOL
+	if (gameId.contains("lol")) {
+		return Kyra::LoLEngine::initKeymaps();
+	}
+#endif
+
+#ifdef ENABLE_EOB
+	if (gameId.contains("eob")) {
+		return Kyra::EoBCoreEngine::initKeymaps(gameId);
+	}
+#endif
+
+	return AdvancedMetaEngine::initKeymaps(target);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)

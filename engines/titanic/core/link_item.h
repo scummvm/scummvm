@@ -59,17 +59,17 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Returns true if the given item connects to another specified view
 	 */
-	virtual bool connectsTo(CViewItem *destView) const;
+	bool connectsTo(CViewItem *destView) const override;
 
 	/**
 	 * Set the destination for the link item

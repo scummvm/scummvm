@@ -40,11 +40,11 @@ class Font : public Graphics::Font {
 public:
 	Font(const Common::String &fileName, int horizSpacing, int lineHeight);
 
-	virtual int getFontHeight() const override;
-	virtual int getMaxCharWidth() const override;
-	virtual int getCharWidth(uint32 chr) const override;
-	virtual int getKerningOffset(uint32 left, uint32 right) const override;
-	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	int getFontHeight() const override;
+	int getMaxCharWidth() const override;
+	int getCharWidth(uint32 chr) const override;
+	int getKerningOffset(uint32 left, uint32 right) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 protected:
 	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor) const;
@@ -69,7 +69,7 @@ public:
 	SpeechFont();
 
 protected:
-	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor) const override;
+	uint8 transformColor(uint8 baseColor, uint8 glyphColor) const override;
 };
 
 }

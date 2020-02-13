@@ -68,66 +68,66 @@ void Room::mudd0Tick60() {
 
 		_awayMission->mudd.muddFirstRoomState++;
 
-		showText(TX_SPEAKER_MUDD,  TX_MUD0_037);
-		showText(TX_SPEAKER_KIRK,  TX_MUD0_009);
-		showText(TX_SPEAKER_MUDD,  TX_MUD0_028);
-		showText(TX_SPEAKER_MCCOY, TX_MUD0_017);
-		showText(TX_SPEAKER_MUDD,  TX_MUD0_026);
-		showText(TX_SPEAKER_KIRK,  TX_MUD0_006);
-		showText(TX_SPEAKER_MUDD,  TX_MUD0_033);
-		showText(TX_SPEAKER_KIRK,  TX_MUD0_005);
-		showText(TX_SPEAKER_MUDD,  TX_MUD0_029);
+		showText(TX_SPEAKER_MUDD, 37, true);
+		showText(TX_SPEAKER_KIRK,  9, true);
+		showText(TX_SPEAKER_MUDD, 28, true);
+		showText(TX_SPEAKER_MCCOY,17, true);
+		showText(TX_SPEAKER_MUDD, 26, true);
+		showText(TX_SPEAKER_KIRK,  6, true);
+		showText(TX_SPEAKER_MUDD, 33, true);
+		showText(TX_SPEAKER_KIRK,  5, true);
+		showText(TX_SPEAKER_MUDD, 29, true);
 	}
 }
 
 void Room::mudd0UsePhaserOnMudd() {
-	showText(TX_SPEAKER_MUDD, TX_MUD0_025);
+	showText(TX_SPEAKER_MUDD, 25, true);
 }
 
 void Room::mudd0UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD0_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
 void Room::mudd0LookAtFoodBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N012);
+	showDescription(12, true);
 }
 
 void Room::mudd0LookAtComponentBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N013);
+	showDescription(13, true);
 }
 
 void Room::mudd0LookAnywhere() {
-	showText(TX_MUD0N019);
+	showDescription(19, true);
 }
 
 void Room::mudd0LookAtMemoryDiskBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N010);
+	showDescription(10, true);
 }
 
 void Room::mudd0LookAtDegrimerBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N008);
+	showDescription(8, true);
 }
 
 void Room::mudd0LookAtLense() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N014);
+	showDescription(14, true);
 }
 
 void Room::mudd0UseSTricorderAnywhere() {
 	// Narrator says something, not Spock (so we don't use "spockScan" function)
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
-	showText(TX_MUD0N015);
+	showDescription(15, true);
 }
 
 void Room::mudd0UseMTricorderAnywhere() {
@@ -136,11 +136,11 @@ void Room::mudd0UseMTricorderAnywhere() {
 	// above.
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
-	showText(TX_MUD0N015);
+	showDescription(15, true);
 }
 
 void Room::mudd0UseSTricorderOnMemoryDiskBox() {
-	spockScan(DIR_N, TX_MUD0_021, true);
+	spockScan(DIR_N, 21, true);
 }
 
 void Room::mudd0UseSTricorderOnDegrimerBox() {
@@ -148,19 +148,19 @@ void Room::mudd0UseSTricorderOnDegrimerBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	loadActorAnim2(OBJECT_SPOCK, "sscanw", -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
-	showText(TX_MUD0N000);
+	showDescription(0, true);
 }
 
 void Room::mudd0UseMTricorderOnLense() {
 	if (_awayMission->mudd.discoveredLenseAndDegrimerFunction)
-		mccoyScan(DIR_E, TX_MUD0_012, true);
+		mccoyScan(DIR_E, 12, true);
 	else
-		mccoyScan(DIR_E, TX_MUD0_013, true);
+		mccoyScan(DIR_E, 13, true);
 }
 
 void Room::mudd0GetLense() {
 	if (_awayMission->mudd.gotLense)
-		showText(TX_MUD0N016);
+		showDescription(16, true);
 	else {
 		_awayMission->mudd.gotLense = true;
 		_awayMission->mudd.missionScore++;
@@ -173,7 +173,7 @@ void Room::mudd0GetLense() {
 
 void Room::mudd0GetMemoryDisk() {
 	if (_awayMission->mudd.gotMemoryDisk)
-		showText(TX_MUD0N016);
+		showDescription(16, true);
 	else {
 		_awayMission->mudd.gotMemoryDisk = true;
 		_awayMission->mudd.missionScore++;
@@ -185,7 +185,7 @@ void Room::mudd0GetMemoryDisk() {
 
 void Room::mudd0GetDegrimer() {
 	if (_awayMission->mudd.gotDegrimer)
-		showText(TX_MUD0N016);
+		showDescription(16, true);
 	else {
 		_awayMission->mudd.gotDegrimer = true;
 		_awayMission->mudd.missionScore++;
@@ -203,7 +203,7 @@ void Room::mudd0PickedUpLense() {
 
 void Room::mudd0PickedUpItem() {
 	_awayMission->disableInput = false; // NOTE: this was never set to true
-	showText(TX_LOV1N007);
+	showDescription(COMMON_MESSAGE_OFFSET + 7, true);	// TX_LOV1N007
 }
 
 
@@ -232,79 +232,79 @@ void Room::mudd0TouchedHotspot0() { // Trigger top door opening
 }
 
 void Room::mudd0UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, TX_MUD0_011);
+	showText(TX_SPEAKER_MCCOY, 11, true);
 }
 
 void Room::mudd0LookAtKirk() {
-	showText(TX_MUD0N004);
+	showDescription(4, true);
 }
 
 void Room::mudd0LookAtSpock() {
-	showText(TX_MUD0N007);
+	showDescription(7, true);
 }
 
 void Room::mudd0LookAtMccoy() {
-	showText(TX_MUD0N001);
+	showDescription(1, true);
 }
 
 void Room::mudd0LookAtRedshirt() {
-	showText(TX_MUD0N005);
+	showDescription(5, true);
 }
 
 void Room::mudd0LookAtMudd() {
-	showText(TX_MUD0N003);
+	showDescription(3, true);
 }
 
 void Room::mudd0TalkToKirk() {
 	if (_awayMission->mudd.muddFirstRoomState == 2)
-		showText(TX_SPEAKER_KIRK, TX_MUD0_010);
+		showText(TX_SPEAKER_KIRK, 10, true);
 	else {
-		showText(TX_SPEAKER_KIRK, TX_MUD0_010);
-		showText(TX_SPEAKER_MUDD, TX_MUD0_031);
-		showText(TX_SPEAKER_KIRK, TX_MUD0_007);
+		showText(TX_SPEAKER_KIRK, 10, true);
+		showText(TX_SPEAKER_MUDD, 31, true);
+		showText(TX_SPEAKER_KIRK,  7, true);
 	}
 }
 
 void Room::mudd0TalkToSpock() {
 	if (_awayMission->mudd.muddFirstRoomState == 2)
-		showText(TX_SPEAKER_SPOCK, TX_MUD0_022);
+		showText(TX_SPEAKER_SPOCK, 22, true);
 	else {
-		showText(TX_SPEAKER_SPOCK, TX_MUD0_022);
-		showText(TX_SPEAKER_MUDD,  TX_MUD0_034);
-		showText(TX_SPEAKER_SPOCK, TX_MUD0_023);
-		showText(TX_SPEAKER_MCCOY, TX_MUD0_015);
-		showText(TX_SPEAKER_MUDD,  TX_MUD0_038);
+		showText(TX_SPEAKER_SPOCK, 22, true);
+		showText(TX_SPEAKER_MUDD,  34, true);
+		showText(TX_SPEAKER_SPOCK, 23, true);
+		showText(TX_SPEAKER_MCCOY, 15, true);
+		showText(TX_SPEAKER_MUDD,  38, true);
 	}
 }
 
 void Room::mudd0TalkToMccoy() {
 	if (_awayMission->mudd.muddFirstRoomState == 2)
-		showText(TX_SPEAKER_MCCOY, TX_MUD0_016);
+		showText(TX_SPEAKER_MCCOY, 16, true);
 	else {
-		showText(TX_SPEAKER_MCCOY, TX_MUD0_016);
-		showText(TX_SPEAKER_KIRK,  TX_MUD0_003);
-		showText(TX_SPEAKER_MUDD,  TX_MUD0_027);
-		showText(TX_SPEAKER_MCCOY, TX_MUD0_014);
+		showText(TX_SPEAKER_MCCOY, 16, true);
+		showText(TX_SPEAKER_KIRK,   3, true);
+		showText(TX_SPEAKER_MUDD,  27, true);
+		showText(TX_SPEAKER_MCCOY, 14, true);
 	}
 }
 
 void Room::mudd0TalkToRedshirt() {
 	if (_awayMission->mudd.muddFirstRoomState == 2) {
-		showText(TX_SPEAKER_BUCHERT, TX_MUD0_039);
-		showText(TX_SPEAKER_KIRK,    TX_MUD0_008);
+		showText(TX_SPEAKER_BUCHERT, 39, true);
+		showText(TX_SPEAKER_KIRK,     8, true);
 	} else {
-		showText(TX_SPEAKER_BUCHERT, TX_MUD0_040);
-		showText(TX_SPEAKER_MUDD,    TX_MUD0_030);
-		showText(TX_SPEAKER_BUCHERT, TX_MUD0_041);
-		showText(TX_SPEAKER_MUDD,    TX_MUD0_036);
+		showText(TX_SPEAKER_BUCHERT, 40, true);
+		showText(TX_SPEAKER_MUDD,    30, true);
+		showText(TX_SPEAKER_BUCHERT, 41, true);
+		showText(TX_SPEAKER_MUDD,    36, true);
 	}
 }
 
 void Room::mudd0TalkToMudd() {
-	showText(TX_SPEAKER_MUDD,  TX_MUD0_032);
-	showText(TX_SPEAKER_SPOCK, TX_MUD0_024);
-	showText(TX_SPEAKER_MUDD,  TX_MUD0_035);
-	showText(TX_SPEAKER_KIRK,  TX_MUD0_004);
+	showText(TX_SPEAKER_MUDD,  32, true);
+	showText(TX_SPEAKER_SPOCK, 24, true);
+	showText(TX_SPEAKER_MUDD,  35, true);
+	showText(TX_SPEAKER_KIRK,   4, true);
 }
 
 }

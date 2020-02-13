@@ -359,10 +359,10 @@ void CMainGameWindow::keyDown(Common::KeyState keyState) {
 
 	} else if (keyState.keycode == Common::KEYCODE_F5) {
 		// Show the GMM save dialog
-		g_vm->showScummVMSaveDialog();
+		g_vm->saveGameDialog();
 	} else if (keyState.keycode == Common::KEYCODE_F7) {
 		// Show the GMM load dialog
-		g_vm->showScummVMRestoreDialog();
+		g_vm->loadGameDialog();
 	} else if (_inputAllowed) {
 		_gameManager->_inputTranslator.keyDown(keyState);
 	}

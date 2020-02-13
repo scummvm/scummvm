@@ -58,30 +58,30 @@ struct Sprites : public Frames {
 		_sprites = new Sprite[_num];
 	}
 
-	~Sprites() {
+	~Sprites() override {
 		delete[] _sprites;
 	}
 
-	uint16 getNum() {
+	uint16 getNum() override {
 		return _num;
 	}
 
-	byte* getData(uint16 index) {
+	byte* getData(uint16 index) override {
 		assert(index < _num);
 		return _sprites[index].packedData;
 	}
 
-	void getRect(uint16 index, Common::Rect &r) {
+	void getRect(uint16 index, Common::Rect &r) override {
 		assert(index < _num);
 		r.setWidth(_sprites[index].w);
 		r.setHeight(_sprites[index].h);
 		r.moveTo(_sprites[index].x, _sprites[index].y);
 	}
-	uint	getRawSize(uint16 index) {
+	uint	getRawSize(uint16 index) override {
 		assert(index < _num);
 		return _sprites[index].size;
 	}
-	uint	getSize(uint16 index) {
+	uint	getSize(uint16 index) override {
 		assert(index < _num);
 		return _sprites[index].w * _sprites[index].h;
 	}

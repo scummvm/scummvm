@@ -56,7 +56,7 @@ void FilesAjaxPageHandler::handle(Client &client) {
 	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
 	if (stream == nullptr) {
-		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("The page is not available without the resources."));
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, HandlerUtils::toUtf8(_("The page is not available without the resources. Make sure file wwwroot.zip from ScummVM distribution is available in 'themepath'.")));
 		return;
 	}
 
@@ -64,16 +64,16 @@ void FilesAjaxPageHandler::handle(Client &client) {
 	Common::String path = client.queryParameter("path");
 
 	//these occur twice:
-	replace(response, "{create_directory_button}", _("Create directory"));
-	replace(response, "{create_directory_button}", _("Create directory"));
-	replace(response, "{upload_files_button}", _("Upload files")); //tab
-	replace(response, "{upload_file_button}", _("Upload files")); //button in the tab
-	replace(response, "{create_directory_desc}", _("Type new directory name:"));
-	replace(response, "{upload_file_desc}", _("Select a file to upload:"));
-	replace(response, "{or_upload_directory_desc}", _("Or select a directory (works in Chrome only):"));
-	replace(response, "{index_of}", _("Index of "));
-	replace(response, "{loading}", _("Loading..."));
-	replace(response, "{error}", _("Error occurred"));
+	replace(response, "{create_directory_button}", HandlerUtils::toUtf8(_("Create directory")));
+	replace(response, "{create_directory_button}", HandlerUtils::toUtf8(_("Create directory")));
+	replace(response, "{upload_files_button}", HandlerUtils::toUtf8(_("Upload files"))); //tab
+	replace(response, "{upload_file_button}", HandlerUtils::toUtf8(_("Upload files"))); //button in the tab
+	replace(response, "{create_directory_desc}", HandlerUtils::toUtf8(_("Type new directory name:")));
+	replace(response, "{upload_file_desc}", HandlerUtils::toUtf8(_("Select a file to upload:")));
+	replace(response, "{or_upload_directory_desc}", HandlerUtils::toUtf8(_("Or select a directory (works in Chrome only):")));
+	replace(response, "{index_of}", HandlerUtils::toUtf8(_("Index of ")));
+	replace(response, "{loading}", HandlerUtils::toUtf8(("Loading...")));
+	replace(response, "{error}", HandlerUtils::toUtf8(_("Error occurred")));
 	replace(response, "{start_path}", encodeDoubleQuotesAndSlashes(path));
 	LocalWebserver::setClientGetHandler(client, response);
 }

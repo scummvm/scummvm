@@ -32,15 +32,15 @@ class MohawkEngine_LivingBooks;
 class LBGraphics : public GraphicsManager {
 public:
 	LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height);
-	~LBGraphics();
+	~LBGraphics() override;
 
-	void setPalette(uint16 id);
+	void setPalette(uint16 id) override;
 	void copyOffsetAnimImageToScreen(uint16 image, int left = 0, int top = 0);
 	bool imageIsTransparentAt(uint16 image, bool useOffsets, int x, int y);
 
 protected:
-	MohawkSurface *decodeImage(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
+	MohawkSurface *decodeImage(uint16 id) override;
+	MohawkEngine *getVM() override { return (MohawkEngine *)_vm; }
 
 private:
 	MohawkBitmap *_bmpDecoder;

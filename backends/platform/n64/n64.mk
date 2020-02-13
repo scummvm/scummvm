@@ -18,9 +18,13 @@ n64-dist: all
 ifdef DIST_FILES_ENGINEDATA
 	$(CP) $(DIST_FILES_ENGINEDATA) $(bundle_name)/romfs
 endif
+ifdef DIST_FILES_NETWORKING
+	$(CP) $(DIST_FILES_NETWORKING) $(bundle_name)/romfs
+endif
+ifdef DIST_FILES_VKEYBD
+	$(CP) $(DIST_FILES_VKEYBD) $(bundle_name)/romfs
+endif
 	$(CP) $(DIST_FILES_DOCS) $(bundle_name)/
-	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip $(bundle_name)/romfs
-	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip $(bundle_name)/romfs
 	genromfs -f $(bundle_name)/romfs.img -d $(bundle_name)/romfs -V scummvmn64
 	mips64-objcopy $(EXECUTABLE) $(bundle_name)/scummvm.elf -O binary
 	cat $(N64SDK)/hkz-libn64/bootcode $(bundle_name)/scummvm.elf $(bundle_name)/romfs.img > scummvm.v64

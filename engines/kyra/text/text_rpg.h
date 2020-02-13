@@ -26,10 +26,10 @@
 #define KYRA_TEXT_EOB_H
 
 #include "common/scummsys.h"
+#include "kyra/graphics/screen.h"
 
 namespace Kyra {
 
-class Screen;
 class KyraRpgEngine;
 
 class TextDisplayer_rpg {
@@ -83,6 +83,7 @@ protected:
 
 	bool _printFlag;
 	bool _sjisTextModeLineBreak;
+	const bool _pc98TextMode;
 
 	char _pageBreakString[20];
 	char _scriptParaString[11];
@@ -109,6 +110,8 @@ private:
 
 	char *_table1;
 	char *_table2;
+
+	Screen::FontId _waitButtonFont;
 
 	uint8 _colorMap[256];
 };

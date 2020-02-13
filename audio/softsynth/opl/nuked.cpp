@@ -403,6 +403,8 @@ static void OPL3_EnvelopeCalc(opl3_slot *slot)
         case envelope_gen_num_release:
             reg_rate = slot->reg_rr;
             break;
+        default:
+            break;
         }
     }
     slot->pg_reset = reset;
@@ -497,6 +499,8 @@ static void OPL3_EnvelopeCalc(opl3_slot *slot)
         {
             eg_inc = 1 << (shift - 1);
         }
+        break;
+    default:
         break;
     }
     slot->eg_rout = (eg_rout + eg_inc) & 0x1ff;
@@ -845,6 +849,8 @@ static void OPL3_ChannelSetupAlg(opl3_channel *channel)
             channel->slots[0]->mod = &channel->slots[0]->fbmod;
             channel->slots[1]->mod = &channel->chip->zeromod;
             break;
+        default:
+            break;
         }
         return;
     }
@@ -900,6 +906,8 @@ static void OPL3_ChannelSetupAlg(opl3_channel *channel)
             channel->out[2] = &channel->slots[1]->out;
             channel->out[3] = &channel->chip->zeromod;
             break;
+        default:
+            break;
         }
     }
     else
@@ -921,6 +929,8 @@ static void OPL3_ChannelSetupAlg(opl3_channel *channel)
             channel->out[1] = &channel->slots[1]->out;
             channel->out[2] = &channel->chip->zeromod;
             channel->out[3] = &channel->chip->zeromod;
+            break;
+        default:
             break;
         }
     }
@@ -1262,6 +1272,8 @@ void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v)
             case 0x05:
                 chip->newm = v & 0x01;
                 break;
+            default:
+                break;
             }
         }
         else
@@ -1270,6 +1282,8 @@ void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v)
             {
             case 0x08:
                 chip->nts = (v >> 6) & 0x01;
+                break;
+            default:
                 break;
             }
         }
@@ -1340,6 +1354,8 @@ void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v)
         {
             OPL3_ChannelWriteC0(&chip->channel[9 * high + (regm & 0x0f)], v);
         }
+        break;
+    default:
         break;
     }
 }
@@ -1424,6 +1440,8 @@ void OPL::write(int port, int val) {
 				dualWrite(1, address[1], val);
 			}
 			break;
+		default:
+			break;
 		}
 	} else {
 		switch (_type) {
@@ -1443,6 +1461,8 @@ void OPL::write(int port, int val) {
 			break;
 		case Config::kOpl3:
 			address[0] = (val & 0xff) | ((port << 7) & 0x100);
+			break;
+		default:
 			break;
 		}
 	}

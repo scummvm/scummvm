@@ -132,11 +132,11 @@ public:
 		return _autoWrapThreshold;
 	}
 
-	virtual bool  persist(OutputPersistenceBlock &writer);
-	virtual bool  unpersist(InputPersistenceBlock &reader);
+	bool  persist(OutputPersistenceBlock &writer) override;
+	bool  unpersist(InputPersistenceBlock &reader) override;
 
 protected:
-	virtual bool doRender(RectangleList *updateRects);
+	bool doRender(RectangleList *updateRects) override;
 
 private:
 	Text(RenderObjectPtr<RenderObject> parentPtr);

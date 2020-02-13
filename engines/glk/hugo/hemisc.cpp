@@ -635,8 +635,6 @@ unsigned int Hugo::Dict() {
 }
 
 void Hugo::FatalError(int n) {
-	char fatalerrorline[64];
-
 #if defined (DEBUGGER)
 	hugo_stopmusic();
 	hugo_stopsample();
@@ -732,8 +730,8 @@ if (n==UNKNOWN_OP_E || n==ILLEGAL_OP_E || n==EXPECT_VAL_E || n==OVERFLOW_E)
 	fprintf(stderr, "\n");
 }
 */
-	sprintf(fatalerrorline, "\nFatal Error:  %s", line);
-	PRINTFATALERROR(fatalerrorline);
+	Common::String msg = Common::String::format("\nFatal Error:  %s", line);
+	PRINTFATALERROR(msg.c_str());
 
 	hugo_closefiles();
 	hugo_blockfree(mem);
@@ -1071,6 +1069,9 @@ void Hugo::InitGame() {
 		}
 	}
 	
+#if defined (GLK)
+	if (_savegameSlot == -1) {
+#endif
 #if defined (DEBUGGER)
 	for (i=0; i<MAXLOCALS; i++) strcpy(localname[i], "");
 	window[VIEW_LOCALS].count = current_locals = 0;
@@ -1081,7 +1082,9 @@ void Hugo::InitGame() {
 	PassLocals(0);
 	RunRoutine((long)initaddr*address_scale);
 #endif
-
+#if defined (GLK)
+	}
+#endif
 	ret = 0;
 	retflag = 0;
 	var[actor] = var[player];

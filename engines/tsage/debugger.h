@@ -31,7 +31,7 @@ namespace TsAGE {
 class Debugger : public GUI::Debugger {
 public:
 	Debugger();
-	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+	~Debugger() override {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 protected:
 	bool Cmd_Scene(int argc, const char **argv);
@@ -50,27 +50,27 @@ protected:
 
 class DemoDebugger : public Debugger {
 protected:
-	virtual bool Cmd_ListObjects(int argc, const char **argv);
-	virtual bool Cmd_MoveObject(int argc, const char **argv);
+	bool Cmd_ListObjects(int argc, const char **argv) override;
+	bool Cmd_MoveObject(int argc, const char **argv) override;
 };
 
 class RingworldDebugger : public Debugger {
 protected:
-	virtual bool Cmd_ListObjects(int argc, const char **argv);
-	virtual bool Cmd_MoveObject(int argc, const char **argv);
+	bool Cmd_ListObjects(int argc, const char **argv) override;
+	bool Cmd_MoveObject(int argc, const char **argv) override;
 };
 
 class BlueForceDebugger : public Debugger {
 protected:
-	virtual bool Cmd_ListObjects(int argc, const char **argv);
-	virtual bool Cmd_MoveObject(int argc, const char **argv);
+	bool Cmd_ListObjects(int argc, const char **argv) override;
+	bool Cmd_MoveObject(int argc, const char **argv) override;
 };
 
 class Ringworld2Debugger : public Debugger {
 protected:
-	virtual bool Cmd_ListObjects(int argc, const char **argv);
-	virtual bool Cmd_MoveObject(int argc, const char **argv);
-	virtual bool Cmd_SetOutpostAlphaDebug(int argc, const char **argv);
+	bool Cmd_ListObjects(int argc, const char **argv) override;
+	bool Cmd_MoveObject(int argc, const char **argv) override;
+	bool Cmd_SetOutpostAlphaDebug(int argc, const char **argv) override;
 };
 
 } // End of namespace TsAGE

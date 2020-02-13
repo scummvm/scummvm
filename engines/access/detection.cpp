@@ -75,7 +75,6 @@ Common::Platform AccessEngine::getPlatform() const {
 } // End of namespace Access
 
 static const PlainGameDescriptor AccessGames[] = {
-	{"Access", "Access"},
 	{"amazon", "Amazon: Guardians of Eden"},
 	{"martian", "Martian Memorandum"},
 	{0, 0}
@@ -89,20 +88,24 @@ public:
 		_maxScanDepth = 3;
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "access";
+	}
+
+	const char *getName() const override {
 		return "Access";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Access Engine (C) 1989-1994 Access Software";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {

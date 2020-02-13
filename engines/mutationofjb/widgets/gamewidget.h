@@ -58,11 +58,11 @@ public:
 		_callback = callback;
 	}
 
-	virtual void handleEvent(const Common::Event &);
+	void handleEvent(const Common::Event &) override;
 
 	void clearState();
 protected:
-	virtual void draw(Graphics::ManagedSurface &);
+	void draw(Graphics::ManagedSurface &) override;
 
 private:
 	/**

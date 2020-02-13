@@ -46,18 +46,26 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
+	InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
 
 	/**
-	 * Load a savegame from the passed stream
-	 */
-	virtual Common::Error loadGameData(strid_t file) override;
+	  * Returns true whether a given feature is supported by the engine
+	  */
+	bool hasFeature(EngineFeature f) const override;
 
 	/**
-	 * Save the game to the passed stream
+	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+
+	/**
+	 * Save the game. The passed write stream represents access to the UMem chunk
+	 * in the Quetzal save file that will be created
+	 */
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 };
+
+extern TADS *g_vm;
 
 } // End of namespace TADS
 } // End of namespace Glk

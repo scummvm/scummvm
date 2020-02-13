@@ -33,14 +33,14 @@ class ConversationTask;
 
 class LoadPlayerCommandParser : public SeqCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class LoadPlayerCommand : public SeqCommand {
 public:
 	LoadPlayerCommand(uint8 apkFrameFirst, uint8 apkFrameLast, uint8 playerFrameFirst, uint8 palIndexFirst, const Common::String &apkFileName) : _apkFrameFirst(apkFrameFirst), _apkFrameLast(apkFrameLast), _playerFrameFirst(playerFrameFirst), _palIndexFirst(palIndexFirst), _apkFileName(apkFileName) {}
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 
 private:
 	uint8 _apkFrameFirst;

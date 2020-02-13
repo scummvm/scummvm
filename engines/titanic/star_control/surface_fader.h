@@ -23,7 +23,7 @@
 #ifndef TITANIC_SURFACE_FADER_H
 #define TITANIC_SURFACE_FADER_H
 
-#include "common/scummsys.h" // typedef for byte
+#include "common/scummsys.h"
 
 namespace Titanic {
 

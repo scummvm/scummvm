@@ -30,8 +30,7 @@ void StarTrekEngine::playIntro() {
 	initStarfieldPosition();
 	initStarfield(10, 20, 309, 169, 128);
 
-	SharedPtr<Bitmap> fakeStarfieldBitmap(new StubBitmap(0, 0));
-	_starfieldSprite.bitmap = fakeStarfieldBitmap;
+	Bitmap *fakeStarfieldBitmap = new StubBitmap(0, 0);
 	initStarfieldSprite(&_starfieldSprite, fakeStarfieldBitmap, _starfieldRect);
 
 	//delR3(&_enterpriseR3); // TODO: uncomment
@@ -41,15 +40,15 @@ void StarTrekEngine::playIntro() {
 	planetR3.field1e = 3;
 	planetR3.funcPtr1 = 0;
 	planetR3.funcPtr2 = 0;
-	planetR3.bitmapOffset = 0;
 
 	_gfx->clearScreenAndPriBuffer();
 	_gfx->fadeoutScreen();
 	_gfx->loadPalette("gold");
-	_gfx->setBackgroundImage(_gfx->loadBitmap("goldlogo"));
+	_gfx->setBackgroundImage("goldlogo");
 	_sound->playVoc("logo");
 	_gfx->copyBackgroundScreen();
 	_system->updateScreen();
+	_system->delayMillis(10);
 	_gfx->fadeinScreen();
 
 	uint32 clockTicks = _clockTicks;
@@ -57,7 +56,7 @@ void StarTrekEngine::playIntro() {
 	Sprite subtitleSprite;
 	_gfx->addSprite(&subtitleSprite);
 	subtitleSprite.setXYAndPriority(0, 0, 12);
-	subtitleSprite.bitmap = _gfx->loadBitmap("blank");
+	subtitleSprite.setBitmap(loadBitmapFile("blank"));
 	subtitleSprite.drawPriority2 = 16;
 
 	int index = 12;
@@ -123,7 +122,7 @@ void StarTrekEngine::playIntro() {
 		switch (frame) {
 		case 0:
 			starfieldZoomSpeed = 10;
-			playMidiMusicTracks(MIDITRACK_0, -1);
+			_sound->playMidiMusicTracks(MIDITRACK_0, -1);
 			_byte_45b3c = 0;
 			break;
 
@@ -151,7 +150,7 @@ void StarTrekEngine::playIntro() {
 			loadSubtitleSprite(2, &subtitleSprite);
 			planetR3.field22 = 2000;
 			planetR3.field24 = 10000 / _starfieldPointDivisor;
-			planetR3.shpFile = loadFile("planet.shp");
+			planetR3.bitmap = new Bitmap(loadFile("planet.shp"));
 			initIntroR3ObjectToMove(&planetR3, 6, 10000, 6, 10000, 0);
 			addR3(&planetR3);
 			initIntroR3ObjectToMove(&_enterpriseR3, -15, 250, 15, 500, 18);
@@ -164,13 +163,17 @@ void StarTrekEngine::playIntro() {
 			break;
 
 		case 366:
-			planetR3.shpFile.reset();
+			delete planetR3.bitmap;
+			planetR3.bitmap = nullptr;
 			delR3(&planetR3);
 			break;
 
 		case 378:
 			_gfx->delSprite(&subtitleSprite);
 			_byte_45b3c = 1;
+			break;
+
+		default:
 			break;
 		}
 
@@ -229,10 +232,10 @@ void StarTrekEngine::initIntroR3ObjectToMove(R3 *r3, int16 srcAngle, int16 srcDe
 void StarTrekEngine::loadSubtitleSprite(int index, Sprite *sprite) {
 	if (_showSubtitles) {
 		if (index == -1)
-			sprite->setBitmap(_gfx->loadBitmap("blank"));
+			sprite->setBitmap(loadBitmapFile("blank"));
 		else {
 			Common::String file = Common::String::format("tittxt%02d", index);
-			sprite->setBitmap(_gfx->loadBitmap(file));
+			sprite->setBitmap(loadBitmapFile(file));
 		}
 	}
 }

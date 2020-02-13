@@ -148,6 +148,8 @@ Common::Error MacVentureEngine::run() {
 	debug("MacVenture::MacVentureEngine::init()");
 	initGraphics(kScreenWidth, kScreenHeight);
 
+	setInitialFlags();
+
 	_debugger = new Console(this);
 
 	// Additional setup.
@@ -176,8 +178,6 @@ Common::Error MacVentureEngine::run() {
 	_scriptEngine = new ScriptEngine(this, _world);
 
 	_soundManager = new SoundManager(this, _mixer);
-
-	setInitialFlags();
 
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
 	if (directSaveSlotLoading >= 0) {
@@ -313,8 +313,10 @@ void MacVentureEngine::refreshReady() {
 		_cmdReady = _currentSelection.size() != 0;
 		break;
 	case 2:
-		if (_destObject > 0) // We have a destination seleted
+		if (_destObject > 0) // We have a destination selected
 			_cmdReady = true;
+		break;
+	default:
 		break;
 	}
 }
@@ -614,6 +616,8 @@ void MacVentureEngine::runObjQueue() {
 		case 0xe:
 			zoomObject(obj.object);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -635,6 +639,8 @@ void MacVentureEngine::printTexts() {
 			_gui->printText(_world->getText(text.asset, text.source, text.destination));
 			gameChanged();
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -653,6 +659,8 @@ void MacVentureEngine::playSounds(bool pause) {
 			break;
 		case kSoundWait:
 			// Empty in the original.
+			break;
+		default:
 			break;
 		}
 	}
@@ -804,7 +812,6 @@ void MacVentureEngine::openObject(ObjID objID) {
 void MacVentureEngine::closeObject(ObjID objID) {
 	warning("closeObject: not fully implemented");
 	_gui->tryCloseWindow(getObjWindow(objID));
-	return;
 }
 
 void MacVentureEngine::checkObject(QueuedObject old) {
@@ -819,8 +826,8 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 		if (old.parent != _world->getObjAttr(id, kAttrParentObject)) {
 			enqueueObject(kSetToPlayerParent, id);
 		}
-		if (old.offscreen != _world->getObjAttr(id, kAttrInvisible) ||
-			old.invisible != _world->getObjAttr(id, kAttrUnclickable)) {
+		if (old.offscreen != !!_world->getObjAttr(id, kAttrInvisible) ||
+			old.invisible != !!_world->getObjAttr(id, kAttrUnclickable)) {
 			updateWindow(findParentWindow(id));
 		}
 	} else if (old.parent != _world->getObjAttr(id, kAttrParentObject) ||
@@ -837,14 +844,14 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 			_gui->addChild(newWin, id);
 			hasChanged = true;
 		}
-	} else if (old.offscreen != _world->getObjAttr(id, kAttrInvisible) ||
-				old.invisible != _world->getObjAttr(id, kAttrUnclickable)) {
+	} else if (old.offscreen != !!_world->getObjAttr(id, kAttrInvisible) ||
+				old.invisible != !!_world->getObjAttr(id, kAttrUnclickable)) {
 		updateWindow(findParentWindow(id));
 	}
 
 	if (_world->getObjAttr(id, kAttrIsExit)) {
 		if (hasChanged ||
-			old.hidden != _world->getObjAttr(id, kAttrHiddenExit) ||
+			old.hidden != !!_world->getObjAttr(id, kAttrHiddenExit) ||
 			old.exitx != _world->getObjAttr(id, kAttrExitX) ||
 			old.exity != _world->getObjAttr(id, kAttrExitY))
 			_gui->updateExit(id);

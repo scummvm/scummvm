@@ -189,7 +189,9 @@ PluginList ELFPluginProvider::getPlugins() {
 
 	// The Memory Manager should now allocate space based on the information
 	// it collected
-	ELFMemMan.allocateHeap();
+	if (!pl.empty()) {
+		ELFMemMan.allocateHeap();
+	}
 #endif
 
 	return pl;

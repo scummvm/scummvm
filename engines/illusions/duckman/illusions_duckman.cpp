@@ -790,6 +790,8 @@ void IllusionsEngine_Duckman::cursorControlRoutine(Control *control, uint32 delt
 		case 4:
 			_menuSystem->update(_cursor._control);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -931,6 +933,7 @@ bool IllusionsEngine_Duckman::changeScene(uint32 sceneId, uint32 threadId, uint3
 	uint32 currSceneId = getCurrentScene();
 	if (currSceneId != 0x10003)
 		dumpCurrSceneFiles(currSceneId, callerThreadId);
+	_soundMan->stopLoopingSounds(); //Fix for global looping sound not stopping in falling scene.
 	_threads->terminateThreads(callerThreadId);
 	_controls->destroyControls();
 	_resSys->unloadSceneResources(0x10003, 0x10001);
@@ -1187,9 +1190,13 @@ void IllusionsEngine_Duckman::playSoundEffect(int index) {
 	case 18:
 		soundEffectId = soundIds[26];
 		break;
+	default:
+		break;
 	}
-	if (soundEffectId)
+
+	if (soundEffectId) {
 		_soundMan->playSound(soundEffectId, 255, 0);
+	}
 }
 
 bool IllusionsEngine_Duckman::getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId) {

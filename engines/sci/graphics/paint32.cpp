@@ -145,6 +145,7 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 
 	LineProperties properties;
 	properties.bitmap = &bitmap;
+	properties.solid = true;
 
 	switch (style) {
 	case kLineStyleSolid:
@@ -157,6 +158,8 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 		break;
 	case kLineStylePattern:
 		properties.solid = pattern == 0xFFFF;
+		break;
+	default:
 		break;
 	}
 

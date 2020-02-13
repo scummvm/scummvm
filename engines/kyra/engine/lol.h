@@ -37,6 +37,10 @@ namespace Audio {
 class SeekableAudioStream;
 } // End of namespace Audio
 
+namespace Common {
+class Keymap;
+}
+
 namespace Kyra {
 
 class Screen_LoL;
@@ -266,14 +270,14 @@ friend class Debugger_LoL;
 friend class HistoryPlayer;
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
-	virtual ~LoLEngine();
+	~LoLEngine() override;
 
-	virtual void initKeymap();
+	static Common::Array<Common::Keymap *> initKeymaps();
 
-	void pauseEngineIntern(bool pause);
+	void pauseEngineIntern(bool pause) override;
 
-	Screen *screen();
-	GUI *gui() const;
+	Screen *screen() override;
+	GUI *gui() const override;
 
 private:
 	Screen_LoL *_screen;
@@ -281,8 +285,8 @@ private:
 
 	TIMInterpreter *_tim;
 
-	Common::Error init();
-	Common::Error go();
+	Common::Error init() override;
+	Common::Error go() override;
 
 	// initialization
 	void initStaticResource();
@@ -294,9 +298,9 @@ private:
 	void startup();
 	void startupNew();
 
-	void registerDefaultSettings();
-	void writeSettings();
-	void readSettings();
+	void registerDefaultSettings() override;
+	void writeSettings() override;
+	void readSettings() override;
 
 	static const char *const kKeymapName;
 
@@ -310,7 +314,7 @@ private:
 
 	// main loop
 	void runLoop();
-	void update();
+	void update() override;
 
 	// mouse
 	void setMouseCursorToIcon(int icon);
@@ -407,7 +411,7 @@ private:
 	void pauseDemoPlayer(bool toggle);
 
 	// timers
-	void setupTimers();
+	void setupTimers() override;
 
 	void timerProcessMonsters(int timerNum);
 	void timerSpecialCharacterUpdate(int timerNum);
@@ -418,23 +422,23 @@ private:
 	void timerUpdateLampState(int timerNum);
 	void timerFadeMessageText(int timerNum);
 
-	uint8 getClock2Timer(int index) { return index < _numClock2Timers ? _clock2Timers[index] : 0; }
-	uint8 getNumClock2Timers()  { return _numClock2Timers; }
+	uint8 getClock2Timer(int index) override { return index < _numClock2Timers ? _clock2Timers[index] : 0; }
+	uint8 getNumClock2Timers() override  { return _numClock2Timers; }
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
 
 	// sound
-	int convertVolumeToMixer(int value);
-	int convertVolumeFromMixer(int value);
+	int convertVolumeToMixer(int value) override;
+	int convertVolumeFromMixer(int value) override;
 
 	void loadTalkFile(int index);
-	void snd_playVoiceFile(int track) {}
+	void snd_playVoiceFile(int track) override {}
 	bool snd_playCharacterSpeech(int id, int8 speaker, int);
-	int snd_updateCharacterSpeech();
-	void snd_stopSpeech(bool setFlag);
-	void snd_playSoundEffect(int track, int volume);
-	bool snd_processEnvironmentalSoundEffect(int soundId, int block);
+	int snd_updateCharacterSpeech() override;
+	void snd_stopSpeech(bool setFlag) override;
+	void snd_playSoundEffect(int track, int volume) override;
+	bool snd_processEnvironmentalSoundEffect(int soundId, int block) override;
 	void snd_queueEnvironmentalSoundEffect(int soundId, int block);
 	void snd_playQueuedEffects();
 	void snd_loadSoundFile(int track);
@@ -521,7 +525,7 @@ private:
 	void gui_initCharInventorySpecialButtons(int charNum);
 	void gui_initMagicScrollButtons();
 	void gui_initMagicSubmenu(int charNum);
-	void gui_initButton(int index, int x = -1, int y = -1, int val = -1);
+	void gui_initButton(int index, int x = -1, int y = -1, int val = -1) override;
 
 	LoLButtonDef _sceneWindowButton;
 
@@ -574,12 +578,12 @@ private:
 	void setupDialogueButtons(int numStr, const char *s1, const char *s2, const char *s3);
 
 	TextDisplayer_LoL *_txt;
-	TextDisplayer_rpg *txt() { return _txt; }
+	TextDisplayer_rpg *txt() override { return _txt; }
 
 	// emc scripts
 	void runInitScript(const char *filename, int optionalFunc);
 	void runInfScript(const char *filename);
-	void runLevelScript(int block, int flags);
+	void runLevelScript(int block, int flags) override;
 	void runLevelScriptCustom(int block, int flags, int charNum, int item, int reg3, int reg4);
 
 	EMCData _scriptData;
@@ -765,7 +769,7 @@ private:
 	TIM *_activeTim[10];
 
 	// tim opcode
-	void setupOpcodeTable();
+	void setupOpcodeTable() override;
 
 	Common::Array<const TIMOpcode *> _timIntroOpcodes;
 	int tlol_setupPaletteFade(const TIM *tim, const uint16 *param);
@@ -858,7 +862,7 @@ private:
 	void calcCharPortraitXpos();
 
 	void updatePortraitSpeechAnim();
-	void stopPortraitSpeechAnim();
+	void stopPortraitSpeechAnim() override;
 	void initTextFading(int textType, int clearField);
 	void setCharFaceFrame(int charNum, int frameNum);
 	void faceFrameRefresh(int charNum);
@@ -906,15 +910,15 @@ private:
 
 	// level
 	void loadLevel(int index);
-	void addLevelItems();
+	void addLevelItems() override;
 	void loadLevelWallData(int fileIndex, bool mapShapes);
 	void assignBlockItem(LevelBlockProperty *l, uint16 item);
 	int assignLevelDecorationShapes(int index);
 	uint8 *getLevelDecorationShapes(int index);
 	void releaseDecorations(int first = 0, int num = 400);
 	void restoreTempDataAdjustMonsterStrength(int index);
-	void loadBlockProperties(const char *cmzFile);
-	const uint8 *getBlockFileData(int levelIndex);
+	void loadBlockProperties(const char *cmzFile) override;
+	const uint8 *getBlockFileData(int levelIndex) override;
 	void loadLevelShpDat(const char *shpFile, const char *datFile, bool flag);
 	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
 
@@ -924,10 +928,10 @@ private:
 	bool testWallFlag(int block, int direction, int flag);
 	bool testWallInvisibility(int block, int direction);
 
-	void drawScene(int pageNum);
+	void drawScene(int pageNum) override;
 
-	void drawSceneShapes(int start = 0);
-	void drawDecorations(int index);
+	void drawSceneShapes(int start = 0) override;
+	void drawDecorations(int index) override;
 	void drawBlockEffects(int index, int type);
 	void drawSpecialGuiShape(int pageNum);
 	void setWallType(int block, int wall, int val);
@@ -951,8 +955,8 @@ private:
 	void calcCoordinatesForSingleCharacter(int charNum, uint16 &x, uint16 &y);
 	void calcCoordinatesAddDirectionOffset(uint16 &x, uint16 &y, int direction);
 
-	int clickedDoorSwitch(uint16 block, uint16 direction);
-	int clickedNiche(uint16 block, uint16 direction);
+	int clickedDoorSwitch(uint16 block, uint16 direction) override;
+	int clickedNiche(uint16 block, uint16 direction) override;
 
 	void movePartySmoothScrollBlocked(int speed);
 	void movePartySmoothScrollUp(int speed);
@@ -1045,7 +1049,7 @@ private:
 	bool isItemMoveable(Item itemIndex);
 	void deleteItem(Item itemIndex);
 	void runItemScript(int charNum, Item item, int flags, int next, int reg4);
-	void setHandItem(Item itemIndex);
+	void setHandItem(Item itemIndex) override;
 	bool itemEquipped(int charNum, uint16 itemType);
 
 	void setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight, int moveable);
@@ -1149,9 +1153,9 @@ private:
 	const uint16 *_monsterScaleWH;
 
 	// misc
-	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
+	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) override;
 
-	const KyraRpgGUISettings *guiSettings() const;
+	const KyraRpgGUISettings *guiSettings() const override;
 
 	uint8 _compassBroken;
 	uint8 _drainMagic;
@@ -1297,20 +1301,20 @@ private:
 	bool _mapUpdateNeeded;
 
 	// unneeded
-	void setWalkspeed(uint8) {}
-	void removeHandItem() {}
-	bool lineIsPassable(int, int) { return false; }
+	void setWalkspeed(uint8) override {}
+	void removeHandItem() override {}
+	bool lineIsPassable(int, int) override { return false; }
 
 	// save
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
 
-	void *generateMonsterTempData(LevelTempData *tmp);
-	void restoreBlockTempData(int levelIndex);
-	void restoreMonsterTempData(LevelTempData *tmp);
-	void releaseMonsterTempData(LevelTempData *tmp);
+	void *generateMonsterTempData(LevelTempData *tmp) override;
+	void restoreBlockTempData(int levelIndex) override;
+	void restoreMonsterTempData(LevelTempData *tmp) override;
+	void releaseMonsterTempData(LevelTempData *tmp) override;
 
-	Graphics::Surface *generateSaveThumbnail() const;
+	Graphics::Surface *generateSaveThumbnail() const override;
 };
 
 class HistoryPlayer {

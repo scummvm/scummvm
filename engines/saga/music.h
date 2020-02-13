@@ -43,8 +43,8 @@ public:
 
 	void play(SagaEngine *vm, ByteArray *buffer, bool loop);
 	void playQuickTime(const Common::String &musicName, bool loop);
-	virtual void pause();
-	virtual void resume();
+	void pause() override;
+	void resume() override;
 
 	bool isAdlib() const { return _driverType == MT_ADLIB; }
 
@@ -52,8 +52,8 @@ public:
 	bool isPlaying() const { return _parser && _parser->isPlaying(); }
 
 	// MidiDriver_BASE interface implementation
-	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+	void send(uint32 b) override;
+	void metaEvent(byte type, byte *data, uint16 length) override;
 
 protected:
 	MusicType _driverType;

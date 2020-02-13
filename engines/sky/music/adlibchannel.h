@@ -64,10 +64,10 @@ typedef struct {
 class AdLibChannel : public ChannelBase {
 public:
 	AdLibChannel (OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData);
-	virtual ~AdLibChannel();
-	virtual uint8 process(uint16 aktTime);
-	virtual void updateVolume(uint16 pVolume);
-	virtual bool isActive();
+	~AdLibChannel() override;
+	uint8 process(uint16 aktTime) override;
+	void updateVolume(uint16 pVolume) override;
+	bool isActive() override;
 private:
 	OPL::OPL *_opl;
 	uint8 *_musicData;

@@ -39,6 +39,7 @@ class Font;
 
 namespace Common {
 	struct Event;
+	class Keymap;
 }
 
 namespace GUI {
@@ -67,7 +68,7 @@ class GuiManager : public Common::Singleton<GuiManager> {
 	friend class Dialog;
 	friend class Common::Singleton<SingletonBaseType>;
 	GuiManager();
-	~GuiManager();
+	~GuiManager() override;
 public:
 
 	// Main entry for the GUI: this will start an event loop that keeps running
@@ -75,6 +76,7 @@ public:
 	void runLoop();
 
 	void processEvent(const Common::Event &event, Dialog *const activeDialog);
+	Common::Keymap *getKeymap() const;
 	void scheduleTopDialogRedraw();
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
@@ -106,9 +108,12 @@ public:
 	 * dialog is provided and is present in the DialogStack, the object will
 	 * only be deleted when that dialog is the top level dialog.
 	 */
-	void addToTrash(GuiObject*, Dialog* parent = 0);
+	void addToTrash(GuiObject*, Dialog* parent = nullptr);
+	void initTextToSpeech();
 
 	bool _launched;
+
+	void redrawFull();
 
 protected:
 	enum RedrawStatus {
@@ -154,8 +159,7 @@ protected:
 	Common::List<GuiObjectTrashItem> _guiObjectTrash;
 
 	void initKeymap();
-	void pushKeymap();
-	void popKeymap();
+	void enableKeymap(bool enabled);
 
 	void saveState();
 	void restoreState();
@@ -164,8 +168,6 @@ protected:
 	void closeTopDialog();
 
 	void redraw();
-
-	void loop();
 
 	void setupCursor();
 	void animateCursor();

@@ -157,6 +157,9 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 					debugN("NULL_STRING ");
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 }

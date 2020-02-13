@@ -56,7 +56,6 @@ public:
 	Common::String readPascalString(bool twoByte = false);
 	void writePascalString(const Common::String &str, bool twoByte = false);
 	int readCount();
-	double readDouble();
 	CObject *parseClass(bool *isCopyReturned);
 
 	/** ownership of returned object is passed to caller */
@@ -77,13 +76,13 @@ public:
 	void decLevel() { _level--; }
 	int getLevel() { return _level; }
 
-	virtual bool eos() const { return _stream->eos(); }
-	virtual uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
-	virtual int32 pos() const { return _stream ? _stream->pos() : _wstream->pos(); }
-	virtual int32 size() const { return _stream->size(); }
-	virtual bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
+	bool eos() const override { return _stream->eos(); }
+	uint32 read(void *dataPtr, uint32 dataSize) override { return _stream->read(dataPtr, dataSize); }
+	int32 pos() const override { return _stream ? _stream->pos() : _wstream->pos(); }
+	int32 size() const override { return _stream->size(); }
+	bool seek(int32 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) { return _wstream->write(dataPtr, dataSize); }
+	uint32 write(const void *dataPtr, uint32 dataSize) override { return _wstream->write(dataPtr, dataSize); }
 
 private:
 	void init();
@@ -121,7 +120,7 @@ public:
 template <class T>
 class ObList : public Common::List<T *>, public CObject {
 public:
-	virtual bool load(MfcArchive &file) {
+	bool load(MfcArchive &file) override {
 		debugC(5, kDebugLoading, "ObList::load()");
 		int count = file.readCount();
 
@@ -155,9 +154,9 @@ class MemoryObject : CObject {
 
  public:
 	MemoryObject();
-	virtual ~MemoryObject();
+	~MemoryObject() override;
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 	void loadFile(const Common::String &filename);
 	void load() { loadFile(_memfilename); }
 	byte *getData();
@@ -177,20 +176,20 @@ class MemoryObject2 : public MemoryObject {
 
  public:
 	MemoryObject2();
-	virtual ~MemoryObject2();
-	virtual bool load(MfcArchive &file);
+	~MemoryObject2() override;
+	bool load(MfcArchive &file) override;
 
 	void copyData(byte *src, int dataSize);
 };
 
 class ObArray : public Common::Array<CObject>, public CObject {
  public:
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 };
 
 class DWordArray : public Common::Array<int32>, public CObject {
  public:
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 };
 
 Common::String genFileName(int superId, int sceneId, const char *ext);

@@ -347,11 +347,11 @@ SegmentId SegManager::getScriptSegment(int script_id) const {
 	return _scriptSegMap.getVal(script_id, 0);
 }
 
-SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
+SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load, bool applyScriptPatches) {
 	SegmentId segment;
 
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
-		instantiateScript(script_nr);
+		instantiateScript(script_nr, applyScriptPatches);
 
 	segment = getScriptSegment(script_nr);
 
@@ -1003,7 +1003,7 @@ void SegManager::createClassTable() {
 	}
 }
 
-reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment) {
+reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment, bool applyScriptPatches) {
 	if (classnr == 0xffff)
 		return NULL_REG;
 
@@ -1012,7 +1012,7 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 calle
 	} else {
 		Class *the_class = &_classTable[classnr];
 		if (!the_class->reg.getSegment()) {
-			getScriptSegment(the_class->script, lock);
+			getScriptSegment(the_class->script, lock, applyScriptPatches);
 
 			if (!the_class->reg.getSegment()) {
 				if (lock == SCRIPT_GET_DONT_LOAD)
@@ -1028,7 +1028,7 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 calle
 	}
 }
 
-int SegManager::instantiateScript(int scriptNum) {
+int SegManager::instantiateScript(int scriptNum, bool applyScriptPatches) {
 	SegmentId segmentId = getScriptSegment(scriptNum);
 	Script *scr = getScriptIfLoaded(segmentId);
 	if (scr) {
@@ -1042,10 +1042,10 @@ int SegManager::instantiateScript(int scriptNum) {
 		scr = allocateScript(scriptNum, &segmentId);
 	}
 
-	scr->load(scriptNum, _resMan, _scriptPatcher);
+	scr->load(scriptNum, _resMan, _scriptPatcher, applyScriptPatches);
 	scr->initializeLocals(this);
 	scr->initializeClasses(this);
-	scr->initializeObjects(this, segmentId);
+	scr->initializeObjects(this, segmentId, applyScriptPatches);
 #ifdef ENABLE_SCI32
 	g_sci->_guestAdditions->instantiateScriptHook(*scr);
 #endif

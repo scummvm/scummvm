@@ -73,7 +73,7 @@ private:
 	int     _walkboxId;
 
 	int     _cluesLimit;
-	int     _timer4RemainDefault;
+	uint32  _timer4RemainDefault;
 
 	// Flags
 	bool _isTarget;
@@ -86,14 +86,14 @@ private:
 	bool _damageAnimIfMoving;
 
 	// Movement
-	bool _movementTrackPaused;
-	int  _movementTrackNextWaypointId;
-	int  _movementTrackNextDelay; // probably not used
-	int  _movementTrackNextAngle; // probably not used
-	bool _movementTrackNextRunning;
+	bool   _movementTrackPaused;
+	int    _movementTrackNextWaypointId;
+	int32  _movementTrackNextDelay;  // probably not used
+	int    _movementTrackNextAngle;  // fixed: used for AI_Movement_Track_Append_With_Facing - original: probably not used
+	bool   _movementTrackNextRunning;
 
-	int _movementTrackWalkingToWaypointId;
-	int _movementTrackDelayOnNextWaypoint;
+	int    _movementTrackWalkingToWaypointId;
+	int32  _movementTrackDelayOnNextWaypoint;
 
 	// Animation
 	int _width;
@@ -110,8 +110,8 @@ private:
 	int _retiredWidth;
 	int _retiredHeight;
 
-	int _timersLeft[kActorTimers];
-	int _timersLast[kActorTimers];
+	int32 _timersLeft[kActorTimers];  // this keeps time difference, and it is stored during save() (saveInt actually saves a uint32)
+	uint32 _timersLast[kActorTimers]; // this keeps actual time, and is not stored during save(), so it can be a uint32
 
 	float _scale;
 
@@ -128,6 +128,7 @@ public:
 	void setAtXYZ(const Vector3 &pos, int facing, bool setFacing = true, bool moving = false, bool retired = false);
 	void setAtWaypoint(int waypointId, int angle, int unknown, bool retired);
 
+	int  getId() const { return _id; };
 	float getX() const;
 	float getY() const;
 	float getZ() const;
@@ -142,11 +143,11 @@ public:
 	void setFPS(int fps);
 	void increaseFPS();
 
-	void timerStart(int timerId, int interval);
-	void timerReset(int timerId);
-	int  timerLeft(int timerId);
-	void timersUpdate();
-	void timerUpdate(int timerId);
+	void   timerStart(int timerId, int32 interval);
+	void   timerReset(int timerId);
+	int32 timerLeft(int timerId);
+	void   timersUpdate();
+	void   timerUpdate(int timerId);
 
 	void movementTrackNext(bool omitAiScript);
 	void movementTrackPause();
@@ -254,7 +255,7 @@ public:
 	void acquireClue(int clueId, bool unknownFlag, int fromActorId);
 	void loseClue(int clueId);
 	bool hasClue(int clueId) const;
-	void copyClues(int actorId);
+	bool copyClues(int actorId);
 	void acquireCluesByRelations();
 
 	int soundVolume() const;

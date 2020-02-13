@@ -40,7 +40,7 @@ namespace Scumm {
  */
 class MusicEngine : public Common::Serializable {
 public:
-	virtual ~MusicEngine() {}
+	~MusicEngine() override {}
 
 	/**
 	 * Set the output volume.
@@ -90,7 +90,7 @@ public:
 	/**
 	 * Save or load the music state.
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &ser) {}
+	void saveLoadWithSerializer(Common::Serializer &ser) override {}
 };
 
 } // End of namespace Scumm

@@ -428,7 +428,7 @@ bool AIScriptMutant2::UpdateAnimation(int *animation, int *frame) {
 			Actor_Combat_AI_Hit_Attempt(kActorMutant2);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(906)) {
-			Actor_Change_Animation_Mode(kActorMutant2, 0);
+			Actor_Change_Animation_Mode(kActorMutant2, kAnimationModeIdle);
 		}
 		break;
 
@@ -456,7 +456,7 @@ bool AIScriptMutant2::UpdateAnimation(int *animation, int *frame) {
 			Sound_Play(kSfxHURT1M2, 100, 0, 0, 50);
 		} else {
 			if (!_animationFrame) {
-				Actor_Change_Animation_Mode(kActorMutant2, 0);
+				Actor_Change_Animation_Mode(kActorMutant2, kAnimationModeIdle);
 			}
 		}
 		break;

@@ -61,7 +61,7 @@ public:
 	bool initialize(const char *inFilename, const char *subtitleFile = nullptr);
 	bool cleanup();
 	VideoPlayer(BaseGame *inGame);
-	virtual ~VideoPlayer();
+	~VideoPlayer() override;
 
 	/*PAVIFILE _aviFile;
 

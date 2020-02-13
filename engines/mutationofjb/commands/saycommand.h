@@ -32,7 +32,7 @@ class SayCommandParser : public SeqCommandParser {
 public:
 	SayCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class SayCommand : public SeqCommand {
@@ -42,8 +42,8 @@ public:
 		_voiceFile(voiceFile),
 		_waitForPrevious(waitForPrevious),
 		_talkingAnimation(talkingAnimation) {}
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	Common::String _lineToSay;
 	Common::String _voiceFile;

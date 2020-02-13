@@ -33,7 +33,7 @@ class Cheater;
 class GobConsole : public GUI::Debugger {
 public:
 	GobConsole(GobEngine *vm);
-	virtual ~GobConsole(void);
+	~GobConsole(void) override;
 
 	void registerCheater(Cheater *cheater);
 	void unregisterCheater();

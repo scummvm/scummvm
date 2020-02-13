@@ -27,7 +27,6 @@
 #include "engines/metaengine.h"
 #include "gui/saveload.h"
 #include "common/system.h"
-#include "common/translation.h"
 
 namespace Cruise {
 
@@ -207,29 +206,10 @@ int processMenu(menuStruct *pMenu) {
 }
 
 static void handleSaveLoad(bool saveFlag) {
-	GUI::SaveLoadChooser *dialog;
 	if (saveFlag)
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		_vm->saveGameDialog();
 	else
-		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-
-	int slot = dialog->runModalWithCurrentTarget();
-
-	if (slot >= 0) {
-		if (!saveFlag)
-			_vm->loadGameState(slot);
-		else {
-			Common::String result(dialog->getResultString());
-			if (result.empty()) {
-				// If the user was lazy and entered no save name, come up with a default name.
-				result = Common::String::format("Save %d", slot + 1);
-			}
-
-			_vm->saveGameState(slot, result);
-		}
-	}
-
-	delete dialog;
+		_vm->loadGameDialog();
 }
 
 int playerMenu(int menuX, int menuY) {
@@ -300,6 +280,8 @@ int playerMenu(int menuX, int menuY) {
 			break;
 		case 7: // exit
 			return 1;
+		default:
+			break;
 		}
 	}
 

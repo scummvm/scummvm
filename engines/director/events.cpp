@@ -21,7 +21,8 @@
  */
 
 #include "common/system.h"
-#include "common/events.h"
+
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/frame.h"
@@ -43,7 +44,7 @@ void processQuitEvent() {
 void DirectorEngine::processEvents() {
 	Common::Event event;
 
-	uint endTime = g_system->getMillis() + 200;
+	uint endTime = g_system->getMillis() + 10;
 
 	Score *sc = getCurrentScore();
 	if (sc->getCurrentFrame() >= sc->_frames.size()) {
@@ -57,6 +58,9 @@ void DirectorEngine::processEvents() {
 
 	while (g_system->getMillis() < endTime) {
 		while (g_system->getEventManager()->pollEvent(event)) {
+			if (_wm->processEvent(event))
+				continue;
+
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				sc->_stopPlay = true;
@@ -69,6 +73,8 @@ void DirectorEngine::processEvents() {
 				// But we still want to know if the mouse is down for press effects.
 				spriteId = currentFrame->getSpriteIDFromPos(pos);
 				sc->_currentMouseDownSpriteId = spriteId;
+
+				sc->_mouseIsDown = true;
 
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 				_lingo->processEvent(kEventMouseDown);
@@ -84,6 +90,8 @@ void DirectorEngine::processEvents() {
 				spriteId = currentFrame->getSpriteIDFromPos(pos);
 
 				debugC(3, kDebugEvents, "event: Button Up @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
+
+				sc->_mouseIsDown = false;
 
 				_lingo->processEvent(kEventMouseUp);
 				sc->_currentMouseDownSpriteId = 0;
@@ -107,7 +115,7 @@ void DirectorEngine::processEvents() {
 					_keyCode = 126;
 					break;
 				default:
-					warning("Keycode: %d", _keyCode);
+					debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
 				}
 
 				_lingo->processEvent(kEventKeyDown);

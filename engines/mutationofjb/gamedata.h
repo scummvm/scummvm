@@ -106,7 +106,7 @@ struct Door : public Common::Serializable {
 	 *
 	 * @param sz Serializer.
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
+	void saveLoadWithSerializer(Common::Serializer &sz) override;
 
 	/**
 	 * Check whether walk action used on this door causes implicit scene change.
@@ -205,7 +205,7 @@ struct Object : public Common::Serializable {
 	 *
 	 * @param sz Serializer.
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
+	void saveLoadWithSerializer(Common::Serializer &sz) override;
 };
 
 /**
@@ -257,7 +257,7 @@ struct Static : public Common::Serializable {
 	 *
 	 * @param sz Serializer.
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
+	void saveLoadWithSerializer(Common::Serializer &sz) override;
 
 	/**
 	 * Check whether this static is combinable.
@@ -307,7 +307,7 @@ struct Bitmap : public Common::Serializable {
 	 *
 	 * @param sz Serializer.
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
+	void saveLoadWithSerializer(Common::Serializer &sz) override;
 };
 
 /**
@@ -423,7 +423,7 @@ struct Scene : Common::Serializable {
 	 *
 	 * @param sz Serializer.
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
+	void saveLoadWithSerializer(Common::Serializer &sz) override;
 };
 
 struct ConversationInfo {
@@ -461,7 +461,7 @@ public:
 	 *
 	 * @param sz Serializer.
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
+	void saveLoadWithSerializer(Common::Serializer &sz) override;
 
 	uint8 _currentScene; // Persistent.
 	uint8 _lastScene;

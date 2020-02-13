@@ -310,6 +310,9 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
 			break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -532,6 +535,23 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] RemoveNormalCursor
+	// Used while changing cursor type at some included script
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "RemoveNormalCursor") == 0) {
+		stack->correctParams(0);
+
+		delete _cursorNormal;
+		_cursorNormal = nullptr;
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// GetNormalCursor
 	//////////////////////////////////////////////////////////////////////////
@@ -580,6 +600,23 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] RemoveHoverCursor
+	// Used while changing cursor type at some included script
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "RemoveHoverCursor") == 0) {
+		stack->correctParams(0);
+
+		delete _cursorHover;
+		_cursorHover = nullptr;
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetHoverCursor

@@ -38,25 +38,25 @@ class AdItem : public AdTalkHolder {
 	using Wintermute::AdObject::display;
 
 public:
-	bool update();
+	bool update() override;
 	DECLARE_PERSISTENT(AdItem, AdTalkHolder)
 	bool display(int x, int y);
-	bool getExtendedFlag(const char *flagName);
+	bool getExtendedFlag(const char *flagName) override;
 	bool _inInventory;
 	bool _cursorCombined;
 	BaseSprite *_spriteHover;
 	BaseSprite *_cursorNormal;
 	BaseSprite *_cursorHover;
 	AdItem(BaseGame *inGame);
-	virtual ~AdItem();
+	~AdItem() override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 private:
 	bool _displayAmount;
 	int32 _amount;

@@ -341,17 +341,6 @@ int main(int argc, char *argv[]) {
 			cout << "    " << i->description << '\n';
 	}
 
-	// Check if the keymapper and the event recorder are enabled simultaneously
-	bool keymapperEnabled = false;
-	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
-		if (i->enable && !strcmp(i->name, "keymapper"))
-			keymapperEnabled = true;
-		if (i->enable && !strcmp(i->name, "eventrecorder") && keymapperEnabled) {
-			std::cerr << "ERROR: The keymapper and the event recorder cannot be enabled simultaneously currently, please disable one of the two\n";
-			return -1;
-		}
-	}
-
 	// Check if tools and tests are enabled simultaneously
 	if (setup.devTools && setup.tests) {
 		std::cerr << "ERROR: The tools and tests projects cannot be created simultaneously\n";
@@ -366,6 +355,7 @@ int main(int argc, char *argv[]) {
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
+	bool backendWin32 = false;
 	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
 		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
@@ -376,42 +366,57 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
 	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
-		// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
 		setup.defines.push_back("WIN32");
+		backendWin32 = true;
 	} else {
 		// As a last resort, select the backend files to build based on the platform used to build create_project.
 		// This is broken when cross compiling.
 #if defined(_WIN32) || defined(WIN32)
 		setup.defines.push_back("WIN32");
+		backendWin32 = true;
 #else
 		setup.defines.push_back("POSIX");
 #endif
 	}
 
-	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false;
+	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false, ttsEnabled = false;
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable) {
-			if (!strcmp(i->name, "updates"))
+			if (!updatesEnabled && !strcmp(i->name, "updates"))
 				updatesEnabled = true;
-			else if (!strcmp(i->name, "libcurl"))
+			else if (!curlEnabled && !strcmp(i->name, "libcurl"))
 				curlEnabled = true;
-			else if (!strcmp(i->name, "sdlnet"))
+			else if (!sdlnetEnabled && !strcmp(i->name, "sdlnet"))
 				sdlnetEnabled = true;
+			else if (!ttsEnabled && !strcmp(i->name, "tts"))
+				ttsEnabled = true;
 		}
 	}
 
 	if (updatesEnabled) {
 		setup.defines.push_back("USE_SPARKLE");
-		if (projectType != kProjectXcode)
+		if (backendWin32)
 			setup.libraries.push_back("winsparkle");
 		else
 			setup.libraries.push_back("sparkle");
 	}
 
-	if (curlEnabled && projectType == kProjectMSVC)
-		setup.defines.push_back("CURL_STATICLIB");
-	if (sdlnetEnabled && projectType == kProjectMSVC)
-		setup.libraries.push_back("iphlpapi");
+	if (backendWin32) {
+		if (curlEnabled) {
+			setup.defines.push_back("CURL_STATICLIB");
+			setup.libraries.push_back("ws2_32");
+			setup.libraries.push_back("wldap32");
+			setup.libraries.push_back("crypt32");
+			setup.libraries.push_back("normaliz");
+		}
+		if (sdlnetEnabled) {
+			setup.libraries.push_back("iphlpapi");
+		}
+		if (ttsEnabled) {
+			setup.libraries.push_back("sapi");
+		}
+		setup.libraries.push_back("winmm");
+	}
 
 	setup.defines.push_back("SDL_BACKEND");
 	if (!setup.useSDL2) {
@@ -425,7 +430,6 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("USE_SDL2");
 		setup.libraries.push_back("sdl2");
 	}
-	setup.libraries.push_back("winmm");
 
 	// Add additional project-specific library
 #ifdef ADDITIONAL_LIBRARY
@@ -500,8 +504,6 @@ int main(int argc, char *argv[]) {
 		// For Visual Studio, all warnings are on by default in the project files,
 		// so we pass a list of warnings to disable globally or per-project
 		//
-		// Tracker reference:
-		// https://sourceforge.net/tracker/?func=detail&aid=2909981&group_id=37116&atid=418822
 		////////////////////////////////////////////////////////////////////////////
 		//
 		// 4068 (unknown pragma)
@@ -1066,6 +1068,7 @@ const Feature s_features[] = {
 	{           "16bit",                 "USE_RGB_COLOR",  "", true,  "16bit color support" },
 	{         "highres",                   "USE_HIGHRES",  "", true,  "high resolution" },
 	{         "mt32emu",                   "USE_MT32EMU",  "", true,  "integrated MT-32 emulator" },
+	{             "lua",                       "USE_LUA",  "", true,  "lua" },
 	{            "nasm",                      "USE_NASM",  "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{          "opengl",                    "USE_OPENGL",  "", true,  "OpenGL support" },
 	{        "opengles",                      "USE_GLES",  "", true,  "forced OpenGL ES mode" },
@@ -1073,13 +1076,13 @@ const Feature s_features[] = {
 	{           "cloud",                     "USE_CLOUD",  "", true,  "Cloud integration support" },
 	{     "translation",               "USE_TRANSLATION",  "", true,  "Translation support" },
 	{          "vkeybd",                 "ENABLE_VKEYBD",  "", false, "Virtual keyboard support"},
-	{       "keymapper",              "ENABLE_KEYMAPPER",  "", false, "Keymapper support"},
 	{   "eventrecorder",          "ENABLE_EVENTRECORDER",  "", false, "Event recorder support"},
 	{         "updates",                   "USE_UPDATES",  "", false, "Updates support"},
 	{         "dialogs",                "USE_SYSDIALOGS",  "", true,  "System dialogs support"},
 	{      "langdetect",                "USE_DETECTLANG",  "", true,  "System language detection support" }, // This feature actually depends on "translation", there
 	                                                                                                         // is just no current way of properly detecting this...
-	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" } // This feature is always applied in xcode projects
+	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" }, // This feature is always applied in xcode projects
+	{             "tts",                       "USE_TTS",  "", true,  "Text to speech support"}
 };
 
 const Tool s_tools[] = {
@@ -1496,7 +1499,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	}
 
 	// We also need to add the UUID of the main project file.
-	const std::string svmUUID = _uuidMap[setup.projectName] = createUUID();
+	const std::string svmUUID = _uuidMap[setup.projectName] = createUUID(setup.projectName);
 
 	createWorkspace(setup);
 
@@ -1581,7 +1584,7 @@ ProjectProvider::UUIDMap ProjectProvider::createUUIDMap(const BuildSetup &setup)
 		if (!i->enable || isSubEngine(i->name, setup.engines))
 			continue;
 
-		result[i->name] = createUUID();
+		result[i->name] = createUUID(i->name);
 	}
 
 	return result;
@@ -1595,17 +1598,20 @@ ProjectProvider::UUIDMap ProjectProvider::createToolsUUIDMap() const {
 		if (!i->enable)
 			continue;
 
-		result[i->name] = createUUID();
+		result[i->name] = createUUID(i->name);
 	}
 
 	return result;
 }
 
+const int kUUIDLen = 16;
+
 std::string ProjectProvider::createUUID() const {
 #ifdef USE_WIN32_API
 	UUID uuid;
-	if (UuidCreate(&uuid) != RPC_S_OK)
-		error("UuidCreate failed");
+	RPC_STATUS status = UuidCreateSequential(&uuid);
+	if (status != RPC_S_OK && status != RPC_S_UUID_LOCAL_ONLY)
+		error("UuidCreateSequential failed");
 
 	unsigned char *string = 0;
 	if (UuidToStringA(&uuid, &string) != RPC_S_OK)
@@ -1616,25 +1622,81 @@ std::string ProjectProvider::createUUID() const {
 	RpcStringFreeA(&string);
 	return result;
 #else
-	unsigned char uuid[16];
+	unsigned char uuid[kUUIDLen];
 
-	for (int i = 0; i < 16; ++i)
+	for (int i = 0; i < kUUIDLen; ++i)
 		uuid[i] = (unsigned char)((std::rand() / (double)(RAND_MAX)) * 0xFF);
 
 	uuid[8] &= 0xBF; uuid[8] |= 0x80;
 	uuid[6] &= 0x4F; uuid[6] |= 0x40;
 
+	return UUIDToString(uuid);
+#endif
+}
+
+std::string ProjectProvider::createUUID(const std::string &name) const {
+#ifdef USE_WIN32_API
+	HCRYPTPROV hProv = NULL;
+	if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT)) {
+		error("CryptAcquireContext failed");
+	}
+	
+	// Use MD5 hashing algorithm
+	HCRYPTHASH hHash = NULL;
+	if (!CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash)) {
+		CryptReleaseContext(hProv, 0);
+		error("CryptCreateHash failed");
+	}
+
+	// Hash unique ScummVM namespace {5f5b43e8-35ff-4f1e-ad7e-a2a87e9b5254}
+	const BYTE uuidNs[kUUIDLen] =
+		{ 0x5f, 0x5b, 0x43, 0xe8, 0x35, 0xff, 0x4f, 0x1e, 0xad, 0x7e, 0xa2, 0xa8, 0x7e, 0x9b, 0x52, 0x54 };
+	if (!CryptHashData(hHash, uuidNs, kUUIDLen, 0)) {
+		CryptDestroyHash(hHash);
+		CryptReleaseContext(hProv, 0);
+		error("CryptHashData failed");
+	}
+
+	// Hash project name
+	if (!CryptHashData(hHash, (const BYTE *)name.c_str(), name.length(), 0)) {
+		CryptDestroyHash(hHash);
+		CryptReleaseContext(hProv, 0);
+		error("CryptHashData failed");
+	}
+
+	// Get resulting UUID
+	BYTE uuid[kUUIDLen];
+	DWORD len = kUUIDLen;
+	if (!CryptGetHashParam(hHash, HP_HASHVAL, uuid, &len, 0)) {
+		CryptDestroyHash(hHash);
+		CryptReleaseContext(hProv, 0);
+		error("CryptGetHashParam failed");
+	}
+
+	// Add version and variant
+	uuid[6] &= 0x0F; uuid[6] |= 0x30;
+	uuid[8] &= 0x3F; uuid[8] |= 0x80;
+
+	CryptDestroyHash(hHash);
+	CryptReleaseContext(hProv, 0);
+
+	return UUIDToString(uuid);
+#else
+	// Fallback to random UUID
+	return createUUID();
+#endif
+}
+
+std::string ProjectProvider::UUIDToString(unsigned char *uuid) const {
 	std::stringstream uuidString;
 	uuidString << std::hex << std::uppercase << std::setfill('0');
-	for (int i = 0; i < 16; ++i) {
+	for (int i = 0; i < kUUIDLen; ++i) {
 		uuidString << std::setw(2) << (int)uuid[i];
 		if (i == 3 || i == 5 || i == 7 || i == 9) {
 			uuidString << std::setw(0) << '-';
 		}
 	}
-
 	return uuidString.str();
-#endif
 }
 
 std::string ProjectProvider::getLastPathComponent(const std::string &path) {

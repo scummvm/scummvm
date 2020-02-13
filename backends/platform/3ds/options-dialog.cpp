@@ -61,7 +61,7 @@ OptionsDialog::OptionsDialog() : GUI::Dialog(20, 20, 280, 200) {
 	_screenRadioGroup->setValue(config.screen);
 
 	new GUI::StaticTextWidget(this, 0, 100, 110, 15, _("C-Pad Sensitivity:"), Graphics::kTextAlignRight);
-	_sensitivity = new GUI::SliderWidget(this, 115, 100, 160, 15, "TODO: Add tooltip", 1);
+	_sensitivity = new GUI::SliderWidget(this, 115, 100, 160, 15);
 	_sensitivity->setMinValue(-15);
 	_sensitivity->setMaxValue(30);
 	_sensitivity->setValue(config.sensitivity);
@@ -72,20 +72,41 @@ OptionsDialog::~OptionsDialog() {
 	optionMenuOpened = false;
 }
 
-void OptionsDialog::updateConfigManager() {
-	config.showCursor = _showCursorCheckbox->getState();
-	config.snapToBorder = _snapToBorderCheckbox->getState();
-	config.stretchToFit = _stretchToFitCheckbox->getState();
-	config.sensitivity = _sensitivity->getValue();
-	config.screen = _screenRadioGroup->getValue();
-	saveConfig();
-	loadConfig();
+bool OptionsDialog::getShowCursor() const {
+	return _showCursorCheckbox->getState();
+}
+
+bool OptionsDialog::getSnapToBorder() const {
+	return _snapToBorderCheckbox->getState();
+}
+
+bool OptionsDialog::getStretchToFit() const {
+	return _stretchToFitCheckbox->getState();
+}
+
+int OptionsDialog::getSensitivity() const {
+	return _sensitivity->getValue();
+}
+
+int OptionsDialog::getScreen() const {
+	return _screenRadioGroup->getValue();
+}
+
+void OptionsDialog::reflowLayout() {
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	// Center the dialog
+	_x = (screenW - getWidth()) / 2;
+	_y = (screenH - getHeight()) / 2;
+
+	GUI::Dialog::reflowLayout();
 }
 
 void OptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case GUI::kOKCmd:
-		updateConfigManager();
+		setResult(1);
 		// Fall through
 	case GUI::kCloseCmd:
 		close();

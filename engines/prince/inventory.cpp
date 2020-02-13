@@ -393,11 +393,9 @@ void PrinceEngine::inventoryLeftMouseButton() {
 	if (_optionEnabled == 0) {
 		int invObjExamEvent = _script->scanMobEvents(_invMobList[_selectedMob]._mask, _script->_scriptInfo.invObjExam);
 		if (invObjExamEvent == -1) {
-			// do_standard
-			// FIXME: UB?
-			// Constness of the pointer returned by c_str() is cast away (which generates a compiler warning)
-			// while it potentially gets modified inside printAt()
-			printAt(0, 216, (char *)_invMobList[_selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
+			char buf[256];
+			strncpy(buf, _invMobList[_selectedMob]._examText.c_str(), 256);
+			printAt(0, 216, buf, kNormalWidth / 2, _invExamY);
 			_interpreter->setCurrentString(_invMobList[_selectedMob]._mask + 70000);
 			setVoice(0, 28, 1);
 			playSample(28, 0);

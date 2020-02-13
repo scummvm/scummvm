@@ -176,11 +176,6 @@ protected:
 	void os_draw_picture(int picture, const Common::Point &pos);
 
 	/**
-	 * Display a picture using the specified bounds
-	 */
-	void os_draw_picture(int picture, const Common::Rect &r);
-
-	/**
 	 * Return the colour of the pixel below the cursor. This is used by V6 games to print
 	 * text on top of pictures. The coulor need not be in the standard set of Z-machine colours.
 	 */
@@ -251,7 +246,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~GlkInterface();
+	~GlkInterface() override;
 
 	/**
 	 * Initialization

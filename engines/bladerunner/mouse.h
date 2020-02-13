@@ -62,7 +62,7 @@ public:
 	void setMouseJitterDown();
 
 	void disable();
-	void enable();
+	void enable(bool force = false);
 	bool isDisabled() const;
 
 	void draw(Graphics::Surface &surface, int x, int y);

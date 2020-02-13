@@ -454,11 +454,6 @@ bool AgiEngine::handleController(uint16 key) {
 		// Otherwise go on and look for the ESC controller
 	}
 
-	// AGI 3.149 games, The Black Cauldron and King's Quest 4 need KEY_ESCAPE to use menus
-	// Games with the GF_ESCPAUSE flag need KEY_ESCAPE to pause the game
-	//		(key == KEY_ESCAPE && getVersion() != 0x3149 && getGameID() != GID_BC && getGameID() != GID_KQ4 && !(getFeatures() & GF_ESCPAUSE)) )
-	//		return false;
-
 	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == AGI_KEY_ENTER) &&
 	        (!_text->promptIsEnabled())) {
 		key = 0x20; // Set Enter key to Space in Manhunter when prompt is disabled

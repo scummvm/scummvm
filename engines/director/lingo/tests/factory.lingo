@@ -11,8 +11,10 @@ method mNew
 	when keydown then aim1(mExit)
     set the locv of sprite 24 to 540
 method mMove x, y
+    global aimCopy
     set the locH of sprite 15 to x
     set the locV of sprite 15 to y-250
+    aimCopy = me
 method mAtFrame
     dontpassevent
     me(mMove, the mouseH, the mouseV)
@@ -60,9 +62,34 @@ method hit
     go "Death"
     set the locV of sprite 14 to 400
     aimgun2
+    if factory(killloc) then put "boo"
 method mDispose
     global fire1
     set fire1 = 0
+Method mNew2 theSprite, startCastRight, endCastRight, startCastLeft, endCastLeft
+    instance startDrawLeft, endDrawLeft, startDrawRight, endDrawRight, multiDrawP
+
+    if startCastLeft and endCastLeft then set multiDrawP to TRUE
+    set startDrawLeft to startCastRight
+    set endDrawLeft to endCastRight
+    set startDrawRight to startCastLeft
+    set endDrawRight to endCastLeft
+
+    me(mInitBirdPart, theSprite, startCastRight)
+Method mAtFrame2 frame, subFrame
+    global gMouseH, gMouseV
+    set gMouseH = mouseH()
+    set gMouseV = mouseV()
+
+    -- Exit when "Done" button, which resides upon score channel 6.
+    if (the clickOn = 6) then exit
+
+    put the mouseDown into mouseClick
+    Body(mEveryFrame, mouseClick)
+    RightWing(mEveryFrame, mouseClick)
+    LeftWing(mEveryFrame, mouseClick)
+
+
 --
 macro KillIt2
 global KillLoc

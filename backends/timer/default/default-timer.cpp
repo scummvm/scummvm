@@ -36,7 +36,7 @@ struct TimerSlot {
 
 	TimerSlot *next;
 
-	TimerSlot() : refCon(0), interval(0), nextFireTime(0), nextFireTimeMicro(0), next(0) {}
+	TimerSlot() : callback(nullptr), refCon(nullptr), interval(0), nextFireTime(0), nextFireTimeMicro(0), next(nullptr) {}
 };
 
 void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {

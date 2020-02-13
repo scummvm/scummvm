@@ -29,7 +29,7 @@
 
 #include "adl/adl.h"
 #include "adl/graphics.h"
-#include "adl/display.h"
+#include "adl/display_a2.h"
 
 namespace Adl {
 
@@ -92,21 +92,21 @@ public:
 			AdlEngine(syst, gd),
 			_files(nullptr),
 			_messageDelay(true) { }
-	~HiRes1Engine() { delete _files; }
+	~HiRes1Engine() override { delete _files; }
 
 private:
 	// AdlEngine
-	void runIntro();
-	void init();
-	void initGameState();
+	void runIntro() override;
+	void init() override;
+	void initGameState() override;
 	void restartGame();
-	void printString(const Common::String &str);
-	Common::String loadMessage(uint idx) const;
-	void printMessage(uint idx);
-	void drawItems();
-	void drawItem(Item &item, const Common::Point &pos);
-	void loadRoom(byte roomNr);
-	void showRoom();
+	void printString(const Common::String &str) override;
+	Common::String loadMessage(uint idx) const override;
+	void printMessage(uint idx) override;
+	void drawItems() override;
+	void drawItem(Item &item, const Common::Point &pos) override;
+	void loadRoom(byte roomNr) override;
+	void showRoom() override;
 
 	void showInstructions(Common::SeekableReadStream &stream, const uint pages[], bool goHome);
 	void wordWrap(Common::String &str) const;
@@ -126,7 +126,7 @@ private:
 };
 
 void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream, const uint pages[], bool goHome) {
-	_display->setMode(DISPLAY_MODE_TEXT);
+	_display->setMode(Display::kModeText);
 
 	uint page = 0;
 	while (pages[page] != 0) {
@@ -154,9 +154,9 @@ void HiRes1Engine::runIntro() {
 	// Early version have no bitmap in 'AUTO LOAD OBJ'
 	if (getGameVersion() >= GAME_VER_HR1_COARSE) {
 		stream->seek(IDI_HR1_OFS_LOGO_0);
-		_display->setMode(DISPLAY_MODE_HIRES);
-		_display->loadFrameBuffer(*stream);
-		_display->updateHiResScreen();
+		_display->setMode(Display::kModeGraphics);
+		static_cast<Display_A2 *>(_display)->loadFrameBuffer(*stream);
+		_display->renderGraphics();
 
 		if (getGameVersion() == GAME_VER_HR1_PD) {
 			// Only the PD version shows a title screen during the load
@@ -177,7 +177,7 @@ void HiRes1Engine::runIntro() {
 		// was present in the original PD release back in 1987.
 		StreamPtr basic(_files->createReadStream("MYSTERY.HELLO"));
 
-		_display->setMode(DISPLAY_MODE_TEXT);
+		_display->setMode(Display::kModeText);
 		_display->home();
 
 		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_0, '"');
@@ -197,7 +197,7 @@ void HiRes1Engine::runIntro() {
 			return;
 	}
 
-	_display->setMode(DISPLAY_MODE_MIXED);
+	_display->setMode(Display::kModeMixed);
 
 	str = readStringAt(*stream, IDI_HR1_OFS_GAME_OR_HELP);
 
@@ -214,10 +214,10 @@ void HiRes1Engine::runIntro() {
 			if (s.empty())
 				continue;
 
-			if (s[0] == APPLECHAR('I')) {
+			if (s[0] == _display->asciiToNative('I')) {
 				instructions = true;
 				break;
-			} else if (s[0] == APPLECHAR('G')) {
+			} else if (s[0] == _display->asciiToNative('G')) {
 				break;
 			}
 		}
@@ -238,10 +238,10 @@ void HiRes1Engine::runIntro() {
 
 	stream.reset(_files->createReadStream(IDS_HR1_EXE_1));
 	stream->seek(0x1800);
-	_display->loadFrameBuffer(*stream);
-	_display->updateHiResScreen();
+	static_cast<Display_A2 *>(_display)->loadFrameBuffer(*stream);
+	_display->renderGraphics();
 
-	_display->setMode(DISPLAY_MODE_MIXED);
+	_display->setMode(Display::kModeMixed);
 
 	if (getGameVersion() == GAME_VER_HR1_SIMI) {
 		// The original waits for the key after initializing the state.
@@ -268,7 +268,7 @@ void HiRes1Engine::init() {
 		_files = files;
 	}
 
-	_graphics = new GraphicsMan(*_display);
+	_graphics = new GraphicsMan_v1<Display_A2>(*static_cast<Display_A2 *>(_display));
 	_display->moveCursorTo(Common::Point(0, 3));
 
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
@@ -397,8 +397,9 @@ void HiRes1Engine::printString(const Common::String &str) {
 }
 
 Common::String HiRes1Engine::loadMessage(uint idx) const {
+	const char returnChar = _display->asciiToNative('\r');
 	StreamPtr stream(_messages[idx]->createReadStream());
-	return readString(*stream, APPLECHAR('\r')) + APPLECHAR('\r');
+	return readString(*stream, returnChar) + returnChar;
 }
 
 void HiRes1Engine::printMessage(uint idx) {
@@ -478,7 +479,7 @@ void HiRes1Engine::showRoom() {
 		drawItems();
 	}
 
-	_display->updateHiResScreen();
+	_display->renderGraphics();
 	_messageDelay = false;
 	printString(_roomData.description);
 	_messageDelay = true;
@@ -487,14 +488,17 @@ void HiRes1Engine::showRoom() {
 void HiRes1Engine::wordWrap(Common::String &str) const {
 	uint end = 39;
 
+	const char spaceChar = _display->asciiToNative(' ');
+	const char returnChar = _display->asciiToNative('\r');
+
 	while (1) {
 		if (str.size() <= end)
 			return;
 
-		while (str[end] != APPLECHAR(' '))
+		while (str[end] != spaceChar)
 			--end;
 
-		str.setChar(APPLECHAR('\r'), end);
+		str.setChar(returnChar, end);
 		end += 40;
 	}
 }

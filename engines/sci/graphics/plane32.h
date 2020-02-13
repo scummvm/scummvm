@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/rect.h"
+#include "sci/engine/features.h"
 #include "sci/engine/vm_types.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/lists32.h"
@@ -308,6 +309,13 @@ public:
 	 * `scrollPics` is true, pic items are also repositioned.
 	 */
 	void scrollScreenItems(const int16 deltaX, const int16 deltaY, const bool scrollPics);
+
+	/**
+	 * The default plane is the first plane generated inside the graphics engine.
+	 */
+	inline bool isDefaultPlane() {
+		return _object.isNumber() && _object.getOffset() == (uint32)g_sci->_features->detectPlaneIdBase();
+	}
 
 #pragma mark -
 #pragma mark Plane - Pic

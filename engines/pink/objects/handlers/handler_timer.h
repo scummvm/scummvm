@@ -39,9 +39,9 @@ class HandlerTimer : public Handler {
 //in Peril this is HandlerTimer
 class HandlerTimerActions : public Handler {
 public:
-	virtual void toConsole();
-	virtual void deserialize(Archive &archive);
-	virtual void handle(Actor *actor);
+	void toConsole() override;
+	void deserialize(Archive &archive) override;
+	void handle(Actor *actor) override;
 
 private:
 	StringArray _actions;
@@ -50,12 +50,12 @@ private:
 //appear in HokusPokus
 class HandlerTimerSequences : public HandlerSequences { //originally it was inherited from HandlerTimer
 public:
-	virtual void toConsole();
+	void toConsole() override;
 
-	virtual void handle(Actor *actor);
+	void handle(Actor *actor) override;
 
 protected:
-	virtual void execute(Sequence *sequence) {};
+	void execute(Sequence *sequence) override {};
 };
 
 } // End of namespace Pink

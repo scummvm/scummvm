@@ -340,6 +340,7 @@ void PSG_HuC6280::write(int offset, byte data) {
 			break;
 
 		case 0x40:
+		default:
 			break;
 
 		case 0x80:

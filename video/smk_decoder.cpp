@@ -675,6 +675,8 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB 
 							}
 						}
 						break;
+					default:
+						break;
 				}
 				++block;
 			}
@@ -695,6 +697,8 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB 
 				}
 				++block;
 			}
+			break;
+		default:
 			break;
 		}
 	}

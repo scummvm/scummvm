@@ -71,7 +71,7 @@ private:
 	int processInput();
 protected:
 	// Engine APIs
-	virtual Common::Error run();
+	Common::Error run() override;
 
 	void shutdown();
 
@@ -79,8 +79,8 @@ protected:
 
 public:
 	CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc);
-	virtual ~ CruiseEngine();
-	virtual bool hasFeature(EngineFeature f) const;
+	~ CruiseEngine() override;
+	bool hasFeature(EngineFeature f) const override;
 
 	int getGameType() const;
 	const char *getGameId() const;
@@ -88,16 +88,16 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	PCSound &sound() { return *_sound; }
-	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	GUI::Debugger *getDebugger() override { return _debugger; }
 	virtual void pauseEngine(bool pause);
 	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }
 
 	static const char *getSavegameFile(int saveGameIdx);
-	virtual Common::Error loadGameState(int slot);
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual bool canSaveGameStateCurrently();
-	virtual void syncSoundSettings();
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
+	void syncSoundSettings() override;
 
 	const CRUISEGameDescription *_gameDescription;
 	void initAllData();

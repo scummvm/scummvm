@@ -1,0 +1,6 @@
+Sound playfile 3, "Sound.AIF"
+
+sound fadeIn 5
+sound fadeIn 5, 10
+sound stop 1
+sound close 1

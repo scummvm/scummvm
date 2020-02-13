@@ -29,17 +29,17 @@ namespace Titanic {
 
 class CStarFieldBase: public CBaseStars {
 public:
-	virtual ~CStarFieldBase() {}
+	~CStarFieldBase() override {}
 
-	virtual bool loadYale(int v1);
+	bool loadYale(int v1) override;
 
 	/**
 	 * Selects a star
 	 */
-	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		const Common::Point &pt, void *handler = nullptr);
+	bool selectStar(CSurfaceArea *surfaceArea, CCamera *camera,
+		const Common::Point &pt, void *handler = nullptr) override;
 
-	virtual bool loadStar();
+	bool loadStar() override;
 
 	/**
 	 * Setup the control

@@ -33,9 +33,9 @@ class IllusionsEngine;
 class SoundGroupResourceLoader : public BaseResourceLoader {
 public:
 	SoundGroupResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~SoundGroupResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
+	~SoundGroupResourceLoader() override {}
+	void load(Resource *resource) override;
+	bool isFlag(int flag) override;
 protected:
 	IllusionsEngine *_vm;
 };
@@ -62,8 +62,8 @@ public:
 class SoundGroupInstance : public ResourceInstance {
 public:
 	SoundGroupInstance(IllusionsEngine *vm);
-	virtual void load(Resource *resource);
-	virtual void unload();
+	void load(Resource *resource) override;
+	void unload() override;
 public:
 	IllusionsEngine *_vm;
 	SoundGroupResource *_soundGroupResource;

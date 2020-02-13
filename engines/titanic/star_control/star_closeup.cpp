@@ -22,7 +22,7 @@
 
 #include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/error_code.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/titanic.h"
 
@@ -192,9 +192,9 @@ bool CStarCloseup::setup2(int val1, int val2) {
 }
 
 void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector &vector2,
-		CSurfaceArea *surfaceArea, CStarCamera *camera) {
+		CSurfaceArea *surfaceArea, CCamera *camera) {
 	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
-	float val1 = camera->getThreshold();
+	float val1 = camera->getFrontClip();
 	StarColor starColor = camera->getStarColor();
 	if (!_flag)
 		return;

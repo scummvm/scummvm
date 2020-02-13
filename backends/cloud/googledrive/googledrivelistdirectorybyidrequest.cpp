@@ -81,7 +81,7 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 	if (response.request)
 		_date = response.request->date();
 
-	Networking::ErrorResponse error(this);
+	Networking::ErrorResponse error(this, "GoogleDriveListDirectoryByIdRequest::responseCallback");
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();

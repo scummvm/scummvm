@@ -85,7 +85,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 	},
 
@@ -97,7 +97,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO,
-			GUIO1(GUIO_NOLAUNCHLOAD)
+			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
 		},
 	},
 
@@ -109,7 +109,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
-			GUIO1(GUIO_NOLAUNCHLOAD)
+			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
 		},
 	},
 
@@ -121,7 +121,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
-			GUIO1(GUIO_NOLAUNCHLOAD)
+			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
 		},
 	},
 
@@ -134,22 +134,26 @@ static const PegasusGameDescription gameDescriptions[] = {
 class PegasusMetaEngine : public AdvancedMetaEngine {
 public:
 	PegasusMetaEngine() : AdvancedMetaEngine(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
-		_singleId = "pegasus";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "pegasus";
+	}
+
+	const char *getName() const override {
 		return "The Journeyman Project: Pegasus Prime";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "The Journeyman Project: Pegasus Prime (C) Presto Studios";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const { return 999; }
-	virtual void removeSaveState(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override { return 999; }
+	void removeSaveState(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool PegasusMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -182,6 +186,10 @@ void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
 	// See listSaves() for info on the pattern
 	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
 	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
+}
+
+Common::KeymapArray PegasusMetaEngine::initKeymaps(const char *target) const {
+	return Pegasus::PegasusEngine::initKeymaps();
 }
 
 bool PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

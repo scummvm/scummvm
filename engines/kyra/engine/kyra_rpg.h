@@ -86,6 +86,7 @@ struct KyraRpgGUISettings {
 		uint8 labelColor2;
 		uint16 width;
 		uint16 height;
+		int16 txtOffsY;
 		int waitReserve;
 		uint16 waitX[2];
 		uint8 waitY[2];
@@ -128,15 +129,15 @@ class KyraRpgEngine : public KyraEngine_v1 {
 friend class TextDisplayer_rpg;
 public:
 	KyraRpgEngine(OSystem *system, const GameFlags &flags);
-	virtual ~KyraRpgEngine();
+	~KyraRpgEngine() override;
 
-	virtual Screen *screen() = 0;
-	virtual GUI *gui() const = 0;
+	Screen *screen() override = 0;
+	GUI *gui() const override = 0;
 
 protected:
 	// Startup
-	virtual Common::Error init();
-	virtual Common::Error go() = 0;
+	Common::Error init() override;
+	Common::Error go() override = 0;
 
 	// Init
 	void initStaticResource();
@@ -149,7 +150,7 @@ protected:
 	void updateEnvironmentalSfx(int soundId);
 
 	// timers
-	virtual void setupTimers() = 0;
+	void setupTimers() override = 0;
 	virtual void enableSysTimer(int sysTimer);
 	virtual void disableSysTimer(int sysTimer);
 	void enableTimer(int id);
@@ -160,7 +161,7 @@ protected:
 
 	// mouse
 	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
-	virtual void setHandItem(Item itemIndex) = 0;
+	void setHandItem(Item itemIndex) override = 0;
 
 	// Characters
 	int _updateCharNum;
@@ -213,10 +214,10 @@ protected:
 	void vcnDraw_bw_hiCol(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_fw_trans_hiCol(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_fw_Amiga(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_bw_Amiga(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_fw_trans_Amiga(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_bw_trans_Amiga(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_planar(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_planar(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_trans_planar(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_trans_planar(uint8 *&dst, const uint8 *&src);
 
 	typedef Common::Functor2Mem<uint8 *&, const uint8 *&, void, KyraRpgEngine> VcnDrawProc;
 	struct VcnLineDrawingMethods {
@@ -368,6 +369,7 @@ protected:
 
 	bool _dialogueField;
 	bool _dialogueFieldAmiga;
+	Screen::FontId _buttonFont;
 
 	const char *_dialogueButtonString[9];
 	const uint16 *_dialogueButtonPosX;
@@ -384,12 +386,12 @@ protected:
 	const char *const *_moreStrings;
 
 	// misc
-	virtual void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) = 0;
-	void delayUntil(uint32 time, bool unused = false, bool doUpdate = false, bool isMainLoop = false);
+	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) override = 0;
+	void delayUntil(uint32 time, bool unused = false, bool doUpdate = false, bool isMainLoop = false) override;
 	int rollDice(int times, int pips, int inc = 0);
 
-	virtual Common::Error loadGameState(int slot) = 0;
-	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
+	Common::Error loadGameState(int slot) override = 0;
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override = 0;
 
 	void generateTempData();
 	virtual void restoreBlockTempData(int levelIndex);
@@ -414,8 +416,8 @@ protected:
 	virtual void snd_stopSpeech(bool) {}
 	virtual int snd_updateCharacterSpeech() { return 0; }
 	virtual void stopPortraitSpeechAnim() {}
-	virtual void setupOpcodeTable() {}
-	virtual void snd_playVoiceFile(int) {}
+	void setupOpcodeTable() override {}
+	void snd_playVoiceFile(int) override {}
 
 	int _environmentSfx;
 	int _environmentSfxVol;
@@ -424,9 +426,9 @@ protected:
 	uint32 _activeVoiceFileTotalTime;
 
 	// unused
-	void setWalkspeed(uint8) {}
-	void removeHandItem() {}
-	bool lineIsPassable(int, int) { return false; }
+	void setWalkspeed(uint8) override {}
+	void removeHandItem() override {}
+	bool lineIsPassable(int, int) override { return false; }
 };
 
 } // End of namespace Kyra

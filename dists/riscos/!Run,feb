@@ -1,10 +1,17 @@
 Run <Obey$Dir>.!Boot
 
-RMEnsure SharedUnixLibrary 1.14 RMLoad System:Modules.SharedULib
+Set Alias$RMLoadIfThere IfThere %%0 Then RMLoad %%*0
+
+RMEnsure SharedUnixLibrary 1.14 RMLoadIfThere System:Modules.SharedULib
 RMEnsure SharedUnixLibrary 1.14 Error ScummVM requires SharedUnixLibrary 1.14 or later. This can be downloaded from https://www.riscos.info/packages/LibraryDetails.html#SharedUnixLibrary
 
-RMEnsure DigitalRenderer 0.56 RMLoad System:Modules.DRenderer
-RMEnsure DigitalRenderer 0.56 Error ScummVM requires DigitalRenderer 0.56 or later. This can be downloaded from https://www.riscos.info/packages/LibraryDetails.html#DRenderer
+RMEnsure DigitalRenderer 0.55 RMLoadIfThere System:Modules.DRenderer
+RMEnsure DigitalRenderer 0.55 Error ScummVM requires DigitalRenderer 0.55 or later. This can be downloaded from https://www.riscos.info/packages/LibraryDetails.html#DRenderer
+
+RMEnsure Iconv 0.12 RMLoadIfThere System:Modules.Iconv
+RMEnsure Iconv 0.12 Error ScummVM requires Iconv 0.12 or later. This can be downloaded from https://www.netsurf-browser.org/projects/iconv/
+
+Unset Alias$RMLoadIfThere
 
 | If running from the desktop, redirect stdout and stderr to a file.
 | This shouldn't happen when running from the command line, so that commands like "<ScummVM$Dir> --help" still work as expected.

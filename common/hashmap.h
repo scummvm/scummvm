@@ -88,8 +88,8 @@ private:
 	typedef HashMap<Key, Val, HashFunc, EqualFunc> HM_t;
 
 	struct Node {
-		const Key _key;
 		Val _value;
+		const Key _key;
 		explicit Node(const Key &key) : _key(key), _value() {}
 		Node() : _key(), _value() {}
 	};
@@ -113,6 +113,9 @@ private:
 	ObjectPool<Node, HASHMAP_MEMORYPOOL_SIZE> _nodePool;
 #endif
 
+	/** Default value, returned by the const getVal. */
+	Val _defaultVal;
+
 	Node **_storage;	///< hashtable of size arrsize.
 	size_type _mask;		///< Capacity of the HashMap minus one; must be a power of two of minus one
 	size_type _size;
@@ -120,9 +123,6 @@ private:
 
 	HashFunc _hash;
 	EqualFunc _equal;
-
-	/** Default value, returned by the const getVal. */
-	const Val _defaultVal;
 
 	/** Dummy node, used as marker for erased objects. */
 	#define HASHMAP_DUMMY_NODE	((Node *)1)

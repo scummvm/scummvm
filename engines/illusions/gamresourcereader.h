@@ -33,8 +33,8 @@ class GamArchive;
 class ResourceReaderGamArchive : public BaseResourceReader {
 public:
 	ResourceReaderGamArchive(const char *filename);
-	~ResourceReaderGamArchive();
-	byte *readResource(uint32 sceneId, uint32 resId, uint32 &dataSize);
+	~ResourceReaderGamArchive() override;
+	byte *readResource(uint32 sceneId, uint32 resId, uint32 &dataSize) override;
 protected:
 	GamArchive *_gamArchive;
 };

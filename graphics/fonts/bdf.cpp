@@ -767,17 +767,17 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 				byte b = 0;
 
 				for (int x = 0; x < box.width; x++) {
+					b <<= 1;
+
 					int sx = (int)((float)x / scale);
 
 					if (srcd[sx / 8] & (0x80 >> (sx % 8)))
 						b |= 1;
 
-					if (!(x % 8) && x) {
+					if (x % 8 == 7) {
 						*dst++ = b;
 						b = 0;
 					}
-
-					b <<= 1;
 				}
 
 				if (((box.width - 1) % 8)) {

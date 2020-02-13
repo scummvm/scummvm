@@ -74,7 +74,7 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 	}
 	if (response.request) _date = response.request->date();
 
-	Networking::ErrorResponse error(this);
+	Networking::ErrorResponse error(this, "DropboxCreateDirectoryRequest::responseCallback: unknown error");
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();

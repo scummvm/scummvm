@@ -50,62 +50,64 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~GraphicsWindow();
+	~GraphicsWindow() override;
 
-	uint drawPicture(uint image, int xpos, int ypos, int scale,
+	bool drawPicture(uint image, int xpos, int ypos, bool scale,
 	                   uint imagewidth, uint imageheight);
+	void drawPicture(const Graphics::Surface &image, uint transColor, int x0, int y0,
+		int width, int height, uint linkval = 0);
 
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Rect &box) override;
+	void rearrange(const Rect &box) override;
 
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual uint getSplit(uint size, bool vertical) const override {
+	uint getSplit(uint size, bool vertical) const override {
 		return size;
 	}
 
 	/**
 	 * Click the window
 	 */
-	virtual void click(const Point &newPos) override;
+	void click(const Point &newPos) override;
 
 	/**
 	 * Cancel a mouse event
 	 */
-	virtual void cancelMouseEvent() override {
+	void cancelMouseEvent() override {
 		_mouseRequest = false;
 	}
 
 	/**
 	 * Cancel a hyperlink event
 	 */
-	virtual void cancelHyperlinkEvent() override {
+	void cancelHyperlinkEvent() override {
 		_hyperRequest = false;
 	}
 
-	virtual void requestMouseEvent() override {
+	void requestMouseEvent() override {
 		_mouseRequest = true;
 	}
 
-	virtual void requestHyperlinkEvent() override {
+	void requestHyperlinkEvent() override {
 		_hyperRequest = true;
 	}
 
 	/**
 	 * Redraw the window
 	 */
-	virtual void redraw() override;
+	void redraw() override;
 
-	virtual void eraseRect(bool whole, const Rect &box) override;
+	void eraseRect(bool whole, const Rect &box) override;
 
-	virtual void fillRect(uint color, const Rect &box) override;
+	void fillRect(uint color, const Rect &box) override;
 
-	virtual void getSize(uint *width, uint *height) const override;
+	void getSize(uint *width, uint *height) const override;
 
-	virtual void setBackgroundColor(uint color) override;
+	void setBackgroundColor(uint color) override;
 };
 
 } // End of namespace Glk

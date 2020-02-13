@@ -508,26 +508,29 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		}
 
 		_commandHandler->addCommand(kCmdSetZ, 20700, 0, NULL);
-		bool hit = (_sprK1->_seqPtr + _sprK2->_seqPtr + _sprK3->_seqPtr == 15);
-		if (hit) {
-			if (spr->_ref == 1) {
-				_commandHandler->addCommand(kCmdSay,       1, 20003, NULL);       // hurray!
-				_commandHandler->addCommand(kCmdSeq,   20011,     2, NULL);       // Camera away
-				_commandHandler->addCommand(kCmdSend,  20701,    -1, NULL);       // move dice1 to scene -1
-				_commandHandler->addCommand(kCmdSend,  20702,    -1, NULL);       // move dice2 to scene -1
-				_commandHandler->addCommand(kCmdSend,  20703,    -1, NULL);       // move dice3 to scene -1
-				_commandHandler->addCommand(kCmdSend,  20700,    -1, NULL);       // move TV to scene -1
-				_commandHandler->addCommand(kCmdKeep,  20007,     0, NULL);       // to pocket
-				_commandHandler->addCommand(kCmdSend,  20006,    20, NULL);       // Move Coin to scene 20
-				_commandHandler->addCommand(kCmdSound, 20006, 20002, NULL);       // Play Coin sound
-				_commandHandler->addCommand(kCmdSay,   20002, 20004, NULL);	      // Say "Luck guy..."
-				_commandHandler->addCommand(kCmdSend,  20010,    20, NULL);       // Move Paper to scene 20
-				_commandHandler->addCommand(kCmdSound, 20010, 20003, NULL);       // Play "ksh" sound! (fx20003.wav)
-				_commandHandler->addCommand(kCmdSay,   20001, 20005, NULL);       // Say "Congratulations"
-				_game = false;
-				return;
-			} else
-				_sprK3->step(newRandom(5));
+		{
+			bool hit = (_sprK1->_seqPtr + _sprK2->_seqPtr + _sprK3->_seqPtr == 15);
+			if (hit) {
+				if (spr->_ref == 1) {
+					_commandHandler->addCommand(kCmdSay,       1, 20003, NULL);       // hurray!
+					_commandHandler->addCommand(kCmdSeq,   20011,     2, NULL);       // Camera away
+					_commandHandler->addCommand(kCmdSend,  20701,    -1, NULL);       // move dice1 to scene -1
+					_commandHandler->addCommand(kCmdSend,  20702,    -1, NULL);       // move dice2 to scene -1
+					_commandHandler->addCommand(kCmdSend,  20703,    -1, NULL);       // move dice3 to scene -1
+					_commandHandler->addCommand(kCmdSend,  20700,    -1, NULL);       // move TV to scene -1
+					_commandHandler->addCommand(kCmdKeep,  20007,     0, NULL);       // to pocket
+					_commandHandler->addCommand(kCmdSend,  20006,    20, NULL);       // Move Coin to scene 20
+					_commandHandler->addCommand(kCmdSound, 20006, 20002, NULL);       // Play Coin sound
+					_commandHandler->addCommand(kCmdSay,   20002, 20004, NULL);	      // Say "Luck guy..."
+					_commandHandler->addCommand(kCmdSend,  20010,    20, NULL);       // Move Paper to scene 20
+					_commandHandler->addCommand(kCmdSound, 20010, 20003, NULL);       // Play "ksh" sound! (fx20003.wav)
+					_commandHandler->addCommand(kCmdSay,   20001, 20005, NULL);       // Say "Congratulations"
+					_game = false;
+					return;
+				} else {
+					_sprK3->step(newRandom(5));
+				}
+			}
 		}
 
 		if (_gameCase2Cpt < 100) {
@@ -542,6 +545,8 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			case 75:
 				// Tell to use ALT key
 				_commandHandler->addCommand(kCmdSay, 20003, 20022, NULL);
+				break;
+			default:
 				break;
 			}
 			_gameCase2Cpt++;
@@ -593,7 +598,13 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			_commandHandler->addCommand(kCmdUncover,   1, 20101, NULL);        // SDS ??
 			_commandHandler->addCommand(kCmdGame,      1,     2, NULL);        // again!
 			break;
+
+		default:
+			break;
 		}
+
+	default:
+		break;
 	}
 }
 

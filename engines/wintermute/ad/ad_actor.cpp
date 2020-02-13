@@ -34,6 +34,7 @@
 #include "engines/wintermute/ad/ad_waypoint_group.h"
 #include "engines/wintermute/ad/ad_path.h"
 #include "engines/wintermute/ad/ad_sentence.h"
+#include "engines/wintermute/base/base_frame.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_region.h"
@@ -456,6 +457,9 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			}
 		}
 		break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -916,7 +920,7 @@ void AdActor::getNextStep() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdActor::initLine(const BasePoint &startPt, const BasePoint &endPt) {
-	_pFCount = MAX((abs(endPt.x - startPt.x)) , (abs(endPt.y - startPt.y)));
+	_pFCount = MAX((abs(endPt.x - startPt.x)), (abs(endPt.y - startPt.y)));
 
 	_pFStepX = (double)(endPt.x - startPt.x) / _pFCount;
 	_pFStepY = (double)(endPt.y - startPt.y) / _pFCount;
@@ -1018,6 +1022,55 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->pushBool(_state == STATE_FOLLOWING_PATH);
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] StopWalking
+	// Used to stop Leah in one scene only at rabbit_run.script in action()
+	// Let's just call turnTo() for current direction to finalize movement
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "StopWalking") == 0) {
+		stack->correctParams(0);
+		turnTo(_dir);
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] SetSpeedWalkAnim
+	// Used to set Leah speed at leah.script in SetSpeed()
+	// Modifies walking animations interframe delays
+	// Takes integer parameter:
+	//     10 on state.ultra_super_mega_fast_walk cheat code
+	//     40 on "Fast" settings
+	//     70 on "Normal" settings
+	//     90 on "Slow" settings
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetSpeedWalkAnim") == 0) {
+		stack->correctParams(1);
+		int speedWalk = stack->pop()->getInt();
+		for (uint32 dir = 0; dir < NUM_DIRECTIONS; dir++) {
+			AdSpriteSet *anim = getAnimByName(_walkAnimName);
+			if (anim != nullptr) {
+				BaseSprite *item = anim->getSprite((TDirection)dir);
+				if (item != nullptr) {
+					for (uint32 i = 0; i < item->_frames.size(); i++) {
+						BaseFrame *frame = item->_frames[i];
+						if (frame != nullptr) {
+							frame->_delay = speedWalk;
+						}
+					}
+				}
+			}
+		}
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// MergeAnims
@@ -1435,6 +1488,9 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 			}
 		}
 		break;
+
+		default:
+			break;
 		}
 	}
 	delete[] fileBuffer;

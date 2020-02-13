@@ -34,11 +34,11 @@ class Listing;
 
 class SourceListingProvider : ListingProvider {
 public:
-	virtual ~SourceListingProvider() {};
+	~SourceListingProvider() override {};
 	/**
 	 * Get a listing. When implementing this, the result should be safe to delete for the caller.
 	 */
-	virtual Listing *getListing(const Common::String &filename, ErrorCode &err) = 0;
+	Listing *getListing(const Common::String &filename, ErrorCode &err) override = 0;
 	virtual ErrorCode setPath(const Common::String &path) = 0;
 	virtual Common::String getPath() const = 0;
 

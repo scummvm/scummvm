@@ -37,7 +37,7 @@ namespace Gob {
 class ADLPlayer : public AdLib {
 public:
 	ADLPlayer();
-	~ADLPlayer();
+	~ADLPlayer() override;
 
 	bool load(Common::SeekableReadStream &adl);
 	bool load(const byte *data, uint32 dataSize, int index = -1);
@@ -47,8 +47,8 @@ public:
 
 protected:
 	// AdLib interface
-	uint32 pollMusic(bool first);
-	void rewind();
+	uint32 pollMusic(bool first) override;
+	void rewind() override;
 
 private:
 	struct Timbre {

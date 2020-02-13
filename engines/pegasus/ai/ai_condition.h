@@ -61,10 +61,10 @@ public:
 class AIOneChildCondition : public AICondition {
 public:
 	AIOneChildCondition(AICondition *);
-	virtual ~AIOneChildCondition();
+	~AIOneChildCondition() override;
 
-	virtual void writeAICondition(Common::WriteStream *);
-	virtual void readAICondition(Common::ReadStream *);
+	void writeAICondition(Common::WriteStream *) override;
+	void readAICondition(Common::ReadStream *) override;
 
 protected:
 	AICondition *_child;
@@ -77,10 +77,10 @@ protected:
 class AITwoChildrenCondition : public AICondition {
 public:
 	AITwoChildrenCondition(AICondition *, AICondition *);
-	virtual ~AITwoChildrenCondition();
+	~AITwoChildrenCondition() override;
 
-	virtual void writeAICondition(Common::WriteStream *);
-	virtual void readAICondition(Common::ReadStream *);
+	void writeAICondition(Common::WriteStream *) override;
+	void readAICondition(Common::ReadStream *) override;
 
 protected:
 	AICondition *_leftChild, *_rightChild;
@@ -94,7 +94,7 @@ class AINotCondition : public AIOneChildCondition {
 public:
 	AINotCondition(AICondition *);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 };
 
 /////////////////////////////////////////////
@@ -105,7 +105,7 @@ class AIAndCondition : public AITwoChildrenCondition {
 public:
 	AIAndCondition(AICondition *, AICondition *);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 };
 
 /////////////////////////////////////////////
@@ -116,7 +116,7 @@ class AIOrCondition : public AITwoChildrenCondition {
 public:
 	AIOrCondition(AICondition *, AICondition *);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 };
 
 /////////////////////////////////////////////
@@ -130,10 +130,10 @@ public:
 	void startTimer();
 	void stopTimer();
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
-	virtual void writeAICondition(Common::WriteStream *);
-	virtual void readAICondition(Common::ReadStream *);
+	void writeAICondition(Common::WriteStream *) override;
+	void readAICondition(Common::ReadStream *) override;
 
 protected:
 	void fire();
@@ -149,13 +149,13 @@ protected:
 class AILocationCondition : public AICondition {
 public:
 	AILocationCondition(uint32);
-	virtual ~AILocationCondition();
+	~AILocationCondition() override;
 
 	void addLocation(RoomViewID);
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
-	virtual void writeAICondition(Common::WriteStream *);
-	virtual void readAICondition(Common::ReadStream *);
+	void writeAICondition(Common::WriteStream *) override;
+	void readAICondition(Common::ReadStream *) override;
 
 protected:
 	uint32 _numLocations, _maxLocations;
@@ -169,9 +169,9 @@ protected:
 class AIDoorOpenedCondition : public AICondition {
 public:
 	AIDoorOpenedCondition(RoomViewID);
-	virtual ~AIDoorOpenedCondition() {}
+	~AIDoorOpenedCondition() override {}
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
 protected:
 	RoomViewID _doorLocation;
@@ -185,7 +185,7 @@ class AIHasItemCondition : public AICondition {
 public:
 	AIHasItemCondition(const ItemID);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
 protected:
 	ItemID _item;
@@ -199,7 +199,7 @@ class AIDoesntHaveItemCondition : public AICondition {
 public:
 	AIDoesntHaveItemCondition(const ItemID);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
 protected:
 	ItemID _item;
@@ -213,7 +213,7 @@ class AICurrentItemCondition : public AICondition {
 public:
 	AICurrentItemCondition(const ItemID);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
 protected:
 	ItemID _item;
@@ -227,7 +227,7 @@ class AICurrentBiochipCondition : public AICondition {
 public:
 	AICurrentBiochipCondition(const ItemID);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
 protected:
 	ItemID _biochip;
@@ -241,7 +241,7 @@ class AIItemStateCondition : public AICondition {
 public:
 	AIItemStateCondition(const ItemID, const ItemState);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
 protected:
 	ItemID _item;
@@ -256,7 +256,7 @@ class AIEnergyMonitorCondition : public AICondition {
 public:
 	AIEnergyMonitorCondition(const int32);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
 protected:
 	int32 _energyThreshold;
@@ -270,7 +270,7 @@ class AILastExtraCondition : public AICondition {
 public:
 	AILastExtraCondition(const ExtraID);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
 protected:
 	ExtraID _lastExtra;

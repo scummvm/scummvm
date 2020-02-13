@@ -89,7 +89,7 @@ public:
 
 	void setSelection(int selection);
 
-	void drawMenu(FWRenderer &r, bool top);
+	void drawMenu(FWRenderer &r, bool top) override;
 private:
 	const Common::Point _pos;
 	const int _width;
@@ -104,7 +104,7 @@ public:
 
 	void setInput(const char *input, int cursor);
 
-	void drawMenu(FWRenderer &r, bool top);
+	void drawMenu(FWRenderer &r, bool top) override;
 private:
 	const Common::Point _pos;
 	const int _width;
@@ -224,42 +224,42 @@ private:
 
 protected:
 
-	void drawSprite(const ObjectStruct &obj);
+	void drawSprite(const ObjectStruct &obj) override;
 	void drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp);
-	int drawChar(char character, int x, int y);
-	void drawBackground();
-	void renderOverlay(const Common::List<overlay>::iterator &it);
+	int drawChar(char character, int x, int y) override;
+	void drawBackground() override;
+	void renderOverlay(const Common::List<overlay>::iterator &it) override;
 
 public:
 	OSRenderer();
-	~OSRenderer();
+	~OSRenderer() override;
 
-	bool initialize();
+	bool initialize() override;
 
 	/** Test if renderer is ready to draw */
-	bool ready() { return _bgTable[_currentBg].bg != NULL; }
+	bool ready() override { return _bgTable[_currentBg].bg != NULL; }
 
-	void clear();
+	void clear() override;
 
-	void incrustMask(const BGIncrust &incrust, uint8 color = 0);
-	void incrustSprite(const BGIncrust &incrust);
+	void incrustMask(const BGIncrust &incrust, uint8 color = 0) override;
+	void incrustSprite(const BGIncrust &incrust) override;
 
-	void loadBg16(const byte *bg, const char *name, unsigned int idx = 0);
-	void loadCt16(const byte *ct, const char *name);
-	void loadBg256(const byte *bg, const char *name, unsigned int idx = 0);
-	void loadCt256(const byte *ct, const char *name);
-	void selectBg(unsigned int idx);
-	void selectScrollBg(unsigned int idx);
-	void setScroll(unsigned int shift);
-	uint getScroll() const;
-	void removeBg(unsigned int idx);
-	void saveBgNames(Common::OutSaveFile &fHandle);
-	const char *getBgName(uint idx = 0) const;
+	void loadBg16(const byte *bg, const char *name, unsigned int idx = 0) override;
+	void loadCt16(const byte *ct, const char *name) override;
+	void loadBg256(const byte *bg, const char *name, unsigned int idx = 0) override;
+	void loadCt256(const byte *ct, const char *name) override;
+	void selectBg(unsigned int idx) override;
+	void selectScrollBg(unsigned int idx) override;
+	void setScroll(unsigned int shift) override;
+	uint getScroll() const override;
+	void removeBg(unsigned int idx) override;
+	void saveBgNames(Common::OutSaveFile &fHandle) override;
+	const char *getBgName(uint idx = 0) const override;
 
-	void reloadPalette();
-	void restorePalette(Common::SeekableReadStream &fHandle, int version);
-	void savePalette(Common::OutSaveFile &fHandle);
-	void transformPalette(int first, int last, int r, int g, int b);
+	void reloadPalette() override;
+	void restorePalette(Common::SeekableReadStream &fHandle, int version) override;
+	void savePalette(Common::OutSaveFile &fHandle) override;
+	void transformPalette(int first, int last, int r, int g, int b) override;
 
 };
 

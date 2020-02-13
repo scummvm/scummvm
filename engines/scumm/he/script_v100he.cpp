@@ -906,7 +906,7 @@ void ScummEngine_v100he::o100_floodFill() {
 
 	switch (subOp) {
 	case 0:
-		memset(&_floodFillParams, 0, sizeof(_floodFillParams));
+		_floodFillParams.reset();
 		_floodFillParams.box.left = 0;
 		_floodFillParams.box.top = 0;
 		_floodFillParams.box.right = 639;

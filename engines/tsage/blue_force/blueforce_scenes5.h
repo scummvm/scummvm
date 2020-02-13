@@ -43,21 +43,21 @@ class Scene550: public SceneExt {
 	/* Objects */
 	class Lyle: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class CaravanDoor: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Vechile: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
 	class Action1: public ActionExt {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	SequenceManager _sequenceManager;
@@ -70,52 +70,52 @@ public:
 	SpeakerJakeJacket _jakeJacketSpeaker;
 	Action1 _action1;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
 };
 
 class Scene551: public Scene550 {
 	/* Objects */
 	class Vechile: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class DrunkStanding: public NamedObjectExt {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Drunk: public NamedObjectExt {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class PatrolCarTrunk: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class TrunkInset: public FocusObject {
 	public:
-		virtual void remove();
-		virtual bool startAction(CursorType action, Event &event);
+		void remove() override;
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class TrunkKits: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Harrison: public NamedObjectExt {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
 	class Item4: public SceneHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
 	class Action2: public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	SpeakerDrunk _drunkSpeaker;
@@ -135,82 +135,82 @@ public:
 	int _field1CD0, _field1CD2;
 
 	Scene551();
-	virtual void synchronize(Serializer &s);
-	void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void dispatch();
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
+	void dispatch() override;
 };
 
 class Scene560: public SceneExt {
 	/* Objects */
 	class DeskChair: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Box: public NamedObjectExt {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class SafeInset: public FocusObject {
 		/* Items */
 		class Item: public NamedHotspotExt {
 		public:
-			virtual bool startAction(CursorType action, Event &event);
+			bool startAction(CursorType action, Event &event) override;
 		};
 	public:
 		NamedObject _digit0, _digit1, _digit2;
 		Item _item1, _item2, _item3, _item4, _item5, _item6;
 		Visage _cursorVisage;
 
-		virtual Common::String getClassName() { return "Scene560_SafeInset"; }
-		virtual void postInit(SceneObjectList *OwnerList = NULL);
-		virtual void remove();
-		virtual void signal();
-		virtual void process(Event &event);
+		Common::String getClassName() override { return "Scene560_SafeInset"; }
+		void postInit(SceneObjectList *OwnerList = NULL) override;
+		void remove() override;
+		void signal() override;
+		void process(Event &event) override;
 	};
 	class Nickel: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class BoxInset: public FocusObject {
 		/* Items */
 		class Item1: public NamedHotspot {
 		public:
-			virtual bool startAction(CursorType action, Event &event);
+			bool startAction(CursorType action, Event &event) override;
 		};
 	public:
 		Item1 _item1;
 
-		virtual Common::String getClassName() { return "Scene560_BoxInset"; }
-		virtual void postInit(SceneObjectList *OwnerList = NULL);
-		virtual void remove();
+		Common::String getClassName() override { return "Scene560_BoxInset"; }
+		void postInit(SceneObjectList *OwnerList = NULL) override;
+		void remove() override;
 	};
 
 	/* Item groups */
 	class PicturePart: public NamedHotspotExt {
 	public:
-		virtual Common::String getClassName() { return "Scene560_PicturePart"; }
-		virtual bool startAction(CursorType action, Event &event);
+		Common::String getClassName() override { return "Scene560_PicturePart"; }
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
 	class Computer: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
 	class Action1: public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action2: public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action3: public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	Action1 _action1;
@@ -233,10 +233,10 @@ public:
 	Common::Point _destPosition;
 
 	Scene560();
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
-	virtual void dispatch();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
+	void process(Event &event) override;
+	void dispatch() override;
 };
 
 class Scene570: public SceneExt {
@@ -249,10 +249,10 @@ class Scene570: public SceneExt {
 		Common::String _passwordStr, _entryBuffer;
 
 		PasswordEntry();
-		virtual Common::String getClassName() { return "Scene570_PasswordEntry"; }
-		virtual void synchronize(Serializer &s);
-		virtual void postInit(SceneObjectList *OwnerList = NULL);
-		virtual void process(Event &event);
+		Common::String getClassName() override { return "Scene570_PasswordEntry"; }
+		void synchronize(Serializer &s) override;
+		void postInit(SceneObjectList *OwnerList = NULL) override;
+		void process(Event &event) override;
 	};
 	class Icon: public NamedObject {
 	public:
@@ -261,10 +261,10 @@ class Scene570: public SceneExt {
 		Common::String _text;
 
 		Icon();
-		virtual Common::String getClassName() { return "Scene570_Custom2"; }
-		virtual void synchronize(Serializer &s);
-		virtual void remove();
-		virtual bool startAction(CursorType action, Event &event);
+		Common::String getClassName() override { return "Scene570_Custom2"; }
+		void synchronize(Serializer &s) override;
+		void remove() override;
+		bool startAction(CursorType action, Event &event) override;
 
 		void setDetails(int iconId, int folderId, int parentFolderId, const Common::String &msg);
 	};
@@ -275,7 +275,7 @@ class Scene570: public SceneExt {
 		int _mode, _selectedFolder, _fieldAA, _fieldAC;
 
 		IconManager();
-		virtual void remove();
+		void remove() override;
 
 		void setup(int mode);
 		void hideList();
@@ -286,21 +286,21 @@ class Scene570: public SceneExt {
 	/* Objects */
 	class PowerSwitch: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class PrinterIcon: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Object3: public FocusObject {
 	public:
-		virtual void remove();
+		void remove() override;
 	};
 
 	/* Items */
 	class FloppyDrive: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 public:
 	SequenceManager _sequenceManager;
@@ -319,24 +319,24 @@ public:
 	NamedHotspot _item7, _printer, _window, _plant, _item11;
 	ASound _sound1;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
+	void process(Event &event) override;
 };
 
 class Scene580: public SceneExt {
 	/* Objects */
 	class Vechile: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Door: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Lyle: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 public:
 	SequenceManager _sequenceManager;
@@ -346,36 +346,36 @@ public:
 	NamedHotspot _item1;
 	SpeakerGameText _gameTextSpeaker;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
+	void process(Event &event) override;
 };
 
 class Scene590: public PalettedScene {
 	/* Objects */
 	class Laura: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Skip: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
 	class Exit: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
 	class Action1: public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action2: public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	SequenceManager _sequenceManager;
@@ -394,11 +394,11 @@ public:
 	int _field17DC, _field17DE, _stripNumber, _field17E2;
 
 	Scene590();
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
-	virtual void dispatch();
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
+	void process(Event &event) override;
+	void dispatch() override;
 };
 
 } // End of namespace BlueForce

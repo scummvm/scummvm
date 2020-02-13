@@ -33,10 +33,19 @@ namespace Hugo {
 #define HEINTERIM ".0"
 
 #define GLK
-#define DEBUGGER 1
 #define GRAPHICS_SUPPORTED
 #define SOUND_SUPPORTED
 #define SETTITLE_SUPPORTED
+#define SAVEGAMEDATA_REPLACED
+#define RESTOREGAMEDATA_REPLACED
+
+// There's a bunch of debugging code in the original Hugo sources behind DEBUGGER defines,
+// but doesn't actually have any implementation of them. I've put in some stub methods,
+// with the idea that debugger code could eventually be hooked up to the ScummVM debugger.
+// So for now the debugger defined is commented out, since with debugger enabled the games
+// don't work properly
+//#define DEBUGGER 1
+
 
 #define MAXOBJLIST 32
 #define MAX_CONTEXT_COMMANDS	32
@@ -164,6 +173,9 @@ browsing.
 
 #define PRINTFATALERROR(a)	error("%s", a)
 
+#define PIC 0
+#define SND 1
+
 #if defined (DEBUGGER)
 #define VIEW_CALLS 0
 #define VIEW_LOCALS 1
@@ -172,9 +184,6 @@ browsing.
 #define VIEW_WATCH 4
 
 #define FORCE_REDRAW 1
-
-#define PIC 0
-#define SND 1
 
 #endif
 

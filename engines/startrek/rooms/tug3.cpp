@@ -54,7 +54,7 @@ void Room::tug3Tick40() {
 }
 
 void Room::tug3LookAnywhere() {
-	showText(TX_TUG3N007);
+	showDescription(7, true);
 }
 
 void Room::tug3ElasiSurrendered() {
@@ -102,7 +102,7 @@ void Room::tug3ElasiDrawPhasers() {
 
 	// If brig guards are alive & untied, kill the hostages
 	if (_awayMission->tug.guard1Status == 0 || _awayMission->tug.guard2Status == 0) {
-		showText(TX_SPEAKER_ELASI_CLANSMAN, TX_TUG3L081);
+		showText(TX_SPEAKER_ELASI_CLANSMAN, 81, true, true);
 		_awayMission->tug.missionScore = 0;
 	}
 
@@ -226,16 +226,16 @@ void Room::tug3TalkToElasi1() {
 
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
-		TX_TUG3_004,
-		TX_TUG3_003,
-		TX_TUG3_002,
+		4,
+		3,
+		2,
 		TX_BLANK
 	};
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices, true);
 
 	switch (choice) {
 	case 0: // They surrender
-		showText(TX_SPEAKER_ELASI_CERETH, TX_TUG3L084);
+		showText(TX_SPEAKER_ELASI_CERETH, 84, true, true);
 		_awayMission->tug.bridgeElasi1Status = GUARDSTAT_SURRENDERED;
 		loadActorAnim2(OBJECT_ELASI_1, "p1surr", -1, -1, 0);
 		tug3ElasiSurrendered();
@@ -246,17 +246,20 @@ void Room::tug3TalkToElasi1() {
 
 	case 1: // Cereth shoots console, doesn't surrender
 		_awayMission->disableInput = true;
-		showText(TX_SPEAKER_ELASI_CERETH, TX_TUG3_F27);
+		showText(TX_SPEAKER_ELASI_CERETH, 27 + FOLLOWUP_MESSAGE_OFFSET, true);
 		loadActorAnim2(OBJECT_ELASI_1, "p1draw", -1, -1, 3);
 		break;
 
 	case 2: // Cereth shoots console and surrenders
 		_awayMission->disableInput = true;
-		showText(TX_SPEAKER_ELASI_CERETH, TX_TUG3L083);
+		showText(TX_SPEAKER_ELASI_CERETH, 83, true, true);
 		loadActorAnim2(OBJECT_ELASI_1, "p1draw", -1, -1, 5);
 
 		// BUGFIX: they're going to surrender, so stop the firefight.
 		_awayMission->timers[0] = 0;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -282,7 +285,7 @@ void Room::tug3Elasi1DrewPhaser2() {
 }
 
 void Room::tug3Elasi1ShotConsoleAndSurrenders() {
-	showText(TX_SPEAKER_ELASI_CERETH, TX_TUG3L080);
+	showText(TX_SPEAKER_ELASI_CERETH, 80, true, true);
 	tug3ElasiSurrendered();
 	_awayMission->disableInput = false;
 	_awayMission->tug.bridgeWinMethod = 3;
@@ -290,15 +293,15 @@ void Room::tug3Elasi1ShotConsoleAndSurrenders() {
 }
 
 void Room::tug3LookAtMccoy() {
-	showText(TX_TUG3N000);
+	showDescription(0, true);
 }
 
 void Room::tug3LookAtSpock() {
-	showText(TX_TUG3N002);
+	showDescription(2, true);
 }
 
 void Room::tug3LookAtRedshirt() {
-	showText(TX_TUG3N001);
+	showDescription(1, true);
 }
 
 void Room::tug3LookAtElasi1() {
@@ -309,61 +312,61 @@ void Room::tug3LookAtElasi1() {
 	// instead of just checking if he's stunned.
 
 	if (_awayMission->tug.bridgeElasi1Status == GUARDSTAT_STUNNED || _awayMission->tug.bridgeElasi1Status == GUARDSTAT_DEAD)
-		showText(TX_TUG3N003);
+		showDescription(3, true);
 	else
-		showText(TX_TUG3N008);
+		showDescription(8, true);
 }
 
 void Room::tug3LookAtElasi2() {
 	// BUGFIX: also check if stunned. They can't "glare at the crewmembers" if they're
 	// unconscious. (applies to below functions too.)
 	if (_awayMission->tug.bridgeElasi2Status == GUARDSTAT_DEAD || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_STUNNED)
-		showText(TX_TUG3N004);
+		showDescription(4, true);
 	else
-		showText(TX_TUG3N005);
+		showDescription(5, true);
 }
 
 void Room::tug3LookAtElasi3() {
 	if (_awayMission->tug.bridgeElasi3Status == GUARDSTAT_DEAD || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_STUNNED)
-		showText(TX_TUG3N004);
+		showDescription(4, true);
 	else
-		showText(TX_TUG3N005);
+		showDescription(5, true);
 }
 
 void Room::tug3LookAtElasi4() {
 	if (_awayMission->tug.bridgeElasi4Status == GUARDSTAT_DEAD || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_STUNNED)
-		showText(TX_TUG3N004);
+		showDescription(4, true);
 	else
-		showText(TX_TUG3N005);
+		showDescription(5, true);
 }
 
 void Room::tug3TalkToMccoy() {
 	if (_awayMission->tug.orbitalDecayCounter != 0 || _awayMission->tug.bridgeElasi1Status != GUARDSTAT_UP) {
 		if (_awayMission->tug.orbitalDecayCounter >= 10) {
 			if (_awayMission->tug.orbitalDecayCounter < 16)
-				showText(TX_SPEAKER_MCCOY, TX_TUG3_011);
+				showText(TX_SPEAKER_MCCOY, 11, true);
 		} else if (_awayMission->tug.orbitalDecayCounter != 0) {
 			// BUGFIX: original game displays a blank textbox. An appropriate audio file
 			// exists, but the corresponding text was written from scratch for ScummVM.
 			// TODO: check if original floppy version has text for this.
-			showText(TX_SPEAKER_MCCOY, TX_TUG3_012);
+			showText(TX_SPEAKER_MCCOY, 12, true);
 		}
 	} else
-		showText(TX_SPEAKER_MCCOY, TX_TUG3_013);
+		showText(TX_SPEAKER_MCCOY, 13, true);
 }
 
 void Room::tug3TalkToSpock() {
 	if (_awayMission->tug.orbitalDecayCounter != 0) {
 		if (_awayMission->tug.orbitalDecayCounter >= 10) {
 			if (_awayMission->tug.orbitalDecayCounter < 16)
-				showText(TX_SPEAKER_SPOCK, TX_TUG3_008);
+				showText(TX_SPEAKER_SPOCK, 8, true);
 		} else
-			showText(TX_SPEAKER_SPOCK, TX_TUG3_009);
+			showText(TX_SPEAKER_SPOCK, 9, true);
 	}
 }
 
 void Room::tug3TalkToRedshirt() {
-	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG3L003);
+	showText(TX_SPEAKER_CHRISTENSEN, 3, true, true);
 }
 
 void Room::tug3UseCommunicator() {
@@ -371,8 +374,8 @@ void Room::tug3UseCommunicator() {
 		return;
 
 	if (_awayMission->tug.orbitalDecayCounter < 10) {
-		showText(TX_SPEAKER_KIRK, TX_TUG3_007);
-		showText(TX_SPEAKER_SULU, TX_TUG3_015);
+		showText(TX_SPEAKER_KIRK, 7, true);
+		showText(TX_SPEAKER_SULU, 15, true);
 		showText(TX_SPEAKER_SHIPS_COMPUTER, TX_COMPA180);
 		_awayMission->timers[1] = 0;
 
@@ -388,8 +391,8 @@ void Room::tug3UseCommunicator() {
 		tug3EndMission();
 	} else {
 		if (_awayMission->tug.orbitalDecayCounter < 16) {
-			showText(TX_SPEAKER_KIRK, TX_TUG3_006);
-			showText(TX_SPEAKER_SCOTT, TX_TUG3_S07);
+			showText(TX_SPEAKER_KIRK, 6, true);
+			showText(TX_SPEAKER_SCOTT, 7 + SCOTTY_MESSAGE_OFFSET, true);
 
 			playMidiMusicTracks(-1, -1);
 
@@ -462,14 +465,14 @@ void Room::tug3Timer1Expired() {
 		_awayMission->timers[1] = 100;
 		_awayMission->tug.orbitalDecayCounter++;
 	} else { // Game over
-		showText(TX_TUG3N006);
+		showDescription(6, true);
 		showGameOverMenu();
 	}
 }
 
 void Room::tug3EndMission() {
 	playMidiMusicTracks(28, -1);
-	showText(TX_SPEAKER_KIRK, TX_TUG3_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 	playSoundEffectIndex(SND_TRANSMAT);
 	loadActorAnim2(OBJECT_13, "rteleb", 0x14, 0xa0, 7);
 	loadActorAnim2(OBJECT_14, "rteleb", 0x118, 0xa0, 0);
@@ -481,8 +484,8 @@ void Room::tug3SecurityTeamBeamedIn() {
 	loadActorAnim2(OBJECT_14, "rdraws", -1, -1, 9);
 	loadActorAnim2(OBJECT_15, "rfiren", -1, -1, 10);
 
-	showText(TX_SPEAKER_KIRK, TX_TUG3_005);
-	showText(TX_SPEAKER_SCOTT, TX_TUG3_S08);
+	showText(TX_SPEAKER_KIRK, 5, true);
+	showText(TX_SPEAKER_SCOTT, 8 + SCOTTY_MESSAGE_OFFSET, true);
 
 	playMidiMusicTracks(-1, -1);
 	_awayMission->disableInput = true;

@@ -23,10 +23,9 @@
 #ifndef STARTREK_BITMAP_H
 #define STARTREK_BITMAP_H
 
-#include "startrek/filestream.h"
-
 #include "common/ptr.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 
 namespace StarTrek {
 
@@ -37,7 +36,7 @@ struct Bitmap {
 	int16 height;
 	byte *pixels;
 
-	Bitmap(Common::SharedPtr<FileStream> stream);
+	Bitmap(Common::MemoryReadStreamEndian *stream, bool closeStream = true);
 	Bitmap(const Bitmap &bitmap);
 	Bitmap(int w, int h);
 	~Bitmap();

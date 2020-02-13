@@ -45,9 +45,9 @@ struct Sequence;
 class BackgroundResourceLoader : public BaseResourceLoader {
 public:
 	BackgroundResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~BackgroundResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
+	~BackgroundResourceLoader() override {}
+	void load(Resource *resource) override;
+	bool isFlag(int flag) override;
 protected:
 	IllusionsEngine *_vm;
 };
@@ -184,10 +184,10 @@ const uint kMaxBackgroundItemSurfaces = 3;
 class BackgroundInstance : public ResourceInstance {
 public:
 	BackgroundInstance(IllusionsEngine *vm);
-	virtual void load(Resource *resource);
-	virtual void unload();
-	virtual void pause();
-	virtual void unpause();
+	void load(Resource *resource) override;
+	void unload() override;
+	void pause() override;
+	void unpause() override;
 public:
 	IllusionsEngine *_vm;
 	uint32 _sceneId;

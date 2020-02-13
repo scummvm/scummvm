@@ -20,100 +20,144 @@
  *
  */
 
+#include "glk/alan2/main.h"
 #include "glk/alan2/decode.h"
 
 namespace Glk {
 namespace Alan2 {
 
-int Decode::inputBit() {
+/* Bit output */
+static int decodeBuffer;    /* Bits to be input */
+static int bitsToGo;        /* Bits still in buffer */
+static int garbageBits;     /* Bits past EOD */
+
+static int inputBit() {
 	int bit;
 
-	if (!_bitsToGo) {		// More bits available ?
-		_decodeBuffer = _txtFile->readByte(); // No, so get more
-		if (_txtFile->eos()) {
-			_garbageBits++;
-
-			if (_garbageBits > VALUEBITS - 2)
-				error("Error in encoded data file.");
+	if (!bitsToGo) {      /* More bits available ? */
+		decodeBuffer = txtfil->readByte(); /* No, so get more */
+		if ((uint)decodeBuffer == EOD) {
+			garbageBits++;
+			if (garbageBits > VALUEBITS - 2)
+				syserr("Error in encoded data file.");
 		} else
-			_bitsToGo = 8;		// Another Char, 8 new bits
+			bitsToGo = 8;     /* Another Char, 8 new bits */
 	}
-
-	bit = _decodeBuffer & 1;			// Get next bit
-	_decodeBuffer = _decodeBuffer >> 1; // and remove it
-	_bitsToGo--;
-
+	bit = decodeBuffer & 1;   /* Get next bit */
+	decodeBuffer = decodeBuffer >> 1; /* and remove it */
+	bitsToGo--;
 	return bit;
 }
 
-void Decode::startDecoding() {
-	_bitsToGo = 0;
-	_garbageBits = 0;
 
-	_value = 0;
-	for (int i = 0; i < VALUEBITS; i++)
-		_value = 2 * _value + inputBit();
+/* Current state of decoding */
 
-	_low = 0;
-	_high = TOPVALUE;
+static CodeValue value;         /* Currently seen code value */
+static CodeValue low, high;     /* Current code region */
+
+
+void startDecoding() {
+	int i;
+
+	bitsToGo = 0;
+	garbageBits = 0;
+
+	value = 0;
+	for (i = 0; i < VALUEBITS; i++)
+		value = 2 * value + inputBit();
+	low = 0;
+	high = TOPVALUE;
 }
 
-int Decode::decodeChar() {
-	const long range = (long)(_high - _low) + 1;
-	const uint f = (((long)(_value - _low) + 1) * _freq[0] - 1) / range;
+int decodeChar() {
+	long range;
+	int f;
 	int symbol;
 
-	// Find the symbol
-	for (symbol = 1; _freq[symbol] > f; symbol++);
+	range = (long)(high - low) + 1;
+	f = (((long)(value - low) + 1) * freq[0] - 1) / range;
 
-	_high = _low + range * _freq[symbol - 1] / _freq[0] - 1;
-	_low = _low + range * _freq[symbol] / _freq[0];
+	/* Find the symbol */
+	for (symbol = 1; (int)freq[symbol] > f; symbol++);
+
+	high = low + range * freq[symbol - 1] / freq[0] - 1;
+	low = low + range * freq[symbol] / freq[0];
 
 	for (;;) {
-		if (_high < HALF) {
-			// Do nothing
-		} else if (_low >= HALF) {
-			_value = _value - HALF;
-			_low = _low - HALF;
-			_high = _high - HALF;
-		} else if (_low >= ONEQUARTER && _high < THREEQUARTER) {
-			_value = _value - ONEQUARTER;
-			_low = _low - ONEQUARTER;
-			_high = _high - ONEQUARTER;
+		if (high < HALF)
+			;
+		else if (low >= HALF) {
+			value = value - HALF;
+			low = low - HALF;
+			high = high - HALF;
+		} else if (low >= ONEQUARTER && high < THREEQUARTER) {
+			value = value - ONEQUARTER;
+			low = low - ONEQUARTER;
+			high = high - ONEQUARTER;
 		} else
 			break;
 
-		// Scale up the range
-		_low = 2 * _low;
-		_high = 2 * _high + 1;
-		_value = 2 * _value + inputBit();
+		/* Scale up the range */
+		low = 2 * low;
+		high = 2 * high + 1;
+		value = 2 * value + inputBit();
 	}
-
 	return symbol - 1;
 }
 
-DecodeInfo *Decode::pushDecode() {
-	DecodeInfo *info = new DecodeInfo();
 
-	info->fpos = _txtFile->pos();
-	info->buffer = _decodeBuffer;
-	info->bits = _bitsToGo;
-	info->value = _value;
-	info->high = _high;
-	info->low = _low;
 
-	return info;
+/* Structure for saved decode info */
+typedef struct DecodeInfo {
+	long fpos;
+	int buffer;
+	int bits;
+	CodeValue value;
+	CodeValue high;
+	CodeValue low;
+} DecodeInfo;
+
+
+/*======================================================================
+
+  pushDecode()
+
+  Save so much info about the decoding process so it is possible to
+  restore and continue later.
+
+ */
+void *pushDecode() {
+	DecodeInfo *info;
+
+	info = (DecodeInfo *) allocate(sizeof(DecodeInfo));
+	info->fpos = txtfil->pos();
+	info->buffer = decodeBuffer;
+	info->bits = bitsToGo;
+	info->value = value;
+	info->high = high;
+	info->low = low;
+	return (info);
 }
 
-void Decode::popDecode (DecodeInfo *info) {
-	_txtFile->seek(info->fpos, SEEK_CUR);
-	_decodeBuffer = info->buffer;
-	_bitsToGo = info->bits;
-	_value = info->value;
-	_high = info->high;
-	_low = info->low;
 
-	delete info;
+/*======================================================================
+
+  popDecode()
+
+  Restore enough info about the decoding process so it is possible to
+  continue after having decoded something else.
+
+ */
+void popDecode(void *i) {
+	DecodeInfo *info = (DecodeInfo *) i;
+	fseek(txtfil, info->fpos, 0);
+	decodeBuffer = info->buffer;
+	bitsToGo = info->bits;
+	value = info->value;
+	high = info->high;
+	low = info->low;
+
+	free(info);
 }
 
 } // End of namespace Alan2

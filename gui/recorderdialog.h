@@ -69,10 +69,10 @@ public:
 		kRecordDialogPlayback
 	};
 	RecorderDialog();
-	~RecorderDialog();
+	~RecorderDialog() override;
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void reflowLayout();
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void reflowLayout() override;
 
 	int runModal(Common::String &target);
 	const Common::String getFileName() {return _filename;}

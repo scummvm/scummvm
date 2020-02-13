@@ -34,9 +34,9 @@ namespace Pegasus {
 class AIChip : public BiochipItem {
 public:
 	AIChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
-	virtual ~AIChip();
+	~AIChip() override;
 
-	void select();
+	void select() override;
 
 	void setUpAIChip();
 
@@ -46,7 +46,7 @@ public:
 	void activateAIHotspots();
 	void clickInAIHotspot(HotSpotID);
 
-	void takeSharedArea();
+	void takeSharedArea() override;
 
 	void showBriefingClicked();
 	void showEnvScanClicked();

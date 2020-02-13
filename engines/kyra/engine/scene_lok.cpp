@@ -174,6 +174,9 @@ void KyraEngine_LoK::enterNewScene(int sceneId, int facing, int unk1, int unk2, 
 
 	initSceneData(facing, unk2, brandonAlive);
 
+	setTextFadeTimerCountdown(-1);
+	_scriptClick.regs[3] = 1;
+
 	_loopFlag2 = 0;
 	_screen->showMouse();
 	if (!brandonAlive)

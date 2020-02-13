@@ -94,30 +94,30 @@ public:
 	SurfaceToFrames(Graphics::Surface *surf) : _surf(surf) {
 	}
 
-	~SurfaceToFrames() {
+	~SurfaceToFrames() override {
 		_surf->free();
 		delete _surf;
 	}
 
-	uint16	getNum() {
+	uint16	getNum() override {
 		return 1;
 	}
-	byte*	getData(uint16 index) {
+	byte*	getData(uint16 index) override {
 		assert(index == 0);
 		return (byte *)_surf->getBasePtr(0,0);
 	}
-	void	getRect(uint16 index, Common::Rect &r) {
+	void	getRect(uint16 index, Common::Rect &r) override {
 		assert(index == 0);
 		r.left = 0;
 		r.top = 0;
 		r.setWidth(_surf->w);
 		r.setHeight(_surf->h);
 	}
-	uint	getRawSize(uint16 index) {
+	uint	getRawSize(uint16 index) override {
 		assert(index == 0);
 		return getSize(index);
 	}
-	uint	getSize(uint16 index) {
+	uint	getSize(uint16 index) override {
 		assert(index == 0);
 		return _surf->w * _surf->h;
 	}
@@ -143,7 +143,7 @@ public:
 
 	}
 
-	~Cnv() {
+	~Cnv() override {
 		if (_freeData)
 			delete[] _data;
 	}
@@ -154,25 +154,25 @@ public:
 		return &_data[index * _width * _height];
 	}
 
-	uint16	getNum() {
+	uint16	getNum() override {
 		return _count;
 	}
 
-	byte	*getData(uint16 index) {
+	byte	*getData(uint16 index) override {
 		return getFramePtr(index);
 	}
 
-	void getRect(uint16 index, Common::Rect &r) {
+	void getRect(uint16 index, Common::Rect &r) override {
 		r.left = 0;
 		r.top = 0;
 		r.setWidth(_width);
 		r.setHeight(_height);
 	}
-	uint	getRawSize(uint16 index) {
+	uint	getRawSize(uint16 index) override {
 		assert(index < _count);
 		return getSize(index);
 	}
-	uint	getSize(uint16 index) {
+	uint	getSize(uint16 index) override {
 		assert(index < _count);
 		return _width * _height;
 	}

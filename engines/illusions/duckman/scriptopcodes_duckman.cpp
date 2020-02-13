@@ -804,6 +804,8 @@ void ScriptOpcodes_Duckman::opCompareBlockCounter(ScriptThread *scriptThread, Op
 	case 6:
 		compareResult = lvalue <= rvalue;
 		break;
+	default:
+		break;
 	}
 	_vm->_stack->push(compareResult ? 1 : 0);
 }

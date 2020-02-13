@@ -42,47 +42,47 @@ namespace Sword25 {
 class SWImage : public Image {
 public:
 	SWImage(const Common::String &filename, bool &result);
-	virtual ~SWImage();
+	~SWImage() override;
 
-	virtual int getWidth() const {
+	int getWidth() const override {
 		return _image.w;
 	}
-	virtual int getHeight() const {
+	int getHeight() const override {
 		return _image.h;
 	}
-	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
+	GraphicEngine::COLOR_FORMATS getColorFormat() const override {
 		return GraphicEngine::CF_ARGB32;
 	}
 
-	virtual bool blit(int posX = 0, int posY = 0,
+	bool blit(int posX = 0, int posY = 0,
 	                  int flipping = Graphics::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0);
-	virtual bool fill(const Common::Rect *fillRectPtr, uint color);
-	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
-	virtual uint getPixel(int x, int y);
+					  RectangleList *updateRects = 0) override;
+	bool fill(const Common::Rect *fillRectPtr, uint color) override;
+	bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) override;
+	uint getPixel(int x, int y) override;
 
-	virtual bool isBlitSource() const               {
+	bool isBlitSource() const override               {
 		return false;
 	}
-	virtual bool isBlitTarget() const               {
+	bool isBlitTarget() const override               {
 		return false;
 	}
-	virtual bool isScalingAllowed() const           {
+	bool isScalingAllowed() const override           {
 		return false;
 	}
-	virtual bool isFillingAllowed() const           {
+	bool isFillingAllowed() const override           {
 		return false;
 	}
-	virtual bool isAlphaAllowed() const             {
+	bool isAlphaAllowed() const override             {
 		return false;
 	}
-	virtual bool isColorModulationAllowed() const   {
+	bool isColorModulationAllowed() const override   {
 		return false;
 	}
-	virtual bool isSetContentAllowed() const        {
+	bool isSetContentAllowed() const override        {
 		return false;
 	}
 private:

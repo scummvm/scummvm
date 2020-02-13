@@ -40,22 +40,22 @@ public:
 
 	DECLARE_PERSISTENT(UIButton, UIObject)
 	void press();
-	virtual bool display() { return display(0, 0); }
-	virtual bool display(int offsetX, int offsetY);
+	bool display() override { return display(0, 0); }
+	bool display(int offsetX, int offsetY) override;
 
-	void correctSize();
+	void correctSize() override;
 
 	UIButton(BaseGame *inGame = nullptr);
-	virtual ~UIButton();
+	~UIButton() override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 
 
 	void setFontHover(BaseFont *font);

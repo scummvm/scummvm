@@ -78,7 +78,7 @@ protected:
 class AsScene1201TntMan : public AnimatedSprite {
 public:
 	AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sprite *asTntManRope, bool isDown);
-	virtual ~AsScene1201TntMan();
+	~AsScene1201TntMan() override;
 protected:
 	Scene *_parentScene;
 	Sprite *_asTntManRope;
@@ -95,7 +95,7 @@ protected:
 class AsScene1201TntManFlame : public AnimatedSprite {
 public:
 	AsScene1201TntManFlame(NeverhoodEngine *vm, Sprite *asTntMan);
-	~AsScene1201TntManFlame();
+	~AsScene1201TntManFlame() override;
 protected:
 	Sprite *_asTntMan;
 	void update();
@@ -179,7 +179,7 @@ protected:
 	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
 
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 } // End of namespace Neverhood

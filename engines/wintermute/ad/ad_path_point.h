@@ -39,7 +39,7 @@ public:
 	DECLARE_PERSISTENT(AdPathPoint, BasePoint)
 	AdPathPoint(int initX, int initY, int initDistance);
 	AdPathPoint();
-	virtual ~AdPathPoint();
+	~AdPathPoint() override;
 	AdPathPoint *_origin;
 	bool _marked;
 	int32 _distance;

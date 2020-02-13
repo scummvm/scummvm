@@ -23,9 +23,9 @@
 #include "bladerunner/ui/kia_section_help.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/shape.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/kia.h"
-#include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_container.h"
 #include "bladerunner/ui/ui_scroll_box.h"
 
@@ -68,13 +68,9 @@ void KIASectionHelp::close() {
 	_scrollBox->hide();
 }
 
-void KIASectionHelp::draw(Graphics::Surface &surface){
+void KIASectionHelp::draw(Graphics::Surface &surface) {
 	_vm->_kia->_shapes->get(69)->draw(surface, 501, 123);
 	_uiContainer->draw(surface);
-}
-
-void KIASectionHelp::handleKeyUp(const Common::KeyState &kbd) {
-	_uiContainer->handleKeyUp(kbd);
 }
 
 void KIASectionHelp::handleMouseMove(int mouseX, int mouseY) {

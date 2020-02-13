@@ -35,7 +35,7 @@ namespace ZVision {
 class SlotControl : public Control {
 public:
 	SlotControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
-	~SlotControl();
+	~SlotControl() override;
 
 	/**
 	 * Called when LeftMouse is lifted. Calls ScriptManager::setStateValue(_key, 1);
@@ -43,7 +43,7 @@ public:
 	 * @param screenSpacePos             The position of the mouse in screen space
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 */
-	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
 	/**
 	 * Called on every MouseMove. Tests if the mouse is inside _hotspot, and if so, sets the cursor.
 	 *
@@ -52,9 +52,9 @@ public:
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 * @return                           Was the cursor changed?
 	 */
-	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
 
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	/**

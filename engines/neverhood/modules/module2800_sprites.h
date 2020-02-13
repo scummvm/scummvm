@@ -138,7 +138,7 @@ protected:
 class AsScene2804BeamCoil : public AnimatedSprite {
 public:
 	AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody);
-	virtual ~AsScene2804BeamCoil();
+	~AsScene2804BeamCoil() override;
 protected:
 	Scene *_parentScene;
 	SsScene2804BeamCoilBody *_ssBeamCoilBody;
@@ -241,7 +241,7 @@ protected:
 class AsScene2812Winch : public AnimatedSprite {
 public:
 	AsScene2812Winch(NeverhoodEngine *vm);
-	virtual ~AsScene2812Winch();
+	~AsScene2812Winch() override;
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -267,14 +267,14 @@ class KmScene2801 : public Klaymen {
 public:
 	KmScene2801(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2803 : public Klaymen {
 public:
 	KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2803Small : public Klaymen {
@@ -284,14 +284,14 @@ protected:
 	void stShrink();
 	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
 
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2805 : public Klaymen {
 public:
 	KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2806 : public Klaymen {
@@ -299,7 +299,7 @@ public:
 	KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2809 : public Klaymen {
@@ -307,14 +307,14 @@ public:
 	KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2810Small : public Klaymen {
 public:
 	KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2810 : public Klaymen {
@@ -322,14 +322,14 @@ public:
 	KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 		NRect *clipRects, uint clipRectsCount);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene2812 : public Klaymen {
 public:
 	KmScene2812(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 } // End of namespace Neverhood

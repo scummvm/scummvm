@@ -30,6 +30,9 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/timer.h"
+#include "common/winexe_pe.h"
+
+#include "graphics/wincursor.h"
 
 #include "engines/util.h"
 
@@ -544,12 +547,10 @@ void GnapEngine::setVerbCursor(int verbCursor) {
 void GnapEngine::setCursor(int cursorIndex) {
 	if (_cursorIndex != cursorIndex) {
 		const char *cursorName = kCursorNames[cursorIndex];
-		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, Common::WinResourceID(cursorName));
+		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_exe, Common::WinResourceID(cursorName));
 		if (cursorGroup) {
 			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
-			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
-				cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
-			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
+			CursorMan.replaceCursor(cursor);
 			delete cursorGroup;
 		}
 		_cursorIndex = cursorIndex;
@@ -758,6 +759,8 @@ void GnapEngine::initGameFlags(int num) {
 		setFlag(kGFKeysTaken);
 		setFlag(kGFGrassTaken);
 		setFlag(kGFBarnPadlockOpen);
+		break;
+	default:
 		break;
 	}
 }
@@ -1056,6 +1059,8 @@ void GnapEngine::doCallback(int callback) {
 	case 10:
 	case 20:
 		_scene->updateAnimationsCb();
+		break;
+	default:
 		break;
 	}
 }

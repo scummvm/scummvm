@@ -37,7 +37,6 @@ public:
 	virtual void quit();
 	virtual void engineInit();
 	virtual void engineDone();
-	virtual bool setGraphicsMode(const char *name);
 	virtual Common::String getDefaultConfigFileName();
 	virtual bool hasFeature(Feature f);
 
@@ -49,28 +48,6 @@ public:
 	void quitWithErrorMsg(const char *msg);
 
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-
-	// Vibration support
-#ifdef USE_VIBRA_SE_PXXX
-	/**
-	 * Intialize the vibration api used if present and supported
-	 */
-	void initializeVibration();
-
-	/**
-	 * Turn vibration on, repeat no time
-	 * @param vibraLength number of repetitions
-	 */
-	void vibrationOn(int vibraLength);
-
-	/**
-	 * Turns the vibration off
-	 */
-	void vibrationOff();
-
-protected:
-	SonyEricsson::CVibration* _vibrationApi;
-#endif // USE_VIBRA_SE_PXXX
 
 protected:
 	/**

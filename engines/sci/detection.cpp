@@ -209,8 +209,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "qfg4",            GID_QFG4 },
 	{ "qfg4demo",        GID_QFG4DEMO },
 	{ "rama",            GID_RAMA },
-	{ "catdate",         GID_CATDATE },
-	{ "sci-fanmade",     GID_FANMADE },	// FIXME: Do we really need/want this?
+	{ "sci-fanmade",     GID_FANMADE },
 	{ "shivers",         GID_SHIVERS },
 	//{ "shivers2",        GID_SHIVERS2 },	// Not SCI
 	{ "slater",          GID_SLATER },
@@ -559,13 +558,16 @@ static const char *directoryGlobs[] = {
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
 	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
-		_singleId = "sci";
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 		_matchFullPaths = true;
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "sci";
+	}
+
+	const char *getName() const override {
 		return "SCI ["
 #ifdef ENABLE_SCI32
 			"all games"
@@ -575,17 +577,17 @@ public:
 			"]";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Sierra's Creative Interpreter (C) Sierra Online";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 Common::Language charToScummVMLanguage(const char c) {

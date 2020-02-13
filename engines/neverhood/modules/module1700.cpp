@@ -86,6 +86,8 @@ void Module1700::createScene(int sceneNum, int which) {
 		_vm->_soundMan->startMusic(0x31114225, 0, 2);
 		_childObject = new Scene1705(_vm, this, which);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1700::updateScene);
 	_childObject->handleUpdate();
@@ -122,6 +124,8 @@ void Module1700::updateScene() {
 			break;
 		case 4:
 			leaveModule(1);
+			break;
+		default:
 			break;
 		}
 	}
@@ -229,6 +233,8 @@ uint32 Scene1705::handleMessage(int messageNum, const MessageParam &param, Entit
 			sendEntityMessage(_klaymen, 0x1014, sender);
 			setMessageList(0x004B6AC0);
 		}
+		break;
+	default:
 		break;
 	}
 	return 0;

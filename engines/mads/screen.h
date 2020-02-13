@@ -229,12 +229,12 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Screen() {}
+	~Screen() override {}
 
 	/**
 	 * Updates the physical screen with contents of the internal surface
 	 */
-	virtual void update();
+	void update() override;
 
 	/**
 	 * Transition to a new screen with a given effect

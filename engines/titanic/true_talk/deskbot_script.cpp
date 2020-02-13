@@ -175,6 +175,9 @@ ScriptChangedResult DeskbotScript::scriptChanged(const TTroomScript *roomScript,
 	case 150:
 		CTrueTalkManager::setFlags(2, 1);
 		break;
+
+	default:
+		break;
 	}
 
 	return SCR_2;

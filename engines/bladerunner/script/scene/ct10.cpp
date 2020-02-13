@@ -57,6 +57,10 @@ void SceneScriptCT10::SceneLoaded() {
 	Clickable_Object("CABINETFRONT");
 	Clickable_Object("CABINETTOP");
 	Clickable_Object("TUB");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("BED");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Scene_2D_Region_Add(0, 379, 229, 454, 375);
 }
 

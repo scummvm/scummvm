@@ -186,9 +186,6 @@ void MystOptionsDialog::open() {
 	if (_vm->getFeatures() & GF_DEMO)
 		_zipModeCheckbox->setEnabled(false);
 
-	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
-	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
-
 	if (_vm->getFeatures() & GF_25TH) {
 		// The 25th anniversary version has a main menu, no need to show these buttons here
 		_loadButton->setVisible(false);
@@ -247,15 +244,12 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		setResult(kActionGoToMenu);
 		close();
 		break;
-	case kQuitCmd: {
+	case kQuitCmd:
 		setResult(kActionShowCredits);
 		close();
-	}
 		break;
 	case GUI::kOKCmd:
-		_vm->_gameState->_globals.zipMode = _zipModeCheckbox->getState();
-		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
-		setResult(kActionNone);
+		setResult(kActionSaveSettings);
 		close();
 		break;
 	default:
@@ -275,13 +269,27 @@ void MystOptionsDialog::setCanReturnToMenu(bool canReturnToMenu) {
 	_canReturnToMenu = canReturnToMenu;
 }
 
+bool MystOptionsDialog::getZipMode() const {
+	return _zipModeCheckbox->getState();
+}
+
+void MystOptionsDialog::setZipMode(bool enabled) {
+	_zipModeCheckbox->setState(enabled);
+}
+
+bool MystOptionsDialog::getTransitions() const {
+	return _transitionsCheckbox->getState();
+}
+
+void MystOptionsDialog::setTransitions(bool enabled) {
+	_transitionsCheckbox->setState(enabled);
+}
+
 #endif
 
 #ifdef ENABLE_RIVEN
 
-RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
-		MohawkOptionsDialog(),
-		_vm(vm) {
+RivenOptionsDialog::RivenOptionsDialog() : MohawkOptionsDialog() {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 35, 220, 15, _("~W~ater Effect Enabled"), nullptr, kWaterCmd);
 
@@ -296,20 +304,33 @@ RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
 RivenOptionsDialog::~RivenOptionsDialog() {
 }
 
-void RivenOptionsDialog::open() {
-	MohawkOptionsDialog::open();
+bool RivenOptionsDialog::getZipMode() const {
+	return _zipModeCheckbox->getState();
+}
 
-	_zipModeCheckbox->setState(_vm->_vars["azip"] != 0);
-	_waterEffectCheckbox->setState(_vm->_vars["waterenabled"] != 0);
-	_transitionModePopUp->setSelectedTag(_vm->_vars["transitionmode"]);
+void RivenOptionsDialog::setZipMode(bool enabled) {
+	_zipModeCheckbox->setState(enabled);
+}
+
+bool RivenOptionsDialog::getWaterEffect() const {
+	return _waterEffectCheckbox->getState();
+}
+
+void RivenOptionsDialog::setWaterEffect(bool enabled) {
+	_waterEffectCheckbox->setState(enabled);
+}
+
+uint32 RivenOptionsDialog::getTransitions() const {
+	return _transitionModePopUp->getSelectedTag();
+}
+
+void RivenOptionsDialog::setTransitions(uint32 mode) {
+	_transitionModePopUp->setSelectedTag(mode);
 }
 
 void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case GUI::kOKCmd:
-		_vm->_vars["azip"] = _zipModeCheckbox->getState() ? 1 : 0;
-		_vm->_vars["waterenabled"] = _waterEffectCheckbox->getState() ? 1 : 0;
-		_vm->_vars["transitionmode"] = _transitionModePopUp->getSelectedTag();
 		setResult(1);
 		close();
 		break;

@@ -622,9 +622,8 @@ void ToucheEngine::res_loadSpeech(int num) {
 			if (_fSpeech[0].isOpen()) {
 				_fSpeech[0].close();
 			}
-			char filename[10];
-			sprintf(filename, "V%d", num);
-			_fSpeech[0].open(filename);
+			Common::String filenameStr = Common::String::format("V%d", num);
+			_fSpeech[0].open(filenameStr.c_str());
 		}
 		if (_fSpeech[0].isOpen()) {
 			_flagsTable[617] = num;

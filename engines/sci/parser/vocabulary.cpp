@@ -231,6 +231,12 @@ bool Vocabulary::loadSuffixes() {
 		// Beginning of next string - skip leading '*'
 		seeker++;
 
+		// The QFG2 demo vocab is truncated at the end. Check for such cases here
+		if (seeker >= resource->size()) {
+			warning("Vocabulary word from %s is truncated for suffix %d at %u", resource->name().c_str(), _parserSuffixes.size(), seeker);
+			break;
+		}
+
 		maxSize = resource->size() - seeker;
 		suffix.word_suffix = (const char *)resource->getUnsafeDataAt(seeker, maxSize);
 		suffix.word_suffix_length = Common::strnlen(suffix.word_suffix, maxSize);
@@ -524,6 +530,8 @@ void Vocabulary::debugDecipherSaidBlock(const SciSpan<const byte> &data) {
 					break;
 				case 0xf9:
 					debugN(">");
+					break;
+				default:
 					break;
 			}
 		}

@@ -54,7 +54,7 @@ public:
 
 	DECLARE_PERSISTENT(AdResponseBox, BaseObject)
 	ScScript *_waitingScript;
-	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
+	bool listen(BaseScriptHolder *param1, uint32 param2) override;
 	typedef enum {
 		EVENT_PREV,
 		EVENT_NEXT,
@@ -62,18 +62,18 @@ public:
 	} TResponseEvent;
 
 	bool weedResponses();
-	bool display();
+	bool display() override;
 
 	bool createButtons();
 	bool invalidateButtons();
 	void clearButtons();
 	void clearResponses();
 	AdResponseBox(BaseGame *inGame);
-	virtual ~AdResponseBox();
+	~AdResponseBox() override;
 
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	UIWindow *getResponseWindow();
 	uint32 getNumResponses() const;

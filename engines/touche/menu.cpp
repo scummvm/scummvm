@@ -76,6 +76,8 @@ void ToucheEngine::drawButton(Button *button) {
 			dx = -1;
 			dy = -2;
 			break;
+		default:
+			break;
 		}
 		const int x = button->x + button->w / 2;
 		const int y = button->y + button->h / 2;
@@ -98,14 +100,13 @@ static void drawSaveGameStateDescriptions(uint8 *dst, int dstPitch, MenuData *me
 	for (int i = 0, slot = currentPage * 10; i < 10; ++i, ++slot) {
 		const Button *b = &menuData->buttonsTable[i];
 		const uint8 color = (slot == currentSlot) ? 0xCB : 0xD9;
-		char buf[64];
-		sprintf(buf, "%d.", slot);
-		Graphics::drawString16(dst, dstPitch, color, b->x, b->y, buf);
-		strcpy(buf, menuData->saveLoadDescriptionsTable[slot]);
+		Common::String savegameNameStr = Common::String::format("%d.", slot);
+		Graphics::drawString16(dst, dstPitch, color, b->x, b->y, savegameNameStr.c_str());
+		savegameNameStr = menuData->saveLoadDescriptionsTable[slot];
 		if (slot == currentSlot && menuData->mode == kMenuSaveStateMode) {
-			strcat(buf, "_");
+			savegameNameStr += "_";
 		}
-		Graphics::drawString16(dst, dstPitch, color, b->x + 30, b->y, buf);
+		Graphics::drawString16(dst, dstPitch, color, b->x + 30, b->y, savegameNameStr.c_str());
 	}
 }
 
@@ -159,6 +160,8 @@ static void setupMenu(MenuMode mode, MenuData *menuData) {
 		menuData->buttonsTable = saveLoadButtonsTable;
 		menuData->buttonsCount = ARRAYSIZE(saveLoadButtonsTable);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -177,6 +180,8 @@ void ToucheEngine::redrawMenu(MenuData *menu) {
 	case kMenuLoadStateMode:
 	case kMenuSaveStateMode:
 		drawSaveGameStateDescriptions(_offscreenBuffer, kScreenWidth, menu, _saveLoadCurrentPage, _saveLoadCurrentSlot);
+		break;
+	default:
 		break;
 	}
 	for (uint i = 0; i < menu->buttonsCount; ++i) {

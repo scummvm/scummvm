@@ -41,7 +41,7 @@ class SoundDesc;
 class BackgroundAtmosphere : private SoundMixer {
 public:
 	BackgroundAtmosphere(Audio::Mixer &mixer);
-	~BackgroundAtmosphere();
+	~BackgroundAtmosphere() override;
 
 	void playBA();
 	void stopBA();
@@ -67,7 +67,7 @@ private:
 
 	Common::RandomSource _rnd;
 
-	void checkEndSample();
+	void checkEndSample() override;
 	void getNextQueuePos();
 };
 

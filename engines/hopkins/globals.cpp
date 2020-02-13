@@ -166,6 +166,8 @@ void Globals::setConfig() {
 		_zoneFilename = "ZONEES.TXT";
 		_textFilename = "TEXTEES.TXT";
 		break;
+	default:
+		break;
 	}
 }
 
@@ -181,7 +183,7 @@ void Globals::clearAll() {
 	_vm->_objectsMan->clearAll();
 
 	_saveData = (Savegame *)malloc(sizeof(Savegame));
-	memset(_saveData, 0, sizeof(Savegame));
+	_saveData->reset();
 
 	_vm->_events->clearAll();
 }

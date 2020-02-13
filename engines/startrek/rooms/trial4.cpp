@@ -47,139 +47,139 @@ void Room::trial4Tick1() {
 }
 
 void Room::trial4Tick60() {
-	showText(TX_SPEAKER_VLICT, TX_TRI4_061);
+	showText(TX_SPEAKER_VLICT, 61, true);
 
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
-		TX_TRI4_022, TX_TRI4_039, TX_TRI4_032,
+		22, 39, 32,
 		TX_BLANK
 	};
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices, true);
 
 	if (choice == 0) { // "You were trying to kill us"
-		showText(TX_SPEAKER_VLICT, TX_TRI4_064);
+		showText(TX_SPEAKER_VLICT, 64, true);
 
 		const TextRef choices2[] = {
 			TX_SPEAKER_KIRK,
-			TX_TRI4_033, TX_TRI4_009, TX_TRI4_002,
+			33, 9, 2,
 			TX_BLANK
 		};
-		showText(choices2); // choice doesn't matter
+		showMultipleTexts(choices2, true); // choice doesn't matter
 
-		showText(TX_SPEAKER_VLICT, TX_TRI4_062);
-		showText(TX_SPEAKER_KIRK,  TX_TRI4_014);
-		showText(TX_SPEAKER_VLICT, TX_TRI4_066);
-		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_043);
+		showText(TX_SPEAKER_VLICT, 62, true);
+		showText(TX_SPEAKER_KIRK,  14, true);
+		showText(TX_SPEAKER_VLICT, 66, true);
+		showText(TX_SPEAKER_QUETZECOATL, 43, true);
 
 		const TextRef choices3[] = {
 			TX_SPEAKER_KIRK,
-			TX_TRI4_029, TX_TRI4_020, TX_TRI4_030,
+			29, 20, 30,
 			TX_BLANK
 		};
-		choice = showText(choices3);
+		choice = showMultipleTexts(choices3, true);
 
 		if (choice == 0) { // "Then you have my deepest respect"
 			// Nothing more
 		} else if (choice == 1) { // "Make it a painless death"
-			showText(TX_SPEAKER_VLICT, TX_TRI4_063);
+			showText(TX_SPEAKER_VLICT, 63, true);
 		} else if (choice == 2) { // "I hope you chose the right time"
-			showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_040);
+			showText(TX_SPEAKER_QUETZECOATL, 40, true);
 		}
 	} else if (choice == 1) { // "Use of guile is honorable?"
-		showText(TX_SPEAKER_VLICT, TX_TRI4_060);
-		showText(TX_SPEAKER_KIRK,  TX_TRI4_013);
-		showText(TX_SPEAKER_VLICT, TX_TRI4_072);
-		showText(TX_SPEAKER_KIRK,  TX_TRI4_015);
-		showText(TX_SPEAKER_VLICT, TX_TRI4_071);
-		showText(TX_SPEAKER_KIRK,  TX_TRI4_005);
-		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_052);
-		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_041);
-		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_051);
-		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_053);
-		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_050);
-		showText(TX_SPEAKER_VLICT, TX_TRI4_070);
+		showText(TX_SPEAKER_VLICT, 60, true);
+		showText(TX_SPEAKER_KIRK,  13, true);
+		showText(TX_SPEAKER_VLICT, 72, true);
+		showText(TX_SPEAKER_KIRK,  15, true);
+		showText(TX_SPEAKER_VLICT, 71, true);
+		showText(TX_SPEAKER_KIRK,  05, true);
+		showText(TX_SPEAKER_QUETZECOATL, 52, true);
+		showText(TX_SPEAKER_QUETZECOATL, 41, true);
+		showText(TX_SPEAKER_QUETZECOATL, 51, true);
+		showText(TX_SPEAKER_QUETZECOATL, 53, true);
+		showText(TX_SPEAKER_QUETZECOATL, 50, true);
+		showText(TX_SPEAKER_VLICT, 70, true);
 
 		const TextRef choices2[] = {
 			TX_SPEAKER_KIRK,
-			TX_TRI4_019, TX_TRI4_025, TX_TRI4_008,
+			19, 25, 8,
 			TX_BLANK
 		};
-		choice = showText(choices2);
+		choice = showMultipleTexts(choices2, true);
 
 		if (choice == 1) { // Threatened Vlict
-			showText(TX_SPEAKER_VLICT, TX_TRI4_069);
-			showText(TX_SPEAKER_KIRK,  TX_TRI4_004);
+			showText(TX_SPEAKER_VLICT, 69, true);
+			showText(TX_SPEAKER_KIRK,  04, true);
 		} // else, nothing more
 	} else if (choice == 2) { // "You didn't say I couldn't use my ship"
-		showText(TX_SPEAKER_VLICT, TX_TRI4_058);
+		showText(TX_SPEAKER_VLICT, 58, true);
 
 		const TextRef choices2[] = {
 			TX_SPEAKER_KIRK,
-			TX_TRI4_027, TX_TRI4_034, TX_TRI4_018,
+			27, 34, 18,
 			TX_BLANK
 		};
-		choice = showText(choices2);
+		choice = showMultipleTexts(choices2, true);
 
 		if (choice == 0) { // "Let's stop playing games"
-			showText(TX_SPEAKER_VLICT, TX_TRI4_075);
-			showText(TX_SPEAKER_KIRK,  TX_TRI4_017);
-			showText(TX_SPEAKER_QUETZECOATL,  TX_TRI4_042);
-			showText(TX_SPEAKER_VLICT, TX_TRI4_054);
+			showText(TX_SPEAKER_VLICT, 75, true);
+			showText(TX_SPEAKER_KIRK,  17, true);
+			showText(TX_SPEAKER_QUETZECOATL,  42, true);
+			showText(TX_SPEAKER_VLICT, 54, true);
 
 			const TextRef choices3[] = {
 				TX_SPEAKER_KIRK,
-				TX_TRI4_028, TX_TRI4_021, TX_TRI4_031,
+				28, 21, 31,
 				TX_BLANK
 			};
-			choice = showText(choices3);
+			choice = showMultipleTexts(choices3, true);
 
 			if (choice == 0 || choice == 1) {
-				showText(TX_SPEAKER_VLICT, TX_TRI4_068);
-				showText(TX_SPEAKER_MCCOY, TX_TRI4_036);
+				showText(TX_SPEAKER_VLICT, 68, true);
+				showText(TX_SPEAKER_MCCOY, 36, true);
 			} else if (choice == 2) {
-				showText(TX_SPEAKER_VLICT, TX_TRI4_056);
-				showText(TX_SPEAKER_KIRK, TX_TRI4_001);
+				showText(TX_SPEAKER_VLICT, 56, true);
+				showText(TX_SPEAKER_KIRK, 01, true);
 			}
 		} else if (choice == 1) { // "You lost, release Quetzecoatl"
-			showText(TX_SPEAKER_VLICT, TX_TRI4_076);
-			showText(TX_SPEAKER_MCCOY, TX_TRI4_037);
-			showText(TX_SPEAKER_VLICT, TX_TRI4_073);
-			showText(TX_SPEAKER_KIRK,  TX_TRI4_011);
-			showText(TX_SPEAKER_VLICT, TX_TRI4_059);
+			showText(TX_SPEAKER_VLICT, 76, true);
+			showText(TX_SPEAKER_MCCOY, 37, true);
+			showText(TX_SPEAKER_VLICT, 73, true);
+			showText(TX_SPEAKER_KIRK,  11, true);
+			showText(TX_SPEAKER_VLICT, 59, true);
 		} else if (choice == 2) { // "Nature beat me to it"
-			showText(TX_SPEAKER_VLICT, TX_TRI4_065);
-			showText(TX_SPEAKER_KIRK,  TX_TRI4_016);
-			showText(TX_SPEAKER_VLICT, TX_TRI4_074);
+			showText(TX_SPEAKER_VLICT, 65, true);
+			showText(TX_SPEAKER_KIRK,  16, true);
+			showText(TX_SPEAKER_VLICT, 74, true);
 
 			const TextRef choices3[] = {
 				TX_SPEAKER_KIRK,
-				TX_TRI4_026, TX_TRI4_024, TX_TRI4_023,
+				26, 24, 23,
 				TX_BLANK
 			};
-			choice = showText(choices3);
+			choice = showMultipleTexts(choices3, true);
 
 			if (choice == 0) { // "The empire will learn you betrayed them"
-				showText(TX_SPEAKER_VLICT, TX_TRI4_057);
-				showText(TX_SPEAKER_SPOCK, TX_TRI4_038);
-				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_044);
-				showText(TX_SPEAKER_KIRK, TX_TRI4_006);
-				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_048);
+				showText(TX_SPEAKER_VLICT, 57, true);
+				showText(TX_SPEAKER_SPOCK, 38, true);
+				showText(TX_SPEAKER_QUETZECOATL, 44, true);
+				showText(TX_SPEAKER_KIRK, 06, true);
+				showText(TX_SPEAKER_QUETZECOATL, 48, true);
 			} else if (choice == 1) { // "You didn't give him a fair trial"
-				showText(TX_SPEAKER_VLICT,       TX_TRI4_055);
-				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_045);
-				showText(TX_SPEAKER_KIRK,        TX_TRI4_003);
-				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_047);
-				showText(TX_SPEAKER_KIRK,        TX_TRI4_010);
+				showText(TX_SPEAKER_VLICT,       55, true);
+				showText(TX_SPEAKER_QUETZECOATL, 45, true);
+				showText(TX_SPEAKER_KIRK,        03, true);
+				showText(TX_SPEAKER_QUETZECOATL, 47, true);
+				showText(TX_SPEAKER_KIRK,        10, true);
 			} else if (choice == 2) { // "How can a liar like you say 'honor'"
-				showText(TX_SPEAKER_VLICT,       TX_TRI4_067);
-				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_046);
-				showText(TX_SPEAKER_KIRK,        TX_TRI4_007);
-				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_049);
+				showText(TX_SPEAKER_VLICT,       67, true);
+				showText(TX_SPEAKER_QUETZECOATL, 46, true);
+				showText(TX_SPEAKER_KIRK,        07, true);
+				showText(TX_SPEAKER_QUETZECOATL, 49, true);
 			}
 		}
 	}
 
-	showText(TX_SPEAKER_KIRK, TX_TRI4_012);
+	showText(TX_SPEAKER_KIRK, 12, true);
 	_awayMission->trial.missionEndMethod = 2;
 	endMission(_awayMission->trial.missionScore, _awayMission->trial.field2b, 2);
 }

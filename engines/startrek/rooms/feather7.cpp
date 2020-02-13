@@ -49,19 +49,19 @@ void Room::feather7Tick1() {
 
 void Room::feather7Tick40() {
 	if (_awayMission->feather.diedFromStalactites)
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_017);
+		showText(TX_SPEAKER_QUETZECOATL, 17, true);
 
-	showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_022);
+	showText(TX_SPEAKER_QUETZECOATL, 22, true);
 
 	if (_awayMission->redshirtDead)
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_021);
+		showText(TX_SPEAKER_QUETZECOATL, 21, true);
 
 	// BUGFIX: Show this even if redshirt isn't dead (he wishes you wouldn't have knocked
 	// out Tlaoxac)
 	if (_awayMission->feather.knockedOutTlaoxac)
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_023);
+		showText(TX_SPEAKER_QUETZECOATL, 23, true);
 
-	showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_027);
+	showText(TX_SPEAKER_QUETZECOATL, 27, true);
 
 	walkCrewmanC(OBJECT_KIRK, 0x6c, 0x93, &Room::feather7KirkReachedSeat);
 	walkCrewmanC(OBJECT_SPOCK, 0xbb, 0x8c, &Room::feather7SpockReachedSeat);
@@ -88,57 +88,57 @@ void Room::feather7QuetzecoatlReachedSeat() {
 void Room::feather7KirkSatDown() {
 	const TextRef choices1[] = {
 		TX_SPEAKER_KIRK,
-		TX_FEA7_005, TX_FEA7_006, TX_FEA7_010,
+		5, 6, 10,
 		TX_BLANK
 	};
-	int choice = showText(choices1);
+	int choice = showMultipleTexts(choices1, true);
 
 	if (choice == 0) {
 		_roomVar.feather.insultedQuetzecoatl = true;
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_020);
+		showText(TX_SPEAKER_QUETZECOATL, 20, true);
 	} else if (choice == 1)
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_019);
+		showText(TX_SPEAKER_QUETZECOATL, 19, true);
 	else
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_016);
+		showText(TX_SPEAKER_QUETZECOATL, 16, true);
 
-	showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_029);
+	showText(TX_SPEAKER_QUETZECOATL, 29, true);
 
 	const TextRef choices2[] = {
 		TX_SPEAKER_KIRK,
-		TX_FEA7_007, TX_FEA7_004, TX_FEA7_012,
+		7, 4, 12,
 		TX_BLANK
 	};
-	choice = showText(choices2);
+	choice = showMultipleTexts(choices2, true);
 
 	if (choice == 0) {
 		_roomVar.feather.insultedQuetzecoatl = true;
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_030);
+		showText(TX_SPEAKER_QUETZECOATL, 30, true);
 	} else if (choice == 1)
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_018);
+		showText(TX_SPEAKER_QUETZECOATL, 18, true);
 	else {
 		_roomVar.feather.insultedQuetzecoatl = true;
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_026);
+		showText(TX_SPEAKER_QUETZECOATL, 26, true);
 	}
 
-	showText(TX_SPEAKER_SPOCK, TX_FEA7_014);
-	showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_024);
+	showText(TX_SPEAKER_SPOCK, 14, true);
+	showText(TX_SPEAKER_QUETZECOATL, 24, true);
 
 	const TextRef choices3[] = {
 		TX_SPEAKER_KIRK,
-		TX_FEA7_008, TX_FEA7_009, TX_FEA7_011,
+		8, 9, 11,
 		TX_BLANK
 	};
-	choice = showText(choices3);
+	choice = showMultipleTexts(choices3, true);
 
 	if (choice == 0) {
 		_roomVar.feather.insultedQuetzecoatl = true;
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_025);
+		showText(TX_SPEAKER_QUETZECOATL, 25, true);
 	} else if (choice == 1)
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_028);
+		showText(TX_SPEAKER_QUETZECOATL, 28, true);
 
-	showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_015);
-	showText(TX_SPEAKER_MCCOY, TX_FEA7_013);
-	showText(TX_SPEAKER_KIRK, TX_FEA7_003);
+	showText(TX_SPEAKER_QUETZECOATL, 15, true);
+	showText(TX_SPEAKER_MCCOY, 13, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 
 	loadActorAnimC(OBJECT_KIRK, "s5r7ku", -1, -1, &Room::feather7ReadyToBeamOut);
 	loadActorAnim2(OBJECT_SPOCK, "s5r7su");
@@ -147,10 +147,10 @@ void Room::feather7KirkSatDown() {
 
 void Room::feather7ReadyToBeamOut() {
 	if (_awayMission->redshirtDead)
-		showText(TX_SPEAKER_KIRK, TX_FEA7_002);
+		showText(TX_SPEAKER_KIRK, 2, true);
 	else {
 		_awayMission->feather.missionScore += 1;
-		showText(TX_SPEAKER_KIRK, TX_FEA7_001);
+		showText(TX_SPEAKER_KIRK, 1, true);
 	}
 
 	if (!_roomVar.feather.insultedQuetzecoatl)

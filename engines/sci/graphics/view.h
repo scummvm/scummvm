@@ -85,6 +85,7 @@ private:
 	void initData(GuiResourceId resourceId);
 	void unpackCel(int16 loopNo, int16 celNo, SciSpan<byte> &outPtr);
 	void unditherBitmap(SciSpan<byte> &bitmap, int16 width, int16 height, byte clearKey);
+	byte getMappedColor(byte color, uint16 scaleSignal, const Palette *palette, int x2, int y2);
 
 	ResourceManager *_resMan;
 	GfxCoordAdjuster16 *_coordAdjuster;

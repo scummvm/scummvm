@@ -38,10 +38,10 @@ class Music {
 		Common::String name;
 		int            volume;
 		int            pan;
-		int            timeFadeIn;
-		int            timePlay;
+		int32          timeFadeIn;
+		int32          timePlay;
 		int            loop;
-		int            timeFadeOut;
+		int32          timeFadeOut;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -61,9 +61,9 @@ public:
 	Music(BladeRunnerEngine *vm);
 	~Music();
 
-	bool play(const Common::String &trackName, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut);
-	void stop(int delay);
-	void adjust(int volume, int pan, int delay);
+	bool play(const Common::String &trackName, int volume, int pan, int32 timeFadeIn, int32 timePlay, int loop, int32 timeFadeOut);
+	void stop(uint32 delay);
+	void adjust(int volume, int pan, uint32 delay);
 	bool isPlaying();
 
 	void setVolume(int volume);
@@ -74,8 +74,8 @@ public:
 	void load(SaveFileReadStream &f);
 
 private:
-	void adjustVolume(int volume, int delay);
-	void adjustPan(int pan, int delay);
+	void adjustVolume(int volume, uint32 delay);
+	void adjustPan(int pan, uint32 delay);
 
 	void ended();
 	void fadeOut();

@@ -1184,6 +1184,8 @@ void Myst::o_bookGivePage(uint16 var, const ArgumentsArray &args) {
 	case kBlueFirePlacePage:
 		mask = 32;
 		break;
+	default:
+		break;
 	}
 
 	// Wrong book
@@ -1330,6 +1332,8 @@ void Myst::o_imagerPlayButton(uint16 var, const ArgumentsArray &args) {
 			_state.imagerActive = 1;
 		}
 		break;
+	default:
+		break;
 	}
 
 	_vm->_cursor->showCursor();
@@ -1367,6 +1371,8 @@ void Myst::o_imagerEraseButton(uint16 var, const ArgumentsArray &args) {
 			break;
 		case 67:
 			_state.imagerWaterErased = 1;
+			break;
+		default:
 			break;
 		}
 
@@ -1520,6 +1526,8 @@ void Myst::generatorButtonValue(MystArea *button, uint16 &mask, uint16 &value) {
 	case 61: // Generator Switch #10
 		mask = 512;
 		value = 9;
+		break;
+	default:
 		break;
 	}
 }

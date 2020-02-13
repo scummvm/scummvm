@@ -44,17 +44,17 @@ public:
 	CLASSDEF;
 	CMovieRangeInfo();
 	CMovieRangeInfo(const CMovieRangeInfo *src);
-	virtual ~CMovieRangeInfo();
+	~CMovieRangeInfo() override;
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Adds an event to the events list

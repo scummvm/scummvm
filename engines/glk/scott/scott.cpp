@@ -21,6 +21,7 @@
  */
 
 #include "glk/scott/scott.h"
+#include "glk/quetzal.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 
@@ -213,7 +214,7 @@ const char *Scott::mapSynonym(const char *word) {
 			tp++;
 		else
 			strcpy(lastword, tp);
-		if (xstrncasecmp(word, tp, _gameHeader._wordLength) == 0)
+		if (scumm_strnicmp(word, tp, _gameHeader._wordLength) == 0)
 			return lastword;
 		n++;
 	}
@@ -229,7 +230,7 @@ int Scott::matchUpItem(const char *text, int loc) {
 
 	while (ct <= _gameHeader._numItems) {
 		if (!_items[ct]._autoGet.empty() && _items[ct]._location == loc &&
-				xstrncasecmp(_items[ct]._autoGet.c_str(), word, _gameHeader._wordLength) == 0)
+				scumm_strnicmp(_items[ct]._autoGet.c_str(), word, _gameHeader._wordLength) == 0)
 			return ct;
 		ct++;
 	}
@@ -483,7 +484,7 @@ int Scott::whichWord(const char *word, const Common::StringArray &list) {
 			tp++;
 		else
 			n = ne;
-		if (xstrncasecmp(word, tp, _gameHeader._wordLength) == 0)
+		if (scumm_strnicmp(word, tp, _gameHeader._wordLength) == 0)
 			return n;
 		ne++;
 	}
@@ -508,41 +509,44 @@ void Scott::lineInput(char *buf, size_t n) {
 	buf[ev.val1] = 0;
 }
 
-Common::Error Scott::saveGameData(strid_t file, const Common::String &desc) {
+Common::Error Scott::writeGameData(Common::WriteStream *ws) {
 	Common::String msg;
 
 	for (int ct = 0; ct < 16; ct++) {
 		msg = Common::String::format("%d %d\n", _counters[ct], _roomSaved[ct]);
-		glk_put_string_stream(file, msg.c_str());
+		ws->write(msg.c_str(), msg.size());
+		ws->writeByte(0);
 	}
 
 	msg = Common::String::format("%u %d %d %d %d %d\n",
 								 _bitFlags, (_bitFlags & (1 << DARKBIT)) ? 1 : 0,
 								 MY_LOC, _currentCounter, _savedRoom, _gameHeader._lightTime);
-	glk_put_string_stream(file, msg.c_str());
+	ws->write(msg.c_str(), msg.size());
+	ws->writeByte(0);
 
 	for (int ct = 0; ct <= _gameHeader._numItems; ct++) {
 		msg = Common::String::format("%hd\n", (short)_items[ct]._location);
-		glk_put_string_stream(file, msg.c_str());
+		ws->write(msg.c_str(), msg.size());
+		ws->writeByte(0);
 	}
 
 	output(_("Saved.\n"));
 	return Common::kNoError;
 }
 
-Common::Error Scott::loadGameData(strid_t file) {
-	char buf[128];
+Common::Error Scott::readSaveData(Common::SeekableReadStream *rs) {
+	Common::String line;
 	int ct = 0;
 	short lo;
 	short darkFlag;
 
 	for (ct = 0; ct < 16; ct++) {
-		glk_get_line_stream(file, buf, sizeof buf);
-		sscanf(buf, "%d %d", &_counters[ct], &_roomSaved[ct]);
+		line = QuetzalReader::readString(rs);
+		sscanf(line.c_str(), "%d %d", &_counters[ct], &_roomSaved[ct]);
 	}
 
-	glk_get_line_stream(file, buf, sizeof buf);
-	sscanf(buf, "%u %hd %d %d %d %d\n",
+	line = QuetzalReader::readString(rs);
+	sscanf(line.c_str(), "%u %hd %d %d %d %d\n",
 		   &_bitFlags, &darkFlag, &MY_LOC, &_currentCounter, &_savedRoom,
 		   &_gameHeader._lightTime);
 
@@ -550,8 +554,8 @@ Common::Error Scott::loadGameData(strid_t file) {
 	if (darkFlag)
 		_bitFlags |= (1 << 15);
 	for (ct = 0; ct <= _gameHeader._numItems; ct++) {
-		glk_get_line_stream(file, buf, sizeof buf);
-		sscanf(buf, "%hd\n", &lo);
+		line = QuetzalReader::readString(rs);
+		sscanf(line.c_str(), "%hd\n", &lo);
 		_items[ct]._location = (unsigned char)lo;
 	}
 
@@ -574,7 +578,7 @@ int Scott::getInput(int *vb, int *no) {
 			num = sscanf(buf, "%9s %9s", verb, noun);
 		} while (num == 0 || *buf == '\n');
 
-		if (xstrcasecmp(verb, "restore") == 0) {
+		if (scumm_stricmp(verb, "restore") == 0) {
 			loadGame();
 			return -1;
 		}
@@ -603,6 +607,8 @@ int Scott::getInput(int *vb, int *no) {
 			// Brian Howarth interpreter also supports this
 			case 'i':
 				strcpy(verb, "INVENTORY");
+				break;
+			default:
 				break;
 			}
 		}
@@ -717,6 +723,8 @@ int Scott::performLine(int ct) {
 			// Only seen in Brian Howarth games so far
 			if (_currentCounter != dv)
 				return 0;
+			break;
+		default:
 			break;
 		}
 		cc++;
@@ -1049,7 +1057,7 @@ int Scott::performActions(int vb, int no) {
 		if (vb == 10 || vb == 18) {
 			// Yes they really _are_ hardcoded values
 			if (vb == 10) {
-				if (xstrcasecmp(_nounText, "ALL") == 0) {
+				if (scumm_stricmp(_nounText, "ALL") == 0) {
 					int i = 0;
 					int f = 0;
 
@@ -1108,7 +1116,7 @@ int Scott::performActions(int vb, int no) {
 				return 0;
 			}
 			if (vb == 18) {
-				if (xstrcasecmp(_nounText, "ALL") == 0) {
+				if (scumm_stricmp(_nounText, "ALL") == 0) {
 					int i = 0;
 					int f = 0;
 					while (i <= _gameHeader._numItems) {
@@ -1152,34 +1160,6 @@ int Scott::performActions(int vb, int no) {
 	}
 
 	return fl;
-}
-
-int Scott::xstrcasecmp(const char *s1, const char *s2) {
-	const unsigned char
-	*us1 = (const unsigned char *)s1,
-	 *us2 = (const unsigned char *)s2;
-
-	while (tolower(*us1) == tolower(*us2++))
-		if (*us1++ == '\0')
-			return (0);
-	return (tolower(*us1) - tolower(*--us2));
-}
-
-int Scott::xstrncasecmp(const char *s1, const char *s2, size_t n) {
-	if (n != 0) {
-		const unsigned char
-		*us1 = (const unsigned char *)s1,
-		 *us2 = (const unsigned char *)s2;
-
-		do {
-			if (tolower(*us1) != tolower(*us2++))
-				return (tolower(*us1) - tolower(*--us2));
-			if (*us1++ == '\0')
-				break;
-		} while (--n != 0);
-	}
-
-	return 0;
 }
 
 void Scott::readInts(Common::SeekableReadStream *f, size_t count, ...) {

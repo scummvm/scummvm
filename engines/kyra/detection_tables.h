@@ -60,6 +60,7 @@ namespace {
 #define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
 #define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB1)
+#define EOB_PC98_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, Kyra::GI_EOB1)
 #define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
 #define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
 
@@ -371,6 +372,22 @@ const KYRAGameDescription adGameDescs[] = {
 			"CD",
 			{
 				{ "GEMCUT.PAK", 0, "d3d4b281cd357230aabcec46843d04bd", -1 },
+				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_CD,
+			GUIO0()
+		},
+		KYRA1_CD_FLAGS
+	},
+	{ // Polish fan translation of Macintosh CD version
+		{
+			"kyra1",
+			"CD",
+			{
+				{ "GEMCUT.PAK", 0, "8ddf09fd6bfafdb27b4cf31c5a6fc91d", -1 },
 				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
 				{ NULL, 0, NULL, 0 }
 			},
@@ -1129,7 +1146,7 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_CD_FLAGS
 	},
 
-	// Russian fan translation
+	// Russian fan translation. Version 1. 03.01.2011
 	{
 		{
 			"lol",
@@ -1140,6 +1157,42 @@ const KYRAGameDescription adGameDescs[] = {
 				{ 0, 0, 0, 0 }
 			},
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
+	// Russian fan translation. Version 2. 06.07.2014
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "d9b9644b709de55f990d5ef73e0f6d44", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
+	// Russian fan translation. Version 24.02.2019
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "8aa1860a3e9f84c6f11118a0181bcfaf", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
@@ -1617,7 +1670,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_MIDIPCJR, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
 		},
 		EOB_FLAGS
 	},
@@ -1633,7 +1686,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_MIDIPCJR, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
 		},
 		EOB_FLAGS
 	},
@@ -1649,7 +1702,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_MIDIPCJR, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
 		},
 		EOB_FLAGS
 	},
@@ -1684,6 +1737,22 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO4(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA, GAMEOPTION_EOB_HPGRAPHS)
 		},
 		EOB_FLAGS
+	},
+
+	{
+		{
+			"eob",
+			0,
+			{
+				{ "BRICK3.BIN", 0, "7fb13157102accf6ddb806d5ad36c833", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			ADGF_NO_FLAGS,
+			GUIO4(GUIO_NOSPEECH, GUIO_MIDIPC98, GUIO_RENDERPC9801, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB_PC98_FLAGS
 	},
 
 	{

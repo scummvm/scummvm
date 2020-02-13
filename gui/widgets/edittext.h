@@ -40,27 +40,27 @@ protected:
 	int				_rightPadding;
 
 public:
-	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip = 0, uint32 cmd = 0, uint32 finishCmd = 0);
-	EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltp = 0, uint32 cmd = 0, uint32 finishCmd = 0);
+	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip = nullptr, uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
+	EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltp = nullptr, uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
 
-	void setEditString(const String &str);
+	void setEditString(const String &str) override;
 
-	virtual void handleMouseDown(int x, int y, int button, int clickCount);
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
 
-	virtual bool wantsFocus() { return true; }
+	bool wantsFocus() override { return true; }
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
 protected:
-	void drawWidget();
-	void receivedFocusWidget();
-	void lostFocusWidget();
+	void drawWidget() override;
+	void receivedFocusWidget() override;
+	void lostFocusWidget() override;
 
-	void startEditMode();
-	void endEditMode();
-	void abortEditMode();
+	void startEditMode() override;
+	void endEditMode() override;
+	void abortEditMode() override;
 
-	Common::Rect getEditRect() const;
+	Common::Rect getEditRect() const override;
 
 	uint32 _finishCmd;
 };

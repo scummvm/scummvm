@@ -20,7 +20,6 @@
  *
  */
 
-#include "audio/softsynth/fmtowns_pc98/towns_midi.h"
 #include "audio/musicplugin.h"
 #include "common/translation.h"
 #include "common/error.h"
@@ -48,8 +47,8 @@ MusicDevices TownsEmuMusicPlugin::getDevices() const {
 }
 
 Common::Error TownsEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = new MidiDriver_TOWNS(g_system->getMixer());
-	return Common::kNoError;
+	*mididriver = 0;
+	return Common::kUnknownError;
 }
 
 class PC98EmuMusicPlugin : public MusicPluginObject {
@@ -73,8 +72,8 @@ MusicDevices PC98EmuMusicPlugin::getDevices() const {
 }
 
 Common::Error PC98EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	//*mididriver = /**/
-	return Common::kNoError;
+	*mididriver = 0;
+	return Common::kUnknownError;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(TOWNS)

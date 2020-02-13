@@ -30,10 +30,10 @@ namespace Gob {
 class BATPlayer : public DemoPlayer {
 public:
 	BATPlayer(GobEngine *vm);
-	virtual ~BATPlayer();
+	~BATPlayer() override;
 
 protected:
-	virtual bool playStream(Common::SeekableReadStream &bat);
+	bool playStream(Common::SeekableReadStream &bat) override;
 };
 
 } // End of namespace Gob

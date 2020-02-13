@@ -49,7 +49,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	// The Last Express (English) - UK Broderbund Release
@@ -68,7 +68,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	// The Last Express (English) - Interplay Release
@@ -87,7 +87,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	// The Last Express (Demo - English) - Broderbund
@@ -103,7 +103,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_DEMO | ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	// The Last Express (French) - Broderbund Release
@@ -122,7 +122,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	// The Last Express (German)
@@ -141,7 +141,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	// The Last Express (Spanish)
@@ -160,7 +160,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	// The Last Express (Italian)
@@ -179,7 +179,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	// The Last Express (Russian)
@@ -198,7 +198,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	// The Last Express (GOG)
@@ -217,7 +217,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOASPECT)
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
 	AD_TABLE_END_MARKER
@@ -227,20 +227,23 @@ static const ADGameDescription gameDescriptions[] = {
 class LastExpressMetaEngine : public AdvancedMetaEngine {
 public:
 	LastExpressMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
-		_singleId = "lastexpress";
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOSFX);
 	}
 
-	const char *getName() const {
+	const char *getEngineId() const override {
+		return "lastexpress";
+	}
+
+	const char *getName() const override {
 		return "The Last Express";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "The Last Express (C) 1997 Smoking Car Productions";
 	}
 
 protected:
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
 
 bool LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {

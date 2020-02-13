@@ -167,6 +167,8 @@ void MinigameBbAirGuitar::buildDrawList(DrawList &drawList) {
 	case 1:
 		buildDrawList1(drawList);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -265,6 +267,8 @@ void MinigameBbAirGuitar::initObjects() {
 		break;
 	case 1:
 		initObjects1();
+		break;
+	default:
 		break;
 	}
 }
@@ -408,6 +412,8 @@ bool MinigameBbAirGuitar::updateStatus(int mouseX, int mouseY, uint mouseButtons
 		return updateStatus0(mouseX, mouseY, mouseButtons);
 	case 1:
 		return updateStatus1(mouseX, mouseY, mouseButtons);
+	default:
+		break;
 	}
 	return false;
 }
@@ -660,6 +666,8 @@ bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButton
 						}
 						break;
 
+					default:
+						break;
 					}
 				}
 			}
@@ -716,6 +724,8 @@ bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButton
 		}
 		break;
 
+	default:
+		break;
 	}
 
 	updateObjs();
@@ -928,6 +938,8 @@ void MinigameBbAirGuitar::afterButtonReleased() {
 		case 2:
 			*_currFrameIndex = 1;
 			break;
+		case 3:
+			break;
 		case 4:
 			*_currFrameIndex = 1;
 			loadTracks();
@@ -976,7 +988,9 @@ void MinigameBbAirGuitar::afterButtonReleased() {
 		case 25:
 		case 26:
 			noteOff(_currButtonNum - 14);
-		break;
+			break;
+		default:
+			break;
 		}
 	}
 

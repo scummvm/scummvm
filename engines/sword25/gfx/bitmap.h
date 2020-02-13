@@ -43,7 +43,7 @@ protected:
 
 public:
 
-	virtual ~Bitmap();
+	~Bitmap() override;
 
 	/**
 	    @brief Setzt den Alphawert des Bitmaps.
@@ -168,8 +168,8 @@ public:
 	virtual bool    isColorModulationAllowed() const = 0;
 	virtual bool    isSetContentAllowed() const = 0;
 
-	virtual bool    persist(OutputPersistenceBlock &writer);
-	virtual bool    unpersist(InputPersistenceBlock &reader);
+	bool    persist(OutputPersistenceBlock &writer) override;
+	bool    unpersist(InputPersistenceBlock &reader) override;
 
 protected:
 	bool  _flipH;

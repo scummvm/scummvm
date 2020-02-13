@@ -53,7 +53,7 @@ public:
 	DECLARE_PERSISTENT(VideoTheoraPlayer, BaseClass)
 
 	VideoTheoraPlayer(BaseGame *inGame);
-	virtual ~VideoTheoraPlayer(void);
+	~VideoTheoraPlayer(void) override;
 
 	// external objects
 	Common::SeekableReadStream *_file;

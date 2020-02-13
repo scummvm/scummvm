@@ -274,7 +274,7 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 	if (offs)
 		_screen->copyRegion(294, y, 182 + offs, y, 18, 8, 6, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
-	Screen::FontId of = (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? _screen->setFont(Screen::FID_SJIS_FNT) : _screen->_currentFont;
+	Screen::FontId of = (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? _screen->setFont(Screen::FID_SJIS_TEXTMODE_FNT) : _screen->_currentFont;
 	_screen->fprintString("%d", 200 + offs, y, col, 0, _flags.use16ColorMode ? 2 : 6, value);
 	_screen->setFont(of);
 }
@@ -798,7 +798,6 @@ void LoLEngine::gui_updateInput() {
 
 void LoLEngine::gui_triggerEvent(int eventType) {
 	Common::Event evt;
-	memset(&evt, 0, sizeof(Common::Event));
 	evt.mouse.x = _mouseX;
 	evt.mouse.y = _mouseY;
 
@@ -1301,9 +1300,18 @@ int LoLEngine::clickedScenePickupItem(Button *button) {
 
 	redrawSceneItem();
 
+	// WORKAROUND for original bug that allowed picking up items by clicking exactly 1 pixel from the
+	// left, right or bottom border (which could even cause lockups). We simply clip the item pixel
+	// search zone to the dimensions of the calling button...
+	const ScreenDim *dim = _screen->getScreenDim(button->dimTableIndex);
+	int clipLeft = (dim->sx << 3) + button->x;
+	int clipTop = dim->sy + button->y;
+	int clipRight = (dim->sx << 3) + button->x + button->width - 1;
+	int clipBottom = dim->sy + button->y + button->height - 1;
+
 	int p = 0;
 	for (int i = 0; i < len; i++) {
-		p = _screen->getPagePixel(_screen->_curPage, CLIP(_mouseX + checkX[i], 0, 320), CLIP(_mouseY + checkY[i], 0, 200));
+		p = _screen->getPagePixel(_screen->_curPage, CLIP(_mouseX + checkX[i], clipLeft, clipRight), CLIP(_mouseY + checkY[i], clipTop, clipBottom));
 		if (p)
 			break;
 	}
@@ -2551,10 +2559,10 @@ int GUI_LoL::getInput() {
 	if (!_displayMenu)
 		return 0;
 
-#ifdef ENABLE_KEYMAPPER
-	Common::Keymapper *const keymapper = _vm->getEventManager()->getKeymapper();
-	keymapper->pushKeymap(Common::kGlobalKeymapName);
-#endif
+	// Disable the keymap during text input
+	Common::Keymapper *const mapper = _vm->_eventMan->getKeymapper();
+	Common::Keymap *const lolKeymap = mapper->getKeymap(LoLEngine::kKeymapName);
+	lolKeymap->setEnabled(false);
 
 	Common::Point p = _vm->getMousePos();
 	_vm->_mouseX = p.x;
@@ -2593,9 +2601,7 @@ int GUI_LoL::getInput() {
 
 	_vm->delay(8);
 
-#ifdef ENABLE_KEYMAPPER
-	keymapper->popKeymap(Common::kGlobalKeymapName);
-#endif
+	lolKeymap->setEnabled(true);
 
 	return inputFlag & 0x8000 ? 1 : 0;
 }
@@ -2627,6 +2633,8 @@ int GUI_LoL::clickedMainMenu(Button *button) {
 		break;
 	case 0x4005:
 		_displayMenu = false;
+		break;
+	default:
 		break;
 	}
 	return 1;

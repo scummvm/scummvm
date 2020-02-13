@@ -90,7 +90,8 @@ OSystem_N64::OSystem_N64() {
 
 	_overlayVisible = false;
 
-	_shakeOffset = 0;
+	_shakeXOffset = 0;
+	_shakeYOffset = 0;
 
 	// Allocate memory for offscreen buffers
 	_offscreen_hic = (uint16 *)memalign(8, _screenWidth * _screenHeight * 2);
@@ -222,22 +223,6 @@ const OSystem::GraphicsMode* OSystem_N64::getSupportedGraphicsModes() const {
 
 int OSystem_N64::getDefaultGraphicsMode() const {
 	return OVERS_NTSC_340X240;
-}
-
-bool OSystem_N64::setGraphicsMode(const char *mode) {
-	int i = 0;
-	while (s_supportedGraphicsModes[i].name) {
-		if (!scumm_stricmp(s_supportedGraphicsModes[i].name, mode)) {
-			_graphicMode = s_supportedGraphicsModes[i].id;
-
-			switchGraphicModeId(_graphicMode);
-
-			return true;
-		}
-		i++;
-	}
-
-	return true;
 }
 
 bool OSystem_N64::setGraphicsMode(int mode) {
@@ -528,8 +513,8 @@ void OSystem_N64::updateScreen() {
 	// Copy the game buffer to screen
 	if (!_overlayVisible) {
 		tmpDst = game_framebuffer;
-		tmpSrc = _offscreen_hic + (_shakeOffset * _screenWidth);
-		for (currentHeight = _shakeOffset; currentHeight < _gameHeight; currentHeight++) {
+		tmpSrc = _offscreen_hic + (_shakeYOffset * _screenWidth);
+		for (currentHeight = _shakeYOffset; currentHeight < _gameHeight; currentHeight++) {
 			uint64 *game_dest = (uint64 *)(tmpDst + skip_pixels + _offscrPixels);
 			uint64 *game_src = (uint64 *)tmpSrc;
 
@@ -541,7 +526,7 @@ void OSystem_N64::updateScreen() {
 			tmpSrc += _screenWidth;
 		}
 
-		uint16 _clearLines = _shakeOffset; // When shaking we must take care of remaining lines to clear
+		uint16 _clearLines = _shakeYOffset; // When shaking we must take care of remaining lines to clear
 		while (_clearLines--) {
 			memset(tmpDst + skip_pixels + _offscrPixels, 0, _screenWidth * 2);
 			tmpDst += _frameBufferWidth;
@@ -615,13 +600,14 @@ void OSystem_N64::unlockScreen() {
 	_dirtyOffscreen = true;
 }
 
-void OSystem_N64::setShakePos(int shakeOffset) {
+void OSystem_N64::setShakePos(int shakeXOffset, int shakeYOffset) {
 
 	// If a rumble pak is plugged in and screen shakes, rumble!
-	if (shakeOffset && _controllerHasRumble) rumblePakEnable(1, _controllerPort);
-	else if (!shakeOffset && _controllerHasRumble) rumblePakEnable(0, _controllerPort);
+	if (shakeYOffset && _controllerHasRumble) rumblePakEnable(1, _controllerPort);
+	else if (!shakeYOffset && _controllerHasRumble) rumblePakEnable(0, _controllerPort);
 
-	_shakeOffset = shakeOffset;
+	_shakeXOffset = shakeXOffset;
+	_shakeYOffset = shakeYOffset;
 	_dirtyOffscreen = true;
 
 	return;
@@ -670,8 +656,8 @@ void OSystem_N64::clearOverlay() {
 	uint8 skip_pixels = (_screenWidth - _gameWidth) / 2; // Center horizontally the image
 
 	uint16 *tmpDst = _overlayBuffer + (_overlayWidth * skip_lines * 2);
-	uint16 *tmpSrc = _offscreen_hic + (_shakeOffset * _screenWidth);
-	for (uint16 currentHeight = _shakeOffset; currentHeight < _gameHeight; currentHeight++) {
+	uint16 *tmpSrc = _offscreen_hic + (_shakeYOffset * _screenWidth);
+	for (uint16 currentHeight = _shakeYOffset; currentHeight < _gameHeight; currentHeight++) {
 		memcpy((tmpDst + skip_pixels), tmpSrc, _gameWidth * 2);
 		tmpDst += _overlayWidth;
 		tmpSrc += _screenWidth;
@@ -895,7 +881,7 @@ void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {
 }
 
 void OSystem_N64::setupMixer(void) {
-	_mixer = new Audio::MixerImpl(this, DEFAULT_SOUND_SAMPLE_RATE);
+	_mixer = new Audio::MixerImpl(DEFAULT_SOUND_SAMPLE_RATE);
 	_mixer->setReady(false);
 
 	enableAudioPlayback();

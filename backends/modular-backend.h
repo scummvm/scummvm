@@ -40,6 +40,7 @@ class MutexManager;
  *   OSystem::getMillis()
  *   OSystem::delayMillis()
  *   OSystem::getTimeAndDate()
+ *   OSystem::quit()
  *
  * And, it should also initialize all the managers variables
  * declared in this class, or override their related functions.
@@ -93,7 +94,7 @@ public:
 	virtual void unlockScreen() override;
 	virtual void fillScreen(uint32 col) override;
 	virtual void updateScreen() override;
-	virtual void setShakePos(int shakeOffset) override;
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset) override;
 	virtual void setFocusRectangle(const Common::Rect& rect) override;
 	virtual void clearFocusRectangle() override;
 
@@ -133,7 +134,6 @@ public:
 	/** @name Miscellaneous */
 	//@{
 
-	virtual void quit() override;
 	virtual void displayMessageOnOSD(const char *msg) override;
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 

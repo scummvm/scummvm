@@ -149,7 +149,7 @@ public:
 	if (!x) { coroParam = x = new CoroContextTag(); } \
 	x->DUMMY = 0; \
 	Common::CoroContextHolder tmpHolder(coroParam); \
-	switch (coroParam->_line) { case 0:;
+	switch (coroParam->_line) { default: break; case 0:;
 
 /**
  * End the code section of a coroutine.

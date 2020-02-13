@@ -46,6 +46,8 @@ bool SliceAnimations::open(const Common::String &name) {
 
 	_palettes.resize(_paletteCount);
 
+	Graphics::PixelFormat screenFormat = screenPixelFormat();
+
 	for (uint32 i = 0; i != _paletteCount; ++i) {
 		for (uint32 j = 0; j != 256; ++j) {
 			uint8 color_r = file.readByte();
@@ -57,8 +59,7 @@ bool SliceAnimations::open(const Common::String &name) {
 			_palettes[i].color[j].b = color_b;
 
 			const int bladeToScummVmConstant = 256 / 32; // 5 bits to 8 bits
-			uint16 rgb555 = screenPixelFormat().RGBToColor(color_r * bladeToScummVmConstant, color_g * bladeToScummVmConstant, color_b * bladeToScummVmConstant);
-			_palettes[i].color555[j] = rgb555;
+			_palettes[i].value[j] = screenFormat.RGBToColor(color_r * bladeToScummVmConstant, color_g * bladeToScummVmConstant, color_b * bladeToScummVmConstant);;
 		}
 	}
 
@@ -86,65 +87,114 @@ bool SliceAnimations::open(const Common::String &name) {
 SliceAnimations::~SliceAnimations() {
 	for (uint32 i = 0; i != _pages.size(); ++i)
 		free(_pages[i]._data);
+
+	// close open files
+	_coreAnimPageFile.close(0);
+	if (!_vm->_cutContent) {
+		_framesPageFile.close(_framesPageFile._fileNumber);
+	} else {
+		for (uint i = 0; i < 5; ++i) {
+			_framesPageFile.close(i);
+		}
+	}
 }
 
 bool SliceAnimations::openCoreAnim() {
-	return _coreAnimPageFile.open("COREANIM.DAT");
+	return _coreAnimPageFile.open("COREANIM.DAT", 0);
 }
 
 bool SliceAnimations::openFrames(int fileNumber) {
 
 	if (_framesPageFile._fileNumber == -1) { // Running for the first time, need to probe
 		// First, try HDFRAMES.DAT
-		if (_framesPageFile.open("HDFRAMES.DAT")) {
+		if (_framesPageFile.open("HDFRAMES.DAT", 0)) {
 			_framesPageFile._fileNumber = 0;
 
 			return true;
 		} else {
-			warning("SliceAnimations::openFrames: HDFRAMES.DAT resource not found. Falling back to using CDFRAMESx.DAT files instead...");
+			debug("SliceAnimations::openFrames: HDFRAMES.DAT resource not found. Falling back to using CDFRAMESx.DAT files instead...");
 		}
 	}
 
 	if (_framesPageFile._fileNumber == 0) // HDFRAMES.DAT
 		return true;
 
-	if (_framesPageFile._fileNumber == fileNumber)
+	if (!_vm->_cutContent && _framesPageFile._fileNumber == fileNumber)
 		return true;
 
-	_framesPageFile.close();
-
-	_framesPageFile._fileNumber = fileNumber;
-
-	if (fileNumber == 1 && _framesPageFile.open("CDFRAMES.DAT")) {// For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
+	if (_vm->_cutContent && _framesPageFile._fileNumber == 5) // all frame files loaded
 		return true;
-	}
 
-	if (_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", fileNumber))) {
+	if (!_vm->_cutContent) {
+		// _fileNumber can normally be in [1,4]
+		// but it will be "5" if we switched from restored content to original
+		if (_framesPageFile._fileNumber == 5) {
+			for (uint i = 1; i < 5; ++i) {
+				_framesPageFile.close(i);
+			}
+		} else if (_framesPageFile._fileNumber > 0) {
+			_framesPageFile.close(_framesPageFile._fileNumber);
+		}
+		_framesPageFile._fileNumber = fileNumber;
+		// For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
+		if (fileNumber == 1 && _framesPageFile.open("CDFRAMES.DAT", fileNumber)) {
+			return true;
+		}
+
+		if (_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", fileNumber), fileNumber)) {
+			return true;
+		}
+	} else {
+		// Restored cut content case
+		// open all four CDFRAMESx.DAT files in slots [1,5]
+		// So that all animation resources are available at all times as if we just had the single HDFRAMES.DAT file
+		for (uint i = 1; i < 5; ++i) {
+			_framesPageFile.close(i);
+			if (i == 1
+			    && (!_framesPageFile.open("CDFRAMES.DAT", i))
+			    && (!_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i))
+			) {
+				// For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
+				return false;
+			} else if (i != 1 &&
+			          !_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i)
+			) {
+				return false;
+			}
+		}
+		_framesPageFile._fileNumber = 5;
 		return true;
 	}
 	return false;
 }
 
-bool SliceAnimations::PageFile::open(const Common::String &name) {
-	if (!_file.open(name))
+bool SliceAnimations::PageFile::open(const Common::String &name, int8 fileIdx) {
+	if (!_files[fileIdx].open(name))
 		return false;
 
-	uint32 timestamp = _file.readUint32LE();
+	uint32 timestamp = _files[fileIdx].readUint32LE();
 	if (timestamp != _sliceAnimations->_timestamp)
 		return false;
 
-	_pageOffsets.resize(_sliceAnimations->_pageCount);
-	for (uint32 i = 0; i != _sliceAnimations->_pageCount; ++i)
-		_pageOffsets[i] = -1;
+	if (!_sliceAnimations->_vm->_cutContent
+		|| (_pageOffsets.size() < _sliceAnimations->_pageCount) ) {
+		_pageOffsets.resize(_sliceAnimations->_pageCount);
+		_pageOffsetsFileIdx.resize(_sliceAnimations->_pageCount);
+		for (uint32 i = 0; i != _sliceAnimations->_pageCount; ++i) {
+			_pageOffsets[i] = -1;
+			_pageOffsetsFileIdx[i] = -1;
+		}
+	}
 
-	uint32 pageCount  = _file.readUint32LE();
+	uint32 pageCount  = _files[fileIdx].readUint32LE();
 	uint32 dataOffset = 8 + 4 * pageCount;
 
 	for (uint32 i = 0; i != pageCount; ++i) {
-		uint32 pageNumber = _file.readUint32LE();
+		uint32 pageNumber = _files[fileIdx].readUint32LE();
 		if (pageNumber == 0xffffffff)
 			continue;
 		_pageOffsets[pageNumber] = dataOffset + i * _sliceAnimations->_pageSize;
+		_pageOffsetsFileIdx[pageNumber] = fileIdx;
 	}
 
 	// debug(5, "PageFile::Open: page file \"%s\" opened with %d pages", name.c_str(), pageCount);
@@ -152,23 +202,29 @@ bool SliceAnimations::PageFile::open(const Common::String &name) {
 	return true;
 }
 
-void SliceAnimations::PageFile::close() {
-	if (_file.isOpen()) {
-		_file.close();
+void SliceAnimations::PageFile::close(int8 fileIdx) {
+	if (fileIdx >= 0 && fileIdx < 5) {
+		if (_files[fileIdx].isOpen()) {
+			_files[fileIdx].close();
+		}
 	}
 }
 
 void *SliceAnimations::PageFile::loadPage(uint32 pageNumber) {
-	if (_pageOffsets[pageNumber] == -1)
+	if (_pageOffsets.size() < _sliceAnimations->_pageCount
+	    || _pageOffsetsFileIdx.size() < _sliceAnimations->_pageCount
+	    || _pageOffsets[pageNumber] == -1
+	    || _pageOffsetsFileIdx[pageNumber] == -1) {
 		return nullptr;
+	}
 
 	uint32 pageSize = _sliceAnimations->_pageSize;
 
 	// TODO: Retire oldest pages if we exceed some memory limit
 
 	void *data = malloc(pageSize);
-	_file.seek(_pageOffsets[pageNumber], SEEK_SET);
-	uint32 r = _file.read(data, pageSize);
+	_files[_pageOffsetsFileIdx[pageNumber]].seek(_pageOffsets[pageNumber], SEEK_SET);
+	uint32 r = _files[_pageOffsetsFileIdx[pageNumber]].read(data, pageSize);
 	assert(r == pageSize);
 
 	return data;

@@ -51,6 +51,10 @@ The dependencies needed to build it are :
 - SDL from https://bitbucket.org/bgK/sdl_psl1ght
 - ScummVM from https://github.com/scummvm/scummvm
 
+ScummVM doesn't provide the CA certificates bundle required by the cloud synchronization features.
+It can be downloaded from the curl website: https://curl.haxx.se/ca/cacert.pem, and packaged in the binary using:
+```$ export DIST_PS3_EXTRA_FILES=/path/to/cacert.pem```
+
 Once all the dependencies are correctly setup, an installable package can be obtained from source by issuing the following command :
 
 ./configure --host=ps3 && make ps3pkg

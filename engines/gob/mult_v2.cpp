@@ -798,6 +798,9 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	case 10:
 		warning("Woodruff Stub: AnimType 10");
 		break;
+
+	default:
+		break;
 	}
 
 	animData.newCycle = 1;

@@ -604,6 +604,9 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 
 			case 15: 	// NOP
 				continue;
+
+			default:
+				break;
 			}
 		}
 	}
@@ -731,6 +734,9 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 			channel.envDelta = param1;
 			channel.envCount = channel.envSkip = (param2 >> 4) + 1;
 			channel.envEndVolume = param3;
+			break;
+
+		default:
 			break;
 	}
 }

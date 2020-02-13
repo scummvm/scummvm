@@ -857,6 +857,9 @@ void TattooUserInterface::drawMaskArea(bool mode) {
 			maskArea(*_mask, Common::Point(xp, 203));
 			maskArea(*_mask1, Common::Point(124 + xp, 239));
 			break;
+
+		default:
+			break;
 		}
 	}
 }

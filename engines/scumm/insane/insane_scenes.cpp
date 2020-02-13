@@ -276,6 +276,7 @@ void Insane::stopSceneSounds(int sceneId) {
 	case 20:
 	case 22:
 	case 23:
+	default:
 		break;
 	}
 	if (!flag)
@@ -609,6 +610,7 @@ int Insane::loadSceneData(int scene, int flag, int phase) {
 		break;
 	default:
 		retvalue = 0;
+		break;
 	}
 	if (phase == 1) {
 		_sceneData1Loaded = 1;
@@ -628,28 +630,28 @@ void Insane::setSceneCostumes(int sceneId) {
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
 		setupValues();
-		return;
+		break;
 	case 17:
 		smlayer_setFluPalette(_smush_goglpaltRip, 0);
 		setupValues();
-		return;
+		break;
 	case 2:
 		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(9));
 		else
 			smlayer_setActorCostume(0, 2, readArray(10));
 		setupValues();
-		return;
+		break;
 	case 13:
 		setEnemyCostumes();
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
-		return;
+		break;
 	case 21:
 		_currEnemy = EN_ROTT3; //PATCH
 		setEnemyCostumes();
 		_actor[1].y = 200;
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
-		return;
+		break;
 	case 4:
 	case 5:
 	case 6:
@@ -659,11 +661,13 @@ void Insane::setSceneCostumes(int sceneId) {
 			smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
 		setupValues();
-		return;
+		break;
 	case 7:
 	case 8:
 		writeArray(4, 0);
-		return;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -959,6 +963,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			break;
 		case 25:
 		case 26:
+		default:
 			break;
 		}
 
@@ -1440,6 +1445,8 @@ void Insane::postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				break;
 			case 6:
 				queueSceneSwitch(4, 0, "tovista1.san", 64, 0, 0, 230);
+				break;
+			default:
 				break;
 			}
 		}

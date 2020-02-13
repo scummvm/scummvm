@@ -32,7 +32,7 @@ class LilliputEngine;
 class LilliputConsole : public GUI::Debugger {
 public:
 	LilliputConsole(LilliputEngine *vm);
-	virtual ~LilliputConsole(void);
+	~LilliputConsole(void) override;
 
 private:
 	LilliputEngine *_vm;

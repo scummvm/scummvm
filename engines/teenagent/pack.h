@@ -51,14 +51,14 @@ class FilePack : public Pack {
 
 public:
 	FilePack();
-	~FilePack();
+	~FilePack() override;
 
-	virtual bool open(const Common::String &filename);
-	virtual void close();
+	bool open(const Common::String &filename) override;
+	void close() override;
 
-	virtual uint32 getSize(uint32 id) const;
-	virtual uint32 read(uint32 id, byte *dst, uint32 size) const;
-	virtual Common::SeekableReadStream *getStream(uint32 id) const;
+	uint32 getSize(uint32 id) const override;
+	uint32 read(uint32 id, byte *dst, uint32 size) const override;
+	Common::SeekableReadStream *getStream(uint32 id) const override;
 };
 
 /** Pack file which reopens file each request. Do not keep file descriptor open.
@@ -70,14 +70,14 @@ class TransientFilePack : public Pack {
 
 public:
 	TransientFilePack();
-	~TransientFilePack();
+	~TransientFilePack() override;
 
-	virtual bool open(const Common::String &filename);
-	virtual void close();
+	bool open(const Common::String &filename) override;
+	void close() override;
 
-	virtual uint32 getSize(uint32 id) const;
-	virtual uint32 read(uint32 id, byte *dst, uint32 size) const;
-	virtual Common::SeekableReadStream *getStream(uint32 id) const;
+	uint32 getSize(uint32 id) const override;
+	uint32 read(uint32 id, byte *dst, uint32 size) const override;
+	Common::SeekableReadStream *getStream(uint32 id) const override;
 };
 
 ///MemoryPack loads whole pack in memory, currently unused.
@@ -103,12 +103,12 @@ class MemoryPack : public Pack {
 	Common::Array<Chunk> chunks;
 
 public:
-	virtual bool open(const Common::String &filename);
-	virtual void close();
+	bool open(const Common::String &filename) override;
+	void close() override;
 
-	virtual uint32 getSize(uint32 id) const;
-	virtual uint32 read(uint32 id, byte *dst, uint32 size) const;
-	virtual Common::SeekableReadStream *getStream(uint32 id) const;
+	uint32 getSize(uint32 id) const override;
+	uint32 read(uint32 id, byte *dst, uint32 size) const override;
+	Common::SeekableReadStream *getStream(uint32 id) const override;
 };
 
 } // End of namespace TeenAgent

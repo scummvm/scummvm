@@ -126,7 +126,6 @@ public:
 	virtual void unlockScreen() override;
 	virtual void fillScreen(uint32 col) override;
 	virtual void updateScreen() override;
-	virtual void setShakePos(int shakeOffset) override;
 	virtual void setFocusRectangle(const Common::Rect& rect) override;
 	virtual void clearFocusRectangle() override;
 
@@ -186,9 +185,10 @@ protected:
 		return _videoMode.scaleFactor;
 	}
 
-	virtual void handleResizeImpl(const int width, const int height) override;
+	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) override;
 
 	virtual int getGraphicsModeScale(int mode) const override;
+	virtual ScalerProc *getGraphicsScalerProc(int mode) const;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/* SDL2 features a different API for 2D graphics. We create a wrapper
@@ -241,6 +241,20 @@ protected:
 #ifdef USE_RGB_COLOR
 		bool formatChanged;
 #endif
+
+		TransactionDetails() {
+			sizeChanged = false;
+			needHotswap = false;
+			needUpdatescreen = false;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			needTextureUpdate = false;
+			needDisplayResize = false;
+#endif
+#ifdef USE_RGB_COLOR
+			formatChanged = false;
+#endif
+		}
 	};
 	TransactionDetails _transactionDetails;
 
@@ -251,7 +265,7 @@ protected:
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
 		bool filtering;
-		
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
 #endif
@@ -265,6 +279,31 @@ protected:
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat format;
 #endif
+
+		VideoState() {
+			setup = false;
+			fullscreen = false;
+			aspectRatioCorrection = false;
+			// desiredAspectRatio set to (0, 0) by AspectRatio constructor
+			filtering = false;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			stretchMode = 0;
+#endif
+
+			mode = 0;
+			scaleFactor = 0;
+
+			screenWidth = 0;
+			screenHeight = 0;
+			overlayWidth = 0;
+			overlayHeight = 0;
+			hardwareWidth = 0;
+			hardwareHeight = 0;
+#ifdef USE_RGB_COLOR
+			// format set to 0 values by Graphics::PixelFormat constructor
+#endif
+		}
 	};
 	VideoState _videoMode, _oldVideoMode;
 
@@ -347,8 +386,9 @@ protected:
 	};
 
 	// Shake mode
-	int _currentShakePos;
-	int _newShakePos;
+	// This is always set to 0 when building with SDL2.
+	int _currentShakeXOffset;
+	int _currentShakeYOffset;
 
 	// Palette data
 	SDL_Color *_currentPalette;
@@ -385,13 +425,12 @@ protected:
 	virtual void setAspectRatioCorrection(bool enable);
 	void setFilteringMode(bool enable);
 
-	virtual bool saveScreenshot(const Common::String &filename) const;
+	virtual bool saveScreenshot(const Common::String &filename) const override;
 	virtual void setGraphicsModeIntern();
 
 private:
 	void setFullscreenMode(bool enable);
-	bool handleScalerHotkeys(Common::KeyCode key);
-	bool isScalerHotkey(const Common::Event &event);
+	void handleScalerHotkeys(int scalefactor, int scalerType);
 
 	/**
 	 * Converts the given point from the overlay's coordinate space to the

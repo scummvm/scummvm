@@ -70,27 +70,17 @@ bool HugoMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 		gameFile.close();
 
 		// Check for known games
-		const HugoGameDescription *p = HUGO_GAMES;
+		const GlkDetectionEntry *p = HUGO_GAMES;
 		while (p->_gameId && (md5 != p->_md5 || filesize != p->_filesize))
 			++p;
 
-		DetectedGame gd;
 		if (!p->_gameId) {
-			if (gDebugLevel > 0) {
-				// Print an entry suitable for putting into the detection_tables.h
-				debug("ENTRY0(\"%s\", \"%s\", %u),", filename.c_str(), md5.c_str(), (uint)filesize);
-			}
-
 			const PlainGameDescriptor &desc = HUGO_GAME_LIST[0];
-			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
+			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
-			gd.setGUIOptions(GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
 		}
-
-		gd.addExtraEntry("filename", filename);
-		gameList.push_back(gd);
 	}
 
 	return !gameList.empty();

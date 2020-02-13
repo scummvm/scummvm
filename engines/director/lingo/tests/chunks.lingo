@@ -1,0 +1,6 @@
+    put randomName() into item i of field "In"
+
+put the last word of field 1 into field 3
+
+put the last char of "Macromedia, the multimedia company"
+put the last word of "Macromedia, the multimedia company"

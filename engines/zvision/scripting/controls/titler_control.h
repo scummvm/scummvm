@@ -36,7 +36,7 @@ namespace ZVision {
 class TitlerControl : public Control {
 public:
 	TitlerControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
-	~TitlerControl();
+	~TitlerControl() override;
 
 	void setString(int strLine);
 

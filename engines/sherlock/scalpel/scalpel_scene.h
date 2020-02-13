@@ -54,33 +54,33 @@ protected:
 	 * The _misc field of the structures contains the number of the graphic image
 	 * that it should point to after loading; _misc is then set to 0.
 	 */
-	virtual bool loadScene(const Common::String &filename);
+	bool loadScene(const Common::String &filename) override;
 
 	/**
 	 * Checks all the background shapes. If a background shape is animating,
 	 * it will flag it as needing to be drawn. If a non-animating shape is
 	 * colliding with another shape, it will also flag it as needing drawing
 	 */
-	virtual void checkBgShapes();
+	void checkBgShapes() override;
 
 	/**
 	 * Draw all the shapes, people and NPCs in the correct order
 	 */
-	virtual void drawAllShapes();
+	void drawAllShapes() override;
 
 	/**
 	 * Returns the index of the closest zone to a given point.
 	 */
-	virtual int closestZone(const Common::Point &pt);
+	int closestZone(const Common::Point &pt) override;
 public:
 	ScalpelScene(SherlockEngine *vm) : Scene(vm) {}
 
-	virtual ~ScalpelScene();
+	~ScalpelScene() override;
 
 	/**
 	 * Draw all objects and characters.
 	 */
-	virtual void doBgAnim();
+	void doBgAnim() override;
 
 	/**
 	 * Attempt to start a canimation sequence. It will load the requisite graphics, and
@@ -90,13 +90,13 @@ public:
 	 * @param playRate		Play rate. 0 is invalid; 1=normal speed, 2=1/2 speed, etc.
 	 *		A negative playRate can also be specified to play the animation in reverse
 	 */
-	virtual int startCAnim(int cAnimNum, int playRate = 1);
+	int startCAnim(int cAnimNum, int playRate = 1) override;
 
 	/**
 	 * Attempts to find a background shape within the passed bounds. If found,
 	 * it will return the shape number, or -1 on failure.
 	 */
-	virtual int findBgShape(const Common::Point &pt);
+	int findBgShape(const Common::Point &pt) override;
 };
 
 } // End of namespace Scalpel

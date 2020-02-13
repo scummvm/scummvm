@@ -113,6 +113,8 @@ void Credits::update() {
 			case '9' :
 				_zone = line[1] - '1';
 				break;
+			default:
+				break;
 			}
 		} else {
 			assert(_count < ARRAYSIZE(_list));
@@ -130,6 +132,8 @@ void Credits::update() {
 				break;
 			case 2:
 				_list[_count].x = (_zone % 3) * (320 / 3) + 100 - _vm->display()->textWidth(line);
+				break;
+			default:
 				break;
 			}
 			_list[_count].y = (_zone / 3) * (200 / 3) + (_count * 10);

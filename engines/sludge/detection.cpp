@@ -69,7 +69,7 @@ static Sludge::SludgeGameDescription s_fallbackDesc =
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	0
 };
@@ -79,19 +79,22 @@ static char s_fallbackFileNameBuffer[51];
 class SludgeMetaEngine : public AdvancedMetaEngine {
 public:
 	SludgeMetaEngine() : AdvancedMetaEngine(Sludge::gameDescriptions, sizeof(Sludge::SludgeGameDescription), sludgeGames) {
-		_singleId = "sludge";
 		_maxScanDepth = 1;
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "sludge";
+	}
+
+	const char *getName() const override {
 		return "Sludge";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Sludge (C) 2000-2014 Hungry Software and contributors";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		const Sludge::SludgeGameDescription *gd = (const Sludge::SludgeGameDescription *)desc;
 			if (gd) {
 				*engine = new Sludge::SludgeEngine(syst, gd);
@@ -110,7 +113,7 @@ ADDetectedGame SludgeMetaEngine::fallbackDetect(const FileMap &allFiles, const C
 	s_fallbackDesc.desc.language = Common::EN_ANY;
 	s_fallbackDesc.desc.flags = ADGF_UNSTABLE;
 	s_fallbackDesc.desc.platform = Common::kPlatformUnknown;
-	s_fallbackDesc.desc.guiOptions = GUIO0();
+	s_fallbackDesc.desc.guiOptions = GUIO1(GUIO_NOMIDI);
 	s_fallbackDesc.languageID = 0;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {

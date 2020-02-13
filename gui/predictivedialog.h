@@ -36,13 +36,13 @@ class PicButtonWidget;
 class PredictiveDialog : public GUI::Dialog {
 public:
 	PredictiveDialog();
-	~PredictiveDialog();
+	~PredictiveDialog() override;
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyUp(Common::KeyState state);
-	virtual void handleKeyDown(Common::KeyState state);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleKeyUp(Common::KeyState state) override;
+	void handleKeyDown(Common::KeyState state) override;
 
 	const char *getResult() const { return _predictiveResult; }
 

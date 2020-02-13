@@ -40,12 +40,12 @@ static const float kJunkSize = convertScreenVToSpaceY(kShuttleWindowMidV - kJunk
 class SpaceJunk : public ScalingMovie, public Idler {
 public:
 	SpaceJunk(const DisplayElementID);
-	virtual ~SpaceJunk();
+	~SpaceJunk() override;
 
 	void setCenter(const CoordType, const CoordType);
 	void setScaleSize(const CoordType);
 
-	void useIdleTime();
+	void useIdleTime() override;
 
 	void launchJunk(int16, CoordType, CoordType);
 

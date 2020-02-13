@@ -221,6 +221,8 @@ void AgiEngine::checkMotion(ScreenObjEntry *screenObj) {
 	case kMotionMoveObj:
 		motionMoveObj(screenObj);
 		break;
+	default:
+		break;
 	}
 
 	if ((_game.block.active && (~screenObj->flags & fIgnoreBlocks)) && screenObj->direction)

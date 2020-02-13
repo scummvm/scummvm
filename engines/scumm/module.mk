@@ -28,10 +28,12 @@ MODULE_OBJS := \
 	imuse/imuse_part.o \
 	imuse/imuse_player.o \
 	imuse/instrument.o \
-	imuse/mac_m68k.o \
-	imuse/pcspk.o \
 	imuse/sysex_samnmax.o \
 	imuse/sysex_scumm.o \
+	imuse/drivers/amiga.o \
+	imuse/drivers/fmtowns.o \
+	imuse/drivers/mac_m68k.o \
+	imuse/drivers/pcspk.o \
 	input.o \
 	midiparser_ro.o \
 	object.o \
@@ -152,7 +154,7 @@ MODULE_OBJS += \
 	he/moonbase/moonbase.o \
 	he/moonbase/moonbase_fow.o
 
-ifdef USE_SDL_NET
+ifdef USE_LIBCURL
 MODULE_OBJS += \
 	he/moonbase/net_main.o
 endif

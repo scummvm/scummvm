@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
@@ -199,17 +200,14 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
+		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
 
 		BaseSprite *spr = new BaseSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("AddTalkSprite method failed for file '%s'", filename);
 		} else {
-			if (ex) {
-				_talkSpritesEx.add(spr);
-			} else {
-				_talkSprites.add(spr);
-			}
+			sprites.add(spr);
 			stack->pushBool(true);
 		}
 		return STATUS_OK;
@@ -223,51 +221,48 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
+		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
 
-		bool setCurrent = false;
-		bool setTemp2 = false;
-
-		if (ex) {
-			for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
-				if (scumm_stricmp(_talkSpritesEx[i]->getFilename(), filename) == 0) {
-					if (_currentSprite == _talkSpritesEx[i]) {
-						setCurrent = true;
-					}
-					if (_tempSprite2 == _talkSpritesEx[i]) {
-						setTemp2 = true;
-					}
-					delete _talkSpritesEx[i];
-					_talkSpritesEx.remove_at(i);
-					break;
+		for (uint32 i = 0; i < sprites.size(); i++) {
+			if (scumm_stricmp(sprites[i]->getFilename(), filename) == 0) {
+				if (_currentSprite == sprites[i]) {
+					_currentSprite = _sprite;
 				}
-			}
-		} else {
-			for (uint32 i = 0; i < _talkSprites.size(); i++) {
-				if (scumm_stricmp(_talkSprites[i]->getFilename(), filename) == 0) {
-					if (_currentSprite == _talkSprites[i]) {
-						setCurrent = true;
-					}
-					if (_tempSprite2 == _talkSprites[i]) {
-						setTemp2 = true;
-					}
-					delete _talkSprites[i];
-					_talkSprites.remove_at(i);
-					break;
+				if (_tempSprite2 == sprites[i]) {
+					_tempSprite2 = _sprite;
 				}
+				delete sprites[i];
+				sprites.remove_at(i);
+				break;
 			}
-
 		}
-
 		stack->pushBool(true);
-		if (setCurrent) {
-			_currentSprite = _sprite;
-		}
-		if (setTemp2) {
-			_tempSprite2 = _sprite;
-		}
-
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetTalkSprites
+	// This is used once, to store Fenek's TalkSprites array to a temporary var
+	// Later state is restored with this.SetTalkSprite(array_talk_sprites[0])
+	// Return value should be array
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetTalkSprites") == 0) {
+		stack->correctParams(1);
+		bool ex = stack->pop()->getBool();
+		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
+
+		BaseScriptable *arr;
+		stack->pushInt(0);
+		arr = makeSXArray(_gameRef, stack);
+		for (uint32 i = 0; i < sprites.size(); i++) {
+			stack->pushString(sprites[i]->getFilename());
+			((SXArray *)arr)->push(stack->pop());
+		}
+		stack->pushNative(arr, false);
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// SetTalkSprite
@@ -277,54 +272,25 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
-		bool setCurrent = false;
-		bool setTemp2 = false;
+		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
 
 		BaseSprite *spr = new BaseSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("SetTalkSprite method failed for file '%s'", filename);
 		} else {
-
-			// delete current
-			if (ex) {
-				for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
-					if (_talkSpritesEx[i] == _currentSprite) {
-						setCurrent = true;
-					}
-					if (_talkSpritesEx[i] == _tempSprite2) {
-						setTemp2 = true;
-					}
-					delete _talkSpritesEx[i];
+			for (uint32 i = 0; i < sprites.size(); i++) {
+				if (_currentSprite == sprites[i]) {
+					_currentSprite = spr;
 				}
-				_talkSpritesEx.clear();
-			} else {
-				for (uint32 i = 0; i < _talkSprites.size(); i++) {
-					if (_talkSprites[i] == _currentSprite) {
-						setCurrent = true;
-					}
-					if (_talkSprites[i] == _tempSprite2) {
-						setTemp2 = true;
-					}
-					delete _talkSprites[i];
+				if (_tempSprite2 == sprites[i]) {
+					_tempSprite2 = spr;
 				}
-				_talkSprites.clear();
+				delete sprites[i];
 			}
-
-			// set new
-			if (ex) {
-				_talkSpritesEx.add(spr);
-			} else {
-				_talkSprites.add(spr);
-			}
+			sprites.clear();
+			sprites.add(spr);
 			stack->pushBool(true);
-
-			if (setCurrent) {
-				_currentSprite = spr;
-			}
-			if (setTemp2) {
-				_tempSprite2 = spr;
-			}
 		}
 		return STATUS_OK;
 	} else {

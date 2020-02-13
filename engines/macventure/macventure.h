@@ -190,17 +190,17 @@ class MacVentureEngine : public Engine {
 
 public:
 	MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~MacVentureEngine();
+	~MacVentureEngine() override;
 
-	virtual bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
-	virtual Common::Error run();
+	Common::Error run() override;
 
 	bool scummVMSaveLoadDialog(bool isSave);
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	void newGame();
 	void setInitialFlags();
 	void setNewGameState();
@@ -370,7 +370,7 @@ private: // Attributes
 class Console : public GUI::Debugger {
 public:
 	Console(MacVentureEngine *vm) {}
-	virtual ~Console(void) {}
+	~Console(void) override {}
 };
 } // End of namespace MacVenture
 

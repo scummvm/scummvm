@@ -35,9 +35,9 @@ class KeysDialog : public GUI::Dialog {
 public:
 	KeysDialog(const Common::String &title = _("Choose an action to map"));
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyUp(Common::KeyState state);
-	virtual void handleKeyDown(Common::KeyState state);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleKeyUp(Common::KeyState state) override;
+	void handleKeyDown(Common::KeyState state) override;
 
 protected:
 

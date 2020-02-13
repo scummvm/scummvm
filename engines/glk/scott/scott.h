@@ -20,6 +20,8 @@
  *
  */
 
+/* Based on ScottFree interpreter version 1.14 */
+
 #ifndef GLK_SCOTT
 #define GLK_SCOTT
 
@@ -157,8 +159,6 @@ private:
 	int performLine(int ct);
 	int performActions(int vb, int no);
 
-	int xstrcasecmp(const char *, const char *);
-	int xstrncasecmp(const char *, const char *, size_t);
 	void readInts(Common::SeekableReadStream *f, size_t count, ...);
 public:
 	/**
@@ -169,22 +169,23 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
+	InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
 
 	/**
 	 * Execute the game
 	 */
-	virtual void runGame() override;
+	void runGame() override;
 
 	/**
-	 * Load a savegame from the passed stream
+	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error loadGameData(strid_t file) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
-	 * Save the game to the passed stream
+	 * Save the game. The passed write stream represents access to the UMem chunk
+	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Scott

@@ -175,7 +175,7 @@ bool TextManager::loadFont(int filenum, const Common::String &charOrder, int h) 
 // load & save
 void TextManager::saveFont(Common::WriteStream *stream) {
 	stream->writeByte(!_fontTable.empty());
-	if (!_fontTable.empty() > 0) {
+	if (!_fontTable.empty()) {
 		stream->writeUint16BE(_loadedFontNum);
 		stream->writeUint16BE(_fontHeight);
 		writeString(_fontOrder.getUTF8String(), stream);

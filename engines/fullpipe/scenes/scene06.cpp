@@ -158,6 +158,8 @@ void sceneHandler06_mumsyBallTake() {
 	case 5:
 		momAni = MV_MOM_TAKE5;
 		break;
+	default:
+		break;
 	}
 
 	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
@@ -674,7 +676,6 @@ int sceneHandler06(ExCommand *ex) {
 				}
 			}
 		}
-
 		break;
 
 	case 33:
@@ -759,6 +760,10 @@ int sceneHandler06(ExCommand *ex) {
 
 			return res;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

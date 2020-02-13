@@ -110,7 +110,7 @@ protected:
 	/**
 	 * Overload of the allocation allocation of sprites
 	 */
-	virtual RMGfxSourceBuffer *newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
+	RMGfxSourceBuffer *newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE) override;
 
 	/**
 	 * Watch thread which waits for the end of an action
@@ -384,7 +384,7 @@ public:
 	/**
 	 * Draw method, which controls chararacter display
 	 */
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 
 	/**
 	 * Show or hide
@@ -400,18 +400,18 @@ public:
 	/**
 	 * Tony stops (on the right side with respect to any subject)
 	 */
-	virtual void stop(CORO_PARAM);
+	void stop(CORO_PARAM) override;
 	void stopNoAction(CORO_PARAM);
 
 	/**
 	 * Set a pattern
 	 */
-	void setPattern(int npatt, bool bPlayP0 = false);
+	void setPattern(int npatt, bool bPlayP0 = false) override;
 
 	/**
 	 * Reads the current pattern
 	 */
-	int getCurPattern();
+	int getCurPattern() override;
 
 	/**
 	 * Waits until the end of a pattern

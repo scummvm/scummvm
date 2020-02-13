@@ -630,7 +630,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 	const uint8 stairsUp = 23;
 	const uint8 stairsDown = 24;
 	const uint8 types[] = { _vm->_teleporterWallId, illusion1, illusion2, stairsUp, stairsDown, hole, plate1, plate2 };
-	const uint8 signs[] = { 1, 15, 15, 'U', 'D', 164, 'O', 'O' };
+	const uint8 signs[] = { 'T', 'i', 'i', 'U', 'D', 215, 'O', 'O', 'k' };
 
 	for (int i = 0; i < 1024; ++i) {
 		if (!(i % 0x20))
@@ -646,10 +646,20 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 		else if (f & 8)
 			c = 216;
 		else if (f & 1)
-			c = 2;
+			c = 35;
+
+		bool key = false;
+		for (int t = bl->drawObjects; t; ) {
+			EoBItem *itm = &_vm->_items[t];
+			if (itm->type == 38)
+				key = true;
+			t = (itm->next != bl->drawObjects) ? itm->next : 0;
+		}
 
 		if (_vm->_currentBlock == i) {
 			c = 'X';			
+		} else if (key) {
+			c = signs[8];
 		} else {
 			for (int ii = 0; ii < ARRAYSIZE(types); ++ii) {
 				if (bl->walls[0] == types[ii] || bl->walls[1] == types[ii] || bl->walls[2] == types[ii] || bl->walls[3] == types[ii]) {
@@ -661,7 +671,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 		
 		debugPrintf("%c", c);
 	}
-	debugPrintf("\n\nParty Position:   %c  Door:             %c  Stairs Up/Down: %c/%c  Plate:      %c   Hole: %c\nSwitch:           %c  Clickable Object: %c  Illusion Wall:  %c    Teleporter: %c\n\n", 'X', 216, 'U', 'D', 'O', 164, '/', 176, 15, 1);
+	debugPrintf("\n\nParty Position:   %c  Door:             %c  Stairs Up/Down: %c/%c  Plate:      %c   Hole: %c\nSwitch:           %c  Clickable Object: %c  Illusion Wall:  %c    Teleporter: %c   Key:  %c\n\n", 'X', 216, signs[3], signs[4], signs[6], signs[5], '/', 176, signs[1], signs[0], signs[8]);
 
 	return true;
 }

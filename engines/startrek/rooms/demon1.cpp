@@ -197,13 +197,13 @@ void Room::demon1KlingonFinishedAimingWeapon() {
 }
 
 void Room::demon1KirkShot() {
-	showText(TX_DEM1N000);
+	showDescription(0, true);
 	showGameOverMenu();
 }
 
 void Room::demon1UsePhaserOnAnything() {
 	if (_roomVar.demon.numKlingonsKilled == 3)
-		showText(TX_SPEAKER_MCCOY, TX_DEM1_011);
+		showText(TX_SPEAKER_MCCOY, 11, true);
 }
 
 void Room::demon1UsePhaserOnKlingon1() {
@@ -239,17 +239,17 @@ void Room::demon1KlingonDropsHand() {
 	loadActorAnim(13, "klghnd", 0x10b, 0x8e, 0);
 	_awayMission->disableInput = 0;
 	_awayMission->timers[1] = 0;
-	showText(TX_DEM1N020);
+	showDescription(20, true);
 
 	if (_awayMission->crewDownBitset & (1 << OBJECT_REDSHIRT))
 		return;
 
-	showText(TX_SPEAKER_EVERTS, TX_DEM1_025);
+	showText(TX_SPEAKER_EVERTS, 25, true);
 
 	if (_roomVar.demon.numKlingonsKilled == 3)
 		return;
 
-	showText(TX_SPEAKER_KLINGON, TX_DEM1_F23);
+	showText(TX_SPEAKER_KLINGON, 23 + FOLLOWUP_MESSAGE_OFFSET, true);
 
 	_awayMission->timers[1] = 1;
 }
@@ -324,50 +324,50 @@ void Room::demon1Timer5Expired() {
 	if (_awayMission->crewDownBitset != 0)
 		return;
 
-	showText(TX_SPEAKER_UHURA, TX_DEM1U077);
-	showText(TX_SPEAKER_KIRK,  TX_DEM1_003);
-	showText(TX_SPEAKER_UHURA, TX_DEM1U078);
-	showText(TX_SPEAKER_KIRK,  TX_DEM1_002);
-	showText(TX_SPEAKER_SPOCK, TX_DEM1_020);
-	showText(TX_SPEAKER_KIRK,  TX_DEM1_004);
-	showText(TX_SPEAKER_SPOCK, TX_DEM1_021);
+	showText(TX_SPEAKER_UHURA, 77, true);
+	showText(TX_SPEAKER_KIRK,  3, true);
+	showText(TX_SPEAKER_UHURA, 78, true);
+	showText(TX_SPEAKER_KIRK,  2, true);
+	showText(TX_SPEAKER_SPOCK, 20, true);
+	showText(TX_SPEAKER_KIRK,  4, true);
+	showText(TX_SPEAKER_SPOCK, 21, true);
 }
 
 
 void Room::demon1UseMTricorderOnKlingon() {
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, TX_DEM1_012);
+	showText(TX_SPEAKER_MCCOY, 12, true);
 }
 
 void Room::demon1UseSTricorderOnTulips() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, TX_DEM1_007);
+	showText(TX_SPEAKER_SPOCK, 7, true);
 }
 
 void Room::demon1UseSTricorderOnPods() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, TX_DEM1_008);
+	showText(TX_SPEAKER_SPOCK, 8, true);
 }
 
 void Room::demon1UseSTricorderOnCattails() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, TX_DEM1_005);
+	showText(TX_SPEAKER_SPOCK, 5, true);
 }
 
 void Room::demon1UseSTricorderOnFerns() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, TX_DEM1_006);
+	showText(TX_SPEAKER_SPOCK, 6, true);
 }
 
 void Room::demon1UseSTricorderOnHand() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, TX_DEM1_017);
+	showText(TX_SPEAKER_SPOCK, 17, true);
 }
 
 void Room::demon1UseSTricorderOnKlingon1() {
@@ -378,17 +378,17 @@ void Room::demon1UseSTricorderOnKlingon1() {
 	playSoundEffectIndex(0x04);
 
 	if (_roomVar.demon.numKlingonsKilled == 3 && !_awayMission->demon.tookKlingonHand && _rdfData[0xcf] != 1) {
-		showText(TX_SPEAKER_SPOCK, TX_DEM1_018);
+		showText(TX_SPEAKER_SPOCK, 18, true);
 		_rdfData[0xcf] = 1;
 	} else {
-		showText(TX_SPEAKER_SPOCK, TX_DEM1_019);
+		showText(TX_SPEAKER_SPOCK, 19, true);
 	}
 }
 
 void Room::demon1UseSTricorderOnKlingon2Or3() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, TX_DEM1_019);
+	showText(TX_SPEAKER_SPOCK, 19, true);
 }
 
 void Room::demon1UseMTricorderOnKirk() {
@@ -409,7 +409,7 @@ void Room::demon1UseMTricorderOnRedshirt() {
 void Room::demon1UseMTricorderOnCrewman() {
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, TX_DEM1_009);
+	showText(TX_SPEAKER_MCCOY, 9, true);
 }
 
 void Room::demon1GetHand() {
@@ -433,96 +433,96 @@ void Room::demon1PickedUpHand() {
 void Room::demon1FinishedGettingHand() {
 
 	if (_awayMission->demon.tookKlingonHand)
-		showText(TX_DEM1N005);
+		showDescription(5, true);
 	else {
 		_awayMission->demon.tookKlingonHand = true;
 		giveItem(OBJECT_IHAND);
-		showText(TX_DEM1N007);
+		showDescription(7, true);
 	}
 }
 
 void Room::demon1LookAtKlingon() {
-	showText(TX_DEM1N004);
+	showDescription(4, true);
 }
 
 void Room::demon1LookAtCattails() {
-	showText(TX_DEM1N018);
+	showDescription(18, true);
 }
 
 void Room::demon1LookAtTulips() {
-	showText(TX_DEM1N010);
+	showDescription(10, true);
 }
 
 void Room::demon1LookAtPods() {
-	showText(TX_DEM1N019);
+	showDescription(19, true);
 }
 
 void Room::demon1LookAtFerns() {
-	showText(TX_DEM1N009);
+	showDescription(9, true);
 }
 
 void Room::demon1LookAtStream() {
-	showText(TX_DEM1N011);
+	showDescription(11, true);
 }
 
 void Room::demon1LookAtMine() {
-	showText(TX_DEM1N021);
+	showDescription(21, true);
 }
 
 void Room::demon1LookAtMountain() {
-	showText(TX_DEM1N016);
+	showDescription(16, true);
 }
 
 void Room::demon1LookAtHand() {
-	showText(TX_DEM1N023);
+	showDescription(23, true);
 }
 void Room::demon1LookAnywhere() {
-	showText(TX_DEM1N017);
+	showDescription(17, true);
 }
 
 void Room::demon1LookAtKirk() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_KIRK))
-		showText(TX_DEM1N012);
+		showDescription(12, true);
 	else
-		showText(TX_DEM1N003);
+		showDescription(3, true);
 }
 
 void Room::demon1LookAtSpock() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_SPOCK))
-		showText(TX_DEM1N015);
+		showDescription(15, true);
 	else
-		showText(TX_DEM1N008);
+		showDescription(8, true);
 }
 
 void Room::demon1LookAtMcCoy() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_MCCOY))
-		showText(TX_DEM1N013);
+		showDescription(13, true);
 	else
-		showText(TX_DEM1N001);
+		showDescription(1, true);
 }
 
 void Room::demon1LookAtRedshirt() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_REDSHIRT))
-		showText(TX_DEM1N014);
+		showDescription(14, true);
 	else
-		showText(TX_DEM1N002);
+		showDescription(2, true);
 }
 
 void Room::demon1TalkToKirk() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_KIRK))
 		demon1TalkToUnconsciousCrewman();
 	else if (_roomVar.demon.numKlingonsKilled == 3)
-		showText(TX_SPEAKER_KIRK, TX_DEM1_001);
+		showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::demon1TalkToSpock() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_SPOCK))
 		demon1TalkToUnconsciousCrewman();
 	else {
-		showText(TX_SPEAKER_SPOCK, TX_DEM1_022);
-		showText(TX_SPEAKER_MCCOY, TX_DEM1_013);
-		showText(TX_SPEAKER_SPOCK, TX_DEM1_024);
-		showText(TX_SPEAKER_MCCOY, TX_DEM1_014);
+		showText(TX_SPEAKER_SPOCK, 22, true);
+		showText(TX_SPEAKER_MCCOY, 13, true);
+		showText(TX_SPEAKER_SPOCK, 24, true);
+		showText(TX_SPEAKER_MCCOY, 14, true);
 	}
 }
 
@@ -530,8 +530,8 @@ void Room::demon1TalkToMcCoy() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_MCCOY))
 		demon1TalkToUnconsciousCrewman();
 	else {
-		showText(TX_SPEAKER_MCCOY, TX_DEM1_015);
-		showText(TX_SPEAKER_SPOCK, TX_DEM1_023);
+		showText(TX_SPEAKER_MCCOY, 15, true);
+		showText(TX_SPEAKER_SPOCK, 23, true);
 	}
 }
 
@@ -539,7 +539,7 @@ void Room::demon1TalkToRedshirt() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_REDSHIRT))
 		demon1TalkToUnconsciousCrewman();
 	else
-		showText(TX_SPEAKER_EVERTS, TX_DEM1_026);
+		showText(TX_SPEAKER_EVERTS, 26, true);
 }
 
 // FIXME: this doesn't happen in actual game? (does the event get blocked from higher up?)

@@ -53,6 +53,11 @@ private:
 	void execute();
 
 	/**
+	 * Loads the list of character
+	 */
+	void loadCharacters();
+
+	/**
 	 * Loads buttons for the dialog
 	 */
 	void loadButtons();

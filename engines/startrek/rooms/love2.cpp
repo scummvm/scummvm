@@ -195,65 +195,65 @@ void Room::love2DoorReachedOrOpened() {
 }
 
 void Room::love2LookAtCabinet() {
-	showText(TX_LOV2N027);
+	showDescription(27, true);
 }
 
 void Room::love2LookAtDoor() {
-	showText(TX_LOV2N001);
+	showDescription(1, true);
 }
 
 void Room::love2LookAtSynthesizer() {
-	showText(TX_LOV2N028);
+	showDescription(28, true);
 }
 
 void Room::love2LookAtAnywhere() {
-	showText(TX_LOV2N026);
+	showDescription(26, true);
 }
 
 void Room::love2LookAtAntigrav() {
-	showText(TX_LOV2N006);
+	showDescription(6, true);
 }
 
 void Room::love2LookAtMccoy() {
-	showText(TX_LOV2N011);
+	showDescription(11, true);
 }
 
 void Room::love2LookAtSpock() {
-	showText(TX_LOV2N014);
+	showDescription(14, true);
 }
 
 void Room::love2LookAtRedshirt() {
-	showText(TX_LOV2N010);
+	showDescription(10, true);
 }
 
 void Room::love2LookAtKirk() {
-	showText(TX_LOV2N009);
+	showDescription(9, true);
 }
 
 void Room::love2LookAtArdak() {
-	showText(TX_LOV2N045);
-	showText(TX_SPEAKER_SPOCK, TX_LOV2_037);
+	showDescription(45, true);
+	showText(TX_SPEAKER_SPOCK, 37, true);
 }
 
 void Room::love2LookAtChamber() {
-	showText(TX_LOV2N029);
-	showText(TX_SPEAKER_SPOCK, TX_LOV2_035);
-	showText(TX_SPEAKER_MCCOY, TX_LOV2_019);
-	showText(TX_SPEAKER_SPOCK, TX_LOV2_033);
-	showText(TX_SPEAKER_MCCOY, TX_LOV2_016);
+	showDescription(29, true);
+	showText(TX_SPEAKER_SPOCK, 35, true);
+	showText(TX_SPEAKER_MCCOY, 19, true);
+	showText(TX_SPEAKER_SPOCK, 33, true);
+	showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::love2LookAtCan1() {
 	switch (_awayMission->love.canister1) {
 	case CANTYPE_O2:
-		showText(TX_LOV2N004);
+		showDescription(4, true);
 		break;
 	case CANTYPE_H2:
-		showText(TX_LOV2N002);
+		showDescription(2, true);
 		break;
 	case CANTYPE_N2:
 	default:
-		showText(TX_LOV2N003);
+		showDescription(3, true);
 		break;
 	}
 }
@@ -261,45 +261,43 @@ void Room::love2LookAtCan1() {
 void Room::love2LookAtCan2() {
 	switch (_awayMission->love.canister2) {
 	case CANTYPE_O2:
-		showText(TX_LOV2N004);
+		showDescription(4, true);
 		break;
 	case CANTYPE_H2:
-		showText(TX_LOV2N002);
+		showDescription(2, true);
 		break;
 	case CANTYPE_N2:
 	default:
-		showText(TX_LOV2N003);
+		showDescription(3, true);
 		break;
 	}
 }
 
 void Room::love2TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_LOV2_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::love2TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_LOV2_029);
+	showText(TX_SPEAKER_SPOCK, 29, true);
 }
 
 void Room::love2TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV2_009);
+	showText(TX_SPEAKER_MCCOY, 9, true);
 }
 
 void Room::love2TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, TX_LOV2_041);
+	showText(TX_SPEAKER_FERRIS, 41, true);
 }
 
 void Room::love2UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
-		mccoyScan(DIR_S, TX_LOV2_008, false);
+		mccoyScan(DIR_S, 8, false, true);
 	else
-		// BUGFIX: should be TX_LOV2_012, but the audio file is missing. Using equivalent
-		// audio from another room.
-		mccoyScan(DIR_S, TX_LOV1_010, false);
+		mccoyScan(DIR_S, 12, false);
 }
 
 void Room::love2UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_LOV2_027, false);
+	spockScan(DIR_S, 27, false, true);
 }
 
 void Room::love2UseKirkOnCabinet() {
@@ -359,11 +357,11 @@ void Room::love2ChangedGasFeed() {
 	if (_awayMission->love.gasFeedOn) {
 		_awayMission->love.gasFeedOn = false;
 		loadActorAnim2(OBJECT_GAS_FEED, "s3r3v2", 0xac, 0x75, 0);
-		showText(TX_LOV2N007);
+		showDescription(7, true);
 	} else {
 		_awayMission->love.gasFeedOn = true;
 		loadActorAnim2(OBJECT_GAS_FEED, "s3r3v1", 0xac, 0x75, 0);
-		showText(TX_LOV2N008);
+		showDescription(8, true);
 	}
 }
 
@@ -390,14 +388,14 @@ void Room::love2UseN2GasOnCanisterSlot() {
 
 void Room::love2ReachedCanisterSlot() {
 	if (_awayMission->love.gasFeedOn)
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_026);
+		showText(TX_SPEAKER_SPOCK, 26, true);
 	else {
 		if (_awayMission->love.canister1 == CANTYPE_NONE)
 			loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 13);
 		else if (_awayMission->love.canister2 == CANTYPE_NONE)
 			loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 14);
 		else
-			showText(TX_LOV2N024);
+			showDescription(24, true);
 	}
 }
 
@@ -405,7 +403,7 @@ void Room::love2PutCanisterInSlot1() {
 	playVoc("SE6FOOD");
 	loadActorAnim(OBJECT_CAN1, _roomVar.love.canisterAnim, 0xa7, 0xae, 0);
 	_awayMission->love.canister1 = _roomVar.love.canisterType;
-	showText(TX_LOV2N034);
+	showDescription(34, true);
 	loseItem(_roomVar.love.canisterItem);
 }
 
@@ -413,7 +411,7 @@ void Room::love2PutCanisterInSlot2() {
 	playVoc("SE6FOOD");
 	loadActorAnim(OBJECT_CAN2, _roomVar.love.canisterAnim, 0xb1, 0xaf, 0);
 	_awayMission->love.canister2 = _roomVar.love.canisterType;
-	showText(TX_LOV2N035);
+	showDescription(35, true);
 	loseItem(_roomVar.love.canisterItem);
 }
 
@@ -423,7 +421,7 @@ void Room::love2UseAntigravOnCanister1() {
 
 void Room::love2ReachedCanisterSlot1ToGet() {
 	if (_awayMission->love.gasFeedOn)
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_025);
+		showText(TX_SPEAKER_SPOCK, 25, true);
 	else {
 		loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 15);
 		// BUGFIX: original game only played this for canister 2
@@ -432,7 +430,7 @@ void Room::love2ReachedCanisterSlot1ToGet() {
 }
 
 void Room::love2TookCanister1() {
-	showText(TX_LOV2N030);
+	showDescription(30, true);
 	loadActorStandAnim(OBJECT_CAN1);
 
 	switch (_awayMission->love.canister1) {
@@ -457,7 +455,7 @@ void Room::love2UseAntigravOnCanister2() {
 
 void Room::love2ReachedCanisterSlot2ToGet() {
 	if (_awayMission->love.gasFeedOn)
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_025);
+		showText(TX_SPEAKER_SPOCK, 25, true);
 	else {
 		loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 16);
 		playVoc("SE3PLBAT");
@@ -465,7 +463,7 @@ void Room::love2ReachedCanisterSlot2ToGet() {
 }
 
 void Room::love2TookCanister2() {
-	showText(TX_LOV2N031);
+	showDescription(31, true);
 	loadActorStandAnim(OBJECT_CAN2);
 
 	switch (_awayMission->love.canister2) {
@@ -515,13 +513,13 @@ void Room::love2CrewmanUsedSynthesizer() {
 	} else {
 		if (_roomVar.love.cb == 3) {
 			if (haveItem(OBJECT_IWRENCH)) {
-				showText(TX_SPEAKER_SPOCK, TX_LOV2_005);
+				showText(TX_SPEAKER_SPOCK, 5, true);
 				walkCrewman(OBJECT_SPOCK, 0xa8, 0xb7, 16);
 			} else
-				showText(TX_SPEAKER_SPOCK, TX_LOV2_006);
+				showText(TX_SPEAKER_SPOCK, 6, true);
 		} else {
 			_roomVar.love.cb++;
-			showText(TX_LOV2N012);
+			showDescription(12, true);
 		}
 	}
 }
@@ -535,7 +533,7 @@ void Room::love2SpockEnabledGasFeeds() {
 	_awayMission->love.gasFeedOn = true;
 
 	loadActorAnim2(OBJECT_GAS_FEED, "s3r3v1", 0xac, 0x75, 0);
-	showText(TX_LOV2N008);
+	showDescription(8, true);
 	walkCrewman(OBJECT_SPOCK, 0xc6, 0xbb, 0);
 
 	love2UseSynthesizer();
@@ -562,21 +560,21 @@ void Room::love2UseSynthesizer() {
 					break;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Wet goo
-					showText(TX_LOV2N051);
-					showText(TX_SPEAKER_KIRK, TX_LOV2_002);
+					showDescription(51, true);
+					showText(TX_SPEAKER_KIRK, 2, true);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 					goto closeSynthesizerDoor;
 
 				case SYNTHITEM_CURE_SAMPLE: // Wet goo
 wetGooFailure:
-					showText(TX_LOV2N050);
-					showText(TX_SPEAKER_MCCOY, TX_LOV2_021);
+					showDescription(50, true);
+					showText(TX_SPEAKER_MCCOY, 21, true);
 					loadActorStandAnim(OBJECT_CURESAMPLE);
 					goto closeSynthesizerDoor;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
 bottleFailure:
-					showText(TX_SPEAKER_SPOCK, TX_LOV2_028);
+					showText(TX_SPEAKER_SPOCK, 28, true);
 					break;
 
 				case SYNTHITEM_NONE: // Water
@@ -598,15 +596,15 @@ closeSynthesizerDoor:
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
 inertMatterFailure:
-					showText(TX_LOV2N049);
-					showText(TX_SPEAKER_SPOCK, TX_LOV2_039); // BUGFIX: original didn't play audio
+					showDescription(49, true);
+					showText(TX_SPEAKER_SPOCK, 39, true); // BUGFIX: original didn't play audio
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
 					goto closeSynthesizerDoor;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Colorless goo (with useful information about virus in ammonia)
-					showText(TX_LOV2N048);
-					showText(TX_SPEAKER_SPOCK, TX_LOV2_034); // BUGFIX: original didn't play audio
-					showText(TX_SPEAKER_MCCOY, TX_LOV2_023);
+					showDescription(48, true);
+					showText(TX_SPEAKER_SPOCK, 34, true); // BUGFIX: original didn't play audio
+					showText(TX_SPEAKER_MCCOY, 23, true);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 					goto closeSynthesizerDoor;
 
@@ -631,8 +629,8 @@ inertMatterFailure:
 					goto inertMatterFailure;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Wet goo
-					showText(TX_LOV2N047);
-					showText(TX_SPEAKER_MCCOY, TX_LOV2_017);
+					showDescription(47, true);
+					showText(TX_SPEAKER_MCCOY, 17, true);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 					goto closeSynthesizerDoor;
 
@@ -651,13 +649,13 @@ inertMatterFailure:
 			}
 		} else {
 			playVoc("EFX24");
-			showText(TX_LOV2N005);
-			showText(TX_SPEAKER_MCCOY, TX_LOV2_010);
+			showDescription(5, true);
+			showText(TX_SPEAKER_MCCOY, 10, true);
 		}
 	} else {
 		playVoc("EFX24");
-		showText(TX_LOV2N005);
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_024);
+		showDescription(5, true);
+		showText(TX_SPEAKER_SPOCK, 24, true);
 	}
 }
 
@@ -671,33 +669,33 @@ void Room::love2SynthesizerDoorClosed() {
 void Room::love2SynthesizerFinished() {
 	switch (_awayMission->love.synthesizerBottleIndex) {
 	case BOTTLETYPE_N2O:
-		showText(TX_LOV2N017);
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_032);
-		showText(TX_SPEAKER_MCCOY, TX_LOV2_015);
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_036);
+		showDescription(17, true);
+		showText(TX_SPEAKER_SPOCK, 32);
+		showText(TX_SPEAKER_MCCOY, 15);
+		showText(TX_SPEAKER_SPOCK, 36);
 		break;
 
 	case BOTTLETYPE_NH3:
-		showText(TX_LOV2N016);
+		showDescription(16, true);
 		if (!_awayMission->redshirtDead) {
-			showText(TX_SPEAKER_FERRIS, TX_LOV2_043);
-			showText(TX_SPEAKER_KIRK, TX_LOV2_003);
+			showText(TX_SPEAKER_FERRIS, 43, true);
+			showText(TX_SPEAKER_KIRK, 3, true);
 		}
 		break;
 
 	case BOTTLETYPE_H2O:
-		showText(TX_LOV2N018);
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_004);
+		showDescription(18, true);
+		showText(TX_SPEAKER_SPOCK, 4, true);
 		break;
 
 	case BOTTLETYPE_RLG:
 	default:
-		showText(TX_LOV2N019);
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_031);
-		showText(TX_SPEAKER_MCCOY, TX_LOV2_018);
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_030);
-		showText(TX_SPEAKER_MCCOY, TX_LOV2_022);
-		showText(TX_SPEAKER_SPOCK, TX_LOV2_038);
+		showDescription(19, true);
+		showText(TX_SPEAKER_SPOCK, 31, true);
+		showText(TX_SPEAKER_MCCOY, 18, true);
+		showText(TX_SPEAKER_SPOCK, 30, true);
+		showText(TX_SPEAKER_MCCOY, 22, true);
+		showText(TX_SPEAKER_SPOCK, 38, true);
 		break;
 	}
 }
@@ -719,8 +717,8 @@ void Room::love2CureStartedSynthesizing() {
 }
 
 void Room::love2CureSynthesized() {
-	showText(TX_LOV2N046);
-	showText(TX_SPEAKER_MCCOY, TX_LOV2_020);
+	showDescription(46, true);
+	showText(TX_SPEAKER_MCCOY, 20, true);
 }
 
 
@@ -732,7 +730,7 @@ void Room::love2UsePolyberylcarbonateOnSynthesizerDoor() {
 
 void Room::love2KirkReachedSynthesizerWithPolyberylcarbonate() {
 	if (_awayMission->love.synthesizerContents != 0)
-		showText(TX_LOV2N025);
+		showDescription(25, true);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 5);
 		playSoundEffectIndex(SND_DOOR1);
@@ -758,7 +756,7 @@ void Room::love2UseVirusSampleOnSynthesizerDoor() {
 
 void Room::love2KirkReachedSynthesizerWithVirusSample() {
 	if (_awayMission->love.synthesizerContents != 0)
-		showText(TX_LOV2N025);
+		showDescription(25, true);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 6);
 		playSoundEffectIndex(SND_DOOR1);
@@ -784,7 +782,7 @@ void Room::love2UseCureSampleOnSynthesizerDoor() {
 
 void Room::love2KirkReachedSynthesizerWithCureSample() {
 	if (_awayMission->love.synthesizerContents != 0)
-		showText(TX_LOV2N025); // BUGFIX: original didn't play audio
+		showDescription(25, true); // BUGFIX: original didn't play audio
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 7);
 		playSoundEffectIndex(SND_DOOR1);
@@ -804,18 +802,18 @@ void Room::love2PutCureSampleInSynthesizer() {
 
 
 void Room::love2UseAnythingOnSynthesizerDoor() {
-	showText(TX_SPEAKER_MCCOY, TX_LOV2_014);
+	showText(TX_SPEAKER_MCCOY, 14, true);
 }
 
 void Room::love2UseAnythingOnSynthesizer() {
-	showText(TX_SPEAKER_SPOCK, TX_LOV2_007);
+	showText(TX_SPEAKER_SPOCK, 7, true);
 }
 
 void Room::love2GetCanister() {
 	if (_awayMission->redshirtDead)
-		showText(TX_SPEAKER_MCCOY, TX_LOV2_011);
+		showText(TX_SPEAKER_MCCOY, 11, true);
 	else
-		showText(TX_SPEAKER_FERRIS, TX_LOV2_040);
+		showText(TX_SPEAKER_FERRIS, 40, true);
 }
 
 
@@ -831,7 +829,7 @@ void Room::love2ReachedAntigrav() {
 void Room::love2GotAntigrav() {
 	loadActorStandAnim(OBJECT_ANTIGRAV);
 	giveItem(OBJECT_IANTIGRA);
-	showText(TX_LOV2N042);
+	showDescription(42, true);
 }
 
 
@@ -847,7 +845,7 @@ void Room::love2ReachedPolyberylcarbonate() {
 
 void Room::love2GotPolyberylcarbonate() {
 	loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
-	showText(TX_LOV2N044);
+	showDescription(44, true);
 	giveItem(OBJECT_IPBC);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -867,7 +865,7 @@ void Room::love2ReachedDishes() {
 
 void Room::love2GotDishes() {
 	loadActorStandAnim(OBJECT_VIRUSSAMPLE);
-	showText(TX_LOV2N036); // FIXME: text doesn't match audio
+	showDescription(36, true); // FIXME: text doesn't match audio
 	giveItem(OBJECT_IDISHES);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -887,7 +885,7 @@ void Room::love2ReachedSample() {
 
 void Room::love2GotSample() {
 	loadActorStandAnim(OBJECT_CURESAMPLE);
-	showText(TX_LOV2N037);
+	showDescription(37, true);
 	giveItem(OBJECT_ISAMPLE);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -908,23 +906,23 @@ void Room::love2ReachedSynthesizerOutput() {
 void Room::love2GotSynthesizerOutput() {
 	switch (_awayMission->love.synthesizerBottleIndex) {
 	case BOTTLETYPE_N2O:
-		showText(TX_LOV2N040);
+		showDescription(40, true);
 		giveItem(OBJECT_IN2O);
 		break;
 
 	case BOTTLETYPE_NH3:
-		showText(TX_LOV2N039);
+		showDescription(39, true);
 		giveItem(OBJECT_INH3);
 		break;
 
 	case BOTTLETYPE_H2O:
-		showText(TX_LOV2N041);
+		showDescription(41, true);
 		giveItem(OBJECT_IH2O);
 		break;
 
 	case BOTTLETYPE_RLG:
 	default:
-		showText(TX_LOV2N038);
+		showDescription(38, true);
 		if (!_awayMission->love.gotTLDH) {
 			_awayMission->love.gotTLDH = true;
 			_awayMission->love.missionScore += 4;
@@ -959,7 +957,7 @@ void Room::love2GotCure() {
 
 	giveItem(OBJECT_ICURE);
 	loadActorStandAnim(OBJECT_CURE);
-	showText(TX_LOV2N043);
+	showDescription(43, true);
 
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 	playSoundEffectIndex(SND_DOOR1);

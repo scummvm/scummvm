@@ -82,7 +82,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 				// is ranked just as high as the others (which each have two
 				// detection files).
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -99,7 +99,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
 				{"packet.002", 1, "4401123400f22f212b89f15fb4b43013", 721122},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::FR_FRA,
 			Common::kPlatformDOS,
@@ -116,7 +116,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
 				{"packet.002", 1, "7b83cedb9bb326ed5143e5c459508d43", 722383},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::FR_FRA,
 			Common::kPlatformDOS,
@@ -133,7 +133,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
 				{"packet.003", 1, "e8f4dc6091037329bab4ddb1cba35807", 719728},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
@@ -163,7 +163,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
 				{"packet.005", 1, "58caac54b891f5d7f335e710e45e5d29", 16209623},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::IT_ITA,
 			Common::kPlatformDOS,
@@ -193,7 +193,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
 				{"packet.004", 1, "a289d3cf80d50f25ec569b653248437e", 17205838},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::ES_ESP,
 			Common::kPlatformDOS,
@@ -210,7 +210,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
 				{"packet.006", 1, "e464b99de7f226391337510d5c328258", 697173},
-				{NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::RU_RUS,
 			Common::kPlatformDOS,
@@ -339,25 +339,28 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
 	DrasculaMetaEngine() : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
-		_singleId = "drascula";
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "drascula";
+	}
+
+	const char *getName() const override {
 		return "Drascula: The Vampire Strikes Back";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Drascula: The Vampire Strikes Back (C) 2000 Alcachofa Soft, (C) 1996 Digital Dreams Multimedia, (C) 1994 Emilio de Paz";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool DrasculaMetaEngine::hasFeature(MetaEngineFeature f) const {

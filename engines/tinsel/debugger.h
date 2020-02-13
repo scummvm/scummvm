@@ -32,7 +32,7 @@ class TinselEngine;
 class Console: public GUI::Debugger {
 public:
 	Console();
-	virtual ~Console();
+	~Console() override;
 
 private:
 	bool cmd_item(int argc, const char **argv);

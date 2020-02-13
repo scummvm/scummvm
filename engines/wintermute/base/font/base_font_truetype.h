@@ -97,12 +97,12 @@ public:
 public:
 	DECLARE_PERSISTENT(BaseFontTT, BaseFont)
 	BaseFontTT(BaseGame *inGame);
-	virtual ~BaseFontTT(void);
+	~BaseFontTT(void) override;
 
-	virtual int getTextWidth(const byte *text, int maxLength = -1) override;
-	virtual int getTextHeight(const byte *text, int width) override;
-	virtual void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1) override;
-	virtual int getLetterHeight() override;
+	int getTextWidth(const byte *text, int maxLength = -1) override;
+	int getTextHeight(const byte *text, int width) override;
+	void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1) override;
+	int getLetterHeight() override;
 
 	bool loadBuffer(char *buffer);
 	bool loadFile(const Common::String &filename);
@@ -111,8 +111,8 @@ public:
 		return _lineHeight;
 	}
 
-	void afterLoad();
-	void initLoop();
+	void afterLoad() override;
+	void initLoop() override;
 
 private:
 	bool parseLayer(BaseTTFontLayer *layer, char *buffer);
@@ -141,6 +141,7 @@ private:
 	bool _isStriked;
 	int32 _fontHeight;
 	char *_fontFile;
+	TTextCharset _charset;
 
 	BaseArray<BaseTTFontLayer *> _layers;
 	void clearCache();

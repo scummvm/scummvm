@@ -30,15 +30,15 @@ namespace MutationOfJB {
 
 class RenameCommandParser : public SeqCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class RenameCommand : public SeqCommand {
 public:
 	RenameCommand(const Common::String &oldName, const Common::String &newName) : _oldName(oldName), _newName(newName) {}
 
-	virtual Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 
 private:
 	Common::String _oldName;

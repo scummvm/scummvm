@@ -22,7 +22,6 @@
 
 #include "common/endian.h"
 #include "common/archive.h"
-#include "common/winexe.h"
 #include "common/winexe_pe.h"
 
 #include "graphics/cursorman.h"
@@ -181,7 +180,7 @@ void Inter_v7::o7_loadCursor() {
 
 	// Load the cursor file and cursor group
 	if (loadCursorFile())
-		cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_cursors, Common::WinResourceID(cursorName));
+		cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_cursors, Common::WinResourceID(cursorName));
 
 	// If the requested cursor does not exist, create a default one
 	const Graphics::Cursor *cursor = 0;

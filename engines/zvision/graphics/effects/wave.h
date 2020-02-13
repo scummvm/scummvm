@@ -34,11 +34,11 @@ class WaveFx : public GraphicsEffect {
 public:
 
 	WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, int16 frames, int16 centerX, int16 centerY, float ampl, float waveln, float spd);
-	~WaveFx();
+	~WaveFx() override;
 
-	const Graphics::Surface *draw(const Graphics::Surface &srcSubRect);
+	const Graphics::Surface *draw(const Graphics::Surface &srcSubRect) override;
 
-	void update();
+	void update() override;
 
 private:
 	int16 _frame;

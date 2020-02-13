@@ -34,6 +34,8 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_menuChoiceInit = 4;
 
 	_turnUndeadString = 0;
+	_itemNamesPC98 = 0;
+	_numItemNamesPC98 = 0;
 	_finBonusStrings = _npcStrings[1] = _npcStrings[2] = 0;
 	_npcStrings[3] = _npcStrings[4] = _npcStrings[5] = _npcStrings[6] = 0;
 	_npcStrings[7] = _npcStrings[8] = _npcStrings[9] = _npcStrings[10] = 0;
@@ -43,6 +45,8 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_doorSwitchShapeEncodeDefs = _doorSwitchCoords = 0;
 	_dscDoorCoordsExt = 0;
 	_useMainMenuGUISettings = false;
+	_ttlCfg = 0;
+	_xdth = false;
 }
 
 EoBEngine::~EoBEngine() {
@@ -56,12 +60,24 @@ Common::Error EoBEngine::init() {
 
 	initStaticResource();
 
+	for (int i = 0; i < ARRAYSIZE(_titleConfig); ++i) {
+		if (_flags.platform == _titleConfig[i].platform)
+			_ttlCfg = &_titleConfig[i];
+	}
+	assert(_ttlCfg);
+
 	if (_configRenderMode != Common::kRenderCGA)
 		_itemsOverlay = _res->fileData((_configRenderMode == Common::kRenderEGA) ? "ITEMRMP.EGA" : "ITEMRMP.VGA", 0);
 
 	_screen->modifyScreenDim(7, 0x01, 0xB3, 0x22, 0x12);
 	_screen->modifyScreenDim(9, 0x01, 0x7D, 0x26, 0x3F);
-	_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0xA0);
+
+	if (_flags.platform == Common::kPlatformPC98) {
+		_screen->modifyScreenDim(28, 0x0A, 0xA4, 0x15, 0x18);
+		_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0x9A);
+	} else {
+		_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0xA0);
+	}
 
 	_scriptTimersCount = 1;
 
@@ -73,12 +89,21 @@ Common::Error EoBEngine::init() {
 		_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	}
 
+	if (_flags.platform == Common::kPlatformPC98) {
+		_vcnFilePattern = "%s.ECB";
+		_vmpFilePattern = "%s.EMP";
+	} else if (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA) {
+		_vcnFilePattern = "%s.ECN";
+		_vmpFilePattern = "%s.EMP";
+	}
+
 	return Common::kNoError;
 }
 
 void EoBEngine::startupNew() {
 	_sound->selectAudioResourceSet(kMusicIngame);
 	_sound->loadSoundFile(0);
+	_screen->selectPC98Palette(0, _screen->getPalette(0));
 	_currentLevel = 1;
 	_currentSub = 0;
 	loadLevel(1, 0);
@@ -92,6 +117,7 @@ void EoBEngine::startupNew() {
 void EoBEngine::startupLoad() {
 	_sound->selectAudioResourceSet(kMusicIngame);
 	_sound->loadSoundFile(0);
+	_screen->selectPC98Palette(0, _screen->getPalette(0));
 }
 
 void EoBEngine::drawNpcScene(int npcIndex) {
@@ -375,9 +401,9 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 	if (doorType1 != 0xFF) {
 		for (int i = 0; i < 3; i++) {
 			const uint8 *enc = &_doorShapeEncodeDefs[(doorType1 * 3 + i) << 2];
-			_doorShapes[shapeId1 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+			_doorShapes[shapeId1 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			enc = &_doorSwitchShapeEncodeDefs[(doorType1 * 3 + i) << 2];
-			_doorSwitches[shapeId1 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+			_doorSwitches[shapeId1 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			_doorSwitches[shapeId1 + i].x = _doorSwitchCoords[doorType1 * 6 + i * 2];
 			_doorSwitches[shapeId1 + i].y = _doorSwitchCoords[doorType1 * 6 + i * 2 + 1];
 		}
@@ -386,9 +412,9 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 	if (doorType2 != 0xFF) {
 		for (int i = 0; i < 3; i++) {
 			const uint8 *enc = &_doorShapeEncodeDefs[(doorType2 * 3 + i) << 2];
-			_doorShapes[shapeId2 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+			_doorShapes[shapeId2 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			enc = &_doorSwitchShapeEncodeDefs[(doorType2 * 3 + i) << 2];
-			_doorSwitches[shapeId2 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+			_doorSwitches[shapeId2 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			_doorSwitches[shapeId2 + i].x = _doorSwitchCoords[doorType2 * 6 + i * 2];
 			_doorSwitches[shapeId2 + i].y = _doorSwitchCoords[doorType2 * 6 + i * 2 + 1];
 		}
@@ -412,7 +438,7 @@ void EoBEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 	case 4:
 	case 5:
 	case 6:
-		y = _dscDoorY6[mDim] - shp[1];
+		y = _dscDoorY7[mDim] - shp[1];
 		d1 = _dscDoorCoordsExt[index << 1] >> 3;
 		d2 = _dscDoorCoordsExt[(index << 1) + 1] >> 3;
 		if (_shpDmX1 > d1)
@@ -607,6 +633,8 @@ const KyraRpgGUISettings *EoBEngine::guiSettings() const {
 		return _useMainMenuGUISettings ? &_guiSettingsAmigaMainMenu : &_guiSettingsAmiga;
 	else if (_configRenderMode == Common::kRenderCGA || _configRenderMode == Common::kRenderEGA)
 		return &_guiSettingsEGA;
+	else if (_flags.platform == Common::kPlatformPC98)
+		return &_guiSettingsPC98;
 	else
 		return &_guiSettingsVGA;
 }

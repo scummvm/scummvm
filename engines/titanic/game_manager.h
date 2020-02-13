@@ -27,8 +27,8 @@
 #include "titanic/game_state.h"
 #include "titanic/input_handler.h"
 #include "titanic/input_translator.h"
-#include "titanic/support/time_event_info.h" // class CTimeEventInfo
-#include "titanic/true_talk/true_talk_manager.h" // class CTrueTalkManager
+#include "titanic/support/time_event_info.h"
+#include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/sound/music_room.h"
 #include "titanic/sound/sound.h"
 

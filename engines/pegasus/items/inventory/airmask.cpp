@@ -175,6 +175,8 @@ void AirMask::refillAirMask() {
 		case kAirMaskLowOn:
 			setItemState(kAirMaskFullOn);
 			break;
+		default:
+			break;
 	}
 
 	if (_oxygenTimer.isFuseLit()) {

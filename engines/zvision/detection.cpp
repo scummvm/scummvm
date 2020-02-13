@@ -61,23 +61,26 @@ public:
 	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
 		_maxScanDepth = 2;
 		_directoryGlobs = ZVision::directoryGlobs;
-		_singleId = "zvision";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "zvision";
+	}
+
+	const char *getName() const override {
 		return "Z-Vision";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Z-Vision (C) 1996 Activision";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {

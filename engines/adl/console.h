@@ -41,7 +41,7 @@ public:
 	Console(AdlEngine *engine);
 
 	static Common::String toAscii(const Common::String &str);
-	static Common::String toAppleWord(const Common::String &str);
+	Common::String toNative(const Common::String &str);
 
 private:
 	bool Cmd_Nouns(int argc, const char **argv);

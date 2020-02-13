@@ -239,9 +239,23 @@ Common::WriteStream *PSPFilesystemNode::createWriteStream() {
 	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
 
-bool PSPFilesystemNode::create(bool isDirectoryFlag) {
-	error("Not supported");
-	return false;
+bool PSPFilesystemNode::createDirectory() {
+	DEBUG_ENTER_FUNC();
+
+	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");	// Make sure to block in case of suspend
+
+	PSP_DEBUG_PRINT_FUNC("path [%s]\n", _path.c_str());
+
+	if (sceIoMkdir(_path.c_str(), 0777) == 0) {
+		struct stat st;
+		_isValid = (0 == stat(_path.c_str(), &st));
+		_isDirectory = S_ISDIR(st.st_mode);
+	}
+
+	PowerMan.endCriticalSection();
+
+	return _isValid && _isDirectory;
 }
 
 #endif //#ifdef __PSP__

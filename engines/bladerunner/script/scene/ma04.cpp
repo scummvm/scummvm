@@ -257,7 +257,7 @@ void SceneScriptMA04::PlayerWalkedIn() {
 		Player_Gains_Control();
 	}
 	if (isPhoneMessageWaiting() || isPhoneRinging()) {
-		Overlay_Play("MA04OVER", 0, 1, 0, 0);
+		Overlay_Play("MA04OVER", 0, true, false, 0);
 	}
 	if (Game_Flag_Query(kFlagMA04McCoySleeping)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, true, false, false);
@@ -272,7 +272,7 @@ void SceneScriptMA04::PlayerWalkedIn() {
 			Sound_Play(kSfxVIDFONE1, 100, 0, 0, 50);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7176.0f, 954.0f, 1806.0f, 0, false, false, false);
 			Actor_Face_Heading(kActorMcCoy, 256, true);
-			Actor_Says(kActorMcCoy, 2680, 0);
+			Actor_Says(kActorMcCoy, 2680, kAnimationModeIdle);
 			Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 			Delay(500);
 			Actor_Says(kActorGuzza, 0, 3);
@@ -294,9 +294,9 @@ void SceneScriptMA04::PlayerWalkedIn() {
 				Game_Flag_Set(kFlagRC01ChromeDebrisTaken);
 				Item_Remove_From_World(kItemChromeDebris);
 			}
-			Actor_Set_Goal_Number(kActorOfficerLeary, 99);
+			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyEndOfAct1);
 			Actor_Put_In_Set(kActorOfficerLeary, kSetFreeSlotC);
-			Actor_Set_At_Waypoint(kActorOfficerLeary, 35, 0);
+			Actor_Set_At_Waypoint(kActorOfficerLeary, 35, 0); // kSetFreeSlotC
 			Autosave_Game(0);
 		}
 		//return false;
@@ -311,6 +311,7 @@ void SceneScriptMA04::PlayerWalkedIn() {
 		}
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, true, false, false);
 		Game_Flag_Set(kFlagChapter1Ending);
+
 		Async_Actor_Walk_To_XYZ(kActorMcCoy, -7204.0f, 956.17f, 1568.0f, 0, false);
 		Set_Enter(kSetMA05, kSceneMA05);
 	}

@@ -37,7 +37,7 @@ void SceneScriptNR01::InitializeScene() {
 	} else if (Game_Flag_Query(kFlagNR01DektoraFall)) {
 		Setup_Scene_Information( -416.0f, 31.93f,  -841.0f, 200);
 		Actor_Set_Invisible(kActorMcCoy, true);
-		Preload(167);
+		Preload(kModelAnimationDektoraInFlamesEndFalling);
 	} else if (Game_Flag_Query(kFlagNR03toNR01)) {
 		Setup_Scene_Information( -416.0f, 31.93f,  -841.0f, 200);
 	} else if (Game_Flag_Query(kFlagUG06toNR01)) {
@@ -383,13 +383,13 @@ void SceneScriptNR01::PlayerWalkedIn() {
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleImmediatelyStartChapter4);
 			} else {
 				int v0 = Global_Variable_Query(kVariableHollowayArrest);
-				if (v0 == 1) {
+				if (v0 == 1) { // Dektora called the fake cops
 					Actor_Says(kActorSteele, 1510, 15);
 					Actor_Says(kActorSteele, 1520, 14);
 					Actor_Says(kActorSteele, 1530, 13);
 					Actor_Says(kActorMcCoy, 3170, 13);
 					Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR01GoToNR08);
-				} else if (v0 == 2) {
+				} else if (v0 == 2) { // Gordo called the fake cops
 					Actor_Says(kActorSteele, 1590, 15);
 					Actor_Says(kActorMcCoy, 3195, 14);
 					Actor_Says(kActorSteele, 1600, 16);
@@ -399,7 +399,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 					Actor_Says(kActorSteele, 1630, 14);
 					Actor_Says(kActorMcCoy, 3205, 12);
 					Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR01GoToNR02);
-				} else if (v0 == 3) {
+				} else if (v0 == 3) { // Lucy called the fake cops
 					Actor_Says(kActorSteele, 1540, 15);
 					Actor_Says(kActorMcCoy, 3175, 13);
 					Actor_Says(kActorSteele, 1550, 13);

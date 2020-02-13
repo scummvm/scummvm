@@ -40,7 +40,7 @@ Windows::Windows() {
 
 	Window windows[48] = {
 		Window(Common::Rect(0, 0, 320, 200), 0, 0, 0, 0, 320, 200),
-		Window(Common::Rect(237, 9, 317, 74), 0, 0, 237, 12, 307, 68),
+		Window(Common::Rect(223, 9, 317, 74), 0, 0, 237, 12, 307, 68),
 		Window(Common::Rect(225, 1, 320, 73), 1, 8, 225, 1, 319, 73),
 		Window(Common::Rect(0, 0, 230, 149), 0, 0, 9, 8, 216, 140),
 		Window(Common::Rect(235, 148, 309, 189), 2, 8, 0, 0, 0, 0),

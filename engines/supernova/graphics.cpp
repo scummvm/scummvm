@@ -25,6 +25,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
@@ -35,7 +36,8 @@
 
 namespace Supernova {
 
-MSNImage::MSNImage() {
+MSNImage::MSNImage(SupernovaEngine *vm)
+	: _vm(vm) {
 	_palette = nullptr;
 	_encodedImage = nullptr;
 	_filenumber = -1;
@@ -68,57 +70,69 @@ MSNImage::~MSNImage() {
 
 bool MSNImage::init(int filenumber) {
 	Common::File file;
-	if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
-		warning("Image data file msn_data.%03d could not be read!", filenumber);
-		return false;
+	_filenumber = filenumber;
+	if (_vm->_MSPart == 1) {
+		if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
+			warning("Image data file msn_data.%03d could not be read!", filenumber);
+			return false;
+		}
+		loadStream(file);
+	}
+	else if (_vm->_MSPart == 2) {
+		if (!loadFromEngineDataFile()) {
+			if (!file.open(Common::String::format("ms2_data.%03d", filenumber))) {
+				warning("Image data file ms2_data.%03d could not be read!", filenumber);
+				return false;
+			}
+			loadStream(file);
+		}
 	}
 
-	_filenumber = filenumber;
-	loadStream(file);
+	return true;
+}
 
+bool MSNImage::loadPbmFromEngineDataFile() {
+	Common::String name;
+	if (_vm->_MSPart == 2) {
+		if (_filenumber == 38)
+			name = "IMG3";
+		else
+			return false;
+	} else if (_vm->_MSPart == 1) {
+		if (_filenumber == 1)
+			name = "IMG1";
+		else if (_filenumber == 2)
+			name = "IMG2";
+		else
+			return false;
+	} else
+		return false;
+	Common::SeekableReadStream *stream = _vm->getBlockFromDatFile(name);
+	if (stream == nullptr)
+		return false;
+	stream->read(_encodedImage, stream->size());
 	return true;
 }
 
 bool MSNImage::loadFromEngineDataFile() {
 	Common::String name;
-	if (_filenumber == 1)
-		name = "IMG1";
-	else if (_filenumber == 2)
-		name = "IMG2";
-	else
+	if (_vm->_MSPart == 1) {
 		return false;
-
-	Common::String cur_lang = ConfMan.get("language");
-
-	// Note: we don't print any warning or errors here if we cannot find the file
-	// or the format is not as expected. We will get those warning when reading the
-	// strings anyway (actually the engine will even refuse to start).
-	Common::File f;
-	if (!f.open(SUPERNOVA_DAT))
-		return false;
-
-	char id[5], lang[5];
-	id[4] = lang[4] = '\0';
-	f.read(id, 3);
-	if (strncmp(id, "MSN", 3) != 0)
-		return false;
-	int version = f.readByte();
-	if (version != SUPERNOVA_DAT_VERSION)
-		return false;
-
-	while (!f.eos()) {
-		f.read(id, 4);
-		f.read(lang, 4);
-		uint32 size = f.readUint32LE();
-		if (f.eos())
-			break;
-		if (name == id && cur_lang == lang) {
-			return f.read(_encodedImage, size) == size;
-		} else
-			f.skip(size);
+	} else if (_vm->_MSPart == 2) {
+		if (_filenumber == 15)
+			name = "M015";
+		else if (_filenumber == 27)
+			name = "M027";
+		else if (_filenumber == 28)
+			name = "M028";
+		else
+			return false;
 	}
 
-	return false;
+	Common::SeekableReadStream *stream = _vm->getBlockFromDatFile(name);
+	if (stream == nullptr)
+		return false;
+	return loadStream(*stream);
 }
 
 bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
@@ -149,7 +163,7 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	_numSections = stream.readByte();
-	for (uint i = 0; i < kMaxSections; ++i) {
+	for (int i = 0; i < kMaxSections; ++i) {
 		_section[i].addressHigh = 0xff;
 		_section[i].addressLow = 0xffff;
 		_section[i].x2 = 0;
@@ -183,7 +197,7 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 
 	// Newspaper images may be in the engine data file. So first try to read
 	// it from there.
-	if (!loadFromEngineDataFile()) {
+	if (!loadPbmFromEngineDataFile()) {
 		// Load the image from the stream
 		byte zwCodes[256] = {0};
 		byte numRepeat = stream.readByte();
@@ -219,7 +233,8 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 }
 
 bool MSNImage::loadSections() {
-	bool isNewspaper = _filenumber == 1 || _filenumber == 2;
+	bool isNewspaper = (_vm->_MSPart == 1 && (_filenumber == 1 || _filenumber == 2)) ||
+					   (_vm->_MSPart == 2 && _filenumber == 38);
 	int imageWidth = isNewspaper ? 640 : 320;
 	int imageHeight = isNewspaper ? 480 : 200;
 	_pitch = imageWidth;
@@ -229,17 +244,18 @@ bool MSNImage::loadSections() {
 		_sectionSurfaces.push_back(surface);
 
 		if (isNewspaper) {
+			Color color1 = isNewspaper ? kColorWhite63 : kColorWhite44;
 			surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
 			byte *surfacePixels = static_cast<byte *>(surface->getPixels());
 			for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
-				*surfacePixels++ = (_encodedImage[i] & 0x80) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x40) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x20) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x10) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x08) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x80) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x40) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x20) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x10) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x08) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x04) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x02) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x01) ? color1 : kColorBlack;
 			}
 		} else {
 			uint32 offset = (_section[section].addressHigh << 16) + _section[section].addressLow;

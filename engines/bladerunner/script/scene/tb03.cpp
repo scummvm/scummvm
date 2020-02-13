@@ -64,7 +64,7 @@ void SceneScriptTB03::InitializeScene() {
 		int goal = Actor_Query_Goal_Number(kActorTyrellGuard);
 		if (goal == kGoalTyrellGuardWait) {
 			Actor_Change_Animation_Mode(kActorTyrellGuard, kAnimationModeIdle);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 399);
+			Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordArrestMcCoyInTB03Act4);
 		} else if (goal != kGoalTyrellGuardWakeUp) {
 			Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardSleeping);
 		}

@@ -146,7 +146,7 @@ protected:
 	void highlightIcon(const Common::Point &pt);
 public:
 	ScalpelMap(SherlockEngine *vm);
-	virtual ~ScalpelMap() {}
+	~ScalpelMap() override {}
 
 	const MapEntry &operator[](int idx) { return _points[idx]; }
 
@@ -163,7 +163,7 @@ public:
 	/**
 	 * Show the map
 	 */
-	virtual int show();
+	int show() override;
 };
 
 } // End of namespace Scalpel

@@ -29,17 +29,17 @@ namespace Adl {
 
 class AdlEngine_v3 : public AdlEngine_v2 {
 public:
-	virtual ~AdlEngine_v3() { }
+	~AdlEngine_v3() override { }
 
 protected:
 	AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd);
 
 	// AdlEngine
-	Common::String getItemDescription(const Item &item) const;
+	Common::String getItemDescription(const Item &item) const override;
 
 	void loadItemDescriptions(Common::SeekableReadStream &stream, byte count);
 
-	virtual int o_isNounNotInRoom(ScriptEnv &e) override;
+	int o_isNounNotInRoom(ScriptEnv &e) override;
 
 	Common::Array<Common::String> _itemDesc;
 };

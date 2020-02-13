@@ -68,12 +68,12 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 };
 
 /**
@@ -159,22 +159,22 @@ public:
 public:
 	CLASSDEF;
 	CProjectItem();
-	virtual ~CProjectItem() { destroyChildren(); }
+	~CProjectItem() override { destroyChildren(); }
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Get the game manager for the project
 	 */
-	virtual CGameManager *getGameManager() const;
+	CGameManager *getGameManager() const override;
 
 	/**
 	 * Sets the game manager for the project, if not already set

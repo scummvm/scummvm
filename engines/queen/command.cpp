@@ -84,14 +84,14 @@ public:
 
 	CmdTextHebrew(uint8 y, QueenEngine *vm) : CmdText(y, vm) {}
 
-	virtual void displayTemp(InkColor color, const char *name, bool outlined) {
+	void displayTemp(InkColor color, const char *name, bool outlined) override {
 		char temp[MAX_COMMAND_LEN];
 
 		snprintf(temp, MAX_COMMAND_LEN, "%s %s", name, _command);
 		display(color, temp, outlined);
 	}
 
-	virtual void addLinkWord(Verb v) {
+	void addLinkWord(Verb v) override {
 		char temp[MAX_COMMAND_LEN];
 
 		strcpy(temp, _command);
@@ -100,7 +100,7 @@ public:
 		strcat(_command, temp);
 	}
 
-	virtual void addObject(const char *objName) {
+	void addObject(const char *objName) override {
 		char temp[MAX_COMMAND_LEN];
 
 		strcpy(temp, _command);
@@ -115,7 +115,7 @@ public:
 
 	CmdTextGreek(uint8 y, QueenEngine *vm) : CmdText(y, vm) {}
 
-	virtual void displayTemp(InkColor color, const char *name, bool outlined) {
+	void displayTemp(InkColor color, const char *name, bool outlined) override {
 		char temp[MAX_COMMAND_LEN];
 		// don't show a space after the goto and give commands in the Greek version
 		if (_command[1] != (char)-34 && !(_command[1] == (char)-2 && strlen(_command) > 5))
@@ -125,7 +125,7 @@ public:
 		display(color, temp, outlined);
 	}
 
-	virtual void addObject(const char *objName) {
+	void addObject(const char *objName) override {
 		// don't show a space after the goto and give commands in the Greek version
 		if (_command[1] != (char)-34 && !(_command[1] == (char)-2 && strlen(_command) > 5))
 			strcat(_command, " ");
@@ -513,6 +513,8 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 		break;
 	case 4:
 		_vm->logic()->joeUseUnderwear();
+		break;
+	default:
 		break;
 	}
 
@@ -1227,6 +1229,8 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 		if (objDesc->lastSeenNumber != objDesc->lastDescription) {
 			++objDesc->lastSeenNumber;
 		}
+		break;
+	default:
 		break;
 	}
 	return objDesc->lastSeenNumber;

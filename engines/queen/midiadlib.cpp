@@ -103,6 +103,8 @@ void AdLibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
 				return;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 	warning("Unhandled meta event %d len %d", event, length);

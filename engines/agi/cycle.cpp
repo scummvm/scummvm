@@ -88,6 +88,8 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	case 4:
 		screenObjEgo->xPos = SCRIPT_WIDTH - screenObjEgo->xSize;
 		break;
+	default:
+		break;
 	}
 
 	uint16 agiVersion = getVersion();
@@ -319,13 +321,6 @@ int AgiEngine::playGame() {
 
 	_game.gfxMode = true;
 	_text->promptRow_Set(22);
-
-	// We run AGIMOUSE always as a side effect
-	//if (getFeatures() & GF_AGIMOUSE)
-		debug(1, "Using AGI Mouse 1.0 protocol");
-
-	if (getFeatures() & GF_AGIPAL)
-		debug(1, "Running AGIPAL game");
 
 	debug(0, "Running AGI script.\n");
 

@@ -40,7 +40,7 @@ class BaseImage;
 class BaseSurfaceOSystem : public BaseSurface {
 public:
 	BaseSurfaceOSystem(BaseGame *inGame);
-	~BaseSurfaceOSystem();
+	~BaseSurfaceOSystem() override;
 
 	bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
 	bool create(int width, int height) override;
@@ -58,12 +58,12 @@ public:
 	bool display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = Graphics::kDefaultRgbaMod, bool transparent = false, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) override;
-	virtual bool displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY);
-	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
+	bool displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) override;
+	bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
 	/*  static unsigned DLL_CALLCONV ReadProc(void *buffer, unsigned size, unsigned count, fi_handle handle);
 	    static int DLL_CALLCONV SeekProc(fi_handle handle, long offset, int origin);
 	    static long DLL_CALLCONV TellProc(fi_handle handle);*/
-	virtual int getWidth() override {
+	int getWidth() override {
 		if (!_loaded) {
 			finishLoad();
 		}
@@ -72,7 +72,7 @@ public:
 		}
 		return _width;
 	}
-	virtual int getHeight() override {
+	int getHeight() override {
 		if (!_loaded) {
 			finishLoad();
 		}
@@ -80,6 +80,17 @@ public:
 			return _surface->h;
 		}
 		return _height;
+	}
+	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) override {
+		if (!_loaded) {
+			finishLoad();
+		}
+		if (_surface) {
+			uint32 pixel = getPixelAt(_surface, x, y);
+			_surface->format.colorToARGB(pixel, *a, *r, *g, *b);
+			return STATUS_OK;
+		}
+		return STATUS_FAILED;
 	}
 
 	Graphics::AlphaType getAlphaType() const { return _alphaType; }

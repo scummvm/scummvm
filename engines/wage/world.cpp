@@ -359,17 +359,11 @@ void World::addSound(Sound *sound) {
 }
 
 void World::loadExternalSounds(Common::String fname) {
-	Common::File in;
-
-	in.open(fname);
-	if (!in.isOpen()) {
+	Common::MacResManager resMan;
+	if (!resMan.open(fname)) {
 		warning("Cannot load sound file <%s>", fname.c_str());
 		return;
 	}
-	in.close();
-
-	Common::MacResManager resMan;
-	resMan.open(fname);
 
 	Common::MacResIDArray resArray;
 	Common::SeekableReadStream *res;

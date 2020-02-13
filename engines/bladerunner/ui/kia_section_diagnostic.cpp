@@ -31,7 +31,7 @@
 
 namespace BladeRunner {
 
-const Color256  KIASectionDiagnostic::kTextColors[] = {
+const Color256 KIASectionDiagnostic::kTextColors[] = {
 	{ 0, 0, 0 },
 	{ 16, 8, 8 },
 	{ 32, 24, 8 },
@@ -71,7 +71,7 @@ void KIASectionDiagnostic::close() {
 }
 
 void KIASectionDiagnostic::draw(Graphics::Surface &surface) {
-	int timeNow = _vm->_time->currentSystem();
+	uint32 timeNow = _vm->_time->currentSystem();
 
 	for (int i = 0; i < _text->getCount(); ++i) {
 		int y = kLineHeight * i + 366 - _offset;
@@ -85,13 +85,14 @@ void KIASectionDiagnostic::draw(Graphics::Surface &surface) {
 
 			const char *text = _text->getText(i);
 			if (text) {
-				_vm->_mainFont->drawColor(text, surface, 320 - _vm->_mainFont->getTextWidth(text) / 2, y, surface.format.RGBToColor(kTextColors[colorIndex].r, kTextColors[colorIndex].g, kTextColors[colorIndex].b));
+				_vm->_mainFont->drawString(&surface, text, 320 - _vm->_mainFont->getStringWidth(text) / 2, y, surface.w, surface.format.RGBToColor(kTextColors[colorIndex].r, kTextColors[colorIndex].g, kTextColors[colorIndex].b));
 			}
 		}
 	}
 
 	// Timing fixed for 60Hz by ScummVM team
-	if (timeNow - _timeLast > 1000 / 60) {
+	// unsigned difference is intentional
+	if (timeNow - _timeLast > (1000u / 60u)) {
 		++_offset;
 		if (_offset > kLineHeight * _text->getCount() + 366) {
 			_offset = 0;

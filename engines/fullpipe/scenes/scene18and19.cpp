@@ -729,7 +729,6 @@ int sceneHandler18(ExCommand *cmd) {
 		{
 			if (g_vars->scene18_enteredTrubaRight) {
 				cmd->_messageKind = 0;
-
 				break;
 			}
 
@@ -760,8 +759,8 @@ int sceneHandler18(ExCommand *cmd) {
 					}
 				}
 			}
-			break;
 		}
+		break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -799,6 +798,9 @@ int sceneHandler18(ExCommand *cmd) {
 
 		g_fp->_behaviorManager->updateBehaviors();
 
+		break;
+
+	default:
 		break;
 	}
 
@@ -876,17 +878,16 @@ int sceneHandler19(ExCommand *cmd) {
 				cmd->_messageKind = 0;
 				break;
 			}
-			break;
-		}
+		} else {
+			if (g_vars->scene19_enteredTruba3) {
+				if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC19_RTRUBA3) {
+					if (g_fp->_aniMan->isIdle()) {
+						if (!(g_fp->_aniMan->_flags & 0x100)) {
+							PictureObject *pic = g_fp->_currentScene->getPictureObjectById(PIC_SC19_RTRUBA31, 0);
 
-		if (g_vars->scene19_enteredTruba3) {
-			if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC19_RTRUBA3) {
-				if (g_fp->_aniMan->isIdle()) {
-					if (!(g_fp->_aniMan->_flags & 0x100)) {
-						PictureObject *pic = g_fp->_currentScene->getPictureObjectById(PIC_SC19_RTRUBA31, 0);
-
-						handleObjectInteraction(g_fp->_aniMan, pic, cmd->_param);
-						break;
+							handleObjectInteraction(g_fp->_aniMan, pic, cmd->_param);
+							break;
+						}
 					}
 				}
 			}
@@ -925,6 +926,9 @@ int sceneHandler19(ExCommand *cmd) {
 
 		g_fp->_behaviorManager->updateBehaviors();
 
+		break;
+
+	default:
 		break;
 	}
 

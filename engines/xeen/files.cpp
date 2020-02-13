@@ -261,7 +261,7 @@ bool FileManager::setup() {
 
 	// Verify the version of the CC is correct
 	CCArchive *dataCc = new CCArchive("xeen.ccs", "data", true);
-	if (!f.open("VERSION", *dataCc) || f.readUint32LE() != 1) {
+	if (!f.open("VERSION", *dataCc) || f.readUint32LE() != 3) {
 		GUIErrorMessage("xeen.ccs is out of date");
 		return false;
 	}

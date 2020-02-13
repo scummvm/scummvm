@@ -98,6 +98,17 @@ public:
 	* Sets a text 16bit palette map. Only used in in EOB II FM-Towns. The map contains 2 entries.
 	*/
 	virtual void set16bitColorMap(const uint16 *src) {}
+	
+	enum FontStyle {
+		kFSNone = 0,
+		kFSLeftShadow,
+		kFSFat
+	};
+
+	/**
+	* Sets a drawing style. Only rudimentary implementation based on what is needed.
+	*/
+	virtual void setStyle(FontStyle style) {}
 
 	/**
 	 * Draws a specific character.
@@ -119,14 +130,14 @@ public:
 class DOSFont : public Font {
 public:
 	DOSFont();
-	~DOSFont() { unload(); }
+	~DOSFont() override { unload(); }
 
-	bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) { _colorMap = src; }
-	void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	bool load(Common::SeekableReadStream &file) override;
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override { _colorMap = src; }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
 	void unload();
@@ -144,129 +155,20 @@ private:
 	uint16 *_bitmapOffsets;
 };
 
-#ifdef ENABLE_EOB
-/**
-* Implementation of the Font interface for old DOS fonts used
-* in EOB and EOB II.
-*
-*/
-class OldDOSFont : public Font {
-public:
-	OldDOSFont(Common::RenderMode mode);
-	~OldDOSFont();
-
-	bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) { _colorMap8bit = src; }
-	void set16bitColorMap(const uint16 *src) { _colorMap16bit = src; }
-	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const;
-
-private:
-	void unload();
-
-	uint8 *_data;
-	uint16 *_bitmapOffsets;
-
-	int _width, _height;
-	const uint8 *_colorMap8bit;
-	const uint16 *_colorMap16bit;
-
-	int _numGlyphs;
-
-	Common::RenderMode _renderMode;
-
-	static uint16 *_cgaDitheringTable;
-	static int _numRef;
-};
-
-/**
- * Implementation of the Font interface for native AmigaDOS system fonts (normally to be loaded via diskfont.library)
- */
-class Resource;
-class AmigaDOSFont : public Font {
-public:
-	AmigaDOSFont(Resource *res, bool needsLocalizedFont = false);
-	~AmigaDOSFont() { unload(); }
-
-	bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) { _colorMap = src;  }
-	void drawChar(uint16 c, byte *dst, int pitch, int) const;
-
-	static void errorDialog(int index);
-
-private:
-	void unload();
-
-	struct TextFont {
-		TextFont() : data(0), bitmap(0), location(0), spacing(0), kerning(0), height(0), width(0), baseLine(0), firstChar(0), lastChar(0), modulo(0) {}
-		~TextFont() {
-			delete[] data;
-		}
-
-		uint16 height;
-		uint16 width;
-		uint16 baseLine;
-		uint8 firstChar;
-		uint8 lastChar;		
-		uint16 modulo;
-		const uint8 *data;
-		const uint8 *bitmap;
-		const uint16 *location;
-		const int16 *spacing;
-		const int16 *kerning;
-	};
-
-	TextFont *loadContentFile(const Common::String fileName);
-	void selectMode(int mode);
-
-	struct FontContent {
-		FontContent() : height(0), style(0), flags(0) {}
-		~FontContent() {
-			data.reset();
-		}
-
-		Common::String contentFile;
-		Common::SharedPtr<TextFont> data;
-		uint16 height;
-		uint8 style;
-		uint8 flags;
-	};
-
-	int _width, _height;
-	uint8 _first, _last;
-	FontContent *_content;
-	uint16 _numElements;
-	uint16 _selectedElement;
-
-	const uint8 *_colorMap;
-	const uint16 _maxPathLen;
-	const bool _needsLocalizedFont;
-
-	static uint8 _errorDialogDisplayed;
-
-	Resource *_res;
-};
-#endif // ENABLE_EOB
-
 /**
  * Implementation of the Font interface for Kyra 1 style (non-native AmigaDOS) AMIGA fonts.
  */
 class AMIGAFont : public Font {
 public:
 	AMIGAFont();
-	~AMIGAFont() { unload(); }
+	~AMIGAFont() override { unload(); }
 
-	bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) {}
-	void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	bool load(Common::SeekableReadStream &file) override;
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override {}
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
 	void unload();
@@ -290,30 +192,30 @@ private:
  */
 class SJISFont : public Font {
 public:
-	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing);
-	virtual ~SJISFont() { unload(); }
+	SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing);
+	~SJISFont() override {}
 
-	virtual bool usesOverlay() const { return true; }
+	bool usesOverlay() const override { return true; }
 
-	bool load(Common::SeekableReadStream &) { return true; }
-	int getHeight() const;
-	int getWidth() const;
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src);
-	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	bool load(Common::SeekableReadStream &) override { return true; }
+	int getHeight() const override;
+	int getWidth() const override;
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override;
+	void setStyle(FontStyle style) override { _style = style; }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 protected:
-	void unload();
-
 	const uint8 *_colorMap;
-	Graphics::FontSJIS *_font;	
+	Common::SharedPtr<Graphics::FontSJIS> _font;
 	int _sjisWidth, _asciiWidth;
 	int _fontHeight;
 	const bool _drawOutline;
+	FontStyle _style;
 
 private:
 	const uint8 _invisColor;
-	const bool _is16Color;
+	const bool _isTextMode;
 	// We use this for cases where the font width returned by getWidth() or getCharWidth() does not match the original.
 	// The original Japanese game versions use hard coded sjis font widths of 8 or 9. However, this does not necessarily
 	// depend on whether an outline is used or not (neither LOL/PC-9801 nor LOL/FM-TOWNS use an outline, but the first
@@ -485,9 +387,15 @@ public:
 		FID_GOLDFONT_FNT,
 		FID_INTRO_FNT,
 		FID_SJIS_FNT,
+		FID_SJIS_TEXTMODE_FNT,
 		FID_SJIS_LARGE_FNT,
 		FID_SJIS_SMALL_FNT,
 		FID_NUM
+	};
+
+	enum FontType {
+		FTYPE_ASCII = 0,
+		FTYPE_SJIS
 	};
 
 	Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize);
@@ -545,9 +453,9 @@ public:
 	virtual void setScreenPalette(const Palette &pal);
 
 	// AMIGA version only
-	bool isInterfacePaletteEnabled() const { return _interfacePaletteEnabled; }
-	void enableInterfacePalette(bool e);
-	void setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b);
+	bool isInterfacePaletteEnabled() const { return _dualPaletteModeSplitY; }
+	void enableDualPaletteMode(int splitY);
+	void disableDualPaletteMode();
 
 	virtual void getRealPalette(int num, uint8 *dst);
 	Palette &getPalette(int num);
@@ -581,6 +489,9 @@ public:
 
 	void setScreenDim(int dim);
 	int curDimIndex() const { return _curDimIndex; }
+
+	void setTextMarginRight(int x) { _textMarginRight = x; }
+	uint16 _textMarginRight;
 
 	const ScreenDim *_curDim;
 
@@ -629,6 +540,7 @@ public:
 	uint8 *_shapePages[2];
 	int _maskMinY, _maskMaxY;
 	FontId _currentFont;
+	FontType _currentFontType;
 
 	// decoding functions
 	static void decodeFrame1(const uint8 *src, uint8 *dst, uint32 size);
@@ -684,6 +596,8 @@ protected:
 	bool _useOverlays;
 	bool _useSJIS;
 	bool _use16ColorMode;
+	bool _use256ColorMode;
+	bool _4bitPixelPacking;
 	bool _useHiResEGADithering;
 	bool _useHiColorScreen;
 	bool _isAmiga;
@@ -691,7 +605,8 @@ protected:
 	Common::RenderMode _renderMode;
 	int _bytesPerPixel;
 	int _screenPageSize;
-
+	
+	Common::SharedPtr<Graphics::FontSJIS> _sjisFontShared;
 	uint8 _sjisInvisibleColor;
 	bool _sjisMixedFontMode;
 
@@ -802,7 +717,7 @@ protected:
 	int _drawShapeVar5;
 
 	// AMIGA version
-	bool _interfacePaletteEnabled;
+	int _dualPaletteModeSplitY;
 
 	// debug
 	bool _debugEnabled;

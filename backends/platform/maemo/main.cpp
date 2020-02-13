@@ -22,13 +22,9 @@
 
 #if defined(MAEMO)
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-
 #include "backends/platform/maemo/maemo.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
-
-#include <unistd.h>
 
 int main(int argc, char* argv[]) {
 	g_system = new Maemo::OSystem_SDL_Maemo();

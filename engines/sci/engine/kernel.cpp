@@ -33,8 +33,12 @@
 
 namespace Sci {
 
-Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
-	: _resMan(resMan), _segMan(segMan), _invalid("<invalid>") {
+Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)	:
+	_resMan(resMan),
+	_segMan(segMan),
+	_invalid("<invalid>") {
+	loadSelectorNames();
+	mapSelectors();
 }
 
 Kernel::~Kernel() {
@@ -49,11 +53,6 @@ Kernel::~Kernel() {
 		}
 		delete[] it->signature;
 	}
-}
-
-void Kernel::init() {
-	loadSelectorNames();
-	mapSelectors();      // Map a few special selectors for later use
 }
 
 uint Kernel::getSelectorNamesSize() const {
@@ -113,16 +112,11 @@ int Kernel::findSelector(const char *selectorName) const {
 	return -1;
 }
 
-// used by Script patcher to figure out, if it's okay to initialize signature/patch-table
-bool Kernel::selectorNamesAvailable() {
-	return !_selectorNames.empty();
-}
-
 void Kernel::loadSelectorNames() {
 	Resource *r = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), 0);
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
-#ifdef ENABLE_SCI32_MAC
+#ifdef ENABLE_SCI32
 	// Starting with KQ7, Mac versions have a BE name table. GK1 Mac and earlier (and all
 	// other platforms) always use LE.
 	const bool isBE = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY
@@ -306,6 +300,9 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 					writePos++;
 					signature = 0;
 				}
+				break;
+			default:
+				break;
 			}
 		}
 		switch (curChar) {
@@ -558,7 +555,7 @@ bool Kernel::signatureMatch(const uint16 *sig, int argc, const reg_t *argv) {
 	return false;
 }
 
-void Kernel::mapFunctions() {
+void Kernel::mapFunctions(GameFeatures *features) {
 	int mapped = 0;
 	int ignored = 0;
 	uint functionCount = _kernelNames.size();
@@ -614,13 +611,13 @@ void Kernel::mapFunctions() {
 			continue;
 		}
 
-#ifdef ENABLE_SCI32_MAC
-		// HACK: Phantasmagoria Mac uses a modified kDoSound (which *nothing*
-		// else seems to use)!
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && g_sci->getGameId() == GID_PHANTASMAGORIA && kernelName == "DoSound") {
-			_kernelFuncs[id].function = kDoSoundPhantasmagoriaMac;
-			_kernelFuncs[id].signature = parseKernelSignature("DoSoundPhantasmagoriaMac", "i.*");
-			_kernelFuncs[id].name = "DoSoundPhantasmagoriaMac";
+#ifdef ENABLE_SCI32
+		// Several SCI 2.1 Middle Mac games use a modified kDoSound
+		//  with different subop numbers.
+		if (features->useDoSoundMac32() && kernelName == "DoSound") {
+			_kernelFuncs[id].function = kDoSoundMac32;
+			_kernelFuncs[id].signature = parseKernelSignature("DoSoundMac32", "i(.*)");
+			_kernelFuncs[id].name = "DoSoundMac32";
 			continue;
 		}
 #endif
@@ -781,8 +778,9 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 				_kernelNames[0x84] = "ShowMovie";
 		} else if (g_sci->getGameId() == GID_QFG4DEMO) {
 			_kernelNames[0x7b] = "RemapColors"; // QFG4 Demo has this SCI2 function instead of StrSplit
-		} else if (g_sci->getGameId() == GID_CATDATE) {
+		} else if (_resMan->testResource(ResourceId(kResourceTypeVocab, 184))) {
 			_kernelNames[0x7b] = "RemapColorsKawa";
+			_kernelNames[0x88] = "KawaDbugStr";
 			_kernelNames[0x89] = "KawaHacks";
 		}
 
@@ -876,7 +874,7 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 	}
 #endif
 
-	mapFunctions();
+	mapFunctions(features);
 }
 
 Common::String Kernel::lookupText(reg_t address, int index) {

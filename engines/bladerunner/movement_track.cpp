@@ -47,11 +47,11 @@ void MovementTrack::reset() {
 	}
 }
 
-int MovementTrack::append(int waypointId, int delay, bool run) {
+int MovementTrack::append(int waypointId, int32 delay, bool run) {
 	return append(waypointId, delay, -1, run);
 }
 
-int MovementTrack::append(int waypointId, int delay, int angle, bool run) {
+int MovementTrack::append(int waypointId, int32 delay, int angle, bool run) {
 	if (_lastIndex >= kSize) {
 		return 0;
 	}
@@ -92,7 +92,7 @@ bool MovementTrack::hasNext() const {
 	return _hasNext;
 }
 
-bool MovementTrack::next(int *waypointId, int *delay, int *angle, bool *run) {
+bool MovementTrack::next(int *waypointId, int32 *delay, int *angle, bool *run) {
 	if (_currentIndex < _lastIndex && _hasNext) {
 		*waypointId = _entries[_currentIndex].waypointId;
 		*delay = _entries[_currentIndex].delay;

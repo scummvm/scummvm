@@ -41,14 +41,14 @@ public:
 	DECLARE_PERSISTENT(PartEmitter, BaseObject)
 
 	PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner);
-	virtual ~PartEmitter(void);
+	~PartEmitter(void) override;
 
 	int32 _fadeOutTime;
 
 	bool start();
 
-	bool update();
-	bool display() { return display(nullptr); } // To avoid shadowing the inherited display-function.
+	bool update() override;
+	bool display() override { return display(nullptr); } // To avoid shadowing the inherited display-function.
 	bool display(BaseRegion *region);
 
 	bool sortParticlesByZ();
@@ -63,10 +63,10 @@ public:
 	BaseArray<PartForce *> _forces;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 
 
 private:

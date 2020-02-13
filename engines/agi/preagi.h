@@ -55,27 +55,27 @@ class PreAgiEngine : public AgiBase {
 	int _gameId;
 
 protected:
-	void initialize();
+	void initialize() override;
 
 	void pollTimer() {}
-	int getKeypress() { return 0; }
-	bool isKeypress() { return false; }
-	void clearKeyQueue() {}
+	int getKeypress() override { return 0; }
+	bool isKeypress() override { return false; }
+	void clearKeyQueue() override {}
 
 	PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
-	virtual ~PreAgiEngine();
+	~PreAgiEngine() override;
 	int getGameId() {
 		return _gameId;
 	}
 
 	PictureMgr *_picture;
 
-	void clearImageStack() {}
+	void clearImageStack() override {}
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-	                          int16 p4, int16 p5, int16 p6, int16 p7) {}
+	                          int16 p4, int16 p5, int16 p6, int16 p7) override {}
 	void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-	                          int16 p4, int16 p5, int16 p6, int16 p7) {}
-	void releaseImageStack() {}
+	                          int16 p4, int16 p5, int16 p6, int16 p7) override {}
+	void releaseImageStack() override {}
 	int saveGame(const Common::String &fileName, const Common::String &saveName) { return -1; }
 	int loadGame(const Common::String &fileName, bool checkId = true) { return -1; }
 

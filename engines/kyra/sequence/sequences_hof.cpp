@@ -1864,12 +1864,14 @@ int SeqPlayer_HOF::cbHOF_overview(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		playSoundAndDisplaySubTitle(1);
 		break;
 
-	CASE_ALT(434, 354)
+	case 434:
+	//CASE_ALT(434, 354)
 		closeNestedAnimation(0);
 		startNestedAnimation(0, kNestedSequenceDragon);
 		break;
 
-	CASE_ALT(540, 400)
+	case 540:
+	//CASE_ALT(540, 400)
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
 		setCountDown(0);
@@ -1938,7 +1940,8 @@ int SeqPlayer_HOF::cbHOF_library(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		playSoundAndDisplaySubTitle(6);
 		break;
 
-	CASE_ALT(660, 480)
+	case 660:
+	//CASE_ALT(660, 480)
 		_screen->copyPage(2, 12);
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
@@ -2982,6 +2985,9 @@ int SeqPlayer_HOF::cbHOFDEMO_outhome(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 	case 137:
 		playSoundAndDisplaySubTitle(6);
 		break;
+
+	default:
+		break;
 	}
 
 	return 0;
@@ -3122,6 +3128,9 @@ int SeqPlayer_HOF::cbHOFDEMO_dinob2(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 
 	case 79:
 		_animCurrentFrame = 4;
+		break;
+
+	default:
 		break;
 	}
 

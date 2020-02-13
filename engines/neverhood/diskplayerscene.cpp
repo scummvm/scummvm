@@ -173,6 +173,8 @@ uint32 AsDiskplayerSceneKey::handleMessage(int messageNum, const MessageParam &p
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -218,6 +220,8 @@ uint32 DiskplayerPlayButton::handleMessage(int messageNum, const MessageParam &p
 		}
 		updatePosition();
 		messageResult = 1;
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -466,6 +470,8 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 			break;
 		case 0x2001:
 			stop();
+			break;
+		default:
 			break;
 		}
 	}

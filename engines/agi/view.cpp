@@ -72,6 +72,8 @@ void AgiEngine::updateView(ScreenObjEntry *screenObj) {
 			celNr--;
 		}
 		break;
+	default:
+		break;
 	}
 
 	setCel(screenObj, celNr);

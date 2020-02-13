@@ -314,6 +314,9 @@ bool compareExpressions(MpalHandle h1, MpalHandle h2) {
 				return false;
 			}
 			break;
+
+		default:
+			break;
 		}
 
 		++one;

@@ -33,7 +33,7 @@ class Director;
 
 class Action : public NamedObject {
 public:
-	virtual void deserialize(Archive &archive) override;
+	void deserialize(Archive &archive) override;
 
 	virtual bool initPalette(Director *director);
 

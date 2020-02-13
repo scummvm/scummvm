@@ -616,6 +616,10 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		writeSelectorValue(_segMan, obj, SELECTOR(min), musicSlot->ticker / 3600);
 		writeSelectorValue(_segMan, obj, SELECTOR(sec), musicSlot->ticker % 3600 / 60);
 		writeSelectorValue(_segMan, obj, SELECTOR(frame), musicSlot->ticker % 60 / 2);
+
+		if (_soundVersion >= SCI_VERSION_1_MIDDLE) {
+			writeSelectorValue(_segMan, obj, SELECTOR(vol), musicSlot->volume);
+		}
 	}
 }
 

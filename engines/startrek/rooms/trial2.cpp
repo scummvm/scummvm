@@ -150,73 +150,73 @@ void Room::trial2Tick1() {
 void Room::trial2Tick60() {
 	if (!_awayMission->trial.enteredGlobRoom) {
 		_awayMission->disableInput = false;
-		showText(TX_SPEAKER_BENNIE, TX_TRI2_034);
-		showText(TX_SPEAKER_KIRK, TX_TRI2_005);
-		showText(TX_SPEAKER_SPOCK, TX_TRI2_030);
-		showText(TX_SPEAKER_KIRK, TX_TRI2_008);
+		showText(TX_SPEAKER_BENNIE, 34, true);
+		showText(TX_SPEAKER_KIRK, 5, true);
+		showText(TX_SPEAKER_SPOCK, 30, true);
+		showText(TX_SPEAKER_KIRK, 8, true);
 		_awayMission->trial.enteredGlobRoom = true;
 	}
 }
 
 void Room::trial2TouchedHotspot0() { // This is unused
 	if (_awayMission->trial.globEnergyLevels[1] != 0 || _awayMission->trial.globEnergyLevels[2] != 0)
-		showText(TX_SPEAKER_SPOCK, TX_TRI2_024);
+		showText(TX_SPEAKER_SPOCK, 24, true);
 }
 
 void Room::trial2LookAtKirk() {
-	showText(TX_TRI2N003);
+	showDescription(3, true);
 }
 
 void Room::trial2LookAtSpock() {
-	showText(TX_TRI2N001);
+	showDescription(1, true);
 }
 
 void Room::trial2LookAtMccoy() {
-	showText(TX_TRI2N006);
+	showDescription(6, true);
 }
 
 void Room::trial2LookAtRedshirt() {
-	showText(TX_TRI2N002);
+	showDescription(2, true);
 }
 
 void Room::trial2LookAtInsignia() {
-	showText(TX_TRI2N004);
+	showDescription(4, true);
 }
 
 void Room::trial2LookAtGlob() {
-	showText(TX_TRI2N000);
+	showDescription(0, true);
 }
 
 void Room::trial2LookAtWall() {
-	showText(TX_TRI2N007);
+	showDescription(7, true);
 }
 
 void Room::trial2LookAtDoor() {
-	showText(TX_TRI2N005);
+	showDescription(5, true);
 }
 
 void Room::trial2TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_TRI2_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::trial2TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI2_019);
+	showText(TX_SPEAKER_SPOCK, 19, true);
 }
 
 void Room::trial2TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI2_013);
+	showText(TX_SPEAKER_MCCOY, 13, true);
 }
 
 void Room::trial2TalkToRedshirt() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI2_033);
+	showText(TX_SPEAKER_BENNIE, 33, true);
 }
 
 void Room::trial2TalkToGlob() {
-	showText(TX_QUIET);
+	showDescription(TX_QUIET);
 }
 
 void Room::trial2UsePhaserOnWall() {
-	showText(TX_TRI2N008);
+	showDescription(8, true);
 }
 
 
@@ -263,9 +263,9 @@ void Room::trial2DrewPhaserToShootGlob() {
 
 	if (!(_roomVar.trial.globBeingShot == OBJECT_GLOB && _roomVar.trial.phaserOnKill == true)) {
 		if (_roomVar.trial.phaserOnKill)
-			showText(TX_SPEAKER_SPOCK, TX_TRI2_023);
+			showText(TX_SPEAKER_SPOCK, 23, true);
 		else
-			showText(TX_SPEAKER_SPOCK, TX_TRI2_025);
+			showText(TX_SPEAKER_SPOCK, 25, true);
 	}
 
 
@@ -288,7 +288,7 @@ void Room::trial2DrewPhaserToShootGlob() {
 void Room::trial2GlobDoneExploding() {
 	stopAllVocSounds();
 	playVoc("Noooloop");
-	showText(TX_SPEAKER_SPOCK, TX_TRI2_020);
+	showText(TX_SPEAKER_SPOCK, 20, true);
 	_awayMission->trial.globDefeated = true;
 	playMidiMusicTracks(MIDITRACK_28, -1);
 	_awayMission->trial.missionScore += 1;
@@ -297,21 +297,7 @@ void Room::trial2GlobDoneExploding() {
 
 void Room::trial2GlobDoneSplitting() {
 	if (_roomVar.trial.globBeingShot == OBJECT_GLOB) {
-		if (true)
-			showText(TX_SPEAKER_SPOCK, TX_TRI2_009);
-		else {
-			// Unused code block: instead of killing the crew right away, the crew can
-			// interact with the split globs.
-			_awayMission->trial.globEnergyLevels[0] = 0;
-			_awayMission->trial.globEnergyLevels[1] = 1;
-			_awayMission->trial.globEnergyLevels[2] = 1;
-			_awayMission->trial.globSplitInTwo = true;
-			loadActorAnim2(OBJECT_SPLIT_GLOB_1, "sglob", SPLIT_GLOB_1_X, SPLIT_GLOB_1_Y);
-			loadActorAnim2(OBJECT_SPLIT_GLOB_2, "sglob", SPLIT_GLOB_2_X, SPLIT_GLOB_2_Y);
-			loadActorStandAnim(OBJECT_GLOB);
-			showText(TX_SPEAKER_SPOCK, TX_TRI2_021);
-			return;
-		}
+		showText(TX_SPEAKER_SPOCK, 9, true);
 	} else if (_roomVar.trial.globBeingShot == OBJECT_SPLIT_GLOB_1) {
 		loadActorAnim2(OBJECT_11, "sglob", 0x43, 0xaf);
 		loadActorAnim2(OBJECT_SPLIT_GLOB_1, "sglob", 0, 0xaf);
@@ -360,23 +346,23 @@ void Room::trial2UseKillPhaserOnSplitGlob2() {
 }
 
 void Room::trial2UseMTricorderOnKirk() {
-	mccoyScan(DIR_S, TX_TRI2_016, true);
+	mccoyScan(DIR_S, 16, true, true);
 }
 
 void Room::trial2UseMTricorderOnSpock() {
-	mccoyScan(DIR_S, TX_TRI2_017, true);
+	mccoyScan(DIR_S, 17, true, true);
 }
 
 void Room::trial2UseMTricorderOnMccoy() {
-	mccoyScan(DIR_S, TX_TRI2_014, true);
+	mccoyScan(DIR_S, 14, true, true);
 }
 
 void Room::trial2UseMTricorderOnRedshirt() {
-	mccoyScan(DIR_S, TX_TRI2_015, true);
+	mccoyScan(DIR_S, 15, true, true);
 }
 
 void Room::trial2UseMTricorderOnGlob() {
-	mccoyScan(DIR_S, TX_TRI2_011, true);
+	mccoyScan(DIR_S, 11, true, true);
 
 	if (!_awayMission->trial.gotPointsForScanningGlob) {
 		_awayMission->trial.gotPointsForScanningGlob = true;
@@ -385,15 +371,15 @@ void Room::trial2UseMTricorderOnGlob() {
 }
 
 void Room::trial2UseSTricorderOnWall() {
-	spockScan(DIR_S, TX_TRI2_029, true);
+	spockScan(DIR_S, 29, true, true);
 }
 
 void Room::trial2UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_TRI2_027, true);
+	spockScan(DIR_S, 27, true, true);
 }
 
 void Room::trial2UseSTricorderOnGlob() {
-	spockScan(DIR_S, TX_TRI2_026, true);
+	spockScan(DIR_S, 26, true, true);
 
 	if (!_awayMission->trial.gotPointsForScanningGlob) {
 		_awayMission->trial.gotPointsForScanningGlob = true;
@@ -403,14 +389,14 @@ void Room::trial2UseSTricorderOnGlob() {
 
 void Room::trial2UseCommunicator() {
 	if (_awayMission->trial.forceFieldDown) { // TODO: Refactor this between rooms?
-		showText(TX_SPEAKER_UHURA, TX_TRI2U091);
+		showText(TX_SPEAKER_UHURA, 91, true);
 
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
-			TX_TRI2_003, TX_TRI2_004, TX_TRI2_007,
+			3, 4, 7,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices, true);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
 			_awayMission->trial.missionEndMethod = 1;
@@ -421,40 +407,40 @@ void Room::trial2UseCommunicator() {
 			loadRoomIndex(4, 4);
 		} // Else don't transport anywhere
 	} else { // Force field still up
-		showText(TX_SPEAKER_UHURA, TX_TRI2U087);
-		showText(TX_SPEAKER_KIRK,  TX_TRI2_006);
-		showText(TX_SPEAKER_UHURA, TX_TRI2U104);
+		showText(TX_SPEAKER_UHURA, 87, true);
+		showText(TX_SPEAKER_KIRK,  6, true);
+		showText(TX_SPEAKER_UHURA, 104, true);
 		if (!_awayMission->trial.globDefeated) {
-			showText(TX_SPEAKER_UHURA, TX_TRI2U081);
-			showText(TX_SPEAKER_KIRK,  TX_TRI2_002);
+			showText(TX_SPEAKER_UHURA, 81, true);
+			showText(TX_SPEAKER_KIRK,  2, true);
 		}
-		showText(TX_SPEAKER_UHURA, TX_TRI2U074);
+		showText(TX_SPEAKER_UHURA, 74, true);
 	}
 }
 
 void Room::trial2UseMccoyOnGlob() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI2_012);
+	showText(TX_SPEAKER_MCCOY, 12, true);
 }
 
 void Room::trial2UseMccoyOnWall() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI2_010);
+	showText(TX_SPEAKER_MCCOY, 10, true);
 }
 
 void Room::trial2UseSpockOnGlob() {
 	// NOTE: Two possible audio files to use, TRI2_028 and TRI2_F11
-	showText(TX_SPEAKER_SPOCK, TX_TRI2_028);
+	showText(TX_SPEAKER_SPOCK, 28, true);
 }
 
 void Room::trial2UseSpockOnWall() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI2_022);
+	showText(TX_SPEAKER_SPOCK, 22, true);
 }
 
 void Room::trial2UseRedshirtOnGlob() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI2_031);
+	showText(TX_SPEAKER_BENNIE, 31, true);
 }
 
 void Room::trial2UseRedshirtOnWall() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI2_032);
+	showText(TX_SPEAKER_BENNIE, 32, true);
 }
 
 void Room::trial2WalkToDoor() {
@@ -462,7 +448,7 @@ void Room::trial2WalkToDoor() {
 }
 
 void Room::trial2UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI2_018);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 }
 
 }

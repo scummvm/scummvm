@@ -43,11 +43,11 @@ public:
 	void correctSize(int32 *width, int32 *height);
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	bool display(int x, int y, int width, int height);
 	UITiledImage(BaseGame *inGame = nullptr);
-	virtual ~UITiledImage();
+	~UITiledImage() override;
 private:
 	BaseSubFrame *_image;
 	Rect32 _upLeft;

@@ -240,25 +240,29 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 	}
 }
 
-void Object::initSpecies(SegManager *segMan, reg_t addr) {
+void Object::initSpecies(SegManager *segMan, reg_t addr, bool applyScriptPatches) {
 	uint16 speciesOffset = getSpeciesSelector().getOffset();
 
 	if (speciesOffset == 0xffff)		// -1
 		setSpeciesSelector(NULL_REG);	// no species
-	else
-		setSpeciesSelector(segMan->getClassAddress(speciesOffset, SCRIPT_GET_LOCK, addr.getSegment()));
+	else {
+		reg_t species = segMan->getClassAddress(speciesOffset, SCRIPT_GET_LOCK, addr.getSegment(), applyScriptPatches);
+		setSpeciesSelector(species);
+	}
 }
 
-void Object::initSuperClass(SegManager *segMan, reg_t addr) {
+void Object::initSuperClass(SegManager *segMan, reg_t addr, bool applyScriptPatches) {
 	uint16 superClassOffset = getSuperClassSelector().getOffset();
 
 	if (superClassOffset == 0xffff)			// -1
 		setSuperClassSelector(NULL_REG);	// no superclass
-	else
-		setSuperClassSelector(segMan->getClassAddress(superClassOffset, SCRIPT_GET_LOCK, addr.getSegment()));
+	else {
+		reg_t classAddress = segMan->getClassAddress(superClassOffset, SCRIPT_GET_LOCK, addr.getSegment(), applyScriptPatches);
+		setSuperClassSelector(classAddress);
+	}
 }
 
-bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass) {
+bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass, bool applyScriptPatches) {
 	const Object *baseObj = segMan->getObject(getSpeciesSelector());
 
 	if (baseObj) {
@@ -270,7 +274,7 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 		_baseObj = baseObj->_baseObj;
 		assert(_baseObj);
 		if (doInitSuperClass)
-			initSuperClass(segMan, addr);
+			initSuperClass(segMan, addr, applyScriptPatches);
 
 		if (_variables.size() != originalVarCount) {
 			// These objects are probably broken.

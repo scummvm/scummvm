@@ -41,7 +41,7 @@ void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	if (!response.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("OneDriveTokenRefresher: failed to refresh token");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "OneDriveTokenRefresher::tokenRefreshed: failed to refresh token", -1));
 		return;
 	}
 
@@ -94,24 +94,48 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 					irrecoverable = false;
 			}
 
-			if (code == "unauthenticated")
+			if (code == "unauthenticated" || code == "InvalidAuthenticationToken")
 				irrecoverable = false;
 
 			if (irrecoverable) {
-				finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpResponseCode));
+				Common::String errorContents = "<irrecoverable> " + json->stringify(true);
+				finishError(Networking::ErrorResponse(this, false, true, errorContents, httpResponseCode));
 				delete json;
 				return;
 			}
 
 			pause();
 			delete json;
-			_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
+			_parentStorage->refreshAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
 			return;
 		}
 	}
 
 	//notify user of success
 	CurlJsonRequest::finishJson(json);
+}
+
+void OneDriveTokenRefresher::finishError(Networking::ErrorResponse error) {
+	if (error.failed) {
+		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
+
+		//somehow OneDrive returns JSON with '.' in unexpected places, try fixing it
+		if (!value) {
+			Common::String fixedResponse = error.response;
+			for (uint32 i = 0; i < fixedResponse.size(); ++i) {
+				if (fixedResponse[i] == '.')
+					fixedResponse.replace(i, 1, " ");
+			}
+			value = Common::JSON::parse(fixedResponse.c_str());
+		}
+
+		if (value) {
+			finishJson(value);
+			return;
+		}
+	}
+
+	Request::finishError(error); //call closest base class's method
 }
 
 void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {

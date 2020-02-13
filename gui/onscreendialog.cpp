@@ -51,19 +51,19 @@ enum {
 };
 
 void OnScreenDialog::reflowLayout() {
-	GuiObject::reflowLayout();
+	Dialog::reflowLayout();
+
+	_x = _y = 0;
 }
 
 void OnScreenDialog::releaseFocus() {
 }
 
 OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
-	_x = _y = 0;
-
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.OnScreenDialog.ShowPics") == 1 && g_gui.theme()->supportsImages()) {
 		GUI::PicButtonWidget *button;
-		button = new PicButtonWidget(this, "OnScreenDialog.StopButton", 0, kStopCmd, 0);
+		button = new PicButtonWidget(this, "OnScreenDialog.StopButton", nullptr, kStopCmd, 0);
 		button->useThemeTransparency(true);
 
 		if (g_system->getOverlayWidth() > 320)
@@ -72,7 +72,7 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 			button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopSmallButton));
 
 		if (isRecord) {
-			button = new PicButtonWidget(this, "OnScreenDialog.EditButton", 0, kEditCmd, 0);
+			button = new PicButtonWidget(this, "OnScreenDialog.EditButton", nullptr, kEditCmd, 0);
 			button->useThemeTransparency(true);
 
 			if (g_system->getOverlayWidth() > 320)
@@ -80,14 +80,14 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 			else
 				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditSmallButton));
 		} else {
-			button = new PicButtonWidget(this, "OnScreenDialog.SwitchModeButton", 0, kSwitchModeCmd, 0);
+			button = new PicButtonWidget(this, "OnScreenDialog.SwitchModeButton", nullptr, kSwitchModeCmd, 0);
 			button->useThemeTransparency(true);
 			if (g_system->getOverlayWidth() > 320)
 				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModeButton));
 			else
 				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModeSmallButton));
 
-			button = new PicButtonWidget(this, "OnScreenDialog.FastReplayButton", 0, kFastModeCmd, 0);
+			button = new PicButtonWidget(this, "OnScreenDialog.FastReplayButton", nullptr, kFastModeCmd, 0);
 			button->useThemeTransparency(true);
 			if (g_system->getOverlayWidth() > 320)
 				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageFastReplayButton));
@@ -118,7 +118,7 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 	_editDlgShown = false;
 
 	_lastTime = 0;
-	_dlg = 0;
+	_dlg = nullptr;
 }
 
 void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -152,6 +152,8 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kFastModeCmd:
 		g_eventRec.switchFastMode();
+		break;
+	default:
 		break;
 	}
 }

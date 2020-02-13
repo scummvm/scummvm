@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Chapters : public Entity {
 public:
 	Chapters(LastExpressEngine *engine);
-	~Chapters() {}
+	~Chapters() override {}
 
 	/**
 	 * Saves the game

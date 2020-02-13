@@ -237,7 +237,7 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_mouse = pMouse;
 	_music = pMusic;
 	_sound = pSound;
-	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
+	_lStrings = loadCustomStrings("strings.txt") ? _customStrings : _languageStrings + SwordEngine::_systemVars.language * 20;
 	_selectedButton = 255;
 	_panelShown = false;
 	_tempThumbnail = 0;
@@ -548,6 +548,8 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 		break;
 	case BUTTON_VOLUME_PANEL:
 		return id;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -633,7 +635,7 @@ void Control::setupVolumePanel() {
 
 	renderText(_lStrings[STR_MUSIC], 149, 39 + 40, TEXT_LEFT_ALIGN);
 	renderText(_lStrings[STR_SPEECH], 320, 39 + 40, TEXT_CENTER);
-	renderText(_lStrings[STR_FX], 438, 39 + 40, TEXT_LEFT_ALIGN);
+	renderText(_lStrings[STR_FX], 449, 39 + 40, TEXT_CENTER);
 
 	createButtons(_volumeButtons, 4);
 	renderText(_lStrings[STR_DONE], _volumeButtons[0].x - 10, _volumeButtons[0].y, TEXT_RIGHT_ALIGN);
@@ -927,15 +929,15 @@ void Control::showSavegameNames() {
 		_buttons[cnt]->draw();
 		uint8 textMode = TEXT_LEFT_ALIGN;
 		uint16 ycoord = _saveButtons[cnt].y + 2;
-		uint8 str[40];
-		sprintf((char *)str, "%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos].c_str());
+		Common::String savegameNameStr = Common::String::format("%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos].c_str());
 		if (cnt + _saveScrollPos == _selectedSavegame) {
 			textMode |= TEXT_RED_FONT;
 			ycoord += 2;
-			if (_cursorVisible)
-				strcat((char *)str, "_");
+			if (_cursorVisible) {
+				savegameNameStr += "_";
+			}
 		}
-		renderText(str, _saveButtons[cnt].x + 6, ycoord, textMode);
+		renderText((const uint8*)savegameNameStr.c_str(), _saveButtons[cnt].x + 6, ycoord, textMode);
 	}
 }
 
@@ -1441,6 +1443,26 @@ const ButtonInfo Control::_volumeButtons[4] = {
 	{ 273, 135, SR_VKNOB, 0, 0 },
 	{ 404, 135, SR_VKNOB, 0, 0 },
 };
+
+bool Control::loadCustomStrings(const char *filename) {
+	Common::File f;
+
+	if (f.open(filename)) {
+		Common::String line;
+
+		for (int lineNo = 0; lineNo < 20; lineNo++) {
+			line = f.readLine();
+
+			if (f.eos())
+				return false;
+
+			memset((void*)_customStrings[lineNo], 0, 43);
+			strncpy((char*)_customStrings[lineNo], line.c_str(), 42);
+		}
+	}
+
+	return true;
+}
 
 const uint8 Control::_languageStrings[8 * 20][43] = {
 	// BS1_ENGLISH:

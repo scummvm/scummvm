@@ -599,6 +599,8 @@ public:
 			case kValidateSeek:
 				modeName = "seeking";
 				break;
+			default:
+				break;
 		}
 
 		return String::format("Access violation %s %s: %u + %d > %u",

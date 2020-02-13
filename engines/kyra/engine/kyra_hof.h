@@ -48,14 +48,14 @@ friend class TextDisplayer_HoF;
 friend class GUI_HoF;
 public:
 	KyraEngine_HoF(OSystem *system, const GameFlags &flags);
-	~KyraEngine_HoF();
+	~KyraEngine_HoF() override;
 
-	void pauseEngineIntern(bool pause);
+	void pauseEngineIntern(bool pause) override;
 
-	Screen *screen() { return _screen; }
-	Screen_v2 *screen_v2() const { return _screen; }
-	GUI *gui() const { return _gui; }
-	virtual TextDisplayer *text() { return _text; }
+	Screen *screen() override { return _screen; }
+	Screen_v2 *screen_v2() const override { return _screen; }
+	GUI *gui() const override { return _gui; }
+	TextDisplayer *text() override { return _text; }
 	int language() const { return _lang; }
 
 protected:
@@ -70,8 +70,8 @@ protected:
 
 	void seq_pausePlayer(bool toggle);
 
-	Common::Error init();
-	Common::Error go();
+	Common::Error init() override;
+	Common::Error go() override;
 
 	Screen_HoF *_screen;
 	TextDisplayer_HoF *_text;
@@ -92,24 +92,24 @@ protected:
 	void runLoop();
 	void cleanup();
 
-	void registerDefaultSettings();
-	void writeSettings();
-	void readSettings();
+	void registerDefaultSettings() override;
+	void writeSettings() override;
+	void readSettings() override;
 	uint8 _configTextspeed;
 
 	// TODO: get rid of all variables having pointers to the static resources if possible
 	// i.e. let them directly use the _staticres functions
 	void initStaticResource();
 
-	void setupTimers();
-	void setupOpcodeTable();
+	void setupTimers() override;
+	void setupOpcodeTable() override;
 
 	void loadMouseShapes();
 	void loadItemShapes();
 
 	// run
-	void update();
-	void updateWithText();
+	void update() override;
+	void updateWithText() override;
 
 	Common::Functor0Mem<void, KyraEngine_HoF> _updateFunctor;
 
@@ -120,7 +120,12 @@ protected:
 	void handleInput(int x, int y);
 	bool handleInputUnkSub(int x, int y);
 
-	int inputSceneChange(int x, int y, int unk1, int unk2);
+	int inputSceneChange(int x, int y, int unk1, int unk2) override;
+
+	// special case
+	void processKeyboardSfx(int inputFlag);
+
+	static const int16 _keyboardSounds[190];
 
 	// gfx/animation specific
 	bool _inventorySaved;
@@ -148,12 +153,12 @@ protected:
 
 	ShapeDesc *_shapeDescTable;
 
-	void loadCharacterShapes(int shapes);
+	void loadCharacterShapes(int shapes) override;
 	void loadInventoryShapes();
 
 	void resetScaleTable();
 	void setScaleTableItem(int item, int data);
-	int getScale(int x, int y);
+	int getScale(int x, int y) override;
 	uint16 _scaleTable[15];
 
 	void setDrawLayerTableEntry(int entry, int data);
@@ -162,36 +167,36 @@ protected:
 
 	int _layerFlagTable[16]; // seems to indicate layers where items get destroyed when dropped to (TODO: check this!)
 
-	int initAnimationShapes(uint8 *filedata);
-	void uninitAnimationShapes(int count, uint8 *filedata);
+	int initAnimationShapes(uint8 *filedata) override;
+	void uninitAnimationShapes(int count, uint8 *filedata) override;
 
 	// animator
 	uint8 *_gamePlayBuffer;
-	void restorePage3();
+	void restorePage3() override;
 
-	void clearAnimObjects();
+	void clearAnimObjects() override;
 
-	void refreshAnimObjects(int force);
+	void refreshAnimObjects(int force) override;
 
-	void drawAnimObjects();
-	void drawSceneAnimObject(AnimObj *obj, int x, int y, int drawLayer);
-	void drawCharacterAnimObject(AnimObj *obj, int x, int y, int drawLayer);
+	void drawAnimObjects() override;
+	void drawSceneAnimObject(AnimObj *obj, int x, int y, int drawLayer) override;
+	void drawCharacterAnimObject(AnimObj *obj, int x, int y, int drawLayer) override;
 
 	void updateItemAnimations();
 
 	void updateCharFacing();
-	void updateCharacterAnim(int);
-	void updateSceneAnim(int anim, int newFrame);
+	void updateCharacterAnim(int) override;
+	void updateSceneAnim(int anim, int newFrame) override;
 
 	int _animObj0Width, _animObj0Height;
-	void setCharacterAnimDim(int w, int h);
-	void resetCharacterAnimDim();
+	void setCharacterAnimDim(int w, int h) override;
+	void resetCharacterAnimDim() override;
 
 	// scene
 	const char *_sceneCommentString;
 	uint8 _scenePal[688];
 
-	void enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3);
+	void enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3) override;
 	void enterNewSceneUnk1(int facing, int unk1, int unk2);
 	void enterNewSceneUnk2(int unk1);
 	void unloadScene();
@@ -209,14 +214,14 @@ protected:
 	void initSceneAnims(int unk1);
 	void initSceneScreen(int unk1);
 
-	int trySceneChange(int *moveTable, int unk1, int updateChar);
+	int trySceneChange(int *moveTable, int unk1, int updateChar) override;
 	int checkSceneChange();
 
 	// pathfinder
-	bool lineIsPassable(int x, int y);
+	bool lineIsPassable(int x, int y) override;
 
 	// item
-	void setMouseCursor(Item item);
+	void setMouseCursor(Item item) override;
 
 	uint8 _itemHtDat[176];
 
@@ -353,8 +358,8 @@ protected:
 
 	int _characterFacingCountTable[2];
 
-	int getCharacterWalkspeed() const;
-	void updateCharAnimFrame(int *table);
+	int getCharacterWalkspeed() const override;
+	void updateCharAnimFrame(int *table) override;
 
 	bool checkCharCollision(int x, int y);
 
@@ -388,12 +393,12 @@ protected:
 	void startDialogue(int dlgIndex);
 
 	void zanthSceneStartupChat();
-	void randomSceneChat();
+	void randomSceneChat() override;
 	void updateDlgBuffer();
 	void loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2);
 	void processDialogue(int dlgOffset, int vocH = 0, int csEntry = 0);
 	void npcChatSequence(const char *str, int objectId, int vocHigh = -1, int vocLow = -1);
-	void setDlgIndex(int dlgIndex);
+	void setDlgIndex(int dlgIndex) override;
 
 	int _npcTalkChpIndex;
 	int _npcTalkDlgIndex;
@@ -438,11 +443,11 @@ protected:
 	void openTalkFile(int newFile);
 	int _lastSfxTrack;
 
-	virtual void snd_playVoiceFile(int id);
+	void snd_playVoiceFile(int id) override;
 	void snd_loadSoundFile(int id);
 
 	void playVoice(int high, int low);
-	void snd_playSoundEffect(int track, int volume=0xFF);
+	void snd_playSoundEffect(int track, int volume=0xFF) override;
 
 	// timer
 	void timerFadeOutMessage(int);
@@ -461,7 +466,7 @@ protected:
 	void showIdleAnim();
 	void runIdleScript(int script);
 
-	void setWalkspeed(uint8 speed);
+	void setWalkspeed(uint8 speed) override;
 
 	// ingame static sequence handling
 	void seq_makeBookOrCauldronAppear(int type);
@@ -517,6 +522,7 @@ protected:
 	int o2_wipeDownMouseItem(EMCState *script);
 	int o2_getElapsedSecs(EMCState *script);
 	int o2_getTimerDelay(EMCState *script);
+	int o2_playCompleteSoundEffect(EMCState *script);
 	int o2_delaySecs(EMCState *script);
 	int o2_setTimerDelay(EMCState *script);
 	int o2_setScaleTableItem(EMCState *script);
@@ -637,7 +643,7 @@ protected:
 	int _cdaTrackTableFinaleSize;
 	const char *const *_ingameSoundList;
 	int _ingameSoundListSize;
-	const uint16 *_ingameSoundIndex;
+	const int16 *_ingameSoundIndex;
 	int _ingameSoundIndexSize;
 	const uint16 *_ingameTalkObjIndex;
 	int _ingameTalkObjIndexSize;
@@ -688,8 +694,8 @@ protected:
 	int _dbgPass;
 
 	// save/load specific
-	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
-	Common::Error loadGameState(int slot);
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
+	Common::Error loadGameState(int slot) override;
 };
 
 } // End of namespace Kyra

@@ -68,7 +68,7 @@ void ScummEngine::loadCJKFont() {
 		if (!_cjkFont)
 			error("SCUMM::Font: Could not open file 'pce.cdbios'");
 
-		_cjkFont->setDrawingMode(Graphics::FontSJIS::kShadowMode);
+		_cjkFont->setDrawingMode(Graphics::FontSJIS::kShadowRightMode);
 		_2byteWidth = _2byteHeight = 12;
 		_useCJKMode = true;
 #endif

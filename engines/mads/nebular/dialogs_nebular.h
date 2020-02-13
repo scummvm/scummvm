@@ -41,7 +41,7 @@ private:
 
 	DialogsNebular(MADSEngine *vm): Dialogs(vm), _capitalizationMode(kUppercase), _dialogWidth(0) {}
 
-	virtual Common::String getVocab(int vocabId);
+	Common::String getVocab(int vocabId) override;
 
 	bool textNoun(Common::String &dest, int nounId, const Common::String &source);
 
@@ -51,11 +51,11 @@ private:
 	void showScummVMRestoreDialog();
 
 public:
-	virtual void showDialog();
+	void showDialog() override;
 
-	virtual void showItem(int objectId, int messageId, int speech = -1);
+	void showItem(int objectId, int messageId, int speech = -1) override;
 
-	virtual bool show(int messageId, int objectId = -1);
+	bool show(int messageId, int objectId = -1) override;
 };
 
 struct HOGANUS {
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Show the dialog
 	 */
-	virtual void show();
+	void show() override;
 
 	bool isCorrectAnswer();
 };
@@ -97,13 +97,13 @@ private:
 	uint32 _palFlags[PALETTE_COUNT];
 	RGBList _rgbList;
 protected:
-	virtual void save();
+	void save() override;
 
-	virtual void restore();
+	void restore() override;
 public:
 	PictureDialog(MADSEngine *vm, const Common::Point &pos, int maxChars, int objectId);
 
-	virtual ~PictureDialog();
+	~PictureDialog() override;
 };
 
 enum DialogTextAlign { ALIGN_NONE = 0, ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
@@ -137,7 +137,7 @@ protected:
 	/**
 	 * Display the dialog
 	 */
-	virtual void display();
+	void display() override;
 
 	/**
 	 * Reset the lines list for the dialog
@@ -192,7 +192,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~GameDialog();
+	~GameDialog() override;
 
 	/**
 	 * Show the dialog
@@ -212,12 +212,12 @@ public:
 	/**
 	 * Display the dialog
 	 */
-	virtual void display();
+	void display() override;
 
 	/**
 	* Show the dialog
 	*/
-	virtual void show();
+	void show() override;
 };
 
 class GameMenuDialog : public GameDialog {
@@ -232,12 +232,12 @@ public:
 	/**
 	* Display the dialog
 	*/
-	virtual void display();
+	void display() override;
 
 	/**
 	* Show the dialog
 	*/
-	virtual void show();
+	void show() override;
 };
 
 class OptionsDialog : public GameDialog {
@@ -257,12 +257,12 @@ public:
 	/**
 	* Display the dialog
 	*/
-	virtual void display();
+	void display() override;
 
 	/**
 	* Show the dialog
 	*/
-	virtual void show();
+	void show() override;
 };
 
 } // End of namespace Nebular

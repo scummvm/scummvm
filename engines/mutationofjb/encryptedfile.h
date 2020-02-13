@@ -29,7 +29,7 @@ namespace MutationOfJB {
 
 class EncryptedFile : public Common::File {
 public:
-	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 }

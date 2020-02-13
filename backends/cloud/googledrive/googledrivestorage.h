@@ -30,18 +30,8 @@ namespace Cloud {
 namespace GoogleDrive {
 
 class GoogleDriveStorage: public Id::IdStorage {
-	static char *KEY, *SECRET;
-
-	static void loadKeyAndSecret();
-
-	Common::String _token, _refreshToken;
-
 	/** This private constructor is called from loadFromConfig(). */
-	GoogleDriveStorage(Common::String token, Common::String refreshToken);
-
-	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
-	void codeFlowComplete(BoolResponse response);
-	void codeFlowFailed(Networking::ErrorResponse error);
+	GoogleDriveStorage(Common::String token, Common::String refreshToken, bool enabled);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
@@ -50,9 +40,25 @@ class GoogleDriveStorage: public Id::IdStorage {
 	void createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse json);
 
 	void printInfo(StorageInfoResponse response);
+
+protected:
+	/**
+	 * @return "gdrive"
+	 */
+	virtual Common::String cloudProvider();
+
+	/**
+	 * @return kStorageGoogleDriveId
+	 */
+	virtual uint32 storageIndex();
+
+	virtual bool needsRefreshToken();
+
+	virtual bool canReuseRefreshToken();
+
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	GoogleDriveStorage(Common::String code);
+	GoogleDriveStorage(Common::String code, Networking::ErrorCallback cb);
 	virtual ~GoogleDriveStorage();
 
 	/**
@@ -100,14 +106,12 @@ public:
 	 */
 	static GoogleDriveStorage *loadFromConfig(Common::String keyPrefix);
 
-	virtual Common::String getRootDirectoryId();
-
 	/**
-	 * Gets new access_token. If <code> passed is "", refresh_token is used.
-	 * Use "" in order to refresh token and pass a callback, so you could
-	 * continue your work when new token is available.
+	 * Remove all GoogleDriveStorage-related data from config.
 	 */
-	void getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr, Common::String code = "");
+	static void removeFromConfig(Common::String keyPrefix);
+
+	virtual Common::String getRootDirectoryId();
 
 	Common::String accessToken() const { return _token; }
 };

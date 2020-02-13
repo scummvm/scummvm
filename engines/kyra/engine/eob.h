@@ -31,40 +31,68 @@ namespace Kyra {
 
 class EoBEngine : public EoBCoreEngine {
 friend class GUI_EoB;
+friend class EoBSeqPlayerCommon;
 friend class EoBIntroPlayer;
+friend class EoBPC98FinalePlayer;
 friend class EoBAmigaFinalePlayer;
 public:
 	EoBEngine(OSystem *system, const GameFlags &flags);
-	~EoBEngine();
+	~EoBEngine() override;
 
 private:
 	// Init / Release
-	Common::Error init();
+	Common::Error init() override;
 	void initStaticResource();
-	void initSpells();
+	void initSpells() override;
 
 	// Main Menu
-	int mainMenu();
+	int mainMenu() override;
 	int mainMenuLoop();
 	int _menuChoiceInit;
 
+	struct RenderModePalFile {
+		int renderMode;
+		char filename[12];
+	};
+
+	struct TitleScreenConfig {
+		const Common::Platform platform;
+		const char bmpFile[12];
+		const RenderModePalFile *palFiles;
+		const int pc98PaletteID;
+		const int page;
+		const bool fade;
+		const int menu1X, menu1Y, menu1W, menu1H, menu1col1, menu1col2, menu1col3;
+		const int menu2X, menu2Y, menu2W, menu2H, menu2col1, menu2col2, menu2col3;
+		const int versionStrYOffs;
+	};
+
+	static const RenderModePalFile _renderModePalFiles[3];
+	static const TitleScreenConfig _titleConfig[3];
+	const TitleScreenConfig *_ttlCfg;
+
 	// Main loop
-	void startupNew();
-	void startupLoad();
+	void startupNew() override;
+	void startupLoad() override;
 
 	// Intro/Outro
-	void seq_playIntro();
-	void seq_playFinale();
-	void seq_xdeath();
+	enum IntroPart {
+		kOnlyCredits = 0,
+		kOnlyIntro,
+		kCreditsAndIntro
+	};
 
-	void boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH, int fillColor = -1);
+	void seq_playIntro(int part);
+	void seq_playFinale() override;
+	void seq_xdeath() override;
 
 	const char *const *_finBonusStrings;
+	bool _xdth;
 
 	// characters
-	void drawNpcScene(int npcIndex);
+	void drawNpcScene(int npcIndex) override;
 	void encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY);
-	void runNpcDialogue(int npcIndex);
+	void runNpcDialogue(int npcIndex) override;
 
 	const uint8 *_npcShpData;
 	const uint8 *_npcSubShpIndex1;
@@ -73,17 +101,17 @@ private:
 	const char *const *_npcStrings[11];
 
 	// items
-	void updateUsedCharacterHandItem(int charIndex, int slot);
+	void updateUsedCharacterHandItem(int charIndex, int slot) override;
 
 	// Monsters
-	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
-	bool killMonsterExtra(EoBMonsterInPlay *m);
-	void updateScriptTimersExtra();
+	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) override;
+	bool killMonsterExtra(EoBMonsterInPlay *m) override;
+	void updateScriptTimersExtra() override;
 
 	// Level
-	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) { return 0; }
-	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2);
-	void drawDoorIntern(int type, int index, int x, int y, int w, int wall, int mDim, int16 y1, int16 y2);
+	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) override { return 0; }
+	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) override;
+	void drawDoorIntern(int type, int index, int x, int y, int w, int wall, int mDim, int16 y1, int16 y2) override;
 
 	const int16 *_dscDoorCoordsExt;
 	const uint8 *_dscDoorScaleMult4;
@@ -104,24 +132,25 @@ private:
 	static const uint8 _monsterAcHitChanceTbl2[];
 
 	// Magic
-	void turnUndeadAuto();
-	void turnUndeadAutoHit();
+	void turnUndeadAuto() override;
+	void turnUndeadAutoHit() override;
 
 	const char *const *_turnUndeadString;
 
 	// Sound
-	void snd_loadAmigaSounds(int level, int);
+	void snd_loadAmigaSounds(int level, int) override;
 
 	// Misc
-	bool checkPartyStatusExtra();
-	int resurrectionSelectDialogue();
+	bool checkPartyStatusExtra() override;
+	int resurrectionSelectDialogue() override;
 	void healParty();
 
-	const KyraRpgGUISettings *guiSettings() const;
-	void useMainMenuGUISettings(bool toggle) { _useMainMenuGUISettings = toggle; }
+	const KyraRpgGUISettings *guiSettings() const override;
+	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }
 
 	static const KyraRpgGUISettings _guiSettingsVGA;
 	static const KyraRpgGUISettings _guiSettingsEGA;
+	static const KyraRpgGUISettings _guiSettingsPC98;
 	static const KyraRpgGUISettings _guiSettingsAmiga;
 	static const KyraRpgGUISettings _guiSettingsAmigaMainMenu;
 	static const uint8 _egaDefaultPalette[];

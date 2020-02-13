@@ -142,15 +142,15 @@ private:
 
 protected:
 	// Engine APIs
-	virtual Common::Error run();
-	virtual GUI::Debugger *getDebugger();
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void syncSoundSettings();
-	virtual void pauseEngineIntern(bool pause);
+	Common::Error run() override;
+	GUI::Debugger *getDebugger() override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 
 public:
 	Sword2Engine(OSystem *syst);
-	~Sword2Engine();
+	~Sword2Engine() override;
 
 	int getFramesPerSecond();
 
@@ -164,10 +164,10 @@ public:
 	void setSubtitles(bool b) { _useSubtitles = b; }
 
 	// GMM Loading/Saving
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	bool canLoadGameStateCurrently();
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
 
 	uint32 _features;
 

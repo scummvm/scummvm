@@ -30,26 +30,32 @@ namespace Cloud {
 namespace Box {
 
 class BoxStorage: public Id::IdStorage {
-	static char *KEY, *SECRET;
-
-	static void loadKeyAndSecret();
-
-	Common::String _token, _refreshToken;
-
 	/** This private constructor is called from loadFromConfig(). */
-	BoxStorage(Common::String token, Common::String refreshToken);
-
-	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
-	void codeFlowComplete(BoolResponse response);
-	void codeFlowFailed(Networking::ErrorResponse error);
+	BoxStorage(Common::String token, Common::String refreshToken, bool enabled);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
 	void createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response);
+
+protected:
+	/**
+	 * @return "box"
+	 */
+	virtual Common::String cloudProvider();
+
+	/**
+	 * @return kStorageBoxId
+	 */
+	virtual uint32 storageIndex();
+
+	virtual bool needsRefreshToken();
+
+	virtual bool canReuseRefreshToken();
+
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	BoxStorage(Common::String code);
+	BoxStorage(Common::String code, Networking::ErrorCallback cb);
 	virtual ~BoxStorage();
 
 	/**
@@ -98,14 +104,12 @@ public:
 	 */
 	static BoxStorage *loadFromConfig(Common::String keyPrefix);
 
-	virtual Common::String getRootDirectoryId();
-
 	/**
-	 * Gets new access_token. If <code> passed is "", refresh_token is used.
-	 * Use "" in order to refresh token and pass a callback, so you could
-	 * continue your work when new token is available.
+	 * Remove all BoxStorage-related data from config.
 	 */
-	void getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr, Common::String code = "");
+	static void removeFromConfig(Common::String keyPrefix);
+
+	virtual Common::String getRootDirectoryId();
 
 	Common::String accessToken() const { return _token; }
 };

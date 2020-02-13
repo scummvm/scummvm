@@ -35,7 +35,7 @@ class Movie;
 class PlanetMover : IdlerTimeBase {
 public:
 	PlanetMover();
-	virtual ~PlanetMover() {}
+	~PlanetMover() override {}
 
 	void startMoving(Movie *);
 	void stopMoving();
@@ -44,7 +44,7 @@ public:
 
 protected:
 	void newDestination();
-	virtual void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 
 	Movie *_planetMovie;
 	CoordType _p1, _p4, _r1, _r4;

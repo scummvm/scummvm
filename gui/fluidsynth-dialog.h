@@ -37,11 +37,11 @@ class PopUpWidget;
 class FluidSynthSettingsDialog : public Dialog {
 public:
 	FluidSynthSettingsDialog();
-	~FluidSynthSettingsDialog();
+	~FluidSynthSettingsDialog() override;
 
-	void open();
-	void close();
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void open() override;
+	void close() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 protected:
 	void setChorusSettingsState(bool enabled);

@@ -284,8 +284,8 @@ int sceneHandler33(ExCommand *cmd) {
 						g_fp->processArcade(cmd);
 				}
 			}
-			break;
 		}
+		break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -307,6 +307,9 @@ int sceneHandler33(ExCommand *cmd) {
 
 		g_fp->startSceneTrack();
 
+		break;
+
+	default:
 		break;
 	}
 

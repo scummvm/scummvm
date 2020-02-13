@@ -23,7 +23,7 @@
 #ifndef TITANIC_STAR_VIEW_H
 #define TITANIC_STAR_VIEW_H
 
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/surface_fader.h"
 #include "titanic/star_control/viewport.h"
 #include "titanic/support/rect.h"
@@ -42,22 +42,29 @@ private:
 	CStarControl *_owner;
 	CStarField *_starField;
 	CVideoSurface *_videoSurface;
-	CStarCamera _camera;
-	bool _hasReference;
+	CCamera _camera;
+	bool _lensValid;
 	CViewport _photoViewport;
 	CSurfaceFader _fader;
 	CVideoSurface *_photoSurface;
 	CGameObject *_homePhotoMask;
-	bool _field218;
+	bool _stereoPair;
 	bool _showingPhoto;
 private:
-	void fn18(CStarCamera *camera);
-	void fn19(int v);
+	/**
+	 * Take a photograph of a view specified by the camera
+	 */
+	void takeHomePhotoHelper(CCamera *camera);
+
+	/**
+	 * View a specified star
+	 */
+	void viewRequiredStar(int index);
 
 	/**
 	 * Gets a random position and orientation
 	 */
-	void randomizeVectors1(FVector &pos, FVector &orientation);
+	void getRandomViewpoint(FVector &pos, FVector &orientation);
 
 	/**
 	 * Gets a random position and orientation
@@ -88,7 +95,10 @@ public:
 	 */
 	void setup(CScreenManager *screenManager, CStarField *starField, CStarControl *starControl);
 
-	void reset();
+	/**
+	 * Take a photograph of a view specified by the current home photo lens
+	 */
+	void takeCurrentHomePhoto();
 
 	/**
 	 * Allows the item to draw itself
@@ -126,43 +136,77 @@ public:
 	void starDestinationSet();
 
 	/**
-	 * Resets back to the origin position
+	 * Reset the starfield view
 	 */
-	void resetPosition();
+	void resetView();
 
-	void fn2();
-	void fn3(bool fadeIn);
-	void fn4();
-	void fn5();
-	void fn6();
-	void fn7();
+	void triggerFade(bool fadeIn);
+
+	/**
+	 * View the solar system
+	 */
+	void viewEarth();
+
+	/**
+	 * Set the view to be from earth
+	 */
+	void viewFromEarth();
+
+	/**
+	 * Turn on constellation boundaries
+	 */
+	void viewBoundaries();
+
+	/**
+	 * Turn on the constellation lines
+	 */
+	void viewConstellations();
+
+	/**
+	 * Look at a random star
+	 */
+	void viewRandomStar();
 
 	/**
 	 * Increase starfield movement to full speed
 	 */
 	void fullSpeed();
 
-	void fn9();
+	/**
+	 * Enable stereo pair vision
+	 */
+	void toggleSteroPair();
 
 	/**
 	 * Toggles between starfield and photo modes
 	 */
-	void toggleMode();
+	void toggleHomePhoto();
 
-	void fn11();
+	/**
+	 * Toggles the solar object rendering
+	 */
+	void toggleSolarRendering();
 
 	/**
 	 * Toggles whether the viewpoint box is visible in the starfield
 	 */
-	void toggleBox();
-
-	void fn13();
-	void fn14();
+	void TogglePosFrame();
 
 	/**
-	 * Called when the photograph is used on the navigation computer
+	 * Turn on Stereo Pair imaging
 	 */
-	void setHasReference();
+	void stereoPairOn();
+
+	/**
+	 * Turn off Stereo Pair imaging
+	 */
+	void stereoPairOff();
+
+	/**
+	 * Called when the photograph is used on the navigation computer,
+	 * takes a photograph of the current view, writing it to the home photo surface
+	 */
+	void takeHomePhoto();
 
 	/**
 	 * Handles locking in a star
@@ -177,4 +221,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_RENDERER_H */
+#endif /* TITANIC_STAR_VIEW_H */

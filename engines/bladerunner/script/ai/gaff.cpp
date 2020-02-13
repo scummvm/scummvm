@@ -94,7 +94,7 @@ void AIScriptGaff::CompletedMovementTrack() {
 		Actor_Says(kActorGaff, 40, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 690, kAnimationModeTalk);
 		Actor_Clue_Acquire(kActorMcCoy, kClueGaffsInformation, true, kActorGaff);
-		CDB_Set_Crime(kClueZuben, kCrimeMoonbusHijacking);
+		CDB_Set_Crime(kClueZubenSquadPhoto, kCrimeMoonbusHijacking);
 		Actor_Clue_Acquire(kActorGaff, kClueMcCoyRetiredZuben, true, -1);
 		Game_Flag_Set(kFlagGaffApproachedMcCoyAboutZuben);
 		Player_Gains_Control();

@@ -58,7 +58,7 @@ class StaticPhase : public Picture {
   public:
 	StaticPhase();
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
 	virtual Common::String toXML();
 
@@ -78,9 +78,9 @@ class DynamicPhase : public StaticPhase {
 	DynamicPhase();
 	DynamicPhase(DynamicPhase *src, bool reverse);
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
-	virtual Common::String toXML();
+	Common::String toXML() override;
 
 	int getDynFlags() { return _dynFlags; }
 };
@@ -95,8 +95,8 @@ class Statics : public DynamicPhase {
 	Statics();
 	Statics(Statics *src, bool reverse);
 
-	virtual bool load(MfcArchive &file);
-	virtual void init();
+	bool load(MfcArchive &file) override;
+	void init() override;
 	Statics *getStaticsById(int itemId);
 
 	Common::Point getSomeXY() const;
@@ -133,12 +133,12 @@ class Movement : public GameObject {
 
   public:
 	Movement();
-	virtual ~Movement();
+	~Movement() override;
 
 	Movement(Movement *src, StaticANIObject *ani);
 	Movement(Movement *src, int *flag1, int flag2, StaticANIObject *ani);
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 	bool load(MfcArchive &file, StaticANIObject *ani);
 
 	Common::Point getCurrDynamicPhaseXY() const;
@@ -198,10 +198,10 @@ public:
 
 public:
 	StaticANIObject();
-	virtual ~StaticANIObject();
+	~StaticANIObject() override;
 	StaticANIObject(StaticANIObject *src);
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
 	void setOXY(int x, int y);
 	Statics *getStaticsById(int id);

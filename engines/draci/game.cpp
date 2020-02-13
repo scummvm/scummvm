@@ -643,8 +643,8 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 			case kStatusDialogue:
 				handleDialogueLoop();
 				break;
-			case kStatusGate:
-				// cannot happen when isCursonOn; added for completeness
+			case kStatusGate: // cannot happen when isCursonOn; added for completeness
+			default:
 				break;
 			}
 		}
@@ -999,6 +999,8 @@ void Game::inventorySwitch(int keycode) {
 			setPreviousItemPosition(pos);
 			removeItem(new_item);
 		}
+		break;
+	default:
 		break;
 	}
 	if (getLoopStatus() == kStatusOrdinary) {

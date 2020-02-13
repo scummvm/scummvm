@@ -49,8 +49,13 @@ PlainGameDescriptor PlainGameDescriptor::of(const char *gameId, const char *desc
 	return pgd;
 }
 
+QualifiedGameDescriptor::QualifiedGameDescriptor(const char *engine, const PlainGameDescriptor &pgd) :
+		engineId(engine),
+		gameId(pgd.gameId),
+		description(pgd.description) {
+}
+
 DetectedGame::DetectedGame() :
-		engineName(nullptr),
 		hasUnknownFiles(false),
 		canBeAdded(true),
 		language(Common::UNK_LANG),
@@ -58,8 +63,8 @@ DetectedGame::DetectedGame() :
 		gameSupportLevel(kStableGame) {
 }
 
-DetectedGame::DetectedGame(const PlainGameDescriptor &pgd) :
-		engineName(nullptr),
+DetectedGame::DetectedGame(const Common::String &engine, const PlainGameDescriptor &pgd) :
+		engineId(engine),
 		hasUnknownFiles(false),
 		canBeAdded(true),
 		language(Common::UNK_LANG),
@@ -71,8 +76,8 @@ DetectedGame::DetectedGame(const PlainGameDescriptor &pgd) :
 	description = pgd.description;
 }
 
-DetectedGame::DetectedGame(const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex) :
-		engineName(nullptr),
+DetectedGame::DetectedGame(const Common::String &engine, const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex) :
+		engineId(engine),
 		hasUnknownFiles(false),
 		canBeAdded(true),
 		gameSupportLevel(kStableGame) {
@@ -178,20 +183,20 @@ Common::String generateUnknownGameReport(const DetectedGames &detectedGames, boo
 
 	FilePropertiesMap matchedFiles;
 
-	const char *currentEngineName = nullptr;
+	Common::String currentEngineId;
 	for (uint i = 0; i < detectedGames.size(); i++) {
 		const DetectedGame &game = detectedGames[i];
 
 		if (!game.hasUnknownFiles) continue;
 
-		if (!currentEngineName || strcmp(currentEngineName, game.engineName) != 0) {
-			currentEngineName = game.engineName;
+		if (currentEngineId.empty() || currentEngineId != game.engineId) {
+			currentEngineId = game.engineId;
 
 			// If the engine is not the same as for the previous entry, print an engine line header
 			report += "\n";
 			report += Common::String::format(
 					translate ? _(reportEngineHeader) : reportEngineHeader,
-					game.engineName
+					game.engineId.c_str()
 			);
 			report += " ";
 

@@ -83,6 +83,7 @@ public:
 
 	Common::SeekableReadStream *createReadStream();
 	Common::WriteStream *createWriteStream();
+	bool createDirectory();
 
 protected:
 	TizenFilesystemNode(const Common::String &root, const Common::String &p);

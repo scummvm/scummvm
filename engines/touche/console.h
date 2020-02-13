@@ -32,7 +32,7 @@ class ToucheEngine;
 class ToucheConsole : public GUI::Debugger {
 public:
 	ToucheConsole(ToucheEngine *vm);
-	virtual ~ToucheConsole(void);
+	~ToucheConsole(void) override;
 
 private:
 	ToucheEngine *_vm;

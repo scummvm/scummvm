@@ -715,6 +715,9 @@ void Penetration::createMap() {
 				_sub->sub = new Submarine(*_objects);
 				_sub->sub->setPosition(kPlayAreaX + kPlayAreaBorderWidth, kPlayAreaY + kPlayAreaBorderHeight);
 				break;
+
+			default:
+				break;
 			}
 		}
 	}

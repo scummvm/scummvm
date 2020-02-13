@@ -121,6 +121,8 @@ uint32 NavigationScene::handleMessage(int messageNum, const MessageParam &param,
 	case NM_ANIMATION_STOP:
 		_smackerDone = true;
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -202,6 +204,8 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 			_isTurning = false;
 			_leaveSceneAfter = true;
 		}
+		break;
+	default:
 		break;
 	}
 

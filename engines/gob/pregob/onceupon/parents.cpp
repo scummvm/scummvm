@@ -168,6 +168,9 @@ void Parents::handleFrameEvent() {
 	case 340:
 		playSound(kSoundCackle);
 		break;
+
+	default:
+		break;
 	}
 }
 

@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+
 #include <FUiCtrlMessageBox.h>
 #include <FLocales.h>
 
@@ -287,7 +289,7 @@ result TizenSystem::initModules() {
 		return E_OUT_OF_MEMORY;
 	}
 
-	_mixer = _audioThread->Construct(this);
+	_mixer = _audioThread->Construct();
 	if (!_mixer) {
 		return E_OUT_OF_MEMORY;
 	}
@@ -452,6 +454,10 @@ void TizenSystem::exitSystem() {
 		closeGraphics();
 		_appForm->exitSystem();
 	}
+}
+
+void TizenSystem::quit() {
+	exit(0);
 }
 
 void TizenSystem::logMessage(LogMessageType::Type type, const char *message) {

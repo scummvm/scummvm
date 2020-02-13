@@ -66,23 +66,6 @@ struct StreamResult {
 };
 typedef StreamResult stream_result_t;
 
-struct SavegameHeader {
-	uint8 _version;
-	byte _interpType;
-	byte _language;
-	Common::String _md5;
-	Common::String _saveName;
-	int _year, _month, _day;
-	int _hour, _minute;
-	int _totalFrames;
-
-	/**
-	 * Constructor
-	 */
-	SavegameHeader() : _version(0), _interpType(0), _language(0), _year(0), _month(0), _day(0),
-		_hour(0), _minute(0), _totalFrames(0) {}
-};
-
 /**
  * File details
  */
@@ -316,7 +299,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~WindowStream();
+	~WindowStream() override;
 
 	/**
 	 * Close the stream
@@ -326,49 +309,49 @@ public:
 	/**
 	 * Write a character
 	 */
-	virtual void putChar(unsigned char ch) override;
+	void putChar(unsigned char ch) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	void putCharUni(uint32 ch) override;
 
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const char *buf, size_t len) override;
+	void putBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+	void putBufferUni(const uint32 *buf, size_t len) override;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
 	 */
-	virtual void unputBuffer(const char *buf, size_t len) override;
+	void unputBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
 	 */
-	virtual void unputBufferUni(const uint32 *buf, size_t len) override;
+	void unputBufferUni(const uint32 *buf, size_t len) override;
 
-	virtual void setStyle(uint val) override;
+	void setStyle(uint val) override;
 
 	/**
 	 * Set a hyperlink
 	 */
-	virtual void setHyperlink(uint linkVal) override;
+	void setHyperlink(uint linkVal) override;
 
 	/**
 	 * Set the style colors
 	 */
-	virtual void setZColors(uint fg, uint bg) override;
+	void setZColors(uint fg, uint bg) override;
 
 	/**
 	 * Set the reverse video style
 	 */
-	virtual void setReverseVideo(bool reverse) override;
+	void setReverseVideo(bool reverse) override;
 };
 
 /**
@@ -391,74 +374,71 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~MemoryStream();
+	~MemoryStream() override;
 
 	/**
 	 * Write a character
 	 */
-	virtual void putChar(unsigned char ch) override;
+	void putChar(unsigned char ch) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	void putCharUni(uint32 ch) override;
 
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const char *buf, size_t len) override;
+	void putBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+	void putBufferUni(const uint32 *buf, size_t len) override;
 
-	virtual uint getPosition() const override;
+	uint getPosition() const override;
 
-	virtual void setPosition(int pos, uint seekMode) override;
+	void setPosition(int pos, uint seekMode) override;
 
 	/**
 	 * Get a character from the stream
 	 */
-	virtual int getChar() override;
+	int getChar() override;
 
 	/**
 	 * Get a unicode character from the stream
 	 */
-	virtual int getCharUni() override;
+	int getCharUni() override;
 
 	/**
 	 * Get a buffer
 	 */
-	virtual uint getBuffer(char *buf, uint len) override;
+	uint getBuffer(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual uint getBufferUni(uint32 *buf, uint len) override;
+	uint getBufferUni(uint32 *buf, uint len) override;
 
 	/**
 	 * Get a line
 	 */
-	virtual uint getLine(char *buf, uint len) override;
+	uint getLine(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode line
 	 */
-	virtual uint getLineUni(uint32 *ubuf, uint len) override;
+	uint getLineUni(uint32 *ubuf, uint len) override;
 };
 
 /**
- * Implements a file stream
+ * Base class for I/O streams
  */
-class FileStream : public Stream {
+class IOStream : public Stream {
 private:
-	Common::File _file;
-	Common::OutSaveFile *_outFile;
-	Common::InSaveFile *_inFile;
 	Common::SeekableReadStream *_inStream;
+	Common::WriteStream *_outStream;
 	uint _lastOp;                 ///< 0, filemode_Write, or filemode_Read
-	bool _textFile;
 private:
 	/**
 	 * Ensure the stream is ready for the given operation
@@ -474,16 +454,114 @@ private:
 	 * Get a UTF8 character
 	 */
 	int getCharUtf8();
+protected:
+	bool _textFile;
 public:
 	/**
-	 * Read a savegame header from a stream
+	 * Constructor
 	 */
-	static bool readSavegameHeader(Common::SeekableReadStream *stream, SavegameHeader &header);
+	IOStream(Streams *streams, bool readable, bool writable, uint rock, bool unicode) :
+		Stream(streams, readable, writable, rock, unicode) {}
+	IOStream(Streams *streams, uint rock = 0) : Stream(streams, false, false, rock, false),
+		_inStream(nullptr), _outStream(nullptr), _lastOp(0), _textFile(false) {}
+	IOStream(Streams *streams, Common::SeekableReadStream *inStream, uint rock = 0) :
+		Stream(streams, true, false, rock, false), _inStream(inStream), _outStream(nullptr), _lastOp(0), _textFile(false) {}
+	IOStream(Streams *streams, Common::WriteStream *outStream, uint rock = 0) :
+		Stream(streams, false, true, rock, false), _inStream(nullptr), _outStream(outStream), _lastOp(0), _textFile(false) {}
+	 
+	/**
+	 * Sets the stream to use
+	 */
+	void setStream(Common::SeekableReadStream *rs) {
+		_inStream = rs;
+		_outStream = nullptr;
+		_readable = true;
+		_writable = false;
+	}
 
 	/**
-	 * Write out a savegame header
+	 * Sets the stream to use
 	 */
-	static void writeSavegameHeader(Common::WriteStream *stream, const Common::String &saveName);
+	void setStream(Common::WriteStream *ws) {
+		_inStream = nullptr;
+		_outStream = ws;
+		_readable = false;
+		_writable = true;
+	}
+
+	/**
+	 * Write a character
+	 */
+	void putChar(unsigned char ch) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	void putCharUni(uint32 ch) override;
+
+	/**
+	 * Write a buffer
+	 */
+	void putBuffer(const char *buf, size_t len) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	void putBufferUni(const uint32 *buf, size_t len) override;
+
+	uint getPosition() const override;
+
+	void setPosition(int pos, uint seekMode) override;
+
+	/**
+	 * Get a character from the stream
+	 */
+	int getChar() override;
+
+	/**
+	 * Get a unicode character from the stream
+	 */
+	int getCharUni() override;
+
+	/**
+	 * Get a buffer
+	 */
+	uint getBuffer(char *buf, uint len) override;
+
+	/**
+	 * Get a unicode buffer
+	 */
+	uint getBufferUni(uint32 *buf, uint len) override;
+
+	/**
+	 * Get a line
+	 */
+	uint getLine(char *buf, uint len) override;
+
+	/**
+	 * Get a unicode line
+	 */
+	uint getLineUni(uint32 *ubuf, uint len) override;
+
+	/**
+	 * Cast a stream to a ScummVM write stream
+	 */
+	operator Common::WriteStream *() const override { return _outStream; }
+
+	/**
+	 * Cast a stream to a ScummVM read stream
+	 */
+	operator Common::SeekableReadStream *() const override { return _inStream; }
+};
+
+/**
+ * Implements a file stream
+ */
+class FileStream : public IOStream {
+private:
+	Common::File _file;
+	Common::InSaveFile *_inSave;
+	Common::OutSaveFile *_outSave;
 public:
 	/**
 	 * Constructor
@@ -493,71 +571,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~FileStream();
-
-	/**
-	 * Write a character
-	 */
-	virtual void putChar(unsigned char ch) override;
-
-	/**
-	 * Write a unicode character
-	 */
-	virtual void putCharUni(uint32 ch) override;
-
-	/**
-	 * Write a buffer
-	 */
-	virtual void putBuffer(const char *buf, size_t len) override;
-
-	/**
-	 * Write a unicode character
-	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
-
-	virtual uint getPosition() const override;
-
-	virtual void setPosition(int pos, uint seekMode) override;
-
-	/**
-	 * Get a character from the stream
-	 */
-	virtual int getChar() override;
-
-	/**
-	 * Get a unicode character from the stream
-	 */
-	virtual int getCharUni() override;
-
-	/**
-	 * Get a buffer
-	 */
-	virtual uint getBuffer(char *buf, uint len) override;
-
-	/**
-	 * Get a unicode buffer
-	 */
-	virtual uint getBufferUni(uint32 *buf, uint len) override;
-
-	/**
-	 * Get a line
-	 */
-	virtual uint getLine(char *buf, uint len) override;
-
-	/**
-	 * Get a unicode line
-	 */
-	virtual uint getLineUni(uint32 *ubuf, uint len) override;
-
-	/**
-	 * Cast a stream to a ScummVM write stream
-	 */
-	virtual operator Common::WriteStream *() const override { return _outFile; }
-
-	/**
-	 * Cast a stream to a ScummVM read stream
-	 */
-	virtual operator Common::SeekableReadStream *() const override { return _inStream; }
+	~FileStream() override;
 };
 
 /**
@@ -594,6 +608,16 @@ public:
 	 * Open a file stream
 	 */
 	FileStream *openFileStream(frefid_t fref, uint fmode, uint rock = 0, bool unicode = false);
+
+	/**
+	 * Open a ScummVM read stream
+	 */
+	IOStream *openStream(Common::SeekableReadStream *rs, uint rock = 0);
+
+	/**
+	 * Open a ScummVM write stream
+	 */
+	IOStream *openStream(Common::WriteStream *ws, uint rock = 0);
 
 	/**
 	 * Open a window stream

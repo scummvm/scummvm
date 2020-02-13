@@ -174,6 +174,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 	switch (table->transitionType) {
 	case 0:
 	case 5:
+	default:
 		break;
 	case 3:
 	case 4:
@@ -301,6 +302,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 
 	switch (table->transitionType) {
 	case 0:
+	default:
 		break;
 	case 8:
 		setHookIdForMusic(table->hookId);
@@ -432,6 +434,7 @@ void IMuseDigital::playFtMusic(const char *songName, int opcode, int volume) {
 	switch (opcode) {
 	case 0:
 	case 4:
+	default:
 		break;
 	case 1:
 	case 2:

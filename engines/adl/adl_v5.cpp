@@ -115,7 +115,7 @@ int AdlEngine_v5::o_setTextMode(ScriptEnv &e) {
 	switch (e.arg(1)) {
 	case 1:
 		if (_linesPrinted != 0) {
-			_display->printChar(APPLECHAR(' '));
+			_display->printChar(_display->asciiToNative(' '));
 			handleTextOverflow();
 			_display->moveCursorTo(Common::Point(0, 23));
 			_maxLines = 4;
@@ -123,7 +123,7 @@ int AdlEngine_v5::o_setTextMode(ScriptEnv &e) {
 		return 1;
 	case 2:
 		_textMode = true;
-		_display->setMode(DISPLAY_MODE_TEXT);
+		_display->setMode(Display::kModeText);
 		_display->home();
 		_maxLines = 24;
 		_linesPrinted = 0;

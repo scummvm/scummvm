@@ -56,23 +56,23 @@ private:
 
 public:
 	Scene701(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s) override;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void preActions();
-	virtual void actions();
-	virtual void step();
+	void setup() override;
+	void enter() override;
+	void preActions() override;
+	void actions() override;
+	void step() override;
 };
 
 class Scene702 : public Scene7xx {
 public:
 	Scene702(MADSEngine *vm) : Scene7xx(vm) {}
 
-	virtual void setup();
-	virtual void enter();
-	virtual void preActions();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void preActions() override;
+	void actions() override;
 };
 
 class Scene703 : public Scene7xx{
@@ -98,12 +98,12 @@ private:
 
 public:
 	Scene703(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s) override;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void step() override;
+	void actions() override;
 };
 
 class Scene704 : public Scene7xx{
@@ -123,12 +123,12 @@ private:
 
 public:
 	Scene704(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s) override;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void step() override;
+	void actions() override;
 };
 
 class Scene705 : public Scene7xx{
@@ -141,12 +141,12 @@ private:
 
 public:
 	Scene705(MADSEngine *vm) : Scene7xx(vm) {}
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s) override;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void step() override;
+	void actions() override;
 };
 
 class Scene706 : public Scene7xx{
@@ -163,43 +163,43 @@ private:
 
 public:
 	Scene706(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s) override;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void step() override;
+	void preActions() override;
+	void actions() override;
 };
 
 class Scene707 : public SceneTeleporter {
 public:
 	Scene707(MADSEngine *vm) : SceneTeleporter(vm) {}
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void step() override;
+	void actions() override;
 };
 
 class Scene710 : public Scene7xx {
 public:
 	Scene710(MADSEngine *vm) : Scene7xx(vm) {}
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void step() override;
+	void actions() override;
 };
 
 class Scene711 : public SceneTeleporter {
 public:
 	Scene711(MADSEngine *vm) : SceneTeleporter(vm) {}
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void step() override;
+	void actions() override;
 };
 
 class Scene751 : public Scene7xx{
@@ -208,13 +208,13 @@ private:
 
 public:
 	Scene751(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s) override;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void step() override;
+	void preActions() override;
+	void actions() override;
 };
 
 class Scene752 : public Scene7xx {
@@ -223,13 +223,13 @@ private:
 
 public:
 	Scene752(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s) override;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
+	void setup() override;
+	void enter() override;
+	void step() override;
+	void preActions() override;
+	void actions() override;
 };
 
 } // End of namespace Nebular

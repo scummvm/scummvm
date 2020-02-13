@@ -100,8 +100,8 @@ private:
 class TestbedOptionsDialog : public GUI::Dialog {
 public:
 	TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan);
-	~TestbedOptionsDialog();
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	~TestbedOptionsDialog() override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
 	GUI::ListWidget::ColorList _colors;
@@ -115,8 +115,8 @@ private:
 class TestbedInteractionDialog : public GUI::Dialog {
 public:
 	TestbedInteractionDialog(uint x, uint y, uint w, uint h) : GUI::Dialog(x, y, w, h), _xOffset(0), _yOffset(0) {}
-	~TestbedInteractionDialog() {}
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	~TestbedInteractionDialog() override {}
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);
 	void addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd);
 	void addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding = 8);

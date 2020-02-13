@@ -484,6 +484,8 @@ int MaitreDScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 	case MKTAG('T', 'R', 'A', '3'):
 		tag2 = MKTAG('T', 'R', 'A', 'V');
 		break;
+	default:
+		break;
 	}
 
 	return TTnpcScript::handleQuote(roomScript, sentence, tag1, tag2, remainder);
@@ -1061,6 +1063,9 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(260696));
 			applyFlag = true;
 		}
+		break;
+
+	default:
 		break;
 	}
 

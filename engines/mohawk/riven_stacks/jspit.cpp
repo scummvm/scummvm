@@ -552,7 +552,7 @@ void JSpit::sunnersPlayVideo(RivenVideo *video, uint32 destCardGlobalId, bool su
 	while (!video->endOfVideo() && !_vm->hasGameEnded()) {
 		_vm->doFrame();
 
-		if (mouseIsDown() || keyGetAction() == kKeyActionMoveForward) {
+		if (mouseIsDown() || getAction() == kRivenActionMoveForward) {
 			video->stop();
 
 			if (sunnersShouldFlee) {

@@ -63,16 +63,16 @@ class PCSound : public Sound {
 public:
 
 	PCSound(Audio::Mixer *mixer, CineEngine *vm);
-	virtual ~PCSound();
+	~PCSound() override;
 
-	virtual void loadMusic(const char *name);
-	virtual void playMusic();
-	virtual void stopMusic();
-	virtual void fadeOutMusic();
+	void loadMusic(const char *name) override;
+	void playMusic() override;
+	void stopMusic() override;
+	void fadeOutMusic() override;
 
-	virtual void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat);
-	virtual void stopSound(int channel);
-	virtual void setBgMusic(int num);
+	void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) override;
+	void stopSound(int channel) override;
+	void setBgMusic(int num) override;
 
 protected:
 
@@ -86,16 +86,16 @@ class PaulaSound : public Sound {
 public:
 
 	PaulaSound(Audio::Mixer *mixer, CineEngine *vm);
-	virtual ~PaulaSound();
+	~PaulaSound() override;
 
-	virtual void loadMusic(const char *name);
-	virtual void playMusic();
-	virtual void stopMusic();
-	virtual void fadeOutMusic();
+	void loadMusic(const char *name) override;
+	void playMusic() override;
+	void stopMusic() override;
+	void fadeOutMusic() override;
 
-	virtual void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat);
-	virtual void stopSound(int channel);
-	virtual void setBgMusic(int num);
+	void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) override;
+	void stopSound(int channel) override;
+	void setBgMusic(int num) override;
 
 	enum {
 		PAULA_FREQ = 3579545,

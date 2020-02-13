@@ -107,6 +107,10 @@ void SetEffects::setFadeDensity(float density) {
 	_fadeDensity = density;
 }
 
+/**
+* Set fog color for fog effect named fogName.
+* RGB arguments are percentages of red, green and blue
+*/
 void SetEffects::setFogColor(const Common::String &fogName, float r, float g, float b) {
 	Fog *fog = findFog(fogName);
 	if (fog == nullptr) {

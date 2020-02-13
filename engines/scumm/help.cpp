@@ -250,6 +250,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("i", _("Inventory"));
 			ADD_BIND("u", _("Use"));
 			break;
+		default:
+			break;
 		}
 		break;
 	case 4:
@@ -320,6 +322,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_TEXT(_("7, 4, and 1 are switched with"));
 			ADD_TEXT(_("9, 6, and 3, respectively."));
 			break;
+		default:
+			break;
 		}
 		break;
 	case 6:
@@ -336,7 +340,11 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("6", _("Fly to right"));
 			ADD_BIND("3", _("Fly to lower right"));
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 	while (i < HELP_NUM_LINES) {

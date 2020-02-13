@@ -3,6 +3,10 @@ set x = 1
 if x = 5 then exit
 else put 10.0
 
+if x = 6 then put 2
+
+set y = 4
+
 repeat with x = 1 to 6
 	if x = 3 then put 30
 	else if x = 4 then put 40
@@ -25,3 +29,102 @@ repeat with x = 1 to 6
 	if x = 4 then put 40
 	else put 50
 end repeat
+
+    if the keyCode = 36 then                    --  return key goes to first menu
+        go to frame 1
+    else if the keyCode = 123 then           --  left arrow goes to previous menu
+        dontPassEvent
+        go to marker(-1)
+    else if the keyCode = 124 then           --  right arrow goes to next menu
+        dontPassEvent
+        go to marker(1)
+    else if the keyCode = 125 then           --  down arrow goes to last (bottom) menu
+        dontPassEvent
+        go to frame "credits"
+    else if the keyCode = 126 then           --  up arrow goes to first (top) menu
+        dontPassEvent
+        go to frame 1
+    end if
+
+if abs(y) = x and abs(x) = y then
+  put TRUE
+else
+  put FALSE
+end if
+
+if abs(y) = x and abs(x) = y then put 5
+if abs(y) = x and abs(x) = y then put 5 else put 6
+
+if the selection = the text of cast A31 then
+    go to frame "sEnd"
+    exit
+else if whichTry = 1 then go to frame "sTell"
+else if whichTry = 2 then go to frame "sShow"
+else if whichTry = 3 then go to frame "sDo"
+
+if the selection = the text of cast A31 then
+    go to frame "sEnd"
+    exit
+else if whichTry = 1 then
+	go to frame "sTell"
+else if whichTry = 2 then
+	put 5
+	go to frame "sShow"
+else if whichTry = 3 then go to frame "sDo"
+else put 6
+
+if the selection = the text of cast A31 then go to frame "sEnd" else put 7
+
+if the selection = the text of cast A31 then go to frame "sEnd"
+else if whichTry = 1 then
+	go to frame "sTell"
+else if whichTry = 2 then
+	put 5
+	go to frame "sShow"
+else if whichTry = 3 then go to frame "sDo"
+else
+	put 6
+	put 7
+end if
+
+if the selection = the text of cast A31 then go to frame "sEnd"
+else if whichTry = 1 then
+	go to frame "sTell"
+else if whichTry = 2 then
+	put 5
+	go to frame "sShow"
+else if whichTry = 3 then go to frame "sDo" else put 7 end if
+
+if rollOver(2) then
+  put "The cursor is INSIDE the square." into field "Cursor Status"
+else
+  put "The cursor is OUTSIDE the square." into field "Cursor Status"
+end if
+
+if the selection = the text of cast A31 then
+    if whichTry = 3 then go to frame "sDo" end if
+else if whichTry = 1 then
+	if whichTry = 3 then go to frame "sDo" else
+		put 5
+	end      if
+else if whichTry = 2 then
+	if whichTry = 3 then go to frame "sDo" else
+		if the selection = the text of cast A21 then
+		    if whichTry = 3 then go to frame "Foo" end if
+		else if abra = 5 then put 6 else
+			put 7
+			if abra = 7 then put 5
+		end if
+	end if
+else if whichTry = 3 then go to frame "sDo"
+else put 6
+
+if the selection = the text of cast A31 then go to frame "sEnd" else put 7 end if
+
+when keyDown then if the key = RETURN then checkField
+when keyDown then if the key = QUOTE then checkField else put "bar"
+
+macro WindowHorzP X
+    set X1 = constrainH( 14, X )
+    if X1 = X then return( TRUE )
+    else return( FALSE )

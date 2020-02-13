@@ -39,30 +39,30 @@ protected:
 	/**
 	 * Show the starting sequence/intro
 	 */
-	virtual void showStartup();
+	void showStartup() override;
 
 	/**
 	 * Show the startup menu
 	 */
-	virtual void showMainMenu();
+	void showMainMenu() override;
 
 	/**
 	 * Death cutscene
 	 */
-	virtual void death();
+	void death() override;
 public:
 	WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
-	virtual ~WorldOfXeenEngine() {}
+	~WorldOfXeenEngine() override {}
 
 	/**
 	 * Show a cutscene
 	 */
-	virtual void showCutscene(const Common::String &name, int status, uint score);
+	void showCutscene(const Common::String &name, int status, uint score) override;
 
 	/**
 	 * Dream sequence
 	 */
-	virtual void dream();
+	void dream() override;
 };
 
 #define WOX_VM (*(::Xeen::WorldOfXeen::WorldOfXeenEngine *)g_vm)

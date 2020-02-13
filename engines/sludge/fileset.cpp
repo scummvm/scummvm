@@ -182,6 +182,9 @@ Common::String ResourceManager::convertString(const Common::String &s) {
 				// falls through
 			case 1:
 				r = wc + r;
+				break;
+			default:
+				break;
 		}
 		res += r;
 	}
@@ -224,8 +227,7 @@ void ResourceManager::readResourceNames(Common::SeekableReadStream *readStream) 
 	_allResourceNames.reserve(numResourceNames);
 
 	for (int fn = 0; fn < numResourceNames; fn++) {
-		_allResourceNames[fn].clear();
-		_allResourceNames[fn] = readString(readStream);
+		_allResourceNames.push_back(readString(readStream));
 		debugC(2, kSludgeDebugDataLoad, "Resource %i: %s", fn, _allResourceNames[fn].c_str());
 	}
 }

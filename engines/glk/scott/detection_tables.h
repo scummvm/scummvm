@@ -27,15 +27,6 @@
 namespace Glk {
 namespace Scott {
 
-/**
- * Game descriptor for Scott Adams games
- */
-struct ScottGame {
-	const char *_md5;
-	const char *_gameId;
-	int32 _filesize;
-};
-
 const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	// Scott Adams games
 	{ "adventureland",     "Adventureland" },
@@ -50,8 +41,8 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "savageisland1",     "Savage Island, Part 1" },
 	{ "savageisland2",     "Savage Island, Part 2" },
 	{ "goldenvoyage",      "The Golden Voyage" },
-	{ "adventure13",       "Adventure 13" },
-	{ "adventure14",       "Adventure 14" },
+	{ "claymorguesorcerer","Sorcerer of Claymorgue Castle" },
+	{ "pirateisle",        "Return to Pirate Isle" },
 	{ "buckaroobanzai",    "Buckaroo Banzai" },
 	{ "marveladventure",   "Marvel Adventure #1" },
 	{ "scottsampler",      "Adventure International's Mini-Adventure Sampler" },
@@ -83,79 +74,79 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ nullptr, nullptr }
 };
 
-const ScottGame SCOTT_GAMES[] = {
+const GlkDetectionEntry SCOTT_GAMES[] = {
 	// PC game versions
-	{ "7c6f495d757a54e73d259efc718d8024", "adventureland",     15896 },
-	{ "ea535fa7684508410151b4561de1f323", "pirateadventure",   16325 },
-	{ "379c77a9a483886366b3b5c425e56410", "missionimpossible", 15275 },
-	{ "a530a6857d1092eaa177eee575c94c71", "voodoocastle",      15852 },
-	{ "5ebb4ade985670bb2eac54f8fa202214", "thecount",          17476 },
-	{ "c57bb6df04dc77a2b232bc5bcab6e417", "strangeodyssey",    17489 },
-	{ "ce2931ac3d5cbc270a5cb7be9e614f6e", "mysteryfunhouse",   17165 },
-	{ "4e6127fad6b5d75eccd3f3b101f8c9c8", "pyramidofdoom",     17673 },
-	{ "2c08327ab06d5490bd9e367ddaeca627", "ghosttown",         17831 },
-	{ "8feb77f11d32e9567ce2fc7d435eaf44", "savageisland1",     19533 },
-	{ "20c40a349f7a214ac515fb1d63c30a87", "savageisland2",     18367 },
-	{ "e2a8f956ab215012d1495550c4c11ee8", "goldenvoyage",      18513 },
-	{ "f986d7e1ee074f65b6c1d00461c9b3c3", "adventure13",       19232 },
-	{ "6d98f422cc986d959a3c74351785aea3", "adventure14",       19013 },
-	{ "aadcc04e6b37eb9d30a58b5bc775842e", "marveladventure",   18876 },
-	{ "d569a769f304dc02b3062d97458ddd01", "scottsampler",      13854 },
+	DT_ENTRY0("adventureland",     "7c6f495d757a54e73d259efc718d8024", 15896),
+	DT_ENTRY0("pirateadventure",   "ea535fa7684508410151b4561de1f323", 16325),
+	DT_ENTRY0("missionimpossible", "379c77a9a483886366b3b5c425e56410", 15275),
+	DT_ENTRY0("voodoocastle",      "a530a6857d1092eaa177eee575c94c71", 15852),
+	DT_ENTRY0("thecount",          "5ebb4ade985670bb2eac54f8fa202214", 17476),
+	DT_ENTRY0("strangeodyssey",    "c57bb6df04dc77a2b232bc5bcab6e417", 17489),
+	DT_ENTRY0("mysteryfunhouse",   "ce2931ac3d5cbc270a5cb7be9e614f6e", 17165),
+	DT_ENTRY0("pyramidofdoom",     "4e6127fad6b5d75eccd3f3b101f8c9c8", 17673),
+	DT_ENTRY0("ghosttown",         "2c08327ab06d5490bd9e367ddaeca627", 17831),
+	DT_ENTRY0("savageisland1",     "8feb77f11d32e9567ce2fc7d435eaf44", 19533),
+	DT_ENTRY0("savageisland2",     "20c40a349f7a214ac515fb1d63c30a87", 18367),
+	DT_ENTRY0("goldenvoyage",      "e2a8f956ab215012d1495550c4c11ee8", 18513),
+	DT_ENTRY0("claymorguesorcerer","f986d7e1ee074f65b6c1d00461c9b3c3", 19232),
+	DT_ENTRY0("pirateisle",        "6d98f422cc986d959a3c74351785aea3", 19013),
+	DT_ENTRY0("marveladventure",   "aadcc04e6b37eb9d30a58b5bc775842e", 18876),
+	DT_ENTRY0("scottsampler",      "d569a769f304dc02b3062d97458ddd01", 13854),
 
 	// PDA game versions
-	{ "ae541fc1085da2f7d561b72ed20a6bc1", "adventureland",     18003 },
-	{ "cbd47ab4fcfe00231ffd71d52378d410", "pirateadventure",   18482 },
-	{ "9251ab2c64e63559d8a6e9e6246760a5", "missionimpossible", 17227 },
-	{ "be849c5747c7fc3b201984afb4403b8e", "voodoocastle",      18140 },
-	{ "85b75b6079b5ee572b5259b29a0e5d21", "thecount",          19999 },
-	{ "c423cae841ac1927b5b2e503607b21bc", "strangeodyssey",    20115 },
-	{ "326b98b991d401605074e64d474ce566", "mysteryfunhouse",   19700 },
-	{ "8ef9010399f055da9adb15ce7745a11c", "pyramidofdoom",     20320 },
-	{ "fcdcca8b2acf76ba2d0006cefa3630a1", "ghosttown",         20687 },
-	{ "c8aaa80f07c40fa8e4b17432644919dc", "savageisland1",     22669 },
-	{ "2add0f28d9b236c866890cdf8d86ee60", "savageisland2",     21169 },
-	{ "675126bd0477e8ed9230ad3db5afc45f", "goldenvoyage",      21401 },
-	{ "0ef0def798d895ed766041fa99dd28a0", "adventure13",       22346 },
-	{ "0bf1bcc649422798332a38c88588fdff", "adventure14",       22087 },
-	{ "a0a5423967287dae9cbeb9abe8324479", "buckaroobanzai",    21038 },
+	DT_ENTRY0("adventureland",     "ae541fc1085da2f7d561b72ed20a6bc1", 18003),
+	DT_ENTRY0("pirateadventure",   "cbd47ab4fcfe00231ffd71d52378d410", 18482),
+	DT_ENTRY0("missionimpossible", "9251ab2c64e63559d8a6e9e6246760a5", 17227),
+	DT_ENTRY0("voodoocastle",      "be849c5747c7fc3b201984afb4403b8e", 18140),
+	DT_ENTRY0("thecount",          "85b75b6079b5ee572b5259b29a0e5d21", 19999),
+	DT_ENTRY0("strangeodyssey",    "c423cae841ac1927b5b2e503607b21bc", 20115),
+	DT_ENTRY0("mysteryfunhouse",   "326b98b991d401605074e64d474ce566", 19700),
+	DT_ENTRY0("pyramidofdoom",     "8ef9010399f055da9adb15ce7745a11c", 20320),
+	DT_ENTRY0("ghosttown",         "fcdcca8b2acf76ba2d0006cefa3630a1", 20687),
+	DT_ENTRY0("savageisland1",     "c8aaa80f07c40fa8e4b17432644919dc", 22669),
+	DT_ENTRY0("savageisland2",     "2add0f28d9b236c866890cdf8d86ee60", 21169),
+	DT_ENTRY0("goldenvoyage",      "675126bd0477e8ed9230ad3db5afc45f", 21401),
+	DT_ENTRY0("claymorguesorcerer","0ef0def798d895ed766041fa99dd28a0", 22346),
+	DT_ENTRY0("pirateisle",        "0bf1bcc649422798332a38c88588fdff", 22087),
+	DT_ENTRY0("buckaroobanzai",    "a0a5423967287dae9cbeb9abe8324479", 21038),
 
 	// 11 Mysterious Adventures
-	{ "2ebf7b1dd515aff34b99b40f27af00e3", "goldenbaton", 13373 },
-	{ "a10cde2063bb56694000013b32dc0798", "timemachine", 13742 },
-	{ "6f7040fe091eeb9ebdc2fd7533b94ceb", "arrowofdeath1", 13412 },
-	{ "c5758034b83b06258e46091a80abebde", "arrowofdeath2", 15554 },
-	{ "7597704b423c1ca2bea3a48263b5f4dc", "pulsar7", 17777 },
-	{ "93a7947e2edb7c45036446168b427546", "circus", 13621 },
-	{ "c8f423a79ad0e508f43ba4ce91f1e573", "feasibility", 13441 },
-	{ "645c089d6d66324472d939993793eb57", "akyrz", 16803 },
-	{ "2f5bb15b461fbdc000243acabd324c67", "perseus", 15080 },
-	{ "3bb85fd505b4d42bd1767c1a76347e2f", "10indians", 14215 },
-	{ "af134c32cc0d50329d6e7335639ded88", "waxworks11", 16068 },
-	{ "028303fd062c39b59b28982cde75f085", "goldenbaton", 53374 },
-	{ "b2ff405412d92b06373d9a5efbb048d4", "timemachine", 54062 },
-	{ "f11f85802eff8aed9e212aef7f26ede1", "arrowofdeath1", 68150 },
-	{ "8f2609b1270248c93cdf254435f9d410", "arrowofdeath2", 77544 },
-	{ "72e14dbfca7ced5c0aadf019b47b4024", "pulsar7", 55516 },
-	{ "64d44e66c4f5353150f8fbaceaa99800", "circus", 48624 },
-	{ "2d717aa4f0eba77b77e259f81f92fc37", "feasibility", 78456 },
-	{ "3467e09eb247c474ae7e8a8d503968d0", "akyrz", 65008 },
-	{ "4d8389c0ea3425bd4d92492538f63b19", "perseus", 56914 },
-	{ "72e91da7590138b78d370a3cb1448f3c", "10indians", 64660 },
-	{ "4d4ee8aa1f24e1745ab1aa017590dcff", "waxworks11", 54556 },
+	DT_ENTRY0("goldenbaton",   "2ebf7b1dd515aff34b99b40f27af00e3", 13373),
+	DT_ENTRY0("timemachine",   "a10cde2063bb56694000013b32dc0798", 13742),
+	DT_ENTRY0("arrowofdeath1", "6f7040fe091eeb9ebdc2fd7533b94ceb", 13412),
+	DT_ENTRY0("arrowofdeath2", "c5758034b83b06258e46091a80abebde", 15554),
+	DT_ENTRY0("pulsar7",       "7597704b423c1ca2bea3a48263b5f4dc", 17777),
+	DT_ENTRY0("circus",        "93a7947e2edb7c45036446168b427546", 13621),
+	DT_ENTRY0("feasibility",   "c8f423a79ad0e508f43ba4ce91f1e573", 13441),
+	DT_ENTRY0("akyrz",         "645c089d6d66324472d939993793eb57", 16803),
+	DT_ENTRY0("perseus",       "2f5bb15b461fbdc000243acabd324c67", 15080),
+	DT_ENTRY0("10indians",     "3bb85fd505b4d42bd1767c1a76347e2f", 14215),
+	DT_ENTRY0("waxworks11",    "af134c32cc0d50329d6e7335639ded88", 16068),
+	DT_ENTRY0("goldenbaton",   "028303fd062c39b59b28982cde75f085", 53374),
+	DT_ENTRY0("timemachine",   "b2ff405412d92b06373d9a5efbb048d4", 54062),
+	DT_ENTRY0("arrowofdeath1", "f11f85802eff8aed9e212aef7f26ede1", 68150),
+	DT_ENTRY0("arrowofdeath2", "8f2609b1270248c93cdf254435f9d410", 77544),
+	DT_ENTRY0("pulsar7",       "72e14dbfca7ced5c0aadf019b47b4024", 55516),
+	DT_ENTRY0("circus",        "64d44e66c4f5353150f8fbaceaa99800", 48624),
+	DT_ENTRY0("feasibility",   "2d717aa4f0eba77b77e259f81f92fc37", 78456),
+	DT_ENTRY0("akyrz",         "3467e09eb247c474ae7e8a8d503968d0", 65008),
+	DT_ENTRY0("perseus",       "4d8389c0ea3425bd4d92492538f63b19", 56914),
+	DT_ENTRY0("10indians",     "72e91da7590138b78d370a3cb1448f3c", 64660),
+	DT_ENTRY0("waxworks11",    "4d4ee8aa1f24e1745ab1aa017590dcff", 54556),
 
 	// Other games
-	{ "c43e19228bae08eab74bc080e17bbe16", "desert", 12287 },
-	{ "5c59396a2db040148a5d86beb37b2bb9", "jamesbondadv", 12405 },
-	{ "0072d8afcd30aa1577350dcfad269e47", "burglarsadv", 11541 },
-	{ "d57705f8f17f0b6044a575accf9cbfd1", "underseaconquest", 5616 },
-	{ "b980c44e8a49aa9d71e92f6b6bf1d136", "gammaworld", 11531 },
-	{ "a1ac54630a0583c19269901ec10cd0b1", "marooned", 12576 },
-	{ "0000d9da5a13701601fb3e7399daa128", "minersadv", 11898 },
-	{ "d97b5cb5ed66eb276ef9f1c1bae0b8dd", "romulanadv", 13959 },
-	{ "effb411e74dfe3a8d69b57b9bc3a2cef", "topsecretadv", 15575 },
+	DT_ENTRY0("desert",           "c43e19228bae08eab74bc080e17bbe16", 12287),
+	DT_ENTRY0("jamesbondadv",     "5c59396a2db040148a5d86beb37b2bb9", 12405),
+	DT_ENTRY0("burglarsadv",      "0072d8afcd30aa1577350dcfad269e47", 11541),
+	DT_ENTRY0("underseaconquest", "d57705f8f17f0b6044a575accf9cbfd1",  5616),
+	DT_ENTRY0("gammaworld",       "b980c44e8a49aa9d71e92f6b6bf1d136", 11531),
+	DT_ENTRY0("marooned",         "a1ac54630a0583c19269901ec10cd0b1", 12576),
+	DT_ENTRY0("minersadv",        "0000d9da5a13701601fb3e7399daa128", 11898),
+	DT_ENTRY0("romulanadv",       "d97b5cb5ed66eb276ef9f1c1bae0b8dd", 13959),
+	DT_ENTRY0("topsecretadv",     "effb411e74dfe3a8d69b57b9bc3a2cef", 15575),
 
-	{ nullptr, nullptr, 0 }
+	DT_END_MARKER
 };
 
-} // End of namespace Frotz
+} // End of namespace Scott
 } // End of namespace Glk

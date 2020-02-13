@@ -37,7 +37,7 @@ private:
 	int _select, _oldSelect;
 public:
 	WidgetQuit(SherlockEngine *vm);
-	virtual ~WidgetQuit() {}
+	~WidgetQuit() override {}
 
 	/**
 	 * Prompt the user whether to quit
@@ -47,7 +47,7 @@ public:
 	/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 } // End of namespace Tattoo

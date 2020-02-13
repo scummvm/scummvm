@@ -82,8 +82,17 @@ struct TextListEntry {
 	FontEffectFlags flags;
 	KnownFont font;
 	const char *text;
+
 	TextListEntry() {
-		memset(this, 0, sizeof(*this));
+		display = false;
+		useRect = false;
+		// point initialized by Common::Point constructor
+		// rect initialized by Common::Rect constructor
+		knownColor = kKnownColorTransparent;
+		effectKnownColor = kKnownColorTransparent;
+		flags = kFontNormal;
+		font = kKnownFontSmall;
+		text = nullptr;
 	}
 
 	bool operator==(const TextListEntry &e) const {

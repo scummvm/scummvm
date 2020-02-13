@@ -238,7 +238,7 @@ void EoBCoreEngine::removeCharacterEffect(int spell, int charIndex, int showWarn
 
 	if (showWarning) {
 		int od = _screen->curDimIndex();
-		Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 		_screen->setScreenDim(7);
 		printWarning(Common::String::format(_magicStrings3[_flags.gameID == GI_EOB1 ? 3 : 2], c->name, s->name).c_str());
 		_screen->setScreenDim(od);
@@ -322,6 +322,8 @@ void EoBCoreEngine::startSpell(int spell) {
 	if ((s->flags & 0x30) && (s->effectFlags & c->effectFlags)) {
 		if (_flags.gameID == GI_EOB2)
 			printWarning(Common::String::format(_magicStrings7[0], c->name, s->name).c_str());
+		else if (spell == 22 && _magicStrings9 && _characters[_activeSpellCharId].effectsRemainder[1])
+			_txt->printMessage(_magicStrings9[0], -1, _characters[_activeSpellCharId].name);
 	} else if ((s->flags & 0x50) && (s->effectFlags & _partyEffectFlags)) {
 		if (_flags.gameID == GI_EOB1 && s->effectFlags == 0x400)
 			// EOB 1 only warns in case of a bless spell
@@ -1008,10 +1010,7 @@ bool EoBCoreEngine::spellCallback_end_iceStorm(void *obj) {
 }
 
 void EoBCoreEngine::spellCallback_start_stoneSkin() {
-	if (_magicStrings9[0] && _characters[_activeSpellCharId].effectsRemainder[1])
-		_txt->printMessage(_magicStrings9[0], -1, _characters[_activeSpellCharId].name);
-	else
-		_characters[_activeSpellCharId].effectsRemainder[1] = (getMageLevel(_openBookChar) >> 1) + rollDice(1, 4);
+	_characters[_activeSpellCharId].effectsRemainder[1] = (getMageLevel(_openBookChar) >> 1) + rollDice(1, 4);
 }
 
 void EoBCoreEngine::spellCallback_start_removeCurse() {

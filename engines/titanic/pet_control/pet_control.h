@@ -130,22 +130,22 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Allows the item to draw itself
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager) override;
 
 	/**
 	 * Gets the bounds occupied by the item
 	 */
-	virtual Rect getBounds() const;
+	Rect getBounds() const override;
 
 	/**
 	 * Resets the PET, including all the sections within it

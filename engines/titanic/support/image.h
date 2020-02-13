@@ -33,7 +33,7 @@ class Image : public Graphics::ManagedSurface {
 private:
 	void loadBitmap(Common::SeekableReadStream &s);
 public:
-	virtual ~Image() {}
+	~Image() override {}
 
 	void load(const CString &resName);
 };

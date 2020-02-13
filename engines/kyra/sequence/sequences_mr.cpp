@@ -80,6 +80,7 @@ void KyraEngine_MR::showBadConscience() {
 			_mainCharacter.facing = 3;
 		else
 			_mainCharacter.facing = 5;
+		// _mainCharacter.facing can not be 0xFF here, so this is safe.
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 	}
 

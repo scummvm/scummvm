@@ -69,25 +69,19 @@ class MusicPlayer;
 class MadeConsole;
 
 class MadeEngine : public ::Engine {
-	int _gameId;
-
 protected:
 
 	// Engine APIs
-	virtual Common::Error run();
+	Common::Error run() override;
 
 public:
 	MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc);
-	virtual ~MadeEngine();
+	~MadeEngine() override;
 
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void syncSoundSettings();
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
 
-	virtual GUI::Debugger *getDebugger();
-
-	int getGameId() {
-		return _gameId;
-	}
+	GUI::Debugger *getDebugger() override;
 
 	Common::RandomSource *_rnd;
 	const MadeGameDescription *_gameDescription;

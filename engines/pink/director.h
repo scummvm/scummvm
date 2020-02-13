@@ -30,10 +30,6 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/screen.h"
 
-namespace Common {
-	class PEResources;
-}
-
 namespace Graphics {
 	class MacMenu;
 }
@@ -48,6 +44,7 @@ class ActionText;
 class Director {
 public:
 	Director();
+	~Director();
 
 	void update();
 	bool processEvent(Common::Event &event);
@@ -75,16 +72,17 @@ public:
 
 	Actor *getActorByPoint(const Common::Point point);
 
-	Graphics::MacWindowManager &getWndManager() { return _wm; };
+	Graphics::MacWindowManager &getWndManager() { return *_wm; };
+
+	void draw(bool blit = true);
 
 private:
-	void draw();
 	void mergeDirtyRects();
 	void drawRect(const Common::Rect &rect);
 
 private:
 	Graphics::Screen _surface;
-	Graphics::MacWindowManager _wm;
+	Graphics::MacWindowManager *_wm;
 	Common::Array<Common::Rect> _dirtyRects;
 	Common::Array<ActionCEL *> _sprites;
 	Common::Array<ActionCEL *> _savedSprites;

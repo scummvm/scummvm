@@ -205,9 +205,9 @@ static const ResString string_map_table_v345[] = {
 class HelpDialog : public ScummDialog {
 public:
 	HelpDialog(const GameSettings &game);
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
 protected:
 	typedef Common::String String;
@@ -286,6 +286,9 @@ HelpDialog::HelpDialog(const GameSettings &game)
 	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", _("~N~ext"), 0, kNextCmd);
 	new GUI::ButtonWidget(this, "ScummHelp.Close", _("~C~lose"), 0, GUI::kCloseCmd);
 	_prevButton->clearFlags(WIDGET_ENABLED);
+
+	GUI::ContainerWidget *placeHolder = new GUI::ContainerWidget(this, "ScummHelp.HelpText");
+	placeHolder->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
 
 	_numLines = HELP_NUM_LINES;
 

@@ -55,6 +55,8 @@ void Module2100::createScene(int sceneNum, int which) {
 		_vm->_soundMan->startMusic(0x11482B95, 0, 1);
 		_childObject = new Scene2101(_vm, this, which);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module2100::updateScene);
 	_childObject->handleUpdate();
@@ -67,8 +69,11 @@ void Module2100::updateScene() {
 			if (_moduleResult == 1) {
 				setGlobalVar(V_DOOR_PASSED, 1);
 				leaveModule(0);
-			} else
+			} else {
 				leaveModule(1);
+			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -209,6 +214,8 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 			} else if (_klaymen->getX() < 228)
 				setMessageList2(0x004B8F00);
 		}
+		break;
+	default:
 		break;
 	}
 	return 0;

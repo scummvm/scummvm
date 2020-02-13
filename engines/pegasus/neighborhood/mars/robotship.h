@@ -36,7 +36,7 @@ static const CoordType kShuttleMovieHeight = 42;
 class RobotShip : IdlerTimeBase {
 public:
 	RobotShip();
-	virtual ~RobotShip();
+	~RobotShip() override;
 
 	void initRobotShip();
 	void cleanUpRobotShip();
@@ -65,7 +65,7 @@ protected:
 	void newDestination();
 	void moveRobotTo(CoordType, CoordType);
 	void timeToDropJunk();
-	virtual void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 	void makeVelocityVector(CoordType, CoordType, CoordType, CoordType, Common::Point &);
 
 	GlowingMovie _spritesMovie;

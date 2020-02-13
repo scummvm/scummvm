@@ -54,12 +54,12 @@ void DropboxUploadRequest::start() {
 		_workingRequest->finish();
 	if (!_contentsStream) {
 		warning("DropboxUploadRequest: cannot start because stream is invalid");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "DropboxUploadRequest::start: cannot start because stream is invalid", -1));
 		return;
 	}
 	if (!_contentsStream->seek(0)) {
 		warning("DropboxUploadRequest: cannot restart because stream couldn't seek(0)");
-		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		finishError(Networking::ErrorResponse(this, false, true, "DropboxUploadRequest::start: cannot restart because stream couldn't seek(0)", -1));
 		return;
 	}
 	_ignoreCallback = false;

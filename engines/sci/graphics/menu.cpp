@@ -138,6 +138,8 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 					functionPos = curPos;
 				}
 				break;
+			default:
+				break;
 			}
 			curPos++;
 		}
@@ -205,6 +207,9 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 				// Some multilingual sci01 games use e.g. '--!%G--!' (which doesn't really make sense)
 				separatorCount += 2;
 				curPos++;
+				break;
+			default:
+				break;
 			}
 			curPos++;
 		}
@@ -464,7 +469,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		while (itemIterator != itemEnd) {
 			itemEntry = *itemIterator;
 
-			if (!itemEntry->saidVmPtr.isNull()) {
+			if (!itemEntry->saidVmPtr.isNull() && itemEntry->enabled) {
 				byte *saidSpec = _segMan->derefBulkPtr(itemEntry->saidVmPtr, 0);
 
 				if (!saidSpec) {
@@ -492,6 +497,9 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 			forceClaimed = true;
 		}
 		} break;
+
+	default:
+		break;
 	}
 
 	if (!_menuSaveHandle.isNull()) {
@@ -790,6 +798,8 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 				case kSciKeyDown:
 					newItemId++;
 					break;
+				default:
+					break;
 				}
 				if ((newMenuId != curItemEntry->menuId) || (newItemId != curItemEntry->id)) {
 					// Selection changed, fix up new selection if required
@@ -801,6 +811,9 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 					case kSciKeyLeft:
 					case kSciKeyRight:
 						curEvent.character = kSciKeyDown;
+						break;
+					default:
+						break;
 					}
 				}
 			} while (newItemEntry->separatorLine);

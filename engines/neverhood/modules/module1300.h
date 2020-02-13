@@ -34,7 +34,7 @@ class SmackerPlayer;
 class Module1300 : public Module {
 public:
 	Module1300(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Module1300();
+	~Module1300() override;
 protected:
 	int _sceneNum;
 	uint32 _musicFileHash;
@@ -90,7 +90,7 @@ protected:
 class Scene1306 : public Scene {
 public:
 	Scene1306(NeverhoodEngine *vm, Module *parentModule, int which);
-	~Scene1306();
+	~Scene1306() override;
 protected:
 	Sprite *_ssButton;
 	Sprite *_asTape;

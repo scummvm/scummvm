@@ -118,7 +118,7 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 
 	if (_saveEncoding) {
 		checker = readStringEncoded(fp);
-		if (checker == UTF8_CHECKER) {
+		if (checker != UTF8_CHECKER) {
 			delete fp;
 			return fatal(LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
 		}

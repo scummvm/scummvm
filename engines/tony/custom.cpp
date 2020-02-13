@@ -1086,6 +1086,8 @@ void tonyMacbeth(CORO_PARAM, uint32 nPos, uint32, uint32, uint32) {
 	case 9:
 		GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_MACBETH9;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2219,7 +2221,7 @@ void doCredits(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint32, uint32) {
 	int i;
 	uint32 startTime;
 
-	~CoroContextTag() {
+	~CoroContextTag() override {
 		delete msg;
 		delete[] text;
 	}

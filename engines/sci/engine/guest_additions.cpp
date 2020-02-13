@@ -114,6 +114,9 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 			return true;
 		} else if (gameId == GID_GK2 && objName == "soundSlider") {
 			return true;
+		} else if (gameId == GID_HOYLE5 && objName == "volumeSliderF") {
+			// Hoyle5 has a second control panel with a different slider name
+			return true;
 		} else if (gameId == GID_KQ7 && (objName == "volumeUp" ||
 										 objName == "volumeDown")) {
 			return true;
@@ -165,7 +168,7 @@ void GuestAdditions::writeVarHook(const int type, const int index, const reg_t v
 				syncGK1StartupVolumeFromScummVM(index, value);
 			} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5MusicVolume) {
 				syncHoyle5VolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kHoyle5VolumeMax / Audio::Mixer::kMaxMixerVolume);
-			} else if (g_sci->getGameId() == GID_HOYLE5 && index == kkGlobalVarHoyle5ResponseTime && value.getOffset() == 0) {
+			} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5ResponseTime && value.getOffset() == 0) {
 				// WORKAROUND: Global 899 contains the response time value,
 				// which may have values between 1 and 15. There is a script
 				// bug when loading values from game.opt, where this variable
@@ -524,6 +527,10 @@ reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) co
 		return promptSaveRestoreRama(s, argc, argv);
 	}
 
+	if (g_sci->getGameId() == GID_HOYLE5) {
+		return promptSaveRestoreHoyle5(s, argc, argv);
+	}
+
 	return promptSaveRestoreDefault(s, argc, argv);
 }
 
@@ -698,16 +705,25 @@ int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, cons
 		description.fromString(descriptionString);
 	}
 
+	// The autosave slot in ScummVM takes up slot 0, but in SCI the first
+	// non-autosave save game number needs to be 0, so reduce the save
+	// number here to match what would come from the normal SCI save/restore
+	// dialog. Wrap slot 0 around to kMaxShiftedSaveId so that it remains
+	// a legal SCI value.
 	if (saveNo > 0) {
-		// The autosave slot in ScummVM takes up slot 0, but in SCI the first
-		// non-autosave save game number needs to be 0, so reduce the save
-		// number here to match what would come from the normal SCI save/restore
-		// dialog. There is additional special code for handling the autosave
-		// game inside of kRestoreGame32.
 		saveNo -= kSaveIdShift;
+	} else if (saveNo == 0) {
+		saveNo = kMaxShiftedSaveId;
 	}
 
 	return saveNo;
+}
+
+reg_t GuestAdditions::promptSaveRestoreHoyle5(EngineState *s, int argc, reg_t *argv) const {
+	assert(argc == 2);
+	Common::String callerName = s->_segMan->getObjectName(s->r_acc);
+	const bool isSave = (callerName == "Save");
+	return make_reg(0, runSaveRestore(isSave, argc > 0 ? argv[0] : NULL_REG, s->_delayedRestoreGameId));
 }
 
 #endif
@@ -737,6 +753,14 @@ bool GuestAdditions::restoreFromLauncher() const {
 		// or, when trying to load an invalid save game, makes the dialog
 		// telling the user that the game is invalid impossible to read
 		if (strcmp(_segMan->getObjectName(_state->variables[VAR_GLOBAL][kGlobalVarCurrentRoom]), "speedRoom") == 0) {
+			return false;
+		}
+
+		// Delayed restore should not happen in LSL6 hires until the room number is set.
+		//  LSL6:restore tests room numbers to determine if restoring is allowed, but the
+		//  Mac version adds a call to kGetEvent in LSL6:init before the initial call to
+		//  LSL6:newRoom. If the room number isn't set yet then restoring isn't allowed.
+		if (g_sci->getGameId() == GID_LSL6HIRES && _state->variables[VAR_GLOBAL][kGlobalVarCurrentRoomNo] == NULL_REG) {
 			return false;
 		}
 
@@ -818,6 +842,7 @@ void GuestAdditions::syncMessageTypeFromScummVM() const {
 		break;
 #endif
 	case kMessageTypeSyncStrategyNone:
+	default:
 		break;
 	}
 }
@@ -916,6 +941,7 @@ void GuestAdditions::syncMessageTypeToScummVM(const int index, const reg_t value
 		// LSL6hires synchronisation happens via send_selector
 #endif
 	case kMessageTypeSyncStrategyNone:
+	default:
 		break;
 	}
 }
@@ -1302,6 +1328,8 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 			case kGlobalVarTorinSpeechVolume:
 				ConfMan.setInt("speech_volume", volume);
 				break;
+			default:
+				break;
 			}
 		}
 		break;
@@ -1404,17 +1432,22 @@ void GuestAdditions::syncGK2UI() const {
 }
 
 void GuestAdditions::syncHoyle5UI(const int16 musicVolume) const {
-	const reg_t sliderId = _segMan->findObjectByName("volumeSlider");
-	if (!sliderId.isNull()) {
-		const int16 yPosition = 167 - musicVolume * 145 / 10;
-		writeSelectorValue(_segMan, sliderId, SELECTOR(y), yPosition);
+	// Hoyle5 has two control panels with different slider names
+	const reg_t sliders[] = { _segMan->findObjectByName("volumeSlider"),
+							  _segMan->findObjectByName("volumeSliderF") };
+	for (int i = 0; i < ARRAYSIZE(sliders); ++i) {
+		const reg_t sliderId = sliders[i];
+		if (!sliderId.isNull()) {
+			const int16 yPosition = 167 - musicVolume * 145 / 10;
+			writeSelectorValue(_segMan, sliderId, SELECTOR(y), yPosition);
 
-		// There does not seem to be any good way to learn whether the
-		// volume slider is visible (and thus eligible for
-		// kUpdateScreenItem)
-		const reg_t planeId = readSelector(_segMan, sliderId, SELECTOR(plane));
-		if (g_sci->_gfxFrameout->getPlanes().findByObject(planeId) != nullptr) {
-			g_sci->_gfxFrameout->kernelUpdateScreenItem(sliderId);
+			// There does not seem to be any good way to learn whether the
+			// volume slider is visible (and thus eligible for
+			// kUpdateScreenItem)
+			const reg_t planeId = readSelector(_segMan, sliderId, SELECTOR(plane));
+			if (g_sci->_gfxFrameout->getPlanes().findByObject(planeId) != nullptr) {
+				g_sci->_gfxFrameout->kernelUpdateScreenItem(sliderId);
+			}
 		}
 	}
 }

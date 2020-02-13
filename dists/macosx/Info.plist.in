@@ -23,7 +23,7 @@
 	<key>CFBundleExecutable</key>
 	<string>scummvm</string>
 	<key>CFBundleGetInfoString</key>
-	<string>@VERSION@, Copyright 2001-2019 The ScummVM Team</string>
+	<string>@VERSION@, Copyright 2001-2020 The ScummVM Team</string>
 	<key>CFBundleIconFile</key>
 	<string>scummvm.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -63,13 +63,19 @@
 	<key>CFBundleVersion</key>
 	<string>@VERSION@</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2001-2019 The ScummVM Team</string>
+	<string>Copyright 2001-2020 The ScummVM Team</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>
 	<string>https://www.scummvm.org/appcasts/macosx/release.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>faYfM+DGPgJCrRzpxSHoFD0rzHa6ZnnEXuzz2E7ZRUk=</string>
 	<key>NSDockTilePlugIn</key>
 	<string>scummvm.docktileplugin</string>
+	<key>NSRequiresAquaSystemAppearance</key>
+	<false/>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>ScummVM saves and loads savegames in the Documents folder by default.</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
 </dict>

@@ -64,6 +64,20 @@ public:
 };
 
 /**
+ * The description of a game supported by an engine
+ */
+struct QualifiedGameDescriptor {
+	Common::String engineId;
+	Common::String gameId;
+	Common::String description;
+
+	QualifiedGameDescriptor() {}
+	QualifiedGameDescriptor(const char *engine, const PlainGameDescriptor &pgd);
+};
+
+typedef Common::Array<QualifiedGameDescriptor> QualifiedGameList;
+
+/**
  * Ths is an enum to describe how done a game is. This also indicates what level of support is expected.
  */
 enum GameSupportLevel {
@@ -98,8 +112,8 @@ typedef Common::HashMap<Common::String, FileProperties, Common::IgnoreCase_Hash,
  */
 struct DetectedGame {
 	DetectedGame();
-	explicit DetectedGame(const PlainGameDescriptor &pgd);
-	DetectedGame(const Common::String &id,
+	DetectedGame(const Common::String &engine, const PlainGameDescriptor &pgd);
+	DetectedGame(const Common::String &engine, const Common::String &id,
 	               const Common::String &description,
 	               Common::Language language = Common::UNK_LANG,
 	               Common::Platform platform = Common::kPlatformUnknown,
@@ -109,10 +123,7 @@ struct DetectedGame {
 	void appendGUIOptions(const Common::String &str);
 	Common::String getGUIOptions() const { return _guiOptions; }
 
-	/**
-	 * The name of the engine supporting the detected game
-	 */
-	const char *engineName;
+	Common::String engineId;
 
 	/**
 	 * A game was detected, but some files were not recognized

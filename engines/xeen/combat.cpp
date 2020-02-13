@@ -254,7 +254,12 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 		breakFlag = true;
 	}
 
+	// WORKAROUND: Flag a script in progress when pausing to prevent any pending combat starting prematurely
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_SCRIPT_IN_PROGRESS;
 	events.ipause(5);
+	_vm->_mode = oldMode;
+
 	intf.drawParty(true);
 	party.checkPartyDead();
 }
@@ -380,7 +385,8 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 				XeenItem &weapon = c._weapons[idx];
 				if (weapon._id < XEEN_SLAYER_SWORD && weapon._id != 0 && weapon._frame != 0) {
 					weapon._state._broken = true;
-					weapon._frame = 0;
+					// WORKAROUND: For consistency, we don't de-equip broken items
+					//weapon._frame = 0;
 				}
 			}
 			sound.playFX(37);
@@ -1156,7 +1162,7 @@ Common::String Combat::getMonsterDescriptions() {
 
 	if (_attackDurationCtr == 2 && _attackMonsters[2] != -1) {
 		_monster2Attack = _attackMonsters[2];
-	} if (_attackDurationCtr == 1 && _attackMonsters[1] != -1) {
+	} else if (_attackDurationCtr == 1 && _attackMonsters[1] != -1) {
 		_monster2Attack = _attackMonsters[1];
 	} else {
 		_monster2Attack = _attackMonsters[0];
@@ -1544,6 +1550,8 @@ void Combat::attack2(int damage, RangeType rangeType) {
 								break;
 							}
 						}
+						break;
+					default:
 						break;
 					}
 				}

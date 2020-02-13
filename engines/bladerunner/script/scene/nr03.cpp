@@ -230,15 +230,43 @@ bool SceneScriptNR03::ClickedOn2DRegion(int region) {
 	if (region == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 79.2f, -70.19f, -984.0f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorHysteriaPatron1, true);
-			int rnd = Random_Query(0, 4);
-			if (rnd == 0) {
+			switch (Random_Query(0, 4)) {
+			case 0:
 				Actor_Says(kActorMcCoy, 1055, kAnimationModeTalk);
-			} else if (rnd == 1) {
+				break;
+			case 1:
 				Actor_Says(kActorMcCoy, 8590, kAnimationModeTalk);
-			} else if (rnd == 2) {
+				break;
+			case 2:
 				Actor_Says(kActorMcCoy, 8930, kAnimationModeTalk);
-			} else if (rnd == 3) {
+				break;
+			case 3:
 				Actor_Says(kActorMcCoy, 7465, kAnimationModeTalk);
+				break;
+#if BLADERUNNER_ORIGINAL_BUGS
+			default:
+				break;
+#else
+			case 4:
+				if (_vm->_cutContent) {
+					switch (Random_Query(1, 10)) {
+					case 1:
+						// fall through
+					case 2:
+						// make this rare
+						Actor_Says(kActorMcCoy, 8518, kAnimationModeTalk); // Hey, can I lick...
+						break;
+					default:
+						Actor_Says(kActorMcCoy, 8700, kAnimationModeTalk); // Never seen anything like that before.
+						break;
+					}
+				} else {
+					// just say the same as in case 0
+					Actor_Says(kActorMcCoy, 1055, kAnimationModeTalk);
+				}
+			default:
+				break;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 		}
 		return true;

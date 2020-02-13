@@ -383,12 +383,24 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 		_wallItems.clear();
 	}
 
-	for (uint i = 0; i < 16; ++i) {
-		b = (i >= _objectSprites.size()) ? 0xff : _objectSprites[i]._spriteId;
-		s.syncAsByte(b);
-		if (s.isLoading() && b != 0xff)
-			_objectSprites.push_back(SpriteResourceEntry(b));
+	byte objSprites[16];
+	int maxSprite = 0;
+	for (int i = 0; i < 16; ++i) {
+		objSprites[i] = (i >= (int)_objectSprites.size()) ? 0xff : _objectSprites[i]._spriteId;
+		s.syncAsByte(objSprites[i]);
+		if (s.isLoading() && objSprites[i] != 0xff)
+			maxSprite = i;
 	}
+
+	if (s.isLoading()) {
+		for (int i = 0; i <= maxSprite; ++i) {
+			if (objSprites[i] == 0xff)
+				_objectSprites.push_back(SpriteResourceEntry());
+			else
+				_objectSprites.push_back(SpriteResourceEntry(objSprites[i]));
+		}
+	}
+
 	for (uint i = 0; i < 16; ++i) {
 		b = (i >= _monsterSprites.size()) ? 0xff : _monsterSprites[i]._spriteId;
 		s.syncAsByte(b);
@@ -405,8 +417,8 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 	if (s.isSaving()) {
 		// Save objects
 		if (_objects.empty()) {
-			MobStruct nullStruct;
-			nullStruct.synchronize(s);
+			mobStruct.endOfList();
+			mobStruct.synchronize(s);
 		} else {
 			for (uint i = 0; i < _objects.size(); ++i) {
 				mobStruct._pos = _objects[i]._position;
@@ -420,8 +432,8 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 
 		// Save monsters
 		if (_monsters.empty()) {
-			MobStruct nullStruct;
-			nullStruct.synchronize(s);
+			mobStruct.endOfList();
+			mobStruct.synchronize(s);
 		} else {
 			for (uint i = 0; i < _monsters.size(); ++i) {
 				mobStruct._pos = _monsters[i]._position;
@@ -434,17 +446,11 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 		mobStruct.synchronize(s);
 
 		// Save wall items
-		if (_wallItems.empty()) {
-			MobStruct nullStruct;
-			nullStruct._pos.x = nullStruct._pos.y = 0x80;
-			nullStruct.synchronize(s);
-		} else {
-			for (uint i = 0; i < _wallItems.size(); ++i) {
-				mobStruct._pos = _wallItems[i]._position;
-				mobStruct._id = _wallItems[i]._id;
-				mobStruct._direction = _wallItems[i]._direction;
-				mobStruct.synchronize(s);
-			}
+		for (uint i = 0; i < _wallItems.size(); ++i) {
+			mobStruct._pos = _wallItems[i]._position;
+			mobStruct._id = _wallItems[i]._id;
+			mobStruct._direction = _wallItems[i]._direction;
+			mobStruct.synchronize(s);
 		}
 		mobStruct.endOfList();
 		mobStruct.synchronize(s);
@@ -453,6 +459,10 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 		// Load monster/obbject data and merge together with sprite Ids
 		// Load objects
 		mobStruct.synchronize(s);
+		if (mobStruct._id == -1 && mobStruct._pos.x == -1)
+			// Empty array has a blank entry
+			mobStruct.synchronize(s);
+
 		do {
 			MazeObject obj;
 			obj._position = mobStruct._pos;
@@ -471,7 +481,11 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 
 		// Load monsters
 		mobStruct.synchronize(s);
-		do {
+		if (mobStruct._id == -1 && mobStruct._pos.x == -1)
+			// Empty array has a blank entry
+			mobStruct.synchronize(s);
+
+		while (mobStruct._id != 255 || mobStruct._pos.x != -1) {
 			MazeMonster mon;
 			mon._position = mobStruct._pos;
 			mon._id = mobStruct._id;
@@ -495,11 +509,11 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			}
 
 			mobStruct.synchronize(s);
-		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+		}
 
-		// Load wall items
+		// Load wall items. Unlike the previous two arrays, this has no dummy entry for an empty array
 		mobStruct.synchronize(s);
-		do {
+		while (mobStruct._id != 255 || mobStruct._pos.x != -1) {
 			if (mobStruct._id < (int)_wallItemSprites.size()) {
 				MazeWallItem wi;
 				wi._position = mobStruct._pos;
@@ -512,7 +526,7 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			}
 
 			mobStruct.synchronize(s);
-		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+		}
 	}
 }
 
@@ -718,7 +732,7 @@ void Map::load(int mapId) {
 	// mazes in each of the four cardinal directions
 	int ccNum = files._ccNum;
 	MazeData *mazeDataP = &_mazeData[0];
-	bool textLoaded = false;
+	bool mapDataLoaded = false;
 
 	for (int idx = 0; idx < 9; ++idx, ++mazeDataP) {
 		mazeDataP->_mazeId = mapId;
@@ -743,14 +757,14 @@ void Map::load(int mapId) {
 
 			_isOutdoors = (mazeDataP->_mazeFlags2 & FLAG_IS_OUTDOORS) != 0;
 
-			// Handle loading text data
-			if (!textLoaded) {
-				textLoaded = true;
+			Common::String mobName = Common::String::format("maze%c%03d.mob", (mapId >= 100) ? 'x' : '0', mapId);
+
+			if (!mapDataLoaded) {
+				// Called once for the main map being loaded
+				mapDataLoaded = true;
 				_mazeName = getMazeName(mapId, ccNum);
 
 				// Load the monster/object data
-				Common::String mobName = Common::String::format("maze%c%03d.mob",
-					(mapId >= 100) ? 'x' : '0', mapId);
 				File mobFile(mobName);
 				XeenSerializer sMob(&mobFile, nullptr);
 				_mobData.synchronize(sMob, _monsterData);
@@ -767,6 +781,25 @@ void Map::load(int mapId) {
 						(_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) &&
 						(_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
 						party._gameFlags[0][56] = true;
+					}
+				}
+			} else if (File::exists(mobName)) {
+				// For surrounding maps, set up flags for whether objects are present
+
+				// WORKAROUND: In WOX Map 120, one of the maps for Deep Mine Alpha,
+				// has invalid monster data. So to work around it, we just ignore it
+				if (!(mapId == 120 && g_vm->getGameID() == GType_WorldOfXeen)) {
+					// Load the monster/object data
+					File mobFile(mobName);
+					XeenSerializer sMob(&mobFile, nullptr);
+					MonsterObjectData mobData(_vm);
+					mobData.synchronize(sMob, _monsterData);
+					mobFile.close();
+
+					mazeDataP->_objectsPresent.resize(mobData._objects.size());
+					for (uint objIndex = 0; objIndex < mobData._objects.size(); ++objIndex) {
+						const Common::Point &pt = mobData._objects[objIndex]._position;
+						mazeDataP->_objectsPresent[objIndex] = ABS(pt.x) != 128 && ABS(pt.y) != 128;
 					}
 				}
 			}
@@ -810,7 +843,8 @@ void Map::load(int mapId) {
 		}
 
 		// Read in the object sprites
-		_mobData._objectSprites[i]._sprites.load(filename);
+		if (!_mobData._objectSprites[i].isEmpty())
+			_mobData._objectSprites[i]._sprites.load(filename);
 	}
 
 	// Load sprites for the monsters

@@ -68,10 +68,10 @@ protected:
 class CreditsThread : public Thread {
 public:
 	CreditsThread(IllusionsEngine_BBDOU *vm, BbdouCredits *credits, uint32 threadId, float speedModifier);
-	virtual int onUpdate();
-	virtual void onNotify();
-	virtual void onResume();
-	virtual void onTerminated();
+	int onUpdate() override;
+	void onNotify() override;
+	void onResume() override;
+	void onTerminated() override;
 public:
 	BbdouCredits *_credits;
 	float _speedModifier;

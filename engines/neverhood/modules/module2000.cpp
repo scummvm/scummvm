@@ -59,6 +59,8 @@ void Module2000::createScene(int sceneNum, int which) {
 		setSubVar(V_TELEPORTER_DEST_AVAILABLE, 1, 1);
 		createSmackerScene(0x204B2031, true, true, false);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module2000::updateScene);
 	_childObject->handleUpdate();
@@ -86,6 +88,8 @@ void Module2000::updateScene() {
 			break;
 		case 2:
 			createScene(1, 0);
+			break;
+		default:
 			break;
 		}
 	}
@@ -152,6 +156,9 @@ uint32 Scene2001::handleMessage(int messageNum, const MessageParam &param, Entit
 			setRectList(0x004B3670);
 			_klaymen->setKlaymenIdleTable1();
 		}
+		break;
+	default:
+		break;
 	}
 	return 0;
 }

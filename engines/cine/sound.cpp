@@ -106,13 +106,13 @@ struct AdLibSoundInstrument {
 class AdLibSoundDriver : public PCSoundDriver {
 public:
 	AdLibSoundDriver(Audio::Mixer *mixer);
-	virtual ~AdLibSoundDriver();
+	~AdLibSoundDriver() override;
 
 	// PCSoundDriver interface
-	virtual void setUpdateCallback(UpdateCallback upCb, void *ref);
-	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
-	virtual void stopChannel(int channel);
-	virtual void stopAll();
+	void setUpdateCallback(UpdateCallback upCb, void *ref) override;
+	void setupChannel(int channel, const byte *data, int instrument, int volume) override;
+	void stopChannel(int channel) override;
+	void stopAll() override;
 
 	void initCard();
 	void onTimer();
@@ -162,36 +162,36 @@ const int AdLibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperator
 class AdLibSoundDriverINS : public AdLibSoundDriver {
 public:
 	AdLibSoundDriverINS(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
-	virtual const char *getInstrumentExtension() const { return ".INS"; }
-	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
-	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSample(const byte *data, int size, int channel, int volume);
+	const char *getInstrumentExtension() const override { return ".INS"; }
+	void loadInstrument(const byte *data, AdLibSoundInstrument *asi) override;
+	void setChannelFrequency(int channel, int frequency) override;
+	void playSample(const byte *data, int size, int channel, int volume) override;
 };
 
 // Operation Stealth AdLib driver
 class AdLibSoundDriverADL : public AdLibSoundDriver {
 public:
 	AdLibSoundDriverADL(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
-	virtual const char *getInstrumentExtension() const { return ".ADL"; }
-	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
-	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSample(const byte *data, int size, int channel, int volume);
+	const char *getInstrumentExtension() const override { return ".ADL"; }
+	void loadInstrument(const byte *data, AdLibSoundInstrument *asi) override;
+	void setChannelFrequency(int channel, int frequency) override;
+	void playSample(const byte *data, int size, int channel, int volume) override;
 };
 
 // (Future Wars) MIDI driver
 class MidiSoundDriverH32 : public PCSoundDriver {
 public:
 	MidiSoundDriverH32(MidiDriver *output);
-	~MidiSoundDriverH32();
+	~MidiSoundDriverH32() override;
 
-	virtual void setUpdateCallback(UpdateCallback upCb, void *ref);
-	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
-	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void stopChannel(int channel);
-	virtual void playSample(const byte *data, int size, int channel, int volume);
-	virtual void stopAll() {}
-	virtual const char *getInstrumentExtension() const { return ".H32"; }
-	virtual void notifyInstrumentLoad(const byte *data, int size, int channel);
+	void setUpdateCallback(UpdateCallback upCb, void *ref) override;
+	void setupChannel(int channel, const byte *data, int instrument, int volume) override;
+	void setChannelFrequency(int channel, int frequency) override;
+	void stopChannel(int channel) override;
+	void playSample(const byte *data, int size, int channel, int volume) override;
+	void stopAll() override {}
+	const char *getInstrumentExtension() const override { return ".H32"; }
+	void notifyInstrumentLoad(const byte *data, int size, int channel) override;
 
 private:
 	MidiDriver *_output;

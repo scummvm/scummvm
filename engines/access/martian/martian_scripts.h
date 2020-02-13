@@ -44,8 +44,8 @@ private:
 	void cmdSpecial7();
 
 protected:
-	virtual void executeSpecial(int commandIndex, int param1, int param2);
-	virtual void executeCommand(int commandIndex);
+	void executeSpecial(int commandIndex, int param1, int param2) override;
+	void executeCommand(int commandIndex) override;
 
 public:
 	MartianScripts(AccessEngine *vm);

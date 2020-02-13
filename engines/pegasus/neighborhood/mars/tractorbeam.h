@@ -33,9 +33,9 @@ namespace Pegasus {
 class TractorBeam : public DisplayElement {
 public:
 	TractorBeam();
-	virtual ~TractorBeam() {}
+	~TractorBeam() override {}
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 };
 
 } // End of namespace Pegasus

@@ -33,7 +33,7 @@ class SludgeEngine;
 class SludgeConsole: public GUI::Debugger {
 public:
 	SludgeConsole(SludgeEngine *vm);
-	virtual ~SludgeConsole(void);
+	~SludgeConsole(void) override;
 
 private:
 	SludgeEngine *_vm;

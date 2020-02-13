@@ -48,9 +48,7 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 	DebugMan.addDebugChannel(kDebugLevelText, "Text", "Text output debugging");
 	DebugMan.addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
 
-	memset(&_game, 0, sizeof(struct AgiGame));
 	memset(&_debug, 0, sizeof(struct AgiDebug));
-	memset(&_mouse, 0, sizeof(struct Mouse));
 
 	_speakerHandle = new Audio::SoundHandle();
 }
@@ -84,10 +82,10 @@ void PreAgiEngine::initialize() {
 
 	// clear all resources and events
 	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
-		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
-		memset(&_game.sounds[i], 0, sizeof(class AgiSound *)); // _game.sounds contains pointers now
-		memset(&_game.dirPic[i], 0, sizeof(struct AgiDir));
-		memset(&_game.dirSound[i], 0, sizeof(struct AgiDir));
+		_game.pictures[i].reset();
+		_game.sounds[i] = nullptr; // _game.sounds contains pointers now
+		_game.dirPic[i].reset();
+		_game.dirSound[i].reset();
 	}
 }
 

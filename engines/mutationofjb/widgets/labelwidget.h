@@ -38,7 +38,7 @@ public:
 	void setText(const Common::String &text);
 
 protected:
-	virtual void draw(Graphics::ManagedSurface &) override;
+	void draw(Graphics::ManagedSurface &) override;
 
 private:
 	uint8 _backgroundColor;

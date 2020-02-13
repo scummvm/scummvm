@@ -148,60 +148,57 @@ void Room::sins3Tick1() {
 }
 
 void Room::sins3UseSTricorderOnBox() {
-	spockScan(DIR_S, TX_SIN3_003);
+	spockScan(DIR_S, 3, false, true);
 }
 
 void Room::sins3UseSTricorderOnMonitor() {
-	spockScan(DIR_N, TX_SIN3_018);
+	spockScan(DIR_N, 18, false, true);
 }
 
 void Room::sins3UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_SIN3_017);
+	spockScan(DIR_S, 17, false, true);
 }
 
 void Room::sins3UseSTricorderOnDrill() {
-	spockScan(DIR_E, TX_SIN3_016);
+	spockScan(DIR_E, 16, false, true);
 }
 
 void Room::sins3UseSTricorderOnPanel() {
 	if (_awayMission->sins.scannedKeycardLock) {
-		spockScan(DIR_E, TX_SIN3_015);
+		spockScan(DIR_E, 15, false, true);
 		_awayMission->sins.laserPattern = 1;
 	} else
-		spockScan(DIR_E, TX_SIN3_019);
+		spockScan(DIR_E, 19, false, true);
 }
 
 void Room::sins3LookAtDrill() {
-	showText(TX_SIN3N012);
+	showDescription(12, true);
 }
 
 void Room::sins3LookAtPanel() {
-	showText(TX_SIN3N011);
+	showDescription(11, true);
 }
 
 void Room::sins3LookAtMonitor() {
-	showText(TX_SIN3N007);
+	showDescription(7, true);
 }
 
 void Room::sins3LookAnywhere() {
-	showText(TX_SIN3N013);
+	showDescription(13, true);
 }
 
 void Room::sins3UseSTricorderOnWall() {
-	// NOTE: this event has two implementations, one unused.
-	if (true)
-		spockScan(DIR_E, TX_SIN3_023);
-	else
-		spockScan(DIR_S, TX_SIN3_022);
+	// NOTE: this event has two implementations (index 23 and 22), one unused.
+	spockScan(DIR_E, 23, false, true);
 }
 
 void Room::sins3LookAtBox() {
 	if (_awayMission->sins.boxState == 0)
-		showText(TX_SIN3N000);
+		showDescription(0, true);
 	else if (_awayMission->sins.boxState == 1)
-		showText(TX_SIN3N008);
+		showDescription(8, true);
 	else if (_awayMission->sins.boxState == 2)
-		showText(TX_SIN3N005);
+		showDescription(5, true);
 }
 
 void Room::sins3UseKirkOnBox() {
@@ -295,9 +292,9 @@ void Room::sins3KirkGotBoxContents() {
 
 void Room::sins3Tick30() {
 	if (!_awayMission->sins.enteredRoom3FirstTime) {
-		showText(TX_SPEAKER_MCCOY, TX_SIN3_012);
-		showText(TX_SPEAKER_SPOCK, TX_SIN3_024);
-		showText(TX_SPEAKER_MCCOY, TX_SIN3_013);
+		showText(TX_SPEAKER_MCCOY, 12, true);
+		showText(TX_SPEAKER_SPOCK, 24, true);
+		showText(TX_SPEAKER_MCCOY, 13, true);
 		_awayMission->sins.enteredRoom3FirstTime = true;
 		_awayMission->disableInput = false;
 	}
@@ -305,13 +302,13 @@ void Room::sins3Tick30() {
 
 void Room::sins3Tick60() {
 	if (_awayMission->sins.gatheredClues == 7) {
-		showText(TX_SPEAKER_SPOCK, TX_SIN3_007);
+		showText(TX_SPEAKER_SPOCK, 7, true);
 		_awayMission->sins.gatheredClues |= 8;
 	}
 }
 
 void Room::sins3UseKirkOnPanel() {
-	showText(TX_SPEAKER_KIRK, TX_SIN3_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 	sins3UseSpockOnPanel();
 }
 
@@ -326,7 +323,7 @@ void Room::sins3SpockReachedPanel() {
 		TX_BLANK
 	};
 
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	if (choice == 3) // cancel
 		return;
@@ -336,7 +333,7 @@ void Room::sins3SpockReachedPanel() {
 		if (_awayMission->sins.laserPattern == 0 && _awayMission->sins.laserSetting == 3)
 			// High setting can't be used until the template pattern has been uploaded to
 			// the machine
-			showText(TX_SPEAKER_SPOCK, TX_SIN3_005);
+			showText(TX_SPEAKER_SPOCK, 5, true);
 		else if (_awayMission->sins.moldState != -1) {
 			if (_awayMission->sins.moldState == 0) { // Mold not yet created
 				loadActorAnim2(OBJECT_SPOCK, "susemn");
@@ -375,7 +372,7 @@ void Room::sins3SpockReachedPanel() {
 				}
 			} else { // moldState == 2 or 4 (mold created; either keycard is in it, or nothing)
 				// "Template would be damaged from direct fire"
-				showText(TX_SPEAKER_SPOCK, TX_SIN3_006);
+				showText(TX_SPEAKER_SPOCK, 6, true);
 			}
 		}
 	}
@@ -423,12 +420,12 @@ void Room::sins3RockTurnedIntoIDCard() {
 }
 
 void Room::sins3RockVaporized() {
-	showText(TX_SPEAKER_SPOCK, TX_SIN3_021);
+	showText(TX_SPEAKER_SPOCK, 21, true);
 }
 
 void Room::sins3UseDrillAnywhere() {
 	// It isn't possible to "use" a hotspot on something else, so this is never called?
-	showText(TX_SIN3N009);
+	showDescription(9, true);
 }
 
 void Room::sins3GetIDCard() {
@@ -452,61 +449,61 @@ void Room::sins3PickedUpIDCard() {
 
 void Room::sins3LookAtItemBeingDrilled() {
 	if (_awayMission->sins.moldState == 2)
-		showText(TX_SIN3N006);
+		showDescription(6, true);
 	else if (_awayMission->sins.moldState == 3)
-		showText(TX_SIN3N014);
+		showDescription(14, true);
 	else if (_awayMission->sins.moldState == 4)
-		showText(TX_SIN3N010);
+		showDescription(10, true);
 }
 
 void Room::sins3LookAtKirk() {
-	showText(TX_SIN3N003);
+	showDescription(3, true);
 }
 
 void Room::sins3LookAtSpock() {
-	showText(TX_SIN3N004);
+	showDescription(4, true);
 }
 
 void Room::sins3LookAtMccoy() {
-	showText(TX_SIN3N001); // BUGFIX: Speaker is "nobody", not Dr. McCoy
+	showDescription(1, true); // BUGFIX: Speaker is "nobody", not Dr. McCoy
 }
 
 void Room::sins3LookAtRedshirt() {
-	showText(TX_SIN3N002);
+	showDescription(2, true);
 }
 
 void Room::sins3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_SIN3_002);
+	showText(TX_SPEAKER_KIRK, 2, true);
 }
 
 void Room::sins3TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_SIN3_020);
+	showText(TX_SPEAKER_SPOCK, 20, true);
 }
 
 void Room::sins3TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_SIN3_011);
+	showText(TX_SPEAKER_MCCOY, 11, true);
 }
 
 void Room::sins3TalkToRedshirt() {
-	showText(TX_SPEAKER_MOSHER, TX_SIN3_026);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN3_014);
-	showText(TX_SPEAKER_MOSHER, TX_SIN3_027);
+	showText(TX_SPEAKER_MOSHER, 26, true);
+	showText(TX_SPEAKER_MCCOY,  14, true);
+	showText(TX_SPEAKER_MOSHER, 27, true);
 }
 
 void Room::sins3UseCommunicator() {
-	showText(TX_SPEAKER_UHURA, TX_SIN3U072);
+	showText(TX_SPEAKER_UHURA, 72, true);
 }
 
 void Room::sins3UseSpockOnDrill() {
-	showText(TX_SPEAKER_SPOCK, TX_SIN3_004);
+	showText(TX_SPEAKER_SPOCK, 4, true);
 }
 
 void Room::sins3UseMccoyOnDrill() {
-	showText(TX_SPEAKER_MCCOY, TX_SIN3_009);
+	showText(TX_SPEAKER_MCCOY, 9, true);
 }
 
 void Room::sins3UseRedshirtOnDrill() {
-	showText(TX_SPEAKER_MOSHER, TX_SIN3_025);
+	showText(TX_SPEAKER_MOSHER, 25, true);
 }
 
 void Room::sins3WalkToDoor() {
@@ -514,11 +511,11 @@ void Room::sins3WalkToDoor() {
 }
 
 void Room::sins3UseMedkitOnCrewman() {
-	showText(TX_SPEAKER_MCCOY, TX_SIN3_010);
+	showText(TX_SPEAKER_MCCOY, 10, true);
 }
 
 void Room::sins3UseMTricorderOnCrewman() {
-	mccoyScan(DIR_S, TX_SIN3_008);
+	mccoyScan(DIR_S, 8, false, true);
 }
 
 }

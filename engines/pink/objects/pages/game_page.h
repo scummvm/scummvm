@@ -35,26 +35,26 @@ class HandlerStartPage;
 class GamePage : public Page {
 public:
 	GamePage();
-	~GamePage();
-	virtual void toConsole();
-	virtual void deserialize(Archive &archive);
+	~GamePage() override;
+	void toConsole() override;
+	void deserialize(Archive &archive) override;
 
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);
 
-	virtual void load(Archive &archive);
+	void load(Archive &archive) override;
 	void unload();
 	void loadManagers();
 	void init(bool isLoadingSave);
 
-	Sequencer *getSequencer() { return _sequencer; }
-	WalkMgr *getWalkMgr() { return _walkMgr; }
-	Module *getModule() { return _module; }
+	Sequencer *getSequencer() override { return _sequencer; }
+	WalkMgr *getWalkMgr() override { return _walkMgr; }
+	Module *getModule() override { return _module; }
 
-	bool checkValueOfVariable(const Common::String &variable, const Common::String &value);
-	void setVariable(Common::String &variable, Common::String &value);
+	bool checkValueOfVariable(const Common::String &variable, const Common::String &value) override;
+	void setVariable(Common::String &variable, Common::String &value) override;
 
-	virtual void clear();
+	void clear() override;
 
 	friend class Console;
 

@@ -32,7 +32,7 @@
 
 #if defined(GP2X)
 #define SAMPLES_PER_SEC 11025
-#elif defined(PLAYSTATION3) || defined(PSP2)
+#elif defined(PLAYSTATION3) || defined(PSP2) || defined(NINTENDO_SWITCH)
 #define SAMPLES_PER_SEC 48000
 #else
 #define SAMPLES_PER_SEC 44100
@@ -81,7 +81,7 @@ void SdlMixerManager::init() {
 		warning("Could not open audio device: %s", SDL_GetError());
 
 		// The mixer is not marked as ready
-		_mixer = new Audio::MixerImpl(g_system, desired.freq);
+		_mixer = new Audio::MixerImpl(desired.freq);
 		return;
 	}
 
@@ -96,7 +96,7 @@ void SdlMixerManager::init() {
 			warning("Could not open audio device: %s", SDL_GetError());
 
 			// The mixer is not marked as ready
-			_mixer = new Audio::MixerImpl(g_system, desired.freq);
+			_mixer = new Audio::MixerImpl(desired.freq);
 			return;
 		}
 
@@ -118,7 +118,7 @@ void SdlMixerManager::init() {
 		error("SDL mixer output requires stereo output device");
 #endif
 
-	_mixer = new Audio::MixerImpl(g_system, _obtained.freq);
+	_mixer = new Audio::MixerImpl(_obtained.freq);
 	assert(_mixer);
 	_mixer->setReady(true);
 

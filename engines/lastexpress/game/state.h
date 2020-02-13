@@ -472,7 +472,7 @@ public:
 			return ret;
 		}
 
-		void saveLoadWithSerializer(Common::Serializer &s) {
+		void saveLoadWithSerializer(Common::Serializer &s) override {
 			if (s.isLoading()) {
 				for (uint i = 0; i < 128; i++) {
 					uint32 val;
@@ -543,7 +543,7 @@ public:
 			return ret;
 		}
 
-		void saveLoadWithSerializer(Common::Serializer &s) {
+		void saveLoadWithSerializer(Common::Serializer &s) override {
 			s.syncAsUint32LE(time);
 			s.syncAsUint32LE(timeDelta);
 			s.syncAsUint32LE(timeTicks);

@@ -50,9 +50,17 @@ void EoBCoreEngine::loadItemDefs() {
 		_items[i].value = s->readSByte();
 	}
 
-	_numItemNames = s->readUint16();
-	for (int i = 0; i < _numItemNames; i++)
-		s->read(_itemNames[i], 35);
+	if (_itemNamesPC98) {
+		_numItemNames = _numItemNamesPC98;
+		for (int i = 0; i < _numItemNames; i++) {
+			assert(strlen(_itemNamesPC98[i]) < 35);
+			Common::strlcpy(_itemNames[i], _itemNamesPC98[i], 34);
+		}
+	} else {
+		_numItemNames = s->readUint16();
+		for (int i = 0; i < _numItemNames; i++)
+			s->read(_itemNames[i], 35);
+	}
 
 	delete s;
 
@@ -217,6 +225,14 @@ int EoBCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	}
 
 	uint16 v = item ? _itemTypes[_items[item].type].invFlags : 0xFFFF;
+
+	// WORKAROUND: The game allows putting the 4 horns and the red rings from the ringmaster riddle into inventory ring slots.
+	// This causes a graphics glitch, since these items are too large for that slot. I prevent this here. Patching it while
+	// loading up items.dat and itemtypes.dat would be preferable but seems too complicated (if not impossible), since the inv
+	// flags are part of itemtypes.dat and it might be wrong to patch these flags for the whole item type.
+	if (_flags.gameID == GI_EOB2 && (_items[item].icon == 107 || _items[item].icon == 61))
+		v &= ~0x100;
+
 	if (v & _slotValidationFlags[slot])
 		return 1;
 

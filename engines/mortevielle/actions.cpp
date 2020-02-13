@@ -125,6 +125,8 @@ void MortevielleEngine::fctMove() {
 		if (menuChoice == 4)
 			menuChoice = 6;
 		break;
+	default:
+		break;
 	}
 
 	if ((_coreVar._currPlace > MOUNTAIN) && (_coreVar._currPlace != ROOM26))
@@ -187,6 +189,8 @@ void MortevielleEngine::fctMove() {
 			_coreVar._currPlace = INSIDE_WELL;
 			prepareDisplayText();
 		}
+		break;
+	default:
 		break;
 	}
 

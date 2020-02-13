@@ -109,12 +109,12 @@ void Room::trial3Tick30() {
 		_awayMission->disableInput = false;
 		_awayMission->trial.enteredTrial3FirstTime = true;
 
-		showText(TX_SPEAKER_BENNIE, TX_TRI3_030);
-		showText(TX_SPEAKER_KIRK,   TX_TRI3_005);
-		showText(TX_SPEAKER_MCCOY,  TX_TRI3_019);
-		showText(TX_SPEAKER_SPOCK,  TX_TRI3_025);
-		showText(TX_SPEAKER_MCCOY,  TX_TRI3_020);
-		showText(TX_SPEAKER_KIRK,   TX_TRI3_004);
+		showText(TX_SPEAKER_BENNIE, 30, true);
+		showText(TX_SPEAKER_KIRK,    5, true);
+		showText(TX_SPEAKER_MCCOY,  19, true);
+		showText(TX_SPEAKER_SPOCK,  25, true);
+		showText(TX_SPEAKER_MCCOY,  20, true);
+		showText(TX_SPEAKER_KIRK,    4, true);
 	}
 }
 
@@ -209,18 +209,18 @@ void Room::trial3CheckShowUhuraText() {
 		_awayMission->disableWalking = false;
 		loadActorStandAnim(OBJECT_KIRK);
 
-		showText(TX_SPEAKER_UHURA, TX_TRI3U084);
-		showText(TX_SPEAKER_KIRK,  TX_TRI3_007);
-		showText(TX_SPEAKER_UHURA, TX_TRI3U099);
+		showText(TX_SPEAKER_UHURA, 84, true);
+		showText(TX_SPEAKER_KIRK,   7, true);
+		showText(TX_SPEAKER_UHURA, 99, true);
 
 		_awayMission->trial.forceFieldDown = true;
 
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
-			TX_TRI3_006, TX_TRI3_002, TX_TRI3_003,
+			6, 2, 3,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices, true);
 
 		if (choice == 0) { // Don't beam out
 		} else if (choice == 1) { // Beam to enterprise
@@ -260,47 +260,47 @@ void Room::trial3KirkExploded() {
 }
 
 void Room::trial3LookAtKirk() {
-	showText(TX_TRI3N000);
+	showDescription(0, true);
 }
 
 void Room::trial3LookAtSpock() {
-	showText(TX_TRI3N004);
+	showDescription(4, true);
 }
 
 void Room::trial3LookAtMccoy() {
-	showText(TX_TRI3N001);
+	showDescription(1, true);
 }
 
 void Room::trial3LookAtRedshirt() {
-	showText(TX_TRI3N002);
+	showDescription(2, true);
 }
 
 void Room::trial3LookAtExit() {
-	showText(TX_TRI3N005);
+	showDescription(5, true);
 }
 
 void Room::trial3LookAtWall() {
-	showText(TX_TRI3N007);
+	showDescription(7, true);
 }
 
 void Room::trial3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_TRI3_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::trial3TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI3_022);
+	showText(TX_SPEAKER_SPOCK, 22, true);
 }
 
 void Room::trial3TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI3_018);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 }
 
 void Room::trial3TalkToRedshirt() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI3_029);
+	showText(TX_SPEAKER_BENNIE, 29, true);
 }
 
 void Room::trial3UsePhaserOnWall() {
-	showText(TX_TRI3N006);
+	showDescription(6, true);
 }
 
 void Room::trial3UseStunPhaserOnKlingon1() {
@@ -346,56 +346,56 @@ void Room::trial3ReadyToShootKlingon1OnKill() {
 }
 
 void Room::trial3UsePhaserAnywhere() {
-	showText(TX_TRI3N003);
+	showDescription(3, true);
 }
 
 void Room::trial3UseMTricorderOnKirk() {
 	// BUGFIX: Original animated Spock instead of Mccoy (same for below mccoy-scan functions)
-	mccoyScan(DIR_S, TX_TRI3_015, true);
+	mccoyScan(DIR_S, 15, true, true);
 }
 
 void Room::trial3UseMTricorderOnSpock() {
-	mccoyScan(DIR_S, TX_TRI3_016, true);
+	mccoyScan(DIR_S, 16, true, true);
 }
 
 void Room::trial3UseMTricorderOnMccoy() {
-	mccoyScan(DIR_S, TX_TRI3_013, true);
+	mccoyScan(DIR_S, 13, true, true);
 }
 
 void Room::trial3UseMTricorderOnRedshirt() {
-	mccoyScan(DIR_S, TX_TRI3_014, true);
+	mccoyScan(DIR_S, 14, true, true);
 }
 
 void Room::trial3UseMTricorderOnExit() {
-	mccoyScan(DIR_S, TX_TRI3_009, true);
+	mccoyScan(DIR_S, 9, true, true);
 }
 
 void Room::trial3UseSTricorderOnWall() {
-	spockScan(DIR_S, TX_TRI3_024, true);
+	spockScan(DIR_S, 24, true, true);
 }
 
 void Room::trial3UseSTricorderOnExit() {
-	spockScan(DIR_S, TX_TRI3_023, true);
+	spockScan(DIR_S, 23, true, true);
 }
 
 void Room::trial3UseMTricorderOnKlingon() {
 	if (_awayMission->trial.shotKlingonState == 22) { // Unconscious
-		mccoyScan(DIR_S, TX_TRI3_011);
+		mccoyScan(DIR_S, 11, false, true);
 		if (!_awayMission->redshirtDead) // BUGFIX: Check if redshirt is dead
-			showText(TX_SPEAKER_BENNIE, TX_TRI3_028);
+			showText(TX_SPEAKER_BENNIE, 28, true);
 	}
 }
 
 void Room::trial3UseCommunicator() {
 	if (_awayMission->trial.forceFieldDown) {
-		showText(TX_SPEAKER_UHURA, TX_TRI3U089);
+		showText(TX_SPEAKER_UHURA, 89, true);
 
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
-			TX_TRI3_103, TX_TRI3_104, TX_TRI3_107,
+			103, 104, 107,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices, true);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
 			_awayMission->trial.missionEndMethod = 1;
@@ -404,7 +404,7 @@ void Room::trial3UseCommunicator() {
 			trial3BeamToVlict();
 		} // Else don't transport anywhere
 	} else { // Force field still up
-		showText(TX_SPEAKER_UHURA, TX_TRI3U067);
+		showText(TX_SPEAKER_UHURA, 67, true);
 	}
 }
 
@@ -425,27 +425,27 @@ void Room::trial3BeamToVlict() {
 }
 
 void Room::trial3UseMccoyOnWall() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI3_010);
+	showText(TX_SPEAKER_MCCOY, 10, true);
 }
 
 void Room::trial3UseMccoyOnExit() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI3_012);
+	showText(TX_SPEAKER_MCCOY, 12, true);
 }
 
 void Room::trial3UseSpockOnWall() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI3_021);
+	showText(TX_SPEAKER_SPOCK, 21, true);
 }
 
 void Room::trial3UseSpockOnExit() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI3_008);
+	showText(TX_SPEAKER_SPOCK, 8, true);
 }
 
 void Room::trial3UseRedshirtOnExit() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI3_027);
+	showText(TX_SPEAKER_BENNIE, 27, true);
 }
 
 void Room::trial3UseRedshirtOnWall() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI3_026);
+	showText(TX_SPEAKER_BENNIE, 26, true);
 }
 
 void Room::trial3WalkToExit() {
@@ -453,7 +453,7 @@ void Room::trial3WalkToExit() {
 }
 
 void Room::trial3UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI3_017);
+	showText(TX_SPEAKER_MCCOY, 17, true);
 }
 
 }

@@ -20,564 +20,463 @@
  *
  */
 
-#include "common/stack.h"
 #include "glk/alan2/alan2.h"
-#include "glk/alan2/execute.h"
-#include "glk/alan2/interpreter.h"
+#include "glk/alan2/debug.h"
+#include "glk/alan2/exe.h"
+#include "glk/alan2/glkio.h"
+#include "glk/alan2/inter.h"
+#include "glk/alan2/main.h"
+#include "glk/alan2/params.h"
 #include "glk/alan2/parse.h"
 #include "glk/alan2/types.h"
-#include "glk/alan2/util.h"
-#include "common/debug.h"
-#include "common/file.h"
-#include "decode.h"
 
 namespace Glk {
 namespace Alan2 {
-	
-uint32 litCount = 0;
 
-// All procedures for getting a command and turning it into a list of
-// dictionary entries are placed here.
+#define LISTLEN 100
 
-Parser::Parser() {
-	wrds[0] = EOF;
-	plural = false;
 
-	// TODO
+/* PUBLIC DATA */
+
+Aword wrds[LISTLEN / 2] = {EOD};  // List of parsed words
+int wrdidx;				// and an index into it
+
+Boolean plural = FALSE;
+
+
+/* Syntax Parameters */
+int paramidx;           /* Index in params */
+ParamElem *params;      /* List of params */
+static ParamElem *pparams;  /* Previous parameter list */
+static ParamElem *mlst;     /* Multiple objects list */
+static ParamElem *pmlst;    /* Previous multiple list */
+
+/* Literals */
+LitElem litValues[MAXPARAMS + 1];
+int litCount;
+
+/* What did the user say? */
+int vrbwrd;         /* The word he used */
+int vrbcode;            /* The code for that verb */
+
+
+/*----------------------------------------------------------------------*\
+
+  SCAN DATA & PROCEDURES
+
+  All procedures for getting a command and turning it into a list of
+  dictionary entries are placed here.
+
+  buf
+  unknown()
+  lookup()
+  token
+  agetline()
+  scan()
+
+\*----------------------------------------------------------------------*/
+
+
+/* PRIVATE DATA */
+
+static char buf[LISTLEN + 1]; /* The input buffer */
+static char isobuf[LISTLEN + 1]; /* The input buffer in ISO */
+
+
+static Boolean eol = TRUE;  /* Looking at End of line? Yes, initially */
+
+
+static void unknown(CONTEXT, char token[]) {
+	char *str = (char *)allocate((int)strlen(token) + 4);
+
+	str[0] = '\'';
+	strcpy(&str[1], token);
+	strcat(str, "'?");
+	output(str);
+	free(str);
+	eol = TRUE;
+	CALL1(error, M_UNKNOWN_WORD)
 }
 
-void Parser::unknown(char *inputStr) {
-	Common::String str = Common::String::format("'%s'?", inputStr);
 
-	// TODO
-#if 0
-#if ISO == 0
-  fromIso(str, str);
-#endif
-#endif
+static char *token;
 
-	_vm->output(str);
-	eol = true;
-	_vm->printError(M_UNKNOWN_WORD);
-}
 
-int Parser::lookup(char *wrd) {
-	for (int i = 0; !endOfTable(&dict[i]); i++) {
-		if (strcmp(wrd, (char *)addrTo(dict[i].wrd)) == 0)
-			return i;
+static int lookup(CONTEXT, char wrd[]) {
+	int i;
+
+	for (i = 0; !endOfTable(&dict[i]); i++) {
+		if (strcmp(wrd, (char *) addrTo(dict[i].wrd)) == 0)
+			return (i);
 	}
-
-	unknown(wrd);
-	return EOF;
+	R0CALL1(unknown, wrd)
+	return EOD;
 }
 
-char *Parser::gettoken(char *tokenBuffer) {
+/* IN - The string to convert to a number */
+static int number(char tok[]) {
+	int i;
+
+	(void)sscanf(tok, "%d", &i);
+	return i;
+}
+
+static char *gettoken(char *tokBuf) {
 	static char *marker;
 	static char oldch;
 
-	if (tokenBuffer == nullptr)
+	if (tokBuf == NULL)
 		*marker = oldch;
 	else
-		marker = tokenBuffer;
-
-	while (*marker != '\0' && Common::isSpace(*marker) && *marker != '\n') marker++;
-	tokenBuffer = marker;
-
-	if (Common::isAlpha(*marker))
-		while (*marker && (Common::isAlpha(*marker) || Common::isDigit(*marker) || *marker == '\'')) marker++;
-	else if (Common::isDigit(*marker))
-		while (Common::isDigit(*marker)) marker++;
+		marker = tokBuf;
+	while (*marker != '\0' && isSpace(*marker) && *marker != '\n') marker++;
+	tokBuf = marker;
+	if (isISOLetter(*marker))
+		while (*marker && (isISOLetter(*marker) || isdigit(*marker) || *marker == '\'')) marker++;
+	else if (isdigit(*marker))
+		while (isdigit(*marker)) marker++;
 	else if (*marker == '\"') {
 		marker++;
 		while (*marker != '\"') marker++;
 		marker++;
 	} else if (*marker == '\0' || *marker == '\n')
-		return nullptr;
+		return NULL;
 	else
 		marker++;
-
 	oldch = *marker;
 	*marker = '\0';
-	
-	return tokenBuffer;
+	return tokBuf;
 }
 
-void Parser::agetline() {
-	// static char buf[LISTLEN + 1];	// The input buffer
-	// static char isobuf[LISTLEN + 1];	// The input buffer in ISO
-
-	_vm->paragraph();
-
-	// TODO
-#if 0
-
+static void agetline(CONTEXT) {
+	para();
 	do {
-#if defined(HAVE_ANSI) || defined(GLK)
 		statusline();
-#endif
-		debug("> ");
 
-#if 0
+		printf("> ");
 		if (logflg)
 			fprintf(logfil, "> ");
-#endif
 
-#ifdef USE_READLINE
 		if (!readline(buf)) {
-			newline();
-			quit();
-		}
-#else
-		if (fgets(buf, LISTLEN, stdin) == nullptr) {
-			newline();
-			quit();
-		}
-#endif
+			if (g_vm->shouldQuit())
+				return;
 
-		getPageSize();
+			newline();
+			CALL0(quit)
+		}
+
 		anyOutput = FALSE;
-
 		if (logflg)
 			fprintf(logfil, "%s\n", buf);
-
-#if ISO == 0
-		toIso(isobuf, buf, NATIVECHARSET);
-#else
 		strcpy(isobuf, buf);
-#endif
 
 		token = gettoken(isobuf);
-
-		if (token != nullptr && strcmp("debug", token) == 0 && _vm->header->debug) {
-			dbgflg = true;
+		if (token != NULL && strcmp("debug", token) == 0 && header->debug) {
+			dbgflg = TRUE;
 			debug();
-			token = nullptr;
+			token = NULL;
 		}
-	} while (token == nullptr);
-
-  eol = false;
-  lin = 1;
-
-#endif
+	} while (token == NULL);
+	eol = FALSE;
+	lin = 1;
 }
 
-void Parser::scan() {
-	uint i;
-	// int w;
+static void scan(CONTEXT) {
+	int i;
+	int w;
+	char *str;
 
-	agetline();
+	CALL0(agetline)
+	if (g_vm->shouldQuit())
+		return;
+
 	wrds[0] = 0;
-
 	for (i = 0; i < litCount; i++)
 		if (litValues[i].type == TYPSTR && litValues[i].value != 0)
 			free((char *) litValues[i].value);
-
+	i = 0;
 	litCount = 0;
-
 	do {
-		if (Common::isAlpha(token[0])) {
-			Common::String tmp = token;
-			tmp.toLowercase();
-			strcpy(token, tmp.c_str());
+		if (isISOLetter(token[0])) {
+			(void) stringLower(token);
+			FUNC1(lookup, w, token);
 
-			// w = lookup(token);
-
-			// TODO
-			//if (!isNoise(w))
-			//	wrds[i++] = w;
-		} else if (Common::isDigit(token[0])) {
+			if (!isNoise(w))
+				wrds[i++] = w;
+		} else if (isdigit(token[0])) {
 			if (litCount > MAXPARAMS)
-				error("Too many parameters.");
-
-			wrds[i++] = dictsize + litCount; // Word outside dictionary = literal
+				syserr("Too many parameters.");
+			wrds[i++] = dictsize + litCount; /* Word outside dictionary = literal */
 			litValues[litCount].type = TYPNUM;
-			litValues[litCount++].value = atoi(token);
+			litValues[litCount++].value = number(token);
 		} else if (token[0] == '\"') {
 			if (litCount > MAXPARAMS)
-				error("Too many parameters.");
-  
-			wrds[i++] = dictsize + litCount; // Word outside dictionary = literal
+				syserr("Too many parameters.");
+			wrds[i++] = dictsize + litCount; /* Word outside dictionary = literal */
 			litValues[litCount].type = TYPSTR;
-
-			// Remove the string quotes while copying
-			Common::String tmp = token;
-			tmp.deleteChar(0);
-			tmp.deleteLastChar();
-			char *str = scumm_strdup(tmp.c_str());
-
+			/* Remove the string quotes while copying */
+			str = strdup(&token[1]);
+			str[strlen(token) - 2] = '\0';
 			litValues[litCount++].value = (Aptr) str;
 		} else if (token[0] == ',') {
-			//wrds[i++] = conjWord;		// TODO
-		} else
-			unknown(token);
-
-		wrds[i] = EOF;
-		eol = (token = gettoken(nullptr)) == nullptr;
+			wrds[i++] = conjWord;
+		} else {
+			CALL1(unknown, token)
+		}
+		wrds[i] = EOD;
+		eol = (token = gettoken(NULL)) == NULL;
 	} while (!eol);
 }
 
-void Parser::nonverb() {
+
+/*----------------------------------------------------------------------*\
+
+  PARSE DATA & PROCEDURES
+
+  All procedures and data for getting a command and parsing it
+
+  nonverb() - search for a non-verb command
+  buildall()    - build a list of objects matching 'all'
+  unambig() - match an unambigous object reference
+  simple()  - match a simple verb command
+  complex() - match a complex -"-
+  tryMatch()- to match a verb command
+  match()   - find the verb class (not used currently) and 'tryMatch()'
+
+\*---------------------------------------------------------------------- */
+
+static int allLength;       /* No. of objects matching 'all' */
+
+
+static void nonverb(CONTEXT) {
 	if (isDir(wrds[wrdidx])) {
 		wrdidx++;
-		if (wrds[wrdidx] != EOF && !isConj(wrds[wrdidx]))
-			_vm->printError(M_WHAT);
-// TODO
-#if 0
-		else
-			go(dict[wrds[wrdidx-1]].code);
-#endif
-
-		if (wrds[wrdidx] != EOF)
+		if (wrds[wrdidx] != EOD && !isConj(wrds[wrdidx])) {
+			CALL1(error, M_WHAT)
+		} else {
+			CALL1(go, dict[wrds[wrdidx - 1]].code)
+		}
+		if (wrds[wrdidx] != EOD)
 			wrdidx++;
-	} else
-		_vm->printError(M_WHAT);
-}
-
-Aword Parser::where(Aword id) {
-	if (isObj(id))
-		return objloc(id);
-	else if (isAct(id))
-		return acts[id - ACTMIN].loc;
-	else
-		error("Can't WHERE item (%ld).", (unsigned long)id);
-}
-
-Aword Parser::objloc(Aword obj) {
-	if (isCnt(objs[obj - OBJMIN].loc)) // In something ?
-		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
-			return where(objs[obj - OBJMIN].loc);
-		else // Containers not anywhere is where the hero is!
-			return where(HERO);
-	else
-		return(objs[obj - OBJMIN].loc);
-}
-
-Abool Parser::objhere(Aword obj) {
-	if (isCnt(objs[obj - OBJMIN].loc)) {	// In something?
-		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
-			return isHere(objs[obj - OBJMIN].loc);
-		else // If the container wasn't anywhere, assume where HERO is!
-			return (int)where(HERO) == _vm->cur.loc;
-	} else
-		return((int)objs[obj - OBJMIN].loc == _vm->cur.loc);
-}
-
-
-Abool Parser::isHere(Aword id) {
-	if (isObj(id))
-		return objhere(id);
-	else if (isAct(id))
-		return (int)acts[id - ACTMIN].loc == _vm->cur.loc;
-	else
-		error("Can't HERE item (%ld).", (unsigned long)id);
-}
-
-// ----------------------------------------------------------------------------
-
-void Parser::buildall(ParamElem list[]) {
-	uint o, i = 0;
-	bool found = false;
-  
-	for (o = OBJMIN; o <= OBJMAX; o++) {
-		if (isHere(o)) {
-			found = true;
-			list[i].code = o;
-			list[i++].firstWord = (Aword)EOF;
-		}
+	} else {
+		CALL1(error, M_WHAT)
 	}
-
-	if (!found)
-		_vm->printError(M_WHAT_ALL);
-	else
-		list[i].code = (Aword)EOF;
 }
 
-void Parser::listCopy(ParamElem a[], ParamElem b[]) {
-	int i;
-
-	for (i = 0; b[i].code != (Aword)EOF; i++)
-		a[i] = b[i];
-
-	a[i].code = (Aword)EOF;
-}
-
-bool Parser::listContains(ParamElem l[], Aword e) {
-	int i;
-
-	for (i = 0; l[i].code != (Aword)EOF && l[i].code != e; i++);
-
-	return (l[i].code == e);
-}
-
-void Parser::listIntersection(ParamElem a[], ParamElem b[]) {
-	int i, last = 0;
-
-	for (i = 0; a[i].code != (Aword)EOF; i++)
-		if (listContains(b, a[i].code))
-			a[last++] = a[i];
-
-	a[last].code = (Aword)EOF;
-}
-
-void Parser::listCopyFromDictionary(ParamElem p[], Aword r[]) {
-	int i;
-
-	for (i = 0; r[i] != (Aword)EOF; i++) {
-		p[i].code = r[i];
-		p[i].firstWord = (Aword)EOF;
-	}
-
-	p[i].code = (Aword)EOF;
-}
-
-int Parser::listLength(ParamElem a[]) {
+static void buildall(CONTEXT, ParamElem list[]) {
 	int i = 0;
+	Boolean found = FALSE;
 
-	while (a[i].code != (Aword)EOF)
-		i++;
-
-	return (i);
-}
-
-void Parser::listCompact(ParamElem a[]) {
-	int i, j;
-
-	for (i = 0, j = 0; a[j].code != (Aword)EOF; j++)
-		if (a[j].code != 0)
-			a[i++] = a[j];
-
-	a[i].code = (Aword)EOF;
-}
-
-void Parser::listMerge(ParamElem a[], ParamElem b[]) {
-	int i, last;
-
-	for (last = 0; a[last].code != (Aword)EOF; last++); // Find end of list
-
-	for (i = 0; b[i].code != (Aword)EOF; i++) {
-		if (!listContains(a, b[i].code)) {
-			a[last++] = b[i];
-			a[last].code = (Aword)EOF;
+	for (uint o = OBJMIN; o <= OBJMAX; o++)
+		if (isHere(o)) {
+			found = TRUE;
+			list[i].code = o;
+			list[i++].firstWord = EOD;
 		}
+	if (!found) {
+		CALL1(error, M_WHAT_ALL)
+	} else {
+		list[i].code = EOD;
 	}
 }
 
-void Parser::listSubtract(ParamElem a[], ParamElem b[]) {
-	for (int i = 0; a[i].code != (Aword)EOF; i++)
-		if (listContains(b, a[i].code))
-			a[i].code = 0;		// Mark empty
-
-	listCompact(a);
-}
-
-void Parser::unambig(ParamElem plst[]) {
+static void unambig(CONTEXT, ParamElem plst[]) {
 	int i;
-	bool found = false;		// Adjective or noun found?
-	static ParamElem *refs;	// Entities referenced by word
-	static ParamElem *savlst;	// Saved list for backup at EOF
-	int firstWord, lastWord;	// The words the player used
+	Boolean found = FALSE;    /* Adjective or noun found ? */
+	static ParamElem *refs;   /* Entities referenced by word */
+	static ParamElem *savlst; /* Saved list for backup at EOD */
+	int firstWord, lastWord;  /* The words the player used */
 
-	if (refs == nullptr)
-		refs = new ParamElem[MAXENTITY + 1];
+	if (refs == NULL)
+		refs = (ParamElem *)allocate((MAXENTITY + 1) * sizeof(ParamElem));
 
-	if (savlst == nullptr)
-		savlst = new ParamElem[MAXENTITY + 1];
+	if (savlst == NULL)
+		savlst = (ParamElem *)allocate((MAXENTITY + 1) * sizeof(ParamElem));
 
 	if (isLiteral(wrds[wrdidx])) {
-		// Transform the word into a reference to the literal value
+		/* Transform the word into a reference to the literal value */
 		plst[0].code = wrds[wrdidx++] - dictsize + LITMIN;
-		plst[0].firstWord = (Aword)EOF;	// No words used!
-		plst[1].code = (Aword)EOF;
+		plst[0].firstWord = EOD;    /* No words used! */
+		plst[1].code = EOD;
 		return;
 	}
 
-	plst[0].code = (Aword)EOF;		// Make empty
-
+	plst[0].code = EOD;       /* Make empty */
 	if (isIt(wrds[wrdidx])) {
 		wrdidx++;
-		
-		// Use last object in previous command!
-		for (i = listLength(pparams)-1; i >= 0 && (pparams[i].code == 0 || pparams[i].code >= LITMIN); i--);
-		
-		if (i < 0)
-			_vm->printError(M_WHAT_IT);
-
+		/* Use last object in previous command! */
+		for (i = lstlen(pparams) - 1; i >= 0 && (pparams[i].code == 0 || pparams[i].code >= LITMIN); i--);
+		if (i < 0) {
+			CALL1(error, M_WHAT_IT)
+		}
 		if (!isHere(pparams[i].code)) {
 			params[0].code = pparams[i].code;
-			params[0].firstWord = (Aword)EOF;
-			params[1].code = (Aword)EOF;
-			_vm->printError(M_NO_SUCH);
+			params[0].firstWord = EOD;
+			params[1].code = EOD;
+			CALL1(error, M_NO_SUCH)
 		}
-
 		plst[0] = pparams[i];
-		plst[0].firstWord = (Aword)EOF;	// No words used!
-		plst[1].code = (Aword)EOF;
+		plst[0].firstWord = EOD;    /* No words used! */
+		plst[1].code = EOD;
 		return;
 	}
 
 	firstWord = wrdidx;
-
-	while (wrds[wrdidx] != EOF && isAdj(wrds[wrdidx])) {
-		// If this word can be a noun and there is no noun following break loop
-		if (isNoun(wrds[wrdidx]) && (wrds[wrdidx+1] == EOF || !isNoun(wrds[wrdidx+1])))
+	while (wrds[wrdidx] != EOD && isAdj(wrds[wrdidx])) {
+		/* If this word can be a noun and there is no noun following break loop */
+		if (isNoun(wrds[wrdidx]) && (wrds[wrdidx + 1] == EOD || !isNoun(wrds[wrdidx + 1])))
 			break;
-
-		listCopyFromDictionary(refs, (Aword *)addrTo(dict[wrds[wrdidx]].adjrefs));
-		listCopy(savlst, plst);	// To save it for backtracking
-
+		cpyrefs(refs, (Aword *)addrTo(dict[wrds[wrdidx]].adjrefs));
+		lstcpy(savlst, plst);   /* To save it for backtracking */
 		if (found)
-			listIntersection(plst, refs);
+			isect(plst, refs);
 		else {
-			listCopy(plst, refs);
-			found = true;
+			lstcpy(plst, refs);
+			found = TRUE;
 		}
-
 		wrdidx++;
 	}
-
-	if (wrds[wrdidx] != EOF) {
+	if (wrds[wrdidx] != EOD) {
 		if (isNoun(wrds[wrdidx])) {
-			listCopyFromDictionary(refs, (Aword *)addrTo(dict[wrds[wrdidx]].nounrefs));
+			cpyrefs(refs, (Aword *)addrTo(dict[wrds[wrdidx]].nounrefs));
 			if (found)
-				listIntersection(plst, refs);
+				isect(plst, refs);
 			else {
-				listCopy(plst, refs);
-				found = true;
+				lstcpy(plst, refs);
+				found = TRUE;
 			}
-
 			wrdidx++;
 		} else
-			_vm->printError(M_NOUN);
+			CALL1(error, M_NOUN)
 	} else if (found) {
-		if (isNoun(wrds[wrdidx-1])) {
-			// Perhaps the last word was also a noun?
-			listCopy(plst, savlst);	// Restore to before last adjective
-			listCopyFromDictionary(refs, (Aword *)addrTo(dict[wrds[wrdidx-1]].nounrefs));
-			
-			if (plst[0].code == (Aword)EOF)
-				listCopy(plst, refs);
+		if (isNoun(wrds[wrdidx - 1])) {
+			/* Perhaps the last word was also a noun? */
+			lstcpy(plst, savlst); /* Restore to before last adjective */
+			cpyrefs(refs, (Aword *)addrTo(dict[wrds[wrdidx - 1]].nounrefs));
+			if (plst[0].code == EOD)
+				lstcpy(plst, refs);
 			else
-				listIntersection(plst, refs);
-		} else
-			_vm->printError(M_NOUN);
+				isect(plst, refs);
+		} else {
+			CALL1(error, M_NOUN)
+		}
 	}
-
 	lastWord = wrdidx - 1;
 
-	// Allow remote objects, but resolve ambiguities by presence
-	if (listLength(plst) > 1) {
-		for (i=0; plst[i].code != (Aword)EOF; i++)
+	/* Allow remote objects, but resolve ambiguities by presence */
+	if (lstlen(plst) > 1) {
+		for (i = 0; plst[i].code != EOD; i++)
 			if (!isHere(plst[i].code))
 				plst[i].code = 0;
-
-		listCompact(plst);
+		compact(plst);
 	}
 
-	if (listLength(plst) > 1 || (found && listLength(plst) == 0)) {
-		params[0].code = 0;		/* Just make it anything != EOF */
+	if (lstlen(plst) > 1 || (found && lstlen(plst) == 0)) {
+		params[0].code = 0;     /* Just make it anything != EOD */
 		params[0].firstWord = firstWord; /* Remember words for errors below */
 		params[0].lastWord = lastWord;
-		params[1].code = (Aword)EOF;	/* But be sure to terminate */
-
-		if (listLength(plst) > 1)
-			_vm->printError(M_WHICH_ONE);
-		else if (found && listLength(plst) == 0)
-			_vm->printError(M_NO_SUCH);
+		params[1].code = EOD;   /* But be sure to terminate */
+		if (lstlen(plst) > 1) {
+			CALL1(error, M_WHICH_ONE)
+		} else if (found && lstlen(plst) == 0) {
+			CALL1(error, M_NO_SUCH)
+		}
 	} else {
 		plst[0].firstWord = firstWord;
 		plst[0].lastWord = lastWord;
 	}
 }
 
-void Parser::simple(ParamElem olst[]) {
-	static ParamElem *tlst = nullptr;
+static void simple(CONTEXT, ParamElem olst[]) {
+	static ParamElem *tlst = NULL;
 	int savidx = wrdidx;
-	bool savplur = false;
+	Boolean savplur = FALSE;
 	int i;
 
-	if (tlst == nullptr)
-		tlst = new ParamElem[MAXENTITY + 1];
-
-	tlst[0].code = (Aword)EOF;
+	if (tlst == NULL)
+		tlst = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
+	tlst[0].code = EOD;
 
 	for (;;) {
 		if (isThem(wrds[wrdidx])) {
-			plural = true;
-
-			for (i = 0; pmlst[i].code != (Aword)EOF; i++)
+			plural = TRUE;
+			for (i = 0; pmlst[i].code != EOD; i++)
 				if (!isHere(pmlst[i].code))
 					pmlst[i].code = 0;
+			compact(pmlst);
+			if (lstlen(pmlst) == 0) {
+				CALL1(error, M_WHAT_THEM)
+			}
 
-			listCompact(pmlst);
-
-			if (listLength(pmlst) == 0)
-				_vm->printError(M_WHAT_THEM);
-
-			listCopy(olst, pmlst);
-			olst[0].firstWord = (Aword)EOF;	// No words used
+			lstcpy(olst, pmlst);
+			olst[0].firstWord = EOD;  /* No words used */
 			wrdidx++;
 		} else {
-			unambig(olst);		// Look for unambigous noun phrase
-
-			if (listLength(olst) == 0) {	// Failed!
-				listCopy(olst, tlst);
+			// Look for unambigous noun phrase
+			CALL1(unambig, olst)
+			if (lstlen(olst) == 0) {  /* Failed! */
+				lstcpy(olst, tlst);
 				wrdidx = savidx;
 				plural = savplur;
 				return;
 			}
 		}
-
-		listMerge(tlst, olst);
-
-		if (wrds[wrdidx] != EOF
-			&& (isConj(wrds[wrdidx])
-			&& (isAdj(wrds[wrdidx+1]) || isNoun(wrds[wrdidx+1])))) {
-			// More parameters in a conjunction separated list ?
+		mrglst(tlst, olst);
+		if (wrds[wrdidx] != EOD
+		        && (isConj(wrds[wrdidx]) &&
+		            (isAdj(wrds[wrdidx + 1]) || isNoun(wrds[wrdidx + 1])))) {
+			/* More parameters in a conjunction separated list ? */
 			savplur = plural;
 			savidx = wrdidx;
 			wrdidx++;
-			plural = true;
+			plural = TRUE;
 		} else {
-			listCopy(olst, tlst);
+			lstcpy(olst, tlst);
 			return;
 		}
 	}
 }
 
-void Parser::complex(ParamElem olst[]) {
-	// Above this procedure we can use the is* tests, but not below since
-	// they work on words.Below all is converted to indices into the
-	// entity tables.Particularly this goes for literals...
 
-	static ParamElem *alst = nullptr;
+/*----------------------------------------------------------------------
 
-	if (alst == nullptr)
-		alst = new ParamElem[MAXENTITY + 1];
+  complex()
+
+  Above this procedure we can use the is* tests, but not below since
+  they work on words. Below all is converted to indices into the
+  entity tables. Particularly this goes for literals...
+
+*/
+static void complex(CONTEXT, ParamElem olst[]) {
+	static ParamElem *alst = NULL;
+
+	if (alst == NULL)
+		alst = (ParamElem *) allocate((MAXENTITY + 1) * sizeof(ParamElem));
 
 	if (isAll(wrds[wrdidx])) {
-		plural = true;
-		buildall(alst);		// Build list of all objects
+		plural = TRUE;
+		// Build list of all objects
+		CALL1(buildall, alst)     
 		wrdidx++;
-		if (wrds[wrdidx] != EOF && isBut(wrds[wrdidx])) {
+		if (wrds[wrdidx] != EOD && isBut(wrds[wrdidx])) {
 			wrdidx++;
-			simple(olst);
-
-			if (listLength(olst) == 0)
-				_vm->printError(M_AFTER_BUT);
-
-			listSubtract(alst, olst);
-			if (listLength(alst) == 0)
-				_vm->printError(M_NOT_MUCH);
+			CALL1(simple, olst)
+			if (lstlen(olst) == 0)
+				CALL1(error, M_AFTER_BUT)
+			sublst(alst, olst);
+			if (lstlen(alst) == 0)
+				CALL1(error, M_NOT_MUCH)
 		}
-
-		listCopy(olst, alst);
-		allLength = listLength(olst);
-	} else
-		simple(olst);		// Look for simple noun group
+		lstcpy(olst, alst);
+		allLength = lstlen(olst);
+	} else {
+		// Look for simple noun group
+		CALL1(simple, olst)
+	}
 }
 
-bool Parser::claCheck(ClaElem *cla) {
-	bool ok = false;
+static Boolean claCheck(ClaElem *cla /* IN - The cla elem to check */) {
+	Boolean ok = FALSE;
 
 	if ((cla->classes & (Aword)CLA_OBJ) != 0)
 		ok = ok || isObj(params[cla->code - 1].code);
@@ -593,375 +492,244 @@ bool Parser::claCheck(ClaElem *cla) {
 		ok = ok || (isCnt(params[cla->code - 1].code) && isObj(params[cla->code - 1].code));
 	if ((cla->classes & (Aword)CLA_CACT) != 0)
 		ok = ok || (isCnt(params[cla->code - 1].code) && isAct(params[cla->code - 1].code));
-
 	return ok;
 }
 
-void Parser::resolve(ParamElem plst[]) {
-	if (allLength > 0)
-		return;	// ALL has already done this
 
-	// Resolve ambiguities by presence
-	for (int i = 0; plst[i].code != (Aword)EOF; i++)  {
-		if (plst[i].code < LITMIN) { // Literals are always 'here'
+/*----------------------------------------------------------------------
+
+  resolve()
+
+  In case the syntax did not indicate omnipotent powers (allowed
+  access to remote object), we need to remove non-present parameters
+
+*/
+static void resolve(CONTEXT, ParamElem plst[]) {
+	int i;
+
+	if (allLength > 0) return;    /* ALL has already done this */
+
+	/* Resolve ambiguities by presence */
+	for (i = 0; plst[i].code != EOD; i++)
+		if (plst[i].code < LITMIN)  /* Literals are always 'here' */
 			if (!isHere(plst[i].code)) {
-				params[0] = plst[i];	// Copy error param as first one for message
-				params[1].code = (Aword)EOF;	// But be sure to terminate
-				_vm->printError(M_NO_SUCH);
+				params[0] = plst[i];    /* Copy error param as first one for message */
+				params[1].code = EOD;   /* But be sure to terminate */
+				CALL1(error, M_NO_SUCH)
 			}
-		}
-	}
 }
 
-bool Parser::endOfTable(StxElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
-
-bool Parser::endOfTable(ElmElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
-
-bool Parser::endOfTable(ClaElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
-
-bool Parser::endOfTable(VrbElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
-
-bool Parser::endOfTable(AltElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
-
-bool Parser::endOfTable(ChkElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
-
-bool Parser::endOfTable(WrdElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
-
-AltElem *Parser::findalt(Aword vrbsadr, Aword param) {
-	VrbElem *vrb;
-	AltElem *alt;
-
-	if (vrbsadr == 0)
-		return nullptr;
-
-	for (vrb = (VrbElem *)addrTo(vrbsadr); !endOfTable(vrb); vrb++) {
-		if ((int)vrb->code == _vm->cur.vrb) {
-			for (alt = (AltElem *)addrTo(vrb->alts); !endOfTable(alt); alt++)
-				if (alt->param == param || alt->param == 0)
-					return alt;
-			return nullptr;
-		}
-	}
-
-	return nullptr;
-}
-
-bool Parser::trycheck(Aaddr adr, bool act) {
-	ChkElem *chk = (ChkElem *)addrTo(adr);
-
-	if (chk->exp == 0) {
-		_vm->_interpreter->interpret(chk->stms);
-		return false;
-	} else {
-		while (!endOfTable(chk)) {
-			_vm->_interpreter->interpret(chk->exp);
-			if (!(Abool)_vm->_stack->pop()) {
-				if (act)
-					_vm->_interpreter->interpret(chk->stms);
-				return false;
-			}
-			chk++;
-		}
-		return true;
-	}
-}
-
-bool Parser::possible() {
-	AltElem *alt[MAXPARAMS + 2];	// List of alt-pointers, one for each param
-	int i;			// Parameter index
-
-	_vm->fail = false;
-	alt[0] = findalt(_vm->header->vrbs, 0);
-
-	// Perform global checks
-	if (alt[0] != 0 && alt[0]->checks != 0) {
-		if (!trycheck(alt[0]->checks, false))
-			return false;
-		if (_vm->fail)
-			return false;
-	}
-
-	// Now CHECKs in this location
-	alt[1] = findalt(locs[_vm->cur.loc - LOCMIN].vrbs, 0);
-	if (alt[1] != 0 && alt[1]->checks != 0)
-		if (!trycheck(alt[1]->checks, false))
-			return false;
-
-	for (i = 0; params[i].code != (Aword)EOF; i++) {
-		alt[i + 2] = findalt(objs[params[i].code - OBJMIN].vrbs, i + 1);
-		// CHECKs in a possible parameter
-		if (alt[i + 2] != 0 && alt[i + 2]->checks != 0)
-			if (!trycheck(alt[i + 2]->checks, false))
-				return false;
-	}
-
-	for (i = 0; i < 2 || params[i - 2].code != (Aword)EOF; i++)
-		if (alt[i] != 0 && alt[i]->action != 0)
-			break;
-	if (i >= 2 && params[i - 2].code == (Aword)EOF)
-		// Didn't find any code for this verb/object combination
-		return false;
-	else
-		return true;
-}
-
-void Parser::tryMatch(ParamElem mlstArr[]) {
-	ElmElem *elms;		// Pointer to element list
-	StxElem *stx;			// Pointer to syntax list
-	ClaElem *cla;			// Pointer to class definitions
-	bool anyPlural = false;	// Any parameter that was plural?
+/* OUT - List of params allowed by multiple */
+static void tryMatch(CONTEXT, ParamElem matchLst[]) {
+	ElmElem *elms;        /* Pointer to element list */
+	StxElem *stx;         /* Pointer to syntax list */
+	ClaElem *cla;         /* Pointer to class definitions */
+	Boolean anyPlural = FALSE;    /* Any parameter that was plural? */
 	int i, p;
-	static ParamElem *tlst = nullptr; // List of params found by complex()
-	static bool *checked = nullptr; // Corresponding parameter checked?
+	static ParamElem *tlst = NULL; /* List of params found by complex() */
+	static Boolean *checked = NULL; /* Corresponding parameter checked? */
 
-	if (tlst == nullptr) {
-		tlst = new ParamElem[MAXENTITY + 1];
-		checked = new bool[MAXENTITY + 1];
+	if (tlst == NULL) {
+		tlst = (ParamElem *) allocate((MAXENTITY + 1) * sizeof(ParamElem));
+		checked = (Boolean *) allocate((MAXENTITY + 1) * sizeof(Boolean));
 	}
 
 	for (stx = stxs; !endOfTable(stx); stx++)
 		if ((int)stx->code == vrbcode)
 			break;
-
-	if (endOfTable(stx))
-		_vm->printError(M_WHAT);
+	if (endOfTable(stx)) {
+		CALL1(error, M_WHAT)
+	}
 
 	elms = (ElmElem *) addrTo(stx->elms);
 
-	while (true) {
-		// End of input?
-		if (wrds[wrdidx] == EOF || isConj(wrds[wrdidx])) {
-			while (!endOfTable(elms) && elms->code != (Aword)EOS)
+	while (TRUE) {
+		/* End of input? */
+		if (wrds[wrdidx] == EOD || isConj(wrds[wrdidx])) {
+			while (!endOfTable(elms) && elms->code != EOS)
 				elms++;
-
-			if (endOfTable(elms))
-				_vm->printError(M_WHAT);
-			else
+			if (endOfTable(elms)) {
+				CALL1(error, M_WHAT)
+			} else
 				break;
 		} else {
-			// A preposition?
+			/* A preposition? */
 			if (isPrep(wrds[wrdidx])) {
 				while (!endOfTable(elms) && elms->code != dict[wrds[wrdidx]].code)
 					elms++;
-
-				if (endOfTable(elms))
-					_vm->printError(M_WHAT);
-				else
+				if (endOfTable(elms)) {
+					CALL1(error, M_WHAT)
+				} else
 					wrdidx++;
 			} else {
-				// Must be a parameter!
+				/* Must be a parameter! */
 				while (!endOfTable(elms) && elms->code != 0)
 					elms++;
-
-				if (endOfTable(elms))
-					_vm->printError(M_WHAT);
-
-				// Get it!
-				plural = false;
-				complex(tlst);
-
-				if (listLength(tlst) == 0) // No object!?
-					_vm->printError(M_WHAT);
-
-				if ((elms->flags & OMNIBIT) == 0) // Omnipotent parameter?
-					resolve(tlst);	// If its not an omnipotent parameter, resolve by presence
-
+				if (endOfTable(elms)) {
+					CALL1(error, M_WHAT)
+				}
+				/* Get it! */
+				plural = FALSE;
+				CALL1(complex, tlst)
+				if (lstlen(tlst) == 0) {
+					/* No object!? */
+					CALL1(error, M_WHAT)
+				}
+				/* Omnipotent parameter? */
+				if ((elms->flags & OMNIBIT) == 0) {
+					/* If its not an omnipotent parameter, resolve by presence */
+					CALL1(resolve, tlst)
+				}
 				if (plural) {
-					if ((elms->flags & MULTIPLEBIT) == 0)	// Allowed multiple?
-						_vm->printError(M_MULTIPLE);
-					else {
-						// Mark this as the multiple position in which to insert
-						// actual parameter values later
+					/* Allowed multiple? */
+					if ((elms->flags & MULTIPLEBIT) == 0) {
+						CALL1(error, M_MULTIPLE)
+					} else {
+						/*
+						   Mark this as the multiple position in which to insert
+						   actual parameter values later
+						 */
 						params[paramidx++].code = 0;
-						listCopy(mlstArr, tlst);
-						anyPlural = true;
+						lstcpy(matchLst, tlst);
+						anyPlural = TRUE;
 					}
 				} else
 					params[paramidx++] = tlst[0];
-				
-				params[paramidx].code = (Aword)EOF;
+				params[paramidx].code = EOD;
 			}
-
 			elms = (ElmElem *) addrTo(elms->next);
 		}
 	}
-  
-	// Now perform class checks
-	if (elms->next == 0)	// No verb code, verb not declared!
-		_vm->printError(M_CANT0);
 
-	for (p = 0; params[p].code != (Aword)EOF; p++) /* Mark all parameters unchecked */
-		checked[p] = false;
+	/* Now perform class checks */
+	if (elms->next == 0) {
+		/* No verb code, verb not declared! */
+		CALL1(error, M_CANT0)
+	}
 
+	for (p = 0; params[p].code != EOD; p++) /* Mark all parameters unchecked */
+		checked[p] = FALSE;
 	for (cla = (ClaElem *) addrTo(elms->next); !endOfTable(cla); cla++) {
 		if (params[cla->code - 1].code == 0) {
-			// This was a multiple parameter, so check all and remove failing
-			for (i = 0; mlstArr[i].code != (Aword)EOF; i++) {
-				params[cla->code-1] = mlstArr[i];
+			/* This was a multiple parameter, so check all and remove failing */
+			for (i = 0; matchLst[i].code != EOD; i++) {
+				params[cla->code - 1] = matchLst[i];
 				if (!claCheck(cla)) {
-					// Multiple could be both an explicit list of params and an ALL
+					/* Multiple could be both an explicit list of params and an ALL */
 					if (allLength == 0) {
 						char marker[80];
-						// It wasn't ALL, we need to say something about it, so
-						// prepare a printout with $1/2/3
-						sprintf(marker, "($%ld)", (unsigned long) cla->code); 
-						_vm->output(marker);
-						_vm->_interpreter->interpret(cla->stms);
-						_vm->paragraph();
+						/*
+						   It wasn't ALL, we need to say something about it, so
+						   prepare a printout with $1/2/3
+						 */
+						sprintf(marker, "($%ld)", (unsigned long) cla->code);
+						output(marker);
+						interpret(cla->stms);
+						para();
 					}
-
-					mlstArr[i].code = 0;	  // In any case remove it from the list
+					matchLst[i].code = 0;   /* In any case remove it from the list */
 				}
 			}
-
 			params[cla->code - 1].code = 0;
 		} else {
 			if (!claCheck(cla)) {
-				_vm->_interpreter->interpret(cla->stms);
-				_vm->printError(MSGMAX);		// Return to player without saying anything
+				/* Return to player without saying anything */
+				interpret(cla->stms);
+				CALL1(error, MSGMAX)
 			}
 		}
-
-		checked[cla->code - 1] = true; // Remember that it's already checked
+		checked[cla->code - 1] = TRUE; /* Remember that it's already checked */
 	}
-
-	// Now check the rest of the parameters, must be objects
-	for (p = 0; params[p].code != (Aword)EOF; p++) {
+	/* Now check the rest of the parameters, must be objects */
+	for (p = 0; params[p].code != EOD; p++)
 		if (!checked[p]) {
 			if (params[p].code == 0) {
-				// This was a multiple parameter, check all and remove failing
-				for (i = 0; mlstArr[i].code != (Aword)EOF; i++) {
-					if (mlstArr[i].code != 0 && !isObj(mlstArr[i].code)) // Skip any empty slots
-						mlstArr[i].code = 0;
-				}
-			} else if (!isObj(params[p].code))
-				_vm->printError(M_CANT0);
-		}
-	}
-
-	// Set verb code
-	_vm->cur.vrb = ((Aword *) cla)[1];	// Take first word after end of table!
-
-	// Finally, if ALL was used, try to find out what was applicable
-	if (allLength > 0) {
-		for (p = 0; params[p].code != 0; p++); // Find multiple marker
-
-		for (i = 0; i < allLength; i++) {
-			if (mlstArr[i].code != 0) {	// Already empty?
-				params[p] = mlstArr[i];
-
-				if (!possible())
-					mlstArr[i].code = 0;	// Remove this from list
+				/* This was a multiple parameter, check all and remove failing */
+				for (i = 0; matchLst[i].code != EOD; i++)
+					if (matchLst[i].code != 0) /* Skip any empty slots */
+						if (!isObj(matchLst[i].code))
+							matchLst[i].code = 0;
+			} else if (!isObj(params[p].code)) {
+				CALL1(error, M_CANT0)
 			}
 		}
 
-		params[p].code = 0;		// Restore multiple marker
-		listCompact(mlstArr);
+	/* Set verb code */
+	cur.vrb = ((Aword *) cla)[1]; /* Take first word after end of table! */
 
-		if (listLength(mlstArr) == 0) {
-			params[0].code = (Aword)EOF;
-			_vm->printError(M_WHAT_ALL);
+	/* Finally, if ALL was used, try to find out what was applicable */
+	if (allLength > 0) {
+		for (p = 0; params[p].code != 0; p++); /* Find multiple marker */
+		for (i = 0; i < allLength; i++) {
+			if (matchLst[i].code != 0) {  /* Already empty? */
+				params[p] = matchLst[i];
+				if (!possible())
+					matchLst[i].code = 0; /* Remove this from list */
+			}
+		}
+		params[p].code = 0;     /* Restore multiple marker */
+		compact(matchLst);
+		if (lstlen(matchLst) == 0) {
+			params[0].code = EOD;
+			CALL1(error, M_WHAT_ALL)
 		}
 	} else if (anyPlural) {
-		listCompact(mlstArr);
+		compact(matchLst);
+		if (lstlen(matchLst) == 0)
+			/* If there where multiple parameters but non left, exit without a */
+			/* word, assuming we have already said enough */
+			CALL1(error, MSGMAX)
+	}
+	plural = anyPlural;       /* Remember that we found plural objects */
+}
 
-		// If there where multiple parameters but non left, exit without a
-		// word, assuming we have already said enough
-		if (listLength(mlstArr) == 0)
-			_vm->printError(MSGMAX);
+/* OUT - List of params allowed by multiple */
+static void match(CONTEXT, ParamElem *matchLst) {
+	/* ... to understand what he said */
+	CALL1(tryMatch, matchLst)
+	if (wrds[wrdidx] != EOD && !isConj(wrds[wrdidx])) {
+		CALL1(error, M_WHAT)
+	}
+	if (wrds[wrdidx] != EOD)  /* More on this line? */
+		wrdidx++;           /* If so skip the AND */
+}
+
+void parse(CONTEXT) {
+	if (mlst == NULL) {       /* Allocate large enough paramlists */
+		mlst = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
+		mlst[0].code = EOD;
+		pmlst = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
+		params = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
+		params[0].code = EOD;
+		pparams = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
 	}
 
-	plural = anyPlural;		// Remember that we found plural objects
-}
-
-void Parser::match(ParamElem *mlstArr) {
-	tryMatch(mlstArr);			// try to understand what the user said
-
-	if (wrds[wrdidx] != EOF && !isConj(wrds[wrdidx]))
-		_vm->printError(M_WHAT);
-	if (wrds[wrdidx] != EOF)	// More on this line?
-		wrdidx++;			// If so skip the AND
-}
-
-void Parser::action(ParamElem plst[]) {
-	int i, mpos;
-	char marker[10];
-
-	if (plural) {
-		// The code == 0 means this is a multiple position. We must loop
-		// over this position (and replace it by each present in the plst)
-		for (mpos = 0; params[mpos].code != 0; mpos++); // Find multiple position
-		
-		sprintf(marker, "($%d)", mpos + 1); // Prepare a printout with $1/2/3
-
-		for (i = 0; plst[i].code != (Aword)EOF; i++) {
-			params[mpos] = plst[i];
-			_vm->output(marker);
-			//do_it();	// TODO
-
-			if (plst[i + 1].code != (Aword)EOF)
-				_vm->paragraph();
-		}
-
-		params[mpos].code = 0;
-	} //else // TODO
-		//do_it();
-}
-
-void Parser::parse() {
-	if (mlst == nullptr) {		// Allocate large enough paramlists
-		mlst = new ParamElem[MAXENTITY + 1];
-		mlst[0].code = (Aword)EOF;
-		pmlst = new ParamElem[MAXENTITY + 1];
-		params = new ParamElem[MAXENTITY + 1];
-		params[0].code = (Aword)EOF;
-		pparams = new ParamElem[MAXENTITY + 1];
-	}
-
-	if (wrds[wrdidx] == EOF) {
+	if (wrds[wrdidx] == EOD) {
 		wrdidx = 0;
-		scan();
-	} else if (false/*anyOutput*/)	// TODO
-		_vm->paragraph();
+		CALL0(scan)
+
+		if (g_vm->shouldQuit())
+			return;
+	} else if (anyOutput)
+		para();
 
 	allLength = 0;
 	paramidx = 0;
-	listCopy(pparams, params);
-	params[0].code = (Aword)EOF;
-	listCopy(pmlst, mlst);
-	mlst[0].code = (Aword)EOF;
-
+	lstcpy(pparams, params);
+	params[0].code = EOD;
+	lstcpy(pmlst, mlst);
+	mlst[0].code = EOD;
 	if (isVerb(wrds[wrdidx])) {
 		vrbwrd = wrds[wrdidx];
 		vrbcode = dict[vrbwrd].code;
 		wrdidx++;
-		match(mlst);
-		action(mlst);		// mlst contains possible multiple params
+		CALL1(match, mlst)
+		/* mlst contains possible multiple params */
+		CALL1(action, mlst)
 	} else {
-		params[0].code = (Aword)EOF;
-		pmlst[0].code = (Aword)EOF;
-		nonverb();
+		params[0].code = EOD;
+		pmlst[0].code = EOD;
+		CALL0(nonverb)
 	}
 }
 

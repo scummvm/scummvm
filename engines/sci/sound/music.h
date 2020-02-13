@@ -130,13 +130,13 @@ public:
 
 public:
 	MusicEntry();
-	~MusicEntry();
+	~MusicEntry() override;
 
 	void doFade();
 	void onTimer();
 	void setSignal(int signal);
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 struct DeviceChannelUsage {
@@ -167,7 +167,7 @@ class SciMusic : public Common::Serializable {
 
 public:
 	SciMusic(SciVersion soundVersion, bool useDigitalSFX);
-	~SciMusic();
+	~SciMusic() override;
 
 	void init();
 
@@ -238,7 +238,7 @@ public:
 
 	void needsRemap() { _needsRemap = true; }
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	// Mutex for music code. Used to guard access to the song playlist, to the
 	// MIDI parser and to the MIDI driver/player. Note that guarded code must NOT

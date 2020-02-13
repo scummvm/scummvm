@@ -182,6 +182,9 @@ void Mult_v1::loadMult(int16 resId) {
 		case 5:
 			_vm->_game->_script->skip(_multData->sndKeys[i].freq * 2);
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -437,6 +440,9 @@ void Mult_v1::newCycleAnim(Mult_Object &animObj) {
 	case 6:
 		animData.frame--;
 		animData.isPaused = 1;
+		break;
+
+	default:
 		break;
 	}
 	animData.newCycle = 1;

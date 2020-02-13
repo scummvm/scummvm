@@ -196,6 +196,8 @@ void ScummEngine_v4::saveVars() {
 		case 0x1F: // close file
 			_saveLoadVarsFilename[0] = '\0';
 			return;
+		default:
+			break;
 		}
 	}
 }
@@ -272,6 +274,8 @@ void ScummEngine_v4::loadVars() {
 		case 0x1F: // close file
 			_saveLoadVarsFilename[0] = '\0';
 			return;
+		default:
+			break;
 		}
 	}
 }

@@ -32,7 +32,6 @@ class Serializer;
 
 namespace StarTrek {
 
-Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2);
 void serializeRect(Common::Rect rect, Common::Serializer &ser);
 
 } // End of namespace StarTrek

@@ -95,10 +95,10 @@ public:
 	OSystem *_system;
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
-	~AvalancheEngine();
+	~AvalancheEngine() override;
 
 	Common::ErrorCode initialize();
-	GUI::Debugger *getDebugger();
+	GUI::Debugger *getDebugger() override;
 
 	Common::RandomSource *_rnd;
 
@@ -106,16 +106,16 @@ public:
 	uint32 getFeatures() const;
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	const char *getCopyrightString() const;
 
 	void synchronize(Common::Serializer &sz);
-	virtual bool canSaveGameStateCurrently();
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canSaveGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	bool saveGame(const int16 slot, const Common::String &desc);
 	Common::String getSaveFileName(const int slot);
-	virtual bool canLoadGameStateCurrently();
-	Common::Error loadGameState(int slot);
+	bool canLoadGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
 	bool loadGame(const int16 slot);
 	Common::String expandDate(int d, int m, int y);
 	uint32 getTimeInSeconds();
@@ -126,7 +126,7 @@ public:
 
 protected:
 	// Engine APIs
-	Common::Error run();
+	Common::Error run() override;
 
 private:
 	AvalancheConsole *_console;

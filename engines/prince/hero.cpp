@@ -534,6 +534,8 @@ int Hero::rotateHero(int oldDirection, int newDirection) {
 			return kMove_MLU;
 		case kHeroDirDown:
 			return kMove_MLD;
+		default:
+			break;
 		}
 		break;
 	case kHeroDirRight:
@@ -544,6 +546,8 @@ int Hero::rotateHero(int oldDirection, int newDirection) {
 			return kMove_MRU;
 		case kHeroDirDown:
 			return kMove_MRD;
+		default:
+			break;
 		}
 		break;
 	case kHeroDirUp:
@@ -554,6 +558,8 @@ int Hero::rotateHero(int oldDirection, int newDirection) {
 			return kMove_MUR;
 		case kHeroDirDown:
 			return kMove_MUD;
+		default:
+			break;
 		}
 		break;
 	case kHeroDirDown:
@@ -564,7 +570,11 @@ int Hero::rotateHero(int oldDirection, int newDirection) {
 			return kMove_MDR;
 		case kHeroDirUp:
 			return kMove_MDU;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 	error("rotateHero - wrong directions - old %d, new %d", oldDirection, newDirection);
@@ -584,6 +594,8 @@ void Hero::heroStanding() {
 		break;
 	case kHeroDirDown:
 		_moveSetType = kMove_SD;
+		break;
+	default:
 		break;
 	}
 }
@@ -637,6 +649,8 @@ void Hero::showHero() {
 				case kHeroDirDown:
 					_moveSetType = kMove_TD;
 					break;
+				default:
+					break;
 				}
 				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
 					_phase++;
@@ -655,6 +669,8 @@ void Hero::showHero() {
 				break;
 			case 1:
 				_moveSetType = kMove_BORED2;
+				break;
+			default:
 				break;
 			}
 			if (_moveSet[_moveSetType] != nullptr) {
@@ -899,6 +915,8 @@ void Hero::heroMoveGotIt(int x, int y, int dir) {
 	case kHeroDirDown:
 		_moveSetType = kMove_MD;
 		break;
+	default:
+		break;
 	}
 
 	if (_vm->_flags->getFlagValue(Flags::HEROFAST) || _state == kHeroStateRun) {
@@ -948,6 +966,8 @@ void Hero::scrollHero() {
 		} else {
 			_vm->_flags->setFlagValue(Flags::SCROLLVALUE, scrollValue - scrollValue2);
 		}
+		break;
+	default:
 		break;
 	}
 

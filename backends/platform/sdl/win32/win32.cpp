@@ -43,6 +43,7 @@
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/platform/sdl/win32/win32-window.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
+#include "backends/platform/sdl/win32/codepage.h"
 #include "backends/saves/windows/windows-saves.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
@@ -50,6 +51,12 @@
 #include "backends/dialogs/win32/win32-dialogs.h"
 
 #include "common/memstream.h"
+#include "common/ustr.h"
+#include "common/encoding.h"
+
+#if defined(USE_TTS)
+#include "backends/text-to-speech/windows/windows-text-to-speech.h"
+#endif
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
@@ -74,9 +81,23 @@ void OSystem_Win32::init() {
 	OSystem_SDL::init();
 }
 
+WORD GetCurrentSubsystem() {
+	// HMODULE is the module base address. And the PIMAGE_DOS_HEADER is located at the beginning.
+	PIMAGE_DOS_HEADER EXEHeader = (PIMAGE_DOS_HEADER)GetModuleHandle(NULL);
+	assert(EXEHeader->e_magic == IMAGE_DOS_SIGNATURE);
+	// PIMAGE_NT_HEADERS is bitness dependant.
+	// Conveniently, since it's for our own process, it's always the correct bitness.
+	// IMAGE_NT_HEADERS has to be found using a byte offset from the EXEHeader,
+	// which requires the ugly cast.
+	PIMAGE_NT_HEADERS PEHeader = (PIMAGE_NT_HEADERS)(((char*)EXEHeader) + EXEHeader->e_lfanew);
+	assert(PEHeader->Signature == IMAGE_NT_SIGNATURE);
+	return PEHeader->OptionalHeader.Subsystem;
+}
+
 void OSystem_Win32::initBackend() {
-	// Console window is enabled by default on Windows
-	ConfMan.registerDefault("console", true);
+	// The console window is enabled for the console subsystem,
+	// since Windows already creates the console window for us
+	ConfMan.registerDefault("console", GetCurrentSubsystem() == IMAGE_SUBSYSTEM_WINDOWS_CUI);
 
 	// Enable or disable the window console window
 	if (ConfMan.getBool("console")) {
@@ -96,7 +117,12 @@ void OSystem_Win32::initBackend() {
 
 #if defined(USE_SPARKLE)
 	// Initialize updates manager
-	_updateManager = new Win32UpdateManager();
+	_updateManager = new Win32UpdateManager((SdlWindow_Win32*)_window);
+#endif
+
+	// Initialize text to speech
+#ifdef USE_TTS
+	_textToSpeechManager = new WindowsTextToSpeechManager();
 #endif
 
 	// Invoke parent implementation of this method
@@ -122,7 +148,7 @@ bool OSystem_Win32::displayLogFile() {
 
 	// Try opening the log file with the default text editor
 	// log files should be registered as "txtfile" by default and thus open in the default text editor
-	HINSTANCE shellExec = ShellExecute(NULL, NULL, _logFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	HINSTANCE shellExec = ShellExecute(getHwnd(), NULL, _logFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	if ((intptr_t)shellExec > 32)
 		return true;
 
@@ -145,17 +171,20 @@ bool OSystem_Win32::displayLogFile() {
 	                            NULL,
 	                            &startupInfo,
 	                            &processInformation);
-	if (result)
+	if (result) {
+		CloseHandle(processInformation.hProcess);
+		CloseHandle(processInformation.hThread);
 		return true;
+	}
 
 	return false;
 }
 
 bool OSystem_Win32::openUrl(const Common::String &url) {
-	const uint64 result = (uint64)ShellExecute(0, 0, /*(wchar_t*)nativeFilePath.utf16()*/url.c_str(), 0, 0, SW_SHOWNORMAL);
+	HINSTANCE result = ShellExecute(getHwnd(), NULL, /*(wchar_t*)nativeFilePath.utf16()*/url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	// ShellExecute returns a value greater than 32 if successful
-	if (result <= 32) {
-		warning("ShellExecute failed: error = %u", result);
+	if ((intptr_t)result <= 32) {
+		warning("ShellExecute failed: error = %p", (void*)result);
 		return false;
 	}
 	return true;
@@ -261,31 +290,22 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 	return configFile;
 }
 
-Common::WriteStream *OSystem_Win32::createLogFile() {
-	// Start out by resetting _logFilePath, so that in case
-	// of a failure, we know that no log file is open.
-	_logFilePath.clear();
-
+Common::String OSystem_Win32::getDefaultLogFileName() {
 	char logFile[MAXPATHLEN];
 
 	// Use the Application Data directory of the user profile.
-	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) == S_OK) {
-		strcat(logFile, "\\ScummVM");
-		CreateDirectory(logFile, NULL);
-		strcat(logFile, "\\Logs");
-		CreateDirectory(logFile, NULL);
-		strcat(logFile, "\\scummvm.log");
-
-		Common::FSNode file(logFile);
-		Common::WriteStream *stream = file.createWriteStream();
-		if (stream)
-			_logFilePath= logFile;
-
-		return stream;
-	} else {
+	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) != S_OK) {
 		warning("Unable to access application data directory");
-		return 0;
+		return Common::String();
 	}
+
+	strcat(logFile, "\\ScummVM");
+	CreateDirectory(logFile, NULL);
+	strcat(logFile, "\\Logs");
+	CreateDirectory(logFile, NULL);
+	strcat(logFile, "\\scummvm.log");
+
+	return logFile;
 }
 
 namespace {
@@ -374,6 +394,120 @@ void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 
 AudioCDManager *OSystem_Win32::createAudioCDManager() {
 	return createWin32AudioCDManager();
+}
+
+char *OSystem_Win32::convertEncoding(const char* to, const char *from, const char *string, size_t length) {
+	char *newString = nullptr;
+	char *result = OSystem_SDL::convertEncoding(to, from, string, length);
+	if (result != nullptr)
+		return result;
+
+	bool swapFromEndian = false;
+#ifdef SCUMM_BIG_ENDIAN
+	if (Common::String(from).hasSuffixIgnoreCase("le"))
+		swapFromEndian = true;
+#else
+	if (Common::String(from).hasSuffixIgnoreCase("be"))
+		swapFromEndian = true;
+#endif
+	if (swapFromEndian) {
+		if (Common::String(from).hasPrefixIgnoreCase("utf-16")) {
+			newString = Common::Encoding::switchEndian(string, length, 16);
+			from = "utf-16";
+		}
+		else if (Common::String(from).hasPrefixIgnoreCase("utf-32")) {
+			newString = Common::Encoding::switchEndian(string, length, 32);
+			from = "utf-32";
+		}
+		else
+			return nullptr;
+		if (newString != nullptr)
+			string = newString;
+		else
+			return nullptr;
+	}
+	bool swapToEndian = false;
+#ifdef SCUMM_BIG_ENDIAN
+		if (Common::String(to).hasSuffixIgnoreCase("le"))
+			swapToEndian = true;
+#else
+		if (Common::String(to).hasSuffixIgnoreCase("be"))
+			swapToEndian = true;
+#endif
+	// UTF-32 is really important for us, because it is used for the
+	// transliteration in Common::Encoding and Win32 cannot convert it
+	if (Common::String(from).hasPrefixIgnoreCase("utf-32")) {
+		Common::U32String UTF32Str((const uint32 *)string, length / 4);
+		string = Common::convertUtf32ToUtf8(UTF32Str).c_str();
+		from = "utf-8";
+	}
+	if (Common::String(to).hasPrefixIgnoreCase("utf-32")) {
+		char *UTF8Str = Common::Encoding::convert("utf-8", from, string, length);
+		Common::U32String UTF32Str = Common::convertUtf8ToUtf32(UTF8Str);
+		free(UTF8Str);
+		if (swapToEndian) {
+			result = Common::Encoding::switchEndian((const char *) UTF32Str.c_str(),
+						(UTF32Str.size() + 1) * 4,
+						32);
+		} else {
+			result = (char *) malloc((UTF32Str.size() + 1) * 4);
+			memcpy(result, UTF32Str.c_str(), (UTF32Str.size() + 1) * 4);
+		}
+		if (newString != nullptr)
+			free(newString);
+		return result;
+	}
+
+	// Add ending zeros
+	WCHAR *tmpStr;
+	if (Common::String(from).hasPrefixIgnoreCase("utf-16")) {
+		// Allocate space for string and 2 ending zeros
+		tmpStr = (WCHAR *) calloc(sizeof(char), length + 2);
+		if (!tmpStr) {
+			if (newString != nullptr)
+				free(newString);
+			warning("Could not allocate memory for string conversion");
+			return nullptr;
+		}
+		memcpy(tmpStr, string, length);
+	} else {
+		// Win32::ansiToUnicode uses new to allocate the memory. We need to copy it into an array
+		// allocated with malloc as it is going to be freed using free.
+		WCHAR *tmpStr2 = Win32::ansiToUnicode(string, Win32::getCodePageId(from));
+		if (!tmpStr2) {
+			if (newString != nullptr)
+				free(newString);
+			return nullptr;
+		}
+		size_t size = wcslen(tmpStr2) + 1; // +1 for the terminating null wchar
+		tmpStr = (WCHAR *) malloc(sizeof(WCHAR) * size);
+		memcpy(tmpStr, tmpStr2, sizeof(WCHAR) * size);
+		delete[] tmpStr2;
+	}
+
+	if (newString != nullptr)
+		free(newString);
+
+	if (Common::String(to).hasPrefixIgnoreCase("utf-16")) {
+		if (swapToEndian) {
+			result = Common::Encoding::switchEndian((char *)tmpStr, wcslen(tmpStr) * 2 + 2, 16);
+			free(tmpStr);
+			return result;
+		}
+		return (char *) tmpStr;
+	} else {
+		result = Win32::unicodeToAnsi(tmpStr, Win32::getCodePageId(to));
+		free(tmpStr);
+		if (!result)
+			return nullptr;
+		// Win32::unicodeToAnsi uses new to allocate the memory. We need to copy it into an array
+		// allocated with malloc as it is going to be freed using free.
+		size_t size = strlen(result) + 1;
+		char *resultCopy = (char *) malloc(sizeof(char) * size);
+		memcpy(resultCopy, result, sizeof(char) * size);
+		delete[] result;
+		return resultCopy;
+	}
 }
 
 #endif

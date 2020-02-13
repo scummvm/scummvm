@@ -44,9 +44,9 @@ public:
 		_id(-1), _baseptr(0), _animCmds(0), _dataOffsets(0), _palette(0),
 		_frameOffsets(0), _numColors(0), _numAnim(0), _format(0), _mirror(false) {}
 
-	void loadCostume(int id);
-	void costumeDecodeData(Actor *a, int frame, uint usemask);
-	byte increaseAnims(Actor *a);
+	void loadCostume(int id) override;
+	void costumeDecodeData(Actor *a, int frame, uint usemask) override;
+	byte increaseAnims(Actor *a) override;
 
 protected:
 	byte increaseAnim(Actor *a, int slot);
@@ -60,9 +60,9 @@ public:
 	byte _numAnim;
 
 	NESCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
-	void loadCostume(int id);
-	void costumeDecodeData(Actor *a, int frame, uint usemask);
-	byte increaseAnims(Actor *a);
+	void loadCostume(int id) override;
+	void costumeDecodeData(Actor *a, int frame, uint usemask) override;
+	byte increaseAnims(Actor *a) override;
 
 protected:
 	byte increaseAnim(Actor *a, int slot);
@@ -71,9 +71,9 @@ protected:
 class V0CostumeLoader : public ClassicCostumeLoader {
 public:
 	V0CostumeLoader(ScummEngine *vm) : ClassicCostumeLoader(vm) {}
-	void loadCostume(int id);
-	void costumeDecodeData(Actor *a, int frame, uint usemask);
-	byte increaseAnims(Actor *a);
+	void loadCostume(int id) override;
+	void costumeDecodeData(Actor *a, int frame, uint usemask) override;
+	byte increaseAnims(Actor *a) override;
 	byte getFrame(Actor *a, int limb);
 
 protected:
@@ -91,12 +91,12 @@ protected:
 public:
 	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
-	void setPalette(uint16 *palette);
-	void setFacing(const Actor *a);
-	void setCostume(int costume, int shadow);
+	void setPalette(uint16 *palette) override;
+	void setFacing(const Actor *a) override;
+	void setCostume(int costume, int shadow) override;
 
 protected:
-	byte drawLimb(const Actor *a, int limb);
+	byte drawLimb(const Actor *a, int limb) override;
 
 	void proc3(Codec1 &v1);
 	void proc3_ami(Codec1 &v1);
@@ -115,12 +115,12 @@ protected:
 public:
 	NESCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
-	void setPalette(uint16 *palette);
-	void setFacing(const Actor *a);
-	void setCostume(int costume, int shadow);
+	void setPalette(uint16 *palette) override;
+	void setFacing(const Actor *a) override;
+	void setCostume(int costume, int shadow) override;
 
 protected:
-	byte drawLimb(const Actor *a, int limb);
+	byte drawLimb(const Actor *a, int limb) override;
 };
 
 #ifdef USE_RGB_COLOR
@@ -128,7 +128,7 @@ class PCEngineCostumeRenderer : public ClassicCostumeRenderer {
 public:
 	PCEngineCostumeRenderer(ScummEngine *vm) : ClassicCostumeRenderer(vm) {}
 
-	void setPalette(uint16 *palette);
+	void setPalette(uint16 *palette) override;
 };
 #endif
 
@@ -139,12 +139,12 @@ protected:
 public:
 	V0CostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
-	void setPalette(uint16 *palette) {}
-	void setFacing(const Actor *a) {}
-	void setCostume(int costume, int shadow);
+	void setPalette(uint16 *palette) override {}
+	void setFacing(const Actor *a) override {}
+	void setCostume(int costume, int shadow) override;
 
 protected:
-	byte drawLimb(const Actor *a, int limb);
+	byte drawLimb(const Actor *a, int limb) override;
 };
 
 } // End of namespace Scumm

@@ -38,17 +38,17 @@ public:
 	void cleanup();
 	bool mimic(AdWaypointGroup *wpt, float scale = 100.0f, int x = 0, int y = 0);
 	DECLARE_PERSISTENT(AdWaypointGroup, BaseObject)
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	AdWaypointGroup(BaseGame *inGame);
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	virtual ~AdWaypointGroup();
+	~AdWaypointGroup() override;
 
 	bool _active;
 	BaseArray<BasePoint *> _points;
 
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
 private:
 	int32 _editorSelectedPoint;
 	float _lastMimicScale;

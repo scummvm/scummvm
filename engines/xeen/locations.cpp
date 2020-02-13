@@ -696,17 +696,40 @@ Character *TavernLocation::doOptions(Character *c) {
 	case Common::KEYCODE_s: {
 		// Sign In
 		// Set location and position for afterwards
-		idx = _ccNum ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
-		assert(idx >= 0);
-		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_ccNum][_locationActionId][idx][0];
-		party._mazePosition.y = Res.TAVERN_EXIT_LIST[_ccNum][_locationActionId][idx][1];
+		if (g_vm->getGameID() == GType_Swords) {
+			switch (party._mazeId) {
+			case 49:
+				party._mazePosition = Common::Point(9, 2);
+				party._mazeDirection = DIR_WEST;
+				break;
+			case 53:
+				party._mazePosition = Common::Point(13, 1);
+				party._mazeDirection = DIR_EAST;
+				break;
+			case 92:
+				party._mazePosition = Common::Point(10, 1);
+				party._mazeDirection = DIR_EAST;
+				break;
+			case 63:
+				party._mazePosition = Common::Point(13, 1);
+				party._mazeDirection = DIR_SOUTH;
+				break;
+			default:
+				break;
+			}
+		} else {
+			idx = _ccNum ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
+			assert(idx >= 0);
+			party._mazePosition.x = Res.TAVERN_EXIT_LIST[_ccNum][_locationActionId][idx][0];
+			party._mazePosition.y = Res.TAVERN_EXIT_LIST[_ccNum][_locationActionId][idx][1];
 
-		if (!_ccNum || party._mazeId == 29)
-			party._mazeDirection = DIR_WEST;
-		else if (party._mazeId == 31)
-			party._mazeDirection = DIR_EAST;
-		else
-			party._mazeDirection = DIR_SOUTH;
+			if (!_ccNum || party._mazeId == 29)
+				party._mazeDirection = DIR_WEST;
+			else if (party._mazeId == 31)
+				party._mazeDirection = DIR_EAST;
+			else
+				party._mazeDirection = DIR_SOUTH;
+		}
 
 		party._priorMazeId = party._mazeId;
 		for (idx = 0; idx < (int)party._activeParty.size(); ++idx) {
@@ -1935,6 +1958,9 @@ int DwarfCutscene::show() {
 		case 2:
 			sound.playSound("dwarf12.voc");
 			break;
+
+		default:
+			break;
 		}
 
 		events.updateGameCounter();
@@ -2134,6 +2160,8 @@ int SphinxCutscene::show() {
 			break;
 		case 2:
 			sound.playSound("sphinx12.voc");
+			break;
+		default:
 			break;
 		}
 

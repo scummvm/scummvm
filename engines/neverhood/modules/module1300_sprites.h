@@ -160,14 +160,14 @@ class KmScene1303 : public Klaymen {
 public:
 	KmScene1303(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene1304 : public Klaymen {
 public:
 	KmScene1304(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene1305 : public Klaymen {
@@ -177,21 +177,21 @@ protected:
 	void stCrashDown();
 	void stCrashDownFinished();
 
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene1306 : public Klaymen {
 public:
 	KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene1308 : public Klaymen {
 public:
 	KmScene1308(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 } // End of namespace Neverhood

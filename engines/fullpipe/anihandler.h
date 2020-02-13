@@ -38,6 +38,15 @@ struct MGMSubItem {
 	int y;
 
 	MGMSubItem();
+
+	void reset() {
+		movement = nullptr;
+		staticsIndex = 0;
+		field_8 = 0;
+		field_C = 0;
+		x = 0;
+		y = 0;
+	}
 };
 
 struct MGMItem {
@@ -63,7 +72,21 @@ struct MakeQueueStruct {
 	int y2;
 	int flags;
 
-	MakeQueueStruct() { memset(this, 0, sizeof(MakeQueueStruct)); }
+	MakeQueueStruct() { reset(); }
+
+	void reset() {
+		ani = nullptr;
+		staticsId1 = 0;
+		staticsId2 = 0;
+		movementId = 0;
+		field_10 = 0;
+		x1 = 0;
+		y1 = 0;
+		field_1C = 0;
+		x2 = 0;
+		y2 = 0;
+		flags = 0;
+	}
 };
 
 class AniHandler : public CObject {

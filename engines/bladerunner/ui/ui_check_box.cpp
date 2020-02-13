@@ -24,11 +24,11 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/game_info.h"
-#include "bladerunner/time.h"
 #include "bladerunner/game_constants.h"
+#include "bladerunner/game_info.h"
+#include "bladerunner/shape.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/kia.h"
-#include "bladerunner/ui/kia_shapes.h"
 
 namespace BladeRunner {
 
@@ -44,9 +44,9 @@ UICheckBox::UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 	_style = style;
 
 	if (isChecked) {
-		_frame = 5;
+		_frame = 5u;
 	} else {
-		_frame = 0;
+		_frame = 0u;
 	}
 
 	_timeLast = _vm->_time->currentSystem();
@@ -57,39 +57,41 @@ UICheckBox::UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 
 void UICheckBox::draw(Graphics::Surface &surface) {
 	if (_rect.right > _rect.left && _rect.bottom > _rect.top) {
-		int shapeId;
+		uint32 shapeId;
 
-		uint timeNow = _vm->_time->currentSystem();
-		if (timeNow - _timeLast > 67) {
-			int frameDelta = (timeNow - _timeLast) / 67u;
+		uint32 timeNow = _vm->_time->currentSystem();
+		// unsigned difference is intentional
+		if (timeNow - _timeLast > 67u) {
+			// unsigned difference is intentional
+			uint32 frameDelta = (timeNow - _timeLast) / 67u;
 			_timeLast = timeNow;
 
 			if (_isChecked) {
-				_frame = MIN(_frame + frameDelta, 5);
+				_frame = MIN<uint32>(_frame + frameDelta, 5u);
 			} else {
-				_frame = MAX(_frame - frameDelta, 0);
+				_frame = (_frame < frameDelta) ? 0 : MAX<uint32>(_frame - frameDelta, 0u);
 			}
 		}
 
 		if (_style) {
 			if (_frame || (_hasFocus && !_isPressed && _isEnabled)) {
-				if (_frame != 5 || (_hasFocus && !_isPressed && _isEnabled)) {
-					shapeId = _frame + 54;
+				if (_frame != 5u || (_hasFocus && !_isPressed && _isEnabled)) {
+					shapeId = _frame + 54u;
 				} else {
-					shapeId = 53;
+					shapeId = 53u;
 				}
 			} else {
-				shapeId = 52;
+				shapeId = 52u;
 			}
 		} else {
 			if (_frame || (_hasFocus && !_isPressed && _isEnabled)) {
-				if (_frame != 5 || (_hasFocus && !_isPressed && _isEnabled)) {
-					shapeId = _frame + 62;
+				if (_frame != 5u || (_hasFocus && !_isPressed && _isEnabled)) {
+					shapeId = _frame + 62u;
 				} else {
-					shapeId = 61;
+					shapeId = 61u;
 				}
 			} else {
-				shapeId = 60;
+				shapeId = 60u;
 			}
 		}
 

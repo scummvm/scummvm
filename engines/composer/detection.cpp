@@ -52,418 +52,38 @@ Common::Language ComposerEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+Common::Platform ComposerEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
+
+bool ComposerEngine::loadDetectedConfigFile(Common::INIFile &configFile) const {
+	const ADGameFileDescription *res = _gameDescription->desc.filesDescriptions;
+	while (res->fileName != NULL) {
+		if (res->fileType == GAME_CONFIGFILE) {
+			return configFile.loadFromFile(res->fileName);
+		}
+		res++;
+	}
+	// default config file name
+	return configFile.loadFromFile("book.ini") || configFile.loadFromFile("book.mac");
+}
+
 }
 
 static const PlainGameDescriptor composerGames[] = {
-	{"composer", "Composer Game"},
 	{"babayaga", "Magic Tales: Baba Yaga and the Magic Geese"},
 	{"darby", "Darby the Dragon"},
 	{"gregory", "Gregory and the Hot Air Balloon"},
 	{"imoking", "Magic Tales: Imo and the King"},
 	{"liam", "Magic Tales: Liam Finds a Story"},
 	{"littlesamurai", "Magic Tales: The Little Samurai"},
+	{"magictales", "Magic Tales"},
 	{"princess", "Magic Tales: The Princess and the Crab"},
 	{"sleepingcub", "Magic Tales: Sleeping Cub's Test of Courage"},
 	{0, 0}
 };
 
-namespace Composer {
-
-static const ComposerGameDescription gameDescriptions[] = {
-	// Magic Tales: Baba Yaga and the Magic Geese - from bug #3485018
-	{
-		{
-			"babayaga",
-			"",
-			AD_ENTRY1s("book.ini", "412b7f4b0ef07f442009d28e3a819974", 3852),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV1
-	},
-
-	// Magic Tales: Baba Yaga and the Magic Geese Mac - from bug #3466402, #7025
-	{
-		{
-			"babayaga",
-			"",
-			AD_ENTRY1s("Baba Yaga", "ae3a4445f42fe10253da7ee4ea0d37d6", 44321),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV1
-	},
-
-	// Magic Tales: Baba Yaga and the Magic Geese German- from bug #10171
-	{
-		{
-			"babayaga",
-			"",
-			AD_ENTRY1s("book.ini", "2a20e73d33ecd0f2fa8123d4f9862f90", 3814),
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV1
-	},
-
-	// Magic Tales: Imo and the King - from bug #3485018
-	{
-		{
-			"imoking",
-			"",
-			AD_ENTRY1s("book.ini", "62b52a1763cce7d7d6ccde9f9d32fd4b", 3299),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV1
-	},
-
-	// Magic Tales: Imo and the King Mac - from bug #3466402
-	{
-		{
-			"imoking",
-			"",
-			AD_ENTRY1("imo and the king", "b0277885fec943b5f19409f35b33964c"),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV1
-	},
-
-	// Magic Tales: Imo and the King German - from bug #10199
-	{
-		{
-			"imoking",
-			"",
-			AD_ENTRY1s("book.ini", "5925c6d4bf85d89b17208be4fcace5e8", 3274),
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV1
-	},
-
-	// Magic Tales: The Little Samurai - from bug #3485018
-	{
-		{
-			"littlesamurai",
-			"",
-			AD_ENTRY1s("book.ini", "7a851869d022a9041e0dd11e5bace09b", 3747),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV1
-	},
-
-	// Magic Tales: The Little Samurai Mac - from bug #3466402
-	{
-		{
-			"littlesamurai",
-			"",
-			AD_ENTRY1("The Little Samurai", "38121dd649c24e8676aa108cf35d44b5"),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV1
-	},
-
-	// from Liam Finds a Story CD
-	{
-		{
-			"magictales",
-			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
-			AD_ENTRY1("book.ini", "dbc98c566f4ac61b544443524585dccb"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV1
-	},
-
-	{
-		{
-			"liam",
-			0,
-			AD_ENTRY1s("book.ini", "fc9d9b9e72e7301d011b808606eaa15b", 834),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	// Liam Finds a Story Mac - from bug #3463201
-	{
-		{
-			"liam",
-			0,
-			{
-				{"liam finds a story.ini", 0, "85a1ca6002ded8572920bbdb73d35b0a", -1},
-				{"page99.rsc", 0, "11b0a19c6b6d73c39e2bd289a457c1dc", -1},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	// from Liam Finds a Story CD
-	{
-		{
-			"magictales",
-			"Magic Tales Demo: Sleeping Cub, Princess & Crab",
-			AD_ENTRY1("book.ini", "3dede2522bb0886c95667b082987a87f"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{
-		{
-			"darby",
-			0,
-			{
-				{"book.ini", 0, "7e3404c559d058521fff2aebe5c427a8", 2545},
-				{"page99.rsc", 0, "49cc6b16caa1c5ec7d94a3c47eed9a02", 1286480},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{
-		{
-			"darby",
-			0,
-			AD_ENTRY1("Darby the Dragon.ini", "d81f9214936fa70d42fc578908d4bb3d"),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{ // Provided by msSeven - from bug Trac #10399
-		{
-			"darby",
-			0,
-			{
-				{"page99.rsc", 0, "ca350397f0c009649afc0cb6145921f0", 1286480},
-				AD_LISTEND
-			},
-			Common::FR_FRA,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{ // Provided by Strangerke, "CD-Rom 100% Malin" Pack
-		{
-			"darby",
-			0,
-			AD_ENTRY1("book.ini", "285308372f7dddff2ca5a25c9192cf5c"),
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{ // Provided by WindlePoons, "100% Kids Darby & Gregor" Pack. Bugreport #6825
-		{
-			"darby",
-			0,
-			{
-				{"book.ini", 0, "285308372f7dddff2ca5a25c9192cf5c", 2545},
-				{"page99.rsc", 0, "40b4879e9ba6a34d6aa2a9d2e30c5ef7", 1286480},
-				AD_LISTEND
-			},
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{ // Provided by Niv Baehr, Bugreport #6878
-		{
-			"darby",
-			0,
-			AD_ENTRY1("page99.rsc", "183463d18c050563dcdec2d9f9670515"),
-			Common::HE_ISR,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{
-		{
-			"gregory",
-			0,
-			{
-				{"book.ini", 0, "14a562dcf361773445255af9f3e94790", 2234},
-				{"page99.rsc", 0, "01f9381162467e052dfd4c704169ef3e", 388644},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{
-		{
-			"gregory",
-			0,
-			AD_ENTRY1("Gregory.ini", "fa82f14731f28c7379c5a106df07a0d6"),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{ // Provided by Strangerke, "CD-Rom 100% Malin" Pack
-		{
-			"gregory",
-			0,
-			AD_ENTRY1("book.ini", "e54fc5c00de5f94e908a969e445af5d0"),
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{ // Provided by WindlePoons, "100% Kids Darby & Gregor" Pack. Bugreport #6825
-		{
-			"gregory",
-			0,
-			{
-				{"book.ini", 0, "e54fc5c00de5f94e908a969e445af5d0", 2234},
-				{"page99.rsc", 0, "1ae6610de621a9901bf87b874fbf331f", 388644},
-				AD_LISTEND
-			},
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{ // Provided by sev
-		{
-			"princess",
-			0,
-			{
-				{"book.ini", 0, "fb32572577b9a41ba299825ef1e3181e", 966},
-				{"page99.rsc", 0, "fd5ebd3b5e36c4651c50241619525355", 45418},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	// The Princess and the Crab Mac - From Bug #3461984
-	{
-		{
-			"princess",
-			0,
-			{
-				{"the princess and the crab.ini", 0, "f6b551a7304643004bd5e4df7ac1e76e", -1},
-				{"page99.rsc", 0, "fd5ebd3b5e36c4651c50241619525355", -1},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{ // Provided by sev
-		{
-			"sleepingcub",
-			0,
-			{
-				{"book.ini", 0, "0d329e592387009c6387a733a3ea2235", 964},
-				{"page99.rsc", 0, "219fbd9bd2ff87c7023814405d753145", 46916},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	// Sleeping Cub Mac - From Bug #3461369
-	{
-		{
-			"sleepingcub",
-			0,
-			{
-				{"sleeping cub.ini", 0, "39642a4036cb51443f5e90052c3ad0b2", -1},
-				{"page99.rsc", 0, "219fbd9bd2ff87c7023814405d753145", -1},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ComposerV2
-	},
-
-	{ AD_TABLE_END_MARKER, 0 }
-};
-
-} // End of namespace Composer
+#include "composer/detection_tables.h"
 
 using namespace Composer;
 
@@ -480,23 +100,26 @@ static const char *directoryGlobs[] = {
 class ComposerMetaEngine : public AdvancedMetaEngine {
 public:
 	ComposerMetaEngine() : AdvancedMetaEngine(Composer::gameDescriptions, sizeof(Composer::ComposerGameDescription), composerGames) {
-		_singleId = "composer";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "composer";
+	}
+
+	const char *getName() const override {
 		return "Magic Composer";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Copyright (C) 1995-1999 Animation Magic";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual SaveStateList listSaves(const char* target) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override;
+	SaveStateList listSaves(const char* target) const override;
 };
 
 bool ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

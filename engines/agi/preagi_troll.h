@@ -160,9 +160,9 @@ struct Item {
 class TrollEngine : public PreAgiEngine {
 public:
 	TrollEngine(OSystem *syst, const AGIGameDescription *gameDesc);
-	~TrollEngine();
+	~TrollEngine() override;
 
-	Common::Error go();
+	Common::Error go() override;
 
 private:
 	int _roomPicture;

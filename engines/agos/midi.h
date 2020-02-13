@@ -94,7 +94,7 @@ public:
 
 public:
 	MidiPlayer();
-	virtual ~MidiPlayer();
+	~MidiPlayer() override;
 
 	void loadSMF(Common::File *in, int song, bool sfx = false);
 	void loadMultipleSMF(Common::File *in, bool sfx = false);
@@ -118,12 +118,13 @@ public:
 	int open(int gameType, bool isDemo);
 
 	// MidiDriver_BASE interface implementation
-	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+	void send(uint32 b) override;
+	void metaEvent(byte type, byte *data, uint16 length) override;
 
 private:
 	kMusicMode _musicMode;
-
+	MusicType musicType;
+	
 private:
 	Common::SeekableReadStream *simon2SetupExtractFile(const Common::String &requestedFileName);
 };

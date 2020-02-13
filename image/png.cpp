@@ -43,7 +43,9 @@ PNGDecoder::PNGDecoder() :
         _outputSurface(0),
         _palette(0),
         _paletteColorCount(0),
-        _skipSignature(false) {
+        _skipSignature(false),
+		_keepTransparencyPaletted(false),
+		_transparentColor(-1) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -159,7 +161,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Images of all color formats except PNG_COLOR_TYPE_PALETTE
 	// will be transformed into ARGB images
-	if (colorType == PNG_COLOR_TYPE_PALETTE && !png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
+	if (colorType == PNG_COLOR_TYPE_PALETTE && (_keepTransparencyPaletted || !png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))) {
 		int numPalette = 0;
 		png_colorp palette = NULL;
 		uint32 success = png_get_PLTE(pngPtr, infoPtr, &palette, &numPalette);
@@ -175,6 +177,16 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_palette[(i * 3) + 2] = palette[i].blue;
 
 		}
+
+		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
+			png_bytep trans;
+			int numTrans;
+			png_color_16p transColor;
+			png_get_tRNS(pngPtr, infoPtr, &trans, &numTrans, &transColor);
+			assert(numTrans == 1);
+			_transparentColor = *trans;
+		}
+
 		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		png_set_packing(pngPtr);
 	} else {
@@ -243,7 +255,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #endif
 }
 
-bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input) {
 #ifdef USE_PNG
 #ifdef SCUMM_LITTLE_ENDIAN
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
@@ -252,16 +264,6 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #endif
-
-	if (input.format.bytesPerPixel == 3) {
-		if (input.format != requiredFormat_3byte) {
-			warning("Cannot currently write PNG with 3-byte pixel format other than %s", requiredFormat_3byte.toString().c_str());
-			return false;
-		}
-	} else if (input.format.bytesPerPixel != 4) {
-		warning("Cannot currently write PNG with pixel format of bpp other than 3, 4");
-		return false;
-	}
 
 	int colorType;
 	Graphics::Surface *tmp = NULL;
@@ -281,11 +283,19 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 
 	png_structp pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!pngPtr) {
+		if (tmp) {
+			tmp->free();
+			delete tmp;
+		}
 		return false;
 	}
 	png_infop infoPtr = png_create_info_struct(pngPtr);
 	if (!infoPtr) {
 		png_destroy_write_struct(&pngPtr, NULL);
+		if (tmp) {
+			tmp->free();
+			delete tmp;
+		}
 		return false;
 	}
 
@@ -298,14 +308,8 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 
 	Common::Array<const uint8 *> rows;
 	rows.reserve(surface->h);
-	if (bottomUp) {
-		for (uint y = surface->h; y-- > 0;) {
-			rows.push_back((const uint8 *)surface->getBasePtr(0, y));
-		}
-	} else {
-		for (uint y = 0; y < surface->h; ++y) {
-			rows.push_back((const uint8 *)surface->getBasePtr(0, y));
-		}
+	for (uint y = 0; y < surface->h; ++y) {
+		rows.push_back((const uint8 *)surface->getBasePtr(0, y));
 	}
 
 	png_set_rows(pngPtr, infoPtr, const_cast<uint8 **>(&rows.front()));

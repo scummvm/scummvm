@@ -57,7 +57,7 @@ public:
 	 * Constructor
 	 */
 	GlkAPI(OSystem *syst, const GlkGameDescription &gameDesc);
-	virtual ~GlkAPI() {}
+	~GlkAPI() override {}
 
 	void glk_exit(void);
 	void glk_set_interrupt_handler(void(*func)(void));
@@ -198,7 +198,12 @@ public:
 
 	bool glk_image_draw(winid_t win, uint image, int val1, int val2);
 	bool glk_image_draw_scaled(winid_t win, uint image,
-	                             int val1, int val2, uint width, uint height);
+		int val1, int val2, uint width, uint height);
+	bool glk_image_draw(winid_t win, const Graphics::Surface &image, uint transColor = (uint)-1,
+		int xp = 0, int yp = 0);
+	bool glk_image_draw_scaled(winid_t win, const Graphics::Surface &image, uint transColor,
+		int xp, int yp, uint width, uint height);
+
 	bool glk_image_get_info(uint image, uint *width, uint *height);
 
 	void glk_window_flow_break(winid_t win);
@@ -308,9 +313,6 @@ public:
 	const gidispatch_intconst_t *gidispatch_get_class(uint32 index) const;
 	uint32 gidispatch_count_intconst() const;
 	const gidispatch_intconst_t *gidispatch_get_intconst(uint32 index) const;
-	uint32 gidispatch_count_functions() const;
-	gidispatch_function_t *gidispatch_get_function(uint32 index) const;
-	gidispatch_function_t *gidispatch_get_function_by_id(uint32 id) const;
 	const char *gidispatch_prototype(uint32 funcnum) const;
 	void gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *arglist);
 	gidispatch_rock_t gidispatch_get_objrock(void *obj, uint objclass);

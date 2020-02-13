@@ -141,7 +141,7 @@ void Resources::loadData() {
 	file.syncNumbers(WEAPON_DAMAGE_MULTIPLIER, 35);
 	file.syncNumbers(METAL_DAMAGE, 22);
 	file.syncNumbers(METAL_DAMAGE_PERCENT, 22);
-	file.syncNumbers(METAL_LAC, 9);
+	file.syncNumbers(METAL_LAC, 22);
 	file.syncNumbers(ARMOR_STRENGTHS, 14);
 	file.syncNumbers(MAKE_ITEM_ARR1, 6);
 	file.syncNumbers3D((int *)MAKE_ITEM_ARR2, 6, 7, 2);

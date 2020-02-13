@@ -136,7 +136,7 @@ const byte FONT[] = {
 
 
 #define X_COUNT 32
-#define CHAR_COUNT sizeof(FONT) / 8
+#define CHAR_COUNT (int)(sizeof(FONT) / 8)
 #define Y_COUNT 3
 #define CHAR_WIDTH 6
 #define CHAR_HEIGHT 8

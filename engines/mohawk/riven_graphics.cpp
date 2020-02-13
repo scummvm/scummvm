@@ -832,11 +832,11 @@ const FliesEffect::FliesEffectData FliesEffect::_firefliesParameters = {
 		true,
 		true,
 		true,
-		3.0,
-		0.7,
+		3.0F,
+		0.7F,
 		40,
-		2.0,
-		1.0,
+		2.0F,
+		1.0F,
 		8447718,
 		30,
 		10
@@ -847,11 +847,11 @@ const FliesEffect::FliesEffectData FliesEffect::_fliesParameters = {
 		false,
 		false,
 		true,
-		8.0,
-		3.0,
+		8.0F,
+		3.0F,
 		80,
-		3.0,
-		1.0,
+		3.0F,
+		1.0F,
 		661528,
 		30,
 		10
@@ -915,9 +915,9 @@ void FliesEffect::initFlyAtPosition(uint index, int posX, int posY, int posZ) {
 	fly.framesTillLightSwitch = randomBetween(_parameters->minFramesLit, _parameters->minFramesLit + _parameters->maxLightDuration);
 
 	fly.hasBlur = false;
-	fly.directionAngleRad = randomBetween(0, 300) / 100.0f;
-	fly.directionAngleRadZ = randomBetween(0, 300) / 100.0f;
-	fly.speed = randomBetween(0, 100) / 100.0f;
+	fly.directionAngleRad = randomBetween(0, 300) / 100.0F;
+	fly.directionAngleRadZ = randomBetween(0, 300) / 100.0F;
+	fly.speed = randomBetween(0, 100) / 100.0F;
 }
 
 void FliesEffect::update() {
@@ -953,17 +953,17 @@ void FliesEffect::updateFlies() {
 void FliesEffect::updateFlyPosition(uint index) {
 	FliesEffectEntry &fly = _fly[index];
 
-	if (fly.directionAngleRad > 2.0f * M_PI) {
-		fly.directionAngleRad = fly.directionAngleRad - 2.0f * M_PI;
+	if (fly.directionAngleRad > 2.0F * M_PI) {
+		fly.directionAngleRad = fly.directionAngleRad - 2.0F * M_PI;
 	}
-	if (fly.directionAngleRad < 0.0f) {
-		fly.directionAngleRad = fly.directionAngleRad + 2.0f * M_PI;
+	if (fly.directionAngleRad < 0.0F) {
+		fly.directionAngleRad = fly.directionAngleRad + 2.0F * M_PI;
 	}
-	if (fly.directionAngleRadZ > 2.0f * M_PI) {
-		fly.directionAngleRadZ = fly.directionAngleRadZ - 2.0f * M_PI;
+	if (fly.directionAngleRadZ > 2.0F * M_PI) {
+		fly.directionAngleRadZ = fly.directionAngleRadZ - 2.0F * M_PI;
 	}
-	if (fly.directionAngleRadZ < 0.0f) {
-		fly.directionAngleRadZ = fly.directionAngleRadZ + 2.0f * M_PI;
+	if (fly.directionAngleRadZ < 0.0F) {
+		fly.directionAngleRadZ = fly.directionAngleRadZ + 2.0F * M_PI;
 	}
 	fly.posXFloat += cos(fly.directionAngleRad) * fly.speed;
 	fly.posYFloat += sin(fly.directionAngleRad) * fly.speed;
@@ -975,7 +975,7 @@ void FliesEffect::updateFlyPosition(uint index) {
 			&fly.alphaMap,
 			&fly.width,
 			&fly.height);
-	fly.posZFloat += cos(fly.directionAngleRadZ) * (fly.speed / 2.0f);
+	fly.posZFloat += cos(fly.directionAngleRadZ) * (fly.speed / 2.0F);
 	fly.posZ = fly.posZFloat;
 	if (_parameters->canBlur && fly.speed > _parameters->blurSpeedTreshold) {
 		fly.hasBlur = true;
@@ -997,16 +997,16 @@ void FliesEffect::updateFlyPosition(uint index) {
 			maxAngularSpeed /= 2;
 		}
 		int angularSpeed = randomBetween(-maxAngularSpeed, maxAngularSpeed);
-		fly.directionAngleRad += angularSpeed / 100.0f;
+		fly.directionAngleRad += angularSpeed / 100.0F;
 	} else {
 		// Make the flies go down if they are too high in the screen
 		int angularSpeed = randomBetween(0, 50);
-		if (fly.directionAngleRad >= M_PI / 2.0f && fly.directionAngleRad <= 3.0f * M_PI / 2.0f) {
+		if (fly.directionAngleRad >= M_PI / 2.0F && fly.directionAngleRad <= 3.0F * M_PI / 2.0F) {
 			// Going down
-			fly.directionAngleRad -= angularSpeed / 100.0f;
+			fly.directionAngleRad -= angularSpeed / 100.0F;
 		} else {
 			// Going up
-			fly.directionAngleRad += angularSpeed / 100.0f;
+			fly.directionAngleRad += angularSpeed / 100.0F;
 		}
 		if (fly.posY < 1) {
 			initFlyRandomPosition(index);
@@ -1026,23 +1026,23 @@ void FliesEffect::updateFlyPosition(uint index) {
 			distanceToScreenEdge = 30;
 		}
 		if (fly.posZ <= distanceToScreenEdge) {
-			fly.directionAngleRadZ += randomBetween(-_parameters->maxAcceleration, _parameters->maxAcceleration) / 100.0f;
+			fly.directionAngleRadZ += randomBetween(-_parameters->maxAcceleration, _parameters->maxAcceleration) / 100.0F;
 		} else {
 			fly.posZ = distanceToScreenEdge;
-			fly.directionAngleRadZ += M_PI;
+			fly.directionAngleRadZ += (float)M_PI;
 		}
 	} else {
 		fly.posZ = 0;
-		fly.directionAngleRadZ += M_PI;
+		fly.directionAngleRadZ += (float)M_PI;
 	}
-	float minSpeed = _parameters->minSpeed - fly.posZ / 40.0f;
-	float maxSpeed = _parameters->maxSpeed - fly.posZ / 20.0f;
-	fly.speed += randomBetween(-_parameters->maxAcceleration, _parameters->maxAcceleration) / 100.0f;
+	float minSpeed = _parameters->minSpeed - fly.posZ / 40.0F;
+	float maxSpeed = _parameters->maxSpeed - fly.posZ / 20.0F;
+	fly.speed += randomBetween(-_parameters->maxAcceleration, _parameters->maxAcceleration) / 100.0F;
 	if (fly.speed > maxSpeed) {
-		fly.speed -= randomBetween(0, 50) / 100.0f;
+		fly.speed -= randomBetween(0, 50) / 100.0F;
 	}
 	if (fly.speed < minSpeed) {
-		fly.speed += randomBetween(0, 50) / 100.0f;
+		fly.speed += randomBetween(0, 50) / 100.0F;
 	}
 }
 
@@ -1200,9 +1200,9 @@ void FliesEffect::draw() {
 			}
 
 			if (_vm->_rnd->getRandomBit()) {
-				fly.directionAngleRad += M_PI / 2.0;
+				fly.directionAngleRad += (float)M_PI / 2.0F;
 			} else {
-				fly.directionAngleRad -= M_PI / 2.0;
+				fly.directionAngleRad -= (float)M_PI / 2.0F;
 			}
 		}
 	}

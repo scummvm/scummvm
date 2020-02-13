@@ -71,6 +71,8 @@ uint32 AsScene1401Pipe::handleMessage(int messageNum, const MessageParam &param,
 	case 0x483A:
 		stSuckInProjector();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -85,6 +87,8 @@ uint32 AsScene1401Pipe::hmSuckInProjector(int messageNum, const MessageParam &pa
 			stDoneSucking();
 		SetMessageHandler(&AsScene1401Pipe::handleMessage);
 		SetUpdateHandler(&AsScene1401Pipe::update);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -132,6 +136,8 @@ uint32 AsScene1401Mouse::handleMessage(int messageNum, const MessageParam &param
 	case 0x4839:
 		stSuckedIn();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -168,6 +174,8 @@ uint32 AsScene1401Cheese::handleMessage(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x4839:
 		stSuckedIn();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -229,6 +237,8 @@ uint32 AsScene1401BackDoor::handleMessage(int messageNum, const MessageParam &pa
 		_countdown = 168;
 		if (!_isOpen)
 			stOpenDoor();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -323,6 +333,8 @@ uint32 AsCommonProjector::handleMessage(int messageNum, const MessageParam &para
 	case 0x4839:
 		stStartSuckedIn();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -366,6 +378,8 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -375,6 +389,8 @@ uint32 AsCommonProjector::hmAnimation(int messageNum, const MessageParam &param,
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -561,6 +577,8 @@ uint32 AsScene1402PuzzleBox::handleMessage(int messageNum, const MessageParam &p
 		break;
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -757,6 +775,8 @@ uint32 AsScene1407Mouse::handleMessage(int messageNum, const MessageParam &param
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -861,6 +881,8 @@ uint32 AsScene1405Tile::handleMessage(int messageNum, const MessageParam &param,
 		}
 		messageResult = 1;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -945,6 +967,8 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stTurnToBack);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -985,6 +1009,8 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -1046,6 +1072,8 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -1122,6 +1150,8 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
+		break;
+	default:
 		break;
 	}
 	return 0;

@@ -40,8 +40,8 @@ class ItemPickup {
 	float        _facing;
 	float        _scale;
 	int          _animationFrame;
-	int          _timeLeft;
-	int          _timeLast;
+	uint32       _timeLeft;
+	uint32       _timeLast;
 	Common::Rect _screenRect;
 
 public:

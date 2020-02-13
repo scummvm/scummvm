@@ -60,7 +60,7 @@ public:
 
 public:
 	ScalpelSaveManager(SherlockEngine *vm, const Common::String &target);
-	virtual ~ScalpelSaveManager() {}
+	~ScalpelSaveManager() override {}
 
 	/**
 	 * Shows the in-game dialog interface for loading and saving games

@@ -37,21 +37,21 @@ class Item;
 class NoradAlphaFillingStation : public GameInteraction, public NotificationReceiver {
 public:
 	NoradAlphaFillingStation(Neighborhood *);
-	virtual ~NoradAlphaFillingStation() {}
+	~NoradAlphaFillingStation() override {}
 
-	virtual void handleInput(const Input &, const Hotspot *);
+	void handleInput(const Input &, const Hotspot *) override;
 
-	virtual void clickInHotspot(const Input &, const Hotspot *);
-	virtual void activateHotspots();
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	void activateHotspots() override;
 
 	void newFillingItem(Item *);
 
 protected:
-	void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
-	virtual void openInteraction();
-	virtual void initInteraction();
-	virtual void closeInteraction();
+	void openInteraction() override;
+	void initInteraction() override;
+	void closeInteraction() override;
 
 	void powerUpFinished();
 	void splashFinished();

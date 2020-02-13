@@ -118,6 +118,9 @@ int sceneHandler31(ExCommand *cmd) {
 		g_fp->_behaviorManager->updateBehaviors();
 
 		break;
+
+	default:
+		break;
 	}
 
 	return 0;

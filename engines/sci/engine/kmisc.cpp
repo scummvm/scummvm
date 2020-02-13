@@ -30,11 +30,15 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/palette.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/cursor32.h"
 #endif
 #include "sci/graphics/maciconbar.h"
 #include "sci/console.h"
+#ifdef ENABLE_SCI32
+#include "sci/engine/hoyle5poker.h"
+#endif
 
 namespace Sci {
 
@@ -365,6 +369,8 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
+	default:
+		break;
 	}
 
 	return s->r_acc;
@@ -541,12 +547,6 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		// Subop 0 has changed a few times
 		// In SCI1, its usage is still unknown
 		// In SCI1.1, it's NOP
-		// In SCI32, it's used for remapping cursor ID's
-#ifdef ENABLE_SCI32_MAC
-		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) // Set Mac cursor remap
-			g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
-		else
-#endif
 		if (getSciVersion() != SCI_VERSION_1_1)
 			warning("Unknown SCI1 kMacPlatform(0) call");
 		break;
@@ -558,7 +558,7 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		break;	// removed warning, as it produces a lot of spam in the console
 	case 2: // Unknown, "UseNextWaitEvent" (Various)
 	case 3: // Unknown, "ProcessOpenDocuments" (Various)
-	case 5: // Unknown, plays a sound (KQ7)
+	case 5: // Unknown
 	case 6: // Unknown, menu-related (Unused?)
 		warning("Unhandled kMacPlatform(%d)", argv[0].toUint16());
 		break;
@@ -568,6 +568,58 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+
+#ifdef ENABLE_SCI32
+reg_t kMacPlatform32(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0: // build cursor view map
+		g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
+		break;
+
+	case 1: // compact/purge mac memory
+	case 2: // hands-off/hands-on for mac menus
+		break;
+
+	// TODO: Save game handling in KQ7, Shivers, and Lighthouse.
+	// - KQ7 uses all three with no parameters; the interpreter would
+	//   remember the current save file.
+	// - Shivers uses all three but passes parameters in a similar
+	//   manner as the normal kSave\kRestore calls.
+	// - Lighthouse goes insane and only uses subop 3 but adds sub-subops
+	//   which appear to do the three operations.
+	// Temporarily stubbing these out with success values so that KQ7 can start.
+	case 3: // initialize save game file
+		warning("Unimplemented kMacPlatform32(%d): Initialize save game file", argv[0].toUint16());
+		return TRUE_REG;
+	case 4: // save game
+		warning("Unimplemented kMacPlatform32(%d): Save game", argv[0].toUint16());
+		return TRUE_REG;
+	case 5: // restore game
+		warning("Unimplemented kMacPlatform32(%d): Restore game", argv[0].toUint16());
+		break;
+
+	// TODO: Mother Goose save game handling
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+		error("Unimplemented kMacPlatform32(%d) save game operation", argv[0].toUint16());
+		break;
+
+	// TODO: Phantasmagoria music volume adjustment [ 0-15 ]
+	case 12:
+		warning("Unimplemented kMacPlatform32(%d): Set volume: %d", argv[0].toUint16(), argv[1].toUint16());
+		break;
+
+	default:
+		error("Unknown kMacPlatform32(%d)", argv[0].toUint16());
+	}
+
+	return s->r_acc;
+}
+#endif
 
 enum kSciPlatforms {
 	kSciPlatformMacintosh = 0,
@@ -628,7 +680,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-extern void showScummVMDialog(const Common::String &message);
+extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
 
 #ifdef ENABLE_SCI32
 reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
@@ -658,13 +710,15 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 		case Common::kPlatformWindows:
 			return make_reg(0, kSciPlatformWindows);
 		case Common::kPlatformMacintosh:
-#ifdef ENABLE_SCI32_MAC
 			// For Mac versions, kPlatform(0) with other args has more functionality
-			if (argc > 1)
-				return kMacPlatform(s, argc - 1, argv + 1);
-			else
-#endif
-				return make_reg(0, kSciPlatformMacintosh);
+			if (argc > 1) {
+				return kMacPlatform32(s, argc - 1, argv + 1);
+			} else {
+				// SCI32 Mac claims to be DOS. GK1 depends on this in order to play its
+				//  view-based slideshow movies. It appears that Sierra opted to change
+				//  this return value instead of updating the game scripts for Mac.
+				return make_reg(0, kSciPlatformDOS);
+			}
 		default:
 			error("Unknown platform %d", g_sci->getPlatform());
 		}
@@ -700,6 +754,9 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 
 	switch (operation) {
 	case 0:	// load DLL
+		if (dllName == "PENGIN16.DLL")
+			showScummVMDialog("The Poker logic is hardcoded in an external DLL, and is not implemented yet. There exists some dummy logic for now, where opponent actions are chosen randomly");
+
 		// This is originally a call to LoadLibrary() and to the Watcom function GetIndirectFunctionHandle
 		return make_reg(0, 1000);	// fake ID for loaded DLL, normally returned from Windows LoadLibrary()
 	case 1: // free DLL
@@ -709,11 +766,8 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 		if (dllName == "PENGIN16.DLL") {
 			// Poker engine logic for Hoyle 5
 			// This is originally a call to the Watcom function InvokeIndirectFunction()
-			// TODO: we need to reverse the logic in PENGIN16.DLL and call it directly
-			//SciArray *data = s->_segMan->lookupArray(argv[2]);
-			warning("The Poker game logic has not been implemented yet");
-			showScummVMDialog("The Poker game logic has not been implemented yet");
-			return NULL_REG;
+			SciArray *data = s->_segMan->lookupArray(argv[2]);
+			return hoyle5PokerEngine(data);
 		} else {
 			error("kWinDLL: Unknown DLL to invoke: %s", dllName.c_str());
 			return NULL_REG;
@@ -731,16 +785,34 @@ reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv) {
 		showScummVMDialog(s->_segMan->getString(argv[1]));
 		return NULL_REG;
 	}
-	case 1: // ZaWarudo
-		// Unused, would invert the color palette for the specified range.
-		return NULL_REG;
-	case 2: // SetTitleColors
+	case 1: { // ZaWarudo
+		// Invert the color palette for the specified range.
+		uint16 from = argv[1].toUint16();
+		uint16 to = argv[2].toUint16();
+		Palette pal = g_sci->_gfxPalette16->_sysPalette;
+		for (uint16 i = from; i <= to; i++)
+		{
+			pal.colors[i].r = 255 - pal.colors[i].r;
+			pal.colors[i].g = 255 - pal.colors[i].g;
+			pal.colors[i].b = 255 - pal.colors[i].b;
+		}
+		g_sci->_gfxPalette16->set(&pal, true);
+ 		return NULL_REG;
+	}
+ 	case 2: // SetTitleColors
 		// Unused, would change the colors for plain windows' title bars.
 		return NULL_REG;
 	case 3: // IsDebug
-		// Should return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
-		return TRUE_REG;
+ 		// Return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
+		return make_reg(0, 3);
+	default:
+		break;
 	}
+	return NULL_REG;
+}
+reg_t kKawaDbugStr(EngineState *s, int argc, reg_t *argv)
+{
+	debug("%s", Common::String::format(s->_segMan->getString(argv[0]).c_str(), argc - 1, argv + 1).c_str());
 	return NULL_REG;
 }
 

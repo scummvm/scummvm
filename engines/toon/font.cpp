@@ -191,7 +191,7 @@ void FontRenderer::setFontColor(int32 fontColor1, int32 fontColor2, int32 fontCo
 	_currentFontColor[3] = fontColor3;
 }
 
-void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &origText, int32 mode) {
+void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &origText, int32 mode, Graphics::Surface &frame) {
 	debugC(5, kDebugFont, "renderMultiLineText(%d, %d, %s, %d)", x, y, origText.c_str(), mode);
 
 	// divide the text in several lines
@@ -289,7 +289,7 @@ void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &o
 
 		while (*line) {
 			byte curChar = textToFont(*line);
-			if (curChar != 32) _currentFont->drawFontFrame(_vm->getMainSurface(), curChar, curX + _vm->state()->_currentScrollValue, curY, _currentFontColor);
+			if (curChar != 32) _currentFont->drawFontFrame(frame, curChar, curX + _vm->state()->_currentScrollValue, curY, _currentFontColor);
 			curX = curX + MAX<int32>(_currentFont->getFrameWidth(curChar) - 2, 0);
 			//height = MAX(height, _currentFont->getFrameHeight(curChar));
 			line++;

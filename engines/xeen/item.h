@@ -241,26 +241,26 @@ protected:
 	/**
 	 * Returns a text string listing all the stats/attributes of a given item
 	 */
-	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
+	Common::String getAttributes(XeenItem &item, const Common::String &classes) override;
 public:
 	WeaponItems(Character *character) : InventoryItems(character, CATEGORY_WEAPON) {}
-	virtual ~WeaponItems() {}
+	~WeaponItems() override {}
 
 	/**
 	 * Equip a given weapon
 	 */
-	virtual void equipItem(int itemIndex);
+	void equipItem(int itemIndex) override;
 
 	/**
 	 * Assembles a full lines description for a specified item for use in
 	 * the Items dialog
 	 */
-	virtual Common::String getFullDescription(int itemIndex, int displayNum);
+	Common::String getFullDescription(int itemIndex, int displayNum) override;
 
 	/**
 	 * Enchants a weapon
 	 */
-	virtual void enchantItem(int itemIndex, int amount);
+	void enchantItem(int itemIndex, int amount) override;
 
 	/**
 	 * Returns true if the character has an Elder weapon in Swords of Xeen
@@ -273,26 +273,26 @@ protected:
 	/**
 	 * Returns a text string listing all the stats/attributes of a given item
 	 */
-	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
+	Common::String getAttributes(XeenItem &item, const Common::String &classes) override;
 public:
 	ArmorItems(Character *character) : InventoryItems(character, CATEGORY_ARMOR) {}
-	virtual ~ArmorItems() {}
+	~ArmorItems() override {}
 
 	/**
 	 * Equip a given piece of armor
 	 */
-	virtual void equipItem(int itemIndex);
+	void equipItem(int itemIndex) override;
 
 	/**
 	 * Assembles a full lines description for a specified item for use in
 	 * the Items dialog
 	 */
-	virtual Common::String getFullDescription(int itemIndex, int displayNum);
+	Common::String getFullDescription(int itemIndex, int displayNum) override;
 
 	/**
 	 * Enchants an armor
 	 */
-	virtual void enchantItem(int itemIndex, int amount);
+	void enchantItem(int itemIndex, int amount) override;
 };
 
 class AccessoryItems : public InventoryItems {
@@ -300,20 +300,20 @@ protected:
 	/**
 	 * Returns a text string listing all the stats/attributes of a given item
 	 */
-	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
+	Common::String getAttributes(XeenItem &item, const Common::String &classes) override;
 public:
 	AccessoryItems(Character *character) : InventoryItems(character, CATEGORY_ACCESSORY) {}
 
 	/**
 	 * Equip a given accessory
 	 */
-	virtual void equipItem(int itemIndex);
+	void equipItem(int itemIndex) override;
 
 	/**
 	 * Assembles a full lines description for a specified item for use in
 	 * the Items dialog
 	 */
-	virtual Common::String getFullDescription(int itemIndex, int displayNum);
+	Common::String getFullDescription(int itemIndex, int displayNum) override;
 };
 
 class MiscItems : public InventoryItems {
@@ -321,16 +321,16 @@ protected:
 	/**
 	 * Returns a text string listing all the stats/attributes of a given item
 	 */
-	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
+	Common::String getAttributes(XeenItem &item, const Common::String &classes) override;
 public:
 	MiscItems(Character *character) : InventoryItems(character, CATEGORY_MISC) {}
-	virtual ~MiscItems() {}
+	~MiscItems() override {}
 
 	/**
 	 * Assembles a full lines description for a specified item for use in
 	 * the Items dialog
 	 */
-	virtual Common::String getFullDescription(int itemIndex, int displayNum);
+	Common::String getFullDescription(int itemIndex, int displayNum) override;
 };
 
 class InventoryItemsGroup {

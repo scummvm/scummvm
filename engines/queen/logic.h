@@ -375,36 +375,36 @@ class LogicDemo : public Logic {
 public:
 
 	LogicDemo(QueenEngine *vm) : Logic(vm) {}
-	void useJournal();
+	void useJournal() override;
 
 protected:
 
-	bool changeToSpecialRoom();
-	void setupSpecialMoveTable();
+	bool changeToSpecialRoom() override;
+	void setupSpecialMoveTable() override;
 };
 
 class LogicInterview : public Logic {
 public:
 
 	LogicInterview(QueenEngine *vm) : Logic(vm) {}
-	void useJournal();
+	void useJournal() override;
 
 protected:
 
-	bool changeToSpecialRoom();
-	void setupSpecialMoveTable();
+	bool changeToSpecialRoom() override;
+	void setupSpecialMoveTable() override;
 };
 
 class LogicGame : public Logic {
 public:
 
 	LogicGame(QueenEngine *vm) : Logic(vm) {}
-	void useJournal();
+	void useJournal() override;
 
 protected:
 
-	bool changeToSpecialRoom();
-	void setupSpecialMoveTable();
+	bool changeToSpecialRoom() override;
+	void setupSpecialMoveTable() override;
 };
 
 

@@ -88,8 +88,8 @@ class Cursor_t7g : public Cursor {
 public:
 	Cursor_t7g(uint8 *img, uint8 *pal);
 
-	void enable();
-	void showFrame(uint16 frame);
+	void enable() override;
+	void showFrame(uint16 frame) override;
 
 private:
 	byte *_img;
@@ -237,10 +237,10 @@ byte *GrvCursorMan_t7g::loadPalette(Common::SeekableReadStream &file) {
 class Cursor_v2 : public Cursor {
 public:
 	Cursor_v2(Common::File &file);
-	~Cursor_v2();
+	~Cursor_v2() override;
 
-	void enable();
-	void showFrame(uint16 frame);
+	void enable() override;
+	void showFrame(uint16 frame) override;
 
 private:
 	// Currently locked to 16bit

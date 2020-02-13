@@ -22,9 +22,9 @@
 
 #include "gui/downloaddialog.h"
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/connection/islimited.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/util.h"
 #include "engines/metaengine.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
@@ -61,11 +61,11 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
 	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSize", "");
 	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSpeed", "");
 	if (g_system->getOverlayWidth() > 320)
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Cancel download"), 0, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Cancel download"), nullptr, kDownloadDialogButtonCmd);
 	else
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _c("Cancel download", "lowres"), 0, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _c("Cancel download", "lowres"), nullptr, kDownloadDialogButtonCmd);
 
-	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("Hide"), 0, kCloseCmd);
+	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("Hide"), nullptr, kCloseCmd);
 	refreshWidgets();
 
 	CloudMan.setDownloadTarget(this);
@@ -114,7 +114,7 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 bool DownloadDialog::selectDirectories() {
-	if (Networking::Connection::isLimited()) {
+	if (g_system->isConnectionLimited()) {
 		MessageDialog alert(_("It looks like your connection is limited. "
 			"Do you really want to download files with it?"), _("Yes"), _("No"));
 		if (alert.runModal() != GUI::kMessageOK)
@@ -206,43 +206,6 @@ void DownloadDialog::handleTickle() {
 void DownloadDialog::reflowLayout() {
 	Dialog::reflowLayout();
 	refreshWidgets();
-}
-
-namespace {
-Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
-	Common::String result = Common::String::format("%lu", bytes);
-	unitsOut = "B";
-
-	if (bytes >= 1024) {
-		bytes /= 1024;
-		result = Common::String::format("%lu", bytes);
-		unitsOut = "KB";
-	}
-
-	double floating = bytes;
-
-	if (bytes >= 1024) {
-		bytes /= 1024;
-		floating /= 1024.0;
-		unitsOut = "MB";
-	}
-
-	if (bytes >= 1024) {
-		bytes /= 1024;
-		floating /= 1024.0;
-		unitsOut = "GB";
-	}
-
-	if (bytes >= 1024) { // woah
-		bytes /= 1024;
-		floating /= 1024.0;
-		unitsOut = "TB";
-	}
-
-	// print one digit after floating point
-	result = Common::String::format("%.1f", floating);
-	return result;
-}
 }
 
 Common::String DownloadDialog::getSizeLabelText() {

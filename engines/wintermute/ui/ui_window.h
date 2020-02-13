@@ -42,36 +42,36 @@ public:
 	bool getWindowObjects(BaseArray<UIObject *> &Objects, bool InteractiveOnly);
 
 	void cleanup();
-	virtual void makeFreezable(bool freezable);
+	void makeFreezable(bool freezable) override;
 
-	virtual bool handleMouseWheel(int delta);
+	bool handleMouseWheel(int32 delta) override;
 
 	bool close();
 	bool goSystemExclusive();
 	bool goExclusive();
 	bool moveFocus(bool forward = true);
-	virtual bool handleMouse(TMouseEvent Event, TMouseButton Button);
+	bool handleMouse(TMouseEvent Event, TMouseButton Button) override;
 	DECLARE_PERSISTENT(UIWindow, UIObject)
 	bool showWidget(const char *name, bool visible = true);
 	bool enableWidget(const char *name, bool enable = true);
 
-	virtual bool display(int offsetX = 0, int offsetY = 0) override;
+	bool display(int offsetX = 0, int offsetY = 0) override;
 	UIWindow(BaseGame *inGame);
-	virtual ~UIWindow();
-	virtual bool handleKeypress(Common::Event *event, bool printable = false) override;
+	~UIWindow() override;
+	bool handleKeypress(Common::Event *event, bool printable = false) override;
 	BaseArray<UIObject *> _widgets;
 
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 
-	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool listen(BaseScriptHolder *param1, uint32 param2) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString();
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 
 	bool getInGame() const;
 	TWindowMode getMode() const;

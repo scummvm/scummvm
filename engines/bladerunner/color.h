@@ -37,11 +37,15 @@ struct Color {
 	Color(float r_, float g_, float b_) : r(r_), g(g_), b(b_) {}
 };
 
+#include "common/pack-start.h"
+
 struct Color256 {
 	uint8 r;
 	uint8 g;
 	uint8 b;
-};
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"
 
 } // End of namespace BladeRunner
 

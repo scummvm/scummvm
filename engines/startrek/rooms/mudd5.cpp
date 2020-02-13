@@ -63,14 +63,14 @@ void Room::mudd5Tick1() {
 void Room::mudd5Timer1Expired() { // Mudd enters room through hatch
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
-		TX_MUD5_006,
-		TX_MUD5_010,
+		6, true,
+		10, true,
 		TX_BLANK
 	};
 
-	showText(TX_SPEAKER_MUDD, TX_MUD5_034);
-	showText(choices);
-	showText(TX_SPEAKER_MUDD, TX_MUD5_037);
+	showText(TX_SPEAKER_MUDD, 34, true);
+	showMultipleTexts(choices);
+	showText(TX_SPEAKER_MUDD, 37, true);
 
 	loadActorAnim2(OBJECT_MUDD, "s4ephc");
 	_awayMission->timers[2] = 140;
@@ -84,47 +84,47 @@ void Room::mudd5Timer2Expired() { // Life-support generator starts acting up
 }
 
 void Room::mudd5UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_003);
+	showText(TX_SPEAKER_KIRK,  3, true);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
 void Room::mudd5UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_MUD5_022, false);
+	spockScan(DIR_S, 22, false, true);
 }
 
 void Room::mudd5UseSTricorderOnEngine() {
-	spockScan(DIR_E, TX_MUD5_011, false);
+	spockScan(DIR_E, 11, false, true);
 }
 
 void Room::mudd5UseSTricorderOnCrane() {
-	spockScan(DIR_S, TX_MUD5_023, false);
+	spockScan(DIR_S, 23, false, true);
 }
 
 void Room::mudd5UseSTricorderOnHatch() {
-	spockScan(DIR_W, TX_MUD5_024, false);
-	showText(TX_SPEAKER_KIRK, TX_MUD5_001);
+	spockScan(DIR_W, 24, false, true);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::mudd5UseSTricorderOnLifeSupportGenerator() {
 	if (_awayMission->mudd.lifeSupportMalfunctioning)
-		spockScan(DIR_W, TX_MUD5_019, false);
+		spockScan(DIR_W, 19, false, true);
 	else
-		spockScan(DIR_W, TX_MUD5_021, false);
+		spockScan(DIR_W, 21, false, true);
 }
 
 void Room::mudd5UseStunPhaserOnHatch() {
-	showText(TX_SPEAKER_SPOCK, TX_MUD5_025);
-	showText(TX_SPEAKER_MCCOY, TX_MUD5_015);
-	showText(TX_SPEAKER_SPOCK, TX_MUD5_030);
+	showText(TX_SPEAKER_SPOCK, 25, true);
+	showText(TX_SPEAKER_MCCOY, 15, true);
+	showText(TX_SPEAKER_SPOCK, 30, true);
 }
 
 void Room::mudd5UseKillPhaserOnHatch() {
-	showText(TX_SPEAKER_BUCHERT, TX_MUD5_039);
-	showText(TX_SPEAKER_SPOCK,   TX_MUD5_027);
+	showText(TX_SPEAKER_BUCHERT, 39, true);
+	showText(TX_SPEAKER_SPOCK,   27, true);
 }
 
 void Room::mudd5UseAnythingOnLifeSupportGenerator() {
-	showText(TX_SPEAKER_MCCOY, TX_MUD5_014); // BUGFIX: speaker is McCoy, not none
+	showText(TX_SPEAKER_MCCOY, 14, true); // BUGFIX: speaker is McCoy, not none
 }
 
 
@@ -134,7 +134,7 @@ void Room::mudd5UseDooverOnLifeSupportGenerator() {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 		walkCrewmanC(OBJECT_KIRK, 0x57, 0xb4, &Room::mudd5KirkReachedLifeSupportGenerator);
 	} else
-		showText(TX_SPEAKER_MCCOY, TX_MUD5_014); // BUGFIX: speaker is McCoy, not none
+		showText(TX_SPEAKER_MCCOY, 14, true); // BUGFIX: speaker is McCoy, not none
 }
 
 void Room::mudd5KirkReachedLifeSupportGenerator() {
@@ -150,8 +150,8 @@ void Room::mudd5KirkTimer4Expired() {
 }
 
 void Room::mudd5KirkRepairedLifeSupportGenerator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_007);
-	showText(TX_SPEAKER_SPOCK, TX_MUD5_028);
+	showText(TX_SPEAKER_KIRK,  7, true);
+	showText(TX_SPEAKER_SPOCK, 28, true);
 
 	_awayMission->mudd.lifeSupportMalfunctioning = false;
 	_awayMission->mudd.muddUnavailable = false;
@@ -166,26 +166,26 @@ void Room::mudd5KirkRepairedLifeSupportGenerator() {
 }
 
 void Room::mudd5KirkTimer3Expired() { // Mudd popped back in after repairing generator
-	showText(TX_SPEAKER_MUDD, TX_MUD5_035);
-	showText(TX_SPEAKER_KIRK, TX_MUD5_005);
-	showText(TX_SPEAKER_MUDD, TX_MUD5_036);
+	showText(TX_SPEAKER_MUDD, 35, true);
+	showText(TX_SPEAKER_KIRK,  5, true);
+	showText(TX_SPEAKER_MUDD, 36, true);
 
 	loadActorAnim2(OBJECT_MUDD, "s4ephc");
 	_awayMission->disableInput = false;
 }
 
 void Room::mudd5LookAtHatch() {
-	showText(TX_MUD5N011);
-	showText(TX_SPEAKER_SPOCK, TX_MUD5_031);
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_009);
+	showDescription(11, true);
+	showText(TX_SPEAKER_SPOCK, 31, true);
+	showText(TX_SPEAKER_KIRK,   9, true);
 }
 
 void Room::mudd5LookAtLifeSupportGenerator() {
 	if (_awayMission->mudd.lifeSupportMalfunctioning)
-		showText(TX_MUD5N008);
+		showDescription(8, true);
 	else {
-		showText(TX_MUD5N012);
-		showText(TX_SPEAKER_SPOCK, TX_MUD5_026);
+		showDescription(12, true);
+		showText(TX_SPEAKER_SPOCK, 26, true);
 	}
 }
 
@@ -203,55 +203,55 @@ void Room::mudd5WalkToDoor() {
 }
 
 void Room::mudd5LookAtKirk() {
-	showText(TX_MUD5N002);
+	showDescription(2, true);
 }
 
 void Room::mudd5LookAtSpock() {
-	showText(TX_MUD5N005);
+	showDescription(5, true);
 }
 
 void Room::mudd5LookAtMccoy() {
-	showText(TX_MUD5N004);
+	showDescription(4, true);
 }
 
 void Room::mudd5LookAtRedshirt() {
-	showText(TX_MUD5N003);
+	showDescription(3, true);
 }
 
 void Room::mudd5LookAtDoor() {
-	showText(TX_MUD5N010);
+	showDescription(10, true);
 }
 
 void Room::mudd5LookAtCrane() {
-	showText(TX_MUD5N000);
+	showDescription(0, true);
 }
 
 void Room::mudd5LookAtEngine() {
-	showText(TX_MUD5N006);
+	showDescription(6, true);
 }
 
 void Room::mudd5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_002);
-	showText(TX_SPEAKER_SPOCK, TX_MUD5_032);
+	showText(TX_SPEAKER_KIRK,   2, true);
+	showText(TX_SPEAKER_SPOCK, 32, true);
 }
 
 void Room::mudd5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_MUD5_033);
-	showText(TX_SPEAKER_MCCOY, TX_MUD5_016);
+	showText(TX_SPEAKER_SPOCK, 33, true);
+	showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::mudd5TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_MUD5_017);
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_004);
+	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_KIRK,   4, true);
 }
 
 void Room::mudd5TalkToRedshirt() {
-	showText(TX_SPEAKER_BUCHERT, TX_MUD5_040);
-	showText(TX_SPEAKER_MCCOY,   TX_MUD5_018);
+	showText(TX_SPEAKER_BUCHERT, 40, true);
+	showText(TX_SPEAKER_MCCOY,   18, true);
 }
 
 void Room::mudd5UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, TX_MUD5_012);
+	showText(TX_SPEAKER_MCCOY, 12, true);
 }
 
 }

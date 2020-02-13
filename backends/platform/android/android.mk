@@ -1,10 +1,21 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-ANDROID_VERSIONCODE = 16
+ANDROID_VERSIONCODE = 45
 
-ANDROID_TARGET_VERSION = 23
+# Historical version codes:
+# ScummVM 2.1.1: 40-44 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
+# ScummVM 2.1.0: 35-39 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
+# ScummVM 2.0.0: 30-34
+# ScummVM 1.9.0.1: 25-28
+# ScummVM 1.9.0: 19
+# ScummVM 1.8.1: 15
 
+ANDROID_TARGET_VERSION = 28
+
+# ndk-build will build the ScummVM library in release mode by default unless:
+# - an Application.mk is provided in the jni folder with APP_OPTIM := debug
+# - or AndroidManifest.xml declares android:debuggable within its <application> tag
 NDK_BUILD = $(ANDROID_NDK)/ndk-build APP_ABI=$(ABI)
 SDK_ANDROID = $(ANDROID_SDK)/tools/android
 
@@ -21,7 +32,11 @@ RESOURCES = \
 	$(PATH_BUILD_RES)/drawable/scummvm.png \
 	$(PATH_BUILD_RES)/drawable/scummvm_big.png \
 	$(PATH_BUILD_RES)/drawable-xhdpi/leanback_icon.png \
-	$(PATH_BUILD_RES)/drawable-xhdpi/ouya_icon.png
+	$(PATH_BUILD_RES)/drawable-xhdpi/ouya_icon.png \
+	$(PATH_BUILD_RES)/drawable-hdpi/ic_action_keyboard.png \
+	$(PATH_BUILD_RES)/drawable-mdpi/ic_action_keyboard.png \
+	$(PATH_BUILD_RES)/drawable-xhdpi/ic_action_keyboard.png \
+	$(PATH_BUILD_RES)/drawable-xxhdpi/ic_action_keyboard.png
 
 DIST_ANDROID_MK = $(PATH_DIST)/jni/Android.mk
 DIST_BUILD_XML = $(PATH_DIST)/custom_rules.xml
@@ -49,9 +64,9 @@ $(PATH_BUILD)/libs/%: $(PATH_DIST)/libs/% | $(PATH_BUILD)
 	@$(MKDIR) -p $(@D)
 	$(CP) $< $@
 
-$(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_SHADERS) $(DIST_BUILD_XML) | $(PATH_BUILD)
+$(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_BUILD_XML) $(DIST_FILES_DOCS) $(PORT_DISTFILES) | $(PATH_BUILD)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(PATH_BUILD_ASSETS)/
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(PORT_DISTFILES) $(PATH_BUILD_ASSETS)/
 	$(INSTALL) -d $(PATH_BUILD)/jni
 	$(INSTALL) -c -m 644 $(DIST_ANDROID_MK) $(PATH_BUILD)/jni
 	$(INSTALL) -c -m 644 $(DIST_BUILD_XML) $(PATH_BUILD)
@@ -83,7 +98,7 @@ all: $(APK_MAIN)
 clean: androidclean
 
 androidclean:
-	@$(RM) -rf $(PATH_BUILD) *.apk release
+	@$(RM) -rf $(PATH_BUILD) *.apk release debug
 
 androidrelease: $(APK_MAIN_RELEASE)
 
@@ -103,6 +118,13 @@ androiddistdebug: all
 	$(CP) $(APK_MAIN) debug/
 	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
 		sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; \
+	done
+
+androiddistrelease: androidrelease
+	$(MKDIR) release
+	$(CP) $(APK_MAIN_RELEASE) release/
+	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
+		sed 's/$$/\r/' < $$i > release/`basename $$i`.txt; \
 	done
 
 .PHONY: androidrelease androidtest $(PATH_BUILD_SRC)

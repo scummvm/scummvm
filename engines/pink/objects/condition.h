@@ -31,15 +31,15 @@ class Actor;
 
 class Condition : public Object {
 public:
-	virtual void deserialize(Archive &archive) = 0;
+	void deserialize(Archive &archive) override = 0;
 	virtual bool evaluate(Actor *actor) = 0;
 };
 
 class ConditionVariable : public Condition {
 public:
 
-	virtual void deserialize(Archive &archive);
-	virtual bool evaluate(Actor *actor) = 0;
+	void deserialize(Archive &archive) override;
+	bool evaluate(Actor *actor) override = 0;
 
 protected:
 	Common::String _name;
@@ -48,8 +48,8 @@ protected:
 
 class ConditionGameVariable : public ConditionVariable {
 public:
-	virtual void toConsole();
-	virtual bool evaluate(Actor *actor);
+	void toConsole() override;
+	bool evaluate(Actor *actor) override;
 };
 
 /*
@@ -61,33 +61,33 @@ class ConditionNotGameVariable : public ConditionGameVariable {
 
 class ConditionModuleVariable : public ConditionVariable {
 public:
-	virtual void toConsole();
-	virtual bool evaluate(Actor *actor);
+	void toConsole() override;
+	bool evaluate(Actor *actor) override;
 };
 
 class ConditionNotModuleVariable : public ConditionModuleVariable {
 public:
-	virtual void toConsole();
-	virtual bool evaluate(Actor *actor);
+	void toConsole() override;
+	bool evaluate(Actor *actor) override;
 };
 
 class ConditionPageVariable : public ConditionVariable {
 public:
-	virtual void toConsole();
-	virtual bool evaluate(Actor *actor);
+	void toConsole() override;
+	bool evaluate(Actor *actor) override;
 };
 
 class ConditionNotPageVariable : public ConditionPageVariable {
 public:
-	virtual void toConsole();
-	virtual bool evaluate(Actor *actor);
+	void toConsole() override;
+	bool evaluate(Actor *actor) override;
 };
 
 class ConditionInventoryItemOwner : public Condition {
 public:
-	virtual void toConsole();
-	virtual void deserialize(Archive &archive);
-	virtual bool evaluate(Actor *actor);
+	void toConsole() override;
+	void deserialize(Archive &archive) override;
+	bool evaluate(Actor *actor) override;
 
 protected:
 	Common::String _item;
@@ -96,8 +96,8 @@ protected:
 
 class ConditionNotInventoryItemOwner : public ConditionInventoryItemOwner {
 public:
-	virtual void toConsole();
-	virtual bool evaluate(Actor *actor);
+	void toConsole() override;
+	bool evaluate(Actor *actor) override;
 };
 
 } // End of namespace Pink

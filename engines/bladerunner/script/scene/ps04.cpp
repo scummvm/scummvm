@@ -62,6 +62,10 @@ void SceneScriptPS04::SceneLoaded() {
 	Unobstacle_Object("B.DOOR", true);
 	Unobstacle_Object("B.CHAIR01", true);
 	Unclickable_Object("CHAIR07");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("FLOOR");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if ( Global_Variable_Query(kVariableChapter) == 2
 	 && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
@@ -97,6 +101,7 @@ bool SceneScriptPS04::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptPS04::ClickedOnItem(int itemId, bool a2) {
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (itemId == kItemWeaponsOrderForm
 	 && Actor_Query_Is_In_Current_Set(kActorGuzza)
 	) {
@@ -105,12 +110,21 @@ bool SceneScriptPS04::ClickedOnItem(int itemId, bool a2) {
 		Item_Remove_From_World(kItemWeaponsOrderForm);
 		Item_Pickup_Spin_Effect(kModelAnimationOriginalRequisitionForm, 464, 362);
 		Actor_Says(kActorMcCoy, 4485, kAnimationModeTalk);
-#if BLADERUNNER_ORIGINAL_BUGS
-		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 here?
-#else
-		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, -1);
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy);
 	}
+#else
+	// bugfix: correct code, this is only for clicking on the kItemWeaponsOrderForm
+	if (itemId == kItemWeaponsOrderForm) {
+		if (Actor_Query_Is_In_Current_Set(kActorGuzza)) {
+			Actor_Says(kActorGuzza, 560, 30);
+		} else if (!Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)) {
+			Item_Remove_From_World(kItemWeaponsOrderForm);
+			Item_Pickup_Spin_Effect(kModelAnimationOriginalRequisitionForm, 464, 362);
+			Actor_Says(kActorMcCoy, 4485, kAnimationModeTalk);
+			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy);
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	return false;
 }
 
@@ -174,8 +188,16 @@ void SceneScriptPS04::dialogueWithGuzza() {
 
 	switch (answer) {
 	case 110: // REQUEST TYRELL MEETING
+		if (_vm->_cutContent) {
+			Actor_Says(kActorGuzza, 420, 31);
+		}
 		Actor_Says(kActorMcCoy, 3990, 19);
 		Actor_Says(kActorMcCoy, 3995, 17);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorGuzza, 430, 33);
+			Actor_Says(kActorMcCoy, 4025, 18);
+			Actor_Says(kActorMcCoy, 4030, 12);
+		}
 		Actor_Says(kActorGuzza, 440, 31);
 		Actor_Says(kActorMcCoy, 4035, 13);
 		Actor_Says(kActorGuzza, 450, 34);
@@ -232,8 +254,8 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		break;
 
 	case 130: // REPORT IN
-		if ( Game_Flag_Query(kFlagZubenRetired)
-		 && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenRetired)
+		if (Game_Flag_Query(kFlagZubenRetired)
+		    && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenRetired)
 		) {
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 140, 30);
@@ -282,8 +304,8 @@ void SceneScriptPS04::dialogueWithGuzza() {
 				Game_Flag_Set(kFlagZubenBountyPaid); // not a proper bug, but was missing from original code, so the flag would remain in non-consistent state in this case
 			}
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		} else if ( Game_Flag_Query(kFlagZubenSpared)
-		        && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenEscaped)
+		} else if (Game_Flag_Query(kFlagZubenSpared)
+		           && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenEscaped)
 		) {
 			Actor_Says(kActorMcCoy, 3955, 13);
 			Actor_Says(kActorGuzza, 280, 30);
@@ -304,13 +326,11 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Flag_Set(kFlagPS04GuzzaTalkZubenEscaped);
-		} else if (
-		 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
-		  || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
-		 )
-		 &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-		 &&  Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 50
-		 && !Game_Flag_Query(kFlagPS04GuzzaTalk1)
+		} else if ((Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
+		            || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu))
+		           &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
+		           &&  Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 50
+		           && !Game_Flag_Query(kFlagPS04GuzzaTalk1)
 		) {
 			Actor_Says(kActorMcCoy, 3970, 18);
 			Actor_Says(kActorGuzza, 330, 30);
@@ -326,12 +346,10 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorGuzza, 400, 34);
 			Actor_Says(kActorGuzza, 410, 31);
 			Game_Flag_Set(kFlagPS04GuzzaTalk1);
-		} else if (
-		 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
-		  || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
-		 )
-		 &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-		 && !Game_Flag_Query(kFlagPS04GuzzaTalk2)
+		} else if ((Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
+		            || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu))
+		           &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
+		           && !Game_Flag_Query(kFlagPS04GuzzaTalk2)
 		) {
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 570, 32);
@@ -364,6 +382,11 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Delay(1000);
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 			Delay(1000);
+			// if McCoy confesses before the body is dumped, then the body should be found (even if in dumpster)
+			if (!Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)) {
+				Game_Flag_Set(kFlagCT04HomelessBodyFound);
+				// return false;
+			}
 		}
 		Actor_Says(kActorGuzza, 700, 34);
 		Actor_Says(kActorMcCoy, 4100, 13);

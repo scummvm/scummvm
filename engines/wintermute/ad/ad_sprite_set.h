@@ -37,12 +37,12 @@ class BaseSprite;
 class AdSpriteSet : public BaseObject {
 public:
 	bool containsSprite(BaseSprite *sprite);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
 	BaseSprite *getSprite(TDirection direction);
 	DECLARE_PERSISTENT(AdSpriteSet, BaseObject)
 	BaseObject *_owner;
 	AdSpriteSet(BaseGame *inGame, BaseObject *owner = nullptr);
-	virtual ~AdSpriteSet();
+	~AdSpriteSet() override;
 	bool loadFile(const char *filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool loadBuffer(char *buffer, bool complete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	BaseSprite *_sprites[NUM_DIRECTIONS];

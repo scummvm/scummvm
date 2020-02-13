@@ -878,6 +878,8 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			parseEditorProperty(params, false);
 			break;
 
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {

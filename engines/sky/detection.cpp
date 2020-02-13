@@ -72,20 +72,24 @@ static const SkyVersion skyVersions[] = {
 
 class SkyMetaEngine : public MetaEngine {
 public:
-	virtual const char *getName() const;
-	virtual const char *getOriginalCopyright() const;
+	const char *getName() const override;
+	const char *getOriginalCopyright() const override;
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	const char *getEngineId() const override {
+		return "sky";
+	}
+
+	bool hasFeature(MetaEngineFeature f) const override;
 	PlainGameList getSupportedGames() const override;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 const char *SkyMetaEngine::getName() const {
@@ -185,12 +189,12 @@ DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 		if (sv->dinnerTableEntries) {
 			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
 
-			DetectedGame game = DetectedGame(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
+			DetectedGame game = DetectedGame(getEngineId(), skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
 			game.setGUIOptions(sv->guioptions);
 
 			detectedGames.push_back(game);
 		} else {
-			detectedGames.push_back(DetectedGame(skySetting.gameId, skySetting.description));
+			detectedGames.push_back(DetectedGame(getEngineId(), skySetting.gameId, skySetting.description));
 		}
 	}
 

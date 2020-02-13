@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Tables : public Entity {
 public:
 	Tables(LastExpressEngine *engine, EntityIndex id);
-	~Tables() {}
+	~Tables() override {}
 
 	/**
 	 * Setup Chapter 1

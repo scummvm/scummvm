@@ -22,15 +22,15 @@
 
 namespace Mohawk {
 
-#define GAMEOPTION_PLAY_MYST_FLYBY         GUIO_GAMEOPTIONS1
-
 #define GUI_OPTIONS_MYST                   GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI)
 #define GUI_OPTIONS_MYST_ME                GUIO5(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_PLAY_MYST_FLYBY)
+#define GUI_OPTIONS_MYST_ME_25TH           GUIO6(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_PLAY_MYST_FLYBY, GAMEOPTION_25TH)
 #define GUI_OPTIONS_MYST_DEMO              GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
 #define GUI_OPTIONS_MYST_MAKING_OF         GUIO5(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
 
 #define GUI_OPTIONS_RIVEN                  GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI)
-#define GUI_OPTIONS_RIVEN_DEMO             GUIO5(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
+#define GUI_OPTIONS_RIVEN_25TH             GUIO5(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_25TH)
+#define GUI_OPTIONS_RIVEN_DEMO             GUIO6(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GAMEOPTION_DEMO)
 
 static const MohawkGameDescription gameDescriptions[] = {
 	// Myst
@@ -352,7 +352,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME
+			GUI_OPTIONS_MYST_ME_25TH
 		},
 		GType_MYST,
 		GF_ME | GF_25TH,
@@ -373,7 +373,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME
+			GUI_OPTIONS_MYST_ME_25TH
 		},
 		GType_MYST,
 		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
@@ -394,7 +394,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME
+			GUI_OPTIONS_MYST_ME_25TH
 		},
 		GType_MYST,
 		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
@@ -415,7 +415,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME
+			GUI_OPTIONS_MYST_ME_25TH
 		},
 		GType_MYST,
 		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
@@ -436,7 +436,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME
+			GUI_OPTIONS_MYST_ME_25TH
 		},
 		GType_MYST,
 		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
@@ -693,7 +693,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN
+			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
 		GF_DVD | GF_25TH,
@@ -714,7 +714,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN
+			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
 		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
@@ -735,7 +735,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN
+			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
 		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
@@ -756,7 +756,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN
+			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
 		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
@@ -777,7 +777,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN
+			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
 		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
@@ -798,7 +798,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN
+			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
 		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
@@ -819,7 +819,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN
+			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
 		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
@@ -840,7 +840,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN
+			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
 		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,

@@ -66,6 +66,7 @@ public:
 	virtual bool setViewport(Rect32 *rect);
 	virtual Rect32 getViewPort() = 0;
 	virtual bool setScreenViewport();
+	virtual void setWindowed(bool windowed) = 0;
 
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 	/**
@@ -88,7 +89,7 @@ public:
 	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); 	// Unused outside indicator-display
 	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); 	// Unused outside indicator-display
 	BaseRenderer(BaseGame *inGame = nullptr);
-	virtual ~BaseRenderer();
+	~BaseRenderer() override;
 	virtual bool setProjection() {
 		return STATUS_OK;
 	};
@@ -116,6 +117,7 @@ public:
 	 * essentially, just copies the region defined by the _indicator-variables.
 	 */
 	virtual bool indicatorFlip() = 0;
+	virtual bool forcedFlip() = 0;
 	virtual void initLoop();
 	virtual bool setup2D(bool force = false);
 	virtual bool setupLines();
@@ -223,6 +225,8 @@ protected:
 	Rect32 _monitorRect;
 private:
 	Common::Array<BaseActiveRect *> _rectList;
+	bool displaySaveloadImage();
+	bool displaySaveloadLines();
 };
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp

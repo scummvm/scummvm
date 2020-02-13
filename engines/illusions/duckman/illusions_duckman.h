@@ -80,8 +80,8 @@ class IllusionsEngine_Duckman : public IllusionsEngine {
 public:
 	IllusionsEngine_Duckman(OSystem *syst, const IllusionsGameDescription *gd);
 protected:
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 
 	uint32 _prevSceneId;
@@ -113,34 +113,34 @@ public:
 	int updateScreenShaker(uint flags);
 
 	void startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId);
-	void updateFader();
-	void clearFader();
-	void pauseFader();
-	void unpauseFader();
+	void updateFader() override;
+	void clearFader() override;
+	void pauseFader() override;
+	void unpauseFader() override;
 
 	int updateVideoPlayer(uint flags);
 	void playVideo(uint32 videoId, uint32 callingThreadId);
-	bool isVideoPlaying();
+	bool isVideoPlaying() override;
 
-	void setDefaultTextCoords();
+	void setDefaultTextCoords() override;
 
-	void loadSpecialCode(uint32 resId);
-	void unloadSpecialCode(uint32 resId);
-	void notifyThreadId(uint32 &threadId);
-	bool testMainActorFastWalk(Control *control);
-	bool testMainActorCollision(Control *control);
-	Control *getObjectControl(uint32 objectId);
-	Common::Point getNamedPointPosition(uint32 namedPointId);
-	uint32 getPriorityFromBase(int16 priority);
-	uint32 getCurrentScene();
-	uint32 getPrevScene();
+	void loadSpecialCode(uint32 resId) override;
+	void unloadSpecialCode(uint32 resId) override;
+	void notifyThreadId(uint32 &threadId) override;
+	bool testMainActorFastWalk(Control *control) override;
+	bool testMainActorCollision(Control *control) override;
+	Control *getObjectControl(uint32 objectId) override;
+	Common::Point getNamedPointPosition(uint32 namedPointId) override;
+	uint32 getPriorityFromBase(int16 priority) override;
+	uint32 getCurrentScene() override;
+	uint32 getPrevScene() override;
 
-	bool isCursorObject(uint32 actorTypeId, uint32 objectId);
-	void setCursorControlRoutine(Control *control);
-	void placeCursorControl(Control *control, uint32 sequenceId);
-	void setCursorControl(Control *control);
-	void showCursor();
-	void hideCursor();
+	bool isCursorObject(uint32 actorTypeId, uint32 objectId) override;
+	void setCursorControlRoutine(Control *control) override;
+	void placeCursorControl(Control *control, uint32 sequenceId) override;
+	void setCursorControl(Control *control) override;
+	void showCursor() override;
+	void hideCursor() override;
 	void initCursor();
 	void setCursorActorIndex(int actorIndex, int a, int b);
 	void enableCursorVerb(int verbNum);
@@ -151,7 +151,7 @@ public:
 	void stopCursorHoldingObject();
 	void cursorControlRoutine(Control *control, uint32 deltaTime);
 
-	void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId);
+	void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId) override;
 	void startScriptThread(uint32 threadId, uint32 callingThreadId);
 	void startScriptThread2(uint32 threadId, uint32 callingThreadId, uint32 unk);
 	uint32 startAbortableTimerThread(uint32 duration, uint32 threadId);
@@ -160,7 +160,7 @@ public:
 	uint32 startTalkThread(uint32 objectId, uint32 talkId, uint32 sequenceId1,
 		uint32 sequenceId2, uint32 callingThreadId);
 	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
-		uint32 value8, uint32 valueC, uint32 value10);
+		uint32 value8, uint32 valueC, uint32 value10) override;
 	void resumeFromSavegame(uint32 callingThreadId);
 
 	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,

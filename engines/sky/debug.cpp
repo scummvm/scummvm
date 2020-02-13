@@ -1258,6 +1258,8 @@ bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 		case  3:
 			arg1 = atoi(argv[2]);
 			// fall through
+		default:
+			break;
 	}
 
 	for (int i = 0; i < numMCodes; ++i) {

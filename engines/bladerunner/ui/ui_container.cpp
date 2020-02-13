@@ -56,7 +56,6 @@ void UIContainer::handleMouseScroll(int direction) {
 	}
 }
 
-
 void UIContainer::handleKeyUp(const Common::KeyState &kbd) {
 	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
 		(*component)->handleKeyUp(kbd);

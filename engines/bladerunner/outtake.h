@@ -33,6 +33,7 @@ class BladeRunnerEngine;
 
 class OuttakePlayer {
 	BladeRunnerEngine *_vm;
+
 	Graphics::Surface  _surfaceVideo;
 
 public:

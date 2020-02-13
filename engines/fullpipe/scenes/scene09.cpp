@@ -505,6 +505,7 @@ int sceneHandler09(ExCommand *cmd) {
 
 			return res;
 		}
+		break;
 
 	case 30:
 		if (g_vars->scene09_interactingHanger >= 0)  {
@@ -578,9 +579,11 @@ int sceneHandler09(ExCommand *cmd) {
 						g_fp->processArcade(cmd);
 				}
 			}
-
-			break;
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

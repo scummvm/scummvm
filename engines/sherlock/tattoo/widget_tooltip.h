@@ -36,17 +36,17 @@ namespace Tattoo {
 class WidgetTooltipBase : public WidgetBase {
 public:
 	WidgetTooltipBase(SherlockEngine *vm) : WidgetBase(vm) {}
-	virtual ~WidgetTooltipBase() {}
+	~WidgetTooltipBase() override {}
 
 	/**
 	 * Erase any previous display of the widget on the screen
 	 */
-	virtual void erase();
+	void erase() override;
 
 	/**
 	 * Update the display of the widget on the screen
 	 */
-	virtual void draw();
+	void draw() override;
 };
 
 class WidgetTooltip: public WidgetTooltipBase {
@@ -54,7 +54,7 @@ public:
 	int _offsetY;
 public:
 	WidgetTooltip(SherlockEngine *vm);
-	virtual ~WidgetTooltip() {}
+	~WidgetTooltip() override {}
 
 	/**
 	 * Set the text for the tooltip
@@ -64,7 +64,7 @@ public:
 	/**
 	 * Handle updating the tooltip state
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 class WidgetSceneTooltip : public WidgetTooltip {
@@ -74,7 +74,7 @@ public:
 	/**
 	 * Handle updating the tooltip state
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 class WidgetMapTooltip : public WidgetTooltip {

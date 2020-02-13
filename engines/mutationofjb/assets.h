@@ -67,7 +67,6 @@ public:
 	 */
 	HardcodedStrings &getHardcodedStrings();
 private:
-	Game &_game;
 	SystemFont _systemFont;
 	SpeechFont _speechFont;
 	ConversationLineList _toSayList;

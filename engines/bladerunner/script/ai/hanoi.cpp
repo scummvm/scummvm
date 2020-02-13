@@ -291,7 +291,7 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Game_Flag_Set(kFlagNR03McCoyThrownOut);
 		AI_Countdown_Timer_Reset(kActorHanoi, kActorTimerAIScriptCustomTask0);
 		Player_Loses_Control();
-		Player_Set_Combat_Mode(false); // this is missing in ITA & SPA versions of the game
+		Player_Set_Combat_Mode(false); // this is missing in ITA and ESP versions of the game
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Actor_Set_Invisible(kActorMcCoy, true);
@@ -525,7 +525,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 		}
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			Actor_Change_Animation_Mode(kActorHanoi, 4);
+			Actor_Change_Animation_Mode(kActorHanoi, kAnimationModeCombatIdle);
 			_animationFrame = 0;
 			_animationState = 8;
 			*animation = 642;

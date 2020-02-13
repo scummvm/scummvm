@@ -97,6 +97,8 @@ void EventsManager::initMouseData() {
 	case LANG_SP:
 		_mouseCursor = _vm->_fileIO->loadFile("SOUES.SPR");
 		break;
+	default:
+		break;
 	}
 }
 

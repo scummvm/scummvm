@@ -40,6 +40,8 @@ private:
 	bool playAnimation(int argc, const char **argv);
 	bool playActorAnimation(int argc, const char **argv);
 	bool call(int argc, const char **argv);
+	bool playSound(int argc, const char **argv);
+	bool playVoice(int argc, const char **argv);
 
 	TeenAgentEngine *_engine;
 };

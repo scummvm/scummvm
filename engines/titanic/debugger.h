@@ -124,7 +124,7 @@ protected:
 	TitanicEngine *_vm;
 public:
 	Debugger(TitanicEngine *vm);
-	virtual ~Debugger() {}
+	~Debugger() override {}
 };
 
 } // End of namespace Titanic

@@ -23,7 +23,7 @@
 #ifndef TITANIC_STAR_CONTROL_H
 #define TITANIC_STAR_CONTROL_H
 
-#include "titanic/core/game_object.h" // class SimpleFile
+#include "titanic/core/game_object.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_view.h"
 
@@ -52,22 +52,22 @@ private:
 public:
 	CLASSDEF;
 	CStarControl();
-	virtual ~CStarControl();
+	~CStarControl() override;
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Allows the item to draw itself
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager) override;
 
 	/**
 	 * _starField is currently showing the starfield

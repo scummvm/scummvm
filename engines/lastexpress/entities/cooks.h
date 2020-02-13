@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Cooks : public Entity {
 public:
 	Cooks(LastExpressEngine *engine);
-	~Cooks() {}
+	~Cooks() override {}
 
 	/**
 	 * Draws the entity

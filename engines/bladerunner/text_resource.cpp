@@ -43,10 +43,15 @@ TextResource::~TextResource() {
 	delete[] _strings;
 }
 
-bool TextResource::open(const Common::String &name) {
+bool TextResource::open(const Common::String &name, bool localized) {
 	assert(name.size() <= 8);
 
-	Common::String resName = Common::String::format("%s.TR%s", name.c_str(), _vm->_languageCode.c_str());
+	Common::String resName;
+	if (localized) {
+		resName = Common::String::format("%s.TR%s", name.c_str(), _vm->_languageCode.c_str());
+	} else {
+		resName = Common::String::format("%s.TRE", name.c_str());
+	}
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(resName));
 	if (!s) {
 		warning("TextResource::open(): Can not open %s", resName.c_str());
@@ -102,7 +107,7 @@ const char *TextResource::getText(uint32 id) const {
 const char *TextResource::getOuttakeTextByFrame(uint32 frame) const {
 	for (uint32 i = 0; i != _count; ++i) {
 		//debug("Checking %d - so within: %d , %d", _ids[i], (0x0000FFFF & _ids[i]), ((_ids[i] >> 16) & 0x0000FFFF ) );
-		if ((frame >= (0x0000FFFF & _ids[i]) )   && (frame <  ((_ids[i] >> 16) & 0x0000FFFF ) )){
+		if ((frame >= (0x0000FFFF & _ids[i]) )   && (frame <  ((_ids[i] >> 16) & 0x0000FFFF ) )) {
 			// we found an id with lower 16bits smaller or equal to our frame key
 			// and with higher 16 bits higher than the frame key
 			return _strings + _offsets[i];

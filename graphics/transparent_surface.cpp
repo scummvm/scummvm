@@ -177,14 +177,17 @@ void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 			for (uint32 j = 0; j < width; j++) {
 
 				uint32 ina = in[kAIndex] * ca >> 8;
-				out[kAIndex] = 255;
-				out[kBIndex] = (out[kBIndex] * (255 - ina) >> 8);
-				out[kGIndex] = (out[kGIndex] * (255 - ina) >> 8);
-				out[kRIndex] = (out[kRIndex] * (255 - ina) >> 8);
 
-				out[kBIndex] = out[kBIndex] + (in[kBIndex] * ina * cb >> 16);
-				out[kGIndex] = out[kGIndex] + (in[kGIndex] * ina * cg >> 16);
-				out[kRIndex] = out[kRIndex] + (in[kRIndex] * ina * cr >> 16);
+				if (ina != 0) {
+					out[kAIndex] = 255;
+					out[kBIndex] = (out[kBIndex] * (255 - ina) >> 8);
+					out[kGIndex] = (out[kGIndex] * (255 - ina) >> 8);
+					out[kRIndex] = (out[kRIndex] * (255 - ina) >> 8);
+
+					out[kBIndex] = out[kBIndex] + (in[kBIndex] * ina * cb >> 16);
+					out[kGIndex] = out[kGIndex] + (in[kGIndex] * ina * cg >> 16);
+					out[kRIndex] = out[kRIndex] + (in[kRIndex] * ina * cr >> 16);
+				}
 
 				in += inStep;
 				out += 4;
@@ -709,6 +712,25 @@ void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool 
 				a = 255;
 				((uint32 *)pixels)[i * w + j] = format.ARGBToColor(a, r, g, b);
 			}
+		}
+	}
+}
+
+/**
+ * Sets alpha channel for all pixels to specified value
+ * @param alpha  value of the alpha channel to set
+ * @param skipTransparent  if set to true, then do not touch pixels with alpha=0
+ */
+void TransparentSurface::setAlpha(uint8 alpha, bool skipTransparent) {
+	assert(format.bytesPerPixel == 4);
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			uint32 pix = ((uint32 *)pixels)[i * w + j];
+			uint8 r, g, b, a;
+			format.colorToARGB(pix, a, r, g, b);
+			if (!skipTransparent || a)
+				a = alpha;
+			((uint32 *)pixels)[i * w + j] = format.ARGBToColor(a, r, g, b);
 		}
 	}
 }

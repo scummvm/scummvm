@@ -42,7 +42,7 @@ public:
 
 	DECLARE_PERSISTENT(AdResponseContext, BaseClass)
 	AdResponseContext(BaseGame *inGame);
-	virtual ~AdResponseContext();
+	~AdResponseContext() override;
 private:
 	char *_context;
 };

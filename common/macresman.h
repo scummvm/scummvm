@@ -181,6 +181,11 @@ public:
 	 */
 	bool loadFromMacBinary(SeekableReadStream &stream);
 
+	/**
+	 * Dump contents of the archive to ./dumps directory
+	 */
+	 void dumpRaw();
+
 private:
 	SeekableReadStream *_stream;
 	String _baseFileName;
@@ -220,6 +225,15 @@ private:
 		uint16 typeOffset;
 		uint16 nameOffset;
 		uint16 numTypes;
+
+		void reset() {
+			resAttr = 0;
+			typeOffset = 0;
+			nameOffset = 0;
+			numTypes = 0;
+		}
+
+		ResMap() { reset(); }
 	};
 
 	struct ResType {

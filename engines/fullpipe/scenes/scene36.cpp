@@ -86,6 +86,9 @@ int sceneHandler36(ExCommand *cmd) {
 		g_fp->startSceneTrack();
 
 		break;
+
+	default:
+		break;
 	}
 
 	return 0;

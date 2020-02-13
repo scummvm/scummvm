@@ -41,13 +41,25 @@ namespace Adl {
 #define GAMEOPTION_COLOR_DEFAULT_OFF GUIO_GAMEOPTIONS1
 #define GAMEOPTION_SCANLINES         GUIO_GAMEOPTIONS2
 #define GAMEOPTION_COLOR_DEFAULT_ON  GUIO_GAMEOPTIONS3
+#define GAMEOPTION_NTSC              GUIO_GAMEOPTIONS4
+#define GAMEOPTION_MONO_TEXT         GUIO_GAMEOPTIONS5
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
+		GAMEOPTION_NTSC,
+		{
+			_s("TV emulation"),
+			_s("Emulate composite output to an NTSC TV"),
+			"ntsc",
+			true
+		}
+	},
+
+	{
 		GAMEOPTION_COLOR_DEFAULT_OFF,
 		{
-			_s("Color mode"),
-			_s("Use color graphics"),
+			_s("Color graphics"),
+			_s("Use color graphics instead of monochrome"),
 			"color",
 			false
 		}
@@ -56,8 +68,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_COLOR_DEFAULT_ON,
 		{
-			_s("Color mode"),
-			_s("Use color graphics"),
+			_s("Color graphics"),
+			_s("Use color graphics instead of monochrome"),
 			"color",
 			true
 		}
@@ -66,15 +78,28 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_SCANLINES,
 		{
-			_s("Scanlines"),
 			_s("Show scanlines"),
+			_s("Darken every other scanline to mimic the look of a CRT"),
 			"scanlines",
 			false
 		}
 	},
 
+	{
+		GAMEOPTION_MONO_TEXT,
+		{
+			_s("Always use sharp monochrome text"),
+			_s("Do not emulate NTSC artifacts for text"),
+			"monotext",
+			true
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
+
+#define DEFAULT_OPTIONS GUIO5(GAMEOPTION_NTSC, GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_MONO_TEXT, GAMEOPTION_SCANLINES, GUIO_NOMIDI)
+#define MH_OPTIONS GUIO5(GAMEOPTION_NTSC, GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_MONO_TEXT, GAMEOPTION_SCANLINES, GUIO_NOMIDI)
 
 static const PlainGameDescriptor adlGames[] = {
 	{ "hires0", "Hi-Res Adventure #0: Mission Asteroid" },
@@ -105,7 +130,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_SIMI
@@ -121,7 +146,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_COARSE
@@ -138,7 +163,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_PD
@@ -149,7 +174,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 static const AdlGameDescription gameDiskDescriptions[] = {
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Coarsegold address
 		{
-			"hires1", 0,
+			"hires1", "",
 			{
 				{ "mysthous", 0, "8df0b3b3e609a2e40237e2419c1cb767", 116480 },
 				AD_LISTEND
@@ -157,14 +182,14 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_COARSE
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
 		{
-			"hires1", 0,
+			"hires1", "",
 			{
 				{ "mysthous", 0, "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360 },
 				AD_LISTEND
@@ -172,14 +197,14 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_PD
 	},
 	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Roberta Williams Anthology
 		{
-			"hires2", 0,
+			"hires2", "",
 			{
 				{ "wizard", 0, "72b114bf8f94fafe5672daac2a70c765", 143360 },
 				AD_LISTEND
@@ -187,14 +212,14 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES2,
 		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #0: Mission Asteroid - Apple II - Roberta Williams Anthology
 		{
-			"hires0", 0,
+			"hires0", "",
 			{
 				{ "mission", 0, "6bc53f51a3c8ee65c020af55fb8bd875", 116480 },
 				AD_LISTEND
@@ -202,14 +227,14 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES0,
 		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #3: Cranston Manor - Apple II
 		{
-			"hires3", 0,
+			"hires3", "",
 			{
 				{ "cranston", 0, "e4d35440791a36e55299c7be1ccd2b04", 116480 },
 				AD_LISTEND
@@ -217,14 +242,14 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES3,
 		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Load 'N' Go
 		{
-			"hires4", 0,
+			"hires4", "",
 			{
 				{ "ulyssesa", 0, "1eaeb2f1a773ce2d1cb9f16b2ef09049", 143360 },
 				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
@@ -233,14 +258,14 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES4,
 		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Atari 8-bit - Re-release
 		{
-			"hires4", 0,
+			"hires4", "",
 			{
 				{ "ulys1b", 0, "bb6aab9a35b41d160b6eefa088165f56", 92160 },
 				{ "ulys1a", 0, "c227eeee34d0bacd62b2d6231c409204", 92160 },
@@ -258,7 +283,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #5: Time Zone - Apple II - Version 1.1 - Roberta Williams Anthology
 		{
-			"hires5", 0,
+			"hires5", "",
 			{
 				{ "tzone1a", 2, "731844b1d19c2801e3a5bc61d109af54", 143360 },
 				{ "tzone1b", 3, "4eaf8d790e3f93097cca9ddbe863df50", 143360 },
@@ -277,14 +302,14 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES5,
 		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - Roberta Williams Anthology / SierraVenture
 		{
-			"hires6", 0,
+			"hires6", "SierraVenture [version A]",
 			{
 				{ "dark1a", 0, "9a5968a8f378c84454d88f4cd4e143a9", 143360 },
 				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },
@@ -295,7 +320,25 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES6,
+		GAME_VER_NONE
+	},
+	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - SierraVenture
+		{
+			"hires6", "SierraVenture [version B]",
+			{
+				{ "dark1a", 0, "d0b8e808b02564b6ce58b5ea5cc61ead", 143360 },
+				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },
+				{ "dark2a", 4, "090e77563add7b4c9ab25f444d727316", 143360 },
+				{ "dark2b", 5, "f2db96af0955324900b800505af4d91f", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES6,
 		GAME_VER_NONE
@@ -309,34 +352,40 @@ struct DiskImageExt {
 };
 
 const DiskImageExt diskImageExts[] = {
+	{ Common::kPlatformApple2, ".woz" },
 	{ Common::kPlatformApple2, ".nib" },
 	{ Common::kPlatformApple2, ".dsk" },
 	{ Common::kPlatformApple2, ".d13" },
-	{ Common::kPlatformAtari8Bit, ".xfd" }
+	{ Common::kPlatformAtari8Bit, ".xfd" },
+	{ Common::kPlatformDOS, ".img" }
 };
 
 class AdlMetaEngine : public AdvancedMetaEngine {
 public:
 	AdlMetaEngine() : AdvancedMetaEngine(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
 
-	const char *getName() const {
+	const char *getName() const override {
 		return "ADL";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getEngineId() const override {
+		return "adl";
+	}
+
+	const char *getOriginalCopyright() const override {
 		return "Copyright (C) Sierra On-Line";
 	}
 
-	bool hasFeature(MetaEngineFeature f) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	int getMaximumSaveSlot() const { return 'O' - 'A'; }
-	SaveStateList listSaves(const char *target) const;
-	void removeSaveState(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	int getMaximumSaveSlot() const override { return 'O' - 'A'; }
+	SaveStateList listSaves(const char *target) const override;
+	void removeSaveState(const char *target, int slot) const override;
 	ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const override;
 
 	bool addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const;
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
 
 bool AdlMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -512,13 +561,15 @@ bool AdlMetaEngine::addFileProps(const FileMap &allFiles, Common::String fname, 
 
 // Based on AdvancedMetaEngine::detectGame
 ADDetectedGames AdlMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
-	// We run the file-based detector first and then add to the returned list
+	// We run the file-based detector first, if it finds a match we do not search for disk images
 	ADDetectedGames matched = AdvancedMetaEngine::detectGame(parent, allFiles, language, platform, extra);
+
+	if (!matched.empty())
+		return matched;
 
 	debug(3, "Starting disk image detection in dir '%s'", parent.getPath().c_str());
 
 	FilePropertiesMap filesProps;
-	bool gotAnyMatchesWithAllFiles = false;
 
 	for (uint g = 0; gameDiskDescriptions[g].desc.gameId != 0; ++g) {
 		ADDetectedGame game(&gameDiskDescriptions[g].desc);
@@ -584,17 +635,20 @@ ADDetectedGames AdlMetaEngine::detectGame(const Common::FSNode &parent, const Fi
 			debug(3, "Matched file: %s", fileName.c_str());
 		}
 
-		if (allFilesPresent && !game.hasUnknownFiles) {
-			debug(2, "Found game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
-			gotAnyMatchesWithAllFiles = true;
-			matched.push_back(game);
-		} else {
-			if (allFilesPresent && !gotAnyMatchesWithAllFiles) {
-				if (matched.empty() || strcmp(matched.back().desc->gameId, game.desc->gameId) != 0)
+		// This assumes that the detection table groups together games that have the same gameId and platform
+		if (allFilesPresent) {
+			if (!game.hasUnknownFiles) {
+				debug(2, "Found game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
+				// If we just added an unknown variant for this game and platform, remove it
+				if (!matched.empty() && strcmp(matched.back().desc->gameId, game.desc->gameId) == 0 && matched.back().desc->platform == game.desc->platform)
+					matched.pop_back();
+				matched.push_back(game);
+			} else {
+				debug(5, "Skipping game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
+				// If we already added a known or unknown variant for this game and platform, don't add another
+				if (matched.empty() || strcmp(matched.back().desc->gameId, game.desc->gameId) != 0 || matched.back().desc->platform != game.desc->platform)
 					matched.push_back(game);
 			}
-
-			debug(5, "Skipping game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
 		}
 	}
 

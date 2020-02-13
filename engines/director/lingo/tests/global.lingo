@@ -1,0 +1,27 @@
+global version
+
+on initPattern
+    global MaxPattern
+    set MaxPattern = 65
+	put "first: " & MaxPattern
+	set a = 5
+end initPattern
+
+on increase
+	global MaxPattern
+	set MaxPattern = MaxPattern + 1
+	put MaxPattern
+	set a = 10
+end increase
+
+set a = 8
+set MaxPattern = 3
+
+initPattern
+
+increase
+increase
+
+put MaxPattern
+
+put a

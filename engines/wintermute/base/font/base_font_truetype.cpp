@@ -48,6 +48,7 @@ IMPLEMENT_PERSISTENT(BaseFontTT, false)
 BaseFontTT::BaseFontTT(BaseGame *inGame) : BaseFont(inGame) {
 	_fontHeight = 12;
 	_isBold = _isItalic = _isUnderline = _isStriked = false;
+	_charset = CHARSET_ANSI;
 
 	_fontFile = nullptr;
 	_font = nullptr;
@@ -116,7 +117,7 @@ int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 	if (_gameRef->_textEncoding == TEXT_UTF8) {
 		textStr = StringUtil::utf8ToWide((const char *)text);
 	} else {
-		textStr = StringUtil::ansiToWide((const char *)text);
+		textStr = StringUtil::ansiToWide((const char *)text, _charset);
 	}
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
@@ -137,7 +138,7 @@ int BaseFontTT::getTextHeight(const byte *text, int width) {
 	if (_gameRef->_textEncoding == TEXT_UTF8) {
 		textStr = StringUtil::utf8ToWide((const char *)text);
 	} else {
-		textStr = StringUtil::ansiToWide((const char *)text);
+		textStr = StringUtil::ansiToWide((const char *)text, _charset);
 	}
 
 
@@ -162,7 +163,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	if (_gameRef->_textEncoding == TEXT_UTF8) {
 		textStr = StringUtil::utf8ToWide((const char *)text);
 	} else {
-		textStr = StringUtil::ansiToWide((const char *)text);
+		textStr = StringUtil::ansiToWide((const char *)text, _charset);
 	}
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
@@ -412,7 +413,7 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 			break;
 
 		case TOKEN_CHARSET:
-			// we don't need this anymore
+			parser.scanStr(params, "%d", &_charset);
 			break;
 
 		case TOKEN_COLOR: {
@@ -441,6 +442,8 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 		}
 		break;
 
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -499,6 +502,9 @@ bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, char *buffer) {
 			layer->_color = BYTETORGBA(RGBCOLGetR(layer->_color), RGBCOLGetG(layer->_color), RGBCOLGetB(layer->_color), a);
 		}
 		break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd != PARSERR_EOF) {
@@ -519,6 +525,7 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_isStriked));
 	persistMgr->transferSint32(TMEMBER(_fontHeight));
 	persistMgr->transferCharPtr(TMEMBER(_fontFile));
+	persistMgr->transferSint32(TMEMBER_INT(_charset));
 
 
 	// persist layers

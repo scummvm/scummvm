@@ -28,6 +28,19 @@
 
 namespace Common {
 
+uint32 WriteStream::writeStream(ReadStream *stream, uint32 dataSize) {
+	void *buf = malloc(dataSize);
+	dataSize = stream->read(buf, dataSize);
+	assert(dataSize > 0);
+	dataSize = write(buf, dataSize);
+	free(buf);
+	return dataSize;
+}
+
+uint32 WriteStream::writeStream(SeekableReadStream *stream) {
+	return writeStream(stream, stream->size());
+}
+
 void WriteStream::writeString(const String &str) {
 	write(str.c_str(), str.size());
 }
@@ -85,6 +98,8 @@ bool MemoryReadStream::seek(int32 offs, int whence) {
 		offs = _size + offs;
 		// Fall through
 	case SEEK_SET:
+		// Fall through
+	default:
 		_ptr = _ptrOrig + offs;
 		_pos = offs;
 		break;
@@ -188,8 +203,6 @@ String SeekableReadStream::readLine() {
 	return line;
 }
 
-
-
 uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
 	if (dataSize > _end - _pos) {
 		dataSize = _end - _pos;
@@ -221,6 +234,8 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 		offset = size() + offset;
 		// fallthrough
 	case SEEK_SET:
+		// Fall through
+	default:
 		_pos = _begin + offset;
 		break;
 	case SEEK_CUR:
@@ -325,6 +340,13 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 			uint32 n = _parentStream->read(dataPtr, dataSize);
 			if (_parentStream->eos())
 				_eos = true;
+
+			// Fill the buffer from the user buffer so a seek back in
+			// the stream into the buffered area brings consistent data.
+			_bufSize = MIN(n, _realBufSize);
+			_pos = _bufSize;
+			memcpy(_buf, (byte *)dataPtr + n - _bufSize, _bufSize);
+
 			return alreadyRead + n;
 		}
 

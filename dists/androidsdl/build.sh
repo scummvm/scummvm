@@ -2,6 +2,43 @@
 
 LOCAL_PATH=`dirname $0`
 LOCAL_PATH=`cd $LOCAL_PATH && pwd`
+# default build mode is release
+build_release=true
+
+if [ "$#" -eq "1" ]; then
+	if [ "$1" = "debug" ]; then
+		build_release=false
+		echo "Preparing for a debug build..."
+	elif [ "$1" = "release" ]; then
+		echo "Preparing for a release build..."
+	else
+		echo "Usage: $0 [debug|release]"
+		echo "  debug:    build debug package"
+		echo "  release:  build release package (default)"
+		exit 0
+	fi
+else
+	echo "Preparing for a release (default) build..."
+fi
+sleep 1
+
+if $build_release ; then
+	if [ -x scummvm/AndroidBuildRelease.sh ] && \
+	     { cp scummvm/AndroidBuildRelease.sh scummvm/AndroidBuild.sh ; } ; then
+		echo "AndroidBuild.sh created successfully"
+	else
+		echo "Error: Required script AndroidBuildRelease.sh could not be copied to AndroidBuild.sh"
+		exit 0
+	fi
+else
+	if [ -x scummvm/AndroidBuildDebug.sh ] && \
+	     { cp scummvm/AndroidBuildDebug.sh scummvm/AndroidBuild.sh ; } ; then
+		echo "AndroidBuild.sh created successfully"
+	else
+		echo "Error: Required script AndroidBuildDebug.sh could not be copied to AndroidBuild.sh"
+		exit 0
+	fi
+fi
 
 if [ \! -d ../../../androidsdl ] ; then
    cd ../../..
@@ -24,7 +61,14 @@ if [ \! -d ../../../androidsdl/project/jni/application/scummvm ] ; then
 fi
 
 cd ../../../androidsdl
-./build.sh scummvm
 
+if $build_release ; then
+	./build.sh release scummvm
+else
+	./build.sh debug scummvm
+fi
+
+# the androidsdl build.sh script ensures that the output file is named "app-release" even if we are in debug mode
 mv project/app/build/outputs/apk/app-release.apk ../scummvm/dists/androidsdl/scummvm-debug.apk
 cd ../scummvm/dists/androidsdl
+rm scummvm/AndroidBuild.sh

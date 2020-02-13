@@ -44,6 +44,11 @@ void SceneScriptPS02::SceneLoaded() {
 	Obstacle_Object("E.DOOR02", true);
 	Clickable_Object("E.DOOR01");
 	Clickable_Object("E.DOOR02");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("E.DOOR01");
+	Unclickable_Object("E.DOOR02");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptPS02::MouseClick(int x, int y) {
@@ -51,6 +56,9 @@ bool SceneScriptPS02::MouseClick(int x, int y) {
 }
 
 bool SceneScriptPS02::ClickedOn3DObject(const char *objectName, bool a2) {
+#if BLADERUNNER_ORIGINAL_BUGS
+	// McCoy never clicks on the door
+	// This stuff is never called
 	if (Object_Query_Click("E.DOOR01", objectName)
 	 || Object_Query_Click("E.D00R02", objectName)
 	) {
@@ -91,6 +99,7 @@ bool SceneScriptPS02::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 		}
 	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	return false;
 }
 

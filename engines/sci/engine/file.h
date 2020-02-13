@@ -47,8 +47,11 @@ enum {
 
 	// SCI engine expects game IDs to start at 0, but slot 0 in ScummVM is
 	// reserved for autosave, so non-autosave games get their IDs shifted up
-	// when saving or restoring, and shifted down when enumerating save games
-	kSaveIdShift = 1
+	// when saving or restoring, and shifted down when enumerating save games.
+	// ScummVM slot 0 can't be shifted down as -1 is an illegal SCI save ID
+	// so it is instead wrapped around to 99 and then back to 0 when shifting up.
+	kSaveIdShift = 1,
+	kMaxShiftedSaveId = 99
 };
 #endif
 
@@ -124,13 +127,13 @@ class MemoryDynamicRWStream : public Common::MemoryWriteStreamDynamic, public Co
 public:
 	MemoryDynamicRWStream(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : MemoryWriteStreamDynamic(disposeMemory), _eos(false) { }
 
-	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 
-	bool eos() const { return _eos; }
-	int32 pos() const { return _pos; }
-	int32 size() const { return _size; }
-	void clearErr() { _eos = false; Common::MemoryWriteStreamDynamic::clearErr(); }
-	bool seek(int32 offs, int whence = SEEK_SET) { return Common::MemoryWriteStreamDynamic::seek(offs, whence); }
+	bool eos() const override { return _eos; }
+	int32 pos() const override { return _pos; }
+	int32 size() const override { return _size; }
+	void clearErr() override { _eos = false; Common::MemoryWriteStreamDynamic::clearErr(); }
+	bool seek(int32 offs, int whence = SEEK_SET) override { return Common::MemoryWriteStreamDynamic::seek(offs, whence); }
 
 protected:
 	bool _eos;
@@ -146,9 +149,9 @@ public:
 	SaveFileRewriteStream(const Common::String &fileName,
 	                      Common::SeekableReadStream *inFile,
 	                      kFileOpenMode mode, bool compress);
-	virtual ~SaveFileRewriteStream();
+	~SaveFileRewriteStream() override;
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) { _changed = true; return MemoryDynamicRWStream::write(dataPtr, dataSize); }
+	uint32 write(const void *dataPtr, uint32 dataSize) override { _changed = true; return MemoryDynamicRWStream::write(dataPtr, dataSize); }
 
 	void commit(); //< Save back to disk
 

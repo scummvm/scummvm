@@ -141,7 +141,7 @@ public:
 	};
 
 	MidiPlayer_Midi(SciVersion version);
-	virtual ~MidiPlayer_Midi();
+	~MidiPlayer_Midi() override;
 
 	int open(ResourceManager *resMan) override;
 	void close() override;
@@ -161,7 +161,7 @@ public:
 	int getVolume() override;
 	void setReverb(int8 reverb) override;
 	void playSwitch(bool play) override;
-	virtual void initTrack(SciSpan<const byte> &) override;
+	void initTrack(SciSpan<const byte> &) override;
 
 private:
 	bool isMt32GmPatch(const SciSpan<const byte> &data);

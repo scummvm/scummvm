@@ -111,11 +111,14 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				Actor_Says(kActorHawkersBarkeep, 180, 13);
 				Actor_Clue_Acquire(kActorMcCoy, kClueChinaBarSecurityDisc, true, kActorHawkersBarkeep);
 				Item_Pickup_Spin_Effect(kModelAnimationVideoDisc, 229, 215);
-			} else if ( Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview1)
-			        && !Actor_Clue_Query(kActorMcCoy, kClueFlaskOfAbsinthe)
-			        &&  (Global_Variable_Query(kVariableChinyen) > 20
-			         ||  Query_Difficulty_Level() == kGameDifficultyEasy
-			        )
+			} else if (Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview1)
+			           && !Actor_Clue_Query(kActorMcCoy, kClueFlaskOfAbsinthe)
+#if !BLADERUNNER_ORIGINAL_BUGS
+			           // don't re-get the flask if McCoy already gave it to the transient (he loses the kClueFlaskOfAbsinthe clue when he does)
+			           && !Actor_Clue_Query(kActorTransient, kClueFlaskOfAbsinthe)
+#endif // !BLADERUNNER_ORIGINAL_BUGS
+			           && (Global_Variable_Query(kVariableChinyen) > 20
+			               || Query_Difficulty_Level() == kGameDifficultyEasy)
 			) {
 				Actor_Clue_Acquire(kActorMcCoy, kClueFlaskOfAbsinthe, true, kActorHawkersBarkeep);
 				Actor_Says(kActorMcCoy, 1230, 13);

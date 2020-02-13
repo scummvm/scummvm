@@ -66,20 +66,13 @@ bool FVector::normalize(float & hyp) {
 	return true;
 }
 
-FVector FVector::addAndNormalize(const FVector &v) const {
-	FVector tempV(_x + v._x, _y + v._y, _z + v._z);
-
-	float unusedScale = 0.0;
-	if (!tempV.normalize(unusedScale)) {
-		// Do the normalization, put the scale amount in unusedScale,
-		// but if it is unsuccessful, crash
-		assert(unusedScale);
-	}
-
+FVector FVector::half(const FVector &v) const {
+	FVector tempV = *this + v;
+	tempV.normalize();
 	return tempV;
 }
 
-FVector FVector::getAnglesAsVect() const {
+FVector FVector::getPolarCoord() const {
 	FVector vector = *this;
 	FVector dest;
 
@@ -115,13 +108,13 @@ FVector FVector::matProdRowVect(const FPose &pose) const {
 FPose FVector::getFrameTransform(const FVector &v) {
 	FPose matrix1, matrix2, matrix3, matrix4;
 
-	FVector vector1 = getAnglesAsVect();
+	FVector vector1 = getPolarCoord();
 	matrix1.setRotationMatrix(X_AXIS, Common::rad2deg<double>(vector1._y));
 	matrix2.setRotationMatrix(Y_AXIS, Common::rad2deg<double>(vector1._z));
 	fposeProd(matrix1, matrix2, matrix3);
 	matrix4 = matrix3.inverseTransform();
 
-	vector1 = v.getAnglesAsVect();
+	vector1 = v.getPolarCoord();
 	matrix1.setRotationMatrix(X_AXIS, Common::rad2deg<double>(vector1._y));
 	matrix2.setRotationMatrix(Y_AXIS, Common::rad2deg<double>(vector1._z));
 	fposeProd(matrix1, matrix2, matrix3);
@@ -131,7 +124,7 @@ FPose FVector::getFrameTransform(const FVector &v) {
 }
 
 FPose FVector::formRotXY() const {
-	FVector v1 = getAnglesAsVect();
+	FVector v1 = getPolarCoord();
 	FPose m1, m2;
 	m1.setRotationMatrix(X_AXIS, Common::rad2deg<double>(v1._y));
 	m2.setRotationMatrix(Y_AXIS, Common::rad2deg<double>(v1._z));

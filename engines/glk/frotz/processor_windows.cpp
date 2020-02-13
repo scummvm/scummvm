@@ -49,18 +49,15 @@ void Processor::z_draw_picture() {
 	flush_buffer();
 
 	Window &win = _wp[_wp._cwin];
-	if (!x || !y) {
-
-		// use cursor column if x-coordinate is 0
-		if (!x)
-			x = win[X_CURSOR];
-		// use cursor line if y-coordinate is 0
-		if (!y)
-			y = win[Y_CURSOR];
+	if (_storyId == ZORK_ZERO && _wp._cwin == 0) {
+		// WORKAROUND: Zork Zero has pictures for graphics embedded in the text with specific
+		// co-prdinates. We need to reset it to 0,0 to flag it should be drawn at the cursor
+		x = y = 0;
+	} else {
+		assert(x && y);
+		x += win[X_POS] - 1;
+		y += win[Y_POS] - 1;
 	}
-
-	x += win[X_POS] - 1;
-	y += win[Y_POS] - 1;
 
 	/* The following is necessary to make Amiga and Macintosh story
 	 * files work with MCGA graphics files.  Some screen-filling
@@ -81,6 +78,7 @@ void Processor::z_draw_picture() {
 			if (_storyId == ARTHUR && pic == 54)
 				delta = h_screen_width / 160;
 
+			assert(x && y);
 			os_draw_picture(mapper[i].pic1, Point(x + delta, y + height1));
 			os_draw_picture(mapper[i].pic2, Point(x + width1 - width2 - delta, y + height1));
 		}

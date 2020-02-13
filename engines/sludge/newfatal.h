@@ -32,7 +32,7 @@ namespace Sludge {
 class FatalMsgManager : public Common::Singleton<Sludge::FatalMsgManager>{
 public:
 	FatalMsgManager();
-	~FatalMsgManager();
+	~FatalMsgManager() override;
 
 	void reset();
 

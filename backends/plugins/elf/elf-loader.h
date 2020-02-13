@@ -68,6 +68,7 @@ protected:
 	int loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 	bool loadStringTable(Elf32_Shdr *shdr);
 	virtual void relocateSymbols(ptrdiff_t offset);
+	void discardSegment();
 
 	// architecture specific
 
@@ -83,6 +84,9 @@ protected:
 
 	// platform specific
 	virtual void flushDataCache(void *ptr, uint32 len) const = 0;
+	virtual void *allocateMemory(uint32 align, uint32 size);
+	virtual void deallocateMemory(void *ptr, uint32 size);
+	virtual void protectMemory(void *ptr, uint32 len, int prot) const {};
 
 public:
 	DLObject();

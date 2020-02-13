@@ -230,6 +230,9 @@ static int ClickedOnRefer(HPOLYGON hRefpoly, int clickX, int clickY, int *ptgtX,
 				break;
 			}
 		break;
+
+	default:
+		break;
 	}
 	if (*ptgtX != -1 && *ptgtY != -1) {
 		return NOT_SORTED;
@@ -302,6 +305,9 @@ static int ClickedOnNothing(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 			if (InPolygon(i, clickY, PATH) != NOPOLY) {
 				return ClickedOnPath(i, clickY, ptgtX, ptgtY);
 			}
+		break;
+
+	default:
 		break;
 	}
 
@@ -394,6 +400,9 @@ DIRECTION GetDirection(int fromx, int fromy, int tox, int toy, DIRECTION lastree
 	case YB_X1_5:
 		ychange += ychange / 2;	// Double y distance to cover
 		break;
+
+	default:
+		break;
 	}
 
 	/*
@@ -452,6 +461,8 @@ DIRECTION GetDirection(int fromx, int fromy, int tox, int toy, DIRECTION lastree
 				case AWAY:
 					if (ydir == Y_UP)
 						DontBother = true;
+					break;
+				default:
 					break;
 				}
 			}
@@ -744,6 +755,7 @@ static void SetNextDest(PMOVER pMover) {
 	hNpoly = pMover->hFnpath;		// The node path we're in (if any)
 	switch (pMover->npstatus) {
 	case NOT_IN:
+	default:
 		break;
 
 	case ENTERING:

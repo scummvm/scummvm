@@ -32,13 +32,13 @@ namespace Tattoo {
 class TattooInventory : public Inventory {
 public:
 	TattooInventory(SherlockEngine *vm);
-	~TattooInventory();
+	~TattooInventory() override;
 
 	/**
 	 * Load the list of names the inventory items correspond to, if not already loaded,
 	 * and then calls loadGraphics to load the associated graphics
 	 */
-	virtual void loadInv();
+	void loadInv() override;
 };
 
 } // End of namespace Tattoo

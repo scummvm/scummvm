@@ -25,85 +25,90 @@
 
 #include "common/scummsys.h"
 
-#ifdef ENABLE_KEYMAPPER
-
+#include "common/array.h"
 #include "common/events.h"
-#include "common/func.h"
-#include "common/list.h"
 #include "common/str.h"
 
 namespace Common {
 
-struct HardwareInput;
-class Keymap;
-
-#define ACTION_ID_SIZE (5)
-
 struct KeyActionEntry {
-	const KeyState ks;
 	const char *id;
+	const KeyState ks;
+	const char *defaultHwId;
 	const char *description;
 };
 
 struct Action {
 	/** unique id used for saving/loading to config */
-	char id[ACTION_ID_SIZE];
+	const char *id;
 	/** Human readable description */
 	String description;
 
-	/** Events to be sent when mapped key is pressed */
-	List<Event> events;
+	/** Event to be sent when mapped key is pressed */
+	Event event;
 
 private:
-	/** Hardware input that is mapped to this Action */
-	const HardwareInput *_hwInput;
-	Keymap *_boss;
+	Array<String> _defaultInputMapping;
 
 public:
-	Action(Keymap *boss, const char *id, String des = "");
+	Action(const char *id, const String &description);
 
-	void addEvent(const Event &evt) {
-		events.push_back(evt);
+	void setEvent(const Event &evt) {
+		event = evt;
 	}
 
-	void addEvent(const EventType evtType) {
-		Event evt;
-
-		evt.type = evtType;
-		events.push_back(evt);
+	void setEvent(const EventType evtType) {
+		event = Event();
+		event.type = evtType;
 	}
 
-	void addKeyEvent(const KeyState &ks) {
-		Event evt;
-
-		evt.type = EVENT_KEYDOWN;
-		evt.kbd = ks;
-		addEvent(evt);
+	void setCustomBackendActionEvent(const CustomEventType evtType) {
+		event = Event();
+		event.type = EVENT_CUSTOM_BACKEND_ACTION_START;
+		event.customType = evtType;
 	}
 
-	void addLeftClickEvent() {
-		addEvent(EVENT_LBUTTONDOWN);
+	void setCustomEngineActionEvent(const CustomEventType evtType) {
+		event = Event();
+		event.type = EVENT_CUSTOM_ENGINE_ACTION_START;
+		event.customType = evtType;
 	}
 
-	void addMiddleClickEvent() {
-		addEvent(EVENT_MBUTTONDOWN);
+	void setKeyEvent(const KeyState &ks) {
+		event = Event();
+		event.type = EVENT_KEYDOWN;
+		event.kbd = ks;
 	}
 
-	void addRightClickEvent() {
-		addEvent(EVENT_RBUTTONDOWN);
+	void setLeftClickEvent() {
+		setEvent(EVENT_LBUTTONDOWN);
 	}
 
-	Keymap *getParent() {
-		return _boss;
+	void setMiddleClickEvent() {
+		setEvent(EVENT_MBUTTONDOWN);
 	}
 
-	void mapInput(const HardwareInput *input);
-	const HardwareInput *getMappedInput() const;
+	void setRightClickEvent() {
+		setEvent(EVENT_RBUTTONDOWN);
+	}
+
+	/**
+	 * Add a default input mapping for the action
+	 *
+	 * Unknown hardware inputs will be silently ignored.
+	 * Having keyboard bindings by default will not cause trouble
+	 * on devices without a keyboard.
+	 *
+	 * @param hwId Hardware input identifier as registered with the keymapper
+	 */
+	void addDefaultInputMapping(const String &hwId);
+
+	const Array<String> &getDefaultInputMapping() const {
+		return _defaultInputMapping;
+	}
 
 };
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
 
 #endif // #ifndef COMMON_ACTION_H

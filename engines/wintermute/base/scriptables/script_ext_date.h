@@ -36,14 +36,14 @@ namespace Wintermute {
 
 class SXDate : public BaseScriptable {
 public:
-	int scCompare(BaseScriptable *Value);
+	int scCompare(BaseScriptable *Value) override;
 	DECLARE_PERSISTENT(SXDate, BaseScriptable)
 	SXDate(BaseGame *inGame, ScStack *Stack);
-	virtual ~SXDate();
-	ScValue *scGetProperty(const Common::String &name);
-	bool scSetProperty(const char *name, ScValue *value);
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	const char *scToString();
+	~SXDate() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 private:
 	TimeDate _tm;
 	Common::String _strRep;

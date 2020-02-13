@@ -695,11 +695,13 @@ void AGOSEngine_DIMP::dimpIdle() {
 					while (z == 0) {
 						n = _rnd.getRandomNumber(2);
 						switch (n) {
+							default:
 							case(0):
 								if (_variableArray[110] > 2)
 									break;
 								n = _rnd.getRandomNumber(6);
 								switch (n) {
+									default:
 									case(0): loadSoundFile("And01.wav");break;
 									case(1): loadSoundFile("And02.wav");break;
 									case(2): loadSoundFile("And03.wav");break;
@@ -715,6 +717,7 @@ void AGOSEngine_DIMP::dimpIdle() {
 									break;
 								n = _rnd.getRandomNumber(6);
 								switch (n) {
+									default:
 									case(0): loadSoundFile("And08.wav");break;
 									case(1): loadSoundFile("And09.wav");break;
 									case(2): loadSoundFile("And0a.wav");break;
@@ -730,6 +733,7 @@ void AGOSEngine_DIMP::dimpIdle() {
 									break;
 								n = _rnd.getRandomNumber(4);
 								switch (n) {
+									default:
 									case(0): loadSoundFile("And0f.wav");break;
 									case(1): loadSoundFile("And0g.wav");break;
 									case(2): loadSoundFile("And0h.wav");break;

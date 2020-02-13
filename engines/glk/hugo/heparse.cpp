@@ -692,7 +692,7 @@ GotVerb:
 				/* end of both input and grammar */
 				if (wd[wordnum]==0 && Peek(grammaraddr)==ROUTINE_T)
 				{
-					full_buffer = (char)wordnum;
+					full_buffer = (byte)wordnum;
 					break;
 				}
 
@@ -1330,7 +1330,7 @@ Clarify:
 			if (pobjcount==1)
 			{
 				pobj = pobjlist[0].obj;
-				full_buffer = false;
+				full_buffer = 0;
 				goto RestoreTempArrays;
 			}
 
@@ -1354,7 +1354,7 @@ Clarify:
 			*/
 			if (flag==0)
 			{
-				full_buffer = true;
+				full_buffer = 1;
 				return false;
 			}
 
@@ -1367,7 +1367,7 @@ Clarify:
 			j = MatchObject(&i);
 			if (j==false)	/* parsing error */
 			{
-				full_buffer = false;
+				full_buffer = 0;
 				return false;
 			}
 			else if (j==-1)	/* multiple matches found */
@@ -1388,7 +1388,7 @@ Clarify:
 					}
 					if (flag==1)
 					{
-						full_buffer = false;
+						full_buffer = 0;
 						goto RestoreTempArrays;
 					}
 				}
@@ -1418,10 +1418,10 @@ Clarify:
 				{
 					/* "You'll have to be more specific..." */
 					ParseError(13, 0);
-					full_buffer = false;
+					full_buffer = 0;
 					return false;
 				}
-				full_buffer = false;
+				full_buffer = 0;
 			}
 
 RestoreTempArrays:
@@ -1468,7 +1468,7 @@ RestoreTempArrays:
 				{
 					/* "You'll have to be more specific..." */
 					ParseError(13, 0);
-					full_buffer = false;
+					full_buffer = 0;
 					return false;
 				}
 			}

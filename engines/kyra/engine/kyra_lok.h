@@ -102,14 +102,14 @@ class KyraEngine_LoK : public KyraEngine_v1 {
 	friend class GUI_LoK;
 public:
 	KyraEngine_LoK(OSystem *system, const GameFlags &flags);
-	~KyraEngine_LoK();
+	~KyraEngine_LoK() override;
 
 	// _sprites and _seqplayer should be paused here too, to avoid some animation glitches,
 	// also parts of the hardcoded Malcolm fight might need some special handling.
 
-	Screen *screen() { return _screen; }
+	Screen *screen() override { return _screen; }
 	Animator_LoK *animator() { return _animator; }
-	GUI *gui() const { return _gui; }
+	GUI *gui() const override { return _gui; }
 	virtual Movie *createWSAMovie();
 
 	uint8 **shapes() { return _shapes; }
@@ -135,8 +135,8 @@ public:
 	const uint8 *const *palTable2() { return &_specialPalettes[29]; }
 
 protected:
-	virtual Common::Error go();
-	virtual Common::Error init();
+	Common::Error go() override;
+	Common::Error init() override;
 
 public:
 	// sequences
@@ -170,7 +170,7 @@ protected:
 	void seq_makeBrandonWisp();
 	void seq_dispelMagicAnimation();
 	void seq_fillFlaskWithWater(int item, int type);
-	void seq_playDrinkPotionAnim(int item, int unk2, int flags);
+	void seq_playDrinkPotionAnim(int item, int makeFlaskEmpty, int flags);
 	void seq_brandonToStone();
 
 	// -> end fight
@@ -188,29 +188,29 @@ protected:
 
 public:
 	// delay
-	void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);
-	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
-	void delayWithTicks(int ticks);
+	void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false) override;
+	void delay(uint32 millis, bool update = false, bool isMainLoop = false) override;
+	void delayWithTicks(int ticks) override;
 
-	bool skipFlag() const;
-	void resetSkipFlag(bool removeEvent = true);
+	bool skipFlag() const override;
+	void resetSkipFlag(bool removeEvent = true) override;
 
 	// TODO
-	void registerDefaultSettings();
-	void readSettings();
-	void writeSettings();
+	void registerDefaultSettings() override;
+	void readSettings() override;
+	void writeSettings() override;
 
-	void snd_playSoundEffect(int track, int volume=0xFF);
-	void snd_playWanderScoreViaMap(int command, int restart);
-	virtual void snd_playVoiceFile(int id);
+	void snd_playSoundEffect(int track, int volume=0xFF) override;
+	void snd_playWanderScoreViaMap(int command, int restart) override;
+	void snd_playVoiceFile(int id) override;
 	void snd_voiceWaitForFinish(bool ingame = true);
 	uint32 snd_getVoicePlayTime();
 
 protected:
 	int32 _speechPlayTime;
 
-	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
-	Common::Error loadGameState(int slot);
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
+	Common::Error loadGameState(int slot) override;
 protected:
 	// input
 	void processInput(int xpos, int ypos);
@@ -241,8 +241,8 @@ protected:
 	void setSceneFile(int roomIndex, int roomName);
 
 	// -> pathfinder
-	int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
-	bool lineIsPassable(int x, int y);
+	int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) override;
+	bool lineIsPassable(int x, int y) override;
 
 	// -> item handling
 	// --> misc
@@ -279,8 +279,8 @@ protected:
 	void placeItemInGenericMapScene(int item, int index);
 
 	// -> mouse item
-	void setHandItem(Item item);
-	void removeHandItem();
+	void setHandItem(Item item) override;
+	void removeHandItem() override;
 	void setMouseItem(Item item);
 
 	int getItemListIndex(Item item);
@@ -363,7 +363,7 @@ protected:
 	void closeFinalWsa();
 
 	//void setTimer19();
-	void setupTimers();
+	void setupTimers() override;
 	void timerUpdateHeadAnims(int timerNum);
 	void timerTulipCreator(int timerNum);
 	void timerRubyCreator(int timerNum);
@@ -379,7 +379,7 @@ protected:
 	void timerInvisibleFrameTimer(int timerNum);
 	void drawAmulet();
 	void setTextFadeTimerCountdown(int16 countdown);
-	void setWalkspeed(uint8 newSpeed);
+	void setWalkspeed(uint8 newSpeed) override;
 
 	void setItemCreationFlags(int offset, int count);
 
@@ -664,7 +664,7 @@ protected:
 	// special palette handling for AMIGA
 	void setupZanthiaPalette(int pal);
 protected:
-	void setupOpcodeTable();
+	void setupOpcodeTable() override;
 
 	// Opcodes
 	int o1_magicInMouseItem(EMCState *script);

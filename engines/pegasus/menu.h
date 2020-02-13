@@ -39,7 +39,7 @@ namespace Pegasus {
 class GameMenu : public IDObject, public InputHandler {
 public:
 	GameMenu(const uint32);
-	virtual ~GameMenu() {}
+	~GameMenu() override {}
 
 	virtual void becomeCurrentHandler();
 	virtual void restorePreviousHandler();
@@ -64,9 +64,9 @@ class Hotspot;
 class MainMenu : public GameMenu {
 public:
 	MainMenu();
-	virtual ~MainMenu();
+	~MainMenu() override;
 
-	virtual void handleInput(const Input &input, const Hotspot *);
+	void handleInput(const Input &input, const Hotspot *) override;
 	void startMainMenuLoop();
 	void stopMainMenuLoop();
 
@@ -97,9 +97,9 @@ protected:
 class CreditsMenu : public GameMenu {
 public:
 	CreditsMenu();
-	virtual ~CreditsMenu() {}
+	~CreditsMenu() override {}
 
-	virtual void handleInput(const Input &input, const Hotspot *);
+	void handleInput(const Input &input, const Hotspot *) override;
 
 protected:
 	void newMenuSelection(const int);
@@ -116,9 +116,9 @@ protected:
 class DeathMenu : public GameMenu {
 public:
 	DeathMenu(const DeathReason);
-	virtual ~DeathMenu() {}
+	~DeathMenu() override {}
 
-	virtual void handleInput(const Input &input, const Hotspot *);
+	void handleInput(const Input &input, const Hotspot *) override;
 
 	bool playerWon() { return _playerWon; }
 
@@ -146,9 +146,9 @@ protected:
 class PauseMenu : public GameMenu {
 public:
 	PauseMenu();
-	virtual ~PauseMenu() {}
+	~PauseMenu() override {}
 
-	virtual void handleInput(const Input &input, const Hotspot *);
+	void handleInput(const Input &input, const Hotspot *) override;
 
 protected:
 	void updateDisplay();

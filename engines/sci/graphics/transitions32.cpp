@@ -133,43 +133,44 @@ void GfxTransitions32::processEffects(PlaneShowStyle &showStyle) {
 	switch(showStyle.type) {
 	case kShowStyleHShutterOut:
 		processHShutterOut(showStyle);
-	break;
+		break;
 	case kShowStyleHShutterIn:
 		processHShutterIn(showStyle);
-	break;
+		break;
 	case kShowStyleVShutterOut:
 		processVShutterOut(showStyle);
-	break;
+		break;
 	case kShowStyleVShutterIn:
 		processVShutterIn(showStyle);
-	break;
+		break;
 	case kShowStyleWipeLeft:
 		processWipeLeft(showStyle);
-	break;
+		break;
 	case kShowStyleWipeRight:
 		processWipeRight(showStyle);
-	break;
+		break;
 	case kShowStyleWipeUp:
 		processWipeUp(showStyle);
-	break;
+		break;
 	case kShowStyleWipeDown:
 		processWipeDown(showStyle);
-	break;
+		break;
 	case kShowStyleIrisOut:
 		processIrisOut(showStyle);
-	break;
+		break;
 	case kShowStyleIrisIn:
 		processIrisIn(showStyle);
-	break;
+		break;
 	case kShowStyleDissolveNoMorph:
 	case kShowStyleDissolve:
 		processPixelDissolve(showStyle);
-	break;
+		break;
 	case kShowStyleNone:
 	case kShowStyleFadeOut:
 	case kShowStyleFadeIn:
 	case kShowStyleMorph:
-	break;
+	default:
+		break;
 	}
 }
 

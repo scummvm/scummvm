@@ -254,10 +254,11 @@ Party::Party(XeenEngine *vm) {
 	_newDay = false;
 	_isNight = false;
 	_stepped = false;
-	_damageType = DT_PHYSICAL;
 	_fallMaze = 0;
 	_fallDamage = 0;
 	_dead = false;
+
+	Character::_itemType = 0;
 }
 
 void Party::synchronize(Common::Serializer &s) {
@@ -1327,7 +1328,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		intf.spellFX(&ps);
 		break;
 	case 58:
-		ps._luck._temporary = MIN(ps._luck._temporary + giveVal, (uint)255);
+		ps._fireResistence._temporary = MIN(ps._fireResistence._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 59:
@@ -1360,7 +1361,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 	case 66: {
 		Character &tempChar = _itemsCharacter;
 		int idx = -1;
-		if (scripts._itemType != 0) {
+		if (Character::_itemType != 0) {
 			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx) {}
 			if (idx == 10)
 				return true;

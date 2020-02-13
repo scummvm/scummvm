@@ -115,17 +115,20 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 				color = (color == color1) ? color2 : color1;
 				debugC(1, kDebugDialog, "changing color to %02x", color);
 				break;
+
+			default:
+				break;
 			}
 			break;
 
-		case 0xff: {
+		case 0xff:
 			//FIXME : wait for the next cycle of the animation
-		}
-		break;
+			break;
 
 		default:
 			message += c;
 			n = 0;
+			break;
 		}
 	}
 

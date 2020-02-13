@@ -43,6 +43,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_debugger = 0;
 
 	_configRenderMode = Common::kRenderDefault;
+	_configNullSound = false;
 
 	if (_flags.platform == Common::kPlatformAmiga)
 		_gameSpeed = 50;
@@ -54,6 +55,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_trackMapSize = 0;
 	_lastMusicCommand = -1;
 	_curSfxFile = _curMusicTheme = -1;
+	_preventScriptSfx = false;
 
 	_gameToLoad = -1;
 
@@ -65,6 +67,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_isSaveAllowed = false;
 
 	_mouseX = _mouseY = 0;
+	_asciiCodeEvents = _kbEventSkip = false;
 
 	// sets up all engine specific debug levels
 	DebugMan.addDebugChannel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
@@ -119,7 +122,7 @@ Common::Error KyraEngine_v1::init() {
 			// Kyra games.
 			MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : MDT_PREFER_MT32));
 			if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
-				_sound = new SoundAdLibPC(this, _mixer);
+				_sound = new SoundPC_v1(this, _mixer, Sound::kAdLib);
 			} else {
 				Sound::kType type;
 				const MusicType midiType = MidiDriver::getMusicType(dev);
@@ -151,7 +154,7 @@ Common::Error KyraEngine_v1::init() {
 				// missing. It's just that at least at the time of writing they
 				// are decidedly inferior to the AdLib ones.
 				if (ConfMan.getBool("multi_midi")) {
-					SoundAdLibPC *adlib = new SoundAdLibPC(this, _mixer);
+					SoundPC_v1 *adlib = new SoundPC_v1(this, _mixer, Sound::kAdLib);
 					assert(adlib);
 
 					_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);
@@ -234,6 +237,19 @@ void KyraEngine_v1::setMousePos(int x, int y) {
 		y <<= 1;
 	}
 	_system->warpMouse(x, y);
+
+	// Feed the event manager an artficial mouse move event, since warpMouse() won't generate one.
+	// From the warpMouse comments I gather that this behavior is intentional due to requirements of
+	// the SCUMM engine. In KYRA we need to get the same coordinates from _eventMan->getMousePos()
+	// that we send via warpMouse(). We have script situations in Kyra (like the Alchemists' crystals
+	// scene) where a new mouse cursor position is set and then immediately read. This function would
+	// then get wrong coordinates.
+	Common::Event event;
+	event.type = Common::EVENT_MOUSEMOVE;
+	event.mouse.x = x;
+	event.mouse.y = y;
+	_eventMan->pushEvent(event);
+	updateInput();
 }
 
 int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) {
@@ -277,13 +293,15 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				}
 			} else {
 				KeyMap::const_iterator keycode = _keyMap.find(event.kbd.keycode);
-				if (keycode != _keyMap.end()) {
+				if (_asciiCodeEvents) {
+					keys = event.kbd.ascii;
+				} else if (keycode != _keyMap.end()) {
 					keys = keycode->_value;
 					if (event.kbd.flags & Common::KBD_SHIFT)
 						keys |= 0x100;
 				} else {
 					keys = 0;
-				}
+				}				
 
 				// When we got an keypress, which we might need to handle,
 				// break the event loop and pass it to GUI code.
@@ -433,8 +451,15 @@ void KyraEngine_v1::setupKeyMap() {
 
 	_keyMap.clear();
 
+	// If we have an engine that wants ASCII codes instead of key codes, we can skip the setup of the key map.
+	// In that case we simply return the ASCII codes from the event manager. At least until I know better I
+	// trust that the ASCII codes we get from our event manager are the same identical codes. If that assumption
+	// turns out to be wrong I can still implement the original conversion method... 
+	if (_asciiCodeEvents)
+		return;
+
 	for (int i = 0; i < ARRAYSIZE(keys); i++)
-		_keyMap[keys[i].kcScummVM] = (_flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : ((_flags.platform == Common::kPlatformFMTowns) ? keys[i].kcFMTowns : keys[i].kcDOS);
+		_keyMap[keys[i].kcScummVM] = (_flags.gameID != GI_EOB1 && _flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : ((_flags.platform == Common::kPlatformFMTowns) ? keys[i].kcFMTowns : keys[i].kcDOS);
 }
 
 void KyraEngine_v1::updateInput() {
@@ -453,7 +478,7 @@ void KyraEngine_v1::updateInput() {
 			else if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
 				quitGame();
 			else
-				_eventList.push_back(event);
+				_eventList.push_back(Event(event, _kbEventSkip));
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -506,7 +531,6 @@ void KyraEngine_v1::resetSkipFlag(bool removeEvent) {
 		}
 	}
 }
-
 
 int KyraEngine_v1::setGameFlag(int flag) {
 	assert((flag >> 3) >= 0 && (flag >> 3) <= ARRAYSIZE(_flagsTable));
@@ -572,16 +596,16 @@ void KyraEngine_v1::readSettings() {
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 
 	if (_sound) {
-		_sound->enableMusic(_configMusic);
-		_sound->enableSFX(_configSounds);
+		_sound->enableMusic(_configNullSound ? false : _configMusic);
+		_sound->enableSFX(_configNullSound ? false : _configSounds);
 	}
 
 	bool speechMute = ConfMan.getBool("speech_mute");
 	bool subtitles = ConfMan.getBool("subtitles");
 
-	if (!speechMute && subtitles)
+	if (!_configNullSound && !speechMute && subtitles)
 		_configVoice = 2;   // Voice & Text
-	else if (!speechMute && !subtitles)
+	else if (!_configNullSound && !speechMute && !subtitles)
 		_configVoice = 1;   // Voice only
 	else
 		_configVoice = 0;   // Text only
@@ -615,8 +639,8 @@ void KyraEngine_v1::writeSettings() {
 	if (_sound) {
 		if (!_configMusic)
 			_sound->beginFadeOut();
-		_sound->enableMusic(_configMusic);
-		_sound->enableSFX(_configSounds);
+		_sound->enableMusic(_configNullSound ? false : _configMusic);
+		_sound->enableSFX(_configNullSound ? false : _configSounds);
 	}
 
 	ConfMan.setBool("speech_mute", speechMute);
@@ -655,6 +679,9 @@ void KyraEngine_v1::setVolume(kVolumeEntry vol, uint8 value) {
 	case kVolumeSpeech:
 		ConfMan.setInt("speech_volume", convertVolumeToMixer(value));
 		break;
+
+	default:
+		break;
 	}
 
 	// Resetup mixer
@@ -678,6 +705,9 @@ uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 			return convertVolumeFromMixer(ConfMan.getInt("speech_volume"));
 		else
 			return 2;
+		break;
+
+	default:
 		break;
 	}
 

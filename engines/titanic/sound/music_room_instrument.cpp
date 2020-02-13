@@ -84,6 +84,9 @@ CMusicRoomInstrument::CMusicRoomInstrument(CProjectItem *project, CSoundManager 
 		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Snake_Head"));
 		_insStartTime = 0.17;
 		break;
+
+	default:
+		break;
 	}
 }
 

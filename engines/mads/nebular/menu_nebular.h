@@ -99,21 +99,21 @@ protected:
 	/**
 	 * Display the menu
 	 */
-	virtual void display();
+	void display() override;
 
 	/**
 	 * Handle the menu item animations
 	 */
-	virtual void doFrame();
+	void doFrame() override;
 
 	/**
 	 * Event handler
 	 */
-	virtual bool onEvent(Common::Event &event);
+	bool onEvent(Common::Event &event) override;
 public:
 	MainMenu(MADSEngine *vm);
 
-	virtual ~MainMenu();
+	~MainMenu() override;
 };
 
 class AdvertView : public EventTarget {
@@ -131,11 +131,11 @@ protected:
 	/**
 	* Event handler
 	*/
-	virtual bool onEvent(Common::Event &event);
+	bool onEvent(Common::Event &event) override;
 public:
 	AdvertView(MADSEngine *vm);
 
-	virtual ~AdvertView() {}
+	~AdvertView() override {}
 
 	/**
 	 * Show the dialog
@@ -145,7 +145,7 @@ public:
 
 class RexAnimationView : public AnimationView {
 protected:
-	virtual void scriptDone();
+	void scriptDone() override;
 public:
 	RexAnimationView(MADSEngine *vm) : AnimationView(vm) {}
 };

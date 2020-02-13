@@ -34,7 +34,7 @@ class GotoCommandParser : public CommandParser {
 public:
 	GotoCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class GotoCommand : public Command {
@@ -43,9 +43,9 @@ public:
 
 	void setLabelCommand(LabelCommand *labelCmd);
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Command *next() const override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Command *next() const override;
+	Common::String debugString() const override;
 private:
 	LabelCommand *_labelCommand;
 };

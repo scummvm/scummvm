@@ -27,7 +27,6 @@
 #define PEGASUS_INPUT_H
 
 #include "common/events.h"
-#include "common/hashmap.h"
 #include "common/rect.h"
 #include "common/singleton.h"
 
@@ -39,12 +38,32 @@ namespace Pegasus {
 class Hotspot;
 class Input;
 
+enum PegasusAction {
+	kPegasusActionNone,
+	kPegasusActionUp,
+	kPegasusActionDown,
+	kPegasusActionLeft,
+	kPegasusActionRight,
+	kPegasusActionInteract,
+	kPegasusActionShowInventory,
+	kPegasusActionShowBiochip,
+	kPegasusActionToggleCenterDisplay,
+	kPegasusActionShowInfoScreen,
+	kPegasusActionShowPauseMenu,
+	kPegasusActionSaveGameState,
+	kPegasusActionLoadGameState,
+	kPegasusActionOpenDebugger,
+	kPegasusActionEnableEasterEgg,
+
+	kPegasusActionCount
+};
+
 class InputDeviceManager : public Common::Singleton<InputDeviceManager>, public Common::EventObserver {
 public:
 	InputDeviceManager();
-	~InputDeviceManager();
+	~InputDeviceManager() override;
 
-	bool notifyEvent(const Common::Event &event);
+	bool notifyEvent(const Common::Event &event) override;
 
 	void getInput(Input &, const InputBits);
 
@@ -56,7 +75,7 @@ protected:
 	friend class Common::Singleton<SingletonBaseType>;
 
 	// Keep track of which keys are down (= true) or not
-	Common::HashMap<uint, bool> _keyMap;
+	bool _keysDown[kPegasusActionCount];
 	InputBits _lastRawBits;
 	bool _consoleRequested;
 };
@@ -452,9 +471,9 @@ protected:
 class Tracker : public InputHandler {
 public:
 	Tracker() : InputHandler(0), _savedHandler(nullptr) {}
-	virtual ~Tracker() {}
+	~Tracker() override {}
 
-	virtual void handleInput(const Input &, const Hotspot *);
+	void handleInput(const Input &, const Hotspot *) override;
 	virtual bool stopTrackingInput(const Input &) { return false; }
 
 	virtual void startTracking(const Input &);
@@ -462,9 +481,9 @@ public:
 	virtual void continueTracking(const Input &) {}
 
 	bool isTracking() { return this == _currentTracker; }
-	bool isClickInput(const Input &, const Hotspot *);
+	bool isClickInput(const Input &, const Hotspot *) override;
 
-	bool releaseInputFocus() { return !isTracking(); }
+	bool releaseInputFocus() override { return !isTracking(); }
 
 protected:
 	static Tracker *_currentTracker;

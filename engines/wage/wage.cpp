@@ -170,7 +170,7 @@ void WageEngine::processEvents() {
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_RETURN: {
-					_inputText = _gui->_consoleWindow->getInput();
+					_inputText = Common::convertFromU32String(_gui->_consoleWindow->getInput());
 					Common::String inp = _inputText + '\n';
 
 					_gui->appendText(inp.c_str());

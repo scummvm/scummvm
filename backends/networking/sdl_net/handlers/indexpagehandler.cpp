@@ -24,7 +24,6 @@
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
 #include "common/translation.h"
-#include "gui/storagewizarddialog.h"
 
 namespace Networking {
 
@@ -34,28 +33,17 @@ IndexPageHandler::~IndexPageHandler() {}
 
 /// public
 
-Common::String IndexPageHandler::code() const { return _code; }
-
 void IndexPageHandler::handle(Client &client) {
-	Common::String queryCode = client.queryParameter("code");
-
-	if (queryCode == "") {
-		// redirect to "/filesAJAX"
-		HandlerUtils::setMessageHandler(
-			client,
-			Common::String::format(
-				"%s<br/><a href=\"files\">%s</a>",
-				_("This is a local webserver index page."),
-				_("Open Files manager")
-			),
-			"/filesAJAX"
-		);
-		return;
-	}
-
-	_code = queryCode;
-	sendCommand(GUI::kStorageCodePassedCmd, 0);
-	HandlerUtils::setMessageHandler(client, _("ScummVM got the code and already connects to your cloud storage!"));
+	// redirect to "/filesAJAX"
+	HandlerUtils::setMessageHandler(
+		client,
+		Common::String::format(
+			"%s<br/><a href=\"files\">%s</a>",
+			HandlerUtils::toUtf8(_("This is a local webserver index page.")).c_str(),
+			HandlerUtils::toUtf8(_("Open Files manager")).c_str()
+		),
+		"/filesAJAX"
+	);
 }
 
 bool IndexPageHandler::minimalModeSupported() {

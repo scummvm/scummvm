@@ -70,7 +70,7 @@ class MacFont {
 public:
 	MacFont(int id = kMacFontChicago, int size = 12, int slant = kMacFontRegular, FontManager::FontUsage fallback = Graphics::FontManager::kBigGUIFont) {
 		_id = id;
-		_size = size;
+		_size = size ? size : 12;
 		_slant = slant;
 		_fallback = fallback;
 		_generated = false;
@@ -81,8 +81,8 @@ public:
 	int getSize() const { return _size; }
 	int getSlant() const { return _slant; }
 	Common::String getName() { return _name; }
-	void setName(Common::String &name) { _name = name; }
-	void setName(const char *name) { _name = name; }
+	void setName(Common::String &name) { setName(name.c_str()); }
+	void setName(const char *name);
 	FontManager::FontUsage getFallback() { return _fallback; }
 	bool isGenerated() { return _generated; }
 	void setGenerated(bool gen) { _generated = gen; }
@@ -102,7 +102,8 @@ private:
 
 class MacFontManager {
 public:
-	MacFontManager();
+	MacFontManager(uint32 mode);
+	~MacFontManager();
 
 	/**
 	 * Accessor method to check the presence of built-in fonts.
@@ -134,6 +135,8 @@ public:
 	void registerFontMapping(uint16 id, Common::String name);
 	void clearFontMapping();
 
+	void forceBuiltinFonts() { _builtInFonts = true; }
+
 private:
 	void loadFontsBDF();
 	void loadFonts();
@@ -143,6 +146,7 @@ private:
 
 private:
 	bool _builtInFonts;
+	uint32 _mode;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
 
 	Common::HashMap<Common::String, int> _fontIds;
@@ -151,6 +155,9 @@ private:
 	Common::HashMap<Common::String, int> _extraFontIds;
 
 	int parseFontSlant(Common::String slant);
+
+	/* Unicode font */
+	Common::HashMap<int, const Graphics::Font *> _uniFonts;
 };
 
 } // End of namespace Graphics

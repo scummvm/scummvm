@@ -190,6 +190,9 @@ bool BaseSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 		break;
 	case Audio::Mixer::kPlainSoundType:
 		error("Plain sound type shouldn't be used in WME");
+		break;
+	default:
+		break;
 	}
 	g_engine->syncSoundSettings();
 

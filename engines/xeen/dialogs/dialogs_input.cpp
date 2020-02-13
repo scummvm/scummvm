@@ -154,7 +154,16 @@ int StringInput::execute(bool type, const Common::String &expected,
 	Common::String line;
 	if (getString(line, 30, 200, false)) {
 		if (type) {
-			if (!line.compareToIgnoreCase(scripts._message)) {
+			// WORKAROUND: Fix for incorrect answer for one of the Vowelless Knight riddles
+			line.toLowercase();
+			if (line == "iieeeoeeeouie")
+				line = "iieeeoeeaouie";
+			Common::String scriptsMsg = scripts._message;
+			scriptsMsg.toLowercase();
+			if (scriptsMsg == "iieeeoeeeouie")
+				scriptsMsg = "iieeeoeeaouie";
+
+			if (line == scriptsMsg) {
 				result = true;
 			} else if (!line.compareToIgnoreCase(expected)) {
 				result = (opcode == 55) ? -1 : 1;
@@ -229,12 +238,13 @@ int Choose123::execute(uint numOptions) {
 	Interface &intf = *_vm->_interface;
 	LocationManager &loc = *_vm->_locations;
 	Windows &windows = *_vm->_windows;
+	Resources &res = *_vm->_resources;
 
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_DIALOG_123;
 
 	loadButtons(numOptions);
-	_iconSprites.draw(0, 7, Common::Point(232, 74));
+	res._globalSprites.draw(0, 7, Common::Point(232, 74));
 	drawButtons(&windows[0]);
 	windows[34].update();
 

@@ -30,7 +30,7 @@
 
 #include "adl/adl_v3.h"
 #include "adl/detection.h"
-#include "adl/display.h"
+#include "adl/display_a2.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
 
@@ -55,13 +55,13 @@ public:
 	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) :
 			AdlEngine_v3(syst, gd),
 			_boot(nullptr) { _brokenRooms.push_back(121); }
-	~HiRes4Engine();
+	~HiRes4Engine() override;
 
 private:
 	// AdlEngine
-	void runIntro();
-	void init();
-	void initGameState();
+	void runIntro() override;
+	void init() override;
+	void initGameState() override;
 
 	void putSpace(uint x, uint y) const;
 	void drawChar(byte c, Common::SeekableReadStream &shapeTable, Common::Point &pos) const;
@@ -134,7 +134,7 @@ void HiRes4Engine::putSpace(uint x, uint y) const {
 
 	_display->moveCursorTo(Common::Point(x, y));
 	_display->printChar(' ');
-	_display->updateTextScreen();
+	_display->renderText();
 	delay(2);
 }
 
@@ -167,7 +167,7 @@ void HiRes4Engine::drawText(const Common::String &str, Common::SeekableReadStrea
 		drawChar(c, shapeTable, pos);
 		drawChar(98, shapeTable, pos);
 
-		_display->updateHiResScreen();
+		_display->renderGraphics();
 		delay(15);
 	}
 }
@@ -179,7 +179,7 @@ void HiRes4Engine::runIntroAdvise(Common::SeekableReadStream &menu) {
 	backupText.push_back(readStringAt(menu, 0x6a9, '"'));
 	backupText.push_back(readStringAt(menu, 0x6c6, '"'));
 
-	_display->setMode(DISPLAY_MODE_TEXT);
+	_display->setMode(Display::kModeText);
 
 	for (uint x = 2; x <= 36; ++x)
 		putSpace(x, 2);
@@ -223,7 +223,7 @@ void HiRes4Engine::runIntroAdvise(Common::SeekableReadStream &menu) {
 			_display->printAsciiString(left);
 			_display->moveCursorTo(Common::Point(19, y));
 			_display->printAsciiString(right);
-			_display->updateTextScreen();
+			_display->renderText();
 			delay(35);
 		} while (x != backupText[i].size() / 2);
 
@@ -244,27 +244,32 @@ void HiRes4Engine::runIntroAdvise(Common::SeekableReadStream &menu) {
 		}
 
 		_display->moveCursorTo(Common::Point(32, 18));
-		_display->printChar(APPLECHAR(cursor[cursorIdx]));
-		_display->updateTextScreen();
+		_display->printChar(_display->asciiToNative(cursor[cursorIdx]));
+		_display->renderText();
 		g_system->delayMillis(25);
 		cursorIdx = (cursorIdx + 1) % cursor.size();
 	}
 }
 
 void HiRes4Engine::runIntroLogo(Common::SeekableReadStream &ms2) {
-	_display->clear(0x00);
-	_display->setMode(DISPLAY_MODE_HIRES);
-	byte *logo = new byte[DISPLAY_SIZE];
-	Display::loadFrameBuffer(ms2, logo);
+	Display_A2 *display = static_cast<Display_A2 *>(_display);
+	const uint width = display->getGfxWidth();
+	const uint height = display->getGfxHeight();
+	const uint pitch = display->getGfxPitch();
 
-	for (uint x = 0; x < DISPLAY_WIDTH; ++x) {
-		for (uint y = 0; y < DISPLAY_HEIGHT; ++y) {
-			const byte p = logo[y * DISPLAY_PITCH + x / 7];
-			_display->setPixelBit(Common::Point(x, y), p);
+	display->clear(0x00);
+	display->setMode(Display::kModeGraphics);
+	byte *logo = new byte[pitch * height];
+	display->loadFrameBuffer(ms2, logo);
+
+	for (uint x = 0; x < width; ++x) {
+		for (uint y = 0; y < height; ++y) {
+			const byte p = logo[y * pitch + x / 7];
+			display->setPixelBit(Common::Point(x, y), p);
 			if (x % 7 == 6)
-				_display->setPixelPalette(Common::Point(x, y), p);
+				display->setPixelPalette(Common::Point(x, y), p);
 		}
-		_display->updateHiResScreen();
+		display->renderGraphics();
 
 		if (shouldQuit()) {
 			delete[] logo;
@@ -279,11 +284,11 @@ void HiRes4Engine::runIntroLogo(Common::SeekableReadStream &ms2) {
 	for (uint i = 38; i != 0; --i) {
 		Common::Point p;
 
-		for (p.y = 1; p.y < DISPLAY_HEIGHT; ++p.y)
-			for (p.x = 0; p.x < DISPLAY_WIDTH; p.x += 7)
-				_display->setPixelByte(Common::Point(p.x, p.y - 1), _display->getPixelByte(p));
+		for (p.y = 1; p.y < (int)height; ++p.y)
+			for (p.x = 0; p.x < (int)width; p.x += 7)
+				display->setPixelByte(Common::Point(p.x, p.y - 1), display->getPixelByte(p));
 
-		_display->updateHiResScreen();
+		display->renderGraphics();
 
 		Tones tone;
 		tone.push_back(Tone(kClock / 2.0 / ((i * 4 + 1) * 10.0 + 10.0), 12.5));
@@ -309,13 +314,13 @@ void HiRes4Engine::runIntroTitle(Common::SeekableReadStream &menu, Common::Seeka
 	// Draw "TM" with lines
 	_graphics->drawLine(Common::Point(200, 170), Common::Point(200, 174), 0x7f);
 	_graphics->drawLine(Common::Point(198, 170), Common::Point(202, 170), 0x7f);
-	_display->updateHiResScreen();
+	_display->renderGraphics();
 	delay(7);
 	_graphics->drawLine(Common::Point(204, 170), Common::Point(204, 174), 0x7f);
 	_graphics->drawLine(Common::Point(204, 170), Common::Point(207, 173), 0x7f);
 	_graphics->drawLine(Common::Point(207, 173), Common::Point(209, 170), 0x7f);
 	_graphics->drawLine(Common::Point(209, 170), Common::Point(209, 174), 0x7f);
-	_display->updateHiResScreen();
+	_display->renderGraphics();
 	delay(7);
 
 	titleString = readStringAt(menu, 0x46c);
@@ -341,7 +346,7 @@ void HiRes4Engine::runIntroInstructions(Common::SeekableReadStream &instructions
 	instructions.seek(0);
 
 	_display->home();
-	_display->setMode(DISPLAY_MODE_TEXT);
+	_display->setMode(Display::kModeText);
 
 	// Search for PRINT commands in tokenized BASIC
 	while (1) {
@@ -397,7 +402,7 @@ void HiRes4Engine::runIntroInstructions(Common::SeekableReadStream &instructions
 
 void HiRes4Engine::runIntroLoading(Common::SeekableReadStream &adventure) {
 	_display->home();
-	_display->setMode(DISPLAY_MODE_TEXT);
+	_display->setMode(Display::kModeText);
 
 	const uint kStrings = 4;
 	const uint kStringLen = 39;
@@ -445,11 +450,11 @@ void HiRes4Engine::runIntro() {
 			if (shouldQuit())
 				return;
 
-			if (key == APPLECHAR('1')) {
+			if (key == _display->asciiToNative('1')) {
 				StreamPtr instructions(files->createReadStream("INSTRUCTIONS"));
 				runIntroInstructions(*instructions);
 				break;
-			} else if (key == APPLECHAR('2')) {
+			} else if (key == _display->asciiToNative('2')) {
 				StreamPtr adventure(files->createReadStream("THE ADVENTURE"));
 				runIntroLoading(*adventure);
 				return;
@@ -459,7 +464,7 @@ void HiRes4Engine::runIntro() {
 }
 
 void HiRes4Engine::init() {
-	_graphics = new GraphicsMan_v2(*_display);
+	_graphics = new GraphicsMan_v2<Display_A2>(*static_cast<Display_A2 *>(_display));
 
 	_boot = new DiskImage();
 	if (!_boot->open(getDiskImageName(0)))
@@ -544,18 +549,18 @@ public:
 			AdlEngine_v3(syst, gd),
 			_boot(nullptr),
 			_curDisk(0) { _brokenRooms.push_back(121); }
-	~HiRes4Engine_Atari();
+	~HiRes4Engine_Atari() override;
 
 private:
 	// AdlEngine
-	void init();
-	void initGameState();
-	void loadRoom(byte roomNr);
-	Common::String formatVerbError(const Common::String &verb) const;
-	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
+	void init() override;
+	void initGameState() override;
+	void loadRoom(byte roomNr) override;
+	Common::String formatVerbError(const Common::String &verb) const override;
+	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const override;
 
 	// AdlEngine_v2
-	void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
+	void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const override;
 
 	Common::SeekableReadStream *createReadStream(DiskImage *disk, byte track, byte sector, byte offset = 0, byte size = 0) const;
 	void loadCommonData();
@@ -573,7 +578,7 @@ HiRes4Engine_Atari::~HiRes4Engine_Atari() {
 }
 
 void HiRes4Engine_Atari::init() {
-	_graphics = new GraphicsMan_v2(*_display);
+	_graphics = new GraphicsMan_v2<Display_A2>(*static_cast<Display_A2 *>(_display));
 
 	_boot = new DiskImage();
 	if (!_boot->open(atariDisks[0]))

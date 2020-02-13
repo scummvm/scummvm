@@ -75,6 +75,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/base/scriptables/script_ext_date.h"
+#include "engines/wintermute/base/scriptables/script_ext_directory.h"
 #include "engines/wintermute/base/scriptables/script_ext_file.h"
 #include "engines/wintermute/base/scriptables/script_ext_math.h"
 #include "engines/wintermute/base/scriptables/script_ext_mem_buffer.h"
@@ -149,6 +150,7 @@ void SystemClassRegistry::registerClasses() {
 	REGISTER_CLASS(ScValue, false)
 	REGISTER_CLASS(SXArray, false)
 	REGISTER_CLASS(SXDate, false)
+	REGISTER_CLASS(SXDirectory, true)
 	REGISTER_CLASS(SXFile, false)
 	REGISTER_CLASS(SXMath, true)
 	REGISTER_CLASS(SXMemBuffer, false)

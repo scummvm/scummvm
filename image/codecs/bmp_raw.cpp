@@ -140,6 +140,8 @@ Graphics::PixelFormat BitmapRawDecoder::getPixelFormat() const {
 	case 24:
 	case 32:
 		return Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	default:
+		break;
 	}
 
 	error("Unhandled BMP raw %dbpp", _bitsPerPixel);

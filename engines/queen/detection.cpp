@@ -209,19 +209,6 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// DOS Floppy - Russian
-	{
-		{
-			"queen",
-			"Floppy",
-			AD_ENTRY1s("queen.1", "0d1c10d5c3a1bd90bc0b3859a3258093", 22677657),
-			Common::RU_RUS,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
-		},
-	},
-
 	// DOS Floppy - Russian (From Bugreport #6946)
 	{
 		{
@@ -495,22 +482,25 @@ static const QueenGameDescription gameDescriptions[] = {
 class QueenMetaEngine : public AdvancedMetaEngine {
 public:
 	QueenMetaEngine() : AdvancedMetaEngine(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames, optionsList) {
-		_singleId = "queen";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "queen";
+	}
+
+	const char *getName() const override {
 		return "Flight of the Amazon Queen";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const { return 99; }
-	virtual void removeSaveState(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override { return 99; }
+	void removeSaveState(const char *target, int slot) const override;
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };

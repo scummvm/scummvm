@@ -773,6 +773,9 @@ void Scene303::actions() {
 			_vm->_dialogs->showItem(OBJ_LARGE_NOTE, 818, 7);
 			_game._player._stepEnabled = true;
 			break;
+
+		default:
+			break;
 		}
 		_action._inProgress = false;
 		return;
@@ -1222,6 +1225,9 @@ void Scene304::handleRaoulAnimation() {
 			}
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	if (resetFrame >= 0) {
@@ -1261,6 +1267,9 @@ void Scene304::handlePhantomAnimation() {
 		 case 3:
 			 resetFrame = 11;
 			 break;
+
+		default:
+			break;
 		 }
 
 		 if (_phantomStatus == 1)
@@ -1282,6 +1291,9 @@ void Scene304::handlePhantomAnimation() {
 		 case 3:
 			 resetFrame = 16;
 			 break;
+
+		default:
+			break;
 		 }
 
 		 if (_phantomStatus == 1)

@@ -130,17 +130,17 @@ public:
 
 public:
 	Script();
-	~Script();
+	~Script() override;
 
 	void freeScript(const bool keepLocalsSegment = false);
-	void load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher);
+	void load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher, bool applyScriptPatches = true);
 
-	virtual bool isValidOffset(uint32 offset) const;
-	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const;
-	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
+	bool isValidOffset(uint32 offset) const override;
+	SegmentRef dereference(reg_t pointer) override;
+	reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const override;
+	void freeAtAddress(SegManager *segMan, reg_t sub_addr) override;
+	Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const override;
+	Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const override;
 
 	/**
 	 * Return a list of all references to objects in this script
@@ -150,7 +150,7 @@ public:
 	 */
 	Common::Array<reg_t> listObjectReferences() const;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	Object *getObject(uint32 offset);
 	const Object *getObject(uint32 offset) const;
@@ -180,10 +180,11 @@ public:
 
 	/**
 	 * Initializes the script's objects (SCI0)
-	 * @param segMan	A reference to the segment manager
-	 * @param segmentId	The script's segment id
+	 * @param segMan	          A reference to the segment manager
+	 * @param segmentId	          The script's segment id
+	 * @param applyScriptPatches  Apply patches for the script, if available
 	 */
-	void initializeObjects(SegManager *segMan, SegmentId segmentId);
+	void initializeObjects(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches);
 
 	// script lock operations
 
@@ -331,15 +332,17 @@ private:
 	 * Initializes the script's objects (SCI0)
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
+	 * @applyScriptPatches  Apply patches for the script, if available
 	 */
-	void initializeObjectsSci0(SegManager *segMan, SegmentId segmentId);
+	void initializeObjectsSci0(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches);
 
 	/**
 	 * Initializes the script's objects (SCI1.1 - SCI2.1)
-	 * @param segMan	A reference to the segment manager
-	 * @param segmentId	The script's segment id
+	 * @param segMan	    A reference to the segment manager
+	 * @param segmentId	    The script's segment id
+	 * @applyScriptPatches  Apply patches for the script, if available
 	 */
-	void initializeObjectsSci11(SegManager *segMan, SegmentId segmentId);
+	void initializeObjectsSci11(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches);
 
 #ifdef ENABLE_SCI32
 	/**
@@ -347,7 +350,7 @@ private:
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
 	 */
-	void initializeObjectsSci3(SegManager *segMan, SegmentId segmentId);
+	void initializeObjectsSci3(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches);
 #endif
 
 	LocalVariables *allocLocalsSegment(SegManager *segMan);

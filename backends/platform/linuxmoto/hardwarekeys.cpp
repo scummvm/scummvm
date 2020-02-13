@@ -24,8 +24,6 @@
 #include "backends/keymapper/keymapper.h"
 #include "common/keyboard.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 using namespace Common;
 
 struct Key {
@@ -105,8 +103,3 @@ static const Mod modifiers[] = {
 	{ KBD_SHIFT | KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+", true },
 	{ 0, 0, 0, false }
 };
-
-Common::HardwareInputSet *OSystem_LINUXMOTO::getHardwareInputSet() {
-	return OSystem_SDL::getHardwareInputSet();
-}
-#endif

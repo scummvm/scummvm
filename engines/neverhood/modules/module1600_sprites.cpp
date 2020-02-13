@@ -207,6 +207,8 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 		stCarAtHome();
 		_newDeltaXType = param.asInteger();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -221,6 +223,8 @@ uint32 AsCommonCar::hmAnimation(int messageNum, const MessageParam &param, Entit
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -233,6 +237,8 @@ uint32 AsCommonCar::hmLeaveCar(int messageNum, const MessageParam &param, Entity
 	case NM_ANIMATION_STOP:
 		sendMessage(_parentScene, NM_CAR_LEAVE, 0);
 		SetMessageHandler(&AsCommonCar::handleMessage);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -929,6 +935,8 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
+		break;
+	default:
 		break;
 	}
 	return messageResult;

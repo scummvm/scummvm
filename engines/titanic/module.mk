@@ -432,32 +432,32 @@ MODULE_OBJS := \
 	sound/wave_file.o \
 	star_control/star_control.o \
 	star_control/base_stars.o \
-	star_control/camera_auto_mover.o \
-	star_control/camera_mover.o \
+	star_control/camera.o \
+	star_control/const_boundaries.o \
+	star_control/constellations.o \
+	star_control/flight_manager_base.o \
+	star_control/flight_manager_marked.o \
+	star_control/flight_manager_unmarked.o \
 	star_control/fmatrix.o \
 	star_control/fpoint.o \
 	star_control/fpose.o \
 	star_control/frange.o \
 	star_control/frect.o \
 	star_control/fvector.o \
-	star_control/marked_auto_mover.o \
-	star_control/marked_camera_mover.o \
 	star_control/matrix_transform.o \
+	star_control/motion_control.o \
+	star_control/motion_control_unmarked.o \
+	star_control/motion_control_marked.o \
 	star_control/orientation_changer.o \
-	star_control/star_camera.o \
 	star_control/star_closeup.o \
 	star_control/star_crosshairs.o \
 	star_control/star_field_base.o \
 	star_control/star_field.o \
 	star_control/star_markers.o \
-	star_control/star_points1.o \
-	star_control/star_points2.o \
 	star_control/star_ref.o \
 	star_control/star_view.o \
 	star_control/surface_area.o \
 	star_control/surface_fader.o \
-	star_control/unmarked_auto_mover.o \
-	star_control/unmarked_camera_mover.o \
 	star_control/viewport.o \
 	support/avi_surface.o \
 	support/direct_draw.o \

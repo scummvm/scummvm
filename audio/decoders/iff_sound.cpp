@@ -79,6 +79,9 @@ struct A8SVXLoader {
 			assert(_data);
 			loadData(chunk._stream);
 			return true;
+
+		default:
+			break;
 		}
 
 		return false;
@@ -93,6 +96,9 @@ struct A8SVXLoader {
 		case 1:
 			// implement other formats here
 			error("compressed IFF audio is not supported");
+			break;
+
+		default:
 			break;
 		}
 

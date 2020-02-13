@@ -42,32 +42,32 @@ protected:
 
 public:
 	ScummEngine_v8(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v8();
+	~ScummEngine_v8() override;
 
 protected:
-	virtual void setupOpcodes();
+	void setupOpcodes() override;
 
-	virtual void printString(int m, const byte *msg);
+	void printString(int m, const byte *msg) override;
 
-	virtual void scummLoop_handleSaveLoad();
+	void scummLoop_handleSaveLoad() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
-	virtual void decodeParseString(int m, int n);
-	virtual void readArrayFromIndexFile();
+	void setupScummVars() override;
+	void resetScummVars() override;
+	void decodeParseString(int m, int n) override;
+	void readArrayFromIndexFile() override;
 
-	virtual void readMAXS(int blockSize);
-	virtual void readGlobalObjects();
+	void readMAXS(int blockSize) override;
+	void readGlobalObjects() override;
 
-	virtual uint fetchScriptWord();
-	virtual int fetchScriptWordSigned();
+	uint fetchScriptWord() override;
+	int fetchScriptWordSigned() override;
 
-	virtual int readVar(uint var);
-	virtual void writeVar(uint var, int value);
+	int readVar(uint var) override;
+	void writeVar(uint var, int value) override;
 
-	virtual int getObjectIdFromOBIM(const byte *obim);
+	int getObjectIdFromOBIM(const byte *obim) override;
 
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	void processKeyboard(Common::KeyState lastKeyHit) override;
 
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 

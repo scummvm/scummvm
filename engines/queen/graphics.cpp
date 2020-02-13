@@ -627,6 +627,8 @@ void Graphics::handleParallax(uint16 roomNum) {
 		_bobs[21].x += 2;
 		_bobs[21].y += 2;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1256,6 +1258,8 @@ void BamScene::updateFightAnimation() {
 			if (_flag == F_REQ_STOP) {
 				_flag = F_STOP;
 			}
+			break;
+		default:
 			break;
 		}
 	}

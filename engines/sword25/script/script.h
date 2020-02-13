@@ -47,7 +47,7 @@ class BS_InputPersistenceBlock;
 class ScriptEngine : public Service, public Persistable {
 public:
 	ScriptEngine(Kernel *KernelPtr) : Service(KernelPtr) {}
-	virtual ~ScriptEngine() {}
+	~ScriptEngine() override {}
 
 	// -----------------------------------------------------------------------------
 	// This method must be implemented by the script engine
@@ -84,8 +84,8 @@ public:
 	*/
 	virtual void setCommandLine(const Common::Array<Common::String> &commandLineParameters) = 0;
 
-	virtual bool persist(OutputPersistenceBlock &writer) = 0;
-	virtual bool unpersist(InputPersistenceBlock &reader) = 0;
+	bool persist(OutputPersistenceBlock &writer) override = 0;
+	bool unpersist(InputPersistenceBlock &reader) override = 0;
 };
 
 } // End of namespace Sword25

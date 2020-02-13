@@ -352,4 +352,11 @@ void MidiOutput::stopNotesOnChannel(int channel) {
 	}
 }
 
+void MidiOutput::allSoundsOff() {
+	for (int i = 0; i < 16; ++i) {
+		stopNotesOnChannel(i);
+		sendIntern(0xB0, i, 0x78, 0);
+	}
+}
+
 } // End of namespace Kyra

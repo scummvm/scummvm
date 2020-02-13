@@ -420,6 +420,9 @@ void InterfaceScene::drawScene() {
 	// limits as specified by the map's _animationInfo listing
 	for (uint idx = 0; idx < map._mobData._objects.size(); ++idx) {
 		MazeObject &mazeObject = map._mobData._objects[idx];
+		if (mazeObject._spriteId == -1)
+			continue;
+
 		AnimationEntry &animEntry = map._animationInfo[mazeObject._spriteId];
 		int directionIndex = Res.DIRECTION_ANIM_POSITIONS[mazeObject._direction][partyDirection];
 
@@ -772,12 +775,12 @@ void InterfaceScene::animate3d() {
 						monster._effect3 = 2;
 					}
 				}
-			}
-		} else {
-			monster._effect3 = (monster._effect3 + 1) % 8;
-			if (monster._effect3 == 0) {
-				MonsterStruct &monsterData = *monster._monsterData;
-				monster._effect1 = monster._effect2 = monsterData._animationEffect;
+			} else {
+				monster._effect3 = (monster._effect3 + 1) % 8;
+				if (monster._effect3 == 0) {
+					MonsterStruct &monsterData = *monster._monsterData;
+					monster._effect1 = monster._effect2 = monsterData._animationEffect;
+				}
 			}
 		}
 	}
@@ -2665,7 +2668,7 @@ void InterfaceScene::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monst
 
 	drawStruct._flags &= ~0xFFF;
 	if (monster._effect2)
-		drawStruct._flags = Res.MONSTER_EFFECT_FLAGS[monster._effect2][monster._effect3];
+		drawStruct._flags = Res.MONSTER_EFFECT_FLAGS[monster._effect2 - 1][monster._effect3];
 }
 
 void InterfaceScene::setIndoorsObjects() {

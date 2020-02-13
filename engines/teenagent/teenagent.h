@@ -61,6 +61,7 @@ class Scene;
 class MusicPlayer;
 class Resources;
 class Inventory;
+class Pack;
 
 // Engine Debug Flags
 enum {
@@ -83,16 +84,16 @@ const uint16 kScreenHeight = 200;
 class TeenAgentEngine : public Engine {
 public:
 	TeenAgentEngine(OSystem *system, const ADGameDescription *gd);
-	~TeenAgentEngine();
+	~TeenAgentEngine() override;
 
-	virtual Common::Error run();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual bool canLoadGameStateCurrently() { return true; }
-	virtual bool canSaveGameStateCurrently() { return !_sceneBusy; }
-	virtual bool hasFeature(EngineFeature f) const;
+	Common::Error run() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canLoadGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently() override { return !_sceneBusy; }
+	bool hasFeature(EngineFeature f) const override;
 
-	GUI::Debugger *getDebugger() { return console; }
+	GUI::Debugger *getDebugger() override { return console; }
 
 	void init();
 
@@ -137,7 +138,7 @@ public:
 
 	void playMusic(byte id); //schedules play
 	void playSound(byte id, byte skipFrames);
-	void playSoundNow(byte id);
+	void playSoundNow(Pack *pack, byte id);
 	void enableObject(byte id, byte sceneId = 0);
 	void disableObject(byte id, byte sceneId = 0);
 	void hideActor();

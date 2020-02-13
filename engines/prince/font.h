@@ -33,19 +33,19 @@ namespace Prince {
 class Font : public Graphics::Font {
 public:
 	Font();
-	virtual ~Font();
+	~Font() override;
 
 	bool loadStream(Common::SeekableReadStream &stream);
 
-	virtual int getFontHeight() const override;
+	int getFontHeight() const override;
 
-	virtual int getMaxCharWidth() const override;
+	int getMaxCharWidth() const override;
 
-	virtual int getCharWidth(uint32 chr) const override;
+	int getCharWidth(uint32 chr) const override;
 
-	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
-	virtual int getKerningOffset(uint32 left, uint32 right) const override { return -2; }
+	int getKerningOffset(uint32 left, uint32 right) const override { return -2; }
 
 private:
 	struct ChrData {

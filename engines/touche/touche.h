@@ -469,13 +469,13 @@ public:
 	typedef void (ToucheEngine::*OpcodeProc)();
 
 	ToucheEngine(OSystem *system, Common::Language language);
-	virtual ~ToucheEngine();
+	~ToucheEngine() override;
 
 	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void syncSoundSettings();
-	GUI::Debugger *getDebugger() { return _console; }
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
+	GUI::Debugger *getDebugger() override { return _console; }
 
 protected:
 
@@ -605,10 +605,10 @@ protected:
 
 	void saveGameStateData(Common::WriteStream *stream);
 	void loadGameStateData(Common::ReadStream *stream);
-	virtual Common::Error saveGameState(int num, const Common::String &description);
-	virtual Common::Error loadGameState(int num);
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
+	Common::Error saveGameState(int num, const Common::String &description) override;
+	Common::Error loadGameState(int num) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	ToucheConsole *_console;
 

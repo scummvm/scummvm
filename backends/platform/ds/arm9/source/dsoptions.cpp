@@ -58,7 +58,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_tab = new GUI::TabWidget(this, 10, 5, 300, 230 - 20 - 40 - 20);
 
-	_tab->addTab("Controls");
+	_tab->addTab("Controls", "");
 
 	_leftHandedCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 130, 20, _("~L~eft handed mode"));
 	_indyFightCheckbox = new GUI::CheckboxWidget(_tab, 5, 20, 140, 20, _("~I~ndy fight controls"));
@@ -94,7 +94,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	_sensitivity->setValue(8);
 	_sensitivity->setFlags(GUI::WIDGET_CLEARBG);
 
-	_tab->addTab("Graphics");
+	_tab->addTab("Graphics", "");
 
 	new GUI::StaticTextWidget(_tab, 5, 67, 180, 15, _("Initial top screen scale:"), Graphics::kTextAlignLeft);
 
@@ -116,7 +116,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 
 
-	_tab->addTab("General");
+	_tab->addTab("General", "");
 
 	_highQualityAudioCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 250, 20, _("High quality audio (slower) (reboot)"), 0, 0, 'T');
 	_disablePowerOff = new GUI::CheckboxWidget(_tab, 5, 20, 200, 20, _("Disable power off"), 0, 0, 'T');

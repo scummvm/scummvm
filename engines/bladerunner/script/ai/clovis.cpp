@@ -241,6 +241,8 @@ int AIScriptClovis::GetFriendlinessModifierIfGetsClue(int otherActorId, int clue
 	case kClueMcCoyRetiredLutherLance:
 	case kClueMcCoyIsInsane:
 		return -5;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -318,8 +320,11 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalClovisUG18SadikWillShootGuzza:
+		// fall through
 	case kGoalClovisUG18SadikIsShootingGuzza:
+		// fall through
 	case kGoalClovisUG18GuzzaDied:
+		// fall through
 	case kGoalClovisUG18Leave:
 		return true;
 
@@ -353,8 +358,13 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
 		Delay(3000);
 		Actor_Retired_Here(kActorMcCoy, 12, 48, true, kActorClovis);
+#else
+		Actor_Retired_Here(kActorMcCoy, 12, 48, true, kActorClovis);
+		Delay(3000);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 
 	case kGoalClovisStartChapter5:
@@ -394,7 +404,15 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Set_At_XYZ(kActorClovis, 45.0f, -41.52f, -85.0f, 750);
 		} else {
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
+#else
+			// same as kGoalClovisKP07LayDown
+			// Actor_Set_Targetable(kActorClovis, true) is already done above
+			Game_Flag_Set(kFlagClovisLyingDown);
+			// prevent Clovis rotating while lying on the bed when McCoy enters KP07
+			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 1022);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Face_Heading(kActorClovis, 1022, false);
 		}
 		someAnim();
@@ -429,6 +447,10 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalClovisKP07FlyAway:
 		Actor_Says(kActorMcCoy, 8501, kAnimationModeTalk);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Face_Actor(kActorClovis, kActorMcCoy, true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorClovis, 1260, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 8502, kAnimationModeTalk);
 		Actor_Says(kActorClovis, 1270, kAnimationModeTalk);
@@ -436,6 +458,10 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorClovis, 1290, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 8505, kAnimationModeTalk);
 		Actor_Says(kActorClovis, 1300, kAnimationModeTalk);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Face_Heading(kActorClovis, 780, true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorClovis, 1310, kAnimationModeTalk);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -517,8 +543,13 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		return true;
 
-	case 518:
+	case kGoalClovisKP07LayDown:
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
+#else
+		// prevent Clovis rotating while lying on the bed when McCoy enters KP07
+		Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 1022);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Face_Heading(kActorClovis, 1022, false);
 		Actor_Set_Targetable(kActorClovis, true);
 		Game_Flag_Set(kFlagClovisLyingDown);
@@ -679,7 +710,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			*animation = 227;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorClovis, 0);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
@@ -851,7 +882,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -872,7 +903,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -893,7 +924,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -914,7 +945,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			*animation = 227;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorClovis, 0);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
@@ -935,7 +966,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			*animation = 227;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorClovis, 0);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
@@ -1052,7 +1083,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -1073,7 +1104,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 13;
 			*animation = 208;
-			Actor_Change_Animation_Mode(kActorClovis, 4);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -1094,7 +1125,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			*animation = 227;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorClovis, 0);
+			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
@@ -1470,6 +1501,9 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 	case 54:
 		_animationFrame = 0;
 		_animationState = 32;
+		break;
+
+	default:
 		break;
 	}
 

@@ -44,7 +44,7 @@ private:
 	bool cmd3DO_PlayAudio(int argc, const char **argv);
 public:
 	ScalpelDebugger(SherlockEngine *vm);
-	virtual ~ScalpelDebugger() {}
+	~ScalpelDebugger() override {}
 };
 
 } // End of namespace Scalpel

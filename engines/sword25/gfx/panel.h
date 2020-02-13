@@ -45,7 +45,7 @@ private:
 	Panel(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle);
 
 public:
-	virtual ~Panel();
+	~Panel() override;
 
 	uint getColor() const {
 		return _color;
@@ -57,11 +57,11 @@ public:
 		}
 	}
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 
 protected:
-	virtual bool doRender(RectangleList *updateRects);
+	bool doRender(RectangleList *updateRects) override;
 
 private:
 	uint32 _color;

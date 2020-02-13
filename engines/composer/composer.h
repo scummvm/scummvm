@@ -58,6 +58,12 @@ enum GameType {
 	GType_ComposerV2
 };
 
+enum GameFileTypes {
+	GAME_CONFIGFILE     = 1 << 0,    // Game configuration
+	GAME_SCRIPTFILE     = 1 << 1,    // Game script
+	GAME_EXECUTABLE     = 1 << 2     // Game executable
+};
+
 class Archive;
 struct Animation;
 class ComposerEngine;
@@ -150,7 +156,7 @@ struct OldScript {
 
 class ComposerEngine : public Engine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 	template <typename T>
 	void syncArray(Common::Serializer &ser, Common::Array<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
@@ -160,26 +166,28 @@ protected:
 	void syncListReverse(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 	template <typename T>
 	void sync(Common::Serializer &ser, T &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion);
-	bool canLoadGameStateCurrently() { return true; }
-	Common::Error loadGameState(int slot);
-	bool canSaveGameStateCurrently() { return true; }
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canLoadGameStateCurrently() override { return true; }
+	Common::Error loadGameState(int slot) override;
+	bool canSaveGameStateCurrently() override { return true; }
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 public:
 	ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc);
-	virtual ~ComposerEngine();
+	~ComposerEngine() override;
 
-	virtual bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
 	int getGameType() const;
 	const char *getGameId() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
+	bool loadDetectedConfigFile(Common::INIFile &configFile) const;
 
 	const ComposerGameDescription *_gameDescription;
 
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 private:
 	Common::RandomSource *_rnd;

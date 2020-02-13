@@ -93,7 +93,7 @@ void Room::trial0Tick1() {
 }
 
 void Room::trial0Tick40() {
-	showText(TX_SPEAKER_VLICT, TX_TRI0_058);
+	showText(TX_SPEAKER_VLICT, 58, true);
 }
 
 void Room::trial0Timer0Expired() { // Doesn't do anything?
@@ -110,79 +110,79 @@ void Room::trial0ReachedRoomCenter() {
 	bool gaveUp = false;
 
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_VLICT, TX_TRI0_053);
+	showText(TX_SPEAKER_VLICT, 53, true);
 
 	const TextRef choices1[] = {
 		TX_SPEAKER_KIRK,
-		TX_TRI0_019, TX_TRI0_016, TX_TRI0_021,
+		19, 16, 21,
 		TX_BLANK
 	};
-	showText(choices1);
+	showMultipleTexts(choices1, true);
 
-	showText(TX_SPEAKER_VLICT, TX_TRI0_054);
-	showText(TX_SPEAKER_KIRK,  TX_TRI0_004);
-	showText(TX_SPEAKER_VLICT, TX_TRI0_047);
+	showText(TX_SPEAKER_VLICT, 54, true);
+	showText(TX_SPEAKER_KIRK,   4, true);
+	showText(TX_SPEAKER_VLICT, 47, true);
 
 	const TextRef choices2[] = {
 		TX_SPEAKER_KIRK,
-		TX_TRI0_011, TX_TRI0_018, TX_TRI0_015,
+		11, 18, 15,
 		TX_BLANK
 	};
-	int choice = showText(choices2);
+	int choice = showMultipleTexts(choices2, true);
 
 	if (choice == 0) { // Kirk intervenes as a warrior
-		showText(TX_SPEAKER_VLICT, TX_TRI0_043);
-		showText(TX_SPEAKER_KIRK,  TX_TRI0_002);
-		showText(TX_SPEAKER_VLICT, TX_TRI0_056);
-		showText(TX_SPEAKER_VLICT, TX_TRI0_061);
-		showText(TX_SPEAKER_KIRK,  TX_TRI0_001);
-		showText(TX_SPEAKER_VLICT, TX_TRI0_060);
+		showText(TX_SPEAKER_VLICT, 43, true);
+		showText(TX_SPEAKER_KIRK,   2, true);
+		showText(TX_SPEAKER_VLICT, 56, true);
+		showText(TX_SPEAKER_VLICT, 61, true);
+		showText(TX_SPEAKER_KIRK,   1, true);
+		showText(TX_SPEAKER_VLICT, 60, true);
 		_awayMission->disableInput = true;
 		loadRoomIndex(1, 4);
 	} else if (choice == 1) { // "This trial is a mockery"
-		showText(TX_SPEAKER_VLICT,        TX_TRI0_048);
-		showText(TX_SPEAKER_QUETZECOATL,  TX_TRI0_041);
-		showText(TX_SPEAKER_VLICT,        TX_TRI0_050);
-		showText(TX_SPEAKER_QUETZECOATL,  TX_TRI0_039);
-		showText(TX_SPEAKER_VLICT,        TX_TRI0_059);
-		showText(TX_SPEAKER_QUETZECOATL,  TX_TRI0_040);
-		showText(TX_SPEAKER_VLICT,        TX_TRI0_046);
+		showText(TX_SPEAKER_VLICT,        48, true);
+		showText(TX_SPEAKER_QUETZECOATL,  41, true);
+		showText(TX_SPEAKER_VLICT,        50, true);
+		showText(TX_SPEAKER_QUETZECOATL,  39, true);
+		showText(TX_SPEAKER_VLICT,        59, true);
+		showText(TX_SPEAKER_QUETZECOATL,  40, true);
+		showText(TX_SPEAKER_VLICT,        46, true);
 
 		const TextRef choices3[] = {
 			TX_SPEAKER_KIRK,
-			TX_TRI0_023, TX_TRI0_006, TX_TRI0_010,
+			23, 6, 10,
 			TX_BLANK
 		};
-		choice = showText(choices3);
+		choice = showMultipleTexts(choices3, true);
 
 		if (choice == 0 || choice == 1) {
-			showText(TX_SPEAKER_VLICT, TX_TRI0_052);
+			showText(TX_SPEAKER_VLICT, 52, true);
 
 			const TextRef choices4[] = {
 				TX_SPEAKER_KIRK,
-				TX_TRI0_017, TX_TRI0_020, TX_TRI0_008,
+				17, 20, 8,
 				TX_BLANK
 			};
-			choice = showText(choices4);
+			choice = showMultipleTexts(choices4, true);
 
 			if (choice == 0 || choice == 1) {
-				showText(TX_SPEAKER_VLICT, TX_TRI0_057);
-				showText(TX_SPEAKER_KIRK,  TX_TRI0_003);
-				showText(TX_SPEAKER_VLICT, TX_TRI0_051);
+				showText(TX_SPEAKER_VLICT, 57, true);
+				showText(TX_SPEAKER_KIRK,   3, true);
+				showText(TX_SPEAKER_VLICT, 51, true);
 
 				const TextRef choices5[] = {
 					TX_SPEAKER_KIRK,
-					TX_TRI0_009, TX_TRI0_014, TX_TRI0_013,
+					9, 14, 13,
 					TX_BLANK
 				};
-				choice = showText(choices5);
+				choice = showMultipleTexts(choices5, true);
 
 				if (choice == 0 || choice == 1) {
-					showText(TX_SPEAKER_VLICT, TX_TRI0_055);
+					showText(TX_SPEAKER_VLICT, 55, true);
 					_awayMission->disableInput = true;
 					loadRoomIndex(1, 4);
 				} else { // choice == 2
-					showText(TX_SPEAKER_VLICT, TX_TRI0_045);
+					showText(TX_SPEAKER_VLICT, 45, true);
 					_awayMission->disableInput = true;
 					loadRoomIndex(1, 4);
 				}
@@ -195,8 +195,8 @@ void Room::trial0ReachedRoomCenter() {
 
 	if (gaveUp) {
 		playMidiMusicTracks(2, -1);
-		showText(TX_SPEAKER_VLICT, TX_TRI0_049);
-		showText(TX_SPEAKER_VLICT, TX_TRI0_044);
+		showText(TX_SPEAKER_VLICT, 49, true);
+		showText(TX_SPEAKER_VLICT, 44, true);
 		_awayMission->trial.missionEndMethod = 0;
 
 		// FIXME: Are these parameters in the right order?
@@ -205,77 +205,77 @@ void Room::trial0ReachedRoomCenter() {
 }
 
 void Room::trial0LookAtWindow() {
-	showText(TX_TRI0N007);
+	showDescription(7, true);
 }
 
 void Room::trial0LookAtVlict() {
-	showText(TX_TRI0N001);
+	showDescription(1, true);
 }
 
 void Room::trial0LookAtGuard() {
-	showText(TX_TRI0N000);
+	showDescription(0, true);
 }
 
 void Room::trial0LookAtBench() {
-	showText(TX_TRI0N006);
+	showDescription(6, true);
 }
 
 void Room::trial0LookAtSeal() {
-	showText(TX_TRI0N008);
+	showDescription(8, true);
 }
 
 void Room::trial0LookAtKirk() {
-	showText(TX_TRI0N004);
+	showDescription(4, true);
 }
 
 void Room::trial0LookAtSpock() {
-	showText(TX_TRI0N005);
+	showDescription(5, true);
 }
 
 void Room::trial0LookAtMccoy() {
-	showText(TX_TRI0N002);
+	showDescription(2, true);
 }
 
 void Room::trial0LookAtRedshirt() {
-	showText(TX_TRI0N003);
+	showDescription(3, true);
 }
 
 void Room::trial0LookAtQuetzecoatl() {
-	showText(TX_TRI0N009);
+	showDescription(9, true);
 }
 
 void Room::trial0TalkToVlict() {
-	showText(TX_SPEAKER_VLICT, TX_TRI0_062);
+	showText(TX_SPEAKER_VLICT, 62, true);
 }
 
 void Room::trial0TalkToGuard() {
-	showText(TX_SPEAKER_KLINGON_GUARD, TX_TRI0_F24);
-	showText(TX_SPEAKER_BENNIE, TX_TRI0_065);
-	showText(TX_SPEAKER_KIRK,   TX_TRI0_007);
-	showText(TX_SPEAKER_BENNIE, TX_TRI0_064);
-	showText(TX_SPEAKER_KIRK,   TX_TRI0_022);
-	showText(TX_SPEAKER_BENNIE, TX_TRI0_066);
+	showText(TX_SPEAKER_KLINGON_GUARD, 24 + FOLLOWUP_MESSAGE_OFFSET, true);
+	showText(TX_SPEAKER_BENNIE, 65, true);
+	showText(TX_SPEAKER_KIRK,    7, true);
+	showText(TX_SPEAKER_BENNIE, 64, true);
+	showText(TX_SPEAKER_KIRK,   22, true);
+	showText(TX_SPEAKER_BENNIE, 66, true);
 }
 
 void Room::trial0TalkToQuetzecoatl() {
-	showText(TX_SPEAKER_QUETZECOATL, TX_TRI0_042);
+	showText(TX_SPEAKER_QUETZECOATL, 42, true);
 }
 
 void Room::trial0TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI0_031);
+	showText(TX_SPEAKER_MCCOY, 31, true);
 }
 
 void Room::trial0TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI0_025);
+	showText(TX_SPEAKER_SPOCK, 25, true);
 }
 
 void Room::trial0TalkToRedshirt() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI0_063);
+	showText(TX_SPEAKER_BENNIE, 63, true);
 }
 
 void Room::trial0UsePhaserOrRock() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI0_026);
-	showText(TX_SPEAKER_MCCOY, TX_TRI0_036);
+	showText(TX_SPEAKER_SPOCK, 26, true);
+	showText(TX_SPEAKER_MCCOY, 36, true);
 }
 
 void Room::trial0UseSnakeOnVlict() {
@@ -285,48 +285,48 @@ void Room::trial0UseSnakeOnVlict() {
 
 void Room::trial0UseSnakeOnGuard() {
 	// Unused, since the snake item doesn't carry over to the courtroom
-	showText(TX_SPEAKER_KLINGON_GUARD, TX_TRI0_F24);
+	showText(TX_SPEAKER_KLINGON_GUARD, 24 + FOLLOWUP_MESSAGE_OFFSET, true);
 }
 
 void Room::trial0UseMTricorderOnQuetzecoatl() {
-	mccoyScan(DIR_S, TX_TRI0_029, true);
+	mccoyScan(DIR_S, 29, false, true);
 }
 
 void Room::trial0UseMTricorderOnVlict() {
-	mccoyScan(DIR_S, TX_TRI0_030, true);
+	mccoyScan(DIR_S, 30, false, true);
 }
 
 void Room::trial0UseMTricorderAnywhere() {
-	mccoyScan(DIR_S, TX_TRI0_035, true);
+	mccoyScan(DIR_S, 35, false, true);
 }
 
 void Room::trial0UseSTricorderOnWindow() {
-	spockScan(DIR_S, TX_TRI0_037, true);
+	spockScan(DIR_S, 37, false, true);
 }
 
 void Room::trial0UseSTricorderAnywhere() {
 	// ENHANCEMENT: Originally didn't play tricorder sound, etc
-	spockScan(DIR_S, TX_TRI0_038, true);
+	spockScan(DIR_S, 38, false, true);
 }
 
 void Room::trial0UseCommunicator() {
-	showText(TX_SPEAKER_UHURA, TX_TRI0U075);
+	showText(TX_SPEAKER_UHURA, 75, true);
 }
 
 void Room::trial0UseCrewmanOnKlingon() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI0_024);
+	showText(TX_SPEAKER_SPOCK, 24, true);
 }
 
 void Room::trial0UseMccoyOnVlict() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI0_027);
+	showText(TX_SPEAKER_MCCOY, 27, true);
 }
 
 void Room::trial0UseMccoyOnGuard() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI0_028);
+	showText(TX_SPEAKER_MCCOY, 28, true);
 }
 
 void Room::trial0UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI0_034);
+	showText(TX_SPEAKER_MCCOY, 34, true);
 }
 
 }

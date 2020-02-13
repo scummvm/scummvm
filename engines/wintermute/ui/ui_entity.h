@@ -37,20 +37,20 @@ class UIEntity : public UIObject {
 public:
 	DECLARE_PERSISTENT(UIEntity, UIObject)
 	UIEntity(BaseGame *inGame);
-	virtual ~UIEntity();
+	~UIEntity() override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
-	virtual bool display() override { return display(0, 0); }
-	virtual bool display(int offsetX, int offsetY) override;
+	bool display() override { return display(0, 0); }
+	bool display(int offsetX, int offsetY) override;
 	bool setEntity(const char *filename);
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 
 private:
 	AdEntity *_entity;

@@ -477,6 +477,8 @@ void Interface::setMode(int mode) {
 			// to flip through the pages of the help system
 		}
 		break;
+	default:
+		break;
 	}
 
 	draw();
@@ -655,6 +657,9 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		case '9':
 			converseSetPos(ascii);
 			break;
+
+		default:
+			break;
 		}
 		break;
 	case kPanelMap:
@@ -707,6 +712,8 @@ bool Interface::processAscii(Common::KeyState keystate) {
 			}
 		}
 #endif
+		break;
+	default:
 		break;
 	}
 	return false;
@@ -1074,6 +1081,8 @@ void Interface::setQuit(PanelButton *panelButton) {
 #endif
 				_vm->quitGame();
 			break;
+		default:
+			break;
 	}
 }
 
@@ -1146,6 +1155,8 @@ void Interface::setLoad(PanelButton *panelButton) {
 		case kTextCancel:
 			// IHNM only
 			setMode(kPanelOption);
+			break;
+		default:
 			break;
 	}
 }
@@ -1410,6 +1421,8 @@ void Interface::setSave(PanelButton *panelButton) {
 			_textInput = false;
 			setMode(kPanelOption);
 			break;
+		default:
+			break;
 	}
 }
 
@@ -1563,6 +1576,9 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 			o = _vm->_actor->getObj(obj);
 			script = o->_scriptEntrypointNumber;
 			break;
+
+		default:
+			break;
 		}
 
 		if (script > 0) {
@@ -1672,6 +1688,8 @@ void Interface::setOption(PanelButton *panelButton) {
 
 		ConfMan.setBool("subtitles", _vm->_subtitlesEnabled);
 		ConfMan.setBool("voices", _vm->_voicesEnabled);
+		break;
+	default:
 		break;
 	}
 }
@@ -1866,6 +1884,9 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		if (_vm->_scene->isNonInteractiveIHNMDemoPart() && (updateFlag & UPDATE_MOUSECLICK))
 			_vm->_scene->showIHNMDemoSpecialScreen();
 #endif
+		break;
+
+	default:
 		break;
 	}
 
@@ -2298,6 +2319,8 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 			textId = kTextText;
 		else if (!_vm->_subtitlesEnabled && _vm->_voicesEnabled)
 			textId = kTextAudio;
+		break;
+	default:
 		break;
 	}
 	if (_vm->getGameId() == GID_ITE) {

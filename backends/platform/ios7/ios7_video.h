@@ -64,7 +64,8 @@ typedef struct {
 
 	GLuint _screenSizeSlot;
 	GLuint _textureSlot;
-	GLuint _shakeSlot;
+	GLuint _shakeXSlot;
+	GLuint _shakeYSlot;
 
 	GLuint _positionSlot;
 	GLuint _textureCoordSlot;
@@ -84,7 +85,8 @@ typedef struct {
 	GLint _mouseWidth, _mouseHeight;
 	GLfloat _mouseScaleX, _mouseScaleY;
 
-	int _scaledShakeOffsetY;
+	int _scaledShakeXOffset;
+	int _scaledShakeYOffset;
 
 	UITouch *_firstTouch;
 	UITouch *_secondTouch;

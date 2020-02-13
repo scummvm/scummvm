@@ -45,7 +45,7 @@ public:
 	AdRegion *_region;
 	TObjectType _type;
 	AdSceneNode(BaseGame *inGame);
-	virtual ~AdSceneNode();
+	~AdSceneNode() override;
 
 };
 

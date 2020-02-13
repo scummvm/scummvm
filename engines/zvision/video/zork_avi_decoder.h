@@ -33,23 +33,23 @@ class ZorkAVIDecoder : public Video::AVIDecoder {
 public:
 	ZorkAVIDecoder() {}
 
-	virtual ~ZorkAVIDecoder() {}
+	~ZorkAVIDecoder() override {}
 
 private:
 	class ZorkAVIAudioTrack : public Video::AVIDecoder::AVIAudioTrack {
 	public:
 		ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType);
 
-		void createAudioStream();
-		void queueSound(Common::SeekableReadStream *stream);
-		void resetStream();
+		void createAudioStream() override;
+		void queueSound(Common::SeekableReadStream *stream) override;
+		void resetStream() override;
 
 	private:
 		Audio::QueuingAudioStream *_queueStream;
 		RawChunkStream _decoder;
 	};
 
-	Video::AVIDecoder::AVIAudioTrack *createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo);
+	Video::AVIDecoder::AVIAudioTrack *createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo) override;
 
 private:
 	// Audio Codecs

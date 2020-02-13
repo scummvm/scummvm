@@ -39,12 +39,12 @@ private:
 public:
 	AudioBufferStream(CAudioBuffer *audioBuffer) : _audioBuffer(audioBuffer) {}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const;
-	virtual int getRate() const { return 22050; }
-	virtual Audio::Timestamp getLength() const { return Audio::Timestamp(); }
-	virtual bool seek(const Audio::Timestamp &where) { return false; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	bool endOfData() const override;
+	int getRate() const override { return 22050; }
+	Audio::Timestamp getLength() const override { return Audio::Timestamp(); }
+	bool seek(const Audio::Timestamp &where) override { return false; }
 };
 
 int AudioBufferStream::readBuffer(int16 *buffer, const int numSamples) {

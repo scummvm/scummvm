@@ -992,6 +992,8 @@ T0172010_ClosedFakeWall:
 		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= championMan._party._firstScentIndex) && (AL0307_uc_ScentOrdinal < championMan._party._lastScentIndex))
 			setFlag(aspectArray[kDMSquareAspectFloorOrn], kDMMaskFootprints);
 		break;
+	default:
+		break;
 	}
 	aspectArray[kDMSquareAspectFirstGroupOrObject] = curThing.toUint16();
 }
@@ -1218,7 +1220,9 @@ Thing DungeonMan::getUnusedThing(uint16 thingType) {
 			break;
 		}
 	}
-	memset(thingPtr, 0, thingDataByteCount * 2);
+	for (uint16 i = 0; i < thingDataByteCount; i++) {
+		thingPtr[i].set(0);
+	}
 
 	*thingPtr = _vm->_thingEndOfList;
 	return curThing;
@@ -1504,6 +1508,8 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 
 								setCurrentMap(mapIndex);
 								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kDMMapXNotOnASquare, 0);
+								break;
+							default:
 								break;
 							}
 							setCurrentMap(currentMapIdx);

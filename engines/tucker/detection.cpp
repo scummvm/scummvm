@@ -43,7 +43,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagNoSubtitles,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -52,7 +52,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -61,7 +61,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -70,7 +70,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -79,7 +79,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformDOS,
 		0,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -88,7 +88,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::CZ_CZE,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{ // Russian fan translation
 		"tucker",
@@ -97,7 +97,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"tucker",
@@ -106,7 +106,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO | Tucker::kGameFlagDemo,
-		GUIO0()
+		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
 };
@@ -118,25 +118,28 @@ static const ADGameDescription tuckerDemoGameDescription = {
 	Common::EN_ANY,
 	Common::kPlatformDOS,
 	ADGF_DEMO | Tucker::kGameFlagDemo | Tucker::kGameFlagIntroOnly,
-	GUIO0()
+	GUIO1(GUIO_NOMIDI)
 };
 
 class TuckerMetaEngine : public AdvancedMetaEngine {
 public:
 	TuckerMetaEngine() : AdvancedMetaEngine(tuckerGameDescriptions, sizeof(ADGameDescription), tuckerGames) {
 		_md5Bytes = 512;
-		_singleId = "tucker";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "tucker";
+	}
+
+	const char *getName() const override {
 		return "Bud Tucker in Double Trouble";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Bud Tucker in Double Trouble (C) Merit Studios";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const {
+	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSupportsListSaves:
 		case kSupportsLoadingDuringStartup:
@@ -151,14 +154,14 @@ public:
 		}
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
 			*engine = new Tucker::TuckerEngine(syst, desc->language, desc->flags);
 		}
 		return desc != nullptr;
 	}
 
-	virtual ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
 		for (Common::FSList::const_iterator d = fslist.begin(); d != fslist.end(); ++d) {
 			Common::FSList audiofslist;
 			if (d->isDirectory() && d->getName().equalsIgnoreCase("audio") && d->getChildren(audiofslist, Common::FSNode::kListFilesOnly)) {
@@ -173,7 +176,7 @@ public:
 		return ADDetectedGame();
 	}
 
-	virtual SaveStateList listSaves(const char *target) const {
+	SaveStateList listSaves(const char *target) const override {
 		Common::String pattern = Tucker::generateGameStateFileName(target, 0, true);
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 		Tucker::TuckerEngine::SavegameHeader header;
@@ -199,16 +202,16 @@ public:
 		return saveList;
 	}
 
-	virtual int getMaximumSaveSlot() const {
+	int getMaximumSaveSlot() const override {
 		return Tucker::kLastSaveSlot;
 	}
 
-	virtual void removeSaveState(const char *target, int slot) const {
+	void removeSaveState(const char *target, int slot) const override {
 		Common::String filename = Tucker::generateGameStateFileName(target, slot);
 		g_system->getSavefileManager()->removeSavefile(filename);
 	}
 
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Common::String fileName = Common::String::format("%s.%d", target, slot);
 		Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 

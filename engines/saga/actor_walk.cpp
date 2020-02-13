@@ -569,6 +569,7 @@ void Actor::handleActions(int msec, bool setup) {
 
 		case kActionAccept:
 		case kActionStoop:
+		default:
 			break;
 
 		case kActionCycleFrames:
@@ -1199,6 +1200,8 @@ void Actor::moveDragon(ActorData *actor) {
 				actor->_partialTarget.u() += 16;
 				moveType = kDragonMoveUpRight;
 				break;
+			default:
+				break;
 			}
 
 			switch (dir2) {
@@ -1213,6 +1216,8 @@ void Actor::moveDragon(ActorData *actor) {
 				break;
 			case kDirUpRight:
 				actor->_partialTarget.u() += 16;
+				break;
+			default:
 				break;
 			}
 

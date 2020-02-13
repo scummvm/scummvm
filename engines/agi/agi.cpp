@@ -91,14 +91,14 @@ int AgiEngine::agiInit() {
 
 	// clear all resources and events
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
-		memset(&_game.views[i], 0, sizeof(struct AgiView));
-		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
-		memset(&_game.logics[i], 0, sizeof(struct AgiLogic));
-		memset(&_game.sounds[i], 0, sizeof(class AgiSound *)); // _game.sounds contains pointers now
-		memset(&_game.dirView[i], 0, sizeof(struct AgiDir));
-		memset(&_game.dirPic[i], 0, sizeof(struct AgiDir));
-		memset(&_game.dirLogic[i], 0, sizeof(struct AgiDir));
-		memset(&_game.dirSound[i], 0, sizeof(struct AgiDir));
+		_game.views[i].reset();
+		_game.pictures[i].reset();
+		_game.logics[i].reset();
+		_game.sounds[i] = nullptr; // _game.sounds contains pointers now
+		_game.dirView[i].reset();
+		_game.dirPic[i].reset();
+		_game.dirLogic[i].reset();
+		_game.dirSound[i].reset();
 	}
 
 	// clear view table
@@ -137,6 +137,9 @@ int AgiEngine::agiInit() {
 		debug("Emulating Sierra AGI v%x.002.%03x",
 		      (int)(getVersion() >> 12) & 0xF,
 		      (int)(getVersion()) & 0xFFF);
+		break;
+	default:
+		warning("Unknown AGI Emulation Version %x", (int)(getVersion() >> 12));
 		break;
 	}
 
@@ -335,7 +338,7 @@ void AgiBase::initRenderMode() {
 		break;
 	}
 
-	if (getFeatures() & (GF_AGI256 | GF_AGI256_2)) {
+	if (getFeatures() & GF_AGI256) {
 		// If current game is AGI256, switch (force) to VGA render mode
 		_renderMode = Common::kRenderVGA;
 	}
@@ -360,10 +363,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	DebugMan.addDebugChannel(kDebugLevelText, "Text", "Text output debugging");
 	DebugMan.addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
 
-
-	memset(&_game, 0, sizeof(struct AgiGame));
 	memset(&_debug, 0, sizeof(struct AgiDebug));
-	memset(&_mouse, 0, sizeof(struct Mouse));
 
 	_game.mouseEnabled = true;
 	_game.mouseHidden = false;

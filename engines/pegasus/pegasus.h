@@ -73,16 +73,17 @@ friend class InputHandler;
 
 public:
 	PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc);
-	virtual ~PegasusEngine();
+	~PegasusEngine() override;
 
 	// Engine stuff
 	const PegasusGameDescription *_gameDescription;
-	bool hasFeature(EngineFeature f) const;
-	GUI::Debugger *getDebugger();
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool hasFeature(EngineFeature f) const override;
+	GUI::Debugger *getDebugger() override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	static Common::Array<Common::Keymap *> initKeymaps();
 
 	// Base classes
 	GraphicsManager *_gfx;
@@ -203,21 +204,21 @@ public:
 	static Common::StringArray listSaveFiles();
 
 protected:
-	Common::Error run();
-	void pauseEngineIntern(bool pause);
+	Common::Error run() override;
+	void pauseEngineIntern(bool pause) override;
 
 	Notification _shellNotification;
-	virtual void receiveNotification(Notification *notification, const NotificationFlags flags);
+	void receiveNotification(Notification *notification, const NotificationFlags flags) override;
 
-	void handleInput(const Input &input, const Hotspot *cursorSpot);
-	virtual bool isClickInput(const Input &, const Hotspot *);
-	virtual InputBits getClickFilter();
+	void handleInput(const Input &input, const Hotspot *cursorSpot) override;
+	bool isClickInput(const Input &, const Hotspot *) override;
+	InputBits getClickFilter() override;
 
-	void clickInHotspot(const Input &, const Hotspot *);
-	void activateHotspots(void);
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	void activateHotspots(void) override;
 
-	void updateCursor(const Common::Point, const Hotspot *);
-	bool wantsCursor();
+	void updateCursor(const Common::Point, const Hotspot *) override;
+	bool wantsCursor() override;
 
 private:
 	// Console
@@ -272,8 +273,7 @@ private:
 	void doSubChase();
 	uint getNeighborhoodCD(const NeighborhoodID neighborhood) const;
 	uint _currentCD;
-	void initKeymap();
-	InputBits getInputFilter();
+	InputBits getInputFilter() override;
 
 	// Menu
 	GameMenu *_gameMenu;

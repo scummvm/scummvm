@@ -86,7 +86,7 @@ private:
 	int _oldMode;
 private:
 	CastSpell(XeenEngine *vm);
-	~CastSpell();
+	~CastSpell() override;
 
 	int execute(Character *&c);
 

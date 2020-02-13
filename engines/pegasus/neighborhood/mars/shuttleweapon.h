@@ -40,7 +40,7 @@ static const TimeScale kShuttleWeaponScale = kFifteenTicksPerSecond;
 class ShuttleWeapon : public IdlerAnimation {
 public:
 	ShuttleWeapon();
-	virtual ~ShuttleWeapon() {}
+	~ShuttleWeapon() override {}
 
 	virtual void initShuttleWeapon();
 	virtual void cleanUpShuttleWeapon();
@@ -50,7 +50,7 @@ public:
 	bool canFireWeapon();
 
 protected:
-	void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 	virtual void updateWeaponPosition();
 	virtual bool collisionWithJunk(Common::Point &impactPoint);
 	bool collisionWithShuttle(Common::Point &impactPoint);

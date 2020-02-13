@@ -69,23 +69,23 @@ struct ChannelInfo {
 class SoundGenSarien : public SoundGen, public Audio::AudioStream {
 public:
 	SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer);
-	~SoundGenSarien();
+	~SoundGenSarien() override;
 
-	void play(int resnum);
-	void stop(void);
+	void play(int resnum) override;
+	void stop(void) override;
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool isStereo() const {
+	bool isStereo() const override {
 		return false;
 	}
 
-	bool endOfData() const {
+	bool endOfData() const override {
 		return false;
 	}
 
-	int getRate() const {
+	int getRate() const override {
 		// FIXME: Ideally, we should use _sampleRate.
 		return 22050;
 	}

@@ -183,6 +183,7 @@ struct FileTableEntry {
 };
 
 struct NameTableEntry {
+	uint16 offset;
 	uint16 index;
 	Common::String name;
 };
@@ -263,14 +264,15 @@ bool MohawkArchive::openStream(Common::SeekableReadStream *stream) {
 		debug(3, "Names = %04x", nameTable.size());
 
 		for (uint16 j = 0; j < nameTable.size(); j++) {
-			uint16 offset = stream->readUint16BE();
-			nameTable[j].index = stream->readUint16BE();
+			nameTable[j].offset = stream->readUint16BE();
+			nameTable[j].index  = stream->readUint16BE();
 
-			debug(4, "Entry[%02x]: Name List Offset = %04x  Index = %04x", j, offset, nameTable[j].index);
+			debug(4, "Entry[%02x]: Name List Offset = %04x  Index = %04x", j, nameTable[j].offset, nameTable[j].index);
+		}
 
+		for (uint16 j = 0; j < nameTable.size(); j++) {
 			// Name List
-			uint32 pos = stream->pos();
-			stream->seek(absOffset + stringTableOffset + offset);
+			stream->seek(absOffset + stringTableOffset + nameTable[j].offset);
 			char c = (char)stream->readByte();
 			while (c != 0) {
 				nameTable[j].name += c;
@@ -278,9 +280,6 @@ bool MohawkArchive::openStream(Common::SeekableReadStream *stream) {
 			}
 
 			debug(3, "Name = \'%s\'", nameTable[j].name.c_str());
-
-			// Get back to next entry
-			stream->seek(pos);
 		}
 
 		// Resource Table

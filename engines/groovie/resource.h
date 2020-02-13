@@ -54,10 +54,10 @@ protected:
 class ResMan_t7g : public ResMan {
 public:
 	ResMan_t7g(Common::MacResManager *macResFork = 0);
-	~ResMan_t7g() {}
+	~ResMan_t7g() override {}
 
-	uint32 getRef(Common::String name, Common::String scriptname);
-	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
+	uint32 getRef(Common::String name, Common::String scriptname) override;
+	bool getResInfo(uint32 fileRef, ResInfo &resInfo) override;
 
 private:
 	Common::MacResManager *_macResFork;
@@ -66,10 +66,10 @@ private:
 class ResMan_v2 : public ResMan {
 public:
 	ResMan_v2();
-	~ResMan_v2() {}
+	~ResMan_v2() override {}
 
-	uint32 getRef(Common::String name, Common::String scriptname);
-	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
+	uint32 getRef(Common::String name, Common::String scriptname) override;
+	bool getResInfo(uint32 fileRef, ResInfo &resInfo) override;
 };
 
 } // End of Groovie namespace

@@ -37,7 +37,7 @@ struct SequenceActorState;
 class Sequencer : public Object {
 public:
 	Sequencer(GamePage *page);
-	~Sequencer();
+	~Sequencer() override;
 
 	void toConsole() override;
 	void deserialize(Archive &archive) override;

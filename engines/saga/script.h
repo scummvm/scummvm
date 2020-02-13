@@ -609,13 +609,13 @@ protected:
 class SAGA1Script : public Script {
 public:
 	SAGA1Script(SagaEngine *vm);
-	~SAGA1Script();
+	~SAGA1Script() override;
 };
 
 class SAGA2Script : public Script {
 public:
 	SAGA2Script(SagaEngine *vm);
-	~SAGA2Script();
+	~SAGA2Script() override;
 };
 
 } // End of namespace Saga

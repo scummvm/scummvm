@@ -48,29 +48,20 @@ install: build
 	install -m0644 backends/vkeybd/packs/vkeybd_default.zip debian/scummvm/opt/scummvm/share
 	install -m0644 backends/vkeybd/packs/vkeybd_small.zip debian/scummvm/opt/scummvm/share
 # for optified version we can also add engine datafiles
-	install -m0644 dists/engine-data/access.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/drascula.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/fonts.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/hugo.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/kyra.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/lure.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/mort.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/neverhood.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/queen.tbl debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/sky.cpt debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/teenagent.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/tony.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/toon.dat debian/scummvm/opt/scummvm/share
-	install -m0644 dists/engine-data/wintermute.zip debian/scummvm/opt/scummvm/share
+	install -m0644 dists/engine-data/*.dat debian/scummvm/opt/scummvm/share
+	install -m0644 dists/engine-data/*.zip debian/scummvm/opt/scummvm/share
+	install -m0644 dists/engine-data/*.ccs debian/scummvm/opt/scummvm/share
+	install -m0644 dists/engine-data/*.tbl debian/scummvm/opt/scummvm/share
+	install -m0644 dists/engine-data/*.cpt debian/scummvm/opt/scummvm/share
 
 	install -m0644 -d debian/scummvm/usr/share/doc/scummvm
-	install -m0644 AUTHORS COPYING COPYING.BSD COPYING.FREEFONT COPYING.LGPL COPYING.OFL COPYRIGHT NEWS README debian/scummvm/usr/share/doc/scummvm
+	install -m0644 AUTHORS COPYING COPYING.BSD COPYING.FREEFONT COPYING.LGPL COPYING.OFL COPYRIGHT NEWS.md README.md debian/scummvm/usr/share/doc/scummvm
 binary: binary-arch
 
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs NEWS
+	dh_installchangelogs NEWS.md
 	dh_link
 	dh_strip
 	dh_fixperms

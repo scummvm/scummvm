@@ -125,7 +125,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 			  TBB: but watch out for /0! */
 		if (dx != 0 && thick != 0) {
-			double ac_recip = 1/dx * sqrt(dx * dx + dy * dy); // 1 / cos(atan2((double)dy, (double)dx));
+			double ac_recip = 1/dx * sqrt((double)(dx * dx + dy * dy)); // 1 / cos(atan2((double)dy, (double)dx));
 			wid = thick * ac_recip;
 		} else {
 			wid = 1;
@@ -183,7 +183,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 		   TBB: but watch out for /0! */
 		if (dy != 0 && thick != 0) {
-			double as_recip = 1/dy * sqrt(dx * dx + dy * dy); // 1 / sin(atan2((double)dy, (double)dx));
+			double as_recip = 1/dy * sqrt((double)(dx * dx + dy * dy)); // 1 / sin(atan2((double)dy, (double)dx));
 			wid = thick * as_recip;
 		} else {
 			wid = 1;
@@ -242,6 +242,13 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	for (int y = rect.top; y <= rect.bottom; y++)
 		drawHLine(rect.left, rect.right, y, color, plotProc, data);
+}
+
+void drawRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
+	drawHLine(rect.left, rect.right, rect.top, color, plotProc, data);
+	drawHLine(rect.left, rect.right, rect.bottom, color, plotProc, data);
+	drawVLine(rect.left, rect.top, rect.bottom, color, plotProc, data);
+	drawVLine(rect.right, rect.top, rect.bottom, color, plotProc, data);
 }
 
 // http://members.chello.at/easyfilter/bresenham.html

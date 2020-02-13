@@ -54,13 +54,13 @@ enum kDebugLevels {
 class AccessVIDMovieDecoder : public Video::VideoDecoder {
 public:
 	AccessVIDMovieDecoder();
-	~AccessVIDMovieDecoder();
+	~AccessVIDMovieDecoder() override;
 
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
 
 protected:
-	void readNextPacket();
+	void readNextPacket() override;
 
 private:
 	bool streamSkipFullFrameCompressedFill();
@@ -81,20 +81,20 @@ private:
 	class StreamVideoTrack : public VideoTrack  {
 	public:
 		StreamVideoTrack(uint32 width, uint32 height, uint16 regularFrameDelay);
-		~StreamVideoTrack();
+		~StreamVideoTrack() override;
 
-		bool endOfTrack() const;
+		bool endOfTrack() const override;
 
-		uint16 getWidth() const { return _width; }
-		uint16 getHeight() const { return _height; }
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
+		uint16 getWidth() const override { return _width; }
+		uint16 getHeight() const override { return _height; }
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
 		void setNextFrameStartTime(uint32 nextFrameStartTime) { _nextFrameStartTime = nextFrameStartTime; }
-		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
-		const Graphics::Surface *decodeNextFrame() { return _surface; }
+		uint32 getNextFrameStartTime() const override { return _nextFrameStartTime; }
+		const Graphics::Surface *decodeNextFrame() override { return _surface; }
 
-		const byte *getPalette() const;
-		bool hasDirtyPalette() const;
+		const byte *getPalette() const override;
+		bool hasDirtyPalette() const override;
 
 		void decodePalette(Common::SeekableReadStream *stream);
 		void decodeFrame(Common::SeekableReadStream *stream, byte chunkId);
@@ -120,13 +120,13 @@ private:
 	class StreamAudioTrack : public AudioTrack {
 	public:
 		StreamAudioTrack(uint32 sampleRate, Audio::Mixer::SoundType soundType);
-		~StreamAudioTrack();
+		~StreamAudioTrack() override;
 
 		void queueAudio(Common::SeekableReadStream *stream, byte chunkId);
 		bool skipOverAudio(Common::SeekableReadStream *stream, byte chunkId);
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		Audio::QueuingAudioStream *_audioStream;

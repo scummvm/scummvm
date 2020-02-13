@@ -75,7 +75,7 @@ public:
 	/**
 	 * Deletes the BS_Polygon object
 	 */
-	virtual ~Polygon();
+	~Polygon() override;
 
 	/**
 	 * Initializes the BS_Polygon with a list of Vertecies.
@@ -173,8 +173,8 @@ public:
 	/// COntains the Vertecies of the polygon
 	Vertex *vertices;
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 
 	Polygon &operator=(const Polygon &p) {
 		init(p.vertexCount, p.vertices);

@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	event.o \
 	resource.o \
 	resource_audio.o \
+	resource_patcher.o \
 	sci.o \
 	util.o \
 	engine/features.o \
@@ -83,6 +84,7 @@ MODULE_OBJS := \
 
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
+	engine/hoyle5poker.o \
 	engine/kgraphics32.o \
 	graphics/celobj32.o \
 	graphics/controls32.o \
@@ -96,6 +98,7 @@ MODULE_OBJS += \
 	graphics/transitions32.o \
 	graphics/video32.o \
 	graphics/cursor32.o \
+	graphics/maccursor32.o \
 	sound/audio32.o \
 	sound/decoders/sol.o \
 	video/robot_decoder.o

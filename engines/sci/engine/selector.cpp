@@ -23,6 +23,7 @@
 #include "sci/sci.h"
 #include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/scriptdebug.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 
@@ -169,6 +170,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(setStep);
 	FIND_SELECTOR(setMotion);
 	FIND_SELECTOR(cycleSpeed);
+	FIND_SELECTOR(owner);
 
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);
@@ -236,6 +238,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(dispose);
 	FIND_SELECTOR(masterVolume);
 	FIND_SELECTOR(setCel);
+	FIND_SELECTOR(value);
 #endif
 }
 
@@ -244,8 +247,14 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 
 	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable)
 		return NULL_REG;
-	else
-		return *address.getPointer(segMan);
+
+	if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
+		reg_t curValue = *address.getPointer(segMan);
+		debugPropertyAccess(segMan->getObject(object), object, 0, selectorId,
+			                curValue, NULL_REG, segMan, BREAK_SELECTORREAD);
+	}
+
+	return *address.getPointer(segMan);
 }
 
 #ifdef ENABLE_SCI32
@@ -267,6 +276,12 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable) {
 		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
 		error("Selector '%s' of object could not be written to. Address %04x:%04x, %s", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object), origin.toString().c_str());
+	}
+
+	if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
+		reg_t curValue = *address.getPointer(segMan);
+		debugPropertyAccess(segMan->getObject(object), object, 0, selectorId,
+			                curValue, value, segMan, BREAK_SELECTORWRITE);
 	}
 
 	*address.getPointer(segMan) = value;

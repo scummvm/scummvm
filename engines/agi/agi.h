@@ -144,22 +144,14 @@ enum BooterDisks {
 // GF_OLDAMIGAV20 means that the interpreter is an old Amiga AGI interpreter that
 // uses value 20 for the computer type (v20 i.e. vComputer) rather than the usual value 5.
 //
-// GF_CLIPCOORDS means that views' coordinates must be clipped at least in commands
-// position and position.v.
-//
 enum AgiGameFeatures {
 	GF_AGIMOUSE    = (1 << 0), // this disables "Click-to-walk mouse interface"
 	GF_AGDS        = (1 << 1),
 	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
-	GF_AGI256_2    = (1 << 3), // marks fanmade AGI-256-2 games
-	GF_AGIPAL      = (1 << 4), // marks game using fanmade AGIPAL extension
-	GF_MACGOLDRUSH = (1 << 5), // use "grdir" instead of "dir" for volume loading
-	GF_FANMADE     = (1 << 6), // marks fanmade games
-	GF_MENUS       = (1 << 7), // not used anymore
-	GF_ESCPAUSE    = (1 << 8), // not used anymore, we detect this internally
-	GF_OLDAMIGAV20 = (1 << 9),
-	GF_CLIPCOORDS  = (1 << 10), // not used atm
-	GF_2GSOLDSOUND = (1 << 11)
+	GF_MACGOLDRUSH = (1 << 3), // use "grdir" instead of "dir" for volume loading
+	GF_FANMADE     = (1 << 4), // marks fanmade games
+	GF_OLDAMIGAV20 = (1 << 5),
+	GF_2GSOLDSOUND = (1 << 6)
 };
 
 struct AGIGameDescription;
@@ -232,6 +224,8 @@ struct gameIdList {
 struct Mouse {
 	int button;
 	Common::Point pos;
+
+	Mouse() : button(0) {}
 };
 
 // Used by AGI Mouse protocol 1.0 for v27 (i.e. button pressed -variable).
@@ -351,6 +345,8 @@ enum {
 struct AgiControllerKeyMapping {
 	uint16 keycode;
 	byte   controllerSlot;
+
+	AgiControllerKeyMapping() : keycode(0), controllerSlot(0) {}
 };
 
 struct AgiObject {
@@ -370,12 +366,24 @@ struct AgiDir {
 	// 3 = in mem, cant be released
 	// 0x40 = was compressed
 	uint8 flags;
+
+	void reset() {
+		volume = 0;
+		offset = 0;
+		len = 0;
+		clen = 0;
+		flags = 0;
+	}
+
+	AgiDir() { reset(); }
 };
 
 struct AgiBlock {
 	bool active;
 	int16 x1, y1;
 	int16 x2, y2;
+
+	AgiBlock() : active(false), x1(0), y1(0), x2(0), y2(0) {}
 };
 
 struct ScriptPos {
@@ -491,6 +499,99 @@ struct AgiGame {
 	int16 nonBlockingTextCyclesLeft;
 
 	bool automaticRestoreGame;
+
+	AgiGame() {
+		_vm = nullptr;
+
+		adjMouseX = 0;
+		adjMouseY = 0;
+
+		for (uint16 i = 0; i < ARRAYSIZE(name); i++) {
+			name[i] = 0;
+		}
+		for (uint16 i = 0; i < ARRAYSIZE(id); i++) {
+			id[i] = 0;
+		}
+		crc = 0;
+
+		for (uint16 i = 0; i < ARRAYSIZE(flags); i++) {
+			flags[i] = 0;
+		}
+		for (uint16 i = 0; i < ARRAYSIZE(vars); i++) {
+			vars[i] = 0;
+		}
+
+		horizon = 0;
+
+		cycleInnerLoopActive = false;
+		cycleInnerLoopType = 0;
+
+		curLogicNr = 0;
+
+		// execStack is defaulted by Common::Array constructor
+
+		playerControl = false;
+		exitAllLogics = false;
+		pictureShown = false;
+		gameFlags = 0;
+
+		// block defaulted by AgiBlock constructor
+
+		gfxMode = false;
+
+		numObjects = 0;
+
+		for (uint16 i = 0; i < ARRAYSIZE(controllerOccured); i++) {
+			controllerOccured[i] = false;
+		}
+
+		// controllerKeyMapping defaulted by AgiControllerKeyMapping constructor
+
+		for (uint16 i = 0; i < MAX_STRINGS + 1; i++) {
+			for (uint16 j = 0; j < MAX_STRINGLEN; j++) {
+				strings[i][j] = 0;
+			}
+		}
+
+		// dirLogic cleared by AgiDir constructor
+		// dirPic cleared by AgiDir constructor
+		// dirView cleared by AgiDir constructor
+		// dirSound cleared by AgiDir constructor
+
+		// pictures cleared by AgiPicture constructor
+		// logics cleared by AgiLogic constructor
+		// views cleared by AgiView constructor
+		for (uint16 i = 0; i < ARRAYSIZE(sounds); i++) {
+			sounds[i] = nullptr;
+		}
+
+		_curLogic = nullptr;
+
+		// screenObjTable cleared by ScreenObjEntry constructor
+
+		// addToPicView cleared by ScreenObjEntry constructor
+
+		automaticSave = false;
+		for (uint16 i = 0; i < ARRAYSIZE(automaticSaveDescription); i++) {
+			automaticSaveDescription[i] = 0;
+		}
+
+		// mouseFence cleared by Common::Rect constructor
+		mouseEnabled = false;
+		mouseHidden = false;
+
+		testResult = 0;
+
+		max_logics = 0;
+		for (uint16 i = 0; i < ARRAYSIZE(logic_list); i++) {
+			logic_list[i] = 0;
+		}
+
+		nonBlockingTextShown = false;
+		nonBlockingTextCyclesLeft = 0;
+
+		automaticRestoreGame = false;
+	}
 };
 
 class AgiLoader {
@@ -521,13 +622,13 @@ private:
 public:
 	AgiLoader_v1(AgiEngine *vm);
 
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int16 resourceType, int16 resourceNr);
-	virtual int unloadResource(int16 resourceType, int16 resourceNr);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
+	int init() override;
+	int deinit() override;
+	int detectGame() override;
+	int loadResource(int16 resourceType, int16 resourceNr) override;
+	int unloadResource(int16 resourceType, int16 resourceNr) override;
+	int loadObjects(const char *) override;
+	int loadWords(const char *) override;
 };
 
 class AgiLoader_v2 : public AgiLoader {
@@ -543,13 +644,13 @@ public:
 		_vm = vm;
 	}
 
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int16 resourceType, int16 resourceNr);
-	virtual int unloadResource(int16 resourceType, int16 resourceNr);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
+	int init() override;
+	int deinit() override;
+	int detectGame() override;
+	int loadResource(int16 resourceType, int16 resourceNr) override;
+	int unloadResource(int16 resourceType, int16 resourceNr) override;
+	int loadObjects(const char *) override;
+	int loadWords(const char *) override;
 };
 
 class AgiLoader_v3 : public AgiLoader {
@@ -565,13 +666,13 @@ public:
 		_vm = vm;
 	}
 
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int16 resourceType, int16 resourceNr);
-	virtual int unloadResource(int16 resourceType, int16 resourceNr);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
+	int init() override;
+	int deinit() override;
+	int detectGame() override;
+	int loadResource(int16 resourceType, int16 resourceNr) override;
+	int unloadResource(int16 resourceType, int16 resourceNr) override;
+	int loadObjects(const char *) override;
+	int loadWords(const char *) override;
 };
 
 class GfxFont;
@@ -612,14 +713,14 @@ protected:
 	// Engine API
 	Common::Error init();
 	virtual Common::Error go() = 0;
-	virtual Common::Error run() {
+	Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
 	virtual void initialize() = 0;
 
@@ -651,7 +752,7 @@ public:
 	virtual void clearKeyQueue() = 0;
 
 	AgiBase(OSystem *syst, const AGIGameDescription *gameDesc);
-	~AgiBase();
+	~AgiBase() override;
 
 	virtual void clearImageStack() = 0;
 	virtual void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
@@ -685,8 +786,8 @@ public:
 
 	const char *getDiskName(uint16 id);
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	const byte *getFontData();
 
@@ -735,20 +836,20 @@ struct AgiOpCodeDefinitionEntry {
 class AgiEngine : public AgiBase {
 protected:
 	// Engine APIs
-	virtual Common::Error go();
+	Common::Error go() override;
 
-	void initialize();
+	void initialize() override;
 
 	uint32 _lastSaveTime;
 
 public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
-	virtual ~AgiEngine();
+	~AgiEngine() override;
 
-	bool promptIsEnabled();
+	bool promptIsEnabled() override;
 
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &description);
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &description) override;
 
 private:
 	int _keyQueue[KEY_QUEUE_SIZE];
@@ -795,17 +896,17 @@ public:
 
 	Common::Stack<ImageStackElement> _imageStack;
 
-	void clearImageStack();
+	void clearImageStack() override;
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-	                          int16 p4, int16 p5, int16 p6, int16 p7);
+	                          int16 p4, int16 p5, int16 p6, int16 p7) override;
 	void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-	                          int16 p4, int16 p5, int16 p6, int16 p7);
-	void releaseImageStack();
+	                          int16 p4, int16 p5, int16 p6, int16 p7) override;
+	void releaseImageStack() override;
 
 	void wait(uint32 msec, bool busy = false);
 
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	int agiInit();
 	int agiDeinit();
@@ -814,9 +915,9 @@ public:
 	int agiUnloadResource(int16 resourceType, int16 resourceNr);
 	void agiUnloadResources();
 
-	virtual int getKeypress();
-	virtual bool isKeypress();
-	virtual void clearKeyQueue();
+	int getKeypress() override;
+	bool isKeypress() override;
+	void clearKeyQueue() override;
 
 	byte getVar(int16 varNr);
 	void setVar(int16 varNr, byte newValue);
@@ -826,7 +927,7 @@ private:
 	void setVolumeViaSystemSetting();
 
 public:
-	void syncSoundSettings();
+	void syncSoundSettings() override;
 
 public:
 	void decrypt(uint8 *mem, int len);

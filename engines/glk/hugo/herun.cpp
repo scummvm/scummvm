@@ -177,9 +177,18 @@ RestartDebugger:
 
 Start:
 	stack_depth = 0;
-
 	strcpy(errbuf, "");
 	strcpy(oops, "");
+
+#if defined (GLK)
+	// Handle any savegame selected directly from the ScummVM launcher
+	if (_savegameSlot != -1) {
+		if (loadGameState(_savegameSlot).getCode() != Common::kNoError) {
+			GUIErrorMessage("Loading failed");
+			_savegameSlot = -1;
+		}
+	}
+#endif
 
 	do
 	{
@@ -250,7 +259,7 @@ Start:
 				do
 				{
 FreshInput:
-					if (full_buffer != true)
+					if (full_buffer != 1)
 					{
 						newinput = true;
 						speaking = 0;
@@ -261,7 +270,16 @@ FreshInput:
 						debugger_has_stepped_back = false;
 						window[VIEW_LOCALS].changed = true;
 #endif
-						if (!playback)
+#if defined (GLK)
+						if (_savegameSlot != -1) {
+							// Trigger a "look" command so that players will get some initial text
+							// after loading a savegame directly from the launcher
+							_savegameSlot = -1;
+							strcpy(buffer, "look");
+						}
+						else
+#endif
+					if (!playback)
 						{
 							GetCommand();
 						}
@@ -325,7 +343,7 @@ FreshInput:
 RecordedNewline:;
 						}
 					}
-					else full_buffer = false;
+					else full_buffer = 0;
 
 					if (!strcmp(buffer, "") || buffer[0]=='.')
 					{
@@ -1151,112 +1169,6 @@ RestartError:
 	return 0;
 }
 
-#ifndef RESTOREGAMEDATA_REPLACED
-
-int Hugo::RestoreGameData() {
-	char testid[3], testserial[9];
-	int lbyte, hbyte;
-	int j;
-	unsigned int k, undosize;
-	long i;
-
-	/* Check ID */
-	testid[0] = (char)hugo_fgetc(save);
-	testid[1] = (char)hugo_fgetc(save);
-	testid[2] = '\0';
-	if (hugo_ferror(save)) goto RestoreError;
-
-	if (strcmp(testid, id))
-	{
-		AP("Incorrect save file.");
-		if (hugo_fclose(save)) FatalError(READ_E);
-		save = nullptr;
-		return 0;
-	}
-
-	/* Check serial number */
-	if (!hugo_fgets(testserial, 9, save)) goto RestoreError;
-	if (strcmp(testserial, serial))
-	{
-		AP("Save file created by different version.");
-		if (hugo_fclose(save)) FatalError(READ_E);
-		save = nullptr;
-		return 0;
-	}
-
-	/* Restore variables */
-	for (k=0; k<MAXGLOBALS+MAXLOCALS; k++)
-	{
-		if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF)
-			goto RestoreError;
-		var[k] = lbyte + hbyte * 256;
-	}
-
-	/* Restore objtable and above */
-
-	if (hugo_fseek(game, objtable*16L, SEEK_SET)) goto RestoreError;
-	i = 0;
-
-	while (i<codeend-(long)(objtable*16L))
-	{
-		if ((hbyte = hugo_fgetc(save))==EOF && hugo_ferror(save)) goto RestoreError;
-
-		if (hbyte==0)
-		{
-			if ((lbyte = hugo_fgetc(save))==EOF && hugo_ferror(save)) goto RestoreError;
-			SETMEM(objtable*16L+i, (unsigned char)lbyte);
-			i++;
-
-			/* Skip byte in game file */
-			if (hugo_fgetc(game)==EOF) goto RestoreError;
-		}
-		else
-		{
-			while (hbyte--)
-			{
-				/* Get unchanged game file byte */
-				if ((lbyte = hugo_fgetc(game))==EOF) goto RestoreError;
-				SETMEM(objtable*16L+i, (unsigned char)lbyte);
-				i++;
-			}
-		}
-	}
-
-	/* Restore undo data */
-	if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF)
-		goto RestoreError;
-	undosize = lbyte + hbyte*256;
-
-	/* We can only restore undo data if it was saved by a port with
-	   the same MAXUNDO as us */
-	if (undosize==MAXUNDO)
-	{
-		for (k=0; k<MAXUNDO; k++)
-		{
-			for (j=0; j<5; j++)
-			{
-				if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF)
-					goto RestoreError;
-				undostack[k][j] = lbyte + hbyte*256;
-			}
-		}
-		if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF) goto RestoreError;
-		undoptr = lbyte + hbyte*256;
-		if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF) goto RestoreError;
-		undoturn = lbyte + hbyte*256;
-		if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF) goto RestoreError;
-		undoinvalid = (unsigned char)lbyte, undorecord = (unsigned char)hbyte;
-	}
-	else undoinvalid = true;
-
-	return true;
-	
-RestoreError:
-	return false;
-}
-
-#endif	// RESTOREGAMEDATA_REPLACED
-
 int Hugo::RunRestore() {
 #if !defined (GLK)
 	save = nullptr;
@@ -1270,40 +1182,28 @@ int Hugo::RunRestore() {
 	if (!strcmp(line, "")) return 0;
 	if (!(save = HUGO_FOPEN(line, "r+b"))) return 0;
 
-#else
-	/* Glk implementation */
-	frefid_t savefile;
-
-	save = nullptr;
-
-	savefile = glk_fileref_create_by_prompt(fileusage_SavedGame | fileusage_BinaryMode,
-		filemode_Read, 0);
-	if (!savefile) return 0;
-	if (glk_fileref_does_file_exist(savefile))
-		save = glk_stream_open_file(savefile, filemode_Read, 0);
-	else
-		save = nullptr;
-	glk_fileref_destroy(savefile);
-	if (!save) return 0;
-
-#endif	/* GLK */
-
 	if (!RestoreGameData()) goto RestoreError;
 
 	if (hugo_fclose(save)) FatalError(READ_E);
 	save = nullptr;
 
-#if !defined (GLK)
 	strcpy(savefile, line);
-#endif
+#else
+	/* Glk implementation */
+	if (loadGame().getCode() != Common::kNoError)
+		goto RestoreError;
+
+#endif	/* GLK */
 
 	game_reset = true;
 
-	return (1);
+	return 1;
 
 RestoreError:
+#if !defined (GLK)
 	if ((save) && hugo_fclose(save)) FatalError(READ_E);
 	save = nullptr;
+#endif
 	game_reset = false;
 	return 0;
 }
@@ -2212,90 +2112,6 @@ ReturnfromRoutine:
 	return;
 }
 
-#ifndef SAVEGAMEDATA_REPLACED
-
-int Hugo::SaveGameData() {
-	int c, j;
-	int lbyte, hbyte;
-	long i;
-	int samecount = 0;
-
-	/* Write ID */
-	if (hugo_fputc(id[0], save)==EOF || hugo_fputc(id[1], save)==EOF) goto SaveError;
-
-	/* Write serial number */
-	if (hugo_fputs(serial, save)==EOF) goto SaveError;
-
-	/* Save variables */
-	for (c=0; c<MAXGLOBALS+MAXLOCALS; c++)
-	{
-		hbyte = (unsigned int)var[c] / 256;
-		lbyte = (unsigned int)var[c] - hbyte * 256;
-		if (hugo_fputc(lbyte, save)==EOF || hugo_fputc(hbyte, save)==EOF) goto SaveError;
-	}
-
-	/* Save objtable to end of code space */
-
-	if (hugo_fseek(game, objtable*16L, SEEK_SET)) goto SaveError;
-
-	for (i=0; i<=codeend-(long)(objtable*16L); i++)
-	{
-		if ((lbyte = hugo_fgetc(game))==EOF) goto SaveError;
-		hbyte = MEM(objtable*16L+i);
-
-		/* If memory same as original game file */
-		if (lbyte==hbyte && samecount<255) samecount++;
-
-		/* If memory differs (or samecount exceeds 1 byte) */
-		else
-		{
-			if (samecount)
-				if (hugo_fputc(samecount, save)==EOF) goto SaveError;
-
-			if (lbyte!=hbyte)
-			{
-				if (hugo_fputc(0, save)==EOF) goto SaveError;
-				if (hugo_fputc(hbyte, save)==EOF) goto SaveError;
-				samecount = 0;
-			}
-			else samecount = 1;
-		}
-	}
-	if (samecount)
-		if (hugo_fputc(samecount, save)==EOF) goto SaveError;
-
-	/* Save undo data */
-	
-	/* Save the number of turns in this port's undo stack */
-	hbyte = (unsigned int)MAXUNDO / 256;
-	lbyte = (unsigned int)MAXUNDO - hbyte*256;
-	if (hugo_fputc(lbyte, save)==EOF || hugo_fputc(hbyte, save)==EOF)
-		goto SaveError;
-	for (c=0; c<MAXUNDO; c++)
-	{
-		for (j=0; j<5; j++)
-		{
-			hbyte = (unsigned int)undostack[c][j] / 256;
-			lbyte = (unsigned int)undostack[c][j] - hbyte*256;
-			if (hugo_fputc(lbyte, save)==EOF || hugo_fputc(hbyte, save)==EOF)
-				goto SaveError;
-		}
-	}
-	if (hugo_fputc(undoptr-(undoptr/256)*256, save)==EOF || hugo_fputc(undoptr/256, save)==EOF)
-		goto SaveError;
-	if (hugo_fputc(undoturn-(undoturn/256)*256, save)==EOF || hugo_fputc(undoturn/256, save)==EOF)
-		goto SaveError;
-	if (hugo_fputc(undoinvalid, save)==EOF || hugo_fputc(undorecord, save)==EOF)
-		goto SaveError;
-		
-	return true;
-		
-SaveError:
-	return false;
-}
-
-#endif	// SAVEGAMEDATA_REPLACED
-
 int Hugo::RunSave() {
 #ifdef PALMOS
 	/* Prevent simultaneous access to the same db record */
@@ -2316,35 +2132,25 @@ int Hugo::RunSave() {
 	if (!hugo_overwrite(line)) return 0;
 	if (!(save = HUGO_FOPEN(line, "w+b"))) return 0;
 
-#else
-	/* Glk implementation */
-	frefid_t savefile;
-
-	save = nullptr;
-
-	savefile = glk_fileref_create_by_prompt(fileusage_SavedGame | fileusage_BinaryMode,
-		filemode_Write, 0);
-	if (!savefile) return 0;
-	save = glk_stream_open_file(savefile, filemode_Write, 0);
-	glk_fileref_destroy(savefile);
-	if (!save) return 0;
-
-#endif	/* GLK */
-
 	if (!SaveGameData()) goto SaveError;
-	
+
 	if (hugo_fclose(save)) FatalError(WRITE_E);
 	save = nullptr;
 
-#if !defined (GLK)
 	strcpy(savefile, line);
-#endif
+#else
+	/* Glk implementation */
+	if (saveGame().getCode() != Common::kNoError)
+		goto SaveError;
+#endif	/* GLK */
 
-	return(1);
+	return 1;
 
 SaveError:
+#if !defined (GLK)
 	if ((save) && hugo_fclose(save)) FatalError(WRITE_E);
 	save = nullptr;
+#endif
 	return 0;
 }
 

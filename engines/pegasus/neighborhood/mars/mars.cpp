@@ -156,7 +156,7 @@ class AirMaskCondition : public AICondition {
 public:
 	AirMaskCondition(const uint32);
 
-	virtual bool fireCondition();
+	bool fireCondition() override;
 
 protected:
 	uint32 _airThreshold;
@@ -323,6 +323,8 @@ TimeValue Mars::getViewTime(const RoomID room, const DirectionConstant direction
 				extraID -= 4;
 		}
 		break;
+	default:
+		break;
 	}
 
 	if (extraID == 0xffffffff)
@@ -345,6 +347,8 @@ void Mars::getZoomEntry(const HotSpotID spotID, ZoomTable::Entry &entry) {
 	case kMars31SouthOutSpotID:
 		if (GameState.getCurrentDirection() == kSouth && GameState.isTakenItemID(kMarsCard))
 			extraID = kMars31SouthZoomOutNoCard;
+		break;
+	default:
 		break;
 	}
 
@@ -373,6 +377,8 @@ void Mars::findSpotEntry(const RoomID room, const DirectionConstant direction, S
 			else
 				GameState.setMarsSeenThermalScan(true);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -388,6 +394,8 @@ CanMoveForwardReason Mars::canMoveForward(ExitTable::Entry &entry) {
 	case MakeRoomView(kMars48, kSouth):
 		if (GameState.getMarsSeenRobotAtReactor() && !GameState.getMarsAvoidedReactorRobot())
 			_utilityFuse.stopFuse();
+		break;
+	default:
 		break;
 	}
 
@@ -453,6 +461,8 @@ CanOpenDoorReason Mars::canOpenDoor(DoorTable::Entry &entry) {
 		if (!GameState.getMarsMazeDoorPair3())
 			return kCantOpenLocked;
 		break;
+	default:
+		break;
 	}
 
 	return Neighborhood::canOpenDoor(entry);
@@ -495,6 +505,8 @@ void Mars::openDoor() {
 			die(kDeathDidntGetOutOfWay);
 			return;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -677,6 +689,8 @@ void Mars::closeDoorOffScreen(const RoomID room, const DirectionConstant directi
 	case kMarsMaze180:
 		playSpotSoundSync(kMarsMazeDoorCloseIn, kMarsMazeDoorCloseOut);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -765,6 +779,8 @@ int16 Mars::getStaticCompassAngle(const RoomID room, const DirectionConstant dir
 	case MakeRoomView(kMars58, kEast):
 	case MakeRoomView(kMars58, kWest):
 		angle -= 90;
+		break;
+	default:
 		break;
 	}
 
@@ -885,6 +901,7 @@ void Mars::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &co
 		break;
 	default:
 		Neighborhood::getExtraCompassMove(entry, compassMove);
+		break;
 	}
 }
 
@@ -1089,6 +1106,8 @@ void Mars::checkContinuePoint(const RoomID room, const DirectionConstant directi
 		if (GameState.getMarsAvoidedReactorRobot())
 			makeContinuePoint();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1137,6 +1156,8 @@ void Mars::timerExpired(const uint32 eventType) {
 	case kMaze136RobotLoopingEvent:
 	case kMaze184RobotLoopingEvent:
 		_interruptionFilter = kFilterNoInput;
+		break;
+	default:
 		break;
 	}
 }
@@ -1207,6 +1228,8 @@ void Mars::arriveAt(const RoomID room, const DirectionConstant direction) {
 			setCurrentAlternate(kAltMarsTookMask);
 		else
 			setCurrentAlternate(kAltMarsNormal);
+		break;
+	default:
 		break;
 	}
 
@@ -1452,7 +1475,11 @@ void Mars::arriveAt(const RoomID room, const DirectionConstant direction) {
 		case kMars46:
 			die(kDeathRunOverByPod);
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -1484,6 +1511,8 @@ void Mars::turnTo(const DirectionConstant direction) {
 	case MakeRoomView(kMars60, kSouth):
 		if (getCurrentActivation() == kActivateAirlockPressurized)
 			playSpotSoundSync(kMarsAirlockPressurizeIn, kMarsAirlockPressurizeOut);
+		break;
+	default:
 		break;
 	}
 
@@ -1599,6 +1628,8 @@ void Mars::turnTo(const DirectionConstant direction) {
 	case MakeRoomView(kMarsMaze184, kWest):
 		launchMaze184Robot();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1643,6 +1674,8 @@ void Mars::activateHotspots() {
 			// Fall through...
 		case kActivateReactorReadyForCrowBar:
 			_vm->getAllHotspots().activateOneHotspot(kMars57CantOpenPanelSpotID);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -1826,6 +1859,8 @@ InputBits Mars::getInputFilter() {
 		if (_canyonChaseMovie.isMovieValid() && _canyonChaseMovie.isRunning())
 			result &= ~kFilterAllDirections;
 		break;
+	default:
+		break;
 	}
 
 	return result;
@@ -1893,6 +1928,8 @@ void Mars::takeItemFromRoom(Item *item) {
 	case kOpticalBiochip:
 		_privateFlags.setFlag(kMarsPrivateGotOpticalChipFlag, true);
 		break;
+	default:
+		break;
 	}
 
 	Neighborhood::takeItemFromRoom(item);
@@ -1953,6 +1990,8 @@ void Mars::pickedUpItem(Item *item) {
 			GameState.setScoringMarsGandhi();
 			startExtraSequence(kMarsRobotHeadClose, kExtraCompletedFlag, kFilterNoInput);
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -2360,6 +2399,8 @@ void Mars::receiveNotification(Notification *notification, const NotificationFla
 		case kMarsMaze136NorthApproach:
 		case kMarsMaze184WestLoop:
 			die(kDeathGroundByMazebot);
+			break;
+		default:
 			break;
 		}
 	} else if ((flag & kTimeForCanyonChaseFlag) != 0) {
@@ -3222,6 +3263,8 @@ void Mars::spaceChaseClick(const Input &input, const HotSpotID id) {
 					_lowerRightShuttleMovie.redrawMovieWorld();
 					GameState.setMarsReadyForShuttleTransport(true);
 					break;
+				default:
+					break;
 				}
 			} else {
 				playSpotSoundSync(kShuttleTractorLimitedIn, kShuttleTractorLimitedOut);
@@ -3235,6 +3278,8 @@ void Mars::spaceChaseClick(const Input &input, const HotSpotID id) {
 		_lowerRightShuttleMovie.setTime(kShuttleLowerRightTransportHiliteTime);
 		_lowerRightShuttleMovie.redrawMovieWorld();
 		_neighborhoodNotification.setNotificationFlags(kTimeToTransportFlag, kTimeToTransportFlag);
+		break;
+	default:
 		break;
 	}
 }
@@ -3489,6 +3534,8 @@ void Mars::doReactorGuess(int32 guess) {
 	case 4:
 		playSpotSoundSync(kColorMatchPurpleIn, kColorMatchPurpleOut);
 		break;
+	default:
+		break;
 	}
 
 	_nextGuess++;
@@ -3510,6 +3557,8 @@ void Mars::doReactorGuess(int32 guess) {
 			break;
 		case 3:
 			playSpotSoundSync(kColorMatchThreeNodesIn, kColorMatchThreeNodesOut);
+			break;
+		default:
 			break;
 		}
 
@@ -3541,6 +3590,8 @@ void Mars::doReactorGuess(int32 guess) {
 				_choiceHighlight.disposeReactorChoiceHighlight();
 				GameState.setScoringDisarmedCardBomb();
 				startExtraSequence(kMars57GameSolved, kExtraCompletedFlag, kFilterNoInput);
+				break;
+			default:
 				break;
 			}
 		} else if (_guessHistory.getNumGuesses() >= 5) {
@@ -3657,6 +3708,8 @@ uint Mars::getNumHints() {
 				}
 			}
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -3729,6 +3782,8 @@ Common::String Mars::getHintMovie(uint hintNum) {
 			}
 
 			return "Images/AI/Globals/XGLOB3F";
+		default:
+			break;
 		}
 	}
 

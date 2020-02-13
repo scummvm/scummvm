@@ -25,25 +25,25 @@
 
 #include "scumm/scumm.h"
 #include "scumm/imuse/imuse.h"
+#include "scumm/imuse/drivers/fmtowns.h"
 #include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
-#include "audio/softsynth/fmtowns_pc98/towns_midi.h"
 
 namespace Scumm {
 
 class Player_Towns : public MusicEngine {
 public:
 	Player_Towns(ScummEngine *vm, bool isVersion2);
-	virtual ~Player_Towns() {}
+	~Player_Towns() override {}
 
 	virtual bool init() = 0;
 
 	void setSfxVolume(int vol);
 
-	int getSoundStatus(int sound) const;
+	int getSoundStatus(int sound) const override;
 
 	virtual int32 doCommand(int numargs, int args[]) = 0;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	virtual void restoreAfterLoad();
 
 	// version 1 specific
@@ -83,27 +83,27 @@ protected:
 class Player_Towns_v1 : public Player_Towns {
 public:
 	Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer);
-	~Player_Towns_v1();
+	~Player_Towns_v1() override;
 
-	bool init();
+	bool init() override;
 
-	void setMusicVolume(int vol);
-	void startSound(int sound);
-	void stopSound(int sound);
-	void stopAllSounds();
+	void setMusicVolume(int vol) override;
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
 
-	int getSoundStatus(int sound) const;
-	int getCurrentCdaSound() { return _cdaCurrentSound; }
-	int getCurrentCdaVolume() { return (_cdaVolLeft + _cdaVolRight + 1) >> 1; }
+	int getSoundStatus(int sound) const override;
+	int getCurrentCdaSound() override { return _cdaCurrentSound; }
+	int getCurrentCdaVolume() override { return (_cdaVolLeft + _cdaVolRight + 1) >> 1; }
 
-	int32 doCommand(int numargs, int args[]);
+	int32 doCommand(int numargs, int args[]) override;
 
-	void setVolumeCD(int left, int right);
-	void setSoundVolume(int sound, int left, int right);
-	void setSoundNote(int sound, int note);
+	void setVolumeCD(int left, int right) override;
+	void setSoundVolume(int sound, int left, int right) override;
+	void setSoundNote(int sound, int note) override;
 
-	void saveLoadWithSerializer(Common::Serializer &ser);
-	void restoreAfterLoad();
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
+	void restoreAfterLoad() override;
 
 private:
 	void restartLoopingSounds();
@@ -142,20 +142,20 @@ private:
 class Player_Towns_v2 : public Player_Towns {
 public:
 	Player_Towns_v2(ScummEngine *vm, Audio::Mixer *mixer, IMuse *imuse, bool disposeIMuse);
-	~Player_Towns_v2();
+	~Player_Towns_v2() override;
 
-	bool init();
+	bool init() override;
 
-	void setMusicVolume(int vol);
+	void setMusicVolume(int vol) override;
 
-	int getSoundStatus(int sound) const;
-	void startSound(int sound);
-	void stopSound(int sound);
-	void stopAllSounds();
+	int getSoundStatus(int sound) const override;
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
 
-	int32 doCommand(int numargs, int args[]);
+	int32 doCommand(int numargs, int args[]) override;
 
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 private:
 	void playVocTrack(const uint8 *data);

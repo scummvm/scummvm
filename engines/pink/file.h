@@ -52,7 +52,7 @@ class Object;
 class OrbFile : public Common::File {
 public:
 	OrbFile();
-	~OrbFile();
+	~OrbFile() override;
 	bool open(const Common::String &name) override;
 
 public:
@@ -77,7 +77,7 @@ private:
 class BroFile : public Common::File {
 public:
 	BroFile() : _timestamp(0) {}
-	bool open(const Common::String &name);
+	bool open(const Common::String &name) override;
 	uint32 getTimestamp() { return _timestamp; }
 
 private:

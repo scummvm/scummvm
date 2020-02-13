@@ -172,6 +172,7 @@ public:
 	VideoEntryPtr findVideo(const Common::String &name, MystStack stack);
 	void playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y);
 	void playFlybyMovie(MystStack stack);
+	void playSkippableMovie(const VideoEntryPtr &video, bool looping);
 	void waitUntilMovieEnds(const VideoEntryPtr &video);
 	Common::String selectLocalizedMovieFilename(const Common::String &movieName);
 
@@ -192,6 +193,7 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	void tryAutoSaving();
 	bool hasFeature(EngineFeature f) const override;
+	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
 	void resumeFromMainMenu();
 
@@ -214,6 +216,7 @@ private:
 	void pauseEngineIntern(bool pause) override;
 
 	void goToMainMenu();
+	bool isGameStarted() const;
 
 	void dropPage();
 

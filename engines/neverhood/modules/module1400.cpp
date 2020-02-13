@@ -89,6 +89,8 @@ void Module1400::createScene(int sceneNum, int which) {
 		_vm->_soundMan->stopMusic(0x06333232, 0, 2);
 		_childObject = new Scene1407(_vm, this);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1400::updateScene);
 	_childObject->handleUpdate();
@@ -132,6 +134,8 @@ void Module1400::updateScene() {
 			break;
 		case 6:
 			createScene(1, 2);
+			break;
+		default:
 			break;
 		}
 	}
@@ -275,6 +279,8 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (_asProjector)
 			sendMessage(_asProjector, NM_MOVE_TO_BACK, 0);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -415,6 +421,8 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList2(0x004B0B68);
 		}
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -479,6 +487,8 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 		playSound(0, 0x68E25540);
 		showMouse(false);
 		_puzzleSolvedCountdown = 72;
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -582,6 +592,8 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -681,6 +693,8 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList(0x004B8D18);
 		}
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -748,6 +762,8 @@ uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entit
 					_countdown = 10;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 	return 0;

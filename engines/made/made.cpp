@@ -40,23 +40,7 @@
 
 namespace Made {
 
-struct GameSettings {
-	const char *gameid;
-	const char *description;
-	byte id;
-	uint32 features;
-	const char *detectname;
-};
-
-static const GameSettings madeSettings[] = {
-	{"made", "Made game", 0, 0, 0},
-
-	{NULL, NULL, 0, 0, NULL}
-};
-
 MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-
-	const GameSettings *g;
 
 	_eventNum = 0;
 	_eventMouseX = _eventMouseY = 0;
@@ -66,15 +50,6 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_soundEnergyArray = 0;
 	_musicBeatStart = 0;
 	_cdTimeStart = 0;
-
-	_gameId = -1;
-
-	const char *gameid = ConfMan.get("gameid").c_str();
-	for (g = madeSettings; g->gameid; ++g)
-		if (!scumm_stricmp(g->gameid, gameid))
-			_gameId = g->id;
-
-	assert(_gameId != -1);
 
 	_rnd = new Common::RandomSource("made");
 
@@ -113,6 +88,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		break;
 	case GID_RTZ:
 		// Return to Zork sets it itself via a script funtion
+		break;
+	default:
 		break;
 	}
 }

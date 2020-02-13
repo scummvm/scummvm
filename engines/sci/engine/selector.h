@@ -135,6 +135,7 @@ struct SelectorCache {
 	Selector setStep;
 	Selector setMotion;
 	Selector cycleSpeed;
+	Selector owner;
 
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()
@@ -194,6 +195,7 @@ struct SelectorCache {
 	Selector dispose; // for RAMA save/load save from launcher
 	Selector masterVolume; // for RAMA volume sync
 	Selector setCel; // for RAMA volume sync
+	Selector value; // for QFG4 import dialog
 #endif
 };
 

@@ -72,7 +72,7 @@ int LoLEngine::processPrologue() {
 		// Original version: (260|193) "V CD1.02 D"
 		const int width = _screen->getTextWidth(versionString.c_str());
 		_screen->fprintString("%s", 320 - width, 193, 0x67, 0x00, 0x04, versionString.c_str());
-		_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
+		_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
 		_screen->updateScreen();
@@ -300,7 +300,7 @@ int LoLEngine::chooseCharacter() {
 
 	_chargenWSA->displayFrame(0, 2, 113, 0, 0, 0, 0);
 
-	_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
+	_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 	_screen->_curPage = 2;
 
 	if (_flags.platform == Common::kPlatformPC98 && _flags.use16ColorMode) {
@@ -317,7 +317,7 @@ int LoLEngine::chooseCharacter() {
 		for (int i = 0; i < 4; ++i) {
 			_screen->printText(_charNamesJapanese[i], _charPosXPC98[i], 168, 0xC1, 0x00);
 
-			Screen::FontId old = _screen->setFont(Screen::FID_SJIS_FNT);
+			Screen::FontId old = _screen->setFont(Screen::FID_SJIS_TEXTMODE_FNT);
 			for (int j = 0; j < 3; ++j) {
 				Common::String attribString = Common::String::format("%2d", _charPreviews[i].attrib[j]);
 				_screen->printText(attribString.c_str(), _charPosXPC98[i] + 16, 176 + j * 8, 0x81, 0x00);

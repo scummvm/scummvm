@@ -81,6 +81,8 @@ void Scene100::Action1::signal() {
 	case 4:
 		error("??exit");
 		break;
+	default:
+		break;
 	}
 }
 
@@ -157,6 +159,8 @@ void Scene100::Action2::signal() {
 	}
 	case 3:
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -281,6 +285,8 @@ void Scene109::Action1::signal() {
 		// End scene
 		scene->_sceneMode = 1;
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -3187,6 +3193,8 @@ void Scene190::Action1::signal() {
 	case 5:
 		BF_GLOBALS._sound1.fadeOut2(NULL);
 		BF_GLOBALS._sceneManager.changeScene(315);
+		break;
+	default:
 		break;
 	}
 }

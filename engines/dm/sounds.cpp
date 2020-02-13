@@ -180,6 +180,8 @@ bool SoundMan::soundGetVolume(int16 mapX, int16 mapY, uint8 *leftVolume, uint8 *
 		rightVolumeColumnIndex = -(mapY - _vm->_dungeonMan->_partyMapY);
 		lineIndex = mapX - _vm->_dungeonMan->_partyMapX;
 		break;
+	default:
+		break;
 	}
 
 	if ((rightVolumeColumnIndex < -12) || (rightVolumeColumnIndex > 12)) /* Sound is not audible if source is more than 12 squares away from the party */

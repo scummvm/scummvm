@@ -42,7 +42,7 @@ public:
 	bool removeItem(AdItem *Item);
 	bool insertItem(const char *name, const char *insertAfter = nullptr);
 	AdInventory(BaseGame *inGame);
-	virtual ~AdInventory();
+	~AdInventory() override;
 	BaseArray<AdItem *> _takenItems;
 	int32 _scrollOffset;
 };

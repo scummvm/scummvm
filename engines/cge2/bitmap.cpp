@@ -308,6 +308,9 @@ bool Bitmap::solidAt(V2D pos) {
 		case kBmpREP:
 			w = 1;
 			break;
+		case kBmpCPY:
+		default:
+			break;
 		}
 		m += w;
 	}
@@ -325,6 +328,7 @@ bool Bitmap::solidAt(V2D pos) {
 
 		n += w;
 		switch (t) {
+		default:
 		case kBmpEOI:
 			return false;
 		case kBmpSKP:

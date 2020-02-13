@@ -48,7 +48,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			{
 				{ "AUTO00.PRC", 0, "4fe1e7930b38e3c63f0f2474d471bf8f", -1},
 				{ "PART01", 0, "61d003202d301c29dd399acfb1354310", -1},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_USA,
 			Common::kPlatformDOS,
@@ -207,7 +207,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			{
 				{ "demo",		0,	"0f50767cd964e302d3af0ba2528df8c4", -1},
 				{ "demo.prc",	0,	"d2ac3a743d288359c63644ea7071edae", -1},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -339,7 +339,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			{
 				{ "procs1",		0,	"74c2dabd9d212525fca8875a5f6d8994", -1},
 				{ "sds1",		0,	"75443ba39cdc95667e07d7118e5c151c", -1},
-				{ NULL, 0, NULL, 0}
+				AD_LISTEND
 			},
 			Common::ES_ESP,
 			Common::kPlatformDOS,

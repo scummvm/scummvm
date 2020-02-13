@@ -90,6 +90,8 @@ class Pictures {
 private:
 	int _refCount;
 	Common::Array<PictureEntry> _store;
+	Common::Array<uint> _adaptivePics;
+	Common::Array<byte> _savedPalette;
 private:
 	/**
 	 * Stores an original picture in the store
@@ -104,7 +106,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Pictures() : _refCount(0) {}
+	Pictures();
 
 	/**
 	 * Destructor

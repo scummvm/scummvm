@@ -32,7 +32,7 @@ class ToonEngine;
 class ToonConsole : public GUI::Debugger {
 public:
 	ToonConsole(ToonEngine *vm);
-	virtual ~ToonConsole(void);
+	~ToonConsole(void) override;
 
 private:
 	ToonEngine *_vm;

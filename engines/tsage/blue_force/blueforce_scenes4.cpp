@@ -1343,6 +1343,8 @@ void Scene440::signal() {
 	case 4403:
 		BF_GLOBALS._sceneManager.changeScene(60);
 		break;
+	default:
+		break;
 	}
 }
 

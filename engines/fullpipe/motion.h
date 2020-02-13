@@ -44,8 +44,8 @@ public:
 
 public:
 	MotionController() : _isEnabled(true), _field_4(0) {}
-	virtual ~MotionController() {}
-	virtual bool load(MfcArchive &file);
+	~MotionController() override {}
+	bool load(MfcArchive &file) override;
 	virtual void methodC() {}
 	virtual void method10() {}
 	virtual void deactivate() { _isEnabled = false; }
@@ -89,7 +89,7 @@ public:
 
 public:
 	MctlItem() : _field_20(0), _field_24(0), _field_28(0) {}
-	~MctlItem();
+	~MctlItem() override;
 };
 
 class MctlCompound : public MotionController {
@@ -98,15 +98,15 @@ public:
 	Common::Array<MctlItem *> _motionControllers;
 
 	MctlCompound() { _objtype = kObjTypeMctlCompound; }
-	virtual ~MctlCompound();
+	~MctlCompound() override;
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
-	virtual void attachObject(StaticANIObject *obj);
-	virtual int detachObject(StaticANIObject *obj);
-	virtual void detachAllObjects();
-	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	void attachObject(StaticANIObject *obj) override;
+	int detachObject(StaticANIObject *obj) override;
+	void detachAllObjects() override;
+	MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
+	MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
 
 	void initMctlGraph();
 	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, double *minDistancePtr);
@@ -146,14 +146,14 @@ public:
 
 public:
 	MctlLadder();
-	virtual ~MctlLadder();
+	~MctlLadder() override;
 	int collisionDetection(StaticANIObject *man);
 
-	virtual void attachObject(StaticANIObject *obj);
-	virtual int detachObject(StaticANIObject *obj) { return 1; }
-	virtual void detachAllObjects();
-	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	void attachObject(StaticANIObject *obj) override;
+	int detachObject(StaticANIObject *obj) override { return 1; }
+	void detachAllObjects() override;
+	MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
+	MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
 
 	MessageQueue *controllerWalkTo(StaticANIObject *ani, int off);
 
@@ -172,7 +172,7 @@ public:
 
 public:
 	MovGraphNode() : _x(0), _y(0), _z(0), _field_10(0), _field_14(0) { _objtype = kObjTypeMovGraphNode; }
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 };
 
 class ReactParallel : public MovGraphReact {
@@ -186,10 +186,10 @@ class ReactParallel : public MovGraphReact {
 
 public:
 	ReactParallel();
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
-	virtual void setCenter(int x1, int y1, int x2, int y2);
-	virtual void createRegion();
+	void setCenter(int x1, int y1, int x2, int y2) override;
+	void createRegion() override;
 };
 
 class ReactPolygonal : public MovGraphReact {
@@ -200,10 +200,10 @@ class ReactPolygonal : public MovGraphReact {
 public:
 	ReactPolygonal();
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
-	virtual void setCenter(int x1, int y1, int x2, int y2);
-	virtual void createRegion();
+	void setCenter(int x1, int y1, int x2, int y2) override;
+	void createRegion() override;
 
 	Common::Rect getBBox();
 };
@@ -224,9 +224,9 @@ class MovGraphLink : public CObject {
 
   public:
 	MovGraphLink();
-	virtual ~MovGraphLink();
+	~MovGraphLink() override;
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
 	void recalcLength();
 };
@@ -284,22 +284,22 @@ private:
 
 public:
 	MovGraph();
-	virtual ~MovGraph();
+	~MovGraph() override;
 
 	static int messageHandler(ExCommand *cmd);
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
-	virtual void attachObject(StaticANIObject *obj);
-	virtual int detachObject(StaticANIObject *obj);
-	virtual void detachAllObjects();
-	virtual Common::Array<MovItem *> *getPaths(StaticANIObject *ani, int x, int y, int flag1, int *rescount);
-	virtual bool setPosImmediate(StaticANIObject *obj, int x, int y);
-	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual void setSelFunc(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter));
-	virtual bool resetPosition(StaticANIObject *ani, int flag);
-	virtual bool canDropInventory(StaticANIObject *ani, int x, int y);
-	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	void attachObject(StaticANIObject *obj) override;
+	int detachObject(StaticANIObject *obj) override;
+	void detachAllObjects() override;
+	Common::Array<MovItem *> *getPaths(StaticANIObject *ani, int x, int y, int flag1, int *rescount) override;
+	bool setPosImmediate(StaticANIObject *obj, int x, int y) override;
+	MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
+	void setSelFunc(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) override;
+	bool resetPosition(StaticANIObject *ani, int flag) override;
+	bool canDropInventory(StaticANIObject *ani, int x, int y) override;
+	MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
 	virtual MessageQueue *method50(StaticANIObject *ani, MovArr *movarr, int staticsId);
 
 	double putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
@@ -372,11 +372,11 @@ public:
 	Common::Array<MctlAni> _items2;
 
 public:
-	virtual void attachObject(StaticANIObject *obj);
-	virtual int detachObject(StaticANIObject *obj);
-	virtual void detachAllObjects();
-	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	void attachObject(StaticANIObject *obj) override;
+	int detachObject(StaticANIObject *obj) override;
+	void detachAllObjects() override;
+	MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
+	MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
 
 	int getObjIndex(int objectId);
 	int getDirByStatics(int index, int staticsId);

@@ -31,14 +31,10 @@
 #include "backends/events/openpandora/op-events.h"
 #include "backends/graphics/openpandora/op-graphics.h"
 #include "backends/platform/openpandora/op-sdl.h"
-#include "backends/platform/openpandora/op-options.h"
 
 #include "common/translation.h"
 #include "common/util.h"
 #include "common/events.h"
-
-/* Quick default button states for modifiers. */
-int BUTTON_STATE_L                  =   false;
 
 enum {
 	/* Touchscreen TapMode */
@@ -49,22 +45,37 @@ enum {
 };
 
 OPEventSource::OPEventSource()
-	: _buttonStateL(false) {
+	: _buttonStateL(false),
+	  _tapmodeLevel(TAPMODE_LEFT) {
+}
+
+void OPEventSource::ToggleTapMode() {
+	if (_tapmodeLevel == TAPMODE_LEFT) {
+		_tapmodeLevel = TAPMODE_RIGHT;
+	} else if (_tapmodeLevel == TAPMODE_RIGHT) {
+		_tapmodeLevel = TAPMODE_HOVER;
+	} else if (_tapmodeLevel == TAPMODE_HOVER) {
+		_tapmodeLevel = TAPMODE_HOVER_DPAD;
+	} else if (_tapmodeLevel == TAPMODE_HOVER_DPAD) {
+		_tapmodeLevel = TAPMODE_LEFT;
+	} else {
+		_tapmodeLevel = TAPMODE_LEFT;
+	}
 }
 
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
 
 bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT) {
-		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
+		if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONDOWN;
-		else if (OP::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
 			event.type = Common::EVENT_LBUTTONDOWN;
-		else if (OP::tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
 			event.type = Common::EVENT_RBUTTONDOWN;
-		else if (OP::tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
-		else if (OP::tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
@@ -93,15 +104,15 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 
 bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT) {
-		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
+		if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONUP;
-		else if (OP::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
 			event.type = Common::EVENT_LBUTTONUP;
-		else if (OP::tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
 			event.type = Common::EVENT_RBUTTONUP;
-		else if (OP::tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
-		else if (OP::tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
+		else if (_tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONUP; /* For normal mice etc. */
@@ -128,7 +139,7 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 
 bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 
-	if (OP::tapmodeLevel == TAPMODE_HOVER_DPAD) {
+	if (_tapmodeLevel == TAPMODE_HOVER_DPAD) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_LEFT:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
@@ -169,19 +180,19 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			return true;
 			break;
 		case SDLK_PAGEUP:
-			OP::ToggleTapMode();
-			if (OP::tapmodeLevel == TAPMODE_LEFT) {
+			ToggleTapMode();
+			if (_tapmodeLevel == TAPMODE_LEFT) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Left Click"));
-			} else if (OP::tapmodeLevel == TAPMODE_RIGHT) {
+			} else if (_tapmodeLevel == TAPMODE_RIGHT) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Right Click"));
-			} else if (OP::tapmodeLevel == TAPMODE_HOVER) {
+			} else if (_tapmodeLevel == TAPMODE_HOVER) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (No Click)"));
-			} else if (OP::tapmodeLevel == TAPMODE_HOVER_DPAD) {
+			} else if (_tapmodeLevel == TAPMODE_HOVER_DPAD) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (DPad Clicks)"));
 			}
 			break;
 		case SDLK_RSHIFT:
-			BUTTON_STATE_L = true;
+			_buttonStateL = true;
 			break;
 		case SDLK_RCTRL:
 			break;
@@ -209,7 +220,7 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		case SDLK_PAGEUP:
 			break;
 		case SDLK_RSHIFT:
-			BUTTON_STATE_L = false;
+			_buttonStateL = false;
 			break;
 		case SDLK_RCTRL:
 			break;

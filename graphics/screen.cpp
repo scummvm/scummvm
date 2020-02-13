@@ -53,10 +53,14 @@ void Screen::update() {
 	}
 
 	// Signal the physical screen to update
-	g_system->updateScreen();
+	updateScreen();
 	_dirtyRects.clear();
 }
 
+void Screen::updateScreen() {
+	// Update the screen
+	g_system->updateScreen();
+}
 
 void Screen::addDirtyRect(const Common::Rect &r) {
 	Common::Rect bounds = r;

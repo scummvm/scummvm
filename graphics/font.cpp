@@ -142,15 +142,21 @@ struct WordWrapper {
 		line.clear();
 		w = 0;
 	}
+
+	void clear() {
+		lines.clear();
+		actualMaxLineWidth = 0;
+	}
 };
 
 template<class StringType>
-int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth) {
+int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth, bool evenWidthLinesModeEnabled, bool wrapOnExplicitNewLines) {
 	WordWrapper<StringType> wrapper(lines);
 	StringType line;
 	StringType tmpStr;
 	int lineWidth = initWidth;
 	int tmpWidth = 0;
+	int fullTextWidthEWL = initWidth; // this replaces new line characters (if any) with single spaces - it is used in Even Width Lines mode
 
 	// The rough idea behind this algorithm is as follows:
 	// We accumulate characters into the string tmpStr. Whenever a full word
@@ -166,80 +172,143 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 	// lines.
 
 	typename StringType::unsigned_type last = 0;
-	for (typename StringType::const_iterator x = str.begin(); x != str.end(); ++x) {
-		typename StringType::unsigned_type c = *x;
 
-		// Convert Windows and Mac line breaks into plain \n
-		if (c == '\r') {
-			if (x != str.end() && *(x + 1) == '\n') {
-				++x;
+	// When EvenWidthLines mode is enabled then we require an early loop over the entire string
+	// in order to get the full width of the text
+	//
+	// "Wrap On Explicit New Lines" and "Even Width Lines" modes are mutually exclusive,
+	// If both are set to true and there are new line characters in the text,
+	// then "Even Width Lines" mode is disabled.
+	//
+	if (evenWidthLinesModeEnabled) {
+		// Early loop to get the full width of the text
+		for (typename StringType::const_iterator x = str.begin(); x != str.end(); ++x) {
+			typename StringType::unsigned_type c = *x;
+
+			// Check for Windows and Mac line breaks
+			if (c == '\r') {
+				if (x != str.end() && *(x + 1) == '\n') {
+					++x;
+				}
+				c = '\n';
 			}
-			c = '\n';
+
+			if (c == '\n') {
+				if (!wrapOnExplicitNewLines) {
+					c = ' ';
+				} else {
+					evenWidthLinesModeEnabled = false;
+					break;
+				}
+			}
+
+			const int w = font.getCharWidth(c) + font.getKerningOffset(last, c);
+			last = c;
+			fullTextWidthEWL += w;
 		}
+	}
 
-		const int currentCharWidth = font.getCharWidth(c);
-		const int w = currentCharWidth + font.getKerningOffset(last, c);
-		last = c;
-		const bool wouldExceedWidth = (lineWidth + tmpWidth + w > maxWidth);
-
-		// If this char is a whitespace, then it represents a potential
-		// 'wrap point' where wrapping could take place. Everything that
-		// came before it can now safely be added to the line, as we know
-		// that it will not have to be wrapped.
-		if (Common::isSpace(c)) {
-			line += tmpStr;
-			lineWidth += tmpWidth;
-
-			tmpStr.clear();
-			tmpWidth = 0;
-
-			// If we encounter a line break (\n), or if the new space would
-			// cause the line to overflow: start a new line
-			if (c == '\n' || wouldExceedWidth) {
-				wrapper.add(line, lineWidth);
+	int targetTotalLinesNumberEWL = 0;
+	int targetMaxLineWidth = 0;
+	do {
+		if (evenWidthLinesModeEnabled) {
+			wrapper.clear();
+			targetTotalLinesNumberEWL += 1;
+			// We add +2 to the fullTextWidthEWL to account for possible shadow pixels
+			// We add +10 * font.getCharWidth(' ') to the quotient since we want to allow some extra margin (about an extra wprd's length)
+			// since that yields better looking results
+			targetMaxLineWidth = ((fullTextWidthEWL + 2) / targetTotalLinesNumberEWL) + 10 * font.getCharWidth(' ');
+			if (targetMaxLineWidth > maxWidth) {
+				// repeat the loop with increased targetTotalLinesNumberEWL
 				continue;
 			}
+		} else {
+			targetMaxLineWidth = maxWidth;
 		}
 
-		// If the max line width would be exceeded by adding this char,
-		// insert a line break.
-		if (wouldExceedWidth) {
-			// Commit what we have so far, *if* we have anything.
-			// If line is empty, then we are looking at a word
-			// which exceeds the maximum line width.
-			if (lineWidth > 0) {
-				wrapper.add(line, lineWidth);
-				// Trim left side
-				while (tmpStr.size() && Common::isSpace(tmpStr[0])) {
-					tmpStr.deleteChar(0);
-					// This is not very fast, but it is the simplest way to
-					// assure we do not mess something up because of kerning.
-					tmpWidth = font.getStringWidth(tmpStr);
+		last = 0;
+		tmpWidth = 0;
+
+		for (typename StringType::const_iterator x = str.begin(); x != str.end(); ++x) {
+			typename StringType::unsigned_type c = *x;
+
+			// Convert Windows and Mac line breaks into plain \n
+			if (c == '\r') {
+				if (x != str.end() && *(x + 1) == '\n') {
+					++x;
 				}
+				c = '\n';
+			}
+			// if wrapping on explicit new lines is disabled, then new line characters should be treated as a single white space char
+			if (!wrapOnExplicitNewLines && c == '\n')  {
+				c = ' ';
+			}
 
-				if (tmpStr.empty()) {
-					// If tmpStr is empty, we might have removed the space before 'c'.
-					// That means we have to recompute the kerning.
+			const int currentCharWidth = font.getCharWidth(c);
+			const int w = currentCharWidth + font.getKerningOffset(last, c);
+			last = c;
+			const bool wouldExceedWidth = (lineWidth + tmpWidth + w > targetMaxLineWidth);
 
-					tmpWidth += currentCharWidth + font.getKerningOffset(0, c);
-					tmpStr += c;
+			// If this char is a whitespace, then it represents a potential
+			// 'wrap point' where wrapping could take place. Everything that
+			// came before it can now safely be added to the line, as we know
+			// that it will not have to be wrapped.
+			if (Common::isSpace(c)) {
+				line += tmpStr;
+				lineWidth += tmpWidth;
+
+				tmpStr.clear();
+				tmpWidth = 0;
+
+				// If we encounter a line break (\n), or if the new space would
+				// cause the line to overflow: start a new line
+				if ((wrapOnExplicitNewLines && c == '\n') || wouldExceedWidth) {
+					wrapper.add(line, lineWidth);
 					continue;
 				}
-			} else {
-				wrapper.add(tmpStr, tmpWidth);
 			}
+
+			// If the max line width would be exceeded by adding this char,
+			// insert a line break.
+			if (wouldExceedWidth) {
+				// Commit what we have so far, *if* we have anything.
+				// If line is empty, then we are looking at a word
+				// which exceeds the maximum line width.
+				if (lineWidth > 0) {
+					wrapper.add(line, lineWidth);
+					// Trim left side
+					while (tmpStr.size() && Common::isSpace(tmpStr[0])) {
+						tmpStr.deleteChar(0);
+						// This is not very fast, but it is the simplest way to
+						// assure we do not mess something up because of kerning.
+						tmpWidth = font.getStringWidth(tmpStr);
+					}
+
+					if (tmpStr.empty()) {
+						// If tmpStr is empty, we might have removed the space before 'c'.
+						// That means we have to recompute the kerning.
+
+						tmpWidth += currentCharWidth + font.getKerningOffset(0, c);
+						tmpStr += c;
+						continue;
+					}
+				} else {
+					wrapper.add(tmpStr, tmpWidth);
+				}
+			}
+
+			tmpWidth += w;
+			tmpStr += c;
 		}
 
-		tmpWidth += w;
-		tmpStr += c;
-	}
-
-	// If some text is left over, add it as the final line
-	line += tmpStr;
-	lineWidth += tmpWidth;
-	if (lineWidth > 0) {
-		wrapper.add(line, lineWidth);
-	}
+		// If some text is left over, add it as the final line
+		line += tmpStr;
+		lineWidth += tmpWidth;
+		if (lineWidth > 0) {
+			wrapper.add(line, lineWidth);
+		}
+	} while (evenWidthLinesModeEnabled
+	         && (targetMaxLineWidth > maxWidth));
 	return wrapper.actualMaxLineWidth;
 }
 
@@ -318,12 +387,12 @@ void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, 
 	}
 }
 
-int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth);
+int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth, bool evenWidthLinesModeEnabled, bool wrapOnExplicitNewLines) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, evenWidthLinesModeEnabled, wrapOnExplicitNewLines);
 }
 
-int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth);
+int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth, bool evenWidthLinesModeEnabled, bool wrapOnExplicitNewLines) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, evenWidthLinesModeEnabled, wrapOnExplicitNewLines);
 }
 
 Common::String Font::handleEllipsis(const Common::String &input, int w) const {

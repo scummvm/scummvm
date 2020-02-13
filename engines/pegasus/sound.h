@@ -92,12 +92,12 @@ protected:
 class SoundTimeBase : public Sound, public TimeBase {
 public:
 	SoundTimeBase();
-	~SoundTimeBase() {}
+	~SoundTimeBase() override {}
 
 	void playSoundSegment(uint32 start, uint32 end);
 
 protected:
-	void updateTime();
+	void updateTime() override;
 
 private:
 	bool _setToStart;

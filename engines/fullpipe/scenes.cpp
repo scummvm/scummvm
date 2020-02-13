@@ -1455,7 +1455,13 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 		case SC_19:
 			updateMapPiece(PIC_MAP_P12, 1);
 			break;
+
+		default:
+			break;
 		}
+		break;
+
+	default:
 		break;
 	}
 }

@@ -21,17 +21,17 @@
  */
 
 #include "titanic/star_control/star_markers.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
 
-void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+void CStarMarkers::draw(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup) {
 	if (_data.empty())
 		return;
 
 	FPose pose = camera->getPose();
-	double threshold = camera->getThreshold();
+	double threshold = camera->getFrontClip();
 	FPoint center((double)surfaceArea->_width * 0.5,
 		surfaceArea->_height * 0.5);
 	FVector newV;

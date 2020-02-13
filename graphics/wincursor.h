@@ -29,8 +29,6 @@
 #include "graphics/cursor.h"
 
 namespace Common {
-class NEResources;
-class PEResources;
 class SeekableReadStream;
 }
 
@@ -56,10 +54,8 @@ struct WinCursorGroup {
 
 	Common::Array<CursorItem> cursors;
 
-	/** Create a cursor group from an NE EXE, returns 0 on failure */
-	static WinCursorGroup *createCursorGroup(Common::NEResources &exe, const Common::WinResourceID &id);
-	/** Create a cursor group from an PE EXE, returns 0 on failure */
-	static WinCursorGroup *createCursorGroup(Common::PEResources &exe, const Common::WinResourceID &id);
+	/** Create a cursor group from an EXE, returns 0 on failure */
+	static WinCursorGroup *createCursorGroup(Common::WinResources *exe, const Common::WinResourceID &id);
 };
 
 /**

@@ -20,7 +20,7 @@
  *
  */
 
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
+#if defined(WIN32) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

@@ -327,7 +327,6 @@ int sceneHandler34(ExCommand *cmd) {
 		getGameLoaderInteractionController()->enableFlag24();
 
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
-
 		break;
 
 	case MSG_SC34_RETRYVENT:
@@ -338,7 +337,6 @@ int sceneHandler34(ExCommand *cmd) {
 		g_fp->_aniMan->_flags &= 0xFEFF;
 
 		getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_param);
-
 		break;
 
 	case MSG_SC34_ONBUMP:
@@ -445,8 +443,8 @@ int sceneHandler34(ExCommand *cmd) {
 					}
 				}
 			}
-			break;
 		}
+		break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -471,7 +469,9 @@ int sceneHandler34(ExCommand *cmd) {
 		g_fp->_behaviorManager->updateBehaviors();
 
 		g_fp->startSceneTrack();
+		break;
 
+	default:
 		break;
 	}
 

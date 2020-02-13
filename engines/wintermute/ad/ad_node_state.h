@@ -42,7 +42,7 @@ public:
 	void setCursor(const char *filename);
 	DECLARE_PERSISTENT(AdNodeState, BaseClass)
 	AdNodeState(BaseGame *inGame);
-	virtual ~AdNodeState();
+	~AdNodeState() override;
 	const char *getName() const { return _name; }
 private:
 	char *_name;

@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Waiter2 : public Entity {
 public:
 	Waiter2(LastExpressEngine *engine);
-	~Waiter2() {}
+	~Waiter2() override {}
 
 	/**
 	 * Updates parameter 2 using time value

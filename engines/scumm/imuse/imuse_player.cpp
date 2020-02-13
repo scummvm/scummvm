@@ -163,7 +163,7 @@ void Player::clear() {
 }
 
 void Player::hook_clear() {
-	memset(&_hook, 0, sizeof(_hook));
+	_hook.reset();
 }
 
 int Player::start_seq_sound(int sound, bool reset_vars) {
@@ -375,7 +375,8 @@ void Player::sysEx(const byte *p, uint16 len) {
 	if (a != IMUSE_SYSEX_ID) {
 		if (a == ROLAND_SYSEX_ID) {
 			// Roland custom instrument definition.
-			if (_isMIDI || _isMT32) {
+			// There is at least one (pointless) attempt in INDY4 Amiga to send this, too.
+			if ((_isMIDI && !_se->_isAmiga) || _isMT32) {
 				part = getPart(p[0] & 0x0F);
 				if (part) {
 					part->_instrument.roland(p - 1);
@@ -407,12 +408,12 @@ void Player::sysEx(const byte *p, uint16 len) {
 
 	if (!_scanning) {
 		for (a = 0; a < len + 1 && a < 19; ++a) {
-			sprintf((char *)&buf[a * 3], " %02X", p[a]);
-		} // next for
+			snprintf((char *)&buf[a * 3], 3 * sizeof(char), " %02X", p[a]);
+		}
 		if (a < len + 1) {
 			buf[a * 3] = buf[a * 3 + 1] = buf[a * 3 + 2] = '.';
 			++a;
-		} // end if
+		}
 		buf[a * 3] = '\0';
 		debugC(DEBUG_IMUSE, "[%02d] SysEx:%s", _id, buf);
 	}

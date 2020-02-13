@@ -69,18 +69,19 @@ public:
 	 * Attempts to normalizes the vector so the length from origin equals 1.0
 	 * Return value is whether or not it was successful in normalizing
 	 * First argument is scale value that normalizes the vector
-	 * TODO: split this function into 2. One that calculates the normalization
-	 * and another that does the normalization. The 2nd would assert if a
-	 * normalization of one was requested. This is cleaner than the current
-	 * implementation.
 	 */
-	bool normalize(float &);
+	bool normalize(float &hyp);
+
+	void normalize() {
+		float hyp;
+		bool result = normalize(hyp);
+		assert(result);
+	}
 
 	/**
-	 * Adds the current vector and a passed one together, normalizes them,
-	 * and then returns the resulting vector
+	 * Calculates a vector halfway between two given vectors
 	 */
-	FVector addAndNormalize(const FVector &v) const;
+	FVector half(const FVector &v) const;
 
 	/**
 	 * Returns a vector, v, that represents a magnitude, and two angles in radians
@@ -88,7 +89,7 @@ public:
 	 * 2. X rotation angle from +y axis of this vector is put in y component of v
 	 * 3. z component output of v is the 4-quadrant angle that z makes with x (Y axis rotation)
 	 */
-	FVector getAnglesAsVect() const;
+	FVector getPolarCoord() const;
 
 	/**
 	 * Returns the distance between a specified point and this one

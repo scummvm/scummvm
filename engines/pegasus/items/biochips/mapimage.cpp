@@ -416,6 +416,8 @@ void MapImage::drawPlayer() {
 		screen->drawLine(gridX + 1, gridY + 1, gridX + 1, gridY + 2, _lightGreen);
 		screen->drawLine(gridX + 2, gridY, gridX + 2, gridY + 3, _lightGreen);
 		break;
+	default:
+		break;
 	}
 }
 

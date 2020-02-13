@@ -44,17 +44,17 @@ void SceneScriptBB11::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagBB11SadikFight)) {
-		Preload(19);
+		Preload(kModelAnimationMcCoyIdle);
 		Preload(220);
 		Preload(227);
 		Preload(328);
 		Preload(343);
 		Preload(344);
-		Preload(17);
-		Preload(14);
+		Preload(kModelAnimationMcCoyGotHitRight);
+		Preload(kModelAnimationMcCoyRunning);
 		Preload(324);
 		Preload(323);
-		Preload(18);
+		Preload(kModelAnimationMcCoyFallsOnHisBack);
 		Preload(345);
 	}
 }

@@ -503,6 +503,8 @@ void BackgroundInstance::drawTiles(Graphics::Surface *surface, TileMap &tileMap,
 	case kGameIdBBDOU:
 		drawTiles16(surface, tileMap, tilePixels);
 		break;
+	default:
+		break;
 	}
 }
 

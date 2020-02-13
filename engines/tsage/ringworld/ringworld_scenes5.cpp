@@ -126,6 +126,8 @@ void Scene4000::Action1::signal() {
 		g_globals->setFlag(96);
 		g_globals->_sceneManager.changeScene(4025);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -183,6 +185,8 @@ void Scene4000::Action2::signal() {
 	case 7:
 		g_globals->_sceneManager.changeScene(4045);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -201,6 +205,8 @@ void Scene4000::Action3::signal() {
 	case 1:
 		scene->_hotspot8.remove();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -241,6 +247,8 @@ void Scene4000::Action4::signal() {
 		g_globals->setFlag(41);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -267,6 +275,8 @@ void Scene4000::Action5::signal() {
 
 		g_globals->_player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -306,6 +316,8 @@ void Scene4000::Action6::signal() {
 	case 5:
 		g_globals->_sceneManager.changeScene(4100);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -330,6 +342,8 @@ void Scene4000::Action7::signal() {
 		break;
 	case 2:
 		g_globals->_sceneManager.changeScene(4050);
+		break;
+	default:
 		break;
 	}
 }
@@ -372,6 +386,8 @@ void Scene4000::Action8::signal() {
 		g_globals->_game->endGame(4000, 15);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -385,6 +401,8 @@ void Scene4000::Action9::signal() {
 		static_cast<SceneObject *>(_owner)->animate(ANIM_MODE_8, 1, this);
 		_actionIndex = 0;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -397,6 +415,8 @@ void Scene4000::Action10::signal() {
 	case 1:
 		static_cast<SceneObject *>(_owner)->animate(ANIM_MODE_8, 1, this);
 		_actionIndex = 0;
+		break;
+	default:
 		break;
 	}
 }
@@ -444,6 +464,8 @@ void Scene4000::Action11::signal() {
 	case 6:
 		g_globals->_sceneManager.changeScene(4250);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -486,6 +508,8 @@ void Scene4000::Action12::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -506,6 +530,8 @@ void Scene4000::Action13::signal() {
 	case 2:
 		scene->_soundHandler2.release();
 		g_globals->_sceneManager.changeScene(4010);
+		break;
+	default:
 		break;
 	}
 }
@@ -1207,6 +1233,8 @@ void Scene4000::signal() {
 	case 4015:
 		ADD_MOVER_NULL(_miranda, 0, _miranda._position.y - 5);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1371,6 +1399,9 @@ void Scene4025::Action1::signal() {
 		g_globals->_events.setCursor(CURSOR_USE);
 		remove();
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -1415,6 +1446,8 @@ void Scene4025::Action2::signal() {
 		g_globals->_events.setCursor(CURSOR_USE);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1429,6 +1462,8 @@ void Scene4025::Action3::signal() {
 		g_globals->clearFlag(34);
 		g_globals->_stripNum = 4025;
 		g_globals->_sceneManager.changeScene(4000);
+		break;
+	default:
 		break;
 	}
 }
@@ -1476,6 +1511,8 @@ void Scene4025::Hole::doAction(int action) {
 			scene->setAction(&scene->_sequenceManager, scene, 4027, NULL);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1496,6 +1533,8 @@ void Scene4025::Peg::doAction(int action) {
 		g_globals->_player.disableControl();
 		scene->_pegPtr = this;
 		scene->setAction(&scene->_action1);
+		break;
+	default:
 		break;
 	}
 }
@@ -1701,6 +1740,8 @@ void Scene4045::Action1::signal() {
 		g_globals->_sceneManager.changeScene(4000);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1731,6 +1772,8 @@ void Scene4045::Action2::signal() {
 		g_globals->setFlag(39);
 		g_globals->_sceneManager.changeScene(4000);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1753,6 +1796,8 @@ void Scene4045::Action3::signal() {
 	case 3:
 		g_globals->_player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -1977,6 +2022,8 @@ void Scene4045::stripCallback(int v) {
 	case 2:
 		_olloFace.animate(ANIM_MODE_NONE, NULL);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1991,6 +2038,8 @@ void Scene4045::signal() {
 		break;
 	case 4102:
 		g_globals->_player.enableControl();
+		break;
+	default:
 		break;
 	}
 }
@@ -2059,6 +2108,8 @@ void Scene4050::Action1::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2096,6 +2147,8 @@ void Scene4050::Action2::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2124,6 +2177,8 @@ void Scene4050::Action3::signal() {
 	case 3:
 		g_globals->_stripNum = 4050;
 		g_globals->_sceneManager.changeScene(4000);
+		break;
+	default:
 		break;
 	}
 }
@@ -2194,6 +2249,8 @@ void Scene4050::Action4::signal() {
 		break;
 	case 9:
 		g_globals->_sceneManager.changeScene(4000);
+		break;
+	default:
 		break;
 	}
 }
@@ -2379,6 +2436,8 @@ void Scene4100::Action1::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2408,6 +2467,8 @@ void Scene4100::Action2::signal() {
 		break;
 	case 3:
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -2470,6 +2531,8 @@ void Scene4100::Action4::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2497,6 +2560,8 @@ void Scene4100::Action5::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2513,6 +2578,8 @@ void Scene4100::Action6::signal() {
 	case 1:
 		g_globals->_player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -2767,6 +2834,8 @@ void Scene4100::signal() {
 	case 4109:
 		g_globals->_player.enableControl();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2877,6 +2946,8 @@ void Scene4150::Action1::signal() {
 
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2904,6 +2975,8 @@ void Scene4150::Action2::signal() {
 		break;
 	case 3:
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -2934,6 +3007,8 @@ void Scene4150::Action3::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2949,6 +3024,8 @@ void Scene4150::HotspotGroup1::doAction(int action) {
 	case OBJECT_ROPE:
 		scene->setAction(&scene->_action3);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2961,6 +3038,8 @@ void Scene4150::HotspotGroup3::doAction(int action) {
 	case CURSOR_USE:
 		SceneItem::display2(4150, 30);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2972,6 +3051,8 @@ void Scene4150::HotspotGroup6::doAction(int action) {
 		break;
 	case CURSOR_USE:
 		SceneItem::display2(4150, 31);
+		break;
+	default:
 		break;
 	}
 }
@@ -3163,6 +3244,8 @@ void Scene4250::Action1::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3219,6 +3302,8 @@ void Scene4250::Action2::signal() {
 		g_globals->clearFlag(43);
 		g_globals->_sceneManager.changeScene(2100);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3235,6 +3320,8 @@ void Scene4250::Action3::signal() {
 	case 2:
 		g_globals->_player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -3257,6 +3344,8 @@ void Scene4250::Action4::signal() {
 	case 3:
 		g_globals->_player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -3287,6 +3376,8 @@ void Scene4250::Action5::signal() {
 		scene->_hotspot4.setStrip(7);
 		g_globals->_player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -3805,6 +3896,8 @@ void Scene4300::Action1::signal() {
 
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3821,6 +3914,8 @@ void Scene4300::Action2::signal() {
 	case 2:
 		g_globals->_player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -3992,6 +4087,8 @@ void Scene4300::Hotspot17::doAction(int action) {
 		scene->_sceneMode = 4303;
 
 		scene->setAction(&scene->_sequenceManager, scene, 4303, this, NULL);
+		break;
+	default:
 		break;
 	}
 }
@@ -4166,6 +4263,8 @@ void Scene4300::stripCallback(int v) {
 	case 2:
 		_hotspot12.hide();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -4200,6 +4299,8 @@ void Scene4300::signal() {
 
 		g_globals->_player.enableControl();
 		g_globals->_scenePalette.addRotation(240, 254, -1);
+		break;
+	default:
 		break;
 	}
 }
@@ -4320,6 +4421,8 @@ void Scene4301::Action1::signal() {
 	case 21:
 		scene->_puzzleDone = true;
 		remove();
+		break;
+	default:
 		break;
 	}
 }

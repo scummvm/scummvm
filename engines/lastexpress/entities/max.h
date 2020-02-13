@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Max : public Entity {
 public:
 	Max(LastExpressEngine *engine);
-	~Max() {}
+	~Max() override {}
 
 	/**
 	 * Resets the entity

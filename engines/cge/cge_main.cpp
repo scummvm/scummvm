@@ -941,6 +941,8 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 		if (mask & kMouseLeftUp)
 			quit();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1065,22 +1067,23 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 
 
 			switch (i) {
-			case  0 : // Name - will be taken in Expand routine
+			default:
+			case 0: // Name - will be taken in Expand routine
 				break;
-			case  1 : // Type
+			case 1: // Type
 				if ((type = takeEnum(Type, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad line %d [%s]", lcnt, fname);
 				break;
-			case  2 : // Phase
+			case 2: // Phase
 				shpcnt++;
 				break;
-			case  3 : // East
+			case 3: // East
 				east = (atoi(strtok(NULL, " \t,;/")) != 0);
 				break;
-			case 11 : // Portable
+			case 11: // Portable
 				port = (atoi(strtok(NULL, " \t,;/")) != 0);
 				break;
-			case 12 : // Transparent
+			case 12: // Transparent
 				tran = (atoi(strtok(NULL, " \t,;/")) != 0);
 				break;
 			}

@@ -184,10 +184,10 @@ public:
 public:
 	RMOptionButton(uint32 dwRes, RMPoint pt, bool bDoubleState = false);
 	RMOptionButton(const RMRect &pt);
-	virtual ~RMOptionButton();
+	~RMOptionButton() override;
 
 	bool doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 	void addToList(RMGfxTargetBuffer &bigBuf);
 	bool isActive();
 	void setActiveState(bool bState);
@@ -209,10 +209,10 @@ private:
 
 public:
 	RMOptionSlide(const RMPoint &pt, int m_nRange = 100, int m_nStartValue = 0, int slideSize = 300);
-	virtual ~RMOptionSlide();
+	~RMOptionSlide() override;
 
 	bool doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 	void addToList(RMGfxTargetBuffer &bigBuf);
 
 	int getValue();
@@ -298,7 +298,7 @@ private:
 
 public:
 	RMOptionScreen();
-	virtual ~RMOptionScreen();
+	~RMOptionScreen() override;
 
 	using RMGfxWoodyBuffer::init;
 	void init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result);
@@ -310,9 +310,9 @@ public:
 	bool isClosing();
 
 	// Overloaded methods
-	virtual int priority();
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	virtual void removeThis(CORO_PARAM, bool &result);
+	int priority() override;
+	void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
+	void removeThis(CORO_PARAM, bool &result) override;
 
 	/**
 	 * Polling for the option screen

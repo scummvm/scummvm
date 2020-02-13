@@ -17,7 +17,7 @@ Description: interpreter that will play graphic adventure games
  Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth,
  Westwood's Legend of Kyrandia, and various others.
  This package does not contain any actual games.
-XSBC-Bugtracker: https://sourceforge.net/tracker/?atid=418820&group_id=37116&func=browse
+XSBC-Bugtracker: https://bugs.scummvm.org/
 XB-Maemo-Display-Name: ScummVM
 XBS-Maemo-Icon-26:
   iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAC/VBMVEUICwcH

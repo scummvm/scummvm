@@ -55,6 +55,8 @@ void FontManager::loadZoneText() {
 	case LANG_SP:
 		_zoneText = _vm->_fileIO->loadFile("ZONEES.TXT");
 		break;
+	default:
+		break;
 	}
 }
 

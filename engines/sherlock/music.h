@@ -37,11 +37,11 @@ class SherlockEngine;
 class MidiParser_SH : public MidiParser {
 public:
 	MidiParser_SH();
-	~MidiParser_SH();
+	~MidiParser_SH() override;
 
 protected:
 	Common::Mutex _mutex;
-	void parseNextEvent(EventInfo &info);
+	void parseNextEvent(EventInfo &info) override;
 
 	uint8 _beats;
 	uint8 _lastEvent;
@@ -49,8 +49,8 @@ protected:
 	byte *_trackEnd;
 
 public:
-	bool loadMusic(byte *musData, uint32 musSize);
-	virtual void unloadMusic();
+	bool loadMusic(byte *musData, uint32 musSize) override;
+	void unloadMusic() override;
 
 private:
 	byte  *_musData;

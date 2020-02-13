@@ -33,10 +33,10 @@ namespace Pegasus {
 class ShieldChip : public BiochipItem {
 public:
 	ShieldChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
-	virtual ~ShieldChip() {}
+	~ShieldChip() override {}
 
-	void select();
-	void deselect();
+	void select() override;
+	void deselect() override;
 };
 
 extern ShieldChip *g_shield;

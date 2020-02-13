@@ -47,9 +47,9 @@ public:
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy() const;
+	TTword *copy() const override;
 
-	virtual bool proc12(int val) const { return _field30 == val; }
+	bool proc12(int val) const override { return _field30 == val; }
 };
 
 } // End of namespace Titanic

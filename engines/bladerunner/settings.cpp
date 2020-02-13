@@ -39,8 +39,8 @@ namespace BladeRunner {
 Settings::Settings(BladeRunnerEngine *vm) {
 	_vm = vm;
 
-	_difficulty = 1;
-	_playerAgenda = 1;
+	_difficulty = kGameDifficultyMedium;
+	_playerAgenda = kPlayerAgendaNormal;
 
 	_chapter = 1;
 	_scene = -1;
@@ -65,10 +65,14 @@ Settings::Settings(BladeRunnerEngine *vm) {
 	_fullHDFrames = true;
 	_mst3k = false;
 
+#if BLADERUNNER_ORIGINAL_BUGS
+	// Probably a bug. Assigning these here again, overrides the initialization above.
+	//       Also note: the reset() method assigns "_ammoAmounts[0] = 1" like above!
 	_ammoType = 0;
 	_ammoAmounts[0] = 0;
 	_ammoAmounts[1] = 0;
 	_ammoAmounts[2] = 0;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	_learyMode = false;
 }
@@ -174,7 +178,7 @@ void Settings::addAmmo(int ammoType, int ammo) {
 }
 
 void Settings::decreaseAmmo() {
-	if (_difficulty == 0 || _ammoType == 0) {
+	if (_difficulty == kGameDifficultyEasy || _ammoType == 0) {
 		return;
 	}
 

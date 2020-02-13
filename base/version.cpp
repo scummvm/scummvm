@@ -151,10 +151,6 @@ const char *gScummVMFeatures = ""
 	"PNG "
 #endif
 
-#ifdef ENABLE_KEYMAPPER
-	"keymapper "
-#endif
-
 #ifdef ENABLE_VKEYBD
 	"virtual keyboard "
 #endif

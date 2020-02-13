@@ -1,0 +1,4 @@
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
+add_engine cryomni3d "Cryo Omni3D games" yes "versailles" "" "highres"
+add_engine versailles "Versailles 1685" yes
+

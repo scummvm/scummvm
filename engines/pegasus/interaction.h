@@ -41,7 +41,7 @@ public:
 
 	// If the interaction is open (_isInteracting == true), it's too late to do anything
 	// about it here.
-	virtual ~GameInteraction() {}
+	~GameInteraction() override {}
 
 	// startInteraction and stopInteraction are called by the outside world to
 	// start and stop the interaction sequence.

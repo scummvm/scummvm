@@ -421,6 +421,8 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 			}
 		}
 		break;
+	default:
+		break;
 	}
 
 	delete[] buffer;

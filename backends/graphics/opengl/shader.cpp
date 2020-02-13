@@ -57,23 +57,23 @@ const char *const g_defaultFragmentShader =
 	"varying vec2 texCoord;\n"
 	"varying vec4 blendColor;\n"
 	"\n"
-	"uniform sampler2D texture;\n"
+	"uniform sampler2D shaderTexture;\n"
 	"\n"
 	"void main(void) {\n"
-	"\tgl_FragColor = blendColor * texture2D(texture, texCoord);\n"
+	"\tgl_FragColor = blendColor * texture2D(shaderTexture, texCoord);\n"
 	"}\n";
 
 const char *const g_lookUpFragmentShader =
 	"varying vec2 texCoord;\n"
 	"varying vec4 blendColor;\n"
 	"\n"
-	"uniform sampler2D texture;\n"
+	"uniform sampler2D shaderTexture;\n"
 	"uniform sampler2D palette;\n"
 	"\n"
 	"const float adjustFactor = 255.0 / 256.0 + 1.0 / (2.0 * 256.0);"
 	"\n"
 	"void main(void) {\n"
-	"\tvec4 index = texture2D(texture, texCoord);\n"
+	"\tvec4 index = texture2D(shaderTexture, texCoord);\n"
 	"\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * adjustFactor, 0.0));\n"
 	"}\n";
 
@@ -253,18 +253,20 @@ bool Shader::setUniform(const Common::String &name, ShaderUniformValue *value) {
 }
 
 GLshader Shader::compileShader(const char *source, GLenum shaderType) {
+	const GLchar *versionSource = g_context.type == kContextGLES2 ? "#version 100\n" : "#version 120\n";
 	GLshader handle;
 	GL_ASSIGN(handle, glCreateShader(shaderType));
 	if (!handle) {
 		return 0;
 	}
 
-	const char *const sources[2] = {
+	const char *const shaderSources[] = {
+		versionSource,
 		g_precisionDefines,
 		source
 	};
 
-	GL_CALL(glShaderSource(handle, ARRAYSIZE(sources), sources, nullptr));
+	GL_CALL(glShaderSource(handle, ARRAYSIZE(shaderSources), shaderSources, nullptr));
 	GL_CALL(glCompileShader(handle));
 
 	GLint result;
@@ -312,7 +314,7 @@ void ShaderManager::notifyCreate() {
 		_builtIn[kCLUT8LookUp]->setUniform1I("palette", 1);
 
 		for (uint i = 0; i < kMaxUsages; ++i) {
-			_builtIn[i]->setUniform1I("texture", 0);
+			_builtIn[i]->setUniform1I("shaderTexture", 0);
 		}
 	} else {
 		for (int i = 0; i < ARRAYSIZE(_builtIn); ++i) {

@@ -48,7 +48,7 @@ private:
 
 public:
 	Sortie(AI *ai) { _ai = ai; _unitType = 0; _shotPosX = _shotPosY = 0; }
-	virtual ~Sortie();
+	~Sortie() override;
 
 	static void setSourcePos(int x, int y) {
 		_sSourceX = x;
@@ -88,15 +88,15 @@ public:
 
 	Common::Array<DefenseUnit *> getEnemyDefenses() const { return _enemyDefenses; }
 
-	virtual IContainedObject *duplicate();
+	IContainedObject *duplicate() override;
 
-	virtual int numChildrenToGen();
-	virtual IContainedObject *createChildObj(int, int &completionFlag);
+	int numChildrenToGen() override;
+	IContainedObject *createChildObj(int, int &completionFlag) override;
 
 
-	virtual float calcH();
-	virtual int checkSuccess();
-	virtual float calcT();
+	float calcH() override;
+	int checkSuccess() override;
+	float calcT() override;
 };
 
 class Defender {

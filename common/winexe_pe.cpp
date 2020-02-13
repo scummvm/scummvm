@@ -23,7 +23,6 @@
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/file.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/winexe_pe.h"
@@ -42,20 +41,6 @@ void PEResources::clear() {
 	_sections.clear();
 	_resources.clear();
 	delete _exe; _exe = nullptr;
-}
-
-bool PEResources::loadFromEXE(const String &fileName) {
-	if (fileName.empty())
-		return false;
-
-	File *file = new File();
-
-	if (!file->open(fileName)) {
-		delete file;
-		return false;
-	}
-
-	return loadFromEXE(file);
 }
 
 bool PEResources::loadFromEXE(SeekableReadStream *stream) {
@@ -151,7 +136,7 @@ void PEResources::parseResourceLevel(Section &section, uint32 offset, int level)
 		if (level == 0)
 			_curType = id;
 		else if (level == 1)
-			_curName = id;
+			_curID = id;
 		else if (level == 2)
 			_curLang = id;
 
@@ -166,9 +151,9 @@ void PEResources::parseResourceLevel(Section &section, uint32 offset, int level)
 			resource.size = _exe->readUint32LE();
 
 			debug(4, "Found resource '%s' '%s' '%s' at %d of size %d", _curType.toString().c_str(),
-					_curName.toString().c_str(), _curLang.toString().c_str(), resource.offset, resource.size);
+					_curID.toString().c_str(), _curLang.toString().c_str(), resource.offset, resource.size);
 
-			_resources[_curType][_curName][_curLang] = resource;
+			_resources[_curType][_curID][_curLang] = resource;
 		}
 
 		_exe->seek(lastOffset);
@@ -187,32 +172,32 @@ const Array<WinResourceID> PEResources::getTypeList() const {
 	return array;
 }
 
-const Array<WinResourceID> PEResources::getNameList(const WinResourceID &type) const {
+const Array<WinResourceID> PEResources::getIDList(const WinResourceID &type) const {
 	Array<WinResourceID> array;
 
 	if (!_exe || !_resources.contains(type))
 		return array;
 
-	const NameMap &nameMap = _resources[type];
+	const IDMap &idMap = _resources[type];
 
-	for (NameMap::const_iterator it = nameMap.begin(); it != nameMap.end(); it++)
+	for (IDMap::const_iterator it = idMap.begin(); it != idMap.end(); it++)
 		array.push_back(it->_key);
 
 	return array;
 }
 
-const Array<WinResourceID> PEResources::getLangList(const WinResourceID &type, const WinResourceID &name) const {
+const Array<WinResourceID> PEResources::getLangList(const WinResourceID &type, const WinResourceID &id) const {
 	Array<WinResourceID> array;
 
 	if (!_exe || !_resources.contains(type))
 		return array;
 
-	const NameMap &nameMap = _resources[type];
+	const IDMap &idMap = _resources[type];
 
-	if (!nameMap.contains(name))
+	if (!idMap.contains(id))
 		return array;
 
-	const LangMap &langMap = nameMap[name];
+	const LangMap &langMap = idMap[id];
 
 	for (LangMap::const_iterator it = langMap.begin(); it != langMap.end(); it++)
 		array.push_back(it->_key);
@@ -220,27 +205,27 @@ const Array<WinResourceID> PEResources::getLangList(const WinResourceID &type, c
 	return array;
 }
 
-SeekableReadStream *PEResources::getResource(const WinResourceID &type, const WinResourceID &name) {
-	Array<WinResourceID> langList = getLangList(type, name);
+SeekableReadStream *PEResources::getResource(const WinResourceID &type, const WinResourceID &id) {
+	Array<WinResourceID> langList = getLangList(type, id);
 
 	if (langList.empty())
 		return nullptr;
 
-	const Resource &resource = _resources[type][name][langList[0]];
+	const Resource &resource = _resources[type][id][langList[0]];
 	_exe->seek(resource.offset);
 	return _exe->readStream(resource.size);
 }
 
-SeekableReadStream *PEResources::getResource(const WinResourceID &type, const WinResourceID &name, const WinResourceID &lang) {
+SeekableReadStream *PEResources::getResource(const WinResourceID &type, const WinResourceID &id, const WinResourceID &lang) {
 	if (!_exe || !_resources.contains(type))
 		return nullptr;
 
-	const NameMap &nameMap = _resources[type];
+	const IDMap &idMap = _resources[type];
 
-	if (!nameMap.contains(name))
+	if (!idMap.contains(id))
 		return nullptr;
 
-	const LangMap &langMap = nameMap[name];
+	const LangMap &langMap = idMap[id];
 
 	if (!langMap.contains(lang))
 		return nullptr;

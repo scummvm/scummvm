@@ -403,7 +403,8 @@ void GraphicsManager::fixBrightness() {
 		case 6:
 			transitionSnapshotBox();
 			break;
-
+		default:
+			break;
 	}
 }
 

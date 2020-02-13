@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure Engine3
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -173,7 +173,7 @@ void Room::feather1Tick45() {
 
 void Room::feather1Tick85() {
 	if (_awayMission->feather.vineState == 0)
-		showText(TX_SPEAKER_QUETZECOATL, TX_FEA1_057);
+		showText(TX_SPEAKER_QUETZECOATL, 57, true);
 }
 
 void Room::feather1Tick95() {
@@ -188,21 +188,21 @@ void Room::feather1QuetzecoatlDisappeared() {
 }
 
 void Room::feather1GetRightVine() {
-	showText(TX_FEA1N008);
+	showDescription(8, true);
 }
 
 void Room::feather1GetLeftVine() {
 	if (_awayMission->feather.vineState == 0)
-		showText(TX_FEA1N009);
+		showDescription(9, true);
 	else
-		showText(TX_FEA1N008);
+		showDescription(8, true);
 }
 
 void Room::feather1GetRocks() {
 	if (_roomVar.feather.crewEscaped[OBJECT_KIRK])
-		showText(TX_FEA1N021);
+		showDescription(21, true);
 	else if (_awayMission->feather.gotRock)
-		showText(TX_FEA1N019);
+		showDescription(19, true);
 	else {
 		walkCrewmanC(OBJECT_KIRK, 0x90, 0xb6, &Room::feather1ReachedRocks);
 		_awayMission->disableInput = true;
@@ -217,7 +217,7 @@ void Room::feather1PickedUpRocks() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 	giveItem(OBJECT_IROCK);
-	showText(TX_FEA1N022);
+	showDescription(22, true);
 	_awayMission->feather.gotRock = true;
 }
 
@@ -229,7 +229,7 @@ void Room::feather1GetSnake() {
 		walkCrewmanC(OBJECT_KIRK, 0x90, 0xbe, &Room::feather1ReachedSnake);
 		_awayMission->disableInput = true;
 	} else
-		showText(TX_FEA1N021);
+		showDescription(21, true);
 }
 
 void Room::feather1ReachedSnake() {
@@ -267,14 +267,14 @@ void Room::feather1Timer0Expired() { // Snake comes back out of hole
 }
 
 void Room::feather1UseCommunicator() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_023);
+	showText(TX_SPEAKER_SPOCK, 23, true);
 }
 
 void Room::feather1UseRockOnHole() {
 	if (_roomVar.feather.crewEscaped[OBJECT_KIRK])
-		showText(TX_FEA1N021);
+		showDescription(21, true);
 	else if (_awayMission->feather.holeBlocked)
-		showText(TX_FEA1N005);
+		showDescription(5, true);
 	else {
 		_awayMission->feather.missionScore++;
 		walkCrewmanC(OBJECT_KIRK, 0xa3, 0xb6, &Room::feather1ReachedHole);
@@ -300,25 +300,25 @@ void Room::feather1PutRockInHole() {
 }
 
 void Room::feather1UseSnakeOnLeftVine() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_037);
+	showText(TX_SPEAKER_SPOCK, 37, true);
 }
 
 void Room::feather1UseSnakeOnSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_041);
-	showText(TX_SPEAKER_KIRK,  TX_FEA1_001);
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_018);
+	showText(TX_SPEAKER_SPOCK, 41, true);
+	showText(TX_SPEAKER_KIRK,   1, true);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 }
 
 void Room::feather1UseSnakeOnKirk() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_026);
+	showText(TX_SPEAKER_SPOCK, 26, true);
 }
 
 void Room::feather1UseSnakeOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_F25);
+	showText(TX_SPEAKER_MCCOY, 25 + FOLLOWUP_MESSAGE_OFFSET, true);
 }
 
 void Room::feather1UseSnakeOnRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA1_050);
+	showText(TX_SPEAKER_STRAGEY, 50, true);
 }
 
 void Room::feather1UseRockOnSnake() {
@@ -326,69 +326,69 @@ void Room::feather1UseRockOnSnake() {
 		loadActorAnim2(OBJECT_SNAKE, "s5r1si");
 		_awayMission->timers[0] = 80;
 		_roomVar.feather.snakeInHole = true;
-		showText(TX_SPEAKER_SPOCK, TX_FEA1_034); // BUGFIX: speaker is Spock, not Stragey
+		showText(TX_SPEAKER_SPOCK, 34, true); // BUGFIX: speaker is Spock, not Stragey
 	}
 }
 
 void Room::feather1UseSpockOnSnake() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_035);
+	showText(TX_SPEAKER_SPOCK, 35, true);
 }
 
 void Room::feather1UseMccoyOnSnake() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_005);
+	showText(TX_SPEAKER_MCCOY, 5, true);
 }
 
 void Room::feather1UseRedshirtOnSnake() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA1_046);
+	showText(TX_SPEAKER_STRAGEY, 46, true);
 }
 
 void Room::feather1UseSpockOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		showText(TX_SPEAKER_SPOCK, TX_FEA1_025);
+		showText(TX_SPEAKER_SPOCK, 25, true);
 	else
-		showText(TX_SPEAKER_SPOCK, TX_FEA1_027);
+		showText(TX_SPEAKER_SPOCK, 27, true);
 }
 
 void Room::feather1UseMccoyOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		showText(TX_SPEAKER_MCCOY, TX_FEA1_004);
+		showText(TX_SPEAKER_MCCOY, 4, true);
 	else
-		showText(TX_SPEAKER_MCCOY, TX_FEA1_010);
+		showText(TX_SPEAKER_MCCOY, 10, true);
 }
 
 void Room::feather1UseRedshirtOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		showText(TX_SPEAKER_STRAGEY, TX_FEA1_047);
+		showText(TX_SPEAKER_STRAGEY, 47, true);
 	else
-		showText(TX_SPEAKER_STRAGEY, TX_FEA1_051);
+		showText(TX_SPEAKER_STRAGEY, 51, true);
 }
 
 void Room::feather1UseRockOnMoss() {
-	showText(TX_FEA1N006);
+	showDescription(6, true);
 }
 
 void Room::feather1UseRockOnSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_032);
+	showText(TX_SPEAKER_SPOCK, 32, true);
 }
 
 void Room::feather1UseRockOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_009);
+	showText(TX_SPEAKER_MCCOY, 9, true);
 }
 
 void Room::feather1UseRockOnRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA1_045);
+	showText(TX_SPEAKER_STRAGEY, 45, true);
 }
 
 void Room::feather1UseSpockOnMoss() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_033);
+	showText(TX_SPEAKER_SPOCK, 33, true);
 }
 
 void Room::feather1UseMccoyOnMoss() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_015);
+	showText(TX_SPEAKER_MCCOY, 15, true);
 }
 
 void Room::feather1UseRedshirtOnMoss() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_049);
+	showText(TX_SPEAKER_MCCOY, 49, true);
 }
 
 void Room::feather1UseRockOnLeftVine() {
@@ -414,9 +414,9 @@ void Room::feather1ThrewRock1() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_042);
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_017);
-	showText(TX_SPEAKER_STRAGEY, TX_FEA1_054);
+	showText(TX_SPEAKER_SPOCK, 42, true);
+	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_STRAGEY, 54, true);
 }
 
 void Room::feather1ReadyToThrowRock2() {
@@ -431,9 +431,9 @@ void Room::feather1ThrewRock2() {
 	loadActorStandAnim(OBJECT_KIRK);
 	_awayMission->disableInput = false;
 
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_043);
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_021);
-	showText(TX_SPEAKER_STRAGEY, TX_FEA1_053);
+	showText(TX_SPEAKER_SPOCK, 43, true);
+	showText(TX_SPEAKER_MCCOY, 21, true);
+	showText(TX_SPEAKER_STRAGEY, 53, true);
 }
 
 
@@ -450,7 +450,7 @@ void Room::feather1UseMccoyOnVine() {
 		_roomVar.feather.crewmanClimbingVine = OBJECT_MCCOY;
 		feather1CrewmanClimbVine();
 	} else
-		showText(TX_SPEAKER_MCCOY, TX_FEA1_013);
+		showText(TX_SPEAKER_MCCOY, 13, true);
 }
 
 void Room::feather1UseRedshirtOnVine() {
@@ -458,7 +458,7 @@ void Room::feather1UseRedshirtOnVine() {
 		_roomVar.feather.crewmanClimbingVine = OBJECT_REDSHIRT;
 		feather1CrewmanClimbVine();
 	} else
-		showText(TX_SPEAKER_STRAGEY, TX_FEA1_052);
+		showText(TX_SPEAKER_STRAGEY, 52, true);
 }
 
 void Room::feather1UseKirkOnVine() {
@@ -466,7 +466,7 @@ void Room::feather1UseKirkOnVine() {
 		_roomVar.feather.crewmanClimbingVine = OBJECT_KIRK;
 		feather1CrewmanClimbVine();
 	} else
-		showText(TX_FEA1N010);
+		showDescription(10, true);
 }
 
 // This was refactored, due to the similarity of the code for each crewman. Originally, the
@@ -508,6 +508,8 @@ void Room::feather1ClimbedUpVine() {
 	case OBJECT_KIRK:
 		walkCrewman(OBJECT_KIRK, 0xa0, 0x30);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -538,80 +540,82 @@ void Room::feather1ClimbedDownVine() {
 	case OBJECT_KIRK:
 		walkCrewman(OBJECT_KIRK, 0x87, 0xba);
 		break;
+	default:
+		break;
 	}
 }
 
 void Room::feather1UsePhaser() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_028);
+	showText(TX_SPEAKER_SPOCK, 28, true);
 }
 
 void Room::feather1UseSTricorderOnRightVine() {
-	spockScan(DIR_N, TX_FEA1_039);
+	spockScan(DIR_N, 39, false, true);
 }
 
 void Room::feather1UseSTricorderOnSnake() {
-	spockScan(DIR_S, TX_FEA1_029);
+	spockScan(DIR_S, 29, false, true);
 }
 
 void Room::feather1UseSTricorderOnMoss() {
-	spockScan(DIR_E, TX_FEA1_038);
+	spockScan(DIR_E, 38, false, true);
 }
 
 void Room::feather1UseSTricorderOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		spockScan(DIR_E, TX_FEA1_030);
+		spockScan(DIR_E, 30, false, true);
 	else
-		spockScan(DIR_E, TX_FEA1_031);
+		spockScan(DIR_E, 31, false, true);
 }
 
 void Room::feather1UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_FEA1_024);
+	spockScan(DIR_S, 24, false, true);
 }
 
 void Room::feather1UseSTricorderOnRocks() {
-	spockScan(DIR_E, TX_FEA1_003);
+	spockScan(DIR_E, 3, false, true);
 }
 
 void Room::feather1UseMTricorderOnVine() {
 	// ENHANCEMENT: Original didn't play tricorder sound, etc
-	mccoyScan(DIR_E, TX_FEA1_007);
+	mccoyScan(DIR_E, 7, false, true);
 }
 
 void Room::feather1UseMTricorderOnMoss() {
-	mccoyScan(DIR_E, TX_FEA1_014);
+	mccoyScan(DIR_E, 14, false, true);
 }
 
 void Room::feather1UseMTricorderOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		mccoyScan(DIR_E, TX_FEA1_011);
+		mccoyScan(DIR_E, 11, false, true);
 	else
-		mccoyScan(DIR_E, TX_FEA1_012);
+		mccoyScan(DIR_E, 12, false, true);
 }
 
 void Room::feather1UseMTricorderOnSnake() {
-	mccoyScan(DIR_S, TX_FEA1_019);
+	mccoyScan(DIR_S, 19, false, true);
 	if (!_roomVar.feather.scannedSnake) {
-		showText(TX_SPEAKER_SPOCK,   TX_FEA1_044);
-		showText(TX_SPEAKER_STRAGEY, TX_FEA1_055);
-		showText(TX_SPEAKER_KIRK,    TX_FEA1_002);
+		showText(TX_SPEAKER_SPOCK,   44, true);
+		showText(TX_SPEAKER_STRAGEY, 55, true);
+		showText(TX_SPEAKER_KIRK,    2, true);
 		_roomVar.feather.scannedSnake = true;
 	}
 }
 
 void Room::feather1UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_008);
+	showText(TX_SPEAKER_MCCOY, 8, true);
 }
 
 void Room::feather1TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA1_006);
+	showText(TX_SPEAKER_MCCOY, 6, true);
 }
 
 void Room::feather1TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA1_040);
+	showText(TX_SPEAKER_SPOCK, 40, true);
 }
 
 void Room::feather1TalkToRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA1_048);
+	showText(TX_SPEAKER_STRAGEY, 48, true);
 }
 
 void Room::feather1WalkToExit() {
@@ -619,58 +623,58 @@ void Room::feather1WalkToExit() {
 }
 
 void Room::feather1LookAnywhere() {
-	showText(TX_FEA1N020);
+	showDescription(20, true);
 }
 
 void Room::feather1LookAtSnake() {
-	showText(TX_FEA1N017);
+	showDescription(17, true);
 }
 
 void Room::feather1LookAtRightVine() {
-	showText(TX_FEA1N015);
+	showDescription(15, true);
 }
 
 void Room::feather1LookAtHole() {
-	showText(TX_FEA1N014);
+	showDescription(14, true);
 }
 
 void Room::feather1LookAtMoss() {
-	showText(TX_FEA1N016);
+	showDescription(16, true);
 }
 
 void Room::feather1LookAtRocks() {
-	showText(TX_FEA1N011);
+	showDescription(11, true);
 }
 
 void Room::feather1LookAtLight() {
-	showText(TX_FEA1N013);
+	showDescription(13, true);
 }
 
 void Room::feather1LookAtEyes() {
-	showText(TX_FEA1N000);
+	showDescription(0, true);
 }
 
 void Room::feather1LookAtKirk() {
-	showText(TX_FEA1N001);
+	showDescription(1, true);
 }
 
 void Room::feather1LookAtSpock() {
-	showText(TX_FEA1N004);
+	showDescription(4, true);
 }
 
 void Room::feather1LookAtMccoy() {
-	showText(TX_FEA1N003);
+	showDescription(3, true);
 }
 
 void Room::feather1LookAtRedshirt() {
-	showText(TX_FEA1N002);
+	showDescription(2, true);
 }
 
 void Room::feather1LookAtLeftVine() {
 	if (_awayMission->feather.vineState == 0)
-		showText(TX_FEA1N012);
+		showDescription(12, true);
 	else
-		showText(TX_FEA1N015);
+		showDescription(15, true);
 }
 
 }

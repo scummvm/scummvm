@@ -38,36 +38,35 @@ enum {
 	kCopyToClipboard = 'cpcl',
 	kOpenBugtrackerURL = 'ourl',
 	kClose = 'clse',
-	kAddAnyway = 'adda',
-	kScrollContainerReflow = 'SCRf'
+	kAddAnyway = 'adda'
 };
 
 UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame) :
-		Dialog(30, 20, 260, 124),
+		Dialog("UnknownGameDialog"),
 		_detectedGame(detectedGame) {
-	// For now place the buttons with a default place and size. They will be resized and moved when rebuild() is called.
-	_closeButton = new ButtonWidget(this, 0, 0, 0, 0, detectedGame.canBeAdded ? _("Cancel") : _("Close"), 0, kClose);
 
 	if (detectedGame.canBeAdded) {
-		_addAnywayButton = new ButtonWidget(this, 0, 0, 0, 0, _("Add anyway"), 0, kAddAnyway);
+		_addAnywayButton = new ButtonWidget(this, "UnknownGameDialog.Add", _("Add anyway"), nullptr, kAddAnyway);
 	} else {
 		_addAnywayButton = nullptr;
 	}
 
+	_closeButton = new ButtonWidget(this, "UnknownGameDialog.Close", detectedGame.canBeAdded ? _("Cancel") : _("Close"), nullptr, kClose);
+
 	//Check if we have clipboard functionality
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
-		_copyToClipboardButton = new ButtonWidget(this, 0, 0, 0, 0, _("Copy to clipboard"), 0, kCopyToClipboard);
+		_copyToClipboardButton = new ButtonWidget(this, "UnknownGameDialog.Copy", _("Copy to clipboard"), nullptr, kCopyToClipboard);
 	} else
 		_copyToClipboardButton = nullptr;
 
 	//Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		_openBugTrackerUrlButton = new ButtonWidget(this, 0, 0, 0, 0, _("Report game"), 0, kOpenBugtrackerURL);
+		_openBugTrackerUrlButton = new ButtonWidget(this, "UnknownGameDialog.Report", _("Report game"), nullptr, kOpenBugtrackerURL);
 	} else
 		_openBugTrackerUrlButton = nullptr;
 
 	// Use a ScrollContainer for the report in case we have a lot of lines.
-	_textContainer = new ScrollContainerWidget(this, 0, 0, 0, 0, kScrollContainerReflow);
+	_textContainer = new ScrollContainerWidget(this, "UnknownGameDialog.TextContainer", "");
 	_textContainer->setTarget(this);
 
 	rebuild();
@@ -78,27 +77,21 @@ void UnknownGameDialog::handleMouseWheel(int x, int y, int direction) {
 }
 
 void UnknownGameDialog::reflowLayout() {
-	rebuild();
 	Dialog::reflowLayout();
+	rebuild();
 }
 
 void UnknownGameDialog::rebuild() {
-	// TODO: Use a theme layout dialog definition
-
 	// First remove the old text widgets
 	for (uint i = 0; i < _textWidgets.size() ; i++) {
 		_textContainer->removeWidget(_textWidgets[i]);
+
+		// Also remove the widget from the dialog for the case it was
+		// the active widget.
+		removeWidget(_textWidgets[i]);
 		delete _textWidgets[i];
 	}
 	_textWidgets.clear();
-
-	// Work out dialog size and position of the various elements in the dialog.
-	// Limit the width of the dialog to 600 - 2 * 10 pixels.
-	const int screenW = MIN((int)g_system->getOverlayWidth(), 600);
-	const int screenH = g_system->getOverlayHeight();
-
-	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
-	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
 
 	Common::String reportTranslated = generateUnknownGameReport(_detectedGame, true, true);
 
@@ -113,64 +106,14 @@ void UnknownGameDialog::rebuild() {
 		reportTranslated += _("You can also directly report your game to the Bug Tracker.");
 	}
 
-	// We use a ScrollContainer to display the text, with a 2 * 8 pixels margin to the dialog border,
-	// the scrollbar, and 2 * 10 margin for the text in the container.
-	// We also keep 2 * 10 pixels between the screen border and the dialog.
-	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+	// We use a ScrollContainer to display the text, with a 2 * 10 margin for the text in the container.
 	Common::Array<Common::String> lines;
-	int maxlineWidth = g_gui.getFont().wordWrapText(reportTranslated, screenW - 2 * 20 - 16 - scrollbarWidth, lines);
+	g_gui.getFont().wordWrapText(reportTranslated, _textContainer->getWidth() - 20, lines);
 
-	int lineCount = lines.size() + 1;
-
-	_h = MIN(screenH - 20, lineCount * kLineHeight + kLineHeight + buttonHeight + 24);
-
-	int closeButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_closeButton->getLabel()) + 10);
-	int copyToClipboardButtonWidth = 0, openBugtrackerURLButtonWidth = 0, addAnywayButtonWidth = 0;
-	int totalButtonWidth = closeButtonWidth;
-
-	if (_copyToClipboardButton) {
-		copyToClipboardButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_copyToClipboardButton->getLabel()) + 10);
-		totalButtonWidth += copyToClipboardButtonWidth + 10;
-	}
-	if (_openBugTrackerUrlButton) {
-		openBugtrackerURLButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_openBugTrackerUrlButton->getLabel()) + 10);
-		totalButtonWidth += openBugtrackerURLButtonWidth + 10;
-	}
-	if (_addAnywayButton) {
-		addAnywayButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_addAnywayButton->getLabel()) + 10);
-		totalButtonWidth += addAnywayButtonWidth + 10;
-	}
-
-	_w = MAX(MAX(maxlineWidth, 0) + 16 + scrollbarWidth, totalButtonWidth) + 20;
-
-	// Center the dialog on the screen
-	_x = (g_system->getOverlayWidth() - _w) / 2;
-	_y = (g_system->getOverlayHeight() - _h) / 2;
-
-	// Now move the buttons and text container to their proper place
-	int buttonPos = _w - 10;
-	if (_addAnywayButton) {
-		buttonPos -= addAnywayButtonWidth + 5;
-		_addAnywayButton->resize(buttonPos, _h - buttonHeight - 8, addAnywayButtonWidth, buttonHeight);
-	}
-	buttonPos -= closeButtonWidth + 5;
-	_closeButton->resize(buttonPos, _h - buttonHeight - 8, closeButtonWidth, buttonHeight);
-	if (_copyToClipboardButton) {
-		buttonPos -= copyToClipboardButtonWidth + 5;
-		_copyToClipboardButton->resize(buttonPos, _h - buttonHeight - 8, copyToClipboardButtonWidth, buttonHeight);
-	}
-	if (_openBugTrackerUrlButton) {
-		buttonPos -= openBugtrackerURLButtonWidth + 5;
-		_openBugTrackerUrlButton->resize(buttonPos, _h - buttonHeight - 8, openBugtrackerURLButtonWidth, buttonHeight);
-	}
-
-	int containerHeight = _h - kLineHeight - buttonHeight - 16;
-	_textContainer->resize(8, 8, _w - 16, containerHeight);
-
-	// And create text widgets
+	// Create text widgets
 	uint y = 8;
 	for (uint i = 0; i < lines.size() ; i++) {
-		StaticTextWidget *widget = new StaticTextWidget(_textContainer, 10, y, _w - 36 - scrollbarWidth, kLineHeight, lines[i], Graphics::kTextAlignLeft);
+		StaticTextWidget *widget = new StaticTextWidget(_textContainer, 10, y, _textContainer->getWidth() - 20, kLineHeight, lines[i], Graphics::kTextAlignLeft);
 		_textWidgets.push_back(widget);
 		y += kLineHeight;
 	}
@@ -193,13 +136,13 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 	Common::String report = generateUnknownGameReport(_detectedGame, false, false);
 	report = encodeUrlString(report);
 
-	Common::String engineName = encodeUrlString(_detectedGame.engineName);
+	Common::String engineId = encodeUrlString(_detectedGame.engineId);
 
 	return Common::String::format(
 		"https://www.scummvm.org/unknowngame?"
 		"engine=%s"
 		"&description=%s",
-		engineName.c_str(),
+		engineId.c_str(),
 		report.c_str());
 }
 
@@ -228,9 +171,7 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	case kOpenBugtrackerURL:
 		g_system->openUrl(generateBugtrackerURL());
 		break;
-	case kScrollContainerReflow:
-		for (uint i = 0; i < _textWidgets.size() ; i++)
-			_textWidgets[i]->setVisible(true);
+	default:
 		break;
 	}
 }

@@ -33,6 +33,10 @@
 
 #include "graphics/surface.h"
 
+namespace Common {
+class Keymap;
+}
+
 namespace Mohawk {
 
 struct MohawkGameDescription;
@@ -104,6 +108,7 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	bool hasFeature(EngineFeature f) const override;
+	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
 	void doFrame();
 	void processInput();
@@ -135,6 +140,7 @@ private:
 	void initVars();
 
 	void pauseEngineIntern(bool) override;
+	uint32 sanitizeTransitionMode(uint32 mode);
 public:
 	// Stack/card/script funtions
 	RivenStack *constructStackById(uint16 id);
@@ -165,7 +171,7 @@ public:
 	void runSaveDialog();
 	void tryAutoSaving();
 	void loadGameStateAndDisplayError(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc, bool autosave);
+	Common::Error saveGameState(int slot, const Common::String &desc, bool autosave) override;
 	void saveGameStateAndDisplayError(int slot, const Common::String &desc);
 
 	/**

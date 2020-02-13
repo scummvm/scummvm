@@ -22,7 +22,7 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(__SYMBIAN32__)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <direct.h>
@@ -31,6 +31,7 @@
 #include "engines/engine.h"
 #include "engines/dialogs.h"
 #include "engines/util.h"
+#include "engines/metaengine.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -40,12 +41,14 @@
 #include "common/error.h"
 #include "common/list.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/singleton.h"
 
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "base/version.h"
 
@@ -53,6 +56,7 @@
 #include "gui/debugger.h"
 #include "gui/dialog.h"
 #include "gui/message.h"
+#include "gui/saveload.h"
 
 #include "audio/mixer.h"
 
@@ -61,8 +65,8 @@
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
 
-#ifdef _WIN32_WCE
-extern bool isSmartphone();
+#ifdef USE_TTS
+#include "common/text-to-speech.h"
 #endif
 
 // FIXME: HACK for error()
@@ -83,10 +87,6 @@ static void defaultErrorHandler(const char *msg) {
 	// now invoke the debugger, if available / supported.
 	if (g_engine) {
 		GUI::Debugger *debugger = g_engine->getDebugger();
-#ifdef _WIN32_WCE
-		if (isSmartphone())
-			debugger = 0;
-#endif
 
 #if defined(USE_TASKBAR)
 		g_system->getTaskbarManager()->notifyError();
@@ -265,8 +265,11 @@ void splashScreen() {
 	// Delay 0.6 secs
 	uint time0 = g_system->getMillis();
 	Common::Event event;
+
+	// We must poll an event in order to have the window shown at least on Mac
+	g_system->getEventManager()->pollEvent(event);
+
 	while (time0 + 600 > g_system->getMillis()) {
-		(void)g_system->getEventManager()->pollEvent(event);
 		g_system->delayMillis(10);
 	}
 	g_system->hideOverlay();
@@ -305,7 +308,7 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 	// Error out on size switch failure
 	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
 		Common::String message;
-		message = Common::String::format("Could not switch to resolution: '%dx%d'.", width, height);
+		message = Common::String::format(_("Could not switch to resolution '%dx%d'."), width, height);
 
 		GUIErrorMessage(message);
 		error("%s", message.c_str());
@@ -322,18 +325,16 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 #endif
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
-		Common::String message = _("Could not switch to video mode: '");
-		message += ConfMan.get("gfx_mode");
-		message += "'.";
+		Common::String message;
+		message = Common::String::format(_("Could not switch to video mode '%s'."), ConfMan.get("gfx_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
 	}
 
 	if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
-		Common::String message = _("Could not switch to stretch mode: '");
-		message += ConfMan.get("stretch_mode");
-		message += "'.";
+		Common::String message;
+		message = Common::String::format(_("Could not switch to stretch mode '%s'."), ConfMan.get("stretch_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -411,7 +412,7 @@ void GUIErrorMessageFormat(const char *fmt, ...) {
 }
 
 void Engine::checkCD() {
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(__SYMBIAN32__)
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD. Check
 	// if this appears to be the case and issue a warning.
@@ -515,6 +516,11 @@ void Engine::pauseEngineIntern(bool pause) {
 void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	ttsMan->pushState();
+	g_gui.initTextToSpeech();
+#endif
 
 	setGameToLoadSlot(-1);
 
@@ -522,7 +528,7 @@ void Engine::openMainMenuDialog() {
 
 	// Load savegame after main menu execution
 	// (not from inside the menu loop to avoid
-	// mouse cursor glitches and simliar bugs,
+	// mouse cursor glitches and similar bugs,
 	// e.g. #2822778).
 	if (_saveSlotToLoad >= 0) {
 		Common::Error status = loadGameState(_saveSlotToLoad);
@@ -536,6 +542,9 @@ void Engine::openMainMenuDialog() {
 	}
 
 	syncSoundSettings();
+#ifdef USE_TTS
+	ttsMan->popState();
+#endif
 }
 
 bool Engine::warnUserAboutUnsupportedGame() {
@@ -609,12 +618,6 @@ void Engine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
-void Engine::deinitKeymap() {
-#ifdef ENABLE_KEYMAPPER
-	_eventMan->getKeymapper()->cleanupGameKeymaps();
-#endif
-}
-
 void Engine::flipMute() {
 	// Mute will be set to true by default here. This has two reasons:
 	// - if the game already has an "mute" config entry, it will be overwritten anyway.
@@ -631,8 +634,25 @@ void Engine::flipMute() {
 }
 
 Common::Error Engine::loadGameState(int slot) {
-	// Do nothing by default
-	return Common::kNoError;
+	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(getSaveStateName(slot));
+
+	if (!saveFile)
+		return Common::kReadingFailed;
+
+	Common::Error result = loadGameStream(saveFile);
+	if (result.getCode() == Common::kNoError) {
+		ExtendedSavegameHeader header;
+		if (MetaEngine::readSavegameHeader(saveFile, &header))
+			setTotalPlayTime(header.playtime);
+	}
+
+	delete saveFile;
+	return result;
+}
+
+Common::Error Engine::loadGameStream(Common::SeekableReadStream *stream) {
+	// Default to returning an error when not implemented
+	return Common::kReadingFailed;
 }
 
 bool Engine::canLoadGameStateCurrently() {
@@ -641,13 +661,89 @@ bool Engine::canLoadGameStateCurrently() {
 }
 
 Common::Error Engine::saveGameState(int slot, const Common::String &desc) {
-	// Do nothing by default
-	return Common::kNoError;
+	return saveGameState(slot, desc, false);
+}
+
+Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(getSaveStateName(slot));
+
+	if (!saveFile)
+		return Common::kWritingFailed;
+
+	Common::Error result = saveGameStream(saveFile, isAutosave);
+	if (result.getCode() == Common::kNoError) {
+		MetaEngine::appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc);
+
+		saveFile->finalize();
+	}
+
+	delete saveFile;
+	return result;
+}
+
+Common::Error Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	// Default to returning an error when not implemented
+	return Common::kWritingFailed;
 }
 
 bool Engine::canSaveGameStateCurrently() {
 	// Do not allow saving by default
 	return false;
+}
+
+bool Engine::loadGameDialog() {
+	if (!canLoadGameStateCurrently()) {
+		g_system->displayMessageOnOSD(_("Loading game is currently unavailable"));
+		return false;
+	}
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	pauseEngine(true);
+	int slotNum = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+	delete dialog;
+
+	if (slotNum < 0)
+		return false;
+
+	Common::Error loadError = loadGameState(slotNum);
+	if (loadError.getCode() != Common::kNoError) {
+		GUI::MessageDialog errorDialog(loadError.getDesc());
+		errorDialog.runModal();
+		return false;
+	}
+
+	return true;
+}
+
+bool Engine::saveGameDialog() {
+	if (!canSaveGameStateCurrently()) {
+		g_system->displayMessageOnOSD(_("Saving game is currently unavailable"));
+		return false;
+	}
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	pauseEngine(true);
+	int slotNum = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	Common::String desc = dialog->getResultString();
+	if (desc.empty())
+		desc = dialog->createDefaultSaveDescription(slotNum);
+
+	delete dialog;
+
+	if (slotNum < 0)
+		return false;
+
+	Common::Error saveError = saveGameState(slotNum, desc);
+	if (saveError.getCode() != Common::kNoError) {
+		GUI::MessageDialog errorDialog(saveError.getDesc());
+		errorDialog.runModal();
+		return false;
+	}
+
+	return true;
 }
 
 void Engine::quitGame() {
@@ -664,12 +760,7 @@ bool Engine::shouldQuit() {
 
 /*
 EnginePlugin *Engine::getMetaEnginePlugin() const {
-
-	const EnginePlugin *plugin = 0;
-	Common::String gameid = ConfMan.get("gameid");
-	gameid.toLowercase();
-	EngineMan.findGame(gameid, &plugin);
-	return plugin;
+	return EngineMan.findPlugin(ConfMan.get("engineid"));
 }
 
 */

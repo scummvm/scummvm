@@ -20,6 +20,7 @@
  */
 
 #include "startrek/common.h"
+#include "startrek/console.h"
 #include "startrek/graphics.h"
 
 #include "common/algorithm.h"
@@ -60,30 +61,25 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	memset(_lutData, 0, 256 * 3);
 
 	_paletteFadeLevel = 0;
-	_mouseLocked = false;
-	_mouseToBeShown = false;
-	_mouseToBeHidden = false;
-	_mouseWarpX = -1;
-	_mouseWarpY = -1;
-
-	setMouseBitmap(loadBitmap("pushbtn"));
-	CursorMan.showMouse(true);
+	_lockedMousePos = Common::Point(-1, -1);
+	_backgroundImage = nullptr;
 }
 
 Graphics::~Graphics() {
 	delete[] _egaData;
 	delete[] _palData;
 	delete[] _lutData;
+	delete _backgroundImage;
 
 	delete _font;
 }
 
-
-void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
-	_backgroundImage = SharedPtr<Bitmap>(new Bitmap(*bitmap));
+void Graphics::setBackgroundImage(Common::String imageName) {
+	delete _backgroundImage;
+	_backgroundImage = new Bitmap(_vm->loadBitmapFile(imageName));
 }
 
-void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, SharedPtr<Bitmap> bitmap) {
+void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, Bitmap *bitmap) {
 	byte *dest = _backgroundImage->pixels + drawRect.top * SCREEN_WIDTH + drawRect.left;
 	byte *src = bitmap->pixels + (drawRect.left - origRect.left)
 	            + (drawRect.top - origRect.top) * bitmap->width;
@@ -131,6 +127,7 @@ void Graphics::clearScreenAndPriBuffer() {
 	surface->fillRect(_screenRect, 0);
 	_vm->_system->unlockScreen();
 	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
 }
 
 void Graphics::loadPalette(const Common::String &paletteName) {
@@ -138,13 +135,14 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	Common::String palFile = paletteName + ".PAL";
 	Common::String lutFile = paletteName + ".LUT";
 
-	SharedPtr<FileStream> palStream = _vm->loadFile(palFile.c_str());
+	Common::MemoryReadStreamEndian *palStream = _vm->loadFile(palFile.c_str());
 	palStream->read(_palData, 256 * 3);
+	delete palStream;
 
 	// Load LUT file
-	SharedPtr<FileStream> lutStream = _vm->loadFile(lutFile.c_str());
-
+	Common::MemoryReadStreamEndian *lutStream = _vm->loadFile(lutFile.c_str());
 	lutStream->read(_lutData, 256);
+	delete lutStream;
 }
 
 void Graphics::copyRectBetweenBitmaps(Bitmap *destBitmap, int destX, int destY, Bitmap *srcBitmap, int srcX, int srcY, int width, int height) {
@@ -200,6 +198,7 @@ void Graphics::setPaletteFadeLevel(byte *palData, int fadeLevel) {
 	// FIXME: this isn't supposed to flush changes to graphics, only palettes.
 	// Might not matter...
 	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
 }
 
 void Graphics::incPaletteFadeLevel() {
@@ -218,8 +217,9 @@ void Graphics::decPaletteFadeLevel() {
 
 
 void Graphics::loadPri(const Common::String &priFile) {
-	SharedPtr<FileStream> priStream = _vm->loadFile(priFile + ".pri");
+	Common::MemoryReadStream *priStream = _vm->loadFile(priFile + ".pri");
 	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
+	delete priStream;
 }
 
 void Graphics::clearPri() {
@@ -241,68 +241,43 @@ byte Graphics::getPriValue(int x, int y) {
 		return b >> 4;
 }
 
-SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
-	return SharedPtr<Bitmap>(new Bitmap(_vm->loadFile(basename + ".BMP")));
-}
-
 Common::Point Graphics::getMousePos() {
-	if (_mouseWarpX != -1)
-		return Common::Point(_mouseWarpX, _mouseWarpY);
-
 	return _vm->_system->getEventManager()->getMousePos();
 }
 
-void Graphics::setMouseBitmap(SharedPtr<Bitmap> bitmap) {
-	_mouseBitmap = bitmap;
+void Graphics::setMouseBitmap(Common::String bitmapName) {
+	Bitmap *bitmap = new Bitmap(_vm->loadBitmapFile(bitmapName));
 
-	if (_mouseLocked)
-		_lockedMouseSprite.setBitmap(_mouseBitmap);
+	CursorMan.pushCursor(
+		bitmap->pixels,
+		bitmap->width,
+		bitmap->height,
+		bitmap->xoffset,
+		bitmap->yoffset,
+		0
+	);
+
+	delete bitmap;
+}
+
+void Graphics::popMouseBitmap() {
+	CursorMan.popCursor();
+}
+
+void Graphics::toggleMouse(bool visible) {
+	CursorMan.showMouse(visible);
 }
 
 void Graphics::lockMousePosition(int16 x, int16 y) {
-	if (_mouseLocked) {
-		if (x != _lockedMouseSprite.pos.x || y != _lockedMouseSprite.pos.y) {
-			_lockedMouseSprite.pos.x = x;
-			_lockedMouseSprite.pos.y = y;
-			_lockedMouseSprite.bitmapChanged = true;
-		}
-		return;
-	}
-
-	_mouseLocked = true;
-	_mouseToBeHidden = true;
-	_mouseToBeShown = false;
-
-	_lockedMouseSprite = Sprite();
-	_lockedMouseSprite.setBitmap(_mouseBitmap);
-	_lockedMouseSprite.drawPriority = 15;
-	_lockedMouseSprite.drawPriority2 = 16;
-	_lockedMouseSprite.pos.x = x;
-	_lockedMouseSprite.pos.y = y;
-
-	addSprite(&_lockedMouseSprite);
+	_lockedMousePos = Common::Point(x, y);
 }
 
 void Graphics::unlockMousePosition() {
-	if (!_mouseLocked)
-		return;
-
-	_mouseLocked = false;
-	_mouseToBeShown = true;
-	_mouseToBeHidden = false;
-
-	_lockedMouseSprite.dontDrawNextFrame();
-	drawAllSprites(false);
-	delSprite(&_lockedMouseSprite);
-}
-
-SharedPtr<Bitmap> Graphics::getMouseBitmap() {
-	return _mouseBitmap;
+	_lockedMousePos = Common::Point(-1, -1);
 }
 
 void Graphics::warpMouse(int16 x, int16 y) {
-	_mouseWarpX = x;
-	_mouseWarpY = y;
+	_vm->_system->warpMouse(x, y);
 }
 
 void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface) {
@@ -497,7 +472,8 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 					if (rect.isEmpty())
 						spr->rect2Valid = 0;
 					else {
-						spr->rectangle2 = getRectEncompassing(spr->drawRect, spr->lastDrawRect);
+						spr->rectangle2 = spr->drawRect;
+						spr->rectangle2.extend(spr->lastDrawRect);
 						spr->rect2Valid = 1;
 					}
 				} else {
@@ -560,7 +536,7 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 
 					if (rect1.width() != 0 && rect1.height() != 0) {
 						if (mustRedrawSprite)
-							rect2 = getRectEncompassing(rect1, rect2);
+							rect2.extend(rect1);
 						else
 							rect2 = rect1;
 						mustRedrawSprite = true;
@@ -615,34 +591,18 @@ void Graphics::forceDrawAllSprites(bool updateScreenFlag) {
 }
 
 void Graphics::updateScreen() {
-	// Check if there are any pending updates to the mouse.
-	if (_mouseBitmap != _mouseBitmapLastFrame) {
-		_mouseBitmapLastFrame = _mouseBitmap;
-		_vm->_system->setMouseCursor(_mouseBitmap->pixels, _mouseBitmap->width, _mouseBitmap->height, _mouseBitmap->xoffset, _mouseBitmap->yoffset, 0);
-	}
-	if (_mouseToBeShown) {
-		CursorMan.showMouse(true);
-		_mouseToBeShown = false;
-	} else if (_mouseToBeHidden) {
-		CursorMan.showMouse(false);
-		_mouseToBeHidden = false;
-	}
+	if (_lockedMousePos.x != -1)
+		_vm->_system->warpMouse(_lockedMousePos.x, _lockedMousePos.y);
 
-	if (_mouseWarpX != -1) {
-		_vm->_system->warpMouse(_mouseWarpX, _mouseWarpY);
-		_mouseWarpX = -1;
-		_mouseWarpY = -1;
-	}
-
+	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
 }
 
 Sprite *Graphics::getSpriteAt(int16 x, int16 y) {
 	for (int i = _numSprites - 1; i >= 0; i--) {
 		Sprite *sprite = _sprites[i];
 
-		if (sprite == &_lockedMouseSprite)
-			continue;
 		if (sprite->drawMode == 1) // Invisible
 			continue;
 
@@ -715,15 +675,16 @@ byte *Graphics::getFontGfx(char c) {
 	return _font->getCharData(c & 0xff);
 }
 
-
 void Graphics::copyBackgroundScreen() {
-	drawDirectToScreen(_backgroundImage);
+	_vm->_system->copyRectToScreen(
+		_backgroundImage->pixels,
+		_backgroundImage->width,
+		_backgroundImage->xoffset,
+		_backgroundImage->yoffset,
+		_backgroundImage->width,
+		_backgroundImage->height
+	);
 }
-
-void Graphics::drawDirectToScreen(SharedPtr<Bitmap> bitmap) {
-	_vm->_system->copyRectToScreen(bitmap->pixels, bitmap->width, bitmap->xoffset, bitmap->yoffset, bitmap->width, bitmap->height);
-}
-
 
 void Graphics::loadEGAData(const char *filename) {
 	// Load EGA palette data
@@ -733,14 +694,15 @@ void Graphics::loadEGAData(const char *filename) {
 	if (!_egaData)
 		_egaData = new byte[256];
 
-	SharedPtr<FileStream> egaStream = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *egaStream = _vm->loadFile(filename);
 	egaStream->read(_egaData, 256);
+	delete egaStream;
 }
 
 void Graphics::drawBackgroundImage(const char *filename) {
 	// Draw an stjr BGD image (palette built-in)
 
-	SharedPtr<FileStream> imageStream = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *imageStream = _vm->loadFile(filename);
 	byte *palette = new byte[256 * 3];
 	imageStream->read(palette, 256 * 3);
 
@@ -755,11 +717,14 @@ void Graphics::drawBackgroundImage(const char *filename) {
 
 	byte *pixels = new byte[width * height];
 	imageStream->read(pixels, width * height);
+	delete imageStream;
 
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 	_vm->_system->copyRectToScreen(pixels, width, xoffset, yoffset, width, height);
-	_vm->_system->updateScreen();
+	//_vm->_system->updateScreen();
+	//_vm->_system->delayMillis(10);
 
+	delete[] pixels;
 	delete[] palette;
 }
 

@@ -108,11 +108,19 @@ const HunkPalette::EntryHeader HunkPalette::getEntryHeader() const {
 const Palette HunkPalette::toPalette() const {
 	Palette outPalette;
 
+	// Set outPalette structures to 0
+	for (int16 i = 0; i < ARRAYSIZE(outPalette.mapping); ++i) {
+		outPalette.mapping[i] = 0;
+	}
+	outPalette.timestamp = 0;
 	for (int16 i = 0; i < ARRAYSIZE(outPalette.colors); ++i) {
 		outPalette.colors[i].used = false;
 		outPalette.colors[i].r = 0;
 		outPalette.colors[i].g = 0;
 		outPalette.colors[i].b = 0;
+	}
+	for (int16 i = 0; i < ARRAYSIZE(outPalette.intensity); ++i) {
+		outPalette.intensity[i] = 0;
 	}
 
 	if (_numPalettes) {
@@ -523,15 +531,11 @@ void GfxPalette32::updateHardware() {
 	memset(bpal + (maxIndex + 1) * 3, 0, (255 - maxIndex - 1) * 3);
 #endif
 
-#ifdef ENABLE_SCI32_MAC
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		bpal[255 * 3    ] = 0;
 		bpal[255 * 3 + 1] = 0;
 		bpal[255 * 3 + 2] = 0;
 	} else {
-#else
-	{
-#endif
 		// The last color must always be white
 		bpal[255 * 3    ] = 255;
 		bpal[255 * 3 + 1] = 255;

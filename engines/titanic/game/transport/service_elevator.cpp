@@ -97,6 +97,8 @@ bool CServiceElevator::ServiceElevatorMsg(CServiceElevatorMsg *msg) {
 		case 3:
 			_v3 = 2;
 			break;
+		default:
+			break;
 		}
 
 		CServiceElevatorFloorRequestMsg requestMsg;

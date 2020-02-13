@@ -45,7 +45,7 @@ namespace Pegasus {
 class Cursor : private Idler {
 public:
 	Cursor();
-	virtual ~Cursor();
+	~Cursor() override;
 
 	void addCursorFrames(uint16 id);
 
@@ -60,7 +60,7 @@ public:
 	void getCursorLocation(Common::Point &) const;
 
 protected:
-	virtual void useIdleTime();
+	void useIdleTime() override;
 
 private:
 	struct CursorInfo {

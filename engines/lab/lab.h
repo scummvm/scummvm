@@ -200,20 +200,20 @@ public:
 	SpecialLocks *_specialLocks;
 	Utils *_utils;
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~LabEngine();
+	~LabEngine() override;
 
-	virtual Common::Error run();
+	Common::Error run() override;
 	void go();
 
 	const ADGameDescription *_gameDescription;
 	Common::Platform getPlatform() const;
 	uint32 getFeatures() const;
 
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	Common::String generateSaveFileName(uint slot);
 
 	void changeVolume(int delta);
@@ -228,10 +228,10 @@ public:
 	void updateEvents();
 	void waitTOF();
 
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	bool isMainDisplay() const { return _mainDisplay; }
 

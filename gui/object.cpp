@@ -31,12 +31,11 @@ namespace GUI {
 
 GuiObject::GuiObject(const Common::String &name)
 	: _x(-1000), _y(-1000), _w(0), _h(0), _name(name), _firstWidget(nullptr) {
-	reflowLayout();
 }
 
 GuiObject::~GuiObject() {
 	delete _firstWidget;
-	_firstWidget = 0;
+	_firstWidget = nullptr;
 }
 
 void GuiObject::reflowLayout() {
@@ -50,7 +49,7 @@ void GuiObject::reflowLayout() {
 void GuiObject::removeWidget(Widget *del) {
 	if (del == _firstWidget) {
 		Widget *del_next = del->next();
-		del->setNext(0);
+		del->setNext(nullptr);
 		_firstWidget = del_next;
 		return;
 	}
@@ -59,7 +58,7 @@ void GuiObject::removeWidget(Widget *del) {
 	while (w) {
 		if (w->next() == del) {
 			Widget *del_next = del->next();
-			del->setNext(0);
+			del->setNext(nullptr);
 			w->setNext(del_next);
 			return;
 		}

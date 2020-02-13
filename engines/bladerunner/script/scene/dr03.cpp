@@ -68,8 +68,13 @@ bool SceneScriptDR03::ClickedOnActor(int actorId) {
 		Actor_Face_Actor(kActorChew, kActorMcCoy, true);
 
 		if (!Game_Flag_Query(kFlagDR03ChewTalk1)) {
-			Actor_Says(kActorMcCoy, 755, 18);
-			Actor_Says(kActorChew, 10, 14);
+			if (_vm->_cutContent && Random_Query(1, 2) == 1) {
+				Actor_Says(kActorMcCoy, 750, 18);
+				Actor_Says(kActorChew, 0, 14);
+			} else {
+				Actor_Says(kActorMcCoy, 755, 18);
+				Actor_Says(kActorChew, 10, 14);
+			}
 			Actor_Says(kActorMcCoy, 760, 18);
 			Actor_Says(kActorChew, 20, 14);
 			Actor_Says(kActorMcCoy, 765, 18);
@@ -185,14 +190,14 @@ void SceneScriptDR03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptDR03::PlayerWalkedIn() {
 	if (!Game_Flag_Query(kFlagDR02toDR03)) {
 		if (Random_Query(1, 2) == 1) {
-			Actor_Says(kActorChew, 660, 14);
-			Actor_Says(kActorChew, 680, 14);
+			Actor_Says(kActorChew, 660, 14); // (yells) Ah!
+			Actor_Says(kActorChew, 680, 14); // What you want? I busy.
 		} else if (Random_Query(1, 2) == 2) {
-			Actor_Says(kActorChew, 670, 14);
-			Actor_Says(kActorChew, 620, 14);
+			Actor_Says(kActorChew, 670, 14); // Hmph. (mumbles in Chinese)
+			Actor_Says(kActorChew, 620, 14); // (yells) What you do, huh?
 		} else {
-			Actor_Says(kActorChew, 690, 14);
-			Actor_Says(kActorChew, 710, 14);
+			Actor_Says(kActorChew, 690, 14); // Not good time now, come back later.
+			Actor_Says(kActorChew, 710, 14); // (Mumbles in Chinese)
 		}
 	}
 }
@@ -285,6 +290,9 @@ void SceneScriptDR03::dialogueWithChew() {
 
 	case 670: // TYRELL
 		Actor_Says(kActorMcCoy, 765, 12);
+		if (_vm->_cutContent) {
+			Actor_Says_With_Pause(kActorMcCoy, 785, 0.80f, 18);
+		}
 		Actor_Says(kActorMcCoy, 790, 13);
 		Actor_Says(kActorChew, 310, 12);
 		Actor_Says(kActorChew, 320, 3);

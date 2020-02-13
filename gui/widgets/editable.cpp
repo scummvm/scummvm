@@ -186,7 +186,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		break;
 
 	case Common::KEYCODE_v:
-		if (g_system->hasFeature(OSystem::kFeatureClipboardSupport) && state.flags & Common::KBD_CTRL) {
+		if (state.flags & Common::KBD_CTRL) {
 			if (g_system->hasTextInClipboard()) {
 				String text = g_system->getTextFromClipboard();
 				for (uint32 i = 0; i < text.size(); ++i) {
@@ -201,7 +201,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		break;
 
 	case Common::KEYCODE_c:
-		if (g_system->hasFeature(OSystem::kFeatureClipboardSupport) && state.flags & Common::KBD_CTRL) {
+		if (state.flags & Common::KBD_CTRL) {
 			if (!getEditString().empty())
 				g_system->setTextInClipboard(getEditString());
 		} else {

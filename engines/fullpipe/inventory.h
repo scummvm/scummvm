@@ -50,7 +50,7 @@ class Inventory : public CObject {
  public:
 	Inventory() { _sceneId = 0; }
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
 	int getInventoryPoolItemIndexById(int itemId);
 	uint getItemsPoolCount() { return _itemsPool.size(); }
@@ -93,7 +93,7 @@ class Inventory2 : public Inventory {
 
  public:
 	Inventory2();
-	virtual ~Inventory2();
+	~Inventory2() override;
 
 	bool loadPartial(MfcArchive &file);
 	bool savePartial(MfcArchive &file);

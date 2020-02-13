@@ -508,6 +508,7 @@ WrLocalsAddr:
 			case 2:
 			case 3:
 				fatal_error("Constant addressing mode in store operand.");
+				break;
 
 			default:
 				fatal_error("Unknown addressing mode in store operand.");

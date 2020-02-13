@@ -76,6 +76,8 @@ void Module1000::createScene(int sceneNum, int which) {
 		_vm->_soundMan->startMusic(_musicFileHash, 0, 0);
 		_childObject = new Scene1005(_vm, this, which);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1000::updateScene);
 	_childObject->handleUpdate();
@@ -114,6 +116,8 @@ void Module1000::updateScene() {
 		case 4:
 			_vm->_soundMan->stopMusic(_musicFileHash, 0, 1);
 			createScene(3, 1);
+			break;
+		default:
 			break;
 		}
 	}
@@ -222,6 +226,8 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case NM_KLAYMEN_LOWER_LEVER:
 		sendMessage(_asHammer, 0x2000, 0);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -454,6 +460,8 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		setSpriteSurfacePriority(_ssCeiling, 1015);
 		setSpriteSurfacePriority(_ssLadderArch, 1015);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -536,6 +544,8 @@ uint32 Scene1004::handleMessage(int messageNum, const MessageParam &param, Entit
 	case NM_POSITION_CHANGE:
 		sendMessage(_asTrashCan, NM_POSITION_CHANGE, 0);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -584,6 +594,8 @@ uint32 Scene1005::handleMessage(int messageNum, const MessageParam &param, Entit
 	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
+		break;
+	default:
 		break;
 	}
 	return 0;

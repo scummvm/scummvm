@@ -179,6 +179,7 @@ int loadBackground(const char *name, int idx) {
 
 		default:
 			assert(0);
+			break;
 		}
 
 		gfxModuleData_setPal256(palScreen[idx]);
@@ -198,6 +199,9 @@ int loadBackground(const char *name, int idx) {
 		case 8:
 			memcpy(backgroundScreens[idx], ptr2, 320 * 200);
 			ptr2 += 320 * 200;
+			break;
+		default:
+			assert(0);
 			break;
 		}
 

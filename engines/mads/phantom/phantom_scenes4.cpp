@@ -3860,6 +3860,8 @@ void Scene410::actions() {
 			_action._inProgress = false;
 			return;
 			break;
+		default:
+			break;
 		}
 	}
 

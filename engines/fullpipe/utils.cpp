@@ -246,22 +246,6 @@ int MfcArchive::readCount() {
 	return count;
 }
 
-double MfcArchive::readDouble() {
-	// FIXME: This is utterly cruel and unportable
-	// Some articles on the matter:
-	// http://randomascii.wordpress.com/2013/02/07/float-precision-revisited-nine-digit-float-portability/
-	// http://randomascii.wordpress.com/2012/01/11/tricks-with-the-floating-point-format/
-
-	union {
-		byte b[8];
-		double d;
-	} tmp;
-
-	read(&tmp.b, 8);
-
-	return tmp.d;
-}
-
 enum {
 	kNullObject,
 	kInteraction,

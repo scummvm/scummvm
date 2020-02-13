@@ -210,7 +210,7 @@ protected:
 	uint32 hmSleeping(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender);
 
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene1002 : public Klaymen {
@@ -244,8 +244,8 @@ protected:
 	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
 
-	void xUpdate();
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	void xUpdate() override;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 class KmScene1004 : public Klaymen {
@@ -254,7 +254,7 @@ public:
 protected:
 	void stReadNote();
 	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 } // End of namespace Neverhood

@@ -84,23 +84,26 @@ const ADGameDescription gameDescriptions[] = {
 class DraciMetaEngine : public AdvancedMetaEngine {
 public:
 	DraciMetaEngine() : AdvancedMetaEngine(Draci::gameDescriptions, sizeof(ADGameDescription), draciGames) {
-		_singleId = "draci";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "draci";
+	}
+
+	const char *getName() const override {
 		return "Draci Historie";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Draci Historie (C) 1995 NoSense";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual int getMaximumSaveSlot() const { return 99; }
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override { return 99; }
+	SaveStateList listSaves(const char *target) const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool DraciMetaEngine::hasFeature(MetaEngineFeature f) const {

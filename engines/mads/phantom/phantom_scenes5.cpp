@@ -406,6 +406,9 @@ void Scene501::actions() {
 					_vm->_gameConv->stop();
 					_scene->_nextSceneId = 506;
 					break;
+
+				default:
+					break;
 				}
 			}
 		} else {
@@ -454,6 +457,9 @@ void Scene501::actions() {
 					_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 5);
 					_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 					_scene->_nextSceneId = 502;
+					break;
+
+				default:
 					break;
 				}
 			} else {
@@ -1297,6 +1303,9 @@ void Scene502::room_502_initialize_panels() {
 		case 4:
 			curPuzzleSprite = 38;
 			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -1343,6 +1352,9 @@ void Scene502::animateFireBursts() {
 				_scene->_sequences.addTimer(_vm->getRandomNumber(300, 600), 69);
 				_fire4ActiveFl = true;
 			}
+			break;
+
+		default:
 			break;
 		}
 	}

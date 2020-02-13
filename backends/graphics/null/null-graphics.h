@@ -25,8 +25,6 @@
 
 #include "backends/graphics/graphics.h"
 
-static const OSystem::GraphicsMode s_noGraphicsModes[] = { {0, 0, 0} };
-
 class NullGraphicsManager : public GraphicsManager {
 public:
 	virtual ~NullGraphicsManager() {}
@@ -35,11 +33,6 @@ public:
 	void setFeatureState(OSystem::Feature f, bool enable) override {}
 	bool getFeatureState(OSystem::Feature f) const override { return false; }
 
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override { return s_noGraphicsModes; }
-	int getDefaultGraphicsMode() const override { return 0; }
-	bool setGraphicsMode(int mode) override { return true; }
-	void resetGraphicsScale() override {}
-	int getGraphicsMode() const override { return 0; }
 	inline Graphics::PixelFormat getScreenFormat() const override {
 		return Graphics::PixelFormat::createFormatCLUT8();
 	}
@@ -63,7 +56,7 @@ public:
 	void unlockScreen() override {}
 	void fillScreen(uint32 col) override {}
 	void updateScreen() override {}
-	void setShakePos(int shakeOffset) override {}
+	void setShakePos(int shakeXOffset, int shakeYOffset) override {}
 	void setFocusRectangle(const Common::Rect& rect) override {}
 	void clearFocusRectangle() override {}
 

@@ -26,11 +26,11 @@
 
 class PC98AudioCoreInternal : public TownsPC98_FmSynth {
 private:
-	PC98AudioCoreInternal(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type, bool externalMutexHandling = false);
+	PC98AudioCoreInternal(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type);
 public:
 	~PC98AudioCoreInternal();
 
-	static PC98AudioCoreInternal *addNewRef(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type, bool externalMutexHandling = false);
+	static PC98AudioCoreInternal *addNewRef(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type);
 	static void releaseRef(PC98AudioCore *owner);
 
 	bool init();
@@ -47,6 +47,7 @@ public:
 	void ssgSetVolume(int volume);
 
 	Common::Mutex &mutex();
+	int mixerThreadLockCounter() const;
 
 private:
 	bool assignPluginDriver(PC98AudioCore *owner, PC98AudioPluginDriver *driver, bool externalMutexHandling = false);
@@ -69,8 +70,8 @@ private:
 	static int _refCount;
 };
 
-PC98AudioCoreInternal::PC98AudioCoreInternal(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type, bool externalMutexHandling) :
-	TownsPC98_FmSynth(mixer, (TownsPC98_FmSynth::EmuType)type, externalMutexHandling),
+PC98AudioCoreInternal::PC98AudioCoreInternal(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type) :
+	TownsPC98_FmSynth(mixer, (TownsPC98_FmSynth::EmuType)type),
 	_drv(driver), _drvOwner(owner),
 	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
 	_port1(type == PC98AudioPluginDriver::kTypeTowns ? 0x4D8 : 0x188), _port2(type == PC98AudioPluginDriver::kTypeTowns ? 0x4DA : 0x18A),
@@ -80,22 +81,22 @@ PC98AudioCoreInternal::PC98AudioCoreInternal(Audio::Mixer *mixer, PC98AudioCore 
 }
 
 PC98AudioCoreInternal::~PC98AudioCoreInternal() {
-	_ready = false;
 	deinit();
-
 	Common::StackLock lock(_mutex);
+	_ready = false;
+
 	/*
 	
 	*/
 }
 
-PC98AudioCoreInternal *PC98AudioCoreInternal::addNewRef(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type, bool externalMutexHandling) {
+PC98AudioCoreInternal *PC98AudioCoreInternal::addNewRef(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type) {
 	_refCount++;
 	if (_refCount == 1 && _refInstance == 0)
-		_refInstance = new PC98AudioCoreInternal(mixer, owner, driver, type, externalMutexHandling);
+		_refInstance = new PC98AudioCoreInternal(mixer, owner, driver, type);
 	else if (_refCount < 2 || _refInstance == 0)
 		error("PC98AudioCoreInternal::addNewRef(): Internal reference management failure");
-	else if (!_refInstance->assignPluginDriver(owner, driver, externalMutexHandling))
+	else if (!_refInstance->assignPluginDriver(owner, driver))
 		error("PC98AudioCoreInternal::addNewRef(): Plugin driver conflict");
 
 	return _refInstance;
@@ -139,6 +140,7 @@ bool PC98AudioCoreInternal::init() {
 }
 
 void PC98AudioCoreInternal::writePort(uint16 port, uint8 value) {
+	Common::StackLock lock(_mutex);
 	if (port == _port1)
 		_address[0] = value;
 	else if (port == _port2 && _address[0] < 0xc0) {
@@ -153,6 +155,7 @@ void PC98AudioCoreInternal::writePort(uint16 port, uint8 value) {
 }
 
 uint8 PC98AudioCoreInternal::readPort(uint16 port) {
+	Common::StackLock lock(_mutex);
 	uint8 val = 0;
 	if (port == _port2 && _address[0] < 0xc0) {
 		val = readReg(0, _address[0]);
@@ -165,20 +168,24 @@ uint8 PC98AudioCoreInternal::readPort(uint16 port) {
 }
 
 void PC98AudioCoreInternal::setMusicVolume(int volume) {
+	Common::StackLock lock(_mutex);
 	_musicVolume = CLIP<uint16>(volume, 0, Audio::Mixer::kMaxMixerVolume);
 	setVolumeIntern(_musicVolume, _sfxVolume);
 }
 
 void PC98AudioCoreInternal::setSoundEffectVolume(int volume) {
+	Common::StackLock lock(_mutex);
 	_sfxVolume = CLIP<uint16>(volume, 0, Audio::Mixer::kMaxMixerVolume);
 	setVolumeIntern(_musicVolume, _sfxVolume);
 }
 
 void PC98AudioCoreInternal::setSoundEffectChanMask(int mask) {
+	Common::StackLock lock(_mutex);
 	setVolumeChannelMasks(~mask, mask);
 }
 
 void PC98AudioCoreInternal::ssgSetVolume(int volume) {
+	Common::StackLock lock(_mutex);
 	setLevelSSG(volume);
 }
 
@@ -186,7 +193,12 @@ Common::Mutex &PC98AudioCoreInternal::mutex() {
 	return _mutex;
 }
 
+int PC98AudioCoreInternal::mixerThreadLockCounter() const {
+	return _mixerThreadLockCounter;
+}
+
 bool PC98AudioCoreInternal::assignPluginDriver(PC98AudioCore *owner, PC98AudioPluginDriver *driver, bool externalMutexHandling) {
+	Common::StackLock lock(_mutex);
 	if (_refCount <= 1)
 		return true;
 
@@ -194,20 +206,17 @@ bool PC98AudioCoreInternal::assignPluginDriver(PC98AudioCore *owner, PC98AudioPl
 		if (driver && driver != _drv)
 			return false;
 	} else {
-		Common::StackLock lock(_mutex);
 		_drv = driver;
 		_drvOwner = owner;
-		_externalMutex = externalMutexHandling;
 	}
 
 	return true;
 }
 
 void PC98AudioCoreInternal::removePluginDriver(PC98AudioCore *owner) {
-	if (_drvOwner == owner) {
-		Common::StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
+	if (_drvOwner == owner)
 		_drv = 0;
-	}
 }
 
 void PC98AudioCoreInternal::timerCallbackA() {
@@ -224,8 +233,8 @@ PC98AudioCoreInternal *PC98AudioCoreInternal::_refInstance = 0;
 
 int PC98AudioCoreInternal::_refCount = 0;
 
-PC98AudioCore::PC98AudioCore(Audio::Mixer *mixer, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type, bool externalMutexHandling) {
-	_internal = PC98AudioCoreInternal::addNewRef(mixer, this, driver, type, externalMutexHandling);
+PC98AudioCore::PC98AudioCore(Audio::Mixer *mixer, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type) {
+	_internal = PC98AudioCoreInternal::addNewRef(mixer, this, driver, type);
 }
 
 PC98AudioCore::~PC98AudioCore() {
@@ -277,12 +286,30 @@ PC98AudioCore::MutexLock PC98AudioCore::stackLockMutex() {
 	return MutexLock(_internal);
 }
 
-PC98AudioCore::MutexLock::MutexLock(PC98AudioCoreInternal *pc98int) : _pc98int(pc98int) {
-	if (_pc98int)
+PC98AudioCore::MutexLock PC98AudioCore::stackUnlockMutex() {
+	return MutexLock(_internal, _internal->mixerThreadLockCounter());
+}
+
+PC98AudioCore::MutexLock::MutexLock(PC98AudioCoreInternal *pc98int, int reverse) : _pc98int(pc98int), _count(reverse) {
+	if (!_pc98int)
+		return;
+
+	if (!reverse) {
 		_pc98int->mutex().lock();
+		return;
+	}
+
+	while (reverse--)
+		_pc98int->mutex().unlock();
 }
 
 PC98AudioCore::MutexLock::~MutexLock() {
-	if (_pc98int)
+	if (!_pc98int)
+		return;
+
+	if (!_count)
 		_pc98int->mutex().unlock();
+
+	while (_count--)
+		_pc98int->mutex().lock();
 }

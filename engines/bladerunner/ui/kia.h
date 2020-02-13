@@ -46,8 +46,8 @@ class KIASectionSettings;
 class KIASectionPogo;
 class KIASectionSave;
 class KIASectionSuspects;
-class KIAShapes;
 class Shape;
+class Shapes;
 class UIImagePicker;
 class VQAPlayer;
 
@@ -78,16 +78,16 @@ class KIA {
 
 	int _transitionId;
 
-	int                _playerVqaTimeLast;
+	uint32             _playerVqaTimeLast;
 	VQAPlayer         *_playerVqaPlayer;
-	int                _playerVqaFrame;
-	int                _playerVisualizerState;
+	uint32             _playerVqaFrame;
+	uint32             _playerVisualizerState;
 	int                _playerPhotographId;
-	Shape             *_playerPhotograph;
+	Shapes            *_playerPhotographs;
 	int                _playerSliceModelId;
 	float              _playerSliceModelAngle;
 	Graphics::Surface  _playerImage;
-	int                _timeLast;
+	uint32             _timeLast;
 
 	ActorDialogueQueueEntry _playerActorDialogueQueue[kPlayerActorDialogueQueueCapacity];
 	int                     _playerActorDialogueQueuePosition;
@@ -121,7 +121,7 @@ public:
 
 	KIALog           *_log;
 	KIAScript        *_script;
-	KIAShapes        *_shapes;
+	Shapes           *_shapes;
 
 	Graphics::Surface _thumbnail;
 
@@ -151,6 +151,8 @@ public:
 	void playPhotograph(int photographId);
 	void playImage(const Graphics::Surface &image);
 
+	const char *scrambleSuspectsName(const char *name);
+
 private:
 	static void mouseDownCallback(int buttonId, void *callbackData);
 	static void mouseUpCallback(int buttonId, void *callbackData);
@@ -171,6 +173,7 @@ private:
 	void playTransitionSound(int transitionId);
 
 	void playPrivateAddon();
+	void playObjectDescription(); // for restored content mode
 };
 
 } // End of namespace BladeRunner

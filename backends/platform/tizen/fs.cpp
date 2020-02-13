@@ -439,3 +439,8 @@ Common::WriteStream *TizenFilesystemNode::createWriteStream() {
 	}
 	return result;
 }
+
+bool TizenFilesystemNode::createDirectory() {
+	warning("TizenFilesystemNode::createDirectory(): Not supported");
+	return _isValid && isDirectory();
+}

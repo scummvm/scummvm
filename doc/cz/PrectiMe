@@ -100,7 +100,7 @@ ScummVM nyní také podporuje mnoho AGI a SCI her od Sierra (např. King's Quest
 
 Mezi systémy, na kterých můžete tyto hrát, jsou běžné stolní počítače (mající Windows, Linux, Mac OS X, ...), herní konzole
 (Dreamcast, Nintendo DS a Wii, PS2, PSP, ...), chytré telefony (Android,
-iPhone, PocketPC, Symbian ...) a další.
+iPhone, Symbian ...) a další.
 
 V současnosti je ScummVM stále velkou částí ve vývoji. Nezapomeňte, že i když se snažíme zajistit, aby mnoho her bylo možno dokončit pouze s pár vážnými chybami, pády programu mohou nastat a my neposkytujeme žádné záruky. Přes to všechno, některé hry byly podporovány po dlouhou dobu
 A měly by fungovat v pořádku se všemi novějšími stabilními verzemi. Jak dobře bude hra ve ScummVM fungovat můžete zjistit prohlédnutím stránky kompatibility.
@@ -938,8 +938,6 @@ Podporované platformy zahrnují (mimo jiné):
 
         UNIX            (Linux, Solaris, IRIX, *BSD, ...)
         Windows
-        Windows CE
-		Windows Mobile (včetně Smartphonů a PocketPCs)
         Mac OS X
         AmigaOS
         Android
@@ -1344,8 +1342,6 @@ ScummVM podporuje různé zkratky ve hře. Liší se mezi různými hrami SCUMM 
     Space                  - Přeskočit videa
 
 Nezapomeňte, že používání Ctrl-f nebo Ctrl-g není doporučeno: hry mohou spadnout, když běží rychlostí vyšší než jejich normální, protože skripty ztratí synchronizaci.
-
-Poznámka pro uživatele WinCE: Kvůli omezenému vstupu z klávesnice ve většině zařízení je malé množství klávesových zkratek podporováno pomocí znovu mapování a/nebo činností panelů. Prosím přečtěte si soubor README-WinCE.txt.
 
 
 6.0) Uložené hry:
@@ -2034,9 +2030,6 @@ Na Windows můžete určit USE_WINDBG a připojit WinDbg pro procházení ladíc
    * Visual Studio (MSVC)
       Přečtěte si prosím:
       <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio>
-   * Windows CE/Mobile
-      Přečtěte si prosím:
-      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE>
 
    Linux:
    * GCC

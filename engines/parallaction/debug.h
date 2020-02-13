@@ -12,11 +12,11 @@ class Parallaction;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(Parallaction *vm);
-	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+	~Debugger() override {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 private:
-	virtual void preEnter();
-	virtual void postEnter();
+	void preEnter() override;
+	void postEnter() override;
 
 private:
 	Parallaction *_vm;

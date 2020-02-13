@@ -73,7 +73,7 @@ private:
 
 public:
 
-	MixerImpl(OSystem *system, uint sampleRate);
+	MixerImpl(uint sampleRate);
 	~MixerImpl();
 
 	virtual bool isReady() const { return _mixerReady; }

@@ -22,7 +22,6 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 
 #include "gob/gob.h"
 #include "gob/dataio.h"
@@ -33,17 +32,19 @@ class GobMetaEngine : public AdvancedMetaEngine {
 public:
 	GobMetaEngine();
 
-	PlainGameDescriptor findGame(const char *gameId) const override;
+	const char *getEngineId() const override {
+		return "gob";
+	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 
-	virtual const char *getName() const;
-	virtual const char *getOriginalCopyright() const;
+	const char *getName() const override;
+	const char *getOriginalCopyright() const override;
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	bool hasFeature(MetaEngineFeature f) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 private:
 	/**
@@ -55,12 +56,7 @@ private:
 GobMetaEngine::GobMetaEngine() :
 	AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
 
-	_singleId   = "gob";
 	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
-}
-
-PlainGameDescriptor GobMetaEngine::findGame(const char *gameId) const {
-	return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 }
 
 ADDetectedGame GobMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
@@ -176,7 +172,6 @@ bool Gob::GobEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 	return AdvancedMetaEngine::createInstance(syst, engine);
 }
 

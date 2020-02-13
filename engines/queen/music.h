@@ -39,7 +39,7 @@ class QueenEngine;
 class MidiMusic : public MidiDriver_BASE {
 public:
 	MidiMusic(QueenEngine *vm);
-	~MidiMusic();
+	~MidiMusic() override;
 	void setVolume(int volume);
 	int getVolume()	const { return _masterVolume; }
 
@@ -54,8 +54,8 @@ public:
 	void toggleVChange();
 
 	// MidiDriver_BASE interface implementation
-	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+	void send(uint32 b) override;
+	void metaEvent(byte type, byte *data, uint16 length) override;
 
 protected:
 

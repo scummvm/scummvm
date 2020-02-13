@@ -117,6 +117,8 @@ void Framebuffer::applyBlendState() {
 			GL_CALL(glEnable(GL_BLEND));
 			GL_CALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 			break;
+		default:
+			break;
 	}
 }
 

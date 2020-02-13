@@ -71,27 +71,27 @@ public:
 	/**
 	 * Setup the glyph
 	 */
-	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+	bool setup(CPetControl *petControl, CPetGlyphs *owner) override;
 
 	/**
 	 * Reset the glyph
 	 */
-	virtual bool reset();
+	bool reset() override;
 
 	/**
 	 * Handles any secondary drawing of the glyph
 	 */
-	virtual void draw2(CScreenManager *screenManager);
+	void draw2(CScreenManager *screenManager) override;
 
 	/**
 	 * Called for mouse button down messages
 	 */
-	virtual bool MouseButtonDownMsg(const Point &pt);
+	bool MouseButtonDownMsg(const Point &pt) override;
 
 	/**
 	 * Handles keypresses when the glyph is focused
 	 */
-	virtual bool KeyCharMsg(int key);
+	bool KeyCharMsg(int key) override;
 
 	/**
 	 * Resets highlighting on the save slots

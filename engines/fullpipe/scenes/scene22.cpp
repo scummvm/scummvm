@@ -301,9 +301,9 @@ int sceneHandler22(ExCommand *cmd) {
 		break;
 
 	case MSG_SC22_CHECKGMABOOT:
-		if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_In_15))
+		if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_In_15)) {
 			g_fp->setObjectState(sO_Boot_15, g_fp->getObjectEnumState(sO_Boot_15, sO_IsPresent));
-
+		}
 		break;
 
 	case MSG_SC22_SHOWSTOOL:
@@ -388,6 +388,9 @@ int sceneHandler22(ExCommand *cmd) {
 			g_fp->startSceneTrack();
 		}
 
+		break;
+
+	default:
 		break;
 	}
 

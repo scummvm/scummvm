@@ -68,6 +68,8 @@ uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &para
 		}
 		messageResult = 1;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -119,6 +121,8 @@ uint32 KmScene2501::xHandleMessage(int messageNum, const MessageParam &param) {
 		sendMessage(_parentScene, 0x2000, 0);
 		_isSittingInTeleporter = false;
 		GotoState(&Klaymen::stGetUpFromTeleporter);
+		break;
+	default:
 		break;
 	}
 	return messageResult;

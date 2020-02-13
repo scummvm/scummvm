@@ -40,11 +40,11 @@ public:
 	bool fadeOut(uint32 targetColor, uint32 duration, bool system = false);
 	bool fadeIn(uint32 sourceColor, uint32 duration, bool system = false);
 	bool deactivate();
-	bool display();
-	bool update();
+	bool display() override;
+	bool update() override;
 	DECLARE_PERSISTENT(BaseFader, BaseObject)
 	BaseFader(BaseGame *inGame);
-	virtual ~BaseFader();
+	~BaseFader() override;
 private:
 	bool _system;
 	bool _active;

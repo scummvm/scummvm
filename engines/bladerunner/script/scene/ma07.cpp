@@ -54,7 +54,7 @@ void SceneScriptMA07::InitializeScene() {
 
 void SceneScriptMA07::SceneLoaded() {
 	Obstacle_Object("BARRICADE", true);
-	if(_vm->_cutContent) {
+	if (_vm->_cutContent) {
 		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelShouldBeOutsideMcCoysAct3) {
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutsideMcCoysBuildingAct3);
 		}
@@ -154,6 +154,11 @@ void SceneScriptMA07::PlayerWalkedIn() {
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
 		Scene_Exits_Disable();
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// don't have McCoy with his gun drawn out when talking to Gaff here
+		Player_Set_Combat_Mode(false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07Wait);
 	}
 

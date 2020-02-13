@@ -189,6 +189,8 @@ void Sound::processFxQueue() {
 			// Once the looped FX has started we can ignore it,
 			// but we can't close it since the WAV data is in use.
 			break;
+		default:
+			break;
 		}
 	}
 }

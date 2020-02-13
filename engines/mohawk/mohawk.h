@@ -57,6 +57,10 @@ enum MohawkGameType {
 	GType_LIVINGBOOKSV5
 };
 
+#define GAMEOPTION_PLAY_MYST_FLYBY         GUIO_GAMEOPTIONS1
+#define GAMEOPTION_25TH                    GUIO_GAMEOPTIONS2
+#define GAMEOPTION_DEMO                    GUIO_GAMEOPTIONS3
+
 enum MohawkGameFeatures {
 	GF_ME             = (1 << 0), // Myst Masterpiece Edition
 	GF_25TH           = (1 << 1), // Myst and Riven 25th Anniversary

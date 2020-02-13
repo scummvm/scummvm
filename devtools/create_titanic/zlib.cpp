@@ -260,6 +260,8 @@ public:
 	bool seek(int32 offset, int whence = SEEK_SET) {
 		int32 newPos = 0;
 		switch (whence) {
+		default:
+			// fallthrough intended
 		case SEEK_SET:
 			newPos = offset;
 			break;

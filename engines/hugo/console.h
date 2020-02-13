@@ -32,7 +32,7 @@ class HugoEngine;
 class HugoConsole : public GUI::Debugger {
 public:
 	HugoConsole(HugoEngine *vm);
-	virtual ~HugoConsole(void);
+	~HugoConsole(void) override;
 
 private:
 	HugoEngine *_vm;

@@ -156,16 +156,16 @@ private:
 	void resetGame();
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual bool canSaveGameStateCurrently();
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error run();
+	bool hasFeature(EngineFeature f) const override;
+	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error run() override;
 
 	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 
-	GUI::Debugger *getDebugger() {
+	GUI::Debugger *getDebugger() override {
 		return _console;
 	}
 

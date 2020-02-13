@@ -214,6 +214,8 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 				break;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 

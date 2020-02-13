@@ -47,12 +47,12 @@ private:
 	CSoundManager *_soundManager;
 public:
 	CMovieManager() : CMovieManagerBase(), _soundManager(nullptr) {}
-	virtual ~CMovieManager() {}
+	~CMovieManager() override {}
 
 	/**
 	 * Create a new movie and return it
 	 */
-	virtual CMovie *createMovie(const CResourceKey &key, CVideoSurface *surface);
+	CMovie *createMovie(const CResourceKey &key, CVideoSurface *surface) override;
 
 	/**
 	 * Sets the sound manager that will be attached to all created movies

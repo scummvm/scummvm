@@ -127,7 +127,10 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 					playMovie(3, 71, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(299, 304, 0);
+					break;
 
+				default:
+					break;
 				}
 			}
 		} else {

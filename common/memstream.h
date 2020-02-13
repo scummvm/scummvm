@@ -98,7 +98,7 @@ protected:
 public:
 	MemoryWriteStream(byte *buf, uint32 len) : _ptr(buf), _bufSize(len), _pos(0), _err(false) {}
 
-	uint32 write(const void *dataPtr, uint32 dataSize) {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		// Write at most as many bytes as are still available...
 		if (dataSize > _bufSize - _pos) {
 			dataSize = _bufSize - _pos;
@@ -137,6 +137,8 @@ public:
 			offset = size() + offset;
 			// Fall through
 		case SEEK_SET:
+			// Fall through
+		default:
 			_ptr = _ptrOrig + offset;
 			_pos = offset;
 			break;
@@ -195,7 +197,7 @@ public:
 			free(_data);
 	}
 
-	uint32 write(const void *dataPtr, uint32 dataSize) {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		ensureCapacity(_pos + dataSize);
 		memcpy(_ptr, dataPtr, dataSize);
 		_ptr += dataSize;
@@ -219,6 +221,8 @@ public:
 			offs = _size + offs;
 			// Fall through
 		case SEEK_SET:
+			// Fall through
+		default:
 			_ptr = _data + offs;
 			_pos = offs;
 			break;
@@ -279,7 +283,7 @@ public:
 			free(_data);
 	}
 
-	uint32 write(const void *dataPtr, uint32 dataSize) {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		ensureCapacity(_length + dataSize);
 		if (_writePos + dataSize < _capacity) {
 			memcpy(_data + _writePos, dataPtr, dataSize);

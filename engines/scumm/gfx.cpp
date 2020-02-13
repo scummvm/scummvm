@@ -523,10 +523,10 @@ void ScummEngine::drawDirtyScreenParts() {
 	// Handle shaking
 	if (_shakeEnabled) {
 		_shakeFrame = (_shakeFrame + 1) % NUM_SHAKE_POSITIONS;
-		_system->setShakePos(shake_positions[_shakeFrame]);
+		_system->setShakePos(0, shake_positions[_shakeFrame]);
 	} else if (!_shakeEnabled &&_shakeFrame != 0) {
 		_shakeFrame = 0;
-		_system->setShakePos(0);
+		_system->setShakePos(0, 0);
 	}
 }
 
@@ -1519,7 +1519,7 @@ void ScummEngine::setShake(int mode) {
 
 	_shakeEnabled = mode != 0;
 	_shakeFrame = 0;
-	_system->setShakePos(0);
+	_system->setShakePos(0, 0);
 }
 
 #pragma mark -
@@ -3644,6 +3644,9 @@ void Gdi::unkDecode9(byte *dst, int dstPitch, const byte *src, int height) const
 		case 2:
 			READ_N_BITS(4, run);
 			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -3704,6 +3707,9 @@ void Gdi::unkDecode11(byte *dst, int dstPitch, const byte *src, int height) cons
 			case 3:
 				inc = 1;
 				READ_N_BITS(8, color);
+				break;
+
+			default:
 				break;
 			}
 		} while (--h);
@@ -4144,6 +4150,8 @@ void ScummEngine::scrollEffect(int dir) {
 			waitForTimer(delay);
 			x += step;
 		}
+		break;
+	default:
 		break;
 	}
 }

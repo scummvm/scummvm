@@ -298,7 +298,16 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(170,  5, 5, 3); // PROTEST
 		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5); // CARS
-		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
+		if ((_vm->_cutContent
+		     && (!Game_Flag_Query(kFlagPS09GrigorianVKChosen)
+		         && (!Actor_Clue_Query(kActorMcCoy, kClueVKGrigorianHuman) && !Actor_Clue_Query(kActorMcCoy, kClueVKGrigorianReplicant))))
+		    || !_vm->_cutContent
+		) {
+			if (_vm->_cutContent) {
+				Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(200);
+			}
+			DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
+		}
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? it is impossible to obtain this clue
 	 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
@@ -347,7 +356,40 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 			Actor_Says(kActorGrigorian, 170, 15);
 			Actor_Says(kActorGrigorian, 180, 16);
 			Actor_Says(kActorMcCoy, 4315, 18);
-			Actor_Says(kActorGrigorian, 200, 13);
+			if (_vm->_cutContent
+			    && (_vm->_language == Common::ES_ESP
+			        || _vm->_language == Common::IT_ITA)
+			) {
+				// In ESP and ITA versions:
+				// Quote 190 is the full quote.
+				// "Everything and anything. Guns so new that even the police had hardly used them I heard."
+				// Quote 200 is muted in ESP and becomes redundant in ITA
+				Actor_Says(kActorGrigorian, 190, kAnimationModeTalk);
+				// TODO: When mixing ESP or ITA voiceover with subtitles from other languages,
+				//       those subtitles would have to be merged with the 190 quote
+				//       in order to show up in the ESP amd ITA version
+				//       Also, the spoken quote appears in ESP version only in restored content mode!
+			} else if (_vm->_cutContent) {
+				// TODO is RUS version covered by this case?
+				// In ENG, FRA and DEU versions:
+				// Quote 190 is the first half:
+				// "Everything and anything."
+				// and quote 200 is the second half:
+				// "Guns so new that even the police had hardly used them I heard."
+				Actor_Says(kActorGrigorian, 190, kAnimationModeTalk);
+				Actor_Says(kActorGrigorian, 200, 13);
+			} else {
+				// vanilla version (non-restored content)
+				// This plays only the second half of the full quote in ENG, FRA, DEU and ITA versions
+#if BLADERUNNER_ORIGINAL_BUGS
+				Actor_Says(kActorGrigorian, 200, 13);
+#else
+				// Quote 200 is muted in the ESP version
+				if (_vm->_language != Common::ES_ESP) {
+					Actor_Says(kActorGrigorian, 200, 13);
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+			}
 			return;
 		}
 		break;
@@ -355,15 +397,49 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 	case 180: // CARS
 		Actor_Says(kActorMcCoy, 4270, 18);
 		Actor_Says(kActorMcCoy, 4255, kAnimationModeTalk);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGrigorian, 210, 12);
 		Actor_Says(kActorGrigorian, 220, 13);
 		Actor_Says(kActorGrigorian, 230, 14);
+#else
+		if (_vm->_language != Common::ES_ESP) {
+			Actor_Says(kActorGrigorian, 210, 12);
+			Actor_Says(kActorGrigorian, 220, 13);
+			// pause (after the quote is spoken) is set to 0.0f here
+			// Grigorian is interrupted by McCoy here, so there shouldn't be any pause after his quote
+			Actor_Says_With_Pause(kActorGrigorian, 230, 0.0f, 14);
+		} else {
+			// In ESP version, quote 210 contains the full quote,
+			// and quotes 220 and 230 are muted.
+			// The pause (after the quote is spoken) is set to 0.0f here, because Grigorian is interrupted in the end
+			Actor_Says_With_Pause(kActorGrigorian, 210, 0.0f, 12);
+			// we skip the muted quotes for the ESP version
+			// TODO: When mixing ESP voiceover with subtitles from other languages,
+			//       those subtitles would have to be merged with the previous full quote (210)
+			//       in order to show up in the ESP version
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 4320, 14);
+		if (_vm->_cutContent) {
+			// "What else do you guys do besides wave signs"
+			Actor_Says(kActorMcCoy, 4325, kAnimationModeTalk);
+		}
 		Actor_Says(kActorGrigorian, 240, 16);
 		Actor_Says(kActorGrigorian, 250, 15);
 		Actor_Says(kActorMcCoy, 4330, 13);
 		Actor_Says(kActorGrigorian, 260, 13);
 		Actor_Says(kActorGrigorian, 270, 12);
+		if (_vm->_cutContent) {
+			// In the ESP version quote 280 is muted. The previous quote (270) already contains the full quote.
+			// Essentially, the full quote is not removed content in the vanilla ESP version
+			// TODO: When mixing ESP voiceover with subtitles from other languages,
+			//       those subtitles would have to be merged with the previous full quote (270)
+			//       in order to show up in the ESP version
+			if (_vm->_language != Common::ES_ESP) {
+				// "A way for the slaves to escape"
+				Actor_Says(kActorGrigorian, 280, 12);
+			}
+		}
 		Actor_Says(kActorMcCoy, 4335, 18);
 		Actor_Says(kActorGrigorian, 290, 15);
 		Actor_Says(kActorMcCoy, 4340, 13);
@@ -391,8 +467,32 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 			Actor_Says(kActorCrazylegs, 1080, kAnimationModeTalk);
 		} else {
 			Actor_Says(kActorGrigorian, 320, 13);
+			if (_vm->_cutContent) {
+				// In the ESP version quote 330 is muted. The previous quote (320) already contains the full quote.
+				// Essentially, the full quote is not removed content in the vanilla ESP version
+				// TODO: When mixing ESP voiceover with subtitles from other languages,
+				//       those subtitles would have to be merged with the previous full quote (320)
+				//       in order to show up in the ESP version
+				if (_vm->_language != Common::ES_ESP) {
+					// "Friends with access to vehicles"
+					Actor_Says(kActorGrigorian, 330, kAnimationModeTalk);
+				}
+			}
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorGrigorian, 340, 14);
 			Actor_Says(kActorGrigorian, 350, 12);
+#else
+			if (_vm->_language != Common::ES_ESP) {
+				Actor_Says(kActorGrigorian, 340, 14);
+				Actor_Says_With_Pause(kActorGrigorian, 350, 0.0f, 12);
+			} else {
+				// quote 350 is muted in ESP version. The quote 340 contains the full quote
+				// TODO: When mixing ESP voiceover with subtitles from other languages,
+				//       those subtitles would have to be merged with the previous full quote (340)
+				//       in order to show up in the ESP version
+				Actor_Says_With_Pause(kActorGrigorian, 340, 0.0f, 14);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 4375, 18);
 		}
 		break;
@@ -412,6 +512,9 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		break;
 
 	case 200: // VOIGT-KAMPFF
+		if (_vm->_cutContent) {
+			Game_Flag_Set(kFlagPS09GrigorianVKChosen);
+		}
 		Actor_Says(kActorMcCoy, 4265, 14);
 		Actor_Says(kActorGrigorian, 400, 13);
 		Actor_Says(kActorMcCoy, 4400, 13);

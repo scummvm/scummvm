@@ -23,7 +23,7 @@
 #ifndef TITANIC_INPUT_HANDLER_H
 #define TITANIC_INPUT_HANDLER_H
 
-#include "titanic/support/rect.h" // Point
+#include "titanic/support/rect.h"
 
 namespace Titanic {
 

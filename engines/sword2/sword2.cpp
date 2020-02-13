@@ -84,23 +84,27 @@ static const ExtraGuiOption sword2ExtraGuiOption = {
 
 class Sword2MetaEngine : public MetaEngine {
 public:
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "sword2";
+	}
+
+	const char *getName() const override {
 		return "Broken Sword II: The Smoking Mirror";
 	}
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Broken Sword II: The Smoking Mirror (C) Revolution";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	bool hasFeature(MetaEngineFeature f) const override;
 	PlainGameList getSupportedGames() const override;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
-	virtual DetectedGames detectGames(const Common::FSList &fslist) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	DetectedGames detectGames(const Common::FSList &fslist) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 };
 
 bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -192,7 +196,7 @@ DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursion = fal
 						continue;
 
 					// Match found, add to list of candidates, then abort inner loop.
-					DetectedGame game = DetectedGame(g->gameid, g->description);
+					DetectedGame game = DetectedGame("sword2", g->gameid, g->description);
 					game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 
 					detectedGames.push_back(game);

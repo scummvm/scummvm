@@ -236,6 +236,7 @@ typedef struct {
 #define R_ARM_V4BX 			40
 
 // PPC relocation types
+#define R_PPC_NONE			0
 #define R_PPC_ADDR32		1
 #define R_PPC_ADDR16_LO		4
 #define R_PPC_ADDR16_HI		5

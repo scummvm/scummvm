@@ -573,6 +573,8 @@ void EventManager::buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
 		case k3_pointerTypeHand:
 			setMousePointerFromSpriteData(bitmapHanPointer);
 			break;
+		default:
+			break;
 		}
 	}
 	_previousMousePointerType = _mousePointerType;

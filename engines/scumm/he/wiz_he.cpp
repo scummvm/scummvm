@@ -50,7 +50,7 @@ void Wiz::clearWizBuffer() {
 void Wiz::polygonClear() {
 	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
 		if (_polygons[i].flag == 1)
-			memset(&_polygons[i], 0, sizeof(WizPolygon));
+			_polygons[i].reset();
 	}
 }
 
@@ -173,7 +173,7 @@ void Wiz::polygonCalcBoundBox(Common::Point *vert, int numVerts, Common::Rect &b
 void Wiz::polygonErase(int fromId, int toId) {
 	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
 		if (_polygons[i].id >= fromId && _polygons[i].id <= toId)
-			memset(&_polygons[i], 0, sizeof(WizPolygon));
+			_polygons[i].reset();
 	}
 }
 
@@ -444,6 +444,8 @@ static void decodeWizMask(uint8 *&dst, uint8 &mask, int w, int maskType) {
 				++dst;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 }

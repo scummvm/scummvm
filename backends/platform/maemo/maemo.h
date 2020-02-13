@@ -41,11 +41,9 @@ public:
 	virtual void quit();
 	virtual void fatalError();
 	virtual void setWindowCaption(const char *caption);
-#ifdef ENABLE_KEYMAPPER
 	virtual Common::HardwareInputSet *getHardwareInputSet();
-	virtual Common::Keymap *getGlobalKeymap();
-	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return _keymapperDefaultBindings; }
-#endif
+	Common::KeymapArray getGlobalKeymaps() override;
+	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 	Model getModel() { return _model; }
 
@@ -56,9 +54,6 @@ private:
 	const Model detectModel();
 	Model _model;
 	MaemoSdlEventObserver *_eventObserver;
-#ifdef ENABLE_KEYMAPPER
-	Common::KeymapperDefaultBindings *_keymapperDefaultBindings;
-#endif
 };
 
 } // namespace Maemo

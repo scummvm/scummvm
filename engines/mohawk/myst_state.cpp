@@ -24,6 +24,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_state.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/serializer.h"
 #include "common/system.h"
@@ -93,6 +94,9 @@ void MystGameState::reset() {
 	_globals.heldPage = kNoPage;
 	_globals.u1 = 1;
 	_globals.ending = kDniNotVisited;
+
+	_globals.zipMode = ConfMan.getBool("zip_mode");
+	_globals.transitions = ConfMan.getBool("transition_mode");
 
 	// Library Bookcase Door - Default to Up
 	_myst.libraryBookcaseDoor = 1;

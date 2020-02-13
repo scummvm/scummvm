@@ -25,17 +25,23 @@
 namespace BladeRunner {
 
 enum kDR01Loops {
-	kDR01LoopBikerInshot          = 0,
-	kDR01LoopPanFromDR02          = 1,
-	kDR01LoopPanFromDR04Pre       = 2,
-	kDR01LoopPanFromDR04Post      = 3,
-	kDR01LoopMainLoop             = 4
+	kDR01LoopBikerInshot          = 0, //   0 -  74
+	kDR01LoopPanFromDR02          = 1, //  75 -  88
+	kDR01LoopPanFromDR04Pre       = 2, //  89 - 116
+	kDR01LoopPanFromDR04Post      = 3, // 117 - 144
+	kDR01LoopMainLoop             = 4  // 145 - 205
 };
 
 void SceneScriptDR01::InitializeScene() {
 	if (Game_Flag_Query(kFlagDR02toDR01)) {
 		Setup_Scene_Information(  -835.0f, -0.04f, -118.0f, 664);
 	} else if (Game_Flag_Query(kFlagDR04toDR01)) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// Part of the barrel flame glitch bug fix:
+		// Disable rogue barrel flame effect during the pan from DR04 to DR01
+		Screen_Effect_Skip(0, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Setup_Scene_Information(  -711.0f, -0.04f,   70.0f, 307);
 	} else if (Game_Flag_Query(kFlagCT11toDR01)) {
 		Setup_Scene_Information(-1765.28f, -0.04f, -23.82f, 269);
@@ -129,11 +135,36 @@ bool SceneScriptDR01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptDR01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, false)) {
-			Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1);
-			Game_Flag_Set(kFlagDR01toDR02);
-			Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
+		if (_vm->_cutContent) {
+			float x, y, z;
+			Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
+			bool exitFlag = true;
+			bool fromFarTop = false;
+			if (x < -1088) {
+				fromFarTop = true;
+				exitFlag = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1149.80f, 0.56f, -94.45f, 0, true, false, false);
+			} else if (-1088 < x && x < -642) {
+				exitFlag = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1271.89f, 6.71f, -268.63f, 0, true, false, false);
+			} else {
+				exitFlag = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, false);
+			}
+			if (!exitFlag) {
+				if (fromFarTop) {
+					Async_Actor_Walk_To_XYZ(kActorMcCoy,  -1066.51f, 0.51f, -110.60f, 0, false);
+				} else {
+					Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
+				}
+				Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1);
+				Game_Flag_Set(kFlagDR01toDR02);
+				Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
+			}
+		} else {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, false)) {
+				Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
+				Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1);
+				Game_Flag_Set(kFlagDR01toDR02);
+				Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
+			}
 		}
 		return true;
 	}
@@ -248,13 +279,30 @@ bool SceneScriptDR01::ClickedOn2DRegion(int region) {
 
 void SceneScriptDR01::SceneFrameAdvanced(int frame) {
 	if (frame < 75) {
+		// TODO This keeps setting McCoy as invisible while in this frame range
+		//      However the performance impact is negligible from this call
 		Actor_Set_Invisible(kActorMcCoy, true);
 	} else {
+		// TODO This keeps setting McCoy as visible while in this frame range
+		//      However the performance impact is negligible from this call
 		Actor_Set_Invisible(kActorMcCoy, false);
 	}
 	if (frame == 2) {
 		Ambient_Sounds_Play_Sound(kSfxBIKEMIX4, 40, -40, 100, 99);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// Part of the barrel flame glitch bug fix:
+	// Disable rogue barrel flame effect during the pan from DR04 to DR01
+	// loops: kDR01LoopPanFromDR04Pre, kDR01LoopPanFromDR04Post
+	if (frame == 89 || frame == 117 ){
+		Screen_Effect_Skip(0, false);
+	}
+	// And restore the flame effect at the end of the loops
+	if (frame == 116 || frame == 144) {
+		Screen_Effect_Restore_All(false);
+	}
+#endif
 }
 
 void SceneScriptDR01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -310,6 +358,10 @@ void SceneScriptDR01::PlayerWalkedOut() {
 			// but don't play this extra outtake when going to Tyrell Building
 			Outtake_Play(kOuttakeAway1,   true, -1);
 		}
+
+		// Part of the barrel flame glitch bug fix:
+		// Add this effect restoration -- as a catch all case
+		Screen_Effect_Restore_All(false);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 }

@@ -63,6 +63,8 @@ void Module1900::createScene(int sceneNum, int which) {
 		_vm->gameState().sceneNum = 6;
 		_childObject = new Scene1907(_vm, this);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1900::updateScene);
 	_childObject->handleUpdate();
@@ -79,6 +81,8 @@ void Module1900::updateScene() {
 			break;
 		case 6:
 			createScene(0, 1);
+			break;
+		default:
 			break;
 		}
 	}
@@ -227,6 +231,8 @@ uint32 Scene1907::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2001:
 		playSound(3);
 		setGlobalVar(V_STAIRS_PUZZLE_SOLVED, 1);
+		break;
+	default:
 		break;
 	}
 	return 0;

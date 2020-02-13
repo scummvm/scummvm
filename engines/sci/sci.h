@@ -128,7 +128,7 @@ enum kDebugLevels {
 	kDebugLevelResMan        = 1 << 19,
 	kDebugLevelOnStartup     = 1 << 20,
 	kDebugLevelDebugMode     = 1 << 21,
-	kDebugLevelScriptPatcher = 1 << 22,
+	kDebugLevelPatcher       = 1 << 22,
 	kDebugLevelWorkarounds   = 1 << 23,
 	kDebugLevelVideo         = 1 << 24,
 	kDebugLevelGame          = 1 << 25
@@ -210,10 +210,7 @@ enum SciGameId {
 	GID_SQ5,
 	GID_SQ6,
 	GID_TORIN,
-
-	GID_CATDATE,
-
-	GID_FANMADE	// FIXME: Do we really need/want this?
+	GID_FANMADE
 };
 
 /**
@@ -234,7 +231,7 @@ enum SciVersion {
 	SCI_VERSION_2, // GK1, PQ4 floppy, QFG4 floppy
 	SCI_VERSION_2_1_EARLY, // GK2 demo, KQ7 1.4/1.51, LSL6 hires, PQ4CD, QFG4CD
 	SCI_VERSION_2_1_MIDDLE, // GK2, Hoyle 5, KQ7 2.00b, MUMG Deluxe, Phantasmagoria 1, PQ:SWAT, Shivers 1, SQ6, Torin
-	SCI_VERSION_2_1_LATE, // demos of LSL7, Lighthouse, RAMA
+	SCI_VERSION_2_1_LATE, // demos and Mac versions of LSL7, Lighthouse, RAMA
 	SCI_VERSION_3 // LSL7, Lighthouse, RAMA, Phantasmagoria 2
 };
 
@@ -254,26 +251,25 @@ class SciEngine : public Engine {
 	friend class Console;
 public:
 	SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId);
-	~SciEngine();
+	~SciEngine() override;
 
 	// Engine APIs
-	virtual Common::Error run();
-	bool hasFeature(EngineFeature f) const;
-	void pauseEngineIntern(bool pause);
-	virtual GUI::Debugger *getDebugger();
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+	void pauseEngineIntern(bool pause) override;
+	GUI::Debugger *getDebugger() override;
 	Console *getSciDebugger();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	void syncSoundSettings(); ///< from ScummVM to the game
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	void syncSoundSettings() override; ///< from ScummVM to the game
 	void updateSoundMixerVolumes();
 	uint32 getTickCount();
 	void setTickCount(const uint32 ticks);
 
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;
-	int getResourceVersion() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
@@ -285,6 +281,7 @@ public:
 
 	bool hasParser() const;
 	bool hasMacIconBar() const;
+	bool hasMacSaveRestoreDialogs() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
 	inline ScriptPatcher *getScriptPatcher() const { return _scriptPatcher; }
@@ -314,6 +311,9 @@ public:
 	 * of file-listings is performed.
 	 */
 	int inQfGImportRoom() const;
+
+	/* Shows a ScummVM message box explaining how to import Qfg saved character files */
+	void showQfgImportMessageBox() const;
 
 	void sleep(uint32 msecs);
 
@@ -349,6 +349,10 @@ public:
 
 	// Initializes ports and paint16 for non-sci32 games, also sets default palette
 	void initGraphics();
+
+	// Suggest to download the GK2 subtitles patch
+	// in the future, we might refactor it to something more generic, if needed
+	void suggestDownloadGK2SubTitlesPatch();
 
 public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx

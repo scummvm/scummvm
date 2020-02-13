@@ -64,7 +64,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		if (!gameFile.open(*file))
 			continue;
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
-		int32 filesize = gameFile.size();
+		size_t filesize = (size_t)gameFile.size();
 		gameFile.seek(0);
 		isBlorb = Blorb::isBlorb(gameFile, ID_SAAI);
 		gameFile.close();
@@ -73,17 +73,20 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			continue;
 
 		// Scan through the Scott game list for a match
-		const ScottGame *p = SCOTT_GAMES;
+		const GlkDetectionEntry *p = SCOTT_GAMES;
 		while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
 			++p;
 
-		if (p->_filesize) {
+		if (!p->_gameId) {
+			if (!isBlorb && filename.hasSuffixIgnoreCase(".dat"))
+				continue;
+
+			const PlainGameDescriptor &desc = SCOTT_GAME_LIST[0];
+			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
+		} else {
 			// Found a match
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			DetectedGame gd(p->_gameId, gameDesc.description, Common::EN_ANY, Common::kPlatformUnknown);
-			gd.addExtraEntry("filename", file->getName());
-
-			gameList.push_back(gd);
+			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
 		}
 	}
 

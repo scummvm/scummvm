@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Verges : public Entity {
 public:
 	Verges(LastExpressEngine *engine);
-	~Verges() {}
+	~Verges() override {}
 
 	/**
 	 * Resets the entity

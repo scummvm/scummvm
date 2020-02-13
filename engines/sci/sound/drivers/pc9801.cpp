@@ -129,13 +129,13 @@ private:
 class SoundChannel_PC9801_FM4OP : public SoundChannel_PC9801 {
 public:
 	SoundChannel_PC9801_FM4OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn);
-	virtual ~SoundChannel_PC9801_FM4OP() {}
+	~SoundChannel_PC9801_FM4OP() override {}
 
 private:
-	void programChange(uint8 program);
-	void sendSoundOnOff(bool soundOn);
-	void sendVolume();
-	void sendFrequency();
+	void programChange(uint8 program) override;
+	void sendSoundOnOff(bool soundOn) override;
+	void sendVolume() override;
+	void sendFrequency() override;
 
 	uint8 _operatorLevel[4];
 	uint8 _carrier;
@@ -149,18 +149,18 @@ private:
 class SoundChannel_PC9801_FM2OP : public SoundChannel_PC9801 {
 public:
 	SoundChannel_PC9801_FM2OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts,  SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn);
-	virtual ~SoundChannel_PC9801_FM2OP() {}
+	~SoundChannel_PC9801_FM2OP() override {}
 	
-	void processNoteEvent(uint8 note, bool soundOn);
-	void reset();
+	void processNoteEvent(uint8 note, bool soundOn) override;
+	void reset() override;
 
 private:
-	void programChange(uint8 program);
-	bool prepareFrequencyAndVolume(bool updateVolume);
-	void processSounds();
-	void sendSoundOnOff(bool soundOn);
-	void sendVolume();
-	void sendFrequency();
+	void programChange(uint8 program) override;
+	bool prepareFrequencyAndVolume(bool updateVolume) override;
+	void processSounds() override;
+	void sendSoundOnOff(bool soundOn) override;
+	void sendVolume() override;
+	void sendFrequency() override;
 
 	uint8 _operatorLevel[2];
 	uint8 _operatorFrqIndex[2];
@@ -182,9 +182,9 @@ private:
 class SoundChannel_PC9801_SSG : public SoundChannel_PC9801 {
 public:
 	SoundChannel_PC9801_SSG(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchOffset, uint8 patchSize, bool &soundOn);
-	virtual ~SoundChannel_PC9801_SSG() {}
-	void reset();
-	void toggleNoiseGenerator(bool enable);
+	~SoundChannel_PC9801_SSG() override {}
+	void reset() override;
+	void toggleNoiseGenerator(bool enable) override;
 
 private:
 	enum {
@@ -195,11 +195,11 @@ private:
 		kEnvSSG_keyOn = 0x10	
 	};
 
-	void programChange(uint8 program);
-	void processSounds();
-	void sendSoundOnOff(bool soundOn);
-	void sendVolume();
-	void sendFrequency();
+	void programChange(uint8 program) override;
+	void processSounds() override;
+	void sendSoundOnOff(bool soundOn) override;
+	void sendVolume() override;
+	void sendFrequency() override;
 	void updateNg();
 	void sendActiveChannelsStatus();
 
@@ -278,23 +278,23 @@ public:
 	};
 
 	MidiDriver_PC9801(Audio::Mixer *mixer, SciVersion version);
-	~MidiDriver_PC9801();
+	~MidiDriver_PC9801() override;
 
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 	static void assignFreeChannels(int num);
-	uint32 property(int prop, uint32 param);
+	uint32 property(int prop, uint32 param) override;
 	void initTrack(SciSpan<const byte> &header);
 
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
-	uint32 getBaseTempo();	
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
+	uint32 getBaseTempo() override;	
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
 
-	void timerCallbackB();
+	void timerCallbackB() override;
 
 private:
 	bool loadInstruments(const SciSpan<const uint8> &data);
@@ -328,6 +328,7 @@ private:
 	const uint16 _baseTempo;
 
 	PC98AudioCore *_pc98a;
+	Audio::Mixer *_mixer;
 	const SciVersion _version;
 };
 
@@ -340,14 +341,14 @@ public:
 	};
 
 	MidiPlayer_PC9801(SciVersion version);
-	~MidiPlayer_PC9801();
+	~MidiPlayer_PC9801() override;
 
-	bool hasRhythmChannel() const;
-	byte getPlayId() const;
-	int getPolyphony() const;
-	void playSwitch(bool play);
+	bool hasRhythmChannel() const override;
+	byte getPlayId() const override;
+	int getPolyphony() const override;
+	void playSwitch(bool play) override;
 
-	void initTrack(SciSpan<const byte> &trackData);
+	void initTrack(SciSpan<const byte> &trackData) override;
 };
 
 SoundChannel_PC9801::SoundChannel_PC9801(PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, int type, SciSpan<const uint8> instrumentData, bool &soundOn)
@@ -1317,26 +1318,27 @@ void MidiPart_PC9801::assignFreeChannels() {
 MidiPart_PC9801 **MidiDriver_PC9801::_parts = 0;
 
 MidiDriver_PC9801::MidiDriver_PC9801(Audio::Mixer *mixer, SciVersion version)
-	: _version(version), _pc98a(0), _chan(0), _numChan(6), _internalVersion(0xFF), _ssgPatchOffset(0xFF), _patchSize(0),
+	: _mixer(mixer), _version(version), _pc98a(0), _chan(0), _numChan(6), _internalVersion(0xFF), _ssgPatchOffset(0xFF), _patchSize(0),
 	_timerProc(0), _timerProcPara(0), _baseTempo(10080), _ready(false), _isOpen(false), _masterVolume(0x0f) ,_soundOn(true), _playID(0),
 	_polyphony(9), _channelMask1(0x10), _channelMask2(0x02) {
-	_pc98a =
-#ifdef SCI_PC98_AUDIO_EXTENDED
-		new PC98AudioCore(mixer, this, kType86, true);
-#else
-		new PC98AudioCore(mixer, this, kType26, true);
-#endif
 }
 
 MidiDriver_PC9801::~MidiDriver_PC9801() {
-	_ready = false;
 	close();
-	delete _pc98a;
 }
 
 int MidiDriver_PC9801::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
+
+	if (!_pc98a) {
+		_pc98a =
+#ifdef SCI_PC98_AUDIO_EXTENDED
+		new PC98AudioCore(_mixer, this, kType86);
+#else
+		new PC98AudioCore(_mixer, this, kType26);
+#endif
+	}
 
 	if (!_ready) {
 		if (!_pc98a->init())
@@ -1413,7 +1415,8 @@ void MidiDriver_PC9801::close() {
 	bool ready = _ready;
 	_isOpen = _ready = false;
 
-	PC98AudioCore::MutexLock lock = _pc98a->stackLockMutex();
+	delete _pc98a;
+	_pc98a = 0;
 
 	if (_parts) {
 		for (int i = 0; i < 16; ++i) {
@@ -1624,8 +1627,14 @@ bool MidiDriver_PC9801::loadInstruments(const SciSpan<const uint8> &data) {
 }
 
 void MidiDriver_PC9801::updateParser() {
-	if (_timerProc)
+	if (_timerProc) {
+		// The mutex lock has to be lifted, before entering the SCI engine space. The engine has its owns mutex and the different threads
+		// will often cause an immediate lockup (each thread caught in the mutex lock of the other). I consider this safe for all realistic
+		// scenarios, since a reentry of the space guarded by the PC98 audio mutex is not possible without triggering another mutex lock.
+		// I have also rearranged the driver deconstruction appropriately.
+		PC98AudioCore::MutexLock tempUnlock = _pc98a->stackUnlockMutex();
 		_timerProc(_timerProcPara);
+	}
 }
 
 void MidiDriver_PC9801::updateChannels() {

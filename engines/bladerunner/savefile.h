@@ -53,16 +53,22 @@ struct SaveFileHeader {
 	int                _day;
 	int                _hour;
 	int                _minute;
+	uint32             _playTime;
 	Graphics::Surface *_thumbnail;
 };
 
 class SaveFileManager {
 private:
 	static const uint32 kTag = MKTAG('B', 'R', 'S', 'V');
-	static const uint32 kVersion = 1;
+	static const uint32 kVersion = 3; // kVersion: 3 as of Feb 5th 2020 (UTC) - ScummVM development version 2.2.0git
 
 public:
-	static const uint32 kNameLength = 32;
+	// kVersion
+	// ----------
+	//        2:: max of 32 characters for the saved game name
+	//        3:: max of 41 characters for the saved game name (this matches the original game's setting)
+	static const uint32 kNameLengthV2  = 32;
+	static const uint32 kNameLength    = 41;
 	static const uint32 kThumbnailSize = 9600; // 80x60x16bpp
 
 	static SaveStateList list(const Common::String &target);
@@ -93,7 +99,7 @@ public:
 
 	void padBytes(int count);
 
-	void writeInt(int v);
+	void writeInt(int32 v); // this writes a 4 byte int (uses writeUint32LE)
 	void writeFloat(float v);
 	void writeBool(bool v);
 	void writeStringSz(const Common::String &s, uint sz);
@@ -116,7 +122,7 @@ public:
 	int32 size() const override { return _s.size(); }
 	bool seek(int32 offset, int whence = SEEK_SET) override { return _s.seek(offset, whence); }
 
-	int readInt();
+	int32 readInt();
 	float readFloat();
 	bool readBool();
 	Common::String readStringSz(uint sz);

@@ -41,17 +41,17 @@ class Scene1000 : public Scene {
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action2 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action3 : public Action {
 	private:
 		void zoom(bool up);
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 
 public:
@@ -60,14 +60,14 @@ public:
 	Action2 _action2;
 	Action3 _action3;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
 };
 
 class Scene1001 : public Scene {
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	SpeakerQText _speakerQText;
@@ -79,7 +79,7 @@ public:
 	SceneObject _object5, _object6, _object7;
 	ASound _soundHandler1, _soundHandler2;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
 };
 
 class Scene1250 : public Scene {
@@ -87,19 +87,19 @@ public:
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action2 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action3 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action4 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	SpeakerQText _speakerQText;
@@ -109,7 +109,7 @@ public:
 	Action4 _action4;
 	SceneObject _object1, _object2;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
 };
 
 class Scene1400 : public Scene {
@@ -117,13 +117,13 @@ public:
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
-		virtual void dispatch();
+		void signal() override;
+		void dispatch() override;
 	};
 public:
 	Action1 _action1;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
 
 };
 
@@ -132,11 +132,11 @@ public:
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action2 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	ASound _soundHandler;
@@ -144,7 +144,7 @@ public:
 	Action2 _action2;
 	SceneObject _object1, _object2, _object3;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
 };
 
 } // End of namespace Ringworld

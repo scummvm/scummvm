@@ -474,6 +474,17 @@ static const char *const kEoB2MenuStringsDefeatFMTownsJapanese[1] = {
 
 static const StringListProvider kEoB2MenuStringsDefeatFMTownsJapaneseProvider = { ARRAYSIZE(kEoB2MenuStringsDefeatFMTownsJapanese), kEoB2MenuStringsDefeatFMTownsJapanese };
 
+static const char *const kEoB2MenuStringsTransferFMTownsJapanese[5] = {
+	"You must transfer\rfour party members\rbefore you may play!",
+	"You may only transfer\rfour party members to\rEOB II!",
+	"Items which are not\ruseful or unbalance\rthe game will be\rdeleted.",
+	" \r ""\x83""p""\x81""[""\x83""e""\x83""B""\x82\xc9\x83\x81\x83""C""\x83""W""\x82\xaa\x82\xa2\x82\xdc\x82\xb9\x82\xf1\x81""B",
+	" \r  ""\x83""p""\x81""[""\x83""e""\x83""B""\x82\xc9\x83""N""\x83\x8c\x83\x8a\x83""b""\x83""N""\x82\xe0\x83""p""\x83\x89\x83""f""\x83""B""\x83\x93""\r  ""\x82\xe0\x82\xa2\x82\xdc\x82\xb9\x82\xf1\x81""B"
+};
+
+static const StringListProvider kEoB2MenuStringsTransferFMTownsJapaneseProvider = { ARRAYSIZE(kEoB2MenuStringsTransferFMTownsJapanese), kEoB2MenuStringsTransferFMTownsJapanese };
+
+
 static const char *const kEoB2MenuStringsSpecFMTownsJapanese[2] = {
 	"\r ""\x96\xDA\x82\xAA\x8A""o""\x82\xDF\x82\xE9\x82\xC6\x81""A""\x83""V""\x81""[""\x83""t""\x82\xCC\x83""C""\x83\x93\x83""T""\x83\x8B\x82\xAA""\r ""\x82\xA2\x82\xC8\x82\xAD\x82\xC8\x82\xC1\x82\xC4\x82\xA2\x82\xBD\x81""I",
 	"  ""\x8E\x9D\x82\xBF\x95\xA8\x82\xAA\x82\xC8\x82\xAD\x82\xC8\x82\xC1\x82\xC4\x82\xA2\x82\xE9\x81""I"

@@ -203,6 +203,9 @@ bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_PROPERTY:
 			parseProperty(params, false);
 			break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {

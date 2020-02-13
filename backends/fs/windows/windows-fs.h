@@ -24,9 +24,6 @@
 #define WINDOWS_FILESYSTEM_H
 
 #include <windows.h>
-#ifdef _WIN32_WCE
-#undef GetCurrentDirectory
-#endif
 
 #include "backends/fs/abstract-fs.h"
 
@@ -53,7 +50,6 @@ public:
 	 * Creates a WindowsFilesystemNode with the root node as path.
 	 *
 	 * In regular windows systems, a virtual root path is used "".
-	 * In windows CE, the "\" root is used instead.
 	 */
 	WindowsFilesystemNode();
 
@@ -84,7 +80,7 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-	virtual bool create(bool isDirectoryFlag);
+	virtual bool createDirectory();
 
 private:
 	/**
@@ -114,6 +110,11 @@ private:
 	 * @return str in Unicode format.
 	 */
 	static const TCHAR* toUnicode(const char *str);
+
+	/**
+	 * Tests and sets the _isValid and _isDirectory flags, using the GetFileAttributes() function.
+	 */
+	virtual void setFlags();
 };
 
 #endif

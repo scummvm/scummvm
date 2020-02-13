@@ -825,7 +825,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 				if (!intersect) {
 					if (_numCrumbs == MAX_CRUMBS) {
 						_numCrumbs = MAX_CRUMBS - 1;
-						memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
+						memmove(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
 					}
 
 					_breadCrumbs[_numCrumbs]._crumbRoomNum = _roomNum;
@@ -842,6 +842,9 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		doUse(kItemMap);
 
 		_interface->mayShowCrumbIndicator();
+		break;
+
+	default:
 		break;
 	}
 
@@ -960,6 +963,9 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 			}
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	_graphics->screenUpdate();
@@ -1024,6 +1030,10 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 			else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 				drawStaticMessage(kTextNothing);
 		}
+		break;
+
+	default:
+		break;
 	}
 }
 

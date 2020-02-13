@@ -41,7 +41,8 @@ enum ResSourceType {
 	kSourceExtAudioMap,		///< SCI1 audio resource maps
 	kSourceWave,			///< External WAVE files, patched in as sound resources
 	kSourceMacResourceFork,	///< Mac SCI1.1 and later resource forks
-	kSourceChunk			///< Script chunk resources (*.chk)
+	kSourceChunk,			///< Script chunk resources (*.chk)
+	kSourceScummVM			///< Built-in resource patcher
 };
 
 
@@ -93,14 +94,14 @@ class DirectoryResourceSource : public ResourceSource {
 public:
 	DirectoryResourceSource(const Common::String &name) : ResourceSource(kSourceDirectory, name) {}
 
-	virtual void scanSource(ResourceManager *resMan);
+	void scanSource(ResourceManager *resMan) override;
 };
 
 class PatchResourceSource : public ResourceSource {
 public:
 	PatchResourceSource(const Common::String &name) : ResourceSource(kSourcePatch, name) {}
 
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	void loadResource(ResourceManager *resMan, Resource *res) override;
 };
 
 class VolumeResourceSource : public ResourceSource {
@@ -116,7 +117,7 @@ public:
 		: ResourceSource(kSourceVolume, name, volNum, resFile), _associatedMap(map) {
 	}
 
-	virtual ResourceSource *findVolume(ResourceSource *map, int volNum) {
+	ResourceSource *findVolume(ResourceSource *map, int volNum) override {
 		if (_associatedMap == map && _volumeNumber == volNum)
 			return this;
 		return NULL;
@@ -129,7 +130,7 @@ public:
 		: ResourceSource(kSourceExtMap, name, volNum, resFile) {
 	}
 
-	virtual void scanSource(ResourceManager *resMan);
+	void scanSource(ResourceManager *resMan) override;
 };
 
 class IntMapResourceSource : public ResourceSource {
@@ -139,7 +140,7 @@ public:
 		: ResourceSource(kSourceIntMap, name, volNum), _mapNumber(mapNum) {
 	}
 
-	virtual void scanSource(ResourceManager *resMan);
+	void scanSource(ResourceManager *resMan) override;
 };
 
 class AudioVolumeResourceSource : public VolumeResourceSource {
@@ -155,9 +156,9 @@ protected:
 public:
 	AudioVolumeResourceSource(ResourceManager *resMan, const Common::String &name, ResourceSource *map, int volNum);
 
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	void loadResource(ResourceManager *resMan, Resource *res) override;
 
-	virtual uint32 getAudioCompressionType() const;
+	uint32 getAudioCompressionType() const override;
 
 	bool relocateMapOffset(uint32 &offset, uint32 &size) const {
 		if (_audioCompressionType == 0) {
@@ -181,14 +182,14 @@ public:
 		: ResourceSource(kSourceExtAudioMap, name, volNum) {
 	}
 
-	virtual void scanSource(ResourceManager *resMan);
+	void scanSource(ResourceManager *resMan) override;
 };
 
 class WaveResourceSource : public ResourceSource {
 public:
 	WaveResourceSource(const Common::String &name) : ResourceSource(kSourceWave, name) {}
 
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	void loadResource(ResourceManager *resMan, Resource *res) override;
 };
 
 /**
@@ -197,11 +198,11 @@ public:
 class MacResourceForkResourceSource : public ResourceSource {
 public:
 	MacResourceForkResourceSource(const Common::String &name, int volNum);
-	~MacResourceForkResourceSource();
+	~MacResourceForkResourceSource() override;
 
-	virtual void scanSource(ResourceManager *resMan);
+	void scanSource(ResourceManager *resMan) override;
 
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	void loadResource(ResourceManager *resMan, Resource *res) override;
 
 protected:
 	Common::MacResManager *_macResMan;
@@ -219,8 +220,8 @@ class ChunkResourceSource : public ResourceSource {
 public:
 	ChunkResourceSource(const Common::String &name, uint16 number);
 
-	virtual void scanSource(ResourceManager *resMan);
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	void scanSource(ResourceManager *resMan) override;
+	void loadResource(ResourceManager *resMan, Resource *res) override;
 
 	uint16 getNumber() const { return _number; }
 

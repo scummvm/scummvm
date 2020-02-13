@@ -129,7 +129,7 @@ public:
 	RivenScriptPtr onMouseMove(const Common::Point &mouse);
 
 	/** Handle a keyboard action */
-	RivenScriptPtr onKeyAction(RivenKeyAction keyAction);
+	RivenScriptPtr onKeyAction(RivenAction keyAction);
 
 	/** General frame update handler */
 	RivenScriptPtr onFrame();
@@ -157,6 +157,7 @@ private:
 	void applyPropertiesPatch8EB7(uint32 globalId, const Common::String &var, uint16 hotspotId);
 	void applyPropertiesPatch2E76(uint32 globalId);
 	void applyPropertiesPatch22118(uint32 globalId);
+	void applyPropertiesPatch2B414(uint32 globalId);
 	void setCurrentCardVariable();
 
 	void moveHotspot(uint16 blstId, const Common::Rect &position);

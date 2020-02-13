@@ -209,6 +209,8 @@ void RightClickDialog::execute() {
 		// Dialog options
 		Ringworld::OptionsDialog::show();
 		break;
+	default:
+		break;
 	}
 }
 

@@ -79,6 +79,8 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	case LANG_SP:
 		_answersFilename = _questionsFilename = "RUEES.TXT";
 		break;
+	default:
+		break;
 	}
 	_dialogueMesgId1 = READ_LE_INT16((uint16 *)_characterBuffer + 40);
 	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
@@ -181,6 +183,8 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	case LANG_SP:
 		_questionsFilename = "RUEES.TXT";
 		_answersFilename = "RUEES.TXT";
+		break;
+	default:
 		break;
 	}
 
@@ -907,6 +911,8 @@ void TalkManager::handleForestAnswser(int zone, int verb) {
 		case 41:
 			indx = 213;
 			break;
+		default:
+			break;
 		}
 		_vm->_globals->_saveData->_data[indx] = 2;
 		_vm->_linesMan->disableZone(22);
@@ -953,6 +959,8 @@ void TalkManager::handleForestAnswser(int zone, int verb) {
 			break;
 		case 41:
 			indx = 212;
+			break;
+		default:
 			break;
 		}
 		_vm->_globals->_saveData->_data[indx] = 2;

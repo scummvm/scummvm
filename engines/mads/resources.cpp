@@ -80,13 +80,13 @@ private:
 	ResourceType getResourceType(const Common::String &resourceName) const;
 public:
 	explicit HagArchive(MADSEngine *vm);
-	virtual ~HagArchive();
+	~HagArchive() override;
 
 	// Archive implementation
-	virtual bool hasFile(const Common::String &name) const;
-	virtual int listMembers(Common::ArchiveMemberList &list) const;
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 };
 
 const char *const MADSCONCAT_STRING = "MADSCONCAT";

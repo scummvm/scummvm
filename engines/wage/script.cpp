@@ -621,8 +621,10 @@ void Script::skipBlock() {
 			case 0x8C: // SOUND
 			case 0x8E: // LET
 			case 0x95: // MENU
-				while (_data->readByte() != 0xFD)
-					;
+				while (_data->readByte() != 0xFD);
+				break;
+			default:
+				break;
 		}
 	}
 }
@@ -800,6 +802,8 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	case kMoveChrScene:
 		_world->move(o1->_value.chr, o2->_value.scene);
 		_handled = true;  // TODO: Is this correct?
+		break;
+	default:
 		break;
 	}
 

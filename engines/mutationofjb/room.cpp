@@ -43,8 +43,8 @@ enum {
 class RoomAnimationDecoderCallback : public AnimationDecoderCallback {
 public:
 	RoomAnimationDecoderCallback(Room &room) : _room(room) {}
-	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
-	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+	void onFrame(int frameNo, Graphics::Surface &surface) override;
+	void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
 private:
 	Room &_room;
 };

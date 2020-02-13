@@ -24,8 +24,8 @@
 
 namespace Networking {
 
-ErrorResponse::ErrorResponse(Request *rq):
-	request(rq), interrupted(false), failed(true), response(""), httpResponseCode(-1) {}
+ErrorResponse::ErrorResponse(Request *rq, Common::String resp):
+	request(rq), interrupted(false), failed(true), response(resp), httpResponseCode(-1) {}
 
 ErrorResponse::ErrorResponse(Request *rq, bool interrupt, bool failure, Common::String resp, long httpCode):
 	request(rq), interrupted(interrupt), failed(failure), response(resp), httpResponseCode(httpCode) {}
@@ -50,7 +50,7 @@ void Request::handleRetry() {
 void Request::pause() { _state = PAUSED; }
 
 void Request::finish() {
-	ErrorResponse error(this, true, false, "", -1);
+	ErrorResponse error(this, true, false, "Request::finish() was called (i.e. interrupted)", -1);
 	finishError(error);
 }
 

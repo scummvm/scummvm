@@ -45,40 +45,7 @@ OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 
 OSystem_SDL_Maemo::~OSystem_SDL_Maemo() {
 	delete _eventObserver;
-#ifdef ENABLE_KEYMAPPER
-	delete _keymapperDefaultBindings;
-#endif
 }
-
-#ifdef ENABLE_KEYMAPPER
-static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymapperDefaultBindings, Model _model) {
-	_keymapperDefaultBindings->setDefaultBinding("gui", "REMP", "HOME");
-	_keymapperDefaultBindings->setDefaultBinding("global", "REMP", "HOME");
-
-	if (_model.hasMenuKey && _model.hasHwKeyboard) {
-		_keymapperDefaultBindings->setDefaultBinding("gui", "FULS", "FULLSCREEN");
-		_keymapperDefaultBindings->setDefaultBinding("global", "FULS", "FULLSCREEN");
-	}
-
-	if (_model.hasHwKeyboard) {
-		_keymapperDefaultBindings->setDefaultBinding("gui", "VIRT", "C+ZOOMMINUS");
-		_keymapperDefaultBindings->setDefaultBinding("global", "VIRT", "C+ZOOMMINUS");
-	} else {
-		_keymapperDefaultBindings->setDefaultBinding("gui", "VIRT", "FULLSCREEN");
-		_keymapperDefaultBindings->setDefaultBinding("global", "VIRT", "FULLSCREEN");
-	}
-
-	if (_model.hasMenuKey )
-		_keymapperDefaultBindings->setDefaultBinding("global", "MENU", "MENU");
-	else
-		_keymapperDefaultBindings->setDefaultBinding("global", "MENU", "S+C+M");
-
-	_keymapperDefaultBindings->setDefaultBinding("gui", "CLOS", "ESCAPE");
-
-	_keymapperDefaultBindings->setDefaultBinding("maemo", "RCLK", "ZOOMPLUS");
-	_keymapperDefaultBindings->setDefaultBinding("maemo", "CLKM", "ZOOMMINUS");
-}
-#endif
 
 void OSystem_SDL_Maemo::init() {
 	// Use an iconless window for Maemo
@@ -103,16 +70,7 @@ void OSystem_SDL_Maemo::initBackend() {
 	if (_eventObserver == 0)
 		_eventObserver = new MaemoSdlEventObserver((MaemoSdlEventSource *)_eventSource);
 
-#ifdef ENABLE_KEYMAPPER
-	if (_keymapperDefaultBindings == 0)
-		_keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
-#endif
-
 	_model = detectModel();
-
-#ifdef ENABLE_KEYMAPPER
-	registerDefaultKeyBindings(_keymapperDefaultBindings, _model);
-#endif
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -129,8 +87,7 @@ void OSystem_SDL_Maemo::fatalError() {
 
 void OSystem_SDL_Maemo::setXWindowName(const char *caption) {
 	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if (SDL_GetWMInfo(&info)) {
+	if (_window->getSDLWMInformation(&info)) {
 		Display *dpy = info.info.x11.display;
 		Window win;
 		win = info.info.x11.fswindow;
@@ -155,7 +112,7 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 		}
 	}
 
-	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
+	_window->setWindowCaption(cap);
 
 	Common::String cap2("ScummVM - "); // 2 lines in OS2008 task switcher, set first line
 	cap = cap2 + cap;
@@ -181,46 +138,86 @@ const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 	return *model;
 }
 
-#ifdef ENABLE_KEYMAPPER
 static const Common::KeyTableEntry maemoKeys[] = {
 	// Function keys
-	{"MENU", Common::KEYCODE_F11, 0, "Menu", false},
-	{"HOME", Common::KEYCODE_F12, 0, "Home", false},
-	{"FULLSCREEN", Common::KEYCODE_F13, 0, "FullScreen", false},
-	{"ZOOMPLUS", Common::KEYCODE_F14, 0, "Zoom+", false},
-	{"ZOOMMINUS", Common::KEYCODE_F15, 0, "Zoom-", false},
+	{"MENU", Common::KEYCODE_F11, "Menu"},
+	{"HOME", Common::KEYCODE_F12, "Home"},
+	{"FULLSCREEN", Common::KEYCODE_F13, "FullScreen"},
+	{"ZOOMPLUS", Common::KEYCODE_F14, "Zoom+"},
+	{"ZOOMMINUS", Common::KEYCODE_F15, "Zoom-"},
 
-	{0, Common::KEYCODE_INVALID, 0, 0, false}
+	{0, Common::KEYCODE_INVALID, 0}
 };
 
 Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
-	return new Common::HardwareInputSet(true, maemoKeys);
+	Common::CompositeHardwareInputSet *inputSet = new Common::CompositeHardwareInputSet();
+	inputSet->addHardwareInputSet(new Common::MouseHardwareInputSet(Common::defaultMouseButtons));
+	inputSet->addHardwareInputSet(new Common::KeyboardHardwareInputSet(maemoKeys, Common::defaultModifiers));
+	inputSet->addHardwareInputSet(new Common::KeyboardHardwareInputSet(Common::defaultKeys, Common::defaultModifiers));
+
+	return inputSet;
 }
 
-Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
+Common::KeymapArray OSystem_SDL_Maemo::getGlobalKeymaps() {
 	using namespace Common;
-	Keymap *globalMap = new Keymap("maemo");
+	KeymapArray globalMaps = OSystem_POSIX::getGlobalKeymaps();
+
+	Keymap *globalMap = new Keymap(Keymap::kKeymapTypeGlobal, "maemo", "Maemo");
 
 	Action *act;
 
-	act = new Action(globalMap, "CLKM", _("Click Mode"));
-	Event evt = Event();
-	evt.type = EVENT_CUSTOM_BACKEND_ACTION;
-	evt.customType = Maemo::kEventClickMode;
-	act->addEvent(evt);
+	act = new Action("CLKM", _("Click Mode"));
+	act->setCustomBackendActionEvent(Maemo::kEventClickMode);
+	globalMap->addAction(act);
 
-	act = new Action(globalMap, "LCLK", _("Left Click"));
-	act->addLeftClickEvent();
+	act = new Action("LCLK", _("Left Click"));
+	act->setLeftClickEvent();
+	globalMap->addAction(act);
 
-	act = new Action(globalMap, "MCLK", _("Middle Click"));
-	act->addMiddleClickEvent();
+	act = new Action("MCLK", _("Middle Click"));
+	act->setMiddleClickEvent();
+	globalMap->addAction(act);
 
-	act = new Action(globalMap, "RCLK", _("Right Click"));
-	act->addRightClickEvent();
+	act = new Action("RCLK", _("Right Click"));
+	act->setRightClickEvent();
+	globalMap->addAction(act);
 
-	return globalMap;
+	globalMaps.push_back(globalMap);
+
+	return globalMaps;
 }
-#endif
+
+Common::KeymapperDefaultBindings *OSystem_SDL_Maemo::getKeymapperDefaultBindings() {
+	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
+
+	keymapperDefaultBindings->setDefaultBinding("gui", "REMP", "HOME");
+	keymapperDefaultBindings->setDefaultBinding("global", "REMP", "HOME");
+
+	if (_model.hasMenuKey && _model.hasHwKeyboard) {
+		keymapperDefaultBindings->setDefaultBinding("gui", "FULS", "FULLSCREEN");
+		keymapperDefaultBindings->setDefaultBinding("global", "FULS", "FULLSCREEN");
+	}
+
+	if (_model.hasHwKeyboard) {
+		keymapperDefaultBindings->setDefaultBinding("gui", "VIRT", "C+ZOOMMINUS");
+		keymapperDefaultBindings->setDefaultBinding("global", "VIRT", "C+ZOOMMINUS");
+	} else {
+		keymapperDefaultBindings->setDefaultBinding("gui", "VIRT", "FULLSCREEN");
+		keymapperDefaultBindings->setDefaultBinding("global", "VIRT", "FULLSCREEN");
+	}
+
+	if (_model.hasMenuKey )
+		keymapperDefaultBindings->setDefaultBinding("global", "MENU", "MENU");
+	else
+		keymapperDefaultBindings->setDefaultBinding("global", "MENU", "S+C+M");
+
+	keymapperDefaultBindings->setDefaultBinding("gui", "CLOS", "ESCAPE");
+
+	keymapperDefaultBindings->setDefaultBinding("maemo", "RCLK", "ZOOMPLUS");
+	keymapperDefaultBindings->setDefaultBinding("maemo", "CLKM", "ZOOMMINUS");
+
+	return keymapperDefaultBindings;
+}
 
 void OSystem_SDL_Maemo::initObserver() {
 	assert(_eventManager);

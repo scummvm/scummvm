@@ -138,7 +138,8 @@ void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat
 
 	_videoContext->screenWidth = width;
 	_videoContext->screenHeight = height;
-	_videoContext->shakeOffsetY = 0;
+	_videoContext->shakeXOffset = 0;
+	_videoContext->shakeYOffset = 0;
 
 	// In case we use the screen texture as frame buffer we reset the pixels
 	// pointer here to avoid freeing the screen texture.
@@ -354,9 +355,10 @@ void OSystem_iOS7::unlockScreen() {
 	dirtyFullScreen();
 }
 
-void OSystem_iOS7::setShakePos(int shakeOffset) {
-	//printf("setShakePos(%i)\n", shakeOffset);
-	_videoContext->shakeOffsetY = shakeOffset;
+void OSystem_iOS7::setShakePos(int shakeXOffset, int shakeYOffset) {
+	//printf("setShakePos(%i, %i)\n", shakeXOffset, shakeYOffset);
+	_videoContext->shakeXOffset = shakeXOffset;
+	_videoContext->shakeYOffset = shakeYOffset;
 	execute_on_main_thread(^ {
 		[[iOS7AppDelegate iPhoneView] setViewTransformation];
 	});

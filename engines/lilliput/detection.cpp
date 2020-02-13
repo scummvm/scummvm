@@ -126,21 +126,25 @@ public:
 	LilliputMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(LilliputGameDescription), lilliputGames) {
 	}
 
-	const char *getName() const {
+	const char *getEngineId() const override {
+		return "lilliput";
+	}
+
+	const char *getName() const override {
 		return "Lilliput";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Lilliput (C) S.L.Grand, Brainware, 1991-1992";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
-	bool hasFeature(MetaEngineFeature f) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 
-	int getMaximumSaveSlot() const;
-	SaveStateList listSaves(const char *target) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	void removeSaveState(const char *target, int slot) const;
+	int getMaximumSaveSlot() const override;
+	SaveStateList listSaves(const char *target) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 bool LilliputMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {

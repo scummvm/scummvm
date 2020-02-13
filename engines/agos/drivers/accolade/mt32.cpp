@@ -21,69 +21,13 @@
  */
 
 #include "agos/drivers/accolade/mididriver.h"
+#include "agos/drivers/accolade/mt32.h"
 
 #include "audio/mididrv.h"
 
 #include "common/config-manager.h"
-#include "common/file.h"
-#include "common/mutex.h"
-#include "common/system.h"
-#include "common/textconsole.h"
 
 namespace AGOS {
-
-class MidiDriver_Accolade_MT32 : public MidiDriver {
-public:
-	MidiDriver_Accolade_MT32();
-	virtual ~MidiDriver_Accolade_MT32();
-
-	// MidiDriver
-	int open();
-	void close();
-	bool isOpen() const { return _isOpen; }
-
-	void send(uint32 b);
-
-	MidiChannel *allocateChannel() {
-		if (_driver)
-			return _driver->allocateChannel();
-		return NULL;
-	}
-	MidiChannel *getPercussionChannel() {
-		if (_driver)
-			return _driver->getPercussionChannel();
-		return NULL;
-	}
-
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
-		if (_driver)
-			_driver->setTimerCallback(timer_param, timer_proc);
-	}
-
-	uint32 getBaseTempo() {
-		if (_driver) {
-			return _driver->getBaseTempo();
-		}
-		return 1000000 / _baseFreq;
-	}
-
-protected:
-	Common::Mutex _mutex;
-	MidiDriver *_driver;
-	bool _nativeMT32; // native MT32, may also be our MUNT, or MUNT over MIDI
-
-	bool _isOpen;
-	int _baseFreq;
-
-private:
-	// simple mapping between MIDI channel and MT32 channel
-	byte _channelMapping[AGOS_MIDI_CHANNEL_COUNT];
-	// simple mapping between MIDI instruments and MT32 instruments
-	byte _instrumentMapping[AGOS_MIDI_INSTRUMENT_COUNT];
-
-public:
-	bool setupInstruments(byte *instrumentData, uint16 instrumentDataSize, bool useMusicDrvFile);
-};
 
 MidiDriver_Accolade_MT32::MidiDriver_Accolade_MT32() {
 	_driver = NULL;

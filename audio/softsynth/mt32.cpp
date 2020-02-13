@@ -290,6 +290,8 @@ uint32 MidiDriver_MT32::property(int prop, uint32 param) {
 	case PROP_CHANNEL_MASK:
 		_channelMask = param & 0xFFFF;
 		return 1;
+	default:
+		break;
 	}
 
 	return 0;

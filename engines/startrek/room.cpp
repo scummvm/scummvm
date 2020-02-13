@@ -20,7 +20,6 @@
  *
  */
 
-#include "startrek/filestream.h"
 #include "startrek/iwfile.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
@@ -46,13 +45,13 @@
 namespace StarTrek {
 
 Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMission(&vm->_awayMission) {
-	SharedPtr<FileStream> rdfFile = _vm->loadFile(name + ".RDF");
+	Common::MemoryReadStreamEndian *rdfFile = _vm->loadFile(name + ".RDF");
 
 	int size = rdfFile->size();
 	_rdfData = new byte[size];
+	_rdfSize = size;
 	rdfFile->read(_rdfData, size);
-
-	_roomIndex = name.lastChar() - '0';
+	delete rdfFile;
 
 	_roomActionList = nullptr;
 
@@ -114,11 +113,201 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMissi
 		_numRoomActions = 0;
 	}
 
+	loadRoomMessages();
+	loadOtherRoomMessages();
 	memset(&_roomVar, 0, sizeof(_roomVar));
 }
 
 Room::~Room() {
+	_lookMessages.clear();
+	_lookWithTalkerMessages.clear();
+	_talkMessages.clear();
 	delete[] _rdfData;
+}
+
+void Room::loadRoomMessages() {
+	// TODO: There are some more messages which are not stored in that offset
+	uint16 messagesOffset = readRdfWord(32);
+	const char *text = (const char *)_rdfData + messagesOffset;
+	const char roomIndexChar = '0' + _vm->_roomIndex;
+
+	do {
+		while (text[0] != '#' || (text[1] != _vm->_missionName[0] && text[4] != roomIndexChar))
+			text++;
+
+		if (text[5] == '\\')
+			loadRoomMessage(text);
+
+		while (*text != '\0')
+			text++;
+
+		// Peek the next byte, in case there's a filler text
+		if (Common::isAlpha(*(text + 1))) {
+			while (*text != '\0')
+				text++;
+		}
+	} while (*(text + 1) == '#');
+}
+
+void Room::loadRoomMessage(const char *text) {
+	int messageNum;
+	bool isTalkMessage;
+	bool isLookMessage;
+	bool isLookWithTalkerMessage;
+
+	Common::String patchedText = patchRoomMessage(text);
+	text = patchedText.c_str();
+
+	char textType = text[10];	// _, U and S: talk message, N: look message, L: look with talker message
+	char numberType = text[11];	// Sxx: Scotty
+
+	if (text[5] != '\\')
+		error("loadRoomMessage: Invalid message");
+
+	isTalkMessage = (textType == '_' || textType == 'U' || numberType == 'S' || numberType == 'F');	// U = Uhura, S = Scotty, F = followup
+	isLookMessage = (textType == 'N');
+	isLookWithTalkerMessage = (textType == 'L');
+
+	sscanf((const char *)(text + 11), "%3d", &messageNum);
+	if (text[14] != '#')
+		error("loadRoomMessage: Invalid message");
+
+	if (memcmp(text + 1, _vm->_missionName.c_str(), 3) || text[4] != _vm->_roomIndex + '0') {
+		// String with a prefix of another mission, separate it
+		messageNum += COMMON_MESSAGE_OFFSET;
+	} else if (numberType == 'S') {
+		// For some reason, Uhura's messages (Uxx) follow the same numbering as the
+		// rest, but Scott's don't, and start from one.
+		messageNum += SCOTTY_MESSAGE_OFFSET;
+	} else if (numberType == 'F') {
+		messageNum += FOLLOWUP_MESSAGE_OFFSET;
+	}
+
+	if (isTalkMessage)
+		_talkMessages[messageNum] = text;
+	else if (isLookMessage)
+		_lookMessages[messageNum] = text;
+	else if (isLookWithTalkerMessage)
+		_lookWithTalkerMessages[messageNum] = text;
+}
+
+struct TypoFix {
+	Common::String prefix;
+	Common::String origText;
+	Common::String newText;
+};
+
+Common::String Room::patchRoomMessage(const char *text) {
+	Common::String txt = text;
+	int i = 0;
+
+	TypoFix typoFixes[] = {
+		{ "#LOV2\\LOV2_012#", "#LOV2\\LOV2_012#", "#LOV1\\LOV1_010#" },	// Audio file missing
+		{ "#LOV3\\LOV3_#",    "#LOV3\\LOV3_#", "#LOV3\\LOV3_000#"},	// Message index missing
+		{ "#LOVA\\LOVA_F08#", "spock", "Spock" },
+		{ "#LOVA\\LOVA_F55#", "sysnthesize", "synthesize" },
+		{ "#FEA3\\FEA3_030#", "#FEA3\\FEA3_030#", "#LOVA\\LOVA_100#" },	// Wrong voice actor
+		{ "#MUD0\\MUD0_023#", "gullability", "gullibility" },
+		{ "#MUD2\\MUD2_002#", "Well, now! I think", "Well, now I think" },
+		{ "#MUD2\\MUD2_014#", "I don't understand enough of the alien's thinking", "I don't understand enough of how the aliens thought," },
+		{ "#MUD3\\MUD3_011#", "to think after all the stunts that Harry has pulled", "to think that after all the stunts that Harry has pulled," },
+		{ "#MUD3\\MUD3_022#", "and they were certain", "and they are certain" },
+		{ "#MUD3\\MUD4_008#", "DId you know", "Did you know" },
+		{ "#FEA1\\FEA1_035#", "before it retreats Captain", "before it retreats, Captain" },
+		{ "#FEA1\\FEA1_041#", "it must have a nasty bite", "it may have a nasty bite" },
+		{ "#FEA3\\FEA3_012#", "he'll be up in about an hour", "he'll be up in about a half hour" },
+		{ "#FEA3\\FEA3_030#", "sHe's dead, Jim!", "He's dead, Jim!" },
+		{ "#FEA5\\FEA5_009#", "those thorns.You might", "those thorns. You might" },
+		{ "#FEA5\\FEA5_018#", "with our phaser not working", "with our phasers not working" },
+		{ "#FEA5\\FEA5_020#", "in a previous life", "in your previous life" },
+		{ "#FEA6\\FEA6_017#", "isn't that just great", "isn't this just great" },
+		{ "#FEA6\\FEA6_019#", "that action, Captain It may", "that action, Captain. It may" },
+		{ "#FEA6\\FEA6N016#", "that attack you", "that attacked you" },
+		{ "#SIN2\\SIN2_012#", "I'm a surgeon not a alien", "I'm a surgeon, not an alien" },
+		{ "#SIN4\\SIN4_023#", "to bypass it's lock system", "to bypass its lock system" },
+		{ "#SIN5\\SIN5N012#", "Sparks explode and", "Sparks fly and" },
+		{ "#TRI0\\TRI0_036#", "the Enterprise!We've", "the Enterprise! We've" },
+		{ "#TRI1\\TRI1_025#", "Male Human-Vulcan", "One male Human-Vulcan" },
+		{ "#TRI1\\TRI1_048#", "with a phaser", "with your phaser" },
+		{ "#TRI2\\TRI2_015#", "Male Human,", "He's a male Human," },
+		{ "#TRI2\\TRI2_017#", "Male Human-Vulcan", "One male Human-Vulcan" },
+		{ "#TRI3\\TRI3_013#", "He's a Male Human", "One male Human" },
+		{ "#TRI3\\TRI3_014#", "Male Human,", "He's a male Human," },
+		{ "#TRI3\\TRI3_016#", "Male Human-Vulcan", "One male Human-Vulcan" },
+		{ "#TRI3\\TRI3U084#", "Captain, come in please!", "Captain, please come in!" },
+		{ "#TRI4\\TRI4_003#", "I didn't want it", "I don't want it" },
+		{ "#TRI4\\TRI4_024#", "a fair trail", "a fair trial" },
+		{ "#TRI4\\TRI4_039#", "what an enemy does not expect", "what the enemy does not expect" },
+		{ "#TRI4\\TRI4_057#", "will believe you", "to believe you" },
+		{ "#TRI5\\TRI5_045#", "at which to transport you", "to which to transport you" },
+		{ "#TRI5\\TRI5N002#", "a beam light", "a beam of light" },
+		{ "#TRI5\\TRI5N016#", "saphire", "sapphire" },
+		{ "#TRI5\\TRI5N017#", "saphire", "sapphire" },
+		{ "#TRI5\\TRI5N018#", "saphire", "sapphire" },
+		{ "#TRI5\\TRI5N019#", "a emerald", "an emerald" },
+		{ "#TRI5\\TRI5N020#", "a emerald", "an emerald" },
+		{ "#TRI5\\TRI5N021#", "a emerald", "an emerald" },
+		{ "#VEN2\\VEN2_050#", "torpedo is loaded", "torpedoes are loaded" },
+		{ "#VEN6\\VEN6_005#", "><upon", "upon" },
+		{ "#VEN8\\VEN8_037#", "Its not", "It's not" },
+		{ "", "", "" }
+	};
+
+	// Fix typos where some messages contain a hyphen instead of an underscore
+	// (e.g in LOV2)
+	if (txt[10] == '-')
+		txt.replace(10, 1, "_");
+
+	// Fix typos where some messages contain double spacing (e.g. in FEA3_020)
+	int32 spacePos = txt.find("  ");
+	if (spacePos > 0)
+		txt.deleteChar(spacePos);
+
+	// Fix typos
+	do {
+		const Common::String origText = typoFixes[i].origText;
+		const Common::String newText = typoFixes[i].newText;
+
+		int32 pos = txt.find(origText);
+		if (pos > 0)
+			txt.replace(pos, origText.size(), newText, pos, newText.size());
+
+		i++;
+	} while (typoFixes[i].prefix != "");
+
+	return txt;
+}
+
+void Room::loadOtherRoomMessages() {
+	uint16 startOffset = readRdfWord(14);
+	// Some RDF files, lile MUDD0, contain text beyond the end offset,
+	// so we read up to the end of the file
+	uint16 endOffset = _rdfSize;	// readRdfWord(16);
+	uint16 offset = startOffset;
+	const char *validPrefixes[] = {
+		"BRI", "COM", "DEM", "FEA", "GEN", "LOV", "MUD", "SIN", "TRI", "TUG", "VEN"
+	};
+
+	while (offset < endOffset) {
+		uint16 nextOffset = readRdfWord(offset + 4);
+		if (nextOffset >= endOffset)
+			break;
+		
+		while (offset < nextOffset) {
+			const char *text = (const char *)_rdfData + offset;
+
+			if (text[0] == '#' && text[5] == '\\') {
+				for (uint i = 0; i < ARRAYSIZE(validPrefixes); i++) {
+					if (!memcmp(text + 1, validPrefixes[i], 3)) {
+						loadRoomMessage(text);
+						break;
+					}
+				}
+			}
+
+			offset++;
+		}
+	}
 }
 
 uint16 Room::readRdfWord(int offset) {
@@ -259,7 +448,7 @@ void Room::loadActorStandAnim(int actorIndex) {
 		_vm->removeActorFromScreen(actorIndex);
 	else {
 		Actor *actor = &_vm->_actorList[actorIndex];
-		if (actor->animationString[0] == '\0')
+		if (actor->animationString.empty())
 			_vm->removeActorFromScreen(actorIndex);
 		else
 			_vm->initStandAnim(actorIndex);
@@ -298,30 +487,43 @@ int Room::showRoomSpecificText(const char **array) {
 	return _vm->showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)array, 20, 20, textColor, true, false, false);
 }
 
-int Room::showText(const TextRef *textIDs) {
+int Room::showMultipleTexts(const TextRef *textIDs, bool fromRDF, bool lookWithTalker) {
 	int numIDs = 0;
+	int retval;
 	while (textIDs[numIDs] != TX_BLANK)
 		numIDs++;
 
 	const char **text = (const char **)malloc(sizeof(const char *) * (numIDs + 1));
-	for (int i = 0; i <= numIDs; i++)
-		text[i] = g_gameStrings[textIDs[i]];
-	int retval = showRoomSpecificText(text);
+
+	for (int i = 0; i <= numIDs; i++) {
+		// TODO: This isn't nice, but it's temporary till we migrate to reading text from RDF files
+		if (i > 0 && fromRDF) {
+			if (textIDs[0] == TX_NULL)
+				text[i] = _lookMessages.contains(textIDs[i]) ? _lookMessages[textIDs[i]].c_str() : _lookMessages[textIDs[i] - COMMON_MESSAGE_OFFSET].c_str();
+			else if (lookWithTalker)
+				text[i] = _lookWithTalkerMessages.contains(textIDs[i]) ? _lookWithTalkerMessages[textIDs[i]].c_str() : _lookWithTalkerMessages[textIDs[i] - COMMON_MESSAGE_OFFSET].c_str();
+			else
+				text[i] = _talkMessages.contains(textIDs[i]) ? _talkMessages[textIDs[i]].c_str() : _talkMessages[textIDs[i] - COMMON_MESSAGE_OFFSET].c_str();
+		} else
+			text[i] = g_gameStrings[textIDs[i]];
+	}
+
+	retval = showRoomSpecificText(text);
 	free(text);
 
 	return retval;
 }
 
-int Room::showText(TextRef speaker, TextRef text) {
+int Room::showText(TextRef speaker, TextRef text, bool fromRDF, bool lookWithTalker) {
 	TextRef textIDs[3];
 	textIDs[0] = speaker;
 	textIDs[1] = text;
 	textIDs[2] = TX_BLANK;
-	return showText(textIDs);
+	return showMultipleTexts(textIDs, fromRDF, lookWithTalker);
 }
 
-int Room::showText(TextRef text) {
-	return showText(TX_NULL, text);
+int Room::showDescription(TextRef text, bool fromRDF, bool lookWithTalker) {
+	return showText(TX_NULL, text, fromRDF, lookWithTalker);
 }
 
 void Room::giveItem(int item) {
@@ -385,11 +587,11 @@ void Room::walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*f
 }
 
 void Room::loadMapFile(const Common::String &name) {
-	_vm->_mapFilename = name;
-	_vm->_iwFile.reset();
-	_vm->_mapFile.reset();
-	_vm->_iwFile = SharedPtr<IWFile>(new IWFile(_vm, name + ".iw"));
+	delete _vm->_mapFile;
 	_vm->_mapFile = _vm->loadFile(name + ".map");
+
+	delete _vm->_iwFile;
+	_vm->_iwFile = new IWFile(_vm, name + ".iw");
 }
 
 void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {
@@ -399,7 +601,7 @@ void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {
 	Sprite sprite;
 	_vm->_gfx->addSprite(&sprite);
 	sprite.setXYAndPriority(0, 0, priority);
-	sprite.setBitmap(_vm->_gfx->loadBitmap(bmpName));
+	sprite.setBitmap(_vm->loadBitmapFile(bmpName));
 
 	_vm->_gfx->drawAllSprites();
 
@@ -431,11 +633,11 @@ int16 Room::getRandomWordInRange(int start, int end) {
 }
 
 void Room::playSoundEffectIndex(int soundEffect) {
-	_vm->playSoundEffectIndex(soundEffect);
+	_vm->_sound->playSoundEffectIndex(soundEffect);
 }
 
 void Room::playMidiMusicTracks(int startTrack, int loopTrack) {
-	_vm->playMidiMusicTracks(startTrack, loopTrack);
+	_vm->_sound->playMidiMusicTracks(startTrack, loopTrack);
 }
 
 void Room::endMission(int16 score, int16 arg1, int16 arg2) {
@@ -447,10 +649,10 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 		_vm->loadActorAnimWithRoomScaling(i, anim, actor->sprite.pos.x, actor->sprite.pos.y);
 	}
 
-	_vm->_kirkActor->animationString[0] = '\0';
-	_vm->_spockActor->animationString[0] = '\0';
-	_vm->_mccoyActor->animationString[0] = '\0';
-	_vm->_redshirtActor->animationString[0] = '\0';
+	_vm->_kirkActor->animationString.clear();
+	_vm->_spockActor->animationString.clear();
+	_vm->_mccoyActor->animationString.clear();
+	_vm->_redshirtActor->animationString.clear();
 
 	playSoundEffectIndex(8);
 
@@ -462,20 +664,25 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 	// TODO: This is a stopgap measure (loading the next away mission immediately).
 	// Replace this with the proper code later.
 	_vm->_gameMode = GAMEMODE_BEAMDOWN;
-	if (_vm->_missionName == "DEMON")
-		_vm->_missionToLoad = "TUG";
-	if (_vm->_missionName == "TUG")
-		_vm->_missionToLoad = "LOVE";
-	if (_vm->_missionName == "LOVE")
-		_vm->_missionToLoad = "MUDD";
-	if (_vm->_missionName == "MUDD")
-		_vm->_missionToLoad = "FEATHER";
-	if (_vm->_missionName == "FEATHER")
-		_vm->_missionToLoad = "TRIAL";
-	if (_vm->_missionName == "TRIAL")
-		_vm->_missionToLoad = "SINS";
-	if (_vm->_missionName == "SINS")
-		_vm->_missionToLoad = "VENG";
+
+	const char *missionNames[] = {
+		"DEMON",
+		"TUG",
+		"LOVE",
+		"MUDD",
+		"FEATHER",
+		"TRIAL",
+		"SINS",
+		"VENG"
+	};
+
+	for (int i = 0; i < ARRAYSIZE(missionNames)-1; i++) {
+		if (_vm->_missionName == missionNames[i]) {
+			_vm->_missionToLoad = missionNames[i + 1];
+			break;
+		}
+	}
+
 	_vm->_roomIndexToLoad = 0;
 }
 
@@ -519,7 +726,7 @@ Common::String Room::getCrewmanAnimFilename(int object, const Common::String &st
 	return _vm->getCrewmanAnimFilename(object, str);
 }
 
-void Room::spockScan(int direction, TextRef text, bool changeDirection) {
+void Room::spockScan(int direction, TextRef text, bool changeDirection, bool fromRDF) {
 	const char *dirs = "nsew";
 	Common::String anim = "sscan_";
 	anim.setChar(dirs[direction], 5);
@@ -531,10 +738,10 @@ void Room::spockScan(int direction, TextRef text, bool changeDirection) {
 	playSoundEffectIndex(SND_TRICORDER);
 
 	if (text != -1)
-		showText(TX_SPEAKER_SPOCK, text);
+		showText(TX_SPEAKER_SPOCK, text, fromRDF);
 }
 
-void Room::mccoyScan(int direction, TextRef text, bool changeDirection) {
+void Room::mccoyScan(int direction, TextRef text, bool changeDirection, bool fromRDF) {
 	const char *dirs = "nsew";
 	Common::String anim = "mscan_";
 	anim.setChar(dirs[direction], 5);
@@ -546,7 +753,29 @@ void Room::mccoyScan(int direction, TextRef text, bool changeDirection) {
 	playSoundEffectIndex(SND_TRICORDER);
 
 	if (text != -1)
-		showText(TX_SPEAKER_MCCOY, text);
+		showText(TX_SPEAKER_MCCOY, text, fromRDF);
+}
+
+bool Room::isPointInPolygon(int offset, int16 x, int16 y) {
+	int16 *data = (int16 *)(_rdfData + offset);
+	int16 numVertices = data[1];
+	int16 *vertData = &data[2];
+
+	for (int i = 0; i < numVertices; i++) {
+		Common::Point p1(vertData[0], vertData[1]);
+		Common::Point p2;
+		if (i == numVertices - 1) // Loop to 1st vertex
+			p2 = Common::Point(data[2], data[3]);
+		else
+			p2 = Common::Point(vertData[2], vertData[3]);
+
+		if ((p2.x - p1.x) * (y - p1.y) - (p2.y - p1.y) * (x - p1.x) < 0)
+			return false;
+
+		vertData += 2;
+	}
+
+	return true;
 }
 
 } // End of namespace StarTrek

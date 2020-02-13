@@ -98,25 +98,25 @@ friend class TownsChannel;
 friend class TownsMidiPart;
 public:
 	MidiDriver_FMTowns(Audio::Mixer *mixer, SciVersion version);
-	~MidiDriver_FMTowns();
+	~MidiDriver_FMTowns() override;
 
-	int open();
+	int open() override;
 	void loadInstruments(const SciSpan<const uint8> &data);
-	bool isOpen() const { return _isOpen; }
-	void close();
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 
-	uint32 property(int prop, uint32 param);
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
+	uint32 property(int prop, uint32 param) override;
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
 
 	void setSoundOn(bool toggle);
 
-	uint32 getBaseTempo();
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	uint32 getBaseTempo() override;
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
 
-	void timerCallback(int timerId);
+	void timerCallback(int timerId) override;
 
 private:
 	int getChannelVolume(uint8 midiPart);
@@ -147,14 +147,14 @@ private:
 class MidiPlayer_FMTowns : public MidiPlayer {
 public:
 	MidiPlayer_FMTowns(SciVersion version);
-	~MidiPlayer_FMTowns();
+	~MidiPlayer_FMTowns() override;
 
-	int open(ResourceManager *resMan);
+	int open(ResourceManager *resMan) override;
 
-	bool hasRhythmChannel() const;
-	byte getPlayId() const;
-	int getPolyphony() const;
-	void playSwitch(bool play);
+	bool hasRhythmChannel() const override;
+	byte getPlayId() const override;
+	int getPolyphony() const override;
+	void playSwitch(bool play) override;
 
 private:
 	MidiDriver_FMTowns *_townsDriver;
@@ -327,6 +327,8 @@ void TownsMidiPart::addChannels(int num) {
 
 	_chanMissing += num;
 	programChange(_program);
+	pitchBend(_pitchBend);
+	controlChangeVolume(_volume << 1);
 }
 
 void TownsMidiPart::dropChannels(int num) {

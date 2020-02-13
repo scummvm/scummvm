@@ -25,7 +25,8 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "common/savefile.h"
-
+#include "common/system.h"
+#include "common/translation.h"
 #include "lure/lure.h"
 
 namespace Lure {
@@ -62,6 +63,25 @@ static const PlainGameDescriptor lureGames[] = {
 };
 
 
+#ifdef USE_TTS
+#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_TTS_NARRATOR,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+#endif
+
 namespace Lure {
 
 static const LureGameDescription gameDescriptions[] = {
@@ -73,7 +93,11 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			#ifdef USE_TTS
+				GUIO1(GAMEOPTION_TTS_NARRATOR)
+			#else
+				GUIO0()
+			#endif
 		},
 		GF_FLOPPY,
 	},
@@ -86,7 +110,12 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			#ifdef USE_TTS
+				GUIO1(GAMEOPTION_TTS_NARRATOR)
+			#else
+				GUIO0()
+			#endif
+
 		},
 		GF_FLOPPY | GF_EGA,
 	},
@@ -205,9 +234,12 @@ static const LureGameDescription gameDescriptions[] = {
 
 class LureMetaEngine : public AdvancedMetaEngine {
 public:
-	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
+	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames
+			#ifdef USE_TTS
+			, optionsList
+			#endif
+			) {
 		_md5Bytes = 1024;
-		_singleId = "lure";
 
 		// Use kADFlagUseExtraAsHint to distinguish between EGA and VGA versions
 		// of italian Lure when their datafiles sit in the same directory.
@@ -215,19 +247,23 @@ public:
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "lure";
+	}
+
+	const char *getName() const override {
 		return "Lure of the Temptress";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Lure of the Temptress (C) Revolution";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {

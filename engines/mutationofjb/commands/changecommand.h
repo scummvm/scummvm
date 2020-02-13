@@ -90,22 +90,22 @@ protected:
 
 class ChangeObjectCommandParser : public ChangeCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class ChangeDoorCommandParser : public ChangeCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class ChangeStaticCommandParser : public ChangeCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class ChangeSceneCommandParser : public ChangeCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class ChangeDoorCommand : public ChangeCommand {
@@ -113,8 +113,8 @@ public:
 	ChangeDoorCommand(uint8 sceneId, uint8 doorId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
 		: ChangeCommand(sceneId, doorId, reg, op, val)
 	{}
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 };
 
 class ChangeObjectCommand : public ChangeCommand {
@@ -122,8 +122,8 @@ public:
 	ChangeObjectCommand(uint8 sceneId, uint8 objectId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
 		: ChangeCommand(sceneId, objectId, reg, op, val)
 	{}
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 };
 
 class ChangeStaticCommand : public ChangeCommand {
@@ -131,8 +131,8 @@ public:
 	ChangeStaticCommand(uint8 sceneId, uint8 staticId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
 		: ChangeCommand(sceneId, staticId, reg, op, val)
 	{}
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 };
 
 class ChangeSceneCommand : public ChangeCommand {
@@ -140,8 +140,8 @@ public:
 	ChangeSceneCommand(uint8 sceneId, uint8 staticId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
 		: ChangeCommand(sceneId, staticId, reg, op, val)
 	{}
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 };
 
 }

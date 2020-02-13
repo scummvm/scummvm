@@ -66,44 +66,44 @@ void Room::feather2Tick1() {
 }
 
 void Room::feather2UseCommunicator() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA2_006);
+	showText(TX_SPEAKER_SPOCK, 6, true);
 }
 
 void Room::feather2UsePhaser() {
 	// FIXME: Why does McCoy say "They're dead, Jim"?
-	showText(TX_SPEAKER_MCCOY, TX_FEA2_003);
+	showText(TX_SPEAKER_MCCOY, 3, true);
 }
 
 void Room::feather2UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_FEA2_007);
+	spockScan(DIR_S, 7, true);
 }
 
 void Room::feather2UseMTricorderAnywhere() {
 	// ENHANCEMENT: Original didn't play tricorder sound, etc
-	mccoyScan(DIR_S, TX_FEA2_002);
+	mccoyScan(DIR_S, 2, true);
 }
 
 void Room::feather2TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA2_004);
+	showText(TX_SPEAKER_MCCOY, 4, true);
 }
 
 void Room::feather2TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_FEA2_008);
+	showText(TX_SPEAKER_SPOCK, 8, true);
 }
 
 void Room::feather2TalkToRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, TX_FEA2_009);
+	showText(TX_SPEAKER_STRAGEY, 9, true);
 }
 
 void Room::feather2LookAtVines() {
 	// NOTE: This might be unused? I can't find where HOTSPOT_VINES is supposed to be.
-	showText(TX_FEA2N000);
-	showText(TX_SPEAKER_STRAGEY, TX_FEA2_010);
-	showText(TX_SPEAKER_MCCOY,   TX_FEA2_005);
+	showDescription(0, true);
+	showText(TX_SPEAKER_STRAGEY, 10, true);
+	showText(TX_SPEAKER_MCCOY,   5, true);
 }
 
 void Room::feather2UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, TX_FEA2_001);
+	showText(TX_SPEAKER_MCCOY, 1, true);
 }
 
 void Room::feather2WalkToLeftExit() {
@@ -111,35 +111,35 @@ void Room::feather2WalkToLeftExit() {
 }
 
 void Room::feather2LookAtEyes() {
-	showText(TX_FEA2N001);
+	showDescription(1, true);
 }
 
 void Room::feather2LookAtBigTree() {
-	showText(TX_FEA2N006);
+	showDescription(6, true);
 }
 
 void Room::feather2LookAtTrees() {
-	showText(TX_FEA2N007);
+	showDescription(7, true);
 }
 
 void Room::feather2LookAnywhere() {
-	showText(TX_FEA2N008);
+	showDescription(8, true);
 }
 
 void Room::feather2LookAtKirk() {
-	showText(TX_FEA2N002);
+	showDescription(2, true);
 }
 
 void Room::feather2LookAtSpock() {
-	showText(TX_FEA2N005);
+	showDescription(5, true);
 }
 
 void Room::feather2LookAtMccoy() {
-	showText(TX_FEA2N004);
+	showDescription(4, true);
 }
 
 void Room::feather2LookAtRedshirt() {
-	showText(TX_FEA2N003);
+	showDescription(3, true);
 }
 
 }

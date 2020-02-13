@@ -34,10 +34,10 @@ class BasicSourceListingProvider : public SourceListingProvider {
 	Common::FSDirectory *_fsDirectory;
 public:
 	BasicSourceListingProvider();
-	virtual ~BasicSourceListingProvider();
-	SourceListing *getListing(const Common::String &filename, ErrorCode &err);
-	ErrorCode setPath(const Common::String &path);
-	Common::String getPath() const;
+	~BasicSourceListingProvider() override;
+	SourceListing *getListing(const Common::String &filename, ErrorCode &err) override;
+	ErrorCode setPath(const Common::String &path) override;
+	Common::String getPath() const override;
 };
 
 }

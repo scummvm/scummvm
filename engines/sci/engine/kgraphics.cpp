@@ -70,9 +70,10 @@ static int16 adjustGraphColor(int16 color) {
 		return color;
 }
 
-void showScummVMDialog(const Common::String &message) {
-	GUI::MessageDialog dialog(message, _("OK"));
-	dialog.runModal();
+int showScummVMDialog(const Common::String &message, const char *altButton = nullptr, bool alignCenter = true) {
+	Graphics::TextAlign alignment = alignCenter ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+	GUI::MessageDialog dialog(message, _("OK"), altButton, alignment);
+	return dialog.runModal();
 }
 
 void kDirLoopWorker(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
@@ -394,9 +395,9 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kWait(EngineState *s, int argc, reg_t *argv) {
-	int sleep_time = argv[0].toUint16();
+	uint16 ticks = argv[0].toUint16();
 
-	const int delta = s->wait(sleep_time);
+	const uint16 delta = s->wait(ticks);
 
 	if (g_sci->_guestAdditions->kWaitHook()) {
 		return NULL_REG;
@@ -492,7 +493,12 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	int16 loopCount;
 
-	loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		loopCount = CelObjView::getNumLoops(viewId);
+	} else
+#endif
+		loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
 
 	debugC(9, kDebugLevelGraphics, "NumLoops(view.%d) = %d", viewId, loopCount);
 
@@ -505,7 +511,12 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = readSelectorValue(s->_segMan, object, SELECTOR(loop));
 	int16 celCount;
 
-	celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		celCount = CelObjView::getNumCels(viewId, loopNo);
+	} else
+#endif
+		celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
 
 	debugC(9, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d", viewId, loopNo, celCount);
 
@@ -553,8 +564,13 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 		if (flags & K_DRAWPIC_FLAGS_ANIMATIONBLACKOUT)
 			animationBlackoutFlag = true;
 		animationNr = flags & 0xFF;
-		if (flags & K_DRAWPIC_FLAGS_MIRRORED)
-			mirroredFlag = true;
+		// Mac interpreters ignored the mirrored flag and didn't mirror pics.
+		//  KQ6 PC room 390 drew pic 390 mirrored so Mac added pic 395, which
+		//  is a mirror of 390, but the script continued to pass this flag.
+		if (g_sci->getPlatform() != Common::kPlatformMacintosh) {
+			if (flags & K_DRAWPIC_FLAGS_MIRRORED)
+				mirroredFlag = true;
+		}
 	}
 	if (argc >= 3) {
 		if (!argv[2].isNull())
@@ -845,6 +861,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	case SCI_CONTROLS_TYPE_TEXT:
 		splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter);
 		break;
+	default:
+		break;
 	}
 
 	switch (type) {
@@ -982,12 +1000,7 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 		if (!changeDirButton.isNull()) {
 			// check if checkDirButton is still enabled, in that case we are called the first time during that room
 			if (!(readSelectorValue(s->_segMan, changeDirButton, SELECTOR(state)) & SCI_CONTROLS_STYLE_DISABLED)) {
-				showScummVMDialog(_("Characters saved inside ScummVM are shown "
-						"automatically. Character files saved in the original "
-						"interpreter need to be put inside ScummVM's saved games "
-						"directory and a prefix needs to be added depending on which "
-						"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
-						"for Quest for Glory 2. Example: 'qfg2-thief.sav'."));
+				g_sci->showQfgImportMessageBox();
 			}
 		}
 

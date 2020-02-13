@@ -60,25 +60,10 @@ bool Keyboard::getKey(Common::Event &event) {
 			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, NULL);
 		return false;
 	case Common::KEYCODE_F5:
-		if (_vm->canSaveGameStateCurrently()) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-			int16 savegameId = dialog->runModalWithCurrentTarget();
-			Common::String savegameDescription = dialog->getResultString();
-			delete dialog;
-
-			if (savegameId != -1)
-				_vm->saveGameState(savegameId, savegameDescription);
-		}
+		_vm->saveGameDialog();
 		return false;
 	case Common::KEYCODE_F7:
-		if (_vm->canLoadGameStateCurrently()) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-			int16 savegameId = dialog->runModalWithCurrentTarget();
-			delete dialog;
-
-			if (savegameId != -1)
-				_vm->loadGameState(savegameId);
-		}
+		_vm->loadGameDialog();
 		return false;
 	case Common::KEYCODE_d:
 		if (event.kbd.flags & Common::KBD_CTRL) {
@@ -207,8 +192,15 @@ void Mouse::newMouse(Common::Event &event) {
 EventManager::EventManager(CGE2Engine *vm) : _vm(vm) {
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
-	memset(&_eventQueue, 0, kEventMax * sizeof(CGE2Event));
-	memset(&_event, 0, sizeof(Common::Event));
+	for (uint16 k = 0; k < kEventMax; k++) {
+		_eventQueue[k]._mask = 0;
+		_eventQueue[k]._x = 0;
+		_eventQueue[k]._y = 0;
+		_eventQueue[k]._spritePtr = nullptr;
+	}
+	_event.joystick.axis = 0;
+	_event.joystick.position = 0;
+	_event.joystick.button = 0;
 }
 
 void EventManager::poll() {

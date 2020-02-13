@@ -29,6 +29,10 @@
 
 #ifdef ENABLE_EOB
 
+namespace Common {
+class Keymap;
+}
+
 namespace Kyra {
 
 struct DarkMoonShapeDef {
@@ -249,17 +253,17 @@ friend class CharacterGenerator;
 friend class TransferPartyWiz;
 public:
 	EoBCoreEngine(OSystem *system, const GameFlags &flags);
-	virtual ~EoBCoreEngine();
+	~EoBCoreEngine() override;
 
-	virtual void initKeymap();
+	static Common::Array<Common::Keymap *> initKeymaps(const Common::String &ameId);
 
-	Screen *screen() { return _screen; }
-	GUI *gui() const { return _gui; }
+	Screen *screen() override { return _screen; }
+	GUI *gui() const override { return _gui; }
 
 protected:
 	// Startup
-	virtual Common::Error init();
-	Common::Error go();
+	Common::Error init() override;
+	Common::Error go() override;
 
 	// Main Menu, Intro, Finale
 	virtual int mainMenu() = 0;
@@ -276,9 +280,9 @@ protected:
 	void initStaticResource();
 	virtual void initSpells();
 
-	void registerDefaultSettings();
-	void readSettings();
-	void writeSettings();
+	void registerDefaultSettings() override;
+	void readSettings() override;
+	void writeSettings() override;
 
 	const uint8 **_largeItemShapes;
 	const uint8 **_smallItemShapes;
@@ -317,7 +321,7 @@ protected:
 	virtual void startupNew();
 	virtual void startupLoad() = 0;
 	void runLoop();
-	void update() { screen()->updateScreen(); }
+	void update() override { screen()->updateScreen(); }
 	bool checkPartyStatus(bool handleDeath);
 
 	bool _runFlag;
@@ -337,9 +341,9 @@ protected:
 	const uint8 *_classModifierFlags;
 
 	// timers
-	void setupTimers();
-	virtual void enableSysTimer(int sysTimer);
-	virtual void disableSysTimer(int sysTimer);
+	void setupTimers() override;
+	void enableSysTimer(int sysTimer) override;
+	void disableSysTimer(int sysTimer) override;
 	void setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer);
 	void deleteCharEventTimer(int charIndex, int evnt);
 	void setupCharacterTimers();
@@ -353,8 +357,8 @@ protected:
 	void timerUpdateFoodStatus(int timerNum);
 	void timerUpdateMonsterIdleAnim(int timerNum);
 
-	uint8 getClock2Timer(int index) { return index < _numClock2Timers ? _clock2Timers[index] : 0; }
-	uint8 getNumClock2Timers()  { return _numClock2Timers; }
+	uint8 getClock2Timer(int index) override { return index < _numClock2Timers ? _clock2Timers[index] : 0; }
+	uint8 getNumClock2Timers() override  { return _numClock2Timers; }
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
@@ -363,7 +367,7 @@ protected:
 	uint32 _restPartyElapsedTime;
 
 	// Mouse
-	void setHandItem(Item itemIndex);
+	void setHandItem(Item itemIndex) override;
 
 	// Characters
 	int getDexterityArmorClassModifier(int dexterity);
@@ -459,6 +463,8 @@ protected:
 	EoBItemType *_itemTypes;
 	char **_itemNames;
 	uint16 _numItemNames;
+	int _numItemNamesPC98;
+	const char * const *_itemNamesPC98;
 	uint32 _partyEffectFlags;
 	Item _lastUsedItem;
 
@@ -586,10 +592,10 @@ protected:
 	void loadLevel(int level, int sub);
 	void readLevelFileData(int level);
 	Common::String initLevelData(int sub);
-	void addLevelItems();
+	void addLevelItems() override;
 	void loadVcnData(const char *file, const uint8 *cgaMapping);
-	void loadBlockProperties(const char *mazFile);
-	const uint8 *getBlockFileData(int levelIndex = 0);
+	void loadBlockProperties(const char *mazFile) override;
+	const uint8 *getBlockFileData(int levelIndex = 0) override;
 	Common::String getBlockFileName(int levelIndex, int sub);
 	const uint8 *getBlockFileData(const char *mazFile);
 	void loadDecorations(const char *cpsFile, const char *decFile);
@@ -600,18 +606,18 @@ protected:
 	virtual void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) = 0;
 	virtual const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) = 0;
 
-	void drawScene(int refresh);
-	void drawSceneShapes(int start = 0);
-	void drawDecorations(int index);
+	void drawScene(int refresh) override;
+	void drawSceneShapes(int start = 0) override;
+	void drawDecorations(int index) override;
 
 	int calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction);
 	void notifyBlockNotPassable();
 	void moveParty(uint16 block);
 
-	int clickedDoorSwitch(uint16 block, uint16 direction);
+	int clickedDoorSwitch(uint16 block, uint16 direction) override;
 	int clickedDoorPry(uint16 block, uint16 direction);
 	int clickedDoorNoPry(uint16 block, uint16 direction);
-	int clickedNiche(uint16 block, uint16 direction);
+	int clickedNiche(uint16 block, uint16 direction) override;
 
 	int specialWallAction(int block, int direction);
 
@@ -627,6 +633,8 @@ protected:
 	int8 _currentSub;
 	Common::String _curGfxFile;
 	Common::String _curBlockFile;
+	Common::String _vcnFilePattern;
+	Common::String _vmpFilePattern;
 
 	uint32 _drawSceneTimer;
 	uint32 _flashShapeTimer;
@@ -660,7 +668,7 @@ protected:
 	const int8 *_portalSeq;
 
 	// Script
-	void runLevelScript(int block, int flags);
+	void runLevelScript(int block, int flags) override;
 	void setScriptFlags(uint32 flags);
 	void clearScriptFlags(uint32 flags);
 	bool checkScriptFlags(uint32 flags);
@@ -686,7 +694,7 @@ protected:
 	void gui_drawWeaponSlotStatus(int x, int y, int status);
 	void gui_drawHitpoints(int index);
 	void gui_drawFoodStatusGraph(int index);
-	void gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2);
+	void gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2) override;
 	void gui_drawCharPortraitStatusFrame(int index);
 	void gui_drawInventoryItem(int slot, int redraw, int pageNum);
 	void gui_drawCompass(bool force);
@@ -701,7 +709,7 @@ protected:
 	void gui_setStatsListButtons();
 	void gui_setSwapCharacterButtons();
 	void gui_setCastOnWhomButtons();
-	void gui_initButton(int index, int x = -1, int y = -1, int val = -1);
+	void gui_initButton(int index, int x = -1, int y = -1, int val = -1) override;
 	Button *gui_getButton(Button *buttonList, int index);
 
 	int clickedInventoryNextPage(Button *button);
@@ -834,7 +842,7 @@ protected:
 	virtual bool restParty_extraAbortCondition();
 
 	// misc
-	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
+	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) override;
 
 	void displayParchment(int id);
 	int countResurrectionCandidates();
@@ -851,8 +859,8 @@ protected:
 	virtual int charSelectDialogue() { return -1; }
 	virtual void characterLevelGain(int charIndex) {}
 
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
 
 	const uint8 *_cgaMappingDefault;
 	const uint8 *_cgaMappingAlt;
@@ -865,6 +873,9 @@ protected:
 	const uint8 *_cgaMappingLevel[5];
 	const uint8 *_cgaLevelMappingIndex;
 
+	// hard coded 16 color palettes for PC98 version of EOB1
+	const uint8 *_palette16c[10];
+
 	bool _enableHiResDithering;
 
 	// Default parameters will import all present original save files and push them to the top of the save dialog.
@@ -872,12 +883,12 @@ protected:
 	Common::String readOriginalSaveFile(Common::String &file);
 	bool saveAsOriginalSaveFile(int slot = -1);
 
-	void *generateMonsterTempData(LevelTempData *tmp);
-	void restoreMonsterTempData(LevelTempData *tmp);
-	void releaseMonsterTempData(LevelTempData *tmp);
-	void *generateWallOfForceTempData(LevelTempData *tmp);
-	void restoreWallOfForceTempData(LevelTempData *tmp);
-	void releaseWallOfForceTempData(LevelTempData *tmp);
+	void *generateMonsterTempData(LevelTempData *tmp) override;
+	void restoreMonsterTempData(LevelTempData *tmp) override;
+	void releaseMonsterTempData(LevelTempData *tmp) override;
+	void *generateWallOfForceTempData(LevelTempData *tmp) override;
+	void restoreWallOfForceTempData(LevelTempData *tmp) override;
+	void releaseWallOfForceTempData(LevelTempData *tmp) override;
 
 	const char *const *_saveLoadStrings;
 
@@ -1132,6 +1143,7 @@ protected:
 	EoBMenuDef *_menuDefs;
 	const EoBMenuButtonDef *_menuButtonDefs;
 
+	int _prefMenuPlatformOffset;
 	bool _configMouse;
 	bool _config2431;
 
@@ -1177,7 +1189,7 @@ protected:
 
 	// sound
 	void snd_playSong(int id);
-	void snd_playSoundEffect(int id, int volume=0xFF);
+	void snd_playSoundEffect(int id, int volume=0xFF) override;
 	void snd_stopSound();
 	void snd_fadeOut(int del = 160);
 	virtual void snd_loadAmigaSounds(int level, int sub) = 0;

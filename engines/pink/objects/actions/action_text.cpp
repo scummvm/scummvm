@@ -23,6 +23,8 @@
 #include "common/debug.h"
 #include "common/substream.h"
 
+#include "graphics/transparent_surface.h"
+
 #include "pink/archive.h"
 #include "pink/director.h"
 #include "pink/pink.h"
@@ -73,6 +75,12 @@ void ActionText::toConsole() {
 		  _name.c_str(), _fileName.c_str(), _xLeft, _yTop, _xRight, _yBottom, _centered, _scrollBar, _textRGB, _backgroundRGB);
 }
 
+static const byte noborderData[3][3] = {
+	{ 0, 1, 0 },
+	{ 1, 0, 1 },
+	{ 0, 1, 0 },
+};
+
 void ActionText::start() {
 	findColorsInPalette();
 	Director *director = _actor->getPage()->getGame()->getDirector();
@@ -83,19 +91,50 @@ void ActionText::start() {
 	stream->read(str, stream->size());
 	delete stream;
 
+	switch(_actor->getPage()->getGame()->getLanguage()) {
+	case Common::RU_RUS:
+		_text = Common::String(str).decode(Common::kWindows1251);
+		break;
+
+	case Common::EN_ANY:
+	default:
+		_text = Common::String(str);
+		break;
+	}
+
+	delete[] str;
+
+	while ( _text.size() > 0 && (_text[ _text.size() - 1 ] == '\n' || _text[ _text.size() - 1 ] == '\r') )
+		_text.deleteLastChar();
+
 	if (_scrollBar) {
 		Graphics::MacFont *font = new Graphics::MacFont;
 		_txtWnd = director->getWndManager().addTextWindow(font, _textColorIndex, _backgroundColorIndex,
 														  _xRight - _xLeft, align, nullptr, false);
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
+		_txtWnd->setEditable(false);
+		_txtWnd->setSelectable(false);
 
-		if (_actor->getPage()->getGame()->getLanguage() == Common::EN_ANY)
-			_txtWnd->appendText(str, font);
+		Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
+		noborder->create(3, 3, noborder->getSupportedPixelFormat());
+		uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
+		uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
+
+		for (int y = 0; y < 3; y++)
+			for (int x = 0; x < 3; x++)
+				*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
+
+		_txtWnd->setBorder(noborder, true);
+
+		Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
+		_txtWnd->setBorder(noborder2, false);
+
+		_txtWnd->appendText(_text, font);
+
 	} else {
 		director->addTextAction(this);
 	}
-	delete[] str;
 }
 
 void ActionText::end() {
@@ -110,17 +149,16 @@ void ActionText::end() {
 
 void ActionText::draw(Graphics::ManagedSurface *surface) {
 	// not working
-	/*Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
-	Graphics::MacFont *font = new Graphics::MacFont;
+	Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+	Graphics::MacFont *font = new Graphics::MacFont();
 	Director *director = _actor->getPage()->getGame()->getDirector();
-	Graphics::MacText text("", &director->getWndManager(), font, _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
-	text.appendText("TESTING", font->getId(), font->getSize(), font->getSlant(), 0);
-	text.draw(surface, _xLeft, _yTop, _xRight - _xLeft, _yBottom - _yTop, 0, 0);*/
+	Graphics::MacText text(_text, &director->getWndManager(), font, _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
+	text.drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft, _yTop));
 }
 
-#define RED(rgb) ((rgb) & 0xFF)
+#define BLUE(rgb) ((rgb) & 0xFF)
 #define GREEN(rgb) (((rgb) >> 8) & 0xFF)
-#define BLUE(rgb) (((rgb) >> 16) & 0xFF)
+#define RED(rgb) (((rgb) >> 16) & 0xFF)
 
 static uint findBestColor(byte *palette, uint32 rgb) {
 	uint bestColor = 0;
@@ -137,14 +175,19 @@ static uint findBestColor(byte *palette, uint32 rgb) {
 			min = dist;
 		}
 	}
+
+	debug(2, "for color %06x the best color is %02x%02x%02x", rgb, palette[bestColor * 3], palette[bestColor * 3 + 1], palette[bestColor * 3 + 2]);
+
 	return bestColor;
 }
 
 void ActionText::findColorsInPalette() {
 	byte palette[256 * 3];
-	g_system->getPaletteManager()->grabPalette(palette, 0, 255);
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 
+	debug(2, "textcolorindex: %06x", _textRGB);
 	_textColorIndex = findBestColor(palette, _textRGB);
+	debug(2, "backgroundColorIndex: %06x", _backgroundRGB);
 	_backgroundColorIndex = findBestColor(palette, _backgroundRGB);
 }
 

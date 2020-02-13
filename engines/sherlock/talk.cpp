@@ -33,6 +33,11 @@
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
+#include "common/config-manager.h"
+
+#ifdef USE_TTS
+#include "common/text-to-speech.h"
+#endif
 
 namespace Sherlock {
 
@@ -351,6 +356,15 @@ void Talk::talkTo(const Common::String filename) {
 
 			// Make a copy of the statement (in case the script frees the statement list), and then execute it
 			Statement statement = _statements[select];
+ 
+                        #ifdef USE_TTS
+			if (_talkTo == -1 && ConfMan.getBool("tts_narrator")) {
+                            Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
+                            _ttsMan->stop();
+                            _ttsMan->say(_statements[select]._reply.c_str());
+	                }
+                        #endif
+
 			doScript(_statements[select]._reply);
 
 			if (IS_ROSE_TATTOO) {

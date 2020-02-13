@@ -73,6 +73,8 @@ void CaldoriaMessages::receiveNotification(Notification *notification, const Not
 		case kCaBedroomMessage2:
 			play1Message(2);
 			break;
+		default:
+			break;
 		}
 	} else {
 		_messageCallBack.releaseCallBack();

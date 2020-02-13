@@ -26,7 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "common/language.h"
 #include "common/tokenizer.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/utils/convert_utf.h"
 
@@ -96,48 +98,114 @@ Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-WideString StringUtil::ansiToWide(const AnsiString &str) {
-	WideString result;
-	for (AnsiString::const_iterator i = str.begin(), end = str.end(); i != end; ++i) {
-		const byte c = *i;
-		if (c < 0x80 || c >= 0xA0) {
-			result += c;
-		} else {
-			uint32 utf32 = _ansiToUTF32[c - 0x80];
-			if (utf32) {
-				result += utf32;
-			} else {
-				// It's an invalid CP1252 character...
-			}
+Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
+	switch (charset) {
+	case CHARSET_EASTEUROPE:
+		return Common::kWindows1250;
+
+	case CHARSET_RUSSIAN:
+		return Common::kWindows1251;
+
+	case CHARSET_ANSI:
+		return Common::kWindows1252;
+
+	case CHARSET_GREEK:
+		return Common::kWindows1253;
+
+	case CHARSET_TURKISH:
+		return Common::kWindows1254;
+
+	case CHARSET_HEBREW:
+		return Common::kWindows1255;
+
+	case CHARSET_BALTIC:
+		return Common::kWindows1257;
+
+	case CHARSET_DEFAULT:
+		switch (BaseEngine::instance().getLanguage()) {
+
+		//cp1250: Central Europe
+		case Common::CZ_CZE:
+		case Common::HR_HRV:
+		case Common::HU_HUN:
+		case Common::PL_POL:
+		case Common::SK_SVK:
+			return Common::kWindows1250;
+
+		//cp1251: Cyrillic
+		case Common::RU_RUS:
+		case Common::UA_UKR:
+			return Common::kWindows1251;
+
+		//cp1252: Western Europe
+		case Common::DA_DAN:
+		case Common::DE_DEU:
+		case Common::EN_ANY:
+		case Common::EN_GRB:
+		case Common::EN_USA:
+		case Common::ES_ESP:
+		case Common::FI_FIN:
+		case Common::FR_FRA:
+		case Common::IT_ITA:
+		case Common::NB_NOR:
+		case Common::NL_NLD:
+		case Common::PT_BRA:
+		case Common::PT_POR:
+		case Common::SE_SWE:
+		case Common::UNK_LANG:
+			return Common::kWindows1252;
+
+		//cp1253: Greek
+		case Common::GR_GRE:
+			return Common::kWindows1253;
+
+		//cp1254: Turkish
+		case Common::TR_TUR:
+			return Common::kWindows1254;
+
+		//cp1255: Hebrew
+		case Common::HE_ISR:
+			return Common::kWindows1255;
+
+		//cp1257: Baltic
+		case Common::ET_EST:
+		case Common::LV_LAT:
+			return Common::kWindows1257;
+
+		case Common::JA_JPN:
+		case Common::KO_KOR:
+		case Common::ZH_CNA:
+		case Common::ZH_TWN:
+		default:
+			warning("Unsupported charset: %d", charset);
+			return Common::kWindows1252;
 		}
+
+	case CHARSET_OEM:
+	case CHARSET_CHINESEBIG5:
+	case CHARSET_GB2312:
+	case CHARSET_HANGUL:
+	case CHARSET_MAC:
+	case CHARSET_SHIFTJIS:
+	case CHARSET_SYMBOL:
+	case CHARSET_VIETNAMESE:
+	case CHARSET_JOHAB:
+	case CHARSET_ARABIC:
+	case CHARSET_THAI:
+	default:
+		warning("Unsupported charset: %d", charset);
+		return Common::kWindows1252;
 	}
-	return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::wideToAnsi(const WideString &wstr) {
-	AnsiString result;
-	for (WideString::const_iterator i = wstr.begin(), end = wstr.end(); i != end; ++i) {
-		const uint32 c = *i;
-		if (c < 0x80 || (c >= 0xA0 && c <= 0xFF)) {
-			result += c;
-		} else {
-			uint32 ansi = 0xFFFFFFFF;
-			for (uint j = 0; j < ARRAYSIZE(_ansiToUTF32); ++j) {
-				if (_ansiToUTF32[j] == c) {
-					ansi = j + 0x80;
-					break;
-				}
-			}
+WideString StringUtil::ansiToWide(const AnsiString &str, TTextCharset charset) {
+	return Common::convertToU32String(str.c_str(), mapCodePage(charset));
+}
 
-			if (ansi != 0xFFFFFFFF) {
-				result += ansi;
-			} else {
-				// There's no valid CP1252 code for this character...
-			}
-		}
-	}
-	return result;
+//////////////////////////////////////////////////////////////////////////
+AnsiString StringUtil::wideToAnsi(const WideString &wstr, TTextCharset charset) {
+	return Common::convertFromU32String(wstr, mapCodePage(charset));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -171,11 +239,5 @@ Common::String StringUtil::decodeSetting(const Common::String &str) {
 AnsiString StringUtil::toString(int val) {
 	return Common::String::format("%d", val);
 }
-
-// Mapping of CP1252 characters 0x80...0x9F into UTF-32
-uint32 StringUtil::_ansiToUTF32[32] = {
-	0x20AC, 0x0000, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x0000, 0x017D, 0x0000,
-	0x0000, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x0000, 0x017E, 0x0178
-};
 
 } // End of namespace Wintermute

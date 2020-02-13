@@ -37,7 +37,8 @@ class SaveLoad {
 public:
 	static bool emptySaveSlot(int slot);
 	static bool isSaveSlotUsed(int slot);
-	static bool getSaveSlotDescription(int slot, char *buffer);
+	static Common::String getSaveSlotDescription(int slot);
+	static void getSaveSlotTimestamp(int slot, TimeDate *time);
 	static Common::String getSaveSlotFilename(int slot);
 
 	static bool loadGame(const Common::String &filename, BaseGame *gameRef);

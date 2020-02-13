@@ -271,6 +271,7 @@ void Scene101::step() {
 		_talkCounter = 0;
 	}
 
+	// Monsieur Brie beckons Raul
 	if (_game._trigger == 50) {
 		_vm->_gameConv->run(0);
 		_callingStatus = 1;
@@ -485,6 +486,9 @@ void Scene101::handleAnimation0() {
 	case 66:
 		resetFrame = 24;
 		break;
+
+	default:
+		break;
 	}
 
 	if (resetFrame >= 0) {
@@ -561,6 +565,10 @@ void Scene101::handleAnimation1() {
 
 				case 3:
 					resetFrame = 17;
+					break;
+
+				default:
+					break;
 				}
 			} else {
 				_chandelierStatus = 4;
@@ -589,6 +597,9 @@ void Scene101::handleAnimation1() {
 
 	case 315:
 		_scene->freeAnimation(1);
+		break;
+
+	default:
 		break;
 	}
 
@@ -2234,6 +2245,9 @@ void Scene103::handleJacquesAnim() {
 			break;
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	if (resetFrame >= 0) {
@@ -3855,6 +3869,9 @@ void Scene105::actions() {
 				_vm->_dialogs->showItem(OBJ_RED_FRAME, 802, 0);
 
 			_game._player._stepEnabled = true;
+			break;
+
+		default:
 			break;
 		}
 		_action._inProgress = false;
@@ -8472,7 +8489,9 @@ void Scene113::handleFlorentAnimation() {
 	case 42:
 		if (_florentStatus == 3)
 			resetFrame = 41;
+		break;
 
+	default:
 		break;
 	}
 
@@ -8842,6 +8861,8 @@ void Scene113::handleJulieAnimation() {
 			break;
 		}
 		break;
+	default:
+		break;
 	}
 
 	if (resetFrame >= 0) {
@@ -9042,6 +9063,9 @@ void Scene113::handleLoveConversation() {
 			_scene->setDynamicAnim(_christineHotspotId1, _globals._animationIndexes[0], 14);
 			_scene->setDynamicAnim(_christineHotspotId1, _globals._animationIndexes[0], 16);
 		}
+		break;
+
+	default:
 		break;
 	}
 

@@ -244,6 +244,8 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	case 6:
 		g_cine->_objectTable[objIdx].part = newValue;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -310,6 +312,8 @@ int16 getObjectParam(uint16 objIdx, uint16 paramIdx) {
 		return g_cine->_objectTable[objIdx].costume;
 	case 5:
 		return g_cine->_objectTable[objIdx].part;
+	default:
+		break;
 	}
 
 	return 0;

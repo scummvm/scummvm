@@ -26,7 +26,11 @@ namespace BladeRunner {
 
 void SceneScriptBB08::InitializeScene() {
 	if (Game_Flag_Query(kFlagBB09toBB08)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Setup_Scene_Information(204.0f, 0.0f, 92.0f, 875);
+#else
+		Setup_Scene_Information(204.0f, 96.1f, 94.0f, 256);
+#endif
 	} else {
 		Setup_Scene_Information(247.0f, 0.0f, 27.0f, 790);
 	}
@@ -120,6 +124,16 @@ void SceneScriptBB08::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptBB08::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagBB09toBB08)) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// prevents a sling-shot effect whereby McCoy reverts to the position vector
+		// he had in the previous room (BB09), if he just started walking before exiting BB09
+		// this bug would result in McCoy teleporting to the right of this scene (BB08)
+		// and he would often then glitch through the bathtub.
+		// Also he would skip the climbing down stairs animation altogether
+		// The bug seems to be particular only to this case of McCoy climbing down a ladder
+		Actor_Force_Stop_Walking(kActorMcCoy);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_At_XYZ(kActorMcCoy, 204.0f, 96.1f, 94.0f, 256);
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Ladder(kActorMcCoy, 8, false, kAnimationModeIdle);

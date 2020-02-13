@@ -51,6 +51,11 @@ Rational::Rational(int num, int denom) {
 	cancel();
 }
 
+Rational::Rational(const Rational &rational) {
+	_num   = rational._num;
+	_denom = rational._denom;
+}
+
 void Rational::cancel() {
 	// Cancel the fraction by dividing both the num and the denom
 	// by their greatest common divisor.

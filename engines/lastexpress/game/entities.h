@@ -46,10 +46,10 @@ class Sequence;
 class Entities : Common::Serializable {
 public:
 	Entities(LastExpressEngine *engine);
-	~Entities();
+	~Entities() override;
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	void savePositions(Common::Serializer &ser);
 	void saveCompartments(Common::Serializer &ser);
 

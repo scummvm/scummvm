@@ -33,14 +33,14 @@ namespace Pegasus {
 class KeyCard : public InventoryItem {
 public:
 	KeyCard(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
-	virtual ~KeyCard() {}
+	~KeyCard() override {}
 
-	virtual void toggleItemState();
-	virtual void setItemState(const ItemState);
+	void toggleItemState() override;
+	void setItemState(const ItemState) override;
 	bool isFlashlightOn();
 
 protected:
-	virtual void removedFromInventory();
+	void removedFromInventory() override;
 };
 
 } // End of namespace Pegasus

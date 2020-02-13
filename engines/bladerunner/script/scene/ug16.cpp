@@ -185,7 +185,7 @@ bool SceneScriptUG16::ClickedOn2DRegion(int region) {
 
 void SceneScriptUG16::SceneFrameAdvanced(int frame) {
 	if (frame == 132) {
-		Ambient_Sounds_Remove_Looping_Sound(kSfxELECLAB1, true);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxELECLAB1, 1);
 	}
 }
 

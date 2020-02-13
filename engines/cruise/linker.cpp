@@ -249,6 +249,8 @@ int updateScriptImport(int ovlIdx) {
 					ovlData->arrayMsgRelHeader[linkEntryIdx].obj2Number = pFoundExport->idx;
 					break;
 				}
+				default:
+					break;
 				}
 			}
 		}

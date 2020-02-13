@@ -21,52 +21,30 @@
  */
 
 #include "glk/tads/tads2/tads2.h"
+#include "glk/tads/tads2/appctx.h"
+#include "glk/tads/tads2/runtime_app.h"
+#include "glk/tads/tads2/os.h"
 
 namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-TADS2::TADS2(OSystem *syst, const GlkGameDescription &gameDesc) : OS(syst, gameDesc) {
-	cmap_init_default();
+TADS2::TADS2(OSystem *syst, const GlkGameDescription &gameDesc) : TADS(syst, gameDesc) {
 }
 
 void TADS2::runGame() {
-	errcxdef errctx;
-	errctx.errcxlgc = &errctx;
-	errctx.errcxfp = nullptr;
-	errctx.errcxofs = 0;
-	errctx.errcxappctx = this;
+	// Initialize the OS layer
+	os_init(nullptr, nullptr, 0, 0, 0);
+	os_instbrk(true);
 
-	/* copyright-date-string */
-#ifdef T2_COPYRIGHT_NOTICE
-	trdptf("%s - A %s TADS %s Interpreter.\n",
-		G_tads_oem_app_name, G_tads_oem_display_mode,
-		TADS_RUNTIME_VERSION);
-	trdptf("%sopyright (c) 1993, 2012 by Michael J. Roberts.\n",
-		G_tads_oem_copyright_prefix ? "TADS c" : "C");
-	trdptf("%s\n", G_tads_oem_author);
-#endif
+	char name[255];
+	strcpy(name, getFilename().c_str());
+	char *argv[2] = { nullptr, name };
 
-	trdmain1(&errctx);
+	trdmain(2, argv, nullptr, ".sav");
 
-	// pause before exiting if the OS desires it
-	os_expause();
-}
-
-void TADS2::trdmain1(errcxdef *errctx) {
-
-}
-
-void TADS2::trdptf(const char *fmt, ...) {
-	va_list va;
-
-	// format the string */
-	va_start(va, fmt);
-	Common::String msg = Common::String::vformat(fmt, va);
-	va_end(va);
-
-	// print the formatted buffer
-	os_printz(msg);
+	os_instbrk(false);
+	os_uninit();
 }
 
 } // End of namespace TADS2

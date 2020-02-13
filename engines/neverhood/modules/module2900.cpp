@@ -74,6 +74,8 @@ void Module2900::createScene(int sceneNum, int which) {
 		_vm->gameState().sceneNum = 0;
 		_childObject = new Scene2001(_vm, this, which);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module2900::updateScene);
 	_childObject->handleUpdate();
@@ -119,6 +121,8 @@ void Module2900::updateScene() {
 		case 5:
 		case 6:
 			leaveModule(_teleporterModuleResult);
+			break;
+		default:
 			break;
 		}
 	}
@@ -227,6 +231,8 @@ uint32 Scene2901::handleMessage(int messageNum, const MessageParam &param, Entit
 		_selectedButtonNum = param.asInteger();
 		if (!getSubVar(V_TELEPORTER_DEST_AVAILABLE, _selectedButtonNum))
 			_selectedButtonNum = _currLocationButtonNum;
+		break;
+	default:
 		break;
 	}
 	return 0;

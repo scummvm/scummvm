@@ -23,7 +23,10 @@
 #ifndef BLADERUNNER_FONT_H
 #define BLADERUNNER_FONT_H
 
+#include "common/array.h"
 #include "common/str.h"
+
+#include "graphics/font.h"
 
 namespace Graphics {
 struct Surface;
@@ -33,7 +36,7 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-class Font {
+class Font : public Graphics::Font {
 	struct Character {
 		int x;
 		int y;
@@ -42,43 +45,32 @@ class Font {
 		int dataOffset;
 	};
 
-	BladeRunnerEngine *_vm;
-
-	int           _characterCount;
-	int           _maxWidth;
-	int           _maxHeight;
-	Character     _characters[256];
-	int           _dataSize;
-	uint16       *_data;
-	int           _screenWidth;
-	int           _screenHeight;
-	int           _spacing1;
-	int           _spacing2;
-	uint16        _defaultColor;
-	uint16        _color;
-	int           _intersperse;
+	uint32                   _characterCount;
+	int                      _maxWidth;
+	int                      _maxHeight;
+	Common::Array<Character> _characters;
+	int                      _dataSize;
+	uint16                  *_data;
+	int                      _screenWidth;
+	int                      _screenHeight;
+	int                      _spacing;
+	bool                     _useFontColor;
 
 public:
-	Font(BladeRunnerEngine *vm);
-	~Font();
+	~Font() override;
 
-	bool open(const Common::String &fileName, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color);
-	void close();
+	static Font* load(BladeRunnerEngine *vm, const Common::String &fileName, int spacing, bool useFontColor);
 
-	void setSpacing(int spacing1, int spacing2);
-	void setColor(uint16 color);
-
-	void draw(const Common::String &text, Graphics::Surface &surface, int x, int y) const;
-	void drawColor(const Common::String &text, Graphics::Surface &surface, int x, int y, uint16 color);
-	void drawNumber(int num, Graphics::Surface &surface, int x, int y) const;
-
-	int getTextWidth(const Common::String &text) const;
-	int getTextHeight(const Common::String &text) const;
+	int getFontHeight() const override;
+	int getMaxCharWidth() const override;
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
+	Font();
 	void reset();
-
-	void drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const;
+	void close();
+	// void drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const;
 };
 
 } // End of namespace BladeRunner

@@ -37,7 +37,7 @@ class LilliputEngine;
 class LilliputSound: public Audio::MidiPlayer {
 public:
 	LilliputSound();
-	~LilliputSound();
+	~LilliputSound() override;
 
 	void init();
 	void refresh();
@@ -59,8 +59,8 @@ private:
 	void loadMusic(Common::String filename);
 	void playMusic(int var1);
 
-	virtual void send(uint32 b);
-	virtual void sendToChannel(byte channel, uint32 b);
+	void send(uint32 b) override;
+	void sendToChannel(byte channel, uint32 b) override;
 };
 
 } // End of namespace Lilliput

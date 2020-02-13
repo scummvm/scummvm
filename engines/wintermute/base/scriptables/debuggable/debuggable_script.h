@@ -35,12 +35,12 @@ class DebuggableScript : public ScScript {
 	int32 _stepDepth;
 	DebuggableScEngine *_engine;
 	BaseArray<WatchInstance *> _watchInstances;
-	virtual void preInstHook(uint32 inst) override;
-	virtual void postInstHook(uint32 inst) override;
+	void preInstHook(uint32 inst) override;
+	void postInstHook(uint32 inst) override;
 	void setStepDepth(int depth);
 public:
 	DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine);
-	virtual ~DebuggableScript();
+	~DebuggableScript() override;
 	ScValue *resolveName(const Common::String &name);
 	/**
 	 * Return argument to last II_DBG_LINE encountered

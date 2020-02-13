@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/winexe_pe.h"
 
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
@@ -99,11 +100,11 @@ bool Moonbase::setFOWImage(int image) {
 			if (_fileName.empty()) { // We are running for the first time
 				_fileName = _vm->generateFilename(-3);
 
-				if (!_exe.loadFromEXE(_fileName))
+				if (!_exe->loadFromEXE(_fileName))
 					error("Cannot open file %s", _fileName.c_str());
 			}
 
-			Common::SeekableReadStream *stream = _exe.getResource(Common::kWinRCData, resId);
+			Common::SeekableReadStream *stream = _exe->getResource(Common::kWinRCData, resId);
 
 			if (stream->size()) {
 				_fowImage = (uint8 *)malloc(stream->size());

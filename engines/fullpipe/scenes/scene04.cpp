@@ -645,7 +645,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 
 	MessageQueue *mq1 = aniHandler.makeRunQueue(&mkQueue);
 
-	memset(&mkQueue, 0, sizeof(mkQueue));
+	mkQueue.reset();
 	mkQueue.ani = ani;
 	mkQueue.staticsId1 = ST_KZW_JUMPOUT;
 	mkQueue.staticsId2 = ST_KZW_SIT;
@@ -1083,8 +1083,8 @@ void sceneHandler04_startSounds(const char *snd1, const char *snd2, const char *
 void updateSound() {
 	switch (g_vars->scene04_musicStage) {
 	case 0:
-		return;
-
+	default:
+		break;
 	case 1:
 		if (!g_fp->_mixer->isSoundHandleActive(g_fp->_soundStream2)) {
 			g_fp->playOggSound("sc4_loop.ogg", g_fp->_soundStream3);
@@ -1506,6 +1506,7 @@ int sceneHandler04(ExCommand *ex) {
 
 			return res;
 		}
+		break;
 
 	case 29:
 		{
@@ -1552,7 +1553,6 @@ int sceneHandler04(ExCommand *ex) {
 				}
 			}
 		}
-
 		break;
 
 	case MSG_SC4_HIDEBOOT:
@@ -1585,7 +1585,6 @@ int sceneHandler04(ExCommand *ex) {
 
 			sceneHandler04_handTake();
 		}
-
 		break;
 
 	case MSG_SC4_KOZAWFALL:
@@ -1605,8 +1604,8 @@ int sceneHandler04(ExCommand *ex) {
 			exnew->_z = 5;
 			exnew->_excFlags |= 2;
 			exnew->postMessage();
-			break;
 		}
+		break;
 
 	case MSG_SC4_MANFROMBOTTLE:
 		sceneHandler04_manFromBottle();
@@ -1634,6 +1633,9 @@ int sceneHandler04(ExCommand *ex) {
 
 	case MSG_SC4_COINPUT:
 		g_vars->scene04_coinPut = true;
+		break;
+
+	default:
 		break;
 	}
 

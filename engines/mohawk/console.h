@@ -106,6 +106,7 @@ private:
 	bool Cmd_StopSound(int argc, const char **argv);
 	bool Cmd_DrawImage(int argc, const char **argv);
 	bool Cmd_ChangePage(int argc, const char **argv);
+	bool Cmd_ChangeCursor(int argc, const char **argv);
 };
 
 #ifdef ENABLE_CSTIME
@@ -115,7 +116,7 @@ class MohawkEngine_CSTime;
 class CSTimeConsole : public GUI::Debugger {
 public:
 	CSTimeConsole(MohawkEngine_CSTime *vm);
-	virtual ~CSTimeConsole(void);
+	~CSTimeConsole(void) override;
 
 private:
 	MohawkEngine_CSTime *_vm;

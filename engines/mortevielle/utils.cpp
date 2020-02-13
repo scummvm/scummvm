@@ -1330,7 +1330,6 @@ void MortevielleEngine::displayDiningRoom() {
  * @remarks	Originally called 'sparl'
  */
 void MortevielleEngine::startDialog(int16 rep) {
-	const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
 	int key;
 
 	assert(rep >= 0);
@@ -1342,7 +1341,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 
 	key = 0;
 	do {
-		_soundManager->startSpeech(rep, haut[_caff - 69], 0);
+		_soundManager->startSpeech(rep, _caff - 69, 0);
 		key = _dialogManager->waitForF3F8();
 		if (shouldQuit())
 			return;
@@ -2291,6 +2290,8 @@ void MortevielleEngine::prepareRoom() {
 			case CHAPEL:
 				setRandomPresenceChapel(_coreVar._faithScore);
 				break;
+			default:
+				break;
 			}
 			if ((_savedBitIndex != 0) && (_currBitIndex != 10))
 				_savedBitIndex = _currBitIndex;
@@ -2831,6 +2832,8 @@ int MortevielleEngine::getPresence(int roomId) {
 			case CHAPEL:
 				pres = getPresenceStatsChapel(h);
 				break;
+			default:
+				break;
 			}
 			pres += _coreVar._faithScore;
 			rand = getRandomNumber(1, 100);
@@ -2856,6 +2859,8 @@ int MortevielleEngine::getPresence(int roomId) {
 					break;
 				case CHAPEL:
 					pres = setPresenceChapel(h);
+					break;
+				default:
 					break;
 				}
 				retVal = pres;
@@ -2940,6 +2945,8 @@ void MortevielleEngine::drawPicture() {
 			case WELL:
 				if (_coreVar._wellObjectId != 0)
 					displayAnimFrame(1, 1);
+				break;
+			default:
 				break;
 			}
 		}

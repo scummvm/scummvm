@@ -128,11 +128,11 @@ int sceneHandler15(ExCommand *cmd) {
 		break;
 
 	case MSG_SC15_ASSDRYG:
-		if (g_fp->_rnd.getRandomNumber(1))
+		if (g_fp->_rnd.getRandomNumber(1)) {
 			g_fp->playSound(SND_15_011, 0);
-		else
+		} else {
 			g_fp->playSound(SND_15_006, 0);
-
+		}
 		break;
 
 	case MSG_SC15_LADDERTOBACK:
@@ -148,11 +148,11 @@ int sceneHandler15(ExCommand *cmd) {
 		break;
 
 	case MSG_SC15_PULL:
-		if (g_vars->scene15_plusminus->_statics->_staticsId == ST_PMS_MINUS)
+		if (g_vars->scene15_plusminus->_statics->_staticsId == ST_PMS_MINUS) {
 			g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_PLUS);
-		else
+		} else {
 			g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_MINUS);
-
+		}
 		break;
 
 	case 64:
@@ -175,8 +175,8 @@ int sceneHandler15(ExCommand *cmd) {
 
 				cmd->_messageKind = 0;
 			}
-			break;
 		}
+		break;
 
 	case 30:
 		// nop
@@ -201,6 +201,10 @@ int sceneHandler15(ExCommand *cmd) {
 		}
 
 		g_fp->_behaviorManager->updateBehaviors();
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;

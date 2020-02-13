@@ -37,7 +37,7 @@ namespace Scalpel {
 
 enum JournalButton {
 	BTN_NONE, BTN_EXIT, BTN_BACK10, BTN_UP, BTN_DOWN, BTN_AHEAD110, BTN_SEARCH,
-	BTN_FIRST_PAGE, BTN_LAST_PAGE, BTN_PRINT_TEXT
+	BTN_FIRST_PAGE, BTN_LAST_PAGE, BTN_PRINT_TEXT, BTN_BACKWARD, BTN_FORWARD
 };
 
 class ScalpelJournal: public Journal {
@@ -94,7 +94,7 @@ private:
 	JournalButton getHighlightedButton(const Common::Point &pt);
 public:
 	ScalpelJournal(SherlockEngine *vm);
-	virtual ~ScalpelJournal() {}
+	~ScalpelJournal() override {}
 
 	/**
 	 * Display the journal
@@ -109,18 +109,18 @@ public:
 	/**
 	 * Draw the journal background, frame, and interface buttons
 	 */
-	virtual void drawFrame();
+	void drawFrame() override;
 
 	/**
 	 * Reset viewing position to the start of the journal
 	 */
-	virtual void resetPosition();
+	void resetPosition() override;
 
 	/**
 	 * Records statements that are said, in the order which they are said. The player
 	 * can then read the journal to review them
 	 */
-	virtual void record(int converseNum, int statementNum, bool replyOnly = false);
+	void record(int converseNum, int statementNum, bool replyOnly = false) override;
 };
 
 } // End of namespace Scalpel

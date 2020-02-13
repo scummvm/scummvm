@@ -45,7 +45,7 @@ namespace ALSA {
 
 #ifdef ENABLE_OPL2LPT
 namespace OPL2LPT {
-	OPL *create();
+	OPL *create(Config::OplType type);
 } // End of namespace OPL2LPT
 #endif // ENABLE_OPL2LPT
 
@@ -57,7 +57,8 @@ enum OplEmulator {
 	kDOSBox = 2,
 	kALSA = 3,
 	kNuked = 4,
-	kOPL2LPT = 5
+	kOPL2LPT = 5,
+	kOPL3LPT = 6
 };
 
 OPL::OPL() {
@@ -79,7 +80,8 @@ const Config::EmulatorDescription Config::_drivers[] = {
 	{ "alsa", _s("ALSA Direct FM"), kALSA, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
 #ifdef ENABLE_OPL2LPT
-	{ "opl2lpt", _s("OPL2LPT"), kOPL2LPT, kFlagOpl2 },
+	{ "opl2lpt", _s("OPL2LPT"), kOPL2LPT, kFlagOpl2},
+	{ "opl3lpt", _s("OPL3LPT"), kOPL3LPT, kFlagOpl2 | kFlagOpl3 },
 #endif
 	{ 0, 0, 0, 0 }
 };
@@ -115,6 +117,9 @@ Config::DriverId Config::detect(OplType type) {
 
 	case kOpl3:
 		flags = kFlagOpl3;
+		break;
+
+	default:
 		break;
 	}
 
@@ -205,10 +210,18 @@ OPL *Config::create(DriverId driver, OplType type) {
 
 #ifdef ENABLE_OPL2LPT
 	case kOPL2LPT:
-		if (type == kOpl2)
-			return OPL2LPT::create();
-		else
-			warning("OPL2LPT only supports OPL2");
+		if (type == kOpl2) {
+			return OPL2LPT::create(type);
+		}
+
+		warning("OPL2LPT only supprts OPL2");
+		return 0;
+	case kOPL3LPT:
+		if (type == kOpl2 || type == kOpl3) {
+			return OPL2LPT::create(type);
+		}
+
+		warning("OPL3LPT does not support dual OPL2");
 		return 0;
 #endif
 

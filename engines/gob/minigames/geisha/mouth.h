@@ -34,10 +34,10 @@ class Mouth : public ANIObject {
 public:
 	Mouth(const ANIFile &ani, const CMPFile &cmp,
 	      uint16 mouthAnim, uint16 mouthSprite, uint16 floorSprite);
-	~Mouth();
+	~Mouth() override;
 
 	/** Advance the animation to the next frame. */
-	void advance();
+	void advance() override;
 
 	/** Active the mouth's animation. */
 	void activate();
@@ -46,12 +46,12 @@ public:
 	bool isDeactivated() const;
 
 	/** Set the current position. */
-	void setPosition(int16 x, int16 y);
+	void setPosition(int16 x, int16 y) override;
 
 	/** Draw the current frame onto the surface and return the affected rectangle. */
-	bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) override;
 	/** Draw the current frame from the surface and return the affected rectangle. */
-	bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) override;
 
 private:
 	static const int kFloorCount = 2;

@@ -38,9 +38,9 @@ class SXMath : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(SXMath, BaseScriptable)
 	SXMath(BaseGame *inGame);
-	virtual ~SXMath();
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
+	~SXMath() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 
 private:
 	double degreeToRadian(double value);

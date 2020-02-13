@@ -46,7 +46,7 @@ protected:
 	/**
 	 * Load the fonts
 	 */
-	virtual void loadFonts(Common::Archive *archive) override;
+	void loadFonts(Common::Archive *archive) override;
 public:
 	/**
 	 * Constructor

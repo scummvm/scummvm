@@ -32,16 +32,4 @@
  */
 DECLARE_SCALER(DownscaleAllByHalf);
 
-/**
- * This filter (down)scales the source image horizontally by a factor of 1/2.
- * For example, a 320x200 image is scaled to 160x200.
- */
-DECLARE_SCALER(DownscaleHorizByHalf);
-
-/**
- * This filter (down)scales the source image horizontally by a factor of 3/4.
- * For example, a 320x200 image is scaled to 240x200.
- */
-DECLARE_SCALER(DownscaleHorizByThreeQuarters);
-
 #endif

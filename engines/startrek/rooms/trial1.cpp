@@ -184,13 +184,13 @@ void Room::trial1Tick50() {
 	if (!_awayMission->trial.doorOpen)
 		_awayMission->disableInput = false;
 	if (!_awayMission->trial.entityDefeated) {
-		showText(TX_SPEAKER_BENNIE, TX_TRI1_056);
-		showText(TX_SPEAKER_SPOCK,  TX_TRI1_047);
-		showText(TX_SPEAKER_MCCOY,  TX_TRI1_032);
-		showText(TX_SPEAKER_KIRK,   TX_TRI1_007);
-		showText(TX_SPEAKER_BENNIE, TX_TRI1_057);
-		showText(TX_SPEAKER_KIRK,   TX_TRI1_010);
-		showText(TX_SPEAKER_BENNIE, TX_TRI1_055);
+		showText(TX_SPEAKER_BENNIE, 56, true);
+		showText(TX_SPEAKER_SPOCK,  47, true);
+		showText(TX_SPEAKER_MCCOY,  32, true);
+		showText(TX_SPEAKER_KIRK,   7, true);
+		showText(TX_SPEAKER_BENNIE, 57, true);
+		showText(TX_SPEAKER_KIRK,   10, true);
+		showText(TX_SPEAKER_BENNIE, 55, true);
 	}
 }
 
@@ -238,47 +238,47 @@ void Room::trial1PickedUpRod() {
 }
 
 void Room::trial1LookAtKirk() {
-	showText(TX_TRI1N003);
+	showDescription(3, true);
 }
 
 void Room::trial1LookAtSpock() {
-	showText(TX_TRI1N017);
+	showDescription(17, true);
 }
 
 void Room::trial1LookAtMccoy() {
-	showText(TX_TRI1N016);
+	showDescription(16, true);
 }
 
 void Room::trial1LookAtRedshirt() {
-	showText(TX_TRI1N015);
+	showDescription(15, true);
 }
 
 void Room::trial1LookAtWall() {
-	showText(TX_TRI1N011);
+	showDescription(11, true);
 }
 
 void Room::trial1LookAtFloor() {
-	showText(TX_TRI1N006);
+	showDescription(6, true);
 }
 
 void Room::trial1LookAtRods() {
-	showText(TX_TRI1N009);
+	showDescription(9, true);
 }
 
 void Room::trial1LookAtDoor() {
-	showText(TX_TRI1N001);
+	showDescription(1, true);
 }
 
 void Room::trial1LookAtLock() {
-	showText(TX_TRI1N002);
+	showDescription(2, true);
 }
 
 void Room::trial1LookAtEntity() {
-	showText(TX_TRI1N000);
+	showDescription(0, true);
 }
 
 void Room::trial1LookAtMoltenRock() {
-	showText(TX_TRI1N007);
+	showDescription(7, true);
 }
 
 void Room::trial1TalkToKirk() {
@@ -286,16 +286,16 @@ void Room::trial1TalkToKirk() {
 }
 
 void Room::trial1TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI1_046);
-	showText(TX_SPEAKER_MCCOY, TX_TRI1_034);
+	showText(TX_SPEAKER_SPOCK, 46, true);
+	showText(TX_SPEAKER_MCCOY, 34, true);
 }
 
 void Room::trial1TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI1_019);
+	showText(TX_SPEAKER_MCCOY, 19, true);
 }
 
 void Room::trial1TalkToRedshirt() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI1_053);
+	showText(TX_SPEAKER_BENNIE, 53, true);
 }
 
 void Room::trial1TalkToEntity() {
@@ -303,15 +303,15 @@ void Room::trial1TalkToEntity() {
 }
 
 void Room::trial1UsePhaserOnCrewman() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI1_048);
+	showText(TX_SPEAKER_BENNIE, 48, true);
 }
 
 void Room::trial1UsePhaserOnEntity() {
-	showText(TX_TRI1N004);
+	showDescription(4, true);
 }
 
 void Room::trial1UsePhaserOnWall() {
-	showText(TX_TRI1N008);
+	showDescription(8, true);
 }
 
 
@@ -345,7 +345,7 @@ void Room::trial1ReachedFloorToUseKillPhaser() {
 }
 
 void Room::trial1DoneShootingFloorWithKillPhaser() {
-	showText(TX_TRI1N014);
+	showDescription(14, true);
 	loadActorAnim2(OBJECT_MOLTEN_ROCK, "t1mltd", 0xca, 0xbc);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
@@ -357,66 +357,66 @@ void Room::trial1DoneShootingFloorWithKillPhaser() {
 }
 
 void Room::trial1UsePhaserOnRod() {
-	showText(TX_TRI1N012);
+	showDescription(12, true);
 }
 
 void Room::trial1UsePhaserOnDoor() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI1_040);
+	showText(TX_SPEAKER_SPOCK, 40, true);
 }
 
 void Room::trial1UsePhaserOnLock() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI1_021);
+	showText(TX_SPEAKER_MCCOY, 21, true);
 }
 
 void Room::trial1UseMTricorderOnKirk() {
-	mccoyScan(DIR_S, TX_TRI1_024, true);
+	mccoyScan(DIR_S, 24, false, true);
 }
 
 void Room::trial1UseMTricorderOnSpock() {
 	// ENHANCEMENT: Original didn't play tricorder sound, etc
-	mccoyScan(DIR_S, TX_TRI1_025, true);
+	mccoyScan(DIR_S, 25, false, true);
 }
 
 void Room::trial1UseMTricorderOnMccoy() {
-	mccoyScan(DIR_S, TX_TRI1_022, true);
+	mccoyScan(DIR_S, 22, false, true);
 }
 
 void Room::trial1UseMTricorderOnRedshirt() {
-	mccoyScan(DIR_S, TX_TRI1_023, true);
+	mccoyScan(DIR_S, 23, false, true);
 }
 
 void Room::trial1UseMTricorderOnEntity() {
-	mccoyScan(DIR_S, TX_TRI1_017, true);
+	mccoyScan(DIR_S, 17, false, true);
 }
 
 void Room::trial1UseSTricorderOnWall() {
-	spockScan(DIR_S, TX_TRI1_043, true);
+	spockScan(DIR_S, 43, false, true);
 }
 
 void Room::trial1UseSTricorderOnEntity() {
-	spockScan(DIR_S, TX_TRI1_012, true);
+	spockScan(DIR_S, 12, false, true);
 
 	// BUG: infinite score mechanism
 	_awayMission->trial.missionScore += 1;
 }
 
 void Room::trial1UseSTricorderOnRods() {
-	spockScan(DIR_S, TX_TRI1_041, true);
+	spockScan(DIR_S, 41, false, true);
 }
 
 void Room::trial1UseSTricorderOnFloor() {
-	spockScan(DIR_S, TX_TRI1_042, true);
+	spockScan(DIR_S, 42, false, true);
 
 	// BUG: infinite score mechanism
 	_awayMission->trial.missionScore += 1;
 }
 
 void Room::trial1UseSTricorderOnDoor() {
-	spockScan(DIR_S, TX_TRI1_013, true);
+	spockScan(DIR_S, 13, false, true);
 }
 
 void Room::trial1UseSTricorderOnLock() {
-	spockScan(DIR_S, TX_TRI1_014, true);
+	spockScan(DIR_S, 14, false, true);
 
 	if (!_awayMission->trial.scannedLock) {
 		_awayMission->trial.scannedLock = true;
@@ -427,64 +427,64 @@ void Room::trial1UseSTricorderOnLock() {
 
 void Room::trial1UseCommunicator() {
 	if (_awayMission->trial.forceFieldDown) {
-		showText(TX_SPEAKER_UHURA, TX_TRI1U090);
+		showText(TX_SPEAKER_UHURA, 90, true);
 
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
-			TX_TRI1_005, TX_TRI1_004, TX_TRI1_009,
+			5, 4, 9,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices, true);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
 			_awayMission->trial.missionEndMethod = 1;
 			endMission(1, 1, 1);
 		} else if (choice == 1) { // "Beam us to Vlict's position"
-			showText(TX_SPEAKER_UHURA, TX_TRI1U080);
+			showText(TX_SPEAKER_UHURA, 80, true);
 			_awayMission->disableInput = true;
 			loadRoomIndex(4, 4);
 		} // Else don't transport anywhere
 	} else { // Force field still up
 		if (_awayMission->trial.uhuraAnalyzedCode)
-			showText(TX_SPEAKER_UHURA, TX_TRI1U068);
+			showText(TX_SPEAKER_UHURA, 68, true);
 		else {
-			showText(TX_SPEAKER_UHURA, TX_TRI1U086);
-			showText(TX_SPEAKER_UHURA, TX_TRI1U106);
-			showText(TX_SPEAKER_UHURA, TX_TRI1U098);
+			showText(TX_SPEAKER_UHURA, 86, true);
+			showText(TX_SPEAKER_UHURA, 106, true);
+			showText(TX_SPEAKER_UHURA, 98, true);
 
 			if (_awayMission->trial.scannedLock) {
-				showText(TX_SPEAKER_KIRK,  TX_TRI1_011);
-				showText(TX_SPEAKER_UHURA, TX_TRI1U101);
+				showText(TX_SPEAKER_KIRK,  11, true);
+				showText(TX_SPEAKER_UHURA, 101, true);
 
 				const TextRef choices[] = {
 					TX_SPEAKER_KIRK,
-					TX_TRI1_006, TX_TRI1_002,
+					6, 2,
 					TX_BLANK
 				};
-				int choice = showText(choices);
+				int choice = showMultipleTexts(choices, true);
 
 				if (choice == 0) { // Don't analyze the anomolous program
-					showText(TX_SPEAKER_UHURA, TX_TRI1U079);
+					showText(TX_SPEAKER_UHURA, 79, true);
 					_awayMission->trial.doorCodeBehaviour = 2;
 					_awayMission->trial.uhuraAnalyzedCode = true;
 					_awayMission->trial.missionScore += 1;
 				} else { // Analyze the anomolous program
-					showText(TX_SPEAKER_UHURA, TX_TRI1U102);
+					showText(TX_SPEAKER_UHURA, 102, true);
 
 					const TextRef choices2[] = {
 						TX_SPEAKER_KIRK,
-						TX_TRI1_003, TX_TRI1_008,
+						3, 8,
 						TX_BLANK
 					};
-					choice = showText(choices2);
+					choice = showMultipleTexts(choices2, true);
 
 					if (choice == 0) { // Activate the program
-						showText(TX_SPEAKER_UHURA, TX_TRI1U095);
+						showText(TX_SPEAKER_UHURA, 95, true);
 						_awayMission->trial.doorCodeBehaviour = 5;
 						_awayMission->trial.uhuraAnalyzedCode = true;
 						_awayMission->trial.missionScore += 3;
 					} else { // Don't activate, only open the door
-						showText(TX_SPEAKER_UHURA, TX_TRI1U079);
+						showText(TX_SPEAKER_UHURA, 79, true);
 						_awayMission->trial.doorCodeBehaviour = 2;
 						_awayMission->trial.uhuraAnalyzedCode = true;
 						_awayMission->trial.missionScore += 1;
@@ -496,34 +496,34 @@ void Room::trial1UseCommunicator() {
 }
 
 void Room::trial1UseMccoyOnEntity() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI1_016);
+	showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::trial1UseMccoyOnLock() {
 	if (!_awayMission->trial.entityDefeated)
-		showText(TX_SPEAKER_MCCOY, TX_TRI1_018);
+		showText(TX_SPEAKER_MCCOY, 18, true);
 	else if (_awayMission->trial.doorCodeBehaviour == 0)
-		showText(TX_SPEAKER_MCCOY, TX_TRI1_020);
+		showText(TX_SPEAKER_MCCOY, 20, true);
 	else
-		showText(TX_SPEAKER_MCCOY, TX_TRI1_029);
+		showText(TX_SPEAKER_MCCOY, 29, true);
 }
 
 void Room::trial1UseMccoyOnFloor() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI1_031);
+	showText(TX_SPEAKER_MCCOY, 31, true);
 }
 
 void Room::trial1UseSpockOnEntity() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI1_039);
+	showText(TX_SPEAKER_SPOCK, 39, true);
 }
 
 
 void Room::trial1UseSpockOnLock() {
 	if (_awayMission->trial.doorOpen)
-		showText(TX_SPEAKER_SPOCK, TX_TRI1_038);
+		showText(TX_SPEAKER_SPOCK, 38, true);
 	else if (!_awayMission->trial.entityDefeated)
-		showText(TX_SPEAKER_SPOCK, TX_TRI1_036);
+		showText(TX_SPEAKER_SPOCK, 36, true);
 	else if (_awayMission->trial.doorCodeBehaviour == 0)
-		showText(TX_SPEAKER_SPOCK, TX_TRI1_044);
+		showText(TX_SPEAKER_SPOCK, 44, true);
 	else if (_awayMission->trial.doorCodeBehaviour == 2)
 		walkCrewmanC(OBJECT_SPOCK, 0x1f, 0xb8, &Room::trial1SpockReachedKeypad);
 	else
@@ -558,11 +558,11 @@ void Room::trial1SpockUsedKeypadWithExtraProgram() {
 
 
 void Room::trial1UseSpockOnFloor() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI1_035);
+	showText(TX_SPEAKER_SPOCK, 35, true);
 }
 
 void Room::trial1UseRedshirtOnEntity() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI1_050);
+	showText(TX_SPEAKER_BENNIE, 50, true);
 }
 
 
@@ -570,9 +570,9 @@ void Room::trial1UseRedshirtOnLock() {
 	if (_awayMission->trial.doorOpen)
 		return;
 	else if (!_awayMission->trial.entityDefeated)
-		showText(TX_SPEAKER_BENNIE, TX_TRI1_051);
+		showText(TX_SPEAKER_BENNIE, 51, true);
 	else if (_awayMission->trial.doorCodeBehaviour == 0)
-		showText(TX_SPEAKER_BENNIE, TX_TRI1_054);
+		showText(TX_SPEAKER_BENNIE, 54, true);
 	else if (_awayMission->trial.doorCodeBehaviour == 2)
 		walkCrewmanC(OBJECT_REDSHIRT, 0x1f, 0xb8, &Room::trial1RedshirtReachedKeypad);
 	else
@@ -607,25 +607,25 @@ void Room::trial1RedshirtUsedKeypadWithExtraProgram() {
 
 
 void Room::trial1UseRedshirtOnFloor() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI1_049);
+	showText(TX_SPEAKER_BENNIE, 49, true);
 }
 
 void Room::trial1UseRodOnMccoy() {
 	// ENHANCEMENT: This was originally only voiced with the wooden rod, not the iron rod.
 	// (This applies to the Spock and Redshirt functions below, too.)
-	showText(TX_SPEAKER_MCCOY, TX_TRI1_027);
+	showText(TX_SPEAKER_MCCOY, 27, true);
 }
 
 void Room::trial1UseRodOnSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI1_037);
+	showText(TX_SPEAKER_SPOCK, 37, true);
 }
 
 void Room::trial1UseRodOnRedshirt() {
-	showText(TX_SPEAKER_BENNIE, TX_TRI1_052);
+	showText(TX_SPEAKER_BENNIE, 52, true);
 }
 
 void Room::trial1UseRodOnFloorOrWall() {
-	showText(TX_TRI1C002);
+	showDescription(TX_TRI1C002);
 }
 
 
@@ -645,7 +645,7 @@ void Room::trial1DoneThrowingWoodRod() {
 
 
 void Room::trial1UseWoodRodOnLock() {
-	showText(TX_TRI1N005);
+	showDescription(5, true);
 }
 
 
@@ -660,7 +660,7 @@ void Room::trial1ReachedMoltenRock() {
 
 void Room::trial1DoneCoatingWoodRod() {
 	_awayMission->disableInput = false;
-	showText(TX_TRI1N013);
+	showDescription(13, true);
 	loseItem(OBJECT_IWROD);
 	giveItem(OBJECT_IIROD);
 
@@ -691,19 +691,19 @@ void Room::trial1DoneThrowingIronRod() {
 
 	_awayMission->disableInput = false;
 	stopAllVocSounds();
-	showText(TX_SPEAKER_SPOCK, TX_TRI1_045);
-	showText(TX_SPEAKER_MCCOY, TX_TRI1_033);
+	showText(TX_SPEAKER_SPOCK, 45, true);
+	showText(TX_SPEAKER_MCCOY, 33, true);
 
 	_awayMission->trial.missionScore += 1;
 }
 
 
 void Room::trial1UseIronRodOnLock() {
-	showText(TX_TRI1N004);
+	showDescription(4, true);
 }
 
 void Room::trial1GetThrownIronRod() {
-	showText(TX_SPEAKER_SPOCK, TX_TRI1_015);
+	showText(TX_SPEAKER_SPOCK, 15, true);
 }
 
 void Room::trial1WalkToDoor() {
@@ -712,7 +712,7 @@ void Room::trial1WalkToDoor() {
 }
 
 void Room::trial1UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, TX_TRI1_026);
+	showText(TX_SPEAKER_MCCOY, 26, true);
 }
 
 }

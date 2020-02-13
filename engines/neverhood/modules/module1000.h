@@ -32,7 +32,7 @@ namespace Neverhood {
 class Module1000 : public Module {
 public:
 	Module1000(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Module1000();
+	~Module1000() override;
 protected:
 	int _sceneNum;
 	uint32 _musicFileHash;
@@ -43,7 +43,7 @@ protected:
 class Scene1001 : public Scene {
 public:
 	Scene1001(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Scene1001();
+	~Scene1001() override;
 protected:
 	Sprite *_asHammer;
 	Sprite *_asDoor;
@@ -56,7 +56,7 @@ protected:
 class Scene1002 : public Scene {
 public:
 	Scene1002(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Scene1002();
+	~Scene1002() override;
 protected:
 	Sprite *_asRing1;
 	Sprite *_asRing2;

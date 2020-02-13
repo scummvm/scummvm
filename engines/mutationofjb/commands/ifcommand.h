@@ -32,7 +32,7 @@ class ScriptParseContext;
 
 class IfCommandParser : public ConditionalCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 private:
 };
 
@@ -40,8 +40,8 @@ class IfCommand : public ConditionalCommand {
 public:
 	IfCommand(uint8 sceneId, uint8 objectId, uint16 value, bool negative);
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 
 private:
 	uint8 _sceneId;

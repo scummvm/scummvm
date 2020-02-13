@@ -37,14 +37,13 @@ class KIASectionHelp : public KIASectionBase {
 
 public:
 	KIASectionHelp(BladeRunnerEngine *vm);
-	~KIASectionHelp();
+	~KIASectionHelp() override;
 
 	void open() override;
 	void close() override;
 
 	void draw(Graphics::Surface &surface) override;
 
-	void handleKeyUp(const Common::KeyState &kbd) override;
 	void handleMouseMove(int mouseX, int mouseY) override;
 	void handleMouseDown(bool mainButton) override;
 	void handleMouseUp(bool mainButton) override;

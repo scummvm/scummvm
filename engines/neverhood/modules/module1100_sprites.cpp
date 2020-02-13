@@ -67,6 +67,8 @@ uint32 SsScene1105Button::handleMessage(int messageNum, const MessageParam &para
 		setVisible(true);
 		playSound(0, 0x44141000);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -98,6 +100,8 @@ uint32 SsScene1105SymbolDie::handleMessage(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case NM_ANIMATION_UPDATE:
 		loadSymbolSprite();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -146,6 +150,8 @@ uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &p
 		sendMessage(_parentScene, 0x2003, 0);
 		stopAnimation();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -192,6 +198,8 @@ uint32 SsScene1105OpenButton::handleMessage(int messageNum, const MessageParam &
 			_countdown = 4;
 		}
 		messageResult = 1;
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -257,6 +265,8 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483E:
 		teleporterDisappear(0x3C2E4245);
+		break;
+	default:
 		break;
 	}
 	return messageResult;

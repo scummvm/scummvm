@@ -41,10 +41,10 @@ class CachedSourceListingProvider : public SourceListingProvider {
 	void invalidateCache();
 public:
 	CachedSourceListingProvider();
-	virtual ~CachedSourceListingProvider();
-	ErrorCode setPath(const Common::String &path);
-	Common::String getPath() const;
-	Listing *getListing(const Common::String &filename, ErrorCode &err);
+	~CachedSourceListingProvider() override;
+	ErrorCode setPath(const Common::String &path) override;
+	Common::String getPath() const override;
+	Listing *getListing(const Common::String &filename, ErrorCode &err) override;
 };
 
 } // End of namespace Wintermute

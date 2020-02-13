@@ -21,6 +21,10 @@ void File::write(const void *buffer, int len) {
 	fwrite(buffer, 1, len, f);
 }
 
+bool File::eof() {
+	return feof(f) != 0;
+}
+
 byte File::readByte() {
 	byte v;
 	read(&v, sizeof(byte));
@@ -37,16 +41,6 @@ uint32 File::readLong() {
 	uint32 v;
 	read(&v, sizeof(uint32));
 	return FROM_LE_32(v);
-}
-
-void File::readString(char* string, int bufferLength) {
-	int i = 0;
-	while (i < bufferLength - 1 && fread(string + i, 1, 1, f) == 1) {
-		if (string[i] == '\n' || string[i] == 0)
-			break;
-		++ i;
-	}
-	string[i] = 0;
 }
 
 void File::writeByte(byte v) {

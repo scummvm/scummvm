@@ -121,24 +121,27 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class CGE2MetaEngine : public AdvancedMetaEngine {
 public:
 	CGE2MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
-		_singleId = "sfinx";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "cge2";
+	}
+
+	const char *getName() const override {
 		return "CGE2";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Sfinx (C) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual SaveStateList listSaves(const char *target) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override;
+	SaveStateList listSaves(const char *target) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 static ADGameDescription s_fallbackDesc = {

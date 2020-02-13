@@ -37,10 +37,13 @@ lib*.a
 /Icon.*
 /scummvm-conf.cpp
 /tmp_*.cpp
+
 /README
 /README.html
 /NEWS
 /NEWS.html
+/doc/de/NEUES
+/doc/de/NEUES.html
 
 /build
 /staging
@@ -73,22 +76,6 @@ lib*.a
 /backends/platform/symbian/*/ScummVM_*.mmp
 !/backends/platform/symbian/*/ScummVM_*_App.mmp
 /backends/platform/symbian/*/BLD.INF
-
-/backends/platform/wince/scummvm.exe*
-/backends/platform/wince/sound
-/backends/platform/wince/tools
-/backends/platform/wince/gui
-/backends/platform/wince/engines
-/backends/platform/wince/common
-/backends/platform/wince/libs
-/backends/platform/wince/graphics
-/backends/platform/wince/base
-/backends/platform/wince/backends
-/backends/platform/wince/.deps
-/backends/platform/wince/libscummvm.a
-/backends/platform/wince/plugins
-/backends/platform/wince/scummvm.dll
-/backends/platform/wince/*.swp
 
 /dists/rpl.exe
 
@@ -142,7 +129,9 @@ project.xcworkspace
 /devtools/make-scumm-fontdata
 /devtools/create_access/create_access
 /devtools/create_cryo/create_cryo_dat
+/devtools/create_cryomni3d/create_cryomni3d_dat
 /devtools/create_drascula/create_drascula
+/devtools/create_glk/create_glk
 /devtools/create_hugo/create_hugo
 /devtools/create_kyradat/create_kyradat
 /devtools/create_lure/create_lure
@@ -150,6 +139,7 @@ project.xcworkspace
 /devtools/create_neverhood/create_neverhood
 /devtools/create_project/create_project
 /devtools/create_supernova/create_supernova
+/devtools/create_supernova/create_image/create_image
 /devtools/create_teenagent/create_teenagent
 /devtools/create_titanic/create_titanic
 /devtools/create_tony/create_tony
@@ -247,6 +237,12 @@ out/
 psp2pkg/
 *.velf
 *.vpk
+
+#Ignore Switch files
+switch_release/
+scummvm.elf
+scummvm.nro
+scummvm_switch.zip
 
 #Ignore gmon.out created by gprof
 gmon.out

@@ -174,6 +174,10 @@ void Expression::skipExpr(char stopToken) {
 			case OP_FUNC:
 				_vm->_game->_script->skip(1);
 				skipExpr(OP_END_EXPR);
+				break;
+
+			default:
+				break;
 			}
 			continue;
 		} // if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC))
@@ -308,6 +312,9 @@ void Expression::printExpr_internal(char stopToken) {
 				else
 					debugN(5, "id(");
 				printExpr_internal(OP_END_EXPR);
+				break;
+
+			default:
 				break;
 			}
 			continue;
@@ -783,10 +790,16 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 			_resultInt =
 				_vm->_util->getRandom(_resultInt);
 			break;
+
+		default:
+			break;
 		}
 
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
 		*stackFrame.values = _resultInt;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -823,6 +836,9 @@ void Expression::simpleArithmetic1(StackFrame &stackFrame) {
 		stackFrame.values[-2] &= stackFrame.values[0];
 		stackFrame.pop(2);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -858,6 +874,9 @@ void Expression::simpleArithmetic2(StackFrame &stackFrame) {
 		case OP_BITAND:
 			stackFrame.values[-3] &= stackFrame.values[-1];
 			stackFrame.pop(2);
+			break;
+
+		default:
 			break;
 		}
 	}

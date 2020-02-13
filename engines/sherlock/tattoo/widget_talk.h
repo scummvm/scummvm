@@ -69,7 +69,7 @@ private:
 	void setStatementLines();
 public:
 	WidgetTalk(SherlockEngine *vm);
-	virtual ~WidgetTalk() {}
+	~WidgetTalk() override {}
 
 	/**
 	 * Figures out how many lines the available talk lines will take up, and opens a text window
@@ -85,7 +85,7 @@ public:
 	/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 } // End of namespace Tattoo

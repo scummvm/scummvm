@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Milos : public Entity {
 public:
 	Milos(LastExpressEngine *engine);
-	~Milos() {}
+	~Milos() override {}
 
 	/**
 	 * Resets the entity

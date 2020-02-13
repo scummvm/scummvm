@@ -421,6 +421,11 @@ void DialogManager::checkForF8(int SpeechNum, bool drawFrame2Fl) {
 		if (_vm->shouldQuit())
 			return;
 	} while (_vm->_key != 66); // keycode for F8
+	// just stop the speech when pressing F8
+#ifdef USE_TTS
+	if (_vm->_soundManager->_ttsMan != nullptr)
+		_vm->_soundManager->_ttsMan->stop();
+#endif
 }
 
 /**

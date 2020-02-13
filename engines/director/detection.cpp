@@ -24,10 +24,8 @@
 
 #include "engines/advancedDetector.h"
 
+#include "common/file.h"
 #include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/system.h"
-#include "common/textconsole.h"
 
 #include "director/director.h"
 
@@ -73,6 +71,7 @@ bool DirectorEngine::hasFeature(EngineFeature f) const {
 static const PlainGameDescriptor directorGames[] = {
 	{ "director",	"Macromedia Director Game" },
 	{ "directortest",	"Macromedia Director Test Target" },
+	{ "directortest-all",	"Macromedia Director All Movies Test Target" },
 	{ "theapartment",	"The Apartment, Interactive demo" },
 	{ "gundam0079",	"Gundam 0079: The War for Earth" },
 	{ "jewels",		"Jewels of the Oracle" },
@@ -86,6 +85,18 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "vvdinosaur",	"Victor Vector & Yondo: The Last Dinosaur Egg"},
 	{ "warlock", 	"Spaceship Warlock"},
 	{ "ernie",		"Ernie"},
+	{ "id4p1",      "iD4 Mission Disk 1 - Alien Supreme Commander" },
+	{ "id4p2",      "iD4 Mission Disk 2 - Alien Science Officer" },
+	{ "id4p3",      "iD4 Mission Disk 3 - Warrior Alien" },
+	{ "id4p4",      "iD4 Mission Disk 4 - Alien Navigator" },
+	{ "id4p5",      "iD4 Mission Disk 5 - Captain Steve Hiller" },
+	{ "id4p6",      "iD4 Mission Disk 6 - Dave's Computer" },
+	{ "id4p7",      "iD4 Mission Disk 7 - President Whitmore" },
+	{ "id4p8",      "iD4 Mission Disk 8 - Alien Attack Fighter" },
+	{ "id4p9",      "iD4 Mission Disk 9 - FA-18 Fighter Jet" },
+	{ "id4p10",     "iD4 Mission Disk 10 - Alien Bomber" },
+	{ "id4p11",     "iD4 Mission Disk 11 - Area 51" },
+	{ "chopsuey",   "Chop Suey" },
 	{ 0, 0 }
 };
 
@@ -99,21 +110,24 @@ static const char *directoryGlobs[] = {
 class DirectorMetaEngine : public AdvancedMetaEngine {
 public:
 	DirectorMetaEngine() : AdvancedMetaEngine(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
-		_singleId = "director";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "director";
+	}
+
+	const char *getName() const override {
 		return "Macromedia Director";
 	}
 
-	virtual const char *getOriginalCopyright() const {
-		return "Macromedia Director (C) Macromedia";
+	const char *getOriginalCopyright() const override {
+		return "Macromedia Director (C) 1990-1995 Macromedia";
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -181,6 +195,7 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 		uint32 tag = f.readUint32LE();
 
 		switch (tag) {
+		case MKTAG('P', 'J', '9', '3'):
 		case MKTAG('3', '9', 'J', 'P'):
 			desc->version = 4;
 			break;

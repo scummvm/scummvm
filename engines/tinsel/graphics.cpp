@@ -135,6 +135,8 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 					decremTiles--;
 				}
 				break;
+			default:
+				break;
 		}
 	}
 

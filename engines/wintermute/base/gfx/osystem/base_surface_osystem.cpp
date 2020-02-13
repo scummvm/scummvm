@@ -26,6 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
@@ -186,6 +187,25 @@ bool BaseSurfaceOSystem::finishLoad() {
 
 	delete image;
 
+	// Bug #6572 WME: Rosemary - Sprite flaw on going upwards
+	// Some Rosemary sprites have non-fully transparent pixels
+	// In original WME it wasn't seen because sprites were downscaled
+	// Let's set alpha to 0 if it is smaller then some treshold
+	if (BaseEngine::instance().getGameId() == "rosemary" && _filename.hasPrefix("actors") && _surface->format.bytesPerPixel == 4) {
+		uint8 treshold = 16;
+		for (int x = 0; x < _surface->w; x++) {
+			for (int y = 0; y < _surface->h; y++) {
+				uint32 pixel = getPixelAt(_surface, x, y);
+				uint8 r, g, b, a;
+				_surface->format.colorToARGB(pixel, a, r, g, b);
+				if (a > 0 && a < treshold) {
+					uint32 *p = (uint32 *)_surface->getBasePtr(x, y);
+					*p = _surface->format.ARGBToColor(0, 0, 0, 0);
+				}
+			}
+		}
+	}
+
 	_loaded = true;
 
 	return true;
@@ -240,7 +260,6 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseSurfaceOSystem::getPixelAt(Graphics::Surface *surface, int x, int y) {
-	warning("BaseSurfaceOSystem::GetPixel - Not ported yet");
 	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
 	uint8 *p = (uint8 *)surface->getBasePtr(x, y);
@@ -433,7 +452,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	// But no checking is in place for that yet.
 
 	// Optimize by not doing alpha-blits if we lack alpha
-	if (_alphaType == Graphics::ALPHA_OPAQUE && !transform._alphaDisable) {
+	// If angle is not 0, then transparent regions are added near the corners
+	if (_alphaType == Graphics::ALPHA_OPAQUE && transform._angle == 0) {
 		transform._alphaDisable = true;
 	}
 

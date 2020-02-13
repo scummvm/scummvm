@@ -82,6 +82,10 @@ void SceneScriptUG09::SceneLoaded() {
 	Unobstacle_Object("BOX34", true);
 	Unobstacle_Object("BOX32", true);
 	Clickable_Object("FACADE_CANOPY");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("FACADE_CANOPY");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptUG09::MouseClick(int x, int y) {

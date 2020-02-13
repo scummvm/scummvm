@@ -129,6 +129,8 @@ uint32 SsScene3009FireCannonButton::handleMessage(int messageNum, const MessageP
 		}
 		messageResult = 1;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -229,6 +231,8 @@ uint32 SsScene3009SymbolArrow::handleMessage(int messageNum, const MessageParam 
 		}
 		messageResult = 1;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -262,6 +266,8 @@ uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const Message
 		}
 		messageResult = 1;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -291,6 +297,8 @@ uint32 AsScene3009HorizontalIndicator::handleMessage(int messageNum, const Messa
 			sendMessage(_parentScene, 0x2004, 0);
 		}
 		messageResult = 1;
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -373,6 +381,8 @@ uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &para
 			sendMessage(_parentScene, 0x2003, 0);
 		}
 		messageResult = 1;
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -472,6 +482,8 @@ uint32 SsScene3010DeadBoltButton::handleMessage(int messageNum, const MessagePar
 		}
 		messageResult = 1;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -531,6 +543,8 @@ uint32 AsScene3010DeadBolt::hmAnimation(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -661,6 +675,8 @@ uint32 SsScene3011Button::handleMessage(int messageNum, const MessageParam &para
 			playSound(0);
 		}
 		messageResult = 1;
+		break;
+	default:
 		break;
 	}
 	return messageResult;

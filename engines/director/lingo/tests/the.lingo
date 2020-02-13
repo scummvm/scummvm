@@ -9,3 +9,35 @@ put the date
 put the long date
 put the abbreviated time
 put the short time
+
+set a = 5
+
+set gravityConst = the value of ( the text of cast A14)
+set the hilite of cast A32 to (a = 3)
+set the text of cast A14 = string( gravityConst )
+
+-- This is object setting. D4+
+set BlastWindow to window "Media Blast"
+set the rect of BlastWindow to myWindowRect
+set the filename of BlastWindow to "blastwin"
+set the titleVisible of BlastWindow to true
+set the modal of BlastWindow to true
+set the windowtype of BlastWindow to 5
+
+set the bottom of x to originV + (the number of lines in someText) * 16
+set the bottom of x to originV + (the number of words in someText) * 16
+
+put the number of words of field 1 into field 5
+
+set h = the locH of sprite pSprite + pChangeH
+
+set the volume of sound 1 to 255
+put the volume of sound 1 into field 11
+
+set the checkMark of menuItem "Horizontal" of menu "The Ball" to False
+
+put the number of castMembers into field 5
+
+put the number of menuItems of menu "sam" into field 3
+
+put abs( the locH of sprite 2 - the mouseH) into field 4

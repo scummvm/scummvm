@@ -48,10 +48,10 @@ public:
 	void setChoice(int choiceNo, const Common::String &str, uint32 data = 0);
 	void clearChoices();
 
-	virtual void handleEvent(const Common::Event &event) override;
+	void handleEvent(const Common::Event &event) override;
 
 protected:
-	virtual void draw(Graphics::ManagedSurface &surface) override;
+	void draw(Graphics::ManagedSurface &surface) override;
 
 private:
 	Graphics::Surface _surface;

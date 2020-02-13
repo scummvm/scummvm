@@ -232,13 +232,13 @@ uint Glulxe::perform_restoreundo() {
 	return res;
 }
 
-Common::Error Glulxe::saveGameData(strid_t str, const Common::String &desc) {
+Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
+#ifdef TODO
 	dest_t dest;
 	int ix;
-	uint res, lx, val;
+	uint res = 0, lx, val;
 	uint memstart = 0, memlen = 0, stackstart = 0, stacklen = 0;
 	uint heapstart = 0, heaplen = 0, filestart = 0, filelen = 0;
-
 	stream_get_iosys(&val, &lx);
 	if (val != 2) {
 		/* Not using the Glk I/O system, so bail. This function only
@@ -246,14 +246,14 @@ Common::Error Glulxe::saveGameData(strid_t str, const Common::String &desc) {
 		fatal_error("Streams are only available in Glk I/O system.");
 	}
 
-	if (str == nullptr)
+	if (ws == nullptr)
 		return Common::kUnknownError;
 
 	dest.ismem = false;
 	dest.size = 0;
 	dest.pos = 0;
 	dest.ptr = nullptr;
-	dest.str = str;
+	dest.str = ws;
 
 	res = 0;
 
@@ -357,19 +357,20 @@ Common::Error Glulxe::saveGameData(strid_t str, const Common::String &desc) {
 	}
 
 	/* All done. */
-
 	return res ? Common::kUnknownError : Common::kNoError;
+#endif
+	return Common::kUnknownError;
 }
 
-Common::Error Glulxe::loadGameData(strid_t str) {
+Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
+#ifdef TODO
 	dest_t dest;
 	int ix;
-	uint lx, res, val;
+	uint lx = 0, res, val;
 	uint filestart, filelen = 0;
 	uint heapsumlen = 0;
 	uint *heapsumarr = nullptr;
 	bool fromshell = false;
-
 	/* If profiling is enabled and active then fail. */
 #if VM_PROFILING
 	if (profile_profiling_active())
@@ -475,7 +476,7 @@ Common::Error Glulxe::loadGameData(strid_t str) {
 
 	if (res)
 		return Common::kUnknownError;
-
+#endif
 	return Common::kNoError;
 }
 

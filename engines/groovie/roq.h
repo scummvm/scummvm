@@ -38,11 +38,11 @@ struct ROQBlockHeader {
 class ROQPlayer : public VideoPlayer {
 public:
 	ROQPlayer(GroovieEngine *vm);
-	~ROQPlayer();
+	~ROQPlayer() override;
 
 protected:
-	uint16 loadInternal();
-	bool playFrameInternal();
+	uint16 loadInternal() override;
+	bool playFrameInternal() override;
 
 private:
 	bool readBlockHeader(ROQBlockHeader &blockHeader);

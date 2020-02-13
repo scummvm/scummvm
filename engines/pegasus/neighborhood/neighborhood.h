@@ -99,10 +99,10 @@ class Neighborhood;
 class StriderCallBack : public TimeBaseCallBack {
 public:
 	StriderCallBack(Neighborhood *);
-	virtual ~StriderCallBack() {}
+	~StriderCallBack() override {}
 
 protected:
-	virtual void callBack();
+	void callBack() override;
 
 	Neighborhood *_neighborhood;
 };
@@ -115,7 +115,7 @@ friend class StriderCallBack;
 
 public:
 	Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id);
-	virtual ~Neighborhood();
+	~Neighborhood() override;
 
 	virtual void init();
 	virtual void start();
@@ -123,8 +123,8 @@ public:
 	virtual void checkContinuePoint(const RoomID, const DirectionConstant) = 0;
 	void makeContinuePoint();
 
-	virtual void activateHotspots();
-	virtual void clickInHotspot(const Input &, const Hotspot *);
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
 
 	virtual CanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
 	virtual CanTurnReason canTurn(TurnDirection turn, DirectionConstant &nextDir);
@@ -250,7 +250,7 @@ public:
 
 	virtual void pickedUpItem(Item *) {}
 
-	virtual void handleInput(const Input &, const Hotspot *);
+	void handleInput(const Input &, const Hotspot *) override;
 protected:
 	PegasusEngine *_vm;
 	Common::String _resName;
@@ -259,7 +259,7 @@ protected:
 	virtual Common::String getNavMovieName() = 0;
 
 	// Notification function.
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
 	// Map info functions.
 	virtual void getExitEntry(const RoomID room, const DirectionConstant direction, ExitTable::Entry &entry);
@@ -304,7 +304,7 @@ protected:
 	virtual bool prepareExtraSync(const ExtraID);
 	virtual bool waitMovieFinish(Movie *, const InputBits);
 
-	virtual InputBits getInputFilter();
+	InputBits getInputFilter() override;
 
 	// Misc.
 	virtual int16 getStaticCompassAngle(const RoomID, const DirectionConstant dir);
@@ -327,7 +327,7 @@ protected:
 	void reinstateMonocleInterface();
 
 	virtual void newInteraction(const InteractionID);
-	virtual void useIdleTime();
+	void useIdleTime() override;
 	virtual void bumpIntoWall();
 	virtual void zoomUpOrBump();
 

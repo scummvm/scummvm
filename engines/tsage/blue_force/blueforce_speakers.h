@@ -48,309 +48,309 @@ public:
 public:
 	VisualSpeaker();
 
-	virtual Common::String getClassName() { return "VisualSpeaker"; }
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-	virtual void startSpeaking(Action *action);
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "VisualSpeaker"; }
+	void synchronize(Serializer &s) override;
+	void remove() override;
+	void startSpeaking(Action *action) override;
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerGameText: public VisualSpeaker {
 public:
 	SpeakerGameText();
 
-	virtual Common::String getClassName() { return "SpeakerGameText"; }
+	Common::String getClassName() override { return "SpeakerGameText"; }
 };
 
 class SpeakerSutter: public VisualSpeaker {
 public:
 	SpeakerSutter();
 
-	virtual Common::String getClassName() { return "SpeakerSutter"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerSutter"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerDoug: public VisualSpeaker {
 public:
 	SpeakerDoug();
 
-	virtual Common::String getClassName() { return "SpeakerDoug"; }
+	Common::String getClassName() override { return "SpeakerDoug"; }
 };
 
 class SpeakerJakeNoHead: public VisualSpeaker {
 public:
 	SpeakerJakeNoHead();
 
-	virtual Common::String getClassName() { return "SpeakerJakeNoHead"; }
+	Common::String getClassName() override { return "SpeakerJakeNoHead"; }
 };
 
 class SpeakerHarrison: public VisualSpeaker {
 public:
 	SpeakerHarrison();
 
-	virtual Common::String getClassName() { return "SpeakerHarrison"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerHarrison"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerJake: public VisualSpeaker {
 public:
 	SpeakerJake();
 
-	virtual Common::String getClassName() { return "SpeakerJake"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerJake"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerJakeJacket: public VisualSpeaker {
 public:
 	SpeakerJakeJacket();
 
-	virtual Common::String getClassName() { return "SpeakerJakeJacket"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerJakeJacket"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerJakeUniform: public VisualSpeaker {
 public:
 	SpeakerJakeUniform();
 
-	virtual Common::String getClassName() { return "SpeakerJakeUniform"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerJakeUniform"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerJailer: public VisualSpeaker {
 public:
 	SpeakerJailer();
 
-	virtual Common::String getClassName() { return "SpeakerJailer"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerJailer"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerGreen: public VisualSpeaker {
 public:
 	SpeakerGreen();
 
-	virtual Common::String getClassName() { return "SpeakerGreen"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerGreen"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerPSutter: public VisualSpeaker {
 public:
 	SpeakerPSutter();
 
-	virtual Common::String getClassName() { return "SpeakerPSutter"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerPSutter"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerJakeRadio: public VisualSpeaker {
 public:
 	SpeakerJakeRadio();
 
-	virtual Common::String getClassName() { return "SpeakerJakeRadio"; }
+	Common::String getClassName() override { return "SpeakerJakeRadio"; }
 };
 
 class SpeakerLyleHat: public VisualSpeaker {
 public:
 	SpeakerLyleHat();
 
-	virtual Common::String getClassName() { return "SpeakerLyleHat"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerLyleHat"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerJordan: public VisualSpeaker {
 public:
 	SpeakerJordan();
 
-	virtual Common::String getClassName() { return "SpeakerJordan"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerJordan"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerSkip: public VisualSpeaker {
 public:
 	SpeakerSkip();
 
-	virtual Common::String getClassName() { return "SpeakerSkip"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerSkip"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerSkipB: public VisualSpeaker {
 public:
 	SpeakerSkipB();
 
-	virtual Common::String getClassName() { return "SpeakerSkipB"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerSkipB"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerCarter: public VisualSpeaker {
 public:
 	SpeakerCarter();
 
-	virtual Common::String getClassName() { return "SpeakerCarter"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerCarter"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerDriver: public VisualSpeaker {
 public:
 	SpeakerDriver();
 
-	virtual Common::String getClassName() { return "SpeakerDriver"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerDriver"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerShooter: public VisualSpeaker {
 public:
 	SpeakerShooter();
 
-	virtual Common::String getClassName() { return "SpeakerShooter"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerShooter"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerJim: public VisualSpeaker {
 public:
 	SpeakerJim();
 
-	virtual Common::String getClassName() { return "SpeakerJim"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerJim"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerDezi: public VisualSpeaker {
 public:
 	SpeakerDezi();
 
-	virtual Common::String getClassName() { return "SpeakerDezi"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerDezi"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerJake385: public VisualSpeaker {
 public:
 	SpeakerJake385();
 
-	virtual Common::String getClassName() { return "SpeakerJake385"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerJake385"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerLaura: public VisualSpeaker {
 public:
 	SpeakerLaura();
 
-	virtual Common::String getClassName() { return "SpeakerLaura"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerLaura"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerLauraHeld: public VisualSpeaker {
 public:
 	SpeakerLauraHeld();
 
-	virtual Common::String getClassName() { return "SpeakerLaura"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerLaura"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerEugene: public VisualSpeaker {
 public:
 	SpeakerEugene();
 
-	virtual Common::String getClassName() { return "SpeakerEugene"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerEugene"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerWeasel: public VisualSpeaker {
 public:
 	SpeakerWeasel();
 
-	virtual Common::String getClassName() { return "SpeakerWeasel"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerWeasel"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerBilly: public VisualSpeaker {
 public:
 	SpeakerBilly();
 
-	virtual Common::String getClassName() { return "SpeakerBilly"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerBilly"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerDrunk: public VisualSpeaker {
 public:
 	SpeakerDrunk();
 
-	virtual Common::String getClassName() { return "SpeakerDrunk"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerDrunk"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerGiggles: public VisualSpeaker {
 public:
 	SpeakerGiggles();
 
-	virtual Common::String getClassName() { return "SpeakerGiggles"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerGiggles"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerFBI: public VisualSpeaker {
 public:
 	SpeakerFBI();
 
-	virtual Common::String getClassName() { return "FBI"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "FBI"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerNico: public VisualSpeaker {
 public:
 	SpeakerNico();
 
-	virtual Common::String getClassName() { return "NICO"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "NICO"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerDA: public VisualSpeaker {
 public:
 	SpeakerDA();
 
-	virtual Common::String getClassName() { return "DA"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "DA"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerGrandma: public VisualSpeaker {
 public:
 	SpeakerGrandma();
 
-	virtual Common::String getClassName() { return "SpeakerGrandma"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerGrandma"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerLyle: public VisualSpeaker {
 public:
 	SpeakerLyle();
 
-	virtual Common::String getClassName() { return "SpeakerLyle"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerLyle"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerGranText: public VisualSpeaker {
 public:
 	SpeakerGranText();
 
-	virtual Common::String getClassName() { return "SpeakerGranText"; }
+	Common::String getClassName() override { return "SpeakerGranText"; }
 };
 
 class SpeakerLyleText: public VisualSpeaker {
 public:
 	SpeakerLyleText();
 
-	virtual Common::String getClassName() { return "SpeakerLyleText"; }
+	Common::String getClassName() override { return "SpeakerLyleText"; }
 };
 
 class SpeakerKate: public VisualSpeaker {
 public:
 	SpeakerKate();
 
-	virtual Common::String getClassName() { return "SpeakerKate"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerKate"; }
+	void setText(const Common::String &msg) override;
 };
 
 class SpeakerTony: public VisualSpeaker {
 public:
 	SpeakerTony();
 
-	virtual Common::String getClassName() { return "SpeakerTony"; }
-	virtual void setText(const Common::String &msg);
+	Common::String getClassName() override { return "SpeakerTony"; }
+	void setText(const Common::String &msg) override;
 };
 } // End of namespace BlueForce
 

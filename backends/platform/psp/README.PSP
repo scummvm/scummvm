@@ -1,4 +1,4 @@
-ScummVM-PSP 2.1.0git README
+ScummVM-PSP 2.2.0git README
 ==============================================================================
 
 Installation
@@ -140,7 +140,7 @@ Building the source code
 ========================
 To build ScummVM for PSP you need:
 
-- ScummVM source code (svn co https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk)
+- ScummVM source code (git clone https://github.com/scummvm/scummvm.git)
 
 - PSP toolchain (svn co svn://svn.pspdev.org/psp/trunk/psptoolchain)
 

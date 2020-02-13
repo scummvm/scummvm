@@ -1940,6 +1940,8 @@ static void HQ2x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 					PIXEL11_100
 				}
 				break;
+			default:
+				break;
 			}
 
 			w1 = w2;

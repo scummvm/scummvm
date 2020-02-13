@@ -108,6 +108,8 @@ void Module1800::createScene(int sceneNum, int which) {
 		// NOTE: Newly introduced sceneNum 1009 (was duplicate 3 with own update handler)
 		createSmackerScene(0x0A840C01, true, true, false);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module1800::updateScene);
 	_childObject->handleUpdate();
@@ -168,12 +170,16 @@ void Module1800::updateScene() {
 		case 1009:
 			leaveModule(0);
 			break;
+		default:
+			break;
 		}
 	} else {
 		switch (_sceneNum) {
 		case 0:
 			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 2)
 				_vm->_soundMan->setTwoSoundsPlayFlag(false);
+			break;
+		default:
 			break;
 		}
 	}

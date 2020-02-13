@@ -139,6 +139,7 @@ bool ScummFile::seek(int32 offs, int whence) {
 			offs = _subFileStart + _subFileLen + offs;
 			break;
 		case SEEK_SET:
+		default:
 			offs += _subFileStart;
 			break;
 		case SEEK_CUR:

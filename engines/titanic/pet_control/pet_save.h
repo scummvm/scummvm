@@ -32,37 +32,37 @@ public:
 	/**
 	 * Reset the glyph
 	 */
-	virtual bool reset();
+	bool reset() override;
 
 	/**
 	 * Handles mouse button up messages
 	 */
-	virtual bool MouseButtonUpMsg(const Point &pt);
+	bool MouseButtonUpMsg(const Point &pt) override;
 
 	/**
 	 * Handles keypresses when the glyph is focused
 	 */
-	virtual bool KeyCharMsg(int key);
+	bool KeyCharMsg(int key) override;
 
 	/**
 	 * Unhighlight any currently highlighted element
 	 */
-	virtual void unhighlightCurrent() { unhighlightSave(_savegameSlotNum); }
+	void unhighlightCurrent() override { unhighlightSave(_savegameSlotNum); }
 
 	/**
 	 * Highlight any currently highlighted element
 	 */
-	virtual void highlightCurrent(const Point &pt);
+	void highlightCurrent(const Point &pt) override;
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CTextControl *text);
+	void getTooltip(CTextControl *text) override;
 
 	/**
 	 * Called on a highlighted item when PET area is entered
 	 */
-	virtual bool enterHighlighted() {
+	bool enterHighlighted() override {
 		highlightSave(_savegameSlotNum);
 		return true;
 	}
@@ -70,22 +70,22 @@ public:
 	/**
 	 * Called on a highlighted item when PET area is left
 	 */
-	virtual void leaveHighlighted() { unhighlightSave(_savegameSlotNum); }
+	void leaveHighlighted() override { unhighlightSave(_savegameSlotNum); }
 
 	/**
 	 * Highlights a save slot
 	 */
-	virtual void highlightSave(int index);
+	void highlightSave(int index) override;
 
 	/**
 	 * Unhighlight a save slot
 	 */
-	virtual void unhighlightSave(int index);
+	void unhighlightSave(int index) override;
 
 	/**
 	 * Executes the loading or saving
 	 */
-	virtual void execute();
+	void execute() override;
 };
 
 } // End of namespace Titanic

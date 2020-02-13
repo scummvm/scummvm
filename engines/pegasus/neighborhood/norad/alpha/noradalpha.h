@@ -35,50 +35,50 @@ class Item;
 class NoradAlpha : public Norad {
 public:
 	NoradAlpha(InputHandler *, PegasusEngine *);
-	virtual ~NoradAlpha() {}
+	~NoradAlpha() override {}
 
-	virtual void init();
-	void start();
+	void init() override;
+	void start() override;
 
-	virtual bool okayToJump();
+	bool okayToJump() override;
 
-	void playClawMonitorIntro();
+	void playClawMonitorIntro() override;
 
-	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &);
+	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &) override;
 
 	void turnOnFillingStation();
 	void turnOffFillingStation();
 	Item *getFillingItem() { return _fillingStationItem; }
 	bool gasCanisterIntake();
 
-	virtual void takeItemFromRoom(Item *);
-	virtual void dropItemIntoRoom(Item *, Hotspot *);
+	void takeItemFromRoom(Item *) override;
+	void dropItemIntoRoom(Item *, Hotspot *) override;
 
-	virtual GameInteraction *makeInteraction(const InteractionID);
+	GameInteraction *makeInteraction(const InteractionID) override;
 
-	virtual void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID,
+	void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID,
 			HotSpotID &pinchClawSpotID, HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
 			HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID, HotSpotID &clawCCWSpotID,
-			HotSpotID &clawCWSpotID, uint32 &, const uint32 *&);
+			HotSpotID &clawCWSpotID, uint32 &, const uint32 *&) override;
 
-	void loadAmbientLoops();
+	void loadAmbientLoops() override;
 
-	Common::String getEnvScanMovie();
-	uint getNumHints();
-	Common::String getHintMovie(uint);
-	void setUpAIRules();
+	Common::String getEnvScanMovie() override;
+	uint getNumHints() override;
+	Common::String getHintMovie(uint) override;
+	void setUpAIRules() override;
 
 	void setSubPrepFailed(bool value) { _subPrepFailed = value; }
 	bool getSubPrepFailed() { return _subPrepFailed; }
 
-	void closeDoorOffScreen(const RoomID, const DirectionConstant);
-	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
-	void clickInHotspot(const Input &, const Hotspot *);
+	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &) override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
 
-	void checkContinuePoint(const RoomID, const DirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
-	bool canSolve();
-	void doSolve();
+	bool canSolve() override;
+	void doSolve() override;
 
 protected:
 	static const uint32 _noradAlphaClawExtras[22];
@@ -89,25 +89,25 @@ protected:
 	virtual void arriveAtNorad04();
 	virtual void arriveAtNorad22();
 
-	virtual void arriveAt(const RoomID, const DirectionConstant);
+	void arriveAt(const RoomID, const DirectionConstant) override;
 
-	virtual void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
-	virtual TimeValue getViewTime(const RoomID, const DirectionConstant);
+	void getZoomEntry(const HotSpotID, ZoomTable::Entry &) override;
+	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
 
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
-	virtual void activateHotspots();
+	void activateHotspots() override;
 
-	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
+	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
 
-	void bumpIntoWall();
+	void bumpIntoWall() override;
 
 	Item *_fillingStationItem;
 
 	bool _subPrepFailed;
 
-	Common::String getSoundSpotsName();
-	Common::String getNavMovieName();
+	Common::String getSoundSpotsName() override;
+	Common::String getNavMovieName() override;
 };
 
 } // End of namespace Pegasus

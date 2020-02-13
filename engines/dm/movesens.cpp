@@ -615,6 +615,7 @@ int16 MovesensMan::getSound(CreatureType creatureType) {
 	case kDMCreatureTypeLordChaos:
 	case kDMCreatureTypeLordOrder:
 	case kDMCreatureTypeGreyLord:
+	default:
 		return 35;
 	case kDMCreatureTypeGiggler:
 	case kDMCreatureTypeStoneGolem:
@@ -969,30 +970,35 @@ void MovesensMan::processRotationEffect() {
 	switch (_sensorRotationEffect) {
 	case kDMSensorEffectClear:
 	case kDMSensorEffectToggle:
-		Thing firstSensorThing = dungeon.getSquareFirstThing(_sensorRotationEffMapX, _sensorRotationEffMapY);
-		while ((firstSensorThing.getType() != kDMThingTypeSensor)
-			|| ((_sensorRotationEffCell != kDMCellAny) && (firstSensorThing.getCell() != _sensorRotationEffCell))) {
-			firstSensorThing = dungeon.getNextThing(firstSensorThing);
-		}
-		Sensor *firstSensor = (Sensor *)dungeon.getThingData(firstSensorThing);
-		Thing lastSensorThing = firstSensor->getNextThing();
-		while ((lastSensorThing != _vm->_thingEndOfList)
-		    && ((lastSensorThing.getType() != kDMThingTypeSensor)
+		{
+			Thing firstSensorThing = dungeon.getSquareFirstThing(_sensorRotationEffMapX, _sensorRotationEffMapY);
+			while ((firstSensorThing.getType() != kDMThingTypeSensor)
+				|| ((_sensorRotationEffCell != kDMCellAny) && (firstSensorThing.getCell() != _sensorRotationEffCell))) {
+				firstSensorThing = dungeon.getNextThing(firstSensorThing);
+			}
+			Sensor *firstSensor = (Sensor *)dungeon.getThingData(firstSensorThing);
+			Thing lastSensorThing = firstSensor->getNextThing();
+			while ((lastSensorThing != _vm->_thingEndOfList)
+				&& ((lastSensorThing.getType() != kDMThingTypeSensor)
 				|| ((_sensorRotationEffCell != kDMCellAny) && (lastSensorThing.getCell() != _sensorRotationEffCell)))) {
+				lastSensorThing = dungeon.getNextThing(lastSensorThing);
+			}
+			if (lastSensorThing == _vm->_thingEndOfList)
+				break;
+			dungeon.unlinkThingFromList(firstSensorThing, Thing(0), _sensorRotationEffMapX, _sensorRotationEffMapY);
+			Sensor *lastSensor = (Sensor *)dungeon.getThingData(lastSensorThing);
 			lastSensorThing = dungeon.getNextThing(lastSensorThing);
+			while (((lastSensorThing != _vm->_thingEndOfList) && (lastSensorThing.getType() == kDMThingTypeSensor))) {
+				if ((_sensorRotationEffCell == kDMCellAny) || (lastSensorThing.getCell() == _sensorRotationEffCell))
+					lastSensor = (Sensor *)dungeon.getThingData(lastSensorThing);
+				lastSensorThing = dungeon.getNextThing(lastSensorThing);
+			}
+			firstSensor->setNextThing(lastSensor->getNextThing());
+			lastSensor->setNextThing(firstSensorThing);
 		}
-		if (lastSensorThing == _vm->_thingEndOfList)
-			break;
-		dungeon.unlinkThingFromList(firstSensorThing, Thing(0), _sensorRotationEffMapX, _sensorRotationEffMapY);
-		Sensor *lastSensor = (Sensor *)dungeon.getThingData(lastSensorThing);
-		lastSensorThing = dungeon.getNextThing(lastSensorThing);
-		while (((lastSensorThing != _vm->_thingEndOfList) && (lastSensorThing.getType() == kDMThingTypeSensor))) {
-			if ((_sensorRotationEffCell == kDMCellAny) || (lastSensorThing.getCell() == _sensorRotationEffCell))
-				lastSensor = (Sensor *)dungeon.getThingData(lastSensorThing);
-			lastSensorThing = dungeon.getNextThing(lastSensorThing);
-		}
-		firstSensor->setNextThing(lastSensor->getNextThing());
-		lastSensor->setNextThing(firstSensorThing);
+		break;
+	default:
+		break;
 	}
 	_sensorRotationEffect = kDMSensorEffectNone;
 }

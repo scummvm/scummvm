@@ -127,6 +127,8 @@ bool Picture::loadPicture(const Common::String &file) {
 		_height = TOON_SCREEN_HEIGHT;
 		return true;
 	}
+	default:
+		break;
 	}
 	return false;
 }

@@ -157,9 +157,10 @@ void Screen::init() {
 	_renderer.setFullScreen(true);
 }
 
-void Screen::setShakePos(int pos) {
-	_shakePos = pos;
-	_renderer.setOffsetOnScreen(0, pos);
+void Screen::setShakePos(int shakeXOffset, int shakeYOffset) {
+	_shakeXOffset = shakeXOffset;
+	_shakeYOffset = shakeYOffset;
+	_renderer.setOffsetOnScreen(shakeXOffset, shakeYOffset);
 	setDirty();
 }
 

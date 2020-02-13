@@ -60,15 +60,15 @@ public:
 	int32 _currentFrame;
 	bool addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = nullptr);
 	BaseSprite(BaseGame *inGame, BaseObject *owner = nullptr);
-	virtual ~BaseSprite();
+	~BaseSprite() override;
 	BaseArray<BaseFrame *> _frames;
-	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 	Common::String debuggerToString() const override;
 private:
 	BaseObject *_owner;

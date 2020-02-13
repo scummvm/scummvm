@@ -67,6 +67,15 @@ public:
 
 		return -1;
 	}
+
+	/**
+	 * Remove an item from an array by value
+	 */
+	void remove(T val) {
+		int index = indexOf(val);
+		if (index != -1)
+			Common::Array<T>::remove_at(index);
+	}
 };
 
 /**

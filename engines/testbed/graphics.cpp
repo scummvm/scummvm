@@ -977,23 +977,48 @@ TestExitStatus GFXtests::shakingEffect() {
 		return kTestSkipped;
 	}
 
+	// test vertical, horizontal, and diagonal
 	Common::Point pt(0, 100);
-	Testsuite::writeOnScreen("If Shaking Effect works, this should shake!", pt);
-	int times = 15;
-	while (times--) {
-		g_system->setShakePos(25);
-		g_system->delayMillis(50);
-		g_system->updateScreen();
-		g_system->setShakePos(0);
-		g_system->delayMillis(50);
-		g_system->updateScreen();
-	}
-	g_system->delayMillis(1500);
+	for (int i = 0; i < 3; ++i) {
+		Common::String direction;
+		int shakeXOffset;
+		int shakeYOffset;
+		switch (i) {
+		case 0:
+			direction = "vertical";
+			shakeXOffset = 0;
+			shakeYOffset = 25;
+			break;
+		case 1:
+			direction = "horizontal";
+			shakeXOffset = 25;
+			shakeYOffset = 0;
+			break;
+		default:
+			direction = "diagonal";
+			shakeXOffset = 25;
+			shakeYOffset = 25;
+			break;
+		}
 
-	if (Testsuite::handleInteractiveInput("Did the Shaking test worked as you were expecting?", "Yes", "No", kOptionRight)) {
-		Testsuite::logDetailedPrintf("Shaking Effect didn't worked");
-		return kTestFailed;
+		Testsuite::writeOnScreen(Common::String::format("If Shaking Effect works, this should shake %s", direction.c_str()), pt);
+		int times = 15;
+		while (times--) {
+			g_system->setShakePos(shakeXOffset, shakeYOffset);
+			g_system->delayMillis(50);
+			g_system->updateScreen();
+			g_system->setShakePos(0, 0);
+			g_system->delayMillis(50);
+			g_system->updateScreen();
+		}
+		g_system->delayMillis(1500);
+
+		if (Testsuite::handleInteractiveInput("Did the Shaking test work as you were expecting?", "Yes", "No", kOptionRight)) {
+			Testsuite::logDetailedPrintf("Shaking Effect didn't work");
+			return kTestFailed;
+		}
 	}
+
 	return kTestPassed;
 }
 
@@ -1187,12 +1212,12 @@ TestExitStatus GFXtests::cursorTrails() {
 		return kTestSkipped;
 	}
 	TestExitStatus passed = kTestFailed;
-	g_system->setShakePos(25);
+	g_system->setShakePos(25, 25);
 	g_system->updateScreen();
 	if (Testsuite::handleInteractiveInput("Does the cursor leaves trails while moving?", "Yes", "No", kOptionRight)) {
 		passed = kTestPassed;
 	}
-	g_system->setShakePos(0);
+	g_system->setShakePos(0, 0);
 	g_system->updateScreen();
 	return passed;
 }

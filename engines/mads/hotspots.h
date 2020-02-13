@@ -41,7 +41,9 @@ public:
 	Facing _facing;
 	int _descId;
 	int _verbId;
+	bool _valid;	// V2
 	int _articleNumber;
+	byte _syntax;	// V2
 	CursorType _cursor;
 
 	/**
@@ -79,7 +81,7 @@ public:
 
 	Common::Array<MADS::DynamicHotspot>::size_type size() const { return _entries.size(); }
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
-	int add(int descId, int verbId, int syntax, int seqIndex, const Common::Rect &bounds);
+	int add(int descId, int verbId, byte syntax, int seqIndex, const Common::Rect &bounds);	// V2
 	int add(int descId, int verbId, int seqIndex, const Common::Rect &bounds);
 	int setPosition(int index, const Common::Point &pos, Facing facing);
 	int setCursor(int index, CursorType cursor);
@@ -107,6 +109,7 @@ public:
 	Facing _facing;
 	int _articleNumber;
 	bool _active;
+	byte _syntax;	// V2
 	CursorType _cursor;
 	int _vocabId;
 	int _verbId;

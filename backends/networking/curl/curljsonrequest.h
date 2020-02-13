@@ -31,6 +31,7 @@ namespace Networking {
 
 typedef Response<Common::JSONValue *> JsonResponse;
 typedef Common::BaseCallback<JsonResponse> *JsonCallback;
+typedef Common::BaseCallback<Common::JSONValue *> *JSONValueCallback;
 
 #define CURL_JSON_REQUEST_BUFFER_SIZE 512 * 1024
 

@@ -35,7 +35,7 @@ class SoundDesc;
 class SoundMixer : public Audio::AudioStream {
 public:
 	SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type);
-	~SoundMixer();
+	~SoundMixer() override;
 
 	virtual void play(SoundDesc &sndDesc, int16 repCount,
 			int16 frequency, int16 fadeLength = 0);
@@ -46,11 +46,11 @@ public:
 
 	void setRepeating(int32 repCount);
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	bool endOfData() const { return _end; }
-	bool endOfStream() const { return false; }
-	int getRate() const { return _rate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return _end; }
+	bool endOfStream() const override { return false; }
+	int getRate() const override { return _rate; }
 
 protected:
 	Audio::Mixer *_mixer;

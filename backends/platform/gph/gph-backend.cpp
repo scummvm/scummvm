@@ -43,13 +43,7 @@
 
 #include "audio/mixer_intern.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <limits.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <time.h>   // for getTimeAndDate()
+#include <unistd.h> // for getcwd()
 
 /* Dump console info to files. */
 #define DUMP_STDOUT
@@ -59,67 +53,58 @@ OSystem_GPH::OSystem_GPH()
 	OSystem_POSIX() {
 }
 
+Common::String OSystem_GPH::getCurrentDirectory() {
+	char cwd[MAXPATHLEN+1];
+	return Common::String(getcwd(cwd, MAXPATHLEN));
+}
+
 void OSystem_GPH::initBackend() {
 
 	assert(!_inited);
 
 	/* Setup default save path to be workingdir/saves */
 
-	char savePath[PATH_MAX+1];
-	char workDirName[PATH_MAX+1];
-
-	if (getcwd(workDirName, PATH_MAX) == NULL) {
+	Common::String workDirName = getCurrentDirectory();
+	if (workDirName.empty()) {
 		error("Could not obtain current working directory.");
 	} else {
-		printf("Current working directory: %s\n", workDirName);
+		printf("Current working directory: %s\n", workDirName.c_str());
 	}
 
-	strcpy(savePath, workDirName);
-	strcat(savePath, "/saves");
-	printf("Current save directory: %s\n", savePath);
-	struct stat sb;
-	if (stat(savePath, &sb) == -1)
-		if (errno == ENOENT) // Create the dir if it does not exist
-			if (mkdir(savePath, 0755) != 0)
-				warning("mkdir for '%s' failed!", savePath);
-
+	Common::String savePath = workDirName + "/saves";
+	printf("Current save directory: %s\n", savePath.c_str());
 	_savefileManager = new DefaultSaveFileManager(savePath);
 
 #ifdef DUMP_STDOUT
 	// The GPH devices have a serial console on the breakout board
 	// but most users do not use this so we output all our STDOUT
 	// and STDERR to files for debug purposes.
-	char STDOUT_FILE[PATH_MAX+1];
-	char STDERR_FILE[PATH_MAX+1];
-
-	strcpy(STDOUT_FILE, workDirName);
-	strcpy(STDERR_FILE, workDirName);
-	strcat(STDOUT_FILE, "/scummvm.stdout.txt");
-	strcat(STDERR_FILE, "/scummvm.stderr.txt");
+	Common::String STDOUT_FILE = workDirName + "/scummvm.stdout.txt";
+	Common::String STDERR_FILE = workDirName + "/scummvm.stderr.txt";
 
 	// Flush the output in case anything is queued
 	fclose(stdout);
 	fclose(stderr);
 
 	// Redirect standard input and standard output
-	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
+	FILE *newfp = freopen(STDOUT_FILE.c_str(), "w", stdout);
 	if (newfp == NULL) {
 #if !defined(stdout)
-		stdout = fopen(STDOUT_FILE, "w");
+		stdout = fopen(STDOUT_FILE.c_str(), "w");
 #else
-		newfp = fopen(STDOUT_FILE, "w");
+		newfp = fopen(STDOUT_FILE.c_str(), "w");
 		if (newfp) {
 			*stdout = *newfp;
 		}
 #endif
 	}
 
-	newfp = freopen(STDERR_FILE, "w", stderr);
+	newfp = freopen(STDERR_FILE.c_str(), "w", stderr);
 	if (newfp == NULL) {
 #if !defined(stderr)
-		stderr = fopen(STDERR_FILE, "w");
+		stderr = fopen(STDERR_FILE.c_str(), "w");
 #else
-		newfp = fopen(STDERR_FILE, "w");
+		newfp = fopen(STDERR_FILE.c_str(), "w");
 		if (newfp) {
 			*stderr = *newfp;
 		}
@@ -186,9 +171,8 @@ void OSystem_GPH::initSDL() {
 void OSystem_GPH::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 	/* Setup default extra data paths for engine data files and plugins */
-	char workDirName[PATH_MAX+1];
-
-	if (getcwd(workDirName, PATH_MAX) == NULL) {
+	Common::String workDirName = getCurrentDirectory();
+	if (workDirName.empty()) {
 		error("Error: Could not obtain current working directory.");
 	}
 
@@ -197,21 +181,13 @@ void OSystem_GPH::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 		s.add("__GP2XWIZ_WORKDIR__", new Common::FSDirectory(workDirName), priority);
 	}
 
-	char enginedataPath[PATH_MAX+1];
-
-	strcpy(enginedataPath, workDirName);
-	strcat(enginedataPath, "/engine-data");
-
+	Common::String enginedataPath = workDirName + "/engine-data";
 	Common::FSNode engineNode(enginedataPath);
 	if (engineNode.exists() && engineNode.isDirectory()) {
 		s.add("__GP2XWIZ_ENGDATA__", new Common::FSDirectory(enginedataPath), priority);
 	}
 
-	char pluginsPath[PATH_MAX+1];
-
-	strcpy(pluginsPath, workDirName);
-	strcat(pluginsPath, "/plugins");
-
+	Common::String pluginsPath = workDirName + "/plugins";
 	Common::FSNode pluginsNode(pluginsPath);
 	if (pluginsNode.exists() && pluginsNode.isDirectory()) {
 		s.add("__GP2XWIZ_PLUGINS__", new Common::FSDirectory(pluginsPath), priority);

@@ -321,6 +321,9 @@ void Parallaction::runGame() {
 	case Input::kInputModeGame:
 		runGameFrame(event);
 		break;
+
+	default:
+		break;
 	}
 
 	if (shouldQuit())
@@ -422,6 +425,9 @@ void Parallaction::drawAnimation(AnimationPtr anim) {
 		if (anim->_flags & (kFlagsScaled | kFlagsCharacter)) {
 			scale = _location.getScale(anim->getZ());
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -599,6 +605,9 @@ void Parallaction::runZone(ZonePtr z) {
 			enterDialogueMode(z);
 			return;
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -850,6 +859,9 @@ void Location::freeZones(bool removeAll) {
 	case GType_BRA:
 		freeList(_zones, removeAll, Common::mem_fun(&Location::keepZone_br));
 		freeList(_animations, removeAll, Common::mem_fun(&Location::keepAnimation_br));
+		break;
+
+	default:
 		break;
 	}
 }

@@ -23,15 +23,16 @@
 #ifndef SCUMM_HE_MOONBASE_NET_MAIN_H
 #define SCUMM_HE_MOONBASE_NET_MAIN_H
 
+#include "backends/networking/curl/postrequest.h"
+
 namespace Scumm {
 
 class ScummEngine_v100he;
 
-//this is a dummy based on ai_main.h Scumm::AI
-
 class Net {
 public:
 	Net(ScummEngine_v100he *vm);
+	~Net();
 
 	int hostGame(char *sessionName, char *userName);
 	int joinGame(char *IP, char *userName);
@@ -60,10 +61,34 @@ public:
 	bool initSession();
 	bool initUser();
 	void remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args);
+	int remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::String data, int defaultRes = 0, bool wait = false, int callid = 0);
 	void remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex);
 	int remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args);
+	void doNetworkOnceAFrame(int msecs);
 
 private:
+	bool remoteReceiveData();
+
+	void createSessionCallback(Common::JSONValue *response);
+	void createSessionErrorCallback(Networking::ErrorResponse error);
+
+	void startQuerySessionsCallback(Common::JSONValue *response);
+	void startQuerySessionsErrorCallback(Networking::ErrorResponse error);
+
+	void addUserCallback(Common::JSONValue *response);
+	void addUserErrorCallback(Networking::ErrorResponse error);
+
+	void disableSessionJoiningErrorCallback(Networking::ErrorResponse error);
+
+	void endSessionCallback(Common::JSONValue *response);
+	void endSessionErrorCallback(Networking::ErrorResponse error);
+
+	void destroyPlayerErrorCallback(Networking::ErrorResponse error);
+
+	void remoteSendDataErrorCallback(Networking::ErrorResponse error);
+
+	void remoteReceiveDataCallback(Common::JSONValue *response);
+	void remoteReceiveDataErrorCallback(Networking::ErrorResponse error);
 
 public:
 	//getters
@@ -82,6 +107,24 @@ public:
 	bool _fakeLatency;
 
 	ScummEngine_v100he *_vm;
+
+	byte *_packbuffer;
+	int _packetsize;
+	byte *_tmpbuffer;
+
+	int _myUserId;
+	int _myPlayerKey;
+
+	int _lastResult;
+
+	int _sessionid;
+
+	bool _sessionsBeingQueried;
+
+	Common::JSONValue *_sessions;
+	Common::JSONValue *_packetdata;
+
+	Common::String _serverprefix;
 };
 
 } // End of namespace Scumm

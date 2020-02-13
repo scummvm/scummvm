@@ -40,7 +40,7 @@ static const PlainGameDescriptor pinkGames[] = {
 	{0, 0}
 };
 
-#include "detection_tables.h"
+#include "pink/detection_tables.h"
 
 static const char *directoryGlobs[] = {
 	"install",
@@ -56,20 +56,24 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "pink";
+	}
+
+	const char *getName() const override {
 		return "Pink Panther";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Pink Panther (C) Wanderlust Interactive";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual int getMaximumSaveSlot() const { return 99; }
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override { return 99; }
+	SaveStateList listSaves(const char *target) const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool PinkMetaEngine::hasFeature(MetaEngineFeature f) const {

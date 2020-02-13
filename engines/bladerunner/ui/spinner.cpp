@@ -48,17 +48,14 @@ Spinner::Spinner(BladeRunnerEngine *vm) {
 	reset();
 	_imagePicker = new UIImagePicker(vm, kSpinnerDestinations);
 	_vqaPlayer = nullptr;
+	_shapes = new Shapes(vm);
 }
 
 Spinner::~Spinner() {
 	delete _imagePicker;
-
+	delete _vqaPlayer;
+	delete _shapes;
 	reset();
-
-	if (_vqaPlayer != nullptr) {
-		_vqaPlayer->close();
-		delete _vqaPlayer;
-	}
 }
 
 void Spinner::setSelectableDestinationFlag(int destination, bool selectable) {
@@ -79,7 +76,8 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	}
 
 	if (loopId < 0) {
-		_isOpen = true;
+		// call Spinner:open()
+		open();
 	} else {
 		_vm->playerLosesControl();
 		_vm->_scene->loopStartSpecial(kSceneLoopModeSpinner, loopId, immediately);
@@ -105,24 +103,25 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	}
 
 	_destinations = nullptr;
-	int firstShapeId = 0;
-	int shapeCount = 0;
 	int spinnerLoopId = 4;
 
+	// mapmask determines which map version will be displayed
+	// Depending on which destinations are available, mapmaks will have value:
+	// 1: For the near view (first chapter locations, and animoid row for some reason)
+	// 3: For medium view locations (includes the near view ones)
+	// 7: For far view locations (includes all the previous ones)
+	// This values are determined in mapmaskv table
+	//
+	// Since the checks below use bitwise AND, we need to check in order
+	// from the "far" version to the "near" version
 	if (mapmask & 4) {
 		_destinations = getDestinationsFar();
-		firstShapeId = 26;
-		shapeCount = 20;
 		spinnerLoopId = 4;
 	} else if (mapmask & 2) {
 		_destinations = getDestinationsMedium();
-		firstShapeId = 10;
-		shapeCount = 16;
 		spinnerLoopId = 2;
 	} else if (mapmask & 1) {
 		_destinations = getDestinationsNear();
-		firstShapeId = 0;
-		shapeCount = 10;
 		spinnerLoopId = 0;
 	} else {
 		return -1;
@@ -131,10 +130,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	_vqaPlayer->setLoop(spinnerLoopId,     -1, kLoopSetModeImmediate, nullptr, nullptr);
 	_vqaPlayer->setLoop(spinnerLoopId + 1, -1, kLoopSetModeJustStart, nullptr, nullptr);
 
-	for (int j = 0; j != shapeCount; ++j) {
-		_shapes.push_back(new Shape(_vm));
-		_shapes[j]->open("SPINNER.SHP", firstShapeId + j);
-	}
+	_shapes->load("SPINNER.SHP");
 
 	_imagePicker->resetImages();
 
@@ -148,9 +144,9 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 		_imagePicker->defineImage(
 			dest->id,
 			dest->rect,
-			_shapes[dest->id],
-			_shapes[dest->id + _shapes.size() / 2],
-			_shapes[dest->id + _shapes.size() / 2],
+			_shapes->get(dest->shapeId),
+			_shapes->get(dest->shapeIdOver),
+			_shapes->get(dest->shapeIdOver),
 			tooltip
 		);
 	}
@@ -163,8 +159,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 			mouseUpCallback,
 			this
 		);
-//		_vm->_ambientSounds->playSpeech(kActorAnsweringMachine, 480, 50, 0, 0, 100);
-		playSpeechLine(kActorAnsweringMachine, 480, 0.5f);
+		_vm->_actors[kActorAnsweringMachine]->speechPlay(480, false);
 		_vm->_ambientSounds->addSound(kSfxSPINAMB2,  5, 30, 30,  45,    0,   0, -101, -101, 0, 0);
 	} else {
 		_imagePicker->activate(
@@ -185,12 +180,8 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 
 	_imagePicker->deactivate();
 
-	for (int i = 0; i != (int)_shapes.size(); ++i) {
-		delete _shapes[i];
-	}
-	_shapes.clear();
+	_shapes->unload();
 
-	_vqaPlayer->close();
 	delete _vqaPlayer;
 	_vqaPlayer = nullptr;
 
@@ -272,10 +263,10 @@ void Spinner::tick() {
 		_vm->_subtitles->tick(_vm->_surfaceFront);
 	}
 	_vm->blitToScreen(_vm->_surfaceFront);
+
 	if (_vm->_cutContent) {
 		tickDescription();
 	}
-	_vm->_system->delayMillis(10);
 }
 
 void Spinner::setSelectedDestination(int destination) {
@@ -294,16 +285,11 @@ void Spinner::reset() {
 
 	_actorId = -1;
 	_sentenceId = -1;
-	_timeSpeakDescription = 0;
-
-	for (int i = 0; i != (int)_shapes.size(); ++i) {
-		delete _shapes[i];
-	}
-	_shapes.clear();
+	_timeSpeakDescriptionStart = 0u;
 }
 
 void Spinner::resume() {
-	if(_vqaPlayer == nullptr) {
+	if (_vqaPlayer == nullptr) {
 		return;
 	}
 
@@ -329,44 +315,44 @@ void Spinner::load(SaveFileReadStream &f) {
 
 const Spinner::Destination *Spinner::getDestinationsFar() {
 	static const Destination destinations[] = {
-		{  0, Common::Rect(220, 227, 246, 262) },
-		{  1, Common::Rect(260, 252, 286, 279) },
-		{  2, Common::Rect(286, 178, 302, 196) },
-		{  3, Common::Rect(244, 178, 263, 195) },
-		{  4, Common::Rect(288, 216, 306, 228) },
-		{  5, Common::Rect(249,  77, 353, 124) },
-		{  6, Common::Rect(190, 127, 208, 138) },
-		{  7, Common::Rect(185, 149, 206, 170) },
-		{  8, Common::Rect(398, 249, 419, 268) },
-		{  9, Common::Rect(390, 218, 419, 236) },
-		{ -1, Common::Rect(-1, -1, -1, -1) }
+		{  0, Common::Rect(220, 227, 246, 262), 26 , 36 },
+		{  1, Common::Rect(260, 252, 286, 279), 27 , 37 },
+		{  2, Common::Rect(286, 178, 302, 196), 28 , 38 },
+		{  3, Common::Rect(244, 178, 263, 195), 29 , 39 },
+		{  4, Common::Rect(288, 216, 306, 228), 30 , 40 },
+		{  5, Common::Rect(249,  77, 353, 124), 31 , 41 },
+		{  6, Common::Rect(190, 127, 208, 138), 32 , 42 },
+		{  7, Common::Rect(185, 149, 206, 170), 33 , 43 },
+		{  8, Common::Rect(398, 249, 419, 268), 34 , 44 },
+		{  9, Common::Rect(390, 218, 419, 236), 35 , 45 },
+		{ -1, Common::Rect(-1, -1, -1, -1), 0, 0 }
 	};
 	return destinations;
 }
 
 const Spinner::Destination *Spinner::getDestinationsMedium() {
 	static const Destination destinations[] = {
-		{  0, Common::Rect(252, 242, 279, 283) },
-		{  1, Common::Rect(301, 273, 328, 304) },
-		{  2, Common::Rect(319, 182, 336, 200) },
-		{  3, Common::Rect(269, 181, 293, 200) },
-		{  4, Common::Rect(325, 227, 345, 240) },
-		{  5, Common::Rect(259,  74, 380, 119) },
-		{  6, Common::Rect(203, 124, 224, 136) },
-		{  7, Common::Rect(200, 147, 222, 170) },
-		{ -1, Common::Rect(-1,-1,-1,-1) }
+		{  0, Common::Rect(252, 242, 279, 283), 10, 18 },
+		{  1, Common::Rect(301, 273, 328, 304), 11, 19 },
+		{  2, Common::Rect(319, 182, 336, 200), 12, 20 },
+		{  3, Common::Rect(269, 181, 293, 200), 13, 21 },
+		{  4, Common::Rect(325, 227, 345, 240), 14, 22 },
+		{  5, Common::Rect(259,  74, 380, 119), 15, 23 },
+		{  6, Common::Rect(203, 124, 224, 136), 16, 24 },
+		{  7, Common::Rect(200, 147, 222, 170), 17, 25 },
+		{ -1, Common::Rect(-1,-1,-1,-1), 0, 0 }
 	};
 	return destinations;
 }
 
 const Spinner::Destination *Spinner::getDestinationsNear() {
 	static const Destination destinations[] = {
-		{  0, Common::Rect(210, 263, 263, 332) },
-		{  1, Common::Rect(307, 330, 361, 381) },
-		{  2, Common::Rect(338, 137, 362, 169) },
-		{  3, Common::Rect(248, 135, 289, 168) },
-		{  4, Common::Rect(352, 222, 379, 238) },
-		{ -1, Common::Rect(-1,-1,-1,-1) }
+		{  0, Common::Rect(210, 263, 263, 332), 0, 5 },
+		{  1, Common::Rect(307, 330, 361, 381), 1, 6 },
+		{  2, Common::Rect(338, 137, 362, 169), 2, 7 },
+		{  3, Common::Rect(248, 135, 289, 168), 3, 8 },
+		{  4, Common::Rect(352, 222, 379, 238), 4, 9 },
+		{ -1, Common::Rect(-1,-1,-1,-1), 0, 0 }
 	};
 	return destinations;
 }
@@ -414,60 +400,31 @@ void Spinner::destinationFocus(int destinationImage) {
 void Spinner::setupDescription(int actorId, int sentenceId) {
 	_actorId = actorId;
 	_sentenceId = sentenceId;
-	_timeSpeakDescription = _vm->_time->current() + 600;
+	_timeSpeakDescriptionStart = _vm->_time->current();
 }
 
 // copied from elevator.cpp code
 void Spinner::resetDescription() {
 	_actorId = -1;
 	_sentenceId = -1;
-	_timeSpeakDescription = 0;
+	_timeSpeakDescriptionStart = 0u;
 }
 
 // copied from elevator.cpp code
 void Spinner::tickDescription() {
-	int now = _vm->_time->current();
-	if (_actorId <= 0 || now < _timeSpeakDescription) {
+	uint32 now = _vm->_time->current();
+	// unsigned difference is intentional
+	if (_actorId <= 0 || (now - _timeSpeakDescriptionStart < 600u)) {
 		return;
 	}
 
 	if (!_vm->_mouse->isDisabled()) {
-		// mouse can mouse when disab;ed so hover callbacks will work, while the cursor is invisible
-		// so postpone the speech until mouse is invisible again
+		// mouse can still move when "disabled", so hover callbacks will work while the cursor is invisible,
+		// so postpone the speech until mouse is visible again
 		_vm->_actors[_actorId]->speechPlay(_sentenceId, false);
 		_actorId = -1;
 		_sentenceId = -1;
 	}
-}
-
-void Spinner::playSpeechLine(int actorId, int sentenceId, float duration) {
-	_vm->gameWaitForActive();
-
-	_vm->_mouse->disable();
-	Actor *actor = _vm->_actors[actorId];
-	actor->speechPlay(sentenceId, true);
-
-	while (_vm->_gameIsRunning) {
-		_vm->_actorIsSpeaking = true;
-		_vm->_actorSpeakStopIsRequested = false;
-		_vm->gameTick();
-		_vm->_actorIsSpeaking = false;
-		if (_vm->_actorSpeakStopIsRequested || !actor->isSpeeching()) {
-			actor->speechStop();
-			break;
-		}
-	}
-
-	if (duration > 0.0f && !_vm->_actorSpeakStopIsRequested) {
-		int timeEnd = duration * 1000.0f + _vm->_time->current();
-		while ((timeEnd > _vm->_time->current()) && _vm->_gameIsRunning) {
-			_vm->gameTick();
-		}
-	}
-
-	_vm->_actorSpeakStopIsRequested = false;
-
-	_vm->_mouse->enable();
 }
 
 } // End of namespace BladeRunner

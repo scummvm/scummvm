@@ -500,9 +500,7 @@ void EoBCoreEngine::initStaticResource() {
 		data = _staticres->loadRawData(kEoB2PcmSoundEffectsFinale, temp2);
 		SoundResourceInfo_TownsEoB finale(files, temp, data, temp2, 40);
 		sndInfo_finale = &finale;
-	} else if (_flags.platform == Common::kPlatformPC98) {
-
-	} else {
+	} else if (_flags.platform != Common::kPlatformPC98) {
 		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		SoundResourceInfo_PC ingame(files, temp);
 		sndInfo_ingame = &ingame;
@@ -783,6 +781,11 @@ void EoBCoreEngine::initMenus() {
 		{  18,  12,  20, 158,  14,  32,  3  },
 		{  19,  12,  37, 158,  14,  50,  3  },
 		{  20,  12,  54, 158,  14,  21,  3  },
+		{  8,  128, 122,  40,  14,  19,  7  },
+		// PC-98 options menu
+		{  17,  12,  20, 158,  14,  32,  3  },
+		{  18,  12,  37, 158,  14,  50,  3  },
+		{  19,  12,  54, 158,  14,  21,  3  },
 		{  8,  128, 122,  40,  14,  19,  7  }
 	};
 
@@ -812,9 +815,13 @@ void EoBCoreEngine::initMenus() {
 		// assign FM-Towns style options menu
 		_menuDefs[2].numButtons = 4;
 		_menuDefs[2].firstButtonStrId = 44;
-	}
-
-	if (_flags.platform == Common::kPlatformAmiga) {
+		_prefMenuPlatformOffset = 32;
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		// assign PC-98 style options menu
+		_menuDefs[2].numButtons = 4;
+		_menuDefs[2].firstButtonStrId = 48;
+		_prefMenuPlatformOffset = 36;
+	} else if (_flags.platform == Common::kPlatformAmiga) {
 		// assign Amiga text colors
 		_menuDefs[0].titleCol = _menuDefs[1].titleCol = _menuDefs[2].titleCol = _menuDefs[4].titleCol = _menuDefs[6].titleCol = guiSettings()->colors.guiColorLightBlue;
 		_menuDefs[3].titleCol = _menuDefs[5].titleCol = guiSettings()->colors.guiColorWhite;
@@ -1163,6 +1170,8 @@ void EoBEngine::initStaticResource() {
 	for (int i = 0; i < 5; i++)
 		_cgaMappingLevel[i] = _staticres->loadRawData(kEoB1CgaMappingLevel0 + i, temp);
 
+	_itemNamesPC98 = _staticres->loadStrings(kEoB1ItemNames, _numItemNamesPC98);
+
 	_turnUndeadString = _staticres->loadStrings(kEoB1TurnUndeadString, temp);
 
 	_npcShpData = _staticres->loadRawData(kEoB1NpcShpData, temp);
@@ -1206,16 +1215,41 @@ void EoBEngine::initStaticResource() {
 		p->dmgModifierEvade = *ps++;
 	}
 
+	if (_flags.platform == Common::kPlatformPC98) {
+		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
+		SoundResourceInfo_PC ingame(files, temp);
+		_sound->initAudioResourceInfo(kMusicIngame, &ingame);
+		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
+		SoundResourceInfo_PC intro(files, temp);
+		_sound->initAudioResourceInfo(kMusicIntro, &intro);
+		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
+		SoundResourceInfo_PC finale(files, temp);
+		_sound->initAudioResourceInfo(kMusicFinale, &finale);
+	}
+
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
 	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
 
-	static const char *const errorSlotNoNameString[3] = {
+	static const char *const errorSlotNoNameString[4] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielstaende mues-\r sen einen Namen\r haben!",
+		"",
 		0
 	};
 
-	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
+	switch (_flags.lang) {
+	case Common::EN_ANY:
+		_errorSlotNoNameString = errorSlotNoNameString[0];
+		break;
+	case Common::DE_DEU:
+		_errorSlotNoNameString = errorSlotNoNameString[1];
+		break;
+	case Common::JA_JPN:
+		_errorSlotNoNameString = errorSlotNoNameString[2];
+		break;
+	default:
+		_errorSlotNoNameString = errorSlotNoNameString[ARRAYSIZE(errorSlotNoNameString) - 1];
+	}
 }
 
 void EoBEngine::initSpells() {
@@ -1301,22 +1335,27 @@ void EoBEngine::initSpells() {
 }
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
-	{ 9, 15, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 135, 130, 132, 180, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
-	{ 9, 15, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+};
+
+const KyraRpgGUISettings EoBEngine::_guiSettingsPC98 = {
+	{ 9, 15, 95, 11, 1, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmiga = {
-	{ 28, 31, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 18, 17, 10, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmigaMainMenu = {
-	{ 28, 31, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 22, 28, 30, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
 };
 
@@ -1330,6 +1369,48 @@ const uint8 EoBEngine::_monsterAcHitChanceTbl1[] = {
 
 const uint8 EoBEngine::_monsterAcHitChanceTbl2[] = {
 	2, 1, 1, 1
+};
+
+const EoBEngine::RenderModePalFile EoBEngine::_renderModePalFiles[3] = {
+	{	Common::kRenderDefault, "EOBPAL.COL" },
+	{	Common::kRenderVGA, "EOBPAL.COL" },
+	{	-1, "" }
+};
+
+const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[3] = {
+	{
+		Common::kPlatformDOS,
+		"INTRO",
+		_renderModePalFiles,
+		-1,
+		2,
+		false,
+		77, 165, 173, 29, 14, 13, 12,
+		76, 164, 175, 31, 14, 13, -1,
+		0
+	},
+	{
+		Common::kPlatformAmiga,
+		"TITLE",
+		&_renderModePalFiles[2],
+		-1,
+		1,
+		true,
+		75, 165, 177, 29, 22, 28, -1,
+		74, 164, 179, 31, 22, 28, -1,
+		0
+	},
+	{
+		Common::kPlatformPC98,
+		"EOBTITLE",
+		&_renderModePalFiles[2],
+		1,
+		2,
+		false,
+		77, 161, 173, 29, 1, 2, 12,
+		76, 160, 175, 31, 1, 2, -1,
+		-8
+	}
 };
 
 void DarkMoonEngine::initStaticResource() {
@@ -1424,17 +1505,17 @@ void DarkMoonEngine::initSpells() {
 }
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
-	{ 9, 15, 95, 11, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
+	{ 9, 15, 95, 11, 1, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
 	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
-	{ 9, 15, 95, 9, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ 9, 15, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
 	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsAmiga = {
-	{ 28, 31, 95, 9, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ 28, 31, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
 	{ 18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
 };
 

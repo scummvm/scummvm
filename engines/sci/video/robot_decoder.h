@@ -320,7 +320,7 @@ public:
 	};
 
 	RobotAudioStream(const int32 bufferSize);
-	virtual ~RobotAudioStream();
+	~RobotAudioStream() override;
 
 	/**
 	 * Adds a new audio packet to the stream.
@@ -435,13 +435,13 @@ private:
 #pragma mark RobotAudioStream - AudioStream implementation
 public:
 	int readBuffer(Audio::st_sample_t *outBuffer, int numSamples) override;
-	virtual bool isStereo() const override { return false; };
-	virtual int getRate() const override { return 22050; };
-	virtual bool endOfData() const override {
+	bool isStereo() const override { return false; };
+	int getRate() const override { return 22050; };
+	bool endOfData() const override {
 		Common::StackLock lock(_mutex);
 		return _readHeadAbs >= _writeHeadAbs;
 	};
-	virtual bool endOfStream() const override {
+	bool endOfStream() const override {
 		Common::StackLock lock(_mutex);
 		return _finished && endOfData();
 	}

@@ -10,7 +10,7 @@ MODULE_OBJS := \
 	detection.o \
 	disk.o \
 	display.o \
-	graphics.o \
+	display_a2.o \
 	hires1.o \
 	hires2.o \
 	hires4.o \

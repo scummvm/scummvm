@@ -1445,6 +1445,7 @@ int GfxFont::writeChar(const char ch) {
 			case 1: *destP = _colors.foreground; break;
 			case 2: *destP = _colors2.background; break;
 			case 3: *destP = _colors2.foreground; break;
+			default: break;
 			}
 		}
 	}

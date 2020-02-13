@@ -75,27 +75,17 @@ bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames
 		gameFile.close();
 
 		// Check for known games
-		const MagneticGameDescription *p = MAGNETIC_GAMES;
+		const GlkDetectionEntry *p = MAGNETIC_GAMES;
 		while (p->_gameId && (md5 != p->_md5 || filesize != p->_filesize))
 			++p;
 
-		DetectedGame gd;
 		if (!p->_gameId) {
-			if (gDebugLevel > 0) {
-				// Print an entry suitable for putting into the detection_tables.h
-				debug("ENTRY0(\"%s\", \"%s\", %u),", filename.c_str(), md5.c_str(), (uint)filesize);
-			}
-
 			const PlainGameDescriptor &desc = MAGNETIC_GAME_LIST[0];
-			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
+			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
-			gd.setGUIOptions(GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
 		}
-
-		gd.addExtraEntry("filename", filename);
-		gameList.push_back(gd);
 	}
 
 	return !gameList.empty();
@@ -107,6 +97,17 @@ void MagneticMetaEngine::detectClashes(Common::StringMap &map) {
 			error("Duplicate game Id found - %s", pd->gameId);
 		map[pd->gameId] = "";
 	}
+}
+
+const gms_game_table_t *gms_gameid_lookup_game(uint32 undo_size, uint32 undo_pc) {
+	const gms_game_table_t *game;
+
+	for (game = GMS_GAME_TABLE; game->name; game++) {
+		if (game->undo_size == undo_size && game->undo_pc == undo_pc)
+			break;
+	}
+
+	return game->name ? game : nullptr;
 }
 
 } // End of namespace Magnetic

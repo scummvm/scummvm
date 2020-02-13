@@ -64,9 +64,7 @@ void Scores::open() {
 	_txtScorers = new TextResource(_vm);
 	_txtScorers->open("SCORERS");
 
-	_font = new Font(_vm);
-	_font->open("TAHOMA24.FON", 640, 480, -1, 0, 0);
-	_font->setSpacing(1, 0);
+	_font = Font::load(_vm, "TAHOMA24.FON", 1, true);
 
 	fill();
 
@@ -142,20 +140,20 @@ void Scores::tick() {
 	_vm->_surfaceFront.hLine(200, 139, 400, _vm->_surfaceFront.format.RGBToColor(0, 248, 0));
 	_vm->_surfaceFront.hLine(200, 347, 400, _vm->_surfaceFront.format.RGBToColor(0, 0, 248));
 
-	_font->draw(_txtScorers->getText(7), _vm->_surfaceFront, 200, 114);
+	_font->drawString(&_vm->_surfaceFront, _txtScorers->getText(7), 200, 114, _vm->_surfaceFront.w, 0);
 
 	int y = 140;
 
 	for (int i = 0; i < 7; i++) {
-		_font->draw(_txtScorers->getText(_scorers[i]), _vm->_surfaceFront, 220, y);
-		_font->drawNumber(_scores[_scorers[i]], _vm->_surfaceFront, 360, y);
+		_font->drawString(&_vm->_surfaceFront, _txtScorers->getText(_scorers[i]), 220, y, _vm->_surfaceFront.w, 0);
+		_font->drawString(&_vm->_surfaceFront, Common::String::format("%d", _scores[_scorers[i]]), 360, y, _vm->_surfaceFront.w, 0);
 
 		y += 26;
 	}
 
-	_font->draw(_txtScorers->getText(8), _vm->_surfaceFront, 200, 322);
-	_font->draw(_txtScorers->getText(_lastScoreId), _vm->_surfaceFront, 220, 348);
-	_font->drawNumber(_lastScoreValue, _vm->_surfaceFront, 360, 348);
+	_font->drawString(&_vm->_surfaceFront, _txtScorers->getText(8), 200, 322, _vm->_surfaceFront.w, 0);
+	_font->drawString(&_vm->_surfaceFront, _txtScorers->getText(_lastScoreId), 220, 348, _vm->_surfaceFront.w, 0);
+	_font->drawString(&_vm->_surfaceFront, Common::String::format("%d", _lastScoreValue), 360, 348, _vm->_surfaceFront.w, 0);
 
 	_vm->blitToScreen(_vm->_surfaceFront);
 }

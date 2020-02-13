@@ -1,7 +1,6 @@
 MODULE := backends/platform/openpandora
 
 MODULE_OBJS := \
-	op-options.o \
 	op-backend.o \
 	op-main.o
 

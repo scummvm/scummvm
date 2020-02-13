@@ -202,6 +202,8 @@ int16 InventoryHandler::processInventory(const int action, ...) {
 			}
 		}
 		break;
+	default:
+		break;
 	}
 	return objId;                                   // For the INV_GET action
 }
@@ -215,6 +217,7 @@ void InventoryHandler::runInventory() {
 	debugC(1, kDebugInventory, "runInventory");
 
 	switch (_inventoryState) {
+	default:
 	case kInventoryOff:                             // Icon bar off screen
 		break;
 	case kInventoryUp:                              // Icon bar moving up

@@ -47,10 +47,10 @@ private:
 	int _selectedAction;
 public:
 	RightClickDialog();
-	~RightClickDialog();
+	~RightClickDialog() override;
 
-	virtual void draw();
-	virtual bool process(Event &event);
+	void draw() override;
+	bool process(Event &event) override;
 	void execute();
 };
 
@@ -64,10 +64,10 @@ private:
 	bool _closeFlag;
 public:
 	AmmoBeltDialog();
-	~AmmoBeltDialog();
+	~AmmoBeltDialog() override;
 
-	virtual void draw();
-	virtual bool process(Event &event);
+	void draw() override;
+	bool process(Event &event) override;
 	void execute();
 };
 
@@ -76,7 +76,7 @@ private:
 	GfxButton _buttons[8];
 public:
 	RadioConvDialog();
-	virtual ~RadioConvDialog();
+	~RadioConvDialog() override;
 	int execute();
 
 	static int show();
@@ -90,7 +90,7 @@ private:
 	GfxMessage _gfxMessage;
 public:
 	OptionsDialog();
-	virtual ~OptionsDialog() {}
+	~OptionsDialog() override {}
 
 	static void show();
 };

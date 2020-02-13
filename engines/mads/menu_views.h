@@ -40,16 +40,16 @@ protected:
 
 	virtual void doFrame() = 0;
 
-	virtual void display();
+	void display() override;
 
 	/**
 	* Event handler
 	*/
-	virtual bool onEvent(Common::Event &event);
+	bool onEvent(Common::Event &event) override;
 public:
 	MenuView(MADSEngine *vm);
 
-	virtual ~MenuView() {}
+	~MenuView() override {}
 
 	virtual void show();
 
@@ -114,9 +114,9 @@ private:
 	 */
 	void resetPalette();
 protected:
-	virtual void display();
+	void display() override;
 
-	virtual void doFrame();
+	void doFrame() override;
 
 	/**
 	 * Called when the script is finished
@@ -130,7 +130,7 @@ public:
 
 	TextView(MADSEngine *vm);
 
-	virtual ~TextView();
+	~TextView() override;
 };
 
 enum ResyncMode { NEVER, ALWAYS, BEGINNING };
@@ -210,11 +210,11 @@ private:
 
 	void scroll();
 protected:
-	virtual void display();
+	void display() override;
 
-	virtual void doFrame();
+	void doFrame() override;
 
-	virtual bool onEvent(Common::Event &event);
+	bool onEvent(Common::Event &event) override;
 
 	virtual void scriptDone();
 public:
@@ -225,7 +225,7 @@ public:
 
 	AnimationView(MADSEngine *vm);
 
-	virtual ~AnimationView();
+	~AnimationView() override;
 };
 
 } // End of namespace MADS

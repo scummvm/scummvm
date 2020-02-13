@@ -26,11 +26,11 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
+#include "bladerunner/shape.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
-#include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_container.h"
 #include "bladerunner/ui/ui_scroll_box.h"
 
@@ -44,8 +44,8 @@ KIASectionLoad::KIASectionLoad(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 	_scrollBox   = new UIScrollBox(_vm, scrollBoxCallback, this, 1025, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
 	_uiContainer->add(_scrollBox);
 
-	_timeLast = 0;
-	_timeLeft = 0;
+	_timeLast = 0u;
+	_timeLeft = 0u;
 
 	_hoveredLineId = -1;
 	_displayingLineId = -1;
@@ -86,7 +86,7 @@ void KIASectionLoad::open() {
 
 	_hoveredLineId = -1;
 	_timeLast = _vm->_time->currentSystem();
-	_timeLeft = 800;
+	_timeLeft = 800u;
 }
 
 void KIASectionLoad::close() {
@@ -96,7 +96,7 @@ void KIASectionLoad::close() {
 	_saveList.clear();
 }
 
-void KIASectionLoad::draw(Graphics::Surface &surface){
+void KIASectionLoad::draw(Graphics::Surface &surface) {
 	_vm->_kia->_shapes->get(69)->draw(surface, 501, 123);
 
 	_uiContainer->draw(surface);
@@ -105,7 +105,7 @@ void KIASectionLoad::draw(Graphics::Surface &surface){
 
 	if (_hoveredLineId != selectedLineId) {
 		if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
-			if (_timeLeft == 0) {
+			if (_timeLeft == 0u) {
 				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), selectedLineId);
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
@@ -115,7 +115,7 @@ void KIASectionLoad::draw(Graphics::Surface &surface){
 			}
 		} else {
 			_vm->_kia->playerReset();
-			_timeLeft = 800;
+			_timeLeft = 800u;
 			_displayingLineId = -1;
 		}
 		_hoveredLineId = selectedLineId;
@@ -124,7 +124,7 @@ void KIASectionLoad::draw(Graphics::Surface &surface){
 	uint32 now = _vm->_time->currentSystem();
 	if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
 		if (_timeLeft) {
-			uint32 timeDiff = now - _timeLast;
+			uint32 timeDiff = now - _timeLast; // unsigned difference is intentional
 			if (timeDiff >= _timeLeft) {
 				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), _saveList[selectedLineId].getSaveSlot());
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
@@ -133,7 +133,7 @@ void KIASectionLoad::draw(Graphics::Surface &surface){
 					_displayingLineId = selectedLineId;
 				}
 			} else {
-				_timeLeft -= timeDiff;
+				_timeLeft = (_timeLeft < timeDiff) ? 0u : (_timeLeft - timeDiff);
 			}
 		}
 	}

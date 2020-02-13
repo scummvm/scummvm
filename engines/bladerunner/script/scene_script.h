@@ -71,12 +71,15 @@ private:
 #define END_SCRIPT };
 
 DECLARE_SCRIPT(AR01)
+	void dialogueWithFishDealerBuyGoldfish();
 END_SCRIPT
 
 DECLARE_SCRIPT(AR02)
 	void dialogueWithInsectDealer1();
-	void dialogueWithInsectDealer2();
+	void dialogueWithInsectDealerBuyBracelet();
+	void dialogueWithInsectDealerBuySlug();
 	void dialogueWithHassan();
+	void dialogueWithHassanBuySnake();
 END_SCRIPT
 
 DECLARE_SCRIPT(BB01)

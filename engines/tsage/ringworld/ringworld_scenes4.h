@@ -39,11 +39,11 @@ class Scene3500 : public Scene {
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action2 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	SpeakerSText _speakerSText;
@@ -52,7 +52,7 @@ public:
 	Action1 _action1;
 	Action2 _action2;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
 };
 
 class Scene3700 : public Scene {
@@ -68,17 +68,17 @@ class Scene3700 : public Scene {
 		int _countdownCtr;
 
 		Viewer();
-		virtual Common::String getClassName() { return "Viewer"; }
-		virtual void synchronize(Serializer &s);
-		virtual void dispatch();
-		virtual void reposition();
-		virtual void draw();
+		Common::String getClassName() override { return "Viewer"; }
+		void synchronize(Serializer &s) override;
+		void dispatch() override;
+		void reposition() override;
+		void draw() override;
 	};
 
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	Viewer _viewer;
@@ -89,7 +89,7 @@ public:
 	SpeakerMR _speakerMR;
 	ASound _soundHandler;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
 };
 
 } // End of namespace Ringworld

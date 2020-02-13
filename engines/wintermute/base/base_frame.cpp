@@ -174,7 +174,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	int hotspotX = 0, hotspotY = 0;
-	bool custoTrans = false;
+	bool customTrans = false;
 	bool editorSelected = false;
 	bool is2DOnly = false;
 	bool is3DOnly = false;
@@ -196,7 +196,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 		case TOKEN_TRANSPARENT:
 			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
-			custoTrans = true;
+			customTrans = true;
 			break;
 
 		case TOKEN_RECT:
@@ -292,6 +292,9 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
 			break;
+
+		default:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -307,7 +310,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 	BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 	if (surface_file != nullptr) {
-		if (custoTrans) {
+		if (customTrans) {
 			sub->setSurface(surface_file, false, r, g, b, lifeTime, keepLoaded);
 		} else {
 			sub->setSurface(surface_file, true, 0, 0, 0, lifeTime, keepLoaded);
@@ -320,7 +323,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		}
 
 		sub->_alpha = BYTETORGBA(ar, ag, ab, alpha);
-		if (custoTrans) {
+		if (customTrans) {
 			sub->_transparent = BYTETORGBA(r, g, b, 0xFF);
 		}
 	}

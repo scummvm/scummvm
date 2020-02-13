@@ -336,8 +336,8 @@ public:
 
 	Functor1MemConst(T *t, const FuncType &func) : _t(t), _func(func) {}
 
-	bool isValid() const { return _func != 0 && _t != 0; }
-	Res operator()(Arg v1) const {
+	bool isValid() const override { return _func != 0 && _t != 0; }
+	Res operator()(Arg v1) const override {
 		return (_t->*_func)(v1);
 	}
 private:
@@ -1852,7 +1852,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 
 		return kCursorHand;
 
-	case SceneHotspot::kActionCatchBeetle:
+	case SceneHotspot::kActionCatchBeetleHS:
 		if (!getBeetle()->isLoaded())
 			return kCursorNormal;
 
@@ -1897,7 +1897,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 LABEL_KEY:
 	// Handle compartment action
 	case SceneHotspot::kActionCompartment:
-	case SceneHotspot::kActionExitCompartment:
+	case SceneHotspot::kActionExitCompartmentHS:
 		debugC(2, kLastExpressDebugScenes, "================================= DOOR %03d =================================", object);
 		if (object >= kObjectMax)
 			return kCursorNormal;

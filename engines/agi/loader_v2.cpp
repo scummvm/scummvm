@@ -129,6 +129,8 @@ int AgiLoader_v2::unloadResource(int16 resourceType, int16 resourceNr) {
 	case RESOURCETYPE_SOUND:
 		_vm->_sound->unloadSound(resourceNr);
 		break;
+	default:
+		break;
 	}
 
 	return errOK;

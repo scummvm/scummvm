@@ -39,7 +39,7 @@ ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesLimit) {
 	_maxCount = 0;
 	switch (cluesLimit) {
 	case 4:
-		_maxCount = _vm->_gameInfo->getClueCount();
+		_maxCount = kClueCount;
 		break;
 	case 3:
 		_maxCount = 100;
@@ -318,6 +318,11 @@ int ActorClues::getCount() const {
 }
 
 int ActorClues::getClueIdByIndex(int index) const {
+	assert(index < _count);
+
+	if (index < 0 || index >= _count) {
+		return -1;
+	}
 	return _clues[index].clueId;
 }
 

@@ -48,6 +48,8 @@ int CharacterArray::indexOf(const Character &c) {
 
 /*------------------------------------------------------------------------*/
 
+int Character::_itemType;
+
 Character::Character(): _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
 	clear();
 	_faceSprites = nullptr;
@@ -59,6 +61,7 @@ Character::Character(const Character &src) : _weapons(this), _armor(this), _acce
 }
 
 void Character::clear() {
+	_name = "";
 	_sex = MALE;
 	_race = HUMAN;
 	_xeenSide = 0;
@@ -418,8 +421,9 @@ int Character::statColor(int amount, int threshold) {
 
 int Character::statBonus(uint statValue) const {
 	int idx;
-	for (idx = 0; Res.STAT_VALUES[idx] <= (int)statValue; ++idx)
-		;
+	for (idx = 0; idx < ARRAYSIZE(Res.STAT_VALUES) - 1; ++idx)
+		if (Res.STAT_VALUES[idx] > (int)statValue)
+			break;
 
 	return Res.STAT_BONUSES[idx];
 }
@@ -967,7 +971,6 @@ int Character::getNumAwards() const {
 
 ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 	XeenEngine *vm = Party::_vm;
-	Scripts &scripts = *vm->_scripts;
 	int itemOffset = vm->getGameID() == GType_Swords ? 6 : 0;
 
 	if (!p1)
@@ -981,18 +984,18 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 
 	// Randomly pick a category and item Id
 	if (p3 == 12) {
-		if (scripts._itemType < (35 + itemOffset)) {
+		if (_itemType < (35 + itemOffset)) {
 			category = CATEGORY_WEAPON;
-			itemId = scripts._itemType;
-		} else if (scripts._itemType < (49 + itemOffset)) {
+			itemId = _itemType;
+		} else if (_itemType < (49 + itemOffset)) {
 			category = CATEGORY_ARMOR;
-			itemId = scripts._itemType - (35 + itemOffset);
-		} else if (scripts._itemType < (60 + itemOffset)) {
+			itemId = _itemType - (35 + itemOffset);
+		} else if (_itemType < (60 + itemOffset)) {
 			category = CATEGORY_ACCESSORY;
-			itemId = scripts._itemType - (49 + itemOffset);
+			itemId = _itemType - (49 + itemOffset);
 		} else {
 			category = CATEGORY_MISC;
-			itemId = scripts._itemType - (60 + itemOffset);
+			itemId = _itemType - (60 + itemOffset);
 		}
 	} else {
 		switch (p3) {
@@ -1102,6 +1105,7 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 		break;
 
 	case CATEGORY_MISC:
+		newItem._material = itemId;
 		v8 = 4;
 		break;
 
@@ -1169,7 +1173,8 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 			break;
 
 		case 4:
-			miscCharges = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
+			miscId = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
+			miscCharges = vm->getRandomNumber(1, 8);
 			break;
 
 		default:

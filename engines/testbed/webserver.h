@@ -53,12 +53,12 @@ public:
 	 * @see addTest()
 	 */
 	WebserverTestSuite();
-	~WebserverTestSuite() {}
-	const char *getName() const {
+	~WebserverTestSuite() override {}
+	const char *getName() const override {
 		return "Webserver";
 	}
 
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Webserver tests";
 	}
 

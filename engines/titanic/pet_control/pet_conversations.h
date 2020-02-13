@@ -130,102 +130,102 @@ private:
 	void npcDialChange(uint dialNum, uint oldLevel, uint newLevel);
 public:
 	CPetConversations();
-	virtual ~CPetConversations() {}
+	~CPetConversations() override {}
 
 	/**
 	 * Sets up the section
 	 */
-	virtual bool setup(CPetControl *petControl);
+	bool setup(CPetControl *petControl) override;
 
 	/**
 	 * Reset the section
 	 */
-	virtual bool reset();
+	bool reset() override;
 
 	/**
 	 * Draw the section
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager) override;
 
 	/**
 	 * Get the bounds for the section
 	 */
-	virtual Rect getBounds() const;
+	Rect getBounds() const override;
 
 	/**
 	 * Returns true if the object is in a valid state
 	 */
-	virtual bool isValid(CPetControl *petControl);
+	bool isValid(CPetControl *petControl) override;
 
 	/**
 	 * Following are handlers for the various messages that the PET can
 	 * pass onto the currently active section/area
 	 */
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
-	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
-	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
-	virtual bool MouseWheelMsg(CMouseWheelMsg *msg);
-	virtual bool KeyCharMsg(CKeyCharMsg *msg);
-	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) override;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) override;
+	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) override;
+	bool MouseWheelMsg(CMouseWheelMsg *msg) override;
+	bool KeyCharMsg(CKeyCharMsg *msg) override;
+	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) override;
 
 	/**
 	 * Display a message
 	 */
-	virtual void displayMessage(const CString &msg);
+	void displayMessage(const CString &msg) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file, int param);
+	void load(SimpleFile *file, int param) override;
 
 	/**
 	 * Called after a game has been loaded
 	 */
-	virtual void postLoad();
+	void postLoad() override;
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Called when a section is switched to
 	 */
-	virtual void enter(PetArea oldArea);
+	void enter(PetArea oldArea) override;
 
 	/**
 	 * Called when a section is being left, to switch to another area
 	 */
-	virtual void leave();
+	void leave() override;
 
 	/**
 	 * Called when a previously set up PET timer expires
 	 */
-	virtual void timerExpired(int val);
+	void timerExpired(int val) override;
 
 	/**
 	 * Display a title for an NPC
 	 */
-	virtual void displayNPCName(CGameObject *npc);
+	void displayNPCName(CGameObject *npc) override;
 
 	/**
 	 * Sets the NPC to use
 	 */
-	virtual void setNPC(const CString &name);
+	void setNPC(const CString &name) override;
 
 	/**
 	 * Resets the active NPC
 	 */
-	virtual void resetNPC();
+	void resetNPC() override;
 
 	/**
 	 * Show the text cursor
 	 */
-	virtual void showCursor();
+	void showCursor() override;
 
 	/**
 	 * Hide the text cursor
 	 */
-	virtual void hideCursor();
+	void hideCursor() override;
 
 	/**
 	 * Set the active NPC

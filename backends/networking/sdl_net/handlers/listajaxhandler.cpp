@@ -42,8 +42,8 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 
 	if (path == "" || path == "/") {
 		if (ConfMan.hasKey("rootpath", "cloud"))
-			addItem(itemsList, IT_DIRECTORY, "/root/", _("File system root"));
-		addItem(itemsList, IT_DIRECTORY, "/saves/", _("Saved games"));
+			addItem(itemsList, IT_DIRECTORY, "/root/", HandlerUtils::toUtf8(_("File system root")));
+		addItem(itemsList, IT_DIRECTORY, "/saves/", HandlerUtils::toUtf8(_("Saved games")));
 		successResult.setVal("items", new Common::JSONValue(itemsList));
 		return successResult;
 	}
@@ -81,7 +81,7 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 			filePath = "/";
 		else
 			filePath = parentPath(prefixToAdd + filePath);
-		addItem(itemsList, IT_PARENT_DIRECTORY, filePath, _("Parent directory"));
+		addItem(itemsList, IT_PARENT_DIRECTORY, filePath, HandlerUtils::toUtf8(_("Parent directory")));
 	}
 
 	// fill the content

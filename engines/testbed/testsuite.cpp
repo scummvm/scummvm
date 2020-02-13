@@ -92,6 +92,7 @@ Testsuite::~Testsuite() {
 void Testsuite::reset() {
 	_numTestsPassed = 0;
 	_numTestsExecuted = 0;
+	_numTestsSkipped = 0;
 	_toQuit = kLoopNormal;
 	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		(*i)->passed = false;

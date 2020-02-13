@@ -83,7 +83,7 @@ class Scene;
 class SceneHotspot {
 public:
 	enum Action {
-		kActionNone = 0,
+		kActionNoneHS = 0,
 		kActionInventory = 1,
 		kActionSavePoint = 2,
 		kActionPlaySound = 3,
@@ -112,8 +112,8 @@ public:
 		kAction27 = 27,
 		kActionConcertSitCough = 28,
 		kAction29 = 29,
-		kActionCatchBeetle = 30,
-		kActionExitCompartment = 31,
+		kActionCatchBeetleHS = 30,
+		kActionExitCompartmentHS = 31,
 		kAction32 = 32,
 		KActionUseWhistle = 33,
 		kActionOpenMatchBox = 34,
@@ -157,7 +157,7 @@ public:
 		coordsOffset = 0;
 		scene = kSceneNone;
 		location = 0;
-		action = kActionNone;
+		action = kActionNoneHS;
 		param1 = 0;
 		param2 = 0;
 		param3 = 0;
@@ -226,9 +226,9 @@ public:
 	byte param2;
 	byte param3;
 
-	~Scene();
+	~Scene() override;
 
-	Common::Rect draw(Graphics::Surface *surface);
+	Common::Rect draw(Graphics::Surface *surface) override;
 
 	// Hotspots
 	Common::Array<SceneHotspot *> *getHotspots() { return &_hotspots; }

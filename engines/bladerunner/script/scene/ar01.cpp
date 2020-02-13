@@ -182,9 +182,10 @@ bool SceneScriptAR01::ClickedOnActor(int actorId) {
 				Game_Flag_Set(kFlagAR01FishDealerTalk);
 				Actor_Set_Goal_Number(kActorFishDealer, 1);
 			} else {
-				if ( Actor_Clue_Query(kActorMcCoy, kClueStrangeScale1)
-				 && !Actor_Clue_Query(kActorMcCoy, kClueFishLadyInterview)
-				 ) {
+				if (Actor_Clue_Query(kActorMcCoy, kClueStrangeScale1)
+				    && !Actor_Clue_Query(kActorMcCoy, kClueFishLadyInterview)
+				    && (!_vm->_cutContent || !Game_Flag_Query(kFlagWrongInvestigation))
+				) {
 					Actor_Says(kActorMcCoy, 40, 11);
 					Actor_Says(kActorFishDealer, 120, 14);
 					Actor_Says(kActorMcCoy, 45, 17);
@@ -198,14 +199,51 @@ bool SceneScriptAR01::ClickedOnActor(int actorId) {
 					Actor_Clue_Acquire(kActorMcCoy, kClueFishLadyInterview, true, kActorFishDealer);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 				} else {
-					if (Random_Query(1, 2) == 1) {
-						Actor_Says(kActorMcCoy, 30, 17);
-						Actor_Says(kActorFishDealer, 100, 14);
-						Actor_Says(kActorFishDealer, 110, 14);
-						Actor_Says(kActorMcCoy, 35, 13);
+					if (_vm->_cutContent) {
+						switch (Global_Variable_Query(kVariableFishDealerBanterTalk)) {
+						case 0:
+							Global_Variable_Increment(kVariableFishDealerBanterTalk, 1);
+							Actor_Says(kActorFishDealer, 230, 14);
+
+							Item_Pickup_Spin_Effect_From_Actor(kModelAnimationGoldfish, kActorFishDealer, 0, -40);
+							dialogueWithFishDealerBuyGoldfish();
+							break;
+						case 1:
+							Global_Variable_Increment(kVariableFishDealerBanterTalk, 1);
+							if (Player_Query_Agenda() == kPlayerAgendaSurly
+							    || Actor_Query_Friendliness_To_Other(kActorFishDealer, kActorMcCoy) <= 45 ) {
+								Actor_Says(kActorMcCoy, 8600, 17); // You keeping busy, pal?
+								Actor_Says(kActorFishDealer, 180, 14); // I can't stand all day gabbing away. My fish require attention.
+								Actor_Says(kActorMcCoy, 8450, 14); // Does this badge mean anything to you?
+								Actor_Says(kActorFishDealer, 190, 14); // Ah! You think you get better info somewhere else? You welcome to try.
+							} else {
+								Actor_Says(kActorMcCoy, 8514, 11); // Got anything new to tell me?
+								Actor_Says(kActorFishDealer, 170, 14); // Afraid not. But been busy today. Maybe you ask me later.
+							}
+							break;
+
+						default:
+							if (Random_Query(1, 2) == 1) {
+								Actor_Says(kActorMcCoy, 30, 17);
+								Actor_Says(kActorFishDealer, 100, 14);
+								Actor_Says(kActorFishDealer, 110, 14);
+								Actor_Says(kActorMcCoy, 35, 13);
+							} else {
+								Actor_Says(kActorMcCoy, 30, 17);
+								Actor_Says(kActorFishDealer, 220, 14);
+							}
+						}
 					} else {
-						Actor_Says(kActorMcCoy, 30, 17);
-						Actor_Says(kActorFishDealer, 220, 14);
+						// original behavior
+						if (Random_Query(1, 2) == 1) {
+							Actor_Says(kActorMcCoy, 30, 17);
+							Actor_Says(kActorFishDealer, 100, 14);
+							Actor_Says(kActorFishDealer, 110, 14);
+							Actor_Says(kActorMcCoy, 35, 13);
+						} else {
+							Actor_Says(kActorMcCoy, 30, 17);
+							Actor_Says(kActorFishDealer, 220, 14);
+						}
 					}
 				}
 				Actor_Set_Goal_Number(kActorFishDealer, 1);
@@ -435,6 +473,39 @@ void SceneScriptAR01::PlayerWalkedOut() {
 }
 
 void SceneScriptAR01::DialogueQueueFlushed(int a1) {
+}
+
+/**
+* This is only for cut content (purchasing the Goldfish)
+*/
+void SceneScriptAR01::dialogueWithFishDealerBuyGoldfish() {
+	Dialogue_Menu_Clear_List();
+
+	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(530);
+	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(540);
+
+	if (Global_Variable_Query(kVariableChinyen) >= 105
+	    || Query_Difficulty_Level() == kGameDifficultyEasy
+	) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3); // BUY
+	}
+	DM_Add_To_List_Never_Repeat_Once_Selected(540, 3, 5, 7); // NO THANKS
+
+	Dialogue_Menu_Appear(320, 240);
+	int answerValue = Dialogue_Menu_Query_Input();
+	Dialogue_Menu_Disappear();
+
+	if (answerValue == 530) { // BUY
+		Actor_Says(kActorMcCoy, 7000, 12);
+		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
+			Global_Variable_Decrement(kVariableChinyen, 105);
+		}
+		Actor_Clue_Acquire(kActorMcCoy, kClueGoldfish, true, kActorFishDealer);
+		Actor_Modify_Friendliness_To_Other(kActorFishDealer, kActorMcCoy, 5);
+	} else if (answerValue == 540) { // NO THANKS
+		Actor_Says(kActorMcCoy, 7005, 13);
+		Actor_Modify_Friendliness_To_Other(kActorFishDealer, kActorMcCoy, -5);
+	}
 }
 
 } // End of namespace BladeRunner

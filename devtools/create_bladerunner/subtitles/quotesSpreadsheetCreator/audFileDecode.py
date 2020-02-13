@@ -5,23 +5,15 @@ ctypesLibFound = False
 structLibFound = False
 
 try:
-	import ctypes 
+	import ctypes
 except ImportError:
-	print "[Error] ctypes python library is required to be installed!" 
+	print "[Error] ctypes python library is required to be installed!"
 else:
 	ctypesLibFound = True
 
-try:
-	import struct 
-except ImportError:
-	print "[Error] struct python library is required to be installed!" 
-else:
-	structLibFound = True
-
-if 	(not ctypesLibFound) \
-	or (not structLibFound):
+if 	(not ctypesLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
-	sys.exit(1)	
+	sys.exit(1)
 	
 from struct import *
 
@@ -97,7 +89,7 @@ def aud_decode_ima_chunk(audioBufferIn, index, sample, cs_chunk):
 			index = 0
 		elif (index > 88):
 			index = 88
-	## output buffer of shorts		
+	## output buffer of shorts
 	#binDataOut = struct.pack('h'*len(audioBufferOut), *audioBufferOut)
 	#return (binDataOut, index, sample)
 	return (audioBufferOut, index, sample)
@@ -126,23 +118,23 @@ def aud_decode_ws_chunk(inputChunkBuffer, cb_s, cb_d):
 		#return binDataOut
 		return outputChunkBuffer
 		
-#	const xccTHA::byte* s_end = inputChunkBuffer + cb_s;	 #  FIX
+#	const xccTHA::byte* s_end = inputChunkBuffer + cb_s; # FIX
 
 	s_end = inpChBuffIter + cb_s
-	sample = ctypes.c_int(0x80).value													#int sample				
+	sample = ctypes.c_int(0x80).value #int sample
 	while (inpChBuffIter < s_end):
 		inpChBuffIter += 1
-		count = ctypes.c_char(inputChunkBuffer[inpChBuffIter] & 0x3f).value  			# char count
-		switchKey = inputChunkBuffer[inpChBuffIter - 1] >> 6							# inputChunkBuffer[-1] # b[-1] is  *(b - 1) 
+		count = ctypes.c_char(inputChunkBuffer[inpChBuffIter] & 0x3f).value # char count
+		switchKey = inputChunkBuffer[inpChBuffIter - 1] >> 6                # inputChunkBuffer[-1] # b[-1] is  *(b - 1)
 		if switchKey == 0:
 			count += 1
-			for iter in range (count, 0, -1):
+			for iter0 in range (count, 0, -1):
 				inpChBuffIter += 1
-				code = ctypes.c_int(inputChunkBuffer[inpChBuffIter]).value				# int code
+				code = ctypes.c_int(inputChunkBuffer[inpChBuffIter]).value  # int code
 				# assignment in C was right to left so:
-				# *(outputChunkBuffer++) = sample = clip8(sample + aud_ws_step_table2[code & 3]) 
+				# *(outputChunkBuffer++) = sample = clip8(sample + aud_ws_step_table2[code & 3])
 				# is:
-				# *(outputChunkBuffer++) = (sample = clip8(sample + aud_ws_step_table2[code & 3])) 
+				# *(outputChunkBuffer++) = (sample = clip8(sample + aud_ws_step_table2[code & 3]))
 				# which is equivalent to these two commands:
 				# sample = clip8(sample + aud_ws_step_table2[code & 3])
 				# *(outputChunkBuffer++) = sample
@@ -161,9 +153,9 @@ def aud_decode_ws_chunk(inputChunkBuffer, cb_s, cb_d):
 				outChBuffIter += 1
 		elif switchKey == 1:
 			count += 1
-			for iter in range (count, 0, -1):
+			for iter0 in range (count, 0, -1):
 				inpChBuffIter += 1
-				code = inputChunkBuffer[inpChBuffIter]	# int code	
+				code = inputChunkBuffer[inpChBuffIter] # int code
 				sample += aud_ws_step_table4[code & 0xf]
 				sample = aud_decode_clip8(sample)
 				outputChunkBuffer.append(ctypes.c_char(sample).value)
@@ -181,7 +173,7 @@ def aud_decode_ws_chunk(inputChunkBuffer, cb_s, cb_d):
 				outChBuffIter += 1
 			else:
 				count += 1
-				# memcpy(outputChunkBuffer, inputChunkBuffer, count) 	# FIX
+				# memcpy(outputChunkBuffer, inputChunkBuffer, count) # FIX
 				for mcp in range(0, count):
 					outputChunkBuffer.append(ctypes.c_char(inputChunkBuffer[inpChBuffIter + mcp]).value)
 				inpChBuffIter += count
@@ -193,7 +185,7 @@ def aud_decode_ws_chunk(inputChunkBuffer, cb_s, cb_d):
 			for mst in range(0, count):
 				outputChunkBuffer.append(ctypes.c_char(sample).value)
 			outChBuffIter += count;
-	# output buffer of chars		
+	# output buffer of chars
 	#binDataOut = struct.pack('b'*len(outputChunkBuffer), *outputChunkBuffer)
 	#return binDataOut
 	return outputChunkBuffer
@@ -201,7 +193,7 @@ def aud_decode_ws_chunk(inputChunkBuffer, cb_s, cb_d):
 #
 #
 #
-class audFileDecode:
+class audFileDecode(object):
 	m_index = -1
 	m_sample = -1
 	m_traceModeEnabled = False
@@ -228,9 +220,8 @@ if __name__ == '__main__':
 	decodeInstance = audFileDecode()
 	if decodeInstance.m_traceModeEnabled:
 		print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
-	
+		
 else:
 	#debug
 	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 	pass
-	

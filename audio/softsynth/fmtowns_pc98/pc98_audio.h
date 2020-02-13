@@ -33,9 +33,9 @@ class PC98AudioCoreInternal;
 class PC98AudioPluginDriver {
 public:
 	enum EmuType {
-		kTypeTowns,
-		kType26,
-		kType86
+		kTypeTowns = 0,
+		kType26 = 1,
+		kType86 = 2
 	};
 
 	virtual ~PC98AudioPluginDriver() {}
@@ -45,7 +45,7 @@ public:
 
 class PC98AudioCore {
 public:
-	PC98AudioCore(Audio::Mixer *mixer, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type, bool externalMutexHandling = false);
+	PC98AudioCore(Audio::Mixer *mixer, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type);
 	~PC98AudioCore();
 
 	bool init();
@@ -71,11 +71,13 @@ public:
 	public:
 		~MutexLock();
 	private:
-		MutexLock(PC98AudioCoreInternal *pc98int);
+		MutexLock(PC98AudioCoreInternal *pc98int, int reverse = 0);
 		PC98AudioCoreInternal *_pc98int;
+		int _count;
 	};
 
 	MutexLock stackLockMutex();
+	MutexLock stackUnlockMutex();
 
 private:
 	PC98AudioCoreInternal *_internal;

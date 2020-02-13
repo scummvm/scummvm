@@ -180,6 +180,9 @@ void Scene1xx::setPlayerSpritesPrefix() {
 			noPlayerFl = true;
 		darkSceneFl = true;
 		break;
+
+	default:
+		break;
 	}
 
 	if (noPlayerFl || _globals[kNoLoadWalker]) {
@@ -1396,6 +1399,9 @@ void Scene104::step() {
 		_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[6], SYNC_SEQ, idx);
 		_game._player._stepEnabled = true;
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -2815,6 +2821,9 @@ void Scene104::handleQueenAnimation() {
 		default:
 			break;
 		}
+		break;
+
+	default:
 		break;
 	}
 

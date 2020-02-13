@@ -719,6 +719,9 @@ void ScummEngine_v0::o_animateActor() {
 		case 0xFF:
 			a->stopActorMoving();
 			return;
+
+		default:
+			break;
 	}
 
 	a->animateActor(anim);

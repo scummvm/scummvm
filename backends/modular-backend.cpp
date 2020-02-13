@@ -20,8 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit
-
 #include "backends/modular-backend.h"
 
 #include "backends/graphics/graphics.h"
@@ -185,8 +183,8 @@ void ModularBackend::updateScreen() {
 #endif
 }
 
-void ModularBackend::setShakePos(int shakeOffset) {
-	_graphicsManager->setShakePos(shakeOffset);
+void ModularBackend::setShakePos(int shakeXOffset, int shakeYOffset) {
+	_graphicsManager->setShakePos(shakeXOffset, shakeYOffset);
 }
 void ModularBackend::setFocusRectangle(const Common::Rect& rect) {
 	_graphicsManager->setFocusRectangle(rect);
@@ -276,8 +274,4 @@ void ModularBackend::displayMessageOnOSD(const char *msg) {
 
 void ModularBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 	_graphicsManager->displayActivityIconOnOSD(icon);
-}
-
-void ModularBackend::quit() {
-	exit(0);
 }

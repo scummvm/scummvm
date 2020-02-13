@@ -255,6 +255,9 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		_posX = (int)((_gameRef->_renderer->getWidth() - width) / 2);
 		_posY = (int)((_gameRef->_renderer->getHeight() - height) / 2);
 		break;
+
+	default:
+		break;
 	}
 	_theoraDecoder->start();
 

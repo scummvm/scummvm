@@ -124,7 +124,7 @@ endif
 
 .PHONY: print-dists print-executables print-version print-distversion
 print-dists:
-	@echo $(DIST_FILES_DOCS) $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_PLATFORM) $(srcdir)/doc
+	@echo $(DIST_FILES_DOCS) $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_PLATFORM) $(srcdir)/doc
 
 print-executables:
 	@echo $(if $(DIST_EXECUTABLES),$(DIST_EXECUTABLES),$(EXECUTABLE) $(PLUGINS))

@@ -1230,7 +1230,7 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 
 		MakeQueueStruct mkQueue;
 
-		memset(&mkQueue, 0, sizeof(mkQueue));
+		mkQueue.reset();
 		mkQueue.ani = ani;
 		mkQueue.staticsId2 = id2;
 		mkQueue.staticsId1 = id1;
@@ -1734,6 +1734,8 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 		case 3:
 			varD = var->getSubVarByName("Down");
 			break;
+		default:
+			break;
 		}
 
 		if (!varD)
@@ -1751,6 +1753,8 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 				break;
 			case 2:
 				idx = varD->getSubVarAsInt("Stop");
+				break;
+			default:
 				break;
 			}
 
@@ -1782,6 +1786,8 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 			case 3:
 				idx = varD->getSubVarAsInt("TurnD");
 				break;
+			default:
+				break;
 			}
 
 			item._subItems[dir]._turn[act]._movementId = idx;
@@ -1811,6 +1817,8 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 				break;
 			case 3:
 				idx = varD->getSubVarAsInt("TurnSD");
+				break;
+			default:
 				break;
 			}
 
@@ -1996,7 +2004,7 @@ MessageQueue *MctlGraph::makeWholeQueue(MctlMQ &mctlMQ) {
 			} else {
 				MakeQueueStruct mkQueue;
 
-				memset(&mkQueue, 0, sizeof(mkQueue));
+				mkQueue.reset();
 
 				mkQueue.ani = _items2[mctlMQ.index]._obj;
 				mkQueue.staticsId2 = mg2i->_mov->_staticsObj2->_staticsId;
@@ -2871,8 +2879,8 @@ bool MovGraphLink::load(MfcArchive &file) {
 	debugC(8, kDebugLoading, "GraphNode2");
 	_graphDst = file.readClass<MovGraphNode>();
 
-	_length = file.readDouble();
-	_angle = file.readDouble();
+	_length = file.readDoubleLE();
+	_angle = file.readDoubleLE();
 
 	debugC(8, kDebugLoading, "length: %g, angle: %g", _length, _angle);
 

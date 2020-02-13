@@ -39,8 +39,8 @@ public:
 	//static bool compareNoCase(const WideString &str1, const WideString &str2);
 	static WideString utf8ToWide(const Utf8String &Utf8Str);
 	static Utf8String wideToUtf8(const WideString &WideStr);
-	static WideString ansiToWide(const AnsiString &str);
-	static AnsiString wideToAnsi(const WideString &str);
+	static WideString ansiToWide(const AnsiString &str, TTextCharset charset = CHARSET_ANSI);
+	static AnsiString wideToAnsi(const WideString &str, TTextCharset charset = CHARSET_ANSI);
 
 	static bool isUtf8BOM(const byte *buffer, uint32 bufferSize);
 	static int indexOf(const WideString &str, const WideString &toFind, size_t startFrom);
@@ -51,7 +51,7 @@ public:
 	static AnsiString toString(int val);
 
 private:
-	static uint32 _ansiToUTF32[32];
+	static Common::CodePage mapCodePage(TTextCharset charset);
 };
 
 } // End of namespace Wintermute

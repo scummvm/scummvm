@@ -24,6 +24,7 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include <unistd.h>
 

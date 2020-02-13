@@ -209,7 +209,7 @@ void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
 			if (_screen->isInterfacePaletteEnabled()) {
 				for (int y = 0; y < 64; ++y) {
 					for (int x = 0; x < 320; ++x) {
-						screen[(y + 136) * Screen::SCREEN_W + x] += 32;
+						screen[(y + 136) * Screen::SCREEN_W + x] |= 0x20;
 					}
 				}
 			}
@@ -917,6 +917,8 @@ void GUI_LoK::setupControls(Menu &menu) {
 	case 2:
 		menu.item[0].itemString = _onCDString; //"On + CD"
 		break;
+	default:
+		break;
 	}
 
 	if (_vm->_configSounds)
@@ -943,6 +945,7 @@ void GUI_LoK::setupControls(Menu &menu) {
 		break;
 	default:
 		menu.item[2].itemString = "ERROR";
+		break;
 	}
 
 	int textControl = 3;
@@ -971,6 +974,7 @@ void GUI_LoK::setupControls(Menu &menu) {
 			break;
 		default:
 			menu.item[3].itemString = "ERROR";
+			break;
 		}
 	} else {
 		if (_vm->gameFlags().platform == Common::kPlatformAmiga)
@@ -995,6 +999,7 @@ void GUI_LoK::setupControls(Menu &menu) {
 		break;
 	default:
 		menu.item[textControl].itemString = "ERROR";
+		break;
 	}
 
 	initMenuLayout(menu);

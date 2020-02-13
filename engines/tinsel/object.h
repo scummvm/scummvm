@@ -92,6 +92,33 @@ struct OBJECT {
 	SCNHANDLE hShape;	///< objects current animation frame
 	SCNHANDLE hMirror;	///< objects previous animation frame
 	int oid;			///< object identifier
+
+	void reset() {
+		pNext = nullptr;
+		pSlave = nullptr;
+		//pOnDispList = nullptr;
+		//xVel = 0;
+		//yVel = 0;
+		xPos = 0;
+		yPos = 0;
+		zPos = 0;
+		rcPrev.top = 0;
+		rcPrev.left = 0;
+		rcPrev.bottom = 0;
+		rcPrev.right = 0;
+		flags = 0;
+		pPal = nullptr;
+		constant = 0;
+		width = 0;
+		height = 0;
+		hBits = 0;
+		hImg = 0;
+		hShape = 0;
+		hMirror = 0;
+		oid = 0;
+	}
+
+	OBJECT() { reset(); }
 };
 typedef OBJECT *POBJECT;
 

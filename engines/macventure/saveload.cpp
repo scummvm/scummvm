@@ -62,7 +62,7 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool s
 
 	// Depends on MACVENTURE_DESC_LENGTH
 	uint32 metaSize = s->readUint32BE();
-	s->seek(-(5 + MACVENTURE_DESC_LENGTH + metaSize), SEEK_END);
+	s->seek(-((int32)(5 + MACVENTURE_DESC_LENGTH + metaSize)), SEEK_END);
 
 	// Load the thumbnail
 	Graphics::Surface *thumbnail;

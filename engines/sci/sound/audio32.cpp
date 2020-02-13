@@ -22,6 +22,8 @@
 
 #include "sci/sound/audio32.h"
 #include "audio/audiostream.h"      // for SeekableAudioStream
+#include "audio/decoders/aiff.h"    // for makeAIFFStream
+#include "audio/decoders/mac_snd.h" // for makeMacSndStream
 #include "audio/decoders/raw.h"     // for makeRawStream, RawFlags::FLAG_16BITS
 #include "audio/decoders/wave.h"    // for makeWAVStream
 #include "audio/rate.h"             // for RateConverter, makeRateConverter
@@ -83,6 +85,42 @@ bool detectWaveAudio(Common::SeekableReadStream &stream) {
 	return true;
 }
 
+bool detectAIFFAudio(Common::SeekableReadStream &stream) {
+	const size_t initialPosition = stream.pos();
+
+	byte blockHeader[8];
+	if (stream.read(blockHeader, sizeof(blockHeader)) != sizeof(blockHeader)) {
+		stream.seek(initialPosition);
+		return false;
+	}
+
+	stream.seek(initialPosition);
+	const uint32 headerType = READ_BE_UINT32(blockHeader);
+
+	if (headerType != MKTAG('F', 'O', 'R', 'M')) {
+		return false;
+	}
+
+	return true;
+}
+
+bool detectMacSndAudio(Common::SeekableReadStream &stream) {
+	const size_t initialPosition = stream.pos();
+
+	byte header[14];
+	if (stream.read(header, sizeof(header)) != sizeof(header)) {
+		stream.seek(initialPosition);
+		return false;
+	}
+
+	stream.seek(initialPosition);
+
+	return (READ_BE_UINT16(header) == 1 &&
+		READ_BE_UINT16(header + 2) == 1 &&
+		READ_BE_UINT16(header + 4) == 5 &&
+		READ_BE_UINT32(header + 10) == 0x00018051);
+}
+
 #pragma mark -
 #pragma mark MutableLoopAudioStream
 
@@ -92,7 +130,7 @@ public:
 		_stream(stream, dispose),
 		_loop(loop_) {}
 
-	virtual int readBuffer(int16 *buffer, int numSamples) override {
+	int readBuffer(int16 *buffer, int numSamples) override {
 		int totalSamplesRead = 0;
 		int samplesRead;
 		do {
@@ -108,19 +146,19 @@ public:
 		return totalSamplesRead;
 	}
 
-	virtual bool isStereo() const override {
+	bool isStereo() const override {
 		return _stream->isStereo();
 	}
 
-	virtual int getRate() const override {
+	int getRate() const override {
 		return _stream->getRate();
 	}
 
-	virtual bool endOfData() const override {
+	bool endOfData() const override {
 		return !_loop && _stream->endOfData();
 	}
 
-	virtual bool endOfStream() const override {
+	bool endOfStream() const override {
 		return !_loop && _stream->endOfStream();
 	}
 
@@ -793,6 +831,10 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 		audioStream = makeSOLStream(dataStream, DisposeAfterUse::YES);
 	} else if (detectWaveAudio(*dataStream)) {
 		audioStream = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
+	} else if (detectAIFFAudio(*dataStream)) {
+		audioStream = Audio::makeAIFFStream(dataStream, DisposeAfterUse::YES);
+	} else if (detectMacSndAudio(*dataStream)) {
+		audioStream = Audio::makeMacSndStream(dataStream, DisposeAfterUse::YES);
 	} else {
 		byte flags = Audio::FLAG_LITTLE_ENDIAN;
 		if (_globalBitDepth == 16) {

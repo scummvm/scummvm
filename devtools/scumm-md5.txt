@@ -252,11 +252,11 @@ zakloom	Zak McKracken & Loom non-interactive demo
 	77f5c9cc0986eb729c1a6b4c8823bbae	7520	en	FM-TOWNS	FM-TOWNS	Demo	zak/loom (non-interactive)	khalek, Fingolfin
 
 monkey2	Monkey Island 2: LeChuck's Revenge
-	132bff65e6367c09cc69318ce1b59333	11155	en	Amiga	-	-	v1.0 4/8/92	Fingolfin
-	c30ef068add4277104243c31ce46c12b	-1	fr	Amiga	-	-	-	Andreas Bylund
-	da669b20271b85182e9c17a2a37ea02e	-1	de	Amiga	-	-	-	Andreas Bylund, Norbert Lange
-	11ddf1fde76e3156eb3a38da213f484e	-1	it	Amiga	-	-	-	Andrea Petrucci
-	6ea966b4d660c870b9ee790d1fbfc535	-1	es	Amiga	-	-	-	Andreas Bylund
+	132bff65e6367c09cc69318ce1b59333	11155	en	Amiga	Amiga	-	v1.0 4/8/92	Fingolfin
+	c30ef068add4277104243c31ce46c12b	-1	fr	Amiga	Amiga	-	-	Andreas Bylund
+	da669b20271b85182e9c17a2a37ea02e	-1	de	Amiga	Amiga	-	-	Andreas Bylund, Norbert Lange
+	11ddf1fde76e3156eb3a38da213f484e	-1	it	Amiga	Amiga	-	-	Andrea Petrucci
+	6ea966b4d660c870b9ee790d1fbfc535	-1	es	Amiga	Amiga	-	-	Andreas Bylund
 	3686cf8f89e102ececf4366e1d2c8126	11135	en	DOS	-	-	-
 	8e4ee4db46954bfe2912e259a16fad82	-1	fr	DOS	-	-	-	Nicolas Sauz&egrave;de, Andrea Petrucci
 	6886e5d08cee329b1f2e743ae2e3ceed	11135	de	DOS	-	-	v1.0D 17Feb92	Fingolfin
@@ -273,12 +273,12 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	f4d20ab4ce19743a646cb48bd93aee72	10835	en	DOS	SE Talkie	Unofficial SE Talkie v0.2	lotharsm
 
 atlantis	Indiana Jones and the Fate of Atlantis
-	3a03dab514e4038df192d8a8de469788	-1	en	Amiga	Floppy	Floppy	-	dhewg
-	20da6fce37805423966aaa8f3c2426aa	-1	fr	Amiga	Floppy	Floppy	-	Joachim Eberhard
-	4f267a901719623de7dde83e47d5b474	-1	de	Amiga	Floppy	Floppy	-	ghoostkilla
-	e534d29afb3c6e0ee9dc3d53c5956714	-1	de	Amiga	Floppy	Floppy	alt?	Tobias Fleischer
-	5798972220cd458be2626d54c80f71d7	-1	it	Amiga	Floppy	Floppy	-	Andrea Petrucci
-	15f588e887e857e8c56fe6ade4956168	-1	es	Amiga	Floppy	Floppy	-	VooD
+	3a03dab514e4038df192d8a8de469788	-1	en	Amiga	Amiga	Floppy	-	dhewg
+	20da6fce37805423966aaa8f3c2426aa	-1	fr	Amiga	Amiga	Floppy	-	Joachim Eberhard
+	4f267a901719623de7dde83e47d5b474	-1	de	Amiga	Amiga	Floppy	-	ghoostkilla
+	e534d29afb3c6e0ee9dc3d53c5956714	-1	de	Amiga	Amiga	Floppy	alt?	Tobias Fleischer
+	5798972220cd458be2626d54c80f71d7	-1	it	Amiga	Amiga	Floppy	-	Andrea Petrucci
+	15f588e887e857e8c56fe6ade4956168	-1	es	Amiga	Amiga	Floppy	-	VooD
 	c63ee46143ba65f9ce14cf539ca51bd7	-1	en	DOS	Floppy	Floppy	-	Andrea Petrucci
 	edfdb24a499d92c59f824c52987c0eec	-1	fr	DOS	Floppy	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
 	1fbebd7b2b692df5297870447a80cfed	12030	de	DOS	Floppy	Floppy	-	Fingolfin
@@ -373,8 +373,8 @@ ft	Full Throttle
 
 dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin
-	aad201302286c1cfee92321cd406e427	811008	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
-	d93cc8be628ed5d3b3a29188fc7105d3	1061296	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
+	aad201302286c1cfee92321cd406e427	811008	All	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
+	d93cc8be628ed5d3b3a29188fc7105d3	1061296	All	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	d62047a6729349ab36f7ee065bf26509	-1	ru	All	-	-	-	sev
 	ebdd2fbc995a321605375dc57766db79	16304	ru	All	-	With Subtitles	-	sev
 	35a2d3040fa512f8232d9e443319d84d	659335495	en	Mac	-	-	Mac bundle	Fingolfin
@@ -688,11 +688,11 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	d4e79c3d8645b8266cd78c325bc35154	60557	us	All	-	-	-	Kirben
 	6a60d395b78b205c93a956100b1bf5ae	-1	de	All	HE 98.5	-	-	EdDammer
 	513f91a9dbe8d5490b39e56a3ac5bbdf	-1	nl	All	HE 98.5	-	-	daniel9
-	2328be0317008ef047eed7912a4b0850	-1	gb	Windows	HE 98.5	-	-	Saleck
 	55f4e9402bec2bded383843123f37c5c	-1	de	Windows	HE 98.5	-	-	WindlePoons
 	e5563c8358443c4352fcddf7402a5e0a	-1	fr	Windows	HE 98.5	-	-	gist974
 	c6907d44f1166941d982864cd42cdc89	-1	de	All	HE 99	-	-	nachbarnebenan
 	f8be685007a8b425ba2a455da732f59f	-1	fr	Mac	HE 99	-	-	alamaz
+	2328be0317008ef047eed7912a4b0850	-1	gb	Windows	HE 99	-	-	Saleck
 	7477bc23d0383516c5e310cd8771dcc9	-1	fr	Windows	HE 99	-	-	Strangerke
 	32709cbeeb3044b34129950860a83f14	-1	ru	Windows	HE 99	-	-	sev
 	1af4eb581a33d808707d66d50e084dca	-1	he	Windows	HE 99	-	-	Matan Bareket

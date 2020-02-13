@@ -38,7 +38,7 @@ namespace ZVision {
 class FistControl : public Control {
 public:
 	FistControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
-	~FistControl();
+	~FistControl() override;
 
 private:
 	uint32 _fiststatus;
@@ -67,9 +67,9 @@ private:
 	int32   _animationId;
 
 public:
-	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool process(uint32 deltaTimeInMillis);
+	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	void readDescFile(const Common::String &fileName);

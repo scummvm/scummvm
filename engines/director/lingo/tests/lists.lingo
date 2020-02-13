@@ -1,0 +1,10 @@
+set x = []
+set y = [:]
+set machinery = [#gears:6, #balls:3, #ramps:8]
+set nested = [1, 2, [3, 4], 5]
+set gList = ["car":1, "boat": 20]
+
+set a to [1, 2, 3]
+put a
+
+set gList = [point(70, 190), point(217, 66), point(364, 185)]

@@ -31,7 +31,7 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class SaveFileReadStream;
 class SaveFileWriteStream;
-class Shape;
+class Shapes;
 class UIImagePicker;
 class VQAPlayer;
 
@@ -41,20 +41,22 @@ class Spinner {
 	struct Destination {
 		int          id;
 		Common::Rect rect;
+		int          shapeId;
+		int          shapeIdOver;
 	};
 
-	BladeRunnerEngine      *_vm;
-	bool                    _isDestinationSelectable[kSpinnerDestinations];
-	bool                    _isOpen;
-	VQAPlayer              *_vqaPlayer;
-	const Destination      *_destinations;
-	int                     _selectedDestination;
-	Common::Array<Shape *>  _shapes;
-	UIImagePicker          *_imagePicker;
+	BladeRunnerEngine *_vm;
+	bool               _isDestinationSelectable[kSpinnerDestinations];
+	bool               _isOpen;
+	VQAPlayer         *_vqaPlayer;
+	const Destination *_destinations;
+	int                _selectedDestination;
+	Shapes            *_shapes;
+	UIImagePicker     *_imagePicker;
 
-	int                    _actorId;
-	int                    _sentenceId;
-	int                    _timeSpeakDescription;
+	int                _actorId;
+	int                _sentenceId;
+	uint32             _timeSpeakDescriptionStart;
 
 public:
 	Spinner(BladeRunnerEngine *vm);
@@ -76,7 +78,6 @@ public:
 	void reset();
 	void resume();
 
-	void playSpeechLine(int actorId, int sentenceId, float duration);
 	void destinationFocus(int destination);
 	void setupDescription(int actorId, int sentenceId);
 	void resetDescription();

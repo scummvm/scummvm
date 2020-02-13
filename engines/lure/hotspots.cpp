@@ -2834,6 +2834,9 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 
 		h.setOccupied(true);
 		break;
+
+	default:
+		break;
 	}
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character point 7");
 }
@@ -3150,6 +3153,9 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 				break;
 		}
 		h.setOccupied(true);
+		break;
+
+	default:
 		break;
 	}
 
@@ -3680,6 +3686,9 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			talkEndConversation();
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -3925,6 +3934,7 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 		break;
 
 	case WAIT:
+	default:
 		// Immediate break, since the code outside the switch handles stopping the barman
 		break;
 	}

@@ -35,7 +35,7 @@ namespace Scumm {
  */
 class AppleII_SoundFunction1_FreqUpDown : public AppleII_SoundFunction {
 public:
-	virtual void init(Player_AppleII *player, const byte *params) {
+	void init(Player_AppleII *player, const byte *params) override {
 		_player = player;
 		_delta = params[0];
 		_count = params[1];
@@ -44,7 +44,7 @@ public:
 		_decInterval = (params[4] >= 0x40);
 	}
 
-	virtual bool update() { // D085
+	bool update() override { // D085
 		if (_decInterval) {
 			do {
 				_update(_interval, _count);
@@ -83,13 +83,13 @@ protected:
  */
 class AppleII_SoundFunction2_SymmetricWave : public AppleII_SoundFunction {
 public:
-	virtual void init(Player_AppleII *player, const byte *params) {
+	void init(Player_AppleII *player, const byte *params) override {
 		_player = player;
 		_params = params;
 		_pos = 1;
 	}
 
-	virtual bool update() { // D0D6
+	bool update() override { // D0D6
 		// while (pos = 1; pos < 256; ++pos)
 		if (_pos < 256) {
 			byte interval = _params[_pos];
@@ -132,13 +132,13 @@ protected:
  */
 class AppleII_SoundFunction3_AsymmetricWave : public AppleII_SoundFunction {
 public:
-	virtual void init(Player_AppleII *player, const byte *params) {
+	void init(Player_AppleII *player, const byte *params) override {
 		_player = player;
 		_params = params;
 		_pos = 1;
 	}
 
-	virtual bool update() { // D132
+	bool update() override { // D132
 		// while (pos = 1; pos < 256; ++pos)
 		if (_pos < 256) {
 			byte interval = _params[_pos];
@@ -177,7 +177,7 @@ protected:
  */
 class AppleII_SoundFunction4_Polyphone : public AppleII_SoundFunction {
 public:
-	virtual void init(Player_AppleII *player, const byte *params) {
+	void init(Player_AppleII *player, const byte *params) override {
 		_player = player;
 		_params = params;
 		_updateRemain1 = 80;
@@ -185,7 +185,7 @@ public:
 		_count = 0;
 	}
 
-	virtual bool update() { // D170
+	bool update() override { // D170
 		// while (_params[0] != 0x01)
 		if (_params[0] != 0x01) {
 			if (_count == 0) // prepare next loop
@@ -273,14 +273,14 @@ protected:
  */
 class AppleII_SoundFunction5_Noise : public AppleII_SoundFunction {
 public:
-	virtual void init(Player_AppleII *player, const byte *params) {
+	void init(Player_AppleII *player, const byte *params) override {
 		_player = player;
 		_index = 0;
 		_param0 = params[0];
 		assert(_param0 > 0);
 	}
 
-	virtual bool update() { // D222
+	bool update() override { // D222
 		const byte noiseMask[] = {
 			0x3F, 0x3F, 0x7F, 0x7F, 0x7F, 0x7F, 0xFF, 0xFF, 0xFF, 0x0F, 0x0F
 		};
@@ -408,6 +408,8 @@ void Player_AppleII::startSound(int nr) {
 		break;
 	case 5:
 		_soundFunc = new AppleII_SoundFunction5_Noise();
+		break;
+	default:
 		break;
 	}
 	_soundFunc->init(this, _params);

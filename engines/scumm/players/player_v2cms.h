@@ -35,19 +35,19 @@ namespace Scumm {
 class Player_V2CMS : public Player_V2Base {
 public:
 	Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer);
-	virtual ~Player_V2CMS();
+	~Player_V2CMS() override;
 
 	// MusicEngine API
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	void setMusicVolume(int vol) override;
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	int  getMusicTimer() override;
+	int  getSoundStatus(int sound) const override;
 
 	// AudioStream API
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return true; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return true; }
 
 private:
 	struct Voice {

@@ -89,6 +89,8 @@ void Scene7000::Action1::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -115,6 +117,8 @@ void Scene7000::Action2::signal() {
 	case 2:
 		g_globals->_sceneManager.changeScene(7100);
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -172,6 +176,8 @@ void Scene7000::Action3::signal() {
 		g_globals->_sceneManager.changeScene(2100);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -202,6 +208,8 @@ void Scene7000::Action4::signal() {
 		g_globals->setFlag(81);
 		g_globals->_player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -262,6 +270,8 @@ void Scene7000::Action5::signal() {
 		g_globals->clearFlag(13);
 		g_globals->_sceneManager.changeScene(2100);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -310,6 +320,8 @@ void Scene7000::Action6::signal() {
 		g_globals->_player.setFrame(1);
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -354,6 +366,8 @@ void Scene7000::Action7::signal() {
 			g_globals->_sceneManager.changeScene(2280);
 		else
 			g_globals->_sceneManager.changeScene(2320);
+		break;
+	default:
 		break;
 	}
 }
@@ -657,6 +671,8 @@ void Scene7000::signal() {
 	case 7015:
 		setAction(&_action4);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -682,6 +698,8 @@ void Scene7100::Action3::signal() {
 	case 2:
 		scene->_object4.remove();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -710,6 +728,8 @@ void Scene7100::Action4::signal() {
 	case 3:
 		_actionIndex = 0;
 		setDelay(1);
+		break;
+	default:
 		break;
 	}
 }
@@ -745,7 +765,10 @@ void Scene7100::Action5::signal() {
 	case 4: {
 		scene->_object9.remove();
 		remove();
+		break;
 	}
+	default:
+		break;
 	}
 }
 
@@ -801,6 +824,8 @@ void Scene7100::Action6::signal() {
 		_actionIndex = 0;
 		setDelay(1);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -828,6 +853,8 @@ void Scene7100::Action7::signal() {
 	case 3:
 		_actionIndex = 0;
 		setDelay(1);
+		break;
+	default:
 		break;
 	}
 }
@@ -927,6 +954,8 @@ void Scene7100::Action8::signal() {
 		_actionIndex = 0;
 		break;
 	}
+	default:
+		break;
 	}
 }
 
@@ -972,6 +1001,8 @@ void Scene7100::Action9::signal() {
 		setDelay(1);
 		break;
 	}
+	default:
+		break;
 	}
 }
 
@@ -991,6 +1022,8 @@ void Scene7100::Action10::signal() {
 	case 2:
 		scene->_object25.remove();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -1019,6 +1052,8 @@ void Scene7100::Action11::signal() {
 	case 3:
 		g_globals->_sceneManager.changeScene(7200);
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -1171,7 +1206,9 @@ void Scene7200::Action1::signal() {
 	case 3:
 		g_globals->_sceneManager.changeScene(7300);
 		remove();
-	break;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1224,7 +1261,9 @@ void Scene7200::Action2::signal() {
 		_actionIndex = 0;
 		setDelay(1);
 		remove();
-	break;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1355,6 +1394,8 @@ void Scene7300::Action1::signal() {
 	case 8:
 		g_globals->_sceneManager.changeScene(2280);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1368,10 +1409,14 @@ void Scene7300::Action2::signal() {
 		setDelay(5);
 		break;
 	case 1:
-		NpcMover *mover1 = new NpcMover();
-		Common::Point pt(g_globals->_randomSource.getRandomNumber(3) + 203, g_globals->_randomSource.getRandomNumber(3) + 96);
-		scene->_object3.addMover(mover1, &pt, this);
-		_actionIndex = 0;
+		{
+			NpcMover *mover1 = new NpcMover();
+			Common::Point pt(g_globals->_randomSource.getRandomNumber(3) + 203, g_globals->_randomSource.getRandomNumber(3) + 96);
+			scene->_object3.addMover(mover1, &pt, this);
+			_actionIndex = 0;
+		}
+		break;
+	default:
 		break;
 	}
 }
@@ -1386,10 +1431,14 @@ void Scene7300::Action3::signal() {
 		setDelay(5);
 		break;
 	case 1:
-		NpcMover *mover1 = new NpcMover();
-		Common::Point pt(g_globals->_randomSource.getRandomNumber(5) + 76, g_globals->_randomSource.getRandomNumber(5) + 78);
-		scene->_object1.addMover(mover1, &pt, this);
-		_actionIndex = 0;
+		{
+			NpcMover *mover1 = new NpcMover();
+			Common::Point pt(g_globals->_randomSource.getRandomNumber(5) + 76, g_globals->_randomSource.getRandomNumber(5) + 78);
+			scene->_object1.addMover(mover1, &pt, this);
+			_actionIndex = 0;
+		}
+		break;
+	default:
 		break;
 	}
 }
@@ -1403,6 +1452,8 @@ void Scene7300::Action4::signal() {
 		break;
 	case 1:
 		_actionIndex = 0;
+		break;
+	default:
 		break;
 	}
 }
@@ -1525,6 +1576,8 @@ void Scene7600::Action1::signal() {
 	case 2:
 		g_globals->_sceneManager.changeScene(7700);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1544,6 +1597,8 @@ void Scene7600::Action2::signal() {
 	case 2:
 		g_globals->_sceneManager.changeScene(2320);
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -1635,6 +1690,8 @@ void Scene7700::Action1::signal() {
 	case 2:
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1652,6 +1709,8 @@ void Scene7700::Action2::signal() {
 	case 3:
 		scene->_prof.animate(ANIM_MODE_6, this);
 		_actionIndex = 0;
+		break;
+	default:
 		break;
 	}
 }
@@ -1682,6 +1741,8 @@ void Scene7700::Action3::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1708,6 +1769,8 @@ void Scene7700::Action4::signal() {
 		g_globals->_player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1727,6 +1790,8 @@ void Scene7700::Action5::signal() {
 		_actionIndex = 0;
 		break;
 	}
+	default:
+		break;
 	}
 }
 
@@ -1758,6 +1823,8 @@ void Scene7700::Action6::signal() {
 		scene->_easterEgg1.remove();
 		scene->_easterEgg2.remove();
 		remove();
+		break;
+	default:
 		break;
 	}
 }

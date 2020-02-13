@@ -406,6 +406,8 @@ Sprite *Sprite::expand() {
 					case 0xFE:
 						s->_next = seqcnt - 1;
 						break;
+					default:
+						break;
 					}
 					if (s->_next > maxnxt)
 						maxnxt = s->_next;
@@ -1149,6 +1151,7 @@ void Bitmap::show(V2D pos) {
 			while (count-- > 0) {
 				// Transfer operation
 				switch (cmd) {
+				default:
 				case 1:
 					// SKIP
 					break;

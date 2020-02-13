@@ -30,10 +30,12 @@
 
 namespace Testbed {
 
-TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) : GUI::Dialog("Browser"), _testbedConfMan(tsConfMan) {
+TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) :
+		GUI::Dialog("TestbedOptions"),
+		_testbedConfMan(tsConfMan) {
 
-	new GUI::StaticTextWidget(this, "Browser.Headline", "Select Testsuites to Execute");
-	new GUI::StaticTextWidget(this, "Browser.Path", "Use Doubleclick to select/deselect");
+	new GUI::StaticTextWidget(this, "TestbedOptions.Headline", "Select Testsuites to Execute");
+	new GUI::StaticTextWidget(this, "TestbedOptions.Info", "Use Doubleclick to select/deselect");
 
 	// Construct a String Array
 	Common::Array<Testsuite *>::const_iterator iter;
@@ -53,7 +55,7 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 		}
 	}
 
-	_testListDisplay = new TestbedListWidget(this, "Browser.List", _testSuiteArray);
+	_testListDisplay = new TestbedListWidget(this, "TestbedOptions.List", _testSuiteArray);
 	_testListDisplay->setNumberingMode(GUI::kListNumberingOff);
 	_testListDisplay->setList(_testSuiteDescArray, &_colors);
 
@@ -61,12 +63,12 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 	_testListDisplay->setEditable(false);
 
 	if (selected > (tsList.size() - selected)) {
-		_selectButton = new GUI::ButtonWidget(this, "Browser.Up", "Deselect All", 0, kTestbedDeselectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", "Deselect All", 0, kTestbedDeselectAll, 0);
 	} else {
-		_selectButton = new GUI::ButtonWidget(this, "Browser.Up", "Select All", 0, kTestbedSelectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", "Select All", 0, kTestbedSelectAll, 0);
 	}
-	new GUI::ButtonWidget(this, "Browser.Cancel", "Run tests", 0, GUI::kCloseCmd);
-	new GUI::ButtonWidget(this, "Browser.Choose", "Exit Testbed", 0, kTestbedQuitCmd);
+	new GUI::ButtonWidget(this, "TestbedOptions.RunTests", "Run tests", 0, GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, "TestbedOptions.Quit", "Exit Testbed", 0, kTestbedQuitCmd);
 }
 
 TestbedOptionsDialog::~TestbedOptionsDialog() {}

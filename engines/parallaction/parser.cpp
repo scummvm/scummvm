@@ -190,6 +190,9 @@ char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk) 
 				count--;
 			}
 			break;
+
+		default:
+			break;
 		}
 
 	}

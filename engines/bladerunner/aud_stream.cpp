@@ -126,6 +126,9 @@ bool AudStream::rewind() {
 	return true;
 }
 
+/**
+* Returns audio length in milliseconds
+*/
 int AudStream::getLength() const {
 	int bytesPerSecond = _overrideFrequency > 0 ? _overrideFrequency : _frequency;
 	if (_flags & 1) { // 16 bit

@@ -92,6 +92,8 @@ void GameNebular::startGame() {
 		// Decompression ending
 		TextView::execute(_vm, "ending4");
 		break;
+	default:
+		break;
 	}
 
 	do {
@@ -289,6 +291,7 @@ void GameNebular::initializeGlobals() {
 	// Final setup based on selected difficulty level
 	switch (_difficulty) {
 	case DIFFICULTY_HARD:
+	default:
 		_objects.setRoom(OBJ_BLOWGUN, NOWHERE);
 		_objects.setRoom(OBJ_NOTE, NOWHERE);
 

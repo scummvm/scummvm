@@ -113,6 +113,7 @@ bool YesNo::execute(bool type, bool townFlag) {
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = oldMode == MODE_7 ? MODE_8 : MODE_7;
 	events.clearEvents();
+	setWaitBounds();
 
 	if (!type) {
 		confirmSprites.load("confirm.icn");

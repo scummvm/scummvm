@@ -98,7 +98,7 @@ public:
 	};
 
 	SavePoints(LastExpressEngine *engine);
-	~SavePoints();
+	~SavePoints() override;
 
 	// Savepoints
 	void push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, uint32 param = 0);
@@ -118,7 +118,7 @@ public:
 	void callAndProcess();
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
 	/**
 	 * Convert this object into a string representation.

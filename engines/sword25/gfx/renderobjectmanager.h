@@ -85,7 +85,7 @@ public:
 	    @param Die Anzahl an Framebuffern, die eingesetzt wird (Backbuffer + Primary).
 	*/
 	RenderObjectManager(int width, int height, int framebufferCount);
-	virtual ~RenderObjectManager();
+	~RenderObjectManager() override;
 
 	// Interface
 	// ---------
@@ -123,8 +123,8 @@ public:
 	*/
 	void detatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> pRenderObject);
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 
 private:
 	bool _frameStarted;

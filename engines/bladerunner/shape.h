@@ -23,7 +23,13 @@
 #ifndef BLADERUNNER_SHAPE_H
 #define BLADERUNNER_SHAPE_H
 
+#include "common/array.h"
 #include "common/str.h"
+
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Graphics {
 struct Surface;
@@ -34,22 +40,39 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class Shape {
-	BladeRunnerEngine *_vm;
+	friend class Shapes;
 
 	int   _width;
 	int   _height;
 	byte *_data;
 
-public:
-	Shape(BladeRunnerEngine *vm);
-	~Shape();
+	bool load(Common::SeekableReadStream *stream);
 
-	bool open(const Common::String &container, int index);
+public:
+	~Shape();
 
 	void draw(Graphics::Surface &surface, int x, int y) const;
 
-	int getWidth()  const { return _width;  }
+	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }
+};
+
+class Shapes {
+	BladeRunnerEngine *_vm;
+
+	Common::Array<Shape> _shapes;
+
+public:
+	Shapes(BladeRunnerEngine *vm);
+	~Shapes();
+
+	bool load(const Common::String &container);
+	void unload();
+
+	const Shape *get(uint32 index) const {
+		assert(index < _shapes.size());
+		return &_shapes[index];
+	}
 };
 
 } // End of namespace BladeRunner

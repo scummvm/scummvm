@@ -220,6 +220,8 @@ void ActorCombat::tick() {
 	case kActorCombatStateApproachRangedAttack:
 		approachToRangedAttack();
 		break;
+	default:
+		break;
 	}
 	--processingCounter;
 }
@@ -574,20 +576,20 @@ int ActorCombat::getCoefficientRangedAttack() const {
 }
 
 int ActorCombat::getDamageCloseAttack(int min, int max) const {
-	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == 0) {
+	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == kGameDifficultyEasy) {
 		return _damage / 2;
 	}
-	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == 2) {
+	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == kGameDifficultyHard) {
 		return _damage;
 	}
 	return ((MIN(max - min, 30) * 100.0f / 60.0f) + 50) * _damage / 100;
 }
 
 int ActorCombat::getDamageRangedAttack(int min, int max) const {
-	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == 0) {
+	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == kGameDifficultyEasy) {
 		return _damage / 2;
 	}
-	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == 2) {
+	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == kGameDifficultyHard) {
 		return _damage;
 	}
 	return ((MIN(max - min, 30) * 100.0f / 60.0f) + 50) * _damage / 100;
@@ -686,7 +688,7 @@ bool ActorCombat::findClosestPositionToEnemy(Vector3 &output) const {
 		Vector3 test = _enemyPosition + offsets[i];
 		float dist = distance(_actorPosition, test);
 		if ( min == -1.0f || dist < min) {
-			if (!_vm->_sceneObjects->existsOnXZ(_actorId, test.x, test.z, true, true) && _vm->_scene->_set->findWalkbox(test.x, test.z) >= 0) {
+			if (!_vm->_sceneObjects->existsOnXZ(_actorId + kSceneObjectOffsetActors, test.x, test.z, true, true) && _vm->_scene->_set->findWalkbox(test.x, test.z) >= 0) {
 				output = test;
 				min = dist;
 			}

@@ -21,14 +21,48 @@
  */
 
 #include "bladerunner/script/scene_script.h"
-
 namespace BladeRunner {
+
+enum kUG18Loops {
+	kUG18LoopTrainsArriving            = 0, //   0 -  59
+	kUG18LoopMainLoop                  = 1, //  60 - 120 (4 seconds in 15 fps)
+	kUG18LoopTrainsLeaving             = 3, // 121 - 180
+	kUG18LoopMainLoopNoTrains          = 4  // 181 - 241 (4 seconds in 15 fps)
+};
+
+static const int kUG18TrainsSecondsOfLoopNoTrains    =    4;
+static const int kUG18TrainsSecondsOfLoopWithTrains  =    4;
+static const int kUG18TrainsCountUpMaxMarginWalkedIn =   12;
+static const int kUG18TrainsCountUpMinMarginWalkedIn =    4;
+static const int kUG18TrainsCountUpTargetRegular     =  600;
+static const int kUG18TrainsCountUpMinMarginRegular  =   65;
+
+// values for re-purposed global variable kVariableUG18StateOfTrains
+enum kUG18TrainsState {
+	kUG18NoTrains                      = 0,
+	kUG18TrainsUnloading               = 1
+};
+
+// values for re-purposed global variable kVariableUG18StateOfGuzzaCorpse
+enum kUG18StateOfGuzzaCorpse {
+	kUG18GuzzaNoCorpse           = 0,
+	kUG18GuzzaCorpseFloatsDown   = 1,
+	kUG18GuzzaCorpseStuckInPipes = 2,
+	kUG18GuzzaCorpseDissolves    = 3
+};
 
 void SceneScriptUG18::InitializeScene() {
 	Setup_Scene_Information(-684.71f, 0.0f, 171.59f, 0);
 	Game_Flag_Reset(kFlagUG13toUG18);
 
 	Scene_Exit_Add_2D_Exit(0, 0, 158, 100, 340, 3);
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+			Overlay_Play("UG18OVER", 0, true, false, 0); // Railing in center platform is intact
+		} else {
+			Overlay_Play("UG18OVER", 2, true, false, 0); // Railing has broken outwards (state after Guzza fell)
+		}
+	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 71, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 45, 0, 1);
@@ -57,7 +91,23 @@ void SceneScriptUG18::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxZUBWLK3,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxZUBWLK4,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
 
-	Scene_Loop_Set_Default(4);
+	if (_vm->_cutContent) {
+		if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
+			Scene_Loop_Set_Default(kUG18LoopMainLoopNoTrains);
+			Global_Variable_Set(kVariableUG18CountUpForNextTrainAction, Random_Query(kUG18TrainsCountUpTargetRegular - kUG18TrainsCountUpMaxMarginWalkedIn, kUG18TrainsCountUpTargetRegular - kUG18TrainsCountUpMinMarginWalkedIn));
+		} else {
+			if (Random_Query(0, 1)) {
+				Scene_Loop_Set_Default(kUG18LoopMainLoop);
+				// don't set the kVariableUG18CountUpForNextTrainAction here, we only want this to play once before transitioning to trains leaving
+			} else {
+				Global_Variable_Set(kVariableUG18StateOfTrains, kUG18NoTrains);
+				Scene_Loop_Set_Default(kUG18LoopMainLoopNoTrains);
+				Global_Variable_Set(kVariableUG18CountUpForNextTrainAction, Random_Query(0, kUG18TrainsCountUpTargetRegular - kUG18TrainsCountUpMinMarginRegular));
+			}
+		}
+	} else {
+		Scene_Loop_Set_Default(kUG18LoopMainLoopNoTrains);
+	}
 
 	if ( Game_Flag_Query(kFlagCallWithGuzza)
 	 && !Game_Flag_Query(kFlagUG18GuzzaScene)
@@ -71,9 +121,11 @@ void SceneScriptUG18::InitializeScene() {
 
 void SceneScriptUG18::SceneLoaded() {
 	Obstacle_Object("MACHINE_01", true);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Unobstacle_Object("PLATFM_RAIL 01", true);
 	Unobstacle_Object("PLATFM_RAIL 02", true);
 	Unobstacle_Object("OBSTACLE1", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Clickable_Object("MACHINE_01");
 	Unclickable_Object("MACHINE_01");
 
@@ -138,6 +190,69 @@ bool SceneScriptUG18::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptUG18::SceneFrameAdvanced(int frame) {
+//	kUG18LoopTrainsArriving            = 0, //   0 -  59
+//	kUG18LoopMainLoop                  = 1, //  60 - 120
+//	kUG18LoopTrainsLeaving             = 3, // 121 - 180
+//	kUG18LoopMainLoopNoTrains          = 4  // 181 - 241
+	if (_vm->_cutContent) {
+		if (frame == 0) {
+			Ambient_Sounds_Play_Sound(Random_Query(kSfxBBGRN1, kSfxBBGRN3), 35, 0, 30, 50);
+			Ambient_Sounds_Play_Sound(kSfxLIGHTON, 25, 0, 30, 50);
+		}
+
+		if (frame == 2) {
+			Ambient_Sounds_Play_Sound(kSfxSUBWAY1, 24, 0, 30, 50);
+		}
+
+		if (frame == 60) {
+			Ambient_Sounds_Play_Sound(kSfxPIPER1, 25, 30, 30, 0);
+			if (Random_Query(1, 3)) {
+				Ambient_Sounds_Play_Sound(kSfxSQUEAK2, 32, 30, 30, 50);
+			} else {
+				Ambient_Sounds_Play_Sound(kSfxSQUEAK4, 34, 30, 30, 50);
+			}
+		}
+
+		if (frame == 68) {
+			Ambient_Sounds_Play_Sound(kSfxSTEAM3, 66, 30, 30, 50);
+		}
+
+		if (frame == 70) {
+			Ambient_Sounds_Play_Sound(kSfxSTEAM6A, 66, 30, 30, 50);
+		}
+
+		if (frame == 115) {
+			Ambient_Sounds_Play_Sound(kSfxMTLDOOR2, 40, 30, 30, 50);
+		}
+
+		if (frame == 128) {
+			Ambient_Sounds_Play_Sound(kSfxSUBWAY1, 24, 30, 0, 50);
+		}
+
+		if (frame == 119    //  end of main loop unloading // works better than using the 120 value
+		   || frame ==  240 //  end of main loop no trains
+		) {
+			if (Global_Variable_Query(kVariableUG18CountUpForNextTrainAction) < kUG18TrainsCountUpTargetRegular) {
+				if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
+					Global_Variable_Increment(kVariableUG18CountUpForNextTrainAction, kUG18TrainsSecondsOfLoopNoTrains); // add seconds
+				} else {
+					Global_Variable_Increment(kVariableUG18CountUpForNextTrainAction, kUG18TrainsSecondsOfLoopWithTrains); // add seconds
+				}
+			} else {
+				if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
+					Global_Variable_Set(kVariableUG18StateOfTrains, kUG18TrainsUnloading);
+					Scene_Loop_Set_Default(kUG18LoopMainLoop);
+					Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG18LoopTrainsArriving, false);
+					// don't set the kVariableUG18CountUpForNextTrainAction here, we only want this to play once before transitioning to trains leaving
+				} else {
+					Global_Variable_Set(kVariableUG18StateOfTrains, kUG18NoTrains);
+					Scene_Loop_Set_Default(kUG18LoopMainLoopNoTrains);
+					Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG18LoopTrainsLeaving, true);
+					Global_Variable_Set(kVariableUG18CountUpForNextTrainAction, Random_Query(0, kUG18TrainsCountUpTargetRegular - kUG18TrainsCountUpMinMarginRegular));
+				}
+			}
+		}
+	}
 }
 
 void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -175,7 +290,7 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > 55
 			 && Game_Flag_Query(kFlagMcCoyRetiredHuman)
 			) {
-				Actor_Says(kActorClovis, 660, 13);
+				Actor_Says(kActorClovis, 660, 13); // Brother, you killed a human...
 				Actor_Says(kActorMcCoy, 5995, 13);
 				Actor_Says(kActorClovis, 670, 13);
 				Actor_Says(kActorMcCoy, 6000, 13);
@@ -198,6 +313,7 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			break;
 
 		case 305:
+			// never triggered
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 			Sound_Play(kSfxLGCAL1, 100, 0, 0, 50);
 			Actor_Force_Stop_Walking(kActorMcCoy);
@@ -210,6 +326,30 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptUG18::PlayerWalkedIn() {
+	if (_vm->_cutContent) {
+		if (Game_Flag_Query(kFlagUG18GuzzaScene)) {
+			switch (Global_Variable_Query(kVariableUG18StateOfGuzzaCorpse)) {
+			case kUG18GuzzaCorpseFloatsDown:
+				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseStuckInPipes);
+				// same logic as using the BB06OVER for doll explosion case in BB06
+				Overlay_Play("UG18OVR2", 0, true, true,  0);
+				Overlay_Play("UG18OVR2", 1, true, false, 0);
+				break;
+			case kUG18GuzzaCorpseStuckInPipes:
+				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseDissolves);
+				Overlay_Play("UG18OVR2", 1, true, true,  0);
+				Overlay_Play("UG18OVR2", 2, false, false, 0);
+				break;
+			case kUG18GuzzaCorpseDissolves:
+				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaNoCorpse);
+				Overlay_Remove("UG18OVR2");
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -488.71f, 0.0f, 123.59f, 0, false, false, false);
 
 	if ( Game_Flag_Query(kFlagCallWithGuzza)
@@ -224,6 +364,9 @@ void SceneScriptUG18::PlayerWalkedIn() {
 }
 
 void SceneScriptUG18::PlayerWalkedOut() {
+	if (_vm->_cutContent) {
+		Overlay_Remove("UG18OVER");
+	}
 }
 
 void SceneScriptUG18::DialogueQueueFlushed(int a1) {
@@ -233,36 +376,63 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
-		ADQ_Add(kActorClovis, 630, 13);
+		ADQ_Add(kActorClovis, 630, 13); // "Whatever is born of mortal birth, must be consumed with the earth."
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18SadikWillShootGuzza);
 		break;
 
 	case kGoalGuzzaUG18ShotByMcCoy:
 		// Bug in the game, shot animation is not reset so McCoy looks still while he is shooting
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL2, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		Delay(900);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		Delay(1100);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL1, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		Delay(900);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, 61);
-		Overlay_Play("UG18over", 1, false, true, 0);
+		if (_vm->_cutContent) {
+			// same logic as using the BB06OVER for doll explosion case in BB06
+			Overlay_Play("UG18OVER", 1, true, true,  0);
+			Overlay_Play("UG18OVER", 2, true, false, 0);
+			Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseFloatsDown);
+		} else {
+			Overlay_Play("UG18OVER", 1, false, true, 0);
+		}
 		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18FallDown);
 		Player_Gains_Control();
 		ADQ_Add_Pause(2000);
-		ADQ_Add(kActorSadik, 360, -1);
+		ADQ_Add(kActorSadik, 360, -1); // The Hunter, he do us a favor...
 		ADQ_Add_Pause(2000);
-		ADQ_Add(kActorClovis, 650, 14);
+		ADQ_Add(kActorClovis, 650, 14); // So, what should we do with this detective.
 		ADQ_Add(kActorSadik, 370, 14);
-		ADQ_Add(kActorClovis, 1320, 14);
+		ADQ_Add(kActorClovis, 1320, 14); // Perhaps you're right
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Retired_Here(kActorGuzza, 72, 32, true, kActorMcCoy);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18GuzzaDied);
 		break;
 
@@ -291,6 +461,19 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, 61);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// don't allow code to reach the overlay animation if the dialogue queue is not flushed
+		// otherwise this animation is stored and if the player saves the game during the queued dialogue
+		// then upon re-load it would play immediately (before Guzza falls)
+		ADQ_Wait_For_All_Queued_Dialogue();
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		if (_vm->_cutContent) {
+			// same logic as using the BB06OVER for doll explosion case in BB06
+			Overlay_Play("UG18OVER", 1, true, true,  0);
+			Overlay_Play("UG18OVER", 2, true, false, 0);
+			Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseFloatsDown);
+		}
 		ADQ_Add_Pause(2000);
 		ADQ_Add(kActorClovis, 650, 14);
 		ADQ_Add(kActorSadik, 370, 14);
@@ -302,11 +485,20 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		break;
 
 	case kGoalClovisUG18GuzzaDied:
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18Move);
+#else
+		// otherwise this gets repeated whenever dialogue queue re-empties
+		if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18Wait) {
+			Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18Move);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 	}
 
 	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18WillShootMcCoy) {
+		// Bug in the original game - Why is Sadik set to die animation here?
+		// never triggered
 		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeDie);
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18PrepareShootMcCoy);
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18Leave);
@@ -424,7 +616,7 @@ void SceneScriptUG18::talkWithClovis() {
 	ADQ_Add(kActorGuzza, 1180, 58);
 	ADQ_Add(kActorClovis, 610, 13);
 	ADQ_Add(kActorGuzza, 1190, 60);
-	ADQ_Add(kActorClovis, 620, 13);
+	ADQ_Add(kActorClovis, 620, 13); // Lieutenant, we have everything we need...
 	ADQ_Add(kActorGuzza, 1200, 59);
 }
 

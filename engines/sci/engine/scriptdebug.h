@@ -31,9 +31,11 @@ extern const char *opcodeNames[];
 
 void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType);
 
-void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, reg_t curValue, reg_t newValue, SegManager *segMan, BreakpointType breakpointType);
+void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, Selector selector, reg_t curValue, reg_t newValue, SegManager *segMan, BreakpointType breakpointType);
 
 void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result);
+
+void logExportCall(uint16 script, uint16 pubfunct, EngineState *s, int argc, reg_t *argv);
 
 void logBacktrace();
 

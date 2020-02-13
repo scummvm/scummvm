@@ -59,7 +59,7 @@ private:
 	}
 
 protected:
-	virtual bool doRender(RectangleList *updateRects) {
+	bool doRender(RectangleList *updateRects) override {
 		return true;
 	}
 };

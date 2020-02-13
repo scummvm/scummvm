@@ -234,6 +234,8 @@ void SoundManager::installDriver(int driverNum) {
 		}
 		break;
 	}
+	default:
+		break;
 	}
 }
 
@@ -2279,6 +2281,8 @@ void Sound::soDoTrackCommand(int channelNum, int command, int value) {
 		break;
 	case 75:
 		_chNumVoices[channelNum] = value;
+		break;
+	default:
 		break;
 	}
 }

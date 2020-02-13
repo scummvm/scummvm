@@ -38,7 +38,7 @@ public:
 	Palette(NeverhoodEngine *vm, const char *filename);
 	// Create from resource with fileHash
 	Palette(NeverhoodEngine *vm, uint32 fileHash);
-	virtual ~Palette();
+	~Palette() override;
 	void init();
 	void usePalette();
 	void addPalette(const char *filename, int toIndex, int count, int fromIndex);

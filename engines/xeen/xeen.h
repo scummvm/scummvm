@@ -131,8 +131,8 @@ private:
 	void loadSettings();
 
 	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific
@@ -149,11 +149,6 @@ private:
 	 * Plays the actual game
 	 */
 	void play();
-
-	/**
-	 * Shows a please wait dialog
-	 */
-	void pleaseWait();
 protected:
 	int _loadSaveSlot;
 protected:
@@ -203,18 +198,52 @@ public:
 	ExtendedOptions _extOptions;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
-	virtual ~XeenEngine();
+	~XeenEngine() override;
 
+	/**
+	 * Returns the features
+	 */
 	uint32 getFeatures() const;
+
+	/**
+	 * Returns the game language
+	 */
 	Common::Language getLanguage() const;
+
+	/**
+	 * Returns the game's platform
+	 */
 	Common::Platform getPlatform() const;
-	uint16 getVersion() const;
+
+	/**
+	 * Gets the game Id
+	 */
 	uint32 getGameID() const;
+
+	/**
+	 * Returns the game Id, but with a reuslt of Clouds or Dark Side for World of Xeen,
+	 * depending on which side the player is currently on
+	 */
+	uint32 getSpecificGameId() const;
+
+	/**
+	 * Returns the game features
+	 */
 	uint32 getGameFeatures() const;
+
+	/**
+	 * Returns true if the game is the CD version
+	 */
 	bool getIsCD() const;
 
+	/**
+	 * Returns a random number
+	 */
 	int getRandomNumber(int maxNumber);
 
+	/**
+	 * Returns a random number
+	 */
 	int getRandomNumber(int minNumber, int maxNumber);
 
 	/**
@@ -230,27 +259,27 @@ public:
 	/**
 	 * Load a savegame
 	 */
-	virtual Common::Error loadGameState(int slot);
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save the game
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Updates sound settings
 	 */
-	virtual void syncSoundSettings();
+	void syncSoundSettings() override;
 
 	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
-	virtual bool canLoadGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
 
 	/**
 	* Returns true if the game can currently be saved
 	*/
-	virtual bool canSaveGameStateCurrently();
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Show a cutscene
@@ -275,6 +304,16 @@ public:
 	 * Saves engine settings
 	 */
 	void saveSettings();
+
+	/**
+	 * Show an error message in a GUI dialog
+	 */
+	void GUIError(const Common::String &msg);
+
+	/**
+	 * Checks if an auto save should be done, and if so, takes care of it
+	 */
+	void autoSaveCheck(int &lastSaveTime);
 };
 
 extern XeenEngine *g_vm;

@@ -41,7 +41,7 @@ class DecompressorData;
  */
 class File : public Common::File {
 public:
-	virtual bool open(const Common::String &filename);
+	bool open(const Common::String &filename) override;
 };
 
 /**
@@ -265,19 +265,19 @@ public:
 class CompressedFile : public SimpleFile {
 public:
 	CompressedFile() : SimpleFile() {}
-	virtual ~CompressedFile() {}
+	~CompressedFile() override {}
 
 	/**
 	 * Set up a stream for read access
 	 */
-	virtual void open(Common::SeekableReadStream *stream) {
+	void open(Common::SeekableReadStream *stream) override {
 		SimpleFile::open(Common::wrapCompressedReadStream(stream));
 	}
 
 	/**
 	 * Set up a stream for write access
 	 */
-	virtual void open(Common::OutSaveFile *stream) {
+	void open(Common::OutSaveFile *stream) override {
 		SimpleFile::open(new Common::OutSaveFile(Common::wrapCompressedWriteStream(stream)));
 	}
 };
@@ -288,7 +288,7 @@ public:
 class StdCWadFile : public SimpleFile {
 public:
 	StdCWadFile() : SimpleFile() {}
-	virtual ~StdCWadFile() {}
+	~StdCWadFile() override {}
 
 	/**
 	 * Open up the specified file
@@ -298,12 +298,12 @@ public:
 	/**
 	 * Unsupported open method from parent class
 	 */
-	virtual void open(Common::SeekableReadStream *stream) {}
+	void open(Common::SeekableReadStream *stream) override {}
 
 	/**
 	 * Unsupported open method from parent class
 	 */
-	virtual void open(Common::OutSaveFile *stream) {}
+	void open(Common::OutSaveFile *stream) override {}
 
 	/**
 	 * Return a reference to the read stream

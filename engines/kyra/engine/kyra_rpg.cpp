@@ -124,6 +124,12 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_environmentSfx = _environmentSfxVol = _envSfxDistThreshold = 0;
 	_monsterStepCounter = _monsterStepMode = 0;
+
+	_buttonFont = Screen::FID_6_FNT;
+	if (_flags.use16ColorMode)
+		_buttonFont = _flags.gameID == GI_LOL ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_SJIS_FNT;
+	else if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns)
+		_buttonFont = Screen::FID_8_FNT;
 }
 
 KyraRpgEngine::~KyraRpgEngine() {
@@ -193,9 +199,9 @@ Common::Error KyraRpgEngine::init() {
 	if (_vcnBpp == 2)
 		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_hiCol),
 			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_hiCol));
-	else if (_flags.platform == Common::kPlatformAmiga)
-		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_Amiga), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_Amiga),
-			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_Amiga), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_Amiga));
+	else if (_flags.platform == Common::kPlatformAmiga || (_flags.gameID == GI_EOB1 && _flags.use16ColorMode))
+		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_planar), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_planar),
+			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_planar), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_planar));
 	else
 		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_4bit),
 			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_4bit));
@@ -222,21 +228,23 @@ bool KyraRpgEngine::posWithinRect(int posX, int posY, int x1, int y1, int x2, in
 
 void KyraRpgEngine::drawDialogueButtons() {
 	int cp = screen()->setCurPage(0);
-	Screen::FontId of = screen()->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : ((_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns) ? Screen::FID_8_FNT : Screen::FID_6_FNT));
+	Screen::FontId of = screen()->setFont(_buttonFont);
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
 		int x = _dialogueButtonPosX[i];
-		if (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) {
+		if (_flags.gameID == GI_LOL && _flags.use16ColorMode) {
 			gui_drawBox(x, ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1, 74, 10, 0xEE, 0xCC, -1);
 			screen()->printText(_dialogueButtonString[i], (x + 37 - (screen()->getTextWidth(_dialogueButtonString[i])) / 2) & ~3,
 			                    ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2) & ~7, _dialogueHighlightedButton == i ? 0xC1 : 0xE1, 0);
 		} else {
-			int sjisYOffset = (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns) ? 1 : ((_flags.lang == Common::JA_JPN && (_dialogueButtonString[i][0] & 0x80)) ? 2 : 0);
+			int yOffset = guiSettings()->buttons.txtOffsY;
+			if (_flags.gameID == GI_LOL && _flags.lang == Common::JA_JPN && (_dialogueButtonString[i][0] & 0x80))
+				yOffset = 0;
 			screen()->set16bitShadingLevel(4);
 			gui_drawBox(x, (_dialogueButtonYoffs + _dialogueButtonPosY[i]), _dialogueButtonWidth, guiSettings()->buttons.height, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 			screen()->set16bitShadingLevel(0);
 			screen()->printText(_dialogueButtonString[i], x + (_dialogueButtonWidth >> 1) - (screen()->getTextWidth(_dialogueButtonString[i])) / 2,
-			                    (_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2 - sjisYOffset, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0);
+			                    (_dialogueButtonYoffs + _dialogueButtonPosY[i]) + yOffset, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0);
 		}
 	}
 	screen()->setFont(of);
@@ -249,7 +257,7 @@ uint16 KyraRpgEngine::processDialogue() {
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
 		int x = _dialogueButtonPosX[i];
-		int y = ((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
+		int y = ((_flags.gameID == GI_LOL && _flags.use16ColorMode) ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
 		Common::Point p = getMousePos();
 		if (posWithinRect(p.x, p.y, x, y, x + _dialogueButtonWidth, y + guiSettings()->buttons.height)) {
 			_dialogueHighlightedButton = i;
@@ -285,7 +293,7 @@ uint16 KyraRpgEngine::processDialogue() {
 		if ((_flags.gameID == GI_LOL && (e == 200 || e == 202)) || (_flags.gameID != GI_LOL && (e == 199 || e == 201))) {
 			for (int i = 0; i < _dialogueNumButtons; i++) {
 				int x = _dialogueButtonPosX[i];
-				int y = (gameFlags().use16ColorMode ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
+				int y = ((_flags.gameID == GI_LOL && _flags.use16ColorMode) ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
 				Common::Point p = getMousePos();
 				if (posWithinRect(p.x, p.y, x, y, x + _dialogueButtonWidth, y + guiSettings()->buttons.height)) {
 					_dialogueHighlightedButton = i;

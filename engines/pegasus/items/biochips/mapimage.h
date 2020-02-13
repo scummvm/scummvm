@@ -41,7 +41,7 @@ namespace Pegasus {
 class MapImage : public DisplayElement {
 public:
 	MapImage();
-	virtual ~MapImage() {}
+	~MapImage() override {}
 
 	void writeToStream(Common::WriteStream *);
 	void readFromStream(Common::ReadStream *);
@@ -51,7 +51,7 @@ public:
 	void unloadImage();
 	void moveToMapLocation(const NeighborhoodID, const RoomID, const DirectionConstant);
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 	bool anyFlagSet() { return _mappedRooms.anyFlagSet(); }
 

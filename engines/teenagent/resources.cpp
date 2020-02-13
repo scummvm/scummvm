@@ -176,7 +176,6 @@ Common::SeekableReadStream *Resources::loadLan(uint32 id) const {
 
 Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
 	switch (id) {
-
 	case 81:
 		if (dseg.get_byte(dsAddr_dogHasBoneFlag))
 			return lan500.getStream(160);
@@ -221,6 +220,9 @@ Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
 		if (dseg.get_byte(dsAddr_johnNotyOutsideMansionDoorFlag) == 1) {
 			return lan500.getStream(400);
 		}
+		break;
+
+	default:
 		break;
 	}
 	return lan000.getStream(id);

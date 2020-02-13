@@ -42,7 +42,7 @@ class BitmapResource : public Resource {
 public:
 	BitmapResource(const Common::String &filename, Image *pImage) :
 					_pImage(pImage), Resource(filename, Resource::TYPE_BITMAP) {}
-	virtual ~BitmapResource() { delete _pImage; }
+	~BitmapResource() override { delete _pImage; }
 
 	/**
 	    @brief Gibt zurück, ob das Objekt einen gültigen Zustand hat.

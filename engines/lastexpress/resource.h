@@ -37,7 +37,7 @@ class Font;
 class ResourceManager : public Common::Archive {
 public:
 	ResourceManager(bool demo);
-	~ResourceManager();
+	~ResourceManager() override;
 
 	// Loading
 	bool loadArchive(ArchiveIndex type);
@@ -45,10 +45,10 @@ public:
 	Common::SeekableReadStream *getFileStream(const Common::String &name) const;
 
 	// Archive functions
-	bool hasFile(const Common::String &name) const;
-	int listMembers(Common::ArchiveMemberList &list) const;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 	// Resource loading
 	Background *loadBackground(const Common::String &name) const;

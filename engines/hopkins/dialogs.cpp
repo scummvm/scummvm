@@ -94,6 +94,8 @@ void DialogsManager::showOptionsDialog() {
 		case LANG_SP:
 			filename = "OPTIES.SPR";
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -256,6 +258,8 @@ void DialogsManager::showOptionsDialog() {
 				case 320:
 					_vm->_graphicsMan->_scrollSpeed = 1;
 					break;
+				default:
+					break;
 				}
 			}
 
@@ -319,6 +323,8 @@ void DialogsManager::showOptionsDialog() {
 		case 640:
 			_vm->_globals->_menuScrollSpeed = 23;
 			break;
+		default:
+			break;
 		}
 
 		_vm->_events->refreshScreenAndEvents();
@@ -368,6 +374,8 @@ void DialogsManager::showInventory() {
 				break;
 			case LANG_SP:
 				filename = "INVENTES.SPR";
+				break;
+			default:
 				break;
 			}
 		}
@@ -670,6 +678,8 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 		case LANG_SP:
 			filename = "SAVEES.SPR";
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -717,6 +727,8 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 				break;
 			case 6:
 				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX_ + 323, 294, 128, 87);
+				break;
+			default:
 				break;
 			}
 

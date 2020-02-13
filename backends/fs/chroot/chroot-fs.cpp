@@ -100,9 +100,8 @@ Common::WriteStream *ChRootFilesystemNode::createWriteStream() {
 	return _realNode->createWriteStream();
 }
 
-bool ChRootFilesystemNode::create(bool isDirectoryFlag) {
-	error("Not supported");
-	return false;
+bool ChRootFilesystemNode::createDirectory() {
+	return _realNode->createDirectory();
 }
 
 Common::String ChRootFilesystemNode::addPathComponent(const Common::String &path, const Common::String &component) {

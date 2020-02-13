@@ -735,6 +735,9 @@ void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) 
 					areaNum = 1;
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 }

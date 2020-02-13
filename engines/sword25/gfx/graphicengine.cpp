@@ -50,8 +50,8 @@
 
 #include "sword25/fmv/movieplayer.h"
 
-#include "sword25/util/lua/lua.h"
-#include "sword25/util/lua/lauxlib.h"
+#include "common/lua/lua.h"
+#include "common/lua/lauxlib.h"
 enum {
 	BIT_DEPTH = 32,
 	BACKBUFFER_COUNT = 1

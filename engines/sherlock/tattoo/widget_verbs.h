@@ -52,7 +52,7 @@ public:
 	Common::StringArray _verbCommands;
 public:
 	WidgetVerbs(SherlockEngine *vm);
-	virtual ~WidgetVerbs() {}
+	~WidgetVerbs() override {}
 
 	/**
 	 * Turns on the menu with all the verbs that are available for the given object
@@ -62,7 +62,7 @@ public:
 	/**
 	 * Process input for the dialog
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 } // End of namespace Tattoo

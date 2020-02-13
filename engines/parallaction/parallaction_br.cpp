@@ -148,6 +148,8 @@ bool Parallaction_br::processGameEvent(int event) {
 		startIngameMenu();
 		c = false;
 		break;
+	default:
+		break;
 	}
 
 	_input->setArrowCursor();

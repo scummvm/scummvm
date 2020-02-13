@@ -67,7 +67,7 @@ int IMuseDigital::allocSlot(int priority) {
 			}
 
 			// Mark it as unused
-			memset(track, 0, sizeof(Track));
+			track->reset();
 
 			debug(5, "IMuseDigital::allocSlot(): Removed sound %d from track %d", _track[trackId]->soundId, trackId);
 		} else {
@@ -93,7 +93,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	Track *track = _track[l];
 
 	// Reset the track
-	memset(track, 0, sizeof(Track));
+	track->reset();
 
 	track->pan = 64;
 	track->vol = volume * 1000;

@@ -96,6 +96,9 @@ void CharGenChild::advance() {
 			setPosition(x, y + 14);
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 

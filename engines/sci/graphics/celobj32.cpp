@@ -217,10 +217,10 @@ struct SCALER_Scale {
 				Copier(READER& souceReader, Buffer& targetBuffer) :
 					_souceReader(souceReader),
 					_targetBuffer(targetBuffer) {}
-				const Graphics::LarryScaleColor* readRow(int y) {
+				const Graphics::LarryScaleColor* readRow(int y) override {
 					return _souceReader.getRow(y);
 				}
-				void writeRow(int y, const Graphics::LarryScaleColor* row) {
+				void writeRow(int y, const Graphics::LarryScaleColor* row) override {
 					memcpy(_targetBuffer.getBasePtr(0, y), row, _targetBuffer.w);
 				}
 			};
@@ -857,9 +857,8 @@ void CelObj::drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targ
 void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	// In SSCI the checks are > because their rects are BR-inclusive; our checks
 	// are >= because our rects are BR-exclusive
-	if (g_sci->_features->hasEmptyScaleDrawHack() &&
-		(targetRect.left >= targetRect.right ||
-		 targetRect.top >= targetRect.bottom)) {
+	if (targetRect.left >= targetRect.right ||
+		 targetRect.top >= targetRect.bottom) {
 		return;
 	}
 
@@ -872,9 +871,8 @@ void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &sca
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	// In SSCI the checks are > because their rects are BR-inclusive; our checks
 	// are >= because our rects are BR-exclusive
-	if (g_sci->_features->hasEmptyScaleDrawHack() &&
-		(targetRect.left >= targetRect.right ||
-		 targetRect.top >= targetRect.bottom)) {
+	if (targetRect.left >= targetRect.right ||
+		 targetRect.top >= targetRect.bottom) {
 		return;
 	}
 
@@ -1028,19 +1026,7 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		error("Cel is less than 0 on loop 0");
 	}
 
-	// HACK: Phantasmagoria view 64001 contains a bad palette that overwrites
-	// parts of the palette used by the background picture in room 6400, causing
-	// the black shadows to become tan, and many of the other background colors
-	// to end up a little bit off. View 64001 renders fine using the existing
-	// palette created by the background image, so here we just ignore the
-	// embedded palette entirely.
-	if (g_sci->getGameId() == GID_PHANTASMAGORIA &&
-		_info.type == kCelTypeView && _info.resourceId == 64001) {
-
-		_hunkPaletteOffset = 0;
-	} else {
-		_hunkPaletteOffset = data.getUint32SEAt(8);
-	}
+	_hunkPaletteOffset = data.getUint32SEAt(8);
 	_celHeaderOffset = loopHeader.getUint32SEAt(12) + (data[13] * _info.celNo);
 
 	const SciSpan<const byte> celHeader = data.subspan(_celHeaderOffset);

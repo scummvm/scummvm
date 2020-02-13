@@ -89,8 +89,8 @@ private:
 	void loadOptions();
 protected:
 	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 	Debugger *_debugger;
 	Dialogs *_dialogs;
@@ -113,7 +113,7 @@ public:
 	bool _disableFastwalk;
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
-	virtual ~MADSEngine();
+	~MADSEngine() override;
 
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -129,12 +129,12 @@ public:
 	/**
 	* Returns true if it is currently okay to restore a game
 	*/
-	bool canLoadGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
 
 	/**
 	* Returns true if it is currently okay to save the game
 	*/
-	bool canSaveGameStateCurrently();
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	* Support method that generates a savegame name
@@ -145,17 +145,17 @@ public:
 	/**
 	 * Handles loading a game via the GMM
 	 */
-	virtual Common::Error loadGameState(int slot);
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Handles saving the game via the GMM
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Handles updating sound settings after they're changed in the GMM dialog
 	 */
-	virtual void syncSoundSettings();
+	void syncSoundSettings() override;
 
 	void saveOptions();
 };

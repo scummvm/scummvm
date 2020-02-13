@@ -188,7 +188,7 @@ Error DebuggerController::stepFinish() {
 
 void DebuggerController::clear() {
 	_lastScript = nullptr;
-	_lastLine = -1;
+	_lastLine = 0xFFFFFFFF; // Invalid
 }
 
 Common::String DebuggerController::readValue(const Common::String &name, Error *error) {
@@ -241,7 +241,7 @@ Error DebuggerController::setValue(const Common::String &name, const Common::Str
 			// Something funny happened here.
 		}
 	} else if (var->_type == VAL_BOOL) {
-		Common::String str = Common::String(trimmed);
+		//Common::String str = Common::String(trimmed);
 		bool valAsBool;
 		if (Common::parseBool(trimmed, valAsBool)) {
 			var->setBool(valAsBool);

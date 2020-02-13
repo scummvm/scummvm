@@ -32,7 +32,7 @@ namespace Graphics {
 class MacWindowManager;
 
 struct MacFontRun {
-	Common::String text;
+	Common::U32String text;
 
 	uint16 fontId;
 	byte textSlant;
@@ -87,8 +87,12 @@ struct MacTextLine {
 };
 
 class MacText {
+	friend class MacEditableText;
+
 public:
-	MacText(Common::String s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
+	MacText(Common::U32String s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
+			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
+	MacText(const Common::String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
 			// 0 pixels between the lines by default
 	~MacText();
@@ -102,10 +106,15 @@ public:
 			}
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
-	void appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
-	void appendTextDefault(Common::String str, bool skipAdd = false);
+	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
+	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
+	void appendText(Common::U32String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
+	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
+	void appendTextDefault(Common::U32String str, bool skipAdd = false);
+	void appendTextDefault(const Common::String &str, bool skipAdd = false);
 	void clearText();
-	void replaceLastLine(Common::String str);
+	void replaceLastLine(Common::U32String str);
+	void replaceLastLine(const Common::String &str);
 	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }
 	int getTextHeight() { return _textMaxHeight; }
@@ -116,19 +125,19 @@ public:
 
 	void getRowCol(int x, int y, int *sx, int *sy, int *row, int *col);
 
-	Common::String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
+	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 private:
-	void splitString(Common::String &s);
+	void splitString(Common::U32String &s);
 	void render(int from, int to);
 	void recalcDims();
 	void reallocSurface();
 	int getLineWidth(int line, bool enforce = false);
 
-private:
+protected:
 	MacWindowManager *_wm;
 
-	Common::String _str;
+	Common::U32String _str;
 	const MacFont *_macFont;
 	int _fgcolor, _bgcolor;
 

@@ -437,7 +437,7 @@ public:
 		return testAnswerFlags(a);
 	}
 
-	virtual void addVisibleAnswers(Question *q) {
+	void addVisibleAnswers(Question *q) override {
 		_askPassword = false;
 		_numVisAnswers = 0;
 		for (int i = 0; i < NUM_ANSWERS && q->_answers[i]; i++) {
@@ -458,7 +458,7 @@ public:
 		resetPassword();
 	}
 
-	virtual int16 selectAnswer() {
+	int16 selectAnswer() override {
 		int ans = NO_ANSWER_SELECTED;
 		if (_askPassword) {
 			ans = askPassword();
@@ -494,7 +494,7 @@ public:
 		return testAnswerFlags(a);
 	}
 
-	virtual void addVisibleAnswers(Question *q) {
+	void addVisibleAnswers(Question *q) override {
 		_numVisAnswers = 0;
 		for (int i = 0; i < NUM_ANSWERS && q->_answers[i]; i++) {
 			Answer *a = q->_answers[i];
@@ -507,7 +507,7 @@ public:
 		}
 	}
 
-	virtual int16 selectAnswer() {
+	int16 selectAnswer() override {
 		int16 ans = NO_ANSWER_SELECTED;
 		if (_numVisAnswers == 1) {
 			ans = selectAnswer1();

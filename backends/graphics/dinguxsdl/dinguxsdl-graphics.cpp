@@ -39,8 +39,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 #define DownscaleAllByHalf 0
 #endif
 
-DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *boss, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(boss, window) {
+DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 const OSystem::GraphicsMode *DINGUXSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -67,10 +67,8 @@ int DINGUXSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	return scale;
 }
 
-void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
-	Common::StackLock lock(_graphicsMutex);
+ScalerProc *DINGUXSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 	ScalerProc *newScalerProc = 0;
-
 	switch (_videoMode.mode) {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
@@ -80,26 +78,34 @@ void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
 		newScalerProc = DownscaleAllByHalf;
 		break;
 #endif
-
-	default:
-		error("Unknown gfx mode %d", _videoMode.mode);
 	}
 
-	_scalerProc = newScalerProc;
-
-	if (!_screen || !_hwScreen)
-		return;
-
-	// Blit everything to the screen
-	_forceRedraw = true;
-
-	// Even if the old and new scale factors are the same, we may have a
-	// different scaler for the cursor now.
-	blitCursor();
+	return newScalerProc;
 }
 
 void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
+
+	_gameScreenShakeXOffset = 0;
+	_gameScreenShakeYOffset = 0;
+
+#ifdef USE_RGB_COLOR
+	// Avoid redundant format changes
+	Graphics::PixelFormat newFormat;
+	if (!format)
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		newFormat = *format;
+
+	assert(newFormat.bytesPerPixel > 0);
+
+	if (newFormat != _videoMode.format) {
+		_videoMode.format = newFormat;
+		_transactionDetails.formatChanged = true;
+		_screenFormat = newFormat;
+	}
+#endif
+
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
@@ -107,11 +113,14 @@ void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
+
+#ifndef GCW0
 	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
 		_window->toggleMouseGrab();
 	}
+#endif
 
 	_transactionDetails.sizeChanged = true;
 }
@@ -125,7 +134,7 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 	SDL_Rect dst;
 	int scale;
 	int hotX, hotY;
-	
+
 	const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
 
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
@@ -161,7 +170,8 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
 
-	dst.y += _currentShakePos;
+	dst.x += _currentShakeXOffset;
+	dst.y += _currentShakeYOffset;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		dst.y = real2Aspect(dst.y);
@@ -179,7 +189,6 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 
 	// The screen will be updated using real surface coordinates, i.e.
 	// they will not be scaled or aspect-ratio corrected.
-
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
@@ -194,7 +203,7 @@ void DINGUXSdlGraphicsManager::undrawMouse() {
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-			addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
+			addDirtyRect(x * 2, y * 2, _mouseBackup.w * 2, _mouseBackup.h * 2);
 		} else {
 			addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 		}
@@ -213,16 +222,29 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos ||
-		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
-		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor)};
+	if (_currentShakeXOffset != _gameScreenShakeXOffset ||
+		(_cursorNeedsRedraw && _mouseBackup.x <= _currentShakeXOffset)) {
+		SDL_Rect blackrect = {0, 0, (Uint16)(_gameScreenShakeXOffset * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
 
-		_currentShakePos = _newShakePos;
+		_currentShakeXOffset = _gameScreenShakeXOffset;
+
+		_forceRedraw = true;
+	}
+	if (_currentShakeYOffset != _gameScreenShakeYOffset ||
+		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakeYOffset)) {
+		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeYOffset * _videoMode.scaleFactor)};
+
+		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
+
+		SDL_FillRect(_hwScreen, &blackrect, 0);
+
+		_currentShakeYOffset = _gameScreenShakeYOffset;
 
 		_forceRedraw = true;
 	}
@@ -282,8 +304,8 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
-			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+			dst.x++;    // Shift rect by one since 2xSai needs to access the data around
+			dst.y++;    // any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -296,15 +318,19 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 		dstPitch = _hwScreen->pitch;
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
-			int dst_y = r->y + _currentShakePos;
+			int dst_y = r->y + _currentShakeYOffset;
 			int dst_h = 0;
-			int dst_w = r->w;
+			int dst_w = 0;
 			int orig_dst_y = 0;
-			int dst_x = r->x;
+			int dst_x = r->x + _currentShakeXOffset;
 			int src_y;
 			int src_x;
 
-			if (dst_y < height) {
+			if (dst_x < width && dst_y < height) {
+				dst_w = r->w;
+				if (dst_w > width - dst_x)
+					dst_w = width - dst_x;
+
 				dst_h = r->h;
 				if (dst_h > height - dst_y)
 					dst_h = height - dst_y;
@@ -318,7 +344,7 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 				assert(scalerProc != NULL);
 
-				if ((_videoMode.mode == GFX_HALF) && (scalerProc == DownscaleAllByHalf)) {
+				if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf) {
 					if (dst_x % 2 == 1) {
 						dst_x--;
 						dst_w++;
@@ -334,24 +360,22 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 					scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
 					           (byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
-
 				} else {
 					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-					           (byte *)_hwScreen->pixels + r->x * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
+					           (byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
 				}
 			}
 
 			if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf) {
-				r->w = r->w / 2;
+				r->w = dst_w / 2;
 				r->h = dst_h / 2;
 			} else {
-				r->w = r->w;
+				r->w = dst_w;
 				r->h = dst_h;
 			}
 
 			r->x = dst_x;
 			r->y = dst_y;
-
 
 #ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
@@ -364,7 +388,9 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
 		if (_forceRedraw) {
+			_dirtyRectList[0].x = 0;
 			_dirtyRectList[0].y = 0;
+			_dirtyRectList[0].w = (_videoMode.mode == GFX_HALF) ? _videoMode.hardwareWidth / 2 : _videoMode.hardwareWidth;
 			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? _videoMode.hardwareHeight / 2 : _videoMode.hardwareHeight;
 		}
 
@@ -373,6 +399,7 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 #ifdef USE_OSD
 		drawOSD();
 #endif
+
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwScreen, _numDirtyRects, _dirtyRectList);
 	}
@@ -384,16 +411,16 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 void DINGUXSdlGraphicsManager::showOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
-		_cursorX = _cursorX / 2;
-		_cursorY = _cursorY / 2;
+		_cursorX /= 2;
+		_cursorY /= 2;
 	}
 	SurfaceSdlGraphicsManager::showOverlay();
 }
 
 void DINGUXSdlGraphicsManager::hideOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
-		_cursorX = _cursorX * 2;
-		_cursorY = _cursorY * 2;
+		_cursorX *= 2;
+		_cursorY *= 2;
 	}
 	SurfaceSdlGraphicsManager::hideOverlay();
 }
@@ -408,11 +435,14 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 		_videoMode.aspectRatioCorrection = false;
 	}
 
+#ifndef GCW0
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
 		debug("GraphicsMode set to HALF");
-	} else {
+	} else
+#endif
+	{
 		setGraphicsMode(GFX_NORMAL);
 		debug("GraphicsMode set to NORMAL");
 	}
@@ -465,7 +495,7 @@ bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
-			return _videoMode.aspectRatioCorrection;
+		return _videoMode.aspectRatioCorrection;
 	case OSystem::kFeatureCursorPalette:
 		return !_cursorPaletteDisabled;
 	default:
@@ -476,8 +506,8 @@ bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 	if (_cursorX != x || _cursorY != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-			x = x / 2;
-			y = y / 2;
+			x /= 2;
+			y /= 2;
 		}
 	}
 	SurfaceSdlGraphicsManager::warpMouse(x, y);

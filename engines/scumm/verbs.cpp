@@ -680,6 +680,8 @@ void ScummEngine_v2::checkExecVerbs() {
 		case 'l':
 			object = 3;
 			break;
+		default:
+			break;
 		}
 
 		if (object != -1) {
@@ -1000,6 +1002,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		// occur in FT; subtype 10, which is used for the speech associated
 		// with the string).
 		byte buf[384];
+		memset(buf, 0, sizeof(buf));
 		convertMessageToString(msg, buf, sizeof(buf));
 		msg = buf;
 		while (*msg == 0xFF)
@@ -1010,6 +1013,9 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		_charset->setCurID(vs->charset_nr);
 
 		// Compute the text rect
+		if (_language == Common::HE_ISR) {
+			vs->curRect.left = _screenWidth - _charset->getStringWidth(0, buf);
+		}
 		vs->curRect.right = 0;
 		vs->curRect.bottom = 0;
 		const byte *msg2 = msg;

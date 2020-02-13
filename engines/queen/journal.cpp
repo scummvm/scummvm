@@ -239,6 +239,8 @@ void Journal::handleKeyDown(uint16 ascii, int keycode) {
 			_quitMode = QM_CONTINUE;
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -291,6 +293,8 @@ void Journal::handleMouseDown(int x, int y) {
 			case ZN_GIVEUP:
 				_quitMode = QM_CONTINUE;
 				_vm->quitGame();
+				break;
+			default:
 				break;
 			}
 		} else if (zoneNum == ZN_NO) {
@@ -372,7 +376,11 @@ void Journal::handleMouseDown(int x, int y) {
 			_vm->subtitles(!_vm->subtitles());
 			drawConfigPanel();
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 	update();
@@ -504,6 +512,8 @@ void Journal::drawInfoPanel() {
 	case 'a':
 		_vm->display()->setTextCentered(132, "Amiga A500/600", false);
 		break;
+	default:
+		break;
 	}
 	switch (ver[1]) {
 	case 'E':
@@ -523,6 +533,8 @@ void Journal::drawInfoPanel() {
 		break;
 	case 'S':
 		_vm->display()->setTextCentered(144, "Espa\xA4""ol", false);
+		break;
+	default:
 		break;
 	}
 	char versionId[13];

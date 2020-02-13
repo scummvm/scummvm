@@ -45,11 +45,11 @@ public:
 	uint32 pos();
 	long read(void *buffer, int len);
 	void write(const void *buffer, int len);
+	bool eof();
 
 	byte readByte();
 	uint16 readWord();
 	uint32 readLong();
-	void readString(char*, int bufferLength);
 	void writeByte(byte v);
 	void writeWord(uint16 v);
 	void writeLong(uint32 v);

@@ -20,13 +20,13 @@ Inhaltsverzeichnis:
  * 3.3 Hinweise zu Spielen auf mehreren CDs
  * 3.4 Bekannte Probleme
  * 3.5 Hinweise zu Beneath a Steel Sky
- * 3.6 Hinweise zu Baphomets Fluch I und II
- * * 3.6.1 Baphomets Fluch
- * * 3.6.2 Baphomets Fluch II
- * * 3.6.3 Zwischensequenzen in Baphomets Fluch
- * * 3.6.4 Zwischensequenzen in Baphomets Fluch (Rückblick)
- * 3.7 Hinweise zu Day of the Tentacle
- * 3.8 Hinweise zu Discworld II
+ * 3.6 Hinweise zu Blade Runner
+ * 3.7 Hinweise zu Baphomets Fluch I und II
+ * * 3.7.1 Baphomets Fluch
+ * * 3.7.2 Baphomets Fluch II
+ * * 3.7.3 Zwischensequenzen in Baphomets Fluch
+ * * 3.7.4 Zwischensequenzen in Baphomets Fluch (Rückblick)
+ * 3.8 Hinweise zu Day of the Tentacle
  * 3.9 Hinweise zu Drači Historie
  * 3.10 Hinweise zu Flight of the Amazon Queen
  * 3.11 Hinweise zu Gobliiins
@@ -124,7 +124,7 @@ schauen Sie öfter einmal vorbei.
 Unter den Systemen, mit denen Sie diese Spiele spielen können, befinden sich
 normale Schreibtisch-Computer (mit den Betriebssystemen Windows, Linux,
 Mac OS X, ...), Spielekonsolen (Dreamcast, Nintendo DS & Wii, PS2, PSP, ...),
-Smartphones (Android, iPhone, PocketPC, Symbian ...) und einige weitere.
+Smartphones (Android, iPhone, Symbian ...) und einige weitere.
 
 Zurzeit befindet sich ScummVM immer noch stark in der Entwicklung. Seien Sie
 sich bewusst, dass wir zwar versuchen, viele Spiele ohne größere Probleme
@@ -395,6 +395,7 @@ Andere Spiele:
      Baphomets Fluch 2.5:
          Die Rückkehr der Tempelritter           [sword25]
      Beavis and Butt-head in Virtual Stupidity   [bbvs]
+     Blade Runner                                [bladerunner]
      Blue Force                                  [blueforce]
      Bud Tucker in Double Trouble                [tucker]
      Chivalry is Not Dead                        [chivalry]
@@ -705,7 +706,27 @@ SKY.DSK) ablegen, in einem Extrapfad oder im Verzeichnis, in dem sich Ihre
 ausführbare ScummVM-Datei befindet.
 
 
-3.6) Hinweise zu Baphomets Fluch I und II:
+3.6) Hinweise zu Blade Runner
+
+Unterstützt werden die Versionen auf Englisch (CD und DVD), Französisch, Deutsch,
+Italienisch, Russisch (von Fargus Multimedia) und Spanisch. Daneben existieren
+noch weitere Versionen, die jedoch alle auf der englischen Version.
+
+Alle *.mix-, *.tlk- und *.dat-Dateien aller 4 CDs/der DVD werden benötigt.
+Die Dateien mit dem Namen CDFRAMES.DAT müssen zu CDFRAMES1.DAT,
+CDFRAMES2.DAT, CDFRAMES3.DAT und CDFRAMES4.DAT umbenannt werden, je nachdem,
+von welcher CD sie kopiert wurden. Andere Dateien mit dem gleichen Namen auf
+verschiedenen CDs sind identisch - hier spielt es keine Rolle, welche Datei
+verwendet wird.
+
+Um Untertitel zu aktivieren, laden Sie die Datei SUBTITLES.MIX von unserer
+[Download](https://www.scummvm.org/games/#bladerunner)-Seite herunter und
+legen diese im gleichen Verzeichnis wie die übrigen Spieldateien ab.
+
+"Blade Runner with restored content" wird noch nicht unterstützt und
+kann noch unbekannte Fehler enthalten.
+
+3.7) Hinweise zu Baphomets Fluch I und II:
 ---- -------------------------------------
 Die Anweisungen für die Spiele Baphomets Fluch I und II beziehen sich auf die
 Version von Sold-Out Software, bei der sich jedes Spiel auf je zwei CDs
@@ -714,7 +735,7 @@ für diese Spiele erlangte. Wir hoffen, dass sie allgemein ausreichend
 ausführlich sind, um für andere Ausgaben genauso hilfreich zu sein.
 
 
-3.6.1) Baphomets Fluch:
+3.7.1) Baphomets Fluch:
 ------ ----------------
 Für dieses Spiel benötigen Sie die Dateien aus dem Verzeichnis clusters von
 beiden CDs. Für die Windows- und Macintosh-Versionen benötigen Sie auch die
@@ -731,7 +752,7 @@ Unterschied macht. Die PlayStation-Version erfordert die Dateien tunes.dat und
 tunes.tab.
 
 
-3.6.2) Baphomets Fluch II:
+3.7.2) Baphomets Fluch II:
 ------ -------------------
 Für dieses Spiel benötigen Sie die Dateien aus dem Verzeichnis clusters von
 beiden CDs. (Ein paar von ihnen sind streng genommen eigentlich nicht notwendig,
@@ -746,7 +767,7 @@ Zusätzlich brauchen Sie die Datei cd.inf und optional die Datei startup.inf aus
 dem Verzeichnis sword2 von CD 1.
 
 
-3.6.3) Zwischensequenzen von Baphomets Fluch I und II:
+3.7.3) Zwischensequenzen von Baphomets Fluch I und II:
 ------ -----------------------------------------------
 Die Zwischensequenzen für Baphomets Fluch I und II haben eine kleine Geschichte
 (schauen Sie im nächsten Abschnitt, wenn Sie interessiert sind), aber im Großen
@@ -792,7 +813,7 @@ funktioniert momentan nicht bei der Verwendung von PlayStation-Videos.
 Arbeit notwendig.)
 
 
-3.6.4) Zwischensequenzen von Baphomets Fluch I und II im Rückblick:
+3.7.4) Zwischensequenzen von Baphomets Fluch I und II im Rückblick:
 ------ ------------------------------------------------------------
 Die Originalausgaben von Baphomets Fluch I und II verwendeten das
 Smacker™-Format der RAD Game Tools. Da RAD uns nicht die ältere Ur-Version
@@ -818,7 +839,7 @@ Sache, da das Entschlüsseln von MPEG-Filmen mit vielen Schwierigkeiten verbunde
 war und diese ohnehin nicht so gut aussahen wie Smacker- und DXA-Versionen.
 
 
-3.7) Hinweise zu Day of the Tentacle:
+3.8) Hinweise zu Day of the Tentacle:
 ---- --------------------------------
 
 An einem bestimmten Punkt im Spiel kommen Sie an einem Computer vorbei, der
@@ -839,16 +860,6 @@ mit welcher Sie die ID des Spiels, welches als Easter-Egg gestartet werden soll,
 festlegen können. Jedoch erlauben nicht alle Spiele die Rückkehr zum Hauptmenü.
 Es ist nicht empfehlenswert, Day of the Tentacle selbst als Easter-Egg-Spiel
 festzulegen.
-
-
-3.8) Hinweise zu Discworld II:
----- -------------------------
-Für diese Spiel benötigen Sie alle Dateien im Verzeichnis DW2 auf beiden CDs.
-Zusätzlich benötigen Sie die Datei SAMPLE.BNK.
-
-Sie müssen ENGISH.SMP, ENGLISH.IDX und ENGLISH.TXT von CD1 zu ENGLISH1.SMP,
-ENGLISH1.IDX und ENGLISH1.TXT umbenennen. Die gleichen Dateien auf CD2 müssen
-in ENGLISH2.SMP, ENGLISH2.IDX und ENGLISH2.TXT umbenannt werden.
 
 
 3.9) Hinweise zu Drači Historie:
@@ -1439,7 +1450,6 @@ Die unterstützten Plattformen beinhalten (aber beschränken sich nicht auf):
 
         UNIX            (Linux, Solaris, IRIX, *BSD, ...)
         Windows
-        Windows CE und Windows Mobile (einschließlich Smartphones und PocketPCs)
         Mac OS X
         AmigaOS
         Android
@@ -1791,6 +1801,20 @@ zwischen SCUMM-Spielen und anderen Spielen.
     Escape                 - Überspringt den Vorspann des Spiels.
     Punkt (.)              - Überspringt aktuelle Textzeile.
 
+  Blade Runner:
+    Strg-d                 - Startet den Debugger.
+    Leertaste              - Kampf-Modus ein-/ausschalten
+    Enter oder Escape      - Überspringt ein Video oder eine Dialogzeile
+    Escape                 - Ruft das Spielmenü auf
+    Tab                    - Aktiviert die letzte Datenbank
+    F1                     - Online-Hilfe
+    F2                     - Spiel speichern
+    F3                     - Spiel laden
+    F4                     - Ermittlungs-Datenbank
+    F5                     - Verdächtigen-Datenbank
+    F6                     - Hinweis-Datenbank
+    F10                    - Spiel beenden
+
   Baphomets Fluch:
     F5 oder Escape         - Ruft Menü zum Speichern und Laden auf.
 
@@ -1920,11 +1944,6 @@ Beachten Sie, dass von der Verwendung von Strg+f oder Strg+g abgeraten wird:
 Spiele können abstürzen, wenn sie schneller als mit ihrer normalen
 Geschwindigkeit laufen, da Skripte aus dem Takt kommen.
 
-Hinweis für WinCE-Anwender: Wegen der beschränkten Tastatureingabe-Möglichkeiten
-bei den meisten Geräten wird ein kleiner Teil dieser Tastenkürzel über die
-Neutastenzuweisung und/oder Konsolenaktionen unterstützt. Näheres ist in der
-Datei README-WinCE.txt nachzulesen.
-
 
 5.5) Sprachoptionen:
 ---- ---------------
@@ -2049,6 +2068,16 @@ Die Verwendung von Spielständen aus den Originalversionen wird nicht von allen
 Spiel-Engines unterstützt. Nur bei den folgenden Spielen können Spielstände aus
 den Originalversionen verwendet werden.
 
+  - Blade Runner
+
+    - Mit der Debugging-Konsole und dem Kommando "save" können Spielstände
+      im ursprünglichen Format gespeichert werden. Das Laden ist mit dem
+      Befehl "load" möglich.
+    - Spielstände sind zwischen verschiedenen Sprachversionen austauschbar.
+    - Es wird nicht empfohlen, Spielstände der Version mit wiederhergestelltem Inhalt
+      ("Restored content") zu konfertieren, da es dabei zu nicht vorhersehbaren
+      Fehlern kommen kann.
+
   Elvira 1
     - Fügen Sie 8 Bytes (Name für Spielstand) am Anfang der Spielstanddatei
       hinzu.
@@ -2107,6 +2136,7 @@ der Spielstand unter ScummVM befinden soll.
 
        AGI
        AGOS
+       BLADERUNNER
        CGE
        CINE
        CRUISE
@@ -2144,6 +2174,7 @@ der Spielstand unter ScummVM befinden soll.
    Die Engines, die momentan --save-slot/-x unterstützen, sind:
 
        AGI
+       BLADERUNNER
        CGE
        CINE
        CRUISE
@@ -2675,6 +2706,9 @@ Standardmäßig wird die Konfigurationsdatei hier gespeichert und geladen:
     ~/Library/Preferences/ScummVM Preferences
     (Hierbei bezieht sich ~ auf das Benutzerverzeichnis.)
 
+    iOS:
+    /var/mobile/Library/ScummVM/scummvm.ini
+
     Sonstige:
     scummvm.ini im aktuellen Verzeichnis
 
@@ -2846,7 +2880,6 @@ folgende nicht standardmäßige Schlüsselwörter:
                                 silberner Mauszeiger verwendet anstatt der
                                 originalen goldenen (Space Quest 4).
 
-
 Baphomets Fluch II verfügt zusätzlich über folgende nicht standardmäßige
 Schlüsselwörter:
 
@@ -2855,6 +2888,12 @@ Schlüsselwörter:
     object_labels      Bool     Falls „true“, werden Objektnamen angezeigt.
     reverse_stereo     Bool     Falls „true“, werden Stereokanäle umgekehrt.
     sfx_mute           Bool     Falls „true“, werden Geräusche unterdrückt.
+
+Blade Runner verfügt zusätzlich über folgende nicht standardmäßige Schlüsselwörter:
+    shorty             bool     Falls "true", wird das Spiel die Charaktere "schrumpfen"
+                                und die Stimmen hochpitchen.
+    sitcom             bool     Falls "true", wird das Spiel Gelächter nach Dialogen oder
+                                Erzählungen abspielen.
 
 Flight of the Amazon Queen verfügt zusätzlich über folgende nicht standardmäßige
 Schlüsselwörter:

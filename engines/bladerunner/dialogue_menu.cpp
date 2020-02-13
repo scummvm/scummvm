@@ -41,13 +41,7 @@ DialogueMenu::DialogueMenu(BladeRunnerEngine *vm) {
 	_vm = vm;
 	reset();
 	_textResource = new TextResource(_vm);
-	_shapes.reserve(8);
-	for (int i = 0; i != 8; ++i) {
-		_shapes.push_back(Shape(_vm));
-		bool r = _shapes[i].open("DIALOG.SHP", i);
-		assert(r);
-		(void)r;
-	}
+	_shapes = new Shapes(_vm);
 
 	_screenX = 0;
 	_screenY = 0;
@@ -57,12 +51,17 @@ DialogueMenu::DialogueMenu(BladeRunnerEngine *vm) {
 
 DialogueMenu::~DialogueMenu() {
 	delete _textResource;
+	delete _shapes;
 }
 
-bool DialogueMenu::loadText(const Common::String &name) {
-	bool r = _textResource->open(name);
+bool DialogueMenu::loadResources() {
+	bool r = _textResource->open("DLGMENU");
 	if (!r) {
 		error("Failed to load dialogue menu text");
+	}
+	r = _shapes->load("DIALOG.SHP");
+	if (!r) {
+		error("Failed to load dialogue menu shapes");
 	}
 	return r;
 }
@@ -141,6 +140,25 @@ bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int prio
 	// calculatePosition();
 
 	return true;
+}
+
+/**
+* Aux function - used in cut content mode to re-use some NeverRepeatOnceSelected dialogue options for different characters
+*/
+bool DialogueMenu::clearNeverRepeatWasSelectedFlag(int answer) {
+	int foundIndex = -1;
+	for (int i = 0; i != _neverRepeatListSize; ++i) {
+		if (answer == _neverRepeatValues[i]) {
+			foundIndex = i;
+			break;
+		}
+	}
+
+	if (foundIndex >= 0 && _neverRepeatWasSelected[foundIndex]) {
+		_neverRepeatWasSelected[foundIndex] = false;
+		return true;
+	}
+	return false;
 }
 
 bool DialogueMenu::addToListNeverRepeatOnceSelected(int answer, int priorityPolite, int priorityNormal, int prioritySurly) {
@@ -324,7 +342,7 @@ void DialogueMenu::draw(Graphics::Surface &s) {
 
 		if (_items[i].colorIntensity < targetColorIntensity) {
 			_items[i].colorIntensity += 4;
-			if(_items[i].colorIntensity > targetColorIntensity) {
+			if (_items[i].colorIntensity > targetColorIntensity) {
 				_items[i].colorIntensity = targetColorIntensity;
 			}
 		} else if (_items[i].colorIntensity > targetColorIntensity) {
@@ -353,21 +371,21 @@ void DialogueMenu::draw(Graphics::Surface &s) {
 		s.hLine(x1 + 8, mouse.y, x2 + 2, s.format.RGBToColor(64, 64, 64));
 	}
 
-	_shapes[0].draw(s, x1, y1);
-	_shapes[3].draw(s, x2, y1);
-	_shapes[2].draw(s, x1, y2);
-	_shapes[5].draw(s, x2, y2);
+	_shapes->get(0)->draw(s, x1, y1);
+	_shapes->get(3)->draw(s, x2, y1);
+	_shapes->get(2)->draw(s, x1, y2);
+	_shapes->get(5)->draw(s, x2, y2);
 
 	for (int i = 0; i != _listSize; ++i) {
-		_shapes[1].draw(s, x1, y);
-		_shapes[4].draw(s, x2, y);
-		uint16 color = s.format.RGBToColor((_items[i].colorIntensity / 2) * (256 / 32), (_items[i].colorIntensity / 2) * (256 / 32), _items[i].colorIntensity * (256 / 32));
-		_vm->_mainFont->drawColor(_items[i].text, s, x, y, color);
+		_shapes->get(1)->draw(s, x1, y);
+		_shapes->get(4)->draw(s, x2, y);
+		uint32 color = s.format.RGBToColor((_items[i].colorIntensity / 2) * (256 / 32), (_items[i].colorIntensity / 2) * (256 / 32), _items[i].colorIntensity * (256 / 32));
+		_vm->_mainFont->drawString(&s, _items[i].text, x, y, s.w, color);
 		y += kLineHeight;
 	}
 	for (; x != x2; ++x) {
-		_shapes[6].draw(s, x, y1);
-		_shapes[7].draw(s, x, y2);
+		_shapes->get(6)->draw(s, x, y1);
+		_shapes->get(7)->draw(s, x, y2);
 	}
 }
 
@@ -388,12 +406,12 @@ const char *DialogueMenu::getText(int id) const {
 void DialogueMenu::calculatePosition(int unusedX, int unusedY) {
 	_maxItemWidth = 0;
 	for (int i = 0; i != _listSize; ++i) {
-		_maxItemWidth = MAX(_maxItemWidth, _vm->_mainFont->getTextWidth(_items[i].text));
+		_maxItemWidth = MAX(_maxItemWidth, _vm->_mainFont->getStringWidth(_items[i].text));
 	}
 	_maxItemWidth += 2;
 
-	int w = kBorderSize + _shapes[4].getWidth() + _maxItemWidth;
-	int h = kBorderSize + _shapes[7].getHeight() + kLineHeight * _listSize;
+	int w = kBorderSize + _shapes->get(4)->getWidth() + _maxItemWidth;
+	int h = kBorderSize + _shapes->get(7)->getHeight() + kLineHeight * _listSize;
 
 	_screenX = _centerX - w / 2;
 	_screenY = _centerY - h / 2;
@@ -533,13 +551,13 @@ void DialogueMenu::darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int 
 	if (x1 < x2 && y1 < y2) {
 		for (int y = y1; y != y2; ++y) {
 			for (int x = x1; x != x2; ++x) {
-				uint16 *p = (uint16 *)s.getBasePtr(x, y);
+				void *p = s.getBasePtr(CLIP(x, 0, s.w - 1), CLIP(y, 0, s.h - 1));
 				uint8 r, g, b;
-				s.format.colorToRGB(*p, r, g, b);
+				s.format.colorToRGB(READ_UINT32(p), r, g, b);
 				r /= 4;
 				g /= 4;
 				b /= 4;
-				*p = s.format.RGBToColor(r, g, b);
+				drawPixel(s, p, s.format.RGBToColor(r, g, b));
 			}
 		}
 	}

@@ -49,7 +49,7 @@ public:
 	DECLARE_PERSISTENT(ScValue, BaseClass)
 
 	bool _isConstVar;
-	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	void setValue(ScValue *val);
 	bool _persistent;
 	bool propExists(const char *name);
@@ -97,7 +97,7 @@ public:
 	ScValue(BaseGame *inGame, int32 Val);
 	ScValue(BaseGame *inGame, double Val);
 	ScValue(BaseGame *inGame, const char *Val);
-	virtual ~ScValue();
+	~ScValue() override;
 	Common::HashMap<Common::String, ScValue *> _valObject;
 	Common::HashMap<Common::String, ScValue *>::iterator _valIter;
 

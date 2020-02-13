@@ -67,7 +67,7 @@ class BehaviorManager : public CObject {
 
   public:
 	BehaviorManager();
-	~BehaviorManager();
+	~BehaviorManager() override;
 
 	void clear();
 

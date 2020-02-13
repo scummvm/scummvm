@@ -120,6 +120,8 @@ public:
 					state = 2;
 				}
 				break;
+			default:
+				break;
 			}
 			++_pos;
 		}
@@ -134,6 +136,8 @@ public:
 			break;
 		case kDataTokenEx:
 			token = "!!";
+			break;
+		default:
 			break;
 		}
 		int tokenLen = strlen(token);
@@ -252,6 +256,8 @@ Audio::RewindableAudioStream *CompressedSound::load(CompressedSoundType type, in
 			offset = kCompressedSoundDataFileHeaderSize + 24;
 		}
 		break;
+	default:
+		break;
 	}
 	if (offset == 0) {
 		return nullptr;
@@ -294,6 +300,8 @@ void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
 			case '_':
 				*p = '-';
 				tryOpen = true;
+				break;
+			default:
 				break;
 			}
 		}
@@ -889,6 +897,8 @@ void TuckerEngine::loadFx() {
 					s->_stopFxSpriteNum = t.getNextInteger();
 					s->_flagValueStopFx = t.getNextInteger();
 				}
+				break;
+			default:
 				break;
 			}
 			if (s->_type == 8) {

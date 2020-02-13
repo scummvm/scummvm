@@ -311,6 +311,9 @@ uint32 SoundGenSarien::mixSound() {
 			} else {
 				_chn[c].env = 0;
 			}
+			break;
+		default:
+			break;
 		}
 	}
 

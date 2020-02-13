@@ -117,10 +117,19 @@ public:
 	ScriptEnv(const Command &cmd, byte room, byte verb, byte noun) :
 			_cmd(cmd), _room(room), _verb(verb), _noun(noun), _ip(0) { }
 
+	virtual ~ScriptEnv() { }
+
+	enum kOpType {
+		kOpTypeDone,
+		kOpTypeCond,
+		kOpTypeAct
+	};
+
 	byte op() const { return _cmd.script[_ip]; }
+	virtual kOpType getOpType() const = 0;
 	// We keep this 1-based for easier comparison with the original engine
 	byte arg(uint i) const { return _cmd.script[_ip + i]; }
-	void skip(uint i) { _ip += i; }
+	virtual void next(uint numArgs) = 0;
 
 	bool isMatch() const {
 		return (_cmd.room == IDI_ANY || _cmd.room == _room) &&
@@ -128,15 +137,15 @@ public:
 		       (_cmd.noun == IDI_ANY || _cmd.noun == _noun);
 	}
 
-	byte getCondCount() const { return _cmd.numCond; }
-	byte getActCount() const { return _cmd.numAct; }
 	byte getNoun() const { return _noun; }
 	const Command &getCommand() const { return _cmd; }
+
+protected:
+	byte _ip;
 
 private:
 	const Command &_cmd;
 	const byte _room, _verb, _noun;
-	byte _ip;
 };
 
 enum {
@@ -231,7 +240,7 @@ struct RoomData {
 class AdlEngine : public Engine {
 friend class Console;
 public:
-	virtual ~AdlEngine();
+	~AdlEngine() override;
 
 	bool pollEvent(Common::Event &event) const;
 	void bell(uint count = 1) const;
@@ -240,9 +249,9 @@ protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
 
 	// Engine
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
 
 	Common::String getDiskImageName(byte volume) const { return Adl::getDiskImageName(*_gameDescription, volume); }
 	GameType getGameType() const { return Adl::getGameType(*_gameDescription); }
@@ -353,6 +362,7 @@ protected:
 	void doActions(ScriptEnv &env);
 	bool doOneCommand(const Commands &commands, byte verb, byte noun);
 	void doAllCommands(const Commands &commands, byte verb, byte noun);
+	virtual ScriptEnv *createScriptEnv(const Command &cmd, byte room, byte verb, byte noun);
 
 	// Debug functions
 	static Common::String toAscii(const Common::String &str);
@@ -435,16 +445,16 @@ private:
 	void setScriptDelay(uint scriptDelay) const { _scriptDelay = scriptDelay; }
 	Common::String getScriptLine() const;
 	// Engine
-	Common::Error run();
-	bool hasFeature(EngineFeature f) const;
-	bool canLoadGameStateCurrently();
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override;
 
 	// Text input
 	byte convertKey(uint16 ascii) const;
 	Common::String getWord(const Common::String &line, uint &index) const;
 
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
 };
 

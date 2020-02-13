@@ -257,6 +257,8 @@ void GnapEngine::runMenu() {
 		case 4:
 			updateMenuStatusQueryQuit();
 			break;
+		default:
+			break;
 		}
 
 		gameUpdateTick();

@@ -435,6 +435,10 @@ OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) {
 	int npcNum = *++str - 1;
+	// WORKAROUND: Fix script error talking to woman in Tailor shop
+	if (npcNum == 111 && _vm->getLanguage() == Common::ES_ESP)
+		npcNum = 5;
+
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	TattooPerson &person = people[npcNum];
 	person._misc = 0;

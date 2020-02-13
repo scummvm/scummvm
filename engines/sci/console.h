@@ -39,11 +39,11 @@ bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpOffset);
 class Console : public GUI::Debugger {
 public:
 	Console(SciEngine *engine);
-	virtual ~Console();
+	~Console() override;
 
 private:
-	virtual void preEnter();
-	virtual void postEnter();
+	void preEnter() override;
+	void postEnter() override;
 
 	// General
 	bool cmdHelp(int argc, const char **argv);

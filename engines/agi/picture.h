@@ -34,6 +34,13 @@ namespace Agi {
 struct AgiPicture {
 	uint32 flen;            /**< size of raw data */
 	uint8 *rdata;           /**< raw vector image data */
+
+	void reset() {
+		flen = 0;
+		rdata = nullptr;
+	}
+
+	AgiPicture() { reset(); }
 };
 
 // AGI picture version

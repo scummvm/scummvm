@@ -377,8 +377,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 				}
 				temp.translate((celObjPic->_relativePosition.x * scriptToScreenX).toInt() - originX, 0);
 
-				// TODO: This is weird.
-				int deltaX = plane._planeRect.width() - temp.right - 1 - temp.left;
+				int deltaX = plane._planeRect.width() - temp.right - temp.left;
 
 				_scaledPosition.x += deltaX;
 				_screenItemRect.translate(deltaX, 0);
@@ -424,8 +423,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 				}
 				temp.translate(celObjPic->_relativePosition.x - (originX * scaleX).toInt(), celObjPic->_relativePosition.y - (celObj._origin.y * scaleY).toInt());
 
-				// TODO: This is weird.
-				int deltaX = plane._gameRect.width() - temp.right - 1 - temp.left;
+				int deltaX = plane._gameRect.width() - temp.right - temp.left;
 
 				_scaledPosition.x += deltaX;
 				_screenItemRect.translate(deltaX, 0);
@@ -475,16 +473,18 @@ CelObj &ScreenItem::getCelObj() const {
 		switch (_celInfo.type) {
 			case kCelTypeView:
 				_celObj.reset(new CelObjView(_celInfo.resourceId, _celInfo.loopNo, _celInfo.celNo));
-			break;
+				break;
 			case kCelTypePic:
 				error("Internal error, pic screen item with no cel.");
-			break;
+				break;
 			case kCelTypeMem:
 				_celObj.reset(new CelObjMem(_celInfo.bitmap));
-			break;
+				break;
 			case kCelTypeColor:
 				_celObj.reset(new CelObjColor(_celInfo.color, _insetRect.width(), _insetRect.height()));
-			break;
+				break;
+			default:
+				break;
 		}
 	}
 

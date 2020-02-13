@@ -1305,6 +1305,8 @@ void RMCharacter::newBoxEntered(int nBox) {
 			case PAT_WALKLEFT:
 				setPattern(PAT_WALKRIGHT);
 				break;
+			default:
+				break;
 			}
 		}
 	}

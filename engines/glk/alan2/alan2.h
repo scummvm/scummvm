@@ -20,37 +20,45 @@
  *
  */
 
+/* Based on Alan2 interpreter version 2.8(6) */
+
 #ifndef GLK_ALAN2
 #define GLK_ALAN2
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/stack.h"
 #include "glk/glk_api.h"
-#include "glk/alan2/acode.h"
-#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
-
-typedef Common::FixedStack<Aptr, 100> Alan2Stack;
-class Decode;
-class Execute;
-class Interpreter;
-class SaveLoad;
-
-#define N_EVTS 100
 
 /**
  * Alan2 game interpreter
  */
 class Alan2 : public GlkAPI {
+private:
+	bool _restartFlag;
 public:
 	bool vm_exited_cleanly;
+	Common::String _advName;
+	int _saveSlot;
+	bool _pendingLook;
 private:
 	/**
-	 * Validates the game file, and if it's invalid, displays an error dialog
+	 * Initialization
 	 */
-	bool is_gamefile_valid();
+	bool initialize();
+
+	/**
+	 * Deinitialization
+	 */
+	void deinitialize();
+
+	/**
+	 * Synchronize data to or from a save file
+	 */
+	void synchronizeSave(Common::Serializer &s);
 public:
 	/**
 	 * Constructor
@@ -60,80 +68,39 @@ public:
 	/**
 	 * Run the game
 	 */
-	void runGame();
+	void runGame() override;
+
+	/**
+	 * Flag for the game to restart
+	 */
+	void setRestart(bool flag) { _restartFlag = flag; }
+
+	/**
+	 * Returns whether the game should restart
+	 */
+	bool shouldRestart() const { return _restartFlag; }
 
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_ALAN2; }
+	InterpreterType getInterpreterType() const override {
+		return INTERPRETER_ALAN2;
+	}
 
 	/**
-	 * Load a savegame from the passed stream
+	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error loadGameData(strid_t file) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
-	 * Save the game to the passed stream
+	 * Save the game. The passed write stream represents access to the UMem chunk
+	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 
-	/**
-	 * Output a string to the screen
-	 */
-	void output(const Common::String str);
-
-	/**
-	 * Print a message from the message table
-	 */
-	void printMessage(MsgKind msg);
-
-	/**
-	 * Print an error from the message table, force new player input and abort
-	 */
-	void printError(MsgKind msg);
-
-	/**
-	 * Make a new paragraph, i.e one empty line (one or two newlines)
-	 */
-	void paragraph();
-
-	/**
-	 * Print the the status line on the top of the screen
-	 */
-	void statusLine();
-
-	/**
-	 * Make a newline, but check for screen full
-	 */
-	void newLine();
-
-	// Engine variables
-	Alan2Stack *_stack;
-	int pc;
-	ParamElem *params;
-	Aword *memory;	// The Amachine memory
-	int memTop;		// Top of memory
-	CurVars cur;	// Amachine variables
-	int col;
-	bool fail;
-	int scores[100];	// FIXME: type + size
-	AcdHdr *header;
-	bool _needSpace;		// originally "needsp"
-
-	EvtElem *evts;					// Event table pointer
-	bool looking;					// LOOKING? flag
-	int dscrstkp;   	            // Describe-stack pointer
-	Common::File *_txtFile;
-	bool _anyOutput;
-	winid_t _bottomWindow;
-
-	Decode *_decode;
-	Execute *_execute;
-	Interpreter *_interpreter;
-	SaveLoad *_saveLoad;
 };
 
-extern Alan2 *_vm;
+extern Alan2 *g_vm;
 
 } // End of namespace Alan2
 } // End of namespace Glk

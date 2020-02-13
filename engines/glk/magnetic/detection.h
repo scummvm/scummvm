@@ -32,6 +32,18 @@ namespace Glk {
 namespace Magnetic {
 
 /**
+ * The following game database is built from Generic/games.txt, and is used
+ * to identify the game being run.  Magnetic Scrolls games don't generally
+ * supply a status line, so this data can be used instead.
+ */
+struct gms_game_table_t {
+	const uint32 undo_size;   ///< Header word at offset 0x22
+	const uint32 undo_pc;     ///< Header word at offset 0x26
+	const char *const name;   ///< Game title and platform
+};
+typedef const gms_game_table_t *gms_game_tableref_t;
+
+/**
  * Meta engine for Magnetic interpreter
  */
 class MagneticMetaEngine {
@@ -56,6 +68,12 @@ public:
 	 */
 	static void detectClashes(Common::StringMap &map);
 };
+
+/**
+ * Look up and return the game table entry given a game's undo size and
+ * undo pc values.  Returns the entry, or NULL if not found.
+ */
+extern const gms_game_table_t *gms_gameid_lookup_game(uint32 undo_size, uint32 undo_pc);
 
 } // End of namespace Magnetic
 } // End of namespace Glk

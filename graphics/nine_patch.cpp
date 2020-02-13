@@ -73,14 +73,16 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
 		uint32 *color = vertical ? (uint32 *)bmp->getBasePtr(0, i) : (uint32 *)bmp->getBasePtr(i, 0);
 		bmp->format.colorToARGB(*color, a, r, g, b);
 
-		if (i == len - 1)
+		if (i == len - 1) {
 			zz = -1;
-		else if (r == 0 && g == 0 && b == 0 && a == 255)
+		} else if (r == 0 && g == 0 && b == 0 && a == 255) {
 			zz = 0;
-		else if (a == 0 || r + g + b + a == 255 * 4)
+		} else if (a == 0 || r + g + b + a == 255 * 4) {
 			zz = 1;
-		else
+		} else {
+			warning("NinePatchSide::init(): Bad pixel at %d,%d", (vertical ? 0 : i), (vertical ? i : 0));
 			return false;
+		}
 
 		if (z != zz) {
 			if (s != -1) {
@@ -128,7 +130,7 @@ void NinePatchSide::calcOffsets(int len) {
 		dest_offset += _m[i]->dest_length;
 	}
 
-	if (remaining_stretch) {
+	if (remaining_stretch && _m.size()) {
 		_m[j]->dest_length += remaining_stretch;
 		if (j + 1 < _m.size())
 			_m[j + 1]->dest_offset += remaining_stretch;
@@ -168,12 +170,12 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	while (i < bmp->w) {
 		bmp->format.colorToARGB(*(uint32 *)bmp->getBasePtr(i, bmp->h - 1), a, r, g, b);
 
-		if (r + g + b == 0 && a == 1) {
+		if (r + g + b == 0 && a == 255) {
 			if (_padding.left == -1)
 				_padding.left = i - 1;
 			else if (_padding.right != -1)
 				goto bad_bitmap;
-		} else if (a == 0 || r + g + b + a == 4) {
+		} else if (a == 0 || r + g + b == 0) {
 			if (_padding.left != -1 && _padding.right == -1)
 				_padding.right = bmp->w - i - 1;
 		}
@@ -184,12 +186,12 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	while (i < bmp->h) {
 		bmp->format.colorToARGB(*(uint32 *)bmp->getBasePtr(bmp->w - 1, i), a, r, g, b);
 
-		if (r + g + b == 0 && a == 1) {
+		if (r + g + b == 0 && a == 255) {
 			if (_padding.top == -1)
 				_padding.top = i - 1;
 			else if (_padding.bottom != -1)
 				goto bad_bitmap;
-		} else if (a == 0 || r + g + b + a == 4) {
+		} else if (a == 0 || r + g + b == 0) {
 			if (_padding.top != -1 && _padding.bottom == -1)
 				_padding.bottom = bmp->h - i - 1;
 		}
@@ -198,12 +200,14 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 
 	if (!_h.init(bmp, false) || !_v.init(bmp, true)) {
 bad_bitmap:
+		warning("NinePatchBitmap::NinePatchBitmap(): Bad bitmap");
+
 		_h._m.clear();
 		_v._m.clear();
 	}
 }
 
-void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, byte numColors) {
+void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, int numColors) {
 	/* don't draw bitmaps that are smaller than the fixed area */
 	if (dw < _h._fix || dh < _v._fix)
 		return;
@@ -274,7 +278,7 @@ void NinePatchBitmap::drawRegions(Graphics::Surface &target, int dx, int dy, int
 						_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
 
 			_bmp->blit(target, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-					Graphics::FLIP_NONE, &r, TS_ARGB(255, 255, 255, 255),
+					Graphics::FLIP_NONE, &r, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
 					_h._m[j]->dest_length, _v._m[i]->dest_length);
 		}
 	}
@@ -309,7 +313,7 @@ void NinePatchBitmap::blitClip(Graphics::Surface &target, Common::Rect clip, int
 				_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
 
 			_bmp->blitClip(target, clip, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-				Graphics::FLIP_NONE, &r, TS_ARGB(255, 255, 255, 255),
+				Graphics::FLIP_NONE, &r, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
 				_h._m[j]->dest_length, _v._m[i]->dest_length);
 		}
 	}
@@ -343,12 +347,12 @@ static inline uint32 dist(uint32 a, uint32 b) {
 	return b - a;
 }
 
-byte NinePatchBitmap::closestGrayscale(uint32 color, byte* palette, byte paletteLength) {
+byte NinePatchBitmap::closestGrayscale(uint32 color, byte* palette, int paletteLength) {
 	if (!_cached_colors.contains(color)) {
 		byte target = grayscale(color);
 		byte bestNdx = 0;
 		byte bestColor = grayscale(palette[0], palette[1], palette[2]);
-		for (byte i = 1; i < paletteLength; ++i) {
+		for (int i = 1; i < paletteLength; ++i) {
 			byte current = grayscale(palette[i * 3], palette[(i * 3) + 1], palette[(i * 3) + 2]);
 			if (dist(target, bestColor) >= dist(target, current)) {
 				bestColor = current;

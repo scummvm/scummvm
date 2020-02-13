@@ -271,6 +271,9 @@ float Sortie::calcH() {
 			case DUT_SHIELD:
 				retValue += 1;
 				break;
+
+			default:
+				break;
 			}
 		}
 	}

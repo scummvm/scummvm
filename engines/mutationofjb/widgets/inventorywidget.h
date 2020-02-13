@@ -64,10 +64,10 @@ public:
 		_callback = callback;
 	}
 
-	virtual void handleEvent(const Common::Event &event) override;
+	void handleEvent(const Common::Event &event) override;
 
 protected:
-	virtual void draw(Graphics::ManagedSurface &surface) override;
+	void draw(Graphics::ManagedSurface &surface) override;
 
 private:
 	void drawInventoryItem(Graphics::ManagedSurface &surface, const Common::String &item, int pos);

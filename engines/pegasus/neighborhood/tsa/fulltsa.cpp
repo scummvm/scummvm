@@ -832,6 +832,8 @@ uint FullTSA::getNumHints() {
 			if (GameState.getCurrentRoom() == kTSA0B && GameState.getTSA0BZoomedIn())
 				numHints = 3;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -947,6 +949,8 @@ short FullTSA::getStaticCompassAngle(const RoomID room, const DirectionConstant 
 	case kTSA37:
 		result -= kCompassShift * 2;
 		break;
+	default:
+		break;
 	}
 
 	return result;
@@ -983,6 +987,8 @@ void FullTSA::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpe
 				getStaticCompassAngle(exitEntry.room, exitEntry.direction) + kCompassShift * 3 / 2);
 		compassMove.insertFaderKnot(exitEntry.movieStart + kFullTSAFrameDuration * 105,
 				getStaticCompassAngle(exitEntry.exitRoom, exitEntry.exitDirection));
+		break;
+	default:
 		break;
 	}
 }
@@ -1092,6 +1098,8 @@ TimeValue FullTSA::getViewTime(const RoomID room, const DirectionConstant direct
 			break;
 		}
 		break;
+	default:
+		break;
 	}
 
 	if (extraID != 0xffffffff) {
@@ -1135,6 +1143,8 @@ void FullTSA::pickedUpItem(Item *item) {
 		biochip = (BiochipItem *)_vm->getAllItems().findItemByID(kMapBiochip);
 		_vm->addItemToBiochips(biochip);
 		GameState.setScoringGotPegasusBiochip(true);
+		break;
+	default:
 		break;
 	}
 }
@@ -1203,6 +1213,8 @@ void FullTSA::startDoorOpenMovie(const TimeValue startTime, const TimeValue stop
 			return;
 		}
 		break;
+	default:
+		break;
 	}
 
 	Neighborhood::startDoorOpenMovie(startTime, stopTime);
@@ -1220,6 +1232,8 @@ InputBits FullTSA::getInputFilter() {
 	case kTSA37:
 		// Can't move forward in Pegasus. Only press the exit button.
 		result &= ~(kFilterUpButton | kFilterUpAuto);
+		break;
+	default:
 		break;
 	}
 
@@ -1240,6 +1254,8 @@ void FullTSA::turnLeft() {
 	case MakeRoomView(kTSA0B, kEast):
 		shutDownComparisonMonitor();
 		break;
+	default:
+		break;
 	}
 
 	Neighborhood::turnLeft();
@@ -1259,6 +1275,8 @@ void FullTSA::turnRight() {
 	case MakeRoomView(kTSA0B, kEast):
 		shutDownComparisonMonitor();
 		break;
+	default:
+		break;
 	}
 
 	Neighborhood::turnRight();
@@ -1269,6 +1287,8 @@ void FullTSA::openDoor() {
 	case MakeRoomView(kTSA15, kSouth):
 		if (GameState.getTSAState() == kTSAPlayerNeedsHistoricalLog || GameState.getTSAState() == kRobotsAtFrontDoor)
 			setCurrentAlternate(kAltTSARedAlert);
+		break;
+	default:
 		break;
 	}
 
@@ -1296,6 +1316,8 @@ CanOpenDoorReason FullTSA::canOpenDoor(DoorTable::Entry &entry) {
 		if (GameState.getTSACommandCenterLocked())
 			return kCantOpenLocked;
 		break;
+	default:
+		break;
 	}
 
 	return Neighborhood::canOpenDoor(entry);
@@ -1322,6 +1344,7 @@ void FullTSA::downButton(const Input &input) {
 		break;
 	default:
 		Neighborhood::downButton(input);
+		break;
 	}
 }
 
@@ -1370,6 +1393,8 @@ void FullTSA::activateHotspots() {
 					_vm->getAllHotspots().activateOneHotspot(kTSA0BEastCompareWSCSpotID);
 				}
 				break;
+			default:
+				break;
 			}
 		break;
 	case MakeRoomView(kTSA0B, kNorth):
@@ -1382,7 +1407,11 @@ void FullTSA::activateHotspots() {
 				_vm->getAllHotspots().activateOneHotspot(kTSA0BNorthRobotsToReadyRoomSpotID);
 				_vm->getAllHotspots().activateOneHotspot(kTSA0BNorthRobotsToFrontDoorSpotID);
 				break;
+			default:
+				break;
 			}
+		break;
+	default:
 		break;
 	}
 }
@@ -1518,6 +1547,8 @@ void FullTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 			_sprite2.setCurrentFrameIndex(kRedirectionNewTargetSprite);
 			startExtraSequence(kTSA0BRobotsFromReadyRoomToCommandCenter, kExtraCompletedFlag, kFilterNoInput);
 			break;
+		default:
+			break;
 		}
 		break;
 	case kTSA0BNorthRobotsToReadyRoomSpotID:
@@ -1540,6 +1571,8 @@ void FullTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 		case kRobotsAtReadyRoom:
 			// Nothing
 			break;
+		default:
+			break;
 		}
 		break;
 	case kTSA0BNorthRobotsToFrontDoorSpotID:
@@ -1561,6 +1594,8 @@ void FullTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 			GameState.setTSAState(kRobotsAtFrontDoor);
 			_sprite2.setCurrentFrameIndex(kRedirectionNewTargetSprite);
 			startExtraSequence(kTSA0BRobotsFromReadyRoomToFrontDoor, kExtraCompletedFlag, kFilterNoInput);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -1954,6 +1989,8 @@ void FullTSA::startUpRobotMonitor() {
 	case kRobotsAtReadyRoom:
 		showExtraView(kTSA0BNorthRobotsAtRRView);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1989,6 +2026,8 @@ void FullTSA::checkContinuePoint(const RoomID room, const DirectionConstant dire
 	case MakeRoomView(kTSA21Red, kSouth):
 	case MakeRoomView(kTSA26, kNorth):
 		makeContinuePoint();
+		break;
+	default:
 		break;
 	}
 }
@@ -2049,6 +2088,8 @@ void FullTSA::arriveAt(const RoomID room, const DirectionConstant direction) {
 			case kRobotsAtReadyRoom:
 				startUpRobotMonitor();
 				break;
+			default:
+				break;
 			}
 		} else {
 			setCurrentActivation(kActivateTSA0BZoomedOut);
@@ -2063,6 +2104,8 @@ void FullTSA::arriveAt(const RoomID room, const DirectionConstant direction) {
 				break;
 			case kTSAPlayerGotHistoricalLog:
 				startExtraSequence(kTSA0BNorthHistLogOpen, kExtraCompletedFlag, kFilterNoInput);
+				break;
+			default:
 				break;
 			}
 		}
@@ -2091,6 +2134,8 @@ void FullTSA::arriveAt(const RoomID room, const DirectionConstant direction) {
 			case kRobotsAtReadyRoom:
 				initializeComparisonMonitor(kMonitorNeutral, 0);
 				break;
+			default:
+				break;
 			}
 		} else {
 			setCurrentActivation(kActivateTSA0BZoomedOut);
@@ -2118,6 +2163,8 @@ void FullTSA::arriveAt(const RoomID room, const DirectionConstant direction) {
 	case MakeRoomView(kTSA37, kNorth):
 		arriveAtTSA37();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2144,6 +2191,8 @@ void FullTSA::checkRobotLocations(const RoomID room, const DirectionConstant dir
 		case kRobotsAtReadyRoom:
 			setCurrentAlternate(kAltTSARobotsAtReadyRoom);
 			break;
+		default:
+			break;
 		}
 		break;
 	case kTSA16:
@@ -2161,8 +2210,12 @@ void FullTSA::checkRobotLocations(const RoomID room, const DirectionConstant dir
 			case kRobotsAtReadyRoom:
 				setCurrentAlternate(kAltTSARobotsAtReadyRoom);
 				break;
+			default:
+				break;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -2208,6 +2261,8 @@ void FullTSA::arriveAtTSA37() {
 	case kPlayerFinishedWithTSA:
 		initializePegasusButtons(true);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2245,6 +2300,8 @@ void FullTSA::turnTo(const DirectionConstant newDirection) {
 			if (GameState.getTSA0BZoomedIn())
 				startUpComparisonMonitor();
 			break;
+		default:
+			break;
 		}
 		break;
 	case MakeRoomView(kTSA0B, kNorth):
@@ -2281,6 +2338,8 @@ void FullTSA::turnTo(const DirectionConstant newDirection) {
 			if (GameState.getTSA0BZoomedIn())
 				startExtraSequence(kTSA0BShowGuardRobots, kExtraCompletedFlag, kFilterNoInput);
 			break;
+		default:
+			break;
 		}
 		break;
 	case MakeRoomView(kTSA0B, kWest):
@@ -2315,6 +2374,8 @@ void FullTSA::turnTo(const DirectionConstant newDirection) {
 		case kRobotsAtReadyRoom:
 			setCurrentAlternate(kAltTSARobotsAtReadyRoom);
 			break;
+		default:
+			break;
 		}
 		break;
 	case MakeRoomView(kTSA22Red, kEast):
@@ -2342,6 +2403,8 @@ void FullTSA::turnTo(const DirectionConstant newDirection) {
 		}
 
 		setCurrentActivation(kActivateHotSpotAlways);
+		break;
+	default:
 		break;
 	}
 
@@ -2371,6 +2434,8 @@ void FullTSA::closeDoorOffScreen(const RoomID room, const DirectionConstant) {
 	case kTSA37:
 		playSpotSoundSync(kTSAPegasusDoorCloseIn, kTSAPegasusDoorCloseOut);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2384,6 +2449,8 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 			// so it has to happen before Neighborhood::receiveNotification,
 			// which may end up starting another sequence...
 			turnTo(kNorth);
+			break;
+		default:
 			break;
 		}
 	}
@@ -2459,6 +2526,8 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 			case kRobotsAtReadyRoom:
 				startUpComparisonMonitor();
 				break;
+			default:
+				break;
 			}
 			break;
 		case kTSA0BEastZoomOut:
@@ -2519,6 +2588,8 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 			case kRobotsAtFrontDoor:
 			case kRobotsAtReadyRoom:
 				startExtraSequence(kTSA0BShowGuardRobots, kExtraCompletedFlag, kFilterNoInput);
+				break;
+			default:
 				break;
 			}
 			break;
@@ -2687,6 +2758,8 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 				GameState.setWSCRobotDead(false);
 				GameState.setWSCRobotGone(false);
 				break;
+			default:
+				break;
 			};
 			break;
 		case kTSA37TimeJumpToPegasus:
@@ -2721,6 +2794,8 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 					break;
 				case kPlayerOnWayToWSC:
 					g_opticalChip->playOpMemMovie(kMercurySpotID);
+					break;
+				default:
 					break;
 				}
 			}
@@ -2765,6 +2840,8 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 		case kTSA37CongratulationsToExit:
 			GameState.setTSAState(kPlayerFinishedWithTSA);
 			initializePegasusButtons(true);
+			break;
+		default:
 			break;
 		}
 	}
@@ -2847,6 +2924,8 @@ Hotspot *FullTSA::getItemScreenSpot(Item *item, DisplayElement *element) {
 	case kPegasusBiochip:
 		return _vm->getAllHotspots().findHotspotByID(kTSA23WestChipsSpotID);
 		break;
+	default:
+		break;
 	}
 
 	return Neighborhood::getItemScreenSpot(item, element);
@@ -2868,6 +2947,8 @@ void FullTSA::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
 			requestExtraSequence(kTSA0BComparisonStartup, kExtraCompletedFlag, kFilterNoInput);
 			GameState.setScoringPutLogInReader(true);
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -2938,6 +3019,8 @@ void FullTSA::handleInput(const Input &input, const Hotspot *cursorSpot) {
 					_sprite2.hide();
 				}
 				break;
+			default:
+				break;
 			}
 		}
 		break;
@@ -2969,8 +3052,12 @@ void FullTSA::handleInput(const Input &input, const Hotspot *cursorSpot) {
 					_sprite1.hide();
 				}
 				break;
+			default:
+				break;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -3016,6 +3103,8 @@ void FullTSA::doSolve() {
 		_sprite2.setCurrentFrameIndex(kRedirectionNewTargetSprite);
 		startExtraSequence(kTSA0BRobotsFromReadyRoomToFrontDoor, kExtraCompletedFlag, kFilterNoInput);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3034,6 +3123,8 @@ void FullTSA::updateCursor(const Common::Point where, const Hotspot *cursorSpot)
 		case kTSA0BWestMonitorOutSpotID:
 			_vm->_cursor->setCurrentFrameIndex(2);
 			return;
+		default:
+			break;
 		}
 	}
 

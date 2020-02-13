@@ -35,6 +35,7 @@
 #include "common/archive.h"
 #include "common/memstream.h"
 #include "common/system.h"
+#include "common/winexe_pe.h"
 
 namespace Scumm {
 
@@ -114,13 +115,18 @@ void ResExtractor::setCursor(int id) {
 
 
 Win32ResExtractor::Win32ResExtractor(ScummEngine_v70he *scumm) : ResExtractor(scumm) {
+	_exe = new Common::PEResources();
+}
+
+Win32ResExtractor::~Win32ResExtractor() {
+	delete _exe;
 }
 
 bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
 	if (_fileName.empty()) { // We are running for the first time
 		_fileName = _vm->generateFilename(-3);
 
-		if (!_exe.loadFromEXE(_fileName))
+		if (!_exe->loadFromEXE(_fileName))
 			error("Cannot open file %s", _fileName.c_str());
 	}
 

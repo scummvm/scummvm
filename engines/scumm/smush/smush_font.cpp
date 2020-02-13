@@ -192,12 +192,18 @@ void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int 
 	if (x < 0)
 		x = 0;
 
-	for (int i = 0; str[i] != 0; i++) {
-		if ((byte)str[i] >= 0x80 && _vm->_useCJKMode) {
-			x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i+1]);
-			i++;
-		} else
+	if (_vm->_language == Common::HE_ISR) {
+		for (int i = strlen(str); i >= 0; i--) {
 			x += drawChar(buffer, dst_width, x, y, str[i]);
+		}
+	} else {
+		for (int i = 0; str[i] != 0; i++) {
+			if ((byte)str[i] >= 0x80 && _vm->_useCJKMode) {
+				x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i+1]);
+				i++;
+			} else
+				x += drawChar(buffer, dst_width, x, y, str[i]);
+		}
 	}
 }
 

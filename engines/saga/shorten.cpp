@@ -418,6 +418,8 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 								buffer[curChannel][i] += channelOffset;
 
 						break;
+					default:
+						break;
 				}
 
 				// Store mean value, if appropriate (duplicated code from above)

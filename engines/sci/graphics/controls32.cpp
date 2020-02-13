@@ -57,8 +57,6 @@ GfxControls32::~GfxControls32() {
 #pragma mark Text input control
 
 reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
-	SegManager *segMan = _segMan;
-
 	TextEditor editor;
 	reg_t textObject = readSelector(_segMan, controlObject, SELECTOR(text));
 	editor.text = _segMan->getString(textObject);
@@ -172,6 +170,8 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 			case kSciKeyEnter:
 				focused = false;
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -184,124 +184,13 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 		if (event.type != kSciEventNone)
 			eventManager->getSciEvent(kSciEventAny);
 
-		// In SSCI, the font and bitmap were reset here on each iteration
-		// through the loop, but this is not necessary since control is not
-		// yielded back to the VM until input is received, which means there is
-		// nothing that could modify the GfxText32's state with a different font
-		// in the meantime
-
-		bool shouldDeleteChar = false;
-		bool shouldRedrawText = false;
-		uint16 lastCursorPosition = editor.cursorCharPosition;
-		if (event.type == kSciEventKeyDown) {
-			switch (event.character) {
-			case kSciKeyLeft:
-				clearTextOnInput = false;
-				if (editor.cursorCharPosition > 0) {
-					--editor.cursorCharPosition;
-				}
-				break;
-
-			case kSciKeyRight:
-				clearTextOnInput = false;
-				if (editor.cursorCharPosition < editor.text.size()) {
-					++editor.cursorCharPosition;
-				}
-				break;
-
-			case kSciKeyHome:
-				clearTextOnInput = false;
-				editor.cursorCharPosition = 0;
-				break;
-
-			case kSciKeyEnd:
-				clearTextOnInput = false;
-				editor.cursorCharPosition = editor.text.size();
-				break;
-
-			case kSciKeyInsert:
-				clearTextOnInput = false;
-				// Redrawing also changes the cursor rect to reflect the new
-				// insertion mode
-				shouldRedrawText = true;
-				_overwriteMode = !_overwriteMode;
-				break;
-
-			case kSciKeyDelete:
-				clearTextOnInput = false;
-				if (editor.cursorCharPosition < editor.text.size()) {
-					shouldDeleteChar = true;
-				}
-				break;
-
-			case kSciKeyBackspace:
-				clearTextOnInput = false;
-				shouldDeleteChar = true;
-				if (editor.cursorCharPosition > 0) {
-					--editor.cursorCharPosition;
-				}
-				break;
-
-			case kSciKeyEtx:
-				editor.text.clear();
-				editor.cursorCharPosition = 0;
-				shouldRedrawText = true;
-				break;
-
-			default: {
-				if (event.character >= 20 && event.character < 257) {
-					if (clearTextOnInput) {
-						clearTextOnInput = false;
-						editor.text.clear();
-					}
-
-					if (
-						(_overwriteMode && editor.cursorCharPosition < editor.maxLength) ||
-						(editor.text.size() < editor.maxLength && _gfxText32->getCharWidth(event.character, true) + _gfxText32->getStringWidth(editor.text) < editor.textRect.width())
-					) {
-						if (_overwriteMode && editor.cursorCharPosition < editor.text.size()) {
-							editor.text.setChar(event.character, editor.cursorCharPosition);
-						} else {
-							editor.text.insertChar(event.character, editor.cursorCharPosition);
-						}
-
-						++editor.cursorCharPosition;
-						shouldRedrawText = true;
-					}
-				}
-			}
-			}
-		}
-
-		if (shouldDeleteChar) {
-			shouldRedrawText = true;
-			if (editor.cursorCharPosition < editor.text.size()) {
-				editor.text.deleteChar(editor.cursorCharPosition);
-			}
-		}
-
-		if (shouldRedrawText) {
-			eraseCursor(editor);
-			_gfxText32->erase(editor.textRect, true);
-			_gfxText32->drawTextBox(editor.text);
-			drawCursor(editor);
+		if (processEditTextEvent(event, editor, screenItem, clearTextOnInput)) {
 			textChanged = true;
-			screenItem->_updated = g_sci->_gfxFrameout->getScreenCount();
-		} else if (editor.cursorCharPosition != lastCursorPosition) {
-			eraseCursor(editor);
-			drawCursor(editor);
-			screenItem->_updated = g_sci->_gfxFrameout->getScreenCount();
-		} else {
-			flashCursor(editor);
-			screenItem->_updated = g_sci->_gfxFrameout->getScreenCount();
 		}
-
-		g_sci->_gfxFrameout->frameOut(true);
-		g_sci->_gfxFrameout->throttle();
 	}
 
 	g_sci->_gfxFrameout->deletePlane(*plane);
-	if (readSelectorValue(segMan, controlObject, SELECTOR(frameOut))) {
+	if (readSelectorValue(_segMan, controlObject, SELECTOR(frameOut))) {
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 
@@ -314,6 +203,224 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 	}
 
 	return make_reg(0, textChanged);
+}
+
+reg_t GfxControls32::kernelInputText(const reg_t textObject, const reg_t titleObject, const int16 maxTextLength) {
+	// kInputText is only known to be used by Phantasmagoria 2 easter eggs
+
+	TextEditor editor;
+	editor.text = _segMan->getString(textObject);
+	editor.foreColor = 0;
+	editor.backColor = 255;
+	editor.skipColor = 250;
+	editor.fontId = -1;
+	editor.maxLength = maxTextLength;
+	editor.cursorCharPosition = 0;
+	editor.cursorIsDrawn = false;
+	editor.borderColor = 0;
+
+	Common::String title = _segMan->getString(titleObject);
+	_gfxText32->setFont(editor.fontId);
+	GfxFont *systemFont = _gfxCache->getFont(editor.fontId);
+	int16 textWidth = _gfxText32->getCharWidth('M', true) * maxTextLength;
+	int16 titleWidth = _gfxText32->getStringWidth(title);
+	int16 textHeight = _gfxText32->scaleUpHeight(systemFont->getHeight());
+	int16 width = MAX(textWidth, titleWidth) + 4;
+	int16 height = (textHeight * 2) + 7;
+
+	// SSCI doesn't scale the position when centering, so the dialog is
+	//  centered on the left side of the screen in Phantasmagoria 2.
+	Common::Rect editorPlaneRect(width, height);
+	editorPlaneRect.translate((320 - width) / 2, (200 - height) / 2);
+	editor.textRect = Common::Rect(1, (height / 2) + 1, width - 1, height - 1);
+	editor.width = width;
+
+	editor.bitmap = _gfxText32->createTitledFontBitmap(width, height, editor.textRect, editor.text,
+						editor.foreColor, editor.backColor, editor.skipColor, editor.fontId,
+						kTextAlignLeft, editor.borderColor, title,
+						editor.backColor, editor.foreColor, // title colors are inverse
+						editor.fontId, true, true);
+
+	drawCursor(editor);
+
+	Plane *plane = new Plane(editorPlaneRect, kPlanePicTransparent);
+	plane->changePic();
+	g_sci->_gfxFrameout->addPlane(plane);
+
+	CelInfo32 celInfo;
+	celInfo.type = kCelTypeMem;
+	celInfo.bitmap = editor.bitmap;
+
+	ScreenItem *screenItem = new ScreenItem(plane->_object, celInfo, Common::Point(), ScaleInfo());
+	plane->_screenItemList.add(screenItem);
+
+	g_sci->_gfxFrameout->frameOut(true);
+
+	EventManager *eventManager = g_sci->getEventManager();
+	bool wasEnterPressed = false;
+	bool clearTextOnInput = true;
+	for (;;) {
+		const SciEvent event = eventManager->getSciEvent(kSciEventAny | kSciEventPeek);
+
+		bool exitEventLoop = false;
+		// SSCI did not have a QUIT event, but we do, so we have to handle it
+		if (event.type == kSciEventQuit) {
+			exitEventLoop = true;
+		} else if (event.type == kSciEventKeyDown) {
+			switch (event.character) {
+			case kSciKeyEsc:
+				exitEventLoop = true;
+				break;
+			case kSciKeyEnter:
+				wasEnterPressed = true;
+				exitEventLoop = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		// consume all events except QUIT so that the engine quits
+		if (event.type != kSciEventNone && event.type != kSciEventQuit) {
+			eventManager->getSciEvent(kSciEventAny);
+		}
+
+		if (exitEventLoop) {
+			break;
+		}
+
+		processEditTextEvent(event, editor, screenItem, clearTextOnInput);
+	}
+
+	g_sci->_gfxFrameout->deletePlane(*plane);
+	g_sci->_gfxFrameout->frameOut(true);
+	_segMan->freeBitmap(editor.bitmap);
+
+	editor.text.trim();
+	SciArray &string = *_segMan->lookupArray(textObject);
+	string.fromString(editor.text);
+
+	return make_reg(0, wasEnterPressed);
+}
+
+bool GfxControls32::processEditTextEvent(const SciEvent &event, TextEditor &editor, ScreenItem *screenItem, bool &clearTextOnInput) {
+	// In SSCI, the font and bitmap were reset here on each iteration
+	// through the loop, but this is not necessary since control is not
+	// yielded back to the VM until input is received, which means there is
+	// nothing that could modify the GfxText32's state with a different font
+	// in the meantime
+
+	bool textChanged = false;
+	bool shouldDeleteChar = false;
+	bool shouldRedrawText = false;
+	uint16 lastCursorPosition = editor.cursorCharPosition;
+	if (event.type == kSciEventKeyDown) {
+		switch (event.character) {
+		case kSciKeyLeft:
+			clearTextOnInput = false;
+			if (editor.cursorCharPosition > 0) {
+				--editor.cursorCharPosition;
+			}
+			break;
+
+		case kSciKeyRight:
+			clearTextOnInput = false;
+			if (editor.cursorCharPosition < editor.text.size()) {
+				++editor.cursorCharPosition;
+			}
+			break;
+
+		case kSciKeyHome:
+			clearTextOnInput = false;
+			editor.cursorCharPosition = 0;
+			break;
+
+		case kSciKeyEnd:
+			clearTextOnInput = false;
+			editor.cursorCharPosition = editor.text.size();
+			break;
+
+		case kSciKeyInsert:
+			clearTextOnInput = false;
+			// Redrawing also changes the cursor rect to reflect the new
+			// insertion mode
+			shouldRedrawText = true;
+			_overwriteMode = !_overwriteMode;
+			break;
+
+		case kSciKeyDelete:
+			clearTextOnInput = false;
+			if (editor.cursorCharPosition < editor.text.size()) {
+				shouldDeleteChar = true;
+			}
+			break;
+
+		case kSciKeyBackspace:
+			clearTextOnInput = false;
+			shouldDeleteChar = true;
+			if (editor.cursorCharPosition > 0) {
+				--editor.cursorCharPosition;
+			}
+			break;
+
+		case kSciKeyEtx:
+			editor.text.clear();
+			editor.cursorCharPosition = 0;
+			shouldRedrawText = true;
+			break;
+
+		default: {
+			if (event.character >= 20 && event.character < 257) {
+				if (clearTextOnInput) {
+					clearTextOnInput = false;
+					editor.text.clear();
+				}
+
+				if (
+					(_overwriteMode && editor.cursorCharPosition < editor.maxLength) ||
+					(editor.text.size() < editor.maxLength && _gfxText32->getCharWidth(event.character, true) + _gfxText32->getStringWidth(editor.text) < editor.textRect.width())
+				) {
+					if (_overwriteMode && editor.cursorCharPosition < editor.text.size()) {
+						editor.text.setChar(event.character, editor.cursorCharPosition);
+					} else {
+						editor.text.insertChar(event.character, editor.cursorCharPosition);
+					}
+
+					++editor.cursorCharPosition;
+					shouldRedrawText = true;
+				}
+			}
+		}
+		}
+	}
+
+	if (shouldDeleteChar) {
+		shouldRedrawText = true;
+		if (editor.cursorCharPosition < editor.text.size()) {
+			editor.text.deleteChar(editor.cursorCharPosition);
+		}
+	}
+
+	if (shouldRedrawText) {
+		eraseCursor(editor);
+		_gfxText32->erase(editor.textRect, true);
+		_gfxText32->drawTextBox(editor.text);
+		drawCursor(editor);
+		textChanged = true;
+		screenItem->_updated = g_sci->_gfxFrameout->getScreenCount();
+	} else if (editor.cursorCharPosition != lastCursorPosition) {
+		eraseCursor(editor);
+		drawCursor(editor);
+		screenItem->_updated = g_sci->_gfxFrameout->getScreenCount();
+	} else {
+		flashCursor(editor);
+		screenItem->_updated = g_sci->_gfxFrameout->getScreenCount();
+	}
+
+	g_sci->_gfxFrameout->frameOut(true);
+	g_sci->_gfxFrameout->throttle();
+
+	return textChanged;
 }
 
 void GfxControls32::drawCursor(TextEditor &editor) {

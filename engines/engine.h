@@ -41,6 +41,8 @@ class EventManager;
 class SaveFileManager;
 class TimerManager;
 class FSNode;
+class SeekableReadStream;
+class WriteStream;
 }
 namespace GUI {
 class Debugger;
@@ -197,20 +199,17 @@ public:
 	 */
 	virtual void syncSoundSettings();
 
-	/*
-	 * Initialize any engine-specific keymaps.
-	 */
-	virtual void initKeymap() {}
-
-	/*
-	 * Cleanup any engine-specific keymaps.
-	 */
-	virtual void deinitKeymap();
-
 	/**
 	 * Flip mute all sound option.
 	 */
 	virtual void flipMute();
+
+	/**
+	 * Generates the savegame filename
+	 */
+	virtual Common::String getSaveStateName(int slot) const {
+		return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	}
 
 	/**
 	 * Load a game state.
@@ -218,6 +217,13 @@ public:
 	 * @return returns kNoError on success, else an error code.
 	 */
 	virtual Common::Error loadGameState(int slot);
+
+	/**
+	 * Load a game state.
+	 * @param stream	the stream to load the savestate from
+	 * @return returns kNoError on success, else an error code.
+	 */
+	virtual Common::Error loadGameStream(Common::SeekableReadStream *stream);
 
 	/**
 	 * Sets the game slot for a savegame to be loaded after global
@@ -242,9 +248,36 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	/**
+	 * Save a game state.
+	 * @param slot	the slot into which the savestate should be stored
+	 * @param desc	a description for the savestate, entered by the user
+	 * @param isAutosave	Expected to be true if an autosave is being created
+	 * @return returns kNoError on success, else an error code.
+	 */
+	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave);
+
+	/**
+	 * Save a game state.
+	 * @param stream	The write stream to save the savegame data to
+	 * @param isAutosave	Expected to be true if an autosave is being created
+	 * @return returns kNoError on success, else an error code.
+	 */
+	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false);
+
+	/**
 	 * Indicates whether a game state can be saved.
 	 */
 	virtual bool canSaveGameStateCurrently();
+
+	/**
+	 * Shows the ScummVM save dialog, allowing users to save their game
+	 */
+	bool saveGameDialog();
+
+	/**
+	 * Shows the ScummVM Restore dialog, allowing users to load a game
+	 */
+	bool loadGameDialog();
 
 protected:
 

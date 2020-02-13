@@ -263,7 +263,7 @@ bool SavesManager::loadGame() {
 	delete dialog;
 
 	if (slotNum != -1) {
-		loadGameState(slotNum);
+		(void)loadGameState(slotNum);
 		g_vm->_interface->drawParty(true);
 	}
 
@@ -289,6 +289,11 @@ bool SavesManager::saveGame() {
 
 		return slotNum != -1;
 	}
+}
+
+void SavesManager::doAutosave() {
+	if (saveGameState(kAutoSaveSlot, _("Autosave")).getCode() != Common::kNoError)
+		g_vm->GUIError(_("Failed to autosave"));
 }
 
 } // End of namespace Xeen

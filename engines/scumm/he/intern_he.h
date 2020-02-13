@@ -64,16 +64,16 @@ public:
 
 public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v60he();
+	~ScummEngine_v60he() override;
 
-	virtual Common::String generateFilename(const int room) const;
+	Common::String generateFilename(const int room) const override;
 
-	virtual void resetScumm();
+	void resetScumm() override;
 
 protected:
-	virtual void setupOpcodes();
+	void setupOpcodes() override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
 	void localizeArray(int slot, byte scriptSlot);
 	void redimArray(int arrayId, int newX, int newY, int d);
@@ -83,7 +83,7 @@ protected:
 	int virtScreenSave(byte *dst, int x1, int y1, int x2, int y2);
 	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
 
-	virtual void decodeParseString(int a, int b);
+	void decodeParseString(int a, int b) override;
 	void swapObjects(int object1, int object2);
 
 	Common::String convertFilePath(const byte *src);
@@ -96,10 +96,10 @@ protected:
 	Common::WriteStream *openSaveFileForAppending(const byte *fileName);
 	void deleteSaveFile(const byte *fileName);
 	void renameSaveFile(const byte *from, const byte *to);
-	void pauseEngineIntern(bool pause);
+	void pauseEngineIntern(bool pause) override;
 
-	Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
-	Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
+	Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName) override;
+	Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName) override;
 
 	/* HE version 60 script opcodes */
 	void o60_setState();
@@ -148,38 +148,38 @@ protected:
 
 public:
 	ScummEngine_v70he(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v70he();
+	~ScummEngine_v70he() override;
 
-	virtual Common::String generateFilename(const int room) const;
+	Common::String generateFilename(const int room) const override;
 
 	void restoreBackgroundHE(Common::Rect rect, int dirtybit = 0);
 
 protected:
-	virtual void allocateArrays();
-	virtual int readResTypeList(ResType type);
-	virtual uint32 getResourceRoomOffset(ResType type, ResId idx);
-	virtual void setupOpcodes();
+	void allocateArrays() override;
+	int readResTypeList(ResType type) override;
+	uint32 getResourceRoomOffset(ResType type, ResId idx) override;
+	void setupOpcodes() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
+	void setupScummVars() override;
+	void resetScummVars() override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
-	virtual void readRoomsOffsets();
-	virtual void readGlobalObjects();
-	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
+	void readRoomsOffsets() override;
+	void readGlobalObjects() override;
+	void readIndexBlock(uint32 blocktype, uint32 itemsize) override;
 
-	virtual void clearRoomObjects();
-	virtual void resetRoomObjects();
+	void clearRoomObjects() override;
+	void resetRoomObjects() override;
 
-	virtual int getActorFromPos(int x, int y);
+	int getActorFromPos(int x, int y) override;
 
-	virtual void loadFlObject(uint object, uint room);
+	void loadFlObject(uint object, uint room) override;
 	void storeFlObject(int slot);
 	void restoreFlObjects();
 
-	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
-	virtual void setDefaultCursor();
+	void setCursorFromImg(uint img, uint room, uint imgindex) override;
+	void setDefaultCursor() override;
 
 	/* HE version 70 script opcodes */
 	void o70_soundOps();
@@ -209,7 +209,7 @@ protected:
 
 public:
 	ScummEngine_v71he(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v71he();
+	~ScummEngine_v71he() override;
 
 	byte *heFindResourceData(uint32 tag, byte *ptr);
 	byte *heFindResource(uint32 tag, byte *ptr);
@@ -220,17 +220,17 @@ public:
 	virtual int setupStringArray(int size);
 
 protected:
-	virtual void setupOpcodes();
+	void setupOpcodes() override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
-	virtual void redrawBGAreas();
+	void redrawBGAreas() override;
 
-	virtual void processActors();
+	void processActors() override;
 	void preProcessAuxQueue();
 	void postProcessAuxQueue();
 
-	virtual void clearDrawQueues();
+	void clearDrawQueues() override;
 
 	int getStringCharWidth(byte chr);
 	void appendSubstring(int dst, int src, int len2, int len);
@@ -287,28 +287,28 @@ protected:
 public:
 	ScummEngine_v72he(OSystem *syst, const DetectorResult &dr);
 
-	virtual void resetScumm();
+	void resetScumm() override;
 
-	virtual byte *getStringAddress(ResId idx);
-	virtual int setupStringArray(int size);
+	byte *getStringAddress(ResId idx) override;
+	int setupStringArray(int size) override;
 	virtual int setupStringArrayFromString(const char *cStr);
 	virtual void getStringFromArray(int arrayNumber, char *buffer, int maxLength);
 
 protected:
-	virtual void setupOpcodes();
+	void setupOpcodes() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
-	virtual void readArrayFromIndexFile();
+	void setupScummVars() override;
+	void resetScummVars() override;
+	void readArrayFromIndexFile() override;
 
-	virtual void readMAXS(int blockSize);
+	void readMAXS(int blockSize) override;
 
-	virtual void redrawBGAreas();
-	virtual void checkExecVerbs();
+	void redrawBGAreas() override;
+	void checkExecVerbs() override;
 
-	byte *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
-	virtual int readArray(int array, int idx2, int idx1);
-	virtual void writeArray(int array, int idx2, int idx1, int value);
+	byte *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end, bool newArray = false, int *newid = NULL);
+	int readArray(int array, int idx2, int idx1) override;
+	void writeArray(int array, int idx2, int idx1, int value) override;
 	void redimArray(int arrayId, int newDim2start, int newDim2end,
 					int newDim1start, int newDim1end, int type);
 	void checkArrayLimits(int array, int dim2start, int dim2end, int dim1start, int dim1end);
@@ -318,15 +318,15 @@ protected:
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int32 resID);
 
-	virtual void decodeParseString(int a, int b);
+	void decodeParseString(int a, int b) override;
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	void copyScriptString(byte *dst, int dstSize);
 
 	int findObject(int x, int y, int num, int *args);
 	int getSoundResourceSize(ResId idx);
 
-	virtual bool handleNextCharsetCode(Actor *a, int *c);
-	virtual int convertMessageToString(const byte *msg, byte *dst, int dstSize);
+	bool handleNextCharsetCode(Actor *a, int *c) override;
+	int convertMessageToString(const byte *msg, byte *dst, int dstSize) override;
 
 	void debugInput(byte *string);
 
@@ -401,23 +401,23 @@ public:
 	ScummEngine_v80he(OSystem *syst, const DetectorResult &dr);
 
 protected:
-	virtual void setupOpcodes();
+	void setupOpcodes() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
+	void setupScummVars() override;
+	void resetScummVars() override;
 
-	virtual void parseEvent(Common::Event event);
+	void parseEvent(Common::Event event) override;
 
-	virtual void initCharset(int charset);
+	void initCharset(int charset) override;
 
-	virtual void clearDrawQueues();
+	void clearDrawQueues() override;
 
 	void createSound(int snd1id, int snd2id);
 
 	void drawLine(int x1, int y1, int x, int unk1, int unk2, int type, int id);
 	void drawPixel(int x, int y, int flags);
 
-	virtual void setDefaultCursor();
+	void setDefaultCursor() override;
 
 	/* HE version 80 script opcodes */
 	void o80_createSound();
@@ -472,30 +472,30 @@ protected:
 
 public:
 	ScummEngine_v90he(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v90he();
+	~ScummEngine_v90he() override;
 
 protected:
-	virtual void allocateArrays();
-	virtual void setupOpcodes();
+	void allocateArrays() override;
+	void setupOpcodes() override;
 
-	virtual void resetScumm();
+	void resetScumm() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
+	void setupScummVars() override;
+	void resetScummVars() override;
 
-	virtual void scummLoop(int delta);
-	virtual void scummLoop_handleDrawing();
-	virtual void runBootscript();
+	void scummLoop(int delta) override;
+	void scummLoop_handleDrawing() override;
+	void runBootscript() override;
 
-	virtual void processInput();
-	virtual void clearClickedStatus();
+	void processInput() override;
+	void clearClickedStatus() override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
-	virtual void readMAXS(int blockSize);
+	void readMAXS(int blockSize) override;
 	void setResourceOffHeap(int typeId, int resId, int val);
 
-	virtual void processActors();
+	void processActors() override;
 
 	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
 	void getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end);
@@ -574,24 +574,26 @@ class ScummEngine_v99he : public ScummEngine_v90he {
 public:
 	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v90he(syst, dr) {}
 
-	virtual void resetScumm();
+	void resetScumm() override;
 
 protected:
-	virtual void resetScummVars();
+	void resetScummVars() override;
 
-	virtual void readMAXS(int blockSize);
+	void readMAXS(int blockSize) override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
-	virtual void copyPalColor(int dst, int src);
-	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
-	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
-	virtual void setPalColor(int index, int r, int g, int b);
-	virtual void updatePalette();
+	void copyPalColor(int dst, int src) override;
+	void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) override;
+	void setPaletteFromPtr(const byte *ptr, int numcolor = -1) override;
+	void setPalColor(int index, int r, int g, int b) override;
+	void updatePalette() override;
 };
 
 class ScummEngine_v100he : public ScummEngine_v99he {
 friend class AI;
+friend class Moonbase;
+friend class Net;
 
 protected:
 	ResType _heResType;
@@ -604,18 +606,19 @@ public:
 
 public:
 	ScummEngine_v100he(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v100he();
+	~ScummEngine_v100he() override;
 
-	virtual void resetScumm();
+	void resetScumm() override;
 
-	virtual void setupScummVars();
+	void setupScummVars() override;
+	void resetScummVars() override;
 
 protected:
-	virtual void setupOpcodes();
+	void setupOpcodes() override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
-	virtual void decodeParseString(int a, int b);
+	void decodeParseString(int a, int b) override;
 
 	/* HE version 100 script opcodes */
 	void o100_actorOps();
@@ -663,6 +666,10 @@ protected:
 	byte VAR_U32_USER_VAR_D;
 	byte VAR_U32_USER_VAR_E;
 	byte VAR_U32_USER_VAR_F;
+
+	byte VAR_REMOTE_START_SCRIPT;
+	byte VAR_NETWORK_AVAILABLE;
+	byte VAR_NETWORK_RECEIVE_ARRAY_SCRIPT;
 };
 
 class ScummEngine_vCUPhe : public Engine {
@@ -672,9 +679,9 @@ protected:
 
 public:
 	ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_vCUPhe();
+	~ScummEngine_vCUPhe() override;
 
-	virtual Common::Error run();
+	Common::Error run() override;
 
 	void parseEvents();
 

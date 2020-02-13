@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/star_view.h"
-#include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/star_control.h"
@@ -31,16 +31,17 @@
 #include "titanic/core/game_object.h"
 #include "titanic/messages/pet_messages.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
 CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullptr),
-		_starField(nullptr), _videoSurface(nullptr), _hasReference(0),
+		_starField(nullptr), _videoSurface(nullptr), _lensValid(0),
 		_photoSurface(nullptr), _homePhotoMask(nullptr),
-		_field218(false), _showingPhoto(false) {
+		_stereoPair(false), _showingPhoto(false) {
 	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
 
-	_camera.proc3(&data);
+	_camera.setMotion(&data);
 }
 
 CStarView::~CStarView() {
@@ -52,11 +53,11 @@ void CStarView::load(SimpleFile *file, int param) {
 	if (!param) {
 		_camera.load(file, param);
 
-		_hasReference = file->readNumber();
-		if (_hasReference)
+		_lensValid = file->readNumber();
+		if (_lensValid)
 			_photoViewport.load(file, 0);
 
-		_field218 = file->readNumber();
+		_stereoPair = file->readNumber();
 		_showingPhoto = file->readNumber();
 	}
 }
@@ -64,11 +65,11 @@ void CStarView::load(SimpleFile *file, int param) {
 void CStarView::save(SimpleFile *file, int indent) {
 	_camera.save(file, indent);
 
-	file->writeNumberLine(_hasReference, indent);
-	if (_hasReference)
+	file->writeNumberLine(_lensValid, indent);
+	if (_lensValid)
 		_photoViewport.save(file, indent);
 
-	file->writeNumberLine(_field218, indent);
+	file->writeNumberLine(_stereoPair, indent);
 	file->writeNumberLine(_showingPhoto, indent);
 }
 
@@ -77,10 +78,10 @@ void CStarView::setup(CScreenManager *screenManager, CStarField *starField, CSta
 	_owner = starControl;
 }
 
-void CStarView::reset() {
-	if (_hasReference) {
-		CStarCamera camera(&_photoViewport);
-		fn18(&camera);
+void CStarView::takeCurrentHomePhoto() {
+	if (_lensValid) {
+		CCamera camera(&_photoViewport);
+		takeHomePhotoHelper(&camera);
 	}
 }
 
@@ -156,12 +157,12 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 
 bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	FPose pose;
-	int matchedIndex = _starField ? _starField->getMatchedIndex() : -1;
+	int lockLevel = _starField ? _starField->getMatchedIndex() : -1;
 
 	switch (tolower(key)) {
 	case Common::KEYCODE_TAB:
 		if (_starField) {
-			toggleMode();
+			toggleHomePhoto();
 			return true;
 		}
 		break;
@@ -185,7 +186,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	}
 
 	case Common::KEYCODE_z:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			pose.setRotationMatrix(Y_AXIS, -1.0);
 			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
@@ -194,23 +195,23 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_SEMICOLON:
-		if (matchedIndex == -1) {
-			_camera.increaseForwardSpeed();
+		if (lockLevel == -1) {
+			_camera.accelerate();
 			errorCode->set();
 			return true;
 		}
 		break;
 
 	case Common::KEYCODE_PERIOD:
-		if (matchedIndex == -1) {
-			_camera.increaseBackwardSpeed();
+		if (lockLevel == -1) {
+			_camera.deccelerate();
 			errorCode->set();
 			return true;
 		}
 		break;
 
 	case Common::KEYCODE_SPACE:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			_camera.stop();
 			errorCode->set();
 			return true;
@@ -218,7 +219,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_x:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			pose.setRotationMatrix(Y_AXIS, 1.0);
 			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
@@ -227,7 +228,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_QUOTE:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			pose.setRotationMatrix(X_AXIS, 1.0);
 			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
@@ -236,13 +237,25 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_SLASH:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			pose.setRotationMatrix(X_AXIS, -1.0);
 			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
 			return true;
 		}
 		break;
+
+	// New for ScummVM to show the boundaries sphere code the original implemented,
+	// but wasn't actually hooked up to any player action
+	case Common::KEYCODE_b:
+		viewBoundaries();
+		return true;
+
+	// New for ScummVM to show the constellations sphere code the original implemented,
+	// but wasn't actually hooked up to any player action
+	case Common::KEYCODE_c:
+		viewConstellations();
+		return true;
 
 	default:
 		break;
@@ -257,10 +270,6 @@ bool CStarView::canSetStarDestination() const {
 
 void CStarView::starDestinationSet() {
 	_camera.clearIsMoved();
-}
-
-void CStarView::resetPosition() {
-	_camera.setPosition(FVector(0.0, 0.0, 0.0));
 }
 
 bool CStarView::updateCamera() {
@@ -282,56 +291,60 @@ bool CStarView::updateCamera() {
 	return false;
 }
 
-void CStarView::fn2() {
+void CStarView::resetView() {
 	if (!_videoSurface) {
 		CScreenManager *scrManager = CScreenManager::setCurrent();
 		if (scrManager)
 			resizeSurface(scrManager, 600, 340, &_videoSurface);
 
 		if (_videoSurface) {
-			fn13();
-			fn19(244);
+			stereoPairOn();
+			viewRequiredStar(244);
 			draw(scrManager);
 		}
 	}
 }
 
-void CStarView::fn3(bool fadeIn) {
+void CStarView::triggerFade(bool fadeIn) {
 	_fader.reset();
 	_fader.setFadeIn(fadeIn);
 }
 
-void CStarView::fn4() {
-	FVector v1, v2;
-	randomizeVectors1(v1, v2);
-	_camera.setPosition(v1);
-	_camera.setOrientation(v2);
+void CStarView::viewFromEarth() {
+	_camera.setPosition(FVector(0.0, 0.0, 0.0));
 }
 
-void CStarView::fn5() {
-	_starField->set1(!_starField->get1());
+void CStarView::viewEarth() {
+	FVector pos, dir;
+	getRandomViewpoint(pos, dir);
+	_camera.setPosition(pos);
+	_camera.setOrientation(dir);
 }
 
-void CStarView::fn6() {
-	_starField->set2(!_starField->get2());
+void CStarView::viewBoundaries() {
+	_starField->setBoundaryState(!_starField->getBoundaryState());
 }
 
-void CStarView::fn7() {
+void CStarView::viewConstellations() {
+	_starField->setConstMapState(!_starField->getConstMapState());
+}
+
+void CStarView::viewRandomStar() {
 	const CBaseStarEntry *star = _starField->getRandomStar();
 	if (star) {
 		FVector pos, orientation;
-		randomizeVectors1(pos, orientation);
+		getRandomViewpoint(pos, orientation);
 		pos += star->_position;
 		_camera.setPosition(pos);
 		_camera.setOrientation(orientation);
 	}
 }
 
-void CStarView::fn19(int index) {
+void CStarView::viewRequiredStar(int index) {
 	const CBaseStarEntry *star = _starField->getStar(index);
 	if (star) {
 		FVector pos, orientation;
-		randomizeVectors1(pos, orientation);
+		getRandomViewpoint(pos, orientation);
 		pos += star->_position;
 		_camera.setPosition(pos);
 		_camera.setOrientation(orientation);
@@ -342,18 +355,18 @@ void CStarView::fullSpeed() {
 	_camera.fullSpeed();
 }
 
-void CStarView::fn9() {
-	_field218 = !_field218;
-	if (_field218) {
-		_camera.proc12(MODE_PHOTO, 30.0);
-		_camera.proc12(MODE_STARFIELD, 28000.0);
+void CStarView::toggleSteroPair() {
+	_stereoPair = !_stereoPair;
+	if (_stereoPair) {
+		_camera.setFields(MODE_PHOTO, 30.0);
+		_camera.setFields(MODE_STARFIELD, 28000.0);
 	} else {
-		_camera.proc12(MODE_PHOTO, 0.0);
-		_camera.proc12(MODE_STARFIELD, 0.0);
+		_camera.setFields(MODE_PHOTO, 0.0);
+		_camera.setFields(MODE_STARFIELD, 0.0);
 	}
 }
 
-void CStarView::toggleMode() {
+void CStarView::toggleHomePhoto() {
 	if (!_photoSurface)
 		return;
 
@@ -362,73 +375,75 @@ void CStarView::toggleMode() {
 		_starField->setMode(_showingPhoto ? MODE_PHOTO : MODE_STARFIELD);
 }
 
-void CStarView::fn11() {
+void CStarView::toggleSolarRendering() {
 	if (_starField)
-		_starField->fn9();
+		_starField->ToggleSolarRendering();
 }
 
-void CStarView::toggleBox() {
+void CStarView::TogglePosFrame() {
 	if (_starField)
 		_starField->toggleBox();
 }
 
-void CStarView::fn13() {
-	_field218 = true;
-	_camera.proc12(MODE_PHOTO, 30.0);
-	_camera.proc12(MODE_STARFIELD, 28000.0);
+void CStarView::stereoPairOn() {
+	_stereoPair = true;
+	_camera.setFields(MODE_PHOTO, 30.0);
+	_camera.setFields(MODE_STARFIELD, 28000.0);
 }
 
-void CStarView::fn14() {
-	_field218 = false;
-	_camera.proc12(MODE_PHOTO, 0.0);
-	_camera.proc12(MODE_STARFIELD, 0.0);
+void CStarView::stereoPairOff() {
+	_stereoPair = false;
+	_camera.setFields(MODE_PHOTO, 0.0);
+	_camera.setFields(MODE_STARFIELD, 0.0);
 }
 
-void CStarView::setHasReference() {
+void CStarView::takeHomePhoto() {
 	FVector pos, orientation;
 	getRandomPhotoViewpoint(pos, orientation);
 
 	_photoViewport.setPosition(pos);
 	_photoViewport.setOrientation(orientation);
-	_field218 = false;
+	_stereoPair = false;
 	_photoViewport.changeStarColorPixel(MODE_PHOTO, 0.0);
 	_photoViewport.changeStarColorPixel(MODE_STARFIELD, 0.0);
-	_hasReference = true;
-	reset();
-	_field218 = true;
+
+	_lensValid = true;
+	takeCurrentHomePhoto();
+	_stereoPair = true;
 }
 
 void CStarView::lockStar() {
 	if (_starField && !_showingPhoto) {
 		CSurfaceArea surfaceArea(_videoSurface);
-		FVector v1, v2, v3;
-		double val = _starField->fn5(&surfaceArea, &_camera, v1, v2, v3);
+		FVector screenCoord, worldCoord, photoPos;
+		double dist = _starField->lockDistance(&surfaceArea, &_camera,
+			screenCoord, worldCoord, photoPos);
 		bool lockSuccess = false;
 
-		if (val > -1.0) {
-			v1 -= surfaceArea._centroid;
-			v3 -= surfaceArea._centroid;
+		if (dist > -1.0) {
+			screenCoord -= surfaceArea._centroid;
+			photoPos -= surfaceArea._centroid;
 
 			switch (_starField->getMatchedIndex()) {
 			case -1:
 				// First star match
-				lockSuccess = _camera.lockMarker1(v1, v2, v3);
+				lockSuccess = _camera.lockMarker1(screenCoord, worldCoord, photoPos);
 				assert(lockSuccess); // lockMarker1 should always succeed
-				_starField->incMatches();
+				_starField->incLockLevel();
 				break;
 
 			case 0:
 				// Second star match
-				lockSuccess = _camera.lockMarker2(&_photoViewport, v2);
+				lockSuccess = _camera.lockMarker2(&_photoViewport, worldCoord);
 				if (lockSuccess) // lockMarker2 may have issues
-					_starField->incMatches();
+					_starField->incLockLevel();
 				break;
 
 			case 1:
 				// Third star match
-				lockSuccess = _camera.lockMarker3(&_photoViewport, v2);
+				lockSuccess = _camera.lockMarker3(&_photoViewport, worldCoord);
 				assert(lockSuccess); // lockMarker3 should always succeed
-				_starField->incMatches();
+				_starField->incLockLevel();
 				break;
 
 			default:
@@ -441,11 +456,11 @@ void CStarView::lockStar() {
 void CStarView::unlockStar() {
 	if (_starField && !_showingPhoto && _camera.isNotInLockingProcess()) {
 		_camera.removeLockedStar();
-		_starField->fn8(_photoSurface);
+		_starField->decLockLevel(_photoSurface);
 	}
 }
 
-void CStarView::fn18(CStarCamera *camera) {
+void CStarView::takeHomePhotoHelper(CCamera *camera) {
 	if (_starField) {
 		if (!_photoSurface) {
 			CScreenManager *scrManager = CScreenManager::setCurrent();
@@ -471,36 +486,32 @@ void CStarView::fn18(CStarCamera *camera) {
 	}
 }
 
-void CStarView::randomizeVectors1(FVector &pos, FVector &orientation) {
-	/* ***DEBUG***
-	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+void CStarView::getRandomViewpoint(FVector &pos, FVector &orientation) {
+	const double MIN_RADIUS = 3.0F * STAR_SCALE;
+	const double RADIUS = 4.0F * STAR_SCALE;
 
-	v2._x = -v1._x;
-	v2._y = -v1._y;
-	v2._z = -v1._z;
-	v2.normalize();
-	*/
-	// Values temporarily hardcoded to match hacked values in original EXE
-	pos = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
-	orientation = FVector((float)-0.577350259, (float)-0.577350259, (float)-0.577350259);
+	pos._x = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+	pos._y = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+	pos._z = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+
+	orientation._x = -pos._x;
+	orientation._y = -pos._y;
+	orientation._z = -pos._z;
+	orientation.normalize();
 }
 
 void CStarView::getRandomPhotoViewpoint(FVector &pos, FVector &orientation) {
-	/* ****DEBUG***
-	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	const double MIN_RADIUS = 3.0F * STAR_SCALE;
+	const double RADIUS = 4.0F * STAR_SCALE;
 
-	v2._x = g_vm->getRandomFloat() * 8192.0 - v1._x;
-	v2._y = g_vm->getRandomFloat() * 1024.0 - v1._y;
-	v2._z = -v1._z;
-	v2.normalize();
-	*/
-	// Values temporarily hardcoded to match hacked values in original EXE
-	pos = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
-	orientation = FVector((float)0.624659300, (float)-0.468542814, (float)-0.624714553);
+	pos._x = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+	pos._y = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+	pos._z = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+
+	orientation._x = g_vm->getRandomFloat() * (STAR_SCALE * 8) - pos._x;
+	orientation._y = g_vm->getRandomFloat() * STAR_SCALE - pos._y;
+	orientation._z = -pos._z;
+	orientation.normalize();
 }
 
 void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,

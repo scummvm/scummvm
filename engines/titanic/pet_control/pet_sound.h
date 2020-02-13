@@ -59,54 +59,54 @@ public:
 	/**
 	 * Setup the glyph
 	 */
-	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+	bool setup(CPetControl *petControl, CPetGlyphs *owner) override;
 
 	/**
 	 * Reset the glyph
 	 */
-	virtual bool reset();
+	bool reset() override;
 
 	/**
 	 * Handles any secondary drawing of the glyph
 	 */
-	virtual void draw2(CScreenManager *screenManager);
+	void draw2(CScreenManager *screenManager) override;
 
 	/**
 	 * Called for mouse button down messages
 	 */
-	virtual bool MouseButtonDownMsg(const Point &pt);
+	bool MouseButtonDownMsg(const Point &pt) override;
 
 	/**
 	 * Called when mouse drag starts
 	 */
-	virtual bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg) override;
 
 	/**
 	 * Called during mouse drags
 	 */
-	virtual bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
+	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg) override;
 
 	/**
 	 * Called when mouse drag ends
 	 */
-	virtual bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg) override;
 
 	/**
 	 * Handles mouse button up messages
 	 */
-	virtual bool MouseButtonUpMsg(const Point &pt);
+	bool MouseButtonUpMsg(const Point &pt) override;
 
 	/**
 	 * Highlight any currently highlighted element
 	 */
-	virtual void highlightCurrent(const Point &pt) {
+	void highlightCurrent(const Point &pt) override {
 		setSliders();
 	}
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CTextControl *text);
+	void getTooltip(CTextControl *text) override;
 
 	/**
 	 * Sets the positions of the volume sliders

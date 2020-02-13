@@ -45,7 +45,7 @@
 
 
 enum {
-	kKyraDatVersion = 94
+	kKyraDatVersion = 96
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -429,6 +429,17 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB1IntroFilesHands, kStringList, false },
 	{ kEoB1IntroFilesWdExit, kStringList, false },
 	{ kEoB1IntroFilesTunnel, kStringList, false },
+
+	{ kEoB1IntroStringsTower, kStringList, true },
+	{ kEoB1IntroStringsOrb, kStringList, true },
+	{ kEoB1IntroStringsWdEntry, kStringList, true },
+	{ kEoB1IntroStringsKing, kStringList, true },
+	{ kEoB1IntroStringsHands, kStringList, true },
+	{ kEoB1IntroStringsWdExit, kStringList, true },
+	{ kEoB1IntroStringsTunnel, kStringList, true },
+
+	{ kEoB1FinaleStrings, kStringList, true },
+
 	{ kEoB1IntroOpeningFrmDelay, kRawData, false },
 	{ kEoB1IntroWdEncodeX, kRawData, false },
 	{ kEoB1IntroWdEncodeY, kRawData, false },
@@ -448,7 +459,11 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB1FinaleCouncilAnim4, kRawData, false },
 	{ kEoB1FinaleEyesAnim, kRawData, false },
 	{ kEoB1FinaleHandsAnim, kRawDataBe16, false },
+	{ kEoB1FinaleHandsAnim2, kRawDataBe16, false },
+	{ kEoB1FinaleHandsAnim3, kRawData, false },
 	{ kEoB1FinaleTextDuration, kRawData, false },
+	{ kEoB1CreditsStrings, kRawData, false },
+	{ kEoB1CreditsCharWdth, kRawData, false },
 	{ kEoB1DoorShapeDefs, kRawData, false },
 	{ kEoB1DoorSwitchShapeDefs, kRawData, false },
 	{ kEoB1DoorSwitchCoords, kRawData, false },
@@ -474,6 +489,11 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB1CgaMappingLevel3, kRawData, false },
 	{ kEoB1CgaMappingLevel4, kRawData, false },
 
+	{ kEoB1Palettes16c, kRawData, false },
+	{ kEoB1PalCycleData, kRawData, false },
+	{ kEoB1PalCycleStyle1, kRawDataBe16, false },
+	{ kEoB1PalCycleStyle2, kRawDataBe16, false },
+
 	{ kEoB1NpcShpData, kRawData, false },
 	{ kEoB1NpcSubShpIndex1, kRawData, false },
 	{ kEoB1NpcSubShpIndex2, kRawData, false },
@@ -489,6 +509,11 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB1Npc5Strings, kStringList, true },
 	{ kEoB1Npc6Strings, kStringList, true },
 	{ kEoB1Npc7Strings, kStringList, true },
+
+	{ kEoB1ItemNames, kStringList, true },
+	{ kEoB1Ascii2SjisTable1, kRawDataBe16, true },
+	{ kEoB1Ascii2SjisTable2, kRawDataBe16, true },
+	{ kEoB1FontLookupTable, kRawData, true },
 
 	// EYE OF THE BEHOLDER II
 	{ kEoB2MainMenuStrings, kStringList, true },

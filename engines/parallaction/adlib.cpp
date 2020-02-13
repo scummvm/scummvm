@@ -288,15 +288,15 @@ public:
 		_adlibTimerParam = NULL;
 	}
 
-	int open();
-	void close();
-	void send(uint32 b);
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel() { return &_channels[9]; }
-	bool isOpen() const { return _isOpen; }
-	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override { return &_channels[9]; }
+	bool isOpen() const override { return _isOpen; }
+	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
-	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override {
 		_adlibTimerProc = timerProc;
 		_adlibTimerParam = timerParam;
 	}
@@ -427,6 +427,8 @@ void AdLibDriver::send(uint32 b) {
 			// all notes off
 			allNotesOff();
 			break;
+		default:
+			break;
 		}
 		break;
 	case 12:
@@ -435,6 +437,8 @@ void AdLibDriver::send(uint32 b) {
 		break;
 	case 14:
 		setPitchBend(channel, (param1 | (param2 << 7)) - 0x2000);
+		break;
+	default:
 		break;
 	}
 }

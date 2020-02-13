@@ -86,6 +86,9 @@
 		<color name = 'darkgray'
 				rgb = '176, 168, 144'
 		/>
+		<color name = 'darkgray2'
+				rgb = '192, 192, 192'
+		/>
 		<color name = 'lightgray'
 				rgb = '210, 200, 170'
 		/>
@@ -119,10 +122,6 @@
 		<bitmap filename = 'editbtn_small.bmp'/>
 		<bitmap filename = 'switchbtn_small.bmp'/>
 		<bitmap filename = 'fastreplay_small.bmp'/>
-		<bitmap filename = 'dropbox.bmp'/>
-		<bitmap filename = 'onedrive.bmp'/>
-		<bitmap filename = 'googledrive.bmp'/>
-		<bitmap filename = 'box.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -212,7 +211,7 @@
 		/>
 
 		<text_color	id = 'color_alternative_disabled'
-				color = '192, 192, 192'
+				color = 'darkgray2'
 		/>
 
 		<text_color	id = 'color_button'
@@ -220,7 +219,7 @@
 		/>
 
 		<text_color	id = 'color_button_disabled'
-				color = '192, 192, 192'
+				color = 'darkgray2'
 		/>
 	</fonts>
 
@@ -857,6 +856,361 @@
 					gradient_end = 'darkeneddarkred'
 					bevel = '1'
 					bevel_color = 'darkgray'
+		/>
+	</drawdata>
+
+	<!-- Dropdown button widget -->
+	<drawdata id = 'dropdown_button_idle' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightred'
+					gradient_end = 'darkred'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_idle' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightred'
+					gradient_end = 'darkred'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+
+	<drawdata id = 'dropdown_button_hover_left' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+					clip = '0,0,-13,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_hover_left' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+					clip = '0,0,-7,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+
+	<drawdata id = 'dropdown_button_hover_right' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+					clip = '-13,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_hover_right' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+					clip = '-7,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+
+	<drawdata id = 'dropdown_button_disabled' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button_disabled'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'shadowcolor'
+					gradient_start = 'darkenedbrightred'
+					gradient_end = 'darkeneddarkred'
+					bevel = '1'
+					bevel_color = 'darkgray'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'darkgray2'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_disabled' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button_disabled'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'shadowcolor'
+					gradient_start = 'darkenedbrightred'
+					gradient_end = 'darkeneddarkred'
+					bevel = '1'
+					bevel_color = 'darkgray'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'darkgray2'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+
+	<drawdata id = 'dropdown_button_pressed_left' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'foreground'
+					shadow = '0'
+					factor = '0'
+					fg_color = '120, 40, 16'
+					gradient_start = '255, 0, 0'
+					gradient_end = '255, 0, 0'
+					bevel = '1'
+					bevel_color = 'black'
+					clip = '0,0,-13,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_pressed_left' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'foreground'
+					shadow = '0'
+					factor = '0'
+					fg_color = '120, 40, 16'
+					gradient_start = '255, 0, 0'
+					gradient_end = '255, 0, 0'
+					bevel = '1'
+					bevel_color = 'black'
+					clip = '0,0,-7,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+
+	<drawdata id = 'dropdown_button_pressed_right' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'foreground'
+					shadow = '0'
+					factor = '0'
+					fg_color = '120, 40, 16'
+					gradient_start = '255, 0, 0'
+					gradient_end = '255, 0, 0'
+					bevel = '1'
+					bevel_color = 'black'
+					clip = '-13,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_pressed_right' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'foreground'
+					shadow = '0'
+					factor = '0'
+					fg_color = '120, 40, 16'
+					gradient_start = '255, 0, 0'
+					gradient_end = '255, 0, 0'
+					bevel = '1'
+					bevel_color = 'black'
+					clip = '-7,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
 		/>
 	</drawdata>
 

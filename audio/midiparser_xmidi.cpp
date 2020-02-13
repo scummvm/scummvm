@@ -183,6 +183,7 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				warning("Unsupported XMIDI controller %d (0x%2x)",
 					info.basic.param1, info.basic.param1);
 			}
+			break;
 		}
 
 		// Should we really keep passing the XMIDI controller events to
@@ -234,7 +235,12 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 
 		default:
 			warning("MidiParser_XMIDI::parseNextEvent: Unsupported event code %x", info.event);
+			break;
 		}
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -366,6 +372,12 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 				len = read4high(pos);
 				pos += (len + 1) & ~1;
 				++tracksRead;
+			} else if (!memcmp(pos, "RBRN", 4)) {
+				// optional branch point offsets. Ignored
+				pos += 4;
+				len = read4high(pos);
+				pos += (len + 1) & ~1;
+
 			} else {
 				warning("Hit invalid block '%c%c%c%c' while scanning for track locations", pos[0], pos[1], pos[2], pos[3]);
 				return false;

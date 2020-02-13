@@ -33,7 +33,7 @@ class CauseThread_Duckman : public Thread {
 public:
 	CauseThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		uint32 triggerThreadId);
-	virtual int onUpdate();
+	int onUpdate() override;
 public:
 	IllusionsEngine_Duckman *_vm;
 	bool _flag;

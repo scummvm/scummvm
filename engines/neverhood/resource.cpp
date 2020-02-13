@@ -490,6 +490,8 @@ void DataResource::load(uint32 fileHash) {
 					_rectArrays.push_back(rectArray);
 					break;
 				}
+			default:
+				break;
 			}
 			_directory.push_back(drDirectoryItem);
 		}

@@ -47,7 +47,7 @@ public:
 	int32 _offsetX;
 	BaseObject *_mainObject;
 	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
+	~BaseViewport() override;
 	virtual Common::String debuggerToString() const;
 private:
 	Rect32 _rect;

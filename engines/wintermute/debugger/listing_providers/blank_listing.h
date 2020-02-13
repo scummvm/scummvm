@@ -29,9 +29,9 @@ class BlankListing : public Listing {
 	const Common::String _filename;
 public:
 	BlankListing(const Common::String filename);
-	virtual ~BlankListing();
-	virtual uint getLength() const;
-	virtual Common::String getLine(uint n);
+	~BlankListing() override;
+	uint getLength() const override;
+	Common::String getLine(uint n) override;
 };
 
 } // End of namespace Wintermute

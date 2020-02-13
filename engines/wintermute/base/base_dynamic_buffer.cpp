@@ -140,7 +140,7 @@ void BaseDynamicBuffer::putDWORD(uint32 val) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseDynamicBuffer::getDWORD() {
-	uint32 ret;
+	uint32 ret = 0;
 	getBytes((byte *)&ret, sizeof(uint32));
 	return ret;
 }

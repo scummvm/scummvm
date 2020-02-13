@@ -22,20 +22,20 @@
 
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/surface_area.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CStarField::CStarField() : _points1On(false), _points2On(false), _mode(MODE_STARFIELD),
+CStarField::CStarField() : _renderBoundaries(false), _renderConstMap(false), _mode(MODE_STARFIELD),
 		_showBox(true), _closeToMarker(false), _isSolved(false) {
 }
 
 void CStarField::load(SimpleFile *file) {
 	_markers.load(file);
 	_crosshairs.load(file);
-	_points1On = file->readNumber();
-	_points2On = file->readNumber();
+	_renderBoundaries = file->readNumber();
+	_renderConstMap = file->readNumber();
 	_mode = (StarMode)file->readNumber();
 	_showBox = file->readNumber();
 	_isSolved = file->readNumber();
@@ -44,26 +44,24 @@ void CStarField::load(SimpleFile *file) {
 void CStarField::save(SimpleFile *file, int indent) {
 	_markers.save(file, indent);
 	_crosshairs.save(file, indent);
-	file->writeNumberLine(_points1On, indent);
-	file->writeNumberLine(_points2On, indent);
+	file->writeNumberLine(_renderBoundaries, indent);
+	file->writeNumberLine(_renderConstMap, indent);
 	file->writeNumberLine(_mode, indent);
 	file->writeNumberLine(_showBox, indent);
 	file->writeNumberLine(_isSolved, indent);
 }
 
 bool CStarField::initDocument() {
-	bool valid = setup() && _points1.initialize();
+	bool valid = setup() && _constBounds.initialize();
 	if (valid)
 		valid = _starCloseup.setup();
 	if (valid)
-		valid = _points1.initialize();
-	if (valid)
-		valid = _points2.initialize();
+		valid = _constMap.initialize();
 
 	return valid;
 }
 
-void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
+void CStarField::render(CVideoSurface *surface, CCamera *camera) {
 	CSurfaceArea surfaceArea(surface);
 	draw(&surfaceArea, camera, &_starCloseup);
 	if (_showBox)
@@ -72,28 +70,28 @@ void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
 	_markers.draw(&surfaceArea, camera, nullptr);
 	_crosshairs.draw(&surfaceArea);
 
-	if (_points2On)
-		_points2.draw(&surfaceArea, camera);
-	if (_points1On)
-		_points1.draw(&surfaceArea, camera);
+	if (_renderConstMap)
+		_constMap.draw(&surfaceArea, camera);
+	if (_renderBoundaries)
+		_constBounds.draw(&surfaceArea, camera);
 
-	fn4(&surfaceArea, camera);
+	renderLockLine(&surfaceArea, camera);
 }
 
-int CStarField::get1() const {
-	return _points1On;
+bool CStarField::getBoundaryState() const {
+	return _renderBoundaries;
 }
 
-void CStarField::set1(int val) {
-	_points1On = val;
+void CStarField::setBoundaryState(bool state) {
+	_renderBoundaries = state;
 }
 
-int CStarField::get2() const {
-	return _points2On;
+bool CStarField::getConstMapState() const {
+	return _renderConstMap;
 }
 
-void CStarField::set2(int val) {
-	_points2On = val;
+void CStarField::setConstMapState(bool state) {
+	_renderConstMap = state;
 }
 
 int CStarField::get54() const {
@@ -177,21 +175,21 @@ void CStarField::drawBox(CSurfaceArea *surfaceArea) {
 	surfaceArea->setColorFromPixel();
 }
 
-void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
-	FVector v1, v2, v3;
+void CStarField::renderLockLine(CSurfaceArea *surfaceArea, CCamera *camera) {
+	FVector screenCoord, worldCoord, photoPos;
 	_closeToMarker = false;
 
 	if (_mode == MODE_STARFIELD) {
-		if (fn5(surfaceArea, camera, v1, v2, v3) > -1.0) {
+		if (lockDistance(surfaceArea, camera, screenCoord, worldCoord, photoPos) > -1.0) {
 			surfaceArea->_pixel = 0xA0A0;
 			surfaceArea->setColorFromPixel();
-			surfaceArea->drawLine(FRect(v1._x, v1._y, v3._x, v3._y));
+			surfaceArea->drawLine(FRect(screenCoord._x, screenCoord._y, photoPos._x, photoPos._y));
 		}
 	}
 }
 
-double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		FVector &v1, FVector &v2, FVector &v3) {
+double CStarField::lockDistance(CSurfaceArea *surfaceArea, CCamera *camera,
+		FVector &screenCoord, FVector &worldCoord, FVector &photoPos) {
 	if (_crosshairs.isEmpty())
 		// No crosshairs selection yet
 		return -1.0;
@@ -200,24 +198,24 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		return -1.0;
 
 	const CBaseStarEntry *dataP = _markers.getDataPtr(_crosshairs._entryIndex);
-	v2 = dataP->_position;
-	FVector tv = camera->getRelativePosNoCentering(2, v2); // First argument is not getting used in CViewport::fn16
+	worldCoord = dataP->_position;
+	FVector tv = camera->getRelativePosNoCentering(2, worldCoord);
 
-	if (camera->getThreshold() >= tv._z)
+	if (camera->getFrontClip() >= tv._z)
 		return -1.0;
 
 	tv = camera->getRelativePos(2, tv);
 
-	v1 = FVector(tv._x + surfaceArea->_centroid._x,
+	screenCoord = FVector(tv._x + surfaceArea->_centroid._x,
 		tv._y + surfaceArea->_centroid._y, tv._z);
 	FPoint pt = _crosshairs.getPosition();
-	v3 = FVector(pt._x, pt._y, 1.0);
+	photoPos = FVector(pt._x, pt._y, 1.0);
 
-	double incr = (v1._x - pt._x) * (v1._x - pt._x);
+	double incr = (screenCoord._x - pt._x) * (screenCoord._x - pt._x);
 	if (incr > 3600.0)
 		return -1.0;
 
-	incr += (v1._y - pt._y) * (v1._y - pt._y);
+	incr += (screenCoord._y - pt._y) * (screenCoord._y - pt._y);
 	if (incr > 3600.0)
 		return -1.0;
 
@@ -225,22 +223,22 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 	return incr;
 }
 
-void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
+void CStarField::fn6(CVideoSurface *surface, CCamera *camera) {
 	CSurfaceArea surfaceArea(surface);
 	_crosshairs.fn1(this, &surfaceArea, camera);
 }
 
-void CStarField::incMatches() {
+void CStarField::incLockLevel() {
 	_crosshairs.incMatches();
 	setSolved();
 }
 
-void CStarField::fn8(CVideoSurface *surface) {
-	_crosshairs.fn2(surface, this, &_markers);
+void CStarField::decLockLevel(CVideoSurface *surface) {
+	_crosshairs.decMatches(surface, this, &_markers);
 	setSolved();
 }
 
-bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
+bool CStarField::mouseButtonDown(CVideoSurface *surface, CCamera *camera,
 		int flags, const Common::Point &pt) {
 	if (_mode == MODE_STARFIELD) {
 		CSurfaceArea surfaceArea(surface);

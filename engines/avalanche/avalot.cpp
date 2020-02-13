@@ -484,6 +484,8 @@ void AvalancheEngine::exitRoom(byte x) {
 	case kRoomRobins:
 		_timer->loseTimer(Timer::kReasonGettingTiedUp);
 		break;
+	default:
+		break;
 	}
 
 	_interrogation = 0; // Leaving the room cancels all the questions automatically.
@@ -738,8 +740,10 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomCatacombs:
 		if ((ped == 0) || (ped == 3) || (ped == 5) || (ped == 6)) {
-
 			switch (ped) {
+			case 0:
+			default:
+				break;
 			case 3: // Enter from oubliette
 				_catacombX = 8;
 				_catacombY = 4;
@@ -1026,6 +1030,8 @@ void AvalancheEngine::useCompass(const Common::Point &cursorPos) {
 		_animation->stopWalking();
 		drawDirection();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1072,6 +1078,7 @@ void AvalancheEngine::guideAvvy(Common::Point cursorPos) {
 
 	switch (what) {
 	case 0:
+	default:
 		_animation->stopWalking();
 		break; // Clicked on Avvy: no movement.
 	case 1:
@@ -1524,6 +1531,8 @@ Common::String AvalancheEngine::getItem(byte which) {
 		case 3:
 			result = "some vinegar";
 			break;
+		default:
+			break;
 		}
 		break;
 	case kObjectOnion:
@@ -1539,6 +1548,7 @@ Common::String AvalancheEngine::getItem(byte which) {
 			result = Common::String(items[which - 1]);
 		else
 			result = "";
+		break;
 	}
 	return result;
 }
@@ -1660,6 +1670,8 @@ void AvalancheEngine::openDoor(Room whither, byte ped, byte magicnum) {
 			break;
 		case 12:
 			_sequence->startLustiesSeq3(whither, ped);
+			break;
+		default:
 			break;
 		}
 		break;

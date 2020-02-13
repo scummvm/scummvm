@@ -45,6 +45,8 @@ uint32 AsScene1001Door::handleMessage(int messageNum, const MessageParam &param,
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -129,6 +131,8 @@ uint32 AsScene1001Hammer::handleMessage(int messageNum, const MessageParam &para
 		playSound(0, 0xE741020A);
 		_newStickFrameIndex = STICK_LAST_FRAME;
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -159,6 +163,8 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 		SetMessageHandler(NULL);
 		setGlobalVar(V_WINDOW_OPEN, 1);
 		setVisible(false);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -203,6 +209,8 @@ uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -230,6 +238,8 @@ uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &p
 		setVisible(true);
 		_countdown = 8;
 		playSound(0, _soundFileHash);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -290,6 +300,8 @@ uint32 AsScene1002Ring::hmRingIdle(int messageNum, const MessageParam &param, En
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -313,6 +325,8 @@ uint32 AsScene1002Ring::hmRingPulled1(int messageNum, const MessageParam &param,
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -329,6 +343,8 @@ uint32 AsScene1002Ring::hmRingPulled2(int messageNum, const MessageParam &param,
 		break;
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -349,6 +365,8 @@ uint32 AsScene1002Ring::hmRingHangingLow(int messageNum, const MessageParam &par
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -368,6 +386,8 @@ uint32 AsScene1002Ring::hmRingReleased(int messageNum, const MessageParam &param
 		break;
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -398,6 +418,8 @@ uint32 AsScene1002Door::handleMessage(int messageNum, const MessageParam &param,
 	case NM_KLAYMEN_CLOSE_DOOR:
 		setGlobalVar(V_FLYTRAP_RING_DOOR, 0);
 		SetSpriteUpdate(&AsScene1002Door::suCloseDoor);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -447,6 +469,8 @@ uint32 AsScene1002BoxingGloveHitEffect::handleMessage(int messageNum, const Mess
 		stopAnimation();
 		setVisible(false);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -476,6 +500,8 @@ uint32 AsScene1002DoorSpy::handleMessage(int messageNum, const MessageParam &par
 	case 0x2003:
 		stDoorSpyBoxingGlove();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -485,6 +511,8 @@ uint32 AsScene1002DoorSpy::hmDoorSpyAnimation(int messageNum, const MessageParam
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -555,6 +583,8 @@ uint32 SsCommonPressButton::handleMessage(int messageNum, const MessageParam &pa
 		_countdown = 4;
 		setVisible(true);
 		playSound(0, _soundFileHash);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -666,6 +696,8 @@ uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1015);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -675,6 +707,8 @@ uint32 AsScene1002VenusFlyTrap::hmAnimationSimple(int messageNum, const MessageP
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -706,6 +740,8 @@ uint32 AsScene1002VenusFlyTrap::hmAnimationExt(int messageNum, const MessagePara
 		break;
 	case NM_MOVE_TO_FRONT:
 		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1015);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -841,6 +877,8 @@ uint32 AsScene1002OutsideDoorBackground::handleMessage(int messageNum, const Mes
 		_isDoorClosed = true;
 		_countdown = 2;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -850,6 +888,8 @@ uint32 AsScene1002OutsideDoorBackground::hmAnimation(int messageNum, const Messa
 	switch (messageResult) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -942,6 +982,8 @@ uint32 AsScene1002KlaymenPeekHand::handleMessage(int messageNum, const MessagePa
 				setClipRect(_savedClipRect);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -971,6 +1013,8 @@ uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &pa
 	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -1050,6 +1094,8 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1080,6 +1126,8 @@ uint32 KmScene1001::hmSleeping(int messageNum, const MessageParam &param, Entity
 			playSound(0, 0xC0238244);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1101,6 +1149,8 @@ uint32 KmScene1001::hmPullHammerLever(int messageNum, const MessageParam &param,
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x4AB28209)
 			sendMessage(_attachedSprite, NM_KLAYMEN_LOWER_LEVER, 0);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1162,6 +1212,8 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		case 4:
 			GotoState(&KmScene1002::stJumpToRing4);
 			break;
+		default:
+			break;
 		}
 		break;
 	case NM_KLAYMEN_MOVE_OBJECT:
@@ -1217,6 +1269,8 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1244,6 +1298,8 @@ uint32 KmScene1002::hmJumpToRing(int messageNum, const MessageParam &param, Enti
 		} else if (param.asInteger() == 0x88001184) {
 			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1301,6 +1357,8 @@ uint32 KmScene1002::hmJumpToRing3(int messageNum, const MessageParam &param, Ent
 			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1357,6 +1415,8 @@ uint32 KmScene1002::hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam 
 			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1396,6 +1456,8 @@ uint32 KmScene1002::hmJumpAndFall(int messageNum, const MessageParam &param, Ent
 		if (param.asInteger() == 0x1307050A) {
 			playSound(0, 0x40428A09);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1454,6 +1516,8 @@ uint32 KmScene1002::hmMoveVenusFlyTrap(int messageNum, const MessageParam &param
 	case NM_KLAYMEN_MOVE_OBJECT:
 		_isMoveObjectRequested = true;
 		return 0;
+	default:
+		break;
 	}
 	return hmLowLevelAnimation(messageNum, param, sender);
 }
@@ -1471,6 +1535,8 @@ uint32 KmScene1002::hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &
 		} else if (param.asInteger() == 0x0A2A9098) {
 			playSound(0, 0x0460E2FA);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1514,6 +1580,8 @@ uint32 KmScene1002::hmPressDoorButton(int messageNum, const MessageParam &param,
 			sendMessage(_attachedSprite, 0x480B, 0);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1536,6 +1604,8 @@ uint32 KmScene1002::hmHitByBoxingGlove(int messageNum, const MessageParam &param
 		} else if (param.asInteger() == 0x60428026) {
 			playSound(0, 0x40608A59);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1603,6 +1673,8 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1615,6 +1687,8 @@ uint32 KmScene1004::hmReadNote(int messageNum, const MessageParam &param, Entity
 			_acceptInput = true;
 			sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;

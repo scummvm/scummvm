@@ -103,7 +103,7 @@ protected:
 	/**
 	 * Returns a list of features the game itself supports
 	 */
-	virtual bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Load game configuration esttings
@@ -137,37 +137,37 @@ public:
 	bool _isScreenDoubled;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~SherlockEngine();
+	~SherlockEngine() override;
 
 	/**
 	 * Main method for running the game
 	 */
-	virtual Common::Error run();
+	Common::Error run() override;
 
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently();
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Called by the GMM to load a savegame
 	 */
-	virtual Common::Error loadGameState(int slot);
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Called by the GMM to save the game
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Called by the engine when sound settings are updated
 	 */
-	virtual void syncSoundSettings();
+	void syncSoundSettings() override;
 
 	/**
 	 * Saves game configuration information

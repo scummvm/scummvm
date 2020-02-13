@@ -137,6 +137,12 @@ private:
 	 */
 	int16 getTextWidth(const uint index, uint length) const;
 
+	/**
+	* Gets the pixel dimensions of a substring of the currently loaded text,
+	* without scaling.
+	*/
+	void getTextDimensions(const uint index, uint length, int16 &width, int16& height) const;
+
 	inline Common::Rect scaleRect(const Common::Rect &rect) {
 		Common::Rect scaledRect(rect);
 		const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
@@ -189,6 +195,11 @@ public:
 	 * Creates a font bitmap with a view background.
 	 */
 	reg_t createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed, const bool gc);
+
+	/**
+	 * Creates a titled font bitmap with a flat color background.
+	 */
+	reg_t createTitledFontBitmap(int16 width, int16 height, const Common::Rect &textRect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const Common::String &title, const uint8 titleForeColor, const uint8 titleBackColor, const GuiResourceId titleFontId, const bool doScaling, const bool gc);
 
 	inline int scaleUpWidth(int value) const {
 		const int scriptWidth = g_sci->_gfxFrameout->getScriptWidth();

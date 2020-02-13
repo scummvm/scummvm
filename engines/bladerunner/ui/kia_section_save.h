@@ -70,7 +70,7 @@ class KIASectionSave : public KIASectionBase {
 
 public:
 	KIASectionSave(BladeRunnerEngine *vm);
-	~KIASectionSave();
+	~KIASectionSave() override;
 
 	void open() override;
 	void close() override;

@@ -89,10 +89,8 @@ public:
 	/** The transient (pseudo) domain. */
 	static char const *const kTransientDomain;
 
-#ifdef ENABLE_KEYMAPPER
 	/** The name of keymapper domain used to store the key maps */
 	static char const *const kKeymapperDomain;
-#endif
 
 #ifdef USE_CLOUD
 	/** The name of cloud domain used to store user's tokens */
@@ -189,9 +187,7 @@ private:
 	Domain			_appDomain;
 	Domain			_defaultsDomain;
 
-#ifdef ENABLE_KEYMAPPER
 	Domain			_keymapperDomain;
-#endif
 
 #ifdef USE_CLOUD
 	Domain			_cloudDomain;

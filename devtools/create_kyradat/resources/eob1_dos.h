@@ -1755,20 +1755,23 @@ static const EoBCharacter kEoB1NpcPresetsDOS[9] = {
 
 static const EoBCharacterProvider kEoB1NpcPresetsDOSProvider = { ARRAYSIZE(kEoB1NpcPresetsDOS), kEoB1NpcPresetsDOS };
 
-static const char *const kEoB1SoundFilesIntroDOS[1] = {
-	"SOUND"
+static const char *const kEoB1SoundFilesIntroDOS[2] = {
+	"SOUND",
+	"PCSOUND"
 };
 
 static const StringListProvider kEoB1SoundFilesIntroDOSProvider = { ARRAYSIZE(kEoB1SoundFilesIntroDOS), kEoB1SoundFilesIntroDOS };
 
-static const char *const kEoB1SoundFilesIngameDOS[1] = {
-	"ADLIB"
+static const char *const kEoB1SoundFilesIngameDOS[2] = {
+	"ADLIB",
+	"PCGAMESN"
 };
 
 static const StringListProvider kEoB1SoundFilesIngameDOSProvider = { ARRAYSIZE(kEoB1SoundFilesIngameDOS), kEoB1SoundFilesIngameDOS };
 
-static const char *const kEoB1SoundFilesFinaleDOS[1] = {
-	"ADLIB"
+static const char *const kEoB1SoundFilesFinaleDOS[2] = {
+	"ADLIB",
+	"PCGAMESN"
 };
 
 static const StringListProvider kEoB1SoundFilesFinaleDOSProvider = { ARRAYSIZE(kEoB1SoundFilesFinaleDOS), kEoB1SoundFilesFinaleDOS };

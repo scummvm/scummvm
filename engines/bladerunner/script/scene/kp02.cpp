@@ -79,14 +79,15 @@ bool SceneScriptKP02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
+		// TODO - A bug? Exit 0 is not added in the original game so this will never be triggered
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1040.0f, -615.49f, 2903.0f, 0, true, false, false)) {
-			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406
-			 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406
+			if (Actor_Query_Goal_Number(kActorFreeSlotB) == kGoalFreeSlotBAct5KP02Attack
+			 || Actor_Query_Goal_Number(kActorFreeSlotA) == kGoalFreeSlotAAct5KP02Attack
 			) {
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
-				Actor_Set_Goal_Number(kActorFreeSlotB, 400);
-				Actor_Set_Goal_Number(kActorFreeSlotA, 400);
+				Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct5Default);
+				Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAAct5Default);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(kFlagKP02toUG12);
@@ -103,13 +104,13 @@ bool SceneScriptKP02::ClickedOnExit(int exitId) {
 
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3065.0f, 0, true, false, false)) {
-			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406
-			 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406
+			if (Actor_Query_Goal_Number(kActorFreeSlotB) == kGoalFreeSlotBAct5KP02Attack
+			 || Actor_Query_Goal_Number(kActorFreeSlotA) == kGoalFreeSlotAAct5KP02Attack
 			) {
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
-				Actor_Set_Goal_Number(kActorFreeSlotB, 400);
-				Actor_Set_Goal_Number(kActorFreeSlotA, 400);
+				Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct5Default);
+				Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAAct5Default);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(kFlagKP02toKP01);
@@ -146,6 +147,13 @@ void SceneScriptKP02::PlayerWalkedIn() {
 	 && Actor_Query_Goal_Number(kActorSteele) != 599
 	) {
 		Actor_Set_Goal_Number(kActorSteele, 450);
+	}
+
+	if (_vm->_cutContent && !Game_Flag_Query(kFlagKP02DispatchOnToxicKipple)) {
+		Game_Flag_Set(kFlagKP02DispatchOnToxicKipple);
+		ADQ_Add_Pause(Random_Query(0, 1) * 1000);
+		ADQ_Add(kActorDispatcher, 300, kAnimationModeTalk);
+		ADQ_Add(kActorDispatcher, 310, kAnimationModeTalk);
 	}
 	//return false;
 }

@@ -117,6 +117,11 @@ extern const RoomAction veng1ActionList[] = {
 	{ {ACTION_DONE_ANIM, 12,      0, 0}, &Room::veng1TriedToGetDebris },
 
 	// Common code
+	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
 	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
@@ -153,7 +158,7 @@ void Room::veng1WalkToDoor() {
 		_roomVar.veng.walkingToDoor = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 	} else
-		showText(TX_VEN1N007);
+		showDescription(7, true);
 }
 
 void Room::veng1TouchedHotspot0() {
@@ -175,98 +180,98 @@ void Room::veng1TouchedTurbolift() {
 }
 
 void Room::veng1LookAtDeadGuy() {
-	showText(TX_VEN4N014);
+	showDescription(TX_VEN4N014);
 }
 
 void Room::veng1UseSTricorderOnVent() {
-	spockScan(DIR_W, TX_VEN1_011);
+	spockScan(DIR_W, 11, false, true);
 }
 
 void Room::veng1LookAtPanel() {
 	if (!_awayMission->veng.openedPanel)
-		showText(TX_VEN1N022);
+		showDescription(22, true);
 	else if (!_awayMission->veng.removedPanelDebris)
-		showText(TX_VEN1N019);
+		showDescription(19, true);
 	else
-		showText(TX_VEN1N010);
+		showDescription(10, true);
 }
 
 void Room::veng1LookAtDoor() {
-	showText(TX_VEN1N021);
+	showDescription(21, true);
 }
 
 void Room::veng1LookAtSaw() {
-	showText(TX_VEN1N001);
+	showDescription(1, true);
 }
 
 void Room::veng1LookAtDebris() {
-	showText(TX_VEN1N000);
+	showDescription(0, true);
 }
 
 void Room::veng1LookAtKirk() {
-	showText(TX_VEN1N002);
+	showDescription(2, true);
 }
 
 void Room::veng1LookAtMccoy() {
-	showText(TX_VEN1N004);
+	showDescription(4, true);
 }
 
 void Room::veng1LookAtSpock() {
-	showText(TX_VEN1N003);
+	showDescription(3, true);
 }
 
 void Room::veng1LookAtRedshirt() {
-	showText(TX_VEN1N005);
+	showDescription(5, true);
 }
 
 void Room::veng1LookAnywhere() {
-	showText(TX_VEN1N020);
+	showDescription(20, true);
 }
 
 void Room::veng1TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, TX_VEN1_001);
+	showText(TX_SPEAKER_KIRK, 1, true);
 }
 
 void Room::veng1TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN1_013);
-	showText(TX_SPEAKER_MCCOY, TX_VEN1_005);
+	showText(TX_SPEAKER_SPOCK, 13, true);
+	showText(TX_SPEAKER_MCCOY,  5, true);
 }
 
 void Room::veng1TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, TX_VEN1_004);
-	showText(TX_SPEAKER_KIRK,  TX_VEN1_002);
+	showText(TX_SPEAKER_MCCOY, 4, true);
+	showText(TX_SPEAKER_KIRK,  2, true);
 }
 
 void Room::veng1TalkToRedshirt() {
-	showText(TX_SPEAKER_KIJE, TX_VEN1_016);
+	showText(TX_SPEAKER_KIJE, 16, true);
 }
 
 void Room::veng1UsePhaserOnDoor() {
-	showText(TX_SPEAKER_KIJE, TX_VEN1_015);
+	showText(TX_SPEAKER_KIJE, 15, true);
 }
 
 void Room::veng1UsePhaserOnPanel() {
-	showText(TX_SPEAKER_SPOCK, TX_VEN1_008);
+	showText(TX_SPEAKER_SPOCK, 8, true);
 }
 
 void Room::veng1UseSTricorderOnSaw() {
-	spockScan(DIR_W, TX_VEN1_012);
+	spockScan(DIR_W, 12, false, true);
 }
 
 void Room::veng1UseSTricorderOnDoor() {
 	if (_awayMission->veng.removedPanelDebris)
-		spockScan(DIR_N, TX_VEN1_009);
+		spockScan(DIR_N, 9, false, true);
 	else
-		spockScan(DIR_N, TX_VEN1_007);
+		spockScan(DIR_N, 7, false, true);
 }
 
 void Room::veng1UseSTricorderOnPanel() {
 	if (!_awayMission->veng.clearedPanelDebris)
-		spockScan(DIR_E, TX_VEN1_014);
+		spockScan(DIR_E, 14, false, true);
 	else if (!_awayMission->veng.removedPanelDebris)
-		spockScan(DIR_E, TX_VEN1_006);
+		spockScan(DIR_E, 6, false, true);
 	else
-		spockScan(DIR_E, TX_VEN1_010);
+		spockScan(DIR_E, 10, false, true);
 }
 
 void Room::veng1GetPanel() {
@@ -282,32 +287,32 @@ void Room::veng1KirkAccessedPanel() {
 	_awayMission->disableInput = false;
 
 	if (!_awayMission->veng.clearedPanelDebris) {
-		showText(TX_VEN1N016);
+		showDescription(16, true);
 	} else if (!_awayMission->veng.openedPanel) {
 		_awayMission->veng.openedPanel = true;
-		showText(TX_VEN1N017);
+		showDescription(17, true);
 		loadActorAnim2(OBJECT_DEBRIS, "s7r1p2", 0xd1, 0x6a);
 		loadActorStandAnim(OBJECT_PANEL);
 	} else
-		showText(TX_VEN1_F33);
+		showDescription(33 + FOLLOWUP_MESSAGE_OFFSET, true);
 
 	walkCrewman(OBJECT_KIRK, 0xc9, 0x98);
 }
 
 void Room::veng1UseSawOnPanel() {
-	showText(TX_VEN1N013);
+	showDescription(13, true);
 }
 
 void Room::veng1UseSawOnDoor() {
-	showText(TX_VEN1N014);
+	showDescription(14, true);
 }
 
 void Room::veng1UseDrillOnDebris() {
-	showText(TX_VEN1N009);
+	showDescription(9, true);
 }
 
 void Room::veng1UseSawOnDebris() {
-	showText(TX_VEN1N018);
+	showDescription(18, true);
 }
 
 void Room::veng1UseDrillOnPanel() {
@@ -325,7 +330,7 @@ void Room::veng1KirkDoneDrillingPanel() {
 	_awayMission->disableInput = false;
 	if (!_awayMission->veng.clearedPanelDebris) {
 		_awayMission->veng.clearedPanelDebris = true;
-		showText(TX_VEN1N008);
+		showDescription(8, true);
 	}
 }
 
@@ -343,10 +348,10 @@ void Room::veng1KirkUsedHypoOnDebris() {
 	_awayMission->disableInput = false;
 
 	if (!_awayMission->veng.oilInHypo)
-		showText(TX_VEN1N012);
+		showDescription(12, true);
 	else {
 		_awayMission->veng.loosenedDebrisWithOil = true;
-		showText(TX_VEN1N015);
+		showDescription(15, true);
 	}
 }
 
@@ -361,7 +366,7 @@ void Room::veng1ReachedSaw() {
 
 void Room::veng1PickedUpSaw() {
 	loadActorStandAnim(OBJECT_SAW);
-	showText(TX_VEN1N023);
+	showDescription(23, true);
 	giveItem(OBJECT_ILMD);
 
 	_awayMission->veng.tookMolecularSaw = true;
@@ -382,11 +387,11 @@ void Room::veng1TriedToGetDebris() {
 	_awayMission->disableInput = false;
 
 	if (!_awayMission->veng.loosenedDebrisWithOil)
-		showText(TX_VEN1N006);
+		showDescription(6, true);
 	else {
 		loadActorStandAnim(OBJECT_DEBRIS);
 		loadActorAnim2(OBJECT_PANEL, "s7r1p3", 0xd1, 0x6a);
-		showText(TX_VEN1N011);
+		showDescription(11, true);
 		_awayMission->veng.removedPanelDebris = true;
 	}
 }

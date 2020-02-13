@@ -408,6 +408,8 @@ void Mouse::systemMenuMouse() {
 			dialog.runModal();
 		}
 		break;
+	default:
+		break;
 	}
 
 	// Menu stays open on death screen. Otherwise it's closed.

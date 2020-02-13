@@ -42,7 +42,7 @@ class ZVision;
 class AnimationEffect : public ScriptingEffect {
 public:
 	AnimationEffect(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse = true);
-	~AnimationEffect();
+	~AnimationEffect() override;
 
 	struct playnode {
 		Common::Rect pos;
@@ -67,11 +67,11 @@ private:
 	int32 _frmDelayOverride;
 
 public:
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 
 	void addPlayNode(int32 slot, int x, int y, int x2, int y2, int startFrame, int endFrame, int loops = 1);
 
-	bool stop();
+	bool stop() override;
 };
 
 } // End of namespace ZVision

@@ -570,6 +570,8 @@ void PrinceEngine::keyHandler(Common::Event event) {
 	case Common::KEYCODE_ESCAPE:
 		_flags->setFlagValue(Flags::ESCAPED2, 1);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -626,6 +628,8 @@ void PrinceEngine::correctStringDEU(char *s) {
 			break;
 		case '\xfc':
 			*s = '\x82';
+			break;
+		default:
 			break;
 		}
 		s++;
@@ -1022,6 +1026,8 @@ void PrinceEngine::mouseWeirdo() {
 			break;
 		case 3:
 			mousePos.y -= kCelStep;
+			break;
+		default:
 			break;
 		}
 		mousePos.x = CLIP(mousePos.x, (int16) 315, (int16) 639);

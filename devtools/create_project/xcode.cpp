@@ -133,12 +133,6 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		}
 	}
 	else {
-		// Ugly hack: explicitly remove the browser.cpp file.
-		// The problem is that we have only one project for two different targets,
-		// and the parsing of the "mk" files added this file for both targets...
-		if (fileID.length() > 12 && fileID.substr(fileID.length() - 12) == "/browser.cpp") {
-			return true;
-		}
 		// macOS target: we skip all files with the "_ios" suffix
 		if (name.length() > 4 && name.substr(name.length() - 4) == "_ios") {
 			return true;
@@ -445,12 +439,13 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("CoreMIDI");
 	DEF_SYSFRAMEWORK("CoreGraphics");
 	DEF_SYSFRAMEWORK("CoreFoundation");
-	DEF_SYSFRAMEWORK("CoreMIDI");
 	DEF_SYSFRAMEWORK("Foundation");
 	DEF_SYSFRAMEWORK("IOKit");
 	DEF_SYSFRAMEWORK("OpenGLES");
 	DEF_SYSFRAMEWORK("QuartzCore");
 	DEF_SYSFRAMEWORK("UIKit");
+	DEF_SYSFRAMEWORK("Security");
+	DEF_SYSFRAMEWORK("SystemConfiguration");
 	DEF_SYSTBD("libiconv");
 
 	// Local libraries
@@ -498,9 +493,13 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (setup.useSDL2) {
 		DEF_LOCALLIB_STATIC("libSDL2main");
 		DEF_LOCALLIB_STATIC("libSDL2");
+		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+			DEF_LOCALLIB_STATIC("libSDL2_net");
 	} else {
 		DEF_LOCALLIB_STATIC("libSDLmain");
 		DEF_LOCALLIB_STATIC("libSDL");
+		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+			DEF_LOCALLIB_STATIC("libSDL_net");
 	}
 
 	frameworksGroup->_properties["children"] = children;
@@ -530,6 +529,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("CoreFoundation.framework");
 	frameworks_iOS.push_back("Foundation.framework");
 	frameworks_iOS.push_back("UIKit.framework");
+	frameworks_iOS.push_back("SystemConfiguration.framework");
 	frameworks_iOS.push_back("AudioToolbox.framework");
 	frameworks_iOS.push_back("QuartzCore.framework");
 	frameworks_iOS.push_back("OpenGLES.framework");
@@ -571,6 +571,16 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
 		frameworks_iOS.push_back("libz.tbd");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_LIBCURL")) {
+		frameworks_iOS.push_back("libcurl.a");
+		frameworks_iOS.push_back("Security.framework");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
+		if (setup.useSDL2)
+			frameworks_iOS.push_back("libSDL2_net.a");
+		else
+			frameworks_iOS.push_back("libSDL_net.a");
 	}
 
 	for (ValueList::iterator framework = frameworks_iOS.begin(); framework != frameworks_iOS.end(); framework++) {
@@ -654,9 +664,13 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (setup.useSDL2) {
 		frameworks_osx.push_back("libSDL2main.a");
 		frameworks_osx.push_back("libSDL2.a");
+		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+			frameworks_iOS.push_back("libSDL2_net.a");
 	} else {
 		frameworks_osx.push_back("libSDLmain.a");
 		frameworks_osx.push_back("libSDL.a");
+		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+			frameworks_iOS.push_back("libSDL_net.a");
 	}
 
 	order = 0;
@@ -753,10 +767,11 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 	if (files.empty()) {
 		files.push_back("gui/themes/scummclassic.zip");
 		files.push_back("gui/themes/scummmodern.zip");
-    files.push_back("gui/themes/scummremastered.zip");
+		files.push_back("gui/themes/scummremastered.zip");
 		files.push_back("gui/themes/translations.dat");
 		files.push_back("dists/engine-data/access.dat");
 		files.push_back("dists/engine-data/cryo.dat");
+		files.push_back("dists/engine-data/cryomni3d.dat");
 		files.push_back("dists/engine-data/drascula.dat");
 		files.push_back("dists/engine-data/fonts.dat");
 		files.push_back("dists/engine-data/hugo.dat");
@@ -771,10 +786,12 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("dists/engine-data/titanic.dat");
 		files.push_back("dists/engine-data/tony.dat");
 		files.push_back("dists/engine-data/toon.dat");
+		files.push_back("dists/engine-data/ultima.dat");
 		files.push_back("dists/engine-data/wintermute.zip");
 		files.push_back("dists/engine-data/macventure.dat");
 		files.push_back("dists/engine-data/xeen.ccs");
 		files.push_back("dists/pred.dic");
+		files.push_back("dists/networking/wwwroot.zip");
 		files.push_back("icons/scummvm.icns");
 		files.push_back("AUTHORS");
 		files.push_back("COPYING");
@@ -977,6 +994,12 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)");
 	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "\"");
 	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
+	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
+		if (setup.useSDL2)
+			iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include/SDL2\"");
+		else
+			iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "include/SDL\"");
+	}
 	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, kSettingsAsList | kSettingsQuoteVariable, 5);
 	ADD_SETTING_QUOTE(iPhone_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/ios7/Info.plist");
 	ValueList iPhone_LibPaths;
@@ -995,6 +1018,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE_IOS7");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE_SANDBOXED");
+	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+		ADD_DEFINE(scummvmIOS_defines, "WITHOUT_SDL");
 	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
 	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME", "LaunchImage");

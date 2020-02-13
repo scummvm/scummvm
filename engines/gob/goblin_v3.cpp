@@ -103,6 +103,9 @@ void Goblin_v3::advMovement(Mult::Mult_Object *obj, int8 state) {
 		obj->goblinX++;
 		obj->goblinY += 2;
 		break;
+
+	default:
+		break;
 	}
 }
 

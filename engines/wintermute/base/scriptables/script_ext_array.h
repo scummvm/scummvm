@@ -40,11 +40,11 @@ public:
 	DECLARE_PERSISTENT(SXArray, BaseScriptable)
 	SXArray(BaseGame *inGame, ScStack *stack);
 	SXArray(BaseGame *inGame);
-	virtual ~SXArray();
-	ScValue *scGetProperty(const Common::String &name);
-	bool scSetProperty(const char *name, ScValue *value);
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	const char *scToString();
+	~SXArray() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 private:
 	int32 _length;
 	ScValue *_values;

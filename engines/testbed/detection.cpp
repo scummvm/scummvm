@@ -40,7 +40,7 @@ static const ADGameDescription testbedDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GUIO_NOLAUNCHLOAD)
 	},
 	AD_TABLE_END_MARKER
 };
@@ -49,23 +49,29 @@ class TestbedMetaEngine : public AdvancedMetaEngine {
 public:
 	TestbedMetaEngine() : AdvancedMetaEngine(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
 		_md5Bytes = 512;
-		_singleId = "testbed";
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "testbed";
+	}
+
+	const char *getName() const override {
 		return "TestBed: The Backend Testing Framework";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Copyright (C) ScummVM";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const override {
 		// Instantiate Engine even if the game data is not found.
 		*engine = new Testbed::TestbedEngine(syst);
 		return true;
 	}
 
+	bool hasFeature(MetaEngineFeature f) const override {
+		return false;
+	}
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TESTBED)

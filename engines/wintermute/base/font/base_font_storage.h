@@ -45,7 +45,7 @@ public:
 	bool removeFont(BaseFont *font);
 	BaseFont *addFont(const Common::String &filename);
 	BaseFontStorage(BaseGame *inGame);
-	virtual ~BaseFontStorage();
+	~BaseFontStorage() override;
 	BaseArray<BaseFont *> _fonts;
 	bool initLoop();
 };

@@ -238,24 +238,24 @@ protected:
 class Player_AppleII : public Audio::AudioStream, public MusicEngine {
 public:
 	Player_AppleII(ScummEngine *scumm, Audio::Mixer *mixer);
-	virtual ~Player_AppleII();
+	~Player_AppleII() override;
 
-	virtual void setMusicVolume(int vol) { _sampleConverter.setMusicVolume(vol); }
+	void setMusicVolume(int vol) override { _sampleConverter.setMusicVolume(vol); }
 	void setSampleRate(int rate) {
 		_sampleRate = rate;
 		_sampleConverter.setSampleRate(rate);
 	}
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getSoundStatus(int sound) const;
-	virtual int  getMusicTimer();
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	int  getSoundStatus(int sound) const override;
+	int  getMusicTimer() override;
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _sampleRate; }
 
 public:
 	void speakerToggle();

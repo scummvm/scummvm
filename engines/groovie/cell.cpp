@@ -297,6 +297,8 @@ void CellGame::countAllCells() {
 		case 4:
 			_board[52]++;
 			break;
+		default:
+			break;
 		}
 	}
 }

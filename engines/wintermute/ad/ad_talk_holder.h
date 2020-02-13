@@ -37,18 +37,18 @@ class AdTalkHolder : public AdObject {
 public:
 	DECLARE_PERSISTENT(AdTalkHolder, AdObject)
 	virtual BaseSprite *getTalkStance(const char *stance);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	BaseSprite *_sprite;
 	BaseArray<BaseSprite *> _talkSprites;
 	BaseArray<BaseSprite *> _talkSpritesEx;
 	AdTalkHolder(BaseGame *inGame);
-	virtual ~AdTalkHolder();
+	~AdTalkHolder() override;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 
 };
 

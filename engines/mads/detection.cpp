@@ -69,7 +69,6 @@ Common::Platform MADSEngine::getPlatform() const {
 } // End of namespace MADS
 
 static const PlainGameDescriptor MADSGames[] = {
-	{"MADS", "MADS"},
 	{"dragonsphere", "Dragonsphere"},
 	{"nebular", "Rex Nebular and the Cosmic Gender Bender"},
 	{"phantom", "Return of the Phantom"},
@@ -81,6 +80,10 @@ static const PlainGameDescriptor MADSGames[] = {
 #define GAMEOPTION_ANIMATED_INTERFACE  GUIO_GAMEOPTIONS3
 #define GAMEOPTION_NAUGHTY_MODE        GUIO_GAMEOPTIONS4
 //#define GAMEOPTION_GRAPHICS_DITHERING  GUIO_GAMEOPTIONS5
+
+#ifdef USE_TTS
+#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS5
+#endif
 
 #include "mads/detection_tables.h"
 
@@ -135,6 +138,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},*/
 
+	#ifdef USE_TTS
+	{
+		GAMEOPTION_TTS_NARRATOR,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false
+		}
+	},
+	#endif
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -144,20 +159,24 @@ public:
 		_maxScanDepth = 3;
 	}
 
-	virtual const char *getName() const {
+	const char *getEngineId() const override {
+		return "mads";
+	}
+
+	const char *getName() const override {
 		return "MADS";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "MADS (C) Microprose";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {

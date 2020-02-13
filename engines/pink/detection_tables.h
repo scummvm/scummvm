@@ -34,7 +34,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DA_DAN,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Dutch
@@ -45,7 +45,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::NL_NLD,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// English
@@ -56,7 +56,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// English Great Britain
@@ -67,7 +67,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_GRB,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Finnish
@@ -78,7 +78,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FI_FIN,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// French
@@ -89,7 +89,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// German
@@ -100,7 +100,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Hebrew
@@ -111,7 +111,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::HE_ISR,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Polish
@@ -122,7 +122,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Portuguese
@@ -133,7 +133,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PT_BRA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Russian
@@ -144,7 +144,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Spanish
@@ -155,7 +155,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Swedish
@@ -166,7 +166,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::SE_SWE,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Dutch, Version 1.0
@@ -177,7 +177,18 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::NL_NLD,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
+	},
+
+	// Dutch, Version 2.0
+	{
+		"pokus",
+		0,
+		AD_ENTRY1s("HPP.orb", "993b0491d507efee0010e4f1c000ab8b", 509498617),
+		Common::NL_NLD,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// English
@@ -188,7 +199,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// French
@@ -199,7 +210,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// German
@@ -210,7 +221,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Hebrew
@@ -221,7 +232,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::HE_ISR,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Polish
@@ -232,7 +243,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Portuguese
@@ -243,7 +254,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PT_BRA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Russian
@@ -254,7 +265,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Spanish
@@ -265,7 +276,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Swedish
@@ -276,7 +287,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::SE_SWE,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Danish
@@ -289,7 +300,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DA_DAN,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	AD_TABLE_END_MARKER

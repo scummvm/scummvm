@@ -639,12 +639,12 @@ void Interface::doStepCode() {
 	case SURFTYPE_LAVA:
 		// It burns, it burns!
 		damage = 100;
-		party._damageType = DT_FIRE;
+		combat._damageType = DT_FIRE;
 		break;
 	case SURFTYPE_SKY:
 		// We can fly, we can.. oh wait, we can't!
 		damage = 100;
-		party._damageType = DT_PHYSICAL;
+		combat._damageType = DT_PHYSICAL;
 		_falling = FALL_IN_PROGRESS;
 		break;
 	case SURFTYPE_DESERT:
@@ -654,7 +654,7 @@ void Interface::doStepCode() {
 		break;
 	case SURFTYPE_CLOUD:
 		if (!party._levitateCount) {
-			party._damageType = DT_PHYSICAL;
+			combat._damageType = DT_PHYSICAL;
 			_falling = FALL_IN_PROGRESS;
 			damage = 100;
 		}
@@ -680,6 +680,9 @@ void Interface::doStepCode() {
 
 			int oldTarget = combat._combatTarget;
 			combat._combatTarget = 0;
+
+			// WORKAROUND: Stepping into combat whilst on lava results in damageType being lost
+			combat._damageType = (surfaceId == SURFTYPE_LAVA) ? DT_FIRE : DT_PHYSICAL;
 			combat.giveCharDamage(damage, combat._damageType, 0);
 
 			combat._combatTarget = oldTarget;
@@ -1665,6 +1668,9 @@ void Interface::doCombat() {
 				if (_tillMove)
 					combat.moveMonsters();
 				party._stepped = true;
+				break;
+
+			default:
 				break;
 			}
 
