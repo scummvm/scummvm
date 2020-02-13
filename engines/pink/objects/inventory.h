@@ -67,7 +67,7 @@ public:
 	bool isPinkOwnsAnyItems();
 	void setItemOwner(const Common::String &owner, InventoryItem *item);
 
-	InventoryItem *getCurrentItem() { return _item; }
+	InventoryItem *getCurrentItem() { return _currentItem; }
 
 	friend class Console;
 
@@ -85,7 +85,7 @@ private:
 	Actor *_rightArrow;
 	Actor *_leftArrow;
 
-	InventoryItem *_item;
+	InventoryItem *_currentItem;
 	Array<InventoryItem *> _items;
 
 	enum State {
