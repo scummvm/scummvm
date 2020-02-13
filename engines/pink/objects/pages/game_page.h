@@ -36,7 +36,7 @@ class GamePage : public Page {
 public:
 	GamePage();
 	~GamePage() override;
-	void toConsole() override;
+	void toConsole() const override;
 	void deserialize(Archive &archive) override;
 
 	void loadState(Archive &archive);

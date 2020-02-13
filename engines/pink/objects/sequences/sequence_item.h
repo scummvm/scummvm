@@ -33,7 +33,7 @@ class SequenceItem : public Object {
 public:
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	virtual bool execute(uint segment, Sequence *sequence, bool loadingSave);
 	virtual bool isLeader();
@@ -48,7 +48,7 @@ protected:
 
 class SequenceItemLeader : public SequenceItem {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	bool isLeader() override;
 };
 
@@ -58,7 +58,7 @@ public:
 		: _sample(0) {}
 
 	void deserialize(Archive &archive) override;
-	void toConsole() override;
+	void toConsole() const override;
 
 	uint32 getSample() { return _sample; }
 
@@ -68,7 +68,7 @@ private:
 
 class SequenceItemDefaultAction : public SequenceItem {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 
 	bool execute(uint segment, Sequence *sequence, bool loadingSave) override;
 	void skip(Sequence *sequence) override;

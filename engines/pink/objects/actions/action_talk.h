@@ -33,7 +33,7 @@ class ActionTalk : public ActionLoop {
 public:
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	void update() override;
 

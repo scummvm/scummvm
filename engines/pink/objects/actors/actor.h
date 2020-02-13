@@ -50,7 +50,7 @@ public:
 	virtual void init(bool paused);
 	bool initPalette(Director *director);
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	bool isPlaying() const { return !_isActionEnded; }
 	virtual void pause(bool paused);

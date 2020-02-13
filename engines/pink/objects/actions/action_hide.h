@@ -29,7 +29,7 @@ namespace Pink {
 
 class ActionHide : public Action {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 
 	void start() override;
 	void end() override;

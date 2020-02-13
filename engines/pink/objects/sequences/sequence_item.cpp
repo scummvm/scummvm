@@ -39,7 +39,7 @@ void SequenceItem::deserialize(Archive &archive) {
 	_action = archive.readString();
 }
 
-void SequenceItem::toConsole() {
+void SequenceItem::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\t\t\tSequenceItem: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
@@ -68,7 +68,7 @@ bool SequenceItemLeader::isLeader() {
 	return true;
 }
 
-void SequenceItemLeader::toConsole() {
+void SequenceItemLeader::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\t\t\tSequenceItemLeader: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
@@ -78,7 +78,7 @@ void SequenceItemLeaderAudio::deserialize(Archive &archive) {
 	_sample = archive.readDWORD();
 }
 
-void SequenceItemLeaderAudio::toConsole() {
+void SequenceItemLeaderAudio::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s _sample=%d", _actor.c_str(), _action.c_str(), _sample);
 }
 
@@ -89,7 +89,7 @@ bool SequenceItemDefaultAction::execute(uint segment, Sequence *sequence, bool l
 	return true;
 }
 
-void SequenceItemDefaultAction::toConsole() {
+void SequenceItemDefaultAction::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\t\t\tSequenceItemDefaultAction: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 

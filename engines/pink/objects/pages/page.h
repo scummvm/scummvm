@@ -37,7 +37,7 @@ class Sequencer;
 class Page : public NamedObject {
 public:
 	~Page() override;
-	void toConsole() override;
+	void toConsole() const override;
 
 	void load(Archive &archive) override;
 	void init();

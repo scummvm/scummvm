@@ -48,7 +48,7 @@ Actor *Page::findActor(const Common::String &name) {
 	return nullptr;
 }
 
-void Page::toConsole() {
+void Page::toConsole() const {
 	for (uint i = 0; i < _actors.size(); ++i) {
 		_actors[i]->toConsole();
 	}

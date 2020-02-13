@@ -43,7 +43,7 @@ void ActionPlayWithSfx::deserialize(Pink::Archive &archive) {
 	_sfxArray.deserialize(archive);
 }
 
-void ActionPlayWithSfx::toConsole() {
+void ActionPlayWithSfx::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionPlayWithSfx: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
 				  " _endFrame = %d, _isLoop = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _isLoop);
 	for (uint i = 0; i < _sfxArray.size(); ++i) {
@@ -91,7 +91,7 @@ void ActionSfx::deserialize(Pink::Archive &archive) {
 	_sprite = (ActionPlayWithSfx *)archive.readObject();
 }
 
-void ActionSfx::toConsole() {
+void ActionSfx::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tActionSfx: _sfx = %s, _volume = %u, _frame = %u", _sfxName.c_str(), _volume, _frame);
 }
 

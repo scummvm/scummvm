@@ -43,7 +43,7 @@ void InventoryItem::deserialize(Archive &archive) {
 	_currentOwner = _initialOwner;
 }
 
-void InventoryItem::toConsole() {
+void InventoryItem::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tInventoryItem: _initialOwner=%s _currentOwner=%s", _initialOwner.c_str(), _currentOwner.c_str());
 }
 
@@ -66,7 +66,7 @@ InventoryItem *InventoryMgr::findInventoryItem(const Common::String &name) {
 	return nullptr;
 }
 
-void InventoryMgr::toConsole() {
+void InventoryMgr::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "InventoryMgr:");
 	for (uint i = 0; i < _items.size(); ++i) {
 		_items[i]->toConsole();

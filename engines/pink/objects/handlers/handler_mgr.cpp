@@ -34,7 +34,7 @@ void HandlerMgr::deserialize(Archive &archive) {
 	_timerHandlers.deserialize(archive);
 }
 
-void HandlerMgr::toConsole() {
+void HandlerMgr::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "HandlerMgr:");
 	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
 		_leftClickHandlers[i]->toConsole();

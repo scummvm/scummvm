@@ -48,7 +48,7 @@ protected:
 
 class ConditionGameVariable : public ConditionVariable {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	bool evaluate(const Actor *actor) const override;
 };
 
@@ -61,31 +61,31 @@ class ConditionNotGameVariable : public ConditionGameVariable {
 
 class ConditionModuleVariable : public ConditionVariable {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	bool evaluate(const Actor *actor) const override;
 };
 
 class ConditionNotModuleVariable : public ConditionModuleVariable {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	bool evaluate(const Actor *actor) const override;
 };
 
 class ConditionPageVariable : public ConditionVariable {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	bool evaluate(const Actor *actor) const override;
 };
 
 class ConditionNotPageVariable : public ConditionPageVariable {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	bool evaluate(const Actor *actor) const override;
 };
 
 class ConditionInventoryItemOwner : public Condition {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	void deserialize(Archive &archive) override;
 	bool evaluate(const Actor *actor) const override;
 
@@ -96,7 +96,7 @@ protected:
 
 class ConditionNotInventoryItemOwner : public ConditionInventoryItemOwner {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	bool evaluate(const Actor *actor) const override;
 };
 

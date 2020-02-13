@@ -37,7 +37,7 @@ bool ConditionGameVariable::evaluate(const Actor *actor) const {
 	return actor->getPage()->getModule()->getGame()->checkValueOfVariable(_name, _value);
 }
 
-void ConditionGameVariable::toConsole() {
+void ConditionGameVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
@@ -45,7 +45,7 @@ bool ConditionModuleVariable::evaluate(const Actor *actor) const {
 	return actor->getPage()->getModule()->checkValueOfVariable(_name, _value);
 }
 
-void ConditionModuleVariable::toConsole() {
+void ConditionModuleVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
@@ -53,7 +53,7 @@ bool ConditionNotModuleVariable::evaluate(const Actor *actor) const {
 	return !ConditionModuleVariable::evaluate(actor);
 }
 
-void ConditionNotModuleVariable::toConsole() {
+void ConditionNotModuleVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionNotModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
@@ -61,7 +61,7 @@ bool ConditionPageVariable::evaluate(const Actor *actor) const {
 	return actor->getPage()->checkValueOfVariable(_name, _value);
 }
 
-void ConditionPageVariable::toConsole() {
+void ConditionPageVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
@@ -69,7 +69,7 @@ bool ConditionNotPageVariable::evaluate(const Actor *actor) const {
 	return !ConditionPageVariable::evaluate(actor);
 }
 
-void ConditionNotPageVariable::toConsole() {
+void ConditionNotPageVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionNotPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
@@ -86,7 +86,7 @@ bool ConditionInventoryItemOwner::evaluate(const Actor *actor) const {
 	return false;
 }
 
-void ConditionInventoryItemOwner::toConsole() {
+void ConditionInventoryItemOwner::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 
@@ -94,7 +94,7 @@ bool ConditionNotInventoryItemOwner::evaluate(const Actor *actor) const {
 	return !ConditionInventoryItemOwner::evaluate(actor);
 }
 
-void ConditionNotInventoryItemOwner::toConsole() {
+void ConditionNotInventoryItemOwner::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionNotInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 

@@ -69,7 +69,7 @@ void ActionText::deserialize(Archive &archive) {
 	_backgroundRGB = archive.readDWORD();
 }
 
-void ActionText::toConsole() {
+void ActionText::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionText: _name = %s, _fileName = %s, "
 				  "_xLeft = %u, _yTop = %u, _xRight = %u, _yBottom = %u _centered = %u, _scrollBar = %u, _textColor = %u _backgroundColor = %u",
 		  _name.c_str(), _fileName.c_str(), _xLeft, _yTop, _xRight, _yBottom, _centered, _scrollBar, _textRGB, _backgroundRGB);

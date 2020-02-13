@@ -33,7 +33,7 @@ void WalkLocation::deserialize(Pink::Archive &archive) {
 	_neighbors.deserialize(archive);
 }
 
-void WalkLocation::toConsole() {
+void WalkLocation::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tWalkLocation: _name =%s", _name.c_str());
 	debugC(6, kPinkDebugLoadingObjects, "\tNeighbors:");
 	for (uint i = 0; i < _neighbors.size(); ++i) {

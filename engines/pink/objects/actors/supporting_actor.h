@@ -35,7 +35,7 @@ class SupportingActor : public Actor {
 public:
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	bool isSupporting() const override { return true; }
 
