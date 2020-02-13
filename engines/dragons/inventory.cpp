@@ -297,8 +297,7 @@ void Inventory::openInventionBook() {
 }
 
 void Inventory::closeInventionBook() {
-	uint uVar1;
-	uint uVar2;
+	uint sceneId;
 
 	// TODO fade_related_calls_with_1f();
 
@@ -313,23 +312,27 @@ void Inventory::closeInventionBook() {
 	_sequenceId = 0;
 	setActorSequenceId(0);
 	setPositionFromSceneId(_inventionBookPrevSceneId);
-	uVar2 = _vm->_scene->getSceneId();
-	if (((((uVar2 == 0x23) || (uVar2 == 0x2d)) || (uVar2 == 0x2e)) || ((uVar2 == 0x31 || (uVar2 == 0x32)))) || (uVar2 == 0x28)) {
-		LAB_80038b9c:
-		if ((uint)_vm->_scene->getSceneId() == 0x27) goto LAB_80038bb8;
-	} else {
-		if (uVar2 != 0x27) {
-			if (((uVar2 != 0x1c) && (uVar2 != 0x1d)) && (uVar1 = uVar2 | 0x8000, uVar2 != 0x21)) goto LAB_80038be8;
-			goto LAB_80038b9c;
+	sceneId = _vm->_scene->getSceneId();
+	if (((((sceneId == 0x23) || (sceneId == 0x2d)) || (sceneId == 0x2e)) || ((sceneId == 0x31 || (sceneId == 0x32)))) || (sceneId == 0x28)) {
+		if ((uint)_vm->_scene->getSceneId() == 0x27) {
+			_vm->getINI(0x206)->sceneId = 0;
 		}
-		LAB_80038bb8:
-		_vm->getINI(0x206)->sceneId = 0;
+	} else {
+		if (sceneId != 0x27) {
+			if (sceneId != 0x1c && sceneId != 0x1d && sceneId != 0x21) {
+				_vm->_scene->loadScene(sceneId | 0x8000u, 0x1e);
+				_vm->setSceneUpdateFunction(_inventionBookPrevSceneUpdateFunc);
+				return;
+			}
+			if ((uint)_vm->_scene->getSceneId() == 0x27) {
+				_vm->getINI(0x206)->sceneId = 0;
+			}
+		} else {
+			_vm->getINI(0x206)->sceneId = 0;
+		}
 	}
-	uVar1 = (uint)_vm->_scene->getSceneId();
-LAB_80038be8:
-	_vm->_scene->loadScene(uVar1, 0x1e);
+	_vm->_scene->loadScene(_vm->_scene->getSceneId(), 0x1e);
 	_vm->setSceneUpdateFunction(_inventionBookPrevSceneUpdateFunc);
-	return;
 }
 
 void Inventory::setPositionFromSceneId(uint32 sceneId) {

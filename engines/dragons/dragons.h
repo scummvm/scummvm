@@ -306,13 +306,10 @@ private:
 	bool isInputEnabled();
 	bool checkForInventoryButtonRelease();
 
-	void fun_80038890();
 	void walkFlickerToObject();
-	void fun_80038994();
 
 	void seedRandom(int32 seed);
 	uint32 shuffleRandState();
-	void fun_8002931c();
 
 	void initializeSound();
 
