@@ -320,13 +320,13 @@ int16 Cursor::executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag) {
 }
 
 void Cursor::selectPreviousCursor() {
-	int16 uVar7 = _sequenceID - 1;
+	int16 newSequenceID = _sequenceID - 1;
 	int16 inventoryType = _vm->_inventory->getType();
-	if ((uVar7 == 0) && ((inventoryType == 1 || (inventoryType == 2)))) {
-		uVar7 = _sequenceID - 2;
+	if (newSequenceID == 0 && (inventoryType == 1 || inventoryType == 2)) {
+		newSequenceID = _sequenceID - 2;
 	}
-	_sequenceID = uVar7;
-	if ((_sequenceID == 3) && (inventoryType == 1)) {
+	_sequenceID = newSequenceID;
+	if (_sequenceID == 3 && inventoryType == 1) {
 		_sequenceID = 1;
 	}
 	if (_sequenceID == 2) {

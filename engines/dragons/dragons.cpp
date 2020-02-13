@@ -446,7 +446,9 @@ void DragonsEngine::gameLoop() {
 									runINIScripts();
 									continue;
 								}
-								if (_inventory->getSequenceId() == 0) goto LAB_80027294;
+								if (_inventory->getSequenceId() == 0) {
+									goto LAB_80027294;
+								}
 							}
 							if ((_cursor->_iniUnderCursor == 0x8001) && (_inventory->getSequenceId() == 1)) {
 								_inventory->setType(2);
@@ -538,7 +540,20 @@ void DragonsEngine::gameLoop() {
 						_inventory->closeInventionBook();
 					}
 				} else {
-					if (_cursor->_iniUnderCursor != 0x8002) goto LAB_8002790c;
+					if (_cursor->_iniUnderCursor != 0x8002) {
+						if ((_cursor->_iniItemInHand == 0) ||
+							(((uint16)(_cursor->_x - 10U) < 300 && ((uint16)(_cursor->_y - 10U) < 0xb4)))) {
+							runINIScripts();
+						} else {
+							_cursor->_sequenceID = 5;
+							waitForFrames(2);
+							_inventory->closeInventory();
+							uVar6 = _inventory->_old_showing_value;
+							_inventory->_old_showing_value = _inventory->getType();
+							_inventory->setType(uVar6);
+						}
+						continue;
+					}
 					_inventory->closeInventory();
 					_inventory->setType(2);
 					if (_inventory->_old_showing_value != 2) {
@@ -558,7 +573,18 @@ void DragonsEngine::gameLoop() {
 					}
 					clearFlags(ENGINE_FLAG_8);
 					walkFlickerToObject();
-					goto LAB_8002790c;
+					if ((_cursor->_iniItemInHand == 0) ||
+						(((uint16)(_cursor->_x - 10U) < 300 && ((uint16)(_cursor->_y - 10U) < 0xb4)))) {
+						runINIScripts();
+					} else {
+						_cursor->_sequenceID = 5;
+						waitForFrames(2);
+						_inventory->closeInventory();
+						uVar6 = _inventory->_old_showing_value;
+						_inventory->_old_showing_value = _inventory->getType();
+						_inventory->setType(uVar6);
+					}
+					continue;
 				}
 				Actor *actor = _inventory->getInventoryItemActor(_cursor->_iniUnderCursor);
 				uint16 tmpId = _cursor->_iniItemInHand;
@@ -602,18 +628,17 @@ void DragonsEngine::gameLoop() {
 				}
 			}
 		}
-LAB_8002790c:
 		if ((_cursor->_iniItemInHand == 0) ||
 			(((uint16)(_cursor->_x - 10U) < 300 && ((uint16)(_cursor->_y - 10U) < 0xb4)))) {
 			runINIScripts();
-			continue;
+		} else {
+			_cursor->_sequenceID = 5;
+			waitForFrames(2);
+			_inventory->closeInventory();
+			uVar6 = _inventory->_old_showing_value;
+			_inventory->_old_showing_value = _inventory->getType();
+			_inventory->setType(uVar6);
 		}
-		_cursor->_sequenceID = 5;
-		waitForFrames(2);
-		_inventory->closeInventory();
-		uVar6 = _inventory->_old_showing_value;
-		_inventory->_old_showing_value = _inventory->getType();
-		_inventory->setType(uVar6);
 	}
 }
 
