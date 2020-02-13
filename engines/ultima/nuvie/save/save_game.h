@@ -59,8 +59,24 @@ public:
 
 	void init(ObjManager *obj_manager);
 
+	/**
+	 * Sets up a new game
+	 */
 	bool load_new();
+
+	/**
+	 * Loads in the savegame created by the original Ultima 6
+	 */
 	bool load_original();
+
+	/**
+	 * Transfers in a character from a previous Ultima game
+	 */
+	bool transfer_character();
+
+	/**
+	 * Loads the savegame with the given name
+	 */
 	bool load(const Common::String &filename);
 
 	bool check_version(NuvieIOFileRead *loadfile, uint16 gameType);

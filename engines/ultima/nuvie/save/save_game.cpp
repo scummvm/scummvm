@@ -49,6 +49,8 @@
 #include "ultima/nuvie/nuvie.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
+#include "gui/browser.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -206,6 +208,18 @@ bool SaveGame::load_original() {
 	return true;
 }
 
+bool SaveGame::transfer_character() {
+	::GUI::BrowserDialog dialog(_("Transfer Character"), true);
+	if (!dialog.runModal())
+		return false;
+
+	Common::FSNode folder = dialog.getResult();
+
+	// TODO: Load in character data from given folder and start new game
+	g_engine->GUIError(Common::String::format("Load party file from folder - %s", folder.getPath().c_str()));
+
+	return false;
+}
 
 bool SaveGame::load_objlist() {
 	Game *game;
