@@ -153,6 +153,11 @@ The following libraries can be downloaded with pacman:
 |  flac         |  3ds-flac             |
 |  curl         |  3ds-curl             |
 
+At the moment of writing, the version of `freetype2` packaged by devkitPro has an issue
+where it allocates too much data on the stack when ScummVM loads GUI themes.
+As a workaround, an older version can be used. Version 2.6.5 is known to work well. The
+instructions below can be used to compile it.
+
 At the moment of writing, `faad` is not in the devkitPro 3DS pacman repository. It
 can be compiled by following the instructions in the section below, in case it cannot
 be found through pacman.
