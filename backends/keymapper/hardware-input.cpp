@@ -330,7 +330,7 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) co
 		byte modifierFlags = 0;
 
 		for (const ModifierTableEntry *modifier = _modifiers;  modifier->id; modifier++) {
-			if (event.kbd.hasFlags(modifier->flag)) {
+			if (event.kbd.flags & modifier->flag) {
 				id += modifier->id;
 				id += "+";
 				fullKeyDesc += modifier->desc;
