@@ -135,9 +135,9 @@ public:
 private:
 	Common::Error init();
 
-	void initMenu(Common::PEResources *exeResources);
+	void initMenu();
 
-	bool loadCursors(Common::PEResources *exeResources);
+	bool loadCursors();
 
 	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
 	void addModule(const Common::String &moduleName);
