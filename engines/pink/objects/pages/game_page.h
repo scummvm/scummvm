@@ -50,8 +50,9 @@ public:
 	Sequencer *getSequencer() override { return _sequencer; }
 	WalkMgr *getWalkMgr() override { return _walkMgr; }
 	Module *getModule() override { return _module; }
+	const Module *getModule() const override { return _module; }
 
-	bool checkValueOfVariable(const Common::String &variable, const Common::String &value) override;
+	bool checkValueOfVariable(const Common::String &variable, const Common::String &value) const override;
 	void setVariable(Common::String &variable, Common::String &value) override;
 
 	void clear() override;

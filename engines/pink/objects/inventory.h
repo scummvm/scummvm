@@ -35,7 +35,7 @@ public:
 
 	void toConsole() override;
 
-	const Common::String &getCurrentOwner() { return _currentOwner; }
+	const Common::String &getCurrentOwner() const { return _currentOwner; }
 
 	friend class InventoryMgr;
 private:

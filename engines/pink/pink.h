@@ -114,10 +114,10 @@ public:
 
 	void changeScene();
 
-	bool isPeril();
+	bool isPeril() const;
 
 	void setVariable(Common::String &variable, Common::String &value);
-	bool checkValueOfVariable(Common::String &variable, Common::String &value);
+	bool checkValueOfVariable(const Common::String &variable, const Common::String &value) const;
 
 	void executeMenuCommand(uint id);
 

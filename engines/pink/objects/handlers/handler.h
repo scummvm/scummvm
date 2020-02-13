@@ -39,7 +39,7 @@ public:
 	~Handler() override;
 	void deserialize(Archive &archive) override;
 	virtual void handle(Actor *actor);
-	bool isSuitable(Actor *actor);
+	bool isSuitable(const Actor *actor) const;
 
 protected:
 	void executeSideEffects(Actor *actor);

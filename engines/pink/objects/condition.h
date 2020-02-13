@@ -32,14 +32,14 @@ class Actor;
 class Condition : public Object {
 public:
 	void deserialize(Archive &archive) override = 0;
-	virtual bool evaluate(Actor *actor) = 0;
+	virtual bool evaluate(const Actor *actor) const = 0;
 };
 
 class ConditionVariable : public Condition {
 public:
 
 	void deserialize(Archive &archive) override;
-	bool evaluate(Actor *actor) override = 0;
+	bool evaluate(const Actor *actor) const override = 0;
 
 protected:
 	Common::String _name;
@@ -49,7 +49,7 @@ protected:
 class ConditionGameVariable : public ConditionVariable {
 public:
 	void toConsole() override;
-	bool evaluate(Actor *actor) override;
+	bool evaluate(const Actor *actor) const override;
 };
 
 /*
@@ -62,32 +62,32 @@ class ConditionNotGameVariable : public ConditionGameVariable {
 class ConditionModuleVariable : public ConditionVariable {
 public:
 	void toConsole() override;
-	bool evaluate(Actor *actor) override;
+	bool evaluate(const Actor *actor) const override;
 };
 
 class ConditionNotModuleVariable : public ConditionModuleVariable {
 public:
 	void toConsole() override;
-	bool evaluate(Actor *actor) override;
+	bool evaluate(const Actor *actor) const override;
 };
 
 class ConditionPageVariable : public ConditionVariable {
 public:
 	void toConsole() override;
-	bool evaluate(Actor *actor) override;
+	bool evaluate(const Actor *actor) const override;
 };
 
 class ConditionNotPageVariable : public ConditionPageVariable {
 public:
 	void toConsole() override;
-	bool evaluate(Actor *actor) override;
+	bool evaluate(const Actor *actor) const override;
 };
 
 class ConditionInventoryItemOwner : public Condition {
 public:
 	void toConsole() override;
 	void deserialize(Archive &archive) override;
-	bool evaluate(Actor *actor) override;
+	bool evaluate(const Actor *actor) const override;
 
 protected:
 	Common::String _item;
@@ -97,7 +97,7 @@ protected:
 class ConditionNotInventoryItemOwner : public ConditionInventoryItemOwner {
 public:
 	void toConsole() override;
-	bool evaluate(Actor *actor) override;
+	bool evaluate(const Actor *actor) const override;
 };
 
 } // End of namespace Pink

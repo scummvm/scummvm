@@ -37,7 +37,7 @@ void Handler::deserialize(Archive &archive) {
 	_sideEffects.deserialize(archive);
 }
 
-bool Handler::isSuitable(Actor *actor) {
+bool Handler::isSuitable(const Actor *actor) const {
 	for (uint i = 0; i < _conditions.size(); ++i) {
 		if (!_conditions[i]->evaluate(actor))
 			return false;
