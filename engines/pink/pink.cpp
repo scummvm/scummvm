@@ -83,7 +83,7 @@ Common::Error PinkEngine::init() {
 	_console = new Console(this);
 	_director = new Director();
 
-	initMenu(_exeResources);
+	initMenu();
 
 	Common::String orbName;
 	Common::String broName;
@@ -98,7 +98,7 @@ Common::Error PinkEngine::init() {
 	if (!_orb.open(orbName) || (_bro && !_bro->open(broName) && _orb.getTimestamp() == _bro->getTimestamp()))
 		return Common::kNoGameDataFoundError;
 
-	if (!loadCursors(_exeResources))
+	if (!loadCursors())
 		return Common::kNoGameDataFoundError;
 
 	setCursor(kLoadingCursor);
@@ -235,41 +235,41 @@ bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &
 	return _variables[variable] == value;
 }
 
-bool PinkEngine::loadCursors(Common::PEResources *exeResources) {
+bool PinkEngine::loadCursors() {
 	bool isPokus = !isPeril();
 
 	_cursors.reserve(kCursorsCount);
 
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusLoadingCursorID));
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableFirstCursorID));
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableSecondCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusLoadingCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusClickableFirstCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusClickableSecondCursorID));
 
 	if (isPokus) {
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableThirdCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusNotClickableCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusHoldingItemCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusClickableThirdCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusNotClickableCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusHoldingItemCursorID));
 	} else {
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilClickableThirdCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilNotClickableCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilHoldingItemCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilClickableThirdCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilNotClickableCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilHoldingItemCursorID));
 	}
 
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDADefaultCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusPDADefaultCursorID));
 
 	if (isPokus) {
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDAClickableFirstFrameCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDAClickableSecondFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusPDAClickableFirstFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusPDAClickableSecondFrameCursorID));
 	} else {
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilPDAClickableFirstFrameCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilPDAClickableSecondFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilPDAClickableFirstFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilPDAClickableSecondFrameCursorID));
 	}
 
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitLeftCursorID));
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitRightCursorID));
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitForwardCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusExitLeftCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusExitRightCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusExitForwardCursorID));
 
 	if (isPokus)
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitDownCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusExitDownCursorID));
 
 	return true;
 }
