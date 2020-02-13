@@ -42,13 +42,13 @@ public:
 
 	void play(Common::SafeSeekableSubReadStream *stream, Audio::Mixer::SoundType type, byte volume = 100, int8 balance = 0, bool isLoop = false);
 
-	bool isPlaying() { return g_system->getMixer()->isSoundHandleActive(_handle); }
+	bool isPlaying() const { return g_system->getMixer()->isSoundHandleActive(_handle); }
 
 	void stop() { g_system->getMixer()->stopHandle(_handle); }
 
 	void pause(bool paused) { g_system->getMixer()->pauseHandle(_handle, paused); }
 
-	uint64 getCurrentSample() { return (uint64)g_system->getMixer()->getElapsedTime(_handle).msecs() * kSampleRate / 1000; }
+	uint64 getCurrentSample() const { return (uint64)g_system->getMixer()->getElapsedTime(_handle).msecs() * kSampleRate / 1000; }
 
 private:
 	Audio::SoundHandle _handle;

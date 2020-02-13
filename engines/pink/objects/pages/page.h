@@ -56,8 +56,9 @@ public:
 	virtual Sequencer *getSequencer() { return nullptr; }
 	virtual WalkMgr *getWalkMgr() { return nullptr; }
 	virtual Module *getModule()  { return nullptr; }
+	virtual const Module *getModule() const { return nullptr; }
 
-	virtual bool checkValueOfVariable(const Common::String &variable, const Common::String &value) { return 0; }
+	virtual bool checkValueOfVariable(const Common::String &variable, const Common::String &value) const { return 0; }
 	virtual void setVariable(Common::String &variable, Common::String &value) {}
 
 protected:

@@ -74,7 +74,7 @@ void PDAButtonActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 		mgr->setCursor(kPDAClickableFirstFrameCursor, point, Common::String());
 }
 
-bool PDAButtonActor::isActive() {
+bool PDAButtonActor::isActive() const {
 	return _action && _action->getName() != "Inactive";
 }
 

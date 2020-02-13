@@ -44,8 +44,8 @@ public:
 
 	void toConsole() override;
 
-	bool isLeftClickHandler(Actor *actor);
-	bool isUseClickHandler(Actor *actor, const Common::String &itemName);
+	bool isLeftClickHandler(const Actor *actor) const;
+	bool isUseClickHandler(const Actor *actor, const Common::String &itemName) const;
 
 	void onTimerMessage(Actor *actor);
 	void onLeftClickMessage(Actor *actor);

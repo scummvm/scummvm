@@ -61,7 +61,7 @@ public:
 	void onLeftClickMessage() override;
 
 private:
-	bool isActive();
+	bool isActive() const;
 
 	Command _command;
 

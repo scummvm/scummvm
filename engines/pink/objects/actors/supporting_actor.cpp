@@ -47,11 +47,11 @@ void SupportingActor::toConsole() {
 	_handlerMgr.toConsole();
 }
 
-bool SupportingActor::isLeftClickHandlers() {
+bool SupportingActor::isLeftClickHandlers() const {
 	return _handlerMgr.isLeftClickHandler(this);
 }
 
-bool SupportingActor::isUseClickHandlers(InventoryItem *item) {
+bool SupportingActor::isUseClickHandlers(InventoryItem *item) const {
 	return _handlerMgr.isUseClickHandler(this, item->getName());
 }
 

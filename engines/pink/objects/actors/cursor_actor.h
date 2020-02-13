@@ -40,7 +40,7 @@ public:
 		}
 	}
 
-	bool isCursor() override {
+	bool isCursor() const override {
 		return true;
 	}
 

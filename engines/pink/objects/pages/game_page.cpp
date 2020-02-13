@@ -118,7 +118,7 @@ void GamePage::loadManagers() {
 	}
 }
 
-bool GamePage::checkValueOfVariable(const Common::String &variable, const Common::String &value) {
+bool GamePage::checkValueOfVariable(const Common::String &variable, const Common::String &value) const {
 	if (!_variables.contains(variable))
 		return value == kUndefinedValue;
 	return _variables[variable] == value;
