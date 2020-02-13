@@ -84,7 +84,7 @@ public:
 	void onWalkEnd(const Common::String &stopName);
 	void onPDAClose();
 
-	bool isInteractingWith(Actor *actor);
+	bool isInteractingWith(const Actor *actor) const;
 
 	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
 

@@ -321,7 +321,7 @@ void LeadActor::onPDAClose() {
 		_page->pause(0);
 }
 
-bool LeadActor::isInteractingWith(Actor *actor) {
+bool LeadActor::isInteractingWith(const Actor *actor) const {
 	if (!_isHaveItem)
 		return actor->isLeftClickHandlers();
 
