@@ -33,7 +33,7 @@ class InventoryItem : public NamedObject {
 public:
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	const Common::String &getCurrentOwner() const { return _currentOwner; }
 
@@ -51,7 +51,7 @@ public:
 	InventoryMgr();
 	~InventoryMgr() override;
 	void deserialize(Archive &archive) override;
-	void toConsole() override;
+	void toConsole() const override;
 
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);

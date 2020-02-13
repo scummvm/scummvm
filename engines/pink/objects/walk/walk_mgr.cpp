@@ -52,7 +52,7 @@ WalkLocation *WalkMgr::findLocation(const Common::String &name) {
 	return nullptr;
 }
 
-void WalkMgr::toConsole() {
+void WalkMgr::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "WalkMgr:");
 	for (uint i = 0; i < _locations.size(); ++i) {
 		_locations[i]->toConsole();

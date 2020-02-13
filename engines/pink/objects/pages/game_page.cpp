@@ -39,7 +39,7 @@ GamePage::~GamePage() {
 	delete _memFile;
 }
 
-void GamePage::toConsole() {
+void GamePage::toConsole() const {
 	Page::toConsole();
 	_walkMgr->toConsole();
 	_sequencer->toConsole();

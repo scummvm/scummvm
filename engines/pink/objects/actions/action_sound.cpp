@@ -45,7 +45,7 @@ void ActionSound::deserialize(Archive &archive) {
 	_isBackground = (bool)archive.readDWORD();
 }
 
-void ActionSound::toConsole() {
+void ActionSound::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionSound: _name = %s, _fileName = %s, _volume = %u, _isLoop = %u,"
 				  " _isBackground = %u", _name.c_str(), _fileName.c_str(), _volume, _isLoop, _isBackground);
 }

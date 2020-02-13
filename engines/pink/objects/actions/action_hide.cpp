@@ -27,7 +27,7 @@
 
 namespace Pink {
 
-void ActionHide::toConsole() {
+void ActionHide::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionHide: _name = %s", _name.c_str());
 }
 

@@ -34,7 +34,7 @@ namespace Pink {
 
 class AudioInfoPDAButton : public Actor {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 
 	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
 	void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;

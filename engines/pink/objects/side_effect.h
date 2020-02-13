@@ -39,7 +39,7 @@ public:
 class SideEffectExit : public SideEffect {
 public:
 	void deserialize(Archive &archive) override;
-	void toConsole() override;
+	void toConsole() const override;
 	void execute(Actor *actor) override;
 
 private:
@@ -51,7 +51,7 @@ class SideEffectLocation : public SideEffect {
 public:
 	void deserialize(Archive &archive) override;
 	void execute(Actor *actor) override;
-	void toConsole() override;
+	void toConsole() const override;
 
 private:
 	Common::String _location;
@@ -61,7 +61,7 @@ class SideEffectInventoryItemOwner : public SideEffect {
 public:
 	void deserialize(Archive &archive) override;
 	void execute(Actor *actor) override;
-	void toConsole() override;
+	void toConsole() const override;
 
 private:
 	Common::String _item;
@@ -80,26 +80,26 @@ protected:
 
 class SideEffectGameVariable : public SideEffectVariable {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	void execute(Actor *actor) override;
 };
 
 class SideEffectModuleVariable : public SideEffectVariable {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	void execute(Actor *actor) override;
 };
 
 class SideEffectPageVariable : public SideEffectVariable {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	void execute(Actor *actor) override;
 };
 
 class SideEffectRandomPageVariable : public SideEffect {
 public:
 	void deserialize(Archive &archive) override;
-	void toConsole() override;
+	void toConsole() const override;
 	void execute(Actor *actor) override;
 
 private:

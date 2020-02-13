@@ -42,7 +42,7 @@ public:
 	~HandlerMgr() override;
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	bool isLeftClickHandler(const Actor *actor) const;
 	bool isUseClickHandler(const Actor *actor, const Common::String &itemName) const;

@@ -63,7 +63,7 @@ protected:
 
 class HandlerStartPage : public HandlerSequences {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 
 private:
 	void execute(Sequence *sequence) override;
@@ -71,7 +71,7 @@ private:
 
 class HandlerLeftClick : public HandlerSequences {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 
 private:
 	void execute(Sequence *sequence) override {}
@@ -80,7 +80,7 @@ private:
 class HandlerUseClick : public HandlerSequences {
 public:
 	void deserialize(Archive &archive) override;
-	void toConsole() override;
+	void toConsole() const override;
 
 	const Common::String &getInventoryItem() const { return _inventoryItem; }
 	const Common::String &getRecepient() const { return _recepient; }

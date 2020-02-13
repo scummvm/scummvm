@@ -28,6 +28,6 @@ void Object::load(Archive &) {}
 
 void Object::deserialize(Archive &) {}
 
-void Object::toConsole() {}
+void Object::toConsole() const {}
 
 } // End of namespace Pink

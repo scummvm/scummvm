@@ -31,7 +31,7 @@ class WalkAction : public ActionCEL {
 public:
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	void update() override;
 

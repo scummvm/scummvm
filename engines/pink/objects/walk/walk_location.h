@@ -29,7 +29,7 @@ namespace Pink {
 class WalkLocation : public NamedObject {
 public:
 	void deserialize(Archive &archive) override;
-	void toConsole() override;
+	void toConsole() const override;
 	Common::StringArray &getNeigbors() { return _neighbors;}
 
 private:
