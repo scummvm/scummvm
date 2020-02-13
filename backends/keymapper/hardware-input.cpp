@@ -205,6 +205,19 @@ const KeyTableEntry defaultKeys[] = {
 	{"AUDIOREWIND", KEYCODE_AUDIOREWIND, "Audio Rewind"},
 	{"AUDIOFASTFORWARD", KEYCODE_AUDIOFASTFORWARD, "Audio Fast-Forward"},
 
+	// Modifier keys
+	{"SCROLLOCK", KEYCODE_SCROLLOCK, "Scroll Lock"   },
+	{"CAPSLOCK",  KEYCODE_CAPSLOCK,  "Caps Lock"     },
+	{"NUMLOCK",   KEYCODE_NUMLOCK,   "Num Lock"      },
+	{"LSHIFT",    KEYCODE_LSHIFT,    "Left Shift"    },
+	{"RSHIFT",    KEYCODE_RSHIFT,    "Right Shift"   },
+	{"LALT",      KEYCODE_LALT,      "Left Alt"      },
+	{"RALT",      KEYCODE_RALT,      "Right Alt"     },
+	{"LCTRL",     KEYCODE_LCTRL,     "Left Control"  },
+	{"RCTRL",     KEYCODE_RCTRL,     "Right Control" },
+	{"LMETA",     KEYCODE_LMETA,     "Left Meta"     },
+	{"RMETA",     KEYCODE_RMETA,     "Right Meta"    },
+
 	{0, KEYCODE_INVALID, 0}
 };
 
@@ -314,9 +327,11 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) co
 	switch (event.type) {
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP: {
+		KeyState normalizedKeystate = normalizeKeyState(event.kbd);
+
 		const KeyTableEntry *key = nullptr;
 		for (key = _keys;  key->hwId; key++) {
-			if (event.kbd.keycode == key->keycode) {
+			if (normalizedKeystate.keycode == key->keycode) {
 				break;
 			}
 		}
@@ -330,7 +345,7 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) co
 		byte modifierFlags = 0;
 
 		for (const ModifierTableEntry *modifier = _modifiers;  modifier->id; modifier++) {
-			if (event.kbd.flags & modifier->flag) {
+			if (normalizedKeystate.flags & modifier->flag) {
 				id += modifier->id;
 				id += "+";
 				fullKeyDesc += modifier->desc;
@@ -344,6 +359,50 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) co
 	default:
 		return HardwareInput();
 	}
+}
+
+KeyState KeyboardHardwareInputSet::normalizeKeyState(const KeyState &keystate) {
+	KeyState normalizedKeystate = keystate;
+
+	// We ignore the sticky modifiers as they traditionally
+	// have no impact on the outcome of key presses.
+	// TODO: Maybe Num Lock should act as a modifier for the keypad.
+	normalizedKeystate.flags &= ~KBD_STICKY;
+
+	// Modifier keypresses ignore the corresponding modifier flag.
+	// That way, for example, `Left Shift` is not identified
+	// as `Shift+Left Shift` by the keymapper.
+	switch (normalizedKeystate.keycode) {
+	case KEYCODE_LSHIFT:
+	case KEYCODE_RSHIFT:
+		normalizedKeystate.flags &= ~KBD_SHIFT;
+		break;
+	case KEYCODE_LCTRL:
+	case KEYCODE_RCTRL:
+		normalizedKeystate.flags &= ~KBD_CTRL;
+		break;
+	case KEYCODE_LALT:
+	case KEYCODE_RALT:
+		normalizedKeystate.flags &= ~KBD_ALT;
+		break;
+	case KEYCODE_LMETA:
+	case KEYCODE_RMETA:
+		normalizedKeystate.flags &= ~KBD_META;
+		break;
+	case KEYCODE_SCROLLOCK:
+		normalizedKeystate.flags &= ~KBD_SCRL;
+		break;
+	case KEYCODE_CAPSLOCK:
+		normalizedKeystate.flags &= ~KBD_CAPS;
+		break;
+	case KEYCODE_NUMLOCK:
+		normalizedKeystate.flags &= ~KBD_NUM;
+		break;
+	default:
+		break;
+	}
+
+	return normalizedKeystate;
 }
 
 MouseHardwareInputSet::MouseHardwareInputSet(const HardwareInputTableEntry *buttonEntries) :

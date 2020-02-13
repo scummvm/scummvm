@@ -128,7 +128,8 @@ Keymap::ActionArray Keymap::getMappedActions(const Event &event) const {
 	switch (event.type) {
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP: {
-		HardwareInput hardwareInput = HardwareInput::createKeyboard("", event.kbd, "");
+		KeyState normalizedKeystate = KeyboardHardwareInputSet::normalizeKeyState(event.kbd);
+		HardwareInput hardwareInput = HardwareInput::createKeyboard("", normalizedKeystate, "");
 		return _hwActionMap[hardwareInput];
 	}
 	case EVENT_LBUTTONDOWN:
