@@ -183,7 +183,7 @@ void MidiOutput::sendIntern(const byte event, const byte channel, byte param1, c
 		else if (!_isMT32 && channel == 0x09) {
 			// Apply GS drumkit fallback to correct invalid drumkit numbers.
 			param1ToSend = MidiDriver::_gsDrumkitFallbackMap[param1];
-			debugC(kDebugLevelSound, "[Midi] Selected drumkit %i (requested %i)", param1ToSend, param1);
+			debugC(7, kDebugLevelSound, "[Midi] Selected drumkit %i (requested %i)", param1ToSend, param1);
 		}
 	}
 
