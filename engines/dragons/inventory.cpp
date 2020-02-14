@@ -63,10 +63,10 @@ static const int16 invYPosTable[41] = {
 };
 
 Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
-	_type = 0;
+	_state = Closed;
 	_sequenceId = 0;
 	_screenPositionIndex = 0;
-	_old_showing_value = 0;
+	_previousState = Closed;
 	_bag = NULL;
 
 	_inventionBookPrevSceneUpdateFunc = NULL;
@@ -86,8 +86,8 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 	_actor->_flags |= (ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
 					   ACTOR_FLAG_200);
 	_sequenceId = 0;
-	_type = 0;
-	_old_showing_value = 0;
+	_state = Closed;
+	_previousState = Closed;
 	_bag = bag;
 
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
@@ -99,7 +99,7 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 
 
 void Inventory::loadScene(uint32 sceneId) {
-	if (!_type) {
+	if (_state == Closed) {
 		_sequenceId = _vm->isFlagSet(ENGINE_FLAG_400000) ? 1 : 0;
 	}
 
@@ -234,7 +234,7 @@ void Inventory::closeInventory() {
 	if (!_vm->isFlagSet(ENGINE_FLAG_400000)) {
 		_sequenceId = 0;
 	} else {
-		if (_old_showing_value == 2) {
+		if (_previousState == InventionBookOpen) {
 			_sequenceId = 3;
 		} else {
 			_sequenceId = 1;

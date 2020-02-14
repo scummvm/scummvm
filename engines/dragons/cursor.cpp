@@ -67,7 +67,7 @@ void Cursor::update() {
 	// TODO update cursor from inputs here.
 
 	// 0x800280b8
-	if (_sequenceID == 0 && (_vm->_inventory->getType() == 1 || _vm->_inventory->getType() == 2)) {
+	if (_sequenceID == 0 && _vm->_inventory->isOpen()) {
 		_sequenceID = 1;
 	}
 
@@ -76,7 +76,7 @@ void Cursor::update() {
 
 	// 0x80028104
 	if (_iniUnderCursor != 0
-			&& ((_iniUnderCursor & 0x8000 && (_vm->_inventory->getType() == 1 || _vm->_inventory->getType() == 2))
+			&& ((_iniUnderCursor & 0x8000 && _vm->_inventory->isOpen())
 			||(!(_iniUnderCursor & 0x8000) && _vm->getINI(_iniUnderCursor - 1)->field_1a_flags_maybe & 0x80))) {
 		if (_actor->_sequenceID != 0x84) {
 			_actor->updateSequence(0x84);
@@ -174,22 +174,9 @@ int16 Cursor::updateINIUnderCursor() {
 	}
 
 	// TODO 0x80028940
-	int16 inventoryType = _vm->_inventory->getType();
-	if (inventoryType == 1) {
+	if (_vm->_inventory->getState() == InventoryOpen) {
 		_iniUnderCursor = _vm->_inventory->getIniAtPosition(_x, _y);
 		return _iniUnderCursor;
-	} else {
-		if (inventoryType < 2) {
-			if (inventoryType != 0) {
-				_iniUnderCursor = 0;
-				return 0;
-			}
-		} else {
-			if (inventoryType != 2) {
-				_iniUnderCursor = 0;
-				return 0;
-			}
-		}
 	}
 
 	return updateIniFromScene();
@@ -321,12 +308,12 @@ int16 Cursor::executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag) {
 
 void Cursor::selectPreviousCursor() {
 	int16 newSequenceID = _sequenceID - 1;
-	int16 inventoryType = _vm->_inventory->getType();
-	if (newSequenceID == 0 && (inventoryType == 1 || inventoryType == 2)) {
+	InventoryState inventoryType = _vm->_inventory->getState();
+	if (newSequenceID == 0 && (inventoryType == InventoryOpen || inventoryType == InventionBookOpen)) {
 		newSequenceID = _sequenceID - 2;
 	}
 	_sequenceID = newSequenceID;
-	if (_sequenceID == 3 && inventoryType == 1) {
+	if (_sequenceID == 3 && inventoryType == InventoryOpen) {
 		_sequenceID = 1;
 	}
 	if (_sequenceID == 2) {

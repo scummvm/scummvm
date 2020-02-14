@@ -115,7 +115,7 @@ void Minigame3::run() {
 	uint16 local_1a;
 	int16 local_16;
 	int16 local_14;
-	int16 origInventoryType;
+	InventoryState origInventoryType;
 	int16 local_10;
 	int16 local_e;
 	UnkStruct UnkStruct_ARRAY_800931a0[4];
@@ -168,9 +168,9 @@ void Minigame3::run() {
 	fd->close();
 	delete fd;
 
-	origInventoryType = _vm->_inventory->getType();
+	origInventoryType = _vm->_inventory->getState();
 //	fade_related_calls_with_1f();
-	_vm->_inventory->setType(0);
+	_vm->_inventory->setState(Closed);
 	_vm->reset_screen_maybe();
 	flicker = _vm->_dragonINIResource->getFlickerRecord();
 	flicker->sceneId = 0;
@@ -745,7 +745,7 @@ void Minigame3::run() {
 //	_vm->_screen->loadPalette(4, (uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
 //			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 	_vm->_screen->updatePaletteTransparency(4, 1, 0xff, true);
-	_vm->_inventory->setType(origInventoryType);
+	_vm->_inventory->setState(origInventoryType);
 	_vm->_scene->setSceneId(origSceneId);
 	_vm->_scene->loadScene(origSceneId, 0);
 }

@@ -301,8 +301,8 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	// 0x8003070c
 	// TODO sub_80013b3c(); // palette related.
 
-	if (_vm->_inventory->isVisible()) {
-		_vm->_inventory->hide();
+	if (_vm->_inventory->isOpen()) {
+		_vm->_inventory->close();
 	}
 
 	if (!_vm->isFlagSet(ENGINE_FLAG_10000)) {

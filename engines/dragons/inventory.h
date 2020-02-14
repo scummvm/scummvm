@@ -38,15 +38,21 @@ class DragonINIResource;
 
 #define ACTOR_INVENTORY_OFFSET 0x17
 
+enum InventoryState {
+	Closed = 0,
+	InventoryOpen = 1,
+	InventionBookOpen = 2
+};
+
 class Inventory {
 public:
-	int16 _old_showing_value;
+	InventoryState _previousState;
 private:
 	DragonsEngine *_vm;
 	int32 _sequenceId;
 	int16 _screenPositionIndex;
 	Actor *_actor;
-	int16 _type;
+	InventoryState _state;
 	Bag *_bag;
 
 	void (*_inventionBookPrevSceneUpdateFunc)();
@@ -70,18 +76,17 @@ public:
 	void updateActorSequenceId(int32 sequenceId);
 	void resetSequenceId();
 
-	int16 getType() { return _type; }
-	void setType(int16 newType) { _type = newType; }
+	InventoryState getState() { return _state; }
+	void setState(InventoryState newState) { _state = newState; }
 
 	int16 getPositionIndex() { return _screenPositionIndex; }
 	Common::Point getPosition();
 
-	bool isVisible() {
-		return _type != 0;
+	bool isOpen() {
+		return _state != Closed;
 	}
 
-	void hide() { _type = 0; }
-	void show(int16 type) { _type = type; }
+	void close() { _state = Closed; }
 
 	void updateVisibility();
 	void setActorFlag400();
