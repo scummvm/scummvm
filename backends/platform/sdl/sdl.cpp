@@ -739,7 +739,7 @@ void OSystem_SDL::setupGraphicsModes() {
 #endif
 
 char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
-#if SDL_VERSION_ATLEAST(1, 2, 10)
+#if SDL_VERSION_ATLEAST(1, 2, 10) && !defined(__MORPHOS__)
 	int zeroBytes = 1;
 	if (Common::String(from).hasPrefixIgnoreCase("utf-16"))
 		zeroBytes = 2;
