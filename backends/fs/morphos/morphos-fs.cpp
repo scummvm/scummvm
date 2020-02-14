@@ -27,9 +27,6 @@
 #include "common/debug.h"
 #include "common/util.h"
 
-//#define ENTER() /* debug(6, "Enter") */
-//#define LEAVE() /* debug(6, "Leave") */
-
 /**
  * Returns the last component of a given path.
  *
@@ -235,10 +232,11 @@ bool MorphOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	
 	if (Examine(_pFileLock, fib) != DOSFALSE) {
 	
+	  MorphOSFilesystemNode *entry;
+		
 	  while (ExNext(_pFileLock, fib) != DOSFALSE)
 	  {
-	  
-	  	MorphOSFilesystemNode *entry;
+
 	  	Common::String full_path = NULL;
 	  	BPTR pLock;
 	  	
