@@ -39,17 +39,17 @@ void Minigame4::run() {
 	DragonINI *flicker;
 	uint uVar4;
 	uint16 result;
-	int16_t uVar3;
+	InventoryState uVar3;
 
 	uVar4 = _vm->getAllFlags();
-	uVar3 = _vm->_inventory->getType();
+	uVar3 = _vm->_inventory->getState();
 	flicker = _vm->_dragonINIResource->getFlickerRecord();
 	uVar1 = _vm->getCurrentSceneId();
 	// fade_related_calls_with_1f();
 	_vm->reset_screen_maybe();
 	_vm->_dragonINIResource->getFlickerRecord()->sceneId = 0;
 	_vm->_dragonINIResource->setFlickerRecord(NULL);
-	_vm->_inventory->setType(0);
+	_vm->_inventory->setState(Closed);
 	_vm->_scene->setSceneId(7);
 	_vm->_scene->loadSceneData(0x8007, 0);
 	_vm->clearFlags(ENGINE_FLAG_8);
@@ -103,7 +103,7 @@ void Minigame4::run() {
 	_vm->_videoFlags &= ~(uint16)4;
 	// EnableVSyncEvent();
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
-	_vm->_inventory->setType(uVar3);
+	_vm->_inventory->setState(uVar3);
 //	_vm->_screen->loadPalette(4, (uint)*(uint16 *)
 //					(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10)
 //			   + *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));

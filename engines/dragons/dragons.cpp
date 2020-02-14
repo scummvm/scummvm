@@ -258,8 +258,8 @@ uint16 DragonsEngine::ipt_img_file_related() {
 
 void DragonsEngine::gameLoop() {
 	uint16 prevImgIniId = 0;
-	uint16 uVar6;
-	uint16 uVar7;
+	InventoryState uVar6;
+	InventoryState uVar7;
 	uint16 sequenceId;
 
 	_cursor->_cursorActivationSeqOffset = 0;
@@ -346,12 +346,12 @@ void DragonsEngine::gameLoop() {
 			_bit_flags_8006fbd8 = 0;
 			DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 			if (flicker->sceneId == getCurrentSceneId() && flicker->actor->_direction != -1) {
-				uVar6 = _scriptOpcodes->_scriptTargetINI;
+				int16 iniId = _scriptOpcodes->_scriptTargetINI;
 				if (_cursor->_sequenceID != 5) {
-					uVar6 = _cursor->_data_80072890;
+					iniId = _cursor->_data_80072890;
 				}
-				if (uVar6 > 0) {
-					flicker->actor->_direction = getINI(uVar6 - 1)->field_e;
+				if (iniId > 0) {
+					flicker->actor->_direction = getINI(iniId - 1)->field_e;
 				}
 			}
 
@@ -364,157 +364,154 @@ void DragonsEngine::gameLoop() {
 			_flickerIdleCounter = 0;
 			continue;
 		}
-		if (_inventory->getType() != 1) {
-			if (_inventory->getType() < 2) {
-				if (_inventory->getType() == 0) {
-					if ((checkForInventoryButtonRelease() && isInputEnabled()) &&
-						((_bit_flags_8006fbd8 & 3) != 1)) {
-						sequenceId = _dragonVAR->getVar(7);
-						uVar7 = _inventory->_old_showing_value;
-						_inventory->_old_showing_value = _inventory->getType();
-						_inventory->setType(_inventory->_old_showing_value);
-						if (sequenceId == 1) {
-							_inventory->_old_showing_value = uVar7;
-							_inventory->inventoryMissing();
-						} else {
-							_flickerIdleCounter = 0;
-							_inventory->setType(1);
-							_inventory->openInventory();
-							if (_cursor->_iniItemInHand == 0) {
-								_cursor->_sequenceID = 1;
-							} else {
-								_cursor->_sequenceID = 5;
-							}
-						}
-						continue;
-					}
-					uVar6 = _inventory->getType();
-					if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
+		if (_inventory->getState() != InventoryOpen) {
+			if (_inventory->getState() == Closed) {
+				if ((checkForInventoryButtonRelease() && isInputEnabled()) &&
+					((_bit_flags_8006fbd8 & 3) != 1)) {
+					sequenceId = _dragonVAR->getVar(7);
+					InventoryState uVar7 = _inventory->_previousState;
+					_inventory->_previousState = _inventory->getState();
+					_inventory->setState(_inventory->_previousState);
+					if (sequenceId == 1) {
+						_inventory->_previousState = uVar7;
+						_inventory->inventoryMissing();
+					} else {
 						_flickerIdleCounter = 0;
-						if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
-							if (_cursor->_iniUnderCursor == 0x8002) {
-								LAB_80027294:
-								if (_cursor->_iniItemInHand == 0) {
-									if ((_bit_flags_8006fbd8 & 3) != 1) {
-										sequenceId = _dragonVAR->getVar(7);
-										uVar7 = _inventory->_old_showing_value;
-										_inventory->_old_showing_value = _inventory->getType();
-										_inventory->setType(_inventory->_old_showing_value);
-										if (sequenceId == 1) {
-											_inventory->_old_showing_value = uVar7;
-											_inventory->inventoryMissing();
-										} else {
-											_flickerIdleCounter = 0;
-											_inventory->setType(1);
-											_inventory->openInventory();
-											if (_cursor->_iniItemInHand == 0) {
-												_cursor->_sequenceID = 1;
-											} else {
-												_cursor->_sequenceID = 5;
-											}
-										}
-										continue;
-									}
-								} else {
-									if (_inventory->addItem(_cursor->_iniItemInHand)) {
-										_cursor->_sequenceID = 1;
-										waitForFrames(1);
-										_cursor->_iniItemInHand = 0;
-										_cursor->_iniUnderCursor = 0;
-										continue;
-									}
-								}
-							} else {
-								if (_cursor->_iniUnderCursor != 0x8001) {
-									_flickerIdleCounter = 0;
-									_cursor->_data_80072890 = _cursor->_iniUnderCursor;
-									if (_cursor->_sequenceID < 5) {
-										_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-										walkFlickerToObject();
-										if (_bit_flags_8006fbd8 != 0) {
-											clearFlags(ENGINE_FLAG_8);
-										}
-									} else {
-										_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-										walkFlickerToObject();
-										if (_bit_flags_8006fbd8 != 0) {
-											clearFlags(ENGINE_FLAG_8);
-										}
-										_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
-										_cursor->_data_80072890 = _cursor->_iniItemInHand;
-									}
-									runINIScripts();
-									continue;
-								}
-								if (_inventory->getSequenceId() == 0) {
-									goto LAB_80027294;
-								}
-							}
-							if ((_cursor->_iniUnderCursor == 0x8001) && (_inventory->getSequenceId() == 1)) {
-								_inventory->setType(2);
-								_inventory->_old_showing_value = uVar6;
-								_inventory->openInventionBook();
-								continue;
-							}
-						}
-						_flickerIdleCounter = 0;
-						_cursor->_data_80072890 = _cursor->_iniUnderCursor;
-						if (_cursor->_sequenceID < 5) {
-							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-							walkFlickerToObject();
-							if (_bit_flags_8006fbd8 != 0) {
-								clearFlags(ENGINE_FLAG_8);
-							}
-						} else {
-							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-							walkFlickerToObject();
-							if (_bit_flags_8006fbd8 != 0) {
-								clearFlags(ENGINE_FLAG_8);
-							}
-							_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
-							_cursor->_data_80072890 = _cursor->_iniItemInHand;
-						}
-					}
-				}
-			} else {
-				if (_inventory->getType() == 2) {
-					uVar6 = _inventory->getType();
-					if (checkForInventoryButtonRelease() && isInputEnabled()) {
-						uVar7 = _inventory->_old_showing_value;
-						if (_dragonVAR->getVar(7) == 1) {
-							_inventory->_old_showing_value = uVar7;
-							_inventory->inventoryMissing();
-							continue;
-						}
-						_flickerIdleCounter = 0;
-						_inventory->setType(1);
-						_inventory->_old_showing_value = uVar6;
+						_inventory->setState(InventoryOpen);
 						_inventory->openInventory();
 						if (_cursor->_iniItemInHand == 0) {
 							_cursor->_sequenceID = 1;
 						} else {
 							_cursor->_sequenceID = 5;
 						}
-						continue;
 					}
-					if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
-						_flickerIdleCounter = 0;
-						_cursor->_data_80072890 = _cursor->_iniUnderCursor;
-						if (_cursor->_sequenceID < 5) {
-							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-							walkFlickerToObject();
-							if (_bit_flags_8006fbd8 != 0) {
-								clearFlags(ENGINE_FLAG_8);
+					continue;
+				}
+				InventoryState uVar6 = _inventory->getState();
+				if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
+					_flickerIdleCounter = 0;
+					if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
+						if (_cursor->_iniUnderCursor == 0x8002) {
+							LAB_80027294:
+							if (_cursor->_iniItemInHand == 0) {
+								if ((_bit_flags_8006fbd8 & 3) != 1) {
+									sequenceId = _dragonVAR->getVar(7);
+									InventoryState uVar7 = _inventory->_previousState;
+									_inventory->_previousState = _inventory->getState();
+									_inventory->setState(_inventory->_previousState);
+									if (sequenceId == 1) {
+										_inventory->_previousState = uVar7;
+										_inventory->inventoryMissing();
+									} else {
+										_flickerIdleCounter = 0;
+										_inventory->setState(InventoryOpen);
+										_inventory->openInventory();
+										if (_cursor->_iniItemInHand == 0) {
+											_cursor->_sequenceID = 1;
+										} else {
+											_cursor->_sequenceID = 5;
+										}
+									}
+									continue;
+								}
+							} else {
+								if (_inventory->addItem(_cursor->_iniItemInHand)) {
+									_cursor->_sequenceID = 1;
+									waitForFrames(1);
+									_cursor->_iniItemInHand = 0;
+									_cursor->_iniUnderCursor = 0;
+									continue;
+								}
 							}
 						} else {
-							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-							walkFlickerToObject();
-							if (_bit_flags_8006fbd8 != 0) {
-								clearFlags(ENGINE_FLAG_8);
+							if (_cursor->_iniUnderCursor != 0x8001) {
+								_flickerIdleCounter = 0;
+								_cursor->_data_80072890 = _cursor->_iniUnderCursor;
+								if (_cursor->_sequenceID < 5) {
+									_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+									walkFlickerToObject();
+									if (_bit_flags_8006fbd8 != 0) {
+										clearFlags(ENGINE_FLAG_8);
+									}
+								} else {
+									_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+									walkFlickerToObject();
+									if (_bit_flags_8006fbd8 != 0) {
+										clearFlags(ENGINE_FLAG_8);
+									}
+									_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
+									_cursor->_data_80072890 = _cursor->_iniItemInHand;
+								}
+								runINIScripts();
+								continue;
 							}
-							_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
-							_cursor->_data_80072890 = _cursor->_iniItemInHand;
+							if (_inventory->getSequenceId() == 0) {
+								goto LAB_80027294;
+							}
 						}
+						if ((_cursor->_iniUnderCursor == 0x8001) && (_inventory->getSequenceId() == 1)) {
+							_inventory->setState(InventionBookOpen);
+							_inventory->_previousState = uVar6;
+							_inventory->openInventionBook();
+							continue;
+						}
+					}
+					_flickerIdleCounter = 0;
+					_cursor->_data_80072890 = _cursor->_iniUnderCursor;
+					if (_cursor->_sequenceID < 5) {
+						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+						walkFlickerToObject();
+						if (_bit_flags_8006fbd8 != 0) {
+							clearFlags(ENGINE_FLAG_8);
+						}
+					} else {
+						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+						walkFlickerToObject();
+						if (_bit_flags_8006fbd8 != 0) {
+							clearFlags(ENGINE_FLAG_8);
+						}
+						_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
+						_cursor->_data_80072890 = _cursor->_iniItemInHand;
+					}
+				}
+			}
+			if (_inventory->getState() == InventionBookOpen) {
+				uVar6 = _inventory->getState();
+				if (checkForInventoryButtonRelease() && isInputEnabled()) {
+					uVar7 = _inventory->_previousState;
+					if (_dragonVAR->getVar(7) == 1) {
+						_inventory->_previousState = uVar7;
+						_inventory->inventoryMissing();
+						continue;
+					}
+					_flickerIdleCounter = 0;
+					_inventory->setState(InventoryOpen);
+					_inventory->_previousState = uVar6;
+					_inventory->openInventory();
+					if (_cursor->_iniItemInHand == 0) {
+						_cursor->_sequenceID = 1;
+					} else {
+						_cursor->_sequenceID = 5;
+					}
+					continue;
+				}
+				if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
+					_flickerIdleCounter = 0;
+					_cursor->_data_80072890 = _cursor->_iniUnderCursor;
+					if (_cursor->_sequenceID < 5) {
+						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+						walkFlickerToObject();
+						if (_bit_flags_8006fbd8 != 0) {
+							clearFlags(ENGINE_FLAG_8);
+						}
+					} else {
+						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+						walkFlickerToObject();
+						if (_bit_flags_8006fbd8 != 0) {
+							clearFlags(ENGINE_FLAG_8);
+						}
+						_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
+						_cursor->_data_80072890 = _cursor->_iniItemInHand;
 					}
 				}
 			}
@@ -524,19 +521,19 @@ void DragonsEngine::gameLoop() {
 		if (checkForInventoryButtonRelease()) {
 			_flickerIdleCounter = 0;
 			_inventory->closeInventory();
-			uVar6 = _inventory->_old_showing_value;
-			_inventory->_old_showing_value = _inventory->getType();
-			_inventory->setType(uVar6);
+			InventoryState prevInventoryMode = _inventory->_previousState;
+			_inventory->_previousState = _inventory->getState();
+			_inventory->setState(prevInventoryMode);
 			continue;
 		}
-		uVar6 = _inventory->getType();
+		uVar6 = _inventory->getState();
 		if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
 			_flickerIdleCounter = 0;
 			if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
 				if (_cursor->_iniUnderCursor == 0x8001) {
 					_inventory->closeInventory();
-					_inventory->setType(0);
-					if (_inventory->_old_showing_value == 2) {
+					_inventory->setState(Closed);
+					if (_inventory->_previousState == InventionBookOpen) {
 						_inventory->closeInventionBook();
 					}
 				} else {
@@ -548,19 +545,19 @@ void DragonsEngine::gameLoop() {
 							_cursor->_sequenceID = 5;
 							waitForFrames(2);
 							_inventory->closeInventory();
-							uVar6 = _inventory->_old_showing_value;
-							_inventory->_old_showing_value = _inventory->getType();
-							_inventory->setType(uVar6);
+							InventoryState prevInventoryMode = _inventory->_previousState;
+							_inventory->_previousState = _inventory->getState();
+							_inventory->setState(prevInventoryMode);
 						}
 						continue;
 					}
 					_inventory->closeInventory();
-					_inventory->setType(2);
-					if (_inventory->_old_showing_value != 2) {
+					_inventory->setState(InventionBookOpen);
+					if (_inventory->_previousState != InventionBookOpen) {
 						_inventory->openInventionBook();
 					}
 				}
-				_inventory->_old_showing_value = uVar6;
+				_inventory->_previousState = uVar6;
 				continue;
 			}
 			if (_cursor->_iniUnderCursor != 0) {
@@ -580,9 +577,9 @@ void DragonsEngine::gameLoop() {
 						_cursor->_sequenceID = 5;
 						waitForFrames(2);
 						_inventory->closeInventory();
-						uVar6 = _inventory->_old_showing_value;
-						_inventory->_old_showing_value = _inventory->getType();
-						_inventory->setType(uVar6);
+						uVar6 = _inventory->_previousState;
+						_inventory->_previousState = _inventory->getState();
+						_inventory->setState(uVar6);
 					}
 					continue;
 				}
@@ -635,9 +632,9 @@ void DragonsEngine::gameLoop() {
 			_cursor->_sequenceID = 5;
 			waitForFrames(2);
 			_inventory->closeInventory();
-			uVar6 = _inventory->_old_showing_value;
-			_inventory->_old_showing_value = _inventory->getType();
-			_inventory->setType(uVar6);
+			InventoryState prevInventoryMode = _inventory->_previousState;
+			_inventory->_previousState = _inventory->getState();
+			_inventory->setState(prevInventoryMode);
 		}
 	}
 }
@@ -1001,7 +998,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		}
 
 		// 0x80027db8
-		if (!_inventory->isVisible()) {
+		if (!_inventory->isOpen()) {
 			for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
 				DragonINI *ini = getINI(i);
 				if (ini->field_10 >= 0 && ini->sceneId == currentSceneId) {
@@ -1184,7 +1181,7 @@ void DragonsEngine::walkFlickerToObject() {
 		if (_cursor->_data_80072890 != 0) {
 
 			if (!(READ_LE_UINT16(_dragonOBD->getFromOpt(_cursor->_data_80072890 - 1) + 4) & 8)
-					&& (_inventory->getType() == 0) && !isFlagSet(ENGINE_FLAG_200000)) {
+				&& (_inventory->getState() == Closed) && !isFlagSet(ENGINE_FLAG_200000)) {
 				targetINI = getINI(_cursor->_data_80072890 - 1);
 				if ((targetINI->field_1a_flags_maybe & 1) == 0) {
 					if (targetINI->actorResourceId == -1) {
@@ -1221,7 +1218,7 @@ void DragonsEngine::walkFlickerToObject() {
 			_bit_flags_8006fbd8 = 3;
 			return;
 		}
-		if (_inventory->getType() == 0 && !isFlagSet(ENGINE_FLAG_200000)) {
+		if (_inventory->getState() == Closed && !isFlagSet(ENGINE_FLAG_200000)) {
 			uVar7 = (uint)(uint16)_cursor->_x;
 			uVar8 = (uint)(uint16)_cursor->_y;
 			flickerINI->actor->_walkSpeed = 0x10000;
@@ -1249,7 +1246,7 @@ bool DragonsEngine::canLoadGameStateCurrently() {
 }
 
 bool DragonsEngine::canSaveGameStateCurrently() {
-	return isInputEnabled() && _inventory->getType() != 1;
+	return isInputEnabled() && !_inventory->isOpen();
 }
 
 bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {

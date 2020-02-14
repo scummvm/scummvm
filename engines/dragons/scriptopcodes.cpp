@@ -407,7 +407,7 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 				_vm->_cursor->_iniItemInHand = 0;
 			} else {
 				if (_vm->_inventory->clearItem(ini->id + 1)) {
-					if (_vm->_inventory->getType() == 1) {
+					if (_vm->_inventory->getState() == InventoryOpen) {
 						ini->actor->clearFlag(ACTOR_FLAG_40);
 					}
 				}
@@ -417,7 +417,7 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 		if (sceneId == 1) {
 			if (_vm->_cursor->_iniItemInHand != 0) {
 				_vm->_inventory->addItem(_vm->_cursor->_iniItemInHand);
-				if (_vm->_inventory->getType() == 1) {
+				if (_vm->_inventory->getState() == InventoryOpen) {
 					Actor *actor = _vm->_inventory->getInventoryItemActor(_vm->_cursor->_iniItemInHand);
 					actor->_flags = 0;
 					actor->_priorityLayer = 0;

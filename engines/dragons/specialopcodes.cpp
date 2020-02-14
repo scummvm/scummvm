@@ -346,14 +346,14 @@ void SpecialOpcodes::spc11ShakeScreen() {
 }
 
 void SpecialOpcodes::spcHandleInventionBookTransition() {
-	int16 invType =_vm->_inventory->getType();
-	if (invType == 1) {
+	int16 invType = _vm->_inventory->getState();
+	if (invType == InventoryOpen) {
 		_vm->_inventory->closeInventory();
-		_vm->_inventory->setType(0);
+		_vm->_inventory->setState(Closed);
 	}
-	if (invType == 2) {
+	if (invType == InventionBookOpen) {
 		_vm->_inventory->closeInventionBook();
-		_vm->_inventory->setType(0);
+		_vm->_inventory->setState(Closed);
 	}
 	_vm->_cursor->updateSequenceID(1);
 	_vm->setFlags(ENGINE_FLAG_400);
@@ -864,23 +864,23 @@ void SpecialOpcodes::spcUnk4f() {
 }
 
 void SpecialOpcodes::spcCloseInventory() {
-	if (_vm->_inventory->getType() == 1) {
+	if (_vm->_inventory->getState() == InventoryOpen) {
 		_vm->_inventory->closeInventory();
-		_vm->_inventory->setType(0);
+		_vm->_inventory->setState(Closed);
 	}
 }
 
 void SpecialOpcodes::spcOpenInventionBook() {
-	if (_vm->_inventory->getType() == 1) {
+	if (_vm->_inventory->getState() == InventoryOpen) {
 		_vm->_inventory->closeInventory();
 	}
 	_vm->_inventory->openInventionBook();
-	_vm->_inventory->setType(2);
+	_vm->_inventory->setState(InventionBookOpen);
 }
 
 void SpecialOpcodes::spcCloseInventionBook() {
 	_vm->_inventory->closeInventionBook();
-	_vm->_inventory->setType(0);
+	_vm->_inventory->setState(Closed);
 }
 
 void SpecialOpcodes::spcSetEngineFlag0x4000000() {
@@ -1200,7 +1200,7 @@ void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
 }
 
 void SpecialOpcodes::spcUseClickerOnLever() {
-	if (_vm->_inventory->getType() != 0) {
+	if (_vm->_inventory->isOpen()) {
 		_vm->_talk->flickerRandomDefaultResponse();
 		_vm->_dragonINIResource->getRecord(0)->field_12 = 1;
 	} else {

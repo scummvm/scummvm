@@ -86,10 +86,10 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	uint16 screenShakeCounter;
 	uint8 paletteData [0x200];
 	uint16 local_28;
-	int16 originalInventoryType;
+	InventoryState originalInventoryType;
 
 	origEngineFlags = _vm->getAllFlags();
-	originalInventoryType = _vm->_inventory->getType();
+	originalInventoryType = _vm->_inventory->getState();
 	flicker = _vm->_dragonINIResource->getFlickerRecord();
 
 	Common::File *fd = new Common::File();
@@ -137,7 +137,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	_dat_80093ca4 = unkArray[local_2e6];
 	_dat_80093c90 = unkArray[local_2e6];
 	_dat_80093c94 = 0;
-	_vm->_inventory->setType(0);
+	_vm->_inventory->setState(Closed);
 	_dat_80093cb4 = 2;
 	_dat_80093cbc = 0;
 	_dat_80093cb8 = 2;
@@ -155,7 +155,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	_dat_80093cc8 = _dat_80093ca4;
 	//fade_related_calls_with_1f();
 	_vm->reset_screen_maybe();
-	_vm->_inventory->setType(0);
+	_vm->_inventory->setState(Closed);
 	flicker->sceneId = 0;
 	_vm->_dragonINIResource->setFlickerRecord(NULL);
 	_vm->setFlags(ENGINE_FLAG_800);
@@ -698,7 +698,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	//TODO FUN_80035e74((uint)uVar17);
 	//TODO FUN_80035e74((uint)uVar16);
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
-	_vm->_inventory->setType(originalInventoryType);
+	_vm->_inventory->setState(originalInventoryType);
 	flicker->field_12 = local_258 + -1;
 	if (flicker->field_12 == 0) {
 		_vm->setVar(0xb, 1);
