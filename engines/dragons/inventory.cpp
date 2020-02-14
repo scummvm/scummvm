@@ -302,9 +302,9 @@ void Inventory::closeInventionBook() {
 	// TODO fade_related_calls_with_1f();
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
-	if (flicker && flicker->actor) {
-		flicker->actor->_x_pos = _inventionBookPrevFlickerINIPosition.x;
-		flicker->actor->_y_pos = _inventionBookPrevFlickerINIPosition.y;
+	if (flicker) {
+		flicker->x = _inventionBookPrevFlickerINIPosition.x;
+		flicker->y = _inventionBookPrevFlickerINIPosition.y;
 		flicker->sceneId = _inventionBookPrevFlickerINISceneId;
 	}
 	_vm->_scene->setSceneId(_inventionBookPrevSceneId);
