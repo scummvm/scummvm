@@ -203,7 +203,11 @@ bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	return _window ? (SDL_GetWindowWMInfo(_window, info) == SDL_TRUE) : false;
 #else
+	#ifdef __MORPHOS__
+	return -1;
+	#else
 	return SDL_GetWMInfo(info);
+	#endif
 #endif
 }
 
