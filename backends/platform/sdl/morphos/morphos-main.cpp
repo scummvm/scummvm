@@ -31,38 +31,8 @@
 
 int main(int argc, char *argv[]) {
 
-	// The following will gather the application name and add the install path
-	// to a variable in AmigaOS4's ENV(ARC) system. It will be placed in AppPaths
-	// so that ScummVM can become AmiUpdate aware
-	//const char *const appname = "ScummVM";
-
-	/*BPTR lock;
-	APTR oldwin;
-
-	// Obtain a lock to the home directory
-	if ((lock = IDOS->GetProgramDir())) {
-		TEXT progpath[2048];
-		TEXT apppath[1024] = "AppPaths";
-
-		if (IDOS->DevNameFromLock(lock,
-			progpath,
-			sizeof(progpath),
-			DN_FULLPATH)) {
-
-			// Stop any "Insert volume..." type requesters
-			oldwin = IDOS->SetProcWindow((APTR)-1);
-
-			// Finally, set the variable to the path the executable was run from
-			IDOS->AddPart( apppath, appname, 1024);
-			IDOS->SetVar( apppath, progpath, -1, GVF_GLOBAL_ONLY|GVF_SAVE_VAR );
-
-			// Turn system requesters back on
-			IDOS->SetProcWindow( oldwin );
-		}
-	}*/
-
 	// Set up a stack cookie to avoid crashes from a stack set too low
-	static const char *stack_cookie __attribute__((used)) = "$STACK: 600000";
+	static const char *stack_cookie __attribute__((used)) = "$STACK: 2048000";
 
 	// Create our OSystem instance
 	g_system = new OSystem_MorphOS();
