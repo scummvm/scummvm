@@ -57,7 +57,7 @@ const char *lastPathComponent(const Common::String &str) {
 
 MorphOSFilesystemNode::MorphOSFilesystemNode() {
 
-	_sDisplayName = "Available Disks";
+	_sDisplayName = "Available HDDs/Partitions";
 	_bIsValid = true;
 	_bIsDirectory = true;
 	_sPath = "";
@@ -68,10 +68,7 @@ MorphOSFilesystemNode::MorphOSFilesystemNode() {
 
 MorphOSFilesystemNode::MorphOSFilesystemNode(const Common::String &p) {
 
-    int len = 0;
 	int offset = p.size();
-
-	assert(offset > 0);
 
 	if (offset <= 0) {
 		debug(6, "Bad offset");
@@ -90,11 +87,10 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(const Common::String &p) {
 	 debug(6,"Failed...");
 	 return;	
 	}
-	
+
 	BPTR pLock = Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
 	 if (Examine(pLock, fib) != DOSFALSE) {
-	 
 	  if (fib->fib_EntryType > 0)
 	  {
 	   	_bIsDirectory = true;
@@ -103,23 +99,14 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(const Common::String &p) {
 	    const char c = _sPath.lastChar();
 			if (c != '/' && c != ':')
 				_sPath += '/';
-	  
 	  } else {
-	  
 	  	_bIsDirectory = false;
 		_bIsValid = false;
-	  
 	  }
-	 
-	 
 	 }
-	
-	
 	 UnLock(pLock);
 	}
-	
 	FreeDosObject(DOS_FIB, fib);
-
 }
 
 MorphOSFilesystemNode::MorphOSFilesystemNode(BPTR pLock, const char *pDisplayName) {
@@ -139,7 +126,6 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 		if (IoErr() != ERROR_LINE_TOO_LONG) {
 			_bIsValid = false;
 			debug(6, "IoErr() != ERROR_LINE_TOO_LONG");
-			//LEAVE();
 			delete[] n;
 			return;
 		}
@@ -151,7 +137,6 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	_bIsValid = false;
 	_bIsDirectory = false;
 
-
 	FileInfoBlock *fib = (FileInfoBlock*) AllocDosObject(DOS_FIB, NULL);
 	
 	if (fib == NULL) {
@@ -159,84 +144,55 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	 return;	
 	}
 
-	if (Examine(pLock, fib) != DOSFALSE) {
-	 
+	if (Examine(pLock, fib) != DOSFALSE) 
+	{
   		_bIsDirectory = fib->fib_EntryType >0;
-	
-	  if (_bIsDirectory)
-	  {
-	   	if (fib->fib_EntryType != ST_ROOT)
-	   		_sPath += '/';
-	   	_pFileLock = DupLock(pLock);
-		_bIsValid = (_pFileLock != NULL);
-	  
-	  } else {
-	  
-		_bIsValid = true;
-	  
-	  }
+		if (_bIsDirectory)
+		{
+	   		if (fib->fib_EntryType != ST_ROOT)
+	   			_sPath += '/';
+	   		_pFileLock = DupLock(pLock);
+			_bIsValid = (_pFileLock != NULL);
+		} else {
+			_bIsValid = true;
+	    }
     }
-		
 	FreeDosObject(DOS_FIB, fib);
-
 }
 
 // We need the custom copy constructor because of DupLock()
 MorphOSFilesystemNode::MorphOSFilesystemNode(const MorphOSFilesystemNode& node)
 : AbstractFSNode() {
-	//ENTER();
 	_sDisplayName = node._sDisplayName;
 	_bIsValid = node._bIsValid;
 	_bIsDirectory = node._bIsDirectory;
 	_sPath = node._sPath;
 	_pFileLock = DupLock(node._pFileLock);
 	_nProt = node._nProt;
-	//LEAVE();
 }
 
 MorphOSFilesystemNode::~MorphOSFilesystemNode() {
-	//ENTER();
 	if (_pFileLock)
 		UnLock(_pFileLock);
-	//LEAVE();
 }
 
 bool MorphOSFilesystemNode::exists() const {
-	//ENTER();
 	if (_sPath.empty())
 		return false;
 
 	bool nodeExists = false;
 
-	// Previously we were trying to examine the node in order
-	// to determine if the node exists or not.
-	// I don't see the point : once you have been granted a
-	// lock on it, it means it exists...
-	//
-	// =============================  Old code
-	// BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
-	// if (pLock)
-	// {
-	// 	if (IDOS->Examine(pLock, fib) != DOSFALSE)
-	// 		nodeExists = true;
-	// 	IDOS->UnLock(pLock);
-	// }
-	//
-	// IDOS->FreeDosObject(DOS_FIB, fib);
-	//
-	// =============================  New code
 	BPTR pLock = Lock(_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
 		nodeExists = true;
 		UnLock(pLock);
 	}
 
-	//LEAVE();
 	return nodeExists;
 }
 
 AbstractFSNode *MorphOSFilesystemNode::getChild(const Common::String &n) const {
-	//ENTER();
+
 	if (!_bIsDirectory) {
 		debug(6, "Not a directory");
 		return 0;
@@ -249,14 +205,10 @@ AbstractFSNode *MorphOSFilesystemNode::getChild(const Common::String &n) const {
 
 	newPath += n;
 
-	//LEAVE();
 	return new MorphOSFilesystemNode(newPath);
 }
 
 bool MorphOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
-
-
-	//bool ret = false;
 
 	if (!_bIsValid) {
 		debug(6, "Invalid node");
@@ -273,7 +225,6 @@ bool MorphOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		myList = listVolumes();
 		return true;
 	}
-
 
 	FileInfoBlock *fib = (FileInfoBlock*) AllocDosObject(DOS_FIB, NULL);
 	
@@ -295,40 +246,35 @@ bool MorphOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	  		(fib->fib_EntryType > 0 && (Common::FSNode::kListDirectoriesOnly == mode)) ||
 	  		(fib->fib_EntryType < 0 && (Common::FSNode::kListFilesOnly == mode )))
 	  		{
-	  		
-	  		full_path = _sPath;
-	  		full_path += fib->fib_FileName;
-	  		pLock = Lock(full_path.c_str(), SHARED_LOCK);
-			if (pLock) {
+
+	  			full_path = _sPath;
+	  			full_path += fib->fib_FileName;
+	  			pLock = Lock(full_path.c_str(), SHARED_LOCK);
+				if (pLock) 
+				{
 					entry = new MorphOSFilesystemNode( pLock, fib->fib_FileName );
 					if (entry) {
 						myList.push_back(entry);
 					}
-
 					UnLock(pLock);
-			}	  
-			
+				}	  
 			}
-			
-		}	
+		}
 	  	if (ERROR_NO_MORE_ENTRIES != IoErr() ) {
 			debug(6, "An error occurred during ExamineDir");
 			return false;
 		}
 	}
-	
+
 	FreeDosObject(DOS_FIB, fib);
-	  
+
 	return true;
-		
 }
 
 AbstractFSNode *MorphOSFilesystemNode::getParent() const {
-	//ENTER();
 
 	if (isRootNode()) {
 		debug(6, "Root node");
-		//LEAVE();
 		return new MorphOSFilesystemNode(*this);
 	}
 
@@ -352,8 +298,6 @@ AbstractFSNode *MorphOSFilesystemNode::getParent() const {
 	if (!_bIsDirectory) {
 		UnLock(pLock);
 	}
-
-	//LEAVE();
 
 	return node;
 }
@@ -382,12 +326,7 @@ AbstractFSList MorphOSFilesystemNode::listVolumes() const {
 			dosList->dol_Task) {
 
 			MorphOSFilesystemNode *entry;
-			
 
-			//CopyStringBSTRToC(dosList->dol_Name, buffer, MAXPATHLEN);
-
-			// Volume name + '\0'
-			//char *volName = new char [strlen(buffer) + 1];
 			CONST_STRPTR volName = (CONST_STRPTR)BADDR(dosList->dol_Name)+1;
 			CONST_STRPTR devName = (CONST_STRPTR)((struct Task *)dosList->dol_Task->mp_SigTask)->tc_Node.ln_Name;
 			BPTR volumeLock;
@@ -417,16 +356,22 @@ AbstractFSList MorphOSFilesystemNode::listVolumes() const {
 }
 
 Common::SeekableReadStream *MorphOSFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	StdioStream *readStream = StdioStream::makeFromPath(getPath(), false);
+
+	if (readStream) {
+		readStream->setBufferSize(8192);
+	}
+
+	return readStream;
 }
 
 Common::WriteStream *MorphOSFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-bool MorphOSFilesystemNode::create(bool isDirectoryFlag) {
-	error("Not supported");
-	return false;
+bool MorphOSFilesystemNode::createDirectory() {
+	warning("AmigaOSFilesystemNode::createDirectory(): Not supported");
+	return _bIsValid && _bIsDirectory;
 }
 
 #endif //defined(__MORPHOS__)
