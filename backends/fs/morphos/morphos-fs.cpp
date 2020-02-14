@@ -317,13 +317,13 @@ AbstractFSList MorphOSFilesystemNode::listVolumes() const {
 
 	dosList = NextDosEntry(dosList, LDF_VOLUMES);
 	
+	MorphOSFilesystemNode *entry;
+	
 	while (dosList) {
 	
 		if (dosList->dol_Type == DLT_VOLUME &&
 			dosList->dol_Name &&
 			dosList->dol_Task) {
-
-			MorphOSFilesystemNode *entry;
 
 			CONST_STRPTR volName = (CONST_STRPTR)BADDR(dosList->dol_Name)+1;
 			CONST_STRPTR devName = (CONST_STRPTR)((struct Task *)dosList->dol_Task->mp_SigTask)->tc_Node.ln_Name;
