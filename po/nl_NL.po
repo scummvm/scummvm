@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-14 13:24+0000\n"
-"PO-Revision-Date: 2020-01-17 14:24+0000\n"
+"PO-Revision-Date: 2020-02-14 07:08+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -36,11 +36,11 @@ msgstr "Beschikbare engines:"
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:87
 msgid "Show hidden files"
-msgstr "Verborgen bestanden weergeven"
+msgstr "Toon verborgen bestanden"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr "Bestanden die gemarkeerd zijn met het verbergen kenmerk weergeven"
+msgstr "Toon bestanden die als verborgen staan gemarkeerd"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
@@ -4113,7 +4113,7 @@ msgstr "Speel de Myst fly by film"
 
 #: engines/mohawk/detection.cpp:187
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr "De Myst fly by file werd niet door de originele engine afgespeeld."
+msgstr "De Myst fly by film werd niet door de originele engine afgespeeld."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:145 engines/mohawk/dialogs.cpp:295
@@ -4887,7 +4887,7 @@ msgstr "* Het gebruik van Ctrl-F en"
 
 #: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
-msgstr "  Ctrl-G wordt niet aanbevolen"
+msgstr "  Ctrl-G wordt niet aangeraden"
 
 #: engines/scumm/help.cpp:110
 msgid "  since they may cause crashes"
