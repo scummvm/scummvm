@@ -222,6 +222,7 @@ private:
 	byte _cursorPalette[3 * 256];
 
 	Graphics::Surface _gameScreen;
+	bool _gameTextureDirty;
 	Sprite _gameTopTexture;
 	Sprite _gameBottomTexture;
 	Sprite _overlay;

@@ -78,6 +78,7 @@ OSystem_3DS::OSystem_3DS():
 	_magY(0),
 	_magWidth(400),
 	_magHeight(240),
+	_gameTextureDirty(false),
 	_overlayVisible(false),
 	_screenChangeId(0),
 	_magnifyMode(MODE_MAGOFF),

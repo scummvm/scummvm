@@ -329,12 +329,9 @@ float OSystem_3DS::getScaleRatio() const {
 void OSystem_3DS::setPalette(const byte *colors, uint start, uint num) {
 	assert(start + num <= 256);
 	memcpy(_palette + 3 * start, colors, 3 * num);
-
-	// Manually update all color that were changed
-	if (_gameScreen.format.bytesPerPixel == 1) {
-		flushGameScreen();
-	}
+	_gameTextureDirty = true;
 }
+
 void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) const {
 	assert(start + num <= 256);
 	memcpy(colors, _palette + 3 * start, 3 * num);
@@ -391,12 +388,17 @@ Graphics::Surface *OSystem_3DS::lockScreen() {
 	return &_gameScreen;
 }
 void OSystem_3DS::unlockScreen() {
-	flushGameScreen();
+	_gameTextureDirty = true;
 }
 
 void OSystem_3DS::updateScreen() {
 	if (sleeping || exiting) {
 		return;
+	}
+
+	if (_gameTextureDirty) {
+		flushGameScreen();
+		_gameTextureDirty = false;
 	}
 
 // 	updateFocus();
