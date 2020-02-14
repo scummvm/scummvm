@@ -41,6 +41,12 @@ public:
 	Console(SciEngine *engine);
 	~Console() override;
 
+	/**
+	 * 'Attach' the debugger. This ensures that the next time onFrame()
+	 * is invoked, the debugger will activate and accept user input.
+	 */
+	void attach(const char *entry = nullptr) override;
+
 private:
 	void preEnter() override;
 	void postEnter() override;

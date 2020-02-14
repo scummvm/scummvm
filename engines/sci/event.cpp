@@ -303,14 +303,6 @@ SciEvent EventManager::getScummVMEvent() {
 		return noEvent;
 	}
 
-	// Check for Control-Shift-D (debug console)
-	if (ev.type == Common::EVENT_KEYDOWN && ev.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_SHIFT) && ev.kbd.keycode == Common::KEYCODE_d) {
-		// Open debug console
-		Console *con = g_sci->getSciDebugger();
-		con->attach();
-		return noEvent;
-	}
-
 	// The IBM keyboard driver prior to SCI1.1 only sent keydown events to the
 	// interpreter
 	if (ev.type != Common::EVENT_KEYDOWN && getSciVersion() < SCI_VERSION_1_1) {

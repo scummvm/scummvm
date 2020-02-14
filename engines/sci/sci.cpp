@@ -240,7 +240,7 @@ SciEngine::~SciEngine() {
 	delete _soundCmd;
 	delete _kernel;
 	delete _vocabulary;
-	delete _console;
+	//_console deleted by Engine
 	delete _guestAdditions;
 	delete _features;
 	delete _gfxMacIconBar;
@@ -331,6 +331,7 @@ Common::Error SciEngine::run() {
 
 	// Create debugger console. It requires GFX and _gamestate to be initialized
 	_console = new Console(this);
+	setDebugger(_console);
 
 	// The game needs to be initialized before the graphics system is initialized, as
 	// the graphics code checks parts of the seg manager upon initialization (e.g. for
@@ -757,8 +758,8 @@ void SciEngine::exitGame() {
 	_gamestate->_fileHandles.resize(5);
 }
 
-// Invoked by error() when a severe error occurs
-GUI::Debugger *SciEngine::getDebugger() {
+// Invoked by debugger when a severe error occurs
+void SciEngine::severeError() {
 	if (_gamestate) {
 		ExecStack *xs = &(_gamestate->_executionStack.back());
 		if (xs) {
@@ -769,11 +770,8 @@ GUI::Debugger *SciEngine::getDebugger() {
 
 	_debugState.runningStep = 0; // Stop multiple execution
 	_debugState.seeking = kDebugSeekNothing; // Stop special seeks
-
-	return _console;
 }
 
-// Used to obtain the engine's console in order to print messages to it
 Console *SciEngine::getSciDebugger() {
 	return _console;
 }

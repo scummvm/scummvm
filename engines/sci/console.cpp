@@ -261,6 +261,15 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 Console::~Console() {
 }
 
+void Console::attach(const char *entry) {
+	if (entry) {
+		// Attaching to display a severe error, let the engine know
+		_engine->severeError();
+	}
+
+	GUI::Debugger::attach(entry);
+}
+
 void Console::preEnter() {
 	_engine->pauseEngine(true);
 }

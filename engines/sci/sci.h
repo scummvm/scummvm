@@ -257,7 +257,7 @@ public:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 	void pauseEngineIntern(bool pause) override;
-	GUI::Debugger *getDebugger() override;
+	void severeError();
 	Console *getSciDebugger();
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
