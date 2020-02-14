@@ -283,7 +283,7 @@
 
 		#define SCUMM_LITTLE_ENDIAN
 
-	#elif defined(__amigaos4__) || defined(__N64__) || defined(__WII__)
+	#elif defined(__MORPHOS__) || defined(__amigaos4__) || defined(__N64__) || defined(__WII__)
 
 		#define SCUMM_BIG_ENDIAN
 		#define SCUMM_NEED_ALIGNMENT
