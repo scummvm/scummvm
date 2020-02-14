@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-14 13:24+0000\n"
-"PO-Revision-Date: 2019-12-04 17:19+0000\n"
+"PO-Revision-Date: 2020-02-14 08:03+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.9.1\n"
+"X-Generator: Weblate 3.10.1\n"
 "X-Language-name: Deutsch\n"
 
 #: gui/about.cpp:102
@@ -676,7 +676,7 @@ msgstr "~H~inzufügen..."
 #: gui/launcher.cpp:171
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Durchsuchen"
+msgstr "Durchsuchen..."
 
 #: gui/launcher.cpp:175
 msgctxt "lowres"
