@@ -31,7 +31,7 @@ class ActionLoop : public ActionPlay {
 public:
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	void update() override;
 

@@ -34,7 +34,7 @@ namespace Pink {
 
 InventoryMgr::InventoryMgr()
 	: _lead(nullptr), _window(nullptr), _itemActor(nullptr),
-	_rightArrow(nullptr), _leftArrow(nullptr), _item(nullptr),
+	_rightArrow(nullptr), _leftArrow(nullptr), _currentItem(nullptr),
 	_state(kIdle), _isClickedOnItem(false) {}
 
 void InventoryItem::deserialize(Archive &archive) {
@@ -43,7 +43,7 @@ void InventoryItem::deserialize(Archive &archive) {
 	_currentOwner = _initialOwner;
 }
 
-void InventoryItem::toConsole() {
+void InventoryItem::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tInventoryItem: _initialOwner=%s _currentOwner=%s", _initialOwner.c_str(), _currentOwner.c_str());
 }
 
@@ -66,7 +66,7 @@ InventoryItem *InventoryMgr::findInventoryItem(const Common::String &name) {
 	return nullptr;
 }
 
-void InventoryMgr::toConsole() {
+void InventoryMgr::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "InventoryMgr:");
 	for (uint i = 0; i < _items.size(); ++i) {
 		_items[i]->toConsole();
@@ -74,12 +74,12 @@ void InventoryMgr::toConsole() {
 }
 
 bool InventoryMgr::isPinkOwnsAnyItems() {
-	if (_item)
+	if (_currentItem)
 		return true;
 
 	for (uint i = 0; i < _items.size(); ++i) {
 		if (_items[i]->getCurrentOwner() == _lead->getName()) {
-			_item = _items[i];
+			_currentItem = _items[i];
 			return true;
 		}
 	}
@@ -91,10 +91,10 @@ void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item
 	if (owner == item->getCurrentOwner())
 		return;
 
-	if (item == _item && _lead->getName() != owner)
-		_item = nullptr;
+	if (item == _currentItem && _lead->getName() != owner)
+		_currentItem = nullptr;
 	else if (_lead->getName() == owner)
-		_item = item;
+		_currentItem = item;
 
 	item->_currentOwner = owner;
 }
@@ -123,7 +123,7 @@ void InventoryMgr::update() {
 	switch (_state) {
 	case kOpening:
 		_state = kReady;
-		_itemActor->setAction(_item->getName());
+		_itemActor->setAction(_currentItem->getName());
 		_window->setAction(kShowAction);
 		_leftArrow->setAction(kShowAction);
 		_rightArrow->setAction(kShowAction);
@@ -173,7 +173,7 @@ void InventoryMgr::close() {
 void InventoryMgr::showNextItem(bool direction) {
 	int index = 0;
 	for (uint i = 0; i < _items.size(); ++i) {
-		if (_item == _items[i]) {
+		if (_currentItem == _items[i]) {
 			index = i + _items.size();
 			break;
 		}
@@ -181,9 +181,9 @@ void InventoryMgr::showNextItem(bool direction) {
 
 	for (uint i = 0; i < _items.size(); ++i) {
 		index = (direction == kLeft) ? index - 1 : index + 1;
-		if (_items[index % _items.size()]->getCurrentOwner() == _item->getCurrentOwner()) {
-			_item = _items[index % _items.size()];
-			_itemActor->setAction(_item->getName());
+		if (_items[index % _items.size()]->getCurrentOwner() == _currentItem->getCurrentOwner()) {
+			_currentItem = _items[index % _items.size()];
+			_itemActor->setAction(_currentItem->getName());
 			break;
 		}
 	}
@@ -199,10 +199,10 @@ void InventoryMgr::loadState(Archive &archive) {
 
 	const Common::String currItemName = archive.readString();
 	if (currItemName.empty()) {
-		_item = nullptr;
+		_currentItem = nullptr;
 		_isClickedOnItem = 0;
 	} else {
-		_item = findInventoryItem(currItemName);
+		_currentItem = findInventoryItem(currItemName);
 	}
 }
 
@@ -214,8 +214,8 @@ void InventoryMgr::saveState(Archive &archive) {
 		archive.writeString(_items[i]->_currentOwner);
 	}
 
-	if (_item)
-		archive.writeString(_item->getName());
+	if (_currentItem)
+		archive.writeString(_currentItem->getName());
 	else
 		archive.writeString(Common::String());
 }

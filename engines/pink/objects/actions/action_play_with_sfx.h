@@ -38,7 +38,7 @@ public:
 
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	void update() override;
 
@@ -58,7 +58,7 @@ class ActionSfx : public Object {
 public:
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	void play();
 	void end();

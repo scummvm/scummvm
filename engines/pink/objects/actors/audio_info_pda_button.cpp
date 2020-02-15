@@ -27,7 +27,7 @@
 
 namespace Pink {
 
-void AudioInfoPDAButton::toConsole()  {
+void AudioInfoPDAButton::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "AudioInfoPDAButton: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();

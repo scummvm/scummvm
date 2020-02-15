@@ -527,6 +527,8 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 			sym->u.s = value.u.s;
 		} else if (value.type == VOID) {
 			sym->u.i = 0;
+		} else if (value.type == ARRAY) {
+			sym->u.farr = value.u.farr;
 		} else {
 			warning("varAssign: unhandled type: %s", value.type2str());
 			sym->u.s = value.u.s;
@@ -586,7 +588,9 @@ Datum Lingo::varFetch(Datum &var) {
 			result.u.i = var.u.sym->u.i;
 		else if (sym->type == VOID)
 			result.u.i = 0;
-		else {
+		else if (sym->type == ARRAY) {
+			result.u.farr = sym->u.farr;
+		} else {
 			warning("varFetch: unhandled type: %s", var.type2str());
 			result.type = VOID;
 		}

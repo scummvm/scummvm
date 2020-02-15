@@ -55,7 +55,7 @@ public:
 
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);
@@ -84,7 +84,7 @@ public:
 	void onWalkEnd(const Common::String &stopName);
 	void onPDAClose();
 
-	bool isInteractingWith(Actor *actor);
+	bool isInteractingWith(const Actor *actor) const;
 
 	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
 
@@ -130,7 +130,7 @@ protected:
 
 class ParlSqPink : public LeadActor {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 
 protected:
 	WalkLocation *getWalkDestination() override;
@@ -138,7 +138,7 @@ protected:
 
 class PubPink : public LeadActor {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 
 	void onLeftClickMessage() override;
 	void onVariableSet() override;

@@ -229,7 +229,7 @@ void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
 	_variables[variable] = value;
 }
 
-bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &value) {
+bool PinkEngine::checkValueOfVariable(const Common::String &variable, const Common::String &value) const {
 	if (!_variables.contains(variable))
 		return value == kUndefinedValue;
 	return _variables[variable] == value;
@@ -302,7 +302,7 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 	_director->pause(pause);
 }
 
-bool PinkEngine::isPeril() {
+bool PinkEngine::isPeril() const {
 	return !strcmp(_desc->gameId, kPeril);
 }
 

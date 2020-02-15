@@ -55,11 +55,13 @@ public:
 
 	PinkEngine *getGame() const { return _game; }
 	InventoryMgr *getInventoryMgr() { return &_invMgr; }
+	const InventoryMgr *getInventoryMgr() const { return &_invMgr; }
 
-	bool checkValueOfVariable(Common::String &variable, Common::String &value);
+	bool checkValueOfVariable(const Common::String &variable, const Common::String &value) const;
 	void setVariable(Common::String &variable, Common::String &value) { _variables[variable] = value; }
 
 	GamePage *getPage() { return _page; }
+	const GamePage *getPage() const { return _page; }
 
 	friend class Console;
 

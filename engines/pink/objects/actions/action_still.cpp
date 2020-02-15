@@ -35,7 +35,7 @@ void ActionStill::deserialize(Archive &archive) {
 	_startFrame = archive.readDWORD();
 }
 
-void ActionStill::toConsole() {
+void ActionStill::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionStill: _name = %s, _fileName = %s, _z =%u _startFrame = %u",
 		  _name.c_str(), _fileName.c_str(), _z, _startFrame);
 }

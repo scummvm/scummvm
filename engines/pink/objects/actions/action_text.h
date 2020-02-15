@@ -39,7 +39,7 @@ public:
 	~ActionText() override;
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	void start() override;
 	void end() override;

@@ -42,7 +42,7 @@ void SeqTimer::deserialize(Archive &archive) {
 	_sequencer = static_cast<Sequencer *>(archive.readObject());
 }
 
-void SeqTimer::toConsole() {
+void SeqTimer::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tSeqTimer: _actor=%s _period=%u _range=%u", _actor.c_str(), _period, _range);
 }
 

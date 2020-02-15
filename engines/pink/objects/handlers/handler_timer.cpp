@@ -39,7 +39,7 @@ void HandlerTimerActions::deserialize(Archive &archive) {
 	_actions.deserialize(archive);
 }
 
-void HandlerTimerActions::toConsole() {
+void HandlerTimerActions::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "HandlerTimerActions:");
 
 	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
@@ -69,7 +69,7 @@ void HandlerTimerActions::handle(Actor *actor) {
 	}
 }
 
-void HandlerTimerSequences::toConsole() {
+void HandlerTimerSequences::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "HandlerTimerSequences:");
 
 	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");

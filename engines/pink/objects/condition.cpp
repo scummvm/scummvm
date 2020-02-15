@@ -33,43 +33,43 @@ void ConditionVariable::deserialize(Archive &archive) {
 	_value = archive.readString();
 }
 
-bool ConditionGameVariable::evaluate(Actor *actor) {
+bool ConditionGameVariable::evaluate(const Actor *actor) const {
 	return actor->getPage()->getModule()->getGame()->checkValueOfVariable(_name, _value);
 }
 
-void ConditionGameVariable::toConsole() {
+void ConditionGameVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-bool ConditionModuleVariable::evaluate(Actor *actor) {
+bool ConditionModuleVariable::evaluate(const Actor *actor) const {
 	return actor->getPage()->getModule()->checkValueOfVariable(_name, _value);
 }
 
-void ConditionModuleVariable::toConsole() {
+void ConditionModuleVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-bool ConditionNotModuleVariable::evaluate(Actor *actor) {
+bool ConditionNotModuleVariable::evaluate(const Actor *actor) const {
 	return !ConditionModuleVariable::evaluate(actor);
 }
 
-void ConditionNotModuleVariable::toConsole() {
+void ConditionNotModuleVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionNotModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-bool ConditionPageVariable::evaluate(Actor *actor) {
+bool ConditionPageVariable::evaluate(const Actor *actor) const {
 	return actor->getPage()->checkValueOfVariable(_name, _value);
 }
 
-void ConditionPageVariable::toConsole() {
+void ConditionPageVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-bool ConditionNotPageVariable::evaluate(Actor *actor) {
+bool ConditionNotPageVariable::evaluate(const Actor *actor) const {
 	return !ConditionPageVariable::evaluate(actor);
 }
 
-void ConditionNotPageVariable::toConsole() {
+void ConditionNotPageVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionNotPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
@@ -78,7 +78,7 @@ void ConditionInventoryItemOwner::deserialize(Archive &archive) {
 	_owner = archive.readString();
 }
 
-bool ConditionInventoryItemOwner::evaluate(Actor *actor) {
+bool ConditionInventoryItemOwner::evaluate(const Actor *actor) const {
 	InventoryMgr *mgr = actor->getInventoryMgr();
 	InventoryItem *item = mgr->findInventoryItem(_item);
 	if (item)
@@ -86,15 +86,15 @@ bool ConditionInventoryItemOwner::evaluate(Actor *actor) {
 	return false;
 }
 
-void ConditionInventoryItemOwner::toConsole() {
+void ConditionInventoryItemOwner::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 
-bool ConditionNotInventoryItemOwner::evaluate(Actor *actor) {
+bool ConditionNotInventoryItemOwner::evaluate(const Actor *actor) const {
 	return !ConditionInventoryItemOwner::evaluate(actor);
 }
 
-void ConditionNotInventoryItemOwner::toConsole() {
+void ConditionNotInventoryItemOwner::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionNotInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 

@@ -34,7 +34,7 @@ void HandlerMgr::deserialize(Archive &archive) {
 	_timerHandlers.deserialize(archive);
 }
 
-void HandlerMgr::toConsole() {
+void HandlerMgr::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "HandlerMgr:");
 	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
 		_leftClickHandlers[i]->toConsole();
@@ -47,7 +47,7 @@ void HandlerMgr::toConsole() {
 	}
 }
 
-bool HandlerMgr::isLeftClickHandler(Actor *actor) {
+bool HandlerMgr::isLeftClickHandler(const Actor *actor) const {
 	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
 		if (_leftClickHandlers[i]->isSuitable(actor))
 			return true;
@@ -56,7 +56,7 @@ bool HandlerMgr::isLeftClickHandler(Actor *actor) {
 	return false;
 }
 
-bool HandlerMgr::isUseClickHandler(Actor *actor, const Common::String &itemName) {
+bool HandlerMgr::isUseClickHandler(const Actor *actor, const Common::String &itemName) const {
 	for (uint i = 0; i < _useClickHandlers.size(); ++i) {
 		if (itemName == _useClickHandlers[i]->getInventoryItem() &&
 			_useClickHandlers[i]->isSuitable(actor))

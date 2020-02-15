@@ -77,7 +77,7 @@ GamePage *Module::findPage(const Common::String &pageName) const {
 	return nullptr;
 }
 
-bool Module::checkValueOfVariable(Common::String &variable, Common::String &value) {
+bool Module::checkValueOfVariable(const Common::String &variable, const Common::String &value) const {
 	if (!_variables.contains(variable))
 		return value == kUndefinedValue;
 	return _variables[variable] == value;

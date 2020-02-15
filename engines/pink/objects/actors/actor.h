@@ -50,18 +50,18 @@ public:
 	virtual void init(bool paused);
 	bool initPalette(Director *director);
 
-	void toConsole() override;
+	void toConsole() const override;
 
-	bool isPlaying() { return !_isActionEnded; }
+	bool isPlaying() const { return !_isActionEnded; }
 	virtual void pause(bool paused);
 
 	void endAction() { _isActionEnded = true; }
 
-	virtual bool isSupporting() { return false; }
-	virtual bool isCursor() { return false; }
+	virtual bool isSupporting() const { return false; }
+	virtual bool isCursor() const { return false; }
 
-	virtual bool isLeftClickHandlers() { return false; }
-	virtual bool isUseClickHandlers(InventoryItem *item) { return false; }
+	virtual bool isLeftClickHandlers() const { return false; }
+	virtual bool isUseClickHandlers(InventoryItem *item) const { return false; }
 
 	virtual void onMouseOver(const Common::Point point, CursorMgr *mgr);
 	virtual void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
@@ -72,8 +72,10 @@ public:
 
 	Action *findAction(const Common::String &name);
 
-	Action *getAction() const { return _action; }
-	Page *getPage() const { return _page; }
+	Action *getAction() { return _action; }
+	const Action *getAction() const { return _action; }
+	Page *getPage() { return _page; }
+	const Page *getPage() const { return _page; }
 
 	InventoryMgr *getInventoryMgr() const;
 

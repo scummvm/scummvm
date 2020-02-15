@@ -39,7 +39,7 @@ public:
 	Sequencer(GamePage *page);
 	~Sequencer() override;
 
-	void toConsole() override;
+	void toConsole() const override;
 	void deserialize(Archive &archive) override;
 
 public:

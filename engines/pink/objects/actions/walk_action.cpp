@@ -34,7 +34,7 @@ void WalkAction::deserialize(Archive &archive) {
 	_toCalcFramePositions = calcFramePositions;
 }
 
-void WalkAction::toConsole() {
+void WalkAction::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tWalkAction: _name = %s, _fileName = %s, _calcFramePositions = %u",
 		  _name.c_str(), _fileName.c_str(), _toCalcFramePositions);
 }
