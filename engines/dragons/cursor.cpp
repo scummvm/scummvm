@@ -56,7 +56,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	data_8007283c = 0;
 	_cursorActivationSeqOffset = 0;
 	_data_800728b0_cursor_seqID = 0;
-	_data_80072890 = 0;
+	_performActionTargetINI = 0;
 }
 
 
@@ -187,7 +187,7 @@ int16 Cursor::updateIniFromScene() {
 	int16 cursorY = _y + _vm->_scene->_camera.y;
 	int16 cursorTileX = cursorX / 32;
 	int16 cursorTileY = cursorY / 8;
-	int16 data_80072890_orig = _data_80072890;
+	int16 data_80072890_orig = _performActionTargetINI;
 	int16 data_800728b0_cursor_seqID_orig = _data_800728b0_cursor_seqID;
 
 	for (int i = 0; i <_vm->_dragonINIResource->totalRecords(); i++) {
@@ -226,11 +226,11 @@ int16 Cursor::updateIniFromScene() {
 			if (cursorOverIni != 0) {
 				// 0x80028bf0
 				// _iniUnderCursor = cursorOverIni;
-				_data_80072890 = _iniUnderCursor;
+				_performActionTargetINI = _iniUnderCursor;
 				_data_800728b0_cursor_seqID = _sequenceID;
 
 				if (ini->field_1a_flags_maybe & 0x800) {
-					_data_80072890 = cursorOverIni;
+					_performActionTargetINI = cursorOverIni;
 					uint32 newSeqId = 1;
 					for (int idx = 0; idx < 5; idx++) {
 						_data_800728b0_cursor_seqID = idx;
@@ -251,13 +251,13 @@ int16 Cursor::updateIniFromScene() {
 
 					_sequenceID = newSeqId;
 					_iniUnderCursor = cursorOverIni;
-					_data_80072890 = _iniUnderCursor;
+					_performActionTargetINI = _iniUnderCursor;
 					_data_800728b0_cursor_seqID = _sequenceID;
 					return _iniUnderCursor;
 				}
 				if (_sequenceID != 0) {
 					_iniUnderCursor = cursorOverIni;
-					_data_80072890 = data_80072890_orig;
+					_performActionTargetINI = data_80072890_orig;
 					_data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
@@ -269,7 +269,7 @@ int16 Cursor::updateIniFromScene() {
 //				local_44 = local_44 + local_48;
 				if (executeScript(scriptOpCall, 0)) {
 					_iniUnderCursor = cursorOverIni;
-					_data_80072890 = data_80072890_orig;
+					_performActionTargetINI = data_80072890_orig;
 					_data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
@@ -277,7 +277,7 @@ int16 Cursor::updateIniFromScene() {
 		}
 	}
 	_iniUnderCursor = 0;
-	_data_80072890 = data_80072890_orig;
+	_performActionTargetINI = data_80072890_orig;
 	_data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 	return 0;
 }

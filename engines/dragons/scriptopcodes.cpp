@@ -318,7 +318,7 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 
 	int16 uVar6 = _scriptTargetINI;
 	int16 uVar5 = _vm->_cursor->_data_800728b0_cursor_seqID;
-	int16 uVar4 = _vm->_cursor->_data_80072890;
+	int16 uVar4 = _vm->_cursor->_performActionTargetINI;
 	int16 uVar3 = _vm->_cursor->_iniUnderCursor;
 	int32 uVar2 = _vm->_cursor->_sequenceID;
 	bool isEngineFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
@@ -333,7 +333,7 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 
 	_scriptTargetINI = field6;
 	_vm->_cursor->_data_800728b0_cursor_seqID = _vm->_cursor->_sequenceID;
-	_vm->_cursor->_data_80072890 = _vm->_cursor->_iniUnderCursor;
+	_vm->_cursor->_performActionTargetINI = _vm->_cursor->_iniUnderCursor;
 //	EnableVSyncEvent();
 	_vm->performAction();
 	if (isEngineFlag8Set) {
@@ -341,7 +341,7 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 	}
 	_vm->_cursor->_sequenceID = uVar2;
 	_vm->_cursor->_iniUnderCursor = uVar3;
-	_vm->_cursor->_data_80072890 = uVar4;
+	_vm->_cursor->_performActionTargetINI = uVar4;
 	_vm->_cursor->_data_800728b0_cursor_seqID = uVar5;
 	_scriptTargetINI = uVar6;
 }

@@ -348,7 +348,7 @@ void DragonsEngine::gameLoop() {
 			if (flicker->sceneId == getCurrentSceneId() && flicker->actor->_direction != -1) {
 				int16 iniId = _scriptOpcodes->_scriptTargetINI;
 				if (_cursor->_sequenceID != 5) {
-					iniId = _cursor->_data_80072890;
+					iniId = _cursor->_performActionTargetINI;
 				}
 				if (iniId > 0) {
 					flicker->actor->_direction = getINI(iniId - 1)->field_e;
@@ -426,7 +426,7 @@ void DragonsEngine::gameLoop() {
 						} else {
 							if (_cursor->_iniUnderCursor != 0x8001) {
 								_flickerIdleCounter = 0;
-								_cursor->_data_80072890 = _cursor->_iniUnderCursor;
+								_cursor->_performActionTargetINI = _cursor->_iniUnderCursor;
 								if (_cursor->_sequenceID < 5) {
 									_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
 									walkFlickerToObject();
@@ -439,8 +439,8 @@ void DragonsEngine::gameLoop() {
 									if (_bit_flags_8006fbd8 != 0) {
 										clearFlags(ENGINE_FLAG_8);
 									}
-									_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
-									_cursor->_data_80072890 = _cursor->_iniItemInHand;
+									_scriptOpcodes->_scriptTargetINI = _cursor->_performActionTargetINI;
+									_cursor->_performActionTargetINI = _cursor->_iniItemInHand;
 								}
 								runINIScripts();
 								continue;
@@ -457,7 +457,7 @@ void DragonsEngine::gameLoop() {
 						}
 					}
 					_flickerIdleCounter = 0;
-					_cursor->_data_80072890 = _cursor->_iniUnderCursor;
+					_cursor->_performActionTargetINI = _cursor->_iniUnderCursor;
 					if (_cursor->_sequenceID < 5) {
 						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
 						walkFlickerToObject();
@@ -470,8 +470,8 @@ void DragonsEngine::gameLoop() {
 						if (_bit_flags_8006fbd8 != 0) {
 							clearFlags(ENGINE_FLAG_8);
 						}
-						_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
-						_cursor->_data_80072890 = _cursor->_iniItemInHand;
+						_scriptOpcodes->_scriptTargetINI = _cursor->_performActionTargetINI;
+						_cursor->_performActionTargetINI = _cursor->_iniItemInHand;
 					}
 				}
 			}
@@ -497,7 +497,7 @@ void DragonsEngine::gameLoop() {
 				}
 				if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
 					_flickerIdleCounter = 0;
-					_cursor->_data_80072890 = _cursor->_iniUnderCursor;
+					_cursor->_performActionTargetINI = _cursor->_iniUnderCursor;
 					if (_cursor->_sequenceID < 5) {
 						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
 						walkFlickerToObject();
@@ -510,8 +510,8 @@ void DragonsEngine::gameLoop() {
 						if (_bit_flags_8006fbd8 != 0) {
 							clearFlags(ENGINE_FLAG_8);
 						}
-						_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
-						_cursor->_data_80072890 = _cursor->_iniItemInHand;
+						_scriptOpcodes->_scriptTargetINI = _cursor->_performActionTargetINI;
+						_cursor->_performActionTargetINI = _cursor->_iniItemInHand;
 					}
 				}
 			}
@@ -521,9 +521,7 @@ void DragonsEngine::gameLoop() {
 		if (checkForInventoryButtonRelease()) {
 			_flickerIdleCounter = 0;
 			_inventory->closeInventory();
-			InventoryState prevInventoryMode = _inventory->_previousState;
-			_inventory->_previousState = _inventory->getState();
-			_inventory->setState(prevInventoryMode);
+			_inventory->setPreviousState();
 			continue;
 		}
 		uVar6 = _inventory->getState();
@@ -545,9 +543,7 @@ void DragonsEngine::gameLoop() {
 							_cursor->_sequenceID = 5;
 							waitForFrames(2);
 							_inventory->closeInventory();
-							InventoryState prevInventoryMode = _inventory->_previousState;
-							_inventory->_previousState = _inventory->getState();
-							_inventory->setState(prevInventoryMode);
+							_inventory->setPreviousState();
 						}
 						continue;
 					}
@@ -563,9 +559,9 @@ void DragonsEngine::gameLoop() {
 			if (_cursor->_iniUnderCursor != 0) {
 				if ((_cursor->_sequenceID != 4) && (_cursor->_sequenceID != 2)) {
 					_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-					_cursor->_data_80072890 = _cursor->_iniUnderCursor;
+					_cursor->_performActionTargetINI = _cursor->_iniUnderCursor;
 					if (_cursor->_sequenceID >= 4) {
-						_cursor->_data_80072890 = _cursor->_iniItemInHand;
+						_cursor->_performActionTargetINI = _cursor->_iniItemInHand;
 						_scriptOpcodes->_scriptTargetINI = _cursor->_iniUnderCursor;
 					}
 					clearFlags(ENGINE_FLAG_8);
@@ -577,9 +573,7 @@ void DragonsEngine::gameLoop() {
 						_cursor->_sequenceID = 5;
 						waitForFrames(2);
 						_inventory->closeInventory();
-						uVar6 = _inventory->_previousState;
-						_inventory->_previousState = _inventory->getState();
-						_inventory->setState(uVar6);
+						_inventory->setPreviousState();
 					}
 					continue;
 				}
@@ -632,9 +626,7 @@ void DragonsEngine::gameLoop() {
 			_cursor->_sequenceID = 5;
 			waitForFrames(2);
 			_inventory->closeInventory();
-			InventoryState prevInventoryMode = _inventory->_previousState;
-			_inventory->_previousState = _inventory->getState();
-			_inventory->setState(prevInventoryMode);
+			_inventory->setPreviousState();
 		}
 	}
 }
@@ -645,6 +637,8 @@ void DragonsEngine::updateHandler() {
 	//TODO logic here
 
 	updateActorSequences();
+
+	updateCamera();
 
 	_cursor->updateVisibility();
 	_inventory->updateVisibility();
@@ -877,142 +871,60 @@ void DragonsEngine::runINIScripts() {
 		setFlags(ENGINE_FLAG_8);
 	}
 }
-/*
-void DragonsEngine::engineFlag0x20UpdateFunction() {
-{
-	uint16 uVar1;
-	uint16 uVar2;
-	DragonINI *pDVar3;
-	DragonINI *pDVar4;
-	uint16 uVar5;
-	uint actorId;
 
-	DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
+void DragonsEngine::engineFlag0x20UpdateFunction() {
+	if (!isFlagSet(ENGINE_FLAG_20)) {
+		_run_func_ptr_unk_countdown_timer = 1;
+		return;
+	}
+
+	if (isFlagSet(ENGINE_FLAG_8) && !isFlagSet(ENGINE_FLAG_80000000)) {
+		_cursor->update();
+	}
+
 	uint16 currentSceneId = _scene->getSceneId();
+	DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
+	DragonINI *ini1 = getINI(1);
 
-
-//	uVar1 = flickerINI->actorId;
-//	actorId = (uint)uVar1;
-//	uVar5 = dragon_ini_pointer[dragon_ini_const__2 + -1].field_0x1c;
-	if (flickerINI == NULL) {
-		//LAB_80027d40:
-//		if ((flickerINI->sceneId == currentSceneId)
-//			&& (uVar5 != 0xffff)) {
-//			actors[(uint)uVar5]._sequenceID = 8;
-//			actors[(uint)uVar5]._priorityLayer_maybe = 0;
-//		}
-	} else {
+	if (flickerINI != NULL) {
 		if (flickerINI->sceneId == currentSceneId) {
-			if ((flickerINI == NULL) || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
-				if ((flickerINI->sceneId == currentSceneId)
-					&& (uVar5 != 0xffff)) {
-//					actors[(uint)uVar5]._sequenceID = 8;
-//					actors[(uint)uVar5]._priorityLayer_maybe = 0;
+			if (flickerINI->actor == NULL || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
+				if (ini1->actor != NULL) {
+					ini1->actor->updateSequence(8);
+					ini1->actor->_priorityLayer = 0;
 				}
 			} else {
-				if ((_bit_flags_8006fbd8 & 2) == 0) {
-					_bit_flags_8006fbd8 = _bit_flags_8006fbd8 | 2;
+				if ((_bit_flags_8006fbd8 & 2u) == 0) {
+					_bit_flags_8006fbd8 |= 2u;
 				}
-//				if (((((actors[actorId]._flags & 0x2000) == 0) && ((actors[actorId]._flags & 4) != 0)) &&
-//					 (actors[actorId]._direction != actors[actorId]._sequenceID)) &&
-//				(actors[actorId]._direction != -1)) {
-//					actor_update_sequenceID(actorId, actors[actorId]._direction);
-//				}
+				if (flickerINI->actor->isFlagClear(ACTOR_FLAG_2000)
+						&& flickerINI->actor->isFlagSet(ACTOR_FLAG_4)
+						&& flickerINI->actor->_direction != -1
+						&& flickerINI->actor->_direction != flickerINI->actor->_sequenceID) {
+					flickerINI->actor->updateSequence(flickerINI->actor->_direction);
+				}
+				if (ini1->actor != NULL) {
+					ini1->actor->_priorityLayer = 0;
+				}
 			}
-
-		} else {
-			//actors[(uint)uVar5]._priorityLayer_maybe = 0;
 		}
-
 	}
 
-
-	LAB_80027db4:
-	uVar1 = num_ini_records_maybe;
-	pDVar3 = dragon_ini_pointer;
-	uVar2 = currentSceneId;
-	if ((inventoryType == 0) && (uVar5 = 0, num_ini_records_maybe != 0)) {
-		actorId = 0;
-		do {
-			pDVar4 = pDVar3 + actorId;
-			if (((-1 < (int)((uint)pDVar4->field_0x10 << 0x10)) && (pDVar4->sceneId_maybe == uVar2)) &&
-				(pDVar4->field_0x10 = pDVar4->field_0x10 - 1, (int)((uint)pDVar4->field_0x10 << 0x10) < 0))
-			{
-				pDVar4->field_1a_flags_maybe = pDVar4->field_1a_flags_maybe | 0x10;
+	// 0x80027db8
+	if (!_inventory->isOpen()) {
+		for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
+			DragonINI *ini = getINI(i);
+			if (ini->field_10 >= 0 && ini->sceneId == currentSceneId) {
+				ini->field_10--;
+				if (ini->field_10 < 0) {
+					ini->field_1a_flags_maybe |= INI_FLAG_10;
+				}
 			}
-			uVar5 = uVar5 + 1;
-			actorId = (uint)uVar5;
-		} while (uVar5 < uVar1);
+		}
 	}
+
 	if (_run_func_ptr_unk_countdown_timer != 0) {
-		_run_func_ptr_unk_countdown_timer = _run_func_ptr_unk_countdown_timer - 1;
-	}
-	return (uint)_run_func_ptr_unk_countdown_timer;
-} */
-
-//TODO the logic in this function doesn't match the original. It should be redone.
-void DragonsEngine::engineFlag0x20UpdateFunction() {
-	if (isFlagSet(ENGINE_FLAG_20)) {
-		if (isFlagSet(ENGINE_FLAG_8) && !isFlagSet(ENGINE_FLAG_80000000)) {
-			_cursor->update();
-		}
-		//TODO 0x80027be4
-
-		uint16 currentSceneId = _scene->getSceneId();
-		DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
-
-
-//	uVar1 = flickerINI->actorId;
-//	actorId = (uint)uVar1;
-//	uVar5 = dragon_ini_pointer[dragon_ini_const__2 + -1].field_0x1c;
-		if (flickerINI == NULL) {
-			//LAB_80027d40:
-			//error("LAB_80027d40"); //TODO is this logic required?
-//		if ((flickerINI->sceneId == currentSceneId)
-//			&& (uVar5 != 0xffff)) {
-//			actors[(uint)uVar5]._sequenceID = 8;
-//			actors[(uint)uVar5]._priorityLayer_maybe = 0;
-//		}
-		} else {
-			if (flickerINI->sceneId == currentSceneId) {
-				if (flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
-					if (_inventory->isActorSet()) {
-						_inventory->setActorSequenceId(8);
-						_inventory->setPriority(0);
-					}
-				} else {
-					if ((_bit_flags_8006fbd8 & 2u) == 0) {
-						_bit_flags_8006fbd8 |= 2u;
-					}
-					if (flickerINI->actor->isFlagClear(ACTOR_FLAG_2000)
-							&& flickerINI->actor->isFlagSet(ACTOR_FLAG_4)
-							&& flickerINI->actor->_direction != -1
-							&& flickerINI->actor->_direction != flickerINI->actor->_sequenceID) {
-						flickerINI->actor->updateSequence(flickerINI->actor->_direction);
-					}
-				}
-			} else {
-				_inventory->setPriority(0); //TODO I don't think this is quite right.
-			}
-
-		}
-
-		// 0x80027db8
-		if (!_inventory->isOpen()) {
-			for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
-				DragonINI *ini = getINI(i);
-				if (ini->field_10 >= 0 && ini->sceneId == currentSceneId) {
-					ini->field_10--;
-					if (ini->field_10 < 0) {
-						ini->field_1a_flags_maybe |= INI_FLAG_10;
-					}
-				}
-			}
-		}
-
-		if (_run_func_ptr_unk_countdown_timer != 0) {
-			_run_func_ptr_unk_countdown_timer--;
-		}
+		_run_func_ptr_unk_countdown_timer--;
 	}
 }
 
@@ -1084,8 +996,8 @@ void DragonsEngine::performAction() {
 	uVar6 = 0;
 	_scriptOpcodes->_data_80071f5c = 0;
 
-	assert(_cursor->_data_80072890 > 0);
-	byte *obd = _dragonOBD->getFromOpt(_cursor->_data_80072890 - 1);
+	assert(_cursor->_performActionTargetINI > 0);
+	byte *obd = _dragonOBD->getFromOpt(_cursor->_performActionTargetINI - 1);
 
 
 	ScriptOpCall local_48(obd + 8, READ_LE_UINT32(obd));
@@ -1097,7 +1009,7 @@ void DragonsEngine::performAction() {
 		_scriptOpcodes->_data_80071f5c = 0;
 
 		obd = _dragonOBD->getFromOpt(_scriptOpcodes->_scriptTargetINI - 1);
-		_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
+		_scriptOpcodes->_scriptTargetINI = _cursor->_performActionTargetINI;
 
 		ScriptOpCall local_38(obd + 8, READ_LE_UINT32(obd));
 
@@ -1178,11 +1090,11 @@ void DragonsEngine::walkFlickerToObject() {
 
 	flickerINI = _dragonINIResource->getFlickerRecord();
 	if (flickerINI->sceneId == getCurrentSceneId()) {
-		if (_cursor->_data_80072890 != 0) {
+		if (_cursor->_performActionTargetINI != 0) {
 
-			if (!(READ_LE_UINT16(_dragonOBD->getFromOpt(_cursor->_data_80072890 - 1) + 4) & 8)
+			if (!(READ_LE_UINT16(_dragonOBD->getFromOpt(_cursor->_performActionTargetINI - 1) + 4) & 8)
 				&& (_inventory->getState() == Closed) && !isFlagSet(ENGINE_FLAG_200000)) {
-				targetINI = getINI(_cursor->_data_80072890 - 1);
+				targetINI = getINI(_cursor->_performActionTargetINI - 1);
 				if ((targetINI->field_1a_flags_maybe & 1) == 0) {
 					if (targetINI->actorResourceId == -1) {
 						return;
@@ -1200,7 +1112,7 @@ void DragonsEngine::walkFlickerToObject() {
 				}
 				flickerINI->actor->startWalk((int)(((uint)targetX + (uint)targetINI->field_1c) * 0x10000) >> 0x10,
 													(int)(((uint)targetY + (uint)targetINI->field_1e) * 0x10000) >> 0x10, 0);
-				_bit_flags_8006fbd8 = 1;
+				_bit_flags_8006fbd8 = 1; //walk to perform an action.
 				return;
 			}
 			if (isFlagSet(ENGINE_FLAG_200000)) {
@@ -1211,7 +1123,7 @@ void DragonsEngine::walkFlickerToObject() {
 			if (flickerINI != NULL && flickerINI->actor != NULL) {
 				flickerINI->actor->clearFlag(ACTOR_FLAG_10);
 				flickerINI->actor->setFlag(ACTOR_FLAG_4);
-				targetINI = getINI(_cursor->_data_80072890 - 1);
+				targetINI = getINI(_cursor->_performActionTargetINI - 1);
 				flickerINI->field_20_actor_field_14 = targetINI->field_e;
 				flickerINI->actor->_direction = targetINI->field_e;
 			}
@@ -1227,7 +1139,7 @@ void DragonsEngine::walkFlickerToObject() {
 					(int)((uVar8 + (uint)_scene->_camera.y) * 0x10000) >> 0x10, 0);
 		}
 	} else {
-		if (_cursor->_data_80072890 != 0) {
+		if (_cursor->_performActionTargetINI != 0) {
 			_bit_flags_8006fbd8 = 3;
 			return;
 		}
@@ -1534,6 +1446,44 @@ void DragonsEngine::updateFlickerIdleAnimation() {
 		&& _dragonINIResource->getFlickerRecord()->actor->isFlagSet(ACTOR_FLAG_4)) {
 		_flickerIdleCounter = 0;
 		clearFlags(ENGINE_FLAG_80000000);
+	}
+}
+
+void DragonsEngine::updateCamera() {
+	if (isFlagSet(ENGINE_FLAG_40) && !isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
+		return;
+	}
+
+	if (isFlagSet(ENGINE_FLAG_1) && !isUnkFlagSet(ENGINE_UNK1_FLAG_2)) { //TODO original doesn't seem to check for flag 2 here. adding to get cutscenes to work.
+		DragonINI *flicker = _dragonINIResource->getFlickerRecord();
+		if (flicker && flicker->sceneId != 0) {
+			if ((flicker->actor->_x_pos - _scene->_camera.x >= 0x4f)) {
+				if (flicker->actor->_x_pos - _scene->_camera.x >= 0xf0) {
+					_scene->_camera.x = flicker->actor->_x_pos - 0xf0;
+				}
+			} else {
+				_scene->_camera.x = flicker->actor->_x_pos - 0x50;
+			}
+
+			int16 sVar4 = flicker->actor->_y_pos + -0x1e;
+			if (((int)flicker->actor->_y_pos - (int)_scene->_camera.y < 0x1e) ||
+				(sVar4 = flicker->actor->_y_pos + -0xaa, 0xaa < (int)flicker->actor->_y_pos - (int)_scene->_camera.y)) {
+				_scene->_camera.y = sVar4;
+			}
+		}
+
+		if (_scene->_camera.x < 0) {
+			_scene->_camera.x = 0;
+		}
+		if (_scene->getStageWidth() < _scene->_camera.x + 0x140) {
+			_scene->_camera.x = _scene->getStageWidth() - 0x140;
+		}
+		if (_scene->_camera.y < 0) {
+			_scene->_camera.y = 0;
+		}
+		if (_scene->getStageHeight() < _scene->_camera.y + 200) {
+			_scene->_camera.y = _scene->getStageHeight() + -200;
+		}
 	}
 }
 

@@ -37,7 +37,7 @@ public:
 	int16 _data_800728b0_cursor_seqID;
 	uint16 _iniUnderCursor;
 	int32 _sequenceID;
-	int16 _data_80072890;
+	int16 _performActionTargetINI;
 	int16 _x;
 	int16 _y;
 	int16 data_8007283c;
