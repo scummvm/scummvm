@@ -42,20 +42,20 @@ AmbushProcess::AmbushProcess() : Process() {
 
 AmbushProcess::AmbushProcess(Actor *actor_) {
 	assert(actor_);
-	item_num = actor_->getObjId();
-	type = 0x21E; // CONSTANT !
+	_itemNum = actor_->getObjId();
+	_type = 0x21E; // CONSTANT !
 
-	delaycount = 0;
+	_delayCount = 0;
 }
 
 void AmbushProcess::run() {
-	if (delaycount > 0) {
-		delaycount--;
+	if (_delayCount > 0) {
+		_delayCount--;
 		return;
 	}
-	delaycount = 10;
+	_delayCount = 10;
 
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	CombatProcess *cp = a->getCombatProcess();
 	if (!cp) {
 		// this shouldn't have happened
@@ -77,13 +77,13 @@ void AmbushProcess::run() {
 void AmbushProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(delaycount);
+	ods->write4(_delayCount);
 }
 
 bool AmbushProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	delaycount = ids->read4();
+	_delayCount = ids->read4();
 
 	return true;
 }

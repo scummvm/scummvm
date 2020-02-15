@@ -21,13 +21,11 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/kernel/memory_manager.h"
-
 #include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/filesys/idata_source.h"
@@ -42,23 +40,23 @@ DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Object)
 DEFINE_CUSTOM_MEMORY_ALLOCATION(Object)
 
 Object::~Object() {
-	if (objid != 0xFFFF)
-		ObjectManager::get_instance()->clearObjId(objid);
+	if (_objId != 0xFFFF)
+		ObjectManager::get_instance()->clearObjId(_objId);
 }
 
 ObjId Object::assignObjId() {
-	if (objid == 0xFFFF)
-		objid = ObjectManager::get_instance()->assignObjId(this);
-	return objid;
+	if (_objId == 0xFFFF)
+		_objId = ObjectManager::get_instance()->assignObjId(this);
+	return _objId;
 }
 
 void Object::clearObjId() {
 	// On clearObjId we kill all processes that belonged to us
-	Kernel::get_instance()->killProcesses(objid, 6, true);
+	Kernel::get_instance()->killProcesses(_objId, 6, true);
 
-	if (objid != 0xFFFF)
-		ObjectManager::get_instance()->clearObjId(objid);
-	objid = 0xFFFF;
+	if (_objId != 0xFFFF)
+		ObjectManager::get_instance()->clearObjId(_objId);
+	_objId = 0xFFFF;
 }
 
 void Object::dumpInfo() {
@@ -91,11 +89,11 @@ void Object::saveData(ODataSource *ods) {
 	// note: Object is unversioned. If we ever want to version it,
 	// increase the global savegame version
 
-	ods->write2(objid);
+	ods->write2(_objId);
 }
 
 bool Object::loadData(IDataSource *ids, uint32 version) {
-	objid = ids->read2();
+	_objId = ids->read2();
 
 	return true;
 }

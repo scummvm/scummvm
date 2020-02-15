@@ -78,14 +78,14 @@ void UCProcess::load(uint16 classid_, uint16 offset_, uint32 this_ptr,
 
 	// then, push the new this pointer
 	if (thissp != 0)
-		stack.push4(UCMachine::stackToPtr(pid, thissp));
+		stack.push4(UCMachine::stackToPtr(_pid, thissp));
 
 	// finally, call the specified function
 	call(classid_, offset_);
 }
 
 void UCProcess::run() {
-	if (flags & PROC_SUSPENDED)
+	if (_flags & PROC_SUSPENDED)
 		return;
 
 	// pass to UCMachine for execution

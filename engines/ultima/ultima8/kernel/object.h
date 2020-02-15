@@ -34,7 +34,7 @@ class IDataSource;
 
 class Object {
 public:
-	Object() : objid(0xFFFF) {}
+	Object() : _objId(0xFFFF) {}
 	virtual ~Object();
 
 	// p_dynamic_cast stuff
@@ -45,7 +45,7 @@ public:
 
 	//! get this Object's objID
 	inline ObjId getObjId() const {
-		return objid;
+		return _objId;
 	}
 
 	//! Assign self and contents (if any) an objID
@@ -80,7 +80,7 @@ protected:
 	//! save the actual Object data
 	virtual void saveData(ODataSource *ods);
 
-	ObjId objid;
+	ObjId _objId;
 };
 
 } // End of namespace Ultima8

@@ -59,7 +59,7 @@ void CreateItemProcess::run() {
 	                                     npcnum, mapnum, extendedflags, true);
 	item->move(x, y, z);
 
-	result = item->getObjId();
+	_result = item->getObjId();
 
 	terminate();
 }

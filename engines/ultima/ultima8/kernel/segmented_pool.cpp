@@ -55,33 +55,32 @@ struct SegmentedPoolNode {
 
 // We pad both the PoolNode and the memory to align it.
 
-SegmentedPool::SegmentedPool(size_t nodeCapacity_, uint32 nodes_)
-	: Pool(), nodes(nodes_), freeNodeCount(nodes_) {
+SegmentedPool::SegmentedPool(size_t nodeCapacity_, uint32 nodes)
+	: Pool(), _nodes(nodes), _freeNodeCount(nodes) {
 	uint32 i;
 
 	// Give it its real capacity.
 	// One redzone is added after the memory block.
-	nodeCapacity = OFFSET_ALIGN(nodeCapacity_ + redzoneSize);
-	nodes = nodes_;
+	_nodeCapacity = OFFSET_ALIGN(nodeCapacity_ + redzoneSize);
+	_nodes = nodes;
 
 	// Node offsets are aligned to the next uintptr offset after the real size.
 	// Another redzone is added between the node and the memory block.
-	nodeOffset = OFFSET_ALIGN(sizeof(SegmentedPoolNode) + redzoneSize)
-	             + nodeCapacity;
+	_nodeOffset = OFFSET_ALIGN(sizeof(SegmentedPoolNode) + redzoneSize) + _nodeCapacity;
 
-	startOfPool = new uint8[nodeOffset * nodes_];
-	endOfPool = startOfPool + (nodeOffset * nodes_);
+	_startOfPool = new uint8[_nodeOffset * nodes];
+	_endOfPool = _startOfPool + (_nodeOffset * nodes);
 
-	VALGRIND_CREATE_MEMPOOL(startOfPool, redzoneSize, 0);
+	VALGRIND_CREATE_MEMPOOL(_startOfPool, redzoneSize, 0);
 
-	firstFree = reinterpret_cast<SegmentedPoolNode *>(startOfPool);
+	firstFree = reinterpret_cast<SegmentedPoolNode *>(_startOfPool);
 	firstFree->pool = this;
 	firstFree->size = 0;
 
 	lastFree = firstFree;
 
-	for (i = 1; i < nodes_; ++i) {
-		lastFree->nextFree = reinterpret_cast<SegmentedPoolNode *>(startOfPool + i * nodeOffset);
+	for (i = 1; i < nodes; ++i) {
+		lastFree->nextFree = reinterpret_cast<SegmentedPoolNode *>(_startOfPool + i * _nodeOffset);
 		lastFree = lastFree->nextFree;
 
 		lastFree->pool = this;
@@ -94,18 +93,18 @@ SegmentedPool::SegmentedPool(size_t nodeCapacity_, uint32 nodes_)
 SegmentedPool::~SegmentedPool() {
 	assert(isEmpty());
 
-	VALGRIND_DESTROY_MEMPOOL(startOfPool);
+	VALGRIND_DESTROY_MEMPOOL(_startOfPool);
 
-	delete [] startOfPool;
+	delete [] _startOfPool;
 }
 
 void *SegmentedPool::allocate(size_t size) {
 	SegmentedPoolNode *node;
 
-	if (isFull() || size > nodeCapacity)
+	if (isFull() || size > _nodeCapacity)
 		return 0;
 
-	--freeNodeCount;
+	--_freeNodeCount;
 	node = firstFree;
 	node->size = size;
 
@@ -122,7 +121,7 @@ void *SegmentedPool::allocate(size_t size) {
 	uint8 *p = reinterpret_cast<uint8 *>(node) +
 	           OFFSET_ALIGN(sizeof(SegmentedPoolNode) + redzoneSize);
 
-	VALGRIND_MEMPOOL_ALLOC(startOfPool, p, size);
+	VALGRIND_MEMPOOL_ALLOC(_startOfPool, p, size);
 #ifdef USE_VALGRIND
 	node->valgrind_handle = VALGRIND_CREATE_BLOCK(p, size,
 	                        "SegmentedPoolBlock");
@@ -139,7 +138,7 @@ void SegmentedPool::deallocate(void *ptr) {
 		node->size = 0;
 		assert(node->pool == this);
 
-		VALGRIND_MEMPOOL_FREE(startOfPool, ptr);
+		VALGRIND_MEMPOOL_FREE(_startOfPool, ptr);
 		VALGRIND_DISCARD(node->valgrind_handle);
 
 //	con->Printf("Free Node 0x%08X\n", node);
@@ -150,7 +149,7 @@ void SegmentedPool::deallocate(void *ptr) {
 			lastFree->nextFree = node;
 			lastFree = lastFree->nextFree;
 		}
-		++freeNodeCount;
+		++_freeNodeCount;
 	}
 }
 
@@ -160,18 +159,18 @@ void SegmentedPool::printInfo() {
 	SegmentedPoolNode *node;
 
 	con->Printf("   start address 0x%X\tend address 0x%X\tnodeOffset 0x%X\n",
-	           startOfPool, endOfPool, nodeOffset);
-	con->Printf("   nodeCapacity %d b\n   total nodes %d\tfree nodes %d\n",
-	           nodeCapacity, nodes, freeNodeCount);
+	           _startOfPool, _endOfPool, _nodeOffset);
+	con->Printf("   _nodeCapacity %d b\n   total _nodes %d\tfree _nodes %d\n",
+	           _nodeCapacity, _nodes, _freeNodeCount);
 	con->Printf("   total memory: %d\tfree memory: %d\n",
-	           nodeCapacity * nodes, nodeCapacity * freeNodeCount);
+	           _nodeCapacity * _nodes, _nodeCapacity * _freeNodeCount);
 
 	max = 0;
-	min = nodeCapacity;
+	min = _nodeCapacity;
 	total = 0;
 
-	for (i = 0; i < nodes; ++i) {
-		node = reinterpret_cast<SegmentedPoolNode *>(startOfPool + i * nodeOffset);
+	for (i = 0; i < _nodes; ++i) {
+		node = reinterpret_cast<SegmentedPoolNode *>(_startOfPool + i * _nodeOffset);
 		if (node->size > 0) {
 			max = node->size > max ? node->size : max;
 			min = node->size < min ? node->size : min;
@@ -179,17 +178,17 @@ void SegmentedPool::printInfo() {
 		}
 	}
 
-	if (nodes > freeNodeCount) {
+	if (_nodes > _freeNodeCount) {
 		con->Printf("   smallest node: %d b\tlargest node: %d b\taverage size: %d b\n",
-		           min, max, total / (nodes - freeNodeCount));
+		           min, max, total / (_nodes - _freeNodeCount));
 	} else {
 		con->Printf("   Empty pool!!!\n");
 	}
 }
 
 SegmentedPoolNode *SegmentedPool::getPoolNode(void *ptr) {
-	uint32 pos = (reinterpret_cast<uint8 *>(ptr) - startOfPool) / nodeOffset;
-	return reinterpret_cast<SegmentedPoolNode *>(startOfPool + pos * nodeOffset);
+	uint32 pos = (reinterpret_cast<uint8 *>(ptr) - _startOfPool) / _nodeOffset;
+	return reinterpret_cast<SegmentedPoolNode *>(_startOfPool + pos * _nodeOffset);
 }
 
 } // End of namespace Ultima8

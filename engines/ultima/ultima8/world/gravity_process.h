@@ -55,8 +55,8 @@ protected:
 
 	void fallStopped();
 
-	int gravity;
-	int xspeed, yspeed, zspeed;
+	int _gravity;
+	int _xSpeed, _ySpeed, _zSpeed;
 };
 
 } // End of namespace Ultima8

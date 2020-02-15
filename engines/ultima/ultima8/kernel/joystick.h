@@ -55,10 +55,10 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	Joystick js;
-	int x_axis, y_axis;
-	int ticks;
-	int accel;
+	Joystick _js;
+	int _xAxis, _yAxis;
+	int _ticks;
+	int _accel;
 };
 
 } // End of namespace Ultima8

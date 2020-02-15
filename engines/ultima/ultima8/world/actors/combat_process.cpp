@@ -54,16 +54,16 @@ CombatProcess::CombatProcess() : Process() {
 
 CombatProcess::CombatProcess(Actor *actor_) {
 	assert(actor_);
-	item_num = actor_->getObjId();
+	_itemNum = actor_->getObjId();
 
-	type = 0x00F2; // CONSTANT !
+	_type = 0x00F2; // CONSTANT !
 	target = 0;
 	fixedTarget = 0;
 	combatmode = CM_WAITING;
 }
 
 void CombatProcess::terminate() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (a)
 		a->clearActorFlag(Actor::ACT_INCOMBAT);
 
@@ -76,7 +76,7 @@ void CombatProcess::run() {
 	// next to them, or maybe only when you are attacking them.
 	// They should not try to approach.
 
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (!(a->getFlags() & Item::FLG_FASTAREA))
 		return;
 
@@ -92,7 +92,7 @@ void CombatProcess::run() {
 			return;
 		}
 
-		pout << "[COMBAT " << item_num << "] target found: "
+		pout << "[COMBAT " << _itemNum << "] target found: "
 		     << target << Std::endl;
 		combatmode = CM_WAITING;
 	}
@@ -106,7 +106,7 @@ void CombatProcess::run() {
 	if (inAttackRange()) {
 		combatmode = CM_ATTACKING;
 
-		pout << "[COMBAT " << item_num << "] target (" << target
+		pout << "[COMBAT " << _itemNum << "] target (" << target
 		     << ") in range" << Std::endl;
 
 		bool hasidle1 = a->hasAnim(Animation::idle1);
@@ -181,7 +181,7 @@ void CombatProcess::setTarget(ObjId newtarget) {
 
 bool CombatProcess::isValidTarget(Actor *target_) {
 	assert(target_);
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
 	// don't target_ self
@@ -207,14 +207,14 @@ bool CombatProcess::isValidTarget(Actor *target_) {
 bool CombatProcess::isEnemy(Actor *target_) {
 	assert(target_);
 
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
 	return ((a->getEnemyAlignment() & target_->getAlignment()) != 0);
 }
 
 ObjId CombatProcess::seekTarget() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (!a) return 0; // uh oh
 
 	if (fixedTarget) {
@@ -242,14 +242,14 @@ ObjId CombatProcess::seekTarget() {
 }
 
 int CombatProcess::getTargetDirection() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	Actor *t = getActor(target);
 
 	return a->getDirToItemCentre(*t);
 }
 
 void CombatProcess::turnToDirection(int direction) {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	int curdir = a->getDir();
 	int step = 1;
 	if ((curdir - direction + 8) % 8 < 4) step = -1;
@@ -278,7 +278,7 @@ void CombatProcess::turnToDirection(int direction) {
 }
 
 bool CombatProcess::inAttackRange() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = 0;
 	if (shapeinfo) mi = shapeinfo->monsterinfo;
@@ -301,7 +301,7 @@ bool CombatProcess::inAttackRange() {
 }
 
 void CombatProcess::waitForTarget() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = 0;
 	if (shapeinfo) mi = shapeinfo->monsterinfo;

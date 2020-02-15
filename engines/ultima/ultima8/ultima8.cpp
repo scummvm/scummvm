@@ -134,7 +134,7 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_drawRenderStats(false), _ttfOverrides(false), _audioMixer(0) {
-	application = this;
+	_application = this;
 
 	for (uint16 key = 0; key < HID_LAST; ++key) {
 		_lastDown[key] = false;
@@ -337,10 +337,10 @@ void Ultima8Engine::startup() {
 	CoreApp::startup();
 
 	bool dataoverride;
-	if (!settingman->get("dataoverride", dataoverride,
+	if (!_settingMan->get("dataoverride", dataoverride,
 		SettingManager::DOM_GLOBAL))
 		dataoverride = false;
-	filesystem->initBuiltinData(dataoverride);
+	_fileSystem->initBuiltinData(dataoverride);
 
 	_kernel = new Kernel();
 	_memoryManager = new MemoryManager();
@@ -448,7 +448,7 @@ void Ultima8Engine::startup() {
 void Ultima8Engine::startupGame() {
 	con->SetAutoPaint(conAutoPaint);
 
-	pout  << Std::endl << "-- Initializing Game: " << gameinfo->name << " --" << Std::endl;
+	pout  << Std::endl << "-- Initializing Game: " << _gameInfo->name << " --" << Std::endl;
 
 	GraphicSysInit();
 
@@ -492,7 +492,7 @@ void Ultima8Engine::startupGame() {
 	con->AddConsoleCommand("MainActor::toggleCombat",
 		MainActor::ConCmd_toggleCombat);
 
-	_gameData = new GameData(gameinfo);
+	_gameData = new GameData(_gameInfo);
 
 	Std::string bindingsfile;
 	if (GAME_IS_U8) {
@@ -502,7 +502,7 @@ void Ultima8Engine::startupGame() {
 	}
 	if (!bindingsfile.empty()) {
 		// system-wide config
-		if (configfileman->readConfigFile(bindingsfile,
+		if (_configFileMan->readConfigFile(bindingsfile,
 			"bindings", true))
 			con->Printf(MM_INFO, "%s... Ok\n", bindingsfile.c_str());
 		else
@@ -528,20 +528,20 @@ void Ultima8Engine::startupGame() {
 
 	_game = Game::createGame(getGameInfo());
 
-	settingman->setDefault("ttf", false);
-	settingman->get("ttf", _ttfOverrides);
+	_settingMan->setDefault("ttf", false);
+	_settingMan->get("ttf", _ttfOverrides);
 
-	settingman->setDefault("_frameSkip", false);
-	settingman->get("_frameSkip", _frameSkip);
+	_settingMan->setDefault("_frameSkip", false);
+	_settingMan->get("_frameSkip", _frameSkip);
 
-	settingman->setDefault("_frameLimit", true);
-	settingman->get("_frameLimit", _frameLimit);
+	_settingMan->setDefault("_frameLimit", true);
+	_settingMan->get("_frameLimit", _frameLimit);
 
-	settingman->setDefault("_interpolate", true);
-	settingman->get("_interpolate", _interpolate);
+	_settingMan->setDefault("_interpolate", true);
+	_settingMan->get("_interpolate", _interpolate);
 
-	settingman->setDefault("cheat", false);
-	settingman->get("cheat", _cheatsEnabled);
+	_settingMan->setDefault("cheat", false);
+	_settingMan->get("cheat", _cheatsEnabled);
 
 	_game->loadFiles();
 	_gameData->setupFontOverrides();
@@ -567,7 +567,7 @@ void Ultima8Engine::startupPentagramMenu() {
 	pout << Std::endl << "-- Initializing Pentagram Menu -- " << Std::endl;
 
 	setupGame(getGameInfo("pentagram"));
-	assert(gameinfo);
+	assert(_gameInfo);
 
 	GraphicSysInit();
 
@@ -692,7 +692,7 @@ void Ultima8Engine::changeGame(istring newgame) {
 
 void Ultima8Engine::menuInitMinimal(istring gamename) {
 	// Only if in the pentagram menu
-	if (gameinfo->name != "pentagram") return;
+	if (_gameInfo->name != "pentagram") return;
 	GameInfo *info = getGameInfo(gamename);
 	if (!info) info = getGameInfo("pentagram");
 	assert(info);
@@ -724,12 +724,12 @@ void Ultima8Engine::DeclareArgs() {
 }
 
 void Ultima8Engine::runGame() {
-	isRunning = true;
+	_isRunning = true;
 
 	int32 next_ticks = g_system->getMillis() * 3;  // Next time is right now!
 
 	Common::Event event;
-	while (isRunning) {
+	while (_isRunning) {
 		_inBetweenFrame = true;  // Will get set false if it's not an _inBetweenFrame
 
 		if (!_frameLimit) {
@@ -771,7 +771,7 @@ void Ultima8Engine::runGame() {
 		}
 
 		// get & handle all events in queue
-		while (isRunning && _events->pollEvent(event)) {
+		while (_isRunning && _events->pollEvent(event)) {
 			handleEvent(event);
 		}
 		handleDelayedEvents();
@@ -887,17 +887,17 @@ void Ultima8Engine::paint() {
 }
 
 void Ultima8Engine::GraphicSysInit() {
-	settingman->setDefault("_fullScreen", false);
-	settingman->setDefault("width", SCREEN_WIDTH);
-	settingman->setDefault("height", SCREEN_HEIGHT);
-	settingman->setDefault("bpp", 32);
+	_settingMan->setDefault("_fullScreen", false);
+	_settingMan->setDefault("width", SCREEN_WIDTH);
+	_settingMan->setDefault("height", SCREEN_HEIGHT);
+	_settingMan->setDefault("bpp", 32);
 
 	bool new_fullscreen;
 	int width, height, bpp;
-	settingman->get("_fullScreen", new_fullscreen);
-	settingman->get("width", width);
-	settingman->get("height", height);
-	settingman->get("bpp", bpp);
+	_settingMan->get("_fullScreen", new_fullscreen);
+	_settingMan->get("width", width);
+	_settingMan->get("height", height);
+	_settingMan->get("bpp", bpp);
 
 #ifdef UNDER_CE
 	width = 240;
@@ -906,10 +906,10 @@ void Ultima8Engine::GraphicSysInit() {
 
 #if 0
 	// store values in user's config file
-	settingman->set("width", width);
-	settingman->set("height", height);
-	settingman->set("bpp", bpp);
-	settingman->set("_fullScreen", new_fullscreen);
+	_settingMan->set("width", width);
+	_settingMan->set("height", height);
+	_settingMan->set("bpp", bpp);
+	_settingMan->set("_fullScreen", new_fullscreen);
 #endif
 
 	if (_screen) {
@@ -953,7 +953,7 @@ void Ultima8Engine::GraphicSysInit() {
 	Std::string alt_confont;
 	bool confont_loaded = false;
 
-	if (settingman->get("console_font", alt_confont)) {
+	if (_settingMan->get("console_font", alt_confont)) {
 		con->Print(MM_INFO, "Alternate console font found...\n");
 		confont_loaded = LoadConsoleFont(alt_confont);
 	}
@@ -989,8 +989,8 @@ void Ultima8Engine::GraphicSysInit() {
 		showSplashScreen();
 
 	bool ttf_antialiasing = true;
-	settingman->setDefault("ttf_antialiasing", true);
-	settingman->get("ttf_antialiasing", ttf_antialiasing);
+	_settingMan->setDefault("ttf_antialiasing", true);
+	_settingMan->get("ttf_antialiasing", ttf_antialiasing);
 
 	_fontManager = new FontManager(ttf_antialiasing);
 	_paletteManager = new PaletteManager(new_screen);
@@ -1002,20 +1002,20 @@ void Ultima8Engine::GraphicSysInit() {
 	_fontManager->loadTTFont(2, "Vera.ttf", 8, 0xA0A0A0, 0);
 
 	bool faded_modal = true;
-	settingman->setDefault("fadedModal", faded_modal);
-	settingman->get("fadedModal", faded_modal);
+	_settingMan->setDefault("fadedModal", faded_modal);
+	_settingMan->get("fadedModal", faded_modal);
 	DesktopGump::SetFadedModal(faded_modal);
 
 	paint();
 }
 
 void Ultima8Engine::changeVideoMode(int width, int height, int new_fullscreen) {
-	if (new_fullscreen == -2) settingman->set("_fullScreen", !_fullScreen);
-	else if (new_fullscreen == 0) settingman->set("_fullScreen", false);
-	else if (new_fullscreen == 1) settingman->set("_fullScreen", true);
+	if (new_fullscreen == -2) _settingMan->set("_fullScreen", !_fullScreen);
+	else if (new_fullscreen == 0) _settingMan->set("_fullScreen", false);
+	else if (new_fullscreen == 1) _settingMan->set("_fullScreen", true);
 
-	if (width > 0) settingman->set("width", width);
-	if (height > 0) settingman->set("height", height);
+	if (width > 0) _settingMan->set("width", width);
+	if (height > 0) _settingMan->set("height", height);
 
 	GraphicSysInit();
 }
@@ -1023,7 +1023,7 @@ void Ultima8Engine::changeVideoMode(int width, int height, int new_fullscreen) {
 bool Ultima8Engine::LoadConsoleFont(Std::string confontini) {
 	// try to load the file
 	con->Printf(MM_INFO, "Loading console font config: %s... ", confontini.c_str());
-	if (configfileman->readConfigFile(confontini, "confont", true))
+	if (_configFileMan->readConfigFile(confontini, "confont", true))
 		pout << "Ok" << Std::endl;
 	else {
 		pout << "Failed" << Std::endl;
@@ -1128,7 +1128,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 		break;
 
 	case Common::EVENT_QUIT:
-		isRunning = false;
+		_isRunning = false;
 		break;
 
 	default:
@@ -1326,7 +1326,7 @@ bool Ultima8Engine::saveGame(int slot, const Std::string &desc, bool ignore_moda
 		return false;
 	}
 
-	settingman->set("lastSave", slot);
+	_settingMan->set("lastSave", slot);
 
 	return saveGameState(slot, desc).getCode() == Common::kNoError;
 }
@@ -1344,7 +1344,7 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	// We'll make it 2KB initially
 	OAutoBufferDataSource buf(2048);
 
-	gameinfo->save(&buf);
+	_gameInfo->save(&buf);
 	sgw->writeFile("GAME", &buf);
 	buf.clear();
 
@@ -1517,7 +1517,7 @@ bool Ultima8Engine::newGame(int saveSlot) {
 
 	_game->startInitialUsecode(saveSlot);
 
-	settingman->set("lastSave", saveSlot);
+	_settingMan->set("lastSave", saveSlot);
 
 	return true;
 }
@@ -1538,14 +1538,14 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	if (state == SavegameReader::SAVE_CORRUPT) {
 		Error("Invalid or corrupt savegame", "Error Loading savegame");
 		delete sg;
-		settingman->set("lastSave", "");
+		_settingMan->set("lastSave", "");
 		return Common::kReadingFailed;
 	}
 
 	if (state != SavegameReader::SAVE_VALID) {
 		Error("Unsupported savegame version", "Error Loading savegame");
 		delete sg;
-		settingman->set("lastSave", "");
+		_settingMan->set("lastSave", "");
 		return Common::kReadingFailed;
 	}
 
@@ -1561,15 +1561,15 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		return Common::kReadingFailed;
 	}
 
-	if (!gameinfo->match(saveinfo)) {
+	if (!_gameInfo->match(saveinfo)) {
 		Std::string message = "Game mismatch\n";
-		message += "Running _game: " + gameinfo->getPrintDetails()  + "\n";
+		message += "Running _game: " + _gameInfo->getPrintDetails()  + "\n";
 		message += "Savegame    : " + saveinfo.getPrintDetails();
 
 #ifdef DEBUG
 		bool ignore;
-		settingman->setDefault("ignore_savegame_mismatch", false);
-		settingman->get("ignore_savegame_mismatch", ignore);
+		_settingMan->setDefault("ignore_savegame_mismatch", false);
+		_settingMan->get("ignore_savegame_mismatch", ignore);
 
 		if (!ignore) {
 			Error(message, "Error Loading savegame " + filename);
@@ -1578,7 +1578,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		}
 		perr << message << Std::endl;
 #else
-		settingman->set("lastSave", "");
+		_settingMan->set("lastSave", "");
 		Error(message, "Error Loading savegame");
 		return Common::kReadingFailed;
 #endif
@@ -1669,7 +1669,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	pout << "Done" << Std::endl;
 
-	settingman->set("lastSave", -1);
+	_settingMan->set("lastSave", -1);
 
 	delete sg;
 	return Common::kNoError;
@@ -1804,7 +1804,7 @@ void Ultima8Engine::ConCmd_newGame(const Console::ArgvType &argv) {
 }
 
 void Ultima8Engine::ConCmd_quit(const Console::ArgvType &argv) {
-	Ultima8Engine::get_instance()->isRunning = false;
+	Ultima8Engine::get_instance()->_isRunning = false;
 }
 
 void Ultima8Engine::ConCmd_drawRenderStats(const Console::ArgvType &argv) {
@@ -1824,7 +1824,7 @@ void Ultima8Engine::ConCmd_engineStats(const Console::ArgvType &argv) {
 
 void Ultima8Engine::ConCmd_changeGame(const Console::ArgvType &argv) {
 	if (argv.size() == 1) {
-		pout << "Current _game is: " << Ultima8Engine::get_instance()->gameinfo->name << Std::endl;
+		pout << "Current _game is: " << Ultima8Engine::get_instance()->_gameInfo->name << Std::endl;
 	} else {
 		Ultima8Engine::get_instance()->changeGame(argv[1]);
 	}
@@ -1833,7 +1833,7 @@ void Ultima8Engine::ConCmd_changeGame(const Console::ArgvType &argv) {
 void Ultima8Engine::ConCmd_listGames(const Console::ArgvType &argv) {
 	Ultima8Engine *app = Ultima8Engine::get_instance();
 	Std::vector<istring> games;
-	games = app->settingman->listGames();
+	games = app->_settingMan->listGames();
 	Std::vector<istring>::iterator iter;
 	for (iter = games.begin(); iter != games.end(); ++iter) {
 		istring _game = *iter;
@@ -1934,10 +1934,10 @@ void Ultima8Engine::ConCmd_memberVar(const Console::ArgvType &argv) {
 
 		// Set config value
 		if (argv.size() >= 4 && ini && *ini && (argv[3] == "yes" || argv[3] == "true")) {
-			if (b) g->settingman->set(ini, *b);
-			else if (istr) g->settingman->set(ini, *istr);
-			else if (i) g->settingman->set(ini, *i);
-			else if (str) g->settingman->set(ini, *str);
+			if (b) g->_settingMan->set(ini, *b);
+			else if (istr) g->_settingMan->set(ini, *istr);
+			else if (i) g->_settingMan->set(ini, *i);
+			else if (str) g->_settingMan->set(ini, *str);
 		}
 	}
 

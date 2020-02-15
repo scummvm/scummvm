@@ -32,7 +32,6 @@
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/ultima8.h"
-
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/monster_egg.h"
@@ -79,11 +78,11 @@ ObjectManager::ObjectManager() {
 
 	setupLoaders();
 
-	objects.resize(65536);
+	_objects.resize(65536);
 
 	//!CONSTANTS
-	objIDs = new idMan(256, 32766, 8192); // Want range of 256 to 32766
-	actorIDs = new idMan(1, 255, 255);
+	_objIDs = new idMan(256, 32766, 8192); // Want range of 256 to 32766
+	_actorIDs = new idMan(1, 255, 255);
 }
 
 ObjectManager::~ObjectManager() {
@@ -92,8 +91,8 @@ ObjectManager::~ObjectManager() {
 
 	objectmanager = 0;
 
-	delete objIDs;
-	delete actorIDs;
+	delete _objIDs;
+	delete _actorIDs;
 }
 
 void ObjectManager::reset() {
@@ -101,28 +100,28 @@ void ObjectManager::reset() {
 
 	unsigned int i;
 
-	for (i = 0; i < objects.size(); ++i) {
-		if (objects[i] == 0) continue;
+	for (i = 0; i < _objects.size(); ++i) {
+		if (_objects[i] == 0) continue;
 #if 0
-		Item *item = p_dynamic_cast<Item *>(objects[i]);
+		Item *item = p_dynamic_cast<Item *>(_objects[i]);
 		if (item && item->getParent()) continue; // will be deleted by parent
 #endif
-		Gump *gump = p_dynamic_cast<Gump *>(objects[i]);
+		Gump *gump = p_dynamic_cast<Gump *>(_objects[i]);
 		if (gump && gump->GetParent()) continue; // will be deleted by parent
-		delete objects[i];
+		delete _objects[i];
 	}
 
-	for (i = 0; i < objects.size(); ++i) {
-		assert(objects[i] == 0);
+	for (i = 0; i < _objects.size(); ++i) {
+		assert(_objects[i] == 0);
 	}
 
 
 	//!CONSTANTS
-	objects.clear();
-	objects.resize(65536);
-	objIDs->clearAll(32766);
-	objIDs->reserveID(666);     // 666 is reserved for the Guardian Bark hack
-	actorIDs->clearAll();
+	_objects.clear();
+	_objects.resize(65536);
+	_objIDs->clearAll(32766);
+	_objIDs->reserveID(666);     // 666 is reserved for the Guardian Bark hack
+	_actorIDs->clearAll();
 }
 
 void ObjectManager::objectStats() {
@@ -130,11 +129,11 @@ void ObjectManager::objectStats() {
 
 	//!constants
 	for (i = 1; i < 256; i++) {
-		if (objects[i] != 0)
+		if (_objects[i] != 0)
 			npccount++;
 	}
-	for (i = 256; i < objects.size(); i++) {
-		if (objects[i] != 0)
+	for (i = 256; i < _objects.size(); i++) {
+		if (_objects[i] != 0)
 			objcount++;
 	}
 
@@ -146,8 +145,8 @@ void ObjectManager::objectStats() {
 void ObjectManager::objectTypes() {
 	pout << "Current object types:" << Std::endl;
 	Std::map<Common::String, unsigned int> objecttypes;
-	for (unsigned int i = 1; i < objects.size(); ++i) {
-		Object *o = objects[i];
+	for (unsigned int i = 1; i < _objects.size(); ++i) {
+		Object *o = _objects[i];
 		if (!o) continue;
 		objecttypes[o->GetClassType().class_name]++;
 	}
@@ -176,9 +175,9 @@ void ObjectManager::ConCmd_objectInfo(const Console::ArgvType &argv) {
 	if (obj == 0) {
 		bool reserved = false;
 		if (objid >= 256) // CONSTANT!
-			reserved = objman->objIDs->isIDUsed(objid);
+			reserved = objman->_objIDs->isIDUsed(objid);
 		else
-			reserved = objman->actorIDs->isIDUsed(objid);
+			reserved = objman->_actorIDs->isIDUsed(objid);
 		if (reserved)
 			pout << "Reserved objid: " << objid << Std::endl;
 		else
@@ -191,65 +190,65 @@ void ObjectManager::ConCmd_objectInfo(const Console::ArgvType &argv) {
 
 uint16 ObjectManager::assignObjId(Object *obj, ObjId new_objid) {
 	if (new_objid == 0xFFFF)
-		new_objid = objIDs->getNewID();
+		new_objid = _objIDs->getNewID();
 	else
-		objIDs->reserveID(new_objid);
+		_objIDs->reserveID(new_objid);
 
 	// failure???
 	if (new_objid != 0) {
-		assert(objects[new_objid] == 0);
-		objects[new_objid] = obj;
+		assert(_objects[new_objid] == 0);
+		_objects[new_objid] = obj;
 	}
 	return new_objid;
 }
 
 uint16 ObjectManager::assignActorObjId(Actor *actor, ObjId new_objid) {
 	if (new_objid == 0xFFFF)
-		new_objid = actorIDs->getNewID();
+		new_objid = _actorIDs->getNewID();
 	else
-		actorIDs->reserveID(new_objid);
+		_actorIDs->reserveID(new_objid);
 
 	// failure???
 	if (new_objid != 0) {
-		assert(objects[new_objid] == 0);
-		objects[new_objid] = actor;
+		assert(_objects[new_objid] == 0);
+		_objects[new_objid] = actor;
 	}
 	return new_objid;
 }
 
 bool ObjectManager::reserveObjId(ObjId objid) {
 	if (objid >= 256) // !constant
-		return objIDs->reserveID(objid);
+		return _objIDs->reserveID(objid);
 	else
-		return actorIDs->reserveID(objid);
+		return _actorIDs->reserveID(objid);
 }
 
 void ObjectManager::clearObjId(ObjId objid) {
 	// need to make this assert check only permanent NPCs
 //	assert(objid >= 256); // !constant
 	if (objid >= 256) // !constant
-		objIDs->clearID(objid);
+		_objIDs->clearID(objid);
 	else
-		actorIDs->clearID(objid);
+		_actorIDs->clearID(objid);
 
-	objects[objid] = 0;
+	_objects[objid] = 0;
 }
 
 Object *ObjectManager::getObject(ObjId objid) const {
-	return objects[objid];
+	return _objects[objid];
 }
 
 void ObjectManager::allow64kObjects() {
-	objIDs->setNewMax(65534);
+	_objIDs->setNewMax(65534);
 }
 
 
 void ObjectManager::save(ODataSource *ods) {
-	objIDs->save(ods);
-	actorIDs->save(ods);
+	_objIDs->save(ods);
+	_actorIDs->save(ods);
 
-	for (unsigned int i = 0; i < objects.size(); ++i) {
-		Object *object = objects[i];
+	for (unsigned int i = 0; i < _objects.size(); ++i) {
+		Object *object = _objects[i];
 		if (!object) continue;
 
 		// child items/gumps are saved by their parent.
@@ -259,7 +258,7 @@ void ObjectManager::save(ODataSource *ods) {
 
 		// don't save Gumps with DONT_SAVE and Gumps with parents, unless
 		// the parent is a core gump
-		// FIXME: This leaks objIDs. See comment in ObjectManager::load().
+		// FIXME: This leaks _objIDs. See comment in ObjectManager::load().
 		if (gump && !gump->mustSave(true)) continue;
 
 		object->save(ods);
@@ -270,8 +269,8 @@ void ObjectManager::save(ODataSource *ods) {
 
 
 bool ObjectManager::load(IDataSource *ids, uint32 version) {
-	if (!objIDs->load(ids, version)) return false;
-	if (!actorIDs->load(ids, version)) return false;
+	if (!_objIDs->load(ids, version)) return false;
+	if (!_actorIDs->load(ids, version)) return false;
 
 	do {
 		// peek ahead for terminator
@@ -296,29 +295,29 @@ bool ObjectManager::load(IDataSource *ids, uint32 version) {
 	} while (true);
 
 	// ObjectManager::save() doesn't save Gumps with the DONT_SAVE flag, but
-	// their IDs are still marked in use in objIDs.
-	// As a workaround, we clear all IDs still in use without actual objects.
+	// their IDs are still marked in use in _objIDs.
+	// As a workaround, we clear all IDs still in use without actual _objects.
 	// We only do this with IDs >= 1024 because below there are truly reserved
-	// objIDs (up to 511 is reserved by U8Game, 666 is reserved for Guardian
+	// _objIDs (up to 511 is reserved by U8Game, 666 is reserved for Guardian
 	// barks).
 	// FIXME: Properly fix this objID leak and increment the savegame number.
 	//        This check can then be turned into an savegame corruption check
 	//        for saves with the new savegame version.
-	// We also fail loading when we're out of objIDs since this could
-	// have caused serious issues when critical objects haven't been created.
-	if (objIDs->isFull()) {
-		perr << "Savegame has been corrupted by running out of objIDs."
+	// We also fail loading when we're out of _objIDs since this could
+	// have caused serious issues when critical _objects haven't been created.
+	if (_objIDs->isFull()) {
+		perr << "Savegame has been corrupted by running out of _objIDs."
 		     << Std::endl;
 		return false;
 	}
 	unsigned int count = 0;
-	for (unsigned int i = 1024; i < objects.size(); i++) {
-		if (objects[i] == 0 && objIDs->isIDUsed(i)) {
-			objIDs->clearID(i);
+	for (unsigned int i = 1024; i < _objects.size(); i++) {
+		if (_objects[i] == 0 && _objIDs->isIDUsed(i)) {
+			_objIDs->clearID(i);
 			count++;
 		}
 	}
-	pout << "Reclaimed " << count << " objIDs on load." << Std::endl;
+	pout << "Reclaimed " << count << " _objIDs on load." << Std::endl;
 
 	return true;
 }
@@ -338,9 +337,9 @@ Object *ObjectManager::loadObject(IDataSource *ids, uint32 version) {
 Object *ObjectManager::loadObject(IDataSource *ids, Std::string classname,
                                   uint32 version) {
 	Std::map<Common::String, ObjectLoadFunc>::iterator iter;
-	iter = objectloaders.find(classname);
+	iter = _objectLoaders.find(classname);
 
-	if (iter == objectloaders.end()) {
+	if (iter == _objectLoaders.end()) {
 		perr << "Unknown Object class: " << classname << Std::endl;
 		return 0;
 	}
@@ -354,12 +353,12 @@ Object *ObjectManager::loadObject(IDataSource *ids, Std::string classname,
 	uint16 objid = obj->getObjId();
 
 	if (objid != 0xFFFF) {
-		objects[objid] = obj;
+		_objects[objid] = obj;
 		bool used;
 		if (objid >= 256)
-			used = objIDs->isIDUsed(objid);
+			used = _objIDs->isIDUsed(objid);
 		else
-			used = actorIDs->isIDUsed(objid);
+			used = _actorIDs->isIDUsed(objid);
 		if (!used) {
 			perr << "Error: object ID " << objid
 			     << " used but marked available. " << Std::endl;

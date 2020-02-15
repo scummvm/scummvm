@@ -75,17 +75,17 @@ public:
 	//! "ObjectManager::objectInfo" console command
 	static void ConCmd_objectInfo(const Console::ArgvType &argv);
 
-	Std::vector<Object *> objects;
-	idMan *objIDs;
-	idMan *actorIDs;
+	Std::vector<Object *> _objects;
+	idMan *_objIDs;
+	idMan *_actorIDs;
 
 private:
 	void setupLoaders();
 
 	void addObjectLoader(Std::string classname, ObjectLoadFunc func) {
-		objectloaders[classname] = func;
+		_objectLoaders[classname] = func;
 	}
-	Std::map<Common::String, ObjectLoadFunc> objectloaders;
+	Std::map<Common::String, ObjectLoadFunc> _objectLoaders;
 
 	static ObjectManager *objectmanager;
 };

@@ -46,7 +46,7 @@ AudioProcess *AudioProcess::the_audio_process = 0;
 
 AudioProcess::AudioProcess(void) : paused(0) {
 	the_audio_process = this;
-	type = 1; // persistent
+	_type = 1; // persistent
 }
 
 AudioProcess::~AudioProcess(void) {

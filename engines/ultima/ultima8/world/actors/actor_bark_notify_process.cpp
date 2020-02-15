@@ -52,7 +52,7 @@ ActorBarkNotifyProcess::~ActorBarkNotifyProcess(void) {
 
 
 void ActorBarkNotifyProcess::run() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (!a) return;
 
 	if (a->isDead() || !a->hasAnim(Animation::talk))
@@ -64,7 +64,7 @@ void ActorBarkNotifyProcess::run() {
 	Animation::Sequence lastanim = a->getLastAnim();
 	if (lastanim != Animation::stand && lastanim != Animation::talk)
 		doAnim = false;
-	else if (Kernel::get_instance()->getNumProcesses(item_num, 0x00F0) > 0)
+	else if (Kernel::get_instance()->getNumProcesses(_itemNum, 0x00F0) > 0)
 		// if busy, don't do talk animation
 		doAnim = false;
 

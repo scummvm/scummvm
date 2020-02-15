@@ -155,7 +155,7 @@ void CameraProcess::run() {
 	}
 
 	if (_time && elapsed > _time) {
-		result = 0; // do we need this
+		_result = 0; // do we need this
 		CameraProcess::SetCameraProcess(0); // This will terminate us
 		return;
 	}

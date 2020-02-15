@@ -39,8 +39,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(HealProcess, Process)
 HealProcess::HealProcess() : Process() {
 	hungerCounter = 0;
 	healCounter = 0;
-	item_num = 0;
-	type = 0x222; // CONSTANT!
+	_itemNum = 0;
+	_type = 0x222; // CONSTANT!
 }
 
 void HealProcess::run() {

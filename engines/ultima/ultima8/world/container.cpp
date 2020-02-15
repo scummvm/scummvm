@@ -53,8 +53,8 @@ Container::~Container() {
 
 
 
-	// if we don't have an objid, we _must_ delete children
-	if (objid == 0xFFFF) {
+	// if we don't have an _objId, we _must_ delete children
+	if (_objId == 0xFFFF) {
 		Std::list<Item *>::iterator iter;
 		for (iter = contents.begin(); iter != contents.end(); ++iter) {
 			delete(*iter);
@@ -148,7 +148,7 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 
 bool Container::addItem(Item *item, bool checkwghtvol) {
 	if (!CanAddItem(item, checkwghtvol)) return false;
-	if (item->getParent() == objid) return true; // already in here
+	if (item->getParent() == _objId) return true; // already in here
 
 	contents.push_back(item);
 	return true;
@@ -326,7 +326,7 @@ bool Container::loadData(IDataSource *ids, uint32 version) {
 		if (!item) return false;
 
 		addItem(item);
-		item->setParent(objid);
+		item->setParent(_objId);
 	}
 
 	return true;

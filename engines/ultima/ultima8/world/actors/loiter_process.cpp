@@ -42,10 +42,10 @@ LoiterProcess::LoiterProcess() : Process() {
 
 LoiterProcess::LoiterProcess(Actor *actor_, int32 c) {
 	assert(actor_);
-	item_num = actor_->getObjId();
+	_itemNum = actor_->getObjId();
 	count = c;
 
-	type = 0x205; // CONSTANT!
+	_type = 0x205; // CONSTANT!
 }
 
 void LoiterProcess::run() {
@@ -56,7 +56,7 @@ void LoiterProcess::run() {
 	if (count > 0)
 		count--;
 
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 
 	if (!a || a->isDead()) {
 		// dead?

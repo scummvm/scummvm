@@ -54,15 +54,15 @@ GrantPeaceProcess::GrantPeaceProcess() : Process() {
 
 GrantPeaceProcess::GrantPeaceProcess(Actor *caster) {
 	assert(caster);
-	item_num = caster->getObjId();
+	_itemNum = caster->getObjId();
 
-	type = 0x21d; // CONSTANT !
+	_type = 0x21d; // CONSTANT !
 
 	havetarget = false;
 }
 
 void GrantPeaceProcess::run() {
-	Actor *caster = getActor(item_num);
+	Actor *caster = getActor(_itemNum);
 	if (!caster) {
 		terminate();
 		return;
@@ -79,8 +79,8 @@ void GrantPeaceProcess::run() {
 		return;
 	}
 
-	// get target result
-	ObjId targetid = static_cast<ObjId>(result);
+	// get target _result
+	ObjId targetid = static_cast<ObjId>(_result);
 	Actor *target = getActor(targetid);
 
 	if (targetid == 1 || !target) {
@@ -117,7 +117,7 @@ void GrantPeaceProcess::run() {
 
 			// undead?
 			if (t->getDefenseType() & WeaponInfo::DMG_UNDEAD) {
-				t->receiveHit(item_num, 8, target->getHP(),
+				t->receiveHit(_itemNum, 8, target->getHP(),
 				              (WeaponInfo::DMG_MAGIC |
 				               WeaponInfo::DMG_PIERCE |
 				               WeaponInfo::DMG_FIRE));
@@ -158,7 +158,7 @@ void GrantPeaceProcess::run() {
 		                                 Actor::ACT_IMMORTAL |
 		                                 Actor::ACT_INVINCIBLE))) {
 			if (getRandom() % 10 == 0) {
-				target->receiveHit(item_num, 8, target->getHP(),
+				target->receiveHit(_itemNum, 8, target->getHP(),
 				                   (WeaponInfo::DMG_MAGIC |
 				                    WeaponInfo::DMG_PIERCE |
 				                    WeaponInfo::DMG_FIRE));

@@ -148,7 +148,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	if (flags & FLG_ETHEREAL) {
 
 		// Remove us from the ethereal void
-		World::get_instance()->etherealRemove(objid);
+		World::get_instance()->etherealRemove(_objId);
 	}
 
 	// Remove from container (if contained or equiped)
@@ -251,7 +251,7 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 	if (flags & FLG_ETHEREAL) {
 
 		// Remove us from the ethereal void
-		World::get_instance()->etherealRemove(objid);
+		World::get_instance()->etherealRemove(_objId);
 	}
 
 	// Remove from container (if contained or equiped)
@@ -326,7 +326,7 @@ void Item::moveToEtherealVoid() {
 	if (flags & FLG_ETHEREAL) return;
 
 	// Add it to the ethereal void
-	World::get_instance()->etherealPush(objid);
+	World::get_instance()->etherealPush(_objId);
 
 	// It's owned by something removed it from the something, but keep flags
 	if (flags & (FLG_CONTAINED | FLG_EQUIPPED)) {
@@ -862,8 +862,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	// Do the sweep test
 	Std::list<CurrentMap::SweepItem> collisions;
 	Std::list<CurrentMap::SweepItem>::iterator it;
-	map->sweepTest(start, end, dims, getShapeInfo()->flags, objid,
-	               false, &collisions);
+	map->sweepTest(start, end, dims, getShapeInfo()->flags, _objId, false, &collisions);
 
 	// Ok, now to work out what to do
 
@@ -903,15 +902,15 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			}
 			// Hitting us at the end (call hit on us, got hit on them)
 			else if (it->end_time == 0x4000) {
-				if (objid == 1 && guiapp->isShowTouchingItems())
+				if (_objId == 1 && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
-				item->callUsecodeEvent_gotHit(objid, hitforce);
+				item->callUsecodeEvent_gotHit(_objId, hitforce);
 				callUsecodeEvent_hit(item->getObjId(), hitforce);
 			}
 			// Hitting us at the start (call release on us and them)
 			else if (!parent && it->hit_time == 0x0000) {
-				if (objid == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
+				if (_objId == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
 				item->callUsecodeEvent_release();
 			}
@@ -969,16 +968,16 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			// If hitting at start, we should have already
 			// called gotHit and hit.
 			if ((!it->touching || it->touching_floor) && it->hit_time >= 0) {
-				if (objid == 1 && guiapp->isShowTouchingItems())
+				if (_objId == 1 && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
-				proc_gothit = item->callUsecodeEvent_gotHit(objid, hitforce);
+				proc_gothit = item->callUsecodeEvent_gotHit(_objId, hitforce);
 				callUsecodeEvent_hit(item->getObjId(), hitforce);
 			}
 
 			// If not hitting at end, we will need to call release
 			if (it->end_time < hit) {
-				if (objid == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
+				if (_objId == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
 				proc_rel = item->callUsecodeEvent_release();
 			}
@@ -1015,17 +1014,17 @@ unsigned int Item::countNearby(uint32 shape_, uint16 range) {
 uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	uint32  class_id = shape;
 
-	// Non-monster NPCs use objid/npcnum + 1024
+	// Non-monster NPCs use _objId/npcnum + 1024
 	// Note: in the original, a non-monster NPC is specified with
 	// the FAST_ONLY flag. However, this causes some summoned monster which
 	// do not receive the FAST_ONLY flag to behave strangely. (Confirmed that
 	// happens in the original as well.) -wjp 20050128
-	if (objid < 256 && (extendedflags & EXT_PERMANENT_NPC))
-		class_id = objid + 1024;
+	if (_objId < 256 && (extendedflags & EXT_PERMANENT_NPC))
+		class_id = _objId + 1024;
 
 	// CHECKME: to make Pentagram behave as much like the original as possible,
 	// don't call any usecode if the original would call the wrong class
-	if (objid < 256 && !(extendedflags & EXT_PERMANENT_NPC) &&
+	if (_objId < 256 && !(extendedflags & EXT_PERMANENT_NPC) &&
 	        !(flags & FLG_FAST_ONLY))
 		return 0;
 
@@ -1040,7 +1039,7 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 #ifdef DEBUG
 	if (UCMachine::get_instance()->trace_event()) {
 		pout.printf("Item: %d calling usecode event %d @ %04X:%04X\n",
-		            objid, event, class_id, offset);
+		            _objId, event, class_id, offset);
 	}
 #endif
 
@@ -1150,7 +1149,7 @@ uint32 Item::use() {
 void Item::destroy(bool delnow) {
 	if (flags & FLG_ETHEREAL) {
 		// Remove us from the ether
-		World::get_instance()->etherealRemove(objid);
+		World::get_instance()->etherealRemove(_objId);
 	} else if (parent) {
 		// we're in a container, so remove self from parent
 		//!! need to make sure this works for equipped items too...
@@ -1202,7 +1201,7 @@ void Item::setupLerp(int32 gametick) {
 	extendedflags &= ~EXT_LERP_NOPREV;
 
 	// Animate it, if needed
-	if ((gametick % 3) == (objid % 3)) animateItem();
+	if ((gametick % 3) == (_objId % 3)) animateItem();
 
 	// Setup the prev values for lerping
 	if (!no_lerp) l_prev = l_next;
@@ -1234,7 +1233,7 @@ void Item::animateItem() {
 	int anim_data = info->animdata;
 	//bool dirty = false;
 
-	if ((static_cast<int>(last_setup) % 6) != (objid % 6) && info->animtype != 1)
+	if ((static_cast<int>(last_setup) % 6) != (_objId % 6) && info->animtype != 1)
 		return;
 
 	switch (info->animtype) {
@@ -1359,10 +1358,10 @@ uint16 Item::openGump(uint32 gumpshape) {
 	ContainerGump *cgump;
 
 	if (getObjId() != 1) { //!! constant
-		cgump = new ContainerGump(shapeP, 0, objid, Gump::FLAG_ITEM_DEPENDENT |
+		cgump = new ContainerGump(shapeP, 0, _objId, Gump::FLAG_ITEM_DEPENDENT |
 		                          Gump::FLAG_DRAGGABLE);
 	} else {
-		cgump = new PaperdollGump(shapeP, 0, objid, Gump::FLAG_ITEM_DEPENDENT |
+		cgump = new PaperdollGump(shapeP, 0, _objId, Gump::FLAG_ITEM_DEPENDENT |
 		                          Gump::FLAG_DRAGGABLE);
 	}
 	//!!TODO: clean up the way this is set
@@ -1396,7 +1395,7 @@ void Item::clearGump() {
 }
 
 int32 Item::ascend(int delta) {
-//	pout << "Ascend: objid=" << getObjId() << ", delta=" << delta << Std::endl;
+//	pout << "Ascend: _objId=" << getObjId() << ", delta=" << delta << Std::endl;
 
 	if (delta == 0) return 0x4000;
 
@@ -1684,7 +1683,7 @@ bool Item::canReach(Item *other, int range,
 	World *world = World::get_instance();
 	CurrentMap *map = world->getCurrentMap();
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
-	               objid, false, &collisions);
+	               _objId, false, &collisions);
 	if (checkLineOfSightCollisions(collisions, usingAlternatePos,
 	                               getObjId(), other->getObjId()))
 		return true;
@@ -1702,7 +1701,7 @@ bool Item::canReach(Item *other, int range,
 
 	collisions.clear();
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
-	               objid, false, &collisions);
+	               _objId, false, &collisions);
 	if (checkLineOfSightCollisions(collisions, usingAlternatePos,
 	                               getObjId(), other->getObjId()))
 		return true;
@@ -1712,7 +1711,7 @@ bool Item::canReach(Item *other, int range,
 
 	collisions.clear();
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
-	               objid, false, &collisions);
+	               _objId, false, &collisions);
 	return checkLineOfSightCollisions(collisions, usingAlternatePos,
 	                                  getObjId(), other->getObjId());
 }
@@ -2443,10 +2442,10 @@ uint32 Item::I_pop(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (w->etherealEmpty()) return 0; // no items left on stack
 
-	uint16 objid = w->etherealPeek();
-	Item *item = getItem(objid);
+	uint16 _objId = w->etherealPeek();
+	Item *item = getItem(_objId);
 	if (!item) {
-		w->etherealRemove(objid);
+		w->etherealRemove(_objId);
 		return 0; // top item was invalid
 	}
 
@@ -2458,7 +2457,7 @@ uint32 Item::I_pop(const uint8 *args, unsigned int /*argsize*/) {
 
 	//! Anything else?
 
-	return objid;
+	return _objId;
 }
 
 uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
@@ -2471,10 +2470,10 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (w->etherealEmpty()) return 0; // no items left on stack
 
-	uint16 objid = w->etherealPeek();
-	Item *item = getItem(objid);
+	uint16 _objId = w->etherealPeek();
+	Item *item = getItem(_objId);
 	if (!item) {
-		w->etherealRemove(objid);
+		w->etherealRemove(_objId);
 		return 0; // top item was invalid
 	}
 
@@ -2486,7 +2485,7 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 
 	//! Anything else?
 
-	return objid;
+	return _objId;
 }
 
 uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
@@ -2502,10 +2501,10 @@ uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (w->etherealEmpty()) return 0; // no items left on stack
 
-	uint16 objid = w->etherealPeek();
-	Item *item = getItem(objid);
+	uint16 _objId = w->etherealPeek();
+	Item *item = getItem(_objId);
 	if (!item) {
-		w->etherealRemove(objid);
+		w->etherealRemove(_objId);
 		return 0; // top item was invalid
 	}
 
@@ -2513,7 +2512,7 @@ uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
 
 	//! Anything else?
 
-	return objid;
+	return _objId;
 }
 
 uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
@@ -2529,10 +2528,10 @@ uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (w->etherealEmpty()) return 0; // no items left on stack
 
-	uint16 objid = w->etherealPeek();
-	Item *item = getItem(objid);
+	uint16 _objId = w->etherealPeek();
+	Item *item = getItem(_objId);
 	if (!item) {
-		w->etherealRemove(objid);
+		w->etherealRemove(_objId);
 		return 0; // top item was invalid
 	}
 
@@ -2543,7 +2542,7 @@ uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 	//! This should probably be different from I_popToContainer, but
 	//! how exactly?
 
-	return objid;
+	return _objId;
 }
 
 uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {

@@ -82,7 +82,7 @@ bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
 	const unsigned int backpack_shape = 529; //!! *cough* constant
 
 	if (!Actor::CanAddItem(item, checkwghtvol)) return false;
-	if (item->getParent() == objid) return true; // already in here
+	if (item->getParent() == _objId) return true; // already in here
 
 	// now check 'equipment slots'
 	// we can have one item of each equipment type, plus one backpack

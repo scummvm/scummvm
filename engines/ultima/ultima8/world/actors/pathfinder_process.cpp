@@ -45,15 +45,15 @@ PathfinderProcess::PathfinderProcess() : Process() {
 
 PathfinderProcess::PathfinderProcess(Actor *actor_, ObjId item_, bool hit) {
 	assert(actor_);
-	item_num = actor_->getObjId();
-	type = 0x0204; // CONSTANT !
+	_itemNum = actor_->getObjId();
+	_type = 0x0204; // CONSTANT !
 
 
 	Item *item = getItem(item_);
 	if (!item) {
 		perr << "PathfinderProcess: non-existent target" << Std::endl;
 		// can't get there...
-		result = PATH_FAILED;
+		_result = PATH_FAILED;
 		terminateDeferred();
 		return;
 	}
@@ -72,10 +72,10 @@ PathfinderProcess::PathfinderProcess(Actor *actor_, ObjId item_, bool hit) {
 	bool ok = pf.pathfind(path);
 
 	if (!ok) {
-		perr << "PathfinderProcess: actor " << item_num
+		perr << "PathfinderProcess: actor " << _itemNum
 		     << " failed to find path" << Std::endl;
 		// can't get there...
-		result = PATH_FAILED;
+		_result = PATH_FAILED;
 		terminateDeferred();
 		return;
 	}
@@ -87,7 +87,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor_, ObjId item_, bool hit) {
 PathfinderProcess::PathfinderProcess(Actor *actor_,
                                      int32 x, int32 y, int32 z) {
 	assert(actor_);
-	item_num = actor_->getObjId();
+	_itemNum = actor_->getObjId();
 
 	targetx = x;
 	targety = y;
@@ -103,10 +103,10 @@ PathfinderProcess::PathfinderProcess(Actor *actor_,
 	bool ok = pf.pathfind(path);
 
 	if (!ok) {
-		perr << "PathfinderProcess: actor " << item_num
+		perr << "PathfinderProcess: actor " << _itemNum
 		     << " failed to find path" << Std::endl;
 		// can't get there...
-		result = PATH_FAILED;
+		_result = PATH_FAILED;
 		terminateDeferred();
 		return;
 	}
@@ -120,7 +120,7 @@ PathfinderProcess::~PathfinderProcess() {
 }
 
 void PathfinderProcess::terminate() {
-	Actor *actor = getActor(item_num);
+	Actor *actor = getActor(_itemNum);
 	if (actor) {
 		// TODO: only clear if it was set by us?
 		// (slightly more complicated if we kill other pathfinders on startup)
@@ -131,7 +131,7 @@ void PathfinderProcess::terminate() {
 }
 
 void PathfinderProcess::run() {
-	Actor *actor = getActor(item_num);
+	Actor *actor = getActor(_itemNum);
 	assert(actor);
 	// if not in the fastarea, do nothing
 	if (!(actor->getFlags() & Item::FLG_FASTAREA)) return;
@@ -144,7 +144,7 @@ void PathfinderProcess::run() {
 		Item *item = getItem(targetitem);
 		if (!item) {
 			perr << "PathfinderProcess: target missing" << Std::endl;
-			result = PATH_FAILED;
+			_result = PATH_FAILED;
 			terminate();
 			return;
 		}
@@ -162,7 +162,7 @@ void PathfinderProcess::run() {
 #if 0
 		pout << "PathfinderProcess: done" << Std::endl;
 #endif
-		result = PATH_OK;
+		_result = PATH_OK;
 		terminate();
 		return;
 	}
@@ -217,10 +217,10 @@ void PathfinderProcess::run() {
 
 		currentstep = 0;
 		if (!ok) {
-			perr << "PathfinderProcess: actor " << item_num
+			perr << "PathfinderProcess: actor " << _itemNum
 			     << " failed to find path" << Std::endl;
 			// can't get there anymore
-			result = PATH_FAILED;
+			_result = PATH_FAILED;
 			terminate();
 			return;
 		}
@@ -231,7 +231,7 @@ void PathfinderProcess::run() {
 		pout << "PathfinderProcess: done" << Std::endl;
 #endif
 		// done
-		result = PATH_OK;
+		_result = PATH_OK;
 		terminate();
 		return;
 	}

@@ -41,7 +41,7 @@ TeleportToEggProcess::TeleportToEggProcess() : Process() {
 
 TeleportToEggProcess::TeleportToEggProcess(int mapnum_, int teleport_id_)
 	: mapnum(mapnum_), teleport_id(teleport_id_) {
-	type = 1; // CONSTANT! (type 1 = persistent)
+	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
 

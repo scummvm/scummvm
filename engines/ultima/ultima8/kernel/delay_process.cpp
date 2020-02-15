@@ -34,37 +34,34 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(DelayProcess, Process)
 
 
 
-DelayProcess::DelayProcess(int count_)
-	: Process(), count(count_) {
-
+DelayProcess::DelayProcess(int count) : Process(), _count(count) {
 }
 
 DelayProcess::~DelayProcess() {
-
 }
 
 void DelayProcess::run() {
-	if (--count == 0)
+	if (--_count == 0)
 		terminate();
 }
 
 void DelayProcess::dumpInfo() {
 	Process::dumpInfo();
-	pout << "Frames left: " << count << Std::endl;
+	pout << "Frames left: " << _count << Std::endl;
 }
 
 
 bool DelayProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	count = static_cast<int>(ids->read4());
+	_count = static_cast<int>(ids->read4());
 
 	return true;
 }
 
 void DelayProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
-	ods->write4(static_cast<uint32>(count));
+	ods->write4(static_cast<uint32>(_count));
 }
 
 } // End of namespace Ultima8

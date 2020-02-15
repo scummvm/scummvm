@@ -39,7 +39,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(SchedulerProcess, Process)
 SchedulerProcess::SchedulerProcess() : Process() {
 	lastRun = 0;
 	nextActor = 0;
-	type = 0x245; // CONSTANT!
+	_type = 0x245; // CONSTANT!
 }
 
 void SchedulerProcess::run() {

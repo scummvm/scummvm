@@ -51,8 +51,8 @@ MusicProcess::MusicProcess(MidiPlayer *player) : _midiPlayer(player),
 	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 
 	the_music_process = this;
-	flags |= PROC_RUNPAUSED;
-	type = 1; // persistent
+	_flags |= PROC_RUNPAUSED;
+	_type = 1; // persistent
 }
 
 MusicProcess::~MusicProcess() {

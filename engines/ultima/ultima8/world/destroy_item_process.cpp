@@ -41,21 +41,21 @@ DestroyItemProcess::DestroyItemProcess() : Process() {
 
 DestroyItemProcess::DestroyItemProcess(Item *item_) {
 	if (item_)
-		item_num = item_->getObjId();
+		_itemNum = item_->getObjId();
 	else
-		item_num = 0;
+		_itemNum = 0;
 
-	type = 0x232;
+	_type = 0x232;
 }
 
 void DestroyItemProcess::run() {
-	if (item_num == 0) {
+	if (_itemNum == 0) {
 		// need to get ObjId to use from process result. (We were apparently
 		// waiting for a process which returned the ObjId to delete.)
-		item_num = static_cast<ObjId>(result);
+		_itemNum = static_cast<ObjId>(_result);
 	}
 
-	Item *it = getItem(item_num);
+	Item *it = getItem(_itemNum);
 
 	if (!it) {
 		// somebody did our work for us...

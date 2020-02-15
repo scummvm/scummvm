@@ -42,7 +42,7 @@ namespace Ultima8 {
 
 Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
                               uint16 flags, uint16 npcnum, uint16 mapnum,
-                              uint32 extendedflags, bool objid) {
+                              uint32 extendedflags, bool _objId) {
 	// check what class to create
 	ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 	                  getShapeInfo(shape);
@@ -70,7 +70,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		item->npcnum = npcnum;
 		item->mapnum = mapnum;
 		item->extendedflags = extendedflags;
-		if (objid) item->assignObjId();
+		if (_objId) item->assignObjId();
 		return item;
 	}
 
@@ -85,7 +85,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		container->npcnum = npcnum;
 		container->mapnum = mapnum;
 		container->extendedflags = extendedflags;
-		if (objid) container->assignObjId();
+		if (_objId) container->assignObjId();
 		return container;
 	}
 
@@ -100,7 +100,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		globegg->npcnum = npcnum;
 		globegg->mapnum = mapnum;
 		globegg->extendedflags = extendedflags;
-		if (objid) globegg->assignObjId();
+		if (_objId) globegg->assignObjId();
 		return globegg;
 	}
 
@@ -113,7 +113,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		egg->npcnum = npcnum;
 		egg->mapnum = mapnum;
 		egg->extendedflags = extendedflags;
-		if (objid) egg->assignObjId();
+		if (_objId) egg->assignObjId();
 		return egg;
 	}
 
@@ -126,7 +126,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		egg->npcnum = npcnum;
 		egg->mapnum = mapnum;
 		egg->extendedflags = extendedflags;
-		if (objid) egg->assignObjId();
+		if (_objId) egg->assignObjId();
 		return egg;
 	}
 
@@ -139,7 +139,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		egg->npcnum = npcnum;
 		egg->mapnum = mapnum;
 		egg->extendedflags = extendedflags;
-		if (objid) egg->assignObjId();
+		if (_objId) egg->assignObjId();
 		return egg;
 	}
 
@@ -152,7 +152,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 
 Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
                                 uint16 flags, uint16 npcnum, uint16 mapnum,
-                                uint32 extendedflags, bool objid) {
+                                uint32 extendedflags, bool _objId) {
 	// this function should probably differentiate between the Avatar,
 	// NPCs, monsters?
 
@@ -174,7 +174,7 @@ Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
 		actor->flags = flags;
 		actor->npcnum = npcnum;
 		actor->mapnum = mapnum;
-		actor->objid = 1;
+		actor->_objId = 1;
 		actor->extendedflags = extendedflags;
 		return actor;
 	}
@@ -188,8 +188,8 @@ Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
 	actor->npcnum = npcnum;
 	actor->mapnum = mapnum;
 	if (npcnum != 0) {
-		actor->objid = static_cast<uint16>(npcnum);
-	} else if (objid) {
+		actor->_objId = static_cast<uint16>(npcnum);
+	} else if (_objId) {
 		actor->assignObjId();
 	}
 	actor->extendedflags = extendedflags;

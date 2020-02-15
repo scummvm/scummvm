@@ -28,41 +28,41 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(SegmentedAllocator, Allocator)
 
-SegmentedAllocator::SegmentedAllocator(size_t nodeCapacity_, uint32 nodes_): Allocator(), nodes(nodes_) {
-	pools.push_back(new SegmentedPool(nodeCapacity_, nodes_));
-	nodeCapacity = pools[0]->getNodeCapacity();
-//	pout << "Initial Pool Created: Nodes - " << nodes << ", Node Capacity - "
-//		<< nodeCapacity << Std::endl;
+SegmentedAllocator::SegmentedAllocator(size_t nodeCapacity, uint32 nodes): Allocator(), _nodes(nodes) {
+	_pools.push_back(new SegmentedPool(nodeCapacity, nodes));
+	_nodeCapacity = _pools[0]->getNodeCapacity();
+//	pout << "Initial Pool Created: Nodes - " << _nodes << ", Node Capacity - "
+//		<< _nodeCapacity << Std::endl;
 }
 
 SegmentedAllocator::~SegmentedAllocator() {
 	Std::vector<SegmentedPool *>::iterator i;
-	for (i = pools.begin(); i != pools.end(); ++i) {
+	for (i = _pools.begin(); i != _pools.end(); ++i) {
 		delete *i;
 	}
 
-	pools.clear();
+	_pools.clear();
 }
 
 void *SegmentedAllocator::allocate(size_t size) {
 	Std::vector<SegmentedPool *>::iterator i;
 	SegmentedPool *p;
 
-	if (size > nodeCapacity)
+	if (size > _nodeCapacity)
 		return 0;
 
-	for (i = pools.begin(); i != pools.end(); ++i) {
+	for (i = _pools.begin(); i != _pools.end(); ++i) {
 		if (!(*i)->isFull())
 			return (*i)->allocate(size);
 	}
 
 	// else we need a new pool
-	p = new SegmentedPool(nodeCapacity, nodes);
+	p = new SegmentedPool(_nodeCapacity, _nodes);
 	if (p) {
-//		pout << "New Pool Created: Nodes - " << nodes << ", Node Capacity - "
-//			<< nodeCapacity << Std::endl;
+//		pout << "New Pool Created: Nodes - " << _nodes << ", Node Capacity - "
+//			<< _nodeCapacity << Std::endl;
 
-		pools.push_back(p);
+		_pools.push_back(p);
 		return p->allocate(size);
 	}
 
@@ -72,7 +72,7 @@ void *SegmentedAllocator::allocate(size_t size) {
 
 Pool *SegmentedAllocator::findPool(void *ptr) {
 	Std::vector<SegmentedPool *>::iterator i;
-	for (i = pools.begin(); i != pools.end(); ++i) {
+	for (i = _pools.begin(); i != _pools.end(); ++i) {
 		if ((*i)->inPool(ptr))
 			return *i;
 	}
@@ -80,15 +80,15 @@ Pool *SegmentedAllocator::findPool(void *ptr) {
 }
 
 void SegmentedAllocator::freeResources() {
-	if (pools.empty())
+	if (_pools.empty())
 		return;
 
 	// Pop back only -- it should suffice.
-	while (pools.back()->isEmpty()) {
-		delete pools.back();
-		pools.pop_back();
+	while (_pools.back()->isEmpty()) {
+		delete _pools.back();
+		_pools.pop_back();
 
-		if (pools.empty())
+		if (_pools.empty())
 			return;
 	}
 }
@@ -97,8 +97,8 @@ void SegmentedAllocator::printInfo() {
 	Std::vector<SegmentedPool *>::iterator it;
 	int i = 0;
 
-	pout << "Pools: " <<  pools.size() << Std::endl;
-	for (it = pools.begin(); it != pools.end(); ++it) {
+	pout << "Pools: " <<  _pools.size() << Std::endl;
+	for (it = _pools.begin(); it != _pools.end(); ++it) {
 		pout << "  Pool " << i++ << ":" << Std::endl;
 		(*it)->printInfo();
 	}

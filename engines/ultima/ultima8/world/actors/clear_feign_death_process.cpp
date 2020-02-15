@@ -42,13 +42,13 @@ ClearFeignDeathProcess::ClearFeignDeathProcess() : Process() {
 
 ClearFeignDeathProcess::ClearFeignDeathProcess(Actor *actor_) {
 	assert(actor_);
-	item_num = actor_->getObjId();
+	_itemNum = actor_->getObjId();
 
-	type = 0x243; // constant !
+	_type = 0x243; // constant !
 }
 
 void ClearFeignDeathProcess::run() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 
 	if (!a) {
 		// actor gone?
@@ -59,7 +59,7 @@ void ClearFeignDeathProcess::run() {
 	a->clearActorFlag(Actor::ACT_FEIGNDEATH);
 
 	AudioProcess *audioproc = AudioProcess::get_instance();
-	if (audioproc) audioproc->playSFX(59, 0x60, item_num, 0);
+	if (audioproc) audioproc->playSFX(59, 0x60, _itemNum, 0);
 
 	// done
 	terminate();

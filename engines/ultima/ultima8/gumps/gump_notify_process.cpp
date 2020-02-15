@@ -38,8 +38,8 @@ GumpNotifyProcess::GumpNotifyProcess()
 }
 
 GumpNotifyProcess::GumpNotifyProcess(uint16 it) : Process(it), _gump(0) {
-	result = 0;
-	type = 0x200; // CONSTANT!
+	_result = 0;
+	_type = 0x200; // CONSTANT!
 }
 
 GumpNotifyProcess::~GumpNotifyProcess(void) {
@@ -52,8 +52,8 @@ void GumpNotifyProcess::setGump(Gump *g) {
 
 void GumpNotifyProcess::notifyClosing(int res) {
 	_gump = 0;
-	result = res;
-	if (!(flags & PROC_TERMINATED)) terminate();
+	_result = res;
+	if (!(_flags & PROC_TERMINATED)) terminate();
 }
 
 void GumpNotifyProcess::terminate() {

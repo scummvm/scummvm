@@ -47,14 +47,14 @@ SplitItemProcess::SplitItemProcess(Item *original, Item *target_) {
 	assert(original->getShapeInfo()->hasQuantity());
 	assert(target_->getShapeInfo()->hasQuantity());
 
-	item_num = original->getObjId();
+	_itemNum = original->getObjId();
 	target = target_->getObjId();
 
 	// type = TODO
 }
 
 void SplitItemProcess::run() {
-	Item *original = getItem(item_num);
+	Item *original = getItem(_itemNum);
 	Item *targetitem = getItem(target);
 
 	assert(original);
@@ -62,7 +62,7 @@ void SplitItemProcess::run() {
 	assert(original->getShapeInfo()->hasQuantity());
 	assert(targetitem->getShapeInfo()->hasQuantity());
 
-	uint16 movecount = static_cast<uint16>(result);
+	uint16 movecount = static_cast<uint16>(_result);
 
 	assert(movecount <= original->getQuality());
 
@@ -88,7 +88,7 @@ void SplitItemProcess::run() {
 		original = 0;
 	}
 
-	result = 0;
+	_result = 0;
 
 	if (!is_terminated())
 		terminate();

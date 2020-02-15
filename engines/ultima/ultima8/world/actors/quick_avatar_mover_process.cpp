@@ -94,19 +94,19 @@ void QuickAvatarMoverProcess::run() {
 		while (dxv || dyv || dzv) {
 			uint32 shapeFlags = avatar->getShapeInfo()->flags;
 
-			if (!clipping || cm->isValidPosition(x + dxv, y + dyv, z + dzv, ixd, iyd, izd, flags, 1, 0, 0)) {
+			if (!clipping || cm->isValidPosition(x + dxv, y + dyv, z + dzv, ixd, iyd, izd, _flags, 1, 0, 0)) {
 				if (clipping && !dzv) {
-					if (cm->isValidPosition(x + dxv, y + dyv, z - 8, ixd, iyd, izd, flags, 1, 0, 0) &&
-					        !cm->isValidPosition(x, y, z - 8, ixd, iyd, izd, flags, 1, 0, 0)) {
+					if (cm->isValidPosition(x + dxv, y + dyv, z - 8, ixd, iyd, izd, _flags, 1, 0, 0) &&
+					        !cm->isValidPosition(x, y, z - 8, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -8;
-					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 16, ixd, iyd, izd, flags, 1, 0, 0) &&
-					           !cm->isValidPosition(x, y, z - 16, ixd, iyd, izd, flags, 1, 0, 0)) {
+					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 16, ixd, iyd, izd, _flags, 1, 0, 0) &&
+					           !cm->isValidPosition(x, y, z - 16, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -16;
-					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 24, ixd, iyd, izd, flags, 1, 0, 0) &&
-					           !cm->isValidPosition(x, y, z - 24, ixd, iyd, izd, flags, 1, 0, 0)) {
+					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 24, ixd, iyd, izd, _flags, 1, 0, 0) &&
+					           !cm->isValidPosition(x, y, z - 24, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -24;
-					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 32, ixd, iyd, izd, flags, 1, 0, 0) &&
-					           !cm->isValidPosition(x, y, z - 32, ixd, iyd, izd, flags, 1, 0, 0)) {
+					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 32, ixd, iyd, izd, _flags, 1, 0, 0) &&
+					           !cm->isValidPosition(x, y, z - 32, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -32;
 					}
 				}

@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/filesys/idata_source.h"
@@ -36,19 +35,19 @@ DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Process)
 DEFINE_CUSTOM_MEMORY_ALLOCATION(Process)
 
 Process::Process(ObjId it, uint16 ty)
-	: pid(0xFFFF), flags(0), item_num(it), type(ty), result(0) {
+	: _pid(0xFFFF), _flags(0), _itemNum(it), _type(ty), _result(0) {
 	Kernel::get_instance()->assignPID(this);
 }
 
 void Process::fail() {
-	assert(!(flags & PROC_TERMINATED));
+	assert(!(_flags & PROC_TERMINATED));
 
-	flags |= PROC_FAILED;
+	_flags |= PROC_FAILED;
 	terminate();
 }
 
 void Process::terminate() {
-	assert(!(flags & PROC_TERMINATED));
+	assert(!(_flags & PROC_TERMINATED));
 
 	Kernel *kernel = Kernel::get_instance();
 
@@ -57,17 +56,17 @@ void Process::terminate() {
 	        i != waiting.end(); ++i) {
 		Process *p = kernel->getProcess(*i);
 		if (p)
-			p->wakeUp(result);
+			p->wakeUp(_result);
 	}
 	waiting.clear();
 
-	flags |= PROC_TERMINATED;
+	_flags |= PROC_TERMINATED;
 }
 
 void Process::wakeUp(uint32 result_) {
-	result = result_;
+	_result = result_;
 
-	flags &= ~PROC_SUSPENDED;
+	_flags &= ~PROC_SUSPENDED;
 
 	Kernel::get_instance()->setNextProcess(this);
 }
@@ -79,10 +78,10 @@ void Process::waitFor(ProcId pid_) {
 		// add this process to waiting list of process pid_
 		Process *p = kernel->getProcess(pid_);
 		assert(p);
-		p->waiting.push_back(pid);
+		p->waiting.push_back(_pid);
 	}
 
-	flags |= PROC_SUSPENDED;
+	_flags |= PROC_SUSPENDED;
 }
 
 void Process::waitFor(Process *proc) {
@@ -93,21 +92,21 @@ void Process::waitFor(Process *proc) {
 }
 
 void Process::suspend() {
-	flags |= PROC_SUSPENDED;
+	_flags |= PROC_SUSPENDED;
 }
 
 void Process::dumpInfo() {
 	Common::String info = Common::String::format(
-		"Process %d class %s, item %d, type %x, status ",
-		getPid(), GetClassType().class_name, item_num, type);
+		"Process %d class %s, item %d, _type %x, status ",
+		getPid(), GetClassType().class_name, _itemNum, _type);
 
 	pout << info.c_str();
-	if (flags & PROC_ACTIVE) pout << "A";
-	if (flags & PROC_SUSPENDED) pout << "S";
-	if (flags & PROC_TERMINATED) pout << "T";
-	if (flags & PROC_TERM_DEFERRED) pout << "t";
-	if (flags & PROC_FAILED) pout << "F";
-	if (flags & PROC_RUNPAUSED) pout << "R";
+	if (_flags & PROC_ACTIVE) pout << "A";
+	if (_flags & PROC_SUSPENDED) pout << "S";
+	if (_flags & PROC_TERMINATED) pout << "T";
+	if (_flags & PROC_TERM_DEFERRED) pout << "t";
+	if (_flags & PROC_FAILED) pout << "F";
+	if (_flags & PROC_RUNPAUSED) pout << "R";
 	if (!waiting.empty()) {
 		pout << ", notify: ";
 		for (Std::vector<ProcId>::iterator i = waiting.begin();
@@ -133,22 +132,22 @@ void Process::writeProcessHeader(ODataSource *ods) {
 }
 
 void Process::saveData(ODataSource *ods) {
-	ods->write2(pid);
-	ods->write4(flags);
-	ods->write2(item_num);
-	ods->write2(type);
-	ods->write4(result);
+	ods->write2(_pid);
+	ods->write4(_flags);
+	ods->write2(_itemNum);
+	ods->write2(_type);
+	ods->write4(_result);
 	ods->write4(static_cast<uint32>(waiting.size()));
 	for (unsigned int i = 0; i < waiting.size(); ++i)
 		ods->write2(waiting[i]);
 }
 
 bool Process::loadData(IDataSource *ids, uint32 version) {
-	pid = ids->read2();
-	flags = ids->read4();
-	item_num = ids->read2();
-	type = ids->read2();
-	result = ids->read4();
+	_pid = ids->read2();
+	_flags = ids->read4();
+	_itemNum = ids->read2();
+	_type = ids->read2();
+	_result = ids->read4();
 	uint32 waitcount = ids->read4();
 	waiting.resize(waitcount);
 	for (unsigned int i = 0; i < waitcount; ++i)

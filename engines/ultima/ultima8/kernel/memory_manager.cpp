@@ -27,35 +27,35 @@
 namespace Ultima {
 namespace Ultima8 {
 
-MemoryManager *MemoryManager::memorymanager;
+MemoryManager *MemoryManager::_memoryManager;
 
 MemoryManager::MemoryManager() {
-	memorymanager = this;
+	_memoryManager = this;
 
 	//!!! CONSTANT !!!!
-	allocatorCount = 2;
+	_allocatorCount = 2;
 	// Tune these with averages from MemoryManager::MemInfo when needed
-	allocators[0] = new SegmentedAllocator(192, 8500);
-	allocators[1] = new SegmentedAllocator(4224, 25);
+	_allocators[0] = new SegmentedAllocator(192, 8500);
+	_allocators[1] = new SegmentedAllocator(4224, 25);
 
 	setAllocationFunctions(MemoryManager::allocate,
 	                                  MemoryManager::deallocate);
 }
 
 MemoryManager::~MemoryManager() {
-	memorymanager = 0;
+	_memoryManager = 0;
 
 	setAllocationFunctions(malloc, free);
-	delete allocators[0];
-	delete allocators[1];
+	delete _allocators[0];
+	delete _allocators[1];
 }
 
 void *MemoryManager::_allocate(size_t size) {
 	int i;
 	// get the memory from the first allocator that can hold "size"
-	for (i = 0; i < allocatorCount; ++i) {
-		if (allocators[i]->getCapacity() >= size) {
-			return allocators[i]->allocate(size);
+	for (i = 0; i < _allocatorCount; ++i) {
+		if (_allocators[i]->getCapacity() >= size) {
+			return _allocators[i]->allocate(size);
 		}
 	}
 
@@ -71,8 +71,8 @@ void *MemoryManager::_allocate(size_t size) {
 void MemoryManager::_deallocate(void *ptr) {
 	Pool *p;
 	int i;
-	for (i = 0; i < allocatorCount; ++i) {
-		p = allocators[i]->findPool(ptr);
+	for (i = 0; i < _allocatorCount; ++i) {
+		p = _allocators[i]->findPool(ptr);
 		if (p) {
 			p->deallocate(ptr);
 			return;
@@ -88,8 +88,8 @@ void MemoryManager::_deallocate(void *ptr) {
 
 void MemoryManager::freeResources() {
 	int i;
-	for (i = 0; i < allocatorCount; ++i) {
-		allocators[i]->freeResources();
+	for (i = 0; i < _allocatorCount; ++i) {
+		_allocators[i]->freeResources();
 	}
 }
 

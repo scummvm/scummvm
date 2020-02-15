@@ -62,7 +62,7 @@ public:
 
 	void setNextProcess(Process *proc);
 	Process *getRunningProcess() const {
-		return runningprocess;
+		return _runningProcess;
 	}
 
 	// objid = 0 means any object, type = 6 means any type
@@ -98,20 +98,21 @@ public:
 	bool load(IDataSource *ids, uint32 version);
 
 	void pause() {
-		paused++;
+		_paused++;
 	}
 	void unpause() {
-		if (paused > 0) paused--;
+		if (_paused > 0)
+			_paused--;
 	}
 	bool isPaused() const {
-		return paused > 0;
+		return _paused > 0;
 	}
 
 	void setFrameByFrame(bool fbf) {
-		framebyframe = fbf;
+		_frameByFrame = fbf;
 	}
 	bool isFrameByFrame() const {
-		return framebyframe;
+		return _frameByFrame;
 	}
 
 	void addProcessLoader(Std::string classname, ProcessLoadFunc func) {
@@ -119,7 +120,7 @@ public:
 	}
 
 	uint32 getFrameNum() const {
-		return framenum;
+		return _frameNum;
 	};
 
 	//! "Kernel::processTypes" console command
@@ -148,11 +149,11 @@ private:
 
 	bool loading;
 
-	uint32 framenum;
-	unsigned int paused;
-	bool framebyframe;
+	uint32 _frameNum;
+	unsigned int _paused;
+	bool _frameByFrame;
 
-	Process *runningprocess;
+	Process *_runningProcess;
 
 	static Kernel *kernel;
 };

@@ -165,9 +165,9 @@ void UCMachine::execProcess(UCProcess *p) {
 	cs.seek(p->ip);
 
 #ifdef DEBUG
-	if (trace_show(p->pid, p->item_num, p->classid)) {
-		pout << Std::hex << "running process " << p->pid
-		     << ", item " << p->item_num << ", type " << p->type
+	if (trace_show(p->_pid, p->_itemNum, p->classid)) {
+		pout << Std::hex << "running process " << p->_pid
+		     << ", item " << p->_itemNum << ", type " << p->type
 		     << ", class " << p->classid << ", offset " << p->ip
 		     << Std::dec << Std::endl;
 	}
@@ -184,8 +184,8 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 		uint16 trace_classid = p->classid;
-		ObjId trace_objid = p->item_num;
-		ProcId trace_pid = p->pid;
+		ObjId trace_objid = p->_itemNum;
+		ProcId trace_pid = p->_pid;
 #endif
 
 		LOGPF(("sp = %02X; %04X:%04X: %02X\t",
@@ -248,7 +248,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			//! probably a member of the Process?
 			//! is the result in 0x08 and 0x6D the same var?
 			LOGPF(("pop dword\tprocess result\n"));
-			p->result = p->stack.pop4();
+			p->_result = p->stack.pop4();
 			break;
 
 		case 0x09:
@@ -1134,7 +1134,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 4B xx
 			// push 32 bit pointer address of BP+XX
 			si8a = static_cast<int8>(cs.read1());
-			p->stack.push4(stackToPtr(p->pid, p->bp + si8a));
+			p->stack.push4(stackToPtr(p->_pid, p->bp + si8a));
 			LOGPF(("push addr\t%s\n", print_bp(si8a)));
 			break;
 
@@ -1277,13 +1277,13 @@ void UCMachine::execProcess(UCProcess *p) {
 			// this seems to link two processes (two pids are popped)
 			// the '01 01' variety most likely causes one process
 			// to wait for the other to finish.
-			// the first pid pushed is often the current pid in U8
+			// the first _pid pushed is often the current _pid in U8
 
 			// question: can multiple processes be waiting for a single proc?
 			// can a process be waiting for multiple processes?
 
 			// 'implies' seems to push a value too, although it is very
-			// often ignored. It looks like it's a pid, but which one?
+			// often ignored. It looks like it's a _pid, but which one?
 
 			// additionally, it is possible that 'implies' puts the result
 			// of a process in the 'process result' variable,
@@ -1296,7 +1296,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			cs.read2(); // skip the 01 01
 			ui16a = p->stack.pop2();
 			ui16b = p->stack.pop2();
-			p->stack.push2(ui16a); //!! which pid do we need to push!?
+			p->stack.push2(ui16a); //!! which _pid do we need to push!?
 			LOGPF(("implies\n"));
 
 			Process *proc = Kernel::get_instance()->getProcess(ui16b);
@@ -1355,9 +1355,9 @@ void UCMachine::execProcess(UCProcess *p) {
 			p->temp32 = Kernel::get_instance()->addProcessExec(newproc);
 
 #ifdef DEBUG
-			if (trace_show(p->pid, p->item_num, p->classid)) {
-				pout << Std::hex << "(still) running process " << p->pid
-				     << ", item " << p->item_num << ", type " << p->type
+			if (trace_show(p->_pid, p->_itemNum, p->classid)) {
+				pout << Std::hex << "(still) running process " << p->_pid
+				     << ", item " << p->_itemNum << ", type " << p->type
 				     << ", class " << p->classid << ", offset " << p->ip
 				     << Std::dec << Std::endl;
 			}
@@ -1399,9 +1399,9 @@ void UCMachine::execProcess(UCProcess *p) {
 			uint16 newpid = Kernel::get_instance()->addProcessExec(newproc);
 
 #ifdef DEBUG
-			if (trace_show(p->pid, p->item_num, p->classid)) {
-				pout << Std::hex << "(still) running process " << p->pid
-				     << ", item " << p->item_num << ", class " << p->classid
+			if (trace_show(p->_pid, p->_itemNum, p->classid)) {
+				pout << Std::hex << "(still) running process " << p->_pid
+				     << ", item " << p->_itemNum << ", class " << p->classid
 				     << ", offset " << p->ip << Std::dec << Std::endl;
 			}
 #endif
@@ -1409,7 +1409,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// as with 'spawn', run execute the spawned process once
 			// immediately
 
-			p->stack.push2(newpid); //! push pid of newproc?
+			p->stack.push2(newpid); //! push _pid of newproc?
 
 			// cede = true;
 		}
@@ -1418,8 +1418,8 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x59:
 			// 59
 			// push process id
-			p->stack.push2(p->pid);
-			LOGPF(("push\t\tpid = %04Xh\n", p->pid));
+			p->stack.push2(p->_pid);
+			LOGPF(("push\t\tpid = %04Xh\n", p->_pid));
 			break;
 
 		case 0x5A:
@@ -1555,7 +1555,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// and add it to the "Free Me" list of the process
 			si8a = cs.read1(); // index
 			ui8a = cs.read1(); // type
-			LOGPF(("param pid chg\t%s, type=%u\n", print_bp(si8a), ui8a));
+			LOGPF(("param _pid chg\t%s, type=%u\n", print_bp(si8a), ui8a));
 
 			ui16a = p->stack.access2(p->bp + si8a);
 			switch (ui8a) {
@@ -1579,7 +1579,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			break;
 			default:
 				ui16b = 0;
-				perr << "Error: invalid param pid change type (" << ui8a
+				perr << "Error: invalid param _pid change type (" << ui8a
 				     << ")" << Std::endl;
 				error = true;
 			}
@@ -1593,7 +1593,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// (of which process? pop anything?)
 			// (also see comment for 0x54 'implies')
 			LOGPF(("push dword\tprocess result\n"));
-			p->stack.push4(p->result);
+			p->stack.push4(p->_result);
 			break;
 
 		case 0x6E:
@@ -1610,7 +1610,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 6F xx
 			// push 32 pointer address of SP-xx
 			si8a = static_cast<int8>(cs.read1());
-			p->stack.push4(stackToPtr(p->pid, static_cast<uint16>(p->stack.getSP() - si8a)));
+			p->stack.push4(stackToPtr(p->_pid, static_cast<uint16>(p->stack.getSP() - si8a)));
 			LOGPF(("push addr\t%s\n", print_sp(-si8a)));
 			break;
 
@@ -1934,7 +1934,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("process exclude"));
 
 			if (Kernel::get_instance()->
-			        getNumProcesses(p->item_num, p->type) > 1) {
+			        getNumProcesses(p->_itemNum, p->_type) > 1) {
 				// another process with this (object,type) is already running
 				p->terminateDeferred();
 				LOGPF(("\t(terminating)\n"));
@@ -1972,13 +1972,13 @@ void UCMachine::execProcess(UCProcess *p) {
 			p->ip = static_cast<uint16>(cs.getPos());   // TRUNCATES!
 
 		// check if we suspended ourselves
-		if ((p->flags & Process::PROC_SUSPENDED) != 0)
+		if ((p->_flags & Process::PROC_SUSPENDED) != 0)
 			cede = true;
 	} // while(!cede && !error && !p->terminated && !p->terminate_deferred)
 
 	if (error) {
 		perr.Print("Process %d caused an error at %04X:%04X. Killing process.\n",
-		            p->pid, p->classid, p->ip);
+		            p->_pid, p->classid, p->ip);
 		p->terminateDeferred();
 	}
 }
@@ -2079,8 +2079,8 @@ uint32 UCMachine::stringToPtr(uint16 s) {
 }
 
 //static
-uint32 UCMachine::stackToPtr(uint16 pid, uint16 offset) {
-	uint32 ptr = SEG_STACK + pid;
+uint32 UCMachine::stackToPtr(uint16 _pid, uint16 offset) {
+	uint32 ptr = SEG_STACK + _pid;
 	ptr <<= 16;
 	ptr += offset;
 	return ptr;
@@ -2117,11 +2117,11 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 		UCProcess *proc = p_dynamic_cast<UCProcess *>
 		                  (Kernel::get_instance()->getProcess(segment));
 
-		// reference to the stack of pid 'segment'
+		// reference to the stack of _pid 'segment'
 		if (!proc) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
-			     << "process (pid: " << segment << ")" << Std::endl;
+			     << "process (_pid: " << segment << ")" << Std::endl;
 			return false;
 		} else {
 			proc->stack.assign(offset, data, size);
@@ -2154,11 +2154,11 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 		UCProcess *proc = p_dynamic_cast<UCProcess *>
 		                  (Kernel::get_instance()->getProcess(segment));
 
-		// reference to the stack of pid 'segment'
+		// reference to the stack of _pid 'segment'
 		if (!proc) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
-			     << "process (pid: " << segment << ")" << Std::endl;
+			     << "process (_pid: " << segment << ")" << Std::endl;
 			return false;
 		} else {
 			Std::memcpy(data, proc->stack.access(offset), size);
@@ -2193,11 +2193,11 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 		UCProcess *proc = p_dynamic_cast<UCProcess *>
 		                  (Kernel::get_instance()->getProcess(segment));
 
-		// reference to the stack of pid 'segment'
+		// reference to the stack of _pid 'segment'
 		if (!proc) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
-			     << "process (pid: " << segment << ")" << Std::endl;
+			     << "process (_pid: " << segment << ")" << Std::endl;
 			return 0;
 		} else {
 			return proc->stack.access2(offset);
@@ -2394,17 +2394,17 @@ void UCMachine::ConCmd_setGlobal(const Console::ArgvType &argv) {
 
 void UCMachine::ConCmd_tracePID(const Console::ArgvType &argv) {
 	if (argv.size() != 2) {
-		pout << "Usage: UCMachine::tracePID pid" << Std::endl;
+		pout << "Usage: UCMachine::tracePID _pid" << Std::endl;
 		return;
 	}
 
-	uint16 pid = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
+	uint16 _pid = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
 
 	UCMachine *uc = UCMachine::get_instance();
 	uc->tracing_enabled = true;
-	uc->trace_PIDs.insert(pid);
+	uc->trace_PIDs.insert(_pid);
 
-	pout << "UCMachine: tracing process " << pid << Std::endl;
+	pout << "UCMachine: tracing process " << _pid << Std::endl;
 }
 
 void UCMachine::ConCmd_traceObjID(const Console::ArgvType &argv) {

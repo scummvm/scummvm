@@ -34,11 +34,11 @@ namespace Ultima8 {
 const unsigned int DOUBLE_CLICK_TIMEOUT = 200;
 
 struct MButton {
-	uint16 downGump;
-	uint32 lastDown;
-	uint32 curDown;
-	int downX, downY;
-	int state;
+	uint16 _downGump;
+	uint32 _lastDown;
+	uint32 _curDown;
+	int _downX, _downY;
+	int _state;
 };
 
 enum MouseButtonState {
@@ -70,7 +70,7 @@ public:
 		DRAG_TEMPFAIL = 3
 	};
 private:
-	static Mouse *instance;
+	static Mouse *_instance;
 	Common::Stack<MouseCursor> _cursors;
 	Texture *_defaultMouse;      //!< Default Pentagram mouse for when there is no GameData
 
@@ -95,7 +95,7 @@ private:
 	void moveDragging(int mx, int my);
 	void stopDragging(int mx, int my);
 public:
-	static Mouse *get_instance() { return instance; }
+	static Mouse *get_instance() { return _instance; }
 public:
 	Mouse();
 

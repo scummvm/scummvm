@@ -48,7 +48,7 @@ bool TargetedAnimProcess::init() {
 	if (!ActorAnimProcess::init())
 		return false;
 
-	tracker->setTargetedMode(x, y, z);
+	_tracker->setTargetedMode(x, y, z);
 	return true;
 }
 

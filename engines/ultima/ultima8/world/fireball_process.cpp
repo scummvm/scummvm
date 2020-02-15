@@ -55,17 +55,17 @@ FireballProcess::FireballProcess(Item *item, Item *target_)
 	tail[1] = 0;
 	tail[2] = 0;
 
-	item_num = item->getObjId();
+	_itemNum = item->getObjId();
 
 	target = target_->getObjId();
 
-	type = 0x218; // CONSTANT!
+	_type = 0x218; // CONSTANT!
 }
 
 void FireballProcess::run() {
 	age++;
 
-	Item *item = getItem(item_num);
+	Item *item = getItem(_itemNum);
 	if (!item) {
 		terminate();
 		return;
@@ -165,7 +165,7 @@ void FireballProcess::terminate() {
 }
 
 void FireballProcess::explode() {
-	Item *item = getItem(item_num);
+	Item *item = getItem(_itemNum);
 	if (item) item->destroy();
 
 	for (unsigned int i = 0; i < 3; ++i) {

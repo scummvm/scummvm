@@ -42,10 +42,10 @@ Kernel::Kernel() : loading(false) {
 	kernel = this;
 	pIDs = new idMan(1, 32766, 128);
 	current_process = processes.end();
-	framenum = 0;
-	paused = 0;
-	runningprocess = 0;
-	framebyframe = false;
+	_frameNum = 0;
+	_paused = 0;
+	_runningProcess = 0;
+	_frameByFrame = false;
 }
 
 Kernel::~Kernel() {
@@ -68,11 +68,11 @@ void Kernel::reset() {
 
 	pIDs->clearAll();
 
-	paused = 0;
-	runningprocess = 0;
+	_paused = 0;
+	_runningProcess = 0;
 
-	// if we're in frame-by-frame mode, reset to a paused state
-	if (framebyframe) paused = 1;
+	// if we're in frame-by-frame mode, reset to a _paused state
+	if (_frameByFrame) _paused = 1;
 }
 
 ProcId Kernel::assignPID(Process *proc) {
@@ -80,9 +80,9 @@ ProcId Kernel::assignPID(Process *proc) {
 	if (loading) return 0xFFFF;
 
 	// Get a pID
-	proc->pid = pIDs->getNewID();
+	proc->_pid = pIDs->getNewID();
 
-	return proc->pid;
+	return proc->_pid;
 }
 
 ProcId Kernel::addProcess(Process *proc) {
@@ -93,17 +93,17 @@ ProcId Kernel::addProcess(Process *proc) {
 	}
 #endif
 
-	assert(proc->pid != 0 && proc->pid != 0xFFFF);
+	assert(proc->_pid != 0 && proc->_pid != 0xFFFF);
 
 #if 0
 	perr << "[Kernel] Adding process " << proc
-	     << ", pid = " << proc->pid << Std::endl;
+	     << ", pid = " << proc->_pid << Std::endl;
 #endif
 
 //	processes.push_back(proc);
 //	proc->active = true;
 	setNextProcess(proc);
-	return proc->pid;
+	return proc->_pid;
 }
 
 ProcId Kernel::addProcessExec(Process *proc) {
@@ -114,22 +114,22 @@ ProcId Kernel::addProcessExec(Process *proc) {
 	}
 #endif
 
-	assert(proc->pid != 0 && proc->pid != 0xFFFF);
+	assert(proc->_pid != 0 && proc->_pid != 0xFFFF);
 
 #if 0
 	perr << "[Kernel] Adding process " << proc
-	     << ", pid = " << proc->pid << Std::endl;
+	     << ", pid = " << proc->_pid << Std::endl;
 #endif
 
 	processes.push_back(proc);
-	proc->flags |= Process::PROC_ACTIVE;
+	proc->_flags |= Process::PROC_ACTIVE;
 
-	Process *oldrunning = runningprocess;
-	runningprocess = proc;
+	Process *oldrunning = _runningProcess;
+	_runningProcess = proc;
 	proc->run();
-	runningprocess = oldrunning;
+	_runningProcess = oldrunning;
 
-	return proc->pid;
+	return proc->_pid;
 }
 
 void Kernel::removeProcess(Process *proc) {
@@ -142,14 +142,14 @@ void Kernel::removeProcess(Process *proc) {
 
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		if (*it == proc) {
-			proc->flags &= ~Process::PROC_ACTIVE;
+			proc->_flags &= ~Process::PROC_ACTIVE;
 
 			perr << "[Kernel] Removing process " << proc << Std::endl;
 
 			processes.erase(it);
 
 			// Clear pid
-			pIDs->clearID(proc->pid);
+			pIDs->clearID(proc->_pid);
 
 			return;
 		}
@@ -158,8 +158,8 @@ void Kernel::removeProcess(Process *proc) {
 
 
 void Kernel::runProcesses() {
-	if (!paused)
-		framenum++;
+	if (!_paused)
+		_frameNum++;
 
 	if (processes.size() == 0) {
 		return;
@@ -174,27 +174,27 @@ void Kernel::runProcesses() {
 	while (current_process != processes.end()) {
 		Process *p = *current_process;
 
-		if (!paused && ((p->flags & (Process::PROC_TERMINATED |
+		if (!_paused && ((p->_flags & (Process::PROC_TERMINATED |
 		                             Process::PROC_TERM_DEFERRED))
 		                == Process::PROC_TERM_DEFERRED)) {
 			p->terminate();
 		}
 		if (!(p->is_terminated() || p->is_suspended()) &&
-		        (!paused || (p->flags & Process::PROC_RUNPAUSED))) {
-			runningprocess = p;
+		        (!_paused || (p->_flags & Process::PROC_RUNPAUSED))) {
+			_runningProcess = p;
 			p->run();
 
-			if (!runningprocess)
+			if (!_runningProcess)
 				return; // If this happens then the list was reset so leave NOW!
 
-			runningprocess = 0;
+			_runningProcess = 0;
 		}
-		if (!paused && (p->flags & Process::PROC_TERMINATED)) {
+		if (!_paused && (p->_flags & Process::PROC_TERMINATED)) {
 			// process is killed, so remove it from the list
 			current_process = processes.erase(current_process);
 
 			// Clear pid
-			pIDs->clearID(p->pid);
+			pIDs->clearID(p->_pid);
 
 			//! is this the right place to delete processes?
 			delete p;
@@ -202,13 +202,13 @@ void Kernel::runProcesses() {
 			++current_process;
 	}
 
-	if (!paused && framebyframe) pause();
+	if (!_paused && _frameByFrame) pause();
 }
 
 void Kernel::setNextProcess(Process *proc) {
 	if (current_process != processes.end() && *current_process == proc) return;
 
-	if (proc->flags & Process::PROC_ACTIVE) {
+	if (proc->_flags & Process::PROC_ACTIVE) {
 		for (ProcessIterator it = processes.begin();
 		        it != processes.end(); ++it) {
 			if (*it == proc) {
@@ -217,7 +217,7 @@ void Kernel::setNextProcess(Process *proc) {
 			}
 		}
 	} else {
-		proc->flags |= Process::PROC_ACTIVE;
+		proc->_flags |= Process::PROC_ACTIVE;
 	}
 
 	if (current_process == processes.end()) {
@@ -233,7 +233,7 @@ void Kernel::setNextProcess(Process *proc) {
 Process *Kernel::getProcess(ProcId pid) {
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		Process *p = *it;
-		if (p->pid == pid)
+		if (p->_pid == pid)
 			return p;
 	}
 	return 0;
@@ -278,7 +278,7 @@ void Kernel::ConCmd_listProcesses(const Console::ArgvType &argv) {
 	for (ProcessIterator it = kern->processes.begin();
 	        it != kern->processes.end(); ++it) {
 		Process *p = *it;
-		if (argv.size() == 1 || p->item_num == item)
+		if (argv.size() == 1 || p->_itemNum == item)
 			p->dumpInfo();
 	}
 
@@ -330,8 +330,8 @@ uint32 Kernel::getNumProcesses(ObjId objid, uint16 processtype) {
 		// Don't count us, we are not really here
 		if (p->is_terminated()) continue;
 
-		if ((objid == 0 || objid == p->item_num) &&
-		        (processtype == 6 || processtype == p->type))
+		if ((objid == 0 || objid == p->_itemNum) &&
+		        (processtype == 6 || processtype == p->_type))
 			count++;
 	}
 
@@ -345,8 +345,8 @@ Process *Kernel::findProcess(ObjId objid, uint16 processtype) {
 		// Don't count us, we are not really here
 		if (p->is_terminated()) continue;
 
-		if ((objid == 0 || objid == p->item_num) &&
-		        (processtype == 6 || processtype == p->type)) {
+		if ((objid == 0 || objid == p->_itemNum) &&
+		        (processtype == 6 || processtype == p->_type)) {
 			return p;
 		}
 	}
@@ -359,10 +359,10 @@ void Kernel::killProcesses(ObjId objid, uint16 processtype, bool fail) {
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		Process *p = *it;
 
-		if (p->item_num != 0 && (objid == 0 || objid == p->item_num) &&
-		        (processtype == 6 || processtype == p->type) &&
-		        !(p->flags & Process::PROC_TERMINATED) &&
-		        !(p->flags & Process::PROC_TERM_DEFERRED)) {
+		if (p->_itemNum != 0 && (objid == 0 || objid == p->_itemNum) &&
+		        (processtype == 6 || processtype == p->_type) &&
+		        !(p->_flags & Process::PROC_TERMINATED) &&
+		        !(p->_flags & Process::PROC_TERM_DEFERRED)) {
 			if (fail)
 				p->fail();
 			else
@@ -375,10 +375,10 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		Process *p = *it;
 
-		if (p->item_num != 0 && (objid == 0 || objid == p->item_num) &&
-		        (p->type != processtype) &&
-		        !(p->flags & Process::PROC_TERMINATED) &&
-		        !(p->flags & Process::PROC_TERM_DEFERRED)) {
+		if (p->_itemNum != 0 && (objid == 0 || objid == p->_itemNum) &&
+		        (p->_type != processtype) &&
+		        !(p->_flags & Process::PROC_TERMINATED) &&
+		        !(p->_flags & Process::PROC_TERM_DEFERRED)) {
 			if (fail)
 				p->fail();
 			else
@@ -388,7 +388,7 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 }
 
 void Kernel::save(ODataSource *ods) {
-	ods->write4(framenum);
+	ods->write4(_frameNum);
 	pIDs->save(ods);
 	ods->write4(processes.size());
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
@@ -397,7 +397,7 @@ void Kernel::save(ODataSource *ods) {
 }
 
 bool Kernel::load(IDataSource *ids, uint32 version) {
-	framenum = ids->read4();
+	_frameNum = ids->read4();
 
 	if (!pIDs->load(ids, version)) return false;
 

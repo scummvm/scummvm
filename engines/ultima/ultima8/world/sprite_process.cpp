@@ -61,14 +61,14 @@ void SpriteProcess::init() {
 }
 
 SpriteProcess::~SpriteProcess(void) {
-	Item *item = getItem(item_num);
+	Item *item = getItem(_itemNum);
 	if (item) item->destroy();
 }
 
 void SpriteProcess::run() {
 	if (!initialized) init();
 
-	Item *item = getItem(item_num);
+	Item *item = getItem(_itemNum);
 
 	if (!item || (frame > last_frame && repeats == 1 && !delay_counter)) {
 		terminate();

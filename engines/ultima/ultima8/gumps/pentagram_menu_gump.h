@@ -38,13 +38,13 @@ class PentagramMenuGump : public ModalGump {
 		Std::string _game;
 	public:
 		PentagramMenuCallbackProcess(ObjId id, const Std::string &game) : Process(id), _game(game) {
-			flags |= PROC_RUNPAUSED;
+			_flags |= PROC_RUNPAUSED;
 		}
 
 		void run() override {
-			pout << "Gump returned: " << result << Std::endl;
+			pout << "Gump returned: " << _result << Std::endl;
 			PentagramMenuGump *menu = p_dynamic_cast<PentagramMenuGump *>(ObjectManager::get_instance()->getObject(getItemNum()));
-			if (menu) menu->ProcessCallback(_game, result);
+			if (menu) menu->ProcessCallback(_game, _result);
 			terminate();
 		}
 	};

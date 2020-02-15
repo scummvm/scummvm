@@ -76,16 +76,16 @@ Actor::~Actor() {
 }
 
 uint16 Actor::assignObjId() {
-	if (objid == 0xFFFF)
-		objid = ObjectManager::get_instance()->assignActorObjId(this);
+	if (_objId == 0xFFFF)
+		_objId = ObjectManager::get_instance()->assignActorObjId(this);
 
 	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		(*iter)->assignObjId();
-		(*iter)->setParent(objid);
+		(*iter)->setParent(_objId);
 	}
 
-	return objid;
+	return _objId;
 }
 
 int16 Actor::getMaxMana() const {
@@ -183,7 +183,7 @@ bool Actor::giveTreasure() {
 					                               Item::FLG_DISPOSABLE,//flags
 					                               0, // npcnum,
 					                               0, // mapnum
-					                               0, true); // ext.flags,objid
+					                               0, true); // ext.flags,_objId
 					item->moveToContainer(this);
 					item->randomGumpLocation();
 					break;
@@ -303,7 +303,7 @@ bool Actor::giveTreasure() {
 				                               Item::FLG_DISPOSABLE, // flags
 				                               0, // npcnum,
 				                               0, // mapnum
-				                               0, true); // ext. flags, objid
+				                               0, true); // ext. flags, _objId
 				item->moveToContainer(this);
 				item->randomGumpLocation();
 				item->callUsecodeEvent_combine(); // this sets the right frame
@@ -344,7 +344,7 @@ bool Actor::giveTreasure() {
 			                               Item::FLG_DISPOSABLE, // flags
 			                               0, // npcnum,
 			                               0, // mapnum
-			                               0, true); // ext. flags, objid
+			                               0, true); // ext. flags, _objId
 			item->moveToContainer(this);
 			item->randomGumpLocation();
 		}
@@ -426,7 +426,7 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 	}
 	// Move it to another map
 	else {
-		World::get_instance()->etherealRemove(objid);
+		World::get_instance()->etherealRemove(_objId);
 		x = newx;
 		y = newy;
 		z = newz;
@@ -618,7 +618,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 		pout << "Damage: " << damage << Std::endl;
 	}
 
-	if (damage >= 4 && objid == 1 && attacker) {
+	if (damage >= 4 && _objId == 1 && attacker) {
 		// play blood sprite
 		int start = 0, end = 12;
 		if (dir > 2) {
@@ -642,7 +642,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 
 				setHP(getMaxHP());
 				AudioProcess *audioproc = AudioProcess::get_instance();
-				if (audioproc) audioproc->playSFX(59, 0x60, objid, 0);
+				if (audioproc) audioproc->playSFX(59, 0x60, _objId, 0);
 				clearActorFlag(ACT_WITHSTANDDEATH);
 			} else {
 				die(damage_type);
@@ -655,7 +655,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	}
 
 	ProcId fallingprocid = 0;
-	if (objid == 1 && damage > 0) {
+	if (_objId == 1 && damage > 0) {
 		if ((damage_type & WeaponInfo::DMG_FALLING) && damage >= 6) {
 			// high falling damage knocks you down
 			doAnim(Animation::fallBackwards, 8);
@@ -669,7 +669,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	}
 
 	// if avatar was blocking; do a quick stopBlock/startBlock and play SFX
-	if (objid == 1 && getLastAnim() == Animation::startBlock) {
+	if (_objId == 1 && getLastAnim() == Animation::startBlock) {
 		ProcId anim1pid = doAnim(Animation::stopBlock, 8);
 		ProcId anim2pid = doAnim(Animation::startBlock, 8);
 
@@ -685,13 +685,13 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 		else
 			sfx = 20 + (getRandom() % 3); // constants!
 		AudioProcess *audioproc = AudioProcess::get_instance();
-		if (audioproc) audioproc->playSFX(sfx, 0x60, objid, 0);
+		if (audioproc) audioproc->playSFX(sfx, 0x60, _objId, 0);
 		return;
 	}
 
 	// TODO: target needs to stumble/fall/call for help/...(?)
 
-	if (objid != 1) {
+	if (_objId != 1) {
 		ObjId target = 1;
 		if (attacker)
 			target = attacker->getObjId();
@@ -797,7 +797,7 @@ ProcId Actor::die(uint16 damageType) {
 			                                      Item::FLG_FAST_ONLY, //flags,
 			                                      0, // npcnum
 			                                      0, // mapnum
-			                                      0, true // ext. flags, objid
+			                                      0, true // ext. flags, _objId
 			                                     );
 			piece->move(x - 128 + 32 * (getRandom() % 6),
 			            y - 128 + 32 * (getRandom() % 6),
@@ -819,7 +819,7 @@ void Actor::killAllButCombatProcesses() {
 	for (; iter != endproc; ++iter) {
 		Process *p = *iter;
 		if (!p) continue;
-		if (p->getItemNum() != objid) continue;
+		if (p->getItemNum() != _objId) continue;
 		if (p->is_terminated()) continue;
 
 		uint16 type = p->getType();
@@ -838,7 +838,7 @@ ProcId Actor::killAllButFallAnims(bool death) {
 
 	if (death) {
 		// if dead, we want to kill everything but animations
-		kernel->killProcessesNotOfType(objid, 0xF0, true);
+		kernel->killProcessesNotOfType(_objId, 0xF0, true);
 	} else {
 		// otherwise, need to focus on combat, so kill everything else
 		killAllButCombatProcesses();
@@ -850,7 +850,7 @@ ProcId Actor::killAllButFallAnims(bool death) {
 	for (; iter != endproc; ++iter) {
 		ActorAnimProcess *p = p_dynamic_cast<ActorAnimProcess *>(*iter);
 		if (!p) continue;
-		if (p->getItemNum() != objid) continue;
+		if (p->getItemNum() != _objId) continue;
 		if (p->is_terminated()) continue;
 
 		Animation::Sequence action = p->getAction();
@@ -969,7 +969,7 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 }
 
 CombatProcess *Actor::getCombatProcess() {
-	Process *p = Kernel::get_instance()->findProcess(objid, 0xF2); // CONSTANT!
+	Process *p = Kernel::get_instance()->findProcess(_objId, 0xF2); // CONSTANT!
 	if (!p) return 0;
 	CombatProcess *cp = p_dynamic_cast<CombatProcess *>(p);
 	assert(cp);

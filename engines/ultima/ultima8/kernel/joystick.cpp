@@ -81,19 +81,19 @@ void ShutdownJoystick() {
 DEFINE_RUNTIME_CLASSTYPE_CODE(JoystickCursorProcess, Process)
 
 JoystickCursorProcess::JoystickCursorProcess()
-	: Process(), js(JOY1), x_axis(0), y_axis(1), ticks(0), accel(0) {
+	: Process(), _js(JOY1), _xAxis(0), _yAxis(1), _ticks(0), _accel(0) {
 }
 
 JoystickCursorProcess::JoystickCursorProcess(Joystick js_, int x_axis_, int y_axis_)
-	: Process(), js(js_), x_axis(x_axis_), y_axis(y_axis_), ticks(0), accel(0) {
+	: Process(), _js(js_), _xAxis(x_axis_), _yAxis(y_axis_), _ticks(0), _accel(0) {
 #ifdef TODO
 	flags |= PROC_RUNPAUSED;
 	type = 1;
 
-	if (joy[js] && js < JOY_LAST) {
-		int axes = SDL_JoystickNumAxes(joy[js]);
-		if (x_axis >= axes && y_axis >= axes) {
-			perr << "Failed to start JoystickCursorProcess: illegal axis for x (" << x_axis << ") or y (" << y_axis << ")" << Std::endl;
+	if (joy[_js] && _js < JOY_LAST) {
+		int axes = SDL_JoystickNumAxes(joy[_js]);
+		if (_xAxis >= axes && _yAxis >= axes) {
+			perr << "Failed to start JoystickCursorProcess: illegal axis for x (" << _xAxis << ") or y (" << _yAxis << ")" << Std::endl;
 			terminate();
 		}
 	} else {
@@ -113,18 +113,18 @@ void JoystickCursorProcess::run() {
 	int dx = 0, dy = 0;
 	int now = g_system->getMillis();
 
-	if (joy[js] && ticks) {
-		int tx = now - ticks;
-		int r = 350 - accel * 30;
-		int16 jx = SDL_JoystickGetAxis(joy[js], x_axis);
-		int16 jy = SDL_JoystickGetAxis(joy[js], y_axis);
+	if (joy[_js] && _ticks) {
+		int tx = now - _ticks;
+		int r = 350 - _accel * 30;
+		int16 jx = SDL_JoystickGetAxis(joy[_js], _xAxis);
+		int16 jy = SDL_JoystickGetAxis(joy[_js], _yAxis);
 		if (jx > AXIS_TOLERANCE || jx < -AXIS_TOLERANCE)
 			dx = ((jx / 1000) * tx) / r;
 		if (jy > AXIS_TOLERANCE || jy < -AXIS_TOLERANCE)
 			dy = ((jy / 1000) * tx) / r;
 	}
 
-	ticks = now;
+	_ticks = now;
 
 	if (dx || dy) {
 		int mx, my;
@@ -133,11 +133,11 @@ void JoystickCursorProcess::run() {
 		mx += dx;
 		my += dy;
 		app->setMouseCoords(mx, my);
-		++accel;
-		if (accel > 10)
-			accel = 10;
+		++_accel;
+		if (_accel > 10)
+			_accel = 10;
 	} else {
-		accel = 0;
+		_accel = 0;
 	}
 #endif
 }
