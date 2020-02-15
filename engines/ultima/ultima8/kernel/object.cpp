@@ -61,7 +61,7 @@ void Object::clearObjId() {
 
 void Object::dumpInfo() {
 	pout << "Object " << getObjId() << " (class "
-	     << GetClassType().class_name << ")" << Std::endl;
+	     << GetClassType()._className << ")" << Std::endl;
 }
 
 ProcId Object::callUsecode(uint16 classid, uint16 offset,
@@ -78,7 +78,7 @@ void Object::save(ODataSource *ods) {
 }
 
 void Object::writeObjectHeader(ODataSource *ods) {
-	const char *cname = GetClassType().class_name; // note: virtual
+	const char *cname = GetClassType()._className; // note: virtual
 	uint16 clen = strlen(cname);
 
 	ods->write2(clen);

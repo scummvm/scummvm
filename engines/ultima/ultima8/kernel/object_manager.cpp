@@ -148,7 +148,7 @@ void ObjectManager::objectTypes() {
 	for (unsigned int i = 1; i < _objects.size(); ++i) {
 		Object *o = _objects[i];
 		if (!o) continue;
-		objecttypes[o->GetClassType().class_name]++;
+		objecttypes[o->GetClassType()._className]++;
 	}
 
 	Std::map<Common::String, unsigned int>::iterator iter;

@@ -32,7 +32,7 @@ template<class A, class B> inline A p_dynamic_cast(B *object) {
 
 // This is just a 'type' used to differentiate each class.
 struct RunTimeClassType {
-	const char *class_name;
+	const char *_className;
 	inline bool operator == (const RunTimeClassType &other) const {
 		return this == &other;
 	}
@@ -74,7 +74,7 @@ struct RunTimeClassType {
 	\
 	bool Classname::IsOfType(const char *classType)                     \
 	{                                                                   \
-		if (!Std::strcmp(classType,ClassType.class_name)) return true;  \
+		if (!Std::strcmp(classType,ClassType._className)) return true;  \
 		return false;                                                   \
 	}
 
@@ -95,7 +95,7 @@ struct RunTimeClassType {
 	\
 	bool Classname::IsOfType(const char *typeName)                      \
 	{                                                                   \
-		if (!Std::strcmp(typeName,ClassType.class_name)) return true;   \
+		if (!Std::strcmp(typeName,ClassType._className)) return true;   \
 		return ParentClassname::IsOfType(typeName);                     \
 	}
 
@@ -123,7 +123,7 @@ struct RunTimeClassType {
 	{                                                                       \
 		typedef Parent1 P1;                                                 \
 		typedef Parent2 P2;                                                 \
-		if (!Std::strcmp(type,ClassType.class_name)) return true;           \
+		if (!Std::strcmp(type,ClassType._className)) return true;           \
 		bool ret = P1::IsOfType(type);                                      \
 		if (ret) return true;                                               \
 		return P2::IsOfType(type);                                          \

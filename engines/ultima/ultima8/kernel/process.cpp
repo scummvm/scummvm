@@ -98,7 +98,7 @@ void Process::suspend() {
 void Process::dumpInfo() {
 	Common::String info = Common::String::format(
 		"Process %d class %s, item %d, _type %x, status ",
-		getPid(), GetClassType().class_name, _itemNum, _type);
+		getPid(), GetClassType()._className, _itemNum, _type);
 
 	pout << info.c_str();
 	if (_flags & PROC_ACTIVE) pout << "A";
@@ -124,7 +124,7 @@ void Process::save(ODataSource *ods) {
 }
 
 void Process::writeProcessHeader(ODataSource *ods) {
-	const char *cname = GetClassType().class_name; // virtual
+	const char *cname = GetClassType()._className; // virtual
 	uint16 clen = strlen(cname);
 
 	ods->write2(clen);

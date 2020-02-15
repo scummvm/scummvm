@@ -87,38 +87,38 @@ enum MsgMask {
 };
 
 class Console {
-	char        text[CON_TEXTSIZE];
-	int32       current;                // line where next message will be printed
-	int32       xoff;                   // offset in current line for next print
-	int32       display;                // bottom of console displays this line
+	char        _text[CON_TEXTSIZE];
+	int32       _current;                // line where next message will be printed
+	int32       _xOff;                   // offset in current line for next print
+	int32       _display;                // bottom of console displays this line
 
-	int32       linewidth;              // characters across screen
-	int32       totallines;             // total lines in console scrollback
+	int32       _lineWidth;              // characters across screen
+	int32       _totalLines;             // total lines in console scrollback
 
-	int32       vislines;
+	int32       _visLines;
 
-	bool        wordwrap;               // Enable/Disable word wrapping
-	bool        cr;                     // Line feed marker
+	bool        _wordWrap;               // Enable/Disable word wrapping
+	bool        _cr;                     // Line feed marker
 
-	int32       putchar_count;          // Number of characters that have been putchar'd
-	char        putchar_buf[CON_PUTCHAR_SIZE];  // The Characters that have been putchar'd
+	int32       _putChar_count;          // Number of characters that have been putchar'd
+	char        _putChar_buf[CON_PUTCHAR_SIZE];  // The Characters that have been putchar'd
 
-	uint32      std_output_enabled;
+	uint32      _stdOutputEnabled;
 
 	// stdout and stderr redirection
-	ODataSource *stdout_redir;
-	ODataSource *stderr_redir;
+	ODataSource *_stdout_redir;
+	ODataSource *_stderr_redir;
 
 	// Confont
-	FixedWidthFont      *confont;
+	FixedWidthFont      *_conFont;
 
-	void (*auto_paint)(void);
+	void (*_autoPaint)(void);
 
-	MsgMask     msgMask;                // mask to determine which messages are printed or not
+	MsgMask     _msgMask;                // mask to determine which messages are printed or not
 
 	// Overlay timing
-	uint32      framenum;
-	uint32      times[CON_NUM_TIMES];   // framenum the line was generated
+	uint32      _frameNum;
+	uint32      _times[CON_NUM_TIMES];   // framenum the line was generated
 	// for transparent notify lines
 public:
 	enum SpecialChars {
@@ -148,17 +148,17 @@ public:
 
 	// Set the console font texture
 	void    SetConFont(FixedWidthFont *cf) {
-		confont = cf;
+		_conFont = cf;
 	}
 
 	// Get the console font texture
 	FixedWidthFont *GetConFont() {
-		return confont;
+		return _conFont;
 	}
 
 	// Autopaint will cause the GUIApp to re-paint everything after a linefeed
 	void    SetAutoPaint(void (*func)(void)) {
-		auto_paint = func;
+		_autoPaint = func;
 	}
 
 	// Scroll through the console. - is up + is down
@@ -166,32 +166,32 @@ public:
 
 	// Redirection
 	void    RedirectOutputStream(uint32 mask, ODataSource *ds) {
-		if (mask & CON_STDOUT) stdout_redir = ds;
-		if (mask & CON_STDERR) stderr_redir = ds;
+		if (mask & CON_STDOUT) _stdout_redir = ds;
+		if (mask & CON_STDERR) _stderr_redir = ds;
 	}
 
 	// Enabling output
 	void    setOutputEnabled(uint32 mask) {
-		std_output_enabled |= mask;
+		_stdOutputEnabled |= mask;
 	}
 
 	// Disabling output
 	void    unsetOutputEnabled(uint32 mask) {
-		std_output_enabled &= ~mask;
+		_stdOutputEnabled &= ~mask;
 	}
 
 	// Enabling output
 	uint32  getOutputEnabled() {
-		return std_output_enabled;
+		return _stdOutputEnabled;
 	}
 
 	// sets what message types to ignore
 	void setMsgMask(const MsgMask mm) {
-		msgMask = mm;
+		_msgMask = mm;
 	}
 
 	void setFrameNum(uint32 f) {
-		framenum = f;
+		_frameNum = f;
 	}
 
 	//
@@ -240,10 +240,10 @@ public:
 
 	// Enable/Disable word wrapping
 	void    EnableWordWrap() {
-		wordwrap = true;
+		_wordWrap = true;
 	}
 	void    DisableWordWrap() {
-		wordwrap = false;
+		_wordWrap = false;
 	}
 
 	//

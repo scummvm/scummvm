@@ -29,17 +29,17 @@
 namespace Ultima {
 namespace Ultima8 {
 
-idMan::idMan(uint16 Begin, uint16 MaxEnd, uint16 StartCount)
-	: begin(Begin), max_end(MaxEnd), startcount(StartCount) {
+idMan::idMan(uint16 begin, uint16 maxEnd, uint16 startCount)
+	: _begin(begin), _maxEnd(maxEnd), _startCount(startCount) {
 	// 0 is always reserved, as is 65535
-	if (begin == 0) begin = 1;
-	if (max_end == 65535) max_end = 65534;
-	if (startcount == 0) startcount = max_end - begin + 1;
+	if (_begin == 0) _begin = 1;
+	if (_maxEnd == 65535) _maxEnd = 65534;
+	if (_startCount == 0) _startCount = _maxEnd - _begin + 1;
 
-	end = begin + startcount - 1;
-	if (end > max_end) end = max_end;
+	_end = _begin + _startCount - 1;
+	if (_end > _maxEnd) _end = _maxEnd;
 
-	ids.resize(end + 1);
+	_ids.resize(_end + 1);
 	clearAll();
 }
 
@@ -49,115 +49,115 @@ idMan::~idMan() {
 
 void idMan::clearAll(uint16 new_max) {
 	if (new_max)
-		max_end = new_max;
+		_maxEnd = new_max;
 
-	end = begin + startcount - 1;
-	if (end > max_end) end = max_end;
-	ids.resize(end + 1);
+	_end = _begin + _startCount - 1;
+	if (_end > _maxEnd) _end = _maxEnd;
+	_ids.resize(_end + 1);
 
-	first = begin;
-	last  = end;
-	usedcount = 0;
+	_first = _begin;
+	_last  = _end;
+	_usedCount = 0;
 
 	uint16 i;
-	for (i = 0; i < first; i++) ids[i] = 0;     // NPCs always used
-	for (; i < last;  i++) ids[i] = i + 1;       // Free IDs
-	ids[last] = 0;                              // Terminates the list
+	for (i = 0; i < _first; i++) _ids[i] = 0;     // NPCs always used
+	for (; i < _last;  i++) _ids[i] = i + 1;       // Free IDs
+	_ids[_last] = 0;                              // Terminates the list
 
 }
 
 uint16 idMan::getNewID() {
 	// more than 75% used and room to expand?
-	if (usedcount * 4 > (end - begin + 1) * 3 && end < max_end) {
+	if (_usedCount * 4 > (_end - _begin + 1) * 3 && _end < _maxEnd) {
 		expand();
 	}
 
 	// Uh oh, what to do when there is none
-	if (!first) {
-		warning("Unable to allocate id (max = %d)", max_end);
+	if (!_first) {
+		warning("Unable to allocate id (max = %d)", _maxEnd);
 		return 0;
 	}
 
 	// Get the next id
-	uint16 id = first;
+	uint16 id = _first;
 
-	// Set the first in the list to next
-	first = ids[id];
+	// Set the _first in the list to next
+	_first = _ids[id];
 
 	// Set us to used
-	ids[id] = 0;
+	_ids[id] = 0;
 
-	// If there is no first, there is no list, cause there's none left
-	// So clear the last pointer
-	if (!first) last = 0;
+	// If there is no _first, there is no list, cause there's none left
+	// So clear the _last pointer
+	if (!_first) _last = 0;
 
-	usedcount++;
+	_usedCount++;
 
 	return id;
 
 }
 
 void idMan::expand() {
-	if (end == max_end) return;
+	if (_end == _maxEnd) return;
 
-	uint16 old_end = end;
-	unsigned int new_end = end * 2;
-	if (new_end > max_end) new_end = max_end;
-	end = new_end;
-	ids.resize(end + 1);
+	uint16 old_end = _end;
+	unsigned int new_end = _end * 2;
+	if (new_end > _maxEnd) new_end = _maxEnd;
+	_end = new_end;
+	_ids.resize(_end + 1);
 
 #if 0
-	perr << "Expanding idMan from (" << begin << "-" << old_end << ") to ("
-	     << begin << "-" << end << ")" << Std::endl;
+	perr << "Expanding idMan from (" << _begin << "-" << old_end << ") to ("
+	     << _begin << "-" << _end << ")" << Std::endl;
 #endif
 
 	// insert the new free IDs at the start
-	for (uint16 i = old_end + 1; i < end; ++i) {
-		ids[i] = i + 1;
+	for (uint16 i = old_end + 1; i < _end; ++i) {
+		_ids[i] = i + 1;
 	}
-	ids[end] = first;
-	first = old_end + 1;
+	_ids[_end] = _first;
+	_first = old_end + 1;
 }
 
 bool idMan::reserveID(uint16 id) {
-	if (id < begin || id > max_end) {
+	if (id < _begin || id > _maxEnd) {
 		return false;
 	}
 
 	// expand until we're big enough to reserve this ID
-	while (id > end) {
+	while (id > _end) {
 		expand();
 	}
 
 	if (isIDUsed(id))
 		return false; // already used
 
-	usedcount++;
+	_usedCount++;
 	// more than 75% used and room to expand?
-	if (usedcount * 4 > (end - begin + 1) * 3 && end < max_end) {
+	if (_usedCount * 4 > (_end - _begin + 1) * 3 && _end < _maxEnd) {
 		expand();
 	}
 
-	if (id == first) {
-		first = ids[id];
-		ids[id] = 0;
-		if (!first) last = 0;
+	if (id == _first) {
+		_first = _ids[id];
+		_ids[id] = 0;
+		if (!_first) _last = 0;
 		return true;
 	}
 
-	uint16 node = ids[first];
-	uint16 prev = first;
+	uint16 node = _ids[_first];
+	uint16 prev = _first;
 
 	while (node != id && node != 0) {
 		prev = node;
-		node = ids[node];
+		node = _ids[node];
 	}
 	assert(node != 0); // list corrupt...
 
-	ids[prev] = ids[node];
-	ids[node] = 0;
-	if (last == node)
-		last = prev;
+	_ids[prev] = _ids[node];
+	_ids[node] = 0;
+	if (_last == node)
+		_last = prev;
 	return true;
 }
 
@@ -165,52 +165,52 @@ void idMan::clearID(uint16 id) {
 	// Only clear IF it is used. We don't want to screw up the linked list
 	// if an id gets cleared twice
 	if (isIDUsed(id)) {
-		// If there is a last, then set the last's next to us
-		// or if there isn't a last, obviously no list exists,
-		// so set the first to us
-		if (last) ids[last] = id;
-		else first = id;
+		// If there is a _last, then set the _last's next to us
+		// or if there isn't a _last, obviously no list exists,
+		// so set the _first to us
+		if (_last) _ids[_last] = id;
+		else _first = id;
 
-		// Set the end to us
-		last = id;
+		// Set the _end to us
+		_last = id;
 
 		// Set our next to terminate
-		ids[id] = 0;
+		_ids[id] = 0;
 
-		usedcount--;
+		_usedCount--;
 	}
 
 	// double-check we didn't break the list
-	assert(!first || last);
+	assert(!_first || _last);
 }
 
 void idMan::save(ODataSource *ods) {
-	ods->write2(begin);
-	ods->write2(end);
-	ods->write2(max_end);
-	ods->write2(startcount);
-	ods->write2(usedcount);
-	uint16 cur = first;
+	ods->write2(_begin);
+	ods->write2(_end);
+	ods->write2(_maxEnd);
+	ods->write2(_startCount);
+	ods->write2(_usedCount);
+	uint16 cur = _first;
 	while (cur) {
 		ods->write2(cur);
-		cur = ids[cur];
+		cur = _ids[cur];
 	}
 	ods->write2(0); // terminator
 }
 
 bool idMan::load(IDataSource *ds, uint32 version) {
-	begin = ds->read2();
-	end = ds->read2();
-	max_end = ds->read2();
-	startcount = ds->read2();
+	_begin = ds->read2();
+	_end = ds->read2();
+	_maxEnd = ds->read2();
+	_startCount = ds->read2();
 	uint16 realusedcount = ds->read2();
 
-	ids.resize(end + 1);
+	_ids.resize(_end + 1);
 
-	for (unsigned int i = 0; i <= end; ++i) {
-		ids[i] = 0;
+	for (unsigned int i = 0; i <= _end; ++i) {
+		_ids[i] = 0;
 	}
-	first = last = 0;
+	_first = _last = 0;
 
 	uint16 cur = ds->read2();
 	while (cur) {
@@ -218,7 +218,7 @@ bool idMan::load(IDataSource *ds, uint32 version) {
 		cur = ds->read2();
 	}
 
-	usedcount = realusedcount;
+	_usedCount = realusedcount;
 
 	return true;
 }

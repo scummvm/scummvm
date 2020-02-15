@@ -86,7 +86,7 @@ Item::~Item() {
 
 void Item::dumpInfo() {
 	pout << "Item " << getObjId() << " (class "
-	     << GetClassType().class_name << ", shape "
+	     << GetClassType()._className << ", shape "
 	     << getShape() << ", " << getFrame() << ", (";
 
 	if (parent) {

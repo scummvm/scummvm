@@ -249,7 +249,7 @@ void Kernel::processTypes() {
 	Std::map<Common::String, unsigned int> processtypes;
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		Process *p = *it;
-		processtypes[p->GetClassType().class_name]++;
+		processtypes[p->GetClassType()._className]++;
 	}
 	Std::map<Common::String, unsigned int>::iterator iter;
 	for (iter = processtypes.begin(); iter != processtypes.end(); ++iter) {

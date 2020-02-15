@@ -37,24 +37,23 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(LoiterProcess, Process)
 
 LoiterProcess::LoiterProcess() : Process() {
-
 }
 
-LoiterProcess::LoiterProcess(Actor *actor_, int32 c) {
-	assert(actor_);
-	_itemNum = actor_->getObjId();
-	count = c;
+LoiterProcess::LoiterProcess(Actor *actor, int32 c) {
+	assert(actor);
+	_itemNum = actor->getObjId();
+	_count = c;
 
 	_type = 0x205; // CONSTANT!
 }
 
 void LoiterProcess::run() {
-	if (!count) {
+	if (!_count) {
 		terminate();
 		return;
 	}
-	if (count > 0)
-		count--;
+	if (_count > 0)
+		_count--;
 
 	Actor *a = getActor(_itemNum);
 
@@ -108,16 +107,16 @@ void LoiterProcess::run() {
 void LoiterProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(count);
+	ods->write4(_count);
 }
 
 bool LoiterProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
 	if (version >= 3)
-		count = ids->read4();
+		_count = ids->read4();
 	else
-		count = 0; // default to loitering indefinitely
+		_count = 0; // default to loitering indefinitely
 
 	return true;
 }
