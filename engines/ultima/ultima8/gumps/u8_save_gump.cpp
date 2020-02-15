@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/u8_save_gump.h"
-
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/widgets/edit_widget.h"
@@ -36,9 +35,9 @@
 #include "ultima/ultima8/gumps/paged_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
+#include "common/translation.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -314,13 +313,13 @@ void U8SaveGump::loadDescriptions() {
 		// FIXME: move version checks elsewhere!!
 		switch (state) {
 		case SavegameReader::SAVE_CORRUPT:
-			descriptions[i] = "[corrupt] ";
+			descriptions[i] = _("[corrupt]");
 			break;
 		case SavegameReader::SAVE_OUT_OF_DATE:
-			descriptions[i] = "[outdated] ";
+			descriptions[i] = _("[outdated]");
 			break;
 		case SavegameReader::SAVE_TOO_RECENT:
-			descriptions[i] = "[too modern] ";
+			descriptions[i] = _("[too modern]");
 			break;
 		default:
 			break;
