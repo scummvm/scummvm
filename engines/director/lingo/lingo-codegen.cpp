@@ -63,7 +63,7 @@ void Lingo::execute(uint pc) {
 			printStack("Stack before: ", current);
 
 		if (debugChannelSet(9, kDebugLingoExec)) {
-			debug("Vars after");
+			debug("Vars before");
 			printAllVars();
 		}
 
