@@ -78,6 +78,7 @@ public:
 
 	InventoryState getState() { return _state; }
 	void setState(InventoryState newState) { _state = newState; }
+	void setPreviousState();
 
 	int16 getPositionIndex() { return _screenPositionIndex; }
 	Common::Point getPosition();

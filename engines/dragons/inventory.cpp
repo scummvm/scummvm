@@ -423,4 +423,10 @@ void Inventory::inventoryMissing() {
 	}
 }
 
+void Inventory::setPreviousState() {
+	InventoryState tmpState = _state;
+	setState(_previousState);
+	_previousState = tmpState;
+}
+
 } // End of namespace Dragons

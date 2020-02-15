@@ -295,6 +295,7 @@ private:
 	void updatePathfindingActors();
 	void updatePaletteCycling();
 	void updateFlickerIdleAnimation();
+	void updateCamera();
 
 	uint32 calulateTimeLeft();
 	void wait();
