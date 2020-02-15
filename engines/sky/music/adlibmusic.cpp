@@ -77,6 +77,8 @@ void AdLibMusic::setupChannels(uint8 *channelData) {
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = READ_LE_UINT16((uint16 *)channelData + cnt) + _musicDataLoc;
 		_channels[cnt] = new AdLibChannel(_opl, _musicData, chDataStart);
+		// also set proper volume - Fixes bug where intro music plays at full volume
+		_channels[cnt]->updateVolume(_musicVolume);
 	}
 }
 
