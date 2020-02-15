@@ -148,7 +148,8 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 						queueAudioFrame(_decoder.decodeAudioFrame());
 					}
 				}
-				_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+				// Use speech sound type as in original engine
+				_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
 				_audioStarted = true;
 			}
 			if (_frameNext + audioPreloadFrames < _frameEnd) {
