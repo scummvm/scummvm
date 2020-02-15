@@ -226,6 +226,9 @@ void LC::c_printtop(void) {
 	case OBJECT:
 		warning("#%s", d.u.s->c_str());
 		break;
+	case ARRAY:
+		warning("ARRAY: %s", d.toString()->c_str());
+		break;
 	default:
 		warning("--unknown--");
 	}
@@ -373,7 +376,7 @@ void LC::c_assign() {
 }
 
 bool LC::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL) {
+	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL && s->type != ARRAY) {
 		warning("attempt to evaluate non-variable '%s'", s->name.c_str());
 
 		return false;
