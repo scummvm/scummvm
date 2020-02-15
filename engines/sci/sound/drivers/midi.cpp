@@ -1219,6 +1219,7 @@ void MidiPlayer_Midi::close() {
 		sendMt32SysEx(0x200000, SciSpan<const byte>(_goodbyeMsg, 20), true);
 	}
 
+	_driver->setTimerCallback(NULL, NULL);
 	_driver->close();
 }
 
