@@ -36,17 +36,17 @@
 #include "graphics/thumbnail.h"
 
 const char *MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
-	static char buffer[100];
+	static char buffer[200];
 
-	snprintf(buffer, 200, "%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
+	snprintf(buffer, sizeof(buffer), "%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
 
 	return buffer;
 }
 
 const char *MetaEngine::getSavegamePattern(const char *target) const {
-	static char buffer[100];
+	static char buffer[200];
 
-	snprintf(buffer, 200, "%s.s##", target == nullptr ? getEngineId() : target);
+	snprintf(buffer, sizeof(buffer), "%s.s##", target == nullptr ? getEngineId() : target);
 
 	return buffer;
 }
