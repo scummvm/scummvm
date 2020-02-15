@@ -1396,8 +1396,10 @@ void ScummEngine::dumpResource(const char *tag, int id, const byte *ptr, int len
 	sprintf(buf, "dumps/%s/%s%d.dmp", _game.gameid, tag, id);
 
 	out.open(buf);
-	if (out.isOpen() == false)
+	if (out.isOpen() == false) {
+		warning("Failed to open file \"%s\" for dumping a resource", buf);
 		return;
+	}
 	out.write(ptr, size);
 	out.close();
 }
