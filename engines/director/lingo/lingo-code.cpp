@@ -1041,16 +1041,14 @@ void LC::c_repeatwithcode(void) {
 		// Handle repeat with  X in ARRAY
 		g_lingo->execute(init + savepc -1); // eval the list
 		Datum array = g_lingo->pop(); // get the list from the stack
+
+		Datum loop_var;
+		loop_var.type = VAR;
+		loop_var.u.sym = g_lingo->lookupVar(countername.c_str());
+
 		int arraySize = array.u.farr->size();
 		for (uint i = 0; i < arraySize; i++) {
-
-			Datum loop_var;
-			loop_var.type = VAR;
-			loop_var.u.sym = g_lingo->lookupVar(countername.c_str());
-
-			Datum source = (*array.u.farr)[i];
-
-			g_lingo->varAssign(loop_var, source);
+			g_lingo->varAssign(loop_var, array.u.farr->operator[](i));
 			g_lingo->execute(body + savepc -1);
 		}
 		g_lingo->_pc = end + savepc - 1; /* next stmt */
