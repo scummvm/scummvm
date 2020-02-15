@@ -528,7 +528,7 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		} else if (value.type == VOID) {
 			sym->u.i = 0;
 		} else if (value.type == ARRAY) {
-			sym->u.farr = new DatumArray(*value.u.farr);
+			sym->u.farr = value.u.farr;
 		} else {
 			warning("varAssign: unhandled type: %s", value.type2str());
 			sym->u.s = value.u.s;
