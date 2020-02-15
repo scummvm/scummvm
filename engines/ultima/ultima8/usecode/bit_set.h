@@ -55,9 +55,9 @@ public:
 	bool load(IDataSource *ids, uint32 version);
 
 private:
-	unsigned int size;
-	unsigned int bytes;
-	uint8 *data;
+	unsigned int _size;
+	unsigned int _bytes;
+	uint8 *_data;
 };
 
 } // End of namespace Ultima8

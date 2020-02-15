@@ -32,7 +32,7 @@ namespace Ultima8 {
 class IDataSource;
 class ODataSource;
 
-// stringlists: elementsize = 2, each element is actually a stringref
+// stringlists: _elementSize = 2, each element is actually a stringref
 // see for example the 0x0E opcode: there is no way to see if the
 // created list is a stringlist or not
 // the opcodes which do need a distinction have a operand for this.
@@ -43,15 +43,15 @@ class ODataSource;
 // Question: does substractList remove _all_ occurences of elements or only 1?
 
 class UCList {
-	Std::vector<uint8> elements;
-	unsigned int elementsize;
-	unsigned int size;
+	Std::vector<uint8> _elements;
+	unsigned int _elementSize;
+	unsigned int _size;
 
 public:
-	UCList(unsigned int elementsize_, unsigned int capacity = 0) :
-		elementsize(elementsize_), size(0) {
+	UCList(unsigned int elementSize, unsigned int capacity = 0) :
+		_elementSize(elementSize), _size(0) {
 		if (capacity > 0)
-			elements.reserve(elementsize * capacity);
+			_elements.reserve(_elementSize * capacity);
 	}
 
 	~UCList() {
@@ -63,44 +63,44 @@ public:
 
 	const uint8 *operator[](uint32 index) {
 		// check that index isn't out of bounds...
-		return &(elements[index * elementsize]);
+		return &(_elements[index * _elementSize]);
 	}
 
 	uint16 getuint16(uint32 index) {
-		assert(elementsize == 2);
-		uint16 t = elements[index * elementsize];
-		t += elements[index * elementsize + 1] << 8;
+		assert(_elementSize == 2);
+		uint16 t = _elements[index * _elementSize];
+		t += _elements[index * _elementSize + 1] << 8;
 		return t;
 	}
 
 	void append(const uint8 *e) {
-		elements.resize((size + 1) * elementsize);
-		for (unsigned int i = 0; i < elementsize; i++)
-			elements[size * elementsize + i] = e[i];
-		size++;
+		_elements.resize((_size + 1) * _elementSize);
+		for (unsigned int i = 0; i < _elementSize; i++)
+			_elements[_size * _elementSize + i] = e[i];
+		_size++;
 	}
 
 	void remove(const uint8 *e) {
 		// do we need to erase all occurences of e or just the first one?
 		// (deleting all, currently)
-		for (unsigned int i = 0; i < size; i++) {
+		for (unsigned int i = 0; i < _size; i++) {
 			bool equal = true;
-			for (unsigned int j = 0; j < elementsize && equal; j++)
-				equal = (elements[i * elementsize + j] == e[j]);
+			for (unsigned int j = 0; j < _elementSize && equal; j++)
+				equal = (_elements[i * _elementSize + j] == e[j]);
 			if (!equal) {
-				elements.erase(elements.begin() + i * elementsize,
-				               elements.begin() + (i + 1)*elementsize);
-				size--;
+				_elements.erase(_elements.begin() + i * _elementSize,
+				               _elements.begin() + (i + 1)*_elementSize);
+				_size--;
 				i--; // back up a bit
 			}
 		}
 	}
 
 	bool inList(const uint8 *e) {
-		for (unsigned int i = 0; i < size; i++) {
+		for (unsigned int i = 0; i < _size; i++) {
 			bool equal = true;
-			for (unsigned int j = 0; j < elementsize && equal; j++)
-				equal = (elements[i * elementsize + j] == e[j]);
+			for (unsigned int j = 0; j < _elementSize && equal; j++)
+				equal = (_elements[i * _elementSize + j] == e[j]);
 			if (equal)
 				return true;
 		}
@@ -109,38 +109,38 @@ public:
 
 	void appendList(UCList &l) {
 		// need to check if elementsizes match...
-		elements.reserve(elementsize * (size + l.size));
-		unsigned int lsize = l.size;
+		_elements.reserve(_elementSize * (_size + l._size));
+		unsigned int lsize = l._size;
 		for (unsigned int i = 0; i < lsize; i++)
 			append(l[i]);
 	}
 	void unionList(UCList &l) { // like append, but remove duplicates
 		// need to check if elementsizes match...
-		elements.reserve(elementsize * (size + l.size));
-		for (unsigned int i = 0; i < l.size; i++)
+		_elements.reserve(_elementSize * (_size + l._size));
+		for (unsigned int i = 0; i < l._size; i++)
 			if (!inList(l[i]))
 				append(l[i]);
 	}
 	void substractList(UCList &l) {
-		for (unsigned int i = 0; i < l.size; i++)
+		for (unsigned int i = 0; i < l._size; i++)
 			remove(l[i]);
 	}
 
 	void free() {
-		elements.clear();
-		size = 0;
+		_elements.clear();
+		_size = 0;
 	}
 	uint32 getSize() const {
-		return size;
+		return _size;
 	}
 	unsigned int getElementSize() const {
-		return elementsize;
+		return _elementSize;
 	}
 
 	void assign(uint32 index, const uint8 *e) {
 		// need to check that index isn't out-of-bounds? (or grow list?)
-		for (unsigned int i = 0; i < elementsize; i++)
-			elements[index * elementsize + i] = e[i];
+		for (unsigned int i = 0; i < _elementSize; i++)
+			_elements[index * _elementSize + i] = e[i];
 	}
 
 	void copyList(UCList &l) { // deep copy for list

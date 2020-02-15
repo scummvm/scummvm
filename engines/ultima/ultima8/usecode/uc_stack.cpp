@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/usecode/uc_stack.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
@@ -30,28 +29,28 @@ namespace Ultima {
 namespace Ultima8 {
 
 void UCStack::save(ODataSource *ods) {
-	ods->write4(size);
+	ods->write4(_size);
 	ods->write4(getSP());
 
-	ods->write(buf_ptr, stacksize());
+	ods->write(_bufPtr, stacksize());
 }
 
 bool UCStack::load(IDataSource *ids, uint32 version) {
-	size = ids->read4();
+	_size = ids->read4();
 #ifdef USE_DYNAMIC_UCSTACK
-	if (buf) delete[] buf;
-	buf = new uint8[size];
+	if (_buf) delete[] _buf;
+	_buf = new uint8[_size];
 #else
-	if (size > sizeof(buf_array)) {
-		perr << "Error: UCStack size mismatch (buf_array too small)" << Std::endl;
+	if (_size > sizeof(buf_array)) {
+		perr << "Error: UCStack _size mismatch (buf_array too small)" << Std::endl;
 		return false;
 	}
-	buf = buf_array;
+	_buf = buf_array;
 #endif
 	uint32 sp = ids->read4();
-	buf_ptr = buf + sp;
+	_bufPtr = _buf + sp;
 
-	ids->read(buf_ptr, size - sp);
+	ids->read(_bufPtr, _size - sp);
 
 	return true;
 }

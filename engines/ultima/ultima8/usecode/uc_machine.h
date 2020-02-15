@@ -44,7 +44,7 @@ public:
 	~UCMachine();
 
 	static UCMachine *get_instance() {
-		return ucmachine;
+		return _ucMachine;
 	}
 
 	void reset();
@@ -93,23 +93,22 @@ protected:
 	void loadIntrinsics(Intrinsic *i, unsigned int icount);
 
 private:
+	ConvertUsecode *_convUse;
+	Intrinsic *_intrinsics;
+	unsigned int _intrinsicCount;
 
-	ConvertUsecode *convuse;
-	Intrinsic *intrinsics;
-	unsigned int intrinsiccount;
+	BitSet *_globals;
 
-	BitSet *globals;
-
-	Std::map<uint16, UCList *> listHeap;
-	Std::map<uint16, Std::string> stringHeap;
+	Std::map<uint16, UCList *> _listHeap;
+	Std::map<uint16, Std::string> _stringHeap;
 
 	uint16 assignString(const char *str);
 	uint16 assignList(UCList *l);
 
-	idMan *listIDs;
-	idMan *stringIDs;
+	idMan *_listIDs;
+	idMan *_stringIDs;
 
-	static UCMachine *ucmachine;
+	static UCMachine *_ucMachine;
 
 	static void     ConCmd_getGlobal(const Console::ArgvType &argv);
 	static void     ConCmd_setGlobal(const Console::ArgvType &argv);
