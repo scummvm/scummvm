@@ -34,11 +34,11 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ScalerGump, DesktopGump)
 
-ScalerGump::ScalerGump(int32 _x, int32 _y, int32 _width, int32 _height) :
-	DesktopGump(_x, _y, _width, _height),
-	swidth1(_width), sheight1(_height), scaler1(0), buffer1(0),
-	swidth2(_width), sheight2(_height), scaler2(0), buffer2(0),
-	width(_width), height(_height) {
+ScalerGump::ScalerGump(int32 x, int32 y, int32 width, int32 height) :
+	DesktopGump(x, y, width, height),
+	swidth1(width), sheight1(height), scaler1(0), buffer1(0),
+	swidth2(width), sheight2(height), scaler2(0), buffer2(0),
+	width(width), height(height) {
 
 	setupScaling();
 }
@@ -82,8 +82,8 @@ void ScalerGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	int32 scaley = (height << 16) / sheight1;
 
 	// Iterate all children
-	Std::list<Gump *>::reverse_iterator it = children.rbegin();
-	Std::list<Gump *>::reverse_iterator end = children.rend();
+	Std::list<Gump *>::reverse_iterator it = _children.rbegin();
+	Std::list<Gump *>::reverse_iterator end = _children.rend();
 
 	while (it != end) {
 		Gump *g = *it;
@@ -131,14 +131,14 @@ void ScalerGump::DoScalerBlit(Texture *src, int swidth, int sheight, RenderSurfa
 
 // Convert a parent relative point to a gump point
 void ScalerGump::ParentToGump(int32 &px, int32 &py, PointRoundDir r) {
-	px -= x;
-	px *= dims.w;
+	px -= _x;
+	px *= _dims.w;
 	if (px < 0 && r == ROUND_TOPLEFT) px -= (width - 1);
 	if (px > 0 && r == ROUND_BOTTOMRIGHT) px += (width - 1);
 	px /= width;
 
-	py -= y;
-	py *= dims.h;
+	py -= _y;
+	py *= _dims.h;
 	if (py < 0 && r == ROUND_TOPLEFT) py -= (height - 1);
 	if (py > 0 && r == ROUND_BOTTOMRIGHT) py += (height - 1);
 	py /= height;
@@ -147,22 +147,22 @@ void ScalerGump::ParentToGump(int32 &px, int32 &py, PointRoundDir r) {
 // Convert a gump point to parent relative point
 void ScalerGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir r) {
 	gx *= width;
-	if (gx < 0 && r == ROUND_TOPLEFT) gx -= (dims.w - 1);
-	if (gx > 0 && r == ROUND_BOTTOMRIGHT) gx += (dims.w - 1);
-	gx /= dims.w;
-	gx += x;
+	if (gx < 0 && r == ROUND_TOPLEFT) gx -= (_dims.w - 1);
+	if (gx > 0 && r == ROUND_BOTTOMRIGHT) gx += (_dims.w - 1);
+	gx /= _dims.w;
+	gx += _x;
 
 	gy *= height;
-	if (gy < 0 && r == ROUND_TOPLEFT) gy -= (dims.h - 1);
-	if (gy > 0 && r == ROUND_BOTTOMRIGHT) gy += (dims.h - 1);
-	gy /= dims.h;
-	gy += y;
+	if (gy < 0 && r == ROUND_TOPLEFT) gy -= (_dims.h - 1);
+	if (gy > 0 && r == ROUND_BOTTOMRIGHT) gy += (_dims.h - 1);
+	gy /= _dims.h;
+	gy += _y;
 }
 
 void ScalerGump::RenderSurfaceChanged() {
 	// Resize the gump to match the RenderSurface
 	Rect new_dims;
-	parent->GetDims(new_dims);
+	_parent->GetDims(new_dims);
 
 	width = new_dims.w;
 	height = new_dims.h;
@@ -197,8 +197,8 @@ void ScalerGump::setupScaling() {
 	if (sheight2 < 0) sheight2 = -sheight2;
 	else if (sheight2 != 0 && sheight2 < 100) sheight2 = height / sheight2;
 
-	dims.w = swidth1;
-	dims.h = sheight1;
+	_dims.w = swidth1;
+	_dims.h = sheight1;
 
 	// We don't care, we are not going to support filters, at least not at the moment
 	if (swidth1 == width && sheight1 == height) return;

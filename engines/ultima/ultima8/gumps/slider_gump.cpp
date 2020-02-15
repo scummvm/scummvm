@@ -129,12 +129,12 @@ void SliderGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
-	ShapeFrame *sf = shape->getFrame(0);
+	_shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
+	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->width;
+	_dims.h = sf->height;
 
 	Shape *childshape = GameData::get_instance()->
 	                    getGumps()->getShape(slidershape);
@@ -190,7 +190,7 @@ void SliderGump::ChildNotify(Gump *child, uint32 message) {
 
 
 void SliderGump::Close(bool no_del) {
-	process_result = value;
+	_processResult = value;
 
 	if (usecodeNotifyPID) {
 		UCProcess *ucp = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(usecodeNotifyPID));

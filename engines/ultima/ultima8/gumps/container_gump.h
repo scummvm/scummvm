@@ -37,8 +37,8 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ContainerGump();
-	ContainerGump(Shape *shape, uint32 framenum, uint16 owner,
-	              uint32 _Flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
+	ContainerGump(Shape *shape, uint32 frameNum, uint16 owner,
+	              uint32 flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
 	~ContainerGump(void) override;
 
 	void setItemArea(Rect *itemarea_) {

@@ -60,12 +60,12 @@ static const int pageOverShape = 34;
 void PagedGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
-	ShapeFrame *sf = shape->getFrame(0);
+	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
+	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->width;
+	_dims.h = sf->height;
 
 	FrameID buttonleft(GameData::GUMPS, pageOverShape, 0);
 	FrameID buttonright(GameData::GUMPS, pageOverShape, 1);
@@ -151,7 +151,7 @@ void PagedGump::addPage(Gump *g) {
 
 	current = gumps.begin();
 	(*current)->UnhideGump();
-	if (focus_child != *current)
+	if (_focusChild != *current)
 		(*current)->MakeFocus();
 
 	if (current + 1 == gumps.end())

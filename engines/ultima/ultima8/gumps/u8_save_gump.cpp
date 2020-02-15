@@ -47,8 +47,8 @@ static const int entryfont = 4;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveGump, Gump)
 
-U8SaveGump::U8SaveGump(bool save_, int page_)
-	: Gump(0, 0, 5, 5), save(save_), page(page_) {
+U8SaveGump::U8SaveGump(bool save, int page)
+	: Gump(0, 0, 5, 5), _save(save), _page(page) {
 
 }
 
@@ -63,31 +63,31 @@ U8SaveGump::~U8SaveGump() {
 void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	dims.w = 220;
-	dims.h = 170;
+	_dims.w = 220;
+	_dims.h = 170;
 
 	FrameID entry_id(GameData::GUMPS, 46, 0);
 	entry_id = _TL_SHP_(entry_id);
 
 	Shape *entryShape;
 	entryShape = GameData::get_instance()->getShape(entry_id);
-	ShapeFrame *sf = entryShape->getFrame(entry_id.framenum);
+	ShapeFrame *sf = entryShape->getFrame(entry_id._frameNum);
 	int entrywidth = sf->width;
 	int entryheight = sf->height;
 
-	if (save)
-		editwidgets.resize(6); // constant!
+	if (_save)
+		_editWidgets.resize(6); // constant!
 
 	loadDescriptions();
 
 	for (int i = 0; i < 6; ++i) {
-		int index_ = page * 6 + i;
+		int index_ = _page * 6 + i;
 
 
 		int xbase = 3;
 		int yi = i;
 		if (i >= 3) {
-			xbase += dims.w / 2 + 9;
+			xbase += _dims.w / 2 + 9;
 			yi -= 3;
 		}
 
@@ -101,7 +101,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 			FrameID entrynum1_id(GameData::GUMPS, 36, (index_ + 1) / 10 - 1);
 			entrynum1_id = _TL_SHP_(entrynum1_id);
 			entryShape = GameData::get_instance()->getShape(entrynum1_id);
-			sf = entryShape->getFrame(entrynum1_id.framenum);
+			sf = entryShape->getFrame(entrynum1_id._frameNum);
 			x_ += 1 + sf->width;
 
 			gump = new Gump(xbase + 2 + entrywidth, 3 + 40 * yi, 1, 1);
@@ -126,7 +126,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 		gump->InitGump(this, false);
 
 		if (index_ == 0) {
-			// special case for 'The Beginning...' save
+			// special case for 'The Beginning...' _save
 			Gump *widget = new TextWidget(xbase, 12 + entryheight,
 			                              _TL_("The Beginning..."),
 			                              true, entryfont, 95);
@@ -134,18 +134,18 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 
 		} else {
 
-			if (save) {
+			if (_save) {
 				EditWidget *ew = new EditWidget(xbase, entryheight + 4 + 40 * yi,
-				                                descriptions[i],
+				                                _descriptions[i],
 				                                true, entryfont,
 				                                95, 38 - entryheight, 0, true);
 				ew->SetIndex(i + 1);
 				ew->InitGump(this, false);
-				editwidgets[i] = ew;
+				_editWidgets[i] = ew;
 			} else {
 				// load
 				Gump *widget = new TextWidget(xbase, entryheight + 4 + 40 * yi,
-				                              descriptions[i], true, entryfont,
+				                              _descriptions[i], true, entryfont,
 				                              95);
 				widget->InitGump(this, false);
 			}
@@ -154,8 +154,8 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 	}
 
 	// remove focus from children (just in case)
-	if (focus_child) focus_child->OnFocus(false);
-	focus_child = 0;
+	if (_focusChild) _focusChild->OnFocus(false);
+	_focusChild = 0;
 }
 
 void U8SaveGump::Close(bool no_del) {
@@ -164,7 +164,7 @@ void U8SaveGump::Close(bool no_del) {
 
 void U8SaveGump::OnFocus(bool gain) {
 	if (gain) {
-		if (save)
+		if (_save)
 			Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_QUILL);
 		else
 			Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_MAGGLASS);
@@ -185,7 +185,7 @@ void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
 	int x_;
 	if (mx >= 3 && mx <= 100)
 		x_ = 0;
-	else if (mx >= dims.w / 2 + 10)
+	else if (mx >= _dims.w / 2 + 10)
 		x_ = 1;
 	else
 		return;
@@ -201,24 +201,24 @@ void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
 		return;
 
 	int i = 3 * x_ + y_;
-	int index_ = 6 * page + i + 1;
+	int index_ = 6 * _page + i + 1;
 
-	if (save && !focus_child && editwidgets[i]) {
-		editwidgets[i]->MakeFocus();
-		PagedGump *p = p_dynamic_cast<PagedGump *>(parent);
+	if (_save && !_focusChild && _editWidgets[i]) {
+		_editWidgets[i]->MakeFocus();
+		PagedGump *p = p_dynamic_cast<PagedGump *>(_parent);
 		if (p) p->enableButtons(false);
 	}
 
-	if (!save) {
+	if (!_save) {
 
 		// If our parent has a notifiy process, we'll put our result in it and wont actually load the game
-		GumpNotifyProcess *p = parent->GetNotifyProcess();
+		GumpNotifyProcess *p = _parent->GetNotifyProcess();
 		if (p) {
 			// Do nothing in this case
-			if (index_ != 1 && descriptions[i].empty()) return;
+			if (index_ != 1 && _descriptions[i].empty()) return;
 
-			parent->SetResult(index_);
-			parent->Close(); // close PagedGump (and us)
+			_parent->SetResult(index_);
+			_parent->Close(); // close PagedGump (and us)
 			return;
 		}
 
@@ -228,8 +228,8 @@ void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
 
 void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 	if (child->IsOfType<EditWidget>() && message == EditWidget::EDIT_ENTER) {
-		// save
-		assert(save);
+		// _save
+		assert(_save);
 
 		EditWidget *widget = p_dynamic_cast<EditWidget *>(child);
 		assert(widget);
@@ -237,26 +237,26 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		Std::string name = widget->getText();
 		if (name.empty()) return;
 
-		if (savegame(widget->GetIndex() + 6 * page, name))
-			parent->Close(); // close PagedGump (and us)
+		if (savegame(widget->GetIndex() + 6 * _page, name))
+			_parent->Close(); // close PagedGump (and us)
 
 		return;
 	}
 
 	if (child->IsOfType<EditWidget>() && message == EditWidget::EDIT_ESCAPE) {
 		// cancel edit
-		assert(save);
+		assert(_save);
 
 		// remove focus
-		if (focus_child) focus_child->OnFocus(false);
-		focus_child = 0;
+		if (_focusChild) _focusChild->OnFocus(false);
+		_focusChild = 0;
 
-		PagedGump *p = p_dynamic_cast<PagedGump *>(parent);
+		PagedGump *p = p_dynamic_cast<PagedGump *>(_parent);
 		if (p) p->enableButtons(true);
 
 		EditWidget *widget = p_dynamic_cast<EditWidget *>(child);
 		assert(widget);
-		widget->setText(descriptions[widget->GetIndex() - 1]);
+		widget->setText(_descriptions[widget->GetIndex() - 1]);
 
 		return;
 	}
@@ -288,10 +288,10 @@ bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
 }
 
 void U8SaveGump::loadDescriptions() {
-	descriptions.resize( 6);
+	_descriptions.resize( 6);
 
 	for (int i = 0; i < 6; ++i) {
-		int saveIndex = 6 * page + i + 1;
+		int saveIndex = 6 * _page + i + 1;
 
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
 			Ultima8Engine::get_instance()->getSaveStateName(saveIndex));
@@ -300,26 +300,26 @@ void U8SaveGump::loadDescriptions() {
 
 		SavegameReader *sg = new SavegameReader(saveFile, true);
 		SavegameReader::State state = sg->isValid();
-		descriptions[i] = "";
+		_descriptions[i] = "";
 
 		// FIXME: move version checks elsewhere!!
 		switch (state) {
 		case SavegameReader::SAVE_CORRUPT:
-			descriptions[i] = _("[corrupt]");
+			_descriptions[i] = _("[corrupt]");
 			break;
 		case SavegameReader::SAVE_OUT_OF_DATE:
-			descriptions[i] = _("[outdated]");
+			_descriptions[i] = _("[outdated]");
 			break;
 		case SavegameReader::SAVE_TOO_RECENT:
-			descriptions[i] = _("[too modern]");
+			_descriptions[i] = _("[too modern]");
 			break;
 		default:
 			break;
 		}
 
 		if (state != SavegameReader::SAVE_VALID)
-			descriptions[i] += " ";
-		descriptions[i] += sg->getDescription();
+			_descriptions[i] += " ";
+		_descriptions[i] += sg->getDescription();
 		delete sg;
 	}
 }
@@ -327,7 +327,7 @@ void U8SaveGump::loadDescriptions() {
 //static
 Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 	if (save) {
-		// can't save if game over
+		// can't _save if game over
 		// FIXME: this check should probably be in Game or GUIApp
 		MainActor *av = getMainActor();
 		if (!av || (av->getActorFlags() & Actor::ACT_DEAD)) return 0;

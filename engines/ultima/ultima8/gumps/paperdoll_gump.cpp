@@ -91,9 +91,9 @@ PaperdollGump::PaperdollGump() : ContainerGump(), statbuttongid(0),
 	Common::fill(cached_val, cached_val + 7, 0);
 }
 
-PaperdollGump::PaperdollGump(Shape *shape_, uint32 framenum_, uint16 owner_,
-		uint32 Flags_, int32 layer_)
-		: ContainerGump(shape_, framenum_, owner_, Flags_, layer_),
+PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
+		uint32 Flags, int32 layer)
+		: ContainerGump(shape_, frameNum, owner, Flags, layer),
 		statbuttongid(0), backpack_rect(49, 25, 10, 25) {
 	statbuttongid = 0;
 
@@ -125,7 +125,7 @@ void PaperdollGump::Close(bool no_del) {
 	// because we do not want to close the Gumps of our contents.
 
 	// Make every item leave the fast area
-	Container *c = getContainer(owner);
+	Container *c = getContainer(_owner);
 	if (!c) return; // Container gone!?
 
 	Std::list<Item *> &contents = c->contents;
@@ -136,7 +136,7 @@ void PaperdollGump::Close(bool no_del) {
 		item->leaveFastArea();  // Can destroy the item
 	}
 
-	Item *o = getItem(owner);
+	Item *o = getItem(_owner);
 	if (o)
 		o->clearGump(); //!! is this the appropriate place?
 
@@ -172,7 +172,7 @@ void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
 }
 
 void PaperdollGump::PaintStats(RenderSurface *surf, int32 lerp_factor) {
-	Actor *a = getActor(owner);
+	Actor *a = getActor(_owner);
 	assert(a);
 
 	PaintStat(surf, 0, _TL_("STR"), a->getStr());
@@ -188,7 +188,7 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	// paint self
 	ItemRelativeGump::PaintThis(surf, lerp_factor, scaled);
 
-	Actor *a = getActor(owner);
+	Actor *a = getActor(_owner);
 
 	if (!a) {
 		// Actor gone!?
@@ -232,7 +232,7 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 
 	ParentToGump(mx, my);
 
-	Actor *a = getActor(owner);
+	Actor *a = getActor(_owner);
 
 	if (!a) return 0; // Container gone!?
 
@@ -272,7 +272,7 @@ bool PaperdollGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	Item *item = getItem(itemid);
 	Item *parent_ = item->getParentAsContainer();
 	if (!parent_) return false;
-	if (parent_->getObjId() != owner) return false;
+	if (parent_->getObjId() != _owner) return false;
 
 	//!!! need to use lerp_factor
 
@@ -318,7 +318,7 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 		return false;
 	}
 
-	Actor *a = getActor(owner);
+	Actor *a = getActor(_owner);
 	assert(a);
 
 	bool over_backpack = false;
@@ -364,7 +364,7 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 void PaperdollGump::DropItem(Item *item, int mx, int my) {
 	display_dragging = false;
 
-	Actor *a = getActor(owner);
+	Actor *a = getActor(_owner);
 	assert(a);
 
 	bool over_backpack = false;

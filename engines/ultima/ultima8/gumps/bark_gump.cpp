@@ -57,9 +57,9 @@ BarkGump::~BarkGump(void) {
 void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 	// OK, this is a bit of a hack, but it's how it has to be
 	int fontnum;
-	if (owner == 1) fontnum = 6;
-	else if (owner > 256) fontnum = 8;
-	else switch (owner % 3) {
+	if (_owner == 1) fontnum = 6;
+	else if (_owner > 256) fontnum = 8;
+	else switch (_owner % 3) {
 		case 1:
 			fontnum = 5;
 			break;
@@ -86,7 +86,7 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 	AudioProcess *ap = AudioProcess::get_instance();
 	speechlength = 0;
 	if (speechshapenum && ap) {
-		if (ap->playSpeech(barked, speechshapenum, owner)) {
+		if (ap->playSpeech(barked, speechshapenum, _owner)) {
 			speechlength = ap->getSpeechLength(barked, speechshapenum) / 33;
 			if (speechlength == 0) speechlength = 1;
 
@@ -111,8 +111,8 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 	} else {
 		counter = d.h * textdelay;
 	}
-	dims.h = d.h;
-	dims.w = d.w;
+	_dims.h = d.h;
+	_dims.w = d.w;
 
 	// Wait with ItemRelativeGump initialization until we calculated our size.
 	ItemRelativeGump::InitGump(newparent, take_focus);
@@ -130,8 +130,8 @@ bool BarkGump::NextText() {
 		} else {
 			counter = d.h * textdelay;
 		}
-		dims.h = d.h;
-		dims.w = d.w;
+		_dims.h = d.h;
+		_dims.w = d.w;
 		return true;
 	}
 
@@ -174,7 +174,7 @@ Gump *BarkGump::OnMouseDown(int button, int32 mx, int32 my) {
 	if (!NextText()) {
 		if (speechlength) {
 			AudioProcess *ap = AudioProcess::get_instance();
-			if (ap) ap->stopSpeech(barked, speechshapenum, owner);
+			if (ap) ap->stopSpeech(barked, speechshapenum, _owner);
 		}
 		Close();
 	}
@@ -222,8 +222,8 @@ bool BarkGump::loadData(IDataSource *ids, uint32 version) {
 	Rect d;
 	widget->GetDims(d);
 	counter = d.h * textdelay;
-	dims.h = d.h;
-	dims.w = d.w;
+	_dims.h = d.h;
+	_dims.w = d.w;
 
 	return true;
 }

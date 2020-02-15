@@ -37,10 +37,10 @@ SlidingWidget::SlidingWidget()
 	: Gump() {
 }
 
-SlidingWidget::SlidingWidget(int x_, int y_, Shape *shape_, uint32 framenum_)
-	: Gump(x_, y_, 5, 5, 0, FLAG_DRAGGABLE) {
-	shape = shape_;
-	framenum = framenum_;
+SlidingWidget::SlidingWidget(int x, int y, Shape *shape, uint32 frameNum)
+	: Gump(x, y, 5, 5, 0, FLAG_DRAGGABLE) {
+	_shape = shape;
+	_frameNum = frameNum;
 }
 
 SlidingWidget::~SlidingWidget() {
@@ -49,11 +49,11 @@ SlidingWidget::~SlidingWidget() {
 void SlidingWidget::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	ShapeFrame *sf = shape->getFrame(framenum);
+	ShapeFrame *sf = _shape->getFrame(_frameNum);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->width;
+	_dims.h = sf->height;
 }
 
 uint16 SlidingWidget::TraceObjId(int32 mx, int32 my) {

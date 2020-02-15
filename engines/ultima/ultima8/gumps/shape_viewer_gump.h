@@ -41,7 +41,7 @@ public:
 	ShapeViewerGump();
 	ShapeViewerGump(int width, int height,
 	                Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
-	                uint32 _Flags = 0, int32 layer = LAYER_MODAL);
+	                uint32 flags = 0, int32 layer = LAYER_MODAL);
 	~ShapeViewerGump(void) override;
 
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
@@ -56,15 +56,15 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	Std::vector<Std::pair<Std::string, ShapeArchive *> > flexes;
-	unsigned int curflex;
-	ShapeArchive *flex;
-	uint32 curshape;
-	uint32 curframe;
+	Std::vector<Std::pair<Std::string, ShapeArchive *> > _flexes;
+	unsigned int _curFlex;
+	ShapeArchive *_flex;
+	uint32 _curShape;
+	uint32 _curFrame;
 
-	uint32 background;
+	uint32 _background;
 
-	int32 shapew, shapeh, shapex, shapey;
+	int32 _shapeW, _shapeH, _shapeX, _shapeY;
 };
 
 } // End of namespace Ultima8

@@ -93,11 +93,11 @@ void MessageBoxGump::InitGump(Gump *newparent, bool take_focus) {
 	// Message size
 	font->getTextSize(message, width, height, rem);
 
-	dims.w = MBG_PADDING + width + MBG_PADDING;
-	if (dims.w < MBG_PADDING + title_w + MBG_PADDING) dims.w = MBG_PADDING + title_w + MBG_PADDING;
-	if (dims.w < buttons_w) dims.w = buttons_w;
+	_dims.w = MBG_PADDING + width + MBG_PADDING;
+	if (_dims.w < MBG_PADDING + title_w + MBG_PADDING) _dims.w = MBG_PADDING + title_w + MBG_PADDING;
+	if (_dims.w < buttons_w) _dims.w = buttons_w;
 
-	dims.h = 23 + MBG_PADDING + height + MBG_PADDING + 28;
+	_dims.h = 23 + MBG_PADDING + height + MBG_PADDING + 28;
 
 	// Title
 	Gump *w = new TextWidget(MBG_PADDING, 2, title, false, 0);
@@ -108,9 +108,9 @@ void MessageBoxGump::InitGump(Gump *newparent, bool take_focus) {
 	w->InitGump(this, false);
 
 	// Buttons (right aligned)
-	int off = dims.w - buttons_w;
+	int off = _dims.w - buttons_w;
 	for (size_t i = 0; i < buttons.size(); i++) {
-		w = new ButtonWidget(off, dims.h - 23, buttons[i], false, 1, 0x80D000D0);
+		w = new ButtonWidget(off, _dims.h - 23, buttons[i], false, 1, 0x80D000D0);
 		w->SetIndex(static_cast<int32>(i));
 		w->InitGump(this, false);
 		width = height = 0;
@@ -132,31 +132,31 @@ void MessageBoxGump::Close(bool no_del) {
 
 void MessageBoxGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled*/) {
 	// Background is partially transparent
-	surf->FillBlended(0x80000000, 0, 0, dims.w, dims.h);
+	surf->FillBlended(0x80000000, 0, 0, _dims.w, _dims.h);
 
 	uint32 line_colour = 0xFFFFFFFF;
 	if (!IsFocus()) line_colour = 0xFF7F7F7F;
 
 	// outer border
-	surf->Fill32(line_colour, 0, 0, dims.w, 1);
-	surf->Fill32(line_colour, 0, 0, 1, dims.h);
-	surf->Fill32(line_colour, 0, dims.h - 1, dims.w, 1);
-	surf->Fill32(line_colour, dims.w - 1, 0, 1, dims.h);
+	surf->Fill32(line_colour, 0, 0, _dims.w, 1);
+	surf->Fill32(line_colour, 0, 0, 1, _dims.h);
+	surf->Fill32(line_colour, 0, _dims.h - 1, _dims.w, 1);
+	surf->Fill32(line_colour, _dims.w - 1, 0, 1, _dims.h);
 
 	// line above buttons
-	surf->Fill32(line_colour, 0, dims.h - 28, dims.w, 1);
+	surf->Fill32(line_colour, 0, _dims.h - 28, _dims.w, 1);
 
 	// line below title
-	surf->Fill32(line_colour, 0, 23, dims.w, 1);
+	surf->Fill32(line_colour, 0, 23, _dims.w, 1);
 
 	// Highlight behind message..
-	if (IsFocus()) surf->Fill32(title_colour, 1, 1, dims.w - 2, 22);
-	else surf->Fill32(0xFF000000, 1, 1, dims.w - 2, 22);
+	if (IsFocus()) surf->Fill32(title_colour, 1, 1, _dims.w - 2, 22);
+	else surf->Fill32(0xFF000000, 1, 1, _dims.w - 2, 22);
 }
 
 void MessageBoxGump::ChildNotify(Gump *child, uint32 msg) {
 	if (child->IsOfType<ButtonWidget>() && msg == ButtonWidget::BUTTON_CLICK) {
-		process_result = child->GetIndex();
+		_processResult = child->GetIndex();
 		Close();
 	}
 }

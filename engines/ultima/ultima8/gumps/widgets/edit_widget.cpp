@@ -58,14 +58,14 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	Font *font = getFont();
 
 	// Y offset is always baseline
-	dims.y = -font->getBaseline();
+	_dims.y = -font->getBaseline();
 
 	// No X offset
-	dims.x = 0;
+	_dims.x = 0;
 
 	if (gamefont && getFont()->isHighRes()) {
 		int32 x_ = 0, y_ = 0, w = 0;
-		ScreenSpaceToGumpRect(x_, y_, w, dims.y, ROUND_OUTSIDE);
+		ScreenSpaceToGumpRect(x_, y_, w, _dims.y, ROUND_OUTSIDE);
 	}
 }
 
@@ -93,8 +93,8 @@ bool EditWidget::textFits(Std::string &t) {
 	unsigned int remaining;
 	int32 width, height;
 
-	int32 max_width = multiline ? dims.w : 0;
-	int32 max_height = dims.h;
+	int32 max_width = multiline ? _dims.w : 0;
+	int32 max_height = _dims.h;
 	if (gamefont && font->isHighRes()) {
 		int32 x_ = 0, y_ = 0;
 		GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
@@ -112,7 +112,7 @@ bool EditWidget::textFits(Std::string &t) {
 	if (multiline)
 		return (remaining >= t.size());
 	else
-		return (width <= dims.w);
+		return (width <= _dims.w);
 }
 
 void EditWidget::renderText() {
@@ -135,8 +135,8 @@ void EditWidget::renderText() {
 	if (!cached_text) {
 		Font *font = getFont();
 
-		int32 max_width = multiline ? dims.w : 0;
-		int32 max_height = dims.h;
+		int32 max_width = multiline ? _dims.w : 0;
+		int32 max_height = _dims.h;
 		if (gamefont && font->isHighRes()) {
 			int32 x_ = 0, y_ = 0;
 			GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
@@ -157,7 +157,7 @@ void EditWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 	renderText();
 
 	if (scaled && gamefont && getFont()->isHighRes()) {
-		surf->FillAlpha(0xFF, dims.x, dims.y, dims.w, dims.h);
+		surf->FillAlpha(0xFF, _dims.x, _dims.y, _dims.w, _dims.h);
 		return;
 	}
 
@@ -175,9 +175,9 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	cached_text->draw(surf, x_, y_, true);
 
-	x_ = dims.x;
-	y_ = dims.y;
-	int32 w = dims.w, h = dims.h;
+	x_ = _dims.x;
+	y_ = _dims.y;
+	int32 w = _dims.w, h = _dims.h;
 	GumpRectToScreenSpace(x_, y_, w, h, ROUND_OUTSIDE);
 	surf->FillAlpha(0x00, x_, y_, w, h);
 }
@@ -191,10 +191,10 @@ bool EditWidget::OnKeyDown(int key, int mod) {
 	switch (key) {
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
-		parent->ChildNotify(this, EDIT_ENTER);
+		_parent->ChildNotify(this, EDIT_ENTER);
 		break;
 	case Common::KEYCODE_ESCAPE:
-		parent->ChildNotify(this, EDIT_ESCAPE);
+		_parent->ChildNotify(this, EDIT_ESCAPE);
 		break;
 	case Common::KEYCODE_BACKSPACE:
 		if (cursor > 0) {

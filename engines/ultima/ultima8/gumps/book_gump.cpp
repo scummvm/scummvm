@@ -57,7 +57,7 @@ BookGump::~BookGump(void) {
 void BookGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	// Create the TextWidgets (NOTE: they _must_ have exactly the same dims)
+	// Create the TextWidgets (NOTE: they _must_ have exactly the same _dims)
 	TextWidget *widget = new TextWidget(9, 5, text, true, 9, 123, 129); //!! constants
 	widget->InitGump(this);
 	textwidgetL = widget->getObjId();
@@ -77,8 +77,8 @@ void BookGump::InitGump(Gump *newparent, bool take_focus) {
 	ShapeFrame *sf = shapeP->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->width;
+	_dims.h = sf->height;
 }
 
 void BookGump::NextText() {

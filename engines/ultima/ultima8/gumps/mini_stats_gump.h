@@ -34,7 +34,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	MiniStatsGump();
-	MiniStatsGump(int x, int y, uint32 _Flags = FLAG_DRAGGABLE,
+	MiniStatsGump(int x, int y, uint32 flags = FLAG_DRAGGABLE,
 	              int32 layer = LAYER_NORMAL);
 	~MiniStatsGump(void) override;
 

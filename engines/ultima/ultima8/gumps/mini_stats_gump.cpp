@@ -55,8 +55,8 @@ MiniStatsGump::MiniStatsGump() : Gump() {
 
 }
 
-MiniStatsGump::MiniStatsGump(int x_, int y_, uint32 _Flags, int32 layer_)
-	: Gump(x_, y_, 5, 5, 0, _Flags, layer_) {
+MiniStatsGump::MiniStatsGump(int x, int y, uint32 flags, int32 layer)
+	: Gump(x, y, 5, 5, 0, flags, layer) {
 
 }
 
@@ -67,12 +67,12 @@ MiniStatsGump::~MiniStatsGump() {
 void MiniStatsGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
-	ShapeFrame *sf = shape->getFrame(0);
+	_shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
+	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->width;
+	_dims.h = sf->height;
 }
 
 void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {

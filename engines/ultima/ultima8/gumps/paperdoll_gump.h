@@ -36,8 +36,8 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	PaperdollGump();
-	PaperdollGump(Shape *shape, uint32 framenum, uint16 owner,
-	              uint32 _Flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
+	PaperdollGump(Shape *shape, uint32 frameNum, uint16 owner,
+	              uint32 flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
 	~PaperdollGump(void) override;
 
 	// Init the gump, call after construction

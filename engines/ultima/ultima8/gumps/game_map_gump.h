@@ -49,7 +49,7 @@ public:
 	void                GetCameraLocation(int32 &x, int32 &y, int32 &z,
 	                                      int lerp_factor = 256);
 
-	// Trace a click, and return ObjId (parent coord space)
+	// Trace a click, and return ObjId (_parent coord space)
 	uint16      TraceObjId(int32 mx, int32 my) override;
 
 	// Trace a click, return ObjId, and the coordinates of the mouse click (gump coord space)

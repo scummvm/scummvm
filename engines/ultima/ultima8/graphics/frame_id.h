@@ -32,13 +32,13 @@ class IDataSource;
 class ODataSource;
 
 struct FrameID {
-	uint16 flexid;
-	uint32 shapenum;
-	uint32 framenum;
+	uint16 _flexId;
+	uint32 _shapeNum;
+	uint32 _frameNum;
 
 	FrameID() { }
 	FrameID(uint16 flex, uint32 shape, uint32 frame)
-		: flexid(flex), shapenum(shape), framenum(frame) {
+		: _flexId(flex), _shapeNum(shape), _frameNum(frame) {
 	}
 
 	void save(ODataSource *ods);

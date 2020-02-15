@@ -92,12 +92,12 @@ static const int menuEntryShape = 37;
 void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
-	ShapeFrame *sf = shape->getFrame(0);
+	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
+	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->width;
+	_dims.h = sf->height;
 
 	Shape *logoShape;
 	logoShape = GameData::get_instance()->getGumps()->getShape(paganShape);
@@ -114,7 +114,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		settingman->get("endgame", endgame);
 		settingman->get("quotes", quotes);
 
-		int x_ = dims.w / 2 + 14;
+		int x_ = _dims.w / 2 + 14;
 		int y_ = 18;
 		Gump *widget;
 		for (int i = 0; i < 8; ++i) {
@@ -141,20 +141,20 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 			widget = new TextWidget(0, 0, name, true, 6);
 			widget->InitGump(this, false);
 			widget->GetDims(rect);
-			widget->Move(90 - rect.w / 2, dims.h - 40);
+			widget->Move(90 - rect.w / 2, _dims.h - 40);
 		}
 	} else {
 		Gump *widget;
 		widget = new TextWidget(0, 0, _TL_("Give thy name:"), true, 6); // CONSTANT!
 		widget->InitGump(this, false);
-		widget->Move(dims.w / 2 + 6, 10);
+		widget->Move(_dims.w / 2 + 6, 10);
 
 		Rect textdims;
 		widget->GetDims(textdims);
 
 		widget = new EditWidget(0, 0, "", true, 6, 110, 40, 15); // CONSTANTS!
 		widget->InitGump(this, true);
-		widget->Move(dims.w / 2 + 6, 10 + textdims.h);
+		widget->Move(_dims.w / 2 + 6, 10 + textdims.h);
 		widget->MakeFocus();
 	}
 }

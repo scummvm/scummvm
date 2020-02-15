@@ -58,8 +58,8 @@ public:
 	//! return the textwidget's vlead, or 0 for an image button
 	int getVlead();
 
-	//void SetShapeDown(Shape *_shape, uint32 _framenum);
-	//void SetShapeUp(Shape *_shape, uint32 _framenum);
+	//void SetShapeDown(Shape *_shape, uint32 frameNum);
+	//void SetShapeUp(Shape *_shape, uint32 frameNum);
 
 	enum Message {
 		BUTTON_CLICK        = 0,
@@ -69,9 +69,9 @@ public:
 
 protected:
 	Shape *shape_up;
-	uint32 framenum_up;
+	uint32 _frameNum_up;
 	Shape *shape_down;
-	uint32 framenum_down;
+	uint32 _frameNum_down;
 	uint16 textwidget;
 	uint32 mouseOverBlendCol;
 	bool mouseOver;

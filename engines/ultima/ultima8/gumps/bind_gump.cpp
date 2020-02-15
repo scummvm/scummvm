@@ -58,7 +58,7 @@ void BindGump::InitGump(Gump *newparent, bool take_focus) {
 
 void BindGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	uint32 rgb = 0x000000;
-	surf->Fill32(rgb, 0, 0, dims.w, dims.h);
+	surf->Fill32(rgb, 0, 0, _dims.w, _dims.h);
 
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }

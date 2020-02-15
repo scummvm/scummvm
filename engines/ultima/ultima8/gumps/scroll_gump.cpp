@@ -71,8 +71,8 @@ void ScrollGump::InitGump(Gump *newparent, bool take_focus) {
 	ShapeFrame *sf = shape_->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->width;
+	_dims.h = sf->height;
 }
 
 void ScrollGump::NextText() {

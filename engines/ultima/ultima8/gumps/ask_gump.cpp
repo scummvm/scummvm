@@ -35,29 +35,28 @@ namespace Ultima8 {
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(AskGump, ItemRelativeGump)
 
-AskGump::AskGump()
-	: ItemRelativeGump(), answers(0) {
+AskGump::AskGump() : ItemRelativeGump(), _answers(0) {
 
 }
 
-AskGump::AskGump(uint16 owner_, UCList *answers_) :
-	ItemRelativeGump(0, 0, 0, 0, owner_, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
-	answers(new UCList(2)) {
-	answers->copyStringList(*answers_);
+AskGump::AskGump(uint16 owner, UCList *answers) :
+	ItemRelativeGump(0, 0, 0, 0, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
+	_answers(new UCList(2)) {
+	_answers->copyStringList(*answers);
 }
 
 AskGump::~AskGump() {
-	answers->freeStrings();
-	delete answers;
+	_answers->freeStrings();
+	delete _answers;
 }
 
 // Init the gump, call after construction
 void AskGump::InitGump(Gump *newparent, bool take_focus) {
 	// OK, this is a bit of a hack, but it's how it has to be
 	int fontnum;
-	if (owner == 1) fontnum = 6;
-	else if (owner > 256) fontnum = 8;
-	else switch (owner % 3) {
+	if (_owner == 1) fontnum = 6;
+	else if (_owner > 256) fontnum = 8;
+	else switch (_owner % 3) {
 		case 1:
 			fontnum = 5;
 			break;
@@ -76,9 +75,9 @@ void AskGump::InitGump(Gump *newparent, bool take_focus) {
 	// This is a hack. We init the gump twice...
 	ItemRelativeGump::InitGump(newparent, take_focus);
 
-	for (unsigned int i = 0; i < answers->getSize(); ++i) {
+	for (unsigned int i = 0; i < _answers->getSize(); ++i) {
 		Std::string str_answer = "@ ";
-		str_answer += UCMachine::get_instance()->getString(answers->getStringIndex(i));
+		str_answer += UCMachine::get_instance()->getString(_answers->getStringIndex(i));
 
 		ButtonWidget *child = new ButtonWidget(px, py, str_answer,
 		                                       true, fontnum);
@@ -87,17 +86,17 @@ void AskGump::InitGump(Gump *newparent, bool take_focus) {
 
 		Rect cd;
 		child->GetDims(cd);
-		if (i + 1 < answers->getSize())
+		if (i + 1 < _answers->getSize())
 			cd.h += child->getVlead();
 
 		if (px + cd.w > 160 && px != 0) {
-			py = dims.h;
+			py = _dims.h;
 			px = 0;
 			child->Move(px, py);
 		}
 
-		if (cd.w + px > dims.w) dims.w = cd.w + px;
-		if (cd.h + py > dims.h) dims.h = cd.h + py;
+		if (cd.w + px > _dims.w) _dims.w = cd.w + px;
+		if (cd.h + py > _dims.h) _dims.h = cd.h + py;
 
 		px += cd.w + 4;
 	}
@@ -108,12 +107,12 @@ void AskGump::InitGump(Gump *newparent, bool take_focus) {
 
 void AskGump::ChildNotify(Gump *child, uint32 message) {
 	if (message == ButtonWidget::BUTTON_CLICK) {
-		uint16 s = answers->getStringIndex(child->GetIndex());
-		process_result = s;
+		uint16 s = _answers->getStringIndex(child->GetIndex());
+		_processResult = s;
 
-		// answers' strings are going to be deleted, so make sure
+		// _answers' strings are going to be deleted, so make sure
 		// the response string won't be deleted
-		answers->removeString(s, true); //!! assuming that answers doesn't
+		_answers->removeString(s, true); //!! assuming that answers doesn't
 		//!! contain two identical strings
 		Close();
 	}
@@ -122,28 +121,28 @@ void AskGump::ChildNotify(Gump *child, uint32 message) {
 void AskGump::saveData(ODataSource *ods) {
 	ItemRelativeGump::saveData(ods);
 
-	answers->save(ods);
+	_answers->save(ods);
 }
 
 bool AskGump::loadData(IDataSource *ids, uint32 version) {
 	if (!ItemRelativeGump::loadData(ids, version)) return false;
 
-	answers = new UCList(2);
-	answers->load(ids, version);
+	_answers = new UCList(2);
+	_answers->load(ids, version);
 
 	// HACK ALERT
 	int px = 0, py = 0;
 
-	dims.w = 0;
-	dims.h = 0;
+	_dims.w = 0;
+	_dims.h = 0;
 
 
-	for (unsigned int i = 0; i < answers->getSize(); ++i) {
+	for (unsigned int i = 0; i < _answers->getSize(); ++i) {
 
 		ButtonWidget *child = 0;
 
 		Std::list<Gump *>::iterator it;
-		for (it = children.begin(); it != children.end(); ++it) {
+		for (it = _children.begin(); it != _children.end(); ++it) {
 			if ((*it)->GetIndex() != (int)i) continue;
 			child = p_dynamic_cast<ButtonWidget *>(*it);
 			if (!child) continue;
@@ -155,13 +154,13 @@ bool AskGump::loadData(IDataSource *ids, uint32 version) {
 		child->GetDims(cd);
 
 		if (px + cd.w > 160 && px != 0) {
-			py = dims.h;
+			py = _dims.h;
 			px = 0;
 		}
 		child->Move(px, py);
 
-		if (cd.w + px > dims.w) dims.w = cd.w + px;
-		if (cd.h + py > dims.h) dims.h = cd.h + py;
+		if (cd.w + px > _dims.w) _dims.w = cd.w + px;
+		if (cd.h + py > _dims.h) _dims.h = cd.h + py;
 
 		px += cd.w + 4;
 	}

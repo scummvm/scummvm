@@ -38,7 +38,7 @@ public:
 
 	MovieGump();
 	MovieGump(int width, int height, RawArchive *skf, bool introMusicHack = false,
-	          uint32 _Flags = 0, int32 layer = LAYER_MODAL);
+	          uint32 flags = 0, int32 layer = LAYER_MODAL);
 	~MovieGump(void) override;
 
 	void InitGump(Gump *newparent, bool take_focus = true) override;

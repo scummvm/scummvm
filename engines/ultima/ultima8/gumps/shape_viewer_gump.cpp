@@ -53,19 +53,19 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeViewerGump, ModalGump)
 
 ShapeViewerGump::ShapeViewerGump()
-	: ModalGump(), curflex(0), flex(0), curshape(0), curframe(0), background(0) {
+	: ModalGump(), _curFlex(0), _flex(0), _curShape(0), _curFrame(0), _background(0) {
 
 }
 
 ShapeViewerGump::ShapeViewerGump(int width, int height,
-                                 Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes_,
-                                 uint32 _Flags, int32 layer_)
-	: ModalGump(50, 50, width, height, 0, _Flags, layer_),
-	  flexes(flexes_), curflex(0), curshape(0), curframe(0), background(0) {
-	if (flexes.size())
-		flex = flexes[0].second;
+                                 Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
+                                 uint32 flags, int32 layer)
+		: ModalGump(50, 50, width, height, 0, flags, layer),
+		_flexes(flexes), _curFlex(0), _curShape(0), _curFrame(0), _background(0) {
+	if (_flexes.size())
+		_flex = _flexes[0].second;
 	else
-		flex = 0;
+		_flex = 0;
 }
 
 ShapeViewerGump::~ShapeViewerGump() {
@@ -73,19 +73,19 @@ ShapeViewerGump::~ShapeViewerGump() {
 }
 
 void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled*/) {
-	if (flexes.empty()) {
+	if (_flexes.empty()) {
 		Close();
 		return;
 	}
 
-	surf->Fill32(background, 0, 0, dims.w, dims.h);
+	surf->Fill32(_background, 0, 0, _dims.w, _dims.h);
 
-	int32 posx = (dims.w - shapew) / 2 + shapex;
-	int32 posy = (dims.h - shapeh) / 2 + shapey;
+	int32 posx = (_dims.w - _shapeW) / 2 + _shapeX;
+	int32 posy = (_dims.h - _shapeH) / 2 + _shapeY;
 
-	Shape *shape_ = flex->getShape(curshape);
-	if (shape_ && curframe < shape_->frameCount())
-		surf->Paint(shape_, curframe, posx, posy);
+	Shape *shape_ = _flex->getShape(_curShape);
+	if (shape_ && _curFrame < shape_->frameCount())
+		surf->Paint(shape_, _curFrame, posx, posy);
 
 	RenderedText *rendtext;
 	Font *font = FontManager::get_instance()->getGameFont(0, true);
@@ -96,22 +96,22 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	if (!shape_) {
 		sprintf(buf1, "NULL");
 	} else {
-		sprintf(buf1, "Frame %d of %d", curframe, shape_->frameCount());
+		sprintf(buf1, "Frame %d of %d", _curFrame, shape_->frameCount());
 	}
-	sprintf(buf2, "%s\nShape %d, %s", flexes[curflex].first.c_str(),
-	        curshape, buf1);
+	sprintf(buf2, "%s\nShape %d, %s", _flexes[_curFlex].first.c_str(),
+	        _curShape, buf1);
 	rendtext = font->renderText(buf2, remaining);
 	rendtext->draw(surf, 20, 20);
 	delete rendtext;
 
-	MainShapeArchive *mainshapes = p_dynamic_cast<MainShapeArchive *>(flex);
+	MainShapeArchive *mainshapes = p_dynamic_cast<MainShapeArchive *>(_flex);
 	if (!mainshapes || !shape_) return;
 
 	char buf3[128];
 	char buf4[128];
 	char buf5[128];
 	char buf6[512];
-	ShapeInfo *info = mainshapes->getShapeInfo(curshape);
+	ShapeInfo *info = mainshapes->getShapeInfo(_curShape);
 	if (info) {
 		sprintf(buf3, "x = %d, y = %d, z = %d\n flags = 0x%04X, family = %d",
 		        info->x, info->y, info->z, info->flags, info->family);
@@ -120,7 +120,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		sprintf(buf5, "volume = %d\n animtype = %d, animdata = %d",
 		        info->animtype, info->animdata, info->volume);
 		sprintf(buf6, "ShapeInfo:\n %s\n %s, %s\nUsecode: %s",
-		        buf3, buf4, buf5, GameData::get_instance()->getMainUsecode()->get_class_name(curshape));
+		        buf3, buf4, buf5, GameData::get_instance()->getMainUsecode()->get_class_name(_curShape));
 		rendtext = font->renderText(buf6, remaining);
 		rendtext->draw(surf, 300, 20);
 		delete rendtext;
@@ -134,67 +134,67 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 
 	switch (key) {
 	case Common::KEYCODE_UP:
-		if (delta >= flex->getCount()) delta = 1;
-		if (curshape < delta)
-			curshape = flex->getCount() + curshape - delta;
+		if (delta >= _flex->getCount()) delta = 1;
+		if (_curShape < delta)
+			_curShape = _flex->getCount() + _curShape - delta;
 		else
-			curshape -= delta;
+			_curShape -= delta;
 		shapechanged = true;
-		curframe = 0;
+		_curFrame = 0;
 		break;
 	case Common::KEYCODE_DOWN:
-		if (delta >= flex->getCount()) delta = 1;
-		if (curshape + delta >= flex->getCount())
-			curshape = curshape + delta - flex->getCount();
+		if (delta >= _flex->getCount()) delta = 1;
+		if (_curShape + delta >= _flex->getCount())
+			_curShape = _curShape + delta - _flex->getCount();
 		else
-			curshape += delta;
-		curframe = 0;
+			_curShape += delta;
+		_curFrame = 0;
 		shapechanged = true;
 		break;
 	case Common::KEYCODE_LEFT: {
-		Shape *shape_ = flex->getShape(curshape);
+		Shape *shape_ = _flex->getShape(_curShape);
 		if (shape_ && shape_->frameCount()) {
 			if (delta >= shape_->frameCount()) delta = 1;
-			if (curframe < delta)
-				curframe = shape_->frameCount() + curframe - delta;
+			if (_curFrame < delta)
+				_curFrame = shape_->frameCount() + _curFrame - delta;
 			else
-				curframe -= delta;
+				_curFrame -= delta;
 		}
 	}
 	break;
 	case Common::KEYCODE_RIGHT: {
-		Shape *shape_ = flex->getShape(curshape);
+		Shape *shape_ = _flex->getShape(_curShape);
 		if (shape_ && shape_->frameCount()) {
 			if (delta >= shape_->frameCount()) delta = 1;
-			if (curframe + delta >= shape_->frameCount())
-				curframe = curframe + delta - shape_->frameCount();
+			if (_curFrame + delta >= shape_->frameCount())
+				_curFrame = _curFrame + delta - shape_->frameCount();
 			else
-				curframe += delta;
+				_curFrame += delta;
 		}
 	}
 	break;
 	case Common::KEYCODE_PAGEUP: {
-		if (curflex == 0)
-			curflex = flexes.size() - 1;
+		if (_curFlex == 0)
+			_curFlex = _flexes.size() - 1;
 		else
-			curflex--;
+			_curFlex--;
 
-		flex = flexes[curflex].second;
+		_flex = _flexes[_curFlex].second;
 		shapechanged = true;
-		curshape = 0;
-		curframe = 0;
+		_curShape = 0;
+		_curFrame = 0;
 	}
 	break;
 	case Common::KEYCODE_PAGEDOWN: {
-		if (curflex + 1 == flexes.size())
-			curflex = 0;
+		if (_curFlex + 1 == _flexes.size())
+			_curFlex = 0;
 		else
-			curflex++;
+			_curFlex++;
 
-		flex = flexes[curflex].second;
+		_flex = _flexes[_curFlex].second;
 		shapechanged = true;
-		curshape = 0;
-		curframe = 0;
+		_curShape = 0;
+		_curFrame = 0;
 	}
 	break;
 	case Common::KEYCODE_ESCAPE: {
@@ -206,9 +206,9 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 	}
 
 	if (shapechanged) {
-		Shape *shape_ = flex->getShape(curshape);
+		Shape *shape_ = _flex->getShape(_curShape);
 		if (shape_)
-			shape_->getTotalDimensions(shapew, shapeh, shapex, shapey);
+			shape_->getTotalDimensions(_shapeW, _shapeH, _shapeX, _shapeY);
 	}
 
 	return true;
@@ -217,8 +217,8 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 bool ShapeViewerGump::OnTextInput(int unicode) {
 	switch (unicode) {
 	case 'b':
-		background += 0x808080;
-		background &= 0xF0F0F0;
+		_background += 0x808080;
+		_background &= 0xF0F0F0;
 		break;
 	default:
 		break;
@@ -232,26 +232,26 @@ bool ShapeViewerGump::OnTextInput(int unicode) {
 void ShapeViewerGump::U8ShapeViewer() {
 	GameData *gamedata = GameData::get_instance();
 
-	Std::vector<Std::pair<Std::string, ShapeArchive *> > flexes;
-	Std::pair<Std::string, ShapeArchive *> flex;
-	flex.first = "u8shapes";
-	flex.second = gamedata->getMainShapes();
-	flexes.push_back(flex);
-	flex.first = "u8gumps";
-	flex.second = gamedata->getGumps();
-	flexes.push_back(flex);
-	flex.first = "u8fonts";
-	flex.second = gamedata->getFonts();
-	flexes.push_back(flex);
+	Std::vector<Std::pair<Std::string, ShapeArchive *> > _flexes;
+	Std::pair<Std::string, ShapeArchive *> _flex;
+	_flex.first = "u8shapes";
+	_flex.second = gamedata->getMainShapes();
+	_flexes.push_back(_flex);
+	_flex.first = "u8gumps";
+	_flex.second = gamedata->getGumps();
+	_flexes.push_back(_flex);
+	_flex.first = "u8fonts";
+	_flex.second = gamedata->getFonts();
+	_flexes.push_back(_flex);
 	FileSystem *filesys = FileSystem::get_instance();
 	IDataSource *eintro = filesys->ReadFile("@game/static/eintro.skf");
 	if (eintro) {
 		ShapeArchive *eintroshapes = new ShapeArchive(eintro, GameData::OTHER,
 		        PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game),
 		        &U8SKFShapeFormat);
-		flex.first = "eintro";
-		flex.second = eintroshapes;
-		flexes.push_back(flex);
+		_flex.first = "eintro";
+		_flex.second = eintroshapes;
+		_flexes.push_back(_flex);
 		// !! memory leak
 	}
 
@@ -260,9 +260,9 @@ void ShapeViewerGump::U8ShapeViewer() {
 		ShapeArchive *endgameshapes = new ShapeArchive(endgame, GameData::OTHER,
 		        PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game),
 		        &U8SKFShapeFormat);
-		flex.first = "endgame";
-		flex.second = endgameshapes;
-		flexes.push_back(flex);
+		_flex.first = "endgame";
+		_flex.second = endgameshapes;
+		_flexes.push_back(_flex);
 		// !! memory leak
 	}
 
@@ -270,7 +270,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 	Rect res;
 	desktopGump->GetDims(res);
 
-	ModalGump *gump = new ShapeViewerGump((res.w * 3) / 4, (res.h * 3) / 4, flexes);
+	ModalGump *gump = new ShapeViewerGump((res.w * 3) / 4, (res.h * 3) / 4, _flexes);
 	gump->InitGump(0);
 }
 

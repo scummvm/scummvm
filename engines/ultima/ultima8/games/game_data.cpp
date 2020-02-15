@@ -123,16 +123,16 @@ ShapeArchive *GameData::getShapeFlex(uint16 flexId) const {
 }
 
 Shape *GameData::getShape(FrameID f) const {
-	ShapeArchive *sf = getShapeFlex(f.flexid);
+	ShapeArchive *sf = getShapeFlex(f._flexId);
 	if (!sf) return 0;
-	Shape *shape = sf->getShape(f.shapenum);
+	Shape *shape = sf->getShape(f._shapeNum);
 	return shape;
 }
 
 ShapeFrame *GameData::getFrame(FrameID f) const {
 	Shape *shape = getShape(f);
 	if (!shape) return 0;
-	ShapeFrame *frame = shape->getFrame(f.framenum);
+	ShapeFrame *frame = shape->getFrame(f._frameNum);
 	return frame;
 }
 
@@ -192,7 +192,7 @@ FrameID GameData::translate(FrameID f) {
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	istring key = "language/";
-	switch (f.flexid) {
+	switch (f._flexId) {
 	case GUMPS:
 		key += "gumps/";
 		break;
@@ -201,7 +201,7 @@ FrameID GameData::translate(FrameID f) {
 	}
 
 	char buf[100];
-	sprintf(buf, "%d,%d", f.shapenum, f.framenum);
+	sprintf(buf, "%d,%d", f._shapeNum, f._frameNum);
 
 	key += buf;
 	if (!config->exists(key))
@@ -211,8 +211,8 @@ FrameID GameData::translate(FrameID f) {
 	config->get(key, trans);
 
 	FrameID t;
-	t.flexid = f.flexid;
-	int n = sscanf(trans.c_str(), "%u,%u", &t.shapenum, &t.framenum);
+	t._flexId = f._flexId;
+	int n = sscanf(trans.c_str(), "%u,%u", &t._shapeNum, &t._frameNum);
 	if (n != 2) {
 		perr << "Invalid shape translation: " << trans << Std::endl;
 		return f;
@@ -436,10 +436,10 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 	}
 }
 
-SpeechFlex *GameData::getSpeechFlex(uint32 shapenum) {
-	if (shapenum >= speech.size()) return 0;
+SpeechFlex *GameData::getSpeechFlex(uint32 _shapeNum) {
+	if (_shapeNum >= speech.size()) return 0;
 
-	SpeechFlex **s = speech[shapenum];
+	SpeechFlex **s = speech[_shapeNum];
 	if (s) return *s;
 
 	s = new SpeechFlex*;
@@ -449,7 +449,7 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapenum) {
 
 	Std::string u8_sound_ = "@game/sound/";
 	char num_flx [32];
-	snprintf(num_flx , 32, "%i.flx", shapenum);
+	snprintf(num_flx , 32, "%i.flx", _shapeNum);
 
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
@@ -462,7 +462,7 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapenum) {
 		*s = new SpeechFlex(sflx);
 	}
 
-	speech[shapenum] = s;
+	speech[_shapeNum] = s;
 
 	return *s;
 }

@@ -58,22 +58,22 @@ static const int noShapeId = 50;
 void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
-	ShapeFrame *sf = shape->getFrame(0);
+	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
+	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->width;
+	_dims.h = sf->height;
 
 	FrameID askshape(GameData::GUMPS, askShapeId, 0);
 	askshape = _TL_SHP_(askshape);
 
 	Shape *askShape = GameData::get_instance()->getShape(askshape);
-	sf = askShape->getFrame(askshape.framenum);
+	sf = askShape->getFrame(askshape._frameNum);
 	assert(sf);
 
 	Gump *ask = new Gump(0, 0, sf->width, sf->height);
-	ask->SetShape(askShape, askshape.framenum);
+	ask->SetShape(askShape, askshape._frameNum);
 	ask->InitGump(this);
 	ask->setRelativePosition(TOP_CENTER, 0, 5);
 

@@ -99,7 +99,7 @@ void PentagramMenuGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 void PentagramMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled*/) {
-	int w = dims.w, h = dims.h;
+	int w = _dims.w, h = _dims.h;
 #if 1
 	// CHECKME: fast enough?
 	for (int i = 0; i < h; i += 4) {
@@ -121,10 +121,10 @@ void PentagramMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /
 
 void PentagramMenuGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	// Iterate all children
-	Std::list<Gump *>::iterator it = children.begin();
-	Std::list<Gump *>::iterator end = children.end();
+	Std::list<Gump *>::iterator it = _children.begin();
+	Std::list<Gump *>::iterator end = _children.end();
 
-	Rect game_clip_rect(0, 45, SCREEN_WIDTH, dims.h - 58);
+	Rect game_clip_rect(0, 45, SCREEN_WIDTH, _dims.h - 58);
 	Rect cur_clip_rect;
 	surf->GetClippingRect(cur_clip_rect);
 

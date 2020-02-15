@@ -69,8 +69,8 @@ GameMapGump::GameMapGump(int X, int Y, int Width, int Height) :
 	Gump(X, Y, Width, Height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP, LAYER_GAMEMAP),
 	display_list(0), display_dragging(false) {
 	// Offset the gump. We want 0,0 to be the centre
-	dims.x -= dims.w / 2;
-	dims.y -= dims.h / 2;
+	_dims.x -= _dims.w / 2;
+	_dims.y -= _dims.h / 2;
 
 	pout << "Create display_list ItemSorter object" << Std::endl;
 	display_list = new ItemSorter();
@@ -732,17 +732,17 @@ void GameMapGump::ConCmd_decrementSortOrder(const Console::ArgvType &argv) {
 }
 
 void GameMapGump::RenderSurfaceChanged() {
-	dims.x += dims.w / 2;
-	dims.y += dims.h / 2;
+	_dims.x += _dims.w / 2;
+	_dims.y += _dims.h / 2;
 
 	// Resize the desktop gump to match the parent
 	Rect new_dims;
-	parent->GetDims(new_dims);
-	dims.w = new_dims.w;
-	dims.h = new_dims.h;
+	_parent->GetDims(new_dims);
+	_dims.w = new_dims.w;
+	_dims.h = new_dims.h;
 
-	dims.x -= dims.w / 2;
-	dims.y -= dims.h / 2;
+	_dims.x -= _dims.w / 2;
+	_dims.y -= _dims.h / 2;
 
 	Gump::RenderSurfaceChanged();
 }

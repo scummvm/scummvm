@@ -83,9 +83,9 @@ bool TargetGump::PointOnGump(int mx, int my) {
 void TargetGump::OnMouseUp(int button, int32 mx, int32 my) {
 	target_tracing = true;
 
-	parent->GumpToScreenSpace(mx, my);
+	_parent->GumpToScreenSpace(mx, my);
 
-	Gump *desktopgump = parent;
+	Gump *desktopgump = _parent;
 	ObjId objId_ = desktopgump->TraceObjId(mx, my);
 	Item *item = getItem(objId_);
 
@@ -94,7 +94,7 @@ void TargetGump::OnMouseUp(int button, int32 mx, int32 my) {
 		pout << "Target result: ";
 		item->dumpInfo();
 
-		process_result = objId_;
+		_processResult = objId_;
 		Close();
 	}
 

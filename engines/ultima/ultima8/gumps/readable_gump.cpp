@@ -68,8 +68,8 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 	ShapeFrame *sf = shape_->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->width;
+	_dims.h = sf->height;
 
 	if (CoreApp::get_instance()->getGameInfo()->language ==
 	        GameInfo::GAMELANG_JAPANESE) {
@@ -86,7 +86,7 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 		}
 	}
 
-	Gump *widget = new TextWidget(0, 0, text, true, fontnum, dims.w - 16, 0, Font::TEXT_CENTER);
+	Gump *widget = new TextWidget(0, 0, text, true, fontnum, _dims.w - 16, 0, Font::TEXT_CENTER);
 	widget->InitGump(this);
 	widget->setRelativePosition(CENTER);
 }

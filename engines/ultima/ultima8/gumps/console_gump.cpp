@@ -59,16 +59,16 @@ ConsoleGump::~ConsoleGump() {
 void ConsoleGump::RenderSurfaceChanged() {
 	// Resize the desktop gump to match the RenderSurface
 	Rect new_dims;
-	parent->GetDims(new_dims);
+	_parent->GetDims(new_dims);
 	con->CheckResize(new_dims.w);
-	dims.w = new_dims.w;
-	dims.h = new_dims.h;
+	_dims.w = new_dims.w;
+	_dims.h = new_dims.h;
 
 	Gump::RenderSurfaceChanged();
 }
 
 void ConsoleGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	int h = dims.h;
+	int h = _dims.h;
 	uint32 next_frame = scroll_frame + 1;
 	Gump::PaintThis(surf, lerp_factor, scaled);
 
@@ -99,18 +99,18 @@ void ConsoleGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 			h = (h * ((scroll_frame * (256 - lerp_factor))
 			          + (next_frame * lerp_factor))) >> 11;
 
-		if (h > dims.h)
-			h = dims.h;
+		if (h > _dims.h)
+			h = _dims.h;
 		else if (h < 0)
 			h = 0;
 	default:
 		break;
 	}
 
-	//surf->FillBlended(0x60000000,0,0,dims.w,h);
+	//surf->FillBlended(0x60000000,0,0,_dims.w,h);
 
 	// This line shows some draw lag when uncommented
-	//surf->Fill32(0x00FFFFFF,0,h-1,dims.w,h);
+	//surf->Fill32(0x00FFFFFF,0,h-1,_dims.w,h);
 	con->DrawConsole(surf, h);
 }
 

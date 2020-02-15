@@ -32,13 +32,13 @@ namespace Ultima8 {
 class UCList;
 
 class AskGump : public ItemRelativeGump {
-	UCList *answers;
+	UCList *_answers;
 public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	AskGump();
-	AskGump(uint16 owner_, UCList *answers_);
+	AskGump(uint16 owner, UCList *answers);
 	~AskGump() override;
 
 	// Init the gump, call after construction

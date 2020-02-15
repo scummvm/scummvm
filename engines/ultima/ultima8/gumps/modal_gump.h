@@ -35,7 +35,7 @@ public:
 
 	ModalGump();
 	ModalGump(int x, int y, int width, int height, uint16 owner = 0,
-	          uint32 _Flags = 0, int32 layer = LAYER_MODAL);
+	          uint32 flags = 0, int32 layer = LAYER_MODAL);
 
 	~ModalGump() override;
 

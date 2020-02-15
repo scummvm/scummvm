@@ -39,9 +39,9 @@ ItemRelativeGump::ItemRelativeGump()
 	: Gump(), ix(0), iy(0) {
 }
 
-ItemRelativeGump::ItemRelativeGump(int32 x_, int32 y_, int32 width, int32 height,
-                                   uint16 owner_, uint32 _Flags, int32 _Layer)
-	: Gump(x_, y_, width, height, owner_, _Flags, _Layer), ix(0), iy(0) {
+ItemRelativeGump::ItemRelativeGump(int32 x, int32 y, int32 width, int32 height,
+                                   uint16 owner, uint32 flags, int32 layer)
+	: Gump(x, y, width, height, owner, flags, layer), ix(0), iy(0) {
 }
 
 ItemRelativeGump::~ItemRelativeGump(void) {
@@ -52,25 +52,25 @@ void ItemRelativeGump::InitGump(Gump *newparent, bool take_focus) {
 
 	GetItemLocation(0);
 
-	if (!newparent && parent)
+	if (!newparent && _parent)
 		MoveOnScreen();
 }
 
 void ItemRelativeGump::MoveOnScreen() {
-	assert(parent);
+	assert(_parent);
 	Rect sd, gd;
-	parent->GetDims(sd);
+	_parent->GetDims(sd);
 
 	// first move back to our desired location
-	x = 0;
-	y = 0;
+	_x = 0;
+	_y = 0;
 
 	// get rectangle that gump occupies in scalerGump's coordinate space
 	int32 left, right, top, bottom;
-	left = -dims.x;
-	right = left + dims.w;
-	top = -dims.y;
-	bottom = top + dims.h;
+	left = -_dims.x;
+	right = left + _dims.w;
+	top = -_dims.y;
+	bottom = top + _dims.h;
 	GumpToParent(left, top);
 	GumpToParent(right, bottom);
 
@@ -117,7 +117,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	Item *prev = 0;
 	Gump *gump = 0;
 
-	it = getItem(owner);
+	it = getItem(_owner);
 
 	if (!it) {
 		// This shouldn't ever happen, the GumpNotifyProcess should
@@ -144,7 +144,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 			return;
 		}
 
-		gump->GetLocationOfItem(owner, gx, gy, lerp_factor);
+		gump->GetLocationOfItem(_owner, gx, gy, lerp_factor);
 	} else {
 		gump->GetLocationOfItem(prev->getObjId(), gx, gy, lerp_factor);
 	}
@@ -155,22 +155,22 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	gump->GumpToScreenSpace(gx, gy);
 
 	// Convert the screenspace coords into the coords of us
-	if (parent) parent->ScreenSpaceToGump(gx, gy);
+	if (_parent) _parent->ScreenSpaceToGump(gx, gy);
 
 	// Set x and y, and center us over it
-	ix = gx - dims.w / 2;
-//	iy = gy-dims.h-it->getShapeInfo()->z*8-16;
-	iy = gy - dims.h;
+	ix = gx - _dims.w / 2;
+//	iy = gy-_dims.h-it->getShapeInfo()->z*8-16;
+	iy = gy - _dims.h;
 
 
-	if (flags & FLAG_KEEP_VISIBLE)
+	if (_flags & FLAG_KEEP_VISIBLE)
 		MoveOnScreen();
 }
 
-void ItemRelativeGump::Move(int32 x_, int32 y_) {
-	ParentToGump(x_, y_);
-	x += x_;
-	y += y_;
+void ItemRelativeGump::Move(int32 x, int32 y) {
+	ParentToGump(x, y);
+	_x += x;
+	_y += y;
 }
 
 void ItemRelativeGump::saveData(ODataSource *ods) {

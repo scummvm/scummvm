@@ -95,8 +95,8 @@ void GameWidget::ChildNotify(Gump *child, uint32 message) {
 	        message == ButtonWidget::BUTTON_CLICK) {
 		int32 index_ = child->GetIndex();
 
-		if (parent)
-			parent->ChildNotify(this, static_cast<uint32>(index_));
+		if (_parent)
+			_parent->ChildNotify(this, static_cast<uint32>(index_));
 	}
 }
 
