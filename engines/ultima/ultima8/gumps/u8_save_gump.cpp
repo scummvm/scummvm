@@ -37,6 +37,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
+#include "common/savefile.h"
 #include "common/translation.h"
 
 namespace Ultima {
@@ -268,22 +269,13 @@ bool U8SaveGump::OnKeyDown(int key, int mod) {
 	return false;
 }
 
-Std::string U8SaveGump::getFilename(int index) {
-	return Std::string::format("@save/%d", index);
-}
-
 bool U8SaveGump::loadgame(int saveIndex) {
 	if (saveIndex == 1) {
-		Ultima8Engine::get_instance()->newGame(Std::string());
+		Ultima8Engine::get_instance()->newGame();
 		return true;
+	} else {
+		return Ultima8Engine::get_instance()->loadGameState(saveIndex).getCode() == Common::kNoError;
 	}
-
-	pout << "Load " << saveIndex << Std::endl;
-
-	Std::string filename = getFilename(saveIndex);
-	Ultima8Engine::get_instance()->loadGame(filename);
-
-	return true;
 }
 
 bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
@@ -291,22 +283,22 @@ bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
 
 	if (name.empty()) return false;
 
-	Std::string filename = getFilename(saveIndex);
-	Ultima8Engine::get_instance()->saveGame(filename, name, true);
+	Ultima8Engine::get_instance()->saveGame(saveIndex, name, true);
 	return true;
 }
 
 void U8SaveGump::loadDescriptions() {
-	descriptions.resize(6);
+	descriptions.resize( 6);
 
 	for (int i = 0; i < 6; ++i) {
 		int saveIndex = 6 * page + i + 1;
 
-		Std::string filename = getFilename(saveIndex);
-		IDataSource *ids = FileSystem::get_instance()->ReadFile(filename);
-		if (!ids) continue;
+		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+			Ultima8Engine::get_instance()->getSaveStateName(saveIndex));
+		if (!saveFile)
+			continue;
 
-		SavegameReader *sg = new SavegameReader(ids, true);
+		SavegameReader *sg = new SavegameReader(saveFile, true);
 		SavegameReader::State state = sg->isValid();
 		descriptions[i] = "";
 
@@ -325,6 +317,8 @@ void U8SaveGump::loadDescriptions() {
 			break;
 		}
 
+		if (state != SavegameReader::SAVE_VALID)
+			descriptions[i] += " ";
 		descriptions[i] += sg->getDescription();
 		delete sg;
 	}

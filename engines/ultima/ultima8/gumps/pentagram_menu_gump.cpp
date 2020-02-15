@@ -230,7 +230,7 @@ bool PentagramMenuGump::OnKeyDown(int key, int mod) {
 void PentagramMenuGump::ProcessCallback(Std::string gamename, int message) {
 	if (message != 0) {
 		SettingManager *settingman = SettingManager::get_instance();
-		settingman->set("lastSave", message != 1 ? U8SaveGump::getFilename(message) : Std::string());
+		settingman->set("lastSave", message != 1 ? message : -1);
 		Ultima8Engine::get_instance()->changeGame(gamename);
 	}
 

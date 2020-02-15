@@ -95,7 +95,7 @@ bool RemorseGame::startGame() {
 	return true;
 }
 
-bool RemorseGame::startInitialUsecode(const Std::string &) {
+bool RemorseGame::startInitialUsecode(int saveSlot) {
 //	Process* proc = new StartU8Process();
 //	Kernel::get_instance()->addProcess(proc);
 

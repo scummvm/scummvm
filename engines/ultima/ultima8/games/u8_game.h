@@ -38,7 +38,7 @@ public:
 	bool startGame() override;
 
 	//! start initial usecode
-	bool startInitialUsecode(const Std::string &savegame) override;
+	bool startInitialUsecode(int saveSlot) override;
 
 	//! write game-specific savegame info (avatar stats, equipment, ...)
 	void writeSaveInfo(ODataSource *ods) override;

@@ -43,7 +43,7 @@ SettingManager::SettingManager() {
 
 void SettingManager::setupScummVMSettings() {
 	conffileman->readConfigString("", "ScummVM", false);
-
+ 
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	if (saveSlot != -1)
 		set("lastSave", Std::string::format("@save/%d", saveSlot), DOM_SCUMMVM);

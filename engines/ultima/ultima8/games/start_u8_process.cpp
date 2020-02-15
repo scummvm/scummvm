@@ -41,8 +41,8 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process, Process)
 
-StartU8Process::StartU8Process(const Std::string &saveName) : Process(),
-		_init(false), _saveName(saveName), _skipStart(!saveName.empty()) {
+StartU8Process::StartU8Process(int saveSlot) : Process(),
+		_init(false), _saveSlot(saveSlot), _skipStart(saveSlot >= 0) {
 }
 
 
@@ -58,7 +58,7 @@ void StartU8Process::run() {
 	}
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid
-	if (!_saveName.empty() && Ultima8Engine::get_instance()->loadGame(_saveName)) {
+	if (_saveSlot >= 0 &&Ultima8Engine::get_instance()->loadGameState(_saveSlot).getCode() == Common::kNoError) {
 		return;
 	}
 

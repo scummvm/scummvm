@@ -49,8 +49,6 @@ public:
 	void ChildNotify(Gump *child, uint32 message) override;
 	void OnFocus(bool gain) override;
 
-	static Std::string getFilename(int index);
-
 	static Gump *showLoadSaveGump(Gump *parent, bool save);
 
 protected:

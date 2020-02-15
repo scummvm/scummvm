@@ -35,41 +35,37 @@ namespace Ultima8 {
 #define SAVEGAME_IDENT MKTAG('V', 'M', 'U', '8')
 #define SAVEGAME_VERSION 5
 
-SavegameReader::SavegameReader(IDataSource *ds, bool metadataOnly) : _file(ds), _version(0) {
-	if (!MetaEngine::readSavegameHeader(ds->GetRawStream(), &_header, false))
+SavegameReader::SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly) : _file(rs), _version(0) {
+	if (!MetaEngine::readSavegameHeader(rs, &_header))
 		return;
 
-	// Set total play time
-	g_engine->setTotalPlayTime(_header.playtime * 1000);
-
 	// Validate the identifier for a valid savegame
-	uint32 ident = ds->read4();
+	uint32 ident = _file->readUint32LE();
 	if (ident != SAVEGAME_IDENT)
 		return;
 
-	_version = ds->read4();
+	_version = _file->readUint32LE();
 	if (metadataOnly)
 		return;
 
 	// Load the index
-	uint count = ds->read2();
+	uint count = _file->readUint16LE();
 
 	for (uint idx = 0; idx < count; ++idx) {
 		char name[12];
-		ds->read(name, 12);
+		_file->read(name, 12);
 		name[11] = '\0';
 
 		FileEntry fe;
-		fe._size = ds->read4();
-		fe._offset = ds->getPos();
+		fe._size = _file->readUint32LE();
+		fe._offset = _file->pos();
 
 		_index[Common::String(name)] = fe;
-		ds->skip(fe._size);
+		_file->skip(fe._size);
 	}
 }
 
 SavegameReader::~SavegameReader() {
-	delete _file;
 }
 
 SavegameReader::State SavegameReader::isValid() const {
@@ -95,7 +91,7 @@ IDataSource *SavegameReader::getDataSource(const Std::string &name) {
 }
 
 
-SavegameWriter::SavegameWriter(ODataSource *ds) : _file(ds) {
+SavegameWriter::SavegameWriter(Common::WriteStream *ws) : _file(ws) {
 	assert(_file);
 }
 
@@ -104,11 +100,11 @@ SavegameWriter::~SavegameWriter() {
 
 bool SavegameWriter::finish() {
 	 // Write ident and savegame version
-	_file->write4(SAVEGAME_IDENT);
-	_file->write4(SAVEGAME_VERSION);
+	_file->writeUint32LE(SAVEGAME_IDENT);
+	_file->writeUint32LE(SAVEGAME_VERSION);
 
 	// Iterate through writing out the files
-	_file->write2(_index.size());
+	_file->writeUint16LE(_index.size());
 	for (uint idx = 0; idx < _index.size(); ++idx) {
 		// Set up a 12 byte space containing the resource name
 		FileEntry &fe = _index[idx];
@@ -118,15 +114,10 @@ bool SavegameWriter::finish() {
 
 		// Write out name, size, and data
 		_file->write(name, 12);
-		_file->write4(fe.size());
+		_file->writeUint32LE(fe.size());
 		_file->write(&fe[0], fe.size());
 	}
 	
-	// Handle adding savegame header
-	Common::OutSaveFile *dest = dynamic_cast<Common::OutSaveFile *>(_file->GetRawStream());
-	MetaEngine::appendExtendedSave(dest, Shared::g_ultima->getTotalPlayTime() / 1000, _description);
-	dest->finalize();
-
 	return true;
 }
 

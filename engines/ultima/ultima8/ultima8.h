@@ -325,31 +325,21 @@ public:
 	/**
 	 * Load a game state
 	 */
-	Common::Error loadGameState(int slot) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	/**
-	 * Save a game state.
-	 * @param slot	the slot into which the savestate should be stored
-	 * @param desc	a description for the savestate, entered by the user
-	 * @param isAutosave If true, autosave is being created
-	 * @return returns kNoError on success, else an error code.
+	 * Handles saving savegame state to a stream
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
 
 	//! save a game
 	//! \param filename the file to save to
 	//! \return true if succesful
-	bool saveGame(Std::string filename, Std::string desc,
-	              bool ignore_modals = false);
-
-	//! load a game
-	//! \param filename the savegame to load
-	//! \return true if succesful.
-	bool loadGame(Std::string filename);
+	bool saveGame(int slot, const Std::string &desc, bool ignore_modals = false);
 
 	//! start a new game
 	//! \return true if succesful.
-	bool newGame(const Std::string &savegame);
+	bool newGame(int saveSlot = -1);
 
 	//! Enter gump text mode (aka SDL Unicode keyhandling)
 	void enterTextMode(Gump *);

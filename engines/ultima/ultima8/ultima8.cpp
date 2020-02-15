@@ -553,11 +553,8 @@ void Ultima8Engine::startupGame() {
 	if (getGameInfo()->type == GameInfo::GAME_U8)
 		_audioMixer->openMidiOutput();
 
-	Std::string savegame;
-	settingman->setDefault("lastSave", "");
-	settingman->get("lastSave", savegame);
-
-	newGame(savegame);
+	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	newGame(saveSlot);
 
 	_consoleGump->HideConsole();
 
@@ -1314,13 +1311,7 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 	return true;
 }
 
-Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	return saveGame(Std::string::format("@save/%d", slot), desc) ?
-		Common::kNoError : Common::kWritingFailed;
-}
-
-bool Ultima8Engine::saveGame(Std::string filename, Std::string desc,
-	bool ignore_modals) {
+bool Ultima8Engine::saveGame(int slot, const Std::string &desc, bool ignore_modals) {
 	// Don't allow saving with Modals open
 	if (!ignore_modals && _desktopGump->FindGump<ModalGump>()) {
 		pout << "Can't save: modal gump open." << Std::endl;
@@ -1335,23 +1326,20 @@ bool Ultima8Engine::saveGame(Std::string filename, Std::string desc,
 		return false;
 	}
 
-	pout << "Saving..." << Std::endl;
+	settingman->set("lastSave", slot);
 
-	pout << "Savegame file: " << filename << Std::endl;
-	pout << "Description: " << desc << Std::endl;
+	return saveGameState(slot, desc).getCode() == Common::kNoError;
+}
 
+Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	// Hack - don't save mouse over status for gumps
 	Gump *gump = _mouse->getMouseOverGump();
 	if (gump)
 		gump->OnMouseLeft();
 
-	ODataSource *ods = filesystem->WriteFile(filename);
-	if (!ods) return false;
-
 	_saveCount++;
 
-	SavegameWriter *sgw = new SavegameWriter(ods);
-	sgw->writeDescription(desc);
+	SavegameWriter *sgw = new SavegameWriter(stream);
 
 	// We'll make it 2KB initially
 	OAutoBufferDataSource buf(2048);
@@ -1407,11 +1395,9 @@ bool Ultima8Engine::saveGame(Std::string filename, Std::string desc,
 	// Restore mouse over
 	if (gump) gump->OnMouseOver();
 
-	settingman->set("lastSave", filename);
-
 	pout << "Done" << Std::endl;
 
-	return true;
+	return Common::kNoError;
 }
 
 void Ultima8Engine::resetEngine() {
@@ -1498,7 +1484,7 @@ void Ultima8Engine::setupCoreGumps() {
 		_objectManager->reserveObjId(i);
 }
 
-bool Ultima8Engine::newGame(const Std::string &savegame) {
+bool Ultima8Engine::newGame(int saveSlot) {
 	con->Print(MM_INFO, "Starting New Game...\n");
 
 	resetEngine();
@@ -1529,9 +1515,9 @@ bool Ultima8Engine::newGame(const Std::string &savegame) {
 	//	av->teleport(54, 14783,5959,8); // shrine of the Ancient Ones; Hanoi
 	//	av->teleport(5, 5104,22464,48); // East road (tenebrae end)
 
-	_game->startInitialUsecode(savegame);
+	_game->startInitialUsecode(saveSlot);
 
-	settingman->set("lastSave", savegame);
+	settingman->set("lastSave", saveSlot);
 
 	return true;
 }
@@ -1546,35 +1532,21 @@ void Ultima8Engine::syncSoundSettings() {
 		midiPlayer->setVolume(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 }
 
-Common::Error Ultima8Engine::loadGameState(int slot) {
-	return loadGame(Std::string::format("@save/%d", slot)) ?
-		Common::kNoError : Common::kReadingFailed;
-}
-
-bool Ultima8Engine::loadGame(Std::string filename) {
-	con->Print(MM_INFO, "Loading...\n");
-
-	IDataSource *ids = filesystem->ReadFile(filename);
-	if (!ids) {
-		Error("Can't load file", "Error Loading savegame " + filename);
-		settingman->set("lastSave", "");
-		return false;
-	}
-
-	SavegameReader *sg = new SavegameReader(ids);
+Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) {
+	SavegameReader *sg = new SavegameReader(stream);
 	SavegameReader::State state = sg->isValid();
 	if (state == SavegameReader::SAVE_CORRUPT) {
-		Error("Invalid or corrupt savegame", "Error Loading savegame " + filename);
+		Error("Invalid or corrupt savegame", "Error Loading savegame");
 		delete sg;
 		settingman->set("lastSave", "");
-		return false;
+		return Common::kReadingFailed;
 	}
 
 	if (state != SavegameReader::SAVE_VALID) {
-		Error("Unsupported savegame version", "Error Loading savegame " + filename);
+		Error("Unsupported savegame version", "Error Loading savegame");
 		delete sg;
 		settingman->set("lastSave", "");
-		return false;
+		return Common::kReadingFailed;
 	}
 
 	IDataSource *ds;
@@ -1584,9 +1556,9 @@ bool Ultima8Engine::loadGame(Std::string filename) {
 	bool ok = saveinfo.load(ds, version);
 
 	if (!ok) {
-		Error("Invalid or corrupt savegame: missing GameInfo", "Error Loading savegame " + filename);
+		Error("Invalid or corrupt savegame: missing GameInfo", "Error Loading savegame");
 		delete sg;
-		return false;
+		return Common::kReadingFailed;
 	}
 
 	if (!gameinfo->match(saveinfo)) {
@@ -1607,8 +1579,8 @@ bool Ultima8Engine::loadGame(Std::string filename) {
 		perr << message << Std::endl;
 #else
 		settingman->set("lastSave", "");
-		Error(message, "Error Loading savegame " + filename);
-		return false;
+		Error(message, "Error Loading savegame");
+		return Common::kReadingFailed;
 #endif
 	}
 
@@ -1690,17 +1662,17 @@ bool Ultima8Engine::loadGame(Std::string filename) {
 	delete ds;
 
 	if (!totalok) {
-		Error(message, "Error Loading savegame " + filename, true);
+		Error(message, "Error Loading savegame", true);
 		delete sg;
-		return false;
+		return Common::kReadingFailed;
 	}
 
 	pout << "Done" << Std::endl;
 
-	settingman->set("lastSave", filename);
+	settingman->set("lastSave", -1);
 
 	delete sg;
-	return true;
+	return Common::kNoError;
 }
 
 void Ultima8Engine::Error(Std::string message, Std::string title, bool exit_to_menu) {
@@ -1811,7 +1783,7 @@ bool Ultima8Engine::load(IDataSource *ids, uint32 version) {
 void Ultima8Engine::ConCmd_saveGame(const Console::ArgvType &argv) {
 	if (argv.size() == 2) {
 		// Save a _game with the given name into the quicksave slot
-		Ultima8Engine::get_instance()->saveGame("@save/1", argv[1]);
+		Ultima8Engine::get_instance()->saveGame(1, argv[1]);
 	} else {
 		Ultima8Engine::get_instance()->saveGameDialog();
 	}
@@ -1821,14 +1793,14 @@ void Ultima8Engine::ConCmd_loadGame(const Console::ArgvType &argv) {
 	if (argv.size() == 2) {
 		// Load a _game from the quicksave slot. The second parameter is ignored,
 		// it just needs to be present to differentiate from showing the GUI load dialog
-		Ultima8Engine::get_instance()->loadGame("@save/1");
+		Ultima8Engine::get_instance()->loadGameState(1);
 	} else {
 		Ultima8Engine::get_instance()->loadGameDialog();
 	}
 }
 
 void Ultima8Engine::ConCmd_newGame(const Console::ArgvType &argv) {
-	Ultima8Engine::get_instance()->newGame(Std::string());
+	Ultima8Engine::get_instance()->newGame();
 }
 
 void Ultima8Engine::ConCmd_quit(const Console::ArgvType &argv) {
