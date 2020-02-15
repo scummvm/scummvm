@@ -36,8 +36,8 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GameWidget, Gump)
 
 
-GameWidget::GameWidget(int X, int Y, istring &game)
-	: Gump(X, Y, 443, 109), highlight(false) {
+GameWidget::GameWidget(int x, int y, istring &game)
+	: Gump(x, y, 443, 109), highlight(false) {
 	info = Ultima8Engine::get_instance()->getGameInfo(game);
 	assert(info);
 }

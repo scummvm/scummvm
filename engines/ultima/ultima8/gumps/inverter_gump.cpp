@@ -34,11 +34,11 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(InverterGump, DesktopGump)
 
 InverterGump::InverterGump(int32 x, int32 y, int32 width, int32 height)
 	: DesktopGump(x, y, width, height) {
-	buffer = 0;
+	_buffer = 0;
 }
 
 InverterGump::~InverterGump() {
-	delete buffer;
+	delete _buffer;
 }
 
 static inline int getLine(int index, int n) {
@@ -94,15 +94,15 @@ void InverterGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sc
 
 
 	// need a backbuffer
-	if (!buffer) {
-		buffer = RenderSurface::CreateSecondaryRenderSurface(width, height);
+	if (!_buffer) {
+		_buffer = RenderSurface::CreateSecondaryRenderSurface(width, height);
 	}
 
-	DesktopGump::PaintChildren(buffer, lerp_factor, scaled);
+	DesktopGump::PaintChildren(_buffer, lerp_factor, scaled);
 
-	Texture *tex = buffer->GetSurfaceAsTexture();
+	Texture *tex = _buffer->GetSurfaceAsTexture();
 
-	// now invert-blit buffer to screen
+	// now invert-blit _buffer to screen
 	int t = (state * height) / 0x10000;
 
 	for (int i = 0; i < height; ++i) {
@@ -132,7 +132,7 @@ void InverterGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir) {
 
 void InverterGump::RenderSurfaceChanged() {
 	DesktopGump::RenderSurfaceChanged();
-	FORGET_OBJECT(buffer);
+	FORGET_OBJECT(_buffer);
 }
 
 } // End of namespace Ultima8

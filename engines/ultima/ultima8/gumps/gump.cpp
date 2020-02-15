@@ -43,10 +43,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Gump, Object)
 Gump::Gump() : Object(), _parent(0), _children() {
 }
 
-Gump::Gump(int inX, int inY, int Width, int Height, uint16 inOwner,
+Gump::Gump(int inX, int inY, int width, int height, uint16 inOwner,
            uint32 inFlags, int32 inLayer) :
 	Object(), _owner(inOwner), _parent(0), _x(inX), _y(inY),
-	_dims(0, 0, Width, Height), _flags(inFlags), _layer(inLayer), _index(-1),
+	_dims(0, 0, width, height), _flags(inFlags), _layer(inLayer), _index(-1),
 	_shape(0), _frameNum(0), _children(), _focusChild(0), _notifier(0),
 	_processResult(0) {
 	assignObjId(); // gumps always get an objid

@@ -35,7 +35,7 @@ class CameraProcess;
 
 class GameMapGump : public Gump {
 protected:
-	ItemSorter      *display_list;
+	ItemSorter *_displayList;
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -77,11 +77,11 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 
-	static void         SetHighlightItems(bool highlight) {
-		highlightItems = highlight;
+	static void Set_highlightItems(bool highlight) {
+		_highlightItems = highlight;
 	}
-	static bool         isHighlightItems() {
-		return highlightItems;
+	static bool is_highlightItems() {
+		return _highlightItems;
 	}
 
 	static void ConCmd_toggleHighlightItems(const Console::ArgvType &argv);
@@ -95,14 +95,13 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	bool display_dragging;
-	uint32 dragging_shape;
-	uint32 dragging_frame;
-	uint32 dragging_flags;
-	int32 dragging_pos[3];
+	bool _displayDragging;
+	uint32 _draggingShape;
+	uint32 _draggingFrame;
+	uint32 _draggingFlags;
+	int32 _draggingPos[3];
 
-	static bool highlightItems;
-
+	static bool _highlightItems;
 };
 
 } // End of namespace Ultima8

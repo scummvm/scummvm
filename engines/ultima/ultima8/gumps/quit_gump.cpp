@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
-
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -31,7 +30,6 @@
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -86,7 +84,7 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	widget = new ButtonWidget(0, 0, yesbutton_up, yesbutton_down);
 	widget->InitGump(this);
 	widget->setRelativePosition(TOP_LEFT, 16, 38);
-	yesWidget = widget->getObjId();
+	_yesWidget = widget->getObjId();
 
 	FrameID nobutton_up(GameData::GUMPS, noShapeId, 0);
 	FrameID nobutton_down(GameData::GUMPS, noShapeId, 1);
@@ -96,7 +94,7 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	widget = new ButtonWidget(0, 0, nobutton_up, nobutton_down);
 	widget->InitGump(this);
 	widget->setRelativePosition(TOP_RIGHT, -16, 38);
-	noWidget = widget->getObjId();
+	_noWidget = widget->getObjId();
 }
 
 
@@ -120,9 +118,9 @@ bool QuitGump::OnKeyDown(int key, int mod) {
 void QuitGump::ChildNotify(Gump *child, uint32 message) {
 	ObjId cid = child->getObjId();
 	if (message == ButtonWidget::BUTTON_CLICK) {
-		if (cid == yesWidget) {
+		if (cid == _yesWidget) {
 			Ultima8Engine::get_instance()->ForceQuit();
-		} else if (cid == noWidget) {
+		} else if (cid == _noWidget) {
 			Close();
 		}
 	}

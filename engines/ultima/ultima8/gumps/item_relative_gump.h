@@ -31,14 +31,14 @@ namespace Ultima8 {
 
 class ItemRelativeGump : public Gump {
 protected:
-	int32 ix, iy;
+	int32 _ix, _iy;
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ItemRelativeGump();
 	ItemRelativeGump(int32 x, int32 y, int32 width, int32 height, uint16 owner, uint32 flags = 0, int32 layer = LAYER_NORMAL);
-	~ItemRelativeGump(void) override;
+	~ItemRelativeGump() override;
 
 	void        InitGump(Gump *newparent, bool take_focus = true) override;
 

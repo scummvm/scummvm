@@ -35,16 +35,16 @@ struct Texture;
 
 class PentagramMenuGump : public ModalGump {
 	class PentagramMenuCallbackProcess : public Process {
-		Std::string game;
+		Std::string _game;
 	public:
-		PentagramMenuCallbackProcess(ObjId id, Std::string game_) : Process(id), game(game_) {
+		PentagramMenuCallbackProcess(ObjId id, const Std::string &game) : Process(id), _game(game) {
 			flags |= PROC_RUNPAUSED;
 		}
 
 		void run() override {
 			pout << "Gump returned: " << result << Std::endl;
 			PentagramMenuGump *menu = p_dynamic_cast<PentagramMenuGump *>(ObjectManager::get_instance()->getObject(getItemNum()));
-			if (menu) menu->ProcessCallback(game, result);
+			if (menu) menu->ProcessCallback(_game, result);
 			terminate();
 		}
 	};
@@ -82,27 +82,25 @@ public:
 #endif
 
 	Texture *getCovers() const {
-		return coversImage;
+		return _coversImage;
 	}
 	Texture *getFlags() const {
-		return flagsImage;
+		return _flagsImage;
 	}
 
 private:
+	int _gameScrollPos;
+	int _gameScrollTarget;
+	int _gameScrollLastDelta;
 
-	int gameScrollPos;
-	int gameScrollTarget;
-	int gameScrollLastDelta;
+	int _gameCount;
 
-	int gamecount;
-
-	Texture *titleImage;
-	Texture *navbarImage;
-	Texture *coversImage;
-	Texture *flagsImage;
+	Texture *_titleImage;
+	Texture *_navbarImage;
+	Texture *_coversImage;
+	Texture *_flagsImage;
 
 	void ProcessCallback(Std::string gamename, int message);
-
 };
 
 } // End of namespace Ultima8

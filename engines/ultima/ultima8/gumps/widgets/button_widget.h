@@ -36,12 +36,12 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ButtonWidget();
-	ButtonWidget(int X, int Y, Std::string txt, bool gamefont, int font,
+	ButtonWidget(int x, int y, Std::string txt, bool gamefont, int font,
 	             uint32 mouseOverBlendCol = 0, int width = 0, int height = 0,
 	             int32 layer = LAYER_NORMAL);
-	ButtonWidget(int X, int Y, FrameID frame_up, FrameID frame_down,
+	ButtonWidget(int x, int y, FrameID frame_up, FrameID frame_down,
 	             bool mouseOver = false, int32 layer = LAYER_NORMAL);
-	~ButtonWidget(void) override;
+	~ButtonWidget() override;
 
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	uint16 TraceObjId(int32 mx, int32 my) override;

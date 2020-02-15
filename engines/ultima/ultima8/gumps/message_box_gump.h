@@ -33,10 +33,10 @@ namespace Ultima {
 namespace Ultima8 {
 
 class MessageBoxGump : public ModalGump {
-	Std::string title;
-	Std::string message;
-	Std::vector<Std::string> buttons;
-	int title_colour;
+	Std::string _title;
+	Std::string _message;
+	Std::vector<Std::string> _buttons;
+	int _titleColour;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 

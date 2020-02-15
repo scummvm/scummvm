@@ -38,7 +38,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MainMenuProcess, Process)
 
 MainMenuProcess::MainMenuProcess() : Process() {
-	init = false;
+	_init = false;
 }
 
 

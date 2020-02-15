@@ -39,10 +39,10 @@ public:
 	ContainerGump();
 	ContainerGump(Shape *shape, uint32 frameNum, uint16 owner,
 	              uint32 flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
-	~ContainerGump(void) override;
+	~ContainerGump() override;
 
-	void setItemArea(Rect *itemarea_) {
-		itemarea = *itemarea_;
+	void setItemArea(Rect *itemArea) {
+		_itemArea = *itemArea;
 	}
 
 	// Close the gump
@@ -83,12 +83,12 @@ protected:
 
 	void getItemCoords(Item *item, int32 &itemx, int32 &itemy);
 
-	Rect itemarea;
+	Rect _itemArea;
 
-	bool display_dragging;
-	uint32 dragging_shape;
-	uint32 dragging_frame;
-	uint32 dragging_flags;
+	bool _displayDragging;
+	uint32 _draggingShape;
+	uint32 _draggingFrame;
+	uint32 _draggingFlags;
 	int32 dragging_x, dragging_y;
 };
 

@@ -38,9 +38,9 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget, Gump)
 
-EditWidget::EditWidget(int X, int Y, Std::string txt, bool gamefont_, int font,
+EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont_, int font,
                        int w, int h, unsigned int maxlength_, bool multiline_)
-	: Gump(X, Y, w, h), text(txt), gamefont(gamefont_), fontnum(font),
+	: Gump(x, y, w, h), text(txt), gamefont(gamefont_), fontnum(font),
 	  maxlength(maxlength_), multiline(multiline_),
 	  cursor_changed(0), cursor_visible(true), cached_text(0) {
 	cursor = text.size();

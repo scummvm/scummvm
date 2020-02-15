@@ -40,10 +40,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump, Gump)
 
 MiniMapGump::MiniMapGump(int x_, int y_) :
 	Gump(x_, y_, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
-	     FLAG_DRAGGABLE, LAYER_NORMAL), minimap(), lastMapNum(0) {
-	minimap.format = TEX_FMT_NATIVE;
-	minimap.width = minimap.height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
-	minimap.buffer = texbuffer[0];
+	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimap(), _lastMapNum(0) {
+	_minimap.format = TEX_FMT_NATIVE;
+	_minimap.width = _minimap.height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
+	_minimap.buffer = texbuffer[0];
 
 	con->AddConsoleCommand("MiniMapGump::generateWholeMap",
 	                      MiniMapGump::ConCmd_generateWholeMap);
@@ -62,9 +62,9 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	CurrentMap *currentmap = world->getCurrentMap();
 	int mapChunkSize = currentmap->getChunkSize();
 
-	if (currentmap->getNum() != lastMapNum) {
+	if (currentmap->getNum() != _lastMapNum) {
 		Std::memset(texbuffer, 0, sizeof(texbuffer));
-		lastMapNum = currentmap->getNum();
+		_lastMapNum = currentmap->getNum();
 	}
 
 	surf->Fill32(0xFFFFAF00, 0, 0, MAP_NUM_CHUNKS * 2 + 1, 1);
@@ -117,7 +117,7 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		surf->Fill32(0, 1, 1 + (MAP_NUM_CHUNKS * 2) - ly, MAP_NUM_CHUNKS * 2, ly);
 	}
 
-	surf->Blit(&minimap, sx + ox, sy + oy, MAP_NUM_CHUNKS * 2 - (ox + lx), MAP_NUM_CHUNKS * 2 - (oy + ly), 1 + ox, 1 + oy);
+	surf->Blit(&_minimap, sx + ox, sy + oy, MAP_NUM_CHUNKS * 2 - (ox + lx), MAP_NUM_CHUNKS * 2 - (oy + ly), 1 + ox, 1 + oy);
 
 	surf->Fill32(0xFFFFFF00, 1 + ax - 2, 1 + ay + 0, 2, 1);
 	surf->Fill32(0xFFFFFF00, 1 + ax + 0, 1 + ay - 2, 1, 2);
@@ -206,10 +206,10 @@ void MiniMapGump::saveData(ODataSource *ods) {
 bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
 	if (!Gump::loadData(ids, version)) return false;
 
-	lastMapNum = 0;
-	minimap.format = TEX_FMT_NATIVE;
-	minimap.width = minimap.height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
-	minimap.buffer = texbuffer[0];
+	_lastMapNum = 0;
+	_minimap.format = TEX_FMT_NATIVE;
+	_minimap.width = _minimap.height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
+	_minimap.buffer = texbuffer[0];
 
 	con->AddConsoleCommand("MiniMapGump::generateWholeMap",
 	                      MiniMapGump::ConCmd_generateWholeMap);

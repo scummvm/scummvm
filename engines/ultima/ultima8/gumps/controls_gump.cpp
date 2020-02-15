@@ -44,7 +44,7 @@ class ControlEntryGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 	ControlEntryGump(int x_, int y_, int width, const char *binding, const char *name);
-	~ControlEntryGump(void) override;
+	~ControlEntryGump() override;
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	void ChildNotify(Gump *child, uint32 message) override;
 	void init();
@@ -135,12 +135,12 @@ void ControlsGump::InitGump(Gump *newparent, bool take_focus) {
 	widget->InitGump(this, false);
 }
 
-void ControlsGump::addEntry(const char *binding, const char *name, int &x_, int &y_) {
+void ControlsGump::addEntry(const char *binding, const char *name, int &x, int &y) {
 	Rect rect;
-	Gump *widget = new ControlEntryGump(x_, y_, _dims.w - x_, binding, name);
+	Gump *widget = new ControlEntryGump(x, y, _dims.w - x, binding, name);
 	widget->InitGump(this);
 	widget->GetDims(rect);
-	y_ += rect.h;
+	y += rect.h;
 }
 
 void ControlsGump::ChildNotify(Gump *child, uint32 message) {

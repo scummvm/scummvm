@@ -39,8 +39,8 @@ class ConsoleGump : public Gump {
 		SCROLLING_TO_SHOW
 	};
 
-	ConsoleScrollState  scroll_state;
-	uint32 scroll_frame;
+	ConsoleScrollState  _scrollState;
+	uint32 _scrollFrame;
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

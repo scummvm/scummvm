@@ -39,7 +39,7 @@ public:
 	SliderGump();
 	SliderGump(int x, int y, int16 min, int16 max,
 	           int16 value, int16 delta = 1);
-	~SliderGump(void) override;
+	~SliderGump() override;
 
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
@@ -59,15 +59,15 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	int16 min;
-	int16 max;
-	int16 delta;
-	int16 value;
+	int16 _min;
+	int16 _max;
+	int16 _delta;
+	int16 _value;
 
-	uint16 usecodeNotifyPID;
+	uint16 _usecodeNotifyPID;
 
-	int16 renderedvalue;
-	RenderedText *renderedtext;
+	int16 _renderedValue;
+	RenderedText *_renderedText;
 
 	int getSliderPos();
 	void setSliderPos();

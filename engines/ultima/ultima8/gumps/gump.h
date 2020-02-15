@@ -144,7 +144,7 @@ public:
 	//! Close item-dependent gumps (recursively).
 	//! Called when there is a map change (so the gumps can self terminate
 	//! among other things), or when backspace is pressed by the user.
-	virtual void        CloseItemDependents(void);
+	virtual void        CloseItemDependents();
 
 	//! Paint the Gump (RenderSurface is relative to parent).
 	//! Calls PaintThis and PaintChildren

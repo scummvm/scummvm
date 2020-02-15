@@ -55,10 +55,10 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	TextWidget();
-	TextWidget(int X, int Y, Std::string txt, bool gamefont, int fontnum,
+	TextWidget(int x, int y, Std::string txt, bool gamefont, int fontnum,
 	           int width = 0, int height = 0,
 	           Font::TextAlign align = Font::TEXT_LEFT);
-	~TextWidget(void) override;
+	~TextWidget() override;
 
 	// Init the gump, call after construction
 	void            InitGump(Gump *newparent, bool take_focus = true) override;

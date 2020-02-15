@@ -30,13 +30,13 @@ namespace Ultima {
 namespace Ultima8 {
 
 class DesktopGump : public Gump {
-	static bool faded_modal;
+	static bool _fadedModal;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	DesktopGump();
 	DesktopGump(int32 x, int32 y, int32 width, int32 height);
-	~DesktopGump(void) override;
+	~DesktopGump() override;
 
 	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
@@ -50,7 +50,7 @@ public:
 	void RenderSurfaceChanged(RenderSurface *surf);
 
 	static void SetFadedModal(bool set) {
-		faded_modal = set;
+		_fadedModal = set;
 	}
 
 protected:

@@ -42,7 +42,7 @@ public:
 	ShapeViewerGump(int width, int height,
 	                Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
 	                uint32 flags = 0, int32 layer = LAYER_MODAL);
-	~ShapeViewerGump(void) override;
+	~ShapeViewerGump() override;
 
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 

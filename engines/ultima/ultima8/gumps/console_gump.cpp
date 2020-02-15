@@ -26,7 +26,6 @@
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
-
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
@@ -34,22 +33,19 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ConsoleGump, Gump)
 
-ConsoleGump::ConsoleGump()
-	: Gump() {
-	con->AddConsoleCommand("ConsoleGump::toggle",
-	                      ConsoleGump::ConCmd_toggle);
+ConsoleGump::ConsoleGump() : Gump() {
+	con->AddConsoleCommand("ConsoleGump::toggle", ConsoleGump::ConCmd_toggle);
 }
 
-ConsoleGump::ConsoleGump(int X, int Y, int Width, int Height) :
-	Gump(X, Y, Width, Height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP, LAYER_CONSOLE),
-	scroll_state(NORMAL_DISPLAY), scroll_frame(8) {
+ConsoleGump::ConsoleGump(int x, int y, int width, int height) :
+	Gump(x, y, width, height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP, LAYER_CONSOLE),
+	_scrollState(NORMAL_DISPLAY), _scrollFrame(8) {
 	con->ClearCommandBuffer();
 
 	// Resize it
-	con->CheckResize(Width);
+	con->CheckResize(width);
 
-	con->AddConsoleCommand("ConsoleGump::toggle",
-	                      ConsoleGump::ConCmd_toggle);
+	con->AddConsoleCommand("ConsoleGump::toggle", ConsoleGump::ConCmd_toggle);
 }
 
 ConsoleGump::~ConsoleGump() {
@@ -69,10 +65,10 @@ void ConsoleGump::RenderSurfaceChanged() {
 
 void ConsoleGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	int h = _dims.h;
-	uint32 next_frame = scroll_frame + 1;
+	uint32 next_frame = _scrollFrame + 1;
 	Gump::PaintThis(surf, lerp_factor, scaled);
 
-	switch (scroll_state) {
+	switch (_scrollState) {
 	case NOTIFY_OVERLAY:
 #ifdef DEBUG
 		con->DrawConsoleNotify(surf);
@@ -82,10 +78,10 @@ void ConsoleGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		return;
 
 	case SCROLLING_TO_HIDE:
-		if (scroll_frame == 0)
+		if (_scrollFrame == 0)
 			return;
 		// Just reverse next_frame and fall through
-		next_frame = scroll_frame - 1;
+		next_frame = _scrollFrame - 1;
 	case SCROLLING_TO_SHOW:
 		if (next_frame > 8)
 			break;
@@ -94,9 +90,9 @@ void ConsoleGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		if (lerp_factor == 256)
 			h = (h * next_frame) >> 3;
 		else if (lerp_factor == 0)
-			h = (h * scroll_frame) >> 3;
+			h = (h * _scrollFrame) >> 3;
 		else
-			h = (h * ((scroll_frame * (256 - lerp_factor))
+			h = (h * ((_scrollFrame * (256 - lerp_factor))
 			          + (next_frame * lerp_factor))) >> 11;
 
 		if (h > _dims.h)
@@ -115,23 +111,23 @@ void ConsoleGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 }
 
 void ConsoleGump::ToggleConsole() {
-	switch (scroll_state) {
+	switch (_scrollState) {
 	case WAITING_TO_HIDE:
 	case SCROLLING_TO_HIDE:
-		scroll_state = SCROLLING_TO_SHOW;
+		_scrollState = SCROLLING_TO_SHOW;
 		break;
 
 	case NOTIFY_OVERLAY:
-		scroll_state = WAITING_TO_SHOW;
+		_scrollState = WAITING_TO_SHOW;
 		break;
 
 	case WAITING_TO_SHOW:
 	case SCROLLING_TO_SHOW:
-		scroll_state = SCROLLING_TO_HIDE;
+		_scrollState = SCROLLING_TO_HIDE;
 		break;
 
 	case NORMAL_DISPLAY:
-		scroll_state = WAITING_TO_HIDE;
+		_scrollState = WAITING_TO_HIDE;
 		Ultima8Engine::get_instance()->leaveTextMode(this);
 		con->ClearCommandBuffer();
 		break;
@@ -143,14 +139,14 @@ void ConsoleGump::ToggleConsole() {
 
 
 void ConsoleGump::HideConsole() {
-	switch (scroll_state) {
+	switch (_scrollState) {
 	case WAITING_TO_SHOW:
 	case SCROLLING_TO_SHOW:
-		scroll_state = SCROLLING_TO_HIDE;
+		_scrollState = SCROLLING_TO_HIDE;
 		break;
 
 	case NORMAL_DISPLAY:
-		scroll_state = WAITING_TO_HIDE;
+		_scrollState = WAITING_TO_HIDE;
 		Ultima8Engine::get_instance()->leaveTextMode(this);
 		con->ClearCommandBuffer();
 		break;
@@ -162,14 +158,14 @@ void ConsoleGump::HideConsole() {
 
 
 void ConsoleGump::ShowConsole() {
-	switch (scroll_state) {
+	switch (_scrollState) {
 	case WAITING_TO_HIDE:
 	case SCROLLING_TO_HIDE:
-		scroll_state = SCROLLING_TO_SHOW;
+		_scrollState = SCROLLING_TO_SHOW;
 		break;
 
 	case NOTIFY_OVERLAY:
-		scroll_state = WAITING_TO_SHOW;
+		_scrollState = WAITING_TO_SHOW;
 		break;
 
 	default:
@@ -178,7 +174,7 @@ void ConsoleGump::ShowConsole() {
 }
 
 bool ConsoleGump::ConsoleIsVisible() {
-	return scroll_state != NOTIFY_OVERLAY;
+	return _scrollState != NOTIFY_OVERLAY;
 }
 
 void ConsoleGump::run() {
@@ -186,31 +182,31 @@ void ConsoleGump::run() {
 
 	con->setFrameNum(Kernel::get_instance()->getFrameNum());
 
-	switch (scroll_state) {
+	switch (_scrollState) {
 	case WAITING_TO_HIDE:
-		scroll_state = SCROLLING_TO_HIDE;
+		_scrollState = SCROLLING_TO_HIDE;
 		break;
 
 	case SCROLLING_TO_HIDE:
-		if (scroll_frame > 0) {
-			--scroll_frame;
+		if (_scrollFrame > 0) {
+			--_scrollFrame;
 			break;
 		}
-		scroll_frame = 0;
-		scroll_state = NOTIFY_OVERLAY;
+		_scrollFrame = 0;
+		_scrollState = NOTIFY_OVERLAY;
 		break;
 
 	case WAITING_TO_SHOW:
-		scroll_state = SCROLLING_TO_SHOW;
+		_scrollState = SCROLLING_TO_SHOW;
 		break;
 
 	case SCROLLING_TO_SHOW:
-		if (scroll_frame < 8) {
-			++scroll_frame;
+		if (_scrollFrame < 8) {
+			++_scrollFrame;
 			break;
 		}
-		scroll_frame = 8;
-		scroll_state = NORMAL_DISPLAY;
+		_scrollFrame = 8;
+		_scrollState = NORMAL_DISPLAY;
 		Ultima8Engine::get_instance()->enterTextMode(this);
 		con->ClearCommandBuffer();
 		break;
@@ -237,7 +233,7 @@ bool ConsoleGump::loadData(IDataSource *ids, uint32 version) {
 
 bool ConsoleGump::OnTextInput(int unicode) {
 	bool handled = false;
-	if (scroll_state == NORMAL_DISPLAY) {
+	if (_scrollState == NORMAL_DISPLAY) {
 
 		con->AddCharacterToCommandBuffer(unicode);
 		handled = true;
@@ -248,7 +244,7 @@ bool ConsoleGump::OnTextInput(int unicode) {
 
 bool ConsoleGump::OnKeyDown(int key, int mod) {
 	bool handled = false;
-	if (scroll_state == NORMAL_DISPLAY) {
+	if (_scrollState == NORMAL_DISPLAY) {
 		switch (key) {
 		// Command completion
 		case Common::KEYCODE_TAB:
@@ -323,7 +319,7 @@ bool ConsoleGump::OnKeyDown(int key, int mod) {
 
 void ConsoleGump::OnFocus(bool gain) {
 	/*
-	if (scroll_state == NORMAL_DISPLAY) {
+	if (_scrollState == NORMAL_DISPLAY) {
 	    if (gain)
 	        Ultima8Engine::get_instance()->enterTextMode(this);
 	    else

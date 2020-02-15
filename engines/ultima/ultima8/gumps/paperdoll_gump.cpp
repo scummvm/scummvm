@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/paperdoll_gump.h"
-
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/shape_info.h"
@@ -38,7 +37,6 @@
 #include "ultima/ultima8/gumps/mini_stats_gump.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -85,8 +83,8 @@ static const int statbuttonx = 81;
 static const int statbuttony = 84;
 
 
-PaperdollGump::PaperdollGump() : ContainerGump(), statbuttongid(0),
-		backpack_rect(49, 25, 10, 25) {
+PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
+		_backpackRect(49, 25, 10, 25) {
 	Common::fill(cached_text, cached_text + 14, (RenderedText *)nullptr);
 	Common::fill(cached_val, cached_val + 7, 0);
 }
@@ -94,8 +92,8 @@ PaperdollGump::PaperdollGump() : ContainerGump(), statbuttongid(0),
 PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
 		uint32 Flags, int32 layer)
 		: ContainerGump(shape_, frameNum, owner, Flags, layer),
-		statbuttongid(0), backpack_rect(49, 25, 10, 25) {
-	statbuttongid = 0;
+		_statButtonId(0), _backpackRect(49, 25, 10, 25) {
+	_statButtonId = 0;
 
 	Common::fill(cached_text, cached_text + 14, (RenderedText *)nullptr);
 	Common::fill(cached_val, cached_val + 7, 0);
@@ -116,7 +114,7 @@ void PaperdollGump::InitGump(Gump *newparent, bool take_focus) {
 
 	Gump *widget = new ButtonWidget(statbuttonx, statbuttony,
 	                                button_up, button_down);
-	statbuttongid = widget->getObjId();
+	_statButtonId = widget->getObjId();
 	widget->InitGump(this);
 }
 
@@ -206,21 +204,21 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 		itemx = equipcoords[i].x;
 		itemy = equipcoords[i].y;
-		itemx += itemarea.x;
-		itemy += itemarea.y;
+		itemx += _itemArea.x;
+		itemy += _itemArea.y;
 		Shape *s = item->getShapeObject();
 		assert(s);
 		surf->Paint(s, frame, itemx, itemy);
 	}
 
-	if (display_dragging) {
+	if (_displayDragging) {
 		int32 itemx, itemy;
-		itemx = dragging_x + itemarea.x;
-		itemy = dragging_y + itemarea.y;
+		itemx = dragging_x + _itemArea.x;
+		itemy = dragging_y + _itemArea.y;
 		Shape *s = GameData::get_instance()->getMainShapes()->
-		           getShape(dragging_shape);
+		           getShape(_draggingShape);
 		assert(s);
-		surf->PaintInvisible(s, dragging_frame, itemx, itemy, false, (dragging_flags & Item::FLG_FLIPPED) != 0);
+		surf->PaintInvisible(s, _draggingFrame, itemx, itemy, false, (_draggingFlags & Item::FLG_FLIPPED) != 0);
 	}
 }
 
@@ -243,8 +241,8 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 
 		itemx = equipcoords[i].x;
 		itemy = equipcoords[i].y;
-		itemx += itemarea.x;
-		itemy += itemarea.y;
+		itemx += _itemArea.x;
+		itemy += _itemArea.y;
 		Shape *s = item->getShapeObject();
 		assert(s);
 		ShapeFrame *frame = s->getFrame(item->getFrame() + 1);
@@ -256,7 +254,7 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 	}
 
 	// try backpack
-	if (backpack_rect.InRect(mx - itemarea.x, my - itemarea.y)) {
+	if (_backpackRect.InRect(mx - _itemArea.x, my - _itemArea.y)) {
 		if (a->getEquip(7)) // constants
 			return a->getEquip(7);
 	}
@@ -277,16 +275,16 @@ bool PaperdollGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	//!!! need to use lerp_factor
 
 	if (item->getShape() == 529) { //!! constant
-		gx = backpack_rect.x;
-		gy = backpack_rect.y;
+		gx = _backpackRect.x;
+		gy = _backpackRect.y;
 	} else {
 		int equiptype = item->getZ();
 		assert(equiptype >= 0 && equiptype <= 6); //!! constants
 		gx = equipcoords[equiptype].x;
 		gy = equipcoords[equiptype].y;
 	}
-	gx += itemarea.x;
-	gy += itemarea.y;
+	gx += _itemArea.x;
+	gy += _itemArea.y;
 
 	return true;
 }
@@ -313,8 +311,8 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 
 
 bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
-	if (!itemarea.InRect(mx, my)) {
-		display_dragging = false;
+	if (!_itemArea.InRect(mx, my)) {
+		_displayDragging = false;
 		return false;
 	}
 
@@ -324,45 +322,45 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 	bool over_backpack = false;
 	Container *backpack = getContainer(a->getEquip(7)); // constant!
 
-	if (backpack && backpack_rect.InRect(mx - itemarea.x, my - itemarea.y)) {
+	if (backpack && _backpackRect.InRect(mx - _itemArea.x, my - _itemArea.y)) {
 		over_backpack = true;
 	}
 
-	display_dragging = true;
+	_displayDragging = true;
 
-	dragging_shape = item->getShape();
-	dragging_frame = item->getFrame();
-	dragging_flags = item->getFlags();
+	_draggingShape = item->getShape();
+	_draggingFrame = item->getFrame();
+	_draggingFlags = item->getFlags();
 
 	int equiptype = item->getShapeInfo()->equiptype;
 	// determine target location and set dragging_x/y
 	if (!over_backpack && equiptype) {
 		// check if item will fit (weight/volume/etc...)
 		if (!a->CanAddItem(item, true)) {
-			display_dragging = false;
+			_displayDragging = false;
 			return false;
 		}
 
-		dragging_frame++;
+		_draggingFrame++;
 		dragging_x = equipcoords[equiptype].x;
 		dragging_y = equipcoords[equiptype].y;
 	} else {
 		// drop in backpack
 
 		if (!backpack->CanAddItem(item, true)) {
-			display_dragging = false;
+			_displayDragging = false;
 			return false;
 		}
 
-		dragging_x = backpack_rect.x + backpack_rect.w / 2;
-		dragging_y = backpack_rect.y + backpack_rect.h / 2;
+		dragging_x = _backpackRect.x + _backpackRect.w / 2;
+		dragging_y = _backpackRect.y + _backpackRect.h / 2;
 	}
 
 	return true;
 }
 
 void PaperdollGump::DropItem(Item *item, int mx, int my) {
-	display_dragging = false;
+	_displayDragging = false;
 
 	Actor *a = getActor(_owner);
 	assert(a);
@@ -370,7 +368,7 @@ void PaperdollGump::DropItem(Item *item, int mx, int my) {
 	bool over_backpack = false;
 	Container *backpack = getContainer(a->getEquip(7)); // constant!
 
-	if (backpack && backpack_rect.InRect(mx - itemarea.x, my - itemarea.y)) {
+	if (backpack && _backpackRect.InRect(mx - _itemArea.x, my - _itemArea.y)) {
 		over_backpack = true;
 	}
 
@@ -384,7 +382,7 @@ void PaperdollGump::DropItem(Item *item, int mx, int my) {
 }
 
 void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
-	if (child->getObjId() == statbuttongid &&
+	if (child->getObjId() == _statButtonId &&
 	        message == ButtonWidget::BUTTON_CLICK) {
 		// check if there already is an open MiniStatsGump
 		Gump *desktop = Ultima8Engine::get_instance()->getDesktopGump();
@@ -415,13 +413,13 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 void PaperdollGump::saveData(ODataSource *ods) {
 	ContainerGump::saveData(ods);
 
-	ods->write2(statbuttongid);
+	ods->write2(_statButtonId);
 }
 
 bool PaperdollGump::loadData(IDataSource *ids, uint32 version) {
 	if (!ContainerGump::loadData(ids, version)) return false;
 
-	statbuttongid = ids->read2();
+	_statButtonId = ids->read2();
 
 	return true;
 }

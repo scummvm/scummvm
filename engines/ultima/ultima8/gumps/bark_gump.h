@@ -31,19 +31,19 @@ namespace Ultima8 {
 
 class BarkGump : public ItemRelativeGump {
 protected:
-	Std::string barked;
-	int32 counter;
-	ObjId textwidget;
-	uint32 speechshapenum;
-	uint32 speechlength;
-	uint32 totaltextheight;
+	Std::string _barked;
+	int32 _counter;
+	ObjId _textWidget;
+	uint32 _speechShapeNum;
+	uint32 _speechLength;
+	uint32 _totalTextHeight;
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	BarkGump();
-	BarkGump(uint16 owner_, Std::string msg, uint32 speechshapenum = 0);
-	~BarkGump(void) override;
+	BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum = 0);
+	~BarkGump() override;
 
 	// Run the gump (decrement the counter)
 	void        run() override;

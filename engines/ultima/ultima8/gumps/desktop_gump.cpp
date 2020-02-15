@@ -35,7 +35,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump, Gump)
 
-bool DesktopGump::faded_modal = true;
+bool DesktopGump::_fadedModal = true;
 
 DesktopGump::DesktopGump()
 	: Gump() {
@@ -72,7 +72,7 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 		if (!g->IsClosing()) {
 			// If background blanking on modal is enabled...
 			// Background is partially transparent
-			if (faded_modal && g->IsOfType<ModalGump>() &&
+			if (_fadedModal && g->IsOfType<ModalGump>() &&
 			        !g->IsOfType<TargetGump>() && !g->IsHidden())
 				surf->FillBlended(0x7F000000, 0, 0, _dims.w, _dims.h);
 

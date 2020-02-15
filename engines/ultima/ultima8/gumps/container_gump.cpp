@@ -50,14 +50,14 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ContainerGump, ItemRelativeGump)
 
 ContainerGump::ContainerGump()
-	: ItemRelativeGump(), display_dragging(false) {
+	: ItemRelativeGump(), _displayDragging(false) {
 
 }
 
 ContainerGump::ContainerGump(Shape *shape, uint32 frameNum, uint16 owner,
                              uint32 flags, int32 layer)
 	: ItemRelativeGump(0, 0, 5, 5, owner, flags, layer),
-	  display_dragging(false) {
+	  _displayDragging(false) {
 	_shape = shape;
 	_frameNum = frameNum;
 }
@@ -99,14 +99,14 @@ void ContainerGump::getItemCoords(Item *item, int32 &itemx, int32 &itemy) {
 		// randomize position
 		// TODO: maybe try to put it somewhere where it doesn't overlap others?
 
-		itemx = getRandom() % itemarea.w;
-		itemy = getRandom() % itemarea.h;
+		itemx = getRandom() % _itemArea.w;
+		itemy = getRandom() % _itemArea.h;
 
 		item->setGumpLocation(itemx, itemy);
 	}
 
-	itemx += itemarea.x;
-	itemy += itemarea.y;
+	itemx += _itemArea.x;
+	itemy += _itemArea.y;
 }
 
 
@@ -144,14 +144,14 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	}
 
 
-	if (display_dragging) {
+	if (_displayDragging) {
 		int32 itemx, itemy;
-		itemx = dragging_x + itemarea.x;
-		itemy = dragging_y + itemarea.y;
+		itemx = dragging_x + _itemArea.x;
+		itemy = dragging_y + _itemArea.y;
 		Shape *s = GameData::get_instance()->getMainShapes()->
-		           getShape(dragging_shape);
+		           getShape(_draggingShape);
 		assert(s);
-		surf->PaintInvisible(s, dragging_frame, itemx, itemy, false, (dragging_flags & Item::FLG_FLIPPED) != 0);
+		surf->PaintInvisible(s, _draggingFrame, itemx, itemy, false, (_draggingFlags & Item::FLG_FLIPPED) != 0);
 	}
 
 }
@@ -251,8 +251,8 @@ void ContainerGump::GetItemLocation(int32 lerp_factor) {
 	if (_parent) _parent->ScreenSpaceToGump(gx, gy);
 
 	// Set x and y, and center us over it
-	ix = gx - _dims.w / 2;
-	iy = gy - _dims.h;
+	_ix = gx - _dims.w / 2;
+	_iy = gy - _dims.h;
 }
 
 void ContainerGump::Close(bool no_del) {
@@ -389,41 +389,41 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 	// check if the container the item is in is in range
 	MainActor *avatar = getMainActor();
 	if (!avatar->canReach(c, 128)) {
-		display_dragging = false;
+		_displayDragging = false;
 		return false;
 	}
 
 	int32 dox, doy;
 	Mouse::get_instance()->getDraggingOffset(dox, doy);
 	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_TARGET);
-	display_dragging = true;
+	_displayDragging = true;
 
-	dragging_shape = item->getShape();
-	dragging_frame = item->getFrame();
-	dragging_flags = item->getFlags();
+	_draggingShape = item->getShape();
+	_draggingFrame = item->getFrame();
+	_draggingFlags = item->getFlags();
 
 	// determine target location and set dragging_x/y
 
-	dragging_x = mx - itemarea.x - dox;
-	dragging_y = my - itemarea.y - doy;
+	dragging_x = mx - _itemArea.x - dox;
+	dragging_y = my - _itemArea.y - doy;
 
 	Shape *sh = item->getShapeObject();
 	assert(sh);
-	ShapeFrame *fr = sh->getFrame(dragging_frame);
+	ShapeFrame *fr = sh->getFrame(_draggingFrame);
 	assert(fr);
 
 	if (dragging_x - fr->xoff < 0 ||
-	        dragging_x - fr->xoff + fr->width > itemarea.w ||
+	        dragging_x - fr->xoff + fr->width > _itemArea.w ||
 	        dragging_y - fr->yoff < 0 ||
-	        dragging_y - fr->yoff + fr->height > itemarea.h) {
-		display_dragging = false;
+	        dragging_y - fr->yoff + fr->height > _itemArea.h) {
+		_displayDragging = false;
 		return false;
 	}
 
 	// check if item will fit (weight/volume/adding container to itself)
 	Container *target = getTargetContainer(item, mx, my);
 	if (!target || !target->CanAddItem(item, true)) {
-		display_dragging = false;
+		_displayDragging = false;
 		return false;
 	}
 
@@ -431,7 +431,7 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 }
 
 void ContainerGump::DraggingItemLeftGump(Item *item) {
-	display_dragging = false;
+	_displayDragging = false;
 }
 
 
@@ -440,7 +440,7 @@ void ContainerGump::StopDraggingItem(Item *item, bool moved) {
 }
 
 void ContainerGump::DropItem(Item *item, int mx, int my) {
-	display_dragging = false;
+	_displayDragging = false;
 
 	int32 px = mx, py = my;
 	GumpToParent(px, py);
@@ -533,8 +533,8 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 
 		int32 dox, doy;
 		Mouse::get_instance()->getDraggingOffset(dox, doy);
-		dragging_x = mx - itemarea.x - dox;
-		dragging_y = my - itemarea.y - doy;
+		dragging_x = mx - _itemArea.x - dox;
+		dragging_y = my - _itemArea.y - doy;
 		item->setGumpLocation(dragging_x, dragging_y);
 	}
 }
@@ -542,10 +542,10 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 void ContainerGump::saveData(ODataSource *ods) {
 	ItemRelativeGump::saveData(ods);
 
-	ods->write4(static_cast<uint32>(itemarea.x));
-	ods->write4(static_cast<uint32>(itemarea.y));
-	ods->write4(static_cast<uint32>(itemarea.w));
-	ods->write4(static_cast<uint32>(itemarea.h));
+	ods->write4(static_cast<uint32>(_itemArea.x));
+	ods->write4(static_cast<uint32>(_itemArea.y));
+	ods->write4(static_cast<uint32>(_itemArea.w));
+	ods->write4(static_cast<uint32>(_itemArea.h));
 }
 
 bool ContainerGump::loadData(IDataSource *ids, uint32 version) {
@@ -555,7 +555,7 @@ bool ContainerGump::loadData(IDataSource *ids, uint32 version) {
 	int32 iay = static_cast<int32>(ids->read4());
 	int32 iaw = static_cast<int32>(ids->read4());
 	int32 iah = static_cast<int32>(ids->read4());
-	itemarea.Set(iax, iay, iaw, iah);
+	_itemArea.Set(iax, iay, iaw, iah);
 
 	return true;
 }

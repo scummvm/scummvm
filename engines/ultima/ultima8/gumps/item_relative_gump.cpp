@@ -35,13 +35,12 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ItemRelativeGump, Gump)
 
-ItemRelativeGump::ItemRelativeGump()
-	: Gump(), ix(0), iy(0) {
+ItemRelativeGump::ItemRelativeGump() : Gump(), _ix(0), _iy(0) {
 }
 
 ItemRelativeGump::ItemRelativeGump(int32 x, int32 y, int32 width, int32 height,
                                    uint16 owner, uint32 flags, int32 layer)
-	: Gump(x, y, width, height, owner, flags, layer), ix(0), iy(0) {
+	: Gump(x, y, width, height, owner, flags, layer), _ix(0), _iy(0) {
 }
 
 ItemRelativeGump::~ItemRelativeGump(void) {
@@ -99,16 +98,16 @@ void ItemRelativeGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled
 
 // Convert a parent relative point to a gump point
 void ItemRelativeGump::ParentToGump(int32 &px, int32 &py, PointRoundDir r) {
-	px -= ix;
-	py -= iy;
+	px -= _ix;
+	py -= _iy;
 	Gump::ParentToGump(px, py, r);
 }
 
 // Convert a gump point to parent relative point
 void ItemRelativeGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir r) {
 	Gump::GumpToParent(gx, gy, r);
-	gx += ix;
-	gy += iy;
+	gx += _ix;
+	gy += _iy;
 }
 
 void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
@@ -158,9 +157,9 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	if (_parent) _parent->ScreenSpaceToGump(gx, gy);
 
 	// Set x and y, and center us over it
-	ix = gx - _dims.w / 2;
-//	iy = gy-_dims.h-it->getShapeInfo()->z*8-16;
-	iy = gy - _dims.h;
+	_ix = gx - _dims.w / 2;
+//	_iy = gy-_dims.h-it->getShapeInfo()->z*8-16;
+	_iy = gy - _dims.h;
 
 
 	if (_flags & FLAG_KEEP_VISIBLE)

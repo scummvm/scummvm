@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-ResizableGump::ResizableGump(int X, int Y, int Width, int Height) : Gump(X, Y, Width, Height) {
+ResizableGump::ResizableGump(int x, int y, int width, int height) : Gump(x, y, width, height) {
 }
 
 ResizableGump::~ResizableGump() {

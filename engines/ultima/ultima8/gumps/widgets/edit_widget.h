@@ -41,10 +41,10 @@ class EditWidget : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	EditWidget(int X, int Y, Std::string txt, bool gamefont, int fontnum,
+	EditWidget(int x, int y, Std::string txt, bool gamefont, int fontnum,
 	           int width, int height, unsigned int maxlength = 0,
 	           bool multiline = false);
-	~EditWidget(void) override;
+	~EditWidget() override;
 
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 

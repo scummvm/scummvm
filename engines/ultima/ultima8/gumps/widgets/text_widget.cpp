@@ -43,9 +43,9 @@ TextWidget::TextWidget() : Gump(), gamefont(false), fontnum(0), blendColour(0),
 		cached_text(0), textalign(Font::TEXT_LEFT) {
 }
 
-TextWidget::TextWidget(int X, int Y, Std::string txt, bool gamefont_, int font,
+TextWidget::TextWidget(int x, int y, Std::string txt, bool gamefont_, int font,
                        int w, int h, Font::TextAlign align) :
-	Gump(X, Y, w, h), text(txt), gamefont(gamefont_), fontnum(font),
+	Gump(x, y, w, h), text(txt), gamefont(gamefont_), fontnum(font),
 	blendColour(0), current_start(0), current_end(0),
 	targetwidth(w), targetheight(h), cached_text(0), textalign(align) {
 }

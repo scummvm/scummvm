@@ -47,7 +47,7 @@ public:
 	//! \param sheight1 height before scaling (usually game-height)
 	//! \param scaler1 scaler to use
 	ScalerGump(int32 x, int32 y, int32 width, int32 height);
-	~ScalerGump(void) override;
+	~ScalerGump() override;
 
 	void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	void RenderSurfaceChanged() override;

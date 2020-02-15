@@ -24,7 +24,6 @@
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -38,7 +37,7 @@ GumpNotifyProcess::GumpNotifyProcess()
 
 }
 
-GumpNotifyProcess::GumpNotifyProcess(uint16 it) : Process(it), gump(0) {
+GumpNotifyProcess::GumpNotifyProcess(uint16 it) : Process(it), _gump(0) {
 	result = 0;
 	type = 0x200; // CONSTANT!
 }
@@ -47,12 +46,12 @@ GumpNotifyProcess::~GumpNotifyProcess(void) {
 }
 
 void GumpNotifyProcess::setGump(Gump *g) {
-	gump = g->getObjId();
+	_gump = g->getObjId();
 }
 
 
 void GumpNotifyProcess::notifyClosing(int res) {
-	gump = 0;
+	_gump = 0;
 	result = res;
 	if (!(flags & PROC_TERMINATED)) terminate();
 }
@@ -60,8 +59,8 @@ void GumpNotifyProcess::notifyClosing(int res) {
 void GumpNotifyProcess::terminate() {
 	Process::terminate();
 
-	if (gump) {
-		Gump *g = Ultima8::getGump(gump);
+	if (_gump) {
+		Gump *g = Ultima8::getGump(_gump);
 		assert(g);
 		g->Close();
 	}
@@ -72,19 +71,19 @@ void GumpNotifyProcess::run() {
 
 void GumpNotifyProcess::dumpInfo() {
 	Process::dumpInfo();
-	pout << " gump: " << gump << Std::endl;
+	pout << " gump: " << _gump << Std::endl;
 }
 
 void GumpNotifyProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(gump);
+	ods->write2(_gump);
 }
 
 bool GumpNotifyProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	gump = ids->read2();
+	_gump = ids->read2();
 
 	return true;
 }
