@@ -1046,7 +1046,7 @@ void LC::c_repeatwithcode(void) {
 		loop_var.type = VAR;
 		loop_var.u.sym = g_lingo->lookupVar(countername.c_str());
 
-		int arraySize = array.u.farr->size();
+		uint arraySize = array.u.farr->size();
 		for (uint i = 0; i < arraySize; i++) {
 			g_lingo->varAssign(loop_var, array.u.farr->operator[](i));
 			g_lingo->execute(body + savepc -1);
