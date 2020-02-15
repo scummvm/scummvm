@@ -65,7 +65,7 @@ bool UltimaEarlyEngine::initialize() {
 	// Set up the resources datafile
 	Resources *res = new Resources();
 	if (!res->open()) {
-		GUIErrorMessage("Could not find correct ultima.dat datafile");
+		GUIErrorMessage(_("Could not find correct ultima.dat datafile"));
 		return false;
 	}
 	SearchMan.add("ultima", res);
