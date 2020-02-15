@@ -1038,7 +1038,21 @@ void LC::c_repeatwithcode(void) {
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
 	if (finish == 0 && inc == 0) {
-		warning("STUB: 'repeat with' over list ");
+		// Handle repeat with  X in ARRAY
+		g_lingo->execute(init + savepc -1); // eval the list
+		Datum array = g_lingo->pop(); // get the list from the stack
+		int arraySize = array.u.farr->size();
+		for (uint i = 0; i < arraySize; i++) {
+
+			Datum loop_var;
+			loop_var.type = VAR;
+			loop_var.u.sym = g_lingo->lookupVar(countername.c_str());
+
+			Datum source = (*array.u.farr)[i];
+
+			g_lingo->varAssign(loop_var, source);
+			g_lingo->execute(body + savepc -1);
+		}
 		g_lingo->_pc = end + savepc - 1; /* next stmt */
 		return;
 	}
