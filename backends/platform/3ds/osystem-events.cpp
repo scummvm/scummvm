@@ -159,7 +159,7 @@ static void eventThreadFunc(void *arg) {
 				pushEventQueue(eventQueue, event);
 			}
 
-			if ((inputMode == MODE_DRAG) & !isDragHeld) {
+			if ((inputMode == MODE_DRAG) & (!isDragHeld)) {
 				if (osys->getMillis() - touchStartTime >= 50) {
 					isDragHeld = true;
 					event.type = Common::EVENT_LBUTTONDOWN;
