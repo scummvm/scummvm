@@ -94,6 +94,7 @@ static void eventThreadFunc(void *arg) {
 
 	uint32 touchStartTime = osys->getMillis();
 	touchPosition lastTouch = {0, 0};
+	bool isDragHeld = false;
 	float cursorDeltaX = 0;
 	float cursorDeltaY = 0;
 	int circleDeadzone = 20;
@@ -150,7 +151,7 @@ static void eventThreadFunc(void *arg) {
 			if (keysPressed & KEY_TOUCH) {
 				touchStartTime = osys->getMillis();
 				if (inputMode == MODE_DRAG) {
-					event.type = Common::EVENT_LBUTTONDOWN;
+					event.type = Common::EVENT_MOUSEMOVE;
 					pushEventQueue(eventQueue, event);
 				}
 			} else if (touch.px != lastTouch.px || touch.py != lastTouch.py) {
@@ -158,11 +159,26 @@ static void eventThreadFunc(void *arg) {
 				pushEventQueue(eventQueue, event);
 			}
 
+			if (inputMode == MODE_DRAG & !isDragHeld) {
+				if (osys->getMillis() - touchStartTime >= 50) {
+					isDragHeld = true;
+					event.type = Common::EVENT_LBUTTONDOWN;
+					pushEventQueue(eventQueue, event);
+				}
+			}
+
 			lastTouch = touch;
 		} else if (keysReleased & KEY_TOUCH) {
 			event.mouse.x = lastTouch.px;
 			event.mouse.y = lastTouch.py;
 			if (inputMode == MODE_DRAG) {
+				if (!isDragHeld) {
+					event.type = Common::EVENT_MOUSEMOVE;
+					pushEventQueue(eventQueue, event);
+					event.type = Common::EVENT_LBUTTONDOWN;
+					pushEventQueue(eventQueue, event);
+				}
+				isDragHeld = false;
 				event.type = Common::EVENT_LBUTTONUP;
 				pushEventQueue(eventQueue, event);
 			} else if (osys->getMillis() - touchStartTime < 200) {
