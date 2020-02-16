@@ -535,6 +535,10 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		}
 	} else if (var.type == REFERENCE) {
 		Score *score = g_director->getCurrentScore();
+		if (!score) {
+			warning("varAssign: Assigning to a reference to an empty score");
+			return;
+		}
 		if (!score->_loadedCast->contains(var.u.i)) {
 			if (!score->_loadedCast->contains(var.u.i - score->_castIDoffset)) {
 				warning("varAssign: Unknown REFERENCE %d", var.u.i);

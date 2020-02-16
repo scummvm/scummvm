@@ -1376,6 +1376,11 @@ void LB::b_rollOver(int nargs) {
 
 	d.u.i = 0; // FALSE
 
+	if (!g_director->getCurrentScore()) {
+		warning("b_rollOver: Reference to an empty score");
+		return;
+	}
+
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
 	if (arg >= (int32) frame->_sprites.size()) {
@@ -1740,6 +1745,14 @@ void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
 
 	int id;
+
+	if (!g_director->getCurrentScore()) {
+		warning("b_field: Assigning to a field in an empty score");
+		d.u.i = 0;
+		d.type = INT;
+		g_lingo->push(d);
+		return;
+	}
 
 	if (d.type == STRING) {
 		if (g_director->getCurrentScore()->_castsNames.contains(*d.u.s))
