@@ -2577,11 +2577,6 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("e");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionOpenDebugger, _("Open debugger"));
-	act->setCustomEngineActionEvent(kPegasusActionOpenDebugger);
-	act->addDefaultInputMapping("C+d");
-	engineKeyMap->addAction(act);
-
 	// We support meta where available and control elsewhere
 	act = new Action(kStandardActionSave, _("Save Game"));
 	act->setCustomEngineActionEvent(kPegasusActionSaveGameState);

@@ -52,7 +52,6 @@ enum PegasusAction {
 	kPegasusActionShowPauseMenu,
 	kPegasusActionSaveGameState,
 	kPegasusActionLoadGameState,
-	kPegasusActionOpenDebugger,
 	kPegasusActionEnableEasterEgg,
 
 	kPegasusActionCount
@@ -77,7 +76,6 @@ protected:
 	// Keep track of which keys are down (= true) or not
 	bool _keysDown[kPegasusActionCount];
 	InputBits _lastRawBits;
-	bool _consoleRequested;
 };
 
 enum {

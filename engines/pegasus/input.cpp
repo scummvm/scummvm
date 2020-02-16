@@ -46,7 +46,6 @@ InputDeviceManager::InputDeviceManager() {
 
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
 	_lastRawBits = kAllUpBits;
-	_consoleRequested = false;
 }
 
 InputDeviceManager::~InputDeviceManager() {
@@ -138,9 +137,6 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		switch ((PegasusAction)event.customType) {
-		case kPegasusActionOpenDebugger:
-			_consoleRequested = true;
-			break;
 		case kPegasusActionSaveGameState:
 			((PegasusEngine *)g_engine)->requestSave();
 			break;
