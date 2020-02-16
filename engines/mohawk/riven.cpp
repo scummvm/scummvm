@@ -267,9 +267,6 @@ void MohawkEngine_Riven::processInput() {
 			case kRivenActionInteract:
 				_stack->onMouseDown(_eventMan->getMousePos());
 				break;
-			case kRivenActionOpenDebugger:
-				getDebugger()->attach();
-				break;
 			case kRivenActionPause:
 				pauseGame();
 				break;
@@ -945,11 +942,6 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	act = new Action("LKDN", _("Look down"));
 	act->setCustomEngineActionEvent(kRivenActionLookDown);
 	act->addDefaultInputMapping("PAGEDOWN");
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionOpenDebugger, _("Open debugger"));
-	act->setCustomEngineActionEvent(kRivenActionOpenDebugger);
-	act->addDefaultInputMapping("C+d");
 	engineKeyMap->addAction(act);
 
 	if (checkGameGUIOption(GAMEOPTION_DEMO, ConfMan.get("guioptions", target))) {

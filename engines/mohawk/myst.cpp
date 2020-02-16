@@ -70,8 +70,7 @@ enum MystEventAction {
 	kMystActionLoadGameState,
 	kMystActionSaveGameState,
 	kMystActionOpenOptionsDialog,
-	kMystActionPause,
-	kMystActionOpenDebugger
+	kMystActionPause
 };
 
 MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) :
@@ -549,11 +548,6 @@ Common::KeymapArray MohawkEngine_Myst::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("SPACE");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionOpenDebugger, _("Open debugger"));
-	act->setCustomEngineActionEvent(kMystActionOpenDebugger);
-	act->addDefaultInputMapping("C+d");
-	engineKeyMap->addAction(act);
-
 	return Keymap::arrayOf(engineKeyMap);
 }
 
@@ -578,9 +572,6 @@ void MohawkEngine_Myst::doFrame() {
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			switch ((MystEventAction)event.customType) {
-			case kMystActionOpenDebugger:
-				getDebugger()->attach();
-				break;
 			case kMystActionInteract:
 				_mouseClicked = true;
 				break;
