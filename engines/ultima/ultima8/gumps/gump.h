@@ -90,14 +90,14 @@ public:
 	//! Set the Gump's shape/frame
 	inline void SetShape(Shape *shape, uint32 frameNum) {
 		_shape = shape;
-		_frameNum = _frameNum;
+		_frameNum = frameNum;
 	}
 
 	void                        SetShape(FrameID frame, bool adjustsize = false);
 
 	//! Set the Gump's frame
 	inline void                 Set_frameNum(uint32 frameNum) {
-		_frameNum = _frameNum;
+		_frameNum = frameNum;
 	}
 
 	//! Init the gump and add it to parent; call after construction
