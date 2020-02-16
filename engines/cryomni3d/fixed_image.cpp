@@ -35,7 +35,11 @@ ZonFixedImage::ZonFixedImage(CryOmni3DEngine &engine,
                              const FixedImageConfiguration *configuration) :
 	_engine(engine), _inventory(inventory), _sprites(sprites),
 	_configuration(configuration),
-	_callback(nullptr), _imageDecoder(nullptr), _imageSurface(nullptr) {
+	_callback(nullptr), _imageDecoder(nullptr), _imageSurface(nullptr),
+	_zonesMode(kZonesMode_None), _currentZone(uint(-1)), _exit(false), _zoneLow(false),
+	_zoneHigh(false), _zoneHighLeft(false), _zoneHighRight(false), _zoneLeft(false), _zoneRight(false),
+	_zoneQuestion(false), _zoneListen(false), _zoneSee(false), _zoneUse(false), _zoneSpeak(false),
+	_usedObject(nullptr), _highLeftId(0), _highRightId(0), _refreshCursor(false) {
 }
 
 ZonFixedImage::~ZonFixedImage() {

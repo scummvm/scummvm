@@ -41,9 +41,10 @@ namespace Versailles {
 class Toolbar {
 public:
 	Toolbar() : _sprites(nullptr), _fontManager(nullptr), _inventory(nullptr),
-		_messages(nullptr), _inventoryOffset(0), _engine(nullptr),
-		_inventoryHovered(uint(-1)), _inventorySelected(uint(-1)), _inventoryEnabled(true),
-		_position(60) { }
+		_messages(nullptr), _engine(nullptr), _inventoryEnabled(true), _inventoryMaxOffset(0),
+		_inventoryOffset(0), _inventoryHovered(uint(-1)), _inventorySelected(uint(-1)), _backupSelectedObject(nullptr),
+		_mouseInOptions(false), _mouseInViewObject(false), _inventoryButtonDragging(false), _parentMustRedraw(false),
+		_shortExit(false), _position(60) { }
 	~Toolbar();
 
 	void init(const Sprites *sprites, FontManager *fontManager,
@@ -89,10 +90,10 @@ private:
 	uint _inventoryHovered;
 	uint _inventorySelected;
 
-	Object *_backup_selected_object;
-	bool _mouse_in_options;
-	bool _mouse_in_view_object;
-	bool _inventory_button_dragging;
+	Object *_backupSelectedObject;
+	bool _mouseInOptions;
+	bool _mouseInViewObject;
+	bool _inventoryButtonDragging;
 
 	bool _parentMustRedraw;
 	bool _shortExit;

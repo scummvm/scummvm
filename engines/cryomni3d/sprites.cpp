@@ -211,7 +211,7 @@ const Graphics::Cursor &Sprites::getCursor(uint spriteId) const {
 }
 
 Sprites::CryoCursor::CryoCursor() : _width(0), _height(0), _offX(0), _offY(0), _data(nullptr),
-	refCnt(1) {
+	refCnt(1), _constantId(uint(-1)) {
 }
 
 Sprites::CryoCursor::~CryoCursor() {
