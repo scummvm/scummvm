@@ -374,8 +374,11 @@ const Common::String MacFontManager::getFontName(int id, int size, int slant, bo
 	if (id == 3) // This is Geneva
 		id = 1;
 
+	int extraSlant = 0;
+
 	if (_extraFontNames.contains(id)) {
-		n = _extraFontNames[id];
+		n = cleanFontName(_extraFontNames[id]);
+		extraSlant = parseFontSlant(_extraFontNames[id]);
 	} else if (id < ARRAYSIZE(fontNames)) {
 		if (fontNames[id])
 			n = fontNames[id];
@@ -386,7 +389,7 @@ const Common::String MacFontManager::getFontName(int id, int size, int slant, bo
 		n = fontNames[1]; // Fallback to Geneva
 	}
 
-	return Common::String::format("%s-%d-%d", n.c_str(), slant, size);
+	return Common::String::format("%s-%d-%d", n.c_str(), slant | extraSlant, size);
 }
 
 const Common::String MacFontManager::getFontName(MacFont &font) {
@@ -433,7 +436,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 
 	if (sizes.empty()) {
 		if (macFont.getSlant() == kMacFontRegular) {
-			debug(1, "No viable substitute found for font %s", getFontName(macFont).c_str());
+			debug(1, "No viable substitute found (1) for font %s", getFontName(macFont).c_str());
 			return;
 		}
 
@@ -444,7 +447,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 		}
 
 		if (sizes.empty()) {
-			debug(1, "No viable substitute found for font %s", getFontName(macFont).c_str());
+			debug(1, "No viable substitute found (2) for font %s", getFontName(macFont).c_str());
 			return;
 		}
 	}
