@@ -1203,7 +1203,8 @@ void SciMusic::remapChannels(bool mainThread) {
 		}
 
 		for (int j = _driverLastChannel; j >= _driverFirstChannel; --j) {
-			if (_channelMap[j]._song == 0) {
+			// channel 9 is reserved for percussion, avoiding it to fix bug #9735 (and maybe others...)
+			if (_channelMap[j]._song == 0 && j != 9) {
 				_channelMap[j] = map->_map[i];
 				map->_map[i]._song = 0;
 #ifdef DEBUG_REMAP
@@ -1308,6 +1309,9 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			// try to find a free channel
 			if (devChannel == -1) {
 				for (int j = 0; j < 16; ++j) {
+					if (j == 9)
+						// reserved for percussion, fixing bug #9735 (and maybe others...)
+						continue;
 					if (map->_map[j] == dc) {
 						// already mapped?! (Can this happen?)
 						devChannel = j;
