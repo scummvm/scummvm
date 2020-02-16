@@ -27,9 +27,9 @@ MODULES := test devtools base $(MODULES)
 
 # After the game specific modules follow the shared modules
 MODULES += \
+	engines \
 	gui \
 	backends \
-	engines \
 	video \
 	image \
 	graphics \
