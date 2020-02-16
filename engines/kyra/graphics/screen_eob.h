@@ -29,8 +29,9 @@
 
 namespace Kyra {
 
-class SegaRenderer;
 class EoBCoreEngine;
+class SegaRenderer;
+class SegaAnimator;
 class Screen_EoB : public Screen {
 friend class SegaRenderer;
 public:
@@ -117,13 +118,18 @@ public:
 	void setDualPalettes(Palette &top, Palette &bottom);
 
 	// SegaCD specific
-	void sega_selectPalette(int srcPalID, int dstPalID, int brightness = 0, bool set = false);
-	void sega_fadePalette(int delay, int brEnd, int dstPalID = -1);
+	void sega_initGraphics();
+	void sega_selectPalette(int srcPalID, int dstPalID, bool set = false);
+	void sega_loadCustomPaletteData(Common::ReadStream *in);
+	void sega_updatePaletteFaders(int palID);
+	void sega_fadePalette(int delay, int16 brEnd, int dstPalID = -1, bool waitForCompletion = true, bool noUpdate = false);
 	void sega_fadeToBlack(int delay) { sega_fadePalette(delay, -7); }
 	void sega_fadeToWhite(int delay) { sega_fadePalette(delay, 7); }
 	void sega_fadeToNeutral(int delay) { sega_fadePalette(delay, 0); }
-	void sega_paletteOps(int opPal, int par1, int par2);
+	void sega_paletteOps(int16 opPal, int16 par1, int16 par2);
+
 	SegaRenderer *sega_getRenderer() const { return _segaRenderer; }
+	SegaAnimator *sega_getAnimator() const { return _segaAnimator; }
 
 private:
 	void updateDirtyRects() override;
@@ -170,83 +176,21 @@ private:
 	static const int _screenDimTableCount;
 
 	// SegaCD specific
+	struct PaletteFader {
+		PaletteFader() : _brCur(0), _brDest(0), _fadeIncr(0), _fadeDelay(0), _fadeTimer(0), _needRefresh(false) {}
+		int16 _brCur;
+		int16 _brDest;
+		int16 _fadeIncr;
+		int16 _fadeDelay;
+		int16 _fadeTimer;
+		bool _needRefresh;
+	};
+
+	PaletteFader *_palFaders;
 	SegaRenderer *_segaRenderer;
-	uint16 _segaPalette[64];
-	int8 _brState[4];
-};
-
-class SegaRenderer {
-public:
-	enum Plane {
-		kPlaneA = 0,
-		kPlaneB = 1,
-		kWindowPlane = 2
-	};
-
-	enum WindowMode {
-		kWinToLeft = 0,
-		kWinToTop = 0,
-		kWinToRight = 1,
-		kWinToBottom = 1
-	};
-
-	enum HScrollMode {
-		kHScrollFullScreen = 0,
-		kHScroll8PixelRows,
-		kHScroll1PixelRows
-	};
-
-public:
-	SegaRenderer(Screen_EoB *screen);
-	~SegaRenderer();
-
-	void setResolution(int w, int h);
-	void setPlaneTableLocation(int plane, uint16 addr);
-	void setupPlaneAB(int plane, uint16 w, uint16 h);
-	void setupWindowPlane(int blockX, int blockY, int horizontalMode, int verticalMode);
-	void setHScrollTableLocation(int addr);
-	void setPitch(int pitch);
-	void setHScrollMode(int mode);	
-
-	void loadToVRAM(const uint16 *data, int dataSize, int addr);
-	void loadToVRAM(Common::SeekableReadStreamEndian *in, int addr, bool compressedData = false);
-	void memsetVRAM(int addr, uint8 val, int len);
-	void fillRectWithTiles(int addr, int x, int y, int w, int h, uint16 nameTblEntry, bool incr = false);
-	
-	void render(int destPageNum);
-
-private:
-	void renderTile(uint8 *dst, int destX, uint16 *nameTable, int hScrollTableIndex);
-	void renderLineFragment(uint8 *&dst, const uint8 *src, int start, int end, uint8 pal);
-
-	void checkUpdateDirtyRects(int addr, int len);
-	void addDirtyRect(int x, int y, int w, int h);
-	void sendDirtyRectsToScreen();
-	void clearDirtyRects();
-
-	struct SegaPlane {
-		SegaPlane() : blockX(0), blockY(0), w(0), h(0), nameTable(0) {}
-		int blockX, blockY;
-		uint16 w, h;
-		uint16 *nameTable;
-		uint16 nameTableSize;
-	};
-
-	SegaPlane _planes[3];
-	uint8 *_vram;
-	uint16 *_hScrollTable;
-	uint8 _hScrollMode;
-	uint16 _pitch;
-
-	struct DRChainEntry {
-		DRChainEntry(DRChainEntry *chain, int x, int y, int w, int h) : next(chain), rect(x, y, x + w, y + h) {}
-		Common::Rect rect;
-		DRChainEntry *next;
-	} *_drChain;
-
-	Screen_EoB *_screen;
-
-	uint16 _screenW, _screenH, _blocksW, _blocksH;
+	SegaAnimator *_segaAnimator;
+	uint16 _segaCurPalette[64];
+	uint16 *_segaCustomPalettes;
 };
 
 /**
@@ -431,6 +375,24 @@ private:
 	uint8 *_data;
 	Common::HashMap<uint16, uint8> _searchTable;
 
+	const uint8 *_colorMap;
+	const int _height, _width;
+};
+
+class SegaCDFont : public Font {
+public:
+	SegaCDFont();
+	~SegaCDFont() override;
+
+private:
+	bool load(Common::SeekableReadStream &file) override;
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override { return _width; }
+	void setColorMap(const uint8 *src) override { _colorMap = src; }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+
+	uint8 *_data;
 	const uint8 *_colorMap;
 	const int _height, _width;
 };

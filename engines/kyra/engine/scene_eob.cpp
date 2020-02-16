@@ -108,8 +108,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 	_screen->setCurPage(0);
 	setHandItem(_itemInHand);
 
-	if (_flags.platform == Common::kPlatformPC98)
-		snd_playSong(level + 1);
+	snd_playLevelScore();
 }
 
 void EoBCoreEngine::readLevelFileData(int level) {

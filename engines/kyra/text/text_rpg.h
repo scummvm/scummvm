@@ -43,7 +43,7 @@ public:
 	void printDialogueText(const char *str, bool wait = false);
 	void printMessage(const char *str, int textColor = -1, ...);
 
-	int clearDim(int dim);
+	virtual int clearDim(int dim);
 	void clearCurDim();
 
 	void resetDimTextPositions(int dim);

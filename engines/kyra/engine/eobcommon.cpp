@@ -32,6 +32,7 @@
 
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/debug-channels.h"
 
 #include "gui/error.h"
 
@@ -538,8 +539,10 @@ Common::Error EoBCoreEngine::init() {
 
 	_gui = new GUI_EoB(this);
 	assert(_gui);
-	_txt = new TextDisplayer_rpg(this, _screen);
-	assert(_txt);
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		_txt = new TextDisplayer_rpg(this, _screen);
+		assert(_txt);
+	}
 	_inf = new EoBInfProcessor(this, _screen);
 	assert(_inf);
 	setDebugger(new Debugger_EoB(this));
@@ -629,6 +632,9 @@ Common::Error EoBCoreEngine::init() {
 	memset(_monsterStoneOverlay, (_flags.platform == Common::kPlatformAmiga) ? guiSettings()->colors.guiColorWhite : 0x0D, 16 * sizeof(uint8));
 	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
+	gDebugLevel = 7;
+	DebugMan.enableDebugChannel(kDebugLevelSequence);
+
 	return Common::kNoError;
 }
 
@@ -661,8 +667,8 @@ void EoBCoreEngine::loadFonts() {
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
-		//_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
-		//_screen->loadFont(Screen::FID_6_FNT, "FONT8SH");
+		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
+		_screen->loadFont(Screen::FID_6_FNT, "FONT8SH");
 	}
 }
 
@@ -2774,8 +2780,20 @@ void EoBCoreEngine::explodeMonster(EoBMonsterInPlay *m) {
 	m->flags &= ~2;
 }
 
-void EoBCoreEngine::snd_playSong(int track) {
+void EoBCoreEngine::snd_playSong(int track, bool loop) {
+	if (_flags.platform == Common::kPlatformSegaCD && !loop)
+		track |= 0x80;
 	_sound->playTrack(track);
+}
+
+void EoBCoreEngine::snd_playLevelScore() {
+	if (_flags.platform == Common::kPlatformPC98) {
+		if (_flags.gameID == GI_EOB1)
+			snd_playSong(_currentLevel + 1);
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		static const uint8 levelTracksSegaCD[13] = { 7, 7, 7, 7, 6, 6, 6, 4, 4, 4, 5, 5, 10 };
+		snd_playSong(levelTracksSegaCD[_currentLevel]);
+	}
 }
 
 void EoBCoreEngine::snd_playSoundEffect(int track, int volume) {

@@ -24,6 +24,7 @@
 
 #include "kyra/engine/eob.h"
 #include "kyra/graphics/screen_eob.h"
+#include "kyra/graphics/screen_eob_segacd.h"
 #include "kyra/resource/resource.h"
 #include "kyra/resource/resource_segacd.h"
 #include "kyra/sequence/seqplayer_eob_segacd.h"
@@ -2245,10 +2246,10 @@ int EoBEngine::mainMenuLoop() {
 
 void EoBEngine::seq_playIntro(int part) {
 	if (_flags.platform == Common::kPlatformSegaCD) {
-		if (part == kOnlyCredits)
+		if (part != kOnlyCredits)
 			seq_segaOpeningCredits();
 		else
-			_seqPlayer->play(53, 53);
+			seq_segaPlaySequence(53, 53);
 	} else {
 		EoBIntroPlayer(this, _screen).start((EoBIntroPlayer::IntroPart)part);
 	}
@@ -2370,13 +2371,13 @@ void EoBEngine::seq_segaOpeningCredits() {
 
 	_screen->sega_getRenderer()->setPitch(128);
 	_screen->sega_getRenderer()->setPlaneTableLocation(SegaRenderer::kPlaneA, 0xE000);
-	_screen->sega_getRenderer()->setupPlaneAB(SegaRenderer::kPlaneA, 1024, 256);
+	_screen->sega_getRenderer()->setupPlaneAB(1024, 256);
 	_screen->sega_getRenderer()->setHScrollMode(SegaRenderer::kHScroll1PixelRows);
 	
-	_screen->sega_getRenderer()->fillRectWithTiles(0xC000, 0, 0, 40, 28, 0);
-	_screen->sega_getRenderer()->fillRectWithTiles(0xE000, 0, 0, 128, 28, 1);
-	_screen->sega_getRenderer()->fillRectWithTiles(0xE000, 0, 0, 40, 28, 1, true);
-	_screen->sega_selectPalette(7, 3, 0, false);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 128, 28, 1);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 1, true);
+	_screen->sega_selectPalette(7, 3, false);
 
 	updateScrollState(scrollTable, 320);
 	_screen->sega_getRenderer()->loadToVRAM(scrollTable, 0x400, 0xD800);
@@ -2397,7 +2398,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 	for (int i = 0; i < 8 && !(shouldQuit() || skipFlag()); ++i) {
 		updateScrollState(scrollTable, 320);
 		_screen->sega_getRenderer()->loadToVRAM(scrollTable, 0x400, 0xD800);
-		_screen->sega_selectPalette(i == 3 ? 59 : 50, 0, 0, true);
+		_screen->sega_selectPalette(i == 3 ? 59 : 50, 0, true);
 
 		in = _sres->getEndianAwareResourceStream(i);
 		_screen->sega_getRenderer()->loadToVRAM(in, 32, true);
@@ -2422,7 +2423,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 		delay(3000);
 
 		if (i == 7)
-			_screen->sega_getRenderer()->fillRectWithTiles(0xE000, 40, 0, 88, 28, 0, false);
+			_screen->sega_getRenderer()->fillRectWithTiles(1, 40, 0, 88, 28, 0, false);
 
 		mod = -1;
 		for (int ii = 0; ii <= 3240 && !(shouldQuit() || skipFlag()); ii += mod) {
@@ -2440,7 +2441,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 
 	_screen->sega_fadeToBlack(0);
 	_screen->sega_getRenderer()->setPlaneTableLocation(SegaRenderer::kPlaneA, 0xC000);
-	_screen->sega_getRenderer()->setupPlaneAB(SegaRenderer::kPlaneA, 512, 512);
+	_screen->sega_getRenderer()->setupPlaneAB(512, 512);
 	_screen->sega_getRenderer()->setHScrollMode(SegaRenderer::kHScrollFullScreen);
 	_screen->sega_getRenderer()->memsetVRAM(0xD800, 0, 0x400);
 	_screen->sega_getRenderer()->setPitch(64);
@@ -2454,10 +2455,10 @@ void EoBEngine::seq_segaOpeningCredits() {
 
 	for (int y = 0; y < 28; y += 4) {
 		for (int x = 0; x < 40; x += 4)
-			_screen->sega_getRenderer()->fillRectWithTiles(0xC000, x, y, 8, 7, 0x461, true);
+			_screen->sega_getRenderer()->fillRectWithTiles(0, x, y, 8, 7, 0x461, true);
 	}
-	_screen->sega_getRenderer()->fillRectWithTiles(0xE000, 0, 0, 40, 28, 1, true);
-	_screen->sega_getRenderer()->fillRectWithTiles(0xC000, 0, 0, 40, 28, 0);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 1, true);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	_screen->sega_getRenderer()->render(0);
 	_screen->sega_fadeToNeutral(3);
 
@@ -2468,17 +2469,46 @@ void EoBEngine::seq_segaOpeningCredits() {
 	_allowSkip = false;
 	resetSkipFlag();
 
-	_screen->sega_getRenderer()->fillRectWithTiles(0xE000, 0, 19, 40, 9, 1);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 19, 40, 9, 1);
 	_screen->sega_getRenderer()->render(0);
 	_screen->updateScreen();
 }
 
-bool EoBEngine::seq_segaPlaySequence(int id) {
-	if (_flags.platform != Common::kPlatformSegaCD)
-		return true;
-	return _seqPlayer->play(id);
+void EoBEngine::seq_segaSetupSequence(int id) {
+	if (_flags.platform != Common::kPlatformSegaCD || id == -1)
+		return;
+	
+	_screen->sega_fadeToBlack(1);
+	//gfxM45(0);
+	for (int i = 0; i < 6; i++) {
+		_characters[i].damageTaken = 0;
+		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = 0;
+		gui_drawCharPortraitWithStats(i);
+	}
+
+	_screen->sega_getRenderer()->setupWindowPlane(0, (id == 53 || id == 54) ? 23 : 18, SegaRenderer::kWinToRight, SegaRenderer::kWinToBottom);
+	_screen->sega_getRenderer()->memsetVRAM(0xD840, 0xEE, 512);
+	_screen->sega_getAnimator()->clearSprites();
+	_screen->setScreenDim(2);
+
 }
 
+bool EoBEngine::seq_segaPlaySequence(int sequenceId, int setupID) {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return true;
+
+	_allowSkip = true;
+	resetSkipFlag();
+
+	seq_segaSetupSequence(setupID);
+
+	_allowSkip = false;
+	resetSkipFlag();
+
+	return _seqPlayer->play(sequenceId);
+}
+
+#undef updateScrollState
 #undef displaySubtitle
 #undef printSub
 

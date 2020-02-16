@@ -67,8 +67,10 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_cpsFilePattern = "%s.";
 	_activePalCycle = 0;
 	_segaRenderer = 0;
-	memset(_brState, 0, sizeof(_brState));
-	memset(_segaPalette, 0, sizeof(_segaPalette));
+	_segaAnimator = 0;
+	_segaCustomPalettes = 0;
+	_palFaders = 0;
+	memset(_segaCurPalette, 0, sizeof(_segaCurPalette));
 }
 
 Screen_EoB::~Screen_EoB() {
@@ -81,7 +83,10 @@ Screen_EoB::~Screen_EoB() {
 	delete[] _cgaDitheringTables[0];
 	delete[] _cgaDitheringTables[1];
 	delete[] _cyclePalette;
+	delete[] _segaCustomPalettes;
+	delete[] _palFaders;
 	delete _segaRenderer;
+	delete _segaAnimator;
 }
 
 bool Screen_EoB::init() {
@@ -119,15 +124,10 @@ bool Screen_EoB::init() {
 			for (int i = 0; i < 256; i++)
 				_cgaScaleTable[i] = ((i & 0xF0) >> 2) | (i & 0x03);
 		} else if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_segaRenderer = new SegaRenderer(this);
-			_segaRenderer->setResolution(320, 224);
-			_segaRenderer->setPlaneTableLocation(SegaRenderer::kPlaneA, 0xC000);
-			_segaRenderer->setPlaneTableLocation(SegaRenderer::kPlaneB, 0xE000);
-			_segaRenderer->setPlaneTableLocation(SegaRenderer::kWindowPlane, 0xF000);
-			_segaRenderer->setupPlaneAB(SegaRenderer::kPlaneA, 1024, 256);
-			_segaRenderer->setupPlaneAB(SegaRenderer::kPlaneB, 1024, 256);
-			_segaRenderer->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
-			_segaRenderer->setHScrollTableLocation(0xD800);
+			sega_initGraphics();
+			_segaCustomPalettes = new uint16[128];
+			_palFaders = new PaletteFader[4];
+			memset(_segaCustomPalettes, 0, 128 * sizeof(uint16));
 		}
 
 		static const char *cpsExt[] = { "CPS", "EGA", "SHP", "BIN" };
@@ -434,7 +434,8 @@ void Screen_EoB::setScreenPalette(const Palette &pal) {
 			createFadeTable16bit((const uint16*)(pal.getData()), &_16bitPalette[i * 256], 0, i * 85);
 	} else if (_useHiResEGADithering && pal.getNumColors() != 16) {
 		generateEGADitheringTable(pal);
-	} else if ((_renderMode == Common::kRenderEGA) && pal.getNumColors() == 16) {
+	} else if (_isSegaCD || (_renderMode == Common::kRenderEGA && pal.getNumColors() == 16)) {
+		_paletteChanged = true;
 		_screenPalette->copy(pal);
 		_system->getPaletteManager()->setPalette(_screenPalette->getData(), 0, _screenPalette->getNumColors());
 	} else if (_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) {
@@ -1513,6 +1514,8 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 				_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp), _vm->staticres()->loadRawData(kEoB1FontLookupTable, temp));
 	} else if (_isAmiga) {
 		fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
+	} else if (_isSegaCD) {
+			fnt = new SegaCDFont();
 	} else {
 		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
 		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);

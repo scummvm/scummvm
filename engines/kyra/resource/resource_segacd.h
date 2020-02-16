@@ -39,7 +39,7 @@ public:
 	SegaCDResource(Resource *res);
 	~SegaCDResource();
 
-	bool loadContainer(const Common::String &filename);
+	bool loadContainer(const Common::String &filename, uint32 offset = 0, uint32 size = 0);
 	void unloadContainer();
 
 	Common::SeekableReadStreamEndian *getEndianAwareResourceStream(int resID);

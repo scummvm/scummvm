@@ -2295,7 +2295,7 @@ void GUI_EoB::runCampMenu() {
 					_vm->_configMusic ^= true;
 					_vm->writeSettings();
 					if (_vm->_configMusic)
-						_vm->snd_playSong(_vm->_currentLevel + 1);
+						_vm->snd_playLevelScore();
 					else
 						_vm->snd_playSong(0);
 				} else {

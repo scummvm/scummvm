@@ -37,6 +37,7 @@ friend class EoBSeqPlayerCommon;
 friend class EoBIntroPlayer;
 friend class EoBPC98FinalePlayer;
 friend class EoBAmigaFinalePlayer;
+friend class SegaSequencePlayer;
 public:
 	EoBEngine(OSystem *system, const GameFlags &flags);
 	~EoBEngine() override;
@@ -90,7 +91,9 @@ private:
 	void seq_xdeath() override;
 
 	void seq_segaOpeningCredits();
-	bool seq_segaPlaySequence(int id);
+	void seq_segaSetupSequence(int id);
+	bool seq_segaPlaySequence(int sequenceId, int setupID = -1);
+
 
 	const char *const *_finBonusStrings;
 	SegaSequencePlayer *_seqPlayer;

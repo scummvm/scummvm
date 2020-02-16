@@ -34,7 +34,7 @@ SegaCDResource::~SegaCDResource() {
 	unloadContainer();
 }
 
-bool SegaCDResource::loadContainer(const Common::String &filename) {
+bool SegaCDResource::loadContainer(const Common::String &filename, uint32 offset, uint32 size) {
 	unloadContainer();
 
 	_str = _res->createEndianAwareReadStream(filename);
@@ -43,16 +43,23 @@ bool SegaCDResource::loadContainer(const Common::String &filename) {
 		return false;
 	}
 
+	_str->seek(offset, SEEK_SET);
+
 	uint32 first = _str->readUint32();
 	_numResources = first >> 2;
 	_offsetTable = new uint32[_numResources + 1];
-	_offsetTable[0] = first;
+	_offsetTable[0] = offset + first;
+
 	for (int i = 1; i < _numResources; ++i) {
-		_offsetTable[i] = _str->readUint32();
+		_offsetTable[i] = offset + _str->readUint32();
 		if (_offsetTable[i] == 0)
 			_numResources = i;
 	}
-	_offsetTable[_numResources] = _str->size();
+
+	if (size)
+		assert(offset + size <= _str->size());
+
+	_offsetTable[_numResources] = size ? offset + size : _str->size();
 
 	return true;
 }

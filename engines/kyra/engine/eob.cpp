@@ -27,6 +27,7 @@
 #include "kyra/resource/resource.h"
 #include "kyra/resource/resource_segacd.h"
 #include "kyra/sound/sound.h"
+#include "kyra/text/text_eob_segacd.h"
 
 namespace Kyra {
 
@@ -111,8 +112,10 @@ Common::Error EoBEngine::init() {
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_sres = new SegaCDResource(_res);
 		assert(_sres);
-		_seqPlayer = new SegaSequencePlayer(this, _sres);
+		_seqPlayer = new SegaSequencePlayer(this, _screen, _sres);
 		assert(_seqPlayer);
+		_txt = new TextDisplayer_SegaCD(this, _screen);
+		assert(_txt);
 	}
 
 	return Common::kNoError;

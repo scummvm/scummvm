@@ -73,14 +73,14 @@ void SoundSegaCD_EoB::loadSfxFile(Common::String file) {
 }
 
 void SoundSegaCD_EoB::playTrack(uint8 track) {
-	static const uint8 levelCDATracks[13] = {
-		7, 7, 7, 7, 6, 6, 6, 4, 4, 4, 5, 5, 10
-	};
-
 	if (!_musicEnabled || !_ready)
 		return;
-	
-	g_system->getAudioCDManager()->play(track, 1, 0, 0);
+
+	int loop = track >> 7;
+	track &= 0x7F;
+
+	g_system->getAudioCDManager()->play(track - 1, loop, 0, 0);
+	g_system->getAudioCDManager()->update();
 }
 
 void SoundSegaCD_EoB::haltTrack() {

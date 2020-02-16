@@ -1190,7 +1190,8 @@ protected:
 	const uint8 *_numSpellsMage;
 
 	// sound
-	void snd_playSong(int id);
+	void snd_playSong(int id, bool loop = true);
+	void snd_playLevelScore();
 	void snd_playSoundEffect(int id, int volume=0xFF) override;
 	void snd_stopSound();
 	void snd_fadeOut(int del = 160);
