@@ -87,6 +87,28 @@ static const char *const fontStyleSuffixes[] = {
 	"Extend"
 };
 
+int parseSlant(const Common::String fontname) {
+	int res = 0;
+
+	for (int i = 1; i < 7; i++)
+		if (fontname.contains(fontStyleSuffixes[i]))
+			res |= (1 << (i - 1));
+
+	return res;
+}
+
+Common::String cleanFontName(const Common::String fontname) {
+	const char *pos;
+	Common::String f = fontname;
+	for (int i = 1; i < 7; i++) {
+		if ((pos = strstr(f.c_str(), fontStyleSuffixes[i])))
+			f = Common::String(f.c_str(), pos);
+	}
+	f.trim();
+
+	return f;
+}
+
 MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 	for (uint i = 0; i < ARRAYSIZE(fontNames); i++)
 		if (fontNames[i])
@@ -213,6 +235,11 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 			Common::SeekableReadStream *fond = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
 
 			Common::String familyName = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
+			int familySlant = parseSlant(familyName);
+
+			if (familySlant) {
+				familyName = cleanFontName(familyName);
+			}
 
 			Graphics::MacFontFamily *fontFamily = new MacFontFamily();
 			fontFamily->load(*fond);
@@ -220,7 +247,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 			Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily->getAssocTable();
 
 			for (uint i = 0; i < assoc->size(); i++) {
-				debug(8, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle,
+				debug(8, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant,
 										(*assoc)[i]._fontID);
 
 				Common::SeekableReadStream *fontstream;
@@ -239,13 +266,13 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 				}
 
 				font = new Graphics::MacFONTFont;
-				font->loadFont(*fontstream, fontFamily, (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
+				font->loadFont(*fontstream, fontFamily, (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
 
 				delete fontstream;
 
-				Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle, (*assoc)[i]._fontSize);
+				Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle | familySlant, (*assoc)[i]._fontSize);
 
-				macfont = new MacFont(_fontIds.getVal(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
+				macfont = new MacFont(_fontIds.getVal(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
 
 				FontMan.assignFontToName(fontName, font);
 				macfont->setFont(font);
@@ -357,17 +384,6 @@ const Common::String MacFontManager::getFontName(int id, int size, int slant, bo
 	if (n.empty()) {
 		warning("MacFontManager: Requested font ID %d not found. Falling back to Geneva", id);
 		n = fontNames[1]; // Fallback to Geneva
-	}
-
-	if (tryGen && slant != kMacFontRegular) {
-		for (int i = 0; i < 7; i++) {
-			if (slant & (1 << i)) {
-				n += ' ';
-				n += fontStyleSuffixes[i + 1];
-			}
-		}
-
-		slant = 0;
 	}
 
 	return Common::String::format("%s-%d-%d", n.c_str(), slant, size);
