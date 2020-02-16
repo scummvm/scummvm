@@ -1513,7 +1513,7 @@ void CryOmni3DEngine_Versailles::executeSeeAction(uint actionId) {
 		return;
 	}
 
-	const FixedImgCallback &cb = _imgScripts.getVal(actionId, nullptr);
+	const FixedImgCallback cb = _imgScripts.getVal(actionId, nullptr);
 	if (cb != nullptr) {
 		handleFixedImg(cb);
 	} else {
