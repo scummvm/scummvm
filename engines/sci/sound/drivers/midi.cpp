@@ -469,9 +469,18 @@ void MidiPlayer_Midi::setVolume(byte volume) {
 	if (!_playSwitch)
 		return;
 
-	for (uint i = 1; i < 10; i++) {
-		if (_channels[i].volume != 0xff)
-			controlChange(i, 0x07, _channels[i].volume & 0x7f);
+	if (_mt32Type == kMt32TypeNone) {
+		// the per channel volume change doesn't work for GM - therefore bug #11012
+		// (which is more problematic than reported - the "volume" slider doesn't affect music at all!)
+		// I don't really understand why. However, using GM "MasterVolume" function solves it
+		byte shiftedMasterVoluem = volume << 3;
+		byte msg[6] = {0x7f, 0x7f, 0x04, 0x01, 0x0, shiftedMasterVoluem};
+		_driver->sysEx(msg, 6);
+	} else {
+		for (uint i = 1; i < 10; i++) {
+			if (_channels[i].volume != 0xff)
+				controlChange(i, 0x07, _channels[i].volume & 0x7f);
+		}
 	}
 }
 
