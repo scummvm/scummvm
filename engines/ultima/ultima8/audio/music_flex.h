@@ -50,7 +50,7 @@ public:
 
 	//! Get an xmidi
 	XMidiFile *getXMidi(uint32 index) {
-		if (index >= count) return 0;
+		if (index >= _count) return 0;
 		cache(index);
 		return songs[index];
 	}

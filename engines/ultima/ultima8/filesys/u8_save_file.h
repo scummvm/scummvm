@@ -48,18 +48,18 @@ public:
 	uint32 getSize(const Std::string &name) override;
 
 	uint32 getCount() override {
-		return count;
+		return _count;
 	}
 
 	static bool isU8SaveFile(IDataSource *ds);
 
 protected:
-	IDataSource *ds;
-	uint32 count;
+	IDataSource *_ds;
+	uint32 _count;
 
-	Std::map<Common::String, uint32> indices;
-	Std::vector<uint32> offsets;
-	Std::vector<uint32> sizes;
+	Std::map<Common::String, uint32> _indices;
+	Std::vector<uint32> _offsets;
+	Std::vector<uint32> _sizes;
 
 private:
 	bool readMetadata();

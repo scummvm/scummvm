@@ -37,15 +37,15 @@ ShapeArchive::~ShapeArchive() {
 }
 
 Shape *ShapeArchive::getShape(uint32 shapenum) {
-	if (shapenum >= count) return 0;
+	if (shapenum >= _count) return 0;
 	cache(shapenum);
 
 	return shapes[shapenum];
 }
 
 void ShapeArchive::cache(uint32 shapenum) {
-	if (shapenum >= count) return;
-	if (shapes.empty()) shapes.resize(count);
+	if (shapenum >= _count) return;
+	if (shapes.empty()) shapes.resize(_count);
 
 	if (shapes[shapenum]) return;
 
@@ -73,7 +73,7 @@ void ShapeArchive::cache(uint32 shapenum) {
 }
 
 void ShapeArchive::uncache(uint32 shapenum) {
-	if (shapenum >= count) return;
+	if (shapenum >= _count) return;
 	if (shapes.empty()) return;
 
 	delete shapes[shapenum];
@@ -81,7 +81,7 @@ void ShapeArchive::uncache(uint32 shapenum) {
 }
 
 bool ShapeArchive::isCached(uint32 shapenum) {
-	if (shapenum >= count) return false;
+	if (shapenum >= _count) return false;
 	if (shapes.empty()) return false;
 
 	return (shapes[shapenum] != 0);

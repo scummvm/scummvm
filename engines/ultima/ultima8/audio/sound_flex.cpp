@@ -33,23 +33,23 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(SoundFlex, Archive)
 
 
 SoundFlex::SoundFlex(IDataSource *ds) : Archive(ds) {
-	samples = 0;
+	_samples = 0;
 }
 
 SoundFlex::~SoundFlex() {
 	Archive::uncache();
-	delete [] samples;
+	delete [] _samples;
 }
 
 void SoundFlex::cache(uint32 index) {
-	if (index >= count) return;
+	if (index >= _count) return;
 
-	if (!samples) {
-		samples = new AudioSample * [count];
-		Std::memset(samples, 0, sizeof(AudioSample *) * count);
+	if (!_samples) {
+		_samples = new AudioSample * [_count];
+		Std::memset(_samples, 0, sizeof(AudioSample *) * _count);
 	}
 
-	if (samples[index]) return;
+	if (_samples[index]) return;
 
 	// This will cache the data
 	uint32 size;
@@ -57,22 +57,22 @@ void SoundFlex::cache(uint32 index) {
 
 	if (!buf || !size) return;
 
-	samples[index] = new SonarcAudioSample(buf, size);
+	_samples[index] = new SonarcAudioSample(buf, size);
 }
 
 void SoundFlex::uncache(uint32 index) {
-	if (index >= count) return;
-	if (!samples) return;
+	if (index >= _count) return;
+	if (!_samples) return;
 
-	delete samples[index];
-	samples[index] = 0;
+	delete _samples[index];
+	_samples[index] = 0;
 }
 
 bool SoundFlex::isCached(uint32 index) {
-	if (index >= count) return false;
-	if (!samples) return false;
+	if (index >= _count) return false;
+	if (!_samples) return false;
 
-	return (samples[index] != 0);
+	return (_samples[index] != 0);
 }
 
 } // End of namespace Ultima8

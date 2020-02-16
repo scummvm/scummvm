@@ -71,11 +71,11 @@ public:
 	}
 
 	uint32 getCount() override {
-		return count;
+		return _count;
 	}
 
 	uint32 getIndexCount() override {
-		return count;
+		return _count;
 	}
 
 	bool isIndexed() const override {
@@ -90,8 +90,8 @@ public:
 protected:
 	bool nameToIndex(const Std::string &name, uint32 &index);
 
-	IDataSource *ds;
-	uint32 count;
+	IDataSource *_ds;
+	uint32 _count;
 
 private:
 	uint32 getOffset(uint32 index);

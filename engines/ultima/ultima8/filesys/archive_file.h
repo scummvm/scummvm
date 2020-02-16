@@ -39,7 +39,7 @@ public:
 
 	//! Check if constructed object is indeed a valid archive
 	virtual bool isValid() const {
-		return valid;
+		return _valid;
 	}
 
 	//! Check if numbered object exists
@@ -107,7 +107,7 @@ public:
 protected:
 	static bool extractIndexFromName(const Std::string &name, uint32 &index);
 
-	bool valid;
+	bool _valid;
 };
 
 } // End of namespace Ultima8

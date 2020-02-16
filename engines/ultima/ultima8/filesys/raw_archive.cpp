@@ -36,46 +36,46 @@ RawArchive::~RawArchive() {
 }
 
 void RawArchive::cache(uint32 index) {
-	if (index >= count) return;
-	if (objects.empty()) objects.resize(count);
+	if (index >= _count) return;
+	if (_objects.empty()) _objects.resize(_count);
 
-	if (objects[index]) return;
+	if (_objects[index]) return;
 
-	objects[index] = getRawObject(index);
+	_objects[index] = getRawObject(index);
 }
 
 void RawArchive::uncache(uint32 index) {
-	if (index >= count) return;
-	if (objects.empty()) return;
+	if (index >= _count) return;
+	if (_objects.empty()) return;
 
-	if (objects[index]) {
-		delete[] objects[index];
-		objects[index] = 0;
+	if (_objects[index]) {
+		delete[] _objects[index];
+		_objects[index] = 0;
 	}
 }
 
 bool RawArchive::isCached(uint32 index) {
-	if (index >= count) return false;
-	if (objects.empty()) return false;
+	if (index >= _count) return false;
+	if (_objects.empty()) return false;
 
-	return (objects[index] != 0);
+	return (_objects[index] != 0);
 }
 
 const uint8 *RawArchive::get_object_nodel(uint32 index) {
-	if (index >= count) return 0;
+	if (index >= _count) return 0;
 	cache(index);
-	return objects[index];
+	return _objects[index];
 }
 
 uint8 *RawArchive::get_object(uint32 index) {
-	if (index >= count) return 0;
+	if (index >= _count) return 0;
 
-	if (index < objects.size() && objects[index]) {
+	if (index < _objects.size() && _objects[index]) {
 		// already cached
 		uint32 size = getRawSize(index);
 		if (size == 0) return 0;
 		uint8 *object = new uint8[size];
-		Std::memcpy(object, objects[index], size);
+		Std::memcpy(object, _objects[index], size);
 		return object;
 	}
 
@@ -83,17 +83,17 @@ uint8 *RawArchive::get_object(uint32 index) {
 }
 
 uint32 RawArchive::get_size(uint32 index) {
-	if (index >= count) return 0;
+	if (index >= _count) return 0;
 	return getRawSize(index);
 }
 
 IDataSource *RawArchive::get_datasource(uint32 index) {
-	if (index >= count) return 0;
+	if (index >= _count) return 0;
 	cache(index);
 
-	if (!objects[index]) return 0;
+	if (!_objects[index]) return 0;
 
-	return new IBufferDataSource(objects[index], getRawSize(index));
+	return new IBufferDataSource(_objects[index], getRawSize(index));
 }
 
 } // End of namespace Ultima8

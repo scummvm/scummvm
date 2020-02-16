@@ -37,8 +37,8 @@ ShapeFont *FontShapeArchive::getFont(uint32 fontnum) {
 }
 
 void FontShapeArchive::cache(uint32 shapenum) {
-	if (shapenum >= count) return;
-	if (shapes.empty()) shapes.resize(count);
+	if (shapenum >= _count) return;
+	if (shapes.empty()) shapes.resize(_count);
 
 	if (shapes[shapenum]) return;
 

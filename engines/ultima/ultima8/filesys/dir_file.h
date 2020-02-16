@@ -45,14 +45,14 @@ public:
 	uint32 getSize(const Std::string &name) override;
 
 	uint32 getCount() override {
-		return count;
+		return _count;
 	}
 
 protected:
 	bool readMetadata();
 
-	Std::string path;
-	uint32 count;
+	Std::string _path;
+	uint32 _count;
 };
 
 } // End of namespace Ultima8

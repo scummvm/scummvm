@@ -31,16 +31,16 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(DirFile, NamedArchiveFile)
 
-DirFile::DirFile(const Std::string &path_) {
-	path = path_;
-	if (path.size() == 0) {
-		valid = false;
+DirFile::DirFile(const Std::string &path) {
+	_path = path;
+	if (_path.size() == 0) {
+		_valid = false;
 		return;
 	}
 
-	if (path[path.size() - 1] != '/') path += "/";
+	if (_path[_path.size() - 1] != '/') _path += "/";
 
-	valid = readMetadata();
+	_valid = readMetadata();
 }
 
 
@@ -52,11 +52,11 @@ bool DirFile::readMetadata() {
 	FileSystem *filesys = FileSystem::get_instance();
 	FileSystem::FileList files;
 
-	/*int ret =*/ filesys->ListFiles(path + "*", files);
+	/*int ret =*/ filesys->ListFiles(_path + "*", files);
 
 	// TODO: check if directory actually exists
 
-	count = files.size();
+	_count = files.size();
 
 	FileSystem::FileList::iterator iter;
 
@@ -75,7 +75,7 @@ bool DirFile::readMetadata() {
 
 bool DirFile::exists(const Std::string &name) {
 	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *ids = filesys->ReadFile(path + name);
+	IDataSource *ids = filesys->ReadFile(_path + name);
 	if (!ids) return false;
 
 	delete ids;
@@ -84,7 +84,7 @@ bool DirFile::exists(const Std::string &name) {
 
 uint32 DirFile::getSize(const Std::string &name) {
 	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *ids = filesys->ReadFile(path + name);
+	IDataSource *ids = filesys->ReadFile(_path + name);
 	if (!ids) return 0;
 
 	uint32 size = ids->getSize();
@@ -94,7 +94,7 @@ uint32 DirFile::getSize(const Std::string &name) {
 
 uint8 *DirFile::getObject(const Std::string &name, uint32 *sizep) {
 	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *ids = filesys->ReadFile(path + name);
+	IDataSource *ids = filesys->ReadFile(_path + name);
 	if (!ids) return 0;
 
 	uint32 size = ids->getSize();

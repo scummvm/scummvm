@@ -69,7 +69,7 @@ void MusicFlex::uncache(uint32 index) {
 }
 
 bool MusicFlex::isCached(uint32 index) {
-	if (index >= count) return false;
+	if (index >= _count) return false;
 	if (!songs) return false;
 
 	return (songs[index] != 0);

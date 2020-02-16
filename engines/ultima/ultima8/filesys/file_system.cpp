@@ -33,20 +33,20 @@ namespace Ultima8 {
 
 using Std::string;
 
-FileSystem *FileSystem::filesystem = 0;
+FileSystem *FileSystem::_fileSystem = 0;
 
 FileSystem::FileSystem(bool noforced)
-	: noforcedvpaths(noforced), allowdataoverride(true) {
+	: _noForcedVPaths(noforced), _allowDataOverride(true) {
 	con->Print(MM_INFO, "Creating FileSystem...\n");
 
-	filesystem = this;
+	_fileSystem = this;
 	AddVirtualPath("@home", "");
 }
 
 FileSystem::~FileSystem() {
 	con->Print(MM_INFO, "Destroying FileSystem...\n");
 
-	filesystem = 0;
+	_fileSystem = 0;
 }
 
 
@@ -57,7 +57,7 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 	IDataSource *data = checkBuiltinData(vfn, is_text);
 
 	// allow data-override?
-	if (!allowdataoverride && data)
+	if (!_allowDataOverride && data)
 		return data;
 
 	Common::SeekableReadStream *readStream;
@@ -238,7 +238,7 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 		}
 	}
 
-	virtualpaths[vp] = rp;
+	_virtualPaths[vp] = rp;
 	return true;
 }
 
@@ -249,12 +249,12 @@ bool FileSystem::RemoveVirtualPath(const string &vpath) {
 	if (vp.rfind('/') == vp.size() - 1)
 		vp.erase(vp.rfind('/'));
 
-	Std::map<Common::String, string>::iterator i = virtualpaths.find(vp);
+	Std::map<Common::String, string>::iterator i = _virtualPaths.find(vp);
 
-	if (i == virtualpaths.end()) {
+	if (i == _virtualPaths.end()) {
 		return false;
 	} else {
-		virtualpaths.erase(vp);
+		_virtualPaths.erase(vp);
 		return true;
 	}
 }
@@ -264,8 +264,8 @@ IDataSource *FileSystem::checkBuiltinData(const Std::string &vfn, bool is_text) 
 	Std::map<Common::String, MemoryFile *>::iterator mf = memoryfiles.find(vfn);
 
 	if (mf != memoryfiles.end())
-		return new IBufferDataSource(mf->_value->data,
-		                             mf->_value->len, is_text);
+		return new IBufferDataSource(mf->_value->_data,
+		                             mf->_value->_len, is_text);
 
 	return 0;
 }
@@ -276,10 +276,10 @@ bool FileSystem::rewrite_virtual_path(string &vfn) {
 
 	while ((pos = vfn.rfind('/', pos)) != Std::string::npos) {
 //		perr << vfn << ", " << vfn.substr(0, pos) << ", " << pos << Std::endl;
-		Std::map<Common::String, string>::iterator p = virtualpaths.find(
+		Std::map<Common::String, string>::iterator p = _virtualPaths.find(
 		            vfn.substr(0, pos));
 
-		if (p != virtualpaths.end()) {
+		if (p != _virtualPaths.end()) {
 			ret = true;
 			// rewrite first part of path
 			vfn = p->_value + vfn.substr(pos + 1);
@@ -292,7 +292,7 @@ bool FileSystem::rewrite_virtual_path(string &vfn) {
 	}
 
 	// We will allow all paths to work
-	if (noforcedvpaths) ret = true;
+	if (_noForcedVPaths) ret = true;
 
 	return ret;
 }

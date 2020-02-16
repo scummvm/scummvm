@@ -153,77 +153,77 @@ public:
 
 class OBufferDataSource: public ODataSource {
 protected:
-	uint8 *buf;
-	uint8 *buf_ptr;
-	uint32 size;
+	uint8 *_buf;
+	uint8 *_bufPtr;
+	uint32 _size;
 public:
 	OBufferDataSource(void *data, uint32 len) {
 		assert(data == 0 || len == 0);
-		buf = buf_ptr = reinterpret_cast<uint8 *>(data);
-		size = len;
+		_buf = _bufPtr = reinterpret_cast<uint8 *>(data);
+		_size = len;
 	};
 
 	void load(char *data, uint32 len) {
 		assert(data == 0 || len == 0);
-		buf = buf_ptr = reinterpret_cast<uint8 *>(data);
-		size = len;
+		_buf = _bufPtr = reinterpret_cast<uint8 *>(data);
+		_size = len;
 	};
 
 	~OBufferDataSource() override {};
 
 	void write1(uint32 val) override {
-		*buf_ptr++ = val & 0xff;
+		*_bufPtr++ = val & 0xff;
 	};
 
 	void write2(uint16 val) override {
-		*buf_ptr++ = val & 0xff;
-		*buf_ptr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = val & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
 	};
 
 	void write2high(uint16 val) override {
-		*buf_ptr++ = (val >> 8) & 0xff;
-		*buf_ptr++ = val & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = val & 0xff;
 	};
 
 	void write3(uint32 val) override {
-		*buf_ptr++ = val & 0xff;
-		*buf_ptr++ = (val >> 8) & 0xff;
-		*buf_ptr++ = (val >> 16) & 0xff;
+		*_bufPtr++ = val & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = (val >> 16) & 0xff;
 	};
 
 	void write4(uint32 val) override {
-		*buf_ptr++ = val & 0xff;
-		*buf_ptr++ = (val >> 8) & 0xff;
-		*buf_ptr++ = (val >> 16) & 0xff;
-		*buf_ptr++ = (val >> 24) & 0xff;
+		*_bufPtr++ = val & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = (val >> 16) & 0xff;
+		*_bufPtr++ = (val >> 24) & 0xff;
 	};
 
 	void write4high(uint32 val) override {
-		*buf_ptr++ = (val >> 24) & 0xff;
-		*buf_ptr++ = (val >> 16) & 0xff;
-		*buf_ptr++ = (val >> 8) & 0xff;
-		*buf_ptr++ = val & 0xff;
+		*_bufPtr++ = (val >> 24) & 0xff;
+		*_bufPtr++ = (val >> 16) & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = val & 0xff;
 	};
 
 	void write(const void *b, uint32 len) override {
-		Common::copy((const byte *)b, (const byte *)b + len, buf_ptr);
-		buf_ptr += len;
+		Common::copy((const byte *)b, (const byte *)b + len, _bufPtr);
+		_bufPtr += len;
 	};
 
 	void seek(uint32 pos) override {
-		buf_ptr = const_cast<unsigned char *>(buf) + pos;
+		_bufPtr = const_cast<unsigned char *>(_buf) + pos;
 	};
 
 	void skip(int32 pos) override {
-		buf_ptr += pos;
+		_bufPtr += pos;
 	};
 
 	uint32 getSize() const override {
-		return size;
+		return _size;
 	};
 
 	uint32 getPos() const override {
-		return static_cast<uint32>(buf_ptr - buf);
+		return static_cast<uint32>(_bufPtr - _buf);
 	};
 };
 
@@ -308,143 +308,143 @@ public:
 
 class OAutoBufferDataSource: public ODataSource {
 protected:
-	uint8 *buf;
-	uint8 *buf_ptr;
-	uint32 size;
-	uint32 loc;
-	uint32 allocated;
+	uint8 *_buf;
+	uint8 *_bufPtr;
+	uint32 _size;
+	uint32 _loc;
+	uint32 _allocated;
 
 	void checkResize(uint32 num_bytes) {
 		// Increment loc
-		loc += num_bytes;
+		_loc += num_bytes;
 
 		// Don't need to resize
-		if (loc <= size) return;
+		if (_loc <= _size) return;
 
 		// Reallocate the buffer
-		if (loc > allocated) {
+		if (_loc > _allocated) {
 			// The old pointer position
-			uint32 pos = static_cast<uint32>(buf_ptr - buf);
+			uint32 pos = static_cast<uint32>(_bufPtr - _buf);
 
 			// The new buffer and size (2 times what is needed)
-			allocated = loc * 2;
-			uint8 *new_buf = new uint8[allocated];
+			_allocated = _loc * 2;
+			uint8 *new_buf = new uint8[_allocated];
 
-			memcpy(new_buf, buf, size);
-			delete [] buf;
+			memcpy(new_buf, _buf, _size);
+			delete [] _buf;
 
-			buf = new_buf;
-			buf_ptr = buf + pos;
+			_buf = new_buf;
+			_bufPtr = _buf + pos;
 		}
 
 		// Update size
-		size = loc;
+		_size = _loc;
 	}
 
 public:
 	OAutoBufferDataSource(uint32 initial_len) {
-		allocated = initial_len;
-		size = 0;
+		_allocated = initial_len;
+		_size = 0;
 
 		// Make the min allocated size 16 bytes
-		if (allocated < 16) allocated = 16;
-		buf = buf_ptr = new uint8[allocated];
-		loc = 0;
+		if (_allocated < 16)
+			_allocated = 16;
+		_buf = _bufPtr = new uint8[_allocated];
+		_loc = 0;
 	};
 
 	//! Get a pointer to the data buffer.
 	const uint8 *getBuf() {
-		return buf;
+		return _buf;
 	}
 
 	~OAutoBufferDataSource() override {
-		delete [] buf_ptr;
+		delete [] _bufPtr;
 	}
 
 	void write1(uint32 val) override {
 		checkResize(1);
-		*buf_ptr++ = val & 0xff;
+		*_bufPtr++ = val & 0xff;
 	};
 
 	void write2(uint16 val) override {
 		checkResize(2);
-		*buf_ptr++ = val & 0xff;
-		*buf_ptr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = val & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
 	};
 
 	void write2high(uint16 val) override {
 		checkResize(2);
-		*buf_ptr++ = (val >> 8) & 0xff;
-		*buf_ptr++ = val & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = val & 0xff;
 	};
 
 	void write3(uint32 val) override {
 		checkResize(3);
-		*buf_ptr++ = val & 0xff;
-		*buf_ptr++ = (val >> 8) & 0xff;
-		*buf_ptr++ = (val >> 16) & 0xff;
+		*_bufPtr++ = val & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = (val >> 16) & 0xff;
 	};
 
 	void write4(uint32 val) override {
 		checkResize(4);
-		*buf_ptr++ = val & 0xff;
-		*buf_ptr++ = (val >> 8) & 0xff;
-		*buf_ptr++ = (val >> 16) & 0xff;
-		*buf_ptr++ = (val >> 24) & 0xff;
+		*_bufPtr++ = val & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = (val >> 16) & 0xff;
+		*_bufPtr++ = (val >> 24) & 0xff;
 	};
 
 	void write4high(uint32 val) override {
 		checkResize(4);
-		*buf_ptr++ = (val >> 24) & 0xff;
-		*buf_ptr++ = (val >> 16) & 0xff;
-		*buf_ptr++ = (val >> 8) & 0xff;
-		*buf_ptr++ = val & 0xff;
+		*_bufPtr++ = (val >> 24) & 0xff;
+		*_bufPtr++ = (val >> 16) & 0xff;
+		*_bufPtr++ = (val >> 8) & 0xff;
+		*_bufPtr++ = val & 0xff;
 	};
 
 	void write(const void *b, uint32 len) override {
 		checkResize(len);
-		Common::copy((const byte *)b, (const byte *)b + len, buf_ptr);
-		buf_ptr += len;
+		Common::copy((const byte *)b, (const byte *)b + len, _bufPtr);
+		_bufPtr += len;
 	};
 
 	void seek(uint32 pos) override {
 		// No seeking past the end of the buffer
-		if (pos <= size) loc = pos;
-		else loc = size;
+		if (pos <= _size) _loc = pos;
+		else _loc = _size;
 
-		buf_ptr = const_cast<unsigned char *>(buf) + loc;
+		_bufPtr = const_cast<unsigned char *>(_buf) + _loc;
 	};
 
 	void skip(int32 pos) override {
 		// No seeking past the end
 		if (pos >= 0) {
-			loc += pos;
-			if (loc > size) loc = size;
+			_loc += pos;
+			if (_loc > _size) _loc = _size;
 		}
 		// No seeking past the start
 		else {
 			uint32 invpos = -pos;
-			if (invpos > loc) invpos = loc;
-			loc -= invpos;
+			if (invpos > _loc) invpos = _loc;
+			_loc -= invpos;
 		}
-		buf_ptr = const_cast<unsigned char *>(buf) + loc;
+		_bufPtr = const_cast<unsigned char *>(_buf) + _loc;
 	};
 
 	uint32 getSize() const override {
-		return size;
+		return _size;
 	};
 
 	uint32 getPos() const override {
-		return static_cast<uint32>(buf_ptr - buf);
+		return static_cast<uint32>(_bufPtr - _buf);
 	};
 
 	// Don't actually do anything substantial
 	virtual void clear() {
-		buf_ptr = buf;
-		size = 0;
-		loc = 0;
+		_bufPtr = _buf;
+		_size = 0;
+		_loc = 0;
 	}
-
 };
 
 } // End of namespace Ultima8

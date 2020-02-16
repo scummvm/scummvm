@@ -40,9 +40,9 @@ public:
 
 	//! Get an audiosample
 	AudioSample *getSample(uint32 index) {
-		if (index >= count) return 0;
+		if (index >= _count) return 0;
 		cache(index);
-		return samples[index];
+		return _samples[index];
 	}
 
 	void cache(uint32 index) override;
@@ -50,7 +50,7 @@ public:
 	bool isCached(uint32 index) override;
 
 private:
-	AudioSample      **samples;
+	AudioSample **_samples;
 };
 
 } // End of namespace Ultima8

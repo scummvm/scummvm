@@ -85,17 +85,17 @@ public:
 	virtual bool isCached(uint32 index) = 0;
 
 	uint32 getCount() const {
-		return count;
+		return _count;
 	}
 
 protected:
-	uint32 count;
+	uint32 _count;
 
 	uint8 *getRawObject(uint32 index, uint32 *sizep = 0);
 	uint32 getRawSize(uint32 index);
 
 private:
-	Std::vector<ArchiveFile *> sources;
+	Std::vector<ArchiveFile *> _sources;
 
 	ArchiveFile *findArchiveFile(uint32 index);
 };
