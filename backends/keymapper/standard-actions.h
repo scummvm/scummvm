@@ -47,7 +47,6 @@ extern const char *kStandardActionOpenMainMenu;
 extern const char *kStandardActionLoad;
 extern const char *kStandardActionSave;
 extern const char *kStandardActionOpenSettings;
-extern const char *kStandardActionOpenDebugger;
 
 } //namespace Common
 
