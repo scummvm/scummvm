@@ -70,8 +70,8 @@ void ContainerGump::InitGump(Gump *newparent, bool take_focus) {
 	ShapeFrame *sf = _shape->getFrame(_frameNum);
 	assert(sf);
 
-	_dims.w = sf->width;
-	_dims.h = sf->height;
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
 
 	// Wait with ItemRelativeGump initialization until we calculated our size.
 	ItemRelativeGump::InitGump(newparent, take_focus);
@@ -412,10 +412,10 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 	ShapeFrame *fr = sh->getFrame(_draggingFrame);
 	assert(fr);
 
-	if (dragging_x - fr->xoff < 0 ||
-	        dragging_x - fr->xoff + fr->width > _itemArea.w ||
-	        dragging_y - fr->yoff < 0 ||
-	        dragging_y - fr->yoff + fr->height > _itemArea.h) {
+	if (dragging_x - fr->_xoff < 0 ||
+	        dragging_x - fr->_xoff + fr->_width > _itemArea.w ||
+	        dragging_y - fr->_yoff < 0 ||
+	        dragging_y - fr->_yoff + fr->_height > _itemArea.h) {
 		_displayDragging = false;
 		return false;
 	}

@@ -713,13 +713,13 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shape_num, uint32 fra
 //	si->sybot += sho2;
 
 	// Real Screenspace coords
-	si->sx = si->sxbot - frame->xoff;   // Left
-	si->sy = si->sybot - frame->yoff;   // Top
-	si->sx2 = si->sx + frame->width;    // Right
-	si->sy2 = si->sy + frame->height;   // Bottom
+	si->sx = si->sxbot - frame->_xoff;   // Left
+	si->sy = si->sybot - frame->_yoff;   // Top
+	si->sx2 = si->sx + frame->_width;    // Right
+	si->sy2 = si->sy + frame->_height;   // Bottom
 
 	// Do Clipping here
-	si->clipped = surf->CheckClipped(Rect(si->sx, si->sy, frame->width, frame->height));
+	si->clipped = surf->CheckClipped(Rect(si->sx, si->sy, frame->_width, frame->_height));
 	if (si->clipped < 0) return;
 
 	// These help out with sorting. We calc them now, so it will be faster
@@ -890,13 +890,13 @@ void ItemSorter::AddItem(Item *add) {
 //	si->sybot += sho2;
 
 	// Real Screenspace coords
-	si->sx = si->sxbot - frame->xoff;   // Left
-	si->sy = si->sybot - frame->yoff;   // Top
-	si->sx2 = si->sx + frame->width;    // Right
-	si->sy2 = si->sy + frame->height;   // Bottom
+	si->sx = si->sxbot - frame->_xoff;   // Left
+	si->sy = si->sybot - frame->_yoff;   // Top
+	si->sx2 = si->sx + frame->_width;    // Right
+	si->sy2 = si->sy + frame->_height;   // Bottom
 
 	// Do Clipping here
-	si->clipped = surf->CheckClipped(Rect(si->sx, si->sy, frame->width, frame->height));
+	si->clipped = surf->CheckClipped(Rect(si->sx, si->sy, frame->_width, frame->_height));
 	if (si->clipped < 0) return;
 
 	// These help out with sorting. We calc them now, so it will be faster

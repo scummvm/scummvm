@@ -303,8 +303,8 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 	ShapeFrame *frame = s->getFrame(item->getFrame());
 	assert(frame);
 
-	Mouse::get_instance()->setDraggingOffset(frame->width / 2 - frame->xoff,
-	        frame->height / 2 - frame->yoff);
+	Mouse::get_instance()->setDraggingOffset(frame->_width / 2 - frame->_xoff,
+	        frame->_height / 2 - frame->_yoff);
 
 	return ret;
 }

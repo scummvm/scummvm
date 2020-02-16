@@ -60,8 +60,8 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	_dims.w = sf->width;
-	_dims.h = sf->height;
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
 
 	FrameID askshape(GameData::GUMPS, askShapeId, 0);
 	askshape = _TL_SHP_(askshape);
@@ -70,7 +70,7 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	sf = askShape->getFrame(askshape._frameNum);
 	assert(sf);
 
-	Gump *ask = new Gump(0, 0, sf->width, sf->height);
+	Gump *ask = new Gump(0, 0, sf->_width, sf->_height);
 	ask->SetShape(askShape, askshape._frameNum);
 	ask->InitGump(this);
 	ask->setRelativePosition(TOP_CENTER, 0, 5);

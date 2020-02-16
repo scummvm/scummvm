@@ -45,7 +45,7 @@ JPFont::~JPFont() {
 }
 
 int JPFont::getWidth(int c) {
-	return shapefont->getFrame(c)->width;
+	return shapefont->getFrame(c)->_width;
 }
 
 int JPFont::getHeight() {

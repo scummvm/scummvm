@@ -131,8 +131,8 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	_dims.w = sf->width;
-	_dims.h = sf->height;
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
 
 	Shape *childshape = GameData::get_instance()->
 	                    getGumps()->getShape(slidershape);

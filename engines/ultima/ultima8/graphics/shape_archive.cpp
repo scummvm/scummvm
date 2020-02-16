@@ -57,7 +57,7 @@ void ShapeArchive::cache(uint32 shapenum) {
 	// Auto detect format
 	if (!format) {
 		format = Shape::DetectShapeFormat(data, shpsize);
-		if (format) pout << "Detected Shape Format: " << format->name << Std::endl;
+		if (format) pout << "Detected Shape Format: " << format->_name << Std::endl;
 	}
 
 	if (!format) {

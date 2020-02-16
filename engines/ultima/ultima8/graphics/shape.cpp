@@ -151,10 +151,10 @@ void Shape::LoadGenericFormat(const uint8 *data_, uint32 size_, const ConvertSha
 	uint32 framesize;
 	IBufferDataSource ds(data_, size_);
 
-	if (format->bytes_ident) {
-		uint8 *ident = new uint8[format->bytes_ident];
-		ds.read(ident, format->bytes_ident);
-		bool match = Std::memcmp(ident, format->ident, format->bytes_ident) == 0;
+	if (format->_bytes_ident) {
+		uint8 *ident = new uint8[format->_bytes_ident];
+		ds.read(ident, format->_bytes_ident);
+		bool match = Std::memcmp(ident, format->_ident, format->_bytes_ident) == 0;
 		delete[] ident;
 
 		if (!match) {
@@ -165,16 +165,16 @@ void Shape::LoadGenericFormat(const uint8 *data_, uint32 size_, const ConvertSha
 
 	// Read special buffer
 	uint8 special[256];
-	if (format->bytes_special) {
+	if (format->_bytes_special) {
 		memset(special, 0, 256);
-		for (uint32 i = 0; i < format->bytes_special; i++) special[ds.read1() & 0xFF] = i + 2;
+		for (uint32 i = 0; i < format->_bytes_special; i++) special[ds.read1() & 0xFF] = i + 2;
 	}
 
 	// Skip unknown
-	ds.skip(format->bytes_header_unk);
+	ds.skip(format->_bytes_header_unk);
 
 	// Read framecount, default 1 if no
-	if (format->bytes_num_frames) framecount = ds.readX(format->bytes_num_frames);
+	if (format->_bytes_num_frames) framecount = ds.readX(format->_bytes_num_frames);
 	else framecount = 1;
 	if (framecount == 0) framecount = ConvertShape::CalcNumFrames(&ds, format, size_, 0);
 
@@ -182,19 +182,19 @@ void Shape::LoadGenericFormat(const uint8 *data_, uint32 size_, const ConvertSha
 
 	for (unsigned int i = 0; i < framecount; ++i) {
 		// Read the offset
-		if (format->bytes_frame_offset) frameoffset = ds.readX(format->bytes_frame_offset) + format->bytes_special;
-		else frameoffset = format->len_header + (format->len_frameheader * i);
+		if (format->_bytes_frame_offset) frameoffset = ds.readX(format->_bytes_frame_offset) + format->_bytes_special;
+		else frameoffset = format->_len_header + (format->_len_frameheader * i);
 
 		// Skip the unknown
-		ds.skip(format->bytes_frameheader_unk);
+		ds.skip(format->_bytes_frameheader_unk);
 
 		// Read frame_length
-		if (format->bytes_frame_length) framesize = ds.readX(format->bytes_frame_length) + format->bytes_frame_length_kludge;
+		if (format->_bytes_frame_length) framesize = ds.readX(format->_bytes_frame_length) + format->_bytes_frame_length_kludge;
 		else framesize = size_ - frameoffset;
 
 		ConvertShapeFrame *prev = 0, p;
 
-		if (format->bytes_special && i > 0) {
+		if (format->_bytes_special && i > 0) {
 			prev = &p;
 			frames[i - 1]->getConvertShapeFrame(p);
 		}
@@ -244,14 +244,14 @@ void Shape::getTotalDimensions(int32 &w, int32 &h, int32 &x, int32 &y) const {
 
 	for (unsigned int i = 0; i < frames.size(); ++i) {
 		ShapeFrame *frame = frames[i];
-		if (-frame->xoff < minx)
-			minx = -frame->xoff;
-		if (-frame->yoff < miny)
-			miny = -frame->yoff;
-		if (frame->width - frame->xoff - 1 > maxx)
-			maxx = frame->width - frame->xoff - 1;
-		if (frame->height - frame->yoff - 1 > maxy)
-			maxy = frame->height - frame->yoff - 1;
+		if (-frame->_xoff < minx)
+			minx = -frame->_xoff;
+		if (-frame->_yoff < miny)
+			miny = -frame->_yoff;
+		if (frame->_width - frame->_xoff - 1 > maxx)
+			maxx = frame->_width - frame->_xoff - 1;
+		if (frame->_height - frame->_yoff - 1 > maxy)
+			maxy = frame->_height - frame->_yoff - 1;
 	}
 
 	w = maxx - minx + 1;

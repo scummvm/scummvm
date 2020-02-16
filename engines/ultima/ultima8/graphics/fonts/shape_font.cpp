@@ -46,13 +46,13 @@ ShapeFont::~ShapeFont() {
 
 
 int ShapeFont::getWidth(char c) {
-	return getFrame(static_cast<unsigned char>(c))->width;
+	return getFrame(static_cast<unsigned char>(c))->_width;
 }
 
 int ShapeFont::getHeight() {
 	if (height == 0) {
 		for (uint32 i = 0; i < frameCount(); i++) {
-			int h = getFrame(i)->height;
+			int h = getFrame(i)->_height;
 
 			if (h > height) height = h;
 		}
@@ -64,7 +64,7 @@ int ShapeFont::getHeight() {
 int ShapeFont::getBaseline() {
 	if (baseline == 0) {
 		for (uint32 i = 0; i < frameCount(); i++) {
-			int b = getFrame(i)->yoff;
+			int b = getFrame(i)->_yoff;
 
 			if (b > baseline) baseline = b;
 		}

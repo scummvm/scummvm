@@ -79,7 +79,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 				                1, iter->dims.h);
 			}
 
-			line_x += (font->getFrame(u8char))->width - font->getHlead();
+			line_x += (font->getFrame(u8char))->_width - font->getHlead();
 		}
 
 		if (iter->cursor == textsize) {
@@ -120,7 +120,7 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 
 			surface->PaintHighlight(font, u8char, line_x, line_y,
 			                        false, false, col);
-			line_x += (font->getFrame(u8char))->width - font->getHlead();
+			line_x += (font->getFrame(u8char))->_width - font->getHlead();
 		}
 
 	}

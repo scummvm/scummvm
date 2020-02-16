@@ -52,8 +52,8 @@ void SlidingWidget::InitGump(Gump *newparent, bool take_focus) {
 	ShapeFrame *sf = _shape->getFrame(_frameNum);
 	assert(sf);
 
-	_dims.w = sf->width;
-	_dims.h = sf->height;
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
 }
 
 uint16 SlidingWidget::TraceObjId(int32 mx, int32 my) {

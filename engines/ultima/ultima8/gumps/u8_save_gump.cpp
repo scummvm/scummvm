@@ -72,8 +72,8 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 	Shape *entryShape;
 	entryShape = GameData::get_instance()->getShape(entry_id);
 	ShapeFrame *sf = entryShape->getFrame(entry_id._frameNum);
-	int entrywidth = sf->width;
-	int entryheight = sf->height;
+	int entrywidth = sf->_width;
+	int entryheight = sf->_height;
 
 	if (_save)
 		_editWidgets.resize(6); // constant!
@@ -102,7 +102,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 			entrynum1_id = _TL_SHP_(entrynum1_id);
 			entryShape = GameData::get_instance()->getShape(entrynum1_id);
 			sf = entryShape->getFrame(entrynum1_id._frameNum);
-			x_ += 1 + sf->width;
+			x_ += 1 + sf->_width;
 
 			gump = new Gump(xbase + 2 + entrywidth, 3 + 40 * yi, 1, 1);
 			gump->SetShape(entrynum1_id, true);

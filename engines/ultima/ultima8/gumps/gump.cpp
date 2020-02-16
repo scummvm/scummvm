@@ -83,8 +83,8 @@ void Gump::SetShape(FrameID frame, bool adjustsize) {
 
 	if (adjustsize && _shape) {
 		ShapeFrame *sf = _shape->getFrame(_frameNum);
-		_dims.w = sf->width;
-		_dims.h = sf->height;
+		_dims.w = sf->_width;
+		_dims.h = sf->_height;
 	}
 }
 
