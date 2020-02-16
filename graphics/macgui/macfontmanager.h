@@ -69,7 +69,7 @@ class Font;
 class MacFont {
 public:
 	MacFont(int id = kMacFontChicago, int size = 12, int slant = kMacFontRegular, FontManager::FontUsage fallback = Graphics::FontManager::kBigGUIFont) {
-		_id = id;
+		_id = id == 3 ? 1 : id;	// Substitude duplicate "Geneva"
 		_size = size ? size : 12;
 		_slant = slant;
 		_fallback = fallback;
