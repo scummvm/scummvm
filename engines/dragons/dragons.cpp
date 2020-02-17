@@ -427,18 +427,12 @@ void DragonsEngine::gameLoop() {
 							if (_cursor->_iniUnderCursor != 0x8001) {
 								_flickerIdleCounter = 0;
 								_cursor->_performActionTargetINI = _cursor->_iniUnderCursor;
-								if (_cursor->_sequenceID < 5) {
-									_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-									walkFlickerToObject();
-									if (_bit_flags_8006fbd8 != 0) {
-										clearFlags(ENGINE_FLAG_8);
-									}
-								} else {
-									_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-									walkFlickerToObject();
-									if (_bit_flags_8006fbd8 != 0) {
-										clearFlags(ENGINE_FLAG_8);
-									}
+								_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+								walkFlickerToObject();
+								if (_bit_flags_8006fbd8 != 0) {
+									clearFlags(ENGINE_FLAG_8);
+								}
+								if (_cursor->_sequenceID >= 5) {
 									_scriptOpcodes->_scriptTargetINI = _cursor->_performActionTargetINI;
 									_cursor->_performActionTargetINI = _cursor->_iniItemInHand;
 								}
@@ -458,18 +452,12 @@ void DragonsEngine::gameLoop() {
 					}
 					_flickerIdleCounter = 0;
 					_cursor->_performActionTargetINI = _cursor->_iniUnderCursor;
-					if (_cursor->_sequenceID < 5) {
-						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-						walkFlickerToObject();
-						if (_bit_flags_8006fbd8 != 0) {
-							clearFlags(ENGINE_FLAG_8);
-						}
-					} else {
-						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-						walkFlickerToObject();
-						if (_bit_flags_8006fbd8 != 0) {
-							clearFlags(ENGINE_FLAG_8);
-						}
+					_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+					walkFlickerToObject();
+					if (_bit_flags_8006fbd8 != 0) {
+						clearFlags(ENGINE_FLAG_8);
+					}
+					if (_cursor->_sequenceID >= 5) {
 						_scriptOpcodes->_scriptTargetINI = _cursor->_performActionTargetINI;
 						_cursor->_performActionTargetINI = _cursor->_iniItemInHand;
 					}
@@ -498,18 +486,12 @@ void DragonsEngine::gameLoop() {
 				if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
 					_flickerIdleCounter = 0;
 					_cursor->_performActionTargetINI = _cursor->_iniUnderCursor;
-					if (_cursor->_sequenceID < 5) {
-						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-						walkFlickerToObject();
-						if (_bit_flags_8006fbd8 != 0) {
-							clearFlags(ENGINE_FLAG_8);
-						}
-					} else {
-						_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
-						walkFlickerToObject();
-						if (_bit_flags_8006fbd8 != 0) {
-							clearFlags(ENGINE_FLAG_8);
-						}
+					_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+					walkFlickerToObject();
+					if (_bit_flags_8006fbd8 != 0) {
+						clearFlags(ENGINE_FLAG_8);
+					}
+					if (_cursor->_sequenceID >= 5) {
 						_scriptOpcodes->_scriptTargetINI = _cursor->_performActionTargetINI;
 						_cursor->_performActionTargetINI = _cursor->_iniItemInHand;
 					}
@@ -580,7 +562,7 @@ void DragonsEngine::gameLoop() {
 				Actor *actor = _inventory->getInventoryItemActor(_cursor->_iniUnderCursor);
 				uint16 tmpId = _cursor->_iniItemInHand;
 				_inventory->replaceItem(_cursor->_iniUnderCursor, _cursor->_iniItemInHand);
-				_cursor->data_8007283c = actor->_sequenceID;
+				_cursor->_data_8007283c_objectInHandSequenceID = actor->_sequenceID;
 				actor->clearFlag(ACTOR_FLAG_40);
 				_cursor->_iniItemInHand = _cursor->_iniUnderCursor;
 				_cursor->_sequenceID = 5;

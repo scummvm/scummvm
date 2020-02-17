@@ -435,7 +435,7 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 										 flicker->actor->_y_pos - (_vm->_scene->_camera.y + 0x1e));
 			_vm->_cursor->_data_800728b0_cursor_seqID = 5;
 			_vm->_cursor->_sequenceID = 5;
-			_vm->_cursor->data_8007283c = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
+			_vm->_cursor->_data_8007283c_objectInHandSequenceID = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
 			_vm->_cursor->_iniItemInHand = field2;
 		}
 	}
