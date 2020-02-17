@@ -46,24 +46,24 @@ FireballProcess::FireballProcess()
 
 }
 
-FireballProcess::FireballProcess(Item *item, Item *target_)
-	: xspeed(0), yspeed(0), age(0) {
+FireballProcess::FireballProcess(Item *item, Item *target)
+	: _xSpeed(0), _ySpeed(0), _age(0) {
 	assert(item);
-	assert(target_);
+	assert(target);
 
-	tail[0] = 0;
-	tail[1] = 0;
-	tail[2] = 0;
+	_tail[0] = 0;
+	_tail[1] = 0;
+	_tail[2] = 0;
 
 	_itemNum = item->getObjId();
 
-	target = target_->getObjId();
+	_target = target->getObjId();
 
 	_type = 0x218; // CONSTANT!
 }
 
 void FireballProcess::run() {
-	age++;
+	_age++;
 
 	Item *item = getItem(_itemNum);
 	if (!item) {
@@ -71,23 +71,23 @@ void FireballProcess::run() {
 		return;
 	}
 
-	Item *t = getItem(target);
+	Item *t = getItem(_target);
 	if (!t) {
 		terminate();
 		return;
 	}
 
-	if (age > 300 && (getRandom() % 20 == 0)) {
+	if (_age > 300 && (getRandom() % 20 == 0)) {
 		// chance of 5% to disappear every frame after 10 seconds
 		terminate();
 		return;
 	}
 
-	// * accelerate a bit towards target
+	// * accelerate a bit towards _target
 	// * try to move
 	// * if succesful:
 	//   * move
-	//   * shift tail, enlarging if smaller than 3 flames
+	//   * shift _tail, enlarging if smaller than 3 flames
 	// * if failed
 	//   * deal damage if hit Actor
 	//   * turn around if hit non-Actor
@@ -103,41 +103,41 @@ void FireballProcess::run() {
 
 	int targetdir = item->getDirToItemCentre(*t);
 
-	if (xspeed == 0 && yspeed == 0 && dx / 64 == 0 && dy / 64 == 0) {
-		xspeed += 2 * x_fact[targetdir];
-		yspeed += 2 * y_fact[targetdir];
+	if (_xSpeed == 0 && _ySpeed == 0 && dx / 64 == 0 && dy / 64 == 0) {
+		_xSpeed += 2 * x_fact[targetdir];
+		_ySpeed += 2 * y_fact[targetdir];
 	} else {
-		xspeed += (dx / 64);
-		yspeed += (dy / 64);
+		_xSpeed += (dx / 64);
+		_ySpeed += (dy / 64);
 	}
 
 	// limit speed
-	int speed = static_cast<int>(sqrt(static_cast<float>(xspeed * xspeed + yspeed * yspeed)));
+	int speed = static_cast<int>(sqrt(static_cast<float>(_xSpeed * _xSpeed + _ySpeed * _ySpeed)));
 	if (speed > 32) {
-		xspeed = (xspeed * 32) / speed;
-		yspeed = (yspeed * 32) / speed;
+		_xSpeed = (_xSpeed * 32) / speed;
+		_ySpeed = (_ySpeed * 32) / speed;
 	}
 
 	ObjId hititem = 0;
-	item->collideMove(x + xspeed, y + yspeed, z, false, false, &hititem);
+	item->collideMove(x + _xSpeed, y + _ySpeed, z, false, false, &hititem);
 
-	// handle tail
-	// tail is shape 261, frame 0-7 (0 = to top-right, 7 = to top)
-	if (tail[2] == 0) {
-		// enlarge tail
+	// handle _tail
+	// _tail is shape 261, frame 0-7 (0 = to top-right, 7 = to top)
+	if (_tail[2] == 0) {
+		// enlarge _tail
 		Item *newtail = ItemFactory::createItem(261, 0, 0,
 		                                        Item::FLG_DISPOSABLE, 0, 0,
 		                                        Item::EXT_SPRITE, true);
-		tail[2] = newtail->getObjId();
+		_tail[2] = newtail->getObjId();
 	}
 
-	Item *tailitem = getItem(tail[2]);
-	tailitem->setFrame(Get_WorldDirection(yspeed, xspeed));
+	Item *tailitem = getItem(_tail[2]);
+	tailitem->setFrame(Get_WorldDirection(_ySpeed, _xSpeed));
 	tailitem->move(x, y, z);
 
-	tail[2] = tail[1];
-	tail[1] = tail[0];
-	tail[0] = tailitem->getObjId();
+	_tail[2] = _tail[1];
+	_tail[1] = _tail[0];
+	_tail[0] = tailitem->getObjId();
 
 	if (hititem) {
 		Actor *hit = getActor(hititem);
@@ -151,8 +151,8 @@ void FireballProcess::run() {
 		} else {
 			// hit an object: invert direction
 
-			xspeed = -xspeed;
-			yspeed = -yspeed;
+			_xSpeed = -_xSpeed;
+			_ySpeed = -_ySpeed;
 		}
 	}
 }
@@ -169,7 +169,7 @@ void FireballProcess::explode() {
 	if (item) item->destroy();
 
 	for (unsigned int i = 0; i < 3; ++i) {
-		item = getItem(tail[i]);
+		item = getItem(_tail[i]);
 		if (item) item->destroy();
 	}
 }
@@ -206,25 +206,25 @@ uint32 FireballProcess::I_TonysBalls(const uint8 *args,
 void FireballProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(xspeed));
-	ods->write4(static_cast<uint32>(yspeed));
-	ods->write2(target);
-	ods->write2(tail[0]);
-	ods->write2(tail[1]);
-	ods->write2(tail[2]);
-	ods->write2(age);
+	ods->write4(static_cast<uint32>(_xSpeed));
+	ods->write4(static_cast<uint32>(_ySpeed));
+	ods->write2(_target);
+	ods->write2(_tail[0]);
+	ods->write2(_tail[1]);
+	ods->write2(_tail[2]);
+	ods->write2(_age);
 }
 
 bool FireballProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	xspeed = static_cast<int>(ids->read4());
-	yspeed = static_cast<int>(ids->read4());
-	target = ids->read2();
-	tail[0] = ids->read2();
-	tail[1] = ids->read2();
-	tail[2] = ids->read2();
-	age = ids->read2();
+	_xSpeed = static_cast<int>(ids->read4());
+	_ySpeed = static_cast<int>(ids->read4());
+	_target = ids->read2();
+	_tail[0] = ids->read2();
+	_tail[1] = ids->read2();
+	_tail[2] = ids->read2();
+	_age = ids->read2();
 
 	return true;
 }

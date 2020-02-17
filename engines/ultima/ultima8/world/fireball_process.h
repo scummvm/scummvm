@@ -51,10 +51,10 @@ protected:
 
 	void explode();
 
-	int xspeed, yspeed;
-	ObjId tail[3];
-	ObjId target;
-	uint16 age;
+	int _xSpeed, _ySpeed;
+	ObjId _tail[3];
+	ObjId _target;
+	uint16 _age;
 };
 
 } // End of namespace Ultima8

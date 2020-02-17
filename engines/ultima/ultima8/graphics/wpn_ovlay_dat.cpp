@@ -98,9 +98,9 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 						unsigned int offset = type * 8 * animlength
 						                      + dir * animlength + frame;
 						ds->seek(4 * offset);
-						f.xoff = ds->readXS(1);
-						f.yoff = ds->readXS(1);
-						f.frame = ds->read2();
+						f._xOff = ds->readXS(1);
+						f._yOff = ds->readXS(1);
+						f._frame = ds->read2();
 
 						awo->_overlay[type]._frames[dir][frame] = f;
 					}

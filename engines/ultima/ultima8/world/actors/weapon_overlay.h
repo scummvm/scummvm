@@ -29,9 +29,9 @@ namespace Ultima {
 namespace Ultima8 {
 
 struct WeaponOverlayFrame {
-	int32 xoff;
-	int32 yoff;
-	uint32 frame;
+	int32 _xOff;
+	int32 _yOff;
+	uint32 _frame;
 };
 
 struct WeaponOverlay {
