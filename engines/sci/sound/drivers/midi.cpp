@@ -465,15 +465,11 @@ void MidiPlayer_Midi::send(uint32 b) {
 // We return 1 for mt32, because if we remap channels to 0 for mt32, those won't get played at all
 // NOTE: SSCI uses channels 1 through 8 for General MIDI as well, in the drivers I checked
 int MidiPlayer_Midi::getFirstChannel() const {
-	if (_mt32Type != kMt32TypeNone)
-		return 1;
-	return 0;
+	return 1;
 }
 
 int MidiPlayer_Midi::getLastChannel() const {
-	if (_mt32Type != kMt32TypeNone)
-		return 8;
-	return 15;
+	return 8;
 }
 
 void MidiPlayer_Midi::setVolume(byte volume) {
