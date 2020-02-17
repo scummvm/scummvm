@@ -361,9 +361,23 @@ public:
 			act->addDefaultInputMapping("JOY_Y"); // extra joy
 			gameKeyMap->addAction(act);
 		} else if (gameId == "5ld" ||
-			gameId == "5ma" ||
-			gameId == "dirtysplit" ||
 			gameId == "projectjoe"
+		) {
+			act = new Action("PAGEUP", _("Previous page"));
+			act->setKeyEvent(KEYCODE_PAGEUP);
+			act->addDefaultInputMapping("PAGEUP"); // original keyboard
+			act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // extra mouse
+			act->addDefaultInputMapping("JOY_LEFT"); // extra joy
+			gameKeyMap->addAction(act);
+
+			act = new Action("PAGEDN", _("Next page"));
+			act->setKeyEvent(KEYCODE_PAGEDOWN);
+			act->addDefaultInputMapping("PAGEDOWN"); // original keyboard
+			act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // extra mouse
+			act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
+			gameKeyMap->addAction(act);
+		} else if (gameId == "5ma" ||
+			gameId == "dirtysplit"
 		) {
 			act = new Action("PAGEUP", _("Previous page"));
 			act->setKeyEvent(KEYCODE_PAGEUP);
@@ -386,7 +400,7 @@ public:
 			gameId == "rhiannon" ||
 			gameId == "shinestar"
 		) {
-			act = new Action("SKIP", _("Skip"));
+			act = new Action(kStandardActionSkip, _("Skip"));
 			act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
 			act->addDefaultInputMapping("SPACE"); // original keyboard
 			act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
@@ -610,7 +624,7 @@ public:
 			//TODO: extra joy control, e.g. "JOY_R+JOY_B"
 			gameKeyMap->addAction(act);
 
-			act = new Action("DBG", _("Debug print"));
+			act = new Action("DBGTXT", _("Debug print"));
 			act->setKeyEvent(KeyState(KEYCODE_F8, 0, KBD_CTRL));
 			act->addDefaultInputMapping("C+F8"); // original keyboard
 			gameKeyMap->addAction(act);
@@ -645,22 +659,22 @@ public:
 			act->addDefaultInputMapping("RIGHT"); // original keyboard
 			gameKeyMap->addAction(act);
 
-			act = new Action(kStandardActionMoveUp, _("Run forward"));
+			act = new Action("FASTU", _("Run forward"));
 			act->setKeyEvent(KeyState(KEYCODE_UP, 0, KBD_SHIFT));
 			act->addDefaultInputMapping("S+UP"); // original keyboard
 			gameKeyMap->addAction(act);
 
-			act = new Action(kStandardActionMoveDown, _("Run backward"));
+			act = new Action("FASTD", _("Run backward"));
 			act->setKeyEvent(KeyState(KEYCODE_DOWN, 0, KBD_SHIFT));
 			act->addDefaultInputMapping("S+DOWN"); // original keyboard
 			gameKeyMap->addAction(act);
 
-			act = new Action(kStandardActionMoveLeft, _("Turn left fast"));
+			act = new Action("FASTL", _("Turn left fast"));
 			act->setKeyEvent(KeyState(KEYCODE_LEFT, 0, KBD_SHIFT));
 			act->addDefaultInputMapping("S+LEFT"); // original keyboard
 			gameKeyMap->addAction(act);
 
-			act = new Action(kStandardActionMoveRight, _("Turn right fast"));
+			act = new Action("FASTR", _("Turn right fast"));
 			act->setKeyEvent(KeyState(KEYCODE_RIGHT, 0, KBD_SHIFT));
 			act->addDefaultInputMapping("S+RIGHT"); // original keyboard
 			gameKeyMap->addAction(act);
@@ -711,7 +725,7 @@ public:
 			//TODO: extra joy control, e.g. "JOY_R+JOY_B"
 			gameKeyMap->addAction(act);
 
-			act = new Action("DBG", _("Debug print"));
+			act = new Action("DBGTXT", _("Debug print"));
 			act->setKeyEvent(KEYCODE_F2);
 			act->addDefaultInputMapping("F2"); // original keyboard
 			gameKeyMap->addAction(act);
@@ -1053,7 +1067,7 @@ public:
 			//TODO: extra joy control, e.g. "JOY_R+JOY_B"
 			gameKeyMap->addAction(act);
 		} else if (gameId == "julia") {
-			act = new Action("SKIP", _("Skip"));
+			act = new Action(kStandardActionSkip, _("Skip"));
 			act->setKeyEvent(KEYCODE_F12);
 			act->addDefaultInputMapping("F12"); // original keyboard
 			act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
@@ -1212,20 +1226,20 @@ public:
 			gameKeyMap->addAction(act);
 		} else if (gameId == "pizzamorgana") {
 			act = new Action("ACTNXT", _("Next action"));
-			act->setRightClickEvent();
-			act->addDefaultInputMapping("MOUSE_RIGHT"); // original mouse (globally)
-			act->addDefaultInputMapping("LEFTBRACKET"); // original keyboard (ingame)
+			act->setMouseWheelUpEvent();
+			act->addDefaultInputMapping("MOUSE_RIGHT"); // original mouse
+			act->addDefaultInputMapping("RIGHTBRACKET"); // original keyboard
 			act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // original mouse
 			act->addDefaultInputMapping("JOY_B"); // extra joy
 			gameKeyMap->addAction(act);
 
 			act = new Action("ACTPRV", _("Previous action"));
 			act->setMouseWheelDownEvent();
-			act->addDefaultInputMapping("RIGHTBRACKET"); // original keyboard
+			act->addDefaultInputMapping("LEFTBRACKET"); // original keyboard
 			act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
 			gameKeyMap->addAction(act);
 
-			act = new Action("SKIP", _("Skip"));
+			act = new Action(kStandardActionSkip, _("Skip"));
 			act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
 			act->addDefaultInputMapping("PERIOD"); // original keyboard
 			act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
@@ -1289,7 +1303,7 @@ public:
 			act->addDefaultInputMapping("JOY_Y"); // extra joy
 			gameKeyMap->addAction(act);
 
-			act = new Action("HINT", _("Show inventory"));
+			act = new Action("INV", _("Show inventory"));
 			act->setKeyEvent(KeyState(KEYCODE_i, 'i'));
 			act->addDefaultInputMapping("i"); // original keyboard
 			act->addDefaultInputMapping("JOY_UP"); // extra joy
@@ -1336,7 +1350,7 @@ public:
 			act->addDefaultInputMapping("JOY_Y"); // extra joy
 			gameKeyMap->addAction(act);
 
-			act = new Action("SKIP", _("Skip"));
+			act = new Action(kStandardActionSkip, _("Skip"));
 			act->setKeyEvent(KeyState(KEYCODE_BACKSPACE, ASCII_BACKSPACE));
 			act->addDefaultInputMapping("BACKSPACE"); // original keyboard
 			act->addDefaultInputMapping("JOY_LEFT"); // extra joy
@@ -1381,7 +1395,7 @@ public:
 			act->addDefaultInputMapping("F5"); // original keyboard
 			gameKeyMap->addAction(act);
 
-			act = new Action("DBG", _("Debug print"));
+			act = new Action("DBGTXT", _("Debug print"));
 			act->setKeyEvent(KEYCODE_F6);
 			act->addDefaultInputMapping("F6"); // original keyboard
 			gameKeyMap->addAction(act);
@@ -1518,17 +1532,17 @@ public:
 			gameKeyMap->addAction(act);
 		} else if (gameId == "zbang") {
 			act = new Action("ACTNXT", _("Next action"));
-			act->setRightClickEvent();
+			act->setMouseWheelUpEvent();
 			act->addDefaultInputMapping("MOUSE_RIGHT"); // original mouse
+			act->addDefaultInputMapping("RIGHTBRACKET"); // original keyboard
 			act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // original mouse
-			act->addDefaultInputMapping("LEFTBRACKET"); // original keyboard
 			act->addDefaultInputMapping("JOY_B"); // extra joy
 			gameKeyMap->addAction(act);
 
 			act = new Action("ACTPRV", _("Previous action"));
-			act->setRightClickEvent();
+			act->setMouseWheelDownEvent();
+			act->addDefaultInputMapping("LEFTBRACKET"); // original keyboard
 			act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
-			act->addDefaultInputMapping("RIGHTBRACKET"); // original keyboard
 			gameKeyMap->addAction(act);
 
 			act = new Action("HINT", _("Show hints"));
@@ -1538,7 +1552,7 @@ public:
 			act->addDefaultInputMapping("JOY_Y"); // extra joy
 			gameKeyMap->addAction(act);
 
-			act = new Action("SKIP", _("Skip"));
+			act = new Action(kStandardActionSkip, _("Skip"));
 			act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
 			act->addDefaultInputMapping("PERIOD"); // original keyboard
 			act->addDefaultInputMapping("JOY_DOWN"); // extra joy
