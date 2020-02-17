@@ -112,10 +112,10 @@ void PentagramMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /
 #endif
 
 //	surf->Fill32(0xFFDCB95C, 18, 0, 90, 400);
-	surf->Blit(_navbarImage, 0, 0, _navbarImage->width, _navbarImage->height, 9, 0);
+	surf->Blit(_navbarImage, 0, 0, _navbarImage->_width, _navbarImage->_height, 9, 0);
 
 //	surf->Fill32(0xFFC11515, 200, 6, 340, 36);
-	surf->Blit(_titleImage, 0, 0, _titleImage->width, _titleImage->height, 200, 6);
+	surf->Blit(_titleImage, 0, 0, _titleImage->_width, _titleImage->_height, 200, 6);
 }
 
 void PentagramMenuGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {

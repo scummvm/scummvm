@@ -46,28 +46,28 @@ public:
 	void start();
 	void stop();
 	bool isPlaying() const {
-		return playing;
+		return _playing;
 	}
 
 private:
 
 	void parseEventList(IDataSource *eventlist);
 
-	int width, height;
-	RawArchive *skf;
-	Std::vector<SKFEvent *> events;
-	unsigned int curframe, curobject;
-	unsigned int curaction;
-	unsigned int curevent;
-	bool playing;
-	unsigned int lastupdate;
-	unsigned int timer;
-	unsigned int framerate;
-	uint8 fadecolour, fadelevel;
-	RenderSurface *buffer;
-	RenderedText *subs;
-	int subtitley;
-	bool introMusicHack;
+	int _width, _height;
+	RawArchive *_skf;
+	Std::vector<SKFEvent *> _events;
+	unsigned int _curFrame, _curObject;
+	unsigned int _curAction;
+	unsigned int _curEvent;
+	bool _playing;
+	unsigned int _lastUpdate;
+	unsigned int _timer;
+	unsigned int _frameRate;
+	uint8 _fadeColour, _fadeLevel;
+	RenderSurface *_buffer;
+	RenderedText *_subs;
+	int _subtitleY;
+	bool _introMusicHack;
 };
 
 } // End of namespace Ultima8

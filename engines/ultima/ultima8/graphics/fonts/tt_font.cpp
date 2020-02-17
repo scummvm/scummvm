@@ -167,9 +167,9 @@ RenderedText *TTFont::renderText(const Std::string &text,
 	memset(buf, 0, 4 * resultwidth * resultheight);
 
 	Texture *texture = new Texture();
-	texture->buffer = buf;
-	texture->width = resultwidth;
-	texture->height = resultheight;
+	texture->_buffer = buf;
+	texture->_width = resultwidth;
+	texture->_height = resultheight;
 
 #if 0
 	pout << "Total size: " << resultwidth << "," << resultheight << Std::endl;

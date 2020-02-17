@@ -537,11 +537,11 @@ void Mouse::paint() {
 			if (frame >= 0) {
 				screen->Paint(mouse, frame, _mousePos.x, _mousePos.y, true);
 			} else if (frame == -2)
-				screen->Blit(_defaultMouse, 0, 0, _defaultMouse->width, _defaultMouse->height, _mousePos.x, _mousePos.y);
+				screen->Blit(_defaultMouse, 0, 0, _defaultMouse->_width, _defaultMouse->_height, _mousePos.x, _mousePos.y);
 		}
 	} else {
 		if (getMouseFrame() != -1)
-			screen->Blit(_defaultMouse, 0, 0, _defaultMouse->width, _defaultMouse->height, _mousePos.x, _mousePos.y);
+			screen->Blit(_defaultMouse, 0, 0, _defaultMouse->_width, _defaultMouse->_height, _mousePos.x, _mousePos.y);
 	}
 }
 

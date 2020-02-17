@@ -41,9 +41,9 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump, Gump)
 MiniMapGump::MiniMapGump(int x_, int y_) :
 	Gump(x_, y_, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
 	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimap(), _lastMapNum(0) {
-	_minimap.format = TEX_FMT_NATIVE;
-	_minimap.width = _minimap.height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
-	_minimap.buffer = texbuffer[0];
+	_minimap._format = TEX_FMT_NATIVE;
+	_minimap._width = _minimap._height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
+	_minimap._buffer = texbuffer[0];
 
 	con->AddConsoleCommand("MiniMapGump::generateWholeMap",
 	                      MiniMapGump::ConCmd_generateWholeMap);
@@ -207,9 +207,9 @@ bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
 	if (!Gump::loadData(ids, version)) return false;
 
 	_lastMapNum = 0;
-	_minimap.format = TEX_FMT_NATIVE;
-	_minimap.width = _minimap.height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
-	_minimap.buffer = texbuffer[0];
+	_minimap._format = TEX_FMT_NATIVE;
+	_minimap._width = _minimap._height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
+	_minimap._buffer = texbuffer[0];
 
 	con->AddConsoleCommand("MiniMapGump::generateWholeMap",
 	                      MiniMapGump::ConCmd_generateWholeMap);

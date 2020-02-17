@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/skf_player.h"
-
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -66,12 +65,12 @@ struct SKFEvent {
 static const int FADESTEPS = 16; // HACK: half speed
 
 
-SKFPlayer::SKFPlayer(RawArchive *movie, int width_, int height_, bool introMusicHack_)
-	: width(width_), height(height_), skf(movie),
-	  curframe(0), curobject(0), curaction(0), curevent(0), playing(false),
-	  timer(0), framerate(15), fadecolour(0), fadelevel(0), buffer(0), subs(0),
-	  introMusicHack(introMusicHack_) {
-	IDataSource *eventlist = skf->get_datasource(0);
+SKFPlayer::SKFPlayer(RawArchive *movie, int width, int height, bool _introMusicHack)
+	: _width(width), _height(height), _skf(movie),
+	  _curFrame(0), _curObject(0), _curAction(0), _curEvent(0), _playing(false),
+	  _timer(0), _frameRate(15), _fadeColour(0), _fadeLevel(0), _buffer(0), _subs(0),
+	  _introMusicHack(_introMusicHack), _lastUpdate(0), _subtitleY(0) {
+	IDataSource *eventlist = _skf->get_datasource(0);
 	if (!eventlist) {
 		perr << "No eventlist found in SKF" << Std::endl;
 		return;
@@ -80,16 +79,16 @@ SKFPlayer::SKFPlayer(RawArchive *movie, int width_, int height_, bool introMusic
 	parseEventList(eventlist);
 	delete eventlist;
 
-	buffer = RenderSurface::CreateSecondaryRenderSurface(width, height);
+	_buffer = RenderSurface::CreateSecondaryRenderSurface(_width, _height);
 }
 
 SKFPlayer::~SKFPlayer() {
-	for (unsigned int i = 0; i < events.size(); ++i)
-		delete events[i];
+	for (unsigned int i = 0; i < _events.size(); ++i)
+		delete _events[i];
 
-	delete skf;
-	delete buffer;
-	delete subs;
+	delete _skf;
+	delete _buffer;
+	delete _subs;
 }
 
 void SKFPlayer::parseEventList(IDataSource *eventlist) {
@@ -99,71 +98,71 @@ void SKFPlayer::parseEventList(IDataSource *eventlist) {
 		ev->frame = frame;
 		ev->action = static_cast<SKFAction>(eventlist->read2());
 		ev->data = eventlist->read2();
-		events.push_back(ev);
+		_events.push_back(ev);
 
 		frame = eventlist->read2();
 	}
 }
 
 void SKFPlayer::start() {
-	buffer->BeginPainting();
-	buffer->Fill32(0, 0, 0, width, height);
-	buffer->EndPainting();
+	_buffer->BeginPainting();
+	_buffer->Fill32(0, 0, 0, _width, _height);
+	_buffer->EndPainting();
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) musicproc->playMusic(0);
-	playing = true;
-	lastupdate = g_system->getMillis();
+	_playing = true;
+	_lastUpdate = g_system->getMillis();
 }
 
 void SKFPlayer::stop() {
 	MusicProcess *musicproc = MusicProcess::get_instance();
-	if (musicproc && !introMusicHack) musicproc->playMusic(0);
-	playing = false;
+	if (musicproc && !_introMusicHack) musicproc->playMusic(0);
+	_playing = false;
 }
 
 void SKFPlayer::paint(RenderSurface *surf, int /*lerp*/) {
-	if (!buffer) return;
+	if (!_buffer) return;
 
-	Texture *tex = buffer->GetSurfaceAsTexture();
+	Texture *tex = _buffer->GetSurfaceAsTexture();
 
-	if (!fadelevel) {
-		surf->Blit(tex, 0, 0, width, height, 0, 0);
-		if (subs)
-			subs->draw(surf, 60, subtitley);
+	if (!_fadeLevel) {
+		surf->Blit(tex, 0, 0, _width, _height, 0, 0);
+		if (_subs)
+			_subs->draw(surf, 60, _subtitleY);
 	} else {
-		uint32 fade = TEX32_PACK_RGBA(fadecolour, fadecolour, fadecolour,
-		                              (fadelevel * 255) / FADESTEPS);
-		surf->FadedBlit(tex, 0, 0, width, height, 0, 0, fade);
-		if (subs)
-			subs->drawBlended(surf, 60, subtitley, fade);
+		uint32 fade = TEX32_PACK_RGBA(_fadeColour, _fadeColour, _fadeColour,
+		                              (_fadeLevel * 255) / FADESTEPS);
+		surf->FadedBlit(tex, 0, 0, _width, _height, 0, 0, fade);
+		if (_subs)
+			_subs->drawBlended(surf, 60, _subtitleY, fade);
 	}
 }
 
 void SKFPlayer::run() {
-	if (!playing || !buffer) return;
+	if (!_playing || !_buffer) return;
 
 	// if doing something, continue
-	if (curaction) {
-		if (curaction == SKF_FadeOut || curaction == SKF_FadeWhite) {
-			fadelevel++;
-			if (fadelevel == FADESTEPS) curaction = 0; // done
-		} else if (curaction == SKF_FadeIn) {
-			fadelevel--;
-			if (fadelevel == 0) curaction = 0; // done
+	if (_curAction) {
+		if (_curAction == SKF_FadeOut || _curAction == SKF_FadeWhite) {
+			_fadeLevel++;
+			if (_fadeLevel == FADESTEPS) _curAction = 0; // done
+		} else if (_curAction == SKF_FadeIn) {
+			_fadeLevel--;
+			if (_fadeLevel == 0) _curAction = 0; // done
 		} else {
-			pout << "Unknown fade action: " << curaction << Std::endl;
+			pout << "Unknown fade action: " << _curAction << Std::endl;
 		}
 	}
 
 	// CHECKME: this timing may not be accurate enough...
 	uint32 now = g_system->getMillis();
-	if (lastupdate + (1000 / framerate) > now) return;
+	if (_lastUpdate + (1000 / _frameRate) > now) return;
 
-	lastupdate += (1000 / framerate);
+	_lastUpdate += (1000 / _frameRate);
 
 	// if waiting, continue to wait
-	if (timer) {
-		timer--;
+	if (_timer) {
+		_timer--;
 		return;
 	}
 
@@ -173,58 +172,58 @@ void SKFPlayer::run() {
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	AudioProcess *audioproc = AudioProcess::get_instance();
 
-	// handle events for the current frame
-	while (curevent < events.size() && events[curevent]->frame <= curframe) {
-//		pout << "event " << curevent << Std::endl;
-		switch (events[curevent]->action) {
+	// handle _events for the current frame
+	while (_curEvent < _events.size() && _events[_curEvent]->frame <= _curFrame) {
+//		pout << "event " << _curEvent << Std::endl;
+		switch (_events[_curEvent]->action) {
 		case SKF_FadeOut:
-			curaction = SKF_FadeOut;
-			fadecolour = 0;
-			fadelevel = 0;
+			_curAction = SKF_FadeOut;
+			_fadeColour = 0;
+			_fadeLevel = 0;
 //			pout << "FadeOut" << Std::endl;
 			break;
 		case SKF_FadeIn:
-			curaction = SKF_FadeIn;
-			fadelevel = FADESTEPS;
+			_curAction = SKF_FadeIn;
+			_fadeLevel = FADESTEPS;
 //			pout << "FadeIn" << Std::endl;
 			break;
 		case SKF_FadeWhite:
-			curaction = SKF_FadeWhite;
-			fadecolour = 0xFF;
-			fadelevel = 0;
+			_curAction = SKF_FadeWhite;
+			_fadeColour = 0xFF;
+			_fadeLevel = 0;
 //			pout << "FadeWhite" << Std::endl;
 			break;
 		case SKF_Wait:
-//			pout << "Wait " << events[curevent]->data << Std::endl;
-			timer = events[curevent]->data;
-			curevent++;
+//			pout << "Wait " << _events[_curEvent]->data << Std::endl;
+			_timer = _events[_curEvent]->data;
+			_curEvent++;
 			return;
 		case SKF_PlayMusic:
-//			pout << "PlayMusic " << events[curevent]->data << Std::endl;
-			if (musicproc) musicproc->playMusic(events[curevent]->data);
+//			pout << "PlayMusic " << _events[_curEvent]->data << Std::endl;
+			if (musicproc) musicproc->playMusic(_events[_curEvent]->data);
 			break;
 		case SKF_SlowStopMusic:
 			POUT("SlowStopMusic");
-			if (musicproc && !introMusicHack) musicproc->playMusic(0);
+			if (musicproc && !_introMusicHack) musicproc->playMusic(0);
 			break;
 		case SKF_PlaySFX:
-//			pout << "PlaySFX " << events[curevent]->data << Std::endl;
-			if (audioproc) audioproc->playSFX(events[curevent]->data, 0x60, 0, 0);
+//			pout << "PlaySFX " << _events[_curEvent]->data << Std::endl;
+			if (audioproc) audioproc->playSFX(_events[_curEvent]->data, 0x60, 0, 0);
 			break;
 		case SKF_StopSFX:
-//			pout << "StopSFX" << events[curevent]->data << Std::endl;
-			if (audioproc) audioproc->stopSFX(events[curevent]->data, 0);
+//			pout << "StopSFX" << _events[_curEvent]->data << Std::endl;
+			if (audioproc) audioproc->stopSFX(_events[_curEvent]->data, 0);
 			break;
 		case SKF_SetSpeed:
-			POUT("SetSpeed " << events[curevent]->data);
-//			framerate = events[curevent]->data;
+			POUT("SetSpeed " << _events[_curEvent]->data);
+//			_frameRate = _events[_curEvent]->data;
 			break;
 		case SKF_PlaySound: {
-//			pout << "PlaySound " << events[curevent]->data << Std::endl;
+//			pout << "PlaySound " << _events[_curEvent]->data << Std::endl;
 
 			if (audioproc) {
-				uint8 *buf = skf->get_object(events[curevent]->data);
-				uint32 bufsize = skf->get_size(events[curevent]->data);
+				uint8 *buf = _skf->get_object(_events[_curEvent]->data);
+				uint32 bufsize = _skf->get_size(_events[_curEvent]->data);
 				AudioSample *s;
 				uint32 rate = buf[6] + (buf[7] << 8);
 				bool stereo = (buf[8] == 2);
@@ -236,14 +235,14 @@ void SKFPlayer::run() {
 
 			// subtitles
 			char *textbuf = reinterpret_cast<char *>(
-			                    skf->get_object(events[curevent]->data - 1));
-			uint32 textsize = skf->get_size(events[curevent]->data - 1);
+			                    _skf->get_object(_events[_curEvent]->data - 1));
+			uint32 textsize = _skf->get_size(_events[_curEvent]->data - 1);
 			if (textsize > 7) {
 				Std::string subtitle = (textbuf + 6);
-				delete subs;
-				subtitley = textbuf[4] + (textbuf[5] << 8);
+				delete _subs;
+				_subtitleY = textbuf[4] + (textbuf[5] << 8);
 				unsigned int remaining;
-				subs = redfont->renderText(subtitle, remaining, 200, 0,
+				_subs = redfont->renderText(subtitle, remaining, 200, 0,
 				                           Font::TEXT_CENTER);
 			}
 			delete textbuf;
@@ -253,38 +252,38 @@ void SKFPlayer::run() {
 		}
 		case SKF_ClearSubs:
 //			pout << "ClearSubs" << Std::endl;
-			delete subs;
-			subs = 0;
+			delete _subs;
+			_subs = 0;
 			break;
 		default:
 			pout << "Unknown action" << Std::endl;
 			break;
 		}
 
-		curevent++;
+		_curEvent++;
 	}
 
-	curframe++;
+	_curFrame++;
 
 	PaletteManager *palman = PaletteManager::get_instance();
 	IDataSource *object;
 
 	uint16 objecttype = 0;
 	do {
-		curobject++;
-		if (curobject >= skf->getCount()) {
+		_curObject++;
+		if (_curObject >= _skf->getCount()) {
 			stop(); // done
 			return;
 		}
 
 		// read object
-		object = skf->get_datasource(curobject);
+		object = _skf->get_datasource(_curObject);
 		if (!object || object->getSize() < 2)
 			continue;
 
 		objecttype = object->read2();
 
-//		pout << "Object " << curobject << "/" << skf->getCount()
+//		pout << "Object " << _curObject << "/" << _skf->getCount()
 //			 << ", type = " << objecttype << Std::endl;
 
 
@@ -302,15 +301,15 @@ void SKFPlayer::run() {
 		Shape *shape = new Shape(object, &U8SKFShapeFormat);
 		Palette *pal = palman->getPalette(PaletteManager::Pal_Movie);
 		shape->setPalette(pal);
-		buffer->BeginPainting();
-		buffer->Paint(shape, 0, 0, 0);
-		buffer->EndPainting();
+		_buffer->BeginPainting();
+		_buffer->Paint(shape, 0, 0, 0);
+		_buffer->EndPainting();
 		delete shape;
 
 		delete object;
 	}
 
-	timer = 1; // HACK! timing is rather broken currently...
+	_timer = 1; // HACK! timing is rather broken currently...
 }
 
 } // End of namespace Ultima8
