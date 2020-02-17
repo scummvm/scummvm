@@ -265,6 +265,12 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 }
 
 SoundManager::~SoundManager() {
+	if (isSpeechPlaying()) {
+		_vm->_mixer->stopHandle(_speechHandle);
+	}
+
+	stopAllVoices();
+
 	delete _vabMusx;
 	delete _vabGlob;
 }

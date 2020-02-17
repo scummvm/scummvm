@@ -40,7 +40,7 @@ public:
 	int16 _performActionTargetINI;
 	int16 _x;
 	int16 _y;
-	int16 data_8007283c;
+	int16 _data_8007283c_objectInHandSequenceID;
 	int16 _cursorActivationSeqOffset;
 	uint16 _iniItemInHand;
 
