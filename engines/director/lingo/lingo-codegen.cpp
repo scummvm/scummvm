@@ -499,7 +499,7 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		}
 
 		if (sym->type != INT && sym->type != VOID &&
-				sym->type != FLOAT && sym->type != STRING) {
+				sym->type != FLOAT && sym->type != STRING && sym->type != ARRAY) {
 			warning("varAssign: assignment to non-variable '%s'", sym->name.c_str());
 			return;
 		}
@@ -518,7 +518,7 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		} else if (value.type == STRING) {
 			sym->u.s = new Common::String(*value.u.s);
 			delete value.u.s;
-		} else if (value.type == POINT) {
+		} else if (value.type == POINT || value.type == ARRAY) {
 			sym->u.farr = new DatumArray(*value.u.farr);
 			delete value.u.farr;
 		} else if (value.type == SYMBOL) {
@@ -527,8 +527,6 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 			sym->u.s = value.u.s;
 		} else if (value.type == VOID) {
 			sym->u.i = 0;
-		} else if (value.type == ARRAY) {
-			sym->u.farr = value.u.farr;
 		} else {
 			warning("varAssign: unhandled type: %s", value.type2str());
 			sym->u.s = value.u.s;
