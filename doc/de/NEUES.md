@@ -4,6 +4,10 @@ Programmcodes finden Sie auf Englisch unter:
 
 #### 2.2.0 (DD.MM.YYYY)
 
+ Allgemein:
+   - Alle Engines unterstützen nun automatisch gespeicherte Spielstände.
+   - Fehler starten nun den Debugger, anstatt ScummVM einfach abstürzen zu lassen.
+
  Dreamweb:
    - Unterstützung für russische Fan-Übersetzung hinzugefügt.
 
