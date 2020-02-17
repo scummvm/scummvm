@@ -3,7 +3,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.2.0 (XXXX-XX-XX)
 
-General:
+ General:
    - Autosaves are now supported for all the engines
    - Errors are more likely to open the debugger, and be displayed, than just crash ScummVM
 
