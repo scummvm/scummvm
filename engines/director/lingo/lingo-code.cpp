@@ -1050,6 +1050,12 @@ void LC::c_repeatwithcode(void) {
 		for (uint i = 0; i < arraySize; i++) {
 			g_lingo->varAssign(loop_var, array.u.farr->operator[](i));
 			g_lingo->execute(body + savepc -1);
+			if (g_lingo->_returning) // handle return within the repeat with loop
+				return;
+			if (g_lingo->_exitRepeat) { // handle `exit repeat`
+				g_lingo->_exitRepeat = false;
+				break;
+			}
 		}
 		g_lingo->_pc = end + savepc - 1; /* next stmt */
 		return;
