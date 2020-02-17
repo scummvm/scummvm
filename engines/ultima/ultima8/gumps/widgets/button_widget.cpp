@@ -29,7 +29,6 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -39,28 +38,28 @@ namespace Ultima8 {
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(ButtonWidget, Gump)
 
-ButtonWidget::ButtonWidget()
-	: Gump() {
+ButtonWidget::ButtonWidget() : Gump(), _shapeUp(0), _shapeDown(0), _mouseOver(false),
+		_origW(0), _origH(0) {
 }
 
 ButtonWidget::ButtonWidget(int x, int y, Std::string txt, bool gamefont,
-                           int font, uint32 mouseOverBlendCol_,
-                           int w, int h, int32 layer_) :
-	Gump(x, y, w, h, 0, 0, layer_), shape_up(0), shape_down(0),
-	mouseOver(false), origw(w), origh(h) {
+                           int font, uint32 mouseOverBlendCol,
+                           int w, int h, int32 layer) :
+	Gump(x, y, w, h, 0, 0, layer), _shapeUp(0), _shapeDown(0),
+	_mouseOver(false), _origW(w), _origH(h) {
 	TextWidget *widget = new TextWidget(0, 0, txt, gamefont, font, w, h);
-	textwidget = widget->getObjId();
-	mouseOverBlendCol = mouseOverBlendCol_;
-	mouseOver = (mouseOverBlendCol != 0);
+	_textWidget = widget->getObjId();
+	_mouseOverBlendCol = mouseOverBlendCol;
+	_mouseOver = (_mouseOverBlendCol != 0);
 }
 
 ButtonWidget::ButtonWidget(int x, int y, FrameID frame_up, FrameID frame_down,
-                           bool _mouseOver, int32 layer_)
-	: Gump(x, y, 5, 5, 0, 0, layer_), textwidget(0), mouseOver(_mouseOver) {
-	shape_up = GameData::get_instance()->getShape(frame_up);
-	shape_down = GameData::get_instance()->getShape(frame_down);
-	_frameNum_up = frame_up._frameNum;
-	_frameNum_down = frame_down._frameNum;
+                           bool _mouseOver, int32 layer)
+	: Gump(x, y, 5, 5, 0, 0, layer), _textWidget(0), _mouseOver(_mouseOver) {
+	_shapeUp = GameData::get_instance()->getShape(frame_up);
+	_shapeDown = GameData::get_instance()->getShape(frame_down);
+	_frameNumUp = frame_up._frameNum;
+	_frameNumDown = frame_down._frameNum;
 }
 
 
@@ -70,18 +69,18 @@ ButtonWidget::~ButtonWidget(void) {
 void ButtonWidget::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	if (textwidget != 0) {
-		Gump *widget = getGump(textwidget);
+	if (_textWidget != 0) {
+		Gump *widget = getGump(_textWidget);
 		assert(widget);
 		widget->InitGump(this);
 		widget->GetDims(_dims); // transfer child dimension to self
 		widget->Move(0, _dims.y); // move it to the correct height
 	} else {
-		assert(shape_up != 0);
-		assert(shape_down != 0);
+		assert(_shapeUp != 0);
+		assert(_shapeDown != 0);
 
-		_shape = shape_up;
-		_frameNum = _frameNum_up;
+		_shape = _shapeUp;
+		_frameNum = _frameNumUp;
 
 		ShapeFrame *sf = _shape->getFrame(_frameNum);
 		assert(sf);
@@ -91,8 +90,8 @@ void ButtonWidget::InitGump(Gump *newparent, bool take_focus) {
 }
 
 int ButtonWidget::getVlead() {
-	if (textwidget != 0) {
-		Gump *widget = getGump(textwidget);
+	if (_textWidget != 0) {
+		Gump *widget = getGump(_textWidget);
 		TextWidget *txtWidget = p_dynamic_cast<TextWidget *>(widget);
 		assert(txtWidget);
 		return txtWidget->getVlead();
@@ -119,9 +118,9 @@ Gump *ButtonWidget::OnMouseDown(int button, int32 mx, int32 my) {
 	if (ret) return ret;
 	if (button == Shared::BUTTON_LEFT) {
 		// CHECKME: change dimensions or not?
-		if (!mouseOver) {
-			_shape = shape_down;
-			_frameNum = _frameNum_down;
+		if (!_mouseOver) {
+			_shape = _shapeDown;
+			_frameNum = _frameNumDown;
 		}
 		return this;
 	}
@@ -138,9 +137,9 @@ uint16 ButtonWidget::TraceObjId(int32 mx, int32 my) {
 
 void ButtonWidget::OnMouseUp(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT) {
-		if (!mouseOver) {
-			_shape = shape_up;
-			_frameNum = _frameNum_up;
+		if (!_mouseOver) {
+			_shape = _shapeUp;
+			_frameNum = _frameNumUp;
 		}
 		_parent->ChildNotify(this, BUTTON_UP);
 	}
@@ -157,29 +156,29 @@ void ButtonWidget::OnMouseDouble(int button, int32 mx, int32 my) {
 }
 
 void ButtonWidget::OnMouseOver() {
-	if (mouseOver) {
-		if (textwidget) {
-			Gump *widget = getGump(textwidget);
+	if (_mouseOver) {
+		if (_textWidget) {
+			Gump *widget = getGump(_textWidget);
 			TextWidget *txtWidget = p_dynamic_cast<TextWidget *>(widget);
 			assert(txtWidget);
-			txtWidget->setBlendColour(mouseOverBlendCol);
+			txtWidget->setBlendColour(_mouseOverBlendCol);
 		} else {
-			_shape = shape_down;
-			_frameNum = _frameNum_down;
+			_shape = _shapeDown;
+			_frameNum = _frameNumDown;
 		}
 	}
 }
 
 void ButtonWidget::OnMouseLeft() {
-	if (mouseOver) {
-		if (textwidget) {
-			Gump *widget = getGump(textwidget);
+	if (_mouseOver) {
+		if (_textWidget) {
+			Gump *widget = getGump(_textWidget);
 			TextWidget *txtWidget = p_dynamic_cast<TextWidget *>(widget);
 			assert(txtWidget);
 			txtWidget->setBlendColour(0);
 		} else {
-			_shape = shape_up;
-			_frameNum = _frameNum_up;
+			_shape = _shapeUp;
+			_frameNum = _frameNumUp;
 		}
 	}
 }
@@ -187,70 +186,70 @@ void ButtonWidget::OnMouseLeft() {
 void ButtonWidget::saveData(ODataSource *ods) {
 	// HACK ALERT
 	int w = 0, h = 0;
-	if (textwidget != 0) {
+	if (_textWidget != 0) {
 		w = _dims.w;
 		h = _dims.h;
-		_dims.w = origw;
-		_dims.h = origh;
+		_dims.w = _origW;
+		_dims.h = _origH;
 	}
 
 	Gump::saveData(ods);
 
 	// HACK ALERT
-	if (textwidget != 0) {
+	if (_textWidget != 0) {
 		_dims.w = w;
 		_dims.h = h;
 	}
 
 	uint16 flex = 0;
 	uint32 shapenum = 0;
-	if (shape_up) {
-		shape_up->getShapeId(flex, shapenum);
+	if (_shapeUp) {
+		_shapeUp->getShapeId(flex, shapenum);
 	}
 	ods->write2(flex);
 	ods->write4(shapenum);
-	ods->write4(_frameNum_up);
+	ods->write4(_frameNumUp);
 
 	flex = 0;
 	shapenum = 0;
-	if (shape_down) {
-		shape_down->getShapeId(flex, shapenum);
+	if (_shapeDown) {
+		_shapeDown->getShapeId(flex, shapenum);
 	}
 	ods->write2(flex);
 	ods->write4(shapenum);
-	ods->write4(_frameNum_down);
-	ods->write2(textwidget);
-	ods->write4(mouseOverBlendCol);
+	ods->write4(_frameNumDown);
+	ods->write2(_textWidget);
+	ods->write4(_mouseOverBlendCol);
 
-	uint8 m = (mouseOver ? 1 : 0);
+	uint8 m = (_mouseOver ? 1 : 0);
 	ods->write1(m);
 }
 
 bool ButtonWidget::loadData(IDataSource *ids, uint32 version) {
 	if (!Gump::loadData(ids, version)) return false;
 
-	shape_up = 0;
+	_shapeUp = 0;
 	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(ids->read2());
 	uint32 shapenum = ids->read4();
 	if (flex) {
-		shape_up = flex->getShape(shapenum);
+		_shapeUp = flex->getShape(shapenum);
 	}
-	_frameNum_up = ids->read4();
+	_frameNumUp = ids->read4();
 
-	shape_down = 0;
+	_shapeDown = 0;
 	flex = GameData::get_instance()->getShapeFlex(ids->read2());
 	shapenum = ids->read4();
 	if (flex) {
-		shape_down = flex->getShape(shapenum);
+		_shapeDown = flex->getShape(shapenum);
 	}
-	_frameNum_down = ids->read4();
-	textwidget = ids->read2();
-	mouseOverBlendCol = ids->read4();
-	mouseOver = (ids->read1() != 0);
+	_frameNumDown = ids->read4();
+	_textWidget = ids->read2();
+	_mouseOverBlendCol = ids->read4();
+	_mouseOver = (ids->read1() != 0);
 
 	// HACK ALERT
-	if (textwidget != 0) {
-		Gump *widget = getGump(textwidget);
+	if (_textWidget != 0) {
+		Gump *widget = getGump(_textWidget);
 		widget->GetDims(_dims); // transfer child dimension to self
 		widget->Move(0, _dims.y); // move it to the correct height
 	}

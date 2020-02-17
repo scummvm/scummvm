@@ -68,14 +68,14 @@ public:
 	};
 
 protected:
-	Shape *shape_up;
-	uint32 _frameNum_up;
-	Shape *shape_down;
-	uint32 _frameNum_down;
-	uint16 textwidget;
-	uint32 mouseOverBlendCol;
-	bool mouseOver;
-	int origw, origh;
+	Shape *_shapeUp;
+	uint32 _frameNumUp;
+	Shape *_shapeDown;
+	uint32 _frameNumDown;
+	uint16 _textWidget;
+	uint32 _mouseOverBlendCol;
+	bool _mouseOver;
+	int _origW, _origH;
 
 public:
 	bool loadData(IDataSource *ids, uint32 version);

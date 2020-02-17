@@ -40,15 +40,15 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget, Gump)
 
 EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont_, int font,
                        int w, int h, unsigned int maxlength_, bool multiline_)
-	: Gump(x, y, w, h), text(txt), gamefont(gamefont_), fontnum(font),
-	  maxlength(maxlength_), multiline(multiline_),
-	  cursor_changed(0), cursor_visible(true), cached_text(0) {
-	cursor = text.size();
+	: Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
+	  _maxLength(maxlength_), _multiLine(multiline_),
+	  _cursorChanged(0), _cursorVisible(true), _cachedText(0) {
+	_cursor = _text.size();
 }
 
 EditWidget::~EditWidget(void) {
-	delete cached_text;
-	cached_text = 0;
+	delete _cachedText;
+	_cachedText = 0;
 }
 
 // Init the gump, call after construction
@@ -63,28 +63,28 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	// No X offset
 	_dims.x = 0;
 
-	if (gamefont && getFont()->isHighRes()) {
+	if (_gameFont && getFont()->isHighRes()) {
 		int32 x_ = 0, y_ = 0, w = 0;
 		ScreenSpaceToGumpRect(x_, y_, w, _dims.y, ROUND_OUTSIDE);
 	}
 }
 
 Font *EditWidget::getFont() const {
-	if (gamefont)
-		return FontManager::get_instance()->getGameFont(fontnum, true);
+	if (_gameFont)
+		return FontManager::get_instance()->getGameFont(_fontNum, true);
 	else
-		return FontManager::get_instance()->getTTFont(fontnum);
+		return FontManager::get_instance()->getTTFont(_fontNum);
 }
 
 void EditWidget::setText(const Std::string &t) {
-	text = t;
-	cursor = text.size();
-	FORGET_OBJECT(cached_text);
+	_text = t;
+	_cursor = _text.size();
+	FORGET_OBJECT(_cachedText);
 }
 
 void EditWidget::ensureCursorVisible() {
-	cursor_visible = true;
-	cursor_changed = g_system->getMillis();
+	_cursorVisible = true;
+	_cursorChanged = g_system->getMillis();
 }
 
 bool EditWidget::textFits(Std::string &t) {
@@ -93,9 +93,9 @@ bool EditWidget::textFits(Std::string &t) {
 	unsigned int remaining;
 	int32 width, height;
 
-	int32 max_width = multiline ? _dims.w : 0;
+	int32 max_width = _multiLine ? _dims.w : 0;
 	int32 max_height = _dims.h;
-	if (gamefont && font->isHighRes()) {
+	if (_gameFont && font->isHighRes()) {
 		int32 x_ = 0, y_ = 0;
 		GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
 	}
@@ -104,49 +104,49 @@ bool EditWidget::textFits(Std::string &t) {
 	                  max_width, max_height,
 	                  Font::TEXT_LEFT, false);
 
-	if (gamefont && font->isHighRes()) {
+	if (_gameFont && font->isHighRes()) {
 		int32 x_ = 0, y_ = 0;
 		ScreenSpaceToGumpRect(x_, y_, width, height, ROUND_OUTSIDE);
 	}
 
-	if (multiline)
+	if (_multiLine)
 		return (remaining >= t.size());
 	else
 		return (width <= _dims.w);
 }
 
 void EditWidget::renderText() {
-	bool cv = cursor_visible;
+	bool cv = _cursorVisible;
 	if (!IsFocus()) {
 		cv = false;
 	} else {
 		uint32 now = g_system->getMillis();
-		if (now > cursor_changed + 750) {
-			cv = !cursor_visible;
-			cursor_changed = now;
+		if (now > _cursorChanged + 750) {
+			cv = !_cursorVisible;
+			_cursorChanged = now;
 		}
 	}
 
-	if (cv != cursor_visible) {
-		FORGET_OBJECT(cached_text);
-		cursor_visible = cv;
+	if (cv != _cursorVisible) {
+		FORGET_OBJECT(_cachedText);
+		_cursorVisible = cv;
 	}
 
-	if (!cached_text) {
+	if (!_cachedText) {
 		Font *font = getFont();
 
-		int32 max_width = multiline ? _dims.w : 0;
+		int32 max_width = _multiLine ? _dims.w : 0;
 		int32 max_height = _dims.h;
-		if (gamefont && font->isHighRes()) {
+		if (_gameFont && font->isHighRes()) {
 			int32 x_ = 0, y_ = 0;
 			GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
 		}
 
 		unsigned int remaining;
-		cached_text = font->renderText(text, remaining,
+		_cachedText = font->renderText(_text, remaining,
 		                               max_width, max_height,
 		                               Font::TEXT_LEFT,
-		                               false, cv ? cursor : Std::string::npos);
+		                               false, cv ? _cursor : Std::string::npos);
 	}
 }
 
@@ -156,24 +156,24 @@ void EditWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 
 	renderText();
 
-	if (scaled && gamefont && getFont()->isHighRes()) {
+	if (scaled && _gameFont && getFont()->isHighRes()) {
 		surf->FillAlpha(0xFF, _dims.x, _dims.y, _dims.w, _dims.h);
 		return;
 	}
 
-	cached_text->draw(surf, 0, 0);
+	_cachedText->draw(surf, 0, 0);
 }
 
 // Overloadable method to Paint just this gumps unscaled components that require compositing (RenderSurface is relative to parent).
 void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy) {
 	Font *font = getFont();
 
-	if (!gamefont || !font->isHighRes()) return;
+	if (!_gameFont || !font->isHighRes()) return;
 
 	int32 x_ = 0, y_ = 0;
 	GumpToScreenSpace(x_, y_, ROUND_BOTTOMRIGHT);
 
-	cached_text->draw(surf, x_, y_, true);
+	_cachedText->draw(surf, x_, y_, true);
 
 	x_ = _dims.x;
 	y_ = _dims.y;
@@ -197,29 +197,29 @@ bool EditWidget::OnKeyDown(int key, int mod) {
 		_parent->ChildNotify(this, EDIT_ESCAPE);
 		break;
 	case Common::KEYCODE_BACKSPACE:
-		if (cursor > 0) {
-			text.erase(--cursor, 1);
-			FORGET_OBJECT(cached_text);
+		if (_cursor > 0) {
+			_text.erase(--_cursor, 1);
+			FORGET_OBJECT(_cachedText);
 			ensureCursorVisible();
 		}
 		break;
 	case Common::KEYCODE_DELETE:
-		if (cursor != text.size()) {
-			text.erase(cursor, 1);
-			FORGET_OBJECT(cached_text);
+		if (_cursor != _text.size()) {
+			_text.erase(_cursor, 1);
+			FORGET_OBJECT(_cachedText);
 		}
 		break;
 	case Common::KEYCODE_LEFT:
-		if (cursor > 0) {
-			cursor--;
-			FORGET_OBJECT(cached_text);
+		if (_cursor > 0) {
+			_cursor--;
+			FORGET_OBJECT(_cachedText);
 			ensureCursorVisible();
 		}
 		break;
 	case Common::KEYCODE_RIGHT:
-		if (cursor < text.size()) {
-			cursor++;
-			FORGET_OBJECT(cached_text);
+		if (_cursor < _text.size()) {
+			_cursor++;
+			FORGET_OBJECT(_cachedText);
 			ensureCursorVisible();
 		}
 		break;
@@ -236,7 +236,7 @@ bool EditWidget::OnKeyUp(int key) {
 
 
 bool EditWidget::OnTextInput(int unicode) {
-	if (maxlength > 0 && text.size() >= maxlength)
+	if (_maxLength > 0 && _text.size() >= _maxLength)
 		return true;
 
 	char c = 0;
@@ -244,13 +244,13 @@ bool EditWidget::OnTextInput(int unicode) {
 		c = reverse_encoding[unicode];
 	if (!c) return true;
 
-	Std::string newtext = text;
-	newtext.insert(cursor, 1, c);
+	Std::string newtext = _text;
+	newtext.insert(_cursor, 1, c);
 
 	if (textFits(newtext)) {
-		text = newtext;
-		cursor++;
-		FORGET_OBJECT(cached_text);
+		_text = newtext;
+		_cursor++;
+		FORGET_OBJECT(_cachedText);
 	}
 
 	return true;

@@ -61,9 +61,9 @@ public:
 	};
 
 protected:
-	GameInfo *info;
+	GameInfo *_info;
 
-	bool highlight;
+	bool _highlight;
 };
 
 } // End of namespace Ultima8

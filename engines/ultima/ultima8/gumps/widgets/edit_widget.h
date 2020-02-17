@@ -58,7 +58,7 @@ public:
 
 	//! get the current text
 	Std::string getText() const {
-		return text;
+		return _text;
 	}
 	void setText(const Std::string &t);
 
@@ -69,22 +69,22 @@ public:
 
 
 protected:
-	Std::string text;
-	Std::string::size_type cursor;
-	bool gamefont;
-	int fontnum;
-	unsigned int maxlength;
-	bool multiline;
+	Std::string _text;
+	Std::string::size_type _cursor;
+	bool _gameFont;
+	int _fontNum;
+	unsigned int _maxLength;
+	bool _multiLine;
 
-	uint32 cursor_changed;
-	bool cursor_visible;
+	uint32 _cursorChanged;
+	bool _cursorVisible;
 
 	void ensureCursorVisible();
 	bool textFits(Std::string &t);
 	void renderText();
 	Font *getFont() const;
 
-	RenderedText *cached_text;
+	RenderedText *_cachedText;
 
 };
 

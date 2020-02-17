@@ -37,7 +37,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump, ItemRelativeGump)
 
 // TODO: Remove all the hacks
 
-BarkGump::BarkGump() : ItemRelativeGump() {
+BarkGump::BarkGump() : ItemRelativeGump(), _counter(0), _textWidget(0),
+		_speechShapeNum(0), _speechLength(0), _totalTextHeight(0) {
 }
 
 BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) :
