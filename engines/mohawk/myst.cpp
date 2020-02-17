@@ -970,10 +970,6 @@ Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &d
 	return _gameState->save(slot, desc, thumbnail, isAutosave) ? Common::kNoError : Common::kUnknownError;
 }
 
-bool MohawkEngine_Myst::canSaveAutosaveCurrently() {
-	return canSaveGameStateCurrently() && _gameState->isAutoSaveAllowed();
-}
-
 bool MohawkEngine_Myst::hasGameSaveSupport() const {
 	return !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
 }

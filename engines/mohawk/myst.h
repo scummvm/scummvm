@@ -192,7 +192,6 @@ public:
 	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("myst-%03d.mys", slot);
 	}
-	virtual bool canSaveAutosaveCurrently() override;
 
 	bool hasFeature(EngineFeature f) const override;
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);

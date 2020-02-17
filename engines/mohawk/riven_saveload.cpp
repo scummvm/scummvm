@@ -164,40 +164,6 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	return descriptor;
 }
 
-bool RivenSaveLoad::isAutoSaveAllowed() {
-	// Open autosave slot and see if it an autosave
-	// Autosaving will be enabled if it is an autosave or if there is no save in that slot
-
-	Common::String filename = buildSaveFilename(_vm->getAutosaveSlot());
-	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
-	if (!loadFile) {
-		return true; // There is no save in the autosave slot, enable autosave
-	}
-
-	MohawkArchive mhk;
-	if (!mhk.openStream(loadFile)) {
-		return true; // Corrupt save, enable autosave
-	}
-
-	if (!mhk.hasResource(ID_META, 1)) {
-		return false; // don't autosave over saves that don't have a meta section (like saves from the original)
-	}
-
-	Common::ScopedPtr<Common::SeekableReadStream> metaStream(mhk.getResource(ID_META, 1));
-	if (!metaStream) {
-		return true; // corrupt save, enable autosave
-	}
-
-	Common::Serializer serializer = Common::Serializer(metaStream.get(), nullptr);
-
-	RivenSaveMetadata metadata;
-	if (!metadata.sync(serializer)) {
-		return true; // corrupt save, enable autosave
-	}
-
-	return metadata.autoSave;
-}
-
 Common::Error RivenSaveLoad::loadGame(const int slot) {
 	if (_vm->getFeatures() & GF_DEMO) // Don't load games in the demo
 		return Common::kNoError;

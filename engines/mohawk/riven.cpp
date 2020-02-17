@@ -748,8 +748,7 @@ void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::St
 }
 
 bool MohawkEngine_Riven::canSaveAutosaveCurrently() {
-	return canSaveGameStateCurrently() && !_gameEnded &&
-		_saveLoad->isAutoSaveAllowed();
+	return canSaveGameStateCurrently() && !_gameEnded;
 }
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
