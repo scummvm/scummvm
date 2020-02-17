@@ -56,6 +56,7 @@
 
 #include "common/str.h"
 #include "common/keyboard.h"
+#include "common/debug.h"
 
 namespace BladeRunner {
 
@@ -654,6 +655,10 @@ void KIA::mouseDownCallback(int buttonId, void *callbackData) {
 		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN5P), 70, 0, 0, 50, 0);
 		if (buttonId == 12) {
 			int endTrackId = self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSHUTDOWN), 70, 0, 0, 50, 0);
+
+			self->_vm->_surfaceFront.fillRect(Common::Rect(0, 0, 640, 480), 0);
+			self->_vm->blitToScreen(self->_vm->_surfaceFront);
+
 			if (endTrackId != -1) {
 				// wait until the full clip has played (similar to the original)
 				uint32 timeNow = self->_vm->_time->currentSystem();
