@@ -86,7 +86,7 @@ typedef uint32(*Intrinsic)(const uint8 *args, unsigned int argsize);
 
 #define ARG_WORLDPOINT(x) ARG_UC_PTR(ucptr_##x); \
 	WorldPoint x; \
-	UCMachine::get_instance()->dereferencePointer(ucptr_##x, x.buf, 5);
+	UCMachine::get_instance()->dereferencePointer(ucptr_##x, x._buf, 5);
 
 #define ARG_NULL8()  args+=1;
 #define ARG_NULL16() args+=2;

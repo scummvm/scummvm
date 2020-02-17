@@ -55,8 +55,8 @@ struct SortItem {
 	uint32                  _flags;     // Item flags
 	uint32                  _extFlags;  // Item extended flags
 
-	int                     sx, sx2;    // Screenspace X coords
-	int                     sy, sy2;    // Screenspace Y coords
+	int                     _sx, _sx2;  // Screenspace X coords
+	int                     _sy, _sy2;  // Screenspace Y coords
 
 	/*
 	            Bounding Box layout
@@ -712,13 +712,13 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 _shapeNum, uint32 fra
 //	si->_syBot += sho2;
 
 	// Real Screenspace coords
-	si->sx = si->_sxBot - _frame->_xoff;   // Left
-	si->sy = si->_syBot - _frame->_yoff;   // Top
-	si->sx2 = si->sx + _frame->_width;    // Right
-	si->sy2 = si->sy + _frame->_height;   // Bottom
+	si->_sx = si->_sxBot - _frame->_xoff;   // Left
+	si->_sy = si->_syBot - _frame->_yoff;   // Top
+	si->_sx2 = si->_sx + _frame->_width;    // Right
+	si->_sy2 = si->_sy + _frame->_height;   // Bottom
 
 	// Do Clipping here
-	si->_clipped = _surf->CheckClipped(Rect(si->sx, si->sy, _frame->_width, _frame->_height));
+	si->_clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, _frame->_width, _frame->_height));
 	if (si->_clipped < 0) return;
 
 	// These help out with sorting. We calc them now, so it will be faster
@@ -889,13 +889,13 @@ void ItemSorter::AddItem(Item *add) {
 //	si->_syBot += sho2;
 
 	// Real Screenspace coords
-	si->sx = si->_sxBot - _frame->_xoff;   // Left
-	si->sy = si->_syBot - _frame->_yoff;   // Top
-	si->sx2 = si->sx + _frame->_width;    // Right
-	si->sy2 = si->sy + _frame->_height;   // Bottom
+	si->_sx = si->_sxBot - _frame->_xoff;   // Left
+	si->_sy = si->_syBot - _frame->_yoff;   // Top
+	si->_sx2 = si->_sx + _frame->_width;    // Right
+	si->_sy2 = si->_sy + _frame->_height;   // Bottom
 
 	// Do Clipping here
-	si->_clipped = _surf->CheckClipped(Rect(si->sx, si->sy, _frame->_width, _frame->_height));
+	si->_clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, _frame->_width, _frame->_height));
 	if (si->_clipped < 0) return;
 
 	// These help out with sorting. We calc them now, so it will be faster
@@ -1153,7 +1153,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 				if (!it->_itemNum) continue;
 
 				// Doesn't Overlap
-				if (x < it->sx || x >= it->sx2 || y < it->sy || y >= it->sy2) continue;
+				if (x < it->_sx || x >= it->_sx2 || y < it->_sy || y >= it->_sy2) continue;
 
 				// Now check the _frame itself
 				ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
@@ -1181,7 +1181,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 			if (!it->_itemNum) continue;
 
 			// Doesn't Overlap
-			if (x < it->sx || x >= it->sx2 || y < it->sy || y >= it->sy2) continue;
+			if (x < it->_sx || x >= it->_sx2 || y < it->_sy || y >= it->_sy2) continue;
 
 			// Now check the _frame itself
 			ShapeFrame *_frame = it->_shape->getFrame(it->_frame);

@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -49,13 +48,12 @@ namespace Ultima8 {
 
 //#define DUMP_ITEMS
 
-World *World::world = 0;
+World *World::_world = 0;
 
-World::World()
-	: currentmap(0) {
+World::World() : _currentMap(0) {
 	con->Print(MM_INFO, "Creating World...\n");
 
-	world = this;
+	_world = this;
 }
 
 
@@ -63,24 +61,24 @@ World::~World() {
 	con->Print(MM_INFO, "Destroying World...\n");
 	clear();
 
-	world = 0;
+	_world = 0;
 }
 
 
 void World::clear() {
 	unsigned int i;
 
-	for (i = 0; i < maps.size(); ++i) {
-		delete maps[i];
+	for (i = 0; i < _maps.size(); ++i) {
+		delete _maps[i];
 	}
-	maps.clear();
+	_maps.clear();
 
-	while (!ethereal.empty())
-		ethereal.pop_front();
+	while (!_ethereal.empty())
+		_ethereal.pop_front();
 
-	if (currentmap)
-		delete currentmap;
-	currentmap = 0;
+	if (_currentMap)
+		delete _currentMap;
+	_currentMap = 0;
 }
 
 void World::reset() {
@@ -95,21 +93,21 @@ void World::initMaps() {
 	// Q: How do we determine which Maps to create? Only create those
 	// with non-zero size in fixed.dat?
 
-	maps.resize(256);
+	_maps.resize(256);
 	for (unsigned int i = 0; i < 256; ++i) {
-		maps[i] = new Map(i);
+		_maps[i] = new Map(i);
 	}
 
-	currentmap = new CurrentMap();
+	_currentMap = new CurrentMap();
 }
 
 bool World::switchMap(uint32 newmap) {
-	assert(currentmap);
+	assert(_currentMap);
 
-	if (currentmap->getNum() == newmap)
+	if (_currentMap->getNum() == newmap)
 		return true;
 
-	if (newmap >= maps.size() || maps[newmap] == 0)
+	if (newmap >= _maps.size() || _maps[newmap] == 0)
 		return false; // no such map
 
 	// Map switching procedure:
@@ -117,7 +115,7 @@ bool World::switchMap(uint32 newmap) {
 	// get rid of camera
 	// stop all sound effects (except speech, such as Guardian barks)
 	// notify all gumps of a map change
-	// delete any ethereal objects
+	// delete any _ethereal objects
 	// write back CurrentMap to the old map, which
 	//   deletes all disposable items
 	//   deletes the EggHatcher
@@ -146,25 +144,25 @@ bool World::switchMap(uint32 newmap) {
 		if (desktop) desktop->CloseItemDependents();
 	}
 
-	// get rid of any remaining ethereal items
-	while (!ethereal.empty()) {
-		uint16 eth = ethereal.front();
-		ethereal.pop_front();
+	// get rid of any remaining _ethereal items
+	while (!_ethereal.empty()) {
+		uint16 eth = _ethereal.front();
+		_ethereal.pop_front();
 		Item *i = getItem(eth);
 		if (i) i->destroy();
 	}
 
-	uint32 oldmap = currentmap->getNum();
+	uint32 oldmap = _currentMap->getNum();
 	if (oldmap != 0) {
 		perr << "Unloading map " << oldmap << Std::endl;
 
-		assert(oldmap < maps.size() && maps[oldmap] != 0);
+		assert(oldmap < _maps.size() && _maps[oldmap] != 0);
 
-		currentmap->writeback();
+		_currentMap->writeback();
 
 		perr << "Unloading Fixed items from map " << oldmap << Std::endl;
 
-		maps[oldmap]->unloadFixed();
+		_maps[oldmap]->unloadFixed();
 	}
 
 	// Kill any processes that need killing (those with type != 1 && item != 0)
@@ -173,10 +171,10 @@ bool World::switchMap(uint32 newmap) {
 	pout << "Loading Fixed items in map " << newmap << Std::endl;
 	IDataSource *items = GameData::get_instance()->getFixed()
 	                     ->get_datasource(newmap);
-	maps[newmap]->loadFixed(items);
+	_maps[newmap]->loadFixed(items);
 	delete items;
 
-	currentmap->loadMap(maps[newmap]);
+	_currentMap->loadMap(_maps[newmap]);
 
 	// reset camera
 	CameraProcess::SetCameraProcess(new CameraProcess(1));
@@ -196,12 +194,12 @@ void World::loadNonFixed(IDataSource *ds) {
 
 		// items in this map?
 		if (f->getSize(i) > 0) {
-			assert(maps.size() > i);
-			assert(maps[i] != 0);
+			assert(_maps.size() > i);
+			assert(_maps[i] != 0);
 
 			IDataSource *items = f->getDataSource(i);
 
-			maps[i]->loadNonFixed(items);
+			_maps[i]->loadNonFixed(items);
 
 			delete items;
 
@@ -318,8 +316,8 @@ void World::loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata) {
 void World::worldStats() {
 	unsigned int i, mapcount = 0;
 
-	for (i = 0; i < maps.size(); i++) {
-		if (maps[i] != 0 && !maps[i]->isEmpty())
+	for (i = 0; i < _maps.size(); i++) {
+		if (_maps[i] != 0 && !_maps[i]->isEmpty())
 			mapcount++;
 	}
 
@@ -338,16 +336,16 @@ void World::worldStats() {
 }
 
 void World::save(ODataSource *ods) {
-	ods->write4(currentmap->getNum());
+	ods->write4(_currentMap->getNum());
 
-	ods->write2(currentmap->_eggHatcher);
+	ods->write2(_currentMap->_eggHatcher);
 
-	uint16 es = static_cast<uint16>(ethereal.size());
+	uint16 es = static_cast<uint16>(_ethereal.size());
 	ods->write4(es);
 
 	// empty stack and refill it again
 	uint16 *e = new uint16[es];
-	Std::list<ObjId>::iterator it = ethereal.begin();
+	Std::list<ObjId>::iterator it = _ethereal.begin();
 	unsigned int i;
 	for (i = 0; i < es; ++i) {
 		e[es - i] = *it;
@@ -363,22 +361,22 @@ void World::save(ODataSource *ods) {
 // load items
 bool World::load(IDataSource *ids, uint32 version) {
 	uint16 curmapnum = ids->read4();
-	currentmap->setMap(maps[curmapnum]);
+	_currentMap->setMap(_maps[curmapnum]);
 
-	currentmap->_eggHatcher = ids->read2();
+	_currentMap->_eggHatcher = ids->read2();
 
 	uint32 etherealcount = ids->read4();
 	for (unsigned int i = 0; i < etherealcount; ++i) {
-		ethereal.push_front(ids->read2());
+		_ethereal.push_front(ids->read2());
 	}
 
 	return true;
 }
 
 void World::saveMaps(ODataSource *ods) {
-	ods->write4(static_cast<uint32>(maps.size()));
-	for (unsigned int i = 0; i < maps.size(); ++i) {
-		maps[i]->save(ods);
+	ods->write4(static_cast<uint32>(_maps.size()));
+	for (unsigned int i = 0; i < _maps.size(); ++i) {
+		_maps[i]->save(ods);
 	}
 }
 
@@ -388,7 +386,7 @@ bool World::loadMaps(IDataSource *ids, uint32 version) {
 
 	// Map objects have already been created by reset()
 	for (unsigned int i = 0; i < mapcount; ++i) {
-		bool res = maps[i]->load(ids, version);
+		bool res = _maps[i]->load(ids, version);
 		if (!res) return false;
 	}
 

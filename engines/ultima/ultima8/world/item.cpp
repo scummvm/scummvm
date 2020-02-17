@@ -1892,7 +1892,7 @@ uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
 	point.setY(_y);
 	point.setZ(_z);
 
-	UCMachine::get_instance()->assignPointer(ptr, point.buf, 5);
+	UCMachine::get_instance()->assignPointer(ptr, point._buf, 5);
 
 	return 0;
 }

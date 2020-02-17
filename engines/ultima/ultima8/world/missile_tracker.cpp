@@ -35,11 +35,11 @@ namespace Ultima8 {
 MissileTracker::MissileTracker(Item *item, int32 sx, int32 sy, int32 sz,
                                int32 tx, int32 ty, int32 tz,
                                int32 speed, int32 gravity_) {
-	objid = item->getObjId();
-	destx = tx;
-	desty = ty;
-	destz = tz;
-	gravity = gravity_;
+	_objId = item->getObjId();
+	_destX = tx;
+	_destY = ty;
+	_destZ = tz;
+	_gravity = gravity_;
 
 	init(sx, sy, sz, speed);
 }
@@ -48,11 +48,11 @@ MissileTracker::MissileTracker(Item *item, int32 tx, int32 ty, int32 tz,
                                int32 speed, int32 gravity_) {
 	assert(item->getParent() == 0);
 
-	objid = item->getObjId();
-	destx = tx;
-	desty = ty;
-	destz = tz;
-	gravity = gravity_;
+	_objId = item->getObjId();
+	_destX = tx;
+	_destY = ty;
+	_destZ = tz;
+	_gravity = gravity_;
 
 	int32 x, y, z;
 	item->getLocation(x, y, z);
@@ -61,10 +61,10 @@ MissileTracker::MissileTracker(Item *item, int32 tx, int32 ty, int32 tz,
 }
 
 void MissileTracker::init(int32 x, int32 y, int32 z, int32 speed) {
-	int range = ABS(x - destx) + ABS(y - desty);
+	int range = ABS(x - _destX) + ABS(y - _destY);
 
 	// rounded division: range/speed
-	frames = (range + (speed / 2)) / speed;
+	_frames = (range + (speed / 2)) / speed;
 
 	/*
 
@@ -73,52 +73,52 @@ void MissileTracker::init(int32 x, int32 y, int32 z, int32 speed) {
 	z_{i+1} = z_i + s_i
 	s_{i+1} = s_i - g
 
-	(z_i = vertical position after i frames,
-	 s_i = vertical speed after i frames, g = gravity)
+	(z_i = vertical position after i _frames,
+	 s_i = vertical speed after i _frames, g = _gravity)
 
 	So:
 
 	z_i = z + sum_{j=0}^{i-1} ( s_0 - jg)
 	    = z + is_0 - 1/2 i(i-1)g
 
-	Conclusion: if we want to reach the destination vertical level in i frames,
+	Conclusion: if we want to reach the destination vertical level in i _frames,
 	we need to set
 
 	s_0 = ((1/2 gi(i-1)) + z_i-z) / i
 
 	*/
 
-	if (frames > 0) {
-		speedz = ((gravity * frames * (frames - 1) / 2) + destz - z) / frames;
+	if (_frames > 0) {
+		_speedZ = ((_gravity * _frames * (_frames - 1) / 2) + _destZ - z) / _frames;
 
 		// check if vertical speed isn't too high
-		if (speedz > speed / 4) {
-			if (gravity == 0 || (speed / (4 * gravity)) <= frames) {
-				if (speed >= 4 && (destz - z) / (speed / 4) > frames)
-					frames = (destz - z) / (speed / 4);
+		if (_speedZ > speed / 4) {
+			if (_gravity == 0 || (speed / (4 * _gravity)) <= _frames) {
+				if (speed >= 4 && (_destZ - z) / (speed / 4) > _frames)
+					_frames = (_destZ - z) / (speed / 4);
 			} else {
-				frames = speed / (4 * gravity);
+				_frames = speed / (4 * _gravity);
 			}
 		}
 
-		speedz = ((gravity * frames * (frames - 1) / 2) + destz - z) / frames;
+		_speedZ = ((_gravity * _frames * (_frames - 1) / 2) + _destZ - z) / _frames;
 
-		// horizontal speed is easier: just divide distance by frames
-		speedx = ((destx - x) + (frames / 2)) / frames;
-		speedy = ((desty - y) + (frames / 2)) / frames;
+		// horizontal speed is easier: just divide distance by _frames
+		_speedX = ((_destX - x) + (_frames / 2)) / _frames;
+		_speedY = ((_destY - y) + (_frames / 2)) / _frames;
 
 #if 0
-		pout.printf("MissileTracker: from (%d,%d,%d) to (%d,%d,%d)\n", x, y, z, destx, desty, destz);
-		pout.printf("speed: %d, gravity: %d, frames: %d\n", speed, gravity, frames);
-		pout.printf("resulting speed: (%d,%d,%d)\n", speedx, speedy, speedz);
+		pout.printf("MissileTracker: from (%d,%d,%d) to (%d,%d,%d)\n", x, y, z, _destX, _destY, _destZ);
+		pout.printf("speed: %d, _gravity: %d, _frames: %d\n", speed, _gravity, _frames);
+		pout.printf("resulting speed: (%d,%d,%d)\n", _speedX, _speedY, _speedZ);
 #endif
 	} else {
 
 		// no significant horizontal movement
-		if (destz > z)
-			speedz = speed / 4;
+		if (_destZ > z)
+			_speedZ = speed / 4;
 		else
-			speedz = -speed / 4;
+			_speedZ = -speed / 4;
 
 	}
 }
@@ -133,18 +133,18 @@ bool MissileTracker::isPathClear() {
 	int32 dims[3];
 	int32 sx, sy, sz;
 
-	sx = speedx;
-	sy = speedy;
-	sz = speedz;
+	sx = _speedX;
+	sy = _speedY;
+	sz = _speedZ;
 
 	World *world = World::get_instance();
 	CurrentMap *map = world->getCurrentMap();
-	Item *item = getItem(objid);
+	Item *item = getItem(_objId);
 
 	item->getFootpadWorld(dims[0], dims[1], dims[2]);
 	item->getLocation(start[0], start[1], start[2]);
 
-	for (int f = 0; f < frames; ++f) {
+	for (int f = 0; f < _frames; ++f) {
 		end[0] = start[0] + sx;
 		end[1] = start[1] + sy;
 		end[2] = start[2] + sz;
@@ -152,7 +152,7 @@ bool MissileTracker::isPathClear() {
 		// Do the sweep test
 		Std::list<CurrentMap::SweepItem> collisions;
 		Std::list<CurrentMap::SweepItem>::iterator it;
-		map->sweepTest(start, end, dims, item->getShapeInfo()->_flags, objid,
+		map->sweepTest(start, end, dims, item->getShapeInfo()->_flags, _objId,
 		               false, &collisions);
 
 		int32 hit = 0x4000;
@@ -167,7 +167,7 @@ bool MissileTracker::isPathClear() {
 			return false;
 		}
 
-		sz -= gravity;
+		sz -= _gravity;
 		for (int i = 0; i < 3; ++i) start[i] = end[i];
 	}
 
@@ -176,10 +176,10 @@ bool MissileTracker::isPathClear() {
 
 
 void MissileTracker::launchItem() {
-	Item *item = getItem(objid);
+	Item *item = getItem(_objId);
 	if (!item) return;
 
-	item->hurl(speedx, speedy, speedz, gravity);
+	item->hurl(_speedX, _speedY, _speedZ, _gravity);
 }
 
 } // End of namespace Ultima8

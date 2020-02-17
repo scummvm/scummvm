@@ -77,7 +77,7 @@ public:
 	~World();
 
 	static World *get_instance() {
-		return world;
+		return _world;
 	}
 
 	//! clear the world (maps, currentmap, ethereal items)
@@ -97,7 +97,7 @@ public:
 
 	//! get the CurrentMap
 	CurrentMap *getCurrentMap() const {
-		return currentmap;
+		return _currentMap;
 	}
 
 	//! switch map. This unloads the CurrentMap back into a Map, kills
@@ -107,22 +107,22 @@ public:
 
 	//! push an item onto the ethereal void
 	void etherealPush(ObjId objid) {
-		ethereal.push_front(objid);
+		_ethereal.push_front(objid);
 	}
 
 	//! check if the the ethereal void is empty
 	bool etherealEmpty() {
-		return ethereal.empty();
+		return _ethereal.empty();
 	}
 
 	//! return (but don't remove) the top item from the ethereal void
 	ObjId etherealPeek() {
-		return ethereal.front();
+		return _ethereal.front();
 	}
 
 	//! remove an item from the ethereal void
 	void etherealRemove(ObjId objid) {
-		ethereal.remove(objid);
+		_ethereal.remove(objid);
 	}
 
 	//! output some statistics about the world
@@ -141,12 +141,12 @@ public:
 	bool load(IDataSource *ids, uint32 version);
 
 private:
-	static World *world;
+	static World *_world;
 
-	Std::vector<Map *> maps;
-	CurrentMap *currentmap;
+	Std::vector<Map *> _maps;
+	CurrentMap *_currentMap;
 
-	Std::list<ObjId> ethereal;
+	Std::list<ObjId> _ethereal;
 };
 
 } // End of namespace Ultima8

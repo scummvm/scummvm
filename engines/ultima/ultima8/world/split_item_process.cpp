@@ -21,12 +21,10 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/world/split_item_process.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -48,14 +46,14 @@ SplitItemProcess::SplitItemProcess(Item *original, Item *target_) {
 	assert(target_->getShapeInfo()->hasQuantity());
 
 	_itemNum = original->getObjId();
-	target = target_->getObjId();
+	_target = target_->getObjId();
 
 	// type = TODO
 }
 
 void SplitItemProcess::run() {
 	Item *original = getItem(_itemNum);
-	Item *targetitem = getItem(target);
+	Item *targetitem = getItem(_target);
 
 	assert(original);
 	assert(targetitem);
@@ -97,13 +95,13 @@ void SplitItemProcess::run() {
 void SplitItemProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(target);
+	ods->write2(_target);
 }
 
 bool SplitItemProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	target = ids->read2();
+	_target = ids->read2();
 
 	return true;
 }

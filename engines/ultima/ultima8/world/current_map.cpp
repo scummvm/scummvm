@@ -108,7 +108,7 @@ uint32 CurrentMap::getNum() const {
 	if (_currentMap == 0)
 		return 0;
 
-	return _currentMap->mapnum;
+	return _currentMap->_mapNum;
 }
 
 void CurrentMap::createEggHatcher() {
@@ -154,9 +154,9 @@ void CurrentMap::writeback() {
 				item->clearObjId();
 				if (item->getExtFlags() & Item::EXT_FIXED) {
 					// item came from fixed
-					_currentMap->fixeditems.push_back(item);
+					_currentMap->_fixedItems.push_back(item);
 				} else {
-					_currentMap->dynamicitems.push_back(item);
+					_currentMap->_dynamicItems.push_back(item);
 				}
 			}
 			_items[i][j].clear();
@@ -205,12 +205,12 @@ void CurrentMap::loadMap(Map *map) {
 	_fastXMax = -1;
 	_fastYMax = -1;
 
-	loadItems(map->fixeditems, callCacheIn);
-	loadItems(map->dynamicitems, callCacheIn);
+	loadItems(map->_fixedItems, callCacheIn);
+	loadItems(map->_dynamicItems, callCacheIn);
 
 	// we take control of the _items in map, so clear the pointers
-	map->fixeditems.clear();
-	map->dynamicitems.clear();
+	map->_fixedItems.clear();
+	map->_dynamicItems.clear();
 
 	// load relevant NPCs to the item lists
 	// !constant

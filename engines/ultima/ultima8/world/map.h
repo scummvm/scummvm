@@ -44,8 +44,8 @@ public:
 	void loadFixed(IDataSource *ds);
 	void unloadFixed();
 
-	bool isEmpty() {
-		return fixeditems.size() == 0 && dynamicitems.size() == 0;
+	bool isEmpty() const {
+		return _fixedItems.size() == 0 && _dynamicItems.size() == 0;
 	}
 
 	void save(ODataSource *ods);
@@ -70,10 +70,10 @@ private:
 	// since fixed items will be cached out most of the time)
 
 
-	Std::list<Item *> fixeditems;
-	Std::list<Item *> dynamicitems;
+	Std::list<Item *> _fixedItems;
+	Std::list<Item *> _dynamicItems;
 
-	uint32 mapnum;
+	uint32 _mapNum;
 };
 
 } // End of namespace Ultima8
