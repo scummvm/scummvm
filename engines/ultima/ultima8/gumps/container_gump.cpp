@@ -81,7 +81,7 @@ void ContainerGump::InitGump(Gump *newparent, bool take_focus) {
 
 	if (!c) return; // Container gone!?
 
-	Std::list<Item *> &contents = c->contents;
+	Std::list<Item *> &contents = c->_contents;
 	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		(*iter)->enterFastArea();
@@ -122,7 +122,7 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 		return;
 	}
 
-	Std::list<Item *> &contents = c->contents;
+	Std::list<Item *> &contents = c->_contents;
 	int32 gametick = Kernel::get_instance()->getFrameNum();
 
 	//!! TODO: check these painting commands (flipped? translucent?)
@@ -170,7 +170,7 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
-	Std::list<Item *> &contents = c->contents;
+	Std::list<Item *> &contents = c->_contents;
 	Std::list<Item *>::reverse_iterator iter;
 
 	// iterate backwards, since we're painting from begin() to end()
@@ -261,7 +261,7 @@ void ContainerGump::Close(bool no_del) {
 	Container *c = getContainer(_owner);
 	if (!c) return; // Container gone!?
 
-	Std::list<Item *> &contents = c->contents;
+	Std::list<Item *> &contents = c->_contents;
 	Std::list<Item *>::iterator iter = contents.begin();
 	while (iter != contents.end()) {
 		Item *item = *iter;

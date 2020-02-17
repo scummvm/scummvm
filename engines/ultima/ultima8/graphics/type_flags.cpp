@@ -238,43 +238,43 @@ void TypeFlags::loadArmourInfo() {
 		int val;
 
 		config->get(k + "/shape", val);
-		ai.shape = static_cast<uint32>(val);
+		ai._shape = static_cast<uint32>(val);
 
-		assert(ai.shape < shapeInfo.size());
-		assert(msf->getShape(ai.shape));
-		unsigned int framecount = msf->getShape(ai.shape)->frameCount();
-		ArmourInfo *aia = shapeInfo[ai.shape]._armourInfo;
+		assert(ai._shape < shapeInfo.size());
+		assert(msf->getShape(ai._shape));
+		unsigned int framecount = msf->getShape(ai._shape)->frameCount();
+		ArmourInfo *aia = shapeInfo[ai._shape]._armourInfo;
 		if (!aia) {
 			aia = new ArmourInfo[framecount];
-			shapeInfo[ai.shape]._armourInfo = aia;
+			shapeInfo[ai._shape]._armourInfo = aia;
 			for (unsigned int i = 0; i < framecount; ++i) {
-				aia[i].shape = 0;
-				aia[i].frame = 0;
-				aia[i].armour_class = 0;
-				aia[i].defense_type = 0;
-				aia[i].kick_attack_bonus = 0;
+				aia[i]._shape = 0;
+				aia[i]._frame = 0;
+				aia[i]._armourClass = 0;
+				aia[i]._defenseType = 0;
+				aia[i]._kickAttackBonus = 0;
 			}
 		}
 
 		config->get(k + "/frame", val);
-		ai.frame = static_cast<uint32>(val);
+		ai._frame = static_cast<uint32>(val);
 
-		assert(ai.frame < framecount);
+		assert(ai._frame < framecount);
 
 		config->get(k + "/armour", val);
-		ai.armour_class = static_cast<uint16>(val);
+		ai._armourClass = static_cast<uint16>(val);
 
 		if (config->get(k + "/type", val))
-			ai.defense_type = static_cast<uint16>(val);
+			ai._defenseType = static_cast<uint16>(val);
 		else
-			ai.defense_type = 0;
+			ai._defenseType = 0;
 
 		if (config->get(k + "/kick_bonus", val))
-			ai.kick_attack_bonus = static_cast<uint16>(val);
+			ai._kickAttackBonus = static_cast<uint16>(val);
 		else
-			ai.kick_attack_bonus = 0;
+			ai._kickAttackBonus = 0;
 
-		aia[ai.frame] = ai;
+		aia[ai._frame] = ai;
 	}
 }
 

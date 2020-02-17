@@ -275,7 +275,7 @@ bool AnimationTracker::step() {
 
 		for (it = collisions.begin(); it != collisions.end(); it++) {
 			// hit something, can't move
-			if (!it->touching && it->blocking) {
+			if (!it->_touching && it->_blocking) {
 #ifdef WATCHACTOR
 				if (a->getObjId() == watchactor) {
 					pout << "AnimationTracker: did sweepTest for large step; "

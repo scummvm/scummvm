@@ -23,14 +23,12 @@
 #ifndef ULTIMA8_WORLD_ARMOURINFO_H
 #define ULTIMA8_WORLD_ARMOURINFO_H
 
-
 struct ArmourInfo {
-	uint32 shape;
-	uint32 frame;
-	uint16 armour_class;
-	uint16 kick_attack_bonus;
-	uint16 defense_type; // see WeaponInfo struct
+	uint32 _shape;
+	uint32 _frame;
+	uint16 _armourClass;
+	uint16 _kickAttackBonus;
+	uint16 _defenseType; // see WeaponInfo struct
 };
-
 
 #endif

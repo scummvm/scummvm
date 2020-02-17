@@ -882,9 +882,9 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		if (!force) {
 			for (it = collisions.begin(); it != collisions.end(); it++) {
 				// Uh oh, we hit something, can't move
-				if (it->end_time == 0x4000 && !it->touching && it->blocking) {
-					if (hititem) *hititem = it->item;
-					if (dirs) *dirs = it->dirs;
+				if (it->_endTime == 0x4000 && !it->_touching && it->_blocking) {
+					if (hititem) *hititem = it->_item;
+					if (dirs) *dirs = it->_dirs;
 					return 0;
 				}
 			}
@@ -893,15 +893,15 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		// Trigger all the required events
 		bool we_were_released = false;
 		for (it = collisions.begin(); it != collisions.end(); it++) {
-			Item *item = getItem(it->item);
+			Item *item = getItem(it->_item);
 
 			// Hitting us at the start and end, don't do anything
-			if (!parent && it->hit_time == 0x0000 &&
-			        it->end_time == 0x4000) {
+			if (!parent && it->_hitTime == 0x0000 &&
+			        it->_endTime == 0x4000) {
 				continue;
 			}
 			// Hitting us at the end (call hit on us, got hit on them)
-			else if (it->end_time == 0x4000) {
+			else if (it->_endTime == 0x4000) {
 				if (_objId == 1 && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
@@ -909,7 +909,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 				callUsecodeEvent_hit(item->getObjId(), hitforce);
 			}
 			// Hitting us at the start (call release on us and them)
-			else if (!parent && it->hit_time == 0x0000) {
+			else if (!parent && it->_hitTime == 0x0000) {
 				if (_objId == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
 				item->callUsecodeEvent_release();
@@ -932,10 +932,10 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		// We don't care about items hitting us at the start
 		if (!force) {
 			for (it = collisions.begin(); it != collisions.end(); it++) {
-				if (it->blocking && !it->touching) {
-					if (hititem) *hititem = it->item;
-					if (dirs) *dirs = it->dirs;
-					hit = it->hit_time;
+				if (it->_blocking && !it->_touching) {
+					if (hititem) *hititem = it->_item;
+					if (dirs) *dirs = it->_dirs;
+					hit = it->_hitTime;
 					break;
 				}
 			}
@@ -957,17 +957,17 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		// Trigger all the required events
 		bool we_were_released = false;
 		for (it = collisions.begin(); it != collisions.end(); it++) {
-			Item *item = getItem(it->item);
+			Item *item = getItem(it->_item);
 			if (!item) continue;
 
 			// Did we go past the endpoint of the move?
-			if (it->hit_time > hit) break;
+			if (it->_hitTime > hit) break;
 
 			uint16 proc_gothit = 0, proc_rel = 0;
 
 			// If hitting at start, we should have already
 			// called gotHit and hit.
-			if ((!it->touching || it->touching_floor) && it->hit_time >= 0) {
+			if ((!it->_touching || it->_touchingFloor) && it->_hitTime >= 0) {
 				if (_objId == 1 && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
@@ -976,7 +976,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			}
 
 			// If not hitting at end, we will need to call release
-			if (it->end_time < hit) {
+			if (it->_endTime < hit) {
 				if (_objId == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
 				proc_rel = item->callUsecodeEvent_release();
@@ -1613,18 +1613,18 @@ static bool checkLineOfSightCollisions(
 	int32 blocked_time = 0x4000;
 	for (it = collisions.begin(); it != collisions.end(); it++) {
 		// ignore self and other
-		if (it->item == item) continue;
-		if (it->item == other && !usingAlternatePos) {
-			other_hit_time = it->hit_time;
+		if (it->_item == item) continue;
+		if (it->_item == other && !usingAlternatePos) {
+			other_hit_time = it->_hitTime;
 			continue;
 		}
 
 		// only touching?
-		if (it->touching) continue;
+		if (it->_touching) continue;
 
 		// hit something
-		if (it->blocking && it->hit_time < blocked_time) {
-			blocked_time = it->hit_time;
+		if (it->_blocking && it->_hitTime < blocked_time) {
+			blocked_time = it->_hitTime;
 		}
 	}
 

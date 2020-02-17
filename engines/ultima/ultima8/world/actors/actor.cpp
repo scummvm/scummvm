@@ -80,7 +80,7 @@ uint16 Actor::assignObjId() {
 		_objId = ObjectManager::get_instance()->assignActorObjId(this);
 
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		(*iter)->assignObjId();
 		(*iter)->setParent(_objId);
 	}
@@ -372,7 +372,7 @@ bool Actor::setEquip(Item *item, bool checkwghtvol) {
 	// now check 'equipment slots'
 	// we can have one item of each equipment type, plus one backpack
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if ((*iter)->getObjId() == item->getObjId()) continue;
 
 		uint32 cet = (*iter)->getShapeInfo()->_equipType;
@@ -394,7 +394,7 @@ uint16 Actor::getEquip(uint32 type) {
 	const unsigned int backpack_shape = 529; //!! *cough* constant
 
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 cet = (*iter)->getShapeInfo()->_equipType;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
 

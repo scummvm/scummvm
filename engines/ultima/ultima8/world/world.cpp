@@ -340,7 +340,7 @@ void World::worldStats() {
 void World::save(ODataSource *ods) {
 	ods->write4(currentmap->getNum());
 
-	ods->write2(currentmap->egghatcher);
+	ods->write2(currentmap->_eggHatcher);
 
 	uint16 es = static_cast<uint16>(ethereal.size());
 	ods->write4(es);
@@ -365,7 +365,7 @@ bool World::load(IDataSource *ids, uint32 version) {
 	uint16 curmapnum = ids->read4();
 	currentmap->setMap(maps[curmapnum]);
 
-	currentmap->egghatcher = ids->read2();
+	currentmap->_eggHatcher = ids->read2();
 
 	uint32 etherealcount = ids->read4();
 	for (unsigned int i = 0; i < etherealcount; ++i) {

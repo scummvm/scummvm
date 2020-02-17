@@ -157,8 +157,8 @@ bool MissileTracker::isPathClear() {
 
 		int32 hit = 0x4000;
 		for (it = collisions.begin(); it != collisions.end(); it++) {
-			if (it->blocking && !it->touching) {
-				hit = it->hit_time;
+			if (it->_blocking && !it->_touching) {
+				hit = it->_hitTime;
 				break;
 			}
 		}

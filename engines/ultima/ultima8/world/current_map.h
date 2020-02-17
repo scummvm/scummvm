@@ -52,14 +52,14 @@ public:
 	//! sets the currently loaded map, without any processing.
 	//! (Should only be used for loading.)
 	void setMap(Map *map) {
-		current_map = map;
+		_currentMap = map;
 	}
 
 	//! Get the map number of the CurrentMap
 	uint32 getNum() const;
 
 	unsigned int getChunkSize() const {
-		return mapChunkSize;
+		return _mapChunkSize;
 	}
 
 	//! Add an item to the beginning of the item list
@@ -133,10 +133,10 @@ public:
 	struct SweepItem {
 		SweepItem(ObjId it, int32 ht, int32 et, bool touch,
 		          bool touchfloor, bool block, uint8 dir)
-			: item(it), hit_time(ht), end_time(et), touching(touch),
-			  touching_floor(touchfloor), blocking(block), dirs(dir) { }
+			: _item(it), _hitTime(ht), _endTime(et), _touching(touch),
+			  _touchingFloor(touchfloor), _blocking(block), _dirs(dir) { }
 
-		ObjId   item;       // Item that was hit
+		ObjId   _item;       // Item that was hit
 
 		//
 		// The time values here are 'normalized' fixed point values
@@ -147,21 +147,21 @@ public:
 		// hit_time to find where the moving item was when the hit occurs
 		//
 
-		int32   hit_time;   // if -1, already hitting when sweep started.
-		int32   end_time;   // if 0x4000, still hitting when sweep finished
+		int32   _hitTime;   // if -1, already hitting when sweep started.
+		int32   _endTime;   // if 0x4000, still hitting when sweep finished
 
-		bool    touching;   // We are only touching (don't actually overlap)
-		bool    touching_floor; // touching and directly below the moving item
+		bool    _touching;   // We are only touching (don't actually overlap)
+		bool    _touchingFloor; // touching and directly below the moving item
 
-		bool    blocking;   // This item blocks the moving item
+		bool    _blocking;   // This item blocks the moving item
 
-		uint8   dirs; // Directions in which the item is being hit.
+		uint8   _dirs; // Directions in which the item is being hit.
 		// Bitmask. Bit 0 is x, 1 is y, 2 is z.
 
 		// Use this func to get the interpolated location of the hit
 		void GetInterpolatedCoords(int32 out[3], int32 start[3], int32 end[3]) {
 			for (int i = 0; i < 3; i++)
-				out[i] = start[i] + ((end[i] - start[i]) * (hit_time >= 0 ? hit_time : 0) + (end[i] > start[i] ? 0x2000 : -0x2000)) / 0x4000;
+				out[i] = start[i] + ((end[i] - start[i]) * (_hitTime >= 0 ? _hitTime : 0) + (end[i] > start[i] ? 0x2000 : -0x2000)) / 0x4000;
 		}
 	};
 
@@ -188,14 +188,14 @@ public:
 		// CONSTANTS!
 		if (gx < 0 || gy < 0 || gx >= MAP_NUM_CHUNKS || gy >= MAP_NUM_CHUNKS)
 			return 0;
-		return &items[gx][gy];
+		return &_items[gx][gy];
 	}
 
 	bool isChunkFast(int32 cx, int32 cy) {
 		// CONSTANTS!
 		if (cx < 0 || cy < 0 || cx >= MAP_NUM_CHUNKS || cy >= MAP_NUM_CHUNKS)
 			return false;
-		return (fast[cy][cx / 32] & (1 << (cx & 31))) != 0;
+		return (_fast[cy][cx / 32] & (1 << (cx & 31))) != 0;
 	}
 
 	// A simple trace to find the top item at a specific xy point
@@ -213,19 +213,19 @@ private:
 	void loadItems(Std::list<Item *> itemlist, bool callCacheIn);
 	void createEggHatcher();
 
-	Map *current_map;
+	Map *_currentMap;
 
 	// item lists. Lots of them :-)
 	// items[x][y]
-	Std::list<Item *> **items;
+	Std::list<Item *> **_items;
 
-	ProcId egghatcher;
+	ProcId _eggHatcher;
 
 	// Fast area bit masks -> fast[ry][rx/32]&(1<<(rx&31));
-	uint32 **fast;
-	int32 fast_x_min, fast_y_min, fast_x_max, fast_y_max;
+	uint32 **_fast;
+	int32 _fastXMin, _fastYMin, _fastXMax, _fastYMax;
 
-	int mapChunkSize;
+	int _mapChunkSize;
 
 	void setChunkFast(int32 cx, int32 cy);
 	void unsetChunkFast(int32 cx, int32 cy);

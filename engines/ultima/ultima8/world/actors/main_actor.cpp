@@ -94,7 +94,7 @@ bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
 	if (equiptype == ShapeInfo::SE_NONE && !backpack) return false;
 
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 cet = (*iter)->getShapeInfo()->_equipType;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
 
@@ -174,11 +174,11 @@ uint16 MainActor::getDefenseType() {
 	uint16 type = 0;
 
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
 		if (si->_armourInfo) {
-			type |= si->_armourInfo[frameNum].defense_type;
+			type |= si->_armourInfo[frameNum]._defenseType;
 		}
 	}
 
@@ -189,11 +189,11 @@ uint32 MainActor::getArmourClass() {
 	uint32 armour = 0;
 
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
 		if (si->_armourInfo) {
-			armour += si->_armourInfo[frameNum].armour_class;
+			armour += si->_armourInfo[frameNum]._armourClass;
 		}
 		if (si->_weaponInfo) {
 			armour += si->_weaponInfo->armour_bonus;
@@ -257,7 +257,7 @@ int MainActor::getDamageAmount() {
 		if (legs) {
 			ShapeInfo *si = legs->getShapeInfo();
 			assert(si->_armourInfo);
-			kick_bonus = si->_armourInfo[legs->getFrame()].kick_attack_bonus;
+			kick_bonus = si->_armourInfo[legs->getFrame()]._kickAttackBonus;
 		}
 
 		damage = (getRandom() % (getStr() / 2 + 1)) + kick_bonus;

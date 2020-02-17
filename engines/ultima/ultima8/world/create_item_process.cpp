@@ -43,10 +43,10 @@ CreateItemProcess::CreateItemProcess(uint32 shape_, uint32 frame_,
                                      uint16 quality_, uint16 flags_,
                                      uint16 npcnum_, uint16 mapnum_,
                                      uint32 extendedflags_,
-                                     int32 x_, int32 y_, int32 z_)
-	: shape(shape_), frame(frame_), quality(quality_), flags(flags_),
-	  npcnum(npcnum_), mapnum(mapnum_), extendedflags(extendedflags_),
-	  x(x_), y(y_), z(z_) {
+                                     int32 x, int32 y, int32 z)
+	: _shape(shape_), _frame(frame_), _quality(quality_), _flags(flags_),
+	  _npcNum(npcnum_), _mapNum(mapnum_), _extendedFlags(extendedflags_),
+	  _x(x), _y(y), _z(z) {
 
 }
 
@@ -55,9 +55,9 @@ CreateItemProcess::~CreateItemProcess(void) {
 }
 
 void CreateItemProcess::run() {
-	Item *item = ItemFactory::createItem(shape, frame, quality, flags,
-	                                     npcnum, mapnum, extendedflags, true);
-	item->move(x, y, z);
+	Item *item = ItemFactory::createItem(_shape, _frame, _quality, _flags,
+	                                     _npcNum, _mapNum, _extendedFlags, true);
+	item->move(_x, _y, _z);
 
 	_result = item->getObjId();
 
@@ -67,31 +67,31 @@ void CreateItemProcess::run() {
 void CreateItemProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(shape);
-	ods->write4(frame);
-	ods->write2(quality);
-	ods->write2(flags);
-	ods->write2(npcnum);
-	ods->write2(mapnum);
-	ods->write4(extendedflags);
-	ods->write4(static_cast<uint32>(x));
-	ods->write4(static_cast<uint32>(y));
-	ods->write4(static_cast<uint32>(z));
+	ods->write4(_shape);
+	ods->write4(_frame);
+	ods->write2(_quality);
+	ods->write2(_flags);
+	ods->write2(_npcNum);
+	ods->write2(_mapNum);
+	ods->write4(_extendedFlags);
+	ods->write4(static_cast<uint32>(_x));
+	ods->write4(static_cast<uint32>(_y));
+	ods->write4(static_cast<uint32>(_z));
 }
 
 bool CreateItemProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	shape = ids->read4();
-	frame = ids->read4();
-	quality = ids->read2();
-	flags = ids->read2();
-	npcnum = ids->read2();
-	mapnum = ids->read2();
-	extendedflags = ids->read4();
-	x = static_cast<int32>(ids->read4());
-	y = static_cast<int32>(ids->read4());
-	z = static_cast<int32>(ids->read4());
+	_shape = ids->read4();
+	_frame = ids->read4();
+	_quality = ids->read2();
+	_flags = ids->read2();
+	_npcNum = ids->read2();
+	_mapNum = ids->read2();
+	_extendedFlags = ids->read4();
+	_x = static_cast<int32>(ids->read4());
+	_y = static_cast<int32>(ids->read4());
+	_z = static_cast<int32>(ids->read4());
 	return true;
 }
 
