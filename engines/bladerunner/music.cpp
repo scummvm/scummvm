@@ -98,7 +98,7 @@ bool Music::play(const Common::String &trackName, int volume, int pan, int32 tim
 	_stream = new AudStream(_data);
 
 	_isNextPresent = false;
-	_channel = _vm->_audioMixer->playMusic(_stream, volumeStart, mixerChannelEnded, this);
+	_channel = _vm->_audioMixer->playMusic(_stream, volumeStart, mixerChannelEnded, this, _stream->getLength());
 	if (_channel < 0) {
 		delete _stream;
 		_stream = nullptr;

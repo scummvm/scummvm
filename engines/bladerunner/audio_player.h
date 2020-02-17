@@ -34,6 +34,7 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 class AudioCache;
+class AudStream;
 
 enum AudioPlayerFlags {
 	kAudioPlayerLoop = 1,
@@ -44,6 +45,7 @@ class AudioPlayer {
 #if BLADERUNNER_ORIGINAL_BUGS
 	static const int kTracks = 6;
 #else
+	// increase tracks, reduce probability of tracks being skipped
 	static const int kTracks = 12;
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
@@ -53,7 +55,7 @@ class AudioPlayer {
 		int                 priority;
 		int                 volume;
 		int                 pan;
-		Audio::AudioStream *stream;
+		AudStream          *stream;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -68,6 +70,7 @@ public:
 
 	int playAud(const Common::String &name, int volume, int panStart, int panEnd, int priority, byte flags = 0, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
 	bool isActive(int track) const;
+	uint32 getLength(int track) const;
 	void stop(int track, bool immediately);
 	void stopAll();
 	void adjustVolume(int track, int volume, uint32 delay, bool overrideVolume);

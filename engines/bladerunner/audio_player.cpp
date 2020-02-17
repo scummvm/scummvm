@@ -132,7 +132,7 @@ void AudioPlayer::mixerChannelEnded(int channel, void *data) {
 	audioPlayer->remove(channel);
 }
 
-int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, int panTo, int priority, byte flags, Audio::Mixer::SoundType type) {
+int AudioPlayer::playAud(const Common::String &name, int volume, int panStart, int panEnd, int priority, byte flags, Audio::Mixer::SoundType type) {
 	/* Find first available track or, alternatively, the lowest priority playing track */
 	int track = -1;
 	int lowestPriority = 1000000;
@@ -200,9 +200,11 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 		priority,
 		flags & kAudioPlayerLoop,
 		actualVolume,
-		panFrom,
+		panStart,
 		mixerChannelEnded,
-		this);
+		this,
+		audioStream->getLength()
+		);
 
 	if (channel == -1) {
 		delete audioStream;
@@ -210,8 +212,8 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 		return -1;
 	}
 
-	if (panFrom != panTo) {
-		_vm->_audioMixer->adjustPan(channel, panTo, (60 * audioStream->getLength()) / 1000);
+	if (panStart != panEnd) {
+		_vm->_audioMixer->adjustPan(channel, panEnd, (60 * audioStream->getLength()) / 1000);
 	}
 
 	_tracks[track].isActive = true;
@@ -230,6 +232,18 @@ bool AudioPlayer::isActive(int track) const {
 	}
 
 	return _tracks[track].isActive;
+}
+
+/**
+* Return the track's length in milliseconds
+*/
+uint32 AudioPlayer::getLength(int track) const {
+	Common::StackLock lock(_mutex);
+	if (track < 0 || track >= kTracks) {
+		return 0;
+	}
+
+	return _tracks[track].stream->getLength();
 }
 
 void AudioPlayer::stop(int track, bool immediately) {

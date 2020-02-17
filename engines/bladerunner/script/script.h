@@ -163,7 +163,7 @@ protected:
 	int Global_Variable_Increment(int, int);
 	int Global_Variable_Decrement(int, int);
 	int Random_Query(int min, int max);
-	void Sound_Play(int id, int volume, int panFrom, int panTo, int priority);
+	void Sound_Play(int id, int volume, int panStart, int panEnd, int priority);
 	void Sound_Play_Speech_Line(int actorId, int sentenceId, int volume, int a4, int priority);
 	void Sound_Left_Footstep_Walk(int actorId);
 	void Sound_Right_Footstep_Walk(int actorId);

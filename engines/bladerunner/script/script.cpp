@@ -1091,9 +1091,9 @@ int ScriptBase::Random_Query(int min, int max) {
 	return _vm->_rnd.getRandomNumberRng(min, max);
 }
 
-void ScriptBase::Sound_Play(int id, int volume, int panFrom, int panTo, int priority) {
-	debugC(6, kDebugScript, "Sound_Play(%d, %d, %d, %d, %d)", id, volume, panFrom, panTo, priority);
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(id), volume, panFrom, panTo, priority);
+void ScriptBase::Sound_Play(int id, int volume, int panStart, int panEnd, int priority) {
+	debugC(6, kDebugScript, "Sound_Play(%d, %d, %d, %d, %d)", id, volume, panStart, panEnd, priority);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(id), volume, panStart, panEnd, priority);
 }
 
 void ScriptBase::Sound_Play_Speech_Line(int actorId, int sentenceId, int volume, int a4, int priority) {

@@ -104,7 +104,8 @@ bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
 		_speechVolume,
 		pan,
 		mixerChannelEnded,
-		this);
+		this,
+		audioStream->getLength());
 
 	_isActive = true;
 

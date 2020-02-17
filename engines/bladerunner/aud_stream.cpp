@@ -129,7 +129,7 @@ bool AudStream::rewind() {
 /**
 * Returns audio length in milliseconds
 */
-int AudStream::getLength() const {
+uint32 AudStream::getLength() const {
 	int bytesPerSecond = _overrideFrequency > 0 ? _overrideFrequency : _frequency;
 	if (_flags & 1) { // 16 bit
 		bytesPerSecond *= 2;
@@ -141,8 +141,7 @@ int AudStream::getLength() const {
 	// since everything is 44100, we easily get overflows with ints
 	// thus we must use doubles
 	double res = (double)_sizeDecompressed * 1000.0 / (double)bytesPerSecond;
-
-	return (int32)res;
+	return (uint32)res;
 }
 
 } // End of namespace BladeRunner
