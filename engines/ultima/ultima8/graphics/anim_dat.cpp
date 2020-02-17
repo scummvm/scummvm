@@ -39,22 +39,22 @@ AnimDat::AnimDat() {
 
 
 AnimDat::~AnimDat() {
-	for (unsigned int i = 0; i < anims.size(); i++)
-		delete anims[i];
-	anims.clear();
+	for (unsigned int i = 0; i < _anims.size(); i++)
+		delete _anims[i];
+	_anims.clear();
 }
 
 ActorAnim *AnimDat::getAnim(uint32 shape) const {
-	if (shape >= anims.size()) return 0;
+	if (shape >= _anims.size()) return 0;
 
-	return anims[shape];
+	return _anims[shape];
 }
 
 AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
-	if (shape >= anims.size()) return 0;
-	if (anims[shape] == 0) return 0;
+	if (shape >= _anims.size()) return 0;
+	if (_anims[shape] == 0) return 0;
 
-	return anims[shape]->getAction(action);
+	return _anims[shape]->getAction(action);
 }
 
 
@@ -62,18 +62,18 @@ void AnimDat::load(IDataSource *ds) {
 	AnimFrame f;
 
 	// CONSTANT !
-	anims.resize(2048);
+	_anims.resize(2048);
 
 	unsigned int actioncount = 64;
 	if (GAME_IS_CRUSADER)
 		actioncount = 256;
 
-	for (unsigned int shape = 0; shape < anims.size(); shape++) {
+	for (unsigned int shape = 0; shape < _anims.size(); shape++) {
 		ds->seek(4 * shape);
 		uint32 offset = ds->read4();
 
 		if (offset == 0) {
-			anims[shape] = 0;
+			_anims[shape] = 0;
 			continue;
 		}
 
@@ -146,7 +146,7 @@ void AnimDat::load(IDataSource *ds) {
 			}
 		}
 
-		anims[shape] = a;
+		_anims[shape] = a;
 	}
 }
 

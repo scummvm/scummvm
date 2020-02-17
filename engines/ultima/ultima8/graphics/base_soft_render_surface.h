@@ -38,35 +38,35 @@ namespace Ultima8 {
 class BaseSoftRenderSurface : public RenderSurface {
 protected:
 	// Frame buffer
-	uint8           *pixels;                // Pointer to logical pixel 0,0
-	uint8           *pixels00;              // Pointer to physical pixel 0,0
+	uint8           *_pixels;                // Pointer to logical pixel 0,0
+	uint8           *_pixels00;              // Pointer to physical pixel 0,0
 
 	// Depth Buffer
-	uint16          *zbuffer;               // Pointer to logical pixel 0,0
-	uint8           *zbuffer00;             // Pointer to physical pixel 0,0
+	uint16          *_zBuffer;               // Pointer to logical pixel 0,0
+	uint8           *_zBuffer00;             // Pointer to physical pixel 0,0
 
 	// Pixel Format (also see 'Colour shifting values' later)
-	int             bytes_per_pixel;        // 2 or 4
-	int             bits_per_pixel;         // 16 or 32
-	int             format_type;            // 16, 555, 565, 32 or 888
+	int             _bytesPerPixel;          // 2 or 4
+	int             _bitsPerPixel;           // 16 or 32
+	int             _formatType;             // 16, 555, 565, 32 or 888
 
 	// Dimensions
-	int32           ox, oy;                 // Physical Pixel for Logical Origin
-	int32           width, height;          // Width and height
-	int32           pitch;                  // Frame buffer pitch (bytes) (could be negated)
-	int32           zpitch;                 // Z Buffer pitch (bytes) (could be negated)
-	bool            flipped;
+	int32           _ox, _oy;                // Physical Pixel for Logical Origin
+	int32           _width, _height;         // Width and height
+	int32           _pitch;                  // Frame buffer pitch (bytes) (could be negated)
+	int32           _zPitch;                 // Z Buffer pitch (bytes) (could be negated)
+	bool            _flipped;
 
 	// Clipping Rectangle
-	Rect clip_window;
+	Rect _clipWindow;
 
 	// Locking count
-	uint32          lock_count;             // Number of locks on surface
+	uint32          _lockCount;              // Number of locks on surface
 
-	Graphics::ManagedSurface *sdl_surf;
+	Graphics::ManagedSurface *_sdlSurf;
 
 	// Renderint to a texture
-	Texture         *rtt_tex;
+	Texture         *_rttTex;
 
 	// Create from a SDL_Surface
 	BaseSoftRenderSurface(Graphics::ManagedSurface *);
@@ -86,16 +86,16 @@ protected:
 
 	// Update the Pixels Pointer
 	void    SetPixelsPointer() {
-		uint8 *pix00 = pixels00;
-		uint8 *zbuf00 = zbuffer00;
+		uint8 *pix00 = _pixels00;
+		uint8 *zbuf00 = _zBuffer00;
 
-		if (flipped) {
-			pix00 += -pitch * (height - 1);
-			zbuf00 += -zpitch * (height - 1);
+		if (_flipped) {
+			pix00 += -_pitch * (_height - 1);
+			zbuf00 += -_zPitch * (_height - 1);
 		}
 
-		pixels = pix00 + ox * bytes_per_pixel + oy * pitch;
-		zbuffer = reinterpret_cast<uint16 *>(zbuf00 + ox + oy * zpitch);
+		_pixels = pix00 + _ox * _bytesPerPixel + _oy * _pitch;
+		_zBuffer = reinterpret_cast<uint16 *>(zbuf00 + _ox + _oy * _zPitch);
 	}
 
 public:
@@ -167,7 +167,7 @@ public:
 	void CreateNativePalette(Palette *palette) override;
 
 	Graphics::ManagedSurface *getRawSurface() const override {
-		return sdl_surf;
+		return _sdlSurf;
 	}
 };
 
