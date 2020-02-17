@@ -40,7 +40,7 @@ public:
 	~SettingManager();
 
 	static SettingManager *get_instance() {
-		return settingmanager;
+		return _settingManager;
 	}
 
 	enum Domain {
@@ -124,14 +124,14 @@ private:
 	void callCallbacks(istring key);
 	void setupScummVMSettings();
 
-	Callbacks callbacks;
-	Std::vector<istring> domains;
+	Callbacks _callbacks;
+	Std::vector<istring> _domains;
 
-	Domain currentDomain;
+	Domain _currentDomain;
 
-	ConfigFileManager *conffileman;
+	ConfigFileManager *_confFileMan;
 
-	static SettingManager *settingmanager;
+	static SettingManager *_settingManager;
 };
 
 } // End of namespace Ultima8

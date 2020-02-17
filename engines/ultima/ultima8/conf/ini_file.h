@@ -43,10 +43,10 @@ public:
 	void write();
 
 	void setReadonly() {
-		readonly = true;
+		_readOnly = true;
 	}
 	bool isReadonly() const {
-		return readonly;
+		return _readOnly;
 	}
 
 	bool hasSection(istring section);
@@ -79,21 +79,21 @@ public:
 	                   bool longformat = false);
 
 private:
-	Std::string filename;
-	istring root;
-	bool is_file;
-	bool readonly;
+	Std::string _filename;
+	istring _root;
+	bool _isFile;
+	bool _readOnly;
 
 	struct KeyValue {
-		istring key;
-		Std::string value;
-		Std::string comment;
+		istring _key;
+		Std::string _value;
+		Std::string _comment;
 	};
 
 	struct Section {
-		istring name;
-		Std::list<KeyValue> keys;
-		Std::string comment;
+		istring _name;
+		Std::list<KeyValue> _keys;
+		Std::string _comment;
 
 		bool hasKey(istring key);
 		KeyValue *getKey(istring key);
@@ -103,7 +103,7 @@ private:
 		Std::string dump();
 	};
 
-	Std::list<Section> sections;
+	Std::list<Section> _sections;
 
 
 	bool stripRoot(istring &key);
