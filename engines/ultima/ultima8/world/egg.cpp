@@ -35,8 +35,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(Egg, Item)
 
-Egg::Egg() : hatched(false) {
-
+Egg::Egg() : _hatched(false) {
 }
 
 
@@ -45,15 +44,15 @@ Egg::~Egg() {
 }
 
 uint16 Egg::hatch() {
-	if (hatched) return 0;
-	hatched = true;
+	if (_hatched) return 0;
+	_hatched = true;
 	return callUsecodeEvent_hatch();
 }
 
 void Egg::dumpInfo() {
 	Item::dumpInfo();
 	pout << "range: " << getXRange() << "," << getYRange()
-	     << ", hatched=" << hatched << Std::endl;
+	     << ", hatched=" << _hatched << Std::endl;
 }
 
 void Egg::leaveFastArea() {
@@ -64,14 +63,14 @@ void Egg::leaveFastArea() {
 void Egg::saveData(ODataSource *ods) {
 	Item::saveData(ods);
 
-	uint8 h = hatched ? 1 :  0;
+	uint8 h = _hatched ? 1 :  0;
 	ods->write1(h);
 }
 
 bool Egg::loadData(IDataSource *ids, uint32 version) {
 	if (!Item::loadData(ids, version)) return false;
 
-	hatched = (ids->read1() != 0);
+	_hatched = (ids->read1() != 0);
 
 	return true;
 }

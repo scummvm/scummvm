@@ -66,9 +66,9 @@ MainActor::~MainActor() {
 
 GravityProcess *MainActor::ensureGravityProcess() {
 	AvatarGravityProcess *p = 0;
-	if (gravitypid) {
+	if (_gravityPid) {
 		p = p_dynamic_cast<AvatarGravityProcess *>(
-		        Kernel::get_instance()->getProcess(gravitypid));
+		        Kernel::get_instance()->getProcess(_gravityPid));
 	} else {
 		p = new AvatarGravityProcess(this, 0);
 		Kernel::get_instance()->addProcess(p);

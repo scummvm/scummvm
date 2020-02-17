@@ -198,7 +198,7 @@ void Container::removeContents() {
 		// move _contents to our coordinates
 		while (_contents.begin() != _contents.end()) {
 			Item *item = *(_contents.begin());
-			item->move(x, y, z);
+			item->move(_x, _y, _z);
 		}
 	}
 }

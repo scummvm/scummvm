@@ -56,8 +56,8 @@ void GlobEgg::enterFastArea() {
 	}
 
 	// Expand it
-	if (!(flags & FLG_FASTAREA)) {
-		MapGlob *glob = GameData::get_instance()->getGlob(quality);
+	if (!(_flags & FLG_FASTAREA)) {
+		MapGlob *glob = GameData::get_instance()->getGlob(_quality);
 		if (!glob) return;
 
 		Std::vector<GlobItem>::iterator iter;
@@ -70,9 +70,9 @@ void GlobEgg::enterFastArea() {
 
 
 			// calculate object's world position
-			int32 itemx = (x & coordmask) + (globitem.x << coordshift) + 1;
-			int32 itemy = (y & coordmask) + (globitem.y << coordshift) + 1;
-			int32 itemz = z + globitem.z;
+			int32 itemx = (_x & coordmask) + (globitem.x << coordshift) + 1;
+			int32 itemy = (_y & coordmask) + (globitem.y << coordshift) + 1;
+			int32 itemz = _z + globitem.z;
 
 			item->move(itemx, itemy, itemz);
 		}

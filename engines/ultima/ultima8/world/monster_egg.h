@@ -38,13 +38,13 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	int getProb() const {
-		return (quality >> 11) & 0x1F;
+		return (_quality >> 11) & 0x1F;
 	}
 	int getMonsterShape() const {
-		return quality & 0x7FF;
+		return _quality & 0x7FF;
 	}
 	int getActivity() const {
-		return mapnum & 0x07;
+		return _mapNum & 0x07;
 	}
 
 	uint16 hatch();

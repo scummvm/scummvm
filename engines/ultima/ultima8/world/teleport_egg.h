@@ -37,10 +37,10 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	bool isTeleporter() const {
-		return frame != 1;
+		return _frame != 1;
 	}
 	int getTeleportId() const {
-		return (quality & 0xFF);
+		return (_quality & 0xFF);
 	}
 
 	bool loadData(IDataSource *ids, uint32 version);

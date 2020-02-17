@@ -427,9 +427,9 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 	// Move it to another map
 	else {
 		World::get_instance()->etherealRemove(_objId);
-		x = newx;
-		y = newy;
-		z = newz;
+		_x = newx;
+		_y = newy;
+		_z = newz;
 	}
 }
 
@@ -799,9 +799,9 @@ ProcId Actor::die(uint16 damageType) {
 			                                      0, // mapnum
 			                                      0, true // ext. flags, _objId
 			                                     );
-			piece->move(x - 128 + 32 * (getRandom() % 6),
-			            y - 128 + 32 * (getRandom() % 6),
-			            z + getRandom() % 8); // move to near actor's position
+			piece->move(_x - 128 + 32 * (getRandom() % 6),
+			            _y - 128 + 32 * (getRandom() % 6),
+			            _z + getRandom() % 8); // move to near actor's position
 			piece->hurl(-25 + (getRandom() % 50),
 			            -25 + (getRandom() % 50),
 			            10 + (getRandom() % 10),

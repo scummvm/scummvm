@@ -50,7 +50,7 @@ uint16 TeleportEgg::hatch() {
 	perr << "Teleport!!!!!!!!" << Std::endl;
 
 	MainActor *av = getMainActor();
-	av->teleport(mapnum, getTeleportId());
+	av->teleport(_mapNum, getTeleportId());
 
 	return 0;
 }
