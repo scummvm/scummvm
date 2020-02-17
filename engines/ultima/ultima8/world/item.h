@@ -612,28 +612,28 @@ inline ShapeInfo *Item::getShapeInfo() const {
 
 inline void Item::getFootpadData(int32 &X, int32 &Y, int32 &Z) const {
 	ShapeInfo *si = getShapeInfo();
-	Z = si->z;
+	Z = si->_z;
 
 	if (flags & Item::FLG_FLIPPED) {
-		X = si->y;
-		Y = si->x;
+		X = si->_y;
+		Y = si->_x;
 	} else {
-		X = si->x;
-		Y = si->y;
+		X = si->_x;
+		Y = si->_y;
 	}
 }
 
 // like getFootpadData, but scaled to world coordinates
 inline void Item::getFootpadWorld(int32 &X, int32 &Y, int32 &Z) const {
 	ShapeInfo *si = getShapeInfo();
-	Z = si->z * 8;
+	Z = si->_z * 8;
 
 	if (flags & Item::FLG_FLIPPED) {
-		X = si->y * 32;
-		Y = si->x * 32;
+		X = si->_y * 32;
+		Y = si->_x * 32;
 	} else {
-		X = si->x * 32;
-		Y = si->y * 32;
+		X = si->_x * 32;
+		Y = si->_y * 32;
 	}
 }
 

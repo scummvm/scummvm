@@ -99,7 +99,7 @@ uint16 Actor::getMaxHP() const {
 bool Actor::loadMonsterStats() {
 	ShapeInfo *shapeinfo = getShapeInfo();
 	MonsterInfo *mi = 0;
-	if (shapeinfo) mi = shapeinfo->monsterinfo;
+	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
 		return false;
 
@@ -128,7 +128,7 @@ bool Actor::giveTreasure() {
 	MainShapeArchive *mainshapes = GameData::get_instance()->getMainShapes();
 	ShapeInfo *shapeinfo = getShapeInfo();
 	MonsterInfo *mi = 0;
-	if (shapeinfo) mi = shapeinfo->monsterinfo;
+	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
 		return false;
 
@@ -164,9 +164,9 @@ bool Actor::giveTreasure() {
 				// NB: this is rather biased towards weapons with low shapes...
 				for (unsigned int s = 0; s < mainshapes->getCount(); ++s) {
 					ShapeInfo *si = mainshapes->getShapeInfo(s);
-					if (!si->weaponinfo) continue;
+					if (!si->_weaponInfo) continue;
 
-					int chance = si->weaponinfo->treasure_chance;
+					int chance = si->_weaponInfo->treasure_chance;
 					if (!chance) continue;
 
 					int r = getRandom() % 100;
@@ -363,7 +363,7 @@ bool Actor::removeItem(Item *item) {
 
 bool Actor::setEquip(Item *item, bool checkwghtvol) {
 	const unsigned int backpack_shape = 529; //!! *cough* constant
-	uint32 equiptype = item->getShapeInfo()->equiptype;
+	uint32 equiptype = item->getShapeInfo()->_equipType;
 	bool backpack = (item->getShape() == backpack_shape);
 
 	// valid item type?
@@ -375,7 +375,7 @@ bool Actor::setEquip(Item *item, bool checkwghtvol) {
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		if ((*iter)->getObjId() == item->getObjId()) continue;
 
-		uint32 cet = (*iter)->getShapeInfo()->equiptype;
+		uint32 cet = (*iter)->getShapeInfo()->_equipType;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
 
 		// already have an item with the same equiptype
@@ -395,7 +395,7 @@ uint16 Actor::getEquip(uint32 type) {
 
 	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
-		uint32 cet = (*iter)->getShapeInfo()->equiptype;
+		uint32 cet = (*iter)->getShapeInfo()->_equipType;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
 
 		if (((*iter)->getFlags() & FLG_EQUIPPED) &&
@@ -538,16 +538,16 @@ uint16 Actor::cSetActivity(int activity) {
 
 uint32 Actor::getArmourClass() {
 	ShapeInfo *si = getShapeInfo();
-	if (si->monsterinfo)
-		return si->monsterinfo->armour_class;
+	if (si->_monsterInfo)
+		return si->_monsterInfo->armour_class;
 	else
 		return 0;
 }
 
 uint16 Actor::getDefenseType() {
 	ShapeInfo *si = getShapeInfo();
-	if (si->monsterinfo)
-		return si->monsterinfo->defense_type;
+	if (si->_monsterInfo)
+		return si->_monsterInfo->defense_type;
 	else
 		return 0;
 }
@@ -562,8 +562,8 @@ int16 Actor::getAttackingDex() {
 
 uint16 Actor::getDamageType() {
 	ShapeInfo *si = getShapeInfo();
-	if (si->monsterinfo)
-		return si->monsterinfo->damage_type;
+	if (si->_monsterInfo)
+		return si->_monsterInfo->damage_type;
 	else
 		return WeaponInfo::DMG_NORMAL;
 }
@@ -571,10 +571,10 @@ uint16 Actor::getDamageType() {
 
 int Actor::getDamageAmount() {
 	ShapeInfo *si = getShapeInfo();
-	if (si->monsterinfo) {
+	if (si->_monsterInfo) {
 
-		int min = static_cast<int>(si->monsterinfo->min_dmg);
-		int max = static_cast<int>(si->monsterinfo->max_dmg);
+		int min = static_cast<int>(si->_monsterInfo->min_dmg);
+		int max = static_cast<int>(si->_monsterInfo->max_dmg);
 
 		int damage = (getRandom() % (max - min + 1)) + min;
 
@@ -756,7 +756,7 @@ ProcId Actor::die(uint16 damageType) {
 
 	ShapeInfo *shapeinfo = getShapeInfo();
 	MonsterInfo *mi = 0;
-	if (shapeinfo) mi = shapeinfo->monsterinfo;
+	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->resurrection && !(damageType & WeaponInfo::DMG_FIRE)) {
 		// this monster will be resurrected after a while

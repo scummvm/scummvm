@@ -51,7 +51,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 	// New item, no lerping
 	extendedflags |= Item::EXT_LERP_NOPREV;
 
-	uint32 family = info->family;
+	uint32 family = info->_family;
 
 	switch (family) {
 	case ShapeInfo::SF_GENERIC:

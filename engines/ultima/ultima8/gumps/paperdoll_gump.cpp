@@ -332,7 +332,7 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 	_draggingFrame = item->getFrame();
 	_draggingFlags = item->getFlags();
 
-	int equiptype = item->getShapeInfo()->equiptype;
+	int equiptype = item->getShapeInfo()->_equipType;
 	// determine target location and set dragging_x/y
 	if (!over_backpack && equiptype) {
 		// check if item will fit (weight/volume/etc...)
@@ -372,7 +372,7 @@ void PaperdollGump::DropItem(Item *item, int mx, int my) {
 		over_backpack = true;
 	}
 
-	int equiptype = item->getShapeInfo()->equiptype;
+	int equiptype = item->getShapeInfo()->_equipType;
 	if (!over_backpack && equiptype) {
 		item->moveToContainer(a);
 	} else {

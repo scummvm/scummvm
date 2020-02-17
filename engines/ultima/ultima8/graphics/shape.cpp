@@ -37,12 +37,12 @@ DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Shape)
 DEFINE_CUSTOM_MEMORY_ALLOCATION(Shape)
 
 Shape::Shape(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format,
-             const uint16 id, const uint32 shape) : flexId(id), shapenum(shape) {
+             const uint16 id, const uint32 shape) : _flexId(id), _shapeNum(shape) {
 	// NB: U8 style!
 
-	this->data = data_;
-	this->size = size_;
-	this->palette = 0;
+	this->_data = data_;
+	this->_size = size_;
+	this->_palette = 0;
 
 	if (!format) format = DetectShapeFormat(data_, size_);
 
@@ -62,16 +62,17 @@ Shape::Shape(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format,
 }
 
 Shape::Shape(IDataSource *src, const ConvertShapeFormat *format)
-	: flexId(0), shapenum(0) {
+	: _flexId(0), _shapeNum(0) {
 	// NB: U8 style!
 
-	this->size = src->getSize();
-	uint8 *d = new uint8[this->size];
-	this->data = d;
-	src->read(d, this->size);
-	this->palette = 0;
+	this->_size = src->getSize();
+	uint8 *d = new uint8[this->_size];
+	this->_data = d;
+	src->read(d, this->_size);
+	this->_palette = 0;
 
-	if (!format) format = DetectShapeFormat(data, size);
+	if (!format)
+		format = DetectShapeFormat(_data, _size);
 
 	if (!format) {
 		// Should be fatal?
@@ -81,23 +82,23 @@ Shape::Shape(IDataSource *src, const ConvertShapeFormat *format)
 
 	// Load it as u8
 	if (format == &U8ShapeFormat || format == &U82DShapeFormat)
-		LoadU8Format(data, size, format);
+		LoadU8Format(_data, _size, format);
 	else if (format == &PentagramShapeFormat)
-		LoadPentagramFormat(data, size, format);
+		LoadPentagramFormat(_data, _size, format);
 	else
-		LoadGenericFormat(data, size, format);
+		LoadGenericFormat(_data, _size, format);
 }
 
 Shape::~Shape() {
-	for (unsigned int i = 0; i < frames.size(); ++i)
-		delete frames[i];
+	for (unsigned int i = 0; i < _frames.size(); ++i)
+		delete _frames[i];
 
-	delete[] const_cast<uint8 *>(data);
+	delete[] const_cast<uint8 *>(_data);
 }
 
 void Shape::getShapeId(uint16 &id, uint32 &shape) {
-	id = flexId;
-	shape = shapenum;
+	id = _flexId;
+	shape = _shapeNum;
 }
 
 // Some macros to make things easier
@@ -115,13 +116,13 @@ void Shape::LoadU8Format(const uint8 *data_, uint32 size_, const ConvertShapeFor
 		return;
 	}
 
-	frames.reserve(framecount);
+	_frames.reserve(framecount);
 
 	for (unsigned int i = 0; i < framecount; ++i) {
 		uint32 frameoffset = READ3(data_, 6 + 6 * i);
 		uint32 framesize = READ2(data_, 10 + 6 * i);
 
-		frames.push_back(new ShapeFrame(data_ + frameoffset, framesize, format));
+		_frames.push_back(new ShapeFrame(data_ + frameoffset, framesize, format));
 	}
 }
 
@@ -134,22 +135,22 @@ void Shape::LoadPentagramFormat(const uint8 *data_, uint32 size_, const ConvertS
 		return;
 	}
 
-	frames.reserve(framecount);
+	_frames.reserve(framecount);
 
 	for (unsigned int i = 0; i < framecount; ++i) {
 		uint32 frameoffset = READ4(data_, 8 + 8 * i);
 		uint32 framesize = READ4(data_, 12 + 8 * i);
 
-		frames.push_back(new ShapeFrame(data_ + frameoffset, framesize, format));
+		_frames.push_back(new ShapeFrame(data_ + frameoffset, framesize, format));
 	}
 }
 
 // This will load any sort of shape via a ConvertShapeFormat struct
-void Shape::LoadGenericFormat(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format) {
+void Shape::LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format) {
 	uint32 framecount;
 	uint32 frameoffset;
 	uint32 framesize;
-	IBufferDataSource ds(data_, size_);
+	IBufferDataSource ds(data, size);
 
 	if (format->_bytes_ident) {
 		uint8 *ident = new uint8[format->_bytes_ident];
@@ -158,7 +159,7 @@ void Shape::LoadGenericFormat(const uint8 *data_, uint32 size_, const ConvertSha
 		delete[] ident;
 
 		if (!match) {
-			frames.clear();
+			_frames.clear();
 			return;
 		}
 	}
@@ -176,9 +177,9 @@ void Shape::LoadGenericFormat(const uint8 *data_, uint32 size_, const ConvertSha
 	// Read framecount, default 1 if no
 	if (format->_bytes_num_frames) framecount = ds.readX(format->_bytes_num_frames);
 	else framecount = 1;
-	if (framecount == 0) framecount = ConvertShape::CalcNumFrames(&ds, format, size_, 0);
+	if (framecount == 0) framecount = ConvertShape::CalcNumFrames(&ds, format, size, 0);
 
-	frames.reserve(framecount);
+	_frames.reserve(framecount);
 
 	for (unsigned int i = 0; i < framecount; ++i) {
 		// Read the offset
@@ -190,23 +191,23 @@ void Shape::LoadGenericFormat(const uint8 *data_, uint32 size_, const ConvertSha
 
 		// Read frame_length
 		if (format->_bytes_frame_length) framesize = ds.readX(format->_bytes_frame_length) + format->_bytes_frame_length_kludge;
-		else framesize = size_ - frameoffset;
+		else framesize = size - frameoffset;
 
 		ConvertShapeFrame *prev = 0, p;
 
 		if (format->_bytes_special && i > 0) {
 			prev = &p;
-			frames[i - 1]->getConvertShapeFrame(p);
+			_frames[i - 1]->getConvertShapeFrame(p);
 		}
 
-		frames.push_back(new ShapeFrame(data_ + frameoffset, framesize, format, special, prev));
+		_frames.push_back(new ShapeFrame(data + frameoffset, framesize, format, special, prev));
 	}
 }
 
 // This will detect the format of a shape
-const ConvertShapeFormat *Shape::DetectShapeFormat(const uint8 *data_, uint32 size_) {
-	IBufferDataSource ds(data_, size_);
-	return Shape::DetectShapeFormat(&ds, size_);
+const ConvertShapeFormat *Shape::DetectShapeFormat(const uint8 *data, uint32 size) {
+	IBufferDataSource ds(data, size);
+	return Shape::DetectShapeFormat(&ds, size);
 }
 
 const ConvertShapeFormat *Shape::DetectShapeFormat(IDataSource *ds, uint32 size_) {
@@ -231,7 +232,7 @@ const ConvertShapeFormat *Shape::DetectShapeFormat(IDataSource *ds, uint32 size_
 }
 
 void Shape::getTotalDimensions(int32 &w, int32 &h, int32 &x, int32 &y) const {
-	if (frames.empty()) {
+	if (_frames.empty()) {
 		w = 0;
 		h = 0;
 		x = 0;
@@ -242,8 +243,8 @@ void Shape::getTotalDimensions(int32 &w, int32 &h, int32 &x, int32 &y) const {
 	int32 minx = 1000000, maxx = -1000000;
 	int32 miny = 1000000, maxy = -1000000;
 
-	for (unsigned int i = 0; i < frames.size(); ++i) {
-		ShapeFrame *frame = frames[i];
+	for (unsigned int i = 0; i < _frames.size(); ++i) {
+		ShapeFrame *frame = _frames[i];
 		if (-frame->_xoff < minx)
 			minx = -frame->_xoff;
 		if (-frame->_yoff < miny)

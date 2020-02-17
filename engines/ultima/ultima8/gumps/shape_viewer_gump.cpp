@@ -114,11 +114,11 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	ShapeInfo *info = mainshapes->getShapeInfo(_curShape);
 	if (info) {
 		sprintf(buf3, "x = %d, y = %d, z = %d\n flags = 0x%04X, family = %d",
-		        info->x, info->y, info->z, info->flags, info->family);
+		        info->_x, info->_y, info->_z, info->_flags, info->_family);
 		sprintf(buf4, "equip type = %d\n unknown flags = 0x%02X\n weight = %d",
-		        info->equiptype, info->unknown, info->weight);
+		        info->_equipType, info->_unknown, info->_weight);
 		sprintf(buf5, "volume = %d\n animtype = %d, animdata = %d",
-		        info->animtype, info->animdata, info->volume);
+		        info->_animType, info->_animData, info->_volume);
 		sprintf(buf6, "ShapeInfo:\n %s\n %s, %s\nUsecode: %s",
 		        buf3, buf4, buf5, GameData::get_instance()->getMainUsecode()->get_class_name(_curShape));
 		rendtext = font->renderText(buf6, remaining);

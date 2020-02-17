@@ -269,7 +269,7 @@ bool AnimationTracker::step() {
 		// Do the sweep test
 		Std::list<CurrentMap::SweepItem> collisions;
 		Std::list<CurrentMap::SweepItem>::iterator it;
-		cm->sweepTest(start, end, dims, a->getShapeInfo()->flags, a->getObjId(),
+		cm->sweepTest(start, end, dims, a->getShapeInfo()->_flags, a->getObjId(),
 		              false, &collisions);
 
 
@@ -298,7 +298,7 @@ bool AnimationTracker::step() {
 	bool targetok = cm->isValidPosition(tx, ty, tz,
 	                                    startx, starty, startz,
 	                                    xd, yd, zd,
-	                                    a->getShapeInfo()->flags,
+	                                    a->getShapeInfo()->_flags,
 	                                    actor, &support, 0);
 
 	if (GAME_IS_U8 && targetok && support) {
@@ -386,7 +386,7 @@ bool AnimationTracker::step() {
 		/*bool targetok = */ cm->isValidPosition(tx, ty, tz,
 		        startx, starty, startz,
 		        xd, yd, zd,
-		        a->getShapeInfo()->flags,
+		        a->getShapeInfo()->_flags,
 		        actor, &support, 0);
 
 

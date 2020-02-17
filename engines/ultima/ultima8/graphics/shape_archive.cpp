@@ -40,14 +40,14 @@ Shape *ShapeArchive::getShape(uint32 shapenum) {
 	if (shapenum >= _count) return 0;
 	cache(shapenum);
 
-	return shapes[shapenum];
+	return _shapes[shapenum];
 }
 
 void ShapeArchive::cache(uint32 shapenum) {
 	if (shapenum >= _count) return;
-	if (shapes.empty()) shapes.resize(_count);
+	if (_shapes.empty()) _shapes.resize(_count);
 
-	if (shapes[shapenum]) return;
+	if (_shapes[shapenum]) return;
 
 	uint32 shpsize;
 	uint8 *data = getRawObject(shapenum, &shpsize);
@@ -55,36 +55,36 @@ void ShapeArchive::cache(uint32 shapenum) {
 	if (!data || shpsize == 0) return;
 
 	// Auto detect format
-	if (!format) {
-		format = Shape::DetectShapeFormat(data, shpsize);
-		if (format) pout << "Detected Shape Format: " << format->_name << Std::endl;
+	if (!_format) {
+		_format = Shape::DetectShapeFormat(data, shpsize);
+		if (_format) pout << "Detected Shape Format: " << _format->_name << Std::endl;
 	}
 
-	if (!format) {
+	if (!_format) {
 		delete [] data;
 		perr << "Error: Unable to detect shape format for flex." << Std::endl;
 		return;
 	}
 
-	Shape *shape = new Shape(data, shpsize, format, id, shapenum);
-	if (palette) shape->setPalette(palette);
+	Shape *shape = new Shape(data, shpsize, _format, _id, shapenum);
+	if (_palette) shape->setPalette(_palette);
 
-	shapes[shapenum] = shape;
+	_shapes[shapenum] = shape;
 }
 
 void ShapeArchive::uncache(uint32 shapenum) {
 	if (shapenum >= _count) return;
-	if (shapes.empty()) return;
+	if (_shapes.empty()) return;
 
-	delete shapes[shapenum];
-	shapes[shapenum] = 0;
+	delete _shapes[shapenum];
+	_shapes[shapenum] = 0;
 }
 
 bool ShapeArchive::isCached(uint32 shapenum) {
 	if (shapenum >= _count) return false;
-	if (shapes.empty()) return false;
+	if (_shapes.empty()) return false;
 
-	return (shapes[shapenum] != 0);
+	return (_shapes[shapenum] != 0);
 }
 
 } // End of namespace Ultima8

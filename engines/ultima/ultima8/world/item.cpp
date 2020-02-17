@@ -429,14 +429,14 @@ void Item::getCentre(int32 &X, int32 &Y, int32 &Z) const {
 	// constants!
 	ShapeInfo *shapeinfo = getShapeInfo();
 	if (flags & FLG_FLIPPED) {
-		X = x - shapeinfo->y * 16;
-		Y = y - shapeinfo->x * 16;
+		X = x - shapeinfo->_y * 16;
+		Y = y - shapeinfo->_x * 16;
 	} else {
-		X = x - shapeinfo->x * 16;
-		Y = y - shapeinfo->y * 16;
+		X = x - shapeinfo->_x * 16;
+		Y = y - shapeinfo->_y * 16;
 	}
 
-	Z = z + shapeinfo->z * 4;
+	Z = z + shapeinfo->_z * 4;
 }
 
 Box Item::getWorldBox() const {
@@ -577,13 +577,13 @@ Shape *Item::getShapeObject() const {
 }
 
 uint16 Item::getFamily() {
-	return static_cast<uint16>(getShapeInfo()->family);
+	return static_cast<uint16>(getShapeInfo()->_family);
 }
 
 uint32 Item::getWeight() {
-	uint32 weight = getShapeInfo()->weight;
+	uint32 weight = getShapeInfo()->_weight;
 
-	switch (getShapeInfo()->family) {
+	switch (getShapeInfo()->_family) {
 	case ShapeInfo::SF_QUANTITY:
 		return ((getQuality() * weight) + 9) / 10;
 	case ShapeInfo::SF_REAGENT:
@@ -602,9 +602,9 @@ uint32 Item::getVolume() {
 	if (getFlags() & FLG_INVISIBLE) return 0;
 
 
-	uint32 volume = getShapeInfo()->volume;
+	uint32 volume = getShapeInfo()->_volume;
 
-	switch (getShapeInfo()->family) {
+	switch (getShapeInfo()->_family) {
 	case ShapeInfo::SF_QUANTITY:
 		return ((getQuality() * volume) + 99) / 100;
 	case ShapeInfo::SF_REAGENT:
@@ -862,7 +862,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	// Do the sweep test
 	Std::list<CurrentMap::SweepItem> collisions;
 	Std::list<CurrentMap::SweepItem>::iterator it;
-	map->sweepTest(start, end, dims, getShapeInfo()->flags, _objId, false, &collisions);
+	map->sweepTest(start, end, dims, getShapeInfo()->_flags, _objId, false, &collisions);
 
 	// Ok, now to work out what to do
 
@@ -1228,15 +1228,15 @@ void Item::animateItem() {
 	ShapeInfo *info = getShapeInfo();
 	Shape *shp = getShapeObject();
 
-	if (!info->animtype) return;
+	if (!info->_animType) return;
 
-	int anim_data = info->animdata;
+	int anim_data = info->_animData;
 	//bool dirty = false;
 
-	if ((static_cast<int>(last_setup) % 6) != (_objId % 6) && info->animtype != 1)
+	if ((static_cast<int>(last_setup) % 6) != (_objId % 6) && info->_animType != 1)
 		return;
 
-	switch (info->animtype) {
+	switch (info->_animType) {
 	case 2:
 		// 50 % chance
 		if (getRandom() & 1) break;
@@ -1283,7 +1283,7 @@ void Item::animateItem() {
 		break;
 
 	default:
-		pout << "type " << info->animtype << " data " << anim_data << Std::endl;
+		pout << "type " << info->_animType << " data " << anim_data << Std::endl;
 		break;
 	}
 	//return dirty;
@@ -1542,8 +1542,8 @@ void Item::explode() {
 
 uint16 Item::getDamageType() {
 	ShapeInfo *si = getShapeInfo();
-	if (si->weaponinfo) {
-		return si->weaponinfo->damage_type;
+	if (si->_weaponInfo) {
+		return si->_weaponInfo->damage_type;
 	}
 
 	return 0;
@@ -1567,7 +1567,7 @@ void Item::receiveHit(uint16 other, int dir, int damage, uint16 type) {
 		return;
 	}
 
-	if (getShapeInfo()->is_fixed() || getShapeInfo()->weight == 0) {
+	if (getShapeInfo()->is_fixed() || getShapeInfo()->_weight == 0) {
 		// can't move
 		return;
 	}
@@ -1580,7 +1580,7 @@ void Item::receiveHit(uint16 other, int dir, int damage, uint16 type) {
 bool Item::canDrag() {
 	ShapeInfo *si = getShapeInfo();
 	if (si->is_fixed()) return false;
-	if (si->weight == 0) return false;
+	if (si->_weight == 0) return false;
 
 	Actor *actor = p_dynamic_cast<Actor *>(this);
 	if (actor) {
@@ -1854,9 +1854,9 @@ uint32 Item::I_getCX(const uint8 *args, unsigned int /*argsize*/) {
 	item->getLocationAbsolute(x, y, z);
 
 	if (item->flags & FLG_FLIPPED)
-		return x - item->getShapeInfo()->y * 16;
+		return x - item->getShapeInfo()->_y * 16;
 	else
-		return x - item->getShapeInfo()->x * 16;
+		return x - item->getShapeInfo()->_x * 16;
 }
 
 uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
@@ -1867,9 +1867,9 @@ uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
 	item->getLocationAbsolute(x, y, z);
 
 	if (item->flags & FLG_FLIPPED)
-		return y - item->getShapeInfo()->x * 16;
+		return y - item->getShapeInfo()->_x * 16;
 	else
-		return y - item->getShapeInfo()->y * 16;
+		return y - item->getShapeInfo()->_y * 16;
 }
 
 uint32 Item::I_getCZ(const uint8 *args, unsigned int /*argsize*/) {
@@ -1879,7 +1879,7 @@ uint32 Item::I_getCZ(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
-	return z + item->getShapeInfo()->z * 4;
+	return z + item->getShapeInfo()->_z * 4;
 }
 
 uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
@@ -2395,7 +2395,7 @@ uint32 Item::I_getFamilyOfType(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(shape);
 
 	return GameData::get_instance()->getMainShapes()->
-	       getShapeInfo(shape)->family;
+	       getShapeInfo(shape)->_family;
 }
 
 uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
@@ -2859,7 +2859,7 @@ uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {
 	info = GameData::get_instance()->getMainShapes()->getShapeInfo(sh);
 	if (!info) return 0;
 
-	if (info->flags & ShapeInfo::SI_CRUS_NPC)
+	if (info->_flags & ShapeInfo::SI_CRUS_NPC)
 		return 1;
 	else
 		return 0;

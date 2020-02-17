@@ -82,94 +82,94 @@ public:
 		SE_WEAPON = 6
 	};
 
-	uint32 flags;
-	uint32 x, y, z;
-	uint32 family;
-	uint32 equiptype;
-	uint32 animtype, animdata;
-	uint32 unknown;
-	uint32 weight, volume;
+	uint32 _flags;
+	uint32 _x, _y, _z;
+	uint32 _family;
+	uint32 _equipType;
+	uint32 _animType, _animData;
+	uint32 _unknown;
+	uint32 _weight, _volume;
 
-	WeaponInfo *weaponinfo;
-	ArmourInfo *armourinfo;
-	MonsterInfo *monsterinfo;
+	WeaponInfo *_weaponInfo;
+	ArmourInfo *_armourInfo;
+	MonsterInfo *_monsterInfo;
 
 	inline bool is_fixed() const {
-		return (flags & SI_FIXED) != 0;
+		return (_flags & SI_FIXED) != 0;
 	}
 	inline bool is_solid() const {
-		return (flags & SI_SOLID) != 0;
+		return (_flags & SI_SOLID) != 0;
 	}
 	inline bool is_sea() const {
-		return (flags & SI_SEA) != 0;
+		return (_flags & SI_SEA) != 0;
 	}
 	inline bool is_land() const {
-		return (flags & SI_LAND) != 0;
+		return (_flags & SI_LAND) != 0;
 	}
 	inline bool is_occl() const {
-		return (flags & SI_OCCL) != 0;
+		return (_flags & SI_OCCL) != 0;
 	}
 	inline bool is_bag() const {
-		return (flags & SI_BAG) != 0;
+		return (_flags & SI_BAG) != 0;
 	}
 	inline bool is_damaging() const {
-		return (flags & SI_DAMAGING) != 0;
+		return (_flags & SI_DAMAGING) != 0;
 	}
 	inline bool is_noisy() const {
-		return (flags & SI_NOISY) != 0;
+		return (_flags & SI_NOISY) != 0;
 	}
 	inline bool is_draw() const {
-		return (flags & SI_DRAW) != 0;
+		return (_flags & SI_DRAW) != 0;
 	}
 	inline bool is_ignore() const {
-		return (flags & SI_IGNORE) != 0;
+		return (_flags & SI_IGNORE) != 0;
 	}
 	inline bool is_roof() const {
-		return (flags & SI_ROOF) != 0;
+		return (_flags & SI_ROOF) != 0;
 	}
 	inline bool is_translucent() const {
-		return (flags & SI_TRANSL) != 0;
+		return (_flags & SI_TRANSL) != 0;
 	}
 	inline bool is_editor() const {
-		return (flags & SI_EDITOR) != 0;
+		return (_flags & SI_EDITOR) != 0;
 	}
 	inline bool is_explode() const {
-		return (flags & SI_EXPLODE) != 0;
+		return (_flags & SI_EXPLODE) != 0;
 	}
 
 	bool hasQuantity() const {
-		return (family == SF_QUANTITY || family == SF_REAGENT);
+		return (_family == SF_QUANTITY || _family == SF_REAGENT);
 	}
 
-	bool getTypeFlag(int typeflag);
-	bool getTypeFlagU8(int typeflag);
-	bool getTypeFlagCrusader(int typeflag);
+	bool getTypeFlag(int typeFlag);
+	bool getTypeFlagU8(int typeFlag);
+	bool getTypeFlagCrusader(int typeFlag);
 
-	inline void getFootpadWorld(int32 &X, int32 &Y, int32 &Z, uint16 flipped) const;
+	inline void getFootpadWorld(int32 &x, int32 &y, int32 &z, uint16 flipped) const;
 
 	ShapeInfo() :
-		flags(0), x(0), y(0), z(0),
-		family(0), equiptype(0), animtype(0), animdata(0),
-		unknown(0), weight(0), volume(0),
-		weaponinfo(0), armourinfo(0), monsterinfo(0) { }
+		_flags(0), _x(0), _y(0), _z(0),
+		_family(0), _equipType(0), _animType(0), _animData(0),
+		_unknown(0), _weight(0), _volume(0),
+		_weaponInfo(0), _armourInfo(0), _monsterInfo(0) { }
 
 	~ShapeInfo() {
-		delete weaponinfo;
-		delete[] armourinfo;
-		delete monsterinfo;
+		delete _weaponInfo;
+		delete[] _armourInfo;
+		delete _monsterInfo;
 	}
 
 };
 
-inline void ShapeInfo::getFootpadWorld(int32 &X, int32 &Y, int32 &Z, uint16 flipped) const {
-	Z = z *  8;
+inline void ShapeInfo::getFootpadWorld(int32 &x, int32 &y, int32 &z, uint16 flipped) const {
+	z = _z *  8;
 
 	if (flipped) {
-		X = y * 32;
-		Y = x * 32;
+		x = _y * 32;
+		y = _x * 32;
 	} else {
-		X = x * 32;
-		Y = y * 32;
+		x = _x * 32;
+		y = _y * 32;
 	}
 }
 

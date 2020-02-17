@@ -356,7 +356,7 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 
 			ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 			                  getShapeInfo(shape);
-			if (info) pout << ", family = " << info->family;
+			if (info) pout << ", family = " << info->_family;
 			pout << Std::endl;
 
 			pout << "Couldn't create item" << Std::endl;

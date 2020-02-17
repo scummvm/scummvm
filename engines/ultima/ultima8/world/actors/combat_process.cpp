@@ -281,7 +281,7 @@ bool CombatProcess::inAttackRange() {
 	Actor *a = getActor(_itemNum);
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = 0;
-	if (shapeinfo) mi = shapeinfo->monsterinfo;
+	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->ranged)
 		return true; // ranged attacks (ghost's fireball) always in range
@@ -304,7 +304,7 @@ void CombatProcess::waitForTarget() {
 	Actor *a = getActor(_itemNum);
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = 0;
-	if (shapeinfo) mi = shapeinfo->monsterinfo;
+	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->shifter && a->getMapNum() != 43 && (getRandom() % 2) == 0) {
 		// changelings (except the ones at the U8 endgame pentagram)

@@ -73,86 +73,86 @@ void TypeFlags::load(IDataSource *ds) {
 		ds->read(data, blocksize);
 
 		ShapeInfo si;
-		si.flags = 0;
+		si._flags = 0;
 
 		if (GAME_IS_U8) {
 
-			if (data[0] & 0x01) si.flags |= ShapeInfo::SI_FIXED;
-			if (data[0] & 0x02) si.flags |= ShapeInfo::SI_SOLID;
-			if (data[0] & 0x04) si.flags |= ShapeInfo::SI_SEA;
-			if (data[0] & 0x08) si.flags |= ShapeInfo::SI_LAND;
-			if (data[0] & 0x10) si.flags |= ShapeInfo::SI_OCCL;
-			if (data[0] & 0x20) si.flags |= ShapeInfo::SI_BAG;
-			if (data[0] & 0x40) si.flags |= ShapeInfo::SI_DAMAGING;
-			if (data[0] & 0x80) si.flags |= ShapeInfo::SI_NOISY;
+			if (data[0] & 0x01) si._flags |= ShapeInfo::SI_FIXED;
+			if (data[0] & 0x02) si._flags |= ShapeInfo::SI_SOLID;
+			if (data[0] & 0x04) si._flags |= ShapeInfo::SI_SEA;
+			if (data[0] & 0x08) si._flags |= ShapeInfo::SI_LAND;
+			if (data[0] & 0x10) si._flags |= ShapeInfo::SI_OCCL;
+			if (data[0] & 0x20) si._flags |= ShapeInfo::SI_BAG;
+			if (data[0] & 0x40) si._flags |= ShapeInfo::SI_DAMAGING;
+			if (data[0] & 0x80) si._flags |= ShapeInfo::SI_NOISY;
 
-			if (data[1] & 0x01) si.flags |= ShapeInfo::SI_DRAW;
-			if (data[1] & 0x02) si.flags |= ShapeInfo::SI_IGNORE;
-			if (data[1] & 0x04) si.flags |= ShapeInfo::SI_ROOF;
-			if (data[1] & 0x08) si.flags |= ShapeInfo::SI_TRANSL;
-			si.family = data[1] >> 4;
+			if (data[1] & 0x01) si._flags |= ShapeInfo::SI_DRAW;
+			if (data[1] & 0x02) si._flags |= ShapeInfo::SI_IGNORE;
+			if (data[1] & 0x04) si._flags |= ShapeInfo::SI_ROOF;
+			if (data[1] & 0x08) si._flags |= ShapeInfo::SI_TRANSL;
+			si._family = data[1] >> 4;
 
-			si.equiptype = data[2] & 0x0F;
-			si.x = data[2] >> 4;
+			si._equipType = data[2] & 0x0F;
+			si._x = data[2] >> 4;
 
-			si.y = data[3] & 0x0F;
-			si.z = data[3] >> 4;
+			si._y = data[3] & 0x0F;
+			si._z = data[3] >> 4;
 
-			si.animtype = data[4] & 0x0F;
-			si.animdata = data[4] >> 4;
+			si._animType = data[4] & 0x0F;
+			si._animData = data[4] >> 4;
 
-			si.unknown = data[5] & 0x0F;
-			if (data[5] & 0x10) si.flags |= ShapeInfo::SI_EDITOR;
-			if (data[5] & 0x20) si.flags |= ShapeInfo::SI_EXPLODE;
-			if (data[5] & 0x40) si.flags |= ShapeInfo::SI_UNKNOWN46;
-			if (data[5] & 0x80) si.flags |= ShapeInfo::SI_UNKNOWN47;
+			si._unknown = data[5] & 0x0F;
+			if (data[5] & 0x10) si._flags |= ShapeInfo::SI_EDITOR;
+			if (data[5] & 0x20) si._flags |= ShapeInfo::SI_EXPLODE;
+			if (data[5] & 0x40) si._flags |= ShapeInfo::SI_UNKNOWN46;
+			if (data[5] & 0x80) si._flags |= ShapeInfo::SI_UNKNOWN47;
 
-			si.weight = data[6];
+			si._weight = data[6];
 
-			si.volume = data[7];
+			si._volume = data[7];
 
 		} else if (GAME_IS_CRUSADER) {
 
 			// might have to split up remorse/regret at some point
 
 			// unchecked
-			if (data[0] & 0x01) si.flags |= ShapeInfo::SI_FIXED;
-			if (data[0] & 0x02) si.flags |= ShapeInfo::SI_SOLID;
-			if (data[0] & 0x04) si.flags |= ShapeInfo::SI_SEA;
-			if (data[0] & 0x08) si.flags |= ShapeInfo::SI_LAND;
-			if (data[0] & 0x10) si.flags |= ShapeInfo::SI_OCCL;
-			if (data[0] & 0x20) si.flags |= ShapeInfo::SI_BAG;
-			if (data[0] & 0x40) si.flags |= ShapeInfo::SI_DAMAGING;
-			if (data[0] & 0x80) si.flags |= ShapeInfo::SI_NOISY;
+			if (data[0] & 0x01) si._flags |= ShapeInfo::SI_FIXED;
+			if (data[0] & 0x02) si._flags |= ShapeInfo::SI_SOLID;
+			if (data[0] & 0x04) si._flags |= ShapeInfo::SI_SEA;
+			if (data[0] & 0x08) si._flags |= ShapeInfo::SI_LAND;
+			if (data[0] & 0x10) si._flags |= ShapeInfo::SI_OCCL;
+			if (data[0] & 0x20) si._flags |= ShapeInfo::SI_BAG;
+			if (data[0] & 0x40) si._flags |= ShapeInfo::SI_DAMAGING;
+			if (data[0] & 0x80) si._flags |= ShapeInfo::SI_NOISY;
 
 			// unchecked
-			if (data[1] & 0x01) si.flags |= ShapeInfo::SI_DRAW;
-			if (data[1] & 0x02) si.flags |= ShapeInfo::SI_IGNORE;
-			if (data[1] & 0x04) si.flags |= ShapeInfo::SI_ROOF;
-			if (data[1] & 0x08) si.flags |= ShapeInfo::SI_TRANSL;
-			si.family = data[1] >> 4;
-			si.family += (data[2] & 1) << 4;
+			if (data[1] & 0x01) si._flags |= ShapeInfo::SI_DRAW;
+			if (data[1] & 0x02) si._flags |= ShapeInfo::SI_IGNORE;
+			if (data[1] & 0x04) si._flags |= ShapeInfo::SI_ROOF;
+			if (data[1] & 0x08) si._flags |= ShapeInfo::SI_TRANSL;
+			si._family = data[1] >> 4;
+			si._family += (data[2] & 1) << 4;
 
 			// (copied from old/viewer/ShapeManager.h)
-			si.x = ((data[3] << 3) | (data[2] >> 5)) & 0x1F;
-			si.y = (data[3] >> 2) & 0x1F;
-			si.z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
+			si._x = ((data[3] << 3) | (data[2] >> 5)) & 0x1F;
+			si._y = (data[3] >> 2) & 0x1F;
+			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
-			if (data[6] & 0x01) si.flags |= ShapeInfo::SI_EDITOR;
-			if (data[6] & 0x02) si.flags |= ShapeInfo::SI_CRUSUNK61;
-			if (data[6] & 0x04) si.flags |= ShapeInfo::SI_CRUSUNK62;
-			if (data[6] & 0x08) si.flags |= ShapeInfo::SI_CRUSUNK63;
-			if (data[6] & 0x10) si.flags |= ShapeInfo::SI_CRUSUNK64;
-			if (data[6] & 0x20) si.flags |= ShapeInfo::SI_CRUS_NPC;
-			if (data[6] & 0x40) si.flags |= ShapeInfo::SI_CRUSUNK66;
-			if (data[6] & 0x80) si.flags |= ShapeInfo::SI_CRUSUNK67;
+			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
+			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRUSUNK61;
+			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRUSUNK62;
+			if (data[6] & 0x08) si._flags |= ShapeInfo::SI_CRUSUNK63;
+			if (data[6] & 0x10) si._flags |= ShapeInfo::SI_CRUSUNK64;
+			if (data[6] & 0x20) si._flags |= ShapeInfo::SI_CRUS_NPC;
+			if (data[6] & 0x40) si._flags |= ShapeInfo::SI_CRUSUNK66;
+			if (data[6] & 0x80) si._flags |= ShapeInfo::SI_CRUSUNK67;
 
-			si.animtype = 0;
+			si._animType = 0;
 
 		}
 
-		si.weaponinfo = 0;
-		si.armourinfo = 0;
+		si._weaponInfo = 0;
+		si._armourInfo = 0;
 
 		shapeInfo[i] = si;
 	}
@@ -161,7 +161,7 @@ void TypeFlags::load(IDataSource *ds) {
 		// Workaround for incorrectly set solid flags on some "moss
 		// curtains" in the catacombs. See also docs/u8bugs.txt
 		for (uint32 i = 459; i <= 464; ++i) {
-			shapeInfo[i].flags &= ~ShapeInfo::SI_SOLID;
+			shapeInfo[i]._flags &= ~ShapeInfo::SI_SOLID;
 		}
 	}
 
@@ -218,7 +218,7 @@ void TypeFlags::loadWeaponInfo() {
 			wi->treasure_chance = 0;
 
 		assert(wi->shape < shapeInfo.size());
-		shapeInfo[wi->shape].weaponinfo = wi;
+		shapeInfo[wi->shape]._weaponInfo = wi;
 	}
 }
 
@@ -243,10 +243,10 @@ void TypeFlags::loadArmourInfo() {
 		assert(ai.shape < shapeInfo.size());
 		assert(msf->getShape(ai.shape));
 		unsigned int framecount = msf->getShape(ai.shape)->frameCount();
-		ArmourInfo *aia = shapeInfo[ai.shape].armourinfo;
+		ArmourInfo *aia = shapeInfo[ai.shape]._armourInfo;
 		if (!aia) {
 			aia = new ArmourInfo[framecount];
-			shapeInfo[ai.shape].armourinfo = aia;
+			shapeInfo[ai.shape]._armourInfo = aia;
 			for (unsigned int i = 0; i < framecount; ++i) {
 				aia[i].shape = 0;
 				aia[i].frame = 0;
@@ -363,7 +363,7 @@ void TypeFlags::loadMonsterInfo() {
 		}
 
 		assert(mi->shape < shapeInfo.size());
-		shapeInfo[mi->shape].monsterinfo = mi;
+		shapeInfo[mi->shape]._monsterInfo = mi;
 	}
 }
 

@@ -672,14 +672,14 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shape_num, uint32 fra
 
 	// X and Y are flipped
 	if (si->flags & Item::FLG_FLIPPED) {
-		xd = info->y * 32;  // Multiply by 32 to get actual world size
-		yd = info->x * 32;  // Multiply by 32 to get actual world size
+		xd = info->_y * 32;  // Multiply by 32 to get actual world size
+		yd = info->_x * 32;  // Multiply by 32 to get actual world size
 	} else {
-		xd = info->x * 32;  // Multiply by 32 to get actual world size
-		yd = info->y * 32;  // Multiply by 32 to get actual world size
+		xd = info->_x * 32;  // Multiply by 32 to get actual world size
+		yd = info->_y * 32;  // Multiply by 32 to get actual world size
 	}
 
-	zd = info->z * 8;   // Multiply by 8 to get actual world size
+	zd = info->_z * 8;   // Multiply by 8 to get actual world size
 
 	// Worldspace bounding box
 	si->x = x;
@@ -745,7 +745,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shape_num, uint32 fra
 		           !(si->ext_flags & Item::EXT_TRANSPARENT);
 		si->roof = info->is_roof();
 		si->noisy = info->is_noisy();
-		si->anim = info->animtype != 0;
+		si->anim = info->_animType != 0;
 		si->trans = info->is_translucent();
 		si->fixed = info->is_fixed();
 		si->land = info->is_land();
@@ -851,14 +851,14 @@ void ItemSorter::AddItem(Item *add) {
 
 	// X and Y are flipped
 	if (si->flags & Item::FLG_FLIPPED) {
-		xd = info->y * 32;  // Multiply by 32 to get actual world size
-		yd = info->x * 32;  // Multiply by 32 to get actual world size
+		xd = info->_y * 32;  // Multiply by 32 to get actual world size
+		yd = info->_x * 32;  // Multiply by 32 to get actual world size
 	} else {
-		xd = info->x * 32;  // Multiply by 32 to get actual world size
-		yd = info->y * 32;  // Multiply by 32 to get actual world size
+		xd = info->_x * 32;  // Multiply by 32 to get actual world size
+		yd = info->_y * 32;  // Multiply by 32 to get actual world size
 	}
 
-	zd = info->z * 8;   // Multiply by 8 to get actual world size
+	zd = info->_z * 8;   // Multiply by 8 to get actual world size
 
 	// Worldspace bounding box
 	add->getLerped(si->x, si->y, si->z);
@@ -922,7 +922,7 @@ void ItemSorter::AddItem(Item *add) {
 		           !(si->ext_flags & Item::EXT_TRANSPARENT);
 		si->roof = info->is_roof();
 		si->noisy = info->is_noisy();
-		si->anim = info->animtype != 0;
+		si->anim = info->_animType != 0;
 		si->trans = info->is_translucent();
 		si->fixed = info->is_fixed();
 		si->land = info->is_land();

@@ -150,7 +150,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 
 	// Convert the GumpSpaceCoord relative to the world/item gump
 	// into screenspace coords
-	gy = gy - it->getShapeInfo()->z * 8 - 16;
+	gy = gy - it->getShapeInfo()->_z * 8 - 16;
 	gump->GumpToScreenSpace(gx, gy);
 
 	// Convert the screenspace coords into the coords of us

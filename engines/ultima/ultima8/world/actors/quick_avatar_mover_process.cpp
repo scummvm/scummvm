@@ -92,7 +92,7 @@ void QuickAvatarMoverProcess::run() {
 		bool ok = false;
 
 		while (dxv || dyv || dzv) {
-			uint32 shapeFlags = avatar->getShapeInfo()->flags;
+			uint32 shapeFlags = avatar->getShapeInfo()->_flags;
 
 			if (!clipping || cm->isValidPosition(x + dxv, y + dyv, z + dzv, ixd, iyd, izd, _flags, 1, 0, 0)) {
 				if (clipping && !dzv) {

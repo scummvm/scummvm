@@ -87,7 +87,7 @@ bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
 	// now check 'equipment slots'
 	// we can have one item of each equipment type, plus one backpack
 
-	uint32 equiptype = item->getShapeInfo()->equiptype;
+	uint32 equiptype = item->getShapeInfo()->_equipType;
 	bool backpack = (item->getShape() == backpack_shape);
 
 	// valid item type?
@@ -95,7 +95,7 @@ bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
 
 	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
-		uint32 cet = (*iter)->getShapeInfo()->equiptype;
+		uint32 cet = (*iter)->getShapeInfo()->_equipType;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
 
 		// already have an item with the same equiptype
@@ -110,7 +110,7 @@ bool MainActor::addItem(Item *item, bool checkwghtvol) {
 
 	item->setFlag(FLG_EQUIPPED);
 
-	uint32 equiptype = item->getShapeInfo()->equiptype;
+	uint32 equiptype = item->getShapeInfo()->_equipType;
 	item->setZ(equiptype);
 
 	return true;
@@ -177,8 +177,8 @@ uint16 MainActor::getDefenseType() {
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
-		if (si->armourinfo) {
-			type |= si->armourinfo[frameNum].defense_type;
+		if (si->_armourInfo) {
+			type |= si->_armourInfo[frameNum].defense_type;
 		}
 	}
 
@@ -192,11 +192,11 @@ uint32 MainActor::getArmourClass() {
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
-		if (si->armourinfo) {
-			armour += si->armourinfo[frameNum].armour_class;
+		if (si->_armourInfo) {
+			armour += si->_armourInfo[frameNum].armour_class;
 		}
-		if (si->weaponinfo) {
-			armour += si->weaponinfo->armour_bonus;
+		if (si->_weaponInfo) {
+			armour += si->_weaponInfo->armour_bonus;
 		}
 	}
 
@@ -209,8 +209,8 @@ int16 MainActor::getDefendingDex() {
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
 	if (weapon) {
 		ShapeInfo *si = weapon->getShapeInfo();
-		assert(si->weaponinfo);
-		dex += si->weaponinfo->dex_defend_bonus;
+		assert(si->_weaponInfo);
+		dex += si->_weaponInfo->dex_defend_bonus;
 	}
 
 	if (dex <= 0) dex = 1;
@@ -224,8 +224,8 @@ int16 MainActor::getAttackingDex() {
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
 	if (weapon) {
 		ShapeInfo *si = weapon->getShapeInfo();
-		assert(si->weaponinfo);
-		dex += si->weaponinfo->dex_attack_bonus;
+		assert(si->_weaponInfo);
+		dex += si->_weaponInfo->dex_attack_bonus;
 	}
 
 	return dex;
@@ -238,9 +238,9 @@ uint16 MainActor::getDamageType() {
 		// weapon equipped?
 
 		ShapeInfo *si = weapon->getShapeInfo();
-		assert(si->weaponinfo);
+		assert(si->_weaponInfo);
 
-		return si->weaponinfo->damage_type;
+		return si->_weaponInfo->damage_type;
 	}
 
 	return Actor::getDamageType();
@@ -256,8 +256,8 @@ int MainActor::getDamageAmount() {
 		Item *legs = getItem(getEquip(ShapeInfo::SE_LEGS));
 		if (legs) {
 			ShapeInfo *si = legs->getShapeInfo();
-			assert(si->armourinfo);
-			kick_bonus = si->armourinfo[legs->getFrame()].kick_attack_bonus;
+			assert(si->_armourInfo);
+			kick_bonus = si->_armourInfo[legs->getFrame()].kick_attack_bonus;
 		}
 
 		damage = (getRandom() % (getStr() / 2 + 1)) + kick_bonus;
@@ -273,10 +273,10 @@ int MainActor::getDamageAmount() {
 		// weapon equipped?
 
 		ShapeInfo *si = weapon->getShapeInfo();
-		assert(si->weaponinfo);
+		assert(si->_weaponInfo);
 
-		int base = si->weaponinfo->base_damage;
-		int mod = si->weaponinfo->damage_modifier;
+		int base = si->_weaponInfo->base_damage;
+		int mod = si->_weaponInfo->damage_modifier;
 
 		damage = (getRandom() % (mod + 1)) + base + getStr() / 5;
 
@@ -516,7 +516,7 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	ShapeInfo *shapeinfo = weapon->getShapeInfo();
 	if (!shapeinfo) return;
 
-	WeaponInfo *weaponinfo = shapeinfo->weaponinfo;
+	WeaponInfo *weaponinfo = shapeinfo->_weaponInfo;
 	if (!weaponinfo) return;
 
 	shape_ = weaponinfo->overlay_shape;

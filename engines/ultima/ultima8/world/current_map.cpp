@@ -499,11 +499,11 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 				//!! constants
 				if (item->getFlags() & Item::FLG_FLIPPED) {
-					ixd = 32 * info->y;
-					iyd = 32 * info->x;
+					ixd = 32 * info->_y;
+					iyd = 32 * info->_x;
 				} else {
-					ixd = 32 * info->x;
-					iyd = 32 * info->y;
+					ixd = 32 * info->_x;
+					iyd = 32 * info->_y;
 				}
 
 				Rect itemrect(ix - ixd, iy - iyd, ixd, iyd);
@@ -636,14 +636,14 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 	ShapeInfo *si = GameData::get_instance()->
 	                getMainShapes()->getShapeInfo(shape);
 	//!! constants
-	xd = si->x * 32;
-	yd = si->y * 32;
-	zd = si->z * 8;
+	xd = si->_x * 32;
+	yd = si->_y * 32;
+	zd = si->_z * 8;
 
 	return isValidPosition(x, y, z,
 	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
 	                       xd, yd, zd,
-	                       si->flags, item, support, roof);
+	                       si->_flags, item, support, roof);
 }
 
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
@@ -693,7 +693,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 				ShapeInfo *si = item->getShapeInfo();
 				//!! need to check is_sea() and is_land() maybe?
-				if (!(si->flags & flagmask))
+				if (!(si->_flags & flagmask))
 					continue; // not an interesting item
 
 				int32 ix, iy, iz, ixd, iyd, izd;
@@ -710,7 +710,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 #endif
 
 				// check overlap
-				if ((si->flags & shapeflags & blockflagmask) &&
+				if ((si->_flags & shapeflags & blockflagmask) &&
 				        /* not non-overlapping */
 				        !(x <= ix - ixd || x - xd >= ix ||
 				          y <= iy - iyd || y - yd >= iy ||
@@ -774,7 +774,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 		supportmask[i] = 0;
 	}
 
-	blockflagmask &= item->getShapeInfo()->flags;
+	blockflagmask &= item->getShapeInfo()->_flags;
 
 	int32 xd, yd, zd;
 	item->getFootpadWorld(xd, yd, zd);
@@ -811,7 +811,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 
 				ShapeInfo *si = citem->getShapeInfo();
 				//!! need to check is_sea() and is_land() maybe?
-				if (!(si->flags & blockflagmask))
+				if (!(si->_flags & blockflagmask))
 					continue; // not an interesting item
 
 				int32 ix, iy, iz, ixd, iyd, izd;
@@ -984,7 +984,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 				if (other_item->getObjId() == item) continue;
 				if (other_item->getExtFlags() & Item::EXT_SPRITE) continue;
 
-				uint32 othershapeflags = other_item->getShapeInfo()->flags;
+				uint32 othershapeflags = other_item->getShapeInfo()->_flags;
 				bool blocking = (othershapeflags & shapeflags &
 				                 blockflagmask) != 0;
 
@@ -1169,7 +1169,7 @@ Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId i
 				if (item->getExtFlags() & Item::EXT_SPRITE) continue;
 
 				ShapeInfo *si = item->getShapeInfo();
-				if (!(si->flags & shflags) || si->is_editor() || si->is_translucent()) continue;
+				if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent()) continue;
 
 				int32 ix, iy, iz, ixd, iyd, izd;
 				item->getLocation(ix, iy, iz);

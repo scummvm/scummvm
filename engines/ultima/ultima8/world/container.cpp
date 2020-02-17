@@ -258,7 +258,7 @@ uint32 Container::getTotalWeight() {
 }
 
 uint32 Container::getCapacity() {
-	uint32 volume = getShapeInfo()->volume;
+	uint32 volume = getShapeInfo()->_volume;
 
 	return (volume == 0) ? 32 : volume;
 }
