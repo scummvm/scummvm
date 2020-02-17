@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/type_flags.h"
 #include "ultima/ultima8/graphics/shape_info.h"
@@ -34,53 +33,53 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MainShapeArchive, ShapeArchive)
 
 
 MainShapeArchive::~MainShapeArchive() {
-	if (typeFlags) {
-		delete typeFlags;
-		typeFlags = 0;
+	if (_typeFlags) {
+		delete _typeFlags;
+		_typeFlags = 0;
 	}
 
-	if (animdat) {
-		delete animdat;
-		animdat = 0;
+	if (_animDat) {
+		delete _animDat;
+		_animDat = 0;
 	}
 }
 
 void MainShapeArchive::loadTypeFlags(IDataSource *ds) {
-	if (typeFlags) {
-		delete typeFlags;
-		typeFlags = 0;
+	if (_typeFlags) {
+		delete _typeFlags;
+		_typeFlags = 0;
 	}
 
-	typeFlags = new TypeFlags;
-	typeFlags->load(ds);
+	_typeFlags = new TypeFlags;
+	_typeFlags->load(ds);
 }
 
 ShapeInfo *MainShapeArchive::getShapeInfo(uint32 shapenum) {
-	assert(typeFlags);
+	assert(_typeFlags);
 
-	return typeFlags->getShapeInfo(shapenum);
+	return _typeFlags->getShapeInfo(shapenum);
 }
 
 void MainShapeArchive::loadAnimDat(IDataSource *ds) {
-	if (animdat) {
-		delete animdat;
-		animdat = 0;
+	if (_animDat) {
+		delete _animDat;
+		_animDat = 0;
 	}
 
-	animdat = new AnimDat;
-	animdat->load(ds);
+	_animDat = new AnimDat;
+	_animDat->load(ds);
 }
 
 ActorAnim *MainShapeArchive::getAnim(uint32 shape) const {
-	assert(animdat);
+	assert(_animDat);
 
-	return animdat->getAnim(shape);
+	return _animDat->getAnim(shape);
 }
 
 AnimAction *MainShapeArchive::getAnim(uint32 shape, uint32 action) const {
-	assert(animdat);
+	assert(_animDat);
 
-	return animdat->getAnim(shape, action);
+	return _animDat->getAnim(shape, action);
 }
 
 } // End of namespace Ultima8

@@ -40,7 +40,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void setTarget(unsigned int target) {
-		targetstate = target;
+		_targetState = target;
 	}
 
 	void run() override;
@@ -54,8 +54,8 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	static InverterProcess *inverter;
-	unsigned int targetstate;
+	static InverterProcess *_inverter;
+	unsigned int _targetState;
 };
 
 } // End of namespace Ultima8

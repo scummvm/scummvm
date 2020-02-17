@@ -32,13 +32,13 @@ namespace Ultima {
 namespace Ultima8 {
 
 class PaletteFaderProcess : public Process {
-	int                         priority;
-	int32                       counter;
-	int32                       max_counter;
-	int16                       old_matrix[12]; // Fixed point -4.11
-	int16                       new_matrix[12];
+	int                         _priority;
+	int32                       _counter;
+	int32                       _maxCounter;
+	int16                       _oldMatrix[12]; // Fixed point -4.11
+	int16                       _newMatrix[12];
 public:
-	static PaletteFaderProcess  *fader;
+	static PaletteFaderProcess  *_fader;
 
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()

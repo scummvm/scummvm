@@ -1735,8 +1735,8 @@ void Ultima8Engine::save(ODataSource *ods) {
 	ods->write2(_avatarMoverProcess->getPid());
 
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	for (int i = 0; i < 12; i++) ods->write2(pal->matrix[i]);
-	ods->write2(pal->transform);
+	for (int i = 0; i < 12; i++) ods->write2(pal->_matrix[i]);
+	ods->write2(pal->_transform);
 
 	ods->write2(static_cast<uint16>(_inversion));
 
@@ -1764,7 +1764,7 @@ bool Ultima8Engine::load(IDataSource *ids, uint32 version) {
 
 	PaletteManager::get_instance()->transformPalette(PaletteManager::Pal_Game, matrix);
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	pal->transform = static_cast<PalTransforms>(ids->read2());
+	pal->_transform = static_cast<PalTransforms>(ids->read2());
 
 	_inversion = ids->read2();
 

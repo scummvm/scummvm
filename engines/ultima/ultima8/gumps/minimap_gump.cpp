@@ -156,7 +156,7 @@ uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
 				if (!frame->hasPoint(i - sx, j - sy)) continue;
 
 				uint16 r2, g2, b2;
-				UNPACK_RGB8(pal->native_untransformed[frame->getPixelAtPoint(i - sx, j - sy)], r2, g2, b2);
+				UNPACK_RGB8(pal->_native_untransformed[frame->getPixelAtPoint(i - sx, j - sy)], r2, g2, b2);
 				r += RenderSurface::Gamma22toGamma10[r2];
 				g += RenderSurface::Gamma22toGamma10[g2];
 				b += RenderSurface::Gamma22toGamma10[b2];

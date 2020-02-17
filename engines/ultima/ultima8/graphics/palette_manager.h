@@ -38,7 +38,7 @@ public:
 	~PaletteManager();
 
 	static PaletteManager *get_instance() {
-		return palettemanager;
+		return _paletteManager;
 	}
 
 	enum PalIndex {
@@ -80,10 +80,10 @@ public:
 	void resetTransforms();
 
 private:
-	Std::vector<Palette *> palettes;
-	RenderSurface *rendersurface;
+	Std::vector<Palette *> _palettes;
+	RenderSurface *_renderSurface;
 
-	static PaletteManager *palettemanager;
+	static PaletteManager *_paletteManager;
 };
 
 } // End of namespace Ultima8

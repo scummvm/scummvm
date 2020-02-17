@@ -33,163 +33,162 @@ namespace Ultima8 {
 
 #define PALETTEFADER_COUNTER    30
 
-PaletteFaderProcess *PaletteFaderProcess::fader = 0;
+PaletteFaderProcess *PaletteFaderProcess::_fader = 0;
 
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(PaletteFaderProcess, Process)
 
-PaletteFaderProcess::PaletteFaderProcess()
-	: Process() {
+PaletteFaderProcess::PaletteFaderProcess() : Process() {
 
 }
 
 PaletteFaderProcess::PaletteFaderProcess(PalTransforms trans,
-        int priority_, int frames) : priority(priority_),
-	counter(frames), max_counter(frames) {
+        int priority_, int frames) : _priority(priority_),
+	_counter(frames), _maxCounter(frames) {
 	PaletteManager  *pm = PaletteManager::get_instance();
 	Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
-	for (int i = 0; i < 12; i++) old_matrix[i] = pal->matrix[i];
-	pm->getTransformMatrix(new_matrix, trans);
-	pal->transform = trans;
+	for (int i = 0; i < 12; i++) _oldMatrix[i] = pal->_matrix[i];
+	pm->getTransformMatrix(_newMatrix, trans);
+	pal->_transform = trans;
 }
 
 PaletteFaderProcess::PaletteFaderProcess(uint32 col32, bool from,
-        int priority_, int frames, bool current) : priority(priority_),
-	counter(frames), max_counter(frames) {
+        int priority, int frames, bool current) : _priority(priority),
+	_counter(frames), _maxCounter(frames) {
 	PaletteManager  *pm = PaletteManager::get_instance();
 	Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
 	if (!from) {
 		if (current)
-			for (int i = 0; i < 12; i++) old_matrix[i] = pal->matrix[i];
+			for (int i = 0; i < 12; i++) _oldMatrix[i] = pal->_matrix[i];
 		else
-			pm->getTransformMatrix(old_matrix, pal->transform);
-		pm->getTransformMatrix(new_matrix, col32);
+			pm->getTransformMatrix(_oldMatrix, pal->_transform);
+		pm->getTransformMatrix(_newMatrix, col32);
 	} else {
-		pm->getTransformMatrix(old_matrix, col32);
+		pm->getTransformMatrix(_oldMatrix, col32);
 		if (current)
-			for (int i = 0; i < 12; i++) new_matrix[i] = pal->matrix[i];
+			for (int i = 0; i < 12; i++) _newMatrix[i] = pal->_matrix[i];
 		else
-			pm->getTransformMatrix(new_matrix, pal->transform);
+			pm->getTransformMatrix(_newMatrix, pal->_transform);
 	}
 }
 
 PaletteFaderProcess::PaletteFaderProcess(int16 from[12], int16 to[12],
-        int priority_, int frames) : priority(priority_),
-	counter(frames), max_counter(frames) {
+        int priority_, int frames) : _priority(priority_),
+	_counter(frames), _maxCounter(frames) {
 	int i;
-	for (i = 0; i < 12; i++) old_matrix[i] = from[i];
-	for (i = 0; i < 12; i++) new_matrix[i] = to[i];
+	for (i = 0; i < 12; i++) _oldMatrix[i] = from[i];
+	for (i = 0; i < 12; i++) _newMatrix[i] = to[i];
 }
 
 PaletteFaderProcess::~PaletteFaderProcess(void) {
-	if (fader == this)
-		fader = 0;
+	if (_fader == this)
+		_fader = 0;
 }
 
 void PaletteFaderProcess::run() {
 	int16   matrix[12];
 
 	for (int i = 0; i < 12; i++) {
-		int32 o = old_matrix[i] * counter;
-		int32 n = new_matrix[i] * (max_counter - counter);
-		matrix[i] = static_cast<int16>((o + n) / max_counter);
+		int32 o = _oldMatrix[i] * _counter;
+		int32 n = _newMatrix[i] * (_maxCounter - _counter);
+		matrix[i] = static_cast<int16>((o + n) / _maxCounter);
 	}
 
 	PaletteManager::get_instance()->transformPalette(
 	    PaletteManager::Pal_Game,
 	    matrix);
 
-	if (!counter--) terminate();
+	if (!_counter--) terminate();
 }
 
 void PaletteFaderProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(priority));
-	ods->write4(static_cast<uint32>(counter));
-	ods->write4(static_cast<uint32>(max_counter));
+	ods->write4(static_cast<uint32>(_priority));
+	ods->write4(static_cast<uint32>(_counter));
+	ods->write4(static_cast<uint32>(_maxCounter));
 	unsigned int i;
 	for (i = 0; i < 12; ++i)
-		ods->write2(old_matrix[i]);
+		ods->write2(_oldMatrix[i]);
 	for (i = 0; i < 12; ++i)
-		ods->write2(new_matrix[i]);
+		ods->write2(_newMatrix[i]);
 }
 
 bool PaletteFaderProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	priority = static_cast<int>(ids->read4());
-	counter = static_cast<int>(ids->read4());
-	max_counter = static_cast<int>(ids->read4());
+	_priority = static_cast<int>(ids->read4());
+	_counter = static_cast<int>(ids->read4());
+	_maxCounter = static_cast<int>(ids->read4());
 
 	unsigned int i;
 	for (i = 0; i < 12; ++i)
-		old_matrix[i] = ids->read2();
+		_oldMatrix[i] = ids->read2();
 	for (i = 0; i < 12; ++i)
-		new_matrix[i] = ids->read2();
+		_newMatrix[i] = ids->read2();
 
-	fader = this; //static
+	_fader = this; //static
 	return true;
 }
 
 uint32 PaletteFaderProcess::I_fadeToPaletteTransform(const uint8 *args,
         unsigned int /*argsize*/) {
 	ARG_UINT16(transform);
-	ARG_UINT16(priority);
+	ARG_UINT16(_priority);
 
-	// If current fader has higher priority, we do nothing
-	if (fader && fader->priority > priority) return 0;
-	else if (fader) fader->terminate();
+	// If current _fader has higher _priority, we do nothing
+	if (_fader && _fader->_priority > _priority) return 0;
+	else if (_fader) _fader->terminate();
 
-	fader = new PaletteFaderProcess(static_cast<PalTransforms>(transform),
-	                                priority, 45);
+	_fader = new PaletteFaderProcess(static_cast<PalTransforms>(transform),
+	                                _priority, 45);
 
-	return Kernel::get_instance()->addProcess(fader);
+	return Kernel::get_instance()->addProcess(_fader);
 }
 
 uint32 PaletteFaderProcess::I_fadeToBlack(const uint8 * /*args*/,
         unsigned int /*argsize*/) {
-	if (fader && fader->priority > 0x7FFF) return 0;
-	else if (fader) fader->terminate();
+	if (_fader && _fader->_priority > 0x7FFF) return 0;
+	else if (_fader) _fader->terminate();
 
-	fader = new PaletteFaderProcess(0x00000000, false, 0x7FFF, 30, true);
-	return Kernel::get_instance()->addProcess(fader);
+	_fader = new PaletteFaderProcess(0x00000000, false, 0x7FFF, 30, true);
+	return Kernel::get_instance()->addProcess(_fader);
 }
 
 uint32 PaletteFaderProcess::I_fadeFromBlack(const uint8 * /*args*/,
         unsigned int /*argsize*/) {
-	if (fader && fader->priority > 0x7FFF) return 0;
-	else if (fader) fader->terminate();
+	if (_fader && _fader->_priority > 0x7FFF) return 0;
+	else if (_fader) _fader->terminate();
 
-	fader = new PaletteFaderProcess(0x00000000, true, 0x7FFF, 30, false);
-	return Kernel::get_instance()->addProcess(fader);
+	_fader = new PaletteFaderProcess(0x00000000, true, 0x7FFF, 30, false);
+	return Kernel::get_instance()->addProcess(_fader);
 }
 
 uint32 PaletteFaderProcess::I_fadeToWhite(const uint8 * /*args*/,
         unsigned int /*argsize*/) {
-	if (fader && fader->priority > 0x7FFF) return 0;
-	else if (fader) fader->terminate();
+	if (_fader && _fader->_priority > 0x7FFF) return 0;
+	else if (_fader) _fader->terminate();
 
-	fader = new PaletteFaderProcess(0x00FFFFFF, false, 0x7FFF, 30, true);
-	return Kernel::get_instance()->addProcess(fader);
+	_fader = new PaletteFaderProcess(0x00FFFFFF, false, 0x7FFF, 30, true);
+	return Kernel::get_instance()->addProcess(_fader);
 }
 
 uint32 PaletteFaderProcess::I_fadeFromWhite(const uint8 * /*args*/,
         unsigned int /*argsize*/) {
-	if (fader && fader->priority > 0x7FFF) return 0;
-	else if (fader) fader->terminate();
+	if (_fader && _fader->_priority > 0x7FFF) return 0;
+	else if (_fader) _fader->terminate();
 
-	fader = new PaletteFaderProcess(0x00FFFFFF, true, 0x7FFF, 30, false);
-	return Kernel::get_instance()->addProcess(fader);
+	_fader = new PaletteFaderProcess(0x00FFFFFF, true, 0x7FFF, 30, false);
+	return Kernel::get_instance()->addProcess(_fader);
 }
 
 uint32 PaletteFaderProcess::I_lightningBolt(const uint8 * /*args*/,
         unsigned int /*argsize*/) {
-	if (fader && fader->priority > -1) return 0;
-	else if (fader) fader->terminate();
+	if (_fader && _fader->_priority > -1) return 0;
+	else if (_fader) _fader->terminate();
 
-	fader = new PaletteFaderProcess(0x3FCFCFCF, true, -1, 10, false);
-	return Kernel::get_instance()->addProcess(fader);
+	_fader = new PaletteFaderProcess(0x3FCFCFCF, true, -1, 10, false);
+	return Kernel::get_instance()->addProcess(_fader);
 }
 
 } // End of namespace Ultima8
