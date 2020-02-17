@@ -39,9 +39,9 @@ class SettingManager;
 struct GameInfo;
 
 
-#define GAME_IS_U8 (CoreApp::get_instance()->getGameInfo()->type == GameInfo::GAME_U8)
-#define GAME_IS_REMORSE (CoreApp::get_instance()->getGameInfo()->type == GameInfo::GAME_REMORSE)
-#define GAME_IS_REGRET (CoreApp::get_instance()->getGameInfo()->type == GameInfo::GAME_REGRET)
+#define GAME_IS_U8 (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_U8)
+#define GAME_IS_REMORSE (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_REMORSE)
+#define GAME_IS_REGRET (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_REGRET)
 #define GAME_IS_CRUSADER (GAME_IS_REMORSE || GAME_IS_REGRET)
 
 

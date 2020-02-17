@@ -50,7 +50,7 @@ public:
 	~GameData();
 
 	static GameData *get_instance() {
-		return gamedata;
+		return _gameData;
 	}
 
 	void loadU8Data();
@@ -58,32 +58,32 @@ public:
 	void setupFontOverrides();
 
 	Usecode *getMainUsecode() const {
-		return mainusecode;
+		return _mainUsecode;
 	}
 	MainShapeArchive *getMainShapes() const {
-		return mainshapes;
+		return _mainShapes;
 	}
 	RawArchive *getFixed() const {
-		return fixed;
+		return _fixed;
 	}
 	MapGlob *getGlob(uint32 glob) const;
 	FontShapeArchive *getFonts() const {
-		return fonts;
+		return _fonts;
 	}
 	GumpShapeArchive *getGumps() const {
-		return gumps;
+		return _gumps;
 	}
 	Shape *getMouse() const {
-		return mouse;
+		return _mouse;
 	}
 	MusicFlex *getMusic() const {
-		return music;
+		return _music;
 	}
 	WpnOvlayDat *getWeaponOverlay() const {
-		return weaponoverlay;
+		return _weaponOverlay;
 	}
 	SoundFlex *getSoundFlex() const {
-		return soundflex;
+		return _soundFlex;
 	}
 	SpeechFlex *getSpeechFlex(uint32 shapenum);
 
@@ -104,21 +104,21 @@ private:
 	void setupTTFOverrides(const char *configkey, bool SJIS);
 	void setupJPOverrides();
 
-	RawArchive *fixed;
-	MainShapeArchive *mainshapes;
-	Usecode *mainusecode;
-	Std::vector<MapGlob *> globs;
-	FontShapeArchive *fonts;
-	GumpShapeArchive *gumps;
-	Shape *mouse;
-	MusicFlex *music;
-	WpnOvlayDat *weaponoverlay;
+	RawArchive *_fixed;
+	MainShapeArchive *_mainShapes;
+	Usecode *_mainUsecode;
+	Std::vector<MapGlob *> _globs;
+	FontShapeArchive *_fonts;
+	GumpShapeArchive *_gumps;
+	Shape *_mouse;
+	MusicFlex *_music;
+	WpnOvlayDat *_weaponOverlay;
 
-	SoundFlex *soundflex;
-	Std::vector<SpeechFlex **> speech;
-	GameInfo *gameinfo;
+	SoundFlex *_soundFlex;
+	Std::vector<SpeechFlex **> _speech;
+	GameInfo *_gameInfo;
 
-	static GameData *gamedata;
+	static GameData *_gameData;
 };
 
 #define _TL_(x) (GameData::get_instance()->translate(x))

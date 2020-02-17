@@ -37,7 +37,7 @@ public:
 	virtual ~Game();
 
 	static Game *get_instance() {
-		return game;
+		return _game;
 	}
 
 	//! load/init game's data files
@@ -62,7 +62,7 @@ public:
 	INTRINSIC(I_playEndgame);
 
 protected:
-	static Game *game;
+	static Game *_game;
 };
 
 } // End of namespace Ultima8

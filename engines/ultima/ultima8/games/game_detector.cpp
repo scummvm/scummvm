@@ -55,7 +55,7 @@ bool GameDetector::detect(Std::string path, GameInfo *info) {
 	if (!ids)
 		return false; // all games have usecode
 
-	md5_file(ids, info->md5, 0);
+	md5_file(ids, info->_md5, 0);
 	delete ids;
 
 	Std::string md5s = info->getPrintableMD5();
@@ -63,8 +63,8 @@ bool GameDetector::detect(Std::string path, GameInfo *info) {
 	int i = 0;
 	while (md5table[i].md5) {
 		if (md5s == md5table[i].md5) {
-			info->type = md5table[i].type;
-			info->language = md5table[i].language;
+			info->_type = md5table[i].type;
+			info->_language = md5table[i].language;
 			info->version = md5table[i].version;
 			return true;
 		}
@@ -77,33 +77,33 @@ bool GameDetector::detect(Std::string path, GameInfo *info) {
 
 
 	// game type
-	if (info->type == GameInfo::GAME_UNKNOWN) {
+	if (info->_type == GameInfo::GAME_UNKNOWN) {
 
 		ids = fs->ReadFile("@detect/static/u8gumps.flx"); // random U8 file
 		if (ids) {
-			info->type = GameInfo::GAME_U8;
+			info->_type = GameInfo::GAME_U8;
 			delete ids;
 			ids = 0;
 		}
 
 	}
 
-	if (info->type == GameInfo::GAME_UNKNOWN) {
+	if (info->_type == GameInfo::GAME_UNKNOWN) {
 
 		ids = fs->ReadFile("@detect/static/help1.dat"); // random remorse file
 		if (ids) {
-			info->type = GameInfo::GAME_REMORSE;
+			info->_type = GameInfo::GAME_REMORSE;
 			delete ids;
 			ids = 0;
 		}
 
 	}
 
-	if (info->type == GameInfo::GAME_UNKNOWN) {
+	if (info->_type == GameInfo::GAME_UNKNOWN) {
 
 		ids = fs->ReadFile("@detect/static/help1.bmp"); // random regret file
 		if (ids) {
-			info->type = GameInfo::GAME_REGRET;
+			info->_type = GameInfo::GAME_REGRET;
 			delete ids;
 			ids = 0;
 		}
@@ -117,10 +117,10 @@ bool GameDetector::detect(Std::string path, GameInfo *info) {
 	// game language
 
 	// detect using eusecode/fusecode/gusecode
-	if (info->language == GameInfo::GAMELANG_UNKNOWN) {
+	if (info->_language == GameInfo::GAMELANG_UNKNOWN) {
 		ids = fs->ReadFile("@detect/usecode/eusecode.flx");
 		if (ids) {
-			if (info->type == GameInfo::GAME_U8) {
+			if (info->_type == GameInfo::GAME_U8) {
 				// distinguish between english and spanish
 				RawArchive *f = new RawArchive(ids);
 				const char *buf = reinterpret_cast<const char *>((f->get_object_nodel(183)));
@@ -128,11 +128,11 @@ bool GameDetector::detect(Std::string path, GameInfo *info) {
 				if (buf) {
 					for (i = 0; i + 9 < size; ++i) {
 						if (strncmp(buf + i, "tableware", 9) == 0) {
-							info->language = GameInfo::GAMELANG_ENGLISH;
+							info->_language = GameInfo::GAMELANG_ENGLISH;
 							break;
 						}
 						if (strncmp(buf + i, "vajilla", 7) == 0) {
-							info->language = GameInfo::GAMELANG_SPANISH;
+							info->_language = GameInfo::GAMELANG_SPANISH;
 							break;
 						}
 					}
@@ -142,33 +142,33 @@ bool GameDetector::detect(Std::string path, GameInfo *info) {
 			}
 
 			// if still unsure, English
-			if (info->language == GameInfo::GAMELANG_UNKNOWN)
-				info->language = GameInfo::GAMELANG_ENGLISH;
+			if (info->_language == GameInfo::GAMELANG_UNKNOWN)
+				info->_language = GameInfo::GAMELANG_ENGLISH;
 
 			delete ids;
 			ids = 0;
 		}
 	}
-	if (info->language == GameInfo::GAMELANG_UNKNOWN) {
+	if (info->_language == GameInfo::GAMELANG_UNKNOWN) {
 		ids = fs->ReadFile("@detect/usecode/fusecode.flx");
 		if (ids) {
-			info->language = GameInfo::GAMELANG_FRENCH;
+			info->_language = GameInfo::GAMELANG_FRENCH;
 			delete ids;
 			ids = 0;
 		}
 	}
-	if (info->language == GameInfo::GAMELANG_UNKNOWN) {
+	if (info->_language == GameInfo::GAMELANG_UNKNOWN) {
 		ids = fs->ReadFile("@detect/usecode/gusecode.flx");
 		if (ids) {
-			info->language = GameInfo::GAMELANG_GERMAN;
+			info->_language = GameInfo::GAMELANG_GERMAN;
 			delete ids;
 			ids = 0;
 		}
 	}
-	if (info->language == GameInfo::GAMELANG_UNKNOWN) {
+	if (info->_language == GameInfo::GAMELANG_UNKNOWN) {
 		ids = fs->ReadFile("@detect/usecode/jusecode.flx");
 		if (ids) {
-			info->language = GameInfo::GAMELANG_JAPANESE;
+			info->_language = GameInfo::GAMELANG_JAPANESE;
 			delete ids;
 			ids = 0;
 		}
@@ -176,9 +176,9 @@ bool GameDetector::detect(Std::string path, GameInfo *info) {
 
 	fs->RemoveVirtualPath("@detect");
 
-	return (info->type != GameInfo::GAME_UNKNOWN &&
+	return (info->_type != GameInfo::GAME_UNKNOWN &&
 	        /* info->version != 0 && */
-	        info->language != GameInfo::GAMELANG_UNKNOWN);
+	        info->_language != GameInfo::GAMELANG_UNKNOWN);
 }
 
 } // End of namespace Ultima8

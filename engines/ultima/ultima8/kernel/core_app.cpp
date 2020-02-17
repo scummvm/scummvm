@@ -188,12 +188,12 @@ GameInfo *CoreApp::getDefaultGame() {
 	} else if (_games.size() == 2) {// TODO - Do this in a better method
 		// only one game in config file, so pick that
 		for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i) {
-			if (i->_value->name != "pentagram")
-				gamename = i->_value->name;
+			if (i->_value->_name != "pentagram")
+				gamename = i->_value->_name;
 		}
 
 	} else if (_games.size() == 1) {
-		gamename = _games.begin()->_value->name;
+		gamename = _games.begin()->_value->_name;
 
 	} else {
 		perr << "Multiple games found in configuration, but no default "
@@ -219,16 +219,16 @@ GameInfo *CoreApp::getDefaultGame() {
 
 bool CoreApp::setupGame(GameInfo *info) {
 	if (!info) return false;
-	assert(info->name != "");
+	assert(info->_name != "");
 
 	_gameInfo = info;
 
-	pout << "Selected game: " << info->name << Std::endl;
+	pout << "Selected game: " << info->_name << Std::endl;
 	pout << info->getPrintDetails() << Std::endl;
 
 	setupGamePaths(info);
 
-	return info->name != "pentagram";
+	return info->_name != "pentagram";
 }
 
 void CoreApp::killGame() {
@@ -256,38 +256,38 @@ bool CoreApp::getGameInfo(istring &game, GameInfo *ginfo) {
 	// first try getting the information from the config file
 	// if that fails, try to autodetect it
 
-	ginfo->name = game;
-	ginfo->type = GameInfo::GAME_UNKNOWN;
+	ginfo->_name = game;
+	ginfo->_type = GameInfo::GAME_UNKNOWN;
 	ginfo->version = 0;
-	ginfo->language = GameInfo::GAMELANG_UNKNOWN;
+	ginfo->_language = GameInfo::GAMELANG_UNKNOWN;
 
 	istring gamekey = "settings/";
 	gamekey += game;
 
 	if (game == "pentagram") {
-		ginfo->type = GameInfo::GAME_PENTAGRAM_MENU;
-		ginfo->language = GameInfo::GAMELANG_ENGLISH;
+		ginfo->_type = GameInfo::GAME_PENTAGRAM_MENU;
+		ginfo->_language = GameInfo::GAMELANG_ENGLISH;
 
 	} else {
 		assert(game == "ultima8");
 
-		ginfo->type = GameInfo::GAME_U8;
+		ginfo->_type = GameInfo::GAME_U8;
 		
 		switch (_gameDesc->desc.language) {
 		case Common::EN_ANY:
-			ginfo->language = GameInfo::GAMELANG_ENGLISH;
+			ginfo->_language = GameInfo::GAMELANG_ENGLISH;
 			break;
 		case Common::FR_FRA:
-			ginfo->language = GameInfo::GAMELANG_FRENCH;
+			ginfo->_language = GameInfo::GAMELANG_FRENCH;
 			break;
 		case Common::DE_DEU:
-			ginfo->language = GameInfo::GAMELANG_GERMAN;
+			ginfo->_language = GameInfo::GAMELANG_GERMAN;
 			break;
 		case Common::ES_ESP:
-			ginfo->language = GameInfo::GAMELANG_SPANISH;
+			ginfo->_language = GameInfo::GAMELANG_SPANISH;
 			break;
 		case Common::JA_JPN:
-			ginfo->language = GameInfo::GAMELANG_JAPANESE;
+			ginfo->_language = GameInfo::GAMELANG_JAPANESE;
 			break;
 		default:
 			error("Unknown language");
@@ -295,16 +295,16 @@ bool CoreApp::getGameInfo(istring &game, GameInfo *ginfo) {
 		}
 	}
 
-	return ginfo->type != GameInfo::GAME_UNKNOWN;
+	return ginfo->_type != GameInfo::GAME_UNKNOWN;
 }
 
 void CoreApp::setupGamePaths(GameInfo *ginfo) {
-	if (!ginfo || ginfo->name == "pentagram") {
+	if (!ginfo || ginfo->_name == "pentagram") {
 		_settingMan->setCurrentDomain(SettingManager::DOM_GLOBAL);
 		return;
 	}
 
-	istring game = ginfo->name;
+	istring game = ginfo->_name;
 
 	_settingMan->setDomainName(SettingManager::DOM_GAME, game);
 	_settingMan->setCurrentDomain(SettingManager::DOM_GAME);

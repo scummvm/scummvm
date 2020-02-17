@@ -47,7 +47,7 @@ GameWidget::~GameWidget() {
 }
 
 istring GameWidget::getGameName() {
-	return info->name;
+	return info->_name;
 }
 void GameWidget::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
@@ -60,7 +60,7 @@ void GameWidget::InitGump(Gump *newparent, bool take_focus) {
 	// FIXME: localize these strings
 	Std::string gamename = "Game:";
 	gamename += " ";
-	gamename += info->name;
+	gamename += info->_name;
 	w = new TextWidget(65, 29, gamename, false, 0, 350, 180);
 	w->InitGump(this, false);
 
@@ -145,14 +145,14 @@ void GameWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled
 
 	// box graphics
 //	surf->Fill32(0xFFAFAFFF,1,1,56,80);
-	surf->Blit(coversImage, (info->type - 1) * 56, 0, 56, 80, 1, 1); // HACK...
+	surf->Blit(coversImage, (info->_type - 1) * 56, 0, 56, 80, 1, 1); // HACK...
 
 	if (highlight)
 		surf->Fill32(0xFF30308F, 58, 1, 443 - 57 - 2, 22);
 
 	// flag
 //	surf->Fill32(0xFFAFFFAF,415,4,24,16);
-	surf->Blit(flagsImage, (info->language - 1) * 24, 0, 24, 16, 415, 4); // HACK...
+	surf->Blit(flagsImage, (info->_language - 1) * 24, 0, 24, 16, 415, 4); // HACK...
 
 
 #if 0

@@ -447,7 +447,7 @@ void Ultima8Engine::startup() {
 void Ultima8Engine::startupGame() {
 	con->SetAutoPaint(conAutoPaint);
 
-	pout  << Std::endl << "-- Initializing Game: " << _gameInfo->name << " --" << Std::endl;
+	pout  << Std::endl << "-- Initializing Game: " << _gameInfo->_name << " --" << Std::endl;
 
 	GraphicSysInit();
 
@@ -549,7 +549,7 @@ void Ultima8Engine::startupGame() {
 	con->SetAutoPaint(0);
 
 	// Create Midi Driver for Ultima 8
-	if (getGameInfo()->type == GameInfo::GAME_U8)
+	if (getGameInfo()->_type == GameInfo::GAME_U8)
 		_audioMixer->openMidiOutput();
 
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
@@ -691,12 +691,12 @@ void Ultima8Engine::changeGame(istring newgame) {
 
 void Ultima8Engine::menuInitMinimal(istring gamename) {
 	// Only if in the pentagram menu
-	if (_gameInfo->name != "pentagram") return;
+	if (_gameInfo->_name != "pentagram") return;
 	GameInfo *info = getGameInfo(gamename);
 	if (!info) info = getGameInfo("pentagram");
 	assert(info);
 
-	pout  << Std::endl << "-- Loading minimal _game data for: " << info->name << " --" << Std::endl;
+	pout  << Std::endl << "-- Loading minimal _game data for: " << info->_name << " --" << Std::endl;
 
 	FORGET_OBJECT(_game);
 	FORGET_OBJECT(_gameData);
@@ -704,7 +704,7 @@ void Ultima8Engine::menuInitMinimal(istring gamename) {
 
 	setupGamePaths(info);
 
-	if (info->name == "pentagram") return;
+	if (info->_name == "pentagram") return;
 
 	_gameData = new GameData(info);
 	_game = Game::createGame(info);
@@ -1823,7 +1823,7 @@ void Ultima8Engine::ConCmd_engineStats(const Console::ArgvType &argv) {
 
 void Ultima8Engine::ConCmd_changeGame(const Console::ArgvType &argv) {
 	if (argv.size() == 1) {
-		pout << "Current _game is: " << Ultima8Engine::get_instance()->_gameInfo->name << Std::endl;
+		pout << "Current _game is: " << Ultima8Engine::get_instance()->_gameInfo->_name << Std::endl;
 	} else {
 		Ultima8Engine::get_instance()->changeGame(argv[1]);
 	}

@@ -49,7 +49,7 @@ public:
 	static Game *createGame(GameInfo *info);
 
 protected:
-	static Game *game;
+	static Game *_game;
 };
 
 } // End of namespace Ultima8

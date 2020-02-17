@@ -157,7 +157,7 @@ void PentagramMenuGump::ChildNotify(Gump *child, uint32 message) {
 			break;
 		case GameWidget::GAME_LOAD: {
 			GameInfo *info = Ultima8Engine::get_instance()->getGameInfo(gamename);
-			if (info && info->type == GameInfo::GAME_U8) {
+			if (info && info->_type == GameInfo::GAME_U8) {
 				Ultima8Engine::get_instance()->menuInitMinimal(gamename);
 				Gump *gump = U8SaveGump::showLoadSaveGump(0, false);
 				if (gump) {

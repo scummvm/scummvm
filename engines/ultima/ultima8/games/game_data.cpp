@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/filesys/file_system.h"
@@ -48,64 +47,64 @@
 namespace Ultima {
 namespace Ultima8 {
 
-GameData *GameData::gamedata = 0;
+GameData *GameData::_gameData = 0;
 
 
-GameData::GameData(GameInfo *gameinfo_)
-	: fixed(0), mainshapes(0), mainusecode(0), globs(), fonts(0), gumps(0),
-	  mouse(0), music(0), weaponoverlay(0), soundflex(0), speech(1024), gameinfo(gameinfo_) {
+GameData::GameData(GameInfo *gameInfo)
+	: _fixed(0), _mainShapes(0), _mainUsecode(0), _globs(), _fonts(0), _gumps(0),
+	  _mouse(0), _music(0), _weaponOverlay(0), _soundFlex(0), _speech(1024), _gameInfo(gameInfo) {
 	con->Print(MM_INFO, "Creating GameData...\n");
 
-	gamedata = this;
+	_gameData = this;
 }
 
 GameData::~GameData() {
 	con->Print(MM_INFO, "Destroying GameData...\n");
 
-	delete fixed;
-	fixed = 0;
+	delete _fixed;
+	_fixed = 0;
 
-	delete mainshapes;
-	mainshapes = 0;
+	delete _mainShapes;
+	_mainShapes = 0;
 
-	delete mainusecode;
-	mainusecode = 0;
+	delete _mainUsecode;
+	_mainUsecode = 0;
 
-	for (unsigned int i = 0; i < globs.size(); ++i)
-		delete globs[i];
-	globs.clear();
+	for (unsigned int i = 0; i < _globs.size(); ++i)
+		delete _globs[i];
+	_globs.clear();
 
-	delete fonts;
-	fonts = 0;
+	delete _fonts;
+	_fonts = 0;
 
-	delete gumps;
-	gumps = 0;
+	delete _gumps;
+	_gumps = 0;
 
-	delete mouse;
-	mouse = 0;
+	delete _mouse;
+	_mouse = 0;
 
-	delete music;
-	music = 0;
+	delete _music;
+	_music = 0;
 
-	delete weaponoverlay;
-	weaponoverlay = 0;
+	delete _weaponOverlay;
+	_weaponOverlay = 0;
 
-	delete soundflex;
-	soundflex = 0;
+	delete _soundFlex;
+	_soundFlex = 0;
 
-	gamedata = 0;
+	_gameData = 0;
 
-	for (unsigned int i = 0; i < speech.size(); ++i) {
-		SpeechFlex **s = speech[i];
+	for (unsigned int i = 0; i < _speech.size(); ++i) {
+		SpeechFlex **s = _speech[i];
 		if (s) delete *s;
 		delete s;
 	}
-	speech.clear();
+	_speech.clear();
 }
 
 MapGlob *GameData::getGlob(uint32 glob) const {
-	if (glob < globs.size())
-		return globs[glob];
+	if (glob < _globs.size())
+		return _globs[glob];
 	else
 		return 0;
 }
@@ -113,9 +112,9 @@ MapGlob *GameData::getGlob(uint32 glob) const {
 ShapeArchive *GameData::getShapeFlex(uint16 flexId) const {
 	switch (flexId) {
 	case MAINSHAPES:
-		return mainshapes;
+		return _mainShapes;
 	case GUMPS:
-		return gumps;
+		return _gumps;
 	default:
 		break;
 	};
@@ -140,8 +139,8 @@ void GameData::loadTranslation() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	Std::string translationfile;
 
-	if (gameinfo->type == GameInfo::GAME_U8) {
-		switch (gameinfo->language) {
+	if (_gameInfo->_type == GameInfo::GAME_U8) {
+		switch (_gameInfo->_language) {
 		case GameInfo::GAMELANG_ENGLISH:
 			// default. Don't need to do anything
 			break;
@@ -194,7 +193,7 @@ FrameID GameData::translate(FrameID f) {
 	istring key = "language/";
 	switch (f._flexId) {
 	case GUMPS:
-		key += "gumps/";
+		key += "_gumps/";
 		break;
 	default:
 		return f;
@@ -228,9 +227,9 @@ void GameData::loadU8Data() {
 	if (!fd)
 		error("Unable to load static/fixed.dat");;
 
-	fixed = new RawArchive(fd);
+	_fixed = new RawArchive(fd);
 
-	char langletter = gameinfo->getLanguageUsecodeLetter();
+	char langletter = _gameInfo->getLanguageUsecodeLetter();
 	if (!langletter)
 		error("Unknown language. Unable to open usecode");;
 
@@ -243,7 +242,7 @@ void GameData::loadU8Data() {
 	if (!uds)
 		error("Unable to load %s", filename.c_str());
 
-	mainusecode = new UsecodeFlex(uds);
+	_mainUsecode = new UsecodeFlex(uds);
 
 	// Load main shapes
 	pout << "Load Shapes" << Std::endl;
@@ -253,7 +252,7 @@ void GameData::loadU8Data() {
 	if (!sf)
 		error("Unable to load static/u8shapes.flx or static/u8shapes.cmp");;
 
-	mainshapes = new MainShapeArchive(sf, MAINSHAPES,
+	_mainShapes = new MainShapeArchive(sf, MAINSHAPES,
 	                                  PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 
 	// Load weapon, armour info
@@ -268,7 +267,7 @@ void GameData::loadU8Data() {
 	if (!tfs)
 		error("Unable to load static/typeflag.dat");
 
-	mainshapes->loadTypeFlags(tfs);
+	_mainShapes->loadTypeFlags(tfs);
 	delete tfs;
 
 	// Load animdat
@@ -276,7 +275,7 @@ void GameData::loadU8Data() {
 	if (!af)
 		error("Unable to load static/anim.dat");
 
-	mainshapes->loadAnimDat(af);
+	_mainShapes->loadAnimDat(af);
 	delete af;
 
 	// Load weapon overlay data
@@ -285,18 +284,18 @@ void GameData::loadU8Data() {
 		error("Unable to load static/wpnovlay.dat");
 
 	RawArchive *overlayflex = new RawArchive(wod);
-	weaponoverlay = new WpnOvlayDat();
-	weaponoverlay->load(overlayflex);
+	_weaponOverlay = new WpnOvlayDat();
+	_weaponOverlay->load(overlayflex);
 	delete overlayflex;
 
-	// Load globs
+	// Load _globs
 	IDataSource *gds = filesystem->ReadFile("@game/static/glob.flx");
 	if (!gds)
 		error("Unable to load static/glob.flx");
 
 	RawArchive *globflex = new RawArchive(gds);
-	globs.clear();
-	globs.resize(globflex->getCount());
+	_globs.clear();
+	_globs.resize(globflex->getCount());
 	for (unsigned int i = 0; i < globflex->getCount(); ++i) {
 		MapGlob *glob = 0;
 		IDataSource *globds = globflex->get_datasource(i);
@@ -307,40 +306,40 @@ void GameData::loadU8Data() {
 		}
 		delete globds;
 
-		globs[i] = glob;
+		_globs[i] = glob;
 	}
 	delete globflex;
 
-	// Load fonts
+	// Load _fonts
 	IDataSource *fds = filesystem->ReadFile("@game/static/u8fonts.flx");
 	if (!fds)
 		error("Unable to load static/u8fonts.flx");
 
-	fonts = new FontShapeArchive(fds, OTHER,
+	_fonts = new FontShapeArchive(fds, OTHER,
 	                             PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
-	fonts->setHVLeads();
+	_fonts->setHVLeads();
 
-	// Load mouse
+	// Load _mouse
 	IDataSource *msds = filesystem->ReadFile("@game/static/u8mouse.shp");
 	if (!msds)
 		error("Unable to load static/u8mouse.shp");
 
-	mouse = new Shape(msds, 0);
-	mouse->setPalette(PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
+	_mouse = new Shape(msds, 0);
+	_mouse->setPalette(PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	delete msds;
 
 	IDataSource *gumpds = filesystem->ReadFile("@game/static/u8gumps.flx");
 	if (!gumpds)
 		error("Unable to load static/u8gumps.flx");
 
-	gumps = new GumpShapeArchive(gumpds, GUMPS,
+	_gumps = new GumpShapeArchive(gumpds, GUMPS,
 	                             PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 
 	IDataSource *gumpageds = filesystem->ReadFile("@game/static/gumpage.dat");
 	if (!gumpageds)
 		error("Unable to load static/gumpage.dat");
 
-	gumps->loadGumpage(gumpageds);
+	_gumps->loadGumpage(gumpageds);
 	delete gumpageds;
 
 
@@ -348,13 +347,13 @@ void GameData::loadU8Data() {
 	if (!mf)
 		error("Unable to load sound/music.flx");
 
-	music = new MusicFlex(mf);
+	_music = new MusicFlex(mf);
 
 	IDataSource *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
 	if (!sndflx)
 		error("Unable to load sound/sound.flx");
 
-	soundflex = new SoundFlex(sndflx);
+	_soundFlex = new SoundFlex(sndflx);
 
 	loadTranslation();
 }
@@ -362,7 +361,7 @@ void GameData::loadU8Data() {
 void GameData::setupFontOverrides() {
 	setupTTFOverrides("game/fontoverride", false);
 
-	if (gameinfo->language == GameInfo::GAMELANG_JAPANESE)
+	if (_gameInfo->_language == GameInfo::GAMELANG_JAPANESE)
 		setupJPOverrides();
 }
 
@@ -437,9 +436,9 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 }
 
 SpeechFlex *GameData::getSpeechFlex(uint32 _shapeNum) {
-	if (_shapeNum >= speech.size()) return 0;
+	if (_shapeNum >= _speech.size()) return 0;
 
-	SpeechFlex **s = speech[_shapeNum];
+	SpeechFlex **s = _speech[_shapeNum];
 	if (s) return *s;
 
 	s = new SpeechFlex*;
@@ -451,7 +450,7 @@ SpeechFlex *GameData::getSpeechFlex(uint32 _shapeNum) {
 	char num_flx [32];
 	snprintf(num_flx , 32, "%i.flx", _shapeNum);
 
-	char langletter = gameinfo->getLanguageFileLetter();
+	char langletter = _gameInfo->getLanguageFileLetter();
 	if (!langletter) {
 		perr << "GameData::getSpeechFlex: Unknown language." << Std::endl;
 		return 0;
@@ -462,7 +461,7 @@ SpeechFlex *GameData::getSpeechFlex(uint32 _shapeNum) {
 		*s = new SpeechFlex(sflx);
 	}
 
-	speech[_shapeNum] = s;
+	_speech[_shapeNum] = s;
 
 	return *s;
 }
@@ -471,13 +470,13 @@ SpeechFlex *GameData::getSpeechFlex(uint32 _shapeNum) {
 void GameData::loadRemorseData() {
 	FileSystem *filesystem = FileSystem::get_instance();
 
-	IDataSource *fd = filesystem->ReadFile("@game/static/fixed.dat");
+	IDataSource *fd = filesystem->ReadFile("@game/static/_fixed.dat");
 	if (!fd)
-		error("Unable to load static/fixed.dat");
+		error("Unable to load static/_fixed.dat");
 
-	fixed = new RawArchive(fd);
+	_fixed = new RawArchive(fd);
 
-	char langletter = gameinfo->getLanguageUsecodeLetter();
+	char langletter = _gameInfo->getLanguageUsecodeLetter();
 	if (!langletter)
 		error("Unknown language. Unable to open usecode");
 
@@ -490,7 +489,7 @@ void GameData::loadRemorseData() {
 	if (!uds)
 		error("Unable to load %s", filename.c_str());
 
-	mainusecode = new UsecodeFlex(uds);
+	_mainUsecode = new UsecodeFlex(uds);
 
 	// Load main shapes
 	pout << "Load Shapes" << Std::endl;
@@ -499,7 +498,7 @@ void GameData::loadRemorseData() {
 	if (!sf)
 		error("Unable to load static/shapes.flx");
 
-	mainshapes = new MainShapeArchive(sf, MAINSHAPES,
+	_mainShapes = new MainShapeArchive(sf, MAINSHAPES,
 	                                  PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game),
 	                                  &CrusaderShapeFormat);
 
@@ -517,7 +516,7 @@ void GameData::loadRemorseData() {
 	if (!tfs)
 		error("Unable to load static/typeflag.dat");
 
-	mainshapes->loadTypeFlags(tfs);
+	_mainShapes->loadTypeFlags(tfs);
 	delete tfs;
 
 	// Load animdat
@@ -525,7 +524,7 @@ void GameData::loadRemorseData() {
 	if (!af)
 		error("Unable to load static/anim.dat");
 
-	mainshapes->loadAnimDat(af);
+	_mainShapes->loadAnimDat(af);
 	delete af;
 
 	// Load weapon overlay data
@@ -534,18 +533,18 @@ void GameData::loadRemorseData() {
 		error("Unable to load static/wpnovlay.dat");
 
 	RawArchive *overlayflex = new RawArchive(wod);
-	weaponoverlay = new WpnOvlayDat();
-	weaponoverlay->load(overlayflex);
+	_weaponOverlay = new WpnOvlayDat();
+	_weaponOverlay->load(overlayflex);
 	delete overlayflex;
 
-	// Load globs
+	// Load _globs
 	IDataSource *gds = filesystem->ReadFile("@game/static/glob.flx");
 	if (!gds)
 		error("Unable to load static/glob.flx");
 
 	RawArchive *globflex = new RawArchive(gds);
-	globs.clear();
-	globs.resize(globflex->getCount());
+	_globs.clear();
+	_globs.resize(globflex->getCount());
 	for (unsigned int i = 0; i < globflex->getCount(); ++i) {
 		MapGlob *glob = 0;
 		IDataSource *globds = globflex->get_datasource(i);
@@ -556,33 +555,33 @@ void GameData::loadRemorseData() {
 		}
 		delete globds;
 
-		globs[i] = glob;
+		_globs[i] = glob;
 	}
 	delete globflex;
 
-	// Load fonts
-	IDataSource *fds = filesystem->ReadFile("@game/static/fonts.flx");
+	// Load _fonts
+	IDataSource *fds = filesystem->ReadFile("@game/static/_fonts.flx");
 	if (!fds)
-		error("Unable to load static/fonts.flx");
+		error("Unable to load static/_fonts.flx");
 
-	fonts = new FontShapeArchive(fds, OTHER,
+	_fonts = new FontShapeArchive(fds, OTHER,
 	                             PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
-	fonts->setHVLeads();
+	_fonts->setHVLeads();
 
-	// Load mouse
-	IDataSource *msds = filesystem->ReadFile("@game/static/mouse.shp");
+	// Load _mouse
+	IDataSource *msds = filesystem->ReadFile("@game/static/_mouse.shp");
 	if (!msds)
-		error("Unable to load static/mouse.shp");
+		error("Unable to load static/_mouse.shp");
 
-	mouse = new Shape(msds, 0);
-	mouse->setPalette(PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
+	_mouse = new Shape(msds, 0);
+	_mouse->setPalette(PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	delete msds;
 
-	IDataSource *gumpds = filesystem->ReadFile("@game/static/gumps.flx");
+	IDataSource *gumpds = filesystem->ReadFile("@game/static/_gumps.flx");
 	if (!gumpds)
-		error("Unable to load static/gumps.flx");
+		error("Unable to load static/_gumps.flx");
 
-	gumps = new GumpShapeArchive(gumpds, GUMPS,
+	_gumps = new GumpShapeArchive(gumpds, GUMPS,
 		PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 
 #if 0
@@ -590,30 +589,30 @@ void GameData::loadRemorseData() {
 	if (!gumpageds)
 		error("Unable to load static/gumpage.dat");
 
-	gumps->loadGumpage(gumpageds);
+	_gumps->loadGumpage(gumpageds);
 	delete gumpageds;
 #endif
 
 	IDataSource *dummyds = filesystem->ReadFile("@data/empty.flx");
-	music = 0; //new MusicFlex(dummyds);
+	_music = 0; //new MusicFlex(dummyds);
 	delete dummyds;
 #if 0
-	IDataSource *mf = filesystem->ReadFile("@game/sound/music.flx");
+	IDataSource *mf = filesystem->ReadFile("@game/sound/_music.flx");
 	if (!mf)
-		error("Unable to load sound/music.flx");
+		error("Unable to load sound/_music.flx");
 
-	music = new MusicFlex(mf);
+	_music = new MusicFlex(mf);
 #endif
 
 	dummyds = filesystem->ReadFile("@data/empty.flx");
-	soundflex = new SoundFlex(dummyds);
+	_soundFlex = new SoundFlex(dummyds);
 	delete dummyds;
 #if 0
 	IDataSource *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
 	if (!sndflx)
 		error("Unable to load sound/sound.flx");
 
-	soundflex = new SoundFlex(sndflx);
+	_soundFlex = new SoundFlex(sndflx);
 #endif
 
 	loadTranslation();

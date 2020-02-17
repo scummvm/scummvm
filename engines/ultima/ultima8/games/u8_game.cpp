@@ -53,7 +53,7 @@ U8Game::U8Game() : Game() {
 	settingman->setDefault("targetedjump", true);
 
 	GameInfo *info = Ultima8Engine::get_instance()->getGameInfo();
-	if (info->language == GameInfo::GAMELANG_JAPANESE) {
+	if (info->_language == GameInfo::GAMELANG_JAPANESE) {
 		settingman->setDefault("textdelay", 20);
 	} else {
 		settingman->setDefault("textdelay", 8);

@@ -35,7 +35,7 @@ class ODataSource;
 struct GameInfo {
 	GameInfo();
 
-	istring name;
+	istring _name;
 
 	enum GameType {
 		GAME_UNKNOWN = 0,
@@ -43,7 +43,7 @@ struct GameInfo {
 		GAME_REMORSE,
 		GAME_REGRET,
 		GAME_PENTAGRAM_MENU
-	} type;
+	} _type;
 
 	//! version number, encoded as 100*major + minor
 	//! so, 2.12 becomes 212
@@ -57,9 +57,9 @@ struct GameInfo {
 		GAMELANG_GERMAN,
 		GAMELANG_SPANISH,
 		GAMELANG_JAPANESE
-	} language;
+	} _language;
 
-	uint8 md5[16];
+	uint8 _md5[16];
 
 	char getLanguageFileLetter() const;
 	char getLanguageUsecodeLetter() const;

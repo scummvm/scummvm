@@ -1738,7 +1738,7 @@ bool Item::canMergeWith(Item *other) {
 	// dirt: frame 9
 	// ex.hood: frame 10-12
 	// blackmoor: frame 14-15
-	if (CoreApp::get_instance()->getGameInfo()->type == GameInfo::GAME_U8) {
+	if (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_U8) {
 		if (getShape() != 395) return false;
 
 		if (frame1 <= 5 && frame2 <= 5)
