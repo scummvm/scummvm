@@ -51,26 +51,26 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 	Std::list<PositionedText>::iterator iter;
 
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
-		int line_x = x + iter->dims.x;
-		int line_y = y + iter->dims.y;
+		int line_x = x + iter->_dims.x;
+		int line_y = y + iter->_dims.y;
 
-		size_t textsize = iter->text.size();
+		size_t textsize = iter->_text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
-			surface->Paint(font, static_cast<unsigned char>(iter->text[i]),
+			surface->Paint(font, static_cast<unsigned char>(iter->_text[i]),
 			               line_x, line_y);
 
-			if (i == iter->cursor) {
+			if (i == iter->_cursor) {
 				surface->Fill32(0xFF000000, line_x, line_y - font->getBaseline(),
-				                1, iter->dims.h);
+				                1, iter->_dims.h);
 			}
 
-			line_x += font->getWidth(iter->text[i]) - font->getHlead();
+			line_x += font->getWidth(iter->_text[i]) - font->getHlead();
 		}
 
-		if (iter->cursor == textsize) {
+		if (iter->_cursor == textsize) {
 			surface->Fill32(0xFF000000, line_x, line_y - font->getBaseline(),
-			                1, iter->dims.h);
+			                1, iter->_dims.h);
 		}
 	}
 }
@@ -82,16 +82,16 @@ void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 	Std::list<PositionedText>::iterator iter;
 
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
-		int line_x = x + iter->dims.x;
-		int line_y = y + iter->dims.y;
+		int line_x = x + iter->_dims.x;
+		int line_y = y + iter->_dims.y;
 
-		size_t textsize = iter->text.size();
+		size_t textsize = iter->_text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
 			surface->PaintHighlight(font,
-			                        static_cast<unsigned char>(iter->text[i]),
+			                        static_cast<unsigned char>(iter->_text[i]),
 			                        line_x, line_y, false, false, col);
-			line_x += font->getWidth(iter->text[i]) - font->getHlead();
+			line_x += font->getWidth(iter->_text[i]) - font->getHlead();
 		}
 
 	}

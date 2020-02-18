@@ -41,12 +41,12 @@ class TTFont;
 class FontManager {
 private:
 	struct TTFId {
-		Std::string filename;
-		int pointsize;
+		Std::string _filename;
+		int _pointSize;
 		bool operator<(const TTFId &other) const {
-			return (pointsize < other.pointsize ||
-			        (pointsize == other.pointsize &&
-			         filename < other.filename));
+			return (_pointSize < other._pointSize ||
+			        (_pointSize == other._pointSize &&
+			         _filename < other._filename));
 		}
 	};
 
@@ -59,13 +59,13 @@ private:
 	};
 	struct TTFEqual {
 		bool operator()(const TTFId &x, const TTFId &y) const {
-			return x.filename == y.filename && x.pointsize == y.pointsize;
+			return x._filename == y._filename && x._pointSize == y._pointSize;
 		}
 	};
 
 	typedef Std::map<TTFId, Graphics::Font *, TTFHash, TTFEqual> TTFFonts;
-	TTFFonts ttf_fonts;
-	bool ttf_antialiasing;
+	TTFFonts _ttfFonts;
+	bool _ttfAntialiasing;
 
 	//! Get a (possibly cached) TTF_Font structure for filename/pointsize,
 	//! loading it if necessary.
@@ -74,17 +74,17 @@ private:
 	//! Override fontnum with specified font
 	void setOverride(unsigned int fontnum, Font *newFont);
 
-	Std::vector<Font *> overrides;
+	Std::vector<Font *> _overrides;
 
-	Std::vector<Font *> ttfonts;
+	Std::vector<Font *> _ttFonts;
 
-	static FontManager *fontmanager;
+	static FontManager *_fontManager;
 public:
 	FontManager(bool ttf_antialiasing);
 	~FontManager();
 
 	static FontManager *get_instance() {
-		return fontmanager;
+		return _fontManager;
 	}
 
 	//! get a Font by fontnum (for game fonts)

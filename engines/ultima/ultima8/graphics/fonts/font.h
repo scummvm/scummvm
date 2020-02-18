@@ -34,9 +34,9 @@ namespace Ultima8 {
 class RenderedText;
 
 struct PositionedText {
-	Std::string text;
-	Rect dims;
-	Std::string::size_type cursor;
+	Std::string _text;
+	Rect _dims;
+	Std::string::size_type _cursor;
 };
 
 class Font {
@@ -96,15 +96,14 @@ public:
 		bool u8specials = false);
 
 	void setHighRes(bool hr) {
-		highRes = hr;
+		_highRes = hr;
 	}
 	bool isHighRes() const {
-		return highRes;
+		return _highRes;
 	}
 
 protected:
-	bool highRes;
-
+	bool _highRes;
 
 protected:
 

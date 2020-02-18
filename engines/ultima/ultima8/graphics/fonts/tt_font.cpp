@@ -180,9 +180,9 @@ RenderedText *TTFont::renderText(const Std::string &text,
 		// convert to unicode
 		Common::U32String unicodeText;
 		if (!SJIS)
-			unicodeText = toUnicode<Traits>(iter->text, bullet);
+			unicodeText = toUnicode<Traits>(iter->_text, bullet);
 		else
-			unicodeText = toUnicode<SJISTraits>(iter->text, bullet);
+			unicodeText = toUnicode<SJISTraits>(iter->_text, bullet);
 
 		// Create a surface and render the text
 		Graphics::ManagedSurface textSurf;
@@ -202,8 +202,8 @@ RenderedText *TTFont::renderText(const Std::string &text,
 		};
 
 #if 0
-		pout << iter->dims.w << "," << iter->dims.h << " vs. "
-			    << textSurf.w << "," << textSurf.h << ": " << iter->text
+		pout << iter->_dims.w << "," << iter->_dims.h << " vs. "
+			    << textSurf.w << "," << textSurf.h << ": " << iter->_text
 			    << Std::endl;
 #endif
 
@@ -212,21 +212,21 @@ RenderedText *TTFont::renderText(const Std::string &text,
 			byte *surfrow = (byte *)textSurf.getBasePtr(0, y);
 
 			// CHECKME: bordersize!
-			uint32 *bufrow = buf + (iter->dims.y + y + bordersize) * resultwidth;
+			uint32 *bufrow = buf + (iter->_dims.y + y + bordersize) * resultwidth;
 			for (int x = 0; x < textSurf.w; x++) {
 
 				if (!antiAliased && surfrow[x] == 1) {
-					bufrow[iter->dims.x + x + bordersize] = rgb | 0xFF000000;
+					bufrow[iter->_dims.x + x + bordersize] = rgb | 0xFF000000;
 					if (bordersize <= 0) continue;
 					if (bordersize == 1) {
 						// optimize common case
 						for (int dx = -1; dx <= 1; dx++) {
 							for (int dy = -1; dy <= 1; dy++) {
-								if (x + 1 + iter->dims.x + dx >= 0 &&
-									    x + 1 + iter->dims.x + dx < resultwidth &&
+								if (x + 1 + iter->_dims.x + dx >= 0 &&
+									    x + 1 + iter->_dims.x + dx < resultwidth &&
 									    y + 1 + dy >= 0 && y + 1 + dy < resultheight) {
-									if (buf[(y + iter->dims.y + dy + 1)*resultwidth + x + 1 + iter->dims.x + dx] == 0) {
-										buf[(y + iter->dims.y + dy + 1)*resultwidth + x + 1 + iter->dims.x + dx] = 0xFF000000;
+									if (buf[(y + iter->_dims.y + dy + 1)*resultwidth + x + 1 + iter->_dims.x + dx] == 0) {
+										buf[(y + iter->_dims.y + dy + 1)*resultwidth + x + 1 + iter->_dims.x + dx] = 0xFF000000;
 									}
 								}
 							}
@@ -235,11 +235,11 @@ RenderedText *TTFont::renderText(const Std::string &text,
 					}
 					for (int dx = -bordersize; dx <= bordersize; dx++) {
 						for (int dy = -bordersize; dy <= bordersize; dy++) {
-							if (x + bordersize + iter->dims.x + dx >= 0 &&
-								    x + bordersize + iter->dims.x + dx < resultwidth &&
+							if (x + bordersize + iter->_dims.x + dx >= 0 &&
+								    x + bordersize + iter->_dims.x + dx < resultwidth &&
 								    y + bordersize + dy >= 0 && y + bordersize + dy < resultheight) {
-								if (buf[(y + iter->dims.y + dy + bordersize)*resultwidth + x + bordersize + iter->dims.x + dx] == 0) {
-									buf[(y + iter->dims.y + dy + bordersize)*resultwidth + x + bordersize + iter->dims.x + dx] = 0xFF000000;
+								if (buf[(y + iter->_dims.y + dy + bordersize)*resultwidth + x + bordersize + iter->_dims.x + dx] == 0) {
+									buf[(y + iter->_dims.y + dy + bordersize)*resultwidth + x + bordersize + iter->_dims.x + dx] = 0xFF000000;
 								}
 							}
 						}
@@ -254,33 +254,33 @@ RenderedText *TTFont::renderText(const Std::string &text,
 					int idx = pixA;
 
 					if (bordersize <= 0) {
-						bufrow[iter->dims.x + x + bordersize] = TEX32_PACK_RGBA(pixR, pixG, pixB, pixA);
+						bufrow[iter->_dims.x + x + bordersize] = TEX32_PACK_RGBA(pixR, pixG, pixB, pixA);
 					} else {
-						bufrow[iter->dims.x + x + bordersize] = TEX32_PACK_RGBA(pixR, pixG, pixB, 0xFF);
+						bufrow[iter->_dims.x + x + bordersize] = TEX32_PACK_RGBA(pixR, pixG, pixB, 0xFF);
 
 						// optimize common case
 						if (bordersize == 1) for (int dx = -1; dx <= 1; dx++) {
 							for (int dy = -1; dy <= 1; dy++) {
-								if (x + 1 + iter->dims.x + dx >= 0 &&
-										x + 1 + iter->dims.x + dx < resultwidth &&
+								if (x + 1 + iter->_dims.x + dx >= 0 &&
+										x + 1 + iter->_dims.x + dx < resultwidth &&
 										y + 1 + dy >= 0 && y + 1 + dy < resultheight) {
-									uint32 alpha = TEX32_A(buf[(y + iter->dims.y + dy + 1) * resultwidth + x + 1 + iter->dims.x + dx]);
+									uint32 alpha = TEX32_A(buf[(y + iter->_dims.y + dy + 1) * resultwidth + x + 1 + iter->_dims.x + dx]);
 									if (alpha != 0xFF) {
 										alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-										buf[(y + iter->dims.y + dy + 1)*resultwidth + x + 1 + iter->dims.x + dx] = alpha << TEX32_A_SHIFT;
+										buf[(y + iter->_dims.y + dy + 1)*resultwidth + x + 1 + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
 									}
 								}
 							}
 						} else {
 							for (int dx = -bordersize; dx <= bordersize; dx++) {
 								for (int dy = -bordersize; dy <= bordersize; dy++) {
-									if (x + bordersize + iter->dims.x + dx >= 0 &&
-											x + bordersize + iter->dims.x + dx < resultwidth &&
+									if (x + bordersize + iter->_dims.x + dx >= 0 &&
+											x + bordersize + iter->_dims.x + dx < resultwidth &&
 											y + bordersize + dy >= 0 && y + bordersize + dy < resultheight) {
-										uint32 alpha = TEX32_A(buf[(y + iter->dims.y + dy + bordersize) * resultwidth + x + bordersize + iter->dims.x + dx]);
+										uint32 alpha = TEX32_A(buf[(y + iter->_dims.y + dy + bordersize) * resultwidth + x + bordersize + iter->_dims.x + dx]);
 										if (alpha != 0xFF) {
 											alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-											buf[(y + iter->dims.y + dy + bordersize)*resultwidth + x + bordersize + iter->dims.x + dx] = alpha << TEX32_A_SHIFT;
+											buf[(y + iter->_dims.y + dy + bordersize)*resultwidth + x + bordersize + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
 										}
 									}
 								}
@@ -291,17 +291,17 @@ RenderedText *TTFont::renderText(const Std::string &text,
 			}
 		}
 
-		if (iter->cursor != Std::string::npos) {
-			assert(iter->cursor <= iter->text.size());
-			unicodeText = Common::U32String(unicodeText.c_str(), iter->cursor);
+		if (iter->_cursor != Std::string::npos) {
+			assert(iter->_cursor <= iter->_text.size());
+			unicodeText = Common::U32String(unicodeText.c_str(), iter->_cursor);
 
 			int w = ttf_font->getStringWidth(unicodeText);
 
-			for (int y = 0; y < iter->dims.h; y++) {
-				uint32 *bufrow = buf + (iter->dims.y + y) * resultwidth;
-				bufrow[iter->dims.x + w + bordersize] = 0xFF000000;
+			for (int y = 0; y < iter->_dims.h; y++) {
+				uint32 *bufrow = buf + (iter->_dims.y + y) * resultwidth;
+				bufrow[iter->_dims.x + w + bordersize] = 0xFF000000;
 //				if (bordersize > 0)
-//					bufrow[iter->dims.x+w+bordersize-1] = 0xFF000000;
+//					bufrow[iter->_dims.x+w+bordersize-1] = 0xFF000000;
 			}
 		}
 	}

@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/fonts/fixed_width_font.h"
-
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
@@ -59,29 +58,29 @@ FixedWidthFont *FixedWidthFont::Create(Std::string iniroot) {
 
 	FixedWidthFont *fwf = new FixedWidthFont;
 
-	fwf->tex = fonttex;
+	fwf->_tex = fonttex;
 
-	if (!config->get(iniroot + "/font/width", fwf->width)) {
-		fwf->width = fwf->tex->_width / 16;
+	if (!config->get(iniroot + "/font/width", fwf->_width)) {
+		fwf->_width = fwf->_tex->_width / 16;
 	}
 
-	if (!config->get(iniroot + "/font/height", fwf->height)) {
-		fwf->height = fwf->tex->_height / 16;
+	if (!config->get(iniroot + "/font/height", fwf->_height)) {
+		fwf->_height = fwf->_tex->_height / 16;
 	}
 
-	if (!config->get(iniroot + "/font/align_x", fwf->align_x)) {
+	if (!config->get(iniroot + "/font/align_x", fwf->_alignX)) {
 		for (int i = 0; i < 32; i++) {
-			if (fwf->width <= (1 << i)) {
-				fwf->align_x = 1 << i;
+			if (fwf->_width <= (1 << i)) {
+				fwf->_alignX = 1 << i;
 				break;
 			}
 		}
 	}
 
-	if (!config->get(iniroot + "/font/align_y", fwf->align_y)) {
+	if (!config->get(iniroot + "/font/align_y", fwf->_alignY)) {
 		for (int i = 0; i < 32; i++) {
-			if (fwf->height <= (1 << i)) {
-				fwf->align_y = 1 << i;
+			if (fwf->_height <= (1 << i)) {
+				fwf->_alignY = 1 << i;
 				break;
 			}
 		}

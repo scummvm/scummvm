@@ -171,7 +171,7 @@ void Console::CheckResize(int scrwidth) {
 	if (!_conFont)
 		width = (scrwidth >> 3) - 2;
 	else
-		width = (scrwidth / _conFont->width) - 2;
+		width = (scrwidth / _conFont->_width) - 2;
 
 	if (width == _lineWidth)
 		return;
@@ -800,23 +800,23 @@ void Console::DrawConsole(RenderSurface *surf, int height) {
 
 	y = lines - 24;
 #else
-	rows = (lines / _conFont->height) - 2;   // rows of _text to draw
+	rows = (lines / _conFont->_height) - 2;   // rows of _text to draw
 
-	y = lines - (_conFont->height * 3);
+	y = lines - (_conFont->_height * 3);
 #endif
 
 // draw from the bottom up
 	if (_display != _current) {
 		// draw arrows to show the buffer is backscrolled
 		for (x = 0 ; x < _lineWidth ; x += 4)
-			surf->PrintCharFixed(_conFont, '^', (x + 1) * _conFont->width, y);
+			surf->PrintCharFixed(_conFont, '^', (x + 1) * _conFont->_width, y);
 
-		y -= _conFont->height;
+		y -= _conFont->_height;
 		rows--;
 	}
 
 	row = _display;
-	for (i = 0 ; i < rows ; i++, y -= _conFont->height, row--) {
+	for (i = 0 ; i < rows ; i++, y -= _conFont->_height, row--) {
 		if (row < 0)
 			break;
 		if (_current - row >= _totalLines)
@@ -825,7 +825,7 @@ void Console::DrawConsole(RenderSurface *surf, int height) {
 		char *txt = _text + (row % _totalLines) * _lineWidth;
 
 		for (x = 0 ; x < _lineWidth ; x++) {
-			surf->PrintCharFixed(_conFont, txt[x], (x + 1)*_conFont->width, y);
+			surf->PrintCharFixed(_conFont, txt[x], (x + 1)*_conFont->_width, y);
 			//  putchar (txt[x]);
 		}
 		//putchar ('\n');
@@ -845,20 +845,20 @@ void Console::DrawConsole(RenderSurface *surf, int height) {
 		cur_pos = _lineWidth - 2;
 	}
 
-	y = lines - (_conFont->height * 2);
+	y = lines - (_conFont->_height * 2);
 
-	surf->PrintCharFixed(_conFont, ']', _conFont->width, y);
+	surf->PrintCharFixed(_conFont, ']', _conFont->_width, y);
 
 	for (x = 0 ; x < (_lineWidth - 2) && com[x]; x++) {
-		surf->PrintCharFixed(_conFont, com[x], (x + 2)*_conFont->width, y);
+		surf->PrintCharFixed(_conFont, com[x], (x + 2)*_conFont->_width, y);
 		//  putchar (txt[x]);
 	}
 
 	// Now for cursor position
 	if (commandInsert)
-		surf->Fill32(0xFFFFFFFF, ((cur_pos + 2)*_conFont->width) + 1, y, 2, _conFont->height);
+		surf->Fill32(0xFFFFFFFF, ((cur_pos + 2)*_conFont->_width) + 1, y, 2, _conFont->_height);
 	else
-		surf->Fill32(0xFFFFFFFF, ((cur_pos + 2)*_conFont->width) + 1, y + _conFont->height - 2, _conFont->width, 2);
+		surf->Fill32(0xFFFFFFFF, ((cur_pos + 2)*_conFont->_width) + 1, y + _conFont->_height - 2, _conFont->_width, 2);
 }
 
 
@@ -881,9 +881,9 @@ void Console::DrawConsoleNotify(RenderSurface *surf) {
 		txt = _text + (i % _totalLines) * _lineWidth;
 
 		for (x = 0 ; x < con->_lineWidth ; x++)
-			surf->PrintCharFixed(_conFont, txt[x], (x + 1)*_conFont->width, v);
+			surf->PrintCharFixed(_conFont, txt[x], (x + 1)*_conFont->_width, v);
 
-		v += _conFont->height;
+		v += _conFont->_height;
 	}
 }
 

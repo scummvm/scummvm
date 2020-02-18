@@ -40,12 +40,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
-FontManager *FontManager::fontmanager = 0;
+FontManager *FontManager::_fontManager = 0;
 
-FontManager::FontManager(bool ttf_antialiasing_) : ttf_antialiasing(ttf_antialiasing_) {
+FontManager::FontManager(bool ttf_antialiasing_) : _ttfAntialiasing(ttf_antialiasing_) {
 	con->Print(MM_INFO, "Creating Font Manager...\n");
 
-	fontmanager = this;
+	_fontManager = this;
 
 	SettingManager *settingman = SettingManager::get_instance();
 	settingman->setDefault("ttf_highres", true);
@@ -56,50 +56,50 @@ FontManager::~FontManager() {
 
 	resetGameFonts();
 
-	for (unsigned int i = 0; i < ttfonts.size(); ++i)
-		delete ttfonts[i];
-	ttfonts.clear();
+	for (unsigned int i = 0; i < _ttFonts.size(); ++i)
+		delete _ttFonts[i];
+	_ttFonts.clear();
 
 	TTFFonts::iterator iter;
-	for (iter = ttf_fonts.begin(); iter != ttf_fonts.end(); ++iter)
+	for (iter = _ttfFonts.begin(); iter != _ttfFonts.end(); ++iter)
 		delete iter->_value;
-	ttf_fonts.clear();
+	_ttfFonts.clear();
 
-	assert(fontmanager == this);
-	fontmanager = 0;
+	assert(_fontManager == this);
+	_fontManager = 0;
 }
 
 // Reset the font manager
 void FontManager::resetGameFonts() {
-	for (unsigned int i = 0; i < overrides.size(); ++i)
-		delete overrides[i];
-	overrides.clear();
+	for (unsigned int i = 0; i < _overrides.size(); ++i)
+		delete _overrides[i];
+	_overrides.clear();
 }
 
 Font *FontManager::getGameFont(unsigned int fontnum,
         bool allowOverride) {
-	if (allowOverride && fontnum < overrides.size() && overrides[fontnum])
-		return overrides[fontnum];
+	if (allowOverride && fontnum < _overrides.size() && _overrides[fontnum])
+		return _overrides[fontnum];
 
 	return GameData::get_instance()->getFonts()->getFont(fontnum);
 }
 
 Font *FontManager::getTTFont(unsigned int fontnum) {
-	if (fontnum >= ttfonts.size())
+	if (fontnum >= _ttFonts.size())
 		return 0;
-	return ttfonts[fontnum];
+	return _ttFonts[fontnum];
 }
 
 
 Graphics::Font *FontManager::getTTF_Font(Std::string filename, int pointsize) {
 	TTFId id;
-	id.filename = filename;
-	id.pointsize = pointsize;
+	id._filename = filename;
+	id._pointSize = pointsize;
 
 	TTFFonts::iterator iter;
-	iter = ttf_fonts.find(id);
+	iter = _ttfFonts.find(id);
 
-	if (iter != ttf_fonts.end())
+	if (iter != _ttfFonts.end())
 		return iter->_value;
 
 	IDataSource *fontids;
@@ -119,7 +119,7 @@ Graphics::Font *FontManager::getTTF_Font(Std::string filename, int pointsize) {
 		return 0;
 	}
 
-	ttf_fonts[id] = font;
+	_ttfFonts[id] = font;
 
 #ifdef DEBUG
 	pout << "Opened TTF: @data/" << filename << "." << Std::endl;
@@ -129,13 +129,13 @@ Graphics::Font *FontManager::getTTF_Font(Std::string filename, int pointsize) {
 }
 
 void FontManager::setOverride(unsigned int fontnum, Font *newFont) {
-	if (fontnum >= overrides.size())
-		overrides.resize(fontnum + 1);
+	if (fontnum >= _overrides.size())
+		_overrides.resize(fontnum + 1);
 
-	if (overrides[fontnum])
-		delete overrides[fontnum];
+	if (_overrides[fontnum])
+		delete _overrides[fontnum];
 
-	overrides[fontnum] = newFont;
+	_overrides[fontnum] = newFont;
 }
 
 
@@ -146,7 +146,7 @@ bool FontManager::addTTFOverride(unsigned int fontnum, Std::string filename,
 	if (!f)
 		return false;
 
-	TTFont *font = new TTFont(f, rgb, bordersize, ttf_antialiasing, SJIS);
+	TTFont *font = new TTFont(f, rgb, bordersize, _ttfAntialiasing, SJIS);
 	SettingManager *settingman = SettingManager::get_instance();
 	bool highres;
 	settingman->get("ttf_highres", highres);
@@ -200,7 +200,7 @@ bool FontManager::loadTTFont(unsigned int fontnum, Std::string filename,
 	if (!f)
 		return false;
 
-	TTFont *font = new TTFont(f, rgb, bordersize, ttf_antialiasing, false);
+	TTFont *font = new TTFont(f, rgb, bordersize, _ttfAntialiasing, false);
 
 	// TODO: check if this is indeed what we want for non-gamefonts
 	SettingManager *settingman = SettingManager::get_instance();
@@ -208,13 +208,13 @@ bool FontManager::loadTTFont(unsigned int fontnum, Std::string filename,
 	settingman->get("ttf_highres", highres);
 	font->setHighRes(highres);
 
-	if (fontnum >= ttfonts.size())
-		ttfonts.resize(fontnum + 1);
+	if (fontnum >= _ttFonts.size())
+		_ttFonts.resize(fontnum + 1);
 
-	if (ttfonts[fontnum])
-		delete ttfonts[fontnum];
+	if (_ttFonts[fontnum])
+		delete _ttFonts[fontnum];
 
-	ttfonts[fontnum] = font;
+	_ttFonts[fontnum] = font;
 
 	return true;
 }

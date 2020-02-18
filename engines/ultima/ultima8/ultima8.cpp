@@ -855,7 +855,7 @@ void Ultima8Engine::paint() {
 		char buf[256] = { '\0' };
 		FixedWidthFont *confont = con->GetConFont();
 		int v_offset = 0;
-		int char_w = confont->width;
+		int char_w = confont->_width;
 
 		if (tdiff >= 250) {
 			diff = tdiff / t;
@@ -868,15 +868,15 @@ void Ultima8Engine::paint() {
 
 		snprintf(buf, 255, "Rendering time %li ms %li FPS ", diff, fps);
 		_screen->PrintTextFixed(confont, buf, dims.w - char_w * strlen(buf), v_offset);
-		v_offset += confont->height;
+		v_offset += confont->_height;
 
 		snprintf(buf, 255, "Paint Gumps %li ms ", paint);
 		_screen->PrintTextFixed(confont, buf, dims.w - char_w * strlen(buf), v_offset);
-		v_offset += confont->height;
+		v_offset += confont->_height;
 
 		snprintf(buf, 255, "t %02d:%02d gh %i ", I_getTimeInMinutes(0, 0), I_getTimeInSeconds(0, 0) % 60, I_getTimeInGameHours(0, 0));
 		_screen->PrintTextFixed(confont, buf, dims.w - char_w * strlen(buf), v_offset);
-		v_offset += confont->height;
+		v_offset += confont->_height;
 	}
 
 	// End _painting

@@ -60,31 +60,31 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 	Std::list<PositionedText>::iterator iter;
 
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
-		int line_x = x + iter->dims.x;
-		int line_y = y + iter->dims.y;
+		int line_x = x + iter->_dims.x;
+		int line_y = y + iter->_dims.y;
 
-		size_t textsize = iter->text.size();
+		size_t textsize = iter->_text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
-			uint16 sjis = iter->text[i] & 0xFF;
+			uint16 sjis = iter->_text[i] & 0xFF;
 			if (sjis >= 0x80) {
-				uint16 t = iter->text[++i] & 0xFF;
+				uint16 t = iter->_text[++i] & 0xFF;
 				sjis += (t << 8);
 			}
 			uint16 u8char = shiftjis_to_ultima8(sjis);
 			surface->Paint(font, u8char, line_x, line_y);
 
-			if (i == iter->cursor) {
+			if (i == iter->_cursor) {
 				surface->Fill32(0xFF000000, line_x, line_y - font->getBaseline(),
-				                1, iter->dims.h);
+				                1, iter->_dims.h);
 			}
 
 			line_x += (font->getFrame(u8char))->_width - font->getHlead();
 		}
 
-		if (iter->cursor == textsize) {
+		if (iter->_cursor == textsize) {
 			surface->Fill32(0xFF000000, line_x, line_y - font->getBaseline(),
-			                1, iter->dims.h);
+			                1, iter->_dims.h);
 		}
 	}
 
@@ -105,15 +105,15 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 	Std::list<PositionedText>::iterator iter;
 
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
-		int line_x = x + iter->dims.x;
-		int line_y = y + iter->dims.y;
+		int line_x = x + iter->_dims.x;
+		int line_y = y + iter->_dims.y;
 
-		size_t textsize = iter->text.size();
+		size_t textsize = iter->_text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
-			uint16 sjis = iter->text[i] & 0xFF;
+			uint16 sjis = iter->_text[i] & 0xFF;
 			if (sjis >= 0x80) {
-				uint16 t = iter->text[++i] & 0xFF;
+				uint16 t = iter->_text[++i] & 0xFF;
 				sjis += (t << 8);
 			}
 			uint16 u8char = shiftjis_to_ultima8(sjis);
