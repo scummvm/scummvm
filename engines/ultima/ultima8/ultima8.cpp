@@ -851,7 +851,7 @@ void Ultima8Engine::paint() {
 	if (_drawRenderStats) {
 		static long diff = 0;
 		static long fps = 0;
-		static long paint = 0;
+		static long paintGumps = 0;
 		char buf[256] = { '\0' };
 		FixedWidthFont *confont = con->GetConFont();
 		int v_offset = 0;
@@ -859,7 +859,7 @@ void Ultima8Engine::paint() {
 
 		if (tdiff >= 250) {
 			diff = tdiff / t;
-			paint = tpaint / t;
+			paintGumps = tpaint / t;
 			fps = 1000 * t / tdiff;
 			t = 0;
 			tdiff = 0;
@@ -870,7 +870,7 @@ void Ultima8Engine::paint() {
 		_screen->PrintTextFixed(confont, buf, dims.w - char_w * strlen(buf), v_offset);
 		v_offset += confont->_height;
 
-		snprintf(buf, 255, "Paint Gumps %li ms ", paint);
+		snprintf(buf, 255, "Paint Gumps %li ms ", paintGumps);
 		_screen->PrintTextFixed(confont, buf, dims.w - char_w * strlen(buf), v_offset);
 		v_offset += confont->_height;
 

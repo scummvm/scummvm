@@ -36,16 +36,16 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ScalerGump, DesktopGump)
 
 ScalerGump::ScalerGump(int32 x, int32 y, int32 width, int32 height) :
 	DesktopGump(x, y, width, height),
-	swidth1(width), sheight1(height), scaler1(0), buffer1(0),
-	swidth2(width), sheight2(height), scaler2(0), buffer2(0),
-	width(width), height(height) {
+	_swidth1(width), _sheight1(height), _scaler1(0), _buffer1(0),
+	_swidth2(width), _sheight2(height), _scaler2(0), _buffer2(0),
+	_width(width), _height(height) {
 
 	setupScaling();
 }
 
 ScalerGump::~ScalerGump() {
-	FORGET_OBJECT(buffer1);
-	FORGET_OBJECT(buffer2);
+	FORGET_OBJECT(_buffer1);
+	FORGET_OBJECT(_buffer2);
 }
 
 void ScalerGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -58,28 +58,28 @@ void ScalerGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	if (IsHidden()) return;
 
 	// No scaling or filtering
-	if (!buffer1) {
+	if (!_buffer1) {
 		PaintChildren(surf, lerp_factor, scaled);
 		return;
 	}
 
 	// Render to texture
-	buffer1->BeginPainting();
-	PaintChildren(buffer1, lerp_factor, true);
-	buffer1->EndPainting();
+	_buffer1->BeginPainting();
+	PaintChildren(_buffer1, lerp_factor, true);
+	_buffer1->EndPainting();
 
-	if (!buffer2) {
-		DoScalerBlit(buffer1->GetSurfaceAsTexture(), swidth1, sheight1, surf, width, height, scaler1);
+	if (!_buffer2) {
+		DoScalerBlit(_buffer1->GetSurfaceAsTexture(), _swidth1, _sheight1, surf, _width, _height, _scaler1);
 	} else {
-		buffer2->BeginPainting();
-		DoScalerBlit(buffer1->GetSurfaceAsTexture(), swidth1, sheight1, buffer2, swidth2, sheight2, scaler1);
-		buffer2->EndPainting();
+		_buffer2->BeginPainting();
+		DoScalerBlit(_buffer1->GetSurfaceAsTexture(), _swidth1, _sheight1, _buffer2, _swidth2, _sheight2, _scaler1);
+		_buffer2->EndPainting();
 
-		DoScalerBlit(buffer2->GetSurfaceAsTexture(), swidth2, sheight2, surf, width, height, scaler2);
+		DoScalerBlit(_buffer2->GetSurfaceAsTexture(), _swidth2, _sheight2, surf, _width, _height, _scaler2);
 	}
 
-	int32 scalex = (width << 16) / swidth1;
-	int32 scaley = (height << 16) / sheight1;
+	int32 scalex = (_width << 16) / _swidth1;
+	int32 scaley = (_height << 16) / _sheight1;
 
 	// Iterate all children
 	Std::list<Gump *>::reverse_iterator it = _children.rbegin();
@@ -133,26 +133,26 @@ void ScalerGump::DoScalerBlit(Texture *src, int swidth, int sheight, RenderSurfa
 void ScalerGump::ParentToGump(int32 &px, int32 &py, PointRoundDir r) {
 	px -= _x;
 	px *= _dims.w;
-	if (px < 0 && r == ROUND_TOPLEFT) px -= (width - 1);
-	if (px > 0 && r == ROUND_BOTTOMRIGHT) px += (width - 1);
-	px /= width;
+	if (px < 0 && r == ROUND_TOPLEFT) px -= (_width - 1);
+	if (px > 0 && r == ROUND_BOTTOMRIGHT) px += (_width - 1);
+	px /= _width;
 
 	py -= _y;
 	py *= _dims.h;
-	if (py < 0 && r == ROUND_TOPLEFT) py -= (height - 1);
-	if (py > 0 && r == ROUND_BOTTOMRIGHT) py += (height - 1);
-	py /= height;
+	if (py < 0 && r == ROUND_TOPLEFT) py -= (_height - 1);
+	if (py > 0 && r == ROUND_BOTTOMRIGHT) py += (_height - 1);
+	py /= _height;
 }
 
 // Convert a gump point to parent relative point
 void ScalerGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir r) {
-	gx *= width;
+	gx *= _width;
 	if (gx < 0 && r == ROUND_TOPLEFT) gx -= (_dims.w - 1);
 	if (gx > 0 && r == ROUND_BOTTOMRIGHT) gx += (_dims.w - 1);
 	gx /= _dims.w;
 	gx += _x;
 
-	gy *= height;
+	gy *= _height;
 	if (gy < 0 && r == ROUND_TOPLEFT) gy -= (_dims.h - 1);
 	if (gy > 0 && r == ROUND_BOTTOMRIGHT) gy += (_dims.h - 1);
 	gy /= _dims.h;
@@ -164,8 +164,8 @@ void ScalerGump::RenderSurfaceChanged() {
 	Rect new_dims;
 	_parent->GetDims(new_dims);
 
-	width = new_dims.w;
-	height = new_dims.h;
+	_width = new_dims.w;
+	_height = new_dims.h;
 
 	setupScaling();
 
@@ -173,66 +173,66 @@ void ScalerGump::RenderSurfaceChanged() {
 }
 
 void ScalerGump::setupScaling() {
-	FORGET_OBJECT(buffer1);
-	FORGET_OBJECT(buffer2);
+	FORGET_OBJECT(_buffer1);
+	FORGET_OBJECT(_buffer2);
 
-	swidth1 = 320;
-	sheight1 = 200;
-	swidth2 = 0;
-	sheight2 = 0;
+	_swidth1 = 320;
+	_sheight1 = 200;
+	_swidth2 = 0;
+	_sheight2 = 0;
 	const Scaler *point = &Ultima8Engine::get_instance()->point_scaler;
-	scaler1 = scaler2 = point;
+	_scaler1 = _scaler2 = point;
 
-	if (swidth1 < 0) swidth1 = -swidth1;
-	else if (swidth1 == 0) swidth1 = width;
-	else if (swidth1 < 100) swidth1 = width / swidth1;
+	if (_swidth1 < 0) _swidth1 = -_swidth1;
+	else if (_swidth1 == 0) _swidth1 = _width;
+	else if (_swidth1 < 100) _swidth1 = _width / _swidth1;
 
-	if (sheight1 < 0) sheight1 = -sheight1;
-	else if (sheight1 == 0) sheight1 = height;
-	else if (sheight1 < 100) sheight1 = height / sheight1;
+	if (_sheight1 < 0) _sheight1 = -_sheight1;
+	else if (_sheight1 == 0) _sheight1 = _height;
+	else if (_sheight1 < 100) _sheight1 = _height / _sheight1;
 
-	if (swidth2 < 0) swidth2 = -swidth2;
-	else if (swidth2 != 0 && swidth2 < 100) swidth2 = width / swidth2;
+	if (_swidth2 < 0) _swidth2 = -_swidth2;
+	else if (_swidth2 != 0 && _swidth2 < 100) _swidth2 = _width / _swidth2;
 
-	if (sheight2 < 0) sheight2 = -sheight2;
-	else if (sheight2 != 0 && sheight2 < 100) sheight2 = height / sheight2;
+	if (_sheight2 < 0) _sheight2 = -_sheight2;
+	else if (_sheight2 != 0 && _sheight2 < 100) _sheight2 = _height / _sheight2;
 
-	_dims.w = swidth1;
-	_dims.h = sheight1;
+	_dims.w = _swidth1;
+	_dims.h = _sheight1;
 
 	// We don't care, we are not going to support filters, at least not at the moment
-	if (swidth1 == width && sheight1 == height) return;
+	if (_swidth1 == _width && _sheight1 == _height) return;
 
-	buffer1 = RenderSurface::CreateSecondaryRenderSurface(swidth1, sheight1);
+	_buffer1 = RenderSurface::CreateSecondaryRenderSurface(_swidth1, _sheight1);
 
-	// scaler2's factor isn't set so auto detect
-	if (swidth2 == 0 || sheight2 == 0) {
-		// scaler 1 is arbitrary so scaler2 not required
-		if (scaler1->ScaleArbitrary()) return;
+	// _scaler2's factor isn't set so auto detect
+	if (_swidth2 == 0 || _sheight2 == 0) {
+		// scaler 1 is arbitrary so _scaler2 not required
+		if (_scaler1->ScaleArbitrary()) return;
 
-		swidth2 = swidth1 * 32;
-		sheight2 = sheight1 * 32;
+		_swidth2 = _swidth1 * 32;
+		_sheight2 = _sheight1 * 32;
 		for (int i = 31; i >= 0; i--) {
-			if (scaler1->ScaleBits() & (1 << i)) {
-				if (swidth2 > width || sheight2 > height) {
-					swidth2 = swidth1 * i;
-					sheight2 = sheight1 * i;
+			if (_scaler1->ScaleBits() & (1 << i)) {
+				if (_swidth2 > _width || _sheight2 > _height) {
+					_swidth2 = _swidth1 * i;
+					_sheight2 = _sheight1 * i;
 				}
 			}
 		}
 	}
 
-	// scaler2 is required
-	if (swidth2 != width || sheight2 != height) {
+	// _scaler2 is required
+	if (_swidth2 != _width || _sheight2 != _height) {
 		// Well almost, in this situation we code in DoScalerBlit to do this for us
-		// scaler2 not required
-		if (width == 640 && height == 480 &&
-		        swidth2 == 640 && sheight2 == 400 &&
-		        swidth1 == 320 && sheight2 == 200) {
+		// _scaler2 not required
+		if (_width == 640 && _height == 480 &&
+		        _swidth2 == 640 && _sheight2 == 400 &&
+		        _swidth1 == 320 && _sheight2 == 200) {
 			return;
 		}
 
-		buffer2 = RenderSurface::CreateSecondaryRenderSurface(swidth2, sheight2);
+		_buffer2 = RenderSurface::CreateSecondaryRenderSurface(_swidth2, _sheight2);
 	}
 }
 

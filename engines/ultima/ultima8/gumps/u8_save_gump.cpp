@@ -47,8 +47,8 @@ static const int entryfont = 4;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveGump, Gump)
 
-U8SaveGump::U8SaveGump(bool save, int page)
-	: Gump(0, 0, 5, 5), _save(save), _page(page) {
+U8SaveGump::U8SaveGump(bool saveMode, int page)
+	: Gump(0, 0, 5, 5), _save(saveMode), _page(page) {
 }
 
 U8SaveGump::~U8SaveGump() {

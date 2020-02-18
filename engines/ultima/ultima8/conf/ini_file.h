@@ -59,10 +59,10 @@ public:
 	bool value(istring key, bool &ret);
 
 	// set value
-	void set(istring key, Std::string value);
-	void set(istring key, const char *value);
-	void set(istring key, int value);
-	void set(istring key, bool value);
+	void set(istring key, Std::string strValue);
+	void set(istring key, const char *strValue);
+	void set(istring key, int intValue);
+	void set(istring key, bool boolValue);
 
 	// remove key
 	void unset(istring key);

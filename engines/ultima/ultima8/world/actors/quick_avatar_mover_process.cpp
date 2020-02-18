@@ -46,8 +46,9 @@ bool QuickAvatarMoverProcess::_quarter = false;
 QuickAvatarMoverProcess::QuickAvatarMoverProcess() : Process(1), _dx(0), _dy(0), _dz(0), _dir(0) {
 }
 
-QuickAvatarMoverProcess::QuickAvatarMoverProcess(int x, int y, int z, int _dir) : Process(1), _dx(x), _dy(y), _dz(z), _dir(_dir) {
-	QuickAvatarMoverProcess::terminateMover(_dir);
+QuickAvatarMoverProcess::QuickAvatarMoverProcess(int x, int y, int z, int dir) : Process(1),
+		_dx(x), _dy(y), _dz(z), _dir(dir) {
+	QuickAvatarMoverProcess::terminateMover(dir);
 	assert(_dir < 6);
 	amp[_dir] = getPid();
 }

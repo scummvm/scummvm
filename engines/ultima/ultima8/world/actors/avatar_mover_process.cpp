@@ -697,16 +697,16 @@ void AvatarMoverProcess::turnToDirection(int direction) {
 	MainActor *avatar = getMainActor();
 	bool combatRun = (avatar->getActorFlags() & Actor::ACT_COMBATRUN) != 0;
 	int curdir = avatar->getDir();
-	int step;
+	int stepDelta;
 	bool combat = avatar->isInCombat() && !combatRun;
 	Animation::Sequence turnanim;
 	Animation::Sequence standanim = Animation::stand;
 
 	if ((curdir - direction + 8) % 8 < 4) {
-		step = -1;
+		stepDelta = -1;
 		turnanim = Animation::lookLeft;
 	} else {
-		step = 1;
+		stepDelta = 1;
 		turnanim = Animation::lookRight;
 	}
 
@@ -728,7 +728,7 @@ void AvatarMoverProcess::turnToDirection(int direction) {
 
 		prevpid = animpid;
 
-		dir = (dir + step + 8) % 8;
+		dir = (dir + stepDelta + 8) % 8;
 	}
 
 	ProcId animpid = avatar->doAnim(standanim, direction);

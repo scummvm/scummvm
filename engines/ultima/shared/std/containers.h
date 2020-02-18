@@ -63,8 +63,8 @@ public:
 	typedef const T const_reference;
 
 	vector() : Common::Array<T>() {}
-	vector(size_t size) : Common::Array<T>() {
-		Common::Array<T>::reserve(size);
+	vector(size_t newSize) : Common::Array<T>() {
+		Common::Array<T>::reserve(newSize);
 	}
 
 	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator pos) {

@@ -21,16 +21,13 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/world/gravity_process.h"
-
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -170,7 +167,7 @@ void GravityProcess::run() {
 		// If it landed on top of hititem and hititem is not land, the item
 		// should always bounce.
 
-		bool terminate = true;
+		bool termFlag = true;
 		Item *hititem = getItem(hititemid);
 		if (_zSpeed < -2 && !p_dynamic_cast<Actor *>(item)) {
 #ifdef BOUNCE_DIAG
@@ -181,7 +178,7 @@ void GravityProcess::run() {
 
 			if (!hititem->getShapeInfo()->is_land() || _zSpeed < -2 * _gravity) {
 				// Bounce!
-				terminate = false;
+				termFlag = false;
 #ifdef BOUNCE_DIAG
 				int xspeedold = _xSpeed;
 				int yspeedold = _ySpeed;
@@ -213,7 +210,7 @@ void GravityProcess::run() {
 					_xSpeed /= 4;
 					_ySpeed /= 4;
 					_zSpeed /= 2;
-					if (_zSpeed == 0) terminate = true;
+					if (_zSpeed == 0) termFlag = true;
 				} else {
 					// Not on land; this bounce approximates what's seen
 					// in the original U8 when Kilandra's daughters ghost
@@ -229,7 +226,7 @@ void GravityProcess::run() {
 				     << _zSpeed << " heading " << headingold_r
 				     << " impulse " << heading_r << " ("
 				     << (_xSpeed - xspeedold) << "," << (_ySpeed - yspeedold)
-				     << "), terminate: " << terminate << Std::endl;
+				     << "), termFlag: " << termFlag << Std::endl;
 #endif
 			} else {
 #ifdef BOUNCE_DIAG
@@ -245,7 +242,7 @@ void GravityProcess::run() {
 			     << "]: slow hit" << Std::endl;
 #endif
 		}
-		if (terminate) {
+		if (termFlag) {
 			item->clearFlag(Item::FLG_BOUNCING);
 			terminateDeferred();
 		} else {

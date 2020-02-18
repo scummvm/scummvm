@@ -65,11 +65,11 @@ struct SKFEvent {
 static const int FADESTEPS = 16; // HACK: half speed
 
 
-SKFPlayer::SKFPlayer(RawArchive *movie, int width, int height, bool _introMusicHack)
+SKFPlayer::SKFPlayer(RawArchive *movie, int width, int height, bool introMusicHack)
 	: _width(width), _height(height), _skf(movie),
 	  _curFrame(0), _curObject(0), _curAction(0), _curEvent(0), _playing(false),
 	  _timer(0), _frameRate(15), _fadeColour(0), _fadeLevel(0), _buffer(0), _subs(0),
-	  _introMusicHack(_introMusicHack), _lastUpdate(0), _subtitleY(0) {
+	  _introMusicHack(introMusicHack), _lastUpdate(0), _subtitleY(0) {
 	IDataSource *eventlist = _skf->get_datasource(0);
 	if (!eventlist) {
 		perr << "No eventlist found in SKF" << Std::endl;

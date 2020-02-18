@@ -389,7 +389,7 @@ bool INIFile::value(istring key, bool &ret) {
 	return true;
 }
 
-void INIFile::set(istring key, string value) {
+void INIFile::set(istring key, string strValue) {
 	if (!stripRoot(key)) return;
 	istring s, k;
 	splitKey(key, s, k);
@@ -404,22 +404,22 @@ void INIFile::set(istring key, string value) {
 		assert(section);
 	}
 
-	section->setKey(k, value);
+	section->setKey(k, strValue);
 }
 
-void INIFile::set(istring key, const char *value) {
-	string v = value;
+void INIFile::set(istring key, const char *strValue) {
+	string v = strValue;
 	set(key, v);
 }
 
-void INIFile::set(istring key, int value) {
+void INIFile::set(istring key, int intValue) {
 	char buf[32];
-	snprintf(buf, 32, "%d", value);
+	snprintf(buf, 32, "%d", intValue);
 	set(key, buf);
 }
 
-void INIFile::set(istring key, bool value) {
-	if (value)
+void INIFile::set(istring key, bool boolValue) {
+	if (boolValue)
 		set(key, "true");
 	else
 		set(key, "false");

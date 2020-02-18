@@ -57,23 +57,23 @@ public:
 	                          PointRoundDir r = ROUND_TOPLEFT) override;
 
 	void GetScaledSize(int32 &sw, int32 &sh) const {
-		sw = swidth1;
-		sh = sheight1;
+		sw = _swidth1;
+		sh = _sheight1;
 	}
 
 protected:
-	int                     swidth1;
-	int                     sheight1;
-	const Scaler *scaler1;
-	RenderSurface           *buffer1;
+	int _swidth1;
+	int _sheight1;
+	const Scaler *_scaler1;
+	RenderSurface *_buffer1;
 
-	int                     swidth2;
-	int                     sheight2;
-	const Scaler *scaler2;
-	RenderSurface           *buffer2;
+	int _swidth2;
+	int _sheight2;
+	const Scaler *_scaler2;
+	RenderSurface *_buffer2;
 
-	int32                   width;
-	int32                   height;
+	int32 _width;
+	int32 _height;
 
 private:
 	void setupScaling();
