@@ -41,11 +41,10 @@ public:
 protected:
 
 	struct RawDecompData {
-		uint32 pos;
+		uint32 _pos;
 	};
 
-	bool signeddata;
-
+	bool _signedData;
 };
 
 } // End of namespace Ultima8

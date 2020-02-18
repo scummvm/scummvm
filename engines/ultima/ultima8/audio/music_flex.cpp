@@ -32,31 +32,31 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Archive)
 
 
 MusicFlex::MusicFlex(IDataSource *ds) : Archive(ds) {
-	songs = 0;
-	Std::memset(info, 0, sizeof(SongInfo *) * 128);
+	_songs = 0;
+	Std::memset(_info, 0, sizeof(SongInfo *) * 128);
 	loadSongInfo();
 }
 
 MusicFlex::~MusicFlex() {
 	uint32 i;
 	for (i = 0; i < 128; i++) {
-		delete info[i];
-		info[i] = 0;
+		delete _info[i];
+		_info[i] = 0;
 	}
 
 	Archive::uncache();
-	delete [] songs;
+	delete [] _songs;
 }
 
-MusicFlex::SongInfo::SongInfo() : num_measures(0), loop_jump(0) {
-	Std::memset(filename, 0, 16);
-	Std::memset(transitions, 0, 128 * sizeof(int *));
+MusicFlex::SongInfo::SongInfo() : _numMeasures(0), _loopJump(0) {
+	Std::memset(_filename, 0, 16);
+	Std::memset(_transitions, 0, 128 * sizeof(int *));
 }
 
 MusicFlex::SongInfo::~SongInfo() {
 	for (int i = 0; i < 128; i++) {
-		delete [] transitions[i];
-		transitions[i] = 0;
+		delete [] _transitions[i];
+		_transitions[i] = 0;
 	}
 }
 
@@ -70,9 +70,9 @@ void MusicFlex::uncache(uint32 index) {
 
 bool MusicFlex::isCached(uint32 index) {
 	if (index >= _count) return false;
-	if (!songs) return false;
+	if (!_songs) return false;
 
-	return (songs[index] != 0);
+	return (_songs[index] != 0);
 }
 
 IDataSource *MusicFlex::getAdlibTimbres() {
@@ -86,7 +86,7 @@ void MusicFlex::loadSongInfo() {
 	uint8 *buf = getRawObject(0, &size);
 
 	if (!buf || !size) {
-		error("Unable to load song info from sound/music.flx");
+		error("Unable to load song _info from sound/music.flx");
 	}
 	IBufferDataSource ds(buf, size);
 	Std::string line;
@@ -115,23 +115,23 @@ void MusicFlex::loadSongInfo() {
 		endIdx = line.findFirstOf(' ', begIdx);
 		int measures = Std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
 
-		// Now finally loop_jump
+		// Now finally _loopJump
 		begIdx = line.findFirstNotOf(' ', endIdx);
 		endIdx = line.findFirstOf(' ', begIdx);
-		int loop_jump = Std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
+		int _loopJump = Std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
 
 		// Uh oh
 		if (num < 0 || num > 127)
-			error("Invalid Section 1 song info data. num out of range");
+			error("Invalid Section 1 song _info data. num out of range");
 
-		if (info[num])
-			error("Invalid Section 1 song info data. num already defined");
+		if (_info[num])
+			error("Invalid Section 1 song _info data. num already defined");
 
-		info[num] = new SongInfo();
+		_info[num] = new SongInfo();
 
-		Std::strncpy(info[num]->filename, name.c_str(), 16);
-		info[num]->num_measures = measures;
-		info[num]->loop_jump = loop_jump;
+		Std::strncpy(_info[num]->_filename, name.c_str(), 16);
+		_info[num]->_numMeasures = measures;
+		_info[num]->_loopJump = _loopJump;
 	};
 
 	// Read 'Section2', or more like skip it, since it's only trans.xmi
@@ -151,7 +151,7 @@ void MusicFlex::loadSongInfo() {
 		if (line.at(0) == '#') break;
 	}
 
-	// Read 'Section4' (trans info)
+	// Read 'Section4' (trans _info)
 	for (;;) {
 		ds.readline(line);
 
@@ -173,32 +173,32 @@ void MusicFlex::loadSongInfo() {
 		// Find index of from name
 		int fi;
 		for (fi = 0; fi < 128; fi++) {
-			if (info[fi] && from == info[fi]->filename) break;
+			if (_info[fi] && from == _info[fi]->_filename) break;
 		}
 
 		if (fi == 128)
-			error("Invalid Section 4 song info data. Unable to find 'from' index (%s)", from.c_str());
+			error("Invalid Section 4 song _info data. Unable to find 'from' index (%s)", from.c_str());
 
 		// Find index of to name
 		int ti;
 		for (ti = 0; ti < 128; ti++) {
-			if (info[ti] && to == info[ti]->filename) break;
+			if (_info[ti] && to == _info[ti]->_filename) break;
 		}
 
 		if (ti == 128)
-			error("Invalid Section 4 song info data. Unable to find 'to' index (%s)", to.c_str());
+			error("Invalid Section 4 song _info data. Unable to find 'to' index (%s)", to.c_str());
 
-		// Allocate Transition info
-		info[fi]->transitions[ti] = new int[info[fi]->num_measures];
+		// Allocate Transition _info
+		_info[fi]->_transitions[ti] = new int[_info[fi]->_numMeasures];
 
-		// Now attempt to read the trans info for the
-		for (int m = 0; m < info[fi]->num_measures; m++) {
-			// Get trans info name
+		// Now attempt to read the trans _info for the
+		for (int m = 0; m < _info[fi]->_numMeasures; m++) {
+			// Get trans _info name
 			begIdx = line.findFirstNotOf(' ', endIdx);
 			endIdx = line.findFirstOf(' ', begIdx);
 
 			if (begIdx == Std::string::npos)
-				error("Invalid Section 4 song info data. Unable to read transitions for all measures");
+				error("Invalid Section 4 song _info data. Unable to read _transitions for all measures");
 
 			Std::string trans = line.substr(begIdx, endIdx - begIdx);
 			const char *str = trans.c_str();
@@ -211,7 +211,7 @@ void MusicFlex::loadSongInfo() {
 			else
 				num = atoi(str + 1);
 
-			info[fi]->transitions[ti][m] = num;
+			_info[fi]->_transitions[ti][m] = num;
 		}
 	}
 

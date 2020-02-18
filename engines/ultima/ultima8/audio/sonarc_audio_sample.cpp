@@ -27,40 +27,37 @@
 namespace Ultima {
 namespace Ultima8 {
 
-bool SonarcAudioSample::GeneratedOneTable = false;
-int SonarcAudioSample::OneTable[256];
+bool SonarcAudioSample::_generatedOneTable = false;
+int SonarcAudioSample::_oneTable[256];
 
-SonarcAudioSample::SonarcAudioSample(uint8 *buffer_, uint32 size_) :
-	AudioSample(buffer_, size_),
-	src_offset(0x20)
+SonarcAudioSample::SonarcAudioSample(uint8 *buffer, uint32 size) :
+	AudioSample(buffer, size), _srcOffset(0x20) {
+	if (!_generatedOneTable) GenerateOneTable();
 
-{
-	if (!GeneratedOneTable) GenerateOneTable();
+	_length = *_buffer;
+	_length |= *(_buffer + 1) << 8;
+	_length |= *(_buffer + 2) << 16;
+	_length |= *(_buffer + 3) << 24;
 
-	length = *buffer;
-	length |= *(buffer + 1) << 8;
-	length |= *(buffer + 2) << 16;
-	length |= *(buffer + 3) << 24;
-
-	sample_rate  = *(buffer + 4);
-	sample_rate |= *(buffer + 5) << 8;
-	bits = 8;
-	stereo = false;
+	_sampleRate  = *(_buffer + 4);
+	_sampleRate |= *(_buffer + 5) << 8;
+	_bits = 8;
+	_stereo = false;
 
 	// Get frame bytes... we need to compensate for 'large' files
-	uint32 frame_bytes = *(buffer + src_offset);
-	frame_bytes |= (*(buffer + src_offset + 1)) << 8;
+	uint32 frame_bytes = *(_buffer + _srcOffset);
+	frame_bytes |= (*(_buffer + _srcOffset + 1)) << 8;
 
-	if (frame_bytes == 0x20 && length > 32767) {
-		src_offset += 0x100;
+	if (frame_bytes == 0x20 && _length > 32767) {
+		_srcOffset += 0x100;
 	}
 
 	// Get Num Frame Samples
-	frame_size = *(buffer + src_offset + 2);
-	frame_size |= (*(buffer + src_offset + 3)) << 8;
+	_frameSize = *(_buffer + _srcOffset + 2);
+	_frameSize |= (*(_buffer + _srcOffset + 3)) << 8;
 
 
-	decompressor_size = sizeof(SonarcDecompData);
+	_decompressorSize = sizeof(SonarcDecompData);
 }
 
 SonarcAudioSample::~SonarcAudioSample(void) {
@@ -71,17 +68,17 @@ SonarcAudioSample::~SonarcAudioSample(void) {
 //
 
 void SonarcAudioSample::GenerateOneTable() {
-	// OneTable[x] gives the number of consecutive 1's on the low side of x
+	// _oneTable[x] gives the number of consecutive 1's on the low side of x
 	for (int i = 0; i < 256; ++i)
-		OneTable[i] = 0;
+		_oneTable[i] = 0;
 
 	for (int power = 2; power < 32; power *= 2)
 		for (int col = power - 1; col < 16; col += power)
 			for (int row = 0; row < 16; ++row)
-				OneTable[row * 16 + col]++;
+				_oneTable[row * 16 + col]++;
 
 	for (int i = 0; i < 16; ++i)
-		OneTable[i * 16 + 15] += OneTable[i];
+		_oneTable[i * 16 + 15] += _oneTable[i];
 }
 
 void SonarcAudioSample::decode_EC(int mode, int samplecount,
@@ -115,11 +112,11 @@ void SonarcAudioSample::decode_EC(int mode, int samplecount,
 			}
 
 			uint8 lowByte = data & 0xFF;
-			int ones = OneTable[lowByte];
+			int ones = _oneTable[lowByte];
 
 			if (ones == 0) {
 				data >>= 1; // strip zero
-				// low byte contains (mode+1) bits of the sample
+				// low byte contains (mode+1) _bits of the sample
 				int8 sample = data & 0xFF;
 				sample <<= (7 - mode);
 				sample >>= (7 - mode); // sign extend
@@ -128,7 +125,7 @@ void SonarcAudioSample::decode_EC(int mode, int samplecount,
 				inputbits -= mode + 2;
 			} else if (ones < 7 - mode) {
 				data >>= ones + 1; // strip ones and zero
-				// low byte contains (mode+ones) bits of the sample
+				// low byte contains (mode+ones) _bits of the sample
 				int8 sample = data & 0xFF;
 				sample <<= (7 - mode - ones);
 				sample &= 0x7F;
@@ -140,7 +137,7 @@ void SonarcAudioSample::decode_EC(int mode, int samplecount,
 				inputbits -= mode + 2 * ones + 1;
 			} else {
 				data >>= (7 - mode); // strip ones
-				// low byte contains 7 bits of the sample
+				// low byte contains 7 _bits of the sample
 				int8 sample = data & 0xFF;
 				sample &= 0x7F;
 				if (!(sample & 0x40))
@@ -211,36 +208,36 @@ int SonarcAudioSample::audio_decode(const uint8 *source, uint8 *dest) {
 
 void SonarcAudioSample::initDecompressor(void *DecompData) const {
 	SonarcDecompData *decomp = reinterpret_cast<SonarcDecompData *>(DecompData);
-	decomp->pos = src_offset;
-	decomp->sample_pos = 0;
+	decomp->_pos = _srcOffset;
+	decomp->_samplePos = 0;
 }
 
 uint32 SonarcAudioSample::decompressFrame(void *DecompData, void *samples) const {
 	SonarcDecompData *decomp = reinterpret_cast<SonarcDecompData *>(DecompData);
 
-	if (decomp->pos == buffer_size) return 0;
-	if (decomp->sample_pos == length) return 0;
+	if (decomp->_pos == _bufferSize) return 0;
+	if (decomp->_samplePos == _length) return 0;
 
 	// Get Frame size
-	uint32 frame_bytes  = *(buffer + decomp->pos);
-	frame_bytes |= (*(buffer + decomp->pos + 1)) << 8;
+	uint32 frame_bytes  = *(_buffer + decomp->_pos);
+	frame_bytes |= (*(_buffer + decomp->_pos + 1)) << 8;
 
 	// Get Num Frame Samples
-	uint32 frame_samples  = *(buffer + decomp->pos + 2);
-	frame_samples |= (*(buffer + decomp->pos + 3)) << 8;
+	uint32 frame_samples  = *(_buffer + decomp->_pos + 2);
+	frame_samples |= (*(_buffer + decomp->_pos + 3)) << 8;
 
-	audio_decode(buffer + decomp->pos, reinterpret_cast<uint8 *>(samples));
+	audio_decode(_buffer + decomp->_pos, reinterpret_cast<uint8 *>(samples));
 
-	decomp->pos += frame_bytes;
-	decomp->sample_pos += frame_samples;
+	decomp->_pos += frame_bytes;
+	decomp->_samplePos += frame_samples;
 
 	return frame_samples;
 }
 
 void SonarcAudioSample::rewind(void *DecompData) const {
 	SonarcDecompData *decomp = reinterpret_cast<SonarcDecompData *>(DecompData);
-	decomp->pos = src_offset;
-	decomp->sample_pos = 0;
+	decomp->_pos = _srcOffset;
+	decomp->_samplePos = 0;
 }
 
 } // End of namespace Ultima8

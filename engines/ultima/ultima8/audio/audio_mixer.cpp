@@ -33,10 +33,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
-AudioMixer *AudioMixer::the_audio_mixer = 0;
+AudioMixer *AudioMixer::_audioMixer = 0;
 
 AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(0) {
-	the_audio_mixer = this;
+	_audioMixer = this;
 	
 	_channels.resize(CHANNEL_COUNT);
 	for (int idx = 0; idx < CHANNEL_COUNT; ++idx)

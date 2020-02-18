@@ -30,12 +30,12 @@ namespace Ultima8 {
 
 class SonarcAudioSample : public AudioSample {
 	struct SonarcDecompData {
-		uint32      pos;
-		uint32      sample_pos;
+		uint32      _pos;
+		uint32      _samplePos;
 	};
 
-	static bool GeneratedOneTable;
-	static int  OneTable[256];
+	static bool _generatedOneTable;
+	static int  _oneTable[256];
 
 	static void GenerateOneTable();
 
@@ -46,10 +46,10 @@ class SonarcAudioSample : public AudioSample {
 	                       uint8 *dest, const uint8 *factors);
 	static int audio_decode(const uint8 *source, uint8 *dest);
 
-	uint32      src_offset;
+	uint32      _srcOffset;
 
 public:
-	SonarcAudioSample(uint8 *buffer_, uint32 size_);
+	SonarcAudioSample(uint8 *buffer, uint32 size);
 	~SonarcAudioSample(void) override;
 
 	void initDecompressor(void *DecompData) const override;
