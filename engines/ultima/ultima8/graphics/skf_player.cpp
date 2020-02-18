@@ -56,9 +56,9 @@ enum SKFAction {
 };
 
 struct SKFEvent {
-	unsigned int frame;
-	SKFAction action;
-	unsigned int data;
+	unsigned int _frame;
+	SKFAction _action;
+	unsigned int _data;
 };
 
 // number of steps in a fade
@@ -95,9 +95,9 @@ void SKFPlayer::parseEventList(IDataSource *eventlist) {
 	uint16 frame = eventlist->read2();
 	while (frame != 0xFFFF) {
 		SKFEvent *ev = new SKFEvent;
-		ev->frame = frame;
-		ev->action = static_cast<SKFAction>(eventlist->read2());
-		ev->data = eventlist->read2();
+		ev->_frame = frame;
+		ev->_action = static_cast<SKFAction>(eventlist->read2());
+		ev->_data = eventlist->read2();
 		_events.push_back(ev);
 
 		frame = eventlist->read2();
@@ -173,9 +173,9 @@ void SKFPlayer::run() {
 	AudioProcess *audioproc = AudioProcess::get_instance();
 
 	// handle _events for the current frame
-	while (_curEvent < _events.size() && _events[_curEvent]->frame <= _curFrame) {
+	while (_curEvent < _events.size() && _events[_curEvent]->_frame <= _curFrame) {
 //		pout << "event " << _curEvent << Std::endl;
-		switch (_events[_curEvent]->action) {
+		switch (_events[_curEvent]->_action) {
 		case SKF_FadeOut:
 			_curAction = SKF_FadeOut;
 			_fadeColour = 0;
@@ -194,36 +194,36 @@ void SKFPlayer::run() {
 //			pout << "FadeWhite" << Std::endl;
 			break;
 		case SKF_Wait:
-//			pout << "Wait " << _events[_curEvent]->data << Std::endl;
-			_timer = _events[_curEvent]->data;
+//			pout << "Wait " << _events[_curEvent]->_data << Std::endl;
+			_timer = _events[_curEvent]->_data;
 			_curEvent++;
 			return;
 		case SKF_PlayMusic:
-//			pout << "PlayMusic " << _events[_curEvent]->data << Std::endl;
-			if (musicproc) musicproc->playMusic(_events[_curEvent]->data);
+//			pout << "PlayMusic " << _events[_curEvent]->_data << Std::endl;
+			if (musicproc) musicproc->playMusic(_events[_curEvent]->_data);
 			break;
 		case SKF_SlowStopMusic:
 			POUT("SlowStopMusic");
 			if (musicproc && !_introMusicHack) musicproc->playMusic(0);
 			break;
 		case SKF_PlaySFX:
-//			pout << "PlaySFX " << _events[_curEvent]->data << Std::endl;
-			if (audioproc) audioproc->playSFX(_events[_curEvent]->data, 0x60, 0, 0);
+//			pout << "PlaySFX " << _events[_curEvent]->_data << Std::endl;
+			if (audioproc) audioproc->playSFX(_events[_curEvent]->_data, 0x60, 0, 0);
 			break;
 		case SKF_StopSFX:
-//			pout << "StopSFX" << _events[_curEvent]->data << Std::endl;
-			if (audioproc) audioproc->stopSFX(_events[_curEvent]->data, 0);
+//			pout << "StopSFX" << _events[_curEvent]->_data << Std::endl;
+			if (audioproc) audioproc->stopSFX(_events[_curEvent]->_data, 0);
 			break;
 		case SKF_SetSpeed:
-			POUT("SetSpeed " << _events[_curEvent]->data);
-//			_frameRate = _events[_curEvent]->data;
+			POUT("SetSpeed " << _events[_curEvent]->_data);
+//			_frameRate = _events[_curEvent]->_data;
 			break;
 		case SKF_PlaySound: {
-//			pout << "PlaySound " << _events[_curEvent]->data << Std::endl;
+//			pout << "PlaySound " << _events[_curEvent]->_data << Std::endl;
 
 			if (audioproc) {
-				uint8 *buf = _skf->get_object(_events[_curEvent]->data);
-				uint32 bufsize = _skf->get_size(_events[_curEvent]->data);
+				uint8 *buf = _skf->get_object(_events[_curEvent]->_data);
+				uint32 bufsize = _skf->get_size(_events[_curEvent]->_data);
 				AudioSample *s;
 				uint32 rate = buf[6] + (buf[7] << 8);
 				bool stereo = (buf[8] == 2);
@@ -235,8 +235,8 @@ void SKFPlayer::run() {
 
 			// subtitles
 			char *textbuf = reinterpret_cast<char *>(
-			                    _skf->get_object(_events[_curEvent]->data - 1));
-			uint32 textsize = _skf->get_size(_events[_curEvent]->data - 1);
+			                    _skf->get_object(_events[_curEvent]->_data - 1));
+			uint32 textsize = _skf->get_size(_events[_curEvent]->_data - 1);
 			if (textsize > 7) {
 				Std::string subtitle = (textbuf + 6);
 				delete _subs;

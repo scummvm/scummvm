@@ -46,7 +46,7 @@ private:
 	//! \param track The track number to play. Pass 0 to stop music
 	void playMusic_internal(int track);
 
-	static MusicProcess *the_music_process;
+	static MusicProcess *_theMusicProcess;
 
 	MidiPlayer *_midiPlayer;
 	MusicStates _state;
@@ -66,7 +66,7 @@ public:
 
 	//! Get the current instance of the Music Processes
 	static MusicProcess *get_instance() {
-		return the_music_process;
+		return _theMusicProcess;
 	}
 
 	void playMusic(int track);

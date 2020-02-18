@@ -42,15 +42,15 @@ namespace Ultima8 {
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(AudioProcess, Process)
 
-AudioProcess *AudioProcess::the_audio_process = 0;
+AudioProcess *AudioProcess::_theAudioProcess = 0;
 
 AudioProcess::AudioProcess(void) : paused(0) {
-	the_audio_process = this;
+	_theAudioProcess = this;
 	_type = 1; // persistent
 }
 
 AudioProcess::~AudioProcess(void) {
-	the_audio_process = 0;
+	_theAudioProcess = 0;
 }
 
 bool AudioProcess::calculateSoundVolume(ObjId _objId, int16 &_lVol, int16 &_rVol) const {

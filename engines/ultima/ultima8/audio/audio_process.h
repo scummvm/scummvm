@@ -71,7 +71,7 @@ public:
 
 	//! Get the current instance of the Audio Processes
 	static AudioProcess *get_instance() {
-		return the_audio_process;
+		return _theAudioProcess;
 	}
 
 	INTRINSIC(I_playSFX);
@@ -138,7 +138,7 @@ private:
 
 	bool calculateSoundVolume(ObjId _objId, int16 &_lVol, int16 &_rVol) const;
 
-	static AudioProcess    *the_audio_process;
+	static AudioProcess *_theAudioProcess;
 };
 
 } // End of namespace Ultima8

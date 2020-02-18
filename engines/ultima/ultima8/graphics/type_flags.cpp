@@ -186,39 +186,39 @@ void TypeFlags::loadWeaponInfo() {
 		int val;
 
 		config->get(k + "/shape", val);
-		wi->shape = static_cast<uint32>(val);
+		wi->_shape = static_cast<uint32>(val);
 
 		config->get(k + "/overlay", val);
-		wi->overlay_type = static_cast<uint8>(val);
+		wi->_overlayType = static_cast<uint8>(val);
 
 		config->get(k + "/overlay_shape", val);
-		wi->overlay_shape = static_cast<uint32>(val);
+		wi->_overlayShape = static_cast<uint32>(val);
 
 		config->get(k + "/damage_mod", val);
-		wi->damage_modifier = static_cast<uint8>(val);
+		wi->_damageModifier = static_cast<uint8>(val);
 
 		config->get(k + "/base_damage", val);
-		wi->base_damage = static_cast<uint8>(val);
+		wi->_baseDamage = static_cast<uint8>(val);
 
 		config->get(k + "/attack_dex", val);
-		wi->dex_attack_bonus = static_cast<uint8>(val);
+		wi->_dexAttackBonus = static_cast<uint8>(val);
 
 		config->get(k + "/defend_dex", val);
-		wi->dex_defend_bonus = static_cast<uint8>(val);
+		wi->_dexDefendBonus = static_cast<uint8>(val);
 
 		config->get(k + "/armour", val);
-		wi->armour_bonus = static_cast<uint8>(val);
+		wi->_armourBonus = static_cast<uint8>(val);
 
 		config->get(k + "/damage_type", val);
-		wi->damage_type = static_cast<uint16>(val);
+		wi->_damageType = static_cast<uint16>(val);
 
 		if (config->get(k + "/treasure_chance", val))
-			wi->treasure_chance = static_cast<uint16>(val);
+			wi->_treasureChance = static_cast<uint16>(val);
 		else
-			wi->treasure_chance = 0;
+			wi->_treasureChance = 0;
 
-		assert(wi->shape < shapeInfo.size());
-		shapeInfo[wi->shape]._weaponInfo = wi;
+		assert(wi->_shape < shapeInfo.size());
+		shapeInfo[wi->_shape]._weaponInfo = wi;
 	}
 }
 

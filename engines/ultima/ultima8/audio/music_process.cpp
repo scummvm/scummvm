@@ -38,7 +38,7 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(MusicProcess, Process)
 
-MusicProcess *MusicProcess::the_music_process = 0;
+MusicProcess *MusicProcess::_theMusicProcess = 0;
 
 MusicProcess::MusicProcess() : _midiPlayer(0), _state(MUSIC_NORMAL),
 		_currentTrack(0), _wantedTrack(0), _lastRequest(0), _queuedTrack(0) {
@@ -50,13 +50,13 @@ MusicProcess::MusicProcess(MidiPlayer *player) : _midiPlayer(player),
 		_lastRequest(0), _queuedTrack(0) {
 	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 
-	the_music_process = this;
+	_theMusicProcess = this;
 	_flags |= PROC_RUNPAUSED;
 	_type = 1; // persistent
 }
 
 MusicProcess::~MusicProcess() {
-	the_music_process = 0;
+	_theMusicProcess = 0;
 }
 
 void MusicProcess::playMusic(int track) {
@@ -243,7 +243,7 @@ bool MusicProcess::loadData(IDataSource *ids, uint32 version) {
 
 	_state = MUSIC_PLAY_WANTED;
 
-	the_music_process = this;
+	_theMusicProcess = this;
 
 	_midiPlayer = AudioMixer::get_instance()->getMidiPlayer();
 
@@ -252,25 +252,25 @@ bool MusicProcess::loadData(IDataSource *ids, uint32 version) {
 
 uint32 MusicProcess::I_musicStop(const uint8 * /*args*/,
                                  unsigned int /*argsize*/) {
-	if (the_music_process) the_music_process->playMusic_internal(0);
+	if (_theMusicProcess) _theMusicProcess->playMusic_internal(0);
 	return 0;
 }
 
 uint32 MusicProcess::I_playMusic(const uint8 *args,
                                  unsigned int /*argsize*/) {
 	ARG_UINT8(song);
-	if (the_music_process) the_music_process->playMusic(song & 0x7F);
+	if (_theMusicProcess) _theMusicProcess->playMusic(song & 0x7F);
 	return 0;
 }
 
 
 void MusicProcess::ConCmd_playMusic(const Console::ArgvType &argv) {
-	if (the_music_process) {
+	if (_theMusicProcess) {
 		if (argv.size() != 2) {
 			pout << "MusicProcess::playMusic (tracknum)" << Std::endl;
 		} else {
 			pout << "Playing track " << argv[1] << Std::endl;
-			the_music_process->playMusic_internal(atoi(argv[1].c_str()));
+			_theMusicProcess->playMusic_internal(atoi(argv[1].c_str()));
 		}
 	} else {
 		pout << "No Music Process" << Std::endl;

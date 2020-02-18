@@ -25,16 +25,16 @@
 
 
 struct WeaponInfo {
-	uint32 shape;
-	uint8 overlay_type;
-	uint32 overlay_shape;
-	uint8 damage_modifier;
-	uint8 base_damage;
-	uint8 dex_attack_bonus;
-	uint8 dex_defend_bonus;
-	uint8 armour_bonus;
-	uint16 damage_type;
-	int treasure_chance;
+	uint32 _shape;
+	uint8 _overlayType;
+	uint32 _overlayShape;
+	uint8 _damageModifier;
+	uint8 _baseDamage;
+	uint8 _dexAttackBonus;
+	uint8 _dexDefendBonus;
+	uint8 _armourBonus;
+	uint16 _damageType;
+	int _treasureChance;
 
 	enum DmgType {
 		DMG_NORMAL = 0x0001,

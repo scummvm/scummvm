@@ -162,7 +162,7 @@ bool Actor::giveTreasure() {
 					ShapeInfo *si = mainshapes->getShapeInfo(s);
 					if (!si->_weaponInfo) continue;
 
-					int chance = si->_weaponInfo->treasure_chance;
+					int chance = si->_weaponInfo->_treasureChance;
 					if (!chance) continue;
 
 					int r = getRandom() % 100;

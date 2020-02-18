@@ -192,7 +192,7 @@ uint32 MainActor::getArmourClass() {
 			armour += si->_armourInfo[frameNum]._armourClass;
 		}
 		if (si->_weaponInfo) {
-			armour += si->_weaponInfo->armour_bonus;
+			armour += si->_weaponInfo->_armourBonus;
 		}
 	}
 
@@ -206,7 +206,7 @@ int16 MainActor::getDefendingDex() {
 	if (weapon) {
 		ShapeInfo *si = weapon->getShapeInfo();
 		assert(si->_weaponInfo);
-		dex += si->_weaponInfo->dex_defend_bonus;
+		dex += si->_weaponInfo->_dexDefendBonus;
 	}
 
 	if (dex <= 0) dex = 1;
@@ -221,7 +221,7 @@ int16 MainActor::getAttackingDex() {
 	if (weapon) {
 		ShapeInfo *si = weapon->getShapeInfo();
 		assert(si->_weaponInfo);
-		dex += si->_weaponInfo->dex_attack_bonus;
+		dex += si->_weaponInfo->_dexAttackBonus;
 	}
 
 	return dex;
@@ -236,7 +236,7 @@ uint16 MainActor::getDamageType() {
 		ShapeInfo *si = weapon->getShapeInfo();
 		assert(si->_weaponInfo);
 
-		return si->_weaponInfo->damage_type;
+		return si->_weaponInfo->_damageType;
 	}
 
 	return Actor::getDamageType();
@@ -271,8 +271,8 @@ int MainActor::getDamageAmount() {
 		ShapeInfo *si = weapon->getShapeInfo();
 		assert(si->_weaponInfo);
 
-		int base = si->_weaponInfo->base_damage;
-		int mod = si->_weaponInfo->damage_modifier;
+		int base = si->_weaponInfo->_baseDamage;
+		int mod = si->_weaponInfo->_damageModifier;
 
 		damage = (getRandom() % (mod + 1)) + base + getStr() / 5;
 
@@ -515,10 +515,10 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	WeaponInfo *weaponinfo = shapeinfo->_weaponInfo;
 	if (!weaponinfo) return;
 
-	shape_ = weaponinfo->overlay_shape;
+	shape_ = weaponinfo->_overlayShape;
 
 	WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
-	frame_ = wpnovlay->getOverlayFrame(_lastAnim, weaponinfo->overlay_type,
+	frame_ = wpnovlay->getOverlayFrame(_lastAnim, weaponinfo->_overlayType,
 	                                  _direction, _animFrame);
 
 	if (frame_ == 0) shape_ = 0;

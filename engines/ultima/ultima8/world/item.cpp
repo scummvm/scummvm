@@ -1540,7 +1540,7 @@ void Item::explode() {
 uint16 Item::getDamageType() {
 	ShapeInfo *si = getShapeInfo();
 	if (si->_weaponInfo) {
-		return si->_weaponInfo->damage_type;
+		return si->_weaponInfo->_damageType;
 	}
 
 	return 0;
