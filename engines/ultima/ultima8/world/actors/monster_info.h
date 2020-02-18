@@ -29,21 +29,21 @@ namespace Ultima {
 namespace Ultima8 {
 
 struct MonsterInfo {
-	uint32 shape;
-	uint16 min_hp, max_hp;
-	uint16 min_dex, max_dex;
-	uint16 min_dmg, max_dmg;
-	uint16 armour_class;
-	uint8 alignment;
-	bool unk;
-	uint16 damage_type;
-	uint16 defense_type;
-	bool resurrection; // auto-resurrection after being killed
-	bool ranged; // ranged attack
-	bool shifter; // shapeshifter
-	uint32 explode; // shape to hurl around after being killed (or 0)
+	uint32 _shape;
+	uint16 _minHp, _maxHp;
+	uint16 _minDex, _maxDex;
+	uint16 _minDmg, _maxDmg;
+	uint16 _armourClass;
+	uint8 _alignment;
+	bool _unk;
+	uint16 _damageType;
+	uint16 _defenseType;
+	bool _resurrection; // auto-resurrection after being killed
+	bool _ranged; // ranged attack
+	bool _shifter; // shapeshifter
+	uint32 _explode; // shape to hurl around after being killed (or 0)
 
-	Std::vector<TreasureInfo> treasure;
+	Std::vector<TreasureInfo> _treasure;
 };
 
 } // End of namespace Ultima8

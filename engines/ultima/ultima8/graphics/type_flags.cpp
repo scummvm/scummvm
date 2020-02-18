@@ -295,75 +295,75 @@ void TypeFlags::loadMonsterInfo() {
 		int val;
 
 		config->get(k + "/shape", val);
-		mi->shape = static_cast<uint32>(val);
+		mi->_shape = static_cast<uint32>(val);
 
 		config->get(k + "/hp_min", val);
-		mi->min_hp = static_cast<uint16>(val);
+		mi->_minHp = static_cast<uint16>(val);
 
 		config->get(k + "/hp_max", val);
-		mi->max_hp = static_cast<uint16>(val);
+		mi->_maxHp = static_cast<uint16>(val);
 
 		config->get(k + "/dex_min", val);
-		mi->min_dex = static_cast<uint16>(val);
+		mi->_minDex = static_cast<uint16>(val);
 
 		config->get(k + "/dex_max", val);
-		mi->max_dex = static_cast<uint16>(val);
+		mi->_maxDex = static_cast<uint16>(val);
 
 		config->get(k + "/damage_min", val);
-		mi->min_dmg = static_cast<uint16>(val);
+		mi->_minDmg = static_cast<uint16>(val);
 
 		config->get(k + "/damage_max", val);
-		mi->max_dmg = static_cast<uint16>(val);
+		mi->_maxDmg = static_cast<uint16>(val);
 
 		config->get(k + "/armour", val);
-		mi->armour_class = static_cast<uint16>(val);
+		mi->_armourClass = static_cast<uint16>(val);
 
 		config->get(k + "/alignment", val);
-		mi->alignment = static_cast<uint8>(val);
+		mi->_alignment = static_cast<uint8>(val);
 
 		config->get(k + "/unk", val);
-		mi->unk = (val != 0);
+		mi->_unk = (val != 0);
 
 		config->get(k + "/damage_type", val);
-		mi->damage_type = static_cast<uint16>(val);
+		mi->_damageType = static_cast<uint16>(val);
 
 		config->get(k + "/defense_type", val);
-		mi->defense_type = static_cast<uint16>(val);
+		mi->_defenseType = static_cast<uint16>(val);
 
 		if (config->get(k + "/resurrection", val))
-			mi->resurrection = (val != 0);
+			mi->_resurrection = (val != 0);
 		else
-			mi->resurrection = false;
+			mi->_resurrection = false;
 
 		if (config->get(k + "/ranged", val))
-			mi->ranged = (val != 0);
+			mi->_ranged = (val != 0);
 		else
-			mi->ranged = false;
+			mi->_ranged = false;
 
 		if (config->get(k + "/shifter", val))
-			mi->shifter = (val != 0);
+			mi->_shifter = (val != 0);
 		else
-			mi->shifter = false;
+			mi->_shifter = false;
 
 		if (config->get(k + "/explode", val))
-			mi->explode = val;
+			mi->_explode = val;
 		else
-			mi->explode = 0;
+			mi->_explode = 0;
 
 		Std::string treasure;
 		if (config->get(k + "/treasure", treasure)) {
-			bool ok = treasureLoader.parse(treasure, mi->treasure);
+			bool ok = treasureLoader.parse(treasure, mi->_treasure);
 			if (!ok) {
 				perr << "failed to parse treasure info for monster '" << k
 				     << "'"  << Std::endl;
-				mi->treasure.clear();
+				mi->_treasure.clear();
 			}
 		} else {
-			mi->treasure.clear();
+			mi->_treasure.clear();
 		}
 
-		assert(mi->shape < shapeInfo.size());
-		shapeInfo[mi->shape]._monsterInfo = mi;
+		assert(mi->_shape < shapeInfo.size());
+		shapeInfo[mi->_shape]._monsterInfo = mi;
 	}
 }
 

@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -45,7 +44,6 @@
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/audio/music_process.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -55,13 +53,11 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor, Actor)
 
-MainActor::MainActor() : justTeleported(false), accumStr(0), accumDex(0),
-	accumInt(0) {
-
+MainActor::MainActor() : _justTeleported(false), _accumStr(0), _accumDex(0),
+	_accumInt(0) {
 }
 
 MainActor::~MainActor() {
-
 }
 
 GravityProcess *MainActor::ensureGravityProcess() {
@@ -126,7 +122,7 @@ void MainActor::teleport(int mapNum_, int32 x_, int32 y_, int32 z_) {
 	}
 
 	Actor::teleport(mapNum_, x_, y_, z_);
-	justTeleported = true;
+	_justTeleported = true;
 }
 
 // teleport to TeleportEgg
@@ -167,7 +163,7 @@ void MainActor::teleport(int mapNum_, int teleport_id) {
 	egg->dumpInfo();
 
 	Actor::teleport(mapNum_, xv, yv, zv);
-	justTeleported = true;
+	_justTeleported = true;
 }
 
 uint16 MainActor::getDefenseType() {
@@ -465,10 +461,10 @@ void MainActor::accumulateStr(int n) {
 	// already max?
 	if (_strength == 25) return; //!! constant
 
-	accumStr += n;
-	if (accumStr >= 650 || getRandom() % (650 - accumStr) == 0) { //!! constant
+	_accumStr += n;
+	if (_accumStr >= 650 || getRandom() % (650 - _accumStr) == 0) { //!! constant
 		_strength++;
-		accumStr = 0;
+		_accumStr = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
 		pout << "Gained _strength!" << Std::endl;
@@ -479,10 +475,10 @@ void MainActor::accumulateDex(int n) {
 	// already max?
 	if (_dexterity == 25) return; //!! constant
 
-	accumDex += n;
-	if (accumDex >= 650 || getRandom() % (650 - accumDex) == 0) { //!! constant
+	_accumDex += n;
+	if (_accumDex >= 650 || getRandom() % (650 - _accumDex) == 0) { //!! constant
 		_dexterity++;
-		accumDex = 0;
+		_accumDex = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
 		pout << "Gained _dexterity!" << Std::endl;
@@ -493,10 +489,10 @@ void MainActor::accumulateInt(int n) {
 	// already max?
 	if (_intelligence == 25) return; //!! constant
 
-	accumInt += n;
-	if (accumInt >= 650 || getRandom() % (650 - accumInt) == 0) { //!! constant
+	_accumInt += n;
+	if (_accumInt >= 650 || getRandom() % (650 - _accumInt) == 0) { //!! constant
 		_intelligence++;
-		accumInt = 0;
+		_accumInt = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
 		pout << "Gained _intelligence!" << Std::endl;
@@ -530,30 +526,30 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 
 void MainActor::saveData(ODataSource *ods) {
 	Actor::saveData(ods);
-	uint8 jt = justTeleported ? 1 : 0;
+	uint8 jt = _justTeleported ? 1 : 0;
 	ods->write1(jt);
-	ods->write4(accumStr);
-	ods->write4(accumDex);
-	ods->write4(accumInt);
-	uint8 namelength = static_cast<uint8>(name.size());
+	ods->write4(_accumStr);
+	ods->write4(_accumDex);
+	ods->write4(_accumInt);
+	uint8 namelength = static_cast<uint8>(_name.size());
 	ods->write1(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		ods->write1(static_cast<uint8>(name[i]));
+		ods->write1(static_cast<uint8>(_name[i]));
 
 }
 
 bool MainActor::loadData(IDataSource *ids, uint32 version) {
 	if (!Actor::loadData(ids, version)) return false;
 
-	justTeleported = (ids->read1() != 0);
-	accumStr = static_cast<int32>(ids->read4());
-	accumDex = static_cast<int32>(ids->read4());
-	accumInt = static_cast<int32>(ids->read4());
+	_justTeleported = (ids->read1() != 0);
+	_accumStr = static_cast<int32>(ids->read4());
+	_accumDex = static_cast<int32>(ids->read4());
+	_accumInt = static_cast<int32>(ids->read4());
 
 	uint8 namelength = ids->read1();
-	name.resize(namelength);
+	_name.resize(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		name[i] = ids->read1();
+		_name[i] = ids->read1();
 
 	return true;
 }

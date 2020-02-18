@@ -44,7 +44,7 @@ public:
 	void OnMouseUp(int button);
 
 	void resetIdleTime() {
-		idleTime = 0;
+		_idleTime = 0;
 	}
 
 	bool loadData(IDataSource *ids, uint32 version);
@@ -61,16 +61,16 @@ protected:
 	bool checkTurn(int direction, bool moving);
 	bool canAttack();
 
-	uint32 lastframe;
+	uint32 _lastFrame;
 
 	// attack speed limiting
-	uint32 lastAttack;
+	uint32 _lastAttack;
 
 	// shake head when idle
-	uint32 idleTime;
-	Animation::Sequence lastHeadShakeAnim;
+	uint32 _idleTime;
+	Animation::Sequence _lastHeadShakeAnim;
 
-	MButton mouseButton[2];
+	MButton _mouseButton[2];
 };
 
 } // End of namespace Ultima8

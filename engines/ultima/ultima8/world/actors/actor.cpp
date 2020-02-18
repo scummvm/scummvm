@@ -100,20 +100,20 @@ bool Actor::loadMonsterStats() {
 		return false;
 
 	uint16 hp;
-	if (mi->max_hp <= mi->min_hp)
-		hp = mi->min_hp;
+	if (mi->_maxHp <= mi->_minHp)
+		hp = mi->_minHp;
 	else
-		hp = mi->min_hp + getRandom() % (mi->max_hp - mi->min_hp);
+		hp = mi->_minHp + getRandom() % (mi->_maxHp - mi->_minHp);
 	setHP(hp);
 
 	uint16 dex;
-	if (mi->max_dex <= mi->min_dex)
-		dex = mi->min_dex;
+	if (mi->_maxDex <= mi->_minDex)
+		dex = mi->_minDex;
 	else
-		dex = mi->min_dex + getRandom() % (mi->max_dex - mi->min_dex);
+		dex = mi->_minDex + getRandom() % (mi->_maxDex - mi->_minDex);
 	setDex(dex);
 
-	uint8 new_alignment = mi->alignment;
+	uint8 new_alignment = mi->_alignment;
 	setAlignment(new_alignment & 0x0F);
 	setEnemyAlignment((new_alignment & 0xF0) >> 4); // !! CHECKME
 
@@ -128,7 +128,7 @@ bool Actor::giveTreasure() {
 	if (!mi)
 		return false;
 
-	Std::vector<TreasureInfo> &treasure = mi->treasure;
+	Std::vector<TreasureInfo> &treasure = mi->_treasure;
 
 	for (unsigned int i = 0; i < treasure.size(); ++i) {
 		TreasureInfo &ti = treasure[i];
@@ -535,7 +535,7 @@ uint16 Actor::cSetActivity(int activity) {
 uint32 Actor::getArmourClass() {
 	ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo)
-		return si->_monsterInfo->armour_class;
+		return si->_monsterInfo->_armourClass;
 	else
 		return 0;
 }
@@ -543,7 +543,7 @@ uint32 Actor::getArmourClass() {
 uint16 Actor::getDefenseType() {
 	ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo)
-		return si->_monsterInfo->defense_type;
+		return si->_monsterInfo->_defenseType;
 	else
 		return 0;
 }
@@ -559,7 +559,7 @@ int16 Actor::getAttackingDex() {
 uint16 Actor::getDamageType() {
 	ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo)
-		return si->_monsterInfo->damage_type;
+		return si->_monsterInfo->_damageType;
 	else
 		return WeaponInfo::DMG_NORMAL;
 }
@@ -569,8 +569,8 @@ int Actor::getDamageAmount() {
 	ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo) {
 
-		int min = static_cast<int>(si->_monsterInfo->min_dmg);
-		int max = static_cast<int>(si->_monsterInfo->max_dmg);
+		int min = static_cast<int>(si->_monsterInfo->_minDmg);
+		int max = static_cast<int>(si->_monsterInfo->_maxDmg);
 
 		int damage = (getRandom() % (max - min + 1)) + min;
 
@@ -754,7 +754,7 @@ ProcId Actor::die(uint16 damageType) {
 	MonsterInfo *mi = 0;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
-	if (mi && mi->resurrection && !(damageType & WeaponInfo::DMG_FIRE)) {
+	if (mi && mi->_resurrection && !(damageType & WeaponInfo::DMG_FIRE)) {
 		// this monster will be resurrected after a while
 
 		pout << "Actor::die: scheduling resurrection" << Std::endl;
@@ -775,19 +775,19 @@ ProcId Actor::die(uint16 damageType) {
 		animproc->waitFor(resproc);
 	}
 
-	if (mi && mi->explode) {
+	if (mi && mi->_explode) {
 		// this monster explodes when it dies
 
 		pout << "Actor::die: exploding" << Std::endl;
 
 		int count = 5;
 		Shape *explosionshape = GameData::get_instance()->getMainShapes()
-		                        ->getShape(mi->explode);
+		                        ->getShape(mi->_explode);
 		assert(explosionshape);
 		unsigned int framecount = explosionshape->frameCount();
 
 		for (int i = 0; i < count; ++i) {
-			Item *piece = ItemFactory::createItem(mi->explode,
+			Item *piece = ItemFactory::createItem(mi->_explode,
 			                                      getRandom() % framecount,
 			                                      0, // qual
 			                                      Item::FLG_FAST_ONLY, //flags,

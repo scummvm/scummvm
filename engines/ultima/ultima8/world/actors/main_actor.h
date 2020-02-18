@@ -47,10 +47,10 @@ public:
 	void teleport(int mapNum_, int teleport_id); // to teleportegg
 
 	bool hasJustTeleported() const {
-		return justTeleported;
+		return _justTeleported;
 	}
 	void setJustTeleported(bool t) {
-		justTeleported = t;
+		_justTeleported = t;
 	}
 
 	//! accumulate a little bit of strength. When you reach 650 you gain
@@ -82,10 +82,10 @@ public:
 	ProcId die(uint16 DamageType) override;
 
 	Std::string getName() {
-		return name;
+		return _name;
 	}
-	void setName(Std::string name_) {
-		name = name_;
+	void setName(const Std::string &name) {
+		_name = name;
 	}
 
 	bool loadData(IDataSource *ids, uint32 version);
@@ -142,13 +142,13 @@ protected:
 
 	void useInventoryItem(uint32 shapenum);
 
-	bool justTeleported;
+	bool _justTeleported;
 
-	int accumStr;
-	int accumDex;
-	int accumInt;
+	int _accumStr;
+	int _accumDex;
+	int _accumInt;
 
-	Std::string name;
+	Std::string _name;
 };
 
 } // End of namespace Ultima8
