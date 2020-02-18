@@ -32,3 +32,34 @@ repeat while y < 5
   if y = 3 then next repeat
   put y
 end repeat
+
+-- tests for repeat with
+
+on exitRepeatWith
+  set aList = [1,2,3,4]
+  repeat with a in aList
+    if a = 3 then
+      exit repeat
+    end if
+  end repeat
+  return a
+end exitRepeatWith
+
+on returnRepeatWith
+  set aList = [1,2,3,4]
+  repeat with a in aList
+    if a = 3 then
+      return a
+    end if
+  end repeat
+end returnRepeatWith
+
+on directListRepeatWith
+  repeat with a in [1,2,3,4]
+    put a
+  end repeat
+end directListRepeatWith
+
+put exitRepeatWith()
+put returnRepeatWith()
+directListRepeatWith()
