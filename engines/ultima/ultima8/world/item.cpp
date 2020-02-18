@@ -803,9 +803,9 @@ bool Item::checkLoopScript(const uint8 *script, uint32 scriptsize) {
 		case 'u':
 		case 'v':
 		case 'w':
-		case '_x':
-		case '_y':
-		case '_z': {
+		case 'x':
+		case 'y':
+		case 'z': {
 			bool match = false;
 			int count = script[i] - '`';
 			for (int j = 0; j < count; j++) {
