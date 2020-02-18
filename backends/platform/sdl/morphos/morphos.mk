@@ -45,4 +45,4 @@ ifdef DYNAMIC_MODULES
 	rx Ext_Inst_so.rexx $(EXECUTABLE) $(MORPHOSPATH)
 	rm Ext_Inst_so.rexx
 endif
-	$(STRIP) $(EXECUTABLE) -o $(AMIGAOSPATH)/$(EXECUTABLE)
+	$(STRIP) $(EXECUTABLE) -o $(MORPHOSPATH)/$(EXECUTABLE)
