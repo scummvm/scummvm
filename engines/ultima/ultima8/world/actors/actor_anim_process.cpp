@@ -123,8 +123,8 @@ bool ActorAnimProcess::init() {
 
 	actor->setActorFlag(Actor::ACT_ANIMLOCK);
 
-	actor->lastanim = _action;
-	actor->direction = _dir;
+	actor->_lastAnim = _action;
+	actor->_direction = _dir;
 
 
 #ifdef WATCHACTOR
@@ -157,7 +157,7 @@ void ActorAnimProcess::run() {
 
 	if (!_firstFrame)
 		_repeatCounter++;
-	if (_repeatCounter > _tracker->getAnimAction()->framerepeat)
+	if (_repeatCounter > _tracker->getAnimAction()->_frameRepeat)
 		_repeatCounter = 0;
 
 	Actor *a = getActor(_itemNum);
@@ -230,7 +230,7 @@ void ActorAnimProcess::run() {
 
 
 			if (_tracker->isBlocked() &&
-			        !(_tracker->getAnimAction()->flags & AnimAction::AAF_UNSTOPPABLE)) {
+			        !(_tracker->getAnimAction()->_flags & AnimAction::AAF_UNSTOPPABLE)) {
 				// FIXME: For blocked large _steps we may still want to do
 				//        a partial move. (But how would that work with
 				//        repeated frames?)
@@ -262,12 +262,12 @@ void ActorAnimProcess::run() {
 		}
 
 		AnimFrame *curframe = _tracker->getAnimFrame();
-		if (curframe && curframe->sfx) {
+		if (curframe && curframe->_sfx) {
 			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc) audioproc->playSFX(curframe->sfx, 0x60, _itemNum, 0);
+			if (audioproc) audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
 		}
 
-		if (curframe && (curframe->flags & AnimFrame::AFF_SPECIAL)) {
+		if (curframe && (curframe->_flags & AnimFrame::AFF_SPECIAL)) {
 			// Flag to trigger a special _action
 			// E.g.: play draw/sheathe SFX for avatar when weapon equipped,
 			// throw skull-fireball when ghost attacks, ...
@@ -334,7 +334,7 @@ void ActorAnimProcess::run() {
 #endif
 
 
-	if (_repeatCounter == _tracker->getAnimAction()->framerepeat) {
+	if (_repeatCounter == _tracker->getAnimAction()->_frameRepeat) {
 		if (_tracker->isUnsupported()) {
 			_animAborted = true;
 
@@ -608,7 +608,7 @@ void ActorAnimProcess::terminate() {
 	if (a) {
 		if (_tracker) { // if we were really animating...
 			a->clearActorFlag(Actor::ACT_ANIMLOCK);
-			if (_tracker->getAnimAction()->flags & AnimAction::AAF_DESTROYACTOR) {
+			if (_tracker->getAnimAction()->_flags & AnimAction::AAF_DESTROYACTOR) {
 				// destroy the actor
 #ifdef WATCHACTOR
 				if (_itemNum == watchactor)

@@ -31,28 +31,28 @@ void AnimAction::getAnimRange(unsigned int lastanim, int lastdir,
                               bool firststep, int dir,
                               unsigned int &startframe, unsigned int &endframe) const {
 	startframe = 0;
-	endframe = size;
+	endframe = _size;
 
-	if (flags & AAF_TWOSTEP) {
+	if (_flags & AAF_TWOSTEP) {
 		// two-step animation?
 		if (firststep) {
-			if (flags & (AAF_LOOPING | AAF_LOOPING2)) {// CHECKME: unknown flag
+			if (_flags & (AAF_LOOPING | AAF_LOOPING2)) {// CHECKME: unknown flag
 				// for a looping animation, start at the end to
 				// make things more fluid
-				startframe = size - 1;
+				startframe = _size - 1;
 			} else {
 				startframe = 0;
 			}
-			endframe = size / 2;
+			endframe = _size / 2;
 		} else {
 			// second step starts halfway
-			startframe = size / 2;
-			if (flags & (AAF_LOOPING | AAF_LOOPING2)) {// CHECKME: unknown flag
-				endframe = size - 1;
+			startframe = _size / 2;
+			if (_flags & (AAF_LOOPING | AAF_LOOPING2)) {// CHECKME: unknown flag
+				endframe = _size - 1;
 			}
 		}
 	} else {
-		if (lastanim == action && lastdir == dir && size > 1) {
+		if (lastanim == _action && lastdir == dir && _size > 1) {
 			// skip first frame if repeating an animation
 			startframe = 1;
 		}

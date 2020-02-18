@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/actor.h"
-
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
@@ -51,7 +50,6 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/filesys/idata_source.h"
@@ -63,12 +61,10 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(Actor, Container)
 
-Actor::Actor()
-	: strength(0), dexterity(0), intelligence(0),
-	  hitpoints(0), mana(0), alignment(0), enemyalignment(0),
-	  lastanim(Animation::walk), animframe(0), direction(0),
-	  fallstart(0), unk0C(0), actorflags(0) {
-
+Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
+	  _hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
+	  _lastAnim(Animation::walk), _animFrame(0), _direction(0),
+		_fallStart(0), _unk0C(0), _actorFlags(0) {
 }
 
 Actor::~Actor() {
@@ -435,7 +431,7 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 
 uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
 	if (dir < 0 || dir > 8) {
-		perr << "Actor::doAnim: Invalid direction (" << dir << ")" << Std::endl;
+		perr << "Actor::doAnim: Invalid _direction (" << dir << ")" << Std::endl;
 		return 0;
 	}
 
@@ -479,7 +475,7 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
 	}
 
 	if (tracker.isBlocked() &&
-	        !(animaction->flags & AnimAction::AAF_UNSTOPPABLE)) {
+	        !(animaction->_flags & AnimAction::AAF_UNSTOPPABLE)) {
 		return Animation::FAILURE;
 	}
 
@@ -601,7 +597,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	}
 
 	if (other == 1 && attacker->getLastAnim() != Animation::kick) {
-		// strength for kicks is accumulated in AvatarMoverProcess
+		// _strength for kicks is accumulated in AvatarMoverProcess
 		MainActor *av = getMainActor();
 		av->accumulateStr(damage / 4);
 	}
@@ -634,7 +630,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	}
 
 	if (damage > 0 && !(getActorFlags() & (ACT_IMMORTAL | ACT_INVINCIBLE))) {
-		if (damage >= hitpoints) {
+		if (damage >= _hitPoints) {
 			// we're dead
 
 			if (getActorFlags() & ACT_WITHSTANDDEATH) {
@@ -651,7 +647,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 		}
 
 		// not dead yet
-		setHP(static_cast<uint16>(hitpoints - damage));
+		setHP(static_cast<uint16>(_hitPoints - damage));
 	}
 
 	ProcId fallingprocid = 0;
@@ -978,7 +974,7 @@ CombatProcess *Actor::getCombatProcess() {
 }
 
 void Actor::setInCombat() {
-	if ((actorflags & ACT_INCOMBAT) != 0) return;
+	if ((_actorFlags & ACT_INCOMBAT) != 0) return;
 
 	assert(getCombatProcess() == 0);
 
@@ -999,7 +995,7 @@ void Actor::setInCombat() {
 }
 
 void Actor::clearInCombat() {
-	if ((actorflags & ACT_INCOMBAT) == 0) return;
+	if ((_actorFlags & ACT_INCOMBAT) == 0) return;
 
 	CombatProcess *cp = getCombatProcess();
 	cp->terminate();
@@ -1070,47 +1066,47 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 void Actor::dumpInfo() {
 	Container::dumpInfo();
 
-	pout << "hp: " << hitpoints << ", mp: " << mana << ", str: " << strength
-	     << ", dex: " << dexterity << ", int: " << intelligence
+	pout << "hp: " << _hitPoints << ", mp: " << _mana << ", str: " << _strength
+	     << ", dex: " << _dexterity << ", int: " << _intelligence
 	     << ", ac: " << getArmourClass() << ", defense: " << Std::hex
 	     << getDefenseType() << " align: " << getAlignment() << " enemy: "
-	     << getEnemyAlignment() << ", flags: " << actorflags
+	     << getEnemyAlignment() << ", flags: " << _actorFlags
 	     << Std::dec << Std::endl;
 }
 
 void Actor::saveData(ODataSource *ods) {
 	Container::saveData(ods);
-	ods->write2(strength);
-	ods->write2(dexterity);
-	ods->write2(intelligence);
-	ods->write2(hitpoints);
-	ods->write2(mana);
-	ods->write2(alignment);
-	ods->write2(enemyalignment);
-	ods->write2(lastanim);
-	ods->write2(animframe);
-	ods->write2(direction);
-	ods->write4(fallstart);
-	ods->write4(actorflags);
-	ods->write1(unk0C);
+	ods->write2(_strength);
+	ods->write2(_dexterity);
+	ods->write2(_intelligence);
+	ods->write2(_hitPoints);
+	ods->write2(_mana);
+	ods->write2(_alignment);
+	ods->write2(_enemyAlignment);
+	ods->write2(_lastAnim);
+	ods->write2(_animFrame);
+	ods->write2(_direction);
+	ods->write4(_fallStart);
+	ods->write4(_actorFlags);
+	ods->write1(_unk0C);
 }
 
 bool Actor::loadData(IDataSource *ids, uint32 version) {
 	if (!Container::loadData(ids, version)) return false;
 
-	strength = static_cast<int16>(ids->read2());
-	dexterity = static_cast<int16>(ids->read2());
-	intelligence = static_cast<int16>(ids->read2());
-	hitpoints = ids->read2();
-	mana = static_cast<int16>(ids->read2());
-	alignment = ids->read2();
-	enemyalignment = ids->read2();
-	lastanim = static_cast<Animation::Sequence>(ids->read2());
-	animframe = ids->read2();
-	direction = ids->read2();
-	fallstart = ids->read4();
-	actorflags = ids->read4();
-	unk0C = ids->read1();
+	_strength = static_cast<int16>(ids->read2());
+	_dexterity = static_cast<int16>(ids->read2());
+	_intelligence = static_cast<int16>(ids->read2());
+	_hitPoints = ids->read2();
+	_mana = static_cast<int16>(ids->read2());
+	_alignment = ids->read2();
+	_enemyAlignment = ids->read2();
+	_lastAnim = static_cast<Animation::Sequence>(ids->read2());
+	_animFrame = ids->read2();
+	_direction = ids->read2();
+	_fallStart = ids->read4();
+	_actorFlags = ids->read4();
+	_unk0C = ids->read1();
 
 	return true;
 }

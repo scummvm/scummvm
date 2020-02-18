@@ -463,43 +463,43 @@ void MainActor::ConCmd_heal(const Console::ArgvType &argv) {
 
 void MainActor::accumulateStr(int n) {
 	// already max?
-	if (strength == 25) return; //!! constant
+	if (_strength == 25) return; //!! constant
 
 	accumStr += n;
 	if (accumStr >= 650 || getRandom() % (650 - accumStr) == 0) { //!! constant
-		strength++;
+		_strength++;
 		accumStr = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained strength!" << Std::endl;
+		pout << "Gained _strength!" << Std::endl;
 	}
 }
 
 void MainActor::accumulateDex(int n) {
 	// already max?
-	if (dexterity == 25) return; //!! constant
+	if (_dexterity == 25) return; //!! constant
 
 	accumDex += n;
 	if (accumDex >= 650 || getRandom() % (650 - accumDex) == 0) { //!! constant
-		dexterity++;
+		_dexterity++;
 		accumDex = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained dexterity!" << Std::endl;
+		pout << "Gained _dexterity!" << Std::endl;
 	}
 }
 
 void MainActor::accumulateInt(int n) {
 	// already max?
-	if (intelligence == 25) return; //!! constant
+	if (_intelligence == 25) return; //!! constant
 
 	accumInt += n;
 	if (accumInt >= 650 || getRandom() % (650 - accumInt) == 0) { //!! constant
-		intelligence++;
+		_intelligence++;
 		accumInt = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained intelligence!" << Std::endl;
+		pout << "Gained _intelligence!" << Std::endl;
 	}
 }
 
@@ -507,7 +507,7 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	shape_ = 0;
 	frame_ = 0;
 
-	if (!isInCombat() && lastanim != Animation::unreadyWeapon) return;
+	if (!isInCombat() && _lastAnim != Animation::unreadyWeapon) return;
 
 	ObjId weaponid = getEquip(ShapeInfo::SE_WEAPON);
 	Item *weapon = getItem(weaponid);
@@ -522,8 +522,8 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	shape_ = weaponinfo->overlay_shape;
 
 	WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
-	frame_ = wpnovlay->getOverlayFrame(lastanim, weaponinfo->overlay_type,
-	                                  direction, animframe);
+	frame_ = wpnovlay->getOverlayFrame(_lastAnim, weaponinfo->overlay_type,
+	                                  _direction, _animFrame);
 
 	if (frame_ == 0) shape_ = 0;
 }

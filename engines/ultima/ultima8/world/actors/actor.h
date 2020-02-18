@@ -42,45 +42,45 @@ public:
 	~Actor() override;
 
 	int16 getStr() const {
-		return strength;
+		return _strength;
 	}
 	void setStr(int16 str) {
-		strength = str;
+		_strength = str;
 	}
 	int16 getDex() const {
-		return dexterity;
+		return _dexterity;
 	}
 	void setDex(int16 dex) {
-		dexterity = dex;
+		_dexterity = dex;
 	}
 	int16 getInt() const {
-		return intelligence;
+		return _intelligence;
 	}
-	void setInt(int16 int_) {
-		intelligence = int_;
+	void setInt(int16 intl) {
+		_intelligence = intl;
 	}
 	uint16 getHP() const {
-		return hitpoints;
+		return _hitPoints;
 	}
 	void setHP(uint16 hp) {
-		hitpoints = hp;
+		_hitPoints = hp;
 	}
 	int16 getMana() const {
-		return mana;
+		return _mana;
 	}
 	void setMana(int16 mp) {
-		mana = mp;
+		_mana = mp;
 	}
 
 	int16 getMaxMana() const;
 	uint16 getMaxHP() const;
 
 	bool isDead() const {
-		return (actorflags & ACT_DEAD) != 0;
+		return (_actorFlags & ACT_DEAD) != 0;
 	}
 
 	bool isInCombat() const {
-		return (actorflags & ACT_INCOMBAT) != 0;
+		return (_actorFlags & ACT_INCOMBAT) != 0;
 	}
 	void toggleInCombat() {
 		if (isInCombat()) clearInCombat();
@@ -92,51 +92,51 @@ public:
 	virtual void clearInCombat();
 
 	uint16 getAlignment() const {
-		return alignment;
+		return _alignment;
 	}
 	void setAlignment(uint16 a) {
-		alignment = a;
+		_alignment = a;
 	}
 	uint16 getEnemyAlignment() const {
-		return enemyalignment;
+		return _enemyAlignment;
 	}
 	void setEnemyAlignment(uint16 a) {
-		enemyalignment = a;
+		_enemyAlignment = a;
 	}
 
 	Animation::Sequence getLastAnim() const {
-		return lastanim;
+		return _lastAnim;
 	}
 	void setLastAnim(Animation::Sequence anim) {
-		lastanim = anim;
+		_lastAnim = anim;
 	}
 	uint16 getDir() const {
-		return direction;
+		return _direction;
 	}
 	void setDir(uint16 dir) {
-		direction = dir;
+		_direction = dir;
 	}
 	int32 getFallStart() const {
-		return fallstart;
+		return _fallStart;
 	}
 	void setFallStart(int32 zp) {
-		fallstart = zp;
+		_fallStart = zp;
 	}
 	void setUnk0C(uint8 b) {
-		unk0C = b;
+		_unk0C = b;
 	}
 
 	uint32 getActorFlags() const {
-		return actorflags;
+		return _actorFlags;
 	}
 	void setActorFlag(uint32 mask) {
-		actorflags |= mask;
+		_actorFlags |= mask;
 	}
 	void clearActorFlag(uint32 mask) {
-		actorflags &= ~mask;
+		_actorFlags &= ~mask;
 	}
 
-	//! set stats from MonsterInfo (hp, dex, alignment, enemyalignment)
+	//! set stats from MonsterInfo (hp, dex, _alignment, _enemyAlignment)
 	//! \return true if a MonsterInfo struct was found, false otherwise
 	bool loadMonsterStats();
 
@@ -205,7 +205,7 @@ public:
 	//! state will be updated to after the animation. If unsuccessful,
 	//! the contents of state are undefined.
 	//! \param anim Action to try
-	//! \param dir direction to walk in
+	//! \param dir _direction to walk in
 	//! \param state the state to start from, or 0 to use the current state
 	Animation::Result tryAnim(Animation::Sequence anim, int dir, unsigned int steps = 0, PathfindingState *state = 0);
 
@@ -294,22 +294,22 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	int16 strength;
-	int16 dexterity;
-	int16 intelligence;
-	uint16 hitpoints;
-	int16 mana;
+	int16 _strength;
+	int16 _dexterity;
+	int16 _intelligence;
+	uint16 _hitPoints;
+	int16 _mana;
 
-	uint16 alignment, enemyalignment;
+	uint16 _alignment, _enemyAlignment;
 
-	Animation::Sequence lastanim;
-	uint16 animframe;
-	uint16 direction;
+	Animation::Sequence _lastAnim;
+	uint16 _animFrame;
+	uint16 _direction;
 
-	int32 fallstart;
-	uint8 unk0C; // unknown byte 0x0C from npcdata.dat
+	int32 _fallStart;
+	uint8 _unk0C; // unknown byte 0x0C from npcdata.dat
 
-	uint32 actorflags;
+	uint32 _actorFlags;
 };
 
 } // End of namespace Ultima8

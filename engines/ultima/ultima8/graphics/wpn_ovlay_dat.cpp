@@ -82,8 +82,8 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 			AnimWeaponOverlay *awo = new AnimWeaponOverlay;
 			_overlay[action] = awo;
 
-			unsigned int animlength = anim->size;
-			unsigned int dircount = anim->dircount;
+			unsigned int animlength = anim->_size;
+			unsigned int dircount = anim->_dirCount;
 
 			unsigned int typecount = ds->getSize() / (4 * dircount * animlength);
 			awo->_overlay.resize(typecount);

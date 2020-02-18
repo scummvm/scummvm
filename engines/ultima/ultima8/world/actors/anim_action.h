@@ -31,11 +31,11 @@ namespace Ultima8 {
 class Actor;
 
 struct AnimFrame {
-	int frame;
-	int deltaz;
-	int deltadir;
-	int sfx;
-	uint32 flags;
+	int _frame;
+	int _deltaZ;
+	int _deltaDir;
+	int _sfx;
+	uint32 _flags;
 
 	enum AnimFrameFlags {
 		AFF_UNK1     = 0x0001,
@@ -45,23 +45,23 @@ struct AnimFrame {
 	};
 
 	inline bool is_flipped() {
-		return (flags & AFF_FLIPPED) != 0;
+		return (_flags & AFF_FLIPPED) != 0;
 	}
 	inline int attack_range() {
-		return ((flags >> 2) & 0x07);
+		return ((_flags >> 2) & 0x07);
 	}
 };
 
 struct AnimAction {
-	uint32 shapenum;
-	uint32 action;
+	uint32 _shapeNum;
+	uint32 _action;
 
 	Std::vector<AnimFrame> frames[16]; // 8 or 16 directions
-	unsigned int size;
-	int framerepeat;
-	uint32 flags;
+	unsigned int _size;
+	int _frameRepeat;
+	uint32 _flags;
 
-	unsigned int dircount;
+	unsigned int _dirCount;
 
 	//! return the range of the animation to play
 	//! \param actor The actor to play the animation for
