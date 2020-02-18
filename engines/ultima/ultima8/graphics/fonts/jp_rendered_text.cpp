@@ -34,17 +34,15 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(JPRenderedText, RenderedText)
 
 
-JPRenderedText::JPRenderedText(Std::list<PositionedText> &lines_,
-                               int width_, int height_, int vlead_,
-                               ShapeFont *font_, unsigned int fontnum_)
-	: lines(lines_), font(font_), fontnum(fontnum_) {
-	width = width_;
-	height = height_;
-	vlead = vlead_;
+JPRenderedText::JPRenderedText(Std::list<PositionedText> &lines, int width, int height,
+		int vLead, ShapeFont *font, unsigned int fontNum)
+		: _lines(lines), _font(font), _fontNum(fontNum) {
+	_width = width;
+	_height = height;
+	_vLead = vLead;
 }
 
 JPRenderedText::~JPRenderedText() {
-
 }
 
 void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmasked*/) {
@@ -52,14 +50,14 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 
 	PaletteManager *palman = PaletteManager::get_instance();
 	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>
-	                                   (PaletteManager::Pal_JPFontStart + fontnum);
+	                                   (PaletteManager::Pal_JPFontStart + _fontNum);
 	Palette *pal = palman->getPalette(fontpal);
-	const Palette *savepal = font->getPalette();
-	font->setPalette(pal);
+	const Palette *savepal = _font->getPalette();
+	_font->setPalette(pal);
 
 	Std::list<PositionedText>::iterator iter;
 
-	for (iter = lines.begin(); iter != lines.end(); ++iter) {
+	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
 		int line_x = x + iter->_dims.x;
 		int line_y = y + iter->_dims.y;
 
@@ -72,23 +70,23 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 				sjis += (t << 8);
 			}
 			uint16 u8char = shiftjis_to_ultima8(sjis);
-			surface->Paint(font, u8char, line_x, line_y);
+			surface->Paint(_font, u8char, line_x, line_y);
 
 			if (i == iter->_cursor) {
-				surface->Fill32(0xFF000000, line_x, line_y - font->getBaseline(),
+				surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
 				                1, iter->_dims.h);
 			}
 
-			line_x += (font->getFrame(u8char))->_width - font->getHlead();
+			line_x += (_font->getFrame(u8char))->_width - _font->getHlead();
 		}
 
 		if (iter->_cursor == textsize) {
-			surface->Fill32(0xFF000000, line_x, line_y - font->getBaseline(),
+			surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
 			                1, iter->_dims.h);
 		}
 	}
 
-	font->setPalette(savepal);
+	_font->setPalette(savepal);
 }
 
 void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
@@ -97,14 +95,14 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 
 	PaletteManager *palman = PaletteManager::get_instance();
 	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>
-	                                   (PaletteManager::Pal_JPFontStart + fontnum);
+	                                   (PaletteManager::Pal_JPFontStart + _fontNum);
 	Palette *pal = palman->getPalette(fontpal);
-	const Palette *savepal = font->getPalette();
-	font->setPalette(pal);
+	const Palette *savepal = _font->getPalette();
+	_font->setPalette(pal);
 
 	Std::list<PositionedText>::iterator iter;
 
-	for (iter = lines.begin(); iter != lines.end(); ++iter) {
+	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
 		int line_x = x + iter->_dims.x;
 		int line_y = y + iter->_dims.y;
 
@@ -118,14 +116,14 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 			}
 			uint16 u8char = shiftjis_to_ultima8(sjis);
 
-			surface->PaintHighlight(font, u8char, line_x, line_y,
+			surface->PaintHighlight(_font, u8char, line_x, line_y,
 			                        false, false, col);
-			line_x += (font->getFrame(u8char))->_width - font->getHlead();
+			line_x += (_font->getFrame(u8char))->_width - _font->getHlead();
 		}
 
 	}
 
-	font->setPalette(savepal);
+	_font->setPalette(savepal);
 }
 
 } // End of namespace Ultima8

@@ -36,12 +36,10 @@ ShapeFont::ShapeFont(const uint8 *data_, uint32 size_,
                      const ConvertShapeFormat *format,
                      const uint16 flexId_, const uint32 shapeNum_)
 	: Font(), Shape(data_, size_, format, flexId_, shapeNum_),
-	  height(0), baseline(0), vlead(-1), hlead(0) {
-
+	  _height(0), _baseLine(0), _vLead(-1), _hLead(0) {
 }
 
 ShapeFont::~ShapeFont() {
-
 }
 
 
@@ -50,27 +48,27 @@ int ShapeFont::getWidth(char c) {
 }
 
 int ShapeFont::getHeight() {
-	if (height == 0) {
+	if (_height == 0) {
 		for (uint32 i = 0; i < frameCount(); i++) {
 			int h = getFrame(i)->_height;
 
-			if (h > height) height = h;
+			if (h > _height) _height = h;
 		}
 	}
 
-	return height;
+	return _height;
 }
 
 int ShapeFont::getBaseline() {
-	if (baseline == 0) {
+	if (_baseLine == 0) {
 		for (uint32 i = 0; i < frameCount(); i++) {
 			int b = getFrame(i)->_yoff;
 
-			if (b > baseline) baseline = b;
+			if (b > _baseLine) _baseLine = b;
 		}
 	}
 
-	return baseline;
+	return _baseLine;
 }
 
 int ShapeFont::getBaselineSkip() {
@@ -78,14 +76,14 @@ int ShapeFont::getBaselineSkip() {
 }
 
 void ShapeFont::getStringSize(const Std::string &text, int32 &width, int32 &height_) {
-	width = hlead;
+	width = _hLead;
 	height_ = getHeight();
 
 	for (unsigned int i = 0; i < text.size(); ++i) {
 		if (text[i] == '\n' || text[i] == '\r') {
 			// ignore
 		} else {
-			width += getWidth(text[i]) - hlead;
+			width += getWidth(text[i]) - _hLead;
 		}
 	}
 }

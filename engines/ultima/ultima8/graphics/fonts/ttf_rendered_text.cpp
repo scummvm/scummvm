@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/graphics/fonts/ttf_rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/graphics/render_surface.h"
@@ -33,39 +32,38 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TTFRenderedText, RenderedText)
 
 
-TTFRenderedText::TTFRenderedText(Texture *texture_, int width_, int height_,
-                                 int vlead_, TTFont *font_)
-	: texture(texture_), font(font_) {
-	width = width_;
-	height = height_;
-	vlead = vlead_;
+TTFRenderedText::TTFRenderedText(Texture *texture_, int width, int height,
+		int vLead, TTFont *font) : _texture(texture_), _font(font) {
+	_width = width;
+	_height = height;
+	_vLead = vLead;
 }
 
 TTFRenderedText::~TTFRenderedText() {
-	delete texture;
+	delete _texture;
 }
 
 void TTFRenderedText::draw(RenderSurface *surface, int x, int y,
                            bool destmasked) {
 	if (!destmasked)
-		surface->Blit(texture, 0, 0, width, height, x, y - font->getBaseline(),
-		              font->isAntialiased());
+		surface->Blit(_texture, 0, 0, _width, _height, x, y - _font->getBaseline(),
+		              _font->isAntialiased());
 	else
-		surface->MaskedBlit(texture, 0, 0, width, height,
-		                    x, y - font->getBaseline(),
-		                    0, font->isAntialiased());
+		surface->MaskedBlit(_texture, 0, 0, _width, _height,
+		                    x, y - _font->getBaseline(),
+		                    0, _font->isAntialiased());
 }
 
 void TTFRenderedText::drawBlended(RenderSurface *surface, int x, int y,
                                   uint32 col, bool destmasked) {
 	if (!destmasked)
-		surface->FadedBlit(texture, 0, 0, width, height,
-		                   x, y - font->getBaseline(), col,
-		                   font->isAntialiased());
+		surface->FadedBlit(_texture, 0, 0, _width, _height,
+		                   x, y - _font->getBaseline(), col,
+		                   _font->isAntialiased());
 	else
-		surface->MaskedBlit(texture, 0, 0, width, height,
-		                    x, y - font->getBaseline(), col,
-		                    font->isAntialiased());
+		surface->MaskedBlit(_texture, 0, 0, _width, _height,
+		                    x, y - _font->getBaseline(), col,
+		                    _font->isAntialiased());
 }
 
 } // End of namespace Ultima8

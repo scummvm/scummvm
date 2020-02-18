@@ -45,9 +45,9 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 protected:
-	Std::list<PositionedText> lines;
-	ShapeFont *font;
-	unsigned int fontnum;
+	Std::list<PositionedText> _lines;
+	ShapeFont *_font;
+	unsigned int _fontNum;
 };
 
 } // End of namespace Ultima8

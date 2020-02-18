@@ -41,7 +41,7 @@ public:
 	int getBaselineSkip() override;
 
 	bool isAntialiased() {
-		return antiAliased;
+		return _antiAliased;
 	}
 
 	void getStringSize(const Std::string &text,
@@ -59,11 +59,11 @@ public:
 
 	ENABLE_RUNTIME_CLASSTYPE()
 protected:
-	Graphics::Font *ttf_font;
-	uint32 rgb;
-	int bordersize;
-	bool antiAliased;
-	bool SJIS;
+	Graphics::Font *_ttfFont;
+	uint32 _rgb;
+	int _borderSize;
+	bool _antiAliased;
+	bool _SJIS;
 
 	uint16 bullet;
 };

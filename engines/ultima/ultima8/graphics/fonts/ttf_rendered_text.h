@@ -47,8 +47,8 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 protected:
-	Texture *texture;
-	TTFont *font;
+	Texture *_texture;
+	TTFont *_font;
 };
 
 } // End of namespace Ultima8

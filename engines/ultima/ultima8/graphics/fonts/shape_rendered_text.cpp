@@ -32,17 +32,16 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeRenderedText, RenderedText)
 
 
-ShapeRenderedText::ShapeRenderedText(Std::list<PositionedText> &lines_,
-                                     int width_, int height_, int vlead_,
-                                     ShapeFont *font_)
-	: lines(lines_), font(font_) {
-	width = width_;
-	height = height_;
-	vlead = vlead_;
+ShapeRenderedText::ShapeRenderedText(Std::list<PositionedText> &_lines,
+                                     int width_, int height, int vLead,
+                                     ShapeFont *_font)
+	: _lines(_lines), _font(_font) {
+	_width = width_;
+	_height = height;
+	_vLead = vLead;
 }
 
 ShapeRenderedText::~ShapeRenderedText() {
-
 }
 
 void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmasked*/) {
@@ -50,26 +49,26 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 
 	Std::list<PositionedText>::iterator iter;
 
-	for (iter = lines.begin(); iter != lines.end(); ++iter) {
+	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
 		int line_x = x + iter->_dims.x;
 		int line_y = y + iter->_dims.y;
 
 		size_t textsize = iter->_text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
-			surface->Paint(font, static_cast<unsigned char>(iter->_text[i]),
+			surface->Paint(_font, static_cast<unsigned char>(iter->_text[i]),
 			               line_x, line_y);
 
 			if (i == iter->_cursor) {
-				surface->Fill32(0xFF000000, line_x, line_y - font->getBaseline(),
+				surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
 				                1, iter->_dims.h);
 			}
 
-			line_x += font->getWidth(iter->_text[i]) - font->getHlead();
+			line_x += _font->getWidth(iter->_text[i]) - _font->getHlead();
 		}
 
 		if (iter->_cursor == textsize) {
-			surface->Fill32(0xFF000000, line_x, line_y - font->getBaseline(),
+			surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
 			                1, iter->_dims.h);
 		}
 	}
@@ -81,17 +80,17 @@ void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 
 	Std::list<PositionedText>::iterator iter;
 
-	for (iter = lines.begin(); iter != lines.end(); ++iter) {
+	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
 		int line_x = x + iter->_dims.x;
 		int line_y = y + iter->_dims.y;
 
 		size_t textsize = iter->_text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
-			surface->PaintHighlight(font,
+			surface->PaintHighlight(_font,
 			                        static_cast<unsigned char>(iter->_text[i]),
 			                        line_x, line_y, false, false, col);
-			line_x += font->getWidth(iter->_text[i]) - font->getHlead();
+			line_x += _font->getWidth(iter->_text[i]) - _font->getHlead();
 		}
 
 	}
