@@ -63,7 +63,6 @@ ContainerGump::ContainerGump(Shape *shape, uint32 frameNum, uint16 owner,
 }
 
 ContainerGump::~ContainerGump() {
-
 }
 
 void ContainerGump::InitGump(Gump *newparent, bool take_focus) {

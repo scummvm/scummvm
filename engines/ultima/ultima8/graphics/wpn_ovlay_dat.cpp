@@ -35,9 +35,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 WpnOvlayDat::WpnOvlayDat() {
-
 }
-
 
 WpnOvlayDat::~WpnOvlayDat() {
 	for (unsigned int i = 0; i < _overlay.size(); i++)

@@ -69,7 +69,6 @@ ShapeViewerGump::ShapeViewerGump(int width, int height,
 }
 
 ShapeViewerGump::~ShapeViewerGump() {
-
 }
 
 void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled*/) {

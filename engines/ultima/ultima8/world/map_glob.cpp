@@ -29,7 +29,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 MapGlob::MapGlob() {
-
 }
 
 

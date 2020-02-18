@@ -38,16 +38,13 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ActorBarkNotifyProcess, GumpNotifyProcess)
 
 ActorBarkNotifyProcess::ActorBarkNotifyProcess()
 	: GumpNotifyProcess() {
-
 }
 
 ActorBarkNotifyProcess::ActorBarkNotifyProcess(uint16 it)
 	: GumpNotifyProcess(it) {
-
 }
 
 ActorBarkNotifyProcess::~ActorBarkNotifyProcess(void) {
-
 }
 
 

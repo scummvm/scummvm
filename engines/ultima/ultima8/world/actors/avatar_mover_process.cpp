@@ -60,7 +60,6 @@ AvatarMoverProcess::AvatarMoverProcess() : Process() {
 
 
 AvatarMoverProcess::~AvatarMoverProcess() {
-
 }
 
 void AvatarMoverProcess::run() {

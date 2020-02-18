@@ -47,11 +47,9 @@ static const int watchactor = WATCHACTOR;
 #endif
 
 AnimationTracker::AnimationTracker() {
-
 }
 
 AnimationTracker::~AnimationTracker() {
-
 }
 
 bool AnimationTracker::init(Actor *actor_, Animation::Sequence action_,

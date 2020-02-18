@@ -38,7 +38,6 @@ INIFile::INIFile(string fname, istring root)
 }
 
 INIFile::~INIFile() {
-
 }
 
 bool INIFile::Section::hasKey(istring key) {

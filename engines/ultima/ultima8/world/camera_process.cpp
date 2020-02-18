@@ -49,7 +49,6 @@ int32 CameraProcess::_eqX = 0;
 int32 CameraProcess::_eqY = 0;
 
 CameraProcess::CameraProcess() : Process() {
-
 }
 
 CameraProcess::~CameraProcess() {

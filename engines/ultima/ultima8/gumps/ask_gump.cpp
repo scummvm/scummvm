@@ -36,7 +36,6 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(AskGump, ItemRelativeGump)
 
 AskGump::AskGump() : ItemRelativeGump(), _answers(0) {
-
 }
 
 AskGump::AskGump(uint16 owner, UCList *answers) :

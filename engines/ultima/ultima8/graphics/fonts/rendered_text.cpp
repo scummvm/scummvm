@@ -30,12 +30,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(RenderedText)
 
 RenderedText::RenderedText()
 	: _width(-1), _height(-1), _vLead(0) {
-
 }
 
 
 RenderedText::~RenderedText() {
-
 }
 
 } // End of namespace Ultima8

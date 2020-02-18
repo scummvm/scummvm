@@ -124,7 +124,6 @@ void MissileTracker::init(int32 x, int32 y, int32 z, int32 speed) {
 }
 
 MissileTracker::~MissileTracker() {
-
 }
 
 bool MissileTracker::isPathClear() {

@@ -44,7 +44,6 @@ idMan::idMan(uint16 begin, uint16 maxEnd, uint16 startCount)
 }
 
 idMan::~idMan() {
-
 }
 
 void idMan::clearAll(uint16 new_max) {

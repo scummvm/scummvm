@@ -68,7 +68,6 @@ Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 }
 
 Actor::~Actor() {
-
 }
 
 uint16 Actor::assignObjId() {

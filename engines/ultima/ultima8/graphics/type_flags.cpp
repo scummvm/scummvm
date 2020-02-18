@@ -36,12 +36,10 @@ namespace Ultima {
 namespace Ultima8 {
 
 TypeFlags::TypeFlags() {
-
 }
 
 
 TypeFlags::~TypeFlags() {
-
 }
 
 ShapeInfo *TypeFlags::getShapeInfo(uint32 shapenum) {

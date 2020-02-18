@@ -47,7 +47,6 @@ TargetGump::TargetGump(int x_, int y_)
 }
 
 TargetGump::~TargetGump() {
-
 }
 
 void TargetGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {

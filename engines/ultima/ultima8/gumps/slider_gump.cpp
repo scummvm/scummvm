@@ -55,7 +55,6 @@ SliderGump::SliderGump(int x, int y, int16 min, int16 max,
 }
 
 SliderGump::~SliderGump() {
-
 }
 
 /*

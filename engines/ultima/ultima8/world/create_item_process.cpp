@@ -51,7 +51,6 @@ CreateItemProcess::CreateItemProcess(uint32 shape_, uint32 frame_,
 }
 
 CreateItemProcess::~CreateItemProcess(void) {
-
 }
 
 void CreateItemProcess::run() {

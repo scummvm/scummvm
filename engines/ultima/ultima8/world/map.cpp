@@ -39,9 +39,7 @@ namespace Ultima8 {
 
 //#define DUMP_ITEMS
 
-Map::Map(uint32 mapNum)
-	: _mapNum(mapNum) {
-
+Map::Map(uint32 mapNum) : _mapNum(mapNum) {
 }
 
 

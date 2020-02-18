@@ -40,7 +40,6 @@ Egg::Egg() : _hatched(false) {
 
 
 Egg::~Egg() {
-
 }
 
 uint16 Egg::hatch() {

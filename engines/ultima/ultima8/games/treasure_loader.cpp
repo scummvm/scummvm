@@ -26,11 +26,9 @@ namespace Ultima {
 namespace Ultima8 {
 
 TreasureLoader::TreasureLoader() {
-
 }
 
 TreasureLoader::~TreasureLoader() {
-
 }
 
 void TreasureLoader::loadDefaults() {

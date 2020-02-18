@@ -38,11 +38,9 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GlobEgg, Item)
 
 GlobEgg::GlobEgg() {
-
 }
 
 GlobEgg::~GlobEgg() {
-
 }
 
 

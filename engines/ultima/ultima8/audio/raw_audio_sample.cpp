@@ -39,7 +39,6 @@ RawAudioSample::RawAudioSample(uint8 *buffer_, uint32 size, uint32 rate,
 }
 
 RawAudioSample::~RawAudioSample() {
-
 }
 
 void RawAudioSample::initDecompressor(void *DecompData) const {

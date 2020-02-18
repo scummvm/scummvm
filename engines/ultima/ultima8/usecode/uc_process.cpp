@@ -51,7 +51,6 @@ UCProcess::UCProcess(uint16 classid_, uint16 offset_, uint32 this_ptr,
 }
 
 UCProcess::~UCProcess() {
-
 }
 
 void UCProcess::load(uint16 classid_, uint16 offset_, uint32 this_ptr,

@@ -35,12 +35,10 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportEgg, Egg)
 
 TeleportEgg::TeleportEgg() {
-
 }
 
 
 TeleportEgg::~TeleportEgg() {
-
 }
 
 uint16 TeleportEgg::hatch() {

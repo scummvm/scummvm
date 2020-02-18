@@ -116,7 +116,6 @@ PathfinderProcess::PathfinderProcess(Actor *actor_,
 }
 
 PathfinderProcess::~PathfinderProcess() {
-
 }
 
 void PathfinderProcess::terminate() {

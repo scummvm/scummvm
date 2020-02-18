@@ -45,7 +45,6 @@ DirFile::DirFile(const Std::string &path) {
 
 
 DirFile::~DirFile() {
-
 }
 
 bool DirFile::readMetadata() {
