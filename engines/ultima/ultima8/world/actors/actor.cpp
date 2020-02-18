@@ -136,28 +136,28 @@ bool Actor::giveTreasure() {
 
 		// check map
 		int currentmap = World::get_instance()->getCurrentMap()->getNum();
-		if (ti.map != 0 && ((ti.map > 0 && ti.map != currentmap) ||
-		                    (ti.map < 0 && -ti.map == currentmap))) {
+		if (ti._map != 0 && ((ti._map > 0 && ti._map != currentmap) ||
+		                    (ti._map < 0 && -ti._map == currentmap))) {
 			continue;
 		}
 
 		// check chance
-		if (ti.chance < 0.999 &&
-		        (static_cast<double>(getRandom()) / RAND_MAX) > ti.chance) {
+		if (ti._chance < 0.999 &&
+		        (static_cast<double>(getRandom()) / RAND_MAX) > ti._chance) {
 			continue;
 		}
 
 		// determine count/quantity
 		int count;
-		if (ti.mincount >= ti.maxcount)
-			count = ti.mincount;
+		if (ti._minCount >= ti._maxCount)
+			count = ti._minCount;
 		else
-			count = ti.mincount + (getRandom() % (ti.maxcount - ti.mincount));
+			count = ti._minCount + (getRandom() % (ti._maxCount - ti._minCount));
 
-		if (!ti.special.empty()) {
-			if (ti.special == "weapon") {
+		if (!ti._special.empty()) {
+			if (ti._special == "weapon") {
 
-				// NB: this is rather biased towards weapons with low shapes...
+				// NB: this is rather biased towards weapons with low _shapes...
 				for (unsigned int s = 0; s < mainshapes->getCount(); ++s) {
 					ShapeInfo *si = mainshapes->getShapeInfo(s);
 					if (!si->_weaponInfo) continue;
@@ -184,7 +184,7 @@ bool Actor::giveTreasure() {
 					item->randomGumpLocation();
 					break;
 				}
-			} else if (ti.special == "sorcfocus") {
+			} else if (ti._special == "sorcfocus") {
 				// CONSTANTS! (and lots of them...)
 				int shapeNum = 397;
 				int frameNum;
@@ -274,17 +274,17 @@ bool Actor::giveTreasure() {
 				}
 
 			} else {
-				pout << "Unhandled special treasure: " << ti.special
+				pout << "Unhandled _special treasure: " << ti._special
 				     << Std::endl;
 			}
 			continue;
 		}
 
-		// if shapes.size() == 1 and the given shape is SF_QUANTITY,
+		// if _shapes.size() == 1 and the given shape is SF_QUANTITY,
 		// then produce a stack of that shape (ignoring frame)
 
-		if (ti.shapes.size() == 1) {
-			uint32 shapeNum = ti.shapes[0];
+		if (ti._shapes.size() == 1) {
+			uint32 shapeNum = ti._shapes[0];
 			ShapeInfo *si = mainshapes->getShapeInfo(shapeNum);
 			if (!si) {
 				perr << "Trying to create treasure with an invalid shapeNum ("
@@ -307,7 +307,7 @@ bool Actor::giveTreasure() {
 			}
 		}
 
-		if (ti.shapes.empty() || ti.frames.empty()) {
+		if (ti._shapes.empty() || ti._frames.empty()) {
 			perr << "No shape/frame set in treasure" << Std::endl;
 			continue;
 		}
@@ -315,12 +315,12 @@ bool Actor::giveTreasure() {
 		// we need to produce a number of items
 		for (i = 0; (int)i < count; ++i) {
 			// pick shape
-			int n = getRandom() % ti.shapes.size();
-			uint32 shapeNum = ti.shapes[n];
+			int n = getRandom() % ti._shapes.size();
+			uint32 shapeNum = ti._shapes[n];
 
 			// pick frame
-			n = getRandom() % ti.frames.size();
-			uint32 frameNum = ti.frames[n];
+			n = getRandom() % ti._frames.size();
+			uint32 frameNum = ti._frames[n];
 
 			ShapeInfo *si = GameData::get_instance()->getMainShapes()->
 			                getShapeInfo(shapeNum);
@@ -481,8 +481,8 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
 
 	if (state) {
 		tracker.updateState(*state);
-		state->lastanim = anim;
-		state->direction = dir;
+		state->_lastAnim = anim;
+		state->_direction = dir;
 	}
 
 
@@ -884,7 +884,7 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 
 	bool slayer = false;
 
-	// special attacks
+	// _special attacks
 	if (damage && damage_type) {
 		if (damage_type & WeaponInfo::DMG_SLAYER) {
 			if (getRandom() % 10 == 0) {
@@ -981,13 +981,13 @@ void Actor::setInCombat() {
 	// kill any processes belonging to this actor
 	Kernel::get_instance()->killProcesses(getObjId(), 6, true);
 
-	// perform special actions
+	// perform _special actions
 	ProcId castproc = callUsecodeEvent_cast(0);
 
 	CombatProcess *cp = new CombatProcess(this);
 	Kernel::get_instance()->addProcess(cp);
 
-	// wait for any special actions to finish before starting to fight
+	// wait for any _special actions to finish before starting to fight
 	if (castproc)
 		cp->waitFor(castproc);
 

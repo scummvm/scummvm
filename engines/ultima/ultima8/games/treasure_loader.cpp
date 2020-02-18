@@ -76,12 +76,12 @@ bool TreasureLoader::parse(Std::string desc,
 
 bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
                                    bool loadingDefault) {
-	ti.special = "";
-	ti.chance = 1;
-	ti.map = 0;
-	ti.shapes.clear();
-	ti.frames.clear();
-	ti.mincount = ti.maxcount = 1;
+	ti._special = "";
+	ti._chance = 1;
+	ti._map = 0;
+	ti._shapes.clear();
+	ti._frames.clear();
+	ti._minCount = ti._maxCount = 1;
 
 	bool loadedDefault = false;
 
@@ -94,28 +94,28 @@ bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
 //		pout << "internalParse: key=" << key << " val=" << val << Std::endl;
 
 		if (key == "shape") {
-			if (!parseUInt32Vector(val, ti.shapes))
+			if (!parseUInt32Vector(val, ti._shapes))
 				return false;
 		} else if (key == "frame") {
-			if (!parseUInt32Vector(val, ti.frames))
+			if (!parseUInt32Vector(val, ti._frames))
 				return false;
 		} else if (key == "count") {
-			if (!parseUIntRange(val, ti.mincount, ti.maxcount)) {
+			if (!parseUIntRange(val, ti._minCount, ti._maxCount)) {
 				int x;
 				if (!parseInt(val, x))
 					return false;
-				ti.mincount = ti.maxcount = x;
+				ti._minCount = ti._maxCount = x;
 			}
 		} else if (key == "chance") {
-			if (!parseDouble(val, ti.chance))
+			if (!parseDouble(val, ti._chance))
 				return false;
 		} else if (key == "map") {
 			if (val.size() > 1 && val[0] == '!')
 				val[0] = '-'; // HACK: invert map for 'not this map'
-			if (!parseInt(val, ti.map))
+			if (!parseInt(val, ti._map))
 				return false;
 		} else if (key == "special" && loadingDefault) {
-			ti.special = val;
+			ti._special = val;
 		} else if (key == "type" && !loadingDefault) {
 			if (loadedDefault)
 				return false;
@@ -135,8 +135,8 @@ bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
 					return false;
 				minmult = maxmult = x;
 			}
-			ti.mincount *= minmult;
-			ti.maxcount *= maxmult;
+			ti._minCount *= minmult;
+			ti._maxCount *= maxmult;
 		} else {
 			return false;
 		}

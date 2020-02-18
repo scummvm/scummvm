@@ -39,8 +39,8 @@ TeleportToEggProcess::TeleportToEggProcess() : Process() {
 }
 
 
-TeleportToEggProcess::TeleportToEggProcess(int mapnum_, int teleport_id_)
-	: mapnum(mapnum_), teleport_id(teleport_id_) {
+TeleportToEggProcess::TeleportToEggProcess(int mapNum, int teleportId)
+	: _mapNum(mapNum), _teleportId(teleportId) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
@@ -48,7 +48,7 @@ TeleportToEggProcess::TeleportToEggProcess(int mapnum_, int teleport_id_)
 void TeleportToEggProcess::run() {
 	MainActor *av = getMainActor();
 
-	av->teleport(mapnum, teleport_id);
+	av->teleport(_mapNum, _teleportId);
 
 	terminate();
 }
@@ -56,15 +56,15 @@ void TeleportToEggProcess::run() {
 void TeleportToEggProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(mapnum));
-	ods->write4(static_cast<uint32>(teleport_id));
+	ods->write4(static_cast<uint32>(_mapNum));
+	ods->write4(static_cast<uint32>(_teleportId));
 }
 
 bool TeleportToEggProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	mapnum = static_cast<int>(ids->read4());
-	teleport_id = static_cast<int>(ids->read4());
+	_mapNum = static_cast<int>(ids->read4());
+	_teleportId = static_cast<int>(ids->read4());
 	return true;
 }
 

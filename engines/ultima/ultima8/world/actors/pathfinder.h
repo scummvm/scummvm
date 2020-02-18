@@ -34,12 +34,12 @@ class Actor;
 class Item;
 
 struct PathfindingState {
-	int32 x, y, z;
-	Animation::Sequence lastanim;
-	uint32 direction;
-	bool flipped;
-	bool firststep;
-	bool combat;
+	int32 _x, _y, _z;
+	Animation::Sequence _lastAnim;
+	uint32 _direction;
+	bool _flipped;
+	bool _firstStep;
+	bool _combat;
 
 	void load(Actor *actor);
 	bool checkPoint(int32 x_, int32 y_, int32 z_, int range);
@@ -48,9 +48,9 @@ struct PathfindingState {
 };
 
 struct PathfindingAction {
-	Animation::Sequence action;
-	uint32 direction;
-	uint32 steps;
+	Animation::Sequence _action;
+	uint32 _direction;
+	uint32 _steps;
 };
 
 struct PathNode;
@@ -83,19 +83,19 @@ public:
 
 
 protected:
-	PathfindingState start;
-	Actor *actor;
-	int32 targetx, targety, targetz;
-	Item *targetitem;
-	bool hitmode;
-	int32 expandtime;
+	PathfindingState _start;
+	Actor *_actor;
+	int32 _targetX, _targetY, _targetZ;
+	Item *_targetItem;
+	bool _hitMode;
+	int32 _expandTime;
 
-	int32 actor_xd, actor_yd, actor_zd;
+	int32 _actorXd, _actorYd, _actorZd;
 
-	Std::list<PathfindingState> visited;
-	Std::priority_queue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> nodes;
+	Std::list<PathfindingState> _visited;
+	Std::priority_queue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
 
-	Std::list<PathNode *> nodelist;
+	Std::list<PathNode *> _nodeList;
 
 	bool alreadyVisited(int32 x, int32 y, int32 z);
 	void newNode(PathNode *oldnode, PathfindingState &state, unsigned int steps);

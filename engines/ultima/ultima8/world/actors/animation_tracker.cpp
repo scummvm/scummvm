@@ -71,13 +71,13 @@ bool AnimationTracker::init(Actor *actor_, Animation::Sequence action_,
 		_flipped = (actor_->getFlags() & Item::FLG_FLIPPED) != 0;
 		_firstStep = (actor_->getActorFlags() & Actor::ACT_FIRSTSTEP) != 0;
 	} else {
-		_animAction->getAnimRange(state_->lastanim, state_->direction,
-		                         state_->firststep, _dir, _startFrame, _endFrame);
-		_flipped = state_->flipped;
-		_firstStep = state_->firststep;
-		_x = state_->x;
-		_y = state_->y;
-		_z = state_->z;
+		_animAction->getAnimRange(state_->_lastAnim, state_->_direction,
+		                         state_->_firstStep, _dir, _startFrame, _endFrame);
+		_flipped = state_->_flipped;
+		_firstStep = state_->_firstStep;
+		_x = state_->_x;
+		_y = state_->_y;
+		_z = state_->_z;
 	}
 	_startX = _x;
 	_startY = _y;
@@ -246,7 +246,7 @@ bool AnimationTracker::step() {
 	// (in CurrentMap maybe) that scans a small area around the given
 	// coordinates for a valid position (with 'must be supported' as a flag).
 	// Note that it should only check in directions orthogonal to the movement
-	// direction (to prevent it becoming impossible to step off a ledge).
+	// _direction (to prevent it becoming impossible to step off a ledge).
 
 	// I seem to recall that the teleporter from the Upper Catacombs teleporter
 	// to the Upper Catacombs places you inside the floor. Using this
@@ -509,11 +509,11 @@ void AnimationTracker::checkWeaponHit() {
 }
 
 void AnimationTracker::updateState(PathfindingState &state) {
-	state.x = _x;
-	state.y = _y;
-	state.z = _z;
-	state.flipped = _flipped;
-	state.firststep = _firstStep;
+	state._x = _x;
+	state._y = _y;
+	state._z = _z;
+	state._flipped = _flipped;
+	state._firstStep = _firstStep;
 }
 
 

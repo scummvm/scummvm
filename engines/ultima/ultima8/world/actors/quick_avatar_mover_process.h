@@ -42,16 +42,16 @@ public:
 	void terminate() override;
 
 	static bool isQuarterSpeed() {
-		return quarter;
+		return _quarter;
 	}
 	static bool isClipping() {
-		return clipping;
+		return _clipping;
 	}
 	static void setQuarterSpeed(bool q) {
-		quarter = q;
+		_quarter = q;
 	}
 	static void toggleClipping() {
-		clipping = !clipping;
+		_clipping = !_clipping;
 	}
 
 	static void terminateMover(int _dir);
@@ -78,10 +78,10 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	int dx, dy, dz, dir;
+	int _dx, _dy, _dz, _dir;
 	static ProcId amp[6];
-	static bool clipping;
-	static bool quarter;
+	static bool _clipping;
+	static bool _quarter;
 };
 
 } // End of namespace Ultima8

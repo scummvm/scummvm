@@ -44,8 +44,8 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	int mapnum;
-	int teleport_id;
+	int _mapNum;
+	int _teleportId;
 };
 
 } // End of namespace Ultima8

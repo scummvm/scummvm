@@ -58,22 +58,22 @@ PathfinderProcess::PathfinderProcess(Actor *actor_, ObjId item_, bool hit) {
 		return;
 	}
 
-	currentstep = 0;
-	targetitem = item_;
-	hitmode = hit;
-	assert(targetitem);
+	_currentStep = 0;
+	_targetItem = item_;
+	_hitMode = hit;
+	assert(_targetItem);
 
-	item->getLocation(targetx, targety, targetz);
+	item->getLocation(_targetX, _targetY, _targetZ);
 
 	Pathfinder pf;
 	pf.init(actor_);
 	pf.setTarget(item, hit);
 
-	bool ok = pf.pathfind(path);
+	bool ok = pf.pathfind(_path);
 
 	if (!ok) {
 		perr << "PathfinderProcess: actor " << _itemNum
-		     << " failed to find path" << Std::endl;
+		     << " failed to find _path" << Std::endl;
 		// can't get there...
 		_result = PATH_FAILED;
 		terminateDeferred();
@@ -89,22 +89,22 @@ PathfinderProcess::PathfinderProcess(Actor *actor_,
 	assert(actor_);
 	_itemNum = actor_->getObjId();
 
-	targetx = x;
-	targety = y;
-	targetz = z;
-	targetitem = 0;
+	_targetX = x;
+	_targetY = y;
+	_targetZ = z;
+	_targetItem = 0;
 
-	currentstep = 0;
+	_currentStep = 0;
 
 	Pathfinder pf;
 	pf.init(actor_);
-	pf.setTarget(targetx, targety, targetz);
+	pf.setTarget(_targetX, _targetY, _targetZ);
 
-	bool ok = pf.pathfind(path);
+	bool ok = pf.pathfind(_path);
 
 	if (!ok) {
 		perr << "PathfinderProcess: actor " << _itemNum
-		     << " failed to find path" << Std::endl;
+		     << " failed to find _path" << Std::endl;
 		// can't get there...
 		_result = PATH_FAILED;
 		terminateDeferred();
@@ -139,9 +139,9 @@ void PathfinderProcess::run() {
 
 	bool ok = true;
 
-	if (targetitem) {
+	if (_targetItem) {
 		int32 curx, cury, curz;
-		Item *item = getItem(targetitem);
+		Item *item = getItem(_targetItem);
 		if (!item) {
 			perr << "PathfinderProcess: target missing" << Std::endl;
 			_result = PATH_FAILED;
@@ -150,14 +150,14 @@ void PathfinderProcess::run() {
 		}
 
 		item->getLocation(curx, cury, curz);
-		if (ABS(curx - targetx) >= 32 || ABS(cury - targety) >= 32 ||
-		        ABS(curz - targetz) >= 8) {
+		if (ABS(curx - _targetX) >= 32 || ABS(cury - _targetY) >= 32 ||
+		        ABS(curz - _targetZ) >= 8) {
 			// target moved
 			ok = false;
 		}
 	}
 
-	if (ok && currentstep >= path.size()) {
+	if (ok && _currentStep >= _path.size()) {
 		// done
 #if 0
 		pout << "PathfinderProcess: done" << Std::endl;
@@ -176,49 +176,49 @@ void PathfinderProcess::run() {
 	// if actor is still animating for whatever reason, wait until he stopped
 	// FIXME: this should happen before the pathfinder is actually called,
 	// since the running animation may move the actor, which could break
-	// the found path.
+	// the found _path.
 	if (actor->getActorFlags() & Actor::ACT_ANIMLOCK) {
 		perr << "PathfinderProcess: ANIMLOCK, waiting" << Std::endl;
 		return;
 	}
 
 	if (ok) {
-		ok = actor->tryAnim(path[currentstep].action,
-		                    path[currentstep].direction,
-		                    path[currentstep].steps) == Animation::SUCCESS;
+		ok = actor->tryAnim(_path[_currentStep]._action,
+		                    _path[_currentStep]._direction,
+		                    _path[_currentStep]._steps) == Animation::SUCCESS;
 	}
 
 	if (!ok) {
 #if 0
-		pout << "PathfinderProcess: recalculating path" << Std::endl;
+		pout << "PathfinderProcess: recalculating _path" << Std::endl;
 #endif
 
-		// need to redetermine path
+		// need to redetermine _path
 		ok = true;
 		Pathfinder pf;
 		pf.init(actor);
-		if (targetitem) {
-			Item *item = getItem(targetitem);
+		if (_targetItem) {
+			Item *item = getItem(_targetItem);
 			if (!item)
 				ok = false;
 			else {
-				if (hitmode && !actor->isInCombat()) {
+				if (_hitMode && !actor->isInCombat()) {
 					// Actor exited combat mode
-					hitmode = false;
+					_hitMode = false;
 				}
-				pf.setTarget(item, hitmode);
-				item->getLocation(targetx, targety, targetz);
+				pf.setTarget(item, _hitMode);
+				item->getLocation(_targetX, _targetY, _targetZ);
 			}
 		} else {
-			pf.setTarget(targetx, targety, targetz);
+			pf.setTarget(_targetX, _targetY, _targetZ);
 		}
 		if (ok)
-			ok = pf.pathfind(path);
+			ok = pf.pathfind(_path);
 
-		currentstep = 0;
+		_currentStep = 0;
 		if (!ok) {
 			perr << "PathfinderProcess: actor " << _itemNum
-			     << " failed to find path" << Std::endl;
+			     << " failed to find _path" << Std::endl;
 			// can't get there anymore
 			_result = PATH_FAILED;
 			terminate();
@@ -226,7 +226,7 @@ void PathfinderProcess::run() {
 		}
 	}
 
-	if (currentstep >= path.size()) {
+	if (_currentStep >= _path.size()) {
 #if 0
 		pout << "PathfinderProcess: done" << Std::endl;
 #endif
@@ -236,15 +236,15 @@ void PathfinderProcess::run() {
 		return;
 	}
 
-	uint16 animpid = actor->doAnim(path[currentstep].action,
-	                               path[currentstep].direction,
-	                               path[currentstep].steps);
+	uint16 animpid = actor->doAnim(_path[_currentStep]._action,
+	                               _path[_currentStep]._direction,
+	                               _path[_currentStep]._steps);
 #if 0
 	pout << "PathfinderProcess(" << getPid() << "): taking step "
-	     << path[currentstep].action << "," << path[currentstep].direction
+	     << _path[_currentStep].action << "," << _path[_currentStep].direction
 	     << " (animpid=" << animpid << ")" << Std::endl;
 #endif
-	currentstep++;
+	_currentStep++;
 
 	waitFor(animpid);
 }
@@ -252,35 +252,35 @@ void PathfinderProcess::run() {
 void PathfinderProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(targetitem);
-	ods->write2(static_cast<uint16>(targetx));
-	ods->write2(static_cast<uint16>(targety));
-	ods->write2(static_cast<uint16>(targetz));
-	ods->write1(hitmode ? 1 : 0);
-	ods->write2(static_cast<uint16>(currentstep));
+	ods->write2(_targetItem);
+	ods->write2(static_cast<uint16>(_targetX));
+	ods->write2(static_cast<uint16>(_targetY));
+	ods->write2(static_cast<uint16>(_targetZ));
+	ods->write1(_hitMode ? 1 : 0);
+	ods->write2(static_cast<uint16>(_currentStep));
 
-	ods->write2(static_cast<uint16>(path.size()));
-	for (unsigned int i = 0; i < path.size(); ++i) {
-		ods->write2(static_cast<uint16>(path[i].action));
-		ods->write2(static_cast<uint16>(path[i].direction));
+	ods->write2(static_cast<uint16>(_path.size()));
+	for (unsigned int i = 0; i < _path.size(); ++i) {
+		ods->write2(static_cast<uint16>(_path[i]._action));
+		ods->write2(static_cast<uint16>(_path[i]._direction));
 	}
 }
 
 bool PathfinderProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	targetitem = ids->read2();
-	targetx = ids->read2();
-	targety = ids->read2();
-	targetz = ids->read2();
-	hitmode = (ids->read1() != 0);
-	currentstep = ids->read2();
+	_targetItem = ids->read2();
+	_targetX = ids->read2();
+	_targetY = ids->read2();
+	_targetZ = ids->read2();
+	_hitMode = (ids->read1() != 0);
+	_currentStep = ids->read2();
 
 	unsigned int pathsize = ids->read2();
-	path.resize(pathsize);
+	_path.resize(pathsize);
 	for (unsigned int i = 0; i < pathsize; ++i) {
-		path[i].action = static_cast<Animation::Sequence>(ids->read2());
-		path[i].direction = ids->read2();
+		_path[i]._action = static_cast<Animation::Sequence>(ids->read2());
+		_path[i]._direction = ids->read2();
 	}
 
 	return true;

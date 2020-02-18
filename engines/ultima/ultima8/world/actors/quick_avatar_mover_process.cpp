@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
-
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -31,7 +30,6 @@
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -42,16 +40,16 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuickAvatarMoverProcess, Process)
 
 ProcId QuickAvatarMoverProcess::amp[6] = { 0, 0, 0, 0, 0, 0 };
-bool QuickAvatarMoverProcess::clipping = false;
-bool QuickAvatarMoverProcess::quarter = false;
+bool QuickAvatarMoverProcess::_clipping = false;
+bool QuickAvatarMoverProcess::_quarter = false;
 
-QuickAvatarMoverProcess::QuickAvatarMoverProcess() : Process(1), dx(0), dy(0), dz(0), dir(0) {
+QuickAvatarMoverProcess::QuickAvatarMoverProcess() : Process(1), _dx(0), _dy(0), _dz(0), _dir(0) {
 }
 
-QuickAvatarMoverProcess::QuickAvatarMoverProcess(int x, int y, int z, int _dir) : Process(1), dx(x), dy(y), dz(z), dir(_dir) {
-	QuickAvatarMoverProcess::terminateMover(dir);
-	assert(dir < 6);
-	amp[dir] = getPid();
+QuickAvatarMoverProcess::QuickAvatarMoverProcess(int x, int y, int z, int _dir) : Process(1), _dx(x), _dy(y), _dz(z), _dir(_dir) {
+	QuickAvatarMoverProcess::terminateMover(_dir);
+	assert(_dir < 6);
+	amp[_dir] = getPid();
 }
 
 QuickAvatarMoverProcess::~QuickAvatarMoverProcess() {
@@ -71,19 +69,19 @@ void QuickAvatarMoverProcess::run() {
 
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 
-	int32 dxv = this->dx;
-	int32 dyv = this->dy;
-	int32 dzv = this->dz;
+	int32 dxv = this->_dx;
+	int32 dyv = this->_dy;
+	int32 dzv = this->_dz;
 
 	for (int j = 0; j < 3; j++) {
-		dxv = this->dx;
-		dyv = this->dy;
-		dzv = this->dz;
+		dxv = this->_dx;
+		dyv = this->_dy;
+		dzv = this->_dz;
 
 		if (j == 1) dxv = 0;
 		else if (j == 2) dyv = 0;
 
-		if (quarter) {
+		if (_quarter) {
 			dxv /= 4;
 			dyv /= 4;
 			dzv /= 4;
@@ -94,8 +92,8 @@ void QuickAvatarMoverProcess::run() {
 		while (dxv || dyv || dzv) {
 			uint32 shapeFlags = avatar->getShapeInfo()->_flags;
 
-			if (!clipping || cm->isValidPosition(x + dxv, y + dyv, z + dzv, ixd, iyd, izd, _flags, 1, 0, 0)) {
-				if (clipping && !dzv) {
+			if (!_clipping || cm->isValidPosition(x + dxv, y + dyv, z + dzv, ixd, iyd, izd, _flags, 1, 0, 0)) {
+				if (_clipping && !dzv) {
 					if (cm->isValidPosition(x + dxv, y + dyv, z - 8, ixd, iyd, izd, _flags, 1, 0, 0) &&
 					        !cm->isValidPosition(x, y, z - 8, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -8;
@@ -134,7 +132,7 @@ void QuickAvatarMoverProcess::run() {
 
 void QuickAvatarMoverProcess::terminate() {
 	Process::terminate();
-	amp[dir] = 0;
+	amp[_dir] = 0;
 }
 
 void QuickAvatarMoverProcess::terminateMover(int _dir) {
@@ -162,7 +160,7 @@ void QuickAvatarMoverProcess::startMover(int x, int y, int z, int _dir) {
 void QuickAvatarMoverProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(dir);
+	ods->write4(_dir);
 	// don't save more information. We plan to terminate upon load
 }
 
@@ -170,9 +168,9 @@ bool QuickAvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
 	// small safety precaution
-	dir = ids->read4();
-	if (dir < 6)
-		amp[dir] = 0;
+	_dir = ids->read4();
+	if (_dir < 6)
+		amp[_dir] = 0;
 	else
 		return false;
 
@@ -241,7 +239,7 @@ void QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed(const Console::ArgvType 
 void QuickAvatarMoverProcess::ConCmd_toggleClipping(const Console::ArgvType &argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
 	QuickAvatarMoverProcess::toggleClipping();
-	pout << "QuickAvatarMoverProcess::clipping = " << QuickAvatarMoverProcess::isClipping() << Std::endl;
+	pout << "QuickAvatarMoverProcess::_clipping = " << QuickAvatarMoverProcess::isClipping() << Std::endl;
 }
 
 } // End of namespace Ultima8

@@ -51,12 +51,12 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	int32 targetx, targety, targetz;
-	ObjId targetitem;
-	bool hitmode;
+	int32 _targetX, _targetY, _targetZ;
+	ObjId _targetItem;
+	bool _hitMode;
 
-	Std::vector<PathfindingAction> path;
-	unsigned int currentstep;
+	Std::vector<PathfindingAction> _path;
+	unsigned int _currentStep;
 };
 
 } // End of namespace Ultima8
