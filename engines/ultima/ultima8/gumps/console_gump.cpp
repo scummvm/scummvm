@@ -80,8 +80,10 @@ void ConsoleGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	case SCROLLING_TO_HIDE:
 		if (_scrollFrame == 0)
 			return;
-		// Just reverse next_frame and fall through
+		// Just reverse next_frame
 		next_frame = _scrollFrame - 1;
+		// Intentional fall-through
+
 	case SCROLLING_TO_SHOW:
 		if (next_frame > 8)
 			break;

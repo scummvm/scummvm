@@ -1757,7 +1757,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("loop\t\t%s %02X %02X\n", print_bp(si16a),
 			       scriptsize, searchtype));
 		}
-		// FALL-THROUGH to handle first item
+		// Intentional fall-through
+
 		case 0x73:
 			// 73
 			// next loop object. pushes false if end reached

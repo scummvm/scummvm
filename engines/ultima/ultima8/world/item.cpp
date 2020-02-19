@@ -1237,6 +1237,7 @@ void Item::animateItem() {
 	case 2:
 		// 50 % chance
 		if (getRandom() & 1) break;
+		// Intentional fall-through
 
 	case 1:
 	case 3:
