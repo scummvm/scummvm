@@ -73,7 +73,7 @@ public:
 	int open();
 	bool isOpen() const { return _isOpen; }
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length);
 
 private:
@@ -186,6 +186,8 @@ void MidiDriver_ALSA::send(uint32 b) {
 		return;
 	}
 
+	midiDriverCommonSend(b);
+
 	unsigned int midiCmd[4];
 	ev.type = SND_SEQ_EVENT_OSS;
 
@@ -267,6 +269,8 @@ void MidiDriver_ALSA::sysEx(const byte *msg, uint16 length) {
 	unsigned char buf[266];
 
 	assert(length + 2 <= ARRAYSIZE(buf));
+
+	midiDriverCommonSysEx(msg, length);
 
 	// Add SysEx frame
 	buf[0] = 0xF0;

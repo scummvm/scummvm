@@ -935,7 +935,7 @@ public:
 
 	int open();
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 	void send(byte channel, uint32 b); // Supports higher than channel 15
 	uint32 property(int prop, uint32 param);
 	bool isOpen() const { return _isOpen; }

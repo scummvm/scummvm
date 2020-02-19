@@ -70,7 +70,7 @@ public:
 	virtual int open();
 	virtual bool isOpen() const;
 	virtual void close();
-	virtual void send(uint32 b);
+	virtual void send(uint32 b) override;
 	virtual void sysEx(const byte *msg, uint16 length);
 	virtual void setTimerCallback(void *timerParam,
 								Common::TimerManager::TimerProc timerProc);

@@ -57,7 +57,7 @@ public:
 	int open();
 	bool isOpen() const { return _isOpen; }
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length);
 
 private:
@@ -109,6 +109,8 @@ void MidiDriver_SEQ::close() {
 }
 
 void MidiDriver_SEQ::send(uint32 b) {
+	midiDriverCommonSend(b);
+
 	unsigned char buf[256];
 	int position = 0;
 
@@ -156,6 +158,8 @@ void MidiDriver_SEQ::sysEx(const byte *msg, uint16 length) {
 	const byte *chr = msg;
 
 	assert(length + 2 <= 266);
+
+	midiDriverCommonSysEx(msg, length);
 
 	buf[position++] = SEQ_MIDIPUTC;
 	buf[position++] = 0xF0;

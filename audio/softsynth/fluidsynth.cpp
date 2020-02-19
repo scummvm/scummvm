@@ -64,7 +64,7 @@ public:
 
 	int open();
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel();
@@ -227,6 +227,8 @@ void MidiDriver_FluidSynth::close() {
 }
 
 void MidiDriver_FluidSynth::send(uint32 b) {
+	midiDriverCommonSend(b);
+
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
 	uint param2 = (byte) ((b >> 16) & 0xFF);
 	uint param1 = (byte) ((b >>  8) & 0xFF);
