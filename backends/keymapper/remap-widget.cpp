@@ -100,6 +100,7 @@ void RemapWidget::reflowActionWidgets() {
 	int keyButtonWidth = g_gui.xmlEval()->getVar("Globals.KeyMapper.ButtonWidth");
 	int resetButtonWidth = g_gui.xmlEval()->getVar("Globals.KeyMapper.ResetWidth");
 	int labelWidth = getWidth() - (spacing + keyButtonWidth + spacing);
+	labelWidth = MAX(0, labelWidth);
 
 	uint textYOff = (buttonHeight - kLineHeight) / 2;
 
@@ -120,7 +121,8 @@ void RemapWidget::reflowActionWidgets() {
 
 			KeymapTitleRow keymapTitle = _keymapSeparators[row.keymap];
 			if (keymapTitle.descriptionText) {
-				uint descriptionWidth = getWidth() - x - spacing - resetButtonWidth - spacing;
+				int descriptionWidth = getWidth() - x - spacing - resetButtonWidth - spacing;
+				descriptionWidth = MAX(0, descriptionWidth);
 
 				keymapTitle.descriptionText->resize(x, y + textYOff, descriptionWidth, kLineHeight);
 				keymapTitle.resetButton->resize(x + descriptionWidth, y, resetButtonWidth, buttonHeight);

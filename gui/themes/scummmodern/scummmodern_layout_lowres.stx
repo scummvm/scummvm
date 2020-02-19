@@ -1198,7 +1198,27 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalConfig' overlays = 'screen_center'>
+	<dialog name = 'GlobalConfig' overlays = 'screen_center' size = '300, 220' inset = '5' >
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'TabWidget' type = 'TabWidget'
+			/>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<space />
+				<widget name='Keys'
+						type='Button'
+				/>
+				<space />
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Ok'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalConfig_Audio' overlays = 'Dialog.GlobalConfig.TabWidget'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'vcMusicText'
@@ -1240,7 +1260,7 @@
 						width = '80'
 				/>
 			</layout>
-			<space size = '4' />
+			<space size = '2' />
 			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
@@ -1260,7 +1280,7 @@
 						  />
 				</layout>
 			</layout>
-			<space size = '4' />
+			<space size = '2' />
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'subSubtitleSpeedDesc'
 						type = 'OptionsLabel'
@@ -1272,19 +1292,12 @@
 						type = 'SmallLabel'
 				/>
 			</layout>
-			<space size = '20'/>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4'>
-				<widget name = 'Keys'
-						type = 'Button'
-				/>
-				<space size = 'Globals.Button.Width' />
-				<widget name = 'Cancel'
-						type = 'Button'
-				/>
-				<widget name = 'Ok'
-						type = 'Button'
-				/>
-			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalConfig_KeyMapper' overlays = 'Dialog.GlobalConfig.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
 		</layout>
 	</dialog>
 
