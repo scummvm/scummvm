@@ -36,23 +36,9 @@ namespace Ultima8 {
 // The console
 Console *con;
 
-// Standard Output Stream Object
-#ifndef SAFE_CONSOLE_STREAMS
-console_ostream<char>       pout;
-console_ostream<char>       *ppout = &pout;
-#else
-console_ostream<char>       *ppout = 0;
-#endif
-
-// Error Output Stream Object
-#ifndef SAFE_CONSOLE_STREAMS
-console_err_ostream<char>   perr;
-console_err_ostream<char>   *pperr = &perr;
-#else
-console_err_ostream<char>   *pperr = 0;
-#endif
-
-
+// Console out/err pointers
+console_ostream<char> *ppout;
+console_err_ostream<char> *pperr;
 
 //
 // Constructor
@@ -70,6 +56,10 @@ Console::Console() : _current(0), _xOff(0), _display(0), _lineWidth(-1),
 
 	Std::memset(_times, 0, sizeof(_times));
 
+	// Set output pointers
+	ppout = &_strOut;
+	pperr = &_errOut;
+
 	// Lets try adding a Console command!
 	AddConsoleCommand("Console::CmdList", ConCmd_CmdList);
 	AddConsoleCommand("Console::CmdHistory", ConCmd_CmdHistory);
@@ -86,6 +76,9 @@ Console::~Console() {
 
 	// Need to do this first
 	PrintPutchar();
+
+	ppout = nullptr;
+	pperr = nullptr;
 }
 
 /*

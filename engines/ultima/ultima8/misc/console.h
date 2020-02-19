@@ -86,6 +86,79 @@ enum MsgMask {
 	         */
 };
 
+
+class ConsoleStream : public Common::WriteStream {
+private:
+	Std::Precision _precision;
+public:
+	ConsoleStream() : Common::WriteStream(), _precision(Std::dec) {
+	}
+
+	int32 pos() const override {
+		return 0;
+	}
+
+	void Print(const char *fmt, ...) {
+		va_list argptr;
+		va_start(argptr, fmt);
+		Common::String str = Common::String::vformat(fmt, argptr);
+		va_end(argptr);
+
+		write(str.c_str(), str.size());
+	}
+
+	ConsoleStream &operator<<(const char *s) {
+		write(s, strlen(s));
+		return *this;
+	}
+
+	ConsoleStream &operator<<(const void *ptr) {
+		Common::String str = Common::String::format("%p", ptr);
+		write(str.c_str(), str.size());
+		return *this;
+	}
+
+	ConsoleStream &operator<<(const Common::String &str) {
+		write(str.c_str(), str.size());
+		return *this;
+	}
+
+	ConsoleStream &operator<<(int val) {
+		Common::String str = Common::String::format(
+			(_precision == Std::hex) ? "%x" : "%d", val);
+		write(str.c_str(), str.size());
+		return *this;
+	}
+};
+
+template<class T>
+class console_ostream : public ConsoleStream {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
+		Common::String str((const char *)dataPtr, (const char *)dataPtr + dataSize);
+		debugN("%s", str.c_str());
+		return dataSize;
+	}
+};
+
+template<class T>
+class console_err_ostream : public ConsoleStream {
+public:
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
+		Common::String str((const char *)dataPtr, dataSize);
+		::warning("%s", str.c_str());
+		return str.size();
+	}
+};
+
+// Standard Output Stream Object
+extern console_ostream<char> *ppout;
+// Error Output Stream Object
+extern console_err_ostream<char> *pperr;
+
+#define pout (*ppout)
+#define perr (*pperr)
+
+
 class Console {
 	char        _text[CON_TEXTSIZE];
 	int32       _current;                // line where next message will be printed
@@ -104,6 +177,11 @@ class Console {
 	char        _putChar_buf[CON_PUTCHAR_SIZE];  // The Characters that have been putchar'd
 
 	uint32      _stdOutputEnabled;
+
+	// Standard Output Stream Object
+	console_ostream<char> _strOut;
+	// Error Output Stream Object
+	console_err_ostream<char> _errOut;
 
 	// stdout and stderr redirection
 	ODataSource *_stdout_redir;
@@ -337,154 +415,6 @@ private:
 
 // Console object
 extern  Console *con;
-
-//
-// Console Ouput Streams
-//
-
-/*
-//
-// Standard Output Streambuf
-//
-template<class _E, class _Tr = Std::char_traits<_E> >
-class console_streambuf : public Std::basic_streambuf<_E, _Tr>
-{
-public:
-    console_streambuf() : Std::basic_streambuf<_E, _Tr>() { }
-    virtual ~console_streambuf() { }
-    typedef typename _Tr::int_type int_type;
-    typedef typename _Tr::char_type char_type;
-
-protected:
-
-    // Output a character
-    virtual int_type overflow(int_type c = _Tr::eof())
-    {
-        if (!_Tr::eq_int_type(_Tr::eof(), c)) con->Putchar(_Tr::to_char_type(c));
-        return (_Tr::not_eof(c));
-    }
-
-    // Flush
-    virtual int sync()
-    {
-        return 0;
-    }
-};
-
-//
-// Standard Output Stream
-//
-template<class _E, class _Tr = Std::char_traits<_E> >
-class console_ostream : public Std::basic_ostream<_E, _Tr>
-{
-//#ifndef SAFE_CONSOLE_STREAMS
-    console_streambuf<_E, _Tr> _Fb;
-//#endif
-
-public:
-    console_ostream() : Std::basic_ostream<_E, _Tr>(&_Fb), _Fb() {}
-    console_ostream(console_streambuf<_E, _Tr> *Fb) : Std::basic_ostream<_E, _Tr>(Fb) {}
-    virtual ~console_ostream() { }
-
-#if defined(MACOSX) && defined(__GNUC__)
-    // Work around a bug in Apple GCC 3.x which incorrectly tries to inline this method
-    int __attribute__ ((noinline)) printf (const char *fmt, ...)
-#else
-    int printf (const char *fmt, ...)
-#endif
-    {
-        va_list argptr;
-        va_start (argptr,fmt);
-        int ret = con->vPrintf(fmt, argptr);
-        va_end (argptr);
-        return ret;
-    }
-};
-*/
-
-class ConsoleStream : public Common::WriteStream {
-private:
-	Std::Precision _precision;
-public:
-	ConsoleStream() : Common::WriteStream(), _precision(Std::dec) {}
-
-	int32 pos() const override {
-		return 0;
-	}
-
-	void Print(const char *fmt, ...) {
-		va_list argptr;
-		va_start(argptr, fmt);
-		Common::String str = Common::String::vformat(fmt, argptr);
-		va_end(argptr);
-
-		write(str.c_str(), str.size());
-	}
-
-	ConsoleStream &operator<<(const char *s) {
-		write(s, strlen(s));
-		return *this;
-	}
-
-	ConsoleStream &operator<<(const void *ptr) {
-		Common::String str = Common::String::format("%p", ptr);
-		write(str.c_str(), str.size());
-		return *this;
-	}
-
-	ConsoleStream &operator<<(const Common::String &str) {
-		write(str.c_str(), str.size());
-		return *this;
-	}
-
-	ConsoleStream &operator<<(int val) {
-		Common::String str = Common::String::format(
-			(_precision == Std::hex) ? "%x" : "%d", val);
-		write(str.c_str(), str.size());
-		return *this;
-	}
-};
-
-template<class T>
-class console_ostream : public ConsoleStream {
-	uint32 write(const void *dataPtr, uint32 dataSize) override {
-		Common::String str((const char *)dataPtr, (const char *)dataPtr + dataSize);
-		debugN("%s", str.c_str());
-		return dataSize;
-	}
-};
-
-//
-// Standard Output Stream Object
-//
-#ifndef SAFE_CONSOLE_STREAMS
-extern console_ostream<char>        pout;
-extern console_ostream<char>        *ppout;
-#else
-#define pout (*ppout)
-extern console_ostream<char>        *ppout;
-#endif
-
-template<class T>
-class console_err_ostream : public ConsoleStream {
-public:
-	uint32 write(const void *dataPtr, uint32 dataSize) override {
-		Common::String str((const char *)dataPtr, dataSize);
-		::warning("%s", str.c_str());
-		return str.size();
-	}
-};
-
-//
-// Error Output Stream Object
-//
-#ifndef SAFE_CONSOLE_STREAMS
-extern console_err_ostream<char>    perr;
-extern console_err_ostream<char>    *pperr;
-#else
-#define perr (*pperr)
-extern console_err_ostream<char>    *pperr;
-#endif
 
 } // End of namespace Ultima8
 } // End of namespace Ultima
