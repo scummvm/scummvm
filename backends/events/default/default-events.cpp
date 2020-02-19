@@ -68,6 +68,7 @@ DefaultEventManager::~DefaultEventManager() {
 #ifdef ENABLE_VKEYBD
 	delete _vk;
 #endif
+	delete _keymapper;
 }
 
 void DefaultEventManager::init() {
