@@ -876,6 +876,11 @@ void ThemeEngine::drawDD(DrawData type, const Common::Rect &r, uint32 dynamic, b
 		extendedRect.clip(_clip);
 	}
 
+	// Cull the elements not in the clip rect
+	if (extendedRect.isEmpty()) {
+		return;
+	}
+
 	if (forceRestore || drawData->_layer == kDrawLayerBackground)
 		restoreBackground(extendedRect);
 
