@@ -108,10 +108,10 @@ void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common
 	setVar("Dialog." + _curDialog + "." + name + ".Enabled", enabled ? 1 : 0);
 }
 
-void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, bool enabled, int inset) {
+void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, int16 width, int16 height, bool enabled, int inset) {
 	Common::String var = "Dialog." + name;
 
-	ThemeLayout *layout = new ThemeLayoutMain(name, overlays, enabled, inset);
+	ThemeLayout *layout = new ThemeLayoutMain(name, overlays, width, height, enabled, inset);
 
 	if (_layouts.contains(var))
 		delete _layouts[var];

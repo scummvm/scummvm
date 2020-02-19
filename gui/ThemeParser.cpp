@@ -740,7 +740,24 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 			return false;
 	}
 
-	_theme->getEvaluator()->addDialog(name, node->values["overlays"], enabled, inset);
+	Common::String overlays = node->values["overlays"];
+	// The size of a dialog depends on the value of its 'overlays' property:
+	//  - 'screen', means the dialog fills the whole screen.
+	//  - 'screen_center', means the size of the dialog is determined
+	//      by its contents, unless an explicit size is specified.
+	//  - if it is set to a user interface element name, the dialog takes
+	//      its size.
+
+	int width = -1, height = -1;
+	if (node->values.contains("size")) {
+		if (overlays != "screen_center")
+			return parserError("Dialogs can only have an explicit size if they overlay 'screen_center'.");
+
+		if (!parseIntegerKey(node->values["size"], 2, &width, &height))
+			return false;
+	}
+
+	_theme->getEvaluator()->addDialog(name, overlays, width, height, enabled, inset);
 
 	if (node->values.contains("shading")) {
 		int shading = 0;
