@@ -43,24 +43,24 @@ void DragonINIResource::reset() {
 	for (int i = 0; i < _count; i++) {
 		_dragonINI[i].id = (uint16)i;
 		_dragonINI[i].iptIndex_maybe = readStream->readSint16LE();
-		_dragonINI[i].field_2 = readStream->readSint16LE();
+		_dragonINI[i].imgId = readStream->readSint16LE();
 		_dragonINI[i].actorResourceId = readStream->readSint16LE();
 		_dragonINI[i].sequenceId = readStream->readSint16LE();
-		_dragonINI[i].field_8 = readStream->readSint16LE();
+		_dragonINI[i].inventorySequenceId = readStream->readSint16LE();
 		uint16 v = readStream->readUint16LE();
 		assert(v == 0); // actorId
 		_dragonINI[i].actor = NULL;
 		_dragonINI[i].sceneId = readStream->readUint16LE();
-		_dragonINI[i].field_e = readStream->readSint16LE();
-		_dragonINI[i].field_10 = readStream->readSint16LE();
-		_dragonINI[i].field_12 = readStream->readSint16LE();
-		_dragonINI[i].field_14 = readStream->readSint16LE();
+		_dragonINI[i].direction = readStream->readSint16LE();
+		_dragonINI[i].counter = readStream->readSint16LE();
+		_dragonINI[i].objectState = readStream->readSint16LE();
+		_dragonINI[i].objectState2 = readStream->readSint16LE();
 		_dragonINI[i].x = readStream->readSint16LE();
 		_dragonINI[i].y = readStream->readSint16LE();
-		_dragonINI[i].field_1a_flags_maybe = readStream->readUint16LE();
-		_dragonINI[i].field_1c = readStream->readSint16LE();
-		_dragonINI[i].field_1e = readStream->readSint16LE();
-		_dragonINI[i].field_20_actor_field_14 = readStream->readUint16LE();
+		_dragonINI[i].flags = readStream->readUint16LE();
+		_dragonINI[i].baseXOffset = readStream->readSint16LE();
+		_dragonINI[i].baseYOffset = readStream->readSint16LE();
+		_dragonINI[i].direction2 = readStream->readUint16LE();
 	}
 
 	_flickerINI = &_dragonINI[0];

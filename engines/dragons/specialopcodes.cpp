@@ -299,19 +299,19 @@ void SpecialOpcodes::spcCastleGardenLogic() {
 void SpecialOpcodes::spcUnk9() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	assert(flicker);
-	flicker->field_1a_flags_maybe |= INI_FLAG_20;
+	flicker->flags |= INI_FLAG_20;
 	assert(flicker->actor);
 	flicker->actor->_flags |= ACTOR_FLAG_100;
 	flicker->actor->_priorityLayer = 0;
-	_vm->getINI(1)->field_1a_flags_maybe |= INI_FLAG_20;
+	_vm->getINI(1)->flags |= INI_FLAG_20;
 }
 
 
 void SpecialOpcodes::spcUnkA() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
-	flicker->field_1a_flags_maybe &= ~INI_FLAG_20;
+	flicker->flags &= ~INI_FLAG_20;
 	flicker->actor->_flags &= ~ACTOR_FLAG_100;
-	_vm->getINI(1)->field_1a_flags_maybe &= ~INI_FLAG_20;
+	_vm->getINI(1)->flags &= ~INI_FLAG_20;
 }
 
 void SpecialOpcodes::spcUnkC() {
@@ -901,7 +901,7 @@ void SpecialOpcodes::spcFlickerSetFlag0x80() {
 
 //used in castle garden scene with knights
 void SpecialOpcodes::spcUnk5d() {
-	_vm->getINI(_vm->getINI(0x13b)->field_12 + 0x13c)->actor->updateSequence(_vm->getINI(0x13b)->field_14);
+	_vm->getINI(_vm->getINI(0x13b)->objectState + 0x13c)->actor->updateSequence(_vm->getINI(0x13b)->objectState2);
 }
 
 void SpecialOpcodes::spcUnk5e() {
@@ -910,7 +910,7 @@ void SpecialOpcodes::spcUnk5e() {
 }
 
 void SpecialOpcodes::spcUnk5f() {
-	_vm->getINI(0x2ab)->field_12 = 0;
+	_vm->getINI(0x2ab)->objectState = 0;
 	panCamera(2);
 }
 
@@ -946,7 +946,7 @@ void SpecialOpcodes::spcUnk66() {
 	if ((var & 2) == 0) {
 		uVar9 = uVar9 + 1;
 	}
-	_vm->getINI(1)->field_12 = uVar9;
+	_vm->getINI(1)->objectState = uVar9;
 }
 
 void SpecialOpcodes::spcTournamentSetCamera() {
@@ -980,7 +980,7 @@ void SpecialOpcodes::panCamera(int16 mode) {
 	int iVar2;
 
 	if (mode == 1) {
-		_vm->getINI(0x2ab)->field_12 = _vm->_scene->_camera.x;
+		_vm->getINI(0x2ab)->objectState = _vm->_scene->_camera.x;
 		_vm->_dragonINIResource->setFlickerRecord(NULL);
 		iVar2 = (int) _vm->_scene->_camera.x;
 		iVar1 = iVar2;
@@ -1086,9 +1086,9 @@ void SpecialOpcodes::spcHedgehogTest() {
 	if (_vm->_dragonINIResource->getRecord(0x168)->actor->_sequenceID == 4 &&
 			_vm->_dragonINIResource->getRecord(0x169)->actor->_sequenceID == 4 &&
 			_vm->_dragonINIResource->getRecord(0x16a)->actor->_sequenceID == 4) {
-		_vm->_dragonINIResource->getRecord(0x169)->field_12 = 1;
+		_vm->_dragonINIResource->getRecord(0x169)->objectState = 1;
 	} else {
-		_vm->_dragonINIResource->getRecord(0x169)->field_12 = 0;
+		_vm->_dragonINIResource->getRecord(0x169)->objectState = 0;
 	}
 }
 
@@ -1202,9 +1202,9 @@ void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
 void SpecialOpcodes::spcUseClickerOnLever() {
 	if (_vm->_inventory->isOpen()) {
 		_vm->_talk->flickerRandomDefaultResponse();
-		_vm->_dragonINIResource->getRecord(0)->field_12 = 1;
+		_vm->_dragonINIResource->getRecord(0)->objectState = 1;
 	} else {
-		_vm->_dragonINIResource->getRecord(0)->field_12 = 0;
+		_vm->_dragonINIResource->getRecord(0)->objectState = 0;
 	}
 }
 
@@ -1394,15 +1394,15 @@ void castleBuildingBlackDragon2UpdateFunction() {
 	DragonsEngine *vm = getEngine();
 
 	ini = vm->_dragonINIResource->getRecord(0x231);
-	if (ini->field_10 <= 0) {
-		if (ini->field_12 == 0) {
+	if (ini->counter <= 0) {
+		if (ini->objectState == 0) {
 			ini->actor->updateSequence(0xb);
-			ini->field_10 = 0x68;
-			ini->field_12 = 1;
-		} else if (ini->field_12 == 1) {
+			ini->counter = 0x68;
+			ini->objectState = 1;
+		} else if (ini->objectState == 1) {
 			ini->actor->updateSequence(4);
-			ini->field_10 = vm->getRand(0xb4);
-			ini->field_12 = 0;
+			ini->counter = vm->getRand(0xb4);
+			ini->objectState = 0;
 		}
 	}
 }
@@ -1680,7 +1680,7 @@ void monksAtBarSceneUpdateFunction() {
 		}
 	}
 	vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(specialOpCounter);
-	vm->_dragonINIResource->getRecord(0)->field_12 = 0;
+	vm->_dragonINIResource->getRecord(0)->objectState = 0;
 }
 
 void flameEscapeSceneUpdateFunction() {
@@ -1764,7 +1764,7 @@ void moatDrainedSceneUpdateFunction() {
 		moatDrainedUpdateCounter = 600;
 	}
 	castleFogUpdateFunction();
-	if (((vm->_dragonINIResource->getRecord(0x208)->field_14 == 2) &&
+	if (((vm->_dragonINIResource->getRecord(0x208)->objectState2 == 2) &&
 		 !vm->isFlagSet(ENGINE_FLAG_8000))) {
 		if (moatDrainedUpdateCounter != 0) {
 			moatDrainedUpdateCounter--;

@@ -50,7 +50,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 					   ACTOR_FLAG_200);
 
 	dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
-	dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= INI_FLAG_1;
+	dragonINIResource->getFlickerRecord()->flags |= INI_FLAG_1;
 	_iniUnderCursor = 0;
 	_iniItemInHand = 0;
 	_objectInHandSequenceID = 0;
@@ -77,7 +77,7 @@ void Cursor::update() {
 	// 0x80028104
 	if (_iniUnderCursor != 0
 			&& ((_iniUnderCursor & 0x8000 && _vm->_inventory->isOpen())
-			||(!(_iniUnderCursor & 0x8000) && _vm->getINI(_iniUnderCursor - 1)->field_1a_flags_maybe & 0x80))) {
+			||(!(_iniUnderCursor & 0x8000) && _vm->getINI(_iniUnderCursor - 1)->flags & 0x80))) {
 		if (_actor->_sequenceID != 0x84) {
 			_actor->updateSequence(0x84);
 		}
@@ -194,10 +194,10 @@ int16 Cursor::updateIniFromScene() {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId != _vm->_scene->getSceneId()) {
 			// 0x80028be4
-		} else if (!_vm->_dragonINIResource->isFlicker(ini) && !(ini->field_1a_flags_maybe & 0x40)) {
+		} else if (!_vm->_dragonINIResource->isFlicker(ini) && !(ini->flags & 0x40)) {
 			int16 cursorOverIni = 0;
 			// 0x80028a10
-			if (ini->field_1a_flags_maybe & 1) {
+			if (ini->flags & 1) {
 				// 0x80028b18
 				if (ini->actor->isFlagSet(ACTOR_FLAG_40) && ini->actor->isFlagSet(ACTOR_FLAG_8)) {
 					int16 iniActorXPosition = ini->actor->_x_pos - ini->actor->_frame->xOffset;
@@ -209,8 +209,8 @@ int16 Cursor::updateIniFromScene() {
 				}
 			} else {
 				// 0x80028a24
-				if (ini->field_2 != -1) {
-					Img *img = _vm->_dragonImg->getImg((uint32)ini->field_2);
+				if (ini->imgId != -1) {
+					Img *img = _vm->_dragonImg->getImg((uint32)ini->imgId);
 					if (img->field_e - 1 >= 1) { // TODO this is >= 2 in the original.
 						if (cursorTileX >= img->x && cursorTileX < img->x + img->w && cursorTileY >= img->y && cursorTileY < img->y + img->h) {
 							cursorOverIni = i + 1;
@@ -229,7 +229,7 @@ int16 Cursor::updateIniFromScene() {
 				_performActionTargetINI = _iniUnderCursor;
 				_data_800728b0_cursor_seqID = _sequenceID;
 
-				if (ini->field_1a_flags_maybe & 0x800) {
+				if (ini->flags & 0x800) {
 					_performActionTargetINI = cursorOverIni;
 					uint32 newSeqId = 1;
 					for (int idx = 0; idx < 5; idx++) {

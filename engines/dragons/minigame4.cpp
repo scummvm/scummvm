@@ -82,7 +82,7 @@ void Minigame4::run() {
 	//DAT_800830e0_soundRelated = 0xf;
 	//UnkSoundFunc5(0xf);
 	//call_fade_related_1f();
-	if (_vm->_dragonINIResource->getRecord(0x1f5)->field_12 == 3) {
+	if (_vm->_dragonINIResource->getRecord(0x1f5)->objectState == 3) {
 		actorTalk(_bruteActor, 0x3321, 0x4A84);
 	} else {
 		actorTalk(_bruteActor, 0x3321, 0x49A2);
@@ -90,8 +90,8 @@ void Minigame4::run() {
 	}
 	result = runDanceBattle();
 	/* field_0x12 */
-	_vm->_dragonINIResource->getRecord(0)->field_12 = result ^ 1;
-	if (_vm->_dragonINIResource->getRecord(0)->field_12 == 1) {
+	_vm->_dragonINIResource->getRecord(0)->objectState = result ^ 1;
+	if (_vm->_dragonINIResource->getRecord(0)->objectState == 1) {
 		_vm->_dragonINIResource->getRecord(0x1f5)->sceneId = 0;
 	}
 

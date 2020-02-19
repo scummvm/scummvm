@@ -135,7 +135,6 @@ Actor::Actor(uint16 id) : _actorID(id) {
 	_actorResource = NULL;
 	_resourceID = -1;
 	_seqCodeIp = 0;
-	_frame_pointer_maybe = NULL;
 	_priorityLayer = 3;
 	_x_pos = 160;
 	_y_pos = 110;
@@ -143,10 +142,7 @@ Actor::Actor(uint16 id) : _actorID(id) {
 	_walkDestY = 0;
 	_walkSpeed = 0;
 	_flags = 0;
-	_frame_width = 0;
-	_frame_height = 0;
 	_frame_flags = 0;
-	_clut = 0;
 	_frame = NULL;
 	_surface = NULL;
 }
@@ -162,8 +158,6 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_direction = 0;
 	_flags = (ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
-	_frame_width = 0;
-	_frame_height = 0;
 	_frame_flags = 4;
 	//TODO sub_80017010();
 	freeFrame();

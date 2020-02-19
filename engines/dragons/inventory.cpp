@@ -176,7 +176,7 @@ void Inventory::openInventory() {
 			item->_flags = 0; //clear all flags
 			item->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 			item->_priorityLayer = 0;
-			item->updateSequence(_vm->getINI(_inventoryItemTbl[i] - 1)->field_8 * 2 + 10);
+			item->updateSequence(_vm->getINI(_inventoryItemTbl[i] - 1)->inventorySequenceId * 2 + 10);
 			item->setFlag(ACTOR_FLAG_200);
 			item->setFlag(ACTOR_FLAG_100);
 			item->setFlag(ACTOR_FLAG_80);

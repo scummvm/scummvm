@@ -434,8 +434,8 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 uint32 Talk::displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 textIndex) {
 	DragonINI *ini = iniId == 0 ? _vm->_dragonINIResource->getFlickerRecord() : _vm->getINI(iniId - 1);
 
-	if ((ini->field_1a_flags_maybe & 1) == 0) {
-		Img *local_v1_184 = _vm->_dragonImg->getImg(ini->field_2);
+	if ((ini->flags & 1) == 0) {
+		Img *local_v1_184 = _vm->_dragonImg->getImg(ini->imgId);
 		int x, y;
 		if (local_v1_184->field_e == 0) {
 			y = (uint)(uint16)local_v1_184->y;

@@ -716,10 +716,10 @@ void Minigame3::run() {
 	}
 	handActorId->updateSequence(1);
 	handActorId->waitUntilFlag4IsSet();
-	_vm->_dragonINIResource->getRecord(0x178)->field_12 = local_224 + 1;
+	_vm->_dragonINIResource->getRecord(0x178)->objectState = local_224 + 1;
 	if (goodRabbitPositionTbl[local_224] == 1) {
 		bunnyActorTbl[bunnyPositionTbl[local_224]]->updateSequence(2);
-		_vm->_dragonINIResource->getRecord(0x178)->field_14 = 1;
+		_vm->_dragonINIResource->getRecord(0x178)->objectState2 = 1;
 	} else {
 		bunnyActorTbl[bunnyPositionTbl[local_224]]->updateSequence(3);
 		i = 0;
@@ -728,7 +728,7 @@ void Minigame3::run() {
 		}
 		_vm->waitForFrames(0x1e);
 		bunnyActorTbl[bunnyPositionTbl[i]]->updateSequence(2);
-		_vm->_dragonINIResource->getRecord(0x178)->field_14 = 0;
+		_vm->_dragonINIResource->getRecord(0x178)->objectState2 = 0;
 	}
 	_vm->waitForFrames(0x3c * 2);
 	_vm->_sound->PauseCDMusic();

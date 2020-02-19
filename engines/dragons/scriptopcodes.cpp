@@ -360,33 +360,33 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 	DragonINI *ini = _vm->getINI(field2 - 1);
 	if (!(field0 & 0x8000)) {
 
-		if (ini->field_1a_flags_maybe & 1) {
+		if (ini->flags & 1) {
 			if (ini->sceneId == currentScene) {
 				assert(ini->actor);
 				ini->actor->reset_maybe();
 			}
 			if (sceneId == currentScene) {
 				ini->actor = _vm->_actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
-				ini->actor->_direction = ini->field_20_actor_field_14;
-				if (ini->field_1a_flags_maybe & 2) {
+				ini->actor->_direction = ini->direction2;
+				if (ini->flags & 2) {
 					ini->actor->_flags |= ACTOR_FLAG_80;
 				} else {
 					ini->actor->_flags &= ~ACTOR_FLAG_80;
 				}
 
-				if (ini->field_1a_flags_maybe & 0x20) {
+				if (ini->flags & 0x20) {
 					ini->actor->_flags |= ACTOR_FLAG_100;
 				} else {
 					ini->actor->_flags &= ~ACTOR_FLAG_100;
 				}
 
-				if (ini->field_1a_flags_maybe & 4) {
+				if (ini->flags & 4) {
 					ini->actor->_flags |= ACTOR_FLAG_8000;
 				} else {
 					ini->actor->_flags &= ~ACTOR_FLAG_8000;
 				}
 
-				if (ini->field_1a_flags_maybe & 0x100) {
+				if (ini->flags & 0x100) {
 					ini->actor->_flags |= ACTOR_FLAG_4000;
 				} else {
 					ini->actor->_flags &= ~ACTOR_FLAG_4000;
@@ -423,7 +423,7 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 					actor->_flags = 0;
 					actor->_priorityLayer = 0;
 					actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-					actor->updateSequence((_vm->getINI(_vm->_cursor->_iniItemInHand - 1)->field_8 * 2 + 10) & 0xfffe);
+					actor->updateSequence((_vm->getINI(_vm->_cursor->_iniItemInHand - 1)->inventorySequenceId * 2 + 10) & 0xfffe);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
 					actor->setFlag(ACTOR_FLAG_100);
@@ -436,7 +436,7 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 										 flicker->actor->_y_pos - (_vm->_scene->_camera.y + 0x1e));
 			_vm->_cursor->_data_800728b0_cursor_seqID = 5;
 			_vm->_cursor->_sequenceID = 5;
-			_vm->_cursor->_objectInHandSequenceID = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
+			_vm->_cursor->_objectInHandSequenceID = _vm->getINI(field2 - 1)->inventorySequenceId * 2 + 10;
 			_vm->_cursor->_iniItemInHand = field2;
 		}
 	}
@@ -813,21 +813,21 @@ void ScriptOpcodes::opMoveActorToObject(ScriptOpCall &scriptOpCall) {
 		bVar1 = (field6 != -1);
 	}
 	if (field8 == -1) {
-		if ((firstIni->field_1a_flags_maybe & 1) == 0) {
-			if ((int)firstIni->field_2 != -1) {
-				Img *firstDragonImg1 = _vm->_dragonImg->getImg(firstIni->field_2);
-				int16 newXPos1 = firstDragonImg1->field_a + firstIni->field_1c;
+		if ((firstIni->flags & 1) == 0) {
+			if ((int)firstIni->imgId != -1) {
+				Img *firstDragonImg1 = _vm->_dragonImg->getImg(firstIni->imgId);
+				int16 newXPos1 = firstDragonImg1->field_a + firstIni->baseXOffset;
 				secondIni->x = newXPos1;
 				secondIni->actor->_x_pos = newXPos1;
-				int16 newYPos1 = firstDragonImg1->field_c + firstIni->field_1e;
+				int16 newYPos1 = firstDragonImg1->field_c + firstIni->baseYOffset;
 				secondIni->y = newYPos1;
 				secondIni->actor->_y_pos = newYPos1;
 			}
 		} else {
-			int16 newYPos2 = firstIni->actor->_y_pos + firstIni->field_1e;
+			int16 newYPos2 = firstIni->actor->_y_pos + firstIni->baseYOffset;
 			firstIni->y = newYPos2;
 			secondIni->actor->_y_pos = newYPos2;
-			someXParam = firstIni->actor->_x_pos + firstIni->field_1c;
+			someXParam = firstIni->actor->_x_pos + firstIni->baseXOffset;
 			secondIni->x = someXParam;
 			secondIni->actor->_x_pos = someXParam;
 		}
@@ -855,20 +855,20 @@ void ScriptOpcodes::opMoveActorToObject(ScriptOpCall &scriptOpCall) {
 	int16 newXPosAgain = 0;
 	int16 newYPosAgain = 0;
 	someBooleanFlag = 1;
-	if ((firstIni->field_1a_flags_maybe & 1) == 0) {
-		if ((int)firstIni->field_2 == -1) {
+	if ((firstIni->flags & 1) == 0) {
+		if ((int)firstIni->imgId == -1) {
 			return;
 		}
-		Img *firstDragonImg2 = _vm->_dragonImg->getImg(firstIni->field_2);
+		Img *firstDragonImg2 = _vm->_dragonImg->getImg(firstIni->imgId);
 
-		newXPosAgain = firstDragonImg2->field_a + firstIni->field_1c;
-		newYPosAgain = firstDragonImg2->field_c + firstIni->field_1e;
+		newXPosAgain = firstDragonImg2->field_a + firstIni->baseXOffset;
+		newYPosAgain = firstDragonImg2->field_c + firstIni->baseYOffset;
 		if (_vm->_dragonINIResource->isFlicker(secondIni)) {
 			someBooleanFlag = 0;
 		}
 	} else {
-		newXPosAgain = firstIni->actor->_x_pos + firstIni->field_1c;
-		newYPosAgain = firstIni->actor->_y_pos + firstIni->field_1e;
+		newXPosAgain = firstIni->actor->_x_pos + firstIni->baseXOffset;
+		newYPosAgain = firstIni->actor->_y_pos + firstIni->baseYOffset;
 		if (_vm->_dragonINIResource->isFlicker(secondIni)) {
 			someBooleanFlag = 0;
 		}
@@ -880,7 +880,7 @@ void ScriptOpcodes::opMoveActorToObject(ScriptOpCall &scriptOpCall) {
 		}
 	}
 
-	secondIni->actor->_direction = firstIni->field_e;
+	secondIni->actor->_direction = firstIni->direction;
 
 	secondIni->x = newXPosAgain;
 	secondIni->y = newYPosAgain;
@@ -950,8 +950,8 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 
 	DragonINI *ini = iniId == 0 ? _vm->_dragonINIResource->getFlickerRecord() : _vm->getINI(iniId - 1);
 
-	if ((ini->field_1a_flags_maybe & 1) == 0) {
-		Img *img = _vm->_dragonImg->getImg(ini->field_2);
+	if ((ini->flags & 1) == 0) {
+		Img *img = _vm->_dragonImg->getImg(ini->imgId);
 
 		int y = img->field_e == 0 ? img->y : img->y << 3;
 
@@ -1019,7 +1019,7 @@ void ScriptOpcodes::setVariable(ScriptOpCall &scriptOpCall) {
 		s2 = getINIField(field4 - 1, field2);
 		DragonINI *ini = _vm->getINI(field4 - 1);
 
-		if (field2 == 0x1a && ini->field_1a_flags_maybe & 1 && ini->sceneId == _vm->getCurrentSceneId()) {
+		if (field2 == 0x1a && ini->flags & 1 && ini->sceneId == _vm->getCurrentSceneId()) {
 			if (s1 & 2) {
 				ini->actor->_flags |= ACTOR_FLAG_80;
 				ini->actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
@@ -1034,7 +1034,7 @@ void ScriptOpcodes::setVariable(ScriptOpCall &scriptOpCall) {
 			}
 		}
 
-		if (fieldA & 4 && field2 == 0 && !(ini->field_1a_flags_maybe & 1) && ini->sceneId == _vm->getCurrentSceneId()) {
+		if (fieldA & 4 && field2 == 0 && !(ini->flags & 1) && ini->sceneId == _vm->getCurrentSceneId()) {
 			if (s1 == -1) {
 				if (ini->iptIndex_maybe != -1) {
 					_vm->_scene->removeImageOverlay(ini->iptIndex_maybe);
@@ -1080,16 +1080,16 @@ uint16 ScriptOpcodes::getINIField(uint32 iniIndex, uint16 fieldOffset) {
 	case 4 : return ini->actorResourceId;
 	case 6 : return ini->sequenceId;
 	case 0xC  : return ini->sceneId;
-	case 0xE  : return ini->field_e;
-	case 0x10 : return ini->field_10;
-	case 0x12  : return ini->field_12;
-	case 0x14 : return ini->field_14;
+	case 0xE  : return ini->direction;
+	case 0x10 : return ini->counter;
+	case 0x12  : return ini->objectState;
+	case 0x14 : return ini->objectState2;
 	case 0x16 : return ini->x;
 	case 0x18 : return ini->y;
-	case 0x1A : return ini->field_1a_flags_maybe;
-	case 0x1C : return ini->field_1c;
-	case 0x1E : return ini->field_1e;
-	case 0x20 : return ini->field_20_actor_field_14;
+	case 0x1A : return ini->flags;
+	case 0x1C : return ini->baseXOffset;
+	case 0x1E : return ini->baseYOffset;
+	case 0x20 : return ini->direction2;
 	default: error("getINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
 }
@@ -1102,16 +1102,16 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 	case 4 : ini->actorResourceId = value; break;
 	case 6 : ini->sequenceId = value; break;
 	case 0xc : ini->sceneId = value; break;
-	case 0xe : ini->field_e = value; break;
-	case 0x10 : ini->field_10 = value; break;
-	case 0x12 : ini->field_12 = value; break;
-	case 0x14 : ini->field_14 = value; break;
+	case 0xe : ini->direction = value; break;
+	case 0x10 : ini->counter = value; break;
+	case 0x12 : ini->objectState = value; break;
+	case 0x14 : ini->objectState2 = value; break;
 	case 0x16 : ini->x = value; break;
 	case 0x18 : ini->y = value; break;
-	case 0x1A : ini->field_1a_flags_maybe = value; break;
-	case 0x1C : ini->field_1c = value; break;
-	case 0x1E : ini->field_1e = value; break;
-	case 0x20 : ini->field_20_actor_field_14 = value; break;
+	case 0x1A : ini->flags = value; break;
+	case 0x1C : ini->baseXOffset = value; break;
+	case 0x1E : ini->baseYOffset = value; break;
+	case 0x20 : ini->direction2 = value; break;
 	default: error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
 
@@ -1130,7 +1130,7 @@ void ScriptOpcodes::opWaitForActorSequenceToFinish(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(iniId);
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
-	if (ini->field_1a_flags_maybe & 1) {
+	if (ini->flags & 1) {
 		while (!(ini->actor->_flags & ACTOR_FLAG_4)) {
 			_vm->waitForFrames(1);
 		}
@@ -1206,7 +1206,7 @@ void ScriptOpcodes::opWaitForActorToFinishWalking(ScriptOpCall &scriptOpCall) {
 	}
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
-	if (ini->field_1a_flags_maybe & 1) {
+	if (ini->flags & 1) {
 		while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
 			_vm->waitForFrames(1);
 		}

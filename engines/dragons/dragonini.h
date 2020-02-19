@@ -44,22 +44,22 @@ enum IniFlags {
 struct DragonINI {
 	uint16 id;
 	int16 iptIndex_maybe;
-	int16 field_2;
+	int16 imgId;
 	int16 actorResourceId;
 	uint16 sequenceId;
-	int16 field_8;
+	int16 inventorySequenceId;
 	Actor *actor;
 	uint16 sceneId;
-	int16 field_e;
-	int16 field_10;
-	int16 field_12;
-	uint16 field_14;
+	int16 direction;
+	int16 counter;
+	int16 objectState;
+	uint16 objectState2;
 	int16 x;
 	int16 y;
-	uint16 field_1a_flags_maybe;
-	int16 field_1c;
-	int16 field_1e;
-	int16 field_20_actor_field_14;
+	uint16 flags;
+	int16 baseXOffset;
+	int16 baseYOffset;
+	int16 direction2;
 };
 
 class DragonINIResource {
