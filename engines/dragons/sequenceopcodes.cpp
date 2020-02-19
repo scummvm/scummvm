@@ -80,7 +80,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(1, opSetFramePointer);
 	OPCODE(2, opSetFramePointerAndStop);
 	OPCODE(3, opJmp);
-	OPCODE(4, opSetFieldC);
+	OPCODE(4, opSetSequenceTimerStartValue);
 	OPCODE(5, opSetSequenceTimer);
 	OPCODE(6, opUpdateXYResetSeqTimer);
 	OPCODE(7, opUpdateXYResetSeqTimerAndStop);
@@ -118,7 +118,7 @@ void SequenceOpcodes::opSetFramePointer(Actor *actor, OpCall &opCall) {
 	debug(4, "set frame pointer %X", framePointer);
 	actor->loadFrame((uint16)framePointer);
 	actor->_flags |= ACTOR_FLAG_2;
-	actor->_sequenceTimer = actor->_field_c;
+	actor->_sequenceTimer = actor->_sequenceTimerMaxValue;
 	updateReturn(opCall, 1);
 }
 
@@ -139,10 +139,10 @@ void SequenceOpcodes::opJmp(Actor *actor, OpCall &opCall) {
 	}
 }
 
-void SequenceOpcodes::opSetFieldC(Actor *actor, OpCall &opCall) {
-	ARG_INT16(newFieldC);
-	actor->_field_c = (uint16)newFieldC;
-	debug(5, "set fieldC: %d", newFieldC);
+void SequenceOpcodes::opSetSequenceTimerStartValue(Actor *actor, OpCall &opCall) {
+	ARG_INT16(startValue);
+	actor->_sequenceTimerMaxValue = (uint16)startValue;
+	debug(5, "set sequenceTimerStartValue: %d", startValue);
 	updateReturn(opCall, 1);
 }
 
@@ -159,7 +159,7 @@ void SequenceOpcodes::opUpdateXYResetSeqTimer(Actor *actor, OpCall &opCall) {
 	ARG_INT8(yOffset);
 	actor->_x_pos += xOffset;
 	actor->_y_pos += yOffset;
-	actor->_sequenceTimer = actor->_field_c;
+	actor->_sequenceTimer = actor->_sequenceTimerMaxValue;
 
 	debug(5, "update actor %d XY offset (%d, %d) new values (%d, %d) %d", actor->_actorID, xOffset, yOffset, actor->_x_pos, actor->_y_pos, actor->_sequenceTimer);
 	updateReturn(opCall, 1);

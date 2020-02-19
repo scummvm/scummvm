@@ -161,7 +161,7 @@ void Minigame5::run() {
 	dustActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	local_4e = _vm->_dragonINIResource->getRecord(DAT_80063a48 + -1)->actor;
 	local_4c = 0;
-	local_4a = local_4e->_field_c;
+	local_4a = local_4e->_sequenceTimerMaxValue;
 	_vm->setFlags(ENGINE_FLAG_4000000);
 	currentState = 1;
 	local_66 = 0;
@@ -327,7 +327,7 @@ void Minigame5::run() {
 								currentState = 4;
 							}
 						} else {
-							local_4e->_field_c = 2;
+							local_4e->_sequenceTimerMaxValue = 2;
 							local_4c = 0x3c;
 							bombActor->_priorityLayer = 0;
 							currentState = 8;

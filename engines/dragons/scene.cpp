@@ -38,7 +38,7 @@ namespace Dragons {
 
 Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader)
 		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
-	_data_80063392 = 2;
+	_mapTransitionEffectSceneID = 2;
 	_data_800633ee = 0;
 }
 void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
@@ -214,7 +214,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	_vm->setFlags(ENGINE_FLAG_200);
 	_actorManager->clearActorFlags(2);
-	_vm->_data_800633fc = 0;
+	_vm->_isLoadingDialogAudio = false;
 	// TODO 0x8002fff0
 
 	for (int i = 0; i < _dragonINIResource->totalRecords(); i++) {
@@ -288,9 +288,9 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 
 	if (flicker && flicker->sceneId != 0) {
-		flicker->field_20_actor_field_14 = _vm->_data_800633fa;
+		flicker->field_20_actor_field_14 = _vm->_flickerInitialSceneDirection;
 		if (flicker->actor) {
-			flicker->actor->_direction = _vm->_data_800633fa;
+			flicker->actor->_direction = _vm->_flickerInitialSceneDirection;
 			flicker->actor->setFlag(ACTOR_FLAG_4);
 		}
 	}

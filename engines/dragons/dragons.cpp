@@ -562,7 +562,7 @@ void DragonsEngine::gameLoop() {
 				Actor *actor = _inventory->getInventoryItemActor(_cursor->_iniUnderCursor);
 				uint16 tmpId = _cursor->_iniItemInHand;
 				_inventory->replaceItem(_cursor->_iniUnderCursor, _cursor->_iniItemInHand);
-				_cursor->_data_8007283c_objectInHandSequenceID = actor->_sequenceID;
+				_cursor->_objectInHandSequenceID = actor->_sequenceID;
 				actor->clearFlag(ACTOR_FLAG_40);
 				_cursor->_iniItemInHand = _cursor->_iniUnderCursor;
 				_cursor->_sequenceID = 5;
@@ -976,7 +976,7 @@ void DragonsEngine::performAction() {
 	local_58_codeEnd = NULL;
 
 	uVar6 = 0;
-	_scriptOpcodes->_data_80071f5c = 0;
+	_scriptOpcodes->_numDialogStackFramesToPop = 0;
 
 	assert(_cursor->_performActionTargetINI > 0);
 	byte *obd = _dragonOBD->getFromOpt(_cursor->_performActionTargetINI - 1);
@@ -988,7 +988,7 @@ void DragonsEngine::performAction() {
 
 	uVar4 = _cursor->executeScript(local_48, 1);
 	if (_cursor->_data_800728b0_cursor_seqID > 4) {
-		_scriptOpcodes->_data_80071f5c = 0;
+		_scriptOpcodes->_numDialogStackFramesToPop = 0;
 
 		obd = _dragonOBD->getFromOpt(_scriptOpcodes->_scriptTargetINI - 1);
 		_scriptOpcodes->_scriptTargetINI = _cursor->_performActionTargetINI;
@@ -1024,7 +1024,7 @@ void DragonsEngine::performAction() {
 			_talk->flickerRandomDefaultResponse();
 		}
 	} else {
-		_scriptOpcodes->_data_80071f5c--;
+		_scriptOpcodes->_numDialogStackFramesToPop--;
 	}
 	_flags |= uVar1 & ENGINE_FLAG_8;
 	return;
@@ -1202,7 +1202,7 @@ void DragonsEngine::reset() {
 	_unkFlags1 = 0;
 	_run_func_ptr_unk_countdown_timer = 0;
 	_videoFlags = 0;
-	_data_800633fa = 0;
+	_flickerInitialSceneDirection = 0;
 
 	for (int i = 0; i < 8; i++) {
 		_paletteCyclingTbl[i].paletteType = 0;

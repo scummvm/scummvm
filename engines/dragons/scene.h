@@ -42,7 +42,7 @@ struct DragonINI;
 class Scene {
 public:
 	Common::Point _camera;
-	int16 _data_80063392;
+	int16 _mapTransitionEffectSceneID;
 
 private:
 	DragonsEngine *_vm;
@@ -55,7 +55,7 @@ private:
 	ScriptOpcodes *_scriptOpcodes;
 
 	int16 _currentSceneId;
-	int16 _data_800633ee;
+	int16 _data_800633ee; //TODO this isn't referenced. Is it needed?
 
 public:
 	Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader);

@@ -73,7 +73,7 @@ protected:
 	void opSetFramePointer(Actor *actor, OpCall &opCall);
 	void opSetFramePointerAndStop(Actor *actor, OpCall &opCall);
 	void opJmp(Actor *actor, OpCall &opCall);
-	void opSetFieldC(Actor *actor, OpCall &opCall);
+	void opSetSequenceTimerStartValue(Actor *actor, OpCall &opCall);
 	void opSetSequenceTimer(Actor *actor, OpCall &opCall);
 	void opUpdateXYResetSeqTimer(Actor *actor, OpCall &opCall);
 	void opUpdateXYResetSeqTimerAndStop(Actor *actor, OpCall &opCall);
