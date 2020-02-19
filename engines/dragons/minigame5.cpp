@@ -478,7 +478,7 @@ void Minigame5::run() {
 		}
 		if (local_10 == 1) break;
 		if (local_10 == 2) {
-			_vm->_dragonINIResource->getRecord(DAT_80063a40 + -1)->field_14 = 2;
+			_vm->_dragonINIResource->getRecord(DAT_80063a40 + -1)->objectState2 = 2;
 			pusherActor->updateSequence(7);
 			_vm->waitForFrames(0x3c);
 			pusherActor->updateSequence(1);
@@ -518,7 +518,7 @@ void Minigame5::run() {
 		}
 	}
 	_vm->_dragonINIResource->getRecord(DAT_80063a40 + -1)->actor->clearFlag(ACTOR_FLAG_100);
-	_vm->_dragonINIResource->getRecord(DAT_80063a40 + -1)->field_14 = 0;
+	_vm->_dragonINIResource->getRecord(DAT_80063a40 + -1)->objectState2 = 0;
 	goto LAB_8009157c;
 }
 

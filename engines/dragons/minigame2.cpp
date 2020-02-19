@@ -699,8 +699,8 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	//TODO FUN_80035e74((uint)uVar16);
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
 	_vm->_inventory->setState(originalInventoryType);
-	flicker->field_12 = local_258 + -1;
-	if (flicker->field_12 == 0) {
+	flicker->objectState = local_258 + -1;
+	if (flicker->objectState == 0) {
 		_vm->setVar(0xb, 1);
 		flicker->actorResourceId = 0xd2; //TODO is this correct?
 		_vm->_actorManager->loadActor(0xd2, flicker->actor->_actorID);

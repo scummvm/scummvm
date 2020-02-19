@@ -828,7 +828,7 @@ void Minigame1::run() {
 		}
 
 		if ((local_252 == 2) && (gameState == 6)) {
-			_vm->getINI(DAT_80063a40 - 1)->field_14 = 2;
+			_vm->getINI(DAT_80063a40 - 1)->objectState2 = 2;
 			if (local_250 != 0) {
 				_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 			}

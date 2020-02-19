@@ -79,7 +79,7 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 		_scriptOpcodes->runScript(scriptOpCall);
 	}
 	DragonINI *ini = _dragonINIResource->getRecord(0xc4);
-	ini->field_12 = 0;
+	ini->objectState = 0;
 }
 
 void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
@@ -89,8 +89,8 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	for (int i = 0; i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
-		ini->field_10 = -1;
-		ini->field_1a_flags_maybe &= ~INI_FLAG_10;
+		ini->counter = -1;
+		ini->flags &= ~INI_FLAG_10;
 	}
 
 	uint16 sceneIdStripped = (uint16)sceneId & ~0x8000;
@@ -220,42 +220,42 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	for (int i = 0; i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		if (ini->sceneId == sceneIdStripped) {
-			if (ini->field_1a_flags_maybe & 1) {
+			if (ini->flags & 1) {
 				Actor *actor = _actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
 
 				if (actor) {
 					ini->actor = actor;
-					if (ini->field_1a_flags_maybe & 0x1000) {
+					if (ini->flags & 0x1000) {
 						actor->_frame_flags |= 0x10;
 					} else {
-						if (ini->field_1a_flags_maybe & 0x2000) {
+						if (ini->flags & 0x2000) {
 							actor->_frame_flags |= 0x20;
 						} else {
 							actor->_frame_flags &= ~0x10;
 						}
 					}
 
-					actor->_direction = ini->field_20_actor_field_14;
+					actor->_direction = ini->direction2;
 
-					if (ini->field_1a_flags_maybe & 2) {
+					if (ini->flags & 2) {
 						actor->_flags |= ACTOR_FLAG_80;
 					} else {
 						actor->_flags &= 0xfeff;
 					}
 
-					if (ini->field_1a_flags_maybe & 0x20) {
+					if (ini->flags & 0x20) {
 						actor->_flags |= ACTOR_FLAG_100;
 					} else {
 						actor->_flags &= 0xfeff;
 					}
 
-					if (ini->field_1a_flags_maybe & 4) {
+					if (ini->flags & 4) {
 						actor->_flags |= ACTOR_FLAG_8000;
 					} else {
 						actor->_flags &= 0x7fff;
 					}
 
-					if (ini->field_1a_flags_maybe & 0x100) {
+					if (ini->flags & 0x100) {
 						actor->_flags |= ACTOR_FLAG_4000;
 					} else {
 						actor->_flags &= 0xbfff;
@@ -265,7 +265,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 //				int x = ini->x - actor->_frame_vram_x;
 //				int y = ini->y - actor->_frame_vram_y;
 //				if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
-//					debug("Actor %d, %d %d (%d, %d)", actor->_actorID, ini->actorResourceId, ini->field_1a_flags_maybe, ini->x, ini->y);
+//					debug("Actor %d, %d %d (%d, %d)", actor->_actorID, ini->actorResourceId, ini->flags, ini->x, ini->y);
 //					_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
 //				}
 				}
@@ -288,7 +288,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 
 	if (flicker && flicker->sceneId != 0) {
-		flicker->field_20_actor_field_14 = _vm->_flickerInitialSceneDirection;
+		flicker->direction2 = _vm->_flickerInitialSceneDirection;
 		if (flicker->actor) {
 			flicker->actor->_direction = _vm->_flickerInitialSceneDirection;
 			flicker->actor->setFlag(ACTOR_FLAG_4);
@@ -374,7 +374,7 @@ void Scene::draw() {
 					int x = actor->_x_pos - (actor->_frame->xOffset * actor->_scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.x);
 					int y = actor->_y_pos - (actor->_frame->yOffset * actor->_scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.y);
 
-					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
+					debug(5, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
 						  s->w, s->h, actor->_priorityLayer, actor->_scale);
 						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);

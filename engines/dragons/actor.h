@@ -90,7 +90,6 @@ public:
 	uint16 _actorFileDictionaryIndex;
 	int16 _resourceID;
 	byte *_seqCodeIp;
-	void* _frame_pointer_maybe;
 	ActorFrame *_frame;
 	Graphics::Surface *_surface;
 	uint16 _sequenceTimerMaxValue;
@@ -114,13 +113,7 @@ public:
 	int16 _finalWalkDestY;
 	uint16 _field_7a;
 	int32 _walkSpeed;
-	uint16 _field_80;
-	uint16 _frame_vram_x;
-	uint16 _frame_vram_y;
-	uint16 _frame_width;
-	uint16 _frame_height;
 	uint16 _frame_flags;
-	uint16 _clut;
 public:
 
 	Actor(uint16 id);
