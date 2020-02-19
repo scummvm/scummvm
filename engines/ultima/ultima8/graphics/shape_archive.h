@@ -46,10 +46,6 @@ public:
 	ShapeArchive(IDataSource *ds, uint16 id, Palette *pal = 0,
 	             const ConvertShapeFormat *format = 0)
 		: Archive(ds), _id(id), _format(format), _palette(pal) { }
-	ShapeArchive(const Std::string &path, uint16 id,
-	             Palette *pal = 0,
-	             const ConvertShapeFormat *format = 0)
-		: Archive(path), _id(id), _format(format), _palette(pal) { }
 
 	~ShapeArchive() override;
 

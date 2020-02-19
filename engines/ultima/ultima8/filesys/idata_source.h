@@ -112,59 +112,6 @@ public:
 	virtual Common::SeekableReadStream *GetRawStream() {
 		return 0;
 	}
-
-	/* SDL_RWops functions: */
-#if TODO
-	static int rw_seek(SDL_RWops *context, int offset, int whence) {
-		IDataSource *ids = static_cast<IDataSource *>
-		                   (context->hidden.unknown.data1);
-		switch (whence) {
-		case SEEK_SET:
-			ids->seek(offset);
-			break;
-		case SEEK_CUR:
-			ids->skip(offset);
-			break;
-		case SEEK_END:
-			ids->seek(ids->getSize() + offset);
-			break;
-		default:
-			return -1;
-			break;
-		}
-		return ids->getPos();
-	}
-	static int rw_read(SDL_RWops *context, void *ptr, int size, int maxnum) {
-		IDataSource *ids = static_cast<IDataSource *>
-		                   (context->hidden.unknown.data1);
-		if (size == 0) return 0;
-		int nbytes = ids->read(ptr, maxnum * size);
-		return (nbytes / size);
-	}
-	static int rw_write(SDL_RWops * /*context*/, const void * /*ptr*/,
-	                    int /*size*/, int /*num*/) {
-		return 0;
-	}
-	static int rw_close(SDL_RWops *context) {
-		IDataSource *ids = static_cast<IDataSource *>
-		                   (context->hidden.unknown.data1);
-		delete ids;
-		SDL_FreeRW(context);
-		return 0;
-	}
-
-	//! Create an SDL_RWops structure from this IDataSource.
-	//! It will delete the IDataSource (and itself) when closed.
-	SDL_RWops *getRWops() {
-		SDL_RWops *rwops = SDL_AllocRW();
-		rwops->seek = rw_seek;
-		rwops->read = rw_read;
-		rwops->write = rw_write;
-		rwops->close = rw_close;
-		rwops->hidden.unknown.data1 = static_cast<void *>(this);
-		return rwops;
-	}
-#endif
 };
 
 

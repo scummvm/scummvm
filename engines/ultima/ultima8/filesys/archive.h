@@ -47,10 +47,6 @@ public:
 	//! Will create FlexFile, U8SaveFile or ZipFile; ids will be deleted.
 	explicit Archive(IDataSource *ids);
 
-	//! create Archive with a single directory input source
-	//! Will create DirFile.
-	explicit Archive(const Std::string &path);
-
 	virtual ~Archive();
 
 	//! add input source.
@@ -61,10 +57,6 @@ public:
 
 	//! add input source, autodetecting the type (as the constructor)
 	bool addSource(IDataSource *ids);
-
-	//! add directory input source (as the constructor)
-	bool addSource(const Std::string &path);
-
 
 	//! Cache all objects
 	void cache();

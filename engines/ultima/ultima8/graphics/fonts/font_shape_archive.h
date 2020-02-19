@@ -44,11 +44,7 @@ public:
 	FontShapeArchive(IDataSource *ds, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(ds, id_, pal_, format_) { }
-	FontShapeArchive(const Std::string &path, uint16 id_,
-	                 Palette *pal_ = 0,
-	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(path, id_, pal_, format_) { }
-
+ 
 	~FontShapeArchive() override { }
 
 	//! load HVLeads from u8.ini

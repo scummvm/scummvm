@@ -39,7 +39,6 @@ public:
 	RawArchive() : Archive() { }
 	explicit RawArchive(ArchiveFile *af) : Archive(af) { }
 	explicit RawArchive(IDataSource *ids) : Archive(ids) { }
-	explicit RawArchive(const Std::string &path) : Archive(path) { }
 
 	~RawArchive() override;
 

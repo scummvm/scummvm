@@ -27,7 +27,6 @@
 #include "ultima/ultima8/filesys/named_archive_file.h"
 #include "ultima/ultima8/filesys/flex_file.h"
 #include "ultima/ultima8/filesys/u8_save_file.h"
-#include "ultima/ultima8/filesys/dir_file.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -56,11 +55,6 @@ Archive::Archive(IDataSource *ids) {
 	addSource(ids);
 }
 
-Archive::Archive(const Std::string &path) {
-	_count = 0;
-	addSource(path);
-}
-
 bool Archive::addSource(ArchiveFile *af) {
 	_sources.push_back(af);
 
@@ -82,16 +76,6 @@ bool Archive::addSource(IDataSource *ids) {
 	}
 
 	if (!s) return false;
-	if (!s->isValid()) {
-		delete s;
-		return false;
-	}
-
-	return addSource(s);
-}
-
-bool Archive::addSource(const Std::string &path) {
-	ArchiveFile *s = new DirFile(path);
 	if (!s->isValid()) {
 		delete s;
 		return false;

@@ -400,11 +400,9 @@ int ConvertShape::CalcNumFrames(IDataSource *source, const ConvertShapeFormat *c
 		if (csf->_bytes_frameheader_unk) source->skip(csf->_bytes_frameheader_unk);
 
 		// Read frame_length
-#ifdef TODO
 		uint32 frame_length = real_len-frame_offset;
 		if (csf->_bytes_frame_length)
 			frame_length = source->readX(csf->_bytes_frame_length) + csf->_bytes_frame_length_kludge;
-#endif
 	}
 
 	source->seek(save_pos);

@@ -77,14 +77,6 @@ public:
 	//! \return true if successful; otherwise, false.
 	bool MkDir(const Std::string &path); // can handle both paths and vpaths
 
-	typedef Common::List<Std::string> FileList;
-
-	//! List files matching a mask
-	//! \param mask the mask to match
-	//! \param files the FileList to which the found files are appended
-	//! \param return OS-specific (FIXME!)
-	int ListFiles(const Std::string mask, FileList &files);
-
 private:
 	static void switch_slashes(Std::string &name);
 	static bool base_to_uppercase(Std::string &str, int count);
