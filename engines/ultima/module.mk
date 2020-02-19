@@ -347,7 +347,6 @@ MODULE_OBJS := \
 	ultima8/filesys/data.o \
 	ultima8/filesys/file_system.o \
 	ultima8/filesys/flex_file.o \
-	ultima8/filesys/output_logger.o \
 	ultima8/filesys/raw_archive.o \
 	ultima8/filesys/savegame.o \
 	ultima8/filesys/u8_save_file.o \
