@@ -79,7 +79,7 @@ public:
 	void close();
 	bool isOpen() const { return _isOpen; }
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 
 	MidiChannel *allocateChannel() {
 		if (_driver)

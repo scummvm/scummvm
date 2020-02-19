@@ -50,7 +50,7 @@ public:
 	int open();
 	bool isOpen() const { return _isOpen; }
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length);
 
 private:
@@ -121,6 +121,8 @@ void MidiDriver_CAMD::send(uint32 b) {
 		warning("MidiDriver_CAMD: Got event while not open");
 		return;
 	}
+
+	midiDriverCommonSend(b);
 
 	ULONG data = READ_LE_UINT32(&b);
 	_ICamd->PutMidi(_midi_link, data);

@@ -131,6 +131,8 @@ static const char HELP_STRING[] =
 	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination AdLib and native MIDI\n"
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
+	"  --dump-midi              Dumps MIDI events to 'dump.mid', until quitting from game\n"
+	"                           (if file already exists, it will be overwritten)\n"
 	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
@@ -233,6 +235,7 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
+	ConfMan.registerDefault("dump_midi", false);
 	ConfMan.registerDefault("enable_gs", false);
 	ConfMan.registerDefault("midi_gain", 100);
 
@@ -652,6 +655,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("native-mt32")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("dump-midi")
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("enable-gs")

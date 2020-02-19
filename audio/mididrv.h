@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/timer.h"
+#include "common/array.h"
 
 class MidiChannel;
 
@@ -86,7 +87,9 @@ enum MidiDriverFlags {
  */
 class MidiDriver_BASE {
 public:
-	virtual ~MidiDriver_BASE() { }
+	MidiDriver_BASE();
+
+	virtual ~MidiDriver_BASE();
 
 	/**
 	 * Output a packed midi command to the midi stream.
@@ -96,6 +99,7 @@ public:
 	 */
 	virtual void send(uint32 b) = 0;
 
+
 	/**
 	 * Output a midi command to the midi stream. Convenience wrapper
 	 * around the usual 'packed' send method.
@@ -103,10 +107,8 @@ public:
 	 * Do NOT use this for sysEx transmission; instead, use the sysEx()
 	 * method below.
 	 */
-	void send(byte status, byte firstOp, byte secondOp) {
-		send(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
-	}
-
+	void send(byte status, byte firstOp, byte secondOp);
+	
 	/**
 	 * Transmit a sysEx to the midi device.
 	 *
@@ -121,6 +123,39 @@ public:
 
 	// TODO: Document this.
 	virtual void metaEvent(byte type, byte *data, uint16 length) { }
+
+protected:
+
+	/**
+	 * Enables midi dumping to a 'dump.mid' file and to debug messages on screen
+	 * It's set by '--dump-midi' command line parameter
+	 */
+	bool _midiDumpEnable;
+
+	/** Used for MIDI dumping delta calculation */
+	uint32 _prevMillis;
+
+	/** Stores all MIDI events, will be written to disk after an engine quits */
+	Common::Array<byte> _midiDumpCache;
+
+	/** Initialize midi dumping mechanism, called only if enabled */
+	void midiDumpInit();
+
+	/** Handles MIDI file variable length dumping */
+	int midiDumpVarLength(const uint32 &delta);
+
+	/** Handles MIDI file time delta dumping */
+	void midiDumpDelta();
+
+	/** Performs dumping of MIDI commands, called only if enabled */
+	void midiDumpDo(uint32 b);
+
+	/** Performs dumping of MIDI SysEx commands, called only if enabled */
+	void midiDumpSysEx(const byte *msg, uint16 length);
+
+	/** Writes the captured MIDI events to disk, called only if enabled */
+	void midiDumpFinish();
+
 };
 
 /**
@@ -165,6 +200,13 @@ public:
 
 	/** Get the device description string matching the given device handle and the given type. */
 	static Common::String getDeviceString(DeviceHandle handle, DeviceStringType type);
+
+	/** Common operations to be done by all drivers on start of send */
+	void midiDriverCommonSend(uint32 b);
+
+	/** Common operations to be done by all drivers on start of sysEx */
+	void midiDriverCommonSysEx(const byte *msg, uint16 length);
+
 
 private:
 	// If detectDevice() detects MT32 and we have a preferred MT32 device

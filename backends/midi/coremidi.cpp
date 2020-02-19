@@ -58,7 +58,7 @@ public:
 	int open();
 	bool isOpen() const { return mOutPort != 0 && mDest != 0; }
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length);
 
 private:
@@ -117,6 +117,8 @@ void MidiDriver_CoreMIDI::close() {
 
 void MidiDriver_CoreMIDI::send(uint32 b) {
 	assert(isOpen());
+
+	midiDriverCommonSend(b);
 
 	// Extract the MIDI data
 	byte status_byte = (b & 0x000000FF);

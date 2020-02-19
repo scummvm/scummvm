@@ -122,7 +122,7 @@ public:
 
 	int open();
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 	void setPitchBendRange(byte channel, uint range);
 	void sysEx(const byte *msg, uint16 length);
 
@@ -227,6 +227,8 @@ int MidiDriver_MT32::open() {
 }
 
 void MidiDriver_MT32::send(uint32 b) {
+	midiDriverCommonSend(b);
+
 	Common::StackLock lock(_mutex);
 	_service.playMsg(b);
 }
@@ -243,6 +245,7 @@ void MidiDriver_MT32::setPitchBendRange(byte channel, uint range) {
 }
 
 void MidiDriver_MT32::sysEx(const byte *msg, uint16 length) {
+	midiDriverCommonSysEx(msg, length);
 	if (msg[0] == 0xf0) {
 		Common::StackLock lock(_mutex);
 		_service.playSysex(msg, length);

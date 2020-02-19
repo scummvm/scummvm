@@ -123,7 +123,7 @@ public:
 	// MidiDriver
 	int open();
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 	MidiChannel *allocateChannel() { return NULL; }
 	MidiChannel *getPercussionChannel() { return NULL; }
 

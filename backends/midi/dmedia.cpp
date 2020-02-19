@@ -58,7 +58,7 @@ public:
 	int open();
 	bool isOpen() const { return _isOpen; }
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length);
 
 private:
@@ -135,6 +135,8 @@ void MidiDriver_DMEDIA::close() {
 }
 
 void MidiDriver_DMEDIA::send(uint32 b) {
+	midiDriverCommonSend(b);
+
 	MDevent event;
 	byte status_byte = (b & 0x000000FF);
 	byte first_byte = (b & 0x0000FF00) >> 8;
@@ -176,6 +178,8 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 	char buf [1024];
 
 	assert(length + 2 <= 256);
+
+	midiDriverCommonSysEx(msg, length);
 
 	memcpy(buf, msg, length);
 	buf[length] = MD_EOX;

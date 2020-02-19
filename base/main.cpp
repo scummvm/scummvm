@@ -449,6 +449,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		return res.getCode();
 	}
 
+	if (settings.contains("dump-midi")) {
+		// Store this command line setting in ConfMan, since all transient settings are destroyed
+		ConfMan.registerDefault("dump_midi", true);
+	}
+
+
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
 	system.initBackend();
