@@ -90,7 +90,7 @@ Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param
 	//TODO 0x800323a4
 
 	//TODO dragon_text_related(textId);
-	_vm->_data_800633fc = 1;
+	_vm->_isLoadingDialogAudio = true;
 	uint32 uVar4 = 0; //TODO FUN_8001d1ac(0, textId, 0);
 
 	actor->updateSequence(startSequenceId);
@@ -378,7 +378,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				}
 			}
 			if (param_5 == 0) {
-				_vm->_data_800633fc = 0;
+				_vm->_isLoadingDialogAudio = false;
 				return (uint)returnStatus;
 			}
 			uVar9 = ((int)((int)(short)unaff_s4 * (uint)1 * (int)sVar3) >> 3) * 0x3c;
@@ -427,7 +427,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			_vm->setFlags(ENGINE_FLAG_8);
 		}
 	}
-	_vm->_data_800633fc = 0;
+	_vm->_isLoadingDialogAudio = false;
 	return (uint)returnStatus;
 }
 
@@ -486,7 +486,7 @@ void Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint
 //		uVar4 = puVar7[5];
 //		puVar8[4] = __dat_80011a80;
 //		puVar8[5] = uVar4;
-		_vm->_data_800633fc = 1;
+		_vm->_isLoadingDialogAudio = true;
 
 		// sVar3 = FUN_8001d1ac(0, textId, 0);
 		_vm->_sound->playSpeech(textId);
@@ -621,13 +621,13 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 		}
 		ScriptOpCall local_1d20(selectedDialogText->scriptCodeStartPtr, selectedDialogText->scriptCodeEndPtr - selectedDialogText->scriptCodeStartPtr);
 		_vm->_scriptOpcodes->runScript(local_1d20);
-		if (_vm->_scriptOpcodes->_data_80071f5c != 0) break;
+		if (_vm->_scriptOpcodes->_numDialogStackFramesToPop != 0) break;
 		local_1d20._code = selectedDialogText->scriptCodeStartPtr;
 		local_1d20._codeEnd = selectedDialogText->scriptCodeEndPtr;
 		talkToActor(local_1d20);
 
-	} while (_vm->_scriptOpcodes->_data_80071f5c == 0);
-	_vm->_scriptOpcodes->_data_80071f5c--;
+	} while (_vm->_scriptOpcodes->_numDialogStackFramesToPop == 0);
+	_vm->_scriptOpcodes->_numDialogStackFramesToPop--;
 //	LAB_80029bc0:
 //	actors[0]._x_pos = cursor_x_var;
 //	actors[0]._y_pos = cursor_y_var;

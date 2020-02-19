@@ -1358,12 +1358,12 @@ void tableBasedSceneUpdateFunction() {
 	SpecialOpcodes *spc = vm->_scriptOpcodes->_specialOpCodes;
 
 	uVar3 = (uint)spc->sceneUpdater.curSequence;
-	if (!vm->isFlagSet(ENGINE_FLAG_8000) || vm->_data_800633fc == 1) {
+	if (!vm->isFlagSet(ENGINE_FLAG_8000) || vm->_isLoadingDialogAudio) {
 		if (spc->sceneUpdater.sequenceID != -1) {
 			vm->getINI(spc->sceneUpdater.iniID)->actor->updateSequence(spc->sceneUpdater.sequenceID);
 			spc->sceneUpdater.sequenceID = -1;
 		}
-		if (vm->_data_800633fc == 0) {
+		if (!vm->_isLoadingDialogAudio) {
 			spc->sceneUpdater.counter--;
 			if (spc->sceneUpdater.counter == 0) {
 				spc->sceneUpdater.sequenceID = spc->sceneUpdater.sequenceIDTbl[uVar3][spc->sceneUpdater.curSequenceIndex]; //*(int16_t *) (sceneUpdateSequenceTbl[uVar3].sequenceIdPtr + (uint) spc->sceneUpdater.curSequenceIndex);
@@ -1486,7 +1486,7 @@ void menInMinesSceneUpdateFunction() {
 		vm->_talk->playDialogAudioDontWait(sceneUpdateFuncDialogTbl[vm->getRand(4)]);
 		sequenceId = 2;
 	} else {
-		if (vm->_data_800633fc == 0) {
+		if (!vm->_isLoadingDialogAudio) {
 			return;
 		}
 		sequenceId = 0;
@@ -1522,7 +1522,7 @@ void monksAtBarSceneUpdateFunction() {
 		specialOpCounter = 600;
 	}
 	if (vm->isFlagSet(ENGINE_FLAG_8000)) {
-		if (vm->_data_800633fc == 0) {
+		if (!vm->_isLoadingDialogAudio) {
 			return;
 		}
 		monk1->updateSequence(0);
@@ -1716,7 +1716,7 @@ void flameEscapeSceneUpdateFunction() {
 		}
 		vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(specialOpCounter);
 	} else {
-		if ((vm->_data_800633fc != 0) && flame->_sequenceID != 0x10) {
+		if (vm->_isLoadingDialogAudio && flame->_sequenceID != 0x10) {
 			flame->updateSequence(0x10);
 		}
 	}

@@ -93,7 +93,7 @@ public:
 	void* _frame_pointer_maybe;
 	ActorFrame *_frame;
 	Graphics::Surface *_surface;
-	uint16 _field_c;
+	uint16 _sequenceTimerMaxValue;
 	int16 _scale; // scale factor 0x100 is 100%
 	uint16 _sequenceTimer;
 	uint16 _sequenceID;

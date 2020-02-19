@@ -87,7 +87,7 @@ void Minigame1::run() {
 	uint16 local_130 [10];
 	int32 local_118 [22];
 	uint32 local_c0 [22];
-	uint16 actorFieldC;
+	uint16 actorSequenceTimerStartValue;
 
 	Actor *catActor;
 	Actor *pusherActor;
@@ -235,7 +235,7 @@ void Minigame1::run() {
 	dustSpriteActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	uVar1 = _vm->getINI(DAT_80063a48 - 1)->actor; //dragon_ini_pointer[DAT_80063a48 + -1].actorId;
 	local_21e = 0;
-	actorFieldC = uVar1->_field_c;
+	actorSequenceTimerStartValue = uVar1->_sequenceTimerMaxValue;
 	_vm->setFlags(ENGINE_FLAG_4000000);
 	local_23e = 0x3700;
 	local_23a = 0x100;
@@ -261,7 +261,7 @@ void Minigame1::run() {
 				_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 			}
 			if ((local_21e == 1) && (local_252 == 0)) {
-				uVar1->_field_c = actorFieldC;
+				uVar1->_sequenceTimerMaxValue = actorSequenceTimerStartValue;
 			}
 			if (local_21e != 0) {
 				local_21e = local_21e + -1;
@@ -412,7 +412,7 @@ void Minigame1::run() {
 						i = i + 1;
 					}
 					if ((i != 8) && (local_188[(uint)i] != 0)) {
-						uVar1->_field_c = 2;
+						uVar1->_sequenceTimerMaxValue = 2;
 						local_21e = 0x3c;
 						if (local_250 != 0) {
 							_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
@@ -863,7 +863,7 @@ void Minigame1::run() {
 	flickerActor->_priorityLayer = 6; //TODO this is 2 in the original but that leave flicker invisible.
 	_vm->clearFlags(ENGINE_FLAG_4000000);
 	_vm->setFlags(savedEngineFlags);
-	uVar1->_field_c = actorFieldC;
+	uVar1->_sequenceTimerMaxValue = actorSequenceTimerStartValue;
 	return;
 }
 

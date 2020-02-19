@@ -76,7 +76,7 @@ ScriptOpCall::ScriptOpCall(byte *start, uint32 length): _op(0), _result(0), _fie
 // ScriptOpcodes
 
 ScriptOpcodes::ScriptOpcodes(DragonsEngine *vm, DragonFLG *dragonFLG)
-	: _vm(vm), _dragonFLG(dragonFLG), _data_80071f5c(0) {
+	: _vm(vm), _dragonFLG(dragonFLG), _numDialogStackFramesToPop(0) {
 	_specialOpCodes = new SpecialOpcodes(_vm);
 	initOpcodes();
 	_scriptTargetINI = 0;
@@ -107,10 +107,10 @@ void ScriptOpcodes::initOpcodes() {
 	// Register opcodes
 	OPCODE(1, opUnk1);
 	OPCODE(2, opAddDialogChoice);
-	OPCODE(3, opUnk3); //dialog related
+	OPCODE(3, opPopDialogStack);
 	OPCODE(4, opExecuteScript);
 	OPCODE(5, opSetActorDirection);
-	OPCODE(6, opUnk6);
+	OPCODE(6, opPerformActionOnObject);
 	OPCODE(7, opMoveObjectToScene);
 	OPCODE(8, opActorLoadSequence);
 
@@ -157,7 +157,7 @@ void ScriptOpcodes::updateReturn(ScriptOpCall &scriptOpCall, uint16 size) {
 void ScriptOpcodes::runScript(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._field8 = 0;
 	scriptOpCall._result = 0;
-	_data_80071f5c = 0;
+	_numDialogStackFramesToPop = 0;
 	executeScriptLoop(scriptOpCall);
 }
 
@@ -165,14 +165,14 @@ void ScriptOpcodes::runScript(ScriptOpCall &scriptOpCall) {
 void ScriptOpcodes::runScript3(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._field8 = 3;
 	scriptOpCall._result = 0;
-	_data_80071f5c = 0;
+	_numDialogStackFramesToPop = 0;
 	executeScriptLoop(scriptOpCall);
 }
 
 bool ScriptOpcodes::runScript4(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._field8 = 4;
 	scriptOpCall._result = 0;
-	_data_80071f5c = 0;
+	_numDialogStackFramesToPop = 0;
 	executeScriptLoop(scriptOpCall);
 	return scriptOpCall._result;
 }
@@ -222,7 +222,7 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 		scriptOpCall._op = (byte) opcode;
 		execOpcode(scriptOpCall);
 
-		if (_data_80071f5c != 0) {
+		if (_numDialogStackFramesToPop != 0) {
 			scriptOpCall._result |= 1;
 			break;
 		}
@@ -275,11 +275,12 @@ void ScriptOpcodes::opAddDialogChoice(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._code += fieldA;
 }
 
-void ScriptOpcodes::opUnk3(ScriptOpCall &scriptOpCall) {
+// The number of dialog frames to pop off the stack. this returns up from nested conversation trees.
+void ScriptOpcodes::opPopDialogStack(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_INT16(field2);
 	if (scriptOpCall._field8 == 0) {
-		_data_80071f5c = field2;
+		_numDialogStackFramesToPop = field2;
 	}
 }
 
@@ -306,11 +307,11 @@ void ScriptOpcodes::opSetActorDirection(ScriptOpCall &scriptOpCall) {
 	}
 }
 
-void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opPerformActionOnObject(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
-	ARG_INT16(field2);
-	ARG_INT16(field4);
-	ARG_INT16(field6);
+	ARG_INT16(verb);
+	ARG_INT16(srcINI);
+	ARG_INT16(targetINI);
 
 	if (scriptOpCall._field8 != 0) {
 		return;
@@ -324,14 +325,14 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 	bool isEngineFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
 	_vm->clearFlags(ENGINE_FLAG_8);
 //	DisableVSyncEvent();
-	_vm->_cursor->_iniUnderCursor = field4;
+	_vm->_cursor->_iniUnderCursor = srcINI;
 	_vm->_cursor->_sequenceID = 0;
 
-	for (int16 i = field2 >> 1; i != 0; i = i >> 1) {
+	for (int16 i = verb >> 1; i != 0; i = i >> 1) {
 		_vm->_cursor->_sequenceID++;
 	}
 
-	_scriptTargetINI = field6;
+	_scriptTargetINI = targetINI;
 	_vm->_cursor->_data_800728b0_cursor_seqID = _vm->_cursor->_sequenceID;
 	_vm->_cursor->_performActionTargetINI = _vm->_cursor->_iniUnderCursor;
 //	EnableVSyncEvent();
@@ -435,7 +436,7 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 										 flicker->actor->_y_pos - (_vm->_scene->_camera.y + 0x1e));
 			_vm->_cursor->_data_800728b0_cursor_seqID = 5;
 			_vm->_cursor->_sequenceID = 5;
-			_vm->_cursor->_data_8007283c_objectInHandSequenceID = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
+			_vm->_cursor->_objectInHandSequenceID = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
 			_vm->_cursor->_iniItemInHand = field2;
 		}
 	}
@@ -532,7 +533,7 @@ void ScriptOpcodes::opPreLoadSceneData(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(sceneId);
 
 	_vm->_sound->PauseCDMusic();
-	_vm->_data_800633fc = 1;
+	_vm->_isLoadingDialogAudio = true;
 
 	if (sceneId >= 2) {
 		//TODO do we need this? It looks like it is pre-loading the next scene's data.
@@ -902,7 +903,7 @@ void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(newSceneID);
 	ARG_INT16(cameraPointID);
-	ARG_INT16(field6);
+	ARG_INT16(flickerDirection);
 
 	if (scriptOpCall._field8 != 0) {
 		return;
@@ -914,9 +915,9 @@ void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 
 	if (newSceneID != 0) {
 		// load scene here.
-		_vm->_scene->_data_80063392 = _vm->_scene->getSceneId();
+		_vm->_scene->_mapTransitionEffectSceneID = _vm->_scene->getSceneId();
 		_vm->_scene->setSceneId(newSceneID);
-		_vm->_data_800633fa = field6;
+		_vm->_flickerInitialSceneDirection = flickerDirection;
 
 		_vm->_scene->loadScene(newSceneID, cameraPointID);
 	} else {
@@ -1256,7 +1257,7 @@ void ScriptOpcodes::loadTalkDialogEntries(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._field8 = 2;
 	scriptOpCall._result = 0;
 	_vm->_talk->clearDialogEntries();
-	_data_80071f5c = 0;
+	_numDialogStackFramesToPop = 0;
 	executeScriptLoop(scriptOpCall);
 
 }

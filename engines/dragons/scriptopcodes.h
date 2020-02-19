@@ -63,7 +63,7 @@ public:
 	void executeScriptLoop(ScriptOpCall &scriptOpCall);
 	void loadTalkDialogEntries(ScriptOpCall &scriptOpCall);
 
-	int16 _data_80071f5c;
+	int16 _numDialogStackFramesToPop;
 	int16 _scriptTargetINI;
 	SpecialOpcodes *_specialOpCodes;
 
@@ -81,10 +81,10 @@ protected:
 	// Opcodes
 	void opUnk1(ScriptOpCall &scriptOpCall);
 	void opAddDialogChoice(ScriptOpCall &scriptOpCall);
-	void opUnk3(ScriptOpCall &scriptOpCall);
+	void opPopDialogStack(ScriptOpCall &scriptOpCall);
 	void opExecuteScript(ScriptOpCall &scriptOpCall); //op 4
 	void opSetActorDirection(ScriptOpCall &scriptOpCall); //op 5
-	void opUnk6(ScriptOpCall &scriptOpCall);
+	void opPerformActionOnObject(ScriptOpCall &scriptOpCall);
 	void opMoveObjectToScene(ScriptOpCall &scriptOpCall);
 	void opActorLoadSequence(ScriptOpCall &scriptOpCall);
 

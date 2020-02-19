@@ -136,7 +136,7 @@ public:
 	FontManager *_fontManager;
 	ScriptOpcodes *_scriptOpcodes;
 	Scene *_scene;
-	uint16 _data_800633fa;
+	uint16 _flickerInitialSceneDirection;
 	Inventory *_inventory;
 	Cursor *_cursor;
 	Credits *_credits;
@@ -145,7 +145,7 @@ public:
 
 	PaletteCyclingInstruction _paletteCyclingTbl[8];
 
-	uint16 _data_800633fc;
+	bool _isLoadingDialogAudio;
 	uint16 _videoFlags; // TODO move to screen?
 
 	void loadCurrentSceneMsf();
