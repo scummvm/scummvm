@@ -391,8 +391,14 @@ Score::~Score() {
 void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 steps = stream.size() / 6;
 	uint16 index = (steps * 3) - 1;
-	uint16 _paletteColorCount = steps;
 	byte *_palette = new byte[index + 1];
+
+	debugC(3, kDebugLoading, "Score::loadPalette(): %d steps, %d bytes", steps, stream.size());
+
+	if (steps > 256) {
+		warning("Score::loadPalette(): steps > 256: %d", steps);
+		steps = 256;
+	}
 
 	for (int i = 0; i < steps; i++) {
 		_palette[index - 2] = stream.readByte();
@@ -405,7 +411,7 @@ void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 		stream.readByte();
 		index -= 3;
 	}
-	_vm->setPalette(_palette, _paletteColorCount);
+	_vm->setPalette(_palette, steps);
 }
 
 void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
