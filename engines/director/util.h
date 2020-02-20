@@ -38,6 +38,8 @@ Common::String convertPath(Common::String &path);
 
 Common::String getPath(Common::String path, Common::String cwd);
 
+Common::String pathMakeRelative(Common::String path);
+
 void processQuitEvent(); // events.cpp
 
 } // End of namespace Director

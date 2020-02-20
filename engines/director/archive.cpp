@@ -43,30 +43,13 @@ Archive::~Archive() {
 
 bool Archive::openFile(const Common::String &fileName) {
 	Common::File *file = new Common::File();
-	Common::String fName = fileName;
 
-	if (!file->open(fName)) {
-		bool opened = false;
-		// Try to drop components
-		while (fName.contains('/')) {
-			int pos = fName.find('/');
-			fName = Common::String(&fName.c_str()[pos + 1]);
-
-			if (!file->open(fName))
-				continue;
-
-			warning("Archive::openFile(): Path converted %s -> %s", fileName.c_str(), fName.c_str());
-
-			opened = true;
-		}
-
-		if (!opened) {
-			delete file;
-			return false;
-		}
+	if (!file->open(fileName)) {
+		delete file;
+		return false;
 	}
 
-	_fileName = fName;
+	_fileName = fileName;
 
 	if (!openStream(file)) {
 		close();
@@ -228,29 +211,7 @@ bool MacArchive::openFile(const Common::String &fileName) {
 
 	Common::String fName = fileName;
 
-	if (!_resFork->open(fName)) {
-		// Try to drop components
-		bool opened = false;
-		while (fName.contains('/')) {
-			int pos = fName.find('/');
-			fName = Common::String(&fName.c_str()[pos + 1]);
-
-			warning("Trying %s", fName.c_str());
-
-			if (!_resFork->open(fName))
-				continue;
-
-			warning("MacArchive::openFile(): Path converted %s -> %s", fileName.c_str(), fName.c_str());
-			opened = true;
-		}
-
-		if (!opened) {
-			close();
-			return false;
-		}
-	}
-
-	if (!_resFork->hasResFork()) {
+	if (!_resFork->open(fName) || !_resFork->hasResFork()) {
 		close();
 		return false;
 	}

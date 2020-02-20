@@ -20,9 +20,11 @@
  *
  */
 
+#include "common/file.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 
+#include "director/director.h"
 #include "director/util.h"
 
 namespace Director {
@@ -149,6 +151,41 @@ Common::String getPath(Common::String path, Common::String cwd) {
 	}
 
 	return cwd; // The path is not altered
+}
+
+Common::String pathMakeRelative(Common::String path) {
+	warning("path: %s", path.c_str());
+	Common::String initialPath = Common::normalizePath(g_director->getCurrentPath() + convertPath(path), '/');
+	Common::File f;
+	Common::String convPath = initialPath;
+
+	if (f.open(initialPath))
+		return initialPath;
+
+	// Now try to search the file
+	bool opened = false;
+	while (convPath.contains('/')) {
+		int pos = convPath.find('/');
+		convPath = Common::String(&convPath.c_str()[pos + 1]);
+
+		warning("Trying %s", convPath.c_str());
+
+		if (!f.open(convPath))
+			continue;
+
+		warning("pathMakeRelative(): Path converted %s -> %s", path.c_str(), convPath.c_str());
+
+		opened = true;
+
+		break;
+	}
+
+	if (!opened)
+		return initialPath;	// Anyway nothing good is happening
+
+	f.close();
+
+	return convPath;
 }
 
 } // End of namespace Director

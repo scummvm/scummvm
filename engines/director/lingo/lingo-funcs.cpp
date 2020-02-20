@@ -183,7 +183,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	if (movie.type != VOID) {
 		movie.toString();
 
-		Common::String movieFilename = Common::normalizePath(g_director->getCurrentPath() + convertPath(*movie.u.s), '/');
+		Common::String movieFilename = pathMakeRelative(*movie.u.s);
 		Common::String cleanedFilename;
 
 		bool fileExists = false;
