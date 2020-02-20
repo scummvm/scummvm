@@ -111,14 +111,14 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		// Check roof
 		//!! This is _not_ the right place for this...
 		int32 ax, ay, az, axd, ayd, azd;
-		Actor *av = getMainActor();
+		const Actor *av = getMainActor();
 		av->getLocation(ax, ay, az);
 		av->getFootpadWorld(axd, ayd, azd);
 		map->isValidPosition(ax, ay, az, 32, 32, 8, 0, 1, 0, &roofid);
 	} else
 		roofid = camera->FindRoof(lerp_factor);
 
-	Item *roof = getItem(roofid);
+	const Item *roof = getItem(roofid);
 	if (roof) {
 		zlimit = roof->getZ();
 	}

@@ -103,7 +103,7 @@ public:
 	}
 
 	//! dump some info about this process to pout
-	virtual void dumpInfo();
+	virtual void dumpInfo() const;
 
 	//! save this process
 	void save(ODataSource *ods);

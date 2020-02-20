@@ -52,7 +52,7 @@ void TreasureLoader::loadDefaults() {
 
 }
 
-bool TreasureLoader::parse(Std::string desc,
+bool TreasureLoader::parse(const Std::string &desc,
                            Std::vector<TreasureInfo> &treasure) {
 	treasure.clear();
 
@@ -72,7 +72,7 @@ bool TreasureLoader::parse(Std::string desc,
 	return true;
 }
 
-bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
+bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
                                    bool loadingDefault) {
 	ti._special = "";
 	ti._chance = 1;
@@ -143,8 +143,9 @@ bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
 	return true;
 }
 
-bool TreasureLoader::parseUInt32Vector(Std::string val,
+bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
                                        Std::vector<uint32> &vec) {
+	Std::string val = val_;
 	vec.clear();
 
 	Std::string::size_type pos;
@@ -173,7 +174,7 @@ bool TreasureLoader::parseUInt32Vector(Std::string val,
 	return true;
 }
 
-bool TreasureLoader::parseUIntRange(Std::string val,
+bool TreasureLoader::parseUIntRange(const Std::string &val,
                                     unsigned int &min, unsigned int &max) {
 	Std::string::size_type pos = val.find('-');
 	if (pos == 0 || pos == Std::string::npos || pos + 1 >= val.size())
@@ -189,13 +190,13 @@ bool TreasureLoader::parseUIntRange(Std::string val,
 	return ok;
 }
 
-bool TreasureLoader::parseDouble(Std::string val, double &d) {
+bool TreasureLoader::parseDouble(const Std::string &val, double &d) {
 	// TODO: error checking
 	d = Std::atof(val.c_str());
 	return true;
 }
 
-bool TreasureLoader::parseInt(Std::string val, int &i) {
+bool TreasureLoader::parseInt(const Std::string &val, int &i) {
 	// TODO: error checking
 	i = Std::strtol(val.c_str(), 0, 0);
 	return true;

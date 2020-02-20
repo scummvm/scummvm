@@ -150,7 +150,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 	texture->_width = resultWidth;
 	texture->_height = resultHeight;
 
-	Std::list<PositionedText>::iterator iter;
+	Std::list<PositionedText>::const_iterator iter;
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
 		// convert to unicode
 		Common::U32String unicodeText;

@@ -74,7 +74,7 @@ void ControlEntryGump::init() {
 	Std::list<Gump *>::iterator it;
 	for (it = _children.begin(); it != _children.end(); ++it) {
 		Gump *g = *it;
-		if (! g->IsClosing())
+		if ( !g->IsClosing())
 			g->Close();
 	}
 

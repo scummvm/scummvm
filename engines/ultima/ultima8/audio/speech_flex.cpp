@@ -33,9 +33,9 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(SpeechFlex, SoundFlex)
 
 SpeechFlex::SpeechFlex(IDataSource *ds) : SoundFlex(ds) {
 	uint32 size = getRawSize(0);
-	uint8 *buf = getRawObject(0);
+	const uint8 *buf = getRawObject(0);
 
-	istring strings(reinterpret_cast<char *>(buf), size);
+	istring strings(reinterpret_cast<const char *>(buf), size);
 	Std::vector<istring> s;
 	SplitString(strings, 0, s);
 

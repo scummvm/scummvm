@@ -176,9 +176,9 @@ void TypeFlags::loadWeaponInfo() {
 	// load weapons
 	Std::vector<istring> weaponkeys;
 	weaponkeys = config->listSections("weapons", true);
-	for (Std::vector<istring>::iterator iter = weaponkeys.begin();
+	for (Std::vector<istring>::const_iterator iter = weaponkeys.begin();
 	        iter != weaponkeys.end(); ++iter) {
-		istring k = *iter;
+		const istring &k = *iter;
 		WeaponInfo *wi = new WeaponInfo;
 
 		int val;
@@ -228,9 +228,9 @@ void TypeFlags::loadArmourInfo() {
 	// load armour
 	Std::vector<istring> armourkeys;
 	armourkeys = config->listSections("armour", true);
-	for (Std::vector<istring>::iterator iter = armourkeys.begin();
+	for (Std::vector<istring>::const_iterator iter = armourkeys.begin();
 	        iter != armourkeys.end(); ++iter) {
-		istring k = *iter;
+		const istring &k = *iter;
 		ArmourInfo ai;
 
 		int val;
@@ -285,9 +285,9 @@ void TypeFlags::loadMonsterInfo() {
 	// load monsters
 	Std::vector<istring> monsterkeys;
 	monsterkeys = config->listSections("monsters", true);
-	for (Std::vector<istring>::iterator iter = monsterkeys.begin();
+	for (Std::vector<istring>::const_iterator iter = monsterkeys.begin();
 	        iter != monsterkeys.end(); ++iter) {
-		istring k = *iter;
+		const istring k = *iter;
 		MonsterInfo *mi = new MonsterInfo;
 
 		int val;

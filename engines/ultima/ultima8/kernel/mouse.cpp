@@ -136,7 +136,7 @@ void Mouse::popAllCursors() {
 	CursorMan.popAllCursors();
 }
 
-bool Mouse::isMouseDownEvent(Shared::MouseButton button) {
+bool Mouse::isMouseDownEvent(Shared::MouseButton button) const {
 	return (_mouseButton[button]._state & MBS_DOWN);
 }
 

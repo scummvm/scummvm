@@ -233,7 +233,7 @@ public:
 	//
 
 	//! Get the _dims
-	virtual void GetDims(Rect &d) {
+	virtual void GetDims(Rect &d) const {
 		d = _dims;
 	}
 
@@ -373,7 +373,7 @@ public:
 	void SetIndex(int32 i) {
 		_index = i;
 	}
-	int32 GetIndex() {
+	int32 GetIndex() const {
 		return _index;
 	}
 
@@ -431,10 +431,10 @@ public:
 		                      // (only for ItemRelativeGumps)
 	};
 
-	inline bool IsHidden() {
+	inline bool IsHidden() const {
 		return (_flags & FLAG_HIDDEN) || (_parent && _parent->IsHidden());
 	}
-	bool IsDraggable() {
+	bool IsDraggable() const {
 		return _flags & FLAG_DRAGGABLE;
 	}
 	virtual void HideGump() {
@@ -444,7 +444,7 @@ public:
 		_flags &= ~FLAG_HIDDEN;
 	}
 
-	bool mustSave(bool toplevel);
+	bool mustSave(bool toplevel) const;
 
 	//
 	// Gump Layers

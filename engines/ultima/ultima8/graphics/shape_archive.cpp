@@ -80,7 +80,7 @@ void ShapeArchive::uncache(uint32 shapenum) {
 	_shapes[shapenum] = 0;
 }
 
-bool ShapeArchive::isCached(uint32 shapenum) {
+bool ShapeArchive::isCached(uint32 shapenum) const {
 	if (shapenum >= _count) return false;
 	if (_shapes.empty()) return false;
 

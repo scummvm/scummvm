@@ -45,9 +45,9 @@ public:
 
 	uint8 *getObject(const Std::string &name, uint32 *size = 0) override;
 
-	uint32 getSize(const Std::string &name) override;
+	uint32 getSize(const Std::string &name) const override;
 
-	uint32 getCount() override {
+	uint32 getCount() const override {
 		return _count;
 	}
 
@@ -63,7 +63,7 @@ protected:
 
 private:
 	bool readMetadata();
-	bool findIndex(const Std::string &name, uint32 &index);
+	bool findIndex(const Std::string &name, uint32 &index) const;
 };
 
 } // End of namespace Ultima8

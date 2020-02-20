@@ -63,7 +63,7 @@ public:
 		_hatched = false;
 	}
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 

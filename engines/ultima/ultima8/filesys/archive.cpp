@@ -101,14 +101,14 @@ uint8 *Archive::getRawObject(uint32 index, uint32 *sizep) {
 	return f->getObject(index, sizep);
 }
 
-uint32 Archive::getRawSize(uint32 index) {
+uint32 Archive::getRawSize(uint32 index) const {
 	ArchiveFile *f = findArchiveFile(index);
 	if (!f) return 0;
 
 	return f->getSize(index);
 }
 
-ArchiveFile *Archive::findArchiveFile(uint32 index) {
+ArchiveFile *Archive::findArchiveFile(uint32 index) const {
 	unsigned int n = _sources.size();
 	for (unsigned int i = 1; i <= n; ++i) {
 		if (_sources[n - i]->exists(index))

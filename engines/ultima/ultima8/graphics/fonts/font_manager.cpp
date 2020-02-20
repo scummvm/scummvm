@@ -91,7 +91,7 @@ Font *FontManager::getTTFont(unsigned int fontnum) {
 }
 
 
-Graphics::Font *FontManager::getTTF_Font(Std::string filename, int pointsize) {
+Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int pointsize) {
 	TTFId id;
 	id._filename = filename;
 	id._pointSize = pointsize;
@@ -139,7 +139,7 @@ void FontManager::setOverride(unsigned int fontnum, Font *newFont) {
 }
 
 
-bool FontManager::addTTFOverride(unsigned int fontnum, Std::string filename,
+bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filename,
                                  int pointsize, uint32 rgb, int bordersize,
                                  bool SJIS) {
 	Graphics::Font *f = getTTF_Font(filename, pointsize);
@@ -194,7 +194,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 }
 
 
-bool FontManager::loadTTFont(unsigned int fontnum, Std::string filename,
+bool FontManager::loadTTFont(unsigned int fontnum, const Std::string &filename,
                              int pointsize, uint32 rgb, int bordersize) {
 	Graphics::Font *f = getTTF_Font(filename, pointsize);
 	if (!f)

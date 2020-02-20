@@ -81,7 +81,7 @@ Item::Item()
 Item::~Item() {
 }
 
-void Item::dumpInfo() {
+void Item::dumpInfo() const {
 	pout << "Item " << getObjId() << " (class "
 	     << GetClassType()._className << ", _shape "
 	     << getShape() << ", " << getFrame() << ", (";
@@ -508,13 +508,13 @@ bool Item::isOn(Item &item2) const {
 
 bool Item::canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport) const {
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
-	Item *support;
+	const Item *support;
 	bool valid = cm->isValidPosition(x_, y_, z_, getShape(), getObjId(),
 	                                 &support, 0);
 	return valid && (!needsupport || support);
 }
 
-int Item::getDirToItemCentre(Item &item2) const {
+int Item::getDirToItemCentre(const Item &item2) const {
 	int32 xv, yv, zv;
 	getCentre(xv, yv, zv);
 
@@ -524,7 +524,7 @@ int Item::getDirToItemCentre(Item &item2) const {
 	return Get_WorldDirection(i2y - yv, i2x - xv);
 }
 
-int Item::getRange(Item &item2, bool checkz) const {
+int Item::getRange(const Item &item2, bool checkz) const {
 	int32 thisX, thisY, thisZ;
 	int32 otherX, otherY, otherZ;
 	int32 thisXd, thisYd, thisZd;
@@ -572,11 +572,11 @@ Shape *Item::getShapeObject() const {
 	return _cachedShape;
 }
 
-uint16 Item::getFamily() {
+uint16 Item::getFamily() const {
 	return static_cast<uint16>(getShapeInfo()->_family);
 }
 
-uint32 Item::getWeight() {
+uint32 Item::getWeight() const {
 	uint32 weight = getShapeInfo()->_weight;
 
 	switch (getShapeInfo()->_family) {
@@ -589,11 +589,11 @@ uint32 Item::getWeight() {
 	}
 }
 
-uint32 Item::getTotalWeight() {
+uint32 Item::getTotalWeight() const {
 	return getWeight();
 }
 
-uint32 Item::getVolume() {
+uint32 Item::getVolume() const {
 	// invisible items (trap markers and such) don't take up volume
 	if (getFlags() & FLG_INVISIBLE) return 0;
 
@@ -1537,7 +1537,7 @@ void Item::explode() {
 	}
 }
 
-uint16 Item::getDamageType() {
+uint16 Item::getDamageType() const {
 	ShapeInfo *si = getShapeInfo();
 	if (si->_weaponInfo) {
 		return si->_weaponInfo->_damageType;

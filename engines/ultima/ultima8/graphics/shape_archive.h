@@ -53,7 +53,7 @@ public:
 
 	void cache(uint32 shapenum) override;
 	void uncache(uint32 shapenum) override;
-	bool isCached(uint32 shapenum) override;
+	bool isCached(uint32 shapenum) const override;
 
 protected:
 	uint16 _id;

@@ -34,7 +34,7 @@ class ShapeFont;
 
 class ShapeRenderedText : public RenderedText {
 public:
-	ShapeRenderedText(Std::list<PositionedText> &lines,
+	ShapeRenderedText(const Std::list<PositionedText> &lines,
 	                  int width, int height, int vlead, ShapeFont *font);
 	~ShapeRenderedText() override;
 

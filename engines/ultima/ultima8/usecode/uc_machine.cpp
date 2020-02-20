@@ -1969,10 +1969,11 @@ void UCMachine::execProcess(UCProcess *p) {
 }
 
 
-Std::string &UCMachine::getString(uint16 str) {
+const Std::string &UCMachine::getString(uint16 str) const {
 	static Std::string emptystring("");
 
-	Std::map<uint16, Std::string>::iterator iter = _stringHeap.find(str);
+	Std::map<uint16, Std::string>::const_iterator iter =
+            _stringHeap.find(str);
 
 	if (iter != _stringHeap.end())
 		return iter->_value;
@@ -2311,6 +2312,7 @@ uint32 UCMachine::I_dummyProcess(const uint8 * /*args*/, unsigned int /*argsize*
 uint32 UCMachine::I_getName(const uint8 * /*args*/, unsigned int /*argsize*/) {
 	UCMachine *uc = UCMachine::get_instance();
 	MainActor *av = getMainActor();
+	// FIXME: This could be bad, we're keeping the reference to a string.c_str
 	return uc->assignString(av->getName().c_str());
 }
 

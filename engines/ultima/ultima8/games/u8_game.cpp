@@ -239,8 +239,8 @@ void U8Game::writeSaveInfo(ODataSource *ods) {
 	MainActor *av = getMainActor();
 	int32 x, y, z;
 
-	Std::string avname = av->getName();
-	uint8 namelength = static_cast<uint8>(avname.size());
+	const Std::string &avname = av->getName();
+	const uint8 namelength = static_cast<uint8>(avname.size());
 	ods->write1(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
 		ods->write1(static_cast<uint8>(avname[i]));

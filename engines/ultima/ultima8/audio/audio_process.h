@@ -53,8 +53,8 @@ public:
 		SampleInfo(int32 s, int32 p, ObjId o, int32 l, int32 c, uint32 ps, uint16 v, int16 lv, int16 rv) :
 			_sfxNum(s), _priority(p), _objId(o), _loops(l), _channel(c),
 			_pitchShift(ps), _volume(v), _lVol(lv), _rVol(rv) { }
-		SampleInfo(Std::string &b, int32 shpnum, ObjId o, int32 c,
-		           uint32 s, uint32 e, uint32 ps, uint16 v, int16 lv, int16 rv) :
+		SampleInfo(const Std::string &b, int32 shpnum, ObjId o, int32 c,
+				   uint32 s, uint32 e, uint32 ps, uint16 v, int16 lv, int16 rv) :
 			_sfxNum(-1), _priority(shpnum), _objId(o), _loops(0), _channel(c), _barked(b),
 			_curSpeechStart(s), _curSpeechEnd(e), _pitchShift(ps), _volume(v),
 			_lVol(lv), _rVol(rv) { }
@@ -82,12 +82,12 @@ public:
 	void run() override;
 
 	void playSFX(int sfxNum, int priority, ObjId objId, int loops,
-	             bool no_duplicates, uint32 pitchShift,
-	             uint16 volume, int16 lVol, int16 rVol);
+				 bool no_duplicates, uint32 pitchShift,
+				 uint16 volume, int16 lVol, int16 rVol);
 
 	void playSFX(int sfxNum, int priority, ObjId objId, int loops,
-	             bool no_duplicates = false, uint32 pitchShift = 0x10000,
-	             uint16 volume = 0x80) {
+				 bool no_duplicates = false, uint32 pitchShift = 0x10000,
+				 uint16 volume = 0x80) {
 		playSFX(sfxNum, priority, objId, loops, no_duplicates, pitchShift, volume, -1, -1);
 	}
 
@@ -95,18 +95,18 @@ public:
 	bool isSFXPlaying(int sfxNum);
 	void setVolumeSFX(int sfxNum, uint8 volume);
 
-	bool playSpeech(Std::string &barked, int shapenum, ObjId objId,
-	                uint32 pitchShift = 0x10000, uint16 volume = 256);
-	void stopSpeech(Std::string &barked, int shapenum, ObjId objId);
-	bool isSpeechPlaying(Std::string &barked, int shapenum);
+	bool playSpeech(const Std::string &barked, int shapenum, ObjId objId,
+					uint32 pitchShift = 0x10000, uint16 volume = 256);
+	void stopSpeech(const Std::string &barked, int shapenum, ObjId objId);
+	bool isSpeechPlaying(const Std::string &barked, int shapenum);
 
 	//! get length (in milliseconds) of speech
-	uint32 getSpeechLength(Std::string &barked, int shapenum) const;
+	uint32 getSpeechLength(const Std::string &barked, int shapenum) const;
 
 	//! play a sample (without storing a SampleInfo)
 	//! returns channel sample is played on, or -1
 	int playSample(AudioSample *sample, int priority, int loops,
-		uint32 pitchShift = 0x10000, int16 lVol = 256, int16 rVol = 256);
+				   uint32 pitchShift = 0x10000, int16 lVol = 256, int16 rVol = 256);
 
 	//! pause all currently playing samples
 	void pauseAllSamples();

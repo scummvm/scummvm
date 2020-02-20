@@ -47,7 +47,7 @@ public:
 
 	void cache(uint32 index) override;
 	void uncache(uint32 index) override;
-	bool isCached(uint32 index) override;
+	bool isCached(uint32 index) const override;
 
 private:
 	AudioSample **_samples;

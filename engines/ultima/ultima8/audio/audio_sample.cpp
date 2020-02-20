@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-AudioSample::AudioSample(uint8 *buffer, uint32 size) :
+AudioSample::AudioSample(const uint8 *buffer, uint32 size) :
 	_sampleRate(0), _bits(0), _stereo(false),
 	_frameSize(0), _decompressorSize(0), _length(0),
 	_bufferSize(size), _buffer(buffer) {

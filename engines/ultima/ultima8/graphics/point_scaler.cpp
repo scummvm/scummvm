@@ -236,7 +236,7 @@ public:
 				do {
 					pos_y = dst_y;
 
-					uintX p = Manip::copy(*texel);
+					const uintX p = Manip::copy(*texel);
 
 					//
 					// Inner loops

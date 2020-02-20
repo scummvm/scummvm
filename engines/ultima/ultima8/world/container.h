@@ -88,13 +88,13 @@ public:
 
 	//! Get the weight of the container and its contents
 	//! \return weight
-	uint32 getTotalWeight() override;
+	uint32 getTotalWeight() const override;
 
 	//! Get the container's capacity
-	virtual uint32 getCapacity();
+	virtual uint32 getCapacity() const;
 
 	//! Get the total volume used up by the container's current contents
-	virtual uint32 getContentVolume();
+	virtual uint32 getContentVolume() const;
 
 	//! Assign self and contents an objID
 	//! \return the assiged ID
@@ -106,7 +106,7 @@ public:
 	//! Destroy self
 	void destroy(bool delnow = false) override;
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 

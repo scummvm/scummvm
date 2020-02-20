@@ -131,7 +131,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 			y_ += 14;
 		}
 
-		MainActor *av = getMainActor();
+		const MainActor *av = getMainActor();
 		Std::string name;
 		if (av)
 			name = av->getName();

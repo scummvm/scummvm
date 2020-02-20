@@ -30,7 +30,7 @@ namespace Ultima8 {
 bool SonarcAudioSample::_generatedOneTable = false;
 int SonarcAudioSample::_oneTable[256];
 
-SonarcAudioSample::SonarcAudioSample(uint8 *buffer, uint32 size) :
+SonarcAudioSample::SonarcAudioSample(uint8 const *buffer, uint32 size) :
 	AudioSample(buffer, size), _srcOffset(0x20) {
 	if (!_generatedOneTable) GenerateOneTable();
 

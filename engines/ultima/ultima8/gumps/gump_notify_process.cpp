@@ -69,7 +69,7 @@ void GumpNotifyProcess::terminate() {
 void GumpNotifyProcess::run() {
 }
 
-void GumpNotifyProcess::dumpInfo() {
+void GumpNotifyProcess::dumpInfo() const {
 	Process::dumpInfo();
 	pout << " gump: " << _gump << Std::endl;
 }

@@ -85,13 +85,13 @@ public:
 	//! \param x x coordinate of search center if item is 0.
 	//! \param y y coordinate of search center if item is 0.
 	void areaSearch(UCList *itemlist, const uint8 *loopscript,
-	                uint32 scriptsize, Item *item, uint16 range, bool recurse,
-	                int32 x = 0, int32 y = 0);
+	                uint32 scriptsize, const Item *item, uint16 range,
+					bool recurse, int32 x = 0, int32 y = 0);
 
 	// Surface search: Search above and below an item.
 	void surfaceSearch(UCList *itemlist, const uint8 *loopscript,
-	                   uint32 scriptsize, Item *item, bool above, bool below,
-	                   bool recurse = false);
+	                   uint32 scriptsize, const Item *item, bool above,
+					   bool below, bool recurse = false);
 
 	// Surface search: Search above and below an item.
 	void surfaceSearch(UCList *itemlist, const uint8 *loopscript,
@@ -111,19 +111,20 @@ public:
 	                     int32 startx, int32 starty, int32 startz,
 	                     int xd, int yd, int zd, uint32 shapeflags,
 	                     ObjId item,
-	                     Item **support = 0, ObjId *roof = 0);
+	                     const Item **support = 0, ObjId *roof = 0) const;
 
 	// Note that this version of isValidPosition does not look for start
 	// position collisions.
 	bool isValidPosition(int32 x, int32 y, int32 z,
 	                     int xd, int yd, int zd, uint32 shapeflags,
 	                     ObjId item,
-	                     Item **support = 0, ObjId *roof = 0);
+	                     const Item **support = 0, ObjId *roof = 0) const;
 
 	// Note that this version of isValidPosition can not take 'flipped'
 	// into account!
 	bool isValidPosition(int32 x, int32 y, int32 z, uint32 shape,
-	                     ObjId item, Item **support = 0, ObjId *roof = 0);
+	                     ObjId item, const Item **support = 0,
+                         ObjId *roof = 0) const;
 
 	//! Scan for a valid position for item in directions orthogonal to movedir
 	bool scanForValidPosition(int32 x, int32 y, int32 z, Item *item,

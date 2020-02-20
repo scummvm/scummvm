@@ -68,7 +68,7 @@ void MusicFlex::uncache(uint32 index) {
 	// Caching not currently supported
 }
 
-bool MusicFlex::isCached(uint32 index) {
+bool MusicFlex::isCached(uint32 index) const {
 	if (index >= _count) return false;
 	if (!_songs) return false;
 
@@ -77,13 +77,13 @@ bool MusicFlex::isCached(uint32 index) {
 
 IDataSource *MusicFlex::getAdlibTimbres() {
 	uint32 size;
-	uint8 *data = getRawObject(259, &size);
+	const uint8 *data = getRawObject(259, &size);
 	return new IBufferDataSource(data, size, false, true);
 }
 
 void MusicFlex::loadSongInfo() {
 	uint32 size;
-	uint8 *buf = getRawObject(0, &size);
+	const uint8 *buf = getRawObject(0, &size);
 
 	if (!buf || !size) {
 		error("Unable to load song _info from sound/music.flx");

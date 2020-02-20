@@ -48,7 +48,7 @@ public:
 
 	void terminate() override;
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	Animation::Sequence getAction() const {
 		return _action;

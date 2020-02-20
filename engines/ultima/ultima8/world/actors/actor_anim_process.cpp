@@ -630,7 +630,7 @@ void ActorAnimProcess::terminate() {
 	Process::terminate();
 }
 
-void ActorAnimProcess::dumpInfo() {
+void ActorAnimProcess::dumpInfo() const {
 	Process::dumpInfo();
 	pout << "_action: " << _action << ", _dir: " << _dir << Std::endl;
 }
