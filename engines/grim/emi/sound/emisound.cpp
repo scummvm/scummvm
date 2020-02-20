@@ -488,6 +488,11 @@ void EMISound::setMusicState(int stateId) {
 	if (stateId == _curMusicState)
 		return;
 
+	if (_musicTable == nullptr) {
+		Debug::debug(Debug::Sound, "No music table loaded");
+		return;
+	}
+
 	Common::String soundName = _musicTable[stateId]._filename;
 	int sync = _musicTable[stateId]._sync;
 	Audio::Timestamp musicPos;
@@ -528,10 +533,6 @@ void EMISound::setMusicState(int stateId) {
 
 	if (stateId == 0) {
 		_curMusicState = 0;
-		return;
-	}
-	if (_musicTable == nullptr) {
-		Debug::debug(Debug::Sound, "No music table loaded");
 		return;
 	}
 	if (_musicTable[stateId]._id != stateId) {
