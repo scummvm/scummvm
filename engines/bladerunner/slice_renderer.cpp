@@ -712,7 +712,7 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 	yMax = CLIP(yMax, 0, 480);
 	yMin = CLIP(yMin, 0, 480);
 
-	int ditheringFactor[] = {
+	static const int ditheringFactor[] = {
 		0,  8,  2, 10,
 		12, 4, 14,  6,
 		3, 11,  1,  9,
