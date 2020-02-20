@@ -340,7 +340,7 @@ void GravityProcess::fallStopped() {
 	}
 }
 
-void GravityProcess::dumpInfo() {
+void GravityProcess::dumpInfo() const {
 	Process::dumpInfo();
 
 	pout << "_gravity: " << _gravity << ", speed: (" << _xSpeed << ","

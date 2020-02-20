@@ -57,7 +57,7 @@ public:
 	virtual void clearObjId();
 
 	//! dump some info about this object to pout
-	virtual void dumpInfo();
+	virtual void dumpInfo() const;
 
 	//! save this object
 	void save(ODataSource *ods);
@@ -76,7 +76,7 @@ public:
 
 protected:
 	//! write the Object savegame header (mainly consisting of the classname)
-	void writeObjectHeader(ODataSource *ods);
+	void writeObjectHeader(ODataSource *ods) const;
 
 	//! save the actual Object data
 	virtual void saveData(ODataSource *ods);

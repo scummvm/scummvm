@@ -59,7 +59,7 @@ void Object::clearObjId() {
 	_objId = 0xFFFF;
 }
 
-void Object::dumpInfo() {
+void Object::dumpInfo() const {
 	g_debugger->debugPrintf("Object %d (class %s)\n", getObjId(), GetClassType()._className);
 }
 
@@ -76,7 +76,7 @@ void Object::save(ODataSource *ods) {
 	saveData(ods); // virtual
 }
 
-void Object::writeObjectHeader(ODataSource *ods) {
+void Object::writeObjectHeader(ODataSource *ods) const {
 	const char *cname = GetClassType()._className; // note: virtual
 	uint16 clen = strlen(cname);
 

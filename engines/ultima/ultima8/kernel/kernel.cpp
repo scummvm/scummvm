@@ -335,7 +335,7 @@ bool Kernel::load(IDataSource *ids, uint32 version) {
 
 	if (!_pIDs->load(ids, version)) return false;
 
-	uint32 pcount = ids->read4();
+	const uint32 pcount = ids->read4();
 
 	for (unsigned int i = 0; i < pcount; ++i) {
 		Process *p = loadProcess(ids, version);
@@ -347,7 +347,7 @@ bool Kernel::load(IDataSource *ids, uint32 version) {
 }
 
 Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
-	uint16 classlen = ids->read2();
+	const uint16 classlen = ids->read2();
 	char *buf = new char[classlen + 1];
 	ids->read(buf, classlen);
 	buf[classlen] = 0;

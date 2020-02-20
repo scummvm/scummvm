@@ -41,10 +41,10 @@ struct PathfindingState {
 	bool _firstStep;
 	bool _combat;
 
-	void load(Actor *actor);
-	bool checkPoint(int32 x_, int32 y_, int32 z_, int range);
-	bool checkItem(Item *item, int xyRange, int zRange);
-	bool checkHit(Actor *actor, Actor *target);
+	void load(const Actor *actor);
+	bool checkPoint(int32 x_, int32 y_, int32 z_, int range) const;
+	bool checkItem(const Item *item, int xyRange, int zRange) const;
+	bool checkHit(Actor *actor, const Actor *target);
 };
 
 struct PathfindingAction {
@@ -57,7 +57,7 @@ struct PathNode;
 
 class PathNodeCmp {
 public:
-	bool operator()(PathNode *n1, PathNode *n2);
+	bool operator()(const PathNode *n1, const PathNode *n2) const;
 };
 
 class Pathfinder {
@@ -95,8 +95,9 @@ protected:
 
 	Std::list<PathNode *> _nodeList;
 
-	bool alreadyVisited(int32 x, int32 y, int32 z);
-	void newNode(PathNode *oldnode, PathfindingState &state, unsigned int steps);
+	bool alreadyVisited(int32 x, int32 y, int32 z) const;
+	void newNode(PathNode *oldnode, PathfindingState &state,
+				 unsigned int steps);
 	void expandNode(PathNode *node);
 	unsigned int costHeuristic(PathNode *node);
 	bool checkTarget(PathNode *node);

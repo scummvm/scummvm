@@ -47,7 +47,7 @@ public:
 	//! Get dimensions.
 	//! \param x Returns the width
 	//! \param y Returns the height
-	virtual void getSize(int &x, int &y) {
+	virtual void getSize(int &x, int &y) const {
 		x = _width;
 		y = _height;
 	}

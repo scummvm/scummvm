@@ -120,7 +120,7 @@ void RemorseGame::writeSaveInfo(ODataSource *ods) {
 	MainActor *av = getMainActor();
 	int32 x, y, z;
 
-	Std::string avname = av->getName();
+	const Std::string &avname = av->getName();
 	uint8 namelength = static_cast<uint8>(avname.size());
 	ods->write1(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
@@ -143,8 +143,8 @@ void RemorseGame::writeSaveInfo(ODataSource *ods) {
 	ods->write2(av->getTotalWeight());
 
 	for (unsigned int i = 1; i <= 6; i++) {
-		uint16 objid = av->getEquip(i);
-		Item *item = getItem(objid);
+		const uint16 objid = av->getEquip(i);
+		const Item *item = getItem(objid);
 		if (item) {
 			ods->write4(item->getShape());
 			ods->write4(item->getFrame());

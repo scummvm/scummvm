@@ -152,15 +152,15 @@ public:
 	uint16 schedule(uint32 time);
 
 	bool setEquip(Item *item, bool checkwghtvol = false);
-	uint16 getEquip(uint32 type);
+	uint16 getEquip(uint32 type) const;
 
-	virtual uint32 getArmourClass();
-	virtual uint16 getDefenseType();
-	virtual int16 getAttackingDex();
-	virtual int16 getDefendingDex();
+	virtual uint32 getArmourClass() const;
+	virtual uint16 getDefenseType() const;
+	virtual int16 getAttackingDex() const;
+	virtual int16 getDefendingDex() const;
 
-	uint16 getDamageType() override;
-	virtual int getDamageAmount();
+	uint16 getDamageType() const override;
+	virtual int getDamageAmount() const;
 
 	//! calculate the damage an attack against this Actor does.
 	//! \param other the attacker (can be zero)
@@ -214,7 +214,7 @@ public:
 
 	uint16 assignObjId() override; // assign an NPC objid
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 

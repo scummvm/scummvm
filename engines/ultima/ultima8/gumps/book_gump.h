@@ -38,7 +38,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	BookGump();
-	BookGump(ObjId owner_, Std::string msg);
+	BookGump(ObjId owner_, const Std::string &msg);
 	~BookGump() override;
 
 	// Go to the next page on mouse click

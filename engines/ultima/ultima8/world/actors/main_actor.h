@@ -70,20 +70,20 @@ public:
 	//! Get the GravityProcess of this Item, creating it if necessary
 	GravityProcess *ensureGravityProcess() override;
 
-	uint32 getArmourClass() override;
-	uint16 getDefenseType() override;
-	int16 getAttackingDex() override;
-	int16 getDefendingDex() override;
+	uint32 getArmourClass() const override;
+	uint16 getDefenseType() const override;
+	int16 getAttackingDex() const override;
+	int16 getDefendingDex() const override;
 
-	uint16 getDamageType() override;
-	int getDamageAmount() override;
+	uint16 getDamageType() const override;
+	int getDamageAmount() const override;
 
 	void setInCombat() override;
 	void clearInCombat() override;
 
 	ProcId die(uint16 DamageType) override;
 
-	Std::string getName() {
+	const Std::string &getName() const {
 		return _name;
 	}
 	void setName(const Std::string &name) {

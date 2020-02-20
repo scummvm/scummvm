@@ -46,7 +46,7 @@ public:
 	void setTarget(ObjId target_);
 	ObjId seekTarget();
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

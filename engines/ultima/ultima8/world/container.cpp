@@ -232,7 +232,7 @@ void Container::destroy(bool delnow) {
 	Item::destroy(delnow);
 }
 
-uint32 Container::getTotalWeight() {
+uint32 Container::getTotalWeight() const {
 	uint32 weight = Item::getTotalWeight();
 
 	// CONSTANT!
@@ -247,7 +247,7 @@ uint32 Container::getTotalWeight() {
 		weight = 300;
 	}
 
-	Std::list<Item *>::iterator iter;
+	Std::list<Item *>::const_iterator iter;
 
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		weight += (*iter)->getTotalWeight();
@@ -256,16 +256,16 @@ uint32 Container::getTotalWeight() {
 	return weight;
 }
 
-uint32 Container::getCapacity() {
+uint32 Container::getCapacity() const {
 	uint32 volume = getShapeInfo()->_volume;
 
 	return (volume == 0) ? 32 : volume;
 }
 
-uint32 Container::getContentVolume() {
+uint32 Container::getContentVolume() const {
 	uint32 volume = 0;
 
-	Std::list<Item *>::iterator iter;
+	Std::list<Item *>::const_iterator iter;
 
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		volume += (*iter)->getVolume();
@@ -297,7 +297,7 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 	}
 }
 
-void Container::dumpInfo() {
+void Container::dumpInfo() const {
 	Item::dumpInfo();
 
 	pout << "Volume: " << getContentVolume() << "/" << getCapacity()

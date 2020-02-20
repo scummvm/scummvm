@@ -148,7 +148,7 @@ void UCProcess::terminate() {
 	Process::terminate();
 }
 
-void UCProcess::dumpInfo() {
+void UCProcess::dumpInfo() const {
 	Process::dumpInfo();
 
 	if (_classId == 0xFFFF) {

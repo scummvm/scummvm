@@ -453,7 +453,7 @@ void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 }
 
 void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
-                            uint32 scriptsize, Item *check, uint16 range,
+                            uint32 scriptsize, const Item *check, uint16 range,
                             bool recurse, int32 x, int32 y) {
 	int32 z;
 	int32 xd = 0, yd = 0, zd = 0;
@@ -480,11 +480,11 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::iterator iter;
+			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
 
-				Item *item = *iter;
+				const Item *item = *iter;
 
 				if (item->getExtFlags() & Item::EXT_SPRITE) continue;
 
@@ -492,7 +492,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 				int32 ix, iy, iz;
 				item->getLocation(ix, iy, iz);
 
-				ShapeInfo *info = item->getShapeInfo();
+				const ShapeInfo *info = item->getShapeInfo();
 				int32 ixd, iyd;
 
 				//!! constants
@@ -530,8 +530,8 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 }
 
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
-                               uint32 scriptsize, Item *check, bool above, bool below,
-                               bool recurse) {
+                               uint32 scriptsize, const Item *check,
+							   bool above, bool below, bool recurse) {
 	int32 origin[3];
 	int32 dims[3];
 	check->getLocationAbsolute(origin[0], origin[1], origin[2]);
@@ -629,9 +629,10 @@ TeleportEgg *CurrentMap::findDestination(uint16 id) {
 
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  uint32 shape,
-                                 ObjId item, Item **support, uint16 *roof) {
+                                 ObjId item, const Item **support,
+                                 ObjId *roof) const {
 	int xd, yd, zd;
-	ShapeInfo *si = GameData::get_instance()->
+	const ShapeInfo *si = GameData::get_instance()->
 	                getMainShapes()->getShapeInfo(shape);
 	//!! constants
 	xd = si->_x * 32;
@@ -647,7 +648,8 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  int xd, int yd, int zd,
                                  uint32 shapeflags,
-                                 ObjId item_, Item **support_, uint16 *roof_) {
+                                 ObjId item_, const Item **support_,
+                                 ObjId *roof_) const {
 	return isValidPosition(x, y, z,
 	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
 	                       xd, yd, zd,
@@ -659,13 +661,14 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  int32 startx, int32 starty, int32 startz,
                                  int xd, int yd, int zd,
                                  uint32 shapeflags,
-                                 ObjId item_, Item **support_, uint16 *roof_) {
+                                 ObjId item_, const Item **support_,
+                                 ObjId *roof_) const {
 	const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING |
 	                         ShapeInfo::SI_ROOF);
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
 	bool valid = true;
-	Item *support = 0;
+	const Item *support = 0;
 	ObjId roof = 0;
 	int32 roofz = 1 << 24; //!! semi-constant
 
@@ -682,10 +685,10 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::iterator iter;
+			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
-				Item *item = *iter;
+				const Item *item = *iter;
 				if (item->getObjId() == item_) continue;
 				if (item->getExtFlags() & Item::EXT_SPRITE) continue;
 

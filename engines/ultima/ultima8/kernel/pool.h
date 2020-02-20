@@ -39,12 +39,12 @@ public:
 	virtual void *allocate(size_t size) = 0;
 	virtual void deallocate(void *ptr) = 0;
 
-	virtual bool isFull() = 0;
-	virtual bool isEmpty() = 0;
+	virtual bool isFull() const = 0;
+	virtual bool isEmpty() const = 0;
 
-	virtual bool inPool(void *ptr) = 0;
+	virtual bool inPool(void *ptr) const = 0;
 
-	virtual void printInfo() = 0;
+	virtual void printInfo() const = 0;
 };
 
 } // End of namespace Ultima8

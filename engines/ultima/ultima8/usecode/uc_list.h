@@ -61,12 +61,12 @@ public:
 		free();
 	}
 
-	const uint8 *operator[](uint32 index) {
+	const uint8 *operator[](uint32 index) const {
 		// check that index isn't out of bounds...
 		return &(_elements[index * _elementSize]);
 	}
 
-	uint16 getuint16(uint32 index) {
+	uint16 getuint16(uint32 index) const {
 		assert(_elementSize == 2);
 		uint16 t = _elements[index * _elementSize];
 		t += _elements[index * _elementSize + 1] << 8;
@@ -96,7 +96,7 @@ public:
 		}
 	}
 
-	bool inList(const uint8 *e) {
+	bool inList(const uint8 *e) const {
 		for (unsigned int i = 0; i < _size; i++) {
 			bool equal = true;
 			for (unsigned int j = 0; j < _elementSize && equal; j++)
@@ -107,21 +107,21 @@ public:
 		return false;
 	}
 
-	void appendList(UCList &l) {
+	void appendList(const UCList &l) {
 		// need to check if elementsizes match...
 		_elements.reserve(_elementSize * (_size + l._size));
 		unsigned int lsize = l._size;
 		for (unsigned int i = 0; i < lsize; i++)
 			append(l[i]);
 	}
-	void unionList(UCList &l) { // like append, but remove duplicates
+	void unionList(const UCList &l) { // like append, but remove duplicates
 		// need to check if elementsizes match...
 		_elements.reserve(_elementSize * (_size + l._size));
 		for (unsigned int i = 0; i < l._size; i++)
 			if (!inList(l[i]))
 				append(l[i]);
 	}
-	void substractList(UCList &l) {
+	void substractList(const UCList &l) {
 		for (unsigned int i = 0; i < l._size; i++)
 			remove(l[i]);
 	}
@@ -143,26 +143,26 @@ public:
 			_elements[index * _elementSize + i] = e[i];
 	}
 
-	void copyList(UCList &l) { // deep copy for list
+	void copyList(const UCList &l) { // deep copy for list
 		free();
 		appendList(l);
 	}
 
 	void freeStrings();
-	void copyStringList(UCList &l);
+	void copyStringList(const UCList &l) ;
 	void unionStringList(UCList &l);
-	void substractStringList(UCList &l);
-	bool stringInList(uint16 str);
+	void substractStringList(const UCList &l);
+	bool stringInList(uint16 str) const;
 	void assignString(uint32 index, uint16 str);
 	void removeString(uint16 str, bool nodel = false);
 
-	uint16 getStringIndex(uint32 index);
+	uint16 getStringIndex(uint32 index) const;
 
 	void save(ODataSource *ods);
 	bool load(IDataSource *ids, uint32 version);
 
 private:
-	Std::string &getString(uint32 index);
+	const Std::string &getString(uint32 index) const;
 };
 
 } // End of namespace Ultima8

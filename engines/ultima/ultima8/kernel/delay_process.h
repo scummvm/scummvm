@@ -42,7 +42,7 @@ public:
 
 	void run() override;
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

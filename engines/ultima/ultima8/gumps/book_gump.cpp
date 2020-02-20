@@ -47,7 +47,7 @@ BookGump::BookGump()
 
 }
 
-BookGump::BookGump(ObjId owner_, Std::string msg) :
+BookGump::BookGump(ObjId owner_, const Std::string &msg) :
 	ModalGump(0, 0, 100, 100, owner_), _text(msg) {
 }
 

@@ -67,29 +67,30 @@ public:
 	void updateActorFlags();
 
 	//! get the current position
-	void getPosition(int32 &x, int32 &y, int32 &z) {
+	void getPosition(int32 &x, int32 &y, int32 &z) const {
 		x = _x;
 		y = _y;
 		z = _z;
 	}
 
-	void getInterpolatedPosition(int32 &x_, int32 &y_, int32 &z_, int fc);
+	void getInterpolatedPosition(int32 &x_, int32 &y_, int32 &z_, int fc)
+            const;
 
 	//! get the difference between current position and previous position
-	void getSpeed(int32 &dx, int32 &dy, int32 &dz);
+	void getSpeed(int32 &dx, int32 &dy, int32 &dz) const;
 
 	//! get the current (shape)frame
-	uint32 getFrame() {
+	uint32 getFrame() const {
 		return _shapeFrame;
 	}
 
 	//! get the current AnimAction
-	AnimAction *getAnimAction() {
+	AnimAction *getAnimAction() const {
 		return _animAction;
 	}
 
 	//! get the current AnimFrame
-	AnimFrame *getAnimFrame();
+	AnimFrame *getAnimFrame() const;
 
 	void setTargetedMode(int32 x_, int32 y_, int32 z_);
 
@@ -115,7 +116,7 @@ private:
 		TargetMode
 	};
 
-	unsigned int getNextFrame(unsigned int frame);
+	unsigned int getNextFrame(unsigned int frame) const;
 	void checkWeaponHit();
 
 	unsigned int _startFrame, _endFrame;

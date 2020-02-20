@@ -95,7 +95,7 @@ void Process::suspend() {
 	_flags |= PROC_SUSPENDED;
 }
 
-void Process::dumpInfo() {
+void Process::dumpInfo() const {
 	Common::String info = Common::String::format(
 		"Process %d class %s, item %d, type %x, status ",
 		getPid(), GetClassType()._className, _itemNum, _type);
@@ -108,7 +108,7 @@ void Process::dumpInfo() {
 	if (_flags & PROC_RUNPAUSED) info += "R";
 	if (!_waiting.empty()) {
 		info += ", notify: ";
-		for (Std::vector<ProcId>::iterator i = _waiting.begin(); i != _waiting.end(); ++i) {
+		for (Std::vector<ProcId>::const_iterator i = _waiting.begin(); i != _waiting.end(); ++i) {
 			if (i != _waiting.begin()) info += ", ";
 			info += *i;
 		}

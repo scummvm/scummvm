@@ -48,7 +48,7 @@ uint16 Egg::hatch() {
 	return callUsecodeEvent_hatch();
 }
 
-void Egg::dumpInfo() {
+void Egg::dumpInfo() const {
 	Item::dumpInfo();
 	pout << "range: " << getXRange() << "," << getYRange()
 	     << ", hatched=" << _hatched << Std::endl;

@@ -27,7 +27,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-RawAudioSample::RawAudioSample(uint8 *buffer_, uint32 size, uint32 rate,
+RawAudioSample::RawAudioSample(const uint8 *buffer_, uint32 size, uint32 rate,
                                bool signedData, bool stereo)
 	: AudioSample(buffer_, size), _signedData(signedData) {
 	_sampleRate = rate;

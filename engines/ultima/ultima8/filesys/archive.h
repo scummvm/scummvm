@@ -74,7 +74,7 @@ public:
 	virtual void uncache(uint32 index) = 0;
 
 	//! Check if an object is cached
-	virtual bool isCached(uint32 index) = 0;
+	virtual bool isCached(uint32 index) const = 0;
 
 	uint32 getCount() const {
 		return _count;
@@ -84,12 +84,12 @@ protected:
 	uint32 _count;
 
 	uint8 *getRawObject(uint32 index, uint32 *sizep = 0);
-	uint32 getRawSize(uint32 index);
+	uint32 getRawSize(uint32 index) const;
 
 private:
 	Std::vector<ArchiveFile *> _sources;
 
-	ArchiveFile *findArchiveFile(uint32 index);
+	ArchiveFile *findArchiveFile(uint32 index) const;
 };
 
 } // End of namespace Ultima8

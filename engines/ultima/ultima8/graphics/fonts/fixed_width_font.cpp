@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-FixedWidthFont *FixedWidthFont::Create(Std::string iniroot) {
+FixedWidthFont *FixedWidthFont::Create(const Std::string &iniroot) {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	FileSystem *filesys = FileSystem::get_instance();
 

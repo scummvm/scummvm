@@ -54,7 +54,7 @@ void RawArchive::uncache(uint32 index) {
 	}
 }
 
-bool RawArchive::isCached(uint32 index) {
+bool RawArchive::isCached(uint32 index) const {
 	if (index >= _count) return false;
 	if (_objects.empty()) return false;
 

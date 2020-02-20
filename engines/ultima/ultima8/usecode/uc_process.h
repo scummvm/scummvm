@@ -58,7 +58,7 @@ public:
 	}
 
 	//! dump some info about this process to pout
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

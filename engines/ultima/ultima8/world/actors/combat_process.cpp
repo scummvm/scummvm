@@ -324,7 +324,7 @@ void CombatProcess::waitForTarget() {
 	}
 }
 
-void CombatProcess::dumpInfo() {
+void CombatProcess::dumpInfo() const {
 	Process::dumpInfo();
 	pout << "Target: " << _target << Std::endl;
 }

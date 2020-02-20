@@ -153,7 +153,7 @@ void SegmentedPool::deallocate(void *ptr) {
 	}
 }
 
-void SegmentedPool::printInfo() {
+void SegmentedPool::printInfo() const {
 	uint16 i;
 	size_t max, min, total;
 	SegmentedPoolNode *node;

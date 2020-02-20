@@ -51,20 +51,20 @@ public:
 	void *allocate(size_t size) override;
 	void deallocate(void *ptr) override;
 
-	bool isFull() override {
+	bool isFull() const override {
 		return _freeNodeCount == 0;
 	}
-	bool isEmpty() override {
+	bool isEmpty() const override {
 		return _freeNodeCount == _nodes;
 	}
 
-	bool inPool(void *ptr) override {
+	bool inPool(void *ptr) const override {
 		return (ptr > _startOfPool && ptr < _endOfPool);
 	}
 
-	void printInfo() override;
+	void printInfo() const override;
 
-	size_t getNodeCapacity() {
+	size_t getNodeCapacity() const {
 		return _nodeCapacity;
 	}
 

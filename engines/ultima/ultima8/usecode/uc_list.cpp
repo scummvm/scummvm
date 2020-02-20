@@ -30,11 +30,11 @@
 namespace Ultima {
 namespace Ultima8 {
 
-uint16 UCList::getStringIndex(uint32 index) {
+uint16 UCList::getStringIndex(uint32 index) const {
 	return _elements[index * 2] + (_elements[index * 2 + 1] << 8);
 }
 
-Std::string &UCList::getString(uint32 index) {
+const Std::string &UCList::getString(uint32 index) const {
 	uint16 sindex = getStringIndex(index);
 	return UCMachine::get_instance()->getString(sindex);
 }
@@ -47,7 +47,7 @@ void UCList::freeStrings() {
 	free();
 }
 
-void UCList::copyStringList(UCList &l) {
+void UCList::copyStringList(const UCList &l) {
 	UCMachine *ucm = UCMachine::get_instance();
 	freeStrings();
 	for (unsigned int i = 0; i < l._size; i++) {
@@ -74,12 +74,12 @@ void UCList::unionStringList(UCList &l) {
 	l.free(); // NB: do _not_ free the strings in l, since they're in this one
 }
 
-void UCList::substractStringList(UCList &l) {
+void UCList::substractStringList(const UCList &l) {
 	for (unsigned int i = 0; i < l._size; i++)
 		removeString(l.getStringIndex(i));
 }
 
-bool UCList::stringInList(uint16 s) {
+bool UCList::stringInList(uint16 s) const {
 	Std::string str = UCMachine::get_instance()->getString(s);
 	for (unsigned int i = 0; i < _size; i++)
 		if (getString(i) == str)
@@ -100,7 +100,7 @@ void UCList::assignString(uint32 index, uint16 str) {
 void UCList::removeString(uint16 s, bool nodel) {
 	// do we need to erase all occurences of str or just the first one?
 	// (deleting all, currently)
-	Std::string str = UCMachine::get_instance()->getString(s);
+	const Std::string &str = UCMachine::get_instance()->getString(s);
 	for (unsigned int i = 0; i < _size; i++) {
 		if (getString(i) == str) {
 			// free string
