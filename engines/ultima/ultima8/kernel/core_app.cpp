@@ -28,7 +28,6 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/misc/args.h"
 #include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/games/game_detector.h"
 #include "ultima/shared/std/misc.h"
 
 namespace Ultima {

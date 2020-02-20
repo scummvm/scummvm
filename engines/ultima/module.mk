@@ -352,7 +352,6 @@ MODULE_OBJS := \
 	ultima8/filesys/u8_save_file.o \
 	ultima8/games/game.o \
 	ultima8/games/game_data.o \
-	ultima8/games/game_detector.o \
 	ultima8/games/game_info.o \
 	ultima8/games/remorse_game.o \
 	ultima8/games/start_u8_process.o \
