@@ -1120,7 +1120,17 @@ void BladeRunnerEngine::gameTick() {
 	}
 
 	if (_debugger->_viewZBuffer) {
-		_surfaceFront.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
+		// The surface front pixel format is 32 bit now,
+		// but the _zbuffer->getData() still returns 16bit pixels
+		// We need to copy pixel by pixel, converting each pixel from 16 to 32bit
+		for (int y = 0; y < 480; ++y) {
+			for (int x = 0; x < 640; ++x) {
+				uint8 a, r, g, b;
+				getGameDataColor(_zbuffer->getData()[y*640 + x], a, r, g, b);
+				void   *dstPixel = _surfaceFront.getBasePtr(x, y);
+				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.ARGBToColor(a, r, g, b));
+			}
+		}
 	}
 
 	_mouse->tick(p.x, p.y);
