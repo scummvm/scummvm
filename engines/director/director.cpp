@@ -201,8 +201,9 @@ Common::Error DirectorEngine::run() {
 				if (num == 0)
 					error("No strings in Projector file");
 
-				_nextMovie.movie = name->readPascalString();
-				warning("Replaced score name with: %s", _nextMovie.movie.c_str());
+				Common::String sname = ":" + name->readPascalString();
+				_nextMovie.movie = convertPath(sname);
+				warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
 
 				delete _currentScore;
 				_currentScore = nullptr;
