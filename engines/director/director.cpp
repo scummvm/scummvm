@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/substream.h"
 
 #include "audio/mixer.h"
 
@@ -182,6 +183,33 @@ Common::Error DirectorEngine::run() {
 		loadInitialMovie(_nextMovie.movie);
 	} else {
 		loadInitialMovie(getEXEName());
+
+		// Let's check if it is a projector file
+		// So far tested with Spaceship Warlock, D2
+		if (_mainArchive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
+			warning("Detected Projector file");
+
+			if (_mainArchive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
+				_currentScore->setArchive(_mainArchive);
+
+				Common::SeekableSubReadStreamEndian *name = _mainArchive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
+				int num = name->readUint16();
+				if (num != 1) {
+					warning("Incorrect number of strings in Projector file");
+				}
+
+				if (num == 0)
+					error("No strings in Projector file");
+
+				_nextMovie.movie = name->readPascalString();
+				warning("Replaced score name with: %s", _nextMovie.movie.c_str());
+
+				delete _currentScore;
+				_currentScore = nullptr;
+
+				delete name;
+			}
+		}
 	}
 
 	if (_currentScore)
