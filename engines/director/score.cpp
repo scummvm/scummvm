@@ -130,7 +130,7 @@ void Score::loadArchive() {
 	} else {
 		Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
-		debugC(2, kDebugLoading, "****** Loading Palette CLUT");
+		debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[0]);
 		loadPalette(*pal);
 	}
 
