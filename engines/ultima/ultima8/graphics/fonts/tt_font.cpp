@@ -87,32 +87,18 @@ int TTFont::getBaselineSkip() {
 	return 0;
 }
 
-#ifdef TODO
-template<class T>
-static uint16 *toUnicode(const Std::string &text, uint16 bullet) {
-	Std::string::size_type l = T::length(text);
-	Common::U32String unicodeText = new uint16[l + 1];
-	Std::string::const_iterator iter = text.begin();
-	for (unsigned int i = 0; i < l; ++i) {
-		uint32 u = T::unicode(iter);
-		if (u > 0xFFFF) {
-			perr.Print("Warning: unicode character out of range for SDL_ttf: %x\n", u);
-			unicodeText[i] = '?';
-		} else if (u == 64) {
-			unicodeText[i] = bullet;
-		} else {
-			unicodeText[i] = u;
-		}
-	}
-	unicodeText[l] = 0;
-	return unicodeText;
-}
-#else
 template<class T>
 static Common::U32String toUnicode(const Std::string &text, uint16 bullet) {
-	return Common::U32String(text);
+	Std::string::size_type len = T::length(text);
+	Common::U32String result = Common::U32String(text.c_str(), len);
+
+	for (uint idx = 0; idx < result.size(); ++idx) {
+		if (result[idx] == '@')
+			result.setChar(bullet, idx);
+	}
+
+	return result;
 }
-#endif
 
 void TTFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
 	// convert to unicode

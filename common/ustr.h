@@ -156,6 +156,11 @@ public:
 		return _str[idx];
 	}
 
+	/** Set character c at position p, replacing the previous character there. */
+	void setChar(value_type c, uint32 p) {
+		_str[p] = c;
+	}
+
 	/**
 	 * Removes the value at position p from the string.
 	 * Using this on decomposed characters will not remove the whole
