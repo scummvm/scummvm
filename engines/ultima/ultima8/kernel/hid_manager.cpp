@@ -36,7 +36,6 @@ HIDManager::HIDManager() {
 	_hidManager = this;
 	con->Print(MM_INFO, "Creating HIDManager...\n");
 
-	InitJoystick();
 	resetBindings();
 }
 
@@ -51,7 +50,6 @@ HIDManager::~HIDManager() {
 	}
 	_commands.clear();
 
-	ShutdownJoystick();
 	_hidManager = 0;
 }
 

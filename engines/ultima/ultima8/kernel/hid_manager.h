@@ -25,7 +25,6 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/kernel/hid_keys.h"
-#include "ultima/ultima8/kernel/joystick.h"
 
 namespace Ultima {
 namespace Ultima8 {

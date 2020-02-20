@@ -27,12 +27,11 @@
 #include "common/config-manager.h"
 #include "gui/saveload.h"
 #include "image/png.h"
-
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/misc/pent_include.h"
 
- //!! a lot of these includes are just for some hacks... clean up sometime
+ // TODO: !! a lot of these includes are just for some hacks... clean up sometime
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/conf/setting_manager.h"
@@ -42,8 +41,6 @@
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/kernel/hid_manager.h"
-#include "ultima/ultima8/kernel/joystick.h"
-
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/fonts/fixed_width_font.h"
@@ -56,7 +53,6 @@
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/filesys/savegame.h"
-
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/console_gump.h"
@@ -74,8 +70,6 @@
 #include "ultima/ultima8/gumps/ask_gump.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/gumps/message_box_gump.h"
-
-
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
@@ -87,7 +81,6 @@
 #include "ultima/ultima8/graphics/inverter_process.h"
 #include "ultima/ultima8/world/actors/heal_process.h"
 #include "ultima/ultima8/world/actors/scheduler_process.h"
-
 #include "ultima/ultima8/world/egg_hatcher_process.h" // for a hack
 #include "ultima/ultima8/usecode/uc_process.h" // more hacking
 #include "ultima/ultima8/gumps/gump_notify_process.h" // guess
@@ -408,8 +401,6 @@ void Ultima8Engine::startup() {
 		ProcessLoader<InverterProcess>::load);
 	_kernel->addProcessLoader("ActorBarkNotifyProcess",
 		ProcessLoader<ActorBarkNotifyProcess>::load);
-	_kernel->addProcessLoader("JoystickCursorProcess",
-		ProcessLoader<JoystickCursorProcess>::load);
 	_kernel->addProcessLoader("AmbushProcess",
 		ProcessLoader<AmbushProcess>::load);
 
@@ -418,10 +409,6 @@ void Ultima8Engine::startup() {
 
 	GraphicSysInit();
 
-#ifdef TODO
-	SDL_ShowCursor(SDL_DISABLE);
-	SDL_GetMouseState(&mouseX, &mouseY);
-#endif
 	_hidManager = new HIDManager();
 
 	// Audio Mixer

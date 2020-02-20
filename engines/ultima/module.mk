@@ -437,7 +437,6 @@ MODULE_OBJS := \
 	ultima8/kernel/delay_process.o \
 	ultima8/kernel/hid_keys.o \
 	ultima8/kernel/hid_manager.o \
-	ultima8/kernel/joystick.o \
 	ultima8/kernel/kernel.o \
 	ultima8/kernel/memory_manager.o \
 	ultima8/kernel/mouse.o \
