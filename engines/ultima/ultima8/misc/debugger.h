@@ -35,7 +35,11 @@ class Ultima1Engine;
  */
 class Debugger : public Shared::Debugger {
 private:
-	bool cmdSpell(int argc, const char **argv);
+	bool cmdToggleHighlightItems(int argc, const char **argv);
+	bool cmdDumpMap(int argc, const char **argvv);
+	bool cmdIncrementSortOrder(int argc, const char **argv);
+	bool cmdDecrementSortOrder(int argc, const char **argv);
+
 public:
 	Debugger();
     ~Debugger() override {}

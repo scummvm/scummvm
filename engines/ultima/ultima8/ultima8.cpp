@@ -244,15 +244,6 @@ bool Ultima8Engine::initialize() {
 	con->AddConsoleCommand("QuickAvatarMoverProcess::toggleClipping",
 		QuickAvatarMoverProcess::ConCmd_toggleClipping);
 
-	con->AddConsoleCommand("GameMapGump::toggleHighlightItems",
-		GameMapGump::ConCmd_toggleHighlightItems);
-	con->AddConsoleCommand("GameMapGump::dumpMap",
-		GameMapGump::ConCmd_dumpMap);
-	con->AddConsoleCommand("GameMapGump::incrementSortOrder",
-		GameMapGump::ConCmd_incrementSortOrder);
-	con->AddConsoleCommand("GameMapGump::decrementSortOrder",
-		GameMapGump::ConCmd_decrementSortOrder);
-
 	con->AddConsoleCommand("AudioProcess::listSFX", AudioProcess::ConCmd_listSFX);
 	con->AddConsoleCommand("AudioProcess::playSFX", AudioProcess::ConCmd_playSFX);
 	con->AddConsoleCommand("AudioProcess::stopSFX", AudioProcess::ConCmd_stopSFX);
@@ -308,11 +299,6 @@ void Ultima8Engine::deinitialize() {
 	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopDescend);
 	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed);
 	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_toggleClipping);
-
-	con->RemoveConsoleCommand(GameMapGump::ConCmd_toggleHighlightItems);
-	con->RemoveConsoleCommand(GameMapGump::ConCmd_dumpMap);
-	con->RemoveConsoleCommand(GameMapGump::ConCmd_incrementSortOrder);
-	con->RemoveConsoleCommand(GameMapGump::ConCmd_decrementSortOrder);
 
 	con->RemoveConsoleCommand(AudioProcess::ConCmd_listSFX);
 	con->RemoveConsoleCommand(AudioProcess::ConCmd_stopSFX);
