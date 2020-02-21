@@ -157,37 +157,6 @@ void ObjectManager::objectTypes() {
 	}
 }
 
-void ObjectManager::ConCmd_objectTypes(const Console::ArgvType & /*argv*/) {
-	ObjectManager::get_instance()->objectTypes();
-}
-
-void ObjectManager::ConCmd_objectInfo(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "usage: objectInfo <objectnum>" << Std::endl;
-		return;
-	}
-
-	ObjectManager *objman = ObjectManager::get_instance();
-
-	ObjId objid = static_cast<ObjId>(strtol(argv[1].c_str(), 0, 0));
-
-	Object *obj = objman->getObject(objid);
-	if (obj == 0) {
-		bool reserved = false;
-		if (objid >= 256) // CONSTANT!
-			reserved = objman->_objIDs->isIDUsed(objid);
-		else
-			reserved = objman->_actorIDs->isIDUsed(objid);
-		if (reserved)
-			pout << "Reserved objid: " << objid << Std::endl;
-		else
-			pout << "No such object: " << objid << Std::endl;
-	} else {
-		obj->dumpInfo();
-	}
-}
-
-
 uint16 ObjectManager::assignObjId(Object *obj, ObjId new_objid) {
 	if (new_objid == 0xFFFF)
 		new_objid = _objIDs->getNewID();

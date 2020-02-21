@@ -23,7 +23,14 @@
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/kernel/allocator.h"
+#include "ultima/ultima8/kernel/hid_manager.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/memory_manager.h"
+#include "ultima/ultima8/kernel/object_manager.h"
+#include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 
 namespace Ultima {
@@ -39,6 +46,25 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("GameMapGump::incrementSortOrder", WRAP_METHOD(Debugger, cmdIncrementSortOrder));
 	registerCmd("GameMapGump::decrementSortOrder", WRAP_METHOD(Debugger, cmdDecrementSortOrder));
 
+	registerCmd("HIDManager::bind", WRAP_METHOD(Debugger, cmdBind));
+	registerCmd("HIDManager::unbind", WRAP_METHOD(Debugger, cmdUnbind));
+	registerCmd("HIDManager::listbinds", WRAP_METHOD(Debugger, cmdListbinds));
+	registerCmd("HIDManager::save", WRAP_METHOD(Debugger, cmdSave));
+
+	registerCmd("Kernel::processTypes", WRAP_METHOD(Debugger, cmdProcessTypes));
+	registerCmd("Kernel::processInfo", WRAP_METHOD(Debugger, cmdProcessInfo));
+	registerCmd("Kernel::listProcesses", WRAP_METHOD(Debugger, cmdListProcesses));
+	registerCmd("Kernel::toggleFrameByFrame", WRAP_METHOD(Debugger, cmdToggleFrameByFrame));
+	registerCmd("Kernel::advanceFrame", WRAP_METHOD(Debugger, cmdAdvanceFrame));
+
+	registerCmd("MemoryManager::MemInfo", WRAP_METHOD(Debugger, cmdMemInfo));
+#ifdef DEBUG
+	registerCmd("MemoryManager::test", WRAP_METHOD(Debugger, cmdTest));
+#endif
+
+	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
+	registerCmd("ObjectManager::objectInfo", WRAP_METHOD(Debugger, cmdObjectInfo));
+
 	registerCmd("QuickAvatarMoverProcess::startMoveUp", WRAP_METHOD(Debugger, cmdStartMoveUp));
 	registerCmd("QuickAvatarMoverProcess::startMoveDown", WRAP_METHOD(Debugger, cmdStartMoveDown));
 	registerCmd("QuickAvatarMoverProcess::startMoveLeft", WRAP_METHOD(Debugger, cmdStartMoveLeft));
@@ -53,9 +79,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("QuickAvatarMoverProcess::stopDescend", WRAP_METHOD(Debugger, cmdStopDescend));
 	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
 	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
-
 }
-
 
 bool Debugger::cmdListSFX(int argc, const char **argv) {
 	AudioProcess *ap = AudioProcess::get_instance();
@@ -109,6 +133,7 @@ bool Debugger::cmdPlaySFX(int argc, const char **argv) {
 		return false;
 	}
 }
+
 
 bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
 	GameMapGump::Set_highlightItems(!GameMapGump::is_highlightItems());
@@ -283,6 +308,189 @@ bool Debugger::cmdDecrementSortOrder(int argc, const char **argv) {
 	return false;
 }
 
+
+bool Debugger::cmdBind(int argc, const char **argv) {
+	Console::ArgvType argv2;
+	Console::ArgvType::const_iterator it;
+	if (argc < 3) {
+		debugPrintf("Usage: %s <key> <action> [<arg> ...]: binds a key or button to an action\n",
+			argv[0]);
+		return true;
+	} else {
+		HIDManager *hid = HIDManager::get_instance();
+
+		istring control(argv[1]);
+		Common::Array<istring> args;
+		for (int i = 2; i < argc; ++i)
+			args.push_back(argv[i]);
+
+		it = args.begin();
+		++it;
+		++it;
+		argv2.assign(it, args.end());
+
+		hid->bind(control, argv2);
+		return false;
+	}
+}
+
+bool Debugger::cmdUnbind(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <key>: unbinds a key or button\n", argv[0]);
+		return true;
+	} else {
+		HIDManager *hid = HIDManager::get_instance();
+
+		istring control(argv[1]);
+
+		hid->unbind(control);
+		return false;
+	}
+}
+
+bool Debugger::cmdListbinds(int argc, const char **argv) {
+	HIDManager *hid = HIDManager::get_instance();
+	hid->listBindings();
+	return true;
+}
+
+bool Debugger::cmdSave(int argc, const char **argv) {
+	HIDManager *hid = HIDManager::get_instance();
+	hid->saveBindings();
+
+	SettingManager *settings = SettingManager::get_instance();
+	settings->write();
+	return false;
+}
+
+
+
+bool Debugger::cmdProcessTypes(int argc, const char **argv) {
+	Kernel::get_instance()->processTypes();
+	return false;
+}
+
+bool Debugger::cmdListProcesses(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("usage: listProcesses [<itemnum>]\n");
+	} else {
+		Kernel *kern = Kernel::get_instance();
+		ObjId item = 0;
+		if (argc == 2) {
+			item = static_cast<ObjId>(strtol(argv[1], 0, 0));
+			debugPrintf("Processes for item %d:\n", item);
+		} else {
+			debugPrintf("Processes:\n");
+		}
+		for (ProcessIterator it = kern->processes.begin();
+			it != kern->processes.end(); ++it) {
+			Process *p = *it;
+			if (argc == 1 || p->_itemNum == item)
+				p->dumpInfo();
+		}
+	}
+
+	return true;
+}
+
+bool Debugger::cmdProcessInfo(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("usage: processInfo <objectnum>\n");
+	} else {
+		Kernel *kern = Kernel::get_instance();
+
+		ProcId procid = static_cast<ProcId>(strtol(argv[1], 0, 0));
+
+		Process *p = kern->getProcess(procid);
+		if (p == 0) {
+			debugPrintf("No such process: %d\n", procid);
+		} else {
+			p->dumpInfo();
+		}
+	}
+
+	return true;
+}
+
+bool Debugger::cmdToggleFrameByFrame(int argc, const char **argv) {
+	Kernel *kern = Kernel::get_instance();
+	bool fbf = !kern->isFrameByFrame();
+	kern->setFrameByFrame(fbf);
+	debugPrintf("FrameByFrame = %s\n", fbf ? "true" : "false");
+
+	if (fbf)
+		kern->pause();
+	else
+		kern->unpause();
+
+	return true;
+}
+
+bool Debugger::cmdAdvanceFrame(int argc, const char **argv) {
+	Kernel *kern = Kernel::get_instance();
+	if (kern->isFrameByFrame()) {
+		kern->unpause();
+		debugPrintf("FrameByFrame: Next Frame\n");
+	}
+
+	return true;
+}
+
+
+bool Debugger::cmdMemInfo(int argc, const char **argv) {
+	MemoryManager *mm = MemoryManager::get_instance();
+	int i, count;
+
+	if (mm) {
+		count = mm->getAllocatorCount();
+		debugPrintf("Allocators: %d\n", count);
+		for (i = 0; i < count; ++i) {
+			debugPrintf(" Allocator %d:\n", i);
+			mm->getAllocator(i)->printInfo();
+			debugPrintf("==============\n");
+		}
+	}
+
+	return true;
+}
+
+#ifdef DEBUG
+bool Debugger::cmdTest(int argc, const char **argv) {
+	return true;
+}
+#endif
+
+bool Debugger::cmdObjectTypes(int argc, const char **argv) {
+	ObjectManager::get_instance()->objectTypes();
+	return true;
+}
+
+bool Debugger::cmdObjectInfo(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("usage: objectInfo <objectnum>\n");
+	} else {
+		ObjectManager *objMan = ObjectManager::get_instance();
+
+		ObjId objid = static_cast<ObjId>(strtol(argv[1], 0, 0));
+
+		Object *obj = objMan->getObject(objid);
+		if (obj == 0) {
+			bool reserved = false;
+			if (objid >= 256) // CONSTANT!
+				reserved = objMan->_objIDs->isIDUsed(objid);
+			else
+				reserved = objMan->_actorIDs->isIDUsed(objid);
+			if (reserved)
+				debugPrintf("Reserved objid: %d\n", objid);
+			else
+				debugPrintf("No such object: %d\n", objid);
+		} else {
+			obj->dumpInfo();
+		}
+	}
+
+	return true;
+}
 
 
 bool Debugger::cmdStartMoveUp(int argc, const char **argv) {

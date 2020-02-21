@@ -189,52 +189,6 @@ void HIDManager::unbind(const istring &control) {
 	bind(control, command);
 }
 
-void HIDManager::ConCmd_bind(const Console::ArgvType &argv) {
-	Console::ArgvType argv2;
-	Console::ArgvType::const_iterator it;
-	if (argv.size() < 3) {
-		if (! argv.empty())
-			pout << "Usage: " << argv[0] << " <key> <action> [<arg> ...]: binds a key or button to an action" << Std::endl;
-		return;
-	}
-	HIDManager *hid = HIDManager::get_instance();
-
-	istring control(argv[1]);
-
-	it = argv.begin();
-	++it;
-	++it;
-	argv2.assign(it, argv.end());
-
-	hid->bind(control, argv2);
-}
-
-void HIDManager::ConCmd_unbind(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		if (! argv.empty())
-			pout << "Usage: " << argv[0] << " <key>: unbinds a key or button" << Std::endl;
-		return;
-	}
-	HIDManager *hid = HIDManager::get_instance();
-
-	istring control(argv[1]);
-
-	hid->unbind(control);
-}
-
-void HIDManager::ConCmd_listbinds(const Console::ArgvType &argv) {
-	HIDManager *hid = HIDManager::get_instance();
-	hid->listBindings();
-}
-
-void HIDManager::ConCmd_save(const Console::ArgvType &argv) {
-	HIDManager *hid = HIDManager::get_instance();
-	hid->saveBindings();
-
-	SettingManager *settings = SettingManager::get_instance();
-	settings->write();
-}
-
 void HIDManager::listBindings() {
 	uint16 key, event;
 	Console::ArgsType command;

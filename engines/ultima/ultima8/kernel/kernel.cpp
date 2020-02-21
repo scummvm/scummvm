@@ -32,8 +32,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Std::list<Process *>::iterator ProcessIterator;
-
 Kernel *Kernel::kernel = 0;
 
 Kernel::Kernel() : loading(false) {
@@ -254,70 +252,6 @@ void Kernel::processTypes() {
 	Std::map<Common::String, unsigned int>::iterator iter;
 	for (iter = processtypes.begin(); iter != processtypes.end(); ++iter) {
 		pout << (*iter)._key << ": " << (*iter)._value << Std::endl;
-	}
-}
-
-void Kernel::ConCmd_processTypes(const Console::ArgvType & /*argv*/) {
-	Kernel::get_instance()->processTypes();
-}
-
-void Kernel::ConCmd_listProcesses(const Console::ArgvType &argv) {
-	if (argv.size() > 2) {
-		pout << "usage: listProcesses [<itemnum>]" << Std::endl;
-		return;
-	}
-
-	Kernel *kern = Kernel::get_instance();
-	ObjId item = 0;
-	if (argv.size() == 2) {
-		item = static_cast<ObjId>(strtol(argv[1].c_str(), 0, 0));
-		pout << "Processes for item " << item << ":" << Std::endl;
-	} else {
-		pout << "Processes:" << Std::endl;
-	}
-	for (ProcessIterator it = kern->processes.begin();
-	        it != kern->processes.end(); ++it) {
-		Process *p = *it;
-		if (argv.size() == 1 || p->_itemNum == item)
-			p->dumpInfo();
-	}
-
-}
-
-void Kernel::ConCmd_processInfo(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "usage: processInfo <objectnum>" << Std::endl;
-		return;
-	}
-
-	Kernel *kern = Kernel::get_instance();
-
-	ProcId procid = static_cast<ProcId>(strtol(argv[1].c_str(), 0, 0));
-
-	Process *p = kern->getProcess(procid);
-	if (p == 0) {
-		pout << "No such process: " << procid << Std::endl;
-	} else {
-		p->dumpInfo();
-	}
-}
-
-void Kernel::ConCmd_toggleFrameByFrame(const Console::ArgvType &argv) {
-	Kernel *kern = Kernel::get_instance();
-	bool fbf = !kern->isFrameByFrame();
-	kern->setFrameByFrame(fbf);
-	pout << "FrameByFrame = " << fbf << Std::endl;
-	if (fbf)
-		kern->pause();
-	else
-		kern->unpause();
-}
-
-void Kernel::ConCmd_advanceFrame(const Console::ArgvType &argv) {
-	Kernel *kern = Kernel::get_instance();
-	if (kern->isFrameByFrame()) {
-		kern->unpause();
-		pout << "FrameByFrame: Next Frame" << Std::endl;
 	}
 }
 

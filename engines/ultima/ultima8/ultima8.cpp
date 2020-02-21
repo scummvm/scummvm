@@ -194,27 +194,6 @@ bool Ultima8Engine::initialize() {
 
 	con->AddConsoleCommand("Ultima8Engine::closeItemGumps", ConCmd_closeItemGumps);
 
-	con->AddConsoleCommand("HIDManager::bind", HIDManager::ConCmd_bind);
-	con->AddConsoleCommand("HIDManager::unbind", HIDManager::ConCmd_unbind);
-	con->AddConsoleCommand("HIDManager::listbinds",
-		HIDManager::ConCmd_listbinds);
-	con->AddConsoleCommand("HIDManager::save", HIDManager::ConCmd_save);
-	con->AddConsoleCommand("Kernel::processTypes", Kernel::ConCmd_processTypes);
-	con->AddConsoleCommand("Kernel::processInfo", Kernel::ConCmd_processInfo);
-	con->AddConsoleCommand("Kernel::listProcesses",
-		Kernel::ConCmd_listProcesses);
-	con->AddConsoleCommand("Kernel::toggleFrameByFrame",
-		Kernel::ConCmd_toggleFrameByFrame);
-	con->AddConsoleCommand("Kernel::advanceFrame", Kernel::ConCmd_advanceFrame);
-	con->AddConsoleCommand("ObjectManager::objectTypes",
-		ObjectManager::ConCmd_objectTypes);
-	con->AddConsoleCommand("ObjectManager::objectInfo",
-		ObjectManager::ConCmd_objectInfo);
-	con->AddConsoleCommand("MemoryManager::MemInfo",
-		MemoryManager::ConCmd_MemInfo);
-	con->AddConsoleCommand("MemoryManager::test",
-		MemoryManager::ConCmd_test);
-
 	return true;
 }
 
@@ -237,20 +216,6 @@ void Ultima8Engine::deinitialize() {
 	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_toggleShowTouchingItems);
 
 	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_closeItemGumps);
-
-	con->RemoveConsoleCommand(HIDManager::ConCmd_bind);
-	con->RemoveConsoleCommand(HIDManager::ConCmd_unbind);
-	con->RemoveConsoleCommand(HIDManager::ConCmd_listbinds);
-	con->RemoveConsoleCommand(HIDManager::ConCmd_save);
-	con->RemoveConsoleCommand(Kernel::ConCmd_processTypes);
-	con->RemoveConsoleCommand(Kernel::ConCmd_processInfo);
-	con->RemoveConsoleCommand(Kernel::ConCmd_listProcesses);
-	con->RemoveConsoleCommand(Kernel::ConCmd_toggleFrameByFrame);
-	con->RemoveConsoleCommand(Kernel::ConCmd_advanceFrame);
-	con->RemoveConsoleCommand(ObjectManager::ConCmd_objectTypes);
-	con->RemoveConsoleCommand(ObjectManager::ConCmd_objectInfo);
-	con->RemoveConsoleCommand(MemoryManager::ConCmd_MemInfo);
-	con->RemoveConsoleCommand(MemoryManager::ConCmd_test);
 }
 
 void Ultima8Engine::startup() {

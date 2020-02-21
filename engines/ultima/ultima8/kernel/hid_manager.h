@@ -36,8 +36,6 @@ private:
 	Std::vector<Console::ArgvType *> _commands;
 	typedef Common::HashMap<uint32, Console::ArgvType *> Bindings;
 	Bindings _bindings;
-
-	void listBindings();
 public:
 	HIDManager();
 	~HIDManager();
@@ -46,6 +44,8 @@ public:
 	static HIDManager *get_instance() {
 		return _hidManager;
 	}
+
+	void listBindings();
 
 	//! execute the Console command associated with the event
 	//! \param key a HID_KEY used to find an appropriate Console command
@@ -74,18 +74,6 @@ public:
 	//! removes all controls to a HIDBinding or the binding to one specified key
 	//! \param bindingName name of a HIDBinding or the name of key
 	void unbind(const istring &control);
-
-	//! "bind" console command
-	static void ConCmd_bind(const Console::ArgvType &argv);
-
-	//! "unbind" console command
-	static void ConCmd_unbind(const Console::ArgvType &argv);
-
-	//! "listbinds" console command
-	static void ConCmd_listbinds(const Console::ArgvType &argv);
-
-	//! "save" console command
-	static void ConCmd_save(const Console::ArgvType &argv);
 };
 
 } // End of namespace Ultima8

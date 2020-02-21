@@ -29,6 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
+class Debugger;
 class Process;
 class idMan;
 class IDataSource;
@@ -36,8 +37,11 @@ class ODataSource;
 
 typedef Process *(*ProcessLoadFunc)(IDataSource *, uint32 version);
 typedef Std::list<Process *>::const_iterator ProcessIter;
+typedef Std::list<Process *>::iterator ProcessIterator;
+
 
 class Kernel {
+	friend class Debugger;
 public:
 	Kernel();
 	~Kernel();
@@ -122,18 +126,6 @@ public:
 	uint32 getFrameNum() const {
 		return _frameNum;
 	};
-
-	//! "Kernel::processTypes" console command
-	static void ConCmd_processTypes(const Console::ArgvType &argv);
-	//! "Kernel::listProcesses" console command
-	static void ConCmd_listProcesses(const Console::ArgvType &argv);
-	//! "Kernel::processInfo" console command
-	static void ConCmd_processInfo(const Console::ArgvType &argv);
-
-	//! "Kernel::toggleFrameByFrame" console command
-	static void ConCmd_toggleFrameByFrame(const Console::ArgvType &argv);
-	//! "Kernel::advanceFrame" console command
-	static void ConCmd_advanceFrame(const Console::ArgvType &argv);
 
 	INTRINSIC(I_getNumProcesses);
 	INTRINSIC(I_resetRef);

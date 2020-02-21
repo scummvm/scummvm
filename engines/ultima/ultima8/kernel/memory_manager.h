@@ -57,12 +57,6 @@ public:
 
 	void freeResources();
 
-	//! "MemoryManager::MemInfo" console command
-	static void ConCmd_MemInfo(const Console::ArgvType &argv);
-
-	//! "MemoryManager::test" console command
-	static void ConCmd_test(const Console::ArgvType &argv);
-
 private:
 	Allocator *_allocators[10];
 	uint16 _allocatorCount;

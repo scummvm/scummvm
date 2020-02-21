@@ -46,6 +46,27 @@ private:
 	bool cmdIncrementSortOrder(int argc, const char **argv);
 	bool cmdDecrementSortOrder(int argc, const char **argv);
 
+	// HID Manager
+	bool cmdBind(int argc, const char **argv);
+	bool cmdUnbind(int argc, const char **argv);
+	bool cmdListbinds(int argc, const char **argv);
+	bool cmdSave(int argc, const char **argv);
+
+	// Kernel
+	bool cmdProcessTypes(int argc, const char **argv);
+	bool cmdListProcesses(int argc, const char **argv);
+	bool cmdProcessInfo(int argc, const char **argv);
+	bool cmdToggleFrameByFrame(int argc, const char **argv);
+	bool cmdAdvanceFrame(int argc, const char **argv);
+
+	// Memory Manager
+	bool cmdMemInfo(int argc, const char **argv);
+	bool cmdTest(int argc, const char **argv);
+
+	// Object Manager
+	bool cmdObjectTypes(int argc, const char **argv);
+	bool cmdObjectInfo(int argc, const char **argv);
+
 	// Quick Avatar Mover Process
 	bool cmdStartMoveUp(int argc, const char **argv);
 	bool cmdStartMoveDown(int argc, const char **argv);

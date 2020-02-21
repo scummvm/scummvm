@@ -30,13 +30,14 @@
 namespace Ultima {
 namespace Ultima8 {
 
+class Debugger;
 class IDataSource;
 class ODataSource;
 
 class Process {
-public:
 	friend class Kernel;
-
+	friend class Debugger;
+public:
 	virtual void run() = 0;
 
 	Process(ObjId _itemNum = 0, uint16 type = 0);
