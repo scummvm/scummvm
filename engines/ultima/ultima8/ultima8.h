@@ -128,8 +128,8 @@ private:
 	int32 _timeOffset;
 	bool _hasCheated;
 	bool _cheatsEnabled;
-	uint32 _lastDown[HID_LAST];
-	bool _down[HID_LAST];
+	uint32 _lastDown[HID_LAST+1];
+	bool _down[HID_LAST+1];
 	unsigned int _inversion;
 private:
 	/**
