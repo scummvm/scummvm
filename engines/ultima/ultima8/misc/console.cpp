@@ -633,13 +633,13 @@ void Console::AddCharacterToCommandBuffer(int ch) {
 						common = it->_key;
 						found = it;
 					} else {
-#ifdef TODO
 						Console::ArgsType::iterator it1 = common.begin();
 						Console::ArgsType::const_iterator it2 = it->_key.begin();
 						int comsize = 0;
 
 						while (it1 != common.end()) {
-							if (!Console::ArgsType::traits_type::eq(*it1, *it2)) break;
+							if (*it1 == *it2)
+								break;
 
 							comsize++;
 							++it1;
@@ -647,14 +647,11 @@ void Console::AddCharacterToCommandBuffer(int ch) {
 						}
 
 						common.resize(comsize);
-#endif
 					}
 					count++;
 				}
 
 			if (count) {
-#ifdef TODO
-
 				if (count > 1) {
 					pout << "]" << commandBuffer << Std::endl;
 
@@ -671,13 +668,11 @@ void Console::AddCharacterToCommandBuffer(int ch) {
 					commandBuffer = common;
 
 				commandCursorPos = commandBuffer.size();
-#endif
 			}
 		}
 	}
 	// Add the character to the command buffer
 	else {
-#ifdef TODO
 		if (commandCursorPos == static_cast<int>(commandBuffer.size())) {
 			commandBuffer += ch;
 		} else if (commandInsert) {
@@ -687,7 +682,6 @@ void Console::AddCharacterToCommandBuffer(int ch) {
 		}
 
 		commandCursorPos++;
-#endif
 	}
 }
 
@@ -746,14 +740,12 @@ void Console::ConCmd_CmdList(const Console::ArgvType &argv) {
 }
 
 void Console::ConCmd_CmdHistory(const Console::ArgvType & /*argv*/) {
-#ifdef TODO
 	Std::vector<ArgsType>::iterator it;
 
 	for (it = con->commandHistory.begin(); it != con->commandHistory.end(); ++it)
 		pout << " " << *it << Std::endl;
 
 	pout << con->commandHistory.size() << " commands" << Std::endl;
-#endif
 }
 
 /*
