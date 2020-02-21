@@ -115,12 +115,6 @@ Common::String convertPath(Common::String &path) {
 		return path;
 	}
 
-	if (path[0] != ':') {
-		warning("convertPath: unsupported absolute path '%s'", path.c_str());
-
-		return path;
-	}
-
 	Common::String res;
 	uint32 idx = 0;
 
@@ -129,7 +123,9 @@ Common::String convertPath(Common::String &path) {
 		idx = 2;
 	} else {
 		res = "./";
-		idx = 1;
+
+		if (path[0] == ':')
+			idx = 1;
 	}
 
 	while (idx != path.size()) {

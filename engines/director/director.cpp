@@ -203,9 +203,6 @@ Common::Error DirectorEngine::run() {
 
 				Common::String sname = name->readPascalString();
 
-				if (!sname.hasPrefix(":"))
-					sname = ":" + sname;
-
 				_nextMovie.movie = pathMakeRelative(sname);
 				warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
 
