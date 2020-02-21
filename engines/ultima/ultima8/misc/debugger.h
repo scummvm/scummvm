@@ -35,11 +35,27 @@ class Ultima1Engine;
  */
 class Debugger : public Shared::Debugger {
 private:
+	// Game Map Gump
 	bool cmdToggleHighlightItems(int argc, const char **argv);
 	bool cmdDumpMap(int argc, const char **argvv);
 	bool cmdIncrementSortOrder(int argc, const char **argv);
 	bool cmdDecrementSortOrder(int argc, const char **argv);
 
+	// Quick Avatar Mover Process
+	bool cmdStartMoveUp(int argc, const char **argv);
+	bool cmdStartMoveDown(int argc, const char **argv);
+	bool cmdStartMoveLeft(int argc, const char **argv);
+	bool cmdStartMoveRight(int argc, const char **argv);
+	bool cmdStartAscend(int argc, const char **argv);
+	bool cmdStartDescend(int argc, const char **argv);
+	bool cmdStopMoveUp(int argc, const char **argv);
+	bool cmdStopMoveDown(int argc, const char **argv);
+	bool cmdStopMoveLeft(int argc, const char **argv);
+	bool cmdStopMoveRight(int argc, const char **argv);
+	bool cmdStopAscend(int argc, const char **argv);
+	bool cmdStopDescend(int argc, const char **argv);
+	bool cmdToggleQuarterSpeed(int argc, const char **argv);
+	bool cmdToggleClipping(int argc, const char **argv);
 public:
 	Debugger();
     ~Debugger() override {}

@@ -57,23 +57,6 @@ public:
 	static void terminateMover(int _dir);
 	static void startMover(int x, int y, int z, int _dir);
 
-	static void ConCmd_startMoveUp(const Console::ArgvType &argv);
-	static void ConCmd_startMoveDown(const Console::ArgvType &argv);
-	static void ConCmd_startMoveLeft(const Console::ArgvType &argv);
-	static void ConCmd_startMoveRight(const Console::ArgvType &argv);
-	static void ConCmd_startAscend(const Console::ArgvType &argv);
-	static void ConCmd_startDescend(const Console::ArgvType &argv);
-
-	static void ConCmd_stopMoveUp(const Console::ArgvType &argv);
-	static void ConCmd_stopMoveDown(const Console::ArgvType &argv);
-	static void ConCmd_stopMoveLeft(const Console::ArgvType &argv);
-	static void ConCmd_stopMoveRight(const Console::ArgvType &argv);
-	static void ConCmd_stopAscend(const Console::ArgvType &argv);
-	static void ConCmd_stopDescend(const Console::ArgvType &argv);
-
-	static void ConCmd_toggleQuarterSpeed(const Console::ArgvType &argv);
-	static void ConCmd_toggleClipping(const Console::ArgvType &argv);
-
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
 	void saveData(ODataSource *ods) override;

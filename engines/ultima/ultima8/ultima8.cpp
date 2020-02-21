@@ -215,35 +215,6 @@ bool Ultima8Engine::initialize() {
 	con->AddConsoleCommand("MemoryManager::test",
 		MemoryManager::ConCmd_test);
 
-	con->AddConsoleCommand("QuickAvatarMoverProcess::startMoveUp",
-		QuickAvatarMoverProcess::ConCmd_startMoveUp);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::startMoveDown",
-		QuickAvatarMoverProcess::ConCmd_startMoveDown);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::startMoveLeft",
-		QuickAvatarMoverProcess::ConCmd_startMoveLeft);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::startMoveRight",
-		QuickAvatarMoverProcess::ConCmd_startMoveRight);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::startAscend",
-		QuickAvatarMoverProcess::ConCmd_startAscend);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::startDescend",
-		QuickAvatarMoverProcess::ConCmd_startDescend);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::stopMoveUp",
-		QuickAvatarMoverProcess::ConCmd_stopMoveUp);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::stopMoveDown",
-		QuickAvatarMoverProcess::ConCmd_stopMoveDown);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::stopMoveLeft",
-		QuickAvatarMoverProcess::ConCmd_stopMoveLeft);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::stopMoveRight",
-		QuickAvatarMoverProcess::ConCmd_stopMoveRight);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::stopAscend",
-		QuickAvatarMoverProcess::ConCmd_stopAscend);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::stopDescend",
-		QuickAvatarMoverProcess::ConCmd_stopDescend);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::toggleQuarterSpeed",
-		QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed);
-	con->AddConsoleCommand("QuickAvatarMoverProcess::toggleClipping",
-		QuickAvatarMoverProcess::ConCmd_toggleClipping);
-
 	con->AddConsoleCommand("AudioProcess::listSFX", AudioProcess::ConCmd_listSFX);
 	con->AddConsoleCommand("AudioProcess::playSFX", AudioProcess::ConCmd_playSFX);
 	con->AddConsoleCommand("AudioProcess::stopSFX", AudioProcess::ConCmd_stopSFX);
@@ -284,21 +255,6 @@ void Ultima8Engine::deinitialize() {
 	con->RemoveConsoleCommand(ObjectManager::ConCmd_objectInfo);
 	con->RemoveConsoleCommand(MemoryManager::ConCmd_MemInfo);
 	con->RemoveConsoleCommand(MemoryManager::ConCmd_test);
-
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveUp);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveDown);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveLeft);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startMoveRight);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startAscend);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_startDescend);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveUp);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveDown);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveLeft);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopMoveRight);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopAscend);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_stopDescend);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed);
-	con->RemoveConsoleCommand(QuickAvatarMoverProcess::ConCmd_toggleClipping);
 
 	con->RemoveConsoleCommand(AudioProcess::ConCmd_listSFX);
 	con->RemoveConsoleCommand(AudioProcess::ConCmd_stopSFX);

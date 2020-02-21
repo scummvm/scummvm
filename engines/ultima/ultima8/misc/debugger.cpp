@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -32,6 +33,22 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
 	registerCmd("GameMapGump::incrementSortOrder", WRAP_METHOD(Debugger, cmdIncrementSortOrder));
 	registerCmd("GameMapGump::decrementSortOrder", WRAP_METHOD(Debugger, cmdDecrementSortOrder));
+
+	registerCmd("QuickAvatarMoverProcess::startMoveUp", WRAP_METHOD(Debugger, cmdStartMoveUp));
+	registerCmd("QuickAvatarMoverProcess::startMoveDown", WRAP_METHOD(Debugger, cmdStartMoveDown));
+	registerCmd("QuickAvatarMoverProcess::startMoveLeft", WRAP_METHOD(Debugger, cmdStartMoveLeft));
+	registerCmd("QuickAvatarMoverProcess::startMoveRight", WRAP_METHOD(Debugger, cmdStartMoveRight));
+	registerCmd("QuickAvatarMoverProcess::startAscend", WRAP_METHOD(Debugger, cmdStartAscend));
+	registerCmd("QuickAvatarMoverProcess::startDescend", WRAP_METHOD(Debugger, cmdStartDescend));
+	registerCmd("QuickAvatarMoverProcess::stopMoveUp", WRAP_METHOD(Debugger, cmdStopMoveUp));
+	registerCmd("QuickAvatarMoverProcess::stopMoveDown", WRAP_METHOD(Debugger, cmdStopMoveDown));
+	registerCmd("QuickAvatarMoverProcess::stopMoveLeft", WRAP_METHOD(Debugger, cmdStopMoveLeft));
+	registerCmd("QuickAvatarMoverProcess::stopMoveRight", WRAP_METHOD(Debugger, cmdStopMoveRight));
+	registerCmd("QuickAvatarMoverProcess::stopAscend", WRAP_METHOD(Debugger, cmdStopAscend));
+	registerCmd("QuickAvatarMoverProcess::stopDescend", WRAP_METHOD(Debugger, cmdStopDescend));
+	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
+	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
+
 }
 
 bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
@@ -205,6 +222,114 @@ bool Debugger::cmdDecrementSortOrder(int argc, const char **argv) {
 	if (gump)
 		gump->IncSortOrder(-1);
 	return false;
+}
+
+
+
+bool Debugger::cmdStartMoveUp(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		QuickAvatarMoverProcess::startMover(-64, -64, 0, 0);
+		return false;
+	} else {
+		debugPrintf("Cheats aren't enabled\n");
+		return true;
+	}
+}
+
+bool Debugger::cmdStartMoveDown(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		QuickAvatarMoverProcess::startMover(+64, +64, 0, 1);
+		return false;
+	} else {
+		debugPrintf("Cheats aren't enabled\n");
+		return true;
+	}
+}
+
+bool Debugger::cmdStartMoveLeft(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		QuickAvatarMoverProcess::startMover(-64, +64, 0, 2);
+		return false;
+	} else {
+		debugPrintf("Cheats aren't enabled\n");
+		return true;
+	}
+}
+
+bool Debugger::cmdStartMoveRight(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		QuickAvatarMoverProcess::startMover(+64, -64, 0, 3);
+		return false;
+	} else {
+		debugPrintf("Cheats aren't enabled\n");
+		return true;
+	}
+}
+
+bool Debugger::cmdStartAscend(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		QuickAvatarMoverProcess::startMover(0, 0, 8, 4);
+		return false;
+	} else {
+		debugPrintf("Cheats aren't enabled\n");
+		return true;
+	}
+}
+
+bool Debugger::cmdStartDescend(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		QuickAvatarMoverProcess::startMover(0, 0, -8, 5);
+		return false;
+	} else {
+		debugPrintf("Cheats aren't enabled\n");
+		return true;
+	}
+}
+
+bool Debugger::cmdStopMoveUp(int argc, const char **argv) {
+	QuickAvatarMoverProcess::terminateMover(0);
+	return false;
+}
+
+bool Debugger::cmdStopMoveDown(int argc, const char **argv) {
+	QuickAvatarMoverProcess::terminateMover(1);
+	return false;
+}
+
+bool Debugger::cmdStopMoveLeft(int argc, const char **argv) {
+	QuickAvatarMoverProcess::terminateMover(2);
+	return false;
+}
+
+bool Debugger::cmdStopMoveRight(int argc, const char **argv) {
+	QuickAvatarMoverProcess::terminateMover(3);
+	return false;
+}
+
+bool Debugger::cmdStopAscend(int argc, const char **argv) {
+	QuickAvatarMoverProcess::terminateMover(4);
+	return false;
+}
+
+bool Debugger::cmdStopDescend(int argc, const char **argv) {
+	QuickAvatarMoverProcess::terminateMover(5);
+	return false;
+}
+
+bool Debugger::cmdToggleQuarterSpeed(int argc, const char **argv) {
+	QuickAvatarMoverProcess::setQuarterSpeed(!QuickAvatarMoverProcess::isQuarterSpeed());
+	return false;
+}
+
+bool Debugger::cmdToggleClipping(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		QuickAvatarMoverProcess::toggleClipping();
+		debugPrintf("QuickAvatarMoverProcess::_clipping = %s\n",
+			QuickAvatarMoverProcess::isClipping() ? "true" : "false");
+	} else {
+		debugPrintf("Cheats aren't enabled\n");
+	}
+	return true;
 }
 
 } // End of namespace Ultima8
