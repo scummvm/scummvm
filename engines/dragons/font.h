@@ -50,11 +50,6 @@ private:
 	uint16 mapChar(uint16 in);
 };
 
-struct ScreenTextEntry {
-	Common::Point position;
-	Graphics::Surface *surface;
-};
-
 class FontManager {
 public:
 	Font *_fonts[3];
@@ -63,8 +58,9 @@ private:
 	uint16 _dat_80086f48_fontColor_flag;
 	DragonsEngine *_vm;
 	Screen *_screen;
-	Common::List<ScreenTextEntry *> _screenTexts;
-	byte *_palettes;
+	Graphics::Surface *_surface;
+
+	int _numTextEntries;
 
 public:
 	FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive);
@@ -76,7 +72,6 @@ public:
 
 private:
 	Font *loadFont(uint16 index, Common::SeekableReadStream &stream);
-	void loadPalettes();
 };
 
 } // End of namespace Dragons

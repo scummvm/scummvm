@@ -40,9 +40,9 @@ DragonRMS::DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD) : _dr
 	for (int i = 0; i < _count; i++) {
 		_rmsObjects[i]._field0 = readStream->readSint32LE();
 		readStream->read(_rmsObjects[i]._sceneName, 4);
-		_rmsObjects[i]._obdOffset = readStream->readSint32LE();
-		_rmsObjects[i]._fieldC = readStream->readSint32LE();
-		_rmsObjects[i]._field10ObdOffset = readStream->readSint32LE();
+		_rmsObjects[i]._afterDataLoadScript = readStream->readSint32LE();
+		_rmsObjects[i]._afterSceneLoadScript = readStream->readSint32LE();
+		_rmsObjects[i]._beforeLoadScript = readStream->readSint32LE();
 		_rmsObjects[i]._inventoryBagPosition = readStream->readSint16LE();
 		_rmsObjects[i]._field16 = readStream->readSint32LE();
 		_rmsObjects[i]._field1a = readStream->readSint16LE();
@@ -53,16 +53,16 @@ char *DragonRMS::getSceneName(uint32 sceneId) {
 	return getRMS(sceneId)->_sceneName;
 }
 
-byte *DragonRMS::getObdData(uint32 sceneId) {
-	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_obdOffset);
+byte *DragonRMS::getBeforeSceneDataLoadedScript(uint32 sceneId) {
+	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_beforeLoadScript);
 }
 
-byte *DragonRMS::getObdDataField10(uint32 sceneId) {
-	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_field10ObdOffset);
+byte *DragonRMS::getAfterSceneDataLoadedScript(uint32 sceneId) {
+	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_afterDataLoadScript);
 }
 
-byte *DragonRMS::getObdDataFieldC(uint32 sceneId) {
-	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_fieldC);
+byte *DragonRMS::getAfterSceneLoadedScript(uint32 sceneId) {
+	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_afterSceneLoadScript);
 }
 
 int16 DragonRMS::getInventoryPosition(uint32 sceneId) {

@@ -29,9 +29,9 @@ namespace Dragons {
 struct RMS {
 	int32 _field0;
 	char _sceneName[4];
-	uint32 _obdOffset;
-	int32 _fieldC;
-	uint32 _field10ObdOffset;
+	uint32 _afterDataLoadScript;
+	int32 _afterSceneLoadScript;
+	uint32 _beforeLoadScript;
 	int16 _inventoryBagPosition;
 	int32 _field16;
 	int16 _field1a;
@@ -48,9 +48,9 @@ private:
 public:
 	DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD);
 	char *getSceneName(uint32 sceneId);
-	byte *getObdData(uint32 sceneId);
-	byte *getObdDataField10(uint32 sceneId);
-	byte *getObdDataFieldC(uint32 sceneId);
+	byte *getAfterSceneDataLoadedScript(uint32 sceneId);
+	byte *getBeforeSceneDataLoadedScript(uint32 sceneId);
+	byte *getAfterSceneLoadedScript(uint32 sceneId);
 	int16 getInventoryPosition(uint32 sceneId);
 
 private:

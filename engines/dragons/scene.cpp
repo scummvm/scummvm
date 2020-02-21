@@ -74,7 +74,7 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 	_data_800633ee = 0;
 
 	if (!(sceneId & 0x8000)) {
-		byte *obd = _dragonRMS->getObdDataFieldC(sceneId);
+		byte *obd = _dragonRMS->getAfterSceneLoadedScript(sceneId);
 		ScriptOpCall scriptOpCall(obd + 4, READ_LE_UINT32(obd));
 		_scriptOpcodes->runScript(scriptOpCall);
 	}
@@ -104,7 +104,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_screen->setScreenShakeOffset(0, 0);
 
 	if (!(sceneId & 0x8000)) {
-		byte *obd = _dragonRMS->getObdDataField10(sceneId);
+		byte *obd = _dragonRMS->getBeforeSceneDataLoadedScript(sceneId);
 		ScriptOpCall scriptOpCall(obd + 4, READ_LE_UINT32(obd));
 		uint16 oldSceneId = _currentSceneId;
 		_currentSceneId = -1;
@@ -326,7 +326,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	}
 
 	if (!(sceneId & 0x8000)) {
-		byte *obd = _dragonRMS->getObdData(sceneId);
+		byte *obd = _dragonRMS->getAfterSceneDataLoadedScript(sceneId);
 		ScriptOpCall scriptOpCall(obd + 4, READ_LE_UINT32(obd));
 		_scriptOpcodes->runScript(scriptOpCall);
 	}

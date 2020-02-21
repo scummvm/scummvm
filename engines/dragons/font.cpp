@@ -28,7 +28,6 @@
 #include "dragons/screen.h"
 #include "dragons/dragons.h"
 
-
 namespace Dragons {
 
 Font::Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelOffset, uint32 pixelSize) {
@@ -70,6 +69,9 @@ Graphics::Surface *Font::render(uint16 *text, uint16 length) {
 }
 
 void Font::renderToSurface(Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint16 length) {
+	if (x < 0 || y < 0 || x + length * 8 >= DRAGONS_SCREEN_WIDTH || y + 8 >= DRAGONS_SCREEN_HEIGHT) {
+		return;
+	}
 	byte *startPixelOffset = (byte *)surface->getPixels() + y * surface->pitch + x * surface->format.bytesPerPixel;
 	for (int i = 0; i < length; i++) {
 		byte *pixels = startPixelOffset;
@@ -84,7 +86,7 @@ void Font::renderToSurface(Graphics::Surface *surface, int16 x, int16 y, uint16 
 	}
 }
 
-FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive): _vm(vm), _screen(screen) {
+FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive): _vm(vm), _screen(screen), _numTextEntries(0) {
 	uint32 fileSize;
 	byte *data = bigfileArchive->load("fntfiles.dat", fileSize);
 	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
@@ -93,47 +95,40 @@ FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigf
 	_fonts[1] = loadFont(1, *readStream);
 	_fonts[2] = loadFont(2, *readStream);
 
-	loadPalettes();
-
 	delete readStream;
 
 	_dat_80086f48_fontColor_flag = 0;
+
+	_surface = new Graphics::Surface();
+	_surface->create(DRAGONS_SCREEN_WIDTH, DRAGONS_SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	clearText(); //clear backing surface.
 }
 
 FontManager::~FontManager() {
 	delete _fonts[0];
 	delete _fonts[1];
 	delete _fonts[2];
-	free(_palettes);
+
+	_surface->free();
+	delete _surface;
 }
 
 void FontManager::addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 fontType) {
 	assert(length < 1024);
 	assert(fontType < 4);
-	ScreenTextEntry *screenTextEntry = new ScreenTextEntry();
-	screenTextEntry->position = Common::Point(x, y);
-	screenTextEntry->surface = _fonts[fontType]->render(text, length);
-
-	_screenTexts.push_back(screenTextEntry);
+	_fonts[fontType]->renderToSurface(_surface, x, y, text, length);
+	++_numTextEntries;
 }
 
 void FontManager::draw() {
-	Common::List<ScreenTextEntry*>::iterator it = _screenTexts.begin();
-	while (it != _screenTexts.end()) {
-		ScreenTextEntry *entry = *it;
-		_screen->copyRectToSurface8bpp(*entry->surface, _screen->getPalette(2), entry->position.x, entry->position.y, Common::Rect(entry->surface->w, entry->surface->h), false, NORMAL);
-		it++;
+	if(_numTextEntries > 0) {
+		_screen->copyRectToSurface8bpp(*_surface, _screen->getPalette(2), 0, 0, Common::Rect(_surface->w, _surface->h), false, NORMAL);
 	}
 }
 
 void FontManager::clearText() {
-	while (!_screenTexts.empty()) {
-		ScreenTextEntry *screenText = _screenTexts.back();
-		screenText->surface->free();
-		delete screenText->surface;
-		delete screenText;
-		_screenTexts.pop_back();
-	}
+	_numTextEntries = 0;
+	_surface->fillRect(Common::Rect(0, 0, _surface->w - 1, _surface->h - 1), 0);
 }
 
 Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
@@ -158,40 +153,6 @@ Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
 
 	stream.seek(mapOffset);
 	return new Font(stream, mapSize, pixelsOffset, pixelsSize);
-}
-
-uint16 packColor(uint8 r, uint8 g, uint8 b) {
-	return (r / 8) << 10 | (g / 8) << 5 | (b / 8);
-}
-
-void FontManager::loadPalettes() {
-//	Common::File fd;
-//	if (!fd.open("dragon.exe")) {
-//		error("Failed to open dragon.exe");
-//	}
-//	fd.seek(0x5336c); //TODO handle other game variants
-//
-//	_palettes = (byte *)malloc(256 * 2 * 4);
-//	fd.read(_palettes, 256 * 2 * 4);
-//
-//	_palettes[2 * 256 + 0x21] = 0x80; //HACK make this color transparent
-//	fd.close();
-
-	//TODO where does original set its palette???
-	_palettes = (byte *)malloc(0x200);
-	memset(_palettes, 0, 0x200);
-	WRITE_LE_INT16(&_palettes[0], 0x8000);
-
-//	WRITE_LE_INT16(&_palettes[0x11 * 2], packColor(95, 95, 95));
-	WRITE_LE_INT16(&_palettes[0x10 * 2], packColor(0, 0, 0) | 0x8000);
-	WRITE_LE_INT16(&_palettes[0x11 * 2], 0x7fe0); //packColor(254, 255, 0));
-	WRITE_LE_INT16(&_palettes[0x12 * 2], 0); //packColor(95, 95, 95));
-	WRITE_LE_INT16(&_palettes[0x13 * 2], packColor(175, 175, 175));
-
-	WRITE_LE_INT16(&_palettes[0x20 * 2], packColor(0, 0, 0) | 0x8000);
-	WRITE_LE_INT16(&_palettes[0x21 * 2], packColor(175, 175, 175));
-	WRITE_LE_INT16(&_palettes[0x22 * 2], 0);
-	WRITE_LE_INT16(&_palettes[0x23 * 2], packColor(175, 175, 175));
 }
 
 void updatePalEntry(uint16 *pal, uint16 index, uint16 newValue) {

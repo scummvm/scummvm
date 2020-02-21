@@ -30,6 +30,9 @@ namespace Dragons {
 #define DRAGONS_NUM_PALETTES 5
 #define DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE 256
 
+#define DRAGONS_SCREEN_WIDTH 320
+#define DRAGONS_SCREEN_HEIGHT 200
+
 enum AlphaBlendMode {
 	NONE,
 	NORMAL,       // 50% x Back + 50% x Sprite
