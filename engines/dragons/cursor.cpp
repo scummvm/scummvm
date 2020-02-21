@@ -234,7 +234,7 @@ int16 Cursor::updateIniFromScene() {
 					uint32 newSeqId = 1;
 					for (int idx = 0; idx < 5; idx++) {
 						_data_800728b0_cursor_seqID = idx;
-						byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
+						byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getAfterSceneLoadedScript(sceneId);
 						ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
 //						uVar17 = uVar15;
@@ -261,7 +261,7 @@ int16 Cursor::updateIniFromScene() {
 					_data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
-				byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
+				byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getAfterSceneLoadedScript(sceneId);
 				ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
 //				local_48 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
