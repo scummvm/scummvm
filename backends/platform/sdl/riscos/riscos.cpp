@@ -30,6 +30,8 @@
 #include "backends/fs/riscos/riscos-fs-factory.h"
 #include "backends/fs/riscos/riscos-fs.h"
 
+#include "common/config-manager.h"
+
 #include <kernel.h>
 #include <swis.h>
 
