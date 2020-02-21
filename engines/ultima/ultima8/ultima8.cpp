@@ -1040,24 +1040,13 @@ void Ultima8Engine::enterTextMode(Gump *gump) {
 
 	if (!_textModes.empty()) {
 		_textModes.remove(gump->getObjId());
-	} else {
-#ifdef TODO
-		SDL_EnableUNICODE(1);
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-#endif
 	}
 	_textModes.push_front(gump->getObjId());
 }
 
 void Ultima8Engine::leaveTextMode(Gump *gump) {
-	if (_textModes.empty()) return;
-	_textModes.remove(gump->getObjId());
-	if (_textModes.empty()) {
-#ifdef TODO
-		SDL_EnableUNICODE(0);
-		SDL_EnableKeyRepeat(0, 0);
-#endif
-	}
+	if (!_textModes.empty())
+		_textModes.remove(gump->getObjId());
 }
 
 void Ultima8Engine::handleEvent(const Common::Event &event) {
