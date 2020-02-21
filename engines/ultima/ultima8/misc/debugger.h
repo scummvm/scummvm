@@ -35,6 +35,11 @@ class Ultima1Engine;
  */
 class Debugger : public Shared::Debugger {
 private:
+	// Audio Process
+	bool cmdListSFX(int argc, const char **argv);
+	bool cmdStopSFX(int argc, const char **argv);
+	bool cmdPlaySFX(int argc, const char **argv);
+
 	// Game Map Gump
 	bool cmdToggleHighlightItems(int argc, const char **argv);
 	bool cmdDumpMap(int argc, const char **argvv);

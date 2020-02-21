@@ -34,8 +34,8 @@ namespace Ultima8 {
 
 class AudioSample;
 
-class AudioProcess :
-	public Process {
+class AudioProcess : public Process {
+public:
 	struct SampleInfo {
 		int32       _sfxNum;
 		int32       _priority;
@@ -60,8 +60,7 @@ class AudioProcess :
 			_lVol(lv), _rVol(rv) { }
 	};
 
-	Std::list<SampleInfo>   sample_info;
-
+	Std::list<SampleInfo> _sampleInfo;
 public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -79,11 +78,6 @@ public:
 	INTRINSIC(I_isSFXPlaying);
 	INTRINSIC(I_setVolumeSFX);
 	INTRINSIC(I_stopSFX);
-
-	static void ConCmd_listSFX(const Console::ArgvType &argv);
-	static void ConCmd_stopSFX(const Console::ArgvType &argv);
-	static void ConCmd_playSFX(const Console::ArgvType &argv);
-
 
 	void run() override;
 

@@ -22,6 +22,7 @@
 
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 
@@ -29,6 +30,10 @@ namespace Ultima {
 namespace Ultima8 {
 
 Debugger::Debugger() : Shared::Debugger() {
+	registerCmd("AudioProcess::listSFX", WRAP_METHOD(Debugger, cmdListSFX));
+	registerCmd("AudioProcess::playSFX", WRAP_METHOD(Debugger, cmdPlaySFX));
+	registerCmd("AudioProcess::stopSFX", WRAP_METHOD(Debugger, cmdStopSFX));
+
 	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdToggleHighlightItems));
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
 	registerCmd("GameMapGump::incrementSortOrder", WRAP_METHOD(Debugger, cmdIncrementSortOrder));
@@ -49,6 +54,60 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
 	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
 
+}
+
+
+bool Debugger::cmdListSFX(int argc, const char **argv) {
+	AudioProcess *ap = AudioProcess::get_instance();
+	if (!ap) {
+		debugPrintf("Error: No AudioProcess\n");
+
+	} else {
+		Std::list<AudioProcess::SampleInfo>::iterator it;
+		for (it = ap->_sampleInfo.begin(); it != ap->_sampleInfo.end(); ++it) {
+			debugPrintf("Sample: num %d, obj %d, loop %d, prio %d",
+				it->_sfxNum, it->_objId, it->_loops, it->_priority);
+			if (!it->_barked.empty()) {
+				debugPrintf(", speech: \"%s\"",
+					it->_barked.substr(it->_curSpeechStart, it->_curSpeechEnd - it->_curSpeechStart).c_str());
+			}
+			debugPrintf("\n");
+		}
+	}
+
+	return true;
+}
+
+bool Debugger::cmdStopSFX(int argc, const char **argv) {
+	AudioProcess *ap = AudioProcess::get_instance();
+	if (!ap) {
+		debugPrintf("Error: No AudioProcess\n");
+		return true;
+	} else if (argc < 2) {
+		debugPrintf("usage: stopSFX <_sfxNum> [<_objId>]\n");
+		return true;
+	} else {
+		int _sfxNum = static_cast<int>(strtol(argv[1], 0, 0));
+		ObjId _objId = (argc >= 3) ? static_cast<ObjId>(strtol(argv[2], 0, 0)) : 0;
+
+		ap->stopSFX(_sfxNum, _objId);
+		return false;
+	}
+}
+
+bool Debugger::cmdPlaySFX(int argc, const char **argv) {
+	AudioProcess *ap = AudioProcess::get_instance();
+	if (!ap) {
+		debugPrintf("Error: No AudioProcess\n");
+		return true;
+	} else if (argc < 2) {
+		debugPrintf("usage: playSFX <_sfxNum>\n");
+		return true;
+	} else {
+		int _sfxNum = static_cast<int>(strtol(argv[1], 0, 0));
+		ap->playSFX(_sfxNum, 0x60, 0, 0);
+		return false;
+	}
 }
 
 bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {

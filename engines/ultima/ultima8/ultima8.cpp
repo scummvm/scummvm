@@ -215,10 +215,6 @@ bool Ultima8Engine::initialize() {
 	con->AddConsoleCommand("MemoryManager::test",
 		MemoryManager::ConCmd_test);
 
-	con->AddConsoleCommand("AudioProcess::listSFX", AudioProcess::ConCmd_listSFX);
-	con->AddConsoleCommand("AudioProcess::playSFX", AudioProcess::ConCmd_playSFX);
-	con->AddConsoleCommand("AudioProcess::stopSFX", AudioProcess::ConCmd_stopSFX);
-
 	return true;
 }
 
@@ -255,10 +251,6 @@ void Ultima8Engine::deinitialize() {
 	con->RemoveConsoleCommand(ObjectManager::ConCmd_objectInfo);
 	con->RemoveConsoleCommand(MemoryManager::ConCmd_MemInfo);
 	con->RemoveConsoleCommand(MemoryManager::ConCmd_test);
-
-	con->RemoveConsoleCommand(AudioProcess::ConCmd_listSFX);
-	con->RemoveConsoleCommand(AudioProcess::ConCmd_stopSFX);
-	con->RemoveConsoleCommand(AudioProcess::ConCmd_playSFX);
 }
 
 void Ultima8Engine::startup() {

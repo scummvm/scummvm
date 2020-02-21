@@ -25,6 +25,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
