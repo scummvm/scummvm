@@ -1192,6 +1192,19 @@ EOF
 
 for ac_option in $@; do
 	case "$ac_option" in
+	# Silently ignore options valid for Autotools configure.
+	--build=*)                                           ;;
+	--program-prefix=*)                                  ;;
+	--sbindir=*)                                         ;;
+	--sysconfdir=*)                                      ;;
+	--includedir=*)                                      ;;
+	--libexecdir=*)                                      ;;
+	--localstatedir=*)                                   ;;
+	--sharedstatedir=*)                                  ;;
+	--infodir=*)                                         ;;
+	--disable-dependency-tracking)                       ;;
+	--enable-dependency-tracking)                        ;;
+	# End of ignored options.
 	--enable-static)              _static_build=yes      ;;
 	--disable-16bit)              _16bit=no              ;;
 	--enable-highres)             _highres=yes           ;;
