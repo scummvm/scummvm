@@ -1155,6 +1155,7 @@ Some influential environment variables:
   AR                 archiver command
   AS                 assembler command
   ASFLAGS            assembler flags
+  CONFIGURE_NO_HOST  Ignore the cross-compile target set by the --host= option
   CPPFLAGS           C++ preprocessor flags, e.g. -I<include dir> if you have
                      headers in a nonstandard directory <include dir>
   CXX                C++ compiler command
@@ -1474,7 +1475,11 @@ for ac_option in $@; do
 		_xcodetoolspath=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--host=*)
-		_host=`echo $ac_option | cut -d '=' -f 2`
+		if test -z "$CONFIGURE_NO_HOST"; then
+			_host=`echo $ac_option | cut -d '=' -f 2`
+		else
+			echo "Ignoring --host option!" >&2
+		fi
 		;;
 	--prefix=*)
 		prefix=`echo $ac_option | cut -d '=' -f 2`
