@@ -154,7 +154,6 @@ Common::String getPath(Common::String path, Common::String cwd) {
 }
 
 Common::String pathMakeRelative(Common::String path) {
-	warning("path: %s", path.c_str());
 	Common::String initialPath = Common::normalizePath(g_director->getCurrentPath() + convertPath(path), '/');
 	Common::File f;
 	Common::String convPath = initialPath;
@@ -167,8 +166,6 @@ Common::String pathMakeRelative(Common::String path) {
 	while (convPath.contains('/')) {
 		int pos = convPath.find('/');
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
-
-		warning("Trying %s", convPath.c_str());
 
 		if (!f.open(convPath))
 			continue;
