@@ -67,17 +67,16 @@ void Background::InitBackground() {
 	};
 
 	// set current background
-	_pCurBgnd = new BACKGND{
-		BLACK,			// sky color
-		Common::Point(0, 0),	// initial world pos
-		Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// scroll limits
-		0,				// no background update process
-		NULL,			// no x scroll table
-		NULL,			// no y scroll table
-		2,				// 2 playfields
-		playfield,		// playfield pointer
-		false			// no auto-erase
-	};
+	_pCurBgnd = new BACKGND();
+	_pCurBgnd->rgbSkyColor = BLACK;
+	_pCurBgnd->ptInitWorld = Common::Point(0, 0);
+	_pCurBgnd->rcScrollLimits = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_pCurBgnd->refreshRate = 0;	// no background update process
+	_pCurBgnd->pXscrollTable = nullptr;
+	_pCurBgnd->pYscrollTable = nullptr;
+	_pCurBgnd->numPlayfields = 2;
+	_pCurBgnd->fieldArray = playfield;
+	_pCurBgnd->bAutoErase = false;
 
 	// init background sky color
 	SetBgndColor(_pCurBgnd->rgbSkyColor);

@@ -91,8 +91,8 @@ public:
 private:
 	char _tBuffer[TBUFSZ];
 
-	SCNHANDLE _hTagFont = 0, _hTalkFont = 0;
-	SCNHANDLE _hRegularTalkFont = 0, _hRegularTagFont = 0;
+	SCNHANDLE _hTagFont, _hTalkFont;
+	SCNHANDLE _hRegularTalkFont, _hRegularTagFont;
 };
 
 } // End of namespace Tinsel

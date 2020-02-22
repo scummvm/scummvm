@@ -148,7 +148,7 @@ private:
 	Font *_font;
 
 	// current background
-	const BACKGND *_pCurBgnd;
+	BACKGND *_pCurBgnd;
 
 	SCNHANDLE _hBgPal;	// Background's palette
 	int _BGspeed;
