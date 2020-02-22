@@ -53,6 +53,7 @@ namespace Ultima8 {
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
+class Debugger;
 class Kernel;
 class MemoryManager;
 class UCMachine;
@@ -77,6 +78,7 @@ struct Texture;
 class AudioMixer;
 
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
+	friend class Debugger;
 private:
 	Std::list<ObjId> _textModes;      //!< Gumps that want text mode
 	bool _ttfOverrides;
@@ -147,33 +149,6 @@ private:
 
 	static void conAutoPaint(void);
 
-	// Load and save games from arbitrary filenames from the console
-	static void ConCmd_saveGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::saveGame <optional filename>" console command
-	static void ConCmd_loadGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::loadGame <optional filename>" console command
-	static void ConCmd_newGame(const Console::ArgvType &argv);          //!< "Ultima8Engine::newGame" console command
-//	static void ConCmd_ForceQuit(const Console::ArgvType &argv);
-
-	static void ConCmd_quit(const Console::ArgvType &argv);             //!< "quit" console command
-
-	static void ConCmd_changeGame(const Console::ArgvType &argv);       //!< "Ultima8Engine::changeGame" console command
-	static void ConCmd_listGames(const Console::ArgvType &argv);            //!< "Ultima8Engine::listGames" console command
-
-	static void ConCmd_setVideoMode(const Console::ArgvType &argv);     //!< "Ultima8Engine::setVideoMode" console command
-
-	// This should be a console variable once they are implemented
-	static void ConCmd_drawRenderStats(const Console::ArgvType &argv);  //!< "Ultima8Engine::drawRenderStats" console command
-
-	static void ConCmd_engineStats(const Console::ArgvType &argv);  //!< "Ultima8Engine::engineStats" console command
-
-	static void ConCmd_toggleAvatarInStasis(const Console::ArgvType &argv); //!< "Ultima8Engine::toggleAvatarInStasis" console command
-	static void ConCmd_togglePaintEditorItems(const Console::ArgvType &argv);   //!< "Ultima8Engine::togglePaintEditorItems" console command
-	static void ConCmd_toggleShowTouchingItems(const Console::ArgvType &argv);  //!< "Ultima8Engine::toggleShowTouchingItems" console command
-
-	static void ConCmd_closeItemGumps(const Console::ArgvType &argv);   //!< "Ultima8Engine::closeItemGumps" console command
-
-	static void ConCmd_toggleCheatMode(const Console::ArgvType &argv);  //!< "Cheat::toggle" console command
-
-	static void ConCmd_memberVar(const Console::ArgvType &argv);    //!< "Ultima8Engine::memberVar <member> [newvalue] [updateini]" console command
 private:
 	//! write savegame info (time, ..., game-specifics)
 	void writeSaveInfo(ODataSource *ods);

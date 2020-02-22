@@ -35,6 +35,27 @@ class Ultima1Engine;
  */
 class Debugger : public Shared::Debugger {
 private:
+	const char *strBool(bool flag) {
+		return flag ? "true" : "false";
+	}
+private:
+	// Engine
+	bool cmdSaveGame(int argc, const char **argv);
+	bool cmdLoadGame(int argc, const char **argv);
+	bool cmdNewGame(int argc, const char **argv);
+	bool cmdQuit(int argc, const char **argv);
+	bool cmdChangeGame(int argc, const char **argv);
+	bool cmdListGames(int argc, const char **argv);
+	bool cmdSetVideoMode(int argc, const char **argv);
+	bool cmdDrawRenderStats(int argc, const char **argv);
+	bool cmdEngineStats(int argc, const char **argv);
+	bool cmdToggleAvatarInStasis(int argc, const char **argv);
+	bool cmdTogglePaintEditorItems(int argc, const char **argv);
+	bool cmdToggleShowTouchingItems(int argc, const char **argv);
+	bool cmdCloseItemGumps(int argc, const char **argv);
+	bool cmdToggleCheatMode(int argc, const char **argv);
+	bool cmdMemberVar(int argc, const char **argv);
+
 	// Audio Process
 	bool cmdListSFX(int argc, const char **argv);
 	bool cmdStopSFX(int argc, const char **argv);
@@ -61,7 +82,9 @@ private:
 
 	// Memory Manager
 	bool cmdMemInfo(int argc, const char **argv);
+#ifdef DEBUG
 	bool cmdTest(int argc, const char **argv);
+#endif
 
 	// Object Manager
 	bool cmdObjectTypes(int argc, const char **argv);
