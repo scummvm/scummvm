@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_USECODE_UCMACHINE_H
 #define ULTIMA8_USECODE_UCMACHINE_H
 
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
@@ -114,25 +115,25 @@ private:
 
 #ifdef DEBUG
 	// tracing
-	bool tracing_enabled;
-	bool trace_all;
-	bool trace_events;
-	Std::set<ObjId> trace_ObjIDs;
-	Std::set<ProcId> trace_PIDs;
-	Std::set<uint16> trace_classes;
+	bool _tracingEnabled;
+	bool _traceAll;
+	bool _traceEvents;
+	Std::set<ObjId> _traceObjIDs;
+	Std::set<ProcId> _tracePIDs;
+	Std::set<uint16> _traceClasses;
 
 	inline bool trace_show(ProcId pid, ObjId objid, uint16 ucclass) {
-		if (!tracing_enabled) return false;
-		if (trace_all) return true;
-		if (trace_ObjIDs.find(objid) != trace_ObjIDs.end()) return true;
-		if (trace_PIDs.find(pid) != trace_PIDs.end()) return true;
-		if (trace_classes.find(ucclass) != trace_classes.end()) return true;
+		if (!_tracingEnabled) return false;
+		if (_traceAll) return true;
+		if (_traceObjIDs.find(objid) != _traceObjIDs.end()) return true;
+		if (_tracePIDs.find(pid) != _tracePIDs.end()) return true;
+		if (_traceClasses.find(ucclass) != _traceClasses.end()) return true;
 		return false;
 	}
 
 public:
 	bool trace_event() {
-		return (tracing_enabled && (trace_all || trace_events));
+		return (_tracingEnabled && (_traceAll || _traceEvents));
 	}
 #endif
 };

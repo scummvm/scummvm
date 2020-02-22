@@ -33,7 +33,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 #ifdef DEBUG
-ObjId Pathfinder::visualdebug_actor = 0xFFFF;
+ObjId Pathfinder::_visualDebugActor = 0xFFFF;
 #endif
 
 struct PathNode {
@@ -403,12 +403,12 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 #endif
 
 #ifdef DEBUG
-	if (_actor->getObjId() == visualdebug_actor) {
+	if (_actor->getObjId() == _visualDebugActor) {
 		RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 		screen->BeginPainting();
 		drawpath(newnode, 0xFFFFFF00, done);
 		screen->EndPainting();
-		SDL_Delay(250);
+		g_system->delayMillis(250);
 		if (!done) {
 			screen->BeginPainting();
 			drawpath(newnode, 0xFFB0B000, done);
@@ -513,7 +513,7 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 #endif
 
 #ifdef DEBUG
-	if (_actor->getObjId() == visualdebug_actor) {
+	if (_actor->getObjId() == _visualDebugActor) {
 		RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 		screen->BeginPainting();
 		if (_targetItem)

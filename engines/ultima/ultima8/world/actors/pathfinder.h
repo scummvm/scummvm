@@ -76,7 +76,7 @@ public:
 	bool pathfind(Std::vector<PathfindingAction> &path);
 
 #ifdef DEBUG
-	static ObjId visualdebug_actor;
+	static ObjId _visualDebugActor;
 #endif
 
 

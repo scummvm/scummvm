@@ -48,6 +48,7 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/pathfinder.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -153,7 +154,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("ShapeViewerGump::U8ShapeViewer", WRAP_METHOD(Debugger, cmdU8ShapeViewer));
 
 #ifdef DEBUG
-	registerCmd("Pathfinder::visualDebug", Pathfinder::cmdVisualDebugPathfinder);
+	registerCmd("Pathfinder::visualDebug", WRAP_METHOD(Debugger, cmdVisualDebugPathfinder));
 #endif
 }
 
@@ -1145,7 +1146,7 @@ bool Debugger::cmdMemInfo(int argc, const char **argv) {
 }
 
 #ifdef DEBUG
-bool Debugger::cmdTest(int argc, const char **argv) {
+bool Debugger::cmdTestMemory(int argc, const char **argv) {
 	return true;
 }
 #endif
@@ -1331,11 +1332,11 @@ bool Debugger::cmdTracePID(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 _pid = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
+	uint16 pid = static_cast<uint16>(strtol(argv[1], 0, 0));
 
 	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_PIDs.insert(_pid);
+	uc->_tracingEnabled = true;
+	uc->_tracePIDs.insert(pid);
 
 	debugPrintf("UCMachine: tracing process %d\n", pid);
 	return true;
@@ -1347,11 +1348,11 @@ bool Debugger::cmdTraceObjID(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 objid = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
+	uint16 objid = static_cast<uint16>(strtol(argv[1], 0, 0));
 
 	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_ObjIDs.insert(objid);
+	uc->_tracingEnabled = true;
+	uc->_traceObjIDs.insert(objid);
 
 	debugPrintf("UCMachine: tracing object %d\n", objid);
 	return true;
@@ -1363,11 +1364,11 @@ bool Debugger::cmdTraceClass(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 ucclass = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
+	uint16 ucclass = static_cast<uint16>(strtol(argv[1], 0, 0));
 
 	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_classes.insert(ucclass);
+	uc->_tracingEnabled = true;
+	uc->_traceClasses.insert(ucclass);
 
 	debugPrintf("UCMachine: tracing class %d\n", ucclass);
 	return true;
@@ -1375,8 +1376,8 @@ bool Debugger::cmdTraceClass(int argc, const char **argv) {
 
 bool Debugger::cmdTraceAll(int argc, const char **argv) {
 	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_all = true;
+	uc->_tracingEnabled = true;
+	uc->_traceAll = true;
 
 	debugPrintf("UCMachine: tracing all usecode\n");
 	return true;
@@ -1384,21 +1385,21 @@ bool Debugger::cmdTraceAll(int argc, const char **argv) {
 
 bool Debugger::cmdTraceEvents(int argc, const char **argv) {
 	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_events = true;
+	uc->_tracingEnabled = true;
+	uc->_traceEvents = true;
 
 	debugPrintf("UCMachine: tracing usecode events\n");
 	return true;
 }
 
-bool Debugger::cmdStopTrace(const Console::ArgvType &/*argv*/) {
+bool Debugger::cmdStopTrace(int argc, const char **argv) {
 	UCMachine *uc = UCMachine::get_instance();
-	uc->trace_ObjIDs.clear();
-	uc->trace_PIDs.clear();
-	uc->trace_classes.clear();
-	uc->tracing_enabled = false;
-	uc->trace_all = false;
-	uc->trace_events = false;
+	uc->_traceObjIDs.clear();
+	uc->_tracePIDs.clear();
+	uc->_traceClasses.clear();
+	uc->_tracingEnabled = false;
+	uc->_traceAll = false;
+	uc->_traceEvents = false;
 
 	debugPrintf("Trace stopped\n");
 	return true;
@@ -1506,16 +1507,18 @@ bool Debugger::cmdVisualDebugPathfinder(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Usage: Pathfinder::visualDebug objid\n");
 		debugPrintf("Specify objid -1 to stop tracing.\n");
-		return;
+		return true;
 	}
-	int p = strtol(argv[1].c_str(), 0, 0);
+	int p = strtol(argv[1], 0, 0);
 	if (p == -1) {
-		visualdebug_actor = 0xFFFF;
+		Pathfinder::_visualDebugActor = 0xFFFF;
 		debugPrintf("Pathfinder: stopped visual tracing\n");
 	} else {
-		visualdebug_actor = (uint16)p;
-		debugPrintf("Pathfinder: visually tracing _actor " << visualdebug_actor << Std::endl;
+		Pathfinder::_visualDebugActor = (uint16)p;
+		debugPrintf("Pathfinder: visually tracing _actor %d\n", Pathfinder::_visualDebugActor);
 	}
+
+	return true;
 }
 #endif
 

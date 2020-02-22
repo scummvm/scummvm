@@ -97,8 +97,8 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	_stringIDs = new idMan(1, 65534, 256);
 
 #ifdef DEBUG
-	tracing_enabled = false;
-	trace_all = false;
+	_tracingEnabled = false;
+	_traceAll = false;
 #endif
 }
 
@@ -147,7 +147,7 @@ void UCMachine::execProcess(UCProcess *p) {
 #ifdef DEBUG
 	if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
 		pout << Std::hex << "running process " << p->_pid
-		     << ", item " << p->_itemNum << ", type " << p->type
+		     << ", item " << p->_itemNum << ", type " << p->_type
 		     << ", class " << p->_classId << ", offset " << p->_ip
 		     << Std::dec << Std::endl;
 	}
@@ -354,7 +354,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			//! TODO
 			uint16 arg_bytes = cs.read1();
 			uint16 func = cs.read2();
-			LOGPF(("calli\t\t%04Xh (%02Xh arg bytes) %s \n", func, arg_bytes, _convUse->_intrinsics()[func]));
+			debug(("calli\t\t%04Xh (%02Xh arg bytes) %s \n", func, arg_bytes, _convUse->intrinsics()[func]));
 
 			// !constants
 			if (func >= _intrinsicCount || _intrinsics[func] == 0) {
@@ -1337,7 +1337,7 @@ void UCMachine::execProcess(UCProcess *p) {
 #ifdef DEBUG
 			if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
 				pout << Std::hex << "(still) running process " << p->_pid
-				     << ", item " << p->_itemNum << ", type " << p->type
+				     << ", item " << p->_itemNum << ", type " << p->_type
 				     << ", class " << p->_classId << ", offset " << p->_ip
 				     << Std::dec << Std::endl;
 			}
@@ -1365,10 +1365,10 @@ void UCMachine::execProcess(UCProcess *p) {
 			uint16 offset = cs.read2();
 			uint16 delta = cs.read2();
 			int this_size = cs.read1();
-			(void)cs.read1(); // ??
+			int unknown = cs.read1(); // ??
 
-			LOGPF(("spawn inline\t%04X:%04X+%04X=%04X %02X %02X\n",
-			       classid, offset, delta, offset + delta, this_size, unknown));
+			debug("spawn inline\t%04X:%04X+%04X=%04X %02X %02X\n",
+				classid, offset, delta, offset + delta, this_size, unknown);
 
 			uint32 thisptr = 0;
 			if (this_size > 0)

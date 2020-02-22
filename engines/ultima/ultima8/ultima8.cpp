@@ -1337,9 +1337,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		_settingMan->get("ignore_savegame_mismatch", ignore);
 
 		if (!ignore) {
-			Error(message, "Error Loading savegame " + filename);
-			delete sg;
-			return false;
+			error("%s", message.c_str());
 		}
 		perr << message << Std::endl;
 #else

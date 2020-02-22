@@ -1035,8 +1035,8 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 
 #ifdef DEBUG
 	if (UCMachine::get_instance()->trace_event()) {
-		pout.printf("Item: %d calling usecode event %d @ %04X:%04X\n",
-		            _objId, event, class_id, offset);
+		pout.Print("Item: %d calling usecode event %d @ %04X:%04X\n",
+			_objId, event, class_id, offset);
 	}
 #endif
 
