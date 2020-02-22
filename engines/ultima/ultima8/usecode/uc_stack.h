@@ -24,6 +24,7 @@
 #define ULTIMA8_USECODE_UCSTACK_H
 
 #include "common/scummsys.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {
