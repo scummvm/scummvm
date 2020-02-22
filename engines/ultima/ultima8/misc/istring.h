@@ -27,39 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/shared/std/string.h"
 #include "common/array.h"
 
-#ifdef strcasecmp
-#undef strcasecmp
-#endif
-
-#ifdef strncasecmp
-#undef strncasecmp
-#endif
-
 namespace Ultima {
 namespace Ultima8 {
-
-extern int strcasecmp(const char *s1, const char *s2);
-extern int strncasecmp(const char *s1, const char *s2, uint32 length);
-
-//! Safe strcpy with size checking
-void strcpy_s(char *dest, size_t size, const char *src);
-//! Safe strcpy with size checking from dest array size
-template<size_t size> inline void strcpy_s(char (& dest)[size], const char *src) {
-	strcpy_s(dest, size, src);
-}
-
-//! Safe strcat with size checking
-inline char *strcat_s(char *dest, size_t size, const char *src) {
-	size_t cur = Std::strlen(dest);
-	if (cur < size) strcpy_s(dest + cur, size - cur, src);
-	return dest;
-}
-//! Safe strcat with size checking from dest array size
-template<size_t size> inline char (&strcat_s(char (& dest)[size], const char *src))[size]  {
-	size_t cur = Std::strlen(dest);
-	if (cur < size) strcpy_s(dest + cur, size - cur, src);
-	return dest;
-}
 
 class istring : public Std::string {
 public:
