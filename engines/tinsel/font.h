@@ -33,7 +33,7 @@ namespace Tinsel {
 
 class Font {
 public:
-	Font() : _hTagFont(0), _hTalkFont(0), _hRegularTalkFont(0), _hRegularTagFont(0), _tBuffer("") {
+	Font() : _hTagFont(0), _hTalkFont(0), _hRegularTalkFont(0), _hRegularTagFont(0) {
 	}
 
 	/**
