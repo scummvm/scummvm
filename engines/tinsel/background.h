@@ -73,12 +73,9 @@ struct BACKGND {
 |*			Background Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void InitBackground(		// called to initialize a background
-	const BACKGND *pBgnd);	// pointer to data struct for current background
+void InitBackground();
 
 void StartupBackground(CORO_PARAM, SCNHANDLE hFilm);
-
-void StopBgndScrolling();	// Stops all background playfields from scrolling
 
 void PlayfieldSetPos(		// Sets the xy position of the specified playfield in the current background
 	int which,		// which playfield

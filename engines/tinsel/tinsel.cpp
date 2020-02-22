@@ -76,7 +76,6 @@ extern void CursorProcess(CORO_PARAM, const void *);
 extern void InventoryProcess(CORO_PARAM, const void *);
 
 // In SCENE.CPP
-extern void PrimeBackground();
 extern SCNHANDLE GetSceneHandle();
 
 //----------------- FORWARD DECLARATIONS  ---------------------
@@ -1105,7 +1104,7 @@ void TinselEngine::RestartGame() {
 	DropBackground();	// No background
 
 	// Ditches existing infrastructure background
-	PrimeBackground();
+	InitBackground();
 
 	// Next scene change won't need to fade out
 	// -> reset the count used by ChangeScene

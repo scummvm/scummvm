@@ -38,27 +38,61 @@ const BACKGND *g_pCurBgnd = NULL;
 
 /**
  * Called to initialize a background.
- * @param pBgnd			Pointer to data struct for current background
  */
+void InitBackground() {
+	// structure for playfields
+	// FIXME: Avoid non-const global vars
+	static PLAYFIELD playfield[] = {
+		{	// FIELD WORLD
+			NULL,		// display list
+			0,			// init field x
+			0,			// init field y
+			0,			// x vel
+			0,			// y vel
+			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
+			false		// moved flag
+		},
+		{	// FIELD STATUS
+			NULL,		// display list
+			0,			// init field x
+			0,			// init field y
+			0,			// x vel
+			0,			// y vel
+			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
+			false		// moved flag
+		}
+	};
 
-void InitBackground(const BACKGND *pBgnd) {
+	// structure for background
+	static const BACKGND backgnd = {
+		BLACK,			// sky color
+		Common::Point(0, 0),	// initial world pos
+		Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// scroll limits
+		0,				// no background update process
+		NULL,			// no x scroll table
+		NULL,			// no y scroll table
+		2,				// 2 playfields
+		playfield,		// playfield pointer
+		false			// no auto-erase
+	};
+
 	int i;			// playfield counter
-	PLAYFIELD *pPlayfield;	// pointer to current playfield
+	PLAYFIELD* pPlayfield;	// pointer to current playfield
 
 	// set current background
-	g_pCurBgnd = pBgnd;
+	g_pCurBgnd = &backgnd;
 
 	// init background sky color
-	SetBgndColor(pBgnd->rgbSkyColor);
+	SetBgndColor(backgnd.rgbSkyColor);
 
 	// start of playfield array
-	pPlayfield = pBgnd->fieldArray;
+	pPlayfield = backgnd.fieldArray;
 
 	// for each background playfield
-	for (i = 0; i < pBgnd->numPlayfields; i++, pPlayfield++) {
+	for (i = 0; i < backgnd.numPlayfields; i++, pPlayfield++) {
 		// init playfield pos
-		pPlayfield->fieldX = intToFrac(pBgnd->ptInitWorld.x);
-		pPlayfield->fieldY = intToFrac(pBgnd->ptInitWorld.y);
+		pPlayfield->fieldX = intToFrac(backgnd.ptInitWorld.x);
+		pPlayfield->fieldY = intToFrac(backgnd.ptInitWorld.y);
 
 		// no scrolling
 		pPlayfield->fieldXvel = intToFrac(0);

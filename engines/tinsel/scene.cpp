@@ -349,52 +349,6 @@ void EndScene() {
 }
 
 /**
- *
- */
-void PrimeBackground() {
-	// structure for playfields
-	// FIXME: Avoid non-const global vars
-	// TODO: We should simply merge this function with InitBackground
-	//   in order to avoid the static var and the problems associate
-	//   with it.
-	static PLAYFIELD playfield[] = {
-		{	// FIELD WORLD
-			NULL,		// display list
-			0,			// init field x
-			0,			// init field y
-			0,			// x vel
-			0,			// y vel
-			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
-			false		// moved flag
-		},
-		{	// FIELD STATUS
-			NULL,		// display list
-			0,			// init field x
-			0,			// init field y
-			0,			// x vel
-			0,			// y vel
-			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
-			false		// moved flag
-		}
-	};
-
-	// structure for background
-	static const BACKGND backgnd = {
-		BLACK,			// sky color
-		Common::Point(0, 0),	// initial world pos
-		Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// scroll limits
-		0,				// no background update process
-		NULL,			// no x scroll table
-		NULL,			// no y scroll table
-		2,				// 2 playfields
-		playfield,		// playfield pointer
-		false			// no auto-erase
-	};
-
-	InitBackground(&backgnd);
-}
-
-/**
  * Start up the standard stuff for the next scene.
  */
 
@@ -418,7 +372,7 @@ void PrimeScene() {
 	CoroScheduler.createProcess(PID_TAG, PointProcess, NULL, 0);
 
 	// init the current background
-	PrimeBackground();
+	InitBackground();
 }
 
 /**
