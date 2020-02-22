@@ -79,6 +79,9 @@ void Config::writeToDisk() {
 		case TXT_US:
 			lang = Common::EN_USA;
 			break;
+		case TXT_JAPANESE:
+			lang = Common::JA_JPN;
+			break;
 		default:
 			lang = Common::EN_ANY;
 		}
@@ -138,6 +141,9 @@ void Config::readFromDisk() {
 	case Common::EN_USA:
 		_language = TXT_US;
 		break;
+	case Common::JA_JPN:
+		_language = TXT_JAPANESE;
+		break;
 	default:
 		_language = TXT_ENGLISH;
 	}
@@ -169,12 +175,8 @@ void Config::readFromDisk() {
 	}
 }
 
-bool isJapanMode() {
-#ifdef JAPAN
-	return true;
-#else
-	return false;
-#endif
+bool Config::isJapanMode() {
+	return _language == TXT_JAPANESE;
 }
 
 } // End of namespace Tinsel

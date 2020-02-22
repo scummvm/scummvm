@@ -433,7 +433,7 @@ void SetTextPal(COLORREF col) {
  * subtitle speed modification.
  */
 static int TextTime(char *pTstring) {
-	if (isJapanMode())
+	if (_vm->_config->isJapanMode())
 		return JAP_TEXT_TIME;
 	else if (!_vm->_config->_textSpeed)
 		return strlen(pTstring) + ONE_SECOND;
@@ -1897,7 +1897,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	} else {
 		_ctx->time = time * ONE_SECOND;
 		_ctx->myleftEvent = (TinselV2 && !bSustain) ? GetLeftEvents() : 0;
-		if (isJapanMode())
+		if (_vm->_config->isJapanMode())
 			bJapDoPrintText = true;
 	}
 
@@ -1915,7 +1915,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		if (IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
-	} else if (bJapDoPrintText || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
+	} else if (bJapDoPrintText || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 		int Loffset, Toffset;	// Screen position
 		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
@@ -2074,7 +2074,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 		}
 
 		// Display the text and set it's Z position
-		if (event == POINTED || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
+		if (event == POINTED || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 			int	xshift;
 
 			// Get the text string
@@ -2290,7 +2290,7 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 		_ctx->took_control = GetControl(CONTROL_OFF);
 
 		// Display for a time, but abort if conversation gets hidden
-		if (isJapanMode())
+		if (_vm->_config->isJapanMode())
 			_ctx->ticks = JAP_TEXT_TIME;
 		else if (pText)
 			_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
@@ -3004,7 +3004,7 @@ static void StopWalk(int actor) {
 static void Subtitles(int onoff) {
 	assert (onoff == ST_ON || onoff == ST_OFF);
 
-	if (isJapanMode())
+	if (_vm->_config->isJapanMode())
 		return;	// Subtitles are always off in JAPAN version (?)
 
 	_vm->_config->_useSubtitles = (onoff == ST_ON);
@@ -3299,7 +3299,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		_ctx->bSample = _ctx->bSamples;
 		_ctx->pText = NULL;
 
-		if (isJapanMode()) {
+		if (_vm->_config->isJapanMode()) {
 			_ctx->ticks = JAP_TEXT_TIME;
 		} else if (_vm->_config->_useSubtitles || !_ctx->bSample) {
 			/*
@@ -3496,7 +3496,7 @@ static void TalkAt(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, bool esc
 		if (escOn && myEscape != GetEscEvents())
 			return;
 
-		if (!isJapanMode() && (_vm->_config->_useSubtitles || !_vm->_sound->sampleExists(text)))
+		if (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_vm->_sound->sampleExists(text)))
 			SetTextPal(GetActorRGB(actor));
 	}
 
@@ -3514,7 +3514,7 @@ static void TalkAtS(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, int sus
 		if (escOn && myEscape != GetEscEvents())
 			return;
 
-		if (!isJapanMode())
+		if (!_vm->_config->isJapanMode())
 			SetTextPal(GetActorRGB(actor));
 	}
 
@@ -3525,7 +3525,7 @@ static void TalkAtS(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, int sus
  * Set talk font's palette entry.
  */
 static void TalkAttr(int r1, int g1, int b1, bool escOn, int myEscape) {
-	if (isJapanMode())
+	if (_vm->_config->isJapanMode())
 		return;
 
 	// Don't do it if it's not wanted
