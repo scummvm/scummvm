@@ -145,10 +145,6 @@ void QuitGump::verifyQuit() {
 	gump->setRelativePosition(CENTER);
 }
 
-void QuitGump::ConCmd_verifyQuit(const Console::ArgvType &argv) {
-	QuitGump::verifyQuit();
-}
-
 bool QuitGump::loadData(IDataSource *ids) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 	return true;

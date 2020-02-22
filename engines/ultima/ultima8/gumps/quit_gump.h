@@ -45,8 +45,6 @@ public:
 	void ChildNotify(Gump *child, uint32 message) override;
 
 	static void verifyQuit();
-	//! "QuitGump::verifyQuit" console command
-	static void ConCmd_verifyQuit(const Console::ArgvType &argv);
 
 	bool loadData(IDataSource *ids);
 protected:

@@ -80,6 +80,22 @@ private:
 	bool cmdToggleFrameByFrame(int argc, const char **argv);
 	bool cmdAdvanceFrame(int argc, const char **argv);
 
+	// Main Actor
+	bool cmdTeleport(int argc, const char **argv);
+	bool cmdMark(int argc, const char **argv);
+	bool cmdRecall(int argc, const char **argv);
+	bool cmdListMarks(int argc, const char **argv);
+	bool cmdName(int argc, const char **argv);
+	bool cmdMaxStats(int argc, const char **argv);
+	bool cmdHeal(int argc, const char **argv);
+	bool cmdToggleInvincibility(int argc, const char **argv);
+	bool cmdUseBackpack(int argc, const char **argv);
+	bool cmdUseInventory(int argc, const char **argv);
+	bool cmdUseRecall(int argc, const char **argv);
+	bool cmdUseBedroll(int argc, const char **argv);
+	bool cmdUseKeyring(int argc, const char **argv);
+	bool cmdToggleCombat(int argc, const char **argv);
+
 	// Memory Manager
 	bool cmdMemInfo(int argc, const char **argv);
 #ifdef DEBUG
@@ -105,6 +121,12 @@ private:
 	bool cmdStopDescend(int argc, const char **argv);
 	bool cmdToggleQuarterSpeed(int argc, const char **argv);
 	bool cmdToggleClipping(int argc, const char **argv);
+
+	// Miscellaneous
+	bool cmdVerifyQuit(int argc, const char **argv);
+	bool cmdU8ShapeViewer(int argc, const char **argv);
+	bool cmdShowMenu(int argc, const char **argv);
+
 public:
 	Debugger();
     ~Debugger() override {}

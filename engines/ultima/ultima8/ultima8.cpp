@@ -173,11 +173,6 @@ bool Ultima8Engine::initialize() {
 	// Set up the events manager
 	_events = new Shared::EventsManager(this);
 
-	// Add console commands
-	con->AddConsoleCommand("QuitGump::verifyQuit", QuitGump::ConCmd_verifyQuit);
-	con->AddConsoleCommand("ShapeViewerGump::U8ShapeViewer", ShapeViewerGump::ConCmd_U8ShapeViewer);
-	con->AddConsoleCommand("MenuGump::showMenu", MenuGump::ConCmd_showMenu);
-
 	return true;
 }
 
@@ -302,43 +297,6 @@ void Ultima8Engine::startupGame() {
 	pout  << Std::endl << "-- Initializing Game: " << _gameInfo->_name << " --" << Std::endl;
 
 	GraphicSysInit();
-
-	// Generic Commands
-#ifdef DEBUG
-	con->AddConsoleCommand("Pathfinder::visualDebug",
-		Pathfinder::ConCmd_visualDebug);
-#endif
-
-	// U8 Game commands
-	con->AddConsoleCommand("MainActor::teleport", MainActor::ConCmd_teleport);
-	con->AddConsoleCommand("MainActor::mark", MainActor::ConCmd_mark);
-	con->AddConsoleCommand("MainActor::recall", MainActor::ConCmd_recall);
-	con->AddConsoleCommand("MainActor::listmarks", MainActor::ConCmd_listmarks);
-	con->AddConsoleCommand("Cheat::maxstats", MainActor::ConCmd_maxstats);
-	con->AddConsoleCommand("Cheat::heal", MainActor::ConCmd_heal);
-	con->AddConsoleCommand("Cheat::toggleInvincibility", MainActor::ConCmd_toggleInvincibility);
-//SVM	con->AddConsoleCommand("Cheat::toggle", Ultima8Engine::ConCmd_toggleCheatMode);
-	con->AddConsoleCommand("MainActor::name", MainActor::ConCmd_name);
-	con->AddConsoleCommand("MovieGump::play", MovieGump::ConCmd_play);
-	con->AddConsoleCommand("MusicProcess::playMusic", MusicProcess::ConCmd_playMusic);
-	con->AddConsoleCommand("InverterProcess::invertScreen",
-		InverterProcess::ConCmd_invertScreen);
-	con->AddConsoleCommand("FastAreaVisGump::toggle",
-		FastAreaVisGump::ConCmd_toggle);
-	con->AddConsoleCommand("MiniMapGump::toggle",
-		MiniMapGump::ConCmd_toggle);
-	con->AddConsoleCommand("MainActor::useBackpack",
-		MainActor::ConCmd_useBackpack);
-	con->AddConsoleCommand("MainActor::useInventory",
-		MainActor::ConCmd_useInventory);
-	con->AddConsoleCommand("MainActor::useRecall",
-		MainActor::ConCmd_useRecall);
-	con->AddConsoleCommand("MainActor::useBedroll",
-		MainActor::ConCmd_useBedroll);
-	con->AddConsoleCommand("MainActor::useKeyring",
-		MainActor::ConCmd_useKeyring);
-	con->AddConsoleCommand("MainActor::toggleCombat",
-		MainActor::ConCmd_toggleCombat);
 
 	_gameData = new GameData(_gameInfo);
 

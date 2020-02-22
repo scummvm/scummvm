@@ -273,10 +273,6 @@ void ShapeViewerGump::U8ShapeViewer() {
 	gump->InitGump(0);
 }
 
-void ShapeViewerGump::ConCmd_U8ShapeViewer(const Console::ArgvType &argv) {
-	ShapeViewerGump::U8ShapeViewer();
-}
-
 bool ShapeViewerGump::loadData(IDataSource *ids) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 	return false;

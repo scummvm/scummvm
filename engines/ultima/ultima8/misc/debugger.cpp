@@ -25,6 +25,9 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/gumps/quit_gump.h"
+#include "ultima/ultima8/gumps/shape_viewer_gump.h"
+#include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/kernel/allocator.h"
 #include "ultima/ultima8/kernel/hid_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -32,8 +35,10 @@
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -97,6 +102,40 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("QuickAvatarMoverProcess::stopDescend", WRAP_METHOD(Debugger, cmdStopDescend));
 	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
 	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
+
+	registerCmd("QuitGump::verifyQuit", WRAP_METHOD(Debugger, cmdVerifyQuit));
+	registerCmd("ShapeViewerGump::U8ShapeViewer", WRAP_METHOD(Debugger, cmdU8ShapeViewer));
+	registerCmd("MenuGump::showMenu", WRAP_METHOD(Debugger, cmdShowMenu));
+
+#ifdef DEBUG
+	registerCmd("Pathfinder::visualDebug",
+		Pathfinder::ConCmd_visualDebug);
+#endif
+
+	registerCmd("MainActor::teleport", WRAP_METHOD(Debugger, cmdTeleport));
+	registerCmd("MainActor::mark", WRAP_METHOD(Debugger, cmdMark));
+	registerCmd("MainActor::recall", WRAP_METHOD(Debugger, cmdRecall));
+	registerCmd("MainActor::listmarks", WRAP_METHOD(Debugger, cmdListMarks));
+	registerCmd("MainActor::name", WRAP_METHOD(Debugger, cmdName));
+	registerCmd("MainActor::useBackpack", WRAP_METHOD(Debugger, cmdUseBackpack));
+	registerCmd("MainActor::useInventory", WRAP_METHOD(Debugger, cmdUseInventory));
+	registerCmd("MainActor::useRecall", WRAP_METHOD(Debugger, cmdUseRecall));
+	registerCmd("MainActor::useBedroll", WRAP_METHOD(Debugger, cmdUseBedroll));
+	registerCmd("MainActor::useKeyring", WRAP_METHOD(Debugger, cmdUseKeyring));
+	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
+
+	/*
+	registerCmd("Cheat::maxstats", WRAP_METHOD(Debugger, cmdMaxStats));
+	registerCmd("Cheat::heal", WRAP_METHOD(Debugger, cmdHeal));
+	registerCmd("Cheat::toggleInvincibility", WRAP_METHOD(Debugger, cmdToggleInvincibility));
+	registerCmd("Cheat::toggle", Ultima8Engine::ConCmd_toggleCheatMode);
+
+	registerCmd("MovieGump::play", MovieGump::ConCmd_play);
+	registerCmd("MusicProcess::playMusic", MusicProcess::ConCmd_playMusic);
+	registerCmd("InverterProcess::invertScreen", InverterProcess::ConCmd_invertScreen);
+	registerCmd("FastAreaVisGump::toggle", FastAreaVisGump::ConCmd_toggle);
+	registerCmd("MiniMapGump::toggle", MiniMapGump::ConCmd_toggle);
+	*/
 }
 
 bool Debugger::cmdSaveGame(int argc, const char **argv) {
@@ -654,6 +693,222 @@ bool Debugger::cmdAdvanceFrame(int argc, const char **argv) {
 }
 
 
+bool Debugger::cmdTeleport(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	MainActor *mainActor = getMainActor();
+	int curmap = mainActor->getMapNum();
+
+	switch (argc - 1) {
+	case 1:
+		mainActor->teleport(curmap,
+			strtol(argv[1], 0, 0));
+		break;
+	case 2:
+		mainActor->teleport(strtol(argv[1], 0, 0),
+			strtol(argv[2], 0, 0));
+		break;
+	case 3:
+		mainActor->teleport(curmap,
+			strtol(argv[1], 0, 0),
+			strtol(argv[2], 0, 0),
+			strtol(argv[3], 0, 0));
+		break;
+	case 4:
+		mainActor->teleport(strtol(argv[1], 0, 0),
+			strtol(argv[2], 0, 0),
+			strtol(argv[3], 0, 0),
+			strtol(argv[4], 0, 0));
+		break;
+	default:
+		debugPrintf("teleport usage:\n");
+		debugPrintf("teleport <mapnum> <x> <y> <z>: teleport to (x,y,z) on map mapnum\n");
+		debugPrintf("teleport <x> <y> <z>: teleport to (x,y,z) on current map\n");
+		debugPrintf("teleport <mapnum> <eggnum>: teleport to target egg eggnum on map mapnum\n");
+		debugPrintf("teleport <eggnum>: teleport to target egg eggnum on current map\n");
+		return true;
+	}
+
+	return false;
+}
+
+bool Debugger::cmdMark(int argc, const char **argv) {
+	if (argc == 1) {
+		debugPrintf("Usage: mark <mark>: set named mark to this location\n");
+		return true;
+	}
+
+	SettingManager *settings = SettingManager::get_instance();
+	MainActor *mainActor = getMainActor();
+	int curmap = mainActor->getMapNum();
+	int32 x, y, z;
+	mainActor->getLocation(x, y, z);
+
+	istring confkey = Common::String::format("marks/%s", argv[1]);
+	char buf[100]; // large enough for 4 ints
+	sprintf(buf, "%d %d %d %d", curmap, x, y, z);
+
+	settings->set(confkey, buf);
+	settings->write(); //!! FIXME: clean this up
+
+	debugPrintf("Set mark \"%s\" to %s\n", argv[1], buf);
+	return true;
+}
+
+bool Debugger::cmdRecall(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	if (argc == 1) {
+		debugPrintf("Usage: recall <mark>: recall to named mark\n");
+		return true;
+	}
+
+	SettingManager *settings = SettingManager::get_instance();
+	MainActor *mainActor = getMainActor();
+	Common::String confKey = Common::String::format("marks/%s", argv[1]);
+	Std::string target;
+	if (!settings->get(confKey, target)) {
+		debugPrintf("recall: no such mark\n");
+		return true;
+	}
+
+	int t[4];
+	int n = sscanf(target.c_str(), "%d%d%d%d", &t[0], &t[1], &t[2], &t[3]);
+	if (n != 4) {
+		debugPrintf("recall: invalid mark\n");
+		return true;
+	}
+
+	mainActor->teleport(t[0], t[1], t[2], t[3]);
+	return false;
+}
+
+bool Debugger::cmdListMarks(int argc, const char **argv) {
+	SettingManager *settings = SettingManager::get_instance();
+	Std::vector<istring> marks;
+	marks = settings->listDataKeys("marks");
+	for (Std::vector<istring>::iterator iter = marks.begin();
+		iter != marks.end(); ++iter) {
+		debugPrintf("%s\n", iter->c_str());
+	}
+
+	return true;
+}
+
+bool Debugger::cmdMaxStats(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	MainActor *mainActor = getMainActor();
+
+	// constants!!
+	mainActor->setStr(25);
+	mainActor->setDex(25);
+	mainActor->setInt(25);
+	mainActor->setHP(mainActor->getMaxHP());
+	mainActor->setMana(mainActor->getMaxMana());
+
+	AudioProcess *audioproc = AudioProcess::get_instance();
+	if (audioproc)
+		audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
+	return false;
+}
+
+bool Debugger::cmdHeal(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	MainActor *mainActor = getMainActor();
+
+	mainActor->setHP(mainActor->getMaxHP());
+	mainActor->setMana(mainActor->getMaxMana());
+	return false;
+}
+
+bool Debugger::cmdName(int argc, const char **argv) {
+	MainActor *av = getMainActor();
+	if (argc > 1)
+		av->setName(argv[1]);
+
+	debugPrintf("MainActor::name = \"%s\"\n", av->getName().c_str());
+	return true;
+}
+
+bool Debugger::cmdUseBackpack(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't: avatarInStasis\n");
+		return true;
+	}
+	MainActor *av = getMainActor();
+	Item *backpack = getItem(av->getEquip(7));
+	if (backpack)
+		backpack->callUsecodeEvent_use();
+	return false;
+}
+
+bool Debugger::cmdUseInventory(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't: avatarInStasis\n");
+		return true;
+	}
+	MainActor *av = getMainActor();
+	av->callUsecodeEvent_use();
+	return false;
+}
+
+bool Debugger::cmdUseRecall(int argc, const char **argv) {
+	MainActor *av = getMainActor();
+	av->useInventoryItem(833);
+	return false;
+}
+
+bool Debugger::cmdUseBedroll(int argc, const char **argv) {
+	MainActor *av = getMainActor();
+	av->useInventoryItem(534);
+	return false;
+}
+
+bool Debugger::cmdUseKeyring(int argc, const char **argv) {
+	MainActor *av = getMainActor();
+	av->useInventoryItem(79);
+	return false;
+}
+
+bool Debugger::cmdToggleCombat(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't: avatarInStasis\n");
+		return true;
+	}
+	MainActor *av = getMainActor();
+	av->toggleInCombat();
+	return false;
+}
+
+bool Debugger::cmdToggleInvincibility(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	MainActor *av = getMainActor();
+
+	if (av->getActorFlags() & Actor::ACT_INVINCIBLE) {
+		av->clearActorFlag(Actor::ACT_INVINCIBLE);
+		debugPrintf("Avatar is no longer invincible.\n");
+	} else {
+		av->setActorFlag(Actor::ACT_INVINCIBLE);
+		debugPrintf("Avatar invincible.\n");
+	}
+
+	return true;
+}
+
+
 bool Debugger::cmdMemInfo(int argc, const char **argv) {
 	MemoryManager *mm = MemoryManager::get_instance();
 	int i, count;
@@ -814,6 +1069,22 @@ bool Debugger::cmdToggleClipping(int argc, const char **argv) {
 		debugPrintf("Cheats aren't enabled\n");
 	}
 	return true;
+}
+
+
+bool Debugger::cmdVerifyQuit(int argc, const char **argv) {
+	QuitGump::verifyQuit();
+	return false;
+}
+
+bool Debugger::cmdU8ShapeViewer(int argc, const char **argv) {
+	ShapeViewerGump::U8ShapeViewer();
+	return false;
+}
+
+bool Debugger::cmdShowMenu(int argc, const char **argv) {
+	MenuGump::showMenu();
+	return false;
 }
 
 } // End of namespace Ultima8

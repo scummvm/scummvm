@@ -50,7 +50,6 @@ public:
 	void ChildNotify(Gump *child, uint32 message) override;
 
 	static void showMenu();
-	static void ConCmd_showMenu(const Console::ArgvType &argv);
 
 	static void inputName();
 

@@ -50,7 +50,6 @@ public:
 	bool OnTextInput(int unicode) override;
 
 	static void U8ShapeViewer();
-	static void ConCmd_U8ShapeViewer(const Console::ArgvType &argv);
 
 	bool loadData(IDataSource *ids);
 protected:
