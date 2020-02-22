@@ -122,8 +122,8 @@ static struct BuiltinProto {
 		// play																// D2 c
 	{ "playAccel",		LB::b_playAccel,	-1,0, false, 2, BLTIN },	// D2
 		// play done														// D2
-	{ "preLoad",		LB::b_preLoad,		-1,0, false, 3, BLTIN },	//		D3 c
-	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, false, 3, BLTIN },	//		D3 c
+	{ "preLoad",		LB::b_preLoad,		-1,0, false, 3, BLTIN },	//		D3.1 c
+	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, false, 3, BLTIN },	//		D3.1 c
 	{ "quit",			LB::b_quit,			0, 0, false, 2, BLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, false, 2, BLTIN },	// D2 c
 	{ "return",			LB::b_return,		0, 1, false, 2, BLTIN },	// D2 function

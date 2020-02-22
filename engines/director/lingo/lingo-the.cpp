@@ -224,7 +224,7 @@ TheEntityField fields[] = {
 
 	// TextCast fields
 	{ kTheCast,		"hilite",		kTheHilite,		2 },// D2 p
-	{ kTheCast,		"size",			kTheSize,		4 },//				D4 p
+	{ kTheCast,		"size",			kTheSize,		3 },//		D3.1 p
 	{ kTheCast,		"text",			kTheText,		2 },// D2 p
 
 	// Field fields
