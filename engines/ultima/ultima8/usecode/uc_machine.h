@@ -29,6 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
+class Debugger;
 class Process;
 class UCProcess;
 class ConvertUsecode;
@@ -39,6 +40,7 @@ class UCList;
 class idMan;
 
 class UCMachine {
+	friend class Debugger;
 public:
 	UCMachine(Intrinsic *iset, unsigned int icount);
 	~UCMachine();
@@ -110,10 +112,6 @@ private:
 
 	static UCMachine *_ucMachine;
 
-	static void     ConCmd_getGlobal(const Console::ArgvType &argv);
-	static void     ConCmd_setGlobal(const Console::ArgvType &argv);
-
-
 #ifdef DEBUG
 	// tracing
 	bool tracing_enabled;
@@ -136,14 +134,6 @@ public:
 	bool trace_event() {
 		return (tracing_enabled && (trace_all || trace_events));
 	}
-
-private:
-	static void     ConCmd_tracePID(const Console::ArgvType &argv);
-	static void     ConCmd_traceObjID(const Console::ArgvType &argv);
-	static void     ConCmd_traceClass(const Console::ArgvType &argv);
-	static void     ConCmd_traceAll(const Console::ArgvType &argv);
-	static void     ConCmd_traceEvents(const Console::ArgvType &argv);
-	static void     ConCmd_stopTrace(const Console::ArgvType &argv);
 #endif
 };
 

@@ -96,16 +96,7 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	_listIDs = new idMan(1, 65534, 128);
 	_stringIDs = new idMan(1, 65534, 256);
 
-	con->AddConsoleCommand("UCMachine::getGlobal", ConCmd_getGlobal);
-	con->AddConsoleCommand("UCMachine::setGlobal", ConCmd_setGlobal);
 #ifdef DEBUG
-	con->AddConsoleCommand("UCMachine::traceObjID", ConCmd_traceObjID);
-	con->AddConsoleCommand("UCMachine::tracePID", ConCmd_tracePID);
-	con->AddConsoleCommand("UCMachine::traceClass", ConCmd_traceClass);
-	con->AddConsoleCommand("UCMachine::traceEvents", ConCmd_traceEvents);
-	con->AddConsoleCommand("UCMachine::traceAll", ConCmd_traceAll);
-	con->AddConsoleCommand("UCMachine::stopTrace", ConCmd_stopTrace);
-
 	tracing_enabled = false;
 	trace_all = false;
 #endif
@@ -114,17 +105,6 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 
 UCMachine::~UCMachine() {
 	con->Print(MM_INFO, "Destroying UCMachine...\n");
-
-	con->RemoveConsoleCommand(UCMachine::ConCmd_getGlobal);
-	con->RemoveConsoleCommand(UCMachine::ConCmd_setGlobal);
-#ifdef DEBUG
-	con->RemoveConsoleCommand(UCMachine::ConCmd_traceObjID);
-	con->RemoveConsoleCommand(UCMachine::ConCmd_tracePID);
-	con->RemoveConsoleCommand(UCMachine::ConCmd_traceClass);
-	con->RemoveConsoleCommand(UCMachine::ConCmd_traceAll);
-	con->RemoveConsoleCommand(UCMachine::ConCmd_stopTrace);
-#endif
-
 	_ucMachine = 0;
 
 	delete _globals;
@@ -2358,115 +2338,6 @@ uint32 UCMachine::I_rndRange(const uint8 *args, unsigned int /*argsize*/) {
 
 	return (lo + (getRandom() % (hi - lo + 1)));
 }
-
-
-void UCMachine::ConCmd_getGlobal(const Console::ArgvType &argv) {
-	UCMachine *uc = UCMachine::get_instance();
-	if (argv.size() != 3) {
-		pout << "usage: UCMachine::getGlobal offset size" << Std::endl;
-		return;
-	}
-
-	unsigned int offset = strtol(argv[1].c_str(), 0, 0);
-	unsigned int size = strtol(argv[2].c_str(), 0, 0);
-
-	pout.Print("[%04X %02X] = %d\n", offset, size,
-	            uc->_globals->getBits(offset, size));
-}
-
-void UCMachine::ConCmd_setGlobal(const Console::ArgvType &argv) {
-	UCMachine *uc = UCMachine::get_instance();
-	if (argv.size() != 4) {
-		pout << "usage: UCMachine::setGlobal offset size value" << Std::endl;
-		return;
-	}
-
-	unsigned int offset = strtol(argv[1].c_str(), 0, 0);
-	unsigned int size = strtol(argv[2].c_str(), 0, 0);
-	unsigned int value = strtol(argv[3].c_str(), 0, 0);
-
-	uc->_globals->setBits(offset, size, value);
-
-	pout.Print("[%04X %02X] = %d\n", offset, size,
-	            uc->_globals->getBits(offset, size));
-}
-
-#ifdef DEBUG
-
-void UCMachine::ConCmd_tracePID(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "Usage: UCMachine::tracePID _pid" << Std::endl;
-		return;
-	}
-
-	uint16 _pid = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
-
-	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_PIDs.insert(_pid);
-
-	pout << "UCMachine: tracing process " << _pid << Std::endl;
-}
-
-void UCMachine::ConCmd_traceObjID(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "Usage: UCMachine::traceObjID objid" << Std::endl;
-		return;
-	}
-
-	uint16 objid = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
-
-	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_ObjIDs.insert(objid);
-
-	pout << "UCMachine: tracing object " << objid << Std::endl;
-}
-
-void UCMachine::ConCmd_traceClass(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "Usage: UCMachine::traceClass class" << Std::endl;
-		return;
-	}
-
-	uint16 ucclass = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
-
-	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_classes.insert(ucclass);
-
-	pout << "UCMachine: tracing class " << ucclass << Std::endl;
-}
-
-void UCMachine::ConCmd_traceAll(const Console::ArgvType &argv) {
-	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_all = true;
-
-	pout << "UCMachine: tracing all usecode" << Std::endl;
-}
-
-void UCMachine::ConCmd_traceEvents(const Console::ArgvType &argv) {
-	UCMachine *uc = UCMachine::get_instance();
-	uc->tracing_enabled = true;
-	uc->trace_events = true;
-
-	pout << "UCMachine: tracing usecode events" << Std::endl;
-}
-
-
-
-void UCMachine::ConCmd_stopTrace(const Console::ArgvType &/*argv*/) {
-	UCMachine *uc = UCMachine::get_instance();
-	uc->trace_ObjIDs.clear();
-	uc->trace_PIDs.clear();
-	uc->trace_classes.clear();
-	uc->tracing_enabled = false;
-	uc->trace_all = false;
-	uc->trace_events = false;
-}
-
-#endif
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

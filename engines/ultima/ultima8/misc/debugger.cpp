@@ -42,6 +42,7 @@
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
+#include "ultima/ultima8/usecode/bit_set.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
@@ -129,6 +130,17 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("QuickAvatarMoverProcess::stopDescend", WRAP_METHOD(Debugger, cmdStopDescend));
 	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
 	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
+
+	registerCmd("UCMachine::getGlobal", WRAP_METHOD(Debugger, cmdGetGlobal));
+	registerCmd("UCMachine::setGlobal", WRAP_METHOD(Debugger, cmdSetGlobal));
+#ifdef DEBUG
+	registerCmd("UCMachine::traceObjID", WRAP_METHOD(Debugger, cmdTraceObjID));
+	registerCmd("UCMachine::tracePID", WRAP_METHOD(Debugger, cmdTracePID));
+	registerCmd("UCMachine::traceClass", WRAP_METHOD(Debugger, cmdTraceClass));
+	registerCmd("UCMachine::traceEvents", WRAP_METHOD(Debugger, cmdTraceEvents));
+	registerCmd("UCMachine::traceAll", WRAP_METHOD(Debugger, cmdTraceAll));
+	registerCmd("UCMachine::stopTrace", WRAP_METHOD(Debugger, cmdStopTrace));
+#endif
 
 	registerCmd("FastAreaVisGump::toggle", WRAP_METHOD(Debugger, cmdToggleFastArea));
 	registerCmd("InverterProcess::invertScreen", WRAP_METHOD(Debugger, cmdInvertScreen));
@@ -1276,6 +1288,123 @@ bool Debugger::cmdToggleClipping(int argc, const char **argv) {
 	}
 	return true;
 }
+
+
+bool Debugger::cmdGetGlobal(int argc, const char **argv) {
+	UCMachine *uc = UCMachine::get_instance();
+	if (argc != 3) {
+		debugPrintf("usage: UCMachine::getGlobal offset size\n");
+		return true;
+	}
+
+	unsigned int offset = strtol(argv[1], 0, 0);
+	unsigned int size = strtol(argv[2], 0, 0);
+
+	pout.Print("[%04X %02X] = %d\n", offset, size,
+		uc->_globals->getBits(offset, size));
+
+	return true;
+}
+
+bool Debugger::cmdSetGlobal(int argc, const char **argv) {
+	UCMachine *uc = UCMachine::get_instance();
+	if (argc != 4) {
+		debugPrintf("usage: UCMachine::setGlobal offset size value\n");
+		return true;
+	}
+
+	unsigned int offset = strtol(argv[1], 0, 0);
+	unsigned int size = strtol(argv[2], 0, 0);
+	unsigned int value = strtol(argv[3], 0, 0);
+
+	uc->_globals->setBits(offset, size, value);
+
+	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getBits(offset, size));
+	return true;
+}
+
+#ifdef DEBUG
+
+bool Debugger::cmdTracePID(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: UCMachine::tracePID _pid\n");
+		return true;
+	}
+
+	uint16 _pid = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
+
+	UCMachine *uc = UCMachine::get_instance();
+	uc->tracing_enabled = true;
+	uc->trace_PIDs.insert(_pid);
+
+	debugPrintf("UCMachine: tracing process %d\n", pid);
+	return true;
+}
+
+bool Debugger::cmdTraceObjID(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: UCMachine::traceObjID objid\n");
+		return true;
+	}
+
+	uint16 objid = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
+
+	UCMachine *uc = UCMachine::get_instance();
+	uc->tracing_enabled = true;
+	uc->trace_ObjIDs.insert(objid);
+
+	debugPrintf("UCMachine: tracing object %d\n", objid);
+	return true;
+}
+
+bool Debugger::cmdTraceClass(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: UCMachine::traceClass class\n");
+		return true;
+	}
+
+	uint16 ucclass = static_cast<uint16>(strtol(argv[1].c_str(), 0, 0));
+
+	UCMachine *uc = UCMachine::get_instance();
+	uc->tracing_enabled = true;
+	uc->trace_classes.insert(ucclass);
+
+	debugPrintf("UCMachine: tracing class %d\n", ucclass);
+	return true;
+}
+
+bool Debugger::cmdTraceAll(int argc, const char **argv) {
+	UCMachine *uc = UCMachine::get_instance();
+	uc->tracing_enabled = true;
+	uc->trace_all = true;
+
+	debugPrintf("UCMachine: tracing all usecode\n");
+	return true;
+}
+
+bool Debugger::cmdTraceEvents(int argc, const char **argv) {
+	UCMachine *uc = UCMachine::get_instance();
+	uc->tracing_enabled = true;
+	uc->trace_events = true;
+
+	debugPrintf("UCMachine: tracing usecode events\n");
+	return true;
+}
+
+bool Debugger::cmdStopTrace(const Console::ArgvType &/*argv*/) {
+	UCMachine *uc = UCMachine::get_instance();
+	uc->trace_ObjIDs.clear();
+	uc->trace_PIDs.clear();
+	uc->trace_classes.clear();
+	uc->tracing_enabled = false;
+	uc->trace_all = false;
+	uc->trace_events = false;
+
+	debugPrintf("Trace stopped\n");
+	return true;
+}
+
+#endif
 
 
 bool Debugger::cmdVerifyQuit(int argc, const char **argv) {
