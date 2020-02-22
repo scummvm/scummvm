@@ -36,17 +36,6 @@ SettingManager::SettingManager() {
 	_confFileMan = ConfigFileManager::get_instance();
 
 	_confFileMan->readConfigString("", "defaultsettings", false);
-
-	// Setup ScummVM configuration settings
-	setupScummVMSettings();
-}
-
-void SettingManager::setupScummVMSettings() {
-	_confFileMan->readConfigString("", "ScummVM", false);
- 
-	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
-	if (saveSlot != -1)
-		set("lastSave", Std::string::format("@save/%d", saveSlot), DOM_SCUMMVM);
 }
 
 SettingManager::~SettingManager() {
@@ -72,7 +61,8 @@ bool SettingManager::exists(istring key, Domain dom) {
 bool SettingManager::get(istring key, Std::string &ret, Domain dom) {
 	Domain keydom;
 	bool found = findKeyDomain(key, dom, keydom);
-	if (!found) return false;
+	if (!found)
+		return false;
 
 	_confFileMan->get(getConfigKey(key, keydom), ret);
 
@@ -82,7 +72,8 @@ bool SettingManager::get(istring key, Std::string &ret, Domain dom) {
 bool SettingManager::get(istring key, int &ret, Domain dom) {
 	Domain keydom;
 	bool found = findKeyDomain(key, dom, keydom);
-	if (!found) return false;
+	if (!found)
+		return false;
 
 	_confFileMan->get(getConfigKey(key, keydom), ret);
 
@@ -92,7 +83,8 @@ bool SettingManager::get(istring key, int &ret, Domain dom) {
 bool SettingManager::get(istring key, bool &ret, Domain dom) {
 	Domain keydom;
 	bool found = findKeyDomain(key, dom, keydom);
-	if (!found) return false;
+	if (!found)
+		return false;
 
 	_confFileMan->get(getConfigKey(key, keydom), ret);
 
@@ -225,12 +217,15 @@ bool SettingManager::findKeyDomain(istring key, Domain dom, Domain &keydom) {
 istring SettingManager::getConfigKey(istring key, Domain dom) {
 	istring ckey;
 
-	if (dom == DOM_CURRENT) dom = _currentDomain;
+	if (dom == DOM_CURRENT)
+		dom = _currentDomain;
+
+	if (dom == DOM_GLOBAL && ConfMan.hasKey(key))
+		// Key exists in scummvm.ini, so can be used as is
+		return key;
 
 	if (dom == DOM_DEFAULTS) {
 		ckey = "defaultsettings/";
-	} else if (dom == DOM_SCUMMVM) {
-		ckey = "ScummVM/";
 	} else {
 		ckey = "settings/" + _domains[dom];
 	}

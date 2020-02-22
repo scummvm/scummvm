@@ -121,12 +121,12 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(0),
 		_kernel(0), _objectManager(0), _hidManager(0), _mouse(0), _ucMachine(0), _screen(0),
-		_fontManager(0), _fullScreen(false), _paletteManager(0), _gameData(0), _world(0),
-		_desktopGump(0), _consoleGump(0), _gameMapGump(0), _avatarMoverProcess(0),
-		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
-		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
-		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
-		_drawRenderStats(false), _ttfOverrides(false), _audioMixer(0) {
+		_fontManager(0), _paletteManager(0), _gameData(0), _world(0), _desktopGump(0),
+		_consoleGump(0), _gameMapGump(0), _avatarMoverProcess(0), _frameSkip(false),
+		_frameLimit(true), _interpolate(true), _animationRate(100), _avatarInStasis(false),
+		_paintEditorItems(false), _inversion(0), _painting(false), _showTouching(false),
+		_timeOffset(0), _hasCheated(false), _cheatsEnabled(false), _drawRenderStats(false),
+		_ttfOverrides(false), _audioMixer(0) {
 	_application = this;
 
 	for (uint16 key = 0; key < HID_LAST; ++key) {
@@ -663,14 +663,11 @@ void Ultima8Engine::paint() {
 }
 
 void Ultima8Engine::GraphicSysInit() {
-	_settingMan->setDefault("_fullScreen", false);
-	_settingMan->setDefault("width", SCREEN_WIDTH);
-	_settingMan->setDefault("height", SCREEN_HEIGHT);
+	_settingMan->setDefault("width", DEFAULT_SCREEN_WIDTH);
+	_settingMan->setDefault("height", DEFAULT_SCREEN_HEIGHT);
 	_settingMan->setDefault("bpp", 32);
 
-	bool new_fullscreen;
 	int width, height, bpp;
-	_settingMan->get("_fullScreen", new_fullscreen);
 	_settingMan->get("width", width);
 	_settingMan->get("height", height);
 	_settingMan->get("bpp", bpp);
@@ -685,20 +682,18 @@ void Ultima8Engine::GraphicSysInit() {
 	_settingMan->set("width", width);
 	_settingMan->set("height", height);
 	_settingMan->set("bpp", bpp);
-	_settingMan->set("_fullScreen", new_fullscreen);
 #endif
 
 	if (_screen) {
 		Rect old_dims;
 		_screen->GetSurfaceDims(old_dims);
-		if (new_fullscreen == _fullScreen && width == old_dims.w && height == old_dims.h) return;
+		if (width == old_dims.w && height == old_dims.h)
+			return;
 		bpp = RenderSurface::format.s_bpp;
 
 		delete _screen;
 	}
 	_screen = 0;
-
-	_fullScreen = new_fullscreen;
 
 	// Set Screen Resolution
 	con->Printf(MM_INFO, "Setting Video Mode %dx%dx%d...\n", width, height, bpp);
@@ -706,8 +701,8 @@ void Ultima8Engine::GraphicSysInit() {
 	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
 
 	if (!new_screen) {
-		perr << "Unable to set new video mode. Trying 640x480x32" << Std::endl;
-		new_screen = RenderSurface::SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32);
+		perr << Common::String::format("Unable to set new video mode. Trying %dx%dx32", width, height) << Std::endl;
+		new_screen = RenderSurface::SetVideoMode(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, 32);
 	}
 
 	if (!new_screen) {
@@ -785,11 +780,7 @@ void Ultima8Engine::GraphicSysInit() {
 	paint();
 }
 
-void Ultima8Engine::changeVideoMode(int width, int height, int new_fullscreen) {
-	if (new_fullscreen == -2) _settingMan->set("_fullScreen", !_fullScreen);
-	else if (new_fullscreen == 0) _settingMan->set("_fullScreen", false);
-	else if (new_fullscreen == 1) _settingMan->set("_fullScreen", true);
-
+void Ultima8Engine::changeVideoMode(int width, int height) {
 	if (width > 0) _settingMan->set("width", width);
 	if (height > 0) _settingMan->set("height", height);
 

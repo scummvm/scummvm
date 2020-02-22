@@ -50,8 +50,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define DEFAULT_SCREEN_WIDTH 640
+#define DEFAULT_SCREEN_HEIGHT 480
 
 class Debugger;
 class Kernel;
@@ -98,7 +98,6 @@ private:
 	HIDManager *_hidManager;
 	UCMachine *_ucMachine;
 	RenderSurface *_screen;
-	bool _fullScreen;
 	Mouse *_mouse;
 	PaletteManager *_paletteManager;
 	GameData *_gameData;
@@ -210,7 +209,8 @@ public:
 	// Used to enable access to the games gumps and shapes
 	void menuInitMinimal(istring game);
 
-	void changeVideoMode(int width, int height, int fullscreen = -1); // -1 = no change, -2 = fullscreen toggle
+	void changeVideoMode(int width, int height);
+
 	RenderSurface *getRenderScreen() {
 		return _screen;
 	}

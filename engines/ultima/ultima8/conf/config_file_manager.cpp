@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/conf/ini_file.h"
+#include "common/config-manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -100,10 +101,15 @@ void ConfigFileManager::clearRoot(istring root) {
 }
 
 bool ConfigFileManager::exists(istring key) {
-	return (findKeyINI(key) != 0);
+	return ConfMan.hasKey(key) || (findKeyINI(key) != 0);
 }
 
 bool ConfigFileManager::get(istring key, string &ret) {
+	if (ConfMan.hasKey(key)) {
+		ret = ConfMan.get(key);
+		return true;
+	}
+
 	INIFile *ini = findKeyINI(key);
 	if (!ini) return false;
 
@@ -113,6 +119,11 @@ bool ConfigFileManager::get(istring key, string &ret) {
 
 
 bool ConfigFileManager::get(istring key, int &ret) {
+	if (ConfMan.hasKey(key)) {
+		ret = ConfMan.getInt(key);
+		return true;
+	}
+
 	INIFile *ini = findKeyINI(key);
 	if (!ini) return false;
 
@@ -121,6 +132,11 @@ bool ConfigFileManager::get(istring key, int &ret) {
 }
 
 bool ConfigFileManager::get(istring key, bool &ret) {
+	if (ConfMan.hasKey(key)) {
+		ret = ConfMan.getBool(key);
+		return true;
+	}
+
 	INIFile *ini = findKeyINI(key);
 	if (!ini) return false;
 
