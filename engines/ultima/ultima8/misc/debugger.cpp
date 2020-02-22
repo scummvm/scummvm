@@ -28,6 +28,7 @@
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
+#include "ultima/ultima8/gumps/console_gump.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
@@ -1407,6 +1408,12 @@ bool Debugger::cmdStopTrace(int argc, const char **argv) {
 
 #endif
 
+
+bool Debugger::cmdToggleConsole(int argc, const char **argv) {
+	ConsoleGump *consoleGump = Ultima8Engine::get_instance()->getConsoleGump();
+	consoleGump->ToggleConsole();
+	return false;
+}
 
 bool Debugger::cmdVerifyQuit(int argc, const char **argv) {
 	QuitGump::verifyQuit();

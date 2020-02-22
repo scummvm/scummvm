@@ -34,7 +34,6 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ConsoleGump, Gump)
 
 ConsoleGump::ConsoleGump() : Gump() {
-	con->AddConsoleCommand("ConsoleGump::toggle", ConsoleGump::ConCmd_toggle);
 }
 
 ConsoleGump::ConsoleGump(int x, int y, int width, int height) :
@@ -44,12 +43,9 @@ ConsoleGump::ConsoleGump(int x, int y, int width, int height) :
 
 	// Resize it
 	con->CheckResize(width);
-
-	con->AddConsoleCommand("ConsoleGump::toggle", ConsoleGump::ConCmd_toggle);
 }
 
 ConsoleGump::~ConsoleGump() {
-	con->RemoveConsoleCommand(ConsoleGump::ConCmd_toggle);
 }
 
 void ConsoleGump::RenderSurfaceChanged() {
@@ -216,11 +212,6 @@ void ConsoleGump::run() {
 	default:
 		break;
 	}
-}
-
-void ConsoleGump::ConCmd_toggle(const Console::ArgvType &argv) {
-	ConsoleGump *consoleGump = Ultima8Engine::get_instance()->getConsoleGump();
-	consoleGump->ToggleConsole();
 }
 
 void ConsoleGump::saveData(ODataSource *ods) {

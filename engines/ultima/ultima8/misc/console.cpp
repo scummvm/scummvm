@@ -60,10 +60,6 @@ Console::Console() : _current(0), _xOff(0), _display(0), _lineWidth(-1),
 	ppout = &_strOut;
 	pperr = &_errOut;
 
-	// Lets try adding a Console command!
-	AddConsoleCommand("Console::CmdList", ConCmd_CmdList);
-	AddConsoleCommand("Console::CmdHistory", ConCmd_CmdHistory);
-
 	PrintInternal("Console initialized.\n");
 }
 
@@ -71,9 +67,6 @@ Console::Console() : _current(0), _xOff(0), _display(0), _lineWidth(-1),
 // Destructor
 //
 Console::~Console() {
-	RemoveConsoleCommand(Console::ConCmd_CmdList);
-	RemoveConsoleCommand(Console::ConCmd_CmdHistory);
-
 	// Need to do this first
 	PrintPutchar();
 
@@ -662,7 +655,7 @@ void Console::AddCharacterToCommandBuffer(int ch) {
 					ArgvType argv;
 					StringToArgv(args, argv);
 
-					ConCmd_CmdList(argv);
+					//ConCmd_CmdList(argv);
 					commandBuffer = common;
 				} else
 					commandBuffer = common;
@@ -705,47 +698,6 @@ void Console::MoveCommandCursor(int num) {
 
 	if (commandCursorPos < 0) commandCursorPos = 0;
 	if (commandCursorPos > static_cast<int>(commandBuffer.size())) commandCursorPos = static_cast<int>(commandBuffer.size());
-}
-
-void Console::ConCmd_CmdList(const Console::ArgvType &argv) {
-	CommandsMap::iterator it;
-	int i = 0;
-
-	//pout << Std::endl;
-
-	if (argv.size() > 1) {
-		for (size_t a = 1; a < argv.size(); a++) {
-			const ArgsType &arg = argv[a];
-
-			for (it = con->ConsoleCommands.begin(); it != con->ConsoleCommands.end(); ++it)
-				if (it->_value) {
-					if (it->_key.compareToIgnoreCase(arg)) continue;
-
-					// TODO: Fix this
-					//pout << " " << it->_key << Std::endl;
-					i ++;
-				}
-		}
-	} else {
-		for (it = con->ConsoleCommands.begin(); it != con->ConsoleCommands.end(); ++it)
-			if (it->_value) {
-				// TODO
-				//pout << " " << it->_key << Std::endl;
-				i ++;
-			}
-	}
-
-	// TODO
-	//pout << i << " commands" << Std::endl;
-}
-
-void Console::ConCmd_CmdHistory(const Console::ArgvType & /*argv*/) {
-	Std::vector<ArgsType>::iterator it;
-
-	for (it = con->commandHistory.begin(); it != con->commandHistory.end(); ++it)
-		pout << " " << *it << Std::endl;
-
-	pout << con->commandHistory.size() << " commands" << Std::endl;
 }
 
 /*

@@ -69,8 +69,6 @@ public:
 	void        OnFocus(bool /*gain*/) override;
 	bool        OnKeyDown(int key, int mod) override;
 
-	static void         ConCmd_toggle(const Console::ArgvType &argv);   //!< "ConsoleGump::toggle" console command
-
 	bool    loadData(IDataSource *ids, uint32 version);
 
 protected:

@@ -139,6 +139,7 @@ private:
 #endif
 
 	// Miscellaneous
+	bool cmdToggleConsole(int argc, const char **argv);
 	bool cmdToggleFastArea(int argc, const char **argv);
 	bool cmdVerifyQuit(int argc, const char **argv);
 	bool cmdU8ShapeViewer(int argc, const char **argv);
@@ -148,6 +149,7 @@ private:
 	bool cmdInvertScreen(int argc, const char **argv);
 	bool cmdPlayMovie(int argc, const char **argv);
 	bool cmdPlayMusic(int argc, const char **argv);
+
 #ifdef DEBUG
 	bool cmdVisualDebugPathfinder(int argc, const char **argv);
 #endif

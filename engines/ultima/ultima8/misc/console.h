@@ -379,12 +379,6 @@ public:
 		commandInsert = !commandInsert;
 	}
 
-	//! "CmdList" console command
-	static void     ConCmd_CmdList(const Console::ArgvType &argv);
-
-	//! "CmdHistory" console command
-	static void     ConCmd_CmdHistory(const Console::ArgvType &argv);
-
 private:
 
 	// Print a text string to the console
