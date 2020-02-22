@@ -33,11 +33,17 @@
 
 namespace Tinsel {
 
+Background::Background(Font* font) : _font(font), _pCurBgnd(nullptr), _hBgPal(0), _BGspeed(0), _hBackground(0), _bDoFadeIn(false), _bgReels(0) {
+	for (int i = 0; i < MAX_BG; i++) {
+		_pBG[i] = nullptr;
+		_thisAnim[i].pObject = nullptr;
+	}
+}
+
 /**
  * Called to initialize a background.
  */
 void Background::InitBackground() {
-	// structure for playfields
 	// FIXME: Avoid non-const global vars
 	static PLAYFIELD playfield[] = {
 		{	// FIELD WORLD
@@ -60,8 +66,8 @@ void Background::InitBackground() {
 		}
 	};
 
-	// structure for background
-	static const BACKGND backgnd = {
+	// set current background
+	_pCurBgnd = new BACKGND{
 		BLACK,			// sky color
 		Common::Point(0, 0),	// initial world pos
 		Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// scroll limits
@@ -73,23 +79,17 @@ void Background::InitBackground() {
 		false			// no auto-erase
 	};
 
-	int i;			// playfield counter
-	PLAYFIELD* pPlayfield;	// pointer to current playfield
-
-	// set current background
-	_pCurBgnd = &backgnd;
-
 	// init background sky color
-	SetBgndColor(backgnd.rgbSkyColor);
+	SetBgndColor(_pCurBgnd->rgbSkyColor);
 
 	// start of playfield array
-	pPlayfield = backgnd.fieldArray;
+	PLAYFIELD* pPlayfield = _pCurBgnd->fieldArray;
 
 	// for each background playfield
-	for (i = 0; i < backgnd.numPlayfields; i++, pPlayfield++) {
+	for (int i = 0; i < _pCurBgnd->numPlayfields; i++, pPlayfield++) {
 		// init playfield pos
-		pPlayfield->fieldX = intToFrac(backgnd.ptInitWorld.x);
-		pPlayfield->fieldY = intToFrac(backgnd.ptInitWorld.y);
+		pPlayfield->fieldX = intToFrac(_pCurBgnd->ptInitWorld.x);
+		pPlayfield->fieldY = intToFrac(_pCurBgnd->ptInitWorld.y);
 
 		// no scrolling
 		pPlayfield->fieldXvel = intToFrac(0);

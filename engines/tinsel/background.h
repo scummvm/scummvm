@@ -81,20 +81,21 @@ class Font;
 
 class Background {
 public:
-	Background(Font *font) : _font(font), _pCurBgnd(nullptr), _hBgPal(0), _BGspeed(0), _hBackground(0), _bDoFadeIn(false), _bgReels(0) {}
+	Background(Font* font);
 
 	void InitBackground();
 
 	void DrawBackgnd();		// Draws all playfields for the current background
-
-	void RedrawBackgnd();	// Completely redraws all the playfield object lists for the current background
 
 	/**
 	 * Called before scene change.
 	 */
 	void DropBackground();
 
-	void ResetBackground() { _pCurBgnd = nullptr; }
+	void ResetBackground() {
+		delete _pCurBgnd;
+		_pCurBgnd = nullptr;
+	}
 
 	void StartupBackground(CORO_PARAM, SCNHANDLE hFilm);
 
