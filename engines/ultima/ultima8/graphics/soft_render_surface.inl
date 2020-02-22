@@ -221,7 +221,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 				int type = dlen & 1;
 				dlen >>= 1;
 
-				pixptr= line_start+x+XNEG(xpos);
+				pixptr = line_start+x+XNEG(xpos);
 				endrun = pixptr + XNEG(dlen);
 				
 				if (!type) {

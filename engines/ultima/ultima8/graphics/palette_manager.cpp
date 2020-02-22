@@ -189,12 +189,12 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 	case Transform_NoRed: {
 		matrix[0] = 0;
 		matrix[1] = 0;
-		matrix[2]  = 0;
-		matrix[3]  = 0;
+		matrix[2] = 0;
+		matrix[3] = 0;
 		matrix[4] = 0;
 		matrix[5] = 0x800;
-		matrix[6]  = 0;
-		matrix[7]  = 0;
+		matrix[6] = 0;
+		matrix[7] = 0;
 		matrix[8] = 0;
 		matrix[9] = 0;
 		matrix[10] = 0x800;
@@ -256,12 +256,12 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 	case Transform_BRG: {
 		matrix[0] = 0;
 		matrix[1] = 0x800;
-		matrix[2]  = 0;
-		matrix[3]  = 0;
+		matrix[2] = 0;
+		matrix[3] = 0;
 		matrix[4] = 0;
 		matrix[5] = 0;
-		matrix[6]  = 0x800;
-		matrix[7]  = 0;
+		matrix[6] = 0x800;
+		matrix[7] = 0;
 		matrix[8] = 0x800;
 		matrix[9] = 0;
 		matrix[10] = 0;
@@ -273,12 +273,12 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 	case Transform_GBR: {
 		matrix[0] = 0;
 		matrix[1] = 0;
-		matrix[2]  = 0x800;
-		matrix[3]  = 0;
+		matrix[2] = 0x800;
+		matrix[3] = 0;
 		matrix[4] = 0x800;
 		matrix[5] = 0;
-		matrix[6]  = 0;
-		matrix[7]  = 0;
+		matrix[6] = 0;
+		matrix[7] = 0;
 		matrix[8] = 0;
 		matrix[9] = 0x800;
 		matrix[10] = 0;
@@ -291,12 +291,12 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 		perr << "Unknown Palette Transformation: " << trans << Std::endl;
 		matrix[0] = 0x800;
 		matrix[1] = 0;
-		matrix[2]  = 0;
-		matrix[3]  = 0;
+		matrix[2] = 0;
+		matrix[3] = 0;
 		matrix[4] = 0;
 		matrix[5] = 0x800;
-		matrix[6]  = 0;
-		matrix[7]  = 0;
+		matrix[6] = 0;
+		matrix[7] = 0;
 		matrix[8] = 0;
 		matrix[9] = 0;
 		matrix[10] = 0x800;
