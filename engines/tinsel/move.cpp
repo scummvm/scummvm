@@ -133,7 +133,7 @@ static int ClickedOnPath(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 		 In a Blocking polygon - try searching down and up.
 		 If still nowhere (for now) give up!
 		 ------------------------------------------------------*/
-		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
 		for (i = clickY+1; i < SCREEN_HEIGHT + Toffset; i++) {
 			// Don't leave the path system
@@ -180,7 +180,7 @@ static int ClickedOnRefer(HPOLYGON hRefpoly, int clickX, int clickY, int *ptgtX,
 	int	end;		// Extreme of the scene
 	int	Loffset, Toffset;
 
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 	*ptgtX = *ptgtY = -1;
 
 	switch (PolySubtype(hRefpoly)) {
@@ -190,7 +190,7 @@ static int ClickedOnRefer(HPOLYGON hRefpoly, int clickX, int clickY, int *ptgtX,
 		break;
 
 	case REF_DOWN:				// Search downwards
-		end = BgHeight();
+		end = _vm->_bg->BgHeight();
 		for (i = clickY+1; i < end; i++)
 			if (InPolygon(clickX, i, PATH) != NOPOLY
 					&& InPolygon(clickX, i, BLOCK) == NOPOLY) {
@@ -211,7 +211,7 @@ static int ClickedOnRefer(HPOLYGON hRefpoly, int clickX, int clickY, int *ptgtX,
 		break;
 
 	case REF_RIGHT:				// Search to the right
-		end = BgWidth();
+		end = _vm->_bg->BgWidth();
 		for (i = clickX+1; i < end; i++)
 			if (InPolygon(i, clickY, PATH) != NOPOLY
 			&& InPolygon(i, clickY, BLOCK) == NOPOLY) {
@@ -252,7 +252,7 @@ static int ClickedOnNothing(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 	int	end;		// Extreme of the scene
 	int	Loffset, Toffset;
 
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
 	switch (g_DefaultRefer) {
 	case REF_DEFAULT:
@@ -266,7 +266,7 @@ static int ClickedOnNothing(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 				return ClickedOnPath(clickX, i, ptgtX, ptgtY);
 			}
 		// Try searching down and up (offscreen).
-		end = BgHeight();
+		end = _vm->_bg->BgHeight();
 		for (i = clickY+1; i < end; i++)
 			if (InPolygon(clickX, i, PATH) != NOPOLY) {
 				return ClickedOnPath(clickX, i, ptgtX, ptgtY);
@@ -285,7 +285,7 @@ static int ClickedOnNothing(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 		break;
 
 	case REF_DOWN:
-		end = BgHeight();
+		end = _vm->_bg->BgHeight();
 		for (i = clickY+1; i < end; i++)
 			if (InPolygon(clickX, i, PATH) != NOPOLY) {
 				return ClickedOnPath(clickX, i, ptgtX, ptgtY);
@@ -300,7 +300,7 @@ static int ClickedOnNothing(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 		break;
 
 	case REF_RIGHT:
-		end = BgWidth();
+		end = _vm->_bg->BgWidth();
 		for (i = clickX + 1; i < end; i++)
 			if (InPolygon(i, clickY, PATH) != NOPOLY) {
 				return ClickedOnPath(i, clickY, ptgtX, ptgtY);

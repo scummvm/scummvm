@@ -64,11 +64,6 @@ namespace Tinsel {
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
-// In BG.CPP
-extern void SetDoFadeIn(bool tf);
-extern void DropBackground();
-extern const BACKGND *g_pCurBgnd;
-
 // In CURSOR.CPP
 extern void CursorProcess(CORO_PARAM, const void *);
 
@@ -678,12 +673,12 @@ bool ChangeScene(bool bReset) {
 
 			switch (g_NextScene.trans) {
 			case TRANS_CUT:
-				SetDoFadeIn(false);
+				_vm->_bg->SetDoFadeIn(false);
 				break;
 
 			case TRANS_FADE:
 			default:
-				SetDoFadeIn(true);
+				_vm->_bg->SetDoFadeIn(true);
 				break;
 			}
 		} else
@@ -854,6 +849,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 TinselEngine::~TinselEngine() {
 	_system->getAudioCDManager()->stop();
+	delete _bg;
 	delete _font;
 	delete _bmv;
 	delete _sound;
@@ -897,6 +893,7 @@ Common::Error TinselEngine::run() {
 	_sound = new SoundManager(this);
 	_bmv = new BMVPlayer();
 	_font = new Font();
+	_bg = new Background(_font);
 
 	// Initialize backend
 	if (getGameID() == GID_DW2) {
@@ -1013,7 +1010,7 @@ Common::Error TinselEngine::run() {
 	_vm->_config->writeToDisk();
 
 	EndScene();
-	g_pCurBgnd = NULL;
+	_bg->ResetBackground();
 
 	return Common::kNoError;
 }
@@ -1036,7 +1033,7 @@ void TinselEngine::NextGameCycle() {
 		_bmv->CopyMovieToScreen();
 	else
 		// redraw background
-		DrawBackgnd();
+		_bg->DrawBackgnd();
 
 	// Why waste resources on yet another process?
 	FettleTimers();
@@ -1101,10 +1098,10 @@ void TinselEngine::CreateConstProcesses() {
 void TinselEngine::RestartGame() {
 	HoldItem(INV_NOICON);	// Holding nothing
 
-	DropBackground();	// No background
+	_bg->DropBackground();	// No background
 
 	// Ditches existing infrastructure background
-	InitBackground();
+	_bg->InitBackground();
 
 	// Next scene change won't need to fade out
 	// -> reset the count used by ChangeScene

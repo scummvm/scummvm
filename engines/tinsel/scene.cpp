@@ -54,9 +54,6 @@ namespace Tinsel {
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
-// in BG.C
-extern void DropBackground();
-
 // in EFFECT.C
 extern void EffectPolyProcess(CORO_PARAM, const void *);
 
@@ -317,7 +314,7 @@ void EndScene() {
 
 	DropPolygons();		// No polygons
 	DropScroll();	// No no-scrolls
-	DropBackground();	// No background
+	_vm->_bg->DropBackground();	// No background
 	DropMovers();		// No moving actors
 	DropCursor();		// No cursor
 	DropActors();		// No actor reels running
@@ -372,7 +369,7 @@ void PrimeScene() {
 	CoroScheduler.createProcess(PID_TAG, PointProcess, NULL, 0);
 
 	// init the current background
-	InitBackground();
+	_vm->_bg->InitBackground();
 }
 
 /**

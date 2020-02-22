@@ -373,7 +373,7 @@ bool SoundManager::offscreenChecks(int x, int &y) {
 		return true;
 
 	// convert x to offset from screen center
-	x -= PlayfieldGetCenterX(FIELD_WORLD);
+	x -= _vm->_bg->PlayfieldGetCenterX(FIELD_WORLD);
 
 	if (x < -SCREEN_WIDTH || x > SCREEN_WIDTH) {
 		// A long way offscreen, ignore it
@@ -392,7 +392,7 @@ int8 SoundManager::getPan(int x) {
 	if (x == -1)
 		return 0;
 
-	x -= PlayfieldGetCenterX(FIELD_WORLD);
+	x -= _vm->_bg->PlayfieldGetCenterX(FIELD_WORLD);
 
 	if (x == 0)
 		return 0;

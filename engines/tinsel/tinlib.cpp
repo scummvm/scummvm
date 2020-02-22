@@ -86,9 +86,6 @@ extern bool g_bNoPause;
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
-// in BG.CPP
-extern void ChangePalette(SCNHANDLE hPal);
-
 // in PDISPLAY.CPP
 extern void EnableTags();
 extern void DisableTags();
@@ -329,27 +326,27 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, int hold, bool ig
 static void DecodeExtreme(EXTREME extreme, int *px, int *py) {
 	int	Loffset, Toffset;
 
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
 	switch (extreme) {
 	case EX_BOTTOM:
 		*px = Loffset;
-		*py = BgHeight() - SCREEN_HEIGHT;
+		*py = _vm->_bg->BgHeight() - SCREEN_HEIGHT;
 		break;
 	case EX_BOTTOMLEFT:
 		*px = 0;
-		*py = BgHeight() - SCREEN_HEIGHT;
+		*py = _vm->_bg->BgHeight() - SCREEN_HEIGHT;
 		break;
 	case EX_BOTTOMRIGHT:
-		*px = BgWidth() - SCREEN_WIDTH;
-		*py = BgHeight() - SCREEN_HEIGHT;
+		*px = _vm->_bg->BgWidth() - SCREEN_WIDTH;
+		*py = _vm->_bg->BgHeight() - SCREEN_HEIGHT;
 		break;
 	case EX_LEFT:
 		*px = 0;
 		*py = Toffset;
 		break;
 	case EX_RIGHT:
-		*px = BgWidth() - SCREEN_WIDTH;
+		*px = _vm->_bg->BgWidth() - SCREEN_WIDTH;
 		*py = Toffset;
 		break;
 	case EX_TOP:
@@ -360,7 +357,7 @@ static void DecodeExtreme(EXTREME extreme, int *px, int *py) {
 		*px = *py = 0;
 		break;
 	case EX_TOPRIGHT:
-		*px = BgWidth() - SCREEN_WIDTH;
+		*px = _vm->_bg->BgWidth() - SCREEN_WIDTH;
 		*py = 0;
 		break;
 	default:
@@ -414,7 +411,7 @@ static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
 			break;
 		}
 
-		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
 	} while (Loffset != psm->x || Toffset != psm->y);
 
@@ -639,7 +636,7 @@ static void AuxScale(int actor, int scale, SCNHANDLE *rp) {
  * Defines the background image for a scene.
  */
 static void Background(CORO_PARAM, SCNHANDLE bfilm) {
-	StartupBackground(coroParam, bfilm);
+	_vm->_bg->StartupBackground(coroParam, bfilm);
 }
 
 /**
@@ -1378,7 +1375,7 @@ static void KillProcess(uint32 procID) {
 static int LToffset(int lort) {
 	int Loffset, Toffset;
 
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 	return (lort == SCREENXPOS) ? Loffset : Toffset;
 }
 
@@ -1472,7 +1469,7 @@ void Offset(EXTREME extreme, int x, int y) {
 	if (TinselV2)
 		DecodeExtreme(extreme, &x, &y);
 
-	PlayfieldSetPos(FIELD_WORLD, x, y);
+	_vm->_bg->PlayfieldSetPos(FIELD_WORLD, x, y);
 }
 
 /**
@@ -1907,8 +1904,8 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	// Print the text
 	if (TinselV2) {
 		int Loffset, Toffset;
-		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
+		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+		_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
 			_vm->_font->TextBufferAddr(), 0, x - Loffset, y - Toffset, _vm->_font->GetTagFontHandle(),
 			TXT_CENTER, 0);
 		assert(_ctx->pText);
@@ -1920,8 +1917,8 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 
 	} else if (bJapDoPrintText || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 		int Loffset, Toffset;	// Screen position
-		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+		_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 					0, x - Loffset, y - Toffset,
 					TinselV2 ? _vm->_font->GetTagFontHandle() : _vm->_font->GetTalkFontHandle(), TXT_CENTER);
 		assert(_ctx->pText); // string produced NULL text
@@ -1933,14 +1930,14 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		 */
 		int	shift;
 		shift = MultiRightmost(_ctx->pText) + 2;
-		if (shift >= BgWidth())			// Not off right
-			MultiMoveRelXY(_ctx->pText, BgWidth() - shift, 0);
+		if (shift >= _vm->_bg->BgWidth())			// Not off right
+			MultiMoveRelXY(_ctx->pText, _vm->_bg->BgWidth() - shift, 0);
 		shift = MultiLeftmost(_ctx->pText) - 1;
 		if (shift <= 0)					// Not off left
 			MultiMoveRelXY(_ctx->pText, -shift, 0);
 		shift = MultiLowest(_ctx->pText);
-		if (shift > BgHeight())			// Not off bottom
-			MultiMoveRelXY(_ctx->pText, 0, BgHeight() - shift);
+		if (shift > _vm->_bg->BgHeight())			// Not off bottom
+			MultiMoveRelXY(_ctx->pText, 0, _vm->_bg->BgHeight() - shift);
 	}
 
 	// Give up if nothing printed and no sample
@@ -1995,7 +1992,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 
 	// Delete the text
 	if (_ctx->pText != NULL)
-		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 	_vm->_mixer->stopHandle(_ctx->handle);
 
 	CORO_END_CODE;
@@ -2086,7 +2083,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 			else
 				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 
-			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+			_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 						0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // PrintObj() string produced NULL text
 
@@ -2126,7 +2123,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Give way to non-POINTED-generated text
 					if (g_bNotPointedRunning) {
 						// Delete the text, and wait for the all-clear
-						MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+						MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 						_ctx->pText = NULL;
 
 						while (g_bNotPointedRunning)
@@ -2138,7 +2135,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 						// Re-display in the same place
 						LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
-						_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
+						_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
 							_vm->_font->TextBufferAddr(), 0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(),
 							TXT_CENTER, 0);
 						assert(_ctx->pText);
@@ -2214,7 +2211,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 		// Delete the text, if haven't already
 		if (_ctx->pText)
-			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 
 		// If it hasn't already finished, stop sample
 		if (_ctx->bSample)
@@ -2244,7 +2241,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 			// Give way to non-POINTED-generated text
 			if (g_bNotPointedRunning) {
 				// Delete the text, and wait for the all-clear
-				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), pText);
+				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), pText);
 				pText = NULL;
 				while (g_bNotPointedRunning)
 					CORO_SLEEP(1);
@@ -2255,7 +2252,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 
 				// Re-display in the same place
 				LoadStringRes(text, _vm->_font->TextBufferAddr(), TBUFSZ);
-				pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+				pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 							0, textx, texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 				assert(pText); // PrintObj() string produced NULL text
 				MultiSetZPosition(pText, Z_INV_ITEXT);
@@ -2545,7 +2542,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 				if (_ctx->thisScroll != g_scrollNumber)
 					CORO_KILL_SELF();
 
-				PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 			} while (Loffset != _ctx->x || Toffset != _ctx->y);
 		} else if (TinselV2 && myEscape) {
 			SCROLL_MONITOR sm;
@@ -2684,7 +2681,7 @@ static void SetPalette(SCNHANDLE hPal, bool escOn, int myEscape) {
 	if (escOn && myEscape != GetEscEvents())
 		return;
 
-	ChangePalette(hPal);
+	_vm->_bg->ChangePalette(hPal);
 }
 
 /**
@@ -3310,7 +3307,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			 */
 			int	xshift, yshift;
 
-			PlayfieldGetPos(FIELD_WORLD, &_ctx->Loffset, &_ctx->Toffset);
+			_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &_ctx->Loffset, &_ctx->Toffset);
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
 				GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
@@ -3324,7 +3321,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				_ctx->y -= _ctx->Toffset;
 			}
 
-			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
+			_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
 					_vm->_font->TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
 					_vm->_font->GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
@@ -3387,7 +3384,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if (_ctx->pText != NULL) {
 				int	nLoff, nToff;
 
-				PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
+				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
 				if (nLoff != _ctx->Loffset || nToff != _ctx->Toffset) {
 					MultiMoveRelXY(_ctx->pText, _ctx->Loffset - nLoff, _ctx->Toffset - nToff);
 					_ctx->Loffset = nLoff;
@@ -3445,7 +3442,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		} while (1);
 
 		if (_ctx->pText != NULL) {
-			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 			_ctx->pText = NULL;
 		}
 		if (TinselV2 && _ctx->bSample)
@@ -3460,7 +3457,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	if (_ctx->bTalkReel)
 		CORO_INVOKE_2(FinishTalkingReel, _ctx->pActor, _ctx->actor);
 	if (_ctx->pText != NULL)
-		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 
 	if (TinselV2) {
 		if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {

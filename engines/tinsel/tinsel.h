@@ -56,6 +56,7 @@ class MidiDriver;
 class MidiMusicPlayer;
 class PCMMusicPlayer;
 class SoundManager;
+class Background;
 class Font;
 
 typedef Common::List<Common::Rect> RectList;
@@ -197,6 +198,7 @@ public:
 	MidiMusicPlayer *_midiMusic;
 	PCMMusicPlayer *_pcmMusic;
 	BMVPlayer *_bmv;
+	Background* _bg;
 	Font *_font;
 
 	Config *_config;

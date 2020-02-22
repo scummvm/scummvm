@@ -55,7 +55,7 @@ goto done
 echo.
 echo Creating project files with all engines enabled (stable and unstable)
 echo.
-create_project ..\.. --enable-all-engines --disable-fluidsynth --msvc
+create_project ..\.. --enable-all-engines --disable-fluidsynth --msvc --build-events --enable-vkeybd --enable-updates --enable-faad --enable-mpeg2
 goto done
 
 :stable

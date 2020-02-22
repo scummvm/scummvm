@@ -31,8 +31,6 @@ namespace Tinsel {
 // Accessed using TextBufferAddr(), this is how big it is:
 #define TBUFSZ	512
 
-class TinselEngine;
-
 class Font {
 public:
 	Font() : _hTagFont(0), _hTalkFont(0), _hRegularTalkFont(0), _hRegularTagFont(0), _tBuffer("") {
