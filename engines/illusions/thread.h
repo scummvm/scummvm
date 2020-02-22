@@ -105,6 +105,7 @@ public:
 	void setThreadSceneId(uint32 threadId, uint32 sceneId);
 	uint32 getThreadSceneId(uint32 threadId);
 	bool isActiveThread(int msgNum);
+	~ThreadList();
 protected:
 	typedef Common::List<Thread*> List;
 	typedef List::iterator Iterator;

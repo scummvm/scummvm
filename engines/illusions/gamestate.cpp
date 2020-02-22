@@ -43,6 +43,7 @@ void GameState::writeState(uint32 sceneId, uint32 threadId) {
 	writeStream->writeUint32LE(sceneId);
 	writeStream->writeUint32LE(threadId);
 	writeStateInternal(writeStream);
+	delete writeStream;
 }
 
 void GameState::read(Common::ReadStream *in) {
