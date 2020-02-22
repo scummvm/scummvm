@@ -65,10 +65,10 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 	RenderSurface::format.g_shift = _sdlSurf->format.gShift;
 	RenderSurface::format.b_shift = _sdlSurf->format.bShift;
 	RenderSurface::format.a_shift = _sdlSurf->format.aShift;
-	RenderSurface::format.r_mask = _sdlSurf->format.rMax();
-	RenderSurface::format.g_mask = _sdlSurf->format.gMax();
-	RenderSurface::format.b_mask = _sdlSurf->format.bMax();
-	RenderSurface::format.a_mask = _sdlSurf->format.aMax();
+	RenderSurface::format.r_mask = _sdlSurf->format.rMax() << _sdlSurf->format.rShift;
+	RenderSurface::format.g_mask = _sdlSurf->format.gMax() << _sdlSurf->format.gShift;
+	RenderSurface::format.b_mask = _sdlSurf->format.bMax() << _sdlSurf->format.bShift;
+	RenderSurface::format.a_mask = _sdlSurf->format.aMax() << _sdlSurf->format.aShift;
 
 	SetPixelsPointer();
 
