@@ -46,7 +46,6 @@ public:
 	void run() override;
 
 	static ProcId invertScreen();
-	static void ConCmd_invertScreen(const Console::ArgvType &argv);
 
 	INTRINSIC(I_invertScreen);
 

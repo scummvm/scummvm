@@ -44,17 +44,12 @@ MiniMapGump::MiniMapGump(int x_, int y_) :
 	_minimap._format = TEX_FMT_NATIVE;
 	_minimap._width = _minimap._height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
 	_minimap._buffer = texbuffer[0];
-
-	con->AddConsoleCommand("MiniMapGump::generateWholeMap",
-	                      MiniMapGump::ConCmd_generateWholeMap);
 }
 
 MiniMapGump::MiniMapGump() : Gump() {
-	con->RemoveConsoleCommand(MiniMapGump::ConCmd_generateWholeMap);
 }
 
 MiniMapGump::~MiniMapGump(void) {
-	con->RemoveConsoleCommand(MiniMapGump::ConCmd_generateWholeMap);
 }
 
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -168,37 +163,6 @@ uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
 	} else return 0;
 }
 
-void MiniMapGump::ConCmd_toggle(const Console::ArgvType &argv) {
-	Ultima8Engine *app = Ultima8Engine::get_instance();
-	Gump *desktop = app->getDesktopGump();
-	Gump *mmg = desktop->FindGump(MiniMapGump::ClassType);
-
-	if (!mmg) {
-		mmg = new MiniMapGump(4, 4);
-		mmg->InitGump(0);
-		mmg->setRelativePosition(TOP_LEFT, 4, 4);
-
-	} else {
-		mmg->Close();
-	}
-}
-
-void MiniMapGump::ConCmd_generateWholeMap(const Console::ArgvType &argv) {
-	World *world = World::get_instance();
-	CurrentMap *currentmap = world->getCurrentMap();
-	currentmap->setWholeMapFast();
-}
-
-uint16 MiniMapGump::TraceObjId(int32 mx, int32 my) {
-	uint16 objId_ = Gump::TraceObjId(mx, my);
-
-	if (!objId_ || objId_ == 65535)
-		if (PointOnGump(mx, my))
-			objId_ = getObjId();
-
-	return objId_;
-}
-
 void MiniMapGump::saveData(ODataSource *ods) {
 	Gump::saveData(ods);
 }
@@ -211,9 +175,17 @@ bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
 	_minimap._width = _minimap._height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
 	_minimap._buffer = texbuffer[0];
 
-	con->AddConsoleCommand("MiniMapGump::generateWholeMap",
-	                      MiniMapGump::ConCmd_generateWholeMap);
 	return true;
+}
+
+uint16 MiniMapGump::TraceObjId(int32 mx, int32 my) {
+	uint16 objId_ = Gump::TraceObjId(mx, my);
+
+	if (!objId_ || objId_ == 65535)
+		if (PointOnGump(mx, my))
+			objId_ = getObjId();
+
+	return objId_;
 }
 
 } // End of namespace Ultima8

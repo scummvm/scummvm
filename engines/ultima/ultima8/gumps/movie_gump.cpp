@@ -102,26 +102,6 @@ ProcId MovieGump::U8MovieViewer(RawArchive *movie, bool introMusicHack) {
 	return gump->GetNotifyProcess()->getPid();
 }
 
-//static
-void MovieGump::ConCmd_play(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "play usage: play <moviename>" << Std::endl;
-		return;
-	}
-
-	Std::string filename = "@game/static/" + argv[1] + ".skf";
-	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *skf = filesys->ReadFile(filename);
-	if (!skf) {
-		pout << "movie not found." << Std::endl;
-		return;
-	}
-
-	RawArchive *flex = new RawArchive(skf);
-	U8MovieViewer(flex);
-}
-
-
 bool MovieGump::loadData(IDataSource *ids) {
 	return false;
 }

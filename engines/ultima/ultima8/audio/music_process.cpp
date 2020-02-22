@@ -263,19 +263,5 @@ uint32 MusicProcess::I_playMusic(const uint8 *args,
 	return 0;
 }
 
-
-void MusicProcess::ConCmd_playMusic(const Console::ArgvType &argv) {
-	if (_theMusicProcess) {
-		if (argv.size() != 2) {
-			pout << "MusicProcess::playMusic (tracknum)" << Std::endl;
-		} else {
-			pout << "Playing track " << argv[1] << Std::endl;
-			_theMusicProcess->playMusic_internal(atoi(argv[1].c_str()));
-		}
-	} else {
-		pout << "No Music Process" << Std::endl;
-	}
-}
-
 } // End of namespace Ultima8
 } // End of namespace Ultima

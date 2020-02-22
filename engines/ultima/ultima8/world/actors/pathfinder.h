@@ -76,8 +76,6 @@ public:
 	bool pathfind(Std::vector<PathfindingAction> &path);
 
 #ifdef DEBUG
-	//! "visualDebug" console command
-	static void ConCmd_visualDebug(const Console::ArgvType &argv);
 	static ObjId visualdebug_actor;
 #endif
 

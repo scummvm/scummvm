@@ -50,9 +50,6 @@ public:
 	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	uint16      TraceObjId(int32 mx, int32 my) override;
 
-	static void         ConCmd_toggle(const Console::ArgvType &argv);   //!< "MiniMapGump::toggle" console command
-	static void         ConCmd_generateWholeMap(const Console::ArgvType &argv); //!< "MiniMapGump::generateWholeMap" console command
-
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
 	void saveData(ODataSource *ods) override;

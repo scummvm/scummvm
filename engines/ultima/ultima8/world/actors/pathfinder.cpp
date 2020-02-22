@@ -624,24 +624,5 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	return false;
 }
 
-
-#ifdef DEBUG
-void Pathfinder::ConCmd_visualDebug(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "Usage: Pathfinder::visualDebug objid" << Std::endl;
-		pout << "Specify objid -1 to stop tracing." << Std::endl;
-		return;
-	}
-	int p = strtol(argv[1].c_str(), 0, 0);
-	if (p == -1) {
-		visualdebug_actor = 0xFFFF;
-		pout << "Pathfinder: stopped visual tracing" << Std::endl;
-	} else {
-		visualdebug_actor = (uint16)p;
-		pout << "Pathfinder: visually tracing _actor " << visualdebug_actor << Std::endl;
-	}
-}
-#endif
-
 } // End of namespace Ultima8
 } // End of namespace Ultima

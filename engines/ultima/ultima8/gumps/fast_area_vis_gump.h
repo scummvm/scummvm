@@ -38,9 +38,6 @@ public:
 
 	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	uint16      TraceObjId(int32 mx, int32 my) override;
-
-	static void         ConCmd_toggle(const Console::ArgvType &argv);   //!< "FastAreaVisGump::toggle" console command
-
 };
 
 } // End of namespace Ultima8

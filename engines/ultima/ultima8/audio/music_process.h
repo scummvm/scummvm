@@ -31,9 +31,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
+class Debugger;
 class MidiPlayer;
 
 class MusicProcess : public Process {
+	friend class Debugger;
+
 	enum MusicStates {
 		MUSIC_NORMAL = 1,
 		MUSIC_TRANSITION = 2,
@@ -87,9 +90,6 @@ public:
 	void run() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
-
-	// MusicProcess::playMusic console command
-	static void ConCmd_playMusic(const Console::ArgvType &argv);
 };
 
 } // End of namespace Ultima8

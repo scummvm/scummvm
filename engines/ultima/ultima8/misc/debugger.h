@@ -99,7 +99,7 @@ private:
 	// Memory Manager
 	bool cmdMemInfo(int argc, const char **argv);
 #ifdef DEBUG
-	bool cmdTest(int argc, const char **argv);
+	bool cmdTestMemory(int argc, const char **argv);
 #endif
 
 	// Object Manager
@@ -123,9 +123,18 @@ private:
 	bool cmdToggleClipping(int argc, const char **argv);
 
 	// Miscellaneous
+	bool cmdToggleFastArea(int argc, const char **argv);
 	bool cmdVerifyQuit(int argc, const char **argv);
 	bool cmdU8ShapeViewer(int argc, const char **argv);
 	bool cmdShowMenu(int argc, const char **argv);
+	bool cmdGenerateWholeMap(int argc, const char **argv);
+	bool cmdToggleMinimap(int argc, const char **argv);
+	bool cmdInvertScreen(int argc, const char **argv);
+	bool cmdPlayMovie(int argc, const char **argv);
+	bool cmdPlayMusic(int argc, const char **argv);
+#ifdef DEBUG
+	bool cmdVisualDebugPathfinder(int argc, const char **argv);
+#endif
 
 public:
 	Debugger();

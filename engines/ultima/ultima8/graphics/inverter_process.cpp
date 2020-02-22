@@ -114,9 +114,5 @@ uint32 InverterProcess::I_invertScreen(const uint8 *args,
 	return invertScreen();
 }
 
-void InverterProcess::ConCmd_invertScreen(const Console::ArgvType &argv) {
-	invertScreen();
-}
-
 } // End of namespace Ultima8
 } // End of namespace Ultima

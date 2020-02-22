@@ -51,20 +51,6 @@ void FastAreaVisGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sca
 			if (currentmap->isChunkFast(xp, yp)) surf->Fill32(0xFFFFFFFF, xp + 1, yp + 1, 1, 1);
 }
 
-void FastAreaVisGump::ConCmd_toggle(const Console::ArgvType &argv) {
-	Ultima8Engine *app = Ultima8Engine::get_instance();
-	Gump *desktop = app->getDesktopGump();
-	Gump *favg = desktop->FindGump(FastAreaVisGump::ClassType);
-
-	if (!favg) {
-		favg = new FastAreaVisGump;
-		favg->InitGump(0);
-		favg->setRelativePosition(TOP_RIGHT, -4, 4);
-	} else {
-		favg->Close();
-	}
-}
-
 uint16 FastAreaVisGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
 

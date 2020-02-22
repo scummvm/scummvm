@@ -23,8 +23,15 @@
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/conf/setting_manager.h"
+#include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/ultima8/filesys/raw_archive.h"
+#include "ultima/ultima8/graphics/inverter_process.h"
+#include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/gumps/minimap_gump.h"
+#include "ultima/ultima8/gumps/movie_gump.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
@@ -64,6 +71,11 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("AudioProcess::playSFX", WRAP_METHOD(Debugger, cmdPlaySFX));
 	registerCmd("AudioProcess::stopSFX", WRAP_METHOD(Debugger, cmdStopSFX));
 
+	registerCmd("Cheat::maxstats", WRAP_METHOD(Debugger, cmdMaxStats));
+	registerCmd("Cheat::heal", WRAP_METHOD(Debugger, cmdHeal));
+	registerCmd("Cheat::toggleInvincibility", WRAP_METHOD(Debugger, cmdToggleInvincibility));
+	registerCmd("Cheat::toggle", WRAP_METHOD(Debugger, cmdToggleCheatMode));
+
 	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdToggleHighlightItems));
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
 	registerCmd("GameMapGump::incrementSortOrder", WRAP_METHOD(Debugger, cmdIncrementSortOrder));
@@ -80,9 +92,21 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("Kernel::toggleFrameByFrame", WRAP_METHOD(Debugger, cmdToggleFrameByFrame));
 	registerCmd("Kernel::advanceFrame", WRAP_METHOD(Debugger, cmdAdvanceFrame));
 
+	registerCmd("MainActor::teleport", WRAP_METHOD(Debugger, cmdTeleport));
+	registerCmd("MainActor::mark", WRAP_METHOD(Debugger, cmdMark));
+	registerCmd("MainActor::recall", WRAP_METHOD(Debugger, cmdRecall));
+	registerCmd("MainActor::listmarks", WRAP_METHOD(Debugger, cmdListMarks));
+	registerCmd("MainActor::name", WRAP_METHOD(Debugger, cmdName));
+	registerCmd("MainActor::useBackpack", WRAP_METHOD(Debugger, cmdUseBackpack));
+	registerCmd("MainActor::useInventory", WRAP_METHOD(Debugger, cmdUseInventory));
+	registerCmd("MainActor::useRecall", WRAP_METHOD(Debugger, cmdUseRecall));
+	registerCmd("MainActor::useBedroll", WRAP_METHOD(Debugger, cmdUseBedroll));
+	registerCmd("MainActor::useKeyring", WRAP_METHOD(Debugger, cmdUseKeyring));
+	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
+
 	registerCmd("MemoryManager::MemInfo", WRAP_METHOD(Debugger, cmdMemInfo));
 #ifdef DEBUG
-	registerCmd("MemoryManager::test", WRAP_METHOD(Debugger, cmdTest));
+	registerCmd("MemoryManager::test", WRAP_METHOD(Debugger, cmdTestMemory));
 #endif
 
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
@@ -103,39 +127,19 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
 	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
 
+	registerCmd("FastAreaVisGump::toggle", WRAP_METHOD(Debugger, cmdToggleFastArea));
+	registerCmd("InverterProcess::invertScreen", WRAP_METHOD(Debugger, cmdInvertScreen));
+	registerCmd("MenuGump::showMenu", WRAP_METHOD(Debugger, cmdShowMenu));
+	registerCmd("MiniMapGump::toggle", WRAP_METHOD(Debugger, cmdToggleMinimap));
+	registerCmd("MiniMapGump::generateWholeMap", WRAP_METHOD(Debugger, cmdGenerateWholeMap));
+	registerCmd("MovieGump::play", WRAP_METHOD(Debugger, cmdPlayMovie));
+	registerCmd("MusicProcess::playMusic", WRAP_METHOD(Debugger, cmdPlayMusic));
 	registerCmd("QuitGump::verifyQuit", WRAP_METHOD(Debugger, cmdVerifyQuit));
 	registerCmd("ShapeViewerGump::U8ShapeViewer", WRAP_METHOD(Debugger, cmdU8ShapeViewer));
-	registerCmd("MenuGump::showMenu", WRAP_METHOD(Debugger, cmdShowMenu));
 
 #ifdef DEBUG
-	registerCmd("Pathfinder::visualDebug",
-		Pathfinder::ConCmd_visualDebug);
+	registerCmd("Pathfinder::visualDebug", Pathfinder::cmdVisualDebugPathfinder);
 #endif
-
-	registerCmd("MainActor::teleport", WRAP_METHOD(Debugger, cmdTeleport));
-	registerCmd("MainActor::mark", WRAP_METHOD(Debugger, cmdMark));
-	registerCmd("MainActor::recall", WRAP_METHOD(Debugger, cmdRecall));
-	registerCmd("MainActor::listmarks", WRAP_METHOD(Debugger, cmdListMarks));
-	registerCmd("MainActor::name", WRAP_METHOD(Debugger, cmdName));
-	registerCmd("MainActor::useBackpack", WRAP_METHOD(Debugger, cmdUseBackpack));
-	registerCmd("MainActor::useInventory", WRAP_METHOD(Debugger, cmdUseInventory));
-	registerCmd("MainActor::useRecall", WRAP_METHOD(Debugger, cmdUseRecall));
-	registerCmd("MainActor::useBedroll", WRAP_METHOD(Debugger, cmdUseBedroll));
-	registerCmd("MainActor::useKeyring", WRAP_METHOD(Debugger, cmdUseKeyring));
-	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
-
-	/*
-	registerCmd("Cheat::maxstats", WRAP_METHOD(Debugger, cmdMaxStats));
-	registerCmd("Cheat::heal", WRAP_METHOD(Debugger, cmdHeal));
-	registerCmd("Cheat::toggleInvincibility", WRAP_METHOD(Debugger, cmdToggleInvincibility));
-	registerCmd("Cheat::toggle", Ultima8Engine::ConCmd_toggleCheatMode);
-
-	registerCmd("MovieGump::play", MovieGump::ConCmd_play);
-	registerCmd("MusicProcess::playMusic", MusicProcess::ConCmd_playMusic);
-	registerCmd("InverterProcess::invertScreen", InverterProcess::ConCmd_invertScreen);
-	registerCmd("FastAreaVisGump::toggle", FastAreaVisGump::ConCmd_toggle);
-	registerCmd("MiniMapGump::toggle", MiniMapGump::ConCmd_toggle);
-	*/
 }
 
 bool Debugger::cmdSaveGame(int argc, const char **argv) {
@@ -1086,6 +1090,103 @@ bool Debugger::cmdShowMenu(int argc, const char **argv) {
 	MenuGump::showMenu();
 	return false;
 }
+
+bool Debugger::cmdToggleFastArea(int argc, const char **argv) {
+	Ultima8Engine *app = Ultima8Engine::get_instance();
+	Gump *desktop = app->getDesktopGump();
+	Gump *favg = desktop->FindGump(FastAreaVisGump::ClassType);
+
+	if (!favg) {
+		favg = new FastAreaVisGump;
+		favg->InitGump(0);
+		favg->setRelativePosition(Gump::TOP_RIGHT, -4, 4);
+	} else {
+		favg->Close();
+	}
+
+	return false;
+}
+
+bool Debugger::cmdInvertScreen(int argc, const char **argv) {
+	InverterProcess::invertScreen();
+	return false;
+}
+
+bool Debugger::cmdPlayMovie(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("play usage: play <moviename>\n");
+		return true;
+	}
+
+	Std::string filename = Common::String::format("@game/static/%s.skf", argv[1]);
+	FileSystem *filesys = FileSystem::get_instance();
+	IDataSource *skf = filesys->ReadFile(filename);
+	if (!skf) {
+		debugPrintf("movie not found.\n");
+		return true;
+	}
+
+	RawArchive *flex = new RawArchive(skf);
+	MovieGump::U8MovieViewer(flex);
+	return false;
+}
+
+bool Debugger::cmdPlayMusic(int argc, const char **argv) {
+	if (MusicProcess::_theMusicProcess) {
+		if (argc != 2) {
+			debugPrintf("MusicProcess::playMusic (tracknum)\n");
+		} else {
+			debugPrintf("Playing track %s\n", argv[1]);
+			MusicProcess::_theMusicProcess->playMusic_internal(atoi(argv[1]));
+			return false;
+		}
+	} else {
+		debugPrintf("No Music Process\n");
+	}
+
+	return true;
+}
+
+bool Debugger::cmdToggleMinimap(int argc, const char **argv) {
+	Ultima8Engine *app = Ultima8Engine::get_instance();
+	Gump *desktop = app->getDesktopGump();
+	Gump *mmg = desktop->FindGump(MiniMapGump::ClassType);
+
+	if (!mmg) {
+		mmg = new MiniMapGump(4, 4);
+		mmg->InitGump(0);
+		mmg->setRelativePosition(Gump::TOP_LEFT, 4, 4);
+	} else {
+		mmg->Close();
+	}
+
+	return true;
+}
+
+bool Debugger::cmdGenerateWholeMap(int argc, const char **argv) {
+	World *world = World::get_instance();
+	CurrentMap *currentmap = world->getCurrentMap();
+	currentmap->setWholeMapFast();
+	return false;
+}
+
+#ifdef DEBUG
+bool Debugger::cmdVisualDebugPathfinder(int argc, const char **argv) {
+	if (argc != 2) {
+		pout << "Usage: Pathfinder::visualDebug objid\n");
+		pout << "Specify objid -1 to stop tracing.\n");
+		return;
+	}
+	int p = strtol(argv[1].c_str(), 0, 0);
+	if (p == -1) {
+		visualdebug_actor = 0xFFFF;
+		pout << "Pathfinder: stopped visual tracing\n");
+	} else {
+		visualdebug_actor = (uint16)p;
+		pout << "Pathfinder: visually tracing _actor " << visualdebug_actor << Std::endl;
+	}
+}
+#endif
 
 } // End of namespace Ultima8
 } // End of namespace Ultima
