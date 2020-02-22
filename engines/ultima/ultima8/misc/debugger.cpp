@@ -44,6 +44,7 @@
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 
@@ -71,10 +72,12 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("AudioProcess::playSFX", WRAP_METHOD(Debugger, cmdPlaySFX));
 	registerCmd("AudioProcess::stopSFX", WRAP_METHOD(Debugger, cmdStopSFX));
 
+	registerCmd("Cheat::toggle", WRAP_METHOD(Debugger, cmdToggleCheatMode));
 	registerCmd("Cheat::maxstats", WRAP_METHOD(Debugger, cmdMaxStats));
 	registerCmd("Cheat::heal", WRAP_METHOD(Debugger, cmdHeal));
 	registerCmd("Cheat::toggleInvincibility", WRAP_METHOD(Debugger, cmdToggleInvincibility));
-	registerCmd("Cheat::toggle", WRAP_METHOD(Debugger, cmdToggleCheatMode));
+	registerCmd("Cheat::items", WRAP_METHOD(Debugger, cmdCheatItems));
+	registerCmd("Cheat::equip", WRAP_METHOD(Debugger, cmdCheatEquip));
 
 	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdToggleHighlightItems));
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
@@ -263,13 +266,6 @@ bool Debugger::cmdCloseItemGumps(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdToggleCheatMode(int argc, const char **argv) {
-	Ultima8Engine *g = Ultima8Engine::get_instance();
-	g->setCheatMode(!g->areCheatsEnabled());
-	debugPrintf("Cheats = %s\n", strBool(g->areCheatsEnabled()));
-	return true;
-}
-
 bool Debugger::cmdMemberVar(int argc, const char **argv) {
 	if (argc == 1) {
 		debugPrintf("Usage: Ultima8Engine::memberVar <member> [newvalue] [updateini]\n");
@@ -392,6 +388,263 @@ bool Debugger::cmdPlaySFX(int argc, const char **argv) {
 		ap->playSFX(_sfxNum, 0x60, 0, 0);
 		return false;
 	}
+}
+
+
+bool Debugger::cmdToggleCheatMode(int argc, const char **argv) {
+	Ultima8Engine *g = Ultima8Engine::get_instance();
+	g->setCheatMode(!g->areCheatsEnabled());
+	debugPrintf("Cheats = %s\n", strBool(g->areCheatsEnabled()));
+	return true;
+}
+
+bool Debugger::cmdMaxStats(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	MainActor *mainActor = getMainActor();
+
+	// constants!!
+	mainActor->setStr(25);
+	mainActor->setDex(25);
+	mainActor->setInt(25);
+	mainActor->setHP(mainActor->getMaxHP());
+	mainActor->setMana(mainActor->getMaxMana());
+
+	AudioProcess *audioproc = AudioProcess::get_instance();
+	if (audioproc)
+		audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
+	return false;
+}
+
+bool Debugger::cmdCheatItems(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	MainActor *av = getMainActor();
+	if (!av) return true;
+	Container *backpack = getContainer(av->getEquip(7)); // CONSTANT!
+	if (!backpack) return true;
+
+	// obsidian
+	Item *money = ItemFactory::createItem(143, 7, 500, 0, 0, 0, 0, true);
+	money->moveToContainer(backpack);
+	money->setGumpLocation(40, 20);
+
+	// skull of quakes
+	Item *skull = ItemFactory::createItem(814, 0, 0, 0, 0, 0, 0, true);
+	skull->moveToContainer(backpack);
+	skull->setGumpLocation(60, 20);
+
+	// recall item
+	Item *recall = ItemFactory::createItem(833, 0, 0, 0, 0, 0, 0, true);
+	recall->moveToContainer(backpack);
+	recall->setGumpLocation(20, 20);
+
+	// sword
+	Item *sword = ItemFactory::createItem(420, 0, 0, 0, 0, 0, 0, true);
+	sword->moveToContainer(backpack);
+	sword->setGumpLocation(20, 30);
+
+	Item *flamesting = ItemFactory::createItem(817, 0, 0, 0, 0, 0, 0, true);
+	flamesting->moveToContainer(backpack);
+	flamesting->setGumpLocation(20, 30);
+
+	Item *hammer = ItemFactory::createItem(815, 0, 0, 0, 0, 0, 0, true);
+	hammer->moveToContainer(backpack);
+	hammer->setGumpLocation(20, 30);
+
+	Item *slayer = ItemFactory::createItem(816, 0, 0, 0, 0, 0, 0, true);
+	slayer->moveToContainer(backpack);
+	slayer->setGumpLocation(20, 30);
+
+	// necromancy reagents
+	Item *bagitem = ItemFactory::createItem(637, 0, 0, 0, 0, 0, 0, true);
+	bagitem->moveToContainer(backpack);
+	bagitem->setGumpLocation(70, 40);
+
+	bagitem = ItemFactory::createItem(637, 0, 0, 0, 0, 0, 0, true);
+	Container *bag = p_dynamic_cast<Container *>(bagitem);
+
+	Item *reagents = ItemFactory::createItem(395, 0, 50, 0, 0, 0, 0, true);
+	reagents->moveToContainer(bag);
+	reagents->setGumpLocation(10, 10);
+	reagents = ItemFactory::createItem(395, 6, 50, 0, 0, 0, 0, true);
+	reagents->moveToContainer(bag);
+	reagents->setGumpLocation(30, 10);
+	reagents = ItemFactory::createItem(395, 8, 50, 0, 0, 0, 0, true);
+	reagents->moveToContainer(bag);
+	reagents->setGumpLocation(50, 10);
+	reagents = ItemFactory::createItem(395, 9, 50, 0, 0, 0, 0, true);
+	reagents->moveToContainer(bag);
+	reagents->setGumpLocation(20, 30);
+	reagents = ItemFactory::createItem(395, 10, 50, 0, 0, 0, 0, true);
+	reagents->moveToContainer(bag);
+	reagents->setGumpLocation(40, 30);
+	reagents = ItemFactory::createItem(395, 14, 50, 0, 0, 0, 0, true);
+	reagents->moveToContainer(bag);
+	reagents->setGumpLocation(60, 30);
+
+	bagitem->moveToContainer(backpack);
+	bagitem->setGumpLocation(70, 20);
+
+	// theurgy foci
+	bagitem = ItemFactory::createItem(637, 0, 0, 0, 0, 0, 0, true);
+	bag = p_dynamic_cast<Container *>(bagitem);
+
+	Item *focus = ItemFactory::createItem(396, 8, 0, 0, 0, 0, 0, true);
+	focus->moveToContainer(bag);
+	focus->setGumpLocation(10, 10);
+	focus = ItemFactory::createItem(396, 9, 0, 0, 0, 0, 0, true);
+	focus->moveToContainer(bag);
+	focus->setGumpLocation(25, 10);
+	focus = ItemFactory::createItem(396, 10, 0, 0, 0, 0, 0, true);
+	focus->moveToContainer(bag);
+	focus->setGumpLocation(40, 10);
+	focus = ItemFactory::createItem(396, 11, 0, 0, 0, 0, 0, true);
+	focus->moveToContainer(bag);
+	focus->setGumpLocation(55, 10);
+	focus = ItemFactory::createItem(396, 12, 0, 0, 0, 0, 0, true);
+	focus->moveToContainer(bag);
+	focus->setGumpLocation(70, 10);
+	focus = ItemFactory::createItem(396, 13, 0, 0, 0, 0, 0, true);
+	focus->moveToContainer(bag);
+	focus->setGumpLocation(10, 30);
+	focus = ItemFactory::createItem(396, 14, 0, 0, 0, 0, 0, true);
+	focus->moveToContainer(bag);
+	focus->setGumpLocation(30, 30);
+	focus = ItemFactory::createItem(396, 15, 0, 0, 0, 0, 0, true);
+	focus->moveToContainer(bag);
+	focus->setGumpLocation(50, 30);
+	focus = ItemFactory::createItem(396, 17, 0, 0, 0, 0, 0, true);
+	focus->moveToContainer(bag);
+	focus->setGumpLocation(70, 30);
+
+	bagitem->moveToContainer(backpack);
+	bagitem->setGumpLocation(0, 30);
+
+
+	// oil flasks
+	Item *flask = ItemFactory::createItem(579, 0, 0, 0, 0, 0, 0, true);
+	flask->moveToContainer(backpack);
+	flask->setGumpLocation(30, 40);
+	flask = ItemFactory::createItem(579, 0, 0, 0, 0, 0, 0, true);
+	flask->moveToContainer(backpack);
+	flask->setGumpLocation(30, 40);
+	flask = ItemFactory::createItem(579, 0, 0, 0, 0, 0, 0, true);
+	flask->moveToContainer(backpack);
+	flask->setGumpLocation(30, 40);
+
+	// zealan shield
+	Item *shield = ItemFactory::createItem(828, 0, 0, 0, 0, 0, 0, true);
+	shield->moveToContainer(backpack);
+	shield->randomGumpLocation();
+
+	shield = ItemFactory::createItem(539, 0, 0, 0, 0, 0, 0, true);
+	shield->moveToContainer(backpack);
+	shield->randomGumpLocation();
+
+	// armour
+	Item *armour = ItemFactory::createItem(64, 0, 0, 0, 0, 0, 0, true);
+	armour->moveToContainer(backpack);
+	armour->randomGumpLocation();
+
+	// death disks
+	Item *disk = ItemFactory::createItem(750, 0, 0, 0, 0, 0, 0, true);
+	disk->moveToContainer(backpack);
+	disk->randomGumpLocation();
+
+	disk = ItemFactory::createItem(750, 0, 0, 0, 0, 0, 0, true);
+	disk->moveToContainer(backpack);
+	disk->randomGumpLocation();
+
+	disk = ItemFactory::createItem(750, 0, 0, 0, 0, 0, 0, true);
+	disk->moveToContainer(backpack);
+	disk->randomGumpLocation();
+
+	return false;
+}
+
+bool Debugger::cmdCheatEquip(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	MainActor *av = getMainActor();
+	if (!av) return true;
+	Container *backpack = getContainer(av->getEquip(7)); // CONSTANT!
+	if (!backpack) return true;
+
+	Item *item;
+
+	// move all current equipment to backpack
+	for (unsigned int i = 0; i < 7; ++i) {
+		item = getItem(av->getEquip(i));
+		if (item) {
+			item->moveToContainer(backpack, false); // no weight/volume check
+			item->randomGumpLocation();
+		}
+	}
+
+	// give new equipment:
+
+	// deceiver
+	item = ItemFactory::createItem(822, 0, 0, 0, 0, 0, 0, true);
+	av->setEquip(item, false);
+
+	// armour
+	item = ItemFactory::createItem(841, 0, 0, 0, 0, 0, 0, true);
+	av->setEquip(item, false);
+
+	// shield
+	item = ItemFactory::createItem(842, 0, 0, 0, 0, 0, 0, true);
+	av->setEquip(item, false);
+
+	// helmet
+	item = ItemFactory::createItem(843, 0, 0, 0, 0, 0, 0, true);
+	av->setEquip(item, false);
+
+	// arm guards
+	item = ItemFactory::createItem(844, 0, 0, 0, 0, 0, 0, true);
+	av->setEquip(item, false);
+
+	// leggings
+	item = ItemFactory::createItem(845, 0, 0, 0, 0, 0, 0, true);
+	av->setEquip(item, false);
+
+	return false;
+}
+
+bool Debugger::cmdHeal(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	MainActor *mainActor = getMainActor();
+
+	mainActor->setHP(mainActor->getMaxHP());
+	mainActor->setMana(mainActor->getMaxMana());
+	return false;
+}
+
+bool Debugger::cmdToggleInvincibility(int argc, const char **argv) {
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats are disabled\n");
+		return true;
+	}
+	MainActor *av = getMainActor();
+
+	if (av->getActorFlags() & Actor::ACT_INVINCIBLE) {
+		av->clearActorFlag(Actor::ACT_INVINCIBLE);
+		debugPrintf("Avatar is no longer invincible.\n");
+	} else {
+		av->setActorFlag(Actor::ACT_INVINCIBLE);
+		debugPrintf("Avatar invincible.\n");
+	}
+
+	return true;
 }
 
 
@@ -803,38 +1056,6 @@ bool Debugger::cmdListMarks(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdMaxStats(int argc, const char **argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		debugPrintf("Cheats are disabled\n");
-		return true;
-	}
-	MainActor *mainActor = getMainActor();
-
-	// constants!!
-	mainActor->setStr(25);
-	mainActor->setDex(25);
-	mainActor->setInt(25);
-	mainActor->setHP(mainActor->getMaxHP());
-	mainActor->setMana(mainActor->getMaxMana());
-
-	AudioProcess *audioproc = AudioProcess::get_instance();
-	if (audioproc)
-		audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-	return false;
-}
-
-bool Debugger::cmdHeal(int argc, const char **argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		debugPrintf("Cheats are disabled\n");
-		return true;
-	}
-	MainActor *mainActor = getMainActor();
-
-	mainActor->setHP(mainActor->getMaxHP());
-	mainActor->setMana(mainActor->getMaxMana());
-	return false;
-}
-
 bool Debugger::cmdName(int argc, const char **argv) {
 	MainActor *av = getMainActor();
 	if (argc > 1)
@@ -893,25 +1114,6 @@ bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 	av->toggleInCombat();
 	return false;
 }
-
-bool Debugger::cmdToggleInvincibility(int argc, const char **argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		debugPrintf("Cheats are disabled\n");
-		return true;
-	}
-	MainActor *av = getMainActor();
-
-	if (av->getActorFlags() & Actor::ACT_INVINCIBLE) {
-		av->clearActorFlag(Actor::ACT_INVINCIBLE);
-		debugPrintf("Avatar is no longer invincible.\n");
-	} else {
-		av->setActorFlag(Actor::ACT_INVINCIBLE);
-		debugPrintf("Avatar invincible.\n");
-	}
-
-	return true;
-}
-
 
 bool Debugger::cmdMemInfo(int argc, const char **argv) {
 	MemoryManager *mm = MemoryManager::get_instance();
@@ -1173,17 +1375,17 @@ bool Debugger::cmdGenerateWholeMap(int argc, const char **argv) {
 #ifdef DEBUG
 bool Debugger::cmdVisualDebugPathfinder(int argc, const char **argv) {
 	if (argc != 2) {
-		pout << "Usage: Pathfinder::visualDebug objid\n");
-		pout << "Specify objid -1 to stop tracing.\n");
+		debugPrintf("Usage: Pathfinder::visualDebug objid\n");
+		debugPrintf("Specify objid -1 to stop tracing.\n");
 		return;
 	}
 	int p = strtol(argv[1].c_str(), 0, 0);
 	if (p == -1) {
 		visualdebug_actor = 0xFFFF;
-		pout << "Pathfinder: stopped visual tracing\n");
+		debugPrintf("Pathfinder: stopped visual tracing\n");
 	} else {
 		visualdebug_actor = (uint16)p;
-		pout << "Pathfinder: visually tracing _actor " << visualdebug_actor << Std::endl;
+		debugPrintf("Pathfinder: visually tracing _actor " << visualdebug_actor << Std::endl;
 	}
 }
 #endif

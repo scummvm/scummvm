@@ -116,9 +116,6 @@ public:
 	//! stop all samples except speech
 	void stopAllExceptSpeech();
 
-	// AudioProcess::playSound console command
-	//static void ConCmd_playSound(const Console::ArgvType &argv);
-
 	bool loadData(IDataSource *ids, uint32 version);
 
 private:

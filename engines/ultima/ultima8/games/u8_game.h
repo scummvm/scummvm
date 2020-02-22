@@ -48,9 +48,6 @@ public:
 	void playCredits() override;
 	void playQuotes() override;
 
-	static void ConCmd_cheatItems(const Console::ArgvType &argv);
-	static void ConCmd_cheatEquip(const Console::ArgvType &argv);
-
 protected:
 	Std::string getCreditText(IDataSource *ids);
 };

@@ -179,13 +179,13 @@ bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
 }
 
 uint16 MiniMapGump::TraceObjId(int32 mx, int32 my) {
-	uint16 objId_ = Gump::TraceObjId(mx, my);
+	uint16 objId = Gump::TraceObjId(mx, my);
 
-	if (!objId_ || objId_ == 65535)
+	if (!objId || objId == 65535)
 		if (PointOnGump(mx, my))
-			objId_ = getObjId();
+			objId = getObjId();
 
-	return objId_;
+	return objId;
 }
 
 } // End of namespace Ultima8

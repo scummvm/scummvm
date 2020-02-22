@@ -53,13 +53,20 @@ private:
 	bool cmdTogglePaintEditorItems(int argc, const char **argv);
 	bool cmdToggleShowTouchingItems(int argc, const char **argv);
 	bool cmdCloseItemGumps(int argc, const char **argv);
-	bool cmdToggleCheatMode(int argc, const char **argv);
 	bool cmdMemberVar(int argc, const char **argv);
 
 	// Audio Process
 	bool cmdListSFX(int argc, const char **argv);
 	bool cmdStopSFX(int argc, const char **argv);
 	bool cmdPlaySFX(int argc, const char **argv);
+
+	// Cheats
+	bool cmdToggleCheatMode(int argc, const char **argv);
+	bool cmdCheatItems(int argc, const char **argv);
+	bool cmdCheatEquip(int argc, const char **argv);
+	bool cmdMaxStats(int argc, const char **argv);
+	bool cmdHeal(int argc, const char **argv);
+	bool cmdToggleInvincibility(int argc, const char **argv);
 
 	// Game Map Gump
 	bool cmdToggleHighlightItems(int argc, const char **argv);
@@ -86,9 +93,6 @@ private:
 	bool cmdRecall(int argc, const char **argv);
 	bool cmdListMarks(int argc, const char **argv);
 	bool cmdName(int argc, const char **argv);
-	bool cmdMaxStats(int argc, const char **argv);
-	bool cmdHeal(int argc, const char **argv);
-	bool cmdToggleInvincibility(int argc, const char **argv);
 	bool cmdUseBackpack(int argc, const char **argv);
 	bool cmdUseInventory(int argc, const char **argv);
 	bool cmdUseRecall(int argc, const char **argv);
