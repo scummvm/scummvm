@@ -1026,22 +1026,6 @@ static void DecScale(int actor, int scale,
 }
 
 /**
- * Declare the text font.
- */
-static void DecTagFont(SCNHANDLE hf) {
-	SetTagFontHandle(hf);		// Store the font handle
-	if (TinselV0)
-		SetTalkFontHandle(hf);	// Also re-use for talk text
-}
-
-/**
- * Declare the text font.
- */
-static void DecTalkFont(SCNHANDLE hf) {
-	SetTalkFontHandle(hf);		// Store the font handle
-}
-
-/**
  * Remove an icon from the conversation window.
  */
 static void DelIcon(int icon) {
@@ -1063,13 +1047,6 @@ static void DelInv(int object) {
  */
 static void DelTopic(int icon) {
 	RemFromInventory(INV_CONV, icon);
-}
-
-/**
- * DimMusic
- */
-static void DimMusic() {
-	_vm->_pcmMusic->dim(true);
 }
 
 /**
@@ -1152,20 +1129,6 @@ static void FaceTag(int actor, HPOLYGON hp) {
 						NOPOLY, YB_X1_5));
 		SetMoverStanding(pMover);
 	}
-}
-
-/**
- * FadeIn
- */
-static void FadeIn() {
-	FadeInMedium();
-}
-
-/**
- * FadeOut
- */
-static void FadeOut() {
-	FadeOutMedium();
 }
 
 /**
@@ -1924,13 +1887,13 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	}
 
 	// Get the string
-	LoadStringRes(text, TextBufferAddr(), TBUFSZ);
+	LoadStringRes(text, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 	// Calculate display time
 	bJapDoPrintText = false;
 	if (time == 0) {
 		// This is a 'talky' print
-		_ctx->time = TextTime(TextBufferAddr());
+		_ctx->time = TextTime(_vm->_font->TextBufferAddr());
 
 		// Cut short-able if sustain was not set
 		_ctx->myleftEvent = bSustain ? 0 : GetLeftEvents();
@@ -1946,7 +1909,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		int Loffset, Toffset;
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-			TextBufferAddr(), 0, x - Loffset, y - Toffset, GetTagFontHandle(),
+			_vm->_font->TextBufferAddr(), 0, x - Loffset, y - Toffset, _vm->_font->GetTagFontHandle(),
 			TXT_CENTER, 0);
 		assert(_ctx->pText);
 
@@ -1958,9 +1921,9 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	} else if (bJapDoPrintText || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 		int Loffset, Toffset;	// Screen position
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 					0, x - Loffset, y - Toffset,
-					TinselV2 ? GetTagFontHandle() : GetTalkFontHandle(), TXT_CENTER);
+					TinselV2 ? _vm->_font->GetTagFontHandle() : _vm->_font->GetTalkFontHandle(), TXT_CENTER);
 		assert(_ctx->pText); // string produced NULL text
 		if (IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
@@ -2119,12 +2082,12 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 			// Get the text string
 			if (TinselV2)
-				LoadSubString(hText, _ctx->sub, TextBufferAddr(), TBUFSZ);
+				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
 			else
-				LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
+				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 
-			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-						0, _ctx->textx, _ctx->texty, GetTagFontHandle(), TXT_CENTER);
+			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+						0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // PrintObj() string produced NULL text
 
 			MultiSetZPosition(_ctx->pText, Z_INV_ITEXT);
@@ -2174,9 +2137,9 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 							break;
 
 						// Re-display in the same place
-						LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
+						LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 						_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-							TextBufferAddr(), 0, _ctx->textx, _ctx->texty, GetTagFontHandle(),
+							_vm->_font->TextBufferAddr(), 0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(),
 							TXT_CENTER, 0);
 						assert(_ctx->pText);
 
@@ -2199,7 +2162,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 				// Display for a time, but abort if conversation gets hidden
 				if (_ctx->pText)
-					_ctx->ticks = TextTime(TextBufferAddr());
+					_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
 				_ctx->timeout = SAMPLETIMEOUT;
 
 				for (;;) {
@@ -2291,9 +2254,9 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 					break;
 
 				// Re-display in the same place
-				LoadStringRes(text, TextBufferAddr(), TBUFSZ);
-				pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-							0, textx, texty, GetTagFontHandle(), TXT_CENTER);
+				LoadStringRes(text, _vm->_font->TextBufferAddr(), TBUFSZ);
+				pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+							0, textx, texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 				assert(pText); // PrintObj() string produced NULL text
 				MultiSetZPosition(pText, Z_INV_ITEXT);
 			}
@@ -2333,7 +2296,7 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 		if (isJapanMode())
 			_ctx->ticks = JAP_TEXT_TIME;
 		else if (pText)
-			_ctx->ticks = TextTime(TextBufferAddr());
+			_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
 		else
 			_ctx->ticks = 0;
 
@@ -2757,8 +2720,8 @@ static void SetTimer(int timerno, int start, bool up, bool frame) {
  * Shell("cmdline")
  */
 static void Shell(SCNHANDLE commandLine) {
-	LoadStringRes(commandLine, TextBufferAddr(), TBUFSZ);
-	error("Tried to execute shell command \"%s\"", TextBufferAddr());
+	LoadStringRes(commandLine, _vm->_font->TextBufferAddr(), TBUFSZ);
+	error("Tried to execute shell command \"%s\"", _vm->_font->TextBufferAddr());
 }
 
 /**
@@ -3354,16 +3317,16 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if (!TinselV0)
 				SetTextPal(GetActorRGB(_ctx->actor));
 			if (TinselV2)
-				LoadSubString(hText, _ctx->sub, TextBufferAddr(), TBUFSZ);
+				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
 			else {
-				LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
+				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 				_ctx->y -= _ctx->Toffset;
 			}
 
 			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-					TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
-					GetTalkFontHandle(), TXT_CENTER);
+					_vm->_font->TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
+					_vm->_font->GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
 
 			if (IsTopWindow())
@@ -3403,7 +3366,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			 * Work out how long to talk.
 			 * During this time, reposition the text if the screen scrolls.
 			 */
-			_ctx->ticks = TextTime(TextBufferAddr());
+			_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
 		}
 
 		if (TinselV2 && _ctx->bSample) {
@@ -3607,20 +3570,6 @@ static void TalkVia(int actor) {
 }
 
 /**
- * Declare a temporary text font.
- */
-static void TempTagFont(SCNHANDLE hFilm) {
-	SetTempTagFontHandle(hFilm);	// Store the font handle
-}
-
-/**
- * Declare a temporary text font.
- */
-static void TempTalkFont(SCNHANDLE hFilm) {
-	SetTempTalkFontHandle(hFilm);	// Store the font handle
-}
-
-/**
  * ThisObject
  */
 static int ThisObject(INV_OBJECT *pinvo) {
@@ -3707,20 +3656,6 @@ static void TryPlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, in
 
 	CORO_INVOKE_ARGS(PlaySample, (CORO_SUBCTX, sample, bComplete, escOn, myEscape));
 	CORO_END_CODE;
-}
-
-/**
- * UnDimMusic
- */
-static void UnDimMusic() {
-	_vm->_pcmMusic->unDim(true);
-}
-
-/**
- * unhookscene
- */
-static void UnHookSceneFn() {
-	UnHookScene();
 }
 
 /**
@@ -4586,12 +4521,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DECTAGFONT:
 		// Common to both DW1 & DW2
-		DecTagFont(pp[0]);
+		_vm->_font->SetTagFontHandle(pp[0]);
 		return -1;
 
 	case DECTALKFONT:
 		// Common to both DW1 & DW2
-		DecTalkFont(pp[0]);
+		_vm->_font->SetTalkFontHandle(pp[0]);
 		return -1;
 
 	case DELICON:
@@ -4611,7 +4546,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DIMMUSIC:
 		// DW2 only
-		DimMusic();
+		_vm->_pcmMusic->dim(true);
 		return 0;
 
 	case DROP:
@@ -4666,7 +4601,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case FADEIN:
 		// DW2 only
-		FadeIn();
+		FadeInMedium();
 		return 0;
 
 	case FADEMIDI:
@@ -4676,7 +4611,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case FADEOUT:
 		// DW1 only
-		FadeOut();
+		FadeOutMedium();
 		return 0;
 
 	case FRAMEGRAB:
@@ -5477,12 +5412,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case TEMPTAGFONT:
 		// DW2 only
-		TempTagFont(pp[0]);
+		_vm->_font->SetTempTagFontHandle(pp[0]);
 		return -1;
 
 	case TEMPTALKFONT:
 		// DW2 only
-		TempTalkFont(pp[0]);
+		_vm->_font->SetTempTalkFontHandle(pp[0]);
 		return -1;
 
 	case THISOBJECT:
@@ -5535,12 +5470,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case UNDIMMUSIC:
 		// DW2 only
-		UnDimMusic();
+		_vm->_pcmMusic->unDim(true);
 		return 0;
 
 	case UNHOOKSCENE:
 		// Common to both DW1 & DW2
-		UnHookSceneFn();
+		UnHookScene();
 		return 0;
 
 	case UNTAGACTOR:

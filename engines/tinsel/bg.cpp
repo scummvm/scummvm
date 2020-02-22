@@ -220,7 +220,7 @@ static void BGotherProcess(CORO_PARAM, const void *param) {
 void SetBackPal(SCNHANDLE hPal) {
 	g_hBgPal = hPal;
 
-	FettleFontPal(g_hBgPal);
+	_vm->_font->FettleFontPal(g_hBgPal);
 	CreateTranslucentPalette(g_hBgPal);
 }
 

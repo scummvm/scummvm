@@ -56,6 +56,7 @@ class MidiDriver;
 class MidiMusicPlayer;
 class PCMMusicPlayer;
 class SoundManager;
+class Font;
 
 typedef Common::List<Common::Rect> RectList;
 
@@ -183,7 +184,6 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	uint16 getVersion() const;
-	uint32 getFlags() const;
 	Common::Platform getPlatform() const;
 	bool getIsADGFDemo() const;
 	bool isV1CD() const;
@@ -197,6 +197,7 @@ public:
 	MidiMusicPlayer *_midiMusic;
 	PCMMusicPlayer *_pcmMusic;
 	BMVPlayer *_bmv;
+	Font *_font;
 
 	Config *_config;
 

@@ -497,25 +497,25 @@ void BMVPlayer::MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, CO
 	if (fontId == 1) {
 		// It's a 'print'
 
-		hFont = GetTagFontHandle();
+		hFont = _vm->_font->GetTagFontHandle();
 		index = 0;
 	} else {
 		// It's a 'talk'
 
 		if (pTalkColor != NULL)
 			SetTextPal(*pTalkColor);
-		hFont = GetTalkFontHandle();
+		hFont = _vm->_font->GetTalkFontHandle();
 		index = 1;
 	}
 
 	if (texts[index].pText)
 		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), texts[index].pText);
 
-	LoadSubString(stringId, 0, TextBufferAddr(), TBUFSZ);
+	LoadSubString(stringId, 0, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 	texts[index].dieFrame = currentFrame + duration;
 	texts[index].pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-						TextBufferAddr(),
+						_vm->_font->TextBufferAddr(),
 						0,
 						x, y,
 						hFont,

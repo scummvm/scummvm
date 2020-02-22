@@ -410,7 +410,7 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 				// May have buggered cursor
 				EndCursorFollowed();
 				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), g_tagBuffer,
-						0, tagX, tagY, GetTagFontHandle(), TXT_CENTER, 0);
+						0, tagX, tagY, _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 				assert(*ppText);
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
 			} else
@@ -453,9 +453,9 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 				SaveTaggedPoly(NOPOLY);	// No tagged polygon
 
 				PlayfieldGetPos(FIELD_WORLD, &tagX, &tagY);
-				LoadStringRes(GetActorTag(ano), TextBufferAddr(), TBUFSZ);
-				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-							0, xtext - tagX, ytext - tagY, GetTagFontHandle(), TXT_CENTER);
+				LoadStringRes(GetActorTag(ano), _vm->_font->TextBufferAddr(), TBUFSZ);
+				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+							0, xtext - tagX, ytext - tagY, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 				assert(*ppText); // Actor tag string produced NULL text
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
 			} else {
@@ -547,9 +547,9 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 
 				int strLen;
 				if (GetPolyTagHandle(hp) != 0)
-					strLen = LoadStringRes(GetPolyTagHandle(hp), TextBufferAddr(), TBUFSZ);
+					strLen = LoadStringRes(GetPolyTagHandle(hp), _vm->_font->TextBufferAddr(), TBUFSZ);
 				else
-					strLen = LoadStringRes(hTagtext, TextBufferAddr(), TBUFSZ);
+					strLen = LoadStringRes(hTagtext, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 				if (strLen == 0)
 					// No valid string returned, so leave ppText as NULL
@@ -559,22 +559,22 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 					EndCursorFollowed();
 
 					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-							TextBufferAddr(), 0, tagx - Loffset, tagy - Toffset,
-							GetTagFontHandle(), TXT_CENTER, 0);
+							_vm->_font->TextBufferAddr(), 0, tagx - Loffset, tagy - Toffset,
+							_vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 				} else if (TinselV2) {
 					// Bugger cursor
-					const char *tagPtr = TextBufferAddr();
+					const char *tagPtr = _vm->_font->TextBufferAddr();
 					if (tagPtr[0] < ' ' && tagPtr[1] == EOS_CHAR)
 						StartCursorFollowed();
 
 					GetCursorXYNoWait(&curX, &curY, false);
-					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-							0, curX, curY, GetTagFontHandle(), TXT_CENTER, 0);
+					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+							0, curX, curY, _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 				} else {
 					// Handle displaying the tag text on-screen
-					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 							0, tagx - Loffset, tagy - Toffset,
-							GetTagFontHandle(), TXT_CENTER);
+						_vm->_font->GetTagFontHandle(), TXT_CENTER);
 					assert(*ppText); // Polygon tag string produced NULL text
 				}
 

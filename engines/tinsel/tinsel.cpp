@@ -43,6 +43,7 @@
 #include "tinsel/events.h"
 #include "tinsel/faders.h"
 #include "tinsel/film.h"
+#include "tinsel/font.h"
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"			// MemoryInit
 #include "tinsel/dialogs.h"
@@ -854,6 +855,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 TinselEngine::~TinselEngine() {
 	_system->getAudioCDManager()->stop();
+	delete _font;
 	delete _bmv;
 	delete _sound;
 	delete _midiMusic;
@@ -895,6 +897,7 @@ Common::Error TinselEngine::run() {
 	_pcmMusic = new PCMMusicPlayer();
 	_sound = new SoundManager(this);
 	_bmv = new BMVPlayer();
+	_font = new Font();
 
 	// Initialize backend
 	if (getGameID() == GID_DW2) {

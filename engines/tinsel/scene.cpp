@@ -331,7 +331,7 @@ void EndScene() {
 		SetSysVar(SV_MaximumXoffset, 0);
 		SetSysVar(SV_MinimumYoffset, 0);
 		SetSysVar(SV_MaximumYoffset, 0);
-		ResetFontHandles();
+		_vm->_font->ResetFontHandles();
 		NoSoundReels();
 	}
 

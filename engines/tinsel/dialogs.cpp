@@ -1556,7 +1556,7 @@ static bool UpdateString(const Common::KeyState &kbd) {
 		g_sedit[cpos] = CURSOR_CHAR;
 		return true;
 //	} else if (isalnum(c) || c == ',' || c == '.' || c == '\'' || (c == ' ' && cpos != 0)) {
-	} else if (IsCharImage(GetTagFontHandle(), kbd.ascii) || (kbd.ascii == ' ' && cpos != 0)) {
+	} else if (IsCharImage(_vm->_font->GetTagFontHandle(), kbd.ascii) || (kbd.ascii == ' ' && cpos != 0)) {
 		if (cpos == SG_DESC_LEN)
 			return false;
 		g_sedit[cpos] = kbd.ascii;
@@ -1600,7 +1600,7 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 				GetPlayfieldList(FIELD_STATUS), g_sedit, 0,
 				g_InvD[g_ino].inventoryX + cd.box[cd.selBox].xpos + 2,
 				g_InvD[g_ino].inventoryY + cd.box[cd.selBox].ypos + TYOFF,
-				GetTagFontHandle(), 0);
+				_vm->_font->GetTagFontHandle(), 0);
 			if (MultiRightmost(g_iconArray[HL3]) > MAX_NAME_RIGHT) {
 				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL3]);
 				UpdateString(Common::KeyState(Common::KEYCODE_BACKSPACE));
@@ -1608,7 +1608,7 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 					GetPlayfieldList(FIELD_STATUS), g_sedit, 0,
 					g_InvD[g_ino].inventoryX + cd.box[cd.selBox].xpos + 2,
 					g_InvD[g_ino].inventoryY + cd.box[cd.selBox].ypos + TYOFF,
-					GetTagFontHandle(), 0);
+					_vm->_font->GetTagFontHandle(), 0);
 			}
 			MultiSetZPosition(g_iconArray[HL3], Z_INV_ITEXT + 2);
 		}
@@ -1686,7 +1686,7 @@ static void Select(int i, bool force) {
 #else
 				g_InvD[g_ino].inventoryY + cd.box[i].ypos + TYOFF,
 #endif
-				GetTagFontHandle(), 0);
+				_vm->_font->GetTagFontHandle(), 0);
 			MultiSetZPosition(g_iconArray[HL3], Z_INV_ITEXT + 2);
 		} else {
 			MultiSetZPosition(g_iconArray[HL2], Z_INV_ICONS + 1);
@@ -2649,17 +2649,17 @@ static void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV,
 
 	// Create text object using title string
 	if (textFrom == FROM_HANDLE) {
-		LoadStringRes(g_InvD[g_ino].hInvTitle, TextBufferAddr(), TBUFSZ);
-		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
+		LoadStringRes(g_InvD[g_ino].hInvTitle, _vm->_font->TextBufferAddr(), TBUFSZ);
+		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(), 0,
 					g_InvD[g_ino].inventoryX + width/2, g_InvD[g_ino].inventoryY + M_TOFF,
-					GetTagFontHandle(), TXT_CENTER);
+					_vm->_font->GetTagFontHandle(), TXT_CENTER);
 		assert(*title); // Inventory title string produced NULL text
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	} else if (textFrom == FROM_STRING && cd.ixHeading != NO_HEADING) {
-		LoadStringRes(g_configStrings[cd.ixHeading], TextBufferAddr(), TBUFSZ);
-		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
+		LoadStringRes(g_configStrings[cd.ixHeading], _vm->_font->TextBufferAddr(), TBUFSZ);
+		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(), 0,
 					g_InvD[g_ino].inventoryX + width/2, g_InvD[g_ino].inventoryY + M_TOFF,
-					GetTagFontHandle(), TXT_CENTER);
+					_vm->_font->GetTagFontHandle(), TXT_CENTER);
 		assert(*title); // Inventory title string produced NULL text
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	}
@@ -2680,10 +2680,10 @@ static void AddTitle(POBJECT *title, int extraH) {
 
 	// Create text object using title string
 	if (g_InvD[g_ino].hInvTitle != (SCNHANDLE)NO_HEADING) {
-		LoadStringRes(g_InvD[g_ino].hInvTitle, TextBufferAddr(), TBUFSZ);
-		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
+		LoadStringRes(g_InvD[g_ino].hInvTitle, _vm->_font->TextBufferAddr(), TBUFSZ);
+		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(), 0,
 					g_InvD[g_ino].inventoryX + (width/2)+NM_BG_POS_X, g_InvD[g_ino].inventoryY + NM_TOFF,
-					GetTagFontHandle(), TXT_CENTER, 0);
+			_vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 		assert(*title);
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	}
@@ -2766,7 +2766,7 @@ static void AddBox(int *pi, const int i) {
 #ifdef JAPAN
 							x + 2, y+2, GetTagFontHandle(), 0);
 #else
-							x + 2, y + TYOFF, GetTagFontHandle(), 0);
+							x + 2, y + TYOFF, _vm->_font->GetTagFontHandle(), 0);
 #endif
 				} else {
 					g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), cd.box[i].boxText, 0,
@@ -2774,7 +2774,7 @@ static void AddBox(int *pi, const int i) {
 // Note: it never seems to go here!
 							x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTER);
 #else
-							x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTER);
+							x + cd.box[i].w / 2, y + TYOFF, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 #endif
 				}
 
@@ -2784,26 +2784,26 @@ static void AddBox(int *pi, const int i) {
 		} else {
 			if (TinselV2) {
 				if (cd.box[i].textMethod == TM_INDEX)
-					LoadStringRes(SysString(cd.box[i].ixText), TextBufferAddr(), TBUFSZ);
+					LoadStringRes(SysString(cd.box[i].ixText), _vm->_font->TextBufferAddr(), TBUFSZ);
 				else {
 					assert(cd.box[i].textMethod == TM_STRINGNUM);
-					LoadStringRes(cd.box[i].ixText, TextBufferAddr(), TBUFSZ);
+					LoadStringRes(cd.box[i].ixText, _vm->_font->TextBufferAddr(), TBUFSZ);
 				}
 			} else {
-				LoadStringRes(g_configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
+				LoadStringRes(g_configStrings[cd.box[i].ixText], _vm->_font->TextBufferAddr(), TBUFSZ);
 				assert(cd.box[i].boxType != RGROUP); // You'll need to add some code!
 			}
 
 			if (TinselV2 && (cd.box[i].boxType == RGROUP))
-				g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-						0, x + 2, y + TYOFF, GetTagFontHandle(), 0, 0);
+				g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+						0, x + 2, y + TYOFF, _vm->_font->GetTagFontHandle(), 0, 0);
 			else
 				g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-					TextBufferAddr(), 0,
+					_vm->_font->TextBufferAddr(), 0,
 #ifdef JAPAN
 					x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTER);
 #else
-					x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTER);
+					x + cd.box[i].w / 2, y + TYOFF, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 #endif
 			MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 			*pi += 1;
@@ -2850,13 +2850,13 @@ static void AddBox(int *pi, const int i) {
 		// Stick in the text
 		if (TinselV2) {
 			assert(cd.box[i].textMethod == TM_INDEX);
-			LoadStringRes(SysString(cd.box[i].ixText), TextBufferAddr(), TBUFSZ);
+			LoadStringRes(SysString(cd.box[i].ixText), _vm->_font->TextBufferAddr(), TBUFSZ);
 		} else {
 			assert(cd.box[i].ixText != USE_POINTER);
-			LoadStringRes(g_configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
+			LoadStringRes(g_configStrings[cd.box[i].ixText], _vm->_font->TextBufferAddr(), TBUFSZ);
 		}
 		g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-			TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
+			_vm->_font->TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF, _vm->_font->GetTagFontHandle(), TXT_RIGHT);
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
 		break;
@@ -2875,20 +2875,20 @@ static void AddBox(int *pi, const int i) {
 		// Stick in the text
 		if (TinselV2) {
 			assert(cd.box[i].textMethod == TM_INDEX);
-			LoadStringRes(SysString(cd.box[i].ixText), TextBufferAddr(), TBUFSZ);
+			LoadStringRes(SysString(cd.box[i].ixText), _vm->_font->TextBufferAddr(), TBUFSZ);
 		} else {
 			assert(cd.box[i].ixText != USE_POINTER);
-			LoadStringRes(g_configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
+			LoadStringRes(g_configStrings[cd.box[i].ixText], _vm->_font->TextBufferAddr(), TBUFSZ);
 		}
 
 		if (cd.box[i].boxType == TOGGLE2) {
 			g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-				TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
-				GetTagFontHandle(), TXT_CENTER, 0);
+				_vm->_font->TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
+				_vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 		} else {
 			g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-				TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF,
-				GetTagFontHandle(), TXT_RIGHT, 0);
+				_vm->_font->TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF,
+				_vm->_font->GetTagFontHandle(), TXT_RIGHT, 0);
 		}
 
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
@@ -2916,13 +2916,13 @@ static void AddBox(int *pi, const int i) {
 		// Stick in the text
 		if (TinselV2) {
 			assert(cd.box[i].textMethod == TM_INDEX);
-			LoadStringRes(SysString(cd.box[i].ixText), TextBufferAddr(), TBUFSZ);
+			LoadStringRes(SysString(cd.box[i].ixText), _vm->_font->TextBufferAddr(), TBUFSZ);
 		} else {
 			assert(cd.box[i].ixText != USE_POINTER);
-			LoadStringRes(g_configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
+			LoadStringRes(g_configStrings[cd.box[i].ixText], _vm->_font->TextBufferAddr(), TBUFSZ);
 		}
 		g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-			TextBufferAddr(), 0, x+MDTEXT_XOFF, y+MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
+			_vm->_font->TextBufferAddr(), 0, x+MDTEXT_XOFF, y+MDTEXT_YOFF, _vm->_font->GetTagFontHandle(), TXT_RIGHT);
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
 		break;
@@ -2945,10 +2945,10 @@ static void AddBox(int *pi, const int i) {
 
 			// Stick in the text
 			assert(cd.box[i].textMethod == TM_INDEX);
-			LoadStringRes(SysString(cd.box[i].ixText), TextBufferAddr(), TBUFSZ);
+			LoadStringRes(SysString(cd.box[i].ixText), _vm->_font->TextBufferAddr(), TBUFSZ);
 			g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-				TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
-				GetTagFontHandle(), TXT_CENTER, 0);
+				_vm->_font->TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
+				_vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 			MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 			*pi += 1;
 		}
@@ -2957,9 +2957,9 @@ static void AddBox(int *pi, const int i) {
 		if (LanguageDesc(g_displayedLanguage) == 0)
 			break;
 
-		LoadStringRes(LanguageDesc(g_displayedLanguage), TextBufferAddr(), TBUFSZ);
-		g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
-				x + cd.box[i].w / 2, y + ROT_YOFF, GetTagFontHandle(), TXT_CENTER, 0);
+		LoadStringRes(LanguageDesc(g_displayedLanguage), _vm->_font->TextBufferAddr(), TBUFSZ);
+		g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(), 0,
+				x + cd.box[i].w / 2, y + ROT_YOFF, _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
 

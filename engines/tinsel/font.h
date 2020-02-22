@@ -31,24 +31,71 @@ namespace Tinsel {
 // Accessed using TextBufferAddr(), this is how big it is:
 #define TBUFSZ	512
 
+class TinselEngine;
 
-char *TextBufferAddr();
+class Font {
+public:
+	Font() : _hTagFont(0), _hTalkFont(0), _hRegularTalkFont(0), _hRegularTagFont(0), _tBuffer("") {
+	}
 
-SCNHANDLE GetTagFontHandle();
+	/**
+	 * Return address of tBuffer
+	 */
+	char* TextBufferAddr() { return _tBuffer; }
 
-SCNHANDLE GetTalkFontHandle();
+	/**
+	 * Return hTagFont handle.
+	 */
+	SCNHANDLE GetTagFontHandle() { return _hTagFont; }
 
-void SetTagFontHandle(SCNHANDLE hFont);
+	/**
+	 * Return hTalkFont handle.
+	 */
+	SCNHANDLE GetTalkFontHandle() { return _hTalkFont; }
 
-void SetTalkFontHandle(SCNHANDLE hFont);
+	/**
+	 * Called from dec_tagfont() Glitter function. Store the tag font handle.
+	 */
+	void SetTagFontHandle(SCNHANDLE hFont);
 
-void SetTempTagFontHandle(SCNHANDLE hFont);
+	/**
+	 * Called from dec_talkfont() Glitter function.
+	 * Store the talk font handle.
+	 */
+	void SetTalkFontHandle(SCNHANDLE hFont) {
+		_hTalkFont = _hRegularTalkFont = hFont;
+	}
 
-void SetTempTalkFontHandle(SCNHANDLE hFont);
+	/**
+	 * Declare a temporary text font (DW2 only).
+	 */
+	void SetTempTagFontHandle(SCNHANDLE hFont) {
+		_hTagFont = hFont;
+	}
 
-void ResetFontHandles();
+	/**
+	 * Declare a temporary text font (DW2 only).
+	 */
+	void SetTempTalkFontHandle(SCNHANDLE hFont) {
+		_hTalkFont = hFont;
+	}
 
-void FettleFontPal(SCNHANDLE fontPal);
+	void ResetFontHandles() {
+		_hTagFont = _hRegularTagFont;
+		_hTalkFont = _hRegularTalkFont;
+	}
+
+	/**
+	 * Poke the background palette into character 0's images.
+	 */
+	void FettleFontPal(SCNHANDLE fontPal);
+
+private:
+	char _tBuffer[TBUFSZ];
+
+	SCNHANDLE _hTagFont = 0, _hTalkFont = 0;
+	SCNHANDLE _hRegularTalkFont = 0, _hRegularTagFont = 0;
+};
 
 } // End of namespace Tinsel
 
