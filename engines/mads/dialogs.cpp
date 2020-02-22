@@ -199,6 +199,13 @@ int TextDialog::estimatePieces(int maxLen) {
 }
 
 TextDialog::~TextDialog() {
+#ifdef USE_TTS
+	if (ConfMan.getBool("tts_narrator")) {
+		Common::TextToSpeechManager* _ttsMan = g_system->getTextToSpeechManager();
+		_ttsMan->stop();
+	}
+#endif
+
 	delete _edgeSeries;
 }
 
@@ -361,18 +368,20 @@ void TextDialog::draw() {
 
 			if (_portrait != nullptr)
 				xp += _portrait->w + 5;
-			#ifdef USE_TTS
-			text += _lines[lineNum];
-			#endif
 			_font->writeString(_vm->_screen, _lines[lineNum],
 				Common::Point(xp, yp), 1);
 
 			if (_lineXp[lineNum] & 0x80) {
-				// Draw an underline under the text
+				// Draw an underline under the text - used for the header text
 				int lineWidth = _font->getWidth(_lines[lineNum], 1);
 				_vm->_screen->hLine(xp, yp + _font->getHeight(), xp + lineWidth,
 					TEXTDIALOG_BLACK);
 			}
+#ifdef USE_TTS
+			else {
+				text += _lines[lineNum];
+			}
+#endif
 		}
 
 		lineYp += _font->getHeight() + 1;
