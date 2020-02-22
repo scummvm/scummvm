@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-14 08:03+0000\n"
+"PO-Revision-Date: 2020-02-22 11:01+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.10.1\n"
+"X-Generator: Weblate 3.11\n"
 "X-Language-name: Deutsch\n"
 
 #: gui/about.cpp:102
@@ -285,9 +285,8 @@ msgid "Override global graphic settings"
 msgstr "Globale Grafik-Einstellungen übergehen"
 
 #: gui/editgamedialog.cpp:209 gui/options.cpp:1632
-#, fuzzy
 msgid "Keymaps"
-msgstr "Tasten-Layout:"
+msgstr "Tastenbelegung"
 
 #: gui/editgamedialog.cpp:216 gui/options.cpp:1639
 msgid "Audio"
@@ -553,7 +552,7 @@ msgstr ""
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "Benutzeroberfläche"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:524
 #: engines/mohawk/riven.cpp:858
