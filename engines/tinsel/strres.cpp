@@ -392,40 +392,6 @@ int NumberOfLanguages() {
 	return count;
 }
 
-LANGUAGE NextLanguage(LANGUAGE thisOne) {
-	int i;
-
-	for (i = thisOne+1; i < NUM_LANGUAGES; i++) {
-		if (g_languages[i].bPresent)
-			return (LANGUAGE)i;
-	}
-
-	for (i = 0; i < thisOne; i++) {
-		if (g_languages[i].bPresent)
-			return (LANGUAGE)i;
-	}
-
-	// No others!
-	return thisOne;
-}
-
-LANGUAGE PrevLanguage(LANGUAGE thisOne) {
-	int i;
-
-	for (i = thisOne-1; i >= 0; i--) {
-		if (g_languages[i].bPresent)
-			return (LANGUAGE)i;
-	}
-
-	for (i = NUM_LANGUAGES-1; i > thisOne; i--) {
-		if (g_languages[i].bPresent)
-			return (LANGUAGE)i;
-	}
-
-	// No others!
-	return thisOne;
-}
-
 SCNHANDLE LanguageDesc(LANGUAGE thisOne) {
 	return g_languages[thisOne].hDescription;
 }
