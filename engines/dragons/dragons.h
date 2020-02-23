@@ -204,16 +204,16 @@ public:
 	~DragonsEngine();
 
 	void updateEvents();
-	virtual Common::Error run();
+	Common::Error run() override;
 
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 
-	virtual Common::Error loadGameState(int slot);
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	bool canSaveGameStateCurrently() override;
 
 	void updateActorSequences();
 	void setFlags(uint32 flags);
