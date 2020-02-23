@@ -201,7 +201,7 @@ void KillMover(PMOVER pMover) {
 	if (pMover->bActive) {
 		pMover->bActive = false;
 		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
-		pMover->actorObj = NULL;
+		pMover->actorObj = nullptr;
 		assert(CoroScheduler.getCurrentProcess() != pMover->pProc);
 		CoroScheduler.killProcess(pMover->pProc);
 	}
@@ -338,7 +338,7 @@ void UnHideMover(PMOVER pMover) {
  */
 static void InitMover(PMOVER pMover) {
 	pMover->bActive = false;
-	pMover->actorObj = NULL;
+	pMover->actorObj = nullptr;
 	pMover->objX = pMover->objY = 0;
 
 	pMover->hRpath = NOPOLY;

@@ -51,7 +51,7 @@ static int maxObj = 0;
 
 void FreeObjectList() {
 	free(objectList);
-	objectList = NULL;
+	objectList= nullptr;
 }
 
 /**
@@ -85,7 +85,7 @@ void KillAllObjects() {
 	}
 
 	// null the last object
-	objectList[NUM_OBJECTS - 1].pNext = NULL;
+	objectList[NUM_OBJECTS - 1].pNext= nullptr;
 }
 
 
@@ -152,7 +152,7 @@ void CopyObject(OBJECT *pDest, OBJECT *pSrc) {
 	pDest->flags |= DMA_CHANGED;
 
 	// null the links
-	pDest->pNext = pDest->pSlave = NULL;
+	pDest->pNext = pDest->pSlave= nullptr;
 }
 
 /**
@@ -370,7 +370,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 	// get pointer to image
 	if (pInitTbl->hObjImg) {
 		int aniX, aniY;		// objects animation offsets
-		PALQ *pPalQ = NULL;	// palette queue pointer
+		PALQ *pPalQ= nullptr;	// palette queue pointer
 		const IMAGE *pImg = (const IMAGE *)LockMem(pInitTbl->hObjImg);	// handle to image
 
 		if (pImg->hImgPal) {

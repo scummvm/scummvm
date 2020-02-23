@@ -120,11 +120,11 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 //	_ctx->prevOver = -1;
 	_ctx->prevString = -1;
 
-	_ctx->cpText = NULL;
-	_ctx->cpathText = NULL;
-	_ctx->rpText = NULL;
-//	_ctx->opText = NULL;
-	_ctx->spText = NULL;
+	_ctx->cpText = nullptr;
+	_ctx->cpathText = nullptr;
+	_ctx->rpText = nullptr;
+//	_ctx->opText = nullptr;
+	_ctx->spText = nullptr;
 
 
 	int aniX, aniY;			// cursor/lead actor position
@@ -151,7 +151,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 			}
 			if (_ctx->cpathText) {
 				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->cpathText);
-				_ctx->cpathText = NULL;
+				_ctx->cpathText = nullptr;
 			}
 
 			// New text objects
@@ -414,7 +414,7 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 				assert(*ppText);
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
 			} else
-				*ppText = NULL;
+				*ppText = nullptr;
 		} else if (*ppText) {
 			// Same actor, maintain tag position
 			GetActorTagPos(actor, &newX, &newY, false);
@@ -512,7 +512,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 			if (hp != GetTaggedPoly()) {
 				if (*ppText) {
 					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
-					*ppText = NULL;
+					*ppText = nullptr;
 				}
 				*pTag = POLY_HOTSPOT_TAG;
 				SaveTaggedActor(0);	// No tagged actor
@@ -553,7 +553,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 
 				if (strLen == 0)
 					// No valid string returned, so leave ppText as NULL
-					ppText = NULL;
+					ppText = nullptr;
 				else if (TinselV2 && !PolyTagFollowsCursor(hp)) {
 					// May have buggered cursor
 					EndCursorFollowed();
@@ -646,7 +646,7 @@ void TagProcess(CORO_PARAM, const void *) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->pText = NULL;
+	_ctx->pText = nullptr;
 	_ctx->Tag = NO_HOTSPOT_TAG;
 
 	SaveTaggedActor(0);		// No tagged actor yet
@@ -663,7 +663,7 @@ void TagProcess(CORO_PARAM, const void *) {
 				// Nothing tagged. Remove tag, if there is one
 				if (_ctx->pText) {
 					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-					_ctx->pText = NULL;
+					_ctx->pText = nullptr;
 
 					if (TinselV2)
 						// May have buggered cursor
@@ -678,7 +678,7 @@ void TagProcess(CORO_PARAM, const void *) {
 			if (_ctx->pText) {
 				// kill current text objects
 				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-				_ctx->pText = NULL;
+				_ctx->pText = nullptr;
 				_ctx->Tag = NO_HOTSPOT_TAG;
 			}
 		}

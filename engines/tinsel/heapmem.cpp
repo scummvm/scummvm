@@ -113,7 +113,7 @@ void MemoryInit() {
 	}
 
 	// null the last mnode
-	g_mnodeList[NUM_MNODES - 1].pNext = NULL;
+	g_mnodeList[NUM_MNODES - 1].pNext = nullptr;
 
 	// clear list of fixed memory nodes
 	memset(g_s_fixedMnodesList, 0, sizeof(g_s_fixedMnodesList));
@@ -202,7 +202,7 @@ static bool HeapCompact(long size) {
 
 		// find the oldest discardable block
 		oldest = DwGetCurrentTime();
-		pOldest = NULL;
+		pOldest = nullptr;
 		for (pCur = pHeap->pNext; pCur != pHeap; pCur = pCur->pNext) {
 			if (pCur->flags == DWM_USED) {
 				// found a non-discarded discardable block
@@ -359,7 +359,7 @@ void MemoryDiscard(MEM_NODE *pMemNode) {
 
 		// mark the node as discarded
 		pMemNode->flags |= DWM_DISCARDED;
-		pMemNode->pBaseAddr = NULL;
+		pMemNode->pBaseAddr = nullptr;
 		pMemNode->size = 0;
 	}
 }

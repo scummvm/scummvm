@@ -121,7 +121,7 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 	const FONT *pFont = (const FONT *)LockMem(hFont);
 
 	// init head of text list
-	pFirst = NULL;
+	pFirst = nullptr;
 
 	// get image for capital W
 	assert(pFont->fontDef[(int)'W']);

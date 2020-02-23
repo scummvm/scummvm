@@ -352,7 +352,7 @@ void Music::OpenMidiFiles() {
 
 void Music::DeleteMidiBuffer() {
 	free(_midiBuffer.pDat);
-	_midiBuffer.pDat = NULL;
+	_midiBuffer.pDat = nullptr;
 }
 
 void Music::CurrentMidiFacts(SCNHANDLE* pMidi, bool* pLoop) {
@@ -412,7 +412,7 @@ void dumpMusic() {
 #endif
 
 MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
-	_driver = NULL;
+	_driver = nullptr;
 	_milesAudioMode = false;
 	bool milesAudioEnabled = false;
 

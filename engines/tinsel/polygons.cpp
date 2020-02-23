@@ -1803,7 +1803,7 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 	for (int i = 0; i < noofPolys; i++)	{
 		if (Polys[i]) {
 			Polys[i]->pointState = PS_NOT_POINTING;
-			Polys[i] = NULL;
+			Polys[i]= nullptr;
 		}
 	}
 
@@ -1889,17 +1889,17 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 void DropPolygons() {
 	pathsOnRoute = 0;
 	memset(RoutePaths, 0, sizeof(RoutePaths));
-	RouteEnd = NULL;
+	RouteEnd= nullptr;
 
 	for (int i = 0; i < noofPolys; i++)	{
 		if (Polys[i]) {
 			Polys[i]->pointState = PS_NOT_POINTING;
-			Polys[i] = NULL;
+			Polys[i]= nullptr;
 		}
 	}
 	noofPolys = 0;
 	free(Polygons);
-	Polygons = NULL;
+	Polygons= nullptr;
 }
 
 

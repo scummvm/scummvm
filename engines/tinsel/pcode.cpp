@@ -470,10 +470,10 @@ void RegisterGlobals(int num) {
 
 void FreeGlobals() {
 	free(g_pGlobals);
-	g_pGlobals = NULL;
+	g_pGlobals= nullptr;
 
 	free(g_icList);
-	g_icList = NULL;
+	g_icList= nullptr;
 }
 
 /**
@@ -491,9 +491,9 @@ void syncGlobInfo(Common::Serializer &s) {
 void INT_CONTEXT::syncWithSerializer(Common::Serializer &s) {
 	if (s.isLoading()) {
 		// Null out the pointer fields
-		pProc = NULL;
-		code = NULL;
-		pinvo = NULL;
+		pProc= nullptr;
+		code= nullptr;
+		pinvo= nullptr;
 	}
 	// Write out used fields
 	s.syncAsUint32LE(GSort);
@@ -531,7 +531,7 @@ static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, i
 		if (ip >= wkEntry->numBytes) {
 			// Finished the workaround
 			ip = wkEntry->ip;
-			wkEntry = NULL;
+			wkEntry= nullptr;
 		} else {
 			code = wkEntry->script;
 		}
@@ -606,7 +606,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 				}
 			}
 			if (wkEntry->script == NULL)
-				wkEntry = NULL;
+				wkEntry= nullptr;
 		}
 
 		byte opcode = (byte)GetBytes(ic->code, wkEntry, ip, 0);
@@ -724,7 +724,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		case OP_JUMP:	// unconditional jump
 
 			ip = Fetch(opcode, ic->code, wkEntry, ip);
-			wkEntry = NULL;					// In case a jump occurs from a workaround
+			wkEntry= nullptr;					// In case a jump occurs from a workaround
 			break;
 
 		case OP_JMPFALSE:	// conditional jump
@@ -733,7 +733,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			if (ic->stack[ic->sp--] == 0) {
 				// condition satisfied - do the jump
 				ip = tmp;
-				wkEntry = NULL;					// In case a jump occurs from a workaround
+				wkEntry= nullptr;					// In case a jump occurs from a workaround
 			}
 			break;
 
@@ -743,7 +743,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			if (ic->stack[ic->sp--] != 0) {
 				// condition satisfied - do the jump
 				ip = tmp;
-				wkEntry = NULL;					// In case a jump occurs from a workaround
+				wkEntry= nullptr;					// In case a jump occurs from a workaround
 			}
 			break;
 
