@@ -2029,6 +2029,20 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->pushInt(rnd);
 		return STATUS_OK;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] GetImageInfo
+	// Returns image size in "<width>;<height>" format, e.g. "800;600"
+	// Known params: "fsdata\\splash1.jpg"
+	// Game script turn off scaling if returned value is "1024;768"
+	// Used at "Papa's Daughters 1" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetImageInfo") == 0) {
+		stack->correctParams(1);
+		/*const char *filename =*/ stack->pop()->getString();
+		stack->pushString("1024;768");
+		return STATUS_OK;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
