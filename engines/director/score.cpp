@@ -1387,10 +1387,7 @@ void Score::startLoop() {
 
 	g_director->_wm->setScreen(_surface);
 
-	if (_stageColor == 0)
-		_trailSurface->clear(_vm->getPaletteColorCount() - 1);
-	else
-		_trailSurface->clear(_stageColor);
+	_trailSurface->clear(255 - _stageColor);
 
 	_currentFrame = 0;
 	_stopPlay = false;
@@ -1469,7 +1466,7 @@ void Score::update() {
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
 
-	_surface->clear();
+	_surface->clear(255 - _stageColor);
 	_surface->copyFrom(*_trailSurface);
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
