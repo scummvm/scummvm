@@ -207,7 +207,7 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($THEENTITYWITHID[0]);
 		g_lingo->codeInt($THEENTITYWITHID[1]);
 		$$ = $expr; }
-	// the <field> of menuItem <expr>" of menu <expr>
+	// the <field> of menuItem <expr> of menu <expr>
 	| tSET THEMENUITEMENTITY simpleexpr tOF ID simpleexpr tTO expr	{
 		if (!$ID->equalsIgnoreCase("menu")) {
 			warning("LEXER: keyword 'menu' expected");
