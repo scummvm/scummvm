@@ -103,8 +103,6 @@ void HIDManager::loadBindings() {
 		bind(i->_key, args);
 		++i;
 	}
-
-	listBindings();
 }
 
 void HIDManager::saveBindings() {
@@ -196,10 +194,10 @@ void HIDManager::listBindings() {
 		ArgvToString(*(it->_value), command);
 
 		if (event == HID_EVENT_DEPRESS) {
-			pout << HID_GetKeyName((HID_Key)key) << " = " << command << Std::endl;
+			g_debugger->debugPrintf("%s = %s\n", HID_GetKeyName((HID_Key)key), command.c_str());
 		} else {
-			pout << HID_GetEventsName((HID_Events)event);
-			pout << ' ' << HID_GetKeyName((HID_Key) key) << " = " << command << Std::endl;
+			g_debugger->debugPrintf("%s", HID_GetEventsName((HID_Events)event));
+			g_debugger->debugPrintf(" %s = %s\n", HID_GetKeyName((HID_Key)key), command.c_str());
 		}
 	}
 }

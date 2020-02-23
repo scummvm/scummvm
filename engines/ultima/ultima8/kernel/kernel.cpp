@@ -238,12 +238,12 @@ Process *Kernel::getProcess(ProcId pid) {
 }
 
 void Kernel::kernelStats() {
-	pout << "Kernel memory stats:" << Std::endl;
-	pout << "Processes  : " << processes.size() << "/32765" << Std::endl;
+	g_debugger->debugPrintf("Kernel memory stats:\n");
+	g_debugger->debugPrintf("Processes  : %u/32765\n", processes.size());
 }
 
 void Kernel::processTypes() {
-	pout << "Current process types:" << Std::endl;
+	g_debugger->debugPrintf("Current process types:\n");
 	Std::map<Common::String, unsigned int> processtypes;
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		Process *p = *it;
@@ -251,7 +251,7 @@ void Kernel::processTypes() {
 	}
 	Std::map<Common::String, unsigned int>::iterator iter;
 	for (iter = processtypes.begin(); iter != processtypes.end(); ++iter) {
-		pout << (*iter)._key << ": " << (*iter)._value << Std::endl;
+		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
 	}
 }
 

@@ -241,7 +241,7 @@ bool Debugger::cmdNewGame(int argc, const char **argv) {
 
 bool Debugger::cmdQuit(int argc, const char **argv) {
 	Ultima8Engine::get_instance()->_isRunning = false;
-	return true;
+	return false;
 }
 
 bool Debugger::cmdEngineStats(int argc, const char **argv) {
@@ -297,14 +297,14 @@ bool Debugger::cmdSetVideoMode(int argc, const char **argv) {
 bool Debugger::cmdToggleAvatarInStasis(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->toggleAvatarInStasis();
-	debugPrintf("_avatarInStasis = %s\n", strBool(g->isAvatarInStasis()));
+	debugPrintf("avatarInStasis = %s\n", strBool(g->isAvatarInStasis()));
 	return true;
 }
 
 bool Debugger::cmdTogglePaintEditorItems(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->togglePaintEditorItems();
-	debugPrintf("_paintEditorItems = %s\n", strBool(g->isPaintEditorItems()));
+	debugPrintf("paintEditorItems = %s\n", strBool(g->isPaintEditorItems()));
 	return true;
 }
 
@@ -318,7 +318,7 @@ bool Debugger::cmdToggleShowTouchingItems(int argc, const char **argv) {
 bool Debugger::cmdCloseItemGumps(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->getDesktopGump()->CloseItemDependents();
-	return true;
+	return false;
 }
 
 bool Debugger::cmdMemberVar(int argc, const char **argv) {
@@ -628,9 +628,9 @@ bool Debugger::cmdCheatEquip(int argc, const char **argv) {
 		return true;
 	}
 	MainActor *av = getMainActor();
-	if (!av) return true;
+	if (!av) return false;
 	Container *backpack = getContainer(av->getEquip(7)); // CONSTANT!
-	if (!backpack) return true;
+	if (!backpack) return false;
 
 	Item *item;
 
@@ -932,10 +932,9 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 }
 
 
-
 bool Debugger::cmdProcessTypes(int argc, const char **argv) {
 	Kernel::get_instance()->processTypes();
-	return false;
+	return true;
 }
 
 bool Debugger::cmdListProcesses(int argc, const char **argv) {
@@ -984,7 +983,7 @@ bool Debugger::cmdToggleFrameByFrame(int argc, const char **argv) {
 	Kernel *kern = Kernel::get_instance();
 	bool fbf = !kern->isFrameByFrame();
 	kern->setFrameByFrame(fbf);
-	debugPrintf("FrameByFrame = %s\n", fbf ? "true" : "false");
+	debugPrintf("FrameByFrame = %s\n", strBool(fbf));
 
 	if (fbf)
 		kern->pause();
@@ -1165,6 +1164,7 @@ bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 		debugPrintf("Can't: avatarInStasis\n");
 		return true;
 	}
+
 	MainActor *av = getMainActor();
 	av->toggleInCombat();
 	return false;
@@ -1325,7 +1325,7 @@ bool Debugger::cmdToggleClipping(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::toggleClipping();
 		debugPrintf("QuickAvatarMoverProcess::_clipping = %s\n",
-			QuickAvatarMoverProcess::isClipping() ? "true" : "false");
+			strBool(QuickAvatarMoverProcess::isClipping()));
 	} else {
 		debugPrintf("Cheats aren't enabled\n");
 	}
@@ -1343,9 +1343,7 @@ bool Debugger::cmdGetGlobal(int argc, const char **argv) {
 	unsigned int offset = strtol(argv[1], 0, 0);
 	unsigned int size = strtol(argv[2], 0, 0);
 
-	pout.Print("[%04X %02X] = %d\n", offset, size,
-		uc->_globals->getBits(offset, size));
-
+	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getBits(offset, size));
 	return true;
 }
 
@@ -1534,7 +1532,7 @@ bool Debugger::cmdToggleMinimap(int argc, const char **argv) {
 		mmg->Close();
 	}
 
-	return true;
+	return false;
 }
 
 bool Debugger::cmdGenerateWholeMap(int argc, const char **argv) {

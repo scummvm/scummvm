@@ -321,17 +321,18 @@ void World::worldStats() {
 			mapcount++;
 	}
 
-	pout << "World memory stats:" << Std::endl;
-	pout << "Maps       : " << mapcount << "/256" << Std::endl;
+	g_debugger->debugPrintf("World memory stats:\n");
+	g_debugger->debugPrintf("Maps       : %u/256\n", mapcount);
+
 	Actor *av = getMainActor();
-	pout << "Avatar pos.: ";
+	g_debugger->debugPrintf("Avatar pos.: ");
 	if (av) {
-		pout << "map " << av->getMapNum() << ", (";
+		g_debugger->debugPrintf("map %d, (", av->getMapNum());
 		int32 x, y, z;
 		av->getLocation(x, y, z);
-		pout << x << "," << y << "," << z << ")" << Std::endl;
+		g_debugger->debugPrintf("%d,%d,%d)\n", x, y, z);
 	} else {
-		pout << "missing (null)" << Std::endl;
+		g_debugger->debugPrintf("missing (null)\n");
 	}
 }
 

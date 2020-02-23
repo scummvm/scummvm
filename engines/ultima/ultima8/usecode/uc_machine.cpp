@@ -2195,32 +2195,32 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 }
 
 void UCMachine::usecodeStats() {
-	pout << "Usecode Machine memory stats:" << Std::endl;
-	pout << "Strings    : " << _stringHeap.size() << "/65534" << Std::endl;
+	g_debugger->debugPrintf("Usecode Machine memory stats:\n");
+	g_debugger->debugPrintf("Strings    : %u/65534\n", _stringHeap.size());
 #ifdef DUMPHEAP
 	Std::map<uint16, Std::string>::iterator iter;
 	for (iter = _stringHeap.begin(); iter != _stringHeap.end(); ++iter)
-		pout << iter->first << ":" << iter->_value << Std::endl;
+		g_debugger->debugPrintf("%d:%s\n", iter->_key << ":" << iter->_value.c_str());
 #endif
-	pout << "Lists      : " << _listHeap.size() << "/65534" << Std::endl;
+	g_debugger->debugPrintf("Lists      : %u/65534\n", _listHeap.size());
 #ifdef DUMPHEAP
 	Std::map<uint16, UCList *>::iterator iterl;
 	for (iterl = _listHeap.begin(); iterl != _listHeap.end(); ++iterl) {
 		if (!iterl->_value) {
-			pout << iterl->first << ": <null>" << Std::endl;
+			g_debugger->debugPrintf("%d: <null>\n", iterl->_key);
 			continue;
 		}
 		if (iterl->_value->getElementSize() == 2) {
-			pout << iterl->first << ":";
+			g_debugger->debugPrintf("%d:", iterl->_key);
+
 			for (unsigned int i = 0; i < iterl->_value->getSize(); ++i) {
-				if (i > 0) pout << ",";
-				pout << iterl->_value->getuint16(i);
+				if (i > 0) g_debugger->debugPrintf(",");
+				g_debugger->debugPrintf("%d", iterl->_value->getuint16(i));
 			}
-			pout << Std::endl;
+			g_debugger->debugPrintf("\n");
 		} else {
-			pout << iterl->first << ": " << iterl->_value->getSize()
-			     << " elements of size " << iterl->_value->getElementSize()
-			     << Std::endl;
+			g_debugger->debugPrintf("%d: %u elements of size %u\n",
+				iterl->_key, iterl->_value->getSize(), iterl->_value->getElementSize());
 		}
 	}
 #endif

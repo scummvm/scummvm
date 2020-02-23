@@ -136,13 +136,13 @@ void ObjectManager::objectStats() {
 			objcount++;
 	}
 
-	pout << "Object memory stats:" << Std::endl;
-	pout << "NPCs       : " << npccount << "/255" << Std::endl;
-	pout << "Objects    : " << objcount << "/32511" << Std::endl;
+	g_debugger->debugPrintf("Object memory stats:\n");
+	g_debugger->debugPrintf("NPCs       : %u/255\n", npccount);
+	g_debugger->debugPrintf("Objects    : %u/32511\n", objcount);
 }
 
 void ObjectManager::objectTypes() {
-	pout << "Current object types:" << Std::endl;
+	g_debugger->debugPrintf("Current object types:\n");
 	Std::map<Common::String, unsigned int> objecttypes;
 	for (unsigned int i = 1; i < _objects.size(); ++i) {
 		Object *o = _objects[i];
@@ -152,7 +152,7 @@ void ObjectManager::objectTypes() {
 
 	Std::map<Common::String, unsigned int>::iterator iter;
 	for (iter = objecttypes.begin(); iter != objecttypes.end(); ++iter) {
-		pout << (*iter)._key << ": " << (*iter)._value << Std::endl;
+		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
 	}
 }
 

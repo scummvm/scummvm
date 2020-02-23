@@ -97,25 +97,24 @@ void Process::suspend() {
 
 void Process::dumpInfo() {
 	Common::String info = Common::String::format(
-		"Process %d class %s, item %d, _type %x, status ",
+		"Process %d class %s, item %d, type %x, status ",
 		getPid(), GetClassType()._className, _itemNum, _type);
 
-	pout << info.c_str();
-	if (_flags & PROC_ACTIVE) pout << "A";
-	if (_flags & PROC_SUSPENDED) pout << "S";
-	if (_flags & PROC_TERMINATED) pout << "T";
-	if (_flags & PROC_TERM_DEFERRED) pout << "t";
-	if (_flags & PROC_FAILED) pout << "F";
-	if (_flags & PROC_RUNPAUSED) pout << "R";
+	if (_flags & PROC_ACTIVE) info += "A";
+	if (_flags & PROC_SUSPENDED) info += "S";
+	if (_flags & PROC_TERMINATED) info += "T";
+	if (_flags & PROC_TERM_DEFERRED) info += "t";
+	if (_flags & PROC_FAILED) info += "F";
+	if (_flags & PROC_RUNPAUSED) info += "R";
 	if (!waiting.empty()) {
-		pout << ", notify: ";
-		for (Std::vector<ProcId>::iterator i = waiting.begin();
-		        i != waiting.end(); ++i) {
-			if (i != waiting.begin()) pout << ", ";
-			pout << *i;
+		info += ", notify: ";
+		for (Std::vector<ProcId>::iterator i = waiting.begin(); i != waiting.end(); ++i) {
+			if (i != waiting.begin()) info += ", ";
+			info += *i;
 		}
 	}
-	pout << Std::endl;
+
+	g_debugger->debugPrintf("%s\n", info.c_str());
 }
 
 void Process::save(ODataSource *ods) {
