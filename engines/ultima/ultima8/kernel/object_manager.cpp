@@ -39,7 +39,6 @@
 #include "ultima/ultima8/world/glob_egg.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
-#include "ultima/ultima8/gumps/console_gump.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
 #include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/container_gump.h"

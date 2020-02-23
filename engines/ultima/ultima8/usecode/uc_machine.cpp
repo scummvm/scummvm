@@ -35,7 +35,6 @@
 #include "ultima/ultima8/usecode/bit_set.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/misc/id_man.h"
-#include "ultima/ultima8/gumps/console_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 
 #define INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD

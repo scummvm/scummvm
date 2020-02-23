@@ -396,7 +396,6 @@ MODULE_OBJS := \
 	ultima8/gumps/bark_gump.o \
 	ultima8/gumps/bind_gump.o \
 	ultima8/gumps/book_gump.o \
-	ultima8/gumps/console_gump.o \
 	ultima8/gumps/container_gump.o \
 	ultima8/gumps/controls_gump.o \
 	ultima8/gumps/credits_gump.o \
@@ -447,7 +446,6 @@ MODULE_OBJS := \
 	ultima8/kernel/segmented_allocator.o \
 	ultima8/kernel/segmented_pool.o \
 	ultima8/misc/args.o \
-	ultima8/misc/console.o \
 	ultima8/misc/debugger.o \
 	ultima8/misc/encoding.o \
 	ultima8/misc/id_man.o \

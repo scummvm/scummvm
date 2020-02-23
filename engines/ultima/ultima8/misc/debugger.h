@@ -133,7 +133,6 @@ private:
 	bool cmdChangeGame(int argc, const char **argv);
 	bool cmdListGames(int argc, const char **argv);
 	bool cmdSetVideoMode(int argc, const char **argv);
-	bool cmdDrawRenderStats(int argc, const char **argv);
 	bool cmdEngineStats(int argc, const char **argv);
 	bool cmdToggleAvatarInStasis(int argc, const char **argv);
 	bool cmdTogglePaintEditorItems(int argc, const char **argv);
@@ -225,7 +224,6 @@ private:
 #endif
 
 	// Miscellaneous
-	bool cmdToggleConsole(int argc, const char **argv);
 	bool cmdToggleFastArea(int argc, const char **argv);
 	bool cmdVerifyQuit(int argc, const char **argv);
 	bool cmdU8ShapeViewer(int argc, const char **argv);

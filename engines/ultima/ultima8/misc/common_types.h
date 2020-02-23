@@ -26,25 +26,12 @@ namespace Ultima {
 namespace Ultima8 {
 
 
-enum {
-	/* Output no message(s). For obvious reasons this probably should never need to be used... */
-	MM_NONE = 0x00,
-	/* general informative messages like the `virtual path "@home"...` stuff.
-	    non-critical and in the general case non-useful unless trying to debug a problem. */
-	MM_INFO = 0x01,
-	/* similar in urgency to a general message, except it's just noting a possible, though
-	    unlikely problem. The:
-	    `Error mounting virtual path "@data": directory not found: /usr/local/share/pentagram`
-	    message would be a good example of this, I believe. */
-	MM_MINOR_WARN = 0x02,
-	/* "We had a problem, and we're trying to recover from it, hopefully successfully." */
-	MM_MINOR_ERR = 4,
-	/* A message noting that we encountered a significant problem and that we're going to
-	    (hopefully!) gracefully terminate the engine... Probably though a call to
-	    CoreApp::application->ForceQuit();
-	    "We had a rather significant problem. Shutting down pentagram now..."
-	    */
-	MM_MAJOR_ERR = 5,
+enum DebugLevel {
+	// General info debug information
+	MM_INFO = 1,
+
+	// Minor warnings not important enough to show to the user normally
+	MM_MINOR_WARN = 1
 };
 
 //

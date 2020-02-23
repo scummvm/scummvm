@@ -23,7 +23,6 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/hid_manager.h"
 #include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/misc/console.h"
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/conf/config_file_manager.h" // temporary!
@@ -77,9 +76,6 @@ void HIDManager::resetBindings() {
 		}
 	}
 	_commands.clear();
-
-	bind(HID_BACKQUOTE, HID_EVENT_PREEMPT, "ConsoleGump::toggle");
-	bind(HID_TILDE, HID_EVENT_PREEMPT, "ConsoleGump::toggle");
 }
 
 void HIDManager::loadBindings() {

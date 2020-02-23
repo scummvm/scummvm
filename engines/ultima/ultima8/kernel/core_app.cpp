@@ -27,7 +27,6 @@
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/misc/args.h"
-#include "ultima/ultima8/misc/console.h"
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/shared/std/misc.h"
 
@@ -45,7 +44,6 @@ CoreApp::CoreApp(const Ultima::UltimaGameDescription *gameDesc)
 		: _gameDesc(gameDesc), _isRunning(false), _gameInfo(0), _fileSystem(0),
 		_configFileMan(0), _settingMan(0), _oHelp(false), _oQuiet(false), _oVQuiet(false) {
 	_application = this;
-	_console = new Console();
 }
 
 CoreApp::~CoreApp() {
@@ -58,7 +56,6 @@ CoreApp::~CoreApp() {
 	FORGET_OBJECT(_settingMan);
 	FORGET_OBJECT(_configFileMan);
 	FORGET_OBJECT(_gameInfo);
-	FORGET_OBJECT(_console);
 
 	_application = 0;
 }

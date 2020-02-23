@@ -55,7 +55,6 @@
 #include "ultima/ultima8/filesys/savegame.h"
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
-#include "ultima/ultima8/gumps/console_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/inverter_gump.h"
 #include "ultima/ultima8/gumps/scaler_gump.h"
@@ -122,11 +121,10 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(0),
 		_kernel(0), _objectManager(0), _hidManager(0), _mouse(0), _ucMachine(0), _screen(0),
 		_fontManager(0), _paletteManager(0), _gameData(0), _world(0), _desktopGump(0),
-		_consoleGump(0), _gameMapGump(0), _avatarMoverProcess(0), _frameSkip(false),
-		_frameLimit(true), _interpolate(true), _animationRate(100), _avatarInStasis(false),
-		_paintEditorItems(false), _inversion(0), _painting(false), _showTouching(false),
-		_timeOffset(0), _hasCheated(false), _cheatsEnabled(false), _drawRenderStats(false),
-		_ttfOverrides(false), _audioMixer(0) {
+		_gameMapGump(0), _avatarMoverProcess(0), _frameSkip(false), _frameLimit(true),
+		_interpolate(true), _animationRate(100), _avatarInStasis(false), _paintEditorItems(false),
+		_inversion(0), _painting(false), _showTouching(false), _timeOffset(0), _hasCheated(false),
+		_cheatsEnabled(false), _ttfOverrides(false), _audioMixer(0) {
 	_application = this;
 
 	for (uint16 key = 0; key < HID_LAST; ++key) {
@@ -180,9 +178,7 @@ void Ultima8Engine::deinitialize() {
 }
 
 void Ultima8Engine::startup() {
-	// Set the console to auto paint, till we have finished initing
-	con->SetAutoPaint(conAutoPaint);
-
+	setDebugger(new Debugger());
 	pout << "-- Initializing Pentagram -- " << Std::endl;
 
 	// parent's startup first
@@ -196,7 +192,6 @@ void Ultima8Engine::startup() {
 
 	_kernel = new Kernel();
 	_memoryManager = new MemoryManager();
-	setDebugger(new Debugger());
 
 	//!! move this elsewhere
 	_kernel->addProcessLoader("DelayProcess",
@@ -284,16 +279,10 @@ void Ultima8Engine::startup() {
 	else
 		startupPentagramMenu();
 
-	// Unset the console auto paint, since we have finished initing
-	con->SetAutoPaint(0);
-
-	//	pout << "Paint Initial display" << Std::endl;
 	paint();
 }
 
 void Ultima8Engine::startupGame() {
-	con->SetAutoPaint(conAutoPaint);
-
 	pout  << Std::endl << "-- Initializing Game: " << _gameInfo->_name << " --" << Std::endl;
 
 	GraphicSysInit();
@@ -310,9 +299,9 @@ void Ultima8Engine::startupGame() {
 		// system-wide config
 		if (_configFileMan->readConfigFile(bindingsfile,
 			"bindings", true))
-			debugN(MM_INFO, "%s... Ok\n", bindingsfile.c_str());
+			debug(MM_INFO, "%s... Ok", bindingsfile.c_str());
 		else
-			debugN(MM_MINOR_WARN, "%s... Failed\n", bindingsfile.c_str());
+			debug(MM_MINOR_WARN, "%s... Failed", bindingsfile.c_str());
 	}
 
 	_hidManager->loadBindings();
@@ -352,9 +341,6 @@ void Ultima8Engine::startupGame() {
 	_game->loadFiles();
 	_gameData->setupFontOverrides();
 
-	// Unset the console auto paint (can't have it from here on)
-	con->SetAutoPaint(0);
-
 	// Create Midi Driver for Ultima 8
 	if (getGameInfo()->_type == GameInfo::GAME_U8)
 		_audioMixer->openMidiOutput();
@@ -362,24 +348,16 @@ void Ultima8Engine::startupGame() {
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	newGame(saveSlot);
 
-	_consoleGump->HideConsole();
-
 	pout << "-- Game Initialized --" << Std::endl << Std::endl;
 }
 
 void Ultima8Engine::startupPentagramMenu() {
-	con->SetAutoPaint(conAutoPaint);
-
 	pout << Std::endl << "-- Initializing Pentagram Menu -- " << Std::endl;
 
 	setupGame(getGameInfo("pentagram"));
 	assert(_gameInfo);
 
 	GraphicSysInit();
-
-	// Unset the console auto paint, since we have finished initing
-	con->SetAutoPaint(0);
-	_consoleGump->HideConsole();
 
 	Rect dims;
 	_desktopGump->GetDims(dims);
@@ -419,7 +397,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	FORGET_OBJECT(_gameData);
 
 	_desktopGump = 0;
-	_consoleGump = 0;
 	_gameMapGump = 0;
 	_scalerGump = 0;
 	_inverterGump = 0;
@@ -449,16 +426,9 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 		Rect scaled_dims;
 		_scalerGump->GetDims(scaled_dims);
 
-		debugN(MM_INFO, "Creating Graphics Console...\n");
-		_consoleGump = new ConsoleGump(0, 0, dims.w, dims.h);
-		_consoleGump->InitGump(0);
-		_consoleGump->HideConsole();
-
 		debugN(MM_INFO, "Creating Inverter...\n");
 		_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
 		_inverterGump->InitGump(0);
-
-		enterTextMode(_consoleGump);
 	}
 }
 
@@ -586,13 +556,6 @@ void Ultima8Engine::runGame() {
 	}
 }
 
-
-// conAutoPaint hackery
-void Ultima8Engine::conAutoPaint(void) {
-	Ultima8Engine *app = Ultima8Engine::get_instance();
-	if (app && !app->isPainting()) app->paint();
-}
-
 // Paint the _screen
 void Ultima8Engine::paint() {
 	static long prev = 0;
@@ -624,37 +587,6 @@ void Ultima8Engine::paint() {
 
 	// Draw the mouse
 	_mouse->paint();
-
-	if (_drawRenderStats) {
-		static long diff = 0;
-		static long fps = 0;
-		static long paintGumps = 0;
-		char buf[256] = { '\0' };
-		FixedWidthFont *confont = con->GetConFont();
-		int v_offset = 0;
-		int char_w = confont->_width;
-
-		if (tdiff >= 250) {
-			diff = tdiff / t;
-			paintGumps = tpaint / t;
-			fps = 1000 * t / tdiff;
-			t = 0;
-			tdiff = 0;
-			tpaint = 0;
-		}
-
-		snprintf(buf, 255, "Rendering time %li ms %li FPS ", diff, fps);
-		_screen->PrintTextFixed(confont, buf, dims.w - char_w * strlen(buf), v_offset);
-		v_offset += confont->_height;
-
-		snprintf(buf, 255, "Paint Gumps %li ms ", paintGumps);
-		_screen->PrintTextFixed(confont, buf, dims.w - char_w * strlen(buf), v_offset);
-		v_offset += confont->_height;
-
-		snprintf(buf, 255, "t %02d:%02d gh %i ", I_getTimeInMinutes(0, 0), I_getTimeInSeconds(0, 0) % 60, I_getTimeInGameHours(0, 0));
-		_screen->PrintTextFixed(confont, buf, dims.w - char_w * strlen(buf), v_offset);
-		v_offset += confont->_height;
-	}
 
 	// End _painting
 	_screen->EndPainting();
@@ -743,9 +675,6 @@ void Ultima8Engine::GraphicSysInit() {
 	_scalerGump = new ScalerGump(0, 0, width, height);
 	_scalerGump->InitGump(0);
 
-	_consoleGump = new ConsoleGump(0, 0, width, height);
-	_consoleGump->InitGump(0);
-
 	Rect scaled_dims;
 	_scalerGump->GetDims(scaled_dims);
 
@@ -796,15 +725,6 @@ bool Ultima8Engine::LoadConsoleFont(Std::string confontini) {
 		pout << "Failed" << Std::endl;
 		return false;
 	}
-
-	FixedWidthFont *confont = FixedWidthFont::Create("confont");
-
-	if (!confont) {
-		perr << "Failed to load Console Font." << Std::endl;
-		return false;
-	}
-
-	con->SetConFont(confont);
 
 	return true;
 }
@@ -1173,7 +1093,6 @@ void Ultima8Engine::resetEngine() {
 
 	// Reset thet gumps
 	_desktopGump = 0;
-	_consoleGump = 0;
 	_gameMapGump = 0;
 	_scalerGump = 0;
 	_inverterGump = 0;
@@ -1214,11 +1133,6 @@ void Ultima8Engine::setupCoreGumps() {
 	Rect scaled_dims;
 	_scalerGump->GetDims(scaled_dims);
 
-	debugN(MM_INFO, "Creating Graphics Console...\n");
-	_consoleGump = new ConsoleGump(0, 0, dims.w, dims.h);
-	_consoleGump->InitGump(0);
-	_consoleGump->HideConsole();
-
 	debugN(MM_INFO, "Creating Inverter...\n");
 	_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
 	_inverterGump->InitGump(0);
@@ -1231,9 +1145,8 @@ void Ultima8Engine::setupCoreGumps() {
 	// TODO: clean this up
 	assert(_desktopGump->getObjId() == 256);
 	assert(_scalerGump->getObjId() == 257);
-	assert(_consoleGump->getObjId() == 258);
-	assert(_inverterGump->getObjId() == 259);
-	assert(_gameMapGump->getObjId() == 260);
+	assert(_inverterGump->getObjId() == 258);
+	assert(_gameMapGump->getObjId() == 259);
 
 
 	for (uint16 i = 261; i < 384; ++i)
@@ -1455,8 +1368,8 @@ void Ultima8Engine::addGump(Gump *gump) {
 	assert(_desktopGump);
 
 	if (gump->IsOfType<ShapeViewerGump>() || gump->IsOfType<MiniMapGump>() ||
-		gump->IsOfType<ConsoleGump>() || gump->IsOfType<ScalerGump>() ||
-		gump->IsOfType<PentagramMenuGump>() || gump->IsOfType<MessageBoxGump>()// ||
+		gump->IsOfType<ScalerGump>() || gump->IsOfType<PentagramMenuGump>() ||
+		gump->IsOfType<MessageBoxGump>()// ||
 		//(_ttfOverrides && (gump->IsOfType<BarkGump>() ||
 		//                gump->IsOfType<AskGump>()))
 		) {

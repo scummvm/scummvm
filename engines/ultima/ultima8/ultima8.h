@@ -42,7 +42,6 @@
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/kernel/hid_keys.h"
-#include "ultima/ultima8/misc/console.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "ultima/ultima8/graphics/point_scaler.h"
 #include "common/events.h"
@@ -59,7 +58,6 @@ class MemoryManager;
 class UCMachine;
 class Game;
 class Gump;
-class ConsoleGump;
 class GameMapGump;
 class ScalerGump;
 class InverterGump;
@@ -105,7 +103,6 @@ private:
 	FontManager *_fontManager;
 
 	Gump *_desktopGump;
-	ConsoleGump *_consoleGump;
 	GameMapGump *_gameMapGump;
 	ScalerGump *_scalerGump;
 	InverterGump *_inverterGump;
@@ -134,7 +131,6 @@ private:
 	uint32 _lastDown[HID_LAST];
 	bool _down[HID_LAST];
 	unsigned int _inversion;
-	bool _drawRenderStats;
 private:
 	/**
 	 * Does engine deinitialization
@@ -145,8 +141,6 @@ private:
 	 * Shows the Pentagram splash screen
 	 */
 	void showSplashScreen();
-
-	static void conAutoPaint(void);
 
 private:
 	//! write savegame info (time, ..., game-specifics)
@@ -263,9 +257,6 @@ public:
 
 	GameMapGump *getGameMapGump() {
 		return _gameMapGump;
-	}
-	ConsoleGump *getConsoleGump() {
-		return _consoleGump;
 	}
 	Gump *getDesktopGump() {
 		return _desktopGump;

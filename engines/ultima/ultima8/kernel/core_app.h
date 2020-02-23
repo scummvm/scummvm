@@ -112,7 +112,6 @@ protected:
 
 private:
 	const Ultima::UltimaGameDescription *_gameDesc;
-	Console *_console;
 
 	//! start filesystem, kernel, config
 	virtual void sysInit();

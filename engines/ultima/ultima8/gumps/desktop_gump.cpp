@@ -26,7 +26,6 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
-#include "ultima/ultima8/gumps/console_gump.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/gumps/target_gump.h"
 
@@ -50,14 +49,6 @@ DesktopGump::~DesktopGump(void) {
 }
 
 void DesktopGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	// Just fill it (only if console showing, or in debug mode)
-
-#ifndef DEBUG
-	ConsoleGump *console = Ultima8Engine::get_instance()->getConsoleGump();
-	if (console->ConsoleIsVisible() || (_children.size() && _children.front()->IsOfType<ConsoleGump>()))
-#endif
-		surf->Fill32(0x000000, 0, 0, _dims.w, _dims.h);
-	//surf->Fill32(0x3f3f3f, 0, 0, _dims.w, _dims.h);
 }
 
 void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {

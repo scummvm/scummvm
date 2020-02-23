@@ -28,7 +28,6 @@
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
-#include "ultima/ultima8/gumps/console_gump.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
@@ -75,7 +74,6 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("Ultima8Engine::saveGame", WRAP_METHOD(Debugger, cmdSaveGame));
 	registerCmd("Ultima8Engine::loadGame", WRAP_METHOD(Debugger, cmdLoadGame));
 	registerCmd("Ultima8Engine::newGame", WRAP_METHOD(Debugger, cmdNewGame));
-	registerCmd("Ultima8Engine::_drawRenderStats", WRAP_METHOD(Debugger, cmdDrawRenderStats));
 	registerCmd("Ultima8Engine::engineStats", WRAP_METHOD(Debugger, cmdEngineStats));
 	registerCmd("Ultima8Engine::changeGame", WRAP_METHOD(Debugger, cmdChangeGame));
 	registerCmd("Ultima8Engine::listGames", WRAP_METHOD(Debugger, cmdListGames));
@@ -244,17 +242,6 @@ bool Debugger::cmdNewGame(int argc, const char **argv) {
 bool Debugger::cmdQuit(int argc, const char **argv) {
 	Ultima8Engine::get_instance()->_isRunning = false;
 	return true;
-}
-
-bool Debugger::cmdDrawRenderStats(int argc, const char **argv) {
-	if (argc == 1) {
-		debugPrintf("Ultima8Engine::_drawRenderStats = %s",
-			strBool(Ultima8Engine::get_instance()->_drawRenderStats));
-		return true;
-	} else {
-		Ultima8Engine::get_instance()->_drawRenderStats = Std::strtol(argv[1], 0, 0) != 0;
-		return false;
-	}
 }
 
 bool Debugger::cmdEngineStats(int argc, const char **argv) {
@@ -1462,12 +1449,6 @@ bool Debugger::cmdStopTrace(int argc, const char **argv) {
 
 #endif
 
-
-bool Debugger::cmdToggleConsole(int argc, const char **argv) {
-	ConsoleGump *consoleGump = Ultima8Engine::get_instance()->getConsoleGump();
-	consoleGump->ToggleConsole();
-	return false;
-}
 
 bool Debugger::cmdVerifyQuit(int argc, const char **argv) {
 	QuitGump::verifyQuit();
