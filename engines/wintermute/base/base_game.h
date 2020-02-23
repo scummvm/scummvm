@@ -375,6 +375,9 @@ public:
 private:
 	// HeroCraft games specific random source with ability a in-script function to set the seed
 	Common::RandomSource *_rndHc;
+
+	// HeroCraft games specific checksum function, used in Papa's Daughters 2 selfcheck
+	uint8 getFilePartChecksumHc(const char *filename, size_t begin, size_t end);	
 #endif
 
 };
