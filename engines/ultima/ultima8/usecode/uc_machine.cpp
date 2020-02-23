@@ -353,7 +353,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			//! TODO
 			uint16 arg_bytes = cs.read1();
 			uint16 func = cs.read2();
-			debug("calli\t\t%04Xh (%02Xh arg bytes) %s \n", func, arg_bytes, _convUse->intrinsics()[func]);
+			debug(MM_INFO, "calli\t\t%04Xh (%02Xh arg bytes) %s \n", func, arg_bytes, _convUse->intrinsics()[func]);
 
 			// !constants
 			if (func >= _intrinsicCount || _intrinsics[func] == 0) {
@@ -1366,7 +1366,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			int this_size = cs.read1();
 			int unknown = cs.read1(); // ??
 
-			debug("spawn inline\t%04X:%04X+%04X=%04X %02X %02X\n",
+			debug(MM_INFO, "spawn inline\t%04X:%04X+%04X=%04X %02X %02X\n",
 				classid, offset, delta, offset + delta, this_size, unknown);
 
 			uint32 thisptr = 0;

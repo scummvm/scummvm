@@ -336,10 +336,10 @@ void CoreApp::ParseArgs(const int argc_, const char *const *const argv_) {
 }
 
 void CoreApp::helpMe() {
-	debug("\t-h\t\t- quick help menu (this)\n");
-	debug("\t-q\t\t- silence general logging messages\n");
-	debug("\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
-	debug("\t--game {name}\t- select a game\n");
+	debug(MM_INFO, "\t-h\t\t- quick help menu (this)\n");
+	debug(MM_INFO, "\t-q\t\t- silence general logging messages\n");
+	debug(MM_INFO, "\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
+	debug(MM_INFO, "\t--game {name}\t- select a game\n");
 }
 
 GameInfo *CoreApp::getGameInfo(istring game) const {

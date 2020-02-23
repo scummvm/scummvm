@@ -1265,21 +1265,21 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ds = sg->getDataSource("UCSTRINGS");
 	ok = _ucMachine->loadStrings(ds, version);
 	totalok &= ok;
-	perr << "UCSTRINGS: " << (ok ? "ok" : "failed") << Std::endl;
+	pout << "UCSTRINGS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "UCSTRINGS: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("UCGLOBALS");
 	ok = _ucMachine->loadGlobals(ds, version);
 	totalok &= ok;
-	perr << "UCGLOBALS: " << (ok ? "ok" : "failed") << Std::endl;
+	pout << "UCGLOBALS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "UCGLOBALS: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("UCLISTS");
 	ok = _ucMachine->loadLists(ds, version);
 	totalok &= ok;
-	perr << "UCLISTS: " << (ok ? "ok" : "failed") << Std::endl;
+	pout << "UCLISTS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "UCLISTS: failed\n";
 	delete ds;
 
@@ -1288,14 +1288,14 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ds = sg->getDataSource("KERNEL");
 	ok = _kernel->load(ds, version);
 	totalok &= ok;
-	perr << "KERNEL: " << (ok ? "ok" : "failed") << Std::endl;
+	pout << "KERNEL: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "KERNEL: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("APP");
 	ok = load(ds, version);
 	totalok &= ok;
-	perr << "APP: " << (ok ? "ok" : "failed") << Std::endl;
+	pout << "APP: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "APP: failed\n";
 	delete ds;
 
@@ -1303,28 +1303,28 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ds = sg->getDataSource("WORLD");
 	ok = _world->load(ds, version);
 	totalok &= ok;
-	perr << "WORLD: " << (ok ? "ok" : "failed") << Std::endl;
+	pout << "WORLD: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "WORLD: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("CURRENTMAP");
 	ok = _world->getCurrentMap()->load(ds, version);
 	totalok &= ok;
-	perr << "CURRENTMAP: " << (ok ? "ok" : "failed") << Std::endl;
+	pout << "CURRENTMAP: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "CURRENTMAP: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("OBJECTS");
 	ok = _objectManager->load(ds, version);
 	totalok &= ok;
-	perr << "OBJECTS: " << (ok ? "ok" : "failed") << Std::endl;
+	pout << "OBJECTS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "OBJECTS: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("MAPS");
 	ok = _world->loadMaps(ds, version);
 	totalok &= ok;
-	perr << "MAPS: " << (ok ? "ok" : "failed") << Std::endl;
+	pout << "MAPS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "MAPS: failed\n";
 	delete ds;
 

@@ -91,11 +91,21 @@ class console_ostream : public ConsoleStream {
 
 template<class T>
 class console_err_ostream : public ConsoleStream {
+private:
+	Common::String _line;
 public:
 	uint32 write(const void *dataPtr, uint32 dataSize) override {
-		Common::String str((const char *)dataPtr, dataSize);
-		::warning("%s", str.c_str());
-		return str.size();
+		_line += Common::String((const char *)dataPtr, dataSize);
+
+		size_t lineEnd;
+		while ((lineEnd = _line.find(Std::endl)) != Common::String::npos) {
+			if (lineEnd > 0)
+				warning("%s", Common::String(_line.c_str(), lineEnd).c_str());
+
+			_line = Common::String(_line.c_str() + lineEnd + 1);
+		}
+
+		return dataSize;
 	}
 };
 
