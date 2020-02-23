@@ -103,6 +103,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"openquest",       "Open Quest"},
 	{"paintaria",       "Paintaria"},
 	{"palladion",       "Palladion"},
+	{"papasdaughters1", "Papa's Daughters"},
+	{"papasdaughters2", "Papa's Daughters Go to the Sea"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
 	{"polechudes",      "Pole Chudes"},
@@ -1356,6 +1358,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("palladion", "Alpha6h",
 		WME_ENTRY1s("Palladion_Alpha6h.exe", "55aec582159410ec6221d4c3fd53db24", 95240860), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
 
+	// Papa's Daughters
+	WME_WINENTRY("papasdaughters1", "",
+		WME_ENTRY1s("data.dcp", "5d801bc95f28e64c33918380f961f454", 80569934), Common::RU_RUS, ADGF_UNSTABLE, WME_HEROCRAFT),
+
+	// Papa's Daughters 2
+	WME_WINENTRY("papasdaughters2", "",
+		WME_ENTRY1s("data.dcp", "8f7dfc4b46c01318ba2bd8e1d79a0edb", 107690073), Common::RU_RUS, ADGF_UNSTABLE, WME_HEROCRAFT),
+
 	// Pigeons in the Park
 	WME_WINENTRY("pigeons", "",
 		WME_ENTRY1s("data.dcp", "9143a5b6ff8206aefe3c4c643add3ec7", 2611100), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_1),
@@ -1368,7 +1378,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Pole Chudes
 	WME_WINENTRY("polechudes", "",
-		WME_ENTRY1s("data.dcp", "3329e9af9cb41e052de8d929ea49b594", 76297454), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_0),
+		WME_ENTRY1s("data.dcp", "3329e9af9cb41e052de8d929ea49b594", 76297454), Common::RU_RUS, ADGF_UNSTABLE, WME_HEROCRAFT),
 
 	// Project: Doom (Beta)
 	WME_WINENTRY("projectdoom", "Beta",
