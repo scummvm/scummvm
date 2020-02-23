@@ -36,7 +36,9 @@ namespace Tinsel {
 
 class Music {
 public:
-	Music() : _midiBuffer({ 0, 0 }), _currentMidi(0), _currentLoop(false) {}
+	Music() : _currentMidi(0), _currentLoop(false) {
+		_midiBuffer = { 0, 0 };
+	}
 
 	bool PlayMidiSequence(		// Plays the specified MIDI sequence through the sound driver
 		uint32 dwFileOffset,		// handle of MIDI sequence data
