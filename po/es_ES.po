@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-22 20:14+0000\n"
+"PO-Revision-Date: 2020-02-23 20:04+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -906,7 +906,7 @@ msgstr "Zona inactiva del joystick:"
 
 #: gui/options.cpp:1073
 msgid "HW Shader:"
-msgstr "Sombreador HW:"
+msgstr "Sombreado por hardware:"
 
 #: gui/options.cpp:1073 gui/options.cpp:1075
 msgid "Different hardware shaders give different visual effects"
@@ -959,7 +959,7 @@ msgstr "Corregir relación de aspecto en juegos de 320x200"
 
 #: gui/options.cpp:1145
 msgid "Preferred device:"
-msgstr "Dispositivo preferido:"
+msgstr "Disp. preferido:"
 
 #: gui/options.cpp:1145
 msgid "Music device:"
@@ -968,8 +968,7 @@ msgstr "Dispositivo de música:"
 #: gui/options.cpp:1145 gui/options.cpp:1147
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr ""
-"Especifica el dispositivo de sonido o emulador de tarjeta de sonido "
-"prefierido"
+"Especifica el dispositivo de sonido o emulador de tarjeta de sonido preferido"
 
 #: gui/options.cpp:1145 gui/options.cpp:1147 gui/options.cpp:1148
 msgid "Specifies output sound device or sound card emulator"
@@ -1041,7 +1040,7 @@ msgstr "Ganancia MIDI:"
 
 #: gui/options.cpp:1243
 msgid "MT-32 Device:"
-msgstr "Disp. MT-32:"
+msgstr "Dispositivo MT-32:"
 
 #: gui/options.cpp:1243
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
@@ -1188,12 +1187,12 @@ msgstr "Nube"
 
 #: gui/options.cpp:1706
 msgid "LAN"
-msgstr "Red de Área Local"
+msgstr "Red local"
 
 #: gui/options.cpp:1708
 msgctxt "lowres"
 msgid "LAN"
-msgstr "Red de Área Local"
+msgstr "Red local"
 
 #: gui/options.cpp:1716
 msgid "Accessibility"
@@ -1240,7 +1239,7 @@ msgstr "Tema:"
 
 #: gui/options.cpp:1869
 msgid "GUI renderer:"
-msgstr "Renderizador de interfaz:"
+msgstr "Renderiz. de interfaz:"
 
 #: gui/options.cpp:1881
 msgid "Autosave:"
@@ -1469,7 +1468,8 @@ msgstr "3. Conectar"
 
 #: gui/options.cpp:2017
 msgid "Connect your cloud storage account"
-msgstr "Conectar almacenamiento en la nube"
+msgstr ""
+"Abrir el asistente de configuración para habilitar el almacenamiento en línea"
 
 #: gui/options.cpp:2026
 msgid "Run server"
@@ -1509,18 +1509,19 @@ msgstr "Puerto que usará el servidor"
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Arrancar servidor para administrar archivos desde el navegador (en la misma "
-"red)."
+"Arrancar el servidor para gestionar los ficheros con el navegador (en la "
+"misma red)."
 
 #: gui/options.cpp:2045
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr "Cerrar el panel de opciones parará el servidor."
+msgstr "Cerrar el panel de opciones detendrá el servidor."
 
 #: gui/options.cpp:2047
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Arrancar servidor para gestionar archivos con el navegador (en la misma red)."
+"Arranca el servidor para gestionar los ficheros con el navegador (en la "
+"misma red)."
 
 #: gui/options.cpp:2048
 msgid "Closing options dialog will stop the server."
@@ -1528,7 +1529,7 @@ msgstr "Cerrar el panel de opciones parará el servidor."
 
 #: gui/options.cpp:2060
 msgid "Use Text to speech"
-msgstr "Usar Texto a voz"
+msgstr "Convertir de texto a voz"
 
 #: gui/options.cpp:2060
 msgid "Will read text in gui on mouse over."
@@ -2194,11 +2195,11 @@ msgstr "Jugar aun así"
 
 #: engines/engine.cpp:731
 msgid "Loading game is currently unavailable"
-msgstr "Cargar juego no está disponible en este momento"
+msgstr "No se puede cargar la partida en estos momentos"
 
 #: engines/engine.cpp:756
 msgid "Saving game is currently unavailable"
-msgstr "Guardar juego no está disponible en este momento"
+msgstr "No se puede guardar la partida en estos momentos"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2497,7 +2498,7 @@ msgstr "Centrar"
 #: backends/graphics/opengl/opengl-graphics.cpp:238
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:80
 msgid "Pixel-perfect scaling"
-msgstr "Escala Pixel-perfecto"
+msgstr "Escalado pixel-perfect"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:239
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:81
@@ -2668,7 +2669,7 @@ msgstr "Joy Y"
 
 #: backends/keymapper/hardware-input.cpp:247
 msgid "Joy Back"
-msgstr "Joy Retroceder"
+msgstr "Joy Back"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Joy Guide"
@@ -2676,7 +2677,7 @@ msgstr "Joy Guía"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "Joy Start"
-msgstr "Joy Iniciar"
+msgstr "Joy Start"
 
 #: backends/keymapper/hardware-input.cpp:250
 msgid "Left Stick"
@@ -2688,7 +2689,7 @@ msgstr "Stick derecho"
 
 #: backends/keymapper/hardware-input.cpp:252
 msgid "Left Shoulder"
-msgstr "Hombro izquierdo"
+msgstr "Botón superior izquierdo"
 
 #: backends/keymapper/hardware-input.cpp:253
 msgid "Right Shoulder"
@@ -2983,28 +2984,28 @@ msgstr "Y"
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/ps3/ps3.cpp:45
 msgid "Select"
-msgstr "Seleccionar"
+msgstr "Select"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/sdl/ps3/ps3.cpp:47
 msgid "Start"
-msgstr "Iniciar"
+msgstr "Start"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 msgid "ZL"
-msgstr "ZI"
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 msgid "ZR"
-msgstr "ZD"
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 msgid "L"
-msgstr "I"
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 msgid "R"
-msgstr "D"
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
@@ -3279,23 +3280,23 @@ msgstr "I3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "R3"
-msgstr "D3"
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr "I1"
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr "D1"
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr "I2"
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr "D2"
+msgstr "R2"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/mohawk/myst.cpp:518 engines/mohawk/riven.cpp:852
@@ -4679,11 +4680,11 @@ msgid ""
 msgstr ""
 "ScummVM ha detectado partidas guardadas de Nippon Safes que deben "
 "renombrarse,\n"
-" ya que los nomhres antiguos no son compatibles.\n"
-"Los nombres antiguos ya no son compatibles, las partidas no se podrán cargar "
-"hasta que se conviertan.\n"
-"Pulse Aceptar para convertirlos. En caso contrario, este mensaje aparecerá "
-"cada vez que inicies el juego.\n"
+" ya que los nomenclatura antigua no es compatible. Solo se podrán cargar "
+"cuando se conviertan.\n"
+"\n"
+"Pulsa Aceptar para convertirlos ahora, sino se volverá a preguntar la "
+"próxima vez.\n"
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
@@ -4747,11 +4748,11 @@ msgstr "???"
 
 #: engines/pegasus/pegasus.cpp:2581
 msgid "Save Game"
-msgstr "Guardar juego"
+msgstr "Guardar partida"
 
 #: engines/pegasus/pegasus.cpp:2587
 msgid "Load Game"
-msgstr "Cargar juego"
+msgstr "Cargar partida"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
@@ -4759,34 +4760,33 @@ msgstr "Introducción alternativa"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an alternative game intro (CD version only)"
-msgstr ""
-"Usa una introducción alternativa para el juego (solo para la versión CD)"
+msgstr "Usar introducción alternativa del juego (solo para la versión CD)"
 
 #: engines/sci/detection.cpp:395
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr "Omitir difuminado EGA (colores completos)"
+msgstr "Omitir difuminado EGA (fondos a todo color)"
 
 #: engines/sci/detection.cpp:396
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
-"Omitir pasada de difuminado en los juegos EGA. Los gráficos se muestran con "
-"los colores completos"
+"Omitir etapa de difuminado en los juegos EGA. Los gráficos se muestran a "
+"todo color"
 
 #: engines/sci/detection.cpp:405
 msgid "Enable high resolution graphics"
-msgstr "Activar gráficos de alta resolución"
+msgstr "Activar gráficos en alta resolución"
 
 #: engines/sci/detection.cpp:406
 msgid "Enable high resolution graphics/content"
-msgstr "Activar gráficos/contenido de alta resolución"
+msgstr "Activar gráficos/contenido en alta resolución"
 
 #: engines/sci/detection.cpp:415
 msgid "Enable black-lined video"
-msgstr "Activar líneas negras en vídeos"
+msgstr "Activar franjas negras en vídeo"
 
 #: engines/sci/detection.cpp:416
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr "Mostrar líneas negras sobre los vídeos para que parezcan más nítidos"
+msgstr "Mostrar franjas negras en los vídeos para que parezcan más nítidos"
 
 #: engines/sci/detection.cpp:426
 msgid "Use high-quality video scaling"
@@ -4794,7 +4794,7 @@ msgstr "Usar reescalado de vídeo de alta calidad"
 
 #: engines/sci/detection.cpp:427
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Usar interpolación lineal al reescalar vídeos, siempre que sea posible"
+msgstr "Usar interpolación lineal al reescalar el vídeo siempre que sea posible"
 
 #: engines/sci/detection.cpp:437
 msgid "Use high-quality \"LarryScale\" cel scaling"
@@ -4831,7 +4831,7 @@ msgstr "Usar CD audio"
 
 #: engines/sci/detection.cpp:479
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Usar CD audio en vez del sonido interno del juego, si está disponible"
+msgstr "Usar CD audio en vez del sonido interno del juego si está disponible"
 
 #: engines/sci/detection.cpp:489
 msgid "Use Windows cursors"
@@ -4841,7 +4841,8 @@ msgstr "Usar cursores de Windows"
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
-"Usar los cursores de Windows (más pequeños y monocromos) en vez de los de DOS"
+"Usar los cursores de Windows (más pequeños y en monocromo) en vez de los de "
+"DOS"
 
 #: engines/sci/detection.cpp:500
 msgid "Use silver cursors"
@@ -4851,12 +4852,12 @@ msgstr "Usar cursores plateados"
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
-"Usar el set alternativo de colores plateados en lugar de los dorados, usados "
-"normalmente"
+"Usar el set alternativo de cursores plateados en lugar de los habituales "
+"dorados"
 
 #: engines/sci/detection.cpp:511
 msgid "Enable content censoring"
-msgstr "Activar censura"
+msgstr "Activar censura de contenidos"
 
 #: engines/sci/detection.cpp:512
 msgid "Enable the game's built-in optional content censoring"
@@ -4864,11 +4865,11 @@ msgstr "Activar la opción de censura incluida en el juego"
 
 #: engines/sci/detection.cpp:522
 msgid "Upscale videos"
-msgstr "Escalar videos"
+msgstr "Escalar vídeos"
 
 #: engines/sci/detection.cpp:523
 msgid "Upscale videos to double their size"
-msgstr "Escalar videos al doble de tamaño"
+msgstr "Escalar vídeos al doble de tamaño"
 
 #: engines/sci/detection.cpp:856 engines/sci/engine/kfile.cpp:484
 msgid "(Autosave)"
@@ -4877,26 +4878,26 @@ msgstr "(Autoguardado)"
 #: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr ""
-"Utiliza una aplicación externa para abrir el archivo de ayuda del juego: %s"
+msgstr "Utiliza un visor externo para abrir el archivo de ayuda del juego: %s"
 
 #: engines/sci/engine/savegame.cpp:1347
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr "El formato del juego guardado está anticuado y no se puede cargar"
+msgstr "El formato de la partida guardada es obsoleto y no se puede cargar"
 
 #: engines/sci/engine/savegame.cpp:1349
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
-"La versión de la partida es %d, pero la última versión compatible es %0d"
+"La partida está guardada para la versión %d, pero solo es compatible desde "
+"%0d"
 
 #: engines/sci/engine/savegame.cpp:1360
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
-"No se puede cargar esta partida porque se ha creado desde una versión "
-"distinta del juego"
+"Esta partida se guardó con una versión diferente del juego y no se puede "
+"cargar"
 
 #: engines/sci/resource.cpp:832
 msgid ""
@@ -4904,9 +4905,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
-"Hay archivos dañados o que faltan. Puede que el juego no funcione "
-"correctamente. Consulta la consola para ver más información, y comprueba que "
-"los archivos son válidos."
+"Hay archivos que faltan o están dañados. Puede que el juego no funcione "
+"correctamente. Consulta la consola para obtener más información, y comprueba "
+"que los archivos son válidos."
 
 #: engines/sci/sci.cpp:388
 msgid ""
