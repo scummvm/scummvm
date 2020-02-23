@@ -36,9 +36,6 @@ namespace Ultima8 {
 // The console
 Console *con;
 
-// Console out/err pointers
-console_ostream<char> *ppout;
-console_err_ostream<char> *pperr;
 
 //
 // Constructor
@@ -56,9 +53,6 @@ Console::Console() : _current(0), _xOff(0), _display(0), _lineWidth(-1),
 
 	Std::memset(_times, 0, sizeof(_times));
 
-	// Set output pointers
-	ppout = &_strOut;
-	pperr = &_errOut;
 
 	PrintInternal("Console initialized.\n");
 }
@@ -69,9 +63,6 @@ Console::Console() : _current(0), _xOff(0), _display(0), _lineWidth(-1),
 Console::~Console() {
 	// Need to do this first
 	PrintPutchar();
-
-	ppout = nullptr;
-	pperr = nullptr;
 }
 
 /*

@@ -48,77 +48,6 @@ class ODataSource;
 class RenderSurface;
 struct FixedWidthFont;
 
-class ConsoleStream : public Common::WriteStream {
-private:
-	Std::Precision _precision;
-public:
-	ConsoleStream() : Common::WriteStream(), _precision(Std::dec) {
-	}
-
-	int32 pos() const override {
-		return 0;
-	}
-
-	void Print(const char *fmt, ...) {
-		va_list argptr;
-		va_start(argptr, fmt);
-		Common::String str = Common::String::vformat(fmt, argptr);
-		va_end(argptr);
-
-		write(str.c_str(), str.size());
-	}
-
-	ConsoleStream &operator<<(const char *s) {
-		write(s, strlen(s));
-		return *this;
-	}
-
-	ConsoleStream &operator<<(const void *ptr) {
-		Common::String str = Common::String::format("%p", ptr);
-		write(str.c_str(), str.size());
-		return *this;
-	}
-
-	ConsoleStream &operator<<(const Common::String &str) {
-		write(str.c_str(), str.size());
-		return *this;
-	}
-
-	ConsoleStream &operator<<(int val) {
-		Common::String str = Common::String::format(
-			(_precision == Std::hex) ? "%x" : "%d", val);
-		write(str.c_str(), str.size());
-		return *this;
-	}
-};
-
-template<class T>
-class console_ostream : public ConsoleStream {
-	uint32 write(const void *dataPtr, uint32 dataSize) override {
-		Common::String str((const char *)dataPtr, (const char *)dataPtr + dataSize);
-		debugN("%s", str.c_str());
-		return dataSize;
-	}
-};
-
-template<class T>
-class console_err_ostream : public ConsoleStream {
-public:
-	uint32 write(const void *dataPtr, uint32 dataSize) override {
-		Common::String str((const char *)dataPtr, dataSize);
-		::warning("%s", str.c_str());
-		return str.size();
-	}
-};
-
-// Standard Output Stream Object
-extern console_ostream<char> *ppout;
-// Error Output Stream Object
-extern console_err_ostream<char> *pperr;
-
-#define pout (*ppout)
-#define perr (*pperr)
-
 
 class Console {
 	char        _text[CON_TEXTSIZE];
@@ -138,11 +67,6 @@ class Console {
 	char        _putChar_buf[CON_PUTCHAR_SIZE];  // The Characters that have been putchar'd
 
 	uint32      _stdOutputEnabled;
-
-	// Standard Output Stream Object
-	console_ostream<char> _strOut;
-	// Error Output Stream Object
-	console_err_ostream<char> _errOut;
 
 	// stdout and stderr redirection
 	ODataSource *_stdout_redir;

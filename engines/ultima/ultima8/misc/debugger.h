@@ -23,13 +23,90 @@
 #ifndef ULTIMA_ULTIMA8_ENGINE_DEBUGGER_H
 #define ULTIMA_ULTIMA8_ENGINE_DEBUGGER_H
 
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/misc.h"
+#include "common/debug.h"
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 class Ultima1Engine;
+
+
+class ConsoleStream : public Common::WriteStream {
+private:
+	Std::Precision _precision;
+public:
+	ConsoleStream() : Common::WriteStream(), _precision(Std::dec) {
+	}
+
+	int32 pos() const override {
+		return 0;
+	}
+
+	void Print(const char *fmt, ...) {
+		va_list argptr;
+		va_start(argptr, fmt);
+		Common::String str = Common::String::vformat(fmt, argptr);
+		va_end(argptr);
+
+		write(str.c_str(), str.size());
+	}
+
+	ConsoleStream &operator<<(const char *s) {
+		write(s, strlen(s));
+		return *this;
+	}
+
+	ConsoleStream &operator<<(const void *ptr) {
+		Common::String str = Common::String::format("%p", ptr);
+		write(str.c_str(), str.size());
+		return *this;
+	}
+
+	ConsoleStream &operator<<(const Common::String &str) {
+		write(str.c_str(), str.size());
+		return *this;
+	}
+
+	ConsoleStream &operator<<(int val) {
+		Common::String str = Common::String::format(
+			(_precision == Std::hex) ? "%x" : "%d", val);
+		write(str.c_str(), str.size());
+		return *this;
+	}
+};
+
+template<class T>
+class console_ostream : public ConsoleStream {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
+		Common::String str((const char *)dataPtr, (const char *)dataPtr + dataSize);
+		debugN(MM_INFO, "%s", str.c_str());
+		return dataSize;
+	}
+};
+
+template<class T>
+class console_err_ostream : public ConsoleStream {
+public:
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
+		Common::String str((const char *)dataPtr, dataSize);
+		::warning("%s", str.c_str());
+		return str.size();
+	}
+};
+
+// Standard Output Stream Object
+extern console_ostream<char> *ppout;
+// Error Output Stream Object
+extern console_err_ostream<char> *pperr;
+
+#define pout (*ppout)
+#define perr (*pperr)
+
 
 /**
  * Debugger base class
@@ -39,10 +116,15 @@ public:
 	typedef Common::String ArgsType;
 	typedef Std::vector<ArgsType> ArgvType;
 private:
+	// Standard Output Stream Object
+	console_ostream<char> _strOut;
+	// Error Output Stream Object
+	console_err_ostream<char> _errOut;
+private:
 	const char *strBool(bool flag) {
 		return flag ? "true" : "false";
 	}
-private:
+
 	// Engine
 	bool cmdSaveGame(int argc, const char **argv);
 	bool cmdLoadGame(int argc, const char **argv);
