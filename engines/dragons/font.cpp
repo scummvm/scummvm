@@ -102,6 +102,8 @@ FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigf
 	_surface = new Graphics::Surface();
 	_surface->create(DRAGONS_SCREEN_WIDTH, DRAGONS_SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	clearText(); //clear backing surface.
+
+	_boxFontChr = bigfileArchive->load("boxfont.chr", fileSize);
 }
 
 FontManager::~FontManager() {
@@ -111,6 +113,8 @@ FontManager::~FontManager() {
 
 	_surface->free();
 	delete _surface;
+
+	free(_boxFontChr);
 }
 
 void FontManager::addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 fontType) {
@@ -166,6 +170,7 @@ void FontManager::updatePalette() {
 	uint16 *palette_f2_font_maybe = (uint16 *)_screen->getPalette(2);
 	uint16 cursor3 = 0x14a5 | 0x8000;
 	if (_vm->isFlagSet(ENGINE_FLAG_200)) {
+		updatePalEntry(palette_f2_font_maybe, 1, 0);
 		if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
 			updatePalEntry(palette_f2_font_maybe, 16, cursor3);
 		} else {
@@ -194,6 +199,55 @@ void FontManager::updatePalette() {
 			updatePalEntry(palette_f2_font_maybe, 33, 0x3bee);
 			updatePalEntry(palette_f2_font_maybe, 49, 0x3bee);
 		}
+	}
+}
+
+void FontManager::drawTextDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
+	const uint16 kTextColCount = 0x28;
+	const uint16 kTileBaseIndex = 1;
+	const uint16 kTileIndexTop = kTileBaseIndex + 10;
+	const uint16 kTileIndexBottom = kTileBaseIndex + 16;
+	const uint16 kTileIndexLeft = kTileBaseIndex + 12;
+	const uint16 kTileIndexRight = kTileBaseIndex + 14;
+	const uint16 kTileIndexBackground = kTileBaseIndex + 13;
+	const uint16 kTileIndexTopLeft = kTileBaseIndex + 9;
+	const uint16 kTileIndexTopRight = kTileBaseIndex + 11;
+	const uint16 kTileIndexBottomLeft = kTileBaseIndex + 15;
+	const uint16 kTileIndexBottomRight = kTileBaseIndex + 17;
+	// Fill background
+	for (int yc = y1 + 1; yc <= y2 - 1; ++yc) {
+		for (int xc = x1 + 1; xc <= x2 - 1; ++xc) {
+			drawBoxChar(xc, yc, kTileIndexBackground);
+		}
+	}
+	// Fill top and bottom rows
+	for (int xc = x1 + 1; xc <= x2 - 1; ++xc) {
+		drawBoxChar(xc, y1, kTileIndexTop);
+		drawBoxChar(xc, y2, kTileIndexBottom);
+	}
+	// Fill left and right columns
+	for (int yc = y1 + 1; yc <= y2 - 1; ++yc) {
+		drawBoxChar(x1, yc, kTileIndexLeft);
+		drawBoxChar(x2, yc, kTileIndexRight);
+	}
+	// Fill corners
+	drawBoxChar(x1, y1, kTileIndexTopLeft);
+	drawBoxChar(x2, y1, kTileIndexTopRight);
+	drawBoxChar(x1, y2, kTileIndexBottomLeft);
+	drawBoxChar(x2, y2, kTileIndexBottomRight);
+}
+
+void FontManager::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
+
+}
+
+void FontManager::drawBoxChar(uint32 x, uint32 y, uint8 tileIndex) {
+	byte *pixels = (byte *)_surface->getBasePtr(x * 8, y * 8);
+	byte *data = _boxFontChr + tileIndex * 64;
+	for (int j = 0; j < 8; j++) {
+		memcpy(pixels, data, 8);
+		data += 8;
+		pixels += _surface->pitch;
 	}
 }
 

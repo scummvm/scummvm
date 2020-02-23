@@ -1167,6 +1167,9 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 	setupPalette1();
 
 	_screen->loadPalette(2, _cursor->getPalette());
+	_screen->updatePaletteTransparency(2, 1, 5, true);
+	_screen->updatePaletteTransparency(2, 0xc1, 0xc3, true);
+
 	_screen->loadPalette(4, _cursor->getPalette());
 	_screen->updatePaletteTransparency(4, 1, 0xff, true);
 

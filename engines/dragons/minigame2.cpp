@@ -254,7 +254,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 
 		if ((_dat_80093c9c != 0) && !_vm->isFlagSet(ENGINE_FLAG_8000)) {
 			loungealotHeadActor->updateSequence(0);
-			//TODO _vm->_talk->FUN_8001a7c4((uint)_dat_8008e7e8, (uint)_dat_8008e844, (uint)_dat_8008e848, (uint)_dat_8008e874);
+			//TODO _vm->_talk->clearTextDialog((uint)_dat_8008e7e8, (uint)_dat_8008e844, (uint)_dat_8008e848, (uint)_dat_8008e874);
 			_dat_80093c9c = 0;
 		}
 		if (_dat_80093c94 != 0) {
@@ -314,16 +314,16 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			 */
 			LAB_800907c4:
 			if (!bVar4) {
-				//TODO FUN_8001a4e4_draw_dialogbox(4, 0x14, 0xd, 0x16, 1);
-				//TODO FUN_8001a4e4_draw_dialogbox(4, 0x10, 0xd, 0x12, 1);
+				//TODO drawTextDialogBox(4, 0x14, 0xd, 0x16, 1);
+				//TODO drawTextDialogBox(4, 0x10, 0xd, 0x12, 1);
 				uVar14->_priorityLayer = 6;
 				uVar15->_priorityLayer = 6;
 				bVar4 = true;
 			}
 		}
 		if ((((local_278 == 0) && (local_27a == 0)) && (local_258 == 0)) && (bVar4)) {
-			// TODO FUN_8001a7c4(4, 0x14, 0xd, 0x16);
-			// TODO FUN_8001a7c4(4, 0x10, 0xd, 0x12);
+			// TODO clearTextDialog(4, 0x14, 0xd, 0x16);
+			// TODO clearTextDialog(4, 0x10, 0xd, 0x12);
 			uVar14->_priorityLayer = 0;
 			uVar15->_priorityLayer = 0;
 			bVar4 = false;
@@ -418,7 +418,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 							_vm->waitForFrames(1);
 							_vm->_screen->loadPalette(0, paletteData);
 							_vm->_screen->loadPalette(1, paletteData);
-//	TODO						FUN_8001a7c4((uint)_dat_8008e7e8, (uint)_dat_8008e844, (uint)_dat_8008e848,
+//	TODO						clearTextDialog((uint)_dat_8008e7e8, (uint)_dat_8008e844, (uint)_dat_8008e848,
 //										 (uint)_dat_8008e874);
 							//punched in the face.
 							break;
@@ -736,7 +736,7 @@ void Minigame2::fun_80093aec_dialog(uint32 textId, int16 x, int16 y) {
 //TODO
 //	if ((((_dat_8008e7e8_dialogBox_x1 != 0) || (_dat_8008e848_dialogBox_x2 != 0)) ||
 //		 (_dat_8008e844_dialogBox_y1 != 0)) || (_dat_8008e874_dialogBox_y2 != 0)) {
-//		_vm->_talk->FUN_8001a7c4((uint)_dat_8008e7e8_dialogBox_x1, (uint)_dat_8008e844_dialogBox_y1,
+//		_vm->_talk->clearTextDialog((uint)_dat_8008e7e8_dialogBox_x1, (uint)_dat_8008e844_dialogBox_y1,
 //					 (uint)_dat_8008e848_dialogBox_x2, (uint)_dat_8008e874_dialogBox_y2);
 //	}
 	_vm->_talk->loadText(textId, auStack4024, 2000);

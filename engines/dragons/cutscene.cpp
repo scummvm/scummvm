@@ -280,7 +280,7 @@ void CutScene::scene1() {
 //																									if (((_actor_8008e7e8 != 0) || (_actor_8008e848 != 0))
 //																										|| ((_actor_8008e844 != 0 || (_actor_8008e874 != 0)))
 //																											) {
-//																										FUN_8001a7c4((uint)_actor_8008e7e8,
+//																										clearTextDialog((uint)_actor_8008e7e8,
 //																													 (uint)_actor_8008e844,
 //																													 (uint)_actor_8008e848,
 //																													 (uint)_actor_8008e874);
