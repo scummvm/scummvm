@@ -296,7 +296,7 @@ void Minigame3::run() {
 	_vm->waitForFrames(0xf);
 	_vm->_talk->loadAndDisplayDialogAroundPoint(0x479A, 0x14, 3, 0x1e01, 0);
 	_vm->waitForFrames(0x1e);
-	// TODO FUN_8001a7c4((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
+	// TODO clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 	i = 0;
 	while ((int16)i < 4) {
 		if (goodRabbitPositionTbl[(int16)i] == 0) {
@@ -325,7 +325,7 @@ void Minigame3::run() {
 	}
 	_vm->waitForFrames(0x1e);
 	_vm->waitForFrames(0x1e);
-	// TODO FUN_8001a7c4((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
+	// TODO clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 	local_56 = 0;
 	local_1c0 = 0;
 	currentState = 2;
@@ -583,7 +583,7 @@ void Minigame3::run() {
 			}
 		}
 		if ((local_e != 0) && (local_10 == 0)) {
-			//TODO implement this. FUN_8001a7c4((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
+			//TODO implement this. clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 			local_e = 0;
 		}
 		if ((local_e != 0) && (local_10 != 0)) {

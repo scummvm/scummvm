@@ -93,7 +93,7 @@ public:
 	void playDialogAudioDontWait(uint32 textIndex);
 
 private:
-	void FUN_8001a7c4(uint32 x1, uint32 y1, uint32 x2, uint32 y2); //clear box maybe?
+	void clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2); //clear box maybe?
 	void copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength);
 	uint32 wideStrLen(uint16 *text);
 	TalkDialogEntry *displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries);
@@ -102,7 +102,7 @@ private:
 	void initDefaultResponseTable();
 	uint32 strlenUTF16(uint16 *text);
 	uint16 *findCharInU16Str(uint16 *text, uint16 chr);
-	void FUN_8001a4e4_draw_dialogbox(uint32 x1, uint32 y1, uint32 x2, uint32 y2, uint16 unk);
+	void drawDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2, uint16 unk);
 	uint16 *UTF16ToUTF16Z(uint16 *dest, uint16 *src);
 	uint16 FindLastPositionOf5cChar(uint16 *text);
 	uint32 FUN_80031c28(uint16 *srcText, uint16 *destText, uint32 cutLength, uint16 param_4);

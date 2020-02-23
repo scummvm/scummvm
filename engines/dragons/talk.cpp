@@ -354,8 +354,8 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			_dat_8008e874_dialogBox_y2 = _dat_8008e844_dialogBox_y1 + sVar4 * _dat_800726f0_tfont_field2 + 1;
 			if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) && ((!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || (param_7 != 0)))) {
 				unaff_s4 = 0;
-				FUN_8001a4e4_draw_dialogbox((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
-											(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2, 0);
+				drawDialogBox((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
+							  (uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2, 0);
 				if (sVar4 > 0) {
 					for (; unaff_s4 < sVar4; unaff_s4++) {
 						if ((short)x < 0x14) {
@@ -413,8 +413,8 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			LAB_80032e18:
 			//TODO CheckIfCdShellIsOpen();
 			if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
-				FUN_8001a7c4((uint)_dat_8008e7e8_dialogBox_x1, (uint)_dat_8008e844_dialogBox_y1,
-							 (uint)_dat_8008e848_dialogBox_x2, (uint)_dat_8008e874_dialogBox_y2);
+				clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
+								(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 			}
 		} while (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
 				 (((!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || (param_7 != 0)) && (*curDialogTextPtr != 0))));
@@ -693,7 +693,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			uVar3 = (uint)uVar8;
 		} while (uVar8 < numEntries);
 	}
-	FUN_8001a4e4_draw_dialogbox(1, 0x17 - (uint)local_58 & 0xffff, 0x26, 0x18, 1);
+	drawDialogBox(1, 0x17 - (uint) local_58 & 0xffff, 0x26, 0x18, 1);
 	uVar8 = 0;
 	_vm->_cursor->updateSequenceID(3);
 	local_50 = -2;
@@ -1002,9 +1002,10 @@ uint32 Talk::strlenUTF16(uint16 *text) {
 	return i;
 }
 
-void Talk::FUN_8001a4e4_draw_dialogbox(uint32 x1, uint32 y1, uint32 x2, uint32 y2, uint16 unk) {
+void Talk::drawDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2, uint16 unk) {
 	//TODO this might be rendering the box under the text.
-	debug("FUN_8001a4e4_draw_dialogbox(%d, %d, %d, %d, %d)", x1, y1, x2, y2, unk);
+	debug("drawTextDialogBox(%d, %d, %d, %d, %d)", x1, y1, x2, y2, unk);
+	_vm->_fontManager->drawTextDialogBox(x1, y1, x2, y2);
 }
 
 uint16 *Talk::findCharInU16Str(uint16 *text, uint16 chr) {
@@ -1034,8 +1035,9 @@ uint16 *Talk::UTF16ToUTF16Z(uint16 *dest, uint16 *src) {
 	return dest;
 }
 
-void Talk::FUN_8001a7c4(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
+void Talk::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
 	//TODO
+	debug("Clear text (%d,%d) -> (%d,%d)", x1, y1, x2, y2);
 	_vm->_fontManager->clearText();
 }
 
@@ -1109,8 +1111,8 @@ void Talk::clearDialogEntries() {
 }
 
 void Talk::FUN_8001a7c4_clearDialogBoxMaybe() {
-	FUN_8001a7c4((uint)_dat_8008e7e8_dialogBox_x1, (uint)_dat_8008e844_dialogBox_y1,
-			(uint)_dat_8008e848_dialogBox_x2, (uint)_dat_8008e874_dialogBox_y2);
+	clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
+					(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 }
 
 void Talk::playDialogAudioDontWait(uint32 textIndex) {

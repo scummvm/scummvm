@@ -203,7 +203,7 @@ uint16 Minigame4::runDanceBattle() {
 			//TODO
 //			if ((((DAT_8008e7e8 != 0) || (DAT_8008e848 != 0)) || (DAT_8008e844 != 0)) ||
 //				(DAT_8008e874 != 0)) {
-//				FUN_8001a7c4((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
+//				clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 //			}
 			_flickerActor->waitUntilFlag8SetThenSet1000AndWaitFor4();
 			_flickerActor->updateSequence(7);
