@@ -147,7 +147,7 @@ void CoreApp::setupGameList() {
 			_games[game] = info;
 
 			Std::string details = info->getPrintDetails();
-			debugN(MM_INFO, details.c_str());
+			debugN(MM_INFO, "%s", details.c_str());
 		} else {
 			debugN(MM_INFO, "unknown, skipping");
 		}

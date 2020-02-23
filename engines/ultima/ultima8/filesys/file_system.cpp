@@ -209,7 +209,8 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 	// Finding Reserved Virtual Path Names
 	// memory path is reserved
 	if (vp == "@memory" || vp.substr(0, 8) == "@memory/") {
-		warning("Error mounting virtual path \"%s\": %s\"@memory\" is a reserved virtual path name", vp.c_str());
+		warning("Error mounting virtual path \"%s\": \"@memory\" is a reserved virtual path name",
+			vp.c_str());
 		return false;
 	}
 

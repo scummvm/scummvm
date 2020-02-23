@@ -158,9 +158,9 @@ void SegmentedPool::printInfo() {
 	size_t max, min, total;
 	SegmentedPoolNode *node;
 
-	debug(MM_INFO, "start address 0x%X\tend address 0x%X\tnodeOffset 0x%X",
+	debug(MM_INFO, "start address 0x%p\tend address 0x%p\tnodeOffset 0x%x",
 		_startOfPool, _endOfPool, _nodeOffset);
-	debug(MM_INFO, "_nodeCapacity %d b\n   total _nodes %d\tfree _nodes %d",
+	debug(MM_INFO, "_nodeCapacity %u b\n   total _nodes %u\tfree _nodes %u",
 		_nodeCapacity, _nodes, _freeNodeCount);
 	debug(MM_INFO, "total memory: %d\tfree memory: %d",
 		_nodeCapacity * _nodes, _nodeCapacity * _freeNodeCount);
@@ -179,7 +179,7 @@ void SegmentedPool::printInfo() {
 	}
 
 	if (_nodes > _freeNodeCount) {
-		debug(MM_INFO, "smallest node: %d b\tlargest node: %d b\taverage size: %d b",
+		debug(MM_INFO, "smallest node: %u b\tlargest node: %u b\taverage size: %u b",
 			min, max, total / (_nodes - _freeNodeCount));
 	} else {
 		debug(MM_INFO, "Empty pool!!!");
