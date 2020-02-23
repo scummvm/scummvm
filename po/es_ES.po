@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
 "PO-Revision-Date: 2020-02-23 20:04+0000\n"
-"Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
+"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -915,7 +915,7 @@ msgstr "Hardware Shaders diferentes, otorgan efectos visuales diferentes"
 #: gui/options.cpp:1075
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr "Sombreador HW:"
+msgstr "Sombreado por hardware:"
 
 #: gui/options.cpp:1076
 msgid "Different shaders give different visual effects"
@@ -3276,7 +3276,7 @@ msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
 msgid "L3"
-msgstr "I3"
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "R3"
