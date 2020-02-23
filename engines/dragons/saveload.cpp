@@ -147,7 +147,7 @@ Common::Error DragonsEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error DragonsEngine::saveGameState(int slot, const Common::String &description) {
+Common::Error DragonsEngine::saveGameState(int slot, const Common::String &description, bool isAutoSave) {
 	const char *fileName = getSavegameFilename(slot);
 	if (!savegame(fileName, description.c_str()))
 		return Common::kWritingFailed;
