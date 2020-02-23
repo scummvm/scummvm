@@ -1820,63 +1820,63 @@ uint32 Item::I_getX(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 _x, _y, _z;
-	item->getLocationAbsolute(_x, _y, _z);
-	return _x;
+	int32 x, y, z;
+	item->getLocationAbsolute(x, y, z);
+	return x;
 }
 
 uint32 Item::I_getY(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 _x, _y, _z;
-	item->getLocationAbsolute(_x, _y, _z);
-	return _y;
+	int32 x, y, z;
+	item->getLocationAbsolute(x, y, z);
+	return y;
 }
 
 uint32 Item::I_getZ(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 _x, _y, _z;
-	item->getLocationAbsolute(_x, _y, _z);
-	return _z;
+	int32 x, y, z;
+	item->getLocationAbsolute(x, y, z);
+	return z;
 }
 
 uint32 Item::I_getCX(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 _x, _y, _z;
-	item->getLocationAbsolute(_x, _y, _z);
+	int32 x, y, z;
+	item->getLocationAbsolute(x, y, z);
 
 	if (item->_flags & FLG_FLIPPED)
-		return _x - item->getShapeInfo()->_y * 16;
+		return x - item->getShapeInfo()->_y * 16;
 	else
-		return _x - item->getShapeInfo()->_x * 16;
+		return x - item->getShapeInfo()->_x * 16;
 }
 
 uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 _x, _y, _z;
-	item->getLocationAbsolute(_x, _y, _z);
+	int32 x, y, z;
+	item->getLocationAbsolute(x, y, z);
 
 	if (item->_flags & FLG_FLIPPED)
-		return _y - item->getShapeInfo()->_x * 16;
+		return y - item->getShapeInfo()->_x * 16;
 	else
-		return _y - item->getShapeInfo()->_y * 16;
+		return y - item->getShapeInfo()->_y * 16;
 }
 
 uint32 Item::I_getCZ(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 _x, _y, _z;
-	item->getLocationAbsolute(_x, _y, _z);
+	int32 x, y, z;
+	item->getLocationAbsolute(x, y, z);
 
-	return _z + item->getShapeInfo()->_z * 4;
+	return z + item->getShapeInfo()->_z * 4;
 }
 
 uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
@@ -1884,13 +1884,13 @@ uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(ptr);
 	if (!item) return 0;
 
-	int32 _x, _y, _z;
-	item->getLocationAbsolute(_x, _y, _z);
+	int32 x, y, z;
+	item->getLocationAbsolute(x, y, z);
 
 	WorldPoint point;
-	point.setX(_x);
-	point.setY(_y);
-	point.setZ(_z);
+	point.setX(x);
+	point.setY(y);
+	point.setZ(z);
 
 	UCMachine::get_instance()->assignPointer(ptr, point._buf, 5);
 
@@ -2334,19 +2334,19 @@ uint32 Item::I_getFootpadData(const uint8 *args, unsigned int /*argsize*/) {
 	if (!item) return 0;
 
 	uint8 buf[2];
-	int32 _x, _y, _z;
-	item->getFootpadData(_x, _y, _z);
+	int32 x, y, z;
+	item->getFootpadData(x, y, z);
 
-	buf[0] = static_cast<uint8>(_x);
-	buf[1] = static_cast<uint8>(_x >> 8);
+	buf[0] = static_cast<uint8>(x);
+	buf[1] = static_cast<uint8>(x >> 8);
 	UCMachine::get_instance()->assignPointer(xptr, buf, 2);
 
-	buf[0] = static_cast<uint8>(_y);
-	buf[1] = static_cast<uint8>(_y >> 8);
+	buf[0] = static_cast<uint8>(y);
+	buf[1] = static_cast<uint8>(y >> 8);
 	UCMachine::get_instance()->assignPointer(yptr, buf, 2);
 
-	buf[0] = static_cast<uint8>(_z);
-	buf[1] = static_cast<uint8>(_z >> 8);
+	buf[0] = static_cast<uint8>(z);
+	buf[1] = static_cast<uint8>(z >> 8);
 	UCMachine::get_instance()->assignPointer(zptr, buf, 2);
 
 	return 0;

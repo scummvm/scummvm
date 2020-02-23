@@ -316,14 +316,14 @@ void CurrentMap::removeItemFromList(Item *item, int32 oldx, int32 oldy) {
 }
 
 // Check to see if the chunk is on the screen
-static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, int32 sright, int32 sbot, int _mapChunkSize) {
-	int32 scx = (cx * _mapChunkSize - cy * _mapChunkSize) / 4;
-	int32 scy = ((cx * _mapChunkSize + cy * _mapChunkSize) / 8);
+static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, int32 sright, int32 sbot, int mapChunkSize) {
+	int32 scx = (cx * mapChunkSize - cy * mapChunkSize) / 4;
+	int32 scy = ((cx * mapChunkSize + cy * mapChunkSize) / 8);
 
 	// Screenspace bounding box left extent    (LNT x coord)
-	int32 cxleft = scx - _mapChunkSize / 4;
+	int32 cxleft = scx - mapChunkSize / 4;
 	// Screenspace bounding box right extent   (RFT x coord)
-	int32 cxright = scx + _mapChunkSize / 4;
+	int32 cxright = scx + mapChunkSize / 4;
 
 	// Screenspace bounding box top extent     (LFT y coord)
 	int32 cytop = scy - 256;

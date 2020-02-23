@@ -136,22 +136,22 @@ void QuickAvatarMoverProcess::terminate() {
 	amp[_dir] = 0;
 }
 
-void QuickAvatarMoverProcess::terminateMover(int _dir) {
-	assert(_dir < 6);
+void QuickAvatarMoverProcess::terminateMover(int dir) {
+	assert(dir < 6);
 
 	Kernel *kernel = Kernel::get_instance();
 
 	QuickAvatarMoverProcess *p =
-	    p_dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(amp[_dir]));
+	    p_dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(amp[dir]));
 
 	if (p && !p->is_terminated())
 		p->terminate();
 }
 
-void QuickAvatarMoverProcess::startMover(int x, int y, int z, int _dir) {
+void QuickAvatarMoverProcess::startMover(int x, int y, int z, int dir) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	if (! g->isAvatarInStasis()) {
-		Process *p = new QuickAvatarMoverProcess(x, y, z, _dir);
+		Process *p = new QuickAvatarMoverProcess(x, y, z, dir);
 		Kernel::get_instance()->addProcess(p);
 	} else {
 		pout << "Can't: avatarInStasis" << Std::endl;

@@ -159,8 +159,8 @@ void MessageBoxGump::ChildNotify(Gump *child, uint32 msg) {
 	}
 }
 
-ProcId MessageBoxGump::Show(Std::string _title, Std::string _message, uint32 _titleColour, Std::vector<Std::string> *_buttons) {
-	Gump *gump = new MessageBoxGump(_title, _message, _titleColour, _buttons);
+ProcId MessageBoxGump::Show(Std::string _title, Std::string _message, uint32 titleColour, Std::vector<Std::string> *_buttons) {
+	Gump *gump = new MessageBoxGump(_title, _message, titleColour, _buttons);
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);
 	gump->CreateNotifier();

@@ -118,7 +118,7 @@ void MusicFlex::loadSongInfo() {
 		// Now finally _loopJump
 		begIdx = line.findFirstNotOf(' ', endIdx);
 		endIdx = line.findFirstOf(' ', begIdx);
-		int _loopJump = Std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
+		int loopJump = Std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
 
 		// Uh oh
 		if (num < 0 || num > 127)
@@ -131,7 +131,7 @@ void MusicFlex::loadSongInfo() {
 
 		Std::strncpy(_info[num]->_filename, name.c_str(), 16);
 		_info[num]->_numMeasures = measures;
-		_info[num]->_loopJump = _loopJump;
+		_info[num]->_loopJump = loopJump;
 	};
 
 	// Read 'Section2', or more like skip it, since it's only trans.xmi

@@ -640,7 +640,7 @@ void ItemSorter::BeginDisplayList(RenderSurface *rs,
 	_camSy = (camx + camy) / 8 - camz;
 }
 
-void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 _shapeNum, uint32 frame_num, uint32 flags, uint32 ext_flags, uint16 _itemNum) {
+void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 frame_num, uint32 flags, uint32 ext_flags, uint16 itemNum) {
 	//if (z > skip_lift) return;
 	//if (Application::tgwds && _shape == 538) return;
 
@@ -648,9 +648,9 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 _shapeNum, uint32 fra
 	if (!_itemsUnused) _itemsUnused = new SortItem(0);
 	SortItem *si = _itemsUnused;
 
-	si->_itemNum = _itemNum;
-	si->_shape = _shapes->getShape(_shapeNum);
-	si->_shapeNum = _shapeNum;
+	si->_itemNum = itemNum;
+	si->_shape = _shapes->getShape(shapeNum);
+	si->_shapeNum = shapeNum;
 	si->_frame = frame_num;
 	ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
 	if (!_frame) {
@@ -659,7 +659,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 _shapeNum, uint32 fra
 		return;
 	}
 
-	ShapeInfo *info = _shapes->getShapeInfo(_shapeNum);
+	ShapeInfo *info = _shapes->getShapeInfo(shapeNum);
 
 	//if (info->is_editor && !show_editor_items) return;
 	//if (info->z > shape_max_height) return;

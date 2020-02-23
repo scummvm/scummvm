@@ -422,10 +422,10 @@ bool Debugger::cmdStopSFX(int argc, const char **argv) {
 		debugPrintf("usage: stopSFX <_sfxNum> [<_objId>]\n");
 		return true;
 	} else {
-		int _sfxNum = static_cast<int>(strtol(argv[1], 0, 0));
-		ObjId _objId = (argc >= 3) ? static_cast<ObjId>(strtol(argv[2], 0, 0)) : 0;
+		int sfxNum = static_cast<int>(strtol(argv[1], 0, 0));
+		ObjId objId = (argc >= 3) ? static_cast<ObjId>(strtol(argv[2], 0, 0)) : 0;
 
-		ap->stopSFX(_sfxNum, _objId);
+		ap->stopSFX(sfxNum, objId);
 		return false;
 	}
 }
@@ -439,8 +439,8 @@ bool Debugger::cmdPlaySFX(int argc, const char **argv) {
 		debugPrintf("usage: playSFX <_sfxNum>\n");
 		return true;
 	} else {
-		int _sfxNum = static_cast<int>(strtol(argv[1], 0, 0));
-		ap->playSFX(_sfxNum, 0x60, 0, 0);
+		int sfxNum = static_cast<int>(strtol(argv[1], 0, 0));
+		ap->playSFX(sfxNum, 0x60, 0, 0);
 		return false;
 	}
 }

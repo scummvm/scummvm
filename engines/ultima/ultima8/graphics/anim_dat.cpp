@@ -101,14 +101,14 @@ void AnimDat::load(IDataSource *ds) {
 			a->_actions[action]->_frameRepeat = ds->read1();
 			a->_actions[action]->_flags |= ds->read1() << 8;
 
-			unsigned int _dirCount = 8;
+			unsigned int dirCount = 8;
 			if (GAME_IS_CRUSADER &&
 			        (a->_actions[action]->_flags & AnimAction::AAF_CRUS_16DIRS)) {
-				_dirCount = 16;
+				dirCount = 16;
 			}
-			a->_actions[action]->_dirCount = _dirCount;
+			a->_actions[action]->_dirCount = dirCount;
 
-			for (unsigned int dir = 0; dir < _dirCount; dir++) {
+			for (unsigned int dir = 0; dir < dirCount; dir++) {
 				a->_actions[action]->frames[dir].clear();
 
 				for (unsigned int j = 0; j < actionsize; j++) {

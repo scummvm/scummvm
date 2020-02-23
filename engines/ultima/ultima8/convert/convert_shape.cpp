@@ -442,16 +442,16 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 	if (csf->_bytes_header_unk) source->skip(csf->_bytes_header_unk);
 
 	// Now read _num_frames
-	int _num_frames = 1;
-	if (csf->_bytes_num_frames) _num_frames = source->readX(csf->_bytes_num_frames);
-	if (_num_frames == 0) _num_frames = CalcNumFrames(source,csf,real_len,start_pos);
+	int numFrames = 1;
+	if (csf->_bytes_num_frames) numFrames = source->readX(csf->_bytes_num_frames);
+	if (numFrames == 0) numFrames = CalcNumFrames(source,csf,real_len,start_pos);
 
 	// Create _frames array
 	ConvertShapeFrame oneframe;
 	Std::memset (&oneframe, 0, sizeof(ConvertShapeFrame));
 
 	// Now read the _frames
-	for (int f = 0; f < _num_frames; f++) 
+	for (int f = 0; f < numFrames; f++) 
 	{
 		ConvertShapeFrame *frame = &oneframe;
 
@@ -590,9 +590,8 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 		}
 	}
 
-	// Free _frames
+	// Free frames
 	oneframe.Free();
-	_num_frames = 0;
 
 	// Return to start position
 	source->seek(start_pos);
@@ -632,16 +631,16 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 	if (csf->_bytes_header_unk) source->skip(csf->_bytes_header_unk);
 
 	// Now read _num_frames
-	int _num_frames = 1;
-	if (csf->_bytes_num_frames) _num_frames = source->readX(csf->_bytes_num_frames);
-	if (_num_frames == 0) _num_frames = CalcNumFrames(source,csf,real_len,start_pos);
+	int numFrames = 1;
+	if (csf->_bytes_num_frames) numFrames = source->readX(csf->_bytes_num_frames);
+	if (numFrames == 0) numFrames = CalcNumFrames(source,csf,real_len,start_pos);
 
 	// Create _frames array
 	ConvertShapeFrame oneframe;
 	Std::memset (&oneframe, 0, sizeof(ConvertShapeFrame));
 
 	// Now read the _frames
-	for (int f = 0; f < _num_frames; f++) 
+	for (int f = 0; f < numFrames; f++) 
 	{
 		ConvertShapeFrame *frame = &oneframe;
 
@@ -706,7 +705,6 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 
 	// Free _frames
 	oneframe.Free();
-	_num_frames = 0;
 
 	// Return to start position
 	source->seek(start_pos);

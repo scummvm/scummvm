@@ -81,32 +81,32 @@ public:
 
 	void run() override;
 
-	void playSFX(int _sfxNum, int _priority, ObjId _objId, int _loops,
-	             bool no_duplicates, uint32 _pitchShift,
-	             uint16 _volume, int16 _lVol, int16 _rVol);
+	void playSFX(int sfxNum, int priority, ObjId objId, int loops,
+	             bool no_duplicates, uint32 pitchShift,
+	             uint16 volume, int16 lVol, int16 rVol);
 
-	void playSFX(int _sfxNum, int _priority, ObjId _objId, int _loops,
-	             bool no_duplicates = false, uint32 _pitchShift = 0x10000,
-	             uint16 _volume = 0x80) {
-		playSFX(_sfxNum, _priority, _objId, _loops, no_duplicates, _pitchShift, _volume, -1, -1);
+	void playSFX(int sfxNum, int priority, ObjId objId, int loops,
+	             bool no_duplicates = false, uint32 pitchShift = 0x10000,
+	             uint16 volume = 0x80) {
+		playSFX(sfxNum, priority, objId, loops, no_duplicates, pitchShift, volume, -1, -1);
 	}
 
-	void stopSFX(int _sfxNum, ObjId _objId);
-	bool isSFXPlaying(int _sfxNum);
-	void setVolumeSFX(int _sfxNum, uint8 _volume);
+	void stopSFX(int sfxNum, ObjId objId);
+	bool isSFXPlaying(int sfxNum);
+	void setVolumeSFX(int sfxNum, uint8 volume);
 
-	bool playSpeech(Std::string &_barked, int shapenum, ObjId _objId,
-	                uint32 _pitchShift = 0x10000, uint16 _volume = 256);
-	void stopSpeech(Std::string &_barked, int shapenum, ObjId _objId);
-	bool isSpeechPlaying(Std::string &_barked, int shapenum);
+	bool playSpeech(Std::string &barked, int shapenum, ObjId objId,
+	                uint32 pitchShift = 0x10000, uint16 volume = 256);
+	void stopSpeech(Std::string &barked, int shapenum, ObjId objId);
+	bool isSpeechPlaying(Std::string &barked, int shapenum);
 
 	//! get length (in milliseconds) of speech
-	uint32 getSpeechLength(Std::string &_barked, int shapenum) const;
+	uint32 getSpeechLength(Std::string &barked, int shapenum) const;
 
 	//! play a sample (without storing a SampleInfo)
-	//! returns _channel sample is played on, or -1
-	int playSample(AudioSample *sample, int _priority, int _loops,
-	               uint32 _pitchShift = 0x10000, int16 _lVol = 256, int16 _rVol = 256);
+	//! returns channel sample is played on, or -1
+	int playSample(AudioSample *sample, int priority, int loops,
+		uint32 pitchShift = 0x10000, int16 lVol = 256, int16 rVol = 256);
 
 	//! pause all currently playing samples
 	void pauseAllSamples();
@@ -127,7 +127,7 @@ private:
 	//! returns true if there was speech left to play, or false if finished
 	bool continueSpeech(SampleInfo &si);
 
-	bool calculateSoundVolume(ObjId _objId, int16 &_lVol, int16 &_rVol) const;
+	bool calculateSoundVolume(ObjId objId, int16 &lVol, int16 &rVol) const;
 
 	static AudioProcess *_theAudioProcess;
 };

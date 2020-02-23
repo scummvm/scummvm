@@ -141,10 +141,10 @@ void Pathfinder::init(Actor *actor_, PathfindingState *state) {
 		_start.load(_actor);
 }
 
-void Pathfinder::setTarget(int32 _x, int32 _y, int32 _z) {
-	_targetX = _x;
-	_targetY = _y;
-	_targetZ = _z;
+void Pathfinder::setTarget(int32 x, int32 y, int32 z) {
+	_targetX = x;
+	_targetY = y;
+	_targetZ = z;
 	_targetItem = 0;
 	_hitMode = false;
 }
@@ -172,13 +172,13 @@ bool Pathfinder::canReach() {
 	return pathfind(path);
 }
 
-bool Pathfinder::alreadyVisited(int32 _x, int32 _y, int32 _z) {
+bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) {
 	//! this may need optimization
 
 	Std::list<PathfindingState>::iterator iter;
 
 	for (iter = _visited.begin(); iter != _visited.end(); ++iter)
-		if (iter->checkPoint(_x, _y, _z, 8))
+		if (iter->checkPoint(x, y, z, 8))
 			return true;
 
 	return false;
@@ -283,7 +283,7 @@ static void drawbox(Item *item) {
 	screen->DrawLine32(0xFF00FF00, x0, y0, x3, y3);
 }
 
-static void drawdot(int32 _x, int32 _y, int32 _z, int size, uint32 rgb) {
+static void drawdot(int32 x, int32 y, int32 Z, int size, uint32 rgb) {
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	int32 cx, cy, cz;
 
@@ -291,12 +291,12 @@ static void drawdot(int32 _x, int32 _y, int32 _z, int size, uint32 rgb) {
 
 	Rect d;
 	screen->GetSurfaceDims(d);
-	_x -= cx;
-	_y -= cy;
-	_z -= cz;
+	x -= cx;
+	y -= cy;
+	Z -= cz;
 	int32 x0, y0;
-	x0 = (d.w / 2) + (_x - _y) / 2;
-	y0 = (d.h / 2) + (_x + _y) / 4 - _z * 2;
+	x0 = (d.w / 2) + (x - y) / 2;
+	y0 = (d.h / 2) + (x + y) / 4 - Z * 2;
 	screen->Fill32(rgb, x0 - size, y0 - size, 2 * size + 1, 2 * size + 1);
 }
 

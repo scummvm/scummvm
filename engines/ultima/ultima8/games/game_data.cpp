@@ -310,7 +310,7 @@ void GameData::loadU8Data() {
 	}
 	delete globflex;
 
-	// Load _fonts
+	// Load fonts
 	IDataSource *fds = filesystem->ReadFile("@game/static/u8fonts.flx");
 	if (!fds)
 		error("Unable to load static/u8fonts.flx");
@@ -319,7 +319,7 @@ void GameData::loadU8Data() {
 	                             PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	_fonts->setHVLeads();
 
-	// Load _mouse
+	// Load \mouse
 	IDataSource *msds = filesystem->ReadFile("@game/static/u8mouse.shp");
 	if (!msds)
 		error("Unable to load static/u8mouse.shp");
@@ -435,10 +435,10 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 	}
 }
 
-SpeechFlex *GameData::getSpeechFlex(uint32 _shapeNum) {
-	if (_shapeNum >= _speech.size()) return 0;
+SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
+	if (shapeNum >= _speech.size()) return 0;
 
-	SpeechFlex **s = _speech[_shapeNum];
+	SpeechFlex **s = _speech[shapeNum];
 	if (s) return *s;
 
 	s = new SpeechFlex*;
@@ -448,7 +448,7 @@ SpeechFlex *GameData::getSpeechFlex(uint32 _shapeNum) {
 
 	Std::string u8_sound_ = "@game/sound/";
 	char num_flx [32];
-	snprintf(num_flx , 32, "%i.flx", _shapeNum);
+	snprintf(num_flx , 32, "%i.flx", shapeNum);
 
 	char langletter = _gameInfo->getLanguageFileLetter();
 	if (!langletter) {
@@ -461,7 +461,7 @@ SpeechFlex *GameData::getSpeechFlex(uint32 _shapeNum) {
 		*s = new SpeechFlex(sflx);
 	}
 
-	_speech[_shapeNum] = s;
+	_speech[shapeNum] = s;
 
 	return *s;
 }
@@ -537,7 +537,7 @@ void GameData::loadRemorseData() {
 	_weaponOverlay->load(overlayflex);
 	delete overlayflex;
 
-	// Load _globs
+	// Load globs
 	IDataSource *gds = filesystem->ReadFile("@game/static/glob.flx");
 	if (!gds)
 		error("Unable to load static/glob.flx");
@@ -559,7 +559,7 @@ void GameData::loadRemorseData() {
 	}
 	delete globflex;
 
-	// Load _fonts
+	// Load fonts
 	IDataSource *fds = filesystem->ReadFile("@game/static/_fonts.flx");
 	if (!fds)
 		error("Unable to load static/_fonts.flx");
@@ -568,7 +568,7 @@ void GameData::loadRemorseData() {
 	                             PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	_fonts->setHVLeads();
 
-	// Load _mouse
+	// Load mouse
 	IDataSource *msds = filesystem->ReadFile("@game/static/_mouse.shp");
 	if (!msds)
 		error("Unable to load static/_mouse.shp");

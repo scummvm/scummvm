@@ -326,14 +326,14 @@ void Ultima8Engine::startupGame() {
 	_settingMan->setDefault("ttf", false);
 	_settingMan->get("ttf", _ttfOverrides);
 
-	_settingMan->setDefault("_frameSkip", false);
-	_settingMan->get("_frameSkip", _frameSkip);
+	_settingMan->setDefault("frameSkip", false);
+	_settingMan->get("frameSkip", _frameSkip);
 
-	_settingMan->setDefault("_frameLimit", true);
-	_settingMan->get("_frameLimit", _frameLimit);
+	_settingMan->setDefault("frameLimit", true);
+	_settingMan->get("frameLimit", _frameLimit);
 
-	_settingMan->setDefault("_interpolate", true);
-	_settingMan->get("_interpolate", _interpolate);
+	_settingMan->setDefault("interpolate", true);
+	_settingMan->get("interpolate", _interpolate);
 
 	_settingMan->setDefault("cheat", false);
 	_settingMan->get("cheat", _cheatsEnabled);
