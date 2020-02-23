@@ -69,10 +69,6 @@ public:
 	static uint8 Gamma10toGamma22[256];
 	static uint8 Gamma22toGamma10[256];
 
-	//
-	// TODO: Improve the way SDL Surfaces are created. Should be more versatile.
-	//
-
 	//! Create a standard RenderSurface
 	static RenderSurface *SetVideoMode(uint32 width, uint32 height, int bpp);
 

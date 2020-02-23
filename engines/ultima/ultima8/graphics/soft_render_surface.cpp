@@ -45,7 +45,7 @@ namespace Ultima8 {
 //
 // SoftRenderSurface::SoftRenderSurface(Graphics::Surface *s)
 //
-// Desc: Create a SoftRenderSurface from a SDL_Surface
+// Desc: Create a SoftRenderSurface from a managed surface
 //
 template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(Graphics::ManagedSurface *s)
 	: BaseSoftRenderSurface(s) {

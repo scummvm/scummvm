@@ -109,7 +109,7 @@ Graphics::Font *FontManager::getTTF_Font(Std::string filename, int pointsize) {
 		return 0;
 	}
 
-	// open font using SDL_RWops.
+	// open font using ScummVM TTF API
 	// Note: The RWops and IDataSource will be deleted by the TTF_Font
 	Common::SeekableReadStream *rs = fontids->GetRawStream();
 	Graphics::Font *font = Graphics::loadTTFFont(*rs, pointsize);

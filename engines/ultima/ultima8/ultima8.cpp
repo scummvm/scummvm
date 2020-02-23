@@ -758,44 +758,44 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
-		key = HID_translateSDLKey(event.kbd.keycode);
-		evn = HID_translateSDLKeyFlags(event.kbd.flags);
+		key = HID_translateKey(event.kbd.keycode);
+		evn = HID_translateKeyFlags(event.kbd.flags);
 		break;
 	case Common::EVENT_KEYUP:
 		// Any system keys not in the bindings can be handled here
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:
-		key = HID_translateSDLMouseButton(1);
+		key = HID_translateMouseButton(1);
 		evn = HID_EVENT_DEPRESS;
 		break;
 	case Common::EVENT_LBUTTONUP:
-		key = HID_translateSDLMouseButton(1);
+		key = HID_translateMouseButton(1);
 		evn = HID_EVENT_RELEASE;
 		break;
 	case Common::EVENT_RBUTTONDOWN:
-		key = HID_translateSDLMouseButton(2);
+		key = HID_translateMouseButton(2);
 		evn = HID_EVENT_DEPRESS;
 		break;
 	case Common::EVENT_RBUTTONUP:
-		key = HID_translateSDLMouseButton(2);
+		key = HID_translateMouseButton(2);
 		evn = HID_EVENT_RELEASE;
 		break;
 	case Common::EVENT_MBUTTONDOWN:
-		key = HID_translateSDLMouseButton(3);
+		key = HID_translateMouseButton(3);
 		evn = HID_EVENT_DEPRESS;
 		break;
 	case Common::EVENT_MBUTTONUP:
-		key = HID_translateSDLMouseButton(3);
+		key = HID_translateMouseButton(3);
 		evn = HID_EVENT_RELEASE;
 		break;
 
 	case Common::EVENT_JOYBUTTON_DOWN:
-		key = HID_translateSDLJoystickButton(event.joystick.button + 1);
+		key = HID_translateJoystickButton(event.joystick.button + 1);
 		evn = HID_EVENT_DEPRESS;
 		break;
 	case Common::EVENT_JOYBUTTON_UP:
-		key = HID_translateSDLJoystickButton(event.joystick.button + 1);
+		key = HID_translateJoystickButton(event.joystick.button + 1);
 		evn = HID_EVENT_DEPRESS;
 		break;
 

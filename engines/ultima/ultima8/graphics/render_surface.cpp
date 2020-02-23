@@ -63,13 +63,13 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp)
 	initGraphics(width, height, &pixelFormat);
 
 	// Set up blitting surface
-	Graphics::ManagedSurface *sdl_surf = new Graphics::Screen(width, height, pixelFormat);
-	assert(sdl_surf);
+	Graphics::ManagedSurface *surface = new Graphics::Screen(width, height, pixelFormat);
+	assert(surface);
 
 	// Now create the SoftRenderSurface
 	RenderSurface *surf;
-	if (pixelFormat.bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(sdl_surf);
-	else surf = new SoftRenderSurface<uint16>(sdl_surf);
+	if (pixelFormat.bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(surface);
+	else surf = new SoftRenderSurface<uint16>(surface);
 
 	// Initialize gamma correction tables
 	for (int i = 0; i < 256; i++) {

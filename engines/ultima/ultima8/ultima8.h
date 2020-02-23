@@ -305,10 +305,10 @@ public:
 	//! \return true if succesful.
 	bool newGame(int saveSlot = -1);
 
-	//! Enter gump text mode (aka SDL Unicode keyhandling)
+	//! Enter gump text mode (aka Unicode keyhandling)
 	void enterTextMode(Gump *);
 
-	//! Leave gump text mode (aka SDL Unicode keyhandling)
+	//! Leave gump text mode (aka Unicode keyhandling)
 	void leaveTextMode(Gump *);
 
 	//! Display an error message box

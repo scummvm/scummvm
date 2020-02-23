@@ -31,7 +31,7 @@ namespace Ultima8 {
 
 class Font;
 
-// This is TTF_Font struct from SDL_ttf
+// This is TTF_Font struct
 typedef struct _TTF_Font TTF_Font;
 class IDataSource;
 

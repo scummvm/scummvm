@@ -63,12 +63,12 @@ protected:
 	// Locking count
 	uint32          _lockCount;              // Number of locks on surface
 
-	Graphics::ManagedSurface *_sdlSurf;
+	Graphics::ManagedSurface *_surface;
 
 	// Renderint to a texture
 	Texture         *_rttTex;
 
-	// Create from a SDL_Surface
+	// Create from a managed surface
 	BaseSoftRenderSurface(Graphics::ManagedSurface *);
 
 	// Create with Texture
@@ -167,7 +167,7 @@ public:
 	void CreateNativePalette(Palette *palette) override;
 
 	Graphics::ManagedSurface *getRawSurface() const override {
-		return _sdlSurf;
+		return _surface;
 	}
 };
 

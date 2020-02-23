@@ -68,9 +68,6 @@ bool BindGump::OnKeyDown(int key, int mod) {
 		HIDManager *hidmanager = HIDManager::get_instance();
 		if (key == Common::KEYCODE_BACKSPACE) {
 			hidmanager->unbind(*binding);
-		} else {
-//			istring control = SDL_GetKeyName(static_cast<SDLKey>(key));
-//			hidmanager->bind(control, *binding);
 		}
 		if (invoker)
 			invoker->ChildNotify(this, UPDATE);

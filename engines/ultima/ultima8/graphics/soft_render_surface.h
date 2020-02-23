@@ -41,7 +41,7 @@ protected:
 
 public:
 
-	// Create from a SDL_Surface
+	// Create from a managed surface
 	SoftRenderSurface(Graphics::ManagedSurface *);
 
 	// Create a Generic surface that matches current screen parameters

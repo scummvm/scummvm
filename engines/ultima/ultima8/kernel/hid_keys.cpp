@@ -311,7 +311,7 @@ HID_Key HID_GetKeyFromName(istring &name) {
 	return HID_LAST;
 }
 
-HID_Key HID_translateSDLKey(Common::KeyCode key) {
+HID_Key HID_translateKey(Common::KeyCode key) {
 	switch (key) {
 	case Common::KEYCODE_BACKSPACE:
 		return HID_BACKSPACE;
@@ -554,7 +554,7 @@ HID_Key HID_translateSDLKey(Common::KeyCode key) {
 	return HID_LAST;
 }
 
-HID_Events HID_translateSDLKeyFlags(byte flags) {
+HID_Events HID_translateKeyFlags(byte flags) {
 	HID_Events result = 0;
 
 	if (flags & Common::KBD_CTRL)
@@ -569,7 +569,7 @@ HID_Events HID_translateSDLKeyFlags(byte flags) {
 	return result;
 }
 
-HID_Key HID_translateSDLMouseButton(uint8 button) {
+HID_Key HID_translateMouseButton(uint8 button) {
 	switch (button) {
 	case 1:
 		return HID_MOUSE1;
@@ -609,7 +609,7 @@ HID_Key HID_translateSDLMouseButton(uint8 button) {
 	return HID_LAST;
 }
 
-HID_Key HID_translateSDLJoystickButton(uint8 button) {
+HID_Key HID_translateJoystickButton(uint8 button) {
 	switch (button) {
 	case 1:
 		return HID_JOY1;
