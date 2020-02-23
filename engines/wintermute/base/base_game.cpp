@@ -2043,6 +2043,32 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->pushString("1024;768");
 		return STATUS_OK;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] A lot of functions used for self-check
+	// Used at "Papa's Daughters 2" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "DeleteItems") == 0 || strcmp(name, "CreateActorItems") == 0 || strcmp(name, "DeleteActorItems") == 0 || strcmp(name, "PrepareItems") == 0 || strcmp(name, "CreateEntityItems") == 0 || strcmp(name, "DeleteEntityItems") == 0 || strcmp(name, "PrepareItemsWin") == 0 || strcmp(name, "CreateItems") == 0) {
+		stack->correctParams(3);
+		uint32 a = (uint32)stack->pop()->getInt();
+		uint32 b = (uint32)stack->pop()->getInt();
+		uint32 c = (uint32)stack->pop()->getInt();
+
+		uint32 result = 0;
+		const char* fname = "PapasDaughters2.wrp.exe";
+		if (strcmp(name, "PrepareItems") == 0 || strcmp(name, "CreateEntityItems") == 0 || strcmp(name, "DeleteEntityItems") == 0) {
+			result = getFilePartChecksumHc(fname, b, a);
+		} else if (strcmp(name, "PrepareItemsWin") == 0) {
+			result = getFilePartChecksumHc(fname, b, c);
+		} else if (strcmp(name, "CreateItems") == 0) {
+			result = getFilePartChecksumHc(fname, a, c);
+		} else {
+			result = getFilePartChecksumHc(fname, a, b);
+		}
+
+		stack->pushInt(result);
+		return STATUS_OK;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -4317,6 +4343,40 @@ void BaseGame::expandStringByStringTable(Common::String &str) const {
 char *BaseGame::getKeyFromStringTable(const char *str) const {
 	return _settings->getKeyFromStringTable(str);
 }
+
+#ifdef ENABLE_HEROCRAFT
+uint8 BaseGame::getFilePartChecksumHc(const char *filename, size_t begin, size_t end) {
+	if (begin >= end) {
+		warning("Wrong limits for checksum check");
+		return 0;
+	}
+
+	uint32 size;
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename, &size);
+	if (buffer == nullptr) {
+		warning("Failed to open '%s' for checksum check", filename);
+		return 0;
+	}
+
+	if (size < end) {
+		warning("File '%s' is too small for checksum check", filename);
+		delete[] buffer;
+		return 0;
+	}
+
+	uint8 result = 0;
+	for (size_t i = begin; i < end; i++) {
+		uint8 tmp = buffer[i];
+		result += tmp;
+		if (result < tmp) {
+			result ++;
+		}
+	}
+
+	delete[] buffer;
+	return result;
+}
+#endif
 
 Common::String BaseGame::readRegistryString(const Common::String &key, const Common::String &initValue) const {
 	// Game specific hacks:

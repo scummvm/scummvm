@@ -1493,7 +1493,19 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		BaseObject *node = getNodeByName(nodeName);
 		if (node) {
 			stack->pushNative((BaseScriptable *)node, true);
-		} else {
+		}
+
+#ifdef ENABLE_HEROCRAFT
+		//////////////////////////////////////////////////////////////////////////
+		// [HeroCraft] papasEntity
+		// Used in some self-check at "Papa's Daughters 2"
+		//////////////////////////////////////////////////////////////////////////
+		else if (strcmp(nodeName,"papasEntity") == 0) {
+			stack->pushInt(777);
+		}
+#endif
+
+		else {
 			stack->pushNULL();
 		}
 
