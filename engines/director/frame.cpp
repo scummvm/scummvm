@@ -642,7 +642,10 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				warning("Frame::renderSprites(): No cast ID for sprite %d", i);
 				continue;
 			}
-
+			if (_sprites[i]->_cast->_surface == nullptr) {
+				warning("Frame::renderSprites(): No cast surface for sprite %d", i);
+				continue;
+			}
 			InkType ink;
 			if (i == _vm->getCurrentScore()->_currentMouseDownSpriteId)
 				ink = kInkTypeReverse;
