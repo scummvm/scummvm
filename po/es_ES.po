@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-23 20:04+0000\n"
-"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
+"PO-Revision-Date: 2020-02-24 07:14+0000\n"
+"Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -943,7 +943,7 @@ msgstr "Pantalla completa"
 
 #: gui/options.cpp:1134
 msgid "Filter graphics"
-msgstr "Filtros de gráficos"
+msgstr "Filtrar gráficos"
 
 #: gui/options.cpp:1134
 msgid "Use linear filtering when scaling graphics"
@@ -1285,7 +1285,7 @@ msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
-"Usa el explorador de archivos del sistema nativo en lugar del de ScummVM "
+"Utiliza el explorador de archivos del sistema nativo en lugar del de ScummVM "
 "para seleccionar un archivo o directorio."
 
 #: gui/options.cpp:1946 gui/updates-dialog.cpp:86
@@ -2693,7 +2693,7 @@ msgstr "Botón superior izquierdo"
 
 #: backends/keymapper/hardware-input.cpp:253
 msgid "Right Shoulder"
-msgstr "Hombro derecho"
+msgstr "Botón superior derecho"
 
 #: backends/keymapper/hardware-input.cpp:254
 #: backends/platform/3ds/osystem-events.cpp:58
@@ -3678,7 +3678,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Falló la carga de partida guardada desde el archivo:\n"
+"Error al cargar la partida guardada del archivo:\n"
 "\n"
 "%s"
 
@@ -3689,7 +3689,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Fallo al guardar la partida al archivo:\n"
+"Error al guardar la partida al archivo:\n"
+"\n"
 "%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2474
@@ -3706,7 +3707,7 @@ msgstr ""
 #: engines/agos/animation.cpp:558
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "No se ha encontrado el vídeo '%s'!"
+msgstr "¡No se ha encontrado el vídeo %s!"
 
 #: engines/bladerunner/bladerunner.cpp:351
 msgid "Failed to initialize resources"
@@ -3742,11 +3743,11 @@ msgstr "Continuar"
 
 #: engines/bladerunner/detection.cpp:48
 msgid "Sitcom mode"
-msgstr "Modo Sitcom"
+msgstr "Modo «sitcom»"
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
-msgstr "El juego añadirá risas tras cada entrada o narración del actor"
+msgstr "El juego añadirá risas tras cada frase o narración del actor"
 
 #: engines/bladerunner/detection.cpp:57
 msgid "Shorty mode"
@@ -3754,7 +3755,7 @@ msgstr "Modo enano"
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr "El juego encojerá a los actores y les pondrá voces agudas"
+msgstr "El juego encogerá a los actores y les pondrá voces agudas"
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
@@ -3765,20 +3766,20 @@ msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
 msgstr ""
-"¡Esto puede producir un alto consumo de CPU! Se evita el uso de la función "
+"¡Puede producir un alto consumo de CPU! Se evita el uso de la función "
 "delayMilis()."
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
-msgstr "Límite máximo de fps"
+msgstr "Límite máximo de FPS"
 
 #: engines/bladerunner/detection.cpp:76
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
-"Este modo alcanza un máximo de 120 fps. Cuando está desactivado, el juego "
-"alcanza 60 fps"
+"Este modo fija un máximo de 120 FPS. Cuando está desactivado, el juego "
+"fijará un máximo de 60 FPS."
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -3792,11 +3793,11 @@ msgid ""
 msgstr ""
 "ScummVM ha detectado partidas guardadas antiguas de Drascula que deben "
 "actualizarse.\n"
-"El formato antiguo ya no es compatible, no podrán cargarse hasta "
-"actualizarlas.\n"
+"El formato antiguo ya no es compatible, así que no podrán cargarse hasta que "
+"hayan sido actualizadas.\n"
 "\n"
-"Pulse Aceptar para actualizarlas. Si no lo hace, el mensaje aparecerá cada "
-"vez que se inicie el juego.\n"
+"Pulsa Aceptar para actualizarlas. De lo contrario, este mensaje aparecerá "
+"cada vez que se inicie el juego.\n"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
@@ -3812,7 +3813,7 @@ msgstr "[ pulsar una tecla para salir ]"
 
 #: engines/glk/quetzal.cpp:146 engines/glk/quetzal.cpp:155
 msgid "Untitled Savegame"
-msgstr "Juego sin nombre"
+msgstr "Partida sin nombre"
 
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
@@ -3828,7 +3829,7 @@ msgstr "Lo siento, no se ha podido guardar el juego"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr "¡Habla! Puedo escucharte.\n"
+msgstr "¡Habla más alto! ¡No te oigo!"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
@@ -5718,7 +5719,7 @@ msgstr "Volar abajo y a la derecha"
 
 #: engines/scumm/input.cpp:563
 msgid "Snap scroll on"
-msgstr "Desplazamiento mediante toques"
+msgstr "Desplazamiento a saltos"
 
 #: engines/scumm/input.cpp:565
 msgid "Snap scroll off"
