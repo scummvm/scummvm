@@ -35,14 +35,14 @@ HIDManager *HIDManager::_hidManager = 0;
 
 HIDManager::HIDManager() {
 	_hidManager = this;
-	con->Print(MM_INFO, "Creating HIDManager...\n");
+	debugN(MM_INFO, "Creating HIDManager...\n");
 
 	resetBindings();
 }
 
 HIDManager::~HIDManager() {
 	Std::vector<Debugger::ArgvType *>::iterator it;
-	con->Print(MM_INFO, "Destroying HIDManager...\n");
+	debugN(MM_INFO, "Destroying HIDManager...\n");
 
 	for (it = _commands.begin(); it != _commands.end(); ++it) {
 		if (*it) {
@@ -85,7 +85,7 @@ void HIDManager::resetBindings() {
 void HIDManager::loadBindings() {
 	Debugger::ArgsType args;
 
-	con->Print(MM_INFO, "Loading HIDBindings...\n");
+	debugN(MM_INFO, "Loading HIDBindings...\n");
 
 	SettingManager *settings = SettingManager::get_instance();
 	KeyMap keys;
@@ -95,7 +95,7 @@ void HIDManager::loadBindings() {
 	KeyMap::iterator end = keys.end();
 
 	if (i == end) {
-		con->Print(MM_INFO, "Loading default HIDBindings...\n");
+		debugN(MM_INFO, "Loading default HIDBindings...\n");
 		ConfigFileManager *config = ConfigFileManager::get_instance();
 		keys = config->listKeyValues("bindings/bindings");
 		i = keys.begin();

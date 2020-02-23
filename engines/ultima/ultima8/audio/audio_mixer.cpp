@@ -42,7 +42,7 @@ AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(0) {
 	for (int idx = 0; idx < CHANNEL_COUNT; ++idx)
 		_channels[idx] = new AudioChannel(_mixer, SAMPLE_RATE, true);
 
-	con->Print(MM_INFO, "Creating AudioMixer...\n");
+	debugN(MM_INFO, "Creating AudioMixer...\n");
 }
 
 void AudioMixer::createProcesses() {
@@ -56,7 +56,7 @@ void AudioMixer::createProcesses() {
 }
 
 AudioMixer::~AudioMixer(void) {
-	con->Print(MM_INFO, "Destroying AudioMixer...\n");
+	debugN(MM_INFO, "Destroying AudioMixer...\n");
 
 	closeMidiOutput();
 

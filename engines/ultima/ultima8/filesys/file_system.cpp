@@ -37,14 +37,14 @@ FileSystem *FileSystem::_fileSystem = 0;
 
 FileSystem::FileSystem(bool noforced)
 	: _noForcedVPaths(noforced), _allowDataOverride(true) {
-	con->Print(MM_INFO, "Creating FileSystem...\n");
+	debugN(MM_INFO, "Creating FileSystem...\n");
 
 	_fileSystem = this;
 	AddVirtualPath("@home", "");
 }
 
 FileSystem::~FileSystem() {
-	con->Print(MM_INFO, "Destroying FileSystem...\n");
+	debugN(MM_INFO, "Destroying FileSystem...\n");
 
 	_fileSystem = 0;
 }
@@ -141,7 +141,7 @@ bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 
 #if 0
 	if (!rewrite_virtual_path(name)) {
-		con->Print_err(MM_MAJOR_WARN, "Illegal file access\n");
+		warning("Illegal file access");
 		return false;
 	}
 
@@ -202,18 +202,14 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 		rp.erase(rp.rfind('/'));
 
 	if (rp.find("..") != string::npos) {
-		con->Printf_err(MM_MINOR_ERR,
-		               "Error mounting virtual path \"%s\": \"..\" not allowed.\n",
-		               vp.c_str());
+		warning("Error mounting virtual path \"%s\": \"..\" not allowed", vp.c_str());
 		return false;
 	}
 
 	// Finding Reserved Virtual Path Names
 	// memory path is reserved
 	if (vp == "@memory" || vp.substr(0, 8) == "@memory/") {
-		con->Printf_err(MM_MINOR_ERR,
-		               "Error mounting virtual path \"%s\": %s\"@memory\" is a reserved virtual path name.\n",
-		               vp.c_str());
+		warning("Error mounting virtual path \"%s\": %s\"@memory\" is a reserved virtual path name", vp.c_str());
 		return false;
 	}
 
@@ -221,15 +217,14 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 	rewrite_virtual_path(fullpath);
 	// When mounting a memory file, it wont exist, so don't attempt to create the dir
 #ifdef DEBUG
-	con->Printf(MM_INFO, "virtual path \"%s\": %s\n", vp.c_str(), fullpath.c_str());
+	debugN(MM_INFO, "virtual path \"%s\": %s\n", vp.c_str(), fullpath.c_str());
 #endif
 	if (!(fullpath.substr(0, 8) == "@memory/")) {
 		if (!IsDir(fullpath)) {
 			if (!create) {
 #ifdef DEBUG
-				con->Printf_err(MM_MINOR_WARN,
-				               "Problem mounting virtual path \"%s\": directory not found: %s\n",
-				               vp.c_str(), fullpath.c_str());
+				warning("Problem mounting virtual path \"%s\": directory not found: %s",
+					vp.c_str(), fullpath.c_str());
 #endif
 				return false;
 			} else {

@@ -35,7 +35,7 @@ namespace Ultima8 {
 Kernel *Kernel::kernel = 0;
 
 Kernel::Kernel() : loading(false) {
-	con->Print(MM_INFO, "Creating Kernel...\n");
+	debugN(MM_INFO, "Creating Kernel...\n");
 
 	kernel = this;
 	pIDs = new idMan(1, 32766, 128);
@@ -48,7 +48,7 @@ Kernel::Kernel() : loading(false) {
 
 Kernel::~Kernel() {
 	reset();
-	con->Print(MM_INFO, "Destroying Kernel...\n");
+	debugN(MM_INFO, "Destroying Kernel...\n");
 
 	kernel = 0;
 
@@ -56,7 +56,7 @@ Kernel::~Kernel() {
 }
 
 void Kernel::reset() {
-	con->Print(MM_INFO, "Resetting Kernel...\n");
+	debugN(MM_INFO, "Resetting Kernel...\n");
 
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		delete(*it);

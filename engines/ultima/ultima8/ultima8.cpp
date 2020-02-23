@@ -310,9 +310,9 @@ void Ultima8Engine::startupGame() {
 		// system-wide config
 		if (_configFileMan->readConfigFile(bindingsfile,
 			"bindings", true))
-			con->Printf(MM_INFO, "%s... Ok\n", bindingsfile.c_str());
+			debugN(MM_INFO, "%s... Ok\n", bindingsfile.c_str());
 		else
-			con->Printf(MM_MINOR_WARN, "%s... Failed\n", bindingsfile.c_str());
+			debugN(MM_MINOR_WARN, "%s... Failed\n", bindingsfile.c_str());
 	}
 
 	_hidManager->loadBindings();
@@ -437,24 +437,24 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 		Rect dims;
 		_screen->GetSurfaceDims(dims);
 
-		con->Print(MM_INFO, "Creating Desktop...\n");
+		debugN(MM_INFO, "Creating Desktop...\n");
 		_desktopGump = new DesktopGump(0, 0, dims.w, dims.h);
 		_desktopGump->InitGump(0);
 		_desktopGump->MakeFocus();
 
-		con->Print(MM_INFO, "Creating _scalerGump...\n");
+		debugN(MM_INFO, "Creating _scalerGump...\n");
 		_scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
 		_scalerGump->InitGump(0);
 
 		Rect scaled_dims;
 		_scalerGump->GetDims(scaled_dims);
 
-		con->Print(MM_INFO, "Creating Graphics Console...\n");
+		debugN(MM_INFO, "Creating Graphics Console...\n");
 		_consoleGump = new ConsoleGump(0, 0, dims.w, dims.h);
 		_consoleGump->InitGump(0);
 		_consoleGump->HideConsole();
 
-		con->Print(MM_INFO, "Creating Inverter...\n");
+		debugN(MM_INFO, "Creating Inverter...\n");
 		_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
 		_inverterGump->InitGump(0);
 
@@ -696,7 +696,7 @@ void Ultima8Engine::GraphicSysInit() {
 	_screen = 0;
 
 	// Set Screen Resolution
-	con->Printf(MM_INFO, "Setting Video Mode %dx%dx%d...\n", width, height, bpp);
+	debugN(MM_INFO, "Setting Video Mode %dx%dx%d...\n", width, height, bpp);
 
 	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
 
@@ -718,19 +718,19 @@ void Ultima8Engine::GraphicSysInit() {
 	}
 
 	// setup normal mouse cursor
-	con->Print(MM_INFO, "Loading Default Mouse Cursor...\n");
+	debugN(MM_INFO, "Loading Default Mouse Cursor...\n");
 	_mouse->setup();
 
 	Std::string alt_confont;
 	bool confont_loaded = false;
 
 	if (_settingMan->get("console_font", alt_confont)) {
-		con->Print(MM_INFO, "Alternate console font found...\n");
+		debugN(MM_INFO, "Alternate console font found...\n");
 		confont_loaded = LoadConsoleFont(alt_confont);
 	}
 
 	if (!confont_loaded) {
-		con->Print(MM_INFO, "Loading default console font...\n");
+		debugN(MM_INFO, "Loading default console font...\n");
 		if (!LoadConsoleFont("@data/fixedfont.ini")) {
 			error("Failed to load console font. Exiting");
 		}
@@ -789,7 +789,7 @@ void Ultima8Engine::changeVideoMode(int width, int height) {
 
 bool Ultima8Engine::LoadConsoleFont(Std::string confontini) {
 	// try to load the file
-	con->Printf(MM_INFO, "Loading console font config: %s... ", confontini.c_str());
+	debugN(MM_INFO, "Loading console font config: %s... ", confontini.c_str());
 	if (_configFileMan->readConfigFile(confontini, "confont", true))
 		pout << "Ok" << Std::endl;
 	else {
@@ -1157,7 +1157,7 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 }
 
 void Ultima8Engine::resetEngine() {
-	con->Print(MM_INFO, "-- Resetting Engine --\n");
+	debugN(MM_INFO, "-- Resetting Engine --\n");
 
 	// kill music
 	if (_audioMixer) _audioMixer->reset();
@@ -1193,37 +1193,37 @@ void Ultima8Engine::resetEngine() {
 	_saveCount = 0;
 	_hasCheated = false;
 
-	con->Print(MM_INFO, "-- Engine Reset --\n");
+	debugN(MM_INFO, "-- Engine Reset --\n");
 }
 
 void Ultima8Engine::setupCoreGumps() {
-	con->Print(MM_INFO, "Setting up core _game gumps...\n");
+	debugN(MM_INFO, "Setting up core _game gumps...\n");
 
 	Rect dims;
 	_screen->GetSurfaceDims(dims);
 
-	con->Print(MM_INFO, "Creating Desktop...\n");
+	debugN(MM_INFO, "Creating Desktop...\n");
 	_desktopGump = new DesktopGump(0, 0, dims.w, dims.h);
 	_desktopGump->InitGump(0);
 	_desktopGump->MakeFocus();
 
-	con->Print(MM_INFO, "Creating _scalerGump...\n");
+	debugN(MM_INFO, "Creating _scalerGump...\n");
 	_scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
 	_scalerGump->InitGump(0);
 
 	Rect scaled_dims;
 	_scalerGump->GetDims(scaled_dims);
 
-	con->Print(MM_INFO, "Creating Graphics Console...\n");
+	debugN(MM_INFO, "Creating Graphics Console...\n");
 	_consoleGump = new ConsoleGump(0, 0, dims.w, dims.h);
 	_consoleGump->InitGump(0);
 	_consoleGump->HideConsole();
 
-	con->Print(MM_INFO, "Creating Inverter...\n");
+	debugN(MM_INFO, "Creating Inverter...\n");
 	_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
 	_inverterGump->InitGump(0);
 
-	con->Print(MM_INFO, "Creating GameMapGump...\n");
+	debugN(MM_INFO, "Creating GameMapGump...\n");
 	_gameMapGump = new GameMapGump(0, 0, scaled_dims.w, scaled_dims.h);
 	_gameMapGump->InitGump(0);
 
@@ -1241,7 +1241,7 @@ void Ultima8Engine::setupCoreGumps() {
 }
 
 bool Ultima8Engine::newGame(int saveSlot) {
-	con->Print(MM_INFO, "Starting New Game...\n");
+	debugN(MM_INFO, "Starting New Game...\n");
 
 	resetEngine();
 
@@ -1249,10 +1249,10 @@ bool Ultima8Engine::newGame(int saveSlot) {
 
 	_game->startGame();
 
-	con->Print(MM_INFO, "Create Camera...\n");
+	debugN(MM_INFO, "Create Camera...\n");
 	CameraProcess::SetCameraProcess(new CameraProcess(1)); // Follow Avatar
 
-	con->Print(MM_INFO, "Create persistent Processes...\n");
+	debugN(MM_INFO, "Create persistent Processes...\n");
 	_avatarMoverProcess = new AvatarMoverProcess();
 	_kernel->addProcess(_avatarMoverProcess);
 

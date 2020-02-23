@@ -27,7 +27,7 @@ namespace Ultima8 {
 SettingManager *SettingManager::_settingManager = 0;
 
 SettingManager::SettingManager() {
-	con->Print(MM_INFO, "Creating SettingManager...\n");
+	debugN(MM_INFO, "Creating SettingManager...\n");
 
 	_settingManager = this;
 
@@ -39,7 +39,7 @@ SettingManager::SettingManager() {
 }
 
 SettingManager::~SettingManager() {
-	con->Print(MM_INFO, "Destroying SettingManager...\n");
+	debugN(MM_INFO, "Destroying SettingManager...\n");
 
 	_settingManager = 0;
 }

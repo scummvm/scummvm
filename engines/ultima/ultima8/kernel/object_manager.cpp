@@ -72,7 +72,7 @@ struct ObjectLoader {
 };
 
 ObjectManager::ObjectManager() {
-	con->Print(MM_INFO, "Creating ObjectManager...\n");
+	debugN(MM_INFO, "Creating ObjectManager...\n");
 
 	objectmanager = this;
 
@@ -87,7 +87,7 @@ ObjectManager::ObjectManager() {
 
 ObjectManager::~ObjectManager() {
 	reset();
-	con->Print(MM_INFO, "Destroying ObjectManager...\n");
+	debugN(MM_INFO, "Destroying ObjectManager...\n");
 
 	objectmanager = 0;
 
@@ -96,7 +96,7 @@ ObjectManager::~ObjectManager() {
 }
 
 void ObjectManager::reset() {
-	con->Print(MM_INFO, "Resetting ObjectManager...\n");
+	debugN(MM_INFO, "Resetting ObjectManager...\n");
 
 	unsigned int i;
 

@@ -83,7 +83,7 @@ enum UCSegments {
 UCMachine *UCMachine::_ucMachine = 0;
 
 UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
-	con->Print(MM_INFO, "Creating UCMachine...\n");
+	debugN(MM_INFO, "Creating UCMachine...\n");
 
 	_ucMachine = this;
 
@@ -104,7 +104,7 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 
 
 UCMachine::~UCMachine() {
-	con->Print(MM_INFO, "Destroying UCMachine...\n");
+	debugN(MM_INFO, "Destroying UCMachine...\n");
 	_ucMachine = 0;
 
 	delete _globals;
@@ -118,7 +118,7 @@ UCMachine::~UCMachine() {
 }
 
 void UCMachine::reset() {
-	con->Print(MM_INFO, "Resetting UCMachine\n");
+	debugN(MM_INFO, "Resetting UCMachine\n");
 
 	// clear _globals
 	_globals->setSize(0x1000);

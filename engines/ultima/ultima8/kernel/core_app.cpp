@@ -67,18 +67,6 @@ void CoreApp::startup() {
 
 	ParseArgs(0, 0);
 
-	// if we're spitting out help, we probably want to avoid having the
-	// other cruft dumped too...
-	if (_oHelp) {
-		_oQuiet = _oVQuiet = true;
-	}
-	if (_oQuiet)
-		con->setMsgMask(static_cast<MsgMask>(MM_ALL & ~MM_INFO &
-		                                    ~MM_MINOR_WARN));
-	if (_oVQuiet)
-		con->setMsgMask(static_cast<MsgMask>(MM_ALL & ~MM_INFO & ~MM_MINOR_WARN
-		                                    & ~MM_MAJOR_WARN & ~MM_MINOR_ERR));
-
 	if (_oHelp) {
 		helpMe(); // Note: this is virtual
 		error("Startup failed");
@@ -145,7 +133,7 @@ void CoreApp::loadConfig() {
 void CoreApp::setupGameList() {
 	Std::vector<istring> gamelist;
 	gamelist = _settingMan->listGames();
-	con->Print(MM_INFO, "Scanning config file for games:\n");
+	debugN(MM_INFO, "Scanning config file for games:\n");
 	Std::vector<istring>::iterator iter;
 	istring gamename;
 
@@ -155,17 +143,17 @@ void CoreApp::setupGameList() {
 		bool detected = getGameInfo(game, info);
 
 		// output detected game info
-		con->Printf(MM_INFO, "%s: ", game.c_str());
+		debugN(MM_INFO, "%s: ", game.c_str());
 		if (detected) {
 			// add game to games map
 			_games[game] = info;
 
 			Std::string details = info->getPrintDetails();
-			con->Print(MM_INFO, details.c_str());
+			debugN(MM_INFO, details.c_str());
 		} else {
-			con->Print(MM_INFO, "unknown, skipping");
+			debugN(MM_INFO, "unknown, skipping");
 		}
-		con->Print(MM_INFO, "\n");
+		debugN(MM_INFO, "\n");
 	}
 }
 
@@ -326,7 +314,7 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 	//       I'd prefer them to be created when needed. (-wjp)
 
 	_fileSystem->AddVirtualPath("@work", work, true);
-	con->Printf(MM_INFO, "U8 Workdir: %s\n", work.c_str()); //!!FIXME (u8)
+	debugN(MM_INFO, "U8 Workdir: %s\n", work.c_str()); //!!FIXME (u8)
 
 	// make sure we've got a minimal sane _fileSystem under there...
 	_fileSystem->MkDir("@work/usecode");
@@ -342,7 +330,7 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 
 	// force creation if it doesn't exist
 	_fileSystem->AddVirtualPath("@save", save, true);
-	con->Printf(MM_INFO, "Savegame directory: %s\n", save.c_str());
+	debugN(MM_INFO, "Savegame directory: %s\n", save.c_str());
 }
 
 void CoreApp::ParseArgs(const int argc_, const char *const *const argv_) {
@@ -350,10 +338,10 @@ void CoreApp::ParseArgs(const int argc_, const char *const *const argv_) {
 }
 
 void CoreApp::helpMe() {
-	con->Print("\t-h\t\t- quick help menu (this)\n");
-	con->Print("\t-q\t\t- silence general logging messages\n");
-	con->Print("\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
-	con->Print("\t--game {name}\t- select a game\n");
+	debug("\t-h\t\t- quick help menu (this)\n");
+	debug("\t-q\t\t- silence general logging messages\n");
+	debug("\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
+	debug("\t--game {name}\t- select a game\n");
 }
 
 GameInfo *CoreApp::getGameInfo(istring game) const {

@@ -53,13 +53,13 @@ GameData *GameData::_gameData = 0;
 GameData::GameData(GameInfo *gameInfo)
 	: _fixed(0), _mainShapes(0), _mainUsecode(0), _globs(), _fonts(0), _gumps(0),
 	  _mouse(0), _music(0), _weaponOverlay(0), _soundFlex(0), _speech(1024), _gameInfo(gameInfo) {
-	con->Print(MM_INFO, "Creating GameData...\n");
+	debugN(MM_INFO, "Creating GameData...\n");
 
 	_gameData = this;
 }
 
 GameData::~GameData() {
-	con->Print(MM_INFO, "Destroying GameData...\n");
+	debugN(MM_INFO, "Destroying GameData...\n");
 
 	delete _fixed;
 	_fixed = 0;

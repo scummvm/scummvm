@@ -237,7 +237,6 @@ int AudioProcess::playSample(AudioSample *sample, int _priority, int _loops, uin
 void AudioProcess::playSFX(int _sfxNum, int _priority, ObjId _objId, int _loops,
                            bool no_duplicates, uint32 _pitchShift, uint16 _volume,
                            int16 _lVol, int16 _rVol) {
-	//con->Printf("playSFX(%i, %i, 0x%X, %i)\n", _sfxNum, _priority, _objId, _loops);
 
 	SoundFlex *soundflx = GameData::get_instance()->getSoundFlex();
 
@@ -281,8 +280,6 @@ void AudioProcess::playSFX(int _sfxNum, int _priority, ObjId _objId, int _loops,
 }
 
 void AudioProcess::stopSFX(int _sfxNum, ObjId _objId) {
-	//con->Printf("stopSFX(%i, 0x%X)\n", _sfxNum, _objId);
-
 	AudioMixer *mixer = AudioMixer::get_instance();
 
 	Std::list<SampleInfo>::iterator it;
@@ -297,8 +294,6 @@ void AudioProcess::stopSFX(int _sfxNum, ObjId _objId) {
 }
 
 bool AudioProcess::isSFXPlaying(int _sfxNum) {
-	//con->Printf("isSFXPlaying(%i)\n", _sfxNum);
-
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
 		if (it->_sfxNum == _sfxNum)
@@ -309,7 +304,6 @@ bool AudioProcess::isSFXPlaying(int _sfxNum) {
 }
 
 void AudioProcess::setVolumeSFX(int _sfxNum, uint8 _volume) {
-	//con->Printf("setVolumeSFX(%i, %i)\n", _sfxNum, _volume);
 	AudioMixer *mixer = AudioMixer::get_instance();
 
 	Std::list<SampleInfo>::iterator it;
@@ -500,7 +494,6 @@ uint32 AudioProcess::I_playAmbientSFX(const uint8 *args, unsigned int argsize) {
 		_objId = objid_;
 	}
 
-//	con->Printf("playAmbientSFX(%i, %i, 0x%X)\n", _sfxNum, _priority, objID);
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap) ap->playSFX(_sfxNum, _priority, _objId, -1, true);
 	else perr << "Error: No AudioProcess" << Std::endl;

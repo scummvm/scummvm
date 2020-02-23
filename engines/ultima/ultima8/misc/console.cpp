@@ -47,7 +47,7 @@ Console::Console() : _current(0), _xOff(0), _display(0), _lineWidth(-1),
 		_totalLines(0), _visLines(0), _wordWrap(true), _cr(false),
 		_putChar_count(0), _stdOutputEnabled(0xFFFFFFFF),
 		_stdout_redir(0), _stderr_redir(0), _conFont(0),
-		_autoPaint(0), _msgMask(MM_ALL), _frameNum(0),
+		_autoPaint(0), _msgMask(0), _frameNum(0),
 		commandCursorPos(0), commandInsert(true), commandHistoryPos(0) {
 	con = this;
 	_lineWidth = -1;
@@ -367,7 +367,7 @@ void Console::Print(const char *txt) {
 }
 
 // Print a _text string to the console, and output to stdout, with message filtering
-void Console::Print(const MsgMask mm, const char *txt) {
+void Console::Print(const int mm, const char *txt) {
 	if (mm & _msgMask) Print(txt);
 }
 
@@ -383,7 +383,7 @@ int32 Console::Printf(const char *fmt, ...) {
 }
 
 // printf, and output to stdout, with message filtering.
-int32 Console::Printf(const MsgMask mm, const char *fmt, ...) {
+int32 Console::Printf(const int mm, const char *fmt, ...) {
 	if (!(mm & _msgMask)) return 0;
 
 	va_list argptr;
@@ -445,7 +445,7 @@ void Console::Print_err(const char *txt) {
 }
 
 // Print a _text string to the console, and output to stderr, with message filtering
-void Console::Print_err(const MsgMask mm, const char *txt) {
+void Console::Print_err(const int mm, const char *txt) {
 	if (mm & _msgMask) Print_err(txt);
 }
 
@@ -461,7 +461,7 @@ int32 Console::Printf_err(const char *fmt, ...) {
 }
 
 // printf, and output to stderr, with message filtering
-int32 Console::Printf_err(const MsgMask mm, const char *fmt, ...) {
+int32 Console::Printf_err(const int mm, const char *fmt, ...) {
 	if (!(mm & _msgMask)) return 0;
 
 	va_list argptr;

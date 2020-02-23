@@ -34,20 +34,20 @@ PaletteManager *PaletteManager::_paletteManager = 0;
 
 PaletteManager::PaletteManager(RenderSurface *rs)
 	: _renderSurface(rs) {
-	con->Print(MM_INFO, "Creating PaletteManager...\n");
+	debugN(MM_INFO, "Creating PaletteManager...\n");
 
 	_paletteManager = this;
 }
 
 PaletteManager::~PaletteManager() {
 	reset();
-	con->Print(MM_INFO, "Destroying PaletteManager...\n");
+	debugN(MM_INFO, "Destroying PaletteManager...\n");
 	_paletteManager = 0;
 }
 
 // Reset the Palette Manager
 void PaletteManager::reset() {
-	con->Print(MM_INFO, "Resetting PaletteManager...\n");
+	debugN(MM_INFO, "Resetting PaletteManager...\n");
 
 	for (unsigned int i = 0; i < _palettes.size(); ++i)
 		delete _palettes[i];
@@ -62,7 +62,7 @@ void PaletteManager::updatedFont(PalIndex index) {
 
 // Reset all the transforms back to default
 void PaletteManager::resetTransforms() {
-	con->Print(MM_INFO, "Resetting Palette Transforms...\n");
+	debugN(MM_INFO, "Resetting Palette Transforms...\n");
 
 	int16 matrix[12];
 	getTransformMatrix(matrix, Transform_None);

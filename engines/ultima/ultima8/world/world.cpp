@@ -51,14 +51,14 @@ namespace Ultima8 {
 World *World::_world = 0;
 
 World::World() : _currentMap(0) {
-	con->Print(MM_INFO, "Creating World...\n");
+	debugN(MM_INFO, "Creating World...\n");
 
 	_world = this;
 }
 
 
 World::~World() {
-	con->Print(MM_INFO, "Destroying World...\n");
+	debugN(MM_INFO, "Destroying World...\n");
 	clear();
 
 	_world = 0;
@@ -82,7 +82,7 @@ void World::clear() {
 }
 
 void World::reset() {
-	con->Print(MM_INFO, "Resetting World...\n");
+	debugN(MM_INFO, "Resetting World...\n");
 
 	clear();
 
