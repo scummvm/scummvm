@@ -126,7 +126,7 @@ void DoSaveScene(SAVED_DATA *sd) {
 	} else {
 		// Tinsel 1 specific data save
 		SaveDeadPolys(sd->SavedDeadPolys);
-		CurrentMidiFacts(&sd->SavedMidi, &sd->SavedLoop);
+		_vm->_music->CurrentMidiFacts(&sd->SavedMidi, &sd->SavedLoop);
 	}
 
 	g_ASceneIsSaved = true;
@@ -379,7 +379,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 			_vm->_pcmMusic->restoreThatTune(sd->SavedTune);
 			ScrollFocus(sd->SavedScrollFocus);
 		} else {
-			RestoreMidiFacts(sd->SavedMidi, sd->SavedLoop);
+			_vm->_music->RestoreMidiFacts(sd->SavedMidi, sd->SavedLoop);
 		}
 
 		if (sd->SavedControl)

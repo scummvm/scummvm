@@ -853,6 +853,7 @@ TinselEngine::~TinselEngine() {
 	delete _font;
 	delete _bmv;
 	delete _sound;
+	delete _music;
 	delete _midiMusic;
 	delete _pcmMusic;
 	_screenSurface.free();
@@ -890,6 +891,7 @@ void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 Common::Error TinselEngine::run() {
 	_midiMusic = new MidiMusicPlayer(this);
 	_pcmMusic = new PCMMusicPlayer();
+	_music = new Music();
 	_sound = new SoundManager(this);
 	_bmv = new BMVPlayer();
 	_font = new Font();
@@ -1146,7 +1148,7 @@ void TinselEngine::RestartDrivers() {
 	g_pKeyboardProcess = CoroScheduler.createProcess(PID_KEYBOARD, KeyboardProcess, NULL, 0);
 
 	// open MIDI files
-	OpenMidiFiles();
+	_vm->_music->OpenMidiFiles();
 
 	// open sample files (only if mixer is ready)
 	if (_mixer->isReady()) {
@@ -1158,7 +1160,7 @@ void TinselEngine::RestartDrivers() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
-	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
+	_vm->_music->SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 }
 
 /**
@@ -1166,9 +1168,9 @@ void TinselEngine::RestartDrivers() {
  */
 void TinselEngine::ChopDrivers() {
 	// remove sound driver
-	StopMidi();
+	_vm->_music->StopMidi();
 	_sound->stopAllSamples();
-	DeleteMidiBuffer();
+	_vm->_music->DeleteMidiBuffer();
 
 	// remove event drivers
 	CoroScheduler.killProcess(g_pMouseProcess);

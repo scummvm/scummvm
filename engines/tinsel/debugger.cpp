@@ -117,11 +117,11 @@ bool Console::cmd_music(int argc, const char **argv) {
 		debugPrintf("Track number/offset can't be 0!\n");
 	} else if (param > 0) {
 		// Track provided
-		PlayMidiSequence(GetTrackOffset(param - 1), false);
+		_vm->_music->PlayMidiSequence(_vm->_music->GetTrackOffset(param - 1), false);
 	} else if (param < 0) {
 		// Offset provided
 		param = param * -1;
-		PlayMidiSequence(param, false);
+		_vm->_music->PlayMidiSequence(param, false);
 	}
 	return true;
 }

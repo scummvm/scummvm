@@ -4462,7 +4462,7 @@ static void SlideMSlider(int x, SSFN fn) {
 		if (g_lX != g_sX) {
 			*cd.box[index].ival = (g_sX - g_mdSlides[i].min)*cd.box[index].w/SLIDE_RANGE;
 			if (cd.box[index].boxFunc == MUSICVOL)
-				SetMidiVolume(*cd.box[index].ival);
+				_vm->_music->SetMidiVolume(*cd.box[index].ival);
 #ifdef MAC_OPTIONS
 			if (cd.box[index].boxFunc == MASTERVOL)
 				SetSystemVolume(*cd.box[index].ival);
@@ -4480,7 +4480,7 @@ static void SlideMSlider(int x, SSFN fn) {
 		MultiSetAniX(g_mdSlides[i].obj, g_mdSlides[i].min+gotoX);
 
 		if (cd.box[index].boxFunc == MUSICVOL)
-			SetMidiVolume(*cd.box[index].ival);
+			_vm->_music->SetMidiVolume(*cd.box[index].ival);
 #ifdef MAC_OPTIONS
 		if (cd.box[index].boxFunc == MASTERVOL)
 			SetSystemVolume(*cd.box[index].ival);

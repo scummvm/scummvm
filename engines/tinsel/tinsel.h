@@ -55,6 +55,7 @@ class Config;
 class MidiDriver;
 class MidiMusicPlayer;
 class PCMMusicPlayer;
+class Music;
 class SoundManager;
 class Background;
 class Font;
@@ -197,6 +198,7 @@ public:
 	SoundManager *_sound;
 	MidiMusicPlayer *_midiMusic;
 	PCMMusicPlayer *_pcmMusic;
+	Music *_music;
 	BMVPlayer *_bmv;
 	Background* _bg;
 	Font *_font;

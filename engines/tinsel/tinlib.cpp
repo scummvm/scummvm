@@ -1597,7 +1597,7 @@ static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 	CORO_BEGIN_CODE(_ctx);
 	assert(loop == MIDI_DEF || loop == MIDI_LOOP);
 
-	PlayMidiSequence(hMidi, loop == MIDI_LOOP);
+	_vm->_music->PlayMidiSequence(hMidi, loop == MIDI_LOOP);
 
 	// This check&sleep was added in DW v2. It was most likely added to
 	// ensure that the MIDI song started playing before the next opcode
@@ -1605,11 +1605,11 @@ static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 	// In DW1, it messes up the script arguments when entering the secret
 	// door in the bookshelf in the library, leading to a crash, when the
 	// music volume is set to 0.
-	if (!MidiPlaying() && TinselV2)
+	if (!_vm->_music->MidiPlaying() && TinselV2)
 		CORO_SLEEP(1);
 
 	if (complete) {
-		while (MidiPlaying())
+		while (_vm->_music->MidiPlaying())
 			CORO_SLEEP(1);
 	}
 	CORO_END_CODE;
@@ -2366,7 +2366,7 @@ static void PrintTag(HPOLYGON hp, SCNHANDLE text, int actor = 0, bool bCursor = 
  * Quits the game
  */
 static void QuitGame() {
-	StopMidi();
+	_vm->_music->StopMidi();
 	StopSample();
 	_vm->quitGame();
 }
@@ -2401,7 +2401,7 @@ void ResetIdleTime() {
  */
 void FnRestartGame() {
 	// TODO: Tinsel 2 comments out the 2 calls, but I'm not sure that this should be done
-	StopMidi();
+	_vm->_music->StopMidi();
 	StopSample();
 
 	g_bRestart = true;
@@ -2964,7 +2964,7 @@ static void StartTimerFn(int timerno, int start, bool up, int fs) {
 }
 
 void StopMidiFn() {
-	StopMidi();		// Stop any currently playing midi
+	_vm->_music->StopMidi();		// Stop any currently playing midi
 }
 
 /**
