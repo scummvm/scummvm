@@ -42,6 +42,7 @@
 #include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/bit_set.h"
 #include "ultima/ultima8/world/world.h"
@@ -54,7 +55,13 @@
 namespace Ultima {
 namespace Ultima8 {
 
+Debugger *g_debugger;
+
 Debugger::Debugger() : Shared::Debugger() {
+	g_debugger = this;
+
+	// WARNING: Not only can the methods below be executed directly in the debugger,
+	// they also act as the methods keybindings are made to. So be wary of changing names
 	registerCmd("quit", WRAP_METHOD(Debugger, cmdQuit));
 	registerCmd("Ultima8Engine::quit", WRAP_METHOD(Debugger, cmdQuit));
 	registerCmd("Ultima8Engine::saveGame", WRAP_METHOD(Debugger, cmdSaveGame));
@@ -158,6 +165,43 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("Pathfinder::visualDebug", WRAP_METHOD(Debugger, cmdVisualDebugPathfinder));
 #endif
 }
+
+Debugger::~Debugger() {
+	g_debugger = nullptr;
+}
+
+
+void Debugger::executeCommand(const ArgsType &args) {
+	ArgvType argv;
+	StringToArgv(args, argv);
+
+	executeCommand(argv);
+}
+
+void Debugger::executeCommand(const ArgvType &argv) {
+	if (argv.empty())
+		return;
+
+	Common::String commandName = argv[0];
+	if (commandName.hasPrefix("GUIApp::"))
+		commandName = "Ultima8Engine::" + Common::String(commandName.c_str() + 8);
+
+	Common::Array<const char *> cArgs;
+	cArgs.push_back(commandName.c_str());
+	for (uint idx = 1; idx < argv.size(); ++idx)
+		cArgs.push_back(argv[idx].c_str());
+
+	bool keepRunning = false;
+	if (!handleCommand(argv.size(), &cArgs[0], keepRunning)) {
+		debugPrintf("Unknown command - %s\n", commandName.c_str());
+		keepRunning = true;
+	}
+
+	// If any message occurred, then we need to ensure the debugger is opened if it isn't already
+	if (keepRunning)
+		attach();
+}
+
 
 bool Debugger::cmdSaveGame(int argc, const char **argv) {
 	if (argc == 2) {
@@ -837,8 +881,8 @@ bool Debugger::cmdDecrementSortOrder(int argc, const char **argv) {
 
 
 bool Debugger::cmdBind(int argc, const char **argv) {
-	Console::ArgvType argv2;
-	Console::ArgvType::const_iterator it;
+	Debugger::ArgvType argv2;
+	Debugger::ArgvType::const_iterator it;
 	if (argc < 3) {
 		debugPrintf("Usage: %s <key> <action> [<arg> ...]: binds a key or button to an action\n",
 			argv[0]);

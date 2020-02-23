@@ -24,6 +24,7 @@
 #define ULTIMA_ULTIMA8_ENGINE_DEBUGGER_H
 
 #include "ultima/shared/engine/debugger.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,6 +35,9 @@ class Ultima1Engine;
  * Debugger base class
  */
 class Debugger : public Shared::Debugger {
+public:
+	typedef Common::String ArgsType;
+	typedef Std::vector<ArgsType> ArgvType;
 private:
 	const char *strBool(bool flag) {
 		return flag ? "true" : "false";
@@ -156,8 +160,13 @@ private:
 
 public:
 	Debugger();
-    ~Debugger() override {}
+	~Debugger() override;
+
+	void executeCommand(const ArgsType &args);
+	void executeCommand(const ArgvType &argv);
 };
+
+extern Debugger *g_debugger;
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

@@ -328,27 +328,6 @@ public:
 	// Console Commands
 	//
 
-	typedef istring ArgsType;
-	typedef Std::vector<ArgsType> ArgvType;
-	typedef void (*Function)(const ArgvType &argv);
-
-	//! Add a command to the console
-	//! \param command The command to add
-	//! \param function Function pointer for command
-	void            AddConsoleCommand(const ArgsType &command, Console::Function function);
-
-	//! Remove all commands associated with a function from the console
-	//! \param function Function pointer for command
-	void            RemoveConsoleCommand(Console::Function function);
-
-	//! Execute a specific console command
-	//! \param command The command to execute with args
-	void            ExecuteConsoleCommand(const Console::ArgsType &args);
-
-	//! Execute a specific console command
-	//! \param command The command to execute with argv
-	void            ExecuteConsoleCommand(const Console::ArgvType &argv);
-
 	//! Execute the currently queued console command
 	void            ExecuteCommandBuffer();
 
@@ -397,14 +376,9 @@ private:
 	void    PrintPutchar();
 
 	// Console Commands
-	ArgsType                    commandBuffer;
 	int                         commandCursorPos;
 	bool                        commandInsert;
-	Std::vector<ArgsType>       commandHistory;
 	int                         commandHistoryPos;
-
-	typedef Common::HashMap<Common::String, Function> CommandsMap;
-	CommandsMap ConsoleCommands;
 };
 
 // Console object

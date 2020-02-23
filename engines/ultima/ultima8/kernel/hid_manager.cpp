@@ -24,6 +24,7 @@
 #include "ultima/ultima8/kernel/hid_manager.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/misc/console.h"
+#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/conf/config_file_manager.h" // temporary!
 
@@ -40,7 +41,7 @@ HIDManager::HIDManager() {
 }
 
 HIDManager::~HIDManager() {
-	Std::vector<Console::ArgvType *>::iterator it;
+	Std::vector<Debugger::ArgvType *>::iterator it;
 	con->Print(MM_INFO, "Destroying HIDManager...\n");
 
 	for (it = _commands.begin(); it != _commands.end(); ++it) {
@@ -58,7 +59,7 @@ bool HIDManager::handleEvent(HID_Key key, HID_Events events) {
 	uint32 keyEvent = (uint32)key | ((uint32)events << 16);
 
  	if (_bindings.contains(keyEvent)) {
-		con->ExecuteConsoleCommand(*_bindings[keyEvent]);
+		g_debugger->executeCommand(*_bindings[keyEvent]);
 		handled = true;
 	}
 
@@ -66,7 +67,7 @@ bool HIDManager::handleEvent(HID_Key key, HID_Events events) {
 }
 
 void HIDManager::resetBindings() {
-	Std::vector<Console::ArgvType *>::iterator it;
+	Std::vector<Debugger::ArgvType *>::iterator it;
 
 	_bindings.clear();
 
@@ -82,7 +83,7 @@ void HIDManager::resetBindings() {
 }
 
 void HIDManager::loadBindings() {
-	Console::ArgsType args;
+	Debugger::ArgsType args;
 
 	con->Print(MM_INFO, "Loading HIDBindings...\n");
 
@@ -123,14 +124,14 @@ void HIDManager::saveBindings() {
 		confkey = section + HID_GetEventsName((HID_Events)events) + ' ' +
 			HID_GetKeyName((HID_Key) key);
 
-		Console::ArgsType command;
+		Debugger::ArgsType command;
 		ArgvToString(*(it->_value), command);
 		settings->set(confkey, command);
 //		settings->unset(confkey);
 	}
 }
 
-void HIDManager::bind(const istring &control, const Console::ArgvType &argv) {
+void HIDManager::bind(const istring &control, const Debugger::ArgvType &argv) {
 	HID_Key key = HID_LAST;
 	HID_Events event = HID_EVENT_DEPRESS;
 	Std::vector<istring> ctrl_argv;
@@ -147,18 +148,18 @@ void HIDManager::bind(const istring &control, const Console::ArgvType &argv) {
 	bind(key, event, argv);
 }
 
-void HIDManager::bind(const istring &control, const Console::ArgsType &args) {
-	Console::ArgvType argv;
+void HIDManager::bind(const istring &control, const Debugger::ArgsType &args) {
+	Debugger::ArgvType argv;
 	StringToArgv(args, argv);
 	bind(control, argv);
 }
 
-void HIDManager::bind(HID_Key key, HID_Events event, const Console::ArgvType &argv) {
+void HIDManager::bind(HID_Key key, HID_Events event, const Debugger::ArgvType &argv) {
 	uint32 keyEvent = (uint32)key | ((uint32)event << 16);
 
-	Console::ArgvType *command = 0;
+	Debugger::ArgvType *command = 0;
 	if (! argv.empty()) {
-		Std::vector<Console::ArgvType *>::iterator it;
+		Std::vector<Debugger::ArgvType *>::iterator it;
 		for (it = _commands.begin(); it != _commands.end(); ++it) {
 			if (argv == (**it)) {
 				// Change from iterator to pointer
@@ -168,7 +169,7 @@ void HIDManager::bind(HID_Key key, HID_Events event, const Console::ArgvType &ar
 		}
 
 		if (!command) {
-			command = new Console::ArgvType(argv);
+			command = new Debugger::ArgvType(argv);
 			_commands.push_back(command);
 		}
 	}
@@ -177,21 +178,21 @@ void HIDManager::bind(HID_Key key, HID_Events event, const Console::ArgvType &ar
 	_bindings[keyEvent] = command;
 }
 
-void HIDManager::bind(HID_Key key, HID_Events event, const Console::ArgsType &args) {
-	Console::ArgvType argv;
+void HIDManager::bind(HID_Key key, HID_Events event, const Debugger::ArgsType &args) {
+	Debugger::ArgvType argv;
 	StringToArgv(args, argv);
 	bind(key, event, argv);
 }
 
 void HIDManager::unbind(const istring &control) {
 	// bind to an empty control
-	Console::ArgvType command;
+	Debugger::ArgvType command;
 	bind(control, command);
 }
 
 void HIDManager::listBindings() {
 	uint16 key, event;
-	Console::ArgsType command;
+	Debugger::ArgsType command;
 
 	for (Bindings::iterator it = _bindings.begin(); it != _bindings.end(); ++it) {
 		key = it->_key & 0xffff;

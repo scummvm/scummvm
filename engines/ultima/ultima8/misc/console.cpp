@@ -516,188 +516,28 @@ void Console::ScrollConsole(int32 lines) {
 // Console commands
 //
 
-void Console::AddConsoleCommand(const ArgsType &command, Console::Function function) {
-	ConsoleCommands[command] = function;
-}
-
-void Console::RemoveConsoleCommand(Console::Function function) {
-	for (CommandsMap::iterator it = ConsoleCommands.begin(); it != ConsoleCommands.end(); ++it) {
-		if (it->_value == function) {
-			//pout << "Removing command: " << it->_key << Std::endl;
-			it->_value = 0;
-		}
-	}
-}
-void Console::ExecuteConsoleCommand(const Console::ArgsType &args) {
-	Console::ArgvType argv;
-	StringToArgv(args, argv);
-
-	ExecuteConsoleCommand(argv);
-}
-
-void Console::ExecuteConsoleCommand(const Console::ArgvType &argv) {
-	CommandsMap::iterator it;
-
-	// Empty?!?
-	if (argv.empty())
-		return;
-
-	// Get the command name. Transparently handle conversions from original GUIApp
-	Common::String commandName = argv[0];
-	if (commandName.hasPrefix("GUIApp::"))
-		commandName = "Ultima8Engine::" + Common::String(commandName.c_str() + 8);
-
-	// Handle the command
-	it = ConsoleCommands.find(commandName);
-
-	if (it != ConsoleCommands.end() && it->_value)
-		it->_value(argv);
-	else
-		Print(Common::String::format("Unknown command: %s\n", argv[0].c_str()).c_str());
-}
-
 void Console::ExecuteCommandBuffer() {
-	if (commandBuffer.empty()) return;
-
-	Console::ArgsType args = commandBuffer;
-	commandBuffer.clear();
-
-	// TODO: Fix this
-	//pout << "]" << args << Std::endl;
-
-	ExecuteConsoleCommand(args);
-
-	commandHistory.push_back(args);
-	commandHistoryPos = 0;
-	commandCursorPos = 0;
+	// DEPRECATED
 }
 
 void Console::ScrollCommandHistory(int num) {
-	int total = commandHistory.size();
-
-	// No history, don't do anything
-	if (!total) return;
-
-	if ((commandHistoryPos - num) <= 0) {
-		if (commandHistoryPos == 1) return;
-		commandHistoryPos = 1;
-	} else
-		commandHistoryPos -= num;
-
-	if (commandHistoryPos > total)
-		commandHistoryPos = total;
-
-	commandBuffer = commandHistory[total - commandHistoryPos];
-	commandCursorPos = commandBuffer.size();
+	// DEPRECATED
 }
 
 void Console::ClearCommandBuffer() {
-	commandBuffer.clear();
-	commandCursorPos = 0;
+	// DEPRECATED
 }
 
 void Console::AddCharacterToCommandBuffer(int ch) {
-	// Enter (execute command)
-	if (ch == Console::Enter) {
-
-		ExecuteCommandBuffer();
-	}
-	// Backspace
-	else if (ch == Console::Backspace) {
-
-		DeleteCommandBufferChars(-1);
-	}
-	// Tab (command completion)
-	else if (ch == Console::Tab) {
-
-		if (!commandBuffer.empty()) {
-
-			int count = 0;
-			Console::ArgsType common;
-			CommandsMap::iterator it;
-			CommandsMap::iterator found;
-
-			for (it = ConsoleCommands.begin(); it != ConsoleCommands.end(); ++it)
-				if (it->_value) {
-					if (it->_key.compareToIgnoreCase(commandBuffer))
-						continue;
-
-					if (!count) {
-						common = it->_key;
-						found = it;
-					} else {
-						Console::ArgsType::iterator it1 = common.begin();
-						Console::ArgsType::const_iterator it2 = it->_key.begin();
-						int comsize = 0;
-
-						while (it1 != common.end()) {
-							if (*it1 == *it2)
-								break;
-
-							comsize++;
-							++it1;
-							++it2;
-						}
-
-						common.resize(comsize);
-					}
-					count++;
-				}
-
-			if (count) {
-				if (count > 1) {
-					pout << "]" << commandBuffer << Std::endl;
-
-					ArgsType args = "CmdList \"";
-					args += commandBuffer;
-					args += '\"';
-
-					ArgvType argv;
-					StringToArgv(args, argv);
-
-					//ConCmd_CmdList(argv);
-					commandBuffer = common;
-				} else
-					commandBuffer = common;
-
-				commandCursorPos = commandBuffer.size();
-			}
-		}
-	}
-	// Add the character to the command buffer
-	else {
-		if (commandCursorPos == static_cast<int>(commandBuffer.size())) {
-			commandBuffer += ch;
-		} else if (commandInsert) {
-			commandBuffer.insert(commandCursorPos, 1, ch);
-		} else {
-			commandBuffer[commandCursorPos] = ch;
-		}
-
-		commandCursorPos++;
-	}
+	// DEPRECATED
 }
 
 void Console::DeleteCommandBufferChars(int num) {
-	if (!num || commandBuffer.empty()) return;
-
-	if (num < 0) {
-		num = -num;
-		if (num > commandCursorPos) num = commandCursorPos;
-		commandCursorPos -= num;
-	} else {
-		if ((num + commandCursorPos) > static_cast<int>(commandBuffer.size()))
-			num = commandBuffer.size() - commandCursorPos;
-	}
-
-	commandBuffer.erase(commandCursorPos, num);
+	// DEPRECATED
 }
 
 void Console::MoveCommandCursor(int num) {
-	commandCursorPos += num;
-
-	if (commandCursorPos < 0) commandCursorPos = 0;
-	if (commandCursorPos > static_cast<int>(commandBuffer.size())) commandCursorPos = static_cast<int>(commandBuffer.size());
+	// DEPRECATED
 }
 
 /*
@@ -768,8 +608,8 @@ void Console::DrawConsole(RenderSurface *surf, int height) {
 		//putchar ('\n');
 	}
 
-	const char *com = commandBuffer.c_str();
-	int com_size = commandBuffer.size();
+	const char *com = "";
+	int com_size = 0;
 	int cur_pos = commandCursorPos;
 
 	if (com_size >= (_lineWidth - 1)) {
