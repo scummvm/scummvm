@@ -98,7 +98,7 @@ public:
 		_line += Common::String((const char *)dataPtr, dataSize);
 
 		size_t lineEnd;
-		while ((lineEnd = _line.find(Std::endl)) != Common::String::npos) {
+		while ((lineEnd = _line.find('\n')) != Common::String::npos) {
 			if (lineEnd > 0)
 				warning("%s", Common::String(_line.c_str(), lineEnd).c_str());
 
