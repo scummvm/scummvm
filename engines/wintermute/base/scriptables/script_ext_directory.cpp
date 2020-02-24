@@ -64,12 +64,14 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Create") == 0) {
 		stack->correctParams(1);
-		stack->pop()->getString();
+		const char *dirName = stack->pop()->getString();
 
-		if (BaseEngine::instance().getGameId() == "hamlet") {
-			// No need to actually create anything since "gamelet.save" is stored at SavefileManager
+		if (strcmp(dirName, "saves") == 0) {
+			// Known games that do this: alphapolaris, hamlet, papasdaughters1, papasdaughters2, polechudes
+			// No need to actually create anything, files will be stored at SavefileManager
 			stack->pushBool(true);
 		} else {
+			// No currently known games need this
 			warning("Directory.Create is not implemented! Returning false...");
 			stack->pushBool(false);
 		}
@@ -84,6 +86,7 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		stack->correctParams(1);
 		stack->pop()->getString();
 
+		// No currently known games need this
 		warning("Directory.Delete is not implemented! Returning false...");
 
 		stack->pushBool(false);
@@ -95,13 +98,20 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFiles") == 0 || strcmp(name, "GetDirectories") == 0) {
 		stack->correctParams(2);
-		stack->pop()->getString();
+		const char *dirName = stack->pop()->getString();
 		stack->pop()->getString();
 
 		stack->pushInt(0);
 		BaseScriptable *array = makeSXArray(_gameRef, stack);
 
-		warning("Directory.%s is not implemented! Returning empty array...", name);
+		// used in secret scene of "Art of Murder 1: FBI Confidential"
+		if (strcmp(dirName, "X:\\FBI\\data\\scenes\\17-magic\\") == 0 && strcmp(name, "GetDirectories") == 0) {
+			//TODO: return list of "scenes\17-magic" subfolders from data.dcp
+			warning("Directory.%s is not implemented! Returning empty array...", name);
+		} else {
+			// No currently known games need this
+			warning("Directory.%s is not implemented! Returning empty array...", name);
+		}
 
  		stack->pushNative(array, false);
  		return STATUS_OK;
@@ -113,6 +123,7 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	else if (strcmp(name, "GetDrives") == 0) {
 		stack->correctParams(0);
 
+		// No currently known games do this
 		warning("Directory.GetDrives is not implemented! Returning empty array...");
 
 		stack->pushInt(0);
@@ -148,8 +159,7 @@ ScValue *SXDirectory::scGetProperty(const Common::String &name) {
 	// CurrentDirectory
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "CurrentDirectory") {
-		warning("Directory.CurrentDirectory is not implemented! Returning 'saves'...");
-		_scValue->setString(""); // See also: BaseGame::scGetProperty("SaveDirectory")
+		_scValue->setString("."); // See also: BaseGame::scGetProperty("SaveDirectory")
 		return _scValue;
 	}
 
@@ -157,7 +167,6 @@ ScValue *SXDirectory::scGetProperty(const Common::String &name) {
 	// TempDirectory
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "TempDirectory") {
-		warning("Directory.TempDirectory is not implemented! Returning 'saves'...");
 		_scValue->setString("temp"); // See also: BaseGame::scGetProperty("SaveDirectory")
 		return _scValue;
 	} else {
