@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-24 07:14+0000\n"
+"PO-Revision-Date: 2020-02-24 19:14+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -955,7 +955,7 @@ msgstr "Corregir relación de aspecto"
 
 #: gui/options.cpp:1137
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Corregir relación de aspecto en juegos de 320x200"
+msgstr "Corregir relación de aspecto en juegos de resolución 320x200"
 
 #: gui/options.cpp:1145
 msgid "Preferred device:"
@@ -1264,7 +1264,7 @@ msgstr "Idioma del interfaz de ScummVM"
 
 #: gui/options.cpp:1924
 msgid "Switch the GUI language to the game language"
-msgstr "Cambia el idioma del interfaz gráfico al idioma del juego"
+msgstr "Cambiar el idioma de la interfaz al idioma del juego"
 
 #: gui/options.cpp:1925
 msgid ""
@@ -1272,13 +1272,13 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
-"Al iniciar un juego, cambia el idioma del interfaz gráfico al idioma del "
-"juego. De esa manera, si un juego utiliza los cuadros de diálogo de guardar "
-"y cargar de ScummVM, estarán en el mismo idioma que el juego."
+"Al iniciar un juego, cambia el idioma de la interfaz al idioma de este. De "
+"esa manera, si un juego utiliza las ventanas de guardado y carga de ScummVM, "
+"estarán en el mismo idioma que el juego."
 
 #: gui/options.cpp:1938
 msgid "Use native system file browser"
-msgstr "Usa el explorador de archivos nativo"
+msgstr "Usar el explorador de archivos nativo"
 
 #: gui/options.cpp:1939
 msgid ""
@@ -3829,7 +3829,7 @@ msgstr "Lo siento, no se ha podido guardar el juego"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr "¡Habla más alto! ¡No te oigo!"
+msgstr "¡Habla más alto! ¡No te oigo!\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
