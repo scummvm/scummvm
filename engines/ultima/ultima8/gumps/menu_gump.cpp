@@ -40,6 +40,7 @@
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/gumps/widgets/edit_widget.h"
@@ -69,15 +70,21 @@ MenuGump::MenuGump(bool nameEntryMode_)
 	MusicProcess *musicprocess = MusicProcess::get_instance();
 	if (musicprocess) _oldMusicTrack = musicprocess->getTrack();
 	else _oldMusicTrack = 0;
+	// Save old palette transform
+	PaletteManager *palman = PaletteManager::get_instance();
+	palman->getTransformMatrix(_oldPalTransform, PaletteManager::Pal_Game);
+	palman->untransformPalette(PaletteManager::Pal_Game);
 }
 
 MenuGump::~MenuGump() {
 }
 
 void MenuGump::Close(bool no_del) {
-	// Restore old music state
+	// Restore old music state and palette
 	MusicProcess *musicprocess = MusicProcess::get_instance();
 	if (musicprocess) musicprocess->playMusic(_oldMusicTrack);
+	PaletteManager *palman = PaletteManager::get_instance();
+	palman->transformPalette(PaletteManager::Pal_Game, _oldPalTransform);
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->popMouseCursor();

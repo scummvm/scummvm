@@ -56,6 +56,7 @@ public:
 protected:
 	bool _nameEntryMode;
 	int _oldMusicTrack;
+	int16 _oldPalTransform[12];
 
 	virtual void selectEntry(int entry);
 };
