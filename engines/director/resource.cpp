@@ -362,48 +362,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	}
 
 	_sharedScore->setSpriteCasts();
-
-	Common::SeekableSubReadStreamEndian *res;
-
-	Common::Array<uint16> dib = sharedCast->getResourceIDList(MKTAG('D','I','B',' '));
-	if (dib.size() != 0) {
-		debugC(3, kDebugLoading, "****** Loading %d DIBs", dib.size());
-
-		for (Common::Array<uint16>::iterator iterator = dib.begin(); iterator != dib.end(); ++iterator) {
-			debugC(3, kDebugLoading, "loadSharedCastsFrom(): Shared DIB %d", *iterator);
-			res = sharedCast->getResource(MKTAG('D','I','B',' '), *iterator);
-			_sharedScore->_loadedCast->setVal(*iterator, new BitmapCast(*res, MKTAG('D','I','B',' '), getVersion()));
-		}
-	}
-
-	Common::Array<uint16> stxt = sharedCast->getResourceIDList(MKTAG('S','T','X','T'));
-	if (stxt.size() != 0) {
-		debugC(3, kDebugLoading, "****** Loading %d STXTs", stxt.size());
-
-		for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
-			debugC(3, kDebugLoading, "loadSharedCastsFrom(): Shared STXT %d", *iterator);
-			res = sharedCast->getResource(MKTAG('S','T','X','T'), *iterator);
-			_sharedScore->_loadedCast->setVal(*iterator, new TextCast(*res, getVersion()));
-		}
-	}
-
-	Common::Array<uint16> bmp = sharedCast->getResourceIDList(MKTAG('B','I','T','D'));
-	if (bmp.size() != 0) {
-		debugC(3, kDebugLoading, "****** Loading %d BITDs", bmp.size());
-		for (Common::Array<uint16>::iterator iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
-			debugC(3, kDebugLoading, "loadSharedCastsFrom(): Shared BITD %d (%s)", *iterator, numToCastNum(*iterator - 1024));
-			res = sharedCast->getResource(MKTAG('B','I','T','D'), *iterator);
-			_sharedScore->_loadedCast->setVal(*iterator, new BitmapCast(*res, MKTAG('B','I','T','D'), getVersion()));
-		}
-	}
-
-	Common::Array<uint16> sound = sharedCast->getResourceIDList(MKTAG('S','N','D',' '));
-	if (sound.size() != 0) {
-		debugC(3, kDebugLoading, "****** Loading %d SNDs", sound.size());
-		for (Common::Array<uint16>::iterator iterator = sound.begin(); iterator != sound.end(); ++iterator) {
-			debugC(3, kDebugLoading, "loadSharedCastsFrom(): Shared SND %d, SKIPPING!", *iterator);
-		}
-	}
+	_sharedScore->loadSpriteImages(true);
 
 	_lingo->_archiveIndex = 0;
 }

@@ -307,7 +307,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 		BitmapCast *bitmapCast = (BitmapCast *)c->_value;
 		uint32 tag = bitmapCast->_tag;
-		uint16 imgId = (uint16)(c->_key + _castIDoffset);
+		uint16 imgId = c->_key;
 
 		if (_vm->getVersion() >= 4 && bitmapCast->_children.size() > 0) {
 			imgId = bitmapCast->_children[0].index;
@@ -318,10 +318,12 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		Common::SeekableReadStream *pic = NULL;
 
 		if (_loadedCast->contains(imgId)) {
-			pic = sharedScore->getArchive()->getResource(tag, imgId);
-		} else if (sharedScore && sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
-			bitmapCast->_tag = tag = ((BitmapCast *)sharedScore->_loadedCast->getVal(imgId))->_tag;
-			pic = sharedScore->getArchive()->getResource(tag, imgId);
+			pic = _movieArchive->getResource(tag, imgId + _castIDoffset);
+		} else if (sharedScore) {
+			if (sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
+				bitmapCast->_tag = tag = ((BitmapCast *)sharedScore->_loadedCast->getVal(imgId))->_tag;
+				pic = sharedScore->getArchive()->getResource(tag, imgId + sharedScore->_castIDoffset);
+			}
 		}
 
 		if (pic == NULL) {
