@@ -4394,7 +4394,7 @@ Common::String BaseGame::readRegistryString(const Common::String &key, const Com
 	} else { // Just fallback to using ConfMan for now
 		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
 		if (ConfMan.hasKey(privKey)) {
-			result = StringUtil::decodeSetting(ConfMan.get(key));
+			result = StringUtil::decodeSetting(ConfMan.get(privKey));
 		}
 	}
 	return result;
