@@ -38,6 +38,7 @@
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/kernel/hid_manager.h"
@@ -977,6 +978,10 @@ void Ultima8Engine::writeSaveInfo(ODataSource *ods) {
 bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 	if (_desktopGump->FindGump<ModalGump>())
 		// Can't save when a modal gump is open
+		return false;
+
+	if (_kernel->getRunningProcess()->IsOfType(StartU8Process::ClassType))
+		// Don't save while starting up.
 		return false;
 
 	// Don't allow saving when avatar is dead.
