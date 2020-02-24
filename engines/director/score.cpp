@@ -341,7 +341,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 			}
 			break;
 		default:
-			warning("Unknown Bitmap Cast Tag: [%d] %s", tag, tag2str(tag));
+			warning("Score::loadSpriteImages(): Unknown Bitmap Cast Tag: [%d] %s", tag, tag2str(tag));
 			break;
 		}
 
@@ -359,7 +359,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 			img->loadStream(*pic);
 			bitmapCast->_surface = img->getSurface();
 		} else {
-			warning("Image %d not found", imgId);
+			warning("Score::loadSpriteImages(): Image %d not found", imgId);
 		}
 	}
 }
