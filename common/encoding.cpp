@@ -183,8 +183,8 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 		return nullptr;
 
 	size_t inSize = length;
-	size_t outSize = inSize;
 	size_t stringSize = inSize > 4 ? inSize : 4;
+	size_t outSize = stringSize;
 
 
 #ifdef ICONV_USES_CONST
