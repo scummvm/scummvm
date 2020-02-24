@@ -90,6 +90,11 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	if (initialTag == MKTAG('R', 'I', 'F', 'X')) {
 		// we've encountered a movie saved from Director, not a projector.
 		loadEXERIFX(exeStream, 0);
+	} else if (initialTag == MKTAG('R', 'I', 'F', 'F') || initialTag == MKTAG('F', 'F', 'I', 'R')) { // This is just a normal movie
+		_mainArchive = new RIFFArchive();
+
+		if (!_mainArchive->openStream(exeStream, 0))
+			error("Failed to load RIFF");
 	} else {
 		exeStream->seek(-4, SEEK_END);
 		exeStream->seek(exeStream->readUint32LE());
