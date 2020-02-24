@@ -86,8 +86,8 @@ public:
 		for (unsigned int i = 0; i < _size; i++) {
 			bool equal = true;
 			for (unsigned int j = 0; j < _elementSize && equal; j++)
-				equal = (_elements[i * _elementSize + j] == e[j]);
-			if (!equal) {
+				equal = equal && (_elements[i * _elementSize + j] == e[j]);
+			if (equal) {
 				_elements.erase(_elements.begin() + i * _elementSize,
 				               _elements.begin() + (i + 1)*_elementSize);
 				_size--;
