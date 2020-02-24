@@ -291,6 +291,11 @@ void MusicPlayerMidi::send(uint32 b) {
 		_driver->send(b);
 }
 
+void MusicPlayerMidi::sysEx(const byte *msg, uint16 length) {
+	if (_driver)
+		_driver->sysEx(msg, length);
+}
+
 void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:

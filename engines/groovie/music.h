@@ -98,6 +98,7 @@ public:
 
 	// MidiDriver_BASE interface
 	void send(uint32 b) override;
+	void sysEx(const byte* msg, uint16 length) override;
 	void metaEvent(byte type, byte *data, uint16 length) override;
 
 private:
