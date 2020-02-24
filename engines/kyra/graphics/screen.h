@@ -61,6 +61,16 @@ struct ScreenDim {
  */
 class Font {
 public:
+	/* Font types
+	 * Currently, we actually only care about oneByte and twoByte, but
+	 * naming it like this makes it easier to extend if the need arises.
+	 */
+	enum Type {
+		kASCII = 0,
+		kSJIS
+	};
+
+public:
 	virtual ~Font() {}
 
 	/**
@@ -72,6 +82,11 @@ public:
 	 * Whether the font draws on the overlay.
 	 */
 	virtual bool usesOverlay() const { return false; }
+
+	/**
+	* Whether the font is Ascii or Sjis.
+	*/
+	virtual Type getType() const = 0;
 
 	/**
 	 * The font height.
@@ -133,6 +148,7 @@ public:
 	~DOSFont() override { unload(); }
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
@@ -164,6 +180,7 @@ public:
 	~AMIGAFont() override { unload(); }
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
@@ -196,6 +213,7 @@ public:
 	~SJISFont() override {}
 
 	bool usesOverlay() const override { return true; }
+	Type getType() const override { return kSJIS; }
 
 	bool load(Common::SeekableReadStream &) override { return true; }
 	int getHeight() const override;
@@ -394,11 +412,6 @@ public:
 		FID_NUM
 	};
 
-	enum FontType {
-		FTYPE_ASCII = 0,
-		FTYPE_SJIS
-	};
-
 	Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize);
 	virtual ~Screen();
 
@@ -541,7 +554,6 @@ public:
 	uint8 *_shapePages[2];
 	int _maskMinY, _maskMaxY;
 	FontId _currentFont;
-	FontType _currentFontType;
 
 	// decoding functions
 	static void decodeFrame1(const uint8 *src, uint8 *dst, uint32 size);

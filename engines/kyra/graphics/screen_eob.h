@@ -204,6 +204,7 @@ public:
 	~OldDOSFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
@@ -243,6 +244,7 @@ public:
 	~AmigaDOSFont() override { unload(); }
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
@@ -330,6 +332,7 @@ public:
 	Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable);
 	~Font12x12PC98() override;
 	bool usesOverlay() const override { return true; }
+	Type getType() const override { return kSJIS; }
 	int getHeight() const override { return _height >> 1; }
 	int getWidth() const override { return _width >> 1; }
 	int getCharWidth(uint16 c) const override { return _width >> 1; };
@@ -362,6 +365,7 @@ public:
 	~SJISFont12x12() override { unload(); }
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kSJIS; }
 	bool usesOverlay() const override { return true; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
@@ -384,13 +388,16 @@ public:
 	SegaCDFont();
 	~SegaCDFont() override;
 
-private:
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kSJIS; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override { return _width; }
 	void setColorMap(const uint8 *src) override { _colorMap = src; }
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+
+private:
+	uint16 convert(uint16 c) const;
 
 	uint8 *_data;
 	const uint8 *_colorMap;

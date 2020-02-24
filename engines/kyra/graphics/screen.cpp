@@ -72,7 +72,6 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_useSJIS = _useOverlays = false;
 
 	_currentFont = FID_8_FNT;
-	_currentFontType = FTYPE_ASCII;
 	_paletteChanged = true;
 	_textMarginRight = SCREEN_W;
 	_customDimTable = 0;
@@ -1348,7 +1347,6 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 Screen::FontId Screen::setFont(FontId fontId) {
 	FontId prev = _currentFont;
 	_currentFont = fontId;
-	_currentFontType = _currentFont >= FID_SJIS_FNT ? FTYPE_SJIS : FTYPE_ASCII;
 
 	assert(_fonts[_currentFont]);
 	return prev;
@@ -1372,10 +1370,10 @@ int Screen::getTextWidth(const char *str) {
 	int maxLineLen = 0;
 
 	FontId curFont = _currentFont;
-	FontType curType = _currentFontType;
+	Font::Type curType = _fonts[curFont]->getType();
 
 	while (1) {
-		if (_sjisMixedFontMode && curType == FTYPE_ASCII)
+		if (_sjisMixedFontMode && curType == Font::kASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
 		uint c = fetchChar(str);
@@ -1409,7 +1407,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	setTextColor(cmap8, 0, 1);
 
 	FontId curFont = _currentFont;
-	FontType curType = _currentFontType;
+	Font::Type curType = _fonts[curFont]->getType();
 
 	if (x < 0)
 		x = 0;
@@ -1423,7 +1421,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 		return;
 
 	while (1) {
-		if (_sjisMixedFontMode && curType == FTYPE_ASCII)
+		if (_sjisMixedFontMode && curType == Font::kASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
 		uint8 charHeightFnt = getFontHeight();
@@ -1451,7 +1449,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 }
 
 uint16 Screen::fetchChar(const char *&s) const {
-	if (_currentFontType == FTYPE_ASCII)
+	if (_fonts[_currentFont]->getType() == Font::kASCII)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;
