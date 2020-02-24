@@ -199,7 +199,7 @@ static struct BuiltinProto {
 	{ "sound-fadeIn",	LB::b_soundFadeIn, 	1, 2, false, 3, BLTIN },	//		D3 c
 	{ "sound-fadeOut",	LB::b_soundFadeOut, 1, 2, false, 3, BLTIN },	//		D3 c
 	{ "sound-playFile",	LB::b_soundPlayFile,2, 2, false, 3, BLTIN },	//		D3 c
-	{ "sound-stop",		LB::b_soundStop,	1, 1, false, 3, BLTIN },	//		D3 c
+	{ "sound-stop",		LB::b_soundStop,	1, 1, false, 2, BLTIN },	//		D2 c
 	{ "soundBusy",		LB::b_soundBusy,	1, 1, true,  3, FBLTIN },	//		D3 f
 	// Window
 	{ "close",			LB::b_close,		1, 1, false, 4, BLTIN },	//			D4 c
@@ -553,7 +553,7 @@ void LB::b_value(int nargs) {
 // Lists
 ///////////////////
 void LB::b_add(int nargs) {
-	// FIXME: when a list is "sorted", add should insert based on 
+	// FIXME: when a list is "sorted", add should insert based on
 	// the current ordering. otherwise, append to the end.
 	LB::b_append(nargs);
 }
