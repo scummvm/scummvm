@@ -117,8 +117,8 @@ void SonarcAudioSample::decode_EC(int mode, int samplecount,
 			if (ones == 0) {
 				data >>= 1; // strip zero
 				// low byte contains (mode+1) _bits of the sample
-				int8 sample = data & 0xFF;
-				sample <<= (7 - mode);
+				const uint8 usample = data & 0xFF;
+				int8 sample = usample << (7 - mode);
 				sample >>= (7 - mode); // sign extend
 				*dest++ = (uint8)(sample + 0x80);
 				data >>= mode + 1;
@@ -126,8 +126,8 @@ void SonarcAudioSample::decode_EC(int mode, int samplecount,
 			} else if (ones < 7 - mode) {
 				data >>= ones + 1; // strip ones and zero
 				// low byte contains (mode+ones) _bits of the sample
-				int8 sample = data & 0xFF;
-				sample <<= (7 - mode - ones);
+				const uint8 usample = data & 0xFF;
+				int8 sample = usample << (7 - mode - ones);
 				sample &= 0x7F;
 				if (!(sample & 0x40))
 					sample |= 0x80; // reconstruct sign bit
