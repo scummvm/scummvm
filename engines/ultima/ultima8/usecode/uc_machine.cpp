@@ -1090,10 +1090,15 @@ void UCMachine::execProcess(UCProcess *p) {
 //				error = true;
 			} else {
 				if (ui32b) {
-					uint16 s = getList(ui16b)->getStringIndex(ui16a);
+					uint16 s = l->getStringIndex(ui16a);
 					p->_stack.push2(duplicateString(s));
 				} else {
-					p->_stack.push((*getList(ui16b))[ui16a], ui32a);
+					if (ui16a < l->getSize()) {
+						p->_stack.push((*l)[ui16a], ui32a);
+					} else {
+						perr << "Warning: ignore 0x44 request to push " << ui16a <<
+								" from list len " << l->getSize() << Std::endl;
+					}
 				}
 			}
 			LOGPF(("push element\t%02X slist==%02X\n", ui32a, ui32b));
