@@ -1244,11 +1244,11 @@ void ScScript::runtimeError(const char *fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
-	vsprintf(buff, fmt, va);
+	vsnprintf(buff, 256, fmt, va);
 	va_end(va);
 
-	_gameRef->LOG(0, "Runtime error. Script '%s', line %d", _filename, _currentLine);
-	_gameRef->LOG(0, "  %s", buff);
+	warning("Runtime error. Script '%s', line %d", _filename, _currentLine);
+	warning("  %s", buff);
 
 	if (!_gameRef->_suppressScriptErrors) {
 		_gameRef->quickMessage("Script runtime error. View log for details.");
