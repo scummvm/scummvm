@@ -308,6 +308,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		BitmapCast *bitmapCast = (BitmapCast *)c->_value;
 		uint32 tag = bitmapCast->_tag;
 		uint16 imgId = c->_key;
+		uint16 realId;
 
 		if (_vm->getVersion() >= 4 && bitmapCast->_children.size() > 0) {
 			imgId = bitmapCast->_children[0].index;
@@ -319,11 +320,13 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 		if (_loadedCast->contains(imgId)) {
 			bitmapCast->_tag = tag = ((BitmapCast *)_loadedCast->getVal(imgId))->_tag;
-			pic = _movieArchive->getResource(tag, imgId + _castIDoffset);
+			realId = imgId + _castIDoffset;
+			pic = _movieArchive->getResource(tag, realId);
 		} else if (sharedScore) {
 			if (sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
 				bitmapCast->_tag = tag = ((BitmapCast *)sharedScore->_loadedCast->getVal(imgId))->_tag;
-				pic = sharedScore->getArchive()->getResource(tag, imgId + sharedScore->_castIDoffset);
+				realId = imgId + sharedScore->_castIDoffset;
+				pic = sharedScore->getArchive()->getResource(tag, realId);
 			}
 		}
 
@@ -332,37 +335,40 @@ void Score::loadSpriteImages(bool isSharedCast) {
 			continue;
 		}
 
+		int w = bitmapCast->_initialRect.width();
+		int h = bitmapCast->_initialRect.height();
+
 		switch (tag) {
 		case MKTAG('D', 'I', 'B', ' '):
-			debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d", imgId);
+			debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d (%d), %d bytes", imgId, realId, pic->size());
 			img = new DIBDecoder();
-			img->loadStream(*pic);
-			bitmapCast->_surface = img->getSurface();
 			break;
+
 		case MKTAG('B', 'I', 'T', 'D'):
-			debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d", imgId);
+			debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d (%d), %d bytes", imgId, realId, pic->size());
+
+			if (w > 0 && h > 0) {
+				if (_vm->getVersion() < 6) {
+					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch);
+				} else {
+					img = new Image::BitmapDecoder();
+				}
+			} else {
+				warning("Score::loadSpriteImages(): Image %d not found", imgId);
+			}
+
 			break;
+
 		default:
 			warning("Score::loadSpriteImages(): Unknown Bitmap Cast Tag: [%d] %s", tag, tag2str(tag));
 			break;
 		}
 
-		int w = bitmapCast->_initialRect.width(), h = bitmapCast->_initialRect.height();
+		img->loadStream(*pic);
+		bitmapCast->_surface = img->getSurface();
+
 		debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
 			imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
-
-		if (bitmapCast != NULL && w > 0 && h > 0) {
-			if (_vm->getVersion() < 6) {
-				img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch);
-			} else {
-				img = new Image::BitmapDecoder();
-			}
-
-			img->loadStream(*pic);
-			bitmapCast->_surface = img->getSurface();
-		} else {
-			warning("Score::loadSpriteImages(): Image %d not found", imgId);
-		}
 	}
 }
 
