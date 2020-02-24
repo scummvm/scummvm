@@ -112,7 +112,7 @@ int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 	} else {
 		samplesRead = MIN(numSamples, (int)(_end - _p) / 2);
-		for (int i = 0; i < samplesRead; i++, _p += 2) {
+		for (int i = 0; i < samplesRead; ++i, _p += 2) {
 			buffer[i] = READ_LE_UINT16(_p);
 		}
 	}

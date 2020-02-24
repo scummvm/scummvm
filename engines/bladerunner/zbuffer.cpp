@@ -53,7 +53,7 @@ void ZBufferDirtyRects::extendExisting() {
 	for (i = 0; i != _count - 1; ++i) {
 		if (last.intersects(_rects[i])) {
 			_rects[i].extend(last);
-			_count--;
+			--_count;
 			break;
 		}
 	}

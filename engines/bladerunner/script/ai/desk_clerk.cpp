@@ -171,7 +171,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		if (_flag1) {
 			*animation = 662;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(662)) {
 				_animationFrame = 0;
 				_flag1 = false;
@@ -184,7 +184,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 			}
 
 			*animation = 661;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(661)) {
 				_animationFrame = 0;
 
@@ -206,7 +206,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 			_flag1 = false;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
 			}
@@ -215,7 +215,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 664;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(664)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -225,7 +225,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 665;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(665)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -235,7 +235,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 666;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(666)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -245,7 +245,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 667;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(667)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -255,7 +255,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 668;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(668)) {
 			_animationFrame = 0;
 		}
@@ -271,7 +271,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 			*animation = 668;
 			_animationState = 6;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
 			}
@@ -280,7 +280,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 670;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(670) - 2) {
 			Ambient_Sounds_Play_Sound(kSfxZUBLAND1, 40, 30, 30, 99);
 			Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkKnockedOut);

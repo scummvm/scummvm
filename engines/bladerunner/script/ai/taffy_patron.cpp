@@ -121,7 +121,7 @@ bool AIScriptTaffyPatron::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 918;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(918) - 1) {
 			_animationFrame = 0;
 		}
@@ -130,7 +130,7 @@ bool AIScriptTaffyPatron::UpdateAnimation(int *animation, int *frame) {
 	case 2:
 		*animation = 919;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(919) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 

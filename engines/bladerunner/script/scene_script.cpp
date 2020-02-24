@@ -162,24 +162,24 @@ bool SceneScript::open(const Common::String &name) {
 }
 
 void SceneScript::initializeScene() {
-	_inScriptCounter++;
+	++_inScriptCounter;
 	_currentScript->InitializeScene();
-	_inScriptCounter--;
+	--_inScriptCounter;
 }
 
 void SceneScript::sceneLoaded() {
 	_vm->_sceneIsLoading = true;
-	_inScriptCounter++;
+	++_inScriptCounter;
 	_currentScript->SceneLoaded();
 	_vm->_sceneIsLoading = false;
-	_inScriptCounter--;
+	--_inScriptCounter;
 }
 
 bool SceneScript::mouseClick(int x, int y) {
 	if (_inScriptCounter > 0)
 		return true;
 
-	_inScriptCounter++;
+	++_inScriptCounter;
 	_mouseX = x;
 	_mouseY = y;
 	bool result = false;
@@ -187,7 +187,7 @@ bool SceneScript::mouseClick(int x, int y) {
 		result = _currentScript->MouseClick(x, y);
 	}
 	_vm->_runningActorId = -1;
-	_inScriptCounter--;
+	--_inScriptCounter;
 	_mouseX = -1;
 	_mouseY = -1;
 	return result;
@@ -198,10 +198,10 @@ bool SceneScript::clickedOn3DObject(const char *objectName, bool combatMode) {
 		return true;
 	}
 
-	_inScriptCounter++;
+	++_inScriptCounter;
 	bool result = _currentScript->ClickedOn3DObject(objectName, combatMode);
 	_vm->_runningActorId = -1;
-	_inScriptCounter--;
+	--_inScriptCounter;
 	return result;
 }
 
@@ -210,10 +210,10 @@ bool SceneScript::clickedOnActor(int actorId) {
 		return true;
 	}
 
-	_inScriptCounter++;
+	++_inScriptCounter;
 	bool result = _currentScript->ClickedOnActor(actorId);
 	_vm->_runningActorId = -1;
-	_inScriptCounter--;
+	--_inScriptCounter;
 	return result;
 }
 
@@ -229,10 +229,10 @@ bool SceneScript::clickedOnItem(int itemId, bool combatMode) {
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	_inScriptCounter++;
+	++_inScriptCounter;
 	bool result = _currentScript->ClickedOnItem(itemId, combatMode);
 	_vm->_runningActorId = -1;
-	_inScriptCounter--;
+	--_inScriptCounter;
 	return result;
 }
 
@@ -241,10 +241,10 @@ bool SceneScript::clickedOnExit(int exitId) {
 		return true;
 	}
 
-	_inScriptCounter++;
+	++_inScriptCounter;
 	bool result = _currentScript->ClickedOnExit(exitId);
 	_vm->_runningActorId = -1;
-	_inScriptCounter--;
+	--_inScriptCounter;
 	return result;
 }
 
@@ -253,42 +253,42 @@ bool SceneScript::clickedOn2DRegion(int region) {
 		return true;
 	}
 
-	_inScriptCounter++;
+	++_inScriptCounter;
 	bool result = _currentScript->ClickedOn2DRegion(region);
 	_vm->_runningActorId = -1;
-	_inScriptCounter--;
+	--_inScriptCounter;
 	return result;
 }
 
 void SceneScript::sceneFrameAdvanced(int frame) {
-	_inScriptCounter++;
+	++_inScriptCounter;
 	_currentScript->SceneFrameAdvanced(frame);
-	_inScriptCounter--;
+	--_inScriptCounter;
 }
 
 void SceneScript::actorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
-	_inScriptCounter++;
+	++_inScriptCounter;
 	if (_currentScript)
 		_currentScript->ActorChangedGoal(actorId, newGoal, oldGoal, currentSet);
-	_inScriptCounter--;
+	--_inScriptCounter;
 }
 
 void SceneScript::playerWalkedIn() {
-	_inScriptCounter++;
+	++_inScriptCounter;
 	_currentScript->PlayerWalkedIn();
-	_inScriptCounter--;
+	--_inScriptCounter;
 }
 
 void SceneScript::playerWalkedOut() {
-	_inScriptCounter++;
+	++_inScriptCounter;
 	_currentScript->PlayerWalkedOut();
-	_inScriptCounter--;
+	--_inScriptCounter;
 }
 
 void SceneScript::dialogueQueueFlushed(int a1) {
-	_inScriptCounter++;
+	++_inScriptCounter;
 	_currentScript->DialogueQueueFlushed(a1);
-	_inScriptCounter--;
+	--_inScriptCounter;
 }
 
 } // End of namespace BladeRunner

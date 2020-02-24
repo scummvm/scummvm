@@ -34,14 +34,14 @@ namespace BladeRunner {
 
 AudioMixer::AudioMixer(BladeRunnerEngine *vm) {
 	_vm = vm;
-	for (int i = 0; i < kChannels; i++) {
+	for (int i = 0; i < kChannels; ++i) {
 		_channels[i].isPresent = false;
 	}
 	_vm->getTimerManager()->installTimerProc(timerCallback, (1000 / kUpdatesPerSecond) * 1000, this, "BladeRunnerAudioMixerTimer");
 }
 
 AudioMixer::~AudioMixer() {
-	for (int i = 0; i < kChannels; i++) {
+	for (int i = 0; i < kChannels; ++i) {
 		stop(i, 0);
 	}
 	_vm->getTimerManager()->removeTimerProc(timerCallback);
@@ -53,7 +53,7 @@ int AudioMixer::play(Audio::Mixer::SoundType type, Audio::RewindableAudioStream 
 	int channel = -1;
 	int lowestPriority = 1000000;
 	int lowestPriorityChannel = -1;
-	for (int i = 0; i < kUsableChannels; i++) {
+	for (int i = 0; i < kUsableChannels; ++i) {
 		if (!_channels[i].isPresent) {
 			channel = i;
 			break;
@@ -173,7 +173,7 @@ void AudioMixer::adjustPan(int channel, int newPan, uint32 time) {
 void AudioMixer::tick() {
 	Common::StackLock lock(_mutex);
 
-	for (int i = 0; i < kChannels; i++) {
+	for (int i = 0; i < kChannels; ++i) {
 		Channel *channel = &_channels[i];
 		if (!channel->isPresent) {
 			continue;

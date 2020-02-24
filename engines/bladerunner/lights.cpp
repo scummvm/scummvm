@@ -44,7 +44,7 @@ void Lights::read(Common::ReadStream *stream, int frameCount) {
 	_ambientLightColor.b = stream->readFloatLE();
 
 	uint _lightCount = stream->readUint32LE();
-	for (uint i = 0; i < _lightCount; i++) {
+	for (uint i = 0; i < _lightCount; ++i) {
 		Light *light;
 		int type = stream->readUint32LE();
 		switch (type) {
@@ -73,7 +73,7 @@ void Lights::read(Common::ReadStream *stream, int frameCount) {
 }
 
 void Lights::removeAnimated() {
-	for (int i = (int)(_lights.size() - 1); i >= 0; i--) {
+	for (int i = (int)(_lights.size() - 1); i >= 0; --i) {
 		if (_lights[i]->_animated) {
 			delete _lights.remove_at(i);
 		}
@@ -88,7 +88,7 @@ void Lights::readVqa(Common::ReadStream *stream) {
 
 	int frameCount = stream->readUint32LE();
 	int count = stream->readUint32LE();
-	for (int i = 0; i < count; i++) {
+	for (int i = 0; i < count; ++i) {
 		int lightType = stream->readUint32LE();
 		Light *light;
 		switch (lightType) {
@@ -120,13 +120,13 @@ void Lights::setupFrame(int frame) {
 		return;
 	}
 
-	for (uint i = 0; i < _lights.size(); i++) {
+	for (uint i = 0; i < _lights.size(); ++i) {
 		_lights[i]->setupFrame(frame);
 	}
 }
 
 void Lights::reset() {
-	for (int i = (int)(_lights.size() - 1); i >= 0; i--) {
+	for (int i = (int)(_lights.size() - 1); i >= 0; --i) {
 		delete _lights.remove_at(i);
 	}
 	_lights.clear();

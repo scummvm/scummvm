@@ -80,7 +80,7 @@ void Light::read(Common::ReadStream *stream, int frameCount, int frame, int anim
 	}
 	int floatCount = size / 4;
 	_animationData = new float[floatCount];
-	for (int i = 0; i < floatCount; i++) {
+	for (int i = 0; i < floatCount; ++i) {
 		_animationData[i] = stream->readFloatLE();
 	}
 
@@ -121,7 +121,7 @@ void Light::readVqa(Common::ReadStream *stream, int frameCount, int frame, int a
 
 	int floatCount = size / 4;
 	_animationData = new float[floatCount];
-	for (int i = 0; i < floatCount; i++) {
+	for (int i = 0; i < floatCount; ++i) {
 		_animationData[i] = stream->readFloatLE();
 	}
 

@@ -266,7 +266,7 @@ int DialogueMenu::queryInput() {
 			_selectedItemIndex = i;
 		} else {
 			int priority = -1;
-			for (int i = 0; i < _listSize; i++) {
+			for (int i = 0; i < _listSize; ++i) {
 				int priorityCompare = -1;
 				if (agenda == kPlayerAgendaPolite) {
 					priorityCompare = _items[i].priorityPolite;

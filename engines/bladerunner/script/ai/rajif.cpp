@@ -114,13 +114,13 @@ bool AIScriptRajif::UpdateAnimation(int *animation, int *frame) {
 	if (_animationState <= 1) {
 		if (_animationState) {
 			*animation = 751;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(751)) {
 				_animationFrame = 0;
 			}
 		} else { // bug in original. Both branches are equal
 			*animation = 751;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(751)) {
 				_animationFrame = 0;
 			}

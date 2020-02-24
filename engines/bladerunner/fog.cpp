@@ -73,7 +73,7 @@ void Fog::readAnimationData(Common::ReadStream *stream, int size) {
 
 	int floatCount = size / 4;
 	_animationData = new float[floatCount];
-	for (int i = 0; i < floatCount; i++) {
+	for (int i = 0; i < floatCount; ++i) {
 		_animationData[i] = stream->readFloatLE();
 	}
 

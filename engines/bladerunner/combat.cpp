@@ -54,7 +54,7 @@ void Combat::reset() {
 	_ammoDamage[1] = 20;
 	_ammoDamage[2] = 30;
 
-	for (int i = 0; i < kSoundCount; i++) {
+	for (int i = 0; i < kSoundCount; ++i) {
 		_hitSoundId[i] = -1;
 		_missSoundId[i] = -1;
 	}

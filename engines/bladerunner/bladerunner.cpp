@@ -1181,7 +1181,7 @@ void BladeRunnerEngine::actorsUpdate() {
 		return;
 	}
 
-	for (int i = 0; i < actorCount; i++) {
+	for (int i = 0; i < actorCount; ++i) {
 		Actor *actor = _actors[i];
 		if (actor->getSetId() == setId || i == _actorUpdateCounter) {
 			_aiScripts->update(i);

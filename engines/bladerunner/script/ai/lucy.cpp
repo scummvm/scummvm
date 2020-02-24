@@ -543,7 +543,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 260;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(260)) {
 			_animationFrame = 0;
 		}
@@ -565,7 +565,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 		if (_animationState == 4) {
 			*animation = 256;
 		}
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -579,7 +579,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 		if (_animationState == 6) {
 			*animation = 258;
 		}
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			*animation = 260;
 			_animationFrame = 0;
@@ -602,7 +602,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 			_flag = 0;
 		} else {
 			*animation = 263;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(263)) {
 				_animationFrame = 0;
 			}
@@ -641,7 +641,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 		if (_animationState == 16) {
 			*animation = 271;
 		}
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 8;
@@ -651,7 +651,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 
 	case 17:
 		*animation = 272;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(272)) {
 			_animationFrame = 0;
 		}
@@ -664,7 +664,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 			*animation = 272;
 		} else {
 			*animation = 273;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(273)) {
 				_animationFrame = 0;
 			}
@@ -673,7 +673,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 
 	case 19:
 		*animation = 274;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(274)) {
 			*animation = 260;
 			_animationFrame = 0;
@@ -683,7 +683,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 
 	case 20:
 		*animation = 275;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(275)) {
 			_animationFrame = 0;
 		}
@@ -691,7 +691,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 
 	case 21:
 		*animation = 276;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(276)) {
 			_animationFrame = 0;
 		}

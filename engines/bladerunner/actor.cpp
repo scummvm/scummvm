@@ -272,7 +272,7 @@ int32 Actor::timerLeft(int timerId) {
 }
 
 void Actor::timersUpdate() {
-	for (int i = 0; i < kActorTimers; i++) {
+	for (int i = 0; i < kActorTimers; ++i) {
 		timerUpdate(i);
 	}
 }
@@ -851,7 +851,7 @@ void Actor::setSetId(int setId) {
 
 	// leaving _setId for setId
 	if (_setId > 0) {
-		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
+		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); ++i) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
 				_vm->_aiScripts->otherAgentExitedThisScene(i, _id);
 			}
@@ -861,7 +861,7 @@ void Actor::setSetId(int setId) {
 	_setId = setId;
 	_vm->_aiScripts->enteredScene(_id, _setId);
 	if (_setId > 0) {
-		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
+		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); ++i) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
 				_vm->_aiScripts->otherAgentEnteredThisScene(i, _id);
 			}
@@ -1168,7 +1168,7 @@ void Actor::combatModeOn(int initialState, bool rangedAttack, int enemyId, int w
 	}
 	stopWalking(false);
 	changeAnimationMode(_animationModeCombatIdle, false);
-	for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
+	for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); ++i) {
 		Actor *otherActor = _vm->_actors[i];
 		if (i != _id && otherActor->_setId == _setId && !otherActor->_isRetired) {
 			_vm->_aiScripts->otherAgentEnteredCombatMode(i, _id, true);
@@ -1183,7 +1183,7 @@ void Actor::combatModeOff() {
 	_inCombat = false;
 	stopWalking(false);
 	changeAnimationMode(kAnimationModeIdle, false);
-	for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
+	for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); ++i) {
 		Actor *otherActor = _vm->_actors[i];
 		if (i != _id && otherActor->_setId == _setId && !otherActor->_isRetired) {
 			_vm->_aiScripts->otherAgentEnteredCombatMode(i, _id, false);
@@ -1299,7 +1299,7 @@ bool Actor::hasClue(int clueId) const {
 bool Actor::copyClues(int actorId) {
 	bool newCluesAcquired = false;
 	Actor *otherActor = _vm->_actors[actorId];
-	for (int i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
+	for (int i = 0; i < (int)_vm->_gameInfo->getClueCount(); ++i) {
 		int clueId = i;
 		if (hasClue(clueId) && !_clues->isPrivate(clueId) && otherActor->canAcquireClue(clueId) && !otherActor->hasClue(clueId)) {
 			int fromActorId = _id;
@@ -1315,7 +1315,7 @@ bool Actor::copyClues(int actorId) {
 
 void Actor::acquireCluesByRelations() {
 	if (_setId >= 0 && _setId != kSetFreeSlotG && _setId != _vm->_actors[0]->_setId) {
-		for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
+		for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); ++i) {
 			if (i != _id && _vm->_actors[i]->_setId == _setId && i && _id
 					&& checkFriendlinessAndHonesty(i)
 					&& _vm->_actors[i]->checkFriendlinessAndHonesty(_id)) {

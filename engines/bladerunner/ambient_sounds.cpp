@@ -108,7 +108,7 @@ void AmbientSounds::removeNonLoopingSound(int sfxId, bool stopPlaying) {
 }
 
 void AmbientSounds::removeAllNonLoopingSounds(bool stopPlaying) {
-	for (int i = 0; i < kNonLoopingSounds; i++) {
+	for (int i = 0; i < kNonLoopingSounds; ++i) {
 		removeNonLoopingSoundByIndex(i, stopPlaying);
 	}
 }
@@ -203,7 +203,7 @@ void AmbientSounds::removeLoopingSound(int sfxId, uint32 delay) {
 }
 
 void AmbientSounds::removeAllLoopingSounds(uint32 delay) {
-	for (int i = 0; i < kLoopingSounds; i++) {
+	for (int i = 0; i < kLoopingSounds; ++i) {
 		removeLoopingSoundByIndex(i, delay);
 	}
 }
@@ -243,7 +243,7 @@ void AmbientSounds::tick() {
 
 void AmbientSounds::setVolume(int volume) {
 	if (_loopingSounds) {
-		for (int i = 0; i < kLoopingSounds; i++) {
+		for (int i = 0; i < kLoopingSounds; ++i) {
 			if (_loopingSounds[i].isActive && _loopingSounds[i].audioPlayerTrack != -1) {
 				int newVolume = _loopingSounds[i].volume * volume / 100;
 				if (_vm->_audioPlayer->isActive(_loopingSounds[i].audioPlayerTrack)) {
