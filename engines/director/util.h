@@ -40,6 +40,8 @@ Common::String getPath(Common::String path, Common::String cwd);
 
 Common::String pathMakeRelative(Common::String path);
 
+Common::String convertMacFilename(const char *name);
+
 void processQuitEvent(); // events.cpp
 
 } // End of namespace Director

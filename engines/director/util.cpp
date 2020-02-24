@@ -181,4 +181,100 @@ Common::String pathMakeRelative(Common::String path) {
 	return convPath;
 }
 
+//////////////////
+////// Mac --> Windows filename conversion
+//////////////////
+static byte myToUpper(byte c) {
+	if (c >= 'a' && c <= 'z')
+		c -= ('a' - 'A');
+	return c;
+}
+
+static bool myIsVowel(byte c) {
+	switch (myToUpper(c)) {
+	case 'A':
+	case 'E':
+	case 'I':
+	case 'O':
+	case 'U':
+		return true;
+	default:
+		return false;
+	}
+}
+
+static bool myIsAlpha(byte c) {
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+}
+
+static bool myIsDigit(byte c) {
+	return (c >= '0' && c <= '9');
+}
+
+static bool myIsAlnum(byte c) {
+	return (myIsAlpha(c) || myIsDigit(c));
+}
+
+static bool myIsSpace(byte c) {
+	return c ==' ';
+}
+
+Common::String convertMacFilename(const char *name) {
+	Common::String res;
+
+	int origlen = strlen(name);
+
+	// Remove trailing spaces
+	const char *ptr = &name[origlen - 1];
+	while (myIsSpace(*ptr))
+		ptr--;
+
+	/* Count suffix digits (up to whole filename less a character). */
+	int numDigits = 0;
+	char digits[10];
+
+	while (myIsDigit(*ptr) && (numDigits < (8 - 1)))
+		digits[++numDigits] = *ptr--;
+
+	ptr = name;
+	int cnt = 0;
+	while (cnt < (8 - numDigits) && ptr < &name[origlen]) {
+		char c = toupper(*ptr++);
+
+		if ((myIsVowel(c) && (cnt != 0)) || myIsSpace(c) || myIsDigit(c))
+			continue;
+
+		if ((c != '_') && !myIsAlnum(c))
+			continue;
+
+		cnt++;
+	}
+
+	int numVowels = 8 - (numDigits + cnt);
+	ptr = name;
+	for (cnt = 0; cnt < (8 - numDigits) && ptr < &name[origlen];) {
+		char c = toupper(*ptr++);
+
+		if (myIsVowel(c) && (cnt != 0)) {
+			if (numVowels > 0)
+				numVowels--;
+			else
+				continue;
+		}
+
+		if (myIsSpace(c) || myIsDigit(c) || ((c != '_') && !myIsAlnum(c)))
+			continue;
+
+		res += c;
+
+		cnt++;
+	}
+
+
+	while (numDigits)
+		res += digits[numDigits--];
+
+	return res + ".MMM";
+}
+
 } // End of namespace Director
