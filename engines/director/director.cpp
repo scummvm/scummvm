@@ -75,10 +75,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_lingo = nullptr;
 
 	_sharedScore = nullptr;
-	_sharedSound = nullptr;
-	_sharedBMP = nullptr;
-	_sharedSTXT = nullptr;
-	_sharedDIB = nullptr;
 
 	_mainArchive = nullptr;
 	_macBinary = nullptr;
@@ -106,12 +102,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
-	delete _sharedSound;
-	delete _sharedBMP;
-	delete _sharedSTXT;
-	delete _sharedDIB;
 	delete _sharedScore;
-
 	delete _currentScore;
 
 	cleanupMainArchive();

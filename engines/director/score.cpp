@@ -322,20 +322,10 @@ void Score::loadSpriteImages(bool isSharedCast) {
 				img = new DIBDecoder();
 				img->loadStream(*_movieArchive->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
 				bitmapCast->_surface = img->getSurface();
-			} else if (isSharedCast && _vm->getSharedDIB() != NULL && _vm->getSharedDIB()->contains(imgId)) {
-				debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d from shared cast", imgId);
-				img = new DIBDecoder();
-				img->loadStream(*_vm->getSharedDIB()->getVal(imgId));
-				bitmapCast->_surface = img->getSurface();
 			}
 			break;
 		case MKTAG('B', 'I', 'T', 'D'):
-			if (isSharedCast) {
-				debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d from shared cast", imgId);
-				pic = _vm->getSharedBMP()->getVal(imgId);
-				if (pic != NULL)
-					pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
-			} else 	if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+			if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
 				debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d", imgId);
 				pic = _movieArchive->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
 			}

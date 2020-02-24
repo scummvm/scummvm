@@ -22,6 +22,7 @@
 
 #include "common/config-manager.h"
 #include "common/macresman.h"
+#include "common/substream.h"
 #include "common/file.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -29,6 +30,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/cast.h"
 #include "director/score.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
@@ -271,16 +273,6 @@ void DirectorEngine::clearSharedCast() {
 	delete _sharedScore;
 
 	_sharedScore = nullptr;
-
-	delete _sharedDIB;
-	delete _sharedSTXT;
-	delete _sharedSound;
-	delete _sharedBMP;
-
-	_sharedDIB = nullptr;
-	_sharedSTXT = nullptr;
-	_sharedSound = nullptr;
-	_sharedBMP = nullptr;
 }
 
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
@@ -292,11 +284,6 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	clearSharedCast();
 
 	Archive *sharedCast = createArchive();
-
-	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
-	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
-	_sharedSound = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
-	_sharedBMP = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 
 	if (!sharedCast->openFile(filename)) {
 		warning("loadSharedCastsFrom(): No shared cast %s", filename.c_str());
@@ -376,13 +363,16 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	_sharedScore->setSpriteCasts();
 
+	Common::SeekableSubReadStreamEndian *res;
+
 	Common::Array<uint16> dib = sharedCast->getResourceIDList(MKTAG('D','I','B',' '));
 	if (dib.size() != 0) {
 		debugC(3, kDebugLoading, "****** Loading %d DIBs", dib.size());
 
 		for (Common::Array<uint16>::iterator iterator = dib.begin(); iterator != dib.end(); ++iterator) {
 			debugC(3, kDebugLoading, "loadSharedCastsFrom(): Shared DIB %d", *iterator);
-			_sharedDIB->setVal(*iterator, sharedCast->getResource(MKTAG('D','I','B',' '), *iterator));
+			res = sharedCast->getResource(MKTAG('D','I','B',' '), *iterator);
+			_sharedScore->_loadedCast->setVal(*iterator, new BitmapCast(*res, MKTAG('D','I','B',' '), getVersion()));
 		}
 	}
 
@@ -392,7 +382,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 		for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 			debugC(3, kDebugLoading, "loadSharedCastsFrom(): Shared STXT %d", *iterator);
-			_sharedSTXT->setVal(*iterator, sharedCast->getResource(MKTAG('S','T','X','T'), *iterator));
+			res = sharedCast->getResource(MKTAG('S','T','X','T'), *iterator);
+			_sharedScore->_loadedCast->setVal(*iterator, new TextCast(*res, getVersion()));
 		}
 	}
 
@@ -401,7 +392,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		debugC(3, kDebugLoading, "****** Loading %d BITDs", bmp.size());
 		for (Common::Array<uint16>::iterator iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
 			debugC(3, kDebugLoading, "loadSharedCastsFrom(): Shared BITD %d (%s)", *iterator, numToCastNum(*iterator - 1024));
-			_sharedBMP->setVal(*iterator, sharedCast->getResource(MKTAG('B','I','T','D'), *iterator));
+			res = sharedCast->getResource(MKTAG('B','I','T','D'), *iterator);
+			_sharedScore->_loadedCast->setVal(*iterator, new BitmapCast(*res, MKTAG('B','I','T','D'), getVersion()));
 		}
 	}
 
@@ -409,8 +401,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (sound.size() != 0) {
 		debugC(3, kDebugLoading, "****** Loading %d SNDs", sound.size());
 		for (Common::Array<uint16>::iterator iterator = sound.begin(); iterator != sound.end(); ++iterator) {
-			debugC(3, kDebugLoading, "loadSharedCastsFrom(): Shared SND  %d", *iterator);
-			_sharedSound->setVal(*iterator, sharedCast->getResource(MKTAG('S','N','D',' '), *iterator));
+			debugC(3, kDebugLoading, "loadSharedCastsFrom(): Shared SND %d, SKIPPING!", *iterator);
 		}
 	}
 
