@@ -64,15 +64,15 @@ void AIScriptCrazylegs::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptCrazylegs::EnteredScene(int sceneId) {
+void AIScriptCrazylegs::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptCrazylegs::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptCrazylegs::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptCrazylegs::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptCrazylegs::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

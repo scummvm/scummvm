@@ -59,15 +59,15 @@ void AIScriptSergeantWalls::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptSergeantWalls::EnteredScene(int sceneId) {
+void AIScriptSergeantWalls::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptSergeantWalls::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptSergeantWalls::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptSergeantWalls::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptSergeantWalls::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

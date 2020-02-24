@@ -230,15 +230,15 @@ void AIScriptFreeSlotA::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptFreeSlotA::EnteredScene(int sceneId) {
+void AIScriptFreeSlotA::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptFreeSlotA::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptFreeSlotA::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptFreeSlotA::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptFreeSlotA::OtherAgentExitedThisSet(int otherActorId) {
 #if !BLADERUNNER_ORIGINAL_BUGS
 	if (otherActorId == kActorMcCoy && Actor_Query_Goal_Number(kActorFreeSlotA) == kGoalFreeSlotAGone) {
 		if (Global_Variable_Query(kVariableChapter) == 4) {

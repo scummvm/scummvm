@@ -66,15 +66,15 @@ void AIScriptHawkersBarkeep::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHawkersBarkeep::EnteredScene(int sceneId) {
+void AIScriptHawkersBarkeep::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHawkersBarkeep::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHawkersBarkeep::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHawkersBarkeep::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHawkersBarkeep::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

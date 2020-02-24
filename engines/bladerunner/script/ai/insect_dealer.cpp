@@ -74,15 +74,15 @@ void AIScriptInsectDealer::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptInsectDealer::EnteredScene(int sceneId) {
+void AIScriptInsectDealer::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptInsectDealer::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptInsectDealer::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptInsectDealer::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptInsectDealer::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

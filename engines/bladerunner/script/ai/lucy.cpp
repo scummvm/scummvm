@@ -218,15 +218,15 @@ void AIScriptLucy::ClickedByPlayer() {
 	}
 }
 
-void AIScriptLucy::EnteredScene(int sceneId) {
+void AIScriptLucy::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptLucy::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptLucy::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptLucy::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptLucy::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

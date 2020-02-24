@@ -118,15 +118,15 @@ void AIScriptBulletBob::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptBulletBob::EnteredScene(int sceneId) {
+void AIScriptBulletBob::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptBulletBob::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptBulletBob::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptBulletBob::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptBulletBob::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

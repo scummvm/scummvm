@@ -50,9 +50,9 @@ public:
 	virtual void CompletedMovementTrack() = 0;
 	virtual void ReceivedClue(int clueId, int fromActorId) = 0;
 	virtual void ClickedByPlayer() = 0;
-	virtual void EnteredScene(int setId) = 0;
-	virtual void OtherAgentEnteredThisScene(int otherActorId) = 0;
-	virtual void OtherAgentExitedThisScene(int otherActorId) = 0;
+	virtual void EnteredSet(int setId) = 0;
+	virtual void OtherAgentEnteredThisSet(int otherActorId) = 0;
+	virtual void OtherAgentExitedThisSet(int otherActorId) = 0;
 	virtual void OtherAgentEnteredCombatMode(int otherActorId, int combatMode) = 0;
 	virtual void ShotAtAndMissed() = 0;
 	virtual bool ShotAtAndHit() = 0;
@@ -77,9 +77,9 @@ public: \
 	void CompletedMovementTrack(); \
 	void ReceivedClue(int clueId, int fromActorId); \
 	void ClickedByPlayer(); \
-	void EnteredScene(int setId); \
-	void OtherAgentEnteredThisScene(int otherActorId); \
-	void OtherAgentExitedThisScene(int otherActorId); \
+	void EnteredSet(int setId); \
+	void OtherAgentEnteredThisSet(int otherActorId); \
+	void OtherAgentExitedThisSet(int otherActorId); \
 	void OtherAgentEnteredCombatMode(int otherActorId, int combatMode); \
 	void ShotAtAndMissed(); \
 	bool ShotAtAndHit(); \
@@ -548,9 +548,9 @@ public:
 	void completedMovementTrack(int actor);
 	void receivedClue(int actor, int clueId, int fromActorId);
 	void clickedByPlayer(int actor);
-	void enteredScene(int actor, int setId);
-	void otherAgentEnteredThisScene(int actor, int otherActorId);
-	void otherAgentExitedThisScene(int actor, int otherActorId);
+	void enteredSet(int actor, int setId);
+	void otherAgentEnteredThisSet(int actor, int otherActorId);
+	void otherAgentExitedThisSet(int actor, int otherActorId);
 	void otherAgentEnteredCombatMode(int actorId, int otherActorId, int combatMode);
 	void shotAtAndMissed(int actorId);
 	bool shotAtAndHit(int actorId);

@@ -64,15 +64,15 @@ void AIScriptEarlyQBartender::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptEarlyQBartender::EnteredScene(int sceneId) {
+void AIScriptEarlyQBartender::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptEarlyQBartender::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptEarlyQBartender::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptEarlyQBartender::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptEarlyQBartender::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

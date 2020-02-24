@@ -126,15 +126,15 @@ void AIScriptTransient::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTransient::EnteredScene(int sceneId) {
+void AIScriptTransient::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTransient::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTransient::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTransient::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTransient::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

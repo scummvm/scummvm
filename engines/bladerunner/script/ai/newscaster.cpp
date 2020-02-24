@@ -54,15 +54,15 @@ void AIScriptNewscaster::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptNewscaster::EnteredScene(int sceneId) {
+void AIScriptNewscaster::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptNewscaster::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptNewscaster::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptNewscaster::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptNewscaster::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

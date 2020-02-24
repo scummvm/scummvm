@@ -167,15 +167,15 @@ void AIScriptHanoi::ClickedByPlayer() {
 	}
 }
 
-void AIScriptHanoi::EnteredScene(int sceneId) {
+void AIScriptHanoi::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHanoi::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHanoi::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHanoi::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHanoi::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

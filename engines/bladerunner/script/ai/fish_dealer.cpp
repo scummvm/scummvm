@@ -102,15 +102,15 @@ void AIScriptFishDealer::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptFishDealer::EnteredScene(int sceneId) {
+void AIScriptFishDealer::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptFishDealer::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptFishDealer::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptFishDealer::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptFishDealer::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

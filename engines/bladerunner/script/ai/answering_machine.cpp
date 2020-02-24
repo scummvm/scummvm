@@ -54,15 +54,15 @@ void AIScriptAnsweringMachine::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptAnsweringMachine::EnteredScene(int sceneId) {
+void AIScriptAnsweringMachine::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptAnsweringMachine::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptAnsweringMachine::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptAnsweringMachine::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptAnsweringMachine::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

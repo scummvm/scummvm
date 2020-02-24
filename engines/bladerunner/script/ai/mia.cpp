@@ -66,15 +66,15 @@ void AIScriptMia::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMia::EnteredScene(int sceneId) {
+void AIScriptMia::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMia::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMia::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMia::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMia::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

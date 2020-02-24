@@ -105,9 +105,9 @@ void AIScriptLeon::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptLeon::EnteredScene(int sceneId) {}
+void AIScriptLeon::EnteredSet(int setId) {}
 
-void AIScriptLeon::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptLeon::OtherAgentEnteredThisSet(int otherActorId) {
 	if (otherActorId == kActorMcCoy
 	 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave
 	) {
@@ -120,7 +120,7 @@ void AIScriptLeon::OtherAgentEnteredThisScene(int otherActorId) {
 	///return false;
 }
 
-void AIScriptLeon::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptLeon::OtherAgentExitedThisSet(int otherActorId) {
 	if (otherActorId == kActorMcCoy
 	 && Actor_Query_Which_Set_In(kActorLeon) != kSetCT11
 	) {

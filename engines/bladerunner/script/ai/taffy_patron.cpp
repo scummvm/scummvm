@@ -54,15 +54,15 @@ void AIScriptTaffyPatron::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTaffyPatron::EnteredScene(int sceneId) {
+void AIScriptTaffyPatron::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTaffyPatron::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTaffyPatron::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTaffyPatron::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTaffyPatron::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

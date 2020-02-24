@@ -273,13 +273,13 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 void AIScriptMcCoy::ClickedByPlayer() {
 }
 
-void AIScriptMcCoy::EnteredScene(int sceneId) {
+void AIScriptMcCoy::EnteredSet(int setId) {
 }
 
-void AIScriptMcCoy::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMcCoy::OtherAgentEnteredThisSet(int otherActorId) {
 }
 
-void AIScriptMcCoy::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMcCoy::OtherAgentExitedThisSet(int otherActorId) {
 }
 
 void AIScriptMcCoy::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {

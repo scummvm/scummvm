@@ -70,15 +70,15 @@ void AIScriptShoeshineMan::ClickedByPlayer() {
 	}
 }
 
-void AIScriptShoeshineMan::EnteredScene(int sceneId) {
+void AIScriptShoeshineMan::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptShoeshineMan::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptShoeshineMan::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptShoeshineMan::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptShoeshineMan::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

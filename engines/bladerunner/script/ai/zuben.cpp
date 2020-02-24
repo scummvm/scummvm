@@ -238,15 +238,15 @@ void AIScriptZuben::ClickedByPlayer() {
 	// return false;
 }
 
-void AIScriptZuben::EnteredScene(int sceneId) {
+void AIScriptZuben::EnteredSet(int setId) {
 	//return false;
 }
 
-void AIScriptZuben::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptZuben::OtherAgentEnteredThisSet(int otherActorId) {
 	//return false;
 }
 
-void AIScriptZuben::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptZuben::OtherAgentExitedThisSet(int otherActorId) {
 	//return false;
 }
 

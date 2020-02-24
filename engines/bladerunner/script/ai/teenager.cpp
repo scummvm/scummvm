@@ -54,15 +54,15 @@ void AIScriptTeenager::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTeenager::EnteredScene(int sceneId) {
+void AIScriptTeenager::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTeenager::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTeenager::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTeenager::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTeenager::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

@@ -203,38 +203,38 @@ void AIScripts::clickedByPlayer(int actor) {
 	--_inScriptCounter;
 }
 
-void AIScripts::enteredScene(int actor, int setId) {
+void AIScripts::enteredSet(int actor, int setId) {
 	if (actor >= _actorCount) {
 		return;
 	}
 
 	++_inScriptCounter;
 	if (_AIScripts[actor]) {
-		_AIScripts[actor]->EnteredScene(setId);
+		_AIScripts[actor]->EnteredSet(setId);
 	}
 	--_inScriptCounter;
 }
 
-void AIScripts::otherAgentEnteredThisScene(int actor, int otherActorId) {
+void AIScripts::otherAgentEnteredThisSet(int actor, int otherActorId) {
 	if (actor >= _actorCount) {
 		return;
 	}
 
 	++_inScriptCounter;
 	if (_AIScripts[actor]) {
-		_AIScripts[actor]->OtherAgentEnteredThisScene(otherActorId);
+		_AIScripts[actor]->OtherAgentEnteredThisSet(otherActorId);
 	}
 	--_inScriptCounter;
 }
 
-void AIScripts::otherAgentExitedThisScene(int actor, int otherActorId) {
+void AIScripts::otherAgentExitedThisSet(int actor, int otherActorId) {
 	if (actor >= _actorCount) {
 		return;
 	}
 
 	++_inScriptCounter;
 	if (_AIScripts[actor]) {
-		_AIScripts[actor]->OtherAgentExitedThisScene(otherActorId);
+		_AIScripts[actor]->OtherAgentExitedThisSet(otherActorId);
 	}
 	--_inScriptCounter;
 }

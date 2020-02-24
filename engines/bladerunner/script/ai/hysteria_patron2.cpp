@@ -58,15 +58,15 @@ void AIScriptHysteriaPatron2::ClickedByPlayer() {
 	Actor_Says(kActorMcCoy, 8935, kAnimationModeTalk);
 }
 
-void AIScriptHysteriaPatron2::EnteredScene(int sceneId) {
+void AIScriptHysteriaPatron2::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHysteriaPatron2::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHysteriaPatron2::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHysteriaPatron2::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHysteriaPatron2::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

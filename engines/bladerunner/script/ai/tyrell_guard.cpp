@@ -72,15 +72,15 @@ void AIScriptTyrellGuard::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTyrellGuard::EnteredScene(int sceneId) {
+void AIScriptTyrellGuard::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTyrellGuard::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTyrellGuard::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTyrellGuard::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTyrellGuard::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

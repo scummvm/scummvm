@@ -63,15 +63,15 @@ void AIScriptChew::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptChew::EnteredScene(int sceneId) {
+void AIScriptChew::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptChew::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptChew::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptChew::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptChew::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

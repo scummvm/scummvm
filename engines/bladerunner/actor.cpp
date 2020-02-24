@@ -853,17 +853,17 @@ void Actor::setSetId(int setId) {
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); ++i) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				_vm->_aiScripts->otherAgentExitedThisScene(i, _id);
+				_vm->_aiScripts->otherAgentExitedThisSet(i, _id);
 			}
 		}
 	}
 	// _setId updated to new (arrived in) setId
 	_setId = setId;
-	_vm->_aiScripts->enteredScene(_id, _setId);
+	_vm->_aiScripts->enteredSet(_id, _setId);
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); ++i) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				_vm->_aiScripts->otherAgentEnteredThisScene(i, _id);
+				_vm->_aiScripts->otherAgentEnteredThisSet(i, _id);
 			}
 		}
 	}

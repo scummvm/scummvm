@@ -141,15 +141,15 @@ void AIScriptHasan::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHasan::EnteredScene(int sceneId) {
+void AIScriptHasan::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHasan::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHasan::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHasan::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHasan::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

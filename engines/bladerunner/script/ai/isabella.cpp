@@ -63,15 +63,15 @@ void AIScriptIsabella::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptIsabella::EnteredScene(int sceneId) {
+void AIScriptIsabella::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptIsabella::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptIsabella::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptIsabella::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptIsabella::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

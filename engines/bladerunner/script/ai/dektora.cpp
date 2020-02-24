@@ -241,11 +241,11 @@ void AIScriptDektora::ClickedByPlayer() {
 	return; //false;
 }
 
-void AIScriptDektora::EnteredScene(int sceneId) {
+void AIScriptDektora::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptDektora::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptDektora::OtherAgentEnteredThisSet(int otherActorId) {
 	if (otherActorId == kActorMcCoy
 	 && Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08GoToNR10
 	) {
@@ -256,7 +256,7 @@ void AIScriptDektora::OtherAgentEnteredThisScene(int otherActorId) {
 	// return false;
 }
 
-void AIScriptDektora::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptDektora::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

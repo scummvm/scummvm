@@ -64,15 +64,15 @@ void AIScriptTyrell::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTyrell::EnteredScene(int sceneId) {
+void AIScriptTyrell::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTyrell::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTyrell::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTyrell::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTyrell::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

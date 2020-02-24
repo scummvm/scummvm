@@ -79,15 +79,15 @@ void AIScriptMurray::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMurray::EnteredScene(int sceneId) {
+void AIScriptMurray::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMurray::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMurray::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMurray::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMurray::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

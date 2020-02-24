@@ -231,15 +231,15 @@ void AIScriptIzo::ClickedByPlayer() {
 	return; //false;
 }
 
-void AIScriptIzo::EnteredScene(int sceneId) {
+void AIScriptIzo::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptIzo::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptIzo::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptIzo::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptIzo::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

@@ -54,15 +54,15 @@ void AIScriptLockupGuard::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptLockupGuard::EnteredScene(int sceneId) {
+void AIScriptLockupGuard::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptLockupGuard::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptLockupGuard::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptLockupGuard::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptLockupGuard::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

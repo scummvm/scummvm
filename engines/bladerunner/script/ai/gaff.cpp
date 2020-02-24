@@ -151,15 +151,15 @@ void AIScriptGaff::ClickedByPlayer() {
 	// return false;
 }
 
-void AIScriptGaff::EnteredScene(int sceneId) {
+void AIScriptGaff::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGaff::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGaff::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGaff::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGaff::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

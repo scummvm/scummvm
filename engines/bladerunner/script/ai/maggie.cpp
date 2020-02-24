@@ -213,13 +213,13 @@ void AIScriptMaggie::ClickedByPlayer() {
 	return; // true
 }
 
-void AIScriptMaggie::EnteredScene(int sceneId) {
+void AIScriptMaggie::EnteredSet(int setId) {
 }
 
-void AIScriptMaggie::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMaggie::OtherAgentEnteredThisSet(int otherActorId) {
 }
 
-void AIScriptMaggie::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMaggie::OtherAgentExitedThisSet(int otherActorId) {
 	if (otherActorId == kActorMcCoy
 	 && Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04
 	 && Global_Variable_Query(kVariableChapter) < 4

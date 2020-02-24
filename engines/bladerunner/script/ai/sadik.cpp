@@ -143,15 +143,15 @@ void AIScriptSadik::ClickedByPlayer() {
 	}
 }
 
-void AIScriptSadik::EnteredScene(int sceneId) {
+void AIScriptSadik::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptSadik::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptSadik::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptSadik::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptSadik::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

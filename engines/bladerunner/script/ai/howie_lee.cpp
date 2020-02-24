@@ -193,7 +193,7 @@ void AIScriptHowieLee::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHowieLee::EnteredScene(int sceneId) {
+void AIScriptHowieLee::EnteredSet(int setId) {
 	if (Actor_Query_Goal_Number(kActorHowieLee) == kGoalHowieLeeGoesToCT04GarbageBin
 	 && Actor_Query_In_Set(kActorHowieLee, kSetCT03_CT04)
 	) {
@@ -225,7 +225,7 @@ void AIScriptHowieLee::EnteredScene(int sceneId) {
 	}
 }
 
-void AIScriptHowieLee::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHowieLee::OtherAgentEnteredThisSet(int otherActorId) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	// prevent player from actually meeting hovering Howie half-body in kSetCT03_CT04
@@ -240,7 +240,7 @@ void AIScriptHowieLee::OtherAgentEnteredThisScene(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHowieLee::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHowieLee::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

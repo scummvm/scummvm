@@ -108,15 +108,15 @@ void AIScriptPhotographer::ClickedByPlayer() {
 	}
 }
 
-void AIScriptPhotographer::EnteredScene(int sceneId) {
+void AIScriptPhotographer::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptPhotographer::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptPhotographer::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptPhotographer::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptPhotographer::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

@@ -227,15 +227,15 @@ void AIScriptGordo::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptGordo::EnteredScene(int sceneId) {
+void AIScriptGordo::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGordo::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGordo::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGordo::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGordo::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

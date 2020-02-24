@@ -61,15 +61,15 @@ void AIScriptRajif::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptRajif::EnteredScene(int sceneId) {
+void AIScriptRajif::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptRajif::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptRajif::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptRajif::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptRajif::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

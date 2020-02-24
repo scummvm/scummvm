@@ -95,15 +95,15 @@ void AIScriptBryant::ClickedByPlayer() {
 	Actor_Voice_Over(40, kActorVoiceOver);
 }
 
-void AIScriptBryant::EnteredScene(int sceneId) {
+void AIScriptBryant::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptBryant::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptBryant::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptBryant::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptBryant::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

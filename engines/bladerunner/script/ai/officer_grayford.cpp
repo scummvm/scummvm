@@ -406,15 +406,15 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 	return; //true;
 }
 
-void AIScriptOfficerGrayford::EnteredScene(int sceneId) {
+void AIScriptOfficerGrayford::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptOfficerGrayford::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptOfficerGrayford::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptOfficerGrayford::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptOfficerGrayford::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

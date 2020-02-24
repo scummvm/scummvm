@@ -100,15 +100,15 @@ void AIScriptMoraji::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMoraji::EnteredScene(int sceneId) {
+void AIScriptMoraji::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMoraji::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMoraji::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMoraji::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMoraji::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

@@ -256,15 +256,15 @@ void AIScriptKlein::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptKlein::EnteredScene(int sceneId) {
+void AIScriptKlein::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptKlein::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptKlein::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptKlein::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptKlein::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

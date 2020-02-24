@@ -97,11 +97,11 @@ void AIScriptRunciter::ReceivedClue(int clueId, int fromActorId) {}
 
 void AIScriptRunciter::ClickedByPlayer() {}
 
-void AIScriptRunciter::EnteredScene(int sceneId) {}
+void AIScriptRunciter::EnteredSet(int setId) {}
 
-void AIScriptRunciter::OtherAgentEnteredThisScene(int otherActorId) {}
+void AIScriptRunciter::OtherAgentEnteredThisSet(int otherActorId) {}
 
-void AIScriptRunciter::OtherAgentExitedThisScene(int otherActorId) {}
+void AIScriptRunciter::OtherAgentExitedThisSet(int otherActorId) {}
 
 void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	if ( Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterRC02Wait

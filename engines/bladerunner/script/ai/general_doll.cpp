@@ -130,15 +130,15 @@ void AIScriptGeneralDoll::ClickedByPlayer() {
 	Actor_Voice_Over(40, kActorVoiceOver);
 }
 
-void AIScriptGeneralDoll::EnteredScene(int sceneId) {
+void AIScriptGeneralDoll::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGeneralDoll::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGeneralDoll::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGeneralDoll::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGeneralDoll::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

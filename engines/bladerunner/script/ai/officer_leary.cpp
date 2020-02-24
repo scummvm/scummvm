@@ -265,11 +265,11 @@ void AIScriptOfficerLeary::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptOfficerLeary::ClickedByPlayer() {}
 
-void AIScriptOfficerLeary::EnteredScene(int sceneId) {}
+void AIScriptOfficerLeary::EnteredSet(int setId) {}
 
-void AIScriptOfficerLeary::OtherAgentEnteredThisScene(int otherActorId) {}
+void AIScriptOfficerLeary::OtherAgentEnteredThisSet(int otherActorId) {}
 
-void AIScriptOfficerLeary::OtherAgentExitedThisScene(int otherActorId) {}
+void AIScriptOfficerLeary::OtherAgentExitedThisSet(int otherActorId) {}
 
 void AIScriptOfficerLeary::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {}
 

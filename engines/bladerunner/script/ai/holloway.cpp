@@ -74,15 +74,15 @@ void AIScriptHolloway::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHolloway::EnteredScene(int sceneId) {
+void AIScriptHolloway::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHolloway::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHolloway::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHolloway::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHolloway::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

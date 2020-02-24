@@ -54,15 +54,15 @@ void AIScriptMarcus::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMarcus::EnteredScene(int sceneId) {
+void AIScriptMarcus::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMarcus::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMarcus::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMarcus::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMarcus::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

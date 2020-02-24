@@ -196,15 +196,15 @@ void AIScriptGuzza::ClickedByPlayer() {
 	// return false;
 }
 
-void AIScriptGuzza::EnteredScene(int sceneId) {
+void AIScriptGuzza::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGuzza::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGuzza::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGuzza::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGuzza::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

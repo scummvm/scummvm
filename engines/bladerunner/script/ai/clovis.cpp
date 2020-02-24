@@ -136,15 +136,15 @@ void AIScriptClovis::ClickedByPlayer() {
 	}
 }
 
-void AIScriptClovis::EnteredScene(int sceneId) {
+void AIScriptClovis::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptClovis::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptClovis::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptClovis::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptClovis::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

@@ -400,7 +400,7 @@ void AIScriptSteele::ClickedByPlayer() {
 	return; //false;
 }
 
-void AIScriptSteele::EnteredScene(int sceneId) {
+void AIScriptSteele::EnteredSet(int setId) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleGoToRC01) {
@@ -472,11 +472,11 @@ void AIScriptSteele::EnteredScene(int sceneId) {
 	return; //false;
 }
 
-void AIScriptSteele::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptSteele::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptSteele::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptSteele::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

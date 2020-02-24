@@ -125,15 +125,15 @@ void AIScriptGenericWalkerC::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptGenericWalkerC::EnteredScene(int sceneId) {
+void AIScriptGenericWalkerC::EnteredSet(int setId) {
 	//return false;
 }
 
-void AIScriptGenericWalkerC::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGenericWalkerC::OtherAgentEnteredThisSet(int otherActorId) {
 	//return false;
 }
 
-void AIScriptGenericWalkerC::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGenericWalkerC::OtherAgentExitedThisSet(int otherActorId) {
 	if (Actor_Query_Goal_Number(kActorGenwalkerC) > kGoalGenwalkerDefault && otherActorId == kActorMcCoy) {
 		Actor_Set_Goal_Number(kActorGenwalkerC, kGoalGenwalkerDefault);
 	}

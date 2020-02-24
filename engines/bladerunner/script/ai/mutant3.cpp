@@ -115,15 +115,15 @@ void AIScriptMutant3::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMutant3::EnteredScene(int sceneId) {
+void AIScriptMutant3::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMutant3::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMutant3::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMutant3::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMutant3::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

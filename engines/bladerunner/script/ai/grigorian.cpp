@@ -63,15 +63,15 @@ void AIScriptGrigorian::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptGrigorian::EnteredScene(int sceneId) {
+void AIScriptGrigorian::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGrigorian::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGrigorian::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGrigorian::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGrigorian::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

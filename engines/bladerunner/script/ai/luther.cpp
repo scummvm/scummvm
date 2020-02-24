@@ -140,15 +140,15 @@ void AIScriptLuther::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptLuther::EnteredScene(int sceneId) {
+void AIScriptLuther::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptLuther::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptLuther::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptLuther::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptLuther::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

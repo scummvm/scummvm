@@ -185,15 +185,15 @@ void AIScriptEarlyQ::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptEarlyQ::EnteredScene(int sceneId) {
+void AIScriptEarlyQ::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptEarlyQ::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptEarlyQ::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptEarlyQ::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptEarlyQ::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

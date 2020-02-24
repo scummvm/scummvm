@@ -79,15 +79,15 @@ void AIScriptSebastian::ClickedByPlayer() {
 	return; //false;
 }
 
-void AIScriptSebastian::EnteredScene(int sceneId) {
+void AIScriptSebastian::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptSebastian::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptSebastian::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptSebastian::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptSebastian::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

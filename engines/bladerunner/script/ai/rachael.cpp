@@ -98,15 +98,15 @@ void AIScriptRachael::ClickedByPlayer() {
 	}
 }
 
-void AIScriptRachael::EnteredScene(int sceneId) {
+void AIScriptRachael::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptRachael::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptRachael::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptRachael::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptRachael::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
