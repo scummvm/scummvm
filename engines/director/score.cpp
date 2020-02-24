@@ -318,6 +318,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		Common::SeekableReadStream *pic = NULL;
 
 		if (_loadedCast->contains(imgId)) {
+			bitmapCast->_tag = tag = ((BitmapCast *)_loadedCast->getVal(imgId))->_tag;
 			pic = _movieArchive->getResource(tag, imgId + _castIDoffset);
 		} else if (sharedScore) {
 			if (sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
@@ -606,6 +607,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
+		uint32 tag;
 		if (size == 0)
 			continue;
 
@@ -617,8 +619,14 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		switch (castType) {
 		case kCastBitmap:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) BitmapCast", id, numToCastNum(id));
-			// TODO: Work out the proper tag!
-			_loadedCast->setVal(id, new BitmapCast(stream, MKTAG('B', 'I', 'T', 'D'), _vm->getVersion()));
+			if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), id + _castIDoffset))
+				tag = MKTAG('B', 'I', 'T', 'D');
+			else if (_movieArchive->hasResource(MKTAG('D', 'I', 'B', ' '), id + _castIDoffset))
+				tag = MKTAG('D', 'I', 'B', ' ');
+			else
+				error("Score::loadCastDataVWCR(): non-existent reference to BitmapCast");
+
+			_loadedCast->setVal(id, new BitmapCast(stream, tag, _vm->getVersion()));
 			break;
 		case kCastText:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) TextCast", id, numToCastNum(id));
