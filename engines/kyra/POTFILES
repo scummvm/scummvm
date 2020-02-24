@@ -2,4 +2,4 @@ engines/kyra/detection.cpp
 engines/kyra/engine/eobcommon.cpp
 engines/kyra/engine/lol.cpp
 engines/kyra/gui/saveload_eob.cpp
-engines/kyra/graphics/screen_eob.cpp
+engines/kyra/graphics/screen_eob_amiga.cpp

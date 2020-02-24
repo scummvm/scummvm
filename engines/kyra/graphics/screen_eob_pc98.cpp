@@ -24,6 +24,7 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/resource/resource.h"
+#include "graphics/sjis.h"
 
 namespace Kyra {
 
@@ -161,6 +162,126 @@ void Screen_EoB::updatePC98PaletteCycle(int brightness) {
 		pal[i] = CLIP<int>(_cyclePalette[i] + brightness, 0, 15);
 	loadPalette(pal, *_palettes[0], 48);
 	setScreenPalette(*_palettes[0]);
+}
+
+SJISFontEoB1PC98::SJISFontEoB1PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const uint16 *convTable1, const uint16 *convTable2) : SJISFont(font, 0, false, false, 0),
+/*_shadowColor(shadowColor),*/ _convTable1(convTable1), _convTable2(convTable2), _defaultConv(true) {
+	assert(_convTable1);
+	assert(_convTable2);
+}
+
+int SJISFontEoB1PC98::getCharWidth(uint16 c) const {
+	return SJISFont::getCharWidth(convert(c));
+}
+
+void SJISFontEoB1PC98::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	c = convert(c);
+	_font->setDrawingMode(_style == kFSLeftShadow ? Graphics::FontSJIS::kShadowLeftMode : Graphics::FontSJIS::kDefaultMode);
+	_font->toggleFatPrint(false);
+	_font->drawChar(dst, c, 640, 1, _colorMap[1], _colorMap[0], 640, 400);
+}
+
+uint16 SJISFontEoB1PC98::convert(uint16 c) const {
+	uint8 l = c & 0xFF;
+	uint8 h = c >> 8;
+
+	if (c < 128) {
+		assert(l > 31);
+		c = _convTable2[l - 32];
+	} else if (l > 160 && l < 225) {
+		bool done = false;
+		if (_defaultConv) {
+			if (h == 0xDE) {
+				if ((l >= 182 && l <= 196) || (l >= 202 && l <= 206)) {
+					c = _convTable1[l - 182];
+					done = true;
+				}
+			} else if (h == 0xDF) {
+				if (l >= 202 && l <= 206) {
+					c = _convTable1[l - 177];
+					done = true;
+				}
+			}
+		}
+		if (!done)
+			c = _convTable2[l - 64];
+	}
+
+	return c;
+}
+
+Font12x12PC98::Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable) : OldDOSFont(Common::kRenderDefault, 12),
+_convTable1(convTable1), _convTable2(convTable2) {
+	assert(convTable1);
+	assert(convTable2);
+	assert(lookupTable);
+
+	_width = _height = 12;
+	_numGlyphs = 275;
+	_bmpOffs = new uint16[_numGlyphs];
+	for (int i = 0; i < _numGlyphs; ++i)
+		_bmpOffs[i] = lookupTable[i] * 24;
+}
+
+Font12x12PC98::~Font12x12PC98() {
+	delete[] _bmpOffs;
+}
+
+bool Font12x12PC98::load(Common::SeekableReadStream &file) {
+	unload();
+
+	_width = _height = 12;
+	_numGlyphs = 275;
+	_bitmapOffsets = _bmpOffs;
+
+	_data = new uint8[file.size()];
+	assert(_data);
+
+	file.read(_data, file.size());
+	if (file.err())
+		return false;
+
+	return true;
+}
+
+uint16 Font12x12PC98::convert(uint16 c) const {
+	uint8 l = c & 0xFF;
+	uint8 h = c >> 8;
+
+	if (c < 128) {
+		c = _convTable2[l - 32];
+	} else if (l > 160 && l < 225) {
+		bool done = false;
+		if (1) {
+			if (h == 0xDE) {
+				if ((l >= 182 && l <= 196) || (l >= 202 && l <= 206)) {
+					c = _convTable1[l - 182];
+					done = true;
+				}
+			} else if (h == 0xDF) {
+				if (l >= 202 && l <= 206) {
+					c = _convTable1[l - 177];
+					done = true;
+				}
+			}
+		}
+		if (!done)
+			c = _convTable2[l - 64];
+	}
+
+	c = SWAP_BYTES_16(c);
+	if (c < 0x813F)
+		c = 1;
+	else if (c < 0x824F)
+		c -= 0x813F;
+	else if (c < 0x833F)
+		c -= 0x81EE;
+	else if (c > 0x839F)
+		c = 1;
+	else
+		c -= 0x828D;
+
+	return c;
 }
 
 } // End of namespace Kyra
