@@ -319,7 +319,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 		if (_loadedCast->contains(imgId)) {
 			pic = sharedScore->getArchive()->getResource(tag, imgId);
-		} else if (sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
+		} else if (sharedScore && sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
 			bitmapCast->_tag = tag = ((BitmapCast *)sharedScore->_loadedCast->getVal(imgId))->_tag;
 			pic = sharedScore->getArchive()->getResource(tag, imgId);
 		}
