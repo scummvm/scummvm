@@ -155,6 +155,15 @@ void PaletteManager::untransformPalette(PalIndex index) {
 	transformPalette(index, matrix);
 }
 
+bool PaletteManager::getTransformMatrix(int16 matrix[12], PalIndex index) {
+	Palette *pal = getPalette(index);
+
+	if (!pal) return false;
+
+	for (int i = 0; i < 12; i++) matrix[i] = pal->_matrix[i];
+	return true;
+}
+
 void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 	switch (trans) {
 	// Normal untransformed palette

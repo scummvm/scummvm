@@ -62,6 +62,9 @@ public:
 	//! reset the transformation matrix of a palette
 	void untransformPalette(PalIndex index);
 
+	//! Get the current TransformMatrix for the given index
+	bool getTransformMatrix(int16 matrix[12], PalIndex index);
+
 	// Get a TransformMatrix from a PalTransforms value (-4.11 fixed)
 	static void getTransformMatrix(int16 matrix[12],
 	                               PalTransforms trans);

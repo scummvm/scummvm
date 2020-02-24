@@ -29,6 +29,7 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
@@ -62,6 +63,9 @@ void AvatarDeathProcess::run() {
 		terminate();
 		return;
 	}
+
+	PaletteManager *palman = PaletteManager::get_instance();
+	palman->untransformPalette(PaletteManager::Pal_Game);
 
 	ReadableGump *gump = new ReadableGump(1, 27, 11,
 	                                      _TL_("HERE LIES*THE AVATAR*REST IN PEACE"));
