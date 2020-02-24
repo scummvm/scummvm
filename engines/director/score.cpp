@@ -296,6 +296,8 @@ void Score::copyCastStxts() {
 void Score::loadSpriteImages(bool isSharedCast) {
 	debugC(1, kDebugLoading, "****** Preloading sprite images");
 
+	Score *sharedScore = _vm->getSharedScore();
+
 	for (Common::HashMap<int, Cast *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
 		if (!c->_value)
 			continue;
@@ -315,20 +317,27 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		Image::ImageDecoder *img = NULL;
 		Common::SeekableReadStream *pic = NULL;
 
+		if (_loadedCast->contains(imgId)) {
+			pic = sharedScore->getArchive()->getResource(tag, imgId);
+		} else if (sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
+			bitmapCast->_tag = tag = ((BitmapCast *)sharedScore->_loadedCast->getVal(imgId))->_tag;
+			pic = sharedScore->getArchive()->getResource(tag, imgId);
+		}
+
+		if (pic == NULL) {
+			warning("Score::loadSpriteImages(): Image %d not found", imgId);
+			continue;
+		}
+
 		switch (tag) {
 		case MKTAG('D', 'I', 'B', ' '):
-			if (_movieArchive->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
-				debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d", imgId);
-				img = new DIBDecoder();
-				img->loadStream(*_movieArchive->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
-				bitmapCast->_surface = img->getSurface();
-			}
+			debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d", imgId);
+			img = new DIBDecoder();
+			img->loadStream(*pic);
+			bitmapCast->_surface = img->getSurface();
 			break;
 		case MKTAG('B', 'I', 'T', 'D'):
-			if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
-				debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d", imgId);
-				pic = _movieArchive->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
-			}
+			debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d", imgId);
 			break;
 		default:
 			warning("Score::loadSpriteImages(): Unknown Bitmap Cast Tag: [%d] %s", tag, tag2str(tag));
@@ -339,7 +348,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
 			imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
 
-		if (pic != NULL && bitmapCast != NULL && w > 0 && h > 0) {
+		if (bitmapCast != NULL && w > 0 && h > 0) {
 			if (_vm->getVersion() < 6) {
 				img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch);
 			} else {

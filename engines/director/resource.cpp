@@ -405,7 +405,6 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		}
 	}
 
-	_sharedScore->loadSpriteImages(true);
 	_lingo->_archiveIndex = 0;
 }
 
