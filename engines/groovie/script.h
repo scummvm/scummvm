@@ -146,7 +146,7 @@ private:
 
 	void loadgame(uint slot);
 	void savegame(uint slot);
-	bool playvideofromref(uint32 fileref);
+	bool playvideofromref(uint32 fileref, bool loopUntilAudioDone = false);
 	void printString(Graphics::Surface *surface, const char *str);
 
 	// Opcodes
