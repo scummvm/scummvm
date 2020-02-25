@@ -166,7 +166,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive) {
 		if (!f.open(convPath))
 			continue;
 
-		warning("pathMakeRelative(): Path converted %s -> %s", path.c_str(), convPath.c_str());
+		debug(2, "pathMakeRelative(): Path converted %s -> %s", path.c_str(), convPath.c_str());
 
 		opened = true;
 
@@ -199,6 +199,8 @@ Common::String pathMakeRelative(Common::String path, bool recursive) {
 			}
 
 			convPath += convertMacFilename(component.c_str()) + ".MMM";
+
+			debug(2, "pathMakeRelative(): Trying %s -> %s", path.c_str(), convPath.c_str());
 
 			return pathMakeRelative(convPath, false);
 		}
