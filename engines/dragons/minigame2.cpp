@@ -82,7 +82,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	short local_260;
 	short local_258;
 	short local_256;
-	int16_t screenShakeTbl [10];
+	int16 screenShakeTbl [10];
 	uint16 screenShakeCounter;
 	uint8 paletteData [0x200];
 	uint16 local_28;

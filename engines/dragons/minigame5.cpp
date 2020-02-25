@@ -71,8 +71,8 @@ void Minigame5::run() {
 	uint16 local_4c;
 	uint16 local_4a;
 	uint16 local_48;
-	int16_t local_46;
-	int16_t local_44;
+	int16 local_46;
+	int16 local_44;
 	short local_42;
 	uint16 local_30 [4];
 	//uint16 uStack42;

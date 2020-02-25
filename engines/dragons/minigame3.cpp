@@ -371,13 +371,13 @@ void Minigame3::run() {
 						bunnyInfo[local_20].x = bunnyInfo[local_20].x + UnkStruct_ARRAY_800931a0[local_50].field_0x14 * -0x200;
 						bunnyInfo[local_20].y = bunnyInfo[local_20].y - bunnyInfo[local_20].field_0xc;
 						bunnyInfo[local_20].field_0xc = bunnyInfo[local_20].field_0xc + bunnyInfo[local_20].field_0x10;
-						bunnyActorTbl[local_1c]->_x_pos = (int16_t)((int)bunnyInfo[local_20].x >> 9);
-						bunnyActorTbl[local_1c]->_y_pos = (int16_t)((int)bunnyInfo[local_20].y >> 9);
+						bunnyActorTbl[local_1c]->_x_pos = (int16)((int)bunnyInfo[local_20].x >> 9);
+						bunnyActorTbl[local_1c]->_y_pos = (int16)((int)bunnyInfo[local_20].y >> 9);
 						bunnyInfo[local_1e].x = bunnyInfo[local_1e].x + UnkStruct_ARRAY_800931a0[local_50].field_0x14 * 0x200;
 						bunnyInfo[local_1e].y = bunnyInfo[local_1e].y - bunnyInfo[local_1e].field_0xc;
 						bunnyInfo[local_1e].field_0xc = bunnyInfo[local_1e].field_0xc + bunnyInfo[local_1e].field_0x10;
-						bunnyActorTbl[local_1a]->_x_pos = (int16_t)((int)bunnyInfo[local_1e].x >> 9);
-						bunnyActorTbl[local_1a]->_y_pos = (int16_t)((int)bunnyInfo[local_1e].y >> 9);
+						bunnyActorTbl[local_1a]->_x_pos = (int16)((int)bunnyInfo[local_1e].x >> 9);
+						bunnyActorTbl[local_1a]->_y_pos = (int16)((int)bunnyInfo[local_1e].y >> 9);
 						if ((local_228 < 4) && unkXPosTbl[local_50 * 4 + local_228] < bunnyActorTbl[local_1a]->_x_pos) {
 							local_228 = local_228 + 1;
 							bunnyActorTbl[local_1a]->updateSequence((uint)local_228 + 6 & 0xffff);

@@ -223,21 +223,21 @@ uint16 Minigame4::runDanceBattle() {
 const static uint16 xDancePosTbl[6] = { 0xAC, 0xB5, 0xBC, 0xB3, 0xB4, 0xAF };
 const static uint16 yDancePosTbl[6] = { 0x1C, 0x23, 0x1A, 0x14, 0x12, 0xF };
 
-const static uint16 uint16_t_ARRAY_80090400[6] = { 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F };
-const static uint16 uint16_t_ARRAY_800903e8[6] = { 1, 2, 3, 4, 5, 6 };
+const static uint16 uint16_ARRAY_80090400[6] = { 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F };
+const static uint16 uint16_ARRAY_800903e8[6] = { 1, 2, 3, 4, 5, 6 };
 
 uint16 Minigame4::singleDanceRound(uint16 currentDancePosition, uint16 duration) {
 	_dat_80090438->_x_pos = xDancePosTbl[(uint)currentDancePosition];
 	_dat_80090438->_y_pos = yDancePosTbl[(uint)currentDancePosition];
 	_dat_80090438->updateSequence(10);
-	_ps1ControllerActor->updateSequence(uint16_t_ARRAY_80090400[(uint)currentDancePosition]);
-	_bruteActor->updateSequence(uint16_t_ARRAY_800903e8[(uint)currentDancePosition]);
-	while ((_flickerActor->_sequenceID != uint16_t_ARRAY_800903e8[(uint)currentDancePosition] &&
+	_ps1ControllerActor->updateSequence(uint16_ARRAY_80090400[(uint)currentDancePosition]);
+	_bruteActor->updateSequence(uint16_ARRAY_800903e8[(uint)currentDancePosition]);
+	while ((_flickerActor->_sequenceID != uint16_ARRAY_800903e8[(uint)currentDancePosition] &&
 			(duration = duration + -1, duration != 0))) {
 		_vm->waitForFrames(1);
 		updateFlickerFromInput();
 	}
-	if (_flickerActor->_sequenceID == uint16_t_ARRAY_800903e8[(uint)currentDancePosition]) {
+	if (_flickerActor->_sequenceID == uint16_ARRAY_800903e8[(uint)currentDancePosition]) {
 		while (duration = duration + -1, duration != 0) {
 			_vm->waitForFrames(1);
 		}
