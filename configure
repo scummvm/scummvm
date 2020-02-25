@@ -133,7 +133,7 @@ done
 #
 # Default settings
 #
-#ResidualVM defaults: faad=no, opengles=no, tremor=no mt32emu=no, translation=no,
+#ResidualVM defaults: faad=no, opengles=no, mt32emu=no, translation=no,
 # flac=no, seq_midi=no, snd_io=no, timidity=no fluidsynth=no, opengles2=no
 # eventrec=no, build_scalers=no, build_hq_scalers=no, sdlnet=no, libcurl=no, cloud=no
 # theoradec=no
@@ -143,7 +143,7 @@ _ogg=auto
 _vorbis=auto
 _sdlnet=no
 _libcurl=no
-_tremor=no
+_tremor=auto
 _tremolo=no
 _flac=no
 _mad=auto
