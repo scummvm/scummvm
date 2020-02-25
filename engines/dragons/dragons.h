@@ -204,7 +204,7 @@ public:
 	void updateEvents();
 	Common::Error run() override;
 
-	const char *getSavegameFilename(int num);
+	Common::String getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 

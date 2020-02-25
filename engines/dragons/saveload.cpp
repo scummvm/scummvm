@@ -141,23 +141,19 @@ bool DragonsEngine::loadgame(const char *filename) {
 }
 
 Common::Error DragonsEngine::loadGameState(int slot) {
-	const char *fileName = getSavegameFilename(slot);
-	if (!loadgame(fileName))
+	if (!loadgame(getSavegameFilename(slot).c_str()))
 		return Common::kReadingFailed;
 	return Common::kNoError;
 }
 
 Common::Error DragonsEngine::saveGameState(int slot, const Common::String &description, bool isAutoSave) {
-	const char *fileName = getSavegameFilename(slot);
-	if (!savegame(fileName, description.c_str()))
+	if (!savegame(getSavegameFilename(slot).c_str(), description.c_str()))
 		return Common::kWritingFailed;
 	return Common::kNoError;
 }
 
-const char *DragonsEngine::getSavegameFilename(int num) {
-	static Common::String filename;
-	filename = getSavegameFilename(_targetName, num);
-	return filename.c_str();
+Common::String DragonsEngine::getSavegameFilename(int num) {
+	return getSavegameFilename(_targetName, num);
 }
 
 Common::String DragonsEngine::getSavegameFilename(const Common::String &target, int num) {
