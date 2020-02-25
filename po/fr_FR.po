@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-25 05:14+0000\n"
+"PO-Revision-Date: 2020-02-26 03:14+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6129,8 +6129,7 @@ msgstr "Les données %s du moteur n'ont pas pu être trouvées"
 #, fuzzy, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
-"Données du moteur périmées. Version attendue : %d.%d ; version trouvée : "
-"%d.%d."
+"Données du moteur périmées. Version attendue: %d.%d ; version trouvée: %d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
