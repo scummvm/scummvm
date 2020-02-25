@@ -204,7 +204,7 @@ bool DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRAGONS)
-REGISTER_PLUGIN_DYNAMIC(ILLUSIONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
 #else
 REGISTER_PLUGIN_STATIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
 #endif
