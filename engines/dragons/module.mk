@@ -34,9 +34,6 @@ MODULE_OBJS := \
 	talk.o \
 	vabsound.o
 
-MODULE_DIRS += \
-	engines/dragons
-
 # This module can be built as a plugin
 ifeq ($(ENABLE_DRAGONS), DYNAMIC_PLUGIN)
 PLUGIN := 1
