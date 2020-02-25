@@ -58,7 +58,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// GOG Ultima 6
+	// GOG Ultima VI
 	{
 		{
 			"ultima6",
@@ -73,7 +73,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// GOG Ultima 6 - Enhanced
+	// GOG Ultima VI - Enhanced
 	{
 		{
 			"ultima6_enh",
@@ -88,7 +88,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
-	// GOG Ultima 8
+	// GOG Ultima VIII
 	{
 		{
 			"ultima8",
