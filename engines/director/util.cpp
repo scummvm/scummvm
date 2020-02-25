@@ -184,23 +184,8 @@ Common::String pathMakeRelative(Common::String path) {
 //////////////////
 ////// Mac --> Windows filename conversion
 //////////////////
-static byte myToUpper(byte c) {
-	if (c >= 'a' && c <= 'z')
-		c -= ('a' - 'A');
-	return c;
-}
-
 static bool myIsVowel(byte c) {
-	switch (myToUpper(c)) {
-	case 'A':
-	case 'E':
-	case 'I':
-	case 'O':
-	case 'U':
-		return true;
-	default:
-		return false;
-	}
+	return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 }
 
 static bool myIsAlpha(byte c) {
