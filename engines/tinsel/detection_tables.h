@@ -437,6 +437,26 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// Discworld PSX CD Japanese
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.scn", 0, "3cbe25971651631fdc33fece642c9c78", 328048},
+				AD_LISTEND
+			},
+			Common::JA_JPN,
+			Common::kPlatformPSX,
+			ADGF_CD | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_DW1,
+		0,
+		GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
+
 	{	// multilanguage PSX demo
 		{
 			"dw",
