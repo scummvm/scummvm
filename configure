@@ -2980,6 +2980,7 @@ case $_host_os in
 		append_var LDFLAGS "-Wl,--gc-sections"
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
 		_pandoc=yes
+		_sdlconfig=sdl-config
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
