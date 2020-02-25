@@ -55,7 +55,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	TextWidget();
-	TextWidget(int x, int y, Std::string txt, bool gamefont, int fontnum,
+	TextWidget(int x, int y, const Std::string &txt, bool gamefont, int fontnum,
 	           int width = 0, int height = 0,
 	           Font::TextAlign align = Font::TEXT_LEFT);
 	~TextWidget() override;
