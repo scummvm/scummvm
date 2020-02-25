@@ -3859,7 +3859,7 @@ msgstr ""
 
 #: dialog0082.txt:2
 msgid "HERO: Użyj tego czaru zamiany i wprowadź mnie|do zamku."
-msgstr "HERO: Use this morph spell and take me|to the castle"
+msgstr "HERO: Use this morph spell and take me|to the castle."
 
 #: dialog0082.txt:3
 msgid "HERO: Nie wiem, w co się zamienię, ale po|prostu wejdź ze mną do zamku."
@@ -12091,7 +12091,7 @@ msgstr "exit - "
 
 #: variatxt.txt:10
 msgid "Nie mogę tego użyć."
-msgstr "That doesn't make any sense!"
+msgstr "I cannot use it."
 
 #: variatxt.txt:11
 msgid "Nie mogę tego zrobić."
