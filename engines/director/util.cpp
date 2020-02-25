@@ -214,13 +214,14 @@ Common::String convertMacFilename(const char *name) {
 	while (myIsSpace(*ptr))
 		ptr--;
 
-	/* Count suffix digits (up to whole filename less a character). */
 	int numDigits = 0;
 	char digits[10];
 
+	// Count trailing digits, but leave front letter
 	while (myIsDigit(*ptr) && (numDigits < (8 - 1)))
 		digits[++numDigits] = *ptr--;
 
+	// Count file name without vowels, spaces and digits in-between
 	ptr = name;
 	int cnt = 0;
 	while (cnt < (8 - numDigits) && ptr < &name[origlen]) {
@@ -235,8 +236,11 @@ Common::String convertMacFilename(const char *name) {
 		cnt++;
 	}
 
+	// Make sure all trailing digits fit
 	int numVowels = 8 - (numDigits + cnt);
 	ptr = name;
+
+	// Put enough characters from beginning
 	for (cnt = 0; cnt < (8 - numDigits) && ptr < &name[origlen];) {
 		char c = toupper(*ptr++);
 
@@ -255,7 +259,7 @@ Common::String convertMacFilename(const char *name) {
 		cnt++;
 	}
 
-
+	// Now attach all digits
 	while (numDigits)
 		res += digits[numDigits--];
 
