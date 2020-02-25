@@ -213,7 +213,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			}
 		}
 
-		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s", movie.u.s->c_str(), convertPath(*movie.u.s).c_str(),
+		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s'", movie.u.s->c_str(), convertPath(*movie.u.s).c_str(),
 				movieFilename.c_str(), cleanedFilename.c_str());
 
 		if (!fileExists) {

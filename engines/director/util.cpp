@@ -149,7 +149,7 @@ Common::String getPath(Common::String path, Common::String cwd) {
 	return cwd; // The path is not altered
 }
 
-Common::String pathMakeRelative(Common::String path) {
+Common::String pathMakeRelative(Common::String path, bool recursive) {
 	Common::String initialPath = Common::normalizePath(g_director->getCurrentPath() + convertPath(path), '/');
 	Common::File f;
 	Common::String convPath = initialPath;
@@ -173,8 +173,39 @@ Common::String pathMakeRelative(Common::String path) {
 		break;
 	}
 
-	if (!opened)
+	if (!opened && recursive) {
+		// Hmmm. We couldn't find the path as is.
+		// Let's try to translate file path into 8.3 format
+		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 4) {
+			convPath.clear();
+			const char *ptr = initialPath.c_str();
+			Common::String component;
+
+			while (*ptr) {
+				if (*ptr == '/') {
+					if (component.equals(".")) {
+						convPath += component;
+					} else {
+						convPath += convertMacFilename(component.c_str());
+					}
+
+					component.clear();
+					convPath += '/';
+				} else {
+					component += *ptr;
+				}
+
+				ptr++;
+			}
+
+			convPath += convertMacFilename(component.c_str()) + ".MMM";
+
+			return pathMakeRelative(convPath, false);
+		}
+
+
 		return initialPath;	// Anyway nothing good is happening
+	}
 
 	f.close();
 
@@ -263,7 +294,7 @@ Common::String convertMacFilename(const char *name) {
 	while (numDigits)
 		res += digits[numDigits--];
 
-	return res + ".MMM";
+	return res;
 }
 
 } // End of namespace Director
