@@ -189,19 +189,19 @@ static bool myIsVowel(byte c) {
 }
 
 static bool myIsAlpha(byte c) {
-	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
 static bool myIsDigit(byte c) {
-	return (c >= '0' && c <= '9');
+	return c >= '0' && c <= '9';
 }
 
 static bool myIsAlnum(byte c) {
-	return (myIsAlpha(c) || myIsDigit(c));
+	return myIsAlpha(c) || myIsDigit(c);
 }
 
 static bool myIsSpace(byte c) {
-	return c ==' ';
+	return c == ' ';
 }
 
 Common::String convertMacFilename(const char *name) {
