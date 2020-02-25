@@ -767,7 +767,7 @@ size_t String::findFirstNotOf(const char *chars, size_t pos) const {
 size_t String::findLastNotOf(char c) const {
 	for (int idx = (int)_size - 1; idx >= 0; --idx) {
 		if ((*this)[idx] != c)
-			return c;
+			return idx;
 	}
 
 	return npos;
