@@ -48,7 +48,7 @@ public:
 	void read(IDataSource *ds);
 
 private:
-	Std::vector<GlobItem> contents;
+	Std::vector<GlobItem> _contents;
 };
 
 } // End of namespace Ultima8

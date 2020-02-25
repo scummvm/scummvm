@@ -52,13 +52,13 @@ void Process::terminate() {
 	Kernel *kernel = Kernel::get_instance();
 
 	// wake up waiting processes
-	for (Std::vector<ProcId>::iterator i = waiting.begin();
-	        i != waiting.end(); ++i) {
+	for (Std::vector<ProcId>::iterator i = _waiting.begin();
+	        i != _waiting.end(); ++i) {
 		Process *p = kernel->getProcess(*i);
 		if (p)
 			p->wakeUp(_result);
 	}
-	waiting.clear();
+	_waiting.clear();
 
 	_flags |= PROC_TERMINATED;
 }
@@ -78,7 +78,7 @@ void Process::waitFor(ProcId pid_) {
 		// add this process to waiting list of process pid_
 		Process *p = kernel->getProcess(pid_);
 		assert(p);
-		p->waiting.push_back(_pid);
+		p->_waiting.push_back(_pid);
 	}
 
 	_flags |= PROC_SUSPENDED;
@@ -106,10 +106,10 @@ void Process::dumpInfo() {
 	if (_flags & PROC_TERM_DEFERRED) info += "t";
 	if (_flags & PROC_FAILED) info += "F";
 	if (_flags & PROC_RUNPAUSED) info += "R";
-	if (!waiting.empty()) {
+	if (!_waiting.empty()) {
 		info += ", notify: ";
-		for (Std::vector<ProcId>::iterator i = waiting.begin(); i != waiting.end(); ++i) {
-			if (i != waiting.begin()) info += ", ";
+		for (Std::vector<ProcId>::iterator i = _waiting.begin(); i != _waiting.end(); ++i) {
+			if (i != _waiting.begin()) info += ", ";
 			info += *i;
 		}
 	}
@@ -136,9 +136,9 @@ void Process::saveData(ODataSource *ods) {
 	ods->write2(_itemNum);
 	ods->write2(_type);
 	ods->write4(_result);
-	ods->write4(static_cast<uint32>(waiting.size()));
-	for (unsigned int i = 0; i < waiting.size(); ++i)
-		ods->write2(waiting[i]);
+	ods->write4(static_cast<uint32>(_waiting.size()));
+	for (unsigned int i = 0; i < _waiting.size(); ++i)
+		ods->write2(_waiting[i]);
 }
 
 bool Process::loadData(IDataSource *ids, uint32 version) {
@@ -148,9 +148,9 @@ bool Process::loadData(IDataSource *ids, uint32 version) {
 	_type = ids->read2();
 	_result = ids->read4();
 	uint32 waitcount = ids->read4();
-	waiting.resize(waitcount);
+	_waiting.resize(waitcount);
 	for (unsigned int i = 0; i < waitcount; ++i)
-		waiting[i] = ids->read2();
+		_waiting[i] = ids->read2();
 
 	return true;
 }

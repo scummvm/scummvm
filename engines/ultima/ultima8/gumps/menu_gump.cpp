@@ -56,19 +56,19 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MenuGump, ModalGump)
 
 MenuGump::MenuGump(bool nameEntryMode_)
 	: ModalGump(0, 0, 5, 5, 0, FLAG_DONT_SAVE) {
-	nameEntryMode = nameEntryMode_;
+	_nameEntryMode = nameEntryMode_;
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
-	if (!nameEntryMode)
+	if (!_nameEntryMode)
 		mouse->setMouseCursor(Mouse::MOUSE_HAND);
 	else
 		mouse->setMouseCursor(Mouse::MOUSE_NONE);
 
 	// Save old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();
-	if (musicprocess) oldMusicTrack = musicprocess->getTrack();
-	else oldMusicTrack = 0;
+	if (musicprocess) _oldMusicTrack = musicprocess->getTrack();
+	else _oldMusicTrack = 0;
 }
 
 MenuGump::~MenuGump() {
@@ -77,7 +77,7 @@ MenuGump::~MenuGump() {
 void MenuGump::Close(bool no_del) {
 	// Restore old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();
-	if (musicprocess) musicprocess->playMusic(oldMusicTrack);
+	if (musicprocess) musicprocess->playMusic(_oldMusicTrack);
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->popMouseCursor();
@@ -108,7 +108,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 	logo->SetShape(logoShape, 0);
 	logo->InitGump(this, false);
 
-	if (!nameEntryMode) {
+	if (!_nameEntryMode) {
 		SettingManager *settingman = SettingManager::get_instance();
 		bool endgame, quotes;
 		settingman->get("endgame", endgame);
@@ -167,7 +167,7 @@ void MenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 bool MenuGump::OnKeyDown(int key, int mod) {
 	if (Gump::OnKeyDown(key, mod)) return true;
 
-	if (!nameEntryMode) {
+	if (!_nameEntryMode) {
 
 		if (key == Common::KEYCODE_ESCAPE) {
 			// FIXME: this check should probably be in Game or GUIApp

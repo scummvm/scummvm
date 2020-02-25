@@ -949,8 +949,8 @@ bool Debugger::cmdListProcesses(int argc, const char **argv) {
 		} else {
 			debugPrintf("Processes:\n");
 		}
-		for (ProcessIterator it = kern->processes.begin();
-			it != kern->processes.end(); ++it) {
+		for (ProcessIterator it = kern->_processes.begin();
+			it != kern->_processes.end(); ++it) {
 			Process *p = *it;
 			if (argc == 1 || p->_itemNum == item)
 				p->dumpInfo();

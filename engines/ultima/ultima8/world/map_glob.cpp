@@ -33,14 +33,14 @@ MapGlob::MapGlob() {
 
 
 MapGlob::~MapGlob() {
-	contents.clear();
+	_contents.clear();
 }
 
 void MapGlob::read(IDataSource *ds) {
 	unsigned int itemcount = ds->read2();
 	assert(ds->getSize() >= 2 + itemcount * 6);
-	contents.clear();
-	contents.resize(itemcount);
+	_contents.clear();
+	_contents.resize(itemcount);
 
 	for (unsigned int i = 0; i < itemcount; ++i) {
 		GlobItem item;
@@ -51,7 +51,7 @@ void MapGlob::read(IDataSource *ds) {
 		item.shape = ds->read2();
 		item.frame = ds->read1();
 
-		contents[i] = item;
+		_contents[i] = item;
 	}
 }
 

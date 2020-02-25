@@ -36,7 +36,7 @@ namespace Ultima8 {
 class MiniMapGump : public Gump {
 	Texture             _minimap;
 	unsigned int        _lastMapNum;
-	uint32              texbuffer[MAP_NUM_CHUNKS * MINMAPGUMP_SCALE][MAP_NUM_CHUNKS * MINMAPGUMP_SCALE];
+	uint32              _texBuffer[MAP_NUM_CHUNKS * MINMAPGUMP_SCALE][MAP_NUM_CHUNKS * MINMAPGUMP_SCALE];
 
 	uint32              sampleAtPoint(int x, int y, CurrentMap *map);
 

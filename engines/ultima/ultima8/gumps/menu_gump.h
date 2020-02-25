@@ -54,8 +54,8 @@ public:
 	static void inputName();
 
 protected:
-	bool nameEntryMode;
-	int oldMusicTrack;
+	bool _nameEntryMode;
+	int _oldMusicTrack;
 
 	virtual void selectEntry(int entry);
 };

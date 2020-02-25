@@ -33,7 +33,7 @@ class NamedArchiveFile : public ArchiveFile {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	NamedArchiveFile() : indexCount(0) { }
+	NamedArchiveFile() : _indexCount(0) { }
 	~NamedArchiveFile() override { }
 
 	bool exists(uint32 index) override {
@@ -59,7 +59,7 @@ public:
 	uint32 getCount() override = 0;
 
 	uint32 getIndexCount() override {
-		return indexCount;
+		return _indexCount;
 	}
 
 	bool isIndexed() const override {
@@ -72,8 +72,8 @@ public:
 protected:
 	bool indexToName(uint32 index, Std::string &name) {
 		Std::map<uint32, Std::string>::iterator iter;
-		iter = indexedNames.find(index);
-		if (iter == indexedNames.end()) return false;
+		iter = _indexedNames.find(index);
+		if (iter == _indexedNames.end()) return false;
 		name = iter->_value;
 		return true;
 	}
@@ -82,13 +82,13 @@ protected:
 		uint32 index;
 		bool hasIndex = extractIndexFromName(name, index);
 		if (hasIndex) {
-			indexedNames[index] = name;
-			if (index >= indexCount) indexCount = index + 1;
+			_indexedNames[index] = name;
+			if (index >= _indexCount) _indexCount = index + 1;
 		}
 	}
 
-	Std::map<uint32, Std::string> indexedNames;
-	uint32 indexCount;
+	Std::map<uint32, Std::string> _indexedNames;
+	uint32 _indexCount;
 };
 
 } // End of namespace Ultima8

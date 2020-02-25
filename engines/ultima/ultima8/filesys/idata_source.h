@@ -197,43 +197,43 @@ public:
 
 class IBufferDataSource : public IDataSource {
 protected:
-	const uint8 *buf;
-	const uint8 *buf_ptr;
-	bool free_buffer;
-	uint32 size;
+	const uint8 *_buf;
+	const uint8 *_bufPtr;
+	bool _freeBuffer;
+	uint32 _size;
 
 	void ConvertTextBuffer() {
 #ifdef WIN32
-		uint8 *new_buf = new uint8[size];
+		uint8 *new_buf = new uint8[_size];
 		uint8 *new_buf_ptr = new_buf;
 		uint32 new_size = 0;
 
 		// What we want to do is convert all 0x0D 0x0A to just 0x0D
 
 		// Do for all but last byte
-		while (size > 1) {
-			if (*(uint16 *)buf_ptr == 0x0A0D) {
-				buf_ptr++;
-				size--;
+		while (_size > 1) {
+			if (*(uint16 *)_bufPtr == 0x0A0D) {
+				_bufPtr++;
+				_size--;
 			}
 
-			*new_buf_ptr = *buf_ptr;
+			*new_buf_ptr = *_bufPtr;
 
 			new_buf_ptr++;
 			new_size++;
-			buf_ptr++;
-			size--;
+			_bufPtr++;
+			_size--;
 		}
 
 		// Do last byte
-		if (size) *new_buf_ptr = *buf_ptr;
+		if (_size) *new_buf_ptr = *_bufPtr;
 
 		// Delete old buffer if requested
-		if (free_buffer) delete[] const_cast<uint8 *>(buf);
+		if (_freeBuffer) delete[] const_cast<uint8 *>(_buf);
 
-		buf_ptr = buf = new_buf;
-		size = new_size;
-		free_buffer = true;
+		_bufPtr = _buf = new_buf;
+		_size = new_size;
+		_freeBuffer = true;
 #endif
 	}
 
@@ -241,107 +241,107 @@ public:
 	IBufferDataSource(const void *data, unsigned int len, bool is_text = false,
 	                  bool delete_data = false) {
 		assert(data != 0 || len == 0);
-		buf = buf_ptr = static_cast<const uint8 *>(data);
-		size = len;
-		free_buffer = delete_data;
+		_buf = _bufPtr = static_cast<const uint8 *>(data);
+		_size = len;
+		_freeBuffer = delete_data;
 
 		if (is_text) ConvertTextBuffer();
 	}
 
 	virtual void load(const void *data, unsigned int len, bool is_text = false,
 	                  bool delete_data = false) {
-		if (free_buffer && buf) delete [] const_cast<uint8 *>(buf);
-		free_buffer = false;
-		buf = buf_ptr = 0;
+		if (_freeBuffer && _buf) delete [] const_cast<uint8 *>(_buf);
+		_freeBuffer = false;
+		_buf = _bufPtr = 0;
 
 		assert(data != 0 || len == 0);
-		buf = buf_ptr = static_cast<const uint8 *>(data);
-		size = len;
-		free_buffer = delete_data;
+		_buf = _bufPtr = static_cast<const uint8 *>(data);
+		_size = len;
+		_freeBuffer = delete_data;
 
 		if (is_text) ConvertTextBuffer();
 	}
 
 	~IBufferDataSource() override {
-		if (free_buffer && buf) delete [] const_cast<uint8 *>(buf);
-		free_buffer = false;
-		buf = buf_ptr = 0;
+		if (_freeBuffer && _buf) delete [] const_cast<uint8 *>(_buf);
+		_freeBuffer = false;
+		_buf = _bufPtr = 0;
 	}
 
 	uint8 read1() override {
 		uint8 b0;
-		b0 = *buf_ptr++;
+		b0 = *_bufPtr++;
 		return (b0);
 	}
 
 	uint16 read2() override {
 		uint8 b0, b1;
-		b0 = *buf_ptr++;
-		b1 = *buf_ptr++;
+		b0 = *_bufPtr++;
+		b1 = *_bufPtr++;
 		return (b0 | (b1 << 8));
 	}
 
 	uint16 read2high() override {
 		uint8 b0, b1;
-		b1 = *buf_ptr++;
-		b0 = *buf_ptr++;
+		b1 = *_bufPtr++;
+		b0 = *_bufPtr++;
 		return (b0 | (b1 << 8));
 	}
 
 	uint32 read3() override {
 		uint8 b0, b1, b2;
-		b0 = *buf_ptr++;
-		b1 = *buf_ptr++;
-		b2 = *buf_ptr++;
+		b0 = *_bufPtr++;
+		b1 = *_bufPtr++;
+		b2 = *_bufPtr++;
 		return (b0 | (b1 << 8) | (b2 << 16));
 	}
 
 	uint32 read4() override {
 		uint8 b0, b1, b2, b3;
-		b0 = *buf_ptr++;
-		b1 = *buf_ptr++;
-		b2 = *buf_ptr++;
-		b3 = *buf_ptr++;
+		b0 = *_bufPtr++;
+		b1 = *_bufPtr++;
+		b2 = *_bufPtr++;
+		b3 = *_bufPtr++;
 		return (b0 | (b1 << 8) | (b2 << 16) | (b3 << 24));
 	}
 
 	uint32 read4high() override {
 		uint8 b0, b1, b2, b3;
-		b3 = *buf_ptr++;
-		b2 = *buf_ptr++;
-		b1 = *buf_ptr++;
-		b0 = *buf_ptr++;
+		b3 = *_bufPtr++;
+		b2 = *_bufPtr++;
+		b1 = *_bufPtr++;
+		b0 = *_bufPtr++;
 		return (b0 | (b1 << 8) | (b2 << 16) | (b3 << 24));
 	}
 
 	int32 read(void *str, int32 num_bytes) override {
-		if (buf_ptr >= buf + size) return 0;
+		if (_bufPtr >= _buf + _size) return 0;
 		int32 count = num_bytes;
-		if (buf_ptr + num_bytes > buf + size)
-			count = static_cast<int32>(buf - buf_ptr + size);
-		Std::memcpy(str, buf_ptr, count);
-		buf_ptr += count;
+		if (_bufPtr + num_bytes > _buf + _size)
+			count = static_cast<int32>(_buf - _bufPtr + _size);
+		Std::memcpy(str, _bufPtr, count);
+		_bufPtr += count;
 		return count;
 	}
 
 	void seek(uint32 pos) override {
-		buf_ptr = buf + pos;
+		_bufPtr = _buf + pos;
 	}
 
 	void skip(int32 delta) override {
-		buf_ptr += delta;
+		_bufPtr += delta;
 	}
 
 	uint32 getSize() const override {
-		return size;
+		return _size;
 	}
 
 	uint32 getPos() const override {
-		return static_cast<uint32>(buf_ptr - buf);
+		return static_cast<uint32>(_bufPtr - _buf);
 	}
 
 	bool eof() const override {
-		return (static_cast<uint32>(buf_ptr - buf)) >= size;
+		return (static_cast<uint32>(_bufPtr - _buf)) >= _size;
 	}
 };
 

@@ -39,7 +39,7 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuickAvatarMoverProcess, Process)
 
-ProcId QuickAvatarMoverProcess::amp[6] = { 0, 0, 0, 0, 0, 0 };
+ProcId QuickAvatarMoverProcess::_amp[6] = { 0, 0, 0, 0, 0, 0 };
 bool QuickAvatarMoverProcess::_clipping = false;
 bool QuickAvatarMoverProcess::_quarter = false;
 
@@ -50,7 +50,7 @@ QuickAvatarMoverProcess::QuickAvatarMoverProcess(int x, int y, int z, int dir) :
 		_dx(x), _dy(y), _dz(z), _dir(dir) {
 	QuickAvatarMoverProcess::terminateMover(dir);
 	assert(_dir < 6);
-	amp[_dir] = getPid();
+	_amp[_dir] = getPid();
 }
 
 QuickAvatarMoverProcess::~QuickAvatarMoverProcess() {
@@ -133,7 +133,7 @@ void QuickAvatarMoverProcess::run() {
 
 void QuickAvatarMoverProcess::terminate() {
 	Process::terminate();
-	amp[_dir] = 0;
+	_amp[_dir] = 0;
 }
 
 void QuickAvatarMoverProcess::terminateMover(int dir) {
@@ -142,7 +142,7 @@ void QuickAvatarMoverProcess::terminateMover(int dir) {
 	Kernel *kernel = Kernel::get_instance();
 
 	QuickAvatarMoverProcess *p =
-	    p_dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(amp[dir]));
+	    p_dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(_amp[dir]));
 
 	if (p && !p->is_terminated())
 		p->terminate();
@@ -171,7 +171,7 @@ bool QuickAvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {
 	// small safety precaution
 	_dir = ids->read4();
 	if (_dir < 6)
-		amp[_dir] = 0;
+		_amp[_dir] = 0;
 	else
 		return false;
 
