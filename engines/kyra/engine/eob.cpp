@@ -23,9 +23,10 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/eob.h"
-#include "kyra/sequence/seqplayer_eob_segacd.h"
+#include "kyra/graphics/screen_eob_segacd.h"
 #include "kyra/resource/resource.h"
 #include "kyra/resource/resource_segacd.h"
+#include "kyra/sequence/seqplayer_eob_segacd.h"
 #include "kyra/sound/sound.h"
 #include "kyra/text/text_eob_segacd.h"
 
@@ -89,6 +90,8 @@ Common::Error EoBEngine::init() {
 	if (_flags.platform == Common::kPlatformPC98) {
 		_screen->modifyScreenDim(28, 0x0A, 0xA4, 0x15, 0x18);
 		_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0x9A);
+	//} else if (_flags.platform == Common::kPlatformSegaCD) {
+		//_screen->modifyScreenDim(28, 0x01, 0x17, 0x23, 0x18);
 	} else {
 		_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0xA0);
 	}
@@ -117,6 +120,32 @@ Common::Error EoBEngine::init() {
 		_txt = new TextDisplayer_SegaCD(this, _screen);
 		assert(_txt);
 	}
+
+	//////////////////////////////77
+	////////////////////////////////
+	////////////////////////////////
+	_sres->loadContainer("ITEM");
+	uint32 tsize;
+	uint8 *in = _sres->resData(0, &tsize);
+	_screen->sega_getRenderer()->loadToVRAM(in, 128, 0xFF80);
+	delete[] in;
+	int hw = 5;
+	_screen->sega_getAnimator()->initSprite(0, 0, 0, 0xE7FC, 5);
+	_screen->sega_getAnimator()->update();
+	_screen->sega_getRenderer()->render(2, true);
+	_screen->sega_getAnimator()->clearSprites();
+	_screen->sega_getAnimator()->update();
+	int cp = _screen->setCurPage(2);
+	_itemIconShapes = new const uint8*[_numItemIconShapes];
+	memset(_itemIconShapes, 0, _numItemIconShapes * sizeof(uint8*));
+	_itemIconShapes[0] = _screen->encodeShape(0, 0, ((hw & 3) + 1), ((hw >> 2) + 1) << 3);
+	_screen->setCurPage(cp);
+	/////////////////////7
+	//////////////////////
+	////////////////
+
+
+
 
 	return Common::kNoError;
 }

@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) : TextDisplayer_rpg(engine, scr), _renderer(scr->sega_getRenderer()), _curDim(0) {
+TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) : TextDisplayer_rpg(engine, scr), _screen(scr), _renderer(scr->sega_getRenderer()), _curDim(0) {
 	assert(_renderer);
 }
 
@@ -37,22 +37,42 @@ TextDisplayer_SegaCD::~TextDisplayer_SegaCD() {
 
 }
 
+void TextDisplayer_SegaCD::printMessageAtPos(const char *str, int x, int y, int textColor, int shadowColor) {
+	const ScreenDim *s = &_dimTable[_curDim];
+	if (x == -1)
+		x = s->sx;
+	if (y == -1)
+		y = s->sy;
+	if (textColor == -1)
+		textColor = s->unk8;
+	if (shadowColor == -1)
+		shadowColor = 0;
+
+	_screen->setTextMarginRight(s->w);
+	_screen->printShadedText(str, x, y, textColor, 0, shadowColor, s->w >> 3);
+
+	if (s->unkE) {
+		for (int i = 0; i < s->h >> 3; ++i)
+			_screen->sega_loadTextBufferToVRAM(i * (s->w >> 3), (s->unkC & 0x7FF) << 5, (s->w * s->h) >> 1);
+	} else {
+		_screen->sega_loadTextBufferToVRAM(0, (s->unkC & 0x7FF) << 5, (s->w * s->h) >> 1);
+	}	
+}
+
 int TextDisplayer_SegaCD::clearDim(int dim) {
 	int res = _curDim;
 	_curDim = dim;
 	const ScreenDim *s = &_dimTable[dim];
-	uint32 size = (s->w * s->h) >> 1;
-	uint8 *buf = new uint8[size];
-	memset(buf, s->unkA, size);
-	_renderer->loadToVRAM(buf, size, (s->unkC & 0x7FF) << 5);
-	delete[] buf;
+	_renderer->memsetVRAM((s->unkC & 0x7FF) << 5, s->unkA, (s->w * s->h) >> 1);
+	_screen->sega_clearTextBuffer(s->unkA);
 	return res;
 }
 
-const ScreenDim TextDisplayer_SegaCD::_dimTable[3] = {
+const ScreenDim TextDisplayer_SegaCD::_dimTable[4] = {
 	{ 0x0001, 0x0017, 0x0118, 0x0018, 0xff, 0x44, 0x2597, 0x0000 },
 	{ 0x0012, 0x0009, 0x00a0, 0x0080, 0xff, 0x00, 0x0153, 0x0028 },
-	{ 0x0001, 0x0014, 0x0130, 0x0030, 0xff, 0xee, 0xe51c, 0x0000 }
+	{ 0x0001, 0x0014, 0x0130, 0x0030, 0xff, 0xee, 0xe51c, 0x0000 },
+	{ 0x0001, 0x0017, 0x0118, 0x0018, 0xff, 0x00, 0x0461, 0x0000 }
 };
 
 } // End of namespace Kyra

@@ -43,9 +43,11 @@ public:
 	CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen);
 	~CharacterGenerator();
 
-	bool start(EoBCharacter *characters, uint8 ***faceShapes);
+	bool start(EoBCharacter *characters, uint8 ***faceShapes, bool defaultParty);
 
 private:
+	bool createCustomParty(uint8 ***faceShapes);
+	void createDefaultParty();
 	void init();
 	void initButtonsFromList(int first, int numButtons);
 	void initButton(int index, int x, int y, int w, int h, int keyCode);
@@ -99,6 +101,9 @@ private:
 	const uint8 *_chargenRaceMinStats;
 	const uint16 *_chargenRaceMaxStats;
 
+	const char *const *_chargenDefaultNames;
+	const uint8 *_chargenDefaultStats;
+
 	const EoBChargenButtonDef *_chargenButtonDefs;
 
 	static const EoBChargenButtonDef _chargenButtonDefsDOS[];
@@ -135,6 +140,7 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 	memset(_chargenSelectedPortraits2, 0, sizeof(_chargenSelectedPortraits2));
 	memset(_chargenMinStats, 0, sizeof(_chargenMinStats));
 	memset(_chargenMaxStats, 0, sizeof(_chargenMaxStats));
+	memset(_chargenButtonLabels, 0, sizeof(_chargenButtonLabels));
 
 	int temp;
 	_chargenStrings1 = _vm->staticres()->loadStrings(kEoBBaseChargenStrings1, temp);
@@ -144,6 +150,8 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 	_chargenClassMinStats = _vm->staticres()->loadRawData(kEoBBaseChargenClassMinStats, temp);
 	_chargenRaceMinStats = _vm->staticres()->loadRawData(kEoBBaseChargenRaceMinStats, temp);
 	_chargenRaceMaxStats = _vm->staticres()->loadRawDataBe16(kEoBBaseChargenRaceMaxStats, temp);
+	_chargenDefaultNames = _vm->staticres()->loadStrings(kEoB1DefaultPartyNames, temp);
+	_chargenDefaultStats = _vm->staticres()->loadRawData(kEoB1DefaultPartyStats, temp);
 
 	EoBChargenButtonDef *chargenButtonDefs = new EoBChargenButtonDef[41];
 	memcpy(chargenButtonDefs, _chargenButtonDefsDOS, 41 * sizeof(EoBChargenButtonDef));
@@ -176,7 +184,7 @@ CharacterGenerator::~CharacterGenerator() {
 	_screen->clearPage(2);
 }
 
-bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
+bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes, bool defaultParty) {
 	if (!characters || !faceShapes) {
 		warning("CharacterGenerator::start: Called without character data");
 		return true;
@@ -188,6 +196,24 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 	_vm->snd_stopSound();
 	_vm->delay(_vm->_tickLength);
 
+	if (defaultParty)
+		createDefaultParty();
+	else if (!createCustomParty(faceShapes))
+		return false;
+
+	if (!_vm->shouldQuit()) {
+		processSpecialButton(15);
+		finish();
+	}
+
+	if (_vm->game() == GI_EOB2)
+		_vm->snd_fadeOut();
+
+	*faceShapes = _faceShapes;
+	return true;
+}
+
+bool CharacterGenerator::createCustomParty(uint8 ***faceShapes) {
 	init();
 
 	_screen->setScreenDim(2);
@@ -253,16 +279,12 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 		}
 	}
 
-	if (!_vm->shouldQuit()) {
-		processSpecialButton(15);
-		finish();
-	}
-
-	if (_vm->game() == GI_EOB2)
-		_vm->snd_fadeOut();
-
-	*faceShapes = _faceShapes;
 	return true;
+}
+
+void CharacterGenerator::createDefaultParty() {
+	assert(_chargenDefaultNames);
+	assert(_chargenDefaultStats);
 }
 
 void CharacterGenerator::init() {
@@ -1990,9 +2012,9 @@ void TransferPartyWiz::giveKhelbensCoin() {
 
 // Start functions
 
-bool EoBCoreEngine::startCharacterGeneration() {
+bool EoBCoreEngine::startCharacterGeneration(bool defaultParty) {
 	_sound->selectAudioResourceSet(_flags.platform == Common::kPlatformAmiga ? kMusicIntro : kMusicIngame);
-	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes);
+	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes, defaultParty);
 }
 
 bool EoBCoreEngine::startPartyTransfer() {

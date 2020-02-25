@@ -176,7 +176,7 @@ int SJISFontEoB1PC98::getCharWidth(uint16 c) const {
 
 void SJISFontEoB1PC98::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	c = convert(c);
-	_font->setDrawingMode(_style == kFSLeftShadow ? Graphics::FontSJIS::kShadowLeftMode : Graphics::FontSJIS::kDefaultMode);
+	_font->setDrawingMode(_style == kStyleLeftShadow ? Graphics::FontSJIS::kShadowLeftMode : Graphics::FontSJIS::kDefaultMode);
 	_font->toggleFatPrint(false);
 	_font->drawChar(dst, c, 640, 1, _colorMap[1], _colorMap[0], 640, 400);
 }

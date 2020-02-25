@@ -105,6 +105,13 @@ public:
 	virtual int getCharWidth(uint16 c) const = 0;
 
 	/**
+	 * Gets the height of a specific character. The only font that requires an
+	 * implemenation for this is the SegaCD one. For all other font this is a
+	 * fixed value.
+	 */
+	virtual int getCharHeight(uint16 c) const { return getHeight(); }
+
+	/**
 	 * Sets a text palette map. The map contains 16 entries.
 	 */
 	virtual void setColorMap(const uint8 *src) = 0;
@@ -115,15 +122,19 @@ public:
 	virtual void set16bitColorMap(const uint16 *src) {}
 	
 	enum FontStyle {
-		kFSNone = 0,
-		kFSLeftShadow,
-		kFSFat
+		kStyleNone			=	0,
+		kStyleLeftShadow	=	1	<<	0,
+		kStyleFat			=	1	<<	1,
+		kStyleNarrow		=	1	<<	2,
+		kStyleVariant		=	1	<<	3,
+		kStyleForceTwoByte	=	1	<<	4,
+		kStyleFixedWidth	=	1	<<	5
 	};
 
 	/**
 	* Sets a drawing style. Only rudimentary implementation based on what is needed.
 	*/
-	virtual void setStyle(FontStyle style) {}
+	virtual void setStyles(int styles) {}
 
 	/**
 	 * Draws a specific character.
@@ -134,6 +145,8 @@ public:
 	 * handling from outside Screen.
 	 */
 	virtual void drawChar(uint16 c, byte *dst, int pitch, int bpp) const = 0;
+
+	virtual void drawChar(uint16 c, byte *dst, int pitch, int xOffs, int yOffs) const {}
 };
 
 /**
@@ -220,7 +233,7 @@ public:
 	int getWidth() const override;
 	int getCharWidth(uint16 c) const override;
 	void setColorMap(const uint8 *src) override;
-	void setStyle(FontStyle style) override { _style = style; }
+	void setStyles(int style) override { _style = style; }
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 protected:
@@ -229,7 +242,7 @@ protected:
 	int _sjisWidth, _asciiWidth;
 	int _fontHeight;
 	const bool _drawOutline;
-	FontStyle _style;
+	int _style;
 
 private:
 	const uint8 _invisColor;
@@ -489,13 +502,15 @@ public:
 	int getFontWidth() const;
 
 	int getCharWidth(uint16 c) const;
-	int getTextWidth(const char *str);
+	int getCharHeight(uint16 c) const;
+	int getTextWidth(const char *str, bool nextWordOnly = false);
 
-	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
+	void printText(const char *str, int x, int y, uint8 color1, uint8 color2, int pitch = -1);
 
 	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
 	void setTextColor16bit(const uint16 *cmap16);
+	void setFontStyles(FontId fontId, int styles);
 
 	const ScreenDim *getScreenDim(int dim) const;
 	void modifyScreenDim(int dim, int x, int y, int w, int h);
@@ -548,8 +563,8 @@ public:
 	void blockInRegion(int x, int y, int width, int height);
 	void blockOutRegion(int x, int y, int width, int height);
 
-	int _charWidth;
-	int _charOffset;
+	int _charSpacing;
+	int _lineSpacing;
 	int _curPage;
 	uint8 *_shapePages[2];
 	int _maskMinY, _maskMaxY;
@@ -595,7 +610,7 @@ protected:
 
 	// font/text specific
 	uint16 fetchChar(const char *&s) const;
-	void drawChar(uint16 c, int x, int y);
+	void drawChar(uint16 c, int x, int y, int pitch = -1);
 
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 
@@ -639,8 +654,8 @@ protected:
 	uint8 _textColorsMap[16];
 	uint16 _textColorsMap16bit[2];
 
-	uint8 *_decodeShapeBuffer;
-	int _decodeShapeBufferSize;
+	uint8 *_textRenderBuffer;
+	int _textRenderBufferSize;
 
 	uint8 *_animBlockPtr;
 	int _animBlockSize;

@@ -153,7 +153,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 	int sjisOffs = (sjisTextMode || _vm->game() != GI_LOL) ? 8 : 9;
 	Screen::FontId of = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? _screen->setFont(Screen::FID_8_FNT) : _screen->_currentFont;
 
-	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charWidth);
+	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charSpacing);
 
 	while (c) {
 		char a = tolower((unsigned char)_ctrl[1]);
@@ -191,7 +191,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			}
 		}
 
-		uint16 dv = _textDimData[sdx].column / (_screen->getFontWidth() + _screen->_charWidth);
+		uint16 dv = _textDimData[sdx].column / (_screen->getFontWidth() + _screen->_charSpacing);
 
 		switch (c - 1) {
 		case 0:
@@ -218,11 +218,11 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 
 		case 8:
 			printLine(_currentLine);
-			dv = _textDimData[sdx].column / (_screen->getFontWidth() + _screen->_charWidth);
+			dv = _textDimData[sdx].column / (_screen->getFontWidth() + _screen->_charSpacing);
 			dv = ((dv + 8) & 0xFFF8) - 1;
 			if (dv >= charsPerLine)
 				dv = 0;
-			_textDimData[sdx].column = (_screen->getFontWidth() + _screen->_charWidth) * dv;
+			_textDimData[sdx].column = (_screen->getFontWidth() + _screen->_charSpacing) * dv;
 			break;
 
 		case 12:
@@ -325,8 +325,8 @@ void TextDisplayer_rpg::printLine(char *str) {
 	bool sjisTextMode = _pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15) ? true : false;
 	int sjisOffs = (sjisTextMode || _vm->game() != GI_LOL) ? 8 : 9;
 
-	int fh = (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT) ? 9 : (_screen->getFontHeight() + _screen->_charOffset);
-	int lines = (sd->h - _screen->_charOffset) / fh;
+	int fh = (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT) ? 9 : (_screen->getFontHeight() + _screen->_lineSpacing);
+	int lines = (sd->h - _screen->_lineSpacing) / fh;
 
 	while (_textDimData[sdx].line >= lines) {
 		if ((lines - _waitButtonSpace) <= _lineCount && _allowPageBreak) {

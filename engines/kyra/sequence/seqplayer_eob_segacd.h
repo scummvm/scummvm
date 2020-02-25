@@ -47,8 +47,8 @@ private:
 	void setHScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB);
 	void updateScrollTimers();
 	void animateWaterdeepScene();
-	void update2();
-	void update3();
+	void updateSpeechAnimations();
+	void updateSpeechAnimGraphics(int animDrawOp);
 
 	struct TileSet {
 		const uint16 *data;
@@ -60,8 +60,8 @@ private:
 
 	struct ScrollTimer {
 		ScrollTimer() : _offsCur(0), _offsDest(0), _incr(0), _delay(0), _timer(0) {}
-		uint16 _offsCur;
-		uint16 _offsDest;
+		int16 _offsCur;
+		int16 _offsDest;
 		int16 _incr;
 		int16 _delay;
 		int16 _timer;
@@ -81,15 +81,21 @@ private:
 		uint16 addr;
 	};
 
-	bool _var1;
 	uint16 _waterdeepScene;
-	uint16 _update2;
-	uint16 _varUnkX1;
-	uint16 _varUnkX2[12];
+	uint16 _playSpeechAnimation;
+	uint16 _speechAnimType;
+	uint16 _speechAnimDrawOps[14];
 
 	bool _waitFlag;
-	int _waterdeepSceneTimer, _unkSEQ2;
-	uint8 *_tempBuffer;
+	int _waterdeepSceneTimer, _speechAnimTimer;
+	uint16 _speechAnimNo, _speechAnimFrame;
+	int _playingID;
+	int _newTrack;
+
+	uint8 *_scaleSrcBuffer;
+	uint8 *_scaleOutBuffer;
+	uint16 *_scaleStampMap;
+	uint16 *_scaleTraceVectors;
 
 	uint32 _debugResyncCnt;
 
@@ -100,9 +106,6 @@ private:
 	SegaRenderer *_renderer;
 	SegaAnimator *_animator;
 	SegaCDResource *_res;
-
-	const uint16 *_wdDsX;
-	const uint8 *_wdDsY;
 
 private:
 	class SQOpcode : public Common::Functor1Mem<const uint8*, void, SegaSequencePlayer> {
@@ -125,13 +128,13 @@ private:
 	void s_initDrawObject(const uint8 *pos);
 	void s_drawTileSet(const uint8 *pos);
 	void s_loadTileDataSingle(const uint8 *pos);
-	void s_3(const uint8 *pos);
-	void s_4(const uint8 *pos);
+	void s_drawTileSetCustom(const uint8 *pos);
+	void s_drawTileSetCustomTopToBottom(const uint8 *pos);
 	void s_fillRect(const uint8 *pos);
-	void s_6(const uint8 *pos);
-	void s_7(const uint8 *pos);
-	void s_8(const uint8 *pos);
-	void s_9_dispText(const uint8 *pos);
+	void s_void(const uint8*) {}
+	void s_initSprite(const uint8 *pos);
+	void s_removeSprite(const uint8 *pos);
+	void s_displayTextJp(const uint8 *pos);
 	void s_fadeToNeutral(const uint8 *pos);
 	void s_fadeToBlack(const uint8 *pos);
 	void s_fadeToNeutral2(const uint8 *pos);
@@ -140,31 +143,36 @@ private:
 	void s_vScroll(const uint8 *pos);
 	void s_hScroll(const uint8 *pos);
 	void s_paletteOps(const uint8 *pos);
-	void s_initSprite(const uint8 *pos);
+	void s_initSpriteCustomCoords(const uint8 *pos);
 	void s_fillRectWithPattern(const uint8 *pos);
-	void s_loadTileDataMult(const uint8 *pos);
-	void s_21(const uint8 *pos);
-	void s_22(const uint8 *pos);
-	void s_initSprite2(const uint8 *pos);
-	void s_drawTileSetCustom(const uint8 *pos);
+	void s_loadTileDataSeries(const uint8 *pos);
+	void s_drawTileSetSeries(const uint8 *pos);
+	void s_initSpriteSeries(const uint8 *pos);
+	void s_initSpriteCustom(const uint8 *pos);
+	void s_drawTileSetCustomCoords(const uint8 *pos);
 	void s_waitForPaletteFade(const uint8*);
 	void s_clearSprites(const uint8*);
-	void s_27(const uint8 *pos);
+	void s_moveSprites2(const uint8 *pos);
 	void s_moveSprites(const uint8 *pos);
 	void s_moveMorphSprite(const uint8 *pos);
 	void s_unpauseCD(const uint8 *pos);
-	void s_enableWaterDeepAnimations(const uint8 *pos);
-	void s_32(const uint8 *pos);
-	void s_setUpdate2(const uint8 *pos);
-	void s_orbEffect(const uint8*);
+	void s_toggleWaterDeepAnimations(const uint8 *pos);
+	void s_assignSpeechAnimGraphics(const uint8 *pos);
+	void s_toggleSpeechAnimation(const uint8 *pos);
+	void s_orbZoomOutEffect(const uint8*);
 	void s_stopCD(const uint8*);
 	void s_playCD(const uint8 *pos);
-	void s_displayText(const uint8 *pos);
+	void s_displayTextEn(const uint8 *pos);
 	void s_loadCustomPalettes(const uint8 *pos);
 	void s_playSoundEffect(const uint8 *pos);
 
 private:
-	static const uint8 _cdaTracks[60];
+	const uint8 *_cdaTracks;
+	const uint8 *_wdAnimSprites;
+	const uint8 *_speechAnimData;
+	const uint16 *_wdDsX;
+	const uint8 *_wdDsY;
+	const uint16 *_patternTables[6];
 };
 
 } // End of namespace Kyra

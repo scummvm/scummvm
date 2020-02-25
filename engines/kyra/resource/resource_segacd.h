@@ -42,15 +42,21 @@ public:
 	bool loadContainer(const Common::String &filename, uint32 offset = 0, uint32 size = 0);
 	void unloadContainer();
 
-	Common::SeekableReadStreamEndian *getEndianAwareResourceStream(int resID);
-	Common::SeekableReadStream *getResourceStream(int resID);
+	Common::SeekableReadStreamEndian *resStreamEndianAware(int resID);
+	Common::SeekableReadStream *resStream(int resID);
 
-	uint8 *fileData(int resID, uint32 *resLen);
-	uint8 **loadAllResources(uint32 *numRes);
+	uint8 *resData(int resID, uint32 *resLen);
 
 private:
 	Resource *_res;
-	uint32 *_offsetTable;
+
+	struct TableEntry {
+		TableEntry() : _offset(0), _len(0) {}
+		uint32 _offset;
+		uint32 _len;
+	};
+
+	TableEntry *_resTable;
 	int _numResources;
 	Common::SeekableReadStreamEndian *_str;
 };

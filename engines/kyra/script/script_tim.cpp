@@ -312,10 +312,10 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 
 		_screen->setFont(sjisMode ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_8_FNT);
 		_screen->setTextColorMap(colorMap);
-		_screen->_charWidth = -2;
+		_screen->_charSpacing = -2;
 	}
 
-	_screen->_charOffset = -4;
+	_screen->_lineSpacing = -4;
 	_screen->copyRegionToBuffer(0, 0, 160, 320, 40, _textAreaBuffer);
 	_textDisplayed = true;
 
@@ -354,14 +354,14 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 		}
 	}
 
-	_screen->_charOffset = 0;
+	_screen->_lineSpacing = 0;
 
 	if (flags < 0) {
 		static const uint8 colorMap[] = { 0x00, 0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0x00, 0x00, 0x00, 0x00 };
 
 		_screen->setFont(sjisMode ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_INTRO_FNT);
 		_screen->setTextColorMap(colorMap);
-		_screen->_charWidth = 0;
+		_screen->_charSpacing = 0;
 	}
 }
 
@@ -381,9 +381,9 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 
 	static const uint8 colorMap[] = { 0x00, 0xA0, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	_screen->setTextColorMap(colorMap);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 	if (!_vm->gameFlags().use16ColorMode)
-		_screen->_charOffset = -4;
+		_screen->_lineSpacing = -4;
 
 	if (!flags)
 		_screen->copyRegionToBuffer(0, 0, 0, 320, 40, _textAreaBuffer);

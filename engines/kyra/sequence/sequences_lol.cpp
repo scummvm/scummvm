@@ -1193,7 +1193,7 @@ void LoLEngine::showCredits() {
 	_screen->hideMouse();
 
 	static const uint8 colorMap[] = { 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x72, 0x6F, 0x6F, 0x6D };
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 
 	_screen->loadBitmap("ROOM.CPS", 2, 2, &_screen->getPalette(0));
 
@@ -1206,7 +1206,7 @@ void LoLEngine::showCredits() {
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 
-	_screen->_charOffset = 0;
+	_screen->_lineSpacing = 0;
 
 	char *credits = 0;
 

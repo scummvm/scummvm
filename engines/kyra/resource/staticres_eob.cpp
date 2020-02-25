@@ -1447,7 +1447,7 @@ const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[5] = {
 	{
 		Common::kPlatformSegaCD,
 		Common::UNK_LANG,
-		"EOBTITLE",
+		"",
 		&_renderModePalFiles[2],
 		1,
 		2,

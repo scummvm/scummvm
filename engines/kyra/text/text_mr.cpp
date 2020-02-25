@@ -45,7 +45,7 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 
 	p = _talkBuffer;
 	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 
 	const int maxTextWidth = (_vm->language() == 0) ? 176 : 240;
 	int textWidth = _screen->getTextWidth(p);
@@ -137,9 +137,9 @@ void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 
 	uint8 colorMap[] = { 0, 255, 240, 240 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	_screen->printText(str, x, y, c0, c2);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 }
 
 void TextDisplayer_MR::restoreScreen() {

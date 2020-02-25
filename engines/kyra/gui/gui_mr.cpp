@@ -309,11 +309,11 @@ void KyraEngine_MR::drawMalcolmsMoodText() {
 	const char *string = (const char *)getTableEntry(_cCodeFile, stringId[_malcolmsMood]);
 
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 
 	int width = _screen->getTextWidth(string);
 
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 	_screen->setFont(oldFont);
 
 	int pageBackUp = _screen->_curPage;
@@ -416,13 +416,13 @@ void KyraEngine_MR::drawScoreCounting(int oldScore, int newScore, int drawOld, c
 
 int KyraEngine_MR::getScoreX(const char *str) {
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 
 	int width = _screen->getTextWidth(str);
 	int x = 160 + (width / 2) - 32;
 
 	_screen->setFont(oldFont);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 	return x;
 }
 
@@ -773,11 +773,11 @@ void KyraEngine_MR::printAlbumText(int page, const char *str, int x, int y, uint
 	_screen->setTextColor(colorMap, 0, 3);
 
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_BOOKFONT_FNT);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 
 	_screen->printText(str, x, y, c0, 0);
 
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 	_screen->setFont(oldFont);
 	_screen->_curPage = oldPage;
 }

@@ -28,6 +28,7 @@
 #include "kyra/text/text_rpg.h"
 #include "kyra/engine/timer.h"
 #include "kyra/engine/util.h"
+#include "kyra/graphics/screen_eob_segacd.h"
 
 #include "backends/keymapper/keymapper.h"
 #include "common/system.h"
@@ -2010,11 +2011,17 @@ void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 	for (int i = 0; i < _menuNumItems; i++) {
 		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
 		int ty = y + i * (lineSpacing + _screen->getFontHeight());
-		_screen->printShadedText(strings[item], x, ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-		if (item == v)
-			_screen->printText(strings[item], x, ty, _vm->guiSettings()->colors.guiColorLightRed, 0);
+		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+			_vm->_txt->printMessageAtPos(strings[item], x, ty, item == v ? 0x55 : 0xff, 0x11);
+		} else {
+			_screen->printShadedText(strings[item], x, ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			if (item == v)
+				_screen->printText(strings[item], x, ty, _vm->guiSettings()->colors.guiColorLightRed, 0);
+		}
 	}
 
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+		_screen->sega_getRenderer()->render(0);
 	_screen->updateScreen();
 	_menuLineSpacing = lineSpacing;
 	_menuLastInFlags = 0;
@@ -2063,8 +2070,14 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 	}
 
 	if (newItem != currentItem) {
-		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0);
-		_screen->printText(strings[simpleMenu_getMenuItem(newItem,  menuItemsMask, itemOffset)], x, y + newItem * lineH , _vm->guiSettings()->colors.guiColorLightRed, 0);
+		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+			_vm->_txt->printMessageAtPos(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, 0xFF, 0x11);
+			_vm->_txt->printMessageAtPos(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, 0x55, 0x11);
+			_screen->sega_getRenderer()->render(0);
+		} else {
+			_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0);
+			_screen->printText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, _vm->guiSettings()->colors.guiColorLightRed, 0);
+		}
 		_screen->updateScreen();
 	}
 
@@ -2097,6 +2110,9 @@ int GUI_EoB::simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffs
 }
 
 void GUI_EoB::simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3) {
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+		return;
+
 	for (int i = 0; i < 3; i++) {
 		_screen->printText(str, x, y, color2, color3);
 		_screen->updateScreen();
@@ -3135,12 +3151,16 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 			drawSaveSlotButton(newHighlight, 0, _vm->guiSettings()->colors.guiColorLightRed);
 
 			// Display highlighted slot index in the bottom left corner to avoid people getting lost with the 990 save slots
-			Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
-			int sli = (newHighlight == 6) ? _savegameOffset : (_savegameOffset + newHighlight);
-			_screen->set16bitShadingLevel(4);
-			_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
-			_screen->set16bitShadingLevel(0);
-			_screen->setFont(of);
+			if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+
+			} else {
+				Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+				int sli = (newHighlight == 6) ? _savegameOffset : (_savegameOffset + newHighlight);
+				_screen->set16bitShadingLevel(4);
+				_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+				_screen->set16bitShadingLevel(0);
+				_screen->setFont(of);
+			}
 
 			_screen->updateScreen();
 			lastHighlight = newHighlight;

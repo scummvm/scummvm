@@ -32,7 +32,6 @@
 
 #include "common/config-manager.h"
 #include "common/translation.h"
-#include "common/debug-channels.h"
 
 #include "gui/error.h"
 
@@ -632,9 +631,6 @@ Common::Error EoBCoreEngine::init() {
 	memset(_monsterStoneOverlay, (_flags.platform == Common::kPlatformAmiga) ? guiSettings()->colors.guiColorWhite : 0x0D, 16 * sizeof(uint8));
 	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
-	gDebugLevel = 7;
-	DebugMan.enableDebugChannel(kDebugLevelSequence);
-
 	return Common::kNoError;
 }
 
@@ -668,16 +664,20 @@ void EoBCoreEngine::loadFonts() {
 		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
-		_screen->loadFont(Screen::FID_6_FNT, "FONT8SH");
+		//_screen->loadFont(Screen::FID_6_FNT, "FONT8SH");
+		_screen->setFontStyles(Screen::FID_8_FNT, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
 	}
 }
 
 Common::Error EoBCoreEngine::go() {
 	static_cast<Debugger_EoB *>(getDebugger())->initialize();
 	_txt->removePageBreakFlag();
-	//_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 	//loadItemsAndDecorationsShapes();
-	//_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
+
+
+	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
+	/*setHandItem(0);*/
 
 	// Import original save game files (especially the "Quick Start Party")
 	if (ConfMan.getBool("importOrigSaves")) {
@@ -707,9 +707,9 @@ Common::Error EoBCoreEngine::go() {
 			startupLoad();
 			repeatLoop = _gui->runLoadMenu(72, 14, true);
 				
-		} else if (action == -2) {
+		} else if (action == -2 || action == -4) {
 			// new game
-			repeatLoop = startCharacterGeneration();
+			repeatLoop = startCharacterGeneration(action == -4);
 			if (repeatLoop && !shouldQuit())
 				startupNew();
 		} else if (action == -3) {
@@ -720,7 +720,7 @@ Common::Error EoBCoreEngine::go() {
 		}
 	}
 
-	if (!shouldQuit() && action >= -3) {
+	if (!shouldQuit() && action >= -4) {
 		runLoop();
 
 		if (_playFinale) {

@@ -91,8 +91,8 @@ private:
 	void seq_xdeath() override;
 
 	void seq_segaOpeningCredits();
-	void seq_segaSetupSequence(int id);
-	bool seq_segaPlaySequence(int sequenceId, int setupID = -1);
+	void seq_segaSetupSequence(int sequenceId);
+	bool seq_segaPlaySequence(int sequenceId, bool init = false);
 
 
 	const char *const *_finBonusStrings;

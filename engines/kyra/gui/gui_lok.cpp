@@ -571,13 +571,13 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 			Common::strlcpy(_savegameNames[i], header.description.c_str(), ARRAYSIZE(_savegameNames[0]));
 
 			// Trim long GMM save descriptions to fit our save slots
-			_screen->_charWidth = -2;
+			_screen->_charSpacing = -2;
 			int fC = _screen->getTextWidth(_savegameNames[i]);
 			while (_savegameNames[i][0] && (fC > 240)) {
 				_savegameNames[i][strlen(_savegameNames[i]) - 1] = 0;
 				fC = _screen->getTextWidth(_savegameNames[i]);
 			}
-			_screen->_charWidth = 0;
+			_screen->_charSpacing = 0;
 
 			Util::convertISOToDOS(_savegameNames[i]);
 
@@ -683,10 +683,10 @@ void GUI_LoK::redrawTextfield() {
 	_screen->fillRect(38, 91, 287, 102, _vm->gameFlags().platform == Common::kPlatformAmiga ? 18 : 250);
 	_text->printText(_savegameName, 38, 92, 253, 0, 0);
 
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	int width = _screen->getTextWidth(_savegameName);
 	_screen->fillRect(39 + width, 93, 45 + width, 100, _vm->gameFlags().platform == Common::kPlatformAmiga ? 31 : 254);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 
 	_screen->updateScreen();
 }
@@ -696,9 +696,9 @@ void GUI_LoK::updateSavegameString() {
 
 	if (_keyPressed.keycode) {
 		length = strlen(_savegameName);
-		_screen->_charWidth = -2;
+		_screen->_charSpacing = -2;
 		int width = _screen->getTextWidth(_savegameName) + 7;
-		_screen->_charWidth = 0;
+		_screen->_charSpacing = 0;
 
 		char inputKey = _keyPressed.ascii;
 		Util::convertISOToDOS(inputKey);

@@ -76,10 +76,10 @@ void SoundSegaCD_EoB::playTrack(uint8 track) {
 	if (!_musicEnabled || !_ready)
 		return;
 
-	int loop = track >> 7;
+	int loop = track >> 6;
 	track &= 0x7F;
 
-	g_system->getAudioCDManager()->play(track - 1, loop, 0, 0);
+	g_system->getAudioCDManager()->play(track - 1, loop - 1, 0, 0);
 	g_system->getAudioCDManager()->update();
 }
 
@@ -103,9 +103,9 @@ void SoundSegaCD_EoB::updateVolumeSettings() {
 	if (/*!_driver ||*/ !_ready)
 		return;
 
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
+	//bool mute = false;
+	//if (ConfMan.hasKey("mute"))
+	//	mute = ConfMan.getBool("mute");
 
 	//_driver->setMusicVolume((mute ? 0 : ConfMan.getInt("music_volume")));
 	//_driver->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));

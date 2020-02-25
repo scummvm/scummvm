@@ -481,10 +481,10 @@ int MainMenu::handle(int dim) {
 	_screen->setTextColorMap(colorMap);
 
 	Screen::FontId oldFont = _screen->setFont(_static.font);
-	int charWidthBackUp = _screen->_charWidth;
+	int charWidthBackUp = _screen->_charSpacing;
 
 	if (_vm->game() != GI_LOL)
-		_screen->_charWidth = -2;
+		_screen->_charSpacing = -2;
 	_screen->setScreenDim(dim);
 
 	int backUpX = _screen->_curDim->sx;
@@ -551,7 +551,7 @@ int MainMenu::handle(int dim) {
 		command = -1;
 
 	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 3, 0);
-	_screen->_charWidth = charWidthBackUp;
+	_screen->_charSpacing = charWidthBackUp;
 	_screen->setFont(oldFont);
 
 	return command;

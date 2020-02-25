@@ -59,7 +59,8 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_sjisMixedFontMode = false;
 
 	_screenPalette = _internFadePalette = 0;
-	_animBlockPtr = _decodeShapeBuffer = 0;
+	_animBlockPtr = _textRenderBuffer = 0;
+	_textRenderBufferSize = 0;
 
 	_useHiColorScreen = _vm->gameFlags().useHiColorMode;
 	_use256ColorMode = true;
@@ -89,7 +90,7 @@ Screen::~Screen() {
 
 	delete _screenPalette;
 	delete _internFadePalette;
-	delete[] _decodeShapeBuffer;
+	delete[] _textRenderBuffer;
 	delete[] _animBlockPtr;
 	delete[] _16bitPalette;
 	delete[] _16bitConversionPalette;
@@ -242,13 +243,11 @@ bool Screen::init() {
 
 	_curDimIndex = -1;
 	_curDim = 0;
-	_charWidth = 0;
-	_charOffset = 0;
+	_charSpacing = 0;
+	_lineSpacing = 0;
 	for (int i = 0; i < ARRAYSIZE(_textColorsMap); ++i)
 		_textColorsMap[i] = i;
 	_textColorsMap16bit[0] = _textColorsMap16bit[1] = 0;
-	_decodeShapeBuffer = NULL;
-	_decodeShapeBufferSize = 0;
 	_animBlockPtr = NULL;
 	_animBlockSize = 0;
 	_mouseLockCount = 1;
@@ -1317,6 +1316,11 @@ void Screen::setTextColor16bit(const uint16 *cmap16) {
 	}
 }
 
+void Screen::setFontStyles(FontId fontId, int styles) {
+	assert(_fonts[fontId]);
+	_fonts[fontId]->setStyles(styles);
+}
+
 bool Screen::loadFont(FontId fontId, const char *filename) {
 	if (fontId == FID_SJIS_FNT) {
 		warning("Trying to replace system SJIS font");
@@ -1362,10 +1366,14 @@ int Screen::getFontWidth() const {
 
 int Screen::getCharWidth(uint16 c) const {
 	const int width = _fonts[_currentFont]->getCharWidth(c);
-	return width + ((_currentFont != FID_SJIS_FNT && _currentFont != FID_SJIS_LARGE_FNT && _currentFont != FID_SJIS_SMALL_FNT) ? _charWidth : 0);
+	return width + ((_currentFont != FID_SJIS_FNT && _currentFont != FID_SJIS_LARGE_FNT && _currentFont != FID_SJIS_SMALL_FNT) ? _charSpacing : 0);
 }
 
-int Screen::getTextWidth(const char *str) {
+int Screen::getCharHeight(uint16 c) const {
+	return _fonts[_currentFont]->getCharHeight(c);
+}
+
+int Screen::getTextWidth(const char *str, bool nextWordOnly) {
 	int curLineLen = 0;
 	int maxLineLen = 0;
 
@@ -1378,7 +1386,7 @@ int Screen::getTextWidth(const char *str) {
 
 		uint c = fetchChar(str);
 
-		if (c == 0) {
+		if (c == 0 || (nextWordOnly && (c == 32 || c == 0x4081))) {
 			break;
 		} else if (c == '\r') {
 			if (curLineLen > maxLineLen)
@@ -1393,13 +1401,13 @@ int Screen::getTextWidth(const char *str) {
 	return MAX(curLineLen, maxLineLen);
 }
 
-void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2) {
+void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2, int pitch) {
 	uint16 cmap16[2];
 	if (_16bitPalette) {
 		cmap16[0] = color2 ? shade16bitColor(_16bitPalette[color2]) : 0xFFFF;
 		cmap16[1] = _16bitPalette[color1];
 		setTextColor16bit(cmap16);
-	}	
+	}
 
 	uint8 cmap8[2];
 	cmap8[0] = color2;
@@ -1420,29 +1428,39 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	else if (y >= _screenHeight)
 		return;
 
+	int charHeight = 0;
+	bool enableWordWrap = _isSegaCD && _vm->gameFlags().lang != Common::JA_JPN;
+
 	while (1) {
 		if (_sjisMixedFontMode && curType == Font::kASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
-		uint8 charHeightFnt = getFontHeight();
-
 		uint c = fetchChar(str);
+		charHeight = MAX<int>(charHeight, getCharHeight(c));
 
 		if (c == 0) {
 			break;
 		} else if (c == '\r') {
 			x = x_start;
-			y += (charHeightFnt + _charOffset);
+			y += (charHeight + _lineSpacing);
 		} else {
 			int charWidth = getCharWidth(c);
-			if (x + charWidth > _textMarginRight) {
+			int needSpace = enableWordWrap ? getTextWidth(str, true) + charWidth : charWidth;
+			if (x + needSpace > _textMarginRight) {
 				x = x_start;
-				y += (charHeightFnt + _charOffset);
+				y += (charHeight + _lineSpacing);
+				if (enableWordWrap) {
+					// skip space at beginning of the line
+					c = fetchChar(str);
+					if (c == 0)
+						return;
+					charWidth = getCharWidth(c);
+				}
 				if (y >= _screenHeight)
 					break;
 			}
 
-			drawChar(c, x, y);
+			drawChar(c, x, y, pitch);
 			x += charWidth;
 		}
 	}
@@ -1461,7 +1479,7 @@ uint16 Screen::fetchChar(const char *&s) const {
 	return ch;
 }
 
-void Screen::drawChar(uint16 c, int x, int y) {
+void Screen::drawChar(uint16 c, int x, int y, int pitch) {
 	Font *fnt = _fonts[_currentFont];
 	assert(fnt);
 
@@ -1474,7 +1492,9 @@ void Screen::drawChar(uint16 c, int x, int y) {
 	if (x + charWidth > SCREEN_W || y + charHeight > _screenHeight)
 		return;
 
-	if (useOverlay) {
+	if (_isSegaCD) {
+		fnt->drawChar(c, _textRenderBuffer + (((y >> 3) * pitch + (x >> 3)) << 5) + ((y & 7) << 2) + ((x & 7) >> 1), pitch, x & 7, y & 7);
+	} else if (useOverlay) {
 		uint8 *destPage = getOverlayPtr(_curPage);
 		if (!destPage) {
 			warning("trying to draw SJIS char on unsupported page %d", _curPage);
@@ -1489,7 +1509,7 @@ void Screen::drawChar(uint16 c, int x, int y) {
 		fnt->drawChar(c, getPagePtr(_curPage) + y * SCREEN_W * _bytesPerPixel + x * _bytesPerPixel, SCREEN_W, _bytesPerPixel);
 	}
 
-	if (_curPage == 0 || _curPage == 1)
+	if (!_isSegaCD && (_curPage == 0 || _curPage == 1))
 		addDirtyRect(x, y, charWidth, charHeight);
 }
 
@@ -3754,7 +3774,7 @@ void AMIGAFont::unload() {
 }
 
 SJISFont::SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing)
-	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kFSNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
+	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kStyleNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
 	_sjisWidth = _font->getMaxFontWidth() >> 1;
 	_fontHeight = _font->getFontHeight() >> 1;
@@ -3798,7 +3818,7 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	else
 		_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
 
-	_font->toggleFatPrint(_style == kFSFat);
+	_font->toggleFatPrint(_style == kStyleFat);
 	_font->drawChar(dst, c, 640, 1, color1, color2, 640, 400);
 }
 

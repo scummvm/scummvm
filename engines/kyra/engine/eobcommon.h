@@ -328,7 +328,7 @@ protected:
 	bool _runFlag;
 
 	// Character generation / party transfer
-	bool startCharacterGeneration();
+	bool startCharacterGeneration(bool defaultParty);
 	bool startPartyTransfer();
 
 	uint8 **_faceShapes;

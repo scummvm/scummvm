@@ -2135,6 +2135,7 @@ void EoBAmigaFinalePlayer::playDialogue(int line, bool withAnim) {
 int EoBEngine::mainMenu() {
 	int menuChoice = _menuChoiceInit;
 	_menuChoiceInit = 0;
+	int resXtr = 0;
 	Screen::FontId of = _screen->_currentFont;
 
 	while (menuChoice >= 0 && !shouldQuit()) {
@@ -2151,32 +2152,58 @@ int EoBEngine::mainMenu() {
 					_screen->loadPalette(_ttlCfg->palFiles[i].filename, _screen->getPalette(0));
 			}
 
-			_screen->loadEoBBitmap(_ttlCfg->bmpFile, _cgaMappingDefault, 5, 3, _ttlCfg->page);
+			if (_ttlCfg->bmpFile[0])
+				_screen->loadEoBBitmap(_ttlCfg->bmpFile, _cgaMappingDefault, 5, 3, _ttlCfg->page);
 
 			if (_ttlCfg->fade)
 				_screen->fadeFromBlack(10);
 			else
 				_screen->setScreenPalette(_screen->getPalette(0));
 
-			_screen->_curPage = 2;
-			of = _screen->setFont(Screen::FID_6_FNT);
-			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
-			_screen->printText(versionString.c_str(), 280 - versionString.size() * 6, 153 + _ttlCfg->versionStrYOffs, _screen->getPagePixel(2, 0, 0), 0);
-			_screen->setFont(of);
-			_screen->fillRect(0, 159 + _ttlCfg->versionStrYOffs, 319, 199, _screen->getPagePixel(2, 0, 0));
+			if (_flags.platform == Common::kPlatformSegaCD) {
 
-			gui_drawBox(_ttlCfg->menu1X, _ttlCfg->menu1Y, _ttlCfg->menu1W, _ttlCfg->menu1H, _ttlCfg->menu1col1, _ttlCfg->menu1col2, _ttlCfg->menu1col3);
-			gui_drawBox(_ttlCfg->menu2X, _ttlCfg->menu2Y, _ttlCfg->menu2W, _ttlCfg->menu2H, _ttlCfg->menu2col1, _ttlCfg->menu2col2, _ttlCfg->menu2col3);
+				// load playfield etc.
+				/*_screen->sega_getAnimator()->clearSprites();
+				_screen->sega_getRenderer()->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
+				_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
+				_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
+				_screen->sega_selectPalette(6, 1, false);
+				_screen->sega_selectPalette(7, 3, true);*/
+				_txt->clearDim(3);
+				//_screen->sega_fadeToNeutral(0);
 
-			_screen->_curPage = 0;
-			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-			_screen->updateScreen();
+				
+
+				_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 19, 40, 8, 0);
+				_screen->sega_getRenderer()->fillRectWithTiles(1, 7, 20, 26, 5, 0x461, true);
+				_screen->sega_getRenderer()->fillRectWithTiles(1, 6, 21, 1, 5, 0);
+				_screen->sega_getRenderer()->fillRectWithTiles(1, 6, 25, 26, 1, 0);
+				if (_flags.lang != Common::JA_JPN)
+					_screen->setFontStyles(_screen->_currentFont, Font::kStyleForceTwoByte | Font::kStyleFat);
+			} else {
+				_screen->_curPage = 2;
+				of = _screen->setFont(Screen::FID_6_FNT);
+				Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+				_screen->printText(versionString.c_str(), 280 - versionString.size() * 6, 153 + _ttlCfg->versionStrYOffs, _screen->getPagePixel(2, 0, 0), 0);
+				_screen->setFont(of);
+				_screen->fillRect(0, 159 + _ttlCfg->versionStrYOffs, 319, 199, _screen->getPagePixel(2, 0, 0));
+
+				gui_drawBox(_ttlCfg->menu1X, _ttlCfg->menu1Y, _ttlCfg->menu1W, _ttlCfg->menu1H, _ttlCfg->menu1col1, _ttlCfg->menu1col2, _ttlCfg->menu1col3);
+				gui_drawBox(_ttlCfg->menu2X, _ttlCfg->menu2Y, _ttlCfg->menu2W, _ttlCfg->menu2H, _ttlCfg->menu2col1, _ttlCfg->menu2col2, _ttlCfg->menu2col3);
+
+				_screen->_curPage = 0;
+				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->updateScreen();
+			}
 
 			_allowImport = true;
 			menuChoice = mainMenuLoop();
 			_allowImport = false;
-			}
 
+			if (_flags.platform == Common::kPlatformSegaCD && _flags.lang != Common::JA_JPN)
+				_screen->setFontStyles(_screen->_currentFont, Font::kStyleFat);
+
+			}
 			break;
 
 		case 1:
@@ -2186,7 +2213,7 @@ int EoBEngine::mainMenu() {
 
 		case 2:
 			// create new party
-			if (_flags.platform == Common::kPlatformPC98) {
+			if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) {
 				_sound->selectAudioResourceSet(kMusicIntro);
 				_sound->loadSoundFile(0);
 				_screen->hideMouse();
@@ -2200,12 +2227,13 @@ int EoBEngine::mainMenu() {
 				_eventList.clear();
 			}
 
-			menuChoice = shouldQuit() ? -5 : -2;
+			menuChoice = shouldQuit() ? -5 : resXtr - 2;
 			break;
 
 		case 3:
-			// quit
-			menuChoice = -5;
+			// Create default party for SegaCD - Quit for all other platforms
+			menuChoice = (_flags.platform == Common::kPlatformSegaCD) ? 2 : -5;
+			resXtr = -2;
 			break;
 
 		case 4:
@@ -2246,10 +2274,10 @@ int EoBEngine::mainMenuLoop() {
 
 void EoBEngine::seq_playIntro(int part) {
 	if (_flags.platform == Common::kPlatformSegaCD) {
-		if (part != kOnlyCredits)
+		if (part == kOnlyCredits)
 			seq_segaOpeningCredits();
 		else
-			seq_segaPlaySequence(53, 53);
+			seq_segaPlaySequence(53, true);
 	} else {
 		EoBIntroPlayer(this, _screen).start((EoBIntroPlayer::IntroPart)part);
 	}
@@ -2259,7 +2287,10 @@ void EoBEngine::seq_playFinale() {
 	if (_flags.platform == Common::kPlatformPC98) {
 		EoBPC98FinalePlayer(this, _screen).start(_xdth);
 		return;
-	} 
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		seq_segaPlaySequence(_xdth ? 55 : 56, true);
+		return;
+	}
 
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
 	_screen->loadFileDataToPage(s, 5, 32000);
@@ -2383,7 +2414,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 	_screen->sega_getRenderer()->loadToVRAM(scrollTable, 0x400, 0xD800);
 
 	_sres->loadContainer("CREDIT");
-	Common::SeekableReadStreamEndian *in = _sres->getEndianAwareResourceStream(1);
+	Common::SeekableReadStreamEndian *in = _sres->resStreamEndianAware(1);
 	_screen->sega_getRenderer()->loadToVRAM(in, 32, true);
 	delete in;
 
@@ -2400,7 +2431,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 		_screen->sega_getRenderer()->loadToVRAM(scrollTable, 0x400, 0xD800);
 		_screen->sega_selectPalette(i == 3 ? 59 : 50, 0, true);
 
-		in = _sres->getEndianAwareResourceStream(i);
+		in = _sres->resStreamEndianAware(i);
 		_screen->sega_getRenderer()->loadToVRAM(in, 32, true);
 		delete in;
 
@@ -2447,7 +2478,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 	_screen->sega_getRenderer()->setPitch(64);
 	_screen->sega_selectPalette(0, 0);
 
-	in = _sres->getEndianAwareResourceStream(8);
+	in = _sres->resStreamEndianAware(8);
 	_screen->sega_getRenderer()->loadToVRAM(in, 32, true);
 	delete in;
 
@@ -2474,8 +2505,8 @@ void EoBEngine::seq_segaOpeningCredits() {
 	_screen->updateScreen();
 }
 
-void EoBEngine::seq_segaSetupSequence(int id) {
-	if (_flags.platform != Common::kPlatformSegaCD || id == -1)
+void EoBEngine::seq_segaSetupSequence(int sequenceId) {
+	if (_flags.platform != Common::kPlatformSegaCD || sequenceId == -1)
 		return;
 	
 	_screen->sega_fadeToBlack(1);
@@ -2486,21 +2517,22 @@ void EoBEngine::seq_segaSetupSequence(int id) {
 		gui_drawCharPortraitWithStats(i);
 	}
 
-	_screen->sega_getRenderer()->setupWindowPlane(0, (id == 53 || id == 54) ? 23 : 18, SegaRenderer::kWinToRight, SegaRenderer::kWinToBottom);
+	_screen->sega_getRenderer()->setupWindowPlane(0, (sequenceId == 53 || sequenceId == 54) ? 23 : 18, SegaRenderer::kWinToRight, SegaRenderer::kWinToBottom);
 	_screen->sega_getRenderer()->memsetVRAM(0xD840, 0xEE, 512);
 	_screen->sega_getAnimator()->clearSprites();
 	_screen->setScreenDim(2);
 
 }
 
-bool EoBEngine::seq_segaPlaySequence(int sequenceId, int setupID) {
+bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool init) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return true;
 
 	_allowSkip = true;
 	resetSkipFlag();
 
-	seq_segaSetupSequence(setupID);
+	if (init)
+		seq_segaSetupSequence(sequenceId);
 
 	_allowSkip = false;
 	resetSkipFlag();

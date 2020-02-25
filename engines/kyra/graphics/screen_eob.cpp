@@ -30,6 +30,7 @@
 #include "kyra/engine/eobcommon.h"
 #include "kyra/resource/resource.h"
 #include "kyra/engine/util.h"
+#include "kyra/graphics/screen_eob_segacd.h"
 
 #include "common/system.h"
 #include "common/memstream.h"
@@ -67,6 +68,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_segaAnimator = 0;
 	_segaCustomPalettes = 0;
 	_palFaders = 0;
+	_specialColorReplace = false;
 	memset(_segaCurPalette, 0, sizeof(_segaCurPalette));
 }
 
@@ -95,9 +97,8 @@ bool Screen_EoB::init() {
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 			_shpBuffer = new uint8[SCREEN_H * SCREEN_W];
 			_convertHiColorBuffer = new uint8[SCREEN_H * SCREEN_W];
-			enableHiColorMode(true);			
-			assert(_fonts[FID_SJIS_FNT]);
-			_fonts[FID_SJIS_FNT]->setStyle(Font::kFSFat);
+			enableHiColorMode(true);
+			setFontStyles(FID_SJIS_FNT, Font::kStyleFat);
 			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
 		} else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98) {
 			_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, /*12,*/ _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
@@ -124,6 +125,9 @@ bool Screen_EoB::init() {
 			sega_initGraphics();
 			_segaCustomPalettes = new uint16[128];
 			_palFaders = new PaletteFader[4];
+			_textRenderBufferSize = SCREEN_W * _screenHeight;
+			_textRenderBuffer = new uint8[_textRenderBufferSize];
+			memset(_textRenderBuffer, 0, _textRenderBufferSize);
 			memset(_segaCustomPalettes, 0, 128 * sizeof(uint16));
 		}
 
@@ -251,8 +255,10 @@ void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, 
 	s->read(_pagePtrs[pageNum], size);
 }
 
-void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol) {
-	if (_vm->gameFlags().lang != Common::JA_JPN) {
+void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol, int pitch) {
+	if (_isSegaCD) {
+		printText(string, x + 1, y + 1, shadowCol, 0, pitch);
+	} else if (_vm->gameFlags().lang != Common::JA_JPN) {
 		printText(string, x - 1, y, shadowCol, col2);
 		printText(string, x, y + 1, shadowCol, 0);
 		printText(string, x - 1, y + 1, shadowCol, 0);
@@ -260,15 +266,13 @@ void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int
 		fillRect(x, y, x + getTextWidth(string) - 1, y + getFontHeight() - 1, col2);
 	}
 
-	if (_vm->gameFlags().use16ColorMode) {
-		assert(_fonts[_currentFont]);
-		_fonts[_currentFont]->setStyle(Font::kFSLeftShadow);
-	}
+	if (_vm->gameFlags().use16ColorMode)
+		setFontStyles(_currentFont, Font::kStyleLeftShadow);
 
-	printText(string, x, y, col1, 0);
+	printText(string, x, y, col1, 0, pitch);
 
 	if (_vm->gameFlags().use16ColorMode)
-		_fonts[_currentFont]->setStyle(Font::kFSNone);
+		setFontStyles(_currentFont, Font::kStyleNone);
 }
 
 void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage) {
@@ -1512,7 +1516,8 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	} else if (_isAmiga) {
 		fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
 	} else if (_isSegaCD) {
-			fnt = new SegaCDFont();
+		fnt = new SegaCDFont(_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp),
+			_vm->staticres()->loadRawData(kEoB1CharWidthTable1, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable1, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable1, temp));
 	} else {
 		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
 		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
@@ -1755,11 +1760,11 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor), _colorMap8bit(0), _colorMap16bit(0) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
-	_style = kFSNone;
+	_style = kStyleNone;
 
 	_numRef++;
 	if (!_cgaDitheringTable && _numRef == 1) {
@@ -1824,7 +1829,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 	uint16 color1 = _colorMap8bit[1];
 	uint16 color2 = _colorMap8bit[0];
 
-    if (_style == kFSLeftShadow) {
+    if (_style == kStyleLeftShadow) {
 		drawCharIntern(c, dst + pitch, pitch, 1, _shadowColor, 0);
 		drawCharIntern(c, dst - 1, pitch, 1, _shadowColor, 0);
 		drawCharIntern(c, dst - 1 + pitch, pitch, 1, _shadowColor, 0);

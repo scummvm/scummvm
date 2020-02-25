@@ -496,7 +496,7 @@ int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {
 			_loopStartScene -= kSequenceLoLDemoScene1;
 		_lastScene = kSequenceLoLDemoScene6 - kSequenceLoLDemoScene1;
 		_target = kLoLDemo;
-		_screen->_charWidth = 0;
+		_screen->_charSpacing = 0;
 	} else if (firstScene >= kSequenceHoFDemoVirgin) {
 		incompatibleData = (_vm->game() != GI_KYRA2 || !_vm->gameFlags().isDemo || _vm->gameFlags().isTalkie);
 		_firstScene -= kSequenceHoFDemoVirgin;
@@ -504,12 +504,12 @@ int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {
 			_loopStartScene -= kSequenceHoFDemoVirgin;
 		_lastScene = kSequenceHoFDemoFisher - kSequenceHoFDemoVirgin;
 		_target = kHoFDemo;
-		_screen->_charWidth = -2;
+		_screen->_charSpacing = -2;
 	} else {
 		_isFinale = _preventLooping = firstScene > kSequenceZanfaun;
 		incompatibleData = (_vm->game() != GI_KYRA2 || (_vm->gameFlags().isDemo && (!_vm->gameFlags().isTalkie || _isFinale)));
 		_target = kHoF;
-		_screen->_charWidth = -2;
+		_screen->_charSpacing = -2;
 		if (_isFinale) {
 			soundSet = kMusicFinale;
 			_lastScene = kSequenceFrash;
@@ -622,7 +622,7 @@ void SeqPlayer_HOF::runLoop() {
 		delayTicks(75);
 
 	_screen->setCurPage(oldPage);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 	_screen->showMouse();
 }
 
@@ -1486,7 +1486,7 @@ void SeqPlayer_HOF::playHoFTalkieCredits() {
 	_screen->updateScreen();
 	_screen->fadeFromBlack();
 
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	uint8 *dataPtr = new uint8[0xAFD];
 	memcpy(dataPtr, talkieCredits, talkieCreditsSize);
 	_vm->staticres()->unloadId(k2SeqplayCredits);

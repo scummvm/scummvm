@@ -49,7 +49,7 @@ public:
 
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
-	void printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol);
+	void printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol, int pitch = -1);
 
 	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip = false) override;
 	void loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage);
@@ -127,6 +127,9 @@ public:
 	void sega_fadeToWhite(int delay) { sega_fadePalette(delay, 7); }
 	void sega_fadeToNeutral(int delay) { sega_fadePalette(delay, 0); }
 	void sega_paletteOps(int16 opPal, int16 par1, int16 par2);
+	void sega_clearTextBuffer(uint8 col);
+	void sega_loadTextBufferToVRAM(uint16 srcOffset, uint16 addr, int size);
+	void sega_gfxScale(uint8 *out, uint16 w, uint16 h, uint16 pitch, const uint8 *in, const uint16 *stampMap, const uint16 *traceVectors);
 
 	SegaRenderer *sega_getRenderer() const { return _segaRenderer; }
 	SegaAnimator *sega_getAnimator() const { return _segaAnimator; }
@@ -187,6 +190,7 @@ private:
 	};
 
 	PaletteFader *_palFaders;
+	bool _specialColorReplace;
 	SegaRenderer *_segaRenderer;
 	SegaAnimator *_segaAnimator;
 	uint16 _segaCurPalette[64];
@@ -210,13 +214,13 @@ public:
 	int getCharWidth(uint16 c) const override;
 	void setColorMap(const uint8 *src) override;
 	void set16bitColorMap(const uint16 *src) override { _colorMap16bit = src; }
-	void setStyle(FontStyle style) override { _style = style; }
+	void setStyles(int styles) override { _style = styles; }
 	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const override;
 
 protected:
 	void unload();
 
-	FontStyle _style;
+	int _style;
 	const uint8 *_colorMap8bit;
 	uint8 *_data;
 	uint16 *_bitmapOffsets;
@@ -385,23 +389,33 @@ private:
 
 class SegaCDFont : public Font {
 public:
-	SegaCDFont();
+	SegaCDFont(const uint16 *convTable1, const uint16 *convTable2, const uint8 *widthTable1, const uint8 *widthTable2, const uint8 *widthTable3);
 	~SegaCDFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
 	Type getType() const override { return kSJIS; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
-	int getCharWidth(uint16 c) const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	int getCharHeight(uint16 c) const override;
+	void setStyles(int styles) override;
 	void setColorMap(const uint8 *src) override { _colorMap = src; }
-	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const override { drawChar(c, dst, pitch, 0, 0); }
+	void drawChar(uint16 c, byte *dst, int pitch, int xOffs, int yOffs) const override;
 
 private:
-	uint16 convert(uint16 c) const;
+	const uint8 *getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHeight, uint8 &pitch) const;
 
-	uint8 *_data;
+	const uint8 *_data;
+	const uint8 *_buffer;
+	bool _forceTwoByte;
+	bool _fixedWidth;
+	uint8 _style;
+
 	const uint8 *_colorMap;
 	const int _height, _width;
+	const uint16 *_convTable1, *_convTable2;
+	const uint8 *_widthTable1, *_widthTable2, *_widthTable3;
 };
 
 } // End of namespace Kyra

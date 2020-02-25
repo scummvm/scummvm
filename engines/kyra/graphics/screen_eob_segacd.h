@@ -66,7 +66,7 @@ public:
 	// The hardware allows/demands separate modification of the vertical and horizontal properties.
 	// To allow this without making another function the w/h parameters can be set to -1 which will
 	// keep the existing value for that property.
-	void setupPlaneAB(int w, int h);
+	void setupPlaneAB(int pixelWidth, int pixelHeigth);
 	// The hardware allows/demands separate modification of the vertical and horizontal properties.
 	// To allow this without making another function the blockX/Y parameters can be set to -1 which
 	// will keep the existing value for that property.
@@ -80,14 +80,15 @@ public:
 	void loadToVRAM(const void *data, int dataSize, int addr);
 	void loadToVRAM(Common::SeekableReadStreamEndian *in, int addr, bool compressedData = false);
 	void memsetVRAM(int addr, uint8 val, int len);
-	void fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr = false, bool topToBottom = false, int presetPatternID = -1);
+	void fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr = false, bool topToBottom = false, const uint16 *patternTable = 0);
 	void writeVSRAMValue(int addr, uint16 value);
+	void clearPlanes();
 	
-	void render(int destPageNum);
+	void render(int destPageNum, bool spritesOnly = false);
 
 private:
 	void renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, int x2, int y2);
-	void renderPlaneTile(uint8 *dst, int destX, uint16 *nameTable, int vScrollTableIndex, int hScrollTableIndex, uint16 pitch, uint16 nameTableSize);
+	void renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTable, int vScrollTableIndex, int hScrollTableIndex, uint16 pitch);
 	void renderSpriteTile(uint8 *dst, uint8 *mask, int x, int y, uint16 tile, uint8 pal, bool vflip, bool hflip, bool prio);
 #if SEGA_PERFORMANCE
 	template<bool hflip, bool oddStart, bool oddEnd> void renderLineFragmentM(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal);
@@ -108,7 +109,7 @@ private:
 	void clearPrioChain();
 
 	struct SegaPlane {
-		SegaPlane() : blockX(0), blockY(0), w(0), h(0), nameTable(0) {}
+		SegaPlane() : blockX(0), blockY(0), w(0), h(0), nameTable(0), nameTableSize(0) {}
 		int blockX, blockY;
 		uint16 w, h;
 		uint16 *nameTable;
@@ -152,8 +153,6 @@ private:
 	PrioTileRenderObj *_prioChainStart, *_prioChainEnd;
 	uint16 _screenW, _screenH, _blocksW, _blocksH;
 	Screen_EoB *_screen;
-
-	const uint16 *_patternTables[6];
 };
 
 class SegaAnimator {
