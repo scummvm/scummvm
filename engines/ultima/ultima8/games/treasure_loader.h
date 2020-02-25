@@ -40,7 +40,7 @@ public:
 	bool parse(Std::string, Std::vector<TreasureInfo> &treasure);
 
 private:
-	TreasureMap defaultTreasure;
+	TreasureMap _defaultTreasure;
 
 	bool internalParse(Std::string desc, TreasureInfo &ti, bool loadingDefault);
 

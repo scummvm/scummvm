@@ -39,13 +39,13 @@ struct Palette;
 struct Rect;
 class Scaler;
 
-#define UNPACK_RGB8(pix,r,g,b) { r = (((pix)&RenderSurface::format.r_mask)>>RenderSurface::format.r_shift)<<RenderSurface::format.r_loss; g = (((pix)&RenderSurface::format.g_mask)>>RenderSurface::format.g_shift)<<RenderSurface::format.g_loss; b = (((pix)&RenderSurface::format.b_mask)>>RenderSurface::format.b_shift)<<RenderSurface::format.b_loss; }
-#define PACK_RGB8(r,g,b) ((((r)>>RenderSurface::format.r_loss)<<RenderSurface::format.r_shift) | (((g)>>RenderSurface::format.g_loss)<<RenderSurface::format.g_shift) | (((b)>>RenderSurface::format.b_loss)<<RenderSurface::format.b_shift))
-#define PACK_RGB16(r,g,b) ((((r)>>RenderSurface::format.r_loss16)<<RenderSurface::format.r_shift) | (((g)>>RenderSurface::format.g_loss16)<<RenderSurface::format.g_shift) | (((b)>>RenderSurface::format.b_loss16)<<RenderSurface::format.b_shift))
+#define UNPACK_RGB8(pix,r,g,b) { r = (((pix)&RenderSurface::_format.r_mask)>>RenderSurface::_format.r_shift)<<RenderSurface::_format.r_loss; g = (((pix)&RenderSurface::_format.g_mask)>>RenderSurface::_format.g_shift)<<RenderSurface::_format.g_loss; b = (((pix)&RenderSurface::_format.b_mask)>>RenderSurface::_format.b_shift)<<RenderSurface::_format.b_loss; }
+#define PACK_RGB8(r,g,b) ((((r)>>RenderSurface::_format.r_loss)<<RenderSurface::_format.r_shift) | (((g)>>RenderSurface::_format.g_loss)<<RenderSurface::_format.g_shift) | (((b)>>RenderSurface::_format.b_loss)<<RenderSurface::_format.b_shift))
+#define PACK_RGB16(r,g,b) ((((r)>>RenderSurface::_format.r_loss16)<<RenderSurface::_format.r_shift) | (((g)>>RenderSurface::_format.g_loss16)<<RenderSurface::_format.g_shift) | (((b)>>RenderSurface::_format.b_loss16)<<RenderSurface::_format.b_shift))
 
-#define UNPACK_RGBA8(pix,r,g,b,a) { r = (((pix)&RenderSurface::format.r_mask)>>RenderSurface::format.r_shift)<<RenderSurface::format.r_loss; g = (((pix)&RenderSurface::format.g_mask)>>RenderSurface::format.g_shift)<<RenderSurface::format.g_loss; b = (((pix)&RenderSurface::format.b_mask)>>RenderSurface::format.b_shift)<<RenderSurface::format.b_loss; ; a = (((pix)&RenderSurface::format.a_mask)>>RenderSurface::format.a_shift)<<RenderSurface::format.a_loss; }
-#define PACK_RGBA8(r,g,b,a) ((((r)>>RenderSurface::format.r_loss)<<RenderSurface::format.r_shift) | (((g)>>RenderSurface::format.g_loss)<<RenderSurface::format.g_shift) | (((b)>>RenderSurface::format.b_loss)<<RenderSurface::format.b_shift) | (((a)>>RenderSurface::format.a_loss)<<RenderSurface::format.a_shift))
-#define PACK_RGBA16(r,g,b,a) ((((r)>>RenderSurface::format.r_loss16)<<RenderSurface::format.r_shift) | (((g)>>RenderSurface::format.g_loss16)<<RenderSurface::format.g_shift) | (((b)>>RenderSurface::format.b_loss16)<<RenderSurface::format.b_shift) | (((a)>>RenderSurface::format.a_loss16)<<RenderSurface::format.a_shift))
+#define UNPACK_RGBA8(pix,r,g,b,a) { r = (((pix)&RenderSurface::_format.r_mask)>>RenderSurface::_format.r_shift)<<RenderSurface::_format.r_loss; g = (((pix)&RenderSurface::_format.g_mask)>>RenderSurface::_format.g_shift)<<RenderSurface::_format.g_loss; b = (((pix)&RenderSurface::_format.b_mask)>>RenderSurface::_format.b_shift)<<RenderSurface::_format.b_loss; ; a = (((pix)&RenderSurface::_format.a_mask)>>RenderSurface::_format.a_shift)<<RenderSurface::_format.a_loss; }
+#define PACK_RGBA8(r,g,b,a) ((((r)>>RenderSurface::_format.r_loss)<<RenderSurface::_format.r_shift) | (((g)>>RenderSurface::_format.g_loss)<<RenderSurface::_format.g_shift) | (((b)>>RenderSurface::_format.b_loss)<<RenderSurface::_format.b_shift) | (((a)>>RenderSurface::_format.a_loss)<<RenderSurface::_format.a_shift))
+#define PACK_RGBA16(r,g,b,a) ((((r)>>RenderSurface::_format.r_loss16)<<RenderSurface::_format.r_shift) | (((g)>>RenderSurface::_format.g_loss16)<<RenderSurface::_format.g_shift) | (((b)>>RenderSurface::_format.b_loss16)<<RenderSurface::_format.b_shift) | (((a)>>RenderSurface::_format.a_loss16)<<RenderSurface::_format.a_shift))
 
 //
 // RenderSurface
@@ -64,10 +64,10 @@ public:
 		uint32  r_mask,   g_mask,   b_mask,   a_mask;
 	};
 
-	static Format format;
+	static Format _format;
 
-	static uint8 Gamma10toGamma22[256];
-	static uint8 Gamma22toGamma10[256];
+	static uint8 _gamma10toGamma22[256];
+	static uint8 _gamma22toGamma10[256];
 
 	//! Create a standard RenderSurface
 	static RenderSurface *SetVideoMode(uint32 width, uint32 height, int bpp);

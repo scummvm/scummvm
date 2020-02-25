@@ -181,7 +181,7 @@ template<> void SoftRenderSurface<uint32>::Fill32(uint32 rgb, int32 sx, int32 sy
 
 template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h) {
 	_clipWindow.IntersectOther(sx, sy, w, h);
-	if (!w || !h || !RenderSurface::format.a_mask) return;
+	if (!w || !h || !RenderSurface::_format.a_mask) return;
 
 	// An optimization.
 	if ((int)(w * sizeof(uintX)) == _pitch) {
@@ -195,24 +195,24 @@ template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int3
 	uint8 *line_end = pixel + w * sizeof(uintX);
 	int diff = _pitch - w * sizeof(uintX);
 
-	uintX a = (((uintX)alpha) << RenderSurface::format.a_shift)&RenderSurface::format.a_mask;
+	uintX a = (((uintX)alpha) << RenderSurface::_format.a_shift)&RenderSurface::_format.a_mask;
 
 #ifdef CHECK_ALPHA_FILLS
 	uintX c;
 	uintX m;
 	if (a == 0) {
-		c = (RenderSurface::format.b_mask >> 1)&RenderSurface::format.b_mask;
-		m = RenderSurface::format.b_mask;
+		c = (RenderSurface::_format.b_mask >> 1)&RenderSurface::_format.b_mask;
+		m = RenderSurface::_format.b_mask;
 	} else {
-		c = (RenderSurface::format.r_mask >> 1)&RenderSurface::format.r_mask;
-		m = RenderSurface::format.r_mask;
+		c = (RenderSurface::_format.r_mask >> 1)&RenderSurface::_format.r_mask;
+		m = RenderSurface::_format.r_mask;
 	}
 #endif
 
 	while (pixel != end) {
 		while (pixel != line_end) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
-			*dest = (*dest & ~RenderSurface::format.a_mask) | a;
+			*dest = (*dest & ~RenderSurface::_format.a_mask) | a;
 #ifdef CHECK_ALPHA_FILLS
 			*dest = (*dest & ~m) | (c + (((*dest & m) >> 1)&m));
 #endif
@@ -254,7 +254,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FillBlended(uint32 rgba, in
 		while (pixel != line_end) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
 			uintX d = *dest;
-			*dest = (d & RenderSurface::format.a_mask) | BlendPreModFast(rgba, d);
+			*dest = (d & RenderSurface::_format.a_mask) | BlendPreModFast(rgba, d);
 			pixel += sizeof(uintX);
 		}
 
@@ -634,7 +634,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 			if (!alpha_blend) while (pixel != line_end) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-					if ((*texel & TEX32_A_MASK) && (*dest & RenderSurface::format.a_mask)) {
+					if ((*texel & TEX32_A_MASK) && (*dest & RenderSurface::_format.a_mask)) {
 						*dest = static_cast<uintX>(
 						            PACK_RGB8(
 						                (TEX32_R(*texel) * ia + r) >> 8,
@@ -649,7 +649,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 			else while (pixel != line_end) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-					if (*dest & RenderSurface::format.a_mask) {
+					if (*dest & RenderSurface::_format.a_mask) {
 						uint32 alpha = *texel & TEX32_A_MASK;
 						if (alpha == 0xFF) {
 							*dest = static_cast<uintX>(
@@ -691,8 +691,8 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 				uintX *dest = reinterpret_cast<uintX *>(pixel);
 
 				// Uh, not completely supported right now
-				//if ((*texel & RenderSurface::format.a_mask) && (*dest & RenderSurface::format.a_mask))
-				if (*dest & RenderSurface::format.a_mask) {
+				//if ((*texel & RenderSurface::_format.a_mask) && (*dest & RenderSurface::_format.a_mask))
+				if (*dest & RenderSurface::_format.a_mask) {
 					*dest = BlendHighlight(*texel, r, g, b, 1, ia);
 				}
 				pixel += sizeof(uintX);

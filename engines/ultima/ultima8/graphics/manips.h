@@ -217,12 +217,12 @@ public:
 	}
 	static void split(uint16 src, uint8 &r, uint8 &g, uint8 &b, uint8 &a) {
 		UNPACK_RGBA8(src, r, g, b, a);
-		r = RenderSurface::Gamma22toGamma10[r];
-		g = RenderSurface::Gamma22toGamma10[g];
-		b = RenderSurface::Gamma22toGamma10[b];
+		r = RenderSurface::_gamma22toGamma10[r];
+		g = RenderSurface::_gamma22toGamma10[g];
+		b = RenderSurface::_gamma22toGamma10[b];
 	}
 	static uint16 merge(uint8 r, uint8 g, uint8 b, uint8 a) {
-		return PACK_RGBA8(RenderSurface::Gamma10toGamma22[r], RenderSurface::Gamma10toGamma22[g], RenderSurface::Gamma10toGamma22[b], a);
+		return PACK_RGBA8(RenderSurface::_gamma10toGamma22[r], RenderSurface::_gamma10toGamma22[g], RenderSurface::_gamma10toGamma22[b], a);
 	}
 	static uint16 to16bit(uint16 src) {
 		return src;
@@ -239,12 +239,12 @@ public:
 	}
 	static void split(uint32 src, uint8 &r, uint8 &g, uint8 &b, uint8 &a) {
 		UNPACK_RGBA8(src, r, g, b, a);
-		r = RenderSurface::Gamma22toGamma10[r];
-		g = RenderSurface::Gamma22toGamma10[g];
-		b = RenderSurface::Gamma22toGamma10[b];
+		r = RenderSurface::_gamma22toGamma10[r];
+		g = RenderSurface::_gamma22toGamma10[g];
+		b = RenderSurface::_gamma22toGamma10[b];
 	}
 	static uint32 merge(uint8 r, uint8 g, uint8 b, uint8 a) {
-		return PACK_RGBA8(RenderSurface::Gamma10toGamma22[r], RenderSurface::Gamma10toGamma22[g], RenderSurface::Gamma10toGamma22[b], a);
+		return PACK_RGBA8(RenderSurface::_gamma10toGamma22[r], RenderSurface::_gamma10toGamma22[g], RenderSurface::_gamma10toGamma22[b], a);
 	}
 	static uint16 to16bit(uint32 src) {
 		uint8 r, g, b;
@@ -262,13 +262,13 @@ public:
 		return PACK_RGBA8(TEX32_R(src), TEX32_G(src), TEX32_B(src), TEX32_A(src));
 	}
 	static void split(uint32 src, uint8 &r, uint8 &g, uint8 &b, uint8 &a) {
-		r = RenderSurface::Gamma22toGamma10[TEX32_R(src)];
-		g = RenderSurface::Gamma22toGamma10[TEX32_G(src)];
-		b = RenderSurface::Gamma22toGamma10[TEX32_B(src)];
+		r = RenderSurface::_gamma22toGamma10[TEX32_R(src)];
+		g = RenderSurface::_gamma22toGamma10[TEX32_G(src)];
+		b = RenderSurface::_gamma22toGamma10[TEX32_B(src)];
 		a = TEX32_A(src);
 	}
 	static uint16 merge(uint8 r, uint8 g, uint8 b, uint8 a) {
-		return PACK_RGBA8(RenderSurface::Gamma10toGamma22[r], RenderSurface::Gamma10toGamma22[g], RenderSurface::Gamma10toGamma22[b], a);
+		return PACK_RGBA8(RenderSurface::_gamma10toGamma22[r], RenderSurface::_gamma10toGamma22[g], RenderSurface::_gamma10toGamma22[b], a);
 	}
 	static uint16 to16bit(uint32 src) {
 		return (src >> 3) | ((src >> 5) & 0x7E0) | ((src >> 8) & 0xF800);
@@ -284,13 +284,13 @@ public:
 		return PACK_RGBA8(TEX32_R(src), TEX32_G(src), TEX32_B(src), TEX32_A(src));
 	}
 	static void split(uint32 src, uint8 &r, uint8 &g, uint8 &b, uint8 &a) {
-		r = RenderSurface::Gamma22toGamma10[TEX32_R(src)];
-		g = RenderSurface::Gamma22toGamma10[TEX32_G(src)];
-		b = RenderSurface::Gamma22toGamma10[TEX32_B(src)];
+		r = RenderSurface::_gamma22toGamma10[TEX32_R(src)];
+		g = RenderSurface::_gamma22toGamma10[TEX32_G(src)];
+		b = RenderSurface::_gamma22toGamma10[TEX32_B(src)];
 		a = TEX32_A(src);
 	}
 	static uint32 merge(uint8 r, uint8 g, uint8 b, uint8 a) {
-		return PACK_RGBA8(RenderSurface::Gamma10toGamma22[r], RenderSurface::Gamma10toGamma22[g], RenderSurface::Gamma10toGamma22[b], a);
+		return PACK_RGBA8(RenderSurface::_gamma10toGamma22[r], RenderSurface::_gamma10toGamma22[g], RenderSurface::_gamma10toGamma22[b], a);
 	}
 	static uint16 to16bit(uint32 src) {
 		return (src >> 3) | ((src >> 5) & 0x7E0) | ((src >> 8) & 0xF800);
@@ -307,13 +307,13 @@ public:
 		return src;
 	}
 	static void split(uint32 src, uint8 &c0, uint8 &c1, uint8 &c2, uint8 &a) {
-		c0 = RenderSurface::Gamma22toGamma10[(src) & 0xFF];
-		c1 = RenderSurface::Gamma22toGamma10[(src >> 8) & 0xFF];
-		c2 = RenderSurface::Gamma22toGamma10[(src >> 16) & 0xFF];
+		c0 = RenderSurface::_gamma22toGamma10[(src) & 0xFF];
+		c1 = RenderSurface::_gamma22toGamma10[(src >> 8) & 0xFF];
+		c2 = RenderSurface::_gamma22toGamma10[(src >> 16) & 0xFF];
 		a = src >> 24;
 	}
 	static uint32 merge(uint8 c0, uint8 c1, uint8 c2, uint8 a) {
-		return RenderSurface::Gamma10toGamma22[c0] | (RenderSurface::Gamma10toGamma22[c1] << 8) | (RenderSurface::Gamma10toGamma22[c2] << 16) | (a << 24);
+		return RenderSurface::_gamma10toGamma22[c0] | (RenderSurface::_gamma10toGamma22[c1] << 8) | (RenderSurface::_gamma10toGamma22[c2] << 16) | (a << 24);
 	}
 	static uint16 to16bit(uint32 src) {
 		return (src >> 3) | ((src >> 5) & 0x7E0) | ((src >> 8) & 0xF800);
@@ -331,12 +331,12 @@ public:
 	}
 	static void split(uint32 src, uint8 &c0, uint8 &c1, uint8 &c2, uint8 &a) {
 		a = src;
-		c2 = RenderSurface::Gamma22toGamma10[(src >> 8) & 0xFF];
-		c1 = RenderSurface::Gamma22toGamma10[(src >> 16) & 0xFF];
-		c0 = RenderSurface::Gamma22toGamma10[(src >> 24) & 0xFF];
+		c2 = RenderSurface::_gamma22toGamma10[(src >> 8) & 0xFF];
+		c1 = RenderSurface::_gamma22toGamma10[(src >> 16) & 0xFF];
+		c0 = RenderSurface::_gamma22toGamma10[(src >> 24) & 0xFF];
 	}
 	static uint32 merge(uint8 c0, uint8 c1, uint8 c2, uint8 a) {
-		return a | (RenderSurface::Gamma10toGamma22[c2] << 8) | (RenderSurface::Gamma10toGamma22[c1] << 16) | (RenderSurface::Gamma10toGamma22[c0] << 24);
+		return a | (RenderSurface::_gamma10toGamma22[c2] << 8) | (RenderSurface::_gamma10toGamma22[c1] << 16) | (RenderSurface::_gamma10toGamma22[c0] << 24);
 	}
 	static uint16 to16bit(uint32 src) {
 		return (src >> 27) | ((src >> 13) & 0x7E0) | ((src << 8) & 0xF800);

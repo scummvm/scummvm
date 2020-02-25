@@ -151,7 +151,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 //
 #ifdef DESTALPHA_MASK
 
-#define NOT_DESTINATION_MASKED	(*pixptr & RenderSurface::format.a_mask)
+#define NOT_DESTINATION_MASKED	(*pixptr & RenderSurface::_format.a_mask)
 
 #else
 

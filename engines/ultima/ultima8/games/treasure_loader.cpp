@@ -43,7 +43,7 @@ void TreasureLoader::loadDefaults() {
 		TreasureInfo ti;
 		bool ok = internalParse(defaultiter->_value, ti, true);
 		if (ok) {
-			defaultTreasure[defaultiter->_key] = ti;
+			_defaultTreasure[defaultiter->_key] = ti;
 		} else {
 			perr << "Failed to parse treasure type '" << defaultiter->_key
 			     << "': " << defaultiter->_value << Std::endl;
@@ -118,8 +118,8 @@ bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
 			if (loadedDefault)
 				return false;
 			TreasureMap::iterator iter;
-			iter = defaultTreasure.find(val);
-			if (iter != defaultTreasure.end())
+			iter = _defaultTreasure.find(val);
+			if (iter != _defaultTreasure.end())
 				ti = iter->_value;
 			else
 				return false;

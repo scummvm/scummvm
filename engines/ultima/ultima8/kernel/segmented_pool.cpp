@@ -73,21 +73,21 @@ SegmentedPool::SegmentedPool(size_t nodeCapacity_, uint32 nodes)
 
 	VALGRIND_CREATE_MEMPOOL(_startOfPool, redzoneSize, 0);
 
-	firstFree = reinterpret_cast<SegmentedPoolNode *>(_startOfPool);
-	firstFree->pool = this;
-	firstFree->size = 0;
+	_firstFree = reinterpret_cast<SegmentedPoolNode *>(_startOfPool);
+	_firstFree->pool = this;
+	_firstFree->size = 0;
 
-	lastFree = firstFree;
+	_lastFree = _firstFree;
 
 	for (i = 1; i < nodes; ++i) {
-		lastFree->nextFree = reinterpret_cast<SegmentedPoolNode *>(_startOfPool + i * _nodeOffset);
-		lastFree = lastFree->nextFree;
+		_lastFree->nextFree = reinterpret_cast<SegmentedPoolNode *>(_startOfPool + i * _nodeOffset);
+		_lastFree = _lastFree->nextFree;
 
-		lastFree->pool = this;
-		lastFree->size = 0;
+		_lastFree->pool = this;
+		_lastFree->size = 0;
 	}
 
-	lastFree->nextFree = 0;
+	_lastFree->nextFree = 0;
 }
 
 SegmentedPool::~SegmentedPool() {
@@ -105,14 +105,14 @@ void *SegmentedPool::allocate(size_t size) {
 		return 0;
 
 	--_freeNodeCount;
-	node = firstFree;
+	node = _firstFree;
 	node->size = size;
 
 	if (isFull()) {
-		firstFree = 0;
-		lastFree = 0;
+		_firstFree = 0;
+		_lastFree = 0;
 	} else {
-		firstFree = firstFree->nextFree;
+		_firstFree = _firstFree->nextFree;
 	}
 
 	node->nextFree = 0;
@@ -143,11 +143,11 @@ void SegmentedPool::deallocate(void *ptr) {
 
 //	debugN"Free Node 0x%08X\n", node);
 		if (isFull()) {
-			firstFree = node;
-			lastFree = node;
+			_firstFree = node;
+			_lastFree = node;
 		} else {
-			lastFree->nextFree = node;
-			lastFree = lastFree->nextFree;
+			_lastFree->nextFree = node;
+			_lastFree = _lastFree->nextFree;
 		}
 		++_freeNodeCount;
 	}

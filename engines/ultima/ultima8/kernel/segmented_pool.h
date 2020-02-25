@@ -78,8 +78,8 @@ private:
 	uint32 _nodes;
 	uint32 _freeNodeCount;
 
-	SegmentedPoolNode *firstFree;
-	SegmentedPoolNode *lastFree;
+	SegmentedPoolNode *_firstFree;
+	SegmentedPoolNode *_lastFree;
 };
 
 } // End of namespace Ultima8

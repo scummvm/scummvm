@@ -711,7 +711,7 @@ bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
 bool Debugger::cmdDumpMap(int argc, const char **argv) {
 #ifdef TODO
 	// We only support 32 bits per pixel for now
-	if (RenderSurface::format.s_bpp != 32) return;
+	if (RenderSurface::_format.s_bpp != 32) return;
 
 	// Save because we're going to potentially break the game by enlarging
 	// the fast area and available object IDs.

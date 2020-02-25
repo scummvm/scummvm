@@ -51,30 +51,30 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 	_bitsPerPixel = _surface->format.bpp();
 	_bytesPerPixel = _surface->format.bytesPerPixel;
 
-	RenderSurface::format.s_bpp = _bitsPerPixel;
-	RenderSurface::format.s_bytes_per_pixel = _bytesPerPixel;
-	RenderSurface::format.r_loss = _surface->format.rLoss;
-	RenderSurface::format.g_loss = _surface->format.gLoss;
-	RenderSurface::format.b_loss = _surface->format.bLoss;
-	RenderSurface::format.a_loss = _surface->format.aLoss;
-	RenderSurface::format.r_loss16 = format.r_loss + 8;
-	RenderSurface::format.g_loss16 = format.g_loss + 8;
-	RenderSurface::format.b_loss16 = format.b_loss + 8;
-	RenderSurface::format.a_loss16 = format.a_loss + 8;
-	RenderSurface::format.r_shift = _surface->format.rShift;
-	RenderSurface::format.g_shift = _surface->format.gShift;
-	RenderSurface::format.b_shift = _surface->format.bShift;
-	RenderSurface::format.a_shift = _surface->format.aShift;
-	RenderSurface::format.r_mask = _surface->format.rMax() << _surface->format.rShift;
-	RenderSurface::format.g_mask = _surface->format.gMax() << _surface->format.gShift;
-	RenderSurface::format.b_mask = _surface->format.bMax() << _surface->format.bShift;
-	RenderSurface::format.a_mask = _surface->format.aMax() << _surface->format.aShift;
+	RenderSurface::_format.s_bpp = _bitsPerPixel;
+	RenderSurface::_format.s_bytes_per_pixel = _bytesPerPixel;
+	RenderSurface::_format.r_loss = _surface->format.rLoss;
+	RenderSurface::_format.g_loss = _surface->format.gLoss;
+	RenderSurface::_format.b_loss = _surface->format.bLoss;
+	RenderSurface::_format.a_loss = _surface->format.aLoss;
+	RenderSurface::_format.r_loss16 = _format.r_loss + 8;
+	RenderSurface::_format.g_loss16 = _format.g_loss + 8;
+	RenderSurface::_format.b_loss16 = _format.b_loss + 8;
+	RenderSurface::_format.a_loss16 = _format.a_loss + 8;
+	RenderSurface::_format.r_shift = _surface->format.rShift;
+	RenderSurface::_format.g_shift = _surface->format.gShift;
+	RenderSurface::_format.b_shift = _surface->format.bShift;
+	RenderSurface::_format.a_shift = _surface->format.aShift;
+	RenderSurface::_format.r_mask = _surface->format.rMax() << _surface->format.rShift;
+	RenderSurface::_format.g_mask = _surface->format.gMax() << _surface->format.gShift;
+	RenderSurface::_format.b_mask = _surface->format.bMax() << _surface->format.bShift;
+	RenderSurface::_format.a_mask = _surface->format.aMax() << _surface->format.aShift;
 
 	SetPixelsPointer();
 
 	// Trickery to get the alpha channel
-	if (format.a_mask == 0 && _bytesPerPixel == 4) {
-		uint32 mask = ~(format.r_mask | format.g_mask | format.b_mask);
+	if (_format.a_mask == 0 && _bytesPerPixel == 4) {
+		uint32 mask = ~(_format.r_mask | _format.g_mask | _format.b_mask);
 
 		// Using all bits????
 		if (!mask) return;
@@ -103,10 +103,10 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 		if (zero < last) return;
 
 		// Set it
-		format.a_shift = first;
-		format.a_loss = 8 - (last + 1 - first);
-		format.a_loss16 = format.a_loss + 8;
-		format.a_mask = mask;
+		_format.a_shift = first;
+		_format.a_loss = 8 - (last + 1 - first);
+		_format.a_loss16 = _format.a_loss + 8;
+		_format.a_mask = mask;
 	}
 }
 
@@ -126,25 +126,25 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp,
 
 	switch (bpp) {
 	case 15:
-		format.r_loss = 3;
-		format.g_loss = 3;
-		format.b_loss = 3;
-		format.a_loss = 7;
+		_format.r_loss = 3;
+		_format.g_loss = 3;
+		_format.b_loss = 3;
+		_format.a_loss = 7;
 		bpp = 16;
 		break;
 
 	case 16:
-		format.r_loss = 3;
-		format.g_loss = 2;
-		format.b_loss = 3;
-		format.a_loss = 0;
+		_format.r_loss = 3;
+		_format.g_loss = 2;
+		_format.b_loss = 3;
+		_format.a_loss = 0;
 		break;
 
 	case 32:
-		format.r_loss = 0;
-		format.g_loss = 0;
-		format.b_loss = 0;
-		format.a_loss = 0;
+		_format.r_loss = 0;
+		_format.g_loss = 0;
+		_format.b_loss = 0;
+		_format.a_loss = 0;
 		break;
 
 	default:
@@ -155,20 +155,20 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp,
 	_bitsPerPixel = bpp;
 	_bytesPerPixel = bpp / 8;
 
-	RenderSurface::format.s_bpp = bpp;
-	RenderSurface::format.s_bytes_per_pixel = _bytesPerPixel;
-	RenderSurface::format.r_loss16 = format.r_loss + 8;
-	RenderSurface::format.g_loss16 = format.g_loss + 8;
-	RenderSurface::format.b_loss16 = format.b_loss + 8;
-	RenderSurface::format.a_loss16 = format.a_loss + 8;
-	RenderSurface::format.r_shift = rsft;
-	RenderSurface::format.g_shift = gsft;
-	RenderSurface::format.b_shift = bsft;
-	RenderSurface::format.a_shift = asft;
-	RenderSurface::format.r_mask = (0xFF >> format.r_loss) << rsft;
-	RenderSurface::format.g_mask = (0xFF >> format.g_loss) << gsft;
-	RenderSurface::format.b_mask = (0xFF >> format.b_loss) << bsft;
-	RenderSurface::format.a_mask = (0xFF >> format.a_loss) << asft;
+	RenderSurface::_format.s_bpp = bpp;
+	RenderSurface::_format.s_bytes_per_pixel = _bytesPerPixel;
+	RenderSurface::_format.r_loss16 = _format.r_loss + 8;
+	RenderSurface::_format.g_loss16 = _format.g_loss + 8;
+	RenderSurface::_format.b_loss16 = _format.b_loss + 8;
+	RenderSurface::_format.a_loss16 = _format.a_loss + 8;
+	RenderSurface::_format.r_shift = rsft;
+	RenderSurface::_format.g_shift = gsft;
+	RenderSurface::_format.b_shift = bsft;
+	RenderSurface::_format.a_shift = asft;
+	RenderSurface::_format.r_mask = (0xFF >> _format.r_loss) << rsft;
+	RenderSurface::_format.g_mask = (0xFF >> _format.g_loss) << gsft;
+	RenderSurface::_format.b_mask = (0xFF >> _format.b_loss) << bsft;
+	RenderSurface::_format.a_mask = (0xFF >> _format.a_loss) << asft;
 
 	SetPixelsPointer();
 }
@@ -186,7 +186,7 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf) :
 	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(0), _rttTex(0) {
 	_clipWindow.ResizeAbs(_width = w, _height = h);
 
-	int bpp = RenderSurface::format.s_bpp;
+	int bpp = RenderSurface::_format.s_bpp;
 
 	_pitch = w * bpp / 8;
 	_bitsPerPixel = bpp;
@@ -208,7 +208,7 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
 	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(0), _rttTex(0) {
 	_clipWindow.ResizeAbs(_width = w, _height = h);
 
-	int bpp = RenderSurface::format.s_bpp;
+	int bpp = RenderSurface::_format.s_bpp;
 
 	_pitch = w * bpp / 8;
 	_bitsPerPixel = bpp;
