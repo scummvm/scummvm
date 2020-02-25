@@ -38,7 +38,7 @@ MODULE_DIRS += \
 	engines/dragons
 
 # This module can be built as a plugin
-ifeq ($(ENABLE_QUUX), DYNAMIC_PLUGIN)
+ifeq ($(ENABLE_DRAGONS), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 
