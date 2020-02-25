@@ -28,8 +28,6 @@
 
 namespace Dragons {
 
-#define ushort uint16
-
 enum {
 	kGameIdDragons = 1
 };
