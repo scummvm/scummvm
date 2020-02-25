@@ -38,7 +38,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(BindGump, ModalGump)
 
-BindGump::BindGump(istring *b, Gump *g): ModalGump(0, 0, 160, 80), binding(b), invoker(g) {
+BindGump::BindGump(istring *b, Gump *g): ModalGump(0, 0, 160, 80), _binding(b), _invoker(g) {
 }
 
 BindGump::~BindGump() {
@@ -64,13 +64,13 @@ void BindGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 }
 
 bool BindGump::OnKeyDown(int key, int mod) {
-	if (key != Common::KEYCODE_ESCAPE && binding) {
+	if (key != Common::KEYCODE_ESCAPE && _binding) {
 		HIDManager *hidmanager = HIDManager::get_instance();
 		if (key == Common::KEYCODE_BACKSPACE) {
-			hidmanager->unbind(*binding);
+			hidmanager->unbind(*_binding);
 		}
-		if (invoker)
-			invoker->ChildNotify(this, UPDATE);
+		if (_invoker)
+			_invoker->ChildNotify(this, UPDATE);
 	}
 	Close();
 	return true;
@@ -81,8 +81,8 @@ Gump *BindGump::OnMouseDown(int button, int32 mx, int32 my) {
 //	HIDManager * hidmanager = HIDManager::get_instance();
 //	if (binding)
 //		hidmanager->bind(control, *binding);
-	if (invoker)
-		invoker->ChildNotify(this, UPDATE);
+	if (_invoker)
+		_invoker->ChildNotify(this, UPDATE);
 	Close();
 	return this;
 }

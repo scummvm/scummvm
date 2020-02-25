@@ -55,8 +55,8 @@ public:
 	};
 protected:
 	void saveData(ODataSource *ods) override;
-	istring *binding;
-	Gump *invoker;
+	istring *_binding;
+	Gump *_invoker;
 };
 
 } // End of namespace Ultima8

@@ -59,7 +59,7 @@ protected:
 	//! returns false if no more text available
 	bool NextText();
 
-	int textdelay;
+	int _textDelay;
 
 public:
 	bool loadData(IDataSource *ids, uint32 version);

@@ -213,8 +213,8 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	if (_displayDragging) {
 		int32 itemx, itemy;
-		itemx = dragging_x + _itemArea.x;
-		itemy = dragging_y + _itemArea.y;
+		itemx = _draggingX + _itemArea.x;
+		itemy = _draggingY + _itemArea.y;
 		Shape *s = GameData::get_instance()->getMainShapes()->
 		           getShape(_draggingShape);
 		assert(s);
@@ -342,8 +342,8 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 		}
 
 		_draggingFrame++;
-		dragging_x = equipcoords[equiptype].x;
-		dragging_y = equipcoords[equiptype].y;
+		_draggingX = equipcoords[equiptype].x;
+		_draggingY = equipcoords[equiptype].y;
 	} else {
 		// drop in backpack
 
@@ -352,8 +352,8 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 			return false;
 		}
 
-		dragging_x = _backpackRect.x + _backpackRect.w / 2;
-		dragging_y = _backpackRect.y + _backpackRect.h / 2;
+		_draggingX = _backpackRect.x + _backpackRect.w / 2;
+		_draggingY = _backpackRect.y + _backpackRect.h / 2;
 	}
 
 	return true;

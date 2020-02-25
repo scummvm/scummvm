@@ -49,15 +49,15 @@ public:
 	void ChildNotify(Gump *child, uint32 message) override;
 	void init();
 protected:
-	istring bindingName;
-	Std::string displayedName;
-	Gump *button;
+	istring _bindingName;
+	Std::string _displayedName;
+	Gump *_button;
 };
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ControlEntryGump, Gump)
 
 ControlEntryGump::ControlEntryGump(int x_, int y_, int width, const char *binding, const char *name)
-	: Gump(x_, y_, width, 5), bindingName(binding), displayedName(name) {
+	: Gump(x_, y_, width, 5), _bindingName(binding), _displayedName(name) {
 }
 
 ControlEntryGump::~ControlEntryGump() {
@@ -81,9 +81,9 @@ void ControlEntryGump::init() {
 	Std::vector<const char *> controls;
 
 	Rect rect;
-	button = new ButtonWidget(0, 0, displayedName, true, font, 0x80D000D0);
-	button->InitGump(this);
-	button->GetDims(rect);
+	_button = new ButtonWidget(0, 0, _displayedName, true, font, 0x80D000D0);
+	_button->InitGump(this);
+	_button->GetDims(rect);
 
 	_dims.h = rect.h;
 
@@ -105,8 +105,8 @@ void ControlEntryGump::init() {
 void ControlEntryGump::ChildNotify(Gump *child, uint32 message) {
 	ObjId cid = child->getObjId();
 	if (message == ButtonWidget::BUTTON_CLICK) {
-		if (cid == button->getObjId()) {
-			ModalGump *gump = new BindGump(&bindingName, _parent);
+		if (cid == _button->getObjId()) {
+			ModalGump *gump = new BindGump(&_bindingName, _parent);
 			gump->InitGump(0);
 			gump->setRelativePosition(CENTER);
 		}

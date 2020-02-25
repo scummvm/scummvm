@@ -120,7 +120,7 @@ public:
 
 private:
 	void saveData(ODataSource *ods) override;
-	uint32 paused;
+	uint32 _paused;
 
 	//! play the next speech sample for the text in this SampleInfo
 	//! note: si is reused if successful

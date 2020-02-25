@@ -44,7 +44,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(AudioProcess, Process)
 
 AudioProcess *AudioProcess::_theAudioProcess = 0;
 
-AudioProcess::AudioProcess(void) : paused(0) {
+AudioProcess::AudioProcess(void) : _paused(0) {
 	_theAudioProcess = this;
 	_type = 1; // persistent
 }
@@ -402,8 +402,8 @@ bool AudioProcess::isSpeechPlaying(Std::string &barked, int shapeNum) {
 }
 
 void AudioProcess::pauseAllSamples() {
-	paused++;
-	if (paused != 1) return;
+	_paused++;
+	if (_paused != 1) return;
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
@@ -421,8 +421,8 @@ void AudioProcess::pauseAllSamples() {
 }
 
 void AudioProcess::unpauseAllSamples() {
-	paused--;
-	if (paused != 0) return;
+	_paused--;
+	if (_paused != 0) return;
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
