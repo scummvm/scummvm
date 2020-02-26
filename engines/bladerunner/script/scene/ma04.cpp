@@ -371,7 +371,7 @@ void SceneScriptMA04::phoneCallWithDektora() {
 	Actor_Says(kActorDektora, 340, 3);
 	Actor_Says(kActorDektora, 350, 3);
 	if (Game_Flag_Query(kFlagCrazylegsArrested)
-	 || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom
+	    || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom
 	) {
 		answer = 1170; // CLOVIS
 	} else {
@@ -424,15 +424,26 @@ void SceneScriptMA04::phoneCallWithLucy() {
 	Actor_Says(kActorMcCoy, 2555, 19);
 	Actor_Says(kActorLucy, 570, 3);
 	Actor_Says(kActorMcCoy, 2560, 17);
-	Actor_Says(kActorLucy, 580, 3);
+	Actor_Says(kActorLucy, 580, 3); // You promise?
 	if (Game_Flag_Query(kFlagCrazylegsArrested)
-	 || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom
+	    || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom
 	) {
-		Actor_Says(kActorLucy, 630, 3);
-		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
+#if BLADERUNNER_ORIGINAL_BUGS
+		Actor_Says(kActorLucy, 630, 3); // I'll meet you there, okay? At the place where he sells the cars.
+		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15); // Wait, Lucy!
 		if (!Game_Flag_Query(kFlagDirectorsCut)) {
 			Actor_Says(kActorLucy, 640, 3);
 		}
+#else
+		// When CrazyLegs is gone from his shop,
+		// it does not make sense for Lucy to say "At the place where he sells the cars"
+		Actor_Says_With_Pause(kActorMcCoy, 2570, 0.0f, 13); // Lucy, there's a good chance--
+		if (!Game_Flag_Query(kFlagDirectorsCut)) {
+			Actor_Says(kActorLucy, 640, 3);
+		}
+		Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50); // (Lucy hangs up)
+		Actor_Says(kActorMcCoy, 2575, 15); // Wait, Lucy!
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy2, true, -1);
 	} else {
 		Actor_Says(kActorLucy, 590, 3);
@@ -440,15 +451,26 @@ void SceneScriptMA04::phoneCallWithLucy() {
 		Actor_Says(kActorLucy, 600, 3);
 		Actor_Says(kActorLucy, 610, 3);
 		Actor_Says(kActorLucy, 620, 3);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 2570, 13);
+#else
+		// McCoy is interrupted here, so use Actor_Says_With_Pause
+		Actor_Says_With_Pause(kActorMcCoy, 2570, 0.0f, 13);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says_With_Pause(kActorLucy, 630, 0.0f, 3);
 		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
 		if (!Game_Flag_Query(kFlagDirectorsCut)) {
 			Actor_Says(kActorLucy, 640, 3);
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy1, true, -1);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
 	Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptMA04::phoneCallWithSteele() {
