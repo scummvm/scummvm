@@ -60,6 +60,10 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/keymapper-defaults.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/graphics.h"
@@ -101,8 +105,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_dpad_scale(4),
 	_fingersDown(0),
 	_trackball_scale(2),
-	_joystick_scale(10),
-	_swap_menu_and_back(false) {
+	_joystick_scale(10) {
 
 	_fsFactory = new POSIXFilesystemFactory();
 
@@ -330,11 +333,6 @@ void OSystem_Android::initBackend() {
 	else
 		ConfMan.setBool("onscreen_control", true);
 
-	if (ConfMan.hasKey("swap_menu_and_back_buttons"))
-		_swap_menu_and_back = ConfMan.getBool("swap_menu_and_back_buttons");
-	else
-		ConfMan.setBool("swap_menu_and_back_buttons", false);
-
 	// BUG: "transient" ConfMan settings get nuked by the options
 	// screen. Passing the savepath in this way makes it stick
 	// (via ConfMan.registerDefault)
@@ -374,7 +372,6 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureOpenUrl ||
 			f == kFeatureTouchpadMode ||
 			f == kFeatureOnScreenControl ||
-			f == kFeatureSwapMenuAndBackButtons ||
 			f == kFeatureClipboardSupport) {
 		return true;
 	}
@@ -397,10 +394,6 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		ConfMan.setBool("onscreen_control", enable);
 		JNI::showKeyboardControl(enable);
 		break;
-	case kFeatureSwapMenuAndBackButtons:
-		ConfMan.setBool("swap_menu_and_back_buttons", enable);
-		_swap_menu_and_back = enable;
-		break;
 	default:
 		ModularBackend::setFeatureState(f, enable);
 		break;
@@ -415,11 +408,25 @@ bool OSystem_Android::getFeatureState(Feature f) {
 		return ConfMan.getBool("touchpad_mouse_mode");
 	case kFeatureOnScreenControl:
 		return ConfMan.getBool("onscreen_control");
-	case kFeatureSwapMenuAndBackButtons:
-		return ConfMan.getBool("swap_menu_and_back_buttons");
 	default:
 		return ModularBackend::getFeatureState(f);
 	}
+}
+
+Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings() {
+	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
+
+	if (ConfMan.hasKey("swap_menu_and_back")  && ConfMan.getBool("swap_menu_and_back")) {
+		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "AC_BACK");
+		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "MENU");
+		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "MENU");
+	} else {
+		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
+		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "AC_BACK");
+		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
+	}
+
+	return keymapperDefaultBindings;
 }
 
 uint32 OSystem_Android::getMillis(bool skipRecord) {
