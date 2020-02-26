@@ -80,6 +80,7 @@ public:
 	bool isOpen() const { return _isOpen; }
 
 	void send(uint32 b);
+	void sysEx(const byte* msg, uint16 length) override;
 
 	MidiChannel *allocateChannel() {
 		if (_driver)
@@ -284,6 +285,20 @@ void MidiDriver_Miles_MT32::resetMT32() {
 	MT32SysEx(0x100001, milesMT32SysExInitReverb);
 }
 
+void MidiDriver_Miles_MT32::sysEx(const byte *msg, uint16 length) {
+	// Send SysEx
+	_driver->sysEx(msg, length);
+
+	// Wait the time it takes to send the SysEx data
+	uint32 delay = (length + 2) * 1000 / 3125;
+
+	// Plus an additional delay for the MT-32 rev00
+	if (_nativeMT32)
+		delay += 40;
+
+	g_system->delayMillis(delay);
+}
+
 void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *dataPtr) {
 	byte   sysExMessage[270];
 	uint16 sysExPos      = 0;
@@ -324,17 +339,7 @@ void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *da
 	assert(sysExPos < sizeof(sysExMessage));
 	sysExMessage[sysExPos++] = sysExChecksum & 0x7f;
 
-	// Send SysEx
-	_driver->sysEx(sysExMessage, sysExPos);
-
-	// Wait the time it takes to send the SysEx data
-	uint32 delay = (sysExPos + 2) * 1000 / 3125;
-
-	// Plus an additional delay for the MT-32 rev00
-	if (_nativeMT32)
-		delay += 40;
-
-	g_system->delayMillis(delay);
+	sysEx(sysExMessage, sysExPos);
 }
 
 // MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
