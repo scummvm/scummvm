@@ -983,7 +983,7 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 		// Can't save when a modal gump is open
 		return false;
 
-	if (_kernel->getRunningProcess()->IsOfType(StartU8Process::ClassType))
+	if (_kernel->getRunningProcess() && _kernel->getRunningProcess()->IsOfType(StartU8Process::ClassType))
 		// Don't save while starting up.
 		return false;
 
