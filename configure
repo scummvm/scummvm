@@ -2585,6 +2585,7 @@ case $_host_os in
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
 		_port_mk="backends/platform/sdl/morphos/morphos.mk"
+		_sdlconfig=sdl-config
 		_nuked_opl=no
 		;;
 	android)
