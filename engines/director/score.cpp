@@ -310,20 +310,23 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		uint16 imgId = c->_key;
 		uint16 realId;
 
-		if (_vm->getVersion() >= 4 && bitmapCast->_children.size() > 0) {
-			imgId = bitmapCast->_children[0].index;
-			tag = bitmapCast->_children[0].tag;
-		}
-
 		Image::ImageDecoder *img = NULL;
 		Common::SeekableReadStream *pic = NULL;
 
-		if (_loadedCast->contains(imgId)) {
-			bitmapCast->_tag = tag = ((BitmapCast *)_loadedCast->getVal(imgId))->_tag;
-			realId = imgId + _castIDoffset;
-			pic = _movieArchive->getResource(tag, realId);
-		} else if (sharedScore) {
-			if (sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
+		if (_vm->getVersion() >= 4 && bitmapCast->_children.size() > 0) {
+			imgId = bitmapCast->_children[0].index;
+			tag = bitmapCast->_children[0].tag;
+
+			if (_movieArchive->hasResource(tag, imgId))
+				pic = _movieArchive->getResource(tag, imgId);
+			else if (sharedScore && sharedScore->getArchive()->hasResource(tag, imgId))
+				pic = sharedScore->getArchive()->getResource(tag, imgId);
+		} else {
+			if (_loadedCast->contains(imgId)) {
+				bitmapCast->_tag = tag = ((BitmapCast *)_loadedCast->getVal(imgId))->_tag;
+				realId = imgId + _castIDoffset;
+				pic = _movieArchive->getResource(tag, realId);
+			} else if (sharedScore && sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
 				bitmapCast->_tag = tag = ((BitmapCast *)sharedScore->_loadedCast->getVal(imgId))->_tag;
 				realId = imgId + sharedScore->_castIDoffset;
 				pic = sharedScore->getArchive()->getResource(tag, realId);
