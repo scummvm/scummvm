@@ -601,7 +601,7 @@ void Ultima8Engine::paint() {
 void Ultima8Engine::GraphicSysInit() {
 	_settingMan->setDefault("width", DEFAULT_SCREEN_WIDTH);
 	_settingMan->setDefault("height", DEFAULT_SCREEN_HEIGHT);
-	_settingMan->setDefault("bpp", 32);
+	_settingMan->setDefault("bpp", 16);
 
 	int width, height, bpp;
 	_settingMan->get("width", width);
