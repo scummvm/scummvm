@@ -338,6 +338,10 @@ public:
 		uint y = target->h - font->getFontHeight();
 		for (uint i = _scrollPos; i != 0; i--) {
 			font->drawString(target, _lines[i], textOffset, y, font->getStringWidth(_lines[i]), kColorBlack);
+
+			if (y < font->getFontHeight())	// Do not draw off-screen
+				break;
+
 			y -= font->getFontHeight();
 		}
 
