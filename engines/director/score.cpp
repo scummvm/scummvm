@@ -735,63 +735,68 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 	switch (castType) {
 	case kCastBitmap:
+		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastBitmap (%d children)", res->children.size());
 		_loadedCast->setVal(id, new BitmapCast(castStream, res->tag, _vm->getVersion()));
-		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastBitmap (%d)", res->children.size());
 		break;
 	case kCastText:
+		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastText (%d children)", res->children.size());
 		_loadedCast->setVal(id, new TextCast(castStream, _vm->getVersion()));
-		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastText (%d)", res->children.size());
 		break;
 	case kCastShape:
+		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastShape (%d children)", res->children.size());
 		_loadedCast->setVal(id, new ShapeCast(castStream, _vm->getVersion()));
-		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastShape (%d)", res->children.size());
 		break;
 	case kCastButton:
+		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastButton (%d children)", res->children.size());
 		_loadedCast->setVal(id, new ButtonCast(castStream, _vm->getVersion()));
-		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastButton (%d)", res->children.size());
 		break;
 	case kCastLingoScript:
+		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastLingoScript");
 		_loadedCast->setVal(id, new ScriptCast(castStream, _vm->getVersion()));
-		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastLingoScript");
 		break;
 	case kCastRTE:
+		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastRTE (%d children)", res->children.size());
 		_loadedCast->setVal(id, new RTECast(castStream, _vm->getVersion()));
-		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastRTE (%d)", res->children.size());
 		break;
 	case kCastFilmLoop:
-		warning("STUB: Score::loadCastData(): kCastFilmLoop (%d)", res->children.size());
+		warning("STUB: Score::loadCastData(): kCastFilmLoop (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	case kCastPalette:
-		warning("STUB: Score::loadCastData(): kCastPalette (%d)", res->children.size());
+		warning("STUB: Score::loadCastData(): kCastPalette (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	case kCastPicture:
-		warning("STUB: Score::loadCastData(): kCastPicture (%d)", res->children.size());
+		warning("STUB: Score::loadCastData(): kCastPicture (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	case kCastSound:
-		warning("STUB: Score::loadCastData(): kCastSound (%d)", res->children.size());
+		warning("STUB: Score::loadCastData(): kCastSound (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	case kCastMovie:
-		warning("STUB: Score::loadCastData(): kCastMovie (%d)", res->children.size());
+		warning("STUB: Score::loadCastData(): kCastMovie (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	case kCastDigitalVideo:
-		warning("STUB: Score::loadCastData(): kCastDigitalVideo (%d)", res->children.size());
+		warning("STUB: Score::loadCastData(): kCastDigitalVideo (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	default:
-		warning("Score::loadCastData(): Unhandled cast type: %d [%s]", castType, tag2str(castType));
+		warning("Score::loadCastData(): Unhandled cast type: %d [%s] (%d children)", castType, tag2str(castType), res->children.size());
 		// also don't try and read the strings... we don't know what this item is.
 		size2 = 0;
 		break;
 	}
 
-	if (_loadedCast->contains(id)) // Skip unhandled casts
-		for (uint child = 0; child < res->children.size(); child++)
+	if (_loadedCast->contains(id)) { // Skip unhandled casts
+		debugCN(3, kDebugLoading, "Children: ");
+		for (uint child = 0; child < res->children.size(); child++) {
+			debugCN(3, kDebugLoading, "%d ", res->children[child].index);
 			_loadedCast->getVal(id)->_children.push_back(res->children[child]);
+		}
+		debugCN(3, kDebugLoading, "\n");
+	}
 
 	free(data);
 
