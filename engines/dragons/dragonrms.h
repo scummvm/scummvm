@@ -42,7 +42,7 @@ class DragonOBD;
 
 class DragonRMS {
 private:
-	int16 _count;
+	uint16 _count;
 	RMS *_rmsObjects;
 	DragonOBD *_dragonOBD;
 public:
