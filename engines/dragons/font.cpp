@@ -37,7 +37,7 @@ Font::Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelOffse
 		error("Allocating memory for font map.");
 	}
 
-	for (int i = 0; i < _size; i++) {
+	for (uint i = 0; i < _size; i++) {
 		_map[i] = stream.readUint16LE();
 	}
 
@@ -215,18 +215,18 @@ void FontManager::drawTextDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2) 
 	const uint16 kTileIndexBottomLeft = kTileBaseIndex + 15;
 	const uint16 kTileIndexBottomRight = kTileBaseIndex + 17;
 	// Fill background
-	for (int yc = y1 + 1; yc <= y2 - 1; ++yc) {
-		for (int xc = x1 + 1; xc <= x2 - 1; ++xc) {
+	for (uint yc = y1 + 1; yc <= y2 - 1; ++yc) {
+		for (uint xc = x1 + 1; xc <= x2 - 1; ++xc) {
 			drawBoxChar(xc, yc, kTileIndexBackground);
 		}
 	}
 	// Fill top and bottom rows
-	for (int xc = x1 + 1; xc <= x2 - 1; ++xc) {
+	for (uint xc = x1 + 1; xc <= x2 - 1; ++xc) {
 		drawBoxChar(xc, y1, kTileIndexTop);
 		drawBoxChar(xc, y2, kTileIndexBottom);
 	}
 	// Fill left and right columns
-	for (int yc = y1 + 1; yc <= y2 - 1; ++yc) {
+	for (uint yc = y1 + 1; yc <= y2 - 1; ++yc) {
 		drawBoxChar(x1, yc, kTileIndexLeft);
 		drawBoxChar(x2, yc, kTileIndexRight);
 	}
