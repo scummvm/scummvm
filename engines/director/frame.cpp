@@ -815,7 +815,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	// WORKAROUND, HACK
 	// Because we're not drawing text with transparency
 	// We swap drawing depending on whether the button is
-	// inverted or not, to prevent destroying the button
+	// inverted or not, to prevent destroying the border
 	if (!invert)
 		renderText(surface, spriteId, &textRect);
 
