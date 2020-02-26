@@ -42,7 +42,7 @@ class BigfileArchive;
 
 class DragonImg {
 private:
-	int16 _count;
+	uint16 _count;
 	Img *_imgObjects;
 	byte *_imgData;
 
