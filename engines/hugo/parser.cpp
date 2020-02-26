@@ -286,10 +286,6 @@ void Parser::keyHandler(Common::Event event) {
 
 	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 		switch (nChar) {
-		case Common::KEYCODE_d:
-			_vm->getDebugger()->attach();
-			_vm->getDebugger()->onFrame();
-			break;
 		case Common::KEYCODE_l:
 			_vm->_file->restoreGame(-1);
 			break;

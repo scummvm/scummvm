@@ -39,13 +39,12 @@ public:
 	RawArchive() : Archive() { }
 	explicit RawArchive(ArchiveFile *af) : Archive(af) { }
 	explicit RawArchive(IDataSource *ids) : Archive(ids) { }
-	explicit RawArchive(const Std::string &path) : Archive(path) { }
 
 	~RawArchive() override;
 
 	void cache(uint32 index) override;
 	void uncache(uint32 index) override;
-	bool isCached(uint32 index) override;
+	bool isCached(uint32 index) const override;
 
 	//! return object. DON'T delete or modify!
 	virtual const uint8 *get_object_nodel(uint32 index);
@@ -61,7 +60,7 @@ public:
 	virtual IDataSource *get_datasource(uint32 index);
 
 protected:
-	Std::vector<uint8 *> objects;
+	Std::vector<uint8 *> _objects;
 };
 
 } // End of namespace Ultima8

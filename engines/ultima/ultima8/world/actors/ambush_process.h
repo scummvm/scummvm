@@ -44,7 +44,7 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	uint32 delaycount;
+	uint32 _delayCount;
 };
 
 } // End of namespace Ultima8

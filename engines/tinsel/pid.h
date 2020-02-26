@@ -29,22 +29,13 @@ namespace Tinsel {
 #define	PID_DESTROY	0x8000			// process id of any process that is to be destroyed between scenes
 
 #define	PID_EFFECTS	(0x0010 | PID_DESTROY)	// generic special effects process id
-#define	PID_FLASH	(PID_EFFECTS + 1)	// flash color process
-#define	PID_CYCLE	(PID_EFFECTS + 2)	// cycle color range process
-#define	PID_MORPH	(PID_EFFECTS + 3)	// morph process
 #define	PID_FADER	(PID_EFFECTS + 4)	// fader process
-#define	PID_FADE_BGND	(PID_EFFECTS + 5)	// fade background color process
-
-#define	PID_BACKGND	(0x0020 | PID_DESTROY)	// background update process id
 
 #define	PID_MOUSE	0x0030			// mouse button checking process id
-
-#define	PID_JOYSTICK	0x0040			// joystick button checking process id
 
 #define	PID_KEYBOARD	0x0050			// keyboard scanning process
 
 #define	PID_CURSOR	0x0060			// cursor process
-#define	PID_CUR_TRAIL	(PID_CURSOR + 1)	// cursor trail process
 
 #define	PID_SCROLL	(0x0070 | PID_DESTROY)	// scroll process
 
@@ -61,10 +52,6 @@ namespace Tinsel {
 #define	PID_MOVER	(0x00D0 | PID_DESTROY)	// moving actor process
 
 #define	PID_REEL	(0x00E0 | PID_DESTROY)	// process for each film reel
-
-#define	PID_MIDI	(0x00F0 | PID_DESTROY)	// process to poll MIDI sound driver
-
-#define PID_BMV		0x0100				// Movie player process
 
 #define PID_BTN_CLICK 0x110				// process to handle mouse button clicks
 

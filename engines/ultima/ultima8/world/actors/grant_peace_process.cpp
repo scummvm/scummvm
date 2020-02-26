@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/world/actors/grant_peace_process.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/actors/actor.h"
@@ -38,7 +37,6 @@
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -48,39 +46,38 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(GrantPeaceProcess, Process)
 
-GrantPeaceProcess::GrantPeaceProcess() : Process() {
-
+GrantPeaceProcess::GrantPeaceProcess() : Process(), _haveTarget(false) {
 }
 
 GrantPeaceProcess::GrantPeaceProcess(Actor *caster) {
 	assert(caster);
-	item_num = caster->getObjId();
+	_itemNum = caster->getObjId();
 
-	type = 0x21d; // CONSTANT !
+	_type = 0x21d; // CONSTANT !
 
-	havetarget = false;
+	_haveTarget = false;
 }
 
 void GrantPeaceProcess::run() {
-	Actor *caster = getActor(item_num);
+	Actor *caster = getActor(_itemNum);
 	if (!caster) {
 		terminate();
 		return;
 	}
 
-	if (!havetarget) {
+	if (!_haveTarget) {
 		TargetGump *targetgump = new TargetGump(0, 0);
 		targetgump->InitGump(0);
 
 		waitFor(targetgump->GetNotifyProcess()->getPid());
 
-		havetarget = true;
+		_haveTarget = true;
 
 		return;
 	}
 
-	// get target result
-	ObjId targetid = static_cast<ObjId>(result);
+	// get target _result
+	ObjId targetid = static_cast<ObjId>(_result);
 	Actor *target = getActor(targetid);
 
 	if (targetid == 1 || !target) {
@@ -117,7 +114,7 @@ void GrantPeaceProcess::run() {
 
 			// undead?
 			if (t->getDefenseType() & WeaponInfo::DMG_UNDEAD) {
-				t->receiveHit(item_num, 8, target->getHP(),
+				t->receiveHit(_itemNum, 8, target->getHP(),
 				              (WeaponInfo::DMG_MAGIC |
 				               WeaponInfo::DMG_PIERCE |
 				               WeaponInfo::DMG_FIRE));
@@ -158,7 +155,7 @@ void GrantPeaceProcess::run() {
 		                                 Actor::ACT_IMMORTAL |
 		                                 Actor::ACT_INVINCIBLE))) {
 			if (getRandom() % 10 == 0) {
-				target->receiveHit(item_num, 8, target->getHP(),
+				target->receiveHit(_itemNum, 8, target->getHP(),
 				                   (WeaponInfo::DMG_MAGIC |
 				                    WeaponInfo::DMG_PIERCE |
 				                    WeaponInfo::DMG_FIRE));
@@ -224,14 +221,14 @@ uint32 GrantPeaceProcess::I_castGrantPeace(const uint8 *args,
 void GrantPeaceProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	uint8 ht = havetarget ? 1 : 0;
+	uint8 ht = _haveTarget ? 1 : 0;
 	ods->write1(ht);
 }
 
 bool GrantPeaceProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	havetarget = (ids->read1() != 0);
+	_haveTarget = (ids->read1() != 0);
 
 	return true;
 }

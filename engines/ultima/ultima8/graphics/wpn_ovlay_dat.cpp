@@ -35,27 +35,25 @@ namespace Ultima {
 namespace Ultima8 {
 
 WpnOvlayDat::WpnOvlayDat() {
-
 }
 
-
 WpnOvlayDat::~WpnOvlayDat() {
-	for (unsigned int i = 0; i < overlay.size(); i++)
-		delete overlay[i];
-	overlay.clear();
+	for (unsigned int i = 0; i < _overlay.size(); i++)
+		delete _overlay[i];
+	_overlay.clear();
 }
 
 const AnimWeaponOverlay *WpnOvlayDat::getAnimOverlay(uint32 action) const {
-	if (action >= overlay.size()) return 0;
-	return overlay[action];
+	if (action >= _overlay.size()) return 0;
+	return _overlay[action];
 }
 
 const WeaponOverlayFrame *WpnOvlayDat::getOverlayFrame(uint32 action, int type,
         int direction,
         int frame) const {
-	if (action >= overlay.size()) return 0;
-	if (!overlay[action]) return 0;
-	return overlay[action]->getFrame(type, direction, frame);
+	if (action >= _overlay.size()) return 0;
+	if (!_overlay[action]) return 0;
+	return _overlay[action]->getFrame(type, direction, frame);
 }
 
 
@@ -65,11 +63,11 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 	MainShapeArchive *msf = GameData::get_instance()->getMainShapes();
 	assert(msf);
 
-	overlay.resize(overlaydat->getCount());
+	_overlay.resize(overlaydat->getCount());
 
-	for (unsigned int action = 0; action < overlay.size(); action++) {
+	for (unsigned int action = 0; action < _overlay.size(); action++) {
 		IDataSource *ds = overlaydat->get_datasource(action);
-		overlay[action] = 0;
+		_overlay[action] = 0;
 
 		if (ds && ds->getSize()) {
 			// get Avatar's animation
@@ -80,29 +78,29 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 			}
 
 			AnimWeaponOverlay *awo = new AnimWeaponOverlay;
-			overlay[action] = awo;
+			_overlay[action] = awo;
 
-			unsigned int animlength = anim->size;
-			unsigned int dircount = anim->dircount;
+			unsigned int animlength = anim->_size;
+			unsigned int dircount = anim->_dirCount;
 
 			unsigned int typecount = ds->getSize() / (4 * dircount * animlength);
-			awo->overlay.resize(typecount);
+			awo->_overlay.resize(typecount);
 
 			for (unsigned int type = 0; type < typecount; type++) {
-				awo->overlay[type].dircount = dircount;
-				awo->overlay[type].frames =
+				awo->_overlay[type]._dirCount = dircount;
+				awo->_overlay[type]._frames =
 				    new Std::vector<WeaponOverlayFrame>[dircount];
 				for (unsigned int dir = 0; dir < dircount; dir++) {
-					awo->overlay[type].frames[dir].resize(animlength);
+					awo->_overlay[type]._frames[dir].resize(animlength);
 					for (unsigned int frame = 0; frame < animlength; frame++) {
 						unsigned int offset = type * 8 * animlength
 						                      + dir * animlength + frame;
 						ds->seek(4 * offset);
-						f.xoff = ds->readXS(1);
-						f.yoff = ds->readXS(1);
-						f.frame = ds->read2();
+						f._xOff = ds->readXS(1);
+						f._yOff = ds->readXS(1);
+						f._frame = ds->read2();
 
-						awo->overlay[type].frames[dir][frame] = f;
+						awo->_overlay[type]._frames[dir][frame] = f;
 					}
 				}
 			}

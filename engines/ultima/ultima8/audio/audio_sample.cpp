@@ -26,14 +26,14 @@
 namespace Ultima {
 namespace Ultima8 {
 
-AudioSample::AudioSample(uint8 *buffer_, uint32 size_) :
-	sample_rate(0), bits(0), stereo(false),
-	frame_size(0), decompressor_size(0), length(0),
-	buffer_size(size_), buffer(buffer_) {
+AudioSample::AudioSample(const uint8 *buffer, uint32 size) :
+	_sampleRate(0), _bits(0), _stereo(false),
+	_frameSize(0), _decompressorSize(0), _length(0),
+	_bufferSize(size), _buffer(buffer) {
 }
 
 AudioSample::~AudioSample(void) {
-	delete [] buffer;
+	delete [] _buffer;
 }
 
 } // End of namespace Ultima8

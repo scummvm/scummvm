@@ -34,7 +34,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	PagedGump(int left, int right, int top, int shape);
-	~PagedGump(void) override;
+	~PagedGump() override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -50,18 +50,18 @@ public:
 	void addPage(Gump *g);
 
 	void enableButtons(bool enabled) {
-		buttonsEnabled = enabled;
+		_buttonsEnabled = enabled;
 	}
 
 	bool loadData(IDataSource *ids);
 protected:
 	void saveData(ODataSource *ods) override;
-	int leftOff, rightOff, topOff, gumpShape;
-	Std::vector<Gump *> gumps;
-	Gump *nextButton;
-	Gump *prevButton;
-	Std::vector<Gump *>::iterator current;
-	bool buttonsEnabled;
+	int _leftOff, _rightOff, _topOff, _gumpShape;
+	Std::vector<Gump *> _gumps;
+	Gump *_nextButton;
+	Gump *_prevButton;
+	Std::vector<Gump *>::iterator _current;
+	bool _buttonsEnabled;
 };
 
 } // End of namespace Ultima8

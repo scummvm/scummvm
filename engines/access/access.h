@@ -36,7 +36,6 @@
 #include "access/bubble_box.h"
 #include "access/char.h"
 #include "access/data.h"
-#include "access/debugger.h"
 #include "access/events.h"
 #include "access/files.h"
 #include "access/font.h"
@@ -112,12 +111,6 @@ protected:
 	void doRoom();
 
 	/**
-	* Support method that generates a savegame name
-	* @param slot		Slot number
-	*/
-	Common::String generateSaveName(int slot);
-
-	/**
 	 * Play back an entire video
 	 */
 	void playVideo(int videoNum, const Common::Point &pt);
@@ -143,7 +136,6 @@ public:
 	BubbleBox *_invBox;
 	BubbleBox *_aboutBox;
 	CharManager *_char;
-	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
 	InventoryManager *_inventory;
@@ -291,7 +283,7 @@ public:
 	/**
 	 * Save the game
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	/**
 	 * Returns true if a savegame can currently be loaded

@@ -61,9 +61,6 @@ namespace Ultima8 {
 // Surface Locked with NULL SoftRenderSurface::pixels pointer
 #define GR_SOFT_ERROR_LOCKED_NULL_PIXELS        (GR_SOFT_ERROR_BASE-1)
 
-// SDL Surface Lock Failed
-#define GR_SOFT_ERROR_SDL_LOCK_FAILED           (GR_SOFT_ERROR_BASE-2)
-
 // BeginPainting()/EndPainting() Mismatch
 #define GR_SOFT_ERROR_BEGIN_END_MISMATCH        (GR_SOFT_ERROR_BASE-3)
 

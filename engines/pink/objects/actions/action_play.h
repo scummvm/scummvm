@@ -31,7 +31,7 @@ class ActionPlay : public ActionStill {
 public:
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	void end() override;
 

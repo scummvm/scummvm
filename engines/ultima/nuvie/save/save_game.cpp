@@ -359,7 +359,7 @@ bool SaveGame::load(const Common::String &filename) {
 	return true;
 }
 
-bool SaveGame::save(const Common::String &filename, const Common::String &save_description) {
+bool SaveGame::save(const Common::String &filename, const Common::String &save_description, bool isAutosave) {
 	uint8 i;
 	NuvieIOFileWrite saveFile;
 	GameId gameType = g_engine->getGameId();
@@ -372,7 +372,7 @@ bool SaveGame::save(const Common::String &filename, const Common::String &save_d
 		config->write();
 	}
 
-	saveFile.open(filename);
+	saveFile.open(filename, isAutosave);
 
 	saveFile.write2(SAVE_VERSION);
 	saveFile.write2(GAME_ID(gameType));

@@ -100,7 +100,7 @@ protected:
 		_queuedRUpTime;
 
 	// SDL overrides
-	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
+	virtual void SDLModToOSystemKeyFlags(SDL_Keymod mod, Common::Event &event);
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);

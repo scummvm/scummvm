@@ -230,8 +230,6 @@ public:
 
 	bool isDemo() const;
 
-	GUI::Debugger *getDebugger() override { return _console; }
-
 	void delay(uint16 verticalBlank); // @ F0022_MAIN_Delay
 	uint16 getScaledProduct(uint16 val, uint16 scale, uint16 vale2); // @ F0030_MAIN_GetScaledProduct
 	uint16 getRandomNumber(uint32 max) { return _rnd->getRandomNumber(max - 1); }

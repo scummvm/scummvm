@@ -44,20 +44,20 @@ class ControlEntryGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 	ControlEntryGump(int x_, int y_, int width, const char *binding, const char *name);
-	~ControlEntryGump(void) override;
+	~ControlEntryGump() override;
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	void ChildNotify(Gump *child, uint32 message) override;
 	void init();
 protected:
-	istring bindingName;
-	Std::string displayedName;
-	Gump *button;
+	istring _bindingName;
+	Std::string _displayedName;
+	Gump *_button;
 };
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ControlEntryGump, Gump)
 
 ControlEntryGump::ControlEntryGump(int x_, int y_, int width, const char *binding, const char *name)
-	: Gump(x_, y_, width, 5), bindingName(binding), displayedName(name) {
+	: Gump(x_, y_, width, 5), _bindingName(binding), _displayedName(name) {
 }
 
 ControlEntryGump::~ControlEntryGump() {
@@ -72,20 +72,20 @@ void ControlEntryGump::InitGump(Gump *newparent, bool take_focus) {
 void ControlEntryGump::init() {
 	// close all children so we can simply use this method to re init
 	Std::list<Gump *>::iterator it;
-	for (it = children.begin(); it != children.end(); ++it) {
+	for (it = _children.begin(); it != _children.end(); ++it) {
 		Gump *g = *it;
-		if (! g->IsClosing())
+		if ( !g->IsClosing())
 			g->Close();
 	}
 
 	Std::vector<const char *> controls;
 
 	Rect rect;
-	button = new ButtonWidget(0, 0, displayedName, true, font, 0x80D000D0);
-	button->InitGump(this);
-	button->GetDims(rect);
+	_button = new ButtonWidget(0, 0, _displayedName, true, font, 0x80D000D0);
+	_button->InitGump(this);
+	_button->GetDims(rect);
 
-	dims.h = rect.h;
+	_dims.h = rect.h;
 
 	//HIDManager * hidmanager = HIDManager::get_instance();
 	//hidmanager->getBindings(bindingName, controls);
@@ -105,13 +105,13 @@ void ControlEntryGump::init() {
 void ControlEntryGump::ChildNotify(Gump *child, uint32 message) {
 	ObjId cid = child->getObjId();
 	if (message == ButtonWidget::BUTTON_CLICK) {
-		if (cid == button->getObjId()) {
-			ModalGump *gump = new BindGump(&bindingName, parent);
+		if (cid == _button->getObjId()) {
+			ModalGump *gump = new BindGump(&_bindingName, _parent);
 			gump->InitGump(0);
 			gump->setRelativePosition(CENTER);
 		}
 	} else if (message == BindGump::UPDATE) {
-		parent->ChildNotify(child, message);
+		_parent->ChildNotify(child, message);
 	}
 }
 
@@ -126,8 +126,8 @@ ControlsGump::~ControlsGump() {
 void ControlsGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	dims.w = 220;
-	dims.h = 120;
+	_dims.w = 220;
+	_dims.h = 120;
 
 	Gump *widget = new TextWidget(0, 0, "Controls", true, font);
 	widget->InitGump(this, false);
@@ -135,18 +135,18 @@ void ControlsGump::InitGump(Gump *newparent, bool take_focus) {
 	widget->InitGump(this, false);
 }
 
-void ControlsGump::addEntry(const char *binding, const char *name, int &x_, int &y_) {
+void ControlsGump::addEntry(const char *binding, const char *name, int &x, int &y) {
 	Rect rect;
-	Gump *widget = new ControlEntryGump(x_, y_, dims.w - x_, binding, name);
+	Gump *widget = new ControlEntryGump(x, y, _dims.w - x, binding, name);
 	widget->InitGump(this);
 	widget->GetDims(rect);
-	y_ += rect.h;
+	y += rect.h;
 }
 
 void ControlsGump::ChildNotify(Gump *child, uint32 message) {
 	if (message == BindGump::UPDATE) {
 		Std::list<Gump *>::iterator it;
-		for (it = children.begin(); it != children.end(); ++it) {
+		for (it = _children.begin(); it != _children.end(); ++it) {
 			ControlEntryGump *g =  p_dynamic_cast<ControlEntryGump *>(*it);
 			if (g)
 				g->init();

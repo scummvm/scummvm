@@ -21,12 +21,10 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/world/actors/heal_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -37,10 +35,10 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(HealProcess, Process)
 
 HealProcess::HealProcess() : Process() {
-	hungerCounter = 0;
-	healCounter = 0;
-	item_num = 0;
-	type = 0x222; // CONSTANT!
+	_hungerCounter = 0;
+	_healCounter = 0;
+	_itemNum = 0;
+	_type = 0x222; // CONSTANT!
 }
 
 void HealProcess::run() {
@@ -54,9 +52,9 @@ void HealProcess::run() {
 
 	// heal one hitpoint and one manapoint every minute (1800 frames)
 
-	healCounter++;
+	_healCounter++;
 
-	if (healCounter == 900) {
+	if (_healCounter == 900) {
 		int16 mana = avatar->getMana();
 		if (mana < avatar->getMaxMana()) {
 			mana++;
@@ -64,16 +62,16 @@ void HealProcess::run() {
 		}
 	}
 
-	if (healCounter == 1800) {
+	if (_healCounter == 1800) {
 		uint16 hp = avatar->getHP();
 		if (hp < avatar->getMaxHP()) {
 			hp++;
 			avatar->setHP(hp);
 		}
-		healCounter = 0;
+		_healCounter = 0;
 
-		if (hungerCounter < 200)
-			hungerCounter++;
+		if (_hungerCounter < 200)
+			_hungerCounter++;
 	}
 }
 
@@ -86,15 +84,15 @@ void HealProcess::feedAvatar(uint16 food) {
 		return;
 	}
 
-	if (food > hungerCounter)
-		food = hungerCounter;
+	if (food > _hungerCounter)
+		food = _hungerCounter;
 
 	if (food == 0) return;
 
-	uint16 oldCounter = hungerCounter;
-	hungerCounter -= food;
+	uint16 oldCounter = _hungerCounter;
+	_hungerCounter -= food;
 
-	uint16 hp = avatar->getHP() - (hungerCounter / 4) + (oldCounter / 4);
+	uint16 hp = avatar->getHP() - (_hungerCounter / 4) + (oldCounter / 4);
 	if (hp > avatar->getMaxHP()) hp = avatar->getMaxHP();
 
 	avatar->setHP(hp);
@@ -119,15 +117,15 @@ uint32 HealProcess::I_feedAvatar(const uint8 *args, unsigned int /*argsize*/) {
 void HealProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(healCounter);
-	ods->write2(hungerCounter);
+	ods->write2(_healCounter);
+	ods->write2(_hungerCounter);
 }
 
 bool HealProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	healCounter = ids->read2();
-	hungerCounter = ids->read2();
+	_healCounter = ids->read2();
+	_hungerCounter = ids->read2();
 
 	return true;
 }

@@ -83,7 +83,7 @@ static void PokeInPalette(SCNHANDLE hMulFrame) {
 		// get pointer to image
 		pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
 
-		pim->hImgPal = TO_32(BgPal());
+		pim->hImgPal = TO_32(_vm->_bg->BgPal());
 	}
 }
 
@@ -101,7 +101,7 @@ void PokeInPalette(const MULTI_INIT *pmi) {
 		// get pointer to image
 		pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
 
-		pim->hImgPal = TO_32(BgPal());
+		pim->hImgPal = TO_32(_vm->_bg->BgPal());
 	}
 }
 
@@ -496,9 +496,9 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	// Set up and insert the multi-object
 	_ctx->pPlayObj = MultiInitObject(pmi);
 	if (!ppi->bTop)
-		MultiInsertObject(GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
 	else
-		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
 
 	// If co-ordinates are specified, use specified.
 	// Otherwise, use actor's position if there are not embedded co-ords.
@@ -640,9 +640,9 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 
 	// Ditch the object
 	if (!ppi->bTop)
-		MultiDeleteObject(GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
 	else
-		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
 
 	if (_ctx->mActor) {
 		if (!_ctx->replaced)
@@ -769,9 +769,9 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	// Set up and insert the multi-object
 	_ctx->pPlayObj = MultiInitObject(_ctx->pmi);
 	if (!bTop)
-		MultiInsertObject(GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
 	else
-		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
 
 	/*
 	 * More action for moving actors
@@ -917,9 +917,9 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 	// Ditch the object
 	if (!bTop)
-		MultiDeleteObject(GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
 	else
-		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
 
 	// Restore moving actor is nessesary
 	if (_ctx->pMover != NULL && _ctx->bPrinciple && !_ctx->bReplaced)

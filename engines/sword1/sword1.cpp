@@ -65,7 +65,7 @@ SwordEngine::SwordEngine(OSystem *syst)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "english"); // PSX Demo
 	SearchMan.addSubDirectoryMatching(gameDataDir, "italian"); // PSX Demo
 
-	_console = new SwordConsole(this);
+	setDebugger(new SwordConsole(this));
 
 	_mouseState = 0;
 	_resMan = 0;
@@ -89,7 +89,6 @@ SwordEngine::~SwordEngine() {
 	delete _mouse;
 	delete _objectMan;
 	delete _resMan;
-	delete _console;
 }
 
 Common::Error SwordEngine::init() {
@@ -690,12 +689,6 @@ uint8 SwordEngine::mainLoop() {
 				retCode = _control->runPanel();
 				if (retCode == CONTROL_NOTHING_DONE)
 					_screen->fullRefresh();
-			}
-
-			// Check for Debugger Activation
-			if (_keyPressed.hasFlags(Common::KBD_CTRL) && _keyPressed.keycode == Common::KEYCODE_d) {
-				this->getDebugger()->attach();
-				this->getDebugger()->onFrame();
 			}
 
 			_mouseState = 0;

@@ -30,39 +30,39 @@ class IDataSource;
 
 class AudioSample {
 protected:
-	uint32  sample_rate;
-	uint32  bits;
-	bool    stereo;
-	int     frame_size;
-	uint32  decompressor_size;
-	uint32  length;
+	uint32  _sampleRate;
+	uint32  _bits;
+	bool    _stereo;
+	int     _frameSize;
+	uint32  _decompressorSize;
+	uint32  _length;
 
-	uint32  buffer_size;
-	uint8   *buffer;
+	uint32  _bufferSize;
+	uint8   const *_buffer;
 
 public:
-	AudioSample(uint8 *buffer, uint32 size);
+	AudioSample(const uint8 *buffer, uint32 size);
 	virtual ~AudioSample(void);
 
 	inline uint32 getRate() const {
-		return sample_rate;
+		return _sampleRate;
 	}
 	inline uint32 getBits() const {
-		return bits;
+		return _bits;
 	}
 	inline bool isStereo() const {
-		return stereo;
+		return _stereo;
 	}
 	inline uint32 getFrameSize() const {
-		return frame_size;
+		return _frameSize;
 	}
 	inline uint32 getDecompressorDataSize() const {
-		return decompressor_size;
+		return _decompressorSize;
 	}
 
-	//! get AudioSample length (in samples)
+	//! get AudioSample _length (in samples)
 	inline uint32 getLength() const {
-		return length;
+		return _length;
 	}
 
 	virtual void initDecompressor(void *DecompData) const = 0;

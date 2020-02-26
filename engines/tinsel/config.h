@@ -55,10 +55,8 @@ public:
 
 	void writeToDisk();
 	void readFromDisk();
+	bool isJapanMode();
 };
-
-
-extern bool isJapanMode();
 
 } // End of namespace Tinsel
 

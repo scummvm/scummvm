@@ -99,8 +99,11 @@ public:
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
 
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
+	virtual Common::String getSaveStateName(int slot) const override {
+		return Common::String::format("%s.s%02d", _targetName.c_str(), slot);
+	}
 
 	static void pauseEngine(void *engine, bool pause); // for MacWndMgr
 
@@ -114,10 +117,10 @@ public:
 
 	void changeScene();
 
-	bool isPeril();
+	bool isPeril() const;
 
 	void setVariable(Common::String &variable, Common::String &value);
-	bool checkValueOfVariable(Common::String &variable, Common::String &value);
+	bool checkValueOfVariable(const Common::String &variable, const Common::String &value) const;
 
 	void executeMenuCommand(uint id);
 
@@ -135,9 +138,9 @@ public:
 private:
 	Common::Error init();
 
-	void initMenu(Common::PEResources *exeResources);
+	void initMenu();
 
-	bool loadCursors(Common::PEResources *exeResources);
+	bool loadCursors();
 
 	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
 	void addModule(const Common::String &moduleName);
@@ -146,7 +149,6 @@ private:
 	void openLocalWebPage(const Common::String &pageName) const;
 
 private:
-	Console *_console;
 	Common::RandomSource _rnd;
 	Common::Array<Graphics::WinCursorGroup *> _cursors;
 

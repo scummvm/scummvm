@@ -32,18 +32,18 @@ namespace Ultima8 {
 class Gump;
 
 class GumpNotifyProcess : public Process {
-	uint16 gump;
+	uint16 _gump;
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	GumpNotifyProcess();
 	GumpNotifyProcess(uint16 it);
-	~GumpNotifyProcess(void) override;
+	~GumpNotifyProcess() override;
 
 	void setGump(Gump *g);
 	uint16 getGump() const {
-		return gump;
+		return _gump;
 	}
 
 	virtual void notifyClosing(int res);
@@ -52,7 +52,7 @@ public:
 
 	void run() override;
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

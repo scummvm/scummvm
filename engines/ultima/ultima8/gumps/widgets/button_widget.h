@@ -36,12 +36,12 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ButtonWidget();
-	ButtonWidget(int X, int Y, Std::string txt, bool gamefont, int font,
+	ButtonWidget(int x, int y, Std::string txt, bool gamefont, int font,
 	             uint32 mouseOverBlendCol = 0, int width = 0, int height = 0,
 	             int32 layer = LAYER_NORMAL);
-	ButtonWidget(int X, int Y, FrameID frame_up, FrameID frame_down,
+	ButtonWidget(int x, int y, FrameID frame_up, FrameID frame_down,
 	             bool mouseOver = false, int32 layer = LAYER_NORMAL);
-	~ButtonWidget(void) override;
+	~ButtonWidget() override;
 
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	uint16 TraceObjId(int32 mx, int32 my) override;
@@ -58,8 +58,8 @@ public:
 	//! return the textwidget's vlead, or 0 for an image button
 	int getVlead();
 
-	//void SetShapeDown(Shape *_shape, uint32 _framenum);
-	//void SetShapeUp(Shape *_shape, uint32 _framenum);
+	//void SetShapeDown(Shape *_shape, uint32 frameNum);
+	//void SetShapeUp(Shape *_shape, uint32 frameNum);
 
 	enum Message {
 		BUTTON_CLICK        = 0,
@@ -68,14 +68,14 @@ public:
 	};
 
 protected:
-	Shape *shape_up;
-	uint32 framenum_up;
-	Shape *shape_down;
-	uint32 framenum_down;
-	uint16 textwidget;
-	uint32 mouseOverBlendCol;
-	bool mouseOver;
-	int origw, origh;
+	Shape *_shapeUp;
+	uint32 _frameNumUp;
+	Shape *_shapeDown;
+	uint32 _frameNumDown;
+	uint16 _textWidget;
+	uint32 _mouseOverBlendCol;
+	bool _mouseOver;
+	int _origW, _origH;
 
 public:
 	bool loadData(IDataSource *ids, uint32 version);

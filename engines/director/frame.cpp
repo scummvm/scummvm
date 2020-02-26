@@ -140,7 +140,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			_soundType2 = stream->readByte();
 		} else {
 			stream->read(unk, 3);
-			warning("Frame::readChannels(): unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
+			if (unk[0] != 0 || unk[1] != 0 || unk[2] != 0)
+				warning("Frame::readChannels(): unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
 		}
 		_skipFrameFlag = stream->readByte();
 		_blend = stream->readByte();
@@ -642,7 +643,10 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				warning("Frame::renderSprites(): No cast ID for sprite %d", i);
 				continue;
 			}
-
+			if (_sprites[i]->_cast->_surface == nullptr) {
+				warning("Frame::renderSprites(): No cast surface for sprite %d", i);
+				continue;
+			}
 			InkType ink;
 			if (i == _vm->getCurrentScore()->_currentMouseDownSpriteId)
 				ink = kInkTypeReverse;

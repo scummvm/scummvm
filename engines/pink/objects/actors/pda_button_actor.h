@@ -52,7 +52,7 @@ class PDAButtonActor : public Actor {
 public:
 	void deserialize(Archive &archive) override;
 
-	void toConsole() override;
+	void toConsole() const override;
 
 	void init(bool paused) override;
 
@@ -61,7 +61,7 @@ public:
 	void onLeftClickMessage() override;
 
 private:
-	bool isActive();
+	bool isActive() const;
 
 	Command _command;
 

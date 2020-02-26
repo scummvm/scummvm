@@ -42,13 +42,13 @@ public:
 
 	void run() override;
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
 	void saveData(ODataSource *ods) override;
 
-	int count;
+	int _count;
 };
 
 } // End of namespace Ultima8

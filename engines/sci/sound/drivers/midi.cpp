@@ -357,46 +357,59 @@ void MidiPlayer_Midi::setPatch(int channel, int patch) {
 
 	assert(channel <= 15);
 
-	if ((channel == MIDI_RHYTHM_CHANNEL) || (_channels[channel].patch == patch))
+	// No need to do anything if a patch change is sent on the rhythm channel of an MT-32
+	// or if the requested patch is the same as the current patch.
+	if ((_mt32Type != kMt32TypeNone && channel == MIDI_RHYTHM_CHANNEL) || (_channels[channel].patch == patch))
 		return;
 
-	_channels[channel].patch = patch;
-	_channels[channel].velocityMapIdx = _velocityMapIdx[patch];
+	int patchToSend;
+	if (channel != MIDI_RHYTHM_CHANNEL) {
+		_channels[channel].patch = patch;
+		_channels[channel].velocityMapIdx = _velocityMapIdx[patch];
 
-	if (_channels[channel].mappedPatch == MIDI_UNMAPPED)
-		resetVol = true;
+		if (_channels[channel].mappedPatch == MIDI_UNMAPPED)
+			resetVol = true;
 
-	_channels[channel].mappedPatch = _patchMap[patch];
+		_channels[channel].mappedPatch = patchToSend = _patchMap[patch];
 
-	if (_patchMap[patch] == MIDI_UNMAPPED) {
-		debugC(kDebugLevelSound, "[Midi] Channel %i set to unmapped patch %i", channel, patch);
-		_driver->send(0xb0 | channel, 0x7b, 0);
-		_driver->send(0xb0 | channel, 0x40, 0);
-		return;
+		if (_patchMap[patch] == MIDI_UNMAPPED) {
+			debugC(kDebugLevelSound, "[Midi] Channel %i set to unmapped patch %i", channel, patch);
+			_driver->send(0xb0 | channel, 0x7b, 0);
+			_driver->send(0xb0 | channel, 0x40, 0);
+			return;
+		}
+
+		if (_patchMap[patch] >= 128) {
+			// Mapped to rhythm, don't send channel commands
+			return;
+		}
+
+		if (_channels[channel].keyShift != _keyShift[patch]) {
+			_channels[channel].keyShift = _keyShift[patch];
+			_driver->send(0xb0 | channel, 0x7b, 0);
+			_driver->send(0xb0 | channel, 0x40, 0);
+			resetVol = true;
+		}
+
+		if (resetVol || (_channels[channel].volAdjust != _volAdjust[patch])) {
+			_channels[channel].volAdjust = _volAdjust[patch];
+			controlChange(channel, 0x07, _channels[channel].volume);
+		}
+
+		uint8 bendRange = _pitchBendRange[patch];
+		if (bendRange != MIDI_UNMAPPED)
+			_driver->setPitchBendRange(channel, bendRange);
+	} else {
+		// A patch change on the rhythm channel of a Roland GS device indicates a drumkit change.
+		// Some GM devices support the GS drumkits as well.
+
+		// Apply drumkit fallback to correct invalid drumkit numbers.
+		patchToSend = patch < 128 ? _driver->_gsDrumkitFallbackMap[patch] : 0;
+		_channels[channel].patch = patchToSend;
+		debugC(kDebugLevelSound, "[Midi] Selected drumkit %i (requested %i)", patchToSend, patch);
 	}
 
-	if (_patchMap[patch] >= 128) {
-		// Mapped to rhythm, don't send channel commands
-		return;
-	}
-
-	if (_channels[channel].keyShift != _keyShift[patch]) {
-		_channels[channel].keyShift = _keyShift[patch];
-		_driver->send(0xb0 | channel, 0x7b, 0);
-		_driver->send(0xb0 | channel, 0x40, 0);
-		resetVol = true;
-	}
-
-	if (resetVol || (_channels[channel].volAdjust != _volAdjust[patch])) {
-		_channels[channel].volAdjust = _volAdjust[patch];
-		controlChange(channel, 0x07, _channels[channel].volume);
-	}
-
-	uint8 bendRange = _pitchBendRange[patch];
-	if (bendRange != MIDI_UNMAPPED)
-		_driver->setPitchBendRange(channel, bendRange);
-
-	_driver->send(0xc0 | channel, _patchMap[patch], 0);
+	_driver->send(0xc0 | channel, patchToSend, 0);
 
 	// Send a pointless command to work around a firmware bug in common
 	// USB-MIDI cables. If the first MIDI command in a USB packet is a
@@ -452,15 +465,11 @@ void MidiPlayer_Midi::send(uint32 b) {
 // We return 1 for mt32, because if we remap channels to 0 for mt32, those won't get played at all
 // NOTE: SSCI uses channels 1 through 8 for General MIDI as well, in the drivers I checked
 int MidiPlayer_Midi::getFirstChannel() const {
-	if (_mt32Type != kMt32TypeNone)
-		return 1;
-	return 0;
+	return 1;
 }
 
 int MidiPlayer_Midi::getLastChannel() const {
-	if (_mt32Type != kMt32TypeNone)
-		return 8;
-	return 15;
+	return 8;
 }
 
 void MidiPlayer_Midi::setVolume(byte volume) {
@@ -1219,6 +1228,7 @@ void MidiPlayer_Midi::close() {
 		sendMt32SysEx(0x200000, SciSpan<const byte>(_goodbyeMsg, 20), true);
 	}
 
+	_driver->setTimerCallback(NULL, NULL);
 	_driver->close();
 }
 

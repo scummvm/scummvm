@@ -36,7 +36,7 @@ UltimaEngine * g_ultima;
 
 UltimaEngine::UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima"),
-		_dataArchive(nullptr), _debugger(nullptr), _events(nullptr) {
+		_dataArchive(nullptr), _events(nullptr) {
 	g_ultima = this;
 }
 
@@ -74,15 +74,6 @@ void UltimaEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
 }
 
-bool UltimaEngine::autoSaveCheck(int lastSaveTime) {
-	if (shouldPerformAutoSave(lastSaveTime) && canSaveGameStateCurrently(true)) {
-		saveGameState(0, _("Autosave"), true);
-		return true;
-	}
-
-	return false;
-}
-
 bool UltimaEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
@@ -104,10 +95,6 @@ GameId UltimaEngine::getGameId() const {
 
 Common::FSNode UltimaEngine::getGameDirectory() const {
 	return Common::FSNode(ConfMan.get("path"));
-}
-
-UltimaMetaEngine *UltimaEngine::getMetaEngine() const {
-	return g_metaEngine;
 }
 
 } // End of namespace Shared

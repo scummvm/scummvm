@@ -82,7 +82,7 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName, bool useSa
 		return;
 
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
-	Common::OutSaveFile *file = saveFileManager->openForSaving(_engine->generateSaveFileName(slot));
+	Common::OutSaveFile *file = saveFileManager->openForSaving(_engine->getSaveStateName(slot));
 
 	writeSaveGameHeader(file, saveName, useSaveBuffer);
 
@@ -98,10 +98,6 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName, bool useSa
 		flushSaveBuffer();
 
 	_lastSaveTime = g_system->getMillis();
-}
-
-void SaveManager::autoSave() {
-	saveGame(0, "Auto save", false);
 }
 
 void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName, bool useSaveBuffer) {
@@ -256,7 +252,7 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 }
 
 Common::SeekableReadStream *SaveManager::getSlotFile(uint slot) {
-	Common::SeekableReadStream *saveFile = g_system->getSavefileManager()->openForLoading(_engine->generateSaveFileName(slot));
+	Common::SeekableReadStream *saveFile = g_system->getSavefileManager()->openForLoading(_engine->getSaveStateName(slot));
 	if (saveFile == NULL) {
 		// Try to load standard save file
 		Common::String filename;

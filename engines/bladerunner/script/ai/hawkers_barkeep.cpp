@@ -66,15 +66,15 @@ void AIScriptHawkersBarkeep::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHawkersBarkeep::EnteredScene(int sceneId) {
+void AIScriptHawkersBarkeep::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHawkersBarkeep::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHawkersBarkeep::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHawkersBarkeep::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHawkersBarkeep::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -123,7 +123,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 			*animation = 705;
 
 			if (_var2) {
-				_var2--;
+				--_var2;
 
 				if (Random_Query(0, 6) == 0) {
 					_var3 = -_var3;
@@ -178,7 +178,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 			*animation = 707;
 
 			if (_var2) {
-				_var2--;
+				--_var2;
 
 				if (_var2 == 0)
 					_var3 = 2 * Random_Query(0, 1) - 1;
@@ -196,7 +196,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 					_var2 = Random_Query(5, 15);
 				}
 
-				_animationFrame++;
+				++_animationFrame;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(707)) {
 					*animation = 705;
 					_animationFrame = 0;
@@ -214,7 +214,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 			*animation = _animationNext;
 		} else if (_var1 == 1) {
 			*animation = 706;
-			_animationFrame++;
+			++_animationFrame;
 
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(706)) {
 				_animationFrame = 0;
@@ -241,7 +241,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 			_var1 = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(710)) {
 				_animationFrame = 0;
@@ -251,7 +251,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 711;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(711)) {
 			_animationFrame = 0;
@@ -262,7 +262,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 712;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(712)) {
 			_animationFrame = 0;
@@ -273,7 +273,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 713;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(713)) {
 			_animationFrame = 0;
@@ -284,7 +284,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 714;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(714)) {
 			_animationFrame = 0;
@@ -295,7 +295,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 715;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(715)) {
 			_animationFrame = 0;
@@ -306,7 +306,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 708;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(708)) {
 			*animation = 705;
@@ -317,7 +317,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 709;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(709)) {
 			*animation = 705;

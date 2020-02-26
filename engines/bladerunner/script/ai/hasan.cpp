@@ -141,15 +141,15 @@ void AIScriptHasan::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHasan::EnteredScene(int sceneId) {
+void AIScriptHasan::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHasan::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHasan::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHasan::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHasan::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -215,10 +215,10 @@ bool AIScriptHasan::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 	if (_var4) {
-		_var4--;
+		--_var4;
 	}
 	if (_var5) {
-		_var5--;
+		--_var5;
 	}
 
 	switch (_animationState) {
@@ -226,9 +226,9 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 		if (_var6 == 1) {
 			*animation = kModelAnimationHasanTalkSuggest;
 			if (_var3) {
-				_var3--;
+				--_var3;
 			} else {
-				_animationFrame++;
+				++_animationFrame;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkSuggest)) {
 					_animationFrame = 0;
 					_var6 = 0;
@@ -244,9 +244,9 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 		} else if (_var6 == 2) {
 			*animation = kModelAnimationHasanTakingABiteSnakeMove;
 			if (_var3) {
-				_var3--;
+				--_var3;
 			} else {
-				_animationFrame++;
+				++_animationFrame;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTakingABiteSnakeMove)) {
 					_animationFrame = 0;
 					_var6 = 0;
@@ -265,7 +265,7 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 		} else if (_var6 == 0) {
 			*animation = kModelAnimationHasanIdleSlightMovement;
 			if (_var3) {
-				_var3--;
+				--_var3;
 			} else {
 				_animationFrame += _var2;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanIdleSlightMovement)) {
@@ -294,7 +294,7 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = kModelAnimationHasanTalkMovingBothHands;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkMovingBothHands)) {
 			_animationFrame = 0;
 		}
@@ -302,7 +302,7 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = kModelAnimationHasanTalkLeftRightLeftGesture;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkLeftRightLeftGesture)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -312,7 +312,7 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = kModelAnimationHasanTalkRaiseHandSnakeMove;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkRaiseHandSnakeMove)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -322,7 +322,7 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = kModelAnimationHasanTalkMovingBothHandsAndNod;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkMovingBothHandsAndNod)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -332,7 +332,7 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = kModelAnimationHasanTalkWipeFaceLeftHand02;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkWipeFaceLeftHand02)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -342,7 +342,7 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = kModelAnimationHasanTalkUpset;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkUpset)) {
 			_animationFrame = 0;
 			_animationState = 1;

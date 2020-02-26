@@ -43,8 +43,7 @@ enum RivenAction {
 	kRivenActionPlayIntroVideos,
 	kRivenActionLoadGameState,
 	kRivenActionSaveGameState,
-	kRivenActionOpenOptionsDialog,
-	kRivenActionOpenDebugger
+	kRivenActionOpenOptionsDialog
 };
 
 } // End of namespace Mohawk

@@ -32,27 +32,27 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GumpShapeArchive, ShapeArchive)
 
 GumpShapeArchive::~GumpShapeArchive() {
-	for (unsigned int i = 0; i < gumpItemArea.size(); ++i)
-		delete gumpItemArea[i];
-	gumpItemArea.clear();
+	for (unsigned int i = 0; i < _gumpItemArea.size(); ++i)
+		delete _gumpItemArea[i];
+	_gumpItemArea.clear();
 }
 
 void GumpShapeArchive::loadGumpage(IDataSource *ds) {
 	unsigned int total = ds->getSize() / 8;
-	gumpItemArea.resize(total + 1);
+	_gumpItemArea.resize(total + 1);
 	for (unsigned int i = 1; i <= total; ++i) {
 		int x, y, w, h;
 		x = static_cast<int16>(ds->read2());
 		y = static_cast<int16>(ds->read2());
 		w = static_cast<int16>(ds->read2()) - x;
 		h = static_cast<int16>(ds->read2()) - y;
-		gumpItemArea[i] = new Rect(x, y, w, h);
+		_gumpItemArea[i] = new Rect(x, y, w, h);
 	}
 }
 
 Rect *GumpShapeArchive::getGumpItemArea(uint32 shapenum) {
-	if (shapenum >= gumpItemArea.size()) return 0;
-	return gumpItemArea[shapenum];
+	if (shapenum >= _gumpItemArea.size()) return 0;
+	return _gumpItemArea[shapenum];
 }
 
 } // End of namespace Ultima8

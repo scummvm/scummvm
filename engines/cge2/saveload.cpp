@@ -47,7 +47,7 @@ bool CGE2Engine::canSaveGameStateCurrently() {
 		_commandHandler->idle() && (_soundStat._wait == nullptr);
 }
 
-Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
+Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	storeHeroPos();
 	saveGame(slot, desc);
 	sceneUp(_now);
@@ -56,7 +56,7 @@ Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
 
 void CGE2Engine::saveGame(int slotNumber, const Common::String &desc) {
 	// Set up the serializer
-	Common::String slotName = generateSaveName(slotNumber);
+	Common::String slotName = getSaveStateName(slotNumber);
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(slotName);
 
 	// Write out the ScummVM savegame header
@@ -93,7 +93,7 @@ bool CGE2Engine::loadGame(int slotNumber) {
 	Common::MemoryReadStream *readStream;
 
 	// Open up the savegame file
-	Common::String slotName = generateSaveName(slotNumber);
+	Common::String slotName = getSaveStateName(slotNumber);
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
 
 	// Read the data into a data buffer
@@ -276,14 +276,6 @@ void CGE2Engine::syncHeader(Common::Serializer &s) {
 		if (checksum != kSavegameCheckSum)
 			error("%s", _text->getText(kBadSVG));
 	}
-}
-
-/**
-* Support method that generates a savegame name
-* @param slot		Slot number
-*/
-Common::String CGE2Engine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 } // End of namespace CGE2

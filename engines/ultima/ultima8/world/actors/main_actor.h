@@ -28,9 +28,11 @@
 namespace Ultima {
 namespace Ultima8 {
 
+class Debugger;
 struct WeaponOverlayFrame;
 
 class MainActor : public Actor {
+	friend class Debugger;
 public:
 	MainActor();
 	~MainActor() override;
@@ -47,10 +49,10 @@ public:
 	void teleport(int mapNum_, int teleport_id); // to teleportegg
 
 	bool hasJustTeleported() const {
-		return justTeleported;
+		return _justTeleported;
 	}
 	void setJustTeleported(bool t) {
-		justTeleported = t;
+		_justTeleported = t;
 	}
 
 	//! accumulate a little bit of strength. When you reach 650 you gain
@@ -68,60 +70,27 @@ public:
 	//! Get the GravityProcess of this Item, creating it if necessary
 	GravityProcess *ensureGravityProcess() override;
 
-	uint32 getArmourClass() override;
-	uint16 getDefenseType() override;
-	int16 getAttackingDex() override;
-	int16 getDefendingDex() override;
+	uint32 getArmourClass() const override;
+	uint16 getDefenseType() const override;
+	int16 getAttackingDex() const override;
+	int16 getDefendingDex() const override;
 
-	uint16 getDamageType() override;
-	int getDamageAmount() override;
+	uint16 getDamageType() const override;
+	int getDamageAmount() const override;
 
 	void setInCombat() override;
 	void clearInCombat() override;
 
 	ProcId die(uint16 DamageType) override;
 
-	Std::string getName() {
-		return name;
+	const Std::string &getName() const {
+		return _name;
 	}
-	void setName(Std::string name_) {
-		name = name_;
+	void setName(const Std::string &name) {
+		_name = name;
 	}
 
 	bool loadData(IDataSource *ids, uint32 version);
-
-	//! "teleport" console command
-	static void ConCmd_teleport(const Console::ArgvType &argv);
-	//! "mark" console command
-	static void ConCmd_mark(const Console::ArgvType &argv);
-	//! "recall" console command
-	static void ConCmd_recall(const Console::ArgvType &argv);
-	//! "listmarks" console command
-	static void ConCmd_listmarks(const Console::ArgvType &argv);
-	//! "Name" console command
-	static void ConCmd_name(const Console::ArgvType &argv);
-
-	//! "maxstats" console command
-	static void ConCmd_maxstats(const Console::ArgvType &argv);
-	//! "heal" console command
-	static void ConCmd_heal(const Console::ArgvType &argv);
-	//! "toggleInvincibility" console command
-	static void ConCmd_toggleInvincibility(const Console::ArgvType &argv);
-
-
-	//! "useBackpack" console command
-	static void ConCmd_useBackpack(const Console::ArgvType &argv);
-	//! "useInventory" console command
-	static void ConCmd_useInventory(const Console::ArgvType &argv);
-	//! "useRecall" console command
-	static void ConCmd_useRecall(const Console::ArgvType &argv);
-	//! "useBedroll" console command
-	static void ConCmd_useBedroll(const Console::ArgvType &argv);
-	//! "useKeyring" console command
-	static void ConCmd_useKeyring(const Console::ArgvType &argv);
-
-	//! "toggleCombat" console command
-	static void ConCmd_toggleCombat(const Console::ArgvType &argv);
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -142,13 +111,13 @@ protected:
 
 	void useInventoryItem(uint32 shapenum);
 
-	bool justTeleported;
+	bool _justTeleported;
 
-	int accumStr;
-	int accumDex;
-	int accumInt;
+	int _accumStr;
+	int _accumDex;
+	int _accumInt;
 
-	Std::string name;
+	Std::string _name;
 };
 
 } // End of namespace Ultima8

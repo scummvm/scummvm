@@ -38,11 +38,9 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GlobEgg, Item)
 
 GlobEgg::GlobEgg() {
-
 }
 
 GlobEgg::~GlobEgg() {
-
 }
 
 
@@ -56,12 +54,12 @@ void GlobEgg::enterFastArea() {
 	}
 
 	// Expand it
-	if (!(flags & FLG_FASTAREA)) {
-		MapGlob *glob = GameData::get_instance()->getGlob(quality);
+	if (!(_flags & FLG_FASTAREA)) {
+		MapGlob *glob = GameData::get_instance()->getGlob(_quality);
 		if (!glob) return;
 
 		Std::vector<GlobItem>::iterator iter;
-		for (iter = glob->contents.begin(); iter != glob->contents.end(); ++iter) {
+		for (iter = glob->_contents.begin(); iter != glob->_contents.end(); ++iter) {
 			GlobItem &globitem = *iter;
 			Item *item = ItemFactory::createItem(globitem.shape, globitem.frame,
 			                                     0,
@@ -70,9 +68,9 @@ void GlobEgg::enterFastArea() {
 
 
 			// calculate object's world position
-			int32 itemx = (x & coordmask) + (globitem.x << coordshift) + 1;
-			int32 itemy = (y & coordmask) + (globitem.y << coordshift) + 1;
-			int32 itemz = z + globitem.z;
+			int32 itemx = (_x & coordmask) + (globitem.x << coordshift) + 1;
+			int32 itemy = (_y & coordmask) + (globitem.y << coordshift) + 1;
+			int32 itemz = _z + globitem.z;
 
 			item->move(itemx, itemy, itemz);
 		}

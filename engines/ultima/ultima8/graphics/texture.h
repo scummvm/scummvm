@@ -88,20 +88,20 @@ class IDataSource;
 // Basic 32 Bit Texture
 //
 struct Texture {
-	uint32          *buffer;
-	int32           width;
-	int32           height;
-	uint32          format;
+	uint32          *_buffer;
+	int32           _width;
+	int32           _height;
+	uint32          _format;
 
 	// Use CalcLOG2s to calculate these (can be -1 which indicates not log2)
-	int32           wlog2;
-	int32           hlog2;
+	int32           _wlog2;
+	int32           _hlog2;
 
 	// For OpenGL
-	uint32          gl_tex;
-	Texture         *next;
+	uint32          _glTex;
+	Texture         *_next;
 
-	Texture() : buffer(0), format(TEX_FMT_STANDARD), gl_tex(0), next(0) {
+	Texture() : _buffer(0), _format(TEX_FMT_STANDARD), _glTex(0), _next(0) {
 	}
 
 	virtual ~Texture();
@@ -111,14 +111,14 @@ struct Texture {
 
 	// Calc texture log2's
 	void CalcLOG2s() {
-		wlog2 = -1;
-		hlog2 = -1;
+		_wlog2 = -1;
+		_hlog2 = -1;
 		for (int i = 0; i < 32; i++) {
-			if (width == (1 << i))
-				wlog2 = i;
+			if (_width == (1 << i))
+				_wlog2 = i;
 
-			if (height == (1 << i))
-				hlog2 = i;
+			if (_height == (1 << i))
+				_hlog2 = i;
 		}
 	}
 

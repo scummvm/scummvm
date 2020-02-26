@@ -94,11 +94,6 @@ void BasePlatform::handleEvent(Common::Event *event) {
 		}
 		break;
 	case Common::EVENT_KEYDOWN:
-		if (event->kbd.flags & Common::KBD_CTRL) {
-			if (event->kbd.keycode == Common::KEYCODE_d) {
-				_engineRef->trigDebugger();
-			}
-		}
 		if (_gameRef) {
 			_gameRef->handleKeypress(event);
 		}

@@ -25,7 +25,7 @@
 
 #include "ultima/shared/std/string.h"
 #include "common/hashmap.h"
-#include "common/serializer.h"
+#include "common/stream.h"
 #include "engines/metaengine.h"
 #include "graphics/surface.h"
 
@@ -46,10 +46,10 @@ class SavegameReader {
 private:
 	ExtendedSavegameHeader _header;
 	Common::HashMap<Common::String, FileEntry> _index;
-	IDataSource *_file;
+	Common::SeekableReadStream *_file;
 	uint32 _version;
 public:
-	explicit SavegameReader(IDataSource *ds, bool metadataOnly = false);
+	explicit SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly = false);
 	~SavegameReader();
 
 	enum State { SAVE_CORRUPT, SAVE_VALID, SAVE_OUT_OF_DATE, SAVE_TOO_RECENT };
@@ -72,18 +72,11 @@ class SavegameWriter {
 		FileEntry() : Common::Array<byte>() {}
 	};
 private:
-	ODataSource *_file;
+	Common::WriteStream *_file;
 	Common::Array<FileEntry> _index;
-	Std::string _description;
 public:
-	explicit SavegameWriter(ODataSource *ds);
+	explicit SavegameWriter(Common::WriteStream *ws);
 	virtual ~SavegameWriter();
-
-	//! write the savegame's description.
-	bool writeDescription(const Std::string &desc) {
-		_description = desc;
-		return true;
-	}
 
 	//! write a file to the savegame
 	//! \param name name of the file

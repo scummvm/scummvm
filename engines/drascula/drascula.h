@@ -330,7 +330,7 @@ public:
 
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
 
 	Common::RandomSource *_rnd;
@@ -732,9 +732,6 @@ public:
 	void update_62();
 	void update_62_pre();
 	void update_102();
-
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 private:
 	int _lang;

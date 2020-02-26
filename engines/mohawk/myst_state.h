@@ -111,7 +111,6 @@ public:
 	void reset();
 	bool load(int slot);
 	bool save(int slot, const Common::String &desc, const Graphics::Surface *thumbnail, bool autosave);
-	bool isAutoSaveAllowed();
 	static void deleteSave(int slot);
 
 	void addZipDest(MystStack stack, uint16 view);

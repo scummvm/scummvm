@@ -51,12 +51,12 @@ public:
 
 	//! Get the Container this Item is in, if any. (0 if not in a Container)
 	ObjId getParent() const {
-		return parent;
+		return _parent;
 	}
 
 	//! Set the parent container of this item.
 	void setParent(ObjId p) {
-		parent = p;
+		_parent = p;
 	}
 
 	//! Get the Container this Item is in, if any. (NULL if not in a Container)
@@ -101,8 +101,8 @@ public:
 	int32 getZ() const;
 
 	//! Set this Item's Z coordinate
-	void setZ(int32 z_) {
-		z = z_;
+	void setZ(int32 z) {
+		_z = z;
 	}
 
 	//! Get this Item's location in a ContainerGump. Undefined if the Item
@@ -134,12 +134,12 @@ public:
 
 	//! Get flags
 	inline uint16 getFlags() const {
-		return flags;
+		return _flags;
 	}
 
 	//! Set the flags set in the given mask.
 	void setFlag(uint32 mask) {
-		flags |= mask;
+		_flags |= mask;
 	}
 
 	virtual void setFlagRecursively(uint32 mask) {
@@ -148,83 +148,83 @@ public:
 
 	//! Clear the flags set in the given mask.
 	void clearFlag(uint32 mask) {
-		flags &= ~mask;
+		_flags &= ~mask;
 	}
 
-	//! Set extendedflags
+	//! Set _extendedFlags
 	void setExtFlags(uint32 f) {
-		extendedflags = f;
+		_extendedFlags = f;
 	}
 
-	//! Get extendedflags
+	//! Get _extendedFlags
 	inline uint32 getExtFlags() const {
-		return extendedflags;
+		return _extendedFlags;
 	}
 
-	//! Set the extendedflags set in the given mask.
+	//! Set the _extendedFlags set in the given mask.
 	void setExtFlag(uint32 mask) {
-		extendedflags |= mask;
+		_extendedFlags |= mask;
 	}
 
-	//! Clear the extendedflags set in the given mask.
+	//! Clear the _extendedFlags set in the given mask.
 	void clearExtFlag(uint32 mask) {
-		extendedflags &= ~mask;
+		_extendedFlags &= ~mask;
 	}
 
 	//! Get this Item's shape number
 	uint32 getShape() const {
-		return shape;
+		return _shape;
 	}
 
 	//! Set this Item's shape number
 	void setShape(uint32 shape_) {
-		shape = shape_;
-		cachedShapeInfo = 0;
-		cachedShape = 0;
+		_shape = shape_;
+		_cachedShapeInfo = 0;
+		_cachedShape = 0;
 	}
 
 	//! Get this Item's frame number
 	uint32 getFrame() const {
-		return frame;
+		return _frame;
 	}
 
 	//! Set this Item's frame number
 	void setFrame(uint32 frame_) {
-		frame = frame_;
+		_frame = frame_;
 	}
 
 	//! Get this Item's quality (a.k.a. 'Q')
 	uint16 getQuality() const {
-		return quality;
+		return _quality;
 	}
 
 	//! Set this Item's quality (a.k.a 'Q');
 	void setQuality(uint16 quality_) {
-		quality = quality_;
+		_quality = quality_;
 	}
 
 	//! Get the 'NpcNum' of this Item. Note that this can represent various
 	//! things depending on the family of this Item.
 	uint16 getNpcNum() const {
-		return npcnum;
+		return _npcNum;
 	}
 
 	//! Set the 'NpcNum' of this Item. Note that this can represent various
 	//! things depending on the family of this Item.
 	void setNpcNum(uint16 npcnum_) {
-		npcnum = npcnum_;
+		_npcNum = npcnum_;
 	}
 
 	//! Get the 'MapNum' of this Item. Note that this can represent various
 	//! things depending on the family of this Item.
 	uint16 getMapNum() const {
-		return mapnum;
+		return _mapNum;
 	}
 
 	//! Set the 'NpcNum' of this Item. Note that this can represent various
 	//! things depending on the family of this Item.
 	void setMapNum(uint16 mapnum_) {
-		mapnum = mapnum_;
+		_mapNum = mapnum_;
 	}
 
 	//! Get the ShapeInfo object for this Item. (The pointer will be cached.)
@@ -238,14 +238,14 @@ public:
 
 	//! Get the family of the shape number of this Item. (This is a
 	//! member of the ShapeInfo object.)
-	uint16 getFamily();
+	uint16 getFamily() const;
 
 	//! Check if we can merge with another item.
 	bool canMergeWith(Item *other);
 
 	//! Get the open ContainerGump for this Item, if any. (NULL if not open.)
-	ObjId getGump() {
-		return gump;
+	ObjId getGump() const {
+		return _gump;
 	}
 	//! Call this to notify the Item's open Gump has closed.
 	void clearGump(); // set gump to 0 and clear the GUMP_OPEN flag
@@ -271,11 +271,11 @@ public:
 
 	//! Get direction from centre to another item's centre.
 	//! Undefined if either item is contained or equipped.
-	int getDirToItemCentre(Item &item2) const;
+	int getDirToItemCentre(const Item &item2) const;
 
 	//! get 'distance' to other item. This is the maximum of the differences
 	//! between the x, y (and possibly z) coordinates of the items.
-	int getRange(Item &item2, bool checkz = false) const;
+	int getRange(const Item &item2, bool checkz = false) const;
 
 	//! Check if this item can reach another item. (This includes LoS.)
 	//! \param other item to be reached
@@ -325,31 +325,31 @@ public:
 
 	//! Set the PID of the GravityProcess for this Item
 	void setGravityPID(ProcId pid) {
-		gravitypid = pid;
+		_gravityPid = pid;
 	}
 
 	//! Get the PID of the GravityProcess for this Item (or 0)
 	ProcId getGravityPID() const {
-		return gravitypid;
+		return _gravityPid;
 	}
 
 	//! Get the GravityProcess of this Item, creating it if necessary
 	virtual GravityProcess *ensureGravityProcess();
 
 	//! Get the weight of this Item
-	virtual uint32 getWeight();
+	virtual uint32 getWeight() const;
 
 	//! Get the weight of this Item and its contents, if any
-	virtual uint32 getTotalWeight();
+	virtual uint32 getTotalWeight() const;
 
 	//! Get the volume this item takes up in a container
-	virtual uint32 getVolume();
+	virtual uint32 getVolume() const;
 
 	//! explode
 	void explode();
 
 	//! get the damage type this object does when hitting something
-	virtual uint16 getDamageType();
+	virtual uint16 getDamageType() const;
 
 	//! receive a hit
 	//! \param other The item delivering the hit
@@ -395,9 +395,9 @@ public:
 
 	//! Get lerped location.
 	inline void getLerped(int32 &xp, int32 &yp, int32 &zp) const {
-		xp = ix;
-		yp = iy;
-		zp = iz;
+		xp = _ix;
+		yp = _iy;
+		zp = _iz;
 	}
 
 	//! Do lerping for an in between frame (0-256)
@@ -408,23 +408,23 @@ public:
 		// not that it matters because on disk they are unsigned 16 bit
 
 		if (factor == 256) {
-			ix = l_next.x;
-			iy = l_next.y;
-			iz = l_next.z;
+			_ix = _lNext._x;
+			_iy = _lNext._y;
+			_iz = _lNext._z;
 		} else if (factor == 0) {
-			ix = l_prev.x;
-			iy = l_prev.y;
-			iz = l_prev.z;
+			_ix = _lPrev._x;
+			_iy = _lPrev._y;
+			_iz = _lPrev._z;
 		} else {
 #if 1
 			// This way while possibly slower is more accurate
-			ix = ((l_prev.x * (256 - factor) + l_next.x * factor) >> 8);
-			iy = ((l_prev.y * (256 - factor) + l_next.y * factor) >> 8);
-			iz = ((l_prev.z * (256 - factor) + l_next.z * factor) >> 8);
+			_ix = ((_lPrev._x * (256 - factor) + _lNext._x * factor) >> 8);
+			_iy = ((_lPrev._y * (256 - factor) + _lNext._y * factor) >> 8);
+			_iz = ((_lPrev._z * (256 - factor) + _lNext._z * factor) >> 8);
 #else
-			ix = l_prev.x + (((l_next.x - l_prev.x) * factor) >> 8);
-			iy = l_prev.y + (((l_next.y - l_prev.y) * factor) >> 8);
-			iz = l_prev.z + (((l_next.z - l_prev.z) * factor) >> 8);
+			_ix = _lPrev.x + (((_lNext.x - _lPrev.x) * factor) >> 8);
+			_iy = _lPrev.y + (((_lNext.y - _lPrev.y) * factor) >> 8);
+			_iz = _lPrev.z + (((_lNext.z - _lPrev.z) * factor) >> 8);
 #endif
 		}
 	}
@@ -440,7 +440,7 @@ public:
 	virtual void leaveFastArea();
 
 	//! dump some info about this item to pout
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -529,36 +529,36 @@ public:
 	INTRINSIC(I_isCrusTypeNPC);
 
 private:
-	uint32 shape;   // DO NOT modify this directly! Always use setShape()!
+	uint32 _shape;   // DO NOT modify this directly! Always use setShape()!
 
 protected:
-	uint32 frame;
+	uint32 _frame;
 
-	int32 x, y, z; // world coordinates
-	uint16 flags;
-	uint16 quality;
-	uint16 npcnum;
-	uint16 mapnum;
+	int32 _x, _y, _z; // world coordinates
+	uint16 _flags;
+	uint16 _quality;
+	uint16 _npcNum;
+	uint16 _mapNum;
 
-	uint32 extendedflags; // pentagram's own flags
+	uint32 _extendedFlags; // pentagram's own flags
 
-	ObjId parent; // objid container this item is in (or 0 for top-level items)
+	ObjId _parent; // objid container this item is in (or 0 for top-level items)
 
-	mutable Shape *cachedShape;
-	mutable ShapeInfo *cachedShapeInfo;
+	mutable Shape *_cachedShape;
+	mutable ShapeInfo *_cachedShapeInfo;
 
 	// This is stuff that is used for displaying and interpolation
 	struct Lerped {
-		int32 x, y, z;
-		uint32 shape, frame;
+		int32 _x, _y, _z;
+		uint32 _shape, _frame;
 	};
 
-	Lerped  l_prev;         // Previous state (relative to camera)
-	Lerped  l_next;         // Next (current) state (relative to camera)
-	int32   ix, iy, iz;     // Interpolated position in camera space
+	Lerped  _lPrev;         // Previous state (relative to camera)
+	Lerped  _lNext;         // Next (current) state (relative to camera)
+	int32   _ix, _iy, _iz;  // Interpolated position in camera space
 
-	ObjId gump;         // Item's gump
-	ProcId gravitypid;      // Item's GravityTracker (or 0)
+	ObjId _gump;             // Item's gump
+	ProcId _gravityPid;      // Item's GravityTracker (or 0)
 
 	//! save the actual Item data
 	void saveData(ODataSource *ods) override;
@@ -569,7 +569,7 @@ private:
 	uint32 callUsecodeEvent(uint32 event, const uint8 *args = 0, int argsize = 0);
 
 	//! The gametick setupLerp was last called on
-	int32   last_setup;
+	int32 _lastSetup;
 
 	//! Animate the item (called by setupLerp)
 	void animateItem();
@@ -605,42 +605,42 @@ public:
 };
 
 inline ShapeInfo *Item::getShapeInfo() const {
-	if (!cachedShapeInfo)
-		cachedShapeInfo = getShapeInfoFromGameInstance();
-	return cachedShapeInfo;
+	if (!_cachedShapeInfo)
+		_cachedShapeInfo = getShapeInfoFromGameInstance();
+	return _cachedShapeInfo;
 }
 
 inline void Item::getFootpadData(int32 &X, int32 &Y, int32 &Z) const {
 	ShapeInfo *si = getShapeInfo();
-	Z = si->z;
+	Z = si->_z;
 
-	if (flags & Item::FLG_FLIPPED) {
-		X = si->y;
-		Y = si->x;
+	if (_flags & Item::FLG_FLIPPED) {
+		X = si->_y;
+		Y = si->_x;
 	} else {
-		X = si->x;
-		Y = si->y;
+		X = si->_x;
+		Y = si->_y;
 	}
 }
 
 // like getFootpadData, but scaled to world coordinates
 inline void Item::getFootpadWorld(int32 &X, int32 &Y, int32 &Z) const {
 	ShapeInfo *si = getShapeInfo();
-	Z = si->z * 8;
+	Z = si->_z * 8;
 
-	if (flags & Item::FLG_FLIPPED) {
-		X = si->y * 32;
-		Y = si->x * 32;
+	if (_flags & Item::FLG_FLIPPED) {
+		X = si->_y * 32;
+		Y = si->_x * 32;
 	} else {
-		X = si->x * 32;
-		Y = si->y * 32;
+		X = si->_x * 32;
+		Y = si->_y * 32;
 	}
 }
 
 inline void Item::getLocation(int32 &X, int32 &Y, int32 &Z) const {
-	X = x;
-	Y = y;
-	Z = z;
+	X = _x;
+	Y = _y;
+	Z = _z;
 }
 
 } // End of namespace Ultima8

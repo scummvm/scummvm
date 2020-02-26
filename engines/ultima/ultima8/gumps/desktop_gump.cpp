@@ -26,7 +26,6 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
-#include "ultima/ultima8/gumps/console_gump.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/gumps/target_gump.h"
 
@@ -35,14 +34,14 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump, Gump)
 
-bool DesktopGump::faded_modal = true;
+bool DesktopGump::_fadedModal = true;
 
 DesktopGump::DesktopGump()
 	: Gump() {
 }
 
-DesktopGump::DesktopGump(int32 _x, int32 _y, int32 _width, int32 _height) :
-	Gump(_x, _y, _width, _height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP,
+DesktopGump::DesktopGump(int32 x, int32 y, int32 width, int32 height) :
+	Gump(x, y, width, height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP,
 	     LAYER_DESKTOP) {
 }
 
@@ -50,20 +49,12 @@ DesktopGump::~DesktopGump(void) {
 }
 
 void DesktopGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	// Just fill it (only if console showing, or in debug mode)
-
-#ifndef DEBUG
-	ConsoleGump *console = Ultima8Engine::get_instance()->getConsoleGump();
-	if (console->ConsoleIsVisible() || (children.size() && children.front()->IsOfType<ConsoleGump>()))
-#endif
-		surf->Fill32(0x000000, 0, 0, dims.w, dims.h);
-	//surf->Fill32(0x3f3f3f, 0, 0, dims.w, dims.h);
 }
 
 void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	// Iterate all children
-	Std::list<Gump *>::iterator it = children.begin();
-	Std::list<Gump *>::iterator end = children.end();
+	Std::list<Gump *>::iterator it = _children.begin();
+	Std::list<Gump *>::iterator end = _children.end();
 
 	while (it != end) {
 		Gump *g = *it;
@@ -72,9 +63,9 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 		if (!g->IsClosing()) {
 			// If background blanking on modal is enabled...
 			// Background is partially transparent
-			if (faded_modal && g->IsOfType<ModalGump>() &&
+			if (_fadedModal && g->IsOfType<ModalGump>() &&
 			        !g->IsOfType<TargetGump>() && !g->IsHidden())
-				surf->FillBlended(0x7F000000, 0, 0, dims.w, dims.h);
+				surf->FillBlended(0x7F000000, 0, 0, _dims.w, _dims.h);
 
 			g->Paint(surf, lerp_factor, scaled);
 		}
@@ -104,8 +95,8 @@ void DesktopGump::RenderSurfaceChanged(RenderSurface *surf) {
 	// Resize the desktop gump to match the RenderSurface
 	Rect new_dims;
 	surf->GetSurfaceDims(new_dims);
-	dims.w = new_dims.w;
-	dims.h = new_dims.h;
+	_dims.w = new_dims.w;
+	_dims.h = new_dims.h;
 
 	Gump::RenderSurfaceChanged();
 }
@@ -113,9 +104,9 @@ void DesktopGump::RenderSurfaceChanged(RenderSurface *surf) {
 void DesktopGump::RenderSurfaceChanged() {
 	// Resize the desktop gump to match the parent
 	Rect new_dims;
-	parent->GetDims(new_dims);
-	dims.w = new_dims.w;
-	dims.h = new_dims.h;
+	_parent->GetDims(new_dims);
+	_dims.w = new_dims.w;
+	_dims.h = new_dims.h;
 
 	Gump::RenderSurfaceChanged();
 }

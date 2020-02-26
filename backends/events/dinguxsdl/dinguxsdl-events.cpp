@@ -144,7 +144,7 @@ bool DINGUXSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		return true;
 	} else if (ev.key.keysym.sym == BUT_X) { // '.' skip dialogue
 		ev.key.keysym.sym = SDLK_PERIOD;
-		ev.key.keysym.mod = (SDLMod)0;
+		ev.key.keysym.mod = KMOD_NONE;
 		ev.key.keysym.unicode = '.';
 	} else if (ev.key.keysym.sym == TRIG_L) { // global menu
 		ev.key.keysym.sym = SDLK_F5;

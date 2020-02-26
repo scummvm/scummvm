@@ -70,8 +70,7 @@ enum MystEventAction {
 	kMystActionLoadGameState,
 	kMystActionSaveGameState,
 	kMystActionOpenOptionsDialog,
-	kMystActionPause,
-	kMystActionOpenDebugger
+	kMystActionPause
 };
 
 MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) :
@@ -90,12 +89,10 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_currentCursor = 0;
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
-	_lastSaveTime = 0;
 
 	_sound = nullptr;
 	_video = nullptr;
 	_gfx = nullptr;
-	_console = nullptr;
 	_gameState = nullptr;
 	_optionsDialog = nullptr;
 	_rnd = nullptr;
@@ -112,7 +109,6 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _gfx;
 	delete _video;
 	delete _sound;
-	delete _console;
 	delete _gameState;
 	delete _optionsDialog;
 	delete _rnd;
@@ -420,7 +416,7 @@ Common::Error MohawkEngine_Myst::run() {
 	_gfx = new MystGraphics(this);
 	_video = new VideoManager(this);
 	_sound = new MystSound(this);
-	_console = new MystConsole(this);
+	setDebugger(new MystConsole(this));
 	_gameState = new MystGameState(this, _saveFileMan);
 	_optionsDialog = new MystOptionsDialog(this);
 	_cursor = new MystCursorManager(this);
@@ -551,11 +547,6 @@ Common::KeymapArray MohawkEngine_Myst::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("SPACE");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionOpenDebugger, _("Open debugger"));
-	act->setCustomEngineActionEvent(kMystActionOpenDebugger);
-	act->addDefaultInputMapping("C+d");
-	engineKeyMap->addAction(act);
-
 	return Keymap::arrayOf(engineKeyMap);
 }
 
@@ -568,10 +559,6 @@ void MohawkEngine_Myst::doFrame() {
 		_waitingOnBlockingOperation = false;
 	}
 
-	if (shouldPerformAutoSave(_lastSaveTime)) {
-		tryAutoSaving();
-	}
-
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -580,10 +567,6 @@ void MohawkEngine_Myst::doFrame() {
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			switch ((MystEventAction)event.customType) {
-			case kMystActionOpenDebugger:
-				_console->attach();
-				_console->onFrame();
-				break;
 			case kMystActionInteract:
 				_mouseClicked = true;
 				break;
@@ -644,7 +627,7 @@ void MohawkEngine_Myst::doFrame() {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
 			// Attempt to autosave before exiting
-			tryAutoSaving();
+			saveAutosaveIfEnabled();
 			break;
 		default:
 			break;
@@ -972,41 +955,19 @@ MystArea *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream
 }
 
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
-	tryAutoSaving();
-
 	if (_gameState->load(slot))
 		return Common::kNoError;
 
 	return Common::kUnknownError;
 }
 
-Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc) {
+Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	const Graphics::Surface *thumbnail = nullptr;
 	if (_stack->getStackId() == kMenuStack) {
 		thumbnail = _gfx->getThumbnailForMainMenu();
 	}
 
-	return _gameState->save(slot, desc, thumbnail, false) ? Common::kNoError : Common::kUnknownError;
-}
-
-void MohawkEngine_Myst::tryAutoSaving() {
-	if (!canSaveGameStateCurrently()) {
-		return; // Can't save right now, try again on the next frame
-	}
-
-	_lastSaveTime = _system->getMillis();
-
-	if (!_gameState->isAutoSaveAllowed()) {
-		return; // Can't autosave ever, try again after the next autosave delay
-	}
-
-	const Graphics::Surface *thumbnail = nullptr;
-	if (_stack->getStackId() == kMenuStack) {
-		thumbnail = _gfx->getThumbnailForMainMenu();
-	}
-
-	if (!_gameState->save(MystGameState::kAutoSaveSlot, "Autosave", thumbnail, true))
-		warning("Attempt to autosave has failed.");
+	return _gameState->save(slot, desc, thumbnail, isAutosave) ? Common::kNoError : Common::kUnknownError;
 }
 
 bool MohawkEngine_Myst::hasGameSaveSupport() const {

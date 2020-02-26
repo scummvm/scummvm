@@ -38,43 +38,43 @@ namespace Ultima8 {
 //
 // BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::Surface *s)
 //
-// Desc: Constructor for BaseSoftRenderSurface from a SDL_Surface
+// Desc: Constructor for BaseSoftRenderSurface from a managed surface
 //
 BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
-	pixels(0), pixels00(0), zbuffer(0), zbuffer00(0),
-	bytes_per_pixel(0), bits_per_pixel(0), format_type(0),
-	ox(0), oy(0), width(0), height(0), pitch(0), zpitch(0),
-	flipped(false), clip_window(0, 0, 0, 0), lock_count(0),
-	sdl_surf(s), rtt_tex(0) {
-	clip_window.ResizeAbs(width = sdl_surf->w, height = sdl_surf->h);
-	pitch = sdl_surf->pitch;
-	bits_per_pixel = sdl_surf->format.bpp();
-	bytes_per_pixel = sdl_surf->format.bytesPerPixel;
+	_pixels(0), _pixels00(0), _zBuffer(0), _zBuffer00(0),
+	_bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
+	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
+	_surface(s), _rttTex(0) {
+	_clipWindow.ResizeAbs(_width = _surface->w, _height = _surface->h);
+	_pitch = _surface->pitch;
+	_bitsPerPixel = _surface->format.bpp();
+	_bytesPerPixel = _surface->format.bytesPerPixel;
 
-	RenderSurface::format.s_bpp = bits_per_pixel;
-	RenderSurface::format.s_bytes_per_pixel = bytes_per_pixel;
-	RenderSurface::format.r_loss = sdl_surf->format.rLoss;
-	RenderSurface::format.g_loss = sdl_surf->format.gLoss;
-	RenderSurface::format.b_loss = sdl_surf->format.bLoss;
-	RenderSurface::format.a_loss = sdl_surf->format.aLoss;
-	RenderSurface::format.r_loss16 = format.r_loss + 8;
-	RenderSurface::format.g_loss16 = format.g_loss + 8;
-	RenderSurface::format.b_loss16 = format.b_loss + 8;
-	RenderSurface::format.a_loss16 = format.a_loss + 8;
-	RenderSurface::format.r_shift = sdl_surf->format.rShift;
-	RenderSurface::format.g_shift = sdl_surf->format.gShift;
-	RenderSurface::format.b_shift = sdl_surf->format.bShift;
-	RenderSurface::format.a_shift = sdl_surf->format.aShift;
-	RenderSurface::format.r_mask = sdl_surf->format.rMax();
-	RenderSurface::format.g_mask = sdl_surf->format.gMax();
-	RenderSurface::format.b_mask = sdl_surf->format.bMax();
-	RenderSurface::format.a_mask = sdl_surf->format.aMax();
+	RenderSurface::_format.s_bpp = _bitsPerPixel;
+	RenderSurface::_format.s_bytes_per_pixel = _bytesPerPixel;
+	RenderSurface::_format.r_loss = _surface->format.rLoss;
+	RenderSurface::_format.g_loss = _surface->format.gLoss;
+	RenderSurface::_format.b_loss = _surface->format.bLoss;
+	RenderSurface::_format.a_loss = _surface->format.aLoss;
+	RenderSurface::_format.r_loss16 = _format.r_loss + 8;
+	RenderSurface::_format.g_loss16 = _format.g_loss + 8;
+	RenderSurface::_format.b_loss16 = _format.b_loss + 8;
+	RenderSurface::_format.a_loss16 = _format.a_loss + 8;
+	RenderSurface::_format.r_shift = _surface->format.rShift;
+	RenderSurface::_format.g_shift = _surface->format.gShift;
+	RenderSurface::_format.b_shift = _surface->format.bShift;
+	RenderSurface::_format.a_shift = _surface->format.aShift;
+	RenderSurface::_format.r_mask = _surface->format.rMax() << _surface->format.rShift;
+	RenderSurface::_format.g_mask = _surface->format.gMax() << _surface->format.gShift;
+	RenderSurface::_format.b_mask = _surface->format.bMax() << _surface->format.bShift;
+	RenderSurface::_format.a_mask = _surface->format.aMax() << _surface->format.aShift;
 
 	SetPixelsPointer();
 
 	// Trickery to get the alpha channel
-	if (format.a_mask == 0 && bytes_per_pixel == 4) {
-		uint32 mask = ~(format.r_mask | format.g_mask | format.b_mask);
+	if (_format.a_mask == 0 && _bytesPerPixel == 4) {
+		uint32 mask = ~(_format.r_mask | _format.g_mask | _format.b_mask);
 
 		// Using all bits????
 		if (!mask) return;
@@ -103,10 +103,10 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 		if (zero < last) return;
 
 		// Set it
-		format.a_shift = first;
-		format.a_loss = 8 - (last + 1 - first);
-		format.a_loss16 = format.a_loss + 8;
-		format.a_mask = mask;
+		_format.a_shift = first;
+		_format.a_loss = 8 - (last + 1 - first);
+		_format.a_loss16 = _format.a_loss + 8;
+		_format.a_mask = mask;
 	}
 }
 
@@ -118,57 +118,57 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 //
 BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp,
         int rsft, int gsft, int bsft, int asft) :
-	pixels(0), pixels00(0), zbuffer(0), zbuffer00(0),
-	bytes_per_pixel(0), bits_per_pixel(0), format_type(0),
-	ox(0), oy(0), width(0), height(0), pitch(0), zpitch(0),
-	flipped(false), clip_window(0, 0, 0, 0), lock_count(0), sdl_surf(0), rtt_tex(0) {
-	clip_window.ResizeAbs(width = w, height = h);
+	_pixels(0), _pixels00(0), _zBuffer(0), _zBuffer00(0),
+	_bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
+	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(0), _rttTex(0) {
+	_clipWindow.ResizeAbs(_width = w, _height = h);
 
 	switch (bpp) {
 	case 15:
-		format.r_loss = 3;
-		format.g_loss = 3;
-		format.b_loss = 3;
-		format.a_loss = 7;
+		_format.r_loss = 3;
+		_format.g_loss = 3;
+		_format.b_loss = 3;
+		_format.a_loss = 7;
 		bpp = 16;
 		break;
 
 	case 16:
-		format.r_loss = 3;
-		format.g_loss = 2;
-		format.b_loss = 3;
-		format.a_loss = 0;
+		_format.r_loss = 3;
+		_format.g_loss = 2;
+		_format.b_loss = 3;
+		_format.a_loss = 0;
 		break;
 
 	case 32:
-		format.r_loss = 0;
-		format.g_loss = 0;
-		format.b_loss = 0;
-		format.a_loss = 0;
+		_format.r_loss = 0;
+		_format.g_loss = 0;
+		_format.b_loss = 0;
+		_format.a_loss = 0;
 		break;
 
 	default:
 		break;
 	}
 
-	pitch = w * bpp / 8;
-	bits_per_pixel = bpp;
-	bytes_per_pixel = bpp / 8;
+	_pitch = w * bpp / 8;
+	_bitsPerPixel = bpp;
+	_bytesPerPixel = bpp / 8;
 
-	RenderSurface::format.s_bpp = bpp;
-	RenderSurface::format.s_bytes_per_pixel = bytes_per_pixel;
-	RenderSurface::format.r_loss16 = format.r_loss + 8;
-	RenderSurface::format.g_loss16 = format.g_loss + 8;
-	RenderSurface::format.b_loss16 = format.b_loss + 8;
-	RenderSurface::format.a_loss16 = format.a_loss + 8;
-	RenderSurface::format.r_shift = rsft;
-	RenderSurface::format.g_shift = gsft;
-	RenderSurface::format.b_shift = bsft;
-	RenderSurface::format.a_shift = asft;
-	RenderSurface::format.r_mask = (0xFF >> format.r_loss) << rsft;
-	RenderSurface::format.g_mask = (0xFF >> format.g_loss) << gsft;
-	RenderSurface::format.b_mask = (0xFF >> format.b_loss) << bsft;
-	RenderSurface::format.a_mask = (0xFF >> format.a_loss) << asft;
+	RenderSurface::_format.s_bpp = bpp;
+	RenderSurface::_format.s_bytes_per_pixel = _bytesPerPixel;
+	RenderSurface::_format.r_loss16 = _format.r_loss + 8;
+	RenderSurface::_format.g_loss16 = _format.g_loss + 8;
+	RenderSurface::_format.b_loss16 = _format.b_loss + 8;
+	RenderSurface::_format.a_loss16 = _format.a_loss + 8;
+	RenderSurface::_format.r_shift = rsft;
+	RenderSurface::_format.g_shift = gsft;
+	RenderSurface::_format.b_shift = bsft;
+	RenderSurface::_format.a_shift = asft;
+	RenderSurface::_format.r_mask = (0xFF >> _format.r_loss) << rsft;
+	RenderSurface::_format.g_mask = (0xFF >> _format.g_loss) << gsft;
+	RenderSurface::_format.b_mask = (0xFF >> _format.b_loss) << bsft;
+	RenderSurface::_format.a_mask = (0xFF >> _format.a_loss) << asft;
 
 	SetPixelsPointer();
 }
@@ -180,18 +180,18 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp,
 // Desc: Constructor for Generic BaseSoftRenderSurface which matches screen params
 //
 BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf) :
-	pixels(0), pixels00(0), zbuffer(0), zbuffer00(0),
-	bytes_per_pixel(0), bits_per_pixel(0), format_type(0),
-	ox(0), oy(0), width(0), height(0), pitch(0), zpitch(0),
-	flipped(false), clip_window(0, 0, 0, 0), lock_count(0), sdl_surf(0), rtt_tex(0) {
-	clip_window.ResizeAbs(width = w, height = h);
+	_pixels(0), _pixels00(0), _zBuffer(0), _zBuffer00(0),
+	_bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
+	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(0), _rttTex(0) {
+	_clipWindow.ResizeAbs(_width = w, _height = h);
 
-	int bpp = RenderSurface::format.s_bpp;
+	int bpp = RenderSurface::_format.s_bpp;
 
-	pitch = w * bpp / 8;
-	bits_per_pixel = bpp;
-	bytes_per_pixel = bpp / 8;
-	pixels00 = buf;
+	_pitch = w * bpp / 8;
+	_bitsPerPixel = bpp;
+	_bytesPerPixel = bpp / 8;
+	_pixels00 = buf;
 
 	SetPixelsPointer();
 }
@@ -202,25 +202,25 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf) :
 // Desc: Constructor for Generic BaseSoftRenderSurface which matches screen params
 //
 BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
-	pixels(0), pixels00(0), zbuffer(0), zbuffer00(0),
-	bytes_per_pixel(0), bits_per_pixel(0), format_type(0),
-	ox(0), oy(0), width(0), height(0), pitch(0), zpitch(0),
-	flipped(false), clip_window(0, 0, 0, 0), lock_count(0), sdl_surf(0), rtt_tex(0) {
-	clip_window.ResizeAbs(width = w, height = h);
+	_pixels(0), _pixels00(0), _zBuffer(0), _zBuffer00(0),
+	_bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
+	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(0), _rttTex(0) {
+	_clipWindow.ResizeAbs(_width = w, _height = h);
 
-	int bpp = RenderSurface::format.s_bpp;
+	int bpp = RenderSurface::_format.s_bpp;
 
-	pitch = w * bpp / 8;
-	bits_per_pixel = bpp;
-	bytes_per_pixel = bpp / 8;
-	pixels00 = new uint8[pitch * height];
+	_pitch = w * bpp / 8;
+	_bitsPerPixel = bpp;
+	_bytesPerPixel = bpp / 8;
+	_pixels00 = new uint8[_pitch * _height];
 
-	rtt_tex = new Texture;
-	rtt_tex->buffer = reinterpret_cast<uint32 *>(pixels00);
-	rtt_tex->width = width;
-	rtt_tex->height = height;
-	rtt_tex->format = TEX_FMT_NATIVE;
-	rtt_tex->CalcLOG2s();
+	_rttTex = new Texture;
+	_rttTex->_buffer = reinterpret_cast<uint32 *>(_pixels00);
+	_rttTex->_width = _width;
+	_rttTex->_height = _height;
+	_rttTex->_format = TEX_FMT_NATIVE;
+	_rttTex->CalcLOG2s();
 
 	SetPixelsPointer();
 }
@@ -232,15 +232,15 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
 // Desc: Destructor
 //
 BaseSoftRenderSurface::~BaseSoftRenderSurface() {
-	if (rtt_tex) {
-		delete rtt_tex;
-		rtt_tex = 0;
+	if (_rttTex) {
+		delete _rttTex;
+		_rttTex = 0;
 
-		delete [] pixels00;
-		pixels00 = 0;
+		delete [] _pixels00;
+		_pixels00 = 0;
 
-		delete [] zbuffer00;
-		zbuffer00 = 0;
+		delete [] _zBuffer00;
+		_zBuffer00 = 0;
 	}
 }
 
@@ -252,26 +252,26 @@ BaseSoftRenderSurface::~BaseSoftRenderSurface() {
 // Returns: Non Zero on error
 //
 ECode BaseSoftRenderSurface::BeginPainting() {
-	if (!lock_count) {
+	if (!_lockCount) {
 
-		if (sdl_surf) {
+		if (_surface) {
 			// Pixels pointer
-			Graphics::Surface s = sdl_surf->getSubArea(Common::Rect(0, 0, sdl_surf->w, sdl_surf->h));
-			pixels00 = static_cast<uint8 *>(s.getPixels());
+			Graphics::Surface s = _surface->getSubArea(Common::Rect(0, 0, _surface->w, _surface->h));
+			_pixels00 = static_cast<uint8 *>(s.getPixels());
 
-			pitch = sdl_surf->pitch;
-			if (flipped) pitch = -pitch;
+			_pitch = _surface->pitch;
+			if (_flipped) _pitch = -_pitch;
 		} else  {
 			ECode ret = GenericLock();
 			if (ret.failed()) return ret;
 		}
 	}
 
-	lock_count++;
+	_lockCount++;
 
-	if (pixels00 == 0) {
-		// TODO: SetLastError(GR_SOFT_ERROR_LOCKED_NULL_PIXELS, "Surface Locked with NULL BaseSoftRenderSurface::pixels pointer!");
-		perr << "Error: Surface Locked with NULL BaseSoftRenderSurface::pixels pointer!" << Std::endl;
+	if (_pixels00 == 0) {
+		// TODO: SetLastError(GR_SOFT_ERROR_LOCKED_NULL_PIXELS, "Surface Locked with NULL BaseSoftRenderSurface::_pixels pointer!");
+		perr << "Error: Surface Locked with NULL BaseSoftRenderSurface::_pixels pointer!" << Std::endl;
 		return GR_SOFT_ERROR_LOCKED_NULL_PIXELS;
 	}
 
@@ -291,22 +291,22 @@ ECode BaseSoftRenderSurface::BeginPainting() {
 //
 ECode BaseSoftRenderSurface::EndPainting() {
 	// Already Unlocked
-	if (!lock_count) {
+	if (!_lockCount) {
 		// TODO: SetLastError(GR_SOFT_ERROR_BEGIN_END_MISMATCH, "BeginPainting()/EndPainting() Mismatch!");
 		perr << "Error: BeginPainting()/EndPainting() Mismatch!" << Std::endl;
 		return GR_SOFT_ERROR_BEGIN_END_MISMATCH;
 	}
 
 	// Decrement counter
-	--lock_count;
+	--_lockCount;
 
-	if (!lock_count) {
-		if (sdl_surf) {
+	if (!_lockCount) {
+		if (_surface) {
 			// Clear pointers
-			pixels = pixels00 = 0;
+			_pixels = _pixels00 = 0;
 
 			// Render the screen
-			Graphics::Screen *screen = dynamic_cast<Graphics::Screen *>(sdl_surf);
+			Graphics::Screen *screen = dynamic_cast<Graphics::Screen *>(_surface);
 			assert(screen);
 			screen->update();
 
@@ -326,11 +326,11 @@ ECode BaseSoftRenderSurface::EndPainting() {
 // Desc: Get the surface as a Texture. Only valid for SecondaryRenderSurfaces
 //
 Texture *BaseSoftRenderSurface::GetSurfaceAsTexture() {
-	if (!rtt_tex) {
+	if (!_rttTex) {
 		perr << "Error: GetSurfaceAsTexture(): Surface doesn't render-to-texture" << Std::endl;
 	}
 
-	return rtt_tex;
+	return _rttTex;
 }
 
 //
@@ -343,66 +343,66 @@ void BaseSoftRenderSurface::CreateNativePalette(Palette *palette) {
 		int32 r, g, b;
 
 		// Normal palette
-		palette->native_untransformed[i] = PACK_RGB8(palette->palette[i * 3 + 0],
-		                                   palette->palette[i * 3 + 1],
-		                                   palette->palette[i * 3 + 2]);
+		palette->_native_untransformed[i] = PACK_RGB8(palette->_palette[i * 3 + 0],
+		                                   palette->_palette[i * 3 + 1],
+		                                   palette->_palette[i * 3 + 2]);
 
-		r = palette->matrix[0] * palette->palette[i * 3 + 0] +
-		    palette->matrix[1] * palette->palette[i * 3 + 1] +
-		    palette->matrix[2] * palette->palette[i * 3 + 2] +
-		    palette->matrix[3] * 255;
+		r = palette->_matrix[0] * palette->_palette[i * 3 + 0] +
+		    palette->_matrix[1] * palette->_palette[i * 3 + 1] +
+		    palette->_matrix[2] * palette->_palette[i * 3 + 2] +
+		    palette->_matrix[3] * 255;
 		if (r < 0) r = 0;
 		if (r > 0x7F800) r = 0x7F800;
 
-		g = palette->matrix[4] * palette->palette[i * 3 + 0] +
-		    palette->matrix[5] * palette->palette[i * 3 + 1] +
-		    palette->matrix[6] * palette->palette[i * 3 + 2] +
-		    palette->matrix[7] * 255;
+		g = palette->_matrix[4] * palette->_palette[i * 3 + 0] +
+		    palette->_matrix[5] * palette->_palette[i * 3 + 1] +
+		    palette->_matrix[6] * palette->_palette[i * 3 + 2] +
+		    palette->_matrix[7] * 255;
 		if (g < 0) g = 0;
 		if (g > 0x7F800) g = 0x7F800;
 
-		b = palette->matrix[8] * palette->palette[i * 3 + 0] +
-		    palette->matrix[9] * palette->palette[i * 3 + 1] +
-		    palette->matrix[10] * palette->palette[i * 3 + 2] +
-		    palette->matrix[11] * 255;
+		b = palette->_matrix[8] * palette->_palette[i * 3 + 0] +
+		    palette->_matrix[9] * palette->_palette[i * 3 + 1] +
+		    palette->_matrix[10] * palette->_palette[i * 3 + 2] +
+		    palette->_matrix[11] * 255;
 		if (b < 0) b = 0;
 		if (b > 0x7F800) b = 0x7F800;
 
 		// Transformed normal palette
 		// FIXME - Wont work on non SDL SRS Implementations
-		palette->native[i] = PACK_RGB8(static_cast<uint8>(r >> 11),
+		palette->_native[i] = PACK_RGB8(static_cast<uint8>(r >> 11),
 		                               static_cast<uint8>(g >> 11),
 		                               static_cast<uint8>(b >> 11));
 
 		// Transformed XFORM palette (Uses the TEX32 format)
-		if (TEX32_A(palette->xform_untransformed[i])) {
-			r = palette->matrix[0] * TEX32_R(palette->xform_untransformed[i]) +
-			    palette->matrix[1] * TEX32_G(palette->xform_untransformed[i]) +
-			    palette->matrix[2] * TEX32_B(palette->xform_untransformed[i]) +
-			    palette->matrix[3] * 255;
+		if (TEX32_A(palette->_xform_untransformed[i])) {
+			r = palette->_matrix[0] * TEX32_R(palette->_xform_untransformed[i]) +
+			    palette->_matrix[1] * TEX32_G(palette->_xform_untransformed[i]) +
+			    palette->_matrix[2] * TEX32_B(palette->_xform_untransformed[i]) +
+			    palette->_matrix[3] * 255;
 			if (r < 0) r = 0;
 			if (r > 0x7F800) r = 0x7F800;
 
-			g = palette->matrix[4] * TEX32_R(palette->xform_untransformed[i]) +
-			    palette->matrix[5] * TEX32_G(palette->xform_untransformed[i]) +
-			    palette->matrix[6] * TEX32_B(palette->xform_untransformed[i]) +
-			    palette->matrix[7] * 255;
+			g = palette->_matrix[4] * TEX32_R(palette->_xform_untransformed[i]) +
+			    palette->_matrix[5] * TEX32_G(palette->_xform_untransformed[i]) +
+			    palette->_matrix[6] * TEX32_B(palette->_xform_untransformed[i]) +
+			    palette->_matrix[7] * 255;
 			if (g < 0) g = 0;
 			if (g > 0x7F800) g = 0x7F800;
 
-			b = palette->matrix[8] * TEX32_R(palette->xform_untransformed[i]) +
-			    palette->matrix[9] * TEX32_G(palette->xform_untransformed[i]) +
-			    palette->matrix[10] * TEX32_B(palette->xform_untransformed[i]) +
-			    palette->matrix[11] * 255;
+			b = palette->_matrix[8] * TEX32_R(palette->_xform_untransformed[i]) +
+			    palette->_matrix[9] * TEX32_G(palette->_xform_untransformed[i]) +
+			    palette->_matrix[10] * TEX32_B(palette->_xform_untransformed[i]) +
+			    palette->_matrix[11] * 255;
 			if (b < 0) b = 0;
 			if (b > 0x7F800) b = 0x7F800;
 
-			palette->xform[i] = TEX32_PACK_RGBA(static_cast<uint8>(r >> 11),
+			palette->_xform[i] = TEX32_PACK_RGBA(static_cast<uint8>(r >> 11),
 			                                    static_cast<uint8>(g >> 11),
 			                                    static_cast<uint8>(b >> 11),
-			                                    TEX32_A(palette->xform_untransformed[i]));
+			                                    TEX32_A(palette->_xform_untransformed[i]));
 		} else
-			palette->xform[i] = 0;
+			palette->_xform[i] = 0;
 	}
 }
 
@@ -413,7 +413,7 @@ void BaseSoftRenderSurface::CreateNativePalette(Palette *palette) {
 // r: Rect object to fill
 //
 void BaseSoftRenderSurface::GetSurfaceDims(Rect &r) const {
-	r.Set(ox, oy, width, height);
+	r.Set(_ox, _oy, _width, _height);
 }
 
 //
@@ -423,11 +423,11 @@ void BaseSoftRenderSurface::GetSurfaceDims(Rect &r) const {
 //
 void BaseSoftRenderSurface::SetOrigin(int32 x, int32 y) {
 	// Adjust the clipping window
-	clip_window.MoveRel(ox - x, oy - y);
+	_clipWindow.MoveRel(_ox - x, _oy - y);
 
 	// Set the origin
-	ox = x;
-	oy = y;
+	_ox = x;
+	_oy = y;
 
 	// The new pointers
 	SetPixelsPointer();
@@ -440,8 +440,8 @@ void BaseSoftRenderSurface::SetOrigin(int32 x, int32 y) {
 //
 void BaseSoftRenderSurface::GetOrigin(int32 &x, int32 &y) const {
 	// Set the origin
-	x = ox;
-	y = oy;
+	x = _ox;
+	y = _oy;
 }
 
 //
@@ -451,7 +451,7 @@ void BaseSoftRenderSurface::GetOrigin(int32 &x, int32 &y) const {
 // r: Rect object to fill
 //
 void BaseSoftRenderSurface::GetClippingRect(Rect &r) const {
-	r = clip_window;
+	r = _clipWindow;
 }
 
 //
@@ -462,8 +462,8 @@ void BaseSoftRenderSurface::GetClippingRect(Rect &r) const {
 //
 void BaseSoftRenderSurface::SetClippingRect(const Rect &r) {
 	// What we need to do is to clip the clipping rect to the phyiscal screen
-	clip_window = r;
-	clip_window.Intersect(-ox, -oy, width, height);
+	_clipWindow = r;
+	_clipWindow.Intersect(-_ox, -_oy, _width, _height);
 }
 
 //
@@ -476,7 +476,7 @@ void BaseSoftRenderSurface::SetClippingRect(const Rect &r) {
 //
 int16 BaseSoftRenderSurface::CheckClipped(const Rect &c) const {
 	Rect r = c;
-	r.Intersect(clip_window);
+	r.Intersect(_clipWindow);
 
 	// Clipped away to the void
 	if (!r.IsValid()) return -1;
@@ -485,7 +485,7 @@ int16 BaseSoftRenderSurface::CheckClipped(const Rect &c) const {
 }
 
 //
-// void BaseSoftRenderSurface::SetFlipped(bool flipped)
+// void BaseSoftRenderSurface::SetFlipped(bool _flipped)
 //
 // Desc: Flip the surface
 //
@@ -493,20 +493,20 @@ void BaseSoftRenderSurface::SetFlipped(bool wantFlipped) {
 	// Flipping is not terrible complex
 	// But is a bit of a pain to set up
 
-	// First we check to see if we are currently flipped
-	if (wantFlipped == flipped) return;
+	// First we check to see if we are currently _flipped
+	if (wantFlipped == _flipped) return;
 
-	flipped = wantFlipped;
+	_flipped = wantFlipped;
 
 	// What we 'need' to do is negate the pitches, and flip the clipping window
 	// We keep the 'origin' in the same position relative to the clipping window
 
-	oy -= clip_window.y;
-	clip_window.y = height - (clip_window.y + clip_window.h);
-	oy += clip_window.y;
+	_oy -= _clipWindow.y;
+	_clipWindow.y = _height - (_clipWindow.y + _clipWindow.h);
+	_oy += _clipWindow.y;
 
-	pitch = -pitch;
-	zpitch = -zpitch;
+	_pitch = -_pitch;
+	_zPitch = -_zPitch;
 
 	SetPixelsPointer();
 
@@ -515,10 +515,10 @@ void BaseSoftRenderSurface::SetFlipped(bool wantFlipped) {
 //
 // bool BaseSoftRenderSurface::IsFlipped() const
 //
-// Desc: Has the render surface been flipped?
+// Desc: Has the render surface been _flipped?
 //
 bool BaseSoftRenderSurface::IsFlipped() const {
-	return flipped;
+	return _flipped;
 }
 
 } // End of namespace Ultima8

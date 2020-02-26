@@ -45,7 +45,7 @@ namespace Ultima8 {
 //
 // SoftRenderSurface::SoftRenderSurface(Graphics::Surface *s)
 //
-// Desc: Create a SoftRenderSurface from a SDL_Surface
+// Desc: Create a SoftRenderSurface from a managed surface
 //
 template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(Graphics::ManagedSurface *s)
 	: BaseSoftRenderSurface(s) {
@@ -98,22 +98,22 @@ template<class uintX> void SoftRenderSurface<uintX>::Fill8(uint8 /*index*/, int3
 //
 
 template<class uintX> void SoftRenderSurface<uintX>::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-	clip_window.IntersectOther(sx, sy, w, h);
+	_clipWindow.IntersectOther(sx, sy, w, h);
 	if (!w || !h) return;
 
 	// An optimization.
-	if ((w * sizeof(uintX)) == pitch) {
+	if ((w * sizeof(uintX)) == _pitch) {
 		w *= h;
 		h = 1;
 	}
 
-	uint8 *pixel = pixels + sy * pitch + sx * sizeof(uintX);
-	uint8 *end = pixel + h * pitch;
+	uint8 *pixel = _pixels + sy * _pitch + sx * sizeof(uintX);
+	uint8 *end = pixel + h * _pitch;
 
 	rgb = PACK_RGB8((rgb >> 16) & 0xFF , (rgb >> 8) & 0xFF , rgb & 0xFF);
 
 	uint8 *line_end = pixel + w * sizeof(uintX);
-	int diff = pitch - w * sizeof(uintX);
+	int diff = _pitch - w * sizeof(uintX);
 
 	while (pixel != end) {
 		while (pixel != line_end) {
@@ -121,52 +121,52 @@ template<class uintX> void SoftRenderSurface<uintX>::Fill32(uint32 rgb, int32 sx
 			pixel += sizeof(uintX);
 		}
 
-		line_end += pitch;
+		line_end += _pitch;
 		pixel += diff;
 	}
 }
 
 // 16 bit version
 template<> void SoftRenderSurface<uint16>::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-	clip_window.IntersectOther(sx, sy, w, h);
+	_clipWindow.IntersectOther(sx, sy, w, h);
 	if (!w || !h) return;
 
 	// An optimization.
-	if (2 * w == pitch) {
+	if (2 * w == _pitch) {
 		w *= h;
 		h = 1;
 	}
 
-	uint8 *pixel = pixels + sy * pitch + sx * sizeof(uint16);
-	uint8 *end = pixel + h * pitch;
+	uint8 *pixel = _pixels + sy * _pitch + sx * sizeof(uint16);
+	uint8 *end = pixel + h * _pitch;
 
 	rgb = PACK_RGB8((rgb >> 16) & 0xFF , (rgb >> 8) & 0xFF , rgb & 0xFF);
 
 	while (pixel != end) {
 		memset_16(pixel, rgb, w);
-		pixel += pitch;
+		pixel += _pitch;
 	}
 }
 
 // 32 bit version
 template<> void SoftRenderSurface<uint32>::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-	clip_window.IntersectOther(sx, sy, w, h);
+	_clipWindow.IntersectOther(sx, sy, w, h);
 	if (!w || !h) return;
 
 	// An optimization.
-	if (4 * w == pitch) {
+	if (4 * w == _pitch) {
 		w *= h;
 		h = 1;
 	}
 
-	uint8 *pixel = pixels + sy * pitch + sx * sizeof(uint32);
-	uint8 *end = pixel + h * pitch;
+	uint8 *pixel = _pixels + sy * _pitch + sx * sizeof(uint32);
+	uint8 *end = pixel + h * _pitch;
 
 	rgb = PACK_RGB8((rgb >> 16) & 0xFF , (rgb >> 8) & 0xFF , rgb & 0xFF);
 
 	while (pixel != end) {
 		memset_32(pixel, rgb, w);
-		pixel += pitch;
+		pixel += _pitch;
 	}
 }
 
@@ -180,46 +180,46 @@ template<> void SoftRenderSurface<uint32>::Fill32(uint32 rgb, int32 sx, int32 sy
 //#define CHECK_ALPHA_FILLS
 
 template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h) {
-	clip_window.IntersectOther(sx, sy, w, h);
-	if (!w || !h || !RenderSurface::format.a_mask) return;
+	_clipWindow.IntersectOther(sx, sy, w, h);
+	if (!w || !h || !RenderSurface::_format.a_mask) return;
 
 	// An optimization.
-	if ((int)(w * sizeof(uintX)) == pitch) {
+	if ((int)(w * sizeof(uintX)) == _pitch) {
 		w *= h;
 		h = 1;
 	}
 
-	uint8 *pixel = pixels + sy * pitch + sx * sizeof(uintX);
-	uint8 *end = pixel + h * pitch;
+	uint8 *pixel = _pixels + sy * _pitch + sx * sizeof(uintX);
+	uint8 *end = pixel + h * _pitch;
 
 	uint8 *line_end = pixel + w * sizeof(uintX);
-	int diff = pitch - w * sizeof(uintX);
+	int diff = _pitch - w * sizeof(uintX);
 
-	uintX a = (((uintX)alpha) << RenderSurface::format.a_shift)&RenderSurface::format.a_mask;
+	uintX a = (((uintX)alpha) << RenderSurface::_format.a_shift)&RenderSurface::_format.a_mask;
 
 #ifdef CHECK_ALPHA_FILLS
 	uintX c;
 	uintX m;
 	if (a == 0) {
-		c = (RenderSurface::format.b_mask >> 1)&RenderSurface::format.b_mask;
-		m = RenderSurface::format.b_mask;
+		c = (RenderSurface::_format.b_mask >> 1)&RenderSurface::_format.b_mask;
+		m = RenderSurface::_format.b_mask;
 	} else {
-		c = (RenderSurface::format.r_mask >> 1)&RenderSurface::format.r_mask;
-		m = RenderSurface::format.r_mask;
+		c = (RenderSurface::_format.r_mask >> 1)&RenderSurface::_format.r_mask;
+		m = RenderSurface::_format.r_mask;
 	}
 #endif
 
 	while (pixel != end) {
 		while (pixel != line_end) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
-			*dest = (*dest & ~RenderSurface::format.a_mask) | a;
+			*dest = (*dest & ~RenderSurface::_format.a_mask) | a;
 #ifdef CHECK_ALPHA_FILLS
 			*dest = (*dest & ~m) | (c + (((*dest & m) >> 1)&m));
 #endif
 			pixel += sizeof(uintX);
 		}
 
-		line_end += pitch;
+		line_end += _pitch;
 		pixel += diff;
 	}
 }
@@ -232,20 +232,20 @@ template<class uintX> void SoftRenderSurface<uintX>::FillBlended(uint32 rgba, in
 		return;
 	}
 
-	clip_window.IntersectOther(sx, sy, w, h);
+	_clipWindow.IntersectOther(sx, sy, w, h);
 	if (!w || !h) return;
 
 	// An optimization.
-	if ((int)(w * sizeof(uintX)) == pitch) {
+	if ((int)(w * sizeof(uintX)) == _pitch) {
 		w *= h;
 		h = 1;
 	}
 
-	uint8 *pixel = pixels + sy * pitch + sx * sizeof(uintX);
-	uint8 *end = pixel + h * pitch;
+	uint8 *pixel = _pixels + sy * _pitch + sx * sizeof(uintX);
+	uint8 *end = pixel + h * _pitch;
 
 	uint8 *line_end = pixel + w * sizeof(uintX);
-	int diff = pitch - w * sizeof(uintX);
+	int diff = _pitch - w * sizeof(uintX);
 
 	int alpha = TEX32_A(rgba) + 1;
 	rgba = TEX32_PACK_RGBA16(TEX32_R(rgba) * alpha, TEX32_G(rgba) * alpha, TEX32_B(rgba) * alpha, 255 * alpha);
@@ -254,11 +254,11 @@ template<class uintX> void SoftRenderSurface<uintX>::FillBlended(uint32 rgba, in
 		while (pixel != line_end) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
 			uintX d = *dest;
-			*dest = (d & RenderSurface::format.a_mask) | BlendPreModFast(rgba, d);
+			*dest = (d & RenderSurface::_format.a_mask) | BlendPreModFast(rgba, d);
 			pixel += sizeof(uintX);
 		}
 
-		line_end += pitch;
+		line_end += _pitch;
 		pixel += diff;
 	}
 }
@@ -334,13 +334,13 @@ template<class uintX> void SoftRenderSurface<uintX>::DrawLine32(uint32 rgb, int3
 //
 // Desc: Blit a region from a Texture (Alpha == 0 -> skipped)
 //
-template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend) {
 	// Clamp or wrap or return?
-	if (sx + w > static_cast<int32>(tex->width))
+	if (sx + w > static_cast<int32>(_tex->_width))
 		return;
 
 	// Clamp or wrap or return?
-	if (sy + h > static_cast<int32>(tex->height))
+	if (sy + h > static_cast<int32>(_tex->_height))
 		return;
 
 	if (sx < 0 || sy < 0)
@@ -348,21 +348,21 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *tex, int32 sx
 
 	// Clip to window
 	int px = dx, py = dy;
-	clip_window.IntersectOther(dx, dy, w, h);
+	_clipWindow.IntersectOther(dx, dy, w, h);
 	if (!w || !h) return;
 
 	// Adjust source x and y
 	if (px != dx) sx += dx - px;
 	if (py != dy) sy += dy - py;
 
-	uint8 *pixel = pixels + dy * pitch + dx * sizeof(uintX);
+	uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
 	uint8 *line_end = pixel + w * sizeof(uintX);
-	uint8 *end = pixel + h * pitch;
-	int diff = pitch - w * sizeof(uintX);
+	uint8 *end = pixel + h * _pitch;
+	int diff = _pitch - w * sizeof(uintX);
 
-	if (tex->format == TEX_FMT_STANDARD) {
-		uint32 *texel = tex->buffer + (sy * tex->width + sx);
-		int tex_diff = tex->width - w;
+	if (_tex->_format == TEX_FMT_STANDARD) {
+		uint32 *texel = _tex->_buffer + (sy * _tex->_width + sx);
+		int tex_diff = _tex->_width - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) while (pixel != line_end) {
@@ -384,13 +384,13 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *tex, int32 sx
 					texel++;
 				}
 
-			line_end += pitch;
+			line_end += _pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
-	} else if (tex->format == TEX_FMT_NATIVE) {
-		uintX *texel = reinterpret_cast<uintX *>(tex->buffer) + (sy * tex->width + sx);
-		int tex_diff = tex->width - w;
+	} else if (_tex->_format == TEX_FMT_NATIVE) {
+		uintX *texel = reinterpret_cast<uintX *>(_tex->_buffer) + (sy * _tex->_width + sx);
+		int tex_diff = _tex->_width - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {
@@ -403,7 +403,7 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *tex, int32 sx
 				texel++;
 			}
 
-			line_end += pitch;
+			line_end += _pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
@@ -412,44 +412,44 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *tex, int32 sx
 	/* Old complete code
 	    // Clamp or wrap or return?
 	#ifndef BLIT_WRAP
-	    if (w > static_cast<int32>(tex->width))
+	    if (w > static_cast<int32>(_tex->_width))
 	#ifndef BLIT_CLIP
 	        return;
 	#else
-	        w = tex->width;
+	        w = _tex->_width;
 	#endif
 
 	    // Clamp or wrap or return?
-	    if (h > static_cast<int32>(tex->height))
+	    if (h > static_cast<int32>(_tex->_height))
 	#ifndef BLIT_CLIP
 	        return;
 	#else
-	        h = tex->height;
+	        h = _tex->_height;
 	#endif
 	#endif
 
 	    // Clip to window
 	    int px = dx, py = dy;
-	    clip_window.IntersectOther(dx,dy,w,h);
+	    _clipWindow.IntersectOther(dx,dy,w,h);
 	    if (!w || !h) return;
 
 	    // Adjust source x and y
 	    if (px != dx) sx += dx - px;
 	    if (py != dy) sy += dy - py;
 
-	    uint8 *pixel = pixels + dy * pitch + dx * sizeof(uintX);
+	    uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
 	    uint8 *line_end = pixel + w*sizeof(uintX);
-	    uint8 *end = pixel + h * pitch;
-	    int diff = pitch - w*sizeof(uintX);
+	    uint8 *end = pixel + h * _pitch;
+	    int diff = _pitch - w*sizeof(uintX);
 
-	    uint32 *texel = tex->buffer + (sy * tex->width + sx);
+	    uint32 *texel = _tex->_buffer + (sy * _tex->_width + sx);
 	#ifdef BLIT_WRAP
-	    uint32 *texel_line_start = tex->buffer + sy * tex->width;
-	    uint32 *texel_line_end = tex->buffer + (sy+1) * tex->width;
-	    uint32 *texel_col_start = tex->buffer + sx;
-	    uint32 *texel_col_end = tex->buffer + (tex->height * tex->width + sx);
+	    uint32 *texel_line_start = _tex->_buffer + sy * _tex->_width;
+	    uint32 *texel_line_end = _tex->_buffer + (sy+1) * _tex->_width;
+	    uint32 *texel_col_start = _tex->_buffer + sx;
+	    uint32 *texel_col_end = _tex->_buffer + (_tex->_height * _tex->_width + sx);
 	#endif
-	    int tex_diff = tex->width - w;
+	    int tex_diff = _tex->_width - w;
 
 	    //b = PACK_RGB8( (rgb>>16)&0xFF , (rgb>>8)&0xFF , rgb&0xFF );
 
@@ -468,7 +468,7 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *tex, int32 sx
 	#endif
 	        }
 
-	        line_end += pitch;
+	        line_end += _pitch;
 	        pixel += diff;
 	        texel+= tex_diff;
 	#ifdef BLIT_WRAP
@@ -487,28 +487,28 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *tex, int32 sx
 //
 // Desc: Blit a region from a Texture (Alpha == 0 -> skipped)
 //
-template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
 	// Clamp or wrap or return?
-	if (w > static_cast<int32>(tex->width))
+	if (w > static_cast<int32>(_tex->_width))
 		return;
 
 	// Clamp or wrap or return?
-	if (h > static_cast<int32>(tex->height))
+	if (h > static_cast<int32>(_tex->_height))
 		return;
 
 	// Clip to window
 	int px = dx, py = dy;
-	clip_window.IntersectOther(dx, dy, w, h);
+	_clipWindow.IntersectOther(dx, dy, w, h);
 	if (!w || !h) return;
 
 	// Adjust source x and y
 	if (px != dx) sx += dx - px;
 	if (py != dy) sy += dy - py;
 
-	uint8 *pixel = pixels + dy * pitch + dx * sizeof(uintX);
+	uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
 	uint8 *line_end = pixel + w * sizeof(uintX);
-	uint8 *end = pixel + h * pitch;
-	int diff = pitch - w * sizeof(uintX);
+	uint8 *end = pixel + h * _pitch;
+	int diff = _pitch - w * sizeof(uintX);
 
 	uint32 a = TEX32_A(col32);
 	uint32 ia = 256 - a;
@@ -516,9 +516,9 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *tex, int
 	uint32 g = (TEX32_G(col32) * a);
 	uint32 b = (TEX32_B(col32) * a);
 
-	if (tex->format == TEX_FMT_STANDARD) {
-		uint32 *texel = tex->buffer + (sy * tex->width + sx);
-		int tex_diff = tex->width - w;
+	if (_tex->_format == TEX_FMT_STANDARD) {
+		uint32 *texel = _tex->_buffer + (sy * _tex->_width + sx);
+		int tex_diff = _tex->_width - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) while (pixel != line_end) {
@@ -564,13 +564,13 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *tex, int
 					texel++;
 				}
 
-			line_end += pitch;
+			line_end += _pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
-	} else if (tex->format == TEX_FMT_NATIVE) {
-		uintX *texel = reinterpret_cast<uintX *>(tex->buffer) + (sy * tex->width + sx);
-		int tex_diff = tex->width - w;
+	} else if (_tex->_format == TEX_FMT_NATIVE) {
+		uintX *texel = reinterpret_cast<uintX *>(_tex->_buffer) + (sy * _tex->_width + sx);
+		int tex_diff = _tex->_width - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {
@@ -583,7 +583,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *tex, int
 				texel++;
 			}
 
-			line_end += pitch;
+			line_end += _pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
@@ -597,28 +597,28 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *tex, int
 // Desc Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
 //
 //
-template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
 	// Clamp or wrap or return?
-	if (w > static_cast<int32>(tex->width))
+	if (w > static_cast<int32>(_tex->_width))
 		return;
 
 	// Clamp or wrap or return?
-	if (h > static_cast<int32>(tex->height))
+	if (h > static_cast<int32>(_tex->_height))
 		return;
 
 	// Clip to window
 	int px = dx, py = dy;
-	clip_window.IntersectOther(dx, dy, w, h);
+	_clipWindow.IntersectOther(dx, dy, w, h);
 	if (!w || !h) return;
 
 	// Adjust source x and y
 	if (px != dx) sx += dx - px;
 	if (py != dy) sy += dy - py;
 
-	uint8 *pixel = pixels + dy * pitch + dx * sizeof(uintX);
+	uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
 	uint8 *line_end = pixel + w * sizeof(uintX);
-	uint8 *end = pixel + h * pitch;
-	int diff = pitch - w * sizeof(uintX);
+	uint8 *end = pixel + h * _pitch;
+	int diff = _pitch - w * sizeof(uintX);
 
 	uint32 a = TEX32_A(col32);
 	uint32 ia = 256 - a;
@@ -626,15 +626,15 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *tex, in
 	uint32 g = (TEX32_G(col32) * a);
 	uint32 b = (TEX32_B(col32) * a);
 
-	if (tex->format == TEX_FMT_STANDARD) {
-		uint32 *texel = tex->buffer + (sy * tex->width + sx);
-		int tex_diff = tex->width - w;
+	if (_tex->_format == TEX_FMT_STANDARD) {
+		uint32 *texel = _tex->_buffer + (sy * _tex->_width + sx);
+		int tex_diff = _tex->_width - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) while (pixel != line_end) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-					if ((*texel & TEX32_A_MASK) && (*dest & RenderSurface::format.a_mask)) {
+					if ((*texel & TEX32_A_MASK) && (*dest & RenderSurface::_format.a_mask)) {
 						*dest = static_cast<uintX>(
 						            PACK_RGB8(
 						                (TEX32_R(*texel) * ia + r) >> 8,
@@ -649,7 +649,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *tex, in
 			else while (pixel != line_end) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-					if (*dest & RenderSurface::format.a_mask) {
+					if (*dest & RenderSurface::_format.a_mask) {
 						uint32 alpha = *texel & TEX32_A_MASK;
 						if (alpha == 0xFF) {
 							*dest = static_cast<uintX>(
@@ -678,28 +678,28 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *tex, in
 					texel++;
 				}
 
-			line_end += pitch;
+			line_end += _pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
-	} else if (tex->format == TEX_FMT_NATIVE) {
-		uintX *texel = reinterpret_cast<uintX *>(tex->buffer) + (sy * tex->width + sx);
-		int tex_diff = tex->width - w;
+	} else if (_tex->_format == TEX_FMT_NATIVE) {
+		uintX *texel = reinterpret_cast<uintX *>(_tex->_buffer) + (sy * _tex->_width + sx);
+		int tex_diff = _tex->_width - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {
 				uintX *dest = reinterpret_cast<uintX *>(pixel);
 
 				// Uh, not completely supported right now
-				//if ((*texel & RenderSurface::format.a_mask) && (*dest & RenderSurface::format.a_mask))
-				if (*dest & RenderSurface::format.a_mask) {
+				//if ((*texel & RenderSurface::_format.a_mask) && (*dest & RenderSurface::_format.a_mask))
+				if (*dest & RenderSurface::_format.a_mask) {
 					*dest = BlendHighlight(*texel, r, g, b, 1, ia);
 				}
 				pixel += sizeof(uintX);
 				texel++;
 			}
 
-			line_end += pitch;
+			line_end += _pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
@@ -727,8 +727,8 @@ template<class uintX> void SoftRenderSurface<uintX>::StretchBlit(Texture *textur
 		return;
 	}
 
-	uint8 *pixel = pixels + dy * pitch + dx * sizeof(uintX);
-	Ultima8Engine::get_instance()->point_scaler.Scale(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clampedges);
+	uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
+	Ultima8Engine::get_instance()->point_scaler.Scale(texture, sx, sy, sw, sh, pixel, dw, dh, _pitch, clampedges);
 }
 
 //
@@ -747,9 +747,9 @@ template<class uintX> bool SoftRenderSurface<uintX>::ScalerBlit(Texture *texture
 		return true;
 	}
 
-	uint8 *pixel = pixels + dy * pitch + dx * sizeof(uintX);
+	uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
 
-	return scaler->Scale(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clampedges);
+	return scaler->Scale(texture, sx, sy, sw, sh, pixel, dw, dh, _pitch, clampedges);
 }
 
 //
@@ -760,11 +760,11 @@ template<class uintX> bool SoftRenderSurface<uintX>::ScalerBlit(Texture *texture
 template<class uintX> void SoftRenderSurface<uintX>::PrintCharFixed(FixedWidthFont *font, int character, int x, int y) {
 	if (character == ' ') return;   // Don't paint spaces
 
-	int align_x = font->align_x;
-	int align_y = font->align_y;
-	int char_width = font->width;
-	int char_height = font->height;
-	Texture *texture = font->tex;
+	int align_x = font->_alignX;
+	int align_y = font->_alignY;
+	int char_width = font->_width;
+	int char_height = font->_height;
+	Texture *texture = font->_tex;
 
 	if (align_x == 16 && align_y == 16) {
 		SoftRenderSurface::Blit(texture, (character & 0x0F) << 4, character & 0xF0, char_width, char_height, x, y);
@@ -782,11 +782,11 @@ template<class uintX> void SoftRenderSurface<uintX>::PrintCharFixed(FixedWidthFo
 // Desc: Draw fixed width from a Texture buffer (16x16 characters fixed width and height)
 //
 template<class uintX> void SoftRenderSurface<uintX>::PrintTextFixed(FixedWidthFont *font, const char *text, int x, int y) {
-	int align_x = font->align_x;
-	int align_y = font->align_y;
-	int char_width = font->width;
-	int char_height = font->height;
-	Texture *texture = font->tex;
+	int align_x = font->_alignX;
+	int align_y = font->_alignY;
+	int char_width = font->_width;
+	int char_height = font->_height;
+	Texture *texture = font->_tex;
 
 	int character;
 	if (align_x == 16 && align_y == 16) while (0 != (character = *text)) {

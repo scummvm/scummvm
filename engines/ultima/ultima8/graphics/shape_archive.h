@@ -37,19 +37,15 @@ class ShapeArchive : public Archive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	ShapeArchive(uint16 id_, Palette *pal_ = 0,
-	             const ConvertShapeFormat *format_ = 0)
-		: Archive(), id(id_), format(format_), palette(pal_) { }
-	ShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
-	             const ConvertShapeFormat *format_ = 0)
-		: Archive(af), id(id_), format(format_), palette(pal_) { }
-	ShapeArchive(IDataSource *ds, uint16 id_, Palette *pal_ = 0,
-	             const ConvertShapeFormat *format_ = 0)
-		: Archive(ds), id(id_), format(format_), palette(pal_) { }
-	ShapeArchive(const Std::string &path, uint16 id_,
-	             Palette *pal_ = 0,
-	             const ConvertShapeFormat *format_ = 0)
-		: Archive(path), id(id_), format(format_), palette(pal_) { }
+	ShapeArchive(uint16 id, Palette *pal = 0,
+	             const ConvertShapeFormat *format = 0)
+		: Archive(), _id(id), _format(format), _palette(pal) { }
+	ShapeArchive(ArchiveFile *af, uint16 id, Palette *pal = 0,
+	             const ConvertShapeFormat *format = 0)
+		: Archive(af), _id(id), _format(format), _palette(pal) { }
+	ShapeArchive(IDataSource *ds, uint16 id, Palette *pal = 0,
+	             const ConvertShapeFormat *format = 0)
+		: Archive(ds), _id(id), _format(format), _palette(pal) { }
 
 	~ShapeArchive() override;
 
@@ -57,13 +53,13 @@ public:
 
 	void cache(uint32 shapenum) override;
 	void uncache(uint32 shapenum) override;
-	bool isCached(uint32 shapenum) override;
+	bool isCached(uint32 shapenum) const override;
 
 protected:
-	uint16 id;
-	const ConvertShapeFormat *format;
-	Palette *palette;
-	Std::vector<Shape *> shapes;
+	uint16 _id;
+	const ConvertShapeFormat *_format;
+	Palette *_palette;
+	Std::vector<Shape *> _shapes;
 };
 
 } // End of namespace Ultima8

@@ -115,15 +115,15 @@ void AIScriptMutant3::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMutant3::EnteredScene(int sceneId) {
+void AIScriptMutant3::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMutant3::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMutant3::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMutant3::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMutant3::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -381,7 +381,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 910;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(910)) {
 			_animationFrame = 0;
 		}
@@ -389,7 +389,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 908;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(908)) {
 			_animationFrame = 0;
 		}
@@ -397,7 +397,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 909;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(909)) {
 			_animationFrame = 0;
 		}
@@ -409,7 +409,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		} else {
 			*animation = 912;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(912)) {
 				_animationFrame = 0;
 			}
@@ -418,7 +418,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 912;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(912)) {
 			_animationFrame = 0;
 			_animationState = 3;
@@ -428,7 +428,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 913;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 9) {
 			int snd;
 			if (Random_Query(1, 2) == 1) {
@@ -448,7 +448,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 917;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(917)) {
 			Actor_Change_Animation_Mode(kActorMutant3, 88);
 		}
@@ -461,7 +461,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 914;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(914)) {
 			_animationFrame = 0;
 		}
@@ -469,7 +469,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 916;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(916)) {
 			_animationFrame = 0;
 			_animationState = 8;
@@ -479,7 +479,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 915;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(915)) {
 			*animation = 910;
 			_animationFrame = 0;

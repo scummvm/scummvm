@@ -89,8 +89,6 @@ public:
 	ResourceMan *_res;
 	GameModule *_gameModule;
 	StaticData *_staticData;
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 	SoundMan *_soundMan;
 	AudioResourceMan *_audioResourceMan;
@@ -123,11 +121,11 @@ public:
 	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description) override;
+	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 	Common::Error removeGameState(int slot);
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
-	const char *getSavegameFilename(int num);
+	Common::String getSaveStateName(int slot) const override;
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	WARN_UNUSED_RESULT static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 

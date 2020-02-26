@@ -29,6 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
+class Debugger;
 class Process;
 class idMan;
 class IDataSource;
@@ -36,14 +37,17 @@ class ODataSource;
 
 typedef Process *(*ProcessLoadFunc)(IDataSource *, uint32 version);
 typedef Std::list<Process *>::const_iterator ProcessIter;
+typedef Std::list<Process *>::iterator ProcessIterator;
+
 
 class Kernel {
+	friend class Debugger;
 public:
 	Kernel();
 	~Kernel();
 
 	static Kernel *get_instance() {
-		return kernel;
+		return _kernel;
 	}
 
 	void reset();
@@ -62,7 +66,7 @@ public:
 
 	void setNextProcess(Process *proc);
 	Process *getRunningProcess() const {
-		return runningprocess;
+		return _runningProcess;
 	}
 
 	// objid = 0 means any object, type = 6 means any type
@@ -85,10 +89,10 @@ public:
 
 	//! get an iterator of the process list.
 	ProcessIter getProcessBeginIterator() {
-		return processes.begin();
+		return _processes.begin();
 	}
 	ProcessIter getProcessEndIterator() {
-		return processes.end();
+		return _processes.end();
 	}
 
 	void kernelStats();
@@ -98,63 +102,52 @@ public:
 	bool load(IDataSource *ids, uint32 version);
 
 	void pause() {
-		paused++;
+		_paused++;
 	}
 	void unpause() {
-		if (paused > 0) paused--;
+		if (_paused > 0)
+			_paused--;
 	}
 	bool isPaused() const {
-		return paused > 0;
+		return _paused > 0;
 	}
 
 	void setFrameByFrame(bool fbf) {
-		framebyframe = fbf;
+		_frameByFrame = fbf;
 	}
 	bool isFrameByFrame() const {
-		return framebyframe;
+		return _frameByFrame;
 	}
 
 	void addProcessLoader(Std::string classname, ProcessLoadFunc func) {
-		processloaders[classname] = func;
+		_processLoaders[classname] = func;
 	}
 
 	uint32 getFrameNum() const {
-		return framenum;
+		return _frameNum;
 	};
-
-	//! "Kernel::processTypes" console command
-	static void ConCmd_processTypes(const Console::ArgvType &argv);
-	//! "Kernel::listProcesses" console command
-	static void ConCmd_listProcesses(const Console::ArgvType &argv);
-	//! "Kernel::processInfo" console command
-	static void ConCmd_processInfo(const Console::ArgvType &argv);
-
-	//! "Kernel::toggleFrameByFrame" console command
-	static void ConCmd_toggleFrameByFrame(const Console::ArgvType &argv);
-	//! "Kernel::advanceFrame" console command
-	static void ConCmd_advanceFrame(const Console::ArgvType &argv);
 
 	INTRINSIC(I_getNumProcesses);
 	INTRINSIC(I_resetRef);
 private:
 	Process *loadProcess(IDataSource *ids, uint32 version);
 
-	Std::list<Process *> processes;
-	idMan   *pIDs;
+	Std::list<Process *> _processes;
+	idMan   *_pIDs;
 
 	Std::list<Process *>::iterator current_process;
 
-	Std::map<Common::String, ProcessLoadFunc> processloaders;
+	Std::map<Common::String, ProcessLoadFunc> _processLoaders;
 
-	bool loading;
+	bool _loading;
 
-	uint32 framenum;
-	unsigned int paused;
-	bool framebyframe;
+	uint32 _frameNum;
+	unsigned int _paused;
+	bool _frameByFrame;
 
-	Process *runningprocess;
+	Process *_runningProcess;
 
-	static Kernel *kernel;
+	static Kernel *_kernel;
 };
 
 // a bit of a hack to prevent having to write a load function for

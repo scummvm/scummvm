@@ -92,6 +92,14 @@ public:
 		setEvent(EVENT_RBUTTONDOWN);
 	}
 
+	void setMouseWheelUpEvent() {
+		setEvent(EVENT_WHEELUP);
+	}
+
+	void setMouseWheelDownEvent() {
+		setEvent(EVENT_WHEELDOWN);
+	}
+
 	/**
 	 * Add a default input mapping for the action
 	 *

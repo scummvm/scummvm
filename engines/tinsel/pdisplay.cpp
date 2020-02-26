@@ -147,16 +147,16 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 				Loffset != _ctx->prevsX || Toffset != _ctx->prevsY) {
 			// kill current text objects
 			if (_ctx->cpText) {
-				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->cpText);
+				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->cpText);
 			}
 			if (_ctx->cpathText) {
-				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->cpathText);
+				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->cpathText);
 				_ctx->cpathText = NULL;
 			}
 
 			// New text objects
 			sprintf(PositionString, "%d %d", aniX + Loffset, aniY + Toffset);
-			_ctx->cpText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
+			_ctx->cpText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, CPOSX, POSY, GetTagFontHandle(), TXT_CENTER);
 			if (g_DispPath) {
 				HPOLYGON hp = InPolygon(aniX + Loffset, aniY + Toffset, PATH);
@@ -168,7 +168,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 						PolyCornerX(hp, 1), PolyCornerY(hp, 1),
 						PolyCornerX(hp, 2), PolyCornerY(hp, 2),
 						PolyCornerX(hp, 3), PolyCornerY(hp, 3));
-				_ctx->cpathText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
+				_ctx->cpathText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), PositionString,
 							0, 4, POSY+ 10, GetTagFontHandle(), 0);
 			}
 
@@ -184,11 +184,11 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 		if (Overrun != _ctx->prevOver) {
 			// kill current text objects
 			if (_ctx->opText) {
-				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->opText);
+				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->opText);
 			}
 
 			sprintf(PositionString, "%d", Overrun);
-			_ctx->opText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
+			_ctx->opText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, OPOSX, POSY, GetTagFontHandle(), TXT_CENTER);
 
 			// update previous value
@@ -209,12 +209,12 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 					Loffset != _ctx->prevsX || Toffset != _ctx->prevsY) {
 				// Kill current text objects
 				if (_ctx->rpText) {
-					MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->rpText);
+					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->rpText);
 				}
 
 				// create new text object list
 				sprintf(PositionString, "%d %d", aniX, aniY);
-				_ctx->rpText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
+				_ctx->rpText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), PositionString,
 								0, LPOSX, POSY,	GetTagFontHandle(), TXT_CENTER);
 
 				// update previous position
@@ -229,11 +229,11 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 		if (g_bShowString && g_newestString != _ctx->prevString) {
 			// kill current text objects
 			if (_ctx->spText) {
-				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->spText);
+				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->spText);
 			}
 
 			sprintf(PositionString, "String: %d", g_newestString);
-			_ctx->spText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
+			_ctx->spText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, SPOSX, POSY+10, GetTalkFontHandle(), TXT_CENTER);
 
 			// update previous value
@@ -401,7 +401,7 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 			SaveTaggedPoly(NOPOLY);		// No tagged polygon
 
 			if (*ppText)
-				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), *ppText);
+				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
 
 			if (ActorTagIsWanted(actor)) {
 				GetActorTagPos(actor, &tagX, &tagY, false);
@@ -409,8 +409,8 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 
 				// May have buggered cursor
 				EndCursorFollowed();
-				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), g_tagBuffer,
-						0, tagX, tagY, GetTagFontHandle(), TXT_CENTER, 0);
+				*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_tagBuffer,
+						0, tagX, tagY, _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 				assert(*ppText);
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
 			} else
@@ -446,22 +446,22 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 				// Display actor's tag
 
 				if (*ppText)
-					MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), *ppText);
+					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
 
 				*pTag = ACTOR_HOTSPOT_TAG;
 				SaveTaggedActor(ano);	// This actor tagged
 				SaveTaggedPoly(NOPOLY);	// No tagged polygon
 
-				PlayfieldGetPos(FIELD_WORLD, &tagX, &tagY);
-				LoadStringRes(GetActorTag(ano), TextBufferAddr(), TBUFSZ);
-				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-							0, xtext - tagX, ytext - tagY, GetTagFontHandle(), TXT_CENTER);
+				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &tagX, &tagY);
+				LoadStringRes(GetActorTag(ano), _vm->_font->TextBufferAddr(), TBUFSZ);
+				*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+							0, xtext - tagX, ytext - tagY, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 				assert(*ppText); // Actor tag string produced NULL text
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
 			} else {
 				// Maintain actor tag's position
 
-				PlayfieldGetPos(FIELD_WORLD, &newX, &newY);
+				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &newX, &newY);
 				if (newX != tagX || newY != tagY) {
 					MultiMoveRelXY(*ppText, tagX - newX, tagY - newY);
 					tagX = newX;
@@ -511,7 +511,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 			// This poly is entitled to be tagged
 			if (hp != GetTaggedPoly()) {
 				if (*ppText) {
-					MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), *ppText);
+					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
 					*ppText = NULL;
 				}
 				*pTag = POLY_HOTSPOT_TAG;
@@ -535,21 +535,21 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 
 			if (newPoly) {
 				if (*ppText)
-					MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), *ppText);
+					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
 
 				if (!TinselV2)
 					*pTag = POLY_HOTSPOT_TAG;
 				SaveTaggedActor(0);	// No tagged actor
 				SaveTaggedPoly(hp);	// This polygon tagged
 
-				PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 				GetTagTag(hp, &hTagtext, &tagx, &tagy);
 
 				int strLen;
 				if (GetPolyTagHandle(hp) != 0)
-					strLen = LoadStringRes(GetPolyTagHandle(hp), TextBufferAddr(), TBUFSZ);
+					strLen = LoadStringRes(GetPolyTagHandle(hp), _vm->_font->TextBufferAddr(), TBUFSZ);
 				else
-					strLen = LoadStringRes(hTagtext, TextBufferAddr(), TBUFSZ);
+					strLen = LoadStringRes(hTagtext, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 				if (strLen == 0)
 					// No valid string returned, so leave ppText as NULL
@@ -558,23 +558,23 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 					// May have buggered cursor
 					EndCursorFollowed();
 
-					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-							TextBufferAddr(), 0, tagx - Loffset, tagy - Toffset,
-							GetTagFontHandle(), TXT_CENTER, 0);
+					*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
+							_vm->_font->TextBufferAddr(), 0, tagx - Loffset, tagy - Toffset,
+							_vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 				} else if (TinselV2) {
 					// Bugger cursor
-					const char *tagPtr = TextBufferAddr();
+					const char *tagPtr = _vm->_font->TextBufferAddr();
 					if (tagPtr[0] < ' ' && tagPtr[1] == EOS_CHAR)
 						StartCursorFollowed();
 
 					GetCursorXYNoWait(&curX, &curY, false);
-					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-							0, curX, curY, GetTagFontHandle(), TXT_CENTER, 0);
+					*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+							0, curX, curY, _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 				} else {
 					// Handle displaying the tag text on-screen
-					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+					*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 							0, tagx - Loffset, tagy - Toffset,
-							GetTagFontHandle(), TXT_CENTER);
+						_vm->_font->GetTagFontHandle(), TXT_CENTER);
 					assert(*ppText); // Polygon tag string produced NULL text
 				}
 
@@ -586,18 +586,18 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 					* New feature: Don't go off the side of the background
 					*/
 					shift = MultiRightmost(*ppText) + Loffset + 2;
-					if (shift >= BgWidth())			// Not off right
-						MultiMoveRelXY(*ppText, BgWidth() - shift, 0);
+					if (shift >= _vm->_bg->BgWidth())			// Not off right
+						MultiMoveRelXY(*ppText, _vm->_bg->BgWidth() - shift, 0);
 					shift = MultiLeftmost(*ppText) + Loffset - 1;
 					if (shift <= 0)					// Not off left
 						MultiMoveRelXY(*ppText, -shift, 0);
 					shift = MultiLowest(*ppText) + Toffset;
-					if (shift > BgHeight())			// Not off bottom
-						MultiMoveRelXY(*ppText, 0, BgHeight() - shift);
+					if (shift > _vm->_bg->BgHeight())			// Not off bottom
+						MultiMoveRelXY(*ppText, 0, _vm->_bg->BgHeight() - shift);
 				}
 			} else if (TinselV2 && (*ppText)) {
 				if (!PolyTagFollowsCursor(hp)) {
-					PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
+					_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
 					if (nLoff != Loffset || nToff != Toffset) {
 						MultiMoveRelXY(*ppText, Loffset - nLoff, Toffset - nToff);
 						Loffset = nLoff;
@@ -612,7 +612,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 					}
 				}
 			} else if (!TinselV2) {
-				PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
+				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
 				if (nLoff != Loffset || nToff != Toffset) {
 					MultiMoveRelXY(*ppText, Loffset - nLoff, Toffset - nToff);
 					Loffset = nLoff;
@@ -662,7 +662,7 @@ void TagProcess(CORO_PARAM, const void *) {
 					&& !PolyTag(&_ctx->Tag, &_ctx->pText)) {
 				// Nothing tagged. Remove tag, if there is one
 				if (_ctx->pText) {
-					MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 					_ctx->pText = NULL;
 
 					if (TinselV2)
@@ -677,7 +677,7 @@ void TagProcess(CORO_PARAM, const void *) {
 			// Remove tag, if there is one
 			if (_ctx->pText) {
 				// kill current text objects
-				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 				_ctx->pText = NULL;
 				_ctx->Tag = NO_HOTSPOT_TAG;
 			}

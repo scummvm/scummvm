@@ -61,8 +61,20 @@ class MusicBase;
 class Debugger;
 class SkyCompact;
 
+enum SkyAction {
+	kSkyActionNone,
+	kSkyActionToggleFastMode,
+	kSkyActionToggleReallyFastMode,
+	kSkyActionOpenControlPanel,
+	kSkyActionConfirm,
+	kSkyActionSkip,
+	kSkyActionSkipLine,
+	kSkyActionPause
+};
+
 class SkyEngine : public Engine {
 protected:
+	SkyAction _action;
 	Common::KeyState _keyPressed;
 
 	Sound *_skySound;
@@ -87,14 +99,19 @@ public:
 	static bool isCDVersion();
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
+	virtual Common::String getSaveStateName(int slot) const override {
+		return Common::String::format("SKY-VM.%03d", slot);
+	}
 
 	static void *fetchItem(uint32 num);
 	static void *_itemList[300];
 
 	static SystemVars _systemVars;
+
+	static const char *shortcutsKeymapId;
 
 protected:
 	// Engine APIs
@@ -107,15 +124,13 @@ protected:
 			return err;
 		return go();
 	}
-	GUI::Debugger *getDebugger() override;
+
 	bool hasFeature(EngineFeature f) const override;
 
 	byte _fastMode;
 
 	void delay(int32 amount);
 	void handleKey();
-
-	uint32 _lastSaveTime;
 
 	void initItemList();
 

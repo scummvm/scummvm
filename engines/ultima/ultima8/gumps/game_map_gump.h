@@ -35,7 +35,7 @@ class CameraProcess;
 
 class GameMapGump : public Gump {
 protected:
-	ItemSorter      *display_list;
+	ItemSorter *_displayList;
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -49,7 +49,7 @@ public:
 	void                GetCameraLocation(int32 &x, int32 &y, int32 &z,
 	                                      int lerp_factor = 256);
 
-	// Trace a click, and return ObjId (parent coord space)
+	// Trace a click, and return ObjId (_parent coord space)
 	uint16      TraceObjId(int32 mx, int32 my) override;
 
 	// Trace a click, return ObjId, and the coordinates of the mouse click (gump coord space)
@@ -77,32 +77,25 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 
-	static void         SetHighlightItems(bool highlight) {
-		highlightItems = highlight;
+	static void Set_highlightItems(bool highlight) {
+		_highlightItems = highlight;
 	}
-	static bool         isHighlightItems() {
-		return highlightItems;
+	static bool is_highlightItems() {
+		return _highlightItems;
 	}
-
-	static void ConCmd_toggleHighlightItems(const Console::ArgvType &argv);
-	static void ConCmd_dumpMap(const Console::ArgvType &argv);
-
-	static void ConCmd_incrementSortOrder(const Console::ArgvType &argv);
-	static void ConCmd_decrementSortOrder(const Console::ArgvType &argv);
 
 	void        RenderSurfaceChanged() override;
 
 protected:
 	void saveData(ODataSource *ods) override;
 
-	bool display_dragging;
-	uint32 dragging_shape;
-	uint32 dragging_frame;
-	uint32 dragging_flags;
-	int32 dragging_pos[3];
+	bool _displayDragging;
+	uint32 _draggingShape;
+	uint32 _draggingFrame;
+	uint32 _draggingFlags;
+	int32 _draggingPos[3];
 
-	static bool highlightItems;
-
+	static bool _highlightItems;
 };
 
 } // End of namespace Ultima8

@@ -226,6 +226,9 @@ void LC::c_printtop(void) {
 	case OBJECT:
 		warning("#%s", d.u.s->c_str());
 		break;
+	case ARRAY:
+		warning("%s", d.toString()->c_str());
+		break;
 	default:
 		warning("--unknown--");
 	}
@@ -373,7 +376,7 @@ void LC::c_assign() {
 }
 
 bool LC::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL) {
+	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL && s->type != ARRAY) {
 		warning("attempt to evaluate non-variable '%s'", s->name.c_str());
 
 		return false;
@@ -1035,7 +1038,25 @@ void LC::c_repeatwithcode(void) {
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
 	if (finish == 0 && inc == 0) {
-		warning("STUB: 'repeat with' over list ");
+		// Handle repeat with  X in ARRAY
+		g_lingo->execute(init + savepc -1); // eval the list
+		Datum array = g_lingo->pop(); // get the list from the stack
+
+		Datum loop_var;
+		loop_var.type = VAR;
+		loop_var.u.sym = g_lingo->lookupVar(countername.c_str());
+
+		uint arraySize = array.u.farr->size();
+		for (uint i = 0; i < arraySize; i++) {
+			g_lingo->varAssign(loop_var, array.u.farr->operator[](i));
+			g_lingo->execute(body + savepc -1);
+			if (g_lingo->_returning) // handle return within the repeat with loop
+				return;
+			if (g_lingo->_exitRepeat) { // handle `exit repeat`
+				g_lingo->_exitRepeat = false;
+				break;
+			}
+		}
 		g_lingo->_pc = end + savepc - 1; /* next stmt */
 		return;
 	}

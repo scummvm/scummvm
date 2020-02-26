@@ -109,8 +109,6 @@ public:
 	FPSound _theSound;
 	Common::List<FPSfx *> _activeSfx;
 	Globals _globals;
-	Debugger *_debugger;
-	GUI::Debugger *getDebugger() override { return _debugger; }
 
 	int16 _cTableDialog[256];
 	int16 _lTableDialog[256];
@@ -167,7 +165,7 @@ public:
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	void play();
 	void close();
@@ -218,6 +216,7 @@ public:
 	void saveState(int n, const char *name);
 	void loadState(CORO_PARAM, int n);
 	static Common::String getSaveStateFileName(int n);
+	virtual Common::String getSaveStateName(int slot) const override;
 
 	/**
 	 * Get a thumbnail

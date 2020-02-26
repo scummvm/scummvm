@@ -40,7 +40,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_staticres = 0;
 	_timer = 0;
 	_emc = 0;
-	_debugger = 0;
 
 	_configRenderMode = Common::kRenderDefault;
 	_configNullSound = false;
@@ -81,10 +80,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	DebugMan.addDebugChannel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	DebugMan.addDebugChannel(kDebugLevelMovie, "Movie", "Movie debug level");
 	DebugMan.addDebugChannel(kDebugLevelTimer, "Timer", "Timer debug level");
-}
-
-::GUI::Debugger *KyraEngine_v1::getDebugger() {
-	return _debugger;
 }
 
 void KyraEngine_v1::pauseEngineIntern(bool pause) {
@@ -199,9 +194,6 @@ Common::Error KyraEngine_v1::init() {
 
 	setupKeyMap();
 
-	// Prevent autosave on game startup
-	_lastAutosave = _system->getMillis();
-
 	return Common::kNoError;
 }
 
@@ -217,7 +209,6 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _text;
 	delete _timer;
 	delete _emc;
-	delete _debugger;
 }
 
 Common::Point KyraEngine_v1::getMousePos() {
@@ -257,9 +248,6 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 	updateInput();
 	_isSaveAllowed = false;
 
-	if (mainLoop)
-		checkAutosave();
-
 	int keys = 0;
 	int8 mouseWheel = 0;
 
@@ -284,11 +272,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 					saveGameStateIntern(saveLoadSlot, savegameName, 0);
 				}
 			} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-				if (event.kbd.keycode == Common::KEYCODE_d) {
-					if (_debugger)
-						_debugger->attach();
-					breakLoop = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_q) {
+				if (event.kbd.keycode == Common::KEYCODE_q) {
 					quitGame();
 				}
 			} else {
@@ -345,9 +329,6 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		default:
 			break;
 		}
-
-		if (_debugger)
-			_debugger->onFrame();
 
 		if (breakLoop)
 			break;

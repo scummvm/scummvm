@@ -69,7 +69,7 @@ public:
 	bool canLoadGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	bool canSaveGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	const ADGameDescription *getGameDescription() const;
 
@@ -79,7 +79,6 @@ private:
 	void updateCursorPalette();
 
 	const ADGameDescription *_gameDesc;
-	Console *_console;
 	Graphics::Screen *_screen;
 	Game *_game;
 	uint8 _mapObjectId;

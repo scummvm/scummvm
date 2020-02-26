@@ -34,6 +34,7 @@
 #include "backends/vkeybd/virtual-keyboard.h"
 
 #include "engines/engine.h"
+#include "gui/debugger.h"
 #include "gui/message.h"
 
 DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
@@ -67,6 +68,7 @@ DefaultEventManager::~DefaultEventManager() {
 #ifdef ENABLE_VKEYBD
 	delete _vk;
 #endif
+	delete _keymapper;
 }
 
 void DefaultEventManager::init() {
@@ -87,6 +89,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	if (_shouldGenerateKeyRepeatEvents) {
 		handleKeyRepeat();
 	}
+
+	if (g_engine)
+		// Handle autosaves if enabled
+		g_engine->handleAutoSave();
 
 	if (_eventQueue.empty()) {
 		return false;
@@ -197,10 +203,20 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			if (g_engine)
 				g_engine->pauseEngine(false);
 			_confirmExitDialogActive = false;
-		} else
+		} else {
 			_shouldQuit = true;
-
+		}
 		break;
+
+	case Common::EVENT_DEBUGGER: {
+		GUI::Debugger *debugger = g_engine ? g_engine->getOrCreateDebugger() : nullptr;
+		if (debugger) {
+			debugger->attach();
+			debugger->onFrame();
+			forwardEvent = false;
+		}
+		break;
+	}
 
 	default:
 		break;
@@ -345,6 +361,11 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 #endif
 #endif
 
+	globalKeymap->addAction(act);
+
+	act = new Action("DEBUGGER", _("Open Debugger"));
+	act->addDefaultInputMapping("C+A+d");
+	act->setEvent(EVENT_DEBUGGER);
 	globalKeymap->addAction(act);
 
 	return globalKeymap;

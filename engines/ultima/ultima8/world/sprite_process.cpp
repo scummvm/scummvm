@@ -27,7 +27,6 @@
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -43,60 +42,60 @@ SpriteProcess::SpriteProcess()
 }
 
 SpriteProcess::SpriteProcess(int Shape, int Frame, int LastFrame,
-                             int Repeats, int Delay, int X, int Y, int Z,
+                             int Repeats, int Delay, int x, int y, int z,
                              bool delayed_init) :
-	shape(Shape), frame(Frame), first_frame(Frame), last_frame(LastFrame),
-	repeats(Repeats), delay(Delay * 2), x(X), y(Y), z(Z), delay_counter(0),
-	initialized(false) {
+	_shape(Shape), _frame(Frame), _firstFrame(Frame), _lastFrame(LastFrame),
+	_repeats(Repeats), _delay(Delay * 2), _x(x), _y(y), _z(z), _delayCounter(0),
+	_initialized(false) {
 	if (!delayed_init)
 		init();
 }
 
 void SpriteProcess::init() {
-	Item *item = ItemFactory::createItem(shape, frame,
-	                                     0, Item::FLG_DISPOSABLE, 0, 0, Item::EXT_SPRITE, true);
-	item->move(x, y, z);
+	Item *item = ItemFactory::createItem(_shape, _frame, 0, Item::FLG_DISPOSABLE,
+		0, 0, Item::EXT_SPRITE, true);
+	item->move(_x, _y, _z);
 	setItemNum(item->getObjId());
-	initialized = true;
+	_initialized = true;
 }
 
 SpriteProcess::~SpriteProcess(void) {
-	Item *item = getItem(item_num);
+	Item *item = getItem(_itemNum);
 	if (item) item->destroy();
 }
 
 void SpriteProcess::run() {
-	if (!initialized) init();
+	if (!_initialized) init();
 
-	Item *item = getItem(item_num);
+	Item *item = getItem(_itemNum);
 
-	if (!item || (frame > last_frame && repeats == 1 && !delay_counter)) {
+	if (!item || (_frame > _lastFrame && _repeats == 1 && !_delayCounter)) {
 		terminate();
 		return;
 	}
 
-	if (delay_counter) {
-		delay_counter = (delay_counter + 1) % delay;
+	if (_delayCounter) {
+		_delayCounter = (_delayCounter + 1) % _delay;
 		return;
 	}
 
-	if (frame > last_frame) {
-		frame = first_frame;
-		repeats--;
+	if (_frame > _lastFrame) {
+		_frame = _firstFrame;
+		_repeats--;
 	}
 
-	item->setFrame(frame);
-	frame++;
-	delay_counter = (delay_counter + 1) % delay;
+	item->setFrame(_frame);
+	_frame++;
+	_delayCounter = (_delayCounter + 1) % _delay;
 }
 
-// createSprite(shape, frame, end,               delay, x, y, z);
-// createSprite(shape, frame, end, unk, repeats, delay, x, y, z);
+// createSprite(_shape, _frame, end,               _delay, _x, _y, _z);
+// createSprite(_shape, _frame, end, unk, _repeats, _delay, _x, _y, _z);
 uint32 SpriteProcess::I_createSprite(const uint8 *args, unsigned int argsize) {
 	int repeats = 1;
-	ARG_SINT16(shape);
-	ARG_SINT16(frame);
-	ARG_SINT16(last_frame);
+	ARG_SINT16(_shape);
+	ARG_SINT16(_frame);
+	ARG_SINT16(_lastFrame);
 
 	if (argsize == 18) {
 		ARG_SINT16(unknown);
@@ -104,44 +103,44 @@ uint32 SpriteProcess::I_createSprite(const uint8 *args, unsigned int argsize) {
 		repeats = repeats_count;
 	}
 
-	ARG_SINT16(delay);
-	ARG_UINT16(x);
-	ARG_UINT16(y);
-	ARG_UINT8(z);
-	Process *p = new SpriteProcess(shape, frame, last_frame, repeats, delay, x, y, z);
+	ARG_SINT16(_delay);
+	ARG_UINT16(_x);
+	ARG_UINT16(_y);
+	ARG_UINT8(_z);
+	Process *p = new SpriteProcess(_shape, _frame, _lastFrame, repeats, _delay, _x, _y, _z);
 	return Kernel::get_instance()->addProcess(p);
 }
 
 void SpriteProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(shape));
-	ods->write4(static_cast<uint32>(frame));
-	ods->write4(static_cast<uint32>(first_frame));
-	ods->write4(static_cast<uint32>(last_frame));
-	ods->write4(static_cast<uint32>(repeats));
-	ods->write4(static_cast<uint32>(delay));
-	ods->write4(static_cast<uint32>(x));
-	ods->write4(static_cast<uint32>(y));
-	ods->write4(static_cast<uint32>(z));
-	ods->write4(static_cast<uint32>(delay_counter));
-	ods->write1(initialized ? 1 : 0);
+	ods->write4(static_cast<uint32>(_shape));
+	ods->write4(static_cast<uint32>(_frame));
+	ods->write4(static_cast<uint32>(_firstFrame));
+	ods->write4(static_cast<uint32>(_lastFrame));
+	ods->write4(static_cast<uint32>(_repeats));
+	ods->write4(static_cast<uint32>(_delay));
+	ods->write4(static_cast<uint32>(_x));
+	ods->write4(static_cast<uint32>(_y));
+	ods->write4(static_cast<uint32>(_z));
+	ods->write4(static_cast<uint32>(_delayCounter));
+	ods->write1(_initialized ? 1 : 0);
 }
 
 bool SpriteProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	shape = static_cast<int>(ids->read4());
-	frame = static_cast<int>(ids->read4());
-	first_frame = static_cast<int>(ids->read4());
-	last_frame = static_cast<int>(ids->read4());
-	repeats = static_cast<int>(ids->read4());
-	delay = static_cast<int>(ids->read4());
-	x = static_cast<int>(ids->read4());
-	y = static_cast<int>(ids->read4());
-	z = static_cast<int>(ids->read4());
-	delay_counter = static_cast<int>(ids->read4());
-	initialized = (ids->read1() != 0);
+	_shape = static_cast<int>(ids->read4());
+	_frame = static_cast<int>(ids->read4());
+	_firstFrame = static_cast<int>(ids->read4());
+	_lastFrame = static_cast<int>(ids->read4());
+	_repeats = static_cast<int>(ids->read4());
+	_delay = static_cast<int>(ids->read4());
+	_x = static_cast<int>(ids->read4());
+	_y = static_cast<int>(ids->read4());
+	_z = static_cast<int>(ids->read4());
+	_delayCounter = static_cast<int>(ids->read4());
+	_initialized = (ids->read1() != 0);
 
 	return true;
 }

@@ -187,7 +187,7 @@ uint Toolbar::callbackInventory(uint invId, uint dragStatus) {
 		_inventorySelected = invId;
 		_engine->setCursor(181);
 		_zones[12].secondary = (obj->viewCallback() == nullptr);
-		_inventory_button_dragging = true;
+		_inventoryButtonDragging = true;
 		return 1;
 	case kDragStatus_Dragging:
 		if (_inventorySelected == invId) {
@@ -195,7 +195,7 @@ uint Toolbar::callbackInventory(uint invId, uint dragStatus) {
 		}
 		_inventorySelected = invId;
 		_zones[12].secondary = (obj->viewCallback() == nullptr);
-		_inventory_button_dragging = true;
+		_inventoryButtonDragging = true;
 		return 1;
 	case kDragStatus_Finished:
 		_engine->setCursor(obj->idSl());
@@ -242,7 +242,7 @@ uint Toolbar::callbackViewObject(uint dragStatus) {
 		return 0;
 	}
 
-	_mouse_in_view_object = true;
+	_mouseInViewObject = true;
 
 	if (_inventorySelected == uint(-1)) {
 		// Nothing selected in toolbar
@@ -257,7 +257,7 @@ uint Toolbar::callbackViewObject(uint dragStatus) {
 
 	switch (dragStatus) {
 	case kDragStatus_NoDrag:
-		_backup_selected_object = selectedObject;
+		_backupSelectedObject = selectedObject;
 		_engine->setCursor(181);
 		return 0;
 	case kDragStatus_Pressed:
@@ -277,11 +277,11 @@ uint Toolbar::callbackViewObject(uint dragStatus) {
 }
 
 uint Toolbar::callbackOptions(uint dragStatus) {
-	_mouse_in_options = true;
+	_mouseInOptions = true;
 
 	switch (dragStatus) {
 	case kDragStatus_NoDrag:
-		_backup_selected_object = _inventory->selectedObject();
+		_backupSelectedObject = _inventory->selectedObject();
 		_engine->setCursor(181);
 		return 0;
 	case kDragStatus_Pressed:
@@ -303,7 +303,7 @@ uint Toolbar::callbackOptions(uint dragStatus) {
 }
 
 uint Toolbar::callbackDocumentation(uint dragStatus) {
-	_mouse_in_options = true;
+	_mouseInOptions = true;
 
 	switch (dragStatus) {
 	case kDragStatus_NoDrag:
@@ -476,7 +476,7 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 	_inventoryHovered = uint(-1);
 	_inventorySelected = uint(-1);
 	_inventory->setSelectedObject(nullptr);
-	_backup_selected_object = nullptr;
+	_backupSelectedObject = nullptr;
 
 	// Refresh zones because we erased selected object
 	updateZones();
@@ -493,8 +493,8 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 	mouseInsideToolbar = (_engine->getMousePos().y > 388);
 
 	while (!exitToolbar) {
-		_mouse_in_options = false;
-		_mouse_in_view_object = false;
+		_mouseInOptions = false;
+		_mouseInViewObject = false;
 
 		_engine->pollEvents();
 		if (_engine->shouldAbort()) {
@@ -542,15 +542,15 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 			_inventory->setSelectedObject(nullptr);
 		}
 
-		if (_backup_selected_object != nullptr && !(_mouse_in_options || _mouse_in_view_object) &&
+		if (_backupSelectedObject != nullptr && !(_mouseInOptions || _mouseInViewObject) &&
 		        !_engine->getCurrentMouseButton()) {
-			_inventory->setSelectedObject(_backup_selected_object);
-			_engine->setCursor(_backup_selected_object->idSl());
-			_backup_selected_object = nullptr;
+			_inventory->setSelectedObject(_backupSelectedObject);
+			_engine->setCursor(_backupSelectedObject->idSl());
+			_backupSelectedObject = nullptr;
 		}
 
 		// Hover the inventory objects
-		if (_inventory->selectedObject() == nullptr /* || _inventory_button_dragging */) {
+		if (_inventory->selectedObject() == nullptr /* || _inventoryButtonDragging */) {
 			// The 2nd above condition is maybe useless because when the mouse button is down the selected object is always null
 			bool shouldHover = false;
 			Common::Array<Zone>::const_iterator zoneIt = hitTestZones(mousePosInToolbar);
@@ -565,7 +565,7 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 					redrawToolbar = true;
 				}
 			}
-			if (!shouldHover && _inventoryHovered != uint(-1) && !_mouse_in_view_object)  {
+			if (!shouldHover && _inventoryHovered != uint(-1) && !_mouseInViewObject)  {
 				// Remove hovering
 				_inventoryHovered = uint(-1);
 				_inventorySelected = uint(-1);
@@ -578,7 +578,7 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 				_zones[12].secondary = true;
 				redrawToolbar = true;
 			}
-			_inventory_button_dragging = false;
+			_inventoryButtonDragging = false;
 		}
 
 		if (_parentMustRedraw) {

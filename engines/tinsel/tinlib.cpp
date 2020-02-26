@@ -86,9 +86,6 @@ extern bool g_bNoPause;
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
-// in BG.CPP
-extern void ChangePalette(SCNHANDLE hPal);
-
 // in PDISPLAY.CPP
 extern void EnableTags();
 extern void DisableTags();
@@ -329,27 +326,27 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, int hold, bool ig
 static void DecodeExtreme(EXTREME extreme, int *px, int *py) {
 	int	Loffset, Toffset;
 
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
 	switch (extreme) {
 	case EX_BOTTOM:
 		*px = Loffset;
-		*py = BgHeight() - SCREEN_HEIGHT;
+		*py = _vm->_bg->BgHeight() - SCREEN_HEIGHT;
 		break;
 	case EX_BOTTOMLEFT:
 		*px = 0;
-		*py = BgHeight() - SCREEN_HEIGHT;
+		*py = _vm->_bg->BgHeight() - SCREEN_HEIGHT;
 		break;
 	case EX_BOTTOMRIGHT:
-		*px = BgWidth() - SCREEN_WIDTH;
-		*py = BgHeight() - SCREEN_HEIGHT;
+		*px = _vm->_bg->BgWidth() - SCREEN_WIDTH;
+		*py = _vm->_bg->BgHeight() - SCREEN_HEIGHT;
 		break;
 	case EX_LEFT:
 		*px = 0;
 		*py = Toffset;
 		break;
 	case EX_RIGHT:
-		*px = BgWidth() - SCREEN_WIDTH;
+		*px = _vm->_bg->BgWidth() - SCREEN_WIDTH;
 		*py = Toffset;
 		break;
 	case EX_TOP:
@@ -360,7 +357,7 @@ static void DecodeExtreme(EXTREME extreme, int *px, int *py) {
 		*px = *py = 0;
 		break;
 	case EX_TOPRIGHT:
-		*px = BgWidth() - SCREEN_WIDTH;
+		*px = _vm->_bg->BgWidth() - SCREEN_WIDTH;
 		*py = 0;
 		break;
 	default:
@@ -414,7 +411,7 @@ static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
 			break;
 		}
 
-		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
 	} while (Loffset != psm->x || Toffset != psm->y);
 
@@ -436,7 +433,7 @@ void SetTextPal(COLORREF col) {
  * subtitle speed modification.
  */
 static int TextTime(char *pTstring) {
-	if (isJapanMode())
+	if (_vm->_config->isJapanMode())
 		return JAP_TEXT_TIME;
 	else if (!_vm->_config->_textSpeed)
 		return strlen(pTstring) + ONE_SECOND;
@@ -639,7 +636,7 @@ static void AuxScale(int actor, int scale, SCNHANDLE *rp) {
  * Defines the background image for a scene.
  */
 static void Background(CORO_PARAM, SCNHANDLE bfilm) {
-	StartupBackground(coroParam, bfilm);
+	_vm->_bg->StartupBackground(coroParam, bfilm);
 }
 
 /**
@@ -1026,22 +1023,6 @@ static void DecScale(int actor, int scale,
 }
 
 /**
- * Declare the text font.
- */
-static void DecTagFont(SCNHANDLE hf) {
-	SetTagFontHandle(hf);		// Store the font handle
-	if (TinselV0)
-		SetTalkFontHandle(hf);	// Also re-use for talk text
-}
-
-/**
- * Declare the text font.
- */
-static void DecTalkFont(SCNHANDLE hf) {
-	SetTalkFontHandle(hf);		// Store the font handle
-}
-
-/**
  * Remove an icon from the conversation window.
  */
 static void DelIcon(int icon) {
@@ -1063,13 +1044,6 @@ static void DelInv(int object) {
  */
 static void DelTopic(int icon) {
 	RemFromInventory(INV_CONV, icon);
-}
-
-/**
- * DimMusic
- */
-static void DimMusic() {
-	_vm->_pcmMusic->dim(true);
 }
 
 /**
@@ -1152,20 +1126,6 @@ static void FaceTag(int actor, HPOLYGON hp) {
 						NOPOLY, YB_X1_5));
 		SetMoverStanding(pMover);
 	}
-}
-
-/**
- * FadeIn
- */
-static void FadeIn() {
-	FadeInMedium();
-}
-
-/**
- * FadeOut
- */
-static void FadeOut() {
-	FadeOutMedium();
 }
 
 /**
@@ -1415,7 +1375,7 @@ static void KillProcess(uint32 procID) {
 static int LToffset(int lort) {
 	int Loffset, Toffset;
 
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 	return (lort == SCREENXPOS) ? Loffset : Toffset;
 }
 
@@ -1509,7 +1469,7 @@ void Offset(EXTREME extreme, int x, int y) {
 	if (TinselV2)
 		DecodeExtreme(extreme, &x, &y);
 
-	PlayfieldSetPos(FIELD_WORLD, x, y);
+	_vm->_bg->PlayfieldSetPos(FIELD_WORLD, x, y);
 }
 
 /**
@@ -1637,7 +1597,7 @@ static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 	CORO_BEGIN_CODE(_ctx);
 	assert(loop == MIDI_DEF || loop == MIDI_LOOP);
 
-	PlayMidiSequence(hMidi, loop == MIDI_LOOP);
+	_vm->_music->PlayMidiSequence(hMidi, loop == MIDI_LOOP);
 
 	// This check&sleep was added in DW v2. It was most likely added to
 	// ensure that the MIDI song started playing before the next opcode
@@ -1645,11 +1605,11 @@ static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 	// In DW1, it messes up the script arguments when entering the secret
 	// door in the bookshelf in the library, leading to a crash, when the
 	// music volume is set to 0.
-	if (!MidiPlaying() && TinselV2)
+	if (!_vm->_music->MidiPlaying() && TinselV2)
 		CORO_SLEEP(1);
 
 	if (complete) {
-		while (MidiPlaying())
+		while (_vm->_music->MidiPlaying())
 			CORO_SLEEP(1);
 	}
 	CORO_END_CODE;
@@ -1924,29 +1884,29 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	}
 
 	// Get the string
-	LoadStringRes(text, TextBufferAddr(), TBUFSZ);
+	LoadStringRes(text, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 	// Calculate display time
 	bJapDoPrintText = false;
 	if (time == 0) {
 		// This is a 'talky' print
-		_ctx->time = TextTime(TextBufferAddr());
+		_ctx->time = TextTime(_vm->_font->TextBufferAddr());
 
 		// Cut short-able if sustain was not set
 		_ctx->myleftEvent = bSustain ? 0 : GetLeftEvents();
 	} else {
 		_ctx->time = time * ONE_SECOND;
 		_ctx->myleftEvent = (TinselV2 && !bSustain) ? GetLeftEvents() : 0;
-		if (isJapanMode())
+		if (_vm->_config->isJapanMode())
 			bJapDoPrintText = true;
 	}
 
 	// Print the text
 	if (TinselV2) {
 		int Loffset, Toffset;
-		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-			TextBufferAddr(), 0, x - Loffset, y - Toffset, GetTagFontHandle(),
+		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+		_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
+			_vm->_font->TextBufferAddr(), 0, x - Loffset, y - Toffset, _vm->_font->GetTagFontHandle(),
 			TXT_CENTER, 0);
 		assert(_ctx->pText);
 
@@ -1955,12 +1915,12 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		if (IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
-	} else if (bJapDoPrintText || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
+	} else if (bJapDoPrintText || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 		int Loffset, Toffset;	// Screen position
-		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+		_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 					0, x - Loffset, y - Toffset,
-					TinselV2 ? GetTagFontHandle() : GetTalkFontHandle(), TXT_CENTER);
+					TinselV2 ? _vm->_font->GetTagFontHandle() : _vm->_font->GetTalkFontHandle(), TXT_CENTER);
 		assert(_ctx->pText); // string produced NULL text
 		if (IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
@@ -1970,14 +1930,14 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		 */
 		int	shift;
 		shift = MultiRightmost(_ctx->pText) + 2;
-		if (shift >= BgWidth())			// Not off right
-			MultiMoveRelXY(_ctx->pText, BgWidth() - shift, 0);
+		if (shift >= _vm->_bg->BgWidth())			// Not off right
+			MultiMoveRelXY(_ctx->pText, _vm->_bg->BgWidth() - shift, 0);
 		shift = MultiLeftmost(_ctx->pText) - 1;
 		if (shift <= 0)					// Not off left
 			MultiMoveRelXY(_ctx->pText, -shift, 0);
 		shift = MultiLowest(_ctx->pText);
-		if (shift > BgHeight())			// Not off bottom
-			MultiMoveRelXY(_ctx->pText, 0, BgHeight() - shift);
+		if (shift > _vm->_bg->BgHeight())			// Not off bottom
+			MultiMoveRelXY(_ctx->pText, 0, _vm->_bg->BgHeight() - shift);
 	}
 
 	// Give up if nothing printed and no sample
@@ -2032,7 +1992,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 
 	// Delete the text
 	if (_ctx->pText != NULL)
-		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 	_vm->_mixer->stopHandle(_ctx->handle);
 
 	CORO_END_CODE;
@@ -2114,17 +2074,17 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 		}
 
 		// Display the text and set it's Z position
-		if (event == POINTED || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
+		if (event == POINTED || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 			int	xshift;
 
 			// Get the text string
 			if (TinselV2)
-				LoadSubString(hText, _ctx->sub, TextBufferAddr(), TBUFSZ);
+				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
 			else
-				LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
+				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 
-			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-						0, _ctx->textx, _ctx->texty, GetTagFontHandle(), TXT_CENTER);
+			_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+						0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // PrintObj() string produced NULL text
 
 			MultiSetZPosition(_ctx->pText, Z_INV_ITEXT);
@@ -2163,7 +2123,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Give way to non-POINTED-generated text
 					if (g_bNotPointedRunning) {
 						// Delete the text, and wait for the all-clear
-						MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+						MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 						_ctx->pText = NULL;
 
 						while (g_bNotPointedRunning)
@@ -2174,9 +2134,9 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 							break;
 
 						// Re-display in the same place
-						LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
-						_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-							TextBufferAddr(), 0, _ctx->textx, _ctx->texty, GetTagFontHandle(),
+						LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
+						_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
+							_vm->_font->TextBufferAddr(), 0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(),
 							TXT_CENTER, 0);
 						assert(_ctx->pText);
 
@@ -2199,7 +2159,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 				// Display for a time, but abort if conversation gets hidden
 				if (_ctx->pText)
-					_ctx->ticks = TextTime(TextBufferAddr());
+					_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
 				_ctx->timeout = SAMPLETIMEOUT;
 
 				for (;;) {
@@ -2251,7 +2211,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 		// Delete the text, if haven't already
 		if (_ctx->pText)
-			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 
 		// If it hasn't already finished, stop sample
 		if (_ctx->bSample)
@@ -2281,7 +2241,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 			// Give way to non-POINTED-generated text
 			if (g_bNotPointedRunning) {
 				// Delete the text, and wait for the all-clear
-				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), pText);
+				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), pText);
 				pText = NULL;
 				while (g_bNotPointedRunning)
 					CORO_SLEEP(1);
@@ -2291,9 +2251,9 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 					break;
 
 				// Re-display in the same place
-				LoadStringRes(text, TextBufferAddr(), TBUFSZ);
-				pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-							0, textx, texty, GetTagFontHandle(), TXT_CENTER);
+				LoadStringRes(text, _vm->_font->TextBufferAddr(), TBUFSZ);
+				pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+							0, textx, texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 				assert(pText); // PrintObj() string produced NULL text
 				MultiSetZPosition(pText, Z_INV_ITEXT);
 			}
@@ -2330,10 +2290,10 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 		_ctx->took_control = GetControl(CONTROL_OFF);
 
 		// Display for a time, but abort if conversation gets hidden
-		if (isJapanMode())
+		if (_vm->_config->isJapanMode())
 			_ctx->ticks = JAP_TEXT_TIME;
 		else if (pText)
-			_ctx->ticks = TextTime(TextBufferAddr());
+			_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
 		else
 			_ctx->ticks = 0;
 
@@ -2406,7 +2366,7 @@ static void PrintTag(HPOLYGON hp, SCNHANDLE text, int actor = 0, bool bCursor = 
  * Quits the game
  */
 static void QuitGame() {
-	StopMidi();
+	_vm->_music->StopMidi();
 	StopSample();
 	_vm->quitGame();
 }
@@ -2441,7 +2401,7 @@ void ResetIdleTime() {
  */
 void FnRestartGame() {
 	// TODO: Tinsel 2 comments out the 2 calls, but I'm not sure that this should be done
-	StopMidi();
+	_vm->_music->StopMidi();
 	StopSample();
 
 	g_bRestart = true;
@@ -2582,7 +2542,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 				if (_ctx->thisScroll != g_scrollNumber)
 					CORO_KILL_SELF();
 
-				PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 			} while (Loffset != _ctx->x || Toffset != _ctx->y);
 		} else if (TinselV2 && myEscape) {
 			SCROLL_MONITOR sm;
@@ -2721,7 +2681,7 @@ static void SetPalette(SCNHANDLE hPal, bool escOn, int myEscape) {
 	if (escOn && myEscape != GetEscEvents())
 		return;
 
-	ChangePalette(hPal);
+	_vm->_bg->ChangePalette(hPal);
 }
 
 /**
@@ -2757,8 +2717,8 @@ static void SetTimer(int timerno, int start, bool up, bool frame) {
  * Shell("cmdline")
  */
 static void Shell(SCNHANDLE commandLine) {
-	LoadStringRes(commandLine, TextBufferAddr(), TBUFSZ);
-	error("Tried to execute shell command \"%s\"", TextBufferAddr());
+	LoadStringRes(commandLine, _vm->_font->TextBufferAddr(), TBUFSZ);
+	error("Tried to execute shell command \"%s\"", _vm->_font->TextBufferAddr());
 }
 
 /**
@@ -3004,7 +2964,7 @@ static void StartTimerFn(int timerno, int start, bool up, int fs) {
 }
 
 void StopMidiFn() {
-	StopMidi();		// Stop any currently playing midi
+	_vm->_music->StopMidi();		// Stop any currently playing midi
 }
 
 /**
@@ -3044,7 +3004,7 @@ static void StopWalk(int actor) {
 static void Subtitles(int onoff) {
 	assert (onoff == ST_ON || onoff == ST_OFF);
 
-	if (isJapanMode())
+	if (_vm->_config->isJapanMode())
 		return;	// Subtitles are always off in JAPAN version (?)
 
 	_vm->_config->_useSubtitles = (onoff == ST_ON);
@@ -3339,7 +3299,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		_ctx->bSample = _ctx->bSamples;
 		_ctx->pText = NULL;
 
-		if (isJapanMode()) {
+		if (_vm->_config->isJapanMode()) {
 			_ctx->ticks = JAP_TEXT_TIME;
 		} else if (_vm->_config->_useSubtitles || !_ctx->bSample) {
 			/*
@@ -3347,23 +3307,23 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			 */
 			int	xshift, yshift;
 
-			PlayfieldGetPos(FIELD_WORLD, &_ctx->Loffset, &_ctx->Toffset);
+			_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &_ctx->Loffset, &_ctx->Toffset);
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
 				GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
 			if (!TinselV0)
 				SetTextPal(GetActorRGB(_ctx->actor));
 			if (TinselV2)
-				LoadSubString(hText, _ctx->sub, TextBufferAddr(), TBUFSZ);
+				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
 			else {
-				LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
+				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 				_ctx->y -= _ctx->Toffset;
 			}
 
-			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-					TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
-					GetTalkFontHandle(), TXT_CENTER);
+			_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
+					_vm->_font->TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
+					_vm->_font->GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
 
 			if (IsTopWindow())
@@ -3403,7 +3363,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			 * Work out how long to talk.
 			 * During this time, reposition the text if the screen scrolls.
 			 */
-			_ctx->ticks = TextTime(TextBufferAddr());
+			_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
 		}
 
 		if (TinselV2 && _ctx->bSample) {
@@ -3424,7 +3384,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if (_ctx->pText != NULL) {
 				int	nLoff, nToff;
 
-				PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
+				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
 				if (nLoff != _ctx->Loffset || nToff != _ctx->Toffset) {
 					MultiMoveRelXY(_ctx->pText, _ctx->Loffset - nLoff, _ctx->Toffset - nToff);
 					_ctx->Loffset = nLoff;
@@ -3482,7 +3442,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		} while (1);
 
 		if (_ctx->pText != NULL) {
-			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 			_ctx->pText = NULL;
 		}
 		if (TinselV2 && _ctx->bSample)
@@ -3497,7 +3457,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	if (_ctx->bTalkReel)
 		CORO_INVOKE_2(FinishTalkingReel, _ctx->pActor, _ctx->actor);
 	if (_ctx->pText != NULL)
-		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 
 	if (TinselV2) {
 		if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {
@@ -3536,7 +3496,7 @@ static void TalkAt(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, bool esc
 		if (escOn && myEscape != GetEscEvents())
 			return;
 
-		if (!isJapanMode() && (_vm->_config->_useSubtitles || !_vm->_sound->sampleExists(text)))
+		if (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_vm->_sound->sampleExists(text)))
 			SetTextPal(GetActorRGB(actor));
 	}
 
@@ -3554,7 +3514,7 @@ static void TalkAtS(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, int sus
 		if (escOn && myEscape != GetEscEvents())
 			return;
 
-		if (!isJapanMode())
+		if (!_vm->_config->isJapanMode())
 			SetTextPal(GetActorRGB(actor));
 	}
 
@@ -3565,7 +3525,7 @@ static void TalkAtS(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, int sus
  * Set talk font's palette entry.
  */
 static void TalkAttr(int r1, int g1, int b1, bool escOn, int myEscape) {
-	if (isJapanMode())
+	if (_vm->_config->isJapanMode())
 		return;
 
 	// Don't do it if it's not wanted
@@ -3604,20 +3564,6 @@ static void TalkRGB(COLORREF color, int myescEvent) {
  */
 static void TalkVia(int actor) {
 	SetSysVar(ISV_DIVERT_ACTOR, actor);
-}
-
-/**
- * Declare a temporary text font.
- */
-static void TempTagFont(SCNHANDLE hFilm) {
-	SetTempTagFontHandle(hFilm);	// Store the font handle
-}
-
-/**
- * Declare a temporary text font.
- */
-static void TempTalkFont(SCNHANDLE hFilm) {
-	SetTempTalkFontHandle(hFilm);	// Store the font handle
 }
 
 /**
@@ -3707,20 +3653,6 @@ static void TryPlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, in
 
 	CORO_INVOKE_ARGS(PlaySample, (CORO_SUBCTX, sample, bComplete, escOn, myEscape));
 	CORO_END_CODE;
-}
-
-/**
- * UnDimMusic
- */
-static void UnDimMusic() {
-	_vm->_pcmMusic->unDim(true);
-}
-
-/**
- * unhookscene
- */
-static void UnHookSceneFn() {
-	UnHookScene();
 }
 
 /**
@@ -4586,12 +4518,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DECTAGFONT:
 		// Common to both DW1 & DW2
-		DecTagFont(pp[0]);
+		_vm->_font->SetTagFontHandle(pp[0]);
 		return -1;
 
 	case DECTALKFONT:
 		// Common to both DW1 & DW2
-		DecTalkFont(pp[0]);
+		_vm->_font->SetTalkFontHandle(pp[0]);
 		return -1;
 
 	case DELICON:
@@ -4611,7 +4543,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DIMMUSIC:
 		// DW2 only
-		DimMusic();
+		_vm->_pcmMusic->dim(true);
 		return 0;
 
 	case DROP:
@@ -4666,7 +4598,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case FADEIN:
 		// DW2 only
-		FadeIn();
+		FadeInMedium();
 		return 0;
 
 	case FADEMIDI:
@@ -4676,7 +4608,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case FADEOUT:
 		// DW1 only
-		FadeOut();
+		FadeOutMedium();
 		return 0;
 
 	case FRAMEGRAB:
@@ -5477,12 +5409,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case TEMPTAGFONT:
 		// DW2 only
-		TempTagFont(pp[0]);
+		_vm->_font->SetTempTagFontHandle(pp[0]);
 		return -1;
 
 	case TEMPTALKFONT:
 		// DW2 only
-		TempTalkFont(pp[0]);
+		_vm->_font->SetTempTalkFontHandle(pp[0]);
 		return -1;
 
 	case THISOBJECT:
@@ -5535,12 +5467,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case UNDIMMUSIC:
 		// DW2 only
-		UnDimMusic();
+		_vm->_pcmMusic->unDim(true);
 		return 0;
 
 	case UNHOOKSCENE:
 		// Common to both DW1 & DW2
-		UnHookSceneFn();
+		UnHookScene();
 		return 0;
 
 	case UNTAGACTOR:

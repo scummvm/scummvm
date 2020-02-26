@@ -30,88 +30,88 @@
 namespace Ultima {
 namespace Ultima8 {
 
-PaletteManager *PaletteManager::palettemanager = 0;
+PaletteManager *PaletteManager::_paletteManager = 0;
 
 PaletteManager::PaletteManager(RenderSurface *rs)
-	: rendersurface(rs) {
-	con->Print(MM_INFO, "Creating PaletteManager...\n");
+	: _renderSurface(rs) {
+	debugN(MM_INFO, "Creating PaletteManager...\n");
 
-	palettemanager = this;
+	_paletteManager = this;
 }
 
 PaletteManager::~PaletteManager() {
 	reset();
-	con->Print(MM_INFO, "Destroying PaletteManager...\n");
-	palettemanager = 0;
+	debugN(MM_INFO, "Destroying PaletteManager...\n");
+	_paletteManager = 0;
 }
 
 // Reset the Palette Manager
 void PaletteManager::reset() {
-	con->Print(MM_INFO, "Resetting PaletteManager...\n");
+	debugN(MM_INFO, "Resetting PaletteManager...\n");
 
-	for (unsigned int i = 0; i < palettes.size(); ++i)
-		delete palettes[i];
-	palettes.clear();
+	for (unsigned int i = 0; i < _palettes.size(); ++i)
+		delete _palettes[i];
+	_palettes.clear();
 }
 
 void PaletteManager::updatedFont(PalIndex index) {
 	Palette *pal = getPalette(index);
 	if (pal)
-		rendersurface->CreateNativePalette(pal); // convert to native format
+		_renderSurface->CreateNativePalette(pal); // convert to native format
 }
 
 // Reset all the transforms back to default
 void PaletteManager::resetTransforms() {
-	con->Print(MM_INFO, "Resetting Palette Transforms...\n");
+	debugN(MM_INFO, "Resetting Palette Transforms...\n");
 
 	int16 matrix[12];
 	getTransformMatrix(matrix, Transform_None);
 
-	for (unsigned int i = 0; i < palettes.size(); ++i) {
-		Palette *pal = palettes[i];
+	for (unsigned int i = 0; i < _palettes.size(); ++i) {
+		Palette *pal = _palettes[i];
 		if (!pal) continue;
-		pal->transform = Transform_None;
-		for (int j = 0; j < 12; j++) pal->matrix[j] = matrix[j];
-		rendersurface->CreateNativePalette(pal); // convert to native format
+		pal->_transform = Transform_None;
+		for (int j = 0; j < 12; j++) pal->_matrix[j] = matrix[j];
+		_renderSurface->CreateNativePalette(pal); // convert to native format
 	}
 }
 
 // Change the Render Surface used by the PaletteManager
 void PaletteManager::RenderSurfaceChanged(RenderSurface *rs) {
-	rendersurface = rs;
+	_renderSurface = rs;
 
-	// Create native palettes for all currently loaded palettes
-	for (unsigned int i = 0; i < palettes.size(); ++i)
-		if (palettes[i])
-			rendersurface->CreateNativePalette(palettes[i]);
+	// Create native _palettes for all currently loaded _palettes
+	for (unsigned int i = 0; i < _palettes.size(); ++i)
+		if (_palettes[i])
+			_renderSurface->CreateNativePalette(_palettes[i]);
 }
 
 void PaletteManager::load(PalIndex index, IDataSource &ds, IDataSource &xformds) {
-	if (palettes.size() <= static_cast<unsigned int>(index))
-		palettes.resize(index + 1);
+	if (_palettes.size() <= static_cast<unsigned int>(index))
+		_palettes.resize(index + 1);
 
-	if (palettes[index])
-		delete palettes[index];
+	if (_palettes[index])
+		delete _palettes[index];
 
 	Palette *pal = new Palette;
 	pal->load(ds, xformds);
-	rendersurface->CreateNativePalette(pal); // convert to native format
+	_renderSurface->CreateNativePalette(pal); // convert to native format
 
-	palettes[index] = pal;
+	_palettes[index] = pal;
 }
 
 void PaletteManager::load(PalIndex index, IDataSource &ds) {
-	if (palettes.size() <= static_cast<unsigned int>(index))
-		palettes.resize(index + 1);
+	if (_palettes.size() <= static_cast<unsigned int>(index))
+		_palettes.resize(index + 1);
 
-	if (palettes[index])
-		delete palettes[index];
+	if (_palettes[index])
+		delete _palettes[index];
 
 	Palette *pal = new Palette;
 	pal->load(ds);
-	rendersurface->CreateNativePalette(pal); // convert to native format
+	_renderSurface->CreateNativePalette(pal); // convert to native format
 
-	palettes[index] = pal;
+	_palettes[index] = pal;
 }
 
 void PaletteManager::duplicate(PalIndex src, PalIndex dest) {
@@ -122,17 +122,17 @@ void PaletteManager::duplicate(PalIndex src, PalIndex dest) {
 	if (srcpal)
 		*newpal = *srcpal;
 
-	rendersurface->CreateNativePalette(newpal); // convert to native format
-	if (palettes.size() <= static_cast<unsigned int>(dest))
-		palettes.resize(dest + 1);
-	palettes[dest] = newpal;
+	_renderSurface->CreateNativePalette(newpal); // convert to native format
+	if (_palettes.size() <= static_cast<unsigned int>(dest))
+		_palettes.resize(dest + 1);
+	_palettes[dest] = newpal;
 }
 
 Palette *PaletteManager::getPalette(PalIndex index) {
-	if (static_cast<unsigned int>(index) >= palettes.size())
+	if (static_cast<unsigned int>(index) >= _palettes.size())
 		return 0;
 
-	return palettes[index];
+	return _palettes[index];
 }
 
 void PaletteManager::transformPalette(PalIndex index, int16 matrix[12]) {
@@ -140,8 +140,8 @@ void PaletteManager::transformPalette(PalIndex index, int16 matrix[12]) {
 
 	if (!pal) return;
 
-	for (int i = 0; i < 12; i++) pal->matrix[i] = matrix[i];
-	rendersurface->CreateNativePalette(pal); // convert to native format
+	for (int i = 0; i < 12; i++) pal->_matrix[i] = matrix[i];
+	_renderSurface->CreateNativePalette(pal); // convert to native format
 }
 
 void PaletteManager::untransformPalette(PalIndex index) {
@@ -149,7 +149,7 @@ void PaletteManager::untransformPalette(PalIndex index) {
 
 	if (!pal) return;
 
-	pal->transform = Transform_None;
+	pal->_transform = Transform_None;
 	int16 matrix[12];
 	getTransformMatrix(matrix, Transform_None);
 	transformPalette(index, matrix);
@@ -189,12 +189,12 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 	case Transform_NoRed: {
 		matrix[0] = 0;
 		matrix[1] = 0;
-		matrix[2]  = 0;
-		matrix[3]  = 0;
+		matrix[2] = 0;
+		matrix[3] = 0;
 		matrix[4] = 0;
 		matrix[5] = 0x800;
-		matrix[6]  = 0;
-		matrix[7]  = 0;
+		matrix[6] = 0;
+		matrix[7] = 0;
 		matrix[8] = 0;
 		matrix[9] = 0;
 		matrix[10] = 0x800;
@@ -256,12 +256,12 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 	case Transform_BRG: {
 		matrix[0] = 0;
 		matrix[1] = 0x800;
-		matrix[2]  = 0;
-		matrix[3]  = 0;
+		matrix[2] = 0;
+		matrix[3] = 0;
 		matrix[4] = 0;
 		matrix[5] = 0;
-		matrix[6]  = 0x800;
-		matrix[7]  = 0;
+		matrix[6] = 0x800;
+		matrix[7] = 0;
 		matrix[8] = 0x800;
 		matrix[9] = 0;
 		matrix[10] = 0;
@@ -273,12 +273,12 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 	case Transform_GBR: {
 		matrix[0] = 0;
 		matrix[1] = 0;
-		matrix[2]  = 0x800;
-		matrix[3]  = 0;
+		matrix[2] = 0x800;
+		matrix[3] = 0;
 		matrix[4] = 0x800;
 		matrix[5] = 0;
-		matrix[6]  = 0;
-		matrix[7]  = 0;
+		matrix[6] = 0;
+		matrix[7] = 0;
 		matrix[8] = 0;
 		matrix[9] = 0x800;
 		matrix[10] = 0;
@@ -291,12 +291,12 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 		perr << "Unknown Palette Transformation: " << trans << Std::endl;
 		matrix[0] = 0x800;
 		matrix[1] = 0;
-		matrix[2]  = 0;
-		matrix[3]  = 0;
+		matrix[2] = 0;
+		matrix[3] = 0;
 		matrix[4] = 0;
 		matrix[5] = 0x800;
-		matrix[6]  = 0;
-		matrix[7]  = 0;
+		matrix[6] = 0;
+		matrix[7] = 0;
 		matrix[8] = 0;
 		matrix[9] = 0;
 		matrix[10] = 0x800;

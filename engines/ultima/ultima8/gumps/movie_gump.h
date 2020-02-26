@@ -38,8 +38,8 @@ public:
 
 	MovieGump();
 	MovieGump(int width, int height, RawArchive *skf, bool introMusicHack = false,
-	          uint32 _Flags = 0, int32 layer = LAYER_MODAL);
-	~MovieGump(void) override;
+	          uint32 flags = 0, int32 layer = LAYER_MODAL);
+	~MovieGump() override;
 
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 
@@ -54,14 +54,11 @@ public:
 
 	static ProcId U8MovieViewer(RawArchive *skf, bool introMusicHack = false);
 
-	//! "play" console command
-	static void ConCmd_play(const Console::ArgvType &argv);
-
 	bool loadData(IDataSource *ids);
 protected:
 	void saveData(ODataSource *ods) override;
 
-	SKFPlayer *player;
+	SKFPlayer *_player;
 };
 
 } // End of namespace Ultima8

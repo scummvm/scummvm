@@ -39,7 +39,7 @@ class AudioSample;
 
 class AudioMixer {
 private:
-	static AudioMixer *the_audio_mixer;
+	static AudioMixer *_audioMixer;
 	Audio::Mixer *_mixer;
 	MidiPlayer *_midiPlayer;
 	Common::Array<AudioChannel *> _channels;
@@ -55,7 +55,7 @@ public:
 	}
 
 	static AudioMixer  *get_instance() {
-		return the_audio_mixer;
+		return _audioMixer;
 	}
 
 	void            reset();

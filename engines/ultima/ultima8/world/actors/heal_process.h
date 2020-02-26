@@ -46,8 +46,8 @@ protected:
 
 	void feedAvatar(uint16 food);
 
-	uint16 healCounter;
-	uint16 hungerCounter;
+	uint16 _healCounter;
+	uint16 _hungerCounter;
 };
 
 } // End of namespace Ultima8

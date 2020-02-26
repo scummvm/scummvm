@@ -178,7 +178,7 @@ void CProjectItem::loadGame(int slotId) {
 	// Open either an existing savegame slot or the new game template
 	if (slotId >= 0) {
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-			g_vm->generateSaveName(slotId));
+			g_vm->getSaveStateName(slotId));
 		file.open(saveFile);
 	} else {
 		Common::File *newFile = new Common::File();
@@ -222,7 +222,7 @@ void CProjectItem::loadGame(int slotId) {
 void CProjectItem::saveGame(int slotId, const CString &desc) {
 	CompressedFile file;
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
-		g_vm->generateSaveName(slotId), false);
+		g_vm->getSaveStateName(slotId), false);
 	file.open(saveFile);
 
 	// Signal the game is being saved

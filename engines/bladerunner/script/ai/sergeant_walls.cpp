@@ -59,15 +59,15 @@ void AIScriptSergeantWalls::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptSergeantWalls::EnteredScene(int sceneId) {
+void AIScriptSergeantWalls::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptSergeantWalls::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptSergeantWalls::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptSergeantWalls::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptSergeantWalls::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -98,7 +98,7 @@ bool AIScriptSergeantWalls::GoalChanged(int currentGoalNumber, int newGoalNumber
 bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		_animationFrame++;
+		++_animationFrame;
 		if ( Game_Flag_Query(kFlagSergeantWallsBuzzInRequest)
 		 && !Game_Flag_Query(kFlagSergeantWallsBuzzInDone)
 		) {
@@ -116,14 +116,14 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 1:
 		*animation = 725;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(725)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 3:
 		*animation = 726;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(726)) {
 			_animationState = 1;
 			_animationFrame = 0;
@@ -132,7 +132,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 4:
 		*animation = 727;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(727)) {
 			_animationState = 1;
 			_animationFrame = 0;
@@ -141,7 +141,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 5:
 		*animation = 728;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(728)) {
 			_animationState = 1;
 			_animationFrame = 0;
@@ -150,7 +150,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 6:
 		*animation = 729;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(729)) {
 			_animationState = 1;
 			_animationFrame = 0;
@@ -159,7 +159,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 7:
 		*animation = 730;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(730)) {
 			_animationState = 1;
 			_animationFrame = 0;
@@ -168,7 +168,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 8:
 		*animation = 731;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(731)) {
 			_animationState = 1;
 			_animationFrame = 0;
@@ -177,7 +177,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 9:
 		*animation = 724;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(724)) {
 			_animationState = 9;
 			_animationFrame = 0;

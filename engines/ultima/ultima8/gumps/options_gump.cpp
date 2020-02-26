@@ -50,10 +50,10 @@ OptionsGump::~OptionsGump() {
 void OptionsGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	dims.w = 220;
-	dims.h = 120;
+	_dims.w = 220;
+	_dims.h = 120;
 
-	int x_ = dims.w / 2 + 14;
+	int x_ = _dims.w / 2 + 14;
 	int y_ = 4;
 	Gump *widget;
 
@@ -98,7 +98,7 @@ static const int gumpShape = 35;
 
 bool OptionsGump::OnKeyDown(int key, int mod) {
 	if (key == Common::KEYCODE_ESCAPE) {
-		parent->Close();
+		_parent->Close();
 	} else if (key >= Common::KEYCODE_1 && key <= Common::KEYCODE_9) {
 		// Minor hack.
 		selectEntry(key - Common::KEYCODE_1 + 1);

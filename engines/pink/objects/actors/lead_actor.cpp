@@ -47,7 +47,7 @@ void LeadActor::deserialize(Archive &archive) {
 	_sequencer = static_cast<Sequencer *>(archive.readObject());
 }
 
-void LeadActor::toConsole() {
+void LeadActor::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "LeadActor: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();
@@ -321,7 +321,7 @@ void LeadActor::onPDAClose() {
 		_page->pause(0);
 }
 
-bool LeadActor::isInteractingWith(Actor *actor) {
+bool LeadActor::isInteractingWith(const Actor *actor) const {
 	if (!_isHaveItem)
 		return actor->isLeftClickHandlers();
 
@@ -434,7 +434,7 @@ Actor *LeadActor::findActor(const Common::String &name) {
 	return _page->findActor(name);
 }
 
-void ParlSqPink::toConsole() {
+void ParlSqPink::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "ParlSqPink: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();
@@ -448,7 +448,7 @@ WalkLocation *ParlSqPink::getWalkDestination() {
 	return LeadActor::getWalkDestination();
 }
 
-void PubPink::toConsole() {
+void PubPink::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "PubPink: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();

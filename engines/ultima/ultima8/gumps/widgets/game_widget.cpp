@@ -36,31 +36,30 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GameWidget, Gump)
 
 
-GameWidget::GameWidget(int X, int Y, istring &game)
-	: Gump(X, Y, 443, 109), highlight(false) {
-	info = Ultima8Engine::get_instance()->getGameInfo(game);
-	assert(info);
+GameWidget::GameWidget(int x, int y, istring &game)
+	: Gump(x, y, 443, 109), _highlight(false) {
+	_info = Ultima8Engine::get_instance()->getGameInfo(game);
+	assert(_info);
 }
 
 GameWidget::~GameWidget() {
-
 }
 
 istring GameWidget::getGameName() {
-	return info->name;
+	return _info->_name;
 }
 void GameWidget::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
 	// setup children
-	Gump *w = new TextWidget(65, 2, info->getGameTitle(),
+	Gump *w = new TextWidget(65, 2, _info->getGameTitle(),
 	                         false, 0, 350, 180);
 	w->InitGump(this, false);
 
 	// FIXME: localize these strings
 	Std::string gamename = "Game:";
 	gamename += " ";
-	gamename += info->name;
+	gamename += _info->_name;
 	w = new TextWidget(65, 29, gamename, false, 0, 350, 180);
 	w->InitGump(this, false);
 
@@ -69,7 +68,7 @@ void GameWidget::InitGump(Gump *newparent, bool take_focus) {
 	w = new TextWidget(65, 50, path, false, 0, 350, 180);
 	w->InitGump(this, false);
 
-	Std::string version = info->getPrintableVersion();
+	Std::string version = _info->getPrintableVersion();
 	w = new TextWidget(360, 70, version, false, 2, 70, 0, Font::TEXT_RIGHT);
 	w->InitGump(this, false);
 
@@ -95,8 +94,8 @@ void GameWidget::ChildNotify(Gump *child, uint32 message) {
 	        message == ButtonWidget::BUTTON_CLICK) {
 		int32 index_ = child->GetIndex();
 
-		if (parent)
-			parent->ChildNotify(this, static_cast<uint32>(index_));
+		if (_parent)
+			_parent->ChildNotify(this, static_cast<uint32>(index_));
 	}
 }
 
@@ -113,11 +112,11 @@ Gump *GameWidget::OnMouseDown(int button, int32 mx, int32 my) {
 }
 
 void GameWidget::OnMouseOver() {
-	highlight = true;
+	_highlight = true;
 }
 
 void GameWidget::OnMouseLeft() {
-	highlight = false;
+	_highlight = false;
 }
 
 
@@ -145,14 +144,14 @@ void GameWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled
 
 	// box graphics
 //	surf->Fill32(0xFFAFAFFF,1,1,56,80);
-	surf->Blit(coversImage, (info->type - 1) * 56, 0, 56, 80, 1, 1); // HACK...
+	surf->Blit(coversImage, (_info->_type - 1) * 56, 0, 56, 80, 1, 1); // HACK...
 
-	if (highlight)
+	if (_highlight)
 		surf->Fill32(0xFF30308F, 58, 1, 443 - 57 - 2, 22);
 
 	// flag
 //	surf->Fill32(0xFFAFFFAF,415,4,24,16);
-	surf->Blit(flagsImage, (info->language - 1) * 24, 0, 24, 16, 415, 4); // HACK...
+	surf->Blit(flagsImage, (_info->_language - 1) * 24, 0, 24, 16, 415, 4); // HACK...
 
 
 #if 0

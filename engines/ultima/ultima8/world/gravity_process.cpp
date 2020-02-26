@@ -21,16 +21,13 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/world/gravity_process.h"
-
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -45,18 +42,18 @@ GravityProcess::GravityProcess()
 
 }
 
-GravityProcess::GravityProcess(Item *item, int gravity_)
-	: xspeed(0), yspeed(0), zspeed(0) {
+GravityProcess::GravityProcess(Item *item, int gravity)
+	: _xSpeed(0), _ySpeed(0), _zSpeed(0) {
 	assert(item);
 
-	gravity = gravity_;
-	item_num = item->getObjId();
+	_gravity = gravity;
+	_itemNum = item->getObjId();
 
-	type = 0x203; // CONSTANT!
+	_type = 0x203; // CONSTANT!
 }
 
 void GravityProcess::init() {
-	Item *item = getItem(item_num);
+	Item *item = getItem(_itemNum);
 	assert(item);
 
 	item->setGravityPID(getPid());
@@ -68,21 +65,21 @@ void GravityProcess::init() {
 }
 
 void GravityProcess::move(int xs, int ys, int zs) {
-	xspeed += xs;
-	yspeed += ys;
-	zspeed += zs;
+	_xSpeed += xs;
+	_ySpeed += ys;
+	_zSpeed += zs;
 }
 
-void GravityProcess::setGravity(int gravity_) {
-	// only apply gravity if stronger than current gravity
+void GravityProcess::setGravity(int gravity) {
+	// only apply _gravity if stronger than current _gravity
 	//!!! is this correct?
-	if (gravity_ > gravity)
-		gravity = gravity_;
+	if (gravity > _gravity)
+		_gravity = gravity;
 }
 
 void GravityProcess::run() {
 	// move item in (xs,ys,zs) direction
-	Item *item = getItem(item_num);
+	Item *item = getItem(_itemNum);
 	if (!item) {
 		terminate();
 		return;
@@ -108,9 +105,9 @@ void GravityProcess::run() {
 	item->getFootpadWorld(ixd, iyd, izd);
 
 	int32 tx, ty, tz;
-	tx = ix + xspeed;
-	ty = iy + yspeed;
-	tz = iz + zspeed;
+	tx = ix + _xSpeed;
+	ty = iy + _ySpeed;
+	tz = iz + _zSpeed;
 
 	bool clipped = false;
 
@@ -119,21 +116,21 @@ void GravityProcess::run() {
 	if (tx < 0 && ix >= 0) {
 		int32 scale = (ix - tx) >> 0x8;
 		tx = 0;
-		ty = iy + ((yspeed * scale) >> 0x2000);
-		tz = iz + ((zspeed * scale) >> 0x2000);
+		ty = iy + ((_ySpeed * scale) >> 0x2000);
+		tz = iz + ((_zSpeed * scale) >> 0x2000);
 		clipped = true;
 	}
 	if (ty < 0 && iy >= 0) {
 		int32 scale = (iy - ty) >> 0x8;
-		tx = ix + ((xspeed * scale) >> 0x2000);
+		tx = ix + ((_xSpeed * scale) >> 0x2000);
 		ty = 0;
-		tz = iz + ((zspeed * scale) >> 0x2000);
+		tz = iz + ((_zSpeed * scale) >> 0x2000);
 		clipped = true;
 	}
 	if (tz < 0 && iz >= 0) {
 		int32 scale = (iz - tz) >> 0x8;
-		tx = ix + ((xspeed * scale) >> 0x2000);
-		ty = iy + ((yspeed * scale) >> 0x2000);
+		tx = ix + ((_xSpeed * scale) >> 0x2000);
+		ty = iy + ((_ySpeed * scale) >> 0x2000);
 		tz = 0;
 		clipped = true;
 	}
@@ -147,7 +144,7 @@ void GravityProcess::run() {
 
 	if (dist == 0x4000 && !clipped) {
 		// normal move
-		zspeed -= gravity;
+		_zSpeed -= _gravity;
 		return;
 	}
 
@@ -165,34 +162,34 @@ void GravityProcess::run() {
 
 
 	// only blocked going down?
-	if (dirs == 4 && zspeed < 0) {
+	if (dirs == 4 && _zSpeed < 0) {
 
 		// If it landed on top of hititem and hititem is not land, the item
 		// should always bounce.
 
-		bool terminate = true;
+		bool termFlag = true;
 		Item *hititem = getItem(hititemid);
-		if (zspeed < -2 && !p_dynamic_cast<Actor *>(item)) {
+		if (_zSpeed < -2 && !p_dynamic_cast<Actor *>(item)) {
 #ifdef BOUNCE_DIAG
-			pout << "item " << item_num << " bounce ["
+			pout << "item " << _itemNum << " bounce ["
 			     << Kernel::get_instance()->getFrameNum()
 			     << "]: hit " << hititem->getObjId() << Std::endl;
 #endif
 
-			if (!hititem->getShapeInfo()->is_land() || zspeed < -2 * gravity) {
+			if (!hititem->getShapeInfo()->is_land() || _zSpeed < -2 * _gravity) {
 				// Bounce!
-				terminate = false;
+				termFlag = false;
 #ifdef BOUNCE_DIAG
-				int xspeedold = xspeed;
-				int yspeedold = yspeed;
-				int zspeedold = zspeed;
+				int xspeedold = _xSpeed;
+				int yspeedold = _ySpeed;
+				int zspeedold = _zSpeed;
 #endif
-				zspeed = 0 - zspeed / 3;
-				int approx_v = ABS(xspeed) + ABS(yspeed) + zspeed;
+				_zSpeed = 0 - _zSpeed / 3;
+				int approx_v = ABS(_xSpeed) + ABS(_ySpeed) + _zSpeed;
 
 				// Apply an impulse on the x/y plane in a random direction
 				// in a 180 degree pie around the orginal vector in x/y
-				double heading_r = atan2((double)yspeed, (double)xspeed);
+				double heading_r = atan2((double)_ySpeed, (double)_xSpeed);
 				double deltah_r = static_cast<double>(getRandom())
 				                  * M_PI / RAND_MAX - M_PI / 2;
 #ifdef BOUNCE_DIAG
@@ -201,51 +198,51 @@ void GravityProcess::run() {
 				heading_r += deltah_r;
 				if (heading_r > M_PI) heading_r -= 2 * M_PI;
 				if (heading_r < -M_PI) heading_r += 2 * M_PI;
-				yspeed += static_cast<int>(sin(heading_r) *
+				_ySpeed += static_cast<int>(sin(heading_r) *
 				                           static_cast<double>(approx_v));
-				xspeed += static_cast<int>(cos(heading_r) *
+				_xSpeed += static_cast<int>(cos(heading_r) *
 				                           static_cast<double>(approx_v));
 
 				if (hititem->getShapeInfo()->is_land()) {
 					// Bouncing off land; this bounce approximates what's
 					// seen in the original U8 when the key thrown by
 					// Kilandra's daughters ghost lands on the grass.
-					xspeed /= 4;
-					yspeed /= 4;
-					zspeed /= 2;
-					if (zspeed == 0) terminate = true;
+					_xSpeed /= 4;
+					_ySpeed /= 4;
+					_zSpeed /= 2;
+					if (_zSpeed == 0) termFlag = true;
 				} else {
 					// Not on land; this bounce approximates what's seen
 					// in the original U8 when Kilandra's daughters ghost
 					// throws a key at the Avatar's head
-					if (ABS(yspeed) > 2) yspeed /= 2;
-					if (ABS(xspeed) > 2) xspeed /= 2;
+					if (ABS(_ySpeed) > 2) _ySpeed /= 2;
+					if (ABS(_xSpeed) > 2) _xSpeed /= 2;
 				}
 #ifdef BOUNCE_DIAG
-				pout << "item " << item_num << " bounce ["
+				pout << "item " << _itemNum << " bounce ["
 				     << Kernel::get_instance()->getFrameNum()
 				     << "]: speed was (" << xspeedold << ","
-				     << yspeedold << "," << zspeedold << ") new zspeed "
-				     << zspeed << " heading " << headingold_r
+				     << yspeedold << "," << zspeedold << ") new _zSpeed "
+				     << _zSpeed << " heading " << headingold_r
 				     << " impulse " << heading_r << " ("
-				     << (xspeed - xspeedold) << "," << (yspeed - yspeedold)
-				     << "), terminate: " << terminate << Std::endl;
+				     << (_xSpeed - xspeedold) << "," << (_ySpeed - yspeedold)
+				     << "), termFlag: " << termFlag << Std::endl;
 #endif
 			} else {
 #ifdef BOUNCE_DIAG
-				pout << "item " << item_num << " bounce ["
+				pout << "item " << _itemNum << " bounce ["
 				     << Kernel::get_instance()->getFrameNum()
 				     << "]: no bounce" << Std::endl;
 #endif
 			}
 		} else {
 #ifdef BOUNCE_DIAG
-			pout << "item " << item_num << " bounce ["
+			pout << "item " << _itemNum << " bounce ["
 			     << Kernel::get_instance()->getFrameNum()
 			     << "]: slow hit" << Std::endl;
 #endif
 		}
-		if (terminate) {
+		if (termFlag) {
 			item->clearFlag(Item::FLG_BOUNCING);
 			terminateDeferred();
 		} else {
@@ -260,24 +257,24 @@ void GravityProcess::run() {
 		// invert and decrease speed in all blocked directions
 
 #ifdef BOUNCE_DIAG
-		int xspeedold = xspeed;
-		int yspeedold = yspeed;
-		int zspeedold = zspeed;
+		int xspeedold = _xSpeed;
+		int yspeedold = _ySpeed;
+		int zspeedold = _zSpeed;
 #endif
 
 		if (dirs & 1)
-			xspeed = -xspeed / 2;
+			_xSpeed = -_xSpeed / 2;
 		if (dirs & 2)
-			yspeed = -yspeed / 2;
+			_ySpeed = -_ySpeed / 2;
 		if (dirs & 4)
-			zspeed = -zspeed / 2;
+			_zSpeed = -_zSpeed / 2;
 
 #ifdef BOUNCE_DIAG
-		pout << "item " << item_num << " bounce ["
+		pout << "item " << _itemNum << " bounce ["
 		     << Kernel::get_instance()->getFrameNum()
 		     << "]: speed was (" << xspeedold << ","
 		     << yspeedold << "," << zspeedold << ") new speed ("
-		     << xspeed << "," << yspeed << "," << zspeed << ")" << Std::endl;
+		     << _xSpeed << "," << _ySpeed << "," << _zSpeed << ")" << Std::endl;
 #endif
 
 		item->setFlag(Item::FLG_BOUNCING);
@@ -288,7 +285,7 @@ void GravityProcess::run() {
 
 void GravityProcess::terminate() {
 	//signal item GravityProcess is gone
-	Item *item = getItem(item_num);
+	Item *item = getItem(_itemNum);
 	if (item) {
 		item->setGravityPID(0);
 
@@ -303,7 +300,7 @@ void GravityProcess::fallStopped() {
 	// actors take a hit if they fall
 	// CHECKME: might need to do a 'die' animation even if actor is dead
 
-	Actor *actor = getActor(item_num);
+	Actor *actor = getActor(_itemNum);
 	if (actor && !actor->isDead()) {
 		int height = actor->getFallStart() - actor->getZ();
 
@@ -323,13 +320,13 @@ void GravityProcess::fallStopped() {
 
 			// 'ooof'
 			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc) audioproc->playSFX(51, 250, item_num, 0); // CONSTANT!
+			if (audioproc) audioproc->playSFX(51, 250, _itemNum, 0); // CONSTANT!
 		}
 
 		if (!actor->isDead() && actor->getLastAnim() != Animation::die) {
 
 			// play land animation, overriding other animations
-			Kernel::get_instance()->killProcesses(item_num, 0xF0, false); // CONSTANT!
+			Kernel::get_instance()->killProcesses(_itemNum, 0xF0, false); // CONSTANT!
 			ProcId lpid = actor->doAnim(Animation::land, 8);
 
 			if (actor->isInCombat()) {
@@ -343,30 +340,30 @@ void GravityProcess::fallStopped() {
 	}
 }
 
-void GravityProcess::dumpInfo() {
+void GravityProcess::dumpInfo() const {
 	Process::dumpInfo();
 
-	pout << "gravity: " << gravity << ", speed: (" << xspeed << ","
-	     << yspeed << "," << zspeed << ")" << Std::endl;
+	pout << "_gravity: " << _gravity << ", speed: (" << _xSpeed << ","
+	     << _ySpeed << "," << _zSpeed << ")" << Std::endl;
 }
 
 
 void GravityProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(gravity));
-	ods->write4(static_cast<uint32>(xspeed));
-	ods->write4(static_cast<uint32>(yspeed));
-	ods->write4(static_cast<uint32>(zspeed));
+	ods->write4(static_cast<uint32>(_gravity));
+	ods->write4(static_cast<uint32>(_xSpeed));
+	ods->write4(static_cast<uint32>(_ySpeed));
+	ods->write4(static_cast<uint32>(_zSpeed));
 }
 
 bool GravityProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	gravity = static_cast<int>(ids->read4());
-	xspeed = static_cast<int>(ids->read4());
-	yspeed = static_cast<int>(ids->read4());
-	zspeed = static_cast<int>(ids->read4());
+	_gravity = static_cast<int>(ids->read4());
+	_xSpeed = static_cast<int>(ids->read4());
+	_ySpeed = static_cast<int>(ids->read4());
+	_zSpeed = static_cast<int>(ids->read4());
 
 	return true;
 }

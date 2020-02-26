@@ -136,15 +136,15 @@ void AIScriptClovis::ClickedByPlayer() {
 	}
 }
 
-void AIScriptClovis::EnteredScene(int sceneId) {
+void AIScriptClovis::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptClovis::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptClovis::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptClovis::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptClovis::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -570,7 +570,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (_var1 == 1) {
 			*animation = 227;
 			if (_var2) {
-				_var2--;
+				--_var2;
 			} else if (++_animationFrame == 7) {
 				_var2 = Random_Query(5, 15);
 			} else {
@@ -592,7 +592,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 						_var3 = 1;
 					}
 				}
-				_var2--;
+				--_var2;
 			} else {
 				_animationFrame += _var3;
 				if (_animationFrame == 13 && Random_Query(0, 1)) {
@@ -659,7 +659,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 238;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(238)) {
 			_animationFrame = 0;
 		} else {
@@ -671,7 +671,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 239;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(239)) {
 			flag = true;
 			_animationFrame = 0;
@@ -695,7 +695,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 240;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(240)) {
 			flag = true;
 			_animationFrame = 0;
@@ -719,7 +719,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (!_animationFrame && _flag) {
 			_animationState = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(230)) {
 				_animationFrame = 0;
 			}
@@ -728,7 +728,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 231;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(231)) {
 			_animationFrame = 0;
 			_animationState = 5;
@@ -738,7 +738,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 232;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(232)) {
 			_animationFrame = 0;
 			_animationState = 5;
@@ -748,7 +748,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 233;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(233)) {
 			_animationFrame = 0;
 			_animationState = 5;
@@ -758,7 +758,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 234;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(234)) {
 			_animationFrame = 0;
 			_animationState = 5;
@@ -768,7 +768,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 235;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(235)) {
 			_animationFrame = 0;
 			_animationState = 5;
@@ -778,7 +778,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 236;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(236)) {
 			_animationFrame = 0;
 			_animationState = 5;
@@ -793,7 +793,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeSit);
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(241)) {
 				_animationFrame = 0;
 			}
@@ -802,7 +802,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 208;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(208)) {
 			_animationFrame = 0;
 		} else {
@@ -814,7 +814,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = 217;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(217)) {
 			flag = true;
 			_animationFrame = 0;
@@ -834,7 +834,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 15:
 		*animation = 218;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(218)) {
 			flag = true;
 			_animationFrame = 0;
@@ -854,7 +854,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 16:
 		*animation = 219;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 2) {
 			int snd;
 
@@ -888,7 +888,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 17:
 		*animation = 211;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(211)) {
 			flag = true;
 			_animationFrame = 0;
@@ -909,7 +909,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 18:
 		*animation = 212;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(212)) {
 			flag = true;
 			_animationFrame = 0;
@@ -930,7 +930,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 19:
 		*animation = 224;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(224)) {
 			flag = true;
 			_animationFrame = 0;
@@ -951,7 +951,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 20:
 		*animation = 225;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(225)) {
 			flag = true;
 			_animationFrame = 0;
@@ -972,7 +972,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 21:
 		*animation = 220;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(220)) {
 			_animationFrame = 0;
 		} else {
@@ -984,7 +984,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 22:
 		*animation = 221;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(221)) {
 			_animationFrame = 0;
 		} else {
@@ -996,7 +996,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 23:
 		*animation = 213;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(213)) {
 			_animationFrame = 0;
 		} else {
@@ -1008,7 +1008,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 24:
 		*animation = 217;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(217)) {
 			_animationFrame = 0;
 		} else {
@@ -1020,7 +1020,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 25:
 		*animation = 222;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(222)) {
 			_animationFrame = 0;
 		} else {
@@ -1032,7 +1032,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 26:
 		*animation = 223;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(223)) {
 			_animationFrame = 0;
 		} else {
@@ -1044,7 +1044,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 27:
 		*animation = 215;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(215)) {
 			_animationFrame = 0;
 		} else {
@@ -1056,7 +1056,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 28:
 		*animation = 216;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(216)) {
 			_animationFrame = 0;
 		} else {
@@ -1068,7 +1068,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 29:
 		*animation = 209;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(209)) {
 			flag = true;
 			_animationFrame = 0;
@@ -1089,7 +1089,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 30:
 		*animation = 210;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(210)) {
 			flag = 1;
 			_animationFrame = 0;
@@ -1110,7 +1110,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 31:
 		*animation = 242;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(242)) {
 			flag = 1;
 			_animationFrame = 0;
@@ -1131,7 +1131,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 32:
 		*animation = 243;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(243)) {
 			_animationFrame = 0;
 		} else {
@@ -1150,7 +1150,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorClovis, 54);
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(244)) {
 				_animationFrame = 0;
 			} else {
@@ -1163,7 +1163,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 34:
 		*animation = 245;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(245)) {
 			_animationState = 33;
 			_animationFrame = 0;
@@ -1173,7 +1173,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 35:
-		_animationFrame++;
+		++_animationFrame;
 		*animation = 247;
 		Actor_Change_Animation_Mode(kActorClovis, 54);
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(247)) {
@@ -1185,7 +1185,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 36:
 		*animation = 248;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(248)) {
 			_animationFrame = 0;
 			_animationState = 37;
@@ -1196,13 +1196,13 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 	case 37:
 		*animation = 249;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(249) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
 	case 38:
 		*animation = 250;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(250)) {
 			_animationFrame = 0;
 			_animationState = 39;
@@ -1212,7 +1212,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 39:
 		*animation = 251;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(251)) {
 			_animationFrame = 0;
 		} else {
@@ -1225,13 +1225,13 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 	case 40:
 		*animation = 252;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(252) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
 	case 41:
 		*animation = 226;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == Slice_Animation_Query_Number_Of_Frames(226) - 1) {
 			Actor_Change_Animation_Mode(kActorClovis, 88);
 			_animationState = 42;

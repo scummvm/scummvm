@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/pentagram_menu_gump.h"
-
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/widgets/game_widget.h"
@@ -39,29 +38,29 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(PentagramMenuGump, ModalGump)
 
-PentagramMenuGump::PentagramMenuGump(int X, int Y, int Width, int Height) :
-	ModalGump(X, Y, Width, Height) {
-	gameScrollPos = 0;
-	gameScrollTarget = 0;
-	gameScrollLastDelta = 0;
-	titleImage = 0;
-	navbarImage = 0;
-	coversImage = 0;
-	flagsImage = 0;
+PentagramMenuGump::PentagramMenuGump(int x, int y, int width, int height) :
+	ModalGump(x, y, width, height) {
+	_gameScrollPos = 0;
+	_gameScrollTarget = 0;
+	_gameScrollLastDelta = 0;
+	_titleImage = 0;
+	_navbarImage = 0;
+	_coversImage = 0;
+	_flagsImage = 0;
 }
 
 PentagramMenuGump::~PentagramMenuGump() {
-	delete titleImage;
-	delete navbarImage;
-	delete coversImage;
-	delete flagsImage;
+	delete _titleImage;
+	delete _navbarImage;
+	delete _coversImage;
+	delete _flagsImage;
 }
 
 void PentagramMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	GameWidget *g;
-	int y_ = 50;
+	int y = 50;
 
 	Std::vector<istring> games;
 	// TODO: listGames() should probably be in CoreApp
@@ -73,33 +72,33 @@ void PentagramMenuGump::InitGump(Gump *newparent, bool take_focus) {
 		if (gameName == "pentagram") continue;
 		if (!Ultima8Engine::get_instance()->getGameInfo(gameName)) continue;
 
-		g = new GameWidget(150, y_, gameName);
+		g = new GameWidget(150, y, gameName);
 		g->InitGump(this, false);
 		g->SetIndex(gameIndex++);
-		y_ += 114;
+		y += 114;
 	}
 
-	gamecount = gameIndex;
+	_gameCount = gameIndex;
 
 	IDataSource *ds = FileSystem::get_instance()->ReadFile("@data/title.png");
-	titleImage = Texture::Create(ds, "title.png");
+	_titleImage = Texture::Create(ds, "title.png");
 	delete ds;
 
 	ds = FileSystem::get_instance()->ReadFile("@data/navbar.png");
-	navbarImage = Texture::Create(ds, "navbar.png");
+	_navbarImage = Texture::Create(ds, "navbar.png");
 	delete ds;
 
 	ds = FileSystem::get_instance()->ReadFile("@data/covers.png");
-	coversImage = Texture::Create(ds, "covers.png");
+	_coversImage = Texture::Create(ds, "covers.png");
 	delete ds;
 
 	ds = FileSystem::get_instance()->ReadFile("@data/flags.png");
-	flagsImage = Texture::Create(ds, "flags.png");
+	_flagsImage = Texture::Create(ds, "flags.png");
 	delete ds;
 }
 
 void PentagramMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled*/) {
-	int w = dims.w, h = dims.h;
+	int w = _dims.w, h = _dims.h;
 #if 1
 	// CHECKME: fast enough?
 	for (int i = 0; i < h; i += 4) {
@@ -113,18 +112,18 @@ void PentagramMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /
 #endif
 
 //	surf->Fill32(0xFFDCB95C, 18, 0, 90, 400);
-	surf->Blit(navbarImage, 0, 0, navbarImage->width, navbarImage->height, 9, 0);
+	surf->Blit(_navbarImage, 0, 0, _navbarImage->_width, _navbarImage->_height, 9, 0);
 
 //	surf->Fill32(0xFFC11515, 200, 6, 340, 36);
-	surf->Blit(titleImage, 0, 0, titleImage->width, titleImage->height, 200, 6);
+	surf->Blit(_titleImage, 0, 0, _titleImage->_width, _titleImage->_height, 200, 6);
 }
 
 void PentagramMenuGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	// Iterate all children
-	Std::list<Gump *>::iterator it = children.begin();
-	Std::list<Gump *>::iterator end = children.end();
+	Std::list<Gump *>::iterator it = _children.begin();
+	Std::list<Gump *>::iterator end = _children.end();
 
-	Rect game_clip_rect(0, 45, SCREEN_WIDTH, dims.h - 58);
+	Rect game_clip_rect(0, 45, 640, _dims.h - 58);
 	Rect cur_clip_rect;
 	surf->GetClippingRect(cur_clip_rect);
 
@@ -134,7 +133,7 @@ void PentagramMenuGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bo
 
 		if (g->IsOfType<GameWidget>()) {
 			surf->SetClippingRect(game_clip_rect);
-			g->Move(150, 50 + 114 * g->GetIndex() + gameScrollPos);
+			g->Move(150, 50 + 114 * g->GetIndex() + _gameScrollPos);
 		}
 
 		g->Paint(surf, lerp_factor, scaled);
@@ -158,7 +157,7 @@ void PentagramMenuGump::ChildNotify(Gump *child, uint32 message) {
 			break;
 		case GameWidget::GAME_LOAD: {
 			GameInfo *info = Ultima8Engine::get_instance()->getGameInfo(gamename);
-			if (info && info->type == GameInfo::GAME_U8) {
+			if (info && info->_type == GameInfo::GAME_U8) {
 				Ultima8Engine::get_instance()->menuInitMinimal(gamename);
 				Gump *gump = U8SaveGump::showLoadSaveGump(0, false);
 				if (gump) {
@@ -188,19 +187,19 @@ void PentagramMenuGump::ChildNotify(Gump *child, uint32 message) {
 }
 
 void PentagramMenuGump::run() {
-	int oldpos = gameScrollPos;
+	int oldpos = _gameScrollPos;
 	ModalGump::run();
 
-	if (gameScrollPos != gameScrollTarget) {
-		int diff = gameScrollTarget - gameScrollPos;
+	if (_gameScrollPos != _gameScrollTarget) {
+		int diff = _gameScrollTarget - _gameScrollPos;
 		if (diff < 20 && diff > -20) {
-			gameScrollPos = gameScrollTarget;
+			_gameScrollPos = _gameScrollTarget;
 		} else {
-			gameScrollPos += diff / 3;
+			_gameScrollPos += diff / 3;
 		}
 	}
 
-	gameScrollLastDelta = gameScrollPos - oldpos;
+	_gameScrollLastDelta = _gameScrollPos - oldpos;
 }
 
 
@@ -213,13 +212,13 @@ bool PentagramMenuGump::OnKeyDown(int key, int mod) {
 		delta = 114;
 	}
 
-	if (delta && gamecount > 3) {
-		gameScrollTarget += delta;
+	if (delta && _gameCount > 3) {
+		_gameScrollTarget += delta;
 
-		if (gameScrollTarget > 0)
-			gameScrollTarget = 0;
-		if (gameScrollTarget < -114 * (gamecount - 3))
-			gameScrollTarget = -114 * (gamecount - 3);
+		if (_gameScrollTarget > 0)
+			_gameScrollTarget = 0;
+		if (_gameScrollTarget < -114 * (_gameCount - 3))
+			_gameScrollTarget = -114 * (_gameCount - 3);
 
 		return true;
 	}
@@ -230,7 +229,7 @@ bool PentagramMenuGump::OnKeyDown(int key, int mod) {
 void PentagramMenuGump::ProcessCallback(Std::string gamename, int message) {
 	if (message != 0) {
 		SettingManager *settingman = SettingManager::get_instance();
-		settingman->set("lastSave", message != 1 ? U8SaveGump::getFilename(message) : Std::string());
+		settingman->set("lastSave", message != 1 ? message : -1);
 		Ultima8Engine::get_instance()->changeGame(gamename);
 	}
 

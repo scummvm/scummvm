@@ -45,22 +45,21 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarMoverProcess, Process)
 
 AvatarMoverProcess::AvatarMoverProcess() : Process() {
-	lastframe = 0;
-	lastAttack = 0;
-	idleTime = 0;
-	lastHeadShakeAnim = Animation::lookLeft;
-	mouseButton[0].state = MBS_HANDLED | MBS_RELHANDLED;
-	mouseButton[1].state = MBS_HANDLED | MBS_RELHANDLED;
-	mouseButton[0].curDown = 0;
-	mouseButton[1].curDown = 0;
-	mouseButton[0].lastDown = 0;
-	mouseButton[1].lastDown = 0;
-	type = 1; // CONSTANT! (type 1 = persistent)
+	_lastFrame = 0;
+	_lastAttack = 0;
+	_idleTime = 0;
+	_lastHeadShakeAnim = Animation::lookLeft;
+	_mouseButton[0]._state = MBS_HANDLED | MBS_RELHANDLED;
+	_mouseButton[1]._state = MBS_HANDLED | MBS_RELHANDLED;
+	_mouseButton[0]._curDown = 0;
+	_mouseButton[1]._curDown = 0;
+	_mouseButton[0]._lastDown = 0;
+	_mouseButton[1]._lastDown = 0;
+	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
 
 AvatarMoverProcess::~AvatarMoverProcess() {
-
 }
 
 void AvatarMoverProcess::run() {
@@ -68,16 +67,16 @@ void AvatarMoverProcess::run() {
 	uint32 framenum = kernel->getFrameNum();
 
 	// only run once per frame
-	if (framenum == lastframe)
+	if (framenum == _lastFrame)
 		return;
-	lastframe = framenum;
+	_lastFrame = framenum;
 
 
 	MainActor *avatar = getMainActor();
 
 	// busy, so don't move
 	if (kernel->getNumProcesses(1, 0x00F0) > 0) {
-		idleTime = 0;
+		_idleTime = 0;
 		return;
 	}
 
@@ -89,7 +88,7 @@ void AvatarMoverProcess::run() {
 
 	// falling, so don't move
 	if (avatar->getGravityPID() != 0) {
-		idleTime = 0;
+		_idleTime = 0;
 		return;
 	}
 
@@ -106,34 +105,34 @@ void AvatarMoverProcess::handleHangingMode() {
 	uint32 now = g_system->getMillis();
 	bool stasis = guiapp->isAvatarInStasis();
 
-	idleTime = 0;
+	_idleTime = 0;
 
 	if (stasis) return;
 
 	bool m0clicked = false;
 	//bool m1clicked = false;
-	if (!(mouseButton[0].state & MBS_HANDLED) &&
-	        now - mouseButton[0].curDown > DOUBLE_CLICK_TIMEOUT) {
+	if (!(_mouseButton[0]._state & MBS_HANDLED) &&
+	        now - _mouseButton[0]._curDown > DOUBLE_CLICK_TIMEOUT) {
 		m0clicked = true;
-		mouseButton[0].state |= MBS_HANDLED;
+		_mouseButton[0]._state |= MBS_HANDLED;
 	}
-	if (!(mouseButton[1].state & MBS_HANDLED) &&
-	        now - mouseButton[1].curDown > DOUBLE_CLICK_TIMEOUT) {
+	if (!(_mouseButton[1]._state & MBS_HANDLED) &&
+	        now - _mouseButton[1]._curDown > DOUBLE_CLICK_TIMEOUT) {
 		//m1clicked = true;
-		mouseButton[1].state |= MBS_HANDLED;
+		_mouseButton[1]._state |= MBS_HANDLED;
 	}
-	if (!(mouseButton[0].state & MBS_RELHANDLED))
-		mouseButton[0].state |= MBS_RELHANDLED;
-	if (!(mouseButton[1].state & MBS_RELHANDLED))
-		mouseButton[1].state |= MBS_RELHANDLED;
+	if (!(_mouseButton[0]._state & MBS_RELHANDLED))
+		_mouseButton[0]._state |= MBS_RELHANDLED;
+	if (!(_mouseButton[1]._state & MBS_RELHANDLED))
+		_mouseButton[1]._state |= MBS_RELHANDLED;
 
 
 	// if left mouse is down, try to climb up
 
-	if ((mouseButton[0].state & MBS_DOWN) &&
-	        (!(mouseButton[0].state & MBS_HANDLED) || m0clicked)) {
-		mouseButton[0].state |= MBS_HANDLED;
-		mouseButton[0].lastDown = 0;
+	if ((_mouseButton[0]._state & MBS_DOWN) &&
+	        (!(_mouseButton[0]._state & MBS_HANDLED) || m0clicked)) {
+		_mouseButton[0]._state |= MBS_HANDLED;
+		_mouseButton[0]._lastDown = 0;
 
 		if (avatar->tryAnim(Animation::climb40, 8) == Animation::SUCCESS) {
 			avatar->ensureGravityProcess()->terminate();
@@ -160,7 +159,7 @@ void AvatarMoverProcess::handleCombatMode() {
 	int32 mousedir = (mouse->getMouseDirection(mx, my) + 7) % 8;
 
 	// never idle when in combat
-	idleTime = 0;
+	_idleTime = 0;
 
 	// If Avatar has fallen down, stand up.
 	if (lastanim == Animation::die || lastanim == Animation::fallBackwards) {
@@ -171,7 +170,7 @@ void AvatarMoverProcess::handleCombatMode() {
 
 	// if we were blocking, and no longer holding the mouse, stop
 	if (lastanim == Animation::startBlock &&
-	        !(mouseButton[0].state & MBS_DOWN)) {
+	        !(_mouseButton[0]._state & MBS_DOWN)) {
 //		pout << "AvatarMover: combat stop blocking" << Std::endl;
 		waitFor(avatar->doAnim(Animation::stopBlock, direction));
 		return;
@@ -184,26 +183,26 @@ void AvatarMoverProcess::handleCombatMode() {
 	bool m0clicked = false;
 	bool m1clicked = false;
 
-	if (!(mouseButton[0].state & MBS_HANDLED) &&
-	        now - mouseButton[0].curDown > DOUBLE_CLICK_TIMEOUT) {
+	if (!(_mouseButton[0]._state & MBS_HANDLED) &&
+	        now - _mouseButton[0]._curDown > DOUBLE_CLICK_TIMEOUT) {
 		m0clicked = true;
-		mouseButton[0].state |= MBS_HANDLED;
+		_mouseButton[0]._state |= MBS_HANDLED;
 	}
 
-	if (!(mouseButton[1].state & MBS_HANDLED) &&
-	        now - mouseButton[1].curDown > DOUBLE_CLICK_TIMEOUT) {
+	if (!(_mouseButton[1]._state & MBS_HANDLED) &&
+	        now - _mouseButton[1]._curDown > DOUBLE_CLICK_TIMEOUT) {
 		m1clicked = true;
-		mouseButton[1].state |= MBS_HANDLED;
+		_mouseButton[1]._state |= MBS_HANDLED;
 	}
 
-	if (!(mouseButton[0].state & MBS_RELHANDLED))
-		mouseButton[0].state |= MBS_RELHANDLED;
+	if (!(_mouseButton[0]._state & MBS_RELHANDLED))
+		_mouseButton[0]._state |= MBS_RELHANDLED;
 
-	if (!(mouseButton[1].state & MBS_RELHANDLED))
-		mouseButton[1].state |= MBS_RELHANDLED;
+	if (!(_mouseButton[1]._state & MBS_RELHANDLED))
+		_mouseButton[1]._state |= MBS_RELHANDLED;
 
-	if ((mouseButton[0].state & MBS_DOWN) &&
-	        (mouseButton[0].state & MBS_HANDLED) && mouseButton[0].lastDown > 0) {
+	if ((_mouseButton[0]._state & MBS_DOWN) &&
+	        (_mouseButton[0]._state & MBS_HANDLED) && _mouseButton[0]._lastDown > 0) {
 		// left click-and-hold = block
 		if (lastanim == Animation::startBlock)
 			return;
@@ -216,11 +215,11 @@ void AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
-	if ((mouseButton[0].state & MBS_DOWN) &&
-	        !(mouseButton[0].state & MBS_HANDLED) &&
-	        mouseButton[0].curDown - mouseButton[0].lastDown <= DOUBLE_CLICK_TIMEOUT) {
-		mouseButton[0].state |= MBS_HANDLED;
-		mouseButton[0].lastDown = 0;
+	if ((_mouseButton[0]._state & MBS_DOWN) &&
+	        !(_mouseButton[0]._state & MBS_HANDLED) &&
+	        _mouseButton[0]._curDown - _mouseButton[0]._lastDown <= DOUBLE_CLICK_TIMEOUT) {
+		_mouseButton[0]._state |= MBS_HANDLED;
+		_mouseButton[0]._lastDown = 0;
 
 		if (canAttack()) {
 			// double left click = attack
@@ -229,7 +228,7 @@ void AvatarMoverProcess::handleCombatMode() {
 			if (checkTurn(mousedir, true)) return;
 
 			waitFor(avatar->doAnim(Animation::attack, mousedir));
-			lastAttack = lastframe;
+			_lastAttack = _lastFrame;
 
 			// attacking gives str/dex
 			avatar->accumulateStr(1 + (getRandom() % 2));
@@ -239,11 +238,11 @@ void AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
-	if ((mouseButton[1].state & MBS_DOWN) &&
-	        !(mouseButton[1].state & MBS_HANDLED) &&
-	        mouseButton[1].curDown - mouseButton[1].lastDown <= DOUBLE_CLICK_TIMEOUT) {
-		mouseButton[1].state |= MBS_HANDLED;
-		mouseButton[1].lastDown = 0;
+	if ((_mouseButton[1]._state & MBS_DOWN) &&
+	        !(_mouseButton[1]._state & MBS_HANDLED) &&
+	        _mouseButton[1]._curDown - _mouseButton[1]._lastDown <= DOUBLE_CLICK_TIMEOUT) {
+		_mouseButton[1]._state |= MBS_HANDLED;
+		_mouseButton[1]._lastDown = 0;
 
 		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
 		if (desktopgump->TraceObjId(mx, my) == 1) {
@@ -260,7 +259,7 @@ void AvatarMoverProcess::handleCombatMode() {
 			if (checkTurn(mousedir, false)) return;
 
 			waitFor(avatar->doAnim(Animation::kick, mousedir));
-			lastAttack = lastframe;
+			_lastAttack = _lastFrame;
 
 			// kicking gives str/dex
 			avatar->accumulateStr(1 + (getRandom() % 2));
@@ -270,8 +269,8 @@ void AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
-	if ((mouseButton[1].state & MBS_DOWN) &&
-	        (mouseButton[1].state & MBS_HANDLED) && mouseButton[1].lastDown > 0) {
+	if ((_mouseButton[1]._state & MBS_DOWN) &&
+	        (_mouseButton[1]._state & MBS_HANDLED) && _mouseButton[1]._lastDown > 0) {
 		// right mouse button is down long enough to act on it
 		// if facing right direction, walk
 		//!! TODO: check if you can actually take this step
@@ -335,8 +334,8 @@ void AvatarMoverProcess::handleNormalMode() {
 	int32 mousedir = (mouse->getMouseDirection(mx, my) + 7) % 8;
 
 	// Store current idle time. (Also see end of function.)
-	uint32 currentIdleTime = idleTime;
-	idleTime = 0;
+	uint32 currentIdleTime = _idleTime;
+	_idleTime = 0;
 
 	// User toggled combat while in combatRun
 	if (avatar->isInCombat()) {
@@ -370,24 +369,24 @@ void AvatarMoverProcess::handleNormalMode() {
 	bool m1clicked = false;
 
 	// check mouse state to see what needs to be done
-	if (!(mouseButton[0].state & MBS_HANDLED) &&
-	        now - mouseButton[0].curDown > DOUBLE_CLICK_TIMEOUT) {
+	if (!(_mouseButton[0]._state & MBS_HANDLED) &&
+	        now - _mouseButton[0]._curDown > DOUBLE_CLICK_TIMEOUT) {
 		m0clicked = true;
-		mouseButton[0].state |= MBS_HANDLED;
+		_mouseButton[0]._state |= MBS_HANDLED;
 	}
 
-	if (!(mouseButton[1].state & MBS_HANDLED) &&
-	        now - mouseButton[1].curDown > DOUBLE_CLICK_TIMEOUT) {
+	if (!(_mouseButton[1]._state & MBS_HANDLED) &&
+	        now - _mouseButton[1]._curDown > DOUBLE_CLICK_TIMEOUT) {
 		m1clicked = true;
-		mouseButton[1].state |= MBS_HANDLED;
+		_mouseButton[1]._state |= MBS_HANDLED;
 	}
 
 	// see if mouse was just released
-	if (!(mouseButton[0].state & MBS_RELHANDLED))
-		mouseButton[0].state |= MBS_RELHANDLED; // don't care about left
+	if (!(_mouseButton[0]._state & MBS_RELHANDLED))
+		_mouseButton[0]._state |= MBS_RELHANDLED; // don't care about left
 
-	if (!(mouseButton[1].state & MBS_RELHANDLED)) {
-		mouseButton[1].state |= MBS_RELHANDLED;
+	if (!(_mouseButton[1]._state & MBS_RELHANDLED)) {
+		_mouseButton[1]._state |= MBS_RELHANDLED;
 
 		// if we were running in combat mode, slow to a walk, draw weapon
 		// (even in stasis)
@@ -427,19 +426,19 @@ void AvatarMoverProcess::handleNormalMode() {
 		return;
 
 	// both mouse buttons down
-	if (!(mouseButton[0].state & MBS_HANDLED) &&
-	        !(mouseButton[1].state & MBS_HANDLED)) {
+	if (!(_mouseButton[0]._state & MBS_HANDLED) &&
+	        !(_mouseButton[1]._state & MBS_HANDLED)) {
 		// notice these are all unsigned.
-		uint32 down = mouseButton[1].curDown;
-		if (mouseButton[0].curDown < down) {
-			down = down - mouseButton[0].curDown;
+		uint32 down = _mouseButton[1]._curDown;
+		if (_mouseButton[0]._curDown < down) {
+			down = down - _mouseButton[0]._curDown;
 		} else {
-			down = mouseButton[0].curDown - down;
+			down = _mouseButton[0]._curDown - down;
 		}
 
 		if (down < DOUBLE_CLICK_TIMEOUT) {
-			mouseButton[0].state |= MBS_HANDLED;
-			mouseButton[1].state |= MBS_HANDLED;
+			_mouseButton[0]._state |= MBS_HANDLED;
+			_mouseButton[1]._state |= MBS_HANDLED;
 			// We got a left mouse down.
 			// Note that this automatically means right was down too.
 
@@ -477,9 +476,9 @@ void AvatarMoverProcess::handleNormalMode() {
 		}
 	}
 
-	if ((!(mouseButton[0].state & MBS_HANDLED) || m0clicked) &&
-	        (mouseButton[1].state & MBS_DOWN)) {
-		mouseButton[0].state |= MBS_HANDLED;
+	if ((!(_mouseButton[0]._state & MBS_HANDLED) || m0clicked) &&
+	        (_mouseButton[1]._state & MBS_DOWN)) {
+		_mouseButton[0]._state |= MBS_HANDLED;
 		// We got a left mouse down.
 		// Note that this automatically means right was down at the time too.
 
@@ -505,14 +504,14 @@ void AvatarMoverProcess::handleNormalMode() {
 		// CHECKME: check what needs to happen when keeping left pressed
 	}
 
-	if ((mouseButton[1].state & MBS_DOWN) &&
-	        !(mouseButton[1].state & MBS_HANDLED) &&
-	        mouseButton[1].curDown - mouseButton[1].lastDown <= DOUBLE_CLICK_TIMEOUT) {
+	if ((_mouseButton[1]._state & MBS_DOWN) &&
+	        !(_mouseButton[1]._state & MBS_HANDLED) &&
+	        _mouseButton[1]._curDown - _mouseButton[1]._lastDown <= DOUBLE_CLICK_TIMEOUT) {
 		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
 		if (desktopgump->TraceObjId(mx, my) == 1) {
 			// double right click on avatar = toggle combat mode
-			mouseButton[1].state |= MBS_HANDLED;
-			mouseButton[1].lastDown = 0;
+			_mouseButton[1]._state |= MBS_HANDLED;
+			_mouseButton[1]._lastDown = 0;
 
 			avatar->toggleInCombat();
 			waitFor(avatar->doAnim(Animation::readyWeapon, direction));
@@ -520,8 +519,8 @@ void AvatarMoverProcess::handleNormalMode() {
 		}
 	}
 
-	if ((mouseButton[1].state & MBS_DOWN) &&
-	        (mouseButton[1].state & MBS_HANDLED)) {
+	if ((_mouseButton[1]._state & MBS_DOWN) &&
+	        (_mouseButton[1]._state & MBS_HANDLED)) {
 		// right mouse button is down long enough to act on it
 		// if facing right direction, walk
 
@@ -551,26 +550,26 @@ void AvatarMoverProcess::handleNormalMode() {
 		return;
 
 	// idle
-	idleTime = currentIdleTime + 1;
+	_idleTime = currentIdleTime + 1;
 
 	// currently shaking head?
 	if (lastanim == Animation::lookLeft || lastanim == Animation::lookRight) {
-		if ((getRandom() % 1500) + 30 < idleTime) {
-			lastHeadShakeAnim = lastanim;
+		if ((getRandom() % 1500) + 30 < _idleTime) {
+			_lastHeadShakeAnim = lastanim;
 			waitFor(avatar->doAnim(Animation::stand, direction));
-			idleTime = 0;
+			_idleTime = 0;
 			return;
 		}
 	} else {
-		if ((getRandom() % 3000) + 150 < idleTime) {
+		if ((getRandom() % 3000) + 150 < _idleTime) {
 			if (getRandom() % 5 == 0)
-				nextanim = lastHeadShakeAnim;
-			else if (lastHeadShakeAnim == Animation::lookLeft)
+				nextanim = _lastHeadShakeAnim;
+			else if (_lastHeadShakeAnim == Animation::lookLeft)
 				nextanim = Animation::lookRight;
 			else
 				nextanim = Animation::lookLeft;
 			waitFor(avatar->doAnim(nextanim, direction));
-			idleTime = 0;
+			_idleTime = 0;
 		}
 	}
 }
@@ -698,16 +697,16 @@ void AvatarMoverProcess::turnToDirection(int direction) {
 	MainActor *avatar = getMainActor();
 	bool combatRun = (avatar->getActorFlags() & Actor::ACT_COMBATRUN) != 0;
 	int curdir = avatar->getDir();
-	int step;
+	int stepDelta;
 	bool combat = avatar->isInCombat() && !combatRun;
 	Animation::Sequence turnanim;
 	Animation::Sequence standanim = Animation::stand;
 
 	if ((curdir - direction + 8) % 8 < 4) {
-		step = -1;
+		stepDelta = -1;
 		turnanim = Animation::lookLeft;
 	} else {
-		step = 1;
+		stepDelta = 1;
 		turnanim = Animation::lookRight;
 	}
 
@@ -729,7 +728,7 @@ void AvatarMoverProcess::turnToDirection(int direction) {
 
 		prevpid = animpid;
 
-		dir = (dir + step + 8) % 8;
+		dir = (dir + stepDelta + 8) % 8;
 	}
 
 	ProcId animpid = avatar->doAnim(standanim, direction);
@@ -777,7 +776,7 @@ bool AvatarMoverProcess::checkTurn(int direction, bool moving) {
 
 bool AvatarMoverProcess::canAttack() {
 	MainActor *avatar = getMainActor();
-	return (lastframe > lastAttack + (25 - avatar->getDex()));
+	return (_lastFrame > _lastAttack + (25 - avatar->getDex()));
 }
 
 void AvatarMoverProcess::OnMouseDown(int button, int32 mx, int32 my) {
@@ -797,10 +796,10 @@ void AvatarMoverProcess::OnMouseDown(int button, int32 mx, int32 my) {
 		break;
 	};
 
-	mouseButton[bid].lastDown = mouseButton[bid].curDown;
-	mouseButton[bid].curDown = g_system->getMillis();
-	mouseButton[bid].state |= MBS_DOWN;
-	mouseButton[bid].state &= ~MBS_HANDLED;
+	_mouseButton[bid]._lastDown = _mouseButton[bid]._curDown;
+	_mouseButton[bid]._curDown = g_system->getMillis();
+	_mouseButton[bid]._state |= MBS_DOWN;
+	_mouseButton[bid]._state &= ~MBS_HANDLED;
 }
 
 void AvatarMoverProcess::OnMouseUp(int button) {
@@ -814,25 +813,25 @@ void AvatarMoverProcess::OnMouseUp(int button) {
 		CANT_HAPPEN_MSG("invalid MouseUp passed to AvatarMoverProcess");
 	}
 
-	mouseButton[bid].state &= ~MBS_DOWN;
-	mouseButton[bid].state &= ~MBS_RELHANDLED;
+	_mouseButton[bid]._state &= ~MBS_DOWN;
+	_mouseButton[bid]._state &= ~MBS_RELHANDLED;
 }
 
 
 void AvatarMoverProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(lastAttack);
-	ods->write4(idleTime);
-	ods->write2(static_cast<uint8>(lastHeadShakeAnim));
+	ods->write4(_lastAttack);
+	ods->write4(_idleTime);
+	ods->write2(static_cast<uint8>(_lastHeadShakeAnim));
 }
 
 bool AvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	lastAttack = ids->read4();
-	idleTime = ids->read4();
-	lastHeadShakeAnim = static_cast<Animation::Sequence>(ids->read2());
+	_lastAttack = ids->read4();
+	_idleTime = ids->read4();
+	_lastHeadShakeAnim = static_cast<Animation::Sequence>(ids->read2());
 
 	return true;
 }

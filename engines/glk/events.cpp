@@ -186,13 +186,7 @@ void Events::pollEvents() {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN: {
-			// Check for debugger
-			Debugger *dbg = g_vm->_debugger;
-			if (dbg && event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				dbg->attach();
-				dbg->onFrame();
-			} else if (!isModifierKey(event.kbd.keycode)) {
+			if (!isModifierKey(event.kbd.keycode)) {
 				// Handle all other keypresses
 				setCursor(CURSOR_NONE);
 				handleKeyDown(event.kbd);

@@ -68,8 +68,6 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 
 	MemoryManager _memoryManager;
-	Debugger *_debugger;
-	GUI::Debugger *getDebugger() override { return _debugger; }
 
 	const char *getGameId() const;
 	uint32 getGameID() const;
@@ -81,9 +79,8 @@ public:
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	void syncSoundSettings() override;
-	Common::String generateSaveName(int slot);
 
 	void initialize();
 	void deinitialize();

@@ -52,7 +52,6 @@ ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gam
 	_mouseEnabled = false;
 	_mouseSpriteId = 0;
 	_lastButton = NULL;
-	_console = NULL;
 }
 
 ComposerEngine::~ComposerEngine() {
@@ -69,7 +68,6 @@ ComposerEngine::~ComposerEngine() {
 		i->_surface.free();
 
 	delete _rnd;
-	delete _console;
 }
 
 Common::Error ComposerEngine::run() {
@@ -106,7 +104,7 @@ Common::Error ComposerEngine::run() {
 	CursorMan.replaceCursor(cursor);
 	delete cursor;
 
-	_console = new Console(this);
+	setDebugger(new Console(this));
 
 	loadLibrary(0);
 
@@ -125,7 +123,6 @@ Common::Error ComposerEngine::run() {
 	else
 		warning("FPS in book.ini is zero. Defaulting to 8...");
 	uint32 lastDrawTime = 0;
-	_lastSaveTime = _system->getMillis();
 
 	bool loadFromLauncher = ConfMan.hasKey("save_slot");
 
@@ -181,8 +178,7 @@ Common::Error ComposerEngine::run() {
 			loadGameState(ConfMan.getInt("save_slot"));
 			loadFromLauncher = false;
 		}
-		if (shouldPerformAutoSave(_lastSaveTime))
-			saveGameState(0, "Autosave");
+
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
@@ -201,14 +197,6 @@ Common::Error ComposerEngine::run() {
 
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
-				case Common::KEYCODE_d:
-					if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-						// Start the debugger
-						getDebugger()->attach();
-						getDebugger()->onFrame();
-					}
-					break;
-
 				case Common::KEYCODE_q:
 					if (event.kbd.hasFlags(Common::KBD_CTRL))
 						quitGame();

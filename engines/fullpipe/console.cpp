@@ -20,6 +20,7 @@
  *
  */
 
+#include "fullpipe/console.h"
 #include "fullpipe/constants.h"
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/gameloader.h"

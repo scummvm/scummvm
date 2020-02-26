@@ -37,19 +37,19 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	int getXRange() const {
-		return (npcnum >> 4) & 0xF;
+		return (_npcNum >> 4) & 0xF;
 	}
 	int getYRange() const {
-		return npcnum & 0xF;
+		return _npcNum & 0xF;
 	}
 
 	void setXRange(int r) {
-		npcnum &= 0x0F;
-		npcnum |= (r & 0xF) << 4;
+		_npcNum &= 0x0F;
+		_npcNum |= (r & 0xF) << 4;
 	}
 	void setYRange(int r) {
-		npcnum &= 0xF0;
-		npcnum |= (r & 0xF);
+		_npcNum &= 0xF0;
+		_npcNum |= (r & 0xF);
 	}
 
 	//! hatch the egg
@@ -58,12 +58,12 @@ public:
 	//! The item has left the fast area
 	void leaveFastArea() override;
 
-	//! clear the 'hatched' flag
+	//! clear the '_hatched' flag
 	void reset() {
-		hatched = false;
+		_hatched = false;
 	}
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -77,7 +77,7 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	bool hatched;
+	bool _hatched;
 };
 
 } // End of namespace Ultima8

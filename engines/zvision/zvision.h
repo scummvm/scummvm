@@ -112,7 +112,6 @@ public:
 	const Graphics::PixelFormat _screenPixelFormat;
 
 private:
-	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
 
 	const int _desiredFrameTime;
@@ -221,8 +220,6 @@ public:
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, Subtitle *sub = NULL);
 	Video::VideoDecoder *loadAnimation(const Common::String &fileName);
 
-	Common::String generateSaveFileName(uint slot);
-
 	void setRenderDelay(uint);
 	bool canRender();
 	static void fpsTimerCallback(void *refCon);
@@ -231,7 +228,6 @@ public:
 		return _fps;
 	}
 
-	GUI::Debugger *getDebugger() override;
 	void syncSoundSettings() override;
 
 	void loadSettings();
@@ -244,7 +240,7 @@ public:
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 private:
 	void initialize();

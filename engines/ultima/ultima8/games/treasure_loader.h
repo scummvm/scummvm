@@ -37,17 +37,17 @@ public:
 	void loadDefaults();
 
 	//! parse treasure string into vector of TreasureInfo objects
-	bool parse(Std::string, Std::vector<TreasureInfo> &treasure);
+	bool parse(const Std::string &, Std::vector<TreasureInfo> &treasure);
 
 private:
-	TreasureMap defaultTreasure;
+	TreasureMap _defaultTreasure;
 
-	bool internalParse(Std::string desc, TreasureInfo &ti, bool loadingDefault);
+	bool internalParse(const Std::string &desc, TreasureInfo &ti, bool loadingDefault);
 
-	bool parseUInt32Vector(Std::string val, Std::vector<uint32> &vec);
-	bool parseUIntRange(Std::string val, unsigned int &min, unsigned int &max);
-	bool parseDouble(Std::string val, double &d);
-	bool parseInt(Std::string val, int &i);
+	bool parseUInt32Vector(const Std::string &val, Std::vector<uint32> &vec);
+	bool parseUIntRange(const Std::string &val, unsigned int &min, unsigned int &max);
+	bool parseDouble(const Std::string &val, double &d);
+	bool parseInt(const Std::string &val, int &i);
 };
 
 } // End of namespace Ultima8

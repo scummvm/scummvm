@@ -669,7 +669,6 @@ void PrinceEngine::displayInventory() {
 		if (shouldQuit())
 			return;
 
-		getDebugger()->onFrame();
 		_graph->update(_graph->_screenForInventory);
 		pausePrinceEngine();
 	}

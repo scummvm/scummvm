@@ -30,85 +30,28 @@
 
 namespace Tinsel {
 
-//----------------- LOCAL GLOBAL DATA --------------------
-
-// FIXME: Avoid non-const global vars
-
-static char g_tBuffer[TBUFSZ];
-
-static SCNHANDLE g_hTagFont = 0, g_hTalkFont = 0;
-static SCNHANDLE g_hRegularTalkFont = 0, g_hRegularTagFont = 0;
-
-
-/**
- * Return address of tBuffer
- */
-char *TextBufferAddr() {
-	return g_tBuffer;
+void Font::SetTagFontHandle(SCNHANDLE hFont) {
+	_hTagFont = _hRegularTagFont = hFont;
+	if (TinselV0)
+		SetTalkFontHandle(hFont);	// Also re-use for talk text
 }
 
-/**
- * Return hTagFont handle.
- */
-SCNHANDLE GetTagFontHandle() {
-	return g_hTagFont;
-}
-
-/**
- * Return hTalkFont handle.
- */
-SCNHANDLE GetTalkFontHandle() {
-	return g_hTalkFont;
-}
-
-/**
- * Called from dec_tagfont() Glitter function. Store the tag font handle.
- */
-void SetTagFontHandle(SCNHANDLE hFont) {
-	g_hTagFont = g_hRegularTagFont = hFont;		// Store the font handle
-}
-
-/**
- * Called from dec_talkfont() Glitter function.
- * Store the talk font handle.
- */
-void SetTalkFontHandle(SCNHANDLE hFont) {
-	g_hTalkFont = g_hRegularTalkFont = hFont;		// Store the font handle
-}
-
-void SetTempTagFontHandle(SCNHANDLE hFont) {
-	g_hTagFont = hFont;
-}
-
-void SetTempTalkFontHandle(SCNHANDLE hFont) {
-	g_hTalkFont = hFont;
-}
-
-void ResetFontHandles() {
-	g_hTagFont = g_hRegularTagFont;
-	g_hTalkFont = g_hRegularTalkFont;
-}
-
-
-/**
- * Poke the background palette into character 0's images.
- */
-void FettleFontPal(SCNHANDLE fontPal) {
+void Font::FettleFontPal(SCNHANDLE fontPal) {
 	const FONT *pFont;
 	IMAGE *pImg;
 
 	assert(fontPal);
-	assert(g_hTagFont); // Tag font not declared
-	assert(g_hTalkFont); // Talk font not declared
+	assert(_hTagFont); // Tag font not declared
+	assert(_hTalkFont); // Talk font not declared
 
-	pFont = (const FONT *)LockMem(g_hTagFont);
+	pFont = (const FONT *)LockMem(_hTagFont);
 	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
 	if (!TinselV2)
 		pImg->hImgPal = TO_32(fontPal);
 	else
 		pImg->hImgPal = 0;
 
-	pFont = (const FONT *)LockMem(g_hTalkFont);
+	pFont = (const FONT *)LockMem(_hTalkFont);
 	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
 	if (!TinselV2)
 		pImg->hImgPal = TO_32(fontPal);

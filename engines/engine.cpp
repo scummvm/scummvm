@@ -86,7 +86,7 @@ static void defaultErrorHandler(const char *msg) {
 	// Unless this error -originated- within the debugger itself, we
 	// now invoke the debugger, if available / supported.
 	if (g_engine) {
-		GUI::Debugger *debugger = g_engine->getDebugger();
+		GUI::Debugger *debugger = g_engine->getOrCreateDebugger();
 
 #if defined(USE_TASKBAR)
 		g_system->getTaskbarManager()->notifyError();
@@ -147,7 +147,10 @@ Engine::Engine(OSystem *syst)
 		_pauseStartTime(0),
 		_saveSlotToLoad(-1),
 		_engineStartTime(_system->getMillis()),
-		_mainMenuDialog(NULL) {
+		_mainMenuDialog(NULL),
+		_debugger(NULL),
+		_autosaveInterval(ConfMan.getInt("autosave_period")),
+		_lastAutosaveTime(_system->getMillis()) {
 
 	g_engine = this;
 	Common::setErrorOutputFormatter(defaultOutputFormatter);
@@ -181,6 +184,7 @@ Engine::Engine(OSystem *syst)
 Engine::~Engine() {
 	_mixer->stopAll();
 
+	delete _debugger;
 	delete _mainMenuDialog;
 	g_engine = NULL;
 
@@ -480,10 +484,42 @@ void Engine::checkCD() {
 #endif
 }
 
-bool Engine::shouldPerformAutoSave(int lastSaveTime) {
-	const int diff = _system->getMillis() - lastSaveTime;
-	const int autosavePeriod = ConfMan.getInt("autosave_period");
-	return autosavePeriod != 0 && diff > autosavePeriod * 1000;
+void Engine::handleAutoSave() {
+	const int diff = _system->getMillis() - _lastAutosaveTime;
+
+	if (_autosaveInterval != 0 && diff > (_autosaveInterval * 1000)) {
+		// Save the autosave
+		saveAutosaveIfEnabled();
+	}
+}
+
+void Engine::saveAutosaveIfEnabled() {
+	if (_autosaveInterval != 0) {
+		bool saveFlag = canSaveAutosaveCurrently();
+
+		if (saveFlag) {
+			// First check for an existing savegame in the slot, and if present, if it's an autosave
+			SaveStateDescriptor desc = getMetaEngine().querySaveMetaInfos(
+				_targetName.c_str(), getAutosaveSlot());
+			saveFlag = desc.getSaveSlot() == -1 || desc.isAutosave();
+		}
+
+		if (saveFlag && saveGameState(getAutosaveSlot(), _("Autosave"), true).getCode() != Common::kNoError) {
+			// Couldn't autosave at the designated time
+			g_system->displayMessageOnOSD(_("Error occurred making autosave"));
+			saveFlag = false;
+		}
+
+		if (!saveFlag) {
+			// Set the next autosave interval to be in 5 minutes, rather than whatever
+			// full autosave interval the user has selected
+			_lastAutosaveTime = _system->getMillis() + (5 * 60 * 1000) - _autosaveInterval;
+			return;
+		}
+	}
+
+	// Reset the last autosave time
+	_lastAutosaveTime = _system->getMillis();
 }
 
 void Engine::errorString(const char *buf1, char *buf2, int size) {
@@ -634,6 +670,9 @@ void Engine::flipMute() {
 }
 
 Common::Error Engine::loadGameState(int slot) {
+	// In case autosaves are on, do a save first before loading the new save
+	saveAutosaveIfEnabled();
+
 	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(getSaveStateName(slot));
 
 	if (!saveFile)
@@ -660,10 +699,6 @@ bool Engine::canLoadGameStateCurrently() {
 	return false;
 }
 
-Common::Error Engine::saveGameState(int slot, const Common::String &desc) {
-	return saveGameState(slot, desc, false);
-}
-
 Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(getSaveStateName(slot));
 
@@ -672,7 +707,7 @@ Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool i
 
 	Common::Error result = saveGameStream(saveFile, isAutosave);
 	if (result.getCode() == Common::kNoError) {
-		MetaEngine::appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc);
+		MetaEngine::appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc, isAutosave);
 
 		saveFile->finalize();
 	}
@@ -758,9 +793,24 @@ bool Engine::shouldQuit() {
 	return (eventMan->shouldQuit() || eventMan->shouldRTL());
 }
 
+GUI::Debugger *Engine::getOrCreateDebugger() {
+	if (!_debugger)
+		// Create a bare-bones debugger. This is useful for engines without their own
+		// debugger when an error occurs
+		_debugger = new GUI::Debugger();
+
+	return _debugger;
+}
+
 /*
 EnginePlugin *Engine::getMetaEnginePlugin() const {
 	return EngineMan.findPlugin(ConfMan.get("engineid"));
 }
 
 */
+
+MetaEngine &Engine::getMetaEngine() {
+	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	assert(plugin);
+	return plugin->get<MetaEngine>();
+}

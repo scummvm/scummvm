@@ -49,7 +49,7 @@ Common::Error PinkEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error PinkEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error PinkEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *out = _saveFileMan->openForSaving(generateSaveName(slot, _targetName.c_str()));
 	if (!out)
 		return Common::kUnknownError;

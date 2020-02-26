@@ -24,14 +24,14 @@
 
 namespace Graphics {
 
-MacWidget::MacWidget(MacWindow *parent, int x, int y, int w, int h, bool focusable) :
-		_focusable(focusable), _parent(parent) {
+MacWidget::MacWidget(int w, int h, bool focusable) :
+		_focusable(focusable) {
 	_contentIsDirty = true;
 
-	_dims.left = x;
-	_dims.right = x + w;
-	_dims.top = y;
-	_dims.bottom = y + h;
+	_dims.left = 0;
+	_dims.right = w;
+	_dims.top = 0;
+	_dims.bottom = h;
 }
 
 } // End of namespace Graphics

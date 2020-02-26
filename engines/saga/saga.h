@@ -471,8 +471,6 @@ public:
 	void syncSoundSettings() override;
 	void pauseEngineIntern(bool pause) override;
 
-	GUI::Debugger *getDebugger() override;
-
 	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
 	~SagaEngine() override;
 
@@ -483,6 +481,9 @@ public:
 	}
 	void fillSaveList();
 	char *calcSaveFileName(uint slotNumber);
+	virtual Common::String getSaveStateName(int slot) const override {
+		return Common::String::format("%s.s%02u", _targetName.c_str(), slot);
+	}
 
 	SaveFileData *getSaveFile(uint idx);
 	uint getNewSaveSlotNumber() const;
@@ -630,7 +631,7 @@ public:
 
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	const GameDisplayInfo &getDisplayInfo();

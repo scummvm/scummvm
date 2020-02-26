@@ -48,10 +48,10 @@ public:
 
 	void terminate() override;
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	Animation::Sequence getAction() const {
-		return action;
+		return _action;
 	}
 
 	bool loadData(IDataSource *ids, uint32 version);
@@ -66,19 +66,19 @@ protected:
 	//! perform special action when hitting an opponent
 	void doHitSpecial(Item *hit);
 
-	Animation::Sequence action;
-	uint32 dir;
-	uint32 steps;
+	Animation::Sequence _action;
+	uint32 _dir;
+	uint32 _steps;
 
-	AnimationTracker *tracker;
-	int repeatcounter;
-	uint32 currentstep;
+	AnimationTracker *_tracker;
+	int _repeatCounter;
+	uint32 _currentStep;
 
-	bool firstframe;
+	bool _firstFrame;
 
-	bool animAborted;
+	bool _animAborted;
 
-	bool attackedSomething; // attacked and hit something with this animation
+	bool _attackedSomething; // attacked and hit something with this animation
 };
 
 } // End of namespace Ultima8

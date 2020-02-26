@@ -79,23 +79,23 @@ public:
 		enum { no_type = 0, type_bool, type_str, type_sint, type_uint } valuetype;
 	};
 
-	Std::vector<Option> options;
+	Std::vector<Option> _options;
 
 	// bool
 	inline void declare(const char *option_cstr, bool *value, const bool defaultvalue = true) {
-		options.push_back(Option(option_cstr, value, defaultvalue));
+		_options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 	// string
 	inline void declare(const char *option_cstr, Std::string *value, const char *defaultvalue = 0) {
-		options.push_back(Option(option_cstr, value, defaultvalue));
+		_options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 	// sint
 	inline void declare(const char *option_cstr, int32 *value, const int32 defaultvalue = 0) {
-		options.push_back(Option(option_cstr, value, defaultvalue));
+		_options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 	// uint
 	inline void declare(const char *option_cstr, uint32 *value, const uint32 defaultvalue = 0) {
-		options.push_back(Option(option_cstr, value, defaultvalue));
+		_options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 
 	void process(const int32 argc, const char *const *const argv);

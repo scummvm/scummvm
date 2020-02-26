@@ -42,46 +42,29 @@ public:
 	void terminate() override;
 
 	static bool isQuarterSpeed() {
-		return quarter;
+		return _quarter;
 	}
 	static bool isClipping() {
-		return clipping;
+		return _clipping;
 	}
 	static void setQuarterSpeed(bool q) {
-		quarter = q;
+		_quarter = q;
 	}
 	static void toggleClipping() {
-		clipping = !clipping;
+		_clipping = !_clipping;
 	}
 
 	static void terminateMover(int _dir);
 	static void startMover(int x, int y, int z, int _dir);
 
-	static void ConCmd_startMoveUp(const Console::ArgvType &argv);
-	static void ConCmd_startMoveDown(const Console::ArgvType &argv);
-	static void ConCmd_startMoveLeft(const Console::ArgvType &argv);
-	static void ConCmd_startMoveRight(const Console::ArgvType &argv);
-	static void ConCmd_startAscend(const Console::ArgvType &argv);
-	static void ConCmd_startDescend(const Console::ArgvType &argv);
-
-	static void ConCmd_stopMoveUp(const Console::ArgvType &argv);
-	static void ConCmd_stopMoveDown(const Console::ArgvType &argv);
-	static void ConCmd_stopMoveLeft(const Console::ArgvType &argv);
-	static void ConCmd_stopMoveRight(const Console::ArgvType &argv);
-	static void ConCmd_stopAscend(const Console::ArgvType &argv);
-	static void ConCmd_stopDescend(const Console::ArgvType &argv);
-
-	static void ConCmd_toggleQuarterSpeed(const Console::ArgvType &argv);
-	static void ConCmd_toggleClipping(const Console::ArgvType &argv);
-
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
 	void saveData(ODataSource *ods) override;
 
-	int dx, dy, dz, dir;
-	static ProcId amp[6];
-	static bool clipping;
-	static bool quarter;
+	int _dx, _dy, _dz, _dir;
+	static ProcId _amp[6];
+	static bool _clipping;
+	static bool _quarter;
 };
 
 } // End of namespace Ultima8

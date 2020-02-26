@@ -114,7 +114,6 @@ StarTrekEngine::~StarTrekEngine() {
 	delete _activeMenu->nextMenu;
 	delete _activeMenu;
 
-	delete _console;
 	delete _gfx;
 	delete _sound;
 	delete _macResFork;
@@ -123,7 +122,7 @@ StarTrekEngine::~StarTrekEngine() {
 Common::Error StarTrekEngine::run() {
 	_gfx = new Graphics(this);
 	_sound = new Sound(this);
-	_console = new Console(this);
+	setDebugger(new Console(this));
 
 	if (getPlatform() == Common::kPlatformMacintosh) {
 		_macResFork = new Common::MacResManager();

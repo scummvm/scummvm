@@ -183,6 +183,7 @@ protected:
 			XML_KEY(dialog)
 				XML_PROP(name, true)
 				XML_PROP(overlays, true)
+				XML_PROP(size, false)
 				XML_PROP(shading, false)
 				XML_PROP(enabled, false)
 				XML_PROP(resolution, false)

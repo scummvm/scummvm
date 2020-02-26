@@ -19,25 +19,26 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/conf/ini_file.h"
+#include "common/config-manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 using Std::string;
 
-ConfigFileManager *ConfigFileManager::configfilemanager = 0;
+ConfigFileManager *ConfigFileManager::_configFileManager = 0;
 
 ConfigFileManager::ConfigFileManager() {
-	con->Print(MM_INFO, "Creating ConfigFileManager...\n");
+	debugN(MM_INFO, "Creating ConfigFileManager...\n");
 
-	configfilemanager = this;
+	_configFileManager = this;
 }
 
 ConfigFileManager::~ConfigFileManager() {
-	con->Print(MM_INFO, "Destroying ConfigFileManager...\n");
+	debugN(MM_INFO, "Destroying ConfigFileManager...\n");
 
 	clear();
-	configfilemanager = 0;
+	_configFileManager = 0;
 }
 
 bool ConfigFileManager::readConfigFile(string fname, istring root,
@@ -51,7 +52,7 @@ bool ConfigFileManager::readConfigFile(string fname, istring root,
 	if (readonly)
 		inifile->setReadonly();
 
-	inifiles.push_back(inifile);
+	_iniFiles.push_back(inifile);
 	return true;
 }
 
@@ -66,33 +67,33 @@ bool ConfigFileManager::readConfigString(string config, istring root,
 	if (readonly)
 		inifile->setReadonly();
 
-	inifiles.push_back(inifile);
+	_iniFiles.push_back(inifile);
 	return true;
 }
 
 void ConfigFileManager::write(istring root) {
-	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
-	        i != inifiles.end(); ++i) {
+	for (Std::vector<INIFile *>::iterator i = _iniFiles.begin();
+	        i != _iniFiles.end(); ++i) {
 		if (!(*i)->isReadonly() && (root == "" || (*i)->checkRoot(root)))
 			(*i)->write();
 	}
 }
 
 void ConfigFileManager::clear() {
-	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
-	        i != inifiles.end(); ++i) {
+	for (Std::vector<INIFile *>::iterator i = _iniFiles.begin();
+	        i != _iniFiles.end(); ++i) {
 		delete(*i);
 	}
-	inifiles.clear();
+	_iniFiles.clear();
 }
 
 void ConfigFileManager::clearRoot(istring root) {
-	Std::vector<INIFile *>::iterator i = inifiles.begin();
+	Std::vector<INIFile *>::iterator i = _iniFiles.begin();
 
-	while (i != inifiles.end()) {
+	while (i != _iniFiles.end()) {
 		if ((*i)->checkRoot(root)) {
 			delete(*i);
-			i = inifiles.erase(i);
+			i = _iniFiles.erase(i);
 		} else {
 			++i;
 		}
@@ -100,10 +101,15 @@ void ConfigFileManager::clearRoot(istring root) {
 }
 
 bool ConfigFileManager::exists(istring key) {
-	return (findKeyINI(key) != 0);
+	return ConfMan.hasKey(key) || (findKeyINI(key) != 0);
 }
 
 bool ConfigFileManager::get(istring key, string &ret) {
+	if (ConfMan.hasKey(key)) {
+		ret = ConfMan.get(key);
+		return true;
+	}
+
 	INIFile *ini = findKeyINI(key);
 	if (!ini) return false;
 
@@ -113,6 +119,11 @@ bool ConfigFileManager::get(istring key, string &ret) {
 
 
 bool ConfigFileManager::get(istring key, int &ret) {
+	if (ConfMan.hasKey(key)) {
+		ret = ConfMan.getInt(key);
+		return true;
+	}
+
 	INIFile *ini = findKeyINI(key);
 	if (!ini) return false;
 
@@ -121,6 +132,11 @@ bool ConfigFileManager::get(istring key, int &ret) {
 }
 
 bool ConfigFileManager::get(istring key, bool &ret) {
+	if (ConfMan.hasKey(key)) {
+		ret = ConfMan.getBool(key);
+		return true;
+	}
+
 	INIFile *ini = findKeyINI(key);
 	if (!ini) return false;
 
@@ -172,8 +188,8 @@ Std::vector<istring> ConfigFileManager::listKeys(istring section,
 	Std::set<istring> keyset;
 	Std::set<istring>::iterator iter;
 
-	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
-	        i != inifiles.end(); ++i) {
+	for (Std::vector<INIFile *>::iterator i = _iniFiles.begin();
+	        i != _iniFiles.end(); ++i) {
 		if ((*i)->checkRoot(section)) {
 			(*i)->listKeys(keyset, section, longformat);
 		}
@@ -193,8 +209,8 @@ Std::vector<istring> ConfigFileManager::listSections(istring root,
 	Std::set<istring> sectionset;
 	Std::set<istring>::iterator iter;
 
-	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
-	        i != inifiles.end(); ++i) {
+	for (Std::vector<INIFile *>::iterator i = _iniFiles.begin();
+	        i != _iniFiles.end(); ++i) {
 		if ((*i)->checkRoot(root)) {
 			(*i)->listSections(sectionset, longformat);
 		}
@@ -211,8 +227,8 @@ KeyMap ConfigFileManager::listKeyValues(istring section,
         bool longformat) {
 	KeyMap values;
 
-	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
-	        i != inifiles.end(); ++i) {
+	for (Std::vector<INIFile *>::iterator i = _iniFiles.begin();
+	        i != _iniFiles.end(); ++i) {
 		if ((*i)->checkRoot(section)) {
 			(*i)->listKeyValues(values, section, longformat);
 		}
@@ -223,8 +239,8 @@ KeyMap ConfigFileManager::listKeyValues(istring section,
 
 
 INIFile *ConfigFileManager::findKeyINI(istring key) {
-	for (Std::vector<INIFile *>::reverse_iterator i = inifiles.rbegin();
-	        i != inifiles.rend(); ++i) {
+	for (Std::vector<INIFile *>::reverse_iterator i = _iniFiles.rbegin();
+	        i != _iniFiles.rend(); ++i) {
 		if ((*i)->hasKey(key))
 			return (*i);
 	}
@@ -233,8 +249,8 @@ INIFile *ConfigFileManager::findKeyINI(istring key) {
 }
 
 INIFile *ConfigFileManager::findWriteINI(istring key) {
-	for (Std::vector<INIFile *>::reverse_iterator i = inifiles.rbegin();
-	        i != inifiles.rend(); ++i) {
+	for (Std::vector<INIFile *>::reverse_iterator i = _iniFiles.rbegin();
+	        i != _iniFiles.rend(); ++i) {
 		if (!(*i)->isReadonly() && (*i)->checkRoot(key))
 			return (*i);
 	}

@@ -35,12 +35,10 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportEgg, Egg)
 
 TeleportEgg::TeleportEgg() {
-
 }
 
 
 TeleportEgg::~TeleportEgg() {
-
 }
 
 uint16 TeleportEgg::hatch() {
@@ -50,7 +48,7 @@ uint16 TeleportEgg::hatch() {
 	perr << "Teleport!!!!!!!!" << Std::endl;
 
 	MainActor *av = getMainActor();
-	av->teleport(mapnum, getTeleportId());
+	av->teleport(_mapNum, getTeleportId());
 
 	return 0;
 }

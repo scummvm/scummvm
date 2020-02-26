@@ -64,15 +64,15 @@ void AIScriptEarlyQBartender::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptEarlyQBartender::EnteredScene(int sceneId) {
+void AIScriptEarlyQBartender::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptEarlyQBartender::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptEarlyQBartender::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptEarlyQBartender::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptEarlyQBartender::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -119,7 +119,7 @@ bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 			}
 		} else if (_var1 == 0) {
 			*animation = 752;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(752)) {
 				_animationFrame = 0;
 
@@ -137,7 +137,7 @@ bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 			_var1 = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(755)) {
 				_animationFrame = 0;
 			}
@@ -146,7 +146,7 @@ bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 757;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(757)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -156,7 +156,7 @@ bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 757;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(757)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -166,7 +166,7 @@ bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 754;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(754)) {
 			Actor_Change_Animation_Mode(kActorEarlyQBartender, kAnimationModeIdle);
 			*animation = 752;

@@ -122,7 +122,7 @@ void CPetLoadSave::resetSlots() {
 
 		// Try and open up the savegame for access
 		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(
-			g_vm->generateSaveName(idx));
+			g_vm->getSaveStateName(idx));
 
 		if (in) {
 			// Read in the savegame header data

@@ -33,11 +33,11 @@ public:
 	static bool Scale(Texture *tex  , int32 sx, int32 sy, int32 sw, int32 sh,
 	                  uint8 *pixel, int32 dw, int32 dh, int32 pitch, bool clamp_src) {
 		// Source buffer pointers
-		uintS *texel = reinterpret_cast<uintS *>(tex->buffer) + (sy * tex->width + sx);
-		int tpitch = tex->width;
+		uintS *texel = reinterpret_cast<uintS *>(tex->_buffer) + (sy * tex->_width + sx);
+		int tpitch = tex->_width;
 		uintS *tline_end = texel + sw;
-		uintS *tex_end = texel + sh * tex->width;
-		int tex_diff = tex->width - sw;
+		uintS *tex_end = texel + sh * tex->_width;
+		int tex_diff = tex->_width - sw;
 
 
 		// First detect integer up scalings, since they are 'easy'
@@ -236,7 +236,7 @@ public:
 				do {
 					pos_y = dst_y;
 
-					uintX p = Manip::copy(*texel);
+					const uintX p = Manip::copy(*texel);
 
 					//
 					// Inner loops

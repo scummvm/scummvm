@@ -50,7 +50,10 @@
 namespace Queen {
 
 QueenEngine::QueenEngine(OSystem *syst)
-	: Engine(syst), _gameStarted(false), _debugger(0), randomizer("queen") {
+	: Engine(syst), _bam(nullptr), _bankMan(nullptr), _command(nullptr), _debugger(nullptr),
+	_display(nullptr), _graphics(nullptr), _grid(nullptr), _input(nullptr), _logic(nullptr),
+	_sound(nullptr), _resource(nullptr), _walk(nullptr), _gameStarted(false),
+	randomizer("queen") {
 }
 
 QueenEngine::~QueenEngine() {
@@ -58,7 +61,6 @@ QueenEngine::~QueenEngine() {
 	delete _resource;
 	delete _bankMan;
 	delete _command;
-	delete _debugger;
 	delete _display;
 	delete _graphics;
 	delete _grid;
@@ -66,6 +68,7 @@ QueenEngine::~QueenEngine() {
 	delete _logic;
 	delete _sound;
 	delete _walk;
+	//_debugger is deleted by Engine
 }
 
 void QueenEngine::registerDefaultSettings() {
@@ -124,8 +127,6 @@ void QueenEngine::writeOptionSettings() {
 }
 
 void QueenEngine::update(bool checkPlayerInput) {
-	_debugger->onFrame();
-
 	_graphics->update(_logic->currentRoom());
 	_logic->update();
 
@@ -143,10 +144,7 @@ void QueenEngine::update(bool checkPlayerInput) {
 	_display->update(joe->active, joe->x, joe->y);
 
 	_input->checkKeys();
-	if (_input->debugger()) {
-		_input->debuggerReset();
-		_debugger->attach();
-	}
+
 	if (canLoadOrSave()) {
 		if (_input->quickSave()) {
 			_input->quickSaveReset();
@@ -155,10 +153,6 @@ void QueenEngine::update(bool checkPlayerInput) {
 		if (_input->quickLoad()) {
 			_input->quickLoadReset();
 			loadGameState(SLOT_QUICKSAVE);
-		}
-		if (shouldPerformAutoSave(_lastSaveTime)) {
-			saveGameState(SLOT_AUTOSAVE, "Autosave");
-			_lastSaveTime = _system->getMillis();
 		}
 	}
 	if (!_input->cutawayRunning()) {
@@ -184,7 +178,7 @@ bool QueenEngine::canSaveGameStateCurrently() {
 	return canLoadOrSave();
 }
 
-Common::Error QueenEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error QueenEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	debug(3, "Saving game to slot %d", slot);
 	char name[20];
 	Common::Error err = Common::kNoError;
@@ -276,15 +270,20 @@ Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *
 	return file;
 }
 
-void QueenEngine::makeGameStateName(int slot, char *buf) const {
+Common::String QueenEngine::getSaveStateName(int slot) const {
 	if (slot == SLOT_LISTPREFIX) {
-		strcpy(buf, "queen.s??");
+		return "queen.s??";
 	} else if (slot == SLOT_AUTOSAVE) {
-		strcpy(buf, "queen.asd");
-	} else {
-		assert(slot >= 0);
-		sprintf(buf, "queen.s%02d", slot);
+		slot = getAutosaveSlot();
 	}
+
+	assert(slot >= 0);
+	return Common::String::format("queen.s%02d", slot);
+}
+
+void QueenEngine::makeGameStateName(int slot, char *buf) const {
+	Common::String name = getSaveStateName(slot);
+	strcpy(buf, name.c_str());
 }
 
 int QueenEngine::getGameStateSlot(const char *filename) const {
@@ -311,10 +310,6 @@ void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 	}
 }
 
-GUI::Debugger *QueenEngine::getDebugger() {
-	return _debugger;
-}
-
 bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
@@ -332,6 +327,7 @@ Common::Error QueenEngine::run() {
 	_bankMan = new BankManager(_resource);
 	_command = new Command(this);
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 	_display = new Display(this, _system);
 	_graphics = new Graphics(this);
 	_grid = new Grid(this);
@@ -359,7 +355,6 @@ Common::Error QueenEngine::run() {
 	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
-	_lastSaveTime = _lastUpdateTime = _system->getMillis();
 
 	while (!shouldQuit()) {
 		if (_logic->newRoom() > 0) {

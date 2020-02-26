@@ -69,14 +69,14 @@ public:
 
 	static void             GetCameraLocation(int32 &x, int32 &y, int32 &z);
 	static CameraProcess   *GetCameraProcess() {
-		return camera;
+		return _camera;
 	}
 	static uint16           SetCameraProcess(CameraProcess *);  // Set the current camera process. Adds process. Return PID
 	static void             ResetCameraProcess();
 
 	static void             SetEarthquake(int32 e) {
-		earthquake = e;
-		if (!e)  eq_x = eq_y = 0;
+		_earthquake = e;
+		if (!e)  _eqX = _eqY = 0;
 	}
 
 	void                    ItemMoved();
@@ -87,17 +87,17 @@ public:
 private:
 	void saveData(ODataSource *ods) override;
 
-	int32 sx, sy, sz;
-	int32 ex, ey, ez;
+	int32 _sx, _sy, _sz;
+	int32 _ex, _ey, _ez;
 	int32 _time;
-	int32 elapsed;
-	uint16 itemnum;
+	int32 _elapsed;
+	uint16 _itemNum;
 
-	int32 last_framenum;
+	int32 _lastFrameNum;
 
-	static CameraProcess    *camera;
-	static int32 earthquake;
-	static int32 eq_x, eq_y;
+	static CameraProcess *_camera;
+	static int32 _earthquake;
+	static int32 _eqX, _eqY;
 };
 
 } // End of namespace Ultima8

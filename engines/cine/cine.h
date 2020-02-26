@@ -127,7 +127,8 @@ public:
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	virtual Common::String getSaveStateName(int slot) const override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 
@@ -139,8 +140,6 @@ public:
 	Common::StringArray _volumeResourceFiles;
 	StringPtrHashMap _volumeEntriesMap;
 	TextHandler _textHandler;
-
-	GUI::Debugger *getDebugger() override { return _console; }
 
 	bool _restartRequested;
 
@@ -157,7 +156,6 @@ private:
 	void mainLoop(int bootScriptIdx);
 	void readVolCnf();
 
-	CineConsole *_console;
 	bool _preLoad;
 	int _timerDelayMultiplier;
 

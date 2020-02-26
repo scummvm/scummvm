@@ -31,6 +31,13 @@
 // multiplier used to increase resolution for keyboard/joystick mouse
 #define MULTIPLIER 16
 
+// Type names which changed between SDL 1.2 and SDL 2.
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+typedef SDLKey     SDL_Keycode;
+typedef SDLMod     SDL_Keymod;
+typedef SDL_keysym SDL_Keysym;
+#endif
+
 /**
  * The SDL event source.
  */
@@ -183,17 +190,17 @@ protected:
 	/**
 	 * Maps the ASCII value of key
 	 */
-	virtual int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
+	virtual int mapKey(SDL_Keycode key, SDL_Keymod mod, Uint16 unicode);
 
 	/**
 	 * Configures the key modifiers flags status
 	 */
-	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
+	virtual void SDLModToOSystemKeyFlags(SDL_Keymod mod, Common::Event &event);
 
 	/**
 	 * Translates SDL key codes to OSystem key codes
 	 */
-	Common::KeyCode SDLToOSystemKeycode(const SDLKey key);
+	Common::KeyCode SDLToOSystemKeycode(const SDL_Keycode key);
 
 	/**
 	 * Notify graphics manager of a resize request.
@@ -204,12 +211,12 @@ protected:
 	 * Extracts unicode information for the specific key sym.
 	 * May only be used for key down events.
 	 */
-	uint32 obtainUnicode(const SDL_keysym keySym);
+	uint32 obtainUnicode(const SDL_Keysym keySym);
 
 	/**
 	 * Extracts the keycode for the specified key sym.
 	 */
-	SDLKey obtainKeycode(const SDL_keysym keySym);
+	SDL_Keycode obtainKeycode(const SDL_Keysym keySym);
 
 	/**
 	 * Whether _fakeMouseMove contains an event we need to send.

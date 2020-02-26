@@ -185,7 +185,7 @@ DMEngine::~DMEngine() {
 
 	// dispose of resources
 	delete _rnd;
-	delete _console;
+	//delete _console; Debugger is deleted by Engine
 	delete _displayMan;
 	delete _dungeonMan;
 	delete _eventMan;
@@ -359,6 +359,7 @@ Common::Error DMEngine::run() {
 	// scummvm/engine specific
 	initGraphics(320, 200);
 	_console = new Console(this);
+	setDebugger(_console);
 	_displayMan = new DisplayMan(this);
 	_dungeonMan = new DungeonMan(this);
 	_eventMan = new EventManager(this);

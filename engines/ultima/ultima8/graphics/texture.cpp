@@ -36,9 +36,9 @@ namespace Ultima8 {
 //
 bool Texture::Clear() {
 	// Temporary fix to prevent us from freeing a RenderSurface's memory
-	if (format != TEX_FMT_NATIVE)
-		delete [] buffer;
-	buffer = 0;
+	if (_format != TEX_FMT_NATIVE)
+		delete [] _buffer;
+	_buffer = 0;
 
 	return true;
 }
@@ -98,13 +98,13 @@ Texture *Texture::Create(IDataSource *ds, const char *filename) {
 
 void Texture::loadSurface(const Graphics::Surface *surf) {
 	assert(surf->format.bytesPerPixel == 2 || surf->format.bytesPerPixel == 4);
-	this->width = surf->w;
-	this->height = surf->h;
-	this->format = TEX_FMT_STANDARD;
-	this->wlog2 = -1;
-	this->hlog2 = -1;
+	this->_width = surf->w;
+	this->_height = surf->h;
+	this->_format = TEX_FMT_STANDARD;
+	this->_wlog2 = -1;
+	this->_hlog2 = -1;
 
-	buffer = new uint32[width * height];
+	_buffer = new uint32[_width * _height];
 
 	// Repack RGBA
 	uint32 pixel, i = 0;
@@ -116,7 +116,7 @@ void Texture::loadSurface(const Graphics::Surface *surf) {
 			pixel = (surf->format.bytesPerPixel == 2) ? *((const uint16 *)srcP) : *((const uint32 *)srcP);
 			surf->format.colorToARGB(pixel, a, r, g, b);
 
-			buffer[i++] = (r << TEX32_R_SHIFT)
+			_buffer[i++] = (r << TEX32_R_SHIFT)
 				| (g << TEX32_G_SHIFT)
 				| (b << TEX32_B_SHIFT)
 				| (a << TEX32_A_SHIFT);

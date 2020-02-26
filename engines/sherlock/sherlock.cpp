@@ -61,7 +61,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 
 SherlockEngine::~SherlockEngine() {
 	delete _animation;
-	delete _debugger;
+	//_debugger is deleted by Engine
 	delete _events;
 	delete _fixedText;
 	delete _journal;
@@ -95,6 +95,7 @@ void SherlockEngine::initialize() {
 	_res = new Resources(this);
 	_animation = new Animation(this);
 	_debugger = Debugger::init(this);
+	setDebugger(_debugger);
 	_events = new Events(this);
 	_fixedText = FixedText::init(this);
 	_inventory = Inventory::init(this);
@@ -278,7 +279,7 @@ Common::Error SherlockEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	_saves->saveGame(slot, desc);
 	return Common::kNoError;
 }

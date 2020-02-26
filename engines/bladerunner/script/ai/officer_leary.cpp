@@ -265,11 +265,11 @@ void AIScriptOfficerLeary::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptOfficerLeary::ClickedByPlayer() {}
 
-void AIScriptOfficerLeary::EnteredScene(int sceneId) {}
+void AIScriptOfficerLeary::EnteredSet(int setId) {}
 
-void AIScriptOfficerLeary::OtherAgentEnteredThisScene(int otherActorId) {}
+void AIScriptOfficerLeary::OtherAgentEnteredThisSet(int otherActorId) {}
 
-void AIScriptOfficerLeary::OtherAgentExitedThisScene(int otherActorId) {}
+void AIScriptOfficerLeary::OtherAgentExitedThisSet(int otherActorId) {}
 
 void AIScriptOfficerLeary::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {}
 
@@ -675,7 +675,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 32:
 		*animation = 603;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(603)) {
 			*animation = 589;
 			_animationState = 0;
@@ -686,7 +686,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 31:
 		*animation = 604;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(604)) {
 			*animation = 601;
 			_animationState = 1;
@@ -696,7 +696,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 30:
 		*animation = 587;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(587)) {
 			*animation = 589;
 			_animationState = 0;
@@ -707,7 +707,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 29:
 		*animation = 586;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(586)) {
 			*animation = 589;
 			_animationState = 0;
@@ -732,7 +732,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 26:
 		*animation = 573;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(573)) {
 			_animationState = 21;
 			_animationFrame = 0;
@@ -743,7 +743,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 25:
 		*animation = 572;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(572)) {
 			_animationState = 21;
 			_animationFrame = 0;
@@ -754,7 +754,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 24:
 		*animation = 581;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 4) {
 			if (Random_Query(1, 2) == 1) {
 				Sound_Play_Speech_Line(kActorOfficerLeary, 9010, 75, 0, 99);
@@ -775,7 +775,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 23:
 		*animation = 580;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(580)) {
 			*animation = 589;
 			_animationState = 0;
@@ -785,7 +785,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 22:
 		*animation = 579;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(579)) {
 			_animationState = 21;
 			_animationFrame = 0;
@@ -795,7 +795,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 21:
 		*animation = 571;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(571)) {
 			_animationFrame = 0;
 		}
@@ -803,7 +803,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 20:
 		*animation = 571;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(571) - 1) {
 			_animationFrame = 0;
 		}
@@ -811,7 +811,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 19:
 		*animation = 600;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(600)) {
 			_animationState = 11;
 			_animationFrame = 0;
@@ -821,7 +821,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 18:
 		*animation = 599;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(599)) {
 			_animationState = 11;
 			_animationFrame = 0;
@@ -831,7 +831,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 17:
 		*animation = 598;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(598)) {
 			_animationState = 11;
 			_animationFrame = 0;
@@ -841,7 +841,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 16:
 		*animation = 597;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(597)) {
 			_animationState = 11;
 			_animationFrame = 0;
@@ -851,7 +851,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 15:
 		*animation = 596;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(596)) {
 			_animationState = 11;
 			_animationFrame = 0;
@@ -861,7 +861,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 14:
 		*animation = 595;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(595)) {
 			_animationState = 11;
 			_animationFrame = 0;
@@ -871,7 +871,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 13:
 		*animation = 594;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(594)) {
 			_animationState = 11;
 			_animationFrame = 0;
@@ -881,7 +881,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 12:
 		*animation = 593;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(593)) {
 			_animationState = 11;
 			_animationFrame = 0;
@@ -901,7 +901,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		}
 
 		*animation = 592;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(592)) {
 			_animationFrame = 0;
 			if (var_45D5BC) {
@@ -919,7 +919,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 10:
 		*animation = 578;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(578)) {
 			_animationFrame = 0;
 		}
@@ -927,7 +927,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 9:
 		*animation = 577;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(577)) {
 			_animationFrame = 0;
 		}
@@ -935,7 +935,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 8:
 		*animation = 575;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(575)) {
 			_animationFrame = 0;
 		}
@@ -943,7 +943,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 7:
 		*animation = 574;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(574)) {
 			_animationFrame = 0;
 		}
@@ -951,7 +951,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 6:
 		*animation = 585;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(585)) {
 			_animationFrame = 0;
 		}
@@ -959,7 +959,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 5:
 		*animation = 584;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(584)) {
 			_animationFrame = 0;
 		}
@@ -967,7 +967,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 4:
 		*animation = 583;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(583)) {
 			_animationFrame = 0;
 		}
@@ -975,7 +975,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 3:
 		*animation = 582;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(582)) {
 			_animationFrame = 0;
 		}
@@ -984,7 +984,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 	case 2:
 		if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 			*animation = 603;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(603)) {
 				Game_Flag_Reset(kFlagOfficerLearyTakingNotes);
 				_animationFrame = 0;
@@ -1021,7 +1021,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		return true;
 	case 1:
 		*animation = 601;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(601)) {
 			_animationFrame = 0;
 		}
@@ -1040,21 +1040,21 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 			*animation = 604;
 		} else if (var_45D5B8 == 1) {
 			*animation = 590;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(590)) {
 				var_45D5B8 = Random_Query(0, 2);
 				_animationFrame = 0;
 			}
 		} else if (var_45D5B8 == 2) {
 			*animation = 591;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(591)) {
 				var_45D5B8 = Random_Query(0, 2);
 				_animationFrame = 0;
 			}
 		} else if (var_45D5B8 == 0) {
 			*animation = 589;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(589)) {
 				var_45D5B8 = Random_Query(0, 2);
 				_animationFrame = 0;

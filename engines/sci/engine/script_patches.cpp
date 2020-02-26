@@ -159,6 +159,7 @@ static const char *const selectorNameTable[] = {
 	"masterVolume", // SCI2 master volume reset
 	"data",         // Phant2, QFG4
 	"format",       // Phant2
+	"mouseMoved",   // Phant2
 	"setSize",      // Phant2
 	"iconV",        // Phant2
 	"track",        // Phant2
@@ -276,6 +277,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_masterVolume,
 	SELECTOR_data,
 	SELECTOR_format,
+	SELECTOR_mouseMoved,
 	SELECTOR_setSize,
 	SELECTOR_iconV,
 	SELECTOR_track,
@@ -8883,7 +8885,8 @@ static const uint16 phant2DocuStoreEmailPlacementPatch[] = {
 //  DItem:track then errors by sending a message to this non-object.
 //
 // We fix this by passing the current event instead of the potentially
-//  nonexistent event parameter to DItem:track.
+//  nonexistent event parameter to DItem:track. This bug also occurs in the
+//  volume scrollbars in the control panel, which this patch also fixes.
 //
 // Applies to at least: English PC, French PC, probably all versions
 // Responsible method: Thumb:action
@@ -8916,6 +8919,50 @@ static const uint16 phant2ComputerScrollbarCrashPatch[] = {
 	PATCH_END
 };
 
+// The volume scrollbar arrows on the control panel don't respond to clicks.
+//  ScrollbarArrow:handleEvent only calls its action method if the selection
+//  flag (2) of its state property is set. DItem:track sets and clears this flag
+//  by calling DItem:hilite if the mouse has moved since the previous cycle.
+//  This normally works because Cast:handleEvent calls the track method of each
+//  member of its mouser collection, but User:doit only passes these events on
+//  if User:hogs is empty. Loading the control panel adds its button to the hogs
+//  stack which prevents DItem:track from being called and updating the flag.
+//  
+// We fix this by setting the global mouse-moved flag whenever a scrollbar arrow
+//  is pressed. ScrollbarArrow:handleEvent already calls DItem:track, so setting
+//  this flag before then causes it to always evaluate the incoming event and
+//  update the selection state flag accordingly.
+//
+// Applies to at least: English PC, French PC, probably all versions
+// Responsible method: ScrollbarArrow:handleEvent
+// Fixes bug: #10164
+static const uint16 phant2ScrollbarArrowSignature[] = {
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	0x67, SIG_SELECTOR8(state),         // pTos state
+	0x35, 0x20,                         // ldi 20
+	0x12,                               // and [ is arrow pressed? ]
+	SIG_MAGICDWORD,
+	0x18,                               // not
+	0x18,                               // not
+	0x31, 0x64,                         // bnt 64
+	0x7e,                               // line
+	SIG_END
+};
+
+static const uint16 phant2ScrollbarArrowPatch[] = {
+	0x67, PATCH_SELECTOR8(state),       // pTos state
+	0x35, 0x20,                         // ldi 20
+	0x12,                               // and [ is arrow pressed? ]
+	0x31, 0x6c,                         // bnt 6c
+	0x38, PATCH_SELECTOR16(mouseMoved), // pushi mouseMoved
+	0x78,                               // push1
+	0x78,                               // push1
+	0x80, PATCH_UINT16(0x0050),         // lag 0050
+	0x4a, PATCH_UINT16(0x0006),         // send 06 [ p2User mouseMoved: 1 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "speed up interface fades",                    3, phant2SlowIFadeSignature,                  phant2SlowIFadePatch },
@@ -8934,6 +8981,7 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true, 63019, "fix file and note content placement",         1, phant2DocuStoreFileNotePlacementSignature, phant2DocuStoreFileNotePlacementPatch },
 	{  true, 63019, "fix email content placement",                 1, phant2DocuStoreEmailPlacementSignature,    phant2DocuStoreEmailPlacementPatch },
 	{  true, 64926, "fix computer scrollbar crash",                1, phant2ComputerScrollbarCrashSignature,     phant2ComputerScrollbarCrashPatch },
+	{  true, 64926, "fix volume scrollbar arrows",                 1, phant2ScrollbarArrowSignature,             phant2ScrollbarArrowPatch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,                  phant2SaveNamePatch1 },
 	{  true, 64990, "increase number of save games (1/2)",         1, phant2NumSavesSignature1,                  phant2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         2, phant2NumSavesSignature2,                  phant2NumSavesPatch2 },

@@ -169,7 +169,7 @@ protected:
 	bool canLoadGameStateCurrently() override { return true; }
 	Common::Error loadGameState(int slot) override;
 	bool canSaveGameStateCurrently() override { return true; }
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 public:
 	ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc);
@@ -186,9 +186,6 @@ public:
 
 	const ComposerGameDescription *_gameDescription;
 
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
-
 private:
 	Common::RandomSource *_rnd;
 
@@ -196,7 +193,7 @@ private:
 	Audio::QueuingAudioStream *_audioStream;
 	uint16 _currSoundPriority;
 
-	uint32 _currentTime, _lastTime, _timeDelta, _lastSaveTime;
+	uint32 _currentTime, _lastTime, _timeDelta;
 
 	bool _needsUpdate;
 	Common::Array<Common::Rect> _dirtyRects;
@@ -233,7 +230,7 @@ private:
 	uint16 _mouseSpriteId;
 	Common::Point _mouseOffset;
 
-	Common::String makeSaveGameName(int slot);
+	virtual Common::String getSaveStateName(int slot) const override;
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
 	Common::String getFilename(const Common::String &section, uint id);
 	Common::String mangleFilename(Common::String filename);

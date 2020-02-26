@@ -122,8 +122,8 @@ static struct BuiltinProto {
 		// play																// D2 c
 	{ "playAccel",		LB::b_playAccel,	-1,0, false, 2, BLTIN },	// D2
 		// play done														// D2
-	{ "preLoad",		LB::b_preLoad,		-1,0, false, 3, BLTIN },	//		D3 c
-	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, false, 3, BLTIN },	//		D3 c
+	{ "preLoad",		LB::b_preLoad,		-1,0, false, 3, BLTIN },	//		D3.1 c
+	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, false, 3, BLTIN },	//		D3.1 c
 	{ "quit",			LB::b_quit,			0, 0, false, 2, BLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, false, 2, BLTIN },	// D2 c
 	{ "return",			LB::b_return,		0, 1, false, 2, BLTIN },	// D2 function
@@ -199,7 +199,7 @@ static struct BuiltinProto {
 	{ "sound-fadeIn",	LB::b_soundFadeIn, 	1, 2, false, 3, BLTIN },	//		D3 c
 	{ "sound-fadeOut",	LB::b_soundFadeOut, 1, 2, false, 3, BLTIN },	//		D3 c
 	{ "sound-playFile",	LB::b_soundPlayFile,2, 2, false, 3, BLTIN },	//		D3 c
-	{ "sound-stop",		LB::b_soundStop,	1, 1, false, 3, BLTIN },	//		D3 c
+	{ "sound-stop",		LB::b_soundStop,	1, 1, false, 2, BLTIN },	//		D2 c
 	{ "soundBusy",		LB::b_soundBusy,	1, 1, true,  3, FBLTIN },	//		D3 f
 	// Window
 	{ "close",			LB::b_close,		1, 1, false, 4, BLTIN },	//			D4 c
@@ -553,13 +553,29 @@ void LB::b_value(int nargs) {
 // Lists
 ///////////////////
 void LB::b_add(int nargs) {
-	g_lingo->printSTUBWithArglist("b_add", nargs);
-	g_lingo->dropStack(nargs);
+	// FIXME: when a list is "sorted", add should insert based on
+	// the current ordering. otherwise, append to the end.
+	LB::b_append(nargs);
 }
 
 void LB::b_addAt(int nargs) {
-	g_lingo->printSTUBWithArglist("b_addAt", nargs);
-	g_lingo->dropStack(nargs);
+	if (nargs != 3) {
+		warning("b_addAt: expected 3 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+	Datum value = g_lingo->pop();
+	Datum index = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	if (index.type != INT) {
+		warning("b_addAt: index arg should be of type INT, not %s", index.type2str());
+		return;
+	}
+	if (list.type != ARRAY) {
+		warning("b_addAt: list arg should be of type ARRAY, not %s", list.type2str());
+		return;
+	}
+	list.u.farr->insert_at(index.u.i-1, value);
 }
 
 void LB::b_addProp(int nargs) {
@@ -568,18 +584,54 @@ void LB::b_addProp(int nargs) {
 }
 
 void LB::b_append(int nargs) {
-	g_lingo->printSTUBWithArglist("b_append", nargs);
-	g_lingo->dropStack(nargs);
+	if (nargs != 2) {
+		warning("b_append: expected 2 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+	Datum value = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	if (list.type != ARRAY) {
+		warning("b_append: list arg should be of type ARRAY, not %s", list.type2str());
+		return;
+	}
+	list.u.farr->push_back(value);
 }
 
 void LB::b_count(int nargs) {
-	g_lingo->printSTUBWithArglist("b_count", nargs);
-	g_lingo->dropStack(nargs);
+	if (nargs != 1) {
+		warning("b_count: expected 1 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+	Datum list = g_lingo->pop();
+	if (list.type != ARRAY) {
+		warning("b_append: list arg should be of type ARRAY, not %s", list.type2str());
+		return;
+	}
+	Datum result;
+	result.type = INT;
+	result.u.i = list.u.farr->size();
+	g_lingo->push(result);
 }
 
 void LB::b_deleteAt(int nargs) {
-	g_lingo->printSTUBWithArglist("b_deleteAt", nargs);
-	g_lingo->dropStack(nargs);
+	if (nargs != 2) {
+		warning("b_deleteAt: expected 2 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+	Datum index = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	if (index.type != INT) {
+		warning("b_deleteAt: index arg should be of type INT, not %s", index.type2str());
+		return;
+	}
+	if (list.type != ARRAY) {
+		warning("b_deleteAt: list arg should be of type ARRAY, not %s", list.type2str());
+		return;
+	}
+	list.u.farr->remove_at(index.u.i-1);
 }
 
 void LB::b_deleteProp(int nargs) {
@@ -633,8 +685,14 @@ void LB::b_getPropAt(int nargs) {
 }
 
 void LB::b_list(int nargs) {
-	g_lingo->printSTUBWithArglist("b_list", nargs);
-	g_lingo->dropStack(nargs);
+	Datum result;
+	result.type = ARRAY;
+	result.u.farr = new DatumArray;
+
+	for (int i = 0; i < nargs; i++)
+		result.u.farr->insert_at(0, g_lingo->pop());
+
+	g_lingo->push(result);
 }
 
 void LB::b_listP(int nargs) {
@@ -1376,6 +1434,11 @@ void LB::b_rollOver(int nargs) {
 
 	d.u.i = 0; // FALSE
 
+	if (!g_director->getCurrentScore()) {
+		warning("b_rollOver: Reference to an empty score");
+		return;
+	}
+
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
 	if (arg >= (int32) frame->_sprites.size()) {
@@ -1740,6 +1803,14 @@ void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
 
 	int id;
+
+	if (!g_director->getCurrentScore()) {
+		warning("b_field: Assigning to a field in an empty score");
+		d.u.i = 0;
+		d.type = INT;
+		g_lingo->push(d);
+		return;
+	}
 
 	if (d.type == STRING) {
 		if (g_director->getCurrentScore()->_castsNames.contains(*d.u.s))

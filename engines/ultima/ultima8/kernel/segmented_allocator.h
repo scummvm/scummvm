@@ -45,16 +45,16 @@ public:
 	void freeResources() override;
 
 	size_t getCapacity() override {
-		return nodeCapacity;
+		return _nodeCapacity;
 	}
 
 	void printInfo() override;
 
 private:
-	Std::vector<SegmentedPool *> pools;
+	Std::vector<SegmentedPool *> _pools;
 
-	size_t nodeCapacity;
-	uint32 nodes;
+	size_t _nodeCapacity;
+	uint32 _nodes;
 };
 
 } // End of namespace Ultima8

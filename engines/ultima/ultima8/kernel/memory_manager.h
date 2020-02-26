@@ -34,43 +34,37 @@ public:
 	~MemoryManager();
 
 	static MemoryManager *get_instance() {
-		return memorymanager;
+		return _memoryManager;
 	}
 
 	//! Allocates memory with the default allocator or malloc
 	static void *allocate(size_t size) {
-		return memorymanager ? memorymanager->_allocate(size) : 0;
+		return _memoryManager ? _memoryManager->_allocate(size) : 0;
 	}
 
 	//! Checks all known Allocators to free memory
 	static void deallocate(void *ptr) {
-		memorymanager->_deallocate(ptr);
+		_memoryManager->_deallocate(ptr);
 	}
 
 	Allocator *getAllocator(uint16 index) {
-		return index < allocatorCount ? allocators[index] : 0;
+		return index < _allocatorCount ? _allocators[index] : 0;
 	}
 
 	uint16 getAllocatorCount() {
-		return allocatorCount;
+		return _allocatorCount;
 	}
 
 	void freeResources();
 
-	//! "MemoryManager::MemInfo" console command
-	static void ConCmd_MemInfo(const Console::ArgvType &argv);
-
-	//! "MemoryManager::test" console command
-	static void ConCmd_test(const Console::ArgvType &argv);
-
 private:
-	Allocator *allocators[10];
-	uint16 allocatorCount;
+	Allocator *_allocators[10];
+	uint16 _allocatorCount;
 
 	void *_allocate(size_t size);
 	void _deallocate(void *ptr);
 
-	static MemoryManager *memorymanager;
+	static MemoryManager *_memoryManager;
 };
 
 } // End of namespace Ultima8

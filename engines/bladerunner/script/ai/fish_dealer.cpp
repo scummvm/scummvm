@@ -102,15 +102,15 @@ void AIScriptFishDealer::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptFishDealer::EnteredScene(int sceneId) {
+void AIScriptFishDealer::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptFishDealer::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptFishDealer::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptFishDealer::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptFishDealer::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -194,7 +194,7 @@ bool AIScriptFishDealer::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 683;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(683))
 			_animationFrame = 0;
@@ -208,7 +208,7 @@ bool AIScriptFishDealer::UpdateAnimation(int *animation, int *frame) {
 			_flag = 0;
 		} else {
 			*animation = 685;
-			_animationFrame++;
+			++_animationFrame;
 
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(685))
 				_animationFrame = 0;
@@ -217,7 +217,7 @@ bool AIScriptFishDealer::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 686;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(686)) {
 			_animationFrame = 0;
@@ -227,7 +227,7 @@ bool AIScriptFishDealer::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 687;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(687)) {
 			_animationFrame = 0;
@@ -237,7 +237,7 @@ bool AIScriptFishDealer::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 684;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(684)) {
 			*animation = 683;
@@ -248,7 +248,7 @@ bool AIScriptFishDealer::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 682;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(682))
 			_animationFrame = 0;

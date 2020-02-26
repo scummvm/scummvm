@@ -55,7 +55,6 @@ WintermuteEngine::WintermuteEngine() : Engine(g_system) {
 	_game = new AdGame("");
 	_debugger = nullptr;
 	_dbgController = nullptr;
-	_trigDebug = false;
 	_gameDescription = nullptr;
 }
 
@@ -83,14 +82,13 @@ WintermuteEngine::WintermuteEngine(OSystem *syst, const WMEGameDescription *desc
 	_game = nullptr;
 	_debugger = nullptr;
 	_dbgController = nullptr;
-	_trigDebug = false;
 }
 
 WintermuteEngine::~WintermuteEngine() {
 	// Dispose your resources here
 	deinit();
 	delete _game;
-	delete _debugger;
+	//_debugger deleted by Engine
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -129,6 +127,7 @@ Common::Error WintermuteEngine::run() {
 	// Create debugger console. It requires GFX to be initialized
 	_dbgController = new DebuggerController(this);
 	_debugger = new Console(this);
+	setDebugger(_debugger);
 
 //	DebugMan.enableDebugChannel("enginelog");
 	debugC(1, kWintermuteDebugLog, "Engine Debug-LOG enabled");
@@ -271,16 +270,10 @@ int WintermuteEngine::messageLoop() {
 		if (!_game) {
 			break;
 		}
-		_debugger->onFrame();
 
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			BasePlatform::handleEvent(&event);
-		}
-
-		if (_trigDebug) {
-			_debugger->attach();
-			_trigDebug = false;
 		}
 
 		if (_game && _game->_renderer->_active && _game->_renderer->isReady()) {
@@ -329,7 +322,7 @@ Common::Error WintermuteEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error WintermuteEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error WintermuteEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	BaseEngine::instance().getGameRef()->saveGame(slot, desc.c_str(), false);
 	return Common::kNoError;
 }

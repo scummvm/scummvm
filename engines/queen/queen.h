@@ -96,8 +96,10 @@ public:
 	bool canLoadOrSave() const;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
+	virtual int getAutosaveSlot() const { return 99; }
+	virtual Common::String getSaveStateName(int slot) const override;
 	void makeGameStateName(int slot, char *buf) const;
 	int getGameStateSlot(const char *filename) const;
 	void findGameStateDescriptions(char descriptions[100][32]);
@@ -120,14 +122,12 @@ protected:
 
 	// Engine APIs
 	Common::Error run() override;
-	GUI::Debugger *getDebugger() override;
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
 
 
 	int _talkSpeed;
 	bool _subtitles;
-	uint32 _lastSaveTime;
 	uint32 _lastUpdateTime;
 	bool _gameStarted;
 

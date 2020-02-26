@@ -196,15 +196,15 @@ void AIScriptGuzza::ClickedByPlayer() {
 	// return false;
 }
 
-void AIScriptGuzza::EnteredScene(int sceneId) {
+void AIScriptGuzza::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGuzza::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGuzza::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGuzza::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGuzza::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -328,7 +328,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 		switch (_state) {
 		case 0:
 			*animation = 197;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(197)) {
 				_animationFrame = 0;
 				if (Random_Query(0, 5) == 0) {
@@ -338,7 +338,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 			break;
 		case 1:
 			*animation = 198;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(198)) {
 				*animation = 197;
 				_animationFrame = 0;
@@ -347,7 +347,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 			break;
 		case 2:
 			*animation = 199;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(199)) {
 				*animation = 197;
 				_animationFrame = 0;
@@ -362,7 +362,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 		case 0:
 			*animation = 189;
 			if (_counter) {
-				_counter--;
+				--_counter;
 				if (Random_Query(0, 6) == 0) {
 					_frameDelta = -_frameDelta;
 				}
@@ -388,7 +388,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 			break;
 		case 1:
 			*animation = 190;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(190)) {
 				*animation = 189;
 				_animationFrame = 0;
@@ -397,7 +397,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 			break;
 		case 2:
 			*animation = 191;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(191)) {
 				if (Random_Query(0, 2) == 0) {
 					*animation = 189;
@@ -455,7 +455,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 185;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(185)) {
 			_animationFrame = 0;
 		}
@@ -463,7 +463,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 186;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(186)) {
 			_animationFrame = 0;
 		}
@@ -471,7 +471,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 176;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(176)) {
 			_animationFrame = 0;
 		}
@@ -479,7 +479,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 177;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(177)) {
 			_animationFrame = 0;
 		}
@@ -487,7 +487,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 181;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(181)) {
 			_animationFrame = 0;
 		}
@@ -495,7 +495,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 187;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(187)) {
 			_animationFrame = 0;
 		}
@@ -503,7 +503,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 188;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(188)) {
 			_animationFrame = 0;
 		}
@@ -519,7 +519,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 			_frameDelta = 1;
 		} else {
 			*animation = 201;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(201)) {
 				_animationFrame = 0;
 			}
@@ -528,7 +528,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = 202;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(202)) {
 			*animation = 201;
 			_animationFrame = 0;
@@ -538,7 +538,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 203;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(203)) {
 			*animation = 201;
 			_animationFrame = 0;
@@ -548,7 +548,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = 204;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(204)) {
 			*animation = 201;
 			_animationFrame = 0;
@@ -558,7 +558,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 15:
 		*animation = 205;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(205)) {
 			*animation = 201;
 			_animationFrame = 0;
@@ -568,7 +568,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 16:
 		*animation = 206;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(206)) {
 			*animation = 201;
 			_animationFrame = 0;
@@ -587,7 +587,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 			_frameDelta = 1;
 		} else {
 			*animation = 192;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(192)) {
 				_animationFrame = 0;
 			}
@@ -596,7 +596,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 18:
 		*animation = 193;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(193)) {
 			*animation = 192;
 			_animationFrame = 0;
@@ -606,7 +606,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 19:
 		*animation = 194;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(194)) {
 			*animation = 192;
 			_animationState = 17;
@@ -616,7 +616,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 20:
 		*animation = 195;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(195)) {
 			*animation = 192;
 			_animationFrame = 0;
@@ -626,7 +626,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 21:
 		*animation = 196;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(196)) {
 			*animation = 192;
 			_animationFrame = 0;
@@ -645,7 +645,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 			_frameDelta = 1;
 		} else {
 			*animation = 179;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(179)) {
 				_animationFrame = 0;
 			}
@@ -663,7 +663,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 			_frameDelta = 1;
 		} else {
 			*animation = 180;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(180)) {
 				_animationFrame = 0;
 			}
@@ -679,7 +679,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 25:
 		*animation = 173;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(173)) {
 			_animationFrame = 0;
 		}
@@ -687,7 +687,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 26:
 		*animation = 174;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(174)) {
 			*animation = 172;
 			_animationFrame = 0;
@@ -698,7 +698,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 27:
 		*animation = 175;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(175)) {
 			*animation = 172;
 			_animationFrame = 0;
@@ -709,7 +709,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 29:
 		*animation = 182;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(182)) {
 			*animation = 172;
 			_animationFrame = 0;
@@ -719,7 +719,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 30:
 		*animation = 183;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(183)) {
 			*animation = 197;
 			_animationFrame = 0;
@@ -729,7 +729,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 31:
 		*animation = 184;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(184)) {
 			*animation = 172;
 			_animationFrame = 0;
@@ -740,7 +740,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 32:
 		*animation = 200;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(200)) {
 			*animation = 197;
 			_animationFrame = 0;
@@ -751,7 +751,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 
 	case 33:
 		*animation = 207;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(207)) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 			float x, y, z;

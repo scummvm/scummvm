@@ -81,30 +81,30 @@ public:
 			if (!(scale_bits & (1 << y_factor))) return false;
 		}
 
-		if (RenderSurface::format.s_bytes_per_pixel == 4) {
-			if (texture->format == TEX_FMT_NATIVE || (texture->format == TEX_FMT_STANDARD &&
-			        RenderSurface::format.a_mask == TEX32_A_MASK && RenderSurface::format.r_mask == TEX32_R_MASK &&
-			        RenderSurface::format.g_mask == TEX32_G_MASK && RenderSurface::format.b_mask == TEX32_B_MASK)) {
-				if (RenderSurface::format.a_mask == 0xFF000000) {
+		if (RenderSurface::_format.s_bytes_per_pixel == 4) {
+			if (texture->_format == TEX_FMT_NATIVE || (texture->_format == TEX_FMT_STANDARD &&
+			        RenderSurface::_format.a_mask == TEX32_A_MASK && RenderSurface::_format.r_mask == TEX32_R_MASK &&
+			        RenderSurface::_format.g_mask == TEX32_G_MASK && RenderSurface::_format.b_mask == TEX32_B_MASK)) {
+				if (RenderSurface::_format.a_mask == 0xFF000000) {
 					if (!Scale32_A888) return 0;
 					return Scale32_A888(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
-				} else if (RenderSurface::format.a_mask == 0x000000FF) {
+				} else if (RenderSurface::_format.a_mask == 0x000000FF) {
 					if (!Scale32_888A) return 0;
 					return Scale32_888A(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 				} else {
 					if (!Scale32Nat) return 0;
 					return Scale32Nat(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 				}
-			} else if (texture->format == TEX_FMT_STANDARD) {
+			} else if (texture->_format == TEX_FMT_STANDARD) {
 				if (!Scale32Sta) return 0;
 				return Scale32Sta(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 			}
 		}
-		if (RenderSurface::format.s_bytes_per_pixel == 2) {
-			if (texture->format == TEX_FMT_NATIVE) {
+		if (RenderSurface::_format.s_bytes_per_pixel == 2) {
+			if (texture->_format == TEX_FMT_NATIVE) {
 				if (!Scale16Nat) return 0;
 				return Scale16Nat(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
-			} else if (texture->format == TEX_FMT_STANDARD) {
+			} else if (texture->_format == TEX_FMT_STANDARD) {
 				if (!Scale16Sta) return 0;
 				return Scale16Sta(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 			}

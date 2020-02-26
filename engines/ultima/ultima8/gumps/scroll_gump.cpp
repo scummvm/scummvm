@@ -31,7 +31,6 @@
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -48,7 +47,7 @@ ScrollGump::ScrollGump()
 }
 
 ScrollGump::ScrollGump(ObjId owner_, Std::string msg) :
-	ModalGump(0, 0, 100, 100, owner_), text(msg) {
+	ModalGump(0, 0, 100, 100, owner_), _text(msg) {
 }
 
 ScrollGump::~ScrollGump(void) {
@@ -58,11 +57,11 @@ void ScrollGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	// Create the TextWidget
-	Gump *widget = new TextWidget(22, 29, text, true, 9, 204, 115); //!! constants
+	Gump *widget = new TextWidget(22, 29, _text, true, 9, 204, 115); //!! constants
 	widget->InitGump(this);
-	textwidget = widget->getObjId();
+	_textWidget = widget->getObjId();
 
-	text.clear(); // no longer need this
+	_text.clear(); // no longer need this
 
 	Shape *shape_ = GameData::get_instance()->getGumps()->getShape(19);
 
@@ -71,12 +70,12 @@ void ScrollGump::InitGump(Gump *newparent, bool take_focus) {
 	ShapeFrame *sf = shape_->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
 }
 
 void ScrollGump::NextText() {
-	TextWidget *widget = p_dynamic_cast<TextWidget *>(getGump(textwidget));
+	TextWidget *widget = p_dynamic_cast<TextWidget *>(getGump(_textWidget));
 	assert(widget);
 	if (!widget->setupNextText()) {
 		Close();
@@ -84,7 +83,7 @@ void ScrollGump::NextText() {
 }
 
 void ScrollGump::OnMouseClick(int button, int32 mx, int32 my) {
-	// Scroll to next text, if possible
+	// Scroll to next _text, if possible
 	NextText();
 }
 

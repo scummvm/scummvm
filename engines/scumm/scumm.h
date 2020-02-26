@@ -393,7 +393,6 @@ public:
 
 	VerbSlot *_verbs;
 	ObjectData *_objs;
-	ScummDebugger *_debugger;
 
 	// Core variables
 	GameSettings _game;
@@ -428,15 +427,19 @@ public:
 			return err;
 		return go();
 	}
+
 	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
-	GUI::Debugger *getDebugger() override;
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
 
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
+	bool canSaveAutosaveCurrently() override {
+		// Keep base engine autosave code disabled in favour of engine's autosave code
+		return false;
+	}
 
 	void pauseEngineIntern(bool pause) override;
 

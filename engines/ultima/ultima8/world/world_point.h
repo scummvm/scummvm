@@ -24,28 +24,28 @@
 #define ULTIMA8_WORLD_WORLDPOINT_H
 
 struct WorldPoint {
-	uint8 buf[5];
+	uint8 _buf[5];
 
 	uint16 getX() const {
-		return buf[0] + (buf[1] << 8);
+		return _buf[0] + (_buf[1] << 8);
 	}
 	uint16 getY() const {
-		return buf[2] + (buf[3] << 8);
+		return _buf[2] + (_buf[3] << 8);
 	}
 	uint16 getZ() const {
-		return buf[4];
+		return _buf[4];
 	}
 
 	void setX(int32 x) {
-		buf[0] = static_cast<uint8>(x);
-		buf[1] = static_cast<uint8>(x >> 8);
+		_buf[0] = static_cast<uint8>(x);
+		_buf[1] = static_cast<uint8>(x >> 8);
 	}
 	void setY(int32 y) {
-		buf[2] = static_cast<uint8>(y);
-		buf[3] = static_cast<uint8>(y >> 8);
+		_buf[2] = static_cast<uint8>(y);
+		_buf[3] = static_cast<uint8>(y >> 8);
 	}
 	void setZ(int32 z) {
-		buf[4] = static_cast<uint8>(z);
+		_buf[4] = static_cast<uint8>(z);
 	}
 };
 

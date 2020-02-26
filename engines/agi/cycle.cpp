@@ -449,10 +449,6 @@ int AgiEngine::playGame() {
 			setVar(VM_VAR_KEY, 0);
 		}
 
-		if (shouldPerformAutoSave(_lastSaveTime)) {
-			saveGame(getSavegameFilename(0), "Autosave");
-		}
-
 	} while (!(shouldQuit() || _restartGame));
 
 	_sound->stopSound();

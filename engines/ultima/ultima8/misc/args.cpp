@@ -24,44 +24,44 @@ namespace Ultima8 {
 
 void Args::process(const int32 argc, const char *const *const argv) {
 	for (int32 i = 1; i < argc; ++i) {
-		for (uint32 j = 0; (j < options.size()) && (i < argc); ++j) {
-			switch (options[j].valuetype) {
+		for (uint32 j = 0; (j < _options.size()) && (i < argc); ++j) {
+			switch (_options[j].valuetype) {
 			case Option::no_type:
 				continue;
 			case Option::type_bool:
-				if (options[j].option == argv[i])
-					*(options[j]._bool_val) = options[j]._bool_default;
+				if (_options[j].option == argv[i])
+					*(_options[j]._bool_val) = _options[j]._bool_default;
 				break;
 			case Option::type_str: {
-				if (options[j].option == argv[i]) {
+				if (_options[j].option == argv[i]) {
 					// We want the _next_ argument
 					if (++i >= argc) {
-						warning("Data not specified for argument '%s'. Using default", options[j].option.c_str());
+						warning("Data not specified for argument '%s'. Using default", _options[j].option.c_str());
 						break;
 					}
-					*(options[j]._str_val) = argv[i];
+					*(_options[j]._str_val) = argv[i];
 				}
 				break;
 			}
 			case Option::type_sint: {
-				if (options[j].option == argv[i]) {
+				if (_options[j].option == argv[i]) {
 					// We want the _next_ argument
 					if (++i >= argc) {
-						warning("Data not specified for argument '%s'. Using default", options[j].option.c_str());
+						warning("Data not specified for argument '%s'. Using default", _options[j].option.c_str());
 						break;
 					}
-					*(options[j]._sint_val) = strtol(argv[i], 0, 10);
+					*(_options[j]._sint_val) = strtol(argv[i], 0, 10);
 				}
 				break;
 			}
 			case Option::type_uint: {
-				if (options[j].option == argv[i]) {
+				if (_options[j].option == argv[i]) {
 					// We want the _next_ argument
 					if (++i >= argc) {
-						warning("Data not specified for argument '%s'. Using default", options[j].option.c_str());
+						warning("Data not specified for argument '%s'. Using default", _options[j].option.c_str());
 						break;
 					}
-					*(options[j]._uint_val) = strtoul(argv[i], 0, 10);
+					*(_options[j]._uint_val) = strtoul(argv[i], 0, 10);
 				}
 				break;
 			}

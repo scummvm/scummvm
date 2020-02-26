@@ -139,14 +139,14 @@ protected:
 
 class ThemeLayoutMain : public ThemeLayout {
 public:
-	ThemeLayoutMain(const Common::String &name, const Common::String &overlays, bool enabled, int inset) :
+	ThemeLayoutMain(const Common::String &name, const Common::String &overlays, int16 width, int16 height, bool enabled, int inset) :
 			ThemeLayout(nullptr),
 			_name(name),
 			_overlays(overlays),
 			_enabled(enabled),
 			_inset(inset) {
-		_w = _defaultW = -1;
-		_h = _defaultH = -1;
+		_w = _defaultW = width;
+		_h = _defaultH = height;
 		_x = _defaultX = -1;
 		_y = _defaultY = -1;
 	}

@@ -285,13 +285,12 @@ public:
 	void pauseEngineIntern(bool pause) override;
 	bool canSaveGameStateCurrently() override;
 	bool canLoadGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 
 	void playVideo(Common::String videoFilename);
 
 	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
-	Common::String generateSaveName(int slot);
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
 	bool loadGame(int slotNumber);
@@ -339,8 +338,6 @@ public:
 	void freeAllSamples();
 
 	void setVoice(uint16 slot, uint32 sampleSlot, uint16 flag);
-
-	GUI::Debugger *getDebugger() override;
 
 	void changeCursor(uint16 curId);
 	void printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y);

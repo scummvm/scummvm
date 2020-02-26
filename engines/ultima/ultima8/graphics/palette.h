@@ -61,19 +61,19 @@ struct Palette {
 	void load(IDataSource &ds);
 
 	// 256 rgb entries
-	uint8 palette[768];
+	uint8 _palette[768];
 
 	// Untransformed native format palette. Created by the RenderSurface
-	uint32 native_untransformed[256];
+	uint32 _native_untransformed[256];
 
 	// Transformed native format palette. Created by the RenderSurface
-	uint32 native[256];
+	uint32 _native[256];
 
 	// Untransformed XFORM ARGB palette
-	uint32 xform_untransformed[256];
+	uint32 _xform_untransformed[256];
 
 	// Transformed XFORM ARGB palette. Created by the RenderSurface
-	uint32 xform[256];
+	uint32 _xform[256];
 
 	// Colour transformation matrix (for fades, hue shifts)
 	// Applied by the RenderSurface (fixed -4.11)
@@ -81,10 +81,10 @@ struct Palette {
 	// G = R*matrix[4] + G*matrix[5] + B*matrix[6]  + matrix[7];
 	// B = R*matrix[8] + G*matrix[9] + B*matrix[10] + matrix[11];
 	// A = A;
-	int16 matrix[12];
+	int16 _matrix[12];
 
 	// The current palette transform
-	PalTransforms transform;
+	PalTransforms _transform;
 };
 
 } // End of namespace Ultima8

@@ -56,19 +56,19 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MenuGump, ModalGump)
 
 MenuGump::MenuGump(bool nameEntryMode_)
 	: ModalGump(0, 0, 5, 5, 0, FLAG_DONT_SAVE) {
-	nameEntryMode = nameEntryMode_;
+	_nameEntryMode = nameEntryMode_;
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
-	if (!nameEntryMode)
+	if (!_nameEntryMode)
 		mouse->setMouseCursor(Mouse::MOUSE_HAND);
 	else
 		mouse->setMouseCursor(Mouse::MOUSE_NONE);
 
 	// Save old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();
-	if (musicprocess) oldMusicTrack = musicprocess->getTrack();
-	else oldMusicTrack = 0;
+	if (musicprocess) _oldMusicTrack = musicprocess->getTrack();
+	else _oldMusicTrack = 0;
 }
 
 MenuGump::~MenuGump() {
@@ -77,7 +77,7 @@ MenuGump::~MenuGump() {
 void MenuGump::Close(bool no_del) {
 	// Restore old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();
-	if (musicprocess) musicprocess->playMusic(oldMusicTrack);
+	if (musicprocess) musicprocess->playMusic(_oldMusicTrack);
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->popMouseCursor();
@@ -92,29 +92,29 @@ static const int menuEntryShape = 37;
 void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
-	ShapeFrame *sf = shape->getFrame(0);
+	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
+	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
 
 	Shape *logoShape;
 	logoShape = GameData::get_instance()->getGumps()->getShape(paganShape);
 	sf = logoShape->getFrame(0);
 	assert(sf);
 
-	Gump *logo = new Gump(42, 10, sf->width, sf->height);
+	Gump *logo = new Gump(42, 10, sf->_width, sf->_height);
 	logo->SetShape(logoShape, 0);
 	logo->InitGump(this, false);
 
-	if (!nameEntryMode) {
+	if (!_nameEntryMode) {
 		SettingManager *settingman = SettingManager::get_instance();
 		bool endgame, quotes;
 		settingman->get("endgame", endgame);
 		settingman->get("quotes", quotes);
 
-		int x_ = dims.w / 2 + 14;
+		int x_ = _dims.w / 2 + 14;
 		int y_ = 18;
 		Gump *widget;
 		for (int i = 0; i < 8; ++i) {
@@ -131,7 +131,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 			y_ += 14;
 		}
 
-		MainActor *av = getMainActor();
+		const MainActor *av = getMainActor();
 		Std::string name;
 		if (av)
 			name = av->getName();
@@ -141,20 +141,20 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 			widget = new TextWidget(0, 0, name, true, 6);
 			widget->InitGump(this, false);
 			widget->GetDims(rect);
-			widget->Move(90 - rect.w / 2, dims.h - 40);
+			widget->Move(90 - rect.w / 2, _dims.h - 40);
 		}
 	} else {
 		Gump *widget;
 		widget = new TextWidget(0, 0, _TL_("Give thy name:"), true, 6); // CONSTANT!
 		widget->InitGump(this, false);
-		widget->Move(dims.w / 2 + 6, 10);
+		widget->Move(_dims.w / 2 + 6, 10);
 
 		Rect textdims;
 		widget->GetDims(textdims);
 
 		widget = new EditWidget(0, 0, "", true, 6, 110, 40, 15); // CONSTANTS!
 		widget->InitGump(this, true);
-		widget->Move(dims.w / 2 + 6, 10 + textdims.h);
+		widget->Move(_dims.w / 2 + 6, 10 + textdims.h);
 		widget->MakeFocus();
 	}
 }
@@ -167,7 +167,7 @@ void MenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 bool MenuGump::OnKeyDown(int key, int mod) {
 	if (Gump::OnKeyDown(key, mod)) return true;
 
-	if (!nameEntryMode) {
+	if (!_nameEntryMode) {
 
 		if (key == Common::KEYCODE_ESCAPE) {
 			// FIXME: this check should probably be in Game or GUIApp
@@ -252,11 +252,6 @@ void MenuGump::showMenu() {
 	ModalGump *gump = new MenuGump();
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);
-}
-
-// static
-void MenuGump::ConCmd_showMenu(const Console::ArgvType &argv) {
-	MenuGump::showMenu();
 }
 
 //static

@@ -239,8 +239,6 @@ public:
 	Maze      _maze;                                // Maze control structure
 	hugoBoot  _boot;                                // Boot info structure
 
-	GUI::Debugger *getDebugger() override;
-
 	Common::RandomSource *_rnd;
 
 	const char *_episode;
@@ -285,12 +283,12 @@ public:
 	void adjustScore(const int adjustment);
 	int getMaxScore() const;
 	void setMaxScore(const int newScore);
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 	bool hasFeature(EngineFeature f) const override;
 	const char *getCopyrightString() const;
 
-	Common::String getSavegameFilename(int slot);
+	virtual Common::String getSaveStateName(int slot) const override;
 	uint16 **loadLongArray(Common::SeekableReadStream &in);
 
 	FileManager *_file;
@@ -319,8 +317,6 @@ private:
 	uint32 _curTime;
 
 	static HugoEngine *s_Engine;
-
-	HugoConsole *_console;
 
 	GameType _gameType;
 	Common::Platform _platform;

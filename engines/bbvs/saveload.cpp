@@ -182,21 +182,15 @@ void BbvsEngine::loadgame(const char *filename) {
 }
 
 Common::Error BbvsEngine::loadGameState(int slot) {
-	const char *fileName = getSavegameFilename(slot);
-	loadgame(fileName);
+	Common::String fileName = getSaveStateName(slot);
+	loadgame(fileName.c_str());
 	return Common::kNoError;
 }
 
-Common::Error BbvsEngine::saveGameState(int slot, const Common::String &description) {
-	const char *fileName = getSavegameFilename(slot);
-	savegame(fileName, description.c_str());
+Common::Error BbvsEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
+	Common::String fileName = getSaveStateName(slot);
+	savegame(fileName.c_str(), description.c_str());
 	return Common::kNoError;
-}
-
-const char *BbvsEngine::getSavegameFilename(int num) {
-	static Common::String filename;
-	filename = getSavegameFilename(_targetName, num);
-	return filename.c_str();
 }
 
 Common::String BbvsEngine::getSavegameFilename(const Common::String &target, int num) {

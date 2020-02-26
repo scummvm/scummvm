@@ -44,37 +44,35 @@ class GumpNotifyProcess;
 //
 
 class Gump : public Object {
-protected:
-
 	friend class GumpList;
-
-	uint16              owner;          // Owner item
-	Gump               *parent;         // Parent gump
-	int32               x, y;           // Gump's position in parent.
+protected:
+	uint16 _owner;        // Owner item
+	Gump *_parent;        // Parent gump
+	int32 _x, _y;         // Gump's position in parent.
 	// Always the upper left corner!
 
-	Rect     dims;           // The dimensions/coord space of the gump
-	uint32              flags;          // Gump flags
-	int32               layer;          // gump ordering layer
+	Rect _dims;           // The dimensions/coord space of the gump
+	uint32 _flags;        // Gump flags
+	int32 _layer;         // gump ordering layer
 
-	int32               index;          // 'Index'
+	int32 _index;         // 'Index'
 
-	Shape               *shape;         // The gumps shape (always painted at 0,0)
-	uint32              framenum;
+	Shape *_shape;        // The gumps shape (always painted at 0,0)
+	uint32 _frameNum;
 
 	//! The Gump list for this gump. This will contain all child gumps,
 	//! as well as all gump widgets.
-	Std::list<Gump *>    children;      // List of all gumps
-	Gump               *focus_child;    // The child that has focus
+	Std::list<Gump *> _children;      // List of all gumps
+	Gump               *_focusChild;  // The child that has focus
 
-	uint16              notifier;       // Process to notify when we're closing
-	uint32              process_result; // Result for the notifier process
+	uint16              _notifier;      // Process to notify when we're closing
+	uint32              _processResult; // Result for the notifier process
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 	Gump();
 	Gump(int x, int y, int width, int height, uint16 owner = 0,
-	     uint32 _Flags = 0, int32 layer = LAYER_NORMAL);
+	     uint32 flags = 0, int32 layer = LAYER_NORMAL);
 	~Gump() override;
 
 public:
@@ -83,29 +81,29 @@ public:
 	void                        SetNotifyProcess(GumpNotifyProcess *proc);
 	GumpNotifyProcess          *GetNotifyProcess();
 	inline uint32               GetResult() {
-		return process_result;
+		return _processResult;
 	}
 	void                        SetResult(uint32 res) {
-		process_result = res;
+		_processResult = res;
 	}
 
 	//! Set the Gump's shape/frame
-	inline void                 SetShape(Shape *_shape, uint32 _framenum) {
-		shape = _shape;
-		framenum = _framenum;
+	inline void SetShape(Shape *shape, uint32 frameNum) {
+		_shape = shape;
+		_frameNum = frameNum;
 	}
 
 	void                        SetShape(FrameID frame, bool adjustsize = false);
 
 	//! Set the Gump's frame
-	inline void                 SetFramenum(uint32 _framenum) {
-		framenum = _framenum;
+	inline void                 Set_frameNum(uint32 frameNum) {
+		_frameNum = frameNum;
 	}
 
 	//! Init the gump and add it to parent; call after construction
 	//! When newparent is 0, this will call Ultima8Engine::addGump().
 	//! \param newparent The Gump's new parent or 0.
-	//! \param takefocus If true, set parent's focus_child to this
+	//! \param takefocus If true, set parent's _focusChild to this
 	virtual void                InitGump(Gump *newparent, bool take_focus = true);
 
 	//! Find a gump of the specified type (this or child)
@@ -146,7 +144,7 @@ public:
 	//! Close item-dependent gumps (recursively).
 	//! Called when there is a map change (so the gumps can self terminate
 	//! among other things), or when backspace is pressed by the user.
-	virtual void        CloseItemDependents(void);
+	virtual void        CloseItemDependents();
 
 	//! Paint the Gump (RenderSurface is relative to parent).
 	//! Calls PaintThis and PaintChildren
@@ -199,19 +197,19 @@ public:
 
 	//! Check to see if a Gump is Closing
 	bool                IsClosing() {
-		return (flags & FLAG_CLOSING) != 0;
+		return (_flags & FLAG_CLOSING) != 0;
 	}
 
 	//! Move this gump
-	virtual void        Move(int32 x_, int32 y_) {
-		x = x_;
-		y = y_;
+	virtual void        Move(int32 x, int32 y) {
+		_x = x;
+		_y = y;
 	}
 
 	//! Move this gump relative to its current position
-	virtual void        MoveRelative(int x_, int y_) {
-		x += x_;
-		y += y_;
+	virtual void        MoveRelative(int x, int y) {
+		_x += x;
+		_y += y;
 	}
 
 	enum Position {
@@ -234,18 +232,18 @@ public:
 	// Points and Coords
 	//
 
-	//! Get the dims
-	virtual void        GetDims(Rect &d) {
-		d = dims;
+	//! Get the _dims
+	virtual void GetDims(Rect &d) const {
+		d = _dims;
 	}
 
-	//! Set the dims
-	virtual void        SetDims(const Rect &d) {
-		dims = d;
+	//! Set the _dims
+	virtual void SetDims(const Rect &d) {
+		_dims = d;
 	}
 
 	//! Detect if a point is on the gump
-	virtual bool        PointOnGump(int mx, int my);
+	virtual bool PointOnGump(int mx, int my);
 
 	enum PointRoundDir {
 		ROUND_TOPLEFT = 0,
@@ -336,12 +334,12 @@ public:
 
 	// Is this gump the focus?
 	inline bool         IsFocus() {
-		return parent ? parent->focus_child == this : false;
+		return _parent ? _parent->_focusChild == this : false;
 	}
 
 	// Get the child in focus
 	inline Gump        *GetFocusChild() {
-		return focus_child;
+		return _focusChild;
 	}
 
 	// Find a new Child to be the focus
@@ -353,67 +351,67 @@ public:
 	//
 
 	//! Add a gump to the child list.
-	virtual void        AddChild(Gump *, bool take_focus = true);
+	virtual void AddChild(Gump *, bool take_focus = true);
 
 	//! Remove a gump from the child list
-	virtual void        RemoveChild(Gump *);
+	virtual void RemoveChild(Gump *);
 
 	//! Move child to front (within its layer)
-	virtual void        MoveChildToFront(Gump *);
+	virtual void MoveChildToFront(Gump *);
 
 	//! Get the parent
-	inline Gump        *GetParent() {
-		return parent;
+	inline Gump *GetParent() {
+		return _parent;
 	}
 
 	//! Get the root gump (or self)
-	Gump               *GetRootGump();
+	Gump *GetRootGump();
 
 	//! This function is used by our children to notifty us of 'something'
 	//! Think of it as a generic call back function
-	virtual void        ChildNotify(Gump *child, uint32 message) { }
-	void                SetIndex(int32 i) {
-		index = i;
+	virtual void ChildNotify(Gump *child, uint32 message) { }
+	void SetIndex(int32 i) {
+		_index = i;
 	}
-	int32               GetIndex() {
-		return index;
+	int32 GetIndex() const {
+		return _index;
 	}
 
 	// Dragging
 	//! Called when a child gump starts to be dragged.
 	//! \return false if the child isn't allowed to be dragged.
-	virtual bool        StartDraggingChild(Gump *gump, int32 mx, int32 my);
-	virtual void        DraggingChild(Gump *gump, int mx, int my);
-	virtual void        StopDraggingChild(Gump *gump);
+	virtual bool StartDraggingChild(Gump *gump, int32 mx, int32 my);
+	virtual void DraggingChild(Gump *gump, int mx, int my);
+	virtual void StopDraggingChild(Gump *gump);
 
 	//! This will be called when an item in this gump starts to be dragged.
 	//! \return false if the item isn't allowed to be dragged.
-	virtual bool        StartDraggingItem(Item *item, int mx, int my) {
+	virtual bool StartDraggingItem(Item *item, int mx, int my) {
 		return false;
 	}
 
 	//! Called when an item is being dragged over the gump.
 	//! Note: this may be called on a different gump than StartDraggingItem.
 	//! \return false if the item can't be dragged to this location.
-	virtual bool        DraggingItem(Item *item, int mx, int my) {
+	virtual bool DraggingItem(Item *item, int mx, int my) {
 		return false;
 	}
 
 	//! Called when an item that was being dragged over the gump left the gump
-	virtual void        DraggingItemLeftGump(Item *item) { }
+	virtual void DraggingItemLeftGump(Item *item) { }
 
 	//! Called when a drag operation finished.
 	//! This is called on the same gump that received StartDraggingItem
 	//! \param moved If true, the item was actually dragged somewhere else.
 	//!              If false, the drag was cancelled.
-	virtual void        StopDraggingItem(Item *item, bool moved) { }
+	virtual void StopDraggingItem(Item *item, bool moved) { }
 
 	//! Called when an item has been dropped on a gump.
 	//! This is called after StopDraggingItem has been called, but possibly
 	//! on a different gump.
 	//! It's guaranteed that a gump will only receive a DropItem at a location
 	//! if a DraggingItem there returned true.
-	virtual void        DropItem(Item *item, int mx, int my) { }
+	virtual void DropItem(Item *item, int mx, int my) { }
 
 public:
 
@@ -433,20 +431,20 @@ public:
 		                      // (only for ItemRelativeGumps)
 	};
 
-	inline bool         IsHidden() {
-		return (flags & FLAG_HIDDEN) || (parent && parent->IsHidden());
+	inline bool IsHidden() const {
+		return (_flags & FLAG_HIDDEN) || (_parent && _parent->IsHidden());
 	}
-	bool                IsDraggable() {
-		return flags & FLAG_DRAGGABLE;
+	bool IsDraggable() const {
+		return _flags & FLAG_DRAGGABLE;
 	}
-	virtual void        HideGump() {
-		flags |= FLAG_HIDDEN;
+	virtual void HideGump() {
+		_flags |= FLAG_HIDDEN;
 	}
-	virtual void        UnhideGump() {
-		flags &= ~FLAG_HIDDEN;
+	virtual void UnhideGump() {
+		_flags &= ~FLAG_HIDDEN;
 	}
 
-	bool mustSave(bool toplevel);
+	bool mustSave(bool toplevel) const;
 
 	//
 	// Gump Layers

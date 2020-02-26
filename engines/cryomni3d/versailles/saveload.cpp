@@ -36,13 +36,17 @@ Common::Error CryOmni3DEngine_Versailles::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error CryOmni3DEngine_Versailles::saveGameState(int slot, const Common::String &desc) {
+Common::Error CryOmni3DEngine_Versailles::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	saveGame(_isVisiting, slot + 1, desc);
 	return Common::kNoError;
 }
 
 Common::String CryOmni3DEngine_Versailles::getSaveFileName(bool visit, uint saveNum) const {
 	return Common::String::format("%s%s.%04u", _targetName.c_str(), visit ? "_visit" : "", saveNum);
+}
+
+Common::String CryOmni3DEngine_Versailles::getSaveStateName(int slot) const {
+	return Common::String::format("%s.%04u", _targetName.c_str(), slot);
 }
 
 bool CryOmni3DEngine_Versailles::canVisit() const {

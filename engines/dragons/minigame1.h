@@ -8,54 +8,35 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef DRAGONS_MINIGAME1_H
+#define DRAGONS_MINIGAME1_H
 
-#ifndef ULTIMA8_FILESYS_DIRFILE_H
-#define ULTIMA8_FILESYS_DIRFILE_H
+#include "common/system.h"
 
-#include "ultima/ultima8/filesys/named_archive_file.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
-#include "ultima/shared/std/string.h"
+namespace Dragons {
 
-namespace Ultima {
-namespace Ultima8 {
+class DragonsEngine;
 
-class DirFile : public NamedArchiveFile {
+class Minigame1 {
+private:
+	DragonsEngine *_vm;
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
+	Minigame1(DragonsEngine *vm);
 
-	//! create DirFile from path
-	explicit DirFile(const Std::string &path);
-	~DirFile() override;
-
-	bool exists(const Std::string &name) override;
-
-	uint8 *getObject(const Std::string &name, uint32 *size = 0) override;
-
-	uint32 getSize(const Std::string &name) override;
-
-	uint32 getCount() override {
-		return count;
-	}
-
-protected:
-	bool readMetadata();
-
-	Std::string path;
-	uint32 count;
+	void run();
 };
 
-} // End of namespace Ultima8
-} // End of namespace Ultima
+} // End of namespace Dragons
 
-#endif
+#endif //DRAGONS_MINIGAME1_H

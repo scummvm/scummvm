@@ -39,23 +39,23 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MovieGump, ModalGump)
 
-MovieGump::MovieGump() : ModalGump(), player(0) {
+MovieGump::MovieGump() : ModalGump(), _player(0) {
 
 }
 
 MovieGump::MovieGump(int width, int height, RawArchive *movie,
-                     bool introMusicHack, uint32 _Flags, int32 layer_)
-	: ModalGump(50, 50, width, height, 0, _Flags, layer_) {
-	player = new SKFPlayer(movie, width, height, introMusicHack);
+                     bool introMusicHack, uint32 flags, int32 layer)
+	: ModalGump(50, 50, width, height, 0, flags, layer) {
+	_player = new SKFPlayer(movie, width, height, introMusicHack);
 }
 
 MovieGump::~MovieGump() {
-	delete player;
+	delete _player;
 }
 
 void MovieGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
-	player->start();
+	_player->start();
 
 	Mouse::get_instance()->pushMouseCursor();
 	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_NONE);
@@ -70,14 +70,14 @@ void MovieGump::Close(bool no_del) {
 void MovieGump::run() {
 	ModalGump::run();
 
-	player->run();
-	if (!player->isPlaying()) {
+	_player->run();
+	if (!_player->isPlaying()) {
 		Close();
 	}
 }
 
 void MovieGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	player->paint(surf, lerp_factor);
+	_player->paint(surf, lerp_factor);
 }
 
 bool MovieGump::OnKeyDown(int key, int mod) {
@@ -101,26 +101,6 @@ ProcId MovieGump::U8MovieViewer(RawArchive *movie, bool introMusicHack) {
 	gump->CreateNotifier();
 	return gump->GetNotifyProcess()->getPid();
 }
-
-//static
-void MovieGump::ConCmd_play(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "play usage: play <moviename>" << Std::endl;
-		return;
-	}
-
-	Std::string filename = "@game/static/" + argv[1] + ".skf";
-	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *skf = filesys->ReadFile(filename);
-	if (!skf) {
-		pout << "movie not found." << Std::endl;
-		return;
-	}
-
-	RawArchive *flex = new RawArchive(skf);
-	U8MovieViewer(flex);
-}
-
 
 bool MovieGump::loadData(IDataSource *ids) {
 	return false;

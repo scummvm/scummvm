@@ -51,7 +51,6 @@ Vars *g_vars = nullptr;
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 	Engine(syst),
 	_gameDescription(gameDesc),
-	_console(this),
 	_rnd("fullpipe"),
 	_gameProject(nullptr),
 	_modalObject(nullptr),
@@ -77,6 +76,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	syncSoundSettings();
 	_sfxVolume = ConfMan.getInt("sfx_volume") * 39 - 10000;
 	_musicVolume = ConfMan.getInt("music_volume");
+
+	setDebugger(new Console(this));
 
 	_gameProjectVersion = 0;
 	_pictureScale = 8;
@@ -238,13 +239,16 @@ Common::Error FullpipeEngine::loadGameState(int slot) {
 		return Common::kUnknownError;
 }
 
-Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &description) {
+Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
 	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot), description))
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;
 }
 
+Common::String FullpipeEngine::getSaveStateName(int slot) const {
+	return Common::String::format("fullpipe.s%02d", slot);
+}
 
 Common::Error FullpipeEngine::run() {
 	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -378,11 +382,6 @@ void FullpipeEngine::updateEvents() {
 				return;
 				break;
 			default:
-				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
-					// Start the debugger
-					getDebugger()->attach();
-					getDebugger()->onFrame();
-				}
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
 				ex->_param = event.kbd.keycode;
 				ex->_excFlags |= 3;

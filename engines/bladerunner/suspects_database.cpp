@@ -100,7 +100,7 @@ bool SuspectDatabaseEntry::addPhotoClue(int shapeId, int clueId) {
 	_photoClues[_photoClueCount].shapeId = shapeId;
 	_photoClues[_photoClueCount].notUsed = -1;
 
-	_photoClueCount++;
+	++_photoClueCount;
 	return true;
 }
 
@@ -236,7 +236,7 @@ SuspectsDatabase::SuspectsDatabase(BladeRunnerEngine *vm, int size) {
 }
 
 SuspectsDatabase::~SuspectsDatabase() {
-	for (int i = _suspects.size() - 1; i >= 0; i--) {
+	for (int i = _suspects.size() - 1; i >= 0; --i) {
 		delete _suspects.remove_at(i);
 	}
 	_suspects.clear();

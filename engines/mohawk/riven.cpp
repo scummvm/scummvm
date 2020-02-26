@@ -71,7 +71,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_sound = nullptr;
 	_rnd = nullptr;
 	_scriptMan = nullptr;
-	_console = nullptr;
 	_saveLoad = nullptr;
 	_optionsDialog = nullptr;
 	_card = nullptr;
@@ -104,7 +103,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _sound;
 	delete _video;
 	delete _gfx;
-	delete _console;
 	delete _extrasFile;
 	delete _saveLoad;
 	delete _scriptMan;
@@ -113,10 +111,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _rnd;
 
 	DebugMan.clearAllDebugChannels();
-}
-
-GUI::Debugger *MohawkEngine_Riven::getDebugger() {
-	return _console;
 }
 
 Common::Error MohawkEngine_Riven::run() {
@@ -138,7 +132,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_gfx = new RivenGraphics(this);
 	_video = new RivenVideoManager(this);
 	_sound = new RivenSoundManager(this);
-	_console = new RivenConsole(this);
+	setDebugger(new RivenConsole(this));
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
 	_optionsDialog = new RivenOptionsDialog();
 	_scriptMan = new RivenScriptManager(this);
@@ -235,10 +229,6 @@ void MohawkEngine_Riven::doFrame() {
 		_scriptMan->runQueuedScripts();
 	}
 
-	if (shouldPerformAutoSave(_lastSaveTime)) {
-		tryAutoSaving();
-	}
-
 	_inventory->onFrame();
 
 	// Update the screen once per frame
@@ -272,10 +262,6 @@ void MohawkEngine_Riven::processInput() {
 			switch ((RivenAction)event.customType) {
 			case kRivenActionInteract:
 				_stack->onMouseDown(_eventMan->getMousePos());
-				break;
-			case kRivenActionOpenDebugger:
-				_console->attach();
-				_console->onFrame();
 				break;
 			case kRivenActionPause:
 				pauseGame();
@@ -324,7 +310,7 @@ void MohawkEngine_Riven::processInput() {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
 			// Attempt to autosave before exiting
-			tryAutoSaving();
+			saveAutosaveIfEnabled();
 			break;
 		default:
 			break;
@@ -733,18 +719,14 @@ void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
 	}
 }
 
-Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
-	return saveGameState(slot, desc, false);
-}
-
-Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc, bool autosave) {
+Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (_menuSavedStack != -1) {
 		_vars["CurrentStackID"] = _menuSavedStack;
 		_vars["CurrentCardID"] = _menuSavedCard;
 	}
 
 	const Graphics::Surface *thumbnail = _menuSavedStack != -1 ? _menuThumbnail.get() : nullptr;
-	Common::Error error = _saveLoad->saveGame(slot, desc, thumbnail, autosave);
+	Common::Error error = _saveLoad->saveGame(slot, desc, thumbnail, isAutosave);
 
 	if (_menuSavedStack != -1) {
 		_vars["CurrentStackID"] = 1;
@@ -765,22 +747,9 @@ void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::St
 	}
 }
 
-void MohawkEngine_Riven::tryAutoSaving() {
-	if (!canSaveGameStateCurrently() || _gameEnded) {
-		return; // Can't save right now, try again on the next frame
-	}
-
-	_lastSaveTime = _system->getMillis();
-
-	if (!_saveLoad->isAutoSaveAllowed()) {
-		return; // Can't autosave ever, try again after the next autosave delay
-	}
-
-	Common::Error saveError = saveGameState(RivenSaveLoad::kAutoSaveSlot, "Autosave", true);
-	if (saveError.getCode() != Common::kNoError)
-		warning("Attempt to autosave has failed.");
+bool MohawkEngine_Riven::canSaveAutosaveCurrently() {
+	return canSaveGameStateCurrently() && !_gameEnded;
 }
-
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
 	Common::String cardName = getStack()->getName(kCardNames, cardNameId);
@@ -858,7 +827,7 @@ void MohawkEngine_Riven::runOptionsDialog() {
 
 	if (hasGameEnded()) {
 		// Attempt to autosave before exiting
-		tryAutoSaving();
+		saveAutosaveIfEnabled();
 	}
 
 	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
@@ -952,11 +921,6 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	act = new Action("LKDN", _("Look down"));
 	act->setCustomEngineActionEvent(kRivenActionLookDown);
 	act->addDefaultInputMapping("PAGEDOWN");
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionOpenDebugger, _("Open debugger"));
-	act->setCustomEngineActionEvent(kRivenActionOpenDebugger);
-	act->addDefaultInputMapping("C+d");
 	engineKeyMap->addAction(act);
 
 	if (checkGameGUIOption(GAMEOPTION_DEMO, ConfMan.get("guioptions", target))) {

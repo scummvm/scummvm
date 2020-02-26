@@ -37,21 +37,19 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(EggHatcherProcess, Process)
 
 EggHatcherProcess::EggHatcherProcess() {
-
 }
 
 
 EggHatcherProcess::~EggHatcherProcess() {
-
 }
 
 void EggHatcherProcess::addEgg(uint16 egg) {
-	eggs.push_back(egg);
+	_eggs.push_back(egg);
 }
 
 void EggHatcherProcess::addEgg(Egg *egg) {
 	assert(egg);
-	eggs.push_back(egg->getObjId());
+	_eggs.push_back(egg->getObjId());
 }
 
 void EggHatcherProcess::run() {
@@ -59,8 +57,8 @@ void EggHatcherProcess::run() {
 	MainActor *av = getMainActor();
 	assert(av);
 
-	for (unsigned int i = 0; i < eggs.size(); i++) {
-		uint16 eggid = eggs[i];
+	for (unsigned int i = 0; i < _eggs.size(); i++) {
+		uint16 eggid = _eggs[i];
 		Egg *egg = p_dynamic_cast<Egg *>(getObject(eggid));
 		if (!egg) continue; // egg gone
 
@@ -81,8 +79,8 @@ void EggHatcherProcess::run() {
 
 		// 'justTeleported':
 		// if the avatar teleports, set the 'justTeleported' flag.
-		// if this is set, don't hatch any teleport eggs
-		// unset it when you're out of range of any teleport eggs
+		// if this is set, don't hatch any teleport _eggs
+		// unset it when you're out of range of any teleport _eggs
 		TeleportEgg *tegg = p_dynamic_cast<TeleportEgg *>(egg);
 
 		if (x1 <= ax && ax - axs < x2 && y1 <= ay && ay - ays < y2 &&
@@ -106,7 +104,7 @@ void EggHatcherProcess::saveData(ODataSource *ods) {
 bool EggHatcherProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	// the eggs will be re-added to the EggHatcherProcess when they're
+	// the _eggs will be re-added to the EggHatcherProcess when they're
 	// re-added to the CurrentMap
 
 	return true;

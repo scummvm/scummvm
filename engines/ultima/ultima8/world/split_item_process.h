@@ -44,7 +44,7 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	ObjId target;
+	ObjId _target;
 };
 
 } // End of namespace Ultima8

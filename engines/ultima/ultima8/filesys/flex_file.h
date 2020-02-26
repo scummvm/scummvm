@@ -61,8 +61,8 @@ public:
 	}
 
 
-	uint32 getSize(uint32 index) override;
-	uint32 getSize(const Std::string &name) override {
+	uint32 getSize(uint32 index) const override;
+	uint32 getSize(const Std::string &name) const override {
 		uint32 index;
 		if (nameToIndex(name, index))
 			return getSize(index);
@@ -70,12 +70,12 @@ public:
 			return 0;
 	}
 
-	uint32 getCount() override {
-		return count;
+	uint32 getCount() const override {
+		return _count;
 	}
 
-	uint32 getIndexCount() override {
-		return count;
+	uint32 getIndexCount() const override {
+		return _count;
 	}
 
 	bool isIndexed() const override {
@@ -88,10 +88,10 @@ public:
 	static bool isFlexFile(IDataSource *ds);
 
 protected:
-	bool nameToIndex(const Std::string &name, uint32 &index);
+	bool nameToIndex(const Std::string &name, uint32 &index) const;
 
-	IDataSource *ds;
-	uint32 count;
+	IDataSource *_ds;
+	uint32 _count;
 
 private:
 	uint32 getOffset(uint32 index);

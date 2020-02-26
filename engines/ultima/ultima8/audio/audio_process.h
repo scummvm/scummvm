@@ -34,34 +34,33 @@ namespace Ultima8 {
 
 class AudioSample;
 
-class AudioProcess :
-	public Process {
+class AudioProcess : public Process {
+public:
 	struct SampleInfo {
-		int32       sfxnum;
-		int32       priority;
-		ObjId       objid;
-		int32       loops;
-		int32       channel;
-		Std::string barked;
-		uint32      curspeech_start, curspeech_end;
-		uint32      pitch_shift;    // 0x10000 is normal
-		uint16      volume;         // 0-256
-		int16       lvol;
-		int16       rvol;
+		int32       _sfxNum;
+		int32       _priority;
+		ObjId       _objId;
+		int32       _loops;
+		int32       _channel;
+		Std::string _barked;
+		uint32      _curSpeechStart, _curSpeechEnd;
+		uint32      _pitchShift;    // 0x10000 is normal
+		uint16      _volume;         // 0-256
+		int16       _lVol;
+		int16       _rVol;
 
-		SampleInfo() : sfxnum(-1) { }
+		SampleInfo() : _sfxNum(-1) { }
 		SampleInfo(int32 s, int32 p, ObjId o, int32 l, int32 c, uint32 ps, uint16 v, int16 lv, int16 rv) :
-			sfxnum(s), priority(p), objid(o), loops(l), channel(c),
-			pitch_shift(ps), volume(v), lvol(lv), rvol(rv) { }
-		SampleInfo(Std::string &b, int32 shpnum, ObjId o, int32 c,
-		           uint32 s, uint32 e, uint32 ps, uint16 v, int16 lv, int16 rv) :
-			sfxnum(-1), priority(shpnum), objid(o), loops(0), channel(c), barked(b),
-			curspeech_start(s), curspeech_end(e), pitch_shift(ps), volume(v),
-			lvol(lv), rvol(rv) { }
+			_sfxNum(s), _priority(p), _objId(o), _loops(l), _channel(c),
+			_pitchShift(ps), _volume(v), _lVol(lv), _rVol(rv) { }
+		SampleInfo(const Std::string &b, int32 shpnum, ObjId o, int32 c,
+				   uint32 s, uint32 e, uint32 ps, uint16 v, int16 lv, int16 rv) :
+			_sfxNum(-1), _priority(shpnum), _objId(o), _loops(0), _channel(c), _barked(b),
+			_curSpeechStart(s), _curSpeechEnd(e), _pitchShift(ps), _volume(v),
+			_lVol(lv), _rVol(rv) { }
 	};
 
-	Std::list<SampleInfo>   sample_info;
-
+	Std::list<SampleInfo> _sampleInfo;
 public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -71,7 +70,7 @@ public:
 
 	//! Get the current instance of the Audio Processes
 	static AudioProcess *get_instance() {
-		return the_audio_process;
+		return _theAudioProcess;
 	}
 
 	INTRINSIC(I_playSFX);
@@ -80,39 +79,34 @@ public:
 	INTRINSIC(I_setVolumeSFX);
 	INTRINSIC(I_stopSFX);
 
-	static void ConCmd_listSFX(const Console::ArgvType &argv);
-	static void ConCmd_stopSFX(const Console::ArgvType &argv);
-	static void ConCmd_playSFX(const Console::ArgvType &argv);
-
-
 	void run() override;
 
-	void playSFX(int sfxnum, int priority, ObjId objid, int loops,
-	             bool no_duplicates, uint32 pitch_shift,
-	             uint16 volume, int16 lvol, int16 rvol);
+	void playSFX(int sfxNum, int priority, ObjId objId, int loops,
+				 bool no_duplicates, uint32 pitchShift,
+				 uint16 volume, int16 lVol, int16 rVol);
 
-	void playSFX(int sfxnum, int priority, ObjId objid, int loops,
-	             bool no_duplicates = false, uint32 pitch_shift = 0x10000,
-	             uint16 volume = 0x80) {
-		playSFX(sfxnum, priority, objid, loops, no_duplicates, pitch_shift, volume, -1, -1);
+	void playSFX(int sfxNum, int priority, ObjId objId, int loops,
+				 bool no_duplicates = false, uint32 pitchShift = 0x10000,
+				 uint16 volume = 0x80) {
+		playSFX(sfxNum, priority, objId, loops, no_duplicates, pitchShift, volume, -1, -1);
 	}
 
-	void stopSFX(int sfxnum, ObjId objid);
-	bool isSFXPlaying(int sfxnum);
-	void setVolumeSFX(int sfxnum, uint8 volume);
+	void stopSFX(int sfxNum, ObjId objId);
+	bool isSFXPlaying(int sfxNum);
+	void setVolumeSFX(int sfxNum, uint8 volume);
 
-	bool playSpeech(Std::string &barked, int shapenum, ObjId objid,
-	                uint32 pitch_shift = 0x10000, uint16 volume = 256);
-	void stopSpeech(Std::string &barked, int shapenum, ObjId objid);
-	bool isSpeechPlaying(Std::string &barked, int shapenum);
+	bool playSpeech(const Std::string &barked, int shapenum, ObjId objId,
+					uint32 pitchShift = 0x10000, uint16 volume = 256);
+	void stopSpeech(const Std::string &barked, int shapenum, ObjId objId);
+	bool isSpeechPlaying(const Std::string &barked, int shapenum);
 
 	//! get length (in milliseconds) of speech
-	uint32 getSpeechLength(Std::string &barked, int shapenum) const;
+	uint32 getSpeechLength(const Std::string &barked, int shapenum) const;
 
 	//! play a sample (without storing a SampleInfo)
 	//! returns channel sample is played on, or -1
 	int playSample(AudioSample *sample, int priority, int loops,
-	               uint32 pitch_shift = 0x10000, int16 lvol = 256, int16 rvol = 256);
+				   uint32 pitchShift = 0x10000, int16 lVol = 256, int16 rVol = 256);
 
 	//! pause all currently playing samples
 	void pauseAllSamples();
@@ -122,23 +116,20 @@ public:
 	//! stop all samples except speech
 	void stopAllExceptSpeech();
 
-	// AudioProcess::playSound console command
-	//static void ConCmd_playSound(const Console::ArgvType &argv);
-
 	bool loadData(IDataSource *ids, uint32 version);
 
 private:
 	void saveData(ODataSource *ods) override;
-	uint32 paused;
+	uint32 _paused;
 
 	//! play the next speech sample for the text in this SampleInfo
 	//! note: si is reused if successful
 	//! returns true if there was speech left to play, or false if finished
 	bool continueSpeech(SampleInfo &si);
 
-	bool calculateSoundVolume(ObjId objid, int16 &lvol, int16 &rvol) const;
+	bool calculateSoundVolume(ObjId objId, int16 &lVol, int16 &rVol) const;
 
-	static AudioProcess    *the_audio_process;
+	static AudioProcess *_theAudioProcess;
 };
 
 } // End of namespace Ultima8

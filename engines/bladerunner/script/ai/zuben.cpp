@@ -238,15 +238,15 @@ void AIScriptZuben::ClickedByPlayer() {
 	// return false;
 }
 
-void AIScriptZuben::EnteredScene(int sceneId) {
+void AIScriptZuben::EnteredSet(int setId) {
 	//return false;
 }
 
-void AIScriptZuben::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptZuben::OtherAgentEnteredThisSet(int otherActorId) {
 	//return false;
 }
 
-void AIScriptZuben::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptZuben::OtherAgentExitedThisSet(int otherActorId) {
 	//return false;
 }
 
@@ -656,7 +656,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 					_animationFrame = _animationLoopFrameMin;
 					_animationLoopDirection = 1;
 				}
-				_animationLoopCounter++;
+				++_animationLoopCounter;
 			} else {
 				_animationFrame += _animationLoopDirection;
 				_animationLoopLength = 0;
@@ -695,7 +695,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			}
 		} else {
 			*animation = 418;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= 24) {
 				_animationFrame = 5;
 			}
@@ -705,7 +705,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 399;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -713,7 +713,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 391;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -721,7 +721,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 400;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -729,7 +729,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 392;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -737,7 +737,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 396;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02PotDodgeCheck) {
@@ -750,7 +750,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 397;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 0;
@@ -759,7 +759,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 388;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -767,7 +767,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 398;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 8) {
 			int sentenceId;
 			if (Random_Query(1, 2) == 1) {
@@ -798,7 +798,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 403;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			if (Actor_Query_Goal_Number(kActorZuben) == 99) {
 				_animationFrame = 0;
@@ -816,7 +816,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 404;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			if (Actor_Query_Goal_Number(kActorZuben) == 99) {
 				_animationFrame = 0;
@@ -834,7 +834,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 389;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			if (Actor_Query_Goal_Number(kActorZuben) == 99) {
 				_animationFrame = 0;
@@ -852,7 +852,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = 390;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			if (Actor_Query_Goal_Number(kActorZuben) == 99) {
 				_animationFrame = 0;
@@ -870,7 +870,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 405;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 7) {
 			Sound_Play(kSfxZUBDEAD1, 30, 0, 0, 50);
 		}
@@ -886,7 +886,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = 393;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 7) {
 			Sound_Play(kSfxZUBDEAD1, 30, 0, 0, 50);
 		}
@@ -917,7 +917,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 17:
 		*animation = 409;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -925,7 +925,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 18:
 		*animation = 410;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
@@ -935,7 +935,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 19:
 		*animation = 411;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
@@ -945,7 +945,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 20:
 		*animation = 412;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
@@ -955,7 +955,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 21:
 		*animation = 413;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
@@ -965,7 +965,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 22:
 		*animation = 414;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
@@ -975,7 +975,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 23:
 		*animation = 415;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
@@ -985,7 +985,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 24:
 		*animation = 416;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
@@ -995,7 +995,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 25:
 		*animation = 417;
-		 _animationFrame++;
+		 ++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
@@ -1006,7 +1006,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 	case 26:
 		Actor_Set_Frame_Rate_FPS(kActorZuben, -1);
 		*animation = 419;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			// Time for McCoy to react and avoid tipping pot
 			Actor_Set_Frame_Rate_FPS(kActorZuben, -2);
@@ -1019,7 +1019,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 	case 27:  // Opening the door
 		Actor_Set_Frame_Rate_FPS(kActorZuben, -1);
 		*animation = 420;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 5) {
 			Overlay_Play("ct02over", 1, false, true, 0);
 		}
@@ -1036,7 +1036,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 28:
 		*animation = 421;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 1) {
 			Sound_Play(kSfxZUBLAND1, 80, 0, 0, 50);
 		}

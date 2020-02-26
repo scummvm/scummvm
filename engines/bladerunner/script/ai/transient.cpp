@@ -126,15 +126,15 @@ void AIScriptTransient::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTransient::EnteredScene(int sceneId) {
+void AIScriptTransient::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTransient::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTransient::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTransient::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTransient::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -226,7 +226,7 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 499;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(499)) {
 			_animationFrame = 0;
 		} else {
@@ -238,21 +238,21 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 1:
 		*animation = 487;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(487)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 2:
 		*animation = 500;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(500)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 3:
 		*animation = 501;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(501)) {
 			*animation = 500;
 			_animationState = 2;
@@ -261,7 +261,7 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 4:
 		*animation = 502;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(502)) {
 			*animation = 500;
 			_animationState = 2;
@@ -270,7 +270,7 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 5:
 		*animation = 503;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(503)) {
 			*animation = 500;
 			_animationState = 2;
@@ -279,14 +279,14 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 6:
 		*animation = 491;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(491)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 7:
 		*animation = 492;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(492)) {
 			_animationState = 6;
 			_animationFrame = 0;
@@ -294,7 +294,7 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 8:
 		*animation = 493;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(493)) {
 			_animationState = 6;
 			_animationFrame = 0;
@@ -302,7 +302,7 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 9:
 		*animation = 494;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(494)) {
 			_animationState = 6;
 			_animationFrame = 0;
@@ -310,7 +310,7 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 10:
 		*animation = 496;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(496)) {
 			_animationState = 6;
 			_animationFrame = 0;
@@ -318,7 +318,7 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 11:
 		*animation = 495;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(495)) {
 			Actor_Set_Frame_Rate_FPS(kActorTransient, 8);
 			_animationState = 12;
@@ -331,7 +331,7 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 14:
 		*animation = 489;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(489)) {
 			Actor_Set_Goal_Number(kActorTransient, 3);
 			_animationState = 15;
@@ -346,14 +346,14 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 16:
 		*animation = 504;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(504) - 1) {
 			_animationFrame = 0;
 		}
 		break;
 	case 17:
 		*animation = 505;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(505) - 1) {
 			*animation = 497;
 			_animationFrame = 0;
@@ -367,14 +367,14 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 18:
 		*animation = 491;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame - 1 == 4) {
 			_animationState = 19;
 		}
 		break;
 	case 19:
 		*animation = 491;
-		_animationFrame--;
+		--_animationFrame;
 		if (_animationFrame + 1 == 4) {
 			_animationState = 18;
 		}

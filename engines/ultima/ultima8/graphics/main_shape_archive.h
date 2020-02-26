@@ -41,17 +41,13 @@ public:
 
 	MainShapeArchive(uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(id_, pal_, format_), typeFlags(0), animdat(0) { }
+		: ShapeArchive(id_, pal_, format_), _typeFlags(0), _animDat(0) { }
 	MainShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(af, id_, pal_, format_), typeFlags(0), animdat(0) { }
+		: ShapeArchive(af, id_, pal_, format_), _typeFlags(0), _animDat(0) { }
 	MainShapeArchive(IDataSource *ds, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(ds, id_, pal_, format_), typeFlags(0), animdat(0) { }
-	MainShapeArchive(const Std::string &path, uint16 id_,
-	                 Palette *pal_ = 0,
-	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(path, id_, pal_, format_), typeFlags(0), animdat(0) { }
+		: ShapeArchive(ds, id_, pal_, format_), _typeFlags(0), _animDat(0) { }
 
 	~MainShapeArchive() override;
 
@@ -63,8 +59,8 @@ public:
 	AnimAction *getAnim(uint32 shape, uint32 action) const;
 
 protected:
-	TypeFlags *typeFlags;
-	AnimDat *animdat;
+	TypeFlags *_typeFlags;
+	AnimDat *_animDat;
 };
 
 } // End of namespace Ultima8

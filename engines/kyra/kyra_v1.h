@@ -256,7 +256,6 @@ protected:
 		return go();
 	}
 
-	::GUI::Debugger *getDebugger() override;
 	bool hasFeature(EngineFeature f) const override;
 	void pauseEngineIntern(bool pause) override;
 
@@ -267,7 +266,6 @@ protected:
 	StaticResource *_staticres;
 	TimerManager *_timer;
 	EMCInterpreter *_emc;
-	Debugger *_debugger;
 
 	// input
 	void setupKeyMap();
@@ -390,13 +388,11 @@ protected:
 	// save/load
 	int _gameToLoad;
 
-	uint32 _lastAutosave;
-	void checkAutosave();
-
 	bool _isSaveAllowed;
 
 	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
 	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	virtual int getAutosaveSlot() const override { return 999; }
 
 	const char *getSavegameFilename(int num);
 	Common::String _savegameFilename;
@@ -426,7 +422,9 @@ protected:
 
 	void loadGameStateCheck(int slot);
 	Common::Error loadGameState(int slot) override = 0;
-	Common::Error saveGameState(int slot, const Common::String &desc) override { return saveGameStateIntern(slot, desc.c_str(), 0); }
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override {
+		return saveGameStateIntern(slot, desc.c_str(), 0);
+	}
 	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header, bool checkID = true);

@@ -207,7 +207,7 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($THEENTITYWITHID[0]);
 		g_lingo->codeInt($THEENTITYWITHID[1]);
 		$$ = $expr; }
-	// the <field> of menuItem <expr>" of menu <expr>
+	// the <field> of menuItem <expr> of menu <expr>
 	| tSET THEMENUITEMENTITY simpleexpr tOF ID simpleexpr tTO expr	{
 		if (!$ID->equalsIgnoreCase("menu")) {
 			warning("LEXER: keyword 'menu' expected");
@@ -252,7 +252,7 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwith tEQ expr[init] end tTO expr[finish] end stmtlist end[end3] tENDREPEAT {
+	| repeatwith tEQ begin[init] expr end tTO expr[finish] end stmtlist end[end3] tENDREPEAT {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
 		WRITE_UINT32(&init, $init - $repeatwith);
 		WRITE_UINT32(&finish, $finish - $repeatwith);
@@ -269,7 +269,7 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwith tEQ expr[init] end tDOWN tTO expr[finish] end stmtlist end[end3] tENDREPEAT {
+	| repeatwith tEQ begin[init] expr end tDOWN tTO expr[finish] end stmtlist end[end3] tENDREPEAT {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
 		WRITE_UINT32(&init, $init - $repeatwith);
 		WRITE_UINT32(&finish, $finish - $repeatwith);
@@ -281,7 +281,7 @@ stmt: stmtoneliner
 		(*g_lingo->_currentScript)[$repeatwith + 3] = body;		/* body of loop */
 		(*g_lingo->_currentScript)[$repeatwith + 4] = inc;		/* increment */
 		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
-	| repeatwith tIN expr[list] end stmtlist end[end3] tENDREPEAT {
+	| repeatwith tIN begin[list] expr end stmtlist end[end3] tENDREPEAT {
 		inst list = 0, body = 0, end = 0;
 		WRITE_UINT32(&list, $list - $repeatwith);
 		WRITE_UINT32(&body, $stmtlist - $repeatwith);

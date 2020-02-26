@@ -42,12 +42,12 @@ public:
 	           const uint8 special[256] = 0, ConvertShapeFrame *prev = 0);
 	~ShapeFrame();
 
-	uint32              compressed;
-	int32               width, height;
-	int32               xoff, yoff;
+	uint32              _compressed;
+	int32               _width, _height;
+	int32               _xoff, _yoff;
 
-	uint32              *line_offsets;      // Note these are offsets into rle_data
-	const uint8         *rle_data;
+	uint32              *_line_offsets;      // Note these are offsets into rle_data
+	const uint8         *_rle_data;
 
 	bool hasPoint(int32 x, int32 y) const;  // Check to see if a point is in the frame
 

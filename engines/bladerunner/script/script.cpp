@@ -297,9 +297,9 @@ void ScriptBase::Actor_Says(int actorId, int sentenceId, int animationMode) {
 }
 
 /**
-* Actor actorId says the sentenceId, and then
-* if pause > 0.0f there will be a delay for "pause" seconds.
-* pause can be 0.0f
+* Actor actorId speaks the quote of sentenceId.
+* If pause > 0.0f, there will be a delay for "pause" seconds after the spoken sentence.
+* Pause can be 0.0f which can be used to simulate a talking actor being interrupted by another actor.
 */
 void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause, int animationMode) {
 	debugC(kDebugScript, "Actor_Says_With_Pause(%d, %d, %f, %d)", actorId, sentenceId, pause, animationMode);
@@ -1091,9 +1091,9 @@ int ScriptBase::Random_Query(int min, int max) {
 	return _vm->_rnd.getRandomNumberRng(min, max);
 }
 
-void ScriptBase::Sound_Play(int id, int volume, int panFrom, int panTo, int priority) {
-	debugC(6, kDebugScript, "Sound_Play(%d, %d, %d, %d, %d)", id, volume, panFrom, panTo, priority);
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(id), volume, panFrom, panTo, priority);
+void ScriptBase::Sound_Play(int id, int volume, int panStart, int panEnd, int priority) {
+	debugC(6, kDebugScript, "Sound_Play(%d, %d, %d, %d, %d)", id, volume, panStart, panEnd, priority);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(id), volume, panStart, panEnd, priority);
 }
 
 void ScriptBase::Sound_Play_Speech_Line(int actorId, int sentenceId, int volume, int a4, int priority) {

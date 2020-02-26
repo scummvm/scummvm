@@ -36,17 +36,17 @@
 #include "graphics/thumbnail.h"
 
 const char *MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
-	static char buffer[100];
+	static char buffer[200];
 
-	snprintf(buffer, 200, "%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
+	snprintf(buffer, sizeof(buffer), "%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
 
 	return buffer;
 }
 
 const char *MetaEngine::getSavegamePattern(const char *target) const {
-	static char buffer[100];
+	static char buffer[200];
 
-	snprintf(buffer, 200, "%s.s##", target == nullptr ? getEngineId() : target);
+	snprintf(buffer, sizeof(buffer), "%s.s##", target == nullptr ? getEngineId() : target);
 
 	return buffer;
 }
@@ -141,7 +141,8 @@ bool MetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesUseExtendedFormat);
 }
 
-void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc) {
+void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
+		Common::String desc, bool isAutosave) {
 	ExtendedSavegameHeader header;
 
 	uint headerPos = saveFile->pos();
@@ -163,8 +164,10 @@ void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playti
 
 	saveFile->writeByte(desc.size());
 	saveFile->writeString(desc);
+	saveFile->writeByte(isAutosave);
 
 	saveScreenThumbnail(saveFile);
+
 	saveFile->writeUint32LE(headerPos);	// Store where the header starts
 
 	saveFile->finalize();
@@ -243,6 +246,9 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 	if (header->description.empty())
 		header->description = header->saveName;
 
+	// Get the flag for whether it's an autosave
+	header->isAutosave = (header->version >= 4) ? in->readByte() : false;
+
 	// Get the thumbnail
 	if (!Graphics::loadThumbnail(*in, header->thumbnail, skipThumbnail)) {
 		in->seek(oldPos, SEEK_SET); // Rewind the file
@@ -287,6 +293,8 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 				parseSavegameHeader(&header, &desc);
 
 				desc.setSaveSlot(slotNum);
+				if (slotNum == getAutosaveSlot())
+					desc.setWriteProtectedFlag(true);
 
 				saveList.push_back(desc);
 			}
@@ -297,6 +305,36 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
+	SaveStateList saveList = listSaves(target);
+	int autosaveSlot = ConfMan.getInt("autosave_period") ? getAutosaveSlot() : -1;
+	if (!saveMode || autosaveSlot == -1)
+		return saveList;
+
+	// Check to see if an autosave is present
+	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
+		int slot = it->getSaveSlot();
+		if (slot == autosaveSlot) {
+			// It has an autosave
+			it->setWriteProtectedFlag(true);
+			return saveList;
+		}
+	}
+
+	// No autosave yet. We want to add a dummy one in so that it can be marked as'
+	// write protected, and thus be prevented from being saved in
+	SaveStateDescriptor desc;
+	desc.setDescription(_("Autosave"));
+	desc.setSaveSlot(autosaveSlot);
+	desc.setWriteProtectedFlag(true);
+
+	saveList.push_back(desc);
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+
+	return saveList;
+}
+
 
 void MetaEngine::removeSaveState(const char *target, int slot) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
@@ -325,6 +363,9 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 
 		desc.setSaveSlot(slot);
 		desc.setThumbnail(header.thumbnail);
+		desc.setAutosave(header.isAutosave);
+		if (slot == getAutosaveSlot())
+			desc.setWriteProtectedFlag(true);
 
 		return desc;
 	}

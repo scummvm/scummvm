@@ -256,15 +256,15 @@ void AIScriptKlein::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptKlein::EnteredScene(int sceneId) {
+void AIScriptKlein::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptKlein::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptKlein::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptKlein::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptKlein::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -355,7 +355,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		    || Actor_Query_Goal_Number(kActorKlein) == kGoalKleinMovingInLab02
 		) {
 			*animation = kModelAnimationKleinWorkingOnInstruments;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinWorkingOnInstruments)) {
 				_animationFrame = 0;
 			}
@@ -363,7 +363,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		           && Actor_Query_Goal_Number(kActorKlein) == kGoalKleinGotoLabSpeaker
 		) {
 			*animation = kModelAnimationKleinStandingIdle;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinStandingIdle)) {
 				_animationFrame = 0;
 				if (Random_Query(1, 10) == 1) {
@@ -374,7 +374,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 			if (Game_Flag_Query(kFlagKleinAnimation3)
 			    && Actor_Query_Goal_Number(kActorKlein) == kGoalKleinGotoLabSpeaker
 			) {
-				_animationFrame--;
+				--_animationFrame;
 				if (_animationFrame < 0) {
 					_animationFrame = 0;
 				}
@@ -407,21 +407,21 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 1:
 		*animation = kModelAnimationKleinWalking;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 2:
 		*animation = kModelAnimationKleinTalkSmallLeftHandMove;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkSmallLeftHandMove)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 3:
 		*animation = kModelAnimationKleinTalkRightHandTouchFace;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkRightHandTouchFace)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -430,7 +430,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 4:
 		*animation = kModelAnimationKleinTalkWideHandMotion;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkWideHandMotion)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -439,7 +439,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 5:
 		*animation = kModelAnimationKleinTalkSuggestOrAsk;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkSuggestOrAsk)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -448,7 +448,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 6:
 		*animation = kModelAnimationKleinTalkDismissive;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkDismissive)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -457,7 +457,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 7:
 		*animation = kModelAnimationKleinTalkRaisingBothHands;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame>= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkRaisingBothHands)) {
 			_animationState = 2;
 			_animationFrame = 0;

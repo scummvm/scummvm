@@ -30,42 +30,42 @@ namespace Ultima8 {
 
 // Base Error Code type
 struct ECode {
-	int32   error;
+	int32 _error;
 
-	ECode() : error(0) { }
-	ECode(int32 _e) : error(_e) { }
+	ECode() : _error(0) { }
+	ECode(int32 _e) : _error(_e) { }
 
 	bool failed() const {
-		return error != 0;
+		return _error != 0;
 	}
 	bool succeded() const {
-		return error == 0;
+		return _error == 0;
 	}
 
 	ECode &operator = (int32 &_e) {
-		error = _e;
+		_error = _e;
 		return (*this);
 	}
 
 	ECode &operator = (ECode &_e) {
-		error = _e.error;
+		_error = _e._error;
 		return (*this);
 	}
 
 	bool operator != (int32 &_e) {
-		return error != _e;
+		return _error != _e;
 	}
 
 	friend bool operator != (int32 &_e, ECode &_e2) {
-		return _e2.error != _e;
+		return _e2._error != _e;
 	}
 
 	bool operator == (int32 &_e) {
-		return error == _e;
+		return _error == _e;
 	}
 
 	friend bool operator == (int32 &_e, ECode &_e2) {
-		return _e2.error == _e;
+		return _e2._error == _e;
 	}
 };
 
@@ -74,10 +74,10 @@ struct ECode {
 // Helper Macros
 //
 
-// Checks to see if a return code is an error
+// Checks to see if a return code is an _error
 #define P_FAILED(e) ((e)!=0)
 
-// Checks to see if an error code indicates success
+// Checks to see if an _error code indicates success
 #define P_SUCCEDED(e) ((e)==0)
 
 

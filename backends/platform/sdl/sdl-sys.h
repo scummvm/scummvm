@@ -278,33 +278,6 @@
 // ease the transition. This is sometimes dangerous because the values changed
 // too!
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-
-// Type names which changed between SDL 1.2 and SDL 2.
-#define SDLKey     SDL_Keycode
-#define SDLMod     SDL_Keymod
-#define SDL_keysym SDL_Keysym
-
-// Key code constants which got renamed.
-#define SDLK_SCROLLOCK SDLK_SCROLLLOCK
-#define SDLK_NUMLOCK   SDLK_NUMLOCKCLEAR
-#define SDLK_LSUPER    SDLK_LGUI
-#define SDLK_RSUPER    SDLK_RGUI
-#define SDLK_PRINT     SDLK_PRINTSCREEN
-#define SDLK_COMPOSE   SDLK_APPLICATION
-#define SDLK_KP0       SDLK_KP_0
-#define SDLK_KP1       SDLK_KP_1
-#define SDLK_KP2       SDLK_KP_2
-#define SDLK_KP3       SDLK_KP_3
-#define SDLK_KP4       SDLK_KP_4
-#define SDLK_KP5       SDLK_KP_5
-#define SDLK_KP6       SDLK_KP_6
-#define SDLK_KP7       SDLK_KP_7
-#define SDLK_KP8       SDLK_KP_8
-#define SDLK_KP9       SDLK_KP_9
-
-// Meta key constants which got renamed.
-#define KMOD_META KMOD_GUI
-
 // SDL surface flags which got removed.
 #define SDL_SRCCOLORKEY 0
 #define SDL_SRCALPHA    0

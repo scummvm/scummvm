@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -38,7 +37,6 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -54,16 +52,16 @@ CombatProcess::CombatProcess() : Process() {
 
 CombatProcess::CombatProcess(Actor *actor_) {
 	assert(actor_);
-	item_num = actor_->getObjId();
+	_itemNum = actor_->getObjId();
 
-	type = 0x00F2; // CONSTANT !
-	target = 0;
-	fixedTarget = 0;
-	combatmode = CM_WAITING;
+	_type = 0x00F2; // CONSTANT !
+	_target = 0;
+	_fixedTarget = 0;
+	_combatMode = CM_WAITING;
 }
 
 void CombatProcess::terminate() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (a)
 		a->clearActorFlag(Actor::ACT_INCOMBAT);
 
@@ -76,25 +74,25 @@ void CombatProcess::run() {
 	// next to them, or maybe only when you are attacking them.
 	// They should not try to approach.
 
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (!(a->getFlags() & Item::FLG_FASTAREA))
 		return;
 
-	Actor *t = getActor(target);
+	Actor *t = getActor(_target);
 
 	if (!t || !isValidTarget(t)) {
-		// no target? try to find one
+		// no _target? try to find one
 
-		target = seekTarget();
+		_target = seekTarget();
 
-		if (!target) {
+		if (!_target) {
 			waitForTarget();
 			return;
 		}
 
-		pout << "[COMBAT " << item_num << "] target found: "
-		     << target << Std::endl;
-		combatmode = CM_WAITING;
+		pout << "[COMBAT " << _itemNum << "] _target found: "
+		     << _target << Std::endl;
+		_combatMode = CM_WAITING;
 	}
 
 	int targetdir = getTargetDirection();
@@ -104,9 +102,9 @@ void CombatProcess::run() {
 	}
 
 	if (inAttackRange()) {
-		combatmode = CM_ATTACKING;
+		_combatMode = CM_ATTACKING;
 
-		pout << "[COMBAT " << item_num << "] target (" << target
+		pout << "[COMBAT " << _itemNum << "] _target (" << _target
 		     << ") in range" << Std::endl;
 
 		bool hasidle1 = a->hasAnim(Animation::idle1);
@@ -148,40 +146,40 @@ void CombatProcess::run() {
 		}
 
 		return;
-	} else if (combatmode != CM_PATHFINDING) {
+	} else if (_combatMode != CM_PATHFINDING) {
 		// not in range? See if we can get in range
 
-		Process *pfproc = new PathfinderProcess(a, target, true);
+		Process *pfproc = new PathfinderProcess(a, _target, true);
 
 		waitFor(Kernel::get_instance()->addProcess(pfproc));
-		combatmode = CM_PATHFINDING;
+		_combatMode = CM_PATHFINDING;
 		return;
 	}
 
-	combatmode = CM_WAITING;
+	_combatMode = CM_WAITING;
 	waitForTarget();
 }
 
 ObjId CombatProcess::getTarget() {
-	Actor *t = getActor(target);
+	Actor *t = getActor(_target);
 
 	if (!t || !isValidTarget(t))
-		target = 0;
+		_target = 0;
 
-	return target;
+	return _target;
 }
 
 void CombatProcess::setTarget(ObjId newtarget) {
-	if (fixedTarget == 0) {
-		fixedTarget = newtarget; // want to prevent seekTarget from changing it
+	if (_fixedTarget == 0) {
+		_fixedTarget = newtarget; // want to prevent seekTarget from changing it
 	}
 
-	target = newtarget;
+	_target = newtarget;
 }
 
 bool CombatProcess::isValidTarget(Actor *target_) {
 	assert(target_);
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
 	// don't target_ self
@@ -207,20 +205,20 @@ bool CombatProcess::isValidTarget(Actor *target_) {
 bool CombatProcess::isEnemy(Actor *target_) {
 	assert(target_);
 
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
 	return ((a->getEnemyAlignment() & target_->getAlignment()) != 0);
 }
 
 ObjId CombatProcess::seekTarget() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	if (!a) return 0; // uh oh
 
-	if (fixedTarget) {
-		Actor *t = getActor(fixedTarget);
+	if (_fixedTarget) {
+		Actor *t = getActor(_fixedTarget);
 		if (t && isValidTarget(t))
-			return fixedTarget; // no need to search
+			return _fixedTarget; // no need to search
 	}
 
 	UCList itemlist(2);
@@ -232,7 +230,7 @@ ObjId CombatProcess::seekTarget() {
 		Actor *t = getActor(itemlist.getuint16(i));
 
 		if (t && isValidTarget(t) && isEnemy(t)) {
-			// found target
+			// found _target
 			return itemlist.getuint16(i);
 		}
 	}
@@ -242,14 +240,14 @@ ObjId CombatProcess::seekTarget() {
 }
 
 int CombatProcess::getTargetDirection() {
-	Actor *a = getActor(item_num);
-	Actor *t = getActor(target);
+	Actor *a = getActor(_itemNum);
+	Actor *t = getActor(_target);
 
 	return a->getDirToItemCentre(*t);
 }
 
 void CombatProcess::turnToDirection(int direction) {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	int curdir = a->getDir();
 	int step = 1;
 	if ((curdir - direction + 8) % 8 < 4) step = -1;
@@ -278,12 +276,12 @@ void CombatProcess::turnToDirection(int direction) {
 }
 
 bool CombatProcess::inAttackRange() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = 0;
-	if (shapeinfo) mi = shapeinfo->monsterinfo;
+	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
-	if (mi && mi->ranged)
+	if (mi && mi->_ranged)
 		return true; // ranged attacks (ghost's fireball) always in range
 
 	AnimationTracker tracker;
@@ -295,18 +293,18 @@ bool CombatProcess::inAttackRange() {
 	}
 
 	ObjId hit = tracker.hitSomething();
-	if (hit == target) return true;
+	if (hit == _target) return true;
 
 	return false;
 }
 
 void CombatProcess::waitForTarget() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = 0;
-	if (shapeinfo) mi = shapeinfo->monsterinfo;
+	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
-	if (mi && mi->shifter && a->getMapNum() != 43 && (getRandom() % 2) == 0) {
+	if (mi && mi->_shifter && a->getMapNum() != 43 && (getRandom() % 2) == 0) {
 		// changelings (except the ones at the U8 endgame pentagram)
 
 		// shift into a tree if nobody is around
@@ -326,25 +324,25 @@ void CombatProcess::waitForTarget() {
 	}
 }
 
-void CombatProcess::dumpInfo() {
+void CombatProcess::dumpInfo() const {
 	Process::dumpInfo();
-	pout << "Target: " << target << Std::endl;
+	pout << "Target: " << _target << Std::endl;
 }
 
 void CombatProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(target);
-	ods->write2(fixedTarget);
-	ods->write1(static_cast<uint8>(combatmode));
+	ods->write2(_target);
+	ods->write2(_fixedTarget);
+	ods->write1(static_cast<uint8>(_combatMode));
 }
 
 bool CombatProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	target = ids->read2();
-	fixedTarget = ids->read2();
-	combatmode = static_cast<CombatMode>(ids->read1());
+	_target = ids->read2();
+	_fixedTarget = ids->read2();
+	_combatMode = static_cast<CombatMode>(ids->read1());
 
 	return true;
 }

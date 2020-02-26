@@ -36,7 +36,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	BindGump(istring *b, Gump *g);
-	~BindGump(void) override;
+	~BindGump() override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -55,8 +55,8 @@ public:
 	};
 protected:
 	void saveData(ODataSource *ods) override;
-	istring *binding;
-	Gump *invoker;
+	istring *_binding;
+	Gump *_invoker;
 };
 
 } // End of namespace Ultima8

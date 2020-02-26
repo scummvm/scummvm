@@ -25,7 +25,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/kernel/hid_keys.h"
-#include "ultima/ultima8/kernel/joystick.h"
+#include "ultima/ultima8/misc/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,11 +34,9 @@ namespace Ultima8 {
 class HIDManager {
 private:
 	static HIDManager *_hidManager;
-	Std::vector<Console::ArgvType *> _commands;
-	typedef Common::HashMap<uint32, Console::ArgvType *> Bindings;
+	Std::vector<Debugger::ArgvType *> _commands;
+	typedef Common::HashMap<uint32, Debugger::ArgvType *> Bindings;
 	Bindings _bindings;
-
-	void listBindings();
 public:
 	HIDManager();
 	~HIDManager();
@@ -47,6 +45,8 @@ public:
 	static HIDManager *get_instance() {
 		return _hidManager;
 	}
+
+	void listBindings();
 
 	//! execute the Console command associated with the event
 	//! \param key a HID_KEY used to find an appropriate Console command
@@ -66,27 +66,15 @@ public:
 	//! loads a single keybinding
 	//! \param control a key or button to bind
 	//! \param bindingName name of the HIDBinding
-	void bind(const istring &control, const Console::ArgvType &argv);
+	void bind(const istring &control, const Debugger::ArgvType &argv);
 
-	void bind(const istring &control, const Console::ArgsType &args);
-	void bind(HID_Key key, HID_Events event, const Console::ArgvType &argv);
-	void bind(HID_Key key, HID_Events event, const Console::ArgsType &args);
+	void bind(const istring &control, const Debugger::ArgsType &args);
+	void bind(HID_Key key, HID_Events event, const Debugger::ArgvType &argv);
+	void bind(HID_Key key, HID_Events event, const Debugger::ArgsType &args);
 
 	//! removes all controls to a HIDBinding or the binding to one specified key
 	//! \param bindingName name of a HIDBinding or the name of key
 	void unbind(const istring &control);
-
-	//! "bind" console command
-	static void ConCmd_bind(const Console::ArgvType &argv);
-
-	//! "unbind" console command
-	static void ConCmd_unbind(const Console::ArgvType &argv);
-
-	//! "listbinds" console command
-	static void ConCmd_listbinds(const Console::ArgvType &argv);
-
-	//! "save" console command
-	static void ConCmd_save(const Console::ArgvType &argv);
 };
 
 } // End of namespace Ultima8

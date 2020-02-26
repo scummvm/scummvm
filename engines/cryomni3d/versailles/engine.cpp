@@ -51,11 +51,15 @@ const FixedImageConfiguration CryOmni3DEngine_Versailles::kFixedImageConfigurati
 CryOmni3DEngine_Versailles::CryOmni3DEngine_Versailles(OSystem *syst,
         const CryOmni3DGameDescription *gamedesc) : CryOmni3DEngine(syst, gamedesc),
 	_mainPalette(nullptr), _cursorPalette(nullptr), _transparentPaletteMap(nullptr),
+	_transparentSrcStart(uint(-1)), _transparentSrcStop(uint(-1)), _transparentDstStart(uint(-1)),
+	_transparentDstStop(uint(-1)), _transparentNewStart(uint(-1)), _transparentNewStop(uint(-1)),
 	_currentPlace(nullptr), _currentWarpImage(nullptr), _fixedImage(nullptr),
 	_transitionAnimateWarp(true), _forceRedrawWarp(false), _forcePaletteUpdate(false),
 	_fadedPalette(false), _loadedSave(uint(-1)), _dialogsMan(this,
 	        getFeatures() & GF_VERSAILLES_AUDIOPADDING_YES),
-	_musicVolumeFactor(1.), _musicCurrentFile(nullptr),
+	_musicVolumeFactor(1.), _musicCurrentFile(nullptr), _omni3dSpeed(0),
+	_isPlaying(false), _isVisiting(false), _abortCommand(kAbortQuit),
+	_currentPlaceId(uint(-1)), _nextPlaceId(uint(-1)), _currentLevel(uint(-1)),
 	_countingDown(false), _countdownNextEvent(0) {
 }
 
@@ -1513,7 +1517,7 @@ void CryOmni3DEngine_Versailles::executeSeeAction(uint actionId) {
 		return;
 	}
 
-	const FixedImgCallback &cb = _imgScripts.getVal(actionId, nullptr);
+	const FixedImgCallback cb = _imgScripts.getVal(actionId, nullptr);
 	if (cb != nullptr) {
 		handleFixedImg(cb);
 	} else {

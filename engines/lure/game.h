@@ -43,7 +43,6 @@ enum GameState {GS_ERROR = 1, GS_TICK = 2, GS_TOCK = 4, GS_PROT = 8, GS_RESTART 
 
 class Game {
 private:
-	Debugger *_debugger;
 	bool _fastTextFlag, _soundFlag;
 	uint8 _state;
 	uint16 _tellCommands[MAX_TELL_COMMANDS * 3 + 1];
@@ -82,7 +81,6 @@ public:
 	bool &debugFlag() { return _debugFlag; }
 	bool fastTextFlag() { return _fastTextFlag; }
 	bool soundFlag() { return _soundFlag; }
-	Debugger &debugger() { return *_debugger; }
 
 	// Menu item support methods
 	void doDebugMenu();

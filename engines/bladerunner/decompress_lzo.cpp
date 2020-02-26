@@ -26,11 +26,11 @@ namespace BladeRunner {
 
 static inline uint32 decode_count(const uint8 **pp) {
 	uint32 v = 0;
-	for (; !**pp; (*pp)++)
+	for (; !**pp; ++(*pp))
 		v += 255;
 
 	v += **pp;
-	(*pp)++;
+	++(*pp);
 
 	return v;
 }

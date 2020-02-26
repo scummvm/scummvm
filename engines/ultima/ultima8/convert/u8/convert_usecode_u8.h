@@ -38,10 +38,10 @@ public:
 	typedef int DebugSymbol;
 	struct UsecodeHeader
 	{
-		uint32 maxOffset;
+		uint32 _maxOffset;
 	};
 	uint32 read4(IDataSource *) { return 0; }
-	uint32 curOffset;
+	uint32 _curOffset;
 
 	virtual const char* const *intrinsics()=0;
 	virtual const char* const *event_names()=0;
@@ -419,7 +419,7 @@ void ConvertUsecodeU8::readheader(IDataSource *ucfile, UsecodeHeader &uch, uint3
 	curOffset_ = 0;
 	#else
 	read4(ucfile); // unknown
-	uch.maxOffset = read4(ucfile) - 0x0C; // file size
+	uch._maxOffset = read4(ucfile) - 0x0C; // file size
 	read4(ucfile); // unknown
 	curOffset_ = 0;
 	#endif

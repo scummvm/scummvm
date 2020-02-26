@@ -84,16 +84,15 @@ const uint16 kScreenHeight = 200;
 class TeenAgentEngine : public Engine {
 public:
 	TeenAgentEngine(OSystem *system, const ADGameDescription *gd);
-	~TeenAgentEngine() override;
+	~TeenAgentEngine();
 
 	Common::Error run() override;
+	Common::String getSaveStateName(int slot) const override;
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return !_sceneBusy; }
 	bool hasFeature(EngineFeature f) const override;
-
-	GUI::Debugger *getDebugger() override { return console; }
 
 	void init();
 
@@ -159,7 +158,6 @@ public:
 	Inventory *inventory;
 	MusicPlayer *music;
 	Dialog *dialog;
-	Console *console;
 
 	void setMusic(byte id);
 

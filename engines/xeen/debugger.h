@@ -92,9 +92,9 @@ public:
 	Debugger(XeenEngine *vm);
 
 	/**
-	 * Updates the debugger window if active
+	 * Updates the debugger
 	 */
-	void update();
+	virtual void onFrame() override;
 };
 
 } // End of namespace Xeen

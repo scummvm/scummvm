@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
-
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -31,7 +30,6 @@
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -41,17 +39,18 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuickAvatarMoverProcess, Process)
 
-ProcId QuickAvatarMoverProcess::amp[6] = { 0, 0, 0, 0, 0, 0 };
-bool QuickAvatarMoverProcess::clipping = false;
-bool QuickAvatarMoverProcess::quarter = false;
+ProcId QuickAvatarMoverProcess::_amp[6] = { 0, 0, 0, 0, 0, 0 };
+bool QuickAvatarMoverProcess::_clipping = false;
+bool QuickAvatarMoverProcess::_quarter = false;
 
-QuickAvatarMoverProcess::QuickAvatarMoverProcess() : Process(1), dx(0), dy(0), dz(0), dir(0) {
+QuickAvatarMoverProcess::QuickAvatarMoverProcess() : Process(1), _dx(0), _dy(0), _dz(0), _dir(0) {
 }
 
-QuickAvatarMoverProcess::QuickAvatarMoverProcess(int x, int y, int z, int _dir) : Process(1), dx(x), dy(y), dz(z), dir(_dir) {
+QuickAvatarMoverProcess::QuickAvatarMoverProcess(int x, int y, int z, int dir) : Process(1),
+		_dx(x), _dy(y), _dz(z), _dir(dir) {
 	QuickAvatarMoverProcess::terminateMover(dir);
-	assert(dir < 6);
-	amp[dir] = getPid();
+	assert(_dir < 6);
+	_amp[_dir] = getPid();
 }
 
 QuickAvatarMoverProcess::~QuickAvatarMoverProcess() {
@@ -71,19 +70,19 @@ void QuickAvatarMoverProcess::run() {
 
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 
-	int32 dxv = this->dx;
-	int32 dyv = this->dy;
-	int32 dzv = this->dz;
+	int32 dxv = this->_dx;
+	int32 dyv = this->_dy;
+	int32 dzv = this->_dz;
 
 	for (int j = 0; j < 3; j++) {
-		dxv = this->dx;
-		dyv = this->dy;
-		dzv = this->dz;
+		dxv = this->_dx;
+		dyv = this->_dy;
+		dzv = this->_dz;
 
 		if (j == 1) dxv = 0;
 		else if (j == 2) dyv = 0;
 
-		if (quarter) {
+		if (_quarter) {
 			dxv /= 4;
 			dyv /= 4;
 			dzv /= 4;
@@ -92,21 +91,21 @@ void QuickAvatarMoverProcess::run() {
 		bool ok = false;
 
 		while (dxv || dyv || dzv) {
-			uint32 shapeFlags = avatar->getShapeInfo()->flags;
+			uint32 shapeFlags = avatar->getShapeInfo()->_flags;
 
-			if (!clipping || cm->isValidPosition(x + dxv, y + dyv, z + dzv, ixd, iyd, izd, flags, 1, 0, 0)) {
-				if (clipping && !dzv) {
-					if (cm->isValidPosition(x + dxv, y + dyv, z - 8, ixd, iyd, izd, flags, 1, 0, 0) &&
-					        !cm->isValidPosition(x, y, z - 8, ixd, iyd, izd, flags, 1, 0, 0)) {
+			if (!_clipping || cm->isValidPosition(x + dxv, y + dyv, z + dzv, ixd, iyd, izd, _flags, 1, 0, 0)) {
+				if (_clipping && !dzv) {
+					if (cm->isValidPosition(x + dxv, y + dyv, z - 8, ixd, iyd, izd, _flags, 1, 0, 0) &&
+					        !cm->isValidPosition(x, y, z - 8, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -8;
-					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 16, ixd, iyd, izd, flags, 1, 0, 0) &&
-					           !cm->isValidPosition(x, y, z - 16, ixd, iyd, izd, flags, 1, 0, 0)) {
+					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 16, ixd, iyd, izd, _flags, 1, 0, 0) &&
+					           !cm->isValidPosition(x, y, z - 16, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -16;
-					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 24, ixd, iyd, izd, flags, 1, 0, 0) &&
-					           !cm->isValidPosition(x, y, z - 24, ixd, iyd, izd, flags, 1, 0, 0)) {
+					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 24, ixd, iyd, izd, _flags, 1, 0, 0) &&
+					           !cm->isValidPosition(x, y, z - 24, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -24;
-					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 32, ixd, iyd, izd, flags, 1, 0, 0) &&
-					           !cm->isValidPosition(x, y, z - 32, ixd, iyd, izd, flags, 1, 0, 0)) {
+					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 32, ixd, iyd, izd, _flags, 1, 0, 0) &&
+					           !cm->isValidPosition(x, y, z - 32, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -32;
 					}
 				}
@@ -134,25 +133,25 @@ void QuickAvatarMoverProcess::run() {
 
 void QuickAvatarMoverProcess::terminate() {
 	Process::terminate();
-	amp[dir] = 0;
+	_amp[_dir] = 0;
 }
 
-void QuickAvatarMoverProcess::terminateMover(int _dir) {
-	assert(_dir < 6);
+void QuickAvatarMoverProcess::terminateMover(int dir) {
+	assert(dir < 6);
 
 	Kernel *kernel = Kernel::get_instance();
 
 	QuickAvatarMoverProcess *p =
-	    p_dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(amp[_dir]));
+	    p_dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(_amp[dir]));
 
 	if (p && !p->is_terminated())
 		p->terminate();
 }
 
-void QuickAvatarMoverProcess::startMover(int x, int y, int z, int _dir) {
+void QuickAvatarMoverProcess::startMover(int x, int y, int z, int dir) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	if (! g->isAvatarInStasis()) {
-		Process *p = new QuickAvatarMoverProcess(x, y, z, _dir);
+		Process *p = new QuickAvatarMoverProcess(x, y, z, dir);
 		Kernel::get_instance()->addProcess(p);
 	} else {
 		pout << "Can't: avatarInStasis" << Std::endl;
@@ -162,7 +161,7 @@ void QuickAvatarMoverProcess::startMover(int x, int y, int z, int _dir) {
 void QuickAvatarMoverProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(dir);
+	ods->write4(_dir);
 	// don't save more information. We plan to terminate upon load
 }
 
@@ -170,78 +169,14 @@ bool QuickAvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
 	// small safety precaution
-	dir = ids->read4();
-	if (dir < 6)
-		amp[dir] = 0;
+	_dir = ids->read4();
+	if (_dir < 6)
+		_amp[_dir] = 0;
 	else
 		return false;
 
 	terminateDeferred(); // Don't allow this process to continue
 	return true;
-}
-
-void QuickAvatarMoverProcess::ConCmd_startMoveUp(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
-	QuickAvatarMoverProcess::startMover(-64, -64, 0, 0);
-}
-
-void QuickAvatarMoverProcess::ConCmd_startMoveDown(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
-	QuickAvatarMoverProcess::startMover(+64, +64, 0, 1);
-}
-
-void QuickAvatarMoverProcess::ConCmd_startMoveLeft(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
-	QuickAvatarMoverProcess::startMover(-64, +64, 0, 2);
-}
-
-void QuickAvatarMoverProcess::ConCmd_startMoveRight(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
-	QuickAvatarMoverProcess::startMover(+64, -64, 0, 3);
-}
-
-void QuickAvatarMoverProcess::ConCmd_startAscend(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
-	QuickAvatarMoverProcess::startMover(0, 0, 8, 4);
-}
-
-void QuickAvatarMoverProcess::ConCmd_startDescend(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
-	QuickAvatarMoverProcess::startMover(0, 0, -8, 5);
-}
-
-void QuickAvatarMoverProcess::ConCmd_stopMoveUp(const Console::ArgvType &argv) {
-	QuickAvatarMoverProcess::terminateMover(0);
-}
-
-void QuickAvatarMoverProcess::ConCmd_stopMoveDown(const Console::ArgvType &argv) {
-	QuickAvatarMoverProcess::terminateMover(1);
-}
-
-void QuickAvatarMoverProcess::ConCmd_stopMoveLeft(const Console::ArgvType &argv) {
-	QuickAvatarMoverProcess::terminateMover(2);
-}
-
-void QuickAvatarMoverProcess::ConCmd_stopMoveRight(const Console::ArgvType &argv) {
-	QuickAvatarMoverProcess::terminateMover(3);
-}
-
-void QuickAvatarMoverProcess::ConCmd_stopAscend(const Console::ArgvType &argv) {
-	QuickAvatarMoverProcess::terminateMover(4);
-}
-
-void QuickAvatarMoverProcess::ConCmd_stopDescend(const Console::ArgvType &argv) {
-	QuickAvatarMoverProcess::terminateMover(5);
-}
-
-void QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed(const Console::ArgvType &argv) {
-	QuickAvatarMoverProcess::setQuarterSpeed(!QuickAvatarMoverProcess::isQuarterSpeed());
-}
-
-void QuickAvatarMoverProcess::ConCmd_toggleClipping(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
-	QuickAvatarMoverProcess::toggleClipping();
-	pout << "QuickAvatarMoverProcess::clipping = " << QuickAvatarMoverProcess::isClipping() << Std::endl;
 }
 
 } // End of namespace Ultima8

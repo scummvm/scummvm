@@ -54,11 +54,11 @@ public:
 	void freeOnTerminate(uint16 index, int type_);
 
 	void setReturnValue(uint32 retval) {
-		temp32 = retval;
+		_temp32 = retval;
 	}
 
 	//! dump some info about this process to pout
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
@@ -70,20 +70,20 @@ protected:
 	bool ret();
 
 	// stack base pointer
-	uint16 bp;
+	uint16 _bp;
 
-	Usecode *usecode;
+	Usecode *_usecode;
 
-	uint16 classid;
-	uint16 ip;
+	uint16 _classId;
+	uint16 _ip;
 
-	uint32 temp32;
+	uint32 _temp32;
 
 	// data stack
-	UCStack stack;
+	UCStack _stack;
 
 	// "Free Me" list
-	Std::list<Std::pair<uint16, int> > freeonterminate;
+	Std::list<Std::pair<uint16, int> > _freeOnTerminate;
 };
 
 } // End of namespace Ultima8

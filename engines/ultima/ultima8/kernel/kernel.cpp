@@ -32,57 +32,55 @@
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Std::list<Process *>::iterator ProcessIterator;
+Kernel *Kernel::_kernel = 0;
 
-Kernel *Kernel::kernel = 0;
+Kernel::Kernel() : _loading(false) {
+	debugN(MM_INFO, "Creating Kernel...\n");
 
-Kernel::Kernel() : loading(false) {
-	con->Print(MM_INFO, "Creating Kernel...\n");
-
-	kernel = this;
-	pIDs = new idMan(1, 32766, 128);
-	current_process = processes.end();
-	framenum = 0;
-	paused = 0;
-	runningprocess = 0;
-	framebyframe = false;
+	_kernel = this;
+	_pIDs = new idMan(1, 32766, 128);
+	current_process = _processes.end();
+	_frameNum = 0;
+	_paused = 0;
+	_runningProcess = 0;
+	_frameByFrame = false;
 }
 
 Kernel::~Kernel() {
 	reset();
-	con->Print(MM_INFO, "Destroying Kernel...\n");
+	debugN(MM_INFO, "Destroying Kernel...\n");
 
-	kernel = 0;
+	_kernel = 0;
 
-	delete pIDs;
+	delete _pIDs;
 }
 
 void Kernel::reset() {
-	con->Print(MM_INFO, "Resetting Kernel...\n");
+	debugN(MM_INFO, "Resetting Kernel...\n");
 
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		delete(*it);
 	}
-	processes.clear();
-	current_process = processes.begin();
+	_processes.clear();
+	current_process = _processes.begin();
 
-	pIDs->clearAll();
+	_pIDs->clearAll();
 
-	paused = 0;
-	runningprocess = 0;
+	_paused = 0;
+	_runningProcess = 0;
 
-	// if we're in frame-by-frame mode, reset to a paused state
-	if (framebyframe) paused = 1;
+	// if we're in frame-by-frame mode, reset to a _paused state
+	if (_frameByFrame) _paused = 1;
 }
 
 ProcId Kernel::assignPID(Process *proc) {
 	// to prevent new processes from getting a PID while loading
-	if (loading) return 0xFFFF;
+	if (_loading) return 0xFFFF;
 
 	// Get a pID
-	proc->pid = pIDs->getNewID();
+	proc->_pid = _pIDs->getNewID();
 
-	return proc->pid;
+	return proc->_pid;
 }
 
 ProcId Kernel::addProcess(Process *proc) {
@@ -93,17 +91,17 @@ ProcId Kernel::addProcess(Process *proc) {
 	}
 #endif
 
-	assert(proc->pid != 0 && proc->pid != 0xFFFF);
+	assert(proc->_pid != 0 && proc->_pid != 0xFFFF);
 
 #if 0
 	perr << "[Kernel] Adding process " << proc
-	     << ", pid = " << proc->pid << Std::endl;
+	     << ", pid = " << proc->_pid << Std::endl;
 #endif
 
 //	processes.push_back(proc);
 //	proc->active = true;
 	setNextProcess(proc);
-	return proc->pid;
+	return proc->_pid;
 }
 
 ProcId Kernel::addProcessExec(Process *proc) {
@@ -114,22 +112,22 @@ ProcId Kernel::addProcessExec(Process *proc) {
 	}
 #endif
 
-	assert(proc->pid != 0 && proc->pid != 0xFFFF);
+	assert(proc->_pid != 0 && proc->_pid != 0xFFFF);
 
 #if 0
 	perr << "[Kernel] Adding process " << proc
-	     << ", pid = " << proc->pid << Std::endl;
+	     << ", pid = " << proc->_pid << Std::endl;
 #endif
 
-	processes.push_back(proc);
-	proc->flags |= Process::PROC_ACTIVE;
+	_processes.push_back(proc);
+	proc->_flags |= Process::PROC_ACTIVE;
 
-	Process *oldrunning = runningprocess;
-	runningprocess = proc;
+	Process *oldrunning = _runningProcess;
+	_runningProcess = proc;
 	proc->run();
-	runningprocess = oldrunning;
+	_runningProcess = oldrunning;
 
-	return proc->pid;
+	return proc->_pid;
 }
 
 void Kernel::removeProcess(Process *proc) {
@@ -140,16 +138,16 @@ void Kernel::removeProcess(Process *proc) {
 	//! over the list. (Hence the special 'erase' in runProcs below, which
 	//! is very Std::list-specific, incidentally)
 
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		if (*it == proc) {
-			proc->flags &= ~Process::PROC_ACTIVE;
+			proc->_flags &= ~Process::PROC_ACTIVE;
 
 			perr << "[Kernel] Removing process " << proc << Std::endl;
 
-			processes.erase(it);
+			_processes.erase(it);
 
 			// Clear pid
-			pIDs->clearID(proc->pid);
+			_pIDs->clearID(proc->_pid);
 
 			return;
 		}
@@ -158,10 +156,10 @@ void Kernel::removeProcess(Process *proc) {
 
 
 void Kernel::runProcesses() {
-	if (!paused)
-		framenum++;
+	if (!_paused)
+		_frameNum++;
 
-	if (processes.size() == 0) {
+	if (_processes.size() == 0) {
 		return;
 		/*
 		perr << "Process queue is empty?! Aborting.\n";
@@ -170,31 +168,31 @@ void Kernel::runProcesses() {
 		exit(0);
 		*/
 	}
-	current_process = processes.begin();
-	while (current_process != processes.end()) {
+	current_process = _processes.begin();
+	while (current_process != _processes.end()) {
 		Process *p = *current_process;
 
-		if (!paused && ((p->flags & (Process::PROC_TERMINATED |
+		if (!_paused && ((p->_flags & (Process::PROC_TERMINATED |
 		                             Process::PROC_TERM_DEFERRED))
 		                == Process::PROC_TERM_DEFERRED)) {
 			p->terminate();
 		}
 		if (!(p->is_terminated() || p->is_suspended()) &&
-		        (!paused || (p->flags & Process::PROC_RUNPAUSED))) {
-			runningprocess = p;
+		        (!_paused || (p->_flags & Process::PROC_RUNPAUSED))) {
+			_runningProcess = p;
 			p->run();
 
-			if (!runningprocess)
+			if (!_runningProcess)
 				return; // If this happens then the list was reset so leave NOW!
 
-			runningprocess = 0;
+			_runningProcess = 0;
 		}
-		if (!paused && (p->flags & Process::PROC_TERMINATED)) {
+		if (!_paused && (p->_flags & Process::PROC_TERMINATED)) {
 			// process is killed, so remove it from the list
-			current_process = processes.erase(current_process);
+			current_process = _processes.erase(current_process);
 
 			// Clear pid
-			pIDs->clearID(p->pid);
+			_pIDs->clearID(p->_pid);
 
 			//! is this the right place to delete processes?
 			delete p;
@@ -202,136 +200,72 @@ void Kernel::runProcesses() {
 			++current_process;
 	}
 
-	if (!paused && framebyframe) pause();
+	if (!_paused && _frameByFrame) pause();
 }
 
 void Kernel::setNextProcess(Process *proc) {
-	if (current_process != processes.end() && *current_process == proc) return;
+	if (current_process != _processes.end() && *current_process == proc) return;
 
-	if (proc->flags & Process::PROC_ACTIVE) {
-		for (ProcessIterator it = processes.begin();
-		        it != processes.end(); ++it) {
+	if (proc->_flags & Process::PROC_ACTIVE) {
+		for (ProcessIterator it = _processes.begin();
+		        it != _processes.end(); ++it) {
 			if (*it == proc) {
-				processes.erase(it);
+				_processes.erase(it);
 				break;
 			}
 		}
 	} else {
-		proc->flags |= Process::PROC_ACTIVE;
+		proc->_flags |= Process::PROC_ACTIVE;
 	}
 
-	if (current_process == processes.end()) {
-		processes.push_front(proc);
+	if (current_process == _processes.end()) {
+		_processes.push_front(proc);
 	} else {
 		ProcessIterator t = current_process;
 		++t;
 
-		processes.insert(t, proc);
+		_processes.insert(t, proc);
 	}
 }
 
 Process *Kernel::getProcess(ProcId pid) {
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
-		if (p->pid == pid)
+		if (p->_pid == pid)
 			return p;
 	}
 	return 0;
 }
 
 void Kernel::kernelStats() {
-	pout << "Kernel memory stats:" << Std::endl;
-	pout << "Processes  : " << processes.size() << "/32765" << Std::endl;
+	g_debugger->debugPrintf("Kernel memory stats:\n");
+	g_debugger->debugPrintf("Processes  : %u/32765\n", _processes.size());
 }
 
 void Kernel::processTypes() {
-	pout << "Current process types:" << Std::endl;
+	g_debugger->debugPrintf("Current process types:\n");
 	Std::map<Common::String, unsigned int> processtypes;
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
-		processtypes[p->GetClassType().class_name]++;
+		processtypes[p->GetClassType()._className]++;
 	}
 	Std::map<Common::String, unsigned int>::iterator iter;
 	for (iter = processtypes.begin(); iter != processtypes.end(); ++iter) {
-		pout << (*iter)._key << ": " << (*iter)._value << Std::endl;
-	}
-}
-
-void Kernel::ConCmd_processTypes(const Console::ArgvType & /*argv*/) {
-	Kernel::get_instance()->processTypes();
-}
-
-void Kernel::ConCmd_listProcesses(const Console::ArgvType &argv) {
-	if (argv.size() > 2) {
-		pout << "usage: listProcesses [<itemnum>]" << Std::endl;
-		return;
-	}
-
-	Kernel *kern = Kernel::get_instance();
-	ObjId item = 0;
-	if (argv.size() == 2) {
-		item = static_cast<ObjId>(strtol(argv[1].c_str(), 0, 0));
-		pout << "Processes for item " << item << ":" << Std::endl;
-	} else {
-		pout << "Processes:" << Std::endl;
-	}
-	for (ProcessIterator it = kern->processes.begin();
-	        it != kern->processes.end(); ++it) {
-		Process *p = *it;
-		if (argv.size() == 1 || p->item_num == item)
-			p->dumpInfo();
-	}
-
-}
-
-void Kernel::ConCmd_processInfo(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "usage: processInfo <objectnum>" << Std::endl;
-		return;
-	}
-
-	Kernel *kern = Kernel::get_instance();
-
-	ProcId procid = static_cast<ProcId>(strtol(argv[1].c_str(), 0, 0));
-
-	Process *p = kern->getProcess(procid);
-	if (p == 0) {
-		pout << "No such process: " << procid << Std::endl;
-	} else {
-		p->dumpInfo();
-	}
-}
-
-void Kernel::ConCmd_toggleFrameByFrame(const Console::ArgvType &argv) {
-	Kernel *kern = Kernel::get_instance();
-	bool fbf = !kern->isFrameByFrame();
-	kern->setFrameByFrame(fbf);
-	pout << "FrameByFrame = " << fbf << Std::endl;
-	if (fbf)
-		kern->pause();
-	else
-		kern->unpause();
-}
-
-void Kernel::ConCmd_advanceFrame(const Console::ArgvType &argv) {
-	Kernel *kern = Kernel::get_instance();
-	if (kern->isFrameByFrame()) {
-		kern->unpause();
-		pout << "FrameByFrame: Next Frame" << Std::endl;
+		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
 	}
 }
 
 uint32 Kernel::getNumProcesses(ObjId objid, uint16 processtype) {
 	uint32 count = 0;
 
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
 
 		// Don't count us, we are not really here
 		if (p->is_terminated()) continue;
 
-		if ((objid == 0 || objid == p->item_num) &&
-		        (processtype == 6 || processtype == p->type))
+		if ((objid == 0 || objid == p->_itemNum) &&
+		        (processtype == 6 || processtype == p->_type))
 			count++;
 	}
 
@@ -339,14 +273,14 @@ uint32 Kernel::getNumProcesses(ObjId objid, uint16 processtype) {
 }
 
 Process *Kernel::findProcess(ObjId objid, uint16 processtype) {
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
 
 		// Don't count us, we are not really here
 		if (p->is_terminated()) continue;
 
-		if ((objid == 0 || objid == p->item_num) &&
-		        (processtype == 6 || processtype == p->type)) {
+		if ((objid == 0 || objid == p->_itemNum) &&
+		        (processtype == 6 || processtype == p->_type)) {
 			return p;
 		}
 	}
@@ -356,13 +290,13 @@ Process *Kernel::findProcess(ObjId objid, uint16 processtype) {
 
 
 void Kernel::killProcesses(ObjId objid, uint16 processtype, bool fail) {
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
 
-		if (p->item_num != 0 && (objid == 0 || objid == p->item_num) &&
-		        (processtype == 6 || processtype == p->type) &&
-		        !(p->flags & Process::PROC_TERMINATED) &&
-		        !(p->flags & Process::PROC_TERM_DEFERRED)) {
+		if (p->_itemNum != 0 && (objid == 0 || objid == p->_itemNum) &&
+		        (processtype == 6 || processtype == p->_type) &&
+		        !(p->_flags & Process::PROC_TERMINATED) &&
+		        !(p->_flags & Process::PROC_TERM_DEFERRED)) {
 			if (fail)
 				p->fail();
 			else
@@ -372,13 +306,13 @@ void Kernel::killProcesses(ObjId objid, uint16 processtype, bool fail) {
 }
 
 void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) {
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
 
-		if (p->item_num != 0 && (objid == 0 || objid == p->item_num) &&
-		        (p->type != processtype) &&
-		        !(p->flags & Process::PROC_TERMINATED) &&
-		        !(p->flags & Process::PROC_TERM_DEFERRED)) {
+		if (p->_itemNum != 0 && (objid == 0 || objid == p->_itemNum) &&
+		        (p->_type != processtype) &&
+		        !(p->_flags & Process::PROC_TERMINATED) &&
+		        !(p->_flags & Process::PROC_TERM_DEFERRED)) {
 			if (fail)
 				p->fail();
 			else
@@ -388,32 +322,32 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 }
 
 void Kernel::save(ODataSource *ods) {
-	ods->write4(framenum);
-	pIDs->save(ods);
-	ods->write4(processes.size());
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
+	ods->write4(_frameNum);
+	_pIDs->save(ods);
+	ods->write4(_processes.size());
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		(*it)->save(ods);
 	}
 }
 
 bool Kernel::load(IDataSource *ids, uint32 version) {
-	framenum = ids->read4();
+	_frameNum = ids->read4();
 
-	if (!pIDs->load(ids, version)) return false;
+	if (!_pIDs->load(ids, version)) return false;
 
-	uint32 pcount = ids->read4();
+	const uint32 pcount = ids->read4();
 
 	for (unsigned int i = 0; i < pcount; ++i) {
 		Process *p = loadProcess(ids, version);
 		if (!p) return false;
-		processes.push_back(p);
+		_processes.push_back(p);
 	}
 
 	return true;
 }
 
 Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
-	uint16 classlen = ids->read2();
+	const uint16 classlen = ids->read2();
 	char *buf = new char[classlen + 1];
 	ids->read(buf, classlen);
 	buf[classlen] = 0;
@@ -422,19 +356,19 @@ Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
 	delete[] buf;
 
 	Std::map<Common::String, ProcessLoadFunc>::iterator iter;
-	iter = processloaders.find(classname);
+	iter = _processLoaders.find(classname);
 
-	if (iter == processloaders.end()) {
+	if (iter == _processLoaders.end()) {
 		perr << "Unknown Process class: " << classname << Std::endl;
 		return 0;
 	}
 
 
-	loading = true;
+	_loading = true;
 
 	Process *p = (*(iter->_value))(ids, version);
 
-	loading = false;
+	_loading = false;
 
 	return p;
 }

@@ -37,7 +37,7 @@ public:
 	virtual ~Game();
 
 	static Game *get_instance() {
-		return game;
+		return _game;
 	}
 
 	//! load/init game's data files
@@ -47,7 +47,7 @@ public:
 	virtual bool startGame() = 0;
 
 	//! start initial usecode
-	virtual bool startInitialUsecode(const Std::string &savegame) = 0;
+	virtual bool startInitialUsecode(int saveSlot = -1) = 0;
 
 	//! write game-specific savegame info (avatar stats, equipment, ...)
 	virtual void writeSaveInfo(ODataSource *ods) = 0;
@@ -62,7 +62,7 @@ public:
 	INTRINSIC(I_playEndgame);
 
 protected:
-	static Game *game;
+	static Game *_game;
 };
 
 } // End of namespace Ultima8

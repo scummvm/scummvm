@@ -40,9 +40,9 @@ ModalGump::ModalGump() : Gump() {
 }
 
 
-ModalGump::ModalGump(int x_, int y_, int width, int height, uint16 owner_,
-                     uint32 _Flags, int32 layer_)
-	: Gump(x_, y_, width, height, owner_, _Flags, layer_) {
+ModalGump::ModalGump(int x, int y, int width, int height, uint16 owner,
+                     uint32 flags, int32 layer)
+	: Gump(x, y, width, height, owner, flags, layer) {
 
 }
 

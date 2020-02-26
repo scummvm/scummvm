@@ -38,7 +38,7 @@ public:
 	bool startGame() override;
 
 	//! start initial usecode
-	bool startInitialUsecode(const Std::string &savegame) override;
+	bool startInitialUsecode(int saveSlot) override;
 
 	//! write game-specific savegame info (avatar stats, equipment, ...)
 	void writeSaveInfo(ODataSource *ods) override;
@@ -47,9 +47,6 @@ public:
 	ProcId playEndgameMovie() override;
 	void playCredits() override;
 	void playQuotes() override;
-
-	static void ConCmd_cheatItems(const Console::ArgvType &argv);
-	static void ConCmd_cheatEquip(const Console::ArgvType &argv);
 
 protected:
 	Std::string getCreditText(IDataSource *ids);

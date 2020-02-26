@@ -20,6 +20,8 @@
  *
  */
 
+#include "backends/keymapper/keymapper.h"
+
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -70,6 +72,8 @@ void *SkyEngine::_itemList[300];
 
 SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 
+const char *SkyEngine::shortcutsKeymapId = "sky-shortcuts";
+
 SkyEngine::SkyEngine(OSystem *syst)
 	: Engine(syst), _fastMode(0), _debugger(0) {
 }
@@ -81,7 +85,7 @@ SkyEngine::~SkyEngine() {
 	delete _skyText;
 	delete _skyMouse;
 	delete _skyScreen;
-	delete _debugger;
+	//_debugger is deleted by Engine
 	delete _skyDisk;
 	delete _skyControl;
 	delete _skyCompact;
@@ -107,47 +111,40 @@ void SkyEngine::syncSoundSettings() {
 	_skyMusic->setVolume(mute ? 0: ConfMan.getInt("music_volume") >> 1);
 }
 
-GUI::Debugger *SkyEngine::getDebugger() {
-	return _debugger;
-}
-
 void SkyEngine::initVirgin() {
 	_skyScreen->setPalette(60111);
 	_skyScreen->showScreen(60110);
 }
 
 void SkyEngine::handleKey() {
-	if (_keyPressed.keycode && _systemVars.paused) {
+	if ((_action != kSkyActionNone || _keyPressed.keycode) && _systemVars.paused) {
 		_skySound->fnUnPauseFx();
 		_systemVars.paused = false;
 		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
-	} else if (_keyPressed.hasFlags(Common::KBD_CTRL)) {
-		if (_keyPressed.keycode == Common::KEYCODE_f)
+	} else {
+		switch (_action) {
+		case kSkyActionToggleFastMode:
 			_fastMode ^= 1;
-		else if (_keyPressed.keycode == Common::KEYCODE_g)
-			_fastMode ^= 2;
-		else if (_keyPressed.keycode == Common::KEYCODE_d)
-			_debugger->attach();
-	} else if (_keyPressed.keycode) {
-		switch (_keyPressed.keycode) {
-		case Common::KEYCODE_BACKQUOTE:
-		case Common::KEYCODE_HASH:
-			_debugger->attach();
 			break;
-		case Common::KEYCODE_F5:
+
+		case kSkyActionToggleReallyFastMode:
+			_fastMode ^= 2;
+			break;
+
+		case kSkyActionOpenControlPanel:
 			_skyControl->doControlPanel();
 			break;
 
-		case Common::KEYCODE_ESCAPE:
+		case kSkyActionSkip:
 			if (!_systemVars.pastIntro)
 				_skyControl->restartGame();
 			break;
 
-		case Common::KEYCODE_PERIOD:
+		case kSkyActionSkipLine:
 			_skyMouse->logicClick();
 			break;
 
-		case Common::KEYCODE_p:
+		case kSkyActionPause:
 			_skyScreen->halvePalette();
 			_skySound->fnPauseFx();
 			_systemVars.paused = true;
@@ -157,11 +154,13 @@ void SkyEngine::handleKey() {
 			break;
 		}
 	}
+
+	_action = kSkyActionNone;
 	_keyPressed.reset();
 }
 
 Common::Error SkyEngine::go() {
-	_keyPressed.reset();
+	_action = kSkyActionNone;
 
 	uint16 result = 0;
 	if (ConfMan.hasKey("save_slot")) {
@@ -192,19 +191,8 @@ Common::Error SkyEngine::go() {
 		}
 	}
 
-	_lastSaveTime = _system->getMillis();
-
 	uint32 delayCount = _system->getMillis();
 	while (!shouldQuit()) {
-		_debugger->onFrame();
-
-		if (shouldPerformAutoSave(_lastSaveTime)) {
-			if (_skyControl->loadSaveAllowed()) {
-				_lastSaveTime = _system->getMillis();
-				_skyControl->doAutoSave();
-			} else
-				_lastSaveTime += 30 * 1000; // try again in 30 secs
-		}
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine();
 		handleKey();
@@ -302,7 +290,11 @@ Common::Error SkyEngine::init() {
 	_skyLogic = new Logic(_skyCompact, _skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
 	_skyMouse->useLogicInstance(_skyLogic);
 
-	_skyControl = new Control(_saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _skyCompact, _system);
+	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
+	Common::Keymap *shortcutsKeymap = keymapper->getKeymap(shortcutsKeymapId);
+	assert(shortcutsKeymap);
+
+	_skyControl = new Control(_saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _skyCompact, _system, shortcutsKeymap);
 	_skyLogic->useControlInstance(_skyControl);
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
@@ -353,6 +345,7 @@ Common::Error SkyEngine::init() {
 	syncSoundSettings();
 
 	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen, _skyCompact);
+	setDebugger(_debugger);
 	return Common::kNoError;
 }
 
@@ -390,6 +383,7 @@ void SkyEngine::delay(int32 amount) {
 	Common::Event event;
 
 	uint32 start = _system->getMillis();
+	_action = kSkyActionNone;
 	_keyPressed.reset();
 
 	if (amount < 0)
@@ -398,6 +392,9 @@ void SkyEngine::delay(int32 amount) {
 	do {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_action = (SkyAction)event.customType;
+				break;
 			case Common::EVENT_KEYDOWN:
 				_keyPressed = event.kbd;
 				break;

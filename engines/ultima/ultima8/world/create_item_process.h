@@ -46,14 +46,14 @@ public:
 protected:
 	void saveData(ODataSource *ods) override;
 
-	uint32 shape;
-	uint32 frame;
-	uint16 quality;
-	uint16 flags;
-	uint16 npcnum;
-	uint16 mapnum;
-	uint32 extendedflags;
-	int32 x, y, z;
+	uint32 _shape;
+	uint32 _frame;
+	uint16 _quality;
+	uint16 _flags;
+	uint16 _npcNum;
+	uint16 _mapNum;
+	uint32 _extendedFlags;
+	int32 _x, _y, _z;
 };
 
 } // End of namespace Ultima8

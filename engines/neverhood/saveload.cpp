@@ -130,15 +130,15 @@ bool NeverhoodEngine::loadgame(const char *filename) {
 }
 
 Common::Error NeverhoodEngine::loadGameState(int slot) {
-	const char *fileName = getSavegameFilename(slot);
-	if (!loadgame(fileName))
+	Common::String fileName = getSaveStateName(slot);
+	if (!loadgame(fileName.c_str()))
 		return Common::kReadingFailed;
 	return Common::kNoError;
 }
 
-Common::Error NeverhoodEngine::saveGameState(int slot, const Common::String &description) {
-	const char *fileName = getSavegameFilename(slot);
-	if (!savegame(fileName, description.c_str()))
+Common::Error NeverhoodEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
+	Common::String fileName = getSaveStateName(slot);
+	if (!savegame(fileName.c_str(), description.c_str()))
 		return Common::kWritingFailed;
 	return Common::kNoError;
 }
@@ -150,10 +150,8 @@ Common::Error NeverhoodEngine::removeGameState(int slot) {
 	return Common::kNoError;
 }
 
-const char *NeverhoodEngine::getSavegameFilename(int num) {
-	static Common::String filename;
-	filename = getSavegameFilename(_targetName, num);
-	return filename.c_str();
+Common::String NeverhoodEngine::getSaveStateName(int slot) const {
+	return getSavegameFilename(_targetName, slot);
 }
 
 Common::String NeverhoodEngine::getSavegameFilename(const Common::String &target, int num) {

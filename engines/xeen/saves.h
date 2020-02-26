@@ -50,12 +50,6 @@ private:
 	Common::String _targetName;
 private:
 	/**
-	 * Support method that generates a savegame name
-	 * @param slot		Slot number
-	 */
-	Common::String generateSaveName(int slot);
-
-	/**
 	 * Initializes a new savegame
 	 */
 	void reset();
@@ -84,7 +78,7 @@ public:
 	/**
 	 * Save the game
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 
 	/**
 	 * Does an autosave

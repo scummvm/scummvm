@@ -74,15 +74,15 @@ void AIScriptHolloway::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHolloway::EnteredScene(int sceneId) {
+void AIScriptHolloway::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHolloway::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHolloway::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHolloway::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHolloway::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -207,7 +207,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 717;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(717)) {
 			_animationFrame = 0;
 		}
@@ -215,7 +215,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 719;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame == 9) {
 			Ambient_Sounds_Play_Sound(kSfxKICK1, 90, 99, 0, 0);
@@ -242,7 +242,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		} else {
 			*animation = 720;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(720)) {
 				_animationFrame = 0;
 			}
@@ -251,7 +251,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 721;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -261,7 +261,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 721;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -271,7 +271,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 721;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -281,7 +281,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 721;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -291,7 +291,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 716;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(716)) {
 			_animationFrame = 0;
 		}

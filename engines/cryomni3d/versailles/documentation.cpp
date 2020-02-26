@@ -1400,7 +1400,6 @@ uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surf
 void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
         const Common::String &text, const Common::String &title,
         const Common::String &subtitle, const Common::String &caption) {
-	bool displayMap = false;
 	unsigned char foreColor = 247;
 	Common::String background;
 	Common::Rect blockTitle;
@@ -1458,7 +1457,7 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 	background = _engine->prepareFileName(background, "hlz");
 	Common::File backgroundFl;
 	if (!backgroundFl.open(background)) {
-		background = displayMap ? "pas_fonP.hlz" : "pas_fond.hlz";
+		background = _currentMapLayout ? "pas_fonP.hlz" : "pas_fond.hlz";
 	} else {
 		backgroundFl.close();
 	}

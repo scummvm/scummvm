@@ -39,7 +39,7 @@ class HandlerTimer : public Handler {
 //in Peril this is HandlerTimer
 class HandlerTimerActions : public Handler {
 public:
-	void toConsole() override;
+	void toConsole() const override;
 	void deserialize(Archive &archive) override;
 	void handle(Actor *actor) override;
 
@@ -50,7 +50,7 @@ private:
 //appear in HokusPokus
 class HandlerTimerSequences : public HandlerSequences { //originally it was inherited from HandlerTimer
 public:
-	void toConsole() override;
+	void toConsole() const override;
 
 	void handle(Actor *actor) override;
 

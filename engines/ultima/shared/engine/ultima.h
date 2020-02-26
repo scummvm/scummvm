@@ -44,7 +44,6 @@ private:
 protected:
 	const UltimaGameDescription *_gameDescription;
 	Common::Archive *_dataArchive;
-	Debugger *_debugger;
 protected:
 	/**
 	 * Initializes needed data for the engine
@@ -63,10 +62,6 @@ protected:
 		return false;
 	}
 
-	/**
-	 * Returns the Ultima meta engine
-	 */
-	UltimaMetaEngine *getMetaEngine() const;
 public:
 	EventsManager *_events;
 public:
@@ -102,13 +97,6 @@ public:
 	}
 
 	/**
-	 * Returns the filename for a savegame given it's slot
-	 */
-	Common::String getSaveFilename(int slotNumber) {
-		return getMetaEngine()->getSavegameFile(slotNumber, _targetName.c_str());
-	}
-
-	/**
 	 * Show a messae in a GUI dialog
 	 */
 	void GUIError(const Common::String &msg);
@@ -130,18 +118,6 @@ public:
 	 */
 	Common::Archive *getDataArchive() const {
 		return _dataArchive;
-	}
-
-	/**
-	 * Checks if an auto save should be done, and if so, takes care of it
-	 */
-	bool autoSaveCheck(int lastSaveTime) override;
-
-	/**
-	 * Return the debugger
-	 */
-	GUI::Debugger *getDebugger() override {
-		return _debugger;
 	}
 
 	/**

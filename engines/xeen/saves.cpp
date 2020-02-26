@@ -115,9 +115,8 @@ void SavesManager::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHea
 	out->writeUint32LE(events.playTime());
 }
 
-Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) {
-	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
-		generateSaveName(slot));
+Common::Error SavesManager::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(g_vm->getSaveStateName(slot));
 	if (!out)
 		return Common::kCreatingFileFailed;
 
@@ -159,7 +158,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 	Party &party = *g_vm->_party;
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		generateSaveName(slot));
+		g_vm->getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kReadingFailed;
 
@@ -206,10 +205,6 @@ Common::Error SavesManager::loadGameState(int slot) {
 
 	delete saveFile;
 	return Common::kNoError;
-}
-
-Common::String SavesManager::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 void SavesManager::newGame() {

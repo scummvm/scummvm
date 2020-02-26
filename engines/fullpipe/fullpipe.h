@@ -34,8 +34,6 @@
 #include "graphics/surface.h"
 
 #include "engines/engine.h"
-
-#include "gui/debugger.h"
 #include "fullpipe/console.h"
 
 struct ADGameDescription;
@@ -109,9 +107,6 @@ protected:
 public:
 	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~FullpipeEngine() override;
-
-	Console _console;
-	GUI::Debugger *getDebugger() override { return &_console; }
 
 	void initialize();
 	void restartGame();
@@ -361,7 +356,8 @@ public:
 	bool _isSaveAllowed;
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description) override;
+	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
+	virtual Common::String getSaveStateName(int slot) const override;
 
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }

@@ -37,7 +37,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	InverterGump(int32 x, int32 y, int32 width, int32 height);
-	~InverterGump(void) override;
+	~InverterGump() override;
 
 	void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
@@ -50,7 +50,7 @@ public:
 	void RenderSurfaceChanged() override;
 
 protected:
-	RenderSurface *buffer;
+	RenderSurface *_buffer;
 };
 
 } // End of namespace Ultima8

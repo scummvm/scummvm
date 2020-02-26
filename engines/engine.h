@@ -31,6 +31,7 @@
 #include "common/singleton.h"
 
 class OSystem;
+class MetaEngine;
 
 namespace Audio {
 class Mixer;
@@ -92,12 +93,26 @@ private:
 	int32 _engineStartTime;
 
 	/**
+	 * Autosave interval
+	 */
+	const int _autosaveInterval;
+
+	/**
+	 * The last time an autosave was done
+	 */
+	int _lastAutosaveTime;
+
+	/**
 	 * Save slot selected via global main menu.
 	 * This slot will be loaded after main menu execution (not from inside
 	 * the menu loop, to avoid bugs like #2822778).
 	 */
 	int _saveSlotToLoad;
 
+	/**
+	 * Optional debugger for the engine
+	 */
+	GUI::Debugger *_debugger;
 public:
 
 
@@ -170,10 +185,24 @@ public:
 	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
 
 	/**
-	 * Return the engine's debugger instance, if any. Used by error() to
-	 * invoke the debugger when a severe error is reported.
+	 * Return the engine's debugger instance, if any.
 	 */
-	virtual GUI::Debugger *getDebugger() { return 0; }
+	virtual GUI::Debugger *getDebugger() { return _debugger; }
+
+	/**
+	 * Sets the engine's debugger. Once set, the Engine class is responsible for managing
+	 * the debugger, and freeing it on exit
+	 */
+	void setDebugger(GUI::Debugger *debugger) {
+		assert(!_debugger);
+		_debugger = debugger;
+	}
+
+	/**
+	 * Return the engine's debugger instance, or create one if none is present.
+	 * Used by error() to invoke the debugger when a severe error is reported.
+	 */
+	GUI::Debugger *getOrCreateDebugger();
 
 	/**
 	 * Determine whether the engine supports the specified feature.
@@ -243,18 +272,10 @@ public:
 	 * Save a game state.
 	 * @param slot	the slot into which the savestate should be stored
 	 * @param desc	a description for the savestate, entered by the user
-	 * @return returns kNoError on success, else an error code.
-	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-
-	/**
-	 * Save a game state.
-	 * @param slot	the slot into which the savestate should be stored
-	 * @param desc	a description for the savestate, entered by the user
 	 * @param isAutosave	Expected to be true if an autosave is being created
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 
 	/**
 	 * Save a game state.
@@ -280,7 +301,6 @@ public:
 	bool loadGameDialog();
 
 protected:
-
 	/**
 	 * Actual implementation of pauseEngine by subclasses. See there
 	 * for details.
@@ -303,6 +323,8 @@ public:
 	 * launcher.
 	 */
 	static bool shouldQuit();
+
+	static MetaEngine &getMetaEngine();
 
 	/**
 	 * Pause or resume the engine. This should stop/resume any audio playback
@@ -357,17 +379,40 @@ public:
 	inline Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }
 
 public:
-
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();
 
-protected:
 
 	/**
-	 * Indicate whether an autosave should be performed.
+	 * Checks for whether it's time to do an autosave, and if so, does it.
 	 */
-	bool shouldPerformAutoSave(int lastSaveTime);
+	void handleAutoSave();
 
+	/**
+	 * Does an autosave immediately if autosaves are turned on
+	 */
+	void saveAutosaveIfEnabled();
+
+	/**
+	 * Indicates whether an autosave can currently be saved.
+	 */
+	virtual bool canSaveAutosaveCurrently() {
+		return canSaveGameStateCurrently();
+	}
+
+	/**
+	 * Returns the slot that should be used for autosaves
+	 * @note	This should match the meta engine getAutosaveSlot() method
+	 */
+	virtual int getAutosaveSlot() const {
+		return 0;
+	}
+
+	bool shouldPerformAutoSave(int lastSaveTime) {
+		// TODO: Remove deprecated method once all engines are refactored
+		// to no longer do autosaves directly themselves
+		return false;
+	}
 };
 
 // Chained games

@@ -25,6 +25,8 @@
 #include "access/access.h"
 #include "access/resources.h"
 #include "access/room.h"
+#include "access/amazon/amazon_resources.h"
+#include "access/martian/martian_resources.h"
 
 namespace Access {
 

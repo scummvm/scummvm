@@ -8,60 +8,42 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef DRAGONS_DRAGONOBD_H
+#define DRAGONS_DRAGONOBD_H
 
-#ifndef ULTIMA8_KERNEL_JOYSTICK_H
-#define ULTIMA8_KERNEL_JOYSTICK_H
+#include "common/system.h"
 
-#include "ultima/ultima8/kernel/process.h"
+namespace Dragons {
 
-namespace Ultima {
-namespace Ultima8 {
+class BigfileArchive;
 
-/*
-   For now, we are limiting to one joystick, 16 buttons,
-   and we are ignoring anything other than buttons and axes (hats and balls)
-*/
+class DragonOBD {
+private:
+	byte *_data;
+	uint32 _dataSize;
+	Common::SeekableReadStream *_optReadStream;
+	Common::SeekableReadStream *_sptReadStream;
 
-enum Joystick {
-	JOY1 = 0,
-	JOY_LAST
-};
-
-void InitJoystick();
-void ShutdownJoystick();
-
-class JoystickCursorProcess : public Process {
 public:
-	JoystickCursorProcess();
-	JoystickCursorProcess(Joystick js_, int x_axis_, int y_axis_);
-	~JoystickCursorProcess() override;
+	virtual ~DragonOBD();
 
-	ENABLE_RUNTIME_CLASSTYPE()
-
-	void run() override;
-
-	bool loadData(IDataSource *ids, uint32 version);
-protected:
-	void saveData(ODataSource *ods) override;
-
-	Joystick js;
-	int x_axis, y_axis;
-	int ticks;
-	int accel;
+	DragonOBD(BigfileArchive *bigfileArchive);
+	byte *getObdAtOffset(uint32 offset);
+	byte *getFromOpt(uint32 index);
+	byte *getFromSpt(uint32 index);
 };
 
-} // End of namespace Ultima8
-} // End of namespace Ultima
+} // End of namespace Dragons
 
-#endif
+#endif //DRAGONS_DRAGONOBD_H

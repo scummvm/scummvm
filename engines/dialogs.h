@@ -71,7 +71,6 @@ protected:
 	GUI::ButtonWidget    *_helpButton;
 
 	GUI::Dialog          *_aboutDialog;
-	GUI::Dialog          *_optionsDialog;
 
 	GUI::SaveLoadChooser *_loadDialog;
 	GUI::SaveLoadChooser *_saveDialog;

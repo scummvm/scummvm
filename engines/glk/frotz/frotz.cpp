@@ -129,7 +129,7 @@ Common::Error Frotz::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error Frotz::saveGameState(int slot, const Common::String &desc) {
+Common::Error Frotz::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String msg;
 	FileReference ref(slot, desc, fileusage_BinaryMode | fileusage_SavedGame);
 

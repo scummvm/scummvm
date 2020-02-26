@@ -56,7 +56,6 @@ struct CRUISEGameDescription;
 class CruiseEngine: public Engine {
 private:
 	bool _preLoad;
-	Debugger *_debugger;
 	PCSound *_sound;
 	Common::StringArray _langStrings;
 	CursorType _savedCursor;
@@ -88,15 +87,15 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	PCSound &sound() { return *_sound; }
-	GUI::Debugger *getDebugger() override { return _debugger; }
 	virtual void pauseEngine(bool pause);
 	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }
 
 	static const char *getSavegameFile(int saveGameIdx);
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
+	Common::String getSaveStateName(int slot) const override { return getSavegameFile(slot); }
 	void syncSoundSettings() override;
 
 	const CRUISEGameDescription *_gameDescription;

@@ -41,7 +41,7 @@ public:
 	void initBuiltinData(bool allowoverride);
 
 	static FileSystem *get_instance() {
-		return filesystem;
+		return _fileSystem;
 	}
 
 	//! Get the current users pentagram home path
@@ -77,21 +77,13 @@ public:
 	//! \return true if successful; otherwise, false.
 	bool MkDir(const Std::string &path); // can handle both paths and vpaths
 
-	typedef Common::List<Std::string> FileList;
-
-	//! List files matching a mask
-	//! \param mask the mask to match
-	//! \param files the FileList to which the found files are appended
-	//! \param return OS-specific (FIXME!)
-	int ListFiles(const Std::string mask, FileList &files);
-
 private:
 	static void switch_slashes(Std::string &name);
 	static bool base_to_uppercase(Std::string &str, int count);
 
 	static bool IsDir(const Std::string &path);
 
-	static FileSystem *filesystem;
+	static FileSystem *_fileSystem;
 
 	/**
 	 *	Open a file for reading,
@@ -107,28 +99,28 @@ private:
 
 	// This will disable the usage of forced virtual paths.
 	// It's useful for 'tools'
-	bool    noforcedvpaths;
+	bool    _noForcedVPaths;
 
 	// This enables/disables overriding builtin data files with external ones
-	bool    allowdataoverride;
+	bool    _allowDataOverride;
 
 	// rewrite virtual path in-place (i.e., fvn is replaced)
 	// returns false if no rewriting was done
 	bool rewrite_virtual_path(Std::string &vfn);
 
-	Std::map<Common::String, Std::string> virtualpaths;
+	Std::map<Common::String, Std::string> _virtualPaths;
 
 	//! Check if the given file is a builtin data file.
 	//! If so, return an IDataSource for it. If not, return 0.
 	IDataSource *checkBuiltinData(const Std::string &vfn, bool is_text = false);
 
 	struct MemoryFile {
-		MemoryFile(const uint8 *_data, const uint32 _len)
-			: data(_data), len(_len) { }
-		const uint8     *data;
-		const uint32    len;
+		MemoryFile(const uint8 *data, const uint32 len)
+			: _data(data), _len(len) { }
+		const uint8 *_data;
+		const uint32 _len;
 	};
-	Std::map<Common::String, MemoryFile *> memoryfiles; // Files mounted in memory
+	Std::map<Common::String, MemoryFile *> _memoryFiles; // Files mounted in memory
 };
 
 } // End of namespace Ultima8

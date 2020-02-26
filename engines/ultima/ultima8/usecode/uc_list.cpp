@@ -30,27 +30,27 @@
 namespace Ultima {
 namespace Ultima8 {
 
-uint16 UCList::getStringIndex(uint32 index) {
-	return elements[index * 2] + (elements[index * 2 + 1] << 8);
+uint16 UCList::getStringIndex(uint32 index) const {
+	return _elements[index * 2] + (_elements[index * 2 + 1] << 8);
 }
 
-Std::string &UCList::getString(uint32 index) {
+const Std::string &UCList::getString(uint32 index) const {
 	uint16 sindex = getStringIndex(index);
 	return UCMachine::get_instance()->getString(sindex);
 }
 
 void UCList::freeStrings() {
 	UCMachine *ucm = UCMachine::get_instance();
-	for (unsigned int i = 0; i < size; i++) {
+	for (unsigned int i = 0; i < _size; i++) {
 		ucm->freeString(getStringIndex(i));
 	}
 	free();
 }
 
-void UCList::copyStringList(UCList &l) {
+void UCList::copyStringList(const UCList &l) {
 	UCMachine *ucm = UCMachine::get_instance();
 	freeStrings();
-	for (unsigned int i = 0; i < l.size; i++) {
+	for (unsigned int i = 0; i < l._size; i++) {
 		uint16 s = ucm->duplicateString(l.getStringIndex(i));
 		uint8 tmp[2]; // ugly...
 		tmp[0] = static_cast<uint8>(s & 0xFF);
@@ -63,7 +63,7 @@ void UCList::unionStringList(UCList &l) {
 	UCMachine *ucm = UCMachine::get_instance();
 	// take the union of two stringlists
 	// i.e., append the second to this one, removing any duplicates
-	for (unsigned int i = 0; i < l.size; i++) {
+	for (unsigned int i = 0; i < l._size; i++) {
 		if (!stringInList(l.getStringIndex(i))) {
 			append(l[i]);
 		} else {
@@ -74,14 +74,14 @@ void UCList::unionStringList(UCList &l) {
 	l.free(); // NB: do _not_ free the strings in l, since they're in this one
 }
 
-void UCList::substractStringList(UCList &l) {
-	for (unsigned int i = 0; i < l.size; i++)
+void UCList::substractStringList(const UCList &l) {
+	for (unsigned int i = 0; i < l._size; i++)
 		removeString(l.getStringIndex(i));
 }
 
-bool UCList::stringInList(uint16 s) {
+bool UCList::stringInList(uint16 s) const {
 	Std::string str = UCMachine::get_instance()->getString(s);
-	for (unsigned int i = 0; i < size; i++)
+	for (unsigned int i = 0; i < _size; i++)
 		if (getString(i) == str)
 			return true;
 
@@ -93,41 +93,41 @@ void UCList::assignString(uint32 index, uint16 str) {
 	// free old contents of element index; take ownership of str(?)
 
 	UCMachine::get_instance()->freeString(getStringIndex(index));
-	elements[index * elementsize] = static_cast<uint8>(str & 0xFF);
-	elements[index * elementsize + 1] = static_cast<uint8>(str >> 8);
+	_elements[index * _elementSize] = static_cast<uint8>(str & 0xFF);
+	_elements[index * _elementSize + 1] = static_cast<uint8>(str >> 8);
 }
 
 void UCList::removeString(uint16 s, bool nodel) {
 	// do we need to erase all occurences of str or just the first one?
 	// (deleting all, currently)
-	Std::string str = UCMachine::get_instance()->getString(s);
-	for (unsigned int i = 0; i < size; i++) {
+	const Std::string &str = UCMachine::get_instance()->getString(s);
+	for (unsigned int i = 0; i < _size; i++) {
 		if (getString(i) == str) {
 			// free string
 			if (!nodel)
 				UCMachine::get_instance()->freeString(getStringIndex(i));
 
 			// remove string from list
-			elements.erase(elements.begin() + i * elementsize,
-			               elements.begin() + (i + 1)*elementsize);
-			size--;
+			_elements.erase(_elements.begin() + i * _elementSize,
+			               _elements.begin() + (i + 1)*_elementSize);
+			_size--;
 			i--; // back up a bit
 		}
 	}
 }
 
 void UCList::save(ODataSource *ods) {
-	ods->write4(elementsize);
-	ods->write4(size);
-	ods->write(&(elements[0]), size * elementsize);
+	ods->write4(_elementSize);
+	ods->write4(_size);
+	ods->write(&(_elements[0]), _size * _elementSize);
 }
 
 
 bool UCList::load(IDataSource *ids, uint32 version) {
-	elementsize = ids->read4();
-	size = ids->read4();
-	elements.resize(size * elementsize);
-	ids->read(&(elements[0]), size * elementsize);
+	_elementSize = ids->read4();
+	_size = ids->read4();
+	_elements.resize(_size * _elementSize);
+	ids->read(&(_elements[0]), _size * _elementSize);
 
 	return true;
 }

@@ -36,6 +36,7 @@
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
+#include "gui/widgets/tab.h"
 
 #include "graphics/font.h"
 
@@ -55,9 +56,9 @@ protected:
 
 public:
 	ConfigDialog(bool subtitleControls);
-	~ConfigDialog();
+	~ConfigDialog() override;
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 MainMenuDialog::MainMenuDialog(Engine *engine)
@@ -111,14 +112,12 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);
 
 	_aboutDialog = new GUI::AboutDialog();
-	_optionsDialog = new ConfigDialog(_engine->hasFeature(Engine::kSupportsSubtitleOptions));
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
 	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 }
 
 MainMenuDialog::~MainMenuDialog() {
 	delete _aboutDialog;
-	delete _optionsDialog;
 	delete _loadDialog;
 	delete _saveDialog;
 }
@@ -134,9 +133,11 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 	case kSaveCmd:
 		save();
 		break;
-	case kOptionsCmd:
-		_optionsDialog->runModal();
+	case kOptionsCmd: {
+		ConfigDialog configDialog(_engine->hasFeature(Engine::kSupportsSubtitleOptions));
+		configDialog.runModal();
 		break;
+	}
 	case kAboutCmd:
 		_aboutDialog->runModal();
 		break;
@@ -283,11 +284,16 @@ enum {
 ConfigDialog::ConfigDialog(bool subtitleControls)
 	: GUI::OptionsDialog("", "GlobalConfig") {
 
+	// GUI:  Add tab widget
+	GUI::TabWidget *tab = new GUI::TabWidget(this, "GlobalConfig.TabWidget");
+
+	tab->addTab(_("Audio"), "GlobalConfig_Audio");
+
 	//
 	// Sound controllers
 	//
 
-	addVolumeControls(this, "GlobalConfig.");
+	addVolumeControls(tab, "GlobalConfig_Audio.");
 	setVolumeSettingsState(true); // could disable controls by GUI options
 
 	//
@@ -296,9 +302,28 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 
 	if (subtitleControls) {
 		// Global talkspeed range of 0-255
-		addSubtitleControls(this, "GlobalConfig.", 255);
+		addSubtitleControls(tab, "GlobalConfig_Audio.", 255);
 		setSubtitleSettingsState(true); // could disable controls by GUI options
 	}
+
+	//
+	// The Keymap tab
+	//
+	const Common::String &gameDomain = ConfMan.getActiveDomainName();
+	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+
+	Common::KeymapArray keymaps;
+	if (plugin) {
+		keymaps = plugin->get<MetaEngine>().initKeymaps(gameDomain.c_str());
+	}
+
+	if (!keymaps.empty()) {
+		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper");
+		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
+	}
+
+	// Activate the first tab
+	tab->setActiveTab(0);
 
 	//
 	// Add the buttons

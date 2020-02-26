@@ -44,20 +44,21 @@ struct HardwareInput;
 class HardwareInputSet;
 class KeymapperDefaultBindings;
 
-struct Event_EqualTo {
+struct HardwareInput_EqualTo {
 	bool operator()(const HardwareInput& x, const HardwareInput& y) const {
 		return (x.type == y.type)
-		        && (x.key == y.key) // TODO: Remove the equality operator from KeyState
+		        && (x.key.keycode == y.key.keycode)
+		        && (x.key.flags == y.key.flags)
 		        && (x.inputCode == y.inputCode);
 	}
 };
 
-struct Event_Hash {
+struct HardwareInput_Hash {
 	uint operator()(const HardwareInput& x) const {
 		uint hash = 7;
 		hash = 31 * hash + x.type;
 		hash = 31 * hash + x.key.keycode;
-		hash = 31 * hash + (x.key.flags & ~KBD_STICKY);
+		hash = 31 * hash + x.key.flags;
 		hash = 31 * hash + x.inputCode;
 		return hash;
 	}
@@ -169,7 +170,7 @@ private:
 	void registerMappings(Action *action, const StringArray &hwInputIds);
 	bool areMappingsIdentical(const Array<HardwareInput> &inputs, const StringArray &mapping);
 
-	typedef HashMap<HardwareInput, ActionArray, Event_Hash, Event_EqualTo> HardwareActionMap;
+	typedef HashMap<HardwareInput, ActionArray, HardwareInput_Hash, HardwareInput_EqualTo> HardwareActionMap;
 
 	KeymapType _type;
 	String _id;

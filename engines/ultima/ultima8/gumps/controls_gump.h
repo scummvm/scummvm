@@ -36,7 +36,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ControlsGump();
-	~ControlsGump(void) override;
+	~ControlsGump() override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -49,7 +49,7 @@ public:
 
 	static void showEngineMenu(PagedGump *pagedgump);
 	static void showU8Menu(PagedGump *pagedgump);
-	void addEntry(const char *binding, const char *name, int &x_, int &y_);
+	void addEntry(const char *binding, const char *name, int &x, int &y);
 
 	bool loadData(IDataSource *ids);
 protected:

@@ -113,6 +113,9 @@ inline void u6debug(bool no_header, const DebugLevelType level, const char *form
 extern void u6debug(bool no_header, const DebugLevelType level, const char *format, ...);
 #endif
 
+#ifdef DEBUG
+#undef DEBUG
+#endif
 #define DEBUG u6debug
 
 #define U6PATH_DELIMITER '/'

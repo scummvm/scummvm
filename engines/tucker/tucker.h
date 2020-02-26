@@ -450,11 +450,11 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail = true);
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(const char *target, int slot, SavegameHeader &header);
-	bool isAutosaveAllowed();
+	virtual bool canSaveAutosaveCurrently() override;
+
 	static bool isAutosaveAllowed(const char *target);
 protected:
 
@@ -744,16 +744,17 @@ protected:
 
 	template<class S> SavegameError saveOrLoadGameStateData(S &s);
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description) override;
-	Common::Error writeSavegame(int slot, const Common::String &description, bool autosave = false);
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	SavegameError writeSavegameHeader(Common::OutSaveFile *file, SavegameHeader &header);
-	void writeAutosave();
+	virtual int getAutosaveSlot() const override { return kAutoSaveSlot; }
+	virtual Common::String getSaveStateName(int slot) const {
+		return Common::String::format("%s.%d", _targetName.c_str(), slot);
+	}
+
 	bool canLoadOrSave() const;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	virtual bool existsSavegame();
-
-	TuckerConsole *_console;
 
 	void handleIntroSequence();
 	void handleCreditsSequence();
@@ -798,7 +799,6 @@ protected:
 	Common::Language _gameLang;
 	uint32 _gameFlags;
 	int _startSlot;
-	uint32 _lastSaveTime;
 
 	bool _quitGame;
 	bool _fastMode;

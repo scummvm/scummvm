@@ -27,42 +27,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 namespace Ultima {
 namespace Ultima8 {
 
-int strncasecmp(const char *s1, const char *s2, uint32 length) {
-	uint32  c1, c2;
-
-	do {
-		c1 = *s1++;
-		c2 = *s2++;
-
-		if (!length--)
-			return 0;       // strings are equal until end point
-
-		if (c1 != c2) {
-			if (c1 >= 'a' && c1 <= 'z')
-				c1 -= ('a' - 'A');
-			if (c2 >= 'a' && c2 <= 'z')
-				c2 -= ('a' - 'A');
-			if (c1 != c2)
-				return (c1 < c2) ? -1 : 1; // strings not equal
-		}
-	} while (c1);
-
-	return 0;       // strings are equal
-}
-
-int strcasecmp(const char *s1, const char *s2) {
-	return strncasecmp(s1, s2, 2147483647);
-}
-
-void strcpy_s(char *dest, size_t size, const char *src) {
-	if (size == 0) return;
-	char *end = dest + size;
-	do {
-		if (!(*dest++ = *src++)) return;
-	} while (dest != end);
-	dest[-1] = 0;
-}
-
 void istring::split(Common::Array<istring> &arr) const {
 	const char *startP = _str, *endP;
 

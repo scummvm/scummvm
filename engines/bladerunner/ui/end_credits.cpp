@@ -66,7 +66,7 @@ void EndCredits::show() {
 	int y = 452;
 	bool small = false;
 
-	for (int i = 0; i < textCount; i++) {
+	for (int i = 0; i < textCount; ++i) {
 		Common::String s = textResource->getText(i);
 		if (s.hasPrefix("^")) {
 			if (!small) {
@@ -113,7 +113,7 @@ void EndCredits::show() {
 
 		_vm->_surfaceFront.fillRect(Common::Rect(640, 480), 0);
 
-		for (int i = 0; i < textCount; i++) {
+		for (int i = 0; i < textCount; ++i) {
 			Common::String s = textResource->getText(i);
 			Font *font;
 			int height;

@@ -112,8 +112,6 @@ public:
 	const Common::String& getTargetName() const { return _targetName; }
 	void syncSoundSettings() override;
 
-	GUI::Debugger *getDebugger() override { return _console; }
-
 	void setupSysStrings();
 	void requestSavegame(int slotNum, Common::String &description);
 	void requestLoadgame(int slotNum);
@@ -149,7 +147,6 @@ public:
 
 	AnimationPlayer *_anim;
 	ArchiveReader *_arc;
-	Console *_console;
 	Input *_input;
 	MenuSystem *_menuSystem;
 	MoviePlayer *_moviePlayer;
@@ -218,7 +215,7 @@ public:
 	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
 	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description) override;
+	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 	void savegame(const char *filename, const char *description);
 	void loadgame(const char *filename);
 

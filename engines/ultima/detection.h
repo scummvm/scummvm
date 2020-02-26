@@ -61,7 +61,7 @@ struct UltimaGameDescription {
 class UltimaMetaEngine : public AdvancedMetaEngine {
 public:
 	UltimaMetaEngine();
-	~UltimaMetaEngine() override;
+	~UltimaMetaEngine() override {}
 
 	const char *getEngineId() const override {
 		return "ultima";
@@ -86,9 +86,5 @@ public:
 	 */
 	SaveStateList listSaves(const char *target) const override;
 };
-
-namespace Ultima {
-extern UltimaMetaEngine *g_metaEngine;
-} // End of namespace Ultima
 
 #endif

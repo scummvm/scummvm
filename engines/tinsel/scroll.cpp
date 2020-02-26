@@ -136,7 +136,7 @@ static void NeedScroll(int direction) {
 	int	Loffset, Toffset;
 
 	// get background offsets
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
 	switch (direction) {
 	case LEFT:	  /* Picture will go left, 'camera' right */
@@ -247,7 +247,7 @@ static void ScrollImage() {
 	int curX, curY;
 
 	// get background offsets
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
 	/*
 	 * Keeping cursor on a tag?
@@ -333,7 +333,7 @@ static void ScrollImage() {
 	if (g_ScrollCursor)
 		AdjustCursorXY(OldLoffset - Loffset, OldToffset - Toffset);
 
-	PlayfieldSetPos(FIELD_WORLD, Loffset, Toffset);
+	_vm->_bg->PlayfieldSetPos(FIELD_WORLD, Loffset, Toffset);
 }
 
 
@@ -356,7 +356,7 @@ static void MonitorScroll() {
 	if (g_oldx == newx && g_oldy == newy)
 		return;
 
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
 	/*
 	 * Approaching right side or left side of the screen?
@@ -420,11 +420,11 @@ void ScrollProcess(CORO_PARAM, const void *) {
 
 	// In Tinsel v2, scenes may play movies, so the background may not always
 	// already be initialized like it is in v1
-	while (!GetBgObject())
+	while (!_vm->_bg->GetBgObject())
 		CORO_SLEEP(1);
 
-	g_ImageH = BgHeight();		// Dimensions
-	g_ImageW = BgWidth();		//  of this scene.
+	g_ImageH = _vm->_bg->BgHeight();		// Dimensions
+	g_ImageW = _vm->_bg->BgWidth();		//  of this scene.
 
 	// Give up if there'll be no purpose in this process
 	if (g_ImageW == SCREEN_WIDTH  &&  g_ImageH == SCREEN_HEIGHT)
@@ -482,7 +482,7 @@ void ScrollTo(int x, int y, int xIter, int yIter) {
 	g_scrollPixelsX = xIter != 0 ? xIter : (TinselV2 ? g_sd.xSpeed : SCROLLPIXELS);
 	g_scrollPixelsY = yIter != 0 ? yIter : (TinselV2 ? g_sd.ySpeed : SCROLLPIXELS);
 
-	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);	// get background offsets
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);	// get background offsets
 
 	g_LeftScroll = x - Loffset;
 	g_DownScroll = y - Toffset;

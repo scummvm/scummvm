@@ -77,7 +77,6 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 
 SupernovaEngine::SupernovaEngine(OSystem *syst)
 	: Engine(syst)
-	, _console(nullptr)
 	, _gm(nullptr)
 	, _sound(nullptr)
 	, _resMan(nullptr)
@@ -107,7 +106,6 @@ SupernovaEngine::~SupernovaEngine() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _sleepAutoSave;
-	delete _console;
 	delete _gm;
 	delete _sound;
 	delete _resMan;
@@ -121,7 +119,6 @@ Common::Error SupernovaEngine::run() {
 		uint32 start = _system->getMillis();
 		_gm->updateEvents();
 		_gm->executeRoom();
-		_console->onFrame();
 		_system->updateScreen();
 		int end = _delay - (_system->getMillis() - start);
 		if (end > 0)
@@ -151,7 +148,7 @@ void SupernovaEngine::init() {
 		_gm = new GameManager1(this, _sound);
 	else if (_MSPart == 2)
 		_gm = new GameManager2(this, _sound);
-	_console = new Console(this, _gm);
+	setDebugger(new Console(this, _gm));
 
 	setTotalPlayTime(0);
 
@@ -669,7 +666,7 @@ bool SupernovaEngine::canSaveGameStateCurrently() {
 	return _allowSaveGame && _gm->canSaveGameStateCurrently();
 }
 
-Common::Error SupernovaEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error SupernovaEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
 }
 
@@ -694,6 +691,15 @@ bool SupernovaEngine::deserialize(Common::ReadStream *in, int version) {
 	return true;
 }
 
+Common::String SupernovaEngine::getSaveStateName(int slot) const {
+	if (_MSPart == 1)
+		return Common::String::format("msn_save.%03d", slot);
+	else if (_MSPart == 2)
+		return Common::String::format("ms2_save.%03d", slot);
+
+	return "";
+}
+
 bool SupernovaEngine::loadGame(int slot) {
 	if (slot < 0)
 		return false;
@@ -716,11 +722,7 @@ bool SupernovaEngine::loadGame(int slot) {
 		// continue to try to load it from there.
 	}
 
-	Common::String filename;
-	if (_MSPart == 1)
-		filename = Common::String::format("msn_save.%03d", slot);
-	else if (_MSPart == 2)
-		filename = Common::String::format("ms2_save.%03d", slot);
+	Common::String filename = getSaveStateName(slot);
 	Common::InSaveFile *savefile = _saveFileMan->openForLoading(filename);
 	if (!savefile)
 		return false;
@@ -783,12 +785,7 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 		return true;
 	}
 
-	Common::String filename;
-	if (_MSPart == 1)
-		filename = Common::String::format("msn_save.%03d", slot);
-	else if (_MSPart == 2)
-		filename = Common::String::format("ms2_save.%03d", slot);
-
+	Common::String filename = getSaveStateName(slot);
 	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename);
 	if (!savefile)
 		return false;

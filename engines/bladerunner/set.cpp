@@ -134,7 +134,7 @@ bool Set::open(const Common::String &name) {
 }
 
 void Set::addObjectsToScene(SceneObjects *sceneObjects) const {
-	for (int i = 0; i < _objectCount; i++) {
+	for (int i = 0; i < _objectCount; ++i) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		overrideSceneObjectInfo(i); // For bugfixes with respect to clickable/targetable box positioning/bounding box
@@ -168,14 +168,14 @@ bool Set::isXZInWalkbox(float x, float z, const Walkbox &walkbox) {
 
 	float lastX = walkbox.vertices[walkbox.vertexCount - 1].x;
 	float lastZ = walkbox.vertices[walkbox.vertexCount - 1].z;
-	for (int i = 0; i < walkbox.vertexCount; i++) {
+	for (int i = 0; i < walkbox.vertexCount; ++i) {
 		float currentX = walkbox.vertices[i].x;
 		float currentZ = walkbox.vertices[i].z;
 
 		if ((currentZ > z && z >= lastZ) || (currentZ <= z && z < lastZ)) {
 			float lineX = (lastX - currentX) / (lastZ - currentZ) * (z - currentZ) + currentX;
 			if (x < lineX)
-				found++;
+				++found;
 		}
 		lastX = currentX;
 		lastZ = currentZ;
@@ -561,7 +561,7 @@ void Set::setupNewObjectInSet(Common::String objName, BoundingBox objBbox) {
 	_objects[objectId].isHotMouse  = 0;
 	_objects[objectId].unknown1    = 0;
 	_objects[objectId].isTarget    = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un_)Combat_Target_Object
-	_objectCount++;
+	++_objectCount;
 }
 /**
 * Used for adding objects in a Set mainly to fix a few "McCoy walking to places he should not" issues

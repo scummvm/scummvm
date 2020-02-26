@@ -34,35 +34,35 @@ class ODataSource;
 // A little-endian stack for use with usecode
 class BaseUCStack {
 protected:
-	uint8 *buf;
-	uint8 *buf_ptr;
-	uint32 size;
+	uint8 *_buf;
+	uint8 *_bufPtr;
+	uint32 _size;
 public:
 
-	BaseUCStack(uint32 len, uint8 *b) : buf(b), size(len) {
+	BaseUCStack(uint32 len, uint8 *b) : _buf(b), _size(len) {
 		// stack grows downward, so start at the end of the buffer
-		buf_ptr = buf + size;
+		_bufPtr = _buf + _size;
 	}
 	virtual ~BaseUCStack() { }
 
 	inline uint32 getSize() const {
-		return size;
+		return _size;
 	}
 
 	inline uint32 stacksize() const {
-		return size - (buf_ptr - buf);
+		return _size - (_bufPtr - _buf);
 	}
 
 	inline void addSP(const int32 offset) {
-		buf_ptr += offset;
+		_bufPtr += offset;
 	}
 
 	inline unsigned int getSP() const {
-		return static_cast<unsigned int>(buf_ptr - buf);
+		return static_cast<unsigned int>(_bufPtr - _buf);
 	}
 
 	inline void setSP(unsigned int pos) {
-		buf_ptr = buf + pos;
+		_bufPtr = _buf + pos;
 	}
 
 	//
@@ -70,31 +70,31 @@ public:
 	//
 
 	inline void push1(uint8 val) {
-		buf_ptr--;
-		buf_ptr[0] = val;
+		_bufPtr--;
+		_bufPtr[0] = val;
 	}
 
 	inline void push2(uint16 val) {
-		buf_ptr -= 2;
-		buf_ptr[0] = static_cast<uint8>(val     & 0xFF);
-		buf_ptr[1] = static_cast<uint8>((val >> 8) & 0xFF);
+		_bufPtr -= 2;
+		_bufPtr[0] = static_cast<uint8>(val     & 0xFF);
+		_bufPtr[1] = static_cast<uint8>((val >> 8) & 0xFF);
 	}
 	inline void push4(uint32 val) {
-		buf_ptr -= 4;
-		buf_ptr[0] = static_cast<uint8>(val      & 0xFF);
-		buf_ptr[1] = static_cast<uint8>((val >> 8)  & 0xFF);
-		buf_ptr[2] = static_cast<uint8>((val >> 16) & 0xFF);
-		buf_ptr[3] = static_cast<uint8>((val >> 24) & 0xFF);
+		_bufPtr -= 4;
+		_bufPtr[0] = static_cast<uint8>(val      & 0xFF);
+		_bufPtr[1] = static_cast<uint8>((val >> 8)  & 0xFF);
+		_bufPtr[2] = static_cast<uint8>((val >> 16) & 0xFF);
+		_bufPtr[3] = static_cast<uint8>((val >> 24) & 0xFF);
 	}
 	// Push an arbitrary number of bytes of 0
 	inline void push0(const uint32 count) {
-		buf_ptr -= count;
-		Std::memset(buf_ptr, 0, count);
+		_bufPtr -= count;
+		Std::memset(_bufPtr, 0, count);
 	}
 	// Push an arbitrary number of bytes
 	inline void push(const uint8 *in, const uint32 count) {
-		buf_ptr -= count;
-		Std::memcpy(buf_ptr, in, count);
+		_bufPtr -= count;
+		Std::memcpy(_bufPtr, in, count);
 	}
 
 	//
@@ -103,21 +103,21 @@ public:
 
 	inline uint16 pop2() {
 		uint8 b0, b1;
-		b0 = *buf_ptr++;
-		b1 = *buf_ptr++;
+		b0 = *_bufPtr++;
+		b1 = *_bufPtr++;
 		return (b0 | (b1 << 8));
 	}
 	inline uint32 pop4() {
 		uint8 b0, b1, b2, b3;
-		b0 = *buf_ptr++;
-		b1 = *buf_ptr++;
-		b2 = *buf_ptr++;
-		b3 = *buf_ptr++;
+		b0 = *_bufPtr++;
+		b1 = *_bufPtr++;
+		b2 = *_bufPtr++;
+		b3 = *_bufPtr++;
 		return (b0 | (b1 << 8) | (b2 << 16) | (b3 << 24));
 	}
 	inline void pop(uint8 *out, const uint32 count) {
-		Std::memcpy(out, buf_ptr, count);
-		buf_ptr += count;
+		Std::memcpy(out, _bufPtr, count);
+		_bufPtr += count;
 	}
 
 	//
@@ -125,20 +125,20 @@ public:
 	//
 
 	inline uint8 access1(const uint32 offset) const {
-		return buf[offset];
+		return _buf[offset];
 	}
 	inline uint16 access2(const uint32 offset) const {
-		return (buf[offset] | (buf[offset + 1] << 8));
+		return (_buf[offset] | (_buf[offset + 1] << 8));
 	}
 	inline uint32 access4(const uint32 offset) const {
-		return buf[offset] | (buf[offset + 1] << 8) |
-		       (buf[offset + 2] << 16) | (buf[offset + 3] << 24);
+		return _buf[offset] | (_buf[offset + 1] << 8) |
+		       (_buf[offset + 2] << 16) | (_buf[offset + 3] << 24);
 	}
 	inline uint8 *access(const uint32 offset) {
-		return buf + offset;
+		return _buf + offset;
 	}
 	inline uint8 *access() {
-		return buf_ptr;
+		return _bufPtr;
 	}
 
 	//
@@ -146,20 +146,20 @@ public:
 	//
 
 	inline void assign1(const uint32 offset, const uint8 val) {
-		const_cast<uint8 *>(buf)[offset]   = static_cast<uint8>(val     & 0xFF);
+		const_cast<uint8 *>(_buf)[offset]   = static_cast<uint8>(val     & 0xFF);
 	}
 	inline void assign2(const uint32 offset, const uint16 val) {
-		const_cast<uint8 *>(buf)[offset]   = static_cast<uint8>(val     & 0xFF);
-		const_cast<uint8 *>(buf)[offset + 1] = static_cast<uint8>((val >> 8) & 0xFF);
+		const_cast<uint8 *>(_buf)[offset]   = static_cast<uint8>(val     & 0xFF);
+		const_cast<uint8 *>(_buf)[offset + 1] = static_cast<uint8>((val >> 8) & 0xFF);
 	}
 	inline void assign4(const uint32 offset, const uint32 val) {
-		const_cast<uint8 *>(buf)[offset]   = static_cast<uint8>(val      & 0xFF);
-		const_cast<uint8 *>(buf)[offset + 1] = static_cast<uint8>((val >> 8)  & 0xFF);
-		const_cast<uint8 *>(buf)[offset + 2] = static_cast<uint8>((val >> 16) & 0xFF);
-		const_cast<uint8 *>(buf)[offset + 3] = static_cast<uint8>((val >> 24) & 0xFF);
+		const_cast<uint8 *>(_buf)[offset]   = static_cast<uint8>(val      & 0xFF);
+		const_cast<uint8 *>(_buf)[offset + 1] = static_cast<uint8>((val >> 8)  & 0xFF);
+		const_cast<uint8 *>(_buf)[offset + 2] = static_cast<uint8>((val >> 16) & 0xFF);
+		const_cast<uint8 *>(_buf)[offset + 3] = static_cast<uint8>((val >> 24) & 0xFF);
 	}
 	inline void assign(const uint32 offset, const uint8 *in, const uint32 len) {
-		Std::memcpy(const_cast<uint8 *>(buf) + offset, in, len);
+		Std::memcpy(const_cast<uint8 *>(_buf) + offset, in, len);
 	}
 };
 
@@ -167,7 +167,7 @@ class DynamicUCStack : public BaseUCStack {
 public:
 	DynamicUCStack(uint32 len = 0x1000) : BaseUCStack(len, new uint8[len]) { }
 	~DynamicUCStack() override {
-		delete [] buf;
+		delete [] _buf;
 	}
 
 #ifdef USE_DYNAMIC_UCSTACK
@@ -179,9 +179,9 @@ public:
 
 #ifndef USE_DYNAMIC_UCSTACK
 class UCStack : public BaseUCStack {
-	uint8   buf_array[0x1000];
+	uint8   _bufArray[0x1000];
 public:
-	UCStack() : BaseUCStack(0x1000, buf_array) { }
+	UCStack() : BaseUCStack(0x1000, _bufArray) { }
 	~UCStack() override { }
 
 	void save(ODataSource *ods);

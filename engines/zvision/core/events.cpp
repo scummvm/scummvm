@@ -224,14 +224,6 @@ void ZVision::processEvents() {
 
 		case Common::EVENT_KEYDOWN: {
 			switch (_event.kbd.keycode) {
-			case Common::KEYCODE_d:
-				if (_event.kbd.hasFlags(Common::KBD_CTRL)) {
-					// Start the debugger
-					_console->attach();
-					_console->onFrame();
-				}
-				break;
-
 			case Common::KEYCODE_LEFT:
 			case Common::KEYCODE_RIGHT:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)

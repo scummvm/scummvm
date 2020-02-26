@@ -35,7 +35,7 @@ public:
 
 	virtual void load(Archive &);
 	virtual void deserialize(Archive &);
-	virtual void toConsole();
+	virtual void toConsole() const;
 };
 
 class NamedObject : public Object {

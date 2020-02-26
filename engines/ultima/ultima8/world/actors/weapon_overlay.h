@@ -29,20 +29,20 @@ namespace Ultima {
 namespace Ultima8 {
 
 struct WeaponOverlayFrame {
-	int32 xoff;
-	int32 yoff;
-	uint32 frame;
+	int32 _xOff;
+	int32 _yOff;
+	uint32 _frame;
 };
 
 struct WeaponOverlay {
-	unsigned int dircount;
-	Std::vector<WeaponOverlayFrame> *frames; // 8 or 16 directions
+	unsigned int _dirCount;
+	Std::vector<WeaponOverlayFrame> *_frames; // 8 or 16 directions
 
 	WeaponOverlay() {
-		frames = NULL;
+		_frames = NULL;
 	}
 	~WeaponOverlay() {
-		delete[] frames;
+		delete[] _frames;
 	}
 };
 
@@ -55,13 +55,13 @@ struct AnimWeaponOverlay {
 	const WeaponOverlayFrame *getFrame(unsigned int type,
 	                                   unsigned int direction,
 	                                   unsigned int frame) const {
-		if (type >= overlay.size()) return 0;
-		if (direction >= overlay[type].dircount) return 0;
-		if (frame >= overlay[type].frames[direction].size()) return 0;
-		return &(overlay[type].frames[direction][frame]);
+		if (type >= _overlay.size()) return 0;
+		if (direction >= _overlay[type]._dirCount) return 0;
+		if (frame >= _overlay[type]._frames[direction].size()) return 0;
+		return &(_overlay[type]._frames[direction][frame]);
 	}
 
-	Std::vector<WeaponOverlay> overlay;
+	Std::vector<WeaponOverlay> _overlay;
 };
 
 } // End of namespace Ultima8

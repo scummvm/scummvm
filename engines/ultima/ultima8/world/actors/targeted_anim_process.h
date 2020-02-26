@@ -46,7 +46,7 @@ protected:
 
 	bool init() override;
 
-	int32 x, y, z;
+	int32 _x, _y, _z;
 };
 
 } // End of namespace Ultima8

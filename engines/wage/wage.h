@@ -177,8 +177,6 @@ public:
 public:
 	Common::RandomSource *_rnd;
 
-	Debugger *_debugger;
-
 	Gui *_gui;
 	World *_world;
 
@@ -213,7 +211,7 @@ public:
 	void saveGame();
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool scummVMSaveLoadDialog(bool isSave);
 
 private:
@@ -225,27 +223,13 @@ private:
 	Scene *getSceneByOffset(int offset) const;
 	int saveGame(const Common::String &fileName, const Common::String &descriptionString);
 	int loadGame(int slotId);
-	Common::String getSavegameFilename(int16 slotId) const;
-
-public:
-
-	GUI::Debugger *getDebugger() override { return _debugger; }
 
 private:
-	Console *_console;
-
 	const ADGameDescription *_gameDescription;
 
 	Common::MacResManager *_resManager;
 
 	Audio::SoundHandle _soundHandle;
-};
-
-// Example console class
-class Console : public GUI::Debugger {
-public:
-	Console(WageEngine *vm) {}
-	~Console(void) override {}
 };
 
 } // End of namespace Wage

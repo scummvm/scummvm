@@ -39,9 +39,9 @@ class SettingManager;
 struct GameInfo;
 
 
-#define GAME_IS_U8 (CoreApp::get_instance()->getGameInfo()->type == GameInfo::GAME_U8)
-#define GAME_IS_REMORSE (CoreApp::get_instance()->getGameInfo()->type == GameInfo::GAME_REMORSE)
-#define GAME_IS_REGRET (CoreApp::get_instance()->getGameInfo()->type == GameInfo::GAME_REGRET)
+#define GAME_IS_U8 (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_U8)
+#define GAME_IS_REMORSE (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_REMORSE)
+#define GAME_IS_REGRET (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_REGRET)
 #define GAME_IS_CRUSADER (GAME_IS_REMORSE || GAME_IS_REGRET)
 
 
@@ -52,7 +52,7 @@ public:
 	virtual ~CoreApp();
 
 	static CoreApp *get_instance() {
-		return application;
+		return _application;
 	};
 
 	virtual void runGame() = 0;
@@ -62,7 +62,7 @@ public:
 	}
 
 	virtual void ForceQuit() {
-		isRunning = false;
+		_isRunning = false;
 	};
 
 	//! Startup the application. This will prepare the application for run().
@@ -71,7 +71,7 @@ public:
 
 	//! Get current GameInfo struct
 	GameInfo *getGameInfo() const {
-		return gameinfo;
+		return _gameInfo;
 	}
 
 	//! Get GameInfo for other configured game, or 0 for an invalid name.
@@ -79,14 +79,14 @@ public:
 
 	virtual void helpMe();
 
-	bool help()   const {
-		return oHelp;
+	bool help() const {
+		return _oHelp;
 	};
-	bool quiet()  const {
-		return oQuiet;
+	bool quiet() const {
+		return _oQuiet;
 	};
 	bool vquiet() const {
-		return oVQuiet;
+		return _oVQuiet;
 	};
 
 protected:
@@ -95,24 +95,23 @@ protected:
 	//! Should call parent class' DeclareArgs().
 	virtual void DeclareArgs();
 
-	bool isRunning;
+	bool _isRunning;
 
 	typedef Std::map<Common::String, GameInfo *, Common::IgnoreCase_Hash> GameMap;
-	GameMap games;
-	GameInfo *gameinfo;
+	GameMap _games;
+	GameInfo *_gameInfo;
 
 	// minimal system
-	FileSystem *filesystem;
-	ConfigFileManager *configfileman;
-	SettingManager *settingman;
+	FileSystem *_fileSystem;
+	ConfigFileManager *_configFileMan;
+	SettingManager *_settingMan;
 
-	Args parameters;
+	Args _parameters;
 
-	static CoreApp *application;
+	static CoreApp *_application;
 
 private:
 	const Ultima::UltimaGameDescription *_gameDesc;
-	Console *_console;
 
 	//! start filesystem, kernel, config
 	virtual void sysInit();
@@ -147,10 +146,10 @@ protected:
 	//! Specifically, @game and @work
 	void setupGamePaths(GameInfo *gameinfo);
 
-	Std::string oGamename;
-	bool oHelp;
-	bool oQuiet;
-	bool oVQuiet;
+	Std::string _oGameName;
+	bool _oHelp;
+	bool _oQuiet;
+	bool _oVQuiet;
 };
 
 } // End of namespace Ultima8

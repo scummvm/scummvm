@@ -25,20 +25,22 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
+class Debugger;
 class IDataSource;
 class ODataSource;
 
 class Process {
-public:
 	friend class Kernel;
-
+	friend class Debugger;
+public:
 	virtual void run() = 0;
 
-	Process(ObjId item_num = 0, uint16 type = 0);
+	Process(ObjId _itemNum = 0, uint16 type = 0);
 	virtual ~Process() { }
 
 	// p_dynamic_cast stuff
@@ -48,17 +50,17 @@ public:
 	ENABLE_CUSTOM_MEMORY_ALLOCATION()
 
 	uint32 getProcessFlags() const {
-		return flags;
+		return _flags;
 	}
 	bool is_active() const {
-		return (flags & PROC_ACTIVE);
+		return (_flags & PROC_ACTIVE);
 	}
 	bool is_terminated() const {
-		return (flags & (PROC_TERMINATED |
+		return (_flags & (PROC_TERMINATED |
 		                 PROC_TERM_DEFERRED)) != 0;
 	}
 	bool is_suspended() const {
-		return (flags & PROC_SUSPENDED) != 0;
+		return (_flags & PROC_SUSPENDED) != 0;
 	}
 
 	//! terminate the process and recursively fail all processes waiting for it
@@ -69,11 +71,11 @@ public:
 
 	//! terminate next frame
 	void terminateDeferred() {
-		flags |= PROC_TERM_DEFERRED;
+		_flags |= PROC_TERM_DEFERRED;
 	}
 
-	//! suspend until process 'pid' returns. If pid is 0, suspend indefinitely
-	void waitFor(ProcId pid);
+	//! suspend until process '_pid' returns. If _pid is 0, suspend indefinitely
+	void waitFor(ProcId _pid);
 
 	//! suspend until process returns. If proc is 0, suspend indefinitely
 	void waitFor(Process *proc);
@@ -84,24 +86,24 @@ public:
 	void wakeUp(uint32 result);
 
 	void setItemNum(ObjId it) {
-		item_num = it;
+		_itemNum = it;
 	}
 	void setType(uint16 ty) {
-		type = ty;
+		_type = ty;
 	}
 
 	ProcId getPid() const {
-		return pid;
+		return _pid;
 	}
 	ObjId getItemNum() const {
-		return item_num;
+		return _itemNum;
 	}
 	uint16 getType() const {
-		return type;
+		return _type;
 	}
 
 	//! dump some info about this process to pout
-	virtual void dumpInfo();
+	virtual void dumpInfo() const;
 
 	//! save this process
 	void save(ODataSource *ods);
@@ -116,20 +118,20 @@ protected:
 	void writeProcessHeader(ODataSource *ods);
 
 	//! process id
-	ProcId pid;
+	ProcId _pid;
 
-	uint32 flags;
+	uint32 _flags;
 
 	//! item we are assigned to
-	ObjId item_num;
-	uint16 type;
+	ObjId _itemNum;
+	uint16 _type;
 
 	//! process result
-	uint32 result;
+	uint32 _result;
 
 	//! Processes waiting for this one to finish.
 	//! When this process terminates, awaken them and pass them the result val.
-	Std::vector<ProcId> waiting;
+	Std::vector<ProcId> _waiting;
 
 public:
 

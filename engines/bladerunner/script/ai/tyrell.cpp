@@ -64,15 +64,15 @@ void AIScriptTyrell::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTyrell::EnteredScene(int sceneId) {
+void AIScriptTyrell::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTyrell::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTyrell::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTyrell::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTyrell::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -110,7 +110,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		if (_var == 1) {
 			*animation = 767;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(767)) {
 				*animation = 766;
 				_animationFrame = 0;
@@ -118,7 +118,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 			}
 		} else if (_var == 0) {
 			*animation = 766;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(766)) {
 				_animationFrame = 0;
 				if (!Random_Query(0, 3)) {
@@ -130,7 +130,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 765;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(765)) {
 			_animationFrame = 0;
 		}
@@ -142,7 +142,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		} else {
 			*animation = 768;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(768)) {
 				_animationFrame = 0;
 			}
@@ -151,7 +151,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 769;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(769)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -161,7 +161,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 770;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(770)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -171,7 +171,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 771;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(771)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -181,7 +181,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 772;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(772)) {
 			_animationFrame = 0;
 			_animationState = 2;

@@ -130,7 +130,7 @@ void Score::loadArchive() {
 	} else {
 		Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
-		debugC(2, kDebugLoading, "****** Loading Palette CLUT");
+		debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[0]);
 		loadPalette(*pal);
 	}
 
@@ -296,6 +296,8 @@ void Score::copyCastStxts() {
 void Score::loadSpriteImages(bool isSharedCast) {
 	debugC(1, kDebugLoading, "****** Preloading sprite images");
 
+	Score *sharedScore = _vm->getSharedScore();
+
 	for (Common::HashMap<int, Cast *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
 		if (!c->_value)
 			continue;
@@ -305,7 +307,8 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 		BitmapCast *bitmapCast = (BitmapCast *)c->_value;
 		uint32 tag = bitmapCast->_tag;
-		uint16 imgId = (uint16)(c->_key + _castIDoffset);
+		uint16 imgId = c->_key;
+		uint16 realId;
 
 		if (_vm->getVersion() >= 4 && bitmapCast->_children.size() > 0) {
 			imgId = bitmapCast->_children[0].index;
@@ -315,52 +318,57 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		Image::ImageDecoder *img = NULL;
 		Common::SeekableReadStream *pic = NULL;
 
+		if (_loadedCast->contains(imgId)) {
+			bitmapCast->_tag = tag = ((BitmapCast *)_loadedCast->getVal(imgId))->_tag;
+			realId = imgId + _castIDoffset;
+			pic = _movieArchive->getResource(tag, realId);
+		} else if (sharedScore) {
+			if (sharedScore->_loadedCast && sharedScore->_loadedCast->contains(imgId)) {
+				bitmapCast->_tag = tag = ((BitmapCast *)sharedScore->_loadedCast->getVal(imgId))->_tag;
+				realId = imgId + sharedScore->_castIDoffset;
+				pic = sharedScore->getArchive()->getResource(tag, realId);
+			}
+		}
+
+		if (pic == NULL) {
+			warning("Score::loadSpriteImages(): Image %d not found", imgId);
+			continue;
+		}
+
+		int w = bitmapCast->_initialRect.width();
+		int h = bitmapCast->_initialRect.height();
+
 		switch (tag) {
 		case MKTAG('D', 'I', 'B', ' '):
-			if (_movieArchive->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
-				debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d", imgId);
-				img = new DIBDecoder();
-				img->loadStream(*_movieArchive->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
-				bitmapCast->_surface = img->getSurface();
-			} else if (isSharedCast && _vm->getSharedDIB() != NULL && _vm->getSharedDIB()->contains(imgId)) {
-				debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d from shared cast", imgId);
-				img = new DIBDecoder();
-				img->loadStream(*_vm->getSharedDIB()->getVal(imgId));
-				bitmapCast->_surface = img->getSurface();
-			}
+			debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d (%d), %d bytes", imgId, realId, pic->size());
+			img = new DIBDecoder();
 			break;
+
 		case MKTAG('B', 'I', 'T', 'D'):
-			if (isSharedCast) {
-				debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d from shared cast", imgId);
-				pic = _vm->getSharedBMP()->getVal(imgId);
-				if (pic != NULL)
-					pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
-			} else 	if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
-				debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d", imgId);
-				pic = _movieArchive->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+			debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d (%d), %d bytes", imgId, realId, pic->size());
+
+			if (w > 0 && h > 0) {
+				if (_vm->getVersion() < 6) {
+					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch);
+				} else {
+					img = new Image::BitmapDecoder();
+				}
+			} else {
+				warning("Score::loadSpriteImages(): Image %d not found", imgId);
 			}
+
 			break;
+
 		default:
-			warning("Unknown Bitmap Cast Tag: [%d] %s", tag, tag2str(tag));
+			warning("Score::loadSpriteImages(): Unknown Bitmap Cast Tag: [%d] %s", tag, tag2str(tag));
 			break;
 		}
 
-		int w = bitmapCast->_initialRect.width(), h = bitmapCast->_initialRect.height();
+		img->loadStream(*pic);
+		bitmapCast->_surface = img->getSurface();
+
 		debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
 			imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
-
-		if (pic != NULL && bitmapCast != NULL && w > 0 && h > 0) {
-			if (_vm->getVersion() < 6) {
-				img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch);
-			} else {
-				img = new Image::BitmapDecoder();
-			}
-
-			img->loadStream(*pic);
-			bitmapCast->_surface = img->getSurface();
-		} else {
-			warning("Image %d not found", imgId);
-		}
 	}
 }
 
@@ -391,8 +399,14 @@ Score::~Score() {
 void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 steps = stream.size() / 6;
 	uint16 index = (steps * 3) - 1;
-	uint16 _paletteColorCount = steps;
 	byte *_palette = new byte[index + 1];
+
+	debugC(3, kDebugLoading, "Score::loadPalette(): %d steps, %d bytes", steps, stream.size());
+
+	if (steps > 256) {
+		warning("Score::loadPalette(): steps > 256: %d", steps);
+		steps = 256;
+	}
 
 	for (int i = 0; i < steps; i++) {
 		_palette[index - 2] = stream.readByte();
@@ -405,7 +419,7 @@ void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 		stream.readByte();
 		index -= 3;
 	}
-	_vm->setPalette(_palette, _paletteColorCount);
+	_vm->setPalette(_palette, steps);
 }
 
 void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
@@ -599,6 +613,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
+		uint32 tag;
 		if (size == 0)
 			continue;
 
@@ -610,8 +625,14 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		switch (castType) {
 		case kCastBitmap:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) BitmapCast", id, numToCastNum(id));
-			// TODO: Work out the proper tag!
-			_loadedCast->setVal(id, new BitmapCast(stream, MKTAG('B', 'I', 'T', 'D'), _vm->getVersion()));
+			if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), id + _castIDoffset))
+				tag = MKTAG('B', 'I', 'T', 'D');
+			else if (_movieArchive->hasResource(MKTAG('D', 'I', 'B', ' '), id + _castIDoffset))
+				tag = MKTAG('D', 'I', 'B', ' ');
+			else
+				error("Score::loadCastDataVWCR(): non-existent reference to BitmapCast");
+
+			_loadedCast->setVal(id, new BitmapCast(stream, tag, _vm->getVersion()));
 			break;
 		case kCastText:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) TextCast", id, numToCastNum(id));
@@ -1381,10 +1402,7 @@ void Score::startLoop() {
 
 	g_director->_wm->setScreen(_surface);
 
-	if (_stageColor == 0)
-		_trailSurface->clear(_vm->getPaletteColorCount() - 1);
-	else
-		_trailSurface->clear(_stageColor);
+	_trailSurface->clear(255 - _stageColor);
 
 	_currentFrame = 0;
 	_stopPlay = false;
@@ -1463,7 +1481,7 @@ void Score::update() {
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
 
-	_surface->clear();
+	_surface->clear(255 - _stageColor);
 	_surface->copyFrom(*_trailSurface);
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);

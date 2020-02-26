@@ -41,7 +41,7 @@ void SideEffectExit::execute(Actor *actor) {
 	actor->getPage()->getLeadActor()->setNextExecutors(_nextModule, _nextPage);
 }
 
-void SideEffectExit::toConsole() {
+void SideEffectExit::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectExit: _nextModule=%s, _nextPage=%s", _nextModule.c_str(), _nextPage.c_str());
 }
 
@@ -56,7 +56,7 @@ void SideEffectLocation::execute(Actor *actor) {
 		mgr->setCurrentWayPoint(location);
 }
 
-void SideEffectLocation::toConsole() {
+void SideEffectLocation::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectLocation: _location=%s", _location.c_str());
 }
 
@@ -71,7 +71,7 @@ void SideEffectInventoryItemOwner::execute(Actor *actor) {
 	mgr->setItemOwner(_owner, item);
 }
 
-void SideEffectInventoryItemOwner::toConsole() {
+void SideEffectInventoryItemOwner::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 
@@ -84,7 +84,7 @@ void SideEffectGameVariable::execute(Actor *actor) {
 	actor->getPage()->getGame()->setVariable(_name, _value);
 }
 
-void SideEffectGameVariable::toConsole() {
+void SideEffectGameVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
@@ -92,7 +92,7 @@ void SideEffectModuleVariable::execute(Actor *actor) {
 	actor->getPage()->getModule()->setVariable(_name, _value);
 }
 
-void SideEffectModuleVariable::toConsole() {
+void SideEffectModuleVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
@@ -100,7 +100,7 @@ void SideEffectPageVariable::execute(Actor *actor) {
 	actor->getPage()->setVariable(_name, _value);
 }
 
-void SideEffectPageVariable::toConsole() {
+void SideEffectPageVariable::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
@@ -118,7 +118,7 @@ void SideEffectRandomPageVariable::execute(Actor *actor) {
 	actor->getPage()->setVariable(_name, _values[index]);
 }
 
-void SideEffectRandomPageVariable::toConsole() {
+void SideEffectRandomPageVariable::toConsole() const {
 	Common::String values("{");
 	for (uint i = 0; i < _values.size(); ++i) {
 		values += _values[i];

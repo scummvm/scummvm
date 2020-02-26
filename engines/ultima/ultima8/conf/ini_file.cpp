@@ -28,17 +28,16 @@ namespace Ultima8 {
 using Std::string;
 
 INIFile::INIFile()
-	: is_file(false), readonly(false) {
+	: _isFile(false), _readOnly(false) {
 
 }
 
-INIFile::INIFile(string fname, istring root_)
-	: root(root_), is_file(false), readonly(false) {
+INIFile::INIFile(string fname, istring root)
+	: _root(root), _isFile(false), _readOnly(false) {
 	readConfigFile(fname);
 }
 
 INIFile::~INIFile() {
-
 }
 
 bool INIFile::Section::hasKey(istring key) {
@@ -47,8 +46,8 @@ bool INIFile::Section::hasKey(istring key) {
 
 INIFile::KeyValue *INIFile::Section::getKey(istring key) {
 	Std::list<KeyValue>::iterator i;
-	for (i = keys.begin(); i != keys.end(); ++i) {
-		if (i->key == key) {
+	for (i = _keys.begin(); i != _keys.end(); ++i) {
+		if (i->_key == key) {
 			return &(*i);
 		}
 	}
@@ -58,33 +57,33 @@ INIFile::KeyValue *INIFile::Section::getKey(istring key) {
 void INIFile::Section::setKey(istring key, string value) {
 	KeyValue *kv = getKey(key);
 	if (kv) {
-		kv->value = value;
+		kv->_value = value;
 		return;
 	}
 
 	KeyValue newkey;
-	newkey.key = key;
-	newkey.value = value;
-	newkey.comment = "";
-	keys.push_back(newkey);
+	newkey._key = key;
+	newkey._value = value;
+	newkey._comment = "";
+	_keys.push_back(newkey);
 }
 
 void INIFile::Section::unsetKey(istring key) {
 	Std::list<KeyValue>::iterator i;
-	for (i = keys.begin(); i != keys.end(); ++i) {
-		if (i->key == key) {
-			i = keys.erase(i);
+	for (i = _keys.begin(); i != _keys.end(); ++i) {
+		if (i->_key == key) {
+			i = _keys.erase(i);
 		}
 	}
 }
 
 string INIFile::Section::dump() {
-	string s = comment;
-	s += "[" + name + "]\n";
+	string s = _comment;
+	s += "[" + _name + "]\n";
 	Std::list<KeyValue>::iterator i;
-	for (i = keys.begin(); i != keys.end(); ++i) {
-		s += i->comment;
-		s += i->key + "=" + i->value + "\n";
+	for (i = _keys.begin(); i != _keys.end(); ++i) {
+		s += i->_comment;
+		s += i->_key + "=" + i->_value + "\n";
 	}
 
 	return s;
@@ -110,8 +109,8 @@ bool INIFile::readConfigFile(string fname) {
 	if (!readConfigString(sbuf))
 		return false;
 
-	is_file = true; // readConfigString sets is_file = false
-	filename = fname;
+	_isFile = true; // readConfigString sets _isFile = false
+	_filename = fname;
 	return true;
 }
 
@@ -142,7 +141,7 @@ static void ltrim(string &s) {
 // http://www.scummvm.org/
 
 bool INIFile::readConfigString(string config) {
-	is_file = false;
+	_isFile = false;
 
 	string line;
 	string comment;
@@ -195,16 +194,16 @@ bool INIFile::readConfigString(string config) {
 				return false;
 			}
 
-			if (!section.name.empty()) {
+			if (!section._name.empty()) {
 				// save previous section
-				sections.push_back(section);
+				_sections.push_back(section);
 			}
-			section.name.clear();
-			section.comment.clear();
-			section.keys.clear();
+			section._name.clear();
+			section._comment.clear();
+			section._keys.clear();
 
-			section.name = line.substr(1, p - 1);
-			section.comment = comment;
+			section._name = line.substr(1, p - 1);
+			section._comment = comment;
 			comment.clear();
 
 		} else {
@@ -217,7 +216,7 @@ bool INIFile::readConfigString(string config) {
 				continue;
 
 			// If no section has been set, this config file is invalid!
-			if (section.name.empty()) {
+			if (section._name.empty()) {
 				perr << "Config file buggy: Key/value pair found outside "
 				     << "a section in line " << lineno << Std::endl;
 				return false;
@@ -235,49 +234,49 @@ bool INIFile::readConfigString(string config) {
 
 			string t = line.substr(0, p);
 			rtrim(t);
-			v.key = t;
+			v._key = t;
 
 			if (p + 1 < line.size())
 				t = line.substr(p + 1);
 			else
 				t = "";
 			ltrim(t);
-			v.value = t;
+			v._value = t;
 
-			v.comment = comment;
+			v._comment = comment;
 			comment.clear();
 
 #if 0
-			pout << "section: " << section.name << ", key: " << v.key
-			     << ", value: " << v.value << Std::endl;
+			pout << "section: " << section._name << ", key: " << v._key
+			     << ", value: " << v._value << Std::endl;
 #endif
 
-			section.keys.push_back(v);
+			section._keys.push_back(v);
 		}
 	}
 
-	if (!section.name.empty()) {
+	if (!section._name.empty()) {
 		// save last section
-		sections.push_back(section);
+		_sections.push_back(section);
 	}
 
 	return true;
 }
 
 void INIFile::clear(istring root_) {
-	sections.clear();
-	root = root_;
-	is_file = false;
-	readonly = false;
-	filename = "";
+	_sections.clear();
+	_root = root_;
+	_isFile = false;
+	_readOnly = false;
+	_filename = "";
 }
 
 string INIFile::dump() {
 	string s;
 
 	Std::list<Section>::iterator i;
-	for (i = sections.begin(); i != sections.end(); ++i) {
-		if (i != sections.begin())
+	for (i = _sections.begin(); i != _sections.end(); ++i) {
+		if (i != _sections.begin())
 			s += "\n";
 
 		s += i->dump();
@@ -287,10 +286,10 @@ string INIFile::dump() {
 }
 
 void INIFile::write() {
-	if (!is_file || readonly)
+	if (!_isFile || _readOnly)
 		return;
 
-	ODataSource *f = FileSystem::get_instance()->WriteFile(filename, true);
+	ODataSource *f = FileSystem::get_instance()->WriteFile(_filename, true);
 	if (!f) return;
 
 	Std::string s = dump();
@@ -305,7 +304,7 @@ bool INIFile::stripRoot(istring &key) {
 	if (pos == istring::npos) return false;
 
 	istring keyroot = key.substr(0, pos);
-	if (keyroot != root) return false;
+	if (keyroot != _root) return false;
 
 	key.erase(0, pos + 1);
 
@@ -314,8 +313,8 @@ bool INIFile::stripRoot(istring &key) {
 
 INIFile::Section *INIFile::getSection(istring section) {
 	Std::list<Section>::iterator i;
-	for (i = sections.begin(); i != sections.end(); ++i) {
-		if (i->name == section) {
+	for (i = _sections.begin(); i != _sections.end(); ++i) {
+		if (i->_name == section) {
 			return &(*i);
 		}
 	}
@@ -352,7 +351,7 @@ bool INIFile::hasKey(istring key) {
 }
 
 bool INIFile::checkRoot(istring key) {
-	return (root == key || stripRoot(key));
+	return (_root == key || stripRoot(key));
 }
 
 bool INIFile::value(istring key, string &ret) {
@@ -366,7 +365,7 @@ bool INIFile::value(istring key, string &ret) {
 	KeyValue *kv = section->getKey(k);
 	if (!kv) return false;
 
-	ret = kv->value;
+	ret = kv->_value;
 	return true;
 }
 
@@ -390,7 +389,7 @@ bool INIFile::value(istring key, bool &ret) {
 	return true;
 }
 
-void INIFile::set(istring key, string value) {
+void INIFile::set(istring key, string strValue) {
 	if (!stripRoot(key)) return;
 	istring s, k;
 	splitKey(key, s, k);
@@ -398,29 +397,29 @@ void INIFile::set(istring key, string value) {
 	Section *section = getSection(s);
 	if (!section) {
 		Section newsec;
-		newsec.name = s;
-		newsec.comment = "";
-		sections.push_back(newsec);
+		newsec._name = s;
+		newsec._comment = "";
+		_sections.push_back(newsec);
 		section = getSection(s);
 		assert(section);
 	}
 
-	section->setKey(k, value);
+	section->setKey(k, strValue);
 }
 
-void INIFile::set(istring key, const char *value) {
-	string v = value;
+void INIFile::set(istring key, const char *strValue) {
+	string v = strValue;
 	set(key, v);
 }
 
-void INIFile::set(istring key, int value) {
+void INIFile::set(istring key, int intValue) {
 	char buf[32];
-	snprintf(buf, 32, "%d", value);
+	snprintf(buf, 32, "%d", intValue);
 	set(key, buf);
 }
 
-void INIFile::set(istring key, bool value) {
-	if (value)
+void INIFile::set(istring key, bool boolValue) {
+	if (boolValue)
 		set(key, "true");
 	else
 		set(key, "false");
@@ -437,7 +436,7 @@ void INIFile::unset(istring key) {
 	}
 }
 
-void INIFile::listKeys(Std::set<istring> &keys, istring section_,
+void INIFile::listKeys(Std::set<istring> &_keys, istring section_,
                        bool longformat) {
 	if (!stripRoot(section_)) return;
 
@@ -445,25 +444,25 @@ void INIFile::listKeys(Std::set<istring> &keys, istring section_,
 	if (!section) return;
 
 	Std::list<KeyValue>::iterator i;
-	for (i = section->keys.begin(); i != section->keys.end(); ++i) {
+	for (i = section->_keys.begin(); i != section->_keys.end(); ++i) {
 		istring k;
 		if (longformat)
-			k = root + "/" + section->name + "/" + i->key;
+			k = _root + "/" + section->_name + "/" + i->_key;
 		else
-			k = i->key;
+			k = i->_key;
 
-		keys.insert(k);
+		_keys.insert(k);
 	}
 }
 
 void INIFile::listSections(Std::set<istring> &sections_, bool longformat) {
 	Std::list<Section>::iterator i;
-	for (i = sections.begin(); i != sections.end(); ++i) {
+	for (i = _sections.begin(); i != _sections.end(); ++i) {
 		istring s;
 		if (longformat)
-			s = root + "/" + i->name;
+			s = _root + "/" + i->_name;
 		else
-			s = i->name;
+			s = i->_name;
 
 		sections_.insert(s);
 	}
@@ -476,14 +475,14 @@ void INIFile::listKeyValues(KeyMap &keyvalues, istring section_, bool longformat
 	if (!section) return;
 
 	Std::list<KeyValue>::iterator i;
-	for (i = section->keys.begin(); i != section->keys.end(); ++i) {
+	for (i = section->_keys.begin(); i != section->_keys.end(); ++i) {
 		istring k;
 		if (longformat)
-			k = root + "/" + section->name + "/" + i->key;
+			k = _root + "/" + section->_name + "/" + i->_key;
 		else
-			k = i->key;
+			k = i->_key;
 
-		keyvalues[k] = i->value;
+		keyvalues[k] = i->_value;
 	}
 }
 

@@ -37,15 +37,15 @@ public:
 
 	CreditsGump();
 	CreditsGump(const Std::string &text, int parskip = 24,
-	            uint32 _Flags = 0, int32 layer_ = LAYER_MODAL);
-	~CreditsGump(void) override;
+	            uint32 flags = 0, int32 layer = LAYER_MODAL);
+	~CreditsGump() override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Set a configuration option to true when user watches entire sequence
-	void SetFlagWhenFinished(Std::string configkey_) {
-		configkey = configkey_;
+	void SetFlagWhenFinished(Std::string configKey) {
+		_configKey = configKey;
 	}
 
 	void Close(bool no_del = false) override;
@@ -61,27 +61,27 @@ protected:
 
 	void extractLine(Std::string &text_, char &modifier, Std::string &line);
 
-	Std::string text;
-	int parskip;
+	Std::string _text;
+	int _parSkip;
 
 	enum CreditsState {
 		CS_PLAYING,
 		CS_FINISHING,
 		CS_CLOSING
-	} state;
+	} _state;
 
-	int timer;
+	int _timer;
 
-	RenderedText *title;
-	RenderedText *nexttitle;
-	int nexttitlesurf;
+	RenderedText *_title;
+	RenderedText *_nextTitle;
+	int _nextTitleSurf;
 
-	RenderSurface *scroll[4];
-	int scrollheight[4];
-	int currentsurface;
-	int currenty;
+	RenderSurface *_scroll[4];
+	int _scrollHeight[4];
+	int _currentSurface;
+	int _currentY;
 
-	Std::string configkey;
+	Std::string _configKey;
 };
 
 } // End of namespace Ultima8

@@ -63,7 +63,7 @@ void Lingo::execute(uint pc) {
 			printStack("Stack before: ", current);
 
 		if (debugChannelSet(9, kDebugLingoExec)) {
-			debug("Vars after");
+			debug("Vars before");
 			printAllVars();
 		}
 
@@ -275,7 +275,7 @@ Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 	sym->argNames = NULL;
 	sym->varNames = NULL;
 	sym->ctx = NULL;
-	sym->archiveIndex = -1;
+	sym->archiveIndex = _archiveIndex;
 
 	if (debugChannelSet(1, kDebugLingoCompile)) {
 		uint pc = 0;
@@ -499,7 +499,7 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		}
 
 		if (sym->type != INT && sym->type != VOID &&
-				sym->type != FLOAT && sym->type != STRING) {
+				sym->type != FLOAT && sym->type != STRING && sym->type != ARRAY) {
 			warning("varAssign: assignment to non-variable '%s'", sym->name.c_str());
 			return;
 		}
@@ -518,7 +518,7 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		} else if (value.type == STRING) {
 			sym->u.s = new Common::String(*value.u.s);
 			delete value.u.s;
-		} else if (value.type == POINT) {
+		} else if (value.type == POINT || value.type == ARRAY) {
 			sym->u.farr = new DatumArray(*value.u.farr);
 			delete value.u.farr;
 		} else if (value.type == SYMBOL) {
@@ -533,6 +533,10 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		}
 	} else if (var.type == REFERENCE) {
 		Score *score = g_director->getCurrentScore();
+		if (!score) {
+			warning("varAssign: Assigning to a reference to an empty score");
+			return;
+		}
 		if (!score->_loadedCast->contains(var.u.i)) {
 			if (!score->_loadedCast->contains(var.u.i - score->_castIDoffset)) {
 				warning("varAssign: Unknown REFERENCE %d", var.u.i);
@@ -586,7 +590,9 @@ Datum Lingo::varFetch(Datum &var) {
 			result.u.i = var.u.sym->u.i;
 		else if (sym->type == VOID)
 			result.u.i = 0;
-		else {
+		else if (sym->type == ARRAY) {
+			result.u.farr = sym->u.farr;
+		} else {
 			warning("varFetch: unhandled type: %s", var.type2str());
 			result.type = VOID;
 		}

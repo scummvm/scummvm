@@ -250,8 +250,9 @@ protected:
 
 	// Engine
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
+	virtual Common::String getSaveStateName(int slot) const override;
 
 	Common::String getDiskImageName(byte volume) const { return Adl::getDiskImageName(*_gameDescription, volume); }
 	GameType getGameType() const { return Adl::getGameType(*_gameDescription); }
@@ -453,8 +454,6 @@ private:
 	byte convertKey(uint16 ascii) const;
 	Common::String getWord(const Common::String &line, uint &index) const;
 
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
 };
 

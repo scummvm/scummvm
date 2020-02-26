@@ -38,7 +38,8 @@ SliceRenderer::SliceRenderer(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_pixelFormat = screenPixelFormat();
 
-	for (int i = 0; i < ARRAYSIZE(_animationsShadowEnabled); i++) { // original game ss going just yp to 942 and not 997
+	// original game is going just up to 942 and not 997
+	for (int i = 0; i < ARRAYSIZE(_animationsShadowEnabled); ++i) {
 		_animationsShadowEnabled[i] = true;
 	}
 	_animation = -1;
@@ -356,7 +357,7 @@ void SliceLineIterator::advance() {
 	_currentZ     += _stepZ;
 	_currentSlice += _stepSlice;
 	_currentX     += _stepX;
-	_currentY     += 1;
+	++_currentY;
 
 	_sliceMatrix._m[0][2] += _stepX * 65536.0f;
 	_sliceMatrix._m[1][2] += _field_38 * 64.0f;
@@ -472,7 +473,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 		}
 
 		sliceLineIterator.advance();
-		frameY += 1;
+		++frameY;
 		zBufferLinePtr += 640;
 	}
 }
@@ -532,7 +533,7 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 			memset(lineZbuffer, 0xFF, 640 * 2);
 			drawSlice(currentSlice, false, currentY, surface, lineZbuffer);
 			currentSlice += sliceStep;
-			currentY--;
+			--currentY;
 		}
 	}
 }
@@ -712,7 +713,7 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 	yMax = CLIP(yMax, 0, 480);
 	yMin = CLIP(yMin, 0, 480);
 
-	int ditheringFactor[] = {
+	static const int ditheringFactor[] = {
 		0,  8,  2, 10,
 		12, 4, 14,  6,
 		3, 11,  1,  9,
@@ -763,7 +764,7 @@ SliceRendererLights::SliceRendererLights(Lights *lights) {
 
 	_lights = lights;
 
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < 20; ++i) {
 		_cacheColor[i].r = 0.0f;
 		_cacheColor[i].g = 0.0f;
 		_cacheColor[i].b = 0.0f;
@@ -778,7 +779,7 @@ void SliceRendererLights::calculateColorBase(Vector3 position1, Vector3 position
 	_finalColor.b = 0.0f;
 	_cacheRecalculation = 0;
 	if (_lights) {
-		for (uint i = 0; i < _lights->_lights.size(); i++) {
+		for (uint i = 0; i < _lights->_lights.size(); ++i) {
 			Light *light = _lights->_lights[i];
 			if (i < 20) {
 				float cacheCoeficient = light->calculate(position1, position2/*, height*/);
@@ -812,7 +813,7 @@ void SliceRendererLights::calculateColorSlice(Vector3 position) {
 	_finalColor.b = 0.0f;
 
 	if (_lights) {
-		for (uint i = 0; i < _lights->_lights.size(); i++) {
+		for (uint i = 0; i < _lights->_lights.size(); ++i) {
 			Light *light = _lights->_lights[i];
 			if (i < 20) {
 				_cacheCounter[i] -= 1.0f;
@@ -821,7 +822,7 @@ void SliceRendererLights::calculateColorSlice(Vector3 position) {
 						_cacheCounter[i] = _cacheCounter[i] + _cacheStart[i];
 					} while (_cacheCounter[i] <= 0.0f);
 					light->calculateColor(&_cacheColor[i], position);
-					_cacheRecalculation++;
+					++_cacheRecalculation;
 				}
 				_finalColor.r += _cacheColor[i].r;
 				_finalColor.g += _cacheColor[i].g;
@@ -829,7 +830,7 @@ void SliceRendererLights::calculateColorSlice(Vector3 position) {
 			} else {
 				Color color;
 				light->calculateColor(&color, position);
-				_cacheRecalculation++;
+				++_cacheRecalculation;
 				_finalColor.r += color.r;
 				_finalColor.g += color.g;
 				_finalColor.b += color.b;

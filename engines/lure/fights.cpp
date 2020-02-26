@@ -129,7 +129,6 @@ void FightsManager::fightLoop() {
 		}
 
 		Screen::getReference().update();
-		game.debugger().onFrame();
 
 		g_system->delayMillis(10);
 	}
@@ -199,14 +198,6 @@ void FightsManager::checkEvents() {
 			case Common::KEYCODE_ESCAPE:
 				engine.quitGame();
 				return;
-
-			case Common::KEYCODE_d:
-				if (events.event().kbd.hasFlags(Common::KBD_CTRL)) {
-					// Activate the debugger
-					game.debugger().attach();
-					return;
-				}
-				break;
 
 			default:
 				// Scan through the mapping list for a move for the keypress

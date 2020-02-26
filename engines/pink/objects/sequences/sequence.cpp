@@ -49,7 +49,7 @@ void Sequence::deserialize(Archive &archive) {
 	_items.deserialize(archive);
 }
 
-void Sequence::toConsole() {
+void Sequence::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tSequence %s", _name.c_str());
 	debugC(6, kPinkDebugLoadingObjects, "\t\t\tItems:");
 	for (uint i = 0; i < _items.size(); ++i) {
@@ -132,7 +132,7 @@ void SequenceAudio::deserialize(Archive &archive) {
 	_soundName = archive.readString();
 }
 
-void SequenceAudio::toConsole() {
+void SequenceAudio::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\t\tSequenceAudio %s : _sound = %s", _name.c_str(), _soundName.c_str());
 	debugC(6, kPinkDebugLoadingObjects, "\t\t\tItems:");
 	for (uint i = 0; i < _items.size(); ++i) {

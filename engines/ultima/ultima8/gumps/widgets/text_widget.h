@@ -38,27 +38,27 @@ class RenderedText;
 
 class TextWidget : public Gump {
 protected:
-	Std::string     text;
-	bool            gamefont;
-	int             fontnum;
-	uint32          blendColour;
-	int32           tx, ty;
+	Std::string     _text;
+	bool            _gameFont;
+	int             _fontNum;
+	uint32          _blendColour;
+	int32           _tx, _ty;
 
-	unsigned int    current_start; //!< start of currently displaying text
-	unsigned int    current_end;   //!< start of remaining text
+	unsigned int    _currentStart; //!< start of currently displaying text
+	unsigned int    _currentEnd;   //!< start of remaining text
 
-	int32 targetwidth, targetheight;
+	int32 _targetWidth, _targetHeight;
 
-	RenderedText *cached_text;
-	Font::TextAlign textalign;
+	RenderedText *_cachedText;
+	Font::TextAlign _textAlign;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	TextWidget();
-	TextWidget(int X, int Y, Std::string txt, bool gamefont, int fontnum,
+	TextWidget(int x, int y, const Std::string &txt, bool gamefont, int fontnum,
 	           int width = 0, int height = 0,
 	           Font::TextAlign align = Font::TEXT_LEFT);
-	~TextWidget(void) override;
+	~TextWidget() override;
 
 	// Init the gump, call after construction
 	void            InitGump(Gump *newparent, bool take_focus = true) override;
@@ -81,13 +81,13 @@ public:
 	//! \param start Returns the start of the text
 	//! \param end Returns the start of the remaining text
 	void getCurrentText(unsigned int &start, unsigned int &end) const {
-		start = current_start;
-		end = current_end;
+		start = _currentStart;
+		end = _currentEnd;
 	}
 
 	//! set the colour to blend the rendered text with. (0 to disable)
 	void setBlendColour(uint32 col) {
-		blendColour = col;
+		_blendColour = col;
 	}
 
 	//! get the RenderedText's vlead

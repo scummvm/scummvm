@@ -34,29 +34,64 @@ class MidiParser;
 
 namespace Tinsel {
 
-bool PlayMidiSequence(		// Plays the specified MIDI sequence through the sound driver
-	uint32 dwFileOffset,		// handle of MIDI sequence data
-	bool bLoop);			// Whether to loop the sequence
+class Music {
+public:
+	Music() : _currentMidi(0), _currentLoop(false) {
+		_midiBuffer.pDat = nullptr;
+		_midiBuffer.size = 0;
+	}
 
-bool MidiPlaying();		// Returns TRUE if a Midi tune is currently playing
+	bool PlayMidiSequence(		// Plays the specified MIDI sequence through the sound driver
+		uint32 dwFileOffset,		// handle of MIDI sequence data
+		bool bLoop);			// Whether to loop the sequence
 
-bool StopMidi();		// Stops any currently playing midi
+	bool MidiPlaying();		// Returns TRUE if a Midi tune is currently playing
 
-void SetMidiVolume(		// Sets the volume of the MIDI music. Returns the old volume
-	int vol);		// new volume - 0..MAXMIDIVOL
+	bool StopMidi();		// Stops any currently playing midi
 
-int GetMidiVolume();
+	void SetMidiVolume(		// Sets the volume of the MIDI music. Returns the old volume
+		int vol);		// new volume - 0..MAXMIDIVOL
 
-void OpenMidiFiles();
-void DeleteMidiBuffer();
+	int GetMidiVolume();
 
-void CurrentMidiFacts(SCNHANDLE	*pMidi, bool *pLoop);
-void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop);
+	void OpenMidiFiles();
+	void DeleteMidiBuffer();
 
-int GetTrackNumber(SCNHANDLE hMidi);
-SCNHANDLE GetTrackOffset(int trackNumber);
+	void CurrentMidiFacts(SCNHANDLE	*pMidi, bool *pLoop);
+	void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop);
 
-void dumpMusic();
+	int GetTrackNumber(SCNHANDLE hMidi);
+	SCNHANDLE GetTrackOffset(int trackNumber);
+
+	uint8 *GetMidiBuffer() { return _midiBuffer.pDat; }
+
+	uint8* ResizeMidiBuffer(uint32 newSize) {
+		if (_midiBuffer.size < newSize) {
+			_midiBuffer.pDat = (byte*)realloc(_midiBuffer.pDat, newSize);
+			assert(_midiBuffer.pDat);
+		}
+
+		return _midiBuffer.pDat;
+	}
+
+	void dumpMusic();
+
+private:
+	// sound buffer structure used for MIDI data and samples
+	struct SOUND_BUFFER {
+		uint8 *pDat;		// pointer to actual buffer
+		uint32 size;		// size of the buffer
+	};
+
+	// MIDI buffer
+	SOUND_BUFFER _midiBuffer;
+
+	SCNHANDLE	_currentMidi;
+	bool		_currentLoop;
+
+	// We allocate 155 entries because that's the maximum, used in the SCN version
+	SCNHANDLE _midiOffsets[155];
+};
 
 class MidiMusicPlayer : public Audio::MidiPlayer {
 public:

@@ -124,10 +124,6 @@ public:
 	void processEvents(); // evetns.cpp
 	void setDraggedSprite(uint16 id); // events.cpp
 
-	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedDIB() const { return _sharedDIB; }
-	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedBMP() const { return _sharedBMP; }
-	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedSTXT() const { return _sharedSTXT; }
-
 	Common::HashMap<Common::String, Score *> *_movies;
 
 	Common::RandomSource _rnd;
@@ -160,10 +156,6 @@ private:
 	void loadMac(const Common::String movie);
 
 	Score *_sharedScore;
-	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedDIB;
-	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSTXT;
-	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSound;
-	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedBMP;
 
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;

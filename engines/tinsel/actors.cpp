@@ -1610,7 +1610,7 @@ void GetActorTagPos(int actor, int *pTagX, int *pTagY, bool bAbsolute) {
 	*pTagY = aTop;
 
 	if (!bAbsolute) {
-		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		*pTagX -= Loffset;
 		*pTagY -= Toffset;
 	}

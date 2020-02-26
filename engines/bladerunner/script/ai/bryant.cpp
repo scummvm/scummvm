@@ -95,15 +95,15 @@ void AIScriptBryant::ClickedByPlayer() {
 	Actor_Voice_Over(40, kActorVoiceOver);
 }
 
-void AIScriptBryant::EnteredScene(int sceneId) {
+void AIScriptBryant::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptBryant::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptBryant::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptBryant::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptBryant::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -222,7 +222,7 @@ bool AIScriptBryant::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 806;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(806)) {
 			_animationFrame = 0;
@@ -230,7 +230,7 @@ bool AIScriptBryant::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 1:
 		*animation = 805;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(805)) {
 			_animationFrame = 0;
@@ -238,7 +238,7 @@ bool AIScriptBryant::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 2:
 		*animation = 808;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(808) - 1) {
 			_animationState = 3;

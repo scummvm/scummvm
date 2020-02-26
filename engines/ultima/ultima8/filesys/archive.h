@@ -47,10 +47,6 @@ public:
 	//! Will create FlexFile, U8SaveFile or ZipFile; ids will be deleted.
 	explicit Archive(IDataSource *ids);
 
-	//! create Archive with a single directory input source
-	//! Will create DirFile.
-	explicit Archive(const Std::string &path);
-
 	virtual ~Archive();
 
 	//! add input source.
@@ -61,10 +57,6 @@ public:
 
 	//! add input source, autodetecting the type (as the constructor)
 	bool addSource(IDataSource *ids);
-
-	//! add directory input source (as the constructor)
-	bool addSource(const Std::string &path);
-
 
 	//! Cache all objects
 	void cache();
@@ -82,22 +74,22 @@ public:
 	virtual void uncache(uint32 index) = 0;
 
 	//! Check if an object is cached
-	virtual bool isCached(uint32 index) = 0;
+	virtual bool isCached(uint32 index) const = 0;
 
 	uint32 getCount() const {
-		return count;
+		return _count;
 	}
 
 protected:
-	uint32 count;
+	uint32 _count;
 
 	uint8 *getRawObject(uint32 index, uint32 *sizep = 0);
-	uint32 getRawSize(uint32 index);
+	uint32 getRawSize(uint32 index) const;
 
 private:
-	Std::vector<ArchiveFile *> sources;
+	Std::vector<ArchiveFile *> _sources;
 
-	ArchiveFile *findArchiveFile(uint32 index);
+	ArchiveFile *findArchiveFile(uint32 index) const;
 };
 
 } // End of namespace Ultima8

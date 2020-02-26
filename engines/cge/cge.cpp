@@ -75,7 +75,6 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_midiPlayer = nullptr;
 	_miniShp = nullptr;
 	_miniShpList = nullptr;
-	_console = nullptr;
 	_sprTv = nullptr;
 	_sprK1 = nullptr;
 	_sprK2 = nullptr;
@@ -140,7 +139,7 @@ void CGEEngine::init() {
 	_resman = new ResourceManager();
 
 	// Create debugger console
-	_console = new CGEConsole(this);
+	setDebugger(new CGEConsole(this));
 
 	// Initialize engine objects
 	_font = new Font(this, "CGE");
@@ -172,8 +171,6 @@ void CGEEngine::init() {
 void CGEEngine::deinit() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
-
-	delete _console;
 
 	// Delete engine objects
 	delete _vga;

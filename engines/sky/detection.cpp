@@ -25,6 +25,9 @@
 
 #include "base/plugins.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
@@ -84,6 +87,7 @@ public:
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
@@ -201,6 +205,73 @@ DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 	return detectedGames;
 }
 
+Common::KeymapArray SkyMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Sky;
+
+	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, "sky-main", "Beneath a Steel Sky");
+
+	Action *act;
+
+	act = new Action("LCLK", _("Walk / Look / Talk"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	mainKeymap->addAction(act);
+
+	act = new Action("RCLK", _("Use"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	mainKeymap->addAction(act);
+
+	act = new Action("CONFIRM", _("Confirm"));
+	act->setCustomEngineActionEvent(kSkyActionConfirm);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("KP_ENTER");
+	mainKeymap->addAction(act);
+
+	act = new Action(kStandardActionSkip, _("Skip / Close"));
+	act->setCustomEngineActionEvent(kSkyActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	mainKeymap->addAction(act);
+
+	Keymap *shortcutsKeymap = new Keymap(Keymap::kKeymapTypeGame, SkyEngine::shortcutsKeymapId, "Beneath a Steel Sky - Shortcuts");
+
+	act = new Action(kStandardActionOpenMainMenu, _("Open control panel"));
+	act->setCustomEngineActionEvent(kSkyActionOpenControlPanel);
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_X");
+	shortcutsKeymap->addAction(act);
+
+	act = new Action("SKPL", _("Skip line"));
+	act->setCustomEngineActionEvent(kSkyActionSkipLine);
+	act->addDefaultInputMapping("PERIOD");
+	shortcutsKeymap->addAction(act);
+
+	act = new Action(kStandardActionPause, _("Pause"));
+	act->setCustomEngineActionEvent(kSkyActionPause);
+	act->addDefaultInputMapping("p");
+	shortcutsKeymap->addAction(act);
+
+	act = new Action("FAST", _("Toggle fast mode"));
+	act->setCustomEngineActionEvent(kSkyActionToggleFastMode);
+	act->addDefaultInputMapping("C+f");
+	shortcutsKeymap->addAction(act);
+
+	act = new Action("RFAST", _("Toggle really fast mode"));
+	act->setCustomEngineActionEvent(kSkyActionToggleReallyFastMode);
+	act->addDefaultInputMapping("C+g");
+	shortcutsKeymap->addAction(act);
+
+	KeymapArray keymaps(2);
+	keymaps[0] = mainKeymap;
+	keymaps[1] = shortcutsKeymap;
+
+	return keymaps;
+}
+
 Common::Error SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	*engine = new Sky::SkyEngine(syst);
@@ -233,11 +304,6 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles("SKY-VM.###");
 
-	// Slot 0 is the autosave, if it exists.
-	// TODO: Check for the existence of the autosave -- but this require us
-	// to know which SKY variant we are looking at.
-	saveList.insert_at(0, SaveStateDescriptor(0, "*AUTOSAVE*"));
-
 	// Prepare the list of savestates by looping over all matching savefiles
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Extract the extension
@@ -246,7 +312,8 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(ext.c_str());
 		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 		if (in) {
-			saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum]));
+			saveList.push_back(SaveStateDescriptor(slotNum,
+				(slotNum == 0) ? _("Autosave") : savenames[slotNum - 1]));
 			delete in;
 		}
 	}
@@ -264,7 +331,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	char fName[20];
-	sprintf(fName,"SKY-VM.%03d", slot - 1);
+	sprintf(fName,"SKY-VM.%03d", slot);
 	saveFileMan->removeSavefile(fName);
 
 	// Load current save game descriptions
@@ -285,7 +352,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 	}
 
 	// Update the save game description at the given slot
-	savenames[slot - 1] = "";
+	savenames[slot] = "";
 
 	// Save the updated descriptions
 	Common::OutSaveFile *outf;
@@ -313,17 +380,14 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 
 namespace Sky {
 Common::Error SkyEngine::loadGameState(int slot) {
-	uint16 result = _skyControl->quickXRestore(slot);
+	uint16 result = _skyControl->quickXRestore(slot - 1);
 	return (result == GAME_RESTORED) ? Common::kNoError : Common::kUnknownError;
 }
 
-Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc) {
-	if (slot == 0)
-		return Common::kWritePermissionDenied;	// we can't overwrite the auto save
-
+Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	// Set the save slot and save the game
-	_skyControl->_selectedGame = slot - 1;
-	if (_skyControl->saveGameToFile(false) != GAME_SAVED)
+	_skyControl->_selectedGame = isAutosave ? 0 : slot - 1;
+	if (_skyControl->saveGameToFile(false, nullptr, isAutosave) != GAME_SAVED)
 		return Common::kWritePermissionDenied;
 
 	// Load current save game descriptions
@@ -332,7 +396,9 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc) {
 	_skyControl->loadDescriptions(saveGameTexts);
 
 	// Update the save game description at the given slot
-	saveGameTexts[slot - 1] = desc;
+	if (!isAutosave)
+		saveGameTexts[slot - 1] = desc;
+
 	// Save the updated descriptions
 	_skyControl->saveDescriptions(saveGameTexts);
 

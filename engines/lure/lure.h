@@ -116,13 +116,12 @@ public:
 	LureLanguage getLureLanguage() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
-	GUI::Debugger *getDebugger() override;
 	bool isEGA() const { return (getFeatures() & GF_EGA) != 0; }
 
 	Common::Error loadGameState(int slot) override {
 		return loadGame(slot) ? Common::kNoError : Common::kReadingFailed;
 	}
-	Common::Error saveGameState(int slot, const Common::String &desc) override {
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override {
 		Common::String s(desc);
 		return saveGame(slot, s) ? Common::kNoError : Common::kReadingFailed;
 	}

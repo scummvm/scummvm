@@ -131,8 +131,6 @@ public:
 	 * Creates a new hierarchy for the game, that contains all the logic for playing that particular game.
 	 */
 	Game *createGame() const;
-
-	GUI::Debugger *getDebugger() override { return nullptr; }
 };
 
 } // End of namespace Shared

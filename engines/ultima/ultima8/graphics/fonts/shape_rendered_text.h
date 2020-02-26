@@ -34,7 +34,7 @@ class ShapeFont;
 
 class ShapeRenderedText : public RenderedText {
 public:
-	ShapeRenderedText(Std::list<PositionedText> &lines,
+	ShapeRenderedText(const Std::list<PositionedText> &lines,
 	                  int width, int height, int vlead, ShapeFont *font);
 	~ShapeRenderedText() override;
 
@@ -44,8 +44,8 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 protected:
-	Std::list<PositionedText> lines;
-	ShapeFont *font;
+	Std::list<PositionedText> _lines;
+	ShapeFont *_font;
 };
 
 } // End of namespace Ultima8

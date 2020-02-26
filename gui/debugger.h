@@ -194,6 +194,13 @@ protected:
 	virtual void postEnter();
 
 	/**
+	 * Process the given command line.
+	 * Returns true if and only if argv[0] is a known command and was
+	 * handled, false otherwise.
+	 */
+	virtual bool handleCommand(int argc, const char **argv, bool &keepRunning);
+
+	/**
 	 * Subclasses should invoke the detach() method in their cmdFOO methods
 	 * if that command will resume execution of the program (as opposed to
 	 * executing, say, a "single step through code" command).
@@ -213,13 +220,6 @@ private:
 
 	bool parseCommand(const char *input);
 	bool tabComplete(const char *input, Common::String &completion) const;
-
-	/**
-	 * Process the given command line.
-	 * Returns true if and only if argv[0] is a known command and was
-	 * handled, false otherwise.
-	 */
-	virtual bool handleCommand(int argc, const char **argv, bool &keepRunning);
 
 protected:
 	bool cmdExit(int argc, const char **argv);

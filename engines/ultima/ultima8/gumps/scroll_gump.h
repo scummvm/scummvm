@@ -31,8 +31,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 class ScrollGump : public ModalGump {
-	Std::string text;
-	ObjId textwidget;
+	Std::string _text;
+	ObjId _textWidget;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 

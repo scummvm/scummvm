@@ -42,8 +42,8 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarDeathProcess, Process)
 
 AvatarDeathProcess::AvatarDeathProcess() : Process() {
-	item_num = 1;
-	type = 1; // CONSTANT !
+	_itemNum = 1;
+	_type = 1; // CONSTANT !
 }
 
 void AvatarDeathProcess::run() {

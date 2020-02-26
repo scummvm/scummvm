@@ -45,11 +45,11 @@ protected:
 	void init(int32 sx, int32 sy, int32 sz, int32 speed);
 
 private:
-	ObjId objid;
-	int32 destx, desty, destz;
-	int32 speedx, speedy, speedz;
-	int32 gravity;
-	int frames;
+	ObjId _objId;
+	int32 _destX, _destY, _destZ;
+	int32 _speedX, _speedY, _speedZ;
+	int32 _gravity;
+	int _frames;
 };
 
 } // End of namespace Ultima8

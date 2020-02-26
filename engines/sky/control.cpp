@@ -21,6 +21,8 @@
  */
 
 
+#include "backends/keymapper/keymap.h"
+
 #include "common/endian.h"
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -194,7 +196,7 @@ void ControlStatus::drawToScreen() {
 	_statusText->drawToScreen(WITH_MASK);
 }
 
-Control::Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system) {
+Control::Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system, Common::Keymap *shortcutsKeymap) {
 	_saveFileMan = saveFileMan;
 
 	_skyScreen = screen;
@@ -206,7 +208,9 @@ Control::Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *dis
 	_skySound = sound;
 	_skyCompact = skyCompact;
 	_system = system;
+	_shortcutsKeymap = shortcutsKeymap;
 	_controlPanel = NULL;
+	_action = kSkyActionNone;
 }
 
 ConResource *Control::createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType) {
@@ -494,7 +498,7 @@ void Control::doControlPanel() {
 		delay(ANIM_DELAY);
 		if (!_controlPanel)
 			return;
-		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed
+		if (_action == kSkyActionSkip) { // escape pressed
 			_mouseClicked = false;
 			quitPanel = true;
 		}
@@ -827,14 +831,8 @@ uint16 Control::shiftUp(uint8 speed) {
 
 bool Control::autoSaveExists() {
 	bool test = false;
-	Common::InSaveFile *f;
-	char fName[20];
-	if (SkyEngine::isCDVersion())
-		strcpy(fName, "SKY-VM-CD.ASD");
-	else
-		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-
-	f = _saveFileMan->openForLoading(fName);
+	Common::InSaveFile *f = _saveFileMan->openForLoading(
+		g_engine->getSaveStateName(g_engine->getAutosaveSlot()));
 	if (f != NULL) {
 		test = true;
 		delete f;
@@ -844,6 +842,7 @@ bool Control::autoSaveExists() {
 
 uint16 Control::saveRestorePanel(bool allowSave) {
 	_keyPressed.reset();
+	_action = kSkyActionNone;
 	_mouseWheel = 0;
 	buttonControl(NULL);
 	_text->drawToScreen(WITH_MASK); // flush text restore buffer
@@ -855,6 +854,9 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		lookList = _savePanLookList;
 		lookListLen = 6;
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
+		 // Disable the shortcuts keymap during text input to prevent letters from being mapped to action events
+		_shortcutsKeymap->setEnabled(false);
 	} else {
 		lookList = _restorePanLookList;
 		if (autoSaveExists())
@@ -902,11 +904,11 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		delay(ANIM_DELAY);
 		if (!_controlPanel)
 			return clickRes;
-		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed
+		if (_action == kSkyActionSkip) { // escape pressed
 			_mouseClicked = false;
 			clickRes = CANCEL_PRESSED;
 			quitPanel = true;
-		} else if ((_keyPressed.keycode == Common::KEYCODE_RETURN) || (_keyPressed.keycode == Common::KEYCODE_KP_ENTER)) {
+		} else if (_action == kSkyActionConfirm) { // enter pressed
 			clickRes = handleClick(lookList[0]);
 			if (!_controlPanel) //game state was destroyed
 				return clickRes;
@@ -916,7 +918,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 				displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
 			quitPanel = true;
 			_mouseClicked = false;
-			_keyPressed.reset();
+			_action = kSkyActionNone;
 		} if (allowSave && _keyPressed.keycode) {
 			handleKeyPress(_keyPressed, saveGameTexts[_selectedGame]);
 			refreshNames = true;
@@ -985,6 +987,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		free(textSprites[cnt]);
 
 	if (allowSave) {
+		_shortcutsKeymap->setEnabled(true);
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	}
 
@@ -1124,24 +1127,10 @@ void Control::saveDescriptions(const Common::StringArray &list) {
 		displayMessage(NULL, "Unable to store Savegame names to file SKY-VM.SAV. (%s)", _saveFileMan->popErrorDesc().c_str());
 }
 
-void Control::doAutoSave() {
-	char fName[20];
-	if (SkyEngine::isCDVersion())
-		strcpy(fName, "SKY-VM-CD.ASD");
-	else
-		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-
-	uint16 res = saveGameToFile(false, fName);
-
-	if (res != GAME_SAVED)
-		displayMessage(0, "Unable to perform autosave to '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
-
-}
-
-uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename) {
+uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename, bool isAutosave) {
 	char fName[20];
 	if (!filename) {
-		sprintf(fName,"SKY-VM.%03d", _selectedGame);
+		sprintf(fName,"SKY-VM.%03d", isAutosave ? 0 : _selectedGame + 1);
 		filename = fName;
 	}
 
@@ -1420,17 +1409,11 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 
 
 uint16 Control::restoreGameFromFile(bool autoSave) {
-	char fName[20];
-	if (autoSave) {
-		if (SkyEngine::isCDVersion())
-			strcpy(fName, "SKY-VM-CD.ASD");
-		else
-			sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-	} else
-		sprintf(fName,"SKY-VM.%03d", _selectedGame);
+	int slot = autoSave ? g_engine->getAutosaveSlot() : _selectedGame + 1;
+	Common::String filename = g_engine->getSaveStateName(slot);
 
 	Common::InSaveFile *inf;
-	inf = _saveFileMan->openForLoading(fName);
+	inf = _saveFileMan->openForLoading(filename);
 	if (inf == NULL) {
 		return RESTORE_FAILED;
 	}
@@ -1441,7 +1424,7 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	*(uint32 *)saveData = TO_LE_32(infSize);
 
 	if (inf->read(saveData+4, infSize-4) != infSize-4) {
-		displayMessage(NULL, "Can't read from file '%s'", fName);
+		displayMessage(NULL, "Can't read from file '%s'", filename.c_str());
 		free(saveData);
 		delete inf;
 		return RESTORE_FAILED;
@@ -1521,11 +1504,15 @@ void Control::delay(unsigned int amount) {
 	uint32 start = _system->getMillis();
 	uint32 cur = start;
 	_keyPressed.reset();
+	_action = kSkyActionNone;
 
 	do {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_action = event.customType;
+				break;
 			case Common::EVENT_KEYDOWN:
 				_keyPressed = event.kbd;
 				break;

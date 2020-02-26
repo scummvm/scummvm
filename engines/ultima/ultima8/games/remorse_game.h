@@ -36,7 +36,7 @@ public:
 	bool startGame() override;
 
 	//! start initial usecode
-	bool startInitialUsecode(const Std::string &savegame) override;
+	bool startInitialUsecode(int saveSlot = -1) override;
 
 	//! write game-specific savegame info (avatar stats, equipment, ...)
 	void writeSaveInfo(ODataSource *ods) override;
@@ -49,7 +49,7 @@ public:
 	static Game *createGame(GameInfo *info);
 
 protected:
-	static Game *game;
+	static Game *_game;
 };
 
 } // End of namespace Ultima8

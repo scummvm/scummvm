@@ -46,7 +46,6 @@ InputDeviceManager::InputDeviceManager() {
 
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
 	_lastRawBits = kAllUpBits;
-	_consoleRequested = false;
 }
 
 InputDeviceManager::~InputDeviceManager() {
@@ -105,10 +104,6 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	// Update the last bits
 	_lastRawBits = currentBits;
 
-	// Set the console to be requested or not
-	input.setConsoleRequested(_consoleRequested);
-	_consoleRequested = false;
-
 	// WORKAROUND: The original had this in currentBits, but then
 	// pressing alt would count as an event (and mess up someone
 	// trying to do alt+enter or something). Since it's only used
@@ -142,9 +137,6 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		switch ((PegasusAction)event.customType) {
-		case kPegasusActionOpenDebugger:
-			_consoleRequested = true;
-			break;
 		case kPegasusActionSaveGameState:
 			((PegasusEngine *)g_engine)->requestSave();
 			break;

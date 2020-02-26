@@ -59,15 +59,12 @@ struct RivenSaveMetadata {
 
 class RivenSaveLoad {
 public:
-	static const int kAutoSaveSlot;
-
 	RivenSaveLoad(MohawkEngine_Riven*, Common::SaveFileManager*);
 	~RivenSaveLoad();
 
 	Common::Error loadGame(const int slot);
 	Common::Error saveGame(const int slot, const Common::String &description,
 	                       const Graphics::Surface *thumbnail, bool autoSave);
-	bool isAutoSaveAllowed();
 	static void deleteSave(const int slot);
 
 	static SaveStateDescriptor querySaveMetaInfos(const int slot);

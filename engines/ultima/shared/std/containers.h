@@ -63,8 +63,8 @@ public:
 	typedef const T const_reference;
 
 	vector() : Common::Array<T>() {}
-	vector(size_t size) : Common::Array<T>() {
-		Common::Array<T>::reserve(size);
+	vector(size_t newSize) : Common::Array<T>() {
+		Common::Array<T>::reserve(newSize);
 	}
 
 	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator pos) {
@@ -107,7 +107,7 @@ template<class T>
 class set {
 	struct Comparitor {
 		bool operator()(const T &a, const T &b) const {
-			return a.Compare(b);
+			return a == b;
 		}
 	};
 
@@ -128,6 +128,13 @@ public:
 
 	iterator begin() { return _items.begin(); }
 	iterator end() { return _items.end(); }
+
+	/**
+	 * Clear the set
+	 */
+	void clear() {
+		_items.clear();
+	}
 
 	/**
 	 * Inserts a new item
@@ -151,6 +158,15 @@ public:
 	 */
 	void swap(set<T> &arr) {
 		_items.swap(arr);
+	}
+
+	/**
+	 * Find an item
+	 */
+	iterator find(T item) {
+		iterator it = begin();
+		for (; it != end() && *it != item; ++it) {}
+		return it;
 	}
 };
 

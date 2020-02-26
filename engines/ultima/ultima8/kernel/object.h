@@ -24,6 +24,7 @@
 #define ULTIMA8_KERNEL_OBJECT_H
 
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,7 +35,7 @@ class IDataSource;
 
 class Object {
 public:
-	Object() : objid(0xFFFF) {}
+	Object() : _objId(0xFFFF) {}
 	virtual ~Object();
 
 	// p_dynamic_cast stuff
@@ -45,7 +46,7 @@ public:
 
 	//! get this Object's objID
 	inline ObjId getObjId() const {
-		return objid;
+		return _objId;
 	}
 
 	//! Assign self and contents (if any) an objID
@@ -56,7 +57,7 @@ public:
 	virtual void clearObjId();
 
 	//! dump some info about this object to pout
-	virtual void dumpInfo();
+	virtual void dumpInfo() const;
 
 	//! save this object
 	void save(ODataSource *ods);
@@ -75,12 +76,12 @@ public:
 
 protected:
 	//! write the Object savegame header (mainly consisting of the classname)
-	void writeObjectHeader(ODataSource *ods);
+	void writeObjectHeader(ODataSource *ods) const;
 
 	//! save the actual Object data
 	virtual void saveData(ODataSource *ods);
 
-	ObjId objid;
+	ObjId _objId;
 };
 
 } // End of namespace Ultima8

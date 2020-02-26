@@ -29,7 +29,9 @@ namespace CryOmni3D {
 
 class Omni3DManager {
 public:
-	Omni3DManager() {}
+	Omni3DManager() : _vfov(0), _alpha(0), _beta(0), _xSpeed(0), _ySpeed(0), _alphaMin(0), _alphaMax(0),
+		_betaMin(0), _betaMax(0), _helperValue(0), _dirty(true), _dirtyCoords(true),
+		_sourceSurface(nullptr) {}
 	virtual ~Omni3DManager();
 
 	void init(double hfov);

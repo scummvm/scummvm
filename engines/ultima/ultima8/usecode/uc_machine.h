@@ -23,12 +23,14 @@
 #ifndef ULTIMA8_USECODE_UCMACHINE_H
 #define ULTIMA8_USECODE_UCMACHINE_H
 
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
+class Debugger;
 class Process;
 class UCProcess;
 class ConvertUsecode;
@@ -39,19 +41,20 @@ class UCList;
 class idMan;
 
 class UCMachine {
+	friend class Debugger;
 public:
 	UCMachine(Intrinsic *iset, unsigned int icount);
 	~UCMachine();
 
 	static UCMachine *get_instance() {
-		return ucmachine;
+		return _ucMachine;
 	}
 
 	void reset();
 
 	void execProcess(UCProcess *proc);
 
-	Std::string &getString(uint16 str);
+	const Std::string &getString(uint16 str) const;
 	UCList *getList(uint16 l);
 
 	void freeString(uint16 s);
@@ -93,58 +96,45 @@ protected:
 	void loadIntrinsics(Intrinsic *i, unsigned int icount);
 
 private:
+	ConvertUsecode *_convUse;
+	Intrinsic *_intrinsics;
+	unsigned int _intrinsicCount;
 
-	ConvertUsecode *convuse;
-	Intrinsic *intrinsics;
-	unsigned int intrinsiccount;
+	BitSet *_globals;
 
-	BitSet *globals;
-
-	Std::map<uint16, UCList *> listHeap;
-	Std::map<uint16, Std::string> stringHeap;
+	Std::map<uint16, UCList *> _listHeap;
+	Std::map<uint16, Std::string> _stringHeap;
 
 	uint16 assignString(const char *str);
 	uint16 assignList(UCList *l);
 
-	idMan *listIDs;
-	idMan *stringIDs;
+	idMan *_listIDs;
+	idMan *_stringIDs;
 
-	static UCMachine *ucmachine;
-
-	static void     ConCmd_getGlobal(const Console::ArgvType &argv);
-	static void     ConCmd_setGlobal(const Console::ArgvType &argv);
-
+	static UCMachine *_ucMachine;
 
 #ifdef DEBUG
 	// tracing
-	bool tracing_enabled;
-	bool trace_all;
-	bool trace_events;
-	Std::set<ObjId> trace_ObjIDs;
-	Std::set<ProcId> trace_PIDs;
-	Std::set<uint16> trace_classes;
+	bool _tracingEnabled;
+	bool _traceAll;
+	bool _traceEvents;
+	Std::set<ObjId> _traceObjIDs;
+	Std::set<ProcId> _tracePIDs;
+	Std::set<uint16> _traceClasses;
 
 	inline bool trace_show(ProcId pid, ObjId objid, uint16 ucclass) {
-		if (!tracing_enabled) return false;
-		if (trace_all) return true;
-		if (trace_ObjIDs.find(objid) != trace_ObjIDs.end()) return true;
-		if (trace_PIDs.find(pid) != trace_PIDs.end()) return true;
-		if (trace_classes.find(ucclass) != trace_classes.end()) return true;
+		if (!_tracingEnabled) return false;
+		if (_traceAll) return true;
+		if (_traceObjIDs.find(objid) != _traceObjIDs.end()) return true;
+		if (_tracePIDs.find(pid) != _tracePIDs.end()) return true;
+		if (_traceClasses.find(ucclass) != _traceClasses.end()) return true;
 		return false;
 	}
 
 public:
-	bool trace_event() {
-		return (tracing_enabled && (trace_all || trace_events));
+	bool trace_event() const {
+		return (_tracingEnabled && (_traceAll || _traceEvents));
 	}
-
-private:
-	static void     ConCmd_tracePID(const Console::ArgvType &argv);
-	static void     ConCmd_traceObjID(const Console::ArgvType &argv);
-	static void     ConCmd_traceClass(const Console::ArgvType &argv);
-	static void     ConCmd_traceAll(const Console::ArgvType &argv);
-	static void     ConCmd_traceEvents(const Console::ArgvType &argv);
-	static void     ConCmd_stopTrace(const Console::ArgvType &argv);
 #endif
 };
 

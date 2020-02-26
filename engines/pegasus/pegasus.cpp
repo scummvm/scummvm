@@ -103,7 +103,6 @@ PegasusEngine::~PegasusEngine() {
 	throwAwayEverything();
 
 	delete _resFork;
-	delete _console;
 	delete _cursor;
 	delete _continuePoint;
 	delete _gameMenu;
@@ -123,7 +122,7 @@ PegasusEngine::~PegasusEngine() {
 }
 
 Common::Error PegasusEngine::run() {
-	_console = new PegasusConsole(this);
+	setDebugger(new PegasusConsole(this));
 	_gfx = new GraphicsManager(this);
 	_resFork = new Common::MacResManager();
 	_cursor = new Cursor();
@@ -388,11 +387,6 @@ void PegasusEngine::showSaveFailedDialog(const Common::Error &status) {
 			"instructions on how to obtain further assistance."), status.getDesc().c_str());
 	GUI::MessageDialog dialog(failMessage);
 	dialog.runModal();
-}
-
-
-GUI::Debugger *PegasusEngine::getDebugger() {
-	return _console;
 }
 
 void PegasusEngine::addIdler(Idler *idler) {
@@ -702,7 +696,7 @@ static bool isValidSaveFileName(const Common::String &desc) {
 	return true;
 }
 
-Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (!isValidSaveFileName(desc))
 		return Common::Error(Common::kCreatingFileFailed, _("Invalid file name for saving"));
 
@@ -1017,12 +1011,6 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	if (!checkGameMenu())
 		shellGameInput(input, cursorSpot);
-
-	// Handle the console here
-	if (input.isConsoleRequested()) {
-		_console->attach();
-		_console->onFrame();
-	}
 
 	// Handle save requests here
 	if (_saveRequested && _saveAllowed) {
@@ -2587,11 +2575,6 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act = new Action("WTF", _("???"));
 	act->setCustomEngineActionEvent(kPegasusActionEnableEasterEgg);
 	act->addDefaultInputMapping("e");
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionOpenDebugger, _("Open debugger"));
-	act->setCustomEngineActionEvent(kPegasusActionOpenDebugger);
-	act->addDefaultInputMapping("C+d");
 	engineKeyMap->addAction(act);
 
 	// We support meta where available and control elsewhere

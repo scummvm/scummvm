@@ -110,7 +110,7 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	DebugMan.addDebugChannel(kDebugMenu,     "Menu",     "Menu debug level");
 	DebugMan.addDebugChannel(kDebugCharset,  "Charset",   "Charset debug level");
 
-	_console = new ToucheConsole(this);
+	setDebugger(new ToucheConsole(this));
 
 	_newEpisodeNum = 0;
 	_currentEpisodeNum = 0;
@@ -192,7 +192,6 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 
 ToucheEngine::~ToucheEngine() {
 	DebugMan.clearAllDebugChannels();
-	delete _console;
 
 	stopMusic();
 	delete _midiPlayer;
@@ -434,9 +433,6 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_f) {
 					_fastMode = !_fastMode;
-				} else if (event.kbd.keycode == Common::KEYCODE_d) {
-					this->getDebugger()->attach();
-					this->getDebugger()->onFrame();
 				}
 			} else {
 				if (event.kbd.keycode == Common::KEYCODE_t) {

@@ -282,6 +282,16 @@ void U32String::toUppercase() {
 	}
 }
 
+uint32 U32String::find(value_type x, uint32 pos) const {
+	for (uint32 i = pos; i < _size; ++i) {
+		if (_str[i] == x) {
+			return i;
+		}
+	}
+
+	return npos;
+}
+
 uint32 U32String::find(const U32String &str, uint32 pos) const {
 	if (pos >= _size) {
 		return npos;

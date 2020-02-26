@@ -32,17 +32,17 @@ class RenderSurface;
 struct SortItem;
 
 class ItemSorter {
-	MainShapeArchive    *shapes;
-	RenderSurface   *surf;
+	MainShapeArchive    *_shapes;
+	RenderSurface   *_surf;
 
-	SortItem    *items;
-	SortItem    *items_tail;
-	SortItem    *items_unused;
-	int32       sort_limit;
+	SortItem    *_items;
+	SortItem    *_itemsTail;
+	SortItem    *_itemsUnused;
+	int32       _sortLimit;
 
-	int32       order_counter;
+	int32       _orderCounter;
 
-	int32       cam_sx, cam_sy;
+	int32       _camSx, _camSy;
 
 public:
 	ItemSorter();
@@ -66,10 +66,10 @@ public:
 	uint16 Trace(int32 x, int32 y, HitFace *face = 0, bool item_highlight = false);
 
 	void IncSortLimit() {
-		sort_limit++;
+		_sortLimit++;
 	}
 	void DecSortLimit() {
-		if (sort_limit > 0) sort_limit--;
+		if (_sortLimit > 0) _sortLimit--;
 	}
 
 private:

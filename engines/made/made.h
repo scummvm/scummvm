@@ -81,8 +81,6 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
 
-	GUI::Debugger *getDebugger() override;
-
 	Common::RandomSource *_rnd;
 	const MadeGameDescription *_gameDescription;
 	uint32 getGameID() const;
@@ -90,8 +88,6 @@ public:
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 
-private:
-	MadeConsole *_console;
 public:
 	PmvPlayer *_pmvPlayer;
 	ResourceReader *_res;

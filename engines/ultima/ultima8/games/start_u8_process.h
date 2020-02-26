@@ -31,11 +31,11 @@ class StartU8Process : public Process {
 protected:
 	bool _init;
 	bool _skipStart;
-	Std::string _saveName;
+	int _saveSlot;
 
 	void saveData(ODataSource *ods) override;
 public:
-	StartU8Process(const Std::string &saveName);
+	StartU8Process(int saveSlot = -1);
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()

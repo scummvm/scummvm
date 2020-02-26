@@ -37,15 +37,15 @@ ResurrectionProcess::ResurrectionProcess() : Process() {
 
 }
 
-ResurrectionProcess::ResurrectionProcess(Actor *actor_) {
-	assert(actor_);
-	item_num = actor_->getObjId();
+ResurrectionProcess::ResurrectionProcess(Actor *actor) {
+	assert(actor);
+	_itemNum = actor->getObjId();
 
-	type = 0x229; // CONSTANT !
+	_type = 0x229; // CONSTANT !
 }
 
 void ResurrectionProcess::run() {
-	Actor *a = getActor(item_num);
+	Actor *a = getActor(_itemNum);
 
 	if (!a) {
 		// actor gone... too late for resurrection now :-)
@@ -77,7 +77,7 @@ void ResurrectionProcess::run() {
 	a->setInCombat();
 
 	// we should already be killed by going into combat mode.
-	if (!(flags & PROC_TERMINATED))
+	if (!(_flags & PROC_TERMINATED))
 		terminate();
 }
 

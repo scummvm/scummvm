@@ -8,36 +8,62 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef DRAGONS_DRAGONFLG_H
+#define DRAGONS_DRAGONFLG_H
 
-#ifndef ULTIMA8_FILESYS_OUTPUTLOGGER_H
-#define ULTIMA8_FILESYS_OUTPUTLOGGER_H
-
-#include "ultima/shared/std/string.h"
 #include "common/stream.h"
+#include "common/system.h"
 
-namespace Ultima {
-namespace Ultima8 {
+namespace Dragons {
 
-//! Class that will duplicate output sent to FILE into another file
-class OutputLogger {
-	int ThreadMain();
+class BigfileArchive;
+
+class Properties {
 public:
-	OutputLogger(Common::WriteStream *file, const Std::string &filename);
-	~OutputLogger(void);
+	Properties(uint count);
+	~Properties();
+	void init(uint count, byte *properties);
+	void clear();
+	bool get(uint32 propertyId);
+	void set(uint32 propertyId, bool value);
+	void save(uint numberToWrite, Common::WriteStream *out);
+	void print(char *prefix);
+
+private:
+	uint _count;
+	byte *_properties;
+	uint32 getSize();
+	void getProperyPos(uint32 propertyId, uint &index, byte &mask);
 };
 
-} // End of namespace Ultima8
-} // End of namespace Ultima
+class DragonFLG {
+private:
+	byte *_data;
+	uint32 _dataSize;
+	Properties *_properties;
 
-#endif
+public:
+	virtual ~DragonFLG();
+
+	DragonFLG(BigfileArchive *bigfileArchive);
+	bool get(uint32 propertyId);
+	void set(uint32 propertyId, bool value);
+
+	void saveState(Common::WriteStream *out);
+	void loadState(Common::ReadStream *in);
+};
+
+} // End of namespace Dragons
+
+#endif //DRAGONS_DRAGONFLG_H

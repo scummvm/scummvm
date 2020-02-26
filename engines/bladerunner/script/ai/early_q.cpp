@@ -185,15 +185,15 @@ void AIScriptEarlyQ::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptEarlyQ::EnteredScene(int sceneId) {
+void AIScriptEarlyQ::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptEarlyQ::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptEarlyQ::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptEarlyQ::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptEarlyQ::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -492,7 +492,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 		if (_var2 == 1) {
 			*animation = 370;
 			if (_var1) {
-				_var1--;
+				--_var1;
 			} else {
 				if (++_animationFrame == 6) {
 					_var1 = Random_Query(8, 15);
@@ -508,7 +508,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 		} else if (_var2 == 0) {
 			*animation = 369;
 			if (_var1) {
-				_var1--;
+				--_var1;
 				if (!Random_Query(0, 6)) {
 					_var3 = -_var3;
 				}
@@ -537,7 +537,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 381;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 18) {
 			Ambient_Sounds_Play_Sound(kSfxBARSFX4, 99, 0, 0, 20);
 		}
@@ -551,7 +551,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 382;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(382)) {
 			_animationFrame = 0;
 		}
@@ -559,7 +559,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 371;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(371)) {
 			*animation = 369;
 			_animationFrame = 0;
@@ -571,13 +571,13 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 	case 4:
 		*animation = 368;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(368) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
 	case 5:
 		*animation = 365;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(365)) {
 			_animationFrame = 0;
 		}
@@ -585,7 +585,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 361;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(361)) {
 			_animationFrame = 0;
 		}
@@ -593,7 +593,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 383;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(383)) {
 			_animationFrame = 0;
 			_animationState = 9;
@@ -603,7 +603,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 387;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(387)) {
 			*animation = 369;
 			_animationFrame = 0;
@@ -613,7 +613,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 384;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(384)) {
 			_animationFrame = 0;
 		}
@@ -628,7 +628,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			*animation = 384;
 			Actor_Change_Animation_Mode(kActorEarlyQ, 53);
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(385)) {
 				_animationFrame = 0;
 			}
@@ -638,7 +638,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 	case 11:
 		*animation = 386;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(386) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		if (_animationFrame == 1) {
 			Ambient_Sounds_Play_Sound(kSfxMALEHURT, 59, 0, 0, 20);
@@ -656,7 +656,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = 360;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(360)) {
 			_animationFrame = 0;
 		}
@@ -664,7 +664,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 362;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(362)) {
 			_animationFrame = 0;
 			_animationState = 12;
@@ -674,7 +674,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = 363;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(363)) {
 			*animation = 369;
 			_animationFrame = 0;
@@ -684,7 +684,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 15:
 		*animation = 364;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 2) {
 			Ambient_Sounds_Play_Sound(kSfxLGCAL1, 60, 0, 0, 20);
 		}
@@ -698,7 +698,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 16:
 		*animation = 366;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(366)) {
 			*animation = 369;
 			_animationFrame = 0;
@@ -709,7 +709,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 17:
 		*animation = 367;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(367)) {
 			*animation = 369;
 			_animationFrame = 0;
@@ -720,7 +720,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 18:
 		*animation = 366;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(366)) {
 			*animation = 369;
 			_animationFrame = 0;
@@ -731,7 +731,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 19:
 		*animation = 367;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(367)) {
 			*animation = 369;
 			_animationFrame = 0;
@@ -748,7 +748,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			_flag = 0;
 			_animationState = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(372)) {
 				_animationFrame = 0;
 			}
@@ -757,7 +757,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 21:
 		*animation = 373;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(373)) {
 			_animationFrame = 0;
 			_animationState = 20;
@@ -767,7 +767,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 22:
 		*animation = 374;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(374)) {
 			_animationFrame = 0;
 			_animationState = 20;
@@ -777,7 +777,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 23:
 		*animation = 375;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(375)) {
 			_animationFrame = 0;
 			_animationState = 20;
@@ -787,7 +787,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 24:
 		*animation = 376;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(376)) {
 			_animationFrame = 0;
 			_animationState = 20;
@@ -797,7 +797,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 25:
 		*animation = 377;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(377)) {
 			_animationFrame = 0;
 			_animationState = 20;
@@ -807,7 +807,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 26:
 		*animation = 378;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(378)) {
 			_animationFrame = 0;
 			_animationState = 20;
@@ -817,7 +817,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 27:
 		*animation = 379;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(379)) {
 			_animationFrame = 0;
 			_animationState = 20;
@@ -827,7 +827,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 28:
 		*animation = 380;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(380)) {
 			_animationFrame = 0;
 			_animationState = 20;

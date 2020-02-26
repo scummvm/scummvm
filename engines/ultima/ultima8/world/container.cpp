@@ -43,20 +43,19 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(Container, Item)
 
 Container::Container() {
-
 }
 
 
 Container::~Container() {
-	// TODO: handle container's contents.
-	// Either destroy the contents, or move them up to this container's parent?
+	// TODO: handle container's _contents.
+	// Either destroy the _contents, or move them up to this container's parent?
 
 
 
-	// if we don't have an objid, we _must_ delete children
-	if (objid == 0xFFFF) {
+	// if we don't have an _objId, we _must_ delete children
+	if (_objId == 0xFFFF) {
 		Std::list<Item *>::iterator iter;
-		for (iter = contents.begin(); iter != contents.end(); ++iter) {
+		for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 			delete(*iter);
 		}
 	}
@@ -67,7 +66,7 @@ ObjId Container::assignObjId() {
 	ObjId id = Item::assignObjId();
 
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		(*iter)->assignObjId();
 		(*iter)->setParent(id);
 	}
@@ -79,7 +78,7 @@ void Container::clearObjId() {
 	Item::clearObjId();
 
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		// make sure we don't clear the ObjId of an Actor
 		assert((*iter)->getObjId() >= 256);
 
@@ -148,9 +147,9 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 
 bool Container::addItem(Item *item, bool checkwghtvol) {
 	if (!CanAddItem(item, checkwghtvol)) return false;
-	if (item->getParent() == objid) return true; // already in here
+	if (item->getParent() == _objId) return true; // already in here
 
-	contents.push_back(item);
+	_contents.push_back(item);
 	return true;
 }
 
@@ -158,9 +157,9 @@ bool Container::addItem(Item *item, bool checkwghtvol) {
 bool Container::removeItem(Item *item) {
 	Std::list<Item *>::iterator iter;
 
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if (*iter == item) {
-			contents.erase(iter);
+			_contents.erase(iter);
 			return true;
 		}
 	}
@@ -170,11 +169,11 @@ bool Container::removeItem(Item *item) {
 bool Container::moveItemToEnd(Item *item) {
 	Std::list<Item *>::iterator iter;
 
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if (*iter == item) {
 			// found; move to end
-			contents.erase(iter);
-			contents.push_back(item);
+			_contents.erase(iter);
+			_contents.push_back(item);
 			return true;
 		}
 	}
@@ -189,24 +188,24 @@ void Container::removeContents() {
 
 	Container *parentCon = getParentAsContainer();
 	if (parentCon) {
-		// move contents to parent
-		while (contents.begin() != contents.end()) {
-			Item *item = *(contents.begin());
+		// move _contents to parent
+		while (_contents.begin() != _contents.end()) {
+			Item *item = *(_contents.begin());
 			item->moveToContainer(parentCon);
 		}
 	} else {
-		// move contents to our coordinates
-		while (contents.begin() != contents.end()) {
-			Item *item = *(contents.begin());
-			item->move(x, y, z);
+		// move _contents to our coordinates
+		while (_contents.begin() != _contents.end()) {
+			Item *item = *(_contents.begin());
+			item->move(_x, _y, _z);
 		}
 	}
 }
 
 
 void Container::destroyContents() {
-	while (contents.begin() != contents.end()) {
-		Item *item = *(contents.begin());
+	while (_contents.begin() != _contents.end()) {
+		Item *item = *(_contents.begin());
 		Container *cont = p_dynamic_cast<Container *>(item);
 		if (cont) cont->destroyContents();
 		item->destroy(true); // we destroy the item immediately
@@ -217,7 +216,7 @@ void Container::setFlagRecursively(uint32 mask) {
 	setFlag(mask);
 
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		(*iter)->setFlag(mask);
 		Container *cont = p_dynamic_cast<Container *>(*iter);
 		if (cont) cont->setFlagRecursively(mask);
@@ -225,20 +224,20 @@ void Container::setFlagRecursively(uint32 mask) {
 }
 
 void Container::destroy(bool delnow) {
-	//! What do we do with our contents?
-	//! (in Exult we remove the contents)
+	//! What do we do with our _contents?
+	//! (in Exult we remove the _contents)
 
 	removeContents();
 
 	Item::destroy(delnow);
 }
 
-uint32 Container::getTotalWeight() {
+uint32 Container::getTotalWeight() const {
 	uint32 weight = Item::getTotalWeight();
 
 	// CONSTANT!
 	if (GAME_IS_U8 && getShape() == 79) {
-		// contents of keyring don't weigh anything
+		// _contents of keyring don't weigh anything
 		return weight;
 	}
 
@@ -248,27 +247,27 @@ uint32 Container::getTotalWeight() {
 		weight = 300;
 	}
 
-	Std::list<Item *>::iterator iter;
+	Std::list<Item *>::const_iterator iter;
 
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		weight += (*iter)->getTotalWeight();
 	}
 
 	return weight;
 }
 
-uint32 Container::getCapacity() {
-	uint32 volume = getShapeInfo()->volume;
+uint32 Container::getCapacity() const {
+	uint32 volume = getShapeInfo()->_volume;
 
 	return (volume == 0) ? 32 : volume;
 }
 
-uint32 Container::getContentVolume() {
+uint32 Container::getContentVolume() const {
 	uint32 volume = 0;
 
-	Std::list<Item *>::iterator iter;
+	Std::list<Item *>::const_iterator iter;
 
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		volume += (*iter)->getVolume();
 	}
 
@@ -278,7 +277,7 @@ uint32 Container::getContentVolume() {
 void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
                                 uint32 scriptsize, bool recurse) {
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		// check item against loopscript
 		if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
 			uint16 oId = (*iter)->getObjId();
@@ -298,7 +297,7 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 	}
 }
 
-void Container::dumpInfo() {
+void Container::dumpInfo() const {
 	Item::dumpInfo();
 
 	pout << "Volume: " << getContentVolume() << "/" << getCapacity()
@@ -307,9 +306,9 @@ void Container::dumpInfo() {
 
 void Container::saveData(ODataSource *ods) {
 	Item::saveData(ods);
-	ods->write4(static_cast<uint32>(contents.size()));
+	ods->write4(static_cast<uint32>(_contents.size()));
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		(*iter)->save(ods);
 	}
 }
@@ -319,14 +318,14 @@ bool Container::loadData(IDataSource *ids, uint32 version) {
 
 	uint32 contentcount = ids->read4();
 
-	// read contents
+	// read _contents
 	for (unsigned int i = 0; i < contentcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(ids, version);
 		Item *item = p_dynamic_cast<Item *>(obj);
 		if (!item) return false;
 
 		addItem(item);
-		item->setParent(objid);
+		item->setParent(_objId);
 	}
 
 	return true;

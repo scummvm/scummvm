@@ -248,10 +248,6 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 	return true;
 }
 
-GUI::Debugger *LureEngine::getDebugger() {
-	return !Game::isCreated() ? NULL : &Game::getReference().debugger();
-}
-
 void LureEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 

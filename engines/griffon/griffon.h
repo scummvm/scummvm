@@ -340,7 +340,6 @@ private:
 	Common::RandomSource *_rnd;
 	bool _shouldQuit;
 	int _gameMode;
-	uint32 _lastAutosaveTime;
 
 	Console *_console;
 
@@ -417,10 +416,9 @@ private:
 	Common::String getSaveStateName(int slot) const override;
 	int loadPlayer(int slotnum);
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *file) override;
 	Common::Error saveGameStream(Common::WriteStream *file, bool isAutosave) override;
-	void autoSaveCheck();
 
 	// sound.cpp
 	void setChannelVolume(int channel, int volume);
@@ -435,6 +433,7 @@ private:
 
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return _gameMode == kGameModePlay; }
+	int getAutosaveSlot() const override { return 4; }
 	bool hasFeature(EngineFeature f) const override;
 
 private:

@@ -320,14 +320,7 @@ void LC::cb_v4assign() {
 void LC::cb_list() {
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		Datum result;
-		warning("STUB: cb_list()");
-
-		for (int i = 0; i < nargs.u.i; i++)
-			g_lingo->pop();
-
-		result.type = VOID;
-		g_lingo->push(result);
+		LB::b_list(nargs.u.i);
 	} else {
 		warning("cb_list: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}

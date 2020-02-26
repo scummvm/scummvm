@@ -527,9 +527,9 @@ void GnapEngine::updateMenuStatusMainMenu() {
 #endif
 }
 
-Common::Error GnapEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error GnapEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
-		generateSaveName(slot));
+		getSaveStateName(slot));
 	if (!out)
 		return Common::kCreatingFileFailed;
 
@@ -630,7 +630,7 @@ WARN_UNUSED_RESULT bool GnapEngine::readSavegameHeader(Common::InSaveFile *in, G
 
 Common::Error GnapEngine::loadGameState(int slot) {
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		generateSaveName(slot));
+		getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kReadingFailed;
 
@@ -651,10 +651,6 @@ Common::Error GnapEngine::loadGameState(int slot) {
 
 	_loadGameSlot = slot;
 	return Common::kNoError;
-}
-
-Common::String GnapEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 void GnapEngine::updateMenuStatusSaveGame() {

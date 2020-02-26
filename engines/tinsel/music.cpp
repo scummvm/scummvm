@@ -54,25 +54,6 @@ enum {
 
 namespace Tinsel {
 
-//--------------------------- Midi data -------------------------------------
-
-// sound buffer structure used for MIDI data and samples
-struct SOUND_BUFFER {
-	uint8 *pDat;		// pointer to actual buffer
-	uint32 size;		// size of the buffer
-};
-
-// FIXME: Avoid non-const global vars
-
-// MIDI buffer
-static SOUND_BUFFER g_midiBuffer = { 0, 0 };
-
-static SCNHANDLE	g_currentMidi = 0;
-static bool		g_currentLoop = false;
-
-// We allocate 155 entries because that's the maximum, used in the SCN version
-static SCNHANDLE g_midiOffsets[155];
-
 static const int enhancedAudioGRAVersion[] = {
 	 1,   2,   1,   1,   3,   3,   4,   4,   5,   6, //   1-10
 	 1,   7,   8,   9,  10,   3,  11,  11,  12,  13, //  11-20
@@ -110,18 +91,18 @@ static const int enhancedAudioSCNVersion[] = {
 	  97,  98,  99,   99                                // 151-154
 };
 
-int GetTrackNumber(SCNHANDLE hMidi) {
-	for (int i = 0; i < ARRAYSIZE(g_midiOffsets); i++) {
-		if (g_midiOffsets[i] == hMidi)
+int Music::GetTrackNumber(SCNHANDLE hMidi) {
+	for (int i = 0; i < ARRAYSIZE(_midiOffsets); i++) {
+		if (_midiOffsets[i] == hMidi)
 			return i;
 	}
 
 	return -1;
 }
 
-SCNHANDLE GetTrackOffset(int trackNumber) {
-	assert(trackNumber < ARRAYSIZE(g_midiOffsets));
-	return g_midiOffsets[trackNumber];
+SCNHANDLE Music::GetTrackOffset(int trackNumber) {
+	assert(trackNumber < ARRAYSIZE(_midiOffsets));
+	return _midiOffsets[trackNumber];
 }
 
 /**
@@ -129,9 +110,9 @@ SCNHANDLE GetTrackOffset(int trackNumber) {
  * @param dwFileOffset		File offset of MIDI sequence data
  * @param bLoop				Whether to loop the sequence
  */
-bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
-	g_currentMidi = dwFileOffset;
-	g_currentLoop = bLoop;
+bool Music::PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
+	_currentMidi = dwFileOffset;
+	_currentLoop = bLoop;
 
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
@@ -160,8 +141,8 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 				StopMidi();
 
 				// StopMidi resets these fields, so set them again
-				g_currentMidi = dwFileOffset;
-				g_currentLoop = bLoop;
+				_currentMidi = dwFileOffset;
+				_currentLoop = bLoop;
 
 				// try to play track, but don't fall back to a true CD
 				g_system->getAudioCDManager()->play(track, bLoop ? -1 : 1, 0, 0, true);
@@ -197,7 +178,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		dwSeqLen = midiStream.readUint32LE();
 
 		// make sure buffer is large enough for this sequence
-		assert(dwSeqLen > 0 && dwSeqLen <= g_midiBuffer.size);
+		assert(dwSeqLen > 0 && dwSeqLen <= _midiBuffer.size);
 
 		// stop any currently playing tune
 		_vm->_midiMusic->stop();
@@ -207,7 +188,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		// name off the buffer itself. However, that function adds SMF headers
 		// to the buffer, thus if it's read again, the SMF headers will be read
 		// and the filename will always be 'MThd'.
-		if (midiStream.read(g_midiBuffer.pDat, dwSeqLen) != dwSeqLen)
+		if (midiStream.read(_midiBuffer.pDat, dwSeqLen) != dwSeqLen)
 			error(FILE_IS_CORRUPT, MIDI_FILE);
 
 		// WORKAROUND for bug #2820054 "DW1: No intro music at first start on Wii",
@@ -238,7 +219,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 /**
  * Returns TRUE if a Midi tune is currently playing.
  */
-bool MidiPlaying() {
+bool Music::MidiPlaying() {
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
 		if (g_system->getAudioCDManager()->isPlaying())
 			return true;
@@ -249,9 +230,9 @@ bool MidiPlaying() {
 /**
  * Stops any currently playing midi.
  */
-bool StopMidi() {
-	g_currentMidi = 0;
-	g_currentLoop = false;
+bool Music::StopMidi() {
+	_currentMidi = 0;
+	_currentLoop = false;
 
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
 		g_system->getAudioCDManager()->stop();
@@ -265,7 +246,7 @@ bool StopMidi() {
 /**
  * Gets the volume of the MIDI music.
  */
-int GetMidiVolume() {
+int Music::GetMidiVolume() {
 	return _vm->_config->_musicVolume;
 }
 
@@ -273,7 +254,7 @@ int GetMidiVolume() {
  * Sets the volume of the MIDI music.
  * @param vol			New volume - 0..MAXMIDIVOL
  */
-void SetMidiVolume(int vol) {
+void Music::SetMidiVolume(int vol) {
 	assert(vol >= 0 && vol <= Audio::Mixer::kMaxChannelVolume);
 	_vm->_midiMusic->setVolume(vol);
 }
@@ -281,7 +262,7 @@ void SetMidiVolume(int vol) {
 /**
  * Opens and inits all MIDI sequence files.
  */
-void OpenMidiFiles() {
+void Music::OpenMidiFiles() {
 	Common::File midiStream;
 
 	if (TinselV0) {
@@ -298,14 +279,14 @@ void OpenMidiFiles() {
 		int32 fileSize = midiStream.size();
 
 		// Init
-		for (int i = 0; i < ARRAYSIZE(g_midiOffsets); i++)
-			g_midiOffsets[i] = 0;
+		for (int i = 0; i < ARRAYSIZE(_midiOffsets); i++)
+			_midiOffsets[i] = 0;
 
 		midiStream.skip(4);	// skip file header
 
 		while (!midiStream.eos() && !midiStream.err() && midiStream.pos() != fileSize) {
-			assert(curTrack < ARRAYSIZE(g_midiOffsets));
-			g_midiOffsets[curTrack] = midiStream.pos();
+			assert(curTrack < ARRAYSIZE(_midiOffsets));
+			_midiOffsets[curTrack] = midiStream.pos();
 			//debug("%d: %d", curTrack, g_midiOffsets[curTrack]);
 
 			songLength = midiStream.readUint32BE();
@@ -316,7 +297,7 @@ void OpenMidiFiles() {
 
 		midiStream.close();
 	} else {
-		if (g_midiBuffer.pDat)
+		if (_midiBuffer.pDat)
 			// already allocated
 			return;
 
@@ -325,15 +306,15 @@ void OpenMidiFiles() {
 			error(CANNOT_FIND_FILE, MIDI_FILE);
 
 		// get length of the largest sequence
-		g_midiBuffer.size = midiStream.readUint32LE();
+		_midiBuffer.size = midiStream.readUint32LE();
 		if (midiStream.eos() || midiStream.err())
 			error(FILE_IS_CORRUPT, MIDI_FILE);
 
-		if (g_midiBuffer.size) {
+		if (_midiBuffer.size) {
 			// allocate a buffer big enough for the largest MIDI sequence
-			if ((g_midiBuffer.pDat = (uint8 *)malloc(g_midiBuffer.size)) != NULL) {
+			if ((_midiBuffer.pDat = (uint8 *)malloc(_midiBuffer.size)) != NULL) {
 				// clear out the buffer
-				memset(g_midiBuffer.pDat, 0, g_midiBuffer.size);
+				memset(_midiBuffer.pDat, 0, _midiBuffer.size);
 			}
 		}
 
@@ -347,15 +328,15 @@ void OpenMidiFiles() {
 		uint32 songLength = 0;
 
 		// Init
-		for (int i = 0; i < ARRAYSIZE(g_midiOffsets); i++)
-			g_midiOffsets[i] = 0;
+		for (int i = 0; i < ARRAYSIZE(_midiOffsets); i++)
+			_midiOffsets[i] = 0;
 
 		while (!midiStream.eos() && !midiStream.err()) {
 			if (curOffset + (4 * curTrack) >= (uint32)midiStream.size())
 				break;
 
-			assert(curTrack < ARRAYSIZE(g_midiOffsets));
-			g_midiOffsets[curTrack] = curOffset + (4 * curTrack);
+			assert(curTrack < ARRAYSIZE(_midiOffsets));
+			_midiOffsets[curTrack] = curOffset + (4 * curTrack);
 			//debug("%d: %d", curTrack, midiOffsets[curTrack]);
 
 			songLength = midiStream.readUint32LE();
@@ -369,10 +350,66 @@ void OpenMidiFiles() {
 	}
 }
 
-void DeleteMidiBuffer() {
-	free(g_midiBuffer.pDat);
-	g_midiBuffer.pDat = NULL;
+void Music::DeleteMidiBuffer() {
+	free(_midiBuffer.pDat);
+	_midiBuffer.pDat = NULL;
 }
+
+void Music::CurrentMidiFacts(SCNHANDLE* pMidi, bool* pLoop) {
+	*pMidi = _currentMidi;
+	*pLoop = _currentLoop;
+}
+
+void Music::RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
+	StopMidi();
+
+	_currentMidi = Midi;
+	_currentLoop = Loop;
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	PlayMidiSequence(_currentMidi, true);
+	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
+}
+
+#if 0
+// Dumps all of the game's music in external XMIDI *.xmi files
+void dumpMusic() {
+	Common::File midiFile;
+	Common::DumpFile outFile;
+	char outName[20];
+	midiFile.open(MIDI_FILE);
+	int outFileSize = 0;
+	char buffer[20000];
+
+	const int total = 155;	// maximum (SCN version)
+
+	for (int i = 0; i < total; i++) {
+		if (midiOffsets[i] == 0)
+			break;
+
+		sprintf(outName, "track%03d.xmi", i + 1);
+		outFile.open(outName);
+
+		if (i < total - 1)
+			outFileSize = midiOffsets[i + 1] - midiOffsets[i] - 4;
+		else
+			outFileSize = midiFile.size() - midiOffsets[i] - 4;
+
+		midiFile.seek(midiOffsets[i] + 4, SEEK_SET);
+
+		assert(outFileSize < 20000);
+		midiFile.read(buffer, outFileSize);
+		outFile.write(buffer, outFileSize);
+
+		outFile.close();
+	}
+
+	midiFile.close();
+}
+#endif
 
 MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 	_driver = NULL;
@@ -528,7 +565,7 @@ void MidiMusicPlayer::playXMIDI(uint32 size, bool loop) {
 	// Load XMID resource data
 
 	MidiParser *parser = MidiParser::createParser_XMIDI();
-	if (parser->loadMusic(g_midiBuffer.pDat, size)) {
+	if (parser->loadMusic(_vm->_music->GetMidiBuffer(), size)) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(getBaseTempo());
@@ -545,8 +582,9 @@ void MidiMusicPlayer::playXMIDI(uint32 size, bool loop) {
 }
 
 void MidiMusicPlayer::playSEQ(uint32 size, bool loop) {
+	uint8 *midiData = _vm->_music->GetMidiBuffer();
 	// MIDI.DAT holds the file names in DW1 PSX
-	Common::String baseName((char *)g_midiBuffer.pDat, size);
+	Common::String baseName((char *)midiData, size);
 	Common::String seqName = baseName + ".SEQ";
 
 	// TODO: Load the instrument bank (<baseName>.VB and <baseName>.VH)
@@ -575,31 +613,28 @@ void MidiMusicPlayer::playSEQ(uint32 size, bool loop) {
 	uint32 actualSize = dataSize + 7 + 22;
 
 	// Resize the buffer if necessary
-	if (g_midiBuffer.size < actualSize) {
-		g_midiBuffer.pDat = (byte *)realloc(g_midiBuffer.pDat, actualSize);
-		assert(g_midiBuffer.pDat);
-	}
+	midiData = _vm->_music->ResizeMidiBuffer(actualSize);
 
 	// Now construct the header
-	WRITE_BE_UINT32(g_midiBuffer.pDat, MKTAG('M', 'T', 'h', 'd'));
-	WRITE_BE_UINT32(g_midiBuffer.pDat + 4, 6); // header size
-	WRITE_BE_UINT16(g_midiBuffer.pDat + 8, 0); // type 0
-	WRITE_BE_UINT16(g_midiBuffer.pDat + 10, 1); // one track
-	WRITE_BE_UINT16(g_midiBuffer.pDat + 12, ppqn);
-	WRITE_BE_UINT32(g_midiBuffer.pDat + 14, MKTAG('M', 'T', 'r', 'k'));
-	WRITE_BE_UINT32(g_midiBuffer.pDat + 18, dataSize + 7); // SEQ data size + tempo change event size
+	WRITE_BE_UINT32(midiData, MKTAG('M', 'T', 'h', 'd'));
+	WRITE_BE_UINT32(midiData + 4, 6); // header size
+	WRITE_BE_UINT16(midiData + 8, 0); // type 0
+	WRITE_BE_UINT16(midiData + 10, 1); // one track
+	WRITE_BE_UINT16(midiData + 12, ppqn);
+	WRITE_BE_UINT32(midiData + 14, MKTAG('M', 'T', 'r', 'k'));
+	WRITE_BE_UINT32(midiData + 18, dataSize + 7); // SEQ data size + tempo change event size
 
 	// Add in a fake tempo change event
-	WRITE_BE_UINT32(g_midiBuffer.pDat + 22, 0x00FF5103); // no delta, meta event, tempo change, param size = 3
-	WRITE_BE_UINT16(g_midiBuffer.pDat + 26, tempo >> 8);
-	g_midiBuffer.pDat[28] = tempo & 0xFF;
+	WRITE_BE_UINT32(midiData + 22, 0x00FF5103); // no delta, meta event, tempo change, param size = 3
+	WRITE_BE_UINT16(midiData + 26, tempo >> 8);
+	midiData[28] = tempo & 0xFF;
 
 	// Now copy in the rest of the events
-	seqFile.read(g_midiBuffer.pDat + 29, dataSize);
+	seqFile.read(midiData + 29, dataSize);
 	seqFile.close();
 
 	MidiParser *parser = MidiParser::createParser_SMF();
-	if (parser->loadMusic(g_midiBuffer.pDat, actualSize)) {
+	if (parser->loadMusic(midiData, actualSize)) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(getBaseTempo());
@@ -621,7 +656,7 @@ void MidiMusicPlayer::pause() {
 }
 
 void MidiMusicPlayer::resume() {
-	setVolume(GetMidiVolume());
+	setVolume(_vm->_music->GetMidiVolume());
 	_isPlaying = true;
 }
 
@@ -1028,61 +1063,5 @@ void PCMMusicPlayer::stop() {
 
 	_end = true;
 }
-
-void CurrentMidiFacts(SCNHANDLE	*pMidi, bool *pLoop) {
-	*pMidi = g_currentMidi;
-	*pLoop = g_currentLoop;
-}
-
-void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
-	StopMidi();
-
-	g_currentMidi = Midi;
-	g_currentLoop = Loop;
-
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-
-	PlayMidiSequence(g_currentMidi, true);
-	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
-}
-
-#if 0
-// Dumps all of the game's music in external XMIDI *.xmi files
-void dumpMusic() {
-	Common::File midiFile;
-	Common::DumpFile outFile;
-	char outName[20];
-	midiFile.open(MIDI_FILE);
-	int outFileSize = 0;
-	char buffer[20000];
-
-	const int total = 155;	// maximum (SCN version)
-
-	for (int i = 0; i < total; i++) {
-		if (midiOffsets[i] == 0)
-			break;
-
-		sprintf(outName, "track%03d.xmi", i + 1);
-		outFile.open(outName);
-
-		if (i < total - 1)
-			outFileSize = midiOffsets[i + 1] - midiOffsets[i] - 4;
-		else
-			outFileSize = midiFile.size() - midiOffsets[i] - 4;
-
-		midiFile.seek(midiOffsets[i] + 4, SEEK_SET);
-
-		assert(outFileSize < 20000);
-		midiFile.read(buffer, outFileSize);
-		outFile.write(buffer, outFileSize);
-
-		outFile.close();
-	}
-
-	midiFile.close();
-}
-#endif
 
 } // End of namespace Tinsel

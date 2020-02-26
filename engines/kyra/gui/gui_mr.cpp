@@ -1341,8 +1341,6 @@ int GUI_MR::gameOptions(Button *caller) {
 		_vm->saveGameStateIntern(999, "Autosave", &thumb);
 		thumb.free();
 
-		_vm->_lastAutosave = _vm->_system->getMillis();
-
 		if (!_vm->loadLanguageFile("ITEMS.", _vm->_itemFile))
 			error("Couldn't load ITEMS");
 		if (!_vm->loadLanguageFile("SCORE.", _vm->_scoreFile))

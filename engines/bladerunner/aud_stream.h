@@ -61,7 +61,7 @@ public:
 	int getRate() const override { return _overrideFrequency > 0 ? _overrideFrequency : _frequency; };
 	bool endOfData() const override { return _p == _end; }
 	bool rewind() override;
-	int getLength() const;
+	uint32 getLength() const;
 };
 
 } // End of namespace BladeRunner

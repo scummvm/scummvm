@@ -47,21 +47,21 @@ public:
 	//! Get dimensions.
 	//! \param x Returns the width
 	//! \param y Returns the height
-	virtual void getSize(int &x, int &y) {
-		x = width;
-		y = height;
+	virtual void getSize(int &x, int &y) const {
+		x = _width;
+		y = _height;
 	}
 
 	//! Get vlead
 	virtual int getVlead() {
-		return vlead;
+		return _vLead;
 	}
 
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
 protected:
-	int width, height;
-	int vlead;
+	int _width, _height;
+	int _vLead;
 };
 
 } // End of namespace Ultima8

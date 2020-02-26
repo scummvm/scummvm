@@ -33,8 +33,8 @@ namespace Ultima {
 namespace Shared {
 
 EventsManager::EventsManager(EventsCallback *callback) : _callback(callback), _playTime(0),
-		_gameCounter(0), _frameCounter(0), _priorFrameCounterTime(0), _lastAutosaveTime(0),
-		_buttonsDown(0), _specialButtons(0) {
+		_gameCounter(0), _frameCounter(0), _priorFrameCounterTime(0), _buttonsDown(0),
+		_specialButtons(0) {
 }
 
 void EventsManager::showCursor() {
@@ -58,11 +58,6 @@ bool EventsManager::pollEvent(Common::Event &event) {
 		nextFrame();
 	}
 
-	// Handle auto saves
-	if (!_lastAutosaveTime)
-		_lastAutosaveTime = timer;
-	_callback->autoSaveCheck(_lastAutosaveTime);
-
 	// Event handling
 	if (g_system->getEventManager()->pollEvent(event)) {
 		if (isMouseDownEvent(event.type)) {
@@ -78,16 +73,6 @@ bool EventsManager::pollEvent(Common::Event &event) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN: {
 			handleKbdSpecial(event.kbd);
-
-			// Check for debugger
-			GUI::Debugger *debugger = _callback->getDebugger();
-			if (debugger != nullptr && event.kbd.keycode == Common::KEYCODE_d
-					&& (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				debugger->attach();
-				debugger->onFrame();
-				return false;
-			}
 			break;
 		}
 		case Common::EVENT_KEYUP:
@@ -166,11 +151,6 @@ void EventsManager::nextFrame() {
 	// Handle any idle updates
 	if (!_eventTargets.empty())
 		eventTarget()->onIdle();
-
-	// Handle debugger updates
-	GUI::Debugger *debugger = _callback->getDebugger();
-	if (debugger)
-		debugger->onFrame();
 
 	// Render anything pending for the screen
 	Graphics::Screen *screen = _callback->getScreen();

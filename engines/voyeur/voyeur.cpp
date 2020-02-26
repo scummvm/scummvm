@@ -84,7 +84,7 @@ VoyeurEngine::~VoyeurEngine() {
 	delete _screen;
 	delete _filesManager;
 	delete _eventsManager;
-	delete _debugger;
+	//_debugger is deleted by Engine
 }
 
 Common::Error VoyeurEngine::run() {
@@ -120,6 +120,7 @@ void VoyeurEngine::ESP_Init() {
 
 void VoyeurEngine::globalInitBolt() {
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 	_eventsManager = new EventsManager(this);
 	_filesManager = new FilesManager(this);
 	_screen = new Screen(this);
@@ -745,10 +746,6 @@ void VoyeurEngine::showEndingNews() {
 
 /*------------------------------------------------------------------------*/
 
-Common::String VoyeurEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
-}
-
 /**
  * Returns true if it is currently okay to restore a game
  */
@@ -773,7 +770,7 @@ Common::Error VoyeurEngine::loadGameState(int slot) {
 
 void VoyeurEngine::loadGame(int slot) {
 	// Open up the save file
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(generateSaveName(slot));
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(getSaveStateName(slot));
 	if (!saveFile)
 		return;
 
@@ -805,9 +802,9 @@ void VoyeurEngine::loadGame(int slot) {
 /**
  * Save the game to the given slot index, and with the given name
  */
-Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	// Open the save file for writing
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(generateSaveName(slot));
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kCreatingFileFailed;
 

@@ -49,7 +49,7 @@ UIImagePicker::~UIImagePicker() {
 }
 
 void UIImagePicker::resetImages() {
-	for (int i = 0; i != _imageCount; i++) {
+	for (int i = 0; i != _imageCount; ++i) {
 		resetImage(i);
 	}
 }
@@ -63,8 +63,8 @@ bool UIImagePicker::defineImage(int i, Common::Rect rect, const Shape *shapeUp, 
 
 	img.rect = rect;
 	// for rect to be inclusive
-	img.rect.right += 1;
-	img.rect.bottom += 1;
+	++(img.rect.right);
+	++(img.rect.bottom);
 	img.shapeUp = shapeUp;
 	img.shapeHovered = shapeHovered;
 	img.shapeDown = shapeDown;

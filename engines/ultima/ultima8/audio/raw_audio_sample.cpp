@@ -27,24 +27,23 @@
 namespace Ultima {
 namespace Ultima8 {
 
-RawAudioSample::RawAudioSample(uint8 *buffer_, uint32 size_, uint32 rate_,
-                               bool signeddata_, bool stereo_)
-	: AudioSample(buffer_, size_), signeddata(signeddata_) {
-	sample_rate = rate_;
-	bits = 8;
-	stereo = stereo_;
-	frame_size = 512;
-	decompressor_size = sizeof(RawDecompData);
-	length = size_;
+RawAudioSample::RawAudioSample(const uint8 *buffer_, uint32 size, uint32 rate,
+                               bool signedData, bool stereo)
+	: AudioSample(buffer_, size), _signedData(signedData) {
+	_sampleRate = rate;
+	_bits = 8;
+	_stereo = stereo;
+	_frameSize = 512;
+	_decompressorSize = sizeof(RawDecompData);
+	_length = size;
 }
 
 RawAudioSample::~RawAudioSample() {
-
 }
 
 void RawAudioSample::initDecompressor(void *DecompData) const {
 	RawDecompData *decomp = reinterpret_cast<RawDecompData *>(DecompData);
-	decomp->pos = 0;
+	decomp->_pos = 0;
 }
 
 void RawAudioSample::rewind(void *DecompData) const {
@@ -54,21 +53,21 @@ void RawAudioSample::rewind(void *DecompData) const {
 uint32 RawAudioSample::decompressFrame(void *DecompData, void *samples) const {
 	RawDecompData *decomp = reinterpret_cast<RawDecompData *>(DecompData);
 
-	if (decomp->pos == buffer_size) return 0;
+	if (decomp->_pos == _bufferSize) return 0;
 
-	uint32 count = frame_size;
-	if (decomp->pos + count > buffer_size)
-		count = buffer_size - decomp->pos;
+	uint32 count = _frameSize;
+	if (decomp->_pos + count > _bufferSize)
+		count = _bufferSize - decomp->_pos;
 
-	if (!signeddata) {
-		Std::memcpy(samples, buffer + decomp->pos, count);
+	if (!_signedData) {
+		Std::memcpy(samples, _buffer + decomp->_pos, count);
 	} else {
 		uint8 *dest = static_cast<uint8 *>(samples);
 		for (unsigned int i = 0; i < count; ++i)
-			dest[i] = buffer[decomp->pos + i] + 128;
+			dest[i] = _buffer[decomp->_pos + i] + 128;
 	}
 
-	decomp->pos += count;
+	decomp->_pos += count;
 
 	return count;
 }

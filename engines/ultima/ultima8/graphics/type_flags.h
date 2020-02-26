@@ -44,7 +44,7 @@ private:
 	void loadArmourInfo();
 	void loadMonsterInfo();
 
-	Std::vector<ShapeInfo> shapeInfo;
+	Std::vector<ShapeInfo> _shapeInfo;
 };
 
 } // End of namespace Ultima8

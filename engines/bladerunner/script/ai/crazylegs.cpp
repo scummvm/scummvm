@@ -64,15 +64,15 @@ void AIScriptCrazylegs::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptCrazylegs::EnteredScene(int sceneId) {
+void AIScriptCrazylegs::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptCrazylegs::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptCrazylegs::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptCrazylegs::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptCrazylegs::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -142,28 +142,28 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 454;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(454))
 			_animationFrame = 0;
 		break;
 
 	case 1:
 		*animation = 455;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(455))
 			_animationFrame = 0;
 		break;
 
 	case 2:
 		*animation = 456;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(456))
 			_animationFrame = 0;
 		break;
 
 	case 3:
 		*animation = 457;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(457)) {
 			*animation = 454;
 			_animationFrame = 0;
@@ -173,14 +173,14 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 452;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(452))
 			_animationFrame = 0;
 		break;
 
 	case 5:
 		*animation = 453;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(453))
 			_animationFrame = 0;
 		break;
@@ -192,7 +192,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 			_flag = 0;
 		} else {
 			*animation = 458;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(458))
 				_animationFrame = 0;
 		}
@@ -200,7 +200,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 459;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(459)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -210,7 +210,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 460;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(460)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -220,7 +220,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 461;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(461)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -230,7 +230,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 462;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(462)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -240,7 +240,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 463;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(463)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -250,7 +250,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = 464;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(464)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -260,7 +260,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 465;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(465)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -270,7 +270,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = 466;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(466)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -286,7 +286,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 			*animation = 456;
 		} else {
 			*animation = 456;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(456))
 				_animationFrame = 0;
 		}
@@ -294,7 +294,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 16:
 		*animation = 467;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(467)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -304,7 +304,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 17:
 		*animation = 468;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(468)) {
 			*animation = 454;
 			_animationFrame = 0;
@@ -314,7 +314,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 18:
 		*animation = 469;
-		_animationFrame--;
+		--_animationFrame;
 		if (_animationFrame <= Slice_Animation_Query_Number_Of_Frames(469)) { // matches original
 			_animationFrame = 0;
 			_animationState = 2;
@@ -324,7 +324,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 	case 19:
 		*animation = 469;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(469)) {
 			*animation = 454;
 			_animationFrame = 0;

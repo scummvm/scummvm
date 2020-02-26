@@ -29,43 +29,42 @@
 namespace Ultima {
 namespace Ultima8 {
 
-BitSet::BitSet() : size(0), bytes(0), data(0) {
-
+BitSet::BitSet() : _size(0), _bytes(0), _data(0) {
 }
 
 
-BitSet::BitSet(unsigned int size_) {
-	data = 0;
-	setSize(size_);
+BitSet::BitSet(unsigned int size) {
+	_data = 0;
+	setSize(size);
 }
 
 BitSet::~BitSet() {
-	delete[] data;
+	delete[] _data;
 }
 
-void BitSet::setSize(unsigned int size_) {
-	if (data) delete[] data;
+void BitSet::setSize(unsigned int size) {
+	if (_data) delete[] _data;
 
-	size = size_;
-	bytes = 0;
-	bytes = size / 8;
-	if (size % 8 != 0) bytes++;
+	_size = size;
+	_bytes = 0;
+	_bytes = _size / 8;
+	if (_size % 8 != 0) _bytes++;
 
-	data = new uint8[bytes];
-	for (unsigned int i = 0; i < bytes; ++i)
-		data[i] = 0;
+	_data = new uint8[_bytes];
+	for (unsigned int i = 0; i < _bytes; ++i)
+		_data[i] = 0;
 }
 
-uint32 BitSet::getBits(unsigned int pos, unsigned int n) {
+uint32 BitSet::getBits(unsigned int pos, unsigned int n) const {
 	assert(n <= 32);
-	assert(pos + n <= size);
+	assert(pos + n <= _size);
 	if (n == 0) return 0;
 
 	unsigned int firstbyte = pos / 8;
 	unsigned int lastbyte = (pos + n - 1) / 8;
 
 	if (firstbyte == lastbyte) {
-		return ((data[firstbyte] >> (pos % 8)) & ((1 << n) - 1));
+		return ((_data[firstbyte] >> (pos % 8)) & ((1 << n) - 1));
 	}
 
 	unsigned int firstbits = 8 - (pos % 8);
@@ -76,28 +75,28 @@ uint32 BitSet::getBits(unsigned int pos, unsigned int n) {
 
 	uint32 ret = 0;
 
-	ret |= (data[firstbyte] & firstmask) >> (8 - firstbits);
+	ret |= (_data[firstbyte] & firstmask) >> (8 - firstbits);
 	unsigned int shift = firstbits;
 	for (unsigned int i = firstbyte + 1; i < lastbyte; ++i) {
-		ret |= (data[i] << shift);
+		ret |= (_data[i] << shift);
 		shift += 8;
 	}
-	ret |= (data[lastbyte] & lastmask) << shift;
+	ret |= (_data[lastbyte] & lastmask) << shift;
 
 	return ret;
 }
 
 void BitSet::setBits(unsigned int pos, unsigned int n, uint32 bits) {
 	assert(n <= 32);
-	assert(pos + n <= size);
+	assert(pos + n <= _size);
 	if (n == 0) return;
 
 	unsigned int firstbyte = pos / 8;
 	unsigned int lastbyte = (pos + n - 1) / 8;
 
 	if (firstbyte == lastbyte) {
-		data[firstbyte] &= ~(((1 << n) - 1) << (pos % 8));
-		data[firstbyte] |= (bits & ((1 << n) - 1)) << (pos % 8);
+		_data[firstbyte] &= ~(((1 << n) - 1) << (pos % 8));
+		_data[firstbyte] |= (bits & ((1 << n) - 1)) << (pos % 8);
 		return;
 	}
 
@@ -107,26 +106,26 @@ void BitSet::setBits(unsigned int pos, unsigned int n, uint32 bits) {
 	unsigned int firstmask = ((1 << firstbits) - 1) << (8 - firstbits);
 	unsigned int lastmask = ((1 << lastbits) - 1);
 
-	data[firstbyte] &= ~firstmask;
-	data[firstbyte] |= (bits << (8 - firstbits)) & firstmask;
+	_data[firstbyte] &= ~firstmask;
+	_data[firstbyte] |= (bits << (8 - firstbits)) & firstmask;
 	unsigned int shift = firstbits;
 	for (unsigned int i = firstbyte + 1; i < lastbyte; ++i) {
-		data[i] = (bits >> shift);
+		_data[i] = (bits >> shift);
 		shift += 8;
 	}
-	data[lastbyte] &= ~lastmask;
-	data[lastbyte] |= (bits >> shift) & lastmask;
+	_data[lastbyte] &= ~lastmask;
+	_data[lastbyte] |= (bits >> shift) & lastmask;
 }
 
 void BitSet::save(ODataSource *ods) {
-	ods->write4(size);
-	ods->write(data, bytes);
+	ods->write4(_size);
+	ods->write(_data, _bytes);
 }
 
 bool BitSet::load(IDataSource *ids, uint32 version) {
 	uint32 s = ids->read4();
 	setSize(s);
-	ids->read(data, bytes);
+	ids->read(_data, _bytes);
 
 	return true;
 }

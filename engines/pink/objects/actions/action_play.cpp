@@ -35,7 +35,7 @@ void ActionPlay::deserialize(Archive &archive) {
 	_stopFrame = archive.readDWORD();
 }
 
-void ActionPlay::toConsole() {
+void ActionPlay::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionPlay: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
 				  " _endFrame = %d", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
 }

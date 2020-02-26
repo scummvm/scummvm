@@ -46,7 +46,7 @@ public:
 	void setTarget(ObjId target_);
 	ObjId seekTarget();
 
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
@@ -60,14 +60,14 @@ protected:
 	void turnToDirection(int direction);
 	void waitForTarget();
 
-	ObjId target;
-	ObjId fixedTarget;
+	ObjId _target;
+	ObjId _fixedTarget;
 
 	enum CombatMode {
 		CM_WAITING = 0,
 		CM_PATHFINDING,
 		CM_ATTACKING
-	} combatmode;
+	} _combatMode;
 };
 
 } // End of namespace Ultima8

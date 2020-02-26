@@ -24,7 +24,6 @@
 #include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"
-
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/ultima8.h"
@@ -34,7 +33,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 #ifdef DEBUG
-ObjId Pathfinder::visualdebug_actor = 0xFFFF;
+ObjId Pathfinder::_visualDebugActor = 0xFFFF;
 #endif
 
 struct PathNode {
@@ -49,22 +48,22 @@ struct PathNode {
 // NOTE: this is just to keep some statistics
 static unsigned int expandednodes = 0;
 
-void PathfindingState::load(Actor *actor) {
-	actor->getLocation(x, y, z);
-	lastanim = actor->getLastAnim();
-	direction = actor->getDir();
-	firststep = (actor->getActorFlags() & Actor::ACT_FIRSTSTEP) != 0;
-	flipped = (actor->getFlags() & Item::FLG_FLIPPED) != 0;
-	combat = actor->isInCombat();
+void PathfindingState::load(const Actor *_actor) {
+	_actor->getLocation(_x, _y, _z);
+	_lastAnim = _actor->getLastAnim();
+	_direction = _actor->getDir();
+	_firstStep = (_actor->getActorFlags() & Actor::ACT_FIRSTSTEP) != 0;
+	_flipped = (_actor->getFlags() & Item::FLG_FLIPPED) != 0;
+	_combat = _actor->isInCombat();
 }
 
 bool PathfindingState::checkPoint(int32 x_, int32 y_, int32 z_,
-                                  int range) {
-	int distance = (x - x_) * (x - x_) + (y - y_) * (y - y_) + (z - z_) * (z - z_);
+                                  int range) const {
+	int distance = (_x - x_) * (_x - x_) + (_y - y_) * (_y - y_) + (_z - z_) * (_z - z_);
 	return distance < range * range;
 }
 
-bool PathfindingState::checkItem(Item *item, int xyRange, int zRange) {
+bool PathfindingState::checkItem(const Item *item, int xyRange, int zRange) const {
 	int32 itemX, itemY, itemZ;
 	int32 itemXd, itemYd, itemZd;
 	int32 itemXmin, itemYmin;
@@ -76,27 +75,27 @@ bool PathfindingState::checkItem(Item *item, int xyRange, int zRange) {
 	itemYmin = itemY - itemYd;
 
 	int range = 0;
-	if (x - itemX > range)
-		range = x - itemX;
-	if (itemXmin - x > range)
-		range = itemXmin - x;
-	if (y - itemY > range)
-		range = y - itemY;
-	if (itemYmin - y > range)
-		range = itemYmin - y;
+	if (_x - itemX > range)
+		range = _x - itemX;
+	if (itemXmin - _x > range)
+		range = itemXmin - _x;
+	if (_y - itemY > range)
+		range = _y - itemY;
+	if (itemYmin - _y > range)
+		range = itemYmin - _y;
 
-	// FIXME: check z properly
+	// FIXME: check _z properly
 
 	return (range <= xyRange);
 }
 
-bool PathfindingState::checkHit(Actor *actor, Actor *target) {
+bool PathfindingState::checkHit(Actor *_actor, const Actor *target) {
 #if 0
-	pout << "Trying hit in direction " << actor->getDirToItemCentre(*target) << Std::endl;
+	pout << "Trying hit in _direction " << _actor->getDirToItemCentre(*target) << Std::endl;
 #endif
 	AnimationTracker tracker;
-	if (!tracker.init(actor, Animation::attack,
-	                  actor->getDirToItemCentre(*target), this)) {
+	if (!tracker.init(_actor, Animation::attack,
+	                  _actor->getDirToItemCentre(*target), this)) {
 		return false;
 	}
 
@@ -110,7 +109,7 @@ bool PathfindingState::checkHit(Actor *actor, Actor *target) {
 	return false;
 }
 
-bool PathNodeCmp::operator()(PathNode *n1, PathNode *n2) {
+bool PathNodeCmp::operator()(const PathNode *n1, const PathNode *n2) const {
 	return (n1->heuristicTotalCost < n2->heuristicTotalCost);
 }
 
@@ -120,51 +119,51 @@ Pathfinder::Pathfinder() {
 
 Pathfinder::~Pathfinder() {
 #if 1
-	pout << "~Pathfinder: " << nodelist.size() << " nodes, "
-	     << expandednodes << " expanded nodes in " << expandtime << "ms." << Std::endl;
+	pout << "~Pathfinder: " << _nodeList.size() << " _nodes, "
+	     << expandednodes << " expanded _nodes in " << _expandTime << "ms." << Std::endl;
 #endif
 
-	// clean up nodes
+	// clean up _nodes
 	Std::list<PathNode *>::iterator iter;
-	for (iter = nodelist.begin(); iter != nodelist.end(); ++iter)
+	for (iter = _nodeList.begin(); iter != _nodeList.end(); ++iter)
 		delete *iter;
-	nodelist.clear();
+	_nodeList.clear();
 }
 
 void Pathfinder::init(Actor *actor_, PathfindingState *state) {
-	actor = actor_;
+	_actor = actor_;
 
-	actor->getFootpadWorld(actor_xd, actor_yd, actor_zd);
+	_actor->getFootpadWorld(_actorXd, _actorYd, _actorZd);
 
 	if (state)
-		start = *state;
+		_start = *state;
 	else
-		start.load(actor);
+		_start.load(_actor);
 }
 
 void Pathfinder::setTarget(int32 x, int32 y, int32 z) {
-	targetx = x;
-	targety = y;
-	targetz = z;
-	targetitem = 0;
-	hitmode = false;
+	_targetX = x;
+	_targetY = y;
+	_targetZ = z;
+	_targetItem = 0;
+	_hitMode = false;
 }
 
 void Pathfinder::setTarget(Item *item, bool hit) {
-	targetitem = item;
-	while (targetitem->getParentAsContainer())
-		targetitem = targetitem->getParentAsContainer();
+	_targetItem = item;
+	while (_targetItem->getParentAsContainer())
+		_targetItem = _targetItem->getParentAsContainer();
 
 	// set target to centre of item for the cost heuristic
-	item->getCentre(targetx, targety, targetz);
-	targetz = item->getZ();
+	item->getCentre(_targetX, _targetY, _targetZ);
+	_targetZ = item->getZ();
 
 	if (hit) {
-		assert(start.combat);
-		assert(p_dynamic_cast<Actor *>(targetitem));
-		hitmode = true;
+		assert(_start._combat);
+		assert(p_dynamic_cast<Actor *>(_targetItem));
+		_hitMode = true;
 	} else {
-		hitmode = false;
+		_hitMode = false;
 	}
 }
 
@@ -173,12 +172,12 @@ bool Pathfinder::canReach() {
 	return pathfind(path);
 }
 
-bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) {
+bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) const {
 	//! this may need optimization
 
-	Std::list<PathfindingState>::iterator iter;
+	Std::list<PathfindingState>::const_iterator iter;
 
-	for (iter = visited.begin(); iter != visited.end(); ++iter)
+	for (iter = _visited.begin(); iter != _visited.end(); ++iter)
 		if (iter->checkPoint(x, y, z, 8))
 			return true;
 
@@ -188,15 +187,15 @@ bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) {
 bool Pathfinder::checkTarget(PathNode *node) {
 	// TODO: these ranges are probably a bit too high,
 	// but otherwise it won't work properly yet -wjp
-	if (targetitem) {
-		if (hitmode) {
-			return node->state.checkHit(actor,
-			                            p_dynamic_cast<Actor *>(targetitem));
+	if (_targetItem) {
+		if (_hitMode) {
+			return node->state.checkHit(_actor,
+			                            p_dynamic_cast<Actor *>(_targetItem));
 		} else {
-			return node->state.checkItem(targetitem, 32, 8);
+			return node->state.checkItem(_targetItem, 32, 8);
 		}
 	} else {
-		return node->state.checkPoint(targetx, targety, targetz, 48);
+		return node->state.checkPoint(_targetX, _targetY, _targetZ, 48);
 	}
 }
 
@@ -206,17 +205,17 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) {
 #if 0
 	double sqrddist;
 
-	sqrddist = (targetx - node->state.x + actor_xd / 2) *
-	           (targetx - node->state.x + actor_xd / 2);
-	sqrddist += (targety - node->state.y + actor_yd / 2) *
-	            (targety - node->state.y + actor_yd / 2);
+	sqrddist = (_targetX - node->state._x + _actorXd / 2) *
+	           (_targetX - node->state._x + _actorXd / 2);
+	sqrddist += (_targetY - node->state._y + _actorYd / 2) *
+	            (_targetY - node->state._y + _actorYd / 2);
 
 	unsigned int dist = static_cast<unsigned int>(Std::sqrt(sqrddist));
 #else
 	// This calculates the distance to the target using only lines in
 	// the 8 available directions (instead of the straight line above)
-	int xd = ABS(targetx - node->state.x + actor_xd / 2);
-	int yd = ABS(targety - node->state.y + actor_yd / 2);
+	int xd = ABS(_targetX - node->state._x + _actorXd / 2);
+	int yd = ABS(_targetY - node->state._y + _actorYd / 2);
 	double m = (xd < yd) ? xd : yd;
 	unsigned int dist = ABS(xd - yd) + static_cast<unsigned int>(m * 1.41421356);
 
@@ -231,7 +230,7 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) {
 #else
 
 	// Weigh remaining distance more than already travelled distance,
-	// to try to explore more nodes closer to the target.
+	// to try to explore more _nodes closer to the target.
 	node->heuristicTotalCost = 2 * cost + 3 * dist;
 #endif
 
@@ -244,7 +243,7 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) {
 // FIXME: these functions assume that we're using a 2x scaler...
 // (and the whole system is generally a very big hack...)
 
-static void drawbox(Item *item) {
+static void drawbox(const Item *item) {
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	int32 cx, cy, cz;
 
@@ -284,7 +283,7 @@ static void drawbox(Item *item) {
 	screen->DrawLine32(0xFF00FF00, x0, y0, x3, y3);
 }
 
-static void drawdot(int32 x, int32 y, int32 z, int size, uint32 rgb) {
+static void drawdot(int32 x, int32 y, int32 Z, int size, uint32 rgb) {
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	int32 cx, cy, cz;
 
@@ -294,10 +293,10 @@ static void drawdot(int32 x, int32 y, int32 z, int size, uint32 rgb) {
 	screen->GetSurfaceDims(d);
 	x -= cx;
 	y -= cy;
-	z -= cz;
+	Z -= cz;
 	int32 x0, y0;
 	x0 = (d.w / 2) + (x - y) / 2;
-	y0 = (d.h / 2) + (x + y) / 4 - z * 2;
+	y0 = (d.h / 2) + (x + y) / 4 - Z * 2;
 	screen->Fill32(rgb, x0 - size, y0 - size, 2 * size + 1, 2 * size + 1);
 }
 
@@ -312,18 +311,18 @@ static void drawedge(PathNode *from, PathNode *to, uint32 rgb) {
 
 	int32 x0, y0, x1, y1;
 
-	cx = from->state.x - cx;
-	cy = from->state.y - cy;
-	cz = from->state.z - cz;
+	cx = from->state._x - cx;
+	cy = from->state._y - cy;
+	cz = from->state._z - cz;
 
 	x0 = (d.w / 2) + (cx - cy) / 2;
 	y0 = (d.h / 2) + (cx + cy) / 4 - cz * 2;
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
-	cx = to->state.x - cx;
-	cy = to->state.y - cy;
-	cz = to->state.z - cz;
+	cx = to->state._x - cx;
+	cy = to->state._y - cy;
+	cz = to->state._z - cz;
 
 	x1 = (d.w / 2) + (cx - cy) / 2;
 	y1 = (d.h / 2) + (cx + cy) / 4 - cz * 2;
@@ -339,12 +338,12 @@ static void drawpath(PathNode *to, uint32 rgb, bool done) {
 		drawedge(n1, n2, rgb);
 
 		if (done && n1 == to)
-			drawdot(n1->state.x, n1->state.y, n1->state.z, 2, 0xFFFF0000);
+			drawdot(n1->state._x, n1->state._y, n1->state._z, 2, 0xFFFF0000);
 		else
-			drawdot(n1->state.x, n1->state.y, n1->state.z, 1, 0xFFFFFFFF);
+			drawdot(n1->state._x, n1->state._y, n1->state._z, 1, 0xFFFFFFFF);
 
 
-		drawdot(n2->state.x, n2->state.y, n2->state.z, 2, 0xFFFFFFFF);
+		drawdot(n2->state._x, n2->state._y, n2->state._z, 2, 0xFFFFFFFF);
 
 		n1 = n2;
 		n2 = n1->parent;
@@ -356,7 +355,7 @@ static void drawpath(PathNode *to, uint32 rgb, bool done) {
 void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
                          unsigned int steps) {
 	PathNode *newnode = new PathNode();
-	nodelist.push_back(newnode); // for garbage collection
+	_nodeList.push_back(newnode); // for garbage collection
 	newnode->state = state;
 	newnode->parent = oldnode;
 	newnode->depth = oldnode->depth + 1;
@@ -364,12 +363,12 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 
 	double sqrddist;
 
-	sqrddist = ((newnode->state.x - oldnode->state.x) *
-	            (newnode->state.x - oldnode->state.x));
-	sqrddist += ((newnode->state.y - oldnode->state.y) *
-	             (newnode->state.y - oldnode->state.y));
-	sqrddist += ((newnode->state.z - oldnode->state.z) *
-	             (newnode->state.z - oldnode->state.z));
+	sqrddist = ((newnode->state._x - oldnode->state._x) *
+	            (newnode->state._x - oldnode->state._x));
+	sqrddist += ((newnode->state._y - oldnode->state._y) *
+	             (newnode->state._y - oldnode->state._y));
+	sqrddist += ((newnode->state._z - oldnode->state._z) *
+	             (newnode->state._z - oldnode->state._z));
 
 	unsigned int dist;
 	dist = static_cast<unsigned int>(Std::sqrt(sqrddist));
@@ -377,7 +376,7 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 	int turn = 0;
 
 	if (oldnode->depth > 0) {
-		turn = state.direction - oldnode->state.direction;
+		turn = state._direction - oldnode->state._direction;
 		if (turn < 0) turn = -turn;
 		if (turn > 4) turn = 8 - turn;
 	}
@@ -391,25 +390,25 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 		costHeuristic(newnode);
 
 #if 0
-	perr << "trying dir " << state.direction;
+	perr << "trying dir " << state._direction;
 
 	if (steps > 0) {
 		perr << ", " << steps << " steps";
 	}
 	perr << " from ("
-	     << oldnode->state.x << "," << oldnode->state.y << ") to ("
-	     << newnode->state.x << "," << newnode->state.y
+	     << oldnode->state._x << "," << oldnode->state._y << ") to ("
+	     << newnode->state._x << "," << newnode->state._y
 	     << "), cost = " << newnode->cost << ", heurtotcost = "
 	     << newnode->heuristicTotalCost << Std::endl;
 #endif
 
 #ifdef DEBUG
-	if (actor->getObjId() == visualdebug_actor) {
+	if (_actor->getObjId() == _visualDebugActor) {
 		RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 		screen->BeginPainting();
 		drawpath(newnode, 0xFFFFFF00, done);
 		screen->EndPainting();
-		SDL_Delay(250);
+		g_system->delayMillis(250);
 		if (!done) {
 			screen->BeginPainting();
 			drawpath(newnode, 0xFFB0B000, done);
@@ -418,7 +417,7 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 	}
 #endif
 
-	nodes.push(newnode);
+	_nodes.push(newnode);
 }
 
 void Pathfinder::expandNode(PathNode *node) {
@@ -427,40 +426,40 @@ void Pathfinder::expandNode(PathNode *node) {
 	AnimationTracker tracker;
 	expandednodes++;
 
-	if (actor->isInCombat())
+	if (_actor->isInCombat())
 		walkanim = Animation::advance;
 
 	// try walking in all 8 directions
 	for (uint32 dir = 0; dir < 8; ++dir) {
 		state = node->state;
-		state.lastanim = walkanim;
-		state.direction = dir;
-		state.combat = actor->isInCombat();
+		state._lastAnim = walkanim;
+		state._direction = dir;
+		state._combat = _actor->isInCombat();
 		uint32 steps = 0, beststeps = 0;
 		int bestsqdist;
-		bestsqdist = (targetx - node->state.x + actor_xd / 2) *
-		             (targetx - node->state.x + actor_xd / 2);
-		bestsqdist += (targety - node->state.y + actor_yd / 2) *
-		              (targety - node->state.y + actor_yd / 2);
+		bestsqdist = (_targetX - node->state._x + _actorXd / 2) *
+		             (_targetX - node->state._x + _actorXd / 2);
+		bestsqdist += (_targetY - node->state._y + _actorYd / 2) *
+		              (_targetY - node->state._y + _actorYd / 2);
 
-		if (!tracker.init(actor, walkanim, dir, &state)) continue;
+		if (!tracker.init(_actor, walkanim, dir, &state)) continue;
 
-		// determine how far the actor will travel if the animation runs to completion
+		// determine how far the _actor will travel if the animation runs to completion
 		int32 max_endx, max_endy;
 		tracker.evaluateMaxAnimTravel(max_endx, max_endy, dir);
-		if (alreadyVisited(max_endx, max_endy, state.z)) continue;
+		if (alreadyVisited(max_endx, max_endy, state._z)) continue;
 		int sqrddist;
-		int x_travel = ABS(max_endx - state.x);
+		const int x_travel = ABS(max_endx - state._x);
 		int xy_maxtravel = x_travel;    // don't have the max(a,b) macro...
-		int y_travel = ABS(max_endy - state.y);
+		const int y_travel = ABS(max_endy - state._y);
 		if (y_travel > xy_maxtravel) xy_maxtravel = y_travel;
 
 		sqrddist = x_travel * x_travel + y_travel * y_travel;
 		if (sqrddist > 400) {
-			// range is greater than 20; see if a node has been visited at range 10
-			if (alreadyVisited(state.x + x_travel * 10 / xy_maxtravel,
-			                   state.y + y_travel * 10 / xy_maxtravel,
-			                   state.z)) {
+			// range is greater than 20; see if a node has been _visited at range 10
+			if (alreadyVisited(state._x + x_travel * 10 / xy_maxtravel,
+			                   state._y + y_travel * 10 / xy_maxtravel,
+			                   state._z)) {
 				continue;
 			}
 		}
@@ -468,10 +467,10 @@ void Pathfinder::expandNode(PathNode *node) {
 			steps++;
 			tracker.updateState(state);
 
-			sqrddist = (targetx - state.x + actor_xd / 2) *
-			           (targetx - state.x + actor_xd / 2);
-			sqrddist += (targety - state.y + actor_yd / 2) *
-			            (targety - state.y + actor_yd / 2);
+			sqrddist = (_targetX - state._x + _actorXd / 2) *
+			           (_targetX - state._x + _actorXd / 2);
+			sqrddist += (_targetY - state._y + _actorYd / 2) *
+			            (_targetY - state._y + _actorYd / 2);
 
 			if (sqrddist < bestsqdist) {
 				bestsqdist = sqrddist;
@@ -482,45 +481,45 @@ void Pathfinder::expandNode(PathNode *node) {
 
 		if (tracker.isDone()) {
 			tracker.updateState(state);
-			if (!alreadyVisited(state.x, state.y, state.z)) {
+			if (!alreadyVisited(state._x, state._y, state._z)) {
 				newNode(node, state, 0);
-				visited.push_back(state);
+				_visited.push_back(state);
 			}
 		} else {
-			// an obstruction was encountered, so generate a visited node to block
+			// an obstruction was encountered, so generate a _visited node to block
 			// future evaluation at the endpoint.
-			visited.push_back(state);
+			_visited.push_back(state);
 		}
 
 		// TODO: maybe only allow partial steps close to target?
 		if (beststeps != 0 && (beststeps != steps ||
-		                       (!tracker.isDone() && targetitem))) {
+		                       (!tracker.isDone() && _targetItem))) {
 			newNode(node, closeststate, beststeps);
-			visited.push_back(closeststate);
+			_visited.push_back(closeststate);
 		}
 	}
 }
 
 bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 #if 0
-	pout << "Actor " << actor->getObjId();
+	pout << "Actor " << _actor->getObjId();
 
-	if (targetitem) {
+	if (_targetItem) {
 		pout << " pathfinding to item: ";
-		targetitem->dumpInfo();
+		_targetItem->dumpInfo();
 	} else {
-		pout << " pathfinding to (" << targetx << "," << targety << "," << targetz << ")" << Std::endl;
+		pout << " pathfinding to (" << _targetX << "," << _targetY << "," << _targetZ << ")" << Std::endl;
 	}
 #endif
 
 #ifdef DEBUG
-	if (actor->getObjId() == visualdebug_actor) {
+	if (_actor->getObjId() == _visualDebugActor) {
 		RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 		screen->BeginPainting();
-		if (targetitem)
-			drawbox(targetitem);
+		if (_targetItem)
+			drawbox(_targetItem);
 		else
-			drawdot(targetx, targety, targetz, 2, 0xFF0000FF);
+			drawdot(_targetX, _targetY, _targetZ, 2, 0xFF0000FF);
 		screen->EndPainting();
 	}
 #endif
@@ -529,13 +528,13 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	path.clear();
 
 	PathNode *startnode = new PathNode();
-	startnode->state = start;
+	startnode->state = _start;
 	startnode->cost = 0;
 	startnode->parent = 0;
 	startnode->depth = 0;
 	startnode->stepsfromparent = 0;
-	nodelist.push_back(startnode);
-	nodes.push(startnode);
+	_nodeList.push_back(startnode);
+	_nodes.push(startnode);
 
 	unsigned int expandedNodes = 0;
 	const unsigned int NODELIMIT_MIN = 30;  //! constant
@@ -543,14 +542,14 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	bool found = false;
 	uint32 starttime = g_system->getMillis();
 
-	while (expandedNodes < NODELIMIT_MAX && !nodes.empty() && !found) {
-		PathNode *node = nodes.top();
-		nodes.pop();
+	while (expandedNodes < NODELIMIT_MAX && !_nodes.empty() && !found) {
+		PathNode *node = _nodes.top();
+		_nodes.pop();
 
 #if 0
-		pout << "Trying node: (" << node->state.x << "," << node->state.y
-		     << "," << node->state.z << ") target=(" << targetx << ","
-		     << targety << "," << targetz << ")" << Std::endl;
+		pout << "Trying node: (" << node->state._x << "," << node->state._y
+		     << "," << node->state._z << ") target=(" << _targetX << ","
+		     << _targetY << "," << _targetZ << ")" << Std::endl;
 #endif
 
 		if (checkTarget(node)) {
@@ -572,16 +571,16 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 			if (length > 0) length++; // add space for final 'stand' action
 			path.resize(length);
 
-			// now backtrack through the nodes to assemble the final animation
+			// now backtrack through the _nodes to assemble the final animation
 			while (node->parent) {
 				PathfindingAction action;
-				action.action = node->state.lastanim;
-				action.direction = node->state.direction;
-				action.steps = node->stepsfromparent;
+				action._action = node->state._lastAnim;
+				action._direction = node->state._direction;
+				action._steps = node->stepsfromparent;
 				path[--i] = action;
 #if 0
-				pout << "anim = " << node->state.lastanim << ", dir = "
-				     << node->state.direction << ", steps = "
+				pout << "anim = " << node->state._lastAnim << ", dir = "
+				     << node->state._direction << ", steps = "
 				     << node->stepsfromparent << Std::endl;
 #endif
 
@@ -592,14 +591,14 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 			}
 
 			if (length) {
-				if (node->state.combat)
-					path[length - 1].action = Animation::combatStand;
+				if (node->state._combat)
+					path[length - 1]._action = Animation::combatStand;
 				else
-					path[length - 1].action = Animation::stand;
-				path[length - 1].direction = path[length - 2].direction;
+					path[length - 1]._action = Animation::stand;
+				path[length - 1]._direction = path[length - 2]._direction;
 			}
 
-			expandtime = g_system->getMillis() - starttime;
+			_expandTime = g_system->getMillis() - starttime;
 			return true;
 		}
 
@@ -612,37 +611,18 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 		}
 	}
 
-	expandtime = g_system->getMillis() - starttime;
+	_expandTime = g_system->getMillis() - starttime;
 
 #if 0
 	static int32 pfcalls = 0;
 	static int32 pftotaltime = 0;
 	pfcalls++;
-	pftotaltime += expandtime;
+	pftotaltime += _expandTime;
 	pout << "maxout average = " << (pftotaltime / pfcalls) << "ms." << Std::endl;
 #endif
 
 	return false;
 }
-
-
-#ifdef DEBUG
-void Pathfinder::ConCmd_visualDebug(const Console::ArgvType &argv) {
-	if (argv.size() != 2) {
-		pout << "Usage: Pathfinder::visualDebug objid" << Std::endl;
-		pout << "Specify objid -1 to stop tracing." << Std::endl;
-		return;
-	}
-	int p = strtol(argv[1].c_str(), 0, 0);
-	if (p == -1) {
-		visualdebug_actor = 0xFFFF;
-		pout << "Pathfinder: stopped visual tracing" << Std::endl;
-	} else {
-		visualdebug_actor = (uint16)p;
-		pout << "Pathfinder: visually tracing actor " << visualdebug_actor << Std::endl;
-	}
-}
-#endif
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

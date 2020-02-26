@@ -199,8 +199,6 @@ public:
 	TextFont *_msgFont;
 	SpecialLocks *_specialLocks;
 	Utils *_utils;
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -214,7 +212,6 @@ public:
 	uint32 getFeatures() const;
 
 	bool hasFeature(EngineFeature f) const override;
-	Common::String generateSaveFileName(uint slot);
 
 	void changeVolume(int delta);
 	uint16 getDirection() { return _direction; }
@@ -229,7 +226,7 @@ public:
 	void waitTOF();
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 

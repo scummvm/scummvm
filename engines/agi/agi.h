@@ -840,8 +840,6 @@ protected:
 
 	void initialize() override;
 
-	uint32 _lastSaveTime;
-
 public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	~AgiEngine() override;
@@ -849,7 +847,7 @@ public:
 	bool promptIsEnabled() override;
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description) override;
+	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 
 private:
 	int _keyQueue[KEY_QUEUE_SIZE];
@@ -870,7 +868,6 @@ public:
 	StringData _stringdata;
 
 	SavedGameSlotIdArray getSavegameSlotIds();
-	Common::String getSavegameFilename(int16 slotId) const;
 	bool getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid);
 
 	int saveGame(const Common::String &fileName, const Common::String &descriptionString);
@@ -904,9 +901,6 @@ public:
 	void releaseImageStack() override;
 
 	void wait(uint32 msec, bool busy = false);
-
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 	int agiInit();
 	int agiDeinit();

@@ -104,7 +104,7 @@ void UISlider::draw(Graphics::Surface &surface) {
 
 	if (_rect.left + 1 < _rect.right - 1) {
 		int striding = _rect.left + sliderX;
-		for (int x = _rect.left + 1; x < _rect.right - 1; x++) {
+		for (int x = _rect.left + 1; x < _rect.right - 1; ++x) {
 			int colorIndex =  15 - (abs(sliderX - x) >> 2);
 
 			if (!_isEnabled) {

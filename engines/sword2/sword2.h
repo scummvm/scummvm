@@ -143,7 +143,6 @@ private:
 protected:
 	// Engine APIs
 	Common::Error run() override;
-	GUI::Debugger *getDebugger() override;
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
 	void pauseEngineIntern(bool pause) override;
@@ -164,7 +163,7 @@ public:
 	void setSubtitles(bool b) { _useSubtitles = b; }
 
 	// GMM Loading/Saving
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
@@ -224,7 +223,7 @@ public:
 	bool saveExists();
 	bool saveExists(uint16 slotNo);
 	uint32 restoreFromBuffer(byte *buffer, uint32 size);
-	Common::String getSaveFileName(uint16 slotNo);
+	virtual Common::String getSaveStateName(int slot) const override;
 	uint32 findBufferSize();
 
 	void startGame();

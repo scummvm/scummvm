@@ -383,7 +383,7 @@ void Scene::objectSetIsObstacle(int objectId, bool isObstacle, bool sceneLoaded,
 
 void Scene::objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded) {
 	int i;
-	for (i = 0; i < (int)_set->getObjectCount(); i++) {
+	for (i = 0; i < (int)_set->getObjectCount(); ++i) {
 		_set->objectSetIsObstacle(i, isObstacle);
 		if (sceneLoaded) {
 			_vm->_sceneObjects->setIsObstacle(i + kSceneObjectOffsetObjects, isObstacle);

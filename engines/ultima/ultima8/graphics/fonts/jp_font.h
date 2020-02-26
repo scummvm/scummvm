@@ -56,8 +56,8 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 protected:
 
-	unsigned int fontnum;
-	ShapeFont *shapefont;
+	unsigned int _fontNum;
+	ShapeFont *_shapeFont;
 };
 
 } // End of namespace Ultima8

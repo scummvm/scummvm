@@ -61,7 +61,6 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	_shouldQuit = false;
 	_gameMode = kGameModeIntro;
-	_lastAutosaveTime = g_system->getMillis();
 
 	_musicChannel = -1;
 	_menuChannel = -1;
@@ -98,6 +97,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 GriffonEngine::~GriffonEngine() {
 	delete _rnd;
+	//delete _console; Debugger is deleted by Engine
 }
 
 void GriffonEngine::syncSoundSettings() {
@@ -134,6 +134,7 @@ Common::Error GriffonEngine::run() {
 	_mixer = g_system->getMixer();
 
 	_console = new Console();
+	setDebugger(_console);
 
 	initialize();
 
@@ -183,13 +184,6 @@ Common::Error GriffonEngine::run() {
 	}
 
 	return Common::kNoError;
-}
-
-void GriffonEngine::autoSaveCheck() {
-	if (shouldPerformAutoSave(_lastAutosaveTime) && canSaveGameStateCurrently()) {
-		saveGameState(4, _("Autosave"), true);
-		_lastAutosaveTime = g_system->getMillis();
-	}
 }
 
 }

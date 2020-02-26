@@ -60,8 +60,6 @@ bool RivenSaveMetadata::sync(Common::Serializer &s) {
 	return true;
 }
 
-const int RivenSaveLoad::kAutoSaveSlot = 0;
-
 RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
 }
 
@@ -110,7 +108,6 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	Common::String filename = buildSaveFilename(slot);
 	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
 	SaveStateDescriptor descriptor;
-	descriptor.setWriteProtectedFlag(slot == kAutoSaveSlot);
 
 	if (!loadFile) {
 		return descriptor;
@@ -138,12 +135,12 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 		return descriptor;
 	}
 
+	descriptor.setSaveSlot(slot);
 	descriptor.setDescription(metadata.saveDescription);
 	descriptor.setPlayTime(metadata.totalPlayTime);
 	descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);
-	if (metadata.autoSave) // Allow non-saves to be deleted, but not autosaves
-		descriptor.setDeletableFlag(slot != kAutoSaveSlot);	
+	descriptor.setAutosave(metadata.autoSave);
 
 	delete metaStream;
 
@@ -165,40 +162,6 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	delete thmbStream;
 
 	return descriptor;
-}
-
-bool RivenSaveLoad::isAutoSaveAllowed() {
-	// Open autosave slot and see if it an autosave
-	// Autosaving will be enabled if it is an autosave or if there is no save in that slot
-
-	Common::String filename = buildSaveFilename(kAutoSaveSlot);
-	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
-	if (!loadFile) {
-		return true; // There is no save in the autosave slot, enable autosave
-	}
-
-	MohawkArchive mhk;
-	if (!mhk.openStream(loadFile)) {
-		return true; // Corrupt save, enable autosave
-	}
-
-	if (!mhk.hasResource(ID_META, 1)) {
-		return false; // don't autosave over saves that don't have a meta section (like saves from the original)
-	}
-
-	Common::ScopedPtr<Common::SeekableReadStream> metaStream(mhk.getResource(ID_META, 1));
-	if (!metaStream) {
-		return true; // corrupt save, enable autosave
-	}
-
-	Common::Serializer serializer = Common::Serializer(metaStream.get(), nullptr);
-
-	RivenSaveMetadata metadata;
-	if (!metadata.sync(serializer)) {
-		return true; // corrupt save, enable autosave
-	}
-
-	return metadata.autoSave;
 }
 
 Common::Error RivenSaveLoad::loadGame(const int slot) {

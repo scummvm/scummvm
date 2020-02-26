@@ -264,7 +264,7 @@ public:
 	/**
 	 * Save the game
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	/**
 	 * Updates sound settings
@@ -280,6 +280,11 @@ public:
 	* Returns true if the game can currently be saved
 	*/
 	bool canSaveGameStateCurrently() override;
+
+	/**
+	* Returns true if an autosave can be created
+	*/
+	virtual bool canSaveAutosaveCurrently() override;
 
 	/**
 	 * Show a cutscene
@@ -309,11 +314,6 @@ public:
 	 * Show an error message in a GUI dialog
 	 */
 	void GUIError(const Common::String &msg);
-
-	/**
-	 * Checks if an auto save should be done, and if so, takes care of it
-	 */
-	void autoSaveCheck(int &lastSaveTime);
 };
 
 extern XeenEngine *g_vm;

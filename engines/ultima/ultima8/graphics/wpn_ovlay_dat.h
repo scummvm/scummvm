@@ -44,7 +44,7 @@ public:
 	        int direction, int frame) const;
 
 private:
-	Std::vector<AnimWeaponOverlay *> overlay;
+	Std::vector<AnimWeaponOverlay *> _overlay;
 };
 
 } // End of namespace Ultima8

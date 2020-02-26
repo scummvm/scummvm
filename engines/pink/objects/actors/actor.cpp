@@ -80,7 +80,7 @@ bool Actor::initPalette(Director *director) {
 	return false;
 }
 
-void Actor::toConsole() {
+void Actor::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "Actor: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();

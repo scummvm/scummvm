@@ -102,7 +102,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 #define LINE_END_ASSIGN()
 #define NOT_CLIPPED_X (1)
 #define NOT_CLIPPED_Y (1)
-#define OFFSET_PIXELS (pixels)
+#define OFFSET_PIXELS (_pixels)
 
 //
 // No Clipping = FALSE
@@ -113,15 +113,15 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 #define NOT_CLIPPED_Y (line >= 0 && line < scrn_height)
 #define NOT_CLIPPED_X (pixptr >= line_start && pixptr < line_end)
 
-	int					scrn_width = clip_window.w;
-	int					scrn_height = clip_window.h;
+	int					scrn_width = _clipWindow.w;
+	int					scrn_height = _clipWindow.h;
 	uintX				*line_end;
 
 #define OFFSET_PIXELS (off_pixels)
 
-	uint8				*off_pixels  = static_cast<uint8*>(pixels) + static_cast<sintptr>(clip_window.x)*sizeof(uintX) + static_cast<sintptr>(clip_window.y)*pitch;
-	x -= clip_window.x;
-	y -= clip_window.y;
+	uint8				*off_pixels  = static_cast<uint8*>(_pixels) + static_cast<sintptr>(_clipWindow.x)*sizeof(uintX) + static_cast<sintptr>(_clipWindow.y)*_pitch;
+	x -= _clipWindow.x;
+	y -= _clipWindow.y;
 
 #endif
 
@@ -151,7 +151,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 //
 #ifdef DESTALPHA_MASK
 
-#define NOT_DESTINATION_MASKED	(*pixptr & RenderSurface::format.a_mask)
+#define NOT_DESTINATION_MASKED	(*pixptr & RenderSurface::_format.a_mask)
 
 #else
 
@@ -176,44 +176,43 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	uint32				pix;
 
 	// Sanity check
-	if (framenum >= s->frameCount()) return;
-	if (s->getPalette() == 0) return;
+	if (framenum >= s->frameCount())
+		return;
+	if (s->getPalette() == 0)
+		return;
 
 	ShapeFrame		*frame			= s->getFrame(framenum);
-	const uint8		*rle_data		= frame->rle_data;
-	const uint32	*line_offsets	= frame->line_offsets;
+	const uint8		*rle_data		= frame->_rle_data;
+	const uint32	*line_offsets	= frame->_line_offsets;
 	const uint32	*pal			= untformed_pal?
-										&(s->getPalette()->native_untransformed[0]):
-										&(s->getPalette()->native[0]);
+										&(s->getPalette()->_native_untransformed[0]):
+										&(s->getPalette()->_native[0]);
 
 	
 #ifdef XFORM_SHAPES
 	const uint32	*xform_pal		= untformed_pal?
-										&(s->getPalette()->xform_untransformed[0]):
-										&(s->getPalette()->xform[0]);
+										&(s->getPalette()->_xform_untransformed[0]):
+										&(s->getPalette()->_xform[0]);
 #endif
 
-	int32 width_ = frame->width;
-	int32 height_ = frame->height;
-	x -= XNEG(frame->xoff);
-	y -= frame->yoff;
+	int32 width_ = frame->_width;
+	int32 height_ = frame->_height;
+	x -= XNEG(frame->_xoff);
+	y -= frame->_yoff;
 
 	// Do it this way if compressed
-	if (frame->compressed) for (int i=0; i<height_; i++) 
-	{
+	if (frame->_compressed) for (int i=0; i<height_; i++)  {
 		xpos = 0;
 		line = y+i;
 
-		if (NOT_CLIPPED_Y)
-		{
+		if (NOT_CLIPPED_Y) {
 
 			linedata = rle_data + line_offsets[i];
-			line_start = reinterpret_cast<uintX *>(static_cast<uint8*>(OFFSET_PIXELS) + pitch*line);
+			line_start = reinterpret_cast<uintX *>(static_cast<uint8*>(OFFSET_PIXELS) + _pitch*line);
 
 			LINE_END_ASSIGN();
 
-			do 
-			{
+			do {
 				xpos += *linedata++;
 			  
 				if (xpos == width_) break;
@@ -222,21 +221,16 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 				int type = dlen & 1;
 				dlen >>= 1;
 
-				pixptr= line_start+x+XNEG(xpos);
+				pixptr = line_start+x+XNEG(xpos);
 				endrun = pixptr + XNEG(dlen);
 				
-				if (!type) 
-				{
-					while (pixptr != endrun) 
-					{
-						if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED) 
-						{
+				if (!type) {
+					while (pixptr != endrun)  {
+						if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED)  {
 							#ifdef XFORM_SHAPES
-							if (USE_XFORM_FUNC) 
-							{
+							if (USE_XFORM_FUNC) {
 								*pixptr = CUSTOM_BLEND(BlendPreModulated(xform_pal[*linedata],*pixptr));
-							}
-							else 
+							} else 
 							#endif
 							{
 								*pixptr = CUSTOM_BLEND(pal[*linedata]);
@@ -245,20 +239,15 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 						pixptr += XNEG(1);
 						linedata++;
 					}
-				} 
-				else 
-				{
+				} else {
 					#ifdef XFORM_SHAPES
 					pix = xform_pal[*linedata];
-					if (USE_XFORM_FUNC) 
-					{
-						while (pixptr != endrun) 
-						{
+					if (USE_XFORM_FUNC) {
+						while (pixptr != endrun) {
 							if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED) *pixptr = CUSTOM_BLEND(BlendPreModulated(xform_pal[*linedata],*pixptr));
 							pixptr += XNEG(1);
 						}
-					} 
-					else 
+					} else 
 					#endif
 					{
 						pix = pal[*linedata];
@@ -280,19 +269,16 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 		}
 	}
 	// Uncompressed
-	else for (int i=0; i<height_; i++) 
-	{
+	else for (int i=0; i<height_; i++)  {
 		linedata = rle_data + line_offsets[i];
 		xpos = 0;
 		line = y+i;
 
-		if (NOT_CLIPPED_Y)
-		{
-			line_start = reinterpret_cast<uintX *>(static_cast<uint8*>(OFFSET_PIXELS) + pitch*line);
+		if (NOT_CLIPPED_Y) {
+			line_start = reinterpret_cast<uintX *>(static_cast<uint8*>(OFFSET_PIXELS) + _pitch*line);
 			LINE_END_ASSIGN();
 
-			do 
-			{
+			do {
 				xpos += *linedata++;
 			  
 				if (xpos == width_) break;
@@ -302,13 +288,10 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 				pixptr= line_start+x+XNEG(xpos);
 				endrun = pixptr + XNEG(dlen);
 
-				while (pixptr != endrun) 
-				{
-					if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED) 
-					{
+				while (pixptr != endrun) {
+					if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED) {
 						#ifdef XFORM_SHAPES
-						if (USE_XFORM_FUNC) 
-						{
+						if (USE_XFORM_FUNC) {
 							*pixptr = CUSTOM_BLEND(BlendPreModulated(xform_pal[*linedata],*pixptr));
 						}
 						else 

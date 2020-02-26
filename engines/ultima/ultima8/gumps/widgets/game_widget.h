@@ -36,7 +36,7 @@ public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	GameWidget(int X, int Y, istring &game);
+	GameWidget(int x, int y, istring &game);
 	~GameWidget() override;
 
 	istring getGameName();
@@ -61,9 +61,9 @@ public:
 	};
 
 protected:
-	GameInfo *info;
+	GameInfo *_info;
 
-	bool highlight;
+	bool _highlight;
 };
 
 } // End of namespace Ultima8

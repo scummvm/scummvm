@@ -156,6 +156,11 @@ public:
 		return _str[idx];
 	}
 
+	/** Set character c at position p, replacing the previous character there. */
+	void setChar(value_type c, uint32 p) {
+		_str[p] = c;
+	}
+
 	/**
 	 * Removes the value at position p from the string.
 	 * Using this on decomposed characters will not remove the whole
@@ -188,6 +193,7 @@ public:
 	 */
 	void toUppercase();
 
+	uint32 find(value_type x, uint32 pos = 0) const;
 	uint32 find(const U32String &str, uint32 pos = 0) const;
 
 	typedef value_type *        iterator;

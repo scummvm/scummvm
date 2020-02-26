@@ -49,16 +49,14 @@ public:
 	void ChildNotify(Gump *child, uint32 message) override;
 	void OnFocus(bool gain) override;
 
-	static Std::string getFilename(int index);
-
 	static Gump *showLoadSaveGump(Gump *parent, bool save);
 
 protected:
-	bool save;
-	int page;
+	bool _save;
+	int _page;
 
-	Std::vector<EditWidget *> editwidgets;
-	Std::vector<Std::string> descriptions;
+	Std::vector<EditWidget *> _editWidgets;
+	Std::vector<Std::string> _descriptions;
 
 	void loadDescriptions();
 

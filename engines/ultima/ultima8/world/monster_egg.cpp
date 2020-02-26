@@ -42,12 +42,10 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MonsterEgg, Item)
 
 MonsterEgg::MonsterEgg() {
-
 }
 
 
 MonsterEgg::~MonsterEgg() {
-
 }
 
 uint16 MonsterEgg::hatch() {
@@ -76,7 +74,7 @@ uint16 MonsterEgg::hatch() {
 		     << ")." << Std::endl;
 	}
 
-	if (!newactor->canExistAt(x, y, z)) {
+	if (!newactor->canExistAt(_x, _y, _z)) {
 		newactor->destroy();
 		return 0;
 	}
@@ -85,7 +83,7 @@ uint16 MonsterEgg::hatch() {
 	// newactor->getMapNum() when newactor is assaulted.
 	newactor->setMapNum(World::get_instance()->getCurrentMap()->getNum());
 	newactor->setNpcNum(objID);
-	newactor->move(x, y, z);
+	newactor->move(_x, _y, _z);
 
 	newactor->cSetActivity(getActivity());
 

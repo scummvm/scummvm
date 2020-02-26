@@ -21,14 +21,12 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/filesys/archive.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/archive_file.h"
 #include "ultima/ultima8/filesys/named_archive_file.h"
 #include "ultima/ultima8/filesys/flex_file.h"
 #include "ultima/ultima8/filesys/u8_save_file.h"
-#include "ultima/ultima8/filesys/dir_file.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -37,36 +35,31 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(NamedArchiveFile, ArchiveFile)
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Archive)
 
 Archive::Archive() {
-	count = 0;
+	_count = 0;
 }
 
 Archive::~Archive() {
-	for (unsigned int i = 0; i < sources.size(); ++i)
-		delete sources[i];
-	sources.clear();
+	for (unsigned int i = 0; i < _sources.size(); ++i)
+		delete _sources[i];
+	_sources.clear();
 }
 
 
 Archive::Archive(ArchiveFile *af) {
-	count = 0;
+	_count = 0;
 	addSource(af);
 }
 
 Archive::Archive(IDataSource *ids) {
-	count = 0;
+	_count = 0;
 	addSource(ids);
 }
 
-Archive::Archive(const Std::string &path) {
-	count = 0;
-	addSource(path);
-}
-
 bool Archive::addSource(ArchiveFile *af) {
-	sources.push_back(af);
+	_sources.push_back(af);
 
 	uint32 indexcount = af->getIndexCount();
-	if (indexcount > count) count = indexcount;
+	if (indexcount > _count) _count = indexcount;
 
 	return true;
 }
@@ -91,23 +84,13 @@ bool Archive::addSource(IDataSource *ids) {
 	return addSource(s);
 }
 
-bool Archive::addSource(const Std::string &path) {
-	ArchiveFile *s = new DirFile(path);
-	if (!s->isValid()) {
-		delete s;
-		return false;
-	}
-
-	return addSource(s);
-}
-
 void Archive::cache() {
-	for (unsigned int i = 0; i < count; ++i)
+	for (unsigned int i = 0; i < _count; ++i)
 		cache(i);
 }
 
 void Archive::uncache() {
-	for (unsigned int i = 0; i < count; ++i)
+	for (unsigned int i = 0; i < _count; ++i)
 		uncache(i);
 }
 
@@ -118,18 +101,18 @@ uint8 *Archive::getRawObject(uint32 index, uint32 *sizep) {
 	return f->getObject(index, sizep);
 }
 
-uint32 Archive::getRawSize(uint32 index) {
+uint32 Archive::getRawSize(uint32 index) const {
 	ArchiveFile *f = findArchiveFile(index);
 	if (!f) return 0;
 
 	return f->getSize(index);
 }
 
-ArchiveFile *Archive::findArchiveFile(uint32 index) {
-	unsigned int n = sources.size();
+ArchiveFile *Archive::findArchiveFile(uint32 index) const {
+	unsigned int n = _sources.size();
 	for (unsigned int i = 1; i <= n; ++i) {
-		if (sources[n - i]->exists(index))
-			return sources[n - i];
+		if (_sources[n - i]->exists(index))
+			return _sources[n - i];
 	}
 
 	return 0;

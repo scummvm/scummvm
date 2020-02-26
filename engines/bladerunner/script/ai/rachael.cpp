@@ -98,15 +98,15 @@ void AIScriptRachael::ClickedByPlayer() {
 	}
 }
 
-void AIScriptRachael::EnteredScene(int sceneId) {
+void AIScriptRachael::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptRachael::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptRachael::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptRachael::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptRachael::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -200,7 +200,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = kModelAnimationRachaelIdle;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelIdle) - 1) {
 			_animationFrame = 0;
 		}
@@ -208,7 +208,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = kModelAnimationRachaelWalking;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelWalking) - 1) {
 			_animationFrame = 0;
 		}
@@ -220,7 +220,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		} else {
 			*animation = kModelAnimationRachaelTalkSoftNod;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkSoftNod) - 1) {
 				_animationFrame = 0;
 			}
@@ -229,7 +229,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = kModelAnimationRachaelTalkNodToLeft;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkNodToLeft) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -239,7 +239,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = kModelAnimationRachaelTalkSuggestWithNodToLeft;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkSuggestWithNodToLeft) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -249,7 +249,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = kModelAnimationRachaelTalkIndiffWithNodToLeft;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkIndiffWithNodToLeft) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -259,7 +259,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = kModelAnimationRachaelTalkOfferPointing;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkOfferPointing) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -269,7 +269,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = kModelAnimationRachaelTalkHaltMovement;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkHaltMovement) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -279,7 +279,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = kModelAnimationRachaelTalkHandOnChest;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkHandOnChest) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -289,7 +289,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = kModelAnimationRachaelTalkHandWaveToRight;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkHandWaveToRight) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;

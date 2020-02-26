@@ -39,7 +39,7 @@ public:
 	TargetGump();
 	TargetGump(int x, int y);
 
-	~TargetGump(void) override;
+	~TargetGump() override;
 
 	bool PointOnGump(int mx, int my) override;
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -54,7 +54,7 @@ protected:
 	void saveData(ODataSource *ods) override;
 
 private:
-	bool target_tracing;
+	bool _targetTracing;
 };
 
 } // End of namespace Ultima8

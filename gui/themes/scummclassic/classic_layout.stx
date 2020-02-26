@@ -1189,8 +1189,28 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalConfig' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8'>
+	<dialog name = 'GlobalConfig' overlays = 'screen_center' size = '500, 350' inset = '8'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'TabWidget' type = 'TabWidget'
+			/>
+			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
+				<space />
+				<widget name='Keys'
+						type='Button'
+				/>
+				<space />
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Ok'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalConfig_Audio' overlays = 'Dialog.GlobalConfig.TabWidget'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<layout type = 'vertical' padding = '0, 0, 0, 0' align = 'center'>
 					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
@@ -1231,7 +1251,6 @@
 				<layout type = 'vertical' padding = '24, 24, 24, 24' align = 'center'>
 					<widget name = 'vcMuteCheckbox'
 							type = 'Checkbox'
-							width = '80'   <!-- FIXME: Why this is needed? -->
 					/>
 				</layout>
 			</layout>
@@ -1264,19 +1283,12 @@
 						type = 'SmallLabel'
 				/>
 			</layout>
-			<space size = '60'/>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
-				<widget name = 'Keys'
-						type = 'Button'
-				/>
-				<space size = 'Globals.Button.Width' />
-				<widget name = 'Cancel'
-						type = 'Button'
-				/>
-				<widget name = 'Ok'
-						type = 'Button'
-				/>
-			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalConfig_KeyMapper' overlays = 'Dialog.GlobalConfig.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
 		</layout>
 	</dialog>
 
@@ -1834,17 +1846,15 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'TestbedOptions' overlays = 'screen_center'>
+	<dialog name = 'TestbedOptions' overlays = 'screen_center' size = '400, 300'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Headline'
 					height = 'Globals.Line.Height'
-					width = '400'
 			/>
 			<widget name = 'Info'
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'List'
-					height = '200'
 					/>
 			<layout type = 'vertical' padding = '0, 0, 16, 0'>
 				<layout type = 'horizontal' padding = '0, 0, 0, 0'>

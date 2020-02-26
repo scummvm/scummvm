@@ -33,16 +33,16 @@
 namespace Ultima {
 namespace Ultima8 {
 
-AudioMixer *AudioMixer::the_audio_mixer = 0;
+AudioMixer *AudioMixer::_audioMixer = 0;
 
 AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(0) {
-	the_audio_mixer = this;
+	_audioMixer = this;
 	
 	_channels.resize(CHANNEL_COUNT);
 	for (int idx = 0; idx < CHANNEL_COUNT; ++idx)
 		_channels[idx] = new AudioChannel(_mixer, SAMPLE_RATE, true);
 
-	con->Print(MM_INFO, "Creating AudioMixer...\n");
+	debugN(MM_INFO, "Creating AudioMixer...\n");
 }
 
 void AudioMixer::createProcesses() {
@@ -56,7 +56,7 @@ void AudioMixer::createProcesses() {
 }
 
 AudioMixer::~AudioMixer(void) {
-	con->Print(MM_INFO, "Destroying AudioMixer...\n");
+	debugN(MM_INFO, "Destroying AudioMixer...\n");
 
 	closeMidiOutput();
 

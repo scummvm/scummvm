@@ -51,10 +51,10 @@
 
 
 //
-// The Console
+// The Debugger
 //
 
-#include "ultima/ultima8/misc/console.h"
+#include "ultima/ultima8/misc/debugger.h"
 
 
 //

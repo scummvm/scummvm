@@ -141,9 +141,6 @@ bool Events::checkForNextFrameCounter() {
 		// Handle any idle updates
 		eventTarget()->onIdle();
 
-		// Give time to the debugger
-		_vm->_debugger->onFrame();
-
 		// Display the frame
 		_vm->_screen->update();
 

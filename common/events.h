@@ -91,7 +91,8 @@ enum EventType {
 
 	EVENT_CLIPBOARD_UPDATE = 27,
 
-	EVENT_CUSTOM_BACKEND_HARDWARE = 28
+	EVENT_CUSTOM_BACKEND_HARDWARE = 28,
+	EVENT_DEBUGGER = 29
 };
 
 const int16 JOYAXIS_MIN = -32768;
@@ -155,7 +156,9 @@ enum JoystickAxis {
 enum MouseButton {
 	MOUSE_BUTTON_LEFT   = 0,
 	MOUSE_BUTTON_RIGHT  = 1,
-	MOUSE_BUTTON_MIDDLE = 2
+	MOUSE_BUTTON_MIDDLE = 2,
+	MOUSE_WHEEL_UP = 3,
+	MOUSE_WHEEL_DOWN = 4
 };
 
 typedef uint32 CustomEventType;
@@ -343,24 +346,8 @@ public:
 
 	/**
 	 * Registers an event mapper with the dispatcher.
-	 *
-	 * The ownership of the "mapper" variable will pass
-	 * to the EventDispatcher, thus it will be deleted
-	 * with "delete", when EventDispatcher is destroyed.
-	 *
-	 * @param autoFree	Destroy previous mapper [default]
-	 *         		Normally we allow only one event mapper to exists,
-	 *			However Event Recorder must intervent into normal
-	 *			event flow without altering its semantics. Thus during
-	 *			Event Recorder playback and recording we allow
-	 *			two mappers.
 	 */
-	void registerMapper(EventMapper *mapper, bool autoFree = true);
-
-	/**
-	 * Queries the setup event mapper.
-	 */
-	EventMapper *queryMapper() const { return _mapper; }
+	void registerMapper(EventMapper *mapper);
 
 	/**
 	 * Registers a new EventSource with the Dispatcher.
@@ -389,7 +376,6 @@ public:
 	 */
 	void unregisterObserver(EventObserver *obs);
 private:
-	bool _autoFreeMapper;
 	EventMapper *_mapper;
 
 	struct Entry {

@@ -67,7 +67,6 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	_gfx = 0;
 	_disk = 0;
 	_input = 0;
-	_debugger = 0;
 	_saveLoad = 0;
 	_menuHelper = 0;
 	_soundMan = 0;
@@ -91,7 +90,6 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 }
 
 Parallaction::~Parallaction() {
-	delete _debugger;
 	delete _globalFlagsNames;
 	delete _callableNames;
 	delete _cmdExec;
@@ -141,7 +139,7 @@ Common::Error Parallaction::init() {
 
 	_gfx = new Gfx(this);
 
-	_debugger = new Debugger(this);
+	setDebugger(new Debugger(this));
 
 	_menuHelper = 0;
 
@@ -152,10 +150,6 @@ void Parallaction::pauseEngineIntern(bool pause) {
 	if (_soundMan) {
 		_soundMan->execute(SC_PAUSE, (int)pause);
 	}
-}
-
-GUI::Debugger *Parallaction::getDebugger() {
-	return _debugger;
 }
 
 void Parallaction::updateView() {

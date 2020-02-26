@@ -32,7 +32,7 @@
 namespace Xeen {
 
 EventsManager::EventsManager(XeenEngine *vm) : _vm(vm), _playTime(0), _gameCounter(0),
-		_frameCounter(0), _priorFrameCounterTime(0), _priorScreenRefreshTime(0), _lastAutosaveTime(0),
+		_frameCounter(0), _priorFrameCounterTime(0), _priorScreenRefreshTime(0),
 		_mousePressed(false), _sprites("mouse.icn") {
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
 }
@@ -76,11 +76,6 @@ void EventsManager::pollEvents() {
 		nextFrame();
 	}
 
-	// Handle auto saves
-	if (!_lastAutosaveTime)
-		_lastAutosaveTime = timer;
-	g_vm->autoSaveCheck(_lastAutosaveTime);
-
 	// Event handling
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -89,14 +84,7 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_RTL:
 			return;
 		case Common::EVENT_KEYDOWN:
-			// Check for debugger
-			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_vm->_debugger->attach();
-				_vm->_debugger->onFrame();
-			} else {
-				addEvent(event.kbd);
-			}
+			addEvent(event.kbd);
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -214,9 +202,6 @@ void EventsManager::waitForPress() {
 void EventsManager::nextFrame() {
 	++_frameCounter;
 	++_playTime;
-
-	// Allow debugger to update
-	_vm->_debugger->update();
 
 	// Update the screen
 	_vm->_screen->update();

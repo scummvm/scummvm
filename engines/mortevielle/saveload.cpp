@@ -147,7 +147,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	if (g_vm->_saveStruct._currPlace == ROOM26)
 		g_vm->_saveStruct._currPlace = LANDING;
 
-	Common::String filename = _vm->generateSaveFilename(n);
+	Common::String filename = _vm->getSaveStateName(n);
 	f = g_system->getSavefileManager()->openForSaving(filename);
 
 	// Write out the savegame header
@@ -172,11 +172,11 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 }
 
 Common::Error SavegameManager::loadGame(int slot) {
-	return loadGame(_vm->generateSaveFilename(slot));
+	return loadGame(_vm->getSaveStateName(slot));
 }
 
 Common::Error SavegameManager::saveGame(int slot) {
-	return saveGame(slot, _vm->generateSaveFilename(slot));
+	return saveGame(slot, _vm->getSaveStateName(slot));
 }
 
 void SavegameManager::writeSavegameHeader(Common::OutSaveFile *out, const Common::String &saveName) {

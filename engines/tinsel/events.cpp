@@ -417,7 +417,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 
 	if (TinselV2 && InventoryActive()) {
 		int x, y;
-		PlayfieldGetPos(FIELD_WORLD, &x, &y);
+		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &x, &y);
 		EventToInventory(pEvent, Common::Point(coOrds.x - x, coOrds.y - y));
 		return;
 	}

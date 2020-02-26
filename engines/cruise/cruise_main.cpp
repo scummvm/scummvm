@@ -1730,15 +1730,9 @@ bool manageEvents() {
 				break;
 			}
 
-			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-				if (event.kbd.keycode == Common::KEYCODE_d) {
-					// Start the debugger
-					_vm->getDebugger()->attach();
-					keyboardCode = Common::KEYCODE_INVALID;
-				} else if (event.kbd.keycode == Common::KEYCODE_f) {
-					bFastMode = !bFastMode;
-					keyboardCode = Common::KEYCODE_INVALID;
-				}
+			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
+				bFastMode = !bFastMode;
+				keyboardCode = Common::KEYCODE_INVALID;
 			}
 
 		default:
@@ -1838,7 +1832,6 @@ void CruiseEngine::mainLoop() {
 			if (_playerDontAskQuit)
 				break;
 
-			_vm->getDebugger()->onFrame();
 		} while (currentTick < _lastTick + _gameSpeed && !bFastMode);
 		if (_playerDontAskQuit)
 			break;

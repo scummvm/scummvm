@@ -29,8 +29,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Font)
 
-Font::Font() : highRes(false) {
-
+Font::Font() : _highRes(false) {
 }
 
 
@@ -212,17 +211,17 @@ Std::list<PositionedText> typesetText(Font *font,
 			// break here
 			int32 stringwidth = 0, stringheight = 0;
 			font->getStringSize(curline, stringwidth, stringheight);
-			line.dims.x = 0;
-			line.dims.y = totalheight;
-			line.dims.w = stringwidth;
-			line.dims.h = stringheight;
-			line.text = curline;
-			line.cursor = Std::string::npos;
+			line._dims.x = 0;
+			line._dims.y = totalheight;
+			line._dims.w = stringwidth;
+			line._dims.h = stringheight;
+			line._text = curline;
+			line._cursor = Std::string::npos;
 			if (cursor != Std::string::npos && cursoriter >= curlinestart &&
 			        (cursoriter < iter || (!breakhere && cursoriter == iter))) {
-				line.cursor = cursoriter - curlinestart;
-				if (line.dims.w == 0) {
-					stringwidth = line.dims.w = 2;
+				line._cursor = cursoriter - curlinestart;
+				if (line._dims.w == 0) {
+					stringwidth = line._dims.w = 2;
 				}
 			}
 			lines.push_back(line);
@@ -347,15 +346,15 @@ Std::list<PositionedText> typesetText(Font *font,
 		case Font::TEXT_LEFT:
 			break;
 		case Font::TEXT_RIGHT:
-			lineiter->dims.x = totalwidth - lineiter->dims.w;
+			lineiter->_dims.x = totalwidth - lineiter->_dims.w;
 			break;
 		case Font::TEXT_CENTER:
-			lineiter->dims.x = (totalwidth - lineiter->dims.w) / 2;
+			lineiter->_dims.x = (totalwidth - lineiter->_dims.w) / 2;
 			break;
 		}
 #if 0
-		pout << lineiter->dims.x << "," << lineiter->dims.y << " "
-		     << lineiter->dims.w << "," << lineiter->dims.h << ": "
+		pout << lineiter->_dims.x << "," << lineiter->_dims.y << " "
+		     << lineiter->_dims.w << "," << lineiter->_dims.h << ": "
 		     << lineiter->text << Std::endl;
 #endif
 	}

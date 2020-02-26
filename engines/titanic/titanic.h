@@ -73,7 +73,6 @@ class CFilesManager;
 class CMainGameWindow;
 class CString;
 class CTrueTalkManager;
-class Debugger;
 class Events;
 class OSScreenManager;
 class CScriptHandler;
@@ -109,7 +108,6 @@ protected:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 public:
-	Debugger *_debugger;
 	Events *_events;
 	CFilesManager *_filesManager;
 	CMovieManager _movieManager;
@@ -151,7 +149,7 @@ public:
 	/**
 	 * Called by the GMM to save the game
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	/**
 	 * Handles updates to the sound levels
@@ -182,12 +180,6 @@ public:
 	 * Returns a uniform random floating point number in the interval [0.0, 65535.0]
 	 */
 	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.00001525855623540901; } // fffffffe=4294967294 and 0.00001525855623540901 ~= 1/65537.0
-
-	/**
-	 * Support method that generates a savegame name
-	 * @param slot		Slot number
-	 */
-	CString generateSaveName(int slot);
 
 	/**
 	 * Checks whether a savegame exists for the given slot,

@@ -51,10 +51,6 @@ namespace Tinsel {
 
 //----------------- EXTERN FUNCTIONS --------------------
 
-// in BG.C
-extern SCNHANDLE GetBgroundHandle();
-extern void SetDoFadeIn(bool tf);
-
 // In DOS_DW.C
 void RestoreMasterProcess(INT_CONTEXT *pic);
 
@@ -107,10 +103,10 @@ static bool g_bNoFade = false;
  */
 void DoSaveScene(SAVED_DATA *sd) {
 	sd->SavedSceneHandle = GetSceneHandle();
-	sd->SavedBgroundHandle = GetBgroundHandle();
+	sd->SavedBgroundHandle = _vm->_bg->GetBgroundHandle();
 	SaveMovers(sd->SavedMoverInfo);
 	sd->NumSavedActors = SaveActors(sd->SavedActorInfo);
-	PlayfieldGetPos(FIELD_WORLD, &sd->SavedLoffset, &sd->SavedToffset);
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &sd->SavedLoffset, &sd->SavedToffset);
 	SaveInterpretContexts(sd->SavedICInfo);
 	sd->SavedControl = ControlIsOn();
 	sd->SavedNoBlocking = GetNoBlocking();
@@ -130,7 +126,7 @@ void DoSaveScene(SAVED_DATA *sd) {
 	} else {
 		// Tinsel 1 specific data save
 		SaveDeadPolys(sd->SavedDeadPolys);
-		CurrentMidiFacts(&sd->SavedMidi, &sd->SavedLoop);
+		_vm->_music->CurrentMidiFacts(&sd->SavedMidi, &sd->SavedLoop);
 	}
 
 	g_ASceneIsSaved = true;
@@ -338,15 +334,15 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 		// Start up the scene
 		StartNewScene(sd->SavedSceneHandle, NO_ENTRY_NUM);
 
-		SetDoFadeIn(!g_bNoFade);
+		_vm->_bg->SetDoFadeIn(!g_bNoFade);
 		g_bNoFade = false;
-		StartupBackground(Common::nullContext, sd->SavedBgroundHandle);
+		_vm->_bg->StartupBackground(Common::nullContext, sd->SavedBgroundHandle);
 
 		if (TinselV2) {
 			Offset(EX_USEXY, sd->SavedLoffset, sd->SavedToffset);
 		} else {
 			KillScroll();
-			PlayfieldSetPos(FIELD_WORLD, sd->SavedLoffset, sd->SavedToffset);
+			_vm->_bg->PlayfieldSetPos(FIELD_WORLD, sd->SavedLoffset, sd->SavedToffset);
 			SetNoBlocking(sd->SavedNoBlocking);
 		}
 
@@ -383,7 +379,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 			_vm->_pcmMusic->restoreThatTune(sd->SavedTune);
 			ScrollFocus(sd->SavedScrollFocus);
 		} else {
-			RestoreMidiFacts(sd->SavedMidi, sd->SavedLoop);
+			_vm->_music->RestoreMidiFacts(sd->SavedMidi, sd->SavedLoop);
 		}
 
 		if (sd->SavedControl)

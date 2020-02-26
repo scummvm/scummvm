@@ -37,7 +37,7 @@ void Handler::deserialize(Archive &archive) {
 	_sideEffects.deserialize(archive);
 }
 
-bool Handler::isSuitable(Actor *actor) {
+bool Handler::isSuitable(const Actor *actor) const {
 	for (uint i = 0; i < _conditions.size(); ++i) {
 		if (!_conditions[i]->evaluate(actor))
 			return false;
@@ -90,7 +90,7 @@ void HandlerStartPage::execute(Sequence *sequence) {
 	sequence->allowSkipping();
 }
 
-void HandlerStartPage::toConsole() {
+void HandlerStartPage::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "HandlerStartPage:");
 
 	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
@@ -109,7 +109,7 @@ void HandlerStartPage::toConsole() {
 	}
 }
 
-void HandlerLeftClick::toConsole() {
+void HandlerLeftClick::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "HandlerLeftClick:");
 
 	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
@@ -134,7 +134,7 @@ void HandlerUseClick::deserialize(Archive &archive) {
 	_recepient = archive.readString();
 }
 
-void HandlerUseClick::toConsole() {
+void HandlerUseClick::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "HandlerUseClick: _inventoryItem=%s, _recepient=%s", _inventoryItem.c_str(), _recepient.c_str());
 	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
 	for (uint i = 0; i < _sideEffects.size(); ++i) {

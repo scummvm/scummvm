@@ -1459,9 +1459,9 @@ bool Control::loadCustomStrings(const char *filename) {
 			memset((void*)_customStrings[lineNo], 0, 43);
 			strncpy((char*)_customStrings[lineNo], line.c_str(), 42);
 		}
+		return true;
 	}
-
-	return true;
+	return false;
 }
 
 const uint8 Control::_languageStrings[8 * 20][43] = {

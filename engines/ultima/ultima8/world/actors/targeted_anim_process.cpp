@@ -39,16 +39,16 @@ TargetedAnimProcess::TargetedAnimProcess() : ActorAnimProcess() {
 }
 
 TargetedAnimProcess::TargetedAnimProcess(Actor *actor_, Animation::Sequence action_, uint32 dir_, int32 coords[3]) : ActorAnimProcess(actor_, action_, dir_) {
-	x = coords[0];
-	y = coords[1];
-	z = coords[2];
+	_x = coords[0];
+	_y = coords[1];
+	_z = coords[2];
 }
 
 bool TargetedAnimProcess::init() {
 	if (!ActorAnimProcess::init())
 		return false;
 
-	tracker->setTargetedMode(x, y, z);
+	_tracker->setTargetedMode(_x, _y, _z);
 	return true;
 }
 
@@ -56,18 +56,18 @@ bool TargetedAnimProcess::init() {
 void TargetedAnimProcess::saveData(ODataSource *ods) {
 	ActorAnimProcess::saveData(ods);
 
-	ods->write4(static_cast<uint32>(x));
-	ods->write4(static_cast<uint32>(y));
-	ods->write4(static_cast<uint32>(z));
+	ods->write4(static_cast<uint32>(_x));
+	ods->write4(static_cast<uint32>(_y));
+	ods->write4(static_cast<uint32>(_z));
 
 }
 
 bool TargetedAnimProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!ActorAnimProcess::loadData(ids, version)) return false;
 
-	x = ids->read4();
-	y = ids->read4();
-	z = ids->read4();
+	_x = ids->read4();
+	_y = ids->read4();
+	_z = ids->read4();
 
 	return true;
 }

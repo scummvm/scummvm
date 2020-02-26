@@ -31,14 +31,14 @@ namespace Common {
 
 namespace Graphics {
 
-class MacWindow;
+class BaseMacWindow;
 class ManagedSurface;
 
 class MacWidget {
 	friend class MacEditableText;
 
 public:
-	MacWidget(MacWindow *parent, int x, int y, int w, int h, bool focusable);
+	MacWidget(int w, int h, bool focusable);
 	virtual ~MacWidget() {}
 
 	const Common::Rect &getDimensions() { return _dims; }
@@ -48,6 +48,7 @@ public:
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
 	virtual bool processEvent(Common::Event &event) = 0;
 	virtual bool hasAllFocus() = 0;
+	void setParent(BaseMacWindow *parent) { _parent = parent; }
 
 protected:
 	bool _focusable;
@@ -56,7 +57,7 @@ protected:
 	Common::Rect _dims;
 
 public:
-	MacWindow *_parent;
+	BaseMacWindow *_parent;
 };
 
 } // End of namespace Graphics

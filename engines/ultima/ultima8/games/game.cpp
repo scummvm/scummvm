@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/games/u8_game.h"
 #include "ultima/ultima8/games/remorse_game.h"
@@ -33,27 +32,27 @@
 namespace Ultima {
 namespace Ultima8 {
 
-Game *Game::game = 0;
+Game *Game::_game = 0;
 
 Game::Game() {
-	game = this;
+	_game = this;
 }
 
 Game::~Game() {
-	assert(game == this);
-	game = 0;
+	assert(_game == this);
+	_game = 0;
 }
 
 
 // static
 Game *Game::createGame(GameInfo *info) {
-	switch (info->type) {
+	switch (info->_type) {
 	case GameInfo::GAME_U8:
 		return new U8Game();
 	case GameInfo::GAME_REMORSE:
 		return new RemorseGame();
 	default:
-		CANT_HAPPEN_MSG("createGame: invalid game");
+		CANT_HAPPEN_MSG("createGame: invalid _game");
 	}
 
 	return 0;

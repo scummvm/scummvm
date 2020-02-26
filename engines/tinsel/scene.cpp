@@ -54,9 +54,6 @@ namespace Tinsel {
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
-// in BG.C
-extern void DropBackground();
-
 // in EFFECT.C
 extern void EffectPolyProcess(CORO_PARAM, const void *);
 
@@ -317,7 +314,7 @@ void EndScene() {
 
 	DropPolygons();		// No polygons
 	DropScroll();	// No no-scrolls
-	DropBackground();	// No background
+	_vm->_bg->DropBackground();	// No background
 	DropMovers();		// No moving actors
 	DropCursor();		// No cursor
 	DropActors();		// No actor reels running
@@ -331,7 +328,7 @@ void EndScene() {
 		SetSysVar(SV_MaximumXoffset, 0);
 		SetSysVar(SV_MinimumYoffset, 0);
 		SetSysVar(SV_MaximumYoffset, 0);
-		ResetFontHandles();
+		_vm->_font->ResetFontHandles();
 		NoSoundReels();
 	}
 
@@ -346,52 +343,6 @@ void EndScene() {
 
 	// kill all destructable process
 	CoroScheduler.killMatchingProcess(PID_DESTROY, PID_DESTROY);
-}
-
-/**
- *
- */
-void PrimeBackground() {
-	// structure for playfields
-	// FIXME: Avoid non-const global vars
-	// TODO: We should simply merge this function with InitBackground
-	//   in order to avoid the static var and the problems associate
-	//   with it.
-	static PLAYFIELD playfield[] = {
-		{	// FIELD WORLD
-			NULL,		// display list
-			0,			// init field x
-			0,			// init field y
-			0,			// x vel
-			0,			// y vel
-			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
-			false		// moved flag
-		},
-		{	// FIELD STATUS
-			NULL,		// display list
-			0,			// init field x
-			0,			// init field y
-			0,			// x vel
-			0,			// y vel
-			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
-			false		// moved flag
-		}
-	};
-
-	// structure for background
-	static const BACKGND backgnd = {
-		BLACK,			// sky color
-		Common::Point(0, 0),	// initial world pos
-		Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// scroll limits
-		0,				// no background update process
-		NULL,			// no x scroll table
-		NULL,			// no y scroll table
-		2,				// 2 playfields
-		playfield,		// playfield pointer
-		false			// no auto-erase
-	};
-
-	InitBackground(&backgnd);
 }
 
 /**
@@ -418,7 +369,7 @@ void PrimeScene() {
 	CoroScheduler.createProcess(PID_TAG, PointProcess, NULL, 0);
 
 	// init the current background
-	PrimeBackground();
+	_vm->_bg->InitBackground();
 }
 
 /**

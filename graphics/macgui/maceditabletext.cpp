@@ -45,19 +45,17 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacEditableText::MacEditableText(MacWindow *parent, int x, int y, int w, int h, Common::U32String s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-		MacWidget(parent, x, y, w, h, true), MacText(s, parent->_wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
+MacEditableText::MacEditableText(int w, int h, MacWindowManager *wm, Common::U32String s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
+		MacWidget(w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
 
-	_parent = parent;
 	_maxWidth = maxWidth;
 
 	init();
 }
 
-MacEditableText::MacEditableText(MacWindow *parent, int x, int y, int w, int h, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-		MacWidget(parent, x, y, w, h, true), MacText(s, parent->_wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
+MacEditableText::MacEditableText(int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
+		MacWidget(w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
 
-	_parent = parent;
 	_maxWidth = maxWidth;
 
 	init();

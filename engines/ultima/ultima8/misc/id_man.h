@@ -45,16 +45,16 @@ class ODataSource;
 //
 
 class idMan {
-	uint16      begin;          //!< start of the available range of IDs
-	uint16      end;            //!< current end of the range
-	uint16      max_end;        //!< end of the available range
-	uint16      startcount;     //!< number of IDs to make available initially
+	uint16      _begin;          //!< start of the available range of IDs
+	uint16      _end;            //!< current end of the range
+	uint16      _maxEnd;         //!< end of the available range
+	uint16      _startCount;     //!< number of IDs to make available initially
 
-	uint16      usedcount;      //!< number of IDs currently in use
+	uint16      _usedCount;      //!< number of IDs currently in use
 
-	Std::vector<uint16> ids;    //!< the 'next' field in a list of free IDs
-	uint16      first;          //!< the first ID in the free list
-	uint16      last;           //!< the last ID in the last list
+	Std::vector<uint16> _ids;    //!< the 'next' field in a list of free IDs
+	uint16      _first;          //!< the first ID in the free list
+	uint16      _last;           //!< the last ID in the last list
 public:
 	//! \param begin start of the range of available IDs
 	//! \param max_end end of the range of available IDs
@@ -64,7 +64,7 @@ public:
 
 	//! check if this idMan is full
 	bool        isFull() const {
-		return first == 0 && end >= max_end;
+		return _first == 0 && _end >= _maxEnd;
 	}
 
 	//! clear all IDs, reset size to the startcount, and set max_end to new_max
@@ -84,7 +84,7 @@ public:
 
 	//! check if an ID is in use
 	bool        isIDUsed(uint16 id) const {
-		return id >= begin && id <= end && ids[id] == 0 && id != last;
+		return id >= _begin && id <= _end && _ids[id] == 0 && id != _last;
 	}
 
 	//! increase the maximum size
@@ -93,7 +93,7 @@ public:
 	//!       to need more than 32768 object IDs, this function should be
 	//!       deleted.
 	void        setNewMax(uint16 maxEnd) {
-		this->max_end = maxEnd;
+		_maxEnd = maxEnd;
 	}
 
 	void save(ODataSource *ods);

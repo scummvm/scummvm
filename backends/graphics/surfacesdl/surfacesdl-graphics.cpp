@@ -39,6 +39,7 @@
 #include "graphics/scaler.h"
 #include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
+#include "gui/debugger.h"
 #include "gui/EventRecorder.h"
 #ifdef USE_PNG
 #include "common/file.h"
@@ -1200,6 +1201,11 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	int height, width;
 	ScalerProc *scalerProc;
 	int scale1;
+
+	// If there's an active debugger, update it
+	GUI::Debugger *debugger = g_engine ? g_engine->getDebugger() : nullptr;
+	if (debugger)
+		debugger->onFrame();
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// If the shake position changed, fill the dirty area with blackness

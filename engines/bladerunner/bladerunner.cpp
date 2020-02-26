@@ -283,7 +283,7 @@ bool BladeRunnerEngine::canSaveGameStateCurrently() {
 		!_elevator->isOpen();
 }
 
-Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *saveFile = BladeRunner::SaveFileManager::openForSaving(_targetName, slot);
 	if (saveFile == nullptr || saveFile->err()) {
 		delete saveFile;
@@ -502,6 +502,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_sceneScript = new SceneScript(this);
 
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 
 	// This is the original startup in the game
 
@@ -933,7 +934,7 @@ void BladeRunnerEngine::shutdown() {
 
 	// These are static objects in original game
 
-	delete _debugger;
+	//delete _debugger;	Debugger deletion is handled by Engine
 	_debugger = nullptr;
 
 	delete _sceneScript;
@@ -1119,7 +1120,17 @@ void BladeRunnerEngine::gameTick() {
 	}
 
 	if (_debugger->_viewZBuffer) {
-		_surfaceFront.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
+		// The surface front pixel format is 32 bit now,
+		// but the _zbuffer->getData() still returns 16bit pixels
+		// We need to copy pixel by pixel, converting each pixel from 16 to 32bit
+		for (int y = 0; y < 480; ++y) {
+			for (int x = 0; x < 640; ++x) {
+				uint8 a, r, g, b;
+				getGameDataColor(_zbuffer->getData()[y*640 + x], a, r, g, b);
+				void   *dstPixel = _surfaceFront.getBasePtr(x, y);
+				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.ARGBToColor(a, r, g, b));
+			}
+		}
 	}
 
 	_mouse->tick(p.x, p.y);
@@ -1170,7 +1181,7 @@ void BladeRunnerEngine::actorsUpdate() {
 		return;
 	}
 
-	for (int i = 0; i < actorCount; i++) {
+	for (int i = 0; i < actorCount; ++i) {
 		Actor *actor = _actors[i];
 		if (actor->getSetId() == setId || i == _actorUpdateCounter) {
 			_aiScripts->update(i);
@@ -1269,12 +1280,6 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 }
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
-	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
-		getDebugger()->attach();
-		getDebugger()->onFrame();
-		return;
-	}
-
 	if (_vqaIsPlaying && (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN)) {
 		_vqaStopIsRequested = true;
 		_vqaIsPlaying = false;
@@ -2317,10 +2322,6 @@ Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 	}
 
 	return thumbnail;
-}
-
-GUI::Debugger *BladeRunnerEngine::getDebugger() {
-	return _debugger;
 }
 
 Common::String BladeRunnerEngine::getTargetName() const {

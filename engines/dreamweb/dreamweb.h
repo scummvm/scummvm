@@ -100,15 +100,12 @@ class DreamWebSound;
 
 class DreamWebEngine : public Engine {
 private:
-	DreamWebConsole			*_console;
 	DreamWebSound *_sound;
 
 protected:
 	// Engine APIs
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
-
-	GUI::Debugger *getDebugger() override { return _console; }
 
 public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
@@ -117,7 +114,7 @@ public:
 	void waitForVSync();
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;

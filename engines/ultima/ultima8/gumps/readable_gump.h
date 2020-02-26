@@ -31,14 +31,14 @@ namespace Ultima {
 namespace Ultima8 {
 
 class ReadableGump : public ModalGump {
-	uint16 shapenum;
-	int fontnum;
-	Std::string text;
+	uint16 _shapeNum;
+	int _fontNum;
+	Std::string _text;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ReadableGump();
-	ReadableGump(ObjId owner, uint16 shape, int font, Std::string msg);
+	ReadableGump(ObjId owner, uint16 shape, int font, const Std::string &msg);
 	~ReadableGump() override;
 
 	// Close on mouse click on key press

@@ -39,7 +39,7 @@ void MovementTrack::reset() {
 	_lastIndex = 0;
 	_hasNext = false;
 	_paused = false;
-	for (int i = 0; i < kSize; i++) {
+	for (int i = 0; i < kSize; ++i) {
 		_entries[i].waypointId = -1;
 		_entries[i].delay = -1;
 		_entries[i].angle = -1;
@@ -61,7 +61,7 @@ int MovementTrack::append(int waypointId, int32 delay, int angle, bool run) {
 	_entries[_lastIndex].angle = angle;
 	_entries[_lastIndex].run = run;
 
-	_lastIndex++;
+	++_lastIndex;
 	_hasNext = true;
 	_currentIndex = 0;
 	return 1;

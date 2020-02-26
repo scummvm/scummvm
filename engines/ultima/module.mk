@@ -345,17 +345,13 @@ MODULE_OBJS := \
 	ultima8/filesys/archive.o \
 	ultima8/filesys/archive_file.o \
 	ultima8/filesys/data.o \
-	ultima8/filesys/dir_file.o \
 	ultima8/filesys/file_system.o \
 	ultima8/filesys/flex_file.o \
-	ultima8/filesys/list_files.o \
-	ultima8/filesys/output_logger.o \
 	ultima8/filesys/raw_archive.o \
 	ultima8/filesys/savegame.o \
 	ultima8/filesys/u8_save_file.o \
 	ultima8/games/game.o \
 	ultima8/games/game_data.o \
-	ultima8/games/game_detector.o \
 	ultima8/games/game_info.o \
 	ultima8/games/remorse_game.o \
 	ultima8/games/start_u8_process.o \
@@ -400,7 +396,6 @@ MODULE_OBJS := \
 	ultima8/gumps/bark_gump.o \
 	ultima8/gumps/bind_gump.o \
 	ultima8/gumps/book_gump.o \
-	ultima8/gumps/console_gump.o \
 	ultima8/gumps/container_gump.o \
 	ultima8/gumps/controls_gump.o \
 	ultima8/gumps/credits_gump.o \
@@ -441,7 +436,6 @@ MODULE_OBJS := \
 	ultima8/kernel/delay_process.o \
 	ultima8/kernel/hid_keys.o \
 	ultima8/kernel/hid_manager.o \
-	ultima8/kernel/joystick.o \
 	ultima8/kernel/kernel.o \
 	ultima8/kernel/memory_manager.o \
 	ultima8/kernel/mouse.o \
@@ -452,7 +446,6 @@ MODULE_OBJS := \
 	ultima8/kernel/segmented_allocator.o \
 	ultima8/kernel/segmented_pool.o \
 	ultima8/misc/args.o \
-	ultima8/misc/console.o \
 	ultima8/misc/debugger.o \
 	ultima8/misc/encoding.o \
 	ultima8/misc/id_man.o \

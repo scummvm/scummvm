@@ -34,7 +34,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	QuitGump();
-	~QuitGump(void) override;
+	~QuitGump() override;
 
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 
@@ -45,13 +45,11 @@ public:
 	void ChildNotify(Gump *child, uint32 message) override;
 
 	static void verifyQuit();
-	//! "QuitGump::verifyQuit" console command
-	static void ConCmd_verifyQuit(const Console::ArgvType &argv);
 
 	bool loadData(IDataSource *ids);
 protected:
 	void saveData(ODataSource *ods) override;
-	ObjId yesWidget, noWidget;
+	ObjId _yesWidget, _noWidget;
 };
 
 } // End of namespace Ultima8

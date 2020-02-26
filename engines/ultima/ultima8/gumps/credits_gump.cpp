@@ -42,46 +42,46 @@ CreditsGump::CreditsGump()
 
 }
 
-CreditsGump::CreditsGump(const Std::string &text_, int parskip_,
-                         uint32 _Flags, int32 layer_)
-	: ModalGump(0, 0, 320, 200, 0, _Flags, layer_) {
-	text = text_;
-	parskip = parskip_;
+CreditsGump::CreditsGump(const Std::string &text, int parskip,
+                         uint32 flags, int32 layer)
+	: ModalGump(0, 0, 320, 200, 0, flags, layer) {
+	_text = text;
+	_parSkip = parskip;
 
-	timer = 0;
-	title = 0;
-	nexttitle = 0;
-	state = CS_PLAYING;
+	_timer = 0;
+	_title = 0;
+	_nextTitle = 0;
+	_state = CS_PLAYING;
 }
 
 CreditsGump::~CreditsGump() {
-	delete scroll[0];
-	delete scroll[1];
-	delete scroll[2];
-	delete scroll[3];
+	delete _scroll[0];
+	delete _scroll[1];
+	delete _scroll[2];
+	delete _scroll[3];
 
-	delete title;
-	delete nexttitle;
+	delete _title;
+	delete _nextTitle;
 }
 
 void CreditsGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	scroll[0] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
-	scroll[1] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
-	scroll[2] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
-	scroll[3] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
-	scroll[0]->Fill32(0xFF000000, 0, 0, 256, 200); // black background
-	scroll[1]->Fill32(0xFF000000, 0, 0, 256, 200);
-	scroll[2]->Fill32(0xFF000000, 0, 0, 256, 200);
-	scroll[3]->Fill32(0xFF000000, 0, 0, 256, 200);
-	scrollheight[0] = 156;
-	scrollheight[1] = 0;
-	scrollheight[2] = 0;
-	scrollheight[3] = 0;
+	_scroll[0] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
+	_scroll[1] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
+	_scroll[2] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
+	_scroll[3] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
+	_scroll[0]->Fill32(0xFF000000, 0, 0, 256, 200); // black background
+	_scroll[1]->Fill32(0xFF000000, 0, 0, 256, 200);
+	_scroll[2]->Fill32(0xFF000000, 0, 0, 256, 200);
+	_scroll[3]->Fill32(0xFF000000, 0, 0, 256, 200);
+	_scrollHeight[0] = 156;
+	_scrollHeight[1] = 0;
+	_scrollHeight[2] = 0;
+	_scrollHeight[3] = 0;
 
-	currentsurface = 0;
-	currenty = 0;
+	_currentSurface = 0;
+	_currentY = 0;
 
 	Mouse::get_instance()->pushMouseCursor();
 	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_NONE);
@@ -131,48 +131,48 @@ void CreditsGump::extractLine(Std::string &text_,
 void CreditsGump::run() {
 	ModalGump::run();
 
-	if (timer) {
-		timer--;
+	if (_timer) {
+		_timer--;
 		return;
 	}
 
-	if (state == CS_CLOSING) {
+	if (_state == CS_CLOSING) {
 		// pout << "CreditsGump: closing" << Std::endl;
 		Close();
 		return;
 	}
 
-	timer = 1;
+	_timer = 1;
 
-	int available = scrollheight[currentsurface] - currenty;
+	int available = _scrollHeight[_currentSurface] - _currentY;
 	int nextblock = -1;
 	for (int i = 1; i < 4; i++) {
-		available += scrollheight[(currentsurface + i) % 4];
-		if (nextblock == -1 && scrollheight[(currentsurface + i) % 4] == 0)
-			nextblock = (currentsurface + i) % 4;
+		available += _scrollHeight[(_currentSurface + i) % 4];
+		if (nextblock == -1 && _scrollHeight[(_currentSurface + i) % 4] == 0)
+			nextblock = (_currentSurface + i) % 4;
 	}
 	if (available == 0) nextblock = 0;
 
-	if (state == CS_FINISHING && available <= 156) {
+	if (_state == CS_FINISHING && available <= 156) {
 		// pout << "CreditsGump: waiting before closing" << Std::endl;
-		timer = 120;
-		state = CS_CLOSING;
+		_timer = 120;
+		_state = CS_CLOSING;
 
-		if (!configkey.empty()) {
+		if (!_configKey.empty()) {
 			SettingManager *settingman = SettingManager::get_instance();
-			settingman->set(configkey, true);
+			settingman->set(_configKey, true);
 			settingman->write();
 		}
 
 		return;
 	}
 
-	if (state == CS_PLAYING && available <= 160) {
+	if (_state == CS_PLAYING && available <= 160) {
 		// time to render next block
 
-		scroll[nextblock]->Fill32(0xFF000000, 0, 0, 256, 200);
-		// scroll[nextblock]->Fill32(0xFFFFFFFF,0,0,256,5); // block marker
-		scrollheight[nextblock] = 0;
+		_scroll[nextblock]->Fill32(0xFF000000, 0, 0, 256, 200);
+		// _scroll[nextblock]->Fill32(0xFFFFFFFF,0,0,256,5); // block marker
+		_scrollHeight[nextblock] = 0;
 
 		Font *redfont, *yellowfont;
 
@@ -181,22 +181,22 @@ void CreditsGump::run() {
 
 		bool done = false;
 		bool firstline = true;
-		while (!text.empty() && !done) {
-			Std::string::size_type endline = text.find('\n');
-			Std::string line = text.substr(0, endline);
+		while (!_text.empty() && !done) {
+			Std::string::size_type endline = _text.find('\n');
+			Std::string line = _text.substr(0, endline);
 
 			if (line.empty()) {
-				text.erase(0, 1);
+				_text.erase(0, 1);
 				continue;
 			}
 
 			// pout << "Rendering paragraph: " << line << Std::endl;
 
 			if (line[0] == '+') {
-				// set title
+				// set _title
 				if (!firstline) {
 					// if this isn't the first line of the block,
-					// postpone setting title until next block
+					// postpone setting _title until next block
 					done = true;
 					continue;
 				}
@@ -207,15 +207,15 @@ void CreditsGump::run() {
 				extractLine(line, modifier, titletext);
 
 				unsigned int remaining;
-				nexttitle = redfont->renderText(titletext, remaining, 192, 0,
+				_nextTitle = redfont->renderText(titletext, remaining, 192, 0,
 				                                Font::TEXT_CENTER);
 
-				if (!title) {
-					title = nexttitle;
-					nexttitle = 0;
+				if (!_title) {
+					_title = _nextTitle;
+					_nextTitle = 0;
 				} else {
-					nexttitlesurf = nextblock;
-					scrollheight[nextblock] = 160; // skip some space
+					_nextTitleSurf = nextblock;
+					_scrollHeight[nextblock] = 160; // skip some space
 				}
 
 			} else {
@@ -250,7 +250,7 @@ void CreditsGump::run() {
 						break;
 					case '@':
 						// pout << "CreditsGump: done, finishing" << Std::endl;
-						state = CS_FINISHING;
+						_state = CS_FINISHING;
 						break;
 					default:
 						break;
@@ -264,7 +264,7 @@ void CreditsGump::run() {
 					if (outline.hasPrefix("&")) {
 						// horizontal line
 
-						if (scrollheight[nextblock] + height + 7 > 200) {
+						if (_scrollHeight[nextblock] + height + 7 > 200) {
 							done = true;
 							break;
 						}
@@ -272,9 +272,9 @@ void CreditsGump::run() {
 						int linewidth = outline.size() * 8;
 						if (linewidth > 192) linewidth = 192;
 
-						scroll[nextblock]->
+						_scroll[nextblock]->
 						Fill32(0xFFD43030, 128 - (linewidth / 2),
-						       scrollheight[nextblock] + height + 3,
+						       _scrollHeight[nextblock] + height + 3,
 						       linewidth, 1);
 						height += 7;
 						continue;
@@ -286,14 +286,14 @@ void CreditsGump::run() {
 					int xd, yd;
 					rt->getSize(xd, yd);
 
-					if (scrollheight[nextblock] + height + yd > 200) {
+					if (_scrollHeight[nextblock] + height + yd > 200) {
 						delete rt;
 						done = true;
 						break;
 					}
 
-					rt->draw(scroll[nextblock], indent,
-					         scrollheight[nextblock] + height +
+					rt->draw(_scroll[nextblock], indent,
+					         _scrollHeight[nextblock] + height +
 					         font->getBaseline());
 
 					height += yd + rt->getVlead();
@@ -301,12 +301,12 @@ void CreditsGump::run() {
 					delete rt;
 				}
 
-				if (state == CS_PLAYING)
-					height += parskip;
+				if (_state == CS_PLAYING)
+					height += _parSkip;
 
-				if (scrollheight[nextblock] + height > 200) {
+				if (_scrollHeight[nextblock] + height > 200) {
 					if (firstline) {
-						height = 200 - scrollheight[nextblock];
+						height = 200 - _scrollHeight[nextblock];
 						assert(height >= 0);
 					} else {
 						done = true;
@@ -315,53 +315,53 @@ void CreditsGump::run() {
 
 				if (done) break; // no room
 
-				scrollheight[nextblock] += height;
+				_scrollHeight[nextblock] += height;
 			}
 
 
 			if (endline != Std::string::npos) endline++;
-			text.erase(0, endline);
+			_text.erase(0, endline);
 
 			firstline = false;
 		}
 	}
 
-	currenty++;
+	_currentY++;
 
-	if (currenty >= scrollheight[currentsurface]) {
+	if (_currentY >= _scrollHeight[_currentSurface]) {
 		// next surface
-		currenty -= scrollheight[currentsurface];
-		scrollheight[currentsurface] = 0;
-		currentsurface = (currentsurface + 1) % 4;
+		_currentY -= _scrollHeight[_currentSurface];
+		_scrollHeight[_currentSurface] = 0;
+		_currentSurface = (_currentSurface + 1) % 4;
 
-		if (nexttitle && currentsurface == nexttitlesurf) {
-			delete title;
-			title = nexttitle;
-			nexttitle = 0;
+		if (_nextTitle && _currentSurface == _nextTitleSurf) {
+			delete _title;
+			_title = _nextTitle;
+			_nextTitle = 0;
 		}
 	}
 }
 
 void CreditsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	surf->Fill32(0xFF000000, 0, 0, 320, 200); // black background
-	surf->Fill32(0xFFD43030, 64, 41, 192, 1); // line between title and scroller
+	surf->Fill32(0xFFD43030, 64, 41, 192, 1); // line between _title and scroller
 
-	if (title)
-		title->draw(surf, 64, 34);
+	if (_title)
+		_title->draw(surf, 64, 34);
 
-	Texture *tex = scroll[currentsurface]->GetSurfaceAsTexture();
-	int h = scrollheight[currentsurface] - currenty;
+	Texture *tex = _scroll[_currentSurface]->GetSurfaceAsTexture();
+	int h = _scrollHeight[_currentSurface] - _currentY;
 	if (h > 156) h = 156;
 	if (h > 0)
-		surf->Blit(tex, 0, currenty, 256, h, 32, 44);
+		surf->Blit(tex, 0, _currentY, 256, h, 32, 44);
 
 	int y_ = h;
 	for (int i = 1; i < 4; i++) {
 		if (h == 156) break;
 
-		int s = (currentsurface + i) % 4;
-		tex = scroll[s]->GetSurfaceAsTexture();
-		h = scrollheight[s];
+		int s = (_currentSurface + i) % 4;
+		tex = _scroll[s]->GetSurfaceAsTexture();
+		h = _scrollHeight[s];
 		if (h > 156 - y_) h = 156 - y_;
 		if (h > 0)
 			surf->Blit(tex, 0, 0, 256, h, 32, 44 + y_);

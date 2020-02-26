@@ -43,6 +43,7 @@
 #include "tinsel/events.h"
 #include "tinsel/faders.h"
 #include "tinsel/film.h"
+#include "tinsel/font.h"
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"			// MemoryInit
 #include "tinsel/dialogs.h"
@@ -63,11 +64,6 @@ namespace Tinsel {
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
-// In BG.CPP
-extern void SetDoFadeIn(bool tf);
-extern void DropBackground();
-extern const BACKGND *g_pCurBgnd;
-
 // In CURSOR.CPP
 extern void CursorProcess(CORO_PARAM, const void *);
 
@@ -75,7 +71,6 @@ extern void CursorProcess(CORO_PARAM, const void *);
 extern void InventoryProcess(CORO_PARAM, const void *);
 
 // In SCENE.CPP
-extern void PrimeBackground();
 extern SCNHANDLE GetSceneHandle();
 
 //----------------- FORWARD DECLARATIONS  ---------------------
@@ -678,12 +673,12 @@ bool ChangeScene(bool bReset) {
 
 			switch (g_NextScene.trans) {
 			case TRANS_CUT:
-				SetDoFadeIn(false);
+				_vm->_bg->SetDoFadeIn(false);
 				break;
 
 			case TRANS_FADE:
 			default:
-				SetDoFadeIn(true);
+				_vm->_bg->SetDoFadeIn(true);
 				break;
 			}
 		} else
@@ -820,7 +815,7 @@ const char *const TinselEngine::_textFiles[][3] = {
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
-		_console(0), _sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
+		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
 	// Register debug flags
 	DebugMan.addDebugChannel(kTinselDebugAnimations, "animations", "Animations debugging");
 	DebugMan.addDebugChannel(kTinselDebugActions, "actions", "Actions debugging");
@@ -854,11 +849,13 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 TinselEngine::~TinselEngine() {
 	_system->getAudioCDManager()->stop();
+	delete _bg;
+	delete _font;
 	delete _bmv;
 	delete _sound;
+	delete _music;
 	delete _midiMusic;
 	delete _pcmMusic;
-	delete _console;
 	_screenSurface.free();
 	FreeSaveScenes();
 	FreeTextBuffer();
@@ -894,8 +891,11 @@ void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 Common::Error TinselEngine::run() {
 	_midiMusic = new MidiMusicPlayer(this);
 	_pcmMusic = new PCMMusicPlayer();
+	_music = new Music();
 	_sound = new SoundManager(this);
 	_bmv = new BMVPlayer();
+	_font = new Font();
+	_bg = new Background(_font);
 
 	// Initialize backend
 	if (getGameID() == GID_DW2) {
@@ -910,7 +910,7 @@ Common::Error TinselEngine::run() {
 		_screenSurface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	_console = new Console();
+	setDebugger(new Console());
 
 	CoroScheduler.reset();
 
@@ -970,9 +970,6 @@ Common::Error TinselEngine::run() {
 	// Foreground loop
 	uint32 timerVal = 0;
 	while (!shouldQuit()) {
-		assert(_console);
-		_console->onFrame();
-
 		// Check for time to do next game cycle
 		if ((g_system->getMillis() > timerVal + GAME_FRAME_DELAY)) {
 			timerVal = g_system->getMillis();
@@ -1015,7 +1012,7 @@ Common::Error TinselEngine::run() {
 	_vm->_config->writeToDisk();
 
 	EndScene();
-	g_pCurBgnd = NULL;
+	_bg->ResetBackground();
 
 	return Common::kNoError;
 }
@@ -1038,7 +1035,7 @@ void TinselEngine::NextGameCycle() {
 		_bmv->CopyMovieToScreen();
 	else
 		// redraw background
-		DrawBackgnd();
+		_bg->DrawBackgnd();
 
 	// Why waste resources on yet another process?
 	FettleTimers();
@@ -1103,10 +1100,10 @@ void TinselEngine::CreateConstProcesses() {
 void TinselEngine::RestartGame() {
 	HoldItem(INV_NOICON);	// Holding nothing
 
-	DropBackground();	// No background
+	_bg->DropBackground();	// No background
 
 	// Ditches existing infrastructure background
-	PrimeBackground();
+	_bg->InitBackground();
 
 	// Next scene change won't need to fade out
 	// -> reset the count used by ChangeScene
@@ -1151,7 +1148,7 @@ void TinselEngine::RestartDrivers() {
 	g_pKeyboardProcess = CoroScheduler.createProcess(PID_KEYBOARD, KeyboardProcess, NULL, 0);
 
 	// open MIDI files
-	OpenMidiFiles();
+	_vm->_music->OpenMidiFiles();
 
 	// open sample files (only if mixer is ready)
 	if (_mixer->isReady()) {
@@ -1163,7 +1160,7 @@ void TinselEngine::RestartDrivers() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
-	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
+	_vm->_music->SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 }
 
 /**
@@ -1171,9 +1168,9 @@ void TinselEngine::RestartDrivers() {
  */
 void TinselEngine::ChopDrivers() {
 	// remove sound driver
-	StopMidi();
+	_vm->_music->StopMidi();
 	_sound->stopAllSamples();
-	DeleteMidiBuffer();
+	_vm->_music->DeleteMidiBuffer();
 
 	// remove event drivers
 	CoroScheduler.killProcess(g_pMouseProcess);
@@ -1184,22 +1181,6 @@ void TinselEngine::ChopDrivers() {
  * Process a keyboard event
  */
 void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
-
-	// Handle any special keys immediately
-	switch (event.kbd.keycode) {
-	case Common::KEYCODE_d:
-		// Checks for CTRL flag, ignoring all the sticky flags
-		if (event.kbd.hasFlags(Common::KBD_CTRL) && event.type == Common::EVENT_KEYDOWN) {
-			// Activate the debugger
-			assert(_console);
-			_console->attach();
-			return;
-		}
-		break;
-	default:
-		break;
-	}
-
 	// Check for movement keys
 	int idx = 0;
 	switch (event.kbd.keycode) {

@@ -26,9 +26,9 @@
 #include "common/scummsys.h"
 #include "access/scripts.h"
 #include "access/asurface.h"
+#include "access/amazon/amazon_resources.h"
 
 namespace Access {
-
 namespace Amazon {
 
 class AmazonEngine;

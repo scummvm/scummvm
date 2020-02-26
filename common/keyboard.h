@@ -346,8 +346,8 @@ struct KeyState {
 
 	/**
 	 * Check if two key states are equal. This implementation ignores the state
-	 * of the sticky flags (caps lock, num lock, scroll lock) completely. This
-	 * functionality is currently only used by the keymapper.
+	 * of the sticky flags (caps lock, num lock, scroll lock) completely.
+	 * @todo is this still being used?
 	 */
 	bool operator==(const KeyState &x) const {
 		// Intentionally ignore ASCII, as the keycode and non-sticky flag

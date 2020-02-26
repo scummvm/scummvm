@@ -36,7 +36,7 @@ namespace Avalanche {
 
 AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd), _fxHidden(false), _interrogation(0) {
 	_system = syst;
-	_console = new AvalancheConsole(this);
+	setDebugger(new AvalancheConsole(this));
 
 	_rnd = new Common::RandomSource("avalanche");
 	_showDebugLines = false;
@@ -61,7 +61,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 }
 
 AvalancheEngine::~AvalancheEngine() {
-	delete _console;
 	delete _rnd;
 
 	delete _graphics;
@@ -172,10 +171,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_parser->init();
 
 	return Common::kNoError;
-}
-
-GUI::Debugger *AvalancheEngine::getDebugger() {
-	return _console;
 }
 
 bool AvalancheEngine::hasFeature(EngineFeature f) const {
@@ -336,12 +331,12 @@ bool AvalancheEngine::canSaveGameStateCurrently() {
 	return (_animationsEnabled && _alive);
 }
 
-Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
 }
 
 bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
-	Common::String fileName = getSaveFileName(slot);
+	Common::String fileName = getSaveStateName(slot);
 	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(fileName);
 	if (!f) {
 		warning("Can't create file '%s', game not saved.", fileName.c_str());
@@ -373,10 +368,6 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	return true;
 }
 
-Common::String AvalancheEngine::getSaveFileName(const int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
-}
-
 bool AvalancheEngine::canLoadGameStateCurrently() {
 	return (_animationsEnabled);
 }
@@ -386,7 +377,7 @@ Common::Error AvalancheEngine::loadGameState(int slot) {
 }
 
 bool AvalancheEngine::loadGame(const int16 slot) {
-	Common::String fileName = getSaveFileName(slot);
+	Common::String fileName = getSaveStateName(slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 	if (!f)
 		return false;
@@ -503,12 +494,7 @@ void AvalancheEngine::updateEvents() {
 			_holdLeftMouse = false; // Same as above.
 			break;
 		case Common::EVENT_KEYDOWN:
-			if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_console->attach();
-				_console->onFrame();
-			} else
-				handleKeyDown(event);
+			handleKeyDown(event);
 			break;
 		default:
 			break;

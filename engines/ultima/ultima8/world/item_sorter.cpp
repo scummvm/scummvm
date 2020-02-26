@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/item_sorter.h"
-
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
@@ -43,21 +42,21 @@ namespace Ultima8 {
 
 // This does NOT need to be in the header
 struct SortItem {
-	SortItem(SortItem *n) : next(n), prev(0), item_num(0), shape(0), order(-1), depends() { }
+	SortItem(SortItem *n) : _next(n), _prev(0), _itemNum(0), _shape(0), _order(-1), _depends() { }
 
-	SortItem                *next;
-	SortItem                *prev;
+	SortItem                *_next;
+	SortItem                *_prev;
 
-	uint16                  item_num;   // Owner item number
+	uint16                  _itemNum;   // Owner item number
 
-	Shape                   *shape;
-	uint32                  shape_num;
-	uint32                  frame;
-	uint32                  flags;      // Item flags
-	uint32                  ext_flags;  // Item extended flags
+	Shape                   *_shape;
+	uint32                  _shapeNum;
+	uint32                  _frame;
+	uint32                  _flags;     // Item flags
+	uint32                  _extFlags;  // Item extended flags
 
-	int                     sx, sx2;    // Screenspace X coords
-	int                     sy, sy2;    // Screenspace Y coords
+	int                     _sx, _sx2;  // Screenspace X coords
+	int                     _sy, _sy2;  // Screenspace Y coords
 
 	/*
 	            Bounding Box layout
@@ -77,36 +76,36 @@ struct SortItem {
 
 	*/
 
-	int32   x, xleft;   // Worldspace bounding box x (xright = x)
-	int32   y, yfar;    // Worldspace bounding box y (ynear = y)
-	int32   z, ztop;    // Worldspace bounding box z (ztop = z)
+	int32   _x, _xLeft;   // Worldspace bounding box x (xright = x)
+	int32   _y, _yFar;    // Worldspace bounding box y (ynear = y)
+	int32   _z, _zTop;    // Worldspace bounding box z (_zTop = z)
 
-	int32   sxleft;     // Screenspace bounding box left extent    (LNT x coord)
-	int32   sxright;    // Screenspace bounding box right extent   (RFT x coord)
+	int32   _sxLeft;     // Screenspace bounding box left extent    (LNT x coord)
+	int32   _sxRight;    // Screenspace bounding box right extent   (RFT x coord)
 
-	int32   sxtop;      // Screenspace bounding box top x coord    (LFT x coord)
-	int32   sytop;      // Screenspace bounding box top extent     (LFT y coord)
+	int32   _sxTop;      // Screenspace bounding box top x coord    (LFT x coord)
+	int32   _syTop;      // Screenspace bounding box top extent     (LFT y coord)
 
-	int32   sxbot;      // Screenspace bounding box bottom x coord (RNB x coord) ss origin
-	int32   sybot;      // Screenspace bounding box bottom extent  (RNB y coord) ss origin
+	int32   _sxBot;      // Screenspace bounding box bottom x coord (RNB x coord) ss origin
+	int32   _syBot;      // Screenspace bounding box bottom extent  (RNB y coord) ss origin
 
-	bool    f32x32 : 1;         // Needs 1 bit  0
-	bool    flat : 1;           // Needs 1 bit  1
-	bool    occl : 1;           // Needs 1 bit  2
-	bool    solid : 1;          // Needs 1 bit  3
-	bool    draw : 1;           // Needs 1 bit  4
-	bool    roof : 1;           // Needs 1 bit  5
-	bool    noisy : 1;          // Needs 1 bit  6
-	bool    anim : 1;           // Needs 1 bit  7
-	bool    trans : 1;          // Needs 1 bit  8
-	bool    fixed : 1;
-	bool    land : 1;
+	bool    _f32x32 : 1;         // Needs 1 bit  0
+	bool    _flat : 1;           // Needs 1 bit  1
+	bool    _occl : 1;           // Needs 1 bit  2
+	bool    _solid : 1;          // Needs 1 bit  3
+	bool    _draw : 1;           // Needs 1 bit  4
+	bool    _roof : 1;           // Needs 1 bit  5
+	bool    _noisy : 1;          // Needs 1 bit  6
+	bool    _anim : 1;           // Needs 1 bit  7
+	bool    _trans : 1;          // Needs 1 bit  8
+	bool    _fixed : 1;
+	bool    _land : 1;
 
-	bool    occluded : 1;       // Set true if occluded
+	bool    _occluded : 1;       // Set true if occluded
 
-	int16   clipped;            // Clipped to RenderSurface
+	int16   _clipped;            // Clipped to RenderSurface
 
-	int32   order;      // Rendering order. -1 is not yet drawn
+	int32   _order;      // Rendering _order. -1 is not yet drawn
 
 	// Note that Std::priority_queue could be used here, BUT there is no guarentee that it's implementation
 	// will be friendly to insertions
@@ -115,10 +114,10 @@ struct SortItem {
 	// So the only reasonable solution is to write my own list
 	struct DependsList {
 		struct Node {
-			Node        *next;
-			Node        *prev;
+			Node        *_next;
+			Node        *_prev;
 			SortItem    *val;
-			Node() : next(0), prev(0), val(0) { }
+			Node() : _next(0), _prev(0), val(0) { }
 		};
 
 		Node *list;
@@ -132,7 +131,7 @@ struct SortItem {
 			}
 			iterator(Node *node) : n(node) { }
 			iterator &operator++() {
-				n = n->next;
+				n = n->_next;
 				return *this;
 			}
 			bool operator != (const iterator &o) {
@@ -149,7 +148,7 @@ struct SortItem {
 
 		void clear() {
 			if (tail) {
-				tail->next = unused;
+				tail->_next = unused;
 				unused = list;
 				tail = 0;
 				list = 0;
@@ -159,40 +158,40 @@ struct SortItem {
 		void push_back(SortItem *other) {
 			if (!unused) unused = new Node();
 			Node *nn = unused;
-			unused = unused->next;
+			unused = unused->_next;
 			nn->val = other;
 
 			// Put it at the end
-			if (tail) tail->next = nn;
+			if (tail) tail->_next = nn;
 			if (!list) list = nn;
-			nn->next = 0;
-			nn->prev = tail;
+			nn->_next = 0;
+			nn->_prev = tail;
 			tail = nn;
 		}
 
 		void insert_sorted(SortItem *other) {
 			if (!unused) unused = new Node();
 			Node *nn = unused;
-			unused = unused->next;
+			unused = unused->_next;
 			nn->val = other;
 
-			for (Node *n = list; n != 0; n = n->next) {
+			for (Node *n = list; n != 0; n = n->_next) {
 				// Get the insert point... which is before the first item that has higher z than us
 				if (other->ListLessThan(n->val)) {
-					nn->next = n;
-					nn->prev = n->prev;
-					n->prev = nn;
-					if (nn->prev) nn->prev->next = nn;
+					nn->_next = n;
+					nn->_prev = n->_prev;
+					n->_prev = nn;
+					if (nn->_prev) nn->_prev->_next = nn;
 					else list = nn;
 					return;
 				}
 			}
 
 			// No suitable, so put at end
-			if (tail) tail->next = nn;
+			if (tail) tail->_next = nn;
 			if (!list) list = nn;
-			nn->next = 0;
-			nn->prev = tail;
+			nn->_next = 0;
+			nn->_prev = tail;
 			tail = nn;
 		}
 
@@ -201,16 +200,16 @@ struct SortItem {
 		~DependsList() {
 			clear();
 			while (unused)  {
-				Node *n = unused->next;
+				Node *n = unused->_next;
 				delete unused;
 				unused = n;
 			}
 		}
 	};
 
-	//Std::vector<SortItem *>   depends;    // All this Items dependencies (i.e. all objects behind)
-	//Std::list<SortItem *> depends;    // All this Items dependencies (i.e. all objects behind)
-	DependsList depends;
+	//Std::vector<SortItem *>   _depends;    // All this Items dependencies (i.e. all objects behind)
+	//Std::list<SortItem *> _depends;    // All this Items dependencies (i.e. all objects behind)
+	DependsList _depends;
 
 	// Functions
 
@@ -228,17 +227,17 @@ struct SortItem {
 
 	// Comparison for the sorted lists
 	inline bool ListLessThan(const SortItem *other) const {
-		return z < other->z ||
-		       (z == other->z && x < other->x) ||
-		       (z == other->z && x == other->x && y < other->y);
+		return _z < other->_z ||
+		       (_z == other->_z && _x < other->_x) ||
+		       (_z == other->_z && _x == other->_x && _y < other->_y);
 	}
 
 };
 
 // Check to see if we overlap si2
 inline bool SortItem::overlap(const SortItem &si2) const {
-	const int point_top_diff[2] = { sxtop - si2.sxbot, sytop - si2.sybot };
-	const int point_bot_diff[2] = { sxbot - si2.sxtop, sybot - si2.sytop };
+	const int point_top_diff[2] = { _sxTop - si2._sxBot, _syTop - si2._syBot };
+	const int point_bot_diff[2] = { _sxBot - si2._sxTop, _syBot - si2._syTop };
 
 	// This function is a bit of a hack. It uses dot products between
 	// points and the lines. Nothing is normalized since that isn't
@@ -256,8 +255,8 @@ inline bool SortItem::overlap(const SortItem &si2) const {
 	// 'normal' of bot right line (-2, 1) of the bounding box
 	const int32 dot_bot_right = -point_bot_diff[0] - point_bot_diff[1] * 2;
 
-	const bool right_clear = sxright <= si2.sxleft;
-	const bool left_clear = sxleft >= si2.sxright;
+	const bool right_clear = _sxRight <= si2._sxLeft;
+	const bool left_clear = _sxLeft >= si2._sxRight;
 	const bool top_left_clear = dot_top_left >= 0;
 	const bool top_right_clear = dot_top_right >= 0;
 	const bool bot_left_clear = dot_bot_left >= 0;
@@ -272,8 +271,8 @@ inline bool SortItem::overlap(const SortItem &si2) const {
 
 // Check to see if we occlude si2
 inline bool SortItem::occludes(const SortItem &si2) const {
-	const int point_top_diff[2] = { sxtop - si2.sxtop, sytop - si2.sytop };
-	const int point_bot_diff[2] = { sxbot - si2.sxbot, sybot - si2.sybot };
+	const int point_top_diff[2] = { _sxTop - si2._sxTop, _syTop - si2._syTop };
+	const int point_bot_diff[2] = { _sxBot - si2._sxBot, _syBot - si2._syBot };
 
 	// This function is a bit of a hack. It uses dot products between
 	// points and the lines. Nothing is normalized since that isn't
@@ -292,8 +291,8 @@ inline bool SortItem::occludes(const SortItem &si2) const {
 	const int32 dot_bot_right = -point_bot_diff[0] - point_bot_diff[1] * 2;
 
 
-	const bool right_res = sxright >= si2.sxright;
-	const bool left_res = sxleft <= si2.sxleft;
+	const bool right_res = _sxRight >= si2._sxRight;
+	const bool left_res = _sxLeft <= si2._sxLeft;
 	const bool top_left_res = dot_top_left <= 0;
 	const bool top_right_res = dot_top_right <= 0;
 	const bool bot_left_res = dot_bot_left <= 0;
@@ -307,65 +306,65 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	const SortItem &si1 = *this;
 
 	// Specialist z flat handling
-	if (si1.flat && si2.flat) {
+	if (si1._flat && si2._flat) {
 		// Differing z is easy for flats
-		if (si1.ztop != si2.ztop) return si1.ztop < si2.ztop;
+		if (si1._zTop != si2._zTop) return si1._zTop < si2._zTop;
 
 		// Equal z
 
 		// Animated always gets drawn after
-		if (si1.anim != si2.anim) return si1.anim < si2.anim;
+		if (si1._anim != si2._anim) return si1._anim < si2._anim;
 
 		// Trans always gets drawn after
-		if (si1.trans != si2.trans) return si1.trans < si2.trans;
+		if (si1._trans != si2._trans) return si1._trans < si2._trans;
 
 		// Draw always gets drawn first
-		if (si1.draw != si2.draw) return si1.draw > si2.draw;
+		if (si1._draw != si2._draw) return si1._draw > si2._draw;
 
 		// Solid always gets drawn first
-		if (si1.solid != si2.solid) return si1.solid > si2.solid;
+		if (si1._solid != si2._solid) return si1._solid > si2._solid;
 
 		// Occludes always get drawn first
-		if (si1.occl != si2.occl) return si1.occl > si2.occl;
+		if (si1._occl != si2._occl) return si1._occl > si2._occl;
 
 		// 32x32 flats get drawn first
-		if (si1.f32x32 != si2.f32x32) return si1.f32x32 > si2.f32x32;
+		if (si1._f32x32 != si2._f32x32) return si1._f32x32 > si2._f32x32;
 	}
 	// Mixed, or non flat
 	else {
 
 		// Clearly X, Y and Z (useful?)
-		//if (si1.x <= si2.xleft && si1.y <= si2.yfar && si1.ztop <= si2.z) return true;
-		//else if (si1.xleft >= si2.x && si1.yfar >= si2.y && si1.z >= si2.ztop) return false;
+		//if (si1._x <= si2._xLeft && si1._y <= si2._yFar && si1._zTop <= si2._z) return true;
+		//else if (si1._xLeft >= si2._x && si1._yFar >= si2._y && si1._z >= si2._zTop) return false;
 
-		//int front1 = si1.x + si1.y;
-		//int rear1 = si1.xleft + si1.yfar;
-		//int front2 = si2.x + si2.y;
-		//int rear2 = si2.xleft + si2.yfar;
+		//int front1 = si1._x + si1._y;
+		//int rear1 = si1._xLeft + si1._yFar;
+		//int front2 = si2._x + si2._y;
+		//int rear2 = si2._xLeft + si2._yFar;
 
 		// Rear of object is infront of other's front
 		//if (front1 <= rear2) return true;
 		//else if (rear1 >= front2) return false;
 
 		// Clearly in z
-		if (si1.ztop <= si2.z) return true;
-		else if (si1.z >= si2.ztop) return false;
+		if (si1._zTop <= si2._z) return true;
+		else if (si1._z >= si2._zTop) return false;
 
 		// Partial in z
-		//if (si1.ztop != si2.ztop) return si1.ztop < si2.ztop;
+		//if (si1._zTop != si2._zTop) return si1._zTop < si2._zTop;
 	}
 
 	// Clearly in x and y? (useful?)
-	//if (si1.x <= si2.xleft && si1.y <= si2.yfar) return true;
-	//else if (si1.xleft >= si2.x && si1.yfar >= si2.y) return false;
+	//if (si1._x <= si2._xLeft && si1._y <= si2._yFar) return true;
+	//else if (si1._xLeft >= si2._x && si1._yFar >= si2._y) return false;
 
 	// Clearly in x?
-	if (si1.x <= si2.xleft) return true;
-	else if (si1.xleft >= si2.x) return false;
+	if (si1._x <= si2._xLeft) return true;
+	else if (si1._xLeft >= si2._x) return false;
 
 	// Clearly in y?
-	if (si1.y <= si2.yfar) return true;
-	else if (si1.yfar >= si2.y) return false;
+	if (si1._y <= si2._yFar) return true;
+	else if (si1._yFar >= si2._y) return false;
 
 	// Are overlapping in all 3 dimentions if we come here
 
@@ -373,38 +372,38 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	// If an object's base (z-bottom) is higher another's, it should be rendered after.
 	// This check must be on the z-bottom and not the z-top because two objects with the
 	// same z-position may have different heights (think of a mouse sorting vs the Avatar).
-	if (si1.z < si2.z) return true;
-	else if (si1.z > si2.z) return false;
+	if (si1._z < si2._z) return true;
+	else if (si1._z > si2._z) return false;
 
 	// Biased Clearly in z
-	if ((si1.ztop + si1.z) / 2 <= si2.z) return true;
-	else if (si1.z >= (si2.ztop + si2.z) / 2) return false;
+	if ((si1._zTop + si1._z) / 2 <= si2._z) return true;
+	else if (si1._z >= (si2._zTop + si2._z) / 2) return false;
 
 	// Biased Clearly X
-	if ((si1.x + si1.xleft) / 2 <= si2.xleft) return true;
-	else if (si1.xleft >= (si2.x + si2.xleft) / 2) return false;
+	if ((si1._x + si1._xLeft) / 2 <= si2._xLeft) return true;
+	else if (si1._xLeft >= (si2._x + si2._xLeft) / 2) return false;
 
 	// Biased Clearly Y
-	if ((si1.y + si1.yfar) / 2 <= si2.yfar) return true;
-	else if (si1.yfar >= (si2.y + si2.yfar) / 2) return false;
+	if ((si1._y + si1._yFar) / 2 <= si2._yFar) return true;
+	else if (si1._yFar >= (si2._y + si2._yFar) / 2) return false;
 
 	// Partial in X + Y front
-	if (si1.x + si1.y != si2.x + si2.y) return (si1.x + si1.y < si2.x + si2.y);
+	if (si1._x + si1._y != si2._x + si2._y) return (si1._x + si1._y < si2._x + si2._y);
 
 	// Partial in X + Y back
-	if (si1.xleft + si1.yfar != si2.xleft + si2.yfar) return (si1.xleft + si1.yfar < si2.xleft + si2.yfar);
+	if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar) return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
 
 	// Partial in x?
-	if (si1.x != si2.x) return si1.x < si2.x;
+	if (si1._x != si2._x) return si1._x < si2._x;
 
 	// Partial in y?
-	if (si1.y != si2.y) return si1.y < si2.y;
+	if (si1._y != si2._y) return si1._y < si2._y;
 
-	// Just sort by shape number - not a number any more (is a pointer)
-	if (si1.shape_num != si2.shape_num) return si1.shape_num < si2.shape_num;
+	// Just sort by _shape number - not a number any more (is a pointer)
+	if (si1._shapeNum != si2._shapeNum) return si1._shapeNum < si2._shapeNum;
 
-	// And then by frame
-	return si1.frame < si2.frame;
+	// And then by _frame
+	return si1._frame < si2._frame;
 }
 
 #define COMPARISON_RETURN(val,op,tab)                               \
@@ -457,41 +456,41 @@ inline bool SortItem::operator<<(const SortItem &si2) const {
 	}
 
 	// Specialist z flat handling
-	pout << "if (si1.flat && si2.flat) -> if ("
-	     << si1.flat << " && " << si2.flat << ") -> "
-	     << (si1.flat && si2.flat) << Std::endl;
+	pout << "if (si1._flat && si2._flat) -> if ("
+	     << si1._flat << " && " << si2._flat << ") -> "
+	     << (si1._flat && si2._flat) << Std::endl;
 	pout << "{" << Std::endl;
 
-	if (si1.flat && si2.flat) {
+	if (si1._flat && si2._flat) {
 		// Differing z is easy for flats
-		//if (si1.ztop != si2.ztop) return si1.ztop < si2.ztop;
-		COMPARISON_RETURN(ztop, <, "\t");
+		//if (si1._zTop != si2._zTop) return si1._zTop < si2._zTop;
+		COMPARISON_RETURN(_zTop, <, "\t");
 
 		// Equal z
 
 		// Animated always gets drawn after
-		//if (si1.anim != si2.anim) return si1.anim < si2.anim;
-		COMPARISON_RETURN(anim, <, "\t");
+		//if (si1._anim != si2._anim) return si1._anim < si2._anim;
+		COMPARISON_RETURN(_anim, <, "\t");
 
 		// Trans always gets drawn after
-		//if (si1.trans != si2.trans) return si1.trans < si2.trans;
-		COMPARISON_RETURN(trans, <, "\t");
+		//if (si1._trans != si2._trans) return si1._trans < si2._trans;
+		COMPARISON_RETURN(_trans, <, "\t");
 
 		// Draw always gets drawn first
-		//if (si1.draw != si2.draw) return si1.draw > si2.draw;
-		COMPARISON_RETURN(draw, >, "\t");
+		//if (si1._draw != si2._draw) return si1._draw > si2._draw;
+		COMPARISON_RETURN(_draw, >, "\t");
 
 		// Solid always gets drawn first
-		//if (si1.solid != si2.solid) return si1.solid > si2.solid;
-		COMPARISON_RETURN(solid, >, "\t");
+		//if (si1._solid != si2._solid) return si1._solid > si2._solid;
+		COMPARISON_RETURN(_solid, >, "\t");
 
 		// Occludes always get drawn first
-		//if (si1.occl != si2.occl) return si1.occl > si2.occl;
-		COMPARISON_RETURN(occl, >, "\t");
+		//if (si1._occl != si2._occl) return si1._occl > si2._occl;
+		COMPARISON_RETURN(_occl, >, "\t");
 
 		// 32x32 flats get drawn first
-		//if (si1.f32x32 != si2.f32x32) return si1.f32x32 > si2.f32x32;
-		COMPARISON_RETURN(f32x32, >, "\t");
+		//if (si1._f32x32 != si2._f32x32) return si1._f32x32 > si2._f32x32;
+		COMPARISON_RETURN(_f32x32, >, "\t");
 	}
 	// Mixed, or non flat
 	else {
@@ -500,13 +499,13 @@ inline bool SortItem::operator<<(const SortItem &si2) const {
 		pout << "{" << Std::endl;
 
 		// Clearly X, Y and Z  (useful?)
-		//if (si1.x <= si2.xleft && si1.y <= si2.yfar && si1.ztop <= si2.z) return true;
-		//else if (si1.xleft >= si2.x && si1.yfar >= si2.y && si1.z >= si2.ztop) return false;
+		//if (si1._x <= si2._xLeft && si1._y <= si2._yFar && si1._zTop <= si2._z) return true;
+		//else if (si1._xLeft >= si2._x && si1._yFar >= si2._y && si1._z >= si2._zTop) return false;
 
-		//int front1 = si1.x + si1.y;
-		//int rear1 = si1.xleft + si1.yfar;
-		//int front2 = si2.x + si2.y;
-		//int rear2 = si2.xleft + si2.yfar;
+		//int front1 = si1._x + si1._y;
+		//int rear1 = si1._xLeft + si1._yFar;
+		//int front2 = si2._x + si2._y;
+		//int rear2 = si2._xLeft + si2._yFar;
 
 		// Rear of object is infront of other's front
 		//if (front1 <= rear2) return true;
@@ -515,77 +514,77 @@ inline bool SortItem::operator<<(const SortItem &si2) const {
 		//COMPARISON_RETURN_TF(rear1,>=,front2,false,"\t");
 
 		// Clearly in z
-		//if (si1.ztop <= si2.z) return true;
-		//else if (si1.z >= si2.ztop) return false;
-		COMPARISON_RETURN_TF(si1.ztop, <=, si2.z, true, "\t");
-		COMPARISON_RETURN_TF(si1.z, >=, si2.ztop, false, "\t");
+		//if (si1._zTop <= si2._z) return true;
+		//else if (si1._z >= si2._zTop) return false;
+		COMPARISON_RETURN_TF(si1._zTop, <=, si2._z, true, "\t");
+		COMPARISON_RETURN_TF(si1._z, >=, si2._zTop, false, "\t");
 
 		// Partial in z
-		//if (si1.ztop != si2.ztop) return si1.ztop < si2.ztop;
+		//if (si1._zTop != si2._zTop) return si1._zTop < si2._zTop;
 	}
 	pout << "}" << Std::endl;
 
 	// Clearly in x and y? (useful?)
-	//if (si1.x <= si2.xleft && si1.y <= si2.yfar) return true;
-	//else if (si1.xleft >= si2.x && si1.yfar >= si2.y) return false;
+	//if (si1._x <= si2._xLeft && si1._y <= si2._yFar) return true;
+	//else if (si1._xLeft >= si2._x && si1._yFar >= si2._y) return false;
 
 	// Clearly X
-	//if (si1.x <= si2.xleft) return true;
-	//else if (si1.xleft >= si2.x) return false;
-	COMPARISON_RETURN_TF(si1.x, <=, si2.xleft, true, "\t");
-	COMPARISON_RETURN_TF(si1.xleft, >=, si2.x, false, "\t");
+	//if (si1._x <= si2._xLeft) return true;
+	//else if (si1._xLeft >= si2._x) return false;
+	COMPARISON_RETURN_TF(si1._x, <=, si2._xLeft, true, "\t");
+	COMPARISON_RETURN_TF(si1._xLeft, >=, si2._x, false, "\t");
 
 	// Clearly Y
-	//if (si1.y <= si2.yfar) return true;
-	//else if (si1.yfar >= si2.y) return false;
-	COMPARISON_RETURN_TF(si1.y, <=, si2.yfar, true, "\t");
-	COMPARISON_RETURN_TF(si1.yfar, >=, si2.y, false, "\t");
+	//if (si1._y <= si2._yFar) return true;
+	//else if (si1._yFar >= si2._y) return false;
+	COMPARISON_RETURN_TF(si1._y, <=, si2._yFar, true, "\t");
+	COMPARISON_RETURN_TF(si1._yFar, >=, si2._y, false, "\t");
 
 	// Z base
-	COMPARISON_RETURN_TF(si1.z, <, si2.z, true, "");
-	COMPARISON_RETURN_TF(si1.z, >, si2.z, false, "");
+	COMPARISON_RETURN_TF(si1._z, <, si2._z, true, "");
+	COMPARISON_RETURN_TF(si1._z, >, si2._z, false, "");
 
 	// Biased Clearly in z
-	//if ((si1.ztop+si1.z)/2 <= si2.z) return true;
-	//else if (si1.z >= (si2.ztop+si2.z)/2) return false;
-	COMPARISON_RETURN_TF((si1.ztop + si1.z) / 2, <=, si2.z, true, "");
-	COMPARISON_RETURN_TF(si1.z, >=, (si2.ztop + si2.z) / 2, false, "");
+	//if ((si1._zTop+si1._z)/2 <= si2._z) return true;
+	//else if (si1._z >= (si2._zTop+si2._z)/2) return false;
+	COMPARISON_RETURN_TF((si1._zTop + si1._z) / 2, <=, si2._z, true, "");
+	COMPARISON_RETURN_TF(si1._z, >=, (si2._zTop + si2._z) / 2, false, "");
 
 	// Biased Clearly X
-	//if ((si1.x+si1.xleft)/2 <= si2.xleft) return true;
-	//else if (si1.xleft >= (si2.x+si2.xleft)/2) return false;
-	COMPARISON_RETURN_TF((si1.x + si1.xleft) / 2, <=, si2.xleft, true, "");
-	COMPARISON_RETURN_TF(si1.xleft, >=, (si2.x + si2.xleft) / 2, false, "");
+	//if ((si1._x+si1._xLeft)/2 <= si2._xLeft) return true;
+	//else if (si1._xLeft >= (si2._x+si2._xLeft)/2) return false;
+	COMPARISON_RETURN_TF((si1._x + si1._xLeft) / 2, <=, si2._xLeft, true, "");
+	COMPARISON_RETURN_TF(si1._xLeft, >=, (si2._x + si2._xLeft) / 2, false, "");
 
 	// Biased Clearly Y
-	//if ((si1.y+si1.yfar)/2 <= si2.yfar) return true;
-	//else if (si1.yfar >= (si2.y+si2.yfar)/2) return false;
-	COMPARISON_RETURN_TF((si1.y + si1.yfar) / 2, <=, si2.yfar, true, "");
-	COMPARISON_RETURN_TF(si1.yfar, >=, (si2.y + si2.yfar) / 2, false, "");
+	//if ((si1._y+si1._yFar)/2 <= si2._yFar) return true;
+	//else if (si1._yFar >= (si2._y+si2._yFar)/2) return false;
+	COMPARISON_RETURN_TF((si1._y + si1._yFar) / 2, <=, si2._yFar, true, "");
+	COMPARISON_RETURN_TF(si1._yFar, >=, (si2._y + si2._yFar) / 2, false, "");
 
 	// Partial in X + Y front
-	//if (si1.x + si1.y != si2.x + si2.y) return (si1.x + si1.y < si2.x + si2.y);
-	COMPARISON_RETURN_EX(si1.x + si1.y, <, si2.x + si2.y, "");
+	//if (si1._x + si1._y != si2._x + si2._y) return (si1._x + si1._y < si2._x + si2._y);
+	COMPARISON_RETURN_EX(si1._x + si1._y, <, si2._x + si2._y, "");
 
 	// Partial in X + Y back
-	//if (si1.xleft + si1.yfar != si2.xleft + si2.yfar) return (si1.xleft + si1.yfar < si2.xleft + si2.yfar);
-	COMPARISON_RETURN_EX(si1.xleft + si1.yfar, <, si2.xleft + si2.yfar, "");
+	//if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar) return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
+	COMPARISON_RETURN_EX(si1._xLeft + si1._yFar, <, si2._xLeft + si2._yFar, "");
 
 	// Partial in x?
-	//if (si1.x != si2.x) return si1.x < si2.x;
-	COMPARISON_RETURN(x, <, "");
+	//if (si1._x != si2._x) return si1._x < si2._x;
+	COMPARISON_RETURN(_x, <, "");
 
 	// Partial in y?
-	//if (si1.y != si2.y) return si1.y < si2.y;
-	COMPARISON_RETURN(y, <, "");
+	//if (si1._y != si2._y) return si1._y < si2._y;
+	COMPARISON_RETURN(_y, <, "");
 
-	// Just sort by shape number
-//	if (si1.shape_num != si2.shape_num) return si1.shape_num < si2.shape_num;
-	COMPARISON_RETURN(shape_num, <, "");
+	// Just sort by _shape number
+//	if (si1._shapeNum != si2._shapeNum) return si1._shapeNum < si2._shapeNum;
+	COMPARISON_RETURN(_shapeNum, <, "");
 
-	// And then by frame
-	//return si1.frame < si2.frame;
-	COMPARISON_RETURN(frame, <, "");
+	// And then by _frame
+	//return si1._frame < si2._frame;
+	COMPARISON_RETURN(_frame, <, "");
 	return 0;
 }
 
@@ -595,220 +594,220 @@ inline bool SortItem::operator<<(const SortItem &si2) const {
 //
 
 ItemSorter::ItemSorter() :
-	shapes(0), surf(0), items(0), items_tail(0), items_unused(0), sort_limit(0) {
+	_shapes(0), _surf(0), _items(0), _itemsTail(0), _itemsUnused(0), _sortLimit(0) {
 	int i = 2048;
-	while (i--) items_unused = new SortItem(items_unused);
+	while (i--) _itemsUnused = new SortItem(_itemsUnused);
 }
 
 ItemSorter::~ItemSorter() {
 	//
-	if (items_tail) {
-		items_tail->next = items_unused;
-		items_unused = items;
+	if (_itemsTail) {
+		_itemsTail->_next = _itemsUnused;
+		_itemsUnused = _items;
 	}
-	items = 0;
-	items_tail = 0;
+	_items = 0;
+	_itemsTail = 0;
 
-	while (items_unused) {
-		SortItem *next = items_unused->next;
-		delete items_unused;
-		items_unused = next;
+	while (_itemsUnused) {
+		SortItem *_next = _itemsUnused->_next;
+		delete _itemsUnused;
+		_itemsUnused = _next;
 	}
 
-	delete [] items;
+	delete [] _items;
 }
 
 void ItemSorter::BeginDisplayList(RenderSurface *rs,
                                   int32 camx, int32 camy, int32 camz) {
-	// Get the shapes, if required
-	if (!shapes) shapes = GameData::get_instance()->getMainShapes();
+	// Get the _shapes, if required
+	if (!_shapes) _shapes = GameData::get_instance()->getMainShapes();
 
 	//
-	if (items_tail) {
-		items_tail->next = items_unused;
-		items_unused = items;
+	if (_itemsTail) {
+		_itemsTail->_next = _itemsUnused;
+		_itemsUnused = _items;
 	}
-	items = 0;
-	items_tail = 0;
+	_items = 0;
+	_itemsTail = 0;
 
 	// Set the RenderSurface, and reset the item list
-	surf = rs;
-	order_counter = 0;
+	_surf = rs;
+	_orderCounter = 0;
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
-	cam_sx = (camx - camy) / 4;
+	_camSx = (camx - camy) / 4;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	cam_sy = (camx + camy) / 8 - camz;
+	_camSy = (camx + camy) / 8 - camz;
 }
 
-void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shape_num, uint32 frame_num, uint32 flags, uint32 ext_flags, uint16 item_num) {
+void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 frame_num, uint32 flags, uint32 ext_flags, uint16 itemNum) {
 	//if (z > skip_lift) return;
-	//if (Application::tgwds && shape == 538) return;
+	//if (Application::tgwds && _shape == 538) return;
 
 	// First thing, get a SortItem to use (first of unused)
-	if (!items_unused) items_unused = new SortItem(0);
-	SortItem *si = items_unused;
+	if (!_itemsUnused) _itemsUnused = new SortItem(0);
+	SortItem *si = _itemsUnused;
 
-	si->item_num = item_num;
-	si->shape = shapes->getShape(shape_num);
-	si->shape_num = shape_num;
-	si->frame = frame_num;
-	ShapeFrame *frame = si->shape->getFrame(si->frame);
-	if (!frame) {
-		perr << "Invalid shape: " << si->shape_num << "," << si->frame
+	si->_itemNum = itemNum;
+	si->_shape = _shapes->getShape(shapeNum);
+	si->_shapeNum = shapeNum;
+	si->_frame = frame_num;
+	ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
+	if (!_frame) {
+		perr << "Invalid _shape: " << si->_shapeNum << "," << si->_frame
 		     << Std::endl;
 		return;
 	}
 
-	ShapeInfo *info = shapes->getShapeInfo(shape_num);
+	ShapeInfo *info = _shapes->getShapeInfo(shapeNum);
 
 	//if (info->is_editor && !show_editor_items) return;
 	//if (info->z > shape_max_height) return;
 
 	// Dimensions
 	int32 xd, yd, zd;
-	si->flags = flags;
-	si->ext_flags = ext_flags;
+	si->_flags = flags;
+	si->_extFlags = ext_flags;
 
 	// X and Y are flipped
-	if (si->flags & Item::FLG_FLIPPED) {
-		xd = info->y * 32;  // Multiply by 32 to get actual world size
-		yd = info->x * 32;  // Multiply by 32 to get actual world size
+	if (si->_flags & Item::FLG_FLIPPED) {
+		xd = info->_y * 32;  // Multiply by 32 to get actual world size
+		yd = info->_x * 32;  // Multiply by 32 to get actual world size
 	} else {
-		xd = info->x * 32;  // Multiply by 32 to get actual world size
-		yd = info->y * 32;  // Multiply by 32 to get actual world size
+		xd = info->_x * 32;  // Multiply by 32 to get actual world size
+		yd = info->_y * 32;  // Multiply by 32 to get actual world size
 	}
 
-	zd = info->z * 8;   // Multiply by 8 to get actual world size
+	zd = info->_z * 8;   // Multiply by 8 to get actual world size
 
 	// Worldspace bounding box
-	si->x = x;
-	si->y = y;
-	si->z = z;
-	si->xleft = si->x - xd;
-	si->yfar = si->y - yd;
-	si->ztop = si->z + zd;
+	si->_x = x;
+	si->_y = y;
+	si->_z = z;
+	si->_xLeft = si->_x - xd;
+	si->_yFar = si->_y - yd;
+	si->_zTop = si->_z + zd;
 
 	// Screenspace bounding box left extent    (LNT x coord)
-	si->sxleft = si->xleft / 4 - si->y / 4 - cam_sx;
+	si->_sxLeft = si->_xLeft / 4 - si->_y / 4 - _camSx;
 	// Screenspace bounding box right extent   (RFT x coord)
-	si->sxright = si->x / 4 - si->yfar / 4 - cam_sx;
+	si->_sxRight = si->_x / 4 - si->_yFar / 4 - _camSx;
 
 	// Screenspace bounding box top x coord    (LFT x coord)
-	si->sxtop = si->xleft / 4 - si->yfar / 4 - cam_sx;
+	si->_sxTop = si->_xLeft / 4 - si->_yFar / 4 - _camSx;
 	// Screenspace bounding box top extent     (LFT y coord)
-	si->sytop = si->xleft / 8 + si->yfar / 8 - si->ztop - cam_sy;
+	si->_syTop = si->_xLeft / 8 + si->_yFar / 8 - si->_zTop - _camSy;
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
-	si->sxbot = si->x / 4 - si->y / 4 - cam_sx;
+	si->_sxBot = si->_x / 4 - si->_y / 4 - _camSx;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	si->sybot = si->x / 8 + si->y / 8 - si->z - cam_sy;
+	si->_syBot = si->_x / 8 + si->_y / 8 - si->_z - _camSy;
 
-//	si->sxleft += swo2;
-//	si->sxright += swo2;
-//	si->sxbot += swo2;
-//	si->sxtop += swo2;
+//	si->_sxLeft += swo2;
+//	si->_sxRight += swo2;
+//	si->_sxBot += swo2;
+//	si->_sxTop += swo2;
 
-//	si->sytop += sho2;
-//	si->sybot += sho2;
+//	si->_syTop += sho2;
+//	si->_syBot += sho2;
 
 	// Real Screenspace coords
-	si->sx = si->sxbot - frame->xoff;   // Left
-	si->sy = si->sybot - frame->yoff;   // Top
-	si->sx2 = si->sx + frame->width;    // Right
-	si->sy2 = si->sy + frame->height;   // Bottom
+	si->_sx = si->_sxBot - _frame->_xoff;   // Left
+	si->_sy = si->_syBot - _frame->_yoff;   // Top
+	si->_sx2 = si->_sx + _frame->_width;    // Right
+	si->_sy2 = si->_sy + _frame->_height;   // Bottom
 
 	// Do Clipping here
-	si->clipped = surf->CheckClipped(Rect(si->sx, si->sy, frame->width, frame->height));
-	if (si->clipped < 0) return;
+	si->_clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, _frame->_width, _frame->_height));
+	if (si->_clipped < 0) return;
 
 	// These help out with sorting. We calc them now, so it will be faster
-	si->f32x32 = xd == 128 && yd == 128;
-	si->flat = zd == 0;
+	si->_f32x32 = xd == 128 && yd == 128;
+	si->_flat = zd == 0;
 
 	/*
 	if (Application::tgwds) {
-	    si->draw = false;
-	    si->solid = false;
-	    si->occl = false;
+	    si->_draw = false;
+	    si->_solid = false;
+	    si->_occl = false;
 	    si->roof = false;
 	    si->noisy = false;
-	    si->anim = false;
-	    si->trans = false;
+	    si->_anim = false;
+	    si->_trans = false;
 	}
 	else
 	*/
 	{
-		si->draw = info->is_draw();
-		si->solid = info->is_solid();
-		si->occl = info->is_occl() && !(si->flags & Item::FLG_INVISIBLE) &&
-		           !(si->ext_flags & Item::EXT_TRANSPARENT);
-		si->roof = info->is_roof();
-		si->noisy = info->is_noisy();
-		si->anim = info->animtype != 0;
-		si->trans = info->is_translucent();
-		si->fixed = info->is_fixed();
-		si->land = info->is_land();
+		si->_draw = info->is_draw();
+		si->_solid = info->is_solid();
+		si->_occl = info->is_occl() && !(si->_flags & Item::FLG_INVISIBLE) &&
+		           !(si->_extFlags & Item::EXT_TRANSPARENT);
+		si->_roof = info->is_roof();
+		si->_noisy = info->is_noisy();
+		si->_anim = info->_animType != 0;
+		si->_trans = info->is_translucent();
+		si->_fixed = info->is_fixed();
+		si->_land = info->is_land();
 	}
 
-	si->occluded = false;
-	si->order = -1;
+	si->_occluded = false;
+	si->_order = -1;
 
 	// We will clear all the vector memory
 	// Stictly speaking the vector will sort of leak memory, since they
 	// are never deleted
-	si->depends.clear();
-	//si->depends.erase(si->depends.begin(), si->depends.end());    // MSVC.Netism
+	si->_depends.clear();
+	//si->_depends.erase(si->_depends.begin(), si->_depends.end());    // MSVC.Netism
 
-	// Iterate the list and compare shapes
+	// Iterate the list and compare _shapes
 
 	// Ok,
 	SortItem *addpoint = 0;
-	for (SortItem *si2 = items; si2 != 0; si2 = si2->next) {
+	for (SortItem *si2 = _items; si2 != 0; si2 = si2->_next) {
 		// Get the insert point... which is before the first item that has higher z than us
 		if (!addpoint && si->ListLessThan(si2)) addpoint = si2;
 
 		// Doesn't overlap
-		if (si2->occluded || !si->overlap(*si2)) continue;
+		if (si2->_occluded || !si->overlap(*si2)) continue;
 
 		// Attempt to find which is infront
 		if (*si < *si2) {
 			// si2 occludes si (us)
-			if (si2->occl && si2->occludes(*si)) {
+			if (si2->_occl && si2->occludes(*si)) {
 				// No need to do any more checks, this isn't visible
-				si->occluded = true;
+				si->_occluded = true;
 				break;
 			}
 
 			// si1 is behind si2, so add it to si2's dependency list
-			si2->depends.insert_sorted(si);
+			si2->_depends.insert_sorted(si);
 		} else {
 			// ss occludes si2. Sadly, we can't remove it from the list.
-			if (si->occl && si->occludes(*si2)) si2->occluded = true;
+			if (si->_occl && si->occludes(*si2)) si2->_occluded = true;
 			// si2 is behind si1, so add it to si1's dependency list
-			else si->depends.push_back(si2);
+			else si->_depends.push_back(si2);
 		}
 	}
 
 	// Add it to the list
-	items_unused = items_unused->next;
+	_itemsUnused = _itemsUnused->_next;
 
 	// have a position
 	//addpoint = 0;
 	if (addpoint) {
-		si->next = addpoint;
-		si->prev = addpoint->prev;
-		addpoint->prev = si;
-		if (si->prev) si->prev->next = si;
-		else items = si;
+		si->_next = addpoint;
+		si->_prev = addpoint->_prev;
+		addpoint->_prev = si;
+		if (si->_prev) si->_prev->_next = si;
+		else _items = si;
 	}
 	// Add it to the end of the list
 	else {
-		if (items_tail) items_tail->next = si;
-		if (!items) items = si;
-		si->next = 0;
-		si->prev = items_tail;
-		items_tail = si;
+		if (_itemsTail) _itemsTail->_next = si;
+		if (!_items) _items = si;
+		si->_next = 0;
+		si->_prev = _itemsTail;
+		_itemsTail = si;
 	}
 }
 
@@ -822,19 +821,19 @@ void ItemSorter::AddItem(Item *add) {
 #else
 
 	//if (add->iz > skip_lift) return;
-	//if (Application::tgwds && shape == 538) return;
+	//if (Application::tgwds && _shape == 538) return;
 
 	// First thing, get a SortItem to use
-	if (!items_unused) items_unused = new SortItem(0);
-	SortItem *si = items_unused;
+	if (!_itemsUnused) _itemsUnused = new SortItem(0);
+	SortItem *si = _itemsUnused;
 
-	si->item_num = add->getObjId();
-	si->shape = add->getShapeObject();
-	si->shape_num = add->getShape();
-	si->frame = add->getFrame();
-	ShapeFrame *frame = si->shape->getFrame(si->frame);
-	if (!frame) {
-		perr << "Invalid shape: " << si->shape_num << "," << si->frame
+	si->_itemNum = add->getObjId();
+	si->_shape = add->getShapeObject();
+	si->_shapeNum = add->getShape();
+	si->_frame = add->getFrame();
+	ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
+	if (!_frame) {
+		perr << "Invalid _shape: " << si->_shapeNum << "," << si->_frame
 		     << Std::endl;
 		return;
 	}
@@ -846,176 +845,176 @@ void ItemSorter::AddItem(Item *add) {
 
 	// Dimensions
 	int32 xd, yd, zd;
-	si->flags = add->getFlags();
-	si->ext_flags = add->getExtFlags();
+	si->_flags = add->getFlags();
+	si->_extFlags = add->getExtFlags();
 
 	// X and Y are flipped
-	if (si->flags & Item::FLG_FLIPPED) {
-		xd = info->y * 32;  // Multiply by 32 to get actual world size
-		yd = info->x * 32;  // Multiply by 32 to get actual world size
+	if (si->_flags & Item::FLG_FLIPPED) {
+		xd = info->_y * 32;  // Multiply by 32 to get actual world size
+		yd = info->_x * 32;  // Multiply by 32 to get actual world size
 	} else {
-		xd = info->x * 32;  // Multiply by 32 to get actual world size
-		yd = info->y * 32;  // Multiply by 32 to get actual world size
+		xd = info->_x * 32;  // Multiply by 32 to get actual world size
+		yd = info->_y * 32;  // Multiply by 32 to get actual world size
 	}
 
-	zd = info->z * 8;   // Multiply by 8 to get actual world size
+	zd = info->_z * 8;   // Multiply by 8 to get actual world size
 
 	// Worldspace bounding box
-	add->getLerped(si->x, si->y, si->z);
-	si->xleft = si->x - xd;
-	si->yfar = si->y - yd;
-	si->ztop = si->z + zd;
+	add->getLerped(si->_x, si->_y, si->_z);
+	si->_xLeft = si->_x - xd;
+	si->_yFar = si->_y - yd;
+	si->_zTop = si->_z + zd;
 
 	// Screenspace bounding box left extent    (LNT x coord)
-	si->sxleft = si->xleft / 4 - si->y / 4 - cam_sx;
+	si->_sxLeft = si->_xLeft / 4 - si->_y / 4 - _camSx;
 	// Screenspace bounding box right extent   (RFT x coord)
-	si->sxright = si->x / 4 - si->yfar / 4 - cam_sx;
+	si->_sxRight = si->_x / 4 - si->_yFar / 4 - _camSx;
 
 	// Screenspace bounding box top x coord    (LFT x coord)
-	si->sxtop = si->xleft / 4 - si->yfar / 4 - cam_sx;
+	si->_sxTop = si->_xLeft / 4 - si->_yFar / 4 - _camSx;
 	// Screenspace bounding box top extent     (LFT y coord)
-	si->sytop = si->xleft / 8 + si->yfar / 8 - si->ztop - cam_sy;
+	si->_syTop = si->_xLeft / 8 + si->_yFar / 8 - si->_zTop - _camSy;
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
-	si->sxbot = si->x / 4 - si->y / 4 - cam_sx;
+	si->_sxBot = si->_x / 4 - si->_y / 4 - _camSx;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	si->sybot = si->x / 8 + si->y / 8 - si->z - cam_sy;
+	si->_syBot = si->_x / 8 + si->_y / 8 - si->_z - _camSy;
 
-//	si->sxleft += swo2;
-//	si->sxright += swo2;
-//	si->sxbot += swo2;
-//	si->sxtop += swo2;
+//	si->_sxLeft += swo2;
+//	si->_sxRight += swo2;
+//	si->_sxBot += swo2;
+//	si->_sxTop += swo2;
 
-//	si->sytop += sho2;
-//	si->sybot += sho2;
+//	si->_syTop += sho2;
+//	si->_syBot += sho2;
 
 	// Real Screenspace coords
-	si->sx = si->sxbot - frame->xoff;   // Left
-	si->sy = si->sybot - frame->yoff;   // Top
-	si->sx2 = si->sx + frame->width;    // Right
-	si->sy2 = si->sy + frame->height;   // Bottom
+	si->_sx = si->_sxBot - _frame->_xoff;   // Left
+	si->_sy = si->_syBot - _frame->_yoff;   // Top
+	si->_sx2 = si->_sx + _frame->_width;    // Right
+	si->_sy2 = si->_sy + _frame->_height;   // Bottom
 
 	// Do Clipping here
-	si->clipped = surf->CheckClipped(Rect(si->sx, si->sy, frame->width, frame->height));
-	if (si->clipped < 0) return;
+	si->_clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, _frame->_width, _frame->_height));
+	if (si->_clipped < 0) return;
 
 	// These help out with sorting. We calc them now, so it will be faster
-	si->f32x32 = xd == 128 && yd == 128;
-	si->flat = zd == 0;
+	si->_f32x32 = xd == 128 && yd == 128;
+	si->_flat = zd == 0;
 
 	/*
 	if (Application::tgwds) {
-	    si->draw = false;
-	    si->solid = false;
-	    si->occl = false;
+	    si->_draw = false;
+	    si->_solid = false;
+	    si->_occl = false;
 	    si->roof = false;
 	    si->noisy = false;
-	    si->anim = false;
-	    si->trans = false;
+	    si->_anim = false;
+	    si->_trans = false;
 	}
 	else
 	*/
 	{
-		si->draw = info->is_draw();
-		si->solid = info->is_solid();
-		si->occl = info->is_occl() && !(si->flags & Item::FLG_INVISIBLE) &&
-		           !(si->ext_flags & Item::EXT_TRANSPARENT);
-		si->roof = info->is_roof();
-		si->noisy = info->is_noisy();
-		si->anim = info->animtype != 0;
-		si->trans = info->is_translucent();
-		si->fixed = info->is_fixed();
-		si->land = info->is_land();
+		si->_draw = info->is_draw();
+		si->_solid = info->is_solid();
+		si->_occl = info->is_occl() && !(si->_flags & Item::FLG_INVISIBLE) &&
+		           !(si->_extFlags & Item::EXT_TRANSPARENT);
+		si->_roof = info->is_roof();
+		si->_noisy = info->is_noisy();
+		si->_anim = info->_animType != 0;
+		si->_trans = info->is_translucent();
+		si->_fixed = info->is_fixed();
+		si->_land = info->is_land();
 	}
 
-	si->occluded = false;
-	si->order = -1;
+	si->_occluded = false;
+	si->_order = -1;
 
 	// We will clear all the vector memory
 	// Stictly speaking the vector will sort of leak memory, since they
 	// are never deleted
-	si->depends.clear();
-	//si->depends.erase(si->depends.begin(), si->depends.end());    // MSVC.Netism
+	si->_depends.clear();
+	//si->_depends.erase(si->_depends.begin(), si->_depends.end());    // MSVC.Netism
 
-	// Iterate the list and compare shapes
+	// Iterate the list and compare _shapes
 
 	// Ok,
 	SortItem *addpoint = 0;
-	for (SortItem *si2 = items; si2 != 0; si2 = si2->next) {
+	for (SortItem *si2 = _items; si2 != 0; si2 = si2->_next) {
 		// Get the insert point... which is before the first item that has higher z than us
 		if (!addpoint && si->ListLessThan(si2)) addpoint = si2;
 
 		// Doesn't overlap
-		if (si2->occluded || !si->overlap(*si2)) continue;
+		if (si2->_occluded || !si->overlap(*si2)) continue;
 
 		// Attempt to find which is infront
 		if (*si < *si2) {
 			// si2 occludes ss
-			if (si2->occl && si2->occludes(*si)) {
+			if (si2->_occl && si2->occludes(*si)) {
 				// No need to do any more checks, this isn't visible
-				si->occluded = true;
+				si->_occluded = true;
 				break;
 			}
 
 			// si1 is behind si2, so add it to si2's dependency list
-			si2->depends.insert_sorted(si);
+			si2->_depends.insert_sorted(si);
 		} else {
 			// ss occludes si2. Sadly, we can't remove it from the list.
-			if (si->occl && si->occludes(*si2)) si2->occluded = true;
+			if (si->_occl && si->occludes(*si2)) si2->_occluded = true;
 			// si2 is behind si1, so add it to si1's dependency list
-			else si->depends.push_back(si2);
+			else si->_depends.push_back(si2);
 		}
 	}
 
 	// Add it to the list
-	items_unused = items_unused->next;
+	_itemsUnused = _itemsUnused->_next;
 
 	// have a position
 	//addpoint = 0;
 	if (addpoint) {
-		si->next = addpoint;
-		si->prev = addpoint->prev;
-		addpoint->prev = si;
-		if (si->prev) si->prev->next = si;
-		else items = si;
+		si->_next = addpoint;
+		si->_prev = addpoint->_prev;
+		addpoint->_prev = si;
+		if (si->_prev) si->_prev->_next = si;
+		else _items = si;
 	}
 	// Add it to the end of the list
 	else {
-		if (items_tail) items_tail->next = si;
-		if (!items) items = si;
-		si->next = 0;
-		si->prev = items_tail;
-		items_tail = si;
+		if (_itemsTail) _itemsTail->_next = si;
+		if (!_items) _items = si;
+		si->_next = 0;
+		si->_prev = _itemsTail;
+		_itemsTail = si;
 	}
 #endif
 }
 
-SortItem *prev = 0;
+SortItem *_prev = 0;
 
 void ItemSorter::PaintDisplayList(bool item_highlight) {
-	prev = 0;
-	SortItem *it = items;
+	_prev = 0;
+	SortItem *it = _items;
 	SortItem *end = 0;
-	order_counter = 0;  // Reset the order_counter
+	_orderCounter = 0;  // Reset the _orderCounter
 	while (it != end) {
-		if (it->order == -1) if (PaintSortItem(it)) return;
-		it = it->next;
+		if (it->_order == -1) if (PaintSortItem(it)) return;
+		it = it->_next;
 	}
 
 	// Item highlighting. We redraw each 'item' transparent
 	if (item_highlight) {
-		it = items;
+		it = _items;
 		while (it != end) {
-			if (!(it->flags & (Item::FLG_DISPOSABLE | Item::FLG_FAST_ONLY)) && !it->fixed) {
-				surf->PaintHighlightInvis(it->shape,
-				                          it->frame,
-				                          it->sxbot,
-				                          it->sybot,
-				                          it->trans,
-				                          (it->flags & Item::FLG_FLIPPED) != 0, 0x1f00ffff);
+			if (!(it->_flags & (Item::FLG_DISPOSABLE | Item::FLG_FAST_ONLY)) && !it->_fixed) {
+				_surf->PaintHighlightInvis(it->_shape,
+				                          it->_frame,
+				                          it->_sxBot,
+				                          it->_syBot,
+				                          it->_trans,
+				                          (it->_flags & Item::FLG_FLIPPED) != 0, 0x1f00ffff);
 			}
 
-			it = it->next;
+			it = it->_next;
 		}
 
 	}
@@ -1023,78 +1022,78 @@ void ItemSorter::PaintDisplayList(bool item_highlight) {
 
 bool ItemSorter::PaintSortItem(SortItem *si) {
 	// Don't paint this, or dependencies if occluded
-	if (si->occluded) return false;
+	if (si->_occluded) return false;
 
 	// Resursion, detection
-	si->order = -2;
+	si->_order = -2;
 
 	// Iterate through our dependancies, and paint them, if possible
-	SortItem::DependsList::iterator it = si->depends.begin();
-	SortItem::DependsList::iterator end = si->depends.end();
+	SortItem::DependsList::iterator it = si->_depends.begin();
+	SortItem::DependsList::iterator end = si->_depends.end();
 	while (it != end) {
 		// Well, it can't. Implies infinite recursive sorting.
-		//if ((*it)->order == -2) CANT_HAPPEN_MSG("Detected cycle in the dependency graph");
+		//if ((*it)->_order == -2) CANT_HAPPEN_MSG("Detected cycle in the dependency graph");
 
-		if ((*it)->order == -1) if (PaintSortItem((*it))) return true;
+		if ((*it)->_order == -1) if (PaintSortItem((*it))) return true;
 
 		++it;
 	}
 
-	// Set our painting order
-	si->order = order_counter;
-	order_counter++;
+	// Set our painting _order
+	si->_order = _orderCounter;
+	_orderCounter++;
 
 	// Now paint us!
 
 //	if (wire) si->info->draw_box_back(s, dispx, dispy, 255);
 
-	if (si->ext_flags & Item::EXT_HIGHLIGHT && si->ext_flags & Item::EXT_TRANSPARENT)
-		surf->PaintHighlightInvis(si->shape, si->frame, si->sxbot, si->sybot, si->trans, (si->flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
-	if (si->ext_flags & Item::EXT_HIGHLIGHT)
-		surf->PaintHighlight(si->shape, si->frame, si->sxbot, si->sybot, si->trans, (si->flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
-	else if (si->ext_flags & Item::EXT_TRANSPARENT)
-		surf->PaintInvisible(si->shape, si->frame, si->sxbot, si->sybot, si->trans, (si->flags & Item::FLG_FLIPPED) != 0);
-	else if (si->flags & Item::FLG_FLIPPED)
-		surf->PaintMirrored(si->shape, si->frame, si->sxbot, si->sybot, si->trans);
-	else if (si->trans)
-		surf->PaintTranslucent(si->shape, si->frame, si->sxbot, si->sybot);
-	else if (!si->clipped)
-		surf->PaintNoClip(si->shape, si->frame, si->sxbot, si->sybot);
+	if (si->_extFlags & Item::EXT_HIGHLIGHT && si->_extFlags & Item::EXT_TRANSPARENT)
+		_surf->PaintHighlightInvis(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
+	if (si->_extFlags & Item::EXT_HIGHLIGHT)
+		_surf->PaintHighlight(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
+	else if (si->_extFlags & Item::EXT_TRANSPARENT)
+		_surf->PaintInvisible(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0);
+	else if (si->_flags & Item::FLG_FLIPPED)
+		_surf->PaintMirrored(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans);
+	else if (si->_trans)
+		_surf->PaintTranslucent(si->_shape, si->_frame, si->_sxBot, si->_syBot);
+	else if (!si->_clipped)
+		_surf->PaintNoClip(si->_shape, si->_frame, si->_sxBot, si->_syBot);
 	else
-		surf->Paint(si->shape, si->frame, si->sxbot, si->sybot);
+		_surf->Paint(si->_shape, si->_frame, si->_sxBot, si->_syBot);
 
 //	if (wire) si->info->draw_box_front(s, dispx, dispy, 255);
 
 	// weapon overlay
 	// FIXME: use highlight/invisibility, also add to Trace() ?
-	if (si->shape_num == 1 && si->item_num == 1) {
+	if (si->_shapeNum == 1 && si->_itemNum == 1) {
 		MainActor *av = getMainActor();
 		const WeaponOverlayFrame *wo_frame = 0;
 		uint32 wo_shapenum;
 		av->getWeaponOverlay(wo_frame, wo_shapenum);
 		if (wo_frame) {
 			Shape *wo_shape = GameData::get_instance()->getMainShapes()->getShape(wo_shapenum);
-			surf->Paint(wo_shape, wo_frame->frame,
-			            si->sxbot + wo_frame->xoff,
-			            si->sybot + wo_frame->yoff);
+			_surf->Paint(wo_shape, wo_frame->_frame,
+			            si->_sxBot + wo_frame->_xOff,
+			            si->_syBot + wo_frame->_yOff);
 		}
 	}
 
-	if (sort_limit) {
-		if (order_counter == sort_limit) {
+	if (_sortLimit) {
+		if (_orderCounter == _sortLimit) {
 			static uint32 previt = 0;
-			int x1 = si->xleft;
-			int y1 = si->yfar;
-			int z2 = si->ztop;
-			if (!previt || previt != si->item_num) {
-				previt = si->item_num;
-				pout << si->shape_num << ":" << si->frame << " (" << x1 << "," << y1 << "," << si->z << ") (" << si->x << "," << si->y << "," << z2 << ")" << Std::endl;
+			int x1 = si->_xLeft;
+			int y1 = si->_yFar;
+			int z2 = si->_zTop;
+			if (!previt || previt != si->_itemNum) {
+				previt = si->_itemNum;
+				pout << si->_shapeNum << ":" << si->_frame << " (" << x1 << "," << y1 << "," << si->_z << ") (" << si->_x << "," << si->_y << "," << z2 << ")" << Std::endl;
 				//  ss->info->print();
-				if (prev) *prev << *si;
+				if (_prev) *_prev << *si;
 			}
 			return true;
 		}
-		prev = si;
+		_prev = si;
 	}
 
 	return false;
@@ -1102,27 +1101,27 @@ bool ItemSorter::PaintSortItem(SortItem *si) {
 
 bool ItemSorter::NullPaintSortItem(SortItem *si) {
 	// Don't paint this, or dependencies if occluded
-	if (si->occluded) return false;
+	if (si->_occluded) return false;
 
 	// Resursion, detection
-	si->order = -2;
+	si->_order = -2;
 
 	// Iterate through our dependancies, and paint them, if possible
-	SortItem::DependsList::iterator it = si->depends.begin();
-	SortItem::DependsList::iterator end = si->depends.end();
+	SortItem::DependsList::iterator it = si->_depends.begin();
+	SortItem::DependsList::iterator end = si->_depends.end();
 	while (it != end) {
 		// Well, it can't. Implies recursive sorting. Can happen though so
 		// you had best leave this commented out
-		//if ((*it)->order == -2) CANT_HAPPEN_MSG("Recursive item sorting");
+		//if ((*it)->_order == -2) CANT_HAPPEN_MSG("Recursive item sorting");
 
-		if ((*it)->order == -1) if (NullPaintSortItem((*it))) return true;
+		if ((*it)->_order == -1) if (NullPaintSortItem((*it))) return true;
 
 		++it;
 	}
 
-	// Set our painting/sorting order
-	si->order = order_counter;
-	order_counter++;
+	// Set our painting/sorting _order
+	si->_order = _orderCounter;
+	_orderCounter++;
 
 	return false;
 }
@@ -1131,40 +1130,40 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 	SortItem *it;
 	SortItem *selected;
 
-	if (!order_counter) { // If no order_counter we need to sort the items
-		it = items;
-		order_counter = 0;  // Reset the order_counter
+	if (!_orderCounter) { // If no _orderCounter we need to sort the _items
+		it = _items;
+		_orderCounter = 0;  // Reset the _orderCounter
 		while (it != 0) {
-			if (it->order == -1) if (NullPaintSortItem(it)) break;
+			if (it->_order == -1) if (NullPaintSortItem(it)) break;
 
-			it = it->next;
+			it = it->_next;
 		}
 	}
 
-	// Firstly, we check for highlighted items
+	// Firstly, we check for highlighted _items
 	selected = 0;
 
 	if (item_highlight) {
-		it = items_tail;
+		it = _itemsTail;
 		selected = 0;
 
-		for (it = items_tail; it != 0; it = it->prev) {
-			if (!(it->flags & (Item::FLG_DISPOSABLE | Item::FLG_FAST_ONLY)) && !it->fixed) {
+		for (it = _itemsTail; it != 0; it = it->_prev) {
+			if (!(it->_flags & (Item::FLG_DISPOSABLE | Item::FLG_FAST_ONLY)) && !it->_fixed) {
 
-				if (!it->item_num) continue;
+				if (!it->_itemNum) continue;
 
 				// Doesn't Overlap
-				if (x < it->sx || x >= it->sx2 || y < it->sy || y >= it->sy2) continue;
+				if (x < it->_sx || x >= it->_sx2 || y < it->_sy || y >= it->_sy2) continue;
 
-				// Now check the frame itself
-				ShapeFrame *frame = it->shape->getFrame(it->frame);
-				assert(frame); // invalid frames shouldn't have been added to the list
+				// Now check the _frame itself
+				ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
+				assert(_frame); // invalid frames shouldn't have been added to the list
 
 				// Nope, doesn't have a point
-				if (it->flags & Item::FLG_FLIPPED) {
-					if (!frame->hasPoint(it->sxbot - x, y - it->sybot)) continue;
+				if (it->_flags & Item::FLG_FLIPPED) {
+					if (!_frame->hasPoint(it->_sxBot - x, y - it->_syBot)) continue;
 				} else {
-					if (!frame->hasPoint(x - it->sxbot, y - it->sybot)) continue;
+					if (!_frame->hasPoint(x - it->_sxBot, y - it->_syBot)) continue;
 				}
 
 				// Ok now check against selected
@@ -1174,43 +1173,43 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 
 	}
 
-	// Ok, this is all pretty simple. We iterate all the items.
+	// Ok, this is all pretty simple. We iterate all the _items.
 	// We then check to see if the item has a point where the trace goes.
-	// Finally we then set the selected SortItem if it's 'order' is highest
+	// Finally we then set the selected SortItem if it's '_order' is highest
 
-	if (!selected) for (it = items; it != 0; it = it->next) {
-			if (!it->item_num) continue;
+	if (!selected) for (it = _items; it != 0; it = it->_next) {
+			if (!it->_itemNum) continue;
 
 			// Doesn't Overlap
-			if (x < it->sx || x >= it->sx2 || y < it->sy || y >= it->sy2) continue;
+			if (x < it->_sx || x >= it->_sx2 || y < it->_sy || y >= it->_sy2) continue;
 
-			// Now check the frame itself
-			ShapeFrame *frame = it->shape->getFrame(it->frame);
-			assert(frame); // invalid frames shouldn't have been added to the list
+			// Now check the _frame itself
+			ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
+			assert(_frame); // invalid frames shouldn't have been added to the list
 
 			// Nope, doesn't have a point
-			if (it->flags & Item::FLG_FLIPPED) {
-				if (!frame->hasPoint(it->sxbot - x, y - it->sybot)) continue;
+			if (it->_flags & Item::FLG_FLIPPED) {
+				if (!_frame->hasPoint(it->_sxBot - x, y - it->_syBot)) continue;
 			} else {
-				if (!frame->hasPoint(x - it->sxbot, y - it->sybot)) continue;
+				if (!_frame->hasPoint(x - it->_sxBot, y - it->_syBot)) continue;
 			}
 
 			// Ok now check against selected
-			if (!selected || (it->order > selected->order)) selected = it;
+			if (!selected || (it->_order > selected->_order)) selected = it;
 		}
 
 	if (selected) {
 
 		if (face) {
-			// shortcut for zero-height items
-			if (selected->ztop == selected->z) {
+			// shortcut for zero-height _items
+			if (selected->_zTop == selected->_z) {
 				*face = Z_FACE;
 			} else {
 				// determine face that was hit
 
 				// RNT coordinates
-				int32 RNTx = selected->sxbot;
-				int32 RNTy = selected->sybot - selected->ztop + selected->z;
+				int32 RNTx = selected->_sxBot;
+				int32 RNTy = selected->_syBot - selected->_zTop + selected->_z;
 
 				/*
 				            Bounding Box layout (top part)
@@ -1236,7 +1235,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 			}
 		}
 
-		return selected->item_num;
+		return selected->_itemNum;
 	}
 
 	return 0;

@@ -273,7 +273,6 @@ public:
 
 	bool hasFeature(EngineFeature f) const override;
 	void pauseEngineIntern(bool pause) override;
-	GUI::Debugger *getDebugger() override;
 
 	// info
 	int32			_screenWidth;
@@ -285,7 +284,6 @@ public:
 	Gfx				*_gfx;
 	Disk			*_disk;
 	Input			*_input;
-	Debugger		*_debugger;
 	SaveLoad		*_saveLoad;
 	MenuInputHelper *_menuHelper;
 	Common::RandomSource _rnd;

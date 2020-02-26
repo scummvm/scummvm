@@ -228,7 +228,9 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 }
 
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
-	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
+	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE
+	           || ev.type == EVENT_WHEELDOWN
+	           || ev.type == EVENT_WHEELUP) {
 		return kIncomingEventInstant;
 	} else if (ev.type == EVENT_JOYAXIS_MOTION) {
 		if (ev.joystick.axis >= ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
@@ -260,6 +262,8 @@ bool Keymapper::isMouseEvent(const Event &event) {
 	        || event.type == EVENT_RBUTTONUP
 	        || event.type == EVENT_MBUTTONDOWN
 	        || event.type == EVENT_MBUTTONUP
+	        || event.type == EVENT_WHEELDOWN
+	        || event.type == EVENT_WHEELUP
 	        || event.type == EVENT_MOUSEMOVE;
 }
 

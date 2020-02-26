@@ -36,18 +36,17 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetGump, ModalGump)
 
-TargetGump::TargetGump() : ModalGump(), target_tracing(false) {
+TargetGump::TargetGump() : ModalGump(), _targetTracing(false) {
 
 }
 
 
 TargetGump::TargetGump(int x_, int y_)
-	: ModalGump(x_, y_, 0, 0), target_tracing(false) {
+	: ModalGump(x_, y_, 0, 0), _targetTracing(false) {
 
 }
 
 TargetGump::~TargetGump() {
-
 }
 
 void TargetGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -75,17 +74,17 @@ void TargetGump::Close(bool no_del) {
 bool TargetGump::PointOnGump(int mx, int my) {
 	// HACK alert: if we're currently tracing from TargetGump::OnMouseUp,
 	//  then we do NOT want to intercept the trace
-	if (target_tracing) return false;
+	if (_targetTracing) return false;
 
 	return ModalGump::PointOnGump(mx, my);
 }
 
 void TargetGump::OnMouseUp(int button, int32 mx, int32 my) {
-	target_tracing = true;
+	_targetTracing = true;
 
-	parent->GumpToScreenSpace(mx, my);
+	_parent->GumpToScreenSpace(mx, my);
 
-	Gump *desktopgump = parent;
+	Gump *desktopgump = _parent;
 	ObjId objId_ = desktopgump->TraceObjId(mx, my);
 	Item *item = getItem(objId_);
 
@@ -94,11 +93,11 @@ void TargetGump::OnMouseUp(int button, int32 mx, int32 my) {
 		pout << "Target result: ";
 		item->dumpInfo();
 
-		process_result = objId_;
+		_processResult = objId_;
 		Close();
 	}
 
-	target_tracing = false;
+	_targetTracing = false;
 }
 
 uint32 TargetGump::I_target(const uint8 * /*args*/, unsigned int /*argsize*/) {

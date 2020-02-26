@@ -43,7 +43,7 @@ namespace CryOmni3D {
 
 CryOmni3DEngine::CryOmni3DEngine(OSystem *syst,
                                  const CryOmni3DGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc),
-	_canLoadSave(false), _fontManager(), _sprites(), _dragStatus(kDragStatus_NoDrag),
+	_canLoadSave(false), _fontManager(), _sprites(), _dragStatus(kDragStatus_NoDrag), _lastMouseButton(0),
 	_autoRepeatNextEvent(uint(-1)) {
 	if (!_mixer->isReady()) {
 		error("Sound initialization failed");
@@ -194,14 +194,14 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 Image::ImageDecoder *CryOmni3DEngine::loadHLZ(const Common::String &filename) {
 	Common::String fname(prepareFileName(filename, "hlz"));
 
-	Image::ImageDecoder *imageDecoder = new Image::HLZFileDecoder();
-
 	Common::File file;
 
 	if (!file.open(fname)) {
 		warning("Failed to open hlz file %s/%s", filename.c_str(), fname.c_str());
 		return nullptr;
 	}
+
+	Image::ImageDecoder *imageDecoder = new Image::HLZFileDecoder();
 
 	if (!imageDecoder->loadStream(file)) {
 		warning("Failed to open hlz file %s", fname.c_str());

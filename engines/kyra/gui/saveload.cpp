@@ -254,13 +254,6 @@ bool KyraEngine_v1::saveFileLoadable(int slot) {
 	return false;
 }
 
-void KyraEngine_v1::checkAutosave() {
-	if (shouldPerformAutoSave(_lastAutosave)) {
-		saveGameStateIntern(999, "Autosave", 0);
-		_lastAutosave = _system->getMillis();
-	}
-}
-
 void KyraEngine_v1::loadGameStateCheck(int slot) {
 	// FIXME: Instead of throwing away the error returned by
 	// loadGameState, we should use it / augment it.

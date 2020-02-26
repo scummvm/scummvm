@@ -223,10 +223,10 @@ protected:
 			return err;
 		return go();
 	}
-	GUI::Debugger *getDebugger() override;
-	bool hasFeature(EngineFeature f) const override;
-	void syncSoundSettings() override;
-	void pauseEngineIntern(bool pause) override;
+
+	virtual bool hasFeature(EngineFeature f) const override;
+	virtual void syncSoundSettings() override;
+	virtual void pauseEngineIntern(bool pause) override;
 
 	virtual void setupOpcodes();
 	uint16 _numOpcodes, _opcode;
@@ -589,8 +589,6 @@ protected:
 	bool _effectsPaused;
 	bool _ambientPaused;
 	bool _musicPaused;
-
-	Debugger *_debugger;
 
 	uint8 _saveGameNameLen;
 	uint16 _saveLoadRowCurPos;

@@ -91,15 +91,15 @@ void AIScriptBlimpGuy::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptBlimpGuy::EnteredScene(int sceneId) {
+void AIScriptBlimpGuy::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptBlimpGuy::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptBlimpGuy::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptBlimpGuy::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptBlimpGuy::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

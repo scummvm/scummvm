@@ -216,14 +216,12 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 namespace Cine {
 
 Common::Error CineEngine::loadGameState(int slot) {
-	char saveNameBuffer[256];
-	sprintf(saveNameBuffer, "%s.%1d", _targetName.c_str(), slot);
-	bool gameLoaded = makeLoad(saveNameBuffer);
+	bool gameLoaded = makeLoad(getSaveStateName(slot));
 
 	return gameLoaded ? Common::kNoError : Common::kUnknownError;
 }
 
-Common::Error CineEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error CineEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	// Load savegame descriptions from index file
 	loadSaveDirectory();
 
@@ -244,13 +242,15 @@ Common::Error CineEngine::saveGameState(int slot, const Common::String &desc) {
 	delete fHandle;
 
 	// Save game
-	char saveFileName[256];
-	sprintf(saveFileName, "%s.%1d", _targetName.c_str(), slot);
-	makeSave(saveFileName);
+	makeSave(getSaveStateName(slot));
 
 	checkDataDisk(-1);
 
 	return Common::kNoError;
+}
+
+Common::String CineEngine::getSaveStateName(int slot) const {
+	return Common::String::format("%s.%1d", _targetName.c_str(), slot);
 }
 
 bool CineEngine::canLoadGameStateCurrently() {

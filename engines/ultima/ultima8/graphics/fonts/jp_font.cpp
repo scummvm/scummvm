@@ -35,34 +35,33 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(JPFont, Font)
 
 
 JPFont::JPFont(ShapeFont *jpfont, unsigned int fontnum_)
-	: fontnum(fontnum_), shapefont(jpfont) {
-	assert(shapefont->frameCount() > 256);
+	: _fontNum(fontnum_), _shapeFont(jpfont) {
+	assert(_shapeFont->frameCount() > 256);
 }
 
 
 JPFont::~JPFont() {
-
 }
 
 int JPFont::getWidth(int c) {
-	return shapefont->getFrame(c)->width;
+	return _shapeFont->getFrame(c)->_width;
 }
 
 int JPFont::getHeight() {
-	return shapefont->getHeight();
+	return _shapeFont->getHeight();
 }
 
 int JPFont::getBaseline() {
-	return shapefont->getBaseline();
+	return _shapeFont->getBaseline();
 }
 
 int JPFont::getBaselineSkip() {
-	return shapefont->getBaselineSkip();
+	return _shapeFont->getBaselineSkip();
 }
 
 
 void JPFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
-	int hlead = shapefont->getHlead();
+	int hlead = _shapeFont->getHlead();
 	width = hlead;
 	height = getHeight();
 
@@ -104,7 +103,7 @@ RenderedText *JPFont::renderText(const Std::string &text,
 	                                cursor);
 
 	return new JPRenderedText(lines, resultwidth, resultheight,
-	                          shapefont->getVlead(), shapefont, fontnum);
+	                          _shapeFont->getVlead(), _shapeFont, _fontNum);
 }
 
 } // End of namespace Ultima8

@@ -44,7 +44,7 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	_loadSlotNumber = -1;
 
 	// Set the up the debugger
-	_debugger = new Debugger();
+	setDebugger(new Debugger());
 	DebugMan.addDebugChannel(kTonyDebugAnimations, "animations", "Animations debugging");
 	DebugMan.addDebugChannel(kTonyDebugActions, "actions", "Actions debugging");
 	DebugMan.addDebugChannel(kTonyDebugSound, "sound", "Sound debugging");
@@ -95,8 +95,6 @@ TonyEngine::~TonyEngine() {
 	// Reset the coroutine scheduler
 	CoroScheduler.reset();
 	CoroScheduler.setResourceCallback(NULL);
-
-	delete _debugger;
 }
 
 /**
@@ -545,6 +543,10 @@ Common::String TonyEngine::getSaveStateFileName(int n) {
 	return Common::String::format("tony.%03d", n);
 }
 
+Common::String TonyEngine::getSaveStateName(int slot) const {
+	return getSaveStateFileName(slot);
+}
+
 void TonyEngine::autoSave(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	Common::String buf;
@@ -692,9 +694,6 @@ void TonyEngine::playProcess(CORO_PARAM, const void *param) {
 
 		// Paint the frame onto the screen
 		g_vm->_window.repaint();
-
-		// Signal the ScummVM debugger
-		g_vm->_debugger->onFrame();
 	}
 
 	CORO_END_CODE;
@@ -757,7 +756,7 @@ Common::Error TonyEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (!GLOBALS._gfxEngine)
 		return Common::kUnknownError;
 

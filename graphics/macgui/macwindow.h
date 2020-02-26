@@ -36,6 +36,7 @@ namespace Graphics {
 
 class MacWindowManager;
 class MacWindowBorder;
+class MacWidget;
 
 namespace MacWindowConstants {
 enum WindowType {
@@ -61,6 +62,14 @@ enum WindowClick {
 };
 }
 using namespace MacWindowConstants;
+
+struct WidgetInfo {
+	Common::Rect bbox;
+	MacWidget *widget;
+
+	WidgetInfo(MacWidget *widget_, int x, int y);
+	~WidgetInfo();
+};
 
 /**
  * Abstract class that defines common functionality for all window classes.
@@ -150,6 +159,8 @@ public:
 	 */
 	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
 
+	void addWidget(MacWidget *widget, int x, int y);
+
 protected:
 	int _id;
 	WindowType _type;
@@ -163,6 +174,8 @@ protected:
 
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
+
+	Common::List<WidgetInfo *> _widgets;
 
 public:
 	MacWindowManager *_wm;

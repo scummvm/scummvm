@@ -67,43 +67,44 @@ public:
 	void updateActorFlags();
 
 	//! get the current position
-	void getPosition(int32 &x_, int32 &y_, int32 &z_) {
-		x_ = x;
-		y_ = y;
-		z_ = z;
+	void getPosition(int32 &x, int32 &y, int32 &z) const {
+		x = _x;
+		y = _y;
+		z = _z;
 	}
 
-	void getInterpolatedPosition(int32 &x_, int32 &y_, int32 &z_, int fc);
+	void getInterpolatedPosition(int32 &x_, int32 &y_, int32 &z_, int fc)
+            const;
 
 	//! get the difference between current position and previous position
-	void getSpeed(int32 &dx, int32 &dy, int32 &dz);
+	void getSpeed(int32 &dx, int32 &dy, int32 &dz) const;
 
 	//! get the current (shape)frame
-	uint32 getFrame() {
-		return shapeframe;
+	uint32 getFrame() const {
+		return _shapeFrame;
 	}
 
 	//! get the current AnimAction
-	AnimAction *getAnimAction() {
-		return animaction;
+	AnimAction *getAnimAction() const {
+		return _animAction;
 	}
 
 	//! get the current AnimFrame
-	AnimFrame *getAnimFrame();
+	AnimFrame *getAnimFrame() const;
 
 	void setTargetedMode(int32 x_, int32 y_, int32 z_);
 
 	bool isDone() const {
-		return done;
+		return _done;
 	}
 	bool isBlocked() const {
-		return blocked;
+		return _blocked;
 	}
 	bool isUnsupported() const {
-		return unsupported;
+		return _unsupported;
 	}
 	ObjId hitSomething() const {
-		return hitobject;
+		return _hitObject;
 	}
 
 	bool load(IDataSource *ids, uint32 version);
@@ -115,34 +116,34 @@ private:
 		TargetMode
 	};
 
-	unsigned int getNextFrame(unsigned int frame);
+	unsigned int getNextFrame(unsigned int frame) const;
 	void checkWeaponHit();
 
-	unsigned int startframe, endframe;
-	bool firstframe;
-	unsigned int currentframe;
+	unsigned int _startFrame, _endFrame;
+	bool _firstFrame;
+	unsigned int _currentFrame;
 
-	ObjId actor;
-	unsigned int dir;
+	ObjId _actor;
+	unsigned int _dir;
 
-	AnimAction *animaction;
+	AnimAction *_animAction;
 
 	// actor state
-	int32 prevx, prevy, prevz;
-	int32 x, y, z;
-	int32 startx, starty, startz;
-	int32 target_dx, target_dy, target_dz;
-	int32 target_offground_left;
-	bool firststep, flipped;
-	uint32 shapeframe;
+	int32 _prevX, _prevY, _prevZ;
+	int32 _x, _y, _z;
+	int32 _startX, _startY, _startZ;
+	int32 _targetDx, _targetDy, _targetDz;
+	int32 _targetOffGroundLeft;
+	bool _firstStep, _flipped;
+	uint32 _shapeFrame;
 
 	// status flags
-	bool done;
-	bool blocked;
-	bool unsupported;
-	ObjId hitobject;
+	bool _done;
+	bool _blocked;
+	bool _unsupported;
+	ObjId _hitObject;
 
-	Mode mode;
+	Mode _mode;
 };
 
 } // End of namespace Ultima8

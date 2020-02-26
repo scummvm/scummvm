@@ -123,7 +123,7 @@ Common::Error ToltecsEngine::run() {
 	_menuSystem = new MenuSystem(this);
 
 	_sound = new Sound(this);
-	_console = new Console(this);
+	setDebugger(new Console(this));
 
 	_cfgText = ConfMan.getBool("subtitles");
 	_cfgVoices = !ConfMan.getBool("speech_mute");
@@ -176,7 +176,6 @@ Common::Error ToltecsEngine::run() {
 	_music->stopSequence();
 	_sound->stopAll();
 
-	delete _console;
 	delete _arc;
 	delete _res;
 	delete _screen;
@@ -305,7 +304,6 @@ void ToltecsEngine::drawScreen() {
 		_screen->_guiRefresh = false;
 	}
 
-	_console->onFrame();
 	_system->updateScreen();
 	_system->delayMillis(10);
 
@@ -321,9 +319,6 @@ void ToltecsEngine::updateInput() {
 			_keyState = event.kbd;
 
 			//debug("key: flags = %02X; keycode = %d", _keyState.flags, _keyState.keycode);
-
-			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d)
-				_console->attach();
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_F5:

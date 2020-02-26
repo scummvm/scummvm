@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
-
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -31,7 +30,6 @@
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -58,22 +56,22 @@ static const int noShapeId = 50;
 void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
-	ShapeFrame *sf = shape->getFrame(0);
+	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
+	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
 
 	FrameID askshape(GameData::GUMPS, askShapeId, 0);
 	askshape = _TL_SHP_(askshape);
 
 	Shape *askShape = GameData::get_instance()->getShape(askshape);
-	sf = askShape->getFrame(askshape.framenum);
+	sf = askShape->getFrame(askshape._frameNum);
 	assert(sf);
 
-	Gump *ask = new Gump(0, 0, sf->width, sf->height);
-	ask->SetShape(askShape, askshape.framenum);
+	Gump *ask = new Gump(0, 0, sf->_width, sf->_height);
+	ask->SetShape(askShape, askshape._frameNum);
 	ask->InitGump(this);
 	ask->setRelativePosition(TOP_CENTER, 0, 5);
 
@@ -86,7 +84,7 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	widget = new ButtonWidget(0, 0, yesbutton_up, yesbutton_down);
 	widget->InitGump(this);
 	widget->setRelativePosition(TOP_LEFT, 16, 38);
-	yesWidget = widget->getObjId();
+	_yesWidget = widget->getObjId();
 
 	FrameID nobutton_up(GameData::GUMPS, noShapeId, 0);
 	FrameID nobutton_down(GameData::GUMPS, noShapeId, 1);
@@ -96,7 +94,7 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	widget = new ButtonWidget(0, 0, nobutton_up, nobutton_down);
 	widget->InitGump(this);
 	widget->setRelativePosition(TOP_RIGHT, -16, 38);
-	noWidget = widget->getObjId();
+	_noWidget = widget->getObjId();
 }
 
 
@@ -120,9 +118,9 @@ bool QuitGump::OnKeyDown(int key, int mod) {
 void QuitGump::ChildNotify(Gump *child, uint32 message) {
 	ObjId cid = child->getObjId();
 	if (message == ButtonWidget::BUTTON_CLICK) {
-		if (cid == yesWidget) {
+		if (cid == _yesWidget) {
 			Ultima8Engine::get_instance()->ForceQuit();
-		} else if (cid == noWidget) {
+		} else if (cid == _noWidget) {
 			Close();
 		}
 	}
@@ -145,10 +143,6 @@ void QuitGump::verifyQuit() {
 	ModalGump *gump = new QuitGump();
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);
-}
-
-void QuitGump::ConCmd_verifyQuit(const Console::ArgvType &argv) {
-	QuitGump::verifyQuit();
 }
 
 bool QuitGump::loadData(IDataSource *ids) {

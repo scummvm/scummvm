@@ -28,7 +28,6 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/misc/args.h"
 #include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/games/game_detector.h"
 #include "ultima/shared/std/misc.h"
 
 namespace Ultima {
@@ -39,28 +38,26 @@ using Std::string;
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(CoreApp)
 
-CoreApp *CoreApp::application = 0;
+CoreApp *CoreApp::_application = 0;
 
 CoreApp::CoreApp(const Ultima::UltimaGameDescription *gameDesc)
-		: _gameDesc(gameDesc), isRunning(false), gameinfo(0), filesystem(0),
-		configfileman(0), settingman(0), oHelp(false), oQuiet(false), oVQuiet(false) {
-	application = this;
-	_console = new Console();
+		: _gameDesc(gameDesc), _isRunning(false), _gameInfo(0), _fileSystem(0),
+		_configFileMan(0), _settingMan(0), _oHelp(false), _oQuiet(false), _oVQuiet(false) {
+	_application = this;
 }
 
 CoreApp::~CoreApp() {
-	for (GameMap::iterator i = games.begin(); i != games.end(); ++i)
+	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
 		delete i->_value;
 
-	games.clear();
+	_games.clear();
 
-	FORGET_OBJECT(filesystem);
-	FORGET_OBJECT(settingman);
-	FORGET_OBJECT(configfileman);
-	FORGET_OBJECT(gameinfo);
-	FORGET_OBJECT(_console);
+	FORGET_OBJECT(_fileSystem);
+	FORGET_OBJECT(_settingMan);
+	FORGET_OBJECT(_configFileMan);
+	FORGET_OBJECT(_gameInfo);
 
-	application = 0;
+	_application = 0;
 }
 
 void CoreApp::startup() {
@@ -68,19 +65,7 @@ void CoreApp::startup() {
 
 	ParseArgs(0, 0);
 
-	// if we're spitting out help, we probably want to avoid having the
-	// other cruft dumped too...
-	if (oHelp) {
-		oQuiet = oVQuiet = true;
-	}
-	if (oQuiet)
-		con->setMsgMask(static_cast<MsgMask>(MM_ALL & ~MM_INFO &
-		                                    ~MM_MINOR_WARN));
-	if (oVQuiet)
-		con->setMsgMask(static_cast<MsgMask>(MM_ALL & ~MM_INFO & ~MM_MINOR_WARN
-		                                    & ~MM_MAJOR_WARN & ~MM_MINOR_ERR));
-
-	if (oHelp) {
+	if (_oHelp) {
 		helpMe(); // Note: this is virtual
 		error("Startup failed");
 	}
@@ -92,22 +77,22 @@ void CoreApp::startup() {
 }
 
 void CoreApp::DeclareArgs() {
-	parameters.declare("--game",    &oGamename, "");
-	parameters.declare("-h",        &oHelp,     true);
-	parameters.declare("--help",    &oHelp,     true);
-	parameters.declare("-q",        &oQuiet,    true);
-	parameters.declare("-qq",       &oVQuiet,   true);
+	_parameters.declare("--game",    &_oGameName, "");
+	_parameters.declare("-h",        &_oHelp,     true);
+	_parameters.declare("--help",    &_oHelp,     true);
+	_parameters.declare("-q",        &_oQuiet,    true);
+	_parameters.declare("-qq",       &_oVQuiet,   true);
 }
 
 void CoreApp::sysInit() {
-	gameinfo = 0;
+	_gameInfo = 0;
 
-	filesystem = new FileSystem;
+	_fileSystem = new FileSystem;
 
-	configfileman = new ConfigFileManager();
-	settingman = new SettingManager();
-	settingman->setDomainName(SettingManager::DOM_GLOBAL, "pentagram");
-	settingman->setCurrentDomain(SettingManager::DOM_GLOBAL);
+	_configFileMan = new ConfigFileManager();
+	_settingMan = new SettingManager();
+	_settingMan->setDomainName(SettingManager::DOM_GLOBAL, "pentagram");
+	_settingMan->setCurrentDomain(SettingManager::DOM_GLOBAL);
 }
 
 // load configuration files
@@ -117,10 +102,10 @@ void CoreApp::loadConfig() {
 	bool dataconf, homeconf;
 
 	// system-wide config, read-only
-	dataconf = settingman->readConfigFile("@data/pentagram.ini", true);
+	dataconf = _settingMan->readConfigFile("@data/pentagram.ini", true);
 
 	// user config
-	homeconf = settingman->readConfigFile("@home/pentagram.ini");
+	homeconf = _settingMan->readConfigFile("@home/pentagram.ini");
 
 	if (!homeconf && !dataconf) {
 		pout << "No configuration files found." << Std::endl;
@@ -134,9 +119,9 @@ void CoreApp::loadConfig() {
 
 	//  load pentagram specific data path
 	Std::string data;
-	if (settingman->get("data", data, SettingManager::DOM_GLOBAL)) {
+	if (_settingMan->get("data", data, SettingManager::DOM_GLOBAL)) {
 		pout << "Setting custom data path: " << data << Std::endl;
-		bool ok = filesystem->AddVirtualPath("@data", data);
+		bool ok = _fileSystem->AddVirtualPath("@data", data);
 		if (!ok) {
 			perr << "Error opening data directory." << Std::endl;
 		}
@@ -145,8 +130,8 @@ void CoreApp::loadConfig() {
 
 void CoreApp::setupGameList() {
 	Std::vector<istring> gamelist;
-	gamelist = settingman->listGames();
-	con->Print(MM_INFO, "Scanning config file for games:\n");
+	gamelist = _settingMan->listGames();
+	debugN(MM_INFO, "Scanning config file for games:\n");
 	Std::vector<istring>::iterator iter;
 	istring gamename;
 
@@ -156,17 +141,17 @@ void CoreApp::setupGameList() {
 		bool detected = getGameInfo(game, info);
 
 		// output detected game info
-		con->Printf(MM_INFO, "%s: ", game.c_str());
+		debugN(MM_INFO, "%s: ", game.c_str());
 		if (detected) {
 			// add game to games map
-			games[game] = info;
+			_games[game] = info;
 
 			Std::string details = info->getPrintDetails();
-			con->Print(MM_INFO, details.c_str());
+			debugN(MM_INFO, "%s", details.c_str());
 		} else {
-			con->Print(MM_INFO, "unknown, skipping");
+			debugN(MM_INFO, "unknown, skipping");
 		}
-		con->Print(MM_INFO, "\n");
+		debugN(MM_INFO, "\n");
 	}
 }
 
@@ -174,26 +159,26 @@ GameInfo *CoreApp::getDefaultGame() {
 	istring gamename;
 
 	Std::string defaultgame;
-	bool defaultset = settingman->get("defaultgame", defaultgame,
+	bool defaultset = _settingMan->get("defaultgame", defaultgame,
 	                                  SettingManager::DOM_GLOBAL);
 
-	if (oGamename != "") {
+	if (_oGameName != "") {
 		// game specified on commandline
-		gamename = oGamename;
+		gamename = _oGameName;
 
 	} else if (defaultset) {
 		// default game specified in config file
 		gamename = defaultgame;
 
-	} else if (games.size() == 2) {// TODO - Do this in a better method
+	} else if (_games.size() == 2) {// TODO - Do this in a better method
 		// only one game in config file, so pick that
-		for (GameMap::iterator i = games.begin(); i != games.end(); ++i) {
-			if (i->_value->name != "pentagram")
-				gamename = i->_value->name;
+		for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i) {
+			if (i->_value->_name != "pentagram")
+				gamename = i->_value->_name;
 		}
 
-	} else if (games.size() == 1) {
-		gamename = games.begin()->_value->name;
+	} else if (_games.size() == 1) {
+		gamename = _games.begin()->_value->_name;
 
 	} else {
 		perr << "Multiple games found in configuration, but no default "
@@ -219,36 +204,36 @@ GameInfo *CoreApp::getDefaultGame() {
 
 bool CoreApp::setupGame(GameInfo *info) {
 	if (!info) return false;
-	assert(info->name != "");
+	assert(info->_name != "");
 
-	gameinfo = info;
+	_gameInfo = info;
 
-	pout << "Selected game: " << info->name << Std::endl;
+	pout << "Selected game: " << info->_name << Std::endl;
 	pout << info->getPrintDetails() << Std::endl;
 
 	setupGamePaths(info);
 
-	return info->name != "pentagram";
+	return info->_name != "pentagram";
 }
 
 void CoreApp::killGame() {
 	// Save the settings!
 	pout << "Saving settings" << Std::endl;
-	settingman->write();
+	_settingMan->write();
 
-	filesystem->RemoveVirtualPath("@game");
-	filesystem->RemoveVirtualPath("@work");
-	filesystem->RemoveVirtualPath("@save");
+	_fileSystem->RemoveVirtualPath("@game");
+	_fileSystem->RemoveVirtualPath("@work");
+	_fileSystem->RemoveVirtualPath("@save");
 
-	configfileman->clearRoot("bindings");
-	configfileman->clearRoot("language");
-	configfileman->clearRoot("weapons");
-	configfileman->clearRoot("armour");
-	configfileman->clearRoot("monsters");
-	configfileman->clearRoot("game");
-	settingman->setCurrentDomain(SettingManager::DOM_GLOBAL);
+	_configFileMan->clearRoot("bindings");
+	_configFileMan->clearRoot("language");
+	_configFileMan->clearRoot("weapons");
+	_configFileMan->clearRoot("armour");
+	_configFileMan->clearRoot("monsters");
+	_configFileMan->clearRoot("game");
+	_settingMan->setCurrentDomain(SettingManager::DOM_GLOBAL);
 
-	gameinfo = 0;
+	_gameInfo = 0;
 }
 
 
@@ -256,38 +241,38 @@ bool CoreApp::getGameInfo(istring &game, GameInfo *ginfo) {
 	// first try getting the information from the config file
 	// if that fails, try to autodetect it
 
-	ginfo->name = game;
-	ginfo->type = GameInfo::GAME_UNKNOWN;
+	ginfo->_name = game;
+	ginfo->_type = GameInfo::GAME_UNKNOWN;
 	ginfo->version = 0;
-	ginfo->language = GameInfo::GAMELANG_UNKNOWN;
+	ginfo->_language = GameInfo::GAMELANG_UNKNOWN;
 
 	istring gamekey = "settings/";
 	gamekey += game;
 
 	if (game == "pentagram") {
-		ginfo->type = GameInfo::GAME_PENTAGRAM_MENU;
-		ginfo->language = GameInfo::GAMELANG_ENGLISH;
+		ginfo->_type = GameInfo::GAME_PENTAGRAM_MENU;
+		ginfo->_language = GameInfo::GAMELANG_ENGLISH;
 
 	} else {
 		assert(game == "ultima8");
 
-		ginfo->type = GameInfo::GAME_U8;
+		ginfo->_type = GameInfo::GAME_U8;
 		
 		switch (_gameDesc->desc.language) {
 		case Common::EN_ANY:
-			ginfo->language = GameInfo::GAMELANG_ENGLISH;
+			ginfo->_language = GameInfo::GAMELANG_ENGLISH;
 			break;
 		case Common::FR_FRA:
-			ginfo->language = GameInfo::GAMELANG_FRENCH;
+			ginfo->_language = GameInfo::GAMELANG_FRENCH;
 			break;
 		case Common::DE_DEU:
-			ginfo->language = GameInfo::GAMELANG_GERMAN;
+			ginfo->_language = GameInfo::GAMELANG_GERMAN;
 			break;
 		case Common::ES_ESP:
-			ginfo->language = GameInfo::GAMELANG_SPANISH;
+			ginfo->_language = GameInfo::GAMELANG_SPANISH;
 			break;
 		case Common::JA_JPN:
-			ginfo->language = GameInfo::GAMELANG_JAPANESE;
+			ginfo->_language = GameInfo::GAMELANG_JAPANESE;
 			break;
 		default:
 			error("Unknown language");
@@ -295,29 +280,29 @@ bool CoreApp::getGameInfo(istring &game, GameInfo *ginfo) {
 		}
 	}
 
-	return ginfo->type != GameInfo::GAME_UNKNOWN;
+	return ginfo->_type != GameInfo::GAME_UNKNOWN;
 }
 
 void CoreApp::setupGamePaths(GameInfo *ginfo) {
-	if (!ginfo || ginfo->name == "pentagram") {
-		settingman->setCurrentDomain(SettingManager::DOM_GLOBAL);
+	if (!ginfo || ginfo->_name == "pentagram") {
+		_settingMan->setCurrentDomain(SettingManager::DOM_GLOBAL);
 		return;
 	}
 
-	istring game = ginfo->name;
+	istring game = ginfo->_name;
 
-	settingman->setDomainName(SettingManager::DOM_GAME, game);
-	settingman->setCurrentDomain(SettingManager::DOM_GAME);
+	_settingMan->setDomainName(SettingManager::DOM_GAME, game);
+	_settingMan->setCurrentDomain(SettingManager::DOM_GAME);
 
 	// load main game data path
 	Std::string gpath;
-	settingman->get("path", gpath, SettingManager::DOM_GAME);
-	filesystem->AddVirtualPath("@game", gpath);
+	_settingMan->get("path", gpath, SettingManager::DOM_GAME);
+	_fileSystem->AddVirtualPath("@game", gpath);
 
 	// load work path. Default is @home/game-work
 	// where 'game' in the above is the specified 'game' loaded
 	Std::string work;
-	if (!settingman->get("work", work, SettingManager::DOM_GAME))
+	if (!_settingMan->get("work", work, SettingManager::DOM_GAME))
 		work = "@home/" + game + "-work";
 
 #if 0
@@ -326,42 +311,42 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 	// TODO: I don't like these being created here.
 	//       I'd prefer them to be created when needed. (-wjp)
 
-	filesystem->AddVirtualPath("@work", work, true);
-	con->Printf(MM_INFO, "U8 Workdir: %s\n", work.c_str()); //!!FIXME (u8)
+	_fileSystem->AddVirtualPath("@work", work, true);
+	debugN(MM_INFO, "U8 Workdir: %s\n", work.c_str()); //!!FIXME (u8)
 
-	// make sure we've got a minimal sane filesystem under there...
-	filesystem->MkDir("@work/usecode");
-	filesystem->MkDir("@work/usecode/obj");
-	filesystem->MkDir("@work/usecode/src");
-	filesystem->MkDir("@work/usecode/asm");
+	// make sure we've got a minimal sane _fileSystem under there...
+	_fileSystem->MkDir("@work/usecode");
+	_fileSystem->MkDir("@work/usecode/obj");
+	_fileSystem->MkDir("@work/usecode/src");
+	_fileSystem->MkDir("@work/usecode/asm");
 #endif
 
 	// load savegame path. Default is @home/game-save
 	Std::string save;
-	if (!settingman->get("save", save, SettingManager::DOM_GAME))
+	if (!_settingMan->get("save", save, SettingManager::DOM_GAME))
 		save = "@home/" + game + "-save";
 
 	// force creation if it doesn't exist
-	filesystem->AddVirtualPath("@save", save, true);
-	con->Printf(MM_INFO, "Savegame directory: %s\n", save.c_str());
+	_fileSystem->AddVirtualPath("@save", save, true);
+	debugN(MM_INFO, "Savegame directory: %s\n", save.c_str());
 }
 
 void CoreApp::ParseArgs(const int argc_, const char *const *const argv_) {
-	parameters.process(argc_, argv_);
+	_parameters.process(argc_, argv_);
 }
 
 void CoreApp::helpMe() {
-	con->Print("\t-h\t\t- quick help menu (this)\n");
-	con->Print("\t-q\t\t- silence general logging messages\n");
-	con->Print("\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
-	con->Print("\t--game {name}\t- select a game\n");
+	debug(MM_INFO, "\t-h\t\t- quick help menu (this)\n");
+	debug(MM_INFO, "\t-q\t\t- silence general logging messages\n");
+	debug(MM_INFO, "\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
+	debug(MM_INFO, "\t--game {name}\t- select a game\n");
 }
 
 GameInfo *CoreApp::getGameInfo(istring game) const {
 	GameMap::const_iterator i;
-	i = games.find(game);
+	i = _games.find(game);
 
-	if (i != games.end())
+	if (i != _games.end())
 		return i->_value;
 	else
 		return 0;

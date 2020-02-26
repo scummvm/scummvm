@@ -52,7 +52,6 @@ enum PegasusAction {
 	kPegasusActionShowPauseMenu,
 	kPegasusActionSaveGameState,
 	kPegasusActionLoadGameState,
-	kPegasusActionOpenDebugger,
 	kPegasusActionEnableEasterEgg,
 
 	kPegasusActionCount
@@ -77,7 +76,6 @@ protected:
 	// Keep track of which keys are down (= true) or not
 	bool _keysDown[kPegasusActionCount];
 	InputBits _lastRawBits;
-	bool _consoleRequested;
 };
 
 enum {
@@ -390,25 +388,21 @@ public:
 	bool anyInputBitSet(const InputBits bits) const { return (_inputState & bits) != 0; }
 
 	bool isAltDown() const { return _altDown; }
-	bool isConsoleRequested() const { return _consoleRequested; }
 
 	void clearInput() {
 		_inputState = kAllUpBits;
 		_inputLocation.x = 0;
 		_inputLocation.y = 0;
-		_consoleRequested = false;
 		_altDown = false;
 	}
 
 protected:
 	void setInputBits(const InputBits state) { _inputState = state; }
 	void setInputLocation(const Common::Point &where) { _inputLocation = where; }
-	void setConsoleRequested(bool consoleRequested) { _consoleRequested = consoleRequested; }
 	void setAltDown(bool altDown) { _altDown = altDown; }
 
 	InputBits _inputState;
 	Common::Point _inputLocation;
-	bool _consoleRequested;
 	bool _altDown;
 };
 

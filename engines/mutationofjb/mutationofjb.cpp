@@ -46,7 +46,6 @@ namespace MutationOfJB {
 MutationOfJBEngine::MutationOfJBEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDesc(gameDesc),
-	  _console(nullptr),
 	  _screen(nullptr),
 	  _game(nullptr),
 	  _mapObjectId(0),
@@ -126,7 +125,7 @@ bool MutationOfJBEngine::canLoadGameStateCurrently() {
 }
 
 Common::Error MutationOfJBEngine::loadGameState(int slot) {
-	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	const Common::String saveName = getSaveStateName(slot);
 	Common::InSaveFile *const saveFile = g_system->getSavefileManager()->openForLoading(saveName);
 	if (!saveFile)
 		return Common::kReadingFailed;
@@ -148,9 +147,9 @@ bool MutationOfJBEngine::canSaveGameStateCurrently() {
 	return _game->loadSaveAllowed();
 }
 
-Common::Error MutationOfJBEngine::saveGameState(int slot, const Common::String &desc) {
-	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-	Common::OutSaveFile *const saveFile = g_system->getSavefileManager()->openForSaving(saveName);
+Common::Error MutationOfJBEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::OutSaveFile *const saveFile = g_system->getSavefileManager()->openForSaving(
+		getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kWritingFailed;
 
@@ -173,7 +172,7 @@ const ADGameDescription *MutationOfJBEngine::getGameDescription() const {
 Common::Error MutationOfJBEngine::run() {
 	initGraphics(320, 200);
 
-	_console = new Console(this);
+	setDebugger(new Console(this));
 	_screen = new Graphics::Screen();
 	_game = new Game(this);
 	_currentScreen = &_game->getGameScreen();
@@ -193,10 +192,6 @@ Common::Error MutationOfJBEngine::run() {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN: {
-				if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) ||
-						event.kbd.ascii == '~' || event.kbd.ascii == '#') {
-					_console->attach();
-				}
 				if (event.kbd.keycode == Common::KEYCODE_F5 && event.kbd.hasFlags(0)) {
 					openMainMenuDialog();
 				}
@@ -210,7 +205,6 @@ Common::Error MutationOfJBEngine::run() {
 				_currentScreen->handleEvent(event);
 		}
 
-		_console->onFrame();
 		_game->update();
 		if (_currentScreen)
 			_currentScreen->update();

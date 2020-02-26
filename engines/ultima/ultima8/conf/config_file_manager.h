@@ -33,7 +33,7 @@ public:
 	~ConfigFileManager();
 
 	static ConfigFileManager *get_instance() {
-		return configfilemanager;
+		return _configFileManager;
 	}
 
 	//! read a config file. Multiple files may be read. Order is important.
@@ -104,9 +104,9 @@ private:
 	INIFile *findKeyINI(istring key);
 	INIFile *findWriteINI(istring key);
 
-	Std::vector<INIFile *> inifiles;
+	Std::vector<INIFile *> _iniFiles;
 
-	static ConfigFileManager *configfilemanager;
+	static ConfigFileManager *_configFileManager;
 };
 
 } // End of namespace Ultima8

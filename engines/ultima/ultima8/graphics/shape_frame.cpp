@@ -34,7 +34,7 @@ namespace Ultima8 {
   parse data and fill class
  */
 ShapeFrame::ShapeFrame(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
-                       const uint8 special[256], ConvertShapeFrame *prev) : line_offsets(0) {
+                       const uint8 special[256], ConvertShapeFrame *prev) : _line_offsets(0) {
 	// Load it as u8
 	if (!format || format == &U8ShapeFormat || format == &U82DShapeFormat)
 		LoadU8Format(data, size);
@@ -47,7 +47,7 @@ ShapeFrame::ShapeFrame(const uint8 *data, uint32 size, const ConvertShapeFormat 
 }
 
 ShapeFrame::~ShapeFrame() {
-	delete [] line_offsets;
+	delete [] _line_offsets;
 }
 
 // Some macros to make things easier
@@ -57,69 +57,70 @@ ShapeFrame::~ShapeFrame() {
 
 // This will load a u8 style shape 'optimzed'.
 void ShapeFrame::LoadU8Format(const uint8 *data, uint32 /*size*/) {
-	compressed = READ1(data, 8);
-	width = static_cast<int16>(READ2(data, 10));
-	height = static_cast<int16>(READ2(data, 12));
-	xoff = static_cast<int16>(READ2(data, 14));
-	yoff = static_cast<int16>(READ2(data, 16));
+	_compressed = READ1(data, 8);
+	_width = static_cast<int16>(READ2(data, 10));
+	_height = static_cast<int16>(READ2(data, 12));
+	_xoff = static_cast<int16>(READ2(data, 14));
+	_yoff = static_cast<int16>(READ2(data, 16));
 
-	if (height == 0) return;
+	if (_height == 0)
+		return;
 
-	line_offsets = new uint32[height];
+	_line_offsets = new uint32[_height];
 
 	data += 18;
-	for (int32 i = 0; i < height; i++) {
-		line_offsets[i] = READ2(data, 0) - ((height - i) * 2);
+	for (int32 i = 0; i < _height; i++) {
+		_line_offsets[i] = READ2(data, 0) - ((_height - i) * 2);
 		data += 2;
 	}
 
-	rle_data = data;
+	_rle_data = data;
 }
 
 // This will load a pentagram style shape 'optimzed'.
 void ShapeFrame::LoadPentagramFormat(const uint8 *data, uint32 /*size*/) {
-	compressed = READ1(data, 0);
-	width = static_cast<int32>(READ4(data, 4));
-	height = static_cast<int32>(READ4(data, 8));
-	xoff = static_cast<int32>(READ4(data, 12));
-	yoff = static_cast<int32>(READ4(data, 16));
+	_compressed = READ1(data, 0);
+	_width = static_cast<int32>(READ4(data, 4));
+	_height = static_cast<int32>(READ4(data, 8));
+	_xoff = static_cast<int32>(READ4(data, 12));
+	_yoff = static_cast<int32>(READ4(data, 16));
 
-	if (height == 0) return;
+	if (_height == 0) return;
 
-	line_offsets = new uint32[height];
+	_line_offsets = new uint32[_height];
 
 	data += 20;
-	for (int32 i = 0; i < height; i++) {
-		line_offsets[i] = READ4(data, 0);
+	for (int32 i = 0; i < _height; i++) {
+		_line_offsets[i] = READ4(data, 0);
 		data += 4;
 	}
 
-	rle_data = data;
+	_rle_data = data;
 }
 
 // This will load any sort of shape via a ConvertShapeFormat struct
 void ShapeFrame::LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format) {
 	IBufferDataSource ds(data, size);
 
-	ds.skip(format->bytes_frame_unknown);
-	compressed = ds.readX(format->bytes_frame_compression);
-	width = ds.readXS(format->bytes_frame_width);
-	height = ds.readXS(format->bytes_frame_height);
-	xoff = ds.readXS(format->bytes_frame_xoff);
-	yoff = ds.readXS(format->bytes_frame_yoff);
+	ds.skip(format->_bytes_frame_unknown);
+	_compressed = ds.readX(format->_bytes_frame_compression);
+	_width = ds.readXS(format->_bytes_frame_width);
+	_height = ds.readXS(format->_bytes_frame_height);
+	_xoff = ds.readXS(format->_bytes_frame_xoff);
+	_yoff = ds.readXS(format->_bytes_frame_yoff);
 
-	if (height == 0) return;
+	if (_height == 0) return;
 
-	line_offsets = new uint32[height];
+	_line_offsets = new uint32[_height];
 
-	if (format->line_offset_absolute) for (int32 i = 0; i < height; i++) {
-			line_offsets[i] = ds.readX(format->bytes_line_offset);
+	if (format->_line_offset_absolute) for (int32 i = 0; i < _height; i++) {
+			_line_offsets[i] = ds.readX(format->_bytes_line_offset);
 		}
-	else for (int32 i = 0; i < height; i++) {
-			line_offsets[i] = ds.readX(format->bytes_line_offset) - ((height - i) * format->bytes_line_offset);
+	else for (int32 i = 0; i < _height; i++) {
+			_line_offsets[i] = ds.readX(format->_bytes_line_offset) - ((_height - i) * format->_bytes_line_offset);
 		}
 
-	rle_data = data + format->len_frameheader2 + height * format->bytes_line_offset;
+	_rle_data = data + format->_len_frameheader2 + _height * format->_bytes_line_offset;
 }
 
 // This will load an U8-compressed shape
@@ -130,18 +131,18 @@ void ShapeFrame::LoadU8CMPFormat(const uint8 *data, uint32 size, const ConvertSh
 
 	f.ReadCmpFrame(&ds, format, special, prev);
 
-	uint32 to_alloc = f.height + (f.bytes_rle + 3) / 4;
-	line_offsets = new uint32[to_alloc];
-	rle_data = reinterpret_cast<uint8 *>(line_offsets + f.height);
+	uint32 to_alloc = f._height + (f._bytes_rle + 3) / 4;
+	_line_offsets = new uint32[to_alloc];
+	_rle_data = reinterpret_cast<uint8 *>(_line_offsets + f._height);
 
-	compressed = f.compression;
-	height = f.height;
-	width = f.width;
-	xoff = f.xoff;
-	yoff = f.yoff;
+	_compressed = f._compression;
+	_height = f._height;
+	_width = f._width;
+	_xoff = f._xoff;
+	_yoff = f._yoff;
 
-	Std::memcpy(line_offsets, f.line_offsets, f.height * 4);
-	Std::memcpy(const_cast<uint8 *>(rle_data), f.rle_data, f.bytes_rle);
+	Std::memcpy(_line_offsets, f._line_offsets, f._height * 4);
+	Std::memcpy(const_cast<uint8 *>(_rle_data), f._rle_data, f._bytes_rle);
 
 	f.Free();
 }
@@ -149,11 +150,11 @@ void ShapeFrame::LoadU8CMPFormat(const uint8 *data, uint32 size, const ConvertSh
 // Checks to see if the frame has a pixel at the point
 bool ShapeFrame::hasPoint(int32 x, int32 y) const {
 	// Add the offset
-	x += xoff;
-	y += yoff;
+	x += _xoff;
+	y += _yoff;
 
 	// First gross culling based on dims
-	if (x < 0 || y < 0 || x >= width || y >= height) return false;
+	if (x < 0 || y < 0 || x >= _width || y >= _height) return false;
 
 	//
 	// This is all pretty simple.
@@ -163,17 +164,17 @@ bool ShapeFrame::hasPoint(int32 x, int32 y) const {
 	//
 
 	int32 xpos = 0;
-	const uint8 *linedata = rle_data + line_offsets[y];
+	const uint8 *linedata = _rle_data + _line_offsets[y];
 
 	do {
 		xpos += *linedata++;
 
-		if (xpos == width) break;
+		if (xpos == _width) break;
 
 		int32 dlen = *linedata++;
 		int type = 0;
 
-		if (compressed) {
+		if (_compressed) {
 			type = dlen & 1;
 			dlen >>= 1;
 		}
@@ -183,7 +184,7 @@ bool ShapeFrame::hasPoint(int32 x, int32 y) const {
 		if (!type) linedata += dlen;
 		else linedata++;
 
-	} while (xpos < width);
+	} while (xpos < _width);
 
 	return false;
 }
@@ -191,11 +192,12 @@ bool ShapeFrame::hasPoint(int32 x, int32 y) const {
 // Get the pixel at the point
 uint8 ShapeFrame::getPixelAtPoint(int32 x, int32 y) const {
 	// Add the offset
-	x += xoff;
-	y += yoff;
+	x += _xoff;
+	y += _yoff;
 
 	// First gross culling based on dims
-	if (x < 0 || y < 0 || x >= width || y >= height) return 0xFF;
+	if (x < 0 || y < 0 || x >= _width || y >= _height)
+		return 0xFF;
 
 	//
 	// This is all pretty simple.
@@ -205,17 +207,18 @@ uint8 ShapeFrame::getPixelAtPoint(int32 x, int32 y) const {
 	//
 
 	int32 xpos = 0;
-	const uint8 *linedata = rle_data + line_offsets[y];
+	const uint8 *linedata = _rle_data + _line_offsets[y];
 
 	do {
 		xpos += *linedata++;
 
-		if (xpos == width) break;
+		if (xpos == _width)
+			break;
 
 		int32 dlen = *linedata++;
 		int type = 0;
 
-		if (compressed) {
+		if (_compressed) {
 			type = dlen & 1;
 			dlen >>= 1;
 		}
@@ -228,20 +231,20 @@ uint8 ShapeFrame::getPixelAtPoint(int32 x, int32 y) const {
 		if (!type) linedata += dlen;
 		else linedata++;
 
-	} while (xpos < width);
+	} while (xpos < _width);
 
 	return 0xFF;
 }
 
 void ShapeFrame::getConvertShapeFrame(ConvertShapeFrame &csf, bool need_bytes_rle) {
-	csf.compression = compressed;
-	csf.width = width;
-	csf.height = height;
-	csf.xoff = xoff;
-	csf.yoff = yoff;
-	csf.line_offsets = line_offsets;
-	csf.bytes_rle = 0;
-	csf.rle_data = const_cast<uint8 *>(rle_data);
+	csf._compression = _compressed;
+	csf._width = _width;
+	csf._height = _height;
+	csf._xoff = _xoff;
+	csf._yoff = _yoff;
+	csf._line_offsets = _line_offsets;
+	csf._bytes_rle = 0;
+	csf._rle_data = const_cast<uint8 *>(_rle_data);
 }
 
 } // End of namespace Ultima8

@@ -37,10 +37,10 @@ ShapeFont *FontShapeArchive::getFont(uint32 fontnum) {
 }
 
 void FontShapeArchive::cache(uint32 shapenum) {
-	if (shapenum >= count) return;
-	if (shapes.empty()) shapes.resize(count);
+	if (shapenum >= _count) return;
+	if (_shapes.empty()) _shapes.resize(_count);
 
-	if (shapes[shapenum]) return;
+	if (_shapes[shapenum]) return;
 
 	uint32 shpsize;
 	uint8 *data = getRawObject(shapenum, &shpsize);
@@ -48,18 +48,19 @@ void FontShapeArchive::cache(uint32 shapenum) {
 	if (!data || shpsize == 0) return;
 
 	// Auto detect format
-	if (!format) format = Shape::DetectShapeFormat(data, shpsize);
+	if (!_format)
+		_format = Shape::DetectShapeFormat(data, shpsize);
 
-	if (!format) {
+	if (!_format) {
 		delete [] data;
 		perr << "Error: Unable to detect shape format for flex." << Std::endl;
 		return;
 	}
 
-	Shape *shape = new ShapeFont(data, shpsize, format, id, shapenum);
-	if (palette) shape->setPalette(palette);
+	Shape *shape = new ShapeFont(data, shpsize, _format, _id, shapenum);
+	if (_palette) shape->setPalette(_palette);
 
-	shapes[shapenum] = shape;
+	_shapes[shapenum] = shape;
 }
 
 void FontShapeArchive::setHVLeads() {

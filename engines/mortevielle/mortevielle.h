@@ -428,7 +428,6 @@ public:
 	GfxSurface _backgroundSurface;
 	Common::RandomSource _randomSource;
 
-	Debugger *_debugger;
 	ScreenSurface *_screenSurface;
 	SoundManager *_soundManager;
 	SavegameManager *_savegameManager;
@@ -443,16 +442,17 @@ public:
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error run() override;
 	void pauseEngineIntern(bool pause) override;
-	GUI::Debugger *getDebugger() override { return _debugger; }
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;
 	bool useOriginalData() const;
 	static Common::String generateSaveFilename(const Common::String &target, int slot);
-	Common::String generateSaveFilename(int slot) { return generateSaveFilename(_targetName, slot); }
+	Common::String getSaveStateName(int slot) const override {
+		return generateSaveFilename(_targetName, slot);
+	}
 
 	int getChar();
 	bool keyPressed();

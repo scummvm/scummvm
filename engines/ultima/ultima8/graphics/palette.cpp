@@ -31,38 +31,38 @@ namespace Ultima8 {
 void Palette::load(IDataSource &ds, IDataSource &xformds) {
 	load(ds);
 	for (int i = 0; i < 256; i++)
-		xform_untransformed[i] = xformds.read4();
+		_xform_untransformed[i] = xformds.read4();
 }
 
 void Palette::load(IDataSource &ds) {
 	int i;
-	ds.read(palette, 768);
+	ds.read(_palette, 768);
 
-	// convert from 0-63 to 0-255 palette
+	// convert from 0-63 to 0-255 _palette
 	for (i = 0; i < 256; i++) {
-		palette[i * 3] = (palette[i * 3] * 255) / 63;
-		palette[i * 3 + 1] = (palette[i * 3 + 1] * 255) / 63;
-		palette[i * 3 + 2] = (palette[i * 3 + 2] * 255) / 63;
+		_palette[i * 3] = (_palette[i * 3] * 255) / 63;
+		_palette[i * 3 + 1] = (_palette[i * 3 + 1] * 255) / 63;
+		_palette[i * 3 + 2] = (_palette[i * 3 + 2] * 255) / 63;
 	}
 
 	for (i = 0; i < 256; i++)
-		xform_untransformed[i] = 0;
+		_xform_untransformed[i] = 0;
 
-	// Setup the transformation matrix
-	matrix[0] = 0x800;
-	matrix[1] = 0;
-	matrix[2] = 0;
-	matrix[3] = 0;
-	matrix[4] = 0;
-	matrix[5] = 0x800;
-	matrix[6] = 0;
-	matrix[7] = 0;
-	matrix[8] = 0;
-	matrix[9] = 0;
-	matrix[10] = 0x800;
-	matrix[11] = 0;
+	// Setup the transformation _matrix
+	_matrix[0] = 0x800;
+	_matrix[1] = 0;
+	_matrix[2] = 0;
+	_matrix[3] = 0;
+	_matrix[4] = 0;
+	_matrix[5] = 0x800;
+	_matrix[6] = 0;
+	_matrix[7] = 0;
+	_matrix[8] = 0;
+	_matrix[9] = 0;
+	_matrix[10] = 0x800;
+	_matrix[11] = 0;
 
-	transform = Transform_None;
+	_transform = Transform_None;
 }
 
 } // End of namespace Ultima8

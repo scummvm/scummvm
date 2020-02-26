@@ -36,9 +36,9 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	PaperdollGump();
-	PaperdollGump(Shape *shape, uint32 framenum, uint16 owner,
-	              uint32 _Flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
-	~PaperdollGump(void) override;
+	PaperdollGump(Shape *shape, uint32 frameNum, uint16 owner,
+	              uint32 flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
+	~PaperdollGump() override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -74,12 +74,12 @@ protected:
 	void PaintStat(RenderSurface *surf, unsigned int n,
 	               Std::string text, int val);
 
-	RenderedText *cached_text[14]; // constant!!
-	int cached_val[7]; // constant!!
+	RenderedText *_cachedText[14]; // constant!!
+	int _cachedVal[7]; // constant!!
 
-	uint16 statbuttongid;
+	uint16 _statButtonId;
 private:
-	const Rect backpack_rect;
+	const Rect _backpackRect;
 };
 
 } // End of namespace Ultima8

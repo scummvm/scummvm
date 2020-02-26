@@ -267,12 +267,6 @@ void CryoEngine::pollEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
-			// Check for debugger
-			if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_debugger->attach();
-				_debugger->onFrame();
-			}
 			return;
 		case Common::EVENT_KEYUP:
 			//          _keyState[(byte)toupper(event.kbd.ascii)] = false;

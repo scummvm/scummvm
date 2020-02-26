@@ -937,7 +937,7 @@ Common::Error SciEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error SciEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String fileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out = saveFileMan->openForSaving(fileName);

@@ -51,35 +51,35 @@ public:
 	void *allocate(size_t size) override;
 	void deallocate(void *ptr) override;
 
-	bool isFull() override {
-		return freeNodeCount == 0;
+	bool isFull() const override {
+		return _freeNodeCount == 0;
 	}
-	bool isEmpty() override {
-		return freeNodeCount == nodes;
-	}
-
-	bool inPool(void *ptr) override {
-		return (ptr > startOfPool && ptr < endOfPool);
+	bool isEmpty() const override {
+		return _freeNodeCount == _nodes;
 	}
 
-	void printInfo() override;
+	bool inPool(void *ptr) const override {
+		return (ptr > _startOfPool && ptr < _endOfPool);
+	}
 
-	size_t getNodeCapacity() {
-		return nodeCapacity;
+	void printInfo() const override;
+
+	size_t getNodeCapacity() const {
+		return _nodeCapacity;
 	}
 
 	SegmentedPoolNode *getPoolNode(void *ptr);
 private:
-	uint8 *startOfPool;
-	uint8 *endOfPool;
+	uint8 *_startOfPool;
+	uint8 *_endOfPool;
 
-	size_t nodeOffset;
-	size_t nodeCapacity;
-	uint32 nodes;
-	uint32 freeNodeCount;
+	size_t _nodeOffset;
+	size_t _nodeCapacity;
+	uint32 _nodes;
+	uint32 _freeNodeCount;
 
-	SegmentedPoolNode *firstFree;
-	SegmentedPoolNode *lastFree;
+	SegmentedPoolNode *_firstFree;
+	SegmentedPoolNode *_lastFree;
 };
 
 } // End of namespace Ultima8

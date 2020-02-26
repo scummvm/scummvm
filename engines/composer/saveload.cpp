@@ -266,12 +266,13 @@ void ComposerEngine::sync<Sprite>(Common::Serializer &ser, Sprite &data, Common:
 		}
 
 }
-Common::String ComposerEngine::makeSaveGameName(int slot) {
-	return (_targetName + Common::String::format(".%02d", slot));
+
+Common::String ComposerEngine::getSaveStateName(int slot) const {
+	return Common::String::format("%s.%02d", _targetName.c_str(), slot);
 }
 
 Common::Error ComposerEngine::loadGameState(int slot) {
-	Common::String filename = makeSaveGameName(slot);
+	Common::String filename = getSaveStateName(slot);
 	Common::InSaveFile *in;
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return Common::kPathNotFile;
@@ -366,17 +367,12 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	if (!_mixer->isSoundHandleActive(_soundHandle))
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
 
-
-	// Reset autosave duration on load
-	_lastSaveTime = _system->getMillis();
-
 	return Common::kNoError;
 }
 
-Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc) {
-	Common::String filename = makeSaveGameName(slot);
+Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::String filename = getSaveStateName(slot);
 	Common::OutSaveFile *out;
-	_lastSaveTime = _system->getMillis();
 	if (!(out = _saveFileMan->openForSaving(filename)))
 		return Common::kWritingFailed;
 

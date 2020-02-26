@@ -475,7 +475,6 @@ public:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 protected:
 
@@ -605,12 +604,13 @@ protected:
 
 	void saveGameStateData(Common::WriteStream *stream);
 	void loadGameStateData(Common::ReadStream *stream);
-	Common::Error saveGameState(int num, const Common::String &description) override;
+	Common::Error saveGameState(int num, const Common::String &description, bool isAutosave = false) override;
 	Common::Error loadGameState(int num) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
-
-	ToucheConsole *_console;
+	Common::String getSaveStateName(int slot) const override {
+		return Common::String::format("%s.%d", _targetName.c_str(), slot);
+	}
 
 	void setupOpcodes();
 	void op_nop();

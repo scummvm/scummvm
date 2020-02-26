@@ -42,7 +42,6 @@
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/kernel/hid_keys.h"
-#include "ultima/ultima8/misc/console.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "ultima/ultima8/graphics/point_scaler.h"
 #include "common/events.h"
@@ -50,15 +49,15 @@
 namespace Ultima {
 namespace Ultima8 {
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define DEFAULT_SCREEN_WIDTH 640
+#define DEFAULT_SCREEN_HEIGHT 480
 
+class Debugger;
 class Kernel;
 class MemoryManager;
 class UCMachine;
 class Game;
 class Gump;
-class ConsoleGump;
 class GameMapGump;
 class ScalerGump;
 class InverterGump;
@@ -77,6 +76,7 @@ struct Texture;
 class AudioMixer;
 
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
+	friend class Debugger;
 private:
 	Std::list<ObjId> _textModes;      //!< Gumps that want text mode
 	bool _ttfOverrides;
@@ -93,11 +93,9 @@ private:
 	Kernel *_kernel;
 	MemoryManager *_memoryManager;
 	ObjectManager *_objectManager;
-	GUI::Debugger *_debugger;
 	HIDManager *_hidManager;
 	UCMachine *_ucMachine;
 	RenderSurface *_screen;
-	bool _fullScreen;
 	Mouse *_mouse;
 	PaletteManager *_paletteManager;
 	GameData *_gameData;
@@ -105,7 +103,6 @@ private:
 	FontManager *_fontManager;
 
 	Gump *_desktopGump;
-	ConsoleGump *_consoleGump;
 	GameMapGump *_gameMapGump;
 	ScalerGump *_scalerGump;
 	InverterGump *_inverterGump;
@@ -131,10 +128,9 @@ private:
 	int32 _timeOffset;
 	bool _hasCheated;
 	bool _cheatsEnabled;
-	uint32 _lastDown[HID_LAST];
-	bool _down[HID_LAST];
+	uint32 _lastDown[HID_LAST+1];
+	bool _down[HID_LAST+1];
 	unsigned int _inversion;
-	bool _drawRenderStats;
 private:
 	/**
 	 * Does engine deinitialization
@@ -146,35 +142,6 @@ private:
 	 */
 	void showSplashScreen();
 
-	static void conAutoPaint(void);
-
-	// Load and save games from arbitrary filenames from the console
-	static void ConCmd_saveGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::saveGame <optional filename>" console command
-	static void ConCmd_loadGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::loadGame <optional filename>" console command
-	static void ConCmd_newGame(const Console::ArgvType &argv);          //!< "Ultima8Engine::newGame" console command
-//	static void ConCmd_ForceQuit(const Console::ArgvType &argv);
-
-	static void ConCmd_quit(const Console::ArgvType &argv);             //!< "quit" console command
-
-	static void ConCmd_changeGame(const Console::ArgvType &argv);       //!< "Ultima8Engine::changeGame" console command
-	static void ConCmd_listGames(const Console::ArgvType &argv);            //!< "Ultima8Engine::listGames" console command
-
-	static void ConCmd_setVideoMode(const Console::ArgvType &argv);     //!< "Ultima8Engine::setVideoMode" console command
-
-	// This should be a console variable once they are implemented
-	static void ConCmd_drawRenderStats(const Console::ArgvType &argv);  //!< "Ultima8Engine::drawRenderStats" console command
-
-	static void ConCmd_engineStats(const Console::ArgvType &argv);  //!< "Ultima8Engine::engineStats" console command
-
-	static void ConCmd_toggleAvatarInStasis(const Console::ArgvType &argv); //!< "Ultima8Engine::toggleAvatarInStasis" console command
-	static void ConCmd_togglePaintEditorItems(const Console::ArgvType &argv);   //!< "Ultima8Engine::togglePaintEditorItems" console command
-	static void ConCmd_toggleShowTouchingItems(const Console::ArgvType &argv);  //!< "Ultima8Engine::toggleShowTouchingItems" console command
-
-	static void ConCmd_closeItemGumps(const Console::ArgvType &argv);   //!< "Ultima8Engine::closeItemGumps" console command
-
-	static void ConCmd_toggleCheatMode(const Console::ArgvType &argv);  //!< "Cheat::toggle" console command
-
-	static void ConCmd_memberVar(const Console::ArgvType &argv);    //!< "Ultima8Engine::memberVar <member> [newvalue] [updateini]" console command
 private:
 	//! write savegame info (time, ..., game-specifics)
 	void writeSaveInfo(ODataSource *ods);
@@ -221,7 +188,7 @@ public:
 	void GUIError(const Common::String &msg);
 
 	static Ultima8Engine *get_instance() {
-		return p_dynamic_cast<Ultima8Engine *>(application);
+		return p_dynamic_cast<Ultima8Engine *>(_application);
 	}
 
 	void startup();
@@ -236,12 +203,12 @@ public:
 	// Used to enable access to the games gumps and shapes
 	void menuInitMinimal(istring game);
 
-	void changeVideoMode(int width, int height, int fullscreen = -1); // -1 = no change, -2 = fullscreen toggle
+	void changeVideoMode(int width, int height);
+
 	RenderSurface *getRenderScreen() {
 		return _screen;
 	}
 
-	GUI::Debugger *getDebugger() override;
 	Graphics::Screen *getScreen() const override;
 
 	void runGame() override;
@@ -291,9 +258,6 @@ public:
 	GameMapGump *getGameMapGump() {
 		return _gameMapGump;
 	}
-	ConsoleGump *getConsoleGump() {
-		return _consoleGump;
-	}
 	Gump *getDesktopGump() {
 		return _desktopGump;
 	}
@@ -325,36 +289,26 @@ public:
 	/**
 	 * Load a game state
 	 */
-	Common::Error loadGameState(int slot) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	/**
-	 * Save a game state.
-	 * @param slot	the slot into which the savestate should be stored
-	 * @param desc	a description for the savestate, entered by the user
-	 * @param isAutosave If true, autosave is being created
-	 * @return returns kNoError on success, else an error code.
+	 * Handles saving savegame state to a stream
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
 
 	//! save a game
 	//! \param filename the file to save to
 	//! \return true if succesful
-	bool saveGame(Std::string filename, Std::string desc,
-	              bool ignore_modals = false);
-
-	//! load a game
-	//! \param filename the savegame to load
-	//! \return true if succesful.
-	bool loadGame(Std::string filename);
+	bool saveGame(int slot, const Std::string &desc, bool ignore_modals = false);
 
 	//! start a new game
 	//! \return true if succesful.
-	bool newGame(const Std::string &savegame);
+	bool newGame(int saveSlot = -1);
 
-	//! Enter gump text mode (aka SDL Unicode keyhandling)
+	//! Enter gump text mode (aka Unicode keyhandling)
 	void enterTextMode(Gump *);
 
-	//! Leave gump text mode (aka SDL Unicode keyhandling)
+	//! Leave gump text mode (aka Unicode keyhandling)
 	void leaveTextMode(Gump *);
 
 	//! Display an error message box

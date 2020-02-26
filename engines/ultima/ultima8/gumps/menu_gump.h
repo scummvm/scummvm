@@ -36,7 +36,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	MenuGump(bool nameEntryMode = false);
-	~MenuGump(void) override;
+	~MenuGump() override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -50,13 +50,12 @@ public:
 	void ChildNotify(Gump *child, uint32 message) override;
 
 	static void showMenu();
-	static void ConCmd_showMenu(const Console::ArgvType &argv);
 
 	static void inputName();
 
 protected:
-	bool nameEntryMode;
-	int oldMusicTrack;
+	bool _nameEntryMode;
+	int _oldMusicTrack;
 
 	virtual void selectEntry(int entry);
 };

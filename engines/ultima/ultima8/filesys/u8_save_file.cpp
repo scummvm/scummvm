@@ -32,55 +32,55 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveFile, NamedArchiveFile)
 
 
 U8SaveFile::U8SaveFile(IDataSource *ds_) {
-	ds = ds_;
-	count = 0;
-	valid = isU8SaveFile(ds);
+	_ds = ds_;
+	_count = 0;
+	_valid = isU8SaveFile(_ds);
 
-	if (valid)
-		valid = readMetadata();
+	if (_valid)
+		_valid = readMetadata();
 }
 
 U8SaveFile::~U8SaveFile() {
-	delete ds;
+	delete _ds;
 }
 
 //static
-bool U8SaveFile::isU8SaveFile(IDataSource *ds) {
-	ds->seek(0);
+bool U8SaveFile::isU8SaveFile(IDataSource *_ds) {
+	_ds->seek(0);
 	char buf[24];
-	ds->read(buf, 23);
+	_ds->read(buf, 23);
 	buf[23] = '\0';
 
 	return (Std::strncmp(buf, "Ultima 8 SaveGame File.", 23) == 0);
 }
 
 bool U8SaveFile::readMetadata() {
-	ds->seek(0x18);
-	count = ds->read2();
+	_ds->seek(0x18);
+	_count = _ds->read2();
 
-	offsets.resize(count);
-	sizes.resize(count);
+	_offsets.resize(_count);
+	_sizes.resize(_count);
 
-	for (unsigned int i = 0; i < count; ++i) {
-		uint32 namelen = ds->read4();
+	for (unsigned int i = 0; i < _count; ++i) {
+		uint32 namelen = _ds->read4();
 		char *buf = new char[namelen];
-		ds->read(buf, static_cast<int32>(namelen));
+		_ds->read(buf, static_cast<int32>(namelen));
 		Std::string filename = buf;
-		indices[filename] = i;
+		_indices[filename] = i;
 		storeIndexedName(filename);
 		delete[] buf;
-		sizes[i] = ds->read4();
-		offsets[i] = ds->getPos();
-		ds->skip(sizes[i]); // skip data
+		_sizes[i] = _ds->read4();
+		_offsets[i] = _ds->getPos();
+		_ds->skip(_sizes[i]); // skip data
 	}
 
 	return true;
 }
 
-bool U8SaveFile::findIndex(const Std::string &name, uint32 &index) {
-	Std::map<Common::String, uint32>::iterator iter;
-	iter = indices.find(name);
-	if (iter == indices.end()) return false;
+bool U8SaveFile::findIndex(const Std::string &name, uint32 &index) const {
+	Std::map<Common::String, uint32>::const_iterator iter;
+	iter = _indices.find(name);
+	if (iter == _indices.end()) return false;
 	index = iter->_value;
 	return true;
 }
@@ -94,14 +94,14 @@ uint8 *U8SaveFile::getObject(const Std::string &name, uint32 *sizep) {
 	uint32 index;
 	if (!findIndex(name, index)) return 0;
 
-	uint32 size = sizes[index];
+	uint32 size = _sizes[index];
 	if (size == 0) return 0;
 
 	uint8 *object = new uint8[size];
-	uint32 offset = offsets[index];
+	uint32 offset = _offsets[index];
 
-	ds->seek(offset);
-	ds->read(object, size);
+	_ds->seek(offset);
+	_ds->read(object, size);
 
 	if (sizep) *sizep = size;
 
@@ -109,11 +109,11 @@ uint8 *U8SaveFile::getObject(const Std::string &name, uint32 *sizep) {
 }
 
 
-uint32 U8SaveFile::getSize(const Std::string &name) {
+uint32 U8SaveFile::getSize(const Std::string &name) const {
 	uint32 index;
 	if (!findIndex(name, index)) return 0;
 
-	return sizes[index];
+	return _sizes[index];
 }
 
 } // End of namespace Ultima8

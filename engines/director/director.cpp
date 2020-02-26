@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/substream.h"
 
 #include "audio/mixer.h"
 
@@ -74,10 +75,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_lingo = nullptr;
 
 	_sharedScore = nullptr;
-	_sharedSound = nullptr;
-	_sharedBMP = nullptr;
-	_sharedSTXT = nullptr;
-	_sharedDIB = nullptr;
 
 	_mainArchive = nullptr;
 	_macBinary = nullptr;
@@ -105,12 +102,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
-	delete _sharedSound;
-	delete _sharedBMP;
-	delete _sharedSTXT;
-	delete _sharedDIB;
 	delete _sharedScore;
-
 	delete _currentScore;
 
 	cleanupMainArchive();
@@ -182,6 +174,35 @@ Common::Error DirectorEngine::run() {
 		loadInitialMovie(_nextMovie.movie);
 	} else {
 		loadInitialMovie(getEXEName());
+
+		// Let's check if it is a projector file
+		// So far tested with Spaceship Warlock, D2
+		if (_mainArchive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
+			warning("Detected Projector file");
+
+			if (_mainArchive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
+				_currentScore->setArchive(_mainArchive);
+
+				Common::SeekableSubReadStreamEndian *name = _mainArchive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
+				int num = name->readUint16();
+				if (num != 1) {
+					warning("Incorrect number of strings in Projector file");
+				}
+
+				if (num == 0)
+					error("No strings in Projector file");
+
+				Common::String sname = name->readPascalString();
+
+				_nextMovie.movie = pathMakeRelative(sname);
+				warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
+
+				delete _currentScore;
+				_currentScore = nullptr;
+
+				delete name;
+			}
+		}
 	}
 
 	if (_currentScore)
@@ -194,7 +215,7 @@ Common::Error DirectorEngine::run() {
 
 		if (_currentScore) {
 			debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			debug(0, "@@@@   Score name '%s'", _currentScore->getMacName().c_str());
+			debug(0, "@@@@   Score name '%s' in '%s'", _currentScore->getMacName().c_str(), _currentPath.c_str());
 			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 			_currentScore->loadArchive();

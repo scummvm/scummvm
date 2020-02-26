@@ -71,7 +71,6 @@ public:
 	Graphics::Surface _screen;
 	EdenGame *_game;
 	HnmPlayer *_video;
-	Debugger *_debugger;
 
 	View *_screenView;
 	volatile int32 _timerTicks;

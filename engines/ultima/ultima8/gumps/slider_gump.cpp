@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/slider_gump.h"
-
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
@@ -35,7 +34,6 @@
 #include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -45,19 +43,18 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SliderGump, ModalGump)
 
 SliderGump::SliderGump() : ModalGump() {
-	renderedtext = 0;
+	_renderedText = 0;
 }
 
 
-SliderGump::SliderGump(int x_, int y_, int16 min_, int16 max_,
-                       int16 value_, int16 delta_)
-	: ModalGump(x_, y_, 5, 5), min(min_), max(max_), delta(delta_), value(value_) {
-	usecodeNotifyPID = 0;
-	renderedtext = 0;
+SliderGump::SliderGump(int x, int y, int16 min, int16 max,
+                       int16 value_, int16 delta)
+	: ModalGump(x, y, 5, 5), _min(min), _max(max), _delta(delta), _value(value_) {
+	_usecodeNotifyPID = 0;
+	_renderedText = 0;
 }
 
 SliderGump::~SliderGump() {
-
 }
 
 /*
@@ -87,14 +84,14 @@ static const int RIGHT_INDEX = 3;
 static const int SLIDER_INDEX = 4;
 
 int SliderGump::getSliderPos() {
-	return sliderminx + (value - min) * (slidermaxx - sliderminx) / (max - min);
+	return sliderminx + (_value - _min) * (slidermaxx - sliderminx) / (_max - _min);
 }
 
 void SliderGump::setValueFromSlider(int sliderx) {
-	int val = (sliderx - sliderminx) * (max - min) / (slidermaxx - sliderminx) + min;
-	if (val < min) val = min;
-	if (val > max) val = max;
-	value = min + delta * (static_cast<int16>(val / delta));
+	int val = (sliderx - sliderminx) * (_max - _min) / (slidermaxx - sliderminx) + _min;
+	if (val < _min) val = _min;
+	if (val > _max) val = _max;
+	_value = _min + _delta * (static_cast<int16>(val / _delta));
 }
 
 void SliderGump::setSliderPos() {
@@ -104,19 +101,19 @@ void SliderGump::setSliderPos() {
 }
 
 void SliderGump::drawText(RenderSurface *surf) {
-	if (!renderedtext || value != renderedvalue) {
+	if (!_renderedText || _value != _renderedValue) {
 		Font *font;
 		font = FontManager::get_instance()->getGameFont(labelfont);
 		char buf[10]; // more than enough for a int16
-		sprintf(buf, "%d", value);
+		sprintf(buf, "%d", _value);
 
 		unsigned int remaining;
-		delete renderedtext;
-		renderedtext = font->renderText(buf, remaining);
-		renderedvalue = value;
+		delete _renderedText;
+		_renderedText = font->renderText(buf, remaining);
+		_renderedValue = _value;
 	}
 
-	renderedtext->draw(surf, labelx, labely);
+	_renderedText->draw(surf, labelx, labely);
 }
 
 void SliderGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -129,12 +126,12 @@ void SliderGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
-	ShapeFrame *sf = shape->getFrame(0);
+	_shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
+	ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
 
 	Shape *childshape = GameData::get_instance()->
 	                    getGumps()->getShape(slidershape);
@@ -175,13 +172,13 @@ void SliderGump::ChildNotify(Gump *child, uint32 message) {
 			Close();
 			break;
 		case LEFT_INDEX:
-			value -= delta;
-			if (value < min) value = min;
+			_value -= _delta;
+			if (_value < _min) _value = _min;
 			setSliderPos();
 			break;
 		case RIGHT_INDEX:
-			value += delta;
-			if (value > max) value = max;
+			_value += _delta;
+			if (_value > _max) _value = _max;
 			setSliderPos();
 			break;
 		}
@@ -190,13 +187,13 @@ void SliderGump::ChildNotify(Gump *child, uint32 message) {
 
 
 void SliderGump::Close(bool no_del) {
-	process_result = value;
+	_processResult = _value;
 
-	if (usecodeNotifyPID) {
-		UCProcess *ucp = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(usecodeNotifyPID));
+	if (_usecodeNotifyPID) {
+		UCProcess *ucp = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(_usecodeNotifyPID));
 		assert(ucp);
-		ucp->setReturnValue(value);
-		ucp->wakeUp(value);
+		ucp->setReturnValue(_value);
+		ucp->wakeUp(_value);
 	}
 
 	ModalGump::Close(no_del);
@@ -227,13 +224,13 @@ void SliderGump::StopDraggingChild(Gump *gump) {
 bool SliderGump::OnKeyDown(int key, int mod) {
 	switch (key) {
 	case Common::KEYCODE_LEFT:
-		value -= delta;
-		if (value < min) value = min;
+		_value -= _delta;
+		if (_value < _min) _value = _min;
 		setSliderPos();
 		break;
 	case Common::KEYCODE_RIGHT:
-		value += delta;
-		if (value > max) value = max;
+		_value += _delta;
+		if (_value > _max) _value = _max;
 		setSliderPos();
 		break;
 	case Common::KEYCODE_RETURN:
@@ -248,7 +245,7 @@ bool SliderGump::OnKeyDown(int key, int mod) {
 
 void SliderGump::setUsecodeNotify(UCProcess *ucp) {
 	assert(ucp);
-	usecodeNotifyPID = ucp->getPid();
+	_usecodeNotifyPID = ucp->getPid();
 }
 
 void SliderGump::saveData(ODataSource *ods) {

@@ -23,6 +23,8 @@
 #ifndef FULLPIPE_CONSOLE_H
 #define FULLPIPE_CONSOLE_H
 
+#include "gui/debugger.h"
+
 namespace Fullpipe {
 
 class FullpipeEngine;

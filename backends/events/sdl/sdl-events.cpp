@@ -117,7 +117,7 @@ SdlEventSource::~SdlEventSource() {
 	closeJoystick();
 }
 
-int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
+int SdlEventSource::mapKey(SDL_Keycode sdlKey, SDL_Keymod mod, Uint16 unicode) {
 	Common::KeyCode key = SDLToOSystemKeycode(sdlKey);
 
 	// Keep unicode in case it's regular ASCII text or in case we didn't get a valid keycode
@@ -337,7 +337,7 @@ int16 SdlEventSource::computeJoystickMouseSpeedFactor() const {
 	return speedFactor * 480 / _km.y_max;
 }
 
-void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
+void SdlEventSource::SDLModToOSystemKeyFlags(SDL_Keymod mod, Common::Event &event) {
 
 	event.kbd.flags = 0;
 
@@ -347,8 +347,13 @@ void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 		event.kbd.flags |= Common::KBD_ALT;
 	if (mod & KMOD_CTRL)
 		event.kbd.flags |= Common::KBD_CTRL;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (mod & KMOD_GUI)
+		event.kbd.flags |= Common::KBD_META;
+#else
 	if (mod & KMOD_META)
 		event.kbd.flags |= Common::KBD_META;
+#endif
 
 	// Sticky flags
 	if (mod & KMOD_NUM)
@@ -357,7 +362,7 @@ void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 		event.kbd.flags |= Common::KBD_CAPS;
 }
 
-Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
+Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDL_Keycode key) {
 	switch (key) {
 	case SDLK_BACKSPACE: return Common::KEYCODE_BACKSPACE;
 	case SDLK_TAB: return Common::KEYCODE_TAB;
@@ -430,16 +435,6 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 	case SDLK_y: return Common::KEYCODE_y;
 	case SDLK_z: return Common::KEYCODE_z;
 	case SDLK_DELETE: return Common::KEYCODE_DELETE;
-	case SDLK_KP0: return Common::KEYCODE_KP0;
-	case SDLK_KP1: return Common::KEYCODE_KP1;
-	case SDLK_KP2: return Common::KEYCODE_KP2;
-	case SDLK_KP3: return Common::KEYCODE_KP3;
-	case SDLK_KP4: return Common::KEYCODE_KP4;
-	case SDLK_KP5: return Common::KEYCODE_KP5;
-	case SDLK_KP6: return Common::KEYCODE_KP6;
-	case SDLK_KP7: return Common::KEYCODE_KP7;
-	case SDLK_KP8: return Common::KEYCODE_KP8;
-	case SDLK_KP9: return Common::KEYCODE_KP9;
 	case SDLK_KP_PERIOD: return Common::KEYCODE_KP_PERIOD;
 	case SDLK_KP_DIVIDE: return Common::KEYCODE_KP_DIVIDE;
 	case SDLK_KP_MULTIPLY: return Common::KEYCODE_KP_MULTIPLY;
@@ -471,26 +466,36 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 	case SDLK_F13: return Common::KEYCODE_F13;
 	case SDLK_F14: return Common::KEYCODE_F14;
 	case SDLK_F15: return Common::KEYCODE_F15;
-	case SDLK_NUMLOCK: return Common::KEYCODE_NUMLOCK;
 	case SDLK_CAPSLOCK: return Common::KEYCODE_CAPSLOCK;
-	case SDLK_SCROLLOCK: return Common::KEYCODE_SCROLLOCK;
 	case SDLK_RSHIFT: return Common::KEYCODE_RSHIFT;
 	case SDLK_LSHIFT: return Common::KEYCODE_LSHIFT;
 	case SDLK_RCTRL: return Common::KEYCODE_RCTRL;
 	case SDLK_LCTRL: return Common::KEYCODE_LCTRL;
 	case SDLK_RALT: return Common::KEYCODE_RALT;
 	case SDLK_LALT: return Common::KEYCODE_LALT;
-	case SDLK_LSUPER: return Common::KEYCODE_LSUPER;
-	case SDLK_RSUPER: return Common::KEYCODE_RSUPER;
 	case SDLK_MODE: return Common::KEYCODE_MODE;
-	case SDLK_COMPOSE: return Common::KEYCODE_COMPOSE;
 	case SDLK_HELP: return Common::KEYCODE_HELP;
-	case SDLK_PRINT: return Common::KEYCODE_PRINT;
 	case SDLK_SYSREQ: return Common::KEYCODE_SYSREQ;
 	case SDLK_MENU: return Common::KEYCODE_MENU;
 	case SDLK_POWER: return Common::KEYCODE_POWER;
 	case SDLK_UNDO: return Common::KEYCODE_UNDO;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+	case SDLK_SCROLLLOCK: return Common::KEYCODE_SCROLLOCK;
+	case SDLK_NUMLOCKCLEAR: return Common::KEYCODE_NUMLOCK;
+	case SDLK_LGUI: return Common::KEYCODE_LSUPER;
+	case SDLK_RGUI: return Common::KEYCODE_RSUPER;
+	case SDLK_PRINTSCREEN: return Common::KEYCODE_PRINT;
+	case SDLK_APPLICATION: return Common::KEYCODE_COMPOSE;
+	case SDLK_KP_0: return Common::KEYCODE_KP0;
+	case SDLK_KP_1: return Common::KEYCODE_KP1;
+	case SDLK_KP_2: return Common::KEYCODE_KP2;
+	case SDLK_KP_3: return Common::KEYCODE_KP3;
+	case SDLK_KP_4: return Common::KEYCODE_KP4;
+	case SDLK_KP_5: return Common::KEYCODE_KP5;
+	case SDLK_KP_6: return Common::KEYCODE_KP6;
+	case SDLK_KP_7: return Common::KEYCODE_KP7;
+	case SDLK_KP_8: return Common::KEYCODE_KP8;
+	case SDLK_KP_9: return Common::KEYCODE_KP9;
 	case SDLK_PERCENT: return Common::KEYCODE_PERCENT;
 	case SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_GRAVE): return Common::KEYCODE_TILDE;
 	case SDLK_F16: return Common::KEYCODE_F16;
@@ -526,6 +531,22 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 	case SDLK_AUDIOFASTFORWARD: return Common::KEYCODE_AUDIOFASTFORWARD;
 #endif
 #else
+	case SDLK_SCROLLOCK: return Common::KEYCODE_SCROLLOCK;
+	case SDLK_NUMLOCK: return Common::KEYCODE_NUMLOCK;
+	case SDLK_LSUPER: return Common::KEYCODE_LSUPER;
+	case SDLK_RSUPER: return Common::KEYCODE_RSUPER;
+	case SDLK_PRINT: return Common::KEYCODE_PRINT;
+	case SDLK_COMPOSE: return Common::KEYCODE_COMPOSE;
+	case SDLK_KP0: return Common::KEYCODE_KP0;
+	case SDLK_KP1: return Common::KEYCODE_KP1;
+	case SDLK_KP2: return Common::KEYCODE_KP2;
+	case SDLK_KP3: return Common::KEYCODE_KP3;
+	case SDLK_KP4: return Common::KEYCODE_KP4;
+	case SDLK_KP5: return Common::KEYCODE_KP5;
+	case SDLK_KP6: return Common::KEYCODE_KP6;
+	case SDLK_KP7: return Common::KEYCODE_KP7;
+	case SDLK_KP8: return Common::KEYCODE_KP8;
+	case SDLK_KP9: return Common::KEYCODE_KP9;
 	case SDLK_WORLD_16: return Common::KEYCODE_TILDE;
 	case SDLK_BREAK: return Common::KEYCODE_BREAK;
 	case SDLK_LMETA: return Common::KEYCODE_LMETA;
@@ -730,10 +751,11 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
 
-	SDLKey sdlKeycode = obtainKeycode(ev.key.keysym);
+	SDL_Keycode sdlKeycode = obtainKeycode(ev.key.keysym);
+	Common::KeyCode key = SDLToOSystemKeycode(sdlKeycode);
 
 	// Handle scroll lock as a key modifier
-	if (sdlKeycode == SDLK_SCROLLOCK)
+	if (key == Common::KEYCODE_SCROLLOCK)
 		_scrollLock = !_scrollLock;
 
 	if (_scrollLock)
@@ -743,8 +765,8 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		return true;
 
 	event.type = Common::EVENT_KEYDOWN;
-	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
-	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
+	event.kbd.keycode = key;
+	event.kbd.ascii = mapKey(sdlKeycode, (SDL_Keymod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	event.kbdRepeat = ev.key.repeat;
@@ -757,12 +779,12 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
-	SDLKey sdlKeycode = obtainKeycode(ev.key.keysym);
-	SDLMod mod = SDL_GetModState();
+	SDL_Keycode sdlKeycode = obtainKeycode(ev.key.keysym);
+	SDL_Keymod mod = SDL_GetModState();
 
 	event.type = Common::EVENT_KEYUP;
 	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
-	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, 0);
+	event.kbd.ascii = mapKey(sdlKeycode, (SDL_Keymod)ev.key.keysym.mod, 0);
 
 	SDLModToOSystemKeyFlags(mod, event);
 
@@ -1126,7 +1148,7 @@ bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
 	return false;
 }
 
-SDLKey SdlEventSource::obtainKeycode(const SDL_keysym keySym) {
+SDL_Keycode SdlEventSource::obtainKeycode(const SDL_Keysym keySym) {
 #if !SDL_VERSION_ATLEAST(2, 0, 0) && defined(WIN32)
 	// WORKAROUND: SDL 1.2 on Windows does not use the user configured keyboard layout,
 	// resulting in "keySym.sym" values to always be those expected for an US keyboard.
@@ -1153,9 +1175,9 @@ SDLKey SdlEventSource::obtainKeycode(const SDL_keysym keySym) {
 		if (ch) {
 			if (ch >= 'A' && ch <= 'Z') {
 				// Windows returns uppercase ASCII whereas SDL expects lowercase
-				return (SDLKey)(SDLK_a + (ch - 'A'));
+				return (SDL_Keycode)(SDLK_a + (ch - 'A'));
 			} else {
-				return (SDLKey)ch;
+				return (SDL_Keycode)ch;
 			}
 		}
 	}
@@ -1164,7 +1186,7 @@ SDLKey SdlEventSource::obtainKeycode(const SDL_keysym keySym) {
 	return keySym.sym;
 }
 
-uint32 SdlEventSource::obtainUnicode(const SDL_keysym keySym) {
+uint32 SdlEventSource::obtainUnicode(const SDL_Keysym keySym) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Event events[2];
 

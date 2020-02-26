@@ -31,10 +31,10 @@ namespace Ultima {
 namespace Ultima8 {
 
 class ShapeFont : public Font, public Shape {
-	int height;
-	int baseline;
-	int vlead;
-	int hlead;
+	int _height;
+	int _baseLine;
+	int _vLead;
+	int _hLead;
 
 public:
 	ShapeFont(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
@@ -47,17 +47,17 @@ public:
 
 	int getWidth(char c);
 	int getVlead() const {
-		return vlead;
+		return _vLead;
 	}
 	int getHlead() const {
-		return hlead;
+		return _hLead;
 	}
 
 	void setVLead(int vl) {
-		vlead = vl;
+		_vLead = vl;
 	}
 	void setHLead(int hl) {
-		hlead = hl;
+		_hLead = hl;
 	}
 
 	void getStringSize(const Std::string &text,

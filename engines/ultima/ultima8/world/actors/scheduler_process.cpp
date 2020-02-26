@@ -37,16 +37,16 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SchedulerProcess, Process)
 
 SchedulerProcess::SchedulerProcess() : Process() {
-	lastRun = 0;
-	nextActor = 0;
-	type = 0x245; // CONSTANT!
+	_lastRun = 0;
+	_nextActor = 0;
+	_type = 0x245; // CONSTANT!
 }
 
 void SchedulerProcess::run() {
-	if (nextActor != 0) {
+	if (_nextActor != 0) {
 		// doing a scheduling run at the moment
 
-		Actor *a = getActor(nextActor);
+		Actor *a = getActor(_nextActor);
 		if (a) {
 			// CHECKME: is this the right time to pass? CONSTANT
 			uint32 stime = Ultima8Engine::get_instance()->getGameTimeInSeconds() / 60;
@@ -54,9 +54,9 @@ void SchedulerProcess::run() {
 			if (schedpid) waitFor(schedpid);
 		}
 
-		nextActor++;
-		if (nextActor == 256) { // CONSTANT
-			nextActor = 0; // done
+		_nextActor++;
+		if (_nextActor == 256) { // CONSTANT
+			_nextActor = 0; // done
 #if 0
 			pout << "Scheduler: finished run at "
 			     << Kernel::get_instance()->getFrameNum() << Std::endl;
@@ -69,10 +69,10 @@ void SchedulerProcess::run() {
 	// CONSTANT!
 	uint32 currenthour = Ultima8Engine::get_instance()->getGameTimeInSeconds() / 900;
 
-	if (currenthour > lastRun) {
+	if (currenthour > _lastRun) {
 		// schedule a new scheduling run
-		lastRun = currenthour;
-		nextActor = 1;
+		_lastRun = currenthour;
+		_nextActor = 1;
 #if 0
 		pout << "Scheduler:  " << Kernel::get_instance()->getFrameNum()
 		     << Std::endl;
@@ -83,15 +83,15 @@ void SchedulerProcess::run() {
 void SchedulerProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(lastRun);
-	ods->write2(nextActor);
+	ods->write4(_lastRun);
+	ods->write2(_nextActor);
 }
 
 bool SchedulerProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	lastRun = ids->read4();
-	nextActor = ids->read2();
+	_lastRun = ids->read4();
+	_nextActor = ids->read2();
 
 	return true;
 }

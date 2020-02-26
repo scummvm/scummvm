@@ -54,15 +54,15 @@ void AIScriptMaleAnnouncer::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMaleAnnouncer::EnteredScene(int sceneId) {
+void AIScriptMaleAnnouncer::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMaleAnnouncer::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMaleAnnouncer::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMaleAnnouncer::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMaleAnnouncer::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

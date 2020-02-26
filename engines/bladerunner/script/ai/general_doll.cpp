@@ -130,15 +130,15 @@ void AIScriptGeneralDoll::ClickedByPlayer() {
 	Actor_Voice_Over(40, kActorVoiceOver);
 }
 
-void AIScriptGeneralDoll::EnteredScene(int sceneId) {
+void AIScriptGeneralDoll::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGeneralDoll::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGeneralDoll::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGeneralDoll::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGeneralDoll::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -287,7 +287,7 @@ bool AIScriptGeneralDoll::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 834;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(834)) {
 			_animationFrame = 0;
 		}
@@ -300,7 +300,7 @@ bool AIScriptGeneralDoll::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(835)) {
 				_animationFrame = 0;
 			}
@@ -309,7 +309,7 @@ bool AIScriptGeneralDoll::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 833;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(833)) {
 			_animationFrame = 0;
 		}
@@ -317,7 +317,7 @@ bool AIScriptGeneralDoll::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 837;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(837)) {
 			*animation = 834;
 			_animationFrame = 0;
@@ -328,7 +328,7 @@ bool AIScriptGeneralDoll::UpdateAnimation(int *animation, int *frame) {
 	case 4:
 		*animation = 836;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(836) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 

@@ -128,7 +128,8 @@ Keymap::ActionArray Keymap::getMappedActions(const Event &event) const {
 	switch (event.type) {
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP: {
-		HardwareInput hardwareInput = HardwareInput::createKeyboard("", event.kbd, "");
+		KeyState normalizedKeystate = KeyboardHardwareInputSet::normalizeKeyState(event.kbd);
+		HardwareInput hardwareInput = HardwareInput::createKeyboard("", normalizedKeystate, "");
 		return _hwActionMap[hardwareInput];
 	}
 	case EVENT_LBUTTONDOWN:
@@ -144,6 +145,14 @@ Keymap::ActionArray Keymap::getMappedActions(const Event &event) const {
 	case EVENT_MBUTTONDOWN:
 	case EVENT_MBUTTONUP: {
 		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_MIDDLE, "");
+		return _hwActionMap[hardwareInput];
+	}
+	case Common::EVENT_WHEELUP: {
+		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_WHEEL_UP, "");
+		return _hwActionMap[hardwareInput];
+	}
+	case Common::EVENT_WHEELDOWN: {
+		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_WHEEL_DOWN, "");
 		return _hwActionMap[hardwareInput];
 	}
 	case EVENT_JOYBUTTON_DOWN:

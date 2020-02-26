@@ -85,7 +85,7 @@ static void CheckBrightness(PMOVER pMover) {
 		else
 			pMover->brightness--;			// ramp down
 
-		DimPartPalette(BgPal(),
+		DimPartPalette(_vm->_bg->BgPal(),
 				pMover->startColor,
 				pMover->paletteLength,
 				pMover->brightness);
@@ -102,10 +102,10 @@ void MoverBrightness(PMOVER pMover, int brightness) {
 	// if BgPal is NULL, and has been changed for ScummVM to a simple assert
 
 	// This is changed from a ProcessGiveWay in DW2 to an assert in ScummVM
-	assert(BgPal());
+	assert(_vm->_bg->BgPal());
 
 	// Do it all immediately
-	DimPartPalette(BgPal(), pMover->startColor, pMover->paletteLength, brightness);
+	DimPartPalette(_vm->_bg->BgPal(), pMover->startColor, pMover->paletteLength, brightness);
 
 	// The actor is probably hidden at this point,
 	pMover->brightness = brightness;
@@ -200,7 +200,7 @@ void SetMoverInEffect(int index, bool tf) {
 void KillMover(PMOVER pMover) {
 	if (pMover->bActive) {
 		pMover->bActive = false;
-		MultiDeleteObject(GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
 		pMover->actorObj = NULL;
 		assert(CoroScheduler.getCurrentProcess() != pMover->pProc);
 		CoroScheduler.killProcess(pMover->pProc);
@@ -697,7 +697,7 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	IMAGE *pim;
 
 
-	assert(BgPal()); // Can't start actor without a background palette
+	assert(_vm->_bg->BgPal()); // Can't start actor without a background palette
 	assert(pMover->walkReels[0][FORWARD]); // Starting actor process without walk reels
 
 	InitMover(pMover);
@@ -711,7 +711,7 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 
 	// get pointer to image
 	pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
-	pim->hImgPal = TO_32(BgPal());
+	pim->hImgPal = TO_32(_vm->_bg->BgPal());
 //---
 	pMover->actorObj = MultiInitObject(pmi);
 
@@ -719,7 +719,7 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	pMover->actorID = id;
 
 	// add it to display list
-	MultiInsertObject(GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
+	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
 	storeActorReel(id, NULL, 0, pMover->actorObj, 0, 0, 0);
 
 	InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_32(pfilm->reels[0].script), ONE_SECOND / FROM_32(pfilm->frate));
@@ -813,7 +813,7 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	pMover->bActive = true;
 
 	// add it to display list
-	MultiInsertObject( GetPlayfieldList(FIELD_WORLD), pMover->actorObj );
+	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
 
 	InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, pFilm->reels[0].script, ONE_SECOND/pFilm->frate);
 	pMover->stepCount = 0;

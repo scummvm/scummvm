@@ -206,7 +206,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 
 	} else {
 		// Open up the savegame file
-		Common::String slotName = generateSaveName(slotNumber);
+		Common::String slotName = getSaveStateName(slotNumber);
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
 
 		// Read the data into a data buffer
@@ -257,20 +257,12 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
  * Returns true if a given savegame exists
  */
 bool CGEEngine::savegameExists(int slotNumber) {
-	Common::String slotName = generateSaveName(slotNumber);
+	Common::String slotName = getSaveStateName(slotNumber);
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
 	bool result = saveFile != NULL;
 	delete saveFile;
 	return result;
-}
-
-/**
- * Support method that generates a savegame name
- * @param slot		Slot number
- */
-Common::String CGEEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 Common::Error CGEEngine::loadGameState(int slot) {
@@ -298,7 +290,7 @@ void CGEEngine::resetGame() {
 	_commandHandler->reset();
 }
 
-Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	sceneDown();
 	_hero->park();
 	_oldLev = _lev;
@@ -323,7 +315,7 @@ Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 
 void CGEEngine::saveGame(int slotNumber, const Common::String &desc) {
 	// Set up the serializer
-	Common::String slotName = generateSaveName(slotNumber);
+	Common::String slotName = getSaveStateName(slotNumber);
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(slotName);
 
 	// Write out the ScummVM savegame header

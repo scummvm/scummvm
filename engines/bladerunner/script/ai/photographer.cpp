@@ -108,15 +108,15 @@ void AIScriptPhotographer::ClickedByPlayer() {
 	}
 }
 
-void AIScriptPhotographer::EnteredScene(int sceneId) {
+void AIScriptPhotographer::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptPhotographer::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptPhotographer::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptPhotographer::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptPhotographer::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -200,7 +200,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 745;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(745)) {
 			_animationFrame = 0;
 		}
@@ -208,7 +208,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 744;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(744)) {
 			_animationFrame = 0;
 		}
@@ -224,7 +224,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 			_var2 = 0;
 			_flag = false;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(747)) {
 				_animationFrame = 0;
 			}
@@ -233,7 +233,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 749;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(749)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -243,7 +243,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 749;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(749)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -253,7 +253,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 750;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(750)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -269,7 +269,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 		if (_var1) {
 			--_var1;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame == 10) {
 				_var1 = 5;
 			}

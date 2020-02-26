@@ -34,24 +34,21 @@ namespace Ultima8 {
 #define MINMAPGUMP_SCALE 8
 
 class MiniMapGump : public Gump {
-	Texture             minimap;
-	unsigned int        lastMapNum;
-	uint32              texbuffer[MAP_NUM_CHUNKS * MINMAPGUMP_SCALE][MAP_NUM_CHUNKS * MINMAPGUMP_SCALE];
+	Texture             _minimap;
+	unsigned int        _lastMapNum;
+	uint32              _texBuffer[MAP_NUM_CHUNKS * MINMAPGUMP_SCALE][MAP_NUM_CHUNKS * MINMAPGUMP_SCALE];
 
 	uint32              sampleAtPoint(int x, int y, CurrentMap *map);
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	MiniMapGump(void);
+	MiniMapGump();
 	MiniMapGump(int x, int y);
-	~MiniMapGump(void) override;
+	~MiniMapGump() override;
 
 	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	uint16      TraceObjId(int32 mx, int32 my) override;
-
-	static void         ConCmd_toggle(const Console::ArgvType &argv);   //!< "MiniMapGump::toggle" console command
-	static void         ConCmd_generateWholeMap(const Console::ArgvType &argv); //!< "MiniMapGump::generateWholeMap" console command
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

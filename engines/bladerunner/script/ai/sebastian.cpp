@@ -79,15 +79,15 @@ void AIScriptSebastian::ClickedByPlayer() {
 	return; //false;
 }
 
-void AIScriptSebastian::EnteredScene(int sceneId) {
+void AIScriptSebastian::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptSebastian::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptSebastian::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptSebastian::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptSebastian::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -147,7 +147,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 811;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(811) - 1) {
 			_animationFrame = 0;
 		}
@@ -155,7 +155,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 809;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(809) - 1) {
 			_animationFrame = 0;
 		}
@@ -163,7 +163,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 810;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(810) - 1) {
 			Actor_Change_Animation_Mode(kActorSebastian, kAnimationModeIdle);
 			*animation = 811;
@@ -175,7 +175,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 	case 3:
 		*animation = 821;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(821) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
@@ -187,7 +187,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		} else {
 			*animation = 813;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(813) - 1) {
 				_animationFrame = 0;
 			}
@@ -196,7 +196,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 814;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(814) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
@@ -206,7 +206,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 815;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(815) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
@@ -216,7 +216,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 816;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(816) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
@@ -226,7 +226,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 817;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(817) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
@@ -236,7 +236,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 818;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(818) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
@@ -246,7 +246,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 819;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(819) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
@@ -256,7 +256,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 820;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(820) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;

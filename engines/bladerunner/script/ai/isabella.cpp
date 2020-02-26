@@ -63,15 +63,15 @@ void AIScriptIsabella::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptIsabella::EnteredScene(int sceneId) {
+void AIScriptIsabella::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptIsabella::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptIsabella::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptIsabella::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptIsabella::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -106,7 +106,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		if (_var3 == 1) {
 			*animation = 839;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(839) - 1) {
 				_animationFrame = 0;
 			}
@@ -120,7 +120,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 		} else if (_var3 == 0) {
 			*animation = 838;
 			if (_var2) {
-				_var2--;
+				--_var2;
 				if (_var2 == 0) {
 					_var4 = 2 * Random_Query(0, 1) - 1;
 				}
@@ -158,7 +158,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 840;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(840) - 1) {
 			flag = true;
 			_animationFrame = 0;
@@ -182,7 +182,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(841) - 1) {
 				_animationFrame = 0;
 			} else {
@@ -202,7 +202,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(842) - 1) {
 				_animationFrame = 0;
 			} else {
@@ -219,7 +219,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 843;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(843) - 1) {
 			flag = true;
 			_animationFrame = 0;
@@ -239,7 +239,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 844;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(844) - 1) {
 			flag = true;
 			_animationFrame = 0;
@@ -259,7 +259,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 845;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(845) - 1) {
 			flag = true;
 			_animationFrame = 0;
@@ -279,7 +279,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 845;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(845) - 1) {
 			flag = true;
 			_animationFrame = 0;
@@ -299,7 +299,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 844;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(844) - 1) {
 			flag = true;
 			_animationFrame = 0;

@@ -39,10 +39,10 @@ public:
 		SongInfo();
 		~SongInfo();
 
-		char        filename[16];
-		int         num_measures;
-		int         loop_jump;
-		int         *transitions[128];
+		char        _filename[16];
+		int         _numMeasures;
+		int         _loopJump;
+		int         *_transitions[128];
 	};
 
 	MusicFlex(IDataSource *ds);
@@ -50,15 +50,15 @@ public:
 
 	//! Get an xmidi
 	XMidiFile *getXMidi(uint32 index) {
-		if (index >= count) return 0;
+		if (index >= _count) return 0;
 		cache(index);
-		return songs[index];
+		return _songs[index];
 	}
 
 	//! Get song info
 	const SongInfo *getSongInfo(uint32 index) const {
 		if (index > 127) return 0;
-		return info[index];
+		return _info[index];
 	}
 
 	//! Get the Adlib Timbres (index 259)
@@ -66,15 +66,15 @@ public:
 
 	void cache(uint32 index) override;
 	void uncache(uint32 index) override;
-	bool isCached(uint32 index) override;
+	bool isCached(uint32 index) const override;
 
 	uint8 *getRawObject(uint32 index, uint32 *sizep = 0) {
 		return Archive::getRawObject(index, sizep);
 	}
 
 private:
-	SongInfo        *info[128];
-	XMidiFile       **songs;
+	SongInfo        *_info[128];
+	XMidiFile       **_songs;
 
 	//! Load the song info
 	void            loadSongInfo();

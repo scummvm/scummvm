@@ -27,7 +27,9 @@
 #include "common/coroutines.h"
 #include "common/frac.h"
 #include "common/rect.h"
+#include "tinsel/anim.h"	// for ANIM
 #include "tinsel/dw.h"	// for SCNHANDLE
+#include "tinsel/object.h"	// for POBJECT
 #include "tinsel/palette.h"	// palette definitions
 
 namespace Tinsel {
@@ -73,43 +75,91 @@ struct BACKGND {
 |*			Background Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void InitBackground(		// called to initialize a background
-	const BACKGND *pBgnd);	// pointer to data struct for current background
+#define MAX_BG	10
 
-void StartupBackground(CORO_PARAM, SCNHANDLE hFilm);
+class Font;
 
-void StopBgndScrolling();	// Stops all background playfields from scrolling
+class Background {
+public:
+	Background(Font* font);
 
-void PlayfieldSetPos(		// Sets the xy position of the specified playfield in the current background
-	int which,		// which playfield
-	int newXpos,		// new x position
-	int newYpos);		// new y position
+	void InitBackground();
 
-void PlayfieldGetPos(		// Returns the xy position of the specified playfield in the current background
-	int which,		// which playfield
-	int *pXpos,		// returns current x position
-	int *pYpos);		// returns current y position
+	void DrawBackgnd();		// Draws all playfields for the current background
 
-int PlayfieldGetCenterX(	// Returns the xy position of the specified playfield in the current background
-	int which);		// which playfield
+	/**
+	 * Called before scene change.
+	 */
+	void DropBackground();
 
-OBJECT **GetPlayfieldList(	// Returns the display list for the specified playfield
-	int which);		// which playfield
+	void ResetBackground() {
+		delete _pCurBgnd;
+		_pCurBgnd = nullptr;
+	}
 
-void KillPlayfieldList(		// Kills all the objects on the display list for the specified playfield
-	int which);		// which playfield
+	void StartupBackground(CORO_PARAM, SCNHANDLE hFilm);
 
-void DrawBackgnd();		// Draws all playfields for the current background
+	void PlayfieldSetPos(		// Sets the xy position of the specified playfield in the current background
+		int which,		// which playfield
+		int newXpos,		// new x position
+		int newYpos);		// new y position
 
-void RedrawBackgnd();	// Completely redraws all the playfield object lists for the current background
+	void PlayfieldGetPos(		// Returns the xy position of the specified playfield in the current background
+		int which,		// which playfield
+		int* pXpos,		// returns current x position
+		int* pYpos);		// returns current y position
 
-OBJECT *GetBgObject();
+	int PlayfieldGetCenterX(	// Returns the xy position of the specified playfield in the current background
+		int which);		// which playfield
 
-SCNHANDLE BgPal();
+	OBJECT** GetPlayfieldList(	// Returns the display list for the specified playfield
+		int which);		// which playfield
 
-int BgWidth();
+	OBJECT* GetBgObject() { return _pBG[0]; }
 
-int BgHeight();
+	void ChangePalette(SCNHANDLE hPal);
+
+	SCNHANDLE BgPal() { return _hBgPal; }
+
+	void SetDoFadeIn(bool tf) { _bDoFadeIn = tf; }
+
+	bool GetDoFadeIn() { return _bDoFadeIn; }
+
+	/**
+	 * Return the current scene handle.
+	 */
+	SCNHANDLE GetBgroundHandle() { return _hBackground; }
+
+	/**
+	 * Return the width of the current background.
+	 */
+	int BgWidth();
+
+	/**
+	 * Return the height of the current background.
+	 */
+	int BgHeight();
+
+	void SetBackPal(SCNHANDLE hPal);
+
+	int getBgSpeed() { return _BGspeed; }
+
+private:
+	Font *_font;
+
+	// current background
+	BACKGND *_pCurBgnd;
+
+	SCNHANDLE _hBgPal;	// Background's palette
+	int _BGspeed;
+	SCNHANDLE _hBackground;	// Current scene handle - stored in case of Save_Scene()
+	bool _bDoFadeIn;
+
+public:
+	int _bgReels;
+	POBJECT _pBG[MAX_BG];
+	ANIM	_thisAnim[MAX_BG];	// used by BGmainProcess()
+};
 
 } // End of namespace Tinsel
 

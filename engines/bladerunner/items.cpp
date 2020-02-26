@@ -39,7 +39,7 @@ Items::~Items() {
 }
 
 void Items::reset() {
-	for (int i = _items.size() - 1; i >= 0; i--) {
+	for (int i = _items.size() - 1; i >= 0; --i) {
 		delete _items.remove_at(i);
 	}
 }
@@ -74,7 +74,7 @@ void Items::getAnimationId(int itemId, int *animationId) const {
 
 void Items::tick() {
 	int setId = _vm->_scene->getSetId();
-	for (int i = 0; i < (int)_items.size(); i++) {
+	for (int i = 0; i < (int)_items.size(); ++i) {
 		if (_items[i]->_setId != setId) {
 			continue;
 		}
@@ -110,7 +110,7 @@ bool Items::addToSet(int setId) {
 	if (itemCount == 0) {
 		return true;
 	}
-	for (int i = 0; i < itemCount; i++) {
+	for (int i = 0; i < itemCount; ++i) {
 		Item *item = _items[i];
 		if (item->_setId == setId) {
 			_vm->_sceneObjects->addItem(item->_itemId + kSceneObjectOffsetItems, item->_boundingBox, item->_screenRectangle, item->isTarget(), item->_isVisible);
@@ -246,7 +246,7 @@ int Items::findTargetUnderMouse(int mouseX, int mouseY) const {
 }
 
 int Items::findItem(int itemId) const {
-	for (int i = 0; i < (int)_items.size(); i++) {
+	for (int i = 0; i < (int)_items.size(); ++i) {
 		if (_items[i]->_itemId == itemId) {
 			return i;
 		}
@@ -270,7 +270,7 @@ void Items::save(SaveFileWriteStream &f) {
 }
 
 void Items::load(SaveFileReadStream &f) {
-	for (int i = _items.size() - 1; i >= 0; i--) {
+	for (int i = _items.size() - 1; i >= 0; --i) {
 		delete _items.remove_at(i);
 	}
 	_items.resize(f.readInt());

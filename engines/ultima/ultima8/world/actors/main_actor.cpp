@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -45,7 +44,6 @@
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/audio/music_process.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -55,20 +53,18 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor, Actor)
 
-MainActor::MainActor() : justTeleported(false), accumStr(0), accumDex(0),
-	accumInt(0) {
-
+MainActor::MainActor() : _justTeleported(false), _accumStr(0), _accumDex(0),
+	_accumInt(0) {
 }
 
 MainActor::~MainActor() {
-
 }
 
 GravityProcess *MainActor::ensureGravityProcess() {
 	AvatarGravityProcess *p = 0;
-	if (gravitypid) {
+	if (_gravityPid) {
 		p = p_dynamic_cast<AvatarGravityProcess *>(
-		        Kernel::get_instance()->getProcess(gravitypid));
+		        Kernel::get_instance()->getProcess(_gravityPid));
 	} else {
 		p = new AvatarGravityProcess(this, 0);
 		Kernel::get_instance()->addProcess(p);
@@ -82,20 +78,20 @@ bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
 	const unsigned int backpack_shape = 529; //!! *cough* constant
 
 	if (!Actor::CanAddItem(item, checkwghtvol)) return false;
-	if (item->getParent() == objid) return true; // already in here
+	if (item->getParent() == _objId) return true; // already in here
 
 	// now check 'equipment slots'
 	// we can have one item of each equipment type, plus one backpack
 
-	uint32 equiptype = item->getShapeInfo()->equiptype;
+	uint32 equiptype = item->getShapeInfo()->_equipType;
 	bool backpack = (item->getShape() == backpack_shape);
 
 	// valid item type?
 	if (equiptype == ShapeInfo::SE_NONE && !backpack) return false;
 
 	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
-		uint32 cet = (*iter)->getShapeInfo()->equiptype;
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
+		uint32 cet = (*iter)->getShapeInfo()->_equipType;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
 
 		// already have an item with the same equiptype
@@ -110,7 +106,7 @@ bool MainActor::addItem(Item *item, bool checkwghtvol) {
 
 	item->setFlag(FLG_EQUIPPED);
 
-	uint32 equiptype = item->getShapeInfo()->equiptype;
+	uint32 equiptype = item->getShapeInfo()->_equipType;
 	item->setZ(equiptype);
 
 	return true;
@@ -126,7 +122,7 @@ void MainActor::teleport(int mapNum_, int32 x_, int32 y_, int32 z_) {
 	}
 
 	Actor::teleport(mapNum_, x_, y_, z_);
-	justTeleported = true;
+	_justTeleported = true;
 }
 
 // teleport to TeleportEgg
@@ -167,50 +163,50 @@ void MainActor::teleport(int mapNum_, int teleport_id) {
 	egg->dumpInfo();
 
 	Actor::teleport(mapNum_, xv, yv, zv);
-	justTeleported = true;
+	_justTeleported = true;
 }
 
-uint16 MainActor::getDefenseType() {
+uint16 MainActor::getDefenseType() const {
 	uint16 type = 0;
 
-	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	Std::list<Item *>::const_iterator iter;
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
-		if (si->armourinfo) {
-			type |= si->armourinfo[frameNum].defense_type;
+		if (si->_armourInfo) {
+			type |= si->_armourInfo[frameNum]._defenseType;
 		}
 	}
 
 	return type;
 }
 
-uint32 MainActor::getArmourClass() {
+uint32 MainActor::getArmourClass() const {
 	uint32 armour = 0;
 
-	Std::list<Item *>::iterator iter;
-	for (iter = contents.begin(); iter != contents.end(); ++iter) {
+	Std::list<Item *>::const_iterator iter;
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
-		if (si->armourinfo) {
-			armour += si->armourinfo[frameNum].armour_class;
+		if (si->_armourInfo) {
+			armour += si->_armourInfo[frameNum]._armourClass;
 		}
-		if (si->weaponinfo) {
-			armour += si->weaponinfo->armour_bonus;
+		if (si->_weaponInfo) {
+			armour += si->_weaponInfo->_armourBonus;
 		}
 	}
 
 	return armour;
 }
 
-int16 MainActor::getDefendingDex() {
+int16 MainActor::getDefendingDex() const {
 	int16 dex = getDex();
 
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
 	if (weapon) {
 		ShapeInfo *si = weapon->getShapeInfo();
-		assert(si->weaponinfo);
-		dex += si->weaponinfo->dex_defend_bonus;
+		assert(si->_weaponInfo);
+		dex += si->_weaponInfo->_dexDefendBonus;
 	}
 
 	if (dex <= 0) dex = 1;
@@ -218,35 +214,35 @@ int16 MainActor::getDefendingDex() {
 	return dex;
 }
 
-int16 MainActor::getAttackingDex() {
+int16 MainActor::getAttackingDex() const {
 	int16 dex = getDex();
 
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
 	if (weapon) {
 		ShapeInfo *si = weapon->getShapeInfo();
-		assert(si->weaponinfo);
-		dex += si->weaponinfo->dex_attack_bonus;
+		assert(si->_weaponInfo);
+		dex += si->_weaponInfo->_dexAttackBonus;
 	}
 
 	return dex;
 }
 
-uint16 MainActor::getDamageType() {
+uint16 MainActor::getDamageType() const {
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
 
 	if (weapon) {
 		// weapon equipped?
 
-		ShapeInfo *si = weapon->getShapeInfo();
-		assert(si->weaponinfo);
+		const ShapeInfo *si = weapon->getShapeInfo();
+		assert(si->_weaponInfo);
 
-		return si->weaponinfo->damage_type;
+		return si->_weaponInfo->_damageType;
 	}
 
 	return Actor::getDamageType();
 }
 
-int MainActor::getDamageAmount() {
+int MainActor::getDamageAmount() const {
 	int damage = 0;
 
 	if (getLastAnim() == Animation::kick) {
@@ -256,8 +252,8 @@ int MainActor::getDamageAmount() {
 		Item *legs = getItem(getEquip(ShapeInfo::SE_LEGS));
 		if (legs) {
 			ShapeInfo *si = legs->getShapeInfo();
-			assert(si->armourinfo);
-			kick_bonus = si->armourinfo[legs->getFrame()].kick_attack_bonus;
+			assert(si->_armourInfo);
+			kick_bonus = si->_armourInfo[legs->getFrame()]._kickAttackBonus;
 		}
 
 		damage = (getRandom() % (getStr() / 2 + 1)) + kick_bonus;
@@ -273,10 +269,10 @@ int MainActor::getDamageAmount() {
 		// weapon equipped?
 
 		ShapeInfo *si = weapon->getShapeInfo();
-		assert(si->weaponinfo);
+		assert(si->_weaponInfo);
 
-		int base = si->weaponinfo->base_damage;
-		int mod = si->weaponinfo->damage_modifier;
+		int base = si->_weaponInfo->_baseDamage;
+		int mod = si->_weaponInfo->_damageModifier;
 
 		damage = (getRandom() % (mod + 1)) + base + getStr() / 5;
 
@@ -330,176 +326,45 @@ ProcId MainActor::die(uint16 damageType) {
 	return animprocid;
 }
 
-
-void MainActor::ConCmd_teleport(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << Std::endl;
-		return;
-	}
-	MainActor *mainactor = getMainActor();
-	int curmap = mainactor->getMapNum();
-
-	switch (argv.size() - 1) {
-	case 1:
-		mainactor->teleport(curmap,
-		                    strtol(argv[1].c_str(), 0, 0));
-		break;
-	case 2:
-		mainactor->teleport(strtol(argv[1].c_str(), 0, 0),
-		                    strtol(argv[2].c_str(), 0, 0));
-		break;
-	case 3:
-		mainactor->teleport(curmap,
-		                    strtol(argv[1].c_str(), 0, 0),
-		                    strtol(argv[2].c_str(), 0, 0),
-		                    strtol(argv[3].c_str(), 0, 0));
-		break;
-	case 4:
-		mainactor->teleport(strtol(argv[1].c_str(), 0, 0),
-		                    strtol(argv[2].c_str(), 0, 0),
-		                    strtol(argv[3].c_str(), 0, 0),
-		                    strtol(argv[4].c_str(), 0, 0));
-		break;
-	default:
-		pout << "teleport usage:" << Std::endl;
-		pout << "teleport <mapnum> <x> <y> <z>: teleport to (x,y,z) on map mapnum" << Std::endl;
-		pout << "teleport <x> <y> <z>: teleport to (x,y,z) on current map" << Std::endl;
-		pout << "teleport <mapnum> <eggnum>: teleport to target egg eggnum on map mapnum" << Std::endl;
-		pout << "teleport <eggnum>: teleport to target egg eggnum on current map" << Std::endl;
-		break;
-	}
-}
-
-void MainActor::ConCmd_mark(const Console::ArgvType &argv) {
-	if (argv.size() == 1) {
-		pout << "Usage: mark <mark>: set named mark to this location" << Std::endl;
-		return;
-	}
-
-	SettingManager *settings = SettingManager::get_instance();
-	MainActor *mainactor = getMainActor();
-	int curmap = mainactor->getMapNum();
-	int32 x, y, z;
-	mainactor->getLocation(x, y, z);
-
-	istring confkey = "marks/" + argv[1];
-	char buf[100]; // large enough for 4 ints
-	sprintf(buf, "%d %d %d %d", curmap, x, y, z);
-
-	settings->set(confkey, buf);
-	settings->write(); //!! FIXME: clean this up
-
-	pout << "Set mark \"" << argv[1].c_str() << "\" to " << buf << Std::endl;
-}
-
-void MainActor::ConCmd_recall(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << Std::endl;
-		return;
-	}
-	if (argv.size() == 1) {
-		pout << "Usage: recall <mark>: recall to named mark" << Std::endl;
-		return;
-	}
-
-	SettingManager *settings = SettingManager::get_instance();
-	MainActor *mainactor = getMainActor();
-	istring confkey = "marks/" + argv[1];
-	Std::string target;
-	if (!settings->get(confkey, target)) {
-		pout << "recall: no such mark" << Std::endl;
-		return;
-	}
-
-	int t[4];
-	int n = sscanf(target.c_str(), "%d%d%d%d", &t[0], &t[1], &t[2], &t[3]);
-	if (n != 4) {
-		pout << "recall: invalid mark" << Std::endl;
-		return;
-	}
-
-	mainactor->teleport(t[0], t[1], t[2], t[3]);
-}
-
-void MainActor::ConCmd_listmarks(const Console::ArgvType &argv) {
-	SettingManager *settings = SettingManager::get_instance();
-	Std::vector<istring> marks;
-	marks = settings->listDataKeys("marks");
-	for (Std::vector<istring>::iterator iter = marks.begin();
-	        iter != marks.end(); ++iter) {
-		pout << (*iter) << Std::endl;
-	}
-}
-
-void MainActor::ConCmd_maxstats(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << Std::endl;
-		return;
-	}
-	MainActor *mainactor = getMainActor();
-
-	// constants!!
-	mainactor->setStr(25);
-	mainactor->setDex(25);
-	mainactor->setInt(25);
-	mainactor->setHP(mainactor->getMaxHP());
-	mainactor->setMana(mainactor->getMaxMana());
-
-	AudioProcess *audioproc = AudioProcess::get_instance();
-	if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-}
-
-void MainActor::ConCmd_heal(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << Std::endl;
-		return;
-	}
-	MainActor *mainactor = getMainActor();
-
-	mainactor->setHP(mainactor->getMaxHP());
-	mainactor->setMana(mainactor->getMaxMana());
-}
-
-
 void MainActor::accumulateStr(int n) {
 	// already max?
-	if (strength == 25) return; //!! constant
+	if (_strength == 25) return; //!! constant
 
-	accumStr += n;
-	if (accumStr >= 650 || getRandom() % (650 - accumStr) == 0) { //!! constant
-		strength++;
-		accumStr = 0;
+	_accumStr += n;
+	if (_accumStr >= 650 || getRandom() % (650 - _accumStr) == 0) { //!! constant
+		_strength++;
+		_accumStr = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained strength!" << Std::endl;
+		pout << "Gained _strength!" << Std::endl;
 	}
 }
 
 void MainActor::accumulateDex(int n) {
 	// already max?
-	if (dexterity == 25) return; //!! constant
+	if (_dexterity == 25) return; //!! constant
 
-	accumDex += n;
-	if (accumDex >= 650 || getRandom() % (650 - accumDex) == 0) { //!! constant
-		dexterity++;
-		accumDex = 0;
+	_accumDex += n;
+	if (_accumDex >= 650 || getRandom() % (650 - _accumDex) == 0) { //!! constant
+		_dexterity++;
+		_accumDex = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained dexterity!" << Std::endl;
+		pout << "Gained _dexterity!" << Std::endl;
 	}
 }
 
 void MainActor::accumulateInt(int n) {
 	// already max?
-	if (intelligence == 25) return; //!! constant
+	if (_intelligence == 25) return; //!! constant
 
-	accumInt += n;
-	if (accumInt >= 650 || getRandom() % (650 - accumInt) == 0) { //!! constant
-		intelligence++;
-		accumInt = 0;
+	_accumInt += n;
+	if (_accumInt >= 650 || getRandom() % (650 - _accumInt) == 0) { //!! constant
+		_intelligence++;
+		_accumInt = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained intelligence!" << Std::endl;
+		pout << "Gained _intelligence!" << Std::endl;
 	}
 }
 
@@ -507,7 +372,7 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	shape_ = 0;
 	frame_ = 0;
 
-	if (!isInCombat() && lastanim != Animation::unreadyWeapon) return;
+	if (!isInCombat() && _lastAnim != Animation::unreadyWeapon) return;
 
 	ObjId weaponid = getEquip(ShapeInfo::SE_WEAPON);
 	Item *weapon = getItem(weaponid);
@@ -516,44 +381,44 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	ShapeInfo *shapeinfo = weapon->getShapeInfo();
 	if (!shapeinfo) return;
 
-	WeaponInfo *weaponinfo = shapeinfo->weaponinfo;
+	WeaponInfo *weaponinfo = shapeinfo->_weaponInfo;
 	if (!weaponinfo) return;
 
-	shape_ = weaponinfo->overlay_shape;
+	shape_ = weaponinfo->_overlayShape;
 
 	WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
-	frame_ = wpnovlay->getOverlayFrame(lastanim, weaponinfo->overlay_type,
-	                                  direction, animframe);
+	frame_ = wpnovlay->getOverlayFrame(_lastAnim, weaponinfo->_overlayType,
+	                                  _direction, _animFrame);
 
 	if (frame_ == 0) shape_ = 0;
 }
 
 void MainActor::saveData(ODataSource *ods) {
 	Actor::saveData(ods);
-	uint8 jt = justTeleported ? 1 : 0;
+	uint8 jt = _justTeleported ? 1 : 0;
 	ods->write1(jt);
-	ods->write4(accumStr);
-	ods->write4(accumDex);
-	ods->write4(accumInt);
-	uint8 namelength = static_cast<uint8>(name.size());
+	ods->write4(_accumStr);
+	ods->write4(_accumDex);
+	ods->write4(_accumInt);
+	uint8 namelength = static_cast<uint8>(_name.size());
 	ods->write1(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		ods->write1(static_cast<uint8>(name[i]));
+		ods->write1(static_cast<uint8>(_name[i]));
 
 }
 
 bool MainActor::loadData(IDataSource *ids, uint32 version) {
 	if (!Actor::loadData(ids, version)) return false;
 
-	justTeleported = (ids->read1() != 0);
-	accumStr = static_cast<int32>(ids->read4());
-	accumDex = static_cast<int32>(ids->read4());
-	accumInt = static_cast<int32>(ids->read4());
+	_justTeleported = (ids->read1() != 0);
+	_accumStr = static_cast<int32>(ids->read4());
+	_accumDex = static_cast<int32>(ids->read4());
+	_accumInt = static_cast<int32>(ids->read4());
 
 	uint8 namelength = ids->read1();
-	name.resize(namelength);
+	_name.resize(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		name[i] = ids->read1();
+		_name[i] = ids->read1();
 
 	return true;
 }
@@ -619,34 +484,6 @@ uint32 MainActor::I_isAvatarInCombat(const uint8 * /*args*/,
 		return 0;
 }
 
-void MainActor::ConCmd_name(const Console::ArgvType &argv) {
-	MainActor *av = getMainActor();
-	if (argv.size() > 1)
-		av->setName(argv[1]);
-
-	pout << "MainActor::name = \"" << av->getName() << "\"" << Std::endl;
-}
-
-void MainActor::ConCmd_useBackpack(const Console::ArgvType &argv) {
-	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		pout << "Can't: avatarInStasis" << Std::endl;
-		return;
-	}
-	MainActor *av = getMainActor();
-	Item *backpack = getItem(av->getEquip(7));
-	if (backpack)
-		backpack->callUsecodeEvent_use();
-}
-
-void MainActor::ConCmd_useInventory(const Console::ArgvType &argv) {
-	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		pout << "Can't: avatarInStasis" << Std::endl;
-		return;
-	}
-	MainActor *av = getMainActor();
-	av->callUsecodeEvent_use();
-}
-
 void MainActor::useInventoryItem(uint32 shapenum) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		pout << "Can't: avatarInStasis" << Std::endl;
@@ -662,51 +499,6 @@ void MainActor::useInventoryItem(uint32 shapenum) {
 	Item *item = getItem(oId);
 	item->callUsecodeEvent_use();
 
-}
-
-void MainActor::ConCmd_useRecall(const Console::ArgvType &argv) {
-	MainActor *av = getMainActor();
-	av->useInventoryItem(833);
-}
-
-void MainActor::ConCmd_useBedroll(const Console::ArgvType &argv) {
-	MainActor *av = getMainActor();
-	av->useInventoryItem(534);
-}
-
-void MainActor::ConCmd_useKeyring(const Console::ArgvType &argv) {
-	MainActor *av = getMainActor();
-	av->useInventoryItem(79);
-}
-
-void MainActor::ConCmd_toggleCombat(const Console::ArgvType &argv) {
-	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		pout << "Can't: avatarInStasis" << Std::endl;
-		return;
-	}
-	MainActor *av = getMainActor();
-	av->toggleInCombat();
-}
-
-void MainActor::ConCmd_toggleInvincibility(const Console::ArgvType &argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << Std::endl;
-		return;
-	}
-	MainActor *av = getMainActor();
-
-	if (av->getActorFlags() & Actor::ACT_INVINCIBLE) {
-
-		av->clearActorFlag(Actor::ACT_INVINCIBLE);
-		pout << "Avatar is no longer invincible." << Std::endl;
-
-
-	} else {
-
-		av->setActorFlag(Actor::ACT_INVINCIBLE);
-		pout << "Avatar invincible." << Std::endl;
-
-	}
 }
 
 } // End of namespace Ultima8

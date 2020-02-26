@@ -29,13 +29,11 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(RenderedText)
 
 RenderedText::RenderedText()
-	: width(-1), height(-1), vlead(0) {
-
+	: _width(-1), _height(-1), _vLead(0) {
 }
 
 
 RenderedText::~RenderedText() {
-
 }
 
 } // End of namespace Ultima8

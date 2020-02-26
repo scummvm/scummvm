@@ -32,16 +32,16 @@ struct Texture;
 class IDataSource;
 
 struct FixedWidthFont {
-	int     width;
-	int     height;
-	int     align_x;
-	int     align_y;
+	int     _width;
+	int     _height;
+	int     _alignX;
+	int     _alignY;
 
-	Texture *tex;
+	Texture *_tex;
 
 	~FixedWidthFont();
 
-	static FixedWidthFont *Create(Std::string iniroot);
+	static FixedWidthFont *Create(const Std::string &iniroot);
 };
 
 } // End of namespace Ultima8

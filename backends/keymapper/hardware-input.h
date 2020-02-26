@@ -234,6 +234,9 @@ public:
 	HardwareInput findHardwareInput(const String &id) const override;
 	HardwareInput findHardwareInput(const Event &event) const override;
 
+	/** Transform a keystate into a canonical form that can be used to unambiguously identify the keypress */
+	static KeyState normalizeKeyState(const KeyState &keystate);
+
 private:
 	const KeyTableEntry *_keys;
 	const ModifierTableEntry *_modifiers;

@@ -137,12 +137,6 @@ public:
 	bool canSaveGameStateCurrently() override;
 
 	/**
-	* Support method that generates a savegame name
-	* @param slot		Slot number
-	*/
-	Common::String generateSaveName(int slot);
-
-	/**
 	 * Handles loading a game via the GMM
 	 */
 	Common::Error loadGameState(int slot) override;
@@ -150,7 +144,7 @@ public:
 	/**
 	 * Handles saving the game via the GMM
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	/**
 	 * Handles updating sound settings after they're changed in the GMM dialog

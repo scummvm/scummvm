@@ -772,7 +772,7 @@ show_engine_help() {
 show_subengine_help() {
 	name=`get_engine_name $1`
 	parent=`get_engine_name $2`
-	option_help "${1}" "${name} in ${parent} engine" "  "
+	option_help "- ${1}" "${name} in ${parent} engine" "  "
 }
 
 # Prepare the strings about the engines to build
@@ -1119,8 +1119,11 @@ Optional Libraries:
   --disable-osx-dock-plugin    disable the NSDockTilePlugin support
                                [Mac OS X only - autodetect]
 
-  --with-sdl-prefix=DIR    prefix where the sdl-config script is
-                           installed (optional)
+  --with-sdl-prefix=DIR    prefix where the SDL package is installed (optional)
+                           e.g., if sdl-config script is at:
+                           /opt/mxe/usr/i686-w64-mingw32.static/bin/sdl2-config
+                           then you should pass:
+                           '--with-sdl-prefix=/opt/mxe/usr/i686-w64-mingw32.static'
 
   --with-freetype2-prefix=DIR  prefix where the freetype-config script is
                                installed (optional)
@@ -1153,6 +1156,7 @@ Some influential environment variables:
   AR                 archiver command
   AS                 assembler command
   ASFLAGS            assembler flags
+  CONFIGURE_NO_HOST  Ignore the cross-compile target set by the --host= option
   CPPFLAGS           C++ preprocessor flags, e.g. -I<include dir> if you have
                      headers in a nonstandard directory <include dir>
   CXX                C++ compiler command
@@ -1190,6 +1194,19 @@ EOF
 
 for ac_option in $@; do
 	case "$ac_option" in
+	# Silently ignore options valid for Autotools configure.
+	--build=*)                                           ;;
+	--program-prefix=*)                                  ;;
+	--sbindir=*)                                         ;;
+	--sysconfdir=*)                                      ;;
+	--includedir=*)                                      ;;
+	--libexecdir=*)                                      ;;
+	--localstatedir=*)                                   ;;
+	--sharedstatedir=*)                                  ;;
+	--infodir=*)                                         ;;
+	--disable-dependency-tracking)                       ;;
+	--enable-dependency-tracking)                        ;;
+	# End of ignored options.
 	--enable-static)              _static_build=yes      ;;
 	--disable-16bit)              _16bit=no              ;;
 	--enable-highres)             _highres=yes           ;;
@@ -1459,7 +1476,11 @@ for ac_option in $@; do
 		_xcodetoolspath=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--host=*)
-		_host=`echo $ac_option | cut -d '=' -f 2`
+		if test -z "$CONFIGURE_NO_HOST"; then
+			_host=`echo $ac_option | cut -d '=' -f 2`
+		else
+			echo "Ignoring --host option!" >&2
+		fi
 		;;
 	--prefix=*)
 		prefix=`echo $ac_option | cut -d '=' -f 2`
@@ -2979,6 +3000,7 @@ case $_host_os in
 		append_var LDFLAGS "-Wl,--gc-sections"
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
 		_pandoc=yes
+		_sdlconfig=sdl-config
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"

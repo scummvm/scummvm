@@ -45,14 +45,14 @@ public:
 	Shape(IDataSource *src, const ConvertShapeFormat *format);
 	virtual ~Shape();
 	void setPalette(const Palette *pal) {
-		palette = pal;
+		_palette = pal;
 	}
 	const Palette *getPalette() const {
-		return palette;
+		return _palette;
 	}
 
 	uint32 frameCount() const {
-		return static_cast<uint32>(frames.size());
+		return static_cast<uint32>(_frames.size());
 	}
 
 	//! Returns the dimensions of all frames combined
@@ -61,7 +61,7 @@ public:
 	void getTotalDimensions(int32 &w, int32 &h, int32 &x, int32 &y) const;
 
 	ShapeFrame *getFrame(unsigned int frame) {
-		if (frame < frames.size()) return frames[frame];
+		if (frame < _frames.size()) return _frames[frame];
 		else return 0;
 	}
 
@@ -87,14 +87,14 @@ protected:
 	// Crusader shapes must be loaded this way
 	void LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
-	Std::vector<ShapeFrame *> frames;
+	Std::vector<ShapeFrame *> _frames;
 
-	const Palette *palette;
+	const Palette *_palette;
 
-	const uint8 *data;
-	uint32 size;
-	const uint16 flexId;
-	const uint32 shapenum;
+	const uint8 *_data;
+	uint32 _size;
+	const uint16 _flexId;
+	const uint32 _shapeNum;
 };
 
 } // End of namespace Ultima8

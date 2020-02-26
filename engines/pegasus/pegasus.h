@@ -78,11 +78,11 @@ public:
 	// Engine stuff
 	const PegasusGameDescription *_gameDescription;
 	bool hasFeature(EngineFeature f) const override;
-	GUI::Debugger *getDebugger() override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
 	static Common::Array<Common::Keymap *> initKeymaps();
 
 	// Base classes
@@ -221,9 +221,6 @@ protected:
 	bool wantsCursor() override;
 
 private:
-	// Console
-	PegasusConsole *_console;
-
 	// Intro
 	void runIntro();
 	void stopIntroTimer();

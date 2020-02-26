@@ -40,14 +40,13 @@ public:
 	~SettingManager();
 
 	static SettingManager *get_instance() {
-		return settingmanager;
+		return _settingManager;
 	}
 
 	enum Domain {
 		DOM_DEFAULTS = 0,
-		DOM_SCUMMVM  = 1,
-		DOM_GLOBAL   = 2,
-		DOM_GAME     = 3,
+		DOM_GLOBAL   = 1,
+		DOM_GAME     = 2,
 		DOM_CURRENT  = 100
 	};
 
@@ -122,16 +121,15 @@ private:
 	bool findKeyDomain(istring key, Domain dom, Domain &keydom);
 	istring getConfigKey(istring key, Domain dom);
 	void callCallbacks(istring key);
-	void setupScummVMSettings();
 
-	Callbacks callbacks;
-	Std::vector<istring> domains;
+	Callbacks _callbacks;
+	Std::vector<istring> _domains;
 
-	Domain currentDomain;
+	Domain _currentDomain;
 
-	ConfigFileManager *conffileman;
+	ConfigFileManager *_confFileMan;
 
-	static SettingManager *settingmanager;
+	static SettingManager *_settingManager;
 };
 
 } // End of namespace Ultima8

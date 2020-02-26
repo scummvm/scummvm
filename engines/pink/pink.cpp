@@ -41,7 +41,7 @@
 namespace Pink {
 
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
-	: Engine(system), _console(nullptr), _rnd("pink"), _exeResources(nullptr),
+	: Engine(system), _rnd("pink"), _exeResources(nullptr),
 	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
 	_module(nullptr), _director(nullptr), _pdaMgr(this) {
 
@@ -56,7 +56,6 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 }
 
 PinkEngine::~PinkEngine() {
-	delete _console;
 	delete _exeResources;
 	delete _bro;
 	_pdaMgr.close();
@@ -80,10 +79,10 @@ Common::Error PinkEngine::init() {
 		return Common::kNoGameDataFoundError;
 	}
 
-	_console = new Console(this);
+	setDebugger(new Console(this));
 	_director = new Director();
 
-	initMenu(_exeResources);
+	initMenu();
 
 	Common::String orbName;
 	Common::String broName;
@@ -98,7 +97,7 @@ Common::Error PinkEngine::init() {
 	if (!_orb.open(orbName) || (_bro && !_bro->open(broName) && _orb.getTimestamp() == _bro->getTimestamp()))
 		return Common::kNoGameDataFoundError;
 
-	if (!loadCursors(_exeResources))
+	if (!loadCursors())
 		return Common::kNoGameDataFoundError;
 
 	setCursor(kLoadingCursor);
@@ -145,12 +144,7 @@ Common::Error Pink::PinkEngine::run() {
 					_actor->onRightButtonClick(event.mouse);
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
-					_console->attach();
-					_console->onFrame();
-				} else {
-					_actor->onKeyboardButtonClick(event.kbd.keycode);
-				}
+				_actor->onKeyboardButtonClick(event.kbd.keycode);
 				break;
 			default:
 				break;
@@ -229,47 +223,47 @@ void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
 	_variables[variable] = value;
 }
 
-bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &value) {
+bool PinkEngine::checkValueOfVariable(const Common::String &variable, const Common::String &value) const {
 	if (!_variables.contains(variable))
 		return value == kUndefinedValue;
 	return _variables[variable] == value;
 }
 
-bool PinkEngine::loadCursors(Common::PEResources *exeResources) {
+bool PinkEngine::loadCursors() {
 	bool isPokus = !isPeril();
 
 	_cursors.reserve(kCursorsCount);
 
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusLoadingCursorID));
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableFirstCursorID));
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableSecondCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusLoadingCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusClickableFirstCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusClickableSecondCursorID));
 
 	if (isPokus) {
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableThirdCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusNotClickableCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusHoldingItemCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusClickableThirdCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusNotClickableCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusHoldingItemCursorID));
 	} else {
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilClickableThirdCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilNotClickableCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilHoldingItemCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilClickableThirdCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilNotClickableCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilHoldingItemCursorID));
 	}
 
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDADefaultCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusPDADefaultCursorID));
 
 	if (isPokus) {
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDAClickableFirstFrameCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDAClickableSecondFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusPDAClickableFirstFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusPDAClickableSecondFrameCursorID));
 	} else {
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilPDAClickableFirstFrameCursorID));
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilPDAClickableSecondFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilPDAClickableFirstFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPerilPDAClickableSecondFrameCursorID));
 	}
 
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitLeftCursorID));
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitRightCursorID));
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitForwardCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusExitLeftCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusExitRightCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusExitForwardCursorID));
 
 	if (isPokus)
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitDownCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(_exeResources, kPokusExitDownCursorID));
 
 	return true;
 }
@@ -302,7 +296,7 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 	_director->pause(pause);
 }
 
-bool PinkEngine::isPeril() {
+bool PinkEngine::isPeril() const {
 	return !strcmp(_desc->gameId, kPeril);
 }
 

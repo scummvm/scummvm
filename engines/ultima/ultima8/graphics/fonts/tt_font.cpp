@@ -43,27 +43,25 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(TTFont, Font)
 static const uint16 BULLETS[] = { 0x2022, 0x30FB, 0x25CF, 0 };
 
 
-TTFont::TTFont(Graphics::Font *font, uint32 rgb_, int bordersize_,
-               bool antiAliased_, bool SJIS_)
-	: ttf_font(font), antiAliased(antiAliased_), SJIS(SJIS_) {
-//	rgb = PACK_RGB8( (rgb_>>16)&0xFF , (rgb_>>8)&0xFF , rgb_&0xFF );
-	// This should be performed by PACK_RGB8, but it is not initialized at this point.
-	rgb = ((rgb_ >> 16) & 0xFF) | (((rgb_ >> 8) & 0xFF) << 8) | ((rgb_ & 0xFF) << 16);
-	bordersize = bordersize_;
+TTFont::TTFont(Graphics::Font *font, uint32 rgb, int borderSize,
+		bool antiAliased, bool SJIS) :
+		_borderSize(borderSize), _ttfFont(font), _antiAliased(antiAliased), _SJIS(SJIS),
+		_pixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0) {
+	_color = _pixelFormat.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xff, rgb & 0xff);
 
-	bullet = 0;
-	// scan for a character to use as a conversation option bullet
+	_bullet = 0;
+	// scan for a character to use as a conversation option _bullet
 	for (int i = 0; BULLETS[i]; ++i) {
 		Common::Rect box = font->getBoundingBox(BULLETS[i]);
 
 		if (!box.isEmpty()) {
-			bullet = BULLETS[i];
+			_bullet = BULLETS[i];
 			break;
 		}
 	}
 
-	if (bullet == 0) {
-		bullet = '*';
+	if (_bullet == 0) {
+		_bullet = '*';
 	}
 }
 
@@ -72,179 +70,147 @@ TTFont::~TTFont() {
 }
 
 int TTFont::getHeight() {
-	return ttf_font->getFontHeight() + 2 * bordersize; // constant (border)
+	return _ttfFont->getFontHeight() + 2 * _borderSize; // constant (border)
 }
 
 int TTFont::getBaseline() {
-//	return TTF_FontAscent(ttf_font);
-	// TODO: TTF ascent isn't publically accessible
-	return 0;
+	Common::Rect box = _ttfFont->getBoundingBox('W');
+	return box.bottom;
 }
 
 int TTFont::getBaselineSkip() {
-//	return TTF_FontLineSkip(ttf_font);
-	// TODO: What should be returned for this?
-	return 0;
+	// TODO: See if
+	return getHeight() + 2;
 }
 
-#ifdef TODO
-template<class T>
-static uint16 *toUnicode(const Std::string &text, uint16 bullet) {
-	Std::string::size_type l = T::length(text);
-	Common::U32String unicodeText = new uint16[l + 1];
-	Std::string::const_iterator iter = text.begin();
-	for (unsigned int i = 0; i < l; ++i) {
-		uint32 u = T::unicode(iter);
-		if (u > 0xFFFF) {
-			perr.Print("Warning: unicode character out of range for SDL_ttf: %x\n", u);
-			unicodeText[i] = '?';
-		} else if (u == 64) {
-			unicodeText[i] = bullet;
-		} else {
-			unicodeText[i] = u;
-		}
-	}
-	unicodeText[l] = 0;
-	return unicodeText;
-}
-#else
 template<class T>
 static Common::U32String toUnicode(const Std::string &text, uint16 bullet) {
-	return Common::U32String(text);
+	Std::string::size_type len = T::length(text);
+	Common::U32String result = Common::U32String(text.c_str(), len);
+
+	for (uint idx = 0; idx < result.size(); ++idx) {
+		if (result[idx] == '@')
+			result.setChar(bullet, idx);
+	}
+
+	return result;
 }
-#endif
 
 void TTFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
 	// convert to unicode
 	Common::U32String unicodeText;
-	if (!SJIS)
-		unicodeText = toUnicode<Traits>(text, bullet);
+	if (!_SJIS)
+		unicodeText = toUnicode<Traits>(text, _bullet);
 	else
-		unicodeText = toUnicode<SJISTraits>(text, bullet);
+		unicodeText = toUnicode<SJISTraits>(text, _bullet);
 
-	width = ttf_font->getStringWidth(unicodeText);
-	height = ttf_font->getFontHeight();
+	width = _ttfFont->getStringWidth(unicodeText);
+	height = _ttfFont->getFontHeight();
 
-	width += 2 * bordersize;
-	height += 2 * bordersize;
+	width += 2 * _borderSize;
+	height += 2 * _borderSize;
 }
 
 void TTFont::getTextSize(const Std::string &text,
-                         int32 &resultwidth, int32 &resultheight,
+                         int32 &resultWidth, int32 &resultHeight,
                          unsigned int &remaining,
                          int32 width, int32 height, TextAlign align,
                          bool u8specials) {
 	Std::list<PositionedText> tmp;
-	if (!SJIS)
+	if (!_SJIS)
 		tmp = typesetText<Traits>(this, text, remaining,
 		                          width, height, align, u8specials,
-		                          resultwidth, resultheight);
+		                          resultWidth, resultHeight);
 	else
 		tmp = typesetText<SJISTraits>(this, text, remaining,
 		                              width, height, align, u8specials,
-		                              resultwidth, resultheight);
+		                              resultWidth, resultHeight);
 }
 
 
-RenderedText *TTFont::renderText(const Std::string &text,
-                                 unsigned int &remaining,
-                                 int32 width, int32 height,
-                                 TextAlign align, bool u8specials,
-                                 Std::string::size_type cursor) {
-	int32 resultwidth, resultheight;
+RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remaining,
+		int32 width, int32 height, TextAlign align, bool u8specials,
+		Std::string::size_type cursor) {
+	int32 resultWidth, resultHeight, lineHeight;
 	Std::list<PositionedText> lines;
-	if (!SJIS)
-		lines = typesetText<Traits>(this, text, remaining,
-		                            width, height, align, u8specials,
-		                            resultwidth, resultheight, cursor);
+	if (!_SJIS)
+		lines = typesetText<Traits>(this, text, remaining, width, height, align, u8specials,
+			resultWidth, resultHeight, cursor);
 	else
-		lines = typesetText<SJISTraits>(this, text, remaining,
-		                                width, height, align, u8specials,
-		                                resultwidth, resultheight, cursor);
+		lines = typesetText<SJISTraits>(this, text, remaining, width, height, align, u8specials,
+			resultWidth, resultHeight, cursor);
+	lineHeight = _ttfFont->getFontHeight();
 
 	// create 32bit RGBA texture buffer
-	uint32 *buf = new uint32[resultwidth * resultheight];
-	memset(buf, 0, 4 * resultwidth * resultheight);
+	uint32 *buf = new uint32[resultWidth * resultHeight];
+	memset(buf, 0, 4 * resultWidth * resultHeight);
 
 	Texture *texture = new Texture();
-	texture->buffer = buf;
-	texture->width = resultwidth;
-	texture->height = resultheight;
+	texture->_buffer = buf;
+	texture->_width = resultWidth;
+	texture->_height = resultHeight;
 
-#if 0
-	pout << "Total size: " << resultwidth << "," << resultheight << Std::endl;
-#endif
-
-	Std::list<PositionedText>::iterator iter;
+	Std::list<PositionedText>::const_iterator iter;
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
 		// convert to unicode
 		Common::U32String unicodeText;
-		if (!SJIS)
-			unicodeText = toUnicode<Traits>(iter->text, bullet);
+		if (!_SJIS)
+			unicodeText = toUnicode<Traits>(iter->_text, _bullet);
 		else
-			unicodeText = toUnicode<SJISTraits>(iter->text, bullet);
+			unicodeText = toUnicode<SJISTraits>(iter->_text, _bullet);
 
 		// Create a surface and render the text
 		Graphics::ManagedSurface textSurf;
-		
-		if (!antiAliased) {
+
+		if (!_antiAliased) {
 			// When not in antialiased mode, use a paletted surface where '1' is
 			// used for pixels of the text
-			textSurf.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-			ttf_font->drawString(&textSurf, unicodeText, 0, 0, width, 1);
+			textSurf.create(resultWidth, lineHeight, Graphics::PixelFormat::createFormatCLUT8());
+			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, 1);
 		} else {
-			// Use a high color surface with the specified rgb color for text
-			textSurf.create(width, height,
-				Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-			uint32 color = textSurf.format.RGBToColor(TEX32_R(rgb), TEX32_G(rgb), TEX32_B(rgb));
-
-			ttf_font->drawString(&textSurf, unicodeText, 0, 0, width, color);
+			// Use a high color surface with the specified _color color for text
+			textSurf.create(resultWidth, lineHeight, _pixelFormat);
+			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, _color);
 		};
-
-#if 0
-		pout << iter->dims.w << "," << iter->dims.h << " vs. "
-			    << textSurf.w << "," << textSurf.h << ": " << iter->text
-			    << Std::endl;
-#endif
 
 		// render the text surface into our texture buffer
 		for (int y = 0; y < textSurf.h; y++) {
 			byte *surfrow = (byte *)textSurf.getBasePtr(0, y);
 
-			// CHECKME: bordersize!
-			uint32 *bufrow = buf + (iter->dims.y + y + bordersize) * resultwidth;
+			// CHECKME: _borderSize!
+			uint32 *bufrow = buf + (iter->_dims.y + y + _borderSize) * resultWidth;
 			for (int x = 0; x < textSurf.w; x++) {
 
-				if (!antiAliased && surfrow[x] == 1) {
-					bufrow[iter->dims.x + x + bordersize] = rgb | 0xFF000000;
-					if (bordersize <= 0) continue;
-					if (bordersize == 1) {
+				if (!_antiAliased && surfrow[x] == 1) {
+					bufrow[iter->_dims.x + x + _borderSize] = _color | 0xFF000000;
+					if (_borderSize <= 0) continue;
+					if (_borderSize == 1) {
 						// optimize common case
 						for (int dx = -1; dx <= 1; dx++) {
 							for (int dy = -1; dy <= 1; dy++) {
-								if (x + 1 + iter->dims.x + dx >= 0 &&
-									    x + 1 + iter->dims.x + dx < resultwidth &&
-									    y + 1 + dy >= 0 && y + 1 + dy < resultheight) {
-									if (buf[(y + iter->dims.y + dy + 1)*resultwidth + x + 1 + iter->dims.x + dx] == 0) {
-										buf[(y + iter->dims.y + dy + 1)*resultwidth + x + 1 + iter->dims.x + dx] = 0xFF000000;
+								if (x + 1 + iter->_dims.x + dx >= 0 &&
+									    x + 1 + iter->_dims.x + dx < resultWidth &&
+									    y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
+									if (buf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] == 0) {
+										buf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = 0xFF000000;
 									}
 								}
 							}
 						}
 						continue;
 					}
-					for (int dx = -bordersize; dx <= bordersize; dx++) {
-						for (int dy = -bordersize; dy <= bordersize; dy++) {
-							if (x + bordersize + iter->dims.x + dx >= 0 &&
-								    x + bordersize + iter->dims.x + dx < resultwidth &&
-								    y + bordersize + dy >= 0 && y + bordersize + dy < resultheight) {
-								if (buf[(y + iter->dims.y + dy + bordersize)*resultwidth + x + bordersize + iter->dims.x + dx] == 0) {
-									buf[(y + iter->dims.y + dy + bordersize)*resultwidth + x + bordersize + iter->dims.x + dx] = 0xFF000000;
+					for (int dx = -_borderSize; dx <= _borderSize; dx++) {
+						for (int dy = -_borderSize; dy <= _borderSize; dy++) {
+							if (x + _borderSize + iter->_dims.x + dx >= 0 &&
+								    x + _borderSize + iter->_dims.x + dx < resultWidth &&
+								    y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
+								if (buf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] == 0) {
+									buf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = 0xFF000000;
 								}
 							}
 						}
 					}
-				} else if (antiAliased) {
+				} else if (_antiAliased) {
 					uint32 pixColor = *((uint32 *)(surfrow + x * 4));
 					if (pixColor == 0)
 						continue;
@@ -253,34 +219,34 @@ RenderedText *TTFont::renderText(const Std::string &text,
 					textSurf.format.colorToARGB(pixColor, pixA, pixR, pixG, pixB);
 					int idx = pixA;
 
-					if (bordersize <= 0) {
-						bufrow[iter->dims.x + x + bordersize] = TEX32_PACK_RGBA(pixR, pixG, pixB, pixA);
+					if (_borderSize <= 0) {
+						bufrow[iter->_dims.x + x + _borderSize] = TEX32_PACK_RGBA(pixR, pixG, pixB, pixA);
 					} else {
-						bufrow[iter->dims.x + x + bordersize] = TEX32_PACK_RGBA(pixR, pixG, pixB, 0xFF);
+						bufrow[iter->_dims.x + x + _borderSize] = TEX32_PACK_RGBA(pixR, pixG, pixB, 0xFF);
 
 						// optimize common case
-						if (bordersize == 1) for (int dx = -1; dx <= 1; dx++) {
+						if (_borderSize == 1) for (int dx = -1; dx <= 1; dx++) {
 							for (int dy = -1; dy <= 1; dy++) {
-								if (x + 1 + iter->dims.x + dx >= 0 &&
-										x + 1 + iter->dims.x + dx < resultwidth &&
-										y + 1 + dy >= 0 && y + 1 + dy < resultheight) {
-									uint32 alpha = TEX32_A(buf[(y + iter->dims.y + dy + 1) * resultwidth + x + 1 + iter->dims.x + dx]);
+								if (x + 1 + iter->_dims.x + dx >= 0 &&
+										x + 1 + iter->_dims.x + dx < resultWidth &&
+										y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
+									uint32 alpha = TEX32_A(buf[(y + iter->_dims.y + dy + 1) * resultWidth + x + 1 + iter->_dims.x + dx]);
 									if (alpha != 0xFF) {
 										alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-										buf[(y + iter->dims.y + dy + 1)*resultwidth + x + 1 + iter->dims.x + dx] = alpha << TEX32_A_SHIFT;
+										buf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
 									}
 								}
 							}
 						} else {
-							for (int dx = -bordersize; dx <= bordersize; dx++) {
-								for (int dy = -bordersize; dy <= bordersize; dy++) {
-									if (x + bordersize + iter->dims.x + dx >= 0 &&
-											x + bordersize + iter->dims.x + dx < resultwidth &&
-											y + bordersize + dy >= 0 && y + bordersize + dy < resultheight) {
-										uint32 alpha = TEX32_A(buf[(y + iter->dims.y + dy + bordersize) * resultwidth + x + bordersize + iter->dims.x + dx]);
+							for (int dx = -_borderSize; dx <= _borderSize; dx++) {
+								for (int dy = -_borderSize; dy <= _borderSize; dy++) {
+									if (x + _borderSize + iter->_dims.x + dx >= 0 &&
+											x + _borderSize + iter->_dims.x + dx < resultWidth &&
+											y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
+										uint32 alpha = TEX32_A(buf[(y + iter->_dims.y + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.x + dx]);
 										if (alpha != 0xFF) {
 											alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-											buf[(y + iter->dims.y + dy + bordersize)*resultwidth + x + bordersize + iter->dims.x + dx] = alpha << TEX32_A_SHIFT;
+											buf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
 										}
 									}
 								}
@@ -291,23 +257,23 @@ RenderedText *TTFont::renderText(const Std::string &text,
 			}
 		}
 
-		if (iter->cursor != Std::string::npos) {
-			assert(iter->cursor <= iter->text.size());
-			unicodeText = Common::U32String(unicodeText.c_str(), iter->cursor);
+		if (iter->_cursor != Std::string::npos) {
+			assert(iter->_cursor <= iter->_text.size());
+			unicodeText = Common::U32String(unicodeText.c_str(), iter->_cursor);
 
-			int w = ttf_font->getStringWidth(unicodeText);
+			int w = _ttfFont->getStringWidth(unicodeText);
 
-			for (int y = 0; y < iter->dims.h; y++) {
-				uint32 *bufrow = buf + (iter->dims.y + y) * resultwidth;
-				bufrow[iter->dims.x + w + bordersize] = 0xFF000000;
-//				if (bordersize > 0)
-//					bufrow[iter->dims.x+w+bordersize-1] = 0xFF000000;
+			for (int y = 0; y < iter->_dims.h; y++) {
+				uint32 *bufrow = buf + (iter->_dims.y + y) * resultWidth;
+				bufrow[iter->_dims.x + w + _borderSize] = 0xFF000000;
+//				if (_borderSize > 0)
+//					bufrow[iter->_dims.x+w+_borderSize-1] = 0xFF000000;
 			}
 		}
 	}
 
-	return new TTFRenderedText(texture, resultwidth, resultheight,
-	                           getBaselineSkip() - getHeight(), this);
+	return new TTFRenderedText(texture, resultWidth, resultHeight,
+		getBaselineSkip() - getHeight(), this);
 }
 
 } // End of namespace Ultima8

@@ -38,18 +38,18 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 		_gameDescription(gameDesc) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");
-	_debugger = nullptr;
+
 	if (g_vm->getGameID() == GType_Ringworld) {
 		if (g_vm->getFeatures() & GF_DEMO)
-			_debugger = new DemoDebugger();
+			setDebugger(new DemoDebugger());
 		else
-			_debugger = new RingworldDebugger();
+			setDebugger(new RingworldDebugger());
 	} else if (g_vm->getGameID() == GType_BlueForce)
-		_debugger = new BlueForceDebugger();
+		setDebugger(new BlueForceDebugger());
 	else if (g_vm->getGameID() == GType_Ringworld2)
-		_debugger = new Ringworld2Debugger();
+		setDebugger(new Ringworld2Debugger());
 	else if (g_vm->getGameID() == GType_Sherlock1)
-		_debugger = new DemoDebugger();
+		setDebugger(new DemoDebugger());
 }
 
 Common::Error TSageEngine::init() {
@@ -61,7 +61,6 @@ Common::Error TSageEngine::init() {
 TSageEngine::~TSageEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
-	delete _debugger;
 }
 
 bool TSageEngine::hasFeature(EngineFeature f) const {
@@ -169,16 +168,8 @@ Common::Error TSageEngine::loadGameState(int slot) {
 /**
  * Save the game to the given slot index, and with the given name
  */
-Common::Error TSageEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error TSageEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return g_saver->save(slot, desc);
-}
-
-/**
- * Support method that generates a savegame name
- * @param slot		Slot number
- */
-Common::String TSageEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 void TSageEngine::syncSoundSettings() {

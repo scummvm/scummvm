@@ -34,17 +34,17 @@ class ActorAnim {
 public:
 	ActorAnim() {}
 	~ActorAnim() {
-		for (unsigned int i = 0; i < actions.size(); ++i)
-			delete actions[i];
+		for (unsigned int i = 0; i < _actions.size(); ++i)
+			delete _actions[i];
 	}
 
 	AnimAction *getAction(unsigned int n) {
-		if (n >= actions.size()) return 0;
-		return actions[n];
+		if (n >= _actions.size()) return 0;
+		return _actions[n];
 	}
 
 private:
-	Std::vector<AnimAction *> actions; // list of this actor's actions
+	Std::vector<AnimAction *> _actions; // list of this actor's actions
 	// (0 if actor doesn't have action)
 };
 

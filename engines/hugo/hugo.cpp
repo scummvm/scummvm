@@ -68,7 +68,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
 	DebugMan.addDebugChannel(kDebugMusic, "Music", "Music debug level");
 
-	_console = new HugoConsole(this);
+	setDebugger(new HugoConsole(this));
 	_rnd = 0;
 
 	_screen = nullptr;
@@ -149,12 +149,7 @@ HugoEngine::~HugoEngine() {
 	delete _text;
 
 	DebugMan.clearAllDebugChannels();
-	delete _console;
 	delete _rnd;
-}
-
-GUI::Debugger *HugoEngine::getDebugger() {
-	return _console;
 }
 
 Status &HugoEngine::getGameStatus() {
@@ -181,7 +176,7 @@ void HugoEngine::setMaxScore(const int newScore) {
 	_maxscore = newScore;
 }
 
-Common::Error HugoEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error HugoEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return (_file->saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
 }
 
@@ -747,10 +742,8 @@ void HugoEngine::syncSoundSettings() {
 	_sound->syncVolume();
 }
 
-Common::String HugoEngine::getSavegameFilename(int slot) {
+Common::String HugoEngine::getSaveStateName(int slot) const {
 	return _targetName + Common::String::format("-%02d.SAV", slot);
 }
-
-
 
 } // End of namespace Hugo

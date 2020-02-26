@@ -35,7 +35,7 @@ MaemoSdlEventSource::MaemoSdlEventSource() : SdlEventSource(), _clickEnabled(tru
 }
 
 struct KeymapEntry {
-	SDLKey sym;
+	SDL_Keycode sym;
 	Common::KeyCode keycode;
 	uint16 ascii;
 };

@@ -79,7 +79,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kDraciSoundDebugLevel, "sound", "Sound debug info");
 	DebugMan.addDebugChannel(kDraciWalkingDebugLevel, "walking", "Walking debug info");
 
-	_console = new DraciConsole(this);
+	setDebugger(new DraciConsole(this));
 
 	_screen = 0;
 	_mouse = 0;
@@ -348,12 +348,6 @@ void DraciEngine::handleEvents() {
 					_game->inventorySwitch(event.kbd.keycode);
 				}
 				break;
-			case Common::KEYCODE_d:
-				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-					this->getDebugger()->attach();
-					this->getDebugger()->onFrame();
-				}
-				break;
 			default:
 				break;
 			}
@@ -407,8 +401,6 @@ DraciEngine::~DraciEngine() {
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
-
-	delete _console;
 }
 
 Common::Error DraciEngine::run() {
@@ -476,7 +468,7 @@ bool DraciEngine::canLoadGameStateCurrently() {
 		(_game->getLoopSubstatus() == kOuterLoop);
 }
 
-Common::Error DraciEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error DraciEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return saveSavegameData(slot, desc, *this);
 }
 

@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/readable_gump.h"
-
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -35,7 +34,6 @@
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/misc/util.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -51,8 +49,8 @@ ReadableGump::ReadableGump()
 
 }
 
-ReadableGump::ReadableGump(ObjId owner_, uint16 shape_, int font, Std::string msg) :
-	ModalGump(0, 0, 100, 100, owner_), shapenum(shape_), fontnum(font), text(msg) {
+ReadableGump::ReadableGump(ObjId owner, uint16 shape, int font, const Std::string &msg) :
+	ModalGump(0, 0, 100, 100, owner), _shapeNum(shape), _fontNum(font), _text(msg) {
 }
 
 ReadableGump::~ReadableGump(void) {
@@ -61,24 +59,24 @@ ReadableGump::~ReadableGump(void) {
 void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	Shape *shape_ = GameData::get_instance()->getGumps()->getShape(shapenum);
+	Shape *shape_ = GameData::get_instance()->getGumps()->getShape(_shapeNum);
 
 	SetShape(shape_, 0);
 
 	ShapeFrame *sf = shape_->getFrame(0);
 	assert(sf);
 
-	dims.w = sf->width;
-	dims.h = sf->height;
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
 
-	if (CoreApp::get_instance()->getGameInfo()->language ==
+	if (CoreApp::get_instance()->getGameInfo()->_language ==
 	        GameInfo::GAMELANG_JAPANESE) {
 		// Japanese subtitles
 		Std::string::size_type pos;
-		pos = text.find('%');
+		pos = _text.find('%');
 		if (pos != Std::string::npos) {
-			Std::string jpsub = text.substr(pos + 1);
-			text = text.substr(0, pos);
+			Std::string jpsub = _text.substr(pos + 1);
+			_text = _text.substr(0, pos);
 
 			Gump *subwidget = new TextWidget(0, 0, jpsub, true, jpsub_font, 0, 0, Font::TEXT_CENTER);
 			subwidget->InitGump(this);
@@ -86,7 +84,7 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 		}
 	}
 
-	Gump *widget = new TextWidget(0, 0, text, true, fontnum, dims.w - 16, 0, Font::TEXT_CENTER);
+	Gump *widget = new TextWidget(0, 0, _text, true, _fontNum, _dims.w - 16, 0, Font::TEXT_CENTER);
 	widget->InitGump(this);
 	widget->setRelativePosition(CENTER);
 }

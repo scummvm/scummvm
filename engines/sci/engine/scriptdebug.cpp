@@ -81,7 +81,7 @@ void DebugState::updateActiveBreakpointTypes() {
 }
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag, bool printBytecode) {
+reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag, bool printBytecode, bool printCSyntax) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	reg_t retval = make_reg32(pos.getSegment(), pos.getOffset() + 1);
@@ -117,14 +117,27 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 			return retval;
 		}
 
-		for (i = 0; i < bytecount; i++)
-			debugN("%02x ", scr[pos.getOffset() + i]);
+		for (i = 0; i < bytecount; i++) {
+			const char *f;
+			if (printCSyntax) {
+				f = "0x%02x, ";		// avoiding the builtin '#' formatter because it doesn't prepend '0x' to zeroes
+			} else {
+				f = "%02x ";
+			}
+			debugN(f, scr[pos.getOffset() + i]);
+		}
 
 		for (i = bytecount; i < 5; i++)
-			debugN("   ");
+			if (printCSyntax) 
+				debugN("      ");
+			else
+				debugN("   ");
 	}
 
 	opsize &= 1; // byte if true, word if false
+
+	if (printCSyntax)
+		debugN("       // ");
 
 	if (printBWTag)
 		debugN("[%c] ", opsize ? 'B' : 'W');
@@ -491,7 +504,7 @@ void SciEngine::scriptDebug() {
 	}
 
 	debugN("Step #%d\n", s->scriptStepCounter);
-	disassemble(s, s->xs->addr.pc, s->_segMan->getObject(s->xs->objp), false, true);
+	disassemble(s, s->xs->addr.pc, s->_segMan->getObject(s->xs->objp), false, true, false);
 
 	if (_debugState.runningStep) {
 		_debugState.runningStep--;

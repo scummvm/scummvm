@@ -51,7 +51,6 @@ UltimaEarlyEngine::UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription 
 }
 
 UltimaEarlyEngine::~UltimaEarlyEngine() {
-	delete _debugger;
 	delete _events;
 	delete _game;
 	delete _mouseCursor;
@@ -65,12 +64,12 @@ bool UltimaEarlyEngine::initialize() {
 	// Set up the resources datafile
 	Resources *res = new Resources();
 	if (!res->open()) {
-		GUIErrorMessage("Could not find correct ultima.dat datafile");
+		GUIErrorMessage(_("Could not find correct ultima.dat datafile"));
 		return false;
 	}
 	SearchMan.add("ultima", res);
 
-	_debugger = new Debugger();
+	setDebugger(new Debugger());
 	_events = new EventsManager(this);
 	_screen = new Gfx::Screen();
 

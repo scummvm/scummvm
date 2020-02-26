@@ -144,7 +144,7 @@ void Scores::tick() {
 
 	int y = 140;
 
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; ++i) {
 		_font->drawString(&_vm->_surfaceFront, _txtScorers->getText(_scorers[i]), 220, y, _vm->_surfaceFront.w, 0);
 		_font->drawString(&_vm->_surfaceFront, Common::String::format("%d", _scores[_scorers[i]]), 360, y, _vm->_surfaceFront.w, 0);
 
@@ -159,7 +159,7 @@ void Scores::tick() {
 }
 
 void Scores::fill() {
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; ++i) {
 		_scorers[i] = i;
 	}
 
@@ -187,7 +187,7 @@ void Scores::reset() {
 	_isLoaded = false;
 	_vqaPlayer = nullptr;
 
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; ++i) {
 		_scores[i] = -80;
 		_scorers[i] = 0;
 	}
@@ -197,7 +197,7 @@ void Scores::reset() {
 }
 
 void Scores::save(SaveFileWriteStream &f) {
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; ++i) {
 		f.writeInt(_scores[i]);
 	}
 
@@ -206,7 +206,7 @@ void Scores::save(SaveFileWriteStream &f) {
 }
 
 void Scores::load(SaveFileReadStream &f) {
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; ++i) {
 		_scores[i] = f.readInt();
 	}
 

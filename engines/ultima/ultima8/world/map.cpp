@@ -30,7 +30,6 @@
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
-
 #include "ultima/ultima8/graphics/shape_info.h" // debugging only
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
@@ -40,9 +39,7 @@ namespace Ultima8 {
 
 //#define DUMP_ITEMS
 
-Map::Map(uint32 mapnum_)
-	: mapnum(mapnum_) {
-
+Map::Map(uint32 mapNum) : _mapNum(mapNum) {
 }
 
 
@@ -53,19 +50,19 @@ Map::~Map() {
 void Map::clear() {
 	Std::list<Item *>::iterator iter;
 
-	for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
+	for (iter = _fixedItems.begin(); iter != _fixedItems.end(); ++iter) {
 		delete *iter;
 	}
-	fixeditems.clear();
+	_fixedItems.clear();
 
-	for (iter = dynamicitems.begin(); iter != dynamicitems.end(); ++iter) {
+	for (iter = _dynamicItems.begin(); iter != _dynamicItems.end(); ++iter) {
 		delete *iter;
 	}
-	dynamicitems.clear();
+	_dynamicItems.clear();
 }
 
 void Map::loadNonFixed(IDataSource *ds) {
-	loadFixedFormatObjects(dynamicitems, ds, 0);
+	loadFixedFormatObjects(_dynamicItems, ds, 0);
 }
 
 
@@ -82,167 +79,167 @@ static void shiftCoordsToZ(int32 &x, int32 &y, int32 &z, int32 newz) {
 
 
 void Map::loadFixed(IDataSource *ds) {
-	loadFixedFormatObjects(fixeditems, ds, Item::EXT_FIXED);
+	loadFixedFormatObjects(_fixedItems, ds, Item::EXT_FIXED);
 
 
 	// U8 hack for missing ground tiles on map 25. See docs/u8bugs.txt
-	if (GAME_IS_U8 && mapnum == 25) {
+	if (GAME_IS_U8 && _mapNum == 25) {
 		// TODO
 	}
 
 	// U8 hack for missing ground/wall tiles on map 62. See docs/u8bugs.txt
-	if (GAME_IS_U8 && mapnum == 62) {
+	if (GAME_IS_U8 && _mapNum == 62) {
 		Item *item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                                     Item::EXT_FIXED, false);
 		item->setLocation(16255, 6143, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(16639, 6143, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(16511, 6143, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15999, 6143, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15871, 6143, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15743, 6143, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15615, 6143, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15999, 6015, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15871, 6015, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15743, 6015, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15615, 6015, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(20095, 6911, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(20223, 6911, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(20095, 6783, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(20223, 6783, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(19839, 6655, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(19967, 6655, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(19839, 6527, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(19967, 6527, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(20095, 6527, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(19967, 6399, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(19839, 6399, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(19711, 6399, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 
 
 		item = ItemFactory::createItem(497, 0, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15487, 6271, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(497, 0, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15359, 6271, 48);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(409, 32, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(14975, 6399, 0);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(409, 32, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(14975, 6015, 0);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 
 		item = ItemFactory::createItem(409, 32, 0, 0, 0, 0,
 		                               Item::EXT_FIXED, false);
 		item->setLocation(15103, 6015, 0);
-		fixeditems.push_back(item);
+		_fixedItems.push_back(item);
 	}
 
-	if (GAME_IS_U8 && mapnum == 49) {
+	if (GAME_IS_U8 && _mapNum == 49) {
 		// Map 49 has some water tiles at the wrong z
 		Std::list<Item *>::iterator iter;
 
-		for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
+		for (iter = _fixedItems.begin(); iter != _fixedItems.end(); ++iter) {
 			if ((*iter)->getShape() == 347 && (*iter)->getZ() == 96) {
 				int32 x, y, z;
 				(*iter)->getLocation(x, y, z);
@@ -255,11 +252,11 @@ void Map::loadFixed(IDataSource *ds) {
 		}
 	}
 
-	if (GAME_IS_U8 && mapnum == 21) {
+	if (GAME_IS_U8 && _mapNum == 21) {
 		// Map 21 has some ground and wall tiles at the wrong z
 		Std::list<Item *>::iterator iter;
 
-		for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
+		for (iter = _fixedItems.begin(); iter != _fixedItems.end(); ++iter) {
 			int32 z = (*iter)->getZ();
 			uint32 sh = (*iter)->getShape();
 			if (z == 8 && (sh == 301 || sh == 31 || sh == 32)) {
@@ -273,11 +270,11 @@ void Map::loadFixed(IDataSource *ds) {
 		}
 	}
 
-	if (GAME_IS_U8 && mapnum == 5) {
+	if (GAME_IS_U8 && _mapNum == 5) {
 		// Map 5 has some ground tiles at the wrong z
 		Std::list<Item *>::iterator iter;
 
-		for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
+		for (iter = _fixedItems.begin(); iter != _fixedItems.end(); ++iter) {
 			if ((*iter)->getShape() == 71 && (*iter)->getFrame() == 8 && (*iter)->getZ() == 0) {
 				int32 x, y, z;
 				(*iter)->getLocation(x, y, z);
@@ -297,10 +294,10 @@ void Map::loadFixed(IDataSource *ds) {
 void Map::unloadFixed() {
 	Std::list<Item *>::iterator iter;
 
-	for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
+	for (iter = _fixedItems.begin(); iter != _fixedItems.end(); ++iter) {
 		delete *iter;
 	}
-	fixeditems.clear();
+	_fixedItems.clear();
 }
 
 void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
@@ -356,7 +353,7 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 
 			ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 			                  getShapeInfo(shape);
-			if (info) pout << ", family = " << info->family;
+			if (info) pout << ", family = " << info->_family;
 			pout << Std::endl;
 
 			pout << "Couldn't create item" << Std::endl;
@@ -384,10 +381,10 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 
 
 void Map::save(ODataSource *ods) {
-	ods->write4(static_cast<uint32>(dynamicitems.size()));
+	ods->write4(static_cast<uint32>(_dynamicItems.size()));
 
 	Std::list<Item *>::iterator iter;
-	for (iter = dynamicitems.begin(); iter != dynamicitems.end(); ++iter) {
+	for (iter = _dynamicItems.begin(); iter != _dynamicItems.end(); ++iter) {
 		(*iter)->save(ods);
 	}
 }
@@ -400,7 +397,7 @@ bool Map::load(IDataSource *ids, uint32 version) {
 		Object *obj = ObjectManager::get_instance()->loadObject(ids, version);
 		Item *item = p_dynamic_cast<Item *>(obj);
 		if (!item) return false;
-		dynamicitems.push_back(item);
+		_dynamicItems.push_back(item);
 	}
 
 	return true;
