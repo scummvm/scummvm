@@ -10,6 +10,7 @@ lib*.a
 
 /config.log
 /scummvm
+/libscummvm.so
 /scummvm-static
 /ScummVMDockTilePlugin*
 /config.h
@@ -37,6 +38,7 @@ lib*.a
 /Icon.*
 /scummvm-conf.cpp
 /tmp_*.cpp
+/*.apk
 
 /README
 /README.html
@@ -45,7 +47,7 @@ lib*.a
 /doc/de/NEUES
 /doc/de/NEUES.html
 
-/build
+/build*
 /staging
 /portdist
 
@@ -248,3 +250,13 @@ scummvm_switch.zip
 #Ignore gmon.out created by gprof
 gmon.out
 /scummvm_libs_2015
+
+#Ignore Eclipse related files (such as a Java plugin for Visual Studio Code)
+.settings
+.project
+
+#Ignore Android Studio files
+.idea
+
+#Ingore temporary Android project folder
+android_project
