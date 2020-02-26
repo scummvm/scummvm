@@ -226,11 +226,10 @@ bool PentagramMenuGump::OnKeyDown(int key, int mod) {
 	return false;
 }
 
-void PentagramMenuGump::ProcessCallback(Std::string gamename, int message) {
+void PentagramMenuGump::ProcessCallback(const Std::string &gameName, int message) {
 	if (message != 0) {
-		SettingManager *settingman = SettingManager::get_instance();
-		settingman->set("lastSave", message != 1 ? message : -1);
-		Ultima8Engine::get_instance()->changeGame(gamename);
+		Ultima8Engine::get_instance()->handleAutoSave();
+		Ultima8Engine::get_instance()->changeGame(gameName);
 	}
 
 	UnhideGump();

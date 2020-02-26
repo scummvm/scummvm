@@ -746,6 +746,26 @@ size_t String::findFirstOf(const char *chars, size_t pos) const {
 	return npos;
 }
 
+size_t String::findLastOf(char c, size_t pos) const {
+	int start = (pos == npos) ? (int)_size - 1 : MIN((int)_size - 1, (int)pos);
+	for (int idx = start; idx >= 0; --idx) {
+		if ((*this)[idx] == c)
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::findLastOf(const char *chars, size_t pos) const {
+	int start = (pos == npos) ? (int)_size - 1 : MIN((int)_size - 1, (int)pos);
+	for (int idx = start; idx >= 0; --idx) {
+		if (strchr(chars, (*this)[idx]))
+			return idx;
+	}
+
+	return npos;
+}
+
 size_t String::findFirstNotOf(char c, size_t pos) const {
 	for (uint idx = pos; idx < _size; ++idx) {
 		if ((*this)[idx] != c)

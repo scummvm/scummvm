@@ -332,6 +332,15 @@ public:
 		return findFirstOf(chars.c_str(), pos);
 	}
 
+	/** Find the last character in the string that's the specified character */
+	size_t findLastOf(char c, size_t pos = npos) const;
+
+	/** Find the last character in the string that's in any of the passed characters */
+	size_t findLastOf(const char *chars, size_t pos = npos) const;
+	size_t findLastOf(const String &chars, size_t pos = npos) const {
+		return findLastOf(chars.c_str(), pos);
+	}
+ 
 	/** Find first character in the string that's not the specified character */
 	size_t findFirstNotOf(char c, size_t pos = 0) const;
 

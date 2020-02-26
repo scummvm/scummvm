@@ -287,6 +287,16 @@ public:
 	bool canSaveGameStateCurrently(bool isAutosave = false) override;
 
 	/**
+	 * Load a game
+	 */
+	Common::Error loadGameState(int slot) override;
+
+	/**
+	 * Saves the game
+	 */
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
+	/**
 	 * Load a game state
 	 */
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;

@@ -100,7 +100,7 @@ private:
 	Texture *_coversImage;
 	Texture *_flagsImage;
 
-	void ProcessCallback(Std::string gamename, int message);
+	void ProcessCallback(const Std::string &gameName, int message);
 };
 
 } // End of namespace Ultima8

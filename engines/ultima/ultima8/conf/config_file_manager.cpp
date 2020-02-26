@@ -37,6 +37,7 @@ ConfigFileManager::ConfigFileManager() {
 ConfigFileManager::~ConfigFileManager() {
 	debugN(MM_INFO, "Destroying ConfigFileManager...\n");
 
+	ConfMan.flushToDisk();
 	clear();
 	_configFileManager = 0;
 }
@@ -145,38 +146,63 @@ bool ConfigFileManager::get(istring key, bool &ret) {
 }
 
 void ConfigFileManager::set(istring key, string val) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.set(subKey, val);
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->set(key, val);
+		ini->set(key, val);
+	}
 }
 
 void ConfigFileManager::set(istring key, const char *val) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.set(subKey, val);
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->set(key, val);
+		ini->set(key, val);
+	}
 }
 
 void ConfigFileManager::set(istring key, int val) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.setInt(subKey, val);
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->set(key, val);
+		ini->set(key, val);
+	}
 }
 
 void ConfigFileManager::set(istring key, bool val) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.setBool(subKey, val);
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->set(key, val);
+		ini->set(key, val);
+	}
 }
 
 void ConfigFileManager::unset(istring key) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.set(subKey, "");
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->unset(key);
+		ini->unset(key);
+	}
 }
 
 

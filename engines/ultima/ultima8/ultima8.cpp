@@ -347,6 +347,9 @@ void Ultima8Engine::startupGame() {
 		_audioMixer->openMidiOutput();
 
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	if (saveSlot == -1)
+		_settingMan->get("lastSave", saveSlot);
+
 	newGame(saveSlot);
 
 	pout << "-- Game Initialized --" << Std::endl << Std::endl;
@@ -1007,9 +1010,23 @@ bool Ultima8Engine::saveGame(int slot, const Std::string &desc, bool ignore_moda
 		return false;
 	}
 
-	_settingMan->set("lastSave", slot);
-
 	return saveGameState(slot, desc).getCode() == Common::kNoError;
+}
+
+Common::Error Ultima8Engine::loadGameState(int slot) {
+	Common::Error result = Shared::UltimaEngine::loadGameState(slot);
+	_settingMan->set("lastSave", (result.getCode() == Common::kNoError) ? slot : -1);
+
+	return result;
+}
+
+Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::Error result = Shared::UltimaEngine::saveGameState(slot, desc, isAutosave);;
+
+	if (!isAutosave)
+		_settingMan->set("lastSave", (result.getCode() == Common::kNoError) ? slot : -1);
+
+	return result;
 }
 
 Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
@@ -1191,7 +1208,8 @@ bool Ultima8Engine::newGame(int saveSlot) {
 
 	_game->startInitialUsecode(saveSlot);
 
-	_settingMan->set("lastSave", saveSlot);
+	if (saveSlot == -1)
+		_settingMan->set("lastSave", -1);
 
 	return true;
 }
@@ -1212,14 +1230,12 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	if (state == SavegameReader::SAVE_CORRUPT) {
 		Error("Invalid or corrupt savegame", "Error Loading savegame");
 		delete sg;
-		_settingMan->set("lastSave", "");
 		return Common::kReadingFailed;
 	}
 
 	if (state != SavegameReader::SAVE_VALID) {
 		Error("Unsupported savegame version", "Error Loading savegame");
 		delete sg;
-		_settingMan->set("lastSave", "");
 		return Common::kReadingFailed;
 	}
 
@@ -1250,7 +1266,6 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		}
 		perr << message << Std::endl;
 #else
-		_settingMan->set("lastSave", "");
 		Error(message, "Error Loading savegame");
 		return Common::kReadingFailed;
 #endif
@@ -1340,8 +1355,6 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	}
 
 	pout << "Done" << Std::endl;
-
-	_settingMan->set("lastSave", -1);
 
 	delete sg;
 	return Common::kNoError;
