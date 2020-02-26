@@ -480,7 +480,7 @@ void Scene::drawActorNumber(int16 x, int16 y, uint16 actorId) {
 
 	sprintf(text8, "%d", actorId);
 
-	for (int i = 0; i < strlen(text8); i++) {
+	for (uint i = 0; i < strlen(text8); i++) {
 		text[i] = text8[i];
 	}
 	_vm->_fontManager->addText(x, y, text, strlen(text8), 1);
