@@ -810,6 +810,15 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	Common::Rect _rect;
 
+	Common::Rect textRect(0, 0, width, height);
+
+	// WORKAROUND, HACK
+	// Because we're not drawing text with transparency
+	// We swap drawing depending on whether the button is
+	// inverted or not, to prevent destroying the button
+	if (!invert)
+		renderText(surface, spriteId, &textRect);
+
 	switch (button->_buttonType) {
 	case kTypeCheckBox:
 		// Magic numbers: checkbox square need to move left about 5px from text and 12px side size (D4)
@@ -833,9 +842,8 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	}
 
-	Common::Rect textRect(0, 0, width, height);
-	// pass the rect of the button into the label.
-	renderText(surface, spriteId, &textRect);
+	if (invert)
+		renderText(surface, spriteId, &textRect);
 }
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textRect) {
