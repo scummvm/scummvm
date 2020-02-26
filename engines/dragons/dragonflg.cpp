@@ -87,7 +87,7 @@ void Properties::save(uint numberToWrite, Common::WriteStream *out) {
 
 void Properties::print(char *prefix) {
 	char *str = new char[_count + 1];
-	int i = 0;
+	uint i = 0;
 	for (; i < _count; i++) {
 		str[i] = get(i) ? '1' : '0';
 	}
