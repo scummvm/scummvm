@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-27 07:14+0000\n"
+"PO-Revision-Date: 2020-02-28 02:14+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -270,7 +270,7 @@ msgstr "Gráficos"
 
 #: gui/editgamedialog.cpp:188 gui/options.cpp:1456 gui/options.cpp:1587
 msgid "GFX"
-msgstr "Gráf."
+msgstr "Gráficos"
 
 #: gui/editgamedialog.cpp:194
 msgid "Override global graphic settings"
@@ -983,7 +983,7 @@ msgstr "Disp. preferido:"
 #: gui/options.cpp:1147
 msgctxt "lowres"
 msgid "Music device:"
-msgstr "Dispositivo de música:"
+msgstr "Disp. música:"
 
 #: gui/options.cpp:1174
 msgid "AdLib emulator:"
@@ -2938,12 +2938,12 @@ msgstr "Cerra~r~"
 #: backends/platform/3ds/options-dialog.cpp:47
 #: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
-msgstr "Mostrar el cursor"
+msgstr "Mostrar cursor"
 
 #: backends/platform/3ds/options-dialog.cpp:50
 #: backends/platform/ds/arm9/source/dsoptions.cpp:66
 msgid "Snap to edges"
-msgstr "Pegar a los bordes"
+msgstr "Pegar a bordes"
 
 #: backends/platform/3ds/options-dialog.cpp:53
 msgid "Stretch to fit"
@@ -2963,7 +2963,7 @@ msgstr "Inferior"
 
 #: backends/platform/3ds/options-dialog.cpp:63
 msgid "C-Pad Sensitivity:"
-msgstr "Sensibilidad del C-Pad:"
+msgstr "Sensib. C-Pad:"
 
 #: backends/platform/3ds/osystem-events.cpp:48
 msgid "A"
