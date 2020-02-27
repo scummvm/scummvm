@@ -631,34 +631,38 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 		int tex_diff = _tex->_width - w;
 
 		while (pixel != end) {
-			if (!alpha_blend) while (pixel != line_end) {
+			if (!alpha_blend) {
+				while (pixel != line_end) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-					if ((*texel & TEX32_A_MASK) && (*dest & RenderSurface::_format.a_mask)) {
-						*dest = static_cast<uintX>(
-						            PACK_RGB8(
-						                (TEX32_R(*texel) * ia + r) >> 8,
-						                (TEX32_G(*texel) * ia + g) >> 8,
-						                (TEX32_B(*texel) * ia + b) >> 8
-						            )
-						        );
+					if (*texel & TEX32_A_MASK) {
+						if (!RenderSurface::_format.a_mask || (*dest & RenderSurface::_format.a_mask)) {
+							*dest = static_cast<uintX>(
+								PACK_RGB8(
+									(TEX32_R(*texel) * ia + r) >> 8,
+									(TEX32_G(*texel) * ia + g) >> 8,
+									(TEX32_B(*texel) * ia + b) >> 8
+								)
+							);
+						}
 					}
 					pixel += sizeof(uintX);
 					texel++;
 				}
-			else while (pixel != line_end) {
+			} else {
+				while (pixel != line_end) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-					if (*dest & RenderSurface::_format.a_mask) {
+					if (!RenderSurface::_format.a_mask || (*dest & RenderSurface::_format.a_mask)) {
 						uint32 alpha = *texel & TEX32_A_MASK;
 						if (alpha == 0xFF) {
 							*dest = static_cast<uintX>(
-							            PACK_RGB8(
-							                (TEX32_R(*texel) * ia + r) >> 8,
-							                (TEX32_G(*texel) * ia + g) >> 8,
-							                (TEX32_B(*texel) * ia + b) >> 8
-							            )
-							        );
+							    PACK_RGB8(
+							        (TEX32_R(*texel) * ia + r) >> 8,
+							        (TEX32_G(*texel) * ia + g) >> 8,
+							        (TEX32_B(*texel) * ia + b) >> 8
+							    )
+							);
 						} else if (alpha) {
 							uint32 src = *texel;
 							uint32 dr, dg, db;
@@ -677,6 +681,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 					pixel += sizeof(uintX);
 					texel++;
 				}
+			}
 
 			line_end += _pitch;
 			pixel += diff;
