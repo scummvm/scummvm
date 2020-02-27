@@ -81,8 +81,6 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 		event.type = Common::EVENT_MOUSEMOVE;
 	else
 		event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
-	} else if (ev.button.button == SDL_BUTTON_RIGHT)
-		event.type = Common::EVENT_RBUTTONDOWN;
 
 	// update KbdMouse
 	_km.x = ev.button.x * MULTIPLIER;
