@@ -46,7 +46,7 @@ static const uint16 BULLETS[] = { 0x2022, 0x30FB, 0x25CF, 0 };
 TTFont::TTFont(Graphics::Font *font, uint32 rgb, int borderSize,
 		bool antiAliased, bool SJIS) :
 		_borderSize(borderSize), _ttfFont(font), _antiAliased(antiAliased), _SJIS(SJIS),
-		_pixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0) {
+		_pixelFormat(Texture::getPixelFormat()) {
 	_color = _pixelFormat.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xff, rgb & 0xff);
 
 	_bullet = 0;
@@ -79,7 +79,7 @@ int TTFont::getBaseline() {
 }
 
 int TTFont::getBaselineSkip() {
-	// TODO: See if
+	// TODO: Come up with something more generic than just hardcoding 2 pixel line separation
 	return getHeight() + 2;
 }
 
