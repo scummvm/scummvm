@@ -48,11 +48,8 @@ private:
 	int32 _bgcolor;
 
 public:
-	CachedMacText(TextCast *const textCast,
-					int32 bgcolor,
-					int version,
-					int defaultWidth = -1,
-					Graphics::MacWindowManager *const wm = NULL);
+	CachedMacText(TextCast *const textCast, int32 bgcolor, int version, int defaultWidth = -1,
+			Graphics::MacWindowManager *const wm = NULL);
 	void setWm(Graphics::MacWindowManager *wm);
 	void clip(int width);
 	void setBgColor(int color) { _bgcolor = color; }
