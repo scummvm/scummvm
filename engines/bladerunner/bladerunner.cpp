@@ -116,6 +116,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_shortyMode                   = false;
 	_noDelayMillisFramelimiter    = false;
 	_framesPerSecondMax           = false;
+	_disableStaminaDrain          = false;
 	_cutContent                   = Common::String(desc->gameId).contains("bladerunner-final");
 
 	_playerLosesControlCounter = 0;
@@ -476,11 +477,13 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	ConfMan.registerDefault("shorty", "false");
 	ConfMan.registerDefault("nodelaymillisfl", "false");
 	ConfMan.registerDefault("frames_per_secondfl", "false");
+	ConfMan.registerDefault("disable_stamina_drain", "false");
 
 	_sitcomMode                = ConfMan.getBool("sitcom");
 	_shortyMode                = ConfMan.getBool("shorty");
 	_noDelayMillisFramelimiter = ConfMan.getBool("nodelaymillisfl");
 	_framesPerSecondMax        = ConfMan.getBool("frames_per_secondfl");
+	_disableStaminaDrain       = ConfMan.getBool("disable_stamina_drain");
 
 	// These are static objects in original game
 	_screenEffects = new ScreenEffects(this, 0x8000);

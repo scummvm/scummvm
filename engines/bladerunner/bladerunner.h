@@ -216,6 +216,7 @@ public:
 	bool _shortyMode;
 	bool _noDelayMillisFramelimiter;
 	bool _framesPerSecondMax;
+	bool _disableStaminaDrain;
 	bool _cutContent;
 
 	int _walkSoundId;

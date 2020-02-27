@@ -226,26 +226,32 @@ void Actor::increaseFPS() {
 	int fps = MIN(_fps + 3, 30);
 	setFPS(fps);
 
-	// Only McCoy is using the stamina timer in the game
-	if (_id == kActorMcCoy) {
-		if (_vm->_cutContent) {
-			if (_fps > 20 && oldFps < _fps) {
-				// only start the stamina timer
-				// when McCoy's fps are more than 20 fps and purely increased
-				// and only if the new drain interval is smaller than the previous one
-				// the start drain interval is supposed to be slow
-				// starting from 10 seconds and decreasing as low as 1 second
-				// (It will barely come into play basically)
-				int nextStaminaDrainInterval = (31 - _fps) * 1000;
-				if (nextStaminaDrainInterval < timerLeft(kActorTimerRunningStaminaFPS)) {
-					timerStart(kActorTimerRunningStaminaFPS, nextStaminaDrainInterval);
+	// Note: When stamina drain is disabled, McCoy returns to normal fps
+	// (which is the default for his animations ie. 15 fps)
+	// on his actor->tick() method, when he switches from running to walking animation
+	// and setFPS(-2) is called
+	if (!_vm->_disableStaminaDrain) {
+		// Only McCoy is using the stamina timer in the game
+		if (_id == kActorMcCoy) {
+			if (_vm->_cutContent) {
+				if (_fps > 20 && oldFps < _fps) {
+					// only start the stamina timer
+					// when McCOy's fps are more than 20 fps and purely increased
+					// and only if the new drain interval is smaller than the previous one
+					// the start drain interval is supposed to be slow
+					// starting from 10 seconds and decreasing as low as 1 second
+					// (It will barely come into play basically)
+					int nextStaminaDrainInterval = (31 - _fps) * 1000;
+					if (nextStaminaDrainInterval < timerLeft(kActorTimerRunningStaminaFPS)) {
+						timerStart(kActorTimerRunningStaminaFPS, nextStaminaDrainInterval);
+					}
 				}
-			}
-		} else {
-			// just prevent any rogue state for stamina timer being 0
-			// at any time when McCoy's fps get increased
-			if (timerLeft(kActorTimerRunningStaminaFPS) == 0) {
-				timerStart(kActorTimerRunningStaminaFPS, 200);
+			} else {
+				// just prevent any rogue state for stamina timer being 0
+				// at any time when McCoy's fps get increased
+				if (timerLeft(kActorTimerRunningStaminaFPS) == 0) {
+					timerStart(kActorTimerRunningStaminaFPS, 200);
+				}
 			}
 		}
 	}
@@ -318,30 +324,42 @@ void Actor::timerUpdate(int timerId) {
 			// Actor animation frame timer
 			break;
 		case kActorTimerRunningStaminaFPS:
-			if (isRunning()) {
-				if (_fps > 15) {
-					int newFps = _fps - 2;
-					if (newFps < 15) {
-						newFps = 15;
-					}
-					setFPS(newFps);
-				}
-			}
-#if BLADERUNNER_ORIGINAL_BUGS
-			_timersLeft[kActorTimerRunningStaminaFPS] = 200;
-#else
-			if (_vm->_cutContent) {
+			// If stamina drain is disabled then
+			// the timer will become zero and won't get initialized again
+			// This is better than entirely skipping updating this specific timer
+			// which would include constantly checking for it in a frequently repeated loop
+			// If stamina drain is re-enabled, the timer will get initialized
+			// either:
+			// Vanilla mode: when McCoy starts running,
+			//               or if starting new game
+			//               or if loading a game where the timer was stored as 0
+			// Restored Content mode: when McCoy starts running fast enough
+			if (!_vm->_disableStaminaDrain) {
 				if (isRunning()) {
-					// drain faster if closer to max fps (30), else slower
-					_timersLeft[kActorTimerRunningStaminaFPS] = (31 - _fps) * 200;
-				} else {
-					// not running - stop the timer
-					timerReset(kActorTimerRunningStaminaFPS);
+					if (_fps > 15) {
+						int newFps = _fps - 2;
+						if (newFps < 15) {
+							newFps = 15;
+						}
+						setFPS(newFps);
+					}
 				}
-			} else {
+#if BLADERUNNER_ORIGINAL_BUGS
 				_timersLeft[kActorTimerRunningStaminaFPS] = 200;
-			}
+#else
+				if (_vm->_cutContent) {
+					if (isRunning()) {
+						// drain faster if closer to max fps (30), else slower
+						_timersLeft[kActorTimerRunningStaminaFPS] = (31 - _fps) * 200;
+					} else {
+						// not running - stop the timer
+						timerReset(kActorTimerRunningStaminaFPS);
+					}
+				} else {
+					_timersLeft[kActorTimerRunningStaminaFPS] = 200;
+				}
 #endif // BLADERUNNER_ORIGINAL_BUGS
+			}
 			break;
 		default:
 			break;
