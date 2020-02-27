@@ -377,7 +377,7 @@ private:
 	Common::RandomSource *_rndHc;
 
 	// HeroCraft games specific checksum function, used in Papa's Daughters 2 selfcheck
-	uint8 getFilePartChecksumHc(const char *filename, size_t begin, size_t end);	
+	uint8 getFilePartChecksumHc(const char *filename, uint32 begin, uint32 end);	
 #endif
 
 };
