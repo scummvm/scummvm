@@ -52,18 +52,19 @@ void CachedMacText::makeMacText() {
 
 	uint color = _wm->findBestColor(_textCast->_palinfo1 & 0xff, _textCast->_palinfo2 & 0xff, _textCast->_palinfo3 & 0xff);
 
-	_macText = new Graphics::MacText(_textCast->_ftext, _wm, macFont, color, 0xff, _width, _align, 1);
+	_macText = new Graphics::MacText(_textCast->_ftext, _wm, macFont, color, _bgcolor, _width, _align, 1);
 	// TODO destroy me
 }
 
 CachedMacText::CachedMacText(TextCast *const textCast,
+								int32 bgcolor,
 								int version,
 								int defaultWidth,
 								Graphics::MacWindowManager *const wm
 								)
 	:
 	_surface(NULL), _macText(NULL), _width(defaultWidth), _dirty(true),
-	_textCast(textCast), _wm(wm) {
+	_textCast(textCast), _wm(wm), _bgcolor(bgcolor) {
 
 	debugC(5, kDebugText, "CachedMacText::CachedMacText(): font id: %d '%s'", _textCast->_fontId, Common::toPrintable(_textCast->_ftext).c_str());
 
