@@ -4345,7 +4345,7 @@ char *BaseGame::getKeyFromStringTable(const char *str) const {
 }
 
 #ifdef ENABLE_HEROCRAFT
-uint8 BaseGame::getFilePartChecksumHc(const char *filename, size_t begin, size_t end) {
+uint8 BaseGame::getFilePartChecksumHc(const char *filename, uint32 begin, uint32 end) {
 	if (begin >= end) {
 		warning("Wrong limits for checksum check");
 		return 0;
@@ -4365,11 +4365,11 @@ uint8 BaseGame::getFilePartChecksumHc(const char *filename, size_t begin, size_t
 	}
 
 	uint8 result = 0;
-	for (size_t i = begin; i < end; i++) {
+	for (uint32 i = begin; i < end; i++) {
 		uint8 tmp = buffer[i];
 		result += tmp;
 		if (result < tmp) {
-			result ++;
+			result++;
 		}
 	}
 
