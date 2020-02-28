@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-14 07:08+0000\n"
+"PO-Revision-Date: 2020-02-28 10:03+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.10.1\n"
+"X-Generator: Weblate 3.11\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Nederlands\n"
 
@@ -280,9 +280,8 @@ msgid "Override global graphic settings"
 msgstr "Negeer algemene grafische instellingen"
 
 #: gui/editgamedialog.cpp:209 gui/options.cpp:1632
-#, fuzzy
 msgid "Keymaps"
-msgstr "Toetskoppeling:"
+msgstr "Toetskoppelingen"
 
 #: gui/editgamedialog.cpp:216 gui/options.cpp:1639
 msgid "Audio"
@@ -548,13 +547,12 @@ msgstr ""
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "GUI"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:524
 #: engines/mohawk/riven.cpp:858
-#, fuzzy
 msgid "Interact"
-msgstr "Interpolatie:"
+msgstr "Interactie"
 
 #: gui/gui-manager.cpp:125 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -1522,7 +1520,6 @@ msgid "Will read text in gui on mouse over."
 msgstr "Leest tekst in GUI als de muis erover gaat."
 
 #: gui/options.cpp:2076
-#, fuzzy
 msgid "None"
 msgstr "Geen"
 
@@ -1981,6 +1978,8 @@ msgstr "<Ongeldige waarde>"
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
+"Illegale spelkopie gedetecteerd. Wij leveren geen support in dit soort "
+"gevallen"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -2148,14 +2147,12 @@ msgstr ""
 "het spelmuziek. Voor details kijk in de README."
 
 #: engines/engine.cpp:507 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "Auto opslaan:"
+msgstr "Automatisch opslaan"
 
 #: engines/engine.cpp:509
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Fout tijdens het inladen van het opgeslagen spel"
+msgstr "Fout tijdens het automatisch opslaan"
 
 #: engines/engine.cpp:572
 #, c-format
@@ -2184,11 +2181,11 @@ msgstr "Evengoed starten"
 
 #: engines/engine.cpp:731
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "Spel laden is nu niet mogelijk"
 
 #: engines/engine.cpp:756
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "Spel opslaan is nu niet mogelijk"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2376,28 +2373,24 @@ msgid "Quit"
 msgstr "Stoppen"
 
 #: backends/events/default/default-events.cpp:322
-#, fuzzy
 msgid "Global"
-msgstr " (Globaal)"
+msgstr "Algemeen"
 
 #: backends/events/default/default-events.cpp:325
-#, fuzzy
 msgid "Global Main Menu"
-msgstr "Globale menu"
+msgstr "Algemene Hoofd Menu"
 
 #: backends/events/default/default-events.cpp:332
 msgid "Display keyboard"
 msgstr "Toon toetsenbord"
 
 #: backends/events/default/default-events.cpp:339
-#, fuzzy
 msgid "Toggle mute"
-msgstr "Mousecapture In-/Uitschakelen"
+msgstr "dempen aan-/uitzetten"
 
 #: backends/events/default/default-events.cpp:365
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Debugger"
+msgstr "Open Debugger"
 
 #: backends/events/gph/gph-events.cpp:401
 #: backends/events/gph/gph-events.cpp:444
@@ -2557,12 +2550,12 @@ msgstr "Venstermodus"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:362 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
-msgstr "Volledig scherm in-/uitschakelen"
+msgstr "Volledig scherm aan-/uitzetten"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:100
 #: engines/wintermute/detection.cpp:835
 msgid "Toggle mouse capture"
-msgstr "Mousecapture In-/Uitschakelen"
+msgstr "Mousecapture aan-/uitzetten"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:374
 #: engines/wintermute/detection.cpp:610 engines/wintermute/detection.cpp:920
@@ -2570,23 +2563,20 @@ msgstr "Mousecapture In-/Uitschakelen"
 #: engines/wintermute/detection.cpp:1280 engines/wintermute/detection.cpp:1366
 #: engines/wintermute/detection.cpp:1383 engines/wintermute/detection.cpp:1414
 msgid "Save screenshot"
-msgstr ""
+msgstr "Bewaar schermafdruk"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:380
-#, fuzzy
 msgid "Toggle aspect ratio correction"
-msgstr "Schakel pixelverhoudingcorrectie aan/uit"
+msgstr "Pixelverhoudingcorrectie aan-/uitzetten"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "Gebruik lineair filteren tijdens het schalen van afbeeldingen"
+msgstr "Lineair filteren tijdens het schalen aan-/uitzetten"
 
 # can this be changed into "Could not switch to video mode '%s'"?
 #: backends/graphics/sdl/sdl-graphics.cpp:394
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Kon niet omschakelen naar uitrekmodus '%s'."
+msgstr "Loop door uitrekmodi"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:400
 #, fuzzy
@@ -3034,14 +3024,12 @@ msgid "Touch"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:316
-#, fuzzy
 msgid "Toggle Drag Mode"
-msgstr "Sleep Modus"
+msgstr "Sleep Modus aan-/uitzetten"
 
 #: backends/platform/3ds/osystem-events.cpp:321
-#, fuzzy
 msgid "Toggle Magnify Mode"
-msgstr "Vergroot Modus Aan"
+msgstr "Vergroot Modus aan-/uitzetten"
 
 #: backends/platform/3ds/osystem-events.cpp:326
 msgid "Open 3DS Settings"
@@ -4764,7 +4752,7 @@ msgstr "Toon/Verberg Bioschip Blad"
 
 #: engines/pegasus/pegasus.cpp:2550
 msgid "Toggle Center Data Display"
-msgstr "Aan-/Uitzetten centreren van Datascherm"
+msgstr "Centreren Datascherm Aan-/Uitzetten"
 
 #: engines/pegasus/pegasus.cpp:2557
 msgid "Display/Hide Info Screen"
@@ -4783,9 +4771,8 @@ msgid "???"
 msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2581
-#, fuzzy
 msgid "Save Game"
-msgstr "Spel opslaan:"
+msgstr "Spel Opslaan"
 
 #: engines/pegasus/pegasus.cpp:2587
 #, fuzzy
@@ -5329,7 +5316,7 @@ msgstr "Verhoog / Verlaag schalingsfactor"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
-msgstr "Schakel pixelverhoudingcorrectie aan/uit"
+msgstr "Pixelverhoudingcorrectie aan-/uitzetten"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
@@ -5640,7 +5627,7 @@ msgstr "Derde kind"
 
 #: engines/scumm/help.cpp:294
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Schakel tussen bezittingen/IQ punten weergave"
+msgstr "Tonen Bezittingen/IQ Punten aan-/uitzetten"
 
 #: engines/scumm/help.cpp:295
 msgid "Toggle Keyboard/Mouse Fighting (*)"
@@ -5899,14 +5886,12 @@ msgid "Skip line"
 msgstr "Regel overslaan"
 
 #: engines/sky/detection.cpp:258
-#, fuzzy
 msgid "Toggle fast mode"
-msgstr "Snelle modus"
+msgstr "Snelle modus aan-/uitzetten"
 
 #: engines/sky/detection.cpp:263
-#, fuzzy
 msgid "Toggle really fast mode"
-msgstr "Draai in zeer snelle modus (*)"
+msgstr "Zeer snelle modus aan-/uitzetten"
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
@@ -6059,16 +6044,14 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Kon opgeslagen spel #%d niet snelladen"
 
 #: engines/ultima/shared/engine/data_archive.cpp:67
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Kon de '%s' engine data file niet vinden."
+msgstr "Kon de '%s' engine data file niet vinden"
 
 #: engines/ultima/shared/engine/data_archive.cpp:84
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr ""
-"Verkeerde versie van de '%s' engine data file gevonden. Verwacht werd %d.%d "
-"maar vond %d.%d."
+msgstr "Verouderde versie engine data. Verwacht werd %d.%d maar vond %d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
@@ -6322,9 +6305,8 @@ msgid "Change font size"
 msgstr ""
 
 #: engines/wintermute/detection.cpp:795
-#, fuzzy
 msgid "Save game"
-msgstr "Spel opslaan:"
+msgstr "Spel opslaan"
 
 #: engines/wintermute/detection.cpp:805
 msgid "Quick save"
@@ -6491,9 +6473,8 @@ msgid "Show journal"
 msgstr "Toon Alles"
 
 #: engines/wintermute/detection.cpp:1481
-#, fuzzy
 msgid "Music menu"
-msgstr "Muziek volume:"
+msgstr "Muziek menu"
 
 #: engines/wintermute/detection.cpp:1501
 msgid "Rotate"
