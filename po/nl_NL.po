@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-28 10:03+0000\n"
+"PO-Revision-Date: 2020-02-28 10:29+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -2386,7 +2386,7 @@ msgstr "Toon toetsenbord"
 
 #: backends/events/default/default-events.cpp:339
 msgid "Toggle mute"
-msgstr "dempen aan-/uitzetten"
+msgstr "Dempen aan-/uitzetten"
 
 #: backends/events/default/default-events.cpp:365
 msgid "Open Debugger"
@@ -2590,35 +2590,35 @@ msgstr "Verhoog / Verlaag schalingsfactor"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Switch to nearest neighbour scaling"
-msgstr ""
+msgstr "Schakel naar dichtstbijzijnde schaalmode"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Switch to AdvMame 2x/3x scaling"
-msgstr ""
+msgstr "Schakel naar AdvMame 2x/3x schaalmode"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:421
 msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
+msgstr "Schakel naar HQ 2x/3x schaalmode"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:423
 msgid "Switch to 2xSai scaling"
-msgstr ""
+msgstr "Schakel naar 2xSai schaalmode"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:424
 msgid "Switch to Super2xSai scaling"
-msgstr ""
+msgstr "Schakel naar Super2xSai schaalmode"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to SuperEagle scaling"
-msgstr ""
+msgstr "Schakel naar SuperEagle schaalmode"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to TV 2x scaling"
-msgstr ""
+msgstr "Schakel naar TV 2x schaalmode"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:427
 msgid "Switch to DotMatrix scaling"
-msgstr ""
+msgstr "Schakel naar DotMatrix schaalmode"
 
 #: backends/keymapper/hardware-input.cpp:234
 #, fuzzy
@@ -2637,27 +2637,27 @@ msgstr "Simuleer linkermuisknop"
 
 #: backends/keymapper/hardware-input.cpp:237
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "Muiswiel Omhoog"
 
 #: backends/keymapper/hardware-input.cpp:238
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "Muiswiel Omlaag"
 
 #: backends/keymapper/hardware-input.cpp:243
 msgid "Joy A"
-msgstr ""
+msgstr "Joy A"
 
 #: backends/keymapper/hardware-input.cpp:244
 msgid "Joy B"
-msgstr ""
+msgstr "Joy B"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Joy X"
-msgstr ""
+msgstr "Joy X"
 
 #: backends/keymapper/hardware-input.cpp:246
 msgid "Joy Y"
-msgstr ""
+msgstr "Joy Y"
 
 #: backends/keymapper/hardware-input.cpp:247
 #, fuzzy
@@ -2666,7 +2666,7 @@ msgstr "Beweeg Terug"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Joy Guide"
-msgstr ""
+msgstr "Joy Guide"
 
 #: backends/keymapper/hardware-input.cpp:249
 #, fuzzy
@@ -2685,23 +2685,23 @@ msgstr "Rechter klik"
 
 #: backends/keymapper/hardware-input.cpp:252
 msgid "Left Shoulder"
-msgstr ""
+msgstr "Linker Schouder"
 
 #: backends/keymapper/hardware-input.cpp:253
 msgid "Right Shoulder"
-msgstr ""
+msgstr "Rechter Schouder"
 
 #: backends/keymapper/hardware-input.cpp:254
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52
 msgid "D-pad Up"
-msgstr ""
+msgstr "D-pad Omhoog"
 
 #: backends/keymapper/hardware-input.cpp:255
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53
 msgid "D-pad Down"
-msgstr ""
+msgstr "D-pad Omlaag"
 
 #: backends/keymapper/hardware-input.cpp:256
 #: backends/platform/3ds/osystem-events.cpp:60
@@ -2752,11 +2752,11 @@ msgstr "Rechter klik"
 #: backends/keymapper/remap-widget.cpp:273
 #: backends/keymapper/remap-widget.cpp:303
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Terug naar beginwaarden"
 
 #: backends/keymapper/remap-widget.cpp:274
 msgid "Clear mapping"
-msgstr ""
+msgstr "Mapping wissen"
 
 #: backends/midi/windows.cpp:163
 msgid "Windows MIDI"
@@ -2969,19 +2969,19 @@ msgstr "C-Pad Gevoeligheid:"
 
 #: backends/platform/3ds/osystem-events.cpp:48
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/ps3/ps3.cpp:45
@@ -2997,31 +2997,31 @@ msgstr "~S~tarten"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
-msgstr ""
+msgstr "C-Pad X"
 
 #: backends/platform/3ds/osystem-events.cpp:67
 msgid "C-Pad Y"
-msgstr ""
+msgstr "C-Pad Y"
 
 #: backends/platform/3ds/osystem-events.cpp:72
 msgid "Touch"
-msgstr ""
+msgstr "Aanraken"
 
 #: backends/platform/3ds/osystem-events.cpp:316
 msgid "Toggle Drag Mode"
@@ -3033,7 +3033,7 @@ msgstr "Vergroot Modus aan-/uitzetten"
 
 #: backends/platform/3ds/osystem-events.cpp:326
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "3DS Instellingen Openen"
 
 #: backends/platform/3ds/osystem-events.cpp:356
 msgid ""
@@ -3263,19 +3263,19 @@ msgstr "BSD Licentie"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41
 msgid "Cross"
-msgstr ""
+msgstr "Kruis"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42
 msgid "Circle"
-msgstr ""
+msgstr "Cirkel"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43
 msgid "Square"
-msgstr ""
+msgstr "Vierkant"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #, fuzzy
@@ -3289,19 +3289,19 @@ msgstr "3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/mohawk/myst.cpp:518 engines/mohawk/riven.cpp:852
@@ -4500,7 +4500,7 @@ msgstr "Spel is gepauzeerd. Druk op een toets om verder te gaan."
 
 #: engines/mohawk/myst.cpp:511 engines/mohawk/riven.cpp:845
 msgid "Open main menu"
-msgstr ""
+msgstr "Open hoofd menu"
 
 #: engines/mohawk/myst.cpp:530 engines/mohawk/riven.cpp:864
 #, fuzzy
@@ -4514,7 +4514,7 @@ msgstr "Opgeslagen spellen"
 
 #: engines/mohawk/myst.cpp:540 engines/mohawk/riven.cpp:874
 msgid "Show options menu"
-msgstr ""
+msgstr "Toon opties menu"
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -4627,7 +4627,7 @@ msgstr "Terug naar s~t~artmenu"
 
 #: engines/mohawk/riven.cpp:932
 msgid "Play intro videos"
-msgstr ""
+msgstr "Speel intro video's"
 
 #: engines/mohawk/riven_stack.cpp:204
 msgid ""
@@ -4768,7 +4768,7 @@ msgstr "Toon/Verberg Pauze-Menu"
 #: engines/wintermute/detection.cpp:1016 engines/wintermute/detection.cpp:1063
 #: engines/wintermute/detection.cpp:1408 engines/wintermute/detection.cpp:1462
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: engines/pegasus/pegasus.cpp:2581
 msgid "Save Game"
