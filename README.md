@@ -551,5 +551,6 @@ Remember to always provide the following information in your bug reports:
 ## 10. Contact
   * Homepage: https://www.residualvm.org/
   * Wiki: https://wiki.residualvm.org/
+  * Discord: https://discord.gg/VFQjRfa
   * Forums: https://forums.residualvm.org/
   * IRC: #residualvm on freenode
