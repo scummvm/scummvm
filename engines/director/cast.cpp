@@ -326,7 +326,7 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_initialRect.debugPrint(0, "ShapeCast: rect:");
 }
 
-ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version, 0) {
+ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version, 0xff) {
 	_type = kCastButton;
 
 	if (version < 4) {
