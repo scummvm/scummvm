@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2019-12-04 17:19+0000\n"
+"PO-Revision-Date: 2020-02-28 17:14+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.9.1\n"
+"X-Generator: Weblate 3.11\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Magyar\n"
 
@@ -280,9 +280,8 @@ msgid "Override global graphic settings"
 msgstr "Globális grafikai beállítások felülbírálása"
 
 #: gui/editgamedialog.cpp:209 gui/options.cpp:1632
-#, fuzzy
 msgid "Keymaps"
-msgstr "Billentyûzet kiosztás:"
+msgstr "Billentyûzet"
 
 #: gui/editgamedialog.cpp:216 gui/options.cpp:1639
 msgid "Audio"
@@ -546,13 +545,12 @@ msgstr ""
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "GUI"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:524
 #: engines/mohawk/riven.cpp:858
-#, fuzzy
 msgid "Interact"
-msgstr "Interpoláció:"
+msgstr "Interakció"
 
 #: gui/gui-manager.cpp:125 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -1511,9 +1509,8 @@ msgid "Will read text in gui on mouse over."
 msgstr "Olvassa a szöveget gui-ban az egérrel."
 
 #: gui/options.cpp:2076
-#, fuzzy
 msgid "None"
-msgstr "Nincs"
+msgstr "Semmi"
 
 #: gui/options.cpp:2146
 msgid "Failed to change cloud storage!"
@@ -1970,6 +1967,7 @@ msgstr "<Rossz érték>"
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
+"Illegális játékpéldány észlelve. Ilyen esetekben nem nyújtunk támogatást"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -2133,14 +2131,12 @@ msgstr ""
 "Nézd meg a README fájlt a részletekért."
 
 #: engines/engine.cpp:507 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "Automentés:"
+msgstr "Automentés"
 
 #: engines/engine.cpp:509
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Hiba a mentésfájl olvasásakor"
+msgstr "Hiba történt automatikus mentéskor"
 
 #: engines/engine.cpp:572
 #, c-format
@@ -2168,11 +2164,11 @@ msgstr "Indítás így is"
 
 #: engines/engine.cpp:731
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "A játék betöltés jelenleg nem elérhetõ"
 
 #: engines/engine.cpp:756
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "A játék mentés jelenleg nem elérhetõ"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2358,28 +2354,24 @@ msgid "Quit"
 msgstr "Kilépés"
 
 #: backends/events/default/default-events.cpp:322
-#, fuzzy
 msgid "Global"
-msgstr " (Globális)"
+msgstr "Globális"
 
 #: backends/events/default/default-events.cpp:325
-#, fuzzy
 msgid "Global Main Menu"
-msgstr "Globális menü"
+msgstr "Globális Fõmenü"
 
 #: backends/events/default/default-events.cpp:332
 msgid "Display keyboard"
 msgstr "Billentyûzet beállítások"
 
 #: backends/events/default/default-events.cpp:339
-#, fuzzy
 msgid "Toggle mute"
-msgstr "Egér rögzítés kapcsoló"
+msgstr "Váltás némításra"
 
 #: backends/events/default/default-events.cpp:365
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Hibakeresõ"
+msgstr "Hibakeresõ megnyitása"
 
 #: backends/events/gph/gph-events.cpp:401
 #: backends/events/gph/gph-events.cpp:444
@@ -2552,202 +2544,184 @@ msgstr "Egér rögzítés kapcsoló"
 #: engines/wintermute/detection.cpp:1280 engines/wintermute/detection.cpp:1366
 #: engines/wintermute/detection.cpp:1383 engines/wintermute/detection.cpp:1414
 msgid "Save screenshot"
-msgstr ""
+msgstr "Képernyõkép mentés"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:380
-#, fuzzy
 msgid "Toggle aspect ratio correction"
-msgstr "Méretarány korrekció kapcsoló"
+msgstr "Képarány korrekció váltása"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "Lineáris szûrés használata a grafika átméretezésénél"
+msgstr "Lineáris szûrés átkapcsolás"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:394
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Nem válthattam '%s' nyújtási módra."
+msgstr "Nyújtási módok váltása"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:400
-#, fuzzy
 msgid "Increase the scale factor"
-msgstr "Lépték növelés / csökkentés"
+msgstr "Skála tényezõ növelése"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:406
-#, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Lépték növelés / csökkentés"
+msgstr "Skála tényezõ csökkentése"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Switch to nearest neighbour scaling"
-msgstr ""
+msgstr "Váltás a legközelebbi szomszéd méretezésre"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Switch to AdvMame 2x/3x scaling"
-msgstr ""
+msgstr "Váltás AdvMame 2x/3x méretezésre"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:421
 msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
+msgstr "Váltás HQ 2x/3x méretezésre"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:423
 msgid "Switch to 2xSai scaling"
-msgstr ""
+msgstr "Váltás 2xSai méretezésre"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:424
 msgid "Switch to Super2xSai scaling"
-msgstr ""
+msgstr "Váltás Super2xSai méretezésre"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to SuperEagle scaling"
-msgstr ""
+msgstr "Váltás SuperEagle méretezésre"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to TV 2x scaling"
-msgstr ""
+msgstr "Váltás TV 2x méretezésre"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:427
 msgid "Switch to DotMatrix scaling"
-msgstr ""
+msgstr "Váltás DotMatrix méretezésre"
 
 #: backends/keymapper/hardware-input.cpp:234
-#, fuzzy
 msgid "Left Mouse Button"
-msgstr "Bal egérgomb szimuláció"
+msgstr "Bal Egérgomb"
 
 #: backends/keymapper/hardware-input.cpp:235
-#, fuzzy
 msgid "Right Mouse Button"
-msgstr "Jobb egérgomb szimuláció"
+msgstr "Jobb Egérgomb"
 
 #: backends/keymapper/hardware-input.cpp:236
-#, fuzzy
 msgid "Middle Mouse Button"
-msgstr "Bal egérgomb szimuláció"
+msgstr "Középsõ Egérgomb"
 
 #: backends/keymapper/hardware-input.cpp:237
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "Egér Kerék Fel"
 
 #: backends/keymapper/hardware-input.cpp:238
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "Egér Kerék Le"
 
 #: backends/keymapper/hardware-input.cpp:243
 msgid "Joy A"
-msgstr ""
+msgstr "Joy A"
 
 #: backends/keymapper/hardware-input.cpp:244
 msgid "Joy B"
-msgstr ""
+msgstr "Joy B"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Joy X"
-msgstr ""
+msgstr "Joy X"
 
 #: backends/keymapper/hardware-input.cpp:246
 msgid "Joy Y"
-msgstr ""
+msgstr "Joy Y"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
 msgid "Joy Back"
-msgstr "Mozgás hátra"
+msgstr "Joy Hátra"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Joy Guide"
-msgstr ""
+msgstr "Joy Vezérlõ"
 
 #: backends/keymapper/hardware-input.cpp:249
-#, fuzzy
 msgid "Joy Start"
-msgstr "Indítás"
+msgstr "Joy Start"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "Left Stick"
-msgstr "Bal katt"
+msgstr "Bal Kar"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "Right Stick"
-msgstr "Jobb katt"
+msgstr "Jobb Kar"
 
 #: backends/keymapper/hardware-input.cpp:252
 msgid "Left Shoulder"
-msgstr ""
+msgstr "Bal Shoulder"
 
 #: backends/keymapper/hardware-input.cpp:253
 msgid "Right Shoulder"
-msgstr ""
+msgstr "Jobb Shoulder"
 
 #: backends/keymapper/hardware-input.cpp:254
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52
 msgid "D-pad Up"
-msgstr ""
+msgstr "D-pad Fel"
 
 #: backends/keymapper/hardware-input.cpp:255
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53
 msgid "D-pad Down"
-msgstr ""
+msgstr "D-pad Le"
 
 #: backends/keymapper/hardware-input.cpp:256
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/sdl/ps3/ps3.cpp:54
-#, fuzzy
 msgid "D-pad Left"
-msgstr "Siklás balra"
+msgstr "D-pad Bal"
 
 #: backends/keymapper/hardware-input.cpp:257
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/sdl/ps3/ps3.cpp:55
-#, fuzzy
 msgid "D-pad Right"
-msgstr "Siklás jobbra"
+msgstr "D-pad Jobb"
 
 #: backends/keymapper/hardware-input.cpp:262
 msgid "Left Trigger"
-msgstr ""
+msgstr "Bal Indító"
 
 #: backends/keymapper/hardware-input.cpp:263
 msgid "Right Trigger"
-msgstr ""
+msgstr "Jobb Indító"
 
 #: backends/keymapper/hardware-input.cpp:264
 #: backends/platform/sdl/ps3/ps3.cpp:62
-#, fuzzy
 msgid "Left Stick X"
-msgstr "Bal katt"
+msgstr "Bal Kar X"
 
 #: backends/keymapper/hardware-input.cpp:265
 #: backends/platform/sdl/ps3/ps3.cpp:63
-#, fuzzy
 msgid "Left Stick Y"
-msgstr "Bal katt"
+msgstr "Bal Kar Y"
 
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/sdl/ps3/ps3.cpp:64
-#, fuzzy
 msgid "Right Stick X"
-msgstr "Jobb katt"
+msgstr "Jobb Kar X"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/sdl/ps3/ps3.cpp:65
-#, fuzzy
 msgid "Right Stick Y"
-msgstr "Jobb katt"
+msgstr "Jobb Kar Y"
 
 #: backends/keymapper/remap-widget.cpp:273
 #: backends/keymapper/remap-widget.cpp:303
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Visszaállítás alapértelmezett értékre"
 
 #: backends/keymapper/remap-widget.cpp:274
 msgid "Clear mapping"
-msgstr ""
+msgstr "Mapping törlése"
 
 #: backends/midi/windows.cpp:163
 msgid "Windows MIDI"
@@ -2960,73 +2934,69 @@ msgstr "C-Pad érzékenység:"
 
 #: backends/platform/3ds/osystem-events.cpp:48
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/ps3/ps3.cpp:45
-#, fuzzy
 msgid "Select"
-msgstr "Akció/Választ"
+msgstr "Választ"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/sdl/ps3/ps3.cpp:47
-#, fuzzy
 msgid "Start"
-msgstr "Indítás"
+msgstr "Start"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
-msgstr ""
+msgstr "C-Pad X"
 
 #: backends/platform/3ds/osystem-events.cpp:67
 msgid "C-Pad Y"
-msgstr ""
+msgstr "C-Pad Y"
 
 #: backends/platform/3ds/osystem-events.cpp:72
 msgid "Touch"
-msgstr ""
+msgstr "Érintés"
 
 #: backends/platform/3ds/osystem-events.cpp:316
-#, fuzzy
 msgid "Toggle Drag Mode"
-msgstr "Húzási mód"
+msgstr "Húzási mód váltás"
 
 #: backends/platform/3ds/osystem-events.cpp:321
-#, fuzzy
 msgid "Toggle Magnify Mode"
-msgstr "Nagyítás mód Be"
+msgstr "Nagyítás Mód Váltás"
 
 #: backends/platform/3ds/osystem-events.cpp:326
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "3DS Beállítások megnyitása"
 
 #: backends/platform/3ds/osystem-events.cpp:356
 msgid ""
@@ -3255,45 +3225,43 @@ msgstr "BSD Licensz"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41
 msgid "Cross"
-msgstr ""
+msgstr "Kereszt"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42
 msgid "Circle"
-msgstr ""
+msgstr "Kör"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43
 msgid "Square"
-msgstr ""
+msgstr "Négyzet"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
-#, fuzzy
 msgid "L3"
-msgstr "3"
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
-#, fuzzy
 msgid "R3"
-msgstr "3"
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/mohawk/myst.cpp:518 engines/mohawk/riven.cpp:852
@@ -4416,7 +4384,7 @@ msgstr "Pajkos játékmód"
 
 #: engines/mads/detection.cpp:145 engines/sherlock/detection.cpp:136
 msgid "TTS Narrator"
-msgstr ""
+msgstr "TTS Narrátor"
 
 #: engines/mads/detection.cpp:146 engines/sherlock/detection.cpp:137
 msgid "Use TTS to read the descriptions (if TTS is available)"
