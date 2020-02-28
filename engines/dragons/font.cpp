@@ -69,14 +69,13 @@ Graphics::Surface *Font::render(uint16 *text, uint16 length) {
 }
 
 void Font::renderToSurface(Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint16 length) {
-	if (x < 0 || y < 0 || x + length * 8 >= DRAGONS_SCREEN_WIDTH || y + 8 >= DRAGONS_SCREEN_HEIGHT) {
+	if (x < 0 || y < 0 || x + length * 8 > surface->w || y + 8 > surface->h) {
 		return;
 	}
 	byte *startPixelOffset = (byte *)surface->getPixels() + y * surface->pitch + x * surface->format.bytesPerPixel;
 	for (int i = 0; i < length; i++) {
 		byte *pixels = startPixelOffset;
 		pixels += i * 8;
-//		debug("char: %d size: %d %d", (text[i] - 0x20), _numChars, (30 + i));
 		byte *data = _pixels + mapChar(text[i]) * 64;
 		for (int j = 0; j < 8; j++) {
 			memcpy(pixels, data, 8);
@@ -170,7 +169,7 @@ void FontManager::updatePalette() {
 	uint16 *palette_f2_font_maybe = (uint16 *)_screen->getPalette(2);
 	uint16 cursor3 = 0x14a5 | 0x8000;
 	if (_vm->isFlagSet(ENGINE_FLAG_200)) {
-		updatePalEntry(palette_f2_font_maybe, 1, 0);
+		updatePalEntry(palette_f2_font_maybe, 3, cursor3);
 		if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
 			updatePalEntry(palette_f2_font_maybe, 16, cursor3);
 		} else {

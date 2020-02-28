@@ -340,17 +340,24 @@ void Scene::draw() {
 	for (uint16 priority = 1; priority < 16; priority++) {
 		if (priority == 7 && _vm->isFlagSet(ENGINE_FLAG_200)) {
 			_vm->_fontManager->updatePalette();
+			_vm->_fontManager->draw();
 		}
 
-		if (priority == _stage->getBgLayerPriority()) {
-			drawBgLayer(0, rect, _stage->getBgLayer());
-		} else if (priority == _stage->getMgLayerPriority()) {
-			drawBgLayer(1, rect, _stage->getMgLayer());
-		} else if (priority == _stage->getFgLayerPriority()) {
-			drawBgLayer(2, rect, _stage->getFgLayer());
-		} else if (priority == 5) {
-			if (_vm->isFlagSet(ENGINE_FLAG_80)) {
-				_vm->_inventory->draw();
+		if (_vm->isFlagSet(ENGINE_FLAG_200)) {
+			if (priority == 5) {
+				if (_vm->isFlagSet(ENGINE_FLAG_80)) {
+					_vm->_inventory->draw();
+				}
+			}
+
+			if (priority == _stage->getFgLayerPriority()) {
+				drawBgLayer(2, rect, _stage->getFgLayer());
+			}
+			if (priority == _stage->getMgLayerPriority()) {
+				drawBgLayer(1, rect, _stage->getMgLayer());
+			}
+			if (priority == _stage->getBgLayerPriority()) {
+				drawBgLayer(0, rect, _stage->getBgLayer());
 			}
 		}
 
@@ -386,7 +393,6 @@ void Scene::draw() {
 			}
 		}
 	}
-	_vm->_fontManager->draw();
 	if (_vm->_credits->isRunning()) {
 		_vm->_credits->draw();
 	}
