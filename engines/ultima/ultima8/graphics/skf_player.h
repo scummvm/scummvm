@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA8_GRAPHICS_SKFPlayer_H
-#define ULTIMA8_GRAPHICS_SKFPlayer_H
+#ifndef ULTIMA8_GRAPHICS_SKFPLAYER_H
+#define ULTIMA8_GRAPHICS_SKFPLAYER_H
 
 #include "ultima/shared/std/containers.h"
 

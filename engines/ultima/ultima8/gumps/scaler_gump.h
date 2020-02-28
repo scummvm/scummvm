@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA8_GUMPS_ScalerGump_H
-#define ULTIMA8_GUMPS_ScalerGump_H
+#ifndef ULTIMA8_GUMPS_SCALERGUMP_H
+#define ULTIMA8_GUMPS_SCALERGUMP_H
 
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/shared/std/containers.h"
