@@ -1523,7 +1523,13 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	Common::String locationName = state()->_locations[SceneId]._name;
 
 	// load package
-	resources()->openPackage(createRoomFilename(locationName + ".PAK"));
+	if (!resources()->openPackage(createRoomFilename(locationName + ".PAK"))) {
+		Common::String msg = Common::String::format(_("Unable to locate the '%s' data file."), createRoomFilename(locationName + ".PAK").c_str());
+		GUIErrorMessage(msg);
+		warning("%s", msg.c_str());
+		_shouldQuit = true;
+		return;
+	}
 
 	loadAdditionalPalette(locationName + ".NPP", 0);
 
