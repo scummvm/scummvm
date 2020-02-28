@@ -1,7 +1,7 @@
 Prerequisites
 =============
 - A homebrew enabled PlayStation 3 console. As of now that mostly means having a custom firmware installed. Obtaining and installing such a software is out of the scope of this document. Sorry, but you're on your own for that one.
-- At least one ResidualVM supported game. The list of compatible games can be seen here: http://www.residualvm.org/compatibility/
+- At least one ResidualVM supported game. The list of compatible games can be seen here: https://www.residualvm.org/compatibility/
 - An USB drive.
 
 Installing
@@ -11,7 +11,7 @@ After having plugged the USB drive to you PS3, the installation package should a
 
 Configuring and playing games
 =============================
-The user manual describes how to add games to ResidualVM and launch them : http://wiki.residualvm.org/index.php/Running_ResidualVM
+The user manual describes how to add games to ResidualVM and launch them : https://wiki.residualvm.org/index.php/Running_ResidualVM
 
 PlayStation 3 Specifics
 =======================

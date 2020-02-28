@@ -208,7 +208,7 @@ List of fixed bugs in GF scripts:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
 	prevents the correct load of this script.
-	See http://forums.residualvm.org/viewtopic.php?t=108
+	See https://forums.residualvm.org/viewtopic.php?t=108
 
 +Others modifications:
 	-The function si.set_up_actors (si.lua), calls "start_script(si.naranja_drinking)",

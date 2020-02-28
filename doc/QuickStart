@@ -5,7 +5,7 @@ English README file.
 
 For more information, compatibility lists, details on donating, the
 latest release, progress reports and more, please visit the ResidualVM home
-page at: http://www.residualvm.org/
+page at: https://www.residualvm.org/
 
 Table of Contents:
 ------------------
@@ -35,7 +35,7 @@ said.
 For the impatient among you, here is how to get ResidualVM running in five
 simple steps.
 
-1. Download ResidualVM from <http://www.residualvm.org/downloads.php> and
+1. Download ResidualVM from <https://www.residualvm.org/downloads.php> and
 install it.
 
 2. Create a directory on your hard drive and copy the game datafiles
@@ -78,7 +78,7 @@ subdirectoriess for supported games.
 2.0) Contact:
 ---- --------
 The easiest way to contact the ResidualVM team is by submitting bug reports
-(see section 2.1) or by using our forums at http://forums.residualvm.org .
+(see section 2.1) or by using our forums at https://forums.residualvm.org .
 You can also join chat with us on IRC (#residualvm on irc.freenode.net) .
 Please do not ask us to support an unsupported game -- read the FAQ on our
 web site first. Note that the official language of the forum and chat is
@@ -93,7 +93,7 @@ reproducible, and still occurs in the latest git/Daily build version.
 Also check the known problems list (below) and the compatibility list on
 our website for that game, to ensure the issue is not already known:
 
-  http://www.residualvm.org/compatibility/
+  https://www.residualvm.org/compatibility/
 
 Please do not report bugs on games that are not listed as being
 completeable in the 'Supported Games' section, or compatibility list. We

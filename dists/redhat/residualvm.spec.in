@@ -13,7 +13,7 @@ Summary		: Interpreter for several 3D games
 Group		: Amusements/Games
 License		: GPL
 
-Url             : http://www.residualvm.org
+Url             : https://www.residualvm.org
 
 Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.gz

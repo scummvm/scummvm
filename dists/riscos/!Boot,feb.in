@@ -4,5 +4,5 @@ IconSprites <ResidualVM$Dir>.!Sprites
 Set ResidualVM$Title "ResidualVM"
 Set ResidualVM$Description "Interpreter for several 3D games"
 Set ResidualVM$Publisher "ResidualVM Developers"
-Set ResidualVM$Web "http://www.residualvm.org/"
+Set ResidualVM$Web "https://www.residualvm.org/"
 Set ResidualVM$Version "@VERSION@"

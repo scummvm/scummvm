@@ -104,7 +104,7 @@ END
 WRITELN(guide_write,'------------------------------------------------------------------------')
 WRITELN(guide_write,'Good Luck!')
 WRITELN(guide_write,'The ResidualVM team.')
-WRITELN(guide_write,'@{"http://www.residualvm.org/" System "URLOpen http://www.residualvm.org/"}')
+WRITELN(guide_write,'@{"https://www.residualvm.org/" System "URLOpen https://www.residualvm.org/"}')
 WRITELN(guide_write,'------------------------------------------------------------------------')
 
 /* Creating the sub links nodes */
