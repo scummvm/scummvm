@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-22 20:14+0000\n"
+"PO-Revision-Date: 2020-02-29 00:14+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -2556,7 +2556,7 @@ msgstr "Tallenna kuvakaappaus"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:380
 msgid "Toggle aspect ratio correction"
-msgstr "Kytke kuvasuhdekorjaus p‰‰lle / pois"
+msgstr "Kuvasuhdekorjaus p‰‰lle / pois"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
 msgid "Toggle linear filtered scaling"
@@ -2644,7 +2644,7 @@ msgstr "Joy Y"
 
 #: backends/keymapper/hardware-input.cpp:247
 msgid "Joy Back"
-msgstr "Joy Takaisin"
+msgstr "Joy Taakse"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Joy Guide"
@@ -2968,27 +2968,27 @@ msgstr "Aloita"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 msgid "ZL"
-msgstr "Vasen hattu"
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 msgid "ZR"
-msgstr "Oikea hattu"
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 msgid "L"
-msgstr "Vasen olka"
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 msgid "R"
-msgstr "Oikea olka"
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
-msgstr "Vasemman hatun X"
+msgstr "C-Pad X"
 
 #: backends/platform/3ds/osystem-events.cpp:67
 msgid "C-Pad Y"
-msgstr "Vasemman hatun Y"
+msgstr "C-Pad Y"
 
 #: backends/platform/3ds/osystem-events.cpp:72
 msgid "Touch"
