@@ -55,9 +55,9 @@ OptionsDialog::OptionsDialog() : GUI::Dialog(20, 20, 280, 200) {
 
 	new GUI::StaticTextWidget(this, 0, 60, 110, 15, _("Use Screen:"), Graphics::kTextAlignRight);
 	_screenRadioGroup = new GUI::RadiobuttonGroup(this, kScreenRadioGroup);
-	_screenTopRadioWidget = new GUI::RadiobuttonWidget(this, 120, 50, 60, 20, _screenRadioGroup, kScreenTop, _("Top"));
-	_screenBottomRadioWidget = new GUI::RadiobuttonWidget(this, 190, 50, 80, 20, _screenRadioGroup, kScreenBottom, _("Bottom"));
-	_screenBothRadioWidget = new GUI::RadiobuttonWidget(this, 155, 70, 80, 20, _screenRadioGroup, kScreenBoth, _("Both"));
+	_screenTopRadioWidget = new GUI::RadiobuttonWidget(this, 120, 50, 60, 20, _screenRadioGroup, kScreenTop, _c("Top", "3ds-screen"));
+	_screenBottomRadioWidget = new GUI::RadiobuttonWidget(this, 190, 50, 80, 20, _screenRadioGroup, kScreenBottom, _c("Bottom", "3ds-screen"));
+	_screenBothRadioWidget = new GUI::RadiobuttonWidget(this, 155, 70, 80, 20, _screenRadioGroup, kScreenBoth, _c("Both", "3ds-screen"));
 	_screenRadioGroup->setValue(config.screen);
 
 	new GUI::StaticTextWidget(this, 0, 100, 110, 15, _("C-Pad Sensitivity:"), Graphics::kTextAlignRight);
