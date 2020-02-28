@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA8_USECODE_BaseUCStack_H
-#define ULTIMA8_USECODE_BaseUCStack_H
+#ifndef ULTIMA8_USECODE_UCSTACK_H
+#define ULTIMA8_USECODE_UCSTACK_H
 
 #include "common/scummsys.h"
 
