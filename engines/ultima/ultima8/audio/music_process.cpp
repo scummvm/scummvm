@@ -56,6 +56,7 @@ MusicProcess::MusicProcess(MidiPlayer *player) : _midiPlayer(player),
 }
 
 MusicProcess::~MusicProcess() {
+	_midiPlayer->stop();
 	_theMusicProcess = 0;
 }
 

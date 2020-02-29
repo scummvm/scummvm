@@ -385,11 +385,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	_mouse->popAllCursors();
 	_mouse->pushMouseCursor();
 
-	if (_audioMixer) {
-		_audioMixer->closeMidiOutput();
-		_audioMixer->reset();
-	}
-
 	FORGET_OBJECT(_world);
 	_objectManager->reset();
 	FORGET_OBJECT(_ucMachine);
@@ -399,6 +394,11 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 
 	FORGET_OBJECT(_game);
 	FORGET_OBJECT(_gameData);
+
+	if (_audioMixer) {
+		_audioMixer->closeMidiOutput();
+		_audioMixer->reset();
+	}
 
 	_desktopGump = 0;
 	_gameMapGump = 0;
