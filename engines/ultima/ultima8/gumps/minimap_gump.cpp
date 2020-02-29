@@ -62,7 +62,7 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		_lastMapNum = currentmap->getNum();
 	}
 
-	surf->Fill32(0xFFFFAF00, 0, 0, MAP_NUM_CHUNKS * 2 + 1, 1);
+	surf->Fill32(0xFFFFAF00, 0, 0, MAP_NUM_CHUNKS * 2 + 3, 1);
 	surf->Fill32(0xFFFFAF00, 0, 1, 1, MAP_NUM_CHUNKS * 2 + 1);
 	surf->Fill32(0xFFFFAF00, 1, MAP_NUM_CHUNKS * 2 + 1, MAP_NUM_CHUNKS * 2 + 1, 1);
 	surf->Fill32(0xFFFFAF00, MAP_NUM_CHUNKS * 2 + 1, 1, 1, MAP_NUM_CHUNKS * 2 + 1);
