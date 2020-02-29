@@ -34,12 +34,14 @@ namespace Ultima8 {
 #define MINMAPGUMP_SCALE 8
 
 class MiniMapGump : public Gump {
+private:
 	Texture             _minimap;
 	unsigned int        _lastMapNum;
-	uint32              _texBuffer[MAP_NUM_CHUNKS * MINMAPGUMP_SCALE][MAP_NUM_CHUNKS * MINMAPGUMP_SCALE];
+	byte _texBuffer[(MAP_NUM_CHUNKS * MINMAPGUMP_SCALE) * (MAP_NUM_CHUNKS * MINMAPGUMP_SCALE) * 4];
 
-	uint32              sampleAtPoint(int x, int y, CurrentMap *map);
-
+	uint32 getPixelAt(int x, int y);
+	void setPixelAt(int x, int y, uint32 pixel);
+	uint32 sampleAtPoint(int x, int y, CurrentMap *map);
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 

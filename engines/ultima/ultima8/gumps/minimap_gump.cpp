@@ -43,13 +43,33 @@ MiniMapGump::MiniMapGump(int x_, int y_) :
 	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimap(), _lastMapNum(0) {
 	_minimap._format = TEX_FMT_NATIVE;
 	_minimap._width = _minimap._height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
-	_minimap._buffer = _texBuffer[0];
+	_minimap._buffer = (uint32 *)_texBuffer;
 }
 
 MiniMapGump::MiniMapGump() : Gump() {
 }
 
 MiniMapGump::~MiniMapGump(void) {
+}
+
+void MiniMapGump::setPixelAt(int x, int y, uint32 pixel) {
+	if (RenderSurface::_format.s_bytes_per_pixel == 2) {
+		uint16 *buf = (uint16 *)_texBuffer + (y * _minimap._width) + x;
+		*buf = pixel;
+	} else {
+		uint32 *buf = (uint32 *)_texBuffer + (y * _minimap._width) + x;
+		*buf = pixel;
+	}
+}
+
+uint32 MiniMapGump::getPixelAt(int x, int y) {
+	if (RenderSurface::_format.s_bytes_per_pixel == 2) {
+		uint16 *buf = (uint16 *)_texBuffer + (y * _minimap._width) + x;
+		return *buf;
+	} else {
+		uint32 *buf = (uint32 *)_texBuffer + (y * _minimap._width) + x;
+		return *buf;
+	}
 }
 
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -71,11 +91,14 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		for (int xv = 0; xv < MAP_NUM_CHUNKS; xv++) {
 			if (currentmap->isChunkFast(xv, yv)) {
 				for (int j = 0; j < MINMAPGUMP_SCALE; j++) for (int i = 0; i < MINMAPGUMP_SCALE; i++) {
-					if (_texBuffer[yv * MINMAPGUMP_SCALE + j][xv * MINMAPGUMP_SCALE + i] == 0)
-						_texBuffer[yv * MINMAPGUMP_SCALE + j][xv * MINMAPGUMP_SCALE + i] = sampleAtPoint(
+					uint32 val = getPixelAt(xv * MINMAPGUMP_SCALE + i, yv * MINMAPGUMP_SCALE + j);
+					if (val == 0) {
+						val = sampleAtPoint(
 							xv * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * i) / MINMAPGUMP_SCALE,
 							yv * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * j) / MINMAPGUMP_SCALE,
 							currentmap);
+						setPixelAt(xv * MINMAPGUMP_SCALE + i, yv * MINMAPGUMP_SCALE + j, val);
+					}
 				}
 			}
 		}
@@ -147,7 +170,8 @@ uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
 
 		uint16 r = 0, g = 0, b = 0, c = 0;
 
-		for (int j = 0; j < 2; j++) for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			for (int i = 0; i < 2; i++) {
 				if (!frame->hasPoint(i - sx, j - sy)) continue;
 
 				uint16 r2, g2, b2;
@@ -157,10 +181,16 @@ uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
 				b += RenderSurface::_gamma22toGamma10[b2];
 				c++;
 			}
-		if (!c) return 0;
+		}
 
-		return PACK_RGB8(RenderSurface::_gamma10toGamma22[r / c], RenderSurface::_gamma10toGamma22[g / c], RenderSurface::_gamma10toGamma22[b / c]);
-	} else return 0;
+		if (!c)
+			return 0;
+
+		uint32 v = PACK_RGB8(RenderSurface::_gamma10toGamma22[r / c], RenderSurface::_gamma10toGamma22[g / c], RenderSurface::_gamma10toGamma22[b / c]);
+		return v;
+	} else {
+		return 0;
+	}
 }
 
 void MiniMapGump::saveData(ODataSource *ods) {
@@ -173,7 +203,7 @@ bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
 	_lastMapNum = 0;
 	_minimap._format = TEX_FMT_NATIVE;
 	_minimap._width = _minimap._height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
-	_minimap._buffer = _texBuffer[0];
+	_minimap._buffer = (uint32 *)_texBuffer[0];
 
 	return true;
 }
