@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-26 03:14+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2020-02-29 07:14+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -1539,7 +1539,6 @@ msgid "Will read text in gui on mouse over."
 msgstr "Lit le texte de l'interface lors d'un survol de la souris."
 
 #: gui/options.cpp:2076
-#, fuzzy
 msgid "None"
 msgstr "Aucune"
 
@@ -2175,9 +2174,8 @@ msgid "Autosave"
 msgstr "Sauvegarde auto"
 
 #: engines/engine.cpp:509
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Erreur lors de la sauvegarde auto"
+msgstr "Erreur lors de la sauvegarde automatique"
 
 #: engines/engine.cpp:572
 #, c-format
@@ -2203,12 +2201,10 @@ msgid "Start anyway"
 msgstr "Je comprends"
 
 #: engines/engine.cpp:731
-#, fuzzy
 msgid "Loading game is currently unavailable"
 msgstr "Chargement actuellement non-disponible"
 
 #: engines/engine.cpp:756
-#, fuzzy
 msgid "Saving game is currently unavailable"
 msgstr "Sauvegarde actuellement non-disponible"
 
@@ -2399,26 +2395,22 @@ msgid "Quit"
 msgstr "Quitter"
 
 #: backends/events/default/default-events.cpp:322
-#, fuzzy
 msgid "Global"
 msgstr "Global"
 
 #: backends/events/default/default-events.cpp:325
-#, fuzzy
 msgid "Global Main Menu"
-msgstr "Menu global"
+msgstr "Menu Principal"
 
 #: backends/events/default/default-events.cpp:332
 msgid "Display keyboard"
 msgstr "Afficher le clavier"
 
 #: backends/events/default/default-events.cpp:339
-#, fuzzy
 msgid "Toggle mute"
 msgstr "Act./Désact. Muet"
 
 #: backends/events/default/default-events.cpp:365
-#, fuzzy
 msgid "Open Debugger"
 msgstr "Ouvrir Débuggeur"
 
@@ -2592,34 +2584,26 @@ msgstr "Capturer/Libérer la souris"
 #: engines/wintermute/detection.cpp:1134 engines/wintermute/detection.cpp:1188
 #: engines/wintermute/detection.cpp:1280 engines/wintermute/detection.cpp:1366
 #: engines/wintermute/detection.cpp:1383 engines/wintermute/detection.cpp:1414
-#, fuzzy
 msgid "Save screenshot"
 msgstr "Capture d'écran"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:380
-#, fuzzy
 msgid "Toggle aspect ratio correction"
-msgstr "Changer correction du rapport d'aspect"
+msgstr "Act./Désact. correction du rapport d'aspect"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr ""
-"Utiliser une interpolation bi-linéaire lors du changement d'échelle des "
-"graphiques"
+msgstr "Act./Désact. interpolation lors du changement d'échelle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:394
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Changer de mode d'étirement"
+msgstr "Changer le mode d'étirement"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:400
-#, fuzzy
 msgid "Increase the scale factor"
 msgstr "Augmenter le facteur d'échelle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:406
-#, fuzzy
 msgid "Decrease the scale factor"
 msgstr "Diminuer le facteur d'échelle"
 
@@ -2701,7 +2685,7 @@ msgstr "Joy Y"
 #: backends/keymapper/hardware-input.cpp:247
 #, fuzzy
 msgid "Joy Back"
-msgstr "Joy Arrière"
+msgstr "Joystick Arrière"
 
 #: backends/keymapper/hardware-input.cpp:248
 #, fuzzy
