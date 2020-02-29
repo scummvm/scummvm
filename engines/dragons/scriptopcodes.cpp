@@ -714,9 +714,7 @@ void ScriptOpcodes::opMoveActorToPoint(ScriptOpCall &scriptOpCall) {
 		ini->actor->startWalk(point.x, point.y, isFlicker ? 0 : 1);
 
 		if (waitForWalkToComplete) {
-			while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
-				_vm->waitForFrames(1);
-			}
+			ini->actor->waitForWalkToFinish();
 		}
 		ini->x = point.x;
 		ini->y = point.y;
@@ -767,9 +765,7 @@ void ScriptOpcodes::opMoveActorToXY(ScriptOpCall &scriptOpCall) {
 		ini->actor->startWalk(destX, destY, isFlicker ? 0 : 1);
 
 		if (waitForWalkToComplete) {
-			while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
-				_vm->waitForFrames(1);
-			}
+			ini->actor->waitForWalkToFinish();
 		}
 		ini->x = destX;
 		ini->y = destY;
@@ -875,9 +871,7 @@ void ScriptOpcodes::opMoveActorToObject(ScriptOpCall &scriptOpCall) {
 	}
 	secondIni->actor->startWalk(newXPosAgain, newYPosAgain, someBooleanFlag);
 	if (!bVar1) {
-		while (secondIni->actor->_flags & ACTOR_FLAG_10) {
-			_vm->waitForFrames(1);
-		}
+		secondIni->actor->waitForWalkToFinish();
 	}
 
 	secondIni->actor->_direction = firstIni->direction;
@@ -1207,9 +1201,7 @@ void ScriptOpcodes::opWaitForActorToFinishWalking(ScriptOpCall &scriptOpCall) {
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
 	if (ini->flags & 1) {
-		while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
-			_vm->waitForFrames(1);
-		}
+		ini->actor->waitForWalkToFinish();
 	}
 }
 

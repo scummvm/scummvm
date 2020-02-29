@@ -791,4 +791,11 @@ int16 Actor::getFrameYOffset() {
 	return _frame ? _frame->yOffset : 0;
 }
 
+void Actor::waitForWalkToFinish() {
+	DragonsEngine *vm = getEngine();
+	do {
+		vm->waitForFrames(1);
+	} while (isFlagSet(ACTOR_FLAG_10));
+}
+
 } // End of namespace Dragons

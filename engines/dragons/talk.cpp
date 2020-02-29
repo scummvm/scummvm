@@ -413,7 +413,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			LAB_80032e18:
 			//TODO CheckIfCdShellIsOpen();
 			if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
-				clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
+				_vm->_fontManager->clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
 								(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 			}
 		} while (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
@@ -1003,7 +1003,6 @@ uint32 Talk::strlenUTF16(uint16 *text) {
 }
 
 void Talk::drawDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2, uint16 unk) {
-	//TODO this might be rendering the box under the text.
 	debug("drawTextDialogBox(%d, %d, %d, %d, %d)", x1, y1, x2, y2, unk);
 	_vm->_fontManager->drawTextDialogBox(x1, y1, x2, y2);
 }
@@ -1033,12 +1032,6 @@ uint16 *Talk::UTF16ToUTF16Z(uint16 *dest, uint16 *src) {
 		ptr++;
 	}
 	return dest;
-}
-
-void Talk::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
-	//TODO
-	debug("Clear text (%d,%d) -> (%d,%d)", x1, y1, x2, y2);
-	_vm->_fontManager->clearText();
 }
 
 uint16 Talk::FindLastPositionOf5cChar(uint16 *text) {
@@ -1111,7 +1104,7 @@ void Talk::clearDialogEntries() {
 }
 
 void Talk::FUN_8001a7c4_clearDialogBoxMaybe() {
-	clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
+	_vm->_fontManager->clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
 					(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 }
 

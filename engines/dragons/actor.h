@@ -131,6 +131,7 @@ public:
 	void waitUntilFlag8And4AreSet();
 	void waitUntilFlag8SetThenSet1000();
 	void waitUntilFlag8SetThenSet1000AndWaitFor4();
+	void waitForWalkToFinish();
 
 	bool waitUntilFlag4IsSetAllowSkip();
 	bool actorSetSequenceAndWaitAllowSkip(uint16 newSequenceID);

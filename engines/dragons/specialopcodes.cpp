@@ -301,7 +301,7 @@ void SpecialOpcodes::spcUnk9() {
 	assert(flicker);
 	flicker->flags |= INI_FLAG_20;
 	assert(flicker->actor);
-	flicker->actor->_flags |= ACTOR_FLAG_100;
+	flicker->actor->setFlag(ACTOR_FLAG_100);
 	flicker->actor->_priorityLayer = 0;
 	_vm->getINI(1)->flags |= INI_FLAG_20;
 }
@@ -310,7 +310,7 @@ void SpecialOpcodes::spcUnk9() {
 void SpecialOpcodes::spcUnkA() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	flicker->flags &= ~INI_FLAG_20;
-	flicker->actor->_flags &= ~ACTOR_FLAG_100;
+	flicker->actor->clearFlag(ACTOR_FLAG_100);
 	_vm->getINI(1)->flags &= ~INI_FLAG_20;
 }
 
@@ -1052,6 +1052,7 @@ void SpecialOpcodes::spcInsideBlackDragonScreenShake() {
 		_vm->_screen->setScreenShakeOffset(0, shakeTbl[i]);
 		_vm->waitForFrames(1);
 	}
+	_vm->_screen->setScreenShakeOffset(0, 0);
 }
 
 void SpecialOpcodes::spc85SetScene1To0x35() {

@@ -47,7 +47,7 @@ private:
 	Actor *_actor_800830a0;
 	Actor *_actor_800830d4;
 	Actor *_actor_800830dc;
-	Actor *_actor_80072e04;
+	Actor *_flameActor;
 
 	uint16 _actor_80063514; //flags
 

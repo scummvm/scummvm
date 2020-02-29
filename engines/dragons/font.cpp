@@ -142,8 +142,7 @@ Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
 	fd.seek(_vm->getFontOffsetFromDragonEXE());
 	fd.skip((index * 2)  * 28);
 
-//	fd->read(info.filename, 16);
-	fd.skip(16);
+	fd.skip(16); //filename
 	uint32 mapOffset = fd.readUint32LE();
 	uint32 mapSize = fd.readUint32LE();
 	fd.skip(4); //unk
@@ -165,11 +164,10 @@ void updatePalEntry(uint16 *pal, uint16 index, uint16 newValue) {
 }
 
 void FontManager::updatePalette() {
-//	if (( != 0 && ((engine_flags_maybe & 0x200) != 0))) {
 	uint16 *palette_f2_font_maybe = (uint16 *)_screen->getPalette(2);
-	uint16 cursor3 = 0x14a5 | 0x8000;
+	const uint16 cursor3 = 0x14a5 | 0x8000;
 	if (_vm->isFlagSet(ENGINE_FLAG_200)) {
-		updatePalEntry(palette_f2_font_maybe, 3, cursor3);
+		updatePalEntry(palette_f2_font_maybe, 3, cursor3); //TODO move this to palette initialisation
 		if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
 			updatePalEntry(palette_f2_font_maybe, 16, cursor3);
 		} else {
@@ -202,7 +200,6 @@ void FontManager::updatePalette() {
 }
 
 void FontManager::drawTextDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
-	const uint16 kTextColCount = 0x28;
 	const uint16 kTileBaseIndex = 1;
 	const uint16 kTileIndexTop = kTileBaseIndex + 10;
 	const uint16 kTileIndexBottom = kTileBaseIndex + 16;
@@ -237,7 +234,9 @@ void FontManager::drawTextDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2) 
 }
 
 void FontManager::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
-
+	//TODO clear just specified Area.
+	debug("Clear text (%d,%d) -> (%d,%d)", x1, y1, x2, y2);
+	clearText();
 }
 
 void FontManager::drawBoxChar(uint32 x, uint32 y, uint8 tileIndex) {

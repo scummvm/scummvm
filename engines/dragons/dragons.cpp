@@ -860,7 +860,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		return;
 	}
 
-	if (isFlagSet(ENGINE_FLAG_8) && !isFlagSet(ENGINE_FLAG_80000000)) {
+	if (isFlagSet(ENGINE_FLAG_8) && !isFlagSet(ENGINE_FLAG_8000000)) {
 		_cursor->update();
 	}
 
