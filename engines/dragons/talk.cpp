@@ -352,7 +352,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			_dat_8008e848_dialogBox_x2 = (uVar11 + _dat_8008e7e8_dialogBox_x1) - 1;
 			_dat_8008e844_dialogBox_y1 = (uVar19 - sVar4 * _dat_800726f0_tfont_field2) + 1;
 			_dat_8008e874_dialogBox_y2 = _dat_8008e844_dialogBox_y1 + sVar4 * _dat_800726f0_tfont_field2 + 1;
-			if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) && ((!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || (param_7 != 0)))) {
+			if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) && ((!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED) || (param_7 != 0)))) {
 				unaff_s4 = 0;
 				drawDialogBox((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
 							  (uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2, 0);
@@ -382,7 +382,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				return (uint)returnStatus;
 			}
 			uVar9 = ((int)((int)(short)unaff_s4 * (uint)1 * (int)sVar3) >> 3) * 0x3c;
-			if ((param_7 == 0) && _vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED)) {
+			if ((param_7 == 0) && _vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED)) {
 				uVar9 = 0;
 			}
 			do {
@@ -392,7 +392,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				if (_vm->_sound->_dat_8006bb60_sound_related != 0) {
 					_vm->_sound->_dat_8006bb60_sound_related = 0;
 					curDialogTextPtr = dialogText;
-					if (!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED)) {
+					if (!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED)) {
 						returnStatus = 1;
 						goto LAB_80032e18;
 					}
@@ -417,7 +417,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 								(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 			}
 		} while (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
-				 (((!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || (param_7 != 0)) && (*curDialogTextPtr != 0))));
+				 (((!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED) || (param_7 != 0)) && (*curDialogTextPtr != 0))));
 	}
 	if (param_5 != 0) {
 		if (_vm->isFlagSet(ENGINE_FLAG_8000)) {

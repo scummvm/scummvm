@@ -192,7 +192,7 @@ void Minigame3::run() {
 	_vm->clearFlags(ENGINE_FLAG_8);
 	_vm->clearFlags(ENGINE_FLAG_1);
 	_vm->setFlags(ENGINE_FLAG_100);
-	_vm->setFlags(ENGINE_FLAG_1000_TEXT_ENABLED);
+	_vm->setFlags(ENGINE_FLAG_1000_SUBTITLES_DISABLED);
 // TODO
 //	memcpy2(auStack1584_palette, scrFileData_maybe, 0x200);
 //	memcpy2(auStack1072_palette, scrFileData_maybe, 0x200);

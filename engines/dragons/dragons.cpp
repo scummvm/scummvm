@@ -1156,7 +1156,7 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 	_flags |= 0x26;
 	_unkFlags1 = 0;
 
-	clearFlags(ENGINE_FLAG_1000_TEXT_ENABLED); //TODO wire this up to subtitle config.
+	initSubtitleFlag();
 
 	_scriptOpcodes->_scriptTargetINI = 0; //TODO this should be reset in scriptopcode.
 	_cursor->init(_actorManager, _dragonINIResource);
@@ -1469,6 +1469,15 @@ void DragonsEngine::updateCamera() {
 		if (_scene->getStageHeight() < _scene->_camera.y + 200) {
 			_scene->_camera.y = _scene->getStageHeight() + -200;
 		}
+	}
+}
+
+void DragonsEngine::initSubtitleFlag() {
+	bool showSubtitles = ConfMan.getBool("subtitles");
+	if (showSubtitles) {
+		clearFlags(ENGINE_FLAG_1000_SUBTITLES_DISABLED);
+	} else {
+		setFlags(ENGINE_FLAG_1000_SUBTITLES_DISABLED);
 	}
 }
 

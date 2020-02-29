@@ -938,7 +938,7 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 
 	int sVar2 = -1; //TODO findTextToDtSpeechIndex(textIndex);
 
-	if (!_vm->isUnkFlagSet(1) && (!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || sVar2 == -1)) {
+	if (!_vm->isUnkFlagSet(1) && (!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED) || sVar2 == -1)) {
 		_vm->_talk->loadText(textIndex, dialog, 2048);
 	}
 
