@@ -55,7 +55,7 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 		if ((reinterpret_cast<uintptr>(buf) & 1)) {
 			*reinterpret_cast<uint8 *>(buf) = static_cast<uint8>(val & 0xFF);
 			buf = (reinterpret_cast<uint8 *>(buf)) + 1;
-			val = ((val & 0xFF) << 24) || ((val & 0xFFFFFF00) >> 8);
+			val = ((val & 0xFF) << 24) | ((val & 0xFFFFFF00) >> 8);
 			align --;
 		}
 
@@ -63,7 +63,7 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 		if ((reinterpret_cast<uintptr>(buf) & 2)) {
 			*reinterpret_cast<uint16 *>(buf) = static_cast<uint16>(val & 0xFFFF);
 			buf = (reinterpret_cast<uint16 *>(buf)) + 1;
-			val = ((val & 0xFFFF) << 16) || ((val & 0xFFFF0000) >> 16);
+			val = ((val & 0xFFFF) << 16) | ((val & 0xFFFF0000) >> 16);
 			align -= 2;
 		}
 	}
@@ -73,6 +73,7 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 
 	// Do the unaligned data
 	if (align) {
+		buf = (reinterpret_cast<uint8 *>(buf)) + dwords * 4;
 		// Ok, shift along by 1 byte
 		if (align == 1) {
 			*reinterpret_cast<uint8 *>(buf) = static_cast<uint8>(val & 0xFF);
