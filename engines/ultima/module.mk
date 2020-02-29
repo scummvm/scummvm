@@ -417,7 +417,6 @@ MODULE_OBJS := \
 	ultima8/gumps/options_gump.o \
 	ultima8/gumps/paged_gump.o \
 	ultima8/gumps/paperdoll_gump.o \
-	ultima8/gumps/pentagram_menu_gump.o \
 	ultima8/gumps/quit_gump.o \
 	ultima8/gumps/readable_gump.o \
 	ultima8/gumps/resizable_gump.o \
@@ -429,7 +428,6 @@ MODULE_OBJS := \
 	ultima8/gumps/u8_save_gump.o \
 	ultima8/gumps/widgets/button_widget.o \
 	ultima8/gumps/widgets/edit_widget.o \
-	ultima8/gumps/widgets/game_widget.o \
 	ultima8/gumps/widgets/sliding_widget.o \
 	ultima8/gumps/widgets/text_widget.o \
 	ultima8/kernel/allocator.o \
