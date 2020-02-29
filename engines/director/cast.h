@@ -87,7 +87,7 @@ public:
 
 class TextCast : public Cast {
 public:
-	TextCast(Common::ReadStreamEndian &stream, uint16 version, int bgcolor);
+	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor);
 
 	void setText(const char *text);
 
