@@ -113,6 +113,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"reptilesquest",   "On the Tracks of Dinosaurs"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
+	{"reversion3",      "Reversion: The Return"},
 	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
 	{"ritter",          "1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
 	{"rosemary",        "Rosemary"},
@@ -3169,6 +3170,36 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "99ab5a155c60377a7a1e64d9dd8f71aa", 272228767,
 					"xlanguage_zh_t.dcp", "c3cf601669aee770a40f7a995fe2b7fa", 8464532,
 					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ZH_TWN, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Return (Steam, February 2020) (Spanish)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
+					"data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Return (Steam, February 2020) (German)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
+					"xlanguage_de.dcp", "c5d72f4b8ee111fddfe1caee8d97dcea", 10235058), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Return (Steam, February 2020) (English)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
+					"xlanguage_en.dcp", "f1af088d8eda8ea96e09eb2a3183a782", 10021001), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Return (Steam, February 2020) (Portuguese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
+					"xlanguage_pt.dcp", "2b55f9688039912fae450e3f6872c8ce", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Return (Steam, February 2020) (Russian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
+					"xlanguage_ru.dcp", "660627fa165d1d60135b3fc2e09e333b", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Return (Steam, February 2020) (Simplified Chinese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
+					"xlanguage_zh_s.dcp", "3c0beb597313226a78e15a38194772c6", 10146103), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Rhiannon: Curse of the four Branches
 	WME_WINENTRY("rhiannon", "",
