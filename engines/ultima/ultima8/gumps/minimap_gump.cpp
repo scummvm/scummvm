@@ -38,8 +38,8 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump, Gump)
 
-MiniMapGump::MiniMapGump(int x_, int y_) :
-	Gump(x_, y_, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
+MiniMapGump::MiniMapGump(int x, int y) :
+	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
 	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimap(), _lastMapNum(0) {
 	_minimap._format = TEX_FMT_NATIVE;
 	_minimap._width = _minimap._height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
@@ -143,25 +143,28 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	surf->Fill32(0xFFFFFF00, 1 + ax + 0, 1 + ay + 1, 1, 2);
 }
 
-uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
-	Item *item = currentmap->traceTopItem(x_, y_, 1 << 15, -1, 0, ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
+uint32 MiniMapGump::sampleAtPoint(int x, int y, CurrentMap *currentmap) {
+	Item *item = currentmap->traceTopItem(x, y, 1 << 15, -1, 0, ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
 
 	if (item) {
 		int32 ix, iy, iz, idx, idy, idz;
 		item->getLocation(ix, iy, iz);
 		item->getFootpadWorld(idx, idy, idz);
 
-		ix -= x_;
-		iy -= y_;
+		ix -= x;
+		iy -= y;
 
 		Shape *sh = item->getShapeObject();
-		if (!sh) return 0;
+		if (!sh)
+			return 0;
 
 		ShapeFrame *frame = sh->getFrame(item->getFrame());
-		if (!frame) return 0;
+		if (!frame)
+			return 0;
 
 		const Palette *pal = sh->getPalette();
-		if (!pal) return 0;
+		if (!pal)
+			return 0;
 
 		// Screenspace bounding box bottom x_ coord (RNB x_ coord)
 		int sx = (ix - iy) / 4;
@@ -174,7 +177,7 @@ uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
 			for (int i = 0; i < 2; i++) {
 				if (!frame->hasPoint(i - sx, j - sy)) continue;
 
-				uint16 r2, g2, b2;
+				byte r2, g2, b2;
 				UNPACK_RGB8(pal->_native_untransformed[frame->getPixelAtPoint(i - sx, j - sy)], r2, g2, b2);
 				r += RenderSurface::_gamma22toGamma10[r2];
 				g += RenderSurface::_gamma22toGamma10[g2];
@@ -186,8 +189,7 @@ uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
 		if (!c)
 			return 0;
 
-		uint32 v = PACK_RGB8(RenderSurface::_gamma10toGamma22[r / c], RenderSurface::_gamma10toGamma22[g / c], RenderSurface::_gamma10toGamma22[b / c]);
-		return v;
+		return PACK_RGB8(RenderSurface::_gamma10toGamma22[r / c], RenderSurface::_gamma10toGamma22[g / c], RenderSurface::_gamma10toGamma22[b / c]);
 	} else {
 		return 0;
 	}
@@ -198,7 +200,8 @@ void MiniMapGump::saveData(ODataSource *ods) {
 }
 
 bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
+	if (!Gump::loadData(ids, version))
+		return false;
 
 	_lastMapNum = 0;
 	_minimap._format = TEX_FMT_NATIVE;
