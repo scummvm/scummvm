@@ -234,7 +234,7 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, byte *source, int 
 	byte *hsrc = source + sourceWidth * ((yi + 0x8000) >> 16);
 	for (int yc = 0; yc < destHeight; ++yc) {
 		byte *wdst = flipX ? dst + (destWidth - 1) * 2 : dst;
-		int xi = xs * clipX;
+		int xi = flipX ? xs : xs * clipX;
 		byte *wsrc = hsrc + ((xi + 0x8000) >> 16);
 		for (int xc = 0; xc < destWidth; ++xc) {
 			byte colorIndex = *wsrc;
@@ -396,9 +396,9 @@ void Screen::setScreenShakeOffset(int16 x, int16 y) {
 
 void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, byte *palette, int yOffset) {
 	byte *dst = (byte *)_backSurface->getBasePtr(0, 0);
-	for (int i = 0; i < 200; i++) {
+	for (int i = 0; i < DRAGONS_SCREEN_HEIGHT; i++) {
 		const byte *src = (const byte *)srcSurface.getPixels() + ((yOffset + i) % srcSurface.h) * srcSurface.pitch;
-		for (int j = 0; j < 320; j++) {
+		for (int j = 0; j < DRAGONS_SCREEN_WIDTH; j++) {
 			uint16 c = READ_LE_UINT16(&palette[src[j] * 2]);
 			if (c != 0) {
 					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
