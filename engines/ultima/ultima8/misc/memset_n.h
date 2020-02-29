@@ -98,7 +98,7 @@ inline void memset_16(void *buf, int32 val, uint32 words) {
 	if (words > 1) memset_32(buf, val | val << 16, words>>1);
 
 	// Final word
-	if (words & 1) *(reinterpret_cast<uint16 *>(buf)) = static_cast<uint16>(val & 0xFFFF);
+	if (words & 1) *(reinterpret_cast<uint16 *>(buf) + (words - 1)) = static_cast<uint16>(val & 0xFFFF);
 }
 
 } // End of namespace Ultima8
