@@ -45,7 +45,7 @@ public:
 	void saveState(Archive &archive);
 
 	void execute(const Command &command);
-	void goToPage(const Common::String &pageName);
+	void goToPage(const Common::String pageName);
 
 	void update() { _cursorMgr.update(); }
 
