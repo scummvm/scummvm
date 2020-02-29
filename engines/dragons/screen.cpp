@@ -397,7 +397,7 @@ void Screen::setScreenShakeOffset(int16 x, int16 y) {
 void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, byte *palette, int yOffset) {
 	byte *dst = (byte *)_backSurface->getBasePtr(0, 0);
 	for (int i = 0; i < 200; i++) {
-		byte *src = (byte *)srcSurface.getPixels() + ((yOffset + i) % srcSurface.h) * srcSurface.pitch;
+		const byte *src = (const byte *)srcSurface.getPixels() + ((yOffset + i) % srcSurface.h) * srcSurface.pitch;
 		for (int j = 0; j < 320; j++) {
 			uint16 c = READ_LE_UINT16(&palette[src[j] * 2]);
 			if (c != 0) {
