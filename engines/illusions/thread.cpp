@@ -344,4 +344,12 @@ bool ThreadList::isActiveThread(int msgNum) {
 	return false;
 }
 
+ThreadList::~ThreadList() {
+	Iterator it = _threads.begin();
+	while (it != _threads.end()) {
+		delete *it;
+		it = _threads.erase(it);
+	}
+}
+
 } // End of namespace Illusions

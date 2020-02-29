@@ -60,6 +60,10 @@ DuckmanSpecialCode::~DuckmanSpecialCode() {
 	delete _propertyTimers;
 	delete _inventory;
 	delete _credits;
+
+	for (SpecialCodeMap::iterator it = _specialCodeMap.begin(); it != _specialCodeMap.end(); ++it) {
+		delete (*it)._value;
+	}
 }
 
 typedef Common::Functor1Mem<OpCall&, void, DuckmanSpecialCode> SpecialCodeFunctionDM;

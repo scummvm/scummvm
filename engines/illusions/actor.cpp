@@ -1006,6 +1006,7 @@ Controls::Controls(IllusionsEngine *vm)
 
 Controls::~Controls() {
 	delete _sequenceOpcodes;
+	destroyControls();
 }
 
 void Controls::placeBackgroundObject(BackgroundObject *backgroundObject) {

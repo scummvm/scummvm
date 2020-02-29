@@ -34,6 +34,7 @@ GamArchive::GamArchive(const char *filename)
 
 GamArchive::~GamArchive() {
 	delete[] _groups;
+	delete _fd;
 }
 
 byte *GamArchive::readResource(uint32 sceneId, uint32 resId, uint32 &dataSize) {

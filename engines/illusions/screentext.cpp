@@ -36,6 +36,7 @@ ScreenText::ScreenText(IllusionsEngine *vm)
 }
 
 ScreenText::~ScreenText() {
+	freeTextSurface();
 }
 
 void ScreenText::getTextInfoDimensions(WidthHeight &textInfoDimensions) {
