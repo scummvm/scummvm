@@ -42,7 +42,7 @@ CoreApp *CoreApp::_application = 0;
 
 CoreApp::CoreApp(const Ultima::UltimaGameDescription *gameDesc)
 		: _gameDesc(gameDesc), _isRunning(false), _gameInfo(0), _fileSystem(0),
-		_configFileMan(0), _settingMan(0), _oHelp(false), _oQuiet(false), _oVQuiet(false) {
+		_configFileMan(0), _settingMan(0) {
 	_application = this;
 }
 
@@ -61,27 +61,8 @@ CoreApp::~CoreApp() {
 }
 
 void CoreApp::startup() {
-	DeclareArgs(); // Note: this is virtual
-
-	ParseArgs(0, 0);
-
-	if (_oHelp) {
-		helpMe(); // Note: this is virtual
-		error("Startup failed");
-	}
-
-
 	sysInit();
-
 	loadConfig(); // load config files
-}
-
-void CoreApp::DeclareArgs() {
-	_parameters.declare("--game",    &_oGameName, "");
-	_parameters.declare("-h",        &_oHelp,     true);
-	_parameters.declare("--help",    &_oHelp,     true);
-	_parameters.declare("-q",        &_oQuiet,    true);
-	_parameters.declare("-qq",       &_oVQuiet,   true);
 }
 
 void CoreApp::sysInit() {
@@ -161,12 +142,7 @@ GameInfo *CoreApp::getDefaultGame() {
 	Std::string defaultgame;
 	bool defaultset = _settingMan->get("defaultgame", defaultgame,
 	                                  SettingManager::DOM_GLOBAL);
-
-	if (_oGameName != "") {
-		// game specified on commandline
-		gamename = _oGameName;
-
-	} else if (defaultset) {
+	if (defaultset) {
 		// default game specified in config file
 		gamename = defaultgame;
 
@@ -333,13 +309,6 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 
 void CoreApp::ParseArgs(const int argc_, const char *const *const argv_) {
 	_parameters.process(argc_, argv_);
-}
-
-void CoreApp::helpMe() {
-	debug(MM_INFO, "\t-h\t\t- quick help menu (this)\n");
-	debug(MM_INFO, "\t-q\t\t- silence general logging messages\n");
-	debug(MM_INFO, "\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
-	debug(MM_INFO, "\t--game {name}\t- select a game\n");
 }
 
 GameInfo *CoreApp::getGameInfo(istring game) const {

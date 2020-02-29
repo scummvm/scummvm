@@ -172,8 +172,6 @@ protected:
 
 	bool initialize() override;
 
-	void DeclareArgs() override;
-
 	/**
 	 * Returns the data archive folder and version that's required
 	 */

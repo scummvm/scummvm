@@ -63,7 +63,6 @@
 #include "ultima/ultima8/gumps/minimap_gump.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
-#include "ultima/ultima8/gumps/pentagram_menu_gump.h"
 
 // For gump positioning... perhaps shouldn't do it this way....
 #include "ultima/ultima8/gumps/bark_gump.h"
@@ -154,7 +153,6 @@ Ultima8Engine::~Ultima8Engine() {
 Common::Error Ultima8Engine::run() {
 	if (initialize()) {
 		startup();
-
 		runGame();
 
 		deinitialize();
@@ -278,7 +276,8 @@ void Ultima8Engine::startup() {
 	if (setupGame(info))
 		startupGame();
 	else
-		startupPentagramMenu();
+		// Couldn't setup the game, should never happen?
+		CANT_HAPPEN_MSG("default game failed to initialize");
 
 	paint();
 }
@@ -353,21 +352,6 @@ void Ultima8Engine::startupGame() {
 	newGame(saveSlot);
 
 	pout << "-- Game Initialized --" << Std::endl << Std::endl;
-}
-
-void Ultima8Engine::startupPentagramMenu() {
-	pout << Std::endl << "-- Initializing Pentagram Menu -- " << Std::endl;
-
-	setupGame(getGameInfo("pentagram"));
-	assert(_gameInfo);
-
-	GraphicSysInit();
-
-	Rect dims;
-	_desktopGump->GetDims(dims);
-
-	Gump *menugump = new PentagramMenuGump(0, 0, dims.w, dims.h);
-	menugump->InitGump(0, true);
 }
 
 void Ultima8Engine::shutdown() {
@@ -466,13 +450,6 @@ void Ultima8Engine::menuInitMinimal(istring gamename) {
 	pout << "-- Finished loading minimal--" << Std::endl << Std::endl;
 }
 
-void Ultima8Engine::DeclareArgs() {
-	// parent's arguments first
-	CoreApp::DeclareArgs();
-
-	// anything else?
-}
-
 void Ultima8Engine::runGame() {
 	_isRunning = true;
 
@@ -542,7 +519,7 @@ void Ultima8Engine::runGame() {
 				if (setupGame(info))
 					startupGame();
 				else
-					startupPentagramMenu();
+					CANT_HAPPEN_MSG("Failed to start up game with valid info.");
 			} else {
 				perr << "Game '" << _changeGameName << "' not found" << Std::endl;
 				_changeGameName.clear();
@@ -1400,8 +1377,7 @@ void Ultima8Engine::addGump(Gump *gump) {
 	assert(_desktopGump);
 
 	if (gump->IsOfType<ShapeViewerGump>() || gump->IsOfType<MiniMapGump>() ||
-		gump->IsOfType<ScalerGump>() || gump->IsOfType<PentagramMenuGump>() ||
-		gump->IsOfType<MessageBoxGump>()// ||
+		gump->IsOfType<ScalerGump>() || gump->IsOfType<MessageBoxGump>()// ||
 		//(_ttfOverrides && (gump->IsOfType<BarkGump>() ||
 		//                gump->IsOfType<AskGump>()))
 		) {
