@@ -214,7 +214,7 @@ bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
 		} else {
 			debugPrintf("Invalid type: %c, only b and i are available\n", type);
 		}
-	} else {
+	} else if (argc > 1 ) {
 		debugPrintf("Too few args\n");
 	}
 
@@ -291,8 +291,6 @@ bool Console::Cmd_EnableScript(int argc, const char **argv) {
 		} else {
 			debugPrintf("Invalid index %d, only %d indices available\n", index, scripts.size());
 		}
-	} else {
-		debugPrintf("Too few args\n");
 	}
 
 	debugPrintf("Enable or disable a script. Use listScripts to get an id\n");
@@ -323,8 +321,6 @@ bool Console::Cmd_ForceScript(int argc, const char **argv) {
 		} else {
 			debugPrintf("Invalid index %d, only %d indices available\n", index, scripts.size());
 		}
-	} else {
-		debugPrintf("Too few args\n");
 	}
 
 	debugPrintf("Force the execution of a script. Use listScripts to get an id\n");
@@ -361,8 +357,6 @@ bool Console::Cmd_DecompileScript(int argc, const char **argv) {
 		} else {
 			debugPrintf("Invalid index %d, only %d indices available\n", index, scripts.size());
 		}
-	} else {
-		debugPrintf("Too few args\n");
 	}
 
 	debugPrintf("Decompile a script. Use listScripts to get an id\n");
@@ -686,32 +680,34 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
-	if (argc != 3) {
-		debugPrintf("Change the current location. Use listLocations to get indices\n");
-		debugPrintf("Usage :\n");
-		debugPrintf("changeLocation [level] [location]\n");
-		return true;
+	if (argc >= 3) {
+		// Assert indices
+		Common::String xarcFileName = Common::String::format("%s/%s/%s.xarc", argv[1], argv[2], argv[2]);
+		if (!Common::File::exists(xarcFileName)) {
+			debugPrintf("Invalid location %s %s. Use listLocations to get correct indices\n", argv[1], argv[2]);
+			return true;
+		}
+
+		uint levelIndex = strtol(argv[1] , nullptr, 16);
+		uint locationIndex = strtol(argv[2] , nullptr, 16);
+
+		StarkUserInterface->changeScreen(Screen::kScreenGame);
+
+		if (!StarkGlobal->getRoot()) {
+			StarkResourceProvider->initGlobal();
+		}
+
+		StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
+
+		return false;
+	} else if (argc > 1) {
+		debugPrintf("Too few args\n");
 	}
 
-	// Assert indices
-	Common::String xarcFileName = Common::String::format("%s/%s/%s.xarc", argv[1], argv[2], argv[2]);
-	if (!Common::File::exists(xarcFileName)) {
-		debugPrintf("Invalid location %s %s. Use listLocations to get correct indices\n", argv[1], argv[2]);
-		return true;
-	}
-
-	uint levelIndex = strtol(argv[1] , nullptr, 16);
-	uint locationIndex = strtol(argv[2] , nullptr, 16);
-
-	StarkUserInterface->changeScreen(Screen::kScreenGame);
-
-	if (!StarkGlobal->getRoot()) {
-		StarkResourceProvider->initGlobal();
-	}
-
-	StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
-
-	return false;
+	debugPrintf("Change the current location. Use listLocations to get indices\n");
+	debugPrintf("Usage :\n");
+	debugPrintf("changeLocation [level] [location]\n");
+	return true;
 }
 
 bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
