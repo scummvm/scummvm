@@ -979,8 +979,8 @@ void Ultima8Engine::writeSaveInfo(ODataSource *ods) {
 }
 
 bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
-	if (_desktopGump->FindGump<ModalGump>())
-		// Can't save when a modal gump is open
+	if (_desktopGump->FindGump<ModalGump>() || _avatarInStasis)
+		// Can't save when a modal gump is open, or avatar in statsis  during cutscenes
 		return false;
 
 	if (_kernel->getRunningProcess() && _kernel->getRunningProcess()->IsOfType(StartU8Process::ClassType))
