@@ -61,11 +61,11 @@ FixedWidthFont *FixedWidthFont::Create(const Std::string &iniroot) {
 	fwf->_tex = fonttex;
 
 	if (!config->get(iniroot + "/font/width", fwf->_width)) {
-		fwf->_width = fwf->_tex->_width / 16;
+		fwf->_width = fwf->_tex->w / 16;
 	}
 
 	if (!config->get(iniroot + "/font/height", fwf->_height)) {
-		fwf->_height = fwf->_tex->_height / 16;
+		fwf->_height = fwf->_tex->h / 16;
 	}
 
 	if (!config->get(iniroot + "/font/align_x", fwf->_alignX)) {

@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 class RenderSurface;
-struct Texture;
+class Texture;
 class Scaler;
 
 class ScalerGump : public DesktopGump {

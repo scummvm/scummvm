@@ -37,7 +37,6 @@ class MiniMapGump : public Gump {
 private:
 	Texture             _minimap;
 	unsigned int        _lastMapNum;
-	byte _texBuffer[(MAP_NUM_CHUNKS * MINMAPGUMP_SCALE) * (MAP_NUM_CHUNKS * MINMAPGUMP_SCALE) * 4];
 
 	uint32 getPixelAt(int x, int y);
 	void setPixelAt(int x, int y, uint32 pixel);

@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-struct Texture;
+class Texture;
 
 class PentagramMenuGump : public ModalGump {
 	class PentagramMenuCallbackProcess : public Process {

@@ -141,14 +141,9 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			resultWidth, resultHeight, cursor);
 	lineHeight = _ttfFont->getFontHeight();
 
-	// create 32bit RGBA texture buffer
-	uint32 *buf = new uint32[resultWidth * resultHeight];
-	memset(buf, 0, 4 * resultWidth * resultHeight);
-
 	Texture *texture = new Texture();
-	texture->_buffer = buf;
-	texture->_width = resultWidth;
-	texture->_height = resultHeight;
+	texture->create(resultWidth, resultHeight, TEX_FMT_STANDARD);
+	uint32 *texBuf = (uint32 *)texture->getPixels();
 
 	Std::list<PositionedText>::const_iterator iter;
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
@@ -178,7 +173,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			byte *surfrow = (byte *)textSurf.getBasePtr(0, y);
 
 			// CHECKME: _borderSize!
-			uint32 *bufrow = buf + (iter->_dims.y + y + _borderSize) * resultWidth;
+			uint32 *bufrow = texBuf + (iter->_dims.y + y + _borderSize) * resultWidth;
 			for (int x = 0; x < textSurf.w; x++) {
 
 				if (!_antiAliased && surfrow[x] == 1) {
@@ -191,8 +186,8 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 								if (x + 1 + iter->_dims.x + dx >= 0 &&
 									    x + 1 + iter->_dims.x + dx < resultWidth &&
 									    y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
-									if (buf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] == 0) {
-										buf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = 0xFF000000;
+									if (texBuf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] == 0) {
+										texBuf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = 0xFF000000;
 									}
 								}
 							}
@@ -204,8 +199,8 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 							if (x + _borderSize + iter->_dims.x + dx >= 0 &&
 								    x + _borderSize + iter->_dims.x + dx < resultWidth &&
 								    y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
-								if (buf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] == 0) {
-									buf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = 0xFF000000;
+								if (texBuf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] == 0) {
+									texBuf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = 0xFF000000;
 								}
 							}
 						}
@@ -230,10 +225,10 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 								if (x + 1 + iter->_dims.x + dx >= 0 &&
 										x + 1 + iter->_dims.x + dx < resultWidth &&
 										y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
-									uint32 alpha = TEX32_A(buf[(y + iter->_dims.y + dy + 1) * resultWidth + x + 1 + iter->_dims.x + dx]);
+									uint32 alpha = TEX32_A(texBuf[(y + iter->_dims.y + dy + 1) * resultWidth + x + 1 + iter->_dims.x + dx]);
 									if (alpha != 0xFF) {
 										alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-										buf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
+										texBuf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
 									}
 								}
 							}
@@ -243,10 +238,10 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 									if (x + _borderSize + iter->_dims.x + dx >= 0 &&
 											x + _borderSize + iter->_dims.x + dx < resultWidth &&
 											y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
-										uint32 alpha = TEX32_A(buf[(y + iter->_dims.y + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.x + dx]);
+										uint32 alpha = TEX32_A(texBuf[(y + iter->_dims.y + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.x + dx]);
 										if (alpha != 0xFF) {
 											alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-											buf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
+											texBuf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
 										}
 									}
 								}
@@ -264,7 +259,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			int w = _ttfFont->getStringWidth(unicodeText);
 
 			for (int y = 0; y < iter->_dims.h; y++) {
-				uint32 *bufrow = buf + (iter->_dims.y + y) * resultWidth;
+				uint32 *bufrow = texBuf + (iter->_dims.y + y) * resultWidth;
 				bufrow[iter->_dims.x + w + _borderSize] = 0xFF000000;
 //				if (_borderSize > 0)
 //					bufrow[iter->_dims.x+w+_borderSize-1] = 0xFF000000;

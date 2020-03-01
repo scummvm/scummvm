@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-struct Texture;
+class Texture;
 class Shape;
 class ShapeFont;
 struct FixedWidthFont;
@@ -78,6 +78,7 @@ public:
 	// Virtual Destructor
 	virtual ~RenderSurface();
 
+	static Graphics::PixelFormat getPixelFormat();
 
 	//
 	// Being/End Painting

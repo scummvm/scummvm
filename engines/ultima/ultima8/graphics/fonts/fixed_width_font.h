@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-struct Texture;
+class Texture;
 class IDataSource;
 
 struct FixedWidthFont {

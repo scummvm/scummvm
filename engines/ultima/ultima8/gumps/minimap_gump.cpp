@@ -42,8 +42,8 @@ MiniMapGump::MiniMapGump(int x, int y) :
 	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
 	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimap(), _lastMapNum(0) {
 	_minimap._format = TEX_FMT_NATIVE;
-	_minimap._width = _minimap._height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
-	_minimap._buffer = (uint32 *)_texBuffer;
+	_minimap.create((MAP_NUM_CHUNKS * MINMAPGUMP_SCALE), (MAP_NUM_CHUNKS * MINMAPGUMP_SCALE),
+		TEX_FMT_NATIVE);
 }
 
 MiniMapGump::MiniMapGump() : Gump() {
@@ -53,21 +53,21 @@ MiniMapGump::~MiniMapGump(void) {
 }
 
 void MiniMapGump::setPixelAt(int x, int y, uint32 pixel) {
-	if (RenderSurface::_format.s_bytes_per_pixel == 2) {
-		uint16 *buf = (uint16 *)_texBuffer + (y * _minimap._width) + x;
+	if (_minimap.format.bytesPerPixel == 2) {
+		uint16 *buf = (uint16 *)_minimap.getBasePtr(x, y);
 		*buf = pixel;
 	} else {
-		uint32 *buf = (uint32 *)_texBuffer + (y * _minimap._width) + x;
+		uint32 *buf = (uint32 *)_minimap.getBasePtr(x, y);
 		*buf = pixel;
 	}
 }
 
 uint32 MiniMapGump::getPixelAt(int x, int y) {
-	if (RenderSurface::_format.s_bytes_per_pixel == 2) {
-		uint16 *buf = (uint16 *)_texBuffer + (y * _minimap._width) + x;
+	if (_minimap.format.bytesPerPixel == 2) {
+		uint16 *buf = (uint16 *)_minimap.getBasePtr(x, y);
 		return *buf;
 	} else {
-		uint32 *buf = (uint32 *)_texBuffer + (y * _minimap._width) + x;
+		uint32 *buf = (uint32 *)_minimap.getBasePtr(x, y);
 		return *buf;
 	}
 }
@@ -78,7 +78,7 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	int mapChunkSize = currentmap->getChunkSize();
 
 	if (currentmap->getNum() != _lastMapNum) {
-		Std::memset(_texBuffer, 0, sizeof(_texBuffer));
+		_minimap.fillRect(Common::Rect(0, 0, _minimap.w, _minimap.h), 0);
 		_lastMapNum = currentmap->getNum();
 	}
 
@@ -204,9 +204,7 @@ bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
 		return false;
 
 	_lastMapNum = 0;
-	_minimap._format = TEX_FMT_NATIVE;
-	_minimap._width = _minimap._height = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
-	_minimap._buffer = (uint32 *)_texBuffer[0];
+	_minimap.create(MAP_NUM_CHUNKS * MINMAPGUMP_SCALE, MAP_NUM_CHUNKS * MINMAPGUMP_SCALE, TEX_FMT_NATIVE);
 
 	return true;
 }

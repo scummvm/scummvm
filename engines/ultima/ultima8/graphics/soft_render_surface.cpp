@@ -336,11 +336,11 @@ template<class uintX> void SoftRenderSurface<uintX>::DrawLine32(uint32 rgb, int3
 //
 template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend) {
 	// Clamp or wrap or return?
-	if (sx + w > static_cast<int32>(_tex->_width))
+	if (sx + w > static_cast<int32>(_tex->w))
 		return;
 
 	// Clamp or wrap or return?
-	if (sy + h > static_cast<int32>(_tex->_height))
+	if (sy + h > static_cast<int32>(_tex->h))
 		return;
 
 	if (sx < 0 || sy < 0)
@@ -361,8 +361,8 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 s
 	int diff = _pitch - w * sizeof(uintX);
 
 	if (_tex->_format == TEX_FMT_STANDARD) {
-		uint32 *texel = _tex->_buffer + (sy * _tex->_width + sx);
-		int tex_diff = _tex->_width - w;
+		uint32 *texel = (uint32 *)_tex->getBasePtr(sx, sy);
+		int tex_diff = _tex->w - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) while (pixel != line_end) {
@@ -389,8 +389,8 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 s
 			texel += tex_diff;
 		}
 	} else if (_tex->_format == TEX_FMT_NATIVE) {
-		uintX *texel = reinterpret_cast<uintX *>(_tex->_buffer) + (sy * _tex->_width + sx);
-		int tex_diff = _tex->_width - w;
+		uintX *texel = reinterpret_cast<uintX *>(_tex->getBasePtr(sx, sy));
+		int tex_diff = _tex->w - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {
@@ -412,11 +412,11 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 s
 	/* Old complete code
 	    // Clamp or wrap or return?
 	#ifndef BLIT_WRAP
-	    if (w > static_cast<int32>(_tex->_width))
+	    if (w > static_cast<int32>(_tex->w))
 	#ifndef BLIT_CLIP
 	        return;
 	#else
-	        w = _tex->_width;
+	        w = _tex->w;
 	#endif
 
 	    // Clamp or wrap or return?
@@ -442,14 +442,14 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 s
 	    uint8 *end = pixel + h * _pitch;
 	    int diff = _pitch - w*sizeof(uintX);
 
-	    uint32 *texel = _tex->_buffer + (sy * _tex->_width + sx);
+	    uint32 *texel = _tex->_buffer + (sy * _tex->w + sx);
 	#ifdef BLIT_WRAP
-	    uint32 *texel_line_start = _tex->_buffer + sy * _tex->_width;
-	    uint32 *texel_line_end = _tex->_buffer + (sy+1) * _tex->_width;
+	    uint32 *texel_line_start = _tex->_buffer + sy * _tex->w;
+	    uint32 *texel_line_end = _tex->_buffer + (sy+1) * _tex->w;
 	    uint32 *texel_col_start = _tex->_buffer + sx;
-	    uint32 *texel_col_end = _tex->_buffer + (_tex->_height * _tex->_width + sx);
+	    uint32 *texel_col_end = _tex->_buffer + (_tex->_height * _tex->w + sx);
 	#endif
-	    int tex_diff = _tex->_width - w;
+	    int tex_diff = _tex->w - w;
 
 	    //b = PACK_RGB8( (rgb>>16)&0xFF , (rgb>>8)&0xFF , rgb&0xFF );
 
@@ -489,11 +489,11 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 s
 //
 template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
 	// Clamp or wrap or return?
-	if (w > static_cast<int32>(_tex->_width))
+	if (w > static_cast<int32>(_tex->w))
 		return;
 
 	// Clamp or wrap or return?
-	if (h > static_cast<int32>(_tex->_height))
+	if (h > static_cast<int32>(_tex->h))
 		return;
 
 	// Clip to window
@@ -517,8 +517,8 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *_tex, in
 	uint32 b = (TEX32_B(col32) * a);
 
 	if (_tex->_format == TEX_FMT_STANDARD) {
-		uint32 *texel = _tex->_buffer + (sy * _tex->_width + sx);
-		int tex_diff = _tex->_width - w;
+		uint32 *texel = (uint32 *)_tex->getBasePtr(sx, sy);
+		int tex_diff = _tex->w - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) while (pixel != line_end) {
@@ -569,8 +569,8 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *_tex, in
 			texel += tex_diff;
 		}
 	} else if (_tex->_format == TEX_FMT_NATIVE) {
-		uintX *texel = reinterpret_cast<uintX *>(_tex->_buffer) + (sy * _tex->_width + sx);
-		int tex_diff = _tex->_width - w;
+		uintX *texel = reinterpret_cast<uintX *>(_tex->getBasePtr(sx, sy));
+		int tex_diff = _tex->w - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {
@@ -599,17 +599,18 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *_tex, in
 //
 template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
 	// Clamp or wrap or return?
-	if (w > static_cast<int32>(_tex->_width))
+	if (w > static_cast<int32>(_tex->w))
 		return;
 
 	// Clamp or wrap or return?
-	if (h > static_cast<int32>(_tex->_height))
+	if (h > static_cast<int32>(_tex->h))
 		return;
 
 	// Clip to window
 	int px = dx, py = dy;
 	_clipWindow.IntersectOther(dx, dy, w, h);
-	if (!w || !h) return;
+	if (!w || !h)
+		return;
 
 	// Adjust source x and y
 	if (px != dx) sx += dx - px;
@@ -627,8 +628,8 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 	uint32 b = (TEX32_B(col32) * a);
 
 	if (_tex->_format == TEX_FMT_STANDARD) {
-		uint32 *texel = _tex->_buffer + (sy * _tex->_width + sx);
-		int tex_diff = _tex->_width - w;
+		uint32 *texel = (uint32 *)_tex->getBasePtr(sx, sy);
+		int tex_diff = _tex->w - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) {
@@ -688,8 +689,8 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 			texel += tex_diff;
 		}
 	} else if (_tex->_format == TEX_FMT_NATIVE) {
-		uintX *texel = reinterpret_cast<uintX *>(_tex->_buffer) + (sy * _tex->_width + sx);
-		int tex_diff = _tex->_width - w;
+		uintX *texel = reinterpret_cast<uintX *>(_tex->getBasePtr(sx, sy));
+		int tex_diff = _tex->w - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {

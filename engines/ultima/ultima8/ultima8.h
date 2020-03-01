@@ -72,7 +72,7 @@ class Mouse;
 class AvatarMoverProcess;
 class IDataSource;
 class ODataSource;
-struct Texture;
+class Texture;
 class AudioMixer;
 
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {

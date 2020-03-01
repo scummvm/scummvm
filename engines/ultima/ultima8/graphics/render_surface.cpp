@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/soft_render_surface.h"
+#include "common/system.h"
 #include "engines/util.h"
 #include "graphics/screen.h"
 
@@ -92,6 +93,10 @@ RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 
 }
 
 RenderSurface::~RenderSurface() {
+}
+
+Graphics::PixelFormat RenderSurface::getPixelFormat() {
+	return g_system->getScreenFormat();
 }
 
 } // End of namespace Ultima8
