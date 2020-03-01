@@ -104,7 +104,7 @@ public:
 protected:
 	uint16 _id;
 	uint16 _unk;
-	byte *_name;
+	uint16 *_name;
 	uint _triggerObjectsCount;
 	TriggerObject *_triggerObjects;
 	uint _resourcesCount;

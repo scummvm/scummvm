@@ -43,7 +43,7 @@ protected:
 struct TalkEntry {
 	uint32 _talkId;
 	//field_4 dd
-	byte *_text;
+	uint16 *_text;
 	byte *_tblPtr;
 	byte *_voiceName;
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
