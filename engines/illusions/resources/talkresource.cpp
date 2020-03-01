@@ -45,11 +45,18 @@ void TalkEntry::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	uint32 textOffs = stream.readUint32LE();
 	uint32 tblOffs = stream.readUint32LE();
 	uint32 voiceNameOffs = stream.readUint32LE();
-	_text = dataStart + textOffs;
+	_text = (uint16 *)(dataStart + textOffs);
 	_tblPtr = dataStart + tblOffs;
 	_voiceName = dataStart + voiceNameOffs;
 	debug(0, "TalkEntry::load() _talkId: %08X; textOffs: %08X; tblOffs: %08X; voiceNameOffs: %08X",
 		_talkId, textOffs, tblOffs, voiceNameOffs);
+
+#if defined(SCUMM_BIG_ENDIAN)
+	for (byte *ptr = (byte *)_text; ptr != _tblPtr; ptr += 2) {
+		WRITE_UINT16(ptr, SWAP_BYTES_16(READ_UINT16(ptr)));
+	}
+#endif
+
 }
 
 // TalkResource
