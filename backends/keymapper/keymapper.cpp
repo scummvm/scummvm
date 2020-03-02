@@ -257,22 +257,6 @@ Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &
 	}
 }
 
-bool Keymapper::isMouseEvent(const Event &event) {
-	return event.type == EVENT_LBUTTONDOWN
-	        || event.type == EVENT_LBUTTONUP
-	        || event.type == EVENT_RBUTTONDOWN
-	        || event.type == EVENT_RBUTTONUP
-	        || event.type == EVENT_MBUTTONDOWN
-	        || event.type == EVENT_MBUTTONUP
-	        || event.type == EVENT_WHEELDOWN
-	        || event.type == EVENT_WHEELUP
-	        || event.type == EVENT_X1BUTTONDOWN
-	        || event.type == EVENT_X1BUTTONUP
-	        || event.type == EVENT_X2BUTTONDOWN
-	        || event.type == EVENT_X2BUTTONUP
-	        || event.type == EVENT_MOUSEMOVE;
-}
-
 Event Keymapper::executeAction(const Action *action, const Event &incomingEvent) {
 	Event outgoingEvent = Event(action->event);
 
