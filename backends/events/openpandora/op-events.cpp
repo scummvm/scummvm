@@ -82,10 +82,6 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	else
 		event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
 
-	// update KbdMouse
-	_km.x = ev.button.x * MULTIPLIER;
-	_km.y = ev.button.y * MULTIPLIER;
-
 	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
@@ -113,9 +109,6 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 		return false;
 
 	processMouseEvent(event, ev.button.x, ev.button.y);
-	// update KbdMouse
-	_km.x = ev.button.x * MULTIPLIER;
-	_km.y = ev.button.y * MULTIPLIER;
 
 	return true;
 }
@@ -130,18 +123,18 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_LEFT:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseY, _mouseY);
 			return true;
 			break;
 		case SDLK_RIGHT:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 #if defined(SDL_BUTTON_MIDDLE)
 		case SDLK_UP:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_MBUTTONDOWN : Common::EVENT_MBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 #endif
@@ -154,12 +147,12 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_HOME:
 			event.type = Common::EVENT_LBUTTONDOWN;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 		case SDLK_END:
 			event.type = Common::EVENT_RBUTTONDOWN;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 		case SDLK_PAGEDOWN:
@@ -192,12 +185,12 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_HOME:
 			event.type = Common::EVENT_LBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 		case SDLK_END:
 			event.type = Common::EVENT_RBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 		case SDLK_PAGEDOWN:
