@@ -261,6 +261,23 @@ Event Keymapper::executeAction(const Action *action, const Event &incomingEvent)
 	Event outgoingEvent = Event(action->event);
 
 	IncomingEventType incomingType = convertToIncomingEventType(incomingEvent);
+
+	if (outgoingEvent.type == EVENT_JOYAXIS_MOTION
+	        || outgoingEvent.type == EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
+		if (incomingEvent.type == EVENT_JOYAXIS_MOTION) {
+			// At the moment only half-axes can be bound to actions, hence taking
+			//  the absolute value. If full axes were to be mappable, the action
+			//  could carry the information allowing to distinguish cases here.
+			outgoingEvent.joystick.position = ABS(incomingEvent.joystick.position);
+		} else if (incomingType == kIncomingEventStart) {
+			outgoingEvent.joystick.position = JOYAXIS_MAX;
+		} else if (incomingType == kIncomingEventEnd) {
+			outgoingEvent.joystick.position = 0;
+		}
+
+		return outgoingEvent;
+	}
+
 	if (incomingType == kIncomingEventIgnored) {
 		outgoingEvent.type = EVENT_INVALID;
 		return outgoingEvent;

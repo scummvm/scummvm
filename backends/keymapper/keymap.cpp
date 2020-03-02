@@ -171,9 +171,19 @@ Keymap::ActionArray Keymap::getMappedActions(const Event &event) const {
 		return _hwActionMap[hardwareInput];
 	}
 	case EVENT_JOYAXIS_MOTION: {
-		bool positiveHalf = event.joystick.position >= 0;
-		HardwareInput hardwareInput = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, positiveHalf, "");
-		return _hwActionMap[hardwareInput];
+		if (event.joystick.position != 0) {
+			bool positiveHalf = event.joystick.position >= 0;
+			HardwareInput hardwareInput = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, positiveHalf, "");
+			return _hwActionMap[hardwareInput];
+		} else {
+			// Axis position zero is part of both half axes, and triggers actions bound to both
+			Keymap::ActionArray actions;
+			HardwareInput hardwareInputPos = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, true, "");
+			HardwareInput hardwareInputNeg = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, false, "");
+			actions.push_back(_hwActionMap[hardwareInputPos]);
+			actions.push_back(_hwActionMap[hardwareInputNeg]);
+			return actions;
+		}
 	}
 	case EVENT_CUSTOM_BACKEND_HARDWARE: {
 		HardwareInput hardwareInput = HardwareInput::createCustom("", event.customType, "");

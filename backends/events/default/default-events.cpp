@@ -30,7 +30,7 @@
 #include "backends/events/default/default-events.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/remap-widget.h"
+#include "backends/keymapper/virtual-mouse.h"
 #include "backends/vkeybd/virtual-keyboard.h"
 
 #include "engines/engine.h"
@@ -58,13 +58,15 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 #ifdef ENABLE_VKEYBD
 	_vk = nullptr;
 #endif
+
+	_virtualMouse = new Common::VirtualMouse(&_dispatcher);
+
 	_keymapper = new Common::Keymapper(this);
-	// EventDispatcher will automatically free the keymapper
 	_dispatcher.registerMapper(_keymapper);
-	_remap = false;
 }
 
 DefaultEventManager::~DefaultEventManager() {
+	delete _virtualMouse;
 #ifdef ENABLE_VKEYBD
 	delete _vk;
 #endif
@@ -371,6 +373,8 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	act->addDefaultInputMapping("C+A+d");
 	act->setEvent(EVENT_DEBUGGER);
 	globalKeymap->addAction(act);
+
+	_virtualMouse->addActionsToKeymap(globalKeymap);
 
 	return globalKeymap;
 }
