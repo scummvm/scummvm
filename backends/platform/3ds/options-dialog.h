@@ -61,7 +61,6 @@ public:
 protected:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	GUI::SliderWidget *_sensitivity;
 	GUI::CheckboxWidget *_showCursorCheckbox;
 	GUI::CheckboxWidget *_snapToBorderCheckbox;
 	GUI::CheckboxWidget *_stretchToFitCheckbox;

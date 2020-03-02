@@ -59,13 +59,6 @@ OptionsDialog::OptionsDialog() : GUI::Dialog(20, 20, 280, 200) {
 	_screenBottomRadioWidget = new GUI::RadiobuttonWidget(this, 190, 50, 80, 20, _screenRadioGroup, kScreenBottom, _c("Bottom", "3ds-screen"));
 	_screenBothRadioWidget = new GUI::RadiobuttonWidget(this, 155, 70, 80, 20, _screenRadioGroup, kScreenBoth, _c("Both", "3ds-screen"));
 	_screenRadioGroup->setValue(config.screen);
-
-	new GUI::StaticTextWidget(this, 0, 100, 110, 15, _("C-Pad Sensitivity:"), Graphics::kTextAlignRight);
-	_sensitivity = new GUI::SliderWidget(this, 115, 100, 160, 15);
-	_sensitivity->setMinValue(-15);
-	_sensitivity->setMaxValue(30);
-	_sensitivity->setValue(config.sensitivity);
-	_sensitivity->setFlags(GUI::WIDGET_CLEARBG);
 }
 
 OptionsDialog::~OptionsDialog() {
@@ -82,10 +75,6 @@ bool OptionsDialog::getSnapToBorder() const {
 
 bool OptionsDialog::getStretchToFit() const {
 	return _stretchToFitCheckbox->getState();
-}
-
-int OptionsDialog::getSensitivity() const {
-	return _sensitivity->getValue();
 }
 
 int OptionsDialog::getScreen() const {
