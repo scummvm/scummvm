@@ -203,7 +203,7 @@ void OSystem_SDL::initBackend() {
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
 	if (_eventSource == 0)
-		_eventSource = new LegacySdlEventSource();
+		_eventSource = new SdlEventSource();
 
 	if (_eventManager == nullptr) {
 		DefaultEventManager *eventManager = new DefaultEventManager(_eventSource);

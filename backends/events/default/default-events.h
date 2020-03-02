@@ -31,6 +31,7 @@ class Keymapper;
 #ifdef ENABLE_VKEYBD
 class VirtualKeyboard;
 #endif
+class VirtualMouse;
 }
 
 
@@ -39,8 +40,9 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	Common::VirtualKeyboard *_vk;
 #endif
 
+	Common::VirtualMouse *_virtualMouse;
+
 	Common::Keymapper *_keymapper;
-	bool _remap;
 
 	Common::ArtificialEventSource _artificialEventSource;
 
