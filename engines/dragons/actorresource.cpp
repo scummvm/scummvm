@@ -186,4 +186,17 @@ byte *ActorResource::getPalette() {
 	return _palette;
 }
 
+ActorResource::ActorResource() : _id(0), _data(nullptr), _fileSize(0), _frames(nullptr),
+														   _framesCount(0),
+														   _sequenceTableOffset(0) {
+	memset(_palette, 0, 512);
+}
+
+ActorResource::~ActorResource() {
+	if (_data) {
+		free(_data);
+	}
+	delete _frames;
+}
+
 } // End of namespace Dragons

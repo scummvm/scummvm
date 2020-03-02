@@ -96,6 +96,8 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 	_debugMode = false;
 	_isGamePaused = false;
 
+	_bit_flags_8006fbd8 = 0;
+
 	reset();
 }
 

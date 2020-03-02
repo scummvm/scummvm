@@ -57,6 +57,7 @@ Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, in
 	} else {
 		//TODO run find by resource and remove from mem logic here. @0x800358c8
 		debug("Unable to find free actor slot!!");
+		delete resource;
 	}
 	resetDisplayOrder();
 	return actor;
@@ -149,6 +150,7 @@ Actor::Actor(uint16 id) : _actorID(id) {
 
 void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	debug(3, "actor %d Init", _actorID);
+	delete _actorResource;
 	_actorResource = resource;
 	_x_pos = x;
 	_y_pos = y;
@@ -209,6 +211,8 @@ void Actor::reset_maybe() {
 	_flags = 0;
 	//TODO actor_find_by_resourceId_and_remove_resource_from_mem_maybe(resourceID);
 	freeFrame();
+	delete _actorResource;
+	_actorResource = NULL;
 }
 
 uint32 calcDistance(int32 x1, int32 y1, int32 x2, int32 y2) {

@@ -68,6 +68,7 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_screenPositionIndex = 0;
 	_previousState = Closed;
 	_bag = NULL;
+	_actor = NULL;
 
 	_inventionBookPrevSceneUpdateFunc = NULL;
 	_inventionBookPrevSceneId = 0;

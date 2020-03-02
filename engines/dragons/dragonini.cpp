@@ -64,6 +64,8 @@ void DragonINIResource::reset() {
 	}
 
 	_flickerINI = &_dragonINI[0];
+
+	delete readStream;
 }
 
 DragonINI *DragonINIResource::getRecord(uint16 index) {
