@@ -23,13 +23,13 @@
 #if !defined(BACKEND_EVENTS_GPH_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
 #define BACKEND_EVENTS_GPH_H
 
-#include "backends/events/sdl/sdl-events.h"
+#include "backends/events/sdl/legacy-sdl-events.h"
 
 /*
  * SDL Events manager for GPH devices.
  */
 
-class GPHEventSource : public SdlEventSource {
+class GPHEventSource : public LegacySdlEventSource {
 public:
 	GPHEventSource();
 

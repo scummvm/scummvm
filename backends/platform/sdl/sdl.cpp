@@ -40,7 +40,7 @@
 #endif
 
 #include "backends/events/default/default-events.h"
-#include "backends/events/sdl/sdl-events.h"
+#include "backends/events/sdl/legacy-sdl-events.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
@@ -203,7 +203,7 @@ void OSystem_SDL::initBackend() {
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
 	if (_eventSource == 0)
-		_eventSource = new SdlEventSource();
+		_eventSource = new LegacySdlEventSource();
 
 	if (_eventManager == nullptr) {
 		DefaultEventManager *eventManager = new DefaultEventManager(_eventSource);

@@ -86,6 +86,9 @@ public:
 		}
 	}
 
+	int getWindowWidth() const { return _windowWidth; }
+	int getWindowHeight() const { return _windowHeight; }
+
 protected:
 	/**
 	 * @returns whether or not the game screen must have aspect ratio correction
