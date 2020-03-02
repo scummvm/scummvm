@@ -359,7 +359,7 @@ public:
 	}
 
 	~OAutoBufferDataSource() override {
-		delete [] _bufPtr;
+		delete [] _buf;
 	}
 
 	void write1(uint32 val) override {
