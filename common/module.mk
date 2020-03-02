@@ -7,7 +7,7 @@ MODULE_OBJS := \
 	dcl.o \
 	debug.o \
 	error.o \
-	EventDispatcher.o \
+	events.o \
 	file.o \
 	fs.o \
 	gui_options.o \
