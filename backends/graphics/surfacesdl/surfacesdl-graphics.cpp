@@ -49,6 +49,13 @@
 #include "common/text-to-speech.h"
 #endif
 
+// SDL surface flags which got removed in SDL2.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#define SDL_SRCCOLORKEY 0
+#define SDL_SRCALPHA    0
+#define SDL_FULLSCREEN  0x40000000
+#endif
+
 static const OSystem::GraphicsMode s_supportedShaders[] = {
 	{"NONE", "Normal (no shader)", 0},
 	{0, 0, 0}
@@ -2766,6 +2773,37 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	SDL_RenderCopy(_renderer, _screenTexture, NULL, &viewport);
 	SDL_RenderPresent(_renderer);
 }
+
+int SurfaceSdlGraphicsManager::SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors) {
+	if (surface->format->palette) {
+		return !SDL_SetPaletteColors(surface->format->palette, colors, firstcolor, ncolors) ? 1 : 0;
+	} else {
+		return 0;
+	}
+}
+
+int SurfaceSdlGraphicsManager::SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha) {
+	if (SDL_SetSurfaceAlphaMod(surface, alpha)) {
+		return -1;
+	}
+
+	if (alpha == 255 || !flag) {
+		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE)) {
+			return -1;
+		}
+	} else {
+		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND)) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+int SurfaceSdlGraphicsManager::SDL_SetColorKey(SDL_Surface *surface, Uint32 flag, Uint32 key) {
+	return ::SDL_SetColorKey(surface, SDL_TRUE, key) ? -1 : 0;
+}
+
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
 #endif
