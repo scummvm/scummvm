@@ -28,32 +28,32 @@
 
 namespace Groovie {
 
-	class GroovieEngine;
+class GroovieEngine;
 
-	class T11hGame
-	{
-	public:
-		T11hGame();
-		~T11hGame();
+class T11hGame
+{
+public:
+	T11hGame();
+	~T11hGame();
+	/**
+	* Sets a pointer to the script variables. This makes it easier if we want
+	* to debug write accesses to the script variables
+	* @param scriptVariables	The current variables from the script.
+	*/
+	void setVariables(byte *scriptVariables);
 
-		/**
-		* Sets a pointer to the script variables. This makes it easier if we want
-		* to debug write accesses to the script variables
-		* @param scriptVariables	The current variables from the script.
-		*/
-		void setVariables(byte *scriptVariables);
+	void opGallery();
+	byte opGallerySub(int one, byte *field);
 
-		void opGallery();
+private:
+	Common::RandomSource _random;
 
-	private:
-		Common::RandomSource _random;
+	void inline setScriptVar(uint16 var, byte value);
+	void inline setScriptVar16(uint16 var, uint16 value);
+	uint16 inline getScriptVar16(uint16 var);
+	byte *_scriptVariables;
 
-		void inline setScriptVar(uint16 var, byte value);
-		void inline setScriptVar16(uint16 var, uint16 value);
-		uint16 inline getScriptVar16(uint16 var);
-		byte *_scriptVariables;
-
-	};
+};
 
 } // End of Groovie namespace
 

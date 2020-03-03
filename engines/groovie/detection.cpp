@@ -180,6 +180,20 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT11H, 1
 	},
 
+	// The 11th Hour Windows English (Available on Steam)
+	{
+		{
+			"11h", "Installed",
+			{
+				{ "disk.1", 0, "4c1d0549f544f052fba2b7a9aebd1077", 220},
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieT11H, 1
+	},
+
 	// The 11th Hour DOS Demo English
 	{
 		{
