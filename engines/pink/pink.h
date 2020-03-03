@@ -123,6 +123,7 @@ public:
 	bool checkValueOfVariable(const Common::String &variable, const Common::String &value) const;
 
 	void executeMenuCommand(uint id);
+	bool executePageChangeCommand(uint id);
 
 	Common::Language getLanguage() const;
 	OrbFile *getOrb()  { return &_orb; }

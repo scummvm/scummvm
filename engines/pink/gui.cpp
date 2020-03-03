@@ -140,6 +140,9 @@ void PinkEngine::initMenu() {
 }
 
 void PinkEngine::executeMenuCommand(uint id) {
+	if (executePageChangeCommand(id))
+		return;
+
 	switch (id) {
 	case kNewGameAction: {
 		const Common::String moduleName = _modules[0]->getName();
@@ -171,155 +174,7 @@ void PinkEngine::executeMenuCommand(uint id) {
 		_actor->loadPDA(kNavigatePage);
 		break;
 
-	case kShowAustraliaArt:
-		_actor->loadPDA("AUSART");
-		break;
-	case kShowAustraliaCloth:
-		_actor->loadPDA("AUSCLO");
-		break;
-	case kShowAustraliaFood:
-		_actor->loadPDA("AUSFOO");
-		break;
-	case kShowAustraliaHistory:
-		_actor->loadPDA("AUSHIS");
-		break;
-	case kShowAustraliaNature:
-		_actor->loadPDA("AUSNAT");
-		break;
-	case kShowAustraliaPeople:
-		_actor->loadPDA("AUSPEO");
-		break;
-	case kShowAustraliaPlaces:
-		_actor->loadPDA("AUSPLA");
-		break;
-	case kShowAustraliaReligion:
-		_actor->loadPDA("AUSREL");
-		break;
-
-	case kShowBhutanArt:
-		_actor->loadPDA("BHUART");
-		break;
-	case kShowBhutanCloth:
-		_actor->loadPDA("BHUCLO");
-		break;
-	case kShowBhutanFood:
-		_actor->loadPDA("BHUFOO");
-		break;
-	case kShowBhutanHistory:
-		_actor->loadPDA("BHUHIS");
-		break;
-	case kShowBhutanNature:
-		_actor->loadPDA("BHUNAT");
-		break;
-	case kShowBhutanPeople:
-		_actor->loadPDA("BHUPEO");
-		break;
-	case kShowBhutanPlaces:
-		_actor->loadPDA("BHUPLA");
-		break;
-	case kShowBhutanReligion:
-		_actor->loadPDA("BHUREL");
-		break;
-
-	case kShowChinaArt:
-		_actor->loadPDA("CHIART");
-		break;
-	case kShowChinaCloth:
-		_actor->loadPDA("CHICLO");
-		break;
-	case kShowChinaFood:
-		_actor->loadPDA("CHIFOO");
-		break;
-	case kShowChinaHistory:
-		_actor->loadPDA("CHIHIS");
-		break;
-	case kShowChinaNature:
-		_actor->loadPDA("CHINAT");
-		break;
-	case kShowChinaPeople:
-		_actor->loadPDA("CHIPEO");
-		break;
-	case kShowChinaPlaces:
-		_actor->loadPDA("CHIPLA");
-		break;
-	case kShowChinaReligion:
-		_actor->loadPDA("CHIREL");
-		break;
-
-	case kShowEnglandArt:
-		_actor->loadPDA("BRIART");
-		break;
-	case kShowEnglandCloth:
-		_actor->loadPDA("BRICLO");
-		break;
-	case kShowEnglandFood:
-		_actor->loadPDA("BRIFOO");
-		break;
-	case kShowEnglandHistory:
-		_actor->loadPDA("BRIHIS");
-		break;
-	case kShowEnglandNature:
-		_actor->loadPDA("BRINAT");
-		break;
-	case kShowEnglandPeople:
-		_actor->loadPDA("BRIPEO");
-		break;
-	case kShowEnglandPlaces:
-		_actor->loadPDA("BRIPLA");
-		break;
-	case kShowEnglandReligion:
-		_actor->loadPDA("BRIREL");
-		break;
-
-	case kShowEgyptArt:
-		_actor->loadPDA("BRIART");
-		break;
-	case kShowEgyptCloth:
-		_actor->loadPDA("BRICLO");
-		break;
-	case kShowEgyptFood:
-		_actor->loadPDA("BRIFOO");
-		break;
-	case kShowEgyptHistory:
-		_actor->loadPDA("BRIHIS");
-		break;
-	case kShowEgyptNature:
-		_actor->loadPDA("BRINAT");
-		break;
-	case kShowEgyptPeople:
-		_actor->loadPDA("BRIPEO");
-		break;
-	case kShowEgyptPlaces:
-		_actor->loadPDA("BRIPLA");
-		break;
-	case kShowEgyptReligion:
-		_actor->loadPDA("BRIREL");
-		break;
-
-	case kShowIndiaArt:
-		_actor->loadPDA("INDART");
-		break;
-	case kShowIndiaCloth:
-		_actor->loadPDA("INDCLO");
-		break;
-	case kShowIndiaFood:
-		_actor->loadPDA("INDFOO");
-		break;
-	case kShowIndiaHistory:
-		_actor->loadPDA("INDHIS");
-		break;
-	case kShowIndiaNature:
-		_actor->loadPDA("INDNAT");
-		break;
-	case kShowIndiaPeople:
-		_actor->loadPDA("INDPEO");
-		break;
-	case kShowIndiaPlaces:
-		_actor->loadPDA("INDPLA");
-		break;
-	case kShowIndiaReligion:
-		_actor->loadPDA("INDREL");
-		break;
+	// Cases kShowAustraliaArt - kShowIndiaReligion are handled in executePageChangeCommand()
 
 	case kShowContent:
 		_actor->loadPDA("TOC");
@@ -360,6 +215,22 @@ void PinkEngine::executeMenuCommand(uint id) {
 		warning("Unprocessed command id %d", id);
 		break;
 	}
+}
+
+// Australia, Bhutan, China, Britain, Egypt, India
+static const char *pageChangePrefixes[] = { "AUS", "BHU", "CHI", "BRI", "EGY", "IND" };
+// Art, Cloth, Food, History, Nature, People, Places, Religion
+static const char *pageChangeSuffixes[] = { "ART", "CLO", "FOO", "HIS", "NAT", "PEO", "PLA", "REL" };
+
+bool PinkEngine::executePageChangeCommand(uint id) {
+	if (id >= kShowAustraliaArt && id <= kShowIndiaReligion) {
+		Common::String prefix = pageChangePrefixes[(id - kShowAustraliaArt) / 8];
+		Common::String suffix = pageChangeSuffixes[(id - kShowAustraliaArt) % 8];
+		_actor->loadPDA(prefix + suffix);
+		return true;
+	}
+
+	return false;
 }
 
 void PinkEngine::openLocalWebPage(const Common::String &pageName) const {
