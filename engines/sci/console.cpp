@@ -3630,7 +3630,10 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 			printBWTag = true;
 		else if (!scumm_stricmp(argv[i], "bc"))
 			printBytes = true;
-		else if (toupper(argv[i][0]) == 'C')
+		else if (!scumm_stricmp(argv[i], "bcc")) {
+			printBytes = true;
+			printCSyntax = true;
+		} else if (toupper(argv[i][0]) == 'C')
 			opCount = atoi(argv[i] + 1);
 		else {
 			debugPrintf("Invalid option '%s'\n", argv[i]);
