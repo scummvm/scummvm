@@ -202,11 +202,11 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._spriteType = stream->readByte();
 			sprite._enabled = sprite._spriteType != 0;
 			if (_vm->getVersion() >= 4) {
-				sprite._foreColor = 0xff - (uint8)stream->readByte();
-				sprite._backColor = 0xff - (uint8)stream->readByte();
+				sprite._foreColor = (uint8)stream->readByte();
+				sprite._backColor = (uint8)stream->readByte();
 			} else {
-				sprite._foreColor = (127 - stream->readByte()) & 0xff; // -128 -> 0, 127 -> 256
-				sprite._backColor = (127 - stream->readByte()) & 0xff;
+				sprite._foreColor = 255 - ((127 - stream->readByte()) & 0xff); // -128 -> 0, 127 -> 255
+				sprite._backColor = 255 - ((127 - stream->readByte()) & 0xff);
 			}
 
 			sprite._flags = stream->readUint16();
@@ -733,7 +733,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	Graphics::ManagedSurface tmpSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
-	tmpSurface.clear(255);
+	tmpSurface.clear(0);
 
 
 	// Draw fill
@@ -947,7 +947,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	}
 
 	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
-	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), 255 - _vm->getCurrentScore()->getStageColor());
+	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), _vm->getCurrentScore()->getStageColor());
 
 	if (textRect == NULL && boxShadow > 0) {
 		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);
@@ -956,15 +956,15 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (textRect == NULL && borderSize != kSizeNone) {
 		for (int bb = 0; bb < borderSize; bb++) {
 			Common::Rect borderRect(bb, bb, textWithFeatures.w - bb - boxShadow - textShadow, textWithFeatures.h - bb - boxShadow - textShadow);
-			textWithFeatures.fillRect(borderRect, 0xff);
-			textWithFeatures.frameRect(borderRect, 0);
+			textWithFeatures.fillRect(borderRect, 0);
+			textWithFeatures.frameRect(borderRect, 255); // default border to black
 		}
 	}
 
 	if (textShadow > 0)
-		textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX + textShadow, textY + textShadow), 0xff);
+		textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX + textShadow, textY + textShadow));
 
-	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY), 0xff);
+	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY));
 
 	InkType ink = _sprites[spriteId]->_ink;
 
@@ -981,34 +981,39 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 	drawRect.clip(t);
 
 	switch (ink) {
-	case kInkTypeCopy:
-		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
-		break;
-	case kInkTypeTransparent:
-		// FIXME: is it always white (last entry in pallette)?
-		targetSurface.transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top), _vm->getPaletteColorCount() - 1);
-		break;
-	case kInkTypeBackgndTrans:
-		drawBackgndTransSprite(targetSurface, spriteSurface, drawRect);
-		break;
-	case kInkTypeMatte:
-		drawMatteSprite(targetSurface, spriteSurface, drawRect);
-		break;
-	case kInkTypeGhost:
-		drawGhostSprite(targetSurface, spriteSurface, drawRect);
-		break;
-	case kInkTypeReverse:
-		drawReverseSprite(targetSurface, spriteSurface, drawRect);
-		break;
-	default:
-		warning("Frame::inkBasedBlit(): Unhandled ink type %d", ink);
-		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
-		break;
+		case kInkTypeCopy:
+			warning("inkcopy");
+			targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
+			break;
+		case kInkTypeTransparent:
+			warning("inktransparent");
+			targetSurface.transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
+			break;
+		case kInkTypeBackgndTrans:
+			warning("inkbackgroundtransparent");
+			drawBackgndTransSprite(targetSurface, spriteSurface, drawRect);
+			break;
+		case kInkTypeMatte:
+			warning("inkMatte");
+			drawMatteSprite(targetSurface, spriteSurface, drawRect);
+			break;
+		case kInkTypeGhost:
+			warning("inkGhost");
+			drawGhostSprite(targetSurface, spriteSurface, drawRect);
+			break;
+		case kInkTypeReverse:
+			warning("inkReverse");
+			drawReverseSprite(targetSurface, spriteSurface, drawRect);
+			break;
+		default:
+			warning("Frame::inkBasedBlit(): Unhandled ink type %d", ink);
+			targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
+			break;
 	}
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
-	uint8 skipColor = _vm->getPaletteColorCount() - 1; // FIXME is it always white (last entry in pallette) ?
+	uint8 skipColor = 0; // white, always the first color in a palette
 	Common::Rect srcRect(sprite.w, sprite.h);
 
 	if (!target.clip(srcRect, drawRect))
@@ -1055,7 +1060,7 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 	if (!target.clip(srcRect, drawRect))
 		return; // Out of screen
 
-	uint8 skipColor = _vm->getPaletteColorCount() - 1;
+	uint8 skipColor = 0;
 	for (int ii = 0; ii < srcRect.height(); ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);

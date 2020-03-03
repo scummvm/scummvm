@@ -108,7 +108,7 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 				}
 
 				for (int i = 0; i < value; i++)
-					*output++ = stream.readByte();
+					*output++ = 255 - stream.readByte();
 
 				if (value & 1)
 					stream.skip(1);
@@ -127,7 +127,7 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 				continue;
 
 			for (int i = 0; i < count; i++, x++)
-				*output++ = value;
+				*output++ = 255 - value;
 		}
 
 	}

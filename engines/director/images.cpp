@@ -86,8 +86,6 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_paletteColorCount = stream.readUint32LE();
 	/* uint32 colorsImportant = */ stream.readUint32LE();
 
-	_paletteColorCount = (_paletteColorCount == 0) ? 255: _paletteColorCount;
-
 	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
 	_codec = Image::createBitmapCodec(compression, width, height, bitsPerPixel);
@@ -136,8 +134,8 @@ BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch) {
 
 	_palette = new byte[256 * 3];
 
-	_palette[0] = _palette[1] = _palette[2] = 0;
-	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0xff;
+	_palette[0] = _palette[1] = _palette[2] = 0xff; // white
+	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0; // black
 
 	_paletteColorCount = 2;
 
