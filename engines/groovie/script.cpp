@@ -1917,6 +1917,11 @@ void Script::o2_gamespecial() {
 			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Mouse Trap in the lab (al.grv)", arg);
 			break;
 
+		case 6:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Mouse Trap in the lab (al.grv)", arg);
+			break;
+
+
 		default:
 			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): T11H Invalid -> NOP", arg);
 		}
