@@ -98,18 +98,17 @@ void CreditsGump::Close(bool no_del) {
 
 void CreditsGump::extractLine(Std::string &text_,
                               char &modifier, Std::string &line) {
-	if (text_.empty()) {
-		line = "";
-		modifier = 0;
-		return;
-	}
-
-	if (text_[0] == '+' || text_[0] == '&' || text_[0] == '}' || text_[0] == '~' ||
-	        text_[0] == '@') {
+	if (!text_.empty() and (text_[0] == '+' || text_[0] == '&' || text_[0] == '}' ||
+							text_[0] == '~' || text_[0] == '@')) {
 		modifier = text_[0];
 		text_.erase(0, 1);
 	} else {
 		modifier = 0;
+	}
+
+	if (text_.empty()) {
+		line = "";
+		return;
 	}
 
 	Std::string::size_type starpos = text_.find('*');
