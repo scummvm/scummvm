@@ -32,7 +32,8 @@ MODULE_OBJS := \
 	specialopcodes.o \
 	sound.o \
 	talk.o \
-	vabsound.o
+	vabsound.o \
+	strplayer.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DRAGONS), DYNAMIC_PLUGIN)

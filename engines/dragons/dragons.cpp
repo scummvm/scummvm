@@ -47,6 +47,7 @@
 #include "dragons/bag.h"
 #include "dragons/talk.h"
 #include "dragons/sound.h"
+#include "dragons/strplayer.h"
 
 namespace Dragons {
 
@@ -72,6 +73,7 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 	_credits = NULL;
 	_talk = NULL;
 	_fontManager = NULL;
+	_strPlayer = NULL;
 	_sceneUpdateFunction = NULL;
 	_vsyncUpdateFunction = NULL;
 
@@ -211,10 +213,16 @@ Common::Error DragonsEngine::run() {
 	_scene = new Scene(this, _screen, _scriptOpcodes, _actorManager, _dragonRMS, _dragonINIResource, _backgroundResourceLoader);
 
 	_sound = new SoundManager(this, _bigfileArchive, _dragonRMS);
+	_strPlayer = new StrPlayer(this, _screen);
 
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	} else {
+		_strPlayer->playVideo("crystald.str");
+		//TODO why doesn't this file load correctly? _video->playVideo("illusion.str");
+		_strPlayer->playVideo("labintro.str");
+
+		//TODO main menu here.
 		loadScene(0);
 	}
 
@@ -234,6 +242,7 @@ Common::Error DragonsEngine::run() {
 	delete _bigfileArchive;
 	delete _screen;
 	delete _sound;
+	delete _strPlayer;
 
 	debug("Ok");
 	return Common::kNoError;

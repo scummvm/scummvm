@@ -121,6 +121,7 @@ class SequenceOpcodes;
 class ScriptOpcodes;
 class Talk;
 class SoundManager;
+class StrPlayer;
 struct DragonINI;
 
 
@@ -140,6 +141,7 @@ public:
 	Credits *_credits;
 	Talk *_talk;
 	SoundManager *_sound;
+	StrPlayer *_strPlayer;
 
 	PaletteCyclingInstruction _paletteCyclingTbl[8];
 
