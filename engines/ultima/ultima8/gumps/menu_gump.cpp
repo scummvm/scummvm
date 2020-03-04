@@ -68,8 +68,13 @@ MenuGump::MenuGump(bool nameEntryMode_)
 
 	// Save old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();
-	if (musicprocess) _oldMusicTrack = musicprocess->getTrack();
-	else _oldMusicTrack = 0;
+	if (musicprocess) {
+		musicprocess->getTrackState(_oldMusicTrackState);
+		// Stop any playing music.
+		musicprocess->playCombatMusic(0);
+	} else {
+		_oldMusicTrackState = MusicProcess::TrackState();
+	}
 	// Save old palette transform
 	PaletteManager *palman = PaletteManager::get_instance();
 	palman->getTransformMatrix(_oldPalTransform, PaletteManager::Pal_Game);
@@ -80,9 +85,10 @@ MenuGump::~MenuGump() {
 }
 
 void MenuGump::Close(bool no_del) {
-	// Restore old music state and palette
+	// Restore old music state and palette.
+	// Music state can be changed by the Intro and Credits
 	MusicProcess *musicprocess = MusicProcess::get_instance();
-	if (musicprocess) musicprocess->playMusic(_oldMusicTrack);
+	if (musicprocess) musicprocess->setTrackState(_oldMusicTrackState);
 	PaletteManager *palman = PaletteManager::get_instance();
 	palman->transformPalette(PaletteManager::Pal_Game, _oldPalTransform);
 

@@ -37,11 +37,27 @@ class MidiPlayer;
 class MusicProcess : public Process {
 	friend class Debugger;
 
-	enum MusicStates {
-		MUSIC_NORMAL = 1,
-		MUSIC_TRANSITION = 2,
-		MUSIC_PLAY_WANTED = 3
+	enum PlaybackStates {
+		PLAYBACK_NORMAL = 1,
+		PLAYBACK_TRANSITION = 2,
+		PLAYBACK_PLAY_WANTED = 3
 	};
+
+public:
+	//! The saveable part of track state
+	struct TrackState {
+		//! Track we want to play
+		int _wanted;
+		//! Last requested track that was not a temporary (ie, combat) track
+		int _lastRequest;
+		//! Track queued to start after current
+		int _queued;
+
+		TrackState() : _wanted(0), _lastRequest(0), _queued(0) { }
+		TrackState(int wanted, int lastRequest, int queued) :
+			_wanted(wanted), _lastRequest(lastRequest), _queued(queued) { }
+	};
+
 private:
 	void saveData(ODataSource *ods) override;
 
@@ -52,13 +68,16 @@ private:
 	static MusicProcess *_theMusicProcess;
 
 	MidiPlayer *_midiPlayer;
-	MusicStates _state;
-	int _currentTrack;      // Currently playing track (don't save)
-	int _wantedTrack;       // Track we want to play (save this)
+	PlaybackStates _state;
 	int _songBranches[128];
 
-	int _lastRequest;       // Last requested track
-	int _queuedTrack;       // Track queued to start after current
+	int _currentTrack;      //! Currently playing track (don't save)
+
+	TrackState _trackState;
+
+	//! Is the current music "combat" music
+	bool _combatMusicActive;
+
 public:
 	MusicProcess();
 	MusicProcess(MidiPlayer *player); // Note that this does NOT delete the driver
@@ -72,20 +91,25 @@ public:
 		return _theMusicProcess;
 	}
 
+	//! Play some background music. Does not change the current track if combat music is active.  If another track is currently queued, just queues this track for play.
 	void playMusic(int track);
+	//! Play some combat music - the last played track will be remembered
 	void playCombatMusic(int track);
+	//! Queue a track to start once the current one finishes
 	void queueMusic(int track);
+	//! Clear any queued track (does not affect currently playing track)
 	void unqueueMusic();
+	//! Restore the last requested non-combat track (eg, at the end of combat)
 	void restoreMusic();
 
 	INTRINSIC(I_playMusic);
 	INTRINSIC(I_musicStop);
 
 
-	//! Get the number of the current or wanted track
-	int getTrack() const {
-		return _wantedTrack;
-	}
+	//! Get the state of tracks (wanted, requested, queued)
+	void getTrackState(TrackState &trackState) const;
+
+	void setTrackState(const TrackState &state);
 
 	void run() override;
 
