@@ -220,6 +220,7 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
 	_rttTex->w = _width;
 	_rttTex->h = _height;
 	_rttTex->_format = TEX_FMT_NATIVE;
+	_rttTex->pitch = _pitch;
 	_rttTex->CalcLOG2s();
 
 	SetPixelsPointer();
