@@ -219,7 +219,7 @@ Common::Error DragonsEngine::run() {
 		loadGameState(ConfMan.getInt("save_slot"));
 	} else {
 		_strPlayer->playVideo("crystald.str");
-		//TODO why doesn't this file load correctly? _video->playVideo("illusion.str");
+		_strPlayer->playVideo("illusion.str");
 		_strPlayer->playVideo("labintro.str");
 
 		//TODO main menu here.

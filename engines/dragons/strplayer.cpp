@@ -32,7 +32,6 @@ StrPlayer::StrPlayer(DragonsEngine *vm, Screen *screen) : _vm(vm), _screen(scree
 
 void StrPlayer::playVideo(const Common::String &filename) {
 	bool skipped = false;
-	Common::Rect srcRect(0, 0, DRAGONS_SCREEN_WIDTH, DRAGONS_SCREEN_HEIGHT);
 	_decoder->loadFile(filename);
 	_decoder->start();
 
@@ -40,7 +39,7 @@ void StrPlayer::playVideo(const Common::String &filename) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
 			if (frame) {
-				_screen->copyRectToSurface(*frame, 0, 0, srcRect);
+				_screen->copyRectToSurface(*frame, 0, 0, Common::Rect(frame->w, frame->h));
 				_screen->updateScreen();
 			}
 		}
