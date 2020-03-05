@@ -110,7 +110,10 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_actorIsSpeaking           = false;
 	_actorSpeakStopIsRequested = false;
 
-	_subtitlesEnabled = false;
+	_subtitlesEnabled             = false;
+
+	_surfaceFrontCreated          = false;
+	_surfaceBackCreated           = false;
 
 	_sitcomMode                   = false;
 	_shortyMode                   = false;
@@ -511,7 +514,9 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// This is the original startup in the game
 
 	_surfaceFront.create(640, 480, screenPixelFormat());
+	_surfaceFrontCreated = true;
 	_surfaceBack.create(640, 480, screenPixelFormat());
+	_surfaceBackCreated = true;
 
 	_time = new Time(this);
 
@@ -818,9 +823,13 @@ void BladeRunnerEngine::shutdown() {
 	delete _policeMaze;
 	_policeMaze = nullptr;
 
+	// don't delete _playerActor since that is handled
+	// in the loop over _actors below
 	_playerActor = nullptr;
+
 	delete _actors[kActorVoiceOver];
 	_actors[kActorVoiceOver] = nullptr;
+
 	int actorCount = kActorCount;
 	if (_gameInfo) {
 		actorCount = (int)_gameInfo->getActorCount();
@@ -861,12 +870,11 @@ void BladeRunnerEngine::shutdown() {
 		closeArchive("MODE.MIX");
 	}
 
-	if (_chapters) {
-		if (_chapters->hasOpenResources())
-			_chapters->closeResources();
-		delete _chapters;
-		_chapters = nullptr;
+	if (_chapters && _chapters->hasOpenResources()) {
+		_chapters->closeResources();
 	}
+	delete _chapters;
+	_chapters = nullptr;
 
 	delete _ambientSounds;
 	_ambientSounds = nullptr;
@@ -922,10 +930,9 @@ void BladeRunnerEngine::shutdown() {
 	if (isArchiveOpen("SUBTITLES.MIX")) {
 		closeArchive("SUBTITLES.MIX");
 	}
-	if (_subtitles) {
-		delete _subtitles;
-		_subtitles = nullptr;
-	}
+
+	delete _subtitles;
+	_subtitles = nullptr;
 
 	delete _framelimiter;
 	_framelimiter = nullptr;
@@ -933,8 +940,15 @@ void BladeRunnerEngine::shutdown() {
 	delete _time;
 	_time = nullptr;
 
-	_surfaceBack.free();
-	_surfaceFront.free();
+	// guard the free() call to Surface::free() will boolean flags
+	// since according to free() documentation:
+	// it should only be used, when "the Surface data was created via
+	// create! Otherwise this function has undefined behavior."
+	if (_surfaceBackCreated)
+		_surfaceBack.free();
+
+	if (_surfaceFrontCreated)
+		_surfaceFront.free();
 
 	// These are static objects in original game
 

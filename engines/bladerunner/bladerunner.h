@@ -188,6 +188,8 @@ public:
 
 	Graphics::Surface  _surfaceFront;
 	Graphics::Surface  _surfaceBack;
+	bool               _surfaceFrontCreated;
+	bool               _surfaceBackCreated;
 
 	ZBuffer           *_zbuffer;
 
