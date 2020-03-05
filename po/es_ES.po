@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-28 02:14+0000\n"
+"PO-Revision-Date: 2020-03-05 13:44+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -39,7 +39,7 @@ msgstr "Mostrar archivos ocultos"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr "Mostrar los archivos marcados como ocultos"
+msgstr "Muestra los archivos marcados como ocultos"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
@@ -48,7 +48,7 @@ msgstr "Arriba"
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr "Ir al nivel de directorio anterior"
+msgstr "Vuelve al directorio anterior"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
@@ -382,7 +382,7 @@ msgstr "Partidas:"
 #: gui/editgamedialog.cpp:305 gui/options.cpp:1829 gui/options.cpp:1831
 #: gui/options.cpp:1832
 msgid "Specifies where your saved games are put"
-msgstr "Especifica dónde guardar tus partidas"
+msgstr "Especifica dónde se guardarán tus partidas"
 
 #: gui/editgamedialog.cpp:304 gui/options.cpp:1831
 msgctxt "lowres"
@@ -444,11 +444,11 @@ msgstr "Aceptar"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
-msgstr "Elegir el archivo para cargar"
+msgstr "Elegir archivo a cargar"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr "Escribir el nombre del archivo"
+msgstr "Introduce el nombre del archivo"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
@@ -537,7 +537,7 @@ msgstr "Reiniciar"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Volver a los valores por defecto de las opciones de FluidSynth."
+msgstr "Recupera los valores por defecto de las opciones de FluidSynth."
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
@@ -594,7 +594,7 @@ msgstr "Asignar"
 
 #: gui/KeysDialog.cpp:45
 msgid "Select an action and click 'Map'"
-msgstr "Selecciona una acción y pulsa 'Asignar'"
+msgstr "Selecciona una acción y pulsa en Asignar"
 
 #: gui/KeysDialog.cpp:76 gui/KeysDialog.cpp:98 gui/KeysDialog.cpp:133
 #, c-format
@@ -639,7 +639,7 @@ msgstr "~O~pciones..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
-msgstr "Cambiar opciones generales de ScummVM"
+msgstr "Cambia las opciones generales de ScummVM"
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
@@ -655,7 +655,7 @@ msgstr "~C~argar..."
 
 #: gui/launcher.cpp:147
 msgid "Load saved game for selected game"
-msgstr "Cargar partida del juego seleccionado"
+msgstr "Carga una partida del juego seleccionado"
 
 #: gui/launcher.cpp:149
 msgid "Record..."
@@ -667,7 +667,7 @@ msgstr "~A~ñadir juego..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr "Añadir juegos a la lista"
+msgstr "Añade juegos a la lista"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
@@ -679,7 +679,7 @@ msgstr "~E~ditar juego..."
 
 #: gui/launcher.cpp:161 gui/launcher.cpp:171
 msgid "Change game options"
-msgstr "Cambiar opciones de juego"
+msgstr "Cambia las opciones de juego"
 
 #: gui/launcher.cpp:163
 msgid "~R~emove Game"
@@ -687,7 +687,7 @@ msgstr "E~l~iminar juego"
 
 #: gui/launcher.cpp:163 gui/launcher.cpp:173
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "Eliminar el juego de la lista. Los archivos no se borran"
+msgstr "Elimina el juego de la lista. Los archivos no serán borrados."
 
 #: gui/launcher.cpp:166
 msgctxt "lowres"
@@ -919,7 +919,7 @@ msgstr "Sombreado por hardware:"
 
 #: gui/options.cpp:1076
 msgid "Different shaders give different visual effects"
-msgstr "Cada sombreador un efecto visual distinto"
+msgstr "Cada sombreador produce un efecto visual distinto"
 
 #: gui/options.cpp:1093
 msgid "Graphics mode:"
@@ -947,7 +947,7 @@ msgstr "Filtrar gráficos"
 
 #: gui/options.cpp:1134
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usar filtrado lineal al escalar gráficos"
+msgstr "Utiliza un filtro lineal al escalar gráficos"
 
 #: gui/options.cpp:1137
 msgid "Aspect ratio correction"
@@ -955,7 +955,7 @@ msgstr "Corregir relación de aspecto"
 
 #: gui/options.cpp:1137
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Corregir relación de aspecto en juegos de resolución 320x200"
+msgstr "Corrige la relación de aspecto en juegos de resolución 320x200"
 
 #: gui/options.cpp:1145
 msgid "Preferred device:"
@@ -1405,7 +1405,7 @@ msgstr "Descargar archivos de juego"
 
 #: gui/options.cpp:1997
 msgid "Open downloads manager dialog"
-msgstr "Abrir el gestor de descargas"
+msgstr "Abre el gestor de descargas"
 
 #: gui/options.cpp:2000
 msgctxt "lowres"
@@ -1426,7 +1426,7 @@ msgstr "Desconectar"
 
 #: gui/options.cpp:2003
 msgid "Stop using this storage on this device"
-msgstr "Dejar de usar este almacenamiento en este dispositivo"
+msgstr "Deja de utilizar este almacenamiento en este dispositivo"
 
 #: gui/options.cpp:2006
 msgctxt "lowres"
@@ -1443,7 +1443,7 @@ msgstr "1. Abre este enlace:"
 
 #: gui/options.cpp:2010
 msgid "Open URL"
-msgstr "Abrir URL"
+msgstr "Abre la dirección URL"
 
 #: gui/options.cpp:2012
 msgctxt "lowres"
@@ -1460,7 +1460,7 @@ msgstr "Pegar"
 
 #: gui/options.cpp:2016
 msgid "Paste code from clipboard"
-msgstr "Pegar código desde el portapapeles"
+msgstr "Pega el código desde el portapapeles"
 
 #: gui/options.cpp:2017
 msgid "3. Connect"
@@ -1468,8 +1468,7 @@ msgstr "3. Conectar"
 
 #: gui/options.cpp:2017
 msgid "Connect your cloud storage account"
-msgstr ""
-"Abrir el asistente de configuración para habilitar el almacenamiento en línea"
+msgstr "Conecta con tu cuenta de almacenamiento en la nube"
 
 #: gui/options.cpp:2026
 msgid "Run server"
@@ -1477,7 +1476,7 @@ msgstr "Habilitar servidor"
 
 #: gui/options.cpp:2026
 msgid "Run local webserver"
-msgstr "Habilitar el servidor local"
+msgstr "Arranca el servidor local"
 
 #: gui/options.cpp:2027 gui/options.cpp:2820
 msgid "Not running"
@@ -1491,7 +1490,8 @@ msgstr "/raíz/:"
 #: gui/options.cpp:2031 gui/options.cpp:2033 gui/options.cpp:2034
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr ""
-"Selecciona el directorio que se mostrará como /raíz/ en el gestor de archivos"
+"Selecciona el directorio que se mostrará como /raíz/ en el administrador de "
+"archivos"
 
 #: gui/options.cpp:2033
 msgid "/root/ Path:"
@@ -1509,8 +1509,8 @@ msgstr "Puerto que usará el servidor"
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Arrancar el servidor para gestionar los ficheros con el navegador (en la "
-"misma red)."
+"Arrancar el servidor para gestionar ficheros con un navegador (en la misma "
+"red)."
 
 #: gui/options.cpp:2045
 msgctxt "lowres"
@@ -1520,8 +1520,8 @@ msgstr "Cerrar el panel de opciones detendrá el servidor."
 #: gui/options.cpp:2047
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Arranca el servidor para gestionar los ficheros con el navegador (en la "
-"misma red)."
+"Arrancar el servidor para gestionar ficheros con un navegador (en la misma "
+"red)."
 
 #: gui/options.cpp:2048
 msgid "Closing options dialog will stop the server."
@@ -1533,7 +1533,7 @@ msgstr "Convertir de texto a voz"
 
 #: gui/options.cpp:2060
 msgid "Will read text in gui on mouse over."
-msgstr "Leerá el texto en la interfaz al pasar el ratón."
+msgstr "Leerá el texto de la interfaz allá por donde pase el puntero del ratón."
 
 #: gui/options.cpp:2076
 msgid "None"
@@ -1541,11 +1541,11 @@ msgstr "Ninguno"
 
 #: gui/options.cpp:2146
 msgid "Failed to change cloud storage!"
-msgstr "¡Fallo al cambiar el almacenamiento en línea!"
+msgstr "¡Fallo al cambiar el almacenamiento en la nube!"
 
 #: gui/options.cpp:2149
 msgid "Another cloud storage is already active."
-msgstr "Ya se ha habilitado otro almacenamiento en línea."
+msgstr "Ya se ha habilitado otro almacenamiento en la nube."
 
 #: gui/options.cpp:2224
 msgid "Theme does not support selected language!"
@@ -1581,7 +1581,7 @@ msgstr "Selecciona el directorio de plugins"
 
 #: gui/options.cpp:2330
 msgid "Select directory for Files Manager /root/"
-msgstr "Selecciona el directorio /raíz/ para el gestor de archivos"
+msgstr "Selecciona el directorio /raíz/ para el administrador de archivos"
 
 #: gui/options.cpp:2442
 msgid ""
@@ -1617,7 +1617,7 @@ msgstr "Detener servidor"
 
 #: gui/options.cpp:2813
 msgid "Stop local webserver"
-msgstr "Detener el servidor local"
+msgstr "Detiene el servidor local"
 
 #: gui/options.cpp:2865
 msgid "Storage connected."
@@ -1818,7 +1818,7 @@ msgstr "Copiar al portapapeles"
 
 #: gui/unknown-game-dialog.cpp:64
 msgid "Report game"
-msgstr "Cargar partida"
+msgstr "Informar del juego"
 
 #: gui/unknown-game-dialog.cpp:101
 msgid ""
@@ -1860,8 +1860,8 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
-"Puedes cambiar esta opción más adelante en la\n"
-"pestaña Otras del menú de opciones."
+"Puedes cambiar esta opción más adelante\n"
+"en la pestaña Otras del menú de opciones."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -2076,9 +2076,8 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
-"Lo sentimos, aún no hay ayuda disponible para este juego. Consulta el "
-"archivo README para encontrar información básica e instrucciones para "
-"obtener más ayuda."
+"Aún no hay ayuda disponible para este juego. Consulta el archivo README para "
+"encontrar información básica e instrucciones para obtener más ayuda."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:385
 #, c-format
@@ -2132,7 +2131,7 @@ msgstr "No se ha podido aplicar el ajuste de pantalla completa."
 
 #: engines/engine.cpp:358
 msgid "Could not apply filtering setting."
-msgstr "No se puede aplicar la configuración de filtrado."
+msgstr "No se ha podido aplicar la configuración de filtrado."
 
 #: engines/engine.cpp:466
 msgid ""
@@ -2450,7 +2449,7 @@ msgstr "Clic desactivado"
 
 #: backends/events/openpandora/op-events.cpp:191
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Modo toque de pantalla táctil - Desplazar (clic de cruceta)"
+msgstr "Modo toque de pantalla táctil - Flotante (clic de cruceta)"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 msgid "Do you want to quit ?"
@@ -2889,7 +2888,7 @@ msgstr "Esta es una página de inicio del servidor local."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
 msgid "Open Files manager"
-msgstr "Abrir administrador de archivos"
+msgstr "Abrir el administrador de archivos"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
@@ -2923,7 +2922,7 @@ msgstr "¡No se ha podido subir el archivo!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
-msgstr "¡No se ha pasado ningún archivo!"
+msgstr "¡No se ha transferido ningún archivo!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
 msgid "Uploaded successfully!"
@@ -3029,7 +3028,7 @@ msgstr "Modo aumentado"
 
 #: backends/platform/3ds/osystem-events.cpp:326
 msgid "Open 3DS Settings"
-msgstr "Abrir configuración 3D"
+msgstr "Configuración de 3DS"
 
 #: backends/platform/3ds/osystem-events.cpp:356
 msgid ""
