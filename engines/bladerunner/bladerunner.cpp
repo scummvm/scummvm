@@ -216,6 +216,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_crimesDatabase          = nullptr;
 	_scene                   = nullptr;
 	_aiScripts               = nullptr;
+	_shapes                  = nullptr;
 	for (int i = 0; i != kActorCount; ++i) {
 		_actors[i]           = nullptr;
 	}
