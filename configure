@@ -2858,9 +2858,6 @@ case $_host_os in
 			append_var CXXFLAGS "`getconf LFS_CFLAGS 2>/dev/null`"
 		fi
 		;;
-	maemo)
-		append_var DEFINES "-DMAEMO"
-		;;
 	mingw*)
 		append_var DEFINES "-DWIN32"
 		# append_var DEFINES "-D__USE_MINGW_ANSI_STDIO=0"  # Modern MinGW does not need it
@@ -3108,7 +3105,6 @@ if test -n "$_host"; then
 			_strip=$_host-strip
 			;;
 		dingux)
-			append_var DEFINES "-DDINGUX"
 			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var CXXFLAGS "-msoft-float"
@@ -3215,7 +3211,7 @@ if test -n "$_host"; then
 		gcw0)
 			_sysroot=`$CXX --print-sysroot`
 			_sdlpath=$_sysroot/usr/bin
-			append_var DEFINES "-DDINGUX -DGCW0"
+			append_var DEFINES "-DGCW0"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
@@ -3227,7 +3223,6 @@ if test -n "$_host"; then
 			_optimization_level=-O3
 			_vkeybd=yes
 			_vorbis=no
-			_sdlconfig=sdl-config
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		gp2x)
@@ -3282,7 +3277,6 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-mcpu=arm926ej-s"
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var INCLUDES "-I/usr/X11R6/include"
-			append_var LIBS "-lX11"
 			append_var LIBS "-L/usr/lib"
 
 			_backend="maemo"
@@ -3341,12 +3335,6 @@ if test -n "$_host"; then
 			_mt32emu=no
 			;;
 		openpandora)
-			append_var DEFINES "-DOPENPANDORA"
-			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
-			if test "$_release_build" = no; then
-				append_var DEFINES "-DOP_DEBUG"
-			fi
-
 			# Use -O3 on the OpenPandora for optimized builds.
 			if test "$_optimizations" = yes; then
 				_optimization_level=-O3
@@ -3538,6 +3526,7 @@ case $_backend in
 		;;
 	dingux)
 		append_var DEFINES "-DDINGUX"
+		_sdlconfig=sdl-config
 		_sdl=auto
 		;;
 	ds)
@@ -3553,6 +3542,7 @@ case $_backend in
 		if test "$_debug_build" = yes; then
 			append_var DEFINES "-DGPH_DEBUG"
 		fi
+		_sdlconfig=sdl-config
 		_sdl=auto
 		;;
 	iphone)
@@ -3575,6 +3565,8 @@ case $_backend in
 		;;
 	maemo)
 		append_var DEFINES "-DMAEMO"
+		append_var LIBS "-lX11"
+		_sdlconfig=sdl-config
 		_sdl=auto
 		;;
 	n64)
@@ -3589,6 +3581,11 @@ case $_backend in
 		append_var DEFINES "-DUSE_NULL_DRIVER"
 		;;
 	openpandora)
+		append_var DEFINES "-DOPENPANDORA"
+		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
+		if test "$_release_build" = no; then
+			append_var DEFINES "-DOP_DEBUG"
+		fi
 		_sdl=auto
 		;;
 	ps2)
