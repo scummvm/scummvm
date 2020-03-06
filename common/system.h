@@ -358,25 +358,6 @@ public:
 		kFeatureIconifyWindow,
 
 		/**
-		 * Setting the state of this feature to true tells the backend to disable
-		 * all key filtering/mapping, in cases where it would be beneficial to do so.
-		 * As an example case, this is used in the AGI engine's predictive dialog.
-		 * When the dialog is displayed this feature is set so that backends with
-		 * phone-like keypad temporarily unmap all user actions which leads to
-		 * comfortable word entry. Conversely, when the dialog exits the feature
-		 * is set to false.
-		 *
-		 * TODO: The word 'beneficial' above is very unclear. Beneficial to
-		 * whom and for what??? Just giving an example is not enough.
-		 *
-		 * TODO: Fingolfin suggests that the way the feature is used can be
-		 * generalized in this sense: Have a keyboard mapping feature, which the
-		 * engine queries for to assign keys to actions ("Here's my default key
-		 * map for these actions, what do you want them set to?").
-		 */
-		kFeatureDisableKeyFiltering,
-
-		/**
 		 * The presence of this feature indicates whether the displayLogFile()
 		 * call is supported.
 		 *
