@@ -119,7 +119,7 @@ void GPHGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *f
 }
 
 void GPHGraphicsManager::drawMouse() {
-	if (!_cursorVisible || !_mouseSurface) {
+	if (!_cursorVisible || !_mouseSurface || !_mouseCurState.w || !_mouseCurState.h) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
 	}
@@ -128,12 +128,14 @@ void GPHGraphicsManager::drawMouse() {
 	int scale;
 	int hotX, hotY;
 
+	const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
+
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-		dst.x = _cursorX / 2;
-		dst.y = _cursorY / 2;
+		dst.x = virtualCursor.x / 2;
+		dst.y = virtualCursor.y / 2;
 	} else {
-		dst.x = _cursorX;
-		dst.y = _cursorY;
+		dst.x = virtualCursor.x;
+		dst.y = virtualCursor.y;
 	}
 
 	if (!_overlayVisible) {
@@ -161,10 +163,8 @@ void GPHGraphicsManager::drawMouse() {
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
 
-	if (!_overlayVisible) {
-		dst.x += _currentShakeXOffset;
-		dst.y += _currentShakeYOffset;
-	}
+	dst.x += _currentShakeXOffset;
+	dst.y += _currentShakeYOffset;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		dst.y = real2Aspect(dst.y);
@@ -177,7 +177,7 @@ void GPHGraphicsManager::drawMouse() {
 	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
 	// clipping necessary
 
-	if (SDL_BlitSurface(_mouseSurface, NULL, _hwScreen, &dst) != 0)
+	if (SDL_BlitSurface(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
 
 	// The screen will be updated using real surface coordinates, i.e.
