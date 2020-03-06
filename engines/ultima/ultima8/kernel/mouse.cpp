@@ -146,28 +146,29 @@ int Mouse::getMouseLength(int mx, int my) {
 	screen->GetSurfaceDims(dims);
 
 	// For now, reference point is (near) the center of the screen
-	int dx = mx - dims.w / 2;
-	int dy = (dims.h / 2 + 14) - my; //! constant
+	int dx = abs(mx - dims.w / 2);
+	int dy = abs((dims.h / 2 + (dims.h * 14 / 200)) - my); //! constant
 
-	int shortsq = (dims.w / 8);
-	if (dims.h / 6 < shortsq)
-		shortsq = (dims.h / 6);
-	shortsq = shortsq * shortsq;
-
-	int mediumsq = ((dims.w * 4) / 10);
-	if (((dims.h * 4) / 10) < mediumsq)
-		mediumsq = ((dims.h * 4) / 10);
-	mediumsq = mediumsq * mediumsq;
-
-	int dsq = dx * dx + dy * dy;
+	//
+	// The original game switches cursors from small -> medium -> large on
+	// rectangles - in x, ~30px and ~130px away from the avatar (center) on
+	// the 320px screen, and approximately the same proportions in y.
+	//
+	// Modern players may be in a window so give them a little bit more
+	// space to make the large cursor without having to hit the edge.
+	//
+	int xshort = (dims.w * 30 / 320);
+	int xmed = (dims.w * 100 / 320);
+	int yshort = (dims.h * 30 / 320);
+	int ymed = (dims.h * 100 / 320);
 
 	// determine length of arrow
-	if (dsq <= shortsq) {
-		return 0;
-	} else if (dsq <= mediumsq) {
+	if (dx > xmed || dy > ymed) {
+		return 2;
+	} else if (dx > xshort || dy > yshort) {
 		return 1;
 	} else {
-		return 2;
+		return 0;
 	}
 }
 
@@ -178,7 +179,7 @@ int Mouse::getMouseDirection(int mx, int my) {
 
 	// For now, reference point is (near) the center of the screen
 	int dx = mx - dims.w / 2;
-	int dy = (dims.h / 2 + 14) - my; //! constant
+	int dy = (dims.h / 2 + (dims.h * 14 / 200)) - my; //! constant
 
 	return ((Get_direction(dy * 2, dx)) + 1) % 8;
 }
