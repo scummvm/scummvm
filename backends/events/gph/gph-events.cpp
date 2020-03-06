@@ -145,6 +145,40 @@ enum {
 	BUTTON_HELP2        = 54
 };
 
+#else
+
+/* Main Joystick Button Mappings */
+enum {
+	/* Joystick Buttons */
+	BUTTON_A            = 0,
+	BUTTON_B            = 1,
+	BUTTON_X            = 2,
+	BUTTON_Y            = 3,
+	BUTTON_L            = 4,
+	BUTTON_R            = 5,
+	BUTTON_SELECT       = 6,
+	BUTTON_MENU         = 7,
+	BUTTON_CLICK        = 8    // Stick Click
+};
+
+enum {
+	/* Unused Joystick Buttons */
+	BUTTON_VOLUP        = 51,
+	BUTTON_VOLDOWN      = 52,
+	BUTTON_UP           = 53,
+	BUTTON_UPLEFT       = 54,
+	BUTTON_LEFT         = 55,
+	BUTTON_DOWNLEFT     = 56,
+	BUTTON_DOWN         = 57,
+	BUTTON_DOWNRIGHT    = 58,
+	BUTTON_RIGHT        = 59,
+	BUTTON_UPRIGHT      = 60,
+	BUTTON_HOME         = 61,    // Home
+	BUTTON_HOLD         = 62,    // Hold (on Power)
+	BUTTON_HELP         = 63,    // Help I
+	BUTTON_HELP2        = 64     // Help II
+};
+
 #endif
 
 enum {
