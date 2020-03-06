@@ -32,6 +32,7 @@
 #include "ultima/nuvie/meta_engine.h"
 #include "ultima/nuvie/nuvie.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/meta_engine.h"
 
 namespace Ultima {
 
@@ -102,11 +103,21 @@ const char *UltimaMetaEngine::getSavegameFile(int saveGameIdx, const char *targe
 SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList = AdvancedMetaEngine::listSaves(target);
 
+	ConfMan.setActiveDomain(target);
 	Common::String gameId = ConfMan.get("gameid");
 	if (gameId == "ultima6" || gameId == "ultima6_enh")
 		Ultima::Nuvie::MetaEngine::listSaves(saveList);
 
 	return saveList;
+}
+
+Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
+	ConfMan.setActiveDomain(target);
+	Common::String gameId = ConfMan.get("gameid");
+	if (gameId == "ultima8")
+		return Ultima::Ultima8::MetaEngine::initKeymaps();
+
+	return Common::KeymapArray();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ULTIMA)

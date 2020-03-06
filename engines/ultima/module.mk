@@ -324,6 +324,7 @@ MODULE_OBJS := \
 	nuvie/lua/lvm.o \
 	nuvie/lua/lzio.o \
 	nuvie/lua/scummvm_file.o \
+	ultima8/meta_engine.o \
 	ultima8/ultima8.o \
 	ultima8/audio/audio_channel.o \
 	ultima8/audio/audio_mixer.o \

@@ -110,6 +110,7 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/audio/midi_player.h"
+#include "ultima/ultima8/meta_engine.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -805,6 +806,10 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 
 	case Common::EVENT_MOUSEMOVE:
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
+		break;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		MetaEngine::executeAction((KeybindingAction)event.customType);
 		break;
 
 	case Common::EVENT_QUIT:

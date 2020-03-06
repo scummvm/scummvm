@@ -24,6 +24,7 @@
 #define ULTIMA_DETECTION
 
 #include "engines/advancedDetector.h"
+#include "backends/keymapper/keymapper.h"
 
 #define MAX_SAVES 99
 
@@ -56,7 +57,7 @@ struct UltimaGameDescription {
 	uint32 features;
 };
 
-} // End of namespace Ultima8
+} // End of namespace Ultima
 
 class UltimaMetaEngine : public AdvancedMetaEngine {
 public:
@@ -85,6 +86,11 @@ public:
 	 * Return a list of all save states associated with the given target.
 	 */
 	SaveStateList listSaves(const char *target) const override;
+
+	/**
+	 * Initialize keymaps
+	 */
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 #endif
