@@ -20,6 +20,8 @@
  *
  */
 
+#ifdef ENABLE_EOB
+
 #include "kyra/resource/resource.h"
 #include "kyra/resource/resource_intern.h"
 #include "kyra/resource/resource_segacd.h"
@@ -120,3 +122,5 @@ uint8 *SegaCDResource::resData(int resID, uint32 *resLen) {
 }
 
 } // End of namespace Kyra
+
+#endif // ENABLE_EOB

@@ -20,6 +20,8 @@
  *
  */
 
+#ifdef ENABLE_EOB
+
 #include "kyra/engine/eob.h"
 #include "kyra/graphics/screen_eob.h"
 #include "kyra/graphics/screen_eob_segacd.h"
@@ -68,7 +70,7 @@ SegaSequencePlayer::SegaSequencePlayer(EoBEngine *vm, Screen_EoB *screen, SegaCD
 	SQOPC(s_toggleWaterDeepAnimations);
 	SQOPC(s_assignSpeechAnimGraphics);
 	SQOPC(s_toggleSpeechAnimation);
-	SQOPC(s_orbZoomOutEffect);
+	SQOPC(s_orbZoomEffect);
 	SQOPC(s_stopCD);
 	SQOPC(s_playCD);
 	SQOPC(s_displayTextEn);
@@ -568,7 +570,7 @@ void SegaSequencePlayer::s_toggleSpeechAnimation(const uint8 *pos) {
 		updateSpeechAnimGraphics(0);
 }
 
-void SegaSequencePlayer::s_orbZoomOutEffect(const uint8*) {
+void SegaSequencePlayer::s_orbZoomEffect(const uint8*) {
 	_renderer->memsetVRAM(0x2AA0, 0, 0x5800);
 	DrawObject *d = &_drawObjects[16];
 	memset(_scaleSrcBuffer, 0, 0x5800);
@@ -667,3 +669,5 @@ void SegaSequencePlayer::s_playSoundEffect(const uint8 *pos) {
 #undef ARG
 
 } // End of namespace Kyra
+
+#endif // ENABLE_EOB

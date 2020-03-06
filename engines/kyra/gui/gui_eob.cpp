@@ -71,6 +71,15 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 			_screen->getPalette(7).copy(_screen->getPalette(1), 0, 32);
 		}
 	}
+
+	// load playfield etc.
+	/*_screen->sega_getAnimator()->clearSprites();
+	_screen->sega_getRenderer()->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
+	_screen->sega_selectPalette(6, 1, false);
+	_screen->sega_selectPalette(7, 3, true);*/
+	//_screen->sega_fadeToNeutral(0);
 }
 
 void EoBCoreEngine::gui_restorePlayField() {
@@ -2010,13 +2019,13 @@ void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 
 	for (int i = 0; i < _menuNumItems; i++) {
 		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
-		int ty = y + i * (lineSpacing + _screen->getFontHeight());
+		int ty = i * (lineSpacing + _screen->getFontHeight());
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printMessageAtPos(strings[item], x, ty, item == v ? 0x55 : 0xff, 0x11);
+			_vm->_txt->printMessageAtPos(strings[item], 4, 2 + ty, item == v ? 0x55 : 0xff, 0x11);
 		} else {
-			_screen->printShadedText(strings[item], x, ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(strings[item], x, y + ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 			if (item == v)
-				_screen->printText(strings[item], x, ty, _vm->guiSettings()->colors.guiColorLightRed, 0);
+				_screen->printText(strings[item], x, y + ty, _vm->guiSettings()->colors.guiColorLightRed, 0);
 		}
 	}
 
@@ -2071,8 +2080,8 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 
 	if (newItem != currentItem) {
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printMessageAtPos(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, 0xFF, 0x11);
-			_vm->_txt->printMessageAtPos(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, 0x55, 0x11);
+			_vm->_txt->printMessageAtPos(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], 4, 2 + currentItem * lineH, 0xFF, 0x11);
+			_vm->_txt->printMessageAtPos(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], 4, 2 + newItem * lineH, 0x55, 0x11);
 			_screen->sega_getRenderer()->render(0);
 		} else {
 			_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0);

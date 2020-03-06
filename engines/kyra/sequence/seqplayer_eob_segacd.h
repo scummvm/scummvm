@@ -20,6 +20,8 @@
  *
  */
 
+#ifdef ENABLE_EOB
+
 #ifndef KYRA_SEQPLAYER_SEGACD_H
 #define KYRA_SEQPLAYER_SEGACD_H
 
@@ -159,7 +161,7 @@ private:
 	void s_toggleWaterDeepAnimations(const uint8 *pos);
 	void s_assignSpeechAnimGraphics(const uint8 *pos);
 	void s_toggleSpeechAnimation(const uint8 *pos);
-	void s_orbZoomOutEffect(const uint8*);
+	void s_orbZoomEffect(const uint8*);
 	void s_stopCD(const uint8*);
 	void s_playCD(const uint8 *pos);
 	void s_displayTextEn(const uint8 *pos);
@@ -178,3 +180,4 @@ private:
 } // End of namespace Kyra
 
 #endif
+#endif // ENABLE_EOB

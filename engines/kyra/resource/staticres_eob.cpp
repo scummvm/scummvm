@@ -1454,7 +1454,7 @@ const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[5] = {
 		false,
 		77, 161, 173, 29, 1, 2, 12,
 		76, 160, 175, 31, 1, 2, -1,
-		-8
+		41
 	}
 };
 

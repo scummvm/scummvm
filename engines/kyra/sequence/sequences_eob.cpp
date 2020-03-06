@@ -2160,30 +2160,21 @@ int EoBEngine::mainMenu() {
 			else
 				_screen->setScreenPalette(_screen->getPalette(0));
 
+			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+
 			if (_flags.platform == Common::kPlatformSegaCD) {
-
-				// load playfield etc.
-				/*_screen->sega_getAnimator()->clearSprites();
-				_screen->sega_getRenderer()->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
-				_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
-				_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
-				_screen->sega_selectPalette(6, 1, false);
-				_screen->sega_selectPalette(7, 3, true);*/
 				_txt->clearDim(3);
-				//_screen->sega_fadeToNeutral(0);
-
-				
-
+				_screen->sega_drawTextBox(26, 5, 0, 0, 208, 40, 0x11, 0xDD);
 				_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 19, 40, 8, 0);
 				_screen->sega_getRenderer()->fillRectWithTiles(1, 7, 20, 26, 5, 0x461, true);
+				_screen->sega_getRenderer()->fillRectWithTiles(1, 7, 25, 25, 1, 0x4E3, true);
 				_screen->sega_getRenderer()->fillRectWithTiles(1, 6, 21, 1, 5, 0);
-				_screen->sega_getRenderer()->fillRectWithTiles(1, 6, 25, 26, 1, 0);
-				if (_flags.lang != Common::JA_JPN)
-					_screen->setFontStyles(_screen->_currentFont, Font::kStyleForceTwoByte | Font::kStyleFat);
+				_screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow);
+				_txt->printMessageAtPos(versionString.c_str(), 200 - versionString.size() * 8, _ttlCfg->versionStrYOffs, 0x88);
+				_screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
 			} else {
 				_screen->_curPage = 2;
 				of = _screen->setFont(Screen::FID_6_FNT);
-				Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
 				_screen->printText(versionString.c_str(), 280 - versionString.size() * 6, 153 + _ttlCfg->versionStrYOffs, _screen->getPagePixel(2, 0, 0), 0);
 				_screen->setFont(of);
 				_screen->fillRect(0, 159 + _ttlCfg->versionStrYOffs, 319, 199, _screen->getPagePixel(2, 0, 0));

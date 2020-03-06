@@ -20,7 +20,7 @@
  *
  */
 
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+#ifdef ENABLE_EOB
 
 #ifndef KYRA_TEXT_EOB_SEGACD_H
 #define KYRA_TEXT_EOB_SEGACD_H
@@ -68,4 +68,4 @@ private:
 
 #endif
 
-#endif // ENABLE_EOB || ENABLE_LOL
+#endif // ENABLE_EOB

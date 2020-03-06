@@ -24,7 +24,6 @@
 
 #include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
-//#include "kyra/sound/drivers/mlalf98.h"
 #include "common/config-manager.h"
 #include "backends/audiocd/audiocd.h"
 
@@ -113,4 +112,4 @@ void SoundSegaCD_EoB::updateVolumeSettings() {
 
 } // End of namespace Kyra
 
-#endif
+#endif // ENABLE_EOB
