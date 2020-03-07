@@ -60,6 +60,11 @@ struct UltimaGameDescription {
 } // End of namespace Ultima
 
 class UltimaMetaEngine : public AdvancedMetaEngine {
+private:
+	/**
+	 * Gets the game Id given a target string
+	 */
+	static Common::String getGameId(const char *target);
 public:
 	UltimaMetaEngine();
 	~UltimaMetaEngine() override {}
