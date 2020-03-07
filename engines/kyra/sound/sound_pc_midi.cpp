@@ -121,9 +121,10 @@ bool SoundMidiPC::init() {
 
 	_output->setTimerCallback(this, SoundMidiPC::onTimer);
 
+	// Load MT-32 and GM initialization files
+	const char* midiFile = 0;
+	const char* pakFile = 0;
 	if (_nativeMT32 && _type == kMidiMT32) {
-		const char *midiFile = 0;
-		const char *pakFile = 0;
 		if (_vm->game() == GI_KYRA1) {
 			midiFile = "INTRO";
 		} else if (_vm->game() == GI_KYRA2) {
@@ -133,7 +134,7 @@ bool SoundMidiPC::init() {
 			midiFile = "LOREINTR";
 
 			if (_vm->gameFlags().isDemo) {
-				if (_vm->gameFlags().useAltShapeHeader) {
+				if (_vm->resource()->exists("INTROVOC.PAK")) {
 					// Intro demo
 					pakFile = "INTROVOC.PAK";
 				} else {
@@ -148,26 +149,35 @@ bool SoundMidiPC::init() {
 					pakFile = "INTROVOC.PAK";
 			}
 		}
-
-		if (!midiFile)
-			return true;
-
-		if (pakFile)
-			_vm->resource()->loadPakFile(pakFile);
-
-		loadSoundFile(midiFile);
-		playTrack(0);
-
-		Common::Event event;
-		while (isPlaying() && !_vm->shouldQuit()) {
-			_vm->_system->updateScreen();
-			_vm->_eventMan->pollEvent(event);
-			_vm->_system->delayMillis(10);
+	} else if (_type == kMidiGM && _vm->game() == GI_LOL) {
+		if (_vm->gameFlags().isDemo && _vm->resource()->exists("INTROVOC.PAK")) {
+			// Intro demo
+			midiFile = "LOREINTR";
+			pakFile = "INTROVOC.PAK";
+		} else {
+			midiFile = "LOLSYSEX";
+			pakFile = "GENERAL.PAK";
 		}
-
-		if (pakFile)
-			_vm->resource()->unloadPakFile(pakFile);
 	}
+
+	if (!midiFile)
+		return true;
+
+	if (pakFile)
+		_vm->resource()->loadPakFile(pakFile);
+
+	loadSoundFile(midiFile);
+	playTrack(0);
+
+	Common::Event event;
+	while (isPlaying() && !_vm->shouldQuit()) {
+		_vm->_system->updateScreen();
+		_vm->_eventMan->pollEvent(event);
+		_vm->_system->delayMillis(10);
+	}
+
+	if (pakFile)
+		_vm->resource()->unloadPakFile(pakFile);
 
 	return true;
 }
