@@ -81,10 +81,27 @@ static void shiftCoordsToZ(int32 &x, int32 &y, int32 &z, int32 newz) {
 void Map::loadFixed(IDataSource *ds) {
 	loadFixedFormatObjects(_fixedItems, ds, Item::EXT_FIXED);
 
-
 	// U8 hack for missing ground tiles on map 25. See docs/u8bugs.txt
 	if (GAME_IS_U8 && _mapNum == 25) {
 		// TODO
+	}
+
+	// U8 hack for missing ground tiles on map 3 (north road).
+	if (GAME_IS_U8 && _mapNum == 7) {
+		Item *item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
+											 Item::EXT_FIXED, false);
+		item->setLocation(2815, 25727, 8);
+		_fixedItems.push_back(item);
+
+		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
+									   Item::EXT_FIXED, false);
+		item->setLocation(9983, 21157, 8);
+		_fixedItems.push_back(item);
+
+		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
+									   Item::EXT_FIXED, false);
+		item->setLocation(13183, 16511, 8);
+		_fixedItems.push_back(item);
 	}
 
 	// U8 hack for missing ground/wall tiles on map 62. See docs/u8bugs.txt
