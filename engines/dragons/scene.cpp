@@ -338,7 +338,7 @@ void Scene::draw() {
 	_vm->_screen->clearScreen();
 
 	for (uint16 priority = 1; priority < 16; priority++) {
-		if (priority == 7 && _vm->isFlagSet(ENGINE_FLAG_200)) {
+		if (_vm->isInMenu() || (priority == 7 && _vm->isFlagSet(ENGINE_FLAG_200))) {
 			_vm->_fontManager->updatePalette();
 			_vm->_fontManager->draw();
 		}

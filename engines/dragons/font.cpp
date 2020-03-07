@@ -166,7 +166,7 @@ void updatePalEntry(uint16 *pal, uint16 index, uint16 newValue) {
 void FontManager::updatePalette() {
 	uint16 *palette_f2_font_maybe = (uint16 *)_screen->getPalette(2);
 	const uint16 cursor3 = 0x14a5 | 0x8000;
-	if (_vm->isFlagSet(ENGINE_FLAG_200)) {
+	if (_vm->isInMenu() || _vm->isFlagSet(ENGINE_FLAG_200)) {
 		updatePalEntry(palette_f2_font_maybe, 3, cursor3); //TODO move this to palette initialisation
 		if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
 			updatePalEntry(palette_f2_font_maybe, 16, cursor3);
@@ -247,6 +247,20 @@ void FontManager::drawBoxChar(uint32 x, uint32 y, uint8 tileIndex) {
 		data += 8;
 		pixels += _surface->pitch;
 	}
+}
+
+void FontManager::addAsciiText(int16 x, int16 y, const char *text, uint16 length, uint8 fontType) {
+	uint16 wText[41];
+	memset(wText, 0, sizeof(wText));
+	if (length > 40) {
+		length = 40;
+	}
+
+	for (int i = 0; i < length; i++) {
+		wText[i] = text[i];
+	}
+
+	addText(x, y, wText, length, fontType);
 }
 
 } // End of namespace Dragons

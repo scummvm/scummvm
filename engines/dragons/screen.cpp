@@ -373,7 +373,7 @@ byte *Screen::getPalette(uint16 paletteNum) {
 }
 
 void Screen::clearScreen() {
-	_backSurface->fillRect(Common::Rect(0, 0, _backSurface->w - 1, _backSurface->h - 1), 0);
+	_backSurface->fillRect(Common::Rect(0, 0, _backSurface->w, _backSurface->h), 0);
 }
 
 void Screen::drawRect(uint16 colour, Common::Rect rect, int id) {

@@ -97,6 +97,7 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 
 	_debugMode = false;
 	_isGamePaused = false;
+	_inMenu = false;
 
 	_bit_flags_8006fbd8 = 0;
 
@@ -222,7 +223,8 @@ Common::Error DragonsEngine::run() {
 		_strPlayer->playVideo("illusion.str");
 		_strPlayer->playVideo("labintro.str");
 
-		//TODO main menu here.
+		init();
+		mainMenu();
 		loadScene(0);
 	}
 
@@ -1161,7 +1163,7 @@ bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-void DragonsEngine::loadScene(uint16 sceneId) {
+void DragonsEngine::init() {
 	_flags = 0x1046;
 	_flags &= 0x1c07040;
 	_flags |= 0x26;
@@ -1183,7 +1185,9 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 
 	_screen->loadPalette(4, _cursor->getPalette());
 	_screen->updatePaletteTransparency(4, 1, 0xff, true);
+}
 
+void DragonsEngine::loadScene(uint16 sceneId) {
 	// TODO fun_80017010_update_actor_texture_maybe();
 	if (sceneId > 2) {
 		_dragonVAR->setVar(1, 1);
@@ -1490,6 +1494,59 @@ void DragonsEngine::initSubtitleFlag() {
 	} else {
 		setFlags(ENGINE_FLAG_1000_SUBTITLES_DISABLED);
 	}
+}
+
+int centerText(const char *text) {
+	return 0x14 - (strlen(text) / 2 + 1);
+}
+
+void DragonsEngine::mainMenu() {
+	_inMenu = true;
+	//TODO need to support other languages.
+	const char copyright[6][40] = {
+			"Crystal Dynamics is a trademark",
+			"of Crystal Dynamics.",
+			"Blazing Dragons is a trademark and",
+			"copyright of Terry Jones and is",
+			"used with permission.",
+			"Licensed by Nelvana Marketing Inc."
+	};
+	const char menuItems[3][40] = {
+			"Start",
+			"Options",
+			"Previews"
+	};
+
+	_screen->clearScreen();
+	Actor *actor = _actorManager->loadActor(0xd9,0,0,0,3);
+	actor->setFlag(ACTOR_FLAG_8000);
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->setFlag(ACTOR_FLAG_80);
+
+	//TODO fix palette for copyright image.
+	_screen->loadPalette(0, _cursor->getPalette()); //actor->_actorResource->getPalette());
+
+	for (int i = 0; i < 6; i++) {
+		_fontManager->addAsciiText(centerText(&copyright[i][0]) * 8, (0x12 + i) * 8, &copyright[i][0], strlen(copyright[i]), 1);
+	}
+
+	waitForFramesAllowSkip(400);
+	_fontManager->clearText();
+	actor->updateSequence(1);
+
+	for (int i = 0; i < 3; i++) {
+		_fontManager->addAsciiText(centerText(&menuItems[i][0]) * 8, (0x12 + i) * 8, &menuItems[i][0], strlen(menuItems[i]), 1);
+	}
+
+	do {
+		waitForFrames(1);
+	} while (!isActionButtonPressed() && !shouldQuit());
+
+	_inMenu = false;
+}
+
+bool DragonsEngine::isInMenu() {
+	return _inMenu;
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {
