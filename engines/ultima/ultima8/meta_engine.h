@@ -29,10 +29,27 @@ namespace Ultima {
 namespace Ultima8 {
 
 enum KeybindingAction {
-	ACTION_NONE, ACTION_COMBAT
+	ACTION_QUICKSAVE, ACTION_SAVE, ACTION_LOAD, ACTION_BEDROLL, ACTION_COMBAT, ACTION_BACKPACK,
+	ACTION_KEYRING, ACTION_MINIMAP, ACTION_RECALL, ACTION_INVENTORY, ACTION_MENU,
+	ACTION_CLOSE_GUMPS, ACTION_HIGHLIGHT_ITEMS, ACTION_TOGGLE_TOUCHING,
+
+	ACTION_CHEAT_MODE, ACTION_CLIPPING, ACTION_DEC_SORT_ORDER, ACTION_INC_SORT_ORDER, ACTION_ASCEND,
+	ACTION_DESCEND, ACTION_MOVE_UP, ACTION_MOVE_DOWN, ACTION_MOVE_LEFT, ACTION_RIGHT,
+
+#ifndef RELEASE_BUILD
+	ACTION_TOGGLE_PAINT, ACTION_ENGINE_STATS, ACTION_FRAME_BY_FRAME,
+	ACTION_ADVANCE_FRAME, ACTION_TOGGLE_STASIS, ACTION_SHAPE_VIEWER,
+#endif
+
+	ACTION_NONE
 };
 
 class MetaEngine {
+private:
+	/**
+	 * Get the method to execute
+	 */
+	static Common::String getMethod(KeybindingAction keyAction, bool isPress);
 public:
 	/**
 	 * Initialize keymaps
@@ -40,9 +57,14 @@ public:
 	static Common::KeymapArray initKeymaps();
 
 	/**
-	 * Execute an engine keymap action
+	 * Execute an engine keymap press action
 	 */
-	static void executeAction(KeybindingAction keyAction);
+	static void pressAction(KeybindingAction keyAction);
+
+	/**
+	 * Execute an engine keymap release action
+	 */
+	static void releaseAction(KeybindingAction keyAction);
 };
 
 } // End of namespace Ultima8

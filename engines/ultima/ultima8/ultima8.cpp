@@ -786,7 +786,11 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 		break;
 
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-		MetaEngine::executeAction((KeybindingAction)event.customType);
+		MetaEngine::pressAction((KeybindingAction)event.customType);
+		break;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		MetaEngine::releaseAction((KeybindingAction)event.customType);
 		break;
 
 	case Common::EVENT_QUIT:
