@@ -893,7 +893,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 			break;
 
 		// Any special key handling goes here
-		if ((event.kbd.keycode == Common::KEYCODE_x || event.kbd.keycode == Common::KEYCODE_x) &&
+		if ((event.kbd.keycode == Common::KEYCODE_q || event.kbd.keycode == Common::KEYCODE_x) &&
 			(event.kbd.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META)) != 0)
 			ForceQuit();
 		break;
