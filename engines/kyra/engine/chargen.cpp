@@ -46,9 +46,9 @@ public:
 	bool start(EoBCharacter *characters, uint8 ***faceShapes, bool defaultParty);
 
 private:
+	void init(bool defaultParty);
 	bool createCustomParty(uint8 ***faceShapes);
 	void createDefaultParty();
-	void init();
 	void initButtonsFromList(int first, int numButtons);
 	void initButton(int index, int x, int y, int w, int h, int keyCode);
 	void checkForCompleteParty();
@@ -196,6 +196,8 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes, bo
 	_vm->snd_stopSound();
 	_vm->delay(_vm->_tickLength);
 
+	init(defaultParty);
+
 	if (defaultParty)
 		createDefaultParty();
 	else if (!createCustomParty(faceShapes))
@@ -213,9 +215,63 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes, bo
 	return true;
 }
 
-bool CharacterGenerator::createCustomParty(uint8 ***faceShapes) {
-	init();
+void CharacterGenerator::init(bool defaultParty) {
+	if (_faceShapes) {
+		for (int i = 0; i < 44; i++)
+			delete[] _faceShapes[i];
+		delete[] _faceShapes;
+	}
 
+	_faceShapes = new uint8 *[44];
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		uint8 *in = _vm->resource()->fileData("FACE", 0);
+		_screen->sega_encodeSpriteShapes((const uint8**)_faceShapes, in, 44, 32, 32, 3);
+		delete[] in;
+	} else {
+		_screen->loadShapeSetBitmap("CHARGENA", 5, 3);
+		for (int i = 0; i < 44; i++)
+			_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true, _vm->_cgaMappingDefault);
+	}
+	_screen->_curPage = 0;
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
+		_screen->fadeToBlack(32);
+
+	// If we start with a default party we only need the face shapes
+	if (defaultParty)
+		return;
+
+	_screen->loadEoBBitmap((_vm->game() == GI_EOB1 && _vm->_flags.lang == Common::ES_ESP) ? "CCARGEN" : "CHARGEN", _vm->_cgaMappingDefault, 5, 3, 0);
+	_screen->selectPC98Palette(4, _screen->getPalette(0));
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
+		_screen->fadeFromBlack(32);
+
+	_screen->loadShapeSetBitmap((_vm->game() == GI_EOB1 && _vm->_flags.lang == Common::ES_ESP) ? "CCARGENB" : "CHARGENB", 5, 3);
+	if (_chargenMagicShapes) {
+		for (int i = 0; i < 10; i++)
+			delete[] _chargenMagicShapes[i];
+		delete[] _chargenMagicShapes;
+	}
+
+	_chargenMagicShapes = new uint8 * [10];
+	for (int i = 0; i < 10; i++)
+		_chargenMagicShapes[i] = _screen->encodeShape(i << 2, 0, 4, 32, true, _vm->_cgaMappingDefault);
+
+	for (int i = 0; i < 17; i++) {
+		const CreatePartyModButton *c = &_chargenModButtons[i];
+		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true, _vm->_cgaMappingDefault) : 0;
+	}
+
+	_screen->convertPage(3, 2, _vm->_cgaMappingDefault);
+	_screen->_curPage = 0;
+	_screen->convertToHiColor(2);
+	_screen->shadeRect(142, 63, 306, 193, 4);
+	_screen->copyRegion(144, 64, 0, 0, 180, 128, 0, 2, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+}
+
+bool CharacterGenerator::createCustomParty(uint8 ***faceShapes) {
 	_screen->setScreenDim(2);
 
 	checkForCompleteParty();
@@ -285,52 +341,24 @@ bool CharacterGenerator::createCustomParty(uint8 ***faceShapes) {
 void CharacterGenerator::createDefaultParty() {
 	assert(_chargenDefaultNames);
 	assert(_chargenDefaultStats);
-}
-
-void CharacterGenerator::init() {
-	_screen->loadShapeSetBitmap("CHARGENA", 5, 3);
-	if (_faceShapes) {
-		for (int i = 0; i < 44; i++)
-			delete[] _faceShapes[i];
-		delete[] _faceShapes;
+	const uint8 *pos = _chargenDefaultStats;
+	for (int i = 0; i < 4; ++i) {
+		EoBCharacter &c = _characters[i];
+		c.raceSex = *pos++;
+		c.cClass = *pos++;
+		c.alignment = *pos++;
+		c.portrait = *pos++;
+		c.faceShape = _faceShapes[c.portrait];
+		c.strengthCur = *pos++;
+		c.intelligenceCur = *pos++;
+		c.wisdomCur = *pos++;
+		c.dexterityCur = *pos++;
+		c.constitutionCur = *pos++;
+		c.charismaCur = *pos++;
+		c.armorClass = *pos++;
+		c.hitPointsCur = *pos++;
+		Common::strlcpy(c.name, _chargenDefaultNames[i], 11);
 	}
-
-	_faceShapes = new uint8*[44];
-	for (int i = 0; i < 44; i++)
-		_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true, _vm->_cgaMappingDefault);
-	_screen->_curPage = 0;
-
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
-		_screen->fadeToBlack(32);
-
-	_screen->loadEoBBitmap((_vm->game() == GI_EOB1 && _vm->_flags.lang == Common::ES_ESP) ? "CCARGEN" : "CHARGEN", _vm->_cgaMappingDefault, 5, 3, 0);
-	_screen->selectPC98Palette(4, _screen->getPalette(0));
-
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
-		_screen->fadeFromBlack(32);
-
-	_screen->loadShapeSetBitmap((_vm->game() == GI_EOB1 && _vm->_flags.lang == Common::ES_ESP) ? "CCARGENB" : "CHARGENB", 5, 3);
-	if (_chargenMagicShapes) {
-		for (int i = 0; i < 10; i++)
-			delete[] _chargenMagicShapes[i];
-		delete[] _chargenMagicShapes;
-	}
-
-	_chargenMagicShapes = new uint8*[10];
-	for (int i = 0; i < 10; i++)
-		_chargenMagicShapes[i] = _screen->encodeShape(i << 2, 0, 4, 32, true, _vm->_cgaMappingDefault);
-
-	for (int i = 0; i < 17; i++) {
-		const CreatePartyModButton *c = &_chargenModButtons[i];
-		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true, _vm->_cgaMappingDefault) : 0;
-	}
-
-	_screen->convertPage(3, 2, _vm->_cgaMappingDefault);
-	_screen->_curPage = 0;
-	_screen->convertToHiColor(2);
-	_screen->shadeRect(142, 63, 306, 193, 4);
-	_screen->copyRegion(144, 64, 0, 0, 180, 128, 0, 2, Screen::CR_NO_P_CHECK);
-	_screen->updateScreen();
 }
 
 void CharacterGenerator::initButtonsFromList(int first, int numButtons) {
