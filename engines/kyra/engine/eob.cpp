@@ -126,21 +126,12 @@ Common::Error EoBEngine::init() {
 	////////////////////////////////
 	////////////////////////////////
 	_sres->loadContainer("ITEM");
-	uint32 tsize;
-	uint8 *in = _sres->resData(0, &tsize);
-	_screen->sega_getRenderer()->loadToVRAM(in, 128, 0xFF80);
-	delete[] in;
-	int hw = 5;
-	_screen->sega_getAnimator()->initSprite(0, 0, 0, 0xE7FC, 5);
-	_screen->sega_getAnimator()->update();
-	_screen->sega_getRenderer()->render(2, true);
-	_screen->sega_getAnimator()->clearSprites();
-	_screen->sega_getAnimator()->update();
-	int cp = _screen->setCurPage(2);
 	_itemIconShapes = new const uint8*[_numItemIconShapes];
 	memset(_itemIconShapes, 0, _numItemIconShapes * sizeof(uint8*));
-	_itemIconShapes[0] = _screen->encodeShape(0, 0, ((hw & 3) + 1), ((hw >> 2) + 1) << 3);
-	_screen->setCurPage(cp);
+	uint32 tsize;
+	uint8 *in = _sres->resData(0, &tsize);
+	_screen->sega_encodeSpriteShapes(_itemIconShapes, in, _numItemIconShapes, 16, 16, 3);
+	delete[] in;
 	/////////////////////7
 	//////////////////////
 	////////////////

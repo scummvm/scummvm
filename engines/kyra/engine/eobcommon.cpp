@@ -675,9 +675,7 @@ Common::Error EoBCoreEngine::go() {
 	_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 	//loadItemsAndDecorationsShapes();
 
-
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
-	/*setHandItem(0);*/
 
 	// Import original save game files (especially the "Quick Start Party")
 	if (ConfMan.getBool("importOrigSaves")) {

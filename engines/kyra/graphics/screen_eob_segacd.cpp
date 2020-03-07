@@ -292,6 +292,35 @@ void Screen_EoB::sega_drawClippedLine(uint8 *dst, int pW, int pH, int x, int y, 
 	}
 }
 
+void Screen_EoB::sega_encodeSpriteShapes(const uint8 **dst, const uint8 *src, int numShapes, int w, int h, int pal) {
+	int spriteSize = (w * h) >> 1;
+	_segaRenderer->loadToVRAM(src, numShapes * spriteSize, 0);
+	int hw = (((h >> 3) - 1) << 2) | ((w >> 3) - 1);
+
+	int cp = setCurPage(2);
+
+	for (int l = 0, s = 0; s < numShapes; l = s) {
+		for (int i = s; i < numShapes; ++i) {
+			_segaAnimator->initSprite(s % 80, ((s % 80) * w) % SCREEN_W, ((s % 80) / (SCREEN_W / w)) * h, ((pal << 13) | (i * (w >> 3) * (h >> 3))), hw);
+			if (((++s) % 80) == 0)
+				break;
+		}
+		
+		_segaAnimator->update();
+		_segaRenderer->render(2, true);
+
+		for (int i = l; i < s; ++i)
+			dst[i] = encodeShape((((i % 80) * w) % SCREEN_W) >> 3, ((i % 80) / (SCREEN_W / w)) * h, w >> 3, h);
+
+		clearPage(2);
+	}
+
+	_segaAnimator->clearSprites();
+	_segaAnimator->update();
+	_segaRenderer->memsetVRAM(0, 0, numShapes * spriteSize);
+	setCurPage(cp);
+}
+
 #if SEGA_PERFORMANCE
 #define mRenderLineFragment(hFlip, oddStart, oddEnd, useMask, dst, mask, src, start, end, pal) \
 { \
