@@ -46,6 +46,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/meta_engine.h"
+#include "engines/dialogs.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -229,8 +230,9 @@ void MenuGump::selectEntry(int entry) {
 		U8SaveGump::showLoadSaveGump(this, entry == 3);
 		break;
 	case 4: {
-		// Options
-		// TODO: Show options
+		// Options - show the ScummVM options dialog
+		GUI::ConfigDialog dlg;
+		dlg.runModal();
 	}
 	break;
 	case 5: // Credits
