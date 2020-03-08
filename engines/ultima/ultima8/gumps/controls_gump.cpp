@@ -27,9 +27,7 @@
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
-#include "ultima/ultima8/gumps/bind_gump.h"
 #include "ultima/ultima8/gumps/paged_gump.h"
-#include "ultima/ultima8/kernel/hid_manager.h"
 
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
@@ -103,6 +101,7 @@ void ControlEntryGump::init() {
 }
 
 void ControlEntryGump::ChildNotify(Gump *child, uint32 message) {
+#ifdef TODO
 	ObjId cid = child->getObjId();
 	if (message == ButtonWidget::BUTTON_CLICK) {
 		if (cid == _button->getObjId()) {
@@ -113,6 +112,7 @@ void ControlEntryGump::ChildNotify(Gump *child, uint32 message) {
 	} else if (message == BindGump::UPDATE) {
 		_parent->ChildNotify(child, message);
 	}
+#endif
 }
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ControlsGump, Gump)
@@ -144,6 +144,7 @@ void ControlsGump::addEntry(const char *binding, const char *name, int &x, int &
 }
 
 void ControlsGump::ChildNotify(Gump *child, uint32 message) {
+#ifdef TODO
 	if (message == BindGump::UPDATE) {
 		Std::list<Gump *>::iterator it;
 		for (it = _children.begin(); it != _children.end(); ++it) {
@@ -152,6 +153,7 @@ void ControlsGump::ChildNotify(Gump *child, uint32 message) {
 				g->init();
 		}
 	}
+#endif
 }
 
 void ControlsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {

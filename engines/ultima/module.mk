@@ -395,7 +395,6 @@ MODULE_OBJS := \
 	ultima8/graphics/fonts/tt_font.o \
 	ultima8/gumps/ask_gump.o \
 	ultima8/gumps/bark_gump.o \
-	ultima8/gumps/bind_gump.o \
 	ultima8/gumps/book_gump.o \
 	ultima8/gumps/container_gump.o \
 	ultima8/gumps/controls_gump.o \
@@ -434,7 +433,6 @@ MODULE_OBJS := \
 	ultima8/kernel/core_app.o \
 	ultima8/kernel/delay_process.o \
 	ultima8/kernel/hid_keys.o \
-	ultima8/kernel/hid_manager.o \
 	ultima8/kernel/kernel.o \
 	ultima8/kernel/memory_manager.o \
 	ultima8/kernel/mouse.o \

@@ -41,7 +41,6 @@
 #include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/kernel/memory_manager.h"
-#include "ultima/ultima8/kernel/hid_manager.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/fonts/fixed_width_font.h"
@@ -120,7 +119,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(0),
-		_kernel(0), _objectManager(0), _hidManager(0), _mouse(0), _ucMachine(0), _screen(0),
+		_kernel(0), _objectManager(0), _mouse(0), _ucMachine(0), _screen(0),
 		_fontManager(0), _paletteManager(0), _gameData(0), _world(0), _desktopGump(0),
 		_gameMapGump(0), _avatarMoverProcess(0), _frameSkip(false), _frameLimit(true),
 		_interpolate(true), _animationRate(100), _avatarInStasis(false), _paintEditorItems(false),
@@ -138,7 +137,6 @@ Ultima8Engine::~Ultima8Engine() {
 	FORGET_OBJECT(_events);
 	FORGET_OBJECT(_kernel);
 	FORGET_OBJECT(_objectManager);
-	FORGET_OBJECT(_hidManager);
 	FORGET_OBJECT(_audioMixer);
 	FORGET_OBJECT(_ucMachine);
 	FORGET_OBJECT(_paletteManager);
@@ -264,8 +262,6 @@ void Ultima8Engine::startup() {
 
 	GraphicSysInit();
 
-	_hidManager = new HIDManager();
-
 	// Audio Mixer
 	_audioMixer = new AudioMixer(_mixer);
 
@@ -289,23 +285,6 @@ void Ultima8Engine::startupGame() {
 	GraphicSysInit();
 
 	_gameData = new GameData(_gameInfo);
-
-	Std::string bindingsfile;
-	if (GAME_IS_U8) {
-		bindingsfile = "@data/u8bindings.ini";
-	} else if (GAME_IS_REMORSE) {
-		bindingsfile = "@data/remorsebindings.ini";
-	}
-	if (!bindingsfile.empty()) {
-		// system-wide config
-		if (_configFileMan->readConfigFile(bindingsfile,
-			"bindings", true))
-			debug(MM_INFO, "%s... Ok", bindingsfile.c_str());
-		else
-			debug(MM_MINOR_WARN, "%s... Failed", bindingsfile.c_str());
-	}
-
-	_hidManager->loadBindings();
 
 	if (GAME_IS_U8) {
 		_ucMachine = new UCMachine(U8Intrinsics, 256);
@@ -717,7 +696,6 @@ void Ultima8Engine::enterTextMode(Gump *gump) {
 		if (_down[key]) {
 			_down[key] = false;
 			_lastDown[key] = false;
-			_hidManager->handleEvent((HID_Key)key, HID_EVENT_RELEASE);
 		}
 	}
 
@@ -799,11 +777,6 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 
 	default:
 		break;
-	}
-
-	if (_mouse->dragging() == Mouse::DRAG_NOT && evn == HID_EVENT_DEPRESS) {
-		if (_hidManager->handleEvent(key, HID_EVENT_PREEMPT))
-			return;
 	}
 
 	// Text mode input. A few hacks here
@@ -908,14 +881,9 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	}
 
 	if (_mouse->dragging() == Mouse::DRAG_NOT && !handled) {
-		if (_hidManager->handleEvent(key, evn))
-			handled = true;
 		if (evn == HID_EVENT_DEPRESS) {
 			_down[key] = true;
-			if (now - _lastDown[key] < DOUBLE_CLICK_TIMEOUT &&
-				_lastDown[key] != 0) {
-				if (_hidManager->handleEvent(key, HID_EVENT_DOUBLE))
-					handled = true;
+			if (now - _lastDown[key] < DOUBLE_CLICK_TIMEOUT && _lastDown[key] != 0) {
 				_lastDown[key] = 0;
 			} else {
 				_lastDown[key] = now;
@@ -939,7 +907,6 @@ void Ultima8Engine::handleDelayedEvents() {
 		if (now - _lastDown[key] > DOUBLE_CLICK_TIMEOUT &&
 			_lastDown[key] != 0 && !_down[key]) {
 			_lastDown[key] = 0;
-			_hidManager->handleEvent((HID_Key)key, HID_EVENT_CLICK);
 		}
 	}
 
