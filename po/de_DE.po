@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-02-26 21:10+0000\n"
+"PO-Revision-Date: 2020-03-08 17:22+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2565,7 +2565,7 @@ msgstr "Vollbild umschalten"
 #: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:100
 #: engines/wintermute/detection.cpp:835
 msgid "Toggle mouse capture"
-msgstr "Mauseingrenzung in Fenster EIN/AUS"
+msgstr "Mauszeiger einfangen"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:374
 #: engines/wintermute/detection.cpp:610 engines/wintermute/detection.cpp:920
