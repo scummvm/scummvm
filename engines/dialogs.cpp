@@ -48,19 +48,6 @@
 #include "gui/KeysDialog.h"
 #endif
 
-class ConfigDialog : public GUI::OptionsDialog {
-protected:
-#ifdef GUI_ENABLE_KEYSDIALOG
-	GUI::Dialog		*_keysDialog;
-#endif
-
-public:
-	ConfigDialog(bool subtitleControls);
-	~ConfigDialog() override;
-
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-};
-
 MainMenuDialog::MainMenuDialog(Engine *engine)
 	: GUI::Dialog("GlobalMenu"), _engine(engine) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
@@ -134,7 +121,7 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		save();
 		break;
 	case kOptionsCmd: {
-		ConfigDialog configDialog(_engine->hasFeature(Engine::kSupportsSubtitleOptions));
+		GUI::ConfigDialog configDialog(_engine->hasFeature(Engine::kSupportsSubtitleOptions));
 		configDialog.runModal();
 		break;
 	}
@@ -256,6 +243,8 @@ enum {
 	kKeysCmd = 'KEYS'
 };
 
+namespace GUI {
+
 // FIXME: We use the empty string as domain name here. This tells the
 // ConfigManager to use the 'default' domain for all its actions. We do that
 // to get as close as possible to editing the 'active' settings.
@@ -281,9 +270,15 @@ enum {
 // These changes will achieve two things at once: Allow us to get rid of using
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
-ConfigDialog::ConfigDialog(bool subtitleControls)
-	: GUI::OptionsDialog("", "GlobalConfig") {
+ConfigDialog::ConfigDialog(bool subtitleControls) : GUI::OptionsDialog("", "GlobalConfig") {
+	init(subtitleControls);
+}
 
+ConfigDialog::ConfigDialog() : GUI::OptionsDialog("", "GlobalConfig") {
+	init(g_engine->hasFeature(Engine::kSupportsSubtitleOptions));
+}
+
+void ConfigDialog::init(bool subtitleControls) {
 	// GUI:  Add tab widget
 	GUI::TabWidget *tab = new GUI::TabWidget(this, "GlobalConfig.TabWidget");
 
@@ -362,3 +357,5 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 		GUI::OptionsDialog::handleCommand (sender, cmd, data);
 	}
 }
+
+} // End of namespace GUI

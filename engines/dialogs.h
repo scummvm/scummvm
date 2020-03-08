@@ -24,6 +24,7 @@
 #define GLOBAL_DIALOGS_H
 
 #include "gui/dialog.h"
+#include "gui/options.h"
 
 class Engine;
 
@@ -75,5 +76,25 @@ protected:
 	GUI::SaveLoadChooser *_loadDialog;
 	GUI::SaveLoadChooser *_saveDialog;
 };
+
+namespace GUI {
+
+class ConfigDialog : public OptionsDialog {
+private:
+	void init(bool subtitleControls);
+protected:
+#ifdef GUI_ENABLE_KEYSDIALOG
+	Dialog *_keysDialog;
+#endif
+
+public:
+	ConfigDialog(bool subtitleControls);
+	ConfigDialog();
+	~ConfigDialog() override;
+
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+};
+
+} // End of namespace GUI
 
 #endif
