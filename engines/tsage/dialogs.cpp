@@ -21,11 +21,7 @@
  */
 
 #include "common/translation.h"
-
-#include "gui/dialog.h"
-#include "gui/options.h"
-#include "gui/widget.h"
-
+#include "engines/dialogs.h"
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
@@ -88,29 +84,6 @@ int MessageDialog::show2(const Common::String &message, const Common::String &bt
 
 	delete dlg;
 	return result;
-}
-
-/*--------------------------------------------------------------------------*/
-
-class ConfigDialog : public GUI::OptionsDialog {
-public:
-	ConfigDialog();
-};
-
-ConfigDialog::ConfigDialog() : GUI::OptionsDialog("", "GlobalConfig") {
-	//
-	// Sound controllers
-	//
-
-	addVolumeControls(this, "GlobalConfig.");
-	setVolumeSettingsState(true); // could disable controls by GUI options
-
-	//
-	// Add the buttons
-	//
-
-	new GUI::ButtonWidget(this, "GlobalConfig.Ok", _("~O~K"), 0, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", _("~C~ancel"), 0, GUI::kCloseCmd);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -192,7 +165,7 @@ void ModalDialog::drawFrame() {
 /*--------------------------------------------------------------------------*/
 
 void SoundDialog::execute() {
-	ConfigDialog *dlg = new ConfigDialog();
+	GUI::ConfigDialog *dlg = new GUI::ConfigDialog();
 	dlg->runModal();
 	delete dlg;
 	g_globals->_soundManager.syncSounds();
