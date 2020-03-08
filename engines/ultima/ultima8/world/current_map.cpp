@@ -698,7 +698,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 					continue; // not an interesting item
 
 				int32 ix, iy, iz, ixd, iyd, izd;
-				si->getFootpadWorld(ixd, iyd, izd, item->getFlags() & Item::FLG_FLIPPED);
+				item->getFootpadWorld(ixd, iyd, izd);
 				item->getLocation(ix, iy, iz);
 
 #if 0
@@ -1016,6 +1016,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 					continue;
 				}
 
+				// Make oext the distance to midpoint in each dim
 				oext[0] /= 2;
 				oext[1] /= 2;
 				oext[2] /= 2;
