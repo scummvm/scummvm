@@ -202,55 +202,21 @@ protected:
 	bool _freeBuffer;
 	uint32 _size;
 
-	void ConvertTextBuffer() {
-#ifdef WIN32
-		uint8 *new_buf = new uint8[_size];
-		uint8 *new_buf_ptr = new_buf;
-		uint32 new_size = 0;
-
-		// What we want to do is convert all 0x0D 0x0A to just 0x0D
-
-		// Do for all but last byte
-		while (_size > 1) {
-			if (*(uint16 *)_bufPtr == 0x0A0D) {
-				_bufPtr++;
-				_size--;
-			}
-
-			*new_buf_ptr = *_bufPtr;
-
-			new_buf_ptr++;
-			new_size++;
-			_bufPtr++;
-			_size--;
-		}
-
-		// Do last byte
-		if (_size) *new_buf_ptr = *_bufPtr;
-
-		// Delete old buffer if requested
-		if (_freeBuffer) delete[] const_cast<uint8 *>(_buf);
-
-		_bufPtr = _buf = new_buf;
-		_size = new_size;
-		_freeBuffer = true;
-#endif
-	}
-
 public:
 	IBufferDataSource(const void *data, unsigned int len, bool is_text = false,
 	                  bool delete_data = false) {
+		assert(!is_text);
 		assert(data != 0 || len == 0);
 		_buf = _bufPtr = static_cast<const uint8 *>(data);
 		_size = len;
 		_freeBuffer = delete_data;
-
-		if (is_text) ConvertTextBuffer();
 	}
 
 	virtual void load(const void *data, unsigned int len, bool is_text = false,
 	                  bool delete_data = false) {
-		if (_freeBuffer && _buf) delete [] const_cast<uint8 *>(_buf);
+		assert(!is_text);
+		if (_freeBuffer && _buf)
+			delete[] const_cast<uint8 *>(_buf);
 		_freeBuffer = false;
 		_buf = _bufPtr = 0;
 
@@ -258,12 +224,11 @@ public:
 		_buf = _bufPtr = static_cast<const uint8 *>(data);
 		_size = len;
 		_freeBuffer = delete_data;
-
-		if (is_text) ConvertTextBuffer();
 	}
 
 	~IBufferDataSource() override {
-		if (_freeBuffer && _buf) delete [] const_cast<uint8 *>(_buf);
+		if (_freeBuffer && _buf)
+			delete[] const_cast<uint8 *>(_buf);
 		_freeBuffer = false;
 		_buf = _bufPtr = 0;
 	}
