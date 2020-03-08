@@ -175,7 +175,7 @@ reg_t SoundCommandParser::kDoSoundPlay(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
+void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restoring) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		warning("kDoSound(play): Slot not found (%04x:%04x), initializing it manually", PRINT_REG(obj));
@@ -188,7 +188,14 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
 			error("Failed to initialize uninitialized sound slot");
 	}
 
-	int resourceId = getSoundResourceId(obj);
+	int resourceId;
+	if (!restoring)
+		resourceId = getSoundResourceId(obj);
+	else
+		// fix bug #10907 - the game was saved while track A was playing, but track B was initialized, waiting to be played later
+		// therefore, musicSlot->resourceId reflects the actual track that was playing (A), while getSoundResourceId(obj)
+		// is reflecting the track that's waiting to be played later (B)
+		resourceId = musicSlot->resourceId;
 
 	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
 		processDisposeSound(obj);
