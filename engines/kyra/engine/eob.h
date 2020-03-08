@@ -75,6 +75,9 @@ private:
 	static const TitleScreenConfig _titleConfig[5];
 	const TitleScreenConfig *_ttlCfg;
 
+	// Init
+	void loadItemsAndDecorationsShapes() override;
+
 	// Main loop
 	void startupNew() override;
 	void startupLoad() override;
@@ -91,9 +94,10 @@ private:
 	void seq_xdeath() override;
 
 	void seq_segaOpeningCredits();
+	void seq_segaFinalCredits();
 	void seq_segaSetupSequence(int sequenceId);
+	void seq_segaRestoreAfterSequence();
 	bool seq_segaPlaySequence(int sequenceId, bool init = false);
-
 
 	const char *const *_finBonusStrings;
 	SegaSequencePlayer *_seqPlayer;

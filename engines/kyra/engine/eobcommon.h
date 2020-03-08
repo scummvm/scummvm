@@ -273,7 +273,7 @@ protected:
 	bool _playFinale;
 
 	//Init, config
-	void loadItemsAndDecorationsShapes();
+	virtual void loadItemsAndDecorationsShapes();
 	void releaseItemsAndDecorationsShapes();
 
 	void initButtonData();

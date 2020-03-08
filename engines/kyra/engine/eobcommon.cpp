@@ -673,7 +673,7 @@ Common::Error EoBCoreEngine::go() {
 	static_cast<Debugger_EoB *>(getDebugger())->initialize();
 	_txt->removePageBreakFlag();
 	_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
-	//loadItemsAndDecorationsShapes();
+	loadItemsAndDecorationsShapes();
 
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
 

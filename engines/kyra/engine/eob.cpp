@@ -122,24 +122,21 @@ Common::Error EoBEngine::init() {
 		assert(_txt);
 	}
 
-	//////////////////////////////77
-	////////////////////////////////
-	////////////////////////////////
+	return Common::kNoError;
+}
+
+void EoBEngine::loadItemsAndDecorationsShapes() {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::loadItemsAndDecorationsShapes();
+		return;
+	}
+
 	_sres->loadContainer("ITEM");
-	_itemIconShapes = new const uint8*[_numItemIconShapes];
+	_itemIconShapes = new const uint8 *[_numItemIconShapes];
 	memset(_itemIconShapes, 0, _numItemIconShapes * sizeof(uint8*));
-	uint32 tsize;
-	uint8 *in = _sres->resData(0, &tsize);
+	uint8 *in = _sres->resData(0);
 	_screen->sega_encodeSpriteShapes(_itemIconShapes, in, _numItemIconShapes, 16, 16, 3);
 	delete[] in;
-	/////////////////////7
-	//////////////////////
-	////////////////
-
-
-
-
-	return Common::kNoError;
 }
 
 void EoBEngine::startupNew() {
