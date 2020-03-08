@@ -397,7 +397,6 @@ MODULE_OBJS := \
 	ultima8/gumps/bark_gump.o \
 	ultima8/gumps/book_gump.o \
 	ultima8/gumps/container_gump.o \
-	ultima8/gumps/controls_gump.o \
 	ultima8/gumps/credits_gump.o \
 	ultima8/gumps/desktop_gump.o \
 	ultima8/gumps/fast_area_vis_gump.o \
@@ -413,7 +412,6 @@ MODULE_OBJS := \
 	ultima8/gumps/mini_stats_gump.o \
 	ultima8/gumps/modal_gump.o \
 	ultima8/gumps/movie_gump.o \
-	ultima8/gumps/options_gump.o \
 	ultima8/gumps/paged_gump.o \
 	ultima8/gumps/paperdoll_gump.o \
 	ultima8/gumps/quit_gump.o \

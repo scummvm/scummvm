@@ -31,8 +31,6 @@
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
-#include "ultima/ultima8/gumps/controls_gump.h"
-#include "ultima/ultima8/gumps/options_gump.h"
 #include "ultima/ultima8/gumps/paged_gump.h"
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
@@ -230,14 +228,9 @@ void MenuGump::selectEntry(int entry) {
 	case 3: // Read/Write Diary
 		U8SaveGump::showLoadSaveGump(this, entry == 3);
 		break;
-	case 4: { // Options
-		PagedGump *gump = new PagedGump(34, -38, 3, gumpShape);
-		gump->InitGump(this);
-
-		OptionsGump *options = new OptionsGump();
-		options->InitGump(gump, false);
-		gump->addPage(options);
-		gump->setRelativePosition(CENTER);
+	case 4: {
+		// Options
+		// TODO: Show options
 	}
 	break;
 	case 5: // Credits
