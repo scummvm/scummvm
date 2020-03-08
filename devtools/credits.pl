@@ -1016,6 +1016,7 @@ begin_credits("Credits");
 
 			begin_section("Ultima");
 				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Matthew Duggan", "stauff", "");
 				add_person("Eric Fry", "yuv422", "(Nuvie)");
 				add_person("", "malignantmanor", "(Nuvie)");
 				add_person("", "sb-x", "(Nuvie)");
