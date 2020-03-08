@@ -78,6 +78,14 @@ static void shiftCoordsToZ(int32 &x, int32 &y, int32 &z, int32 newz) {
 }
 
 
+void Map::addMapFix(uint32 shape, uint32 frame, int32 x, int32 y, int32 z) {
+	Item *item = ItemFactory::createItem(shape, frame, 0, 0, 0, 0,
+										 Item::EXT_FIXED, false);
+	item->setLocation(x, y, z);
+	_fixedItems.push_back(item);
+}
+
+
 void Map::loadFixed(IDataSource *ds) {
 	loadFixedFormatObjects(_fixedItems, ds, Item::EXT_FIXED);
 
@@ -86,170 +94,43 @@ void Map::loadFixed(IDataSource *ds) {
 		// TODO
 	}
 
-	// U8 hack for missing ground tiles on map 3 (north road).
+	// U8 hack for missing ground tiles on map 7 (north road).
 	if (GAME_IS_U8 && _mapNum == 7) {
-		Item *item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-											 Item::EXT_FIXED, false);
-		item->setLocation(2815, 25727, 8);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-									   Item::EXT_FIXED, false);
-		item->setLocation(9983, 21157, 8);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-									   Item::EXT_FIXED, false);
-		item->setLocation(13183, 16511, 8);
-		_fixedItems.push_back(item);
+		addMapFix(301, 1, 2815, 25727, 8);
+		addMapFix(301, 1, 9983, 21157, 8);
+		addMapFix(301, 1, 13183, 16511, 8);
 	}
 
 	// U8 hack for missing ground/wall tiles on map 62. See docs/u8bugs.txt
 	if (GAME_IS_U8 && _mapNum == 62) {
-		Item *item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                                     Item::EXT_FIXED, false);
-		item->setLocation(16255, 6143, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(16639, 6143, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(16511, 6143, 48);
-		_fixedItems.push_back(item);
-
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15999, 6143, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15871, 6143, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15743, 6143, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15615, 6143, 48);
-		_fixedItems.push_back(item);
-
-
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15999, 6015, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15871, 6015, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15743, 6015, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15615, 6015, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(20095, 6911, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(20223, 6911, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(20095, 6783, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(20223, 6783, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(19839, 6655, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(19967, 6655, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(19839, 6527, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(19967, 6527, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(20095, 6527, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(19967, 6399, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(19839, 6399, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(301, 1, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(19711, 6399, 48);
-		_fixedItems.push_back(item);
-
-
-
-		item = ItemFactory::createItem(497, 0, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15487, 6271, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(497, 0, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15359, 6271, 48);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(409, 32, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(14975, 6399, 0);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(409, 32, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(14975, 6015, 0);
-		_fixedItems.push_back(item);
-
-		item = ItemFactory::createItem(409, 32, 0, 0, 0, 0,
-		                               Item::EXT_FIXED, false);
-		item->setLocation(15103, 6015, 0);
-		_fixedItems.push_back(item);
+		addMapFix(301, 1, 16255, 6143, 48);
+		addMapFix(301, 1, 16639, 6143, 48);
+		addMapFix(301, 1, 16511, 6143, 48);
+		addMapFix(301, 1, 15999, 6143, 48);
+		addMapFix(301, 1, 15871, 6143, 48);
+		addMapFix(301, 1, 15743, 6143, 48);
+		addMapFix(301, 1, 15615, 6143, 48);
+		addMapFix(301, 1, 15999, 6015, 48);
+		addMapFix(301, 1, 15871, 6015, 48);
+		addMapFix(301, 1, 15743, 6015, 48);
+		addMapFix(301, 1, 15615, 6015, 48);
+		addMapFix(301, 1, 20095, 6911, 48);
+		addMapFix(301, 1, 20223, 6911, 48);
+		addMapFix(301, 1, 20095, 6783, 48);
+		addMapFix(301, 1, 20223, 6783, 48);
+		addMapFix(301, 1, 19839, 6655, 48);
+		addMapFix(301, 1, 19967, 6655, 48);
+		addMapFix(301, 1, 19839, 6527, 48);
+		addMapFix(301, 1, 19967, 6527, 48);
+		addMapFix(301, 1, 20095, 6527, 48);
+		addMapFix(301, 1, 19967, 6399, 48);
+		addMapFix(301, 1, 19839, 6399, 48);
+		addMapFix(301, 1, 19711, 6399, 48);
+		addMapFix(497, 0, 15487, 6271, 48);
+		addMapFix(497, 0, 15359, 6271, 48);
+		addMapFix(409, 32, 14975, 6399, 0);
+		addMapFix(409, 32, 14975, 6015, 0);
+		addMapFix(409, 32, 15103, 6015, 0);
 	}
 
 	if (GAME_IS_U8 && _mapNum == 49) {
