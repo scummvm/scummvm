@@ -80,10 +80,10 @@ static const KeybindingRecord DEBUG_KEYS[] = {
 	{ ACTION_ADVANCE_FRAME, "ADVANCE_FRAME", "Advance Frame", "Kernel::advanceFrame", nullptr, "SPACE" },
 	{ ACTION_TOGGLE_STASIS, "TOGGLE_STASIS", "Toggle Avatar In Stasis", "GUIApp::toggleAvatarInStasis", nullptr, "F10" },
 	{ ACTION_SHAPE_VIEWER, "SHAPE_VIEWER", "Show Shape Viewer", "ShapeViewerGump::U8ShapeViewer", nullptr, "F11" },
-#endif
 
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
 };
+#endif
 
 
 Common::KeymapArray MetaEngine::initKeymaps() {
