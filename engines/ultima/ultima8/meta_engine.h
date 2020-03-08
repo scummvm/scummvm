@@ -54,7 +54,7 @@ public:
 	/**
 	 * Initialize keymaps
 	 */
-	static Common::KeymapArray initKeymaps();
+	static Common::KeymapArray initKeymaps(bool isMenuActive = false);
 
 	/**
 	 * Execute an engine keymap press action
@@ -65,6 +65,11 @@ public:
 	 * Execute an engine keymap release action
 	 */
 	static void releaseAction(KeybindingAction keyAction);
+
+	/**
+	 * Enables/disables keymaps based on whether the in-game menu is active
+	 */
+	static void setGameMenuActive(bool isActive);
 };
 
 } // End of namespace Ultima8

@@ -59,6 +59,7 @@ class UCMachine;
 class Game;
 class Gump;
 class GameMapGump;
+class MenuGump;
 class ScalerGump;
 class InverterGump;
 class RenderSurface;
@@ -346,6 +347,7 @@ public:
 	void makeCheater() {
 		_hasCheated = true;
 	}
+	Gump *getMenuGump() const;
 };
 
 } // End of namespace Ultima8

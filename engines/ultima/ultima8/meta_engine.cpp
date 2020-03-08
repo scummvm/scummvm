@@ -22,6 +22,7 @@
 
 #include "ultima/ultima8/meta_engine.h"
 #include "ultima/ultima8/misc/debugger.h"
+#include "ultima/ultima8/ultima8.h"
 #include "common/translation.h"
 #include "backends/keymapper/action.h"
 
@@ -86,7 +87,7 @@ static const KeybindingRecord DEBUG_KEYS[] = {
 #endif
 
 
-Common::KeymapArray MetaEngine::initKeymaps() {
+Common::KeymapArray MetaEngine::initKeymaps(bool isMenuActive) {
 	Common::KeymapArray keymapArray;
 
 	// Core keymaps
@@ -94,38 +95,53 @@ Common::KeymapArray MetaEngine::initKeymaps() {
 	keymapArray.push_back(keyMap);
 
 	for (const KeybindingRecord *r = KEYS; r->_id; ++r) {
-		Common::Action *act = new Common::Action(r->_id, _(r->_desc));
-		act->setCustomEngineActionEvent(r->_action);
-		act->addDefaultInputMapping(r->_key);
-		keyMap->addAction(act);
+		if (!isMenuActive || !strcmp(r->_id, "MENU")) {
+			Common::Action *act = new Common::Action(r->_id, _(r->_desc));
+			act->setCustomEngineActionEvent(r->_action);
+			act->addDefaultInputMapping(r->_key);
+			keyMap->addAction(act);
+		}
 	}
 
-	// Cheat keymaps
-	keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "ultima8_cheats", _("Ultima VIII Cheats"));
-	keymapArray.push_back(keyMap);
+	if (!isMenuActive) {
+		// Cheat keymaps
+		keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "ultima8_cheats", _("Ultima VIII Cheats"));
+		keymapArray.push_back(keyMap);
 
-	for (const KeybindingRecord *r = CHEAT_KEYS; r->_id; ++r) {
-		Common::Action *act = new Common::Action(r->_id, _(r->_desc));
-		act->setCustomEngineActionEvent(r->_action);
-		act->addDefaultInputMapping(r->_key);
-		keyMap->addAction(act);
-	}
+		for (const KeybindingRecord *r = CHEAT_KEYS; r->_id; ++r) {
+			Common::Action *act = new Common::Action(r->_id, _(r->_desc));
+			act->setCustomEngineActionEvent(r->_action);
+			act->addDefaultInputMapping(r->_key);
+			keyMap->addAction(act);
+		}
 
 #ifndef RELEASE_BUILD
-	// Debug keymaps
-	keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "ultima8_debug", _("Ultima VIII Debug"));
-	keymapArray.push_back(keyMap);
+		// Debug keymaps
+		keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "ultima8_debug", _("Ultima VIII Debug"));
+		keymapArray.push_back(keyMap);
 
-	for (const KeybindingRecord *r = DEBUG_KEYS; r->_id; ++r) {
-		Common::Action *act = new Common::Action(r->_id, _(r->_desc));
-		act->setCustomEngineActionEvent(r->_action);
-		act->addDefaultInputMapping(r->_key);
-		keyMap->addAction(act);
-	}
+		for (const KeybindingRecord *r = DEBUG_KEYS; r->_id; ++r) {
+			Common::Action *act = new Common::Action(r->_id, _(r->_desc));
+			act->setCustomEngineActionEvent(r->_action);
+			act->addDefaultInputMapping(r->_key);
+			keyMap->addAction(act);
+		}
 #endif
+	}
 
 	return keymapArray;
 }
+
+void MetaEngine::setGameMenuActive(bool isActive) {
+	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
+	mapper->cleanupGameKeymaps();
+
+	Common::KeymapArray arr = initKeymaps(isActive);
+
+	for (uint idx = 0; idx < arr.size(); ++idx)
+		mapper->addGameKeymap(arr[idx]);
+}
+
 
 void MetaEngine::pressAction(KeybindingAction keyAction) {
 	Common::String methodName = getMethod(keyAction, true);

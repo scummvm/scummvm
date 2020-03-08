@@ -737,7 +737,6 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	HID_Key key = HID_LAST;
 	uint16 evn = HID_EVENT_LAST;
 	bool handled = false;
-	KeybindingAction keybindAction = ACTION_NONE;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -785,6 +784,14 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	case Common::EVENT_MOUSEMOVE:
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
 		break;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		MetaEngine::pressAction((KeybindingAction)event.customType);
+		return;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		MetaEngine::releaseAction((KeybindingAction)event.customType);
+		return;
 
 	case Common::EVENT_QUIT:
 		_isRunning = false;
@@ -842,35 +849,9 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 				gump->OnKeyUp(event.kbd.keycode);
 				return;
 
-			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-				if ((KeybindingAction)event.customType == ACTION_MENU) {
-					// When any gump is already open, the game menu action acts to close the gump
-					gump->OnKeyDown(Common::KEYCODE_ESCAPE, 0);
-				}
-				break;
-
 			default:
 				break;
 			}
-		}
-	}
-
-	if (!gump) {
-		// Handling for keybinding actions, which only happens if no gump is open
-		switch (event.type) {
-		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			keybindAction = (KeybindingAction)event.customType;
-			if (keybindAction != ACTION_NONE)
-				MetaEngine::pressAction(keybindAction);
-			break;
-
-		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			keybindAction = (KeybindingAction)event.customType;
-			if (keybindAction != ACTION_NONE)
-				MetaEngine::releaseAction(keybindAction);
-			break;
-		default:
-			break;
 		}
 	}
 
@@ -1582,6 +1563,13 @@ void Ultima8Engine::showSplashScreen() {
 
 	// Pause to allow the image to be seen
 	g_system->delayMillis(2000);
+}
+
+Gump *Ultima8Engine::getMenuGump() const {
+	if (_textModes.empty())
+		return nullptr;
+
+	return p_dynamic_cast<Gump *>(_objectManager->getObject(_textModes.front()));
 }
 
 } // End of namespace Ultima8

@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
-
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -46,9 +45,9 @@
 #include "ultima/ultima8/gumps/widgets/edit_widget.h"
 #include "ultima/ultima8/gumps/u8_save_gump.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
+#include "ultima/ultima8/meta_engine.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -79,10 +78,14 @@ MenuGump::MenuGump(bool nameEntryMode_)
 	PaletteManager *palman = PaletteManager::get_instance();
 	palman->getTransformMatrix(_oldPalTransform, PaletteManager::Pal_Game);
 	palman->untransformPalette(PaletteManager::Pal_Game);
+
+	MetaEngine::setGameMenuActive(true);
 }
 
 MenuGump::~MenuGump() {
+	MetaEngine::setGameMenuActive(false);
 }
+
 
 void MenuGump::Close(bool no_del) {
 	// Restore old music state and palette.
@@ -262,9 +265,15 @@ bool MenuGump::OnTextInput(int unicode) {
 
 //static
 void MenuGump::showMenu() {
-	ModalGump *gump = new MenuGump();
-	gump->InitGump(0);
-	gump->setRelativePosition(CENTER);
+	Gump *gump = Ultima8Engine::get_instance()->getMenuGump();
+
+	if (gump) {
+		gump->Close();
+	} else {
+		gump = new MenuGump();
+		gump->InitGump(0);
+		gump->setRelativePosition(CENTER);
+	}
 }
 
 //static
