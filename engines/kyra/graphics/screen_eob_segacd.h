@@ -88,7 +88,7 @@ public:
 
 private:
 	void renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, int x2, int y2);
-	void renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTable, int vScrollTableIndex, int hScrollTableIndex, uint16 pitch);
+	void renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTable, int vScrollLSBStart, int vScrollLSBEnd, int hScrollTableIndex, uint16 pitch);
 	void renderSpriteTile(uint8 *dst, uint8 *mask, int x, int y, uint16 tile, uint8 pal, bool vflip, bool hflip, bool prio);
 #if SEGA_PERFORMANCE
 	template<bool hflip, bool oddStart, bool oddEnd> void renderLineFragmentM(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal);
@@ -109,9 +109,9 @@ private:
 	void clearPrioChain();
 
 	struct SegaPlane {
-		SegaPlane() : blockX(0), blockY(0), w(0), h(0), nameTable(0), nameTableSize(0) {}
+		SegaPlane() : blockX(0), blockY(0), w(0), h(0), mod(0), nameTable(0), nameTableSize(0) {}
 		int blockX, blockY;
-		uint16 w, h;
+		uint16 w, h, mod;
 		uint16 *nameTable;
 		uint16 nameTableSize;
 	};

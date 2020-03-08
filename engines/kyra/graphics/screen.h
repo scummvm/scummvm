@@ -125,8 +125,8 @@ public:
 		kStyleNone			=	0,
 		kStyleLeftShadow	=	1	<<	0,
 		kStyleFat			=	1	<<	1,
-		kStyleNarrow		=	1	<<	2,
-		kStyleVariant		=	1	<<	3,
+		kStyleNarrow1		=	1	<<	2,
+		kStyleNarrow2		=	1	<<	3,
 		kStyleForceTwoByte	=	1	<<	4,
 		kStyleFixedWidth	=	1	<<	5
 	};

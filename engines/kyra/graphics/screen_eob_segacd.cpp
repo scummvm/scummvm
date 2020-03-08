@@ -422,6 +422,7 @@ void SegaRenderer::setupPlaneAB(int pixelWidth, int pixelHeigth) {
 			_planes[i].w = pixelWidth >> 3;
 		if (pixelHeigth != -1)
 			_planes[i].h = pixelHeigth >> 3;
+		_planes[i].mod = _planes[i].h;
 		_planes[i].nameTableSize = _planes[i].w * _planes[i].h;
 	}
 }
@@ -433,6 +434,7 @@ void SegaRenderer::setupWindowPlane(int blockX, int blockY, int horizontalMode, 
 		_planes[kWindowPlane].blockY = verticalMode ? blockY : 0;
 	_planes[kWindowPlane].w = horizontalMode ? _blocksW - blockX : blockX;
 	_planes[kWindowPlane].h = verticalMode ? _blocksH - blockY : blockY;
+	_planes[kWindowPlane].mod = _planes[kWindowPlane].blockY + _planes[kWindowPlane].h;
 	_planes[kWindowPlane].nameTableSize = _planes[kWindowPlane].w * _planes[kWindowPlane].h;
 }
 
@@ -655,42 +657,45 @@ void SegaRenderer::render(int destPageNum, bool spritesOnly) {
 
 void SegaRenderer::renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, int x2, int y2) {
 	SegaPlane *p = &_planes[plane];
-	uint16 *ntbl = p->nameTable + y1 * _pitch + x1;
 	uint8 *dst = dstBuffer + (y1 << 3) * _screenW + (x1 << 3);
 
 	for (int y = y1; y < y2; ++y) {
 		int hScrollTableIndex = (plane == kWindowPlane) ? -1 : (_hScrollMode == kHScrollFullScreen) ? plane : (y1 << 4) + plane;
 		uint8 *dst2 = dst;
 		for (int x = x1; x < x2; ++x) {
-			int vScrollTableIndex = (plane == kWindowPlane) ? -1 : (_vScrollMode == kVScrollFullScreen) ? plane : (x >> 1) + plane;
-			renderPlaneTile(dst, x, ntbl, vScrollTableIndex, hScrollTableIndex, _pitch);
+			int vScrollTableIndex = (plane == kWindowPlane) ? -1 : (_vScrollMode == kVScrollFullScreen) ? plane : (x & ~1) + plane;
+			uint16 vscrNt = 0;
+			uint16 vscrPxStart = 0;
+			uint16 vscrPxEnd = 8;
+
+			if (vScrollTableIndex != -1) {
+				vscrNt = _vsram[vScrollTableIndex] & 0x3FF;
+				vscrPxStart = vscrNt & 7;
+				vscrNt >>= 3;
+			}
+
+			int ty = (vscrNt + y) % p->mod;
+
+			renderPlaneTile(dst, x, &p->nameTable[ty * _pitch + x1], vscrPxStart, vscrPxEnd, hScrollTableIndex, _pitch);
+
+			if (vscrPxStart) {
+				ty = (ty + 1) % p->mod;
+				uint16 dstOffs = (vscrPxEnd - vscrPxStart) * _screenW;
+				vscrPxEnd = vscrPxStart;
+				vscrPxStart = 0;
+				renderPlaneTile(dst + dstOffs, x, &p->nameTable[ty * _pitch + x1], vscrPxStart, vscrPxEnd, hScrollTableIndex, _pitch);
+			}
 			dst += 8;
 		}
-		ntbl += _pitch;
 		dst = dst2 + (_screenW << 3);
 	}
 }
 
-void SegaRenderer::renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTable, int vScrollTableIndex, int hScrollTableIndex, uint16 pitch) {
-	uint16 vscrNt = 0;
-	uint16 vscrPx = 0;
-
-	if (vScrollTableIndex != -1) {
-		vscrNt = _vsram[vScrollTableIndex] & 0x3FF;
-		vscrPx = vscrNt & 7;
-		vscrNt >>= 3;
-	}
-
-	for (int bY = vscrPx; bY < vscrPx + 8; ++bY) {
+void SegaRenderer::renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTable, int vScrollLSBStart, int vScrollLSBEnd, int hScrollTableIndex, uint16 pitch) {
+	for (int bY = vScrollLSBStart; bY < vScrollLSBEnd; ++bY) {
 		uint8 *dst2 = dst;
 		uint16 hscrNt = 0;
 		uint16 hscrPx = 0;
-
-		if (bY == 8) {
-			nameTable += pitch;
-			if (hScrollTableIndex != -1 && _hScrollMode == kHScroll8PixelRows)
-				hScrollTableIndex += 16;
-		}
 
 		if (hScrollTableIndex != -1) {
 			hscrNt = (-_hScrollTable[hScrollTableIndex]) & 0x3FF;
@@ -698,7 +703,7 @@ void SegaRenderer::renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTabl
 			hscrNt >>= 3;
 		}
 
-		const uint16 *pNt = &nameTable[vscrNt * pitch + ((destX + hscrNt) % pitch)];
+		const uint16 *pNt = &nameTable[(destX + hscrNt) % pitch];
 		if (pNt < (const uint16*)(&_vram[0x10000])) {
 			uint16 nt = *pNt;
 			uint16 pal = ((nt >> 13) & 3) << 4;
@@ -716,7 +721,7 @@ void SegaRenderer::renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTabl
 
 		if (hscrPx) {
 			dst += (8 - hscrPx);
-			pNt = &nameTable[vscrNt * pitch + ((destX + hscrNt + 1) % pitch)];
+			pNt = &nameTable[(destX + hscrNt + 1) % pitch];
 			if (pNt < (const uint16*)(&_vram[0x10000])) {
 				uint16 nt = *pNt;
 				uint16 pal = ((nt >> 13) & 3) << 4;
@@ -1050,7 +1055,7 @@ void SegaCDFont::setStyles(int styles) {
 	_forceTwoByte = (styles & kStyleForceTwoByte);
 	_data = (styles & kStyleFat) ? _buffer + 131072 : _buffer;
 	_fixedWidth = (styles & kStyleFixedWidth);
-	_style = (styles & kStyleNarrow) ? 1 : (styles & kStyleVariant ? 2 : 0);
+	_style = (styles & kStyleNarrow1) ? 1 : (styles & kStyleNarrow2 ? 2 : 0);
 }
 
 void SegaCDFont::drawChar(uint16 c, byte *dst, int pitch, int xOffs, int yOffs) const {

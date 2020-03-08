@@ -37,7 +37,7 @@ TextDisplayer_SegaCD::~TextDisplayer_SegaCD() {
 
 }
 
-void TextDisplayer_SegaCD::printMessageAtPos(const char *str, int x, int y, int textColor, int shadowColor) {
+void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int textColor, int shadowColor, bool noScreenUpdate) {
 	const ScreenDim *s = &_dimTable[_curDim];
 	if (x == -1)
 		x = s->sx;
@@ -50,6 +50,9 @@ void TextDisplayer_SegaCD::printMessageAtPos(const char *str, int x, int y, int 
 
 	_screen->setTextMarginRight(s->w);
 	_screen->printShadedText(str, x, y, textColor, 0, shadowColor, s->w >> 3);
+
+	if (noScreenUpdate)
+		return;
 
 	if (s->unkE) {
 		for (int i = 0; i < s->h >> 3; ++i)
@@ -68,11 +71,13 @@ int TextDisplayer_SegaCD::clearDim(int dim) {
 	return res;
 }
 
-const ScreenDim TextDisplayer_SegaCD::_dimTable[4] = {
+const ScreenDim TextDisplayer_SegaCD::_dimTable[6] = {
 	{ 0x0001, 0x0017, 0x0118, 0x0018, 0xff, 0x44, 0x2597, 0x0000 },
 	{ 0x0012, 0x0009, 0x00a0, 0x0080, 0xff, 0x00, 0x0153, 0x0028 },
 	{ 0x0001, 0x0014, 0x0130, 0x0030, 0xff, 0xee, 0xe51c, 0x0000 },
-	{ 0x0001, 0x0017, 0x00D0, 0x0030, 0xff, 0x00, 0x0461, 0x0000 }
+	{ 0x0001, 0x0017, 0x00D0, 0x0030, 0xff, 0x00, 0x0461, 0x0000 },
+	{ 0x0000, 0x0000, 0x00F0, 0x0100, 0xff, 0x00, 0x600A, 0x0000 },
+	{ 0x0000, 0x0000, 0x0140, 0x00B0, 0xff, 0x11, 0x4001, 0x0000 }
 };
 
 } // End of namespace Kyra

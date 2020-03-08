@@ -42,7 +42,7 @@ public:
 	void printDialogueText(int stringId, const char *pageBreakString);
 	void printDialogueText(const char *str, bool wait = false);
 	void printMessage(const char *str, int textColor = -1, ...);*/
-	void printMessageAtPos(const char *str, int x = -1, int y = -1, int textColor = -1, int shadowColor = -1) override;
+	void printShadowedText(const char *str, int x = -1, int y = -1, int textColor = -1, int shadowColor = -1, bool noScreenUpdate = false) override;
 
 	int clearDim(int dim) override;
 	//void clearCurDim() override;
@@ -61,7 +61,7 @@ private:
 	SegaRenderer *_renderer;
 	int _curDim;
 
-	static const ScreenDim _dimTable[4];
+	static const ScreenDim _dimTable[6];
 };
 
 } // End of namespace Kyra

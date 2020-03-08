@@ -95,6 +95,8 @@ private:
 
 	void seq_segaOpeningCredits();
 	void seq_segaFinalCredits();
+	void seq_segaShowStats();
+
 	void seq_segaSetupSequence(int sequenceId);
 	void seq_segaRestoreAfterSequence();
 	bool seq_segaPlaySequence(int sequenceId, bool init = false);

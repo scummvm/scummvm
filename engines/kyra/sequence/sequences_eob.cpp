@@ -2169,8 +2169,8 @@ int EoBEngine::mainMenu() {
 				_screen->sega_getRenderer()->fillRectWithTiles(1, 7, 20, 26, 5, 0x461, true);
 				_screen->sega_getRenderer()->fillRectWithTiles(1, 7, 25, 25, 1, 0x4E3, true);
 				_screen->sega_getRenderer()->fillRectWithTiles(1, 6, 21, 1, 5, 0);
-				_screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow);
-				_txt->printMessageAtPos(versionString.c_str(), 200 - versionString.size() * 8, _ttlCfg->versionStrYOffs, 0x88);
+				_screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow1);
+				_txt->printShadowedText(versionString.c_str(), 200 - versionString.size() * 8, _ttlCfg->versionStrYOffs, 0x88);
 				_screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
 			} else {
 				_screen->_curPage = 2;
@@ -2268,7 +2268,8 @@ void EoBEngine::seq_playIntro(int part) {
 		if (part == kOnlyCredits)
 			seq_segaOpeningCredits();
 		else
-			seq_segaPlaySequence(53, true);
+			seq_playFinale();
+			//seq_segaPlaySequence(53, true);
 	} else {
 		EoBIntroPlayer(this, _screen).start((EoBIntroPlayer::IntroPart)part);
 	}
@@ -2280,6 +2281,9 @@ void EoBEngine::seq_playFinale() {
 		return;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		seq_segaPlaySequence(_xdth ? 55 : 56, true);
+		seq_segaFinalCredits();
+		seq_segaShowStats();
+		snd_stopSound();
 		return;
 	}
 
@@ -2390,27 +2394,28 @@ void EoBEngine::seq_xdeath() {
 void EoBEngine::seq_segaOpeningCredits() {
 	uint16 *scrollTable = new uint16[0x200];
 	memset(scrollTable, 0, 0x200 * sizeof(uint16));
+	SegaRenderer *r = _screen->sega_getRenderer();
 
-	_screen->sega_getRenderer()->setPitch(128);
-	_screen->sega_getRenderer()->setPlaneTableLocation(SegaRenderer::kPlaneA, 0xE000);
-	_screen->sega_getRenderer()->setupPlaneAB(1024, 256);
-	_screen->sega_getRenderer()->setHScrollMode(SegaRenderer::kHScroll1PixelRows);
+	r->setPitch(128);
+	r->setPlaneTableLocation(SegaRenderer::kPlaneA, 0xE000);
+	r->setupPlaneAB(1024, 256);
+	r->setHScrollMode(SegaRenderer::kHScroll1PixelRows);
 	
-	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0);
-	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 128, 28, 1);
-	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 1, true);
+	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
+	r->fillRectWithTiles(1, 0, 0, 128, 28, 1);
+	r->fillRectWithTiles(1, 0, 0, 40, 28, 1, true);
 	_screen->sega_selectPalette(7, 3, false);
 
 	updateScrollState(scrollTable, 320);
-	_screen->sega_getRenderer()->loadToVRAM(scrollTable, 0x400, 0xD800);
+	r->loadToVRAM(scrollTable, 0x400, 0xD800);
 
 	_sres->loadContainer("CREDIT");
 	Common::SeekableReadStreamEndian *in = _sres->resStreamEndianAware(1);
-	_screen->sega_getRenderer()->loadToVRAM(in, 32, true);
+	r->loadToVRAM(in, 32, true);
 	delete in;
 
 	_screen->sega_selectPalette(50, 0, 0);
-	_screen->sega_getRenderer()->render(0);
+	r->render(0);
 
 	_allowSkip = true;
 	resetSkipFlag();
@@ -2419,14 +2424,14 @@ void EoBEngine::seq_segaOpeningCredits() {
 
 	for (int i = 0; i < 8 && !(shouldQuit() || skipFlag()); ++i) {
 		updateScrollState(scrollTable, 320);
-		_screen->sega_getRenderer()->loadToVRAM(scrollTable, 0x400, 0xD800);
+		r->loadToVRAM(scrollTable, 0x400, 0xD800);
 		_screen->sega_selectPalette(i == 3 ? 59 : 50, 0, true);
 
 		in = _sres->resStreamEndianAware(i);
-		_screen->sega_getRenderer()->loadToVRAM(in, 32, true);
+		r->loadToVRAM(in, 32, true);
 		delete in;
 
-		_screen->sega_getRenderer()->render(0);
+		r->render(0);
 		_screen->updateScreen();
 
 		_screen->sega_paletteOps(6, 0, 0);
@@ -2435,8 +2440,8 @@ void EoBEngine::seq_segaOpeningCredits() {
 		for (int ii = 9730; ii > 0 && !(shouldQuit() || skipFlag()); ii -= mod) {
 			uint32 end = _system->getMillis() + 16;
 			updateScrollState(scrollTable, ii / 30);
-			_screen->sega_getRenderer()->loadToVRAM(scrollTable, 0x400, 0xD800);
-			_screen->sega_getRenderer()->render(0);
+			r->loadToVRAM(scrollTable, 0x400, 0xD800);
+			r->render(0);
 			_screen->updateScreen();
 			mod--;
 			delayUntil(end);
@@ -2445,14 +2450,14 @@ void EoBEngine::seq_segaOpeningCredits() {
 		delay(3000);
 
 		if (i == 7)
-			_screen->sega_getRenderer()->fillRectWithTiles(1, 40, 0, 88, 28, 0, false);
+			r->fillRectWithTiles(1, 40, 0, 88, 28, 0, false);
 
 		mod = -1;
 		for (int ii = 0; ii <= 3240 && !(shouldQuit() || skipFlag()); ii += mod) {
 			uint32 end = _system->getMillis() + 16;
 			updateScrollState(scrollTable, ii / 10);
-			_screen->sega_getRenderer()->loadToVRAM(scrollTable, 0x400, 0xD800);
-			_screen->sega_getRenderer()->render(0);
+			r->loadToVRAM(scrollTable, 0x400, 0xD800);
+			r->render(0);
 			_screen->updateScreen();
 			mod++;
 			delayUntil(end);
@@ -2462,38 +2467,235 @@ void EoBEngine::seq_segaOpeningCredits() {
 	}
 
 	_screen->sega_fadeToBlack(0);
-	_screen->sega_getRenderer()->setPlaneTableLocation(SegaRenderer::kPlaneA, 0xC000);
-	_screen->sega_getRenderer()->setupPlaneAB(512, 512);
-	_screen->sega_getRenderer()->setHScrollMode(SegaRenderer::kHScrollFullScreen);
-	_screen->sega_getRenderer()->memsetVRAM(0xD800, 0, 0x400);
-	_screen->sega_getRenderer()->setPitch(64);
+	r->setPlaneTableLocation(SegaRenderer::kPlaneA, 0xC000);
+	r->setupPlaneAB(512, 512);
+	r->setHScrollMode(SegaRenderer::kHScrollFullScreen);
+	r->memsetVRAM(0xD800, 0, 0x400);
+	r->setPitch(64);
 	_screen->sega_selectPalette(0, 0);
 
 	in = _sres->resStreamEndianAware(8);
-	_screen->sega_getRenderer()->loadToVRAM(in, 32, true);
+	r->loadToVRAM(in, 32, true);
 	delete in;
 
-	_screen->sega_getRenderer()->memsetVRAM(0x8C20, 0xCC, 0x700);
+	r->memsetVRAM(0x8C20, 0xCC, 0x700);
 
 	for (int y = 0; y < 28; y += 4) {
 		for (int x = 0; x < 40; x += 4)
-			_screen->sega_getRenderer()->fillRectWithTiles(0, x, y, 8, 7, 0x461, true);
+			r->fillRectWithTiles(0, x, y, 8, 7, 0x461, true);
 	}
-	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 1, true);
-	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0);
-	_screen->sega_getRenderer()->render(0);
+	r->fillRectWithTiles(1, 0, 0, 40, 28, 1, true);
+	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
+	r->render(0);
 	_screen->sega_fadeToNeutral(3);
 
-	while (!(shouldQuit() || skipFlag())) {
+	while (!(shouldQuit() || skipFlag()))
 		delay(20);
-	}
 
 	_allowSkip = false;
 	resetSkipFlag();
 
-	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 19, 40, 9, 1);
-	_screen->sega_getRenderer()->render(0);
+	r->fillRectWithTiles(1, 0, 19, 40, 9, 1);
+	r->render(0);
 	_screen->updateScreen();
+}
+
+void EoBEngine::seq_segaFinalCredits() {
+	if (shouldQuit())
+		return;
+
+	int temp = 0;
+	const uint8 *grid = _staticres->loadRawData(kEoB1CreditsTileGrid, temp);
+	const char *const *strings = _staticres->loadStrings(kEoB1CreditsStrings2, temp);
+	SegaRenderer *r = _screen->sega_getRenderer();
+	_screen->sega_fadeToBlack(0);
+	_screen->sega_selectPalette(7, 3, true);
+	_txt->clearDim(4);
+
+	r->setupPlaneAB(512, 256);
+	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
+	r->fillRectWithTiles(1, 0, 0, 40, 32, 0);
+	r->fillRectWithTiles(1, 5, 0, 30, 32, 0x600A, true);
+	r->fillRectWithTiles(0, 0, 0, 40, 5, 0x6001);
+	r->fillRectWithTiles(0, 0, 5, 40, 1, 0x6002);
+	r->fillRectWithTiles(0, 0, 22, 40, 1, 0x6003);
+	r->fillRectWithTiles(0, 0, 23, 40, 5, 0x6001);
+	r->memsetVRAM(32, 0xCC, 32);
+	r->loadToVRAM(grid, 64, 64);
+	r->memsetVRAM(0x140, 0, 0x7800);
+	r->render(0);
+
+	delay(320);
+
+	_screen->sega_fadeToNeutral(1);
+	ScrollManager *scrMan = new ScrollManager(r);
+	scrMan->setVScrollTimers(0, 1, 0, 4730, 1, 2);
+
+	int skipLines = 0;
+	int curStr = 0;
+	int ln = 30;
+
+	_allowSkip = true;
+	resetSkipFlag();
+
+	for (bool loop = true; loop; loop = !(shouldQuit() || skipFlag())) {
+		for (int i = 0; i < 32; ++i) {
+			uint32 del = _system->getMillis() + 16;
+			scrMan->updateScrollTimers();
+			r->render(0);
+			_screen->updateScreen();
+			delayUntil(del);
+		}
+
+		_screen->sega_clearTextBuffer(0);
+
+		if (!skipLines) {
+			const char *pos = strings[curStr];
+			char c = *pos;
+			if (c == '/') {
+				if (*++pos == 'E')
+					break;
+				skipLines = (int)(*pos - '0');
+				curStr++;
+			} else {
+
+				int styles = _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
+				//int extraSpacing = 6;
+
+				if (c == '<') {
+					styles |= Font::kStyleNarrow1;
+					//extraSpacing = 4;
+					pos++;
+				}
+				if (c == ';')
+					pos++;
+
+				_screen->setFontStyles(_screen->_currentFont, styles);
+				_txt->printShadowedText(pos, 120 - (_screen->getTextWidth(pos) >> 1), 0, 0xFF, 0xCC, true);
+				curStr++;
+			}
+		} else {
+			skipLines--;
+		}
+
+		_screen->sega_loadTextBufferToVRAM(0, (ln * 30 + 10) << 5, 1920);
+
+		ln += 2;
+		if (ln == 32)
+			ln = 0;
+	}
+
+	_screen->sega_fadeToBlack(1);
+
+	_screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
+	r->setupPlaneAB(512, 512);
+	scrMan->setVScrollTimers(0, 1, 0, 0, 1, 0);
+	scrMan->updateScrollTimers();
+	delete scrMan;
+
+	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
+	r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
+	r->fillRectWithTiles(0, 14, 9, 12, 8, 0x45A0, true);
+	r->render(0);
+
+	_screen->sega_fadeToNeutral(3);
+
+	while (!(shouldQuit() || skipFlag()))
+		delay(20);
+
+	_allowSkip = false;
+	resetSkipFlag();
+
+	_screen->sega_fadeToBlack(3);
+}
+
+void EoBEngine::seq_segaShowStats() {
+	if (shouldQuit())
+		return;
+
+	SegaRenderer *r = _screen->sega_getRenderer();
+	_txt->clearDim(5);
+
+	int styles = _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
+	_screen->setFontStyles(_screen->_currentFont, styles);
+
+	_txt->printShadowedText(_finBonusStrings[2], 90, 8, 0xFF, 0x00, false);
+
+	styles |= Font::kStyleNarrow2;
+	_screen->setFontStyles(_screen->_currentFont, styles);
+
+	_txt->printShadowedText(_finBonusStrings[3], 48, 28, 0xFF, 0x00, false);
+	_txt->printShadowedText(_finBonusStrings[4], 48, 40, 0xFF, 0x00, false);
+	_txt->printShadowedText(_finBonusStrings[5], 48, 52, 0xFF, 0x00, false);
+	_txt->printShadowedText(_finBonusStrings[6], 48, 64, 0xFF, 0x00, false);
+	_txt->printShadowedText(_finBonusStrings[7], 48, 76, 0xFF, 0x00, false);
+	_txt->printShadowedText(_finBonusStrings[8], 48, 88, 0xFF, 0x00, false);
+
+	styles &= ~(Font::kStyleNarrow2);
+	_screen->setFontStyles(_screen->_currentFont, styles);
+
+	////
+	////
+	uint32 totalPlayTicks = 0;
+	uint32 totalEnemiesKilled = 0;
+	uint32 totalSteps = 0;
+	uint32 partyArrows = 0;
+	uint32 numMaps = 0;
+	/////
+	////
+
+	uint32 specialSearches = 0;
+	for (int i = 1; i <= 12; ++i) {
+		if (checkScriptFlags(1 << i))
+			++specialSearches;
+	}
+
+	_txt->printShadowedText(Common::String::format("%u:%02u:%02u", totalPlayTicks / 216000, totalPlayTicks / 3600, totalPlayTicks / 60).c_str(), 148, 28, 0xFF, 0x00, false);
+	_txt->printShadowedText(Common::String::format("%u", totalEnemiesKilled).c_str(), 148, 40, 0xFF, 0x00, false);
+	_txt->printShadowedText(Common::String::format("%u", totalSteps).c_str(), 148, 52, 0xFF, 0x00, false);
+	_txt->printShadowedText(Common::String::format("%u(%u%%)", partyArrows, partyArrows * 100 / 26).c_str(), 148, 64, 0xFF, 0x00, false);
+	_txt->printShadowedText(Common::String::format("%u(%u%%)", numMaps, numMaps * 100 / 12).c_str(), 148, 76, 0xFF, 0x00, false);
+	_txt->printShadowedText(Common::String::format("%u(%u%%)", specialSearches, specialSearches * 100 / 12).c_str(), 148, 88, 0xFF, 0x00, false);
+
+	if (checkScriptFlags(0x1FFE)) {
+		const char pwgen[] = "A15BZFQ3CDXYEKNM279GHIUSJLR84P6T";
+		const uint8 pwAdd[5] = { 0, 13, 3, 7, 0 };
+		char password[7] = "\0\0\0\0\0\0";
+
+		uint8 v = 0;
+		for (int i = 0; i < 5; i++) {
+			password[i] = pwgen[(_characters[i].hitPointsCur + pwAdd[i]) & 0x1F];
+			v = (v + (uint8)password[i]) & 0x1F;
+		}
+		password[5] = pwgen[v];
+
+		_txt->printShadowedText(_finBonusStrings[0], 30, 108, 0x22, 0x00, false);
+		_txt->printShadowedText(_finBonusStrings[1], 30, 132, 0x22, 0x00, false);
+		_txt->printShadowedText(password, 140, 156, 0xFF, 0x00, false);
+	}
+
+	_screen->sega_loadTextBufferToVRAM(0, 32, 28160);
+	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
+	r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
+	r->fillRectWithTiles(0, 0, 3, 40, 22, 0x4001, true);
+	r->render(0);
+
+	// This is a custom palette that gets loaded at the beginning of the ending sequence.
+	// Aborting that sequence too early might lead to wrong colors here...
+	_screen->sega_selectPalette(36, 2);
+	_screen->sega_fadeToNeutral(3);
+
+	resetSkipFlag();
+	_allowSkip = false;
+
+	while (!(shouldQuit() || skipFlag()))
+		delay(20);
+
+	_allowSkip = false;
+	resetSkipFlag();
+
+	_screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
+	_screen->sega_fadeToBlack(3);
 }
 
 void EoBEngine::seq_segaSetupSequence(int sequenceId) {
@@ -2501,7 +2703,6 @@ void EoBEngine::seq_segaSetupSequence(int sequenceId) {
 		return;
 	
 	_screen->sega_fadeToBlack(1);
-	//gfxM45(0);
 	for (int i = 0; i < 6; i++) {
 		_characters[i].damageTaken = 0;
 		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = 0;
@@ -2512,7 +2713,17 @@ void EoBEngine::seq_segaSetupSequence(int sequenceId) {
 	_screen->sega_getRenderer()->memsetVRAM(0xD840, 0xEE, 512);
 	_screen->sega_getAnimator()->clearSprites();
 	_screen->setScreenDim(2);
+}
 
+void EoBEngine::seq_segaRestoreAfterSequence() {
+	SegaRenderer *r = _screen->sega_getRenderer();
+	_screen->sega_fadeToBlack(1);
+	_screen->sega_getAnimator()->clearSprites();
+	_screen->sega_getAnimator()->update();
+	r->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
+	r->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
+	r->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
+	r->render(0);
 }
 
 bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool init) {
@@ -2528,7 +2739,11 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool init) {
 	_allowSkip = false;
 	resetSkipFlag();
 
-	return _seqPlayer->play(sequenceId);
+	if (!_seqPlayer->play(sequenceId))
+		return false;
+
+	seq_segaRestoreAfterSequence();
+	return true;
 }
 
 #undef updateScrollState

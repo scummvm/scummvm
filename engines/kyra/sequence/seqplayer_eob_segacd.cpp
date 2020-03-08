@@ -115,7 +115,6 @@ SegaSequencePlayer::SegaSequencePlayer(EoBEngine *vm, Screen_EoB *screen, SegaCD
 SegaSequencePlayer::~SegaSequencePlayer() {
 	delete[] _drawObjects;
 	delete[] _tileSets;
-	delete[] _scrollManager;
 	delete[] _scaleSrcBuffer;
 	delete[] _scaleOutBuffer;
 	delete[] _scaleStampMap;
@@ -123,6 +122,8 @@ SegaSequencePlayer::~SegaSequencePlayer() {
 
 	for (Common::Array<SQOpcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
 		delete (*i);
+
+	delete _scrollManager;
 }
 
 bool SegaSequencePlayer::play(int id) {
@@ -212,9 +213,13 @@ bool SegaSequencePlayer::play(int id) {
 	debugC(3, kDebugLevelSequence, "Total millis out of sync: %d", _debugResyncCnt);
 
 	if (_vm->shouldQuit() || _vm->skipFlag()) {
-		_vm->snd_stopSound();
+		if (!(_playingID == 55 || _playingID == 56))
+			_vm->snd_stopSound();
 		_screen->sega_fadeToBlack(5);
 	}
+
+	_scrollManager->setVScrollTimers(0, 1, 0, 0, 1, 0);
+	_scrollManager->setHScrollTimers(0, 1, 0, 0, 1, 0);
 
 	_vm->_allowSkip = false;
 	_vm->resetSkipFlag();
@@ -407,7 +412,7 @@ void SegaSequencePlayer::s_displayTextJp(const uint8 *pos) {
 		y = 16;
 	}
 
-	_vm->_txt->printMessageAtPos(str, x, y, -1, 0xEE);
+	_vm->_txt->printShadowedText(str, x, y, -1, 0xEE);
 }
 
 void SegaSequencePlayer::s_fadeToNeutral(const uint8 *pos) {
@@ -597,7 +602,7 @@ void SegaSequencePlayer::s_displayTextEn(const uint8 *pos) {
 
 	if (_playingID >= 55) {
 		_screen->setFontStyles(_screen->_currentFont, Font::kStyleForceTwoByte | Font::kStyleFat);
-		_vm->_txt->printMessageAtPos(str, 0, 0, -1, 0xEE);
+		_vm->_txt->printShadowedText(str, 0, 0, -1, 0xEE);
 		_screen->setFontStyles(_screen->_currentFont, Font::kStyleFat);
 	} else {
 		int x = 0;
@@ -608,9 +613,8 @@ void SegaSequencePlayer::s_displayTextEn(const uint8 *pos) {
 			y = 16;
 		}
 
-		_vm->_txt->printMessageAtPos(str, x, y, -1, 0xEE);
+		_vm->_txt->printShadowedText(str, x, y, -1, 0xEE);
 	}
-
 }
 
 void SegaSequencePlayer::s_loadCustomPalettes(const uint8 *pos) {

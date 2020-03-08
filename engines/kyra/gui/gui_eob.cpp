@@ -2021,7 +2021,7 @@ void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
 		int ty = i * (lineSpacing + _screen->getFontHeight());
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printMessageAtPos(strings[item], 4, 2 + ty, item == v ? 0x55 : 0xff, 0x11);
+			_vm->_txt->printShadowedText(strings[item], 4, 2 + ty, item == v ? 0x55 : 0xff, 0x11);
 		} else {
 			_screen->printShadedText(strings[item], x, y + ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 			if (item == v)
@@ -2080,8 +2080,8 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 
 	if (newItem != currentItem) {
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printMessageAtPos(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], 4, 2 + currentItem * lineH, 0xFF, 0x11);
-			_vm->_txt->printMessageAtPos(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], 4, 2 + newItem * lineH, 0x55, 0x11);
+			_vm->_txt->printShadowedText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], 4, 2 + currentItem * lineH, 0xFF, 0x11);
+			_vm->_txt->printShadowedText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], 4, 2 + newItem * lineH, 0x55, 0x11);
 			_screen->sega_getRenderer()->render(0);
 		} else {
 			_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0);
