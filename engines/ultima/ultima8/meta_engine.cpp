@@ -54,7 +54,7 @@ static const KeybindingRecord KEYS[] = {
 		"GameMapGump::toggleHighlightItems", "TAB" },
 	{ ACTION_TOGGLE_TOUCHING, "TOUCHING", "Show Touching Items", "GUIApp::toggleShowTouchingItems", nullptr, "h" },
 
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {
@@ -69,7 +69,7 @@ static const KeybindingRecord CHEAT_KEYS[] = {
 	{ ACTION_MOVE_LEFT, "MOVE_LEFT", "Move Left", "QuickAvatarMoverProcess::startMoveLeft", "QuickAvatarMoverProcess::stopMoveLeft", "LEFT" },
 	{ ACTION_RIGHT, "MOVE_RIGHT", "Move Right", "QuickAvatarMoverProcess::startMoveRight", "QuickAvatarMoverProcess::stopMoveRight", "RIGHT" },
 
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 #ifndef RELEASE_BUILD
@@ -81,7 +81,7 @@ static const KeybindingRecord DEBUG_KEYS[] = {
 	{ ACTION_TOGGLE_STASIS, "TOGGLE_STASIS", "Toggle Avatar In Stasis", "GUIApp::toggleAvatarInStasis", nullptr, "F10" },
 	{ ACTION_SHAPE_VIEWER, "SHAPE_VIEWER", "Show Shape Viewer", "ShapeViewerGump::U8ShapeViewer", nullptr, "F11" },
 
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 #endif
 

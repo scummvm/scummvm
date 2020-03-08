@@ -114,6 +114,9 @@ public:
 	void create(uint16 width, uint16 height, const Graphics::PixelFormat &pixelFormat) override {
 		Graphics::ManagedSurface::create(width, height, pixelFormat);
 	}
+	void create(ManagedSurface &surf, const Common::Rect &bounds) override {
+		Graphics::ManagedSurface::create(surf, bounds);
+	}
 	void create(uint16 width, uint16 height, TextureFormat textureFormat);
 
 	// Calc texture log2's
