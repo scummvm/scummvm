@@ -13,7 +13,7 @@ all: $(EXECUTABLE).dwp
 endif
 
 ifdef USE_PANDOC
-all: readme
+all: README$(PANDOCEXT) NEWS$(PANDOCEXT)
 endif
 
 ######################################################################
@@ -246,9 +246,10 @@ DISTDIR := dist
 VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
 ifdef USE_PANDOC
-# Convert README.md to plain text for any platform that might require it
-readme: README.md
-	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $(PANDOCOUTPUT) README.md
+# Convert README.md and NEWS.md to plain text for any platform that might require it
+%$(PANDOCEXT): %.md
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) --metadata pagetitle=$(basename $(notdir $@)) -s -o $@ $<
 endif
 
 # TODO git via $(GITROOT)
@@ -280,9 +281,9 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYING.OFL COPYING.ISC COPYING.LUA COPYING.MIT COPYING.TINYGL COPYRIGHT KNOWN_BUGS NEWS README.md)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYING.OFL COPYING.ISC COPYING.LUA COPYING.MIT COPYING.TINYGL COPYRIGHT KNOWN_BUGS NEWS.md README.md)
 ifdef USE_PANDOC
-DIST_FILES_DOCS+=$(PANDOCOUTPUT)
+DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT)
 endif
 
 # Themes files

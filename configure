@@ -1090,7 +1090,6 @@ Optional Libraries:
   --with-nasm-prefix=DIR   prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
-  --with-pandoc-output=FILE  filename to convert README.md to (optional)
   --with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
 
   --with-readline-prefix=DIR   prefix where readline is installed (optional)
@@ -1406,11 +1405,6 @@ for ac_option in $@; do
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_nasmpath="$arg:$arg/bin"
-		;;
-	--with-pandoc-output=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		_pandocoutput="$arg"
-		_pandoc=yes
 		;;
 	--with-pandoc-format=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2695,6 +2689,16 @@ case $_host_os in
 				_xcodetoolspath=
 				echo "Could not determine path for Xcode Tools"
 			fi
+		fi
+
+		# Use pandoc to generate README and NEWS file for the bundle
+		# Also default to  HTML rather than plain text as it gives a nicer
+		# formating, especially for the README. We could consider using RTF
+		# as well, but TextEdit does not support links within the document,
+		# and having a TOC with links, which we do with html, is quite convenient.
+		_pandoc=yes
+		if test "$_pandocformat" = "default"; then
+			_pandocformat="html"
 		fi
 		;;
 	dreamcast)
@@ -5355,27 +5359,40 @@ define_in_config_if_yes $_nasm 'USE_NASM'
 # Check for pandoc
 #
 if test "$_pandoc" = yes ; then
-  echocheck "pandoc"
+	echocheck "pandoc"
 
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
+	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
 
-  for path_dir in $_pandocpath; do
-    if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
-      PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
-      break
-    fi
-  done
+	for path_dir in $_pandocpath; do
+		if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
+			PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
+			break
+		fi
+	done
 
 	IFS="$ac_save_ifs"
 
-  if ! test "$PANDOC" ; then
-    _pandoc = no
-  fi
+	if ! test "$PANDOC" ; then
+		_pandoc=no
+	fi
 
 	echo $_pandoc
 fi
 
 define_in_config_if_yes $_pandoc 'USE_PANDOC'
+
+# Default to plain text output for pandoc
+if test -z "$_pandocformat" -o "$_pandocformat" = "default"; then
+	_pandocformat="plain"
+fi
+
+if test "$_pandocext" = "default"; then
+	if test "$_pandocformat" = plain; then
+		_pandocext=""
+	else
+		_pandocext=".$_pandocformat"
+	fi
+fi
 
 #
 # Enable vkeybd / keymapper / event recorder
@@ -5858,8 +5875,8 @@ EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
 PANDOC := $PANDOC
-PANDOCOUTPUT := $_pandocoutput
 PANDOCFORMAT := $_pandocformat
+PANDOCEXT := $_pandocext
 ZLIB_LIBS := $ZLIB_LIBS
 ZLIB_CFLAGS := $ZLIB_CFLAGS
 

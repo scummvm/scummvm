@@ -22,9 +22,14 @@ win32dist: all
 	cp $(srcdir)/COPYING.MIT $(WIN32PATH)/COPYING.MIT.txt
 	cp $(srcdir)/COPYING.TINYGL $(WIN32PATH)/COPYING.TINYGL.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
-	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
+ifdef USE_PANDOC
+	cp NEWS$(PANDOCEXT) $(WIN32PATH)/NEWS.txt
+	cp README$(PANDOCEXT) $(WIN32PATH)/README.txt
+else
+	cp $(srcdir)/NEWS.md $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/README.md $(WIN32PATH)/README.txt
+endif
 	cp $(WIN32SDLDOCPATH)/README-SDL.txt $(WIN32PATH)/README-SDL.txt
 	cp $(WIN32SDLPATH)/SDL2.dll $(WIN32PATH)
 	cp $(srcdir)/dists/win32/ResidualVM.iss $(WIN32PATH)
