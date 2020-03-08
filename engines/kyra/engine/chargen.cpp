@@ -43,11 +43,11 @@ public:
 	CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen);
 	~CharacterGenerator();
 
-	bool start(EoBCharacter *characters, uint8 ***faceShapes, bool defaultParty);
+	bool start(EoBCharacter *characters, const uint8 ***faceShapes, bool defaultParty);
 
 private:
 	void init(bool defaultParty);
-	bool createCustomParty(uint8 ***faceShapes);
+	bool createCustomParty(const uint8 ***faceShapes);
 	void createDefaultParty();
 	void initButtonsFromList(int first, int numButtons);
 	void initButton(int index, int x, int y, int w, int h, int keyCode);
@@ -121,7 +121,7 @@ private:
 	static const int16 _raceModifiers[];
 
 	EoBCharacter *_characters;
-	uint8 **_faceShapes;
+	const uint8 **_faceShapes;
 
 	EoBCoreEngine *_vm;
 	Screen_EoB *_screen;
@@ -184,7 +184,7 @@ CharacterGenerator::~CharacterGenerator() {
 	_screen->clearPage(2);
 }
 
-bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes, bool defaultParty) {
+bool CharacterGenerator::start(EoBCharacter *characters, const uint8 ***faceShapes, bool defaultParty) {
 	if (!characters || !faceShapes) {
 		warning("CharacterGenerator::start: Called without character data");
 		return true;
@@ -222,10 +222,10 @@ void CharacterGenerator::init(bool defaultParty) {
 		delete[] _faceShapes;
 	}
 
-	_faceShapes = new uint8 *[44];
+	_faceShapes = new const uint8 *[44];
 	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
 		uint8 *in = _vm->resource()->fileData("FACE", 0);
-		_screen->sega_encodeSpriteShapes((const uint8**)_faceShapes, in, 44, 32, 32, 3);
+		_screen->sega_encodeSpriteShapes(_faceShapes, in, 44, 32, 32, 3);
 		delete[] in;
 	} else {
 		_screen->loadShapeSetBitmap("CHARGENA", 5, 3);
@@ -271,7 +271,7 @@ void CharacterGenerator::init(bool defaultParty) {
 	_screen->updateScreen();
 }
 
-bool CharacterGenerator::createCustomParty(uint8 ***faceShapes) {
+bool CharacterGenerator::createCustomParty(const uint8 ***faceShapes) {
 	_screen->setScreenDim(2);
 
 	checkForCompleteParty();

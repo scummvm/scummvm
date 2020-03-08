@@ -107,7 +107,7 @@ struct EoBCharacter {
 	uint8 food;
 	uint8 level[3];
 	uint32 experience[3];
-	uint8 *faceShape;
+	const uint8 *faceShape;
 
 	int8 mageSpells[80];
 	int8 clericSpells[80];
@@ -331,7 +331,7 @@ protected:
 	bool startCharacterGeneration(bool defaultParty);
 	bool startPartyTransfer();
 
-	uint8 **_faceShapes;
+	const uint8 **_faceShapes;
 
 	static const int8 _characterClassType[];
 	static const uint8 _hpIncrPerLevel[];
