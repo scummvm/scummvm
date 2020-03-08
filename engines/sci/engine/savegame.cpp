@@ -736,7 +736,7 @@ void SoundCommandParser::reconstructPlayList() {
 			if (_soundVersion >= SCI_VERSION_1_EARLY)
 				writeSelectorValue(_segMan, entry->soundObj, SELECTOR(vol), entry->volume);
 
-			processPlaySound(entry->soundObj, entry->playBed);
+			processPlaySound(entry->soundObj, entry->playBed, true);
 		}
 	}
 }
