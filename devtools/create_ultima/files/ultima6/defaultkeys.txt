@@ -1,0 +1,165 @@
+right	walk_east
+left	walk_west
+up	walk_north
+down	walk_south
+KP7	walk_north_west
+KP8	walk_north
+KP9	walk_north_east
+KP4	walk_west
+KP6	walk_east
+KP1	walk_south_west
+KP2	walk_south
+KP3	walk_south_east
+
+Esc	game_menu_dialog
+SPACE	cancel_action
+ENTER	do_action
+KP_ENTER	do_action
+Alt-ENTER	toggle_fullscreen
+
+q	quit
+Ctrl-q	quit
+Alt-q	quit_no_dialog
+Alt-x	quit
+s	save_menu
+Ctrl-l	load_latest_save
+Ctrl-r	load_latest_save
+
+;	multi_use
+,	new_command_bar
+.	toggle_original_style_command_bar
+`	toggle_combat_strategy
+tab	toggle_cursor
+l	look
+t	talk
+u	use
+g	get
+m	move
+d	drop
+b	toggle_combat
+a	attack
+i	doll_gump #cycle doll gump
+h	show_keys
+z	close_gumps
+
+Ctrl-c	toggle_cheats
+Alt-Ctrl-g	toggle_god_mode
+Alt-h	toggle_hackmove
+Alt-Ctrl-h	heal_party
+e	show_eggs
+Alt-E	toggle_ethereal
+Alt-Ctrl-e	toggle_egg_spawn
+Alt-i	toggle_no_darkness
+Alt-Ctrl-p	toggle_pickpocket_mode
+Ctrl-t	teleport_to_cursor
+x	toggle_x_ray
+
+Ctrl-a	toggle_audio
+Ctrl-m	toggle_music
+Ctrl-s	toggle_sfx
+
+Alt-a	select_command_bar	0	# select attack on the command bar
+Alt-t	select_command_bar	2	# select talk on the command bar
+Alt-l	select_command_bar	3	# select look on the command bar
+Alt-g	select_command_bar	4	# select get on the command bar
+Alt-d	select_command_bar	5	# select drop on the command bar
+Alt-m	select_command_bar	6	# select move on the command bar
+Alt-u	select_command_bar	7	# select use on the command bar
+Alt-b	select_command_bar	9	# select toggle combat on the command bar
+pageup	msg_scroll_up
+pagedown	msg_scroll_down
+
+1	solo_mode	1	# solo mode as Avatar
+2	solo_mode	2	# solo mode as character 2
+3	solo_mode	3	# solo mode as character 3
+4	solo_mode	4	# solo mode as character 4
+5	solo_mode	5	# solo mode as character 5
+6	solo_mode	6	# solo mode as character 6
+7	solo_mode	7	# solo mode as character 7
+8	solo_mode	8	# solo mode as character 8
+9	solo_mode	9	# solo mode as character 9
+0	party_mode
+F10	party_view
+KP/	party_view
+/	party_view
+
+Alt-F1	doll_gump	1	# Show doll_gump for Avatar
+Alt-F2	doll_gump	2	# Show doll gump for character 2
+Alt-F3	doll_gump	3	# Show doll gump for character 3
+Alt-F4	doll_gump	4	# Show doll gump for character 4
+Alt-F5	doll_gump	5	# Show doll gump for character 5
+Alt-F6	doll_gump	6	# Show doll gump for character 6
+Alt-F7	doll_gump	7	# Show doll gump for character 7
+Alt-F8	doll_gump	8	# Show doll gump for character 8
+Alt-F9	doll_gump	9	# Show doll gump for character 9
+
+F1	inventory	1	# Show inventory for Avatar
+F2	inventory	2	# Show inventory for character 2
+F3	inventory	3	# Show inventory for character 3
+F4	inventory	4	# Show inventory for character 4
+F5	inventory	5	# Show inventory for character 5
+F6	inventory	6	# Show inventory for character 6
+F7	inventory	7	# Show inventory for character 7
+F8	inventory	8	# Show inventory for character 8
+F9	inventory	9	# Show inventory for character 9
+ctrl-1	show_stats	1	# Show stats for Avatar
+ctrl-2	show_stats	2	# Show stats for character 2
+ctrl-3	show_stats	3	# Show stats for character 3
+ctrl-4	show_stats	4	# Show stats for character 4
+ctrl-5	show_stats	5	# Show stats for character 5
+ctrl-6	show_stats	6	# Show stats for character 6
+ctrl-7	show_stats	7	# Show stats for character 7
+ctrl-8	show_stats	8	# Show stats for character 8
+ctrl-9	show_stats	9	# Show stats for character 9
+
+shift-=	next_party_member
+=	next_party_member
+KP+	next_party_member
+-	previous_party_member
+KP-	previous_party_member
+home	home_key
+end	end_key
+KP*	toggle_view	# Toggle between inventory and actor view
+shift-8	toggle_view	# Toggle between inventory and actor view
+
+Ctrl-f	toggle_fps_display
+
+Ctrl-d	decrease_debug
+Ctrl-i	increase_debug
+
+joy_up		walk_north
+joy_down	walk_south
+joy_left	walk_west
+joy_right	walk_east
+joy_rightup		walk_north_east
+joy_rightdown	walk_south_east
+joy_leftup		walk_north_west
+joy_leftdown	walk_south_west
+joy_up2		msg_scroll_up
+joy_down2	msg_scroll_down
+joy_left2	previous_party_member
+joy_right2	next_party_member
+joy_rightup2	do_nothing
+joy_rightdown2	do_nothing
+joy_leftup2		do_nothing
+joy_leftdown2	do_nothing
+joy_hat_up	walk_north
+joy_hat_down	walk_south
+joy_hat_left	walk_west
+joy_hat_right	walk_east
+joy_hat_rightup	walk_north_east
+joy_hat_rightdown	walk_south_east
+joy_hat_leftup		walk_north_west
+joy_hat_leftdown	walk_south_west
+joy0	toggle_cursor
+joy1	cancel_action
+joy2	do_action
+joy3	multi_use
+joy4	solo_mode 0
+joy5	toggle_combat
+joy6	get
+joy7	drop
+joy8	game_menu_dialog
+joy9	new_command_bar
+joy10	move
+joy11	look
