@@ -78,10 +78,8 @@ SegaSequencePlayer::SegaSequencePlayer(EoBEngine *vm, Screen_EoB *screen, SegaCD
 	SQOPC(s_playSoundEffect);
 #undef SQOPC
 
-	_vScrollTimers = new ScrollTimer[2];
-	assert(_vScrollTimers);
-	_hScrollTimers = new ScrollTimer[2];
-	assert(_hScrollTimers);
+	_scrollManager = new ScrollManager(_renderer);
+	assert(_scrollManager);
 	_tileSets = new TileSet[100];
 	assert(_tileSets);
 	memset(_tileSets, 0, 100 * sizeof(TileSet));
@@ -117,8 +115,7 @@ SegaSequencePlayer::SegaSequencePlayer(EoBEngine *vm, Screen_EoB *screen, SegaCD
 SegaSequencePlayer::~SegaSequencePlayer() {
 	delete[] _drawObjects;
 	delete[] _tileSets;
-	delete[] _vScrollTimers;
-	delete[] _hScrollTimers;
+	delete[] _scrollManager;
 	delete[] _scaleSrcBuffer;
 	delete[] _scaleOutBuffer;
 	delete[] _scaleStampMap;
@@ -131,8 +128,8 @@ SegaSequencePlayer::~SegaSequencePlayer() {
 bool SegaSequencePlayer::play(int id) {
 	_screen->sega_fadeToBlack(2);
 	_animator->clearSprites();
-	setVScrollTimers(0, 1, 0, 0, 1, 0);
-	setHScrollTimers(0, 1, 0, 0, 1, 0);
+	_scrollManager->setVScrollTimers(0, 1, 0, 0, 1, 0);
+	_scrollManager->setHScrollTimers(0, 1, 0, 0, 1, 0);
 	_vm->_txt->clearDim(2);
 
 	_renderer->fillRectWithTiles(2, 0, 0, 40, 28, 0xE6C2);
@@ -266,7 +263,7 @@ void SegaSequencePlayer::run(const uint8 *data) {
 		if (_playSpeechAnimation)
 			updateSpeechAnimations();
 
-		updateScrollTimers();
+		_scrollManager->updateScrollTimers();
 		_animator->update();
 		_renderer->render(0);
 		_screen->sega_updatePaletteFaders(-1);
@@ -275,7 +272,7 @@ void SegaSequencePlayer::run(const uint8 *data) {
 		uint32 now = _vm->_system->getMillis();
 		int diff = now - (frameStart + 16);
 		if (diff < 0)
-			_vm->delay(frameStart + 16 - now);
+			_vm->delay((uint32)-diff);
 		else if (diff) {
 			frameCounter += diff;
 			// This will be triggered with higher values whenever there is a palette fading and the code waits for it
@@ -294,44 +291,6 @@ void SegaSequencePlayer::run(const uint8 *data) {
 				return true;
 		}*/
 	}
-}
-
-void SegaSequencePlayer::setVScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB) {
-	_vScrollTimers[0]._offsDest = destA;
-	_vScrollTimers[0]._incr = incrA;
-	_vScrollTimers[0]._timer = _vScrollTimers[0]._delay = delayA;
-	_vScrollTimers[1]._offsDest = destB;
-	_vScrollTimers[1]._incr = incrB;
-	_vScrollTimers[1]._timer = _vScrollTimers[1]._delay = delayB;
-}
-
-void SegaSequencePlayer::setHScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB) {
-	_hScrollTimers[0]._offsDest = destA;
-	_hScrollTimers[0]._incr = incrA;
-	_hScrollTimers[0]._timer = _hScrollTimers[0]._delay = delayA;
-	_hScrollTimers[1]._offsDest = destB;
-	_hScrollTimers[1]._incr = incrB;
-	_hScrollTimers[1]._timer = _hScrollTimers[1]._delay = delayB;
-}
-
-void SegaSequencePlayer::updateScrollTimers() {
-	for (int i = 0; i < 4; ++i) {
-		ScrollTimer &t = i < 2 ? _vScrollTimers[i] : _hScrollTimers[i - 2];
-		if (t._delay == 0 && t._offsCur != t._offsDest)
-			t._offsCur = t._offsDest;
-		if (t._offsCur == t._offsDest)
-			continue;
-		if (--t._timer)
-			continue;
-
-		t._offsCur += t._incr;
-		t._timer = t._delay;
-	}
-
-	_renderer->writeVSRAMValue(0, _vScrollTimers[0]._offsCur);
-	_renderer->writeVSRAMValue(2, _vScrollTimers[1]._offsCur);
-	uint16 hscr[2] = { (uint16)_hScrollTimers[0]._offsCur, (uint16)_hScrollTimers[1]._offsCur };
-	_renderer->loadToVRAM(hscr, 4, 0xD800);
 }
 
 void SegaSequencePlayer::animateWaterdeepScene() {
@@ -472,11 +431,11 @@ void SegaSequencePlayer::s_setPalette(const uint8 *pos) {
 }
 
 void SegaSequencePlayer::s_vScroll(const uint8 *pos) {
-	setVScrollTimers(ARG(0), S_ARG(2), ARG(4), ARG(6), S_ARG(8), ARG(10));
+	_scrollManager->setVScrollTimers(ARG(0), S_ARG(2), ARG(4), ARG(6), S_ARG(8), ARG(10));
 }
 
 void SegaSequencePlayer::s_hScroll(const uint8 *pos) {
-	setHScrollTimers(ARG(0), S_ARG(2), ARG(4), ARG(6), S_ARG(8), ARG(10));
+	_scrollManager->setHScrollTimers(ARG(0), S_ARG(2), ARG(4), ARG(6), S_ARG(8), ARG(10));
 }
 
 void SegaSequencePlayer::s_paletteOps(const uint8 *pos) {

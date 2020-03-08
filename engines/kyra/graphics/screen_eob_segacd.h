@@ -182,6 +182,30 @@ private:
 	bool _needUpdate;
 };
 
+class ScrollManager {
+public:
+	ScrollManager(SegaRenderer *renderer);
+	~ScrollManager();
+
+	void setVScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB);
+	void setHScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB);
+	void updateScrollTimers();
+
+private:
+	struct ScrollTimer {
+		ScrollTimer() : _offsCur(0), _offsDest(0), _incr(0), _delay(0), _timer(0) {}
+		int16 _offsCur;
+		int16 _offsDest;
+		int16 _incr;
+		int16 _delay;
+		int16 _timer;
+	};
+
+	ScrollTimer *_vScrollTimers;
+	ScrollTimer *_hScrollTimers;
+	SegaRenderer *_renderer;
+};
+
 } // End of namespace Kyra
 
 #endif // ENABLE_EOB

@@ -47,7 +47,7 @@ public:
 	Common::SeekableReadStreamEndian *resStreamEndianAware(int resID);
 	Common::SeekableReadStream *resStream(int resID);
 
-	uint8 *resData(int resID, uint32 *resLen);
+	uint8 *resData(int resID, uint32 *resLen = 0);
 
 private:
 	Resource *_res;
@@ -61,6 +61,9 @@ private:
 	TableEntry *_resTable;
 	int _numResources;
 	Common::SeekableReadStreamEndian *_str;
+	Common::String _curFile;
+	uint32 _curOffset;
+	uint32 _curSize;
 };
 
 } // End of namespace Kyra

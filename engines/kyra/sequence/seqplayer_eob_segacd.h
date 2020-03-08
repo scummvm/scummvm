@@ -45,9 +45,7 @@ public:
 
 private:
 	void run(const uint8 *data);
-	void setVScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB);
-	void setHScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB);
-	void updateScrollTimers();
+
 	void animateWaterdeepScene();
 	void updateSpeechAnimations();
 	void updateSpeechAnimGraphics(int animDrawOp);
@@ -59,18 +57,6 @@ private:
 	};
 
 	TileSet *_tileSets;
-
-	struct ScrollTimer {
-		ScrollTimer() : _offsCur(0), _offsDest(0), _incr(0), _delay(0), _timer(0) {}
-		int16 _offsCur;
-		int16 _offsDest;
-		int16 _incr;
-		int16 _delay;
-		int16 _timer;
-	};
-
-	ScrollTimer *_vScrollTimers;
-	ScrollTimer *_hScrollTimers;
 
 	struct DrawObject {
 		uint16 agg;
@@ -108,6 +94,7 @@ private:
 	SegaRenderer *_renderer;
 	SegaAnimator *_animator;
 	SegaCDResource *_res;
+	ScrollManager *_scrollManager;
 
 private:
 	class SQOpcode : public Common::Functor1Mem<const uint8*, void, SegaSequencePlayer> {

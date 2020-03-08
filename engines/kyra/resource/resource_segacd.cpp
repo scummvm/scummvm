@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-SegaCDResource::SegaCDResource(Resource *res) : _res(res), _str(0), _resTable(0), _numResources(0) {
+SegaCDResource::SegaCDResource(Resource *res) : _res(res), _str(0), _resTable(0), _numResources(0), _curOffset(0), _curSize(0) {
 }
 
 SegaCDResource::~SegaCDResource() {
@@ -37,6 +37,9 @@ SegaCDResource::~SegaCDResource() {
 }
 
 bool SegaCDResource::loadContainer(const Common::String &filename, uint32 offset, uint32 size) {
+	if (_curFile.equals(filename) && _curOffset == offset && _curSize == size)
+		return true;
+
 	unloadContainer();
 
 	_str = _res->createEndianAwareReadStream(filename);
@@ -76,6 +79,10 @@ bool SegaCDResource::loadContainer(const Common::String &filename, uint32 offset
 		}
 		_resTable[i]._len = next - _resTable[i]._offset;
 	}
+
+	_curFile = filename;
+	_curOffset = offset;
+	_curSize = size;
 
 	return true;
 }

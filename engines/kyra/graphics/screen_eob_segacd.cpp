@@ -1182,6 +1182,56 @@ const uint8 *SegaCDFont::getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHei
 
 #undef mRenderLineFragment
 
+ScrollManager::ScrollManager(SegaRenderer *renderer) :_renderer(renderer) {
+	_vScrollTimers = new ScrollTimer[2];
+	assert(_vScrollTimers);
+	_hScrollTimers = new ScrollTimer[2];
+	assert(_hScrollTimers);
+}
+
+ScrollManager::~ScrollManager() {
+	delete[] _vScrollTimers;
+	delete[] _hScrollTimers;
+}
+
+void ScrollManager::setVScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB) {
+	_vScrollTimers[0]._offsDest = destA;
+	_vScrollTimers[0]._incr = incrA;
+	_vScrollTimers[0]._timer = _vScrollTimers[0]._delay = delayA;
+	_vScrollTimers[1]._offsDest = destB;
+	_vScrollTimers[1]._incr = incrB;
+	_vScrollTimers[1]._timer = _vScrollTimers[1]._delay = delayB;
+}
+
+void ScrollManager::setHScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB) {
+	_hScrollTimers[0]._offsDest = destA;
+	_hScrollTimers[0]._incr = incrA;
+	_hScrollTimers[0]._timer = _hScrollTimers[0]._delay = delayA;
+	_hScrollTimers[1]._offsDest = destB;
+	_hScrollTimers[1]._incr = incrB;
+	_hScrollTimers[1]._timer = _hScrollTimers[1]._delay = delayB;
+}
+
+void ScrollManager::updateScrollTimers() {
+	for (int i = 0; i < 4; ++i) {
+		ScrollTimer &t = i < 2 ? _vScrollTimers[i] : _hScrollTimers[i - 2];
+		if (t._delay == 0 && t._offsCur != t._offsDest)
+			t._offsCur = t._offsDest;
+		if (t._offsCur == t._offsDest)
+			continue;
+		if (--t._timer)
+			continue;
+
+		t._offsCur += t._incr;
+		t._timer = t._delay;
+	}
+
+	_renderer->writeVSRAMValue(0, _vScrollTimers[0]._offsCur);
+	_renderer->writeVSRAMValue(2, _vScrollTimers[1]._offsCur);
+	uint16 hscr[2] = { (uint16)_hScrollTimers[0]._offsCur, (uint16)_hScrollTimers[1]._offsCur };
+	_renderer->loadToVRAM(hscr, 4, 0xD800);
+}
+
 } // End of namespace Kyra
 
 #endif // ENABLE_EOB
