@@ -274,7 +274,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 			int xRel = _hiresDX / MULTIPLIER;
 			int yRel = _hiresDY / MULTIPLIER;
 			x = _mouseX + xRel;
-			y = _mousey + yRel;
+			y = _mouseY + yRel;
 			_hiresDX %= MULTIPLIER;
 			_hiresDY %= MULTIPLIER;
 		}
@@ -314,7 +314,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 					// starting drag, so push mouse down at current location (back) 
 					// or location of "oldest" finger (front)
 					int mouseDownX = _mouseX;
-					int mouseDownY = _mousey;
+					int mouseDownY = _mouseY;
 					if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 						for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 							if (_finger[port][i].id == id) {
@@ -417,7 +417,7 @@ void PSP2EventSource::finishSimulatedMouseClicks() {
 					ev.type = SDL_MOUSEBUTTONUP;
 					ev.button.button = simulatedButton;
 					ev.button.x = _mouseX;
-					ev.button.y = _mousey;
+					ev.button.y = _mouseY;
 					SDL_PushEvent(&ev);
 
 					_simulatedClickStartTime[port][i] = 0;
