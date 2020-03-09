@@ -52,7 +52,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-ObjectManager *ObjectManager::_objectManager = 0;
+ObjectManager *ObjectManager::_objectManager = nullptr;
 
 
 // a template class  to prevent having to write a load function for
@@ -64,7 +64,7 @@ struct ObjectLoader {
 		bool ok = p->loadData(ids, version);
 		if (!ok) {
 			delete p;
-			p = 0;
+			p = nullptr;
 		}
 		return p;
 	}
@@ -88,7 +88,7 @@ ObjectManager::~ObjectManager() {
 	reset();
 	debugN(MM_INFO, "Destroying ObjectManager...\n");
 
-	_objectManager = 0;
+	_objectManager = nullptr;
 
 	delete _objIDs;
 	delete _actorIDs;
@@ -128,11 +128,11 @@ void ObjectManager::objectStats() {
 
 	//!constants
 	for (i = 1; i < 256; i++) {
-		if (_objects[i] != 0)
+		if (_objects[i] != nullptr)
 			npccount++;
 	}
 	for (i = 256; i < _objects.size(); i++) {
-		if (_objects[i] != 0)
+		if (_objects[i] != nullptr)
 			objcount++;
 	}
 
@@ -199,7 +199,7 @@ void ObjectManager::clearObjId(ObjId objid) {
 	else
 		_actorIDs->clearID(objid);
 
-	_objects[objid] = 0;
+	_objects[objid] = nullptr;
 }
 
 Object *ObjectManager::getObject(ObjId objid) const {
@@ -309,14 +309,14 @@ Object *ObjectManager::loadObject(IDataSource *ids, Std::string classname,
 
 	if (iter == _objectLoaders.end()) {
 		perr << "Unknown Object class: " << classname << Std::endl;
-		return 0;
+		return nullptr;
 	}
 
 	Object *obj = (*(iter->_value))(ids, version);
 
 	if (!obj) {
 		perr << "Error loading object of type " << classname << Std::endl;
-		return 0;
+		return nullptr;
 	}
 	uint16 objid = obj->getObjId();
 
@@ -330,7 +330,7 @@ Object *ObjectManager::loadObject(IDataSource *ids, Std::string classname,
 		if (!used) {
 			perr << "Error: object ID " << objid
 			     << " used but marked available. " << Std::endl;
-			return 0;
+			return nullptr;
 		}
 	}
 

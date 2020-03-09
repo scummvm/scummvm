@@ -67,7 +67,7 @@ static Item *getItemForFamily(uint32 family) {
 		return new TeleportEgg();
 	}
 
-	return 0;
+	return nullptr;
 }
 
 Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
@@ -76,8 +76,8 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 	// check what class to create
 	ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 	                  getShapeInfo(shape);
-	if (info == 0)
-		return 0;
+	if (info == nullptr)
+		return nullptr;
 
 	// New item, no lerping
 	extendedflags |= Item::EXT_LERP_NOPREV;
@@ -115,7 +115,7 @@ Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
 	/*
 	    // This makes it rather hard to create new NPCs...
 	    if (npcnum == 0) // or do monsters have npcnum 0? we'll see...
-	        return 0;
+	        return nullptr;
 	*/
 	// New actor, no lerping
 	extendedflags |= Item::EXT_LERP_NOPREV;

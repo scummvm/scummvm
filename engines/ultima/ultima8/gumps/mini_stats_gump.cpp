@@ -117,7 +117,7 @@ Gump *MiniStatsGump::OnMouseDown(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT)
 		return this;
 
-	return 0;
+	return nullptr;
 }
 
 void MiniStatsGump::OnMouseDouble(int button, int32 mx, int32 my) {

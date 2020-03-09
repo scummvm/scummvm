@@ -115,16 +115,32 @@ namespace Ultima8 {
 
 using Std::string;
 
+// a bit of a hack to prevent having to write a load function for
+// every process
+template<class T>
+struct ProcessLoader {
+	static Process *load(IDataSource *ids, uint32 version) {
+		T *p = new T();
+		bool ok = p->loadData(ids, version);
+		if (!ok) {
+			delete p;
+			p = nullptr;
+		}
+		return p;
+	}
+};
+
 DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(0),
-		_kernel(0), _objectManager(0), _mouse(0), _ucMachine(0), _screen(0),
-		_fontManager(0), _paletteManager(0), _gameData(0), _world(0), _desktopGump(0),
-		_gameMapGump(0), _avatarMoverProcess(0), _frameSkip(false), _frameLimit(true),
-		_interpolate(true), _animationRate(100), _avatarInStasis(false), _paintEditorItems(false),
-		_inversion(0), _painting(false), _showTouching(false), _timeOffset(0), _hasCheated(false),
-		_cheatsEnabled(false), _ttfOverrides(false), _audioMixer(0) {
+		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(nullptr),
+		_kernel(nullptr), _objectManager(nullptr), _mouse(nullptr), _ucMachine(nullptr),
+		_screen(nullptr), _fontManager(nullptr), _paletteManager(nullptr), _gameData(nullptr),
+		_world(nullptr), _desktopGump(nullptr), _gameMapGump(nullptr), _avatarMoverProcess(nullptr),
+		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
+		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
+		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
+		_ttfOverrides(false), _audioMixer(0) {
 	_application = this;
 
 	for (uint16 key = 0; key < HID_LAST; ++key) {
@@ -364,10 +380,10 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 		_audioMixer->reset();
 	}
 
-	_desktopGump = 0;
-	_gameMapGump = 0;
-	_scalerGump = 0;
-	_inverterGump = 0;
+	_desktopGump = nullptr;
+	_gameMapGump = nullptr;
+	_scalerGump = nullptr;
+	_inverterGump = nullptr;
 
 	_timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
 	_saveCount = 0;
@@ -586,7 +602,7 @@ void Ultima8Engine::GraphicSysInit() {
 
 		delete _screen;
 	}
-	_screen = 0;
+	_screen = nullptr;
 
 	// Set Screen Resolution
 	debugN(MM_INFO, "Setting Video Mode %dx%dx%d...\n", width, height, bpp);
@@ -780,7 +796,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	}
 
 	// Text mode input. A few hacks here
-	Gump *gump = 0;
+	Gump *gump = nullptr;
 
 	if (!_textModes.empty()) {
 		while (!_textModes.empty()) {
@@ -1075,10 +1091,10 @@ void Ultima8Engine::resetEngine() {
 	_paletteManager->resetTransforms();
 
 	// Reset thet gumps
-	_desktopGump = 0;
-	_gameMapGump = 0;
-	_scalerGump = 0;
-	_inverterGump = 0;
+	_desktopGump = nullptr;
+	_gameMapGump = nullptr;
+	_scalerGump = nullptr;
+	_inverterGump = nullptr;
 
 	_textModes.clear();
 

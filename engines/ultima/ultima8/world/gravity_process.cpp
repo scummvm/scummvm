@@ -43,12 +43,10 @@ GravityProcess::GravityProcess()
 }
 
 GravityProcess::GravityProcess(Item *item, int gravity)
-	: _xSpeed(0), _ySpeed(0), _zSpeed(0) {
+	: _xSpeed(0), _ySpeed(0), _zSpeed(0), _gravity(gravity) {
 	assert(item);
 
-	_gravity = gravity;
 	_itemNum = item->getObjId();
-
 	_type = 0x203; // CONSTANT!
 }
 

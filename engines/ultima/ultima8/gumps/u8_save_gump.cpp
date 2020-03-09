@@ -328,7 +328,8 @@ Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 		// can't _save if game over
 		// FIXME: this check should probably be in Game or GUIApp
 		MainActor *av = getMainActor();
-		if (!av || (av->getActorFlags() & Actor::ACT_DEAD)) return 0;
+		if (!av || (av->getActorFlags() & Actor::ACT_DEAD))
+			return nullptr;
 	}
 
 	PagedGump *gump = new PagedGump(34, -38, 3, 35);

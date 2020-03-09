@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-PaletteManager *PaletteManager::_paletteManager = 0;
+PaletteManager *PaletteManager::_paletteManager = nullptr;
 
 PaletteManager::PaletteManager(RenderSurface *rs)
 	: _renderSurface(rs) {
@@ -42,7 +42,7 @@ PaletteManager::PaletteManager(RenderSurface *rs)
 PaletteManager::~PaletteManager() {
 	reset();
 	debugN(MM_INFO, "Destroying PaletteManager...\n");
-	_paletteManager = 0;
+	_paletteManager = nullptr;
 }
 
 // Reset the Palette Manager
@@ -131,7 +131,7 @@ void PaletteManager::duplicate(PalIndex src, PalIndex dest) {
 
 Palette *PaletteManager::getPalette(PalIndex index) {
 	if (static_cast<unsigned int>(index) >= _palettes.size())
-		return 0;
+		return nullptr;
 
 	return _palettes[index];
 }

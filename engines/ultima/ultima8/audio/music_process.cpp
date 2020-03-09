@@ -35,9 +35,9 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(MusicProcess, Process)
 
-MusicProcess *MusicProcess::_theMusicProcess = 0;
+MusicProcess *MusicProcess::_theMusicProcess = nullptr;
 
-MusicProcess::MusicProcess() : _midiPlayer(0), _state(PLAYBACK_NORMAL),
+MusicProcess::MusicProcess() : _midiPlayer(nullptr), _state(PLAYBACK_NORMAL),
 		_currentTrack(0), _combatMusicActive(false) {
 	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 }
@@ -53,7 +53,7 @@ MusicProcess::MusicProcess(MidiPlayer *player) : _midiPlayer(player),
 
 MusicProcess::~MusicProcess() {
 	_midiPlayer->stop();
-	_theMusicProcess = 0;
+	_theMusicProcess = nullptr;
 }
 
 void MusicProcess::playMusic(int track) {

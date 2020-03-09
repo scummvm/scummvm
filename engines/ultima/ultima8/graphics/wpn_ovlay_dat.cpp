@@ -44,15 +44,18 @@ WpnOvlayDat::~WpnOvlayDat() {
 }
 
 const AnimWeaponOverlay *WpnOvlayDat::getAnimOverlay(uint32 action) const {
-	if (action >= _overlay.size()) return 0;
+	if (action >= _overlay.size())
+		return nullptr;
 	return _overlay[action];
 }
 
 const WeaponOverlayFrame *WpnOvlayDat::getOverlayFrame(uint32 action, int type,
         int direction,
         int frame) const {
-	if (action >= _overlay.size()) return 0;
-	if (!_overlay[action]) return 0;
+	if (action >= _overlay.size())
+		return nullptr;
+	if (!_overlay[action])
+		return nullptr;
 	return _overlay[action]->getFrame(type, direction, frame);
 }
 
@@ -67,7 +70,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 
 	for (unsigned int action = 0; action < _overlay.size(); action++) {
 		IDataSource *ds = overlaydat->get_datasource(action);
-		_overlay[action] = 0;
+		_overlay[action] = nullptr;
 
 		if (ds && ds->getSize()) {
 			// get Avatar's animation

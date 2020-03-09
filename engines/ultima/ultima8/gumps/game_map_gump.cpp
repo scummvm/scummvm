@@ -296,7 +296,7 @@ Gump *GameMapGump::OnMouseDown(int button, int32 mx, int32 my) {
 		return this;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void GameMapGump::OnMouseUp(int button, int32 mx, int32 my) {

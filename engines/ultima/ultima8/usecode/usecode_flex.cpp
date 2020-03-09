@@ -44,7 +44,7 @@ const char *UsecodeFlex::get_class_name(uint32 classid) {
 		const uint8 *name_object = get_object_nodel(1);
 		return reinterpret_cast<const char *>(name_object + 4 + (13 * classid));
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 

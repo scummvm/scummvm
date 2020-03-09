@@ -33,7 +33,7 @@ namespace Ultima8 {
 
 #define PALETTEFADER_COUNTER    30
 
-PaletteFaderProcess *PaletteFaderProcess::_fader = 0;
+PaletteFaderProcess *PaletteFaderProcess::_fader = nullptr;
 
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(PaletteFaderProcess, Process)
@@ -82,7 +82,7 @@ PaletteFaderProcess::PaletteFaderProcess(int16 from[12], int16 to[12],
 
 PaletteFaderProcess::~PaletteFaderProcess(void) {
 	if (_fader == this)
-		_fader = 0;
+		_fader = nullptr;
 }
 
 void PaletteFaderProcess::run() {

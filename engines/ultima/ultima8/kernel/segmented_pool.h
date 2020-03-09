@@ -39,7 +39,7 @@ struct SegmentedPoolNode;
  * A pool with memory broken into even length segments.
  * SegmentedPool only allocate memory one segment at a time.
  * If the requested memory is larger than a segment, allocation will fail
- * and return 0.
+ * and return nullptr.
  */
 class SegmentedPool: public Pool {
 public:

@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-SettingManager *SettingManager::_settingManager = 0;
+SettingManager *SettingManager::_settingManager = nullptr;
 
 SettingManager::SettingManager() {
 	debugN(MM_INFO, "Creating SettingManager...\n");
@@ -45,7 +45,7 @@ SettingManager::SettingManager() {
 SettingManager::~SettingManager() {
 	debugN(MM_INFO, "Destroying SettingManager...\n");
 
-	_settingManager = 0;
+	_settingManager = nullptr;
 }
 
 bool SettingManager::readConfigFile(Std::string fname, bool readonly) {

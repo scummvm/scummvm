@@ -40,19 +40,19 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget, Gump)
 
 TextWidget::TextWidget() : Gump(), _gameFont(false), _fontNum(0), _blendColour(0),
 		_tx(0), _ty(0), _currentStart(0), _currentEnd(0), _targetWidth(0), _targetHeight(0),
-		_cachedText(0), _textAlign(Font::TEXT_LEFT) {
+		_cachedText(nullptr), _textAlign(Font::TEXT_LEFT) {
 }
 
 TextWidget::TextWidget(int x, int y, const Std::string &txt, bool gamefont_, int font,
                        int w, int h, Font::TextAlign align) :
 	Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
 	_blendColour(0), _currentStart(0), _currentEnd(0),
-	_targetWidth(w), _targetHeight(h), _cachedText(0), _textAlign(align) {
+	_targetWidth(w), _targetHeight(h), _cachedText(nullptr), _textAlign(align) {
 }
 
 TextWidget::~TextWidget(void) {
 	delete _cachedText;
-	_cachedText = 0;
+	_cachedText = nullptr;
 }
 
 // Init the gump, call after construction
@@ -129,7 +129,7 @@ bool TextWidget::setupNextText() {
 	_currentEnd = _currentStart + remaining;
 
 	delete _cachedText;
-	_cachedText = 0;
+	_cachedText = nullptr;
 
 	if (_gameFont) {
 		Font *fontP = getFont();
@@ -211,7 +211,7 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 // don't handle any mouse motion events, so let parent handle them for us.
 Gump *TextWidget::OnMouseMotion(int32 mx, int32 my) {
-	return 0;
+	return nullptr;
 }
 
 

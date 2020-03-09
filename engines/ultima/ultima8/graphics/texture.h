@@ -103,8 +103,7 @@ public:
 		return Graphics::PixelFormat(4, 8, 8, 8, 8, TEX32_R_SHIFT, TEX32_G_SHIFT, TEX32_B_SHIFT, TEX32_A_SHIFT);
 	}
 
-	Texture() : _format(TEX_FMT_STANDARD), _glTex(0), _next(0) {
-	}
+	Texture();
 
 	virtual ~Texture();
 

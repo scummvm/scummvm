@@ -150,22 +150,6 @@ private:
 	static Kernel *_kernel;
 };
 
-// a bit of a hack to prevent having to write a load function for
-// every process
-template<class T>
-struct ProcessLoader {
-	static Process *load(IDataSource *ids, uint32 version) {
-		T *p = new T();
-		bool ok = p->loadData(ids, version);
-		if (!ok) {
-			delete p;
-			p = 0;
-		}
-		return p;
-	}
-};
-
-
 extern uint getRandom();
 
 } // End of namespace Ultima8

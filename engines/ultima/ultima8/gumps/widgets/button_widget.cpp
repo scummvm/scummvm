@@ -38,14 +38,14 @@ namespace Ultima8 {
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(ButtonWidget, Gump)
 
-ButtonWidget::ButtonWidget() : Gump(), _shapeUp(0), _shapeDown(0), _mouseOver(false),
-		_origW(0), _origH(0) {
+ButtonWidget::ButtonWidget() : Gump(), _shapeUp(nullptr), _shapeDown(nullptr),
+		_mouseOver(false), _origW(0), _origH(0) {
 }
 
 ButtonWidget::ButtonWidget(int x, int y, Std::string txt, bool gamefont,
                            int font, uint32 mouseOverBlendCol,
                            int w, int h, int32 layer) :
-	Gump(x, y, w, h, 0, 0, layer), _shapeUp(0), _shapeDown(0),
+	Gump(x, y, w, h, 0, 0, layer), _shapeUp(nullptr), _shapeDown(nullptr),
 	_mouseOver(false), _origW(w), _origH(h) {
 	TextWidget *widget = new TextWidget(0, 0, txt, gamefont, font, w, h);
 	_textWidget = widget->getObjId();
@@ -76,8 +76,8 @@ void ButtonWidget::InitGump(Gump *newparent, bool take_focus) {
 		widget->GetDims(_dims); // transfer child dimension to self
 		widget->Move(0, _dims.y); // move it to the correct height
 	} else {
-		assert(_shapeUp != 0);
-		assert(_shapeDown != 0);
+		assert(_shapeUp != nullptr);
+		assert(_shapeDown != nullptr);
 
 		_shape = _shapeUp;
 		_frameNum = _frameNumUp;
@@ -115,7 +115,8 @@ bool ButtonWidget::PointOnGump(int mx, int my) {
 
 Gump *ButtonWidget::OnMouseDown(int button, int32 mx, int32 my) {
 	Gump *ret = Gump::OnMouseDown(button, mx, my);
-	if (ret) return ret;
+	if (ret)
+		return ret;
 	if (button == Shared::BUTTON_LEFT) {
 		// CHECKME: change dimensions or not?
 		if (!_mouseOver) {
@@ -124,7 +125,7 @@ Gump *ButtonWidget::OnMouseDown(int button, int32 mx, int32 my) {
 		}
 		return this;
 	}
-	return 0;
+	return nullptr;
 }
 
 uint16 ButtonWidget::TraceObjId(int32 mx, int32 my) {
@@ -228,7 +229,7 @@ void ButtonWidget::saveData(ODataSource *ods) {
 bool ButtonWidget::loadData(IDataSource *ids, uint32 version) {
 	if (!Gump::loadData(ids, version)) return false;
 
-	_shapeUp = 0;
+	_shapeUp = nullptr;
 	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(ids->read2());
 	uint32 shapenum = ids->read4();
 	if (flex) {
@@ -236,7 +237,7 @@ bool ButtonWidget::loadData(IDataSource *ids, uint32 version) {
 	}
 	_frameNumUp = ids->read4();
 
-	_shapeDown = 0;
+	_shapeDown = nullptr;
 	flex = GameData::get_instance()->getShapeFlex(ids->read2());
 	shapenum = ids->read4();
 	if (flex) {

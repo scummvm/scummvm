@@ -324,13 +324,13 @@ bool Debugger::cmdMemberVar(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 
 	// Set the pointer to the correct type
-	bool *b = 0;
-	int *i = 0;
-	Std::string *str = 0;
-	istring *istr = 0;
+	bool *b = nullptr;
+	int *i = nullptr;
+	Std::string *str = nullptr;
+	istring *istr = nullptr;
 
 	// ini entry name if supported
-	const char *ini = 0;
+	const char *ini = nullptr;
 
 	if (!scumm_stricmp(argv[1], "_frameLimit")) {
 		b = &g->_frameLimit;

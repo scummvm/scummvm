@@ -29,7 +29,7 @@ namespace Ultima8 {
 // The Pentagram dynamic cast
 template<class A, class B> inline A p_dynamic_cast(B *object) {
 	if (object && object->IsOfType(static_cast<A>(0)->ClassType)) return static_cast<A>(object);
-	return 0;
+	return nullptr;
 }
 
 // This is just a 'type' used to differentiate each class.

@@ -79,13 +79,7 @@ struct ConvertShapeFrame {
 	int32				_bytes_rle;			// Number of bytes of RLE Data
 	uint8				*_rle_data;
 
-	void Free() {
-		delete [] _line_offsets;
-		_line_offsets = 0;
-
-		delete [] _rle_data;
-		_rle_data = 0;
-	}
+	void Free();
 
 	void Read(IDataSource *source, const ConvertShapeFormat *csf, uint32 frame_length);
 
@@ -104,26 +98,14 @@ class ConvertShape
 	ConvertShapeFrame	*_frames;
 
 public:
-	ConvertShape() : _num_frames(0), _frames(0)
-	{
-	}
+	ConvertShape();
 
 	~ConvertShape()
 	{
 		Free();
 	}
 
-	void Free()
-	{
-		if (_frames)
-			for(uint32 i = 0; i < _num_frames; ++i)
-				_frames[i].Free();
-		
-		delete [] _frames;
-		_frames = 0;
-		_num_frames = 0;
-	}
-
+	void Free();
 
 	void Read(IDataSource *source, const ConvertShapeFormat *csf, uint32 real_len);
 	void Write(ODataSource *source, const ConvertShapeFormat *csf, uint32 &write_len);

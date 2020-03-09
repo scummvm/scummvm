@@ -102,20 +102,20 @@ void *SegmentedPool::allocate(size_t size) {
 	SegmentedPoolNode *node;
 
 	if (isFull() || size > _nodeCapacity)
-		return 0;
+		return nullptr;
 
 	--_freeNodeCount;
 	node = _firstFree;
 	node->size = size;
 
 	if (isFull()) {
-		_firstFree = 0;
-		_lastFree = 0;
+		_firstFree = nullptr;
+		_lastFree = nullptr;
 	} else {
 		_firstFree = _firstFree->nextFree;
 	}
 
-	node->nextFree = 0;
+	node->nextFree = nullptr;
 
 //	debugN"Allocating Node 0x%08X\n", node);
 	uint8 *p = reinterpret_cast<uint8 *>(node) +

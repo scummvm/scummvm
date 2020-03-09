@@ -43,14 +43,17 @@ AnimDat::~AnimDat() {
 }
 
 ActorAnim *AnimDat::getAnim(uint32 shape) const {
-	if (shape >= _anims.size()) return 0;
+	if (shape >= _anims.size())
+		return nullptr;
 
 	return _anims[shape];
 }
 
 AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
-	if (shape >= _anims.size()) return 0;
-	if (_anims[shape] == 0) return 0;
+	if (shape >= _anims.size())
+		return nullptr;
+	if (_anims[shape] == 0)
+		return nullptr;
 
 	return _anims[shape]->getAction(action);
 }
@@ -71,7 +74,7 @@ void AnimDat::load(IDataSource *ds) {
 		uint32 offset = ds->read4();
 
 		if (offset == 0) {
-			_anims[shape] = 0;
+			_anims[shape] = nullptr;
 			continue;
 		}
 

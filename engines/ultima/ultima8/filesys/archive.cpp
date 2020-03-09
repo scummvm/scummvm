@@ -65,7 +65,7 @@ bool Archive::addSource(ArchiveFile *af) {
 }
 
 bool Archive::addSource(IDataSource *ids) {
-	ArchiveFile *s = 0;
+	ArchiveFile *s = nullptr;
 
 	if (!ids) return false;
 
@@ -96,7 +96,8 @@ void Archive::uncache() {
 
 uint8 *Archive::getRawObject(uint32 index, uint32 *sizep) {
 	ArchiveFile *f = findArchiveFile(index);
-	if (!f) return 0;
+	if (!f)
+		return nullptr;
 
 	return f->getObject(index, sizep);
 }
@@ -115,7 +116,7 @@ ArchiveFile *Archive::findArchiveFile(uint32 index) const {
 			return _sources[n - i];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Ultima8

@@ -42,13 +42,13 @@ EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont_, int font,
                        int w, int h, unsigned int maxlength_, bool multiline_)
 	: Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
 	  _maxLength(maxlength_), _multiLine(multiline_),
-	  _cursorChanged(0), _cursorVisible(true), _cachedText(0) {
+	  _cursorChanged(0), _cursorVisible(true), _cachedText(nullptr) {
 	_cursor = _text.size();
 }
 
 EditWidget::~EditWidget(void) {
 	delete _cachedText;
-	_cachedText = 0;
+	_cachedText = nullptr;
 }
 
 // Init the gump, call after construction
@@ -184,7 +184,7 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 // don't handle any mouse motion events, so let parent handle them for us.
 Gump *EditWidget::OnMouseMotion(int32 mx, int32 my) {
-	return 0;
+	return nullptr;
 }
 
 bool EditWidget::OnKeyDown(int key, int mod) {

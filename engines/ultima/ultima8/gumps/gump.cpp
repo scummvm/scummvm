@@ -40,22 +40,22 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(Gump, Object)
 
-Gump::Gump() : Object(), _parent(0), _children() {
+Gump::Gump() : Object(), _parent(nullptr), _children() {
 }
 
 Gump::Gump(int inX, int inY, int width, int height, uint16 inOwner,
            uint32 inFlags, int32 inLayer) :
-	Object(), _owner(inOwner), _parent(0), _x(inX), _y(inY),
+	Object(), _owner(inOwner), _parent(nullptr), _x(inX), _y(inY),
 	_dims(0, 0, width, height), _flags(inFlags), _layer(inLayer), _index(-1),
-	_shape(0), _frameNum(0), _children(), _focusChild(0), _notifier(0),
-	_processResult(0) {
+	_shape(nullptr), _frameNum(0), _children(), _focusChild(nullptr),
+	_notifier(0), _processResult(0) {
 	assignObjId(); // gumps always get an objid
 }
 
 Gump::~Gump() {
 	// Get rid of focus
 	if (_focusChild) _focusChild->OnFocus(false);
-	_focusChild = 0;
+	_focusChild = nullptr;
 
 	// Delete all children
 	Std::list<Gump *>::iterator it = _children.begin();
@@ -335,7 +335,7 @@ void Gump::PaintComposited(RenderSurface * /*surf*/, int32 /*lerp_factor*/, int3
 Gump *Gump::FindGump(int mx, int my) {
 	int32 gx = mx, gy = my;
 	ParentToGump(gx, gy);
-	Gump *gump = 0;
+	Gump *gump = nullptr;
 
 	// Iterate all children
 	Std::list<Gump *>::reverse_iterator it = _children.rbegin();
@@ -348,12 +348,14 @@ Gump *Gump::FindGump(int mx, int my) {
 	}
 
 	// it's over a child
-	if (gump) return gump;
+	if (gump)
+		return gump;
 
 	// it's over this gump
-	if (PointOnGump(mx, my)) return this;
+	if (PointOnGump(mx, my))
+		return this;
 
-	return 0;
+	return nullptr;
 }
 
 void Gump::setRelativePosition(Gump::Position pos, int xoffset, int yoffset) {
@@ -529,8 +531,10 @@ bool Gump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 Gump *Gump::FindGump(const RunTimeClassType &t, bool recursive,
                      bool no_inheritance) {
 	// If that is our type, then return us!
-	if (GetClassType() == t) return this;
-	else if (!no_inheritance && IsOfType(t)) return this;
+	if (GetClassType() == t)
+		return this;
+	else if (!no_inheritance && IsOfType(t))
+		return this;
 
 	// Iterate all children
 	Std::list<Gump *>::iterator  it = _children.begin();
@@ -540,13 +544,17 @@ Gump *Gump::FindGump(const RunTimeClassType &t, bool recursive,
 		Gump *g = *it;
 
 		// Not if closing
-		if (g->_flags & FLAG_CLOSING) continue;
+		if (g->_flags & FLAG_CLOSING)
+			continue;
 
-		if (g->GetClassType() == t) return g;
-		else if (!no_inheritance && g->IsOfType(t)) return g;
+		if (g->GetClassType() == t)
+			return g;
+		else if (!no_inheritance && g->IsOfType(t))
+			return g;
 	}
 
-	if (!recursive) return 0;
+	if (!recursive)
+		return nullptr;
 
 	// Recursive Iterate all children
 	it = _children.begin();
@@ -556,14 +564,16 @@ Gump *Gump::FindGump(const RunTimeClassType &t, bool recursive,
 		Gump *g = (*it);
 
 		// Not if closing
-		if (g->_flags & FLAG_CLOSING) continue;
+		if (g->_flags & FLAG_CLOSING)
+			continue;
 
 		g = g->FindGump(t, recursive, no_inheritance);
 
-		if (g) return g;
+		if (g)
+			return g;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 // Makes this gump the focus
@@ -577,8 +587,9 @@ void Gump::MakeFocus() {
 }
 
 void Gump::FindNewFocusChild() {
-	if (_focusChild) _focusChild->OnFocus(false);
-	_focusChild = 0;
+	if (_focusChild)
+		_focusChild->OnFocus(false);
+	_focusChild = nullptr;
 
 	// Now add the gump to use as the new focus
 	Std::list<Gump *>::reverse_iterator	it = _children.rbegin();
@@ -634,7 +645,7 @@ void Gump::RemoveChild(Gump *gump) {
 
 	// Remove it
 	_children.remove(gump);
-	gump->_parent = 0;
+	gump->_parent = nullptr;
 
 	// Remove focus, the give upper most gump the focus
 	if (gump == _focusChild) {
@@ -686,7 +697,7 @@ Gump *Gump::OnMouseDown(int button, int32 mx, int32 my) {
 	// Convert to local coords
 	ParentToGump(mx, my);
 
-	Gump *handled = 0;
+	Gump *handled = nullptr;
 
 	// Iterate children backwards
 	Std::list<Gump *>::reverse_iterator it;
@@ -709,7 +720,7 @@ Gump *Gump::OnMouseMotion(int32 mx, int32 my) {
 	// Convert to local coords
 	ParentToGump(mx, my);
 
-	Gump *handled = 0;
+	Gump *handled = nullptr;
 
 	// Iterate children backwards
 	Std::list<Gump *>::reverse_iterator it;
@@ -829,7 +840,7 @@ bool Gump::loadData(IDataSource *ids, uint32 version) {
 	_layer = static_cast<int32>(ids->read4());
 	_index = static_cast<int32>(ids->read4());
 
-	_shape = 0;
+	_shape = nullptr;
 	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(ids->read2());
 	uint32 shapenum = ids->read4();
 	if (flex) {
@@ -838,7 +849,7 @@ bool Gump::loadData(IDataSource *ids, uint32 version) {
 
 	_frameNum = ids->read4();
 	uint16 focusid = ids->read2();
-	_focusChild = 0;
+	_focusChild = nullptr;
 	_notifier = ids->read2();
 	_processResult = ids->read4();
 
