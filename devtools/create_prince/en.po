@@ -4396,7 +4396,7 @@ msgstr "OTHER: Get going then!"
 
 #: dialog0108.txt:1
 msgid "OTHER: Na pewno oddałem ci wszystkie|rzeczy?"
-msgstr "OTHRE: Are you sure you've got everything?"
+msgstr "OTHER: Are you sure you've got everything?"
 
 #: dialog0108.txt:2
 msgid "HERO: Tak, sprawdziłem dokładnie."
@@ -6962,7 +6962,7 @@ msgstr ""
 
 #: dialog0186.txt:4
 msgid "OTHER: Sio!"
-msgstr "Other: Shoo!"
+msgstr "OTHER: Shoo!"
 
 #: dialog0187.txt:1
 msgid "OTHER: Przepraszam, czy ma pan może jakieś|zbędne obole?"
@@ -7451,7 +7451,7 @@ msgstr "OTHER: Oh... This can't be true..."
 
 #: dialog0226.txt:1
 msgid "HERO: Oto trucizna."
-msgstr "HERE: Here is the poison."
+msgstr "HERO: Here is the poison."
 
 #: dialog0226.txt:2
 msgid "HERO: Najlepsza z najlepszych."
