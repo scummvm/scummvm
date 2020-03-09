@@ -155,15 +155,15 @@ void SegmentedPool::deallocate(void *ptr) {
 
 void SegmentedPool::printInfo() const {
 	uint16 i;
-	size_t max, min, total;
+	uint32 max, min, total;
 	SegmentedPoolNode *node;
 
 	debug(MM_INFO, "start address 0x%p\tend address 0x%p\tnodeOffset 0x%x",
-		_startOfPool, _endOfPool, _nodeOffset);
+		_startOfPool, _endOfPool, (uint32)_nodeOffset);
 	debug(MM_INFO, "_nodeCapacity %u b\n   total _nodes %u\tfree _nodes %u",
-		_nodeCapacity, _nodes, _freeNodeCount);
-	debug(MM_INFO, "total memory: %d\tfree memory: %d",
-		_nodeCapacity * _nodes, _nodeCapacity * _freeNodeCount);
+		(uint32)_nodeCapacity, _nodes, _freeNodeCount);
+	debug(MM_INFO, "total memory: %u\tfree memory: %u",
+		(uint32)(_nodeCapacity * _nodes), (uint32)(_nodeCapacity * _freeNodeCount));
 
 	max = 0;
 	min = _nodeCapacity;
