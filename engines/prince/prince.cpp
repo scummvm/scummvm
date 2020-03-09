@@ -237,7 +237,7 @@ void PrinceEngine::init() {
 	if (getFeatures() & GF_TRANSLATED) {
 		PtcArchive *translation = new PtcArchive();
 		if (getFeatures() & GF_TRANSLATED) {
-			if (!translation->openTranslation("all/prince_translation.dat"))
+			if (!translation->openTranslation("prince_translation.dat"))
 				error("Can't open prince_translation.dat");
 		}
 
