@@ -95,6 +95,7 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	act = new Action("SKLI", _("Skip line"));
 	act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
 	act->addDefaultInputMapping("PERIOD");
+	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
 	act = new Action("PIND", _("Predictive input dialog"));
