@@ -32,7 +32,10 @@ StrPlayer::StrPlayer(DragonsEngine *vm, Screen *screen) : _vm(vm), _screen(scree
 
 void StrPlayer::playVideo(const Common::String &filename) {
 	bool skipped = false;
-	_decoder->loadFile(filename);
+
+	if (!_decoder->loadFile(filename)) {
+		error("Error playing video from %s", filename.c_str());
+	}
 	_decoder->start();
 
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo() && !skipped) {
@@ -55,6 +58,10 @@ void StrPlayer::playVideo(const Common::String &filename) {
 	}
 	_screen->clearScreen();
 	_decoder->close();
+}
+
+StrPlayer::~StrPlayer() {
+	delete _decoder;
 }
 
 } // End of namespace Dragons
