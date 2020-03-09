@@ -343,36 +343,109 @@ EoBCoreEngine::~EoBCoreEngine() {
 Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Eye of the Beholder");
 
-	const Common::KeyActionEntry keyActionEntries[] = {
-		{ "MVF", Common::KEYCODE_UP,     "UP",     _("Move Forward")                      },
-		{ "MVB", Common::KEYCODE_DOWN,   "DOWN",   _("Move Back")                         },
-		{ "MVL", Common::KEYCODE_LEFT,   "LEFT",   _("Move Left")                         },
-		{ "MVR", Common::KEYCODE_RIGHT,  "RIGHT",  _("Move Right")                        },
-		{ "TL",  Common::KEYCODE_HOME,   "HOME",   _("Turn Left")                         },
-		{ "TR",  Common::KEYCODE_PAGEUP, "PAGEUP", _("Turn Right")                        },
-		{ "INV", Common::KEYCODE_i,      "i",      _("Open/Close Inventory")              },
-		{ "SCE", Common::KEYCODE_p,      "p",      _("Switch Inventory/Character screen") },
-		{ "CMP", Common::KEYCODE_c,      "c",      _("Camp")                              },
-		{ "CSP", Common::KEYCODE_SPACE,  "SPACE",  _("Cast Spell")                        },
-		// TODO: Spell cursor, but this needs more thought, since different
-		// game versions use different keycodes.
-		{ "SL1", Common::KEYCODE_1,      "1",      _("Spell Level 1")                     },
-		{ "SL2", Common::KEYCODE_2,      "2",      _("Spell Level 2")                     },
-		{ "SL3", Common::KEYCODE_3,      "3",      _("Spell Level 3")                     },
-		{ "SL4", Common::KEYCODE_4,      "4",      _("Spell Level 4")                     },
-		{ "SL5", Common::KEYCODE_5,      "5",      _("Spell Level 5")                     }
-	};
+	Common::Action *act;
 
-	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); ++i) {
-		Common::Action *const act = new Common::Action(keyActionEntries[i].id, keyActionEntries[i].description);
-		act->setKeyEvent(keyActionEntries[i].ks);
-		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
-		engineKeyMap->addAction(act);
-	}
+	act = new Common::Action("LCLK", _("Interact via Left Click)"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("RCLK", _("Interact via Right Click)"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("MVF", _("Move Forward"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_UP));
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("MVB", _("Move Back"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_DOWN));
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("MVL", _("Move Left"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_LEFT));
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("MVR", _("Move Right"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_RIGHT));
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("TL", _("Turn Left"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_HOME));
+	act->addDefaultInputMapping("HOME");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("TR", _("Turn Right"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_PAGEUP));
+	act->addDefaultInputMapping("PAGEUP");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("INV", _("Open/Close Inventory"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_i, 'i'));
+	act->addDefaultInputMapping("i");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SCE", _("Switch Inventory/Character screen"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_p, 'p'));
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("CMP", _("Camp"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_c, 'c'));
+	act->addDefaultInputMapping("c");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("CSP", _("Cast Spell"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_SPACE, ' '));
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	// TODO: Spell cursor, but this needs more thought, since different
+	// game versions use different keycodes.
+	act = new Common::Action("SL1", _("Spell Level 1"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_1, '1'));
+	act->addDefaultInputMapping("1");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SL2", _("Spell Level 2"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_2, '2'));
+	act->addDefaultInputMapping("2");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SL3", _("Spell Level 3"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_3, '2'));
+	act->addDefaultInputMapping("3");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SL4", _("Spell Level 4"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_4, '4'));
+	act->addDefaultInputMapping("4");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SL5", _("Spell Level 5"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_5, '5'));
+	act->addDefaultInputMapping("5");
+	engineKeyMap->addAction(act);
 
 	if (gameId == "eob2") {
-		Common::Action *const act = new Common::Action("SL6", _("Spell Level 6"));
-		act->setKeyEvent(Common::KeyState(Common::KEYCODE_6));
+		act = new Common::Action("SL6", _("Spell Level 6"));
+		act->setKeyEvent(Common::KeyState(Common::KEYCODE_6, '6'));
 		act->addDefaultInputMapping("6");
 		engineKeyMap->addAction(act);
 	}
