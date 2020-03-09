@@ -203,10 +203,13 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restorin
 
 	if (_soundVersion >= SCI_VERSION_1_EARLY) {
 		writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
-		writeSelectorValue(_segMan, obj, SELECTOR(min), 0);
-		writeSelectorValue(_segMan, obj, SELECTOR(sec), 0);
-		writeSelectorValue(_segMan, obj, SELECTOR(frame), 0);
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), 0);
+		if (!restoring) {
+			musicSlot->ticker = 0;		// fix bug #10812
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), 0);
+		}
+		writeSelectorValue(_segMan, obj, SELECTOR(min), musicSlot->ticker / 3600);
+		writeSelectorValue(_segMan, obj, SELECTOR(sec), musicSlot->ticker % 3600 / 60);
+		writeSelectorValue(_segMan, obj, SELECTOR(frame), musicSlot->ticker % 60 / 2);
 	} else {
 		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundPlaying);
 	}

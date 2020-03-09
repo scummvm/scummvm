@@ -467,6 +467,10 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->overridePriority = false;
 
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
+
+			// Fast forward to the last position and perform associated events when loading
+			pSnd->pMidiParser->jumpToTick(pSnd->ticker, true, true, true);
+
 			pSnd->reverb = pSnd->pMidiParser->getSongReverb();
 
 			// Restore looping and hold
