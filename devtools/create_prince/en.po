@@ -7908,7 +7908,7 @@ msgstr "HERO: Well, as the devil, I think I have the|right to enter."
 
 #: dialog0244.txt:5
 msgid "OTHER2: Coś ty jakiś taki dziwny..."
-msgstr "OTHER: You look somewhat strange..."
+msgstr "OTHER2: You look somewhat strange..."
 
 #: dialog0244.txt:6
 msgid "OTHER2: Różek złamany, ogona nie ma..."
