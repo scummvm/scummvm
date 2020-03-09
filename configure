@@ -940,7 +940,7 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
-                          gph, iphone, ios7, linuxmoto, maemo, n64, null, openpandora,
+                          gph, iphone, ios7, maemo, n64, null, openpandora,
                           ps2, psp, psp2, samsungtv, sdl, switch, tizen, webos, wii) [sdl]
 
 Installation directories:
@@ -988,8 +988,6 @@ Special configuration feature:
                                            iphone for Apple iPhone (iOS <= 6)
                                            ios7 for Apple iPhone / iPad (iOS >= 7)
                                            maemo for Nokia Maemo
-                                           motoezx for MotoEZX
-                                           motomagx for MotoMAGX
                                            n64 for Nintendo 64
                                            openpandora for OpenPandora
                                            ouya for OUYA
@@ -1695,16 +1693,6 @@ maemo)
 	datarootdir='${prefix}/share'
 	datadir=/opt/scummvm/share
 	docdir='${datarootdir}/doc/scummvm'
-	;;
-motoezx)
-	_host_os=linux
-	_host_cpu=arm
-	_host_alias=arm-linux-gnu
-	;;
-motomagx)
-	_host_os=linux
-	_host_cpu=arm
-	_host_alias=arm-linux-gnueabi
 	;;
 n64)
 	_host_os=n64
@@ -3316,26 +3304,6 @@ if test -n "$_host"; then
 			append_var LDFLAGS "-static-libgcc"
 			append_var LIBS "-laudio"
 			;;
-		motoezx)
-			append_var DEFINES "-DMOTOEZX"
-			append_var ASFLAGS "-mfpu=vfp"
-			_backend="linuxmoto"
-			_build_hq_scalers=no
-			_mt32emu=no
-			_vkeybd=yes
-			_seq_midi=no
-			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
-			;;
-		motomagx)
-			append_var DEFINES "-DMOTOMAGX"
-			append_var ASFLAGS "-mfpu=vfp"
-			_backend="linuxmoto"
-			_build_hq_scalers=no
-			_mt32emu=no
-			_vkeybd=yes
-			_seq_midi=no
-			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
-			;;
 		n64)
 			append_var CXXFLAGS "-mno-extern-sdata"
 			append_var CXXFLAGS "--param max-inline-insns-auto=20"
@@ -3604,10 +3572,6 @@ case $_backend in
 			append_var CFLAGS "-isysroot $SDKROOT -F$SDKROOT/System/Library/Frameworks"
 			append_var CXXFLAGS "-isysroot $SDKROOT -I$SDKROOT/usr/include/c++/4.2.1 -F$SDKROOT/System/Library/Frameworks"
 		fi
-		;;
-	linuxmoto)
-		append_var DEFINES "-DLINUXMOTO"
-		_sdl=auto
 		;;
 	maemo)
 		append_var DEFINES "-DMAEMO"

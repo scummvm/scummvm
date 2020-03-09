@@ -282,12 +282,6 @@ MODULE_OBJS += \
 	graphics/gph/gph-graphics.o
 endif
 
-ifeq ($(BACKEND),linuxmoto)
-MODULE_OBJS += \
-	events/linuxmotosdl/linuxmotosdl-events.o \
-	graphics/linuxmotosdl/linuxmotosdl-graphics.o
-endif
-
 ifeq ($(BACKEND),maemo)
 MODULE_OBJS += \
 	events/maemosdl/maemosdl-events.o \

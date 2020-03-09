@@ -47,7 +47,7 @@ public:
 	 */
 	Audio::Mixer *getMixer() { return (Audio::Mixer *)_mixer; }
 
-	// Used by LinuxMoto Port
+	// Used by Event recorder
 
 	/**
 	 * Pauses the audio system
