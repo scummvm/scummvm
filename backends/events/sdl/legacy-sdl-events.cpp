@@ -285,6 +285,7 @@ bool LegacySdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &eve
 	return SdlEventSource::handleMouseButtonUp(ev, event);
 }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 bool LegacySdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) {
 	if (event.joystick.button == Common::JOYSTICK_BUTTON_RIGHT_SHOULDER) {
 		// Right shoulder is the modifier button that makes the mouse go slower.
@@ -305,5 +306,6 @@ bool LegacySdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Commo
 
 	return SdlEventSource::handleControllerAxisMotion(ev, event);
 }
+#endif
 
 #endif
