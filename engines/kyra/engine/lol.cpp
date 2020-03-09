@@ -463,28 +463,88 @@ Common::Error LoLEngine::init() {
 Common::KeymapArray LoLEngine::initKeymaps() {
 	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Lands of Lore");
 
-	const Common::KeyActionEntry keyActionEntries[] = {
-		{ "AT1", Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "F1",     _("Attack 1")     },
-		{ "AT2", Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2), "F2",     _("Attack 2")     },
-		{ "AT3", Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3), "F3",     _("Attack 3")     },
-		{ "MVF", Common::KeyState(Common::KEYCODE_UP),                   "UP",     _("Move Forward") },
-		{ "MVB", Common::KeyState(Common::KEYCODE_DOWN),                 "DOWN",   _("Move Back")    },
-		{ "SLL", Common::KeyState(Common::KEYCODE_LEFT),                 "LEFT",   _("Slide Left")   },
-		{ "SLR", Common::KeyState(Common::KEYCODE_RIGHT),                "RIGHT",  _("Slide Right")  },
-		{ "TL",  Common::KeyState(Common::KEYCODE_HOME),                 "HOME",   _("Turn Left")    },
-		{ "TR",  Common::KeyState(Common::KEYCODE_PAGEUP),               "PAGEUP", _("Turn Right")   },
-		{ "RST", Common::KeyState(Common::KEYCODE_r),                    "r",      _("Rest")         },
-		{ "OPT", Common::KeyState(Common::KEYCODE_o),                    "o",      _("Options")      },
-		{ "SPL", Common::KeyState(Common::KEYCODE_SLASH),                "SLASH",  _("Choose Spell") },
-		{ 0,     Common::KeyState(),                                     0,        0                 }
-	};
+	Common::Action *act;
 
-	for (const Common::KeyActionEntry *entry = keyActionEntries; entry->id; ++entry) {
-		Common::Action *const act = new Common::Action(entry->id, entry->description);
-		act->setKeyEvent(entry->ks);
-		act->addDefaultInputMapping(entry->defaultHwId);
-		engineKeyMap->addAction(act);
-	}
+	act = new Common::Action("LCLK", _("Interact via Left Click)"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("RCLK", _("Interact via Right Click)"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("AT1", _("Attack 1"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1));
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("AT2", _("Attack 2"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2));
+	act->addDefaultInputMapping("F2");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("AT3", _("Attack 3"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3));
+	act->addDefaultInputMapping("F3");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("MVF", _("Move Forward"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_UP));
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("MVB", _("Move Back"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_DOWN));
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SLL", _("Slide Left"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_LEFT));
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SLR", _("Slide Right"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_RIGHT));
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("TL", _("Turn Left"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_HOME));
+	act->addDefaultInputMapping("HOME");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("TR", _("Turn Right"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_PAGEUP));
+	act->addDefaultInputMapping("PAGEUP");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("RST", _("Rest"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_r, 'r'));
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("OPT", _("Options"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_o, 'o'));
+	act->addDefaultInputMapping("o");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SPL", _("Choose Spell"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_SLASH, '/'));
+	act->addDefaultInputMapping("SLASH");
+	engineKeyMap->addAction(act);
 
 	return Common::Keymap::arrayOf(engineKeyMap);
 }
