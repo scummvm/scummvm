@@ -116,7 +116,7 @@ public:
 
 	// MidiDriver_BASE implementation
 	virtual void send(uint32 b) override;
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+	virtual void metaEvent(byte type, byte *data, uint16 length) override;
 
 protected:
 	/**

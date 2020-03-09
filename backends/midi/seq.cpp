@@ -54,11 +54,11 @@
 class MidiDriver_SEQ : public MidiDriver_MPU401 {
 public:
 	MidiDriver_SEQ();
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
 	void send(uint32 b) override;
-	void sysEx(const byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length) override;
 
 private:
 	bool _isOpen;

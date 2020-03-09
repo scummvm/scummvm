@@ -84,11 +84,11 @@ class MidiDriver_TIMIDITY : public MidiDriver_MPU401 {
 public:
 	MidiDriver_TIMIDITY();
 
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
 	void send(uint32 b) override;
-	void sysEx(const byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length) override;
 
 private:
 	/* creates a tcp connection to TiMidity server, returns filedesc (like open()) */
