@@ -97,13 +97,13 @@ Common::KeymapArray MetaEngine::initKeymaps(bool isMenuActive) {
 
 	Common::Action *act;
 
-	act = new Common::Action("LCLK", _("Interact via Left Click)"));
+	act = new Common::Action("LCLK", _("Interact via Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	keyMap->addAction(act);
 
-	act = new Common::Action("RCLK", _("Interact via Right Click)"));
+	act = new Common::Action("RCLK", _("Interact via Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
