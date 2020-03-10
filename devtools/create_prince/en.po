@@ -5138,12 +5138,12 @@ msgid "#E3"
 msgstr "#E3"
 
 #: dialog0146.txt:100401
-msgid "#X1"
-msgstr "#X1"
+msgid "#E3"
+msgstr "#E3"
 
 #: dialog0146.txt:100501
-msgid "#B1"
-msgstr "#B1"
+msgid "#X1"
+msgstr "#X1"
 
 #: dialog0146.txt:100601
 msgid "#B1"
