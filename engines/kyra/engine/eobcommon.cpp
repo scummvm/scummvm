@@ -63,7 +63,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_vmpFilePattern = "%s.VMP";
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = 0;
-	_itemIconShapes = _amigaBlueItemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
+	_itemIconShapes = _blueItemIconShapes = _xtraItemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
 	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = 0;
 	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 
@@ -84,9 +84,9 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_items = 0;
 	_itemTypes = 0;
 	_itemNames = 0;
-	_itemNamesPC98 = 0;
+	_itemNamesStatic = 0;
 	_itemInHand = -1;
-	_numItems = _numItemNames = _numItemNamesPC98 = 0;
+	_numItems = _numItemNames = _numItemNamesStatic = 0;
 
 	_castScrollSlot = 0;
 	_currentSub = 0;
@@ -684,7 +684,7 @@ Common::Error EoBCoreEngine::go() {
 		//ConfMan.flushToDisk();
 	}
 
-	//loadItemDefs();
+	loadItemDefs();
 	int action = 0;
 
 	for (bool repeatLoop = true; repeatLoop; repeatLoop ^= true) {
@@ -934,11 +934,11 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		
 		if (_flags.platform == Common::kPlatformAmiga) {
 			const uint8 offsY = (_flags.gameID == GI_EOB1) ? 80 : 96;
-			_amigaBlueItemIconShapes = new const uint8*[_numItemIconShapes];
+			_blueItemIconShapes = new const uint8*[_numItemIconShapes];
 			for (int i = 0; i < _numItemIconShapes; i++) {
 				int bx = (i % 0x14) << 1;
 				int by = (i / 0x14) << 4;
-				_amigaBlueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + offsY + 8) ? _screen->encodeShape(bx, by + offsY, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
+				_blueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + offsY + 8) ? _screen->encodeShape(bx, by + offsY, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
 			}
 		}
 	}
@@ -996,84 +996,29 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	}
 }
 
+#define releaseShpArr(shapes, num) \
+if (shapes) { \
+	for (int iii = 0; iii < num; iii++) { \
+		if (shapes[iii]) \
+			delete[] shapes[iii]; \
+	} \
+} \
+shapes = 0
+
 void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	if (_flags.platform != Common::kPlatformFMTowns || _flags.gameID != GI_EOB2) {
-		if (_largeItemShapes) {
-			for (int i = 0; i < _numLargeItemShapes; i++) {
-				if (_largeItemShapes[i])
-					delete[] _largeItemShapes[i];
-			}
-		}
-
-		if (_smallItemShapes) {
-			for (int i = 0; i < _numSmallItemShapes; i++) {
-				if (_smallItemShapes[i])
-					delete[] _smallItemShapes[i];
-			}
-		}
-
-		if (_thrownItemShapes) {
-			for (int i = 0; i < _numThrownItemShapes; i++) {
-				if (_thrownItemShapes[i])
-					delete[] _thrownItemShapes[i];
-			}
-		}
-
-		if (_spellShapes) {
-			for (int i = 0; i < 4; i++) {
-				if (_spellShapes[i])
-					delete[] _spellShapes[i];
-			}
-		}
-
-		if (_itemIconShapes) {
-			for (int i = 0; i < _numItemIconShapes; i++) {
-				if (_itemIconShapes[i])
-					delete[] _itemIconShapes[i];
-			}
-		}
-
-		if (_amigaBlueItemIconShapes) {
-			for (int i = 0; i < _numItemIconShapes; i++) {
-				if (_amigaBlueItemIconShapes[i])
-					delete[] _amigaBlueItemIconShapes[i];
-			}
-		}
-
-		if (_sparkShapes) {
-			for (int i = 0; i < 3; i++) {
-				if (_sparkShapes[i])
-					delete[] _sparkShapes[i];
-			}
-		}
-
-		if (_wallOfForceShapes) {
-			for (int i = 0; i < 6; i++) {
-				if (_wallOfForceShapes[i])
-					delete[] _wallOfForceShapes[i];
-			}
-		}
-
-		if (_teleporterShapes) {
-			for (int i = 0; i < 6; i++) {
-				if (_teleporterShapes[i])
-					delete[] _teleporterShapes[i];
-			}
-		}
-
-		if (_compassShapes) {
-			for (int i = 0; i < 12; i++) {
-				if (_compassShapes[i])
-					delete[] _compassShapes[i];
-			}
-		}
-
-		if (_firebeamShapes) {
-			for (int i = 0; i < 3; i++) {
-				if (_firebeamShapes[i])
-					delete[] _firebeamShapes[i];
-			}
-		}
+		releaseShpArr(_largeItemShapes, _numLargeItemShapes);
+		releaseShpArr(_smallItemShapes, _numSmallItemShapes);
+		releaseShpArr(_thrownItemShapes, _numThrownItemShapes);
+		releaseShpArr(_spellShapes, 4);
+		releaseShpArr(_itemIconShapes, _numItemIconShapes);
+		releaseShpArr(_blueItemIconShapes, _numItemIconShapes);
+		releaseShpArr(_xtraItemIconShapes, 3);
+		releaseShpArr(_sparkShapes, 3);
+		releaseShpArr(_wallOfForceShapes, 6);
+		releaseShpArr(_teleporterShapes, 6);
+		releaseShpArr(_compassShapes, 12);
+		releaseShpArr(_firebeamShapes, 3);
 
 		delete[] _redSplatShape;
 		delete[] _greenSplatShape;
@@ -1090,7 +1035,8 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	delete[] _thrownItemShapes;
 	delete[] _spellShapes;
 	delete[] _itemIconShapes;
-	delete[] _amigaBlueItemIconShapes;
+	delete[] _blueItemIconShapes;
+	delete[] _xtraItemIconShapes;
 	delete[] _sparkShapes;
 	delete[] _wallOfForceShapes;
 	delete[] _teleporterShapes;
@@ -1098,32 +1044,16 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	delete[] _firebeamShapes;
 
 	for (int i = 0; i < 3; ++i) {
-		if (_largeItemShapesScl[i]) {
-			for (int ii = 0; ii < _numLargeItemShapes; ++ii) {
-				if (_largeItemShapesScl[i][ii])
-					delete[] _largeItemShapesScl[i][ii];
-			}
-		}
-
-		if (_smallItemShapesScl[i]) {
-			for (int ii = 0; ii < _numSmallItemShapes; ++ii) {
-				if (_smallItemShapesScl[i][ii])
-					delete[] _smallItemShapesScl[i][ii];
-			}
-		}
-
-		if (_thrownItemShapesScl[i]) {
-			for (int ii = 0; ii < _numThrownItemShapes; ++ii) {
-				if (_thrownItemShapesScl[i][ii])
-					delete[] _thrownItemShapesScl[i][ii];
-			}
-		}
-
+		releaseShpArr(_largeItemShapesScl[i], _numLargeItemShapes);
+		releaseShpArr(_smallItemShapesScl[i], _numSmallItemShapes);
+		releaseShpArr(_thrownItemShapesScl[i], _numThrownItemShapes);
 		delete[] _largeItemShapesScl[i];
 		delete[] _smallItemShapesScl[i];
 		delete[] _thrownItemShapesScl[i];
 	}
 }
+
+#undef releaseShpArr
 
 void EoBCoreEngine::setHandItem(Item itemIndex) {
 	if (itemIndex == -1) {
@@ -1141,10 +1071,24 @@ void EoBCoreEngine::setHandItem(Item itemIndex) {
 	int icon = _items[_itemInHand].icon;
 	const uint8 *shp = _itemIconShapes[icon];
 	const uint8 *ovl = 0;
+	bool applyBluePal = ((_partyEffectFlags & 2) && (_items[_itemInHand].flags & 0x80)) ? true : false;
 
-	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2)) {
-		if (_amigaBlueItemIconShapes)
-			shp = _amigaBlueItemIconShapes[icon];
+	if (_xtraItemIconShapes) {
+		bool applyBluePalC = applyBluePal;
+		applyBluePal = false;
+		if (_items[_itemInHand].nameUnid == 23)
+			shp = _xtraItemIconShapes[0];
+		else if (_items[_itemInHand].nameUnid == 97)
+			shp = _xtraItemIconShapes[1];
+		else if (_items[_itemInHand].nameId == 39)
+			shp = _xtraItemIconShapes[2];
+		else
+			applyBluePal = applyBluePalC;
+	}
+
+	if (icon && applyBluePal) {
+		if (_blueItemIconShapes)
+			shp = _blueItemIconShapes[icon];
 		else
 			ovl = _flags.gameID == GI_EOB1 ? ((_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icon << 4]) : _screen->generateShapeOverlay(shp, _lightBlueFadingTable);
 	}

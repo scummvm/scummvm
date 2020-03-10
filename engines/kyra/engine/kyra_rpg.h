@@ -143,7 +143,6 @@ protected:
 	void initStaticResource();
 
 	const uint8 **_itemIconShapes;
-	const uint8 **_amigaBlueItemIconShapes;
 
 	// Main loop
 	virtual void update() = 0;

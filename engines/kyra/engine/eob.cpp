@@ -38,8 +38,8 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_menuChoiceInit = 4;
 
 	_turnUndeadString = 0;
-	_itemNamesPC98 = 0;
-	_numItemNamesPC98 = 0;
+	_itemNamesStatic = 0;
+	_numItemNamesStatic = 0;
 	_finBonusStrings = _npcStrings[1] = _npcStrings[2] = 0;
 	_npcStrings[3] = _npcStrings[4] = _npcStrings[5] = _npcStrings[6] = 0;
 	_npcStrings[7] = _npcStrings[8] = _npcStrings[9] = _npcStrings[10] = 0;
@@ -125,18 +125,35 @@ Common::Error EoBEngine::init() {
 	return Common::kNoError;
 }
 
+#define loadSpritesAndEncodeToShapes(resID, shapeBuffer, numShapes, width, height) \
+	shapeBuffer = new const uint8 *[numShapes]; \
+	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
+	in = _sres->resData(resID); \
+	_screen->sega_encodeSpriteShapes(shapeBuffer, in, numShapes, width, height, 3); \
+	delete[] in
+
 void EoBEngine::loadItemsAndDecorationsShapes() {
 	if (_flags.platform != Common::kPlatformSegaCD) {
 		EoBCoreEngine::loadItemsAndDecorationsShapes();
 		return;
 	}
 
+	uint8 *in = 0;
 	_sres->loadContainer("ITEM");
-	_itemIconShapes = new const uint8 *[_numItemIconShapes];
-	memset(_itemIconShapes, 0, _numItemIconShapes * sizeof(uint8*));
-	uint8 *in = _sres->resData(0);
-	_screen->sega_encodeSpriteShapes(_itemIconShapes, in, _numItemIconShapes, 16, 16, 3);
-	delete[] in;
+	loadSpritesAndEncodeToShapes(0, _itemIconShapes, _numItemIconShapes, 16, 16);
+	loadSpritesAndEncodeToShapes(14, _blueItemIconShapes, _numItemIconShapes, 16, 16);
+	loadSpritesAndEncodeToShapes(13, _xtraItemIconShapes, 3, 16, 16);
+}
+
+#undef loadSpritesAndEncodeToShapes
+
+Common::SeekableReadStreamEndian *EoBEngine::getItemDefinitionFile(int index) {
+	assert(index == 0 || index == 1);
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return EoBCoreEngine::getItemDefinitionFile(index);
+
+	_sres->loadContainer("ITEMDAT");
+	return _sres->resStreamEndian(index);
 }
 
 void EoBEngine::startupNew() {

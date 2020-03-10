@@ -157,7 +157,7 @@ bool SegaSequencePlayer::play(int id) {
 		if (!_res->loadContainer("VISUAL", offset, size))
 			return false;
 
-		Common::SeekableReadStreamEndian *in = _res->resStreamEndianAware(0);
+		Common::SeekableReadStreamEndian *in = _res->resStreamEndian(0);
 		if (!in)
 			return false;
 		_screen->sega_loadCustomPaletteData(in);
@@ -167,7 +167,7 @@ bool SegaSequencePlayer::play(int id) {
 		_screen->sega_selectPalette(32, 1, false);
 		_screen->sega_selectPalette(30, 3, false);
 
-		in = _res->resStreamEndianAware(2);
+		in = _res->resStreamEndian(2);
 		if (!in)
 			return false;
 		uint32 len = in->size();
@@ -175,7 +175,7 @@ bool SegaSequencePlayer::play(int id) {
 		in->read(tileData, len);
 		delete in;
 
-		in = _res->resStreamEndianAware(1);
+		in = _res->resStreamEndian(1);
 		if (!in)
 			return false;
 		memset(_tileSets, 0, 100 * sizeof(TileSet));
@@ -189,7 +189,7 @@ bool SegaSequencePlayer::play(int id) {
 		}
 		delete in;
 
-		in = _res->resStreamEndianAware(3);
+		in = _res->resStreamEndian(3);
 		if (!in)
 			return false;
 		len = in->size();
@@ -618,7 +618,7 @@ void SegaSequencePlayer::s_displayTextEn(const uint8 *pos) {
 }
 
 void SegaSequencePlayer::s_loadCustomPalettes(const uint8 *pos) {
-	Common::SeekableReadStreamEndian *in = _res->resStreamEndianAware(0);
+	Common::SeekableReadStreamEndian *in = _res->resStreamEndian(0);
 	in->seek(ARG(0) << 5);
 	_screen->sega_loadCustomPaletteData(in);
 	delete in;

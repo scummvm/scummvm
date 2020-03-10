@@ -2410,7 +2410,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 	r->loadToVRAM(scrollTable, 0x400, 0xD800);
 
 	_sres->loadContainer("CREDIT");
-	Common::SeekableReadStreamEndian *in = _sres->resStreamEndianAware(1);
+	Common::SeekableReadStreamEndian *in = _sres->resStreamEndian(1);
 	r->loadToVRAM(in, 32, true);
 	delete in;
 
@@ -2427,7 +2427,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 		r->loadToVRAM(scrollTable, 0x400, 0xD800);
 		_screen->sega_selectPalette(i == 3 ? 59 : 50, 0, true);
 
-		in = _sres->resStreamEndianAware(i);
+		in = _sres->resStreamEndian(i);
 		r->loadToVRAM(in, 32, true);
 		delete in;
 
@@ -2474,7 +2474,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 	r->setPitch(64);
 	_screen->sega_selectPalette(0, 0);
 
-	in = _sres->resStreamEndianAware(8);
+	in = _sres->resStreamEndian(8);
 	r->loadToVRAM(in, 32, true);
 	delete in;
 

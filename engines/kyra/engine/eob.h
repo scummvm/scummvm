@@ -77,6 +77,7 @@ private:
 
 	// Init
 	void loadItemsAndDecorationsShapes() override;
+	Common::SeekableReadStreamEndian *getItemDefinitionFile(int index) override;
 
 	// Main loop
 	void startupNew() override;

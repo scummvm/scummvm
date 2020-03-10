@@ -95,7 +95,7 @@ void SegaCDResource::unloadContainer() {
 	_str = 0;
 }
 
-Common::SeekableReadStreamEndian *SegaCDResource::resStreamEndianAware(int resID) {
+Common::SeekableReadStreamEndian *SegaCDResource::resStreamEndian(int resID) {
 	if (!_str || !_resTable || resID >= _numResources)
 		return 0;
 

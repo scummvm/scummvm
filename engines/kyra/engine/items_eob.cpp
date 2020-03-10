@@ -28,13 +28,21 @@
 
 namespace Kyra {
 
+Common::SeekableReadStreamEndian *EoBCoreEngine::getItemDefinitionFile(int index) {
+	assert(index == 0 || index == 1);
+	return _res->createEndianAwareReadStream(index ? "itemtype.dat" : "item.dat");
+}
+
 void EoBCoreEngine::loadItemDefs() {
-	Common::SeekableReadStreamEndian *s = _res->createEndianAwareReadStream("item.dat");
+	Common::SeekableReadStreamEndian *s = getItemDefinitionFile(0);
 	memset(_items, 0, sizeof(EoBItem) * 600);
 	_numItems = s->readUint16();
 
 	for (int i = 0; i < 600; i++)
 		_items[i].block = -1;
+
+	if (_flags.platform == Common::kPlatformSegaCD)
+		_items[498].block = _items[499].block = -2;
 
 	for (int i = 0; i < _numItems; i++) {
 		_items[i].nameUnid = s->readByte();
@@ -50,11 +58,11 @@ void EoBCoreEngine::loadItemDefs() {
 		_items[i].value = s->readSByte();
 	}
 
-	if (_itemNamesPC98) {
-		_numItemNames = _numItemNamesPC98;
+	if (_itemNamesStatic) {
+		_numItemNames = _numItemNamesStatic;
 		for (int i = 0; i < _numItemNames; i++) {
-			assert(strlen(_itemNamesPC98[i]) < 35);
-			Common::strlcpy(_itemNames[i], _itemNamesPC98[i], 34);
+			assert(strlen(_itemNamesStatic[i]) < 35);
+			Common::strlcpy(_itemNames[i], _itemNamesStatic[i], 34);
 		}
 	} else {
 		_numItemNames = s->readUint16();
@@ -64,7 +72,7 @@ void EoBCoreEngine::loadItemDefs() {
 
 	delete s;
 
-	s = _res->createEndianAwareReadStream("itemtype.dat");
+	s = getItemDefinitionFile(1);
 	uint16 numTypes = s->readUint16();
 
 	delete[] _itemTypes;
@@ -481,9 +489,22 @@ void EoBCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	const uint8 *ovl = 0;
 	const uint8 *shp = _itemIconShapes[icn];
 
+	if (_xtraItemIconShapes) {
+		bool applyBluePalC = applyBluePal;
+		applyBluePal = false;
+		if (_items[itemId].nameUnid == 23)
+			shp = _xtraItemIconShapes[0];
+		else if (_items[itemId].nameUnid == 97)
+			shp = _xtraItemIconShapes[1];
+		else if (_items[itemId].nameId == 39)
+			shp = _xtraItemIconShapes[2];
+		else
+			applyBluePal = applyBluePalC;
+	}
+
 	if (applyBluePal) {
-		if (_amigaBlueItemIconShapes) {
-			shp = _amigaBlueItemIconShapes[icn];
+		if (_blueItemIconShapes) {
+			shp = _blueItemIconShapes[icn];
 		} else if (_flags.gameID == GI_EOB1) {
 			ovl = (_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icn << 4];
 		} else {

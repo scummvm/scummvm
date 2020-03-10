@@ -291,6 +291,8 @@ protected:
 	const uint8 **_largeItemShapesScl[3];
 	const uint8 **_smallItemShapesScl[3];
 	const uint8 **_thrownItemShapesScl[3];
+	const uint8 **_blueItemIconShapes;
+	const uint8 **_xtraItemIconShapes;
 	const int _numLargeItemShapes;
 	const int _numSmallItemShapes;
 	const int _numThrownItemShapes;
@@ -428,6 +430,7 @@ protected:
 	bool _loading;
 
 	// Items
+	virtual Common::SeekableReadStreamEndian *getItemDefinitionFile(int index);
 	void loadItemDefs();
 	Item duplicateItem(Item itemIndex);
 	void setItemPosition(Item *itemQueue, int block, Item item, int pos);
@@ -464,8 +467,8 @@ protected:
 	EoBItemType *_itemTypes;
 	char **_itemNames;
 	uint16 _numItemNames;
-	int _numItemNamesPC98;
-	const char * const *_itemNamesPC98;
+	int _numItemNamesStatic;
+	const char * const *_itemNamesStatic;
 	uint32 _partyEffectFlags;
 	Item _lastUsedItem;
 

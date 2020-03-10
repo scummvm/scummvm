@@ -44,7 +44,7 @@ public:
 	bool loadContainer(const Common::String &filename, uint32 offset = 0, uint32 size = 0);
 	void unloadContainer();
 
-	Common::SeekableReadStreamEndian *resStreamEndianAware(int resID);
+	Common::SeekableReadStreamEndian *resStreamEndian(int resID);
 	Common::SeekableReadStream *resStream(int resID);
 
 	uint8 *resData(int resID, uint32 *resLen = 0);
