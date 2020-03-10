@@ -876,14 +876,14 @@ void Interpreter::O__SETFLAG() {
 	Flags::Id flagId = readScriptFlagId();
 	int32 value = readScriptFlagValue();
 	_flags->setFlagValue((Flags::Id)(flagId), value);
-	debugInterpreter("O__SETFLAG 0x%04X (%s) = %d", flagId, Flags::getFlagName(flagId), value);
+	debugInterpreter("O__SETFLAG 0x%04X (%s) = %d", flagId, _flagMap.getFlagName(flagId), value);
 }
 
 void Interpreter::O_COMPARE() {
 	Flags::Id flagId = readScriptFlagId();
 	int32 value = readScriptFlagValue();
 	_result = _flags->getFlagValue(flagId) != value;
-	debugInterpreter("O_COMPARE flagId 0x%04X (%s), value %d == %d (%d)", flagId, Flags::getFlagName(flagId), value, _flags->getFlagValue(flagId), _result);
+	debugInterpreter("O_COMPARE flagId 0x%04X (%s), value %d == %d (%d)", flagId, _flagMap.getFlagName(flagId), value, _flags->getFlagValue(flagId), _result);
 }
 
 void Interpreter::O_JUMPZ() {
@@ -921,7 +921,7 @@ void Interpreter::O_ADDFLAG() {
 	} else {
 		_result = 0;
 	}
-	debugInterpreter("O_ADDFLAG flagId %04x (%s), value %d", flagId, Flags::getFlagName(flagId), value);
+	debugInterpreter("O_ADDFLAG flagId %04x (%s), value %d", flagId, _flagMap.getFlagName(flagId), value);
 }
 
 void Interpreter::O_TALKANIM() {
@@ -1188,7 +1188,7 @@ void Interpreter::O_COMPAREHI() {
 	} else {
 		_result = 1;
 	}
-	debugInterpreter("O_COMPAREHI flag %04x - (%s), value %d, flagValue %d, result %d", flag, Flags::getFlagName(flag), value, flagValue, _result);
+	debugInterpreter("O_COMPAREHI flag %04x - (%s), value %d, flagValue %d, result %d", flag, _flagMap.getFlagName(flag), value, flagValue, _result);
 }
 
 void Interpreter::O_COMPARELO() {
@@ -1200,7 +1200,7 @@ void Interpreter::O_COMPARELO() {
 	} else {
 		_result = 1;
 	}
-	debugInterpreter("O_COMPARELO flag %04x - (%s), value %d, flagValue %d, result %d", flag, Flags::getFlagName(flag), value, flagValue, _result);
+	debugInterpreter("O_COMPARELO flag %04x - (%s), value %d, flagValue %d, result %d", flag, _flagMap.getFlagName(flag), value, flagValue, _result);
 }
 
 // Not used in script
@@ -1301,7 +1301,7 @@ void Interpreter::O_GETHERODATA() {
 	if (hero != nullptr) {
 		_flags->setFlagValue(flagId, hero->getData((Hero::AttrId)heroOffset));
 	}
-	debugInterpreter("O_GETHERODATA flag %04x - (%s), heroId %d, heroOffset %d", flagId, Flags::getFlagName(flagId), heroId, heroOffset);
+	debugInterpreter("O_GETHERODATA flag %04x - (%s), heroId %d, heroOffset %d", flagId, _flagMap.getFlagName(flagId), heroId, heroOffset);
 }
 
 // No need of implementation here
@@ -1340,7 +1340,7 @@ void Interpreter::O_GETBACKANIMDATA() {
 	int currAnim = _vm->_backAnimList[animNumber]._seq._currRelative;
 	int16 value = _vm->_backAnimList[animNumber].backAnims[currAnim].getAnimData((Anim::AnimOffsets)(animDataOffset));
 	_flags->setFlagValue((Flags::Id)(flagId), value);
-	debugInterpreter("O_GETBACKANIMDATA flag %04X (%s), animNumber %d, animDataOffset %d, value %d", flagId, Flags::getFlagName(flagId), animNumber, animDataOffset, value);
+	debugInterpreter("O_GETBACKANIMDATA flag %04X (%s), animNumber %d, animDataOffset %d, value %d", flagId, _flagMap.getFlagName(flagId), animNumber, animDataOffset, value);
 }
 
 void Interpreter::O_GETANIMDATA() {
@@ -1350,7 +1350,7 @@ void Interpreter::O_GETANIMDATA() {
 	if (_vm->_normAnimList[anim]._animData != nullptr) {
 		_flags->setFlagValue(flagId, _vm->_normAnimList[anim].getAnimData((Anim::AnimOffsets)(animOffset)));
 	}
-	debugInterpreter("O_GETANIMDATA flag %04X (%s), anim %d, animOffset %d", flagId, Flags::getFlagName(flagId), anim, animOffset);
+	debugInterpreter("O_GETANIMDATA flag %04X (%s), anim %d, animOffset %d", flagId, _flagMap.getFlagName(flagId), anim, animOffset);
 }
 
 void Interpreter::O_SETBGCODE() {
@@ -1395,14 +1395,14 @@ void Interpreter::O_GETCHAR() {
 	Flags::Id flagId = readScriptFlagId();
 	_flags->setFlagValue(flagId, *_string);
 	_string++;
-	debugInterpreter("O_GETCHAR %04X (%s) %02x", flagId, Flags::getFlagName(flagId), _flags->getFlagValue(flagId));
+	debugInterpreter("O_GETCHAR %04X (%s) %02x", flagId, _flagMap.getFlagName(flagId), _flags->getFlagValue(flagId));
 }
 
 void Interpreter::O_SETDFLAG() {
 	Flags::Id flagId = readScriptFlagId();
 	int32 address = readScript32();
 	_flags->setFlagValue((Flags::Id)(flagId), _currentInstruction + address - 4);
-	debugInterpreter("O_SETDFLAG 0x%04X (%s) = 0x%04X", flagId, Flags::getFlagName(flagId), _currentInstruction + address - 4);
+	debugInterpreter("O_SETDFLAG 0x%04X (%s) = 0x%04X", flagId, _flagMap.getFlagName(flagId), _currentInstruction + address - 4);
 }
 
 void Interpreter::O_CALLDFLAG() {
@@ -1410,7 +1410,7 @@ void Interpreter::O_CALLDFLAG() {
 	_stack[_stacktop] = _currentInstruction;
 	_stacktop++;
 	_currentInstruction = _flags->getFlagValue(flagId);
-	debugInterpreter("O_CALLDFLAG 0x%04X (%s) = 0x%04X", flagId, Flags::getFlagName(flagId), _currentInstruction);
+	debugInterpreter("O_CALLDFLAG 0x%04X (%s) = 0x%04X", flagId, _flagMap.getFlagName(flagId), _currentInstruction);
 }
 
 void Interpreter::O_PRINTAT() {
@@ -1759,7 +1759,7 @@ void Interpreter::O_SETBACKANIMDATA() {
 	uint16 value = _flags->getFlagValue((Flags::Id)(flagId));
 	int currAnim = _vm->_backAnimList[animNumber]._seq._currRelative;
 	_vm->_backAnimList[animNumber].backAnims[currAnim].setAnimData((Anim::AnimOffsets)(animDataOffset), value);
-	debugInterpreter("O_SETBACKANIMDATA flag %04X (%s), animNumber %d, animDataOffset %d, value %d", flagId, Flags::getFlagName(flagId), animNumber, animDataOffset, value);
+	debugInterpreter("O_SETBACKANIMDATA flag %04X (%s), animNumber %d, animDataOffset %d, value %d", flagId, _flagMap.getFlagName(flagId), animNumber, animDataOffset, value);
 }
 
 void Interpreter::O_VIEWFLC() {
