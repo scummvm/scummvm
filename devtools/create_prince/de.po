@@ -4711,6 +4711,10 @@ msgstr "#B1"
 msgid "#B1"
 msgstr "#B1"
 
+#: dialog0146.txt:100801
+msgid "#B1"
+msgstr "#B1"
+
 #: dialog0147.txt:1
 msgid "OTHER: To było przepiękne."
 msgstr "OTHER: Das war wunderschön."
