@@ -80,6 +80,7 @@ struct zvisionIniSettings {
 };
 
 const char *mainKeymapId = "zvision";
+const char *gameKeymapId = "zvision-game";
 const char *cutscenesKeymapId = "zvision-cutscenes";
 
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
@@ -207,8 +208,8 @@ void ZVision::initialize() {
 	initScreen();
 
 	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
-	_mainKeymap = keymapper->getKeymap(mainKeymapId);
-	_mainKeymap->setEnabled(true);
+	_gameKeymap = keymapper->getKeymap(gameKeymapId);
+	_gameKeymap->setEnabled(true);
 	_cutscenesKeymap = keymapper->getKeymap(cutscenesKeymapId);
 	_cutscenesKeymap->setEnabled(false);
 
