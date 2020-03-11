@@ -442,6 +442,17 @@ Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *fla
 	_fgOpcodePC = _script->getStartGameOffset();
 	_bgOpcodePC = 0;
 
+	_currentInstruction = 0;
+	_lastOpcode = 0;
+	_lastInstruction = 0;
+
+	_string = nullptr;
+	_currentString = 0;
+
+	_stringStack.string = nullptr;
+	_stringStack.dialogData = nullptr;
+	_stringStack.currentString = 0;
+
 	memset(_stringBuf, 1, 1024);
 }
 
