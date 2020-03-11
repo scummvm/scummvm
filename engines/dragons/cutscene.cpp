@@ -50,7 +50,7 @@ void CutScene::scene1() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 
 	_actor_80063514 = 0xb00;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	//fade_related_calls_with_1f();
@@ -541,7 +541,7 @@ void CutScene::knightsSavedBackAtCastle() {
 
 	uVar1 = _vm->_dragonINIResource->getFlickerRecord();
 	_actor_80063514 = 0xa00;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	isFlag0x10Set = _vm->isFlagSet(ENGINE_FLAG_10);
 	//TODO fade_related_calls_with_1f();
@@ -647,7 +647,7 @@ void CutScene::flameReturnsCutScene() {
 
 	uVar1 = _vm->_dragonINIResource->getFlickerRecord();
 	_actor_80063514 = 0x3f;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	engineFlag10Set = _vm->isFlagSet(ENGINE_FLAG_10);
 	//fade_related_calls_with_1f();
@@ -723,7 +723,7 @@ void CutScene::knightsSavedAgain() {
 
 	flicker = _vm->_dragonINIResource->getFlickerRecord();
 	_actor_80063514 = 0;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	engineFlag10Set = _vm->isFlagSet(ENGINE_FLAG_10);
 	//fade_related_calls_with_1f();
@@ -826,7 +826,7 @@ void CutScene::tournamentCutScene() {
 
 	_vm->_talk->loadText(0x4C6E8, dialogText, 1000);
 	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C6E8);
-	_vm->setVsyncUpdateFunction(NULL);
+	_vm->setVsyncUpdateFunction(nullptr);
 	_vm->setFlags(ENGINE_FLAG_20000);
 	// fade_related_calls_with_1f();
 	Actor *actor = _vm->_dragonINIResource->getRecord(0x02BE)->actor;

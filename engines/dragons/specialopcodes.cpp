@@ -329,7 +329,7 @@ void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
 }
 
 void SpecialOpcodes::spcStopLadyOfTheLakeCapturedSceneLogic() {
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 	_vm->_sound->PauseCDMusic();
 	if ((_dat_80083148 != 0) || (_uint16_t_80083154 != 0)) {
 		//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
@@ -480,7 +480,7 @@ void SpecialOpcodes::spcActivatePizzaMakerActor() {
 
 void SpecialOpcodes::spcDeactivatePizzaMakerActor() {
 	if (_vm->getSceneUpdateFunction() == pizzaUpdateFunction) {
-		_vm->setSceneUpdateFunction(NULL);
+		_vm->clearSceneUpdateFunction();
 	}
 }
 
@@ -545,7 +545,7 @@ void SpecialOpcodes::spcMenInMinesSceneLogic() {
 
 void SpecialOpcodes::spcStopMenInMinesSceneLogic() {
 	if (_vm->getSceneUpdateFunction() == menInMinesSceneUpdateFunction) {
-		_vm->setSceneUpdateFunction(NULL);
+		_vm->clearSceneUpdateFunction();
 		if (0x3c < _specialOpCounter) {
 			_specialOpCounter = 0x3c;
 		}
@@ -566,7 +566,7 @@ void SpecialOpcodes::spcMonksAtBarSceneLogic() {
 
 void SpecialOpcodes::spcStopMonksAtBarSceneLogic() {
 	if (_vm->getSceneUpdateFunction() == monksAtBarSceneUpdateFunction) {
-		_vm->setSceneUpdateFunction(NULL);
+		_vm->clearSceneUpdateFunction();
 		if ((_dat_80083148 != 0) && (_uint16_t_80083154 != 0)) {
 			//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 		}
@@ -594,7 +594,7 @@ void SpecialOpcodes::spcStopFlameBedroomEscapeSceneLogic() {
 	_dat_80083148 = 0;
 	_vm->_dragonINIResource->getRecord(0x96)->actor->updateSequence(0);
 	if (_vm->getSceneUpdateFunction() == flameEscapeSceneUpdateFunction) {
-		_vm->setSceneUpdateFunction(NULL);
+		_vm->clearSceneUpdateFunction();
 	}
 }
 
@@ -919,7 +919,7 @@ void SpecialOpcodes::spcCastleBuildBlackDragonSceneLogic() {
 }
 
 void SpecialOpcodes::spcStopSceneUpdateFunction() {
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 }
 
 void SpecialOpcodes::spcSetInventorySequenceTo5() {
@@ -981,7 +981,7 @@ void SpecialOpcodes::panCamera(int16 mode) {
 
 	if (mode == 1) {
 		_vm->getINI(0x2ab)->objectState = _vm->_scene->_camera.x;
-		_vm->_dragonINIResource->setFlickerRecord(NULL);
+		_vm->_dragonINIResource->setFlickerRecord(nullptr);
 		iVar2 = (int) _vm->_scene->_camera.x;
 		iVar1 = iVar2;
 		while (iVar1 <= (_vm->_scene->getStageWidth() - 320)) {
@@ -1043,7 +1043,7 @@ void SpecialOpcodes::spc82CallResetDataMaybe() {
 }
 
 void SpecialOpcodes::spcStopScreenShakeUpdater() {
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 	_vm->_screen->setScreenShakeOffset(0, 0);
 }
 
@@ -1268,7 +1268,7 @@ void SpecialOpcodes::clearSceneUpdateFunction() {
 	if (sceneUpdater.sequenceID != -1) {
 		_vm->getINI(sceneUpdater.iniID)->actor->updateSequence(sceneUpdater.sequenceID);
 	}
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 }
 
 void SpecialOpcodes::setupTableBasedSceneUpdateFunction(uint16 initialCounter, uint16 numSequences,
