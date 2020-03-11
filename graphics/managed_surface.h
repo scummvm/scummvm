@@ -507,6 +507,13 @@ public:
 	}
 
 	/**
+	 * Gets the palette array
+	 */
+	const uint32 *getPalette() const {
+		return _palette;
+	}
+
+	/**
 	 * Sets the palette using RGB tuplets
 	 */
 	void setPalette(const byte *colors, uint start, uint num);
