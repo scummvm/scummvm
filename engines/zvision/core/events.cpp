@@ -68,31 +68,6 @@ uint8 ZVision::getBufferedKey(uint8 pos) {
 		return _cheatBuffer[KEYBUF_SIZE - pos - 1];
 }
 
-void ZVision::shortKeys(Common::Event event) {
-	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_s:
-			if (_menu->getEnable() & kMenubarSave)
-				_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
-			break;
-		case Common::KEYCODE_r:
-			if (_menu->getEnable() & kMenubarRestore)
-				_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
-			break;
-		case Common::KEYCODE_p:
-			if (_menu->getEnable() & kMenubarSettings)
-				_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
-			break;
-		case Common::KEYCODE_q:
-			if (_menu->getEnable() & kMenubarExit)
-				ifQuit();
-			break;
-		default:
-			break;
-		}
-	}
-}
-
 void ZVision::cheatCodes(uint8 key) {
 	Location loc = _scriptManager->getCurrentLocation();
 	// Do not process cheat codes while in the game menus
@@ -240,6 +215,26 @@ void ZVision::processEvents() {
 					                     _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
 
+			case kZVisionActionSave:
+				if (_menu->getEnable() & kMenubarSave)
+					_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
+				break;
+
+			case kZVisionActionRestore:
+				if (_menu->getEnable() & kMenubarRestore)
+					_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
+				break;
+
+			case kZVisionActionPreferences:
+				if (_menu->getEnable() & kMenubarSettings)
+					_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
+				break;
+
+			case kZVisionActionQuit:
+				if (_menu->getEnable() & kMenubarExit)
+					ifQuit();
+				break;
+
 			case kZVisionActionShowFPS: {
 				Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
 				_renderManager->showDebugMsg(fpsStr);
@@ -273,7 +268,6 @@ void ZVision::processEvents() {
 			_scriptManager->setStateValue(StateKey_KeyPress, vkKey);
 
 			_scriptManager->addEvent(_event);
-			shortKeys(_event);
 			cheatCodes(vkKey);
 		}
 		break;
