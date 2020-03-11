@@ -97,6 +97,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	// Symbian OS  should have joystick_num set to 0 in the ini file,
 	// but uiq devices might refuse opening the joystick
 	ConfMan.setInt("joystick_num", 0);
+	ConfMan.setBool("fullscreen", true);
 	ConfMan.flushToDisk();
 
 	GUI::Actions::init();
