@@ -366,8 +366,7 @@ static void setupKeymapper(OSystem &system) {
 	HardwareInputSet *inputSet = system.getHardwareInputSet();
 	KeymapperDefaultBindings *backendDefaultBindings = system.getKeymapperDefaultBindings();
 
-	mapper->registerHardwareInputSet(inputSet);
-	mapper->registerBackendDefaultBindings(backendDefaultBindings);
+	mapper->registerHardwareInputSet(inputSet, backendDefaultBindings);
 
 	Keymap *primaryGlobalKeymap = system.getEventManager()->getGlobalKeymap();
 	if (primaryGlobalKeymap) {

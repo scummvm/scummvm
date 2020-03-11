@@ -125,7 +125,6 @@ void OSystem_3DS::quit() {
 
 void OSystem_3DS::initBackend() {
 	loadConfig();
-	ConfMan.set("joystick_num", 0);
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 	if (!ConfMan.hasKey("vkeybd_pack_name")) {

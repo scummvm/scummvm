@@ -916,6 +916,14 @@ void OptionsDialog::handleTickle() {
 	}
 }
 
+void OptionsDialog::handleOtherEvent(const Common::Event &event) {
+	Dialog::handleOtherEvent(event);
+
+	if (event.type == Common::EVENT_INPUT_CHANGED && _keymapperWidget) {
+		_keymapperWidget->handleInputChanged();
+	}
+}
+
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
