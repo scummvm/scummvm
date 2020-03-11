@@ -85,9 +85,9 @@ void PriorityLayer::restoreTileMap(int16 x, int16 y, int16 w, int16 h) {
 }
 
 Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
-	_layerSurface[0] = NULL;
-	_layerSurface[1] = NULL;
-	_layerSurface[2] = NULL;
+	_layerSurface[0] = nullptr;
+	_layerSurface[1] = nullptr;
+	_layerSurface[2] = nullptr;
 	_layerOffset[0] = Common::Point(0, 0);
 	_layerOffset[1] = Common::Point(0, 0);
 	_layerOffset[2] = Common::Point(0, 0);
@@ -403,7 +403,7 @@ uint16 ScaleLayer::getScale(uint16 y) {
 	return uVar1 & 0xfff8u;
 }
 
-ScaleLayer::ScaleLayer(): _savedBands(NULL) {
+ScaleLayer::ScaleLayer(): _savedBands(nullptr) {
 	for (int i = 0; i < 32; i++) {
 		_bands[i]._y = -1;
 		_bands[i]._priority = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;

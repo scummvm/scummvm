@@ -472,7 +472,7 @@ Audio::SoundHandle *SoundManager::getVoiceHandle(uint16 soundID) {
 			return &_voice[i].handle;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void SoundManager::stopVoicePlaying(uint16 soundID) {

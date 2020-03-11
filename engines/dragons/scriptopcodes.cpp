@@ -904,7 +904,7 @@ void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 	}
 
 	//TODO fade_related_calls_with_1f();
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 	_vm->_sound->PauseCDMusic();
 
 	if (newSceneID != 0) {

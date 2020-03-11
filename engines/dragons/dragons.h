@@ -256,6 +256,7 @@ public:
 
 	void runSceneUpdaterFunction();
 	void setSceneUpdateFunction(void (*newUpdateFunction)());
+	void clearSceneUpdateFunction();
 	void (*getSceneUpdateFunction())();
 
 	void setVsyncUpdateFunction(void (*newUpdateFunction)());

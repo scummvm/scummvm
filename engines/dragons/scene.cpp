@@ -136,7 +136,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 
-	if (flicker == NULL || flicker->sceneId == 0) {
+	if (flicker == nullptr || flicker->sceneId == 0) {
 		_vm->getINI(1)->sceneId = 0;
 	} else {
 		_currentSceneId = (uint16)(sceneId & 0x7fff);

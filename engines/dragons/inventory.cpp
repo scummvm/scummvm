@@ -67,10 +67,10 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_sequenceId = 0;
 	_screenPositionIndex = 0;
 	_previousState = Closed;
-	_bag = NULL;
-	_actor = NULL;
+	_bag = nullptr;
+	_actor = nullptr;
 
-	_inventionBookPrevSceneUpdateFunc = NULL;
+	_inventionBookPrevSceneUpdateFunc = nullptr;
 	_inventionBookPrevSceneId = 0;
 	_inventionBookPrevFlickerINISceneId = 0;
 	_inventionBookPrevFlickerINIPosition = Common::Point(0, 0);
@@ -282,7 +282,7 @@ void Inventory::loadInventoryItemsFromSave() {
 
 void Inventory::openInventionBook() {
 	_inventionBookPrevSceneUpdateFunc = _vm->getSceneUpdateFunction();
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 //	fade_related_calls_with_1f();
 	_sequenceId = 2;
 	_actor->updateSequence(2);
@@ -404,7 +404,7 @@ void Inventory::inventoryMissing() {
 	static uint16 counter = 0;
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
-	if (flicker->actor != NULL) {
+	if (flicker->actor != nullptr) {
 		flicker->actor->clearFlag(ACTOR_FLAG_10);
 		if ((_vm->getCurrentSceneId() != 0x2e) || (flicker->actor->_resourceID != 0x91)) {
 			flicker->actor->setFlag(ACTOR_FLAG_4);

@@ -157,7 +157,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	_vm->reset_screen_maybe();
 	_vm->_inventory->setState(Closed);
 	flicker->sceneId = 0;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setFlags(ENGINE_FLAG_800);
 	_vm->_scene->setSceneId(5);
 	_vm->_scene->loadSceneData(5 | 0x8000, 0);

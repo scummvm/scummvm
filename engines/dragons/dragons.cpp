@@ -61,21 +61,21 @@ DragonsEngine *getEngine() {
 
 DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst) {
 	_language = desc->language;
-	_bigfileArchive = NULL;
-	_dragonRMS = NULL;
-	_backgroundResourceLoader = NULL;
-	_screen = NULL;
+	_bigfileArchive = nullptr;
+	_dragonRMS = nullptr;
+	_backgroundResourceLoader = nullptr;
+	_screen = nullptr;
 	_sequenceOpcodes = new SequenceOpcodes(this);
-	_scriptOpcodes = NULL;
+	_scriptOpcodes = nullptr;
 	_engine = this;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
-	_credits = NULL;
-	_talk = NULL;
-	_fontManager = NULL;
-	_strPlayer = NULL;
-	_sceneUpdateFunction = NULL;
-	_vsyncUpdateFunction = NULL;
+	_credits = nullptr;
+	_talk = nullptr;
+	_fontManager = nullptr;
+	_strPlayer = nullptr;
+	_sceneUpdateFunction = nullptr;
+	_vsyncUpdateFunction = nullptr;
 
 	_leftMouseButtonUp = false;
 	_leftMouseButtonDown = false;
@@ -881,10 +881,10 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 	DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
 	DragonINI *ini1 = getINI(1);
 
-	if (flickerINI != NULL) {
+	if (flickerINI != nullptr) {
 		if (flickerINI->sceneId == currentSceneId) {
-			if (flickerINI->actor == NULL || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
-				if (ini1->actor != NULL) {
+			if (flickerINI->actor == nullptr || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
+				if (ini1->actor != nullptr) {
 					ini1->actor->updateSequence(8);
 					ini1->actor->_priorityLayer = 0;
 				}
@@ -898,7 +898,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 						&& flickerINI->actor->_direction != flickerINI->actor->_sequenceID) {
 					flickerINI->actor->updateSequence(flickerINI->actor->_direction);
 				}
-				if (ini1->actor != NULL) {
+				if (ini1->actor != nullptr) {
 					ini1->actor->_priorityLayer = 0;
 				}
 			}
@@ -985,8 +985,8 @@ void DragonsEngine::performAction() {
 
 	uVar2 = _scriptOpcodes->_scriptTargetINI;
 	uVar1 = _flags;
-	local_58_code = NULL;
-	local_58_codeEnd = NULL;
+	local_58_code = nullptr;
+	local_58_codeEnd = nullptr;
 
 	uVar6 = 0;
 	_scriptOpcodes->_numDialogStackFramesToPop = 0;
@@ -1021,7 +1021,7 @@ void DragonsEngine::performAction() {
 		local_58_codeEnd = local_58_code + READ_LE_UINT16(local_48._code + 6);
 	}
 	uVar4 = uVar4 & 0xfffd;
-	if (local_58_code != NULL && local_58_codeEnd != NULL) {
+	if (local_58_code != nullptr && local_58_codeEnd != nullptr) {
 		clearFlags(ENGINE_FLAG_8);
 		ScriptOpCall local_58(local_58_code, local_58_codeEnd - local_58_code);
 		_scriptOpcodes->runScript(local_58);
@@ -1115,7 +1115,7 @@ void DragonsEngine::walkFlickerToObject() {
 				return;
 			}
 			flickerINI = _dragonINIResource->getFlickerRecord();
-			if (flickerINI != NULL && flickerINI->actor != NULL) {
+			if (flickerINI != nullptr && flickerINI->actor != nullptr) {
 				flickerINI->actor->clearFlag(ACTOR_FLAG_10);
 				flickerINI->actor->setFlag(ACTOR_FLAG_4);
 				targetINI = getINI(_cursor->_performActionTargetINI - 1);
@@ -1230,18 +1230,22 @@ void DragonsEngine::reset() {
 		_paletteCyclingTbl[i].updateCounter = 0;
 	}
 
-	setSceneUpdateFunction(NULL);
+	clearSceneUpdateFunction();
 }
 
 void DragonsEngine::runSceneUpdaterFunction() {
 	if ((isFlagSet(ENGINE_FLAG_20) && (_run_func_ptr_unk_countdown_timer == 0)) &&
-			(_run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != NULL)) {
+			(_run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != nullptr)) {
 		_sceneUpdateFunction();
 	}
 }
 
 void DragonsEngine::setSceneUpdateFunction(void (*newUpdateFunction)()) {
 	_sceneUpdateFunction = newUpdateFunction;
+}
+
+void DragonsEngine::clearSceneUpdateFunction() {
+	setSceneUpdateFunction(nullptr);
 }
 
 void DragonsEngine::setVsyncUpdateFunction(void (*newUpdateFunction)()) {
@@ -1316,7 +1320,7 @@ bool DragonsEngine::isDebugMode() {
 }
 
 bool DragonsEngine::isVsyncUpdaterFunctionRunning() {
-	return _vsyncUpdateFunction != NULL;
+	return _vsyncUpdateFunction != nullptr;
 }
 
 void DragonsEngine::runVsyncUpdaterFunction() {
