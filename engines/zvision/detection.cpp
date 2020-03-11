@@ -211,22 +211,22 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	mainKeymap->addAction(act);
 
 	act = new Action(kStandardActionSave, _("Save"));
-	act->setKeyEvent(KeyState(KEYCODE_s, 's', KBD_CTRL));
+	act->setCustomEngineActionEvent(kZVisionActionSave);
 	act->addDefaultInputMapping("C+s");
 	mainKeymap->addAction(act);
 
 	act = new Action(kStandardActionLoad, _("Restore"));
-	act->setKeyEvent(KeyState(KEYCODE_r, 'r', KBD_CTRL));
+	act->setCustomEngineActionEvent(kZVisionActionRestore);
 	act->addDefaultInputMapping("C+r");
 	mainKeymap->addAction(act);
 
 	act = new Action("QUIT", _("Quit"));
-	act->setKeyEvent(KeyState(KEYCODE_q, 'q', KBD_CTRL));
+	act->setCustomEngineActionEvent(kZVisionActionQuit);
 	act->addDefaultInputMapping("C+q");
 	mainKeymap->addAction(act);
 
 	act = new Action(kStandardActionOpenSettings, _("Preferences"));
-	act->setKeyEvent(KeyState(KEYCODE_p, 'p', KBD_CTRL));
+	act->setCustomEngineActionEvent(kZVisionActionPreferences);
 	act->addDefaultInputMapping("C+p");
 	mainKeymap->addAction(act);
 

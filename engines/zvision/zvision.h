@@ -106,9 +106,12 @@ enum ZVisionAction {
 	kZVisionActionDown,
 	kZVisionActionLeft,
 	kZVisionActionRight,
+	kZVisionActionSave,
+	kZVisionActionRestore,
+	kZVisionActionQuit,
+	kZVisionActionPreferences,
 	kZVisionActionShowFPS,
 	kZVisionActionSkipCutscene,
-	kZVisionActionQuit,
 
 	kZVisionActionCount
 };
@@ -276,7 +279,6 @@ private:
 	void onMouseMove(const Common::Point &pos);
 
 	void registerDefaultSettings();
-	void shortKeys(Common::Event);
 
 	void cheatCodes(uint8 key);
 	void pushKeyToCheatBuf(uint8 key);
