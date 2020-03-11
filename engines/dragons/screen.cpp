@@ -408,4 +408,30 @@ void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, 
 	}
 }
 
+void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, byte *palette, Common::Rect srcRect,
+										   AlphaBlendMode alpha) {
+	// Copy buffer data to internal buffer
+	const byte *src = (const byte *)srcSurface.getBasePtr(0, 0);
+	int width = srcSurface.w > DRAGONS_SCREEN_WIDTH ? DRAGONS_SCREEN_WIDTH : srcSurface.w;
+	int height = srcRect.height();
+
+	byte *dst = (byte *)_backSurface->getBasePtr(0, 0);
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			int32 srcIdx = (i + srcRect.top) * srcSurface.w + ((j + srcRect.left) % srcSurface.w);
+			uint16 c = READ_LE_UINT16(&palette[src[srcIdx] * 2]);
+			if (c != 0) {
+				if (!(c & 0x8000) || alpha == NONE) {
+					// only copy opaque pixels
+					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
+				} else {
+					WRITE_LE_UINT16(&dst[j * 2], alpha == NORMAL ? alphaBlendRGB555(c, READ_LE_INT16(&dst[j * 2]), 128) : alphaBlendAdditiveRGB555(c, READ_LE_INT16(&dst[j * 2])));
+					// semi-transparent pixels.
+				}
+			}
+		}
+		dst += _backSurface->pitch;
+	}
+}
+
 } // End of namespace Dragons

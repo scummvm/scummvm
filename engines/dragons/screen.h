@@ -56,6 +56,7 @@ public:
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY);
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, Common::Rect srcRect, bool flipX = false, AlphaBlendMode alpha = NONE);
 	void copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, Common::Rect srcRect, bool flipX = false, AlphaBlendMode alpha = NONE, uint16 scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE);
+	void copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, byte *palette, Common::Rect srcRect, AlphaBlendMode alpha = NONE);
 	void updateScreen();
 	void loadPalette(uint16 paletteNum, byte *palette);
 	byte *getPalette(uint16 paletteNum);

@@ -517,7 +517,7 @@ void Scene::drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface 
 		rect.bottom += offset.y;
 	}
 //	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
-	_screen->copyRectToSurface8bpp(*surface, _screen->getPalette(0), 0, 0, rect, false, _stage->getLayerAlphaMode(layerNumber));
+	_screen->copyRectToSurface8bppWrappedX(*surface, _screen->getPalette(0), rect, _stage->getLayerAlphaMode(layerNumber));
 }
 
 ScaleLayer *Scene::getScaleLayer() {
