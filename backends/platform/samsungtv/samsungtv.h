@@ -32,6 +32,7 @@ public:
 	virtual void initBackend();
 	virtual void quit();
 	virtual void fatalError();
+	virtual bool hasFeature(Feature f);
 
 protected:
 	virtual Common::String getDefaultConfigFileName();

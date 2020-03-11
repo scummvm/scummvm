@@ -42,4 +42,11 @@ void OSystem_SDL_Dingux::initBackend() {
 	OSystem_POSIX::initBackend();
 }
 
+bool OSystem_SDL_Dingux::hasFeature(Feature f) {
+	if (f == kFeatureFullscreenMode)
+		return false;
+
+	return OSystem_SDL::hasFeature(f);
+}
+
 #endif

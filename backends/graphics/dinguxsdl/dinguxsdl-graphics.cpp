@@ -458,12 +458,6 @@ void DINGUXSdlGraphicsManager::setupHardwareSize() {
 	}
 }
 
-bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
-	return
-	    (f == OSystem::kFeatureAspectRatioCorrection) ||
-	    (f == OSystem::kFeatureCursorPalette);
-}
-
 void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 	if (_cursorX != x || _cursorY != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
