@@ -86,9 +86,6 @@ OSystem_SDL::OSystem_SDL()
 	_mixerManager(0),
 	_eventSource(0),
 	_window(0) {
-
-	ConfMan.registerDefault("kbdmouse_speed", 3);
-	ConfMan.registerDefault("joystick_deadzone", 3);
 }
 
 OSystem_SDL::~OSystem_SDL() {

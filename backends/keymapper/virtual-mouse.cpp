@@ -43,6 +43,9 @@ VirtualMouse::VirtualMouse(EventDispatcher *eventDispatcher) :
 		_subPixelRemainderX(0.f),
 		_subPixelRemainderY(0.f),
 		_lastUpdateMillis(0) {
+	ConfMan.registerDefault("kbdmouse_speed", 3);
+	ConfMan.registerDefault("joystick_deadzone", 3);
+
 	_eventDispatcher->registerSource(this, false);
 	_eventDispatcher->registerObserver(this, 10, false);
 }

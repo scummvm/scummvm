@@ -33,6 +33,9 @@
 LegacySdlEventSource::LegacySdlEventSource() {
 	// Reset mouse state
 	memset(&_km, 0, sizeof(_km));
+
+	ConfMan.registerDefault("kbdmouse_speed", 3);
+	ConfMan.registerDefault("joystick_deadzone", 3);
 }
 
 void LegacySdlEventSource::updateKbdMouse() {
