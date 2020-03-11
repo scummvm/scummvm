@@ -194,12 +194,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 	_scalerType = 0;
 
-#ifndef __SYMBIAN32__
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
-#else
-	_videoMode.fullscreen = true;
-#endif
-
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.stretchMode = STRETCH_FIT;
@@ -1493,6 +1488,9 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) c
 
 void SurfaceSdlGraphicsManager::setFullscreenMode(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
+
+	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode))
+		return;
 
 	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable)
 		return;

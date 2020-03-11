@@ -27,6 +27,8 @@
 #include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
 
 void OSystem_SDL_Dingux::initBackend() {
+	ConfMan.registerDefault("fullscreen", true);
+
 	// Create the events manager
 	if (_eventSource == 0)
 		_eventSource = new DINGUXSdlEventSource();

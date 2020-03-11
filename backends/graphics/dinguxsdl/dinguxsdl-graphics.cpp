@@ -453,8 +453,6 @@ void DINGUXSdlGraphicsManager::setupHardwareSize() {
 
 		_videoMode.hardwareWidth = _videoMode.screenWidth / 2;
 		_videoMode.hardwareHeight = _videoMode.screenHeight / 2;
-
-		_videoMode.fullscreen = true;
 	} else {
 		SurfaceSdlGraphicsManager::setupHardwareSize();
 	}

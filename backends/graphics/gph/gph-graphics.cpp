@@ -422,9 +422,6 @@ void GPHGraphicsManager::hideOverlay() {
 }
 
 void GPHGraphicsManager::setupHardwareSize() {
-	// We don't offer anything other than fullscreen on GPH devices so let's not even pretend.
-	_videoMode.fullscreen = true;
-
 	// Set the hardware stats to match the LCD.
 	_videoMode.hardwareWidth = 320;
 	_videoMode.hardwareHeight = 240;

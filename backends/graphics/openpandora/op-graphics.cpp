@@ -53,7 +53,6 @@ bool OPGraphicsManager::loadGFXMode() {
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_SetCursor(hiddenCursor);
 
-	_videoMode.fullscreen = true;
 	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
 
