@@ -210,4 +210,11 @@ void OSystem_GPH::quit() {
 	OSystem_POSIX::quit();
 }
 
+bool OSystem_GPH::hasFeature(Feature f) {
+	if (f == kFeatureFullscreenMode)
+		return false;
+
+	return OSystem_SDL::hasFeature(f);
+}
+
 #endif

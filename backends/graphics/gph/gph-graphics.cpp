@@ -458,12 +458,6 @@ bool GPHGraphicsManager::loadGFXMode() {
 	return success;
 }
 
-bool GPHGraphicsManager::hasFeature(OSystem::Feature f) const {
-	return
-	    (f == OSystem::kFeatureAspectRatioCorrection) ||
-	    (f == OSystem::kFeatureCursorPalette);
-}
-
 void GPHGraphicsManager::warpMouse(int x, int y) {
 	if (_cursorX != x || _cursorY != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {

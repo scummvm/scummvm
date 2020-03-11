@@ -34,6 +34,7 @@
 class OSystem_SDL_Dingux : public OSystem_POSIX {
 public:
 	void initBackend();
+	bool hasFeature(Feature f);
 };
 
 

@@ -141,7 +141,6 @@ SOURCE     backends\events\symbiansdl\symbiansdl-events.cpp
 SOURCE	   backends\fs\abstract-fs.cpp
 SOURCE	   backends\fs\symbian\symbianstream.cpp
 SOURCE     backends\graphics\sdl\sdl-graphics.cpp
-SOURCE     backends\graphics\symbiansdl\symbiansdl-graphics.cpp
 SOURCE     backends\keymapper\action.cpp
 SOURCE     backends\keymapper\keymap.cpp
 SOURCE     backends\keymapper\keymapper.cpp
