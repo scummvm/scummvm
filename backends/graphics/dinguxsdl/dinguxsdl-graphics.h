@@ -48,12 +48,14 @@ public:
 	void internUpdateScreen() override;
 	void showOverlay() override;
 	void hideOverlay() override;
-	bool loadGFXMode() override;
 	void drawMouse() override;
 	void undrawMouse() override;
 	void warpMouse(int x, int y) override;
 
 	virtual void transformMouseCoordinates(Common::Point &point);
+
+protected:
+	void setupHardwareSize() override;
 };
 
 #endif /* BACKENDS_GRAPHICS_SDL_DINGUX_H */

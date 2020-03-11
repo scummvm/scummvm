@@ -421,8 +421,7 @@ void GPHGraphicsManager::hideOverlay() {
 	SurfaceSdlGraphicsManager::hideOverlay();
 }
 
-bool GPHGraphicsManager::loadGFXMode() {
-
+void GPHGraphicsManager::setupHardwareSize() {
 	// We don't offer anything other than fullscreen on GPH devices so let's not even pretend.
 	_videoMode.fullscreen = true;
 
@@ -450,13 +449,16 @@ bool GPHGraphicsManager::loadGFXMode() {
 		if (_videoMode.aspectRatioCorrection)
 			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
 	}
-	SurfaceSdlGraphicsManager::loadGFXMode();
+}
+
+bool GPHGraphicsManager::loadGFXMode() {
+	bool success = SurfaceSdlGraphicsManager::loadGFXMode();
 
 	// The old GP2X hacked SDL needs this after any call to SDL_SetVideoMode
 	// and it does not hurt other devices.
 	SDL_ShowCursor(SDL_DISABLE);
 
-	return true;
+	return success;
 }
 
 bool GPHGraphicsManager::hasFeature(OSystem::Feature f) const {
