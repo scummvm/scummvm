@@ -9239,6 +9239,10 @@ msgstr "P#OTHER: Hmm."
 msgid "OTHER: No, ale może jeszcze będą z ciebie ludzie."
 msgstr "OTHER: Naja, aber aus dir kann schon noch was werden."
 
+#: invtxt.txt:0
+msgid "homunkulus - Nie jest najmądrzejszy, ale przynajmniej|jest magiczny."
+msgstr "Homunkulus - Er ist nicht der Klügste,|aber wenigstens magisch."
+
 #: invtxt.txt:1
 msgid "eliksir nieśmiertelności - Aż trudno uwierzyć, że coś takiego|naprawdę istnieje."
 msgstr "Unsterblichkeitselixier - Schwer zu glauben, daß so etwas|wirklich existiert."

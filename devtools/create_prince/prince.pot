@@ -9238,6 +9238,10 @@ msgstr ""
 msgid "OTHER: No, ale może jeszcze będą z ciebie ludzie."
 msgstr ""
 
+#: invtxt.txt:0
+msgid "homunkulus - Nie jest najmądrzejszy, ale przynajmniej|jest magiczny."
+msgstr ""
+
 #: invtxt.txt:1
 msgid "eliksir nieśmiertelności - Aż trudno uwierzyć, że coś takiego|naprawdę istnieje."
 msgstr ""
