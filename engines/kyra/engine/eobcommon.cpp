@@ -188,6 +188,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = 0;
 	_buttonList7Size = _buttonList8Size = 0;
 	_inventorySlotsY = _mnDef = 0;
+	_invFont1 = _invFont2 = _conFont = Screen::FID_6_FNT;
+	_invFont3 = Screen::FID_8_FNT;
 	_transferStringsScummVM = 0;
 	_buttonDefs = 0;
 	_npcPreset = 0;
@@ -225,6 +227,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
 	_cgaMappingDefault = _cgaMappingAlt = _cgaMappingInv = _cgaLevelMappingIndex = _cgaMappingItemsL = _cgaMappingItemsS = _cgaMappingThrown = _cgaMappingIcons = _cgaMappingDeco = 0;
 	_amigaLevelSoundList1 = _amigaLevelSoundList2 = 0;
+	_dcrShpDataPos = 0;
 	_amigaSoundMap = 0;
 	_amigaCurSoundFile = -1;
 	_prefMenuPlatformOffset = 0;
@@ -574,13 +577,16 @@ void EoBCoreEngine::loadFonts() {
 	}
 
 	if (_flags.platform == Common::kPlatformFMTowns) {
-			_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT.DMP");
+		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT.DMP");
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
+		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
+		_conFont = _invFont3 = Screen::FID_SJIS_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
 		//_screen->loadFont(Screen::FID_6_FNT, "FONT8SH");
 		_screen->setFontStyles(Screen::FID_8_FNT, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
+		_invFont1 = _invFont2 = _conFont = Screen::FID_8_FNT;
 	}
 }
 
@@ -592,11 +598,13 @@ Common::Error EoBCoreEngine::go() {
 
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
 
-	// Import original save game files (especially the "Quick Start Party")
+	// Import original save game files (especially the "Quick Start Party").
+	// The SegaCD version has a "Default Party" main menu option instead.
 	if (ConfMan.getBool("importOrigSaves")) {
-		//importOriginalSaveFile(-1);
-		//ConfMan.setBool("importOrigSaves", false);
-		//ConfMan.flushToDisk();
+		if (_flags.platform != Common::kPlatformSegaCD)
+			importOriginalSaveFile(-1);
+		ConfMan.setBool("importOrigSaves", false);
+		ConfMan.flushToDisk();
 	}
 
 	loadItemDefs();
@@ -702,8 +710,7 @@ void EoBCoreEngine::runLoop() {
 	_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
 	_flashShapeTimer = 0;
 	_drawSceneTimer = _system->getMillis();
-
-	_screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	_screen->setFont(_conFont);
 	_screen->setScreenDim(7);
 
 	_runFlag = true;
@@ -728,7 +735,8 @@ void EoBCoreEngine::runLoop() {
 			snd_processEnvironmentalSoundEffect(_flags.gameID == GI_EOB1 ? 30 : (rollDice(1, 2, -1) ? 27 : 28), _currentBlock + rollDice(1, 12, -1));
 		}
 
-		updateEnvironmentalSfx(0);
+		snd_updateLevelScore();
+		snd_updateEnvironmentalSfx(0);
 		turnUndeadAuto();
 	}
 }

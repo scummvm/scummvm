@@ -1225,7 +1225,7 @@ void LoLEngine::drawScene(int pageNum) {
 		SWAP(_sceneDrawPage1, _sceneDrawPage2);
 	}
 
-	updateEnvironmentalSfx(0);
+	snd_updateEnvironmentalSfx(0);
 	gui_drawCompass();
 
 	_sceneUpdateRequired = false;
@@ -1452,7 +1452,7 @@ void LoLEngine::drawDecorations(int index) {
 		uint8 d = (_currentDirection + _dscWalls[s]) & 3;
 		int8 l = _wllShapeMap[_visibleBlocks[index]->walls[d]];
 
-		uint8 *shapeData = 0;
+		const uint8 *shapeData = 0;
 
 		int x = 0;
 		int y = 0;

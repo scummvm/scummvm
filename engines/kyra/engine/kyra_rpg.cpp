@@ -54,6 +54,7 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_vcnBpp = flags.useHiColorMode ? 2 : 1;
 	_vcnSrcBitsPerPixel = (flags.platform == Common::kPlatformAmiga) ? 5 : (_vcnBpp == 2 ? 8 : 4);
 	_vcnDrawLine = 0;
+	_vmpVisOffs = (flags.platform == Common::kPlatformSegaCD) ? _vmpOffsetsSegaCD : _vmpOffsetsDefault;
 
 	_vmpPtr = 0;
 	_blockBrightness = _wllVcnOffset = _wllVcnOffset2 = _wllVcnRmdOffset = 0;
@@ -169,7 +170,7 @@ Common::Error KyraRpgEngine::init() {
 
 	_levelDecorationProperties = new LevelDecorationProperty[100];
 	memset(_levelDecorationProperties, 0, 100 * sizeof(LevelDecorationProperty));
-	_levelDecorationShapes = new uint8*[400];
+	_levelDecorationShapes = new const uint8*[400];
 	memset(_levelDecorationShapes, 0, 400 * sizeof(uint8 *));
 	_levelBlockProperties = new LevelBlockProperty[1025];
 	memset(_levelBlockProperties, 0, 1025 * sizeof(LevelBlockProperty));
@@ -407,7 +408,7 @@ bool KyraRpgEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) 
 	return true;
 }
 
-void KyraRpgEngine::updateEnvironmentalSfx(int soundId) {
+void KyraRpgEngine::snd_updateEnvironmentalSfx(int soundId) {
 	snd_processEnvironmentalSoundEffect(soundId, _currentBlock);
 }
 

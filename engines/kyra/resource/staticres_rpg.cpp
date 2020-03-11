@@ -74,6 +74,10 @@ void StaticResource::freeRawDataBe32(void *&ptr, int &size) {
 
 const uint8 KyraRpgEngine::_dropItemDirIndex[] = { 0, 1, 2, 3, 1, 3, 0, 2, 3, 2, 1, 0, 2, 0, 3, 1 };
 
+const uint16 KyraRpgEngine::_vmpOffsetsDefault[9] = { 102, 97, 129, 117, 81, 159, 45, 239, 0 };
+
+const uint16 KyraRpgEngine::_vmpOffsetsSegaCD[9] = { 0, 15, 20, 50, 62, 78, 158, 194, 386 };
+
 void KyraRpgEngine::initStaticResource() {
 	int temp;
 	_dscShapeX = (const int16 *)_staticres->loadRawDataBe16(kRpgCommonDscX, temp);

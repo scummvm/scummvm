@@ -225,7 +225,7 @@ void CharacterGenerator::init(bool defaultParty) {
 	_faceShapes = new const uint8 *[44];
 	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
 		uint8 *in = _vm->resource()->fileData("FACE", 0);
-		_screen->sega_encodeSpriteShapes(_faceShapes, in, 44, 32, 32, 3);
+		_screen->sega_encodeShapesFromSprites(_faceShapes, in, 44, 32, 32, 3);
 		delete[] in;
 	} else {
 		_screen->loadShapeSetBitmap("CHARGENA", 5, 3);

@@ -733,7 +733,7 @@ void EoBCoreEngine::endObjectFlight(EoBFlyingObject *fo) {
 	if (fo->enable == 1) {
 		_items[fo->item].pos &= 3;
 		runLevelScript(fo->curBlock, 4);
-		updateEnvironmentalSfx(18);
+		snd_updateEnvironmentalSfx(18);
 	}
 	memset(fo, 0, sizeof(EoBFlyingObject));
 }

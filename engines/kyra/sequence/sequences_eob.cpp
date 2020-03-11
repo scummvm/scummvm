@@ -2272,8 +2272,7 @@ void EoBEngine::seq_playIntro(int part) {
 		if (part == kOnlyCredits)
 			seq_segaOpeningCredits();
 		else
-			seq_playFinale();
-			//seq_segaPlaySequence(53, true);
+			seq_segaPlaySequence(53, true);
 	} else {
 		EoBIntroPlayer(this, _screen).start((EoBIntroPlayer::IntroPart)part);
 	}

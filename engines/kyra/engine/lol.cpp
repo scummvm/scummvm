@@ -878,7 +878,7 @@ void LoLEngine::runLoop() {
 		if (_sceneUpdateRequired)
 			gui_drawScene(0);
 		else
-			updateEnvironmentalSfx(0);
+			snd_updateEnvironmentalSfx(0);
 
 		if (_partyDamageFlags != -1) {
 			checkForPartyDeath();

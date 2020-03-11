@@ -47,6 +47,7 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_dscDoorScaleMult4 = _dscDoorScaleMult5 = _dscDoorScaleMult6 = _dscDoorY3 = 0;
 	_dscDoorY4 = _dscDoorY5 = _dscDoorY6 = _dscDoorY7 = _doorShapeEncodeDefs = 0;
 	_doorSwitchShapeEncodeDefs = _doorSwitchCoords = 0;
+	_doorShapesSrc = _doorSwitchShapesSrc = 0;
 	_dscDoorCoordsExt = 0;
 	_useMainMenuGUISettings = false;
 	_ttlCfg = 0;
@@ -54,9 +55,12 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 
 	_seqPlayer = 0;
 	_sres = 0;
+	_levelCurTrack = 0;
 }
 
 EoBEngine::~EoBEngine() {
+	delete[] _doorShapesSrc;
+	delete[] _doorSwitchShapesSrc;
 	delete[] _itemsOverlay;
 	delete _seqPlayer;
 	delete _sres;
@@ -129,7 +133,7 @@ Common::Error EoBEngine::init() {
 	shapeBuffer = new const uint8 *[numShapes]; \
 	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
 	in = _sres->resData(resID); \
-	_screen->sega_encodeSpriteShapes(shapeBuffer, in, numShapes, width, height, 3); \
+	_screen->sega_encodeShapesFromSprites(shapeBuffer, in, numShapes, width, height, 3); \
 	delete[] in
 
 void EoBEngine::loadItemsAndDecorationsShapes() {
@@ -160,6 +164,16 @@ void EoBEngine::startupNew() {
 	_sound->selectAudioResourceSet(kMusicIngame);
 	_sound->loadSoundFile(0);
 	_screen->selectPC98Palette(0, _screen->getPalette(0));
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		_screen->sega_selectPalette(4, 0);
+		_screen->sega_selectPalette(6, 1);
+		_screen->sega_selectPalette(8, 2);
+		_screen->sega_selectPalette(7, 3);
+
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
+		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
+		_txt->clearDim(0);
+	}
 	_currentLevel = 1;
 	_currentSub = 0;
 	loadLevel(1, 0);
@@ -413,6 +427,56 @@ void EoBEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 	}
 }
 
+void EoBEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::loadMonsterShapes(filename, monsterIndex, hasDecorations, encodeTableIndex);
+		return;
+	}
+
+	static const uint8 lvlEncodeTableIndex[] = {
+		0x00, 0x00, 0x00, 0x01, 0x03, 0x02, 0x04, 0x05, 0x06, 0x06, 0x07, 0x06, 0x10,
+		0x0e, 0x0c, 0x08, 0x0f, 0x14, 0x12, 0x09, 0x0b, 0x0a, 0x13, 0x11, 0x15, 0x0d
+	};
+
+	_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+	uint8 *data = _sres->resData(monsterIndex >> 4, 0);
+	const uint8 *pos = data;
+
+	int size = 0;
+	const uint8 *enc = _staticres->loadRawData(kEoBBaseEncodeMonsterDefs00 + lvlEncodeTableIndex[(_currentLevel << 1) + (monsterIndex >> 4)], size);
+	size >>= 1;
+	assert(size <= 18);
+
+	for (int i = 0; i < size; i++) {
+		_monsterShapes[monsterIndex + i] = _screen->sega_encodeShape(pos, enc[0], enc[1], 2);
+		pos += ((enc[0] * enc[1]) >> 1);
+		enc += 2;
+	}
+
+	delete[] data;
+
+#if 0
+	// DEBUG: display all the just encoded monster shapes on screen
+	setLevelPalettes(_currentLevel);
+	_screen->sega_fadeToNeutral(0);
+	_screen->clearPage(0);
+	uint16 x = 0;
+	uint8 y = 0;
+	uint8 hmax = 0;
+	for (int i = 0; i < size; i++) {
+		if (x + (_monsterShapes[monsterIndex + i][2] << 3) > 320) {
+			y += hmax;
+			x = hmax = 0;
+		}
+		hmax = MAX(_monsterShapes[monsterIndex + i][1], hmax);
+		_screen->drawShape(0, _monsterShapes[monsterIndex + i], x, y);
+		_screen->updateScreen();
+		x += _monsterShapes[monsterIndex + i][2] << 3;
+	}
+	_screen->updateScreen();
+#endif
+}
+
 void EoBEngine::replaceMonster(int unit, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) {
 	if (_levelBlockProperties[block].flags & 7)
 		return;
@@ -450,32 +514,111 @@ void EoBEngine::updateScriptTimersExtra() {
 	}
 }
 
+void EoBEngine::readLevelFileData(int level) {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::readLevelFileData(level);
+		return;
+	}
+	_sres->loadContainer(Common::String::format("L%d", level));
+	Common::SeekableReadStream *s = _sres->resStream(7);
+	_screen->loadFileDataToPage(s, 5, 15000);
+	delete s;
+}
+
+void EoBEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
+	if (file)
+		strcpy(_lastBlockDataFile, file);
+	delete[] _vcnBlocks;
+
+	Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile);
+	if (_flags.platform == Common::kPlatformAmiga) {
+		Common::SeekableReadStream *in = _res->createReadStream(fn);
+		uint32 vcnSize = in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
+		_vcnBlocks = new uint8[vcnSize];
+		_screen->getPalette(1).loadAmigaPalette(*in, 1, 5);
+		in->seek(22, SEEK_CUR);
+		in->read(_vcnBlocks, vcnSize);
+		delete in;
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_vcnBlocks = _res->fileData(fn.c_str(), 0);
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+		_vcnBlocks = _sres->resData(5, 0);
+	} else {
+		EoBCoreEngine::loadVcnData(file, cgaMapping);
+	}
+}
+
+Common::SeekableReadStreamEndian *EoBEngine::getVmpData(const char *file) {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return EoBCoreEngine::getVmpData(file);
+	_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+	return _sres->resStreamEndian(3);
+}
+
+const uint8 *EoBEngine::getBlockFileData(int level) {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return EoBCoreEngine::getBlockFileData(level);
+	_sres->loadContainer(Common::String::format("L%d", level));
+	Common::SeekableReadStream *s = _sres->resStream(6);
+	_screen->loadFileDataToPage(s, 15, s->size());
+	delete s;
+	return _screen->getCPagePtr(15);
+}
+
+Common::SeekableReadStreamEndian *EoBEngine::getDecDefinitions(const char *decFile) {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return EoBCoreEngine::getDecDefinitions(decFile);
+	_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+	return _sres->resStreamEndian(4);
+}
+
+void EoBEngine::loadDecShapesToPage3(const char *shpFile) {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return EoBCoreEngine::loadDecShapesToPage3(shpFile);
+	_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+	Common::SeekableReadStream *s = _sres->resStream(2);
+	_screen->loadFileDataToPage(s, 3, s->size());
+	_dcrShpDataPos = _screen->getCPagePtr(3);
+	delete s;
+}
+
 void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {
-	_screen->loadShapeSetBitmap("DOOR", 5, 3);
-	_screen->_curPage = 2;
+	static const uint8 lvlIndex[13] = { 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x03, 0x03, 0x04 };
+	const int doorType[2] = { doorType1, doorType2 };
+	const int shapeId[2] = { shapeId1, shapeId2 };
 
-	if (doorType1 != 0xFF) {
-		for (int i = 0; i < 3; i++) {
-			const uint8 *enc = &_doorShapeEncodeDefs[(doorType1 * 3 + i) << 2];
-			_doorShapes[shapeId1 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
-			enc = &_doorSwitchShapeEncodeDefs[(doorType1 * 3 + i) << 2];
-			_doorSwitches[shapeId1 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
-			_doorSwitches[shapeId1 + i].x = _doorSwitchCoords[doorType1 * 6 + i * 2];
-			_doorSwitches[shapeId1 + i].y = _doorSwitchCoords[doorType1 * 6 + i * 2 + 1];
-		}
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+		Common::SeekableReadStreamEndian *in = _sres->resStreamEndian(8);
+		_screen->loadFileDataToPage(in, 2, in->size());
+		delete in;
+	} else {
+		_screen->loadShapeSetBitmap("DOOR", 5, 3);
+		_screen->_curPage = 2;
 	}
 
-	if (doorType2 != 0xFF) {
+	for (int a = 0; a < 2; ++a) {
+		if (doorType[a] == 0xFF)
+			continue;
+
 		for (int i = 0; i < 3; i++) {
-			const uint8 *enc = &_doorShapeEncodeDefs[(doorType2 * 3 + i) << 2];
-			_doorShapes[shapeId2 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
-			enc = &_doorSwitchShapeEncodeDefs[(doorType2 * 3 + i) << 2];
-			_doorSwitches[shapeId2 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
-			_doorSwitches[shapeId2 + i].x = _doorSwitchCoords[doorType2 * 6 + i * 2];
-			_doorSwitches[shapeId2 + i].y = _doorSwitchCoords[doorType2 * 6 + i * 2 + 1];
+			if (_flags.platform == Common::kPlatformSegaCD) {
+				int offs = lvlIndex[_currentLevel] * 6 + shapeId[a] + i;
+				const uint8 *enc = &_doorShapeEncodeDefs[offs << 2];
+				_doorShapes[shapeId[a] + i] = _screen->sega_encodeShape(_doorShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0);
+				enc = &_doorSwitchShapeEncodeDefs[(offs << 2) - shapeId[a]];
+				_doorSwitches[shapeId[a] + i].shp = _screen->sega_encodeShape(_doorSwitchShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0);
+			} else {
+				const uint8 *enc = &_doorShapeEncodeDefs[(doorType[a] * 3 + i) << 2];
+				_doorShapes[shapeId[a] + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+				enc = &_doorSwitchShapeEncodeDefs[(doorType[a] * 3 + i) << 2];
+				_doorSwitches[shapeId[a] + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+			}
+			_doorSwitches[shapeId[a] + i].x = _doorSwitchCoords[doorType[a] * 6 + i * 2];
+			_doorSwitches[shapeId[a] + i].y = _doorSwitchCoords[doorType[a] * 6 + i * 2 + 1];
 		}
 	}
-
 	_screen->_curPage = 0;
 }
 
@@ -548,6 +691,17 @@ void EoBEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 			drawBlockObject(0, 2, _doorSwitches[shapeIndex].shp, _doorSwitches[shapeIndex].x + w, _doorSwitches[shapeIndex].y, 5);
 		break;
 	}
+}
+
+void EoBEngine::setLevelPalettes(int level) {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return;
+
+	static const uint8 palette0[13] = { 0x04, 0x10, 0x11, 0x12, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30, 0x31 };
+	static const uint8 palette2[13] = { 0x08, 0x08, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d };
+
+	_screen->sega_selectPalette(palette0[level], 0);
+	_screen->sega_selectPalette(palette2[level], 2);
 }
 
 void EoBEngine::turnUndeadAuto() {
@@ -628,6 +782,21 @@ void EoBEngine::snd_loadAmigaSounds(int level, int) {
 	_amigaCurSoundFile = level;
 }
 
+void EoBEngine::snd_updateLevelScore() {
+	if (_flags.platform != Common::kPlatformSegaCD || _currentLevel != 5)
+		return;
+
+	int x = _currentBlock & 0x1F;
+	int y = (_currentBlock >> 5) & 0x1F;
+
+	int track = (x >= 14 && x < 20 && y >= 7 && y < 15) ? (x == 14 && y == 14 ? 6 : 12) : (x == 17 && y == 6 ? 12 : 6);
+	if (track == _levelCurTrack)
+		return;
+
+	_levelCurTrack = track;
+	snd_playSong(track);
+}
+
 bool EoBEngine::checkPartyStatusExtra() {
 	_screen->copyPage(0, 10);
 	int cd = _screen->curDimIndex();
@@ -682,6 +851,19 @@ void EoBEngine::healParty() {
 		if (_characters[i].hitPointsCur > _characters[i].hitPointsMax)
 			_characters[i].hitPointsCur = _characters[i].hitPointsMax;
 	}
+}
+
+void EoBEngine::gui_drawPlayField(bool refresh) {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::gui_drawPlayField(refresh);
+		return;
+	}
+
+	uint8 *data = _res->fileData("PLAYFLD", 0);
+
+	delete[] data;
+
+	_screen->sega_fadeToNeutral(0);
 }
 
 const KyraRpgGUISettings *EoBEngine::guiSettings() const {

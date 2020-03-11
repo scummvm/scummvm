@@ -131,6 +131,8 @@ bool Screen_EoB::init() {
 			memset(_segaCustomPalettes, 0, 128 * sizeof(uint16));
 		}
 
+		_useShapeShading = (_bytesPerPixel != 2 && !_isAmiga && !_isSegaCD && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering;
+
 		static const char *cpsExt[] = { "CPS", "EGA", "SHP", "BIN" };
 		int ci = 0;
 		if (_vm->game() == GI_EOB1) {
@@ -1581,7 +1583,7 @@ void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
 	if (_bytesPerPixel == 2) {
 		*(uint16*)dst = _16bitPalette[(_dsShapeFadingLevel << 8) + col];
 		return;
-	} else if (_use256ColorMode || _useHiResEGADithering) {
+	} else if (_useShapeShading) {
 		if (_dsBackgroundFading) {
 			if (_dsShapeFadingLevel) {
 				col = *dst;

@@ -846,7 +846,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 			_screen->decodeFrame4(cmpData, l->wallsXorData, 4096);
 		}
 		_curBlockFile = getBlockFileName(i + 1, 0);
-		const uint8 *p = getBlockFileData();
+		const uint8 *p = getBlockFileData(i + 1);
 		uint16 len = READ_LE_UINT16(p + 4);
 		p += 6;
 
@@ -1261,7 +1261,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 		Common::String curBlockFile = _curBlockFile;
 		_curBlockFile = getBlockFileName(i + 1, 0);
-		const uint8 *p = getBlockFileData();
+		const uint8 *p = getBlockFileData(i + 1);
 		_curBlockFile = curBlockFile;
 		uint16 len = READ_LE_UINT16(p + 4);
 		p += 6;

@@ -121,14 +121,22 @@ private:
 	void updateUsedCharacterHandItem(int charIndex, int slot) override;
 
 	// Monsters
+	void loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) override;
 	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) override;
 	bool killMonsterExtra(EoBMonsterInPlay *m) override;
 	void updateScriptTimersExtra() override;
 
 	// Level
+	void readLevelFileData(int level) override;
+	void loadVcnData(const char *file, const uint8 *cgaMapping) override;
+	Common::SeekableReadStreamEndian *getVmpData(const char *file) override;
+	const uint8 *getBlockFileData(int level) override;
+	Common::SeekableReadStreamEndian *getDecDefinitions(const char *decFile) override;
+	void loadDecShapesToPage3(const char *shpFile) override;
 	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) override { return 0; }
 	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) override;
 	void drawDoorIntern(int type, int index, int x, int y, int w, int wall, int mDim, int16 y1, int16 y2) override;
+	void setLevelPalettes(int level) override;
 
 	const int16 *_dscDoorCoordsExt;
 	const uint8 *_dscDoorScaleMult4;
@@ -144,6 +152,9 @@ private:
 	const uint8 *_doorSwitchShapeEncodeDefs;
 	const uint8 *_doorSwitchCoords;
 
+	const uint8 *const *_doorShapesSrc;
+	const uint8 *const *_doorSwitchShapesSrc;
+
 	// Fight
 	static const uint8 _monsterAcHitChanceTbl1[];
 	static const uint8 _monsterAcHitChanceTbl2[];
@@ -156,6 +167,9 @@ private:
 
 	// Sound
 	void snd_loadAmigaSounds(int level, int) override;
+	void snd_updateLevelScore() override;
+
+	int _levelCurTrack;
 
 	// Misc
 	bool checkPartyStatusExtra() override;
@@ -166,6 +180,7 @@ private:
 	SegaCDResource *_sres;
 
 	// GUI
+	void gui_drawPlayField(bool refresh) override;
 	const KyraRpgGUISettings *guiSettings() const override;
 	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }
 

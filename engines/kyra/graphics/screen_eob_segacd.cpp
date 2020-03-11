@@ -225,10 +225,7 @@ void Screen_EoB::sega_loadTextBufferToVRAM(uint16 srcOffset, uint16 addr, int si
 }
 
 void Screen_EoB::sega_gfxScale(uint8 *out, uint16 w, uint16 h, uint16 pitch, const uint8 *in, const uint16 *stampMap, const uint16 *traceVectors) {
-	/* Implement only the required functions:
-	 - no support for stamp size other than 0
-	 - no support for rotation/flipping
-	 */
+	// Implement only the required functions. No support for stamp size other than 0 or for rotation/flipping.
 	while (h--) {
 		uint32 xt = *traceVectors++ << 8;
 		uint32 yt = *traceVectors++ << 8;
@@ -292,12 +289,37 @@ void Screen_EoB::sega_drawClippedLine(uint8 *dst, int pW, int pH, int x, int y, 
 	}
 }
 
-void Screen_EoB::sega_encodeSpriteShapes(const uint8 **dst, const uint8 *src, int numShapes, int w, int h, int pal) {
+uint8 *Screen_EoB::sega_encodeShape(const uint8 *src, int w, int h, int pal) {
+	uint8 *shp = new uint8[(w >> 1) * h + 20];
+	uint8 *dst = shp;
+	*dst++ = 2;
+	*dst++ = h;
+	*dst++ = w >> 3;
+	*dst++ = h;
+	*dst++ = 0;
+
+	for (int i = 1; i < 16; i++)
+		*dst++ = (pal << 4) | i;
+
+	const uint8 *pos = src;
+	for (int i = 0; i < h; ++i) {
+		const uint8 *pos2 = pos;
+		for (int ii = 0; ii < (w >> 1); ++ii) {
+			*dst++ = *pos;
+			pos += h;
+		}
+		pos = pos2 + 1;
+	}
+
+	return shp;
+}
+
+void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *src, int numShapes, int w, int h, int pal) {
 	int spriteSize = (w * h) >> 1;
 	_segaRenderer->loadToVRAM(src, numShapes * spriteSize, 0);
 	int hw = (((h >> 3) - 1) << 2) | ((w >> 3) - 1);
 
-	int cp = setCurPage(2);
+	int cp = setCurPage(7);
 
 	for (int l = 0, s = 0; s < numShapes; l = s) {
 		for (int i = s; i < numShapes; ++i) {
@@ -307,12 +329,12 @@ void Screen_EoB::sega_encodeSpriteShapes(const uint8 **dst, const uint8 *src, in
 		}
 		
 		_segaAnimator->update();
-		_segaRenderer->render(2, true);
+		_segaRenderer->render(7, true);
 
 		for (int i = l; i < s; ++i)
 			dst[i] = encodeShape((((i % 80) * w) % SCREEN_W) >> 3, ((i % 80) / (SCREEN_W / w)) * h, w >> 3, h);
 
-		clearPage(2);
+		clearPage(7);
 	}
 
 	_segaAnimator->clearSprites();

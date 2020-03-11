@@ -322,9 +322,9 @@ Common::SeekableReadStream *Resource::createReadStream(const Common::String &fil
 	return _files.createReadStreamForMember(file);
 }
 
-Common::SeekableReadStreamEndian *Resource::createEndianAwareReadStream(const Common::String &file) {
+Common::SeekableReadStreamEndian *Resource::createEndianAwareReadStream(const Common::String &file, int endianness) {
 	Common::SeekableReadStream *stream = _files.createReadStreamForMember(file);
-	return stream ? new EndianAwareStreamWrapper(stream, _bigEndianPlatForm) : 0;
+	return stream ? new EndianAwareStreamWrapper(stream, (endianness == kForceBE) ? true : (endianness == kForceLE ? false : _bigEndianPlatForm)) : 0;
 }
 
 Common::Archive *Resource::loadArchive(const Common::String &name, Common::ArchiveMemberPtr member) {

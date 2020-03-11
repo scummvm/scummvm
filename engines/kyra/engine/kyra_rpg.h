@@ -156,7 +156,7 @@ protected:
 
 	// Main loop
 	virtual void update() = 0;
-	void updateEnvironmentalSfx(int soundId);
+	void snd_updateEnvironmentalSfx(int soundId);
 
 	// timers
 	void setupTimers() override = 0;
@@ -269,7 +269,7 @@ protected:
 	LevelDecorationProperty *_levelDecorationData;
 	uint16 _levelDecorationDataSize;
 	LevelDecorationProperty *_levelDecorationProperties;
-	uint8 **_levelDecorationShapes;
+	const uint8 **_levelDecorationShapes;
 	uint16 _decorationCount;
 	int16 _mappedDecorationsCount;
 	uint16 *_vmpPtr;
@@ -332,6 +332,10 @@ protected:
 	const uint8 *_dscDoorFrameY2;
 	const uint8 *_dscDoorFrameIndex1;
 	const uint8 *_dscDoorFrameIndex2;
+
+	const uint16 *_vmpVisOffs;
+	static const uint16 _vmpOffsetsDefault[9];
+	static const uint16 _vmpOffsetsSegaCD[9];
 
 	// Script
 	virtual void runLevelScript(int block, int flags) = 0;

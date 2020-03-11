@@ -986,7 +986,7 @@ private:
 	int _lvlShapeIndex;
 	bool _partyAwake;
 
-	uint8 *_specialGuiShape;
+	const uint8 *_specialGuiShape;
 	uint16 _specialGuiShapeX;
 	uint16 _specialGuiShapeY;
 	uint16 _specialGuiShapeMirrorFlag;

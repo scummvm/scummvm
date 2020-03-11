@@ -496,9 +496,8 @@ protected:
 	const char *const *_ascii2SjisTables2;
 
 	// Monsters
-	void loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex);
+	virtual void loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex);
 	void releaseMonsterShapes(int first, int num);
-	uint8 *loadTownsShape(Common::SeekableReadStream *stream);
 	virtual void generateMonsterPalettes(const char *file, int16 monsterIndex) {}
 	virtual void loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex) {}
 	virtual const uint8 *loadMonsterProperties(const uint8 *data) { return 0; }
@@ -594,21 +593,25 @@ protected:
 
 	// Level
 	void loadLevel(int level, int sub);
-	void readLevelFileData(int level);
+	virtual void readLevelFileData(int level);
 	Common::String initLevelData(int sub);
 	void addLevelItems() override;
-	void loadVcnData(const char *file, const uint8 *cgaMapping);
+	virtual void loadVcnData(const char *file, const uint8 *cgaMapping);
+	virtual Common::SeekableReadStreamEndian *getVmpData(const char *file);
 	void loadBlockProperties(const char *mazFile) override;
-	const uint8 *getBlockFileData(int levelIndex = 0) override;
-	Common::String getBlockFileName(int levelIndex, int sub);
+	virtual const uint8 *getBlockFileData(int levelIndex) override;
 	const uint8 *getBlockFileData(const char *mazFile);
+	Common::String getBlockFileName(int levelIndex, int sub);
 	void loadDecorations(const char *cpsFile, const char *decFile);
+	virtual Common::SeekableReadStreamEndian *getDecDefinitions(const char *decFile);
+	virtual void loadDecShapesToPage3(const char *shpFile);
 	void assignWallsAndDecorations(int wallIndex, int vmpIndex, int decDataIndex, int specialType, int flags);
 	void releaseDecorations();
 	void releaseDoorShapes();
 	void toggleWallState(int wall, int flags);
 	virtual void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) = 0;
 	virtual const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) = 0;
+	virtual void setLevelPalettes(int level) {}
 
 	void drawScene(int refresh) override;
 	void drawSceneShapes(int start = 0) override;
@@ -633,6 +636,7 @@ protected:
 
 	EoBRect8 *_levelDecorationRects;
 	SpriteDecoration *_doorSwitches;
+	const uint8 *_dcrShpDataPos;
 
 	int8 _currentSub;
 	Common::String _curGfxFile;
@@ -689,7 +693,7 @@ protected:
 	uint8 _scriptTimersMode;
 
 	// Gui
-	void gui_drawPlayField(bool refresh);
+	virtual void gui_drawPlayField(bool refresh);
 	void gui_restorePlayField();
 	void gui_drawAllCharPortraitsWithStats();
 	void gui_drawCharPortraitWithStats(int index);
@@ -782,6 +786,10 @@ protected:
 
 	const uint16 *_inventorySlotsX;
 	const uint8 *_inventorySlotsY;
+	Screen::FontId _invFont1;
+	Screen::FontId _invFont2;
+	Screen::FontId _invFont3;
+	Screen::FontId _conFont;
 	const uint8 **_compassShapes;
 	uint8 _charExchangeSwap;
 	bool _configHpBarGraphs;
@@ -1199,6 +1207,7 @@ protected:
 	void snd_stopSound();
 	void snd_fadeOut(int del = 160);
 	virtual void snd_loadAmigaSounds(int level, int sub) = 0;
+	virtual void snd_updateLevelScore() {}
 
 	const char **_amigaSoundMap;
 	const char *const *_amigaLevelSoundList1;

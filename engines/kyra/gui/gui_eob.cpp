@@ -118,14 +118,14 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		_screen->copyRegion(240, 168, x2, y2 + 24, 64, 26, 2, 2, Screen::CR_NO_P_CHECK);
 		int cp = _screen->setCurPage(2);
 
-		Screen::FontId cf = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_SMALL_FNT : Screen::FID_6_FNT);
+		Screen::FontId cf = _screen->setFont(_invFont1);
 
 		if (index == _exchangeCharacterId)
 			_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, guiSettings()->colors.guiColorDarkRed, guiSettings()->colors.fill);
 		else
 			_screen->printText(c->name, x2 + 2, y2 + (_flags.platform == Common::kPlatformFMTowns ? 1 : 2), txtCol1, _flags.use16ColorMode ? 0 : guiSettings()->colors.fill);
 
-		_screen->setFont(Screen::FID_6_FNT);
+		_screen->setFont(_invFont2);
 
 		gui_drawFaceShape(index);
 		gui_drawWeaponSlot(index, 0);
@@ -152,9 +152,9 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		_screen->copyRegion(176, 0, 0, 0, 144, 168, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->_curPage = 2;
 		gui_drawFaceShape(index);
-		Screen::FontId cf = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_SMALL_FNT : Screen::FID_6_FNT);
+		Screen::FontId cf = _screen->setFont(_invFont1);
 		_screen->printShadedText(c->name, 219, 6, txtCol2, 0, guiSettings()->colors.guiColorBlack);
-		_screen->setFont(Screen::FID_6_FNT);
+		_screen->setFont(_invFont2);
 		gui_drawHitpoints(index);
 		gui_drawFoodStatusGraph(index);
 
@@ -162,7 +162,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			int statusTxtY = 158;
 			if (_flags.lang == Common::JA_JPN) {
 				statusTxtY = 157;
-				_screen->setFont(_flags.platform == Common::kPlatformFMTowns ? Screen::FID_8_FNT : Screen::FID_SJIS_FNT);
+				_screen->setFont(_invFont3);
 			}
 
 			if (c->hitPointsCur == -10)
@@ -178,7 +178,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			else if (c->flags & 8)
 				_screen->printShadedText(_characterGuiStringsSt[6], 232, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
 
-			_screen->setFont(Screen::FID_6_FNT);
+			_screen->setFont(_invFont2);
 
 			for (int i = 0; i < 27; i++)
 				gui_drawInventoryItem(i, 0, 2);
@@ -430,9 +430,8 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 		if (bgCur <= 10)
 			col = guiSettings()->colors.guiColorDarkRed;
 
-		if (!_currentControlMode)
+		if (!_currentControlMode && _flags.platform != Common::kPlatformSegaCD)
 			_screen->printText(_characterGuiStringsHp[0], x - 13, y - 1, guiSettings()->colors.guiColorBlack, 0);
-
 
 		gui_drawHorizontalBarGraph(x, y, w, h, bgCur, bgMax, col, guiSettings()->colors.barGraph);
 
@@ -582,7 +581,7 @@ void EoBCoreEngine::gui_drawInventoryItem(int slot, int redraw, int pageNum) {
 }
 
 void EoBCoreEngine::gui_drawCompass(bool force) {
-	if (_currentDirection == _compassDirection && !force)
+	//if (_currentDirection == _compassDirection && !force)
 		return;
 
 	static const uint8 shpX[2][3] = { { 0x70, 0x4D, 0x95 }, { 0x72, 0x4F, 0x97 } };

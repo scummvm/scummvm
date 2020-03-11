@@ -33,40 +33,21 @@
 namespace Kyra {
 
 void EoBCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
-	if (_flags.platform == Common::kPlatformFMTowns) {
-		Common::String tmp = Common::String::format("%s.MNT", filename);
-		Common::SeekableReadStream *s = _res->createReadStream(tmp);
-		if (!s)
-			error("Screen_EoB::loadMonsterShapes(): Failed to load file '%s'", tmp.c_str());
+	_screen->loadShapeSetBitmap(filename, 3, 3);
+	const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
 
-		for (int i = 0; i < 6; i++)
-			_monsterShapes[monsterIndex + i] = loadTownsShape(s);
+	for (int i = 0; i < 6; i++, enc += 4)
+		_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaMappingDefault);
 
-		for (int i = 0; i < 6; i++) {
-			for (int ii = 0; ii < 2; ii++)
-				s->read(_monsterPalettes[(monsterIndex >= 18 ? i + 6 : i) * 2 + ii], 16);
-		}
+	generateMonsterPalettes(filename, monsterIndex);
 
-		if (hasDecorations)
+	if (hasDecorations) {
+		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.DCR", filename));
+		if (s)
 			loadMonsterDecoration(s, monsterIndex);
-
 		delete s;
-	} else {
-		_screen->loadShapeSetBitmap(filename, 3, 3);
-		const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
-
-		for (int i = 0; i < 6; i++, enc += 4)
-			_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaMappingDefault);
-
-		generateMonsterPalettes(filename, monsterIndex);
-
-		if (hasDecorations) {
-			Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.DCR", filename));
-			if (s)
-				loadMonsterDecoration(s, monsterIndex);
-			delete s;
-		}
 	}
+
 	_screen->_curPage = 0;
 }
 
@@ -77,15 +58,6 @@ void EoBCoreEngine::releaseMonsterShapes(int first, int num) {
 		delete[] _monsterDecorations[i].shp;
 		_monsterDecorations[i].shp = 0;
 	}
-}
-
-uint8 *EoBCoreEngine::loadTownsShape(Common::SeekableReadStream *stream) {
-	uint32 size = stream->readUint32LE();
-	uint8 *shape= new uint8[size];
-	stream->read(shape, size);
-	if (shape[0] == 1)
-		shape[0]++;
-	return shape;
 }
 
 const uint8 *EoBCoreEngine::loadActiveMonsterData(const uint8 *data, int level) {
@@ -362,7 +334,7 @@ void EoBCoreEngine::drawBlockItems(int index) {
 	uint8 w = _visibleBlocks[index]->walls[_sceneDrawVarDown];
 	uint8 flg = (index == 16) ? 0x80 : _wllWallFlags[w];
 
-	if (_wllVmpMap[w] && !(flg & 0x80))
+	//if (_wllVmpMap[w] && !(flg & 0x80))
 		return;
 
 	uint16 o2 = o = _items[o].next;
@@ -487,6 +459,19 @@ void EoBCoreEngine::drawMonsters(int index) {
 		int subFrame = ABS(f);
 		int shpIndex = d->shpIndex ? 18 : 0;
 		int palIndex = d->palette ? ((((shpIndex == 18) ? subFrame + 5 : subFrame - 1) << 1) + (d->palette - 1)) : -1;
+
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			if (d->curAttackFrame == -1)
+				subFrame = 5;
+			else if (f == 3)
+				subFrame = 2;
+			else if (f == -3)
+				subFrame = 4;
+			else if (f == 4)
+				subFrame = 3;
+			else if (f == -4)
+				subFrame = -3;
+		}
 
 		const uint8 *shp = _screen->scaleShape(_monsterShapes[subFrame + shpIndex - 1], blockDistance);
 
@@ -1025,17 +1010,17 @@ bool EoBCoreEngine::updateMonsterTryCloseAttack(EoBMonsterInPlay *m, int block) 
 		if (facing) {
 			disableSysTimer(2);
 			if (m->type == 4)
-				updateEnvironmentalSfx(_monsterProps[m->type].sound1);
+				snd_updateEnvironmentalSfx(_monsterProps[m->type].sound1);
 			m->curAttackFrame = -2;
 			_flashShapeTimer = 0;
 			drawScene(1);
 			m->curAttackFrame = -1;
 			if (m->type != 4)
-				updateEnvironmentalSfx(_monsterProps[m->type].sound1);
+				snd_updateEnvironmentalSfx(_monsterProps[m->type].sound1);
 			_flashShapeTimer = _system->getMillis() + 8 * _tickLength;
 			drawScene(1);
 		} else {
-			updateEnvironmentalSfx(_monsterProps[m->type].sound1);
+			snd_updateEnvironmentalSfx(_monsterProps[m->type].sound1);
 		}
 
 		monsterCloseAttack(m);

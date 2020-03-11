@@ -160,6 +160,40 @@ void DarkMoonEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 	}
 }
 
+void DarkMoonEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
+	if (_flags.platform != Common::kPlatformFMTowns) {
+		EoBCoreEngine::loadMonsterShapes(filename, monsterIndex, hasDecorations, encodeTableIndex);
+		return;
+	}
+
+	Common::String tmp = Common::String::format("%s.MNT", filename);
+	Common::SeekableReadStream *s = _res->createReadStream(tmp);
+	if (!s)
+		error("Screen_EoB::loadMonsterShapes(): Failed to load file '%s'", tmp.c_str());
+
+	for (int i = 0; i < 6; i++)
+		_monsterShapes[monsterIndex + i] = loadFMTownsShape(s);
+
+	for (int i = 0; i < 6; i++) {
+		for (int ii = 0; ii < 2; ii++)
+			s->read(_monsterPalettes[(monsterIndex >= 18 ? i + 6 : i) * 2 + ii], 16);
+	}
+
+	if (hasDecorations)
+		loadMonsterDecoration(s, monsterIndex);
+
+	delete s;
+}
+
+uint8 *DarkMoonEngine::loadFMTownsShape(Common::SeekableReadStream *stream) {
+	uint32 size = stream->readUint32LE();
+	uint8 *shape = new uint8[size];
+	stream->read(shape, size);
+	if (shape[0] == 1)
+		shape[0]++;
+	return shape;
+}
+
 void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterIndex) {
 	if (_flags.platform == Common::kPlatformAmiga)
 		return;
@@ -232,7 +266,7 @@ void DarkMoonEngine::loadMonsterDecoration(Common::SeekableReadStream *stream, i
 
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		while (!activeDecorations.empty()) {
-			activeDecorations.front()->shp = loadTownsShape(stream);
+			activeDecorations.front()->shp = loadFMTownsShape(stream);
 			activeDecorations.pop_front();
 		}
 	}
@@ -390,6 +424,19 @@ bool DarkMoonEngine::killMonsterExtra(EoBMonsterInPlay *m) {
 		return false;
 	}
 	return true;
+}
+
+void DarkMoonEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
+	if (file)
+		strcpy(_lastBlockDataFile, file);
+	delete[] _vcnBlocks;
+
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile);
+		_vcnBlocks = _res->fileData(fn.c_str(), 0);
+	} else {
+		EoBCoreEngine::loadVcnData(file, cgaMapping);
+	}
 }
 
 const uint8 *DarkMoonEngine::loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) {
