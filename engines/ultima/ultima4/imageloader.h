@@ -1,0 +1,61 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef ULTIMA4_IMAGELOADER_H
+#define ULTIMA4_IMAGELOADER_H
+
+#include "ultima/shared/std/containers.h"
+#include "common/str.h"
+
+namespace Ultima {
+namespace Ultima4 {
+
+class Image;
+class U4FILE;
+
+/**
+ * The generic image loader interface.  Image loaders should override
+ * the load method to load an image from a U4FILE and register
+ * themselves with registerLoader.  By convention, the type parameter
+ * of load and registerLoader is the standard mime type of the image
+ * file (e.g. image/png) or an xu4 specific mime type
+ * (e.g. image/x-u4...).
+ */
+class ImageLoader {
+public:
+    ImageLoader() {}
+    virtual ~ImageLoader() {}
+    virtual Image *load(U4FILE *file, int width, int height, int bpp) = 0;
+    static ImageLoader *getLoader(const Common::String &fileType);
+
+protected:
+    static ImageLoader *registerLoader(ImageLoader *loader, const Common::String &type);
+    static void setFromRawData(Image *image, int width, int height, int bpp, unsigned char *rawData);
+
+private:
+    static Std::map<Common::String, ImageLoader *> *loaderMap;
+};
+
+} // End of namespace Ultima4
+} // End of namespace Ultima
+
+#endif
