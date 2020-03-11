@@ -62,9 +62,16 @@ void Keymapper::clear() {
 	_hardwareInputs = nullptr;
 }
 
-void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
-	if (_hardwareInputs)
-		error("Hardware input set already registered");
+void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs, KeymapperDefaultBindings *backendDefaultBindings) {
+	bool reloadMappings = false;
+	if (_hardwareInputs) {
+		reloadMappings = true;
+		delete _hardwareInputs;
+	}
+	if (_backendDefaultBindings) {
+		reloadMappings = true;
+		delete _backendDefaultBindings;
+	}
 
 	if (!inputs) {
 		warning("No hardware input were defined, using defaults");
@@ -75,13 +82,11 @@ void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
 	}
 
 	_hardwareInputs = inputs;
-}
-
-void Keymapper::registerBackendDefaultBindings(KeymapperDefaultBindings *backendDefaultBindings) {
-	if (!_keymaps.empty())
-		error("Backend default bindings must be defined before adding keymaps");
-
 	_backendDefaultBindings = backendDefaultBindings;
+
+	if (reloadMappings) {
+		reloadAllMappings();
+	}
 }
 
 void Keymapper::addGlobalKeymap(Keymap *keymap) {
@@ -113,6 +118,10 @@ void Keymapper::initKeymap(Keymap *keymap, ConfigManager::Domain *domain) {
 	}
 
 	keymap->setConfigDomain(domain);
+	reloadKeymapMappings(keymap);
+}
+
+void Keymapper::reloadKeymapMappings(Keymap *keymap) {
 	keymap->setHardwareInputs(_hardwareInputs);
 	keymap->setBackendDefaultBindings(_backendDefaultBindings);
 	keymap->loadMappings();
@@ -143,7 +152,7 @@ Keymap *Keymapper::getKeymap(const String &id) const {
 
 void Keymapper::reloadAllMappings() {
 	for (uint i = 0; i < _keymaps.size(); i++) {
-		_keymaps[i]->loadMappings();
+		reloadKeymapMappings(_keymaps[i]);
 	}
 }
 

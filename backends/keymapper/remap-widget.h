@@ -51,6 +51,7 @@ public:
 	~RemapWidget() override;
 	void build();
 	bool save();
+	void handleInputChanged();
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleTickle() override;

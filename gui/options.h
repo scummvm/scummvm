@@ -75,6 +75,7 @@ public:
 	void close() override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleTickle() override;
+	void handleOtherEvent(const Common::Event &event) override;
 
 	const Common::String& getDomain() const { return _domain; }
 

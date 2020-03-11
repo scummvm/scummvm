@@ -93,6 +93,17 @@ bool RemapWidget::save() {
 	return changes;
 }
 
+void RemapWidget::handleInputChanged() {
+	Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	assert(keymapper);
+
+	for (uint i = 0; i < _keymapTable.size(); i++) {
+		keymapper->reloadKeymapMappings(_keymapTable[i]);
+	}
+
+	refreshKeymap();
+}
+
 void RemapWidget::reflowActionWidgets() {
 	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
 

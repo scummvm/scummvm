@@ -527,10 +527,10 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		}
 
 	case SDL_JOYDEVICEADDED:
-		return handleJoystickAdded(ev.jdevice);
+		return handleJoystickAdded(ev.jdevice, event);
 
 	case SDL_JOYDEVICEREMOVED:
-		return handleJoystickRemoved(ev.jdevice);
+		return handleJoystickRemoved(ev.jdevice, event);
 
 	case SDL_DROPFILE:
 		event.type = Common::EVENT_DROP_FILE;
@@ -722,7 +722,7 @@ void SdlEventSource::openJoystick(int joystickIndex) {
 			);
 		}
 	} else {
-		warning("Invalid joystick: %d", joystickIndex);
+		debug(5, "Invalid joystick: %d", joystickIndex);
 	}
 }
 
@@ -823,21 +823,24 @@ bool SdlEventSource::handleJoyHatMotion(SDL_Event &ev, Common::Event &event) {
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-bool SdlEventSource::handleJoystickAdded(const SDL_JoyDeviceEvent &device) {
+bool SdlEventSource::handleJoystickAdded(const SDL_JoyDeviceEvent &device, Common::Event &event) {
 	debug(5, "SdlEventSource: Received joystick added event for index '%d'", device.which);
 
 	int joystick_num = ConfMan.getInt("joystick_num");
-	if (joystick_num == device.which) {
-		debug(5, "SdlEventSource: Newly added joystick with index '%d' matches 'joysticky_num', trying to use it", device.which);
-
-		closeJoystick();
-		openJoystick(joystick_num);
+	if (joystick_num != device.which) {
+		return false;
 	}
 
-	return false;
+	debug(5, "SdlEventSource: Newly added joystick with index '%d' matches 'joysticky_num', trying to use it", device.which);
+
+	closeJoystick();
+	openJoystick(joystick_num);
+
+	event.type = Common::EVENT_INPUT_CHANGED;
+	return true;
 }
 
-bool SdlEventSource::handleJoystickRemoved(const SDL_JoyDeviceEvent &device) {
+bool SdlEventSource::handleJoystickRemoved(const SDL_JoyDeviceEvent &device, Common::Event &event) {
 	debug(5, "SdlEventSource: Received joystick removed event for instance id '%d'", device.which);
 
 	SDL_Joystick *joystick;
@@ -851,13 +854,16 @@ bool SdlEventSource::handleJoystickRemoved(const SDL_JoyDeviceEvent &device) {
 		return false;
 	}
 
-	if (SDL_JoystickInstanceID(joystick) == device.which) {
-		debug(5, "SdlEventSource: Newly removed joystick with instance id '%d' matches currently used joystick, closing current joystick", device.which);
-
-		closeJoystick();
+	if (SDL_JoystickInstanceID(joystick) != device.which) {
+		return false;
 	}
 
-	return false;
+	debug(5, "SdlEventSource: Newly removed joystick with instance id '%d' matches currently used joystick, closing current joystick", device.which);
+
+	closeJoystick();
+
+	event.type = Common::EVENT_INPUT_CHANGED;
+	return true;
 }
 
 int SdlEventSource::mapSDLControllerButtonToOSystem(Uint8 sdlButton) {
@@ -915,6 +921,14 @@ void SdlEventSource::fakeWarpMouse(const int x, const int y) {
 	_queuedFakeMouseMove = true;
 	_fakeMouseMove.type = Common::EVENT_MOUSEMOVE;
 	_fakeMouseMove.mouse = Common::Point(x, y);
+}
+
+bool SdlEventSource::isJoystickConnected() const {
+	return _joystick
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	        || _controller
+#endif
+	        ;
 }
 
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {

@@ -177,8 +177,7 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureClipboardSupport) return true;
 #endif
 	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
-		bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;
-		return joystickSupportEnabled;
+		return _eventSource->isJoystickConnected();
 	}
 	return ModularBackend::hasFeature(f);
 }
@@ -403,8 +402,7 @@ Common::HardwareInputSet *OSystem_SDL::getHardwareInputSet() {
 	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
 	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
 
-	bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;
-	if (joystickSupportEnabled) {
+	if (_eventSource->isJoystickConnected()) {
 		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
 	}
 

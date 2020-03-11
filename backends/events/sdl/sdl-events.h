@@ -56,6 +56,9 @@ public:
 	 */
 	void fakeWarpMouse(const int x, const int y);
 
+	/** Returns whether a joystick is currently connected */
+	bool isJoystickConnected() const;
+
 protected:
 	/** Scroll lock state - since SDL doesn't track it */
 	bool _scrollLock;
@@ -131,8 +134,8 @@ protected:
 	virtual bool handleJoyHatMotion(SDL_Event &ev, Common::Event &event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	virtual bool handleJoystickAdded(const SDL_JoyDeviceEvent &event);
-	virtual bool handleJoystickRemoved(const SDL_JoyDeviceEvent &device);
+	virtual bool handleJoystickAdded(const SDL_JoyDeviceEvent &device, Common::Event &event);
+	virtual bool handleJoystickRemoved(const SDL_JoyDeviceEvent &device, Common::Event &event);
 	virtual int mapSDLControllerButtonToOSystem(Uint8 sdlButton);
 	virtual bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp);
 	virtual bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event);

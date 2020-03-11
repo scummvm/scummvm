@@ -71,7 +71,6 @@ void OSystem_Switch::init() {
 
 void OSystem_Switch::initBackend() {
 
-	ConfMan.registerDefault("joystick_num", 0);
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "2x");
@@ -80,10 +79,8 @@ void OSystem_Switch::initBackend() {
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
 
 	ConfMan.setBool("fullscreen", true);
+	ConfMan.setInt("joystick_num", 0);
 
-	if (!ConfMan.hasKey("joystick_num")) {
-		ConfMan.setInt("joystick_num", 0);
-	}
 	if (!ConfMan.hasKey("aspect_ratio")) {
 		ConfMan.setBool("aspect_ratio", false);
 	}
