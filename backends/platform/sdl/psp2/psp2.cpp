@@ -161,8 +161,6 @@ void OSystem_PSP2::setFeatureState(Feature f, bool enable) {
 	case kFeatureTouchpadMode:
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 		break;
-	case kFeatureFullscreenMode:
-		break;
 	default:
 		OSystem_SDL::setFeatureState(f, enable);
 		break;
@@ -173,9 +171,6 @@ bool OSystem_PSP2::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureTouchpadMode:
 		return ConfMan.getBool("touchpad_mouse_mode");
-		break;
-	case kFeatureFullscreenMode:
-		return true;
 		break;
 	default:
 		return OSystem_SDL::getFeatureState(f);

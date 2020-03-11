@@ -464,33 +464,6 @@ bool GPHGraphicsManager::hasFeature(OSystem::Feature f) const {
 	    (f == OSystem::kFeatureCursorPalette);
 }
 
-void GPHGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		setAspectRatioCorrection(enable);
-		break;
-	case OSystem::kFeatureCursorPalette:
-		_cursorPaletteDisabled = !enable;
-		blitCursor();
-		break;
-	default:
-		break;
-	}
-}
-
-bool GPHGraphicsManager::getFeatureState(OSystem::Feature f) const {
-	assert(_transactionMode == kTransactionNone);
-
-	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
-	case OSystem::kFeatureCursorPalette:
-		return !_cursorPaletteDisabled;
-	default:
-		return false;
-	}
-}
-
 void GPHGraphicsManager::warpMouse(int x, int y) {
 	if (_cursorX != x || _cursorY != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
