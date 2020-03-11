@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-03-11 08:14+0000\n"
+"PO-Revision-Date: 2020-03-11 17:32+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -2189,11 +2189,11 @@ msgstr "Avvia comunque"
 
 #: engines/engine.cpp:731
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "Caricamento temporaneamente disabilitato"
 
 #: engines/engine.cpp:756
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "Salvataggio temporaneamente disabilitato"
 
 #: engines/game.cpp:171
 #, c-format
@@ -6094,14 +6094,13 @@ msgid "Escape"
 msgstr "Escape"
 
 #: engines/wintermute/detection.cpp:306
-#, fuzzy
 msgid "Look At"
 msgstr "Esamina"
 
 #: engines/wintermute/detection.cpp:333 engines/wintermute/detection.cpp:642
 #: engines/wintermute/detection.cpp:1561
 msgid "Walk forward"
-msgstr "Cammina in avanti"
+msgstr "Avanza"
 
 #: engines/wintermute/detection.cpp:339 engines/wintermute/detection.cpp:647
 msgid "Walk backward"
@@ -6234,7 +6233,7 @@ msgstr "Scorri verso il basso"
 
 #: engines/wintermute/detection.cpp:605
 msgid "Change shadow type"
-msgstr ""
+msgstr "Cambia qualità ombre"
 
 #: engines/wintermute/detection.cpp:615 engines/wintermute/detection.cpp:702
 msgid "Volume max"
@@ -6246,18 +6245,16 @@ msgstr "Mostra interprete di debug"
 
 #: engines/wintermute/detection.cpp:627 engines/wintermute/detection.cpp:728
 #: engines/wintermute/detection.cpp:1398
-#, fuzzy
 msgid "Debug print"
-msgstr "Debugger"
+msgstr "Visualizza output del debugger"
 
 #: engines/wintermute/detection.cpp:632 engines/wintermute/detection.cpp:1371
 msgid "Exit"
 msgstr "Esci"
 
 #: engines/wintermute/detection.cpp:637
-#, fuzzy
 msgid "Light helper window"
-msgstr "Adatta alla finestra"
+msgstr "Visualizza parametri illuminazione scena"
 
 #: engines/wintermute/detection.cpp:662
 msgid "Run forward"
@@ -6276,23 +6273,20 @@ msgid "Turn right fast"
 msgstr "Gira rapidamente a destra"
 
 #: engines/wintermute/detection.cpp:682
-#, fuzzy
 msgid "Show blueprint"
-msgstr "Mostra riga nomi oggetti"
+msgstr "Mostra progetto"
 
 #: engines/wintermute/detection.cpp:709
-#, fuzzy
 msgid "Volume off"
-msgstr "Volume"
+msgstr "Volume a zero"
 
 #: engines/wintermute/detection.cpp:716
 msgid "Change font size"
 msgstr "Cambia dimensione testi"
 
 #: engines/wintermute/detection.cpp:795
-#, fuzzy
 msgid "Save game"
-msgstr "Salva gioco:"
+msgstr "Salva gioco"
 
 #: engines/wintermute/detection.cpp:805
 msgid "Quick save"
@@ -6304,172 +6298,160 @@ msgstr "Andatura camminata: Lenta"
 
 #: engines/wintermute/detection.cpp:815
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "Andatura camminata: Media"
 
 #: engines/wintermute/detection.cpp:820
 msgid "Walking speed: High"
-msgstr ""
+msgstr "Andatura camminata: Veloce"
 
 #: engines/wintermute/detection.cpp:825
-#, fuzzy
 msgid "Quick load"
-msgstr "Modalità clic"
+msgstr "Carica Salvataggio rapido"
 
 #: engines/wintermute/detection.cpp:830 engines/wintermute/detection.cpp:1108
 #: engines/wintermute/detection.cpp:1393
-#, fuzzy
 msgid "Cancel waiting"
-msgstr "Annulla download"
+msgstr "Salta attesa"
 
 #: engines/wintermute/detection.cpp:840
 msgid "First page"
-msgstr ""
+msgstr "Prima pagina"
 
 #: engines/wintermute/detection.cpp:845
-#, fuzzy
 msgid "Last page"
-msgstr "Lancia incantesimo"
+msgstr "Ultima pagina"
 
 #: engines/wintermute/detection.cpp:852
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "Andatura camminata: Ultra Super Mega Veloce"
 
 #: engines/wintermute/detection.cpp:874
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "Abilità: Telecinesi"
 
 #: engines/wintermute/detection.cpp:879
 msgid "Ability: Push"
-msgstr ""
+msgstr "Abilità: Spinta"
 
 #: engines/wintermute/detection.cpp:884
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "Abilità: Fulmine"
 
 #: engines/wintermute/detection.cpp:889
 msgid "Ability: Light"
-msgstr ""
+msgstr "Abilità: Luce"
 
 #: engines/wintermute/detection.cpp:894
 msgid "Ability: Wind"
-msgstr ""
+msgstr "Abilità: Vento"
 
 #: engines/wintermute/detection.cpp:899
 msgid "Ability: Sound"
-msgstr ""
+msgstr "Abilità: Suono"
 
 #: engines/wintermute/detection.cpp:904
 msgid "Ability: Esence"
-msgstr ""
+msgstr "Abilità: Essenza"
 
 #: engines/wintermute/detection.cpp:909
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "Abilità: Esorcista"
 
 #: engines/wintermute/detection.cpp:914
-#, fuzzy
 msgid "Skip minigame"
-msgstr "Salta battuta"
+msgstr "Salta minigioco"
 
 #: engines/wintermute/detection.cpp:1022
 msgid "Show hints / Dance move"
-msgstr ""
+msgstr "Mostra suggerimenti / Passo di danza"
 
 #: engines/wintermute/detection.cpp:1029
 msgid "Dance move up"
-msgstr ""
+msgstr "Balla verso l'alto"
 
 #: engines/wintermute/detection.cpp:1035
-#, fuzzy
 msgid "Dance move down"
-msgstr "Annulla download"
+msgstr "Balla verso il basso"
 
 #: engines/wintermute/detection.cpp:1041
 msgid "Dance move left"
-msgstr ""
+msgstr "Balla verso sinistra"
 
 #: engines/wintermute/detection.cpp:1047
-#, fuzzy
 msgid "Dance move right"
-msgstr "Vai a destra"
+msgstr "Balla verso destra"
 
 #: engines/wintermute/detection.cpp:1077
-#, fuzzy
 msgid "Cancel input"
-msgstr "Annulla"
+msgstr "Cancella input"
 
 #: engines/wintermute/detection.cpp:1173
 msgid "Shift"
-msgstr ""
+msgstr "Maiusc"
 
 #: engines/wintermute/detection.cpp:1228 engines/wintermute/detection.cpp:1534
 msgid "Next action"
-msgstr ""
+msgstr "Azione successiva"
 
 #: engines/wintermute/detection.cpp:1236 engines/wintermute/detection.cpp:1542
-#, fuzzy
 msgid "Previous action"
-msgstr "~P~recedenti"
+msgstr "Azione precedente"
 
 #: engines/wintermute/detection.cpp:1255 engines/wintermute/detection.cpp:1388
 msgid "Settings"
-msgstr ""
+msgstr "Impostazioni"
 
 #: engines/wintermute/detection.cpp:1260
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "Risposta dialogo 1"
 
 #: engines/wintermute/detection.cpp:1265
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "Risposta dialogo 2"
 
 #: engines/wintermute/detection.cpp:1270
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "Risposta dialogo 3"
 
 #: engines/wintermute/detection.cpp:1275
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "Risposta dialogo 4"
 
 #: engines/wintermute/detection.cpp:1285
 msgid "Spin slower"
-msgstr ""
+msgstr "Ruota più lentamente"
 
 #: engines/wintermute/detection.cpp:1292
 msgid "Spin faster"
-msgstr ""
+msgstr "Ruota più velocemente"
 
 #: engines/wintermute/detection.cpp:1312 engines/wintermute/detection.cpp:1359
-#, fuzzy
 msgid "Show map"
-msgstr "Mostra ~M~appa"
+msgstr "Mostra mappa"
 
 #: engines/wintermute/detection.cpp:1403
-#, fuzzy
 msgid "Bezier window"
-msgstr "Adatta alla finestra"
+msgstr "Finestra Bezier"
 
 #: engines/wintermute/detection.cpp:1419
 msgid "Droid action"
-msgstr ""
+msgstr "Azione droide"
 
 #: engines/wintermute/detection.cpp:1475
-#, fuzzy
 msgid "Show journal"
-msgstr "Mostra tutte"
+msgstr "Mostra diario"
 
 #: engines/wintermute/detection.cpp:1481
-#, fuzzy
 msgid "Music menu"
-msgstr "Volume musica:"
+msgstr "Menù musica"
 
 #: engines/wintermute/detection.cpp:1501
 msgid "Rotate"
-msgstr "Rotazione"
+msgstr "Ruota"
 
 #: engines/wintermute/detection.cpp:1526
 msgid "Drop"
-msgstr ""
+msgstr "Rilascia"
 
 #: engines/wintermute/detection.cpp:1626
 msgid "F1"
