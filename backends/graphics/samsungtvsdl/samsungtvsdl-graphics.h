@@ -32,8 +32,6 @@ public:
 	SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
 	bool hasFeature(OSystem::Feature f) const override;
-	void setFeatureState(OSystem::Feature f, bool enable) override;
-	bool getFeatureState(OSystem::Feature f) const override;
 };
 
 #endif

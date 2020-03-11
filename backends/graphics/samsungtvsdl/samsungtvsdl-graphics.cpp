@@ -38,23 +38,4 @@ bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 		(f == OSystem::kFeatureCursorPalette);
 }
 
-void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
-		break;
-	default:
-		break;
-	}
-}
-
-bool SamsungTVSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
-	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		return SurfaceSdlGraphicsManager::getFeatureState(f);
-	default:
-		return false;
-	}
-}
-
 #endif

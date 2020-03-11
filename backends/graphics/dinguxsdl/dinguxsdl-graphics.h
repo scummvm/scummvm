@@ -37,8 +37,6 @@ public:
 	DINGUXSdlGraphicsManager(SdlEventSource *boss, SdlWindow *window);
 
 	bool hasFeature(OSystem::Feature f) const override;
-	void setFeatureState(OSystem::Feature f, bool enable) override;
-	bool getFeatureState(OSystem::Feature f) const override;
 	int getDefaultGraphicsMode() const override;
 
 	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
