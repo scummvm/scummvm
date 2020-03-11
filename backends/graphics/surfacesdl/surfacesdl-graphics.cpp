@@ -902,10 +902,7 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	height = bestH;
 }
 
-bool SurfaceSdlGraphicsManager::loadGFXMode() {
-	_forceRedraw = true;
-
-#if !defined(__MAEMO__) && !defined(DINGUX) && !defined(GPH_DEVICE)
+void SurfaceSdlGraphicsManager::setupHardwareSize() {
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
@@ -919,12 +916,12 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
 		_videoMode.hardwareHeight = real2Aspect(_videoMode.hardwareHeight);
 	}
+}
 
-// On GPH devices ALL the _videoMode.hardware... are setup in GPHGraphicsManager::loadGFXMode()
-#elif !defined(GPH_DEVICE)
-	_videoMode.hardwareWidth = _videoMode.overlayWidth;
-	_videoMode.hardwareHeight = _videoMode.overlayHeight;
-#endif
+bool SurfaceSdlGraphicsManager::loadGFXMode() {
+	_forceRedraw = true;
+
+	setupHardwareSize();
 
 	//
 	// Create the surface that contains the 8 bit game data

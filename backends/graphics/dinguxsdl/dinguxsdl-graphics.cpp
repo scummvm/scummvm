@@ -425,7 +425,7 @@ void DINGUXSdlGraphicsManager::hideOverlay() {
 	SurfaceSdlGraphicsManager::hideOverlay();
 }
 
-bool DINGUXSdlGraphicsManager::loadGFXMode() {
+void DINGUXSdlGraphicsManager::setupHardwareSize() {
 	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
 
 	// Forcefully disable aspect ratio correction for games
@@ -450,24 +450,14 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 	if ((_videoMode.mode == GFX_HALF) && !_overlayVisible) {
 		_videoMode.overlayWidth = _videoMode.screenWidth / 2;
 		_videoMode.overlayHeight = _videoMode.screenHeight / 2;
+
+		_videoMode.hardwareWidth = _videoMode.screenWidth / 2;
+		_videoMode.hardwareHeight = _videoMode.screenHeight / 2;
+
 		_videoMode.fullscreen = true;
 	} else {
-		_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-
-		if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
-			_videoMode.aspectRatioCorrection = false;
-
-		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-
-		if (_videoMode.aspectRatioCorrection) {
-			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
-			_videoMode.hardwareHeight = real2Aspect(_videoMode.hardwareHeight);
-		}
+		SurfaceSdlGraphicsManager::setupHardwareSize();
 	}
-
-	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
 
 bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) const {

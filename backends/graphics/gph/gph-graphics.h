@@ -53,6 +53,9 @@ public:
 	void warpMouse(int x, int y) override;
 
 	virtual void transformMouseCoordinates(Common::Point &point);
+
+protected:
+	void setupHardwareSize() override;
 };
 
 #endif /* BACKENDS_GRAPHICS_GPH_H */
