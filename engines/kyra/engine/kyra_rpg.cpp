@@ -25,6 +25,10 @@
 #include "kyra/engine/kyra_rpg.h"
 #include "kyra/sound/sound.h"
 
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/action.h"
+
+#include "common/func.h"
 #include "common/system.h"
 
 namespace Kyra {
@@ -218,6 +222,22 @@ Common::Error KyraRpgEngine::init() {
 	_dialogueButtonWidth = guiSettings()->buttons.width;
 
 	return Common::kNoError;
+}
+
+void KyraRpgEngine::addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::String &actionDesc, const Common::Functor0Mem<void, Common::Action>::FuncType setEventProc, const Common::String &mapping1, const Common::String &mapping2) {
+	Common::Action *act = new Common::Action(actionId, actionDesc);
+	Common::Functor0Mem<void, Common::Action>(act, setEventProc)();
+	act->addDefaultInputMapping(mapping1);
+	act->addDefaultInputMapping(mapping2);
+	keyMap->addAction(act);
+}
+
+void KyraRpgEngine::addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::String &actionDesc, Common::KeyState eventKeyState, const Common::String &mapping1, const Common::String &mapping2) {
+	Common::Action *act = new Common::Action(actionId, actionDesc);
+	act->setKeyEvent(eventKeyState);
+	act->addDefaultInputMapping(mapping1);
+	act->addDefaultInputMapping(mapping2);
+	keyMap->addAction(act);
 }
 
 bool KyraRpgEngine::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2) {
