@@ -1014,7 +1014,7 @@ void Interpreter::O_GETMOBTEXT() {
 	int32 mob = readScriptFlagValue();
 	debugInterpreter("O_GETMOBTEXT mob %d", mob);
 	_currentString = _vm->_locationNr * 100 + mob + 60001;
-	strncpy((char *)_stringBuf, _vm->_mobList[mob]._examText.c_str(), 1024);
+	strncpy((char *)_stringBuf, _vm->_mobList[mob]._examText.c_str(), 1023);
 	_string = _stringBuf;
 }
 
@@ -1831,7 +1831,7 @@ void Interpreter::O_DISABLENAK() {
 void Interpreter::O_GETMOBNAME() {
 	int32 modId = readScriptFlagValue();
 	debugInterpreter("O_GETMOBNAME modId %d", modId);
-	strncpy((char *)_stringBuf, _vm->_mobList[modId]._name.c_str(), 1024);
+	strncpy((char *)_stringBuf, _vm->_mobList[modId]._name.c_str(), 1023);
 	_string = _stringBuf;
 }
 
