@@ -89,6 +89,7 @@ void SoundManager::playSpeech(uint32 textIndex) {
 		error("Failed to open dtspeech.xa");
 	}
 	CdIntToPos_0(speechLocation.sectorStart * 32);
+	//TODO move the stream creation logic inside PSXAudioTrack.
 	fd->seek(((speechLocation.sectorStart * 32) + speechLocation.startOffset) * RAW_CD_SECTOR_SIZE);
 	PSXAudioTrack *_audioTrack = new PSXAudioTrack(fd, Audio::Mixer::kSpeechSoundType);
 	for (int i = 0x0; i < speechLocation.sectorEnd - speechLocation.sectorStart; i++) {

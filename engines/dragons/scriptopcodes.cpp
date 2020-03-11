@@ -1214,7 +1214,7 @@ void ScriptOpcodes::opShowActor(ScriptOpCall &scriptOpCall) {
 	}
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
-	ini->actor->setFlag(ACTOR_FLAG_400);
+	ini->actor->clearFlag(ACTOR_FLAG_400);
 }
 
 void ScriptOpcodes::opHideActor(ScriptOpCall &scriptOpCall) {

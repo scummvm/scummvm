@@ -61,7 +61,7 @@ bool Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
 
 	copyTextToBuffer(textBuffer, data + 10 + fileOffset, bufferLength);
 	bool status = (READ_LE_INT16(data) != 0);
-	delete data;
+	free(data);
 	return status;
 }
 
