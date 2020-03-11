@@ -39,6 +39,21 @@
 namespace Ultima {
 namespace Ultima4 {
 
+Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
+		Shared::UltimaEngine(syst, gameDesc) {
+}
+
+Ultima4Engine::~Ultima4Engine() {
+}
+
+bool Ultima4Engine::initialize() {
+	return Shared::UltimaEngine::initialize();
+}
+
+Common::Error Ultima4Engine::run() {
+	return Common::kNoError;
+}
+
 bool verbose = false;
 bool quit = false;
 bool useProfile = false;

@@ -29,6 +29,7 @@
 #include "common/memstream.h"
 #include "common/translation.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima4/ultima4.h"
 #include "ultima/nuvie/meta_engine.h"
 #include "ultima/nuvie/nuvie.h"
 #include "ultima/ultima8/ultima8.h"
@@ -38,6 +39,7 @@ namespace Ultima {
 
 static const PlainGameDescriptor ULTIMA_GAMES[] = {
 	{ "ultima1", "Ultima I - The First Age of Darkness" },
+	{ "ultima4", "Ultima IV - Quest of the Avatar" },
 	{ "ultima6", "Ultima VI - The False Prophet" },
 	{ "ultima6_enh", "Ultima VI - The False Prophet - Enhanced" },
 	{ "ultima8", "Ultima VIII - Pagan" },
@@ -66,6 +68,9 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		switch (gd->gameId) {
 		case Ultima::GAME_ULTIMA1:
 			*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
+			break;
+		case Ultima::GAME_ULTIMA4:
+			*engine = new Ultima::Ultima4::Ultima4Engine(syst, gd);
 			break;
 		case Ultima::GAME_ULTIMA6:
 		case Ultima::GAME_MARTIAN_DREAMS:

@@ -51,6 +51,8 @@
 namespace Ultima {
 namespace Ultima4 {
 
+extern void gameDestroyAllCreatures();
+
 /**
  * Returns true if 'map' points to a Combat Map
  */ 
@@ -861,8 +863,6 @@ bool CombatController::keyPressed(int key) {
 
     case U4_FKEY:
         {
-            extern void gameDestroyAllCreatures();
-
             if (settings.debug)
                 gameDestroyAllCreatures();
             else valid = false;

@@ -23,6 +23,8 @@
 #ifndef ULTIMA4_H
 #define ULTIMA4_H
 
+#include "ultima/shared/engine/ultima.h"
+
 namespace Ultima {
 namespace Ultima4 {
 
@@ -94,6 +96,32 @@ namespace Ultima4 {
 #define WIND_AREA_W 10
 #define WIND_AREA_H 1
 #define WIND_SECONDS_PER_PHASE 1
+
+class Ultima4Engine : public Shared::UltimaEngine {
+protected:
+	// Engine APIs
+	Common::Error run() override;
+
+	bool initialize() override;
+public:
+	Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
+	~Ultima4Engine() override;
+
+	/**
+	 * Returns true if a savegame can be loaded
+	 */
+	bool canLoadGameStateCurrently(bool isAutosave = false) override {
+		return false;
+	}
+
+	/**
+	 * Returns true if the game can be saved
+	 */
+	bool canSaveGameStateCurrently(bool isAutosave = false) override {
+		return false;
+	}
+};
+
 
 } // End of namespace Ultima4
 } // End of namespace Ultima
