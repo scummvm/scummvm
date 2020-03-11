@@ -107,6 +107,7 @@ protected:
 	void addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOptions &engineOptions);
 
 	void setGraphicSettingsState(bool enabled);
+	void setShaderSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setMIDISettingsState(bool enabled);
 	void setMT32SettingsState(bool enabled);

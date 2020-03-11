@@ -54,15 +54,15 @@ void AIScriptTheBard::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTheBard::EnteredScene(int sceneId) {
+void AIScriptTheBard::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTheBard::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTheBard::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTheBard::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTheBard::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

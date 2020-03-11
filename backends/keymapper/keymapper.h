@@ -157,10 +157,10 @@ private:
 
 	bool _joystickAxisPreviouslyPressed[6];
 
+	bool mapEvent(const Event &ev, Keymap::KeymapType keymapType, List<Event> &mappedEvents);
 	Event executeAction(const Action *act, const Event &incomingEvent);
 	EventType convertStartToEnd(EventType eventType);
 	IncomingEventType convertToIncomingEventType(const Event &ev) const;
-	static bool isMouseEvent(const Event &event);
 
 	void hardcodedEventMapping(Event ev);
 	void resetInputState();

@@ -53,7 +53,7 @@ void SetEffects::read(Common::ReadStream *stream, int frameCount) {
 
 	_fogCount = stream->readUint32LE();
 	int i;
-	for (i = 0; i < _fogCount; i++) {
+	for (i = 0; i < _fogCount; ++i) {
 		int type = stream->readUint32LE();
 		Fog *fog = nullptr;
 		switch (type) {

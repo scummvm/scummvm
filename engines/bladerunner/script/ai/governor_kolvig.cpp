@@ -54,15 +54,15 @@ void AIScriptGovernorKolvig::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptGovernorKolvig::EnteredScene(int sceneId) {
+void AIScriptGovernorKolvig::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGovernorKolvig::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGovernorKolvig::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGovernorKolvig::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGovernorKolvig::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

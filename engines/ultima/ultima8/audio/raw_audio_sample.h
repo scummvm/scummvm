@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 class RawAudioSample : public AudioSample {
 public:
-	RawAudioSample(uint8 *buffer, uint32 size,
+	RawAudioSample(const uint8 *buffer, uint32 size,
 	               uint32 rate, bool signeddata, bool stereo);
 	~RawAudioSample() override;
 

@@ -103,7 +103,7 @@ public:
 	}
 
 	//! dump some info about this process to pout
-	virtual void dumpInfo();
+	virtual void dumpInfo() const;
 
 	//! save this process
 	void save(ODataSource *ods);
@@ -131,7 +131,7 @@ protected:
 
 	//! Processes waiting for this one to finish.
 	//! When this process terminates, awaken them and pass them the result val.
-	Std::vector<ProcId> waiting;
+	Std::vector<ProcId> _waiting;
 
 public:
 

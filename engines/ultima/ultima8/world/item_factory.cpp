@@ -40,29 +40,53 @@
 namespace Ultima {
 namespace Ultima8 {
 
-Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
-                              uint16 flags, uint16 npcnum, uint16 mapnum,
-                              uint32 extendedflags, bool _objId) {
-	// check what class to create
-	ShapeInfo *info = GameData::get_instance()->getMainShapes()->
-	                  getShapeInfo(shape);
-	if (info == 0) return 0;
-
-	// New item, no lerping
-	extendedflags |= Item::EXT_LERP_NOPREV;
-
-	uint32 family = info->_family;
-
+static Item *getItemForFamily(uint32 family) {
 	switch (family) {
 	case ShapeInfo::SF_GENERIC:
 	case ShapeInfo::SF_QUALITY:
 	case ShapeInfo::SF_QUANTITY:
 	case ShapeInfo::SF_BREAKABLE:
 	case ShapeInfo::SF_REAGENT: // reagents need special handling too
-	case ShapeInfo::SF_15: { // what's this?
+	case ShapeInfo::SF_15: // what's this?
 		// 'simple' item
+		return new Item();
 
-		Item *item = new Item();
+	case ShapeInfo::SF_CONTAINER:
+		return new Container();
+
+	case ShapeInfo::SF_GLOBEGG:
+		return new GlobEgg();
+
+	case ShapeInfo::SF_UNKEGG:
+		return new Egg();
+
+	case ShapeInfo::SF_MONSTEREGG:
+		return new MonsterEgg();
+
+	case ShapeInfo::SF_TELEPORTEGG:
+		return new TeleportEgg();
+	}
+
+	return 0;
+}
+
+Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
+                              uint16 flags, uint16 npcnum, uint16 mapnum,
+                              uint32 extendedflags, bool _objId) {
+	// check what class to create
+	ShapeInfo *info = GameData::get_instance()->getMainShapes()->
+	                  getShapeInfo(shape);
+	if (info == 0)
+		return 0;
+
+	// New item, no lerping
+	extendedflags |= Item::EXT_LERP_NOPREV;
+
+	uint32 family = info->_family;
+
+	Item *item = getItemForFamily(family);
+
+	if (item) {
 		item->setShape(shape);
 		item->_frame = frame;
 		item->_quality = quality;
@@ -70,92 +94,24 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		item->_npcNum = npcnum;
 		item->_mapNum = mapnum;
 		item->_extendedFlags = extendedflags;
-		if (_objId) item->assignObjId();
-		return item;
+		if (_objId)
+			item->assignObjId();
 	}
 
-	case ShapeInfo::SF_CONTAINER: {
-		// container
-
-		Container *container = new Container();
-		container->setShape(shape);
-		container->_frame = frame;
-		container->_quality = quality;
-		container->_flags = flags;
-		container->_npcNum = npcnum;
-		container->_mapNum = mapnum;
-		container->_extendedFlags = extendedflags;
-		if (_objId) container->assignObjId();
-		return container;
-	}
-
-	case ShapeInfo::SF_GLOBEGG: {
-		// glob egg
-
-		GlobEgg *globegg = new GlobEgg();
-		globegg->setShape(shape);
-		globegg->_frame = frame;
-		globegg->_quality = quality;
-		globegg->_flags = flags;
-		globegg->_npcNum = npcnum;
-		globegg->_mapNum = mapnum;
-		globegg->_extendedFlags = extendedflags;
-		if (_objId) globegg->assignObjId();
-		return globegg;
-	}
-
-	case ShapeInfo::SF_UNKEGG: {
-		Egg *egg = new Egg();
-		egg->setShape(shape);
-		egg->_frame = frame;
-		egg->_quality = quality;
-		egg->_flags = flags;
-		egg->_npcNum = npcnum;
-		egg->_mapNum = mapnum;
-		egg->_extendedFlags = extendedflags;
-		if (_objId) egg->assignObjId();
-		return egg;
-	}
-
-	case ShapeInfo::SF_MONSTEREGG: {
-		MonsterEgg *egg = new MonsterEgg();
-		egg->setShape(shape);
-		egg->_frame = frame;
-		egg->_quality = quality;
-		egg->_flags = flags;
-		egg->_npcNum = npcnum;
-		egg->_mapNum = mapnum;
-		egg->_extendedFlags = extendedflags;
-		if (_objId) egg->assignObjId();
-		return egg;
-	}
-
-	case ShapeInfo::SF_TELEPORTEGG: {
-		TeleportEgg *egg = new TeleportEgg();
-		egg->setShape(shape);
-		egg->_frame = frame;
-		egg->_quality = quality;
-		egg->_flags = flags;
-		egg->_npcNum = npcnum;
-		egg->_mapNum = mapnum;
-		egg->_extendedFlags = extendedflags;
-		if (_objId) egg->assignObjId();
-		return egg;
-	}
-
-	default:
-		return 0;
-	}
+	return item;
 }
 
+static Actor *getActorForNpcNum(uint32 npcnum) {
+	if (npcnum == 1)
+		return new MainActor();
 
+	// 'normal' Actor/NPC
+	return new Actor();
+}
 
 Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
                                 uint16 flags, uint16 npcnum, uint16 mapnum,
                                 uint32 extendedflags, bool _objId) {
-	// this function should probably differentiate between the Avatar,
-	// NPCs, monsters?
-
 	/*
 	    // This makes it rather hard to create new NPCs...
 	    if (npcnum == 0) // or do monsters have npcnum 0? we'll see...
@@ -164,23 +120,8 @@ Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
 	// New actor, no lerping
 	extendedflags |= Item::EXT_LERP_NOPREV;
 
-	if (npcnum == 1) {
-		// Main Actor
+	Actor *actor = getActorForNpcNum(npcnum);
 
-		MainActor *actor = new MainActor();
-		actor->setShape(shape);
-		actor->_frame = frame;
-		actor->_quality = quality;
-		actor->_flags = flags;
-		actor->_npcNum = npcnum;
-		actor->_mapNum = mapnum;
-		actor->_objId = 1;
-		actor->_extendedFlags = extendedflags;
-		return actor;
-	}
-
-	// 'normal' Actor/NPC
-	Actor *actor = new Actor();
 	actor->setShape(shape);
 	actor->_frame = frame;
 	actor->_quality = quality;

@@ -42,7 +42,7 @@ public:
 	~ObjectManager();
 
 	static ObjectManager *get_instance() {
-		return objectmanager;
+		return _objectManager;
 	}
 
 	void reset();
@@ -82,7 +82,7 @@ private:
 	}
 	Std::map<Common::String, ObjectLoadFunc> _objectLoaders;
 
-	static ObjectManager *objectmanager;
+	static ObjectManager *_objectManager;
 };
 
 } // End of namespace Ultima8

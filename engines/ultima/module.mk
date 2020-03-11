@@ -324,6 +324,7 @@ MODULE_OBJS := \
 	nuvie/lua/lvm.o \
 	nuvie/lua/lzio.o \
 	nuvie/lua/scummvm_file.o \
+	ultima8/meta_engine.o \
 	ultima8/ultima8.o \
 	ultima8/audio/audio_channel.o \
 	ultima8/audio/audio_mixer.o \
@@ -394,10 +395,8 @@ MODULE_OBJS := \
 	ultima8/graphics/fonts/tt_font.o \
 	ultima8/gumps/ask_gump.o \
 	ultima8/gumps/bark_gump.o \
-	ultima8/gumps/bind_gump.o \
 	ultima8/gumps/book_gump.o \
 	ultima8/gumps/container_gump.o \
-	ultima8/gumps/controls_gump.o \
 	ultima8/gumps/credits_gump.o \
 	ultima8/gumps/desktop_gump.o \
 	ultima8/gumps/fast_area_vis_gump.o \
@@ -413,10 +412,8 @@ MODULE_OBJS := \
 	ultima8/gumps/mini_stats_gump.o \
 	ultima8/gumps/modal_gump.o \
 	ultima8/gumps/movie_gump.o \
-	ultima8/gumps/options_gump.o \
 	ultima8/gumps/paged_gump.o \
 	ultima8/gumps/paperdoll_gump.o \
-	ultima8/gumps/pentagram_menu_gump.o \
 	ultima8/gumps/quit_gump.o \
 	ultima8/gumps/readable_gump.o \
 	ultima8/gumps/resizable_gump.o \
@@ -428,14 +425,12 @@ MODULE_OBJS := \
 	ultima8/gumps/u8_save_gump.o \
 	ultima8/gumps/widgets/button_widget.o \
 	ultima8/gumps/widgets/edit_widget.o \
-	ultima8/gumps/widgets/game_widget.o \
 	ultima8/gumps/widgets/sliding_widget.o \
 	ultima8/gumps/widgets/text_widget.o \
 	ultima8/kernel/allocator.o \
 	ultima8/kernel/core_app.o \
 	ultima8/kernel/delay_process.o \
 	ultima8/kernel/hid_keys.o \
-	ultima8/kernel/hid_manager.o \
 	ultima8/kernel/kernel.o \
 	ultima8/kernel/memory_manager.o \
 	ultima8/kernel/mouse.o \

@@ -117,7 +117,7 @@ int ActorClues::getModifier(int actorId, int otherActorId, int clueId) {
 	}
 
 	modifier2 = 0;
-	for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
+	for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); ++i) {
 		if (i != actorId && i != otherActorId) {
 			modifier2 += (friendliness - 50) * _vm->_aiScripts->callGetFriendlinessModifierIfGetsClue(i, otherActorId, clueId) / 100;
 		}
@@ -151,12 +151,12 @@ void ActorClues::acquireCluesByRelations(int actorId, int otherActorId) {
 	int count2 = findAcquirableCluesFromActor(otherActorId, actorId, clues2, kClueCount);
 
 	if (count1 || count2) {
-		for (int i = 0; i < count1; i++) {
+		for (int i = 0; i < count1; ++i) {
 			clues1[i].modifier = getModifier(actorId, otherActorId, clues1[i].clueId);
 		}
 		qsort(clues1, count1, sizeof(CluesUS), cluesCompare);
 
-		for (int i = 0; i < count2; i++) {
+		for (int i = 0; i < count2; ++i) {
 			clues2[i].modifier = getModifier(otherActorId, actorId, clues2[i].clueId);
 		}
 		qsort(clues2, count2, sizeof(CluesUS), cluesCompare);
@@ -178,7 +178,7 @@ void ActorClues::acquireCluesByRelations(int actorId, int otherActorId) {
 			clue2count = 1;
 		}
 
-		for (int i = 0; i < clue2count; i++) {
+		for (int i = 0; i < clue2count; ++i) {
 			bool flag = false;
 			if (otherActor->_clues->isFlag2(clues2[i].clueId)) {
 				avgParameters = (2 * otherActor->getFriendlinessToOther(actorId) + otherActor->getHonesty()) / 3;
@@ -196,7 +196,7 @@ void ActorClues::acquireCluesByRelations(int actorId, int otherActorId) {
 			actor->_clues->acquire(clues2[i].clueId, flag, otherActorId);
 		}
 
-		for (int i = 0; i < clue1count; i++) {
+		for (int i = 0; i < clue1count; ++i) {
 			bool flag = false;
 			if (actor->_clues->isFlag2(clues1[i].clueId)) {
 				avgParameters = (2 * actor->getFriendlinessToOther(otherActorId) + actor->getHonesty()) / 3;
@@ -222,7 +222,7 @@ int ActorClues::findAcquirableCluesFromActor(int actorId, int targetActorId, Clu
 	int count = 0;
 	int cluesCount = actor->_clues->getCount();
 
-	for (int i = 0; i < cluesCount; i++) 	{
+	for (int i = 0; i < cluesCount; ++i) 	{
 		int clueId = actor->_clues->getClueIdByIndex(i);
 
 		if (actor->_clues->isAcquired(clueId)
@@ -231,7 +231,7 @@ int ActorClues::findAcquirableCluesFromActor(int actorId, int targetActorId, Clu
 			list[count].clueId = clueId;
 			list[count].modifier = 0;
 
-			count++;
+			++count;
 		}
 	}
 
@@ -334,7 +334,7 @@ void ActorClues::removeAll() {
 }
 
 int ActorClues::findClueIndex(int clueId) const {
-	for (int i = 0; i < _count; i++) {
+	for (int i = 0; i < _count; ++i) {
 		if (clueId == _clues[i].clueId) {
 			return i;
 		}

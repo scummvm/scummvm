@@ -151,15 +151,15 @@ void AIScriptGaff::ClickedByPlayer() {
 	// return false;
 }
 
-void AIScriptGaff::EnteredScene(int sceneId) {
+void AIScriptGaff::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGaff::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGaff::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGaff::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGaff::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -334,7 +334,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 794;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -342,7 +342,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 788;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -350,7 +350,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 798;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -358,7 +358,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 799;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -368,7 +368,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 800;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -378,7 +378,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 801;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -388,7 +388,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 800;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -398,7 +398,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 801;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -408,7 +408,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 802;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(35) - 1) { // Bug in the game?
 			Actor_Set_Invisible(kActorGaff, true);
 			*animation = 794;

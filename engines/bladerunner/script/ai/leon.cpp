@@ -105,9 +105,9 @@ void AIScriptLeon::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptLeon::EnteredScene(int sceneId) {}
+void AIScriptLeon::EnteredSet(int setId) {}
 
-void AIScriptLeon::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptLeon::OtherAgentEnteredThisSet(int otherActorId) {
 	if (otherActorId == kActorMcCoy
 	 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave
 	) {
@@ -120,7 +120,7 @@ void AIScriptLeon::OtherAgentEnteredThisScene(int otherActorId) {
 	///return false;
 }
 
-void AIScriptLeon::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptLeon::OtherAgentExitedThisSet(int otherActorId) {
 	if (otherActorId == kActorMcCoy
 	 && Actor_Query_Which_Set_In(kActorLeon) != kSetCT11
 	) {
@@ -272,7 +272,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 847;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(847)) {
 			_animationFrame = 0;
 		}
@@ -280,7 +280,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 846;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(846)) {
 			_animationFrame = 0;
 		}
@@ -294,7 +294,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		} else {
 			*animation = 850;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(850)) {
 				_animationFrame = 0;
 			}
@@ -303,7 +303,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 851;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(851)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -313,7 +313,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 852;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(852)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -323,7 +323,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 853;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(853)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -339,7 +339,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 			*animation = 848;
 		} else {
 			*animation = 854;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(854)) {
 				_animationFrame = 0;
 			}
@@ -348,7 +348,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 855;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(855)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -358,7 +358,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 854;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(854)) {
 			_animationFrame = 0;
 		}
@@ -366,7 +366,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 849;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(849)) {
 			Actor_Change_Animation_Mode(kActorLeon, kAnimationModeIdle);
 			*animation = 847;
@@ -380,7 +380,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 856;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 6) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 			Actor_Retired_Here(kActorMcCoy, 12, 12, true, -1);

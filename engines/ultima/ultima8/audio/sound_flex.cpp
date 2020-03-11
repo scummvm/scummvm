@@ -68,7 +68,7 @@ void SoundFlex::uncache(uint32 index) {
 	_samples[index] = 0;
 }
 
-bool SoundFlex::isCached(uint32 index) {
+bool SoundFlex::isCached(uint32 index) const {
 	if (index >= _count) return false;
 	if (!_samples) return false;
 

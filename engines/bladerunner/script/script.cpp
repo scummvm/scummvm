@@ -297,9 +297,9 @@ void ScriptBase::Actor_Says(int actorId, int sentenceId, int animationMode) {
 }
 
 /**
-* Actor actorId says the sentenceId, and then
-* if pause > 0.0f there will be a delay for "pause" seconds.
-* pause can be 0.0f
+* Actor actorId speaks the quote of sentenceId.
+* If pause > 0.0f, there will be a delay for "pause" seconds after the spoken sentence.
+* Pause can be 0.0f which can be used to simulate a talking actor being interrupted by another actor.
 */
 void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause, int animationMode) {
 	debugC(kDebugScript, "Actor_Says_With_Pause(%d, %d, %f, %d)", actorId, sentenceId, pause, animationMode);

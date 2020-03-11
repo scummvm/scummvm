@@ -74,15 +74,15 @@ void AIScriptInsectDealer::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptInsectDealer::EnteredScene(int sceneId) {
+void AIScriptInsectDealer::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptInsectDealer::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptInsectDealer::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptInsectDealer::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptInsectDealer::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -134,7 +134,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 		case 0:
 			*animation = 545;
 			if (_counter) {
-				_counter--;
+				--_counter;
 				if (Random_Query(0, 6) == 0) {
 					_frameDelta = -_frameDelta;
 				}
@@ -158,7 +158,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			break;
 		case 1:
 			*animation = 546;
-			_animationFrame++;
+			++_animationFrame;
 
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(546)) {
 				*animation = 545;
@@ -179,7 +179,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		} else {
 			*animation = 548;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(548)) {
 				_animationFrame = 0;
 				_animationState = 0;
@@ -188,7 +188,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 2:
 		*animation = 549;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(549)) {
 			*animation = 548;
 			_animationFrame = 0;
@@ -197,7 +197,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 3:
 		*animation = 550;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(550)) {
 			*animation = 548;
 			_animationFrame = 0;
@@ -206,7 +206,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 4:
 		*animation = 551;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(551)) {
 			*animation = 548;
 			_animationFrame = 0;
@@ -215,7 +215,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 5:
 		*animation = 552;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(552)) {
 			*animation = 548;
 			_animationFrame = 0;
@@ -224,7 +224,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 6:
 		*animation = 553;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(553)) {
 			*animation = 548;
 			_animationFrame = 0;
@@ -233,7 +233,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 7:
 		*animation = 554;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(554)) {
 			*animation = 548;
 			_animationFrame = 0;
@@ -242,7 +242,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 8:
 		*animation = 547;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(547)) {
 			*animation = 545;
 			_animationFrame = 0;

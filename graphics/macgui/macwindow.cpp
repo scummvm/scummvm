@@ -26,6 +26,7 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macwidget.h"
 #include "image/bmp.h"
 
 namespace Graphics {
@@ -38,6 +39,22 @@ BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
 	_contentIsDirty = true;
 
 	_type = kWindowUnknown;
+}
+
+WidgetInfo::WidgetInfo(MacWidget *widget_, int x, int y) {
+	widget = widget_;
+	bbox = widget->getDimensions();
+	bbox.moveTo(x, y);
+}
+
+WidgetInfo::~WidgetInfo() {
+	delete widget;
+}
+
+void BaseMacWindow::addWidget(MacWidget *widget, int x, int y) {
+	_widgets.push_back(new WidgetInfo(widget, x, y));
+
+	widget->setParent(this);
 }
 
 MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm) :

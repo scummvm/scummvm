@@ -72,9 +72,8 @@ PathfinderProcess::PathfinderProcess(Actor *actor_, ObjId item_, bool hit) {
 	bool ok = pf.pathfind(_path);
 
 	if (!ok) {
-		perr << "PathfinderProcess: actor " << _itemNum
-		     << " failed to find _path" << Std::endl;
 		// can't get there...
+		debug(MM_INFO, "PathfinderProcess: actor %d failed to find path", _itemNum);
 		_result = PATH_FAILED;
 		terminateDeferred();
 		return;
@@ -103,9 +102,8 @@ PathfinderProcess::PathfinderProcess(Actor *actor_,
 	bool ok = pf.pathfind(_path);
 
 	if (!ok) {
-		perr << "PathfinderProcess: actor " << _itemNum
-		     << " failed to find _path" << Std::endl;
 		// can't get there...
+		debug(MM_INFO, "PathfinderProcess: actor %d failed to find path", _itemNum);
 		_result = PATH_FAILED;
 		terminateDeferred();
 		return;
@@ -216,9 +214,8 @@ void PathfinderProcess::run() {
 
 		_currentStep = 0;
 		if (!ok) {
-			perr << "PathfinderProcess: actor " << _itemNum
-			     << " failed to find _path" << Std::endl;
 			// can't get there anymore
+			debug(MM_INFO, "PathfinderProcess: actor %d failed to find path", _itemNum);
 			_result = PATH_FAILED;
 			terminate();
 			return;

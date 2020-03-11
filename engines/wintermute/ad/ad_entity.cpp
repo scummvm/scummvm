@@ -29,7 +29,9 @@
 
 #include "engines/wintermute/ad/ad_entity.h"
 #include "engines/wintermute/ad/ad_game.h"
+#include "engines/wintermute/ad/ad_layer.h"
 #include "engines/wintermute/ad/ad_scene.h"
+#include "engines/wintermute/ad/ad_scene_node.h"
 #include "engines/wintermute/ad/ad_waypoint_group.h"
 #include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/base/base_active_rect.h"
@@ -838,6 +840,86 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
+#if defined(ENABLE_KINJAL) || defined(ENABLE_HEROCRAFT)
+	//////////////////////////////////////////////////////////////////////////
+	// [WME Kinjal 1.4] SetBeforeEntity / SetAfterEntity
+	// Usage at HeroCraft games: ent.SetBeforeEntity("redDuskaEntity")
+	// Look for target entity (entity with given name, on the same layer as source entity)
+	// If target entity is not found, do nothing  
+	// Else shift nodes of the layer to put current entity behind/after target entity
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetBeforeEntity") == 0 || strcmp(name, "SetAfterEntity") == 0) {
+		stack->correctParams(1);
+		const char *nodeName = stack->pop()->getString();
+
+		if (strcmp(getName(), nodeName) == 0) {
+			warning("%s(%s): source and target have the same name", name, nodeName);
+			stack->pushBool(false);
+			return STATUS_OK;
+		}
+
+		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.size(); i++) {
+			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
+			for (uint32 j = 0; j < layer->_nodes.size(); j++) {
+				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
+					// found source layer and index, looking for target node
+					for (uint32 k = 0; k < layer->_nodes.size(); k++) {
+						if (layer->_nodes[k]->_type == OBJECT_ENTITY && strcmp(layer->_nodes[k]->_entity->getName(), nodeName) == 0) {
+							// update target index, depending on method name and comparison of index values
+							if (j < k && strcmp(name, "SetBeforeEntity") == 0) {
+								k--;
+							} else if (j > k && strcmp(name, "SetAfterEntity") == 0) {
+								k++;
+							}
+
+							// shift layer nodes array between source and target 
+							int32 delta = j <= k ? 1 : -1;
+							AdSceneNode *tmp = layer->_nodes[j];
+							for (int32 x = j; x != (int32)k; x += delta) {
+								layer->_nodes[x] = layer->_nodes[x + delta];
+							}
+							layer->_nodes[k] = tmp;
+
+							// done
+							stack->pushBool(true);
+							return STATUS_OK;
+						}
+					}
+				}
+			}
+		}
+
+		warning("%s(%s): not found", name, nodeName);
+		stack->pushBool(false);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [WME Kinjal 1.4] GetLayer / GetIndex
+	// Find current entity's layer and node index
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetLayer") == 0 || strcmp(name, "GetIndex") == 0) {
+		stack->correctParams(0);
+
+		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.size(); i++) {
+			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
+			for (uint32 j = 0; j < layer->_nodes.size(); j++) {
+				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
+					if (strcmp(name, "GetLayer") == 0) {
+						stack->pushNative(layer, true);
+					} else {
+						stack->pushInt(j);
+					}
+					return STATUS_OK;
+				}
+			}
+		}
+
+		warning("%s(): not found", name);
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// CreateRegion

@@ -1428,6 +1428,8 @@ arguments -- see the next section.
                               supported by some MIDI drivers)
     --multi-midi             Enable combination of AdLib and native MIDI
     --native-mt32            True Roland MT-32 (disable GM emulation)
+    --dump-midi              Dumps MIDI events to 'dump.mid', until quitting from game
+                              (if file already exists, it will be overwritten)
     --enable-gs              Enable Roland GS mode for MIDI playback
     --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
     --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame, nuked)

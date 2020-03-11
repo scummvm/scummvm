@@ -63,15 +63,15 @@ void AIScriptChew::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptChew::EnteredScene(int sceneId) {
+void AIScriptChew::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptChew::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptChew::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptChew::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptChew::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -105,9 +105,9 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 		if (_var2 == 0) {
 			*animation = 777;
 			if (_var1) {
-				_var1--;
+				--_var1;
 			} else {
-				_animationFrame++;
+				++_animationFrame;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(777)) {
 					_animationFrame = 0;
 					_var3 = 1;
@@ -188,7 +188,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 			_var2 = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(780)) {
 				_animationFrame = 0;
 			}
@@ -197,7 +197,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 781;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(781)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -207,7 +207,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 782;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(782)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -217,7 +217,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 783;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(783)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -227,7 +227,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 784;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(784)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -237,7 +237,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 785;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(785)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -247,7 +247,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 786;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(786)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -257,7 +257,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 787;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(787)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -267,7 +267,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 775;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(775)) {
 			*animation = 777;
 			_animationFrame = 0;
@@ -279,13 +279,13 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 	case 11:
 		*animation = 776;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(776) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
 	case 12:
 		*animation = 773;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(773)) {
 			_animationFrame = 0;
 		}
@@ -293,7 +293,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 774;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(774)) {
 			_animationFrame = 0;
 			_animationState = 2;

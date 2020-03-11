@@ -122,15 +122,15 @@ void AIScriptMutant1::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMutant1::EnteredScene(int sceneId) {
+void AIScriptMutant1::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMutant1::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMutant1::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMutant1::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMutant1::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -401,7 +401,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 894;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(894)) {
 			_animationFrame = 0;
 		}
@@ -410,7 +410,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 	case 1:
 	case 2:
 		*animation = 893;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(893)) {
 			_animationFrame = 0;
 		}
@@ -422,7 +422,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		} else {
 			*animation = 896;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(896)) {
 				_animationFrame = 0;
 			}
@@ -431,7 +431,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 896;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(896)) {
 			_animationFrame = 0;
 			_animationState = 3;
@@ -441,7 +441,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 897;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(897)) {
 			_animationFrame = 0;
 			_animationState = 3;
@@ -451,7 +451,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 898;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 5) {
 			int snd;
 
@@ -472,7 +472,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 899;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 1) {
 			Ambient_Sounds_Play_Sound(kSfxHURT1M1, 99, 0, 0, 25);
 		}
@@ -483,7 +483,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 900;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 1) {
 			Sound_Play(kSfxYELL1M1, 100, 0, 0, 50);
 		}
@@ -499,7 +499,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 899;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 9) {
 			Sound_Play(kSfxHURT1M1, 100, 0, 0, 50);
 		}

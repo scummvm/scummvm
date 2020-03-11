@@ -213,7 +213,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			}
 		}
 
-		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s", movie.u.s->c_str(), convertPath(*movie.u.s).c_str(),
+		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s'", movie.u.s->c_str(), convertPath(*movie.u.s).c_str(),
 				movieFilename.c_str(), cleanedFilename.c_str());
 
 		if (!fileExists) {
@@ -342,6 +342,15 @@ void Lingo::func_cursor(int c, int m) {
 
 		if (score->_loadedCast->getVal(c)->_type != kCastBitmap || score->_loadedCast->getVal(m)->_type != kCastBitmap) {
 			warning("cursor: wrong cast reference type");
+			return;
+		}
+
+		if (score->_loadedCast->getVal(c)->_surface == nullptr) {
+			warning("cursor: empty sprite %d surface", c);
+			return;
+		}
+		if (score->_loadedCast->getVal(m)->_surface == nullptr) {
+			warning("cursor: empty sprite %d surface", m);
 			return;
 		}
 

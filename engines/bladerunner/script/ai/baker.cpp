@@ -54,15 +54,15 @@ void AIScriptBaker::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptBaker::EnteredScene(int sceneId) {
+void AIScriptBaker::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptBaker::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptBaker::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptBaker::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptBaker::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

@@ -40,16 +40,16 @@ class SonarcAudioSample : public AudioSample {
 	static void GenerateOneTable();
 
 	static void decode_EC(int mode, int samplecount,
-	                      const uint8 *source, int sourcesize,
-	                      uint8 *dest);
+						  const uint8 *source, int sourcesize,
+						  uint8 *dest);
 	static void decode_LPC(int order, int nsamples,
-	                       uint8 *dest, const uint8 *factors);
+						   uint8 *dest, const uint8 *factors);
 	static int audio_decode(const uint8 *source, uint8 *dest);
 
 	uint32      _srcOffset;
 
 public:
-	SonarcAudioSample(uint8 *buffer, uint32 size);
+	SonarcAudioSample(const uint8 *buffer, uint32 size);
 	~SonarcAudioSample(void) override;
 
 	void initDecompressor(void *DecompData) const override;

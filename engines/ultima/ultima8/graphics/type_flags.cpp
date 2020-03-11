@@ -43,8 +43,8 @@ TypeFlags::~TypeFlags() {
 }
 
 ShapeInfo *TypeFlags::getShapeInfo(uint32 shapenum) {
-	if (shapenum < shapeInfo.size())
-		return &(shapeInfo[shapenum]);
+	if (shapenum < _shapeInfo.size())
+		return &(_shapeInfo[shapenum]);
 	else
 		return 0;
 }
@@ -63,8 +63,8 @@ void TypeFlags::load(IDataSource *ds) {
 	uint32 size = ds->getSize();
 	uint32 count = size / blocksize;
 
-	shapeInfo.clear();
-	shapeInfo.resize(count);
+	_shapeInfo.clear();
+	_shapeInfo.resize(count);
 
 	for (uint32 i = 0; i < count; ++i) {
 		uint8 data[9];
@@ -152,14 +152,14 @@ void TypeFlags::load(IDataSource *ds) {
 		si._weaponInfo = 0;
 		si._armourInfo = 0;
 
-		shapeInfo[i] = si;
+		_shapeInfo[i] = si;
 	}
 
 	if (GAME_IS_U8) {
 		// Workaround for incorrectly set solid flags on some "moss
 		// curtains" in the catacombs. See also docs/u8bugs.txt
 		for (uint32 i = 459; i <= 464; ++i) {
-			shapeInfo[i]._flags &= ~ShapeInfo::SI_SOLID;
+			_shapeInfo[i]._flags &= ~ShapeInfo::SI_SOLID;
 		}
 	}
 
@@ -176,9 +176,9 @@ void TypeFlags::loadWeaponInfo() {
 	// load weapons
 	Std::vector<istring> weaponkeys;
 	weaponkeys = config->listSections("weapons", true);
-	for (Std::vector<istring>::iterator iter = weaponkeys.begin();
+	for (Std::vector<istring>::const_iterator iter = weaponkeys.begin();
 	        iter != weaponkeys.end(); ++iter) {
-		istring k = *iter;
+		const istring &k = *iter;
 		WeaponInfo *wi = new WeaponInfo;
 
 		int val;
@@ -215,8 +215,8 @@ void TypeFlags::loadWeaponInfo() {
 		else
 			wi->_treasureChance = 0;
 
-		assert(wi->_shape < shapeInfo.size());
-		shapeInfo[wi->_shape]._weaponInfo = wi;
+		assert(wi->_shape < _shapeInfo.size());
+		_shapeInfo[wi->_shape]._weaponInfo = wi;
 	}
 }
 
@@ -228,9 +228,9 @@ void TypeFlags::loadArmourInfo() {
 	// load armour
 	Std::vector<istring> armourkeys;
 	armourkeys = config->listSections("armour", true);
-	for (Std::vector<istring>::iterator iter = armourkeys.begin();
+	for (Std::vector<istring>::const_iterator iter = armourkeys.begin();
 	        iter != armourkeys.end(); ++iter) {
-		istring k = *iter;
+		const istring &k = *iter;
 		ArmourInfo ai;
 
 		int val;
@@ -238,13 +238,13 @@ void TypeFlags::loadArmourInfo() {
 		config->get(k + "/shape", val);
 		ai._shape = static_cast<uint32>(val);
 
-		assert(ai._shape < shapeInfo.size());
+		assert(ai._shape < _shapeInfo.size());
 		assert(msf->getShape(ai._shape));
 		unsigned int framecount = msf->getShape(ai._shape)->frameCount();
-		ArmourInfo *aia = shapeInfo[ai._shape]._armourInfo;
+		ArmourInfo *aia = _shapeInfo[ai._shape]._armourInfo;
 		if (!aia) {
 			aia = new ArmourInfo[framecount];
-			shapeInfo[ai._shape]._armourInfo = aia;
+			_shapeInfo[ai._shape]._armourInfo = aia;
 			for (unsigned int i = 0; i < framecount; ++i) {
 				aia[i]._shape = 0;
 				aia[i]._frame = 0;
@@ -285,9 +285,9 @@ void TypeFlags::loadMonsterInfo() {
 	// load monsters
 	Std::vector<istring> monsterkeys;
 	monsterkeys = config->listSections("monsters", true);
-	for (Std::vector<istring>::iterator iter = monsterkeys.begin();
+	for (Std::vector<istring>::const_iterator iter = monsterkeys.begin();
 	        iter != monsterkeys.end(); ++iter) {
-		istring k = *iter;
+		const istring k = *iter;
 		MonsterInfo *mi = new MonsterInfo;
 
 		int val;
@@ -360,8 +360,8 @@ void TypeFlags::loadMonsterInfo() {
 			mi->_treasure.clear();
 		}
 
-		assert(mi->_shape < shapeInfo.size());
-		shapeInfo[mi->_shape]._monsterInfo = mi;
+		assert(mi->_shape < _shapeInfo.size());
+		_shapeInfo[mi->_shape]._monsterInfo = mi;
 	}
 }
 

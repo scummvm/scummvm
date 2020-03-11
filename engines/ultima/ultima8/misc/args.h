@@ -1,20 +1,23 @@
-/*
- *  Copyright (C) 2000-2001  The Exult Team
- *  Copyright (C) 2002-2003  The Pentagram Team
+/* ScummVM - Graphic Adventure Engine
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef ULTIMA8_MISC_ARGS_H
@@ -79,23 +82,23 @@ public:
 		enum { no_type = 0, type_bool, type_str, type_sint, type_uint } valuetype;
 	};
 
-	Std::vector<Option> options;
+	Std::vector<Option> _options;
 
 	// bool
 	inline void declare(const char *option_cstr, bool *value, const bool defaultvalue = true) {
-		options.push_back(Option(option_cstr, value, defaultvalue));
+		_options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 	// string
 	inline void declare(const char *option_cstr, Std::string *value, const char *defaultvalue = 0) {
-		options.push_back(Option(option_cstr, value, defaultvalue));
+		_options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 	// sint
 	inline void declare(const char *option_cstr, int32 *value, const int32 defaultvalue = 0) {
-		options.push_back(Option(option_cstr, value, defaultvalue));
+		_options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 	// uint
 	inline void declare(const char *option_cstr, uint32 *value, const uint32 defaultvalue = 0) {
-		options.push_back(Option(option_cstr, value, defaultvalue));
+		_options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 
 	void process(const int32 argc, const char *const *const argv);

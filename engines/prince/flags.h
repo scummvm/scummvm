@@ -24,13 +24,14 @@
 #define PRINCE_FLAGS_H
 
 #include "common/scummsys.h"
+#include "common/hashmap.h"
 
 namespace Prince {
 
 class Flags {
 public:
-	static int compareFlagDebug(const void *a, const void *b);
-	static const char *getFlagName(uint16 flagId);
+	Flags();
+	const char *getFlagName(uint16 flagId);
 
 	enum Id {
 		FLAGA1			=	0x8000,
@@ -407,13 +408,8 @@ public:
 		ESCAPED2	=	0x8470
 	};
 
-	struct FlagDebug {
-		Id id;
-		char flagName[30];
-	};
-
-	static const int kFlagDebugAmount = 368;
-	static const FlagDebug _flagNames[kFlagDebugAmount];
+private:
+	Common::HashMap<uint, const char *> _flagMap;
 };
 
 } // End of namespace Prince

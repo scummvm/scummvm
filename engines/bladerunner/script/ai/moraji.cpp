@@ -100,15 +100,15 @@ void AIScriptMoraji::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMoraji::EnteredScene(int sceneId) {
+void AIScriptMoraji::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMoraji::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMoraji::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMoraji::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMoraji::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -238,7 +238,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		*animation = 733;
 		if (_var2) {
-			_var2--;
+			--_var2;
 		} else {
 			_animationFrame += _var1;
 			if (Random_Query(0, 10) == 0) {
@@ -262,14 +262,14 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 290;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(290))
 			_animationFrame = 0;
 		break;
 
 	case 3:
 		*animation = 732;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(732))
 			_animationFrame = 0;
 		break;
@@ -279,7 +279,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 734;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(734)) {
 			_animationFrame = 0;
 			_animationState = Random_Query(0, 2) + 5;
@@ -288,7 +288,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 735;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(735)) {
 			_animationFrame = 0;
 			_animationState = 5;
@@ -298,7 +298,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 736;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(736)) {
 			_animationFrame = 0;
 			_animationState = 5;
@@ -308,7 +308,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 737;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(737)) {
 			_animationFrame = 0;
 			_animationState = 0;
@@ -322,7 +322,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 742;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(742)) {
 			_animationFrame = 0;
 			_animationState = 3;
@@ -340,7 +340,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 739;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(739)) {
 			Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiLayDown);
 			_animationFrame = 0;
@@ -352,7 +352,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 	case 12:
 		*animation = 740;
 		if (_var2) {
-			_var2--;
+			--_var2;
 		} else {
 			_animationFrame += _var1;
 			if (!Random_Query(0, 5)) {
@@ -370,7 +370,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 741;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(741) - 1) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 			Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiDead);

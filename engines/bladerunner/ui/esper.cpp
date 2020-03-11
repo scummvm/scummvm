@@ -1329,7 +1329,7 @@ void ESPER::copyImageBlur(Graphics::Surface &src, Common::Rect srcRect, Graphics
 						srcXCounter += srcRect.width();
 						if (srcXCounter >= dstRect.width()) {
 							srcXCounter -= dstRect.width();
-							srcX += 1; // bug in original game? Is using 1 instead of skipX as for Y
+							++srcX; // bug in original game? Advancing by 1 instead of skipX as for Y
 						}
 
 						srcX = CLIP(srcX, 0, src.w - 1);

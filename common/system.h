@@ -358,25 +358,6 @@ public:
 		kFeatureIconifyWindow,
 
 		/**
-		 * Setting the state of this feature to true tells the backend to disable
-		 * all key filtering/mapping, in cases where it would be beneficial to do so.
-		 * As an example case, this is used in the AGI engine's predictive dialog.
-		 * When the dialog is displayed this feature is set so that backends with
-		 * phone-like keypad temporarily unmap all user actions which leads to
-		 * comfortable word entry. Conversely, when the dialog exits the feature
-		 * is set to false.
-		 *
-		 * TODO: The word 'beneficial' above is very unclear. Beneficial to
-		 * whom and for what??? Just giving an example is not enough.
-		 *
-		 * TODO: Fingolfin suggests that the way the feature is used can be
-		 * generalized in this sense: Have a keyboard mapping feature, which the
-		 * engine queries for to assign keys to actions ("Here's my default key
-		 * map for these actions, what do you want them set to?").
-		 */
-		kFeatureDisableKeyFiltering,
-
-		/**
 		 * The presence of this feature indicates whether the displayLogFile()
 		 * call is supported.
 		 *
@@ -665,6 +646,16 @@ public:
 	}
 
 	/**
+	 * Return the ID of the 'default' shader mode. What exactly this means
+	 * is up to the backend. This mode is set by the client code when no user
+	 * overrides are present (i.e. if no custom shader mode is selected via
+	 * the command line or a config file).
+	 *
+	 * @return the ID of the 'default' shader mode
+	 */
+	virtual int getDefaultShader() const { return 0; }
+
+	/**
 	 * Switch to the specified shader mode. If switching to the new mode
 	 * failed, this method returns false.
 	 *
@@ -672,6 +663,18 @@ public:
 	 * @return true if the switch was successful, false otherwise
 	 */
 	virtual bool setShader(int id) { return false; }
+
+	/**
+	 * Switch to the shader mode with the given name. If 'name' is unknown,
+	 * or if switching to the new mode failed, this method returns false.
+	 *
+	 * @param name	the name of the new shader mode
+	 * @return true if the switch was successful, false otherwise
+	 * @note This is implemented via the setShader(int) method, as well
+	 *       as getSupportedShaders() and getDefaultShader().
+	 *       In particular, backends do not have to overload this!
+	 */
+	bool setShader(const char *name);
 
 	/**
 	 * Determine which shader is currently active.

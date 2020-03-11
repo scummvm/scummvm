@@ -55,11 +55,11 @@ class MidiDriver_CoreMIDI : public MidiDriver_MPU401 {
 public:
 	MidiDriver_CoreMIDI(ItemCount device);
 	~MidiDriver_CoreMIDI();
-	int open();
-	bool isOpen() const { return mOutPort != 0 && mDest != 0; }
-	void close();
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
+	int open() override;
+	bool isOpen() const override { return mOutPort != 0 && mDest != 0; }
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
 
 private:
 	ItemCount mDevice;
@@ -117,6 +117,8 @@ void MidiDriver_CoreMIDI::close() {
 
 void MidiDriver_CoreMIDI::send(uint32 b) {
 	assert(isOpen());
+
+	midiDriverCommonSend(b);
 
 	// Extract the MIDI data
 	byte status_byte = (b & 0x000000FF);

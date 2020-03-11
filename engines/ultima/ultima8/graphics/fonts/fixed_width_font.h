@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-struct Texture;
+class Texture;
 class IDataSource;
 
 struct FixedWidthFont {
@@ -41,7 +41,7 @@ struct FixedWidthFont {
 
 	~FixedWidthFont();
 
-	static FixedWidthFont *Create(Std::string iniroot);
+	static FixedWidthFont *Create(const Std::string &iniroot);
 };
 
 } // End of namespace Ultima8

@@ -33,10 +33,6 @@
 #include "engines/engine.h"
 #include "gui/gui-manager.h"
 
-// #define JOY_INVERT_Y
-#define JOY_XAXIS 0
-#define JOY_YAXIS 1
-
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #define GAMECONTROLLERDB_FILE "gamecontrollerdb.txt"
 
@@ -87,14 +83,12 @@ void SdlEventSource::loadGameControllerMappingFile() {
 #endif
 
 SdlEventSource::SdlEventSource()
-    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false), _lastHatPosition(SDL_HAT_CENTERED)
+    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false),
+      _lastHatPosition(SDL_HAT_CENTERED), _mouseX(0), _mouseY(0)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr)
 #endif
       {
-	// Reset mouse state
-	memset(&_km, 0, sizeof(_km));
-
 	int joystick_num = ConfMan.getInt("joystick_num");
 	if (joystick_num >= 0) {
 		// Initialize SDL joystick subsystem
@@ -182,6 +176,9 @@ int SdlEventSource::mapKey(SDL_Keycode sdlKey, SDL_Keymod mod, Uint16 unicode) {
 }
 
 bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
+	_mouseX = x;
+	_mouseY = y;
+
 	event.mouse.x = x;
 	event.mouse.y = y;
 
@@ -190,151 +187,6 @@ bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 	}
 
 	return true;
-}
-
-void SdlEventSource::updateKbdMouse() {
-	uint32 curTime = g_system->getMillis(true);
-	if (curTime < _km.last_time + _km.delay_time) {
-		return;
-	}
-
-	_km.last_time = curTime;
-	if (_km.x_down_count == 1) {
-		_km.x_down_time = curTime;
-		_km.x_down_count = 2;
-	}
-	if (_km.y_down_count == 1) {
-		_km.y_down_time = curTime;
-		_km.y_down_count = 2;
-	}
-
-	if (_km.x_vel || _km.y_vel) {
-		if (_km.x_down_count) {
-			if (curTime > _km.x_down_time + 300) {
-				if (_km.x_vel > 0)
-					_km.x_vel += MULTIPLIER;
-				else
-					_km.x_vel -= MULTIPLIER;
-			} else if (curTime > _km.x_down_time + 200) {
-				if (_km.x_vel > 0)
-					_km.x_vel = 5 * MULTIPLIER;
-				else
-					_km.x_vel = -5 * MULTIPLIER;
-			}
-		}
-		if (_km.y_down_count) {
-			if (curTime > _km.y_down_time + 300) {
-				if (_km.y_vel > 0)
-					_km.y_vel += MULTIPLIER;
-				else
-					_km.y_vel -= MULTIPLIER;
-			} else if (curTime > _km.y_down_time + 200) {
-				if (_km.y_vel > 0)
-					_km.y_vel = 5 * MULTIPLIER;
-				else
-					_km.y_vel = -5 * MULTIPLIER;
-			}
-		}
-
-		int16 speedFactor = computeJoystickMouseSpeedFactor();
-
-		// - The modifier key makes the mouse movement slower
-		// - The extra factor "delay/speedFactor" ensures velocities
-		// are independent of the kbdMouse update rate
-		// - all velocities were originally chosen
-		// at a delay of 25, so that is the reference used here
-		// - note: operator order is important to avoid overflow
-		if (_km.modifier) {
-			_km.x += ((_km.x_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
-			_km.y += ((_km.y_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
-		} else {
-			_km.x += (_km.x_vel * ((int16)_km.delay_time)) / speedFactor;
-			_km.y += (_km.y_vel * ((int16)_km.delay_time)) / speedFactor;
-		}
-
-		if (_km.x < 0) {
-			_km.x = 0;
-			_km.x_vel = -1 * MULTIPLIER;
-			_km.x_down_count = 1;
-		} else if (_km.x > _km.x_max * MULTIPLIER) {
-			_km.x = _km.x_max * MULTIPLIER;
-			_km.x_vel = 1 * MULTIPLIER;
-			_km.x_down_count = 1;
-		}
-
-		if (_km.y < 0) {
-			_km.y = 0;
-			_km.y_vel = -1 * MULTIPLIER;
-			_km.y_down_count = 1;
-		} else if (_km.y > _km.y_max * MULTIPLIER) {
-			_km.y = _km.y_max * MULTIPLIER;
-			_km.y_vel = 1 * MULTIPLIER;
-			_km.y_down_count = 1;
-		}
-	}
-}
-
-bool SdlEventSource::handleKbdMouse(Common::Event &event) {
-	int32 oldKmX = _km.x;
-	int32 oldKmY = _km.y;
-
-	updateKbdMouse();
-
-	if (_km.x != oldKmX || _km.y != oldKmY) {
-		if (_graphicsManager) {
-			_graphicsManager->getWindow()->warpMouseInWindow((Uint16)(_km.x / MULTIPLIER), (Uint16)(_km.y / MULTIPLIER));
-		}
-
-		event.type = Common::EVENT_MOUSEMOVE;
-		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-	}
-
-	return false;
-}
-
-int16 SdlEventSource::computeJoystickMouseSpeedFactor() const {
-	int16 speedFactor;
-
-	switch (ConfMan.getInt("kbdmouse_speed")) {
-	// 0.25 keyboard pointer speed
-	case 0:
-		speedFactor = 100;
-		break;
-	// 0.5 speed
-	case 1:
-		speedFactor = 50;
-		break;
-	// 0.75 speed
-	case 2:
-		speedFactor = 33;
-		break;
-	// 1.0 speed
-	case 3:
-		speedFactor = 25;
-		break;
-	// 1.25 speed
-	case 4:
-		speedFactor = 20;
-		break;
-	// 1.5 speed
-	case 5:
-		speedFactor = 17;
-		break;
-	// 1.75 speed
-	case 6:
-		speedFactor = 14;
-		break;
-	// 2.0 speed
-	case 7:
-		speedFactor = 12;
-		break;
-	default:
-		speedFactor = 25;
-	}
-
-	// Scale the mouse cursor speed with the display size so moving across
-	// the screen takes a reasonable amount of time at higher resolutions.
-	return speedFactor * 480 / _km.y_max;
 }
 
 void SdlEventSource::SDLModToOSystemKeyFlags(SDL_Keymod mod, Common::Event &event) {
@@ -590,11 +442,6 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 			return true;
 	}
 
-	// Handle mouse control via analog joystick and keyboard
-	if (handleKbdMouse(event)) {
-		return true;
-	}
-
 	return false;
 }
 
@@ -616,11 +463,10 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
 		Sint32 yDir = ev.wheel.y;
-		// HACK: It seems we want the mouse coordinates supplied
-		// with a mouse wheel event. However, SDL2 does not supply
-		// these, thus we use whatever we got last time. It seems
-		// these are always stored in _km.x, _km.y.
-		if (!processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER)) {
+		// We want the mouse coordinates supplied with a mouse wheel event.
+		// However, SDL2 does not supply these, thus we use whatever we got
+		// last time.
+		if (!processMouseEvent(event, _mouseX, _mouseY)) {
 			return false;
 		}
 		if (yDir < 0) {
@@ -798,10 +644,6 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 
-	// update KbdMouse
-	_km.x = ev.motion.x * MULTIPLIER;
-	_km.y = ev.motion.y * MULTIPLIER;
-
 	return processMouseEvent(event, ev.motion.x, ev.motion.y);
 }
 
@@ -820,12 +662,16 @@ bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 	else if (ev.button.button == SDL_BUTTON_MIDDLE)
 		event.type = Common::EVENT_MBUTTONDOWN;
 #endif
+#if defined(SDL_BUTTON_X1)
+	else if (ev.button.button == SDL_BUTTON_X1)
+		event.type = Common::EVENT_X1BUTTONDOWN;
+#endif
+#if defined(SDL_BUTTON_X2)
+	else if (ev.button.button == SDL_BUTTON_X2)
+		event.type = Common::EVENT_X2BUTTONDOWN;
+#endif
 	else
 		return false;
-
-	// update KbdMouse
-	_km.x = ev.button.x * MULTIPLIER;
-	_km.y = ev.button.y * MULTIPLIER;
 
 	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
@@ -839,12 +685,16 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	else if (ev.button.button == SDL_BUTTON_MIDDLE)
 		event.type = Common::EVENT_MBUTTONUP;
 #endif
+#if defined(SDL_BUTTON_X1)
+	else if (ev.button.button == SDL_BUTTON_X1)
+		event.type = Common::EVENT_X1BUTTONUP;
+#endif
+#if defined(SDL_BUTTON_X2)
+	else if (ev.button.button == SDL_BUTTON_X2)
+		event.type = Common::EVENT_X2BUTTONUP;
+#endif
 	else
 		return false;
-
-	// update KbdMouse
-	_km.x = ev.button.x * MULTIPLIER;
-	_km.y = ev.button.y * MULTIPLIER;
 
 	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
@@ -935,16 +785,6 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 }
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
-
-	// TODO: Move hardcoded axis to mouse motion code to the keymapper
-	if (ev.jaxis.axis == JOY_XAXIS) {
-		_km.joy_x = ev.jaxis.value;
-		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
-	} else if (ev.jaxis.axis == JOY_YAXIS) {
-		_km.joy_y = ev.jaxis.value;
-		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
-	}
-
 	event.type = Common::EVENT_JOYAXIS_MOTION;
 	event.joystick.axis = ev.jaxis.axis;
 	event.joystick.position = ev.jaxis.value;
@@ -1055,25 +895,10 @@ bool SdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &
 	event.type = buttonUp ? Common::EVENT_JOYBUTTON_UP : Common::EVENT_JOYBUTTON_DOWN;
 	event.joystick.button = button;
 
-	if (event.joystick.button == Common::JOYSTICK_BUTTON_RIGHT_SHOULDER) {
-		// Right shoulder is the modifier button that makes the mouse go slower.
-		_km.modifier = !buttonUp;
-	}
-
 	return true;
 }
 
 bool SdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) {
-
-	// TODO: Move hardcoded axis to mouse motion code to the keymapper
-	if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
-		_km.joy_x = ev.caxis.value;
-		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
-	} else if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
-		_km.joy_y = ev.caxis.value;
-		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
-	}
-
 	event.type = Common::EVENT_JOYAXIS_MOTION;
 	event.joystick.axis = ev.caxis.axis;
 	event.joystick.position = ev.caxis.value;
@@ -1082,48 +907,8 @@ bool SdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Eve
 }
 #endif
 
-bool SdlEventSource::handleAxisToMouseMotion(int16 xAxis, int16 yAxis) {
-#ifdef JOY_INVERT_Y
-	yAxis = -yAxis;
-#endif
-
-	// conversion factor between keyboard mouse and joy axis value
-	int vel_to_axis = (1500 / MULTIPLIER);
-
-	// radial and scaled deadzone
-
-	float analogX = (float)xAxis;
-	float analogY = (float)yAxis;
-	float deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
-
-	float magnitude = sqrt(analogX * analogX + analogY * analogY);
-
-	if (magnitude >= deadZone) {
-		_km.x_down_count = 0;
-		_km.y_down_count = 0;
-		float scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
-		_km.x_vel = (int16)(analogX * scalingFactor * 32768.0f / vel_to_axis);
-		_km.y_vel = (int16)(analogY * scalingFactor * 32768.0f / vel_to_axis);
-	} else {
-		_km.x_vel = 0;
-		_km.y_vel = 0;
-	}
-
-	return false;
-}
-
 bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
-}
-
-void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
-	_km.x_max = x_max;
-	_km.y_max = y_max;
-	_km.delay_time = 12;
-	_km.last_time = 0;
-	_km.modifier = false;
-	_km.joy_x = 0;
-	_km.joy_y = 0;
 }
 
 void SdlEventSource::fakeWarpMouse(const int x, const int y) {

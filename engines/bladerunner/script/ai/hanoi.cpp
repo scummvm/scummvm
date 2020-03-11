@@ -167,15 +167,15 @@ void AIScriptHanoi::ClickedByPlayer() {
 	}
 }
 
-void AIScriptHanoi::EnteredScene(int sceneId) {
+void AIScriptHanoi::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHanoi::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHanoi::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHanoi::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHanoi::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -348,7 +348,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		if (_flag1) {
 			*animation = 649;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				*animation = 648;
 				_animationFrame = 0;
@@ -359,7 +359,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 		*animation = 648;
 		if (_var3 != 0) {
-			_var3--;
+			--_var3;
 			if (!Random_Query(0, 6)) {
 				_var4 = -_var4;
 			}
@@ -420,7 +420,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 657;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
@@ -430,7 +430,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 658;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -438,7 +438,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 659;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 3;
@@ -448,7 +448,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 657;
-		_animationFrame--;
+		--_animationFrame;
 		if (_animationFrame == 0) {
 			_animationState = 0;
 			_animationFrame = 0;
@@ -468,7 +468,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 345;  // Sadik is used in this animation, but he is well hidden
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > 26) {
 			Actor_Change_Animation_Mode(kActorHanoi, kAnimationModeIdle);
 			_animationState = 0;
@@ -481,7 +481,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 645;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -489,7 +489,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 642;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -497,7 +497,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 643;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorHanoi, kAnimationModeCombatIdle);
 			_animationState = 8;
@@ -509,7 +509,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 644;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame == 4) {
 			Ambient_Sounds_Play_Sound(kSfxSHOTCOK1, 77, 0, 0, 20);
@@ -534,7 +534,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 660;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			*animation = 648;
 			_animationFrame = 0;
@@ -544,7 +544,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = 646;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			*animation = 642;
 			_animationFrame = 0;
@@ -555,7 +555,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 	case 13:
 		*animation = 647;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
@@ -566,7 +566,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 		) {
 			_animationState = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
 			}
@@ -575,7 +575,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 15:
 		*animation = 651;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;
@@ -585,7 +585,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 16:
 		*animation = 652;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;
@@ -595,7 +595,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 17:
 		*animation = 653;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;
@@ -605,7 +605,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 18:
 		*animation = 654;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;
@@ -615,7 +615,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 19:
 		*animation = 655;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;
@@ -625,7 +625,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 20:
 		*animation = 656;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 14;

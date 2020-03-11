@@ -47,8 +47,8 @@ BookGump::BookGump()
 
 }
 
-BookGump::BookGump(ObjId owner_, Std::string msg) :
-	ModalGump(0, 0, 100, 100, owner_), text(msg) {
+BookGump::BookGump(ObjId owner_, const Std::string &msg) :
+	ModalGump(0, 0, 100, 100, owner_), _text(msg) {
 }
 
 BookGump::~BookGump(void) {
@@ -58,16 +58,16 @@ void BookGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	// Create the TextWidgets (NOTE: they _must_ have exactly the same _dims)
-	TextWidget *widget = new TextWidget(9, 5, text, true, 9, 123, 129); //!! constants
+	TextWidget *widget = new TextWidget(9, 5, _text, true, 9, 123, 129); //!! constants
 	widget->InitGump(this);
-	textwidgetL = widget->getObjId();
+	_textWidgetL = widget->getObjId();
 
-	widget = new TextWidget(150, 5, text, true, 9, 123, 129); //!! constants
+	widget = new TextWidget(150, 5, _text, true, 9, 123, 129); //!! constants
 	widget->InitGump(this);
-	textwidgetR = widget->getObjId();
+	_textWidgetR = widget->getObjId();
 	widget->setupNextText();
 
-	text.clear(); // no longer need this
+	_text.clear(); // no longer need this
 
 	//!! constant
 	Shape *shapeP = GameData::get_instance()->getGumps()->getShape(6);
@@ -82,8 +82,8 @@ void BookGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 void BookGump::NextText() {
-	TextWidget *widgetL = p_dynamic_cast<TextWidget *>(getGump(textwidgetL));
-	TextWidget *widgetR = p_dynamic_cast<TextWidget *>(getGump(textwidgetR));
+	TextWidget *widgetL = p_dynamic_cast<TextWidget *>(getGump(_textWidgetL));
+	TextWidget *widgetR = p_dynamic_cast<TextWidget *>(getGump(_textWidgetR));
 	assert(widgetL);
 	assert(widgetR);
 	if (!widgetR->setupNextText()) {

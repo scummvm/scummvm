@@ -54,15 +54,15 @@ void AIScriptDispatcher::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptDispatcher::EnteredScene(int sceneId) {
+void AIScriptDispatcher::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptDispatcher::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptDispatcher::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptDispatcher::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptDispatcher::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

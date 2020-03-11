@@ -120,7 +120,7 @@ private:
 		const uint8 *_data;
 		const uint32 _len;
 	};
-	Std::map<Common::String, MemoryFile *> memoryfiles; // Files mounted in memory
+	Std::map<Common::String, MemoryFile *> _memoryFiles; // Files mounted in memory
 };
 
 } // End of namespace Ultima8

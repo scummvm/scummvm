@@ -406,15 +406,15 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 	return; //true;
 }
 
-void AIScriptOfficerGrayford::EnteredScene(int sceneId) {
+void AIScriptOfficerGrayford::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptOfficerGrayford::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptOfficerGrayford::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptOfficerGrayford::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptOfficerGrayford::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -928,7 +928,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		if (_var1 == 2) {
 			*animation = 627;
 		}
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_var1 = 0;
@@ -940,7 +940,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 618;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(618)) {
 			_animationFrame = 0;
 		}
@@ -948,7 +948,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 619;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(619)) {
 			_animationFrame = 0;
 		}
@@ -956,7 +956,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 611;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(611)) {
 			_animationFrame = 0;
 		}
@@ -964,7 +964,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 610;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(610)) {
 			_animationFrame = 0;
 		}
@@ -978,7 +978,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 			_var2 = 0;
 		} else {
 			*animation = 629;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(629)) {
 				_animationFrame = 0;
 				_animationState = Random_Query(9, 11);
@@ -988,7 +988,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 630;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(630)) {
 			_animationFrame = 0;
 			_animationState = 9;
@@ -998,7 +998,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 631;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(631)) {
 			_animationFrame = 0;
 			_animationState = 9;
@@ -1008,7 +1008,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = 632;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(632)) {
 			_animationFrame = 0;
 			_animationState = 9;
@@ -1018,7 +1018,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 633;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(633)) {
 			_animationFrame = 0;
 			_animationState = 9;
@@ -1028,7 +1028,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = 634;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(634)) {
 			_animationFrame = 0;
 			_animationState = 9;
@@ -1038,7 +1038,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 15:
 		*animation = 635;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(635)) {
 			_animationFrame = 0;
 			_animationState = 9;
@@ -1048,7 +1048,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 16:
 		*animation = 636;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(636)) {
 			_animationFrame = 0;
 			_animationState = 9;
@@ -1058,7 +1058,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 17:
 		*animation = 637;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(637)) {
 			_animationFrame = 0;
 			_animationState = 9;
@@ -1069,7 +1069,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 	case 18:
 	case 19:
 		*animation = 605;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(605)) {
 			_animationFrame = 0;
 		}
@@ -1077,7 +1077,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 20:
 		*animation = 615;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(615)) {
 			_animationFrame = 0;
 			_animationState = 19;
@@ -1086,7 +1086,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 21:
 		*animation = 616;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 11) {
 			Ambient_Sounds_Play_Sound(kSfxHOLSTER1, 25, 0, 0, 25);
 		}
@@ -1103,7 +1103,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 22:
 		*animation = 617;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 3) {
 			int snd;
 			if (Random_Query(1, 2) == 1) {
@@ -1126,13 +1126,13 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 	case 23:
 		*animation = 617;
 		if (_animationFrame < 2) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
 	case 24:
 		*animation = 617;
-		_animationFrame--;
+		--_animationFrame;
 		if (_animationFrame < 0) {
 			_animationFrame = 0;
 			_animationState = 21;
@@ -1142,7 +1142,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 27:
 		*animation = 608;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(608) - 1) {
 			_animationFrame = 0;
 			_animationState = 19;
@@ -1153,7 +1153,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 28:
 		*animation = 609;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(609) - 1) {
 			_animationFrame = 0;
 			_animationState = 19;
@@ -1164,7 +1164,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 29:
 		*animation = 622;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(622) - 1) {
 			*animation = 605;
 			_animationFrame = 0;
@@ -1175,7 +1175,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 30:
 		*animation = 623;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(623) - 1) {
 			*animation = 605;
 			_animationFrame = 0;
@@ -1187,23 +1187,23 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 	case 31:
 		*animation = 612;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(612) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
 	case 32:
 		*animation = 624;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(624) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
 	case 34:
 		*animation = 639;
 		if (_var3) {
-			_var3--;
+			--_var3;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(639)) {
 				if (Random_Query(0, 1)) {
 					*animation = 641;
@@ -1224,9 +1224,9 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 	case 35:
 		*animation = 638;
 		if (_var3) {
-			_var3--;
+			--_var3;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(638)) {
 				if (Random_Query(0, 1)) {
 					*animation = 641;
@@ -1246,7 +1246,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 36:
 		*animation = 640;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(640)) {
 			_animationFrame = 0;
 			_animationState = 34;
@@ -1256,7 +1256,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 
 	case 37:
 		*animation = 641;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(641)) {
 			*animation = 625;
 			_animationState = 0;

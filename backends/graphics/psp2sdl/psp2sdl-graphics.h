@@ -33,16 +33,24 @@ public:
 
 	virtual OSystem::TransactionError endGFXTransaction() override;
 	virtual const OSystem::GraphicsMode *getSupportedShaders() const override;
+	virtual int getDefaultShader() const override;
+	virtual int getShader() const override;
+	virtual bool setShader(int id) override;
 
 protected:
 	virtual void setGraphicsModeIntern() override;
 	virtual void unloadGFXMode() override;
 	virtual bool hotswapGFXMode() override;
 
-	virtual void updateShader() override;
 	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) override;
 	virtual void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects) override;
+
+private:
 	void PSP2_UpdateFiltering();
+	void updateShader();
+
+	int _currentShader;
+	int _numShaders;
 
 	vita2d_texture *_vitatex_hwscreen;
 	void *_sdlpixels_hwscreen;

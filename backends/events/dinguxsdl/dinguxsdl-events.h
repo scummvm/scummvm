@@ -23,9 +23,9 @@
 #ifndef BACKENDS_EVENTS_SDL_DINGUX_H
 #define BACKENDS_EVENTS_SDL_DINGUX_H
 
-#include "backends/events/sdl/sdl-events.h"
+#include "backends/events/sdl/legacy-sdl-events.h"
 
-class DINGUXSdlEventSource : public SdlEventSource {
+class DINGUXSdlEventSource : public LegacySdlEventSource {
 protected:
 	bool remapKey(SDL_Event &ev, Common::Event &event);
 };

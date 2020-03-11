@@ -47,7 +47,7 @@ public:
 	~Kernel();
 
 	static Kernel *get_instance() {
-		return kernel;
+		return _kernel;
 	}
 
 	void reset();
@@ -89,10 +89,10 @@ public:
 
 	//! get an iterator of the process list.
 	ProcessIter getProcessBeginIterator() {
-		return processes.begin();
+		return _processes.begin();
 	}
 	ProcessIter getProcessEndIterator() {
-		return processes.end();
+		return _processes.end();
 	}
 
 	void kernelStats();
@@ -120,7 +120,7 @@ public:
 	}
 
 	void addProcessLoader(Std::string classname, ProcessLoadFunc func) {
-		processloaders[classname] = func;
+		_processLoaders[classname] = func;
 	}
 
 	uint32 getFrameNum() const {
@@ -132,14 +132,14 @@ public:
 private:
 	Process *loadProcess(IDataSource *ids, uint32 version);
 
-	Std::list<Process *> processes;
-	idMan   *pIDs;
+	Std::list<Process *> _processes;
+	idMan   *_pIDs;
 
 	Std::list<Process *>::iterator current_process;
 
-	Std::map<Common::String, ProcessLoadFunc> processloaders;
+	Std::map<Common::String, ProcessLoadFunc> _processLoaders;
 
-	bool loading;
+	bool _loading;
 
 	uint32 _frameNum;
 	unsigned int _paused;
@@ -147,7 +147,7 @@ private:
 
 	Process *_runningProcess;
 
-	static Kernel *kernel;
+	static Kernel *_kernel;
 };
 
 // a bit of a hack to prevent having to write a load function for

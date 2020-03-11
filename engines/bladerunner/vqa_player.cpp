@@ -115,7 +115,7 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 
 		if (loopEndQueued == -1) {
 			if (_repeatsCount != -1) {
-				_repeatsCount--;
+				--_repeatsCount;
 			}
 			//callback for repeat, it is not used in the blade runner
 		} else {
@@ -142,7 +142,7 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 		if (_hasAudio) {
 			int audioPreloadFrames = 14;
 			if (!_audioStarted) {
-				for (int i = 0; i < audioPreloadFrames; i++) {
+				for (int i = 0; i < audioPreloadFrames; ++i) {
 					if (_frameNext + i < _frameEnd) {
 						_decoder.readFrame(_frameNext + i, kVQAReadAudio);
 						queueAudioFrame(_decoder.decodeAudioFrame());
@@ -169,7 +169,7 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 				_frameNextTime = now + 60000 / 15;
 			}
 		}
-		_frameNext++;
+		++_frameNext;
 		result = _frame;
 	}
 

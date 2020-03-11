@@ -83,15 +83,15 @@ void AIScriptDeskClerk::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptDeskClerk::EnteredScene(int sceneId) {
+void AIScriptDeskClerk::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptDeskClerk::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptDeskClerk::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptDeskClerk::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptDeskClerk::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -148,7 +148,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	//	- when using CDFRAMES, the game would crash with a message "Unable to locate page 2214 for animation 668 frame 4!"
 	// This occurs when:
 	//	 The player walks out too fast from the scene where Leon is choking the clerk in Act 3.
-	//   Hence, Leon's AI script's OtherAgentExitedThisScene() is triggered, Leon is gone,
+	//   Hence, Leon's AI script's OtherAgentExitedThisSet() is triggered, Leon is gone,
 	//   and DeskClerk goal is set to kGoalDeskClerkKnockedOut which puts him in kSetFreeSlotH without changing his animation id.
 	// Thus later on, when the player leaves Chinatown and returns, DeskClerk's (update()) will set his goal to kGoalDeskClerkRecovered
 	// In Act 4, the CDFRAMES#.DAT method loads a reduced number of animations for DeskClerk causing the crash when McCoy visits the Yukon lobby.
@@ -171,7 +171,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		if (_flag1) {
 			*animation = 662;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(662)) {
 				_animationFrame = 0;
 				_flag1 = false;
@@ -184,7 +184,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 			}
 
 			*animation = 661;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(661)) {
 				_animationFrame = 0;
 
@@ -206,7 +206,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 			_flag1 = false;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
 			}
@@ -215,7 +215,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 664;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(664)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -225,7 +225,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 665;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(665)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -235,7 +235,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 666;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(666)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -245,7 +245,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 667;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(667)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -255,7 +255,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 668;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(668)) {
 			_animationFrame = 0;
 		}
@@ -271,7 +271,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 			*animation = 668;
 			_animationState = 6;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
 			}
@@ -280,7 +280,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 670;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(670) - 2) {
 			Ambient_Sounds_Play_Sound(kSfxZUBLAND1, 40, 30, 30, 99);
 			Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkKnockedOut);

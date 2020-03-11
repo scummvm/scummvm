@@ -59,7 +59,7 @@ void GlobEgg::enterFastArea() {
 		if (!glob) return;
 
 		Std::vector<GlobItem>::iterator iter;
-		for (iter = glob->contents.begin(); iter != glob->contents.end(); ++iter) {
+		for (iter = glob->_contents.begin(); iter != glob->_contents.end(); ++iter) {
 			GlobItem &globitem = *iter;
 			Item *item = ItemFactory::createItem(globitem.shape, globitem.frame,
 			                                     0,

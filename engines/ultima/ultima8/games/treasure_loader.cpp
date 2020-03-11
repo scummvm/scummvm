@@ -1,19 +1,23 @@
-/*
- *  Copyright (C) 2004-2005 The Pentagram Team
+/* ScummVM - Graphic Adventure Engine
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
@@ -43,7 +47,7 @@ void TreasureLoader::loadDefaults() {
 		TreasureInfo ti;
 		bool ok = internalParse(defaultiter->_value, ti, true);
 		if (ok) {
-			defaultTreasure[defaultiter->_key] = ti;
+			_defaultTreasure[defaultiter->_key] = ti;
 		} else {
 			perr << "Failed to parse treasure type '" << defaultiter->_key
 			     << "': " << defaultiter->_value << Std::endl;
@@ -52,7 +56,7 @@ void TreasureLoader::loadDefaults() {
 
 }
 
-bool TreasureLoader::parse(Std::string desc,
+bool TreasureLoader::parse(const Std::string &desc,
                            Std::vector<TreasureInfo> &treasure) {
 	treasure.clear();
 
@@ -72,7 +76,7 @@ bool TreasureLoader::parse(Std::string desc,
 	return true;
 }
 
-bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
+bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
                                    bool loadingDefault) {
 	ti._special = "";
 	ti._chance = 1;
@@ -118,8 +122,8 @@ bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
 			if (loadedDefault)
 				return false;
 			TreasureMap::iterator iter;
-			iter = defaultTreasure.find(val);
-			if (iter != defaultTreasure.end())
+			iter = _defaultTreasure.find(val);
+			if (iter != _defaultTreasure.end())
 				ti = iter->_value;
 			else
 				return false;
@@ -143,8 +147,9 @@ bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
 	return true;
 }
 
-bool TreasureLoader::parseUInt32Vector(Std::string val,
+bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
                                        Std::vector<uint32> &vec) {
+	Std::string val = val_;
 	vec.clear();
 
 	Std::string::size_type pos;
@@ -173,7 +178,7 @@ bool TreasureLoader::parseUInt32Vector(Std::string val,
 	return true;
 }
 
-bool TreasureLoader::parseUIntRange(Std::string val,
+bool TreasureLoader::parseUIntRange(const Std::string &val,
                                     unsigned int &min, unsigned int &max) {
 	Std::string::size_type pos = val.find('-');
 	if (pos == 0 || pos == Std::string::npos || pos + 1 >= val.size())
@@ -189,13 +194,13 @@ bool TreasureLoader::parseUIntRange(Std::string val,
 	return ok;
 }
 
-bool TreasureLoader::parseDouble(Std::string val, double &d) {
+bool TreasureLoader::parseDouble(const Std::string &val, double &d) {
 	// TODO: error checking
 	d = Std::atof(val.c_str());
 	return true;
 }
 
-bool TreasureLoader::parseInt(Std::string val, int &i) {
+bool TreasureLoader::parseInt(const Std::string &val, int &i) {
 	// TODO: error checking
 	i = Std::strtol(val.c_str(), 0, 0);
 	return true;

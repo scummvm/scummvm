@@ -96,11 +96,11 @@ class MidiDriver_CORE : public MidiDriver_MPU401 {
 public:
 	MidiDriver_CORE();
 	~MidiDriver_CORE();
-	int open();
-	bool isOpen() const { return _auGraph != 0; }
-	void close();
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
+	int open() override;
+	bool isOpen() const override { return _auGraph != 0; }
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
 
 private:
 	void loadSoundFont(const char *soundfont);
@@ -279,6 +279,8 @@ void MidiDriver_CORE::close() {
 
 void MidiDriver_CORE::send(uint32 b) {
 	assert(isOpen());
+
+	midiDriverCommonSend(b);
 
 	byte status_byte = (b & 0x000000FF);
 	byte first_byte = (b & 0x0000FF00) >> 8;

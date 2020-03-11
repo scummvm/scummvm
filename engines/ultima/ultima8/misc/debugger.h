@@ -169,12 +169,6 @@ private:
 	bool cmdIncrementSortOrder(int argc, const char **argv);
 	bool cmdDecrementSortOrder(int argc, const char **argv);
 
-	// HID Manager
-	bool cmdBind(int argc, const char **argv);
-	bool cmdUnbind(int argc, const char **argv);
-	bool cmdListbinds(int argc, const char **argv);
-	bool cmdSave(int argc, const char **argv);
-
 	// Kernel
 	bool cmdProcessTypes(int argc, const char **argv);
 	bool cmdListProcesses(int argc, const char **argv);

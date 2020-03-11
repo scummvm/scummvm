@@ -38,7 +38,9 @@ Common::String convertPath(Common::String &path);
 
 Common::String getPath(Common::String path, Common::String cwd);
 
-Common::String pathMakeRelative(Common::String path);
+Common::String pathMakeRelative(Common::String path, bool recursive = true);
+
+Common::String convertMacFilename(const char *name);
 
 void processQuitEvent(); // events.cpp
 

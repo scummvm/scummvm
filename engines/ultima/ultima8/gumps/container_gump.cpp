@@ -145,8 +145,8 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	if (_displayDragging) {
 		int32 itemx, itemy;
-		itemx = dragging_x + _itemArea.x;
-		itemy = dragging_y + _itemArea.y;
+		itemx = _draggingX + _itemArea.x;
+		itemy = _draggingY + _itemArea.y;
 		Shape *s = GameData::get_instance()->getMainShapes()->
 		           getShape(_draggingShape);
 		assert(s);
@@ -403,18 +403,18 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 
 	// determine target location and set dragging_x/y
 
-	dragging_x = mx - _itemArea.x - dox;
-	dragging_y = my - _itemArea.y - doy;
+	_draggingX = mx - _itemArea.x - dox;
+	_draggingY = my - _itemArea.y - doy;
 
 	Shape *sh = item->getShapeObject();
 	assert(sh);
 	ShapeFrame *fr = sh->getFrame(_draggingFrame);
 	assert(fr);
 
-	if (dragging_x - fr->_xoff < 0 ||
-	        dragging_x - fr->_xoff + fr->_width > _itemArea.w ||
-	        dragging_y - fr->_yoff < 0 ||
-	        dragging_y - fr->_yoff + fr->_height > _itemArea.h) {
+	if (_draggingX - fr->_xoff < 0 ||
+	        _draggingX - fr->_xoff + fr->_width > _itemArea.w ||
+	        _draggingY - fr->_yoff < 0 ||
+	        _draggingY - fr->_yoff + fr->_height > _itemArea.h) {
 		_displayDragging = false;
 		return false;
 	}
@@ -478,7 +478,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 				splittarget->randomGumpLocation();
 			} else {
 				splittarget->moveToContainer(getContainer(_owner));
-				splittarget->setGumpLocation(dragging_x, dragging_y);
+				splittarget->setGumpLocation(_draggingX, _draggingY);
 			}
 		}
 
@@ -532,9 +532,9 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 
 		int32 dox, doy;
 		Mouse::get_instance()->getDraggingOffset(dox, doy);
-		dragging_x = mx - _itemArea.x - dox;
-		dragging_y = my - _itemArea.y - doy;
-		item->setGumpLocation(dragging_x, dragging_y);
+		_draggingX = mx - _itemArea.x - dox;
+		_draggingY = my - _itemArea.y - doy;
+		item->setGumpLocation(_draggingX, _draggingY);
 	}
 }
 

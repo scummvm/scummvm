@@ -44,7 +44,7 @@ public:
 
 	void cache(uint32 index) override;
 	void uncache(uint32 index) override;
-	bool isCached(uint32 index) override;
+	bool isCached(uint32 index) const override;
 
 	//! return object. DON'T delete or modify!
 	virtual const uint8 *get_object_nodel(uint32 index);

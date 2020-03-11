@@ -53,17 +53,6 @@ public:
 		else write4(val);
 	}
 
-	void writef(float f) {
-		// FIXME: dubious...
-		union {
-			uint32  i;
-			float   f;
-		} int_float;
-		int_float.f = f;
-		write4(int_float.i);
-	}
-
-
 	virtual Common::WriteStream *GetRawStream() {
 		return 0;
 	}
@@ -359,7 +348,7 @@ public:
 	}
 
 	~OAutoBufferDataSource() override {
-		delete [] _bufPtr;
+		delete [] _buf;
 	}
 
 	void write1(uint32 val) override {

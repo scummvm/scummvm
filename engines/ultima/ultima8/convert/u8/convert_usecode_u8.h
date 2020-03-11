@@ -41,7 +41,7 @@ public:
 		uint32 _maxOffset;
 	};
 	uint32 read4(IDataSource *) { return 0; }
-	uint32 curOffset;
+	uint32 _curOffset;
 
 	virtual const char* const *intrinsics()=0;
 	virtual const char* const *event_names()=0;

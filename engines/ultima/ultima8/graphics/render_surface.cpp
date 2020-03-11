@@ -23,13 +23,14 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/soft_render_surface.h"
+#include "common/system.h"
 #include "engines/util.h"
 #include "graphics/screen.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-RenderSurface::Format   RenderSurface::format = {
+RenderSurface::Format   RenderSurface::_format = {
 	0,  0,
 	0,  0,  0,  0,
 	0,  0,  0,  0,
@@ -37,8 +38,8 @@ RenderSurface::Format   RenderSurface::format = {
 	0,  0,  0,  0
 };
 
-uint8 RenderSurface::Gamma10toGamma22[256];
-uint8 RenderSurface::Gamma22toGamma10[256];
+uint8 RenderSurface::_gamma10toGamma22[256];
+uint8 RenderSurface::_gamma22toGamma10[256];
 
 //
 // RenderSurface::SetVideoMode()
@@ -73,8 +74,8 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp)
 
 	// Initialize gamma correction tables
 	for (int i = 0; i < 256; i++) {
-		Gamma22toGamma10[i] = static_cast<uint8>(0.5 + (Std::pow(i / 255.0, 2.2 / 1.0) * 255.0));
-		Gamma10toGamma22[i] = static_cast<uint8>(0.5 + (Std::pow(i / 255.0, 1.0 / 2.2) * 255.0));
+		_gamma22toGamma10[i] = static_cast<uint8>(0.5 + (Std::pow(i / 255.0, 2.2 / 1.0) * 255.0));
+		_gamma10toGamma22[i] = static_cast<uint8>(0.5 + (Std::pow(i / 255.0, 1.0 / 2.2) * 255.0));
 	}
 
 	return surf;
@@ -86,12 +87,16 @@ RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 
 	RenderSurface *surf;
 
 	// TODO: Change this
-	if (format.s_bpp == 32) surf = new SoftRenderSurface<uint32>(width, height);
+	if (_format.s_bpp == 32) surf = new SoftRenderSurface<uint32>(width, height);
 	else surf = new SoftRenderSurface<uint16>(width, height);
 	return surf;
 }
 
 RenderSurface::~RenderSurface() {
+}
+
+Graphics::PixelFormat RenderSurface::getPixelFormat() {
+	return g_system->getScreenFormat();
 }
 
 } // End of namespace Ultima8

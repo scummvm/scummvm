@@ -1,20 +1,24 @@
-/*
-Copyright (C) 2006 The Pentagram team
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/remorse_game.h"
@@ -120,7 +124,7 @@ void RemorseGame::writeSaveInfo(ODataSource *ods) {
 	MainActor *av = getMainActor();
 	int32 x, y, z;
 
-	Std::string avname = av->getName();
+	const Std::string &avname = av->getName();
 	uint8 namelength = static_cast<uint8>(avname.size());
 	ods->write1(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
@@ -143,8 +147,8 @@ void RemorseGame::writeSaveInfo(ODataSource *ods) {
 	ods->write2(av->getTotalWeight());
 
 	for (unsigned int i = 1; i <= 6; i++) {
-		uint16 objid = av->getEquip(i);
-		Item *item = getItem(objid);
+		const uint16 objid = av->getEquip(i);
+		const Item *item = getItem(objid);
 		if (item) {
 			ods->write4(item->getShape());
 			ods->write4(item->getFrame());

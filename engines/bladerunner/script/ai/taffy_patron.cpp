@@ -54,15 +54,15 @@ void AIScriptTaffyPatron::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTaffyPatron::EnteredScene(int sceneId) {
+void AIScriptTaffyPatron::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTaffyPatron::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTaffyPatron::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTaffyPatron::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTaffyPatron::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -121,7 +121,7 @@ bool AIScriptTaffyPatron::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 918;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(918) - 1) {
 			_animationFrame = 0;
 		}
@@ -130,7 +130,7 @@ bool AIScriptTaffyPatron::UpdateAnimation(int *animation, int *frame) {
 	case 2:
 		*animation = 919;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(919) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 

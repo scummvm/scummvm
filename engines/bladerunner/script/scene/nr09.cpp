@@ -137,7 +137,7 @@ void SceneScriptNR09::playNextMusic() {
 		} else if (track == 2) {
 			Music_Play(kMusicArkDnce1, 41, -80, 2, -1, 0, 0);
 		}
-		track++;
+		++track;
 		if (track > 2) {
 			track = 0;
 		}

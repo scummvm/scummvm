@@ -91,9 +91,6 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
-	virtual const OSystem::GraphicsMode *getSupportedShaders() const override;
-	virtual int getShader() const override;
-	virtual bool setShader(int id) override;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const override;
 	virtual int getDefaultStretchMode() const override;
@@ -200,6 +197,9 @@ protected:
 
 	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 	virtual void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
+	int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
+	int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
+	int SDL_SetColorKey(SDL_Surface *surface, Uint32 flag, Uint32 key);
 #endif
 
 	/** Unseen game screen */
@@ -336,9 +336,6 @@ protected:
 
 	int _screenChangeCount;
 
-	int _currentShader;
-	int _numShaders;
-
 	enum {
 		NUM_DIRTY_RECT = 100,
 		MAX_SCALING = 3
@@ -416,7 +413,6 @@ protected:
 	virtual void blitCursor();
 
 	virtual void internUpdateScreen();
-	virtual void updateShader();
 
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();

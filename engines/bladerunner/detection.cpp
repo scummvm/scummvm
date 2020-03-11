@@ -78,6 +78,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
+	{
+		GAMEOPTION_DISABLE_STAMINA_DRAIN,
+		{
+			_s("Disable McCoy's quick stamina drain"),
+			_s("When running, McCoy won't start slowing down as soon as the player stops clicking the mouse"),
+			"disable_stamina_drain",
+			false
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

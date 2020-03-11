@@ -110,12 +110,16 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_actorIsSpeaking           = false;
 	_actorSpeakStopIsRequested = false;
 
-	_subtitlesEnabled = false;
+	_subtitlesEnabled             = false;
+
+	_surfaceFrontCreated          = false;
+	_surfaceBackCreated           = false;
 
 	_sitcomMode                   = false;
 	_shortyMode                   = false;
 	_noDelayMillisFramelimiter    = false;
 	_framesPerSecondMax           = false;
+	_disableStaminaDrain          = false;
 	_cutContent                   = Common::String(desc->gameId).contains("bladerunner-final");
 
 	_playerLosesControlCounter = 0;
@@ -215,6 +219,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_crimesDatabase          = nullptr;
 	_scene                   = nullptr;
 	_aiScripts               = nullptr;
+	_shapes                  = nullptr;
 	for (int i = 0; i != kActorCount; ++i) {
 		_actors[i]           = nullptr;
 	}
@@ -476,11 +481,13 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	ConfMan.registerDefault("shorty", "false");
 	ConfMan.registerDefault("nodelaymillisfl", "false");
 	ConfMan.registerDefault("frames_per_secondfl", "false");
+	ConfMan.registerDefault("disable_stamina_drain", "false");
 
 	_sitcomMode                = ConfMan.getBool("sitcom");
 	_shortyMode                = ConfMan.getBool("shorty");
 	_noDelayMillisFramelimiter = ConfMan.getBool("nodelaymillisfl");
 	_framesPerSecondMax        = ConfMan.getBool("frames_per_secondfl");
+	_disableStaminaDrain       = ConfMan.getBool("disable_stamina_drain");
 
 	// These are static objects in original game
 	_screenEffects = new ScreenEffects(this, 0x8000);
@@ -507,7 +514,9 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// This is the original startup in the game
 
 	_surfaceFront.create(640, 480, screenPixelFormat());
+	_surfaceFrontCreated = true;
 	_surfaceBack.create(640, 480, screenPixelFormat());
+	_surfaceBackCreated = true;
 
 	_time = new Time(this);
 
@@ -814,9 +823,13 @@ void BladeRunnerEngine::shutdown() {
 	delete _policeMaze;
 	_policeMaze = nullptr;
 
+	// don't delete _playerActor since that is handled
+	// in the loop over _actors below
 	_playerActor = nullptr;
+
 	delete _actors[kActorVoiceOver];
 	_actors[kActorVoiceOver] = nullptr;
+
 	int actorCount = kActorCount;
 	if (_gameInfo) {
 		actorCount = (int)_gameInfo->getActorCount();
@@ -857,12 +870,11 @@ void BladeRunnerEngine::shutdown() {
 		closeArchive("MODE.MIX");
 	}
 
-	if (_chapters) {
-		if (_chapters->hasOpenResources())
-			_chapters->closeResources();
-		delete _chapters;
-		_chapters = nullptr;
+	if (_chapters && _chapters->hasOpenResources()) {
+		_chapters->closeResources();
 	}
+	delete _chapters;
+	_chapters = nullptr;
 
 	delete _ambientSounds;
 	_ambientSounds = nullptr;
@@ -918,10 +930,9 @@ void BladeRunnerEngine::shutdown() {
 	if (isArchiveOpen("SUBTITLES.MIX")) {
 		closeArchive("SUBTITLES.MIX");
 	}
-	if (_subtitles) {
-		delete _subtitles;
-		_subtitles = nullptr;
-	}
+
+	delete _subtitles;
+	_subtitles = nullptr;
 
 	delete _framelimiter;
 	_framelimiter = nullptr;
@@ -929,8 +940,15 @@ void BladeRunnerEngine::shutdown() {
 	delete _time;
 	_time = nullptr;
 
-	_surfaceBack.free();
-	_surfaceFront.free();
+	// guard the free() call to Surface::free() will boolean flags
+	// since according to free() documentation:
+	// it should only be used, when "the Surface data was created via
+	// create! Otherwise this function has undefined behavior."
+	if (_surfaceBackCreated)
+		_surfaceBack.free();
+
+	if (_surfaceFrontCreated)
+		_surfaceFront.free();
 
 	// These are static objects in original game
 
@@ -1181,7 +1199,7 @@ void BladeRunnerEngine::actorsUpdate() {
 		return;
 	}
 
-	for (int i = 0; i < actorCount; i++) {
+	for (int i = 0; i < actorCount; ++i) {
 		Actor *actor = _actors[i];
 		if (actor->getSetId() == setId || i == _actorUpdateCounter) {
 			_aiScripts->update(i);

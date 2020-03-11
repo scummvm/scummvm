@@ -61,10 +61,10 @@ Obstacles::~Obstacles() {
 }
 
 void Obstacles::clear() {
-	for (int i = 0; i < kPolygonCount; i++) {
+	for (int i = 0; i < kPolygonCount; ++i) {
 		_polygons[i].isPresent = false;
 		_polygons[i].verticeCount = 0;
-		for (int j = 0; j < kPolygonVertexCount; j++) {
+		for (int j = 0; j < kPolygonVertexCount; ++j) {
 			_polygons[i].vertices[j].x = 0.0f;
 			_polygons[i].vertices[j].y = 0.0f;
 		}
@@ -218,7 +218,7 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 #endif
 			polyMerged.vertices[polyMerged.verticeCount] = polyLine.start;
 			polyMerged.vertexType[polyMerged.verticeCount] = polyPrimaryType;
-			polyMerged.verticeCount++;
+			++(polyMerged.verticeCount);
 		}
 
 		flagAddVertexToVertexList = true;
@@ -227,7 +227,8 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 		if (linePolygonIntersection(polyLine, polyPrimaryType, polySecondary, &intersectionPoint, &polySecondaryIntersectionIndex, pathLengthSinceLastIntersection)) {
 			if (WITHIN_TOLERANCE(intersectionPoint.x, polyLine.start.x) && WITHIN_TOLERANCE(intersectionPoint.y, polyLine.start.y)) {
 				flagAddVertexToVertexList = false;
-				polyMerged.verticeCount--; // TODO(madmoose): How would this work?
+				// TODO(madmoose): How would this work?
+				--(polyMerged.verticeCount);
 			} else {
 				// Obstacles::nop
 			}
@@ -243,7 +244,7 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 		} else {
 			vertIndex = (vertIndex + 1) % polyPrimary->verticeCount;
 #if USE_PATHFINDING_EXPERIMENTAL_FIX_2
-			pathLengthSinceLastIntersection++;
+			++pathLengthSinceLastIntersection;
 #endif
 			flagDidFindIntersection = false;
 		}
@@ -326,7 +327,7 @@ restart:
 }
 
 int Obstacles::findEmptyPolygon() const {
-	for (int i = 0; i < kPolygonCount; i++) {
+	for (int i = 0; i < kPolygonCount; ++i) {
 		if (!_polygons[i].isPresent) {
 			return i;
 		}

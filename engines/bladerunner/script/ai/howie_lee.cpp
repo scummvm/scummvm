@@ -193,7 +193,7 @@ void AIScriptHowieLee::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHowieLee::EnteredScene(int sceneId) {
+void AIScriptHowieLee::EnteredSet(int setId) {
 	if (Actor_Query_Goal_Number(kActorHowieLee) == kGoalHowieLeeGoesToCT04GarbageBin
 	 && Actor_Query_In_Set(kActorHowieLee, kSetCT03_CT04)
 	) {
@@ -225,7 +225,7 @@ void AIScriptHowieLee::EnteredScene(int sceneId) {
 	}
 }
 
-void AIScriptHowieLee::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHowieLee::OtherAgentEnteredThisSet(int otherActorId) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	// prevent player from actually meeting hovering Howie half-body in kSetCT03_CT04
@@ -240,7 +240,7 @@ void AIScriptHowieLee::OtherAgentEnteredThisScene(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHowieLee::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHowieLee::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -323,7 +323,7 @@ bool AIScriptHowieLee::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		_animationFrame++;
+		++_animationFrame;
 		if (var_45DFB8) {
 			*animation = 673;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(673)) {
@@ -344,7 +344,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 1:
 		*animation = 674;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(674)) {
 			_animationFrame = 0;
 			if (_animationState < 3 || _animationState > 8) {
@@ -359,7 +359,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 2:
 		*animation = 672;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(672)) {
 			_animationFrame = 0;
 		}
@@ -372,7 +372,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			var_45DFB8 = Random_Query(0, 1);
 			*animation = 671;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(676)) {
 				_animationFrame = 0;
 			}
@@ -381,7 +381,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 4:
 		*animation = 677;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(677)) {
 			_animationState = 3;
 			_animationFrame = 0;
@@ -390,7 +390,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 5:
 		*animation = 678;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(678)) {
 			_animationState = 3;
 			_animationFrame = 0;
@@ -399,7 +399,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 6:
 		*animation = 679;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(679)) {
 			_animationState = 3;
 			_animationFrame = 0;
@@ -408,7 +408,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 7:
 		*animation = 680;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(680)) {
 			_animationState = 3;
 			_animationFrame = 0;
@@ -417,7 +417,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 8:
 		*animation = 681;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(681)) {
 			_animationState = 3;
 			_animationFrame = 0;

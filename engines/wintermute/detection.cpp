@@ -1321,7 +1321,9 @@ public:
 			act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
 			act->addDefaultInputMapping("JOY_Y"); // extra joy
 			gameKeyMap->addAction(act);
-		} else if (gameId == "reversion2") {
+		} else if (gameId == "reversion2" ||
+			gameId == "reversion3"
+		) {
 			act = new Action("INV", _("Show inventory"));
 			act->setKeyEvent(KeyState(KEYCODE_i, 'i'));
 			act->addDefaultInputMapping("i"); // original keyboard

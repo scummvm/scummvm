@@ -45,7 +45,7 @@ void DelayProcess::run() {
 		terminate();
 }
 
-void DelayProcess::dumpInfo() {
+void DelayProcess::dumpInfo() const {
 	Process::dumpInfo();
 	pout << "Frames left: " << _count << Std::endl;
 }

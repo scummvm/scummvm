@@ -231,15 +231,15 @@ void AIScriptIzo::ClickedByPlayer() {
 	return; //false;
 }
 
-void AIScriptIzo::EnteredScene(int sceneId) {
+void AIScriptIzo::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptIzo::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptIzo::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptIzo::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptIzo::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -525,7 +525,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		if (_var4 == 1) {
 			*animation = 298;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(298)) {
 				_animationFrame = 0;
 				_var4 = 0;
@@ -533,7 +533,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		} else if (_var4 == 0) {
 			*animation = 297;
 			if (_var3) {
-				_var3--;
+				--_var3;
 			} else {
 				_animationFrame += _var2;
 				if (_animationFrame < 0) {
@@ -564,7 +564,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 			_flag = 0;
 		} else {
 			*animation = 299;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(299)) {
 				_animationFrame = 0;
 			}
@@ -578,7 +578,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 	case 6:
 	case 7:
 		*animation = _animationState + 298;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -588,7 +588,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 277;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(277)) {
 			_animationFrame = 0;
 		}
@@ -596,7 +596,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 287;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(287)) {
 			_animationFrame = 0;
 			_animationState = 8;
@@ -606,7 +606,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 288;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(288)) {
 			*animation = 297;
 			_animationFrame = 0;
@@ -617,7 +617,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 289;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 6) {
 			int snd;
 			if (Random_Query(1, 2) == 1) {
@@ -660,7 +660,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		if (_animationState == 17) {
 			*animation = 281;
 		}
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 8;
@@ -672,7 +672,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 	case 14:
 	case 15:
 		*animation = _animationFrame + 280;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= 2
 		 && (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk
 		  || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run
@@ -703,7 +703,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		if (_animationState == 19) {
 			*animation = 296;
 		}
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 			_animationState = 30;
@@ -750,7 +750,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		if (_animationState == 28) {
 			*animation = 306;
 		}
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -763,7 +763,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 
 	case 31:
 		*animation = 308;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(308)) {
 			_animationFrame = 0;
 		}
@@ -771,7 +771,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 
 	case 32:
 		*animation = 309;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(309)) {
 			_animationFrame = 0;
 			_animationState = 31;
@@ -782,7 +782,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 	case 33:
 		*animation = 310;
 		if (_animationFrame || !_flag) {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(310)) {
 				_animationFrame = 0;
 			}
@@ -795,7 +795,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 
 	case 34:
 		*animation = 311;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 6) {
 			Scene_Loop_Set_Default(0); // // HC01 - MainLoop
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true); // HC01 - IzoFlashLoop

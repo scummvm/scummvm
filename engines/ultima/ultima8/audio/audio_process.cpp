@@ -44,7 +44,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(AudioProcess, Process)
 
 AudioProcess *AudioProcess::_theAudioProcess = 0;
 
-AudioProcess::AudioProcess(void) : paused(0) {
+AudioProcess::AudioProcess(void) : _paused(0) {
 	_theAudioProcess = this;
 	_type = 1; // persistent
 }
@@ -322,7 +322,7 @@ void AudioProcess::setVolumeSFX(int sfxNum, uint8 volume) {
 // Speech
 //
 
-bool AudioProcess::playSpeech(Std::string &barked, int shapeNum, ObjId objId, uint32 pitchShift, uint16 volume) {
+bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId objId, uint32 pitchShift, uint16 volume) {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapeNum);
 
 	if (!speechflex) return false;
@@ -366,7 +366,7 @@ bool AudioProcess::playSpeech(Std::string &barked, int shapeNum, ObjId objId, ui
 	return true;
 }
 
-uint32 AudioProcess::getSpeechLength(Std::string &barked, int shapenum) const {
+uint32 AudioProcess::getSpeechLength(const Std::string &barked, int shapenum) const {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapenum);
 	if (!speechflex) return 0;
 
@@ -374,7 +374,7 @@ uint32 AudioProcess::getSpeechLength(Std::string &barked, int shapenum) const {
 }
 
 
-void AudioProcess::stopSpeech(Std::string &barked, int shapenum, ObjId objId) {
+void AudioProcess::stopSpeech(const Std::string &barked, int shapenum, ObjId objId) {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
 	Std::list<SampleInfo>::iterator it;
@@ -389,7 +389,7 @@ void AudioProcess::stopSpeech(Std::string &barked, int shapenum, ObjId objId) {
 	}
 }
 
-bool AudioProcess::isSpeechPlaying(Std::string &barked, int shapeNum) {
+bool AudioProcess::isSpeechPlaying(const Std::string &barked, int shapeNum) {
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
 		if (it->_sfxNum == -1 && it->_priority == shapeNum &&
@@ -402,8 +402,8 @@ bool AudioProcess::isSpeechPlaying(Std::string &barked, int shapeNum) {
 }
 
 void AudioProcess::pauseAllSamples() {
-	paused++;
-	if (paused != 1) return;
+	_paused++;
+	if (_paused != 1) return;
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
@@ -421,8 +421,8 @@ void AudioProcess::pauseAllSamples() {
 }
 
 void AudioProcess::unpauseAllSamples() {
-	paused--;
-	if (paused != 0) return;
+	_paused--;
+	if (_paused != 0) return;
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 

@@ -238,7 +238,7 @@ public:
 
 	//! Get the family of the shape number of this Item. (This is a
 	//! member of the ShapeInfo object.)
-	uint16 getFamily();
+	uint16 getFamily() const;
 
 	//! Check if we can merge with another item.
 	bool canMergeWith(Item *other);
@@ -271,11 +271,11 @@ public:
 
 	//! Get direction from centre to another item's centre.
 	//! Undefined if either item is contained or equipped.
-	int getDirToItemCentre(Item &item2) const;
+	int getDirToItemCentre(const Item &item2) const;
 
 	//! get 'distance' to other item. This is the maximum of the differences
 	//! between the x, y (and possibly z) coordinates of the items.
-	int getRange(Item &item2, bool checkz = false) const;
+	int getRange(const Item &item2, bool checkz = false) const;
 
 	//! Check if this item can reach another item. (This includes LoS.)
 	//! \param other item to be reached
@@ -337,19 +337,19 @@ public:
 	virtual GravityProcess *ensureGravityProcess();
 
 	//! Get the weight of this Item
-	virtual uint32 getWeight();
+	virtual uint32 getWeight() const;
 
 	//! Get the weight of this Item and its contents, if any
-	virtual uint32 getTotalWeight();
+	virtual uint32 getTotalWeight() const;
 
 	//! Get the volume this item takes up in a container
-	virtual uint32 getVolume();
+	virtual uint32 getVolume() const;
 
 	//! explode
 	void explode();
 
 	//! get the damage type this object does when hitting something
-	virtual uint16 getDamageType();
+	virtual uint16 getDamageType() const;
 
 	//! receive a hit
 	//! \param other The item delivering the hit
@@ -440,7 +440,7 @@ public:
 	virtual void leaveFastArea();
 
 	//! dump some info about this item to pout
-	void dumpInfo() override;
+	void dumpInfo() const override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -611,7 +611,7 @@ inline ShapeInfo *Item::getShapeInfo() const {
 }
 
 inline void Item::getFootpadData(int32 &X, int32 &Y, int32 &Z) const {
-	ShapeInfo *si = getShapeInfo();
+	const ShapeInfo *si = getShapeInfo();
 	Z = si->_z;
 
 	if (_flags & Item::FLG_FLIPPED) {
@@ -625,16 +625,8 @@ inline void Item::getFootpadData(int32 &X, int32 &Y, int32 &Z) const {
 
 // like getFootpadData, but scaled to world coordinates
 inline void Item::getFootpadWorld(int32 &X, int32 &Y, int32 &Z) const {
-	ShapeInfo *si = getShapeInfo();
-	Z = si->_z * 8;
-
-	if (_flags & Item::FLG_FLIPPED) {
-		X = si->_y * 32;
-		Y = si->_x * 32;
-	} else {
-		X = si->_x * 32;
-		Y = si->_y * 32;
-	}
+	const ShapeInfo *si = getShapeInfo();
+	si->getFootpadWorld(X, Y, Z, _flags & Item::FLG_FLIPPED);
 }
 
 inline void Item::getLocation(int32 &X, int32 &Y, int32 &Z) const {

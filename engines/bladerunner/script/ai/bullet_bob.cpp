@@ -118,15 +118,15 @@ void AIScriptBulletBob::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptBulletBob::EnteredScene(int sceneId) {
+void AIScriptBulletBob::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptBulletBob::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptBulletBob::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptBulletBob::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptBulletBob::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -208,7 +208,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 		if (_var1 == 1) {
 			*animation = 516;
 			if (_var4) {
-				_var4--;
+				--_var4;
 			} else {
 				if (++_animationFrame == 6) {
 					_var4 = Random_Query(4, 8);
@@ -227,7 +227,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 		} else if (_var1 == 0) {
 			*animation = 514;
 			if (_var4) {
-				_var4--;
+				--_var4;
 			} else {
 				_animationFrame += _var3;
 				if (_animationFrame < 0) {
@@ -249,7 +249,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 506;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(506)) {
 			_animationFrame = 0;
 		}
@@ -257,7 +257,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 513;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(513)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -274,7 +274,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 510;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(510) - 1) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(510) - 1;
 			_animationState = 16;
@@ -287,7 +287,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 525;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(525)) {
 			*animation = 514;
 			_animationFrame = 0;
@@ -297,7 +297,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 517;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(517)) {
 			_animationFrame = 0;
 		}
@@ -305,7 +305,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 518;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(518)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -315,7 +315,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 519;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(519)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -325,7 +325,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 520;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(520)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -335,7 +335,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 521;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(521)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -345,7 +345,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 522;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(522)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -355,7 +355,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = 523;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(523)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -365,7 +365,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 524;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(524)) {
 			_animationFrame = 0;
 			_animationState = 6;
@@ -375,7 +375,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = 512;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(512)) {
 			_animationFrame = 0;
 			_animationState = 1;

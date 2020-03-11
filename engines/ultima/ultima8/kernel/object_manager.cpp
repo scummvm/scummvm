@@ -52,7 +52,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-ObjectManager *ObjectManager::objectmanager = 0;
+ObjectManager *ObjectManager::_objectManager = 0;
 
 
 // a template class  to prevent having to write a load function for
@@ -73,7 +73,7 @@ struct ObjectLoader {
 ObjectManager::ObjectManager() {
 	debugN(MM_INFO, "Creating ObjectManager...\n");
 
-	objectmanager = this;
+	_objectManager = this;
 
 	setupLoaders();
 
@@ -88,7 +88,7 @@ ObjectManager::~ObjectManager() {
 	reset();
 	debugN(MM_INFO, "Destroying ObjectManager...\n");
 
-	objectmanager = 0;
+	_objectManager = 0;
 
 	delete _objIDs;
 	delete _actorIDs;

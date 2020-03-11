@@ -257,9 +257,9 @@ bool FileSystem::RemoveVirtualPath(const string &vpath) {
 
 IDataSource *FileSystem::checkBuiltinData(const Std::string &vfn, bool is_text) {
 	// Is it a Memory file?
-	Std::map<Common::String, MemoryFile *>::iterator mf = memoryfiles.find(vfn);
+	Std::map<Common::String, MemoryFile *>::iterator mf = _memoryFiles.find(vfn);
 
-	if (mf != memoryfiles.end())
+	if (mf != _memoryFiles.end())
 		return new IBufferDataSource(mf->_value->_data,
 		                             mf->_value->_len, is_text);
 

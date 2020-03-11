@@ -33,9 +33,9 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(SpeechFlex, SoundFlex)
 
 SpeechFlex::SpeechFlex(IDataSource *ds) : SoundFlex(ds) {
 	uint32 size = getRawSize(0);
-	uint8 *buf = getRawObject(0);
+	const uint8 *buf = getRawObject(0);
 
-	istring strings(reinterpret_cast<char *>(buf), size);
+	istring strings(reinterpret_cast<const char *>(buf), size);
 	Std::vector<istring> s;
 	SplitString(strings, 0, s);
 
@@ -45,7 +45,7 @@ SpeechFlex::SpeechFlex(IDataSource *ds) : SoundFlex(ds) {
 
 //		pout << "Found string: \"" << s[i] << "\"" << Std::endl;
 
-		phrases.push_back(s[i]);
+		_phrases.push_back(s[i]);
 	}
 
 	delete [] buf;
@@ -71,7 +71,7 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 
 //	pout << "Looking for string: \"" << text << "\"" << Std::endl;
 
-	for (it = phrases.begin(); it != phrases.end(); ++it) {
+	for (it = _phrases.begin(); it != _phrases.end(); ++it) {
 		if (text.find(it->c_str()) == 0) {
 //			pout << "Found: " << i << Std::endl;
 			end = (*it).size() + start + pos1;

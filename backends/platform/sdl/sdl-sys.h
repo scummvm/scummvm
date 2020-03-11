@@ -274,23 +274,4 @@
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-// SDL 2 has major API changes. We redefine constants which got renamed to
-// ease the transition. This is sometimes dangerous because the values changed
-// too!
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-// SDL surface flags which got removed.
-#define SDL_SRCCOLORKEY 0
-#define SDL_SRCALPHA    0
-#define SDL_FULLSCREEN  0x40000000
-
-// Compatibility implementations for removed functionality.
-int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
-int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
-
-#define SDL_SetColorKey SDL_SetColorKey_replacement
-int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key);
-
-#endif
-
-
 #endif

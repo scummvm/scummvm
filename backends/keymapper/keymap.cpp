@@ -155,15 +155,35 @@ Keymap::ActionArray Keymap::getMappedActions(const Event &event) const {
 		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_WHEEL_DOWN, "");
 		return _hwActionMap[hardwareInput];
 	}
+	case EVENT_X1BUTTONDOWN:
+	case EVENT_X1BUTTONUP: {
+		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_X1, "");
+		return _hwActionMap[hardwareInput];
+	}
+	case EVENT_X2BUTTONDOWN:
+	case EVENT_X2BUTTONUP: {
+		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_X2, "");
+		return _hwActionMap[hardwareInput];
+	}
 	case EVENT_JOYBUTTON_DOWN:
 	case EVENT_JOYBUTTON_UP: {
 		HardwareInput hardwareInput = HardwareInput::createJoystickButton("", event.joystick.button, "");
 		return _hwActionMap[hardwareInput];
 	}
 	case EVENT_JOYAXIS_MOTION: {
-		bool positiveHalf = event.joystick.position >= 0;
-		HardwareInput hardwareInput = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, positiveHalf, "");
-		return _hwActionMap[hardwareInput];
+		if (event.joystick.position != 0) {
+			bool positiveHalf = event.joystick.position >= 0;
+			HardwareInput hardwareInput = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, positiveHalf, "");
+			return _hwActionMap[hardwareInput];
+		} else {
+			// Axis position zero is part of both half axes, and triggers actions bound to both
+			Keymap::ActionArray actions;
+			HardwareInput hardwareInputPos = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, true, "");
+			HardwareInput hardwareInputNeg = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, false, "");
+			actions.push_back(_hwActionMap[hardwareInputPos]);
+			actions.push_back(_hwActionMap[hardwareInputNeg]);
+			return actions;
+		}
 	}
 	case EVENT_CUSTOM_BACKEND_HARDWARE: {
 		HardwareInput hardwareInput = HardwareInput::createCustom("", event.customType, "");

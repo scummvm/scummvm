@@ -66,15 +66,15 @@ void AIScriptMia::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMia::EnteredScene(int sceneId) {
+void AIScriptMia::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMia::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMia::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMia::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMia::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -111,7 +111,7 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 566;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(566))
 			_animationFrame = 0;
@@ -120,7 +120,7 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 567;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(567)) {
 			*animation = 566;
@@ -137,7 +137,7 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
@@ -147,7 +147,7 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 569;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(569)) {
 			*animation = 568;
@@ -158,7 +158,7 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 570;
-		_animationFrame++;
+		++_animationFrame;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(570)) {
 			*animation = 568;

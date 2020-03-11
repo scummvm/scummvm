@@ -441,7 +441,7 @@ void BMVPlayer::FettleMovieText() {
 		if (texts[i].pText) {
 			if (currentFrame > texts[i].dieFrame) {
 				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), texts[i].pText);
-				texts[i].pText = NULL;
+				texts[i].pText = nullptr;
 			} else {
 				MultiForceRedraw(texts[i].pText);
 				bIsText = true;
@@ -725,17 +725,17 @@ void BMVPlayer::FinishBMV() {
 
 	// Release the data buffer
 	free(bigBuffer);
-	bigBuffer = NULL;
+	bigBuffer = nullptr;
 
 	// Release the screen buffer
 	free(screenBuffer);
-	screenBuffer = NULL;
+	screenBuffer = nullptr;
 
 	// Ditch any text objects
 	for (i = 0; i < 2; i++) {
 		if (texts[i].pText) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), texts[i].pText);
-			texts[i].pText = NULL;
+			texts[i].pText = nullptr;
 		}
 	}
 	bMovieOn = false;

@@ -41,6 +41,7 @@
 #include "engines/wintermute/ad/ad_scene_state.h"
 #include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_waypoint_group.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
@@ -1493,7 +1494,19 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		BaseObject *node = getNodeByName(nodeName);
 		if (node) {
 			stack->pushNative((BaseScriptable *)node, true);
-		} else {
+		}
+
+#ifdef ENABLE_HEROCRAFT
+		//////////////////////////////////////////////////////////////////////////
+		// [HeroCraft] papasEntity
+		// Used in some self-check at "Papa's Daughters 2"
+		//////////////////////////////////////////////////////////////////////////
+		else if (BaseEngine::instance().getTargetExecutable() == WME_HEROCRAFT && strcmp(nodeName,"papasEntity") == 0) {
+			stack->pushInt(777);
+		}
+#endif
+
+		else {
 			stack->pushNULL();
 		}
 

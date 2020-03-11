@@ -58,7 +58,6 @@ void loadConfig() {
 	config.showCursor = confGetBool("showcursor", true);
 	config.snapToBorder = confGetBool("snaptoborder", true);
 	config.stretchToFit = confGetBool("stretchtofit", false);
-	config.sensitivity = confGetInt("sensitivity", -5);
 	config.screen = confGetInt("screen", kScreenBoth);
 
 	// Turn off the backlight of any screen not used
@@ -83,7 +82,6 @@ void saveConfig() {
 	confSetBool("showcursor", config.showCursor);
 	confSetBool("snaptoborder", config.snapToBorder);
 	confSetBool("stretchtofit", config.stretchToFit);
-	confSetInt("sensitivity", config.sensitivity);
 	confSetInt("screen", config.screen);
 	ConfMan.flushToDisk();
 }

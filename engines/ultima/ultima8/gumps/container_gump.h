@@ -89,7 +89,7 @@ protected:
 	uint32 _draggingShape;
 	uint32 _draggingFrame;
 	uint32 _draggingFlags;
-	int32 dragging_x, dragging_y;
+	int32 _draggingX, _draggingY;
 };
 
 } // End of namespace Ultima8

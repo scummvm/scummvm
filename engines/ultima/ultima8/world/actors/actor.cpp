@@ -385,10 +385,10 @@ bool Actor::setEquip(Item *item, bool checkwghtvol) {
 	return true;
 }
 
-uint16 Actor::getEquip(uint32 type) {
+uint16 Actor::getEquip(uint32 type) const {
 	const unsigned int backpack_shape = 529; //!! *cough* constant
 
-	Std::list<Item *>::iterator iter;
+	Std::list<Item *>::const_iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 cet = (*iter)->getShapeInfo()->_equipType;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
@@ -531,31 +531,31 @@ uint16 Actor::cSetActivity(int activity) {
 	return 0;
 }
 
-uint32 Actor::getArmourClass() {
-	ShapeInfo *si = getShapeInfo();
+uint32 Actor::getArmourClass() const {
+	const ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo)
 		return si->_monsterInfo->_armourClass;
 	else
 		return 0;
 }
 
-uint16 Actor::getDefenseType() {
-	ShapeInfo *si = getShapeInfo();
+uint16 Actor::getDefenseType() const {
+	const ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo)
 		return si->_monsterInfo->_defenseType;
 	else
 		return 0;
 }
 
-int16 Actor::getDefendingDex() {
+int16 Actor::getDefendingDex() const {
 	return getDex();
 }
 
-int16 Actor::getAttackingDex() {
+int16 Actor::getAttackingDex() const {
 	return getDex();
 }
 
-uint16 Actor::getDamageType() {
+uint16 Actor::getDamageType() const {
 	ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo)
 		return si->_monsterInfo->_damageType;
@@ -564,8 +564,8 @@ uint16 Actor::getDamageType() {
 }
 
 
-int Actor::getDamageAmount() {
-	ShapeInfo *si = getShapeInfo();
+int Actor::getDamageAmount() const {
+	const ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo) {
 
 		int min = static_cast<int>(si->_monsterInfo->_minDmg);
@@ -1062,7 +1062,7 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 }
 
 
-void Actor::dumpInfo() {
+void Actor::dumpInfo() const {
 	Container::dumpInfo();
 
 	pout << "hp: " << _hitPoints << ", mp: " << _mana << ", str: " << _strength

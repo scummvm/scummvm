@@ -150,7 +150,7 @@ bool GotoCD() {
 bool TinselFile::_warningShown = false;
 
 TinselFile::TinselFile() : ReadStreamEndian(TinselV1Mac) {
-	_stream = NULL;
+	_stream = nullptr;
 }
 
 TinselFile::~TinselFile() {
@@ -189,7 +189,7 @@ bool TinselFile::open(const Common::String &filename) {
 
 void TinselFile::close() {
 	delete _stream;
-	_stream = NULL;
+	_stream = nullptr;
 }
 
 int32 TinselFile::pos() const {

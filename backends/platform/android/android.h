@@ -111,7 +111,6 @@ private:
 	int _dpad_scale;
 	int _joystick_scale;
 	int _fingersDown;
-	bool _swap_menu_and_back;
 
 	void clipMouse(Common::Point &p);
 	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true, bool touchpadMode = false);
@@ -119,6 +118,8 @@ private:
 public:
 	virtual void pushEvent(const Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings();
+
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 

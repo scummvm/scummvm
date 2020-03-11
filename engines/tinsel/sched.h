@@ -37,14 +37,12 @@ struct INT_CONTEXT;
 //----------------- FUNCTION PROTOTYPES --------------------
 
 void SceneProcesses(uint32 numProcess, SCNHANDLE hProcess);
-void CallSceneProcess(uint32 procID);
 void KillSceneProcess(uint32 procID);
 void SceneProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait,
 					   int myEscape, bool *result = NULL);
 void RestoreSceneProcess(INT_CONTEXT *pic);
 
 void GlobalProcesses(uint32 numProcess, byte *pProcess);
-void xCallGlobalProcess(uint32 procID);
 void xKillGlobalProcess(uint32 procID);
 bool GlobalProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait, int myEscape);
 void RestoreGlobalProcess(INT_CONTEXT *pic);

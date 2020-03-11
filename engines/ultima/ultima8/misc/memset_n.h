@@ -1,20 +1,24 @@
-/*
-Copyright (C) 2002-2004 The Pentagram Team
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
 //
 // memset_n is a set of optimized functions for filling buffers of
@@ -55,7 +59,7 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 		if ((reinterpret_cast<uintptr>(buf) & 1)) {
 			*reinterpret_cast<uint8 *>(buf) = static_cast<uint8>(val & 0xFF);
 			buf = (reinterpret_cast<uint8 *>(buf)) + 1;
-			val = ((val & 0xFF) << 24) || ((val & 0xFFFFFF00) >> 8);
+			val = ((val & 0xFF) << 24) | ((val & 0xFFFFFF00) >> 8);
 			align --;
 		}
 
@@ -63,7 +67,7 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 		if ((reinterpret_cast<uintptr>(buf) & 2)) {
 			*reinterpret_cast<uint16 *>(buf) = static_cast<uint16>(val & 0xFFFF);
 			buf = (reinterpret_cast<uint16 *>(buf)) + 1;
-			val = ((val & 0xFFFF) << 16) || ((val & 0xFFFF0000) >> 16);
+			val = ((val & 0xFFFF) << 16) | ((val & 0xFFFF0000) >> 16);
 			align -= 2;
 		}
 	}
@@ -73,6 +77,7 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 
 	// Do the unaligned data
 	if (align) {
+		buf = (reinterpret_cast<uint8 *>(buf)) + dwords * 4;
 		// Ok, shift along by 1 byte
 		if (align == 1) {
 			*reinterpret_cast<uint8 *>(buf) = static_cast<uint8>(val & 0xFF);
@@ -97,7 +102,7 @@ inline void memset_16(void *buf, int32 val, uint32 words) {
 	if (words > 1) memset_32(buf, val | val << 16, words>>1);
 
 	// Final word
-	if (words & 1) *(reinterpret_cast<uint16 *>(buf)) = static_cast<uint16>(val & 0xFFFF);
+	if (words & 1) *(reinterpret_cast<uint16 *>(buf) + (words - 1)) = static_cast<uint16>(val & 0xFFFF);
 }
 
 } // End of namespace Ultima8

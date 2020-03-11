@@ -63,15 +63,15 @@ void AIScriptGrigorian::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptGrigorian::EnteredScene(int sceneId) {
+void AIScriptGrigorian::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptGrigorian::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptGrigorian::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptGrigorian::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptGrigorian::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -105,9 +105,9 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 		if (var_45CA10 == 0) {
 			*animation = 478;
 			if (var_45CA14) {
-				var_45CA14--;
+				--var_45CA14;
 			} else {
-				_animationFrame++;
+				++_animationFrame;
 				if (_animationFrame == 5 || _animationFrame == 13) {
 					var_45CA14 = Random_Query(2, 4);
 				}
@@ -118,7 +118,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 			}
 		} else if (var_45CA10 == 1) {
 			*animation = 479;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(479)) {
 				*animation = 478;
 				_animationFrame = 0;
@@ -127,9 +127,9 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 		} else if (var_45CA10 == 2) {
 			*animation = 480;
 			if (var_45CA14) {
-				var_45CA14--;
+				--var_45CA14;
 			} else {
-				_animationFrame++;
+				++_animationFrame;
 				if (_animationFrame >= 8 && _animationFrame <= 10) {
 					var_45CA14 = Random_Query(2, 4);
 				}
@@ -143,21 +143,21 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 1:
 		*animation = 479;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(479)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 2:
 		*animation = 481;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(481)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 3:
 		*animation = 482;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(482)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -166,7 +166,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 4:
 		*animation = 483;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(483)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -175,7 +175,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 5:
 		*animation = 484;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(484)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -184,7 +184,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 6:
 		*animation = 485;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(485)) {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -193,7 +193,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 7:
 		*animation = 486;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(486)) {
 			_animationState = 2;
 			_animationFrame = 0;

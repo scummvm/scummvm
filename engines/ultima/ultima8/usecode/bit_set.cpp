@@ -55,7 +55,7 @@ void BitSet::setSize(unsigned int size) {
 		_data[i] = 0;
 }
 
-uint32 BitSet::getBits(unsigned int pos, unsigned int n) {
+uint32 BitSet::getBits(unsigned int pos, unsigned int n) const {
 	assert(n <= 32);
 	assert(pos + n <= _size);
 	if (n == 0) return 0;

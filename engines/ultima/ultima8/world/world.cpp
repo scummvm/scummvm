@@ -313,7 +313,7 @@ void World::loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata) {
 }
 
 
-void World::worldStats() {
+void World::worldStats() const {
 	unsigned int i, mapcount = 0;
 
 	for (i = 0; i < _maps.size(); i++) {
@@ -324,7 +324,7 @@ void World::worldStats() {
 	g_debugger->debugPrintf("World memory stats:\n");
 	g_debugger->debugPrintf("Maps       : %u/256\n", mapcount);
 
-	Actor *av = getMainActor();
+	const Actor *av = getMainActor();
 	g_debugger->debugPrintf("Avatar pos.: ");
 	if (av) {
 		g_debugger->debugPrintf("map %d, (", av->getMapNum());

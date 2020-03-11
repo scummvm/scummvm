@@ -54,15 +54,15 @@ void AIScriptHysteriaPatron3::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHysteriaPatron3::EnteredScene(int sceneId) {
+void AIScriptHysteriaPatron3::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHysteriaPatron3::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHysteriaPatron3::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHysteriaPatron3::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHysteriaPatron3::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

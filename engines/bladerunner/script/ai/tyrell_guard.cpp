@@ -72,15 +72,15 @@ void AIScriptTyrellGuard::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptTyrellGuard::EnteredScene(int sceneId) {
+void AIScriptTyrellGuard::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptTyrellGuard::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTyrellGuard::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptTyrellGuard::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTyrellGuard::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -149,7 +149,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 555;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(555)) {
 			_animationFrame = 0;
 		}
@@ -167,7 +167,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 564;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(564)) {
 			_animationFrame = 0;
 			_animationState = 0;
@@ -182,7 +182,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 			*animation = 555;
 			_animationState = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
 			}
@@ -191,7 +191,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 559;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(559)) {
 			*animation = 558;
 			_animationFrame = 0;
@@ -201,7 +201,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 560;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(560)) {
 			*animation = 558;
 			_animationFrame = 0;
@@ -211,7 +211,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 561;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(561)) {
 			*animation = 558;
 			_animationFrame = 0;
@@ -221,7 +221,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 562;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(562)) {
 			*animation = 558;
 			_animationFrame = 0;
@@ -230,7 +230,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 8:
 		*animation = 557;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(557)) {
 			*animation = 555;
 			_animationFrame = 0;
@@ -239,7 +239,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 9:
 		*animation = 563;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(563)) {
 			*animation = 555;
 			_animationFrame = 0;
@@ -249,7 +249,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 564;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(564)) {
 			*animation = 555;
 			_animationFrame = 0;
@@ -259,7 +259,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 565;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(565)) {
 			*animation = 555;
 			_animationFrame = 0;

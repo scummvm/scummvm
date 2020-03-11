@@ -13,6 +13,11 @@ ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
 	TEST_LIBS += engines/wintermute/libwintermute.a
 endif
 
+ifeq ($(ENABLE_ULTIMA), STATIC_PLUGIN)
+	TESTS += $(srcdir)/test/engines/ultima/*/*/*.h
+	TEST_LIBS += engines/ultima/libultima.a
+endif
+
 #
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh --include=$(srcdir)/test/cxxtest_mingw.h
 TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest

@@ -31,7 +31,6 @@ struct Config {
 	bool showCursor;
 	bool snapToBorder;
 	bool stretchToFit;
-	int sensitivity;
 	int screen;
 };
 

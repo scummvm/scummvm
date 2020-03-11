@@ -111,12 +111,12 @@ public:
 	}
 
 	//! check if the the ethereal void is empty
-	bool etherealEmpty() {
+	bool etherealEmpty() const {
 		return _ethereal.empty();
 	}
 
 	//! return (but don't remove) the top item from the ethereal void
-	ObjId etherealPeek() {
+	ObjId etherealPeek() const {
 		return _ethereal.front();
 	}
 
@@ -126,7 +126,7 @@ public:
 	}
 
 	//! output some statistics about the world
-	void worldStats();
+	void worldStats() const;
 
 	//! save the Maps in World.
 	void saveMaps(ODataSource *ods);

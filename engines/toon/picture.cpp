@@ -62,7 +62,7 @@ bool Picture::loadPicture(const Common::String &file) {
 			memcpy(_palette, _data + dstsize - (dstsize & 0x7ff), _paletteEntries * 3);
 			_vm->fixPaletteEntries(_palette, _paletteEntries);
 		} else {
-			_palette = 0;
+			_palette = NULL;
 		}
 		return true;
 	}
@@ -76,6 +76,8 @@ bool Picture::loadPicture(const Common::String &file) {
 			_palette = new uint8[_paletteEntries * 3];
 			memcpy(_palette, fileData + 16, _paletteEntries * 3);
 			_vm->fixPaletteEntries(_palette, _paletteEntries);
+		} else {
+			_palette = NULL;
 		}
 
 		// size can only be 640x400 or 1280x400
@@ -151,10 +153,12 @@ Picture::~Picture() {
 void Picture::setupPalette() {
 	debugC(1, kDebugPicture, "setupPalette()");
 
-	if (_useFullPalette)
-		_vm->setPaletteEntries(_palette, 0, 256);
-	else
-		_vm->setPaletteEntries(_palette, 1, 128);
+	if (_palette != NULL) {
+		if (_useFullPalette)
+			_vm->setPaletteEntries(_palette, 0, 256);
+		else
+			_vm->setPaletteEntries(_palette, 1, 128);
+	}
 }
 
 void Picture::drawMask(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy) {

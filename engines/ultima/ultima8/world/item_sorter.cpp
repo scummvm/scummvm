@@ -69,7 +69,7 @@ struct SortItem {
 	 |   \   /   |   4 = Right Near Top RNT +++
 	 |     4     |   5 = Left  Near Bot LNB -+-
 	 |     |     |   6 = Right Far  Bot RFB +--
-	 5     |     6   7 = Right Near Bot LNB ++-
+	 5     |     6   7 = Right Near Bot RNB ++-
 	   \   |   /     8 = Left  Far  Bot LFB --- (not shown)
 	     \ | /
 	       7
@@ -262,9 +262,9 @@ inline bool SortItem::overlap(const SortItem &si2) const {
 	const bool bot_left_clear = dot_bot_left >= 0;
 	const bool bot_right_clear = dot_bot_right >= 0;
 
-	const bool clear = right_clear | left_clear |
-	                   bot_right_clear | bot_left_clear |
-	                   top_right_clear | top_left_clear;
+	const bool clear = right_clear || left_clear ||
+	                   (bot_right_clear && bot_left_clear) ||
+	                   (top_right_clear && top_left_clear);
 
 	return !clear;
 }
@@ -298,8 +298,8 @@ inline bool SortItem::occludes(const SortItem &si2) const {
 	const bool bot_left_res = dot_bot_left <= 0;
 	const bool bot_right_res = dot_bot_right <= 0;
 
-	return right_res & left_res & bot_right_res & bot_left_res &
-		top_right_res & top_left_res;
+	return right_res && left_res && bot_right_res && bot_left_res &&
+		top_right_res && top_left_res;
 }
 
 inline bool SortItem::operator<(const SortItem &si2) const {
@@ -347,8 +347,10 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 		//else if (rear1 >= front2) return false;
 
 		// Clearly in z
-		if (si1._zTop <= si2._z) return true;
-		else if (si1._z >= si2._zTop) return false;
+		if (si1._zTop <= si2._z)
+			return true;
+		else if (si1._z >= si2._zTop)
+			return false;
 
 		// Partial in z
 		//if (si1._zTop != si2._zTop) return si1._zTop < si2._zTop;
@@ -949,19 +951,19 @@ void ItemSorter::AddItem(Item *add) {
 
 		// Attempt to find which is infront
 		if (*si < *si2) {
-			// si2 occludes ss
+			// si2 occludes si
 			if (si2->_occl && si2->occludes(*si)) {
 				// No need to do any more checks, this isn't visible
 				si->_occluded = true;
 				break;
 			}
 
-			// si1 is behind si2, so add it to si2's dependency list
+			// si is behind si2, so add it to si2's dependency list
 			si2->_depends.insert_sorted(si);
 		} else {
-			// ss occludes si2. Sadly, we can't remove it from the list.
+			// si occludes si2. Sadly, we can't remove it from the list.
 			if (si->_occl && si->occludes(*si2)) si2->_occluded = true;
-			// si2 is behind si1, so add it to si1's dependency list
+			// si2 is behind si, so add it to si's dependency list
 			else si->_depends.push_back(si2);
 		}
 	}

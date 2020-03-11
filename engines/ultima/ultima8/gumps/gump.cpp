@@ -752,7 +752,7 @@ bool Gump::OnTextInput(int unicode) {
 	return handled;
 }
 
-bool Gump::mustSave(bool toplevel) {
+bool Gump::mustSave(bool toplevel) const {
 	// DONT_SAVE flag
 	if (_flags & FLAG_DONT_SAVE)
 		return false;

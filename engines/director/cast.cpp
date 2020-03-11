@@ -121,9 +121,10 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 	_tag = castTag;
 }
 
-TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
+TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor) {
 	_type = kCastText;
 
+	_bgcolor = bgcolor;
 	_borderSize = kSizeNone;
 	_gutterSize = kSizeNone;
 	_boxShadow = kSizeNone;
@@ -234,7 +235,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		stream.readUint16();
 	}
 
-	_cachedMacText = new CachedMacText(this, version, -1, g_director->_wm);
+	_cachedMacText = new CachedMacText(this, _bgcolor, version, -1, g_director->_wm);
 	// TODO Destroy me
 
 	_modified = false;
@@ -325,7 +326,7 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_initialRect.debugPrint(0, "ShapeCast: rect:");
 }
 
-ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {
+ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version, 0xff) {
 	_type = kCastButton;
 
 	if (version < 4) {
@@ -387,7 +388,7 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 	}
 }
 
-RTECast::RTECast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {
+RTECast::RTECast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor) : TextCast(stream, version, bgcolor) {
 
 	_type = kCastRTE;
 }

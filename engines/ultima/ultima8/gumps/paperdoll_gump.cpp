@@ -85,8 +85,8 @@ static const int statbuttony = 84;
 
 PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
 		_backpackRect(49, 25, 10, 25) {
-	Common::fill(cached_text, cached_text + 14, (RenderedText *)nullptr);
-	Common::fill(cached_val, cached_val + 7, 0);
+	Common::fill(_cachedText, _cachedText + 14, (RenderedText *)nullptr);
+	Common::fill(_cachedVal, _cachedVal + 7, 0);
 }
 
 PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
@@ -95,14 +95,14 @@ PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
 		_statButtonId(0), _backpackRect(49, 25, 10, 25) {
 	_statButtonId = 0;
 
-	Common::fill(cached_text, cached_text + 14, (RenderedText *)nullptr);
-	Common::fill(cached_val, cached_val + 7, 0);
+	Common::fill(_cachedText, _cachedText + 14, (RenderedText *)nullptr);
+	Common::fill(_cachedVal, _cachedVal + 7, 0);
 }
 
 PaperdollGump::~PaperdollGump() {
 	for (int i = 0; i < 14; ++i) { // ! constant
-		delete cached_text[i];
-		cached_text[i] = 0;
+		delete _cachedText[i];
+		_cachedText[i] = 0;
 	}
 }
 
@@ -152,21 +152,21 @@ void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
 	char buf[16]; // enough for uint32
 	unsigned int remaining;
 
-	if (!cached_text[2 * n])
-		cached_text[2 * n] = descfont->renderText(text, remaining,
+	if (!_cachedText[2 * n])
+		_cachedText[2 * n] = descfont->renderText(text, remaining,
 		                     statdescwidth, statheight,
 		                     Font::TEXT_RIGHT);
-	cached_text[2 * n]->draw(surf, statcoords[n].xd, statcoords[n].y);
+	_cachedText[2 * n]->draw(surf, statcoords[n].xd, statcoords[n].y);
 
-	if (!cached_text[2 * n + 1] || cached_val[n] != val) {
-		delete cached_text[2 * n + 1];
+	if (!_cachedText[2 * n + 1] || _cachedVal[n] != val) {
+		delete _cachedText[2 * n + 1];
 		sprintf(buf, "%d", val);
-		cached_text[2 * n + 1] = font->renderText(buf, remaining,
+		_cachedText[2 * n + 1] = font->renderText(buf, remaining,
 		                         statwidth, statheight,
 		                         Font::TEXT_RIGHT);
-		cached_val[n] = val;
+		_cachedVal[n] = val;
 	}
-	cached_text[2 * n + 1]->draw(surf, statcoords[n].x, statcoords[n].y);
+	_cachedText[2 * n + 1]->draw(surf, statcoords[n].x, statcoords[n].y);
 }
 
 void PaperdollGump::PaintStats(RenderSurface *surf, int32 lerp_factor) {
@@ -213,8 +213,8 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	if (_displayDragging) {
 		int32 itemx, itemy;
-		itemx = dragging_x + _itemArea.x;
-		itemy = dragging_y + _itemArea.y;
+		itemx = _draggingX + _itemArea.x;
+		itemy = _draggingY + _itemArea.y;
 		Shape *s = GameData::get_instance()->getMainShapes()->
 		           getShape(_draggingShape);
 		assert(s);
@@ -342,8 +342,8 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 		}
 
 		_draggingFrame++;
-		dragging_x = equipcoords[equiptype].x;
-		dragging_y = equipcoords[equiptype].y;
+		_draggingX = equipcoords[equiptype].x;
+		_draggingY = equipcoords[equiptype].y;
 	} else {
 		// drop in backpack
 
@@ -352,8 +352,8 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 			return false;
 		}
 
-		dragging_x = _backpackRect.x + _backpackRect.w / 2;
-		dragging_y = _backpackRect.y + _backpackRect.h / 2;
+		_draggingX = _backpackRect.x + _backpackRect.w / 2;
+		_draggingY = _backpackRect.y + _backpackRect.h / 2;
 	}
 
 	return true;

@@ -45,7 +45,7 @@ BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) 
 	ItemRelativeGump(0, 0, 100, 100, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
 	_barked(msg), _counter(100), _speechShapeNum(speechShapeNum),
 	_speechLength(0), _totalTextHeight(0), _textWidget(0) {
-	SettingManager::get_instance()->get("textdelay", textdelay);
+	SettingManager::get_instance()->get("textdelay", _textDelay);
 }
 
 BarkGump::~BarkGump(void) {
@@ -106,7 +106,7 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 	if (_speechLength && _totalTextHeight) {
 		_counter = (d.h * _speechLength) / _totalTextHeight;
 	} else {
-		_counter = d.h * textdelay;
+		_counter = d.h * _textDelay;
 	}
 	_dims.h = d.h;
 	_dims.w = d.w;
@@ -125,7 +125,7 @@ bool BarkGump::NextText() {
 		if (_speechLength && _totalTextHeight) {
 			_counter = (d.h * _speechLength) / _totalTextHeight;
 		} else {
-			_counter = d.h * textdelay;
+			_counter = d.h * _textDelay;
 		}
 		_dims.h = d.h;
 		_dims.w = d.w;
@@ -157,7 +157,7 @@ void BarkGump::run() {
 				if (!speechplaying)
 					Close();
 				else
-					_counter = textdelay;
+					_counter = _textDelay;
 			}
 		}
 	}
@@ -213,12 +213,12 @@ bool BarkGump::loadData(IDataSource *ids, uint32 version) {
 
 	TextWidget *widget = p_dynamic_cast<TextWidget *>(getGump(_textWidget));
 
-	SettingManager::get_instance()->get("textdelay", textdelay);
+	SettingManager::get_instance()->get("textdelay", _textDelay);
 
 	// This is just a hack
 	Rect d;
 	widget->GetDims(d);
-	_counter = d.h * textdelay;
+	_counter = d.h * _textDelay;
 	_dims.h = d.h;
 	_dims.w = d.w;
 

@@ -87,7 +87,7 @@ static struct FuncDescr {
 	{ LC::c_gt,				"c_gt",				"" },
 	{ LC::c_hilite,			"c_hilite",			"" },
 	{ LC::c_ifcode,			"c_ifcode",			"oooi" },
-	{ LC::c_instance,		"c_instance",		"s" },
+	{ LC::c_instance,		"c_instance",		"s" },	// D2
 	{ LC::c_intersects,		"c_intersects",		"" },
 	{ LC::c_intpush,		"c_intpush",		"i" },
 	{ LC::c_itemOf,			"c_itemOf",			"" },	// D3

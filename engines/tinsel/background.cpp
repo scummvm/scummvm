@@ -95,7 +95,7 @@ void Background::InitBackground() {
 		pPlayfield->fieldYvel = intToFrac(0);
 
 		// clear playfield display list
-		pPlayfield->pDispList = NULL;
+		pPlayfield->pDispList = nullptr;
 
 		// clear playfield moved flag
 		pPlayfield->bMoved = false;
@@ -298,7 +298,7 @@ void Background::SetBackPal(SCNHANDLE hPal) {
 }
 
 void Background::DropBackground() {
-	_pBG[0] = NULL;	// No background
+	_pBG[0] = nullptr;	// No background
 
 	if (!TinselV2)
 		_hBgPal = 0;	// No background palette

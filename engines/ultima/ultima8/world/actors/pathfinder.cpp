@@ -48,7 +48,7 @@ struct PathNode {
 // NOTE: this is just to keep some statistics
 static unsigned int expandednodes = 0;
 
-void PathfindingState::load(Actor *_actor) {
+void PathfindingState::load(const Actor *_actor) {
 	_actor->getLocation(_x, _y, _z);
 	_lastAnim = _actor->getLastAnim();
 	_direction = _actor->getDir();
@@ -58,12 +58,12 @@ void PathfindingState::load(Actor *_actor) {
 }
 
 bool PathfindingState::checkPoint(int32 x_, int32 y_, int32 z_,
-                                  int range) {
+                                  int range) const {
 	int distance = (_x - x_) * (_x - x_) + (_y - y_) * (_y - y_) + (_z - z_) * (_z - z_);
 	return distance < range * range;
 }
 
-bool PathfindingState::checkItem(Item *item, int xyRange, int zRange) {
+bool PathfindingState::checkItem(const Item *item, int xyRange, int zRange) const {
 	int32 itemX, itemY, itemZ;
 	int32 itemXd, itemYd, itemZd;
 	int32 itemXmin, itemYmin;
@@ -89,7 +89,7 @@ bool PathfindingState::checkItem(Item *item, int xyRange, int zRange) {
 	return (range <= xyRange);
 }
 
-bool PathfindingState::checkHit(Actor *_actor, Actor *target) {
+bool PathfindingState::checkHit(Actor *_actor, const Actor *target) {
 #if 0
 	pout << "Trying hit in _direction " << _actor->getDirToItemCentre(*target) << Std::endl;
 #endif
@@ -109,7 +109,7 @@ bool PathfindingState::checkHit(Actor *_actor, Actor *target) {
 	return false;
 }
 
-bool PathNodeCmp::operator()(PathNode *n1, PathNode *n2) {
+bool PathNodeCmp::operator()(const PathNode *n1, const PathNode *n2) const {
 	return (n1->heuristicTotalCost < n2->heuristicTotalCost);
 }
 
@@ -172,10 +172,10 @@ bool Pathfinder::canReach() {
 	return pathfind(path);
 }
 
-bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) {
+bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) const {
 	//! this may need optimization
 
-	Std::list<PathfindingState>::iterator iter;
+	Std::list<PathfindingState>::const_iterator iter;
 
 	for (iter = _visited.begin(); iter != _visited.end(); ++iter)
 		if (iter->checkPoint(x, y, z, 8))
@@ -243,7 +243,7 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) {
 // FIXME: these functions assume that we're using a 2x scaler...
 // (and the whole system is generally a very big hack...)
 
-static void drawbox(Item *item) {
+static void drawbox(const Item *item) {
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	int32 cx, cy, cz;
 
@@ -449,9 +449,9 @@ void Pathfinder::expandNode(PathNode *node) {
 		tracker.evaluateMaxAnimTravel(max_endx, max_endy, dir);
 		if (alreadyVisited(max_endx, max_endy, state._z)) continue;
 		int sqrddist;
-		int x_travel = ABS(max_endx - state._x);
+		const int x_travel = ABS(max_endx - state._x);
 		int xy_maxtravel = x_travel;    // don't have the max(a,b) macro...
-		int y_travel = ABS(max_endy - state._y);
+		const int y_travel = ABS(max_endy - state._y);
 		if (y_travel > xy_maxtravel) xy_maxtravel = y_travel;
 
 		sqrddist = x_travel * x_travel + y_travel * y_travel;

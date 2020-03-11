@@ -54,15 +54,15 @@ void AIScriptHawkersParrot::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptHawkersParrot::EnteredScene(int sceneId) {
+void AIScriptHawkersParrot::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptHawkersParrot::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptHawkersParrot::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptHawkersParrot::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptHawkersParrot::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 

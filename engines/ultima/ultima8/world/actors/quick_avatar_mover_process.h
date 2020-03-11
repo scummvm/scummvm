@@ -62,7 +62,7 @@ protected:
 	void saveData(ODataSource *ods) override;
 
 	int _dx, _dy, _dz, _dir;
-	static ProcId amp[6];
+	static ProcId _amp[6];
 	static bool _clipping;
 	static bool _quarter;
 };

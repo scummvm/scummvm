@@ -149,7 +149,7 @@ Common::String getPath(Common::String path, Common::String cwd) {
 	return cwd; // The path is not altered
 }
 
-Common::String pathMakeRelative(Common::String path) {
+Common::String pathMakeRelative(Common::String path, bool recursive) {
 	Common::String initialPath = Common::normalizePath(g_director->getCurrentPath() + convertPath(path), '/');
 	Common::File f;
 	Common::String convPath = initialPath;
@@ -166,19 +166,137 @@ Common::String pathMakeRelative(Common::String path) {
 		if (!f.open(convPath))
 			continue;
 
-		warning("pathMakeRelative(): Path converted %s -> %s", path.c_str(), convPath.c_str());
+		debug(2, "pathMakeRelative(): Path converted %s -> %s", path.c_str(), convPath.c_str());
 
 		opened = true;
 
 		break;
 	}
 
-	if (!opened)
+	if (!opened && recursive) {
+		// Hmmm. We couldn't find the path as is.
+		// Let's try to translate file path into 8.3 format
+		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 4) {
+			convPath.clear();
+			const char *ptr = initialPath.c_str();
+			Common::String component;
+
+			while (*ptr) {
+				if (*ptr == '/') {
+					if (component.equals(".")) {
+						convPath += component;
+					} else {
+						convPath += convertMacFilename(component.c_str());
+					}
+
+					component.clear();
+					convPath += '/';
+				} else {
+					component += *ptr;
+				}
+
+				ptr++;
+			}
+
+			convPath += convertMacFilename(component.c_str()) + ".MMM";
+
+			debug(2, "pathMakeRelative(): Trying %s -> %s", path.c_str(), convPath.c_str());
+
+			return pathMakeRelative(convPath, false);
+		}
+
+
 		return initialPath;	// Anyway nothing good is happening
+	}
 
 	f.close();
 
 	return convPath;
+}
+
+//////////////////
+////// Mac --> Windows filename conversion
+//////////////////
+static bool myIsVowel(byte c) {
+	return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+}
+
+static bool myIsAlpha(byte c) {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+static bool myIsDigit(byte c) {
+	return c >= '0' && c <= '9';
+}
+
+static bool myIsAlnum(byte c) {
+	return myIsAlpha(c) || myIsDigit(c);
+}
+
+static bool myIsSpace(byte c) {
+	return c == ' ';
+}
+
+Common::String convertMacFilename(const char *name) {
+	Common::String res;
+
+	int origlen = strlen(name);
+
+	// Remove trailing spaces
+	const char *ptr = &name[origlen - 1];
+	while (myIsSpace(*ptr))
+		ptr--;
+
+	int numDigits = 0;
+	char digits[10];
+
+	// Count trailing digits, but leave front letter
+	while (myIsDigit(*ptr) && (numDigits < (8 - 1)))
+		digits[++numDigits] = *ptr--;
+
+	// Count file name without vowels, spaces and digits in-between
+	ptr = name;
+	int cnt = 0;
+	while (cnt < (8 - numDigits) && ptr < &name[origlen]) {
+		char c = toupper(*ptr++);
+
+		if ((myIsVowel(c) && (cnt != 0)) || myIsSpace(c) || myIsDigit(c))
+			continue;
+
+		if ((c != '_') && !myIsAlnum(c))
+			continue;
+
+		cnt++;
+	}
+
+	// Make sure all trailing digits fit
+	int numVowels = 8 - (numDigits + cnt);
+	ptr = name;
+
+	// Put enough characters from beginning
+	for (cnt = 0; cnt < (8 - numDigits) && ptr < &name[origlen];) {
+		char c = toupper(*ptr++);
+
+		if (myIsVowel(c) && (cnt != 0)) {
+			if (numVowels > 0)
+				numVowels--;
+			else
+				continue;
+		}
+
+		if (myIsSpace(c) || myIsDigit(c) || ((c != '_') && !myIsAlnum(c)))
+			continue;
+
+		res += c;
+
+		cnt++;
+	}
+
+	// Now attach all digits
+	while (numDigits)
+		res += digits[numDigits--];
+
+	return res;
 }
 
 } // End of namespace Director

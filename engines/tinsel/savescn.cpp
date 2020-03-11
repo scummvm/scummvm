@@ -86,7 +86,7 @@ static int g_savedSceneCount = 0;
 static bool g_bNotDoneYet = false;
 
 //static SAVED_DATA ssData[MAX_NEST];
-static SAVED_DATA *g_ssData = NULL;
+static SAVED_DATA *g_ssData = nullptr;
 static SAVED_DATA g_sgData;
 
 static SAVED_DATA *g_rsd = 0;
@@ -160,7 +160,7 @@ void InitializeSaveScenes() {
 
 void FreeSaveScenes() {
 	free(g_ssData);
-	g_ssData = NULL;
+	g_ssData = nullptr;
 }
 
 /**

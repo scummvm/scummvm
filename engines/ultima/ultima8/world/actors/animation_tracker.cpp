@@ -101,7 +101,7 @@ bool AnimationTracker::init(Actor *actor_, Animation::Sequence action_,
 	return true;
 }
 
-unsigned int AnimationTracker::getNextFrame(unsigned int frame) {
+unsigned int AnimationTracker::getNextFrame(unsigned int frame) const {
 	frame++;
 
 	if (frame == _endFrame)
@@ -290,7 +290,7 @@ bool AnimationTracker::step() {
 		// If it succeeded, we proceed as usual
 	}
 
-	Item *support;
+	const Item *support;
 	bool targetok = cm->isValidPosition(tx, ty, tz,
 	                                    _startX, _startY, _startZ,
 	                                    xd, yd, zd,
@@ -409,7 +409,7 @@ bool AnimationTracker::step() {
 	return true;
 }
 
-AnimFrame *AnimationTracker::getAnimFrame() {
+AnimFrame *AnimationTracker::getAnimFrame() const {
 	return &_animAction->frames[_dir][_currentFrame];
 }
 
@@ -452,7 +452,7 @@ void AnimationTracker::setTargetedMode(int32 x_, int32 y_, int32 z_) {
 void AnimationTracker::checkWeaponHit() {
 	int range = _animAction->frames[_dir][_currentFrame].attack_range();
 
-	Actor *a = getActor(_actor);
+	const Actor *a = getActor(_actor);
 	assert(a);
 
 
@@ -542,7 +542,7 @@ void AnimationTracker::updateActorFlags() {
 }
 
 void AnimationTracker::getInterpolatedPosition(int32 &x_, int32 &y_,
-        int32 &z_, int fc) {
+                                               int32 &z_, int fc) const {
 	int32 dx = _x - _prevX;
 	int32 dy = _y - _prevY;
 	int32 dz = _z - _prevZ;
@@ -552,7 +552,7 @@ void AnimationTracker::getInterpolatedPosition(int32 &x_, int32 &y_,
 	z_ = _prevZ + (dz * fc) / (_animAction->_frameRepeat + 1);
 }
 
-void AnimationTracker::getSpeed(int32 &dx, int32 &dy, int32 &dz) {
+void AnimationTracker::getSpeed(int32 &dx, int32 &dy, int32 &dz) const {
 	dx = _x - _prevX;
 	dy = _y - _prevY;
 	dz = _z - _prevZ;

@@ -242,14 +242,14 @@ void Mouse::draw(Graphics::Surface &surface, int x, int y) {
 	}
 
 	if (_randomCountdownX > 0) {
-		_randomCountdownX--;
+		--_randomCountdownX;
 		x += _randomX;
 		y += _randomY;
 
 		if (!_randomCountdownX)
 			setMouseJitterDown();
 	} else if (_randomCountdownY > 0) {
-		_randomCountdownY--;
+		--_randomCountdownY;
 		x += _randomX;
 		y += _randomY;
 	}

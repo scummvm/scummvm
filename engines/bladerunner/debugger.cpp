@@ -690,7 +690,7 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 
 		// Sanity check
 		uint i;
-		for (i = 0; sceneList[i].chapter != 0; i++) {
+		for (i = 0; sceneList[i].chapter != 0; ++i) {
 			if (sceneList[i].chapter == chapterIdNormalized &&
 			    sceneList[i].set == setId &&
 			    sceneList[i].scene == sceneId
@@ -735,7 +735,7 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 		}
 
 		uint i;
-		for (i = 0; sceneList[i].chapter != 0; i++) {
+		for (i = 0; sceneList[i].chapter != 0; ++i) {
 			if (sceneList[i].chapter == chapterIdNormalized && sceneName.equalsIgnoreCase(sceneList[i].name))
 				break;
 		}
@@ -760,7 +760,7 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 	}
 
 	uint i;
-	for (i = 0; sceneList[i].chapter != 0; i++) {
+	for (i = 0; sceneList[i].chapter != 0; ++i) {
 		if (sceneList[i].chapter == chapterIdNormalized && sceneList[i].set == _vm->_scene->getSetId()
 				&& sceneList[i].scene == _vm->_scene->getSceneId())
 			break;
@@ -1096,7 +1096,7 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 
 			for (int i = 0; i < _vm->_overlays->kOverlayVideos; ++i) {
 				if (_vm->_overlays->_videos[i].loaded) {
-					countOfLoadedOverlaysInScene++;
+					++countOfLoadedOverlaysInScene;
 					VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[i].vqaPlayer->_decoder._loopInfo;
 					for (int j = 0; j < loopInfo.loopCount; ++j) {
 						debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[i].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
@@ -1392,7 +1392,7 @@ bool Debugger::cmdObject(int argc, const char **argv) {
 				debugPrintf("Unable to add more objects in the set\n");
 			} else {
 				int objectId = _vm->_scene->_set->_objectCount;
-				_vm->_scene->_set->_objectCount++;
+				++(_vm->_scene->_set->_objectCount);
 				_vm->_scene->_set->_objects[objectId].name = custObjName.c_str();
 
 				float x0, y0, z0, x1, y1, z1;
@@ -1934,7 +1934,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			if (argc == 2) {
 				debugPrintf("Listing scene actors: \n");
 				int count = 0;
-				for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
+				for (int i = 0; i < _vm->_sceneObjects->_count; ++i) {
 					SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
 					if (sceneObject->type == kSceneObjectTypeActor) {
@@ -2044,7 +2044,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 						_vm->_view->_fovX);
 			debugPrintf("Listing scene objects: \n");
 			int count = 0;
-			for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
+			for (int i = 0; i < _vm->_sceneObjects->_count; ++i) {
 				SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 				const BoundingBox &bbox = sceneObject->boundingBox;
 				Vector3 a, b;
@@ -2072,7 +2072,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 		} else if (arg == "item") {
 			debugPrintf("Listing scene items: \n");
 			int count = 0;
-			for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
+			for (int i = 0; i < _vm->_sceneObjects->_count; ++i) {
 				SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
 				if (sceneObject->type == kSceneObjectTypeItem) {
@@ -2104,7 +2104,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			debugPrintf("Listing plain regions: \n");
 			int count = 0;
 			//list regions
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 10; ++i) {
 				Regions::Region *region = &_vm->_scene->_regions->_regions[i];
 				if (!region->present) continue;
 				Common::Rect r = region->rectangle;
@@ -2114,7 +2114,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 
 			debugPrintf("Listing exits: \n");
 			//list exits
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 10; ++i) {
 				Regions::Region *region = &_vm->_scene->_exits->_regions[i];
 				if (!region->present) continue;
 				Common::Rect r = region->rectangle;
@@ -2125,7 +2125,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 		} else if (arg == "way") {
 			debugPrintf("Listing waypoints: \n");
 			int count = 0;
-			for (int i = 0; i < _vm->_waypoints->_count; i++) {
+			for (int i = 0; i < _vm->_waypoints->_count; ++i) {
 				Waypoints::Waypoint *waypoint = &_vm->_waypoints->_waypoints[i];
 				if (waypoint->setId != _vm->_scene->getSetId()) {
 					continue;
@@ -2136,7 +2136,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			}
 
 			// list combat cover waypoints
-			for (int i = 0; i < (int)_vm->_combat->_coverWaypoints.size(); i++) {
+			for (int i = 0; i < (int)_vm->_combat->_coverWaypoints.size(); ++i) {
 				Combat::CoverWaypoint *cover = &_vm->_combat->_coverWaypoints[i];
 				if (cover->setId != _vm->_scene->getSetId()) {
 					continue;
@@ -2147,7 +2147,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			}
 
 			// list combat flee waypoints
-			for (int i = 0; i < (int)_vm->_combat->_fleeWaypoints.size(); i++) {
+			for (int i = 0; i < (int)_vm->_combat->_fleeWaypoints.size(); ++i) {
 				Combat::FleeWaypoint *flee = &_vm->_combat->_fleeWaypoints[i];
 				if (flee->setId != _vm->_scene->getSetId()) {
 					continue;
@@ -2160,7 +2160,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 		} else if (arg == "walk") {
 			debugPrintf("Listing walkboxes: \n");
 			// list walkboxes
-			for (int i = 0; i < _vm->_scene->_set->_walkboxCount; i++) {
+			for (int i = 0; i < _vm->_scene->_set->_walkboxCount; ++i) {
 				Set::Walkbox *walkbox = &_vm->_scene->_set->_walkboxes[i];
 
 				debugPrintf("%2d. Walkbox %s, vertices: %d\n", i, walkbox->name.c_str(), walkbox->vertexCount);
@@ -2177,7 +2177,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 		} else if (arg == "lit") {
 			debugPrintf("Listing lights: \n");
 			// list lights
-			for (int i = 0; i < (int)_vm->_lights->_lights.size(); i++) {
+			for (int i = 0; i < (int)_vm->_lights->_lights.size(); ++i) {
 				Light *light = _vm->_lights->_lights[i];
 				debugPrintf("%2d. Light %s\n", i, light->_name.c_str());
 			}
@@ -2185,7 +2185,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 		} else if (arg == "eff") {
 			debugPrintf("Listing scene effects: \n");
 			// list scene effects
-			for (uint i = 0; i < _vm->_screenEffects->_entries.size(); i++) {
+			for (uint i = 0; i < _vm->_screenEffects->_entries.size(); ++i) {
 				ScreenEffects::Entry &entry = _vm->_screenEffects->_entries[i];
 				debugPrintf("%2d. Effect (h: %d, x: %d, y: %d, z: %d\n", i, (int)entry.height, (int)entry.x, (int)entry.y, (int)entry.z);
 			}
@@ -2262,7 +2262,7 @@ void Debugger::drawSceneObjects() {
 	//draw scene objects
 	int count = _vm->_sceneObjects->_count;
 	if (count > 0) {
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count; ++i) {
 			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
 			const BoundingBox &bbox = sceneObject->boundingBox;
@@ -2317,7 +2317,7 @@ void Debugger::drawSceneObjects() {
 
 void Debugger::drawLights() {
 	// draw lights
-	for (int i = 0; i < (int)_vm->_lights->_lights.size(); i++) {
+	for (int i = 0; i < (int)_vm->_lights->_lights.size(); ++i) {
 		if (_viewLights
 		    || (_specificLightsDrawn && findInDbgDrawList(debuggerObjTypeLight, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
 		) {
@@ -2389,7 +2389,7 @@ void Debugger::drawFogs() {
 void Debugger::drawRegions() {
 	if (_viewRegionsNormalToggle || _specificRegionNormalDrawn) {
 		//draw regions
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; ++i) {
 			Regions::Region *region = &_vm->_scene->_regions->_regions[i];
 			if (!region->present) continue;
 			if (_viewRegionsNormalToggle
@@ -2402,7 +2402,7 @@ void Debugger::drawRegions() {
 
 	if (_viewRegionsExitsToggle || _specificRegionExitsDrawn) {
 		//draw exits
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; ++i) {
 			Regions::Region *region = &_vm->_scene->_exits->_regions[i];
 			if (!region->present) continue;
 			if (_viewRegionsExitsToggle
@@ -2417,7 +2417,7 @@ void Debugger::drawRegions() {
 void Debugger::drawWaypoints() {
 	if (_viewWaypointsNormalToggle || _specificWaypointNormalDrawn)  {
 		//draw world waypoints
-		for (int i = 0; i < _vm->_waypoints->_count; i++) {
+		for (int i = 0; i < _vm->_waypoints->_count; ++i) {
 			Waypoints::Waypoint *waypoint = &_vm->_waypoints->_waypoints[i];
 			if (waypoint->setId != _vm->_scene->getSetId()) {
 				continue;
@@ -2438,7 +2438,7 @@ void Debugger::drawWaypoints() {
 
 	if (_viewWaypointsCoverToggle || _specificWaypointCoverDrawn) {
 		//draw combat cover waypoints
-		for (int i = 0; i < (int)_vm->_combat->_coverWaypoints.size(); i++) {
+		for (int i = 0; i < (int)_vm->_combat->_coverWaypoints.size(); ++i) {
 			Combat::CoverWaypoint *cover = &_vm->_combat->_coverWaypoints[i];
 			if (cover->setId != _vm->_scene->getSetId()) {
 				continue;
@@ -2459,7 +2459,7 @@ void Debugger::drawWaypoints() {
 
 	if (_viewWaypointsFleeToggle || _specificWaypointFleeDrawn) {
 		//draw combat flee waypoints
-		for (int i = 0; i < (int)_vm->_combat->_fleeWaypoints.size(); i++) {
+		for (int i = 0; i < (int)_vm->_combat->_fleeWaypoints.size(); ++i) {
 			Combat::FleeWaypoint *flee = &_vm->_combat->_fleeWaypoints[i];
 			if (flee->setId != _vm->_scene->getSetId()) {
 				continue;
@@ -2481,12 +2481,12 @@ void Debugger::drawWaypoints() {
 
 void Debugger::drawWalkboxes() {
 	//draw walkboxes
-	for (int i = 0; i < _vm->_scene->_set->_walkboxCount; i++) {
+	for (int i = 0; i < _vm->_scene->_set->_walkboxCount; ++i) {
 		if (_viewWalkboxes
 		    || (_specificWalkboxesDrawn && findInDbgDrawList(debuggerObjTypeWalkbox, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
 		) {
 			Set::Walkbox *walkbox = &_vm->_scene->_set->_walkboxes[i];
-			for (int j = 0; j < walkbox->vertexCount; j++) {
+			for (int j = 0; j < walkbox->vertexCount; ++j) {
 				Vector3 start = _vm->_view->calculateScreenPosition(walkbox->vertices[j]);
 				Vector3 end = _vm->_view->calculateScreenPosition(walkbox->vertices[(j + 1) % walkbox->vertexCount]);
 				_vm->_surfaceFront.drawLine(start.x, start.y, end.x, end.y, _vm->_surfaceFront.format.RGBToColor(255, 255, 0));
@@ -2499,14 +2499,14 @@ void Debugger::drawWalkboxes() {
 
 void Debugger::drawScreenEffects() {
 	//draw aesc
-	for (uint i = 0; i < _vm->_screenEffects->_entries.size(); i++) {
+	for (uint i = 0; i < _vm->_screenEffects->_entries.size(); ++i) {
 		if (_viewScreenEffects
 		    || (_specificEffectsDrawn && findInDbgDrawList(debuggerObjTypeEffect, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
 		) {
 			ScreenEffects::Entry &entry = _vm->_screenEffects->_entries[i];
 			int j = 0;
-			for (int y = 0; y < entry.height; y++) {
-				for (int x = 0; x < entry.width; x++) {
+			for (int y = 0; y < entry.height; ++y) {
+				for (int x = 0; x < entry.width; ++x) {
 					Common::Rect r((entry.x + x) * 2, (entry.y + y) * 2, (entry.x + x) * 2 + 2, (entry.y + y) * 2 + 2);
 
 					int ec = entry.data[j++];

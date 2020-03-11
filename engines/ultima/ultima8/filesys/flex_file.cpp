@@ -88,7 +88,7 @@ uint8 *FlexFile::getObject(uint32 index, uint32 *sizep) {
 	return object;
 }
 
-uint32 FlexFile::getSize(uint32 index) {
+uint32 FlexFile::getSize(uint32 index) const {
 	if (index >= _count) return 0;
 
 	_ds->seek(0x84 + 8 * index);
@@ -97,7 +97,7 @@ uint32 FlexFile::getSize(uint32 index) {
 	return length;
 }
 
-bool FlexFile::nameToIndex(const Std::string &name, uint32 &index) {
+bool FlexFile::nameToIndex(const Std::string &name, uint32 &index) const {
 	return extractIndexFromName(name, index);
 }
 

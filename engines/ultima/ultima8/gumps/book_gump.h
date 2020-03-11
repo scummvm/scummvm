@@ -31,14 +31,14 @@ namespace Ultima {
 namespace Ultima8 {
 
 class BookGump : public ModalGump {
-	Std::string text;
-	ObjId textwidgetL;
-	ObjId textwidgetR;
+	Std::string _text;
+	ObjId _textWidgetL;
+	ObjId _textWidgetR;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	BookGump();
-	BookGump(ObjId owner_, Std::string msg);
+	BookGump(ObjId owner_, const Std::string &msg);
 	~BookGump() override;
 
 	// Go to the next page on mouse click

@@ -20,10 +20,11 @@
  *
  */
 
-#ifndef ULTIMA8_USECODE_BaseUCStack_H
-#define ULTIMA8_USECODE_BaseUCStack_H
+#ifndef ULTIMA8_USECODE_UCSTACK_H
+#define ULTIMA8_USECODE_UCSTACK_H
 
 #include "common/scummsys.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -179,9 +180,9 @@ public:
 
 #ifndef USE_DYNAMIC_UCSTACK
 class UCStack : public BaseUCStack {
-	uint8   buf_array[0x1000];
+	uint8   _bufArray[0x1000];
 public:
-	UCStack() : BaseUCStack(0x1000, buf_array) { }
+	UCStack() : BaseUCStack(0x1000, _bufArray) { }
 	~UCStack() override { }
 
 	void save(ODataSource *ods);

@@ -97,11 +97,11 @@ void AIScriptRunciter::ReceivedClue(int clueId, int fromActorId) {}
 
 void AIScriptRunciter::ClickedByPlayer() {}
 
-void AIScriptRunciter::EnteredScene(int sceneId) {}
+void AIScriptRunciter::EnteredSet(int setId) {}
 
-void AIScriptRunciter::OtherAgentEnteredThisScene(int otherActorId) {}
+void AIScriptRunciter::OtherAgentEnteredThisSet(int otherActorId) {}
 
-void AIScriptRunciter::OtherAgentExitedThisScene(int otherActorId) {}
+void AIScriptRunciter::OtherAgentExitedThisSet(int otherActorId) {}
 
 void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	if ( Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterRC02Wait
@@ -227,7 +227,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		if (var_45CD78 == 0) {
 			*animation = 529;
 			if (var_45CD84) {
-				var_45CD84--;
+				--var_45CD84;
 			} else {
 				_animationFrame += var_45CD80;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(529)) {
@@ -252,7 +252,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 			}
 		} else if (var_45CD78 == 1) {
 			*animation = 530;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(530)) {
 				_animationFrame = 0;
 				var_45CD78 = 0;
@@ -263,7 +263,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		} else if (var_45CD78 == 2) {
 			*animation = 531;
 			if (var_45CD84) {
-				var_45CD84--;
+				--var_45CD84;
 			} else {
 				_animationFrame += var_45CD80;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
@@ -284,7 +284,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case kRunciterStateWalking:
 		*animation = 526;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(526)) {
 			_animationFrame = 0;
 		}
@@ -293,7 +293,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 533;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(533)) {
 			_animationFrame = 0;
 			if (var_45CD88) {
@@ -309,7 +309,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 534;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(534)) {
 			_animationFrame = 0;
 			if (var_45CD88) {
@@ -326,7 +326,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 535;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(535)) {
 			_animationFrame = 0;
 			if (var_45CD88) {
@@ -343,7 +343,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 536;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(536)) {
 			_animationFrame = 0;
 			if (var_45CD88) {
@@ -360,7 +360,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 537;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(537)) {
 			_animationFrame = 0;
 			if (var_45CD88) {
@@ -377,7 +377,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 538;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(538)) {
 			_animationFrame = 0;
 			if (var_45CD88) {
@@ -394,7 +394,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 539;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(539)) {
 			_animationFrame = 0;
 			if (var_45CD88) {
@@ -410,7 +410,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 10:
 		*animation = 540;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(540)) {
 			_animationFrame = 0;
 			if (var_45CD88) {
@@ -443,7 +443,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = 532;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(532)) {
 			*animation = 529;
 			_animationState = 0;
@@ -481,7 +481,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 	case kRunciterStateDying:
 		*animation = 528;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(528) - 1) {
 			*animation = 528;
 			_animationState = kRunciterStateDead;

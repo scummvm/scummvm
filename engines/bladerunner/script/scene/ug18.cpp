@@ -526,7 +526,11 @@ void SceneScriptUG18::talkWithGuzza() {
 	Actor_Says(kActorGuzza, 850, 14);
 	Actor_Says(kActorGuzza, 860, 13);
 	Actor_Says(kActorMcCoy, 5880, 15);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 5885, 9);
+#else
+	Actor_Says_With_Pause(kActorMcCoy, 5885, 0.0f, 9);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 5890, 13);
 	Actor_Says(kActorGuzza, 870, 15);
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -205.13f, 0.0f, -184.47f, 0, false, false, false);

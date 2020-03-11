@@ -63,6 +63,8 @@ bool InputWatcher::notifyEvent(const Event &event) {
 		case EVENT_LBUTTONDOWN:
 		case EVENT_RBUTTONDOWN:
 		case EVENT_MBUTTONDOWN:
+		case EVENT_X1BUTTONDOWN:
+		case EVENT_X2BUTTONDOWN:
 			return true;
 		case EVENT_KEYUP:
 		case EVENT_JOYBUTTON_UP:
@@ -72,6 +74,8 @@ bool InputWatcher::notifyEvent(const Event &event) {
 		case EVENT_MBUTTONUP:
 		case EVENT_WHEELUP:
 		case EVENT_WHEELDOWN:
+		case EVENT_X1BUTTONUP:
+		case EVENT_X2BUTTONUP:
 		case EVENT_CUSTOM_BACKEND_HARDWARE:
 			_hwInput = _keymapper->findHardwareInput(event);
 			if (_hwInput.type != kHardwareInputTypeInvalid) {

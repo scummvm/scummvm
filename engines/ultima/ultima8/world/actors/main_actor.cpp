@@ -166,10 +166,10 @@ void MainActor::teleport(int mapNum_, int teleport_id) {
 	_justTeleported = true;
 }
 
-uint16 MainActor::getDefenseType() {
+uint16 MainActor::getDefenseType() const {
 	uint16 type = 0;
 
-	Std::list<Item *>::iterator iter;
+	Std::list<Item *>::const_iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
@@ -181,10 +181,10 @@ uint16 MainActor::getDefenseType() {
 	return type;
 }
 
-uint32 MainActor::getArmourClass() {
+uint32 MainActor::getArmourClass() const {
 	uint32 armour = 0;
 
-	Std::list<Item *>::iterator iter;
+	Std::list<Item *>::const_iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
@@ -199,7 +199,7 @@ uint32 MainActor::getArmourClass() {
 	return armour;
 }
 
-int16 MainActor::getDefendingDex() {
+int16 MainActor::getDefendingDex() const {
 	int16 dex = getDex();
 
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
@@ -214,7 +214,7 @@ int16 MainActor::getDefendingDex() {
 	return dex;
 }
 
-int16 MainActor::getAttackingDex() {
+int16 MainActor::getAttackingDex() const {
 	int16 dex = getDex();
 
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
@@ -227,13 +227,13 @@ int16 MainActor::getAttackingDex() {
 	return dex;
 }
 
-uint16 MainActor::getDamageType() {
+uint16 MainActor::getDamageType() const {
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
 
 	if (weapon) {
 		// weapon equipped?
 
-		ShapeInfo *si = weapon->getShapeInfo();
+		const ShapeInfo *si = weapon->getShapeInfo();
 		assert(si->_weaponInfo);
 
 		return si->_weaponInfo->_damageType;
@@ -242,7 +242,7 @@ uint16 MainActor::getDamageType() {
 	return Actor::getDamageType();
 }
 
-int MainActor::getDamageAmount() {
+int MainActor::getDamageAmount() const {
 	int damage = 0;
 
 	if (getLastAnim() == Animation::kick) {

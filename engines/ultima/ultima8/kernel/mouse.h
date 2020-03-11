@@ -129,7 +129,7 @@ public:
 	//! set current mouse cursor location
 	void setMouseCoords(int mx, int my);
 
-	bool isMouseDownEvent(Shared::MouseButton button);
+	bool isMouseDownEvent(Shared::MouseButton button) const;
 
 	//! remove all existing cursors
 	void popAllCursors();

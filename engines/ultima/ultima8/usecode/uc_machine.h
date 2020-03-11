@@ -54,7 +54,7 @@ public:
 
 	void execProcess(UCProcess *proc);
 
-	Std::string &getString(uint16 str);
+	const Std::string &getString(uint16 str) const;
 	UCList *getList(uint16 l);
 
 	void freeString(uint16 s);
@@ -132,7 +132,7 @@ private:
 	}
 
 public:
-	bool trace_event() {
+	bool trace_event() const {
 		return (_tracingEnabled && (_traceAll || _traceEvents));
 	}
 #endif

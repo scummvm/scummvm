@@ -405,7 +405,7 @@ void KIASectionCrimes::updateSuspectPhoto() {
 	_suspectPhotoNotUsed = -1;
 	int photoCluesCount = suspect->getPhotoCount();
 	if (photoCluesCount > 0) {
-		for (int i = 0 ; i < photoCluesCount; i++) {
+		for (int i = 0 ; i < photoCluesCount; ++i) {
 			//TODO: weird stuff going on here... original game is using internal clue index instead id
 			if (_clues->isAcquired(suspect->getPhotoClueId(i))) {
 				_suspectPhotoShapeId = suspect->getPhotoShapeId(i);

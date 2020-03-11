@@ -87,7 +87,7 @@ public:
 
 class TextCast : public Cast {
 public:
-	TextCast(Common::ReadStreamEndian &stream, uint16 version);
+	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor);
 
 	void setText(const char *text);
 
@@ -104,6 +104,7 @@ public:
 	byte _textSlant;
 	byte _textFlags;
 	uint16 _palinfo1, _palinfo2, _palinfo3;
+	int32 _bgcolor;
 
 	Common::String _ftext;
 	Common::String _ptext;
@@ -129,7 +130,7 @@ public:
 
 class RTECast : public TextCast {
 public:
-	RTECast(Common::ReadStreamEndian &stream, uint16 version);
+	RTECast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor);
 
 	void loadChunks();
 };

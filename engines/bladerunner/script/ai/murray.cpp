@@ -79,15 +79,15 @@ void AIScriptMurray::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptMurray::EnteredScene(int sceneId) {
+void AIScriptMurray::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptMurray::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptMurray::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptMurray::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptMurray::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -124,7 +124,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 698;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(698))
 			_animationFrame = 0;
 		break;
@@ -134,7 +134,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 		if (!_animationFrame && _flag) {
 			_animationState = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(700))
 				_animationFrame = 0;
 		}
@@ -142,7 +142,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 701;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(701)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -152,7 +152,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 702;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(702)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -162,7 +162,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 703;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(703)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -172,7 +172,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 704;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(704)) {
 			_animationFrame = 0;
 			_animationState = 1;
@@ -182,7 +182,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 699;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(699)) {
 			*animation = 698;
 			_animationFrame = 0;

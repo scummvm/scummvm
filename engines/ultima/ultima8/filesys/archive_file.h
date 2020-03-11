@@ -73,12 +73,12 @@ public:
 	//! Get size of object; returns zero if index is invalid.
 	//! See also exists(uint32 index)
 	//! \param index index of object to get size of
-	virtual uint32 getSize(uint32 index) = 0;
+	virtual uint32 getSize(uint32 index) const = 0;
 
 	//! Get size of named object; returns zero if name is invalid
 	//! See also exists(Std::string name)
 	//! \param index index of object to get size of
-	virtual uint32 getSize(const Std::string &name) = 0;
+	virtual uint32 getSize(const Std::string &name) const = 0;
 
 	//! Get object as an IDataSource
 	//! Delete the IDataSource afterwards; that will delete the data as well
@@ -91,12 +91,12 @@ public:
 	//! Get upper bound for number of objects.
 	//! In an indexed file this is (probably) the highest index plus one,
 	//! while in a named file it's (probably) the actual count
-	virtual uint32 getCount() = 0;
+	virtual uint32 getCount() const = 0;
 
 	//! Get the highest index in the file
 	//! Guaranteed to be sufficiently large for a vector that needs to
 	//!  store the indexed entries of this file
-	virtual uint32 getIndexCount() = 0;
+	virtual uint32 getIndexCount() const = 0;
 
 	//! is archive indexed?
 	virtual bool isIndexed() const = 0;

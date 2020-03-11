@@ -77,8 +77,8 @@ bool U8SaveFile::readMetadata() {
 	return true;
 }
 
-bool U8SaveFile::findIndex(const Std::string &name, uint32 &index) {
-	Std::map<Common::String, uint32>::iterator iter;
+bool U8SaveFile::findIndex(const Std::string &name, uint32 &index) const {
+	Std::map<Common::String, uint32>::const_iterator iter;
 	iter = _indices.find(name);
 	if (iter == _indices.end()) return false;
 	index = iter->_value;
@@ -109,7 +109,7 @@ uint8 *U8SaveFile::getObject(const Std::string &name, uint32 *sizep) {
 }
 
 
-uint32 U8SaveFile::getSize(const Std::string &name) {
+uint32 U8SaveFile::getSize(const Std::string &name) const {
 	uint32 index;
 	if (!findIndex(name, index)) return 0;
 

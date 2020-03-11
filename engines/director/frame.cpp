@@ -140,7 +140,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			_soundType2 = stream->readByte();
 		} else {
 			stream->read(unk, 3);
-			warning("Frame::readChannels(): unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
+			if (unk[0] != 0 || unk[1] != 0 || unk[2] != 0)
+				warning("Frame::readChannels(): unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
 		}
 		_skipFrameFlag = stream->readByte();
 		_blend = stream->readByte();
@@ -809,6 +810,15 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	Common::Rect _rect;
 
+	Common::Rect textRect(0, 0, width, height);
+
+	// WORKAROUND, HACK
+	// Because we're not drawing text with transparency
+	// We swap drawing depending on whether the button is
+	// inverted or not, to prevent destroying the border
+	if (!invert)
+		renderText(surface, spriteId, &textRect);
+
 	switch (button->_buttonType) {
 	case kTypeCheckBox:
 		// Magic numbers: checkbox square need to move left about 5px from text and 12px side size (D4)
@@ -832,9 +842,8 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	}
 
-	Common::Rect textRect(0, 0, width, height);
-	// pass the rect of the button into the label.
-	renderText(surface, spriteId, &textRect);
+	if (invert)
+		renderText(surface, spriteId, &textRect);
 }
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textRect) {
@@ -938,7 +947,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	}
 
 	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
-	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), 0xff);
+	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), 255 - _vm->getCurrentScore()->getStageColor());
 
 	if (textRect == NULL && boxShadow > 0) {
 		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);

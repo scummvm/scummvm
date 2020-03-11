@@ -58,7 +58,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// GOG Ultima 6
+	// GOG Ultima VI
 	{
 		{
 			"ultima6",
@@ -73,7 +73,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// GOG Ultima 6 - Enhanced
+	// GOG Ultima VI - Enhanced
 	{
 		{
 			"ultima6_enh",
@@ -88,7 +88,22 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
-	// GOG Ultima 8
+	// Ultima VIII - Ultima Collection 1998
+	{
+		{
+			"ultima8",
+			"",
+			AD_ENTRY1s("eusecode.flx", "87c8b584e2947e5e4d99bd8bff6cea2e", 1251108),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_ULTIMA8,
+		0
+	},
+
+	// GOG Ultima VIII
 	{
 		{
 			"ultima8",
@@ -107,7 +122,6 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			//AD_ENTRY1s("fusecode.flx", "4017eb8678ee24af0ce8c7647a05509b", 1300957),
 			{
 				{ "eusecode.flx", 0, "c61f1dacde591cb39d452264e281f234", 1251108 },
 				{ "fusecode.flx", 0, "4017eb8678ee24af0ce8c7647a05509b", 1300957 },
@@ -126,7 +140,6 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			//AD_ENTRY1s("gusecode.flx", "d69599a46870b66c1b7c02710ed185bdx", 0),
 			{
 				{"eusecode.flx", 0, "c61f1dacde591cb39d452264e281f234", 1251108},
 				{"gusecode.flx", 0, "d69599a46870b66c1b7c02710ed185bd", 1378604},

@@ -106,7 +106,7 @@ void AudioCache::incRef(int32 hash) {
 
 	for (uint i = 0; i != _cacheItems.size(); ++i) {
 		if (_cacheItems[i].hash == hash) {
-			_cacheItems[i].refs++;
+			++(_cacheItems[i].refs);
 			return;
 		}
 	}
@@ -119,7 +119,7 @@ void AudioCache::decRef(int32 hash) {
 	for (uint i = 0; i != _cacheItems.size(); ++i) {
 		if (_cacheItems[i].hash == hash) {
 			assert(_cacheItems[i].refs > 0);
-			_cacheItems[i].refs--;
+			--(_cacheItems[i].refs);
 			return;
 		}
 	}

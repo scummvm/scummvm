@@ -41,11 +41,11 @@ bool UCStack::load(IDataSource *ids, uint32 version) {
 	if (_buf) delete[] _buf;
 	_buf = new uint8[_size];
 #else
-	if (_size > sizeof(buf_array)) {
+	if (_size > sizeof(_bufArray)) {
 		perr << "Error: UCStack _size mismatch (buf_array too small)" << Std::endl;
 		return false;
 	}
-	_buf = buf_array;
+	_buf = _bufArray;
 #endif
 	uint32 sp = ids->read4();
 	_bufPtr = _buf + sp;

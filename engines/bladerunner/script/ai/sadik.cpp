@@ -143,15 +143,15 @@ void AIScriptSadik::ClickedByPlayer() {
 	}
 }
 
-void AIScriptSadik::EnteredScene(int sceneId) {
+void AIScriptSadik::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptSadik::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptSadik::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptSadik::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptSadik::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -495,7 +495,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		if (_var2 == 1) {
 			*animation = 329;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(329)) {
 				*animation = 328;
 				_animationFrame = 0;
@@ -504,7 +504,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		} else if (_var2 == 0) {
 			*animation = 328;
 			if (_var3) {
-				_var3--;
+				--_var3;
 				if (!Random_Query(0, 6)) {
 					_var4 = -_var4;
 				}
@@ -559,7 +559,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			*animation = 339;
 			break;
 		}
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -567,7 +567,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 312;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(312)) {
 			_animationFrame = 0;
 		}
@@ -575,7 +575,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 313;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(313)) {
 			_animationFrame = 0;
 			_animationState = 7;
@@ -586,7 +586,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 314;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(314)) {
 			_animationFrame = 0;
 			_animationState = 7;
@@ -597,7 +597,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 325;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(325)) {
 			*animation = 328;
 			_animationFrame = 0;
@@ -608,7 +608,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 11:
 		*animation = 326;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(326)) {
 			*animation = 328;
 			_animationFrame = 0;
@@ -619,7 +619,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = 315;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(315)) {
 			_animationFrame = 0;
 			_animationState = 7;
@@ -630,7 +630,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 13:
 		*animation = 316;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(316)) {
 			_animationFrame = 0;
 			_animationState = 7;
@@ -642,20 +642,20 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 	case 14:
 		*animation = 327;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(327) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
 	case 15:
 		*animation = 327;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(327) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
 	case 16:
 		*animation = 320;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(320)) {
 			_animationFrame = 0;
 			_animationState = 7;
@@ -665,7 +665,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 17:
 		*animation = 321;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(321)) {
 			*animation = 328;
 			_animationFrame = 0;
@@ -675,7 +675,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 18:
 		*animation = 322;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 5) {
 			int snd;
 			if (Random_Query(1, 2) == 1) {
@@ -703,7 +703,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 			_flag = 0;
 		} else {
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(331)) {
 				_animationFrame = 0;
 			}
@@ -740,7 +740,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			*animation = 338;
 			break;
 		}
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 19;
@@ -750,7 +750,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 27:
 		*animation = 330;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(330)) {
 			*animation = 328;
 			_animationFrame = 0;
@@ -761,7 +761,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 28:
 		*animation = 341;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(341)) {
 			*animation = 328;
 			_animationFrame = 0;
@@ -771,7 +771,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 29:
 		*animation = 342;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(342)) {
 			*animation = 328;
 			_animationFrame = 0;
@@ -781,7 +781,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 30:
 		*animation = 343;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(343)) {
 			*animation = 328;
 			_animationFrame = 0;
@@ -792,7 +792,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 31:
 		*animation = 344;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(344)) {
 			*animation = 328;
 			_animationFrame = 0;
@@ -803,7 +803,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 32:
 		*animation = 345;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 23) {
 			_nextSoundId = kSfxMTLDOOR2;
 		}
@@ -817,7 +817,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 33:
 		*animation = 344;
-		_animationFrame++;
+		++_animationFrame;
 		if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
 			if (_animationFrame == 4) {
 				_nextSoundId = kSfxPUNCH1;
@@ -840,7 +840,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 34:
 		*animation = 343;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame == 4) {
 			if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
 				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);

@@ -226,8 +226,10 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_constrainedMemory = false;
 
 	_settings = new BaseGameSettings(this);
-//#endif
 
+#ifdef ENABLE_HEROCRAFT
+	_rndHc = new Common::RandomSource("HeroCraft");
+#endif
 }
 
 
@@ -277,6 +279,11 @@ BaseGame::~BaseGame() {
 	_renderer = nullptr;
 	_musicSystem = nullptr;
 	_settings = nullptr;
+
+#ifdef ENABLE_HEROCRAFT
+	delete _rndHc;
+	_rndHc = nullptr;
+#endif
 
 	DEBUG_DebugDisable();
 	debugC(kWintermuteDebugLog, "--- shutting down normally ---\n");
@@ -1975,6 +1982,94 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_HEROCRAFT
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] GetSpriteControl
+	// Returns some internal state
+	// Known return values are:
+	// * 44332211: MUST be returned at "game.script" to allow game start
+	// * 77885566: may be returned at "mainMenu.script" to force open registration window
+	// * 90123679: may be returned at "mainMenu.script" to make "Buy Game" button visible
+	// Used at "Pole Chudes" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetSpriteControl") == 0) {
+		stack->correctParams(0);
+		stack->pushInt(44332211L);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] RandomInitSeed
+	// Additional method to be called before RandomSeed()
+	// Used at "Pole Chudes" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "RandomInitSeed") == 0) {
+		stack->correctParams(1);
+		int seed = stack->pop()->getInt();
+
+		_rndHc->setSeed(seed);
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] RandomSeed
+	// Similar to usual Random() function, but using seed provided earlier
+	// Used at "Pole Chudes" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "RandomSeed") == 0) {
+		stack->correctParams(2);
+
+		int from = stack->pop()->getInt();
+		int to   = stack->pop()->getInt();
+		int rnd  = _rndHc->getRandomNumberRng(from, to);
+
+		stack->pushInt(rnd);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] GetImageInfo
+	// Returns image size in "<width>;<height>" format, e.g. "800;600"
+	// Known params: "fsdata\\splash1.jpg"
+	// Game script turn off scaling if returned value is "1024;768"
+	// Used at "Papa's Daughters 1" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetImageInfo") == 0) {
+		stack->correctParams(1);
+		/*const char *filename =*/ stack->pop()->getString();
+		stack->pushString("1024;768");
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] A lot of functions used for self-check
+	// Used at "Papa's Daughters 2" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "DeleteItems") == 0 || strcmp(name, "CreateActorItems") == 0 || strcmp(name, "DeleteActorItems") == 0 || strcmp(name, "PrepareItems") == 0 || strcmp(name, "CreateEntityItems") == 0 || strcmp(name, "DeleteEntityItems") == 0 || strcmp(name, "PrepareItemsWin") == 0 || strcmp(name, "CreateItems") == 0) {
+		stack->correctParams(3);
+		uint32 a = (uint32)stack->pop()->getInt();
+		uint32 b = (uint32)stack->pop()->getInt();
+		uint32 c = (uint32)stack->pop()->getInt();
+
+		uint32 result = 0;
+		const char* fname = "PapasDaughters2.wrp.exe";
+		if (strcmp(name, "PrepareItems") == 0 || strcmp(name, "CreateEntityItems") == 0 || strcmp(name, "DeleteEntityItems") == 0) {
+			result = getFilePartChecksumHc(fname, b, a);
+		} else if (strcmp(name, "PrepareItemsWin") == 0) {
+			result = getFilePartChecksumHc(fname, b, c);
+		} else if (strcmp(name, "CreateItems") == 0) {
+			result = getFilePartChecksumHc(fname, a, c);
+		} else {
+			result = getFilePartChecksumHc(fname, a, b);
+		}
+
+		stack->pushInt(result);
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// EnableScriptProfiling
@@ -4249,6 +4344,40 @@ char *BaseGame::getKeyFromStringTable(const char *str) const {
 	return _settings->getKeyFromStringTable(str);
 }
 
+#ifdef ENABLE_HEROCRAFT
+uint8 BaseGame::getFilePartChecksumHc(const char *filename, uint32 begin, uint32 end) {
+	if (begin >= end) {
+		warning("Wrong limits for checksum check");
+		return 0;
+	}
+
+	uint32 size;
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename, &size);
+	if (buffer == nullptr) {
+		warning("Failed to open '%s' for checksum check", filename);
+		return 0;
+	}
+
+	if (size < end) {
+		warning("File '%s' is too small for checksum check", filename);
+		delete[] buffer;
+		return 0;
+	}
+
+	uint8 result = 0;
+	for (uint32 i = begin; i < end; i++) {
+		uint8 tmp = buffer[i];
+		result += tmp;
+		if (result < tmp) {
+			result++;
+		}
+	}
+
+	delete[] buffer;
+	return result;
+}
+#endif
+
 Common::String BaseGame::readRegistryString(const Common::String &key, const Common::String &initValue) const {
 	// Game specific hacks:
 	Common::String result = initValue;
@@ -4265,7 +4394,7 @@ Common::String BaseGame::readRegistryString(const Common::String &key, const Com
 	} else { // Just fallback to using ConfMan for now
 		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
 		if (ConfMan.hasKey(privKey)) {
-			result = StringUtil::decodeSetting(ConfMan.get(key));
+			result = StringUtil::decodeSetting(ConfMan.get(privKey));
 		}
 	}
 	return result;

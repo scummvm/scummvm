@@ -46,7 +46,7 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 
 		obj_init.hObjImg  = READ_32(pFrame);	// first objects shape
 	} else {	// this must be a animation list for a NULL object
-		pFrame = NULL;
+		pFrame = nullptr;
 		obj_init.hObjImg = 0;	// first objects shape
 	}
 
@@ -77,7 +77,7 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 	}
 
 	// null end of list for final object
-	pObj->pSlave = NULL;
+	pObj->pSlave = nullptr;
 
 	// return master object
 	return pFirst;

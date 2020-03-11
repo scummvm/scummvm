@@ -38,10 +38,10 @@ protected:
 	uint32  _length;
 
 	uint32  _bufferSize;
-	uint8   *_buffer;
+	uint8   const *_buffer;
 
 public:
-	AudioSample(uint8 *buffer, uint32 size);
+	AudioSample(const uint8 *buffer, uint32 size);
 	virtual ~AudioSample(void);
 
 	inline uint32 getRate() const {

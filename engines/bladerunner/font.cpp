@@ -60,7 +60,7 @@ Font* Font::load(BladeRunnerEngine *vm, const Common::String &fileName, int spac
 	}
 
 	font->_characters.resize(font->_characterCount);
-	for (uint32 i = 0; i < font->_characterCount; i++) {
+	for (uint32 i = 0; i < font->_characterCount; ++i) {
 		font->_characters[i].x = stream->readUint32LE();
 		font->_characters[i].y = stream->readUint32LE();
 		font->_characters[i].width = stream->readUint32LE();
@@ -68,7 +68,7 @@ Font* Font::load(BladeRunnerEngine *vm, const Common::String &fileName, int spac
 		font->_characters[i].dataOffset = stream->readUint32LE();
 	}
 
-	for (int i = 0; i < font->_dataSize; i++) {
+	for (int i = 0; i < font->_dataSize; ++i) {
 		font->_data[i] = stream->readUint16LE();
 	}
 
@@ -150,10 +150,10 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 				void *dstPtr = dst->getBasePtr(CLIP(currentX + _characters[characterIndex].x, 0, dst->w - 1), CLIP(currentY + _characters[characterIndex].y, 0, dst->h - 1));
 				drawPixel(*dst, dstPtr, outColor);
 			}
-			srcPtr++;
-			currentX++;
+			++srcPtr;
+			++currentX;
 		}
-		currentY++;
+		++currentY;
 	}
 }
 

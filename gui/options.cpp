@@ -348,10 +348,24 @@ void OptionsDialog::build() {
 	}
 
 	// Shader options
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
-		if (_shaderPopUp) {
-			int value = ConfMan.getInt("shader", _domain);
-			_shaderPopUp->setSelected(value);
+	if (_shaderPopUp) {
+		_shaderPopUp->setSelected(0);
+
+		if (g_system->hasFeature(OSystem::kFeatureShader)) {
+			if (ConfMan.hasKey("shader", _domain)) {
+				const OSystem::GraphicsMode *sm = g_system->getSupportedShaders();
+				Common::String shader(ConfMan.get("shader", _domain));
+				int shaderCount = 1;
+				while (sm->name) {
+					shaderCount++;
+					if (scumm_stricmp(sm->name, shader.c_str()) == 0)
+						_shaderPopUp->setSelected(shaderCount);
+					sm++;
+				}
+			}
+		} else {
+			_shaderPopUpDesc->setVisible(false);
+			_shaderPopUp->setVisible(false);
 		}
 	}
 
@@ -534,6 +548,31 @@ void OptionsDialog::apply() {
 		}
 	}
 
+	// Shader options
+	if (_shaderPopUp) {
+		if (_enableShaderSettings) {
+			bool isSet = false;
+
+			if ((int32)_shaderPopUp->getSelectedTag() >= 0) {
+				const OSystem::GraphicsMode *sm = g_system->getSupportedShaders();
+				while (sm->name) {
+					if (sm->id == (int)_shaderPopUp->getSelectedTag()) {
+						if (ConfMan.get("shader", _domain) != sm->name)
+							graphicsModeChanged = true;
+						ConfMan.set("shader", sm->name, _domain);
+						isSet = true;
+						break;
+					}
+					sm++;
+				}
+			}
+			if (!isSet)
+				ConfMan.removeKey("shader", _domain);
+		} else {
+			ConfMan.removeKey("shader", _domain);
+		}
+	}
+
 	// Setup graphics again if needed
 	if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
 		g_system->beginGFXTransaction();
@@ -547,6 +586,8 @@ void OptionsDialog::apply() {
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 		if (ConfMan.hasKey("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
+		if (ConfMan.hasKey("shader"))
+			g_system->setShader(ConfMan.get("shader", _domain).c_str());
 
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
@@ -613,18 +654,6 @@ void OptionsDialog::apply() {
 			// And display the error
 			GUI::MessageDialog dialog(message);
 			dialog.runModal();
-		}
-	}
-
-	// Shader options
-	if (_enableShaderSettings) {
-		if (g_system->hasFeature(OSystem::kFeatureShader)) {
-			if (_shaderPopUp) {
-				if (ConfMan.getInt("shader", _domain) != (int32)_shaderPopUp->getSelectedTag()) {
-					ConfMan.setInt("shader", _shaderPopUp->getSelectedTag(), _domain);
-					g_system->setShader(_shaderPopUp->getSelectedTag());
-				}
-			}
 		}
 	}
 
@@ -909,6 +938,13 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_aspectCheckbox->setEnabled(enabled);
 }
 
+void OptionsDialog::setShaderSettingsState(bool enabled) {
+	_enableShaderSettings = enabled;
+
+	_shaderPopUpDesc->setEnabled(enabled);
+	_shaderPopUp->setEnabled(enabled);
+}
+
 void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 	_midiPopUpDesc->setEnabled(enabled);
@@ -1067,19 +1103,25 @@ void OptionsDialog::addKeyMapperControls(GuiObject *boss, const Common::String &
 }
 
 void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
+	Common::String context;
+	if (g_system->getOverlayWidth() <= 320)
+		context = "lowres";
+
 	// Shader selector
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
-		if (g_system->getOverlayWidth() > 320)
-			_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _("HW Shader:"), _("Different hardware shaders give different visual effects"));
-		else
-			_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _c("HW Shader:", "lowres"), _("Different hardware shaders give different visual effects"));
-		_shaderPopUp = new PopUpWidget(boss, prefix + "grShaderPopUp", _("Different shaders give different visual effects"));
-		const OSystem::GraphicsMode *p = g_system->getSupportedShaders();
-		while (p->name) {
-			_shaderPopUp->appendEntry(p->name, p->id);
-			p++;
-		}
+	if (g_system->getOverlayWidth() > 320)
+		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _("HW Shader:"), _("Different hardware shaders give different visual effects"));
+	else
+		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _c("HW Shader:", "lowres"), _("Different hardware shaders give different visual effects"));
+	_shaderPopUp = new PopUpWidget(boss, prefix + "grShaderPopUp", _("Different shaders give different visual effects"));
+	const OSystem::GraphicsMode *p = g_system->getSupportedShaders();
+
+	_shaderPopUp->appendEntry(_("<default>"));
+	_shaderPopUp->appendEntry("");
+	while (p->name) {
+		_shaderPopUp->appendEntry(_c(p->description, context), p->id);
+		p++;
 	}
+
 	_enableShaderSettings = true;
 }
 

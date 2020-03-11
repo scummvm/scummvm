@@ -91,20 +91,20 @@ PoliceMaze::PoliceMaze(BladeRunnerEngine *vm) : ScriptBase(vm) {
 	_pm_var1 = 0;
 	_pm_var2 = 0;
 
-	for (int i = 0; i < kNumMazeTracks; i++) {
+	for (int i = 0; i < kNumMazeTracks; ++i) {
 		_tracks[i] = new PoliceMazeTargetTrack(vm);
 	}
 }
 
 PoliceMaze::~PoliceMaze() {
-	for (int i = 0; i < kNumMazeTracks; i++) {
+	for (int i = 0; i < kNumMazeTracks; ++i) {
 		delete _tracks[i];
 		_tracks[i] = nullptr;
 	}
 }
 
 void PoliceMaze::clear(bool isLoadingGame) {
-	for (int i = 0; i < kNumMazeTracks; i++) {
+	for (int i = 0; i < kNumMazeTracks; ++i) {
 		if (_tracks[i]->isPresent()) {
 			_tracks[i]->clear(isLoadingGame);
 		}
@@ -122,7 +122,7 @@ void PoliceMaze::setPauseState(bool state) {
 
 	uint32 timeNow = _vm->_time->current();
 
-	for (int i = 0; i < kNumMazeTracks; i++) {
+	for (int i = 0; i < kNumMazeTracks; ++i) {
 		_tracks[i]->setTime(timeNow);
 	}
 }
@@ -141,12 +141,12 @@ void PoliceMaze::tick() {
 		return;
 	}
 
-	for (int i = 0; i < kNumMazeTracks; i++) {
+	for (int i = 0; i < kNumMazeTracks; ++i) {
 		_tracks[i]->tick();
 	}
 
 	bool notFound = true;
-	for (int i = 0; i < kNumMazeTracks; i++) {
+	for (int i = 0; i < kNumMazeTracks; ++i) {
 		if (!_tracks[i]->isPaused()) {
 			notFound = false;
 			break;
@@ -234,7 +234,7 @@ void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float s
 		double coefY = (endY - startY) * coef;
 		double coefZ = (endZ - startZ) * coef;
 
-		for (int i = 0; i < steps - 1; i++) {
+		for (int i = 0; i < steps - 1; ++i) {
 			_points[i].x = i * coefX + startX;
 			_points[i].y = i * coefY + startY;
 			_points[i].z = i * coefZ + startZ;
@@ -326,10 +326,10 @@ bool PoliceMazeTargetTrack::tick() {
 
 	if (_isMoving) {
 		if (_pointIndex < _pointTarget) {
-			_pointIndex++;
+			++_pointIndex;
 			advancePoint = true;
 		} else if (_pointIndex > _pointTarget) {
-			_pointIndex--;
+			--_pointIndex;
 			advancePoint = true;
 		} else {
 			_isMoving = 0;
@@ -346,7 +346,7 @@ bool PoliceMazeTargetTrack::tick() {
 	bool cont = true;
 
 	while (cont) {
-		_dataIndex++;
+		++_dataIndex;
 
 		switch (_data[_dataIndex - 1]) {
 		case kPMTIActivate:
@@ -379,7 +379,7 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIShoot:
 			{
 				int soundId = _data[_dataIndex++];
-				_dataIndex++; // second argument is not used
+				++_dataIndex; // second argument is not used
 #if BLADERUNNER_DEBUG_CONSOLE
 				debug("ItemId: %3i, Shoot, SoundId: %i", _itemId, soundId);
 #endif

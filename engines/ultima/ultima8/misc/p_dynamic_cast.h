@@ -1,21 +1,23 @@
-/*
- *  p_dynamic_cast.cpp - Pentagram Dynamic Cast Emulation Header
+/* ScummVM - Graphic Adventure Engine
  *
- *  Copyright (C) 2003-2006  The Pentagram Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef ULTIMA8_MISC_P_DYNAMIC_CAST_H
@@ -44,17 +46,17 @@ struct RunTimeClassType {
 //
 #define ENABLE_RUNTIME_CLASSTYPE()                                              \
 	static const RunTimeClassType   ClassType;                                  \
-	virtual bool IsOfType(const RunTimeClassType & type) override;              \
-	virtual bool IsOfType(const char * type) override;                          \
-	template<class Type> inline bool IsOfType() { return IsOfType(Type::ClassType); }   \
-	virtual const RunTimeClassType & GetClassType() override { return ClassType; }
+	virtual bool IsOfType(const RunTimeClassType & type) const override;        \
+	virtual bool IsOfType(const char * type) const override;                    \
+	template<class Type> inline bool IsOfType() const { return IsOfType(Type::ClassType); }   \
+	virtual const RunTimeClassType & GetClassType() const override { return ClassType; }
 
 #define ENABLE_RUNTIME_CLASSTYPE_BASE()                                         \
 	static const RunTimeClassType   ClassType;                                  \
-	virtual bool IsOfType(const RunTimeClassType & type);                       \
-	virtual bool IsOfType(const char * type);                                   \
-	template<class Type> inline bool IsOfType() { return IsOfType(Type::ClassType); }   \
-	virtual const RunTimeClassType & GetClassType() { return ClassType; }
+	virtual bool IsOfType(const RunTimeClassType & type) const;                 \
+	virtual bool IsOfType(const char * type) const;                             \
+	template<class Type> inline bool IsOfType() const { return IsOfType(Type::ClassType); }   \
+	virtual const RunTimeClassType & GetClassType() const { return ClassType; }
 
 
 
@@ -66,13 +68,13 @@ struct RunTimeClassType {
 	#Classname                                                      \
     };                                                                  \
 	\
-	bool Classname::IsOfType(const RunTimeClassType &classType)         \
+	bool Classname::IsOfType(const RunTimeClassType &classType) const   \
 	{                                                                   \
 		if (classType == ClassType) return true;                        \
 		return false;                                                   \
 	}                                                                   \
 	\
-	bool Classname::IsOfType(const char *classType)                     \
+	bool Classname::IsOfType(const char *classType) const               \
 	{                                                                   \
 		if (!Std::strcmp(classType,ClassType._className)) return true;  \
 		return false;                                                   \
@@ -87,13 +89,13 @@ struct RunTimeClassType {
 	                                                                    #Classname                                                      \
 	                                              };                                                                  \
 	\
-	bool Classname::IsOfType(const RunTimeClassType & classType)        \
+	bool Classname::IsOfType(const RunTimeClassType & classType) const  \
 	{                                                                   \
 		if (classType == ClassType) return true;                        \
 		return ParentClassname::IsOfType(classType);                    \
 	}                                                                   \
 	\
-	bool Classname::IsOfType(const char *typeName)                      \
+	bool Classname::IsOfType(const char *typeName) const                \
 	{                                                                   \
 		if (!Std::strcmp(typeName,ClassType._className)) return true;   \
 		return ParentClassname::IsOfType(typeName);                     \
@@ -109,7 +111,7 @@ struct RunTimeClassType {
 	                                                                        #Classname                                                          \
 	                                              };                                                                      \
 	\
-	bool Classname::IsOfType(const RunTimeClassType &type)                  \
+	bool Classname::IsOfType(const RunTimeClassType &type) const            \
 	{                                                                       \
 		typedef Parent1 P1;                                                 \
 		typedef Parent2 P2;                                                 \
@@ -119,7 +121,7 @@ struct RunTimeClassType {
 		return P2::IsOfType(type);                                          \
 	}                                                                       \
 	\
-	bool Classname::IsOfType(const char * type)                             \
+	bool Classname::IsOfType(const char * type) const                       \
 	{                                                                       \
 		typedef Parent1 P1;                                                 \
 		typedef Parent2 P2;                                                 \

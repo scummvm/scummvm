@@ -26,11 +26,14 @@
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "graphics/font.h"
+#include "graphics/pixelformat.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 class TTFont : public Font {
+private:
+	Graphics::PixelFormat _pixelFormat;
 public:
 	TTFont(Graphics::Font *font, uint32 rgb, int bordersize,
 	       bool antiAliased, bool SJIS);
@@ -60,12 +63,12 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 protected:
 	Graphics::Font *_ttfFont;
-	uint32 _rgb;
+	uint32 _color;
 	int _borderSize;
 	bool _antiAliased;
 	bool _SJIS;
 
-	uint16 bullet;
+	uint16 _bullet;
 };
 
 } // End of namespace Ultima8

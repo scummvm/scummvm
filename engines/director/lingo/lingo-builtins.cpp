@@ -62,15 +62,15 @@ static struct BuiltinProto {
 	// String
 	{ "chars",			LB::b_chars,		3, 3, true, 2, FBLTIN },	// D2 f
 	{ "charToNum",		LB::b_charToNum,	1, 1, true, 2, FBLTIN },	// D2 f
-	{ "delete",			LB::b_delete,		1, 1, true, 3, BLTIN },	//		D3 c
-	{ "hilite",			LB::b_hilite,		1, 1, true, 3, BLTIN },	//		D3 c
+	{ "delete",			LB::b_delete,		1, 1, true, 3, BLTIN },		//		D3 command
+	{ "hilite",			LB::b_hilite,		1, 1, true, 3, BLTIN },		//		D3 c
 	{ "length",			LB::b_length,		1, 1, true, 2, FBLTIN },	// D2 f
 	{ "numToChar",		LB::b_numToChar,	1, 1, true, 2, FBLTIN },	// D2 f
 	{ "offset",			LB::b_offset,		2, 3, true, 2, FBLTIN },	// D2 f
 	{ "string",			LB::b_string,		1, 1, true, 2, FBLTIN },	// D2 f
 	{ "value",		 	LB::b_value,		1, 1, true, 2, FBLTIN },	// D2 f
 	// Lists
-	{ "add",			LB::b_add,			2, 2, false, 4, BLTIN },	//			D4 command
+	{ "add",			LB::b_add,			2, 2, false, 4, BLTIN },	//			D4 c
 	{ "addAt",			LB::b_addAt,		3, 3, false, 4, BLTIN },	//			D4 c
 	{ "addProp",		LB::b_addProp,		3, 3, false, 4, BLTIN },	//			D4 c
 	{ "append",			LB::b_append,		2, 2, false, 4, BLTIN },	//			D4 c
@@ -99,7 +99,7 @@ static struct BuiltinProto {
 	{ "closeResFile",	LB::b_closeResFile,	0, 1, false, 2, BLTIN },	// D2 c
 	{ "closeXlib",		LB::b_closeXlib,	0, 1, false, 2, BLTIN },	// D2 c
 	{ "getNthFileNameInFolder",LB::b_getNthFileNameInFolder,2,2,true,4,FBLTIN },//	D4 f
-		// open																// D2 c
+		// open															// D2 c
 	{ "openDA",	 		LB::b_openDA, 		1, 1, false, 2, BLTIN },	// D2 c
 	{ "openResFile",	LB::b_openResFile,	1, 1, false, 2, BLTIN },	// D2 c
 	{ "openXlib",		LB::b_openXlib,		1, 1, false, 2, BLTIN },	// D2 c
@@ -119,20 +119,20 @@ static struct BuiltinProto {
 	{ "nothing",		LB::b_nothing,		0, 0, false, 2, BLTIN },	// D2 c
 	{ "pass",			LB::b_pass,			0, 0, false, 4, BLTIN },	//			D4 c
 	{ "pause",			LB::b_pause,		0, 0, false, 2, BLTIN },	// D2 c
-		// play																// D2 c
+		// play															// D2 c
 	{ "playAccel",		LB::b_playAccel,	-1,0, false, 2, BLTIN },	// D2
-		// play done														// D2
+		// play done													// D2
 	{ "preLoad",		LB::b_preLoad,		-1,0, false, 3, BLTIN },	//		D3.1 c
 	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, false, 3, BLTIN },	//		D3.1 c
 	{ "quit",			LB::b_quit,			0, 0, false, 2, BLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, false, 2, BLTIN },	// D2 c
-	{ "return",			LB::b_return,		0, 1, false, 2, BLTIN },	// D2 function
+	{ "return",			LB::b_return,		0, 1, false, 2, BLTIN },	// D2 f
 	{ "shutDown",		LB::b_shutDown,		0, 0, false, 2, BLTIN },	// D2 c
 	{ "startTimer",		LB::b_startTimer,	0, 0, false, 2, BLTIN },	// D2 c
-		// when keyDown														// D2
-		// when mouseDown													// D2
-		// when mouseUp														// D2
-		// when timeOut														// D2
+		// when keyDown													// D2
+		// when mouseDown												// D2
+		// when mouseUp													// D2
+		// when timeOut													// D2
 	// Types
 	{ "factory",		LB::b_factoryP,		1, 1, true,  3, FBLTIN },	//		D3
 	{ "floatP",			LB::b_floatP,		1, 1, true,  3, FBLTIN },	//		D3
@@ -152,8 +152,8 @@ static struct BuiltinProto {
 	{ "HMStoFrames",	LB::b_HMStoFrames,	4, 4, false, 3, FBLTIN },	//		D3 f
 	{ "param",	 		LB::b_param,		1, 1, true,  4, FBLTIN },	//			D4 f
 	{ "printFrom",	 	LB::b_printFrom,	-1,0, false, 2, BLTIN },	// D2 c
-		// put																// D2
-		// set																// D2
+		// put															// D2
+		// set															// D2
 	{ "showGlobals",	LB::b_showGlobals,	0, 0, false, 2, BLTIN },	// D2 c
 	{ "showLocals",		LB::b_showLocals,	0, 0, false, 2, BLTIN },	// D2 c
 	// Score
@@ -164,7 +164,7 @@ static struct BuiltinProto {
 	{ "editableText",	LB::b_editableText,	0, 0, false, 2, BLTIN },	// D2, FIXME: the field in D4+
 	{ "erase",			LB::b_erase,		1, 1, false, 4, BLTIN },	//			D4 c
 	{ "findEmpty",		LB::b_findEmpty,	1, 1, true,  4, FBLTIN },	//			D4 f
-		// go														// D2
+		// go															// D2
 	{ "importFileInto",	LB::b_importFileInto,2, 2, false, 4, BLTIN },	//			D4 c
 	{ "installMenu",	LB::b_installMenu,	1, 1, false, 2, BLTIN },	// D2 c
 	{ "label",			LB::b_label,		1, 1, true,  2, FBLTIN },	// D2 f
@@ -199,7 +199,7 @@ static struct BuiltinProto {
 	{ "sound-fadeIn",	LB::b_soundFadeIn, 	1, 2, false, 3, BLTIN },	//		D3 c
 	{ "sound-fadeOut",	LB::b_soundFadeOut, 1, 2, false, 3, BLTIN },	//		D3 c
 	{ "sound-playFile",	LB::b_soundPlayFile,2, 2, false, 3, BLTIN },	//		D3 c
-	{ "sound-stop",		LB::b_soundStop,	1, 1, false, 3, BLTIN },	//		D3 c
+	{ "sound-stop",		LB::b_soundStop,	1, 1, false, 2, BLTIN },	//		D2 c
 	{ "soundBusy",		LB::b_soundBusy,	1, 1, true,  3, FBLTIN },	//		D3 f
 	// Window
 	{ "close",			LB::b_close,		1, 1, false, 4, BLTIN },	//			D4 c
@@ -553,7 +553,7 @@ void LB::b_value(int nargs) {
 // Lists
 ///////////////////
 void LB::b_add(int nargs) {
-	// FIXME: when a list is "sorted", add should insert based on 
+	// FIXME: when a list is "sorted", add should insert based on
 	// the current ordering. otherwise, append to the end.
 	LB::b_append(nargs);
 }

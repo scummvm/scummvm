@@ -49,10 +49,10 @@ uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) 
 			count = MIN(count, out_remain);
 
 			if (version == 1) {
-				for (i = 0; i < count; i++)
+				for (i = 0; i < count; ++i)
 					dst[i] = outBuf[i + pos];
 			} else {
-				for (i = 0; i < count; i++)
+				for (i = 0; i < count; ++i)
 					dst[i] = *(dst + i - pos);
 			}
 		} else if (src[0] == 0xfe) { // 0b11111110
@@ -69,10 +69,10 @@ uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) 
 			count = MIN(count, out_remain);
 
 			if (version == 1) {
-				for (i = 0; i < count; i++)
+				for (i = 0; i < count; ++i)
 					dst[i] = outBuf[i + pos];
 			} else {
-				for (i = 0; i < count; i++)
+				for (i = 0; i < count; ++i)
 					dst[i] = *(dst + i - pos);
 			}
 		} else if (src[0] >= 0x80) { // 0b10??????
@@ -88,7 +88,7 @@ uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) 
 			src += 2;
 			count = MIN(count, out_remain);
 
-			for (i = 0; i < count; i++) {
+			for (i = 0; i < count; ++i) {
 				dst[i] = *(dst + i - relpos);
 			}
 		}

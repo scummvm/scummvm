@@ -403,6 +403,7 @@ int ConvertShape::CalcNumFrames(IDataSource *source, const ConvertShapeFormat *c
 		uint32 frame_length = real_len-frame_offset;
 		if (csf->_bytes_frame_length)
 			frame_length = source->readX(csf->_bytes_frame_length) + csf->_bytes_frame_length_kludge;
+		debug(MM_INFO, "Frame %d length = %xh", f, frame_length);
 	}
 
 	source->seek(save_pos);

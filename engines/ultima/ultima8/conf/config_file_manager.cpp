@@ -1,20 +1,24 @@
-/*
-Copyright (C) 2004 The Pentagram team
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
@@ -37,6 +41,7 @@ ConfigFileManager::ConfigFileManager() {
 ConfigFileManager::~ConfigFileManager() {
 	debugN(MM_INFO, "Destroying ConfigFileManager...\n");
 
+	ConfMan.flushToDisk();
 	clear();
 	_configFileManager = 0;
 }
@@ -145,38 +150,63 @@ bool ConfigFileManager::get(istring key, bool &ret) {
 }
 
 void ConfigFileManager::set(istring key, string val) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.set(subKey, val);
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->set(key, val);
+		ini->set(key, val);
+	}
 }
 
 void ConfigFileManager::set(istring key, const char *val) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.set(subKey, val);
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->set(key, val);
+		ini->set(key, val);
+	}
 }
 
 void ConfigFileManager::set(istring key, int val) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.setInt(subKey, val);
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->set(key, val);
+		ini->set(key, val);
+	}
 }
 
 void ConfigFileManager::set(istring key, bool val) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.setBool(subKey, val);
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->set(key, val);
+		ini->set(key, val);
+	}
 }
 
 void ConfigFileManager::unset(istring key) {
-	INIFile *ini = findWriteINI(key);
-	if (!ini) return;
+	if (key.hasPrefix("settings/")) {
+		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
+		ConfMan.set(subKey, "");
+	} else {
+		INIFile *ini = findWriteINI(key);
+		if (!ini) return;
 
-	ini->unset(key);
+		ini->unset(key);
+	}
 }
 
 

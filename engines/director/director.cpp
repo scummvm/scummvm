@@ -75,10 +75,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_lingo = nullptr;
 
 	_sharedScore = nullptr;
-	_sharedSound = nullptr;
-	_sharedBMP = nullptr;
-	_sharedSTXT = nullptr;
-	_sharedDIB = nullptr;
 
 	_mainArchive = nullptr;
 	_macBinary = nullptr;
@@ -106,12 +102,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
-	delete _sharedSound;
-	delete _sharedBMP;
-	delete _sharedSTXT;
-	delete _sharedDIB;
 	delete _sharedScore;
-
 	delete _currentScore;
 
 	cleanupMainArchive();
@@ -224,7 +215,7 @@ Common::Error DirectorEngine::run() {
 
 		if (_currentScore) {
 			debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			debug(0, "@@@@   Score name '%s'", _currentScore->getMacName().c_str());
+			debug(0, "@@@@   Score name '%s' in '%s'", _currentScore->getMacName().c_str(), _currentPath.c_str());
 			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 			_currentScore->loadArchive();

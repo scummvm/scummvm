@@ -140,15 +140,15 @@ void AIScriptLuther::ClickedByPlayer() {
 	//return false;
 }
 
-void AIScriptLuther::EnteredScene(int sceneId) {
+void AIScriptLuther::EnteredSet(int setId) {
 	// return false;
 }
 
-void AIScriptLuther::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptLuther::OtherAgentEnteredThisSet(int otherActorId) {
 	// return false;
 }
 
-void AIScriptLuther::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptLuther::OtherAgentExitedThisSet(int otherActorId) {
 	// return false;
 }
 
@@ -247,7 +247,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		*animation = 346;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
@@ -255,7 +255,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 348;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			*animation = 346;
 			_animationFrame = 0;
@@ -272,7 +272,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		} else {
 			*animation = 349;
-			_animationFrame++;
+			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
 			}
@@ -281,7 +281,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 350;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -291,7 +291,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = 351;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -301,7 +301,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = 352;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -311,7 +311,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		*animation = 353;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -321,7 +321,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = 354;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -331,7 +331,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 8:
 		*animation = 355;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 2;
@@ -341,7 +341,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 9:
 		*animation = 356;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			*animation = 346;
 			_animationFrame = 0;
@@ -352,7 +352,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 357;
-		_animationFrame++;
+		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorLuther, 50);
 			*animation = 358;
@@ -363,7 +363,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 	case 11:
 		*animation = 358;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
@@ -373,7 +373,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 			Ambient_Sounds_Play_Sound(kSfxHEADHIT2, 59, 0, 0, 20);
 		}
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
-			_animationFrame++;
+			++_animationFrame;
 		}
 		break;
 
