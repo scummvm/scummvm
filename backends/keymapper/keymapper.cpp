@@ -40,7 +40,7 @@ Keymapper::Keymapper(EventManager *eventMan) :
 		_backendDefaultBindings(nullptr),
 		_delayedEventSource(new DelayedEventSource()),
 		_enabled(true),
-		_enabledKeymapType(Keymap::kKeymapTypeGlobal) {
+		_enabledKeymapType(Keymap::kKeymapTypeGame) {
 	_eventMan->getEventDispatcher()->registerSource(_delayedEventSource, true);
 	resetInputState();
 }
@@ -90,9 +90,7 @@ void Keymapper::addGlobalKeymap(Keymap *keymap) {
 
 	ConfigManager::Domain *keymapperDomain = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 	initKeymap(keymap, keymapperDomain);
-
-	// Global keymaps have the lowest priority, they need to be first in the array
-	_keymaps.insert_at(0, keymap);
+	_keymaps.push_back(keymap);
 }
 
 void Keymapper::addGameKeymap(Keymap *keymap) {
@@ -150,9 +148,9 @@ void Keymapper::reloadAllMappings() {
 }
 
 void Keymapper::setEnabledKeymapType(Keymap::KeymapType type) {
+	assert(type == Keymap::kKeymapTypeGui || type == Keymap::kKeymapTypeGame);
 	_enabledKeymapType = type;
 }
-
 
 List<Event> Keymapper::mapEvent(const Event &ev) {
 	if (!_enabled) {
@@ -164,44 +162,11 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 	hardcodedEventMapping(ev);
 
 	List<Event> mappedEvents;
-	for (int i = _keymaps.size() - 1; i >= 0; --i) {
-		if (!_keymaps[i]->isEnabled()) {
-			continue;
-		}
-
-		Keymap::KeymapType keymapType = _keymaps[i]->getType();
-		if (keymapType != _enabledKeymapType && keymapType != Keymap::kKeymapTypeGlobal) {
-			continue; // Ignore GUI keymaps while in game and vice versa
-		}
-
-		//debug(9, "Keymapper::mapKey keymap: %s", _keymaps[i]->getId().c_str());
-
-		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(ev);
-		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
-			Event mappedEvent = executeAction(*it, ev);
-			if (mappedEvent.type == EVENT_INVALID) {
-				continue;
-			}
-
-			// In case we mapped a mouse event to something else, we need to generate an artificial
-			// mouse move event so event observers can keep track of the mouse position.
-			// Makes it possible to reliably use the mouse position from EventManager when consuming
-			// custom action events.
-			if (isMouseEvent(ev) && !isMouseEvent(mappedEvent)) {
-				Event fakeMouseEvent;
-				fakeMouseEvent.type  = EVENT_MOUSEMOVE;
-				fakeMouseEvent.mouse = ev.mouse;
-
-				mappedEvents.push_back(fakeMouseEvent);
-			}
-
-			mappedEvents.push_back(mappedEvent);
-		}
-		if (!actions.empty()) {
-			// If we found actions matching this input in a keymap, no need to look at the other keymaps.
-			// An input resulting in actions from system and game keymaps would lead to unexpected user experience.
-			break;
-		}
+	if (!mapEvent(ev, _enabledKeymapType, mappedEvents)) {
+		// If we found actions matching this input in the game / gui keymaps,
+		// no need to look at the global keymaps. An input resulting in actions
+		// from system and game keymaps would lead to unexpected user experience.
+		mapEvent(ev, Keymap::kKeymapTypeGlobal, mappedEvents);
 	}
 
 	if (ev.type == EVENT_JOYAXIS_MOTION && ev.joystick.axis < ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
@@ -225,6 +190,44 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 	}
 
 	return mappedEvents;
+}
+
+bool Keymapper::mapEvent(const Event &ev, Keymap::KeymapType keymapType, List<Event> &mappedEvents) {
+	bool matchedAction = false;
+
+	for (uint i = 0; i < _keymaps.size(); i++) {
+		if (!_keymaps[i]->isEnabled() || _keymaps[i]->getType() != keymapType) {
+			continue;
+		}
+
+		Keymap::ActionArray actions = _keymaps[i]->getMappedActions(ev);
+		if (!actions.empty()) {
+			matchedAction = true;
+		}
+
+		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
+			Event mappedEvent = executeAction(*it, ev);
+			if (mappedEvent.type == EVENT_INVALID) {
+				continue;
+			}
+
+			// In case we mapped a mouse event to something else, we need to generate an artificial
+			// mouse move event so event observers can keep track of the mouse position.
+			// Makes it possible to reliably use the mouse position from EventManager when consuming
+			// custom action events.
+			if (isMouseEvent(ev) && !isMouseEvent(mappedEvent)) {
+				Event fakeMouseEvent;
+				fakeMouseEvent.type  = EVENT_MOUSEMOVE;
+				fakeMouseEvent.mouse = ev.mouse;
+
+				mappedEvents.push_back(fakeMouseEvent);
+			}
+
+			mappedEvents.push_back(mappedEvent);
+		}
+	}
+
+	return matchedAction;
 }
 
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
