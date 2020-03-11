@@ -117,6 +117,7 @@ enum ZVisionAction {
 };
 
 extern const char *mainKeymapId;
+extern const char *gameKeymapId;
 extern const char *cutscenesKeymapId;
 
 class ZVision : public Engine {
@@ -162,7 +163,7 @@ private:
 	// To prevent allocation every time we process events
 	Common::Event _event;
 
-	Common::Keymap *_mainKeymap, *_cutscenesKeymap;
+	Common::Keymap *_gameKeymap, *_cutscenesKeymap;
 
 	int _frameRenderDelay;
 	int _renderedFrameCount;
@@ -210,6 +211,9 @@ public:
 		return _menu;
 	}
 
+	Common::Keymap *getGameKeymap() const {
+		return _gameKeymap;
+	}
 	Common::RandomSource *getRandomSource() const {
 		return _rnd;
 	}

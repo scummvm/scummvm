@@ -94,7 +94,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 	_videoIsPlaying = true;
 
 	_cutscenesKeymap->setEnabled(true);
-	_mainKeymap->setEnabled(false);
+	_gameKeymap->setEnabled(false);
 
 	// Only continue while the video is still playing
 	while (!shouldQuit() && !vid.endOfVideo() && vid.isPlaying()) {
@@ -142,7 +142,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 	}
 
 	_cutscenesKeymap->setEnabled(false);
-	_mainKeymap->setEnabled(true);
+	_gameKeymap->setEnabled(true);
 
 	_videoIsPlaying = false;
 	_clock.start();

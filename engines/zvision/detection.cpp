@@ -145,90 +145,92 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	mainKeymap->addAction(act);
 
+	Keymap *gameKeymap = new Keymap(Keymap::kKeymapTypeGame, gameKeymapId, "Z-Vision - Game");
+
 	act = new Action(kStandardActionMoveUp, _("Look Up"));
 	act->setCustomEngineActionEvent(kZVisionActionUp);
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("JOY_UP");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action(kStandardActionMoveDown, _("Look Down"));
 	act->setCustomEngineActionEvent(kZVisionActionDown);
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action(kStandardActionMoveLeft, _("Turn Left"));
 	act->setCustomEngineActionEvent(kZVisionActionLeft);
 	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("JOY_LEFT");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action(kStandardActionMoveRight, _("Turn Right"));
 	act->setCustomEngineActionEvent(kZVisionActionRight);
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("JOY_RIGHT");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action("FPS", _("Show FPS"));
 	act->setCustomEngineActionEvent(kZVisionActionShowFPS);
 	act->addDefaultInputMapping("F10");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action("HELP", _("Help"));
 	act->setKeyEvent(KEYCODE_F1);
 	act->addDefaultInputMapping("F1");
 	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action("INV", _("Inventory"));
 	act->setKeyEvent(KEYCODE_F5);
 	act->addDefaultInputMapping("F5");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action("SPELL", _("Spellbook"));
 	act->setKeyEvent(KEYCODE_F6);
 	act->addDefaultInputMapping("F6");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action("SCORE", _("Score"));
 	act->setKeyEvent(KEYCODE_F7);
 	act->addDefaultInputMapping("F7");
 	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action("AWAY", _("Put away object"));
 	act->setKeyEvent(KEYCODE_F8);
 	act->addDefaultInputMapping("F8");
 	act->addDefaultInputMapping("JOY_X");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action("COIN", _("Extract coin"));
 	act->setKeyEvent(KEYCODE_F9);
 	act->addDefaultInputMapping("F9");
 	act->addDefaultInputMapping("JOY_Y");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action(kStandardActionSave, _("Save"));
 	act->setCustomEngineActionEvent(kZVisionActionSave);
 	act->addDefaultInputMapping("C+s");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action(kStandardActionLoad, _("Restore"));
 	act->setCustomEngineActionEvent(kZVisionActionRestore);
 	act->addDefaultInputMapping("C+r");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action("QUIT", _("Quit"));
 	act->setCustomEngineActionEvent(kZVisionActionQuit);
 	act->addDefaultInputMapping("C+q");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	act = new Action(kStandardActionOpenSettings, _("Preferences"));
 	act->setCustomEngineActionEvent(kZVisionActionPreferences);
 	act->addDefaultInputMapping("C+p");
-	mainKeymap->addAction(act);
+	gameKeymap->addAction(act);
 
 	Keymap *cutscenesKeymap = new Keymap(Keymap::kKeymapTypeGame, cutscenesKeymapId, "Z-Vision - Cutscenes");
 
@@ -243,9 +245,10 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("C+q");
 	cutscenesKeymap->addAction(act);
 
-	KeymapArray keymaps(2);
+	KeymapArray keymaps(3);
 	keymaps[0] = mainKeymap;
-	keymaps[1] = cutscenesKeymap;
+	keymaps[1] = gameKeymap;
+	keymaps[2] = cutscenesKeymap;
 
 	return keymaps;
 }

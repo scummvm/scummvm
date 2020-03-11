@@ -30,8 +30,11 @@
 #include "zvision/text/string_manager.h"
 #include "zvision/graphics/render_manager.h"
 
+#include "backends/keymapper/keymap.h"
+
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/rect.h"
 #include "video/video_decoder.h"
 
@@ -118,6 +121,23 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 InputControl::~InputControl() {
 	_background->free();
 	delete _background;
+	unfocus();
+}
+
+void InputControl::focus() {
+	if (!_readOnly) {
+		_engine->getGameKeymap()->setEnabled(false);
+	}
+	_focused = true;
+	_textChanged = true;
+}
+
+void InputControl::unfocus() {
+	if (!_readOnly) {
+		_engine->getGameKeymap()->setEnabled(true);
+	}
+	_focused = false;
+	_textChanged = true;
 }
 
 bool InputControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
