@@ -73,6 +73,7 @@ namespace Ultima4 {
 
 using namespace std;
 
+extern bool quit;
 GameController *game = NULL;
 
 /*-----------------*/
@@ -1401,7 +1402,6 @@ bool GameController::keyPressed(int key) {
             {             
                 // TODO - implement loop in main() and let quit fall back to there
                 // Quit to the main menu
-                extern bool quit;
                 endTurn = false;
 
                 screenMessage("Quit to menu?");            

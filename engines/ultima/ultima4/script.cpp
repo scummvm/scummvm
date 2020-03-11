@@ -46,7 +46,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace std;
+extern SpellEffectCallback spellEffectCallback;
 
 /*
  * Script::Variable class
@@ -1231,7 +1231,6 @@ Script::ReturnCode Script::heal(xmlNodePtr script, xmlNodePtr current) {
  * Performs all of the visual/audio effects of casting a spell
  */ 
 Script::ReturnCode Script::castSpell(xmlNodePtr script, xmlNodePtr current) {
-    extern SpellEffectCallback spellEffectCallback;
     (*spellEffectCallback)('r', -1, SOUND_MAGIC);
     if (debug)
         ::debug("\n<Spell effect>");

@@ -37,6 +37,8 @@
 namespace Ultima {
 namespace Ultima4 {
 
+extern TileAnimSet *tileanims;
+
 TileId Tile::nextId = 0;
 
 Tile::Tile(Tileset *tileset)
@@ -178,8 +180,6 @@ void Tile::loadImage() {
         }
 
         if (animationRule.size() > 0) {
-            extern TileAnimSet *tileanims;
-
             anim = NULL;
             if (tileanims)
                 anim = tileanims->getByName(animationRule);
