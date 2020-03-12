@@ -319,13 +319,13 @@ CreatureStatus Creature::getState() const {
 bool Creature::specialAction() {
     bool retval = false;        
 
-    int dx = abs(c->location->coords.x - coords.x);
-    int dy = abs(c->location->coords.y - coords.y);
-    int mapdist = c->location->coords.distance(coords, c->location->map);
+    int dx = abs(c->_location->coords.x - coords.x);
+    int dy = abs(c->_location->coords.y - coords.y);
+    int mapdist = c->_location->coords.distance(coords, c->_location->map);
 
     /* find out which direction the avatar is in relation to the creature */
     MapCoords mapcoords(coords);
-    int dir = mapcoords.getRelativeDirection(c->location->coords, c->location->map);
+    int dir = mapcoords.getRelativeDirection(c->_location->coords, c->_location->map);
 
     //Init outside of switch
     int broadsidesDirs = 0;
@@ -341,7 +341,7 @@ bool Creature::specialAction() {
            and not in a city
            Note: Monsters in settlements in U3 do fire on party
         */
-        if (mapdist <= 3 && xu4_random(2) == 0 && (c->location->context & CTX_CITY) == 0) {
+        if (mapdist <= 3 && xu4_random(2) == 0 && (c->_location->context & CTX_CITY) == 0) {
             Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, coords,
                                                                1, 3, NULL, false);
             for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
@@ -396,15 +396,15 @@ bool Creature::specialEffect() {
         {
             ObjectDeque::iterator i;
 
-            if (coords == c->location->coords) {
+            if (coords == c->_location->coords) {
 
                 /* damage the ship */
-                if (c->transportContext == TRANSPORT_SHIP) {
+                if (c->_transportContext == TRANSPORT_SHIP) {
                     /* FIXME: Check actual damage from u4dos */                           
                     gameDamageShip(10, 30);                        
                 }
                 /* anything else but balloon damages the party */
-                else if (c->transportContext != TRANSPORT_BALLOON) {
+                else if (c->_transportContext != TRANSPORT_BALLOON) {
                     /* FIXME: formula for twister damage is guesstimated from u4dos */
                     gameDamageParty(0, 75);
                 }
@@ -412,14 +412,14 @@ bool Creature::specialEffect() {
             }
 
             /* See if the storm is on top of any objects and destroy them! */
-            for (i = c->location->map->objects.begin();
-                 i != c->location->map->objects.end();) {
+            for (i = c->_location->map->objects.begin();
+                 i != c->_location->map->objects.end();) {
 
                 obj = *i;
                 if (this != obj &&
                     obj->getCoords() == coords) {
                     /* Converged with an object, destroy the object! */
-                    i = c->location->map->removeObject(i);
+                    i = c->_location->map->removeObject(i);
                     retval = true;
                 }
                 else i++;
@@ -431,13 +431,13 @@ bool Creature::specialEffect() {
         {
             ObjectDeque::iterator i;
 
-            if (coords == c->location->coords && (c->transportContext == TRANSPORT_SHIP)) {                    
+            if (coords == c->_location->coords && (c->_transportContext == TRANSPORT_SHIP)) {                    
                                 
                 /* Deal 10 damage to the ship */
                 gameDamageShip(-1, 10);
 
                 /* Send the party to Locke Lake */
-                c->location->coords = c->location->map->getLabel("lockelake");
+                c->_location->coords = c->_location->map->getLabel("lockelake");
 
                 /* Teleport the whirlpool that sent you there far away from lockelake */
                 this->setCoords(Coords(0,0,0));
@@ -446,8 +446,8 @@ bool Creature::specialEffect() {
             }
 
             /* See if the whirlpool is on top of any objects and destroy them! */
-            for (i = c->location->map->objects.begin();
-                 i != c->location->map->objects.end();) {
+            for (i = c->_location->map->objects.begin();
+                 i != c->_location->map->objects.end();) {
 
                 obj = *i;
 
@@ -459,7 +459,7 @@ bool Creature::specialEffect() {
                     /* Make sure the object isn't a flying creature or object */
                     if (!m || (m && (m->swims() || m->sails()) && !m->flies())) {
                         /* Destroy the object it met with */
-                        i = c->location->map->removeObject(i);
+                        i = c->_location->map->removeObject(i);
                         retval = true;
                     }
                     else {
@@ -490,7 +490,7 @@ void Creature::act(CombatController *controller) {
         return;
 
     if (negates())
-        c->aura->set(Aura::NEGATE, 2);
+        c->_aura->set(Aura::NEGATE, 2);
 
     /*
      * figure out what to do
@@ -502,10 +502,10 @@ void Creature::act(CombatController *controller) {
     // creatures who ranged attack do so 1/4 of the time.  Make sure
     // their ranged attack is not negated!
     else if (ranged != 0 && xu4_random(4) == 0 && 
-             (rangedhittile != "magic_flash" || (*c->aura != Aura::NEGATE)))
+             (rangedhittile != "magic_flash" || (*c->_aura != Aura::NEGATE)))
         action = CA_RANGED;
     // creatures who cast sleep do so 1/4 of the time they don't ranged attack
-    else if (castsSleep() && (*c->aura != Aura::NEGATE) && (xu4_random(4) == 0))
+    else if (castsSleep() && (*c->_aura != Aura::NEGATE) && (xu4_random(4) == 0))
         action = CA_CAST_SLEEP;
     else if (getState() == MSTAT_FLEEING)
         action = CA_FLEE;
@@ -544,13 +544,13 @@ void Creature::act(CombatController *controller) {
                 /* steal gold if the creature steals gold */
                 if (stealsGold() && xu4_random(4) == 0) {
                     soundPlay(SOUND_ITEM_STOLEN, false);                       // ITEM_STOLEN, gold
-                    c->party->adjustGold(-(xu4_random(0x3f)));
+                    c->_party->adjustGold(-(xu4_random(0x3f)));
                 }
             
                 /* steal food if the creature steals food */
                 if (stealsFood()) {
                     soundPlay(SOUND_ITEM_STOLEN, false);                       // ITEM_STOLEN, food
-                    c->party->adjustFood(-2500);
+                    c->_party->adjustFood(-2500);
                 }
             }
         } else {
@@ -583,7 +583,7 @@ void Creature::act(CombatController *controller) {
         
         while (!valid) {
             Map *map = getMap();
-            new_c = Coords(xu4_random(map->width), xu4_random(map->height), c->location->coords.z);
+            new_c = Coords(xu4_random(map->width), xu4_random(map->height), c->_location->coords.z);
                 
             const Tile *tile = map->tileTypeAt(new_c, WITH_OBJECTS);
             
@@ -642,7 +642,7 @@ void Creature::act(CombatController *controller) {
                 
                 /* Congrats, you have a heart! */
                 if (isGood())
-                    c->party->adjustKarma(KA_SPARED_GOOD);
+                    c->_party->adjustKarma(KA_SPARED_GOOD);
 
                 map->removeObject(this);                
             }
@@ -784,7 +784,7 @@ Creature *Creature::nearestOpponent(int *dist, bool ranged) {
     Creature *opponent = NULL;
     int d, leastDist = 0xFFFF;    
     ObjectDeque::iterator i;
-    bool jinx = (*c->aura == Aura::JINX);
+    bool jinx = (*c->_aura == Aura::JINX);
     Map *map = getMap();
 
     for (i = map->objects.begin(); i != map->objects.end(); ++i) {
@@ -1013,9 +1013,9 @@ Creature *CreatureMgr::randomForTile(const Tile *tile) {
         return NULL;
 
     //if (c->saveGame->moves > 100000) // FIXME: what's 100,000 moves all about (if anything)?
-    if (c->saveGame->moves > 30000)
+    if (c->_saveGame->moves > 30000)
         era = 0x0f;
-    else if (c->saveGame->moves > 20000)
+    else if (c->_saveGame->moves > 20000)
         era = 0x07;
     else
         era = 0x03;

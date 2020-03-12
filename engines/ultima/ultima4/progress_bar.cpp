@@ -37,16 +37,16 @@ ProgressBar::ProgressBar(int x, int y, int width, int height, int _min, int _max
 ProgressBar& ProgressBar::operator++()  { current++; draw(); return *this; }
 ProgressBar& ProgressBar::operator--()  { current--; draw(); return *this; }
 void ProgressBar::draw() {
-    Image *bar = Image::create(SCALED(width), SCALED(height), false, Image::HARDWARE);
-    int pos = static_cast<int>((double(current - min) / double(max - min)) * (width - (bwidth * 2)));
+    Image *bar = Image::create(SCALED(_width), SCALED(_height), false, Image::HARDWARE);
+    int pos = static_cast<int>((double(current - min) / double(max - min)) * (_width - (bwidth * 2)));
 
     // border color
-    bar->fillRect(0, 0, SCALED(width), SCALED(height), bcolor.r, bcolor.g, bcolor.b); 
+    bar->fillRect(0, 0, SCALED(_width), SCALED(_height), bcolor.r, bcolor.g, bcolor.b); 
 
     // color
-    bar->fillRect(SCALED(bwidth), SCALED(bwidth), SCALED(pos), SCALED(height - (bwidth * 2)), color.r, color.g, color.b); 
+    bar->fillRect(SCALED(bwidth), SCALED(bwidth), SCALED(pos), SCALED(_height - (bwidth * 2)), color.r, color.g, color.b); 
 
-    bar->drawOn(screen, SCALED(x), SCALED(y));
+    bar->drawOn(screen, SCALED(_x), SCALED(_y));
     update();
 
     delete bar;

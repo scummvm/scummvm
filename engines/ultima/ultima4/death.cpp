@@ -97,7 +97,7 @@ void deathTimer(void *data) {
     timerCount++;
     if ((timerMsg < N_MSGS) && (timerCount > deathMsgs[timerMsg].timeout)) {
 
-        screenMessage(deathMsgs[timerMsg].text, c->party->member(0)->getName().c_str());
+        screenMessage(deathMsgs[timerMsg].text, c->_party->member(0)->getName().c_str());
         screenHideCursor();
 
         timerCount = 0;
@@ -111,7 +111,7 @@ void deathTimer(void *data) {
 }
 
 void deathRevive() {
-    while(!c->location->map->isWorldMap() && c->location->prev != NULL) {
+    while(!c->_location->map->isWorldMap() && c->_location->prev != NULL) {
         game->exitToParentMap();        
     }
 
@@ -121,25 +121,25 @@ void deathRevive() {
     gameSetViewMode(VIEW_NORMAL);
 
     /* Move our world map location to Lord British's Castle */
-    c->location->coords = c->location->map->portals[0]->coords;
+    c->_location->coords = c->_location->map->portals[0]->coords;
     
     /* Now, move the avatar into the castle and put him
        in front of Lord British */
     game->setMap(mapMgr->get(100), 1, NULL);
-    c->location->coords.x = REVIVE_CASTLE_X;
-    c->location->coords.y = REVIVE_CASTLE_Y;
-    c->location->coords.z = 0;
+    c->_location->coords.x = REVIVE_CASTLE_X;
+    c->_location->coords.y = REVIVE_CASTLE_Y;
+    c->_location->coords.z = 0;
 
-    c->aura->set();
-    c->horseSpeed = 0;
-	c->lastCommandTime = g_system->getMillis();
+    c->_aura->set();
+    c->_horseSpeed = 0;
+	c->_lastCommandTime = g_system->getMillis();
     musicMgr->play();
 
-    c->party->reviveParty();
+    c->_party->reviveParty();
 
     screenEnableCursor();
     screenShowCursor();
-    c->stats->setView(STATS_PARTY_OVERVIEW);
+    c->_stats->setView(STATS_PARTY_OVERVIEW);
     screenRedrawScreen();
 }
 

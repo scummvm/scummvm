@@ -132,7 +132,7 @@ void screenInit() {
     tileanims = NULL;
     for (Std::vector<TileAnimSet *>::const_iterator i = tileanimSets.begin(); i != tileanimSets.end(); i++) {
         TileAnimSet *set = *i;
-        if (set->name == settings.videoType)
+        if (set->_name == settings.videoType)
             tileanims = set;
     }
     if (!tileanims)
@@ -231,9 +231,9 @@ void screenMessage(const char *fmt, ...) {
     screenHideCursor();
 
     /* scroll the message area, if necessary */
-    if (c->line == 12) {
+    if (c->_line == 12) {
         screenScrollMessageArea();
-        c->line--;
+        c->_line--;
     }
 
     for (i = 0; i < strlen(buffer); i++) {
@@ -245,7 +245,7 @@ void screenMessage(const char *fmt, ...) {
             c->col--;
             if (c->col < 0) {
                 c->col += 16;
-                c->line--;
+                c->_line--;
             }
             continue;
         }
@@ -268,7 +268,7 @@ void screenMessage(const char *fmt, ...) {
         if ((c->col + wordlen > 16) || buffer[i] == '\n' || c->col == 16) {
             if (buffer[i] == '\n' || buffer[i] == ' ')
                 i++;
-            c->line++;
+            c->_line++;
             c->col = 0;
 #ifdef IOS
             recursed = true;
@@ -285,11 +285,11 @@ void screenMessage(const char *fmt, ...) {
         /* don't show a space in column 1.  Helps with Hawkwind. */
         if (buffer[i] == ' ' && c->col == 0)
           continue; 
-        screenShowChar(buffer[i], TEXT_AREA_X + c->col, TEXT_AREA_Y + c->line);
+        screenShowChar(buffer[i], TEXT_AREA_X + c->col, TEXT_AREA_Y + c->_line);
         c->col++;
     }
 
-    screenSetCursorPos(TEXT_AREA_X + c->col, TEXT_AREA_Y + c->line);
+    screenSetCursorPos(TEXT_AREA_X + c->col, TEXT_AREA_Y + c->_line);
     screenShowCursor();
 
     screenNeedPrompt = 1;
@@ -371,13 +371,13 @@ Layout *screenLoadLayoutFromConf(const ConfigElement &conf) {
 
 
 Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height, int x, int y, bool &focus) {
-    MapCoords center = c->location->coords;    
-    static MapTile grass = c->location->map->tileset->getByName("grass")->getId();
+    MapCoords center = c->_location->coords;    
+    static MapTile grass = c->_location->map->tileset->getByName("grass")->getId();
     
-    if (c->location->map->width <= width &&
-        c->location->map->height <= height) {
-        center.x = c->location->map->width / 2;
-        center.y = c->location->map->height / 2;
+    if (c->_location->map->width <= width &&
+        c->_location->map->height <= height) {
+        center.x = c->_location->map->width / 2;
+        center.y = c->_location->map->height / 2;
     }
 
     MapCoords tc = center;
@@ -386,39 +386,39 @@ Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height,
     tc.y += y - (height / 2);
 
     /* Wrap the location if we can */    
-    tc.wrap(c->location->map);
+    tc.wrap(c->_location->map);
 
     /* off the edge of the map: pad with grass tiles */
-    if (MAP_IS_OOB(c->location->map, tc)) {        
+    if (MAP_IS_OOB(c->_location->map, tc)) {        
         focus = false;
         Std::vector<MapTile> result;
         result.push_back(grass);
         return result;
     }
 
-    return c->location->tilesAt(tc, focus);
+    return c->_location->tilesAt(tc, focus);
 }
 
 bool screenTileUpdate(TileView *view, const Coords &coords, bool redraw)
 {
-	if (c->location->map->flags & FIRST_PERSON)
+	if (c->_location->map->flags & FIRST_PERSON)
 		return false;
 
 	// Get the tiles
 	bool focus;
 	MapCoords mc(coords);
-	mc.wrap(c->location->map);
-	Std::vector<MapTile> tiles = c->location->tilesAt(mc, focus);
+	mc.wrap(c->_location->map);
+	Std::vector<MapTile> tiles = c->_location->tilesAt(mc, focus);
 
 	// Get the screen coordinates
 	int x = coords.x;
 	int y = coords.y;
 
-	if (c->location->map->width > VIEWPORT_W || c->location->map->height > VIEWPORT_H)
+	if (c->_location->map->width > VIEWPORT_W || c->_location->map->height > VIEWPORT_H)
 	{
 		//Center the coordinates to the viewport if you're on centered-view map.
-		x = x - c->location->coords.x + VIEWPORT_W / 2;
-		y = y - c->location->coords.y + VIEWPORT_H / 2;
+		x = x - c->_location->coords.x + VIEWPORT_W / 2;
+		y = y - c->_location->coords.y + VIEWPORT_H / 2;
 	}
 
 	// Draw if it is on screen
@@ -449,14 +449,14 @@ void screenUpdate(TileView *view, bool showmap, bool blackout) {
     {
     	screenEraseMapArea();
     }
-    else if (c->location->map->flags & FIRST_PERSON) {
+    else if (c->_location->map->flags & FIRST_PERSON) {
     	DungeonViewer.display(c, view);
         screenRedrawMapArea();
     }
 
     else if (showmap) {
-        static MapTile black = c->location->map->tileset->getByName("black")->getId();
-        static MapTile avatar = c->location->map->tileset->getByName("avatar")->getId();
+        static MapTile black = c->_location->map->tileset->getByName("black")->getId();
+        static MapTile avatar = c->_location->map->tileset->getByName("avatar")->getId();
 
         int x, y;
 
@@ -623,18 +623,18 @@ void screenUpdateMoons() {
     int trammelChar, feluccaChar;
 
     /* show "L?" for the dungeon level */
-    if (c->location->context == CTX_DUNGEON) {
+    if (c->_location->context == CTX_DUNGEON) {
         screenShowChar('L', 11, 0);
-        screenShowChar('1'+c->location->coords.z, 12, 0);        
+        screenShowChar('1'+c->_location->coords.z, 12, 0);        
     }
     /* show the current moons (non-combat) */
-    else if ((c->location->context & CTX_NON_COMBAT) == c->location->context) {
-        trammelChar = (c->saveGame->trammelphase == 0) ?
+    else if ((c->_location->context & CTX_NON_COMBAT) == c->_location->context) {
+        trammelChar = (c->_saveGame->trammelphase == 0) ?
             MOON_CHAR + 7 :
-            MOON_CHAR + c->saveGame->trammelphase - 1;
-        feluccaChar = (c->saveGame->feluccaphase == 0) ?
+            MOON_CHAR + c->_saveGame->trammelphase - 1;
+        feluccaChar = (c->_saveGame->feluccaphase == 0) ?
             MOON_CHAR + 7 :
-            MOON_CHAR + c->saveGame->feluccaphase - 1;
+            MOON_CHAR + c->_saveGame->feluccaphase - 1;
 
         screenShowChar(trammelChar, 11, 0);
         screenShowChar(feluccaChar, 12, 0);        
@@ -646,14 +646,14 @@ void screenUpdateMoons() {
 void screenUpdateWind() {   
     
     /* show the direction we're facing in the dungeon */
-    if (c->location->context == CTX_DUNGEON) {
+    if (c->_location->context == CTX_DUNGEON) {
         screenEraseTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
-        screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Dir: %5s", getDirectionName((Direction)c->saveGame->orientation));        
+        screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Dir: %5s", getDirectionName((Direction)c->_saveGame->orientation));        
     }
     /* show the wind direction */
-    else if ((c->location->context & CTX_NON_COMBAT) == c->location->context) {
+    else if ((c->_location->context & CTX_NON_COMBAT) == c->_location->context) {
         screenEraseTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
-        screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Wind %5s", getDirectionName((Direction) c->windDirection));
+        screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Wind %5s", getDirectionName((Direction) c->_windDirection));
     }
     screenRedrawTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
 }
@@ -700,7 +700,7 @@ void screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWP
     /*
      * if the map has the no line of sight flag, all is visible
      */
-    if (c->location->map->flags & NO_LINE_OF_SIGHT) {
+    if (c->_location->map->flags & NO_LINE_OF_SIGHT) {
         for (y = 0; y < VIEWPORT_H; y++) {
             for (x = 0; x < VIEWPORT_W; x++) {
                 screenLos[x][y] = 1;
@@ -1240,11 +1240,11 @@ void screenGemUpdate() {
                      VIEWPORT_H * TILE_HEIGHT * settings.scale,
                      0, 0, 0);
     
-    Layout *layout = screenGetGemLayout(c->location->map);
+    Layout *layout = screenGetGemLayout(c->_location->map);
     
     
     //TODO, move the code responsible for determining 'peer' visibility to a non SDL specific part of the code.
-    if (c->location->map->type == Map::DUNGEON) {
+    if (c->_location->map->type == Map::DUNGEON) {
     	//DO THE SPECIAL DUNGEON MAP TRAVERSAL
     	Std::vector<Std::vector<int> > drawnTiles(layout->viewport.width, Std::vector<int>(layout->viewport.height, 0));
     	Common::List<Std::pair<int,int> > coordStack;
@@ -1252,8 +1252,8 @@ void screenGemUpdate() {
     	//Put the avatar's position on the stack
     	int center_x = layout->viewport.width / 2 - 1;
     	int center_y = layout->viewport.height / 2 - 1;
-    	int avt_x = c->location->coords.x - 1;
-    	int avt_y = c->location->coords.y - 1;
+    	int avt_x = c->_location->coords.x - 1;
+    	int avt_y = c->_location->coords.y - 1;
         
     	coordStack.push_back(Std::pair<int,int>(center_x, center_y));
     	bool weAreDrawingTheAvatarTile = true;
@@ -1283,17 +1283,17 @@ void screenGemUpdate() {
                                                        layout->viewport.height, x - center_x + avt_x, y - center_y + avt_y, focus);
 			tile = tiles.front();
             
-			TileId avatarTileId = c->location->map->tileset->getByName("avatar")->getId();
+			TileId avatarTileId = c->_location->map->tileset->getByName("avatar")->getId();
             
             
 			if (!weAreDrawingTheAvatarTile)
 			{
 				//Hack to avoid showing the avatar tile multiple times in cycling dungeon maps
 				if (tile.getId() == avatarTileId)
-					tile = c->location->map->getTileFromData(c->location->coords)->getId();
+					tile = c->_location->map->getTileFromData(c->_location->coords)->getId();
 			}
             
-			screenShowGemTile(layout, c->location->map, tile, focus, x, y);
+			screenShowGemTile(layout, c->_location->map, tile, focus, x, y);
             
 			if (!tile.getTileType()->isOpaque() || tile.getTileType()->isWalkable() ||  weAreDrawingTheAvatarTile)
 			{
@@ -1324,7 +1324,7 @@ void screenGemUpdate() {
 				bool focus;
 				tile = screenViewportTile(layout->viewport.width,
                                           layout->viewport.height, x, y, focus).front();
-				screenShowGemTile(layout, c->location->map, tile, focus, x, y);
+				screenShowGemTile(layout, c->_location->map, tile, focus, x, y);
 			}
 		}
 	}

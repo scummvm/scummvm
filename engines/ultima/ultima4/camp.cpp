@@ -56,24 +56,24 @@ CampController::CampController() {
     MapId id;
 
     /* setup camp (possible, but not for-sure combat situation */
-    if (c->location->context & CTX_DUNGEON)
+    if (c->_location->context & CTX_DUNGEON)
         id = MAP_CAMP_DNG;
     else
         id = MAP_CAMP_CON;
 
-    map = getCombatMap(mapMgr->get(id));
-    game->setMap(map, true, NULL, this);
+    _map = getCombatMap(mapMgr->get(id));
+    game->setMap(_map, true, NULL, this);
 }
 
 void CampController::init(Creature *m) {
     CombatController::init(m);
-    camping = true;
+    _camping = true;
 }
 
 void CampController::begin() {
     // make sure everyone's asleep
-    for (int i = 0; i < c->party->size(); i++)
-        c->party->member(i)->putToSleep();            
+    for (int i = 0; i < c->_party->size(); i++)
+        c->_party->member(i)->putToSleep();            
 
     CombatController::begin();
 
@@ -94,7 +94,7 @@ void CampController::begin() {
         screenMessage("Ambushed!\n");
         
         /* create an ambushing creature (so it leaves a chest) */
-        setCreature(c->location->prev->map->addCreature(m, c->location->prev->coords));
+        setCreature(c->_location->prev->map->addCreature(m, c->_location->prev->coords));
         
         /* fill the creature table with creatures and place them */
         fillCreatureTable(m);
@@ -105,16 +105,16 @@ void CampController::begin() {
     }
     else {
         /* Wake everyone up! */    
-        for (int i = 0; i < c->party->size(); i++)
-            c->party->member(i)->wakeUp();    
+        for (int i = 0; i < c->_party->size(); i++)
+            c->_party->member(i)->wakeUp();    
 
         /* Make sure we've waited long enough for camping to be effective */
         bool healed = false;
-        if (((c->saveGame->moves / CAMP_HEAL_INTERVAL) >= 0x10000) || (((c->saveGame->moves / CAMP_HEAL_INTERVAL) & 0xffff) != c->saveGame->lastcamp))
+        if (((c->_saveGame->moves / CAMP_HEAL_INTERVAL) >= 0x10000) || (((c->_saveGame->moves / CAMP_HEAL_INTERVAL) & 0xffff) != c->_saveGame->lastcamp))
             healed = heal();
 
         screenMessage(healed ? "Party Healed!\n" : "No effect.\n");
-        c->saveGame->lastcamp = (c->saveGame->moves / CAMP_HEAL_INTERVAL) & 0xffff;
+        c->_saveGame->lastcamp = (c->_saveGame->moves / CAMP_HEAL_INTERVAL) & 0xffff;
     
         eventHandler->popController();
         game->exitToParentMap();
@@ -125,16 +125,16 @@ void CampController::begin() {
 
 void CampController::end(bool adjustKarma) {
     // wake everyone up!
-    for (int i = 0; i < c->party->size(); i++)
-        c->party->member(i)->wakeUp();        
+    for (int i = 0; i < c->_party->size(); i++)
+        c->_party->member(i)->wakeUp();        
     CombatController::end(adjustKarma);
 }
 
 bool CampController::heal() {
     // restore each party member to max mp, and restore some hp
     bool healed = false;
-    for (int i = 0; i < c->party->size(); i++) {
-        PartyMember *m = c->party->member(i);
+    for (int i = 0; i < c->_party->size(); i++) {
+        PartyMember *m = c->_party->member(i);
         m->setMp(m->getMaxMp());
         if ((m->getHp() < m->getMaxHp()) && m->heal(HT_CAMPHEAL))
             healed = true;
@@ -144,12 +144,12 @@ bool CampController::heal() {
 }
 
 InnController::InnController() {
-    map = NULL;
+    _map = NULL;
     /*
      * Normally in cities, only one opponent per encounter; inn's
      * override this to get the regular encounter size.
      */
-    forceStandardEncounterSize = true;
+    _forceStandardEncounterSize = true;
 }
 
 void InnController::begin() {
@@ -163,7 +163,7 @@ void InnController::begin() {
     EventHandler::wait_msecs(INN_FADE_OUT_TIME);
 
     /* show the sleeping avatar */
-    c->party->setTransport(c->location->map->tileset->getByName("corpse")->getId());
+    c->_party->setTransport(c->_location->map->tileset->getByName("corpse")->getId());
     gameUpdateScreen();
 
     screenDisableCursor();
@@ -173,7 +173,7 @@ void InnController::begin() {
     screenEnableCursor();
 
     /* restore the avatar to normal */
-    c->party->setTransport(c->location->map->tileset->getByName("avatar")->getId());
+    c->_party->setTransport(c->_location->map->tileset->getByName("avatar")->getId());
     gameUpdateScreen();
 
     /* the party is always healed */
@@ -181,7 +181,7 @@ void InnController::begin() {
 
     /* Is there a special encounter during your stay? */
     // mwinterrowd suggested code, based on u4dos
-    if (c->party->member(0)->isDead()) {
+    if (c->_party->member(0)->isDead()) {
     	maybeMeetIsaac();
     }
     else {
@@ -202,8 +202,8 @@ void InnController::begin() {
 bool InnController::heal() {
     // restore each party member to max mp, and restore some hp
     bool healed = false;
-    for (int i = 0; i < c->party->size(); i++) {
-        PartyMember *m = c->party->member(i);
+    for (int i = 0; i < c->_party->size(); i++) {
+        PartyMember *m = c->_party->member(i);
         m->setMp(m->getMaxMp());
         if ((m->getHp() < m->getMaxHp()) && m->heal(HT_INNHEAL))
             healed = true;
@@ -219,17 +219,17 @@ void InnController::maybeMeetIsaac()
 	//	if ((location == skara_brae) && (random(4) = 0) {
 	//			// create Isaac the Ghost
 	//	}
-    if ((c->location->map->id == 11) && (xu4_random(4) == 0)) {
-        City *city = dynamic_cast<City*>(c->location->map);
+    if ((c->_location->map->id == 11) && (xu4_random(4) == 0)) {
+        City *city = dynamic_cast<City*>(c->_location->map);
 
-        if (city->extraDialogues.size() == 1 &&
-            city->extraDialogues[0]->getName() == "Isaac") {
+        if (city->_extraDialogues.size() == 1 &&
+            city->_extraDialogues[0]->getName() == "Isaac") {
 
-            Coords coords(27, xu4_random(3) + 10, c->location->coords.z);
+            Coords coords(27, xu4_random(3) + 10, c->_location->coords.z);
 
             // If Isaac is already around, just bring him back to the inn
-            for (ObjectDeque::iterator i = c->location->map->objects.begin();
-                 i != c->location->map->objects.end();
+            for (ObjectDeque::iterator i = c->_location->map->objects.begin();
+                 i != c->_location->map->objects.end();
                  i++) {
                 Person *p = dynamic_cast<Person*>(*i);
                 if (p && p->getName() == "Isaac") {
@@ -244,7 +244,7 @@ void InnController::maybeMeetIsaac()
 
             Isaac->setMovementBehavior(MOVEMENT_WANDER);
 
-            Isaac->setDialogue(city->extraDialogues[0]);
+            Isaac->setDialogue(city->_extraDialogues[0]);
             Isaac->getStart() = coords;
             Isaac->setPrevTile(Isaac->getTile());
 
@@ -265,18 +265,18 @@ void InnController::maybeAmbush()
         if (xu4_random(4) == 0) {
             /* Rats! */
             mapid = MAP_BRICK_CON;
-            creature = c->location->map->addCreature(creatureMgr->getById(RAT_ID), c->location->coords);
+            creature = c->_location->map->addCreature(creatureMgr->getById(RAT_ID), c->_location->coords);
         } else {
             /* While strolling down the street, attacked by rogues! */
             mapid = MAP_INN_CON;
-            creature = c->location->map->addCreature(creatureMgr->getById(ROGUE_ID), c->location->coords);
+            creature = c->_location->map->addCreature(creatureMgr->getById(ROGUE_ID), c->_location->coords);
             screenMessage("\nIn the middle of the night while out on a stroll...\n\n");
             showMessage = false;
         }
 
 
-        map = getCombatMap(mapMgr->get(mapid));
-        game->setMap(map, true, NULL, this);
+        _map = getCombatMap(mapMgr->get(mapid));
+        game->setMap(_map, true, NULL, this);
 
         init(creature);
         showCombatMessage(showMessage);

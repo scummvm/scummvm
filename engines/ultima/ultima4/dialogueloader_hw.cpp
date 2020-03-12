@@ -106,7 +106,7 @@ Response *hawkwindGetAdvice(const DynamicResponse *dynResp) {
     for (int v = 0; v < VIRT_MAX; v++) {
         if (scumm_strnicmp(dynResp->getParam().c_str(), getVirtueName((Virtue) v), 4) == 0) {
             virtue = v;
-            virtueLevel = c->saveGame->karma[v];
+            virtueLevel = c->_saveGame->karma[v];
             break;
         }
     }
@@ -131,10 +131,10 @@ Response *hawkwindGetAdvice(const DynamicResponse *dynResp) {
 Response *hawkwindGetIntro(const DynamicResponse *dynResp) {
     Response *intro = new Response("");
 
-    if (c->party->member(0)->getStatus() == STAT_SLEEPING ||
-        c->party->member(0)->getStatus() == STAT_DEAD) {
-        intro->add(hawkwindText[HW_SPEAKONLYWITH] + c->party->member(0)->getName() +
-                   hawkwindText[HW_RETURNWHEN] + c->party->member(0)->getName() +
+    if (c->_party->member(0)->getStatus() == STAT_SLEEPING ||
+        c->_party->member(0)->getStatus() == STAT_DEAD) {
+        intro->add(hawkwindText[HW_SPEAKONLYWITH] + c->_party->member(0)->getName() +
+                   hawkwindText[HW_RETURNWHEN] + c->_party->member(0)->getName() +
                    hawkwindText[HW_ISREVIVED]);
         intro->add(ResponsePart::END);
     }
@@ -143,7 +143,7 @@ Response *hawkwindGetIntro(const DynamicResponse *dynResp) {
         intro->add(ResponsePart::STARTMUSIC_HW);
         intro->add(ResponsePart::HAWKWIND);
 
-        intro->add(hawkwindText[HW_WELCOME] + c->party->member(0)->getName() +
+        intro->add(hawkwindText[HW_WELCOME] + c->_party->member(0)->getName() +
                    hawkwindText[HW_GREETING1] + hawkwindText[HW_GREETING2]);
     }
 

@@ -103,8 +103,8 @@ void codexStart() {
     /**
      * make the avatar alone
      */
-    c->stats->setView(STATS_PARTY_OVERVIEW);
-    c->stats->update(true);     /* show just the avatar */
+    c->_stats->setView(STATS_PARTY_OVERVIEW);
+    c->_stats->update(true);     /* show just the avatar */
     screenRedrawScreen();
 
     /**
@@ -118,7 +118,7 @@ void codexStart() {
     /**
      * check to see if you have the 3-part key
      */
-    if ((c->saveGame->items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) != (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
+    if ((c->_saveGame->items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) != (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
         codexEject(CODEX_EJECT_NO_3_PART_KEY);
         return;
     }
@@ -217,12 +217,12 @@ void codexEject(CodexEjectCode code) {
      */
     if (code >= CODEX_EJECT_HONESTY && code <= CODEX_EJECT_HUMILITY) {
         int virtue = code - CODEX_EJECT_HONESTY;
-        c->location->coords.x = startLocations[virtue].x;
-        c->location->coords.y = startLocations[virtue].y;        
+        c->_location->coords.x = startLocations[virtue].x;
+        c->_location->coords.y = startLocations[virtue].y;        
     }
 
     /* finally, finish the turn */
-    c->location->turnCompleter->finishTurn();
+    c->_location->turnCompleter->finishTurn();
     eventHandler->setController(game);
 }
 
@@ -245,14 +245,14 @@ void codexHandleWOP(const Common::String &word) {
         tries = 1; /* reset 'tries' in case we need to enter this again later */
 
         /* eject them if they don't have all 8 party members */
-        if (c->saveGame->members != 8) {
+        if (c->_saveGame->members != 8) {
             codexEject(CODEX_EJECT_NO_FULL_PARTY);
             return;
         }
         
         /* eject them if they're not a full avatar at this point */
         for (i = 0; i < VIRT_MAX; i++) {
-            if (c->saveGame->karma[i] != 0) {
+            if (c->_saveGame->karma[i] != 0) {
                 codexEject(CODEX_EJECT_NO_FULL_AVATAR);
                 return;
             }
@@ -467,7 +467,7 @@ bool codexHandleEndgameAnyKey(int key, void *data) {
     else {
         /* CONGRATULATIONS!... you have completed the game in x turns */    
         screenDisableCursor();
-        screenMessage("%s%d%s", codexEndgameText2[index-7].c_str(), c->saveGame->moves, codexEndgameText2[index-6].c_str());
+        screenMessage("%s%d%s", codexEndgameText2[index-7].c_str(), c->_saveGame->moves, codexEndgameText2[index-6].c_str());
 #ifdef IOS
         U4IOS::endChoiceConversation();
 #endif

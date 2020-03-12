@@ -965,14 +965,14 @@ Script::ReturnCode Script::random(xmlNodePtr script, xmlNodePtr current) {
  */ 
 Script::ReturnCode Script::move(xmlNodePtr script, xmlNodePtr current) {
     if (xmlPropExists(current, "x"))
-        c->location->coords.x = getPropAsInt(current, "x");
+        c->_location->coords.x = getPropAsInt(current, "x");
     if (xmlPropExists(current, "y"))
-        c->location->coords.y = getPropAsInt(current, "y");
+        c->_location->coords.y = getPropAsInt(current, "y");
     if (xmlPropExists(current, "z"))
-        c->location->coords.z = getPropAsInt(current, "z");
+        c->_location->coords.z = getPropAsInt(current, "z");
 
     if (debug)
-        ::debug("\nMove: x-%d y-%d z-%d", c->location->coords.x, c->location->coords.y, c->location->coords.z);
+        ::debug("\nMove: x-%d y-%d z-%d", c->_location->coords.x, c->_location->coords.y, c->_location->coords.z);
     
     gameUpdateScreen();
     return RET_OK;
@@ -1017,21 +1017,21 @@ Script::ReturnCode Script::pay(xmlNodePtr script, xmlNodePtr current) {
 
     if (debug) {
         ::debug("\nPay: price(%d) quantity(%d)", price, quant);                
-        ::debug("\n\tParty gold:  %d -", c->saveGame->gold);
+        ::debug("\n\tParty gold:  %d -", c->_saveGame->gold);
         ::debug("\n\tTotal price: %d", price * quant);
     }
     
     price *= quant;
-    if (price > c->saveGame->gold) {
+    if (price > c->_saveGame->gold) {
         if (debug)
             ::debug("\n\t=== Can't pay! ===");
         run(cantpay);
         return RET_STOP;
     }
-    else c->party->adjustGold(-price);
+    else c->_party->adjustGold(-price);
 
     if (debug)
-        ::debug("\n\tBalance:     %d\n", c->saveGame->gold);
+        ::debug("\n\tBalance:     %d\n", c->_saveGame->gold);
 
     return RET_OK;
 }
@@ -1129,36 +1129,36 @@ Script::ReturnCode Script::add(xmlNodePtr script, xmlNodePtr current) {
     }
 
     if (type == "gold")        
-        c->party->adjustGold(quant);    
+        c->_party->adjustGold(quant);    
     else if (type == "food") {
         quant *= 100;
-        c->party->adjustFood(quant);
+        c->_party->adjustFood(quant);
     }
     else if (type == "horse")
-        c->party->setTransport(Tileset::findTileByName("horse")->getId());
+        c->_party->setTransport(Tileset::findTileByName("horse")->getId());
     else if (type == "torch") {
-        AdjustValueMax(c->saveGame->torches, quant, 99);
-        c->party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(c->_saveGame->torches, quant, 99);
+        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "gem") {
-        AdjustValueMax(c->saveGame->gems, quant, 99);
-        c->party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(c->_saveGame->gems, quant, 99);
+        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "key") {
-        AdjustValueMax(c->saveGame->keys, quant, 99);
-        c->party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(c->_saveGame->keys, quant, 99);
+        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "sextant") {
-        AdjustValueMax(c->saveGame->sextants, quant, 99);
-        c->party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(c->_saveGame->sextants, quant, 99);
+        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "weapon") {
-        AdjustValueMax(c->saveGame->weapons[subtype[0] - 'a'], quant, 99);
-        c->party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(c->_saveGame->weapons[subtype[0] - 'a'], quant, 99);
+        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "armor") {
-        AdjustValueMax(c->saveGame->armor[subtype[0] - 'a'], quant, 99);
-        c->party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(c->_saveGame->armor[subtype[0] - 'a'], quant, 99);
+        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "reagent") {
         int reagent;
@@ -1172,9 +1172,9 @@ Script::ReturnCode Script::add(xmlNodePtr script, xmlNodePtr current) {
         }
 
         if (reagents[reagent].size()) {
-            AdjustValueMax(c->saveGame->reagents[reagent], quant, 99);
-            c->party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
-            c->stats->resetReagentsMenu();
+            AdjustValueMax(c->_saveGame->reagents[reagent], quant, 99);
+            c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+            c->_stats->resetReagentsMenu();
         }
         else errorWarning("Error: reagent '%s' not found", subtype.c_str());
     }
@@ -1194,9 +1194,9 @@ Script::ReturnCode Script::lose(xmlNodePtr script, xmlNodePtr current) {
     int quant = getPropAsInt(current, "quantity");
 
     if (type == "weapon")
-        AdjustValueMin(c->saveGame->weapons[subtype[0] - 'a'], -quant, 0);            
+        AdjustValueMin(c->_saveGame->weapons[subtype[0] - 'a'], -quant, 0);            
     else if (type == "armor")
-        AdjustValueMin(c->saveGame->armor[subtype[0] - 'a'], -quant, 0);            
+        AdjustValueMin(c->_saveGame->armor[subtype[0] - 'a'], -quant, 0);            
 
     if (debug) {
         ::debug("\nLose: %s ", type.c_str());
@@ -1213,7 +1213,7 @@ Script::ReturnCode Script::lose(xmlNodePtr script, xmlNodePtr current) {
  */ 
 Script::ReturnCode Script::heal(xmlNodePtr script, xmlNodePtr current) {
     Common::String type = getPropAsStr(current, "type");
-    PartyMember *p = c->party->member(getPropAsInt(current, "player")-1);
+    PartyMember *p = c->_party->member(getPropAsInt(current, "player")-1);
 
     if (type == "cure")
         p->heal(HT_CURE);
@@ -1246,7 +1246,7 @@ Script::ReturnCode Script::damage(xmlNodePtr script, xmlNodePtr current) {
     int pts = getPropAsInt(current, "pts");
     PartyMember *p;
     
-    p = c->party->member(player);
+    p = c->_party->member(player);
     p->applyDamage(pts);
 
     if (debug)
@@ -1292,7 +1292,7 @@ Script::ReturnCode Script::karma(xmlNodePtr script, xmlNodePtr current) {
 
     KarmaActionMap::iterator ka = action_map.find(action);
     if (ka != action_map.end())
-        c->party->adjustKarma(ka->_value);
+        c->_party->adjustKarma(ka->_value);
     else if (debug)
         ::debug(" <FAILED - action '%s' not found>", action.c_str());
 
@@ -1381,11 +1381,11 @@ Script::ReturnCode Script::ztats(xmlNodePtr script, xmlNodePtr current) {
          */ 
         view = view_map.find(screen);
         if (view != view_map.end()) 
-            c->stats->setView(view->_value); /* change it! */
+            c->_stats->setView(view->_value); /* change it! */
         else if (debug)
             ::debug(" <FAILED - view could not be found>");
     }
-    else c->stats->setView(STATS_PARTY_OVERVIEW);
+    else c->_stats->setView(STATS_PARTY_OVERVIEW);
 
     return RET_OK;
 }

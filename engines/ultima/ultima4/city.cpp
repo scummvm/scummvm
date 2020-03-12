@@ -39,11 +39,11 @@ City::City() : Map() {
 
 
 City::~City() {
-    for (PersonList::iterator i = persons.begin(); i != persons.end(); i++)
+    for (PersonList::iterator i = _persons.begin(); i != _persons.end(); i++)
         delete *i;
-    for (PersonRoleList::iterator j = personroles.begin(); j != personroles.end(); j++)
+    for (PersonRoleList::iterator j = _personRoles.begin(); j != _personRoles.end(); j++)
         delete *j;
-    for (Std::vector<Dialogue *>::iterator k = extraDialogues.begin(); k != extraDialogues.end(); k++)
+    for (Std::vector<Dialogue *>::iterator k = _extraDialogues.begin(); k != _extraDialogues.end(); k++)
         delete *k;
 }
 
@@ -51,7 +51,7 @@ City::~City() {
  * Returns the name of the city
  */ 
 Common::String City::getName() {
-    return name;
+    return _name;
 }
 
 /**
@@ -80,11 +80,11 @@ void City::addPeople() {
     // Make sure the city has no people in it already
     removeAllPeople();
 
-    for (current = persons.begin(); current != persons.end(); current++) {
+    for (current = _persons.begin(); current != _persons.end(); current++) {
         Person *p = *current;
         if ( (p->getTile() != 0)
-             && !(c->party->canPersonJoin(p->getName(), NULL)
-                  && c->party->isPersonJoined(p->getName()))
+             && !(c->_party->canPersonJoin(p->getName(), NULL)
+                  && c->_party->isPersonJoined(p->getName()))
             )
             addPerson(p);
     }

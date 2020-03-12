@@ -59,7 +59,7 @@ void TileRule::load() {
     for (Std::vector<ConfigElement>::iterator i = rules.begin(); i != rules.end(); i++) {
         TileRule *rule = new TileRule;
         rule->initFromConf(*i);
-        TileRule::rules[rule->name] = rule;
+        TileRule::rules[rule->_name] = rule;
     }    
     
     if (TileRule::findByName("default") == NULL)
@@ -105,58 +105,58 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
     static const char *speedEnumStrings[] = { "fast", "slow", "vslow", "vvslow", NULL };
     static const char *effectsEnumStrings[] = { "none", "fire", "sleep", "poison", "poisonField", "electricity", "lava", NULL };
 
-    this->mask = 0;
-    this->movementMask = 0;
-    this->speed = FAST;
-    this->effect = EFFECT_NONE;
-    this->walkonDirs = MASK_DIR_ALL;
-    this->walkoffDirs = MASK_DIR_ALL;    
-    this->name = conf.getString("name");
+    this->_mask = 0;
+    this->_movementMask = 0;
+    this->_speed = FAST;
+    this->_effect = EFFECT_NONE;
+    this->_walkOnDirs = MASK_DIR_ALL;
+    this->_walkOffDirs = MASK_DIR_ALL;    
+    this->_name = conf.getString("name");
 
     for (i = 0; i < sizeof(booleanAttributes) / sizeof(booleanAttributes[0]); i++) {
         if (conf.getBool(booleanAttributes[i].name))
-            this->mask |= booleanAttributes[i].mask;        
+            this->_mask |= booleanAttributes[i].mask;        
     }
 
     for (i = 0; i < sizeof(movementBooleanAttr) / sizeof(movementBooleanAttr[0]); i++) {
         if (conf.getBool(movementBooleanAttr[i].name))
-            this->movementMask |= movementBooleanAttr[i].mask;
+            this->_movementMask |= movementBooleanAttr[i].mask;
     }
 
     Common::String cantwalkon = conf.getString("cantwalkon");
     if (cantwalkon == "all")
-        this->walkonDirs = 0;
+        this->_walkOnDirs = 0;
     else if (cantwalkon == "west")
-        this->walkonDirs = DIR_REMOVE_FROM_MASK(DIR_WEST, this->walkonDirs);
+        this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_WEST, this->_walkOnDirs);
     else if (cantwalkon == "north")
-        this->walkonDirs = DIR_REMOVE_FROM_MASK(DIR_NORTH, this->walkonDirs);
+        this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_NORTH, this->_walkOnDirs);
     else if (cantwalkon == "east")
-        this->walkonDirs = DIR_REMOVE_FROM_MASK(DIR_EAST, this->walkonDirs);
+        this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_EAST, this->_walkOnDirs);
     else if (cantwalkon == "south")
-        this->walkonDirs = DIR_REMOVE_FROM_MASK(DIR_SOUTH, this->walkonDirs);
+        this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_SOUTH, this->_walkOnDirs);
     else if (cantwalkon == "advance")
-        this->walkonDirs = DIR_REMOVE_FROM_MASK(DIR_ADVANCE, this->walkonDirs);
+        this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_ADVANCE, this->_walkOnDirs);
     else if (cantwalkon == "retreat")
-        this->walkonDirs = DIR_REMOVE_FROM_MASK(DIR_RETREAT, this->walkonDirs);
+        this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_RETREAT, this->_walkOnDirs);
 
     Common::String cantwalkoff = conf.getString("cantwalkoff");
     if (cantwalkoff == "all")
-        this->walkoffDirs = 0;
+        this->_walkOffDirs = 0;
     else if (cantwalkoff == "west")
-        this->walkoffDirs = DIR_REMOVE_FROM_MASK(DIR_WEST, this->walkoffDirs);
+        this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_WEST, this->_walkOffDirs);
     else if (cantwalkoff == "north")
-        this->walkoffDirs = DIR_REMOVE_FROM_MASK(DIR_NORTH, this->walkoffDirs);
+        this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_NORTH, this->_walkOffDirs);
     else if (cantwalkoff == "east")
-        this->walkoffDirs = DIR_REMOVE_FROM_MASK(DIR_EAST, this->walkoffDirs);
+        this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_EAST, this->_walkOffDirs);
     else if (cantwalkoff == "south")
-        this->walkoffDirs = DIR_REMOVE_FROM_MASK(DIR_SOUTH, this->walkoffDirs);
+        this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_SOUTH, this->_walkOffDirs);
     else if (cantwalkoff == "advance")
-        this->walkoffDirs = DIR_REMOVE_FROM_MASK(DIR_ADVANCE, this->walkoffDirs);
+        this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_ADVANCE, this->_walkOffDirs);
     else if (cantwalkoff == "retreat")
-        this->walkoffDirs = DIR_REMOVE_FROM_MASK(DIR_RETREAT, this->walkoffDirs);
+        this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_RETREAT, this->_walkOffDirs);
 
-    this->speed = static_cast<TileSpeed>(conf.getEnum("speed", speedEnumStrings));
-    this->effect = static_cast<TileEffect>(conf.getEnum("effect", effectsEnumStrings));
+    this->_speed = static_cast<TileSpeed>(conf.getEnum("speed", speedEnumStrings));
+    this->_effect = static_cast<TileEffect>(conf.getEnum("effect", effectsEnumStrings));
 
     return true;
 }
@@ -197,7 +197,7 @@ void Tileset::loadAll() {
             Tileset *tileset = new Tileset;
             tileset->load(*i);
 
-            tilesets[tileset->name] = tileset;
+            tilesets[tileset->_name] = tileset;
         }
     }
 
@@ -280,12 +280,12 @@ Tile* Tileset::findTileById(TileId id) {
 void Tileset::load(const ConfigElement &tilesetConf) {
     Debug dbg("debug/tileset.txt", "Tileset", true);
     
-    name = tilesetConf.getString("name");
+    _name = tilesetConf.getString("name");
     if (tilesetConf.exists("imageName"))
-        imageName = tilesetConf.getString("imageName");
+        _imageName = tilesetConf.getString("imageName");
     if (tilesetConf.exists("extends"))
-        extends = Tileset::get(tilesetConf.getString("extends"));
-    else extends = NULL;
+        _extends = Tileset::get(tilesetConf.getString("extends"));
+    else _extends = NULL;
 
     TRACE_LOCAL(dbg, "\tLoading Tiles...");
 
@@ -301,12 +301,12 @@ void Tileset::load(const ConfigElement &tilesetConf) {
         TRACE_LOCAL(dbg, Common::String("\t\tLoaded '") + tile->getName() + "'");
 
         /* add the tile to our tileset */
-        tiles[tile->getId()] = tile;
-        nameMap[tile->getName()] = tile;
+        _tiles[tile->getId()] = tile;
+        _nameMap[tile->getName()] = tile;
         
         index += tile->getFrames();
     }
-    totalFrames = index;   
+    _totalFrames = index;   
 }
 
 void Tileset::unloadImages()
@@ -314,7 +314,7 @@ void Tileset::unloadImages()
     Tileset::TileIdMap::iterator i;
 
     /* free all the image memory and nullify so that reloading can automatically take place lazily */
-    for (i = tiles.begin(); i != tiles.end(); i++)
+    for (i = _tiles.begin(); i != _tiles.end(); i++)
     {
     	i->_value->deleteImage();
     }
@@ -327,22 +327,22 @@ void Tileset::unload() {
     Tileset::TileIdMap::iterator i;    
         
     /* free all the memory for the tiles */
-    for (i = tiles.begin(); i != tiles.end(); i++)
+    for (i = _tiles.begin(); i != _tiles.end(); i++)
         delete i->_value;    
 
-    tiles.clear();
-    totalFrames = 0;
-    imageName.clear();    
+    _tiles.clear();
+    _totalFrames = 0;
+    _imageName.clear();    
 }
 
 /**
  * Returns the tile with the given id in the tileset
  */
 Tile* Tileset::get(TileId id) {
-    if (tiles.find(id) != tiles.end())
-        return tiles[id];
-    else if (extends)
-        return extends->get(id);
+    if (_tiles.find(id) != _tiles.end())
+        return _tiles[id];
+    else if (_extends)
+        return _extends->get(id);
     return NULL;    
 }
 
@@ -350,10 +350,10 @@ Tile* Tileset::get(TileId id) {
  * Returns the tile with the given name from the tileset, if it exists
  */
 Tile* Tileset::getByName(const Common::String &name) {
-    if (nameMap.find(name) != nameMap.end())
-        return nameMap[name];
-    else if (extends)
-        return extends->getByName(name);
+    if (_nameMap.find(name) != _nameMap.end())
+        return _nameMap[name];
+    else if (_extends)
+        return _extends->getByName(name);
     else return NULL;
 }
 
@@ -361,23 +361,23 @@ Tile* Tileset::getByName(const Common::String &name) {
  * Returns the image name for the tileset, if it exists
  */
 Common::String Tileset::getImageName() const {
-    if (imageName.empty() && extends)
-        return extends->getImageName();
-    else return imageName;
+    if (_imageName.empty() && _extends)
+        return _extends->getImageName();
+    else return _imageName;
 }
 
 /**
  * Returns the number of tiles in the tileset
  */
 unsigned int Tileset::numTiles() const {
-    return tiles.size();
+    return _tiles.size();
 }
 
 /**
  * Returns the total number of frames in the tileset
  */ 
 unsigned int Tileset::numFrames() const {
-    return totalFrames;
+    return _totalFrames;
 }
 
 } // End of namespace Ultima4

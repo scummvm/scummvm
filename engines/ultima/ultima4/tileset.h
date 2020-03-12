@@ -29,8 +29,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-
 class ConfigElement;
 class Tile;
 
@@ -47,13 +45,13 @@ public:
 
     bool initFromConf(const ConfigElement &tileRuleConf);
 
-    Common::String name;
-    unsigned short mask;    
-    unsigned short movementMask;
-    TileSpeed speed;
-    TileEffect effect;
-    int walkonDirs;
-    int walkoffDirs;
+    Common::String _name;
+    unsigned short _mask;    
+    unsigned short _movementMask;
+    TileSpeed _speed;
+    TileEffect _effect;
+    int _walkOnDirs;
+    int _walkOffDirs;
 };
 
 /**
@@ -86,13 +84,13 @@ public:
 private:
     static TilesetMap tilesets;
 
-    Common::String name;
-    TileIdMap tiles;
-    unsigned int totalFrames;
-    Common::String imageName;
-    Tileset* extends;
+    Common::String _name;
+    TileIdMap _tiles;
+    unsigned int _totalFrames;
+    Common::String _imageName;
+    Tileset *_extends;
 
-    TileStrMap nameMap;
+    TileStrMap _nameMap;
 };
 
 } // End of namespace Ultima4

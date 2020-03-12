@@ -33,14 +33,14 @@ class Tile;
 typedef unsigned int TileId;
 typedef unsigned char MapId;
 
-typedef enum {
+enum TileSpeed {
     FAST,
     SLOW,
     VSLOW,
     VVSLOW
-} TileSpeed;
+};
 
-typedef enum {
+enum TileEffect {
     EFFECT_NONE,
     EFFECT_FIRE,
     EFFECT_SLEEP,
@@ -48,9 +48,9 @@ typedef enum {
     EFFECT_POISONFIELD,
     EFFECT_ELECTRICITY,
     EFFECT_LAVA
-} TileEffect;
+};
 
-typedef enum {
+enum TileAnimationStyle {
     ANIM_NONE,
     ANIM_SCROLL,
     ANIM_CAMPFIRE,
@@ -59,26 +59,26 @@ typedef enum {
     ANIM_SHIPFLAG,    
     ANIM_LCBFLAG,
     ANIM_FRAMES
-} TileAnimationStyle;
+};
 
 /**
  * A MapTile is a specific instance of a Tile.
  */
 class MapTile {
 public:
-    MapTile() : id(0), frame(0) {}
-    MapTile(const TileId &i, unsigned char f = 0) : id(i), frame(f), freezeAnimation(false) {}
-    MapTile(const MapTile &t) : id(t.id), frame(t.frame), freezeAnimation(t.freezeAnimation) {}
+    MapTile() : _id(0), _frame(0) {}
+    MapTile(const TileId &i, unsigned char f = 0) : _id(i), _frame(f), _freezeAnimation(false) {}
+    MapTile(const MapTile &t) : _id(t._id), _frame(t._frame), _freezeAnimation(t._freezeAnimation) {}
 
-    TileId getId() const			{return id;}
-    unsigned char getFrame() const	{return frame;}
-    bool getFreezeAnimation() const {return freezeAnimation;}
+    TileId getId() const			{return _id;}
+    unsigned char getFrame() const	{return _frame;}
+    bool getFreezeAnimation() const {return _freezeAnimation;}
 
-    bool operator==(const MapTile &m) const  { return id == m.id; }
-    bool operator==(const TileId &i) const   { return id == i; }
-    bool operator!=(const MapTile &m) const  { return id != m.id; }
-    bool operator!=(const TileId &i) const   { return id != i; }
-    bool operator<(const MapTile &m) const   { return id < m.id; } /* for Std::less */
+    bool operator==(const MapTile &m) const  { return _id == m._id; }
+    bool operator==(const TileId &i) const   { return _id == i; }
+    bool operator!=(const MapTile &m) const  { return _id != m._id; }
+    bool operator!=(const TileId &i) const   { return _id != i; }
+    bool operator<(const MapTile &m) const   { return _id < m._id; } /* for Std::less */
     
     Direction getDirection() const;
     bool setDirection(Direction d);
@@ -86,9 +86,9 @@ public:
     const Tile *getTileType() const;
 
     // Properties
-    TileId id;
-    unsigned char frame;
-    bool freezeAnimation;
+    TileId _id;
+    unsigned char _frame;
+    bool _freezeAnimation;
 };
 
 /**

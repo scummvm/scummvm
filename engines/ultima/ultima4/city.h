@@ -33,8 +33,8 @@ class Person;
 class Dialogue;
 
 struct PersonRole {
-    int role;
-    int id;
+    int _role;
+    int _id;
 };
 
 typedef Std::vector<Person *> PersonList;
@@ -53,12 +53,12 @@ public:
     Person *personAt(const Coords &coords);
 
     // Properties
-    Common::String name;
-    Common::String type;
-    PersonList persons;
-    Common::String tlk_fname;
-    PersonRoleList personroles;    
-    Std::vector<Dialogue *> extraDialogues;
+    Common::String _name;
+    Common::String _type;
+    PersonList _persons;
+    Common::String _tlkFname;
+    PersonRoleList _personRoles;    
+    Std::vector<Dialogue *> _extraDialogues;
 };
 
 bool isCity(Map *punknown);

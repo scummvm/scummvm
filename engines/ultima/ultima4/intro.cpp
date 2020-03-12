@@ -150,7 +150,7 @@ bool IntroBinData::load() {
     baseTileTable = new Tile*[INTRO_BASETILE_TABLE_SIZE];
     for (i = 0; i < INTRO_BASETILE_TABLE_SIZE; i++) {
         MapTile tile = TileMap::get("base")->translate(u4fgetc(title));
-        baseTileTable[i] = Tileset::get("base")->get(tile.id);
+        baseTileTable[i] = Tileset::get("base")->get(tile._id);
     }
 
     /* --------------------------
@@ -487,11 +487,11 @@ void IntroController::drawMap() {
                 if ((binData->scriptTable[scrPos+1] >> 5) >= binData->baseTileTable[dataNibble]->getFrames()) {
                     int frame = (binData->scriptTable[scrPos+1] >> 5) - binData->baseTileTable[dataNibble]->getFrames();
                     objectStateTable[dataNibble].tile = MapTile(binData->baseTileTable[dataNibble]->getId() + 1);
-                    objectStateTable[dataNibble].tile.frame = frame;
+                    objectStateTable[dataNibble].tile._frame = frame;
                 }
                 else {
                     objectStateTable[dataNibble].tile = MapTile(binData->baseTileTable[dataNibble]->getId());
-                    objectStateTable[dataNibble].tile.frame = (binData->scriptTable[scrPos+1] >> 5);
+                    objectStateTable[dataNibble].tile._frame = (binData->scriptTable[scrPos+1] >> 5);
                 }
                 
                 scrPos += 2;

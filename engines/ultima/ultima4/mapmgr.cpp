@@ -226,14 +226,14 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 }
 
 void MapMgr::initCityFromConf(const ConfigElement &cityConf, City *city) {
-    city->name = cityConf.getString("name");
-    city->type = cityConf.getString("type");
-    city->tlk_fname = cityConf.getString("tlk_fname");
+    city->_name = cityConf.getString("name");
+    city->_type = cityConf.getString("type");
+    city->_tlkFname = cityConf.getString("tlk_fname");
 
     vector<ConfigElement> children = cityConf.getChildren();
     for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
         if (i->getName() == "personrole")
-            city->personroles.push_back(initPersonRoleFromConf(*i));
+            city->_personRoles.push_back(initPersonRoleFromConf(*i));
     }    
 }
 
@@ -245,8 +245,8 @@ PersonRole *MapMgr::initPersonRoleFromConf(const ConfigElement &personRoleConf) 
 
     personrole = new PersonRole;
 
-    personrole->role = personRoleConf.getEnum("role", roleEnumStrings) + NPC_TALKER_COMPANION;
-    personrole->id = personRoleConf.getInt("id");
+    personrole->_role = personRoleConf.getEnum("role", roleEnumStrings) + NPC_TALKER_COMPANION;
+    personrole->_id = personRoleConf.getInt("id");
 
     return personrole;
 }

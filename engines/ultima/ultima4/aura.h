@@ -28,8 +28,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-
 /**
  * Aura class
  */
@@ -46,22 +44,22 @@ public:
 
     Aura();
 
-    int getDuration() const         { return duration; }
-    Aura::Type getType() const      { return type; }
-    bool isActive() const           { return duration > 0; }
+    int getDuration() const         { return _duration; }
+    Aura::Type getType() const      { return _type; }
+    bool isActive() const           { return _duration > 0; }
 
     void setDuration(int d);
     void set(Type = NONE, int d = 0);
     void setType(Type t);
 
-    bool operator==(const Type &t) const    { return type == t; }
+    bool operator==(const Type &t) const    { return _type == t; }
     bool operator!=(const Type &t) const    { return !operator==(t); }
 
     void passTurn();
 
 private:
-    Type type;
-    int duration;
+    Type _type;
+    int _duration;
 };
 
 } // End of namespace Ultima4

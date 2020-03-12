@@ -37,7 +37,7 @@ Debug dbg("debug/tilemap.txt", "TileMap");
 /**
  * Static variables
  */
-TileMap::TileIndexMapMap TileMap::tileMaps;
+TileMap::TileIndexMapMap TileMap::_tileMaps;
 
 /**
  * Load all tilemaps from the specified xml file
@@ -72,13 +72,13 @@ void TileMap::unloadAll() {
     TileIndexMapMap::iterator map;       
         
     /* free all the memory for the tile maps */
-    for (map = tileMaps.begin(); map != tileMaps.end(); map++)
+    for (map = _tileMaps.begin(); map != _tileMaps.end(); map++)
         delete map->_value;
     
     /* Clear the map so we don't attempt to delete the memory again
      * next time.
      */
-    tileMaps.clear();
+    _tileMaps.clear();
 }
  
 /**
@@ -121,25 +121,25 @@ void TileMap::load(const ConfigElement &tilemapConf) {
         /* insert the tile into the tile map */
         for (int i = 0; i < frames; i++) {
             if (i < t->getFrames())
-                tm->tilemap[index+i] = MapTile(t->getId(), i);
+                tm->_tileMap[index+i] = MapTile(t->getId(), i);
             /* frame fell out of the scope of the tile -- frame is set to 0 */
             else
-                tm->tilemap[index+i] = MapTile(t->getId(), 0);
+                tm->_tileMap[index+i] = MapTile(t->getId(), 0);
         }
         
         index += frames;
     }
     
     /* add the tilemap to our list */
-    tileMaps[name] = tm;
+    _tileMaps[name] = tm;
 }
 
 /**
  * Returns the Tile index map with the specified name
  */
 TileMap *TileMap::get(Common::String name) {
-    if (tileMaps.find(name) != tileMaps.end())
-        return tileMaps[name];
+    if (_tileMaps.find(name) != _tileMaps.end())
+        return _tileMaps[name];
     else return NULL;    
 }
 
@@ -147,20 +147,20 @@ TileMap *TileMap::get(Common::String name) {
  * Translates a raw index to a MapTile.
  */
 MapTile TileMap::translate(unsigned int index) {
-    return tilemap[index];
+    return _tileMap[index];
 }
 
 unsigned int TileMap::untranslate(MapTile &tile) {
     unsigned int index = 0;
 
-    for (Std::map<unsigned int, MapTile>::iterator i = tilemap.begin(); i != tilemap.end(); i++) {
+    for (Std::map<unsigned int, MapTile>::iterator i = _tileMap.begin(); i != _tileMap.end(); i++) {
         if (i->_value == tile) {
             index = i->_key;
             break;
         }
     }
 
-    index += tile.frame;
+    index += tile._frame;
 
     return index;
 }

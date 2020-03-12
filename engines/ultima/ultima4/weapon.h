@@ -47,49 +47,47 @@ public:
     };
 
 public:
-    typedef Common::String string;
-
     static const Weapon *get(WeaponType w);
-    static const Weapon *get(const string &name);
+    static const Weapon *get(const Common::String &name);
 
-    WeaponType getType() const          {return type;}
-    const string &getName() const       {return name;}
-    const string &getAbbrev() const     {return abbr;}
-    bool canReady(ClassType klass) const{return (canuse & (1 << klass)) != 0;}
-    int getRange() const                {return range;}
-    int getDamage() const               {return damage;}
-    const string &getHitTile() const    {return hittile;}
-    const string &getMissTile() const   {return misstile;}
-    const string &leavesTile() const    {return leavetile;}
-    unsigned short getFlags() const     {return flags;}
+    WeaponType getType() const          {return _type;}
+    const Common::String &getName() const       {return _name;}
+    const Common::String &getAbbrev() const     {return _abbr;}
+    bool canReady(ClassType klass) const{return (_canUse & (1 << klass)) != 0;}
+    int getRange() const                {return _range;}
+    int getDamage() const               {return _damage;}
+    const Common::String &getHitTile() const    {return _hitTile;}
+    const Common::String &getMissTile() const   {return _missTile;}
+    const Common::String &leavesTile() const    {return _leaveTile;}
+    unsigned short getFlags() const     {return _flags;}
 
-    bool loseWhenUsed() const           {return flags & WEAP_LOSE;}
-    bool loseWhenRanged() const         {return flags & WEAP_LOSEWHENRANGED;}
-    bool canChooseDistance() const      {return flags & WEAP_CHOOSEDISTANCE;}
-    bool alwaysHits() const             {return flags & WEAP_ALWAYSHITS;}
-    bool isMagic() const                {return flags & WEAP_MAGIC;}
-    bool canAttackThroughObjects() const{return flags & WEAP_ATTACKTHROUGHOBJECTS;}
-    bool rangeAbsolute() const          {return flags & WEAP_ABSOLUTERANGE;}
-    bool returns() const                {return flags & WEAP_RETURNS;}
-    bool showTravel() const             {return !(flags & WEAP_DONTSHOWTRAVEL);}
+    bool loseWhenUsed() const           {return _flags & WEAP_LOSE;}
+    bool loseWhenRanged() const         {return _flags & WEAP_LOSEWHENRANGED;}
+    bool canChooseDistance() const      {return _flags & WEAP_CHOOSEDISTANCE;}
+    bool alwaysHits() const             {return _flags & WEAP_ALWAYSHITS;}
+    bool isMagic() const                {return _flags & WEAP_MAGIC;}
+    bool canAttackThroughObjects() const{return _flags & WEAP_ATTACKTHROUGHOBJECTS;}
+    bool rangeAbsolute() const          {return _flags & WEAP_ABSOLUTERANGE;}
+    bool returns() const                {return _flags & WEAP_RETURNS;}
+    bool showTravel() const             {return !(_flags & WEAP_DONTSHOWTRAVEL);}
 
 private:
     Weapon(const ConfigElement &conf);
 
     static void loadConf();
-    static bool confLoaded;
-    static Std::vector<Weapon *> weapons;
+    static bool _confLoaded;
+    static Std::vector<Weapon *> _weapons;
 
-    WeaponType type;
-    string name;
-    string abbr;            /**< abbreviation for the weapon */
-    unsigned char canuse;   /**< bitmask of classes that can use weapon */
-    int range;              /**< range of weapon */
-    int damage;             /**< damage of weapon */
-    string hittile;         /**< tile to display a hit */
-    string misstile;        /**< tile to display a miss */
-    string leavetile;       /**< if the weapon leaves a tile, the tile #, zero otherwise */
-    unsigned short flags;
+    WeaponType _type;
+    Common::String _name;
+    Common::String _abbr;            /**< abbreviation for the weapon */
+    byte _canUse;             /**< bitmask of classes that can use weapon */
+    int _range;              /**< range of weapon */
+    int _damage;             /**< damage of weapon */
+    Common::String _hitTile;         /**< tile to display a hit */
+    Common::String _missTile;        /**< tile to display a miss */
+    Common::String _leaveTile;       /**< if the weapon leaves a tile, the tile #, zero otherwise */
+    unsigned short _flags;
 };
 
 } // End of namespace Ultima4

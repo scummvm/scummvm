@@ -40,24 +40,24 @@ public:
     static const Armor *get(const string &name);
 
     // Getters
-    ArmorType getType() const       {return type;   } /**< Returns the ArmorType of the armor */
-    const string &getName() const   {return name;   } /**< Returns the name of the armor */
-    int getDefense() const          {return defense;} /**< Returns the defense value of the armor */
+    ArmorType getType() const       {return _type;   } /**< Returns the ArmorType of the armor */
+    const string &getName() const   {return _name;   } /**< Returns the name of the armor */
+    int getDefense() const          {return _defense;} /**< Returns the defense value of the armor */
                                                       /** Returns true if the class given can wear the armor */
-    bool canWear(ClassType klass) const {return canuse & (1 << klass);}
+    bool canWear(ClassType klass) const {return _canUse & (1 << klass);}
 
 private:
     Armor(const ConfigElement &conf);
 
     static void loadConf();
-    static bool confLoaded;
-    static Std::vector<Armor *> armors;
+    static bool _confLoaded;
+    static Std::vector<Armor *> _armors;
 
-    ArmorType type;
-    string name;
-    unsigned char canuse;
-    int defense;
-    unsigned short mask;
+    ArmorType _type;
+    string _name;
+    unsigned char _canUse;
+    int _defense;
+    unsigned short _mask;
 };
 
 } // End of namespace Ultima4

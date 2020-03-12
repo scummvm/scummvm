@@ -41,14 +41,14 @@ class Person;
 class Script;
 class StatsArea;
 
-typedef enum {
+enum TransportContext {
     TRANSPORT_FOOT      = 0x1,
     TRANSPORT_HORSE     = 0x2,
     TRANSPORT_SHIP      = 0x4,
     TRANSPORT_BALLOON		= 0x8,
     TRANSPORT_FOOT_OR_HORSE	= TRANSPORT_FOOT | TRANSPORT_HORSE,
     TRANSPORT_ANY			= 0xffff
-} TransportContext;
+};
 
 /**
  * Context class
@@ -58,21 +58,21 @@ public:
     Context();
     ~Context();
 
-    Party *party;
-    SaveGame *saveGame;
-    class Location *location;
-    int line, col;
-    StatsArea *stats;
-    int moonPhase;
-    int windDirection;
-    int windCounter;
-    bool windLock;
-    Aura *aura;    
-    int horseSpeed;
-    int opacity;
-    TransportContext transportContext;
-    uint32 lastCommandTime;
-    class Object *lastShip;
+    Party *_party;
+    SaveGame *_saveGame;
+    class Location *_location;
+    int _line, col;
+    StatsArea *_stats;
+    int _moonPhase;
+    int _windDirection;
+    int _windCounter;
+    bool _windLock;
+    Aura *_aura;    
+    int _horseSpeed;
+    int _opacity;
+    TransportContext _transportContext;
+    uint32 _lastCommandTime;
+    class Object *_lastShip;
 
     /**
      * Provides scripts with information
@@ -80,7 +80,7 @@ public:
     virtual Common::String translate(Std::vector<Common::String> &parts) {
         if (parts.size() == 1) {
             if (parts[0] == "wind")
-                return getDirectionName(static_cast<Direction>(windDirection));
+                return getDirectionName(static_cast<Direction>(_windDirection));
         }
         return "";
     }

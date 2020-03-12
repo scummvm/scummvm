@@ -62,22 +62,22 @@ void DungeonView::display(Context * c, TileView *view)
     	Std::vector<MapTile> tiles;
 
         screenEraseMapArea();
-        if (c->party->getTorchDuration() > 0) {
+        if (c->_party->getTorchDuration() > 0) {
             for (y = 3; y >= 0; y--) {
                 DungeonGraphicType type;
 
                 //FIXME: Maybe this should be in a loop
 				tiles = getTiles(y, -1);
                 type = tilesToGraphic(tiles);
-				drawWall(-1, y, (Direction)c->saveGame->orientation, type);
+				drawWall(-1, y, (Direction)c->_saveGame->orientation, type);
 
 				tiles = getTiles(y, 1);
                 type = tilesToGraphic(tiles);
-                drawWall(1, y, (Direction)c->saveGame->orientation, type);
+                drawWall(1, y, (Direction)c->_saveGame->orientation, type);
 
                 tiles = getTiles(y, 0);
                 type = tilesToGraphic(tiles);
-                drawWall(0, y, (Direction)c->saveGame->orientation, type);
+                drawWall(0, y, (Direction)c->_saveGame->orientation, type);
 
                 //This only checks that the tile at y==3 is opaque
                 if (y == 3 && !tiles.front().getTileType()->isOpaque())
@@ -88,11 +88,11 @@ void DungeonView::display(Context * c, TileView *view)
                		DungeonGraphicType distant_type = tilesToGraphic(distant_tiles);
 
 					if ((distant_type == DNGGRAPHIC_DNGTILE) || (distant_type == DNGGRAPHIC_BASETILE))
-						drawTile(c->location->map->tileset->get(distant_tiles.front().getId()),0, y_obj, Direction(c->saveGame->orientation));
+						drawTile(c->_location->map->tileset->get(distant_tiles.front().getId()),0, y_obj, Direction(c->_saveGame->orientation));
                		}
                	}
 				if ((type == DNGGRAPHIC_DNGTILE) || (type == DNGGRAPHIC_BASETILE))
-					drawTile(c->location->map->tileset->get(tiles.front().getId()), 0, y, Direction(c->saveGame->orientation));
+					drawTile(c->_location->map->tileset->get(tiles.front().getId()), 0, y, Direction(c->_saveGame->orientation));
             }
         }
     }
@@ -101,15 +101,15 @@ void DungeonView::display(Context * c, TileView *view)
     else {
     	Std::vector<MapTile> tiles;
 
-        static MapTile black = c->location->map->tileset->getByName("black")->getId();
-        static MapTile avatar = c->location->map->tileset->getByName("avatar")->getId();
+        static MapTile black = c->_location->map->tileset->getByName("black")->getId();
+        static MapTile avatar = c->_location->map->tileset->getByName("avatar")->getId();
 
         for (y = 0; y < VIEWPORT_H; y++) {
             for (x = 0; x < VIEWPORT_W; x++) {
                     tiles = getTiles((VIEWPORT_H / 2) - y, x - (VIEWPORT_W / 2));
 
 				/* Only show blackness if there is no light */
-				if (c->party->getTorchDuration() <= 0)
+				if (c->_party->getTorchDuration() <= 0)
 					view->drawTile(black, false, x, y);
 				else if (x == VIEWPORT_W/2 && y == VIEWPORT_H/2)
 					view->drawTile(avatar, false, x, y);
@@ -151,17 +151,17 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
     const int *dscale = tiledWall ? lscale : nscale;
 
     //Clear scratchpad and set a background color
-    animated->initializeToBackgroundColor();
+    _animated->initializeToBackgroundColor();
     //Put tile on animated scratchpad
     if (tile->getAnim()) {
         MapTile mt = tile->getId();
-        tile->getAnim()->draw(animated, tile, mt, orientation);
+        tile->getAnim()->draw(_animated, tile, mt, orientation);
     }
     else
     {
-        tile->getImage()->drawOn(animated, 0, 0);
+        tile->getImage()->drawOn(_animated, 0, 0);
     }
-    animated->makeBackgroundColorTransparent();
+    _animated->makeBackgroundColorTransparent();
     //This process involving the background color is only required for drawing in the dungeon.
     //It will not play well with semi-transparent graphics.
 
@@ -169,23 +169,23 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
     if (dscale[distance] == 0)
 		return;
     else if (dscale[distance] == 1)
-        scaled = screenScaleDown(animated, 2);
+        scaled = screenScaleDown(_animated, 2);
     else
     {
-        scaled = screenScale(animated, dscale[distance] / 2, 1, 0);
+        scaled = screenScale(_animated, dscale[distance] / 2, 1, 0);
     }
 
     if (tiledWall) {
-    	int i_x = SCALED((VIEWPORT_W * tileWidth  / 2) + this->x) - (scaled->width() / 2);
-    	int i_y = SCALED((VIEWPORT_H * tileHeight / 2) + this->y) - (scaled->height() / 2);
+    	int i_x = SCALED((VIEWPORT_W * _tileWidth  / 2) + this->_x) - (scaled->width() / 2);
+    	int i_y = SCALED((VIEWPORT_H * _tileHeight / 2) + this->_y) - (scaled->height() / 2);
     	int f_x = i_x + scaled->width();
     	int f_y = i_y + scaled->height();
-    	int d_x = animated->width();
-    	int d_y = animated->height();
+    	int d_x = _animated->width();
+    	int d_y = _animated->height();
 
     	for (int x = i_x; x < f_x; x+=d_x)
     		for (int y = i_y; y < f_y; y+=d_y)
-    			animated->drawSubRectOn(this->screen,
+    			_animated->drawSubRectOn(this->screen,
     					x,
     					y,
     					0,
@@ -196,16 +196,16 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
     }
     else {
     	int y_offset = MAX(0,(dscale[distance] - offset_adj) * offset_multiplier);
-    	int x = SCALED((VIEWPORT_W * tileWidth / 2) + this->x) - (scaled->width() / 2);
-    	int y = SCALED((VIEWPORT_H * tileHeight / 2) + this->y + y_offset) - (scaled->height() / 8);
+    	int x = SCALED((VIEWPORT_W * _tileWidth / 2) + this->_x) - (scaled->width() / 2);
+    	int y = SCALED((VIEWPORT_H * _tileHeight / 2) + this->_y + y_offset) - (scaled->height() / 8);
 
 		scaled->drawSubRectOn(	this->screen,
 								x,
 								y,
 								0,
 								0,
-								SCALED(tileWidth * VIEWPORT_W + this->x) - x ,
-								SCALED(tileHeight * VIEWPORT_H + this->y) - y );
+								SCALED(_tileWidth * VIEWPORT_W + this->_x) - x ,
+								SCALED(_tileHeight * VIEWPORT_H + this->_y) - y );
     }
 
     delete scaled;
@@ -254,9 +254,9 @@ void DungeonView::drawTile(Tile *tile, int x_offset, int distance, Direction ori
 }
 
 Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
-    MapCoords coords = c->location->coords;
+    MapCoords coords = c->_location->coords;
 
-    switch (c->saveGame->orientation) {
+    switch (c->_saveGame->orientation) {
     case DIR_WEST:
         coords.x -= fwd;
         coords.y -= side;
@@ -284,32 +284,32 @@ Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
     }
 
     // Wrap the coordinates if necessary
-    coords.wrap(c->location->map);
+    coords.wrap(c->_location->map);
 
     bool focus;
-    return c->location->tilesAt(coords, focus);
+    return c->_location->tilesAt(coords, focus);
 }
 
 DungeonGraphicType DungeonView::tilesToGraphic(const Std::vector<MapTile> &tiles) {
     MapTile tile = tiles.front();
 
-    static const MapTile corridor = c->location->map->tileset->getByName("brick_floor")->getId();
-    static const MapTile up_ladder = c->location->map->tileset->getByName("up_ladder")->getId();
-    static const MapTile down_ladder = c->location->map->tileset->getByName("down_ladder")->getId();
-    static const MapTile updown_ladder = c->location->map->tileset->getByName("up_down_ladder")->getId();
+    static const MapTile corridor = c->_location->map->tileset->getByName("brick_floor")->getId();
+    static const MapTile up_ladder = c->_location->map->tileset->getByName("up_ladder")->getId();
+    static const MapTile down_ladder = c->_location->map->tileset->getByName("down_ladder")->getId();
+    static const MapTile updown_ladder = c->_location->map->tileset->getByName("up_down_ladder")->getId();
 
     /*
      * check if the dungeon tile has an annotation or object on top
      * (always displayed as a tile, unless a ladder)
      */
     if (tiles.size() > 1) {
-        if (tile.id == up_ladder.id)
+        if (tile._id == up_ladder._id)
             return DNGGRAPHIC_LADDERUP;
-        else if (tile.id == down_ladder.id)
+        else if (tile._id == down_ladder._id)
             return DNGGRAPHIC_LADDERDOWN;
-        else if (tile.id == updown_ladder.id)
+        else if (tile._id == updown_ladder._id)
             return DNGGRAPHIC_LADDERUPDOWN;
-        else if (tile.id == corridor.id)
+        else if (tile._id == corridor._id)
             return DNGGRAPHIC_NONE;
         else
             return DNGGRAPHIC_BASETILE;
@@ -319,7 +319,7 @@ DungeonGraphicType DungeonView::tilesToGraphic(const Std::vector<MapTile> &tiles
      * if not an annotation or object, then the tile is a dungeon
      * token
      */
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->location->map);
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->map);
     DungeonToken token = dungeon->tokenForTile(tile);
 
     switch (token) {

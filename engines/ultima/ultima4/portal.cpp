@@ -90,7 +90,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
     if (portal && portal->portalConditionsMet && !(*portal->portalConditionsMet)(portal))
         return 0;
     /* must klimb or descend on foot! */
-    else if (c->transportContext & ~TRANSPORT_FOOT && (action == ACTION_KLIMB || action == ACTION_DESCEND)) {
+    else if (c->_transportContext & ~TRANSPORT_FOOT && (action == ACTION_KLIMB || action == ACTION_DESCEND)) {
         screenMessage("%sOnly on foot!\n", action == ACTION_KLIMB ? "Klimb\n" : "");
         return 1;
     }    
@@ -113,7 +113,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
             case Map::CITY: 
                 {
                     City *city = dynamic_cast<City*>(destination);
-                    screenMessage("Enter %s!\n\n%s\n\n", city->type.c_str(), city->getName().c_str());
+                    screenMessage("Enter %s!\n\n%s\n\n", city->_type.c_str(), city->getName().c_str());
                 }
                 break;            
             case Map::SHRINE:
@@ -135,7 +135,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
     }
 
     /* check the transportation requisites of the portal */
-    if (c->transportContext & ~portal->portalTransportRequisites) {
+    if (c->_transportContext & ~portal->portalTransportRequisites) {
         screenMessage("Only on foot!\n");        
         return 1;
     }
@@ -162,9 +162,9 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
      * note that we use c->location instead of location, since
      * location has probably been invalidated above 
      */
-    if (portal->retroActiveDest && c->location->prev) {
-        c->location->prev->coords = portal->retroActiveDest->coords;        
-        c->location->prev->map = mapMgr->get(portal->retroActiveDest->mapid);
+    if (portal->retroActiveDest && c->_location->prev) {
+        c->_location->prev->coords = portal->retroActiveDest->coords;        
+        c->_location->prev->map = mapMgr->get(portal->retroActiveDest->mapid);
     }
 
     if (destination->type == Map::SHRINE) {

@@ -332,7 +332,7 @@ extern void gs_object_player_wear(sc_gameref_t gs, sc_int object);
 extern void gs_object_npc_wear(sc_gameref_t gs, sc_int object, sc_int npc);
 extern void gs_object_to_room(sc_gameref_t gs, sc_int object, sc_int room);
 extern sc_int gs_npc_count(sc_gameref_t gs);
-extern void gs_set_npc_location(sc_gameref_t gs, sc_int npc, sc_int location);
+extern void gs_set_npc_location(sc_gameref_t gs, sc_int npc, sc_int _location);
 extern sc_int gs_npc_location(sc_gameref_t gs, sc_int npc);
 extern void gs_set_npc_position(sc_gameref_t gs, sc_int npc, sc_int position);
 extern sc_int gs_npc_position(sc_gameref_t gs, sc_int npc);

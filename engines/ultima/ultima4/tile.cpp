@@ -208,7 +208,7 @@ void Tile::deleteImage()
  * MapTile Class Implementation
  */
 Direction MapTile::getDirection() const {
-    return getTileType()->directionForFrame(frame);
+    return getTileType()->directionForFrame(_frame);
 }
 
 bool MapTile::setDirection(Direction d) {
@@ -220,7 +220,7 @@ bool MapTile::setDirection(Direction d) {
 
     int new_frame = type->frameForDirection(d);
     if (new_frame != -1) {
-        frame = new_frame;
+        _frame = new_frame;
         return true;
     }
     return false;
@@ -235,7 +235,7 @@ bool Tile::isDungeonFloor() const {
 
 bool Tile::isOpaque() const {
     extern Context *c;
-    return c->opacity ? opaque : false;
+    return c->_opacity ? opaque : false;
 }
 
 /**
@@ -243,7 +243,7 @@ bool Tile::isOpaque() const {
  * Deprecated? Never used in XML. Other mechanisms exist, though this could help?
  */
 bool Tile::isForeground() const {
-    return (rule->mask & MASK_FOREGROUND);
+    return (rule->_mask & MASK_FOREGROUND);
 }
 
 Direction Tile::directionForFrame(int frame) const {
@@ -263,7 +263,7 @@ int Tile::frameForDirection(Direction d) const {
 
 
 const Tile *MapTile::getTileType() const {
-    return Tileset::findTileById(id);
+    return Tileset::findTileById(_id);
 }
 
 } // End of namespace Ultima4
