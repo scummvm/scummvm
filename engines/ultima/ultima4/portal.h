@@ -46,22 +46,22 @@ typedef enum {
 
 typedef bool (*PortalConditionsMet)(const Portal *p);
 
-typedef struct _PortalDestination {
-    MapCoords coords;
-    MapId mapid;
-} PortalDestination;
+struct PortalDestination {
+    MapCoords _coords;
+    MapId _mapid;
+};
 
 struct Portal {
-    MapCoords coords;
-    MapId destid;
-    MapCoords start;    
-    PortalTriggerAction trigger_action;
-    PortalConditionsMet portalConditionsMet;
-    struct _PortalDestination *retroActiveDest;
-    bool saveLocation;
-    Common::String message;
-    TransportContext portalTransportRequisites;
-    bool exitPortal;
+    MapCoords _coords;
+    MapId _destid;
+    MapCoords _start;    
+    PortalTriggerAction _triggerAction;
+    PortalConditionsMet _portalConditionsMet;
+	PortalDestination *_retroActiveDest;
+    bool _saveLocation;
+    Common::String _message;
+    TransportContext _portalTransportRequisites;
+    bool _exitPortal;
 };
 
 void createDngLadder(Location *location, PortalTriggerAction action, Portal *p);

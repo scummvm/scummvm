@@ -80,9 +80,9 @@ Music::Music() : introMid(TOWNS), current(NONE), playing(NULL), logger(new Debug
 	create_sys(); // Call the Sound System specific creation file.
 
 	// Set up the volume.
-    on = settings.musicVol;
-    setMusicVolume(settings.musicVol);
-    setSoundVolume(settings.soundVol);
+    on = settings._musicVol;
+    setMusicVolume(settings._musicVol);
+    setSoundVolume(settings._soundVol);
     TRACE(*logger, Common::String("Music initialized: volume is ") + (on ? "on" : "off"));
 }
 
@@ -164,7 +164,7 @@ bool Music::toggle() {
     else
         fadeIn(1000, true);
 
-    eventHandler->getTimer()->add(&Music::callback, settings.gameCyclesPerSecond);
+    eventHandler->getTimer()->add(&Music::callback, settings._gameCyclesPerSecond);
     return on;    
 }
 
@@ -177,7 +177,7 @@ void Music::fadeOut(int msecs) {
 		return;
 
 	if (isPlaying()) {
-		if (!settings.volumeFades)
+		if (!settings._volumeFades)
 			stop();
 		else {
 			fadeOut_sys(msecs);
@@ -197,7 +197,7 @@ void Music::fadeIn(int msecs, bool loadFromMap) {
 		if (loadFromMap || !playing)
 			load(c->_location->map->music);
 
-		if (!settings.volumeFades)
+		if (!settings._volumeFades)
 			play();
 		else {
 			fadeIn_sys(msecs, loadFromMap);
@@ -206,37 +206,37 @@ void Music::fadeIn(int msecs, bool loadFromMap) {
 }
 
 int Music::increaseMusicVolume() {
-    if (++settings.musicVol > MAX_VOLUME)
-        settings.musicVol = MAX_VOLUME;
+    if (++settings._musicVol > MAX_VOLUME)
+        settings._musicVol = MAX_VOLUME;
     else
-        setMusicVolume(settings.musicVol);
-    return (settings.musicVol * 100 / MAX_VOLUME);  // percentage
+        setMusicVolume(settings._musicVol);
+    return (settings._musicVol * 100 / MAX_VOLUME);  // percentage
 }
 
 int Music::decreaseMusicVolume() {
-    if (--settings.musicVol < 0)
-        settings.musicVol = 0;
+    if (--settings._musicVol < 0)
+        settings._musicVol = 0;
     else
-        setMusicVolume(settings.musicVol);
-    return (settings.musicVol * 100 / MAX_VOLUME);  // percentage
+        setMusicVolume(settings._musicVol);
+    return (settings._musicVol * 100 / MAX_VOLUME);  // percentage
 }
 
 
 
 int Music::increaseSoundVolume() {
-    if (++settings.soundVol > MAX_VOLUME)
-        settings.soundVol = MAX_VOLUME;
+    if (++settings._soundVol > MAX_VOLUME)
+        settings._soundVol = MAX_VOLUME;
     else
-        setSoundVolume(settings.soundVol);
-    return (settings.soundVol * 100 / MAX_VOLUME);  // percentage
+        setSoundVolume(settings._soundVol);
+    return (settings._soundVol * 100 / MAX_VOLUME);  // percentage
 }
 
 int Music::decreaseSoundVolume() {
-    if (--settings.soundVol < 0)
-        settings.soundVol = 0;
+    if (--settings._soundVol < 0)
+        settings._soundVol = 0;
     else
-        setSoundVolume(settings.soundVol);
-    return (settings.soundVol * 100 / MAX_VOLUME);  // percentage
+        setSoundVolume(settings._soundVol);
+    return (settings._soundVol * 100 / MAX_VOLUME);  // percentage
 }
 
 } // End of namespace Ultima4

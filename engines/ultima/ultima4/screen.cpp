@@ -117,26 +117,26 @@ void screenInit() {
     screenLoadGraphicsFromConf();
     
     if (verbose)
-        debug("using %s scaler\n", settings.filter.c_str());
+        debug("using %s scaler\n", settings._filter.c_str());
       
     screenInit_sys();
     
     /* if we can't use vga, reset to default:ega */
-    if (!u4isUpgradeAvailable() && settings.videoType == "VGA")
-        settings.videoType = "EGA";
+    if (!u4isUpgradeAvailable() && settings._videoType == "VGA")
+        settings._videoType = "EGA";
     
     
-    KeyHandler::setKeyRepeat(settings.keydelay, settings.keyinterval);
+    KeyHandler::setKeyRepeat(settings._keydelay, settings._keyinterval);
     
     /* find the tile animations for our tileset */
     tileanims = NULL;
     for (Std::vector<TileAnimSet *>::const_iterator i = tileanimSets.begin(); i != tileanimSets.end(); i++) {
         TileAnimSet *set = *i;
-        if (set->_name == settings.videoType)
+        if (set->_name == settings._videoType)
             tileanims = set;
     }
     if (!tileanims)
-        errorFatal("unable to find tile animations for \"%s\" video mode in graphics.xml", settings.videoType.c_str());
+        errorFatal("unable to find tile animations for \"%s\" video mode in graphics.xml", settings._videoType.c_str());
     
     dungeonTileChars.clear();
     dungeonTileChars["brick_floor"] = CHARSET_FLOOR;
@@ -334,13 +334,13 @@ void screenLoadGraphicsFromConf() {
     for (i = layouts.begin(); i != layouts.end(); i++) {
         Layout *layout = *i;
         
-        if (layout->type == LAYOUT_GEM && layout->name == settings.gemLayout) {
+        if (layout->type == LAYOUT_GEM && layout->name == settings._gemLayout) {
             gemlayout = layout;
             break;
         }
     }
     if (!gemlayout)
-        errorFatal("no gem layout named %s found!\n", settings.gemLayout.c_str());
+        errorFatal("no gem layout named %s found!\n", settings._gemLayout.c_str());
 }
 
 Layout *screenLoadLayoutFromConf(const ConfigElement &conf) {
@@ -510,14 +510,14 @@ void screenDrawImage(const Common::String &name, int x, int y) {
         
         if (info) {
             info->image->drawSubRect(x, y,
-                                     subimage->x * (settings.scale / info->prescale),
-                                     subimage->y * (settings.scale / info->prescale),
-                                     subimage->width * (settings.scale / info->prescale),
-                                     subimage->height * (settings.scale / info->prescale));
+                                     subimage->x * (settings._scale / info->prescale),
+                                     subimage->y * (settings._scale / info->prescale),
+                                     subimage->width * (settings._scale / info->prescale),
+                                     subimage->height * (settings._scale / info->prescale));
             return;
         }
     }
-    errorFatal("ERROR 1006: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", name.c_str(), settings.game.c_str());
+    errorFatal("ERROR 1006: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", name.c_str(), settings._game.c_str());
 }
 
 void screenDrawImageInMapArea(const Common::String &name) {
@@ -525,12 +525,12 @@ void screenDrawImageInMapArea(const Common::String &name) {
     
     info = imageMgr->get(name);
     if (!info)
-        errorFatal("ERROR 1004: Unable to load data files.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", settings.game.c_str());
+        errorFatal("ERROR 1004: Unable to load data files.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", settings._game.c_str());
     
-    info->image->drawSubRect(BORDER_WIDTH * settings.scale, BORDER_HEIGHT * settings.scale,
-                             BORDER_WIDTH * settings.scale, BORDER_HEIGHT * settings.scale,
-                             VIEWPORT_W * TILE_WIDTH * settings.scale, 
-                             VIEWPORT_H * TILE_HEIGHT * settings.scale);
+    info->image->drawSubRect(BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
+                             BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
+                             VIEWPORT_W * TILE_WIDTH * settings._scale, 
+                             VIEWPORT_H * TILE_HEIGHT * settings._scale);
 }
 
 
@@ -541,10 +541,10 @@ void screenTextColor(int color) {
     if (charsetInfo == NULL) {
         charsetInfo = imageMgr->get(BKGD_CHARSET);
         if (!charsetInfo)
-            errorFatal("ERROR 1003: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_CHARSET, settings.game.c_str());
+            errorFatal("ERROR 1003: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_CHARSET, settings._game.c_str());
     }
     
-	if (!settings.enhancements || !settings.enhancementsOptions.textColorization) {
+	if (!settings._enhancements || !settings._enhancementsOptions._textColorization) {
 		return;
 	}
     
@@ -568,12 +568,12 @@ void screenShowChar(int chr, int x, int y) {
     if (charsetInfo == NULL) {
         charsetInfo = imageMgr->get(BKGD_CHARSET);
         if (!charsetInfo)
-            errorFatal("ERROR 1001: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_CHARSET, settings.game.c_str());
+            errorFatal("ERROR 1001: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_CHARSET, settings._game.c_str());
     }
     
-    charsetInfo->image->drawSubRect(x * charsetInfo->image->width(), y * (CHAR_HEIGHT * settings.scale),
-                                    0, chr * (CHAR_HEIGHT * settings.scale),
-                                    charsetInfo->image->width(), CHAR_HEIGHT * settings.scale);
+    charsetInfo->image->drawSubRect(x * charsetInfo->image->width(), y * (CHAR_HEIGHT * settings._scale),
+                                    0, chr * (CHAR_HEIGHT * settings._scale),
+                                    charsetInfo->image->width(), CHAR_HEIGHT * settings._scale);
 }
 
 /**
@@ -586,17 +586,17 @@ void screenScrollMessageArea() {
     
     screen->drawSubRectOn(screen, 
                           TEXT_AREA_X * charsetInfo->image->width(), 
-                          TEXT_AREA_Y * CHAR_HEIGHT * settings.scale,
+                          TEXT_AREA_Y * CHAR_HEIGHT * settings._scale,
                           TEXT_AREA_X * charsetInfo->image->width(),
-                          (TEXT_AREA_Y + 1) * CHAR_HEIGHT * settings.scale,
+                          (TEXT_AREA_Y + 1) * CHAR_HEIGHT * settings._scale,
                           TEXT_AREA_W * charsetInfo->image->width(),
-                          (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings.scale);
+                          (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings._scale);
     
     
     screen->fillRect(TEXT_AREA_X * charsetInfo->image->width(),
-                     TEXT_AREA_Y * CHAR_HEIGHT * settings.scale + (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings.scale,
+                     TEXT_AREA_Y * CHAR_HEIGHT * settings._scale + (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings._scale,
                      TEXT_AREA_W * charsetInfo->image->width(),
-                     CHAR_HEIGHT * settings.scale,
+                     CHAR_HEIGHT * settings._scale,
                      0, 0, 0);
     
     screenRedrawScreen();
@@ -629,12 +629,12 @@ void screenUpdateMoons() {
     }
     /* show the current moons (non-combat) */
     else if ((c->_location->context & CTX_NON_COMBAT) == c->_location->context) {
-        trammelChar = (c->_saveGame->trammelphase == 0) ?
+        trammelChar = (c->_saveGame->_trammelPhase == 0) ?
             MOON_CHAR + 7 :
-            MOON_CHAR + c->_saveGame->trammelphase - 1;
-        feluccaChar = (c->_saveGame->feluccaphase == 0) ?
+            MOON_CHAR + c->_saveGame->_trammelPhase - 1;
+        feluccaChar = (c->_saveGame->_feluccaPhase == 0) ?
             MOON_CHAR + 7 :
-            MOON_CHAR + c->_saveGame->feluccaphase - 1;
+            MOON_CHAR + c->_saveGame->_feluccaPhase - 1;
 
         screenShowChar(trammelChar, 11, 0);
         screenShowChar(feluccaChar, 12, 0);        
@@ -648,7 +648,7 @@ void screenUpdateWind() {
     /* show the direction we're facing in the dungeon */
     if (c->_location->context == CTX_DUNGEON) {
         screenEraseTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
-        screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Dir: %5s", getDirectionName((Direction)c->_saveGame->orientation));        
+        screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Dir: %5s", getDirectionName((Direction)c->_saveGame->_orientation));        
     }
     /* show the wind direction */
     else if ((c->_location->context & CTX_NON_COMBAT) == c->_location->context) {
@@ -718,12 +718,12 @@ void screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWP
         }
     }
 
-    if (settings.lineOfSight == "DOS")
+    if (settings._lineOfSight == "DOS")
         screenFindLineOfSightDOS(viewportTiles);
-    else if (settings.lineOfSight == "Enhanced")
+    else if (settings._lineOfSight == "Enhanced")
         screenFindLineOfSightEnhanced(viewportTiles);
     else
-        errorFatal("unknown line of sight style %s!\n", settings.lineOfSight.c_str());
+        errorFatal("unknown line of sight style %s!\n", settings._lineOfSight.c_str());
 }        
 
 
@@ -1080,10 +1080,10 @@ int screenPointInMouseArea(int x, int y, MouseArea *area) {
 
     /* two points define a rectangle */
     if (area->npoints == 2) {
-        if (x >= (int)(area->point[0].x * settings.scale) &&
-            y >= (int)(area->point[0].y * settings.scale) &&
-            x < (int)(area->point[1].x * settings.scale) &&
-            y < (int)(area->point[1].y * settings.scale)) {
+        if (x >= (int)(area->point[0].x * settings._scale) &&
+            y >= (int)(area->point[0].y * settings._scale) &&
+            x < (int)(area->point[1].x * settings._scale) &&
+            y < (int)(area->point[1].y * settings._scale)) {
             return 1;
         }
     }
@@ -1091,9 +1091,9 @@ int screenPointInMouseArea(int x, int y, MouseArea *area) {
     /* three points define a triangle */
     else if (area->npoints == 3) {
         return screenPointInTriangle(x, y, 
-                                     area->point[0].x * settings.scale, area->point[0].y * settings.scale,
-                                     area->point[1].x * settings.scale, area->point[1].y * settings.scale,
-                                     area->point[2].x * settings.scale, area->point[2].y * settings.scale);
+                                     area->point[0].x * settings._scale, area->point[0].y * settings._scale,
+                                     area->point[1].x * settings._scale, area->point[1].y * settings._scale,
+                                     area->point[2].x * settings._scale, area->point[2].y * settings._scale);
     }
 
     return 0;
@@ -1105,19 +1105,19 @@ void screenRedrawMapArea() {
 
 void screenEraseMapArea() {
     Image *screen = imageMgr->get("screen")->image;
-    screen->fillRect(BORDER_WIDTH * settings.scale,
-                     BORDER_WIDTH * settings.scale,
-                     VIEWPORT_W * TILE_WIDTH * settings.scale,
-                     VIEWPORT_H * TILE_HEIGHT * settings.scale,
+    screen->fillRect(BORDER_WIDTH * settings._scale,
+                     BORDER_WIDTH * settings._scale,
+                     VIEWPORT_W * TILE_WIDTH * settings._scale,
+                     VIEWPORT_H * TILE_HEIGHT * settings._scale,
                      0, 0, 0);
 }
 
 void screenEraseTextArea(int x, int y, int width, int height) {
     Image *screen = imageMgr->get("screen")->image;
-    screen->fillRect(x * CHAR_WIDTH * settings.scale,
-                     y * CHAR_HEIGHT * settings.scale,
-                     width * CHAR_WIDTH * settings.scale,
-                     height * CHAR_HEIGHT * settings.scale,
+    screen->fillRect(x * CHAR_WIDTH * settings._scale,
+                     y * CHAR_HEIGHT * settings._scale,
+                     width * CHAR_WIDTH * settings._scale,
+                     height * CHAR_HEIGHT * settings._scale,
                      0, 0, 0);
 }
 
@@ -1136,7 +1136,7 @@ void screenShake(int iterations) {
     // Therefore, a temporary Image buffer is used to store the area
     // that gets clipped at the bottom.
     
-    if (settings.screenShakes) {
+    if (settings._screenShakes) {
         // specify the size of the offset, and create a buffer
         // to store the offset row plus 1
         shakeOffset = 1;
@@ -1151,13 +1151,13 @@ void screenShake(int iterations) {
             bottom->drawOn(screen, 0, SCALED(200-(shakeOffset)));
             screen->fillRect(0, 0, SCALED(320), SCALED(shakeOffset), 0, 0, 0);
             screenRedrawScreen();
-            EventHandler::sleep(settings.shakeInterval);
+            EventHandler::sleep(settings._shakeInterval);
             
             // shift the screen back up, and replace the bottom row
             screen->drawOn(screen, 0, 0-SCALED(shakeOffset));
             bottom->drawOn(screen, 0, SCALED(200-(shakeOffset+1)));
             screenRedrawScreen();
-            EventHandler::sleep(settings.shakeInterval);
+            EventHandler::sleep(settings._shakeInterval);
         }
         // free the bottom row image
         delete bottom;
@@ -1179,34 +1179,34 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
         ASSERT(charsetInfo, "charset not initialized");
         Std::map<Common::String, int>::iterator charIndex = dungeonTileChars.find(t.getTileType()->getName());
         if (charIndex != dungeonTileChars.end()) {
-            charsetInfo->image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings.scale,
-                                            (layout->viewport.y + (y * layout->tileshape.height)) * settings.scale,
+            charsetInfo->image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
+                                            (layout->viewport.y + (y * layout->tileshape.height)) * settings._scale,
                                             0, 
-                                            charIndex->_value * layout->tileshape.height * settings.scale, 
-                                            layout->tileshape.width * settings.scale,
-                                            layout->tileshape.height * settings.scale);
+                                            charIndex->_value * layout->tileshape.height * settings._scale, 
+                                            layout->tileshape.width * settings._scale,
+                                            layout->tileshape.height * settings._scale);
         }
     }
     else {
         if (gemTilesInfo == NULL) {
             gemTilesInfo = imageMgr->get(BKGD_GEMTILES);
             if (!gemTilesInfo)
-                errorFatal("ERROR 1002: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_GEMTILES, settings.game.c_str());
+                errorFatal("ERROR 1002: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_GEMTILES, settings._game.c_str());
         }
         
         if (tile < 128) {
-            gemTilesInfo->image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings.scale,
-                                             (layout->viewport.y + (y * layout->tileshape.height)) * settings.scale,
+            gemTilesInfo->image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
+                                             (layout->viewport.y + (y * layout->tileshape.height)) * settings._scale,
                                              0, 
-                                             tile * layout->tileshape.height * settings.scale,
-                                             layout->tileshape.width * settings.scale,
-                                             layout->tileshape.height * settings.scale);
+                                             tile * layout->tileshape.height * settings._scale,
+                                             layout->tileshape.width * settings._scale,
+                                             layout->tileshape.height * settings._scale);
         } else {
             Image *screen = imageMgr->get("screen")->image;
-            screen->fillRect((layout->viewport.x + (x * layout->tileshape.width)) * settings.scale,
-                             (layout->viewport.y + (y * layout->tileshape.height)) * settings.scale,
-                             layout->tileshape.width * settings.scale,
-                             layout->tileshape.height * settings.scale,
+            screen->fillRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
+                             (layout->viewport.y + (y * layout->tileshape.height)) * settings._scale,
+                             layout->tileshape.width * settings._scale,
+                             layout->tileshape.height * settings._scale,
                              0, 0, 0);
         }
     }
@@ -1234,10 +1234,10 @@ void screenGemUpdate() {
     int x, y;
     Image *screen = imageMgr->get("screen")->image;
     
-    screen->fillRect(BORDER_WIDTH * settings.scale, 
-                     BORDER_HEIGHT * settings.scale,
-                     VIEWPORT_W * TILE_WIDTH * settings.scale, 
-                     VIEWPORT_H * TILE_HEIGHT * settings.scale,
+    screen->fillRect(BORDER_WIDTH * settings._scale, 
+                     BORDER_HEIGHT * settings._scale,
+                     VIEWPORT_W * TILE_WIDTH * settings._scale, 
+                     VIEWPORT_H * TILE_HEIGHT * settings._scale,
                      0, 0, 0);
     
     Layout *layout = screenGetGemLayout(c->_location->map);

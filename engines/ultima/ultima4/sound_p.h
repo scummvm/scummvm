@@ -48,10 +48,10 @@ private:
     void play_sys(Sound sound, bool onlyOnce, int specificDurationInTicks);
     bool load_sys(Sound sound, const Common::String &soundPathName);
     void stop_sys(int channel);
-    Std::vector<Common::String> soundFilenames;
-    Std::vector<OSSoundChunk *> soundChunk;
+    Std::vector<Common::String> _soundFilenames;
+    Std::vector<OSSoundChunk *> _soundChunk;
     SoundManager();
-    static SoundManager *instance;
+    static SoundManager *_instance;
 };
 
 } // End of namespace Ultima4

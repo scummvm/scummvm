@@ -44,17 +44,17 @@ public:
 
     void reinit();
 
-    int getCursorX() const { return cursorX; }
-    int getCursorY() const { return cursorY; }
-    bool getCursorEnabled() const { return cursorEnabled; }
-    int getWidth() const { return columns; }
+    int getCursorX() const { return _cursorX; }
+    int getCursorY() const { return _cursorY; }
+    bool getCursorEnabled() const { return _cursorEnabled; }
+    int getWidth() const { return _columns; }
 
     void drawChar(int chr, int x, int y);
     void drawCharMasked(int chr, int x, int y, unsigned char mask);
     void textAt(int x, int y, const char *fmt, ...) PRINTF_LIKE(4, 5);
     void scroll();
 
-    void setCursorFollowsText(bool follows) { cursorFollowsText = follows; }
+    void setCursorFollowsText(bool follows) { _cursorFollowsText = follows; }
     void setCursorPos(int x, int y, bool clearOld = true);
     void enableCursor();
     void disableCursor();
@@ -73,12 +73,12 @@ public:
 
 
 protected:
-    int columns, rows;          /**< size of the view in character cells  */
-    bool cursorEnabled;         /**< whether the cursor is enabled */
-    bool cursorFollowsText;     /**< whether the cursor is moved past the last character written */
-    int cursorX, cursorY;       /**< current position of cursor */
-    int cursorPhase;            /**< the rotation state of the cursor */
-    static Image *charset;      /**< image containing font */
+    int _columns, _rows;         /**< size of the view in character cells  */
+    bool _cursorEnabled;         /**< whether the cursor is enabled */
+    bool _cursorFollowsText;     /**< whether the cursor is moved past the last character written */
+    int _cursorX, _cursorY;      /**< current position of cursor */
+    int _cursorPhase;            /**< the rotation state of the cursor */
+    static Image *_charset;      /**< image containing font */
 };
 
 } // End of namespace Ultima4

@@ -51,68 +51,68 @@ extern SpellEffectCallback spellEffectCallback;
 /*
  * Script::Variable class
  */
-Script::Variable::Variable() : i_val(0), s_val(""), set(false) {}
-Script::Variable::Variable(const Common::String &v) : set(true) {
-    i_val = static_cast<int>(strtol(v.c_str(), NULL, 10));
-    s_val = v;
+Script::Variable::Variable() : _iVal(0), _sVal(""), _set(false) {}
+Script::Variable::Variable(const Common::String &v) : _set(true) {
+    _iVal = static_cast<int>(strtol(v.c_str(), NULL, 10));
+    _sVal = v;
 }
 
-Script::Variable::Variable(const int &v) : set(true) {
-    i_val = v;
-    s_val = xu4_to_string(v);
+Script::Variable::Variable(const int &v) : _set(true) {
+    _iVal = v;
+    _sVal = xu4_to_string(v);
 }
 
-int&    Script::Variable::getInt()      { return i_val; }
-Common::String& Script::Variable::getString()   { return s_val; }
+int&    Script::Variable::getInt()      { return _iVal; }
+Common::String& Script::Variable::getString()   { return _sVal; }
 
-void    Script::Variable::setValue(const int &v)    { i_val = v; }
-void    Script::Variable::setValue(const Common::String &v) { s_val = v; }
+void    Script::Variable::setValue(const int &v)    { _iVal = v; }
+void    Script::Variable::setValue(const Common::String &v) { _sVal = v; }
 void    Script::Variable::unset()                   {
-    set = false;
-    i_val = 0;
-    s_val = "";
+    _set = false;
+    _iVal = 0;
+    _sVal = "";
 }
 
-bool    Script::Variable::isInt() const             { return i_val > 0; }
-bool    Script::Variable::isString() const          { return i_val == 0; }
-bool    Script::Variable::isSet() const             { return set; }
+bool    Script::Variable::isInt() const             { return _iVal > 0; }
+bool    Script::Variable::isString() const          { return _iVal == 0; }
+bool    Script::Variable::isSet() const             { return _set; }
 
 /*
  * Static member variables 
  */ 
-Script::ActionMap Script::action_map;
+Script::ActionMap Script::_actionMap;
 
 /**
  * Constructs a script object
  */ 
-Script::Script() : vendorScriptDoc(NULL), scriptNode(NULL), debug(NULL), state(STATE_UNLOADED),
-    nounName("item"), idPropName("id")
+Script::Script() : _vendorScriptDoc(NULL), _scriptNode(NULL), _debug(NULL), _state(STATE_UNLOADED),
+    _nounName("item"), _idPropName("id")
 {       
-    action_map["context"]           = ACTION_SET_CONTEXT;
-    action_map["unset_context"]     = ACTION_UNSET_CONTEXT;
-    action_map["end"]               = ACTION_END;
-    action_map["redirect"]          = ACTION_REDIRECT;
-    action_map["wait_for_keypress"] = ACTION_WAIT_FOR_KEY;
-    action_map["wait"]              = ACTION_WAIT;
-    action_map["stop"]              = ACTION_STOP;
-    action_map["include"]           = ACTION_INCLUDE;
-    action_map["for"]               = ACTION_FOR_LOOP;
-    action_map["random"]            = ACTION_RANDOM;
-    action_map["move"]              = ACTION_MOVE;
-    action_map["sleep"]             = ACTION_SLEEP;
-    action_map["cursor"]            = ACTION_CURSOR;
-    action_map["pay"]               = ACTION_PAY;
-    action_map["if"]                = ACTION_IF;
-    action_map["input"]             = ACTION_INPUT;
-    action_map["add"]               = ACTION_ADD;
-    action_map["lose"]              = ACTION_LOSE;
-    action_map["heal"]              = ACTION_HEAL;
-    action_map["cast_spell"]        = ACTION_CAST_SPELL;
-    action_map["damage"]            = ACTION_DAMAGE;
-    action_map["karma"]             = ACTION_KARMA;
-    action_map["music"]             = ACTION_MUSIC;
-    action_map["var"]               = ACTION_SET_VARIABLE;    
-    action_map["ztats"]             = ACTION_ZTATS;    
+    _actionMap["context"]           = ACTION_SET_CONTEXT;
+    _actionMap["unset_context"]     = ACTION_UNSET_CONTEXT;
+    _actionMap["end"]               = ACTION_END;
+    _actionMap["redirect"]          = ACTION_REDIRECT;
+    _actionMap["wait_for_keypress"] = ACTION_WAIT_FOR_KEY;
+    _actionMap["wait"]              = ACTION_WAIT;
+    _actionMap["stop"]              = ACTION_STOP;
+    _actionMap["include"]           = ACTION_INCLUDE;
+    _actionMap["for"]               = ACTION_FOR_LOOP;
+    _actionMap["random"]            = ACTION_RANDOM;
+    _actionMap["move"]              = ACTION_MOVE;
+    _actionMap["sleep"]             = ACTION_SLEEP;
+    _actionMap["cursor"]            = ACTION_CURSOR;
+    _actionMap["pay"]               = ACTION_PAY;
+    _actionMap["if"]                = ACTION_IF;
+    _actionMap["input"]             = ACTION_INPUT;
+    _actionMap["add"]               = ACTION_ADD;
+    _actionMap["lose"]              = ACTION_LOSE;
+    _actionMap["heal"]              = ACTION_HEAL;
+    _actionMap["cast_spell"]        = ACTION_CAST_SPELL;
+    _actionMap["damage"]            = ACTION_DAMAGE;
+    _actionMap["karma"]             = ACTION_KARMA;
+    _actionMap["music"]             = ACTION_MUSIC;
+    _actionMap["var"]               = ACTION_SET_VARIABLE;    
+    _actionMap["ztats"]             = ACTION_ZTATS;    
 }
 
 Script::~Script() {
@@ -124,8 +124,8 @@ Script::~Script() {
     // Smart pointers anyone?
    
     // Clean variables
-    Std::map<Common::String, Script::Variable *>::iterator variableItem = variables.begin();
-    Std::map<Common::String, Script::Variable *>::iterator variablesEnd = variables.end();
+    Std::map<Common::String, Script::Variable *>::iterator variableItem = _variables.begin();
+    Std::map<Common::String, Script::Variable *>::iterator variablesEnd = _variables.end();
     while (variableItem != variablesEnd) {
         delete variableItem->_value;
         ++variableItem;
@@ -133,10 +133,10 @@ Script::~Script() {
 }
 
 void Script::removeCurrentVariable(const Common::String &name) {
-    Std::map<Common::String, Script::Variable *>::iterator dup = variables.find(name);
-    if (dup != variables.end()) {
+    Std::map<Common::String, Script::Variable *>::iterator dup = _variables.find(name);
+    if (dup != _variables.end()) {
         delete dup->_value;
-        variables.erase(dup); // not strictly necessary, but correct.
+        _variables.erase(dup); // not strictly necessary, but correct.
     }
 }
 
@@ -144,7 +144,7 @@ void Script::removeCurrentVariable(const Common::String &name) {
  * Adds an information provider for the script
  */
 void Script::addProvider(const Common::String &name, Provider *p) {
-    providers[name] = p;
+    _providers[name] = p;
 }
 
 /**
@@ -152,7 +152,7 @@ void Script::addProvider(const Common::String &name, Provider *p) {
  */ 
 bool Script::load(const Common::String &filename, const Common::String &baseId, const Common::String &subNodeName, const Common::String &subNodeId) {
     xmlNodePtr root, node, child;
-    this->state = STATE_NORMAL;
+    this->_state = STATE_NORMAL;
 #ifdef TODO
     /* unload previous script */
     unload();
@@ -265,14 +265,14 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
  * Unloads the script
  */ 
 void Script::unload() {
-    if (vendorScriptDoc) {
-        xmlFreeDoc(vendorScriptDoc);
-        vendorScriptDoc = NULL;
+    if (_vendorScriptDoc) {
+        xmlFreeDoc(_vendorScriptDoc);
+        _vendorScriptDoc = NULL;
     }
 
-    if (debug) {
-        delete debug;
-        debug = NULL;
+    if (_debug) {
+        delete _debug;
+        _debug = NULL;
     }
 }
 
@@ -283,13 +283,13 @@ void Script::unload() {
     xmlNodePtr scriptNode;
     Common::String search_id;
     
-    if (variables.find(idPropName) != variables.end()) {
-        if (variables[idPropName]->isSet())
-            search_id = variables[idPropName]->getString();
+    if (_variables.find(_idPropName) != _variables.end()) {
+        if (_variables[_idPropName]->isSet())
+            search_id = _variables[_idPropName]->getString();
         else search_id = "null";
     }
     
-    scriptNode = find(this->scriptNode, script, search_id);
+    scriptNode = find(this->_scriptNode, script, search_id);
 
     if (!scriptNode)
         errorFatal("Script '%s' not found in vendorScript.xml", script.c_str());
@@ -310,17 +310,17 @@ Script::ReturnCode Script::execute(xmlNodePtr script, xmlNodePtr currentItem, Co
             retval = redirect(NULL, script);        
         /* end the conversation */
         else {
-            if (debug)
+            if (_debug)
                 ::debug("\nA script with no children found (nowhere to go). Ending script...\n");
             screenMessage("\n");            
-            this->state = STATE_DONE;
+            this->_state = STATE_DONE;
         }
     }
 
     /* do we start where we left off, or start from the beginning? */
     if (currentItem) {
         current = currentItem->next;
-        if (debug)
+        if (_debug)
             ::debug("\nReturning to execution from end of '%s' script\n", currentItem->name);
     }
     else current = script->children;
@@ -331,7 +331,7 @@ Script::ReturnCode Script::execute(xmlNodePtr script, xmlNodePtr currentItem, Co
         ActionMap::iterator action;
 
         /* nothing left to do */
-        if (this->state == STATE_DONE)
+        if (this->_state == STATE_DONE)
             break;
 
         /* begin execution of script */       
@@ -345,7 +345,7 @@ Script::ReturnCode Script::execute(xmlNodePtr script, xmlNodePtr currentItem, Co
                 *output += content;
             else screenMessage("%s", content.c_str());
 
-            if (debug && content.size())
+            if (_debug && content.size())
                 ::debug("\nOutput: \n====================\n%s\n====================", content.c_str());
         }
         /* skip comments */
@@ -354,8 +354,8 @@ Script::ReturnCode Script::execute(xmlNodePtr script, xmlNodePtr currentItem, Co
             /**
              * Search for the corresponding action and execute it!
              */ 
-            action = action_map.find(name);
-            if (action != action_map.end()) {
+            action = _actionMap.find(name);
+            if (action != _actionMap.end()) {
                 /**
                  * Found it!
                  */ 
@@ -393,7 +393,7 @@ Script::ReturnCode Script::execute(xmlNodePtr script, xmlNodePtr currentItem, Co
             /**
              * Didn't find the corresponding action...
              */ 
-            else if (debug)
+            else if (_debug)
                  ::debug("ERROR: '%s' method not found", name.c_str());
 
             /* The script was redirected or stopped, stop now! */
@@ -401,7 +401,7 @@ Script::ReturnCode Script::execute(xmlNodePtr script, xmlNodePtr currentItem, Co
                 break;
         }        
         
-        if (debug)
+        if (_debug)
             ::debug("\n");        
     }    
 
@@ -416,33 +416,33 @@ void Script::_continue() {
     resetState();
     
     /* there's no target indicated, just start where we left off! */            
-    if (target.empty())
-        execute(currentScript, currentItem);                
-    else run(target);
+    if (_target.empty())
+        execute(_currentScript, _currentItem);                
+    else run(_target);
 }
 
 /**
  * Set and retrieve property values
  */ 
-void Script::resetState()               { state = STATE_NORMAL; }
-void Script::setState(Script::State s)  { state = s; }
-void Script::setTarget(const Common::String &val)      { target = val; }
-void Script::setChoices(const Common::String &val)     { choices = val; }
-void Script::setVar(const Common::String &name, const Common::String &val)    { removeCurrentVariable(name); variables[name] = new Variable(val); }
-void Script::setVar(const Common::String &name, int val)       { removeCurrentVariable(name); variables[name] = new Variable(val); }
+void Script::resetState()               { _state = STATE_NORMAL; }
+void Script::setState(Script::State s)  { _state = s; }
+void Script::setTarget(const Common::String &val)      { _target = val; }
+void Script::setChoices(const Common::String &val)     { _choices = val; }
+void Script::setVar(const Common::String &name, const Common::String &val)    { removeCurrentVariable(name); _variables[name] = new Variable(val); }
+void Script::setVar(const Common::String &name, int val)       { removeCurrentVariable(name); _variables[name] = new Variable(val); }
 void Script::unsetVar(const Common::String &name) {
     // Ensure that the variable at least exists, but has no value
-    if (variables.find(name) != variables.end())
-        variables[name]->unset();
-    else variables[name] = new Variable;
+    if (_variables.find(name) != _variables.end())
+        _variables[name]->unset();
+    else _variables[name] = new Variable;
 }
 
-Script::State Script::getState()        { return state; }
-Common::String Script::getTarget()              { return target; }
-Script::InputType Script::getInputType(){ return inputType; }
-Common::String Script::getChoices()             { return choices; }
-Common::String Script::getInputName()           { return inputName; }
-int Script::getInputMaxLen()            { return inputMaxLen; }
+Script::State Script::getState()        { return _state; }
+Common::String Script::getTarget()              { return _target; }
+Script::InputType Script::getInputType(){ return _inputType; }
+Common::String Script::getChoices()             { return _choices; }
+Common::String Script::getInputName()           { return _inputName; }
+int Script::getInputMaxLen()            { return _inputMaxLen; }
 
 /**
  * Translates a script Common::String with dynamic variables
@@ -450,7 +450,7 @@ int Script::getInputMaxLen()            { return inputMaxLen; }
 void Script::translate(Common::String *text) {
     unsigned int pos;
     bool nochars = true;
-    xmlNodePtr node = this->translationContext.back();
+    xmlNodePtr node = this->_translationContext.back();
     
     /* determine if the script is completely whitespace */
     for (Common::String::iterator current = text->begin(); current != text->end(); current++) {
@@ -505,7 +505,7 @@ void Script::translate(Common::String *text) {
         post = item.substr(pos+1);
         item = item.substr(0, pos);
 
-        if (debug)
+        if (_debug)
             ::debug("\n{%s} == ", item.c_str());
 
         /* translate any stuff contained in the item */
@@ -516,12 +516,12 @@ void Script::translate(Common::String *text) {
         // Get defined variables
         if (item[0] == '$') {
             Common::String varName = item.substr(1);
-            if (variables.find(varName) != variables.end())
-                prop = variables[varName]->getString();
+            if (_variables.find(varName) != _variables.end())
+                prop = _variables[varName]->getString();
         }        
         // Get the current iterator for our loop
         else if (item == "iterator")
-            prop = xu4_to_string(this->iterator);
+            prop = xu4_to_string(this->_iterator);
         else if ((pos = item.find("show_inventory:")) < item.size()) {
             pos = item.find(":");
             Common::String itemScript = item.substr(pos+1);
@@ -534,28 +534,28 @@ void Script::translate(Common::String *text) {
             /**
              * Save iterator
              */ 
-            int oldIterator = this->iterator;            
+            int oldIterator = this->_iterator;            
 
             /* start iterator at 0 */
-            this->iterator = 0;
+            this->_iterator = 0;
             
             for (item = node->children; item; item = item->next) {
-                if (xmlStrcmp(item->name, (const xmlChar *)nounName.c_str()) == 0) {
+                if (xmlStrcmp(item->name, (const xmlChar *)_nounName.c_str()) == 0) {
                     bool hidden = (bool)xmlGetPropAsBool(item, "hidden");                    
 
                     if (!hidden) {
                         /* make sure the item's requisites are met */
                         if (!xmlPropExists(item, "req") || compare(getPropAsStr(item, "req"))) {
                             /* put a newline after each */
-                            if (this->iterator > 0)
+                            if (this->_iterator > 0)
                                 prop += "\n";                            
 
                             /* set translation context to item */
-                            translationContext.push_back(item);
+                            _translationContext.push_back(item);
                             execute(itemShowScript, NULL, &prop);
-                            translationContext.pop_back();
+                            _translationContext.pop_back();
 
-                            this->iterator++;
+                            this->_iterator++;
                         }
                     }                    
                 }
@@ -564,7 +564,7 @@ void Script::translate(Common::String *text) {
             /**
              * Restore iterator to previous value
              */             
-            this->iterator = oldIterator;
+            this->_iterator = oldIterator;
         }
 
         /**
@@ -576,8 +576,8 @@ void Script::translate(Common::String *text) {
             Common::String ids;
 
             for (item = node->children; item; item = item->next) {
-                if (xmlStrcmp(item->name, (const xmlChar *)nounName.c_str()) == 0) {
-                    Common::String id = getPropAsStr(item, idPropName.c_str());
+                if (xmlStrcmp(item->name, (const xmlChar *)_nounName.c_str()) == 0) {
+                    Common::String id = getPropAsStr(item, _idPropName.c_str());
                     /* make sure the item's requisites are met */
                     if (!xmlPropExists(item, "req") || (compare(getPropAsStr(item, "req"))))
                         ids += id[0];
@@ -597,9 +597,9 @@ void Script::translate(Common::String *text) {
 
             provider = item.substr(0, pos);
             to_find = item.substr(pos + 1);
-            if (providers.find(provider) != providers.end()) {
+            if (_providers.find(provider) != _providers.end()) {
                 Std::vector<Common::String> parts = split(to_find, ":");
-                Provider* p = providers[provider];
+                Provider* p = _providers[provider];
                 prop = p->translate(parts);
             }
         }
@@ -617,7 +617,7 @@ void Script::translate(Common::String *text) {
              */
             if (funcName.empty()) {
                 /* we have the property name, now go get the property value! */
-                prop = getPropAsStr(translationContext, item, true);
+                prop = getPropAsStr(_translationContext, item, true);
             }
             
             /**
@@ -672,10 +672,10 @@ void Script::translate(Common::String *text) {
             }
         }        
        
-        if (prop.empty() && debug)
+        if (prop.empty() && _debug)
             ::debug("\nWarning: dynamic property '{%s}' not found in vendor script (was this intentional?)", item.c_str());        
 
-        if (debug)
+        if (_debug)
             ::debug("\"%s\"", prop.c_str());
 
         /* put the script back together */
@@ -699,9 +699,9 @@ void Script::translate(Common::String *text) {
     if (node) {
         for (current = node->children; current; current = current->next) {
             if (!xmlNodeIsText(current) && (script_to_find == (char *)current->name)) {
-                if (id.empty() && !xmlPropExists(current, idPropName.c_str()) && !_default)
+                if (id.empty() && !xmlPropExists(current, _idPropName.c_str()) && !_default)
                     return current;
-                else if (xmlPropExists(current, idPropName.c_str()) && (id == xmlGetPropAsString(current, idPropName.c_str())))
+                else if (xmlPropExists(current, _idPropName.c_str()) && (id == xmlGetPropAsString(current, _idPropName.c_str())))
                     return current;
                 else if (_default && xmlPropExists(current, "default") && xmlGetPropAsBool(current, "default"))
                     return current;
@@ -785,20 +785,20 @@ Script::ReturnCode Script::pushContext(xmlNodePtr script, xmlNodePtr current) {
     Common::String nodeName = getPropAsStr(current, "name");
     Common::String search_id;
 
-    if (xmlPropExists(current, idPropName.c_str()))         
-        search_id = getPropAsStr(current, idPropName);
-    else if (variables.find(idPropName) != variables.end()) {
-        if (variables[idPropName]->isSet())
-            search_id = variables[idPropName]->getString();
+    if (xmlPropExists(current, _idPropName.c_str()))         
+        search_id = getPropAsStr(current, _idPropName);
+    else if (_variables.find(_idPropName) != _variables.end()) {
+        if (_variables[_idPropName]->isSet())
+            search_id = _variables[_idPropName]->getString();
         else search_id = "null";
     }
 
     // When looking for a new context, start from within our old one
-    translationContext.push_back(find(translationContext.back(), nodeName, search_id));
-    if (debug) {
-        if (!this->translationContext.back())
-            ::debug("\nWarning!!! Invalid translation context <%s %s=\"%s\" ...>", nodeName.c_str(), idPropName.c_str(), search_id.c_str());
-        else ::debug("\nChanging translation context to <%s %s=\"%s\" ...>", nodeName.c_str(), idPropName.c_str(), search_id.c_str());
+    _translationContext.push_back(find(_translationContext.back(), nodeName, search_id));
+    if (_debug) {
+        if (!this->_translationContext.back())
+            ::debug("\nWarning!!! Invalid translation context <%s %s=\"%s\" ...>", nodeName.c_str(), _idPropName.c_str(), search_id.c_str());
+        else ::debug("\nChanging translation context to <%s %s=\"%s\" ...>", nodeName.c_str(), _idPropName.c_str(), search_id.c_str());
     }
 
     return RET_OK;
@@ -808,10 +808,10 @@ Script::ReturnCode Script::pushContext(xmlNodePtr script, xmlNodePtr current) {
  * Removes a node from the translation context
  */ 
 Script::ReturnCode Script::popContext(xmlNodePtr script, xmlNodePtr current) {
-    if (translationContext.size() > 1) {
-        translationContext.pop_back();
-        if (debug)
-            ::debug("\nReverted translation context to <%s ...>", translationContext.back()->name);
+    if (_translationContext.size() > 1) {
+        _translationContext.pop_back();
+        if (_debug)
+            ::debug("\nReverted translation context to <%s ...>", _translationContext.back()->name);
     }
     return RET_OK;
 }
@@ -823,14 +823,14 @@ Script::ReturnCode Script::end(xmlNodePtr script, xmlNodePtr current) {
     /**
      * See if there's a global 'end' node declared for cleanup
      */
-    xmlNodePtr endScript = find(scriptNode, "end");
+    xmlNodePtr endScript = find(_scriptNode, "end");
     if (endScript)
         execute(endScript);
 
-    if (debug)
+    if (_debug)
         ::debug("\n<End script>");
     
-    this->state = STATE_DONE;
+    this->_state = STATE_DONE;
     
     return RET_STOP;
 }
@@ -839,14 +839,14 @@ Script::ReturnCode Script::end(xmlNodePtr script, xmlNodePtr current) {
  * Wait for keypress from the user
  */ 
 Script::ReturnCode Script::waitForKeypress(xmlNodePtr script, xmlNodePtr current) {
-    this->currentScript = script;
-    this->currentItem = current;
-    this->choices = "abcdefghijklmnopqrstuvwxyz01234567890\015 \033";
-    this->target.clear();
-    this->state = STATE_INPUT;
-    this->inputType = INPUT_KEYPRESS;
+    this->_currentScript = script;
+    this->_currentItem = current;
+    this->_choices = "abcdefghijklmnopqrstuvwxyz01234567890\015 \033";
+    this->_target.clear();
+    this->_state = STATE_INPUT;
+    this->_inputType = INPUT_KEYPRESS;
 
-    if (debug)
+    if (_debug)
         ::debug("\n<Wait>");
 
     return RET_STOP;
@@ -863,16 +863,16 @@ Script::ReturnCode Script::redirect(xmlNodePtr script, xmlNodePtr current) {
     else target = getPropAsStr(current, "target");
 
     /* set a new search id */
-    Common::String search_id = getPropAsStr(current, idPropName);
+    Common::String search_id = getPropAsStr(current, _idPropName);
     
-    xmlNodePtr newScript = find(this->scriptNode, target, search_id);
+    xmlNodePtr newScript = find(this->_scriptNode, target, search_id);
     if (!newScript)
-        errorFatal("Error: redirect failed -- could not find target script '%s' with %s=\"%s\"", target.c_str(), idPropName.c_str(), search_id.c_str());
+        errorFatal("Error: redirect failed -- could not find target script '%s' with %s=\"%s\"", target.c_str(), _idPropName.c_str(), search_id.c_str());
 
-    if (debug) {
+    if (_debug) {
         ::debug("\nRedirected to <%s", target.c_str());
         if (search_id.size())
-            ::debug(" %s=\"%s\"", idPropName.c_str(), search_id.c_str());
+            ::debug(" %s=\"%s\"", _idPropName.c_str(), search_id.c_str());
         ::debug(" .../>");
     }
     
@@ -885,16 +885,16 @@ Script::ReturnCode Script::redirect(xmlNodePtr script, xmlNodePtr current) {
  */ 
 Script::ReturnCode Script::include(xmlNodePtr script, xmlNodePtr current) {
     Common::String scriptName = getPropAsStr(current, "script");
-    Common::String id = getPropAsStr(current, idPropName);
+    Common::String id = getPropAsStr(current, _idPropName);
 
-    xmlNodePtr newScript = find(this->scriptNode, scriptName, id);
+    xmlNodePtr newScript = find(this->_scriptNode, scriptName, id);
     if (!newScript)
-        errorFatal("Error: include failed -- could not find target script '%s' with %s=\"%s\"", scriptName.c_str(), idPropName.c_str(), id.c_str());
+        errorFatal("Error: include failed -- could not find target script '%s' with %s=\"%s\"", scriptName.c_str(), _idPropName.c_str(), id.c_str());
 
-    if (debug) {
+    if (_debug) {
         ::debug("\nIncluded script <%s", scriptName.c_str());
         if (!id.empty())
-            ::debug(" %s=\"%s\"", idPropName.c_str(), id.c_str());
+            ::debug(" %s=\"%s\"", _idPropName.c_str(), id.c_str());
         ::debug(" .../>");
     }
 
@@ -919,17 +919,17 @@ Script::ReturnCode Script::forLoop(xmlNodePtr script, xmlNodePtr current) {
     int start = getPropAsInt(current, "start"),
         end = getPropAsInt(current, "end"),
         /* save the iterator in case this loop is nested */
-        oldIterator = this->iterator,
+        oldIterator = this->_iterator,
         i;
 
-    if (debug)
+    if (_debug)
         ::debug("\n\n<For Start=%d End=%d>\n", start, end);
     
-    for (i = start, this->iterator = start;
+    for (i = start, this->_iterator = start;
          i <= end;
-         i++, this->iterator++) {
+         i++, this->_iterator++) {
         
-        if (debug)
+        if (_debug)
             ::debug("\n%d: ", i);
 
         retval = execute(current);
@@ -938,7 +938,7 @@ Script::ReturnCode Script::forLoop(xmlNodePtr script, xmlNodePtr current) {
     }
 
     /* restore the previous iterator */
-    this->iterator = oldIterator;
+    this->_iterator = oldIterator;
 
     return retval;
 }
@@ -954,7 +954,7 @@ Script::ReturnCode Script::random(xmlNodePtr script, xmlNodePtr current) {
     if (num < perc)
         retval = execute(current);
 
-    if (debug)
+    if (_debug)
         ::debug("\nRandom (%d%%): rolled %d (%s)", perc, num, (num < perc) ? "Succeeded" : "Failed");
 
     return retval;
@@ -971,7 +971,7 @@ Script::ReturnCode Script::move(xmlNodePtr script, xmlNodePtr current) {
     if (xmlPropExists(current, "z"))
         c->_location->coords.z = getPropAsInt(current, "z");
 
-    if (debug)
+    if (_debug)
         ::debug("\nMove: x-%d y-%d z-%d", c->_location->coords.x, c->_location->coords.y, c->_location->coords.z);
     
     gameUpdateScreen();
@@ -982,7 +982,7 @@ Script::ReturnCode Script::move(xmlNodePtr script, xmlNodePtr current) {
  * Puts the player to sleep. Useful when coding inn scripts
  */ 
 Script::ReturnCode Script::sleep(xmlNodePtr script, xmlNodePtr current) {
-    if (debug)
+    if (_debug)
         ::debug("\nSleep!\n");
 
     CombatController *cc = new InnController();
@@ -1015,23 +1015,23 @@ Script::ReturnCode Script::pay(xmlNodePtr script, xmlNodePtr current) {
     if (price < 0)
         errorFatal("Error: could not find price for item");
 
-    if (debug) {
+    if (_debug) {
         ::debug("\nPay: price(%d) quantity(%d)", price, quant);                
-        ::debug("\n\tParty gold:  %d -", c->_saveGame->gold);
+        ::debug("\n\tParty gold:  %d -", c->_saveGame->_gold);
         ::debug("\n\tTotal price: %d", price * quant);
     }
     
     price *= quant;
-    if (price > c->_saveGame->gold) {
-        if (debug)
+    if (price > c->_saveGame->_gold) {
+        if (_debug)
             ::debug("\n\t=== Can't pay! ===");
         run(cantpay);
         return RET_STOP;
     }
     else c->_party->adjustGold(-price);
 
-    if (debug)
-        ::debug("\n\tBalance:     %d\n", c->_saveGame->gold);
+    if (_debug)
+        ::debug("\n\tBalance:     %d\n", c->_saveGame->_gold);
 
     return RET_OK;
 }
@@ -1043,16 +1043,16 @@ Script::ReturnCode Script::_if(xmlNodePtr script, xmlNodePtr current) {
     Common::String test = getPropAsStr(current, "test");
     Script::ReturnCode retval = RET_OK;
 
-    if (debug)
+    if (_debug)
         ::debug("\nIf(%s) - ", test.c_str());
 
     if (compare(test)) {
-        if (debug)
+        if (_debug)
             ::debug("True - Executing '%s'", current->name);
 
         retval = execute(current);                
     }
-    else if (debug)
+    else if (_debug)
         ::debug("False");
 
     return retval;
@@ -1064,46 +1064,46 @@ Script::ReturnCode Script::_if(xmlNodePtr script, xmlNodePtr current) {
 Script::ReturnCode Script::input(xmlNodePtr script, xmlNodePtr current) {
     Common::String type = getPropAsStr(current, "type");
             
-    this->currentScript = script;
-    this->currentItem = current;
+    this->_currentScript = script;
+    this->_currentItem = current;
 
     if (xmlPropExists(current, "target"))
-        this->target = getPropAsStr(current, "target");
-    else this->target.clear();
+        this->_target = getPropAsStr(current, "target");
+    else this->_target.clear();
 
-    this->state = STATE_INPUT;
-    this->inputName = "input";
+    this->_state = STATE_INPUT;
+    this->_inputName = "input";
 
     // Does the variable have a maximum length?
     if (xmlPropExists(current, "maxlen"))
-        this->inputMaxLen = getPropAsInt(current, "maxlen");
-    else this->inputMaxLen = Conversation::BUFFERLEN;
+        this->_inputMaxLen = getPropAsInt(current, "maxlen");
+    else this->_inputMaxLen = Conversation::BUFFERLEN;
 
     // Should we name the variable something other than "input"
     if (xmlPropExists(current, "name"))
-        this->inputName = getPropAsStr(current, "name");
+        this->_inputName = getPropAsStr(current, "name");
     else {
         if (type == "choice")
-            this->inputName = idPropName;
+            this->_inputName = _idPropName;
     }
         
     if (type == "number")
-        this->inputType = INPUT_NUMBER;
+        this->_inputType = INPUT_NUMBER;
     else if (type == "keypress")
-        this->inputType = INPUT_KEYPRESS;
+        this->_inputType = INPUT_KEYPRESS;
     else if (type == "choice") {
-        this->inputType = INPUT_CHOICE;
-        this->choices = getPropAsStr(current, "options");
-        this->choices += " \015\033";
+        this->_inputType = INPUT_CHOICE;
+        this->_choices = getPropAsStr(current, "options");
+        this->_choices += " \015\033";
     }
     else if (type == "text")
-        this->inputType = INPUT_STRING;
+        this->_inputType = INPUT_STRING;
     else if (type == "direction")
-        this->inputType = INPUT_DIRECTION;
+        this->_inputType = INPUT_DIRECTION;
     else if (type == "player")
-        this->inputType = INPUT_PLAYER;        
+        this->_inputType = INPUT_PLAYER;        
 
-    if (debug)
+    if (_debug)
         ::debug("\nInput: %s", type.c_str());
 
     /* the script stops here, at least for now */
@@ -1116,13 +1116,13 @@ Script::ReturnCode Script::input(xmlNodePtr script, xmlNodePtr current) {
 Script::ReturnCode Script::add(xmlNodePtr script, xmlNodePtr current) {
     Common::String type = getPropAsStr(current, "type");
     Common::String subtype = getPropAsStr(current, "subtype");
-    int quant = getPropAsInt(this->translationContext.back(), "quantity");
+    int quant = getPropAsInt(this->_translationContext.back(), "quantity");
     if (quant == 0)
         quant = getPropAsInt(current, "quantity");
     else
         quant *= getPropAsInt(current, "quantity");
 
-    if (debug) {
+    if (_debug) {
         ::debug("\nAdd: %s ", type.c_str());
         if (!subtype.empty())
             ::debug("- %s ", subtype.c_str());
@@ -1137,27 +1137,27 @@ Script::ReturnCode Script::add(xmlNodePtr script, xmlNodePtr current) {
     else if (type == "horse")
         c->_party->setTransport(Tileset::findTileByName("horse")->getId());
     else if (type == "torch") {
-        AdjustValueMax(c->_saveGame->torches, quant, 99);
+        AdjustValueMax(c->_saveGame->_torches, quant, 99);
         c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "gem") {
-        AdjustValueMax(c->_saveGame->gems, quant, 99);
+        AdjustValueMax(c->_saveGame->_gems, quant, 99);
         c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "key") {
-        AdjustValueMax(c->_saveGame->keys, quant, 99);
+        AdjustValueMax(c->_saveGame->_keys, quant, 99);
         c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "sextant") {
-        AdjustValueMax(c->_saveGame->sextants, quant, 99);
+        AdjustValueMax(c->_saveGame->_sextants, quant, 99);
         c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "weapon") {
-        AdjustValueMax(c->_saveGame->weapons[subtype[0] - 'a'], quant, 99);
+        AdjustValueMax(c->_saveGame->_weapons[subtype[0] - 'a'], quant, 99);
         c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "armor") {
-        AdjustValueMax(c->_saveGame->armor[subtype[0] - 'a'], quant, 99);
+        AdjustValueMax(c->_saveGame->_armor[subtype[0] - 'a'], quant, 99);
         c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "reagent") {
@@ -1172,14 +1172,14 @@ Script::ReturnCode Script::add(xmlNodePtr script, xmlNodePtr current) {
         }
 
         if (reagents[reagent].size()) {
-            AdjustValueMax(c->_saveGame->reagents[reagent], quant, 99);
+            AdjustValueMax(c->_saveGame->_reagents[reagent], quant, 99);
             c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
             c->_stats->resetReagentsMenu();
         }
         else errorWarning("Error: reagent '%s' not found", subtype.c_str());
     }
 
-    if (debug)
+    if (_debug)
         ::debug("(x%d)", quant);
 
     return RET_OK;
@@ -1194,11 +1194,11 @@ Script::ReturnCode Script::lose(xmlNodePtr script, xmlNodePtr current) {
     int quant = getPropAsInt(current, "quantity");
 
     if (type == "weapon")
-        AdjustValueMin(c->_saveGame->weapons[subtype[0] - 'a'], -quant, 0);            
+        AdjustValueMin(c->_saveGame->_weapons[subtype[0] - 'a'], -quant, 0);            
     else if (type == "armor")
-        AdjustValueMin(c->_saveGame->armor[subtype[0] - 'a'], -quant, 0);            
+        AdjustValueMin(c->_saveGame->_armor[subtype[0] - 'a'], -quant, 0);            
 
-    if (debug) {
+    if (_debug) {
         ::debug("\nLose: %s ", type.c_str());
         if (subtype.size())
             ::debug("- %s ", subtype.c_str());
@@ -1232,7 +1232,7 @@ Script::ReturnCode Script::heal(xmlNodePtr script, xmlNodePtr current) {
  */ 
 Script::ReturnCode Script::castSpell(xmlNodePtr script, xmlNodePtr current) {
     (*spellEffectCallback)('r', -1, SOUND_MAGIC);
-    if (debug)
+    if (_debug)
         ::debug("\n<Spell effect>");
 
     return RET_OK;
@@ -1249,7 +1249,7 @@ Script::ReturnCode Script::damage(xmlNodePtr script, xmlNodePtr current) {
     p = c->_party->member(player);
     p->applyDamage(pts);
 
-    if (debug)
+    if (_debug)
         ::debug("\nDamage: %d damage to player %d", pts, player + 1);
 
     return RET_OK;
@@ -1261,7 +1261,7 @@ Script::ReturnCode Script::damage(xmlNodePtr script, xmlNodePtr current) {
 Script::ReturnCode Script::karma(xmlNodePtr script, xmlNodePtr current) {
     Common::String action = getPropAsStr(current, "action");            
 
-    if (debug)
+    if (_debug)
         ::debug("\nKarma: adjusting - '%s'", action.c_str());            
 
     typedef Std::map<Common::String, KarmaAction /*, Std::less<Common::String> */> KarmaActionMap;
@@ -1293,7 +1293,7 @@ Script::ReturnCode Script::karma(xmlNodePtr script, xmlNodePtr current) {
     KarmaActionMap::iterator ka = action_map.find(action);
     if (ka != action_map.end())
         c->_party->adjustKarma(ka->_value);
-    else if (debug)
+    else if (_debug)
         ::debug(" <FAILED - action '%s' not found>", action.c_str());
 
     return RET_OK;
@@ -1330,16 +1330,16 @@ Script::ReturnCode Script::setVar(xmlNodePtr script, xmlNodePtr current) {
     Common::String value = getPropAsStr(current, "value");
 
     if (name.empty()) {
-        if (debug)
+        if (_debug)
             ::debug("Variable name empty!");
         return RET_STOP;
     }
     
     removeCurrentVariable(name);
-    variables[name] = new Variable(value);
+    _variables[name] = new Variable(value);
 
-    if (debug)
-        ::debug("\nSet Variable: %s=%s", name.c_str(), variables[name]->getString().c_str());
+    if (_debug)
+        ::debug("\nSet Variable: %s=%s", name.c_str(), _variables[name]->getString().c_str());
 
     return RET_OK;
 }
@@ -1373,7 +1373,7 @@ Script::ReturnCode Script::ztats(xmlNodePtr script, xmlNodePtr current) {
         Common::String screen = getPropAsStr(current, "screen");
         StatsViewMap::iterator view;
 
-        if (debug)
+        if (_debug)
             ::debug("\nZtats: %s", screen.c_str());
     
         /**
@@ -1382,7 +1382,7 @@ Script::ReturnCode Script::ztats(xmlNodePtr script, xmlNodePtr current) {
         view = view_map.find(screen);
         if (view != view_map.end()) 
             c->_stats->setView(view->_value); /* change it! */
-        else if (debug)
+        else if (_debug)
             ::debug(" <FAILED - view could not be found>");
     }
     else c->_stats->setView(STATS_PARTY_OVERVIEW);

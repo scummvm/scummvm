@@ -184,9 +184,9 @@ enum {
 
 typedef struct sc_var_set_s *sc_var_setref_t;
 extern void var_put(sc_var_setref_t vars,
-                    const sc_char *name, sc_int type, sc_vartype_t vt_value);
+                    const sc_char *name, sc_int _type, sc_vartype_t vt_value);
 extern sc_bool var_get(sc_var_setref_t vars,
-                       const sc_char *name, sc_int *type,
+                       const sc_char *name, sc_int *_type,
                        sc_vartype_t *vt_rvalue);
 extern void var_put_integer(sc_var_setref_t vars,
                             const sc_char *name, sc_int value);
@@ -768,7 +768,7 @@ extern void if_print_debug_character(sc_char character);
 extern void if_print_tag(sc_int tag, const sc_char *arg);
 extern void if_read_line(sc_char *buffer, sc_int length);
 extern void if_read_debug(sc_char *buffer, sc_int length);
-extern sc_bool if_confirm(sc_int type);
+extern sc_bool if_confirm(sc_int _type);
 extern void *if_open_saved_game(sc_bool is_save);
 extern void if_close_saved_game(void *opaque);
 extern void if_display_hints(sc_gameref_t game);

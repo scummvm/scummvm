@@ -81,10 +81,10 @@ public:
     void highlightPlayer(int player);
     void redraw();
 
-    TextView *getMainArea() { return &mainArea; }
+    TextView *getMainArea() { return &_mainArea; }
 
     void resetReagentsMenu();
-    Menu *getReagentsMenu() { return &reagentsMixMenu; }
+    Menu *getReagentsMenu() { return &_reagentsMixMenu; }
 
 private:
     void showPartyView(bool avatarOnly);
@@ -97,13 +97,13 @@ private:
     void showMixtures();
     void setTitle(const Common::String &s);
 
-    TextView title;
-    TextView mainArea;
-    TextView summary;
+    TextView _title;
+    TextView _mainArea;
+    TextView _summary;
     
-    StatsView view;
+    StatsView _view;
 
-    Menu reagentsMixMenu;
+    Menu _reagentsMixMenu;
 };
 
 /**
@@ -112,12 +112,12 @@ private:
  */
 class ReagentsMenuController : public MenuController {
 public:
-    ReagentsMenuController(Menu *menu, Ingredients *i, TextView *view) : MenuController(menu, view), ingredients(i) { }
+    ReagentsMenuController(Menu *menu, Ingredients *i, TextView *view) : MenuController(menu, view), _ingredients(i) { }
 
     bool keyPressed(int key);
 
 private:
-    Ingredients *ingredients;
+    Ingredients *_ingredients;
 };
 
 } // End of namespace Ultima4

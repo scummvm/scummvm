@@ -106,7 +106,7 @@ Response *hawkwindGetAdvice(const DynamicResponse *dynResp) {
     for (int v = 0; v < VIRT_MAX; v++) {
         if (scumm_strnicmp(dynResp->getParam().c_str(), getVirtueName((Virtue) v), 4) == 0) {
             virtue = v;
-            virtueLevel = c->_saveGame->karma[v];
+            virtueLevel = c->_saveGame->_karma[v];
             break;
         }
     }

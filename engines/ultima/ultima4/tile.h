@@ -69,19 +69,19 @@ public:
 
     void loadProperties(const ConfigElement &conf);
 
-    TileId getId() const                {return id;}
-    const Common::String &getName() const       {return name;}
-    int getWidth() const                {return w;}
-    int getHeight() const               {return h;}
-    int getFrames() const               {return frames;}
-    int getScale() const                {return scale;}
-    TileAnim *getAnim() const           {return anim;}
+    TileId getId() const                {return _id;}
+    const Common::String &getName() const       {return _name;}
+    int getWidth() const                {return _w;}
+    int getHeight() const               {return _h;}
+    int getFrames() const               {return _frames;}
+    int getScale() const                {return _scale;}
+    TileAnim *getAnim() const           {return _anim;}
     Image *getImage();
-    const Common::String &getLooksLike() const  {return looks_like;}
+    const Common::String &getLooksLike() const  {return _looksLike;}
 
-    bool isTiledInDungeon() const       {return tiledInDungeon;}
-    bool isLandForeground() const       {return foreground;}
-    bool isWaterForeground() const      {return waterForeground;}
+    bool isTiledInDungeon() const       {return _tiledInDungeon;}
+    bool isLandForeground() const       {return _foreground;}
+    bool isWaterForeground() const      {return _waterForeground;}
 
     int canWalkOn(Direction d) const   {return DIR_IN_MASK(d, rule->_walkOnDirs);}
 	int canWalkOff(Direction d) const  { return DIR_IN_MASK(d, rule->_walkOffDirs); }
@@ -108,7 +108,7 @@ public:
     int  isLockedDoor() const       {return rule->_mask & MASK_LOCKEDDOOR;}
     int  isChest() const            {return rule->_mask & MASK_CHEST;}
     int  isShip() const             {return rule->_mask & MASK_SHIP;}
-    bool isPirateShip() const       {return name == "pirate_ship";}
+    bool isPirateShip() const       {return _name == "pirate_ship";}
     int  isHorse() const            {return rule->_mask & MASK_HORSE;}
     int  isBalloon() const          {return rule->_mask & MASK_BALLOON;}
     int  canDispel() const          {return rule->_mask & MASK_DISPEL;}
@@ -121,7 +121,7 @@ public:
     Direction directionForFrame(int frame) const;
     int frameForDirection(Direction d) const;
 
-    static void resetNextId()                       {nextId = 0;}
+    static void resetNextId()                       {_nextId = 0;}
     static bool canTalkOverTile(const Tile *tile)   {return tile->canTalkOver() != 0;}
     static bool canAttackOverTile(const Tile *tile) {return tile->canAttackOver() != 0;}
     void deleteImage();
@@ -130,30 +130,30 @@ private:
     void loadImage();
 
 private:
-    TileId id;          /**< an id that is unique across all tilesets */
-    Common::String name;        /**< The name of this tile */
-    Tileset *tileset;   /**< The tileset this tile belongs to */
-    int w, h;           /**< width and height of the tile */
-    int frames;         /**< The number of frames this tile has */
-    int scale;          /**< The scale of the tile */
-    TileAnim *anim;     /**< The tile animation for this tile */    
-    bool opaque;        /**< Is this tile opaque? */
+    TileId _id;          /**< an id that is unique across all tilesets */
+    Common::String _name;        /**< The name of this tile */
+    Tileset *_tileset;   /**< The tileset this tile belongs to */
+    int _w, _h;           /**< width and height of the tile */
+    int _frames;         /**< The number of frames this tile has */
+    int _scale;          /**< The scale of the tile */
+    TileAnim *_anim;     /**< The tile animation for this tile */    
+    bool _opaque;        /**< Is this tile opaque? */
 
-    bool foreground;    /**< As a maptile, is a foreground that will search neighbour maptiles for a land-based background replacement. ex: chests */
-    bool waterForeground;/**< As a maptile, is a foreground that will search neighbour maptiles for a water-based background replacement. ex: chests */
+    bool _foreground;    /**< As a maptile, is a foreground that will search neighbour maptiles for a land-based background replacement. ex: chests */
+    bool _waterForeground;/**< As a maptile, is a foreground that will search neighbour maptiles for a water-based background replacement. ex: chests */
 
     TileRule *rule;     /**< The rules that govern the behavior of this tile */
-    Common::String imageName;   /**< The name of the image that belongs to this tile */
-    Common::String looks_like;  /**< The name of the tile that this tile looks exactly like (if any) */    
+    Common::String _imageName;   /**< The name of the image that belongs to this tile */
+    Common::String _looksLike;  /**< The name of the tile that this tile looks exactly like (if any) */    
 
-    Image *image;       /**< The original image for this tile (with all of its frames) */
-    bool tiledInDungeon;
-    Std::vector<Direction> directions;
+    Image *_image;       /**< The original image for this tile (with all of its frames) */
+    bool _tiledInDungeon;
+    Std::vector<Direction> _directions;
 
-    Common::String animationRule;
+    Common::String _animationRule;
 
 
-    static TileId nextId;
+    static TileId _nextId;
 };
 
 } // End of namespace Ultima4

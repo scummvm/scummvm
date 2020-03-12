@@ -86,10 +86,10 @@ void screenInit_sys() {
         printf("screen initialized [screenInit()], using %s video driver\n", SDL_VideoDriverName(driver, sizeof(driver)));
     }
 #else
-	initGraphics(320 * settings.scale, 200 * settings.scale);
+	initGraphics(320 * settings._scale, 200 * settings._scale);
 #endif
     /* enable or disable the mouse cursor */
-    if (settings.mouseOptions.enabled) {
+    if (settings._mouseOptions.enabled) {
 		g_system->showMouse(true);
 #ifdef TODO
 		cursors[0] = SDL_GetCursor();
@@ -102,9 +102,9 @@ void screenInit_sys() {
 		g_system->showMouse(false);
     }
 
-    filterScaler = scalerGet(settings.filter);
+    filterScaler = scalerGet(settings._filter);
     if (!filterScaler)
-        errorFatal("%s is not a valid filter", settings.filter.c_str());
+        errorFatal("%s is not a valid filter", settings._filter.c_str());
 
     screenRefreshThreadInit();
 }
@@ -235,7 +235,7 @@ Image *screenScale(Image *src, int scale, int n, int filter) {
 		src = dest;
 		scale /= 2;
 	}
-	if (scale == 3 && scaler3x(settings.filter)) {
+	if (scale == 3 && scaler3x(settings._filter)) {
 		dest = (*filterScaler)(src, 3, n);
 		src = dest;
 		scale /= 3;

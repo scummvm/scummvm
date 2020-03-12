@@ -35,7 +35,7 @@ using namespace std;
 /*
  * Initialize static members
  */ 
-Settings *Settings::instance = NULL;
+Settings *Settings::_instance = NULL;
 
 #if defined(_WIN32) || defined(__CYGWIN__)
 #define SETTINGS_BASE_FILENAME "xu4.cfg"
@@ -44,23 +44,23 @@ Settings *Settings::instance = NULL;
 #endif
 
 bool SettingsData::operator==(const SettingsData &s) const {    
-    int fieldsSize = (int *)&end_of_bitwise_comparators - (int *)this;
+    int fieldsSize = (int *)&_end_of_bitwise_comparators - (int *)this;
     if (memcmp(this, &s, fieldsSize) != 0)
         return false;
 
-    if (filter != s.filter)
+    if (_filter != s._filter)
         return false;
-    if (gemLayout != s.gemLayout)
+    if (_gemLayout != s._gemLayout)
         return false;
-    if (lineOfSight != s.lineOfSight)
+    if (_lineOfSight != s._lineOfSight)
         return false;
-    if (videoType != s.videoType)
+    if (_videoType != s._videoType)
         return false;
-    if (battleDiff != s.battleDiff)
+    if (_battleDiff != s._battleDiff)
         return false;
-    if (logging != s.logging)
+    if (_logging != s._logging)
         return false;
-    if (game != s.game)
+    if (_game != s._game)
         return false;
 
     return true;
@@ -75,9 +75,9 @@ bool SettingsData::operator!=(const SettingsData &s) const {
  * Default contructor.  Settings is a singleton so this is private.
  */
 Settings::Settings() {    
-    battleDiffs.push_back("Normal");
-    battleDiffs.push_back("Hard");
-    battleDiffs.push_back("Expert");
+    _battleDiffs.push_back("Normal");
+    _battleDiffs.push_back("Hard");
+    _battleDiffs.push_back("Expert");
 }
 
 
@@ -86,15 +86,15 @@ Settings::Settings() {
  */
 void Settings::init(bool useProfile, const Common::String profileName) {
 	if (useProfile) {
-		userPath = "./profiles/";
-		userPath += profileName.c_str();
-		userPath += "/";
+		_userPath = "./profiles/";
+		_userPath += profileName.c_str();
+		_userPath += "/";
 	} else {
-        userPath = "";
+        _userPath = "";
 	}
-    FileSystem::createDirectory(userPath);
+    FileSystem::createDirectory(_userPath);
 
-    filename = userPath + SETTINGS_BASE_FILENAME;
+    _filename = _userPath + SETTINGS_BASE_FILENAME;
 
     read();
 }
@@ -104,9 +104,9 @@ void Settings::init(bool useProfile, const Common::String profileName) {
  * Return the global instance of settings.
  */
 Settings &Settings::getInstance() {
-    if (instance == NULL)
-        instance = new Settings();
-    return *instance;
+    if (_instance == NULL)
+        _instance = new Settings();
+    return *_instance;
 }
 
 void Settings::setData(const SettingsData &data) {
@@ -123,64 +123,64 @@ bool Settings::read() {
     extern int eventTimerGranularity;   
 
     /* default settings */
-    scale                 = DEFAULT_SCALE;
-    fullscreen            = DEFAULT_FULLSCREEN;
-    filter                = DEFAULT_FILTER;
-    videoType             = DEFAULT_VIDEO_TYPE;
-    gemLayout             = DEFAULT_GEM_LAYOUT;
-    lineOfSight           = DEFAULT_LINEOFSIGHT;
-    screenShakes          = DEFAULT_SCREEN_SHAKES;
-    gamma                 = DEFAULT_GAMMA;
-    musicVol              = DEFAULT_MUSIC_VOLUME;
-    soundVol              = DEFAULT_SOUND_VOLUME;
-    volumeFades           = DEFAULT_VOLUME_FADES;
-    shortcutCommands      = DEFAULT_SHORTCUT_COMMANDS;
-    keydelay              = DEFAULT_KEY_DELAY;
-    keyinterval           = DEFAULT_KEY_INTERVAL;
-    filterMoveMessages    = DEFAULT_FILTER_MOVE_MESSAGES;
-    battleSpeed           = DEFAULT_BATTLE_SPEED;
-    enhancements          = DEFAULT_ENHANCEMENTS;    
-    gameCyclesPerSecond   = DEFAULT_CYCLES_PER_SECOND;
-    screenAnimationFramesPerSecond = DEFAULT_ANIMATION_FRAMES_PER_SECOND;
-    debug                 = DEFAULT_DEBUG;
-    battleDiff            = DEFAULT_BATTLE_DIFFICULTY;
-    validateXml           = DEFAULT_VALIDATE_XML;
-    spellEffectSpeed      = DEFAULT_SPELL_EFFECT_SPEED;
-    campTime              = DEFAULT_CAMP_TIME;
-    innTime               = DEFAULT_INN_TIME;
-    shrineTime            = DEFAULT_SHRINE_TIME;
-    shakeInterval         = DEFAULT_SHAKE_INTERVAL;
-    titleSpeedRandom      = DEFAULT_TITLE_SPEED_RANDOM;
-    titleSpeedOther       = DEFAULT_TITLE_SPEED_OTHER;
+    _scale                 = DEFAULT_SCALE;
+    _fullscreen            = DEFAULT_FULLSCREEN;
+    _filter                = DEFAULT_FILTER;
+    _videoType             = DEFAULT_VIDEO_TYPE;
+    _gemLayout             = DEFAULT_GEM_LAYOUT;
+    _lineOfSight           = DEFAULT_LINEOFSIGHT;
+    _screenShakes          = DEFAULT_SCREEN_SHAKES;
+    _gamma                 = DEFAULT_GAMMA;
+    _musicVol              = DEFAULT_MUSIC_VOLUME;
+    _soundVol              = DEFAULT_SOUND_VOLUME;
+    _volumeFades           = DEFAULT_VOLUME_FADES;
+    _shortcutCommands      = DEFAULT_SHORTCUT_COMMANDS;
+    _keydelay              = DEFAULT_KEY_DELAY;
+    _keyinterval           = DEFAULT_KEY_INTERVAL;
+    _filterMoveMessages    = DEFAULT_FILTER_MOVE_MESSAGES;
+    _battleSpeed           = DEFAULT_BATTLE_SPEED;
+    _enhancements          = DEFAULT_ENHANCEMENTS;    
+    _gameCyclesPerSecond   = DEFAULT_CYCLES_PER_SECOND;
+    _screenAnimationFramesPerSecond = DEFAULT_ANIMATION_FRAMES_PER_SECOND;
+    _debug                 = DEFAULT_DEBUG;
+    _battleDiff            = DEFAULT_BATTLE_DIFFICULTY;
+    _validateXml           = DEFAULT_VALIDATE_XML;
+    _spellEffectSpeed      = DEFAULT_SPELL_EFFECT_SPEED;
+    _campTime              = DEFAULT_CAMP_TIME;
+    _innTime               = DEFAULT_INN_TIME;
+    _shrineTime            = DEFAULT_SHRINE_TIME;
+    _shakeInterval         = DEFAULT_SHAKE_INTERVAL;
+    _titleSpeedRandom      = DEFAULT_TITLE_SPEED_RANDOM;
+    _titleSpeedOther       = DEFAULT_TITLE_SPEED_OTHER;
 
-    pauseForEachMovement  = DEFAULT_PAUSE_FOR_EACH_MOVEMENT;
-    pauseForEachTurn	  = DEFAULT_PAUSE_FOR_EACH_TURN;
+    _pauseForEachMovement  = DEFAULT_PAUSE_FOR_EACH_MOVEMENT;
+    _pauseForEachTurn	  = DEFAULT_PAUSE_FOR_EACH_TURN;
 
     /* all specific minor enhancements default to "on", any major enhancements default to "off" */
-    enhancementsOptions.activePlayer     = true;
-    enhancementsOptions.u5spellMixing    = true;
-    enhancementsOptions.u5shrines        = true;
-    enhancementsOptions.slimeDivides     = true;
-    enhancementsOptions.gazerSpawnsInsects = true;
-    enhancementsOptions.textColorization = false;
-    enhancementsOptions.c64chestTraps    = true;
-    enhancementsOptions.smartEnterKey    = true;
-    enhancementsOptions.peerShowsObjects = false;
-    enhancementsOptions.u5combat         = false;
-    enhancementsOptions.u4TileTransparencyHack = true;
-    enhancementsOptions.u4TileTransparencyHackPixelShadowOpacity = DEFAULT_SHADOW_PIXEL_OPACITY;
-    enhancementsOptions.u4TrileTransparencyHackShadowBreadth = DEFAULT_SHADOW_PIXEL_SIZE;
+    _enhancementsOptions._activePlayer     = true;
+    _enhancementsOptions._u5spellMixing    = true;
+    _enhancementsOptions._u5shrines        = true;
+    _enhancementsOptions._slimeDivides     = true;
+    _enhancementsOptions._gazerSpawnsInsects = true;
+    _enhancementsOptions._textColorization = false;
+    _enhancementsOptions._c64chestTraps    = true;
+    _enhancementsOptions._smartEnterKey    = true;
+    _enhancementsOptions._peerShowsObjects = false;
+    _enhancementsOptions._u5combat         = false;
+    _enhancementsOptions._u4TileTransparencyHack = true;
+    _enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity = DEFAULT_SHADOW_PIXEL_OPACITY;
+    _enhancementsOptions._u4TrileTransparencyHackShadowBreadth = DEFAULT_SHADOW_PIXEL_SIZE;
 
-    innAlwaysCombat = 0;
-    campingAlwaysCombat = 0;
+    _innAlwaysCombat = 0;
+    _campingAlwaysCombat = 0;
 
     /* mouse defaults to on */
-    mouseOptions.enabled = 1;
+    _mouseOptions.enabled = 1;
 
-    logging = DEFAULT_LOGGING;
-    game = "Ultima IV";
+    _logging = DEFAULT_LOGGING;
+    _game = "Ultima IV";
 
-	if (!settingsFile.open(filename))
+	if (!settingsFile.open(_filename))
         return false;
 #ifdef TODO
     while(fgets(buffer, sizeof(buffer), settingsFile) != NULL) {
@@ -314,7 +314,7 @@ bool Settings::read() {
     fclose(settingsFile);
 #endif
 
-    eventTimerGranularity = (1000 / gameCyclesPerSecond);
+    eventTimerGranularity = (1000 / _gameCyclesPerSecond);
     return true;
 }
 
@@ -438,11 +438,11 @@ bool Settings::write() {
  * Return the path where user settings are stored.
  */
 const Common::String &Settings::getUserPath() {
-    return userPath;
+    return _userPath;
 }
 
 const Std::vector<Common::String> &Settings::getBattleDiffs() { 
-    return battleDiffs;
+    return _battleDiffs;
 }
 
 } // End of namespace Ultima4

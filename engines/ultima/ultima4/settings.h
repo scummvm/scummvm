@@ -82,19 +82,19 @@ namespace Ultima4 {
 #define DEFAULT_SHADOW_PIXEL_SIZE		2
 
 struct SettingsEnhancementOptions {
-    bool activePlayer;
-    bool u5spellMixing;
-    bool u5shrines;
-    bool u5combat;
-    bool slimeDivides;
-    bool gazerSpawnsInsects;
-    bool textColorization;
-    bool c64chestTraps;    
-    bool smartEnterKey;
-    bool peerShowsObjects;
-    bool u4TileTransparencyHack;
-    int	 u4TileTransparencyHackPixelShadowOpacity;
-    int	 u4TrileTransparencyHackShadowBreadth;
+    bool _activePlayer;
+    bool _u5spellMixing;
+    bool _u5shrines;
+    bool _u5combat;
+    bool _slimeDivides;
+    bool _gazerSpawnsInsects;
+    bool _textColorization;
+    bool _c64chestTraps;    
+    bool _smartEnterKey;
+    bool _peerShowsObjects;
+    bool _u4TileTransparencyHack;
+    int	 _u4TileTransparencyHackPixelShadowOpacity;
+    int	 _u4TrileTransparencyHackShadowBreadth;
 
 };
 
@@ -110,38 +110,38 @@ public:
     bool operator==(const SettingsData &) const;
     bool operator!=(const SettingsData &) const;
 
-    int                 battleSpeed;
-    bool                campingAlwaysCombat;
-    int                 campTime;
-    bool                debug;
-    bool                enhancements;
-    SettingsEnhancementOptions enhancementsOptions;    
-    bool                filterMoveMessages;
-    bool                fullscreen;
-    int                 gameCyclesPerSecond;
-    int					screenAnimationFramesPerSecond;
-    bool                innAlwaysCombat;
-    int                 innTime;
-    int                 keydelay;
-    int                 keyinterval;
-    MouseOptions        mouseOptions;
-    int                 musicVol;
-    unsigned int        scale;
-    bool                screenShakes;
-    int                 gamma;
-    int                 shakeInterval;
-    bool                shortcutCommands;
-    int                 shrineTime;
-    int                 soundVol;
-    int                 spellEffectSpeed;
-    bool                validateXml;
-    bool                volumeFades;
-    int                 titleSpeedRandom;
-    int                 titleSpeedOther;
+    int                 _battleSpeed;
+    bool                _campingAlwaysCombat;
+    int                 _campTime;
+    bool                _debug;
+    bool                _enhancements;
+    SettingsEnhancementOptions _enhancementsOptions;    
+    bool                _filterMoveMessages;
+    bool                _fullscreen;
+    int                 _gameCyclesPerSecond;
+    int					_screenAnimationFramesPerSecond;
+    bool                _innAlwaysCombat;
+    int                 _innTime;
+    int                 _keydelay;
+    int                 _keyinterval;
+    MouseOptions        _mouseOptions;
+    int                 _musicVol;
+    unsigned int        _scale;
+    bool                _screenShakes;
+    int                 _gamma;
+    int                 _shakeInterval;
+    bool                _shortcutCommands;
+    int                 _shrineTime;
+    int                 _soundVol;
+    int                 _spellEffectSpeed;
+    bool                _validateXml;
+    bool                _volumeFades;
+    int                 _titleSpeedRandom;
+    int                 _titleSpeedOther;
 
     //Settings that aren't in file yet
-    int					pauseForEachTurn;
-    int					pauseForEachMovement;
+    int					_pauseForEachTurn;
+    int					_pauseForEachMovement;
 
     /**
      * Strings, classes, and other objects that cannot
@@ -149,15 +149,15 @@ public:
      * end of the list so that our == and != operators
      * function correctly
      */ 
-    long                end_of_bitwise_comparators;
+    long                _end_of_bitwise_comparators;
 
-    Common::String              filter;
-    Common::String              gemLayout;
-    Common::String              lineOfSight;
-    Common::String              videoType;
-    Common::String              battleDiff;
-    Common::String              logging;
-    Common::String              game;
+    Common::String              _filter;
+    Common::String              _gemLayout;
+    Common::String              _lineOfSight;
+    Common::String              _videoType;
+    Common::String              _battleDiff;
+    Common::String              _logging;
+    Common::String              _game;
 };
 
 /**
@@ -181,11 +181,11 @@ public:
 private:
     Settings();
 
-    static Settings *instance;
+    static Settings *_instance;
 
-    Common::String userPath;
-    Common::String filename;
-    Std::vector<Common::String> battleDiffs;
+    Common::String _userPath;
+    Common::String _filename;
+    Std::vector<Common::String> _battleDiffs;
 };
 
 /* the global settings */

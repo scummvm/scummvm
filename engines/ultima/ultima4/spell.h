@@ -67,32 +67,32 @@ public:
     void multiply(int mixes);
 
 private:
-    unsigned short reagents[REAG_MAX];
+    unsigned short _reagents[REAG_MAX];
 };
 
 struct Spell {
-    typedef enum {
+    enum Param {
         PARAM_NONE,             /* none */
         PARAM_PLAYER,           /* number of a player required */
         PARAM_DIR,              /* direction required */
         PARAM_TYPEDIR,          /* type of field and direction required (energy field) */
         PARAM_PHASE,            /* phase required (gate) */
         PARAM_FROMDIR           /* direction from required (winds) */
-    } Param;
+    };
 
-    typedef enum {
+    enum SpecialEffects {
         SFX_NONE,               /* none */
         SFX_INVERT,             /* invert the screen (moongates, most normal spells) */
         SFX_TREMOR              /* tremor spell */
-    } SpecialEffects;
+    };
 
-    const char *name;
-    int components;
-    LocationContext context;
-    TransportContext transportContext;
-    int (*spellFunc)(int);
-    Param paramType;
-    int mp;
+    const char *_name;
+    int _components;
+    LocationContext _context;
+    TransportContext _transportContext;
+    int (*_spellFunc)(int);
+    Param _paramType;
+    int _mp;
 };
 
 typedef void (*SpellEffectCallback)(int spell, int player, Sound sound);

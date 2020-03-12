@@ -30,18 +30,18 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Image *TextView::charset = NULL;
+Image *TextView::_charset = NULL;
 
 TextView::TextView(int x, int y, int columns, int rows) : View(x, y, columns * CHAR_WIDTH, rows * CHAR_HEIGHT) {
-    this->columns = columns;
-    this->rows = rows;
-    this->cursorEnabled = false;
-    this->cursorFollowsText = false;
-    this->cursorX = 0;
-    this->cursorY = 0;
-    this->cursorPhase = 0;
-    if (charset == NULL)
-        charset = imageMgr->get(BKGD_CHARSET)->image;
+    this->_columns = columns;
+    this->_rows = rows;
+    this->_cursorEnabled = false;
+    this->_cursorFollowsText = false;
+    this->_cursorX = 0;
+    this->_cursorY = 0;
+    this->_cursorPhase = 0;
+    if (_charset == NULL)
+        _charset = imageMgr->get(BKGD_CHARSET)->image;
     eventHandler->getTimer()->add(&cursorTimer, /*SCR_CYCLE_PER_SECOND*/4, this);
 }
 
@@ -51,17 +51,17 @@ TextView::~TextView() {
 
 void TextView::reinit() {
     View::reinit();
-    charset = imageMgr->get(BKGD_CHARSET)->image;
+    _charset = imageMgr->get(BKGD_CHARSET)->image;
 }
 
 /**
  * Draw a character from the charset onto the view.
  */
 void TextView::drawChar(int chr, int x, int y) {
-    ASSERT(x < columns, "x value of %d out of range", x);
-    ASSERT(y < rows, "y value of %d out of range", y);
+    ASSERT(x < _columns, "x value of %d out of range", x);
+    ASSERT(y < _rows, "y value of %d out of range", y);
 
-    charset->drawSubRect(SCALED(this->_x + (x * CHAR_WIDTH)),
+    _charset->drawSubRect(SCALED(this->_x + (x * CHAR_WIDTH)),
                          SCALED(this->_y + (y * CHAR_HEIGHT)),
                          0, SCALED(chr * CHAR_HEIGHT),
                          SCALED(CHAR_WIDTH),
@@ -89,7 +89,7 @@ void TextView::drawCharMasked(int chr, int x, int y, unsigned char mask) {
 
 /* highlight the selected row using a background color */
 void TextView::textSelectedAt(int x, int y, const char *text) {
-    if (!settings.enhancements || !settings.enhancementsOptions.textColorization) {
+    if (!settings._enhancements || !settings._enhancementsOptions._textColorization) {
         this->textAt(x, y, "%s", text);
         return;
     }
@@ -105,7 +105,7 @@ void TextView::textSelectedAt(int x, int y, const char *text) {
 Common::String TextView::colorizeStatus(char statustype) {
     Common::String output;
 
-    if (!settings.enhancements || !settings.enhancementsOptions.textColorization) {
+    if (!settings._enhancements || !settings._enhancementsOptions._textColorization) {
         output = statustype;
         return output;
     }
@@ -123,7 +123,7 @@ Common::String TextView::colorizeStatus(char statustype) {
 
 /* depending on the status type, apply colorization to the character */
 Common::String TextView::colorizeString(Common::String input, ColorFG color, unsigned int colorstart, unsigned int colorlength) {
-    if (!settings.enhancements || !settings.enhancementsOptions.textColorization)
+    if (!settings._enhancements || !settings._enhancementsOptions._textColorization)
         return input;
 
     Common::String output = "";
@@ -156,15 +156,15 @@ Common::String TextView::colorizeString(Common::String input, ColorFG color, uns
 }
 
 void TextView::setFontColor(ColorFG fg, ColorBG bg) {
-    charset->setFontColorFG(fg);
-    charset->setFontColorBG(bg);
+    _charset->setFontColorFG(fg);
+    _charset->setFontColorBG(bg);
 }
 
 void TextView::setFontColorFG(ColorFG fg) {
-    charset->setFontColorFG(fg);
+    _charset->setFontColorFG(fg);
 }
 void TextView::setFontColorBG(ColorBG bg) {
-    charset->setFontColorBG(bg);
+    _charset->setFontColorBG(bg);
 }
 
 void TextView::textAt(int x, int y, const char *fmt, ...) {
@@ -173,7 +173,7 @@ void TextView::textAt(int x, int y, const char *fmt, ...) {
     unsigned int offset = 0;
 
     bool reenableCursor = false;
-    if (cursorFollowsText && cursorEnabled) {
+    if (_cursorFollowsText && _cursorEnabled) {
         disableCursor();
         reenableCursor = true;
     }
@@ -200,7 +200,7 @@ void TextView::textAt(int x, int y, const char *fmt, ...) {
         }
     }
 
-    if (cursorFollowsText)
+    if (_cursorFollowsText)
         setCursorPos(x + i, y, true);
     if (reenableCursor)
         enableCursor();
@@ -216,7 +216,7 @@ void TextView::scroll() {
                           SCALED(_height) - SCALED(CHAR_HEIGHT));
 
     screen->fillRect(SCALED(_x),
-                     SCALED(_y + (CHAR_HEIGHT * (rows - 1))),
+                     SCALED(_y + (CHAR_HEIGHT * (_rows - 1))),
                      SCALED(_width),
                      SCALED(CHAR_HEIGHT),
                      0, 0, 0);
@@ -225,47 +225,47 @@ void TextView::scroll() {
 }
 
 void TextView::setCursorPos(int x, int y, bool clearOld) {
-    while (x >= columns) {
-        x -= columns;
+    while (x >= _columns) {
+        x -= _columns;
         y++;
     }
-    ASSERT(y < rows, "y value of %d out of range", y);
+    ASSERT(y < _rows, "y value of %d out of range", y);
 
-    if (clearOld && cursorEnabled) {
-        drawChar(' ', cursorX, cursorY);
-        update(cursorX * CHAR_WIDTH, cursorY * CHAR_HEIGHT, CHAR_WIDTH, CHAR_HEIGHT);
+    if (clearOld && _cursorEnabled) {
+        drawChar(' ', _cursorX, _cursorY);
+        update(_cursorX * CHAR_WIDTH, _cursorY * CHAR_HEIGHT, CHAR_WIDTH, CHAR_HEIGHT);
     }
 
-    cursorX = x;
-    cursorY = y;
+    _cursorX = x;
+    _cursorY = y;
 
     drawCursor();
 }
 
 void TextView::enableCursor() {
-    cursorEnabled = true;
+    _cursorEnabled = true;
     drawCursor();
 }
 
 void TextView::disableCursor() {
-    cursorEnabled = false;
-    drawChar(' ', cursorX, cursorY);
-    update(cursorX * CHAR_WIDTH, cursorY * CHAR_HEIGHT, CHAR_WIDTH, CHAR_HEIGHT);
+    _cursorEnabled = false;
+    drawChar(' ', _cursorX, _cursorY);
+    update(_cursorX * CHAR_WIDTH, _cursorY * CHAR_HEIGHT, CHAR_WIDTH, CHAR_HEIGHT);
 }
 
 void TextView::drawCursor() {
-    ASSERT(cursorPhase >= 0 && cursorPhase < 4, "invalid cursor phase: %d", cursorPhase);
+    ASSERT(_cursorPhase >= 0 && _cursorPhase < 4, "invalid cursor phase: %d", _cursorPhase);
 
-    if (!cursorEnabled)
+    if (!_cursorEnabled)
         return;
 
-    drawChar(31 - cursorPhase, cursorX, cursorY);
-    update(cursorX * CHAR_WIDTH, cursorY * CHAR_HEIGHT, CHAR_WIDTH, CHAR_HEIGHT);
+    drawChar(31 - _cursorPhase, _cursorX, _cursorY);
+    update(_cursorX * CHAR_WIDTH, _cursorY * CHAR_HEIGHT, CHAR_WIDTH, CHAR_HEIGHT);
 }
 
 void TextView::cursorTimer(void *data) {
     TextView *thiz = static_cast<TextView *>(data);
-    thiz->cursorPhase = (thiz->cursorPhase + 1) % 4;
+    thiz->_cursorPhase = (thiz->_cursorPhase + 1) % 4;
     thiz->drawCursor();
 }
 

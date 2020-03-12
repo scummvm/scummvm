@@ -233,7 +233,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 
     sigData = intro->getSigData();
     im->alphaOff();
-    if (settings.videoType != "VGA-ALLPNG" && settings.videoType != "new") {
+    if (settings._videoType != "VGA-ALLPNG" && settings._videoType != "new") {
         /* ----------------------------
          * update the position of "and"
          * ---------------------------- */
@@ -341,12 +341,12 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
     /* -------------------------
      * update the colors for VGA
      * ------------------------- */
-    if (settings.videoType == "VGA")
+    if (settings._videoType == "VGA")
     {
         ImageInfo *borderInfo = imageMgr->get(BKGD_BORDERS, true);
 //        ImageInfo *charsetInfo = imageMgr->get(BKGD_CHARSET);
         if (!borderInfo)
-            errorFatal("ERROR 1001: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_BORDERS, settings.game.c_str());
+            errorFatal("ERROR 1001: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_BORDERS, settings._game.c_str());
 
         delete borderInfo->image;
         borderInfo->image = NULL;
@@ -388,7 +388,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
         x = sigData[i] + 0x14;
         y = 0xBF - sigData[i+1];
 
-        if (settings.videoType != "EGA")
+        if (settings._videoType != "EGA")
         {
             // yellow gradient
             color = im->setColor(255, (y == 1 ? 250 : 255), blue[y]);
@@ -404,7 +404,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
      * draw the red line between "Origin Systems, Inc." and "present"
      * -------------------------------------------------------------- */
     /* we're still working with an unscaled surface */
-    if (settings.videoType != "EGA")
+    if (settings._videoType != "EGA")
     {
         color = im->setColor(0, 0, 161);    // dark blue
     }
@@ -571,7 +571,7 @@ U4FILE * ImageMgr::getImageFile(ImageInfo *info)
      * and are not renamed in the upgrade installation process
      */
 	if (u4isUpgradeInstalled() && getInfoFromSet(info->name, getSet("VGA"))->filename.find(".old") != Common::String::npos) {
-        if (settings.videoType == "EGA")
+        if (settings._videoType == "EGA")
             filename = getInfoFromSet(info->name, getSet("VGA"))->filename;
         else
             filename = getInfoFromSet(info->name, getSet("EGA"))->filename;
@@ -669,11 +669,11 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
     	Image *unscaled_original = unscaled;
     	unscaled = Image::duplicate(unscaled);
     	delete unscaled_original;
-    	if (Settings::getInstance().enhancements && Settings::getInstance().enhancementsOptions.u4TileTransparencyHack)
+    	if (Settings::getInstance()._enhancements && Settings::getInstance()._enhancementsOptions._u4TileTransparencyHack)
     	{
-    		int transparency_shadow_size =Settings::getInstance().enhancementsOptions.u4TrileTransparencyHackShadowBreadth;
+    		int transparency_shadow_size =Settings::getInstance()._enhancementsOptions._u4TrileTransparencyHackShadowBreadth;
     		int black_index = 0;
-    		int opacity = Settings::getInstance().enhancementsOptions.u4TileTransparencyHackPixelShadowOpacity;
+    		int opacity = Settings::getInstance()._enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity;
 
     		int frames = info->tiles;
     		for (int f = 0; f < frames; ++f)
@@ -688,12 +688,12 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
         return info;
     }
 
-    int imageScale = settings.scale;
-    if ((settings.scale % info->prescale) != 0) {
-        int orig_scale = settings.scale;
-        settings.scale = info->prescale;
+    int imageScale = settings._scale;
+    if ((settings._scale % info->prescale) != 0) {
+        int orig_scale = settings._scale;
+        settings._scale = info->prescale;
         settings.write();
-    	errorFatal("image %s is prescaled to an incompatible size: %d\nResetting the scale to %d. Sorry about the inconvenience, please restart.", info->filename.c_str(), orig_scale, settings.scale);
+    	errorFatal("image %s is prescaled to an incompatible size: %d\nResetting the scale to %d. Sorry about the inconvenience, please restart.", info->filename.c_str(), orig_scale, settings._scale);
     }
     imageScale /= info->prescale;
 
@@ -751,7 +751,7 @@ const vector<Common::String> &ImageMgr::getSetNames() {
 void ImageMgr::update(Settings *newSettings) {
     Common::String setname;
 
-    setname = newSettings->videoType;
+    setname = newSettings->_videoType;
 
     TRACE(*logger, Common::String("base image set is '") + setname + Common::String("'"));
 

@@ -69,15 +69,15 @@ void DungeonView::display(Context * c, TileView *view)
                 //FIXME: Maybe this should be in a loop
 				tiles = getTiles(y, -1);
                 type = tilesToGraphic(tiles);
-				drawWall(-1, y, (Direction)c->_saveGame->orientation, type);
+				drawWall(-1, y, (Direction)c->_saveGame->_orientation, type);
 
 				tiles = getTiles(y, 1);
                 type = tilesToGraphic(tiles);
-                drawWall(1, y, (Direction)c->_saveGame->orientation, type);
+                drawWall(1, y, (Direction)c->_saveGame->_orientation, type);
 
                 tiles = getTiles(y, 0);
                 type = tilesToGraphic(tiles);
-                drawWall(0, y, (Direction)c->_saveGame->orientation, type);
+                drawWall(0, y, (Direction)c->_saveGame->_orientation, type);
 
                 //This only checks that the tile at y==3 is opaque
                 if (y == 3 && !tiles.front().getTileType()->isOpaque())
@@ -88,11 +88,11 @@ void DungeonView::display(Context * c, TileView *view)
                		DungeonGraphicType distant_type = tilesToGraphic(distant_tiles);
 
 					if ((distant_type == DNGGRAPHIC_DNGTILE) || (distant_type == DNGGRAPHIC_BASETILE))
-						drawTile(c->_location->map->tileset->get(distant_tiles.front().getId()),0, y_obj, Direction(c->_saveGame->orientation));
+						drawTile(c->_location->map->tileset->get(distant_tiles.front().getId()),0, y_obj, Direction(c->_saveGame->_orientation));
                		}
                	}
 				if ((type == DNGGRAPHIC_DNGTILE) || (type == DNGGRAPHIC_BASETILE))
-					drawTile(c->_location->map->tileset->get(tiles.front().getId()), 0, y, Direction(c->_saveGame->orientation));
+					drawTile(c->_location->map->tileset->get(tiles.front().getId()), 0, y, Direction(c->_saveGame->_orientation));
             }
         }
     }
@@ -133,7 +133,7 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
     const int * nscale;
     int offset_multiplier = 0;
     int offset_adj = 0;
-    if (settings.videoType != "EGA")
+    if (settings._videoType != "EGA")
     {
     	lscale = & lscale_vga[0];
     	nscale = & nscale_vga[0];
@@ -256,7 +256,7 @@ void DungeonView::drawTile(Tile *tile, int x_offset, int distance, Direction ori
 Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
     MapCoords coords = c->_location->coords;
 
-    switch (c->_saveGame->orientation) {
+    switch (c->_saveGame->_orientation) {
     case DIR_WEST:
         coords.x -= fwd;
         coords.y -= side;
@@ -448,19 +448,19 @@ void DungeonView::drawWall(int xoffset, int distance, Direction orientation, Dun
         y = subimage->y;
     }
 
-    screenDrawImage(dngGraphicInfo[index].subimage, (BORDER_WIDTH + x) * settings.scale,
-                    (BORDER_HEIGHT + y) * settings.scale);
+    screenDrawImage(dngGraphicInfo[index].subimage, (BORDER_WIDTH + x) * settings._scale,
+                    (BORDER_HEIGHT + y) * settings._scale);
 
     if (dngGraphicInfo[index].subimage2 != NULL) {
         // FIXME: subimage2 is a horrible hack, needs to be cleaned up
-        if (settings.videoType == "EGA")
+        if (settings._videoType == "EGA")
             screenDrawImage(dngGraphicInfo[index].subimage2,
-                            (8 + dngGraphicInfo[index].ega_x2) * settings.scale,
-                            (8 + dngGraphicInfo[index].ega_y2) * settings.scale);
+                            (8 + dngGraphicInfo[index].ega_x2) * settings._scale,
+                            (8 + dngGraphicInfo[index].ega_y2) * settings._scale);
         else
             screenDrawImage(dngGraphicInfo[index].subimage2,
-                            (8 + dngGraphicInfo[index].vga_x2) * settings.scale,
-                            (8 + dngGraphicInfo[index].vga_y2) * settings.scale);
+                            (8 + dngGraphicInfo[index].vga_x2) * settings._scale,
+                            (8 + dngGraphicInfo[index].vga_y2) * settings._scale);
     }
 }
 

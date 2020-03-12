@@ -39,27 +39,27 @@ namespace Ultima4 {
 
 extern TileAnimSet *tileanims;
 
-TileId Tile::nextId = 0;
+TileId Tile::_nextId = 0;
 
 Tile::Tile(Tileset *tileset)
-    : id(nextId++)
-    , name()
-    , tileset(tileset)
-    , w(0)
-    , h(0)
-    , frames(0)
-    , scale(1)
-    , anim(NULL)
-    , opaque(false)
-    , foreground()
-    , waterForeground()
+    : _id(_nextId++)
+    , _name()
+    , _tileset(tileset)
+    , _w(0)
+    , _h(0)
+    , _frames(0)
+    , _scale(1)
+    , _anim(NULL)
+    , _opaque(false)
+    , _foreground()
+    , _waterForeground()
     , rule(NULL)
-    , imageName()
-    , looks_like()
-    , image(NULL)
-    , tiledInDungeon(false)
-    , directions()
-    , animationRule("") {
+    , _imageName()
+    , _looksLike()
+    , _image(NULL)
+    , _tiledInDungeon(false)
+    , _directions()
+    , _animationRule("") {
 }
 
 /**
@@ -69,18 +69,18 @@ void Tile::loadProperties(const ConfigElement &conf) {
     if (conf.getName() != "tile")
         return;
             
-    name = conf.getString("name"); /* get the name of the tile */
+    _name = conf.getString("name"); /* get the name of the tile */
 
     /* get the animation for the tile, if one is specified */
     if (conf.exists("animation")) {
-        animationRule = conf.getString("animation");
+        _animationRule = conf.getString("animation");
     }
 
     /* see if the tile is opaque */
-    opaque = conf.getBool("opaque"); 
+    _opaque = conf.getBool("opaque"); 
 
-    foreground = conf.getBool("usesReplacementTileAsBackground");
-    waterForeground = conf.getBool("usesWaterReplacementTileAsBackground");
+    _foreground = conf.getBool("usesReplacementTileAsBackground");
+    _waterForeground = conf.getBool("usesWaterReplacementTileAsBackground");
 
     /* find the rule that applies to the current tile, if there is one.
        if there is no rule specified, it defaults to the "default" rule */
@@ -92,29 +92,29 @@ void Tile::loadProperties(const ConfigElement &conf) {
     else rule = TileRule::findByName("default");
 
     /* get the number of frames the tile has */    
-    frames = conf.getInt("frames", 1);
+    _frames = conf.getInt("frames", 1);
 
     /* get the name of the image that belongs to this tile */
     if (conf.exists("image"))
-        imageName = conf.getString("image");
+        _imageName = conf.getString("image");
     else 
-        imageName = Common::String("tile_") + name;
+        _imageName = Common::String("tile_") + _name;
 
-    tiledInDungeon = conf.getBool("tiledInDungeon");
+    _tiledInDungeon = conf.getBool("tiledInDungeon");
 
     if (conf.exists("directions")) {
         Common::String dirs = conf.getString("directions");
-        if (dirs.size() != (unsigned) frames)
-            errorFatal("Error: %ld directions for tile but only %d frames", (long) dirs.size(), frames);
+        if (dirs.size() != (unsigned) _frames)
+            errorFatal("Error: %ld directions for tile but only %d frames", (long) dirs.size(), _frames);
         for (unsigned i = 0; i < dirs.size(); i++) {
             if (dirs[i] == 'w')
-                directions.push_back(DIR_WEST);
+                _directions.push_back(DIR_WEST);
             else if (dirs[i] == 'n')
-                directions.push_back(DIR_NORTH);
+                _directions.push_back(DIR_NORTH);
             else if (dirs[i] == 'e')
-                directions.push_back(DIR_EAST);
+                _directions.push_back(DIR_EAST);
             else if (dirs[i] == 's')
-                directions.push_back(DIR_SOUTH);
+                _directions.push_back(DIR_SOUTH);
             else
                 errorFatal("Error: unknown direction specified by %c", dirs[i]);
         }
@@ -122,41 +122,41 @@ void Tile::loadProperties(const ConfigElement &conf) {
 }
 
 Image *Tile::getImage() {
-    if (!image)
+    if (!_image)
         loadImage();
-    return image;
+    return _image;
 }
 
 /**
  * Loads the tile image
  */ 
 void Tile::loadImage() {
-    if (!image) {
-        scale = settings.scale;
+    if (!_image) {
+        _scale = settings._scale;
 
     	SubImage *subimage = NULL;
 
-        ImageInfo *info = imageMgr->get(imageName);
+        ImageInfo *info = imageMgr->get(_imageName);
         if (!info) {
-            subimage = imageMgr->getSubImage(imageName);
+            subimage = imageMgr->getSubImage(_imageName);
             if (subimage)            
                 info = imageMgr->get(subimage->srcImageName);            
         }
         if (!info) //IF still no info loaded
         {
-            errorWarning("Error: couldn't load image for tile '%s'", name.c_str());
+            errorWarning("Error: couldn't load image for tile '%s'", _name.c_str());
             return;
         }
 
         /* FIXME: This is a hack to address the fact that there are 4
            frames for the guard in VGA mode, but only 2 in EGA. Is there
            a better way to handle this? */
-        if (name == "guard")
+        if (_name == "guard")
         {
-        	if (settings.videoType == "EGA")
-        		frames = 2;
+        	if (settings._videoType == "EGA")
+        		_frames = 2;
         	else
-        		frames = 4;
+        		_frames = 4;
         }
 
 
@@ -164,9 +164,9 @@ void Tile::loadImage() {
         	info->image->alphaOff();
 
         if (info) {
-            w = (subimage ? subimage->width * scale : info->width * scale / info->prescale);
-            h = (subimage ? (subimage->height * scale) / frames : (info->height * scale / info->prescale) / frames);
-            image = Image::create(w, h * frames, false, Image::HARDWARE);
+            _w = (subimage ? subimage->width * _scale : info->width * _scale / info->prescale);
+            _h = (subimage ? (subimage->height * _scale) / _frames : (info->height * _scale / info->prescale) / _frames);
+            _image = Image::create(_w, _h * _frames, false, Image::HARDWARE);
 
 
             //info->image->alphaOff();
@@ -174,17 +174,17 @@ void Tile::loadImage() {
             /* draw the tile from the image we found to our tile image */
             if (subimage) {
                 Image *tiles = info->image;
-                tiles->drawSubRectOn(image, 0, 0, subimage->x * scale, subimage->y * scale, subimage->width * scale, subimage->height * scale);
+                tiles->drawSubRectOn(_image, 0, 0, subimage->x * _scale, subimage->y * _scale, subimage->width * _scale, subimage->height * _scale);
             }
-            else info->image->drawOn(image, 0, 0);
+            else info->image->drawOn(_image, 0, 0);
         }
 
-        if (animationRule.size() > 0) {
-            anim = NULL;
+        if (_animationRule.size() > 0) {
+            _anim = NULL;
             if (tileanims)
-                anim = tileanims->getByName(animationRule);
-            if (anim == NULL)
-                errorWarning("Warning: animation style '%s' not found", animationRule.c_str());
+                _anim = tileanims->getByName(_animationRule);
+            if (_anim == NULL)
+                errorWarning("Warning: animation style '%s' not found", _animationRule.c_str());
         }
 
         /* if we have animations, we always used 'animated' to draw from */
@@ -197,11 +197,11 @@ void Tile::loadImage() {
 
 void Tile::deleteImage()
 {
-    if(image) {
-        delete image;
-        image = NULL;
+    if(_image) {
+        delete _image;
+        _image = NULL;
     }
-    scale = settings.scale;
+    _scale = settings._scale;
 }
 
 /**
@@ -227,15 +227,15 @@ bool MapTile::setDirection(Direction d) {
 }
 
 bool Tile::isDungeonFloor() const {
-    Tile *floor = tileset->getByName("brick_floor");
-    if (id == floor->id)
+    Tile *floor = _tileset->getByName("brick_floor");
+    if (_id == floor->_id)
         return true;
     return false;
 }
 
 bool Tile::isOpaque() const {
     extern Context *c;
-    return c->_opacity ? opaque : false;
+    return c->_opacity ? _opaque : false;
 }
 
 /**
@@ -247,15 +247,15 @@ bool Tile::isForeground() const {
 }
 
 Direction Tile::directionForFrame(int frame) const {
-    if (static_cast<unsigned>(frame) >= directions.size())
+    if (static_cast<unsigned>(frame) >= _directions.size())
         return DIR_NONE;
     else
-        return directions[frame];
+        return _directions[frame];
 }
 
 int Tile::frameForDirection(Direction d) const {
-    for (int i = 0; (unsigned) i < directions.size() && i < frames; i++) {
-        if (directions[i] == d)
+    for (int i = 0; (unsigned) i < _directions.size() && i < _frames; i++) {
+        if (_directions[i] == d)
             return i;
     }
     return -1;

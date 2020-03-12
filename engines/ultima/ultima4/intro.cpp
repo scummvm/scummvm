@@ -196,7 +196,7 @@ IntroController::IntroController() :
     confMenu.add(MI_CONF_SOUND,               "\010 Sound Options",              2,  3,/*'s'*/  2);
     confMenu.add(MI_CONF_INPUT,               "\010 Input Options",              2,  4,/*'i'*/  2);
     confMenu.add(MI_CONF_SPEED,               "\010 Speed Options",              2,  5,/*'p'*/  3);
-    confMenu.add(MI_CONF_01, new BoolMenuItem("Game Enhancements         %s",    2,  7,/*'e'*/  5, &settingsChanged.enhancements));
+    confMenu.add(MI_CONF_01, new BoolMenuItem("Game Enhancements         %s",    2,  7,/*'e'*/  5, &settingsChanged._enhancements));
     confMenu.add(MI_CONF_GAMEPLAY,            "\010 Enhanced Gameplay Options",  2,  9,/*'g'*/ 11);
     confMenu.add(MI_CONF_INTERFACE,           "\010 Enhanced Interface Options", 2, 10,/*'n'*/ 12);
     confMenu.add(CANCEL,                      "\017 Main Menu",                  2, 12,/*'m'*/  2);
@@ -204,15 +204,15 @@ IntroController::IntroController() :
     confMenu.setClosesMenu(CANCEL);
 
     /* set the default visibility of the two enhancement menus */
-    confMenu.getItemById(MI_CONF_GAMEPLAY)->setVisible(settings.enhancements);
-    confMenu.getItemById(MI_CONF_INTERFACE)->setVisible(settings.enhancements);
+    confMenu.getItemById(MI_CONF_GAMEPLAY)->setVisible(settings._enhancements);
+    confMenu.getItemById(MI_CONF_INTERFACE)->setVisible(settings._enhancements);
 
     videoMenu.setTitle("Video Options:", 0, 0);
     videoMenu.add(MI_VIDEO_CONF_GFX, 						 "\010 Game Graphics Options",  2,  2,/*'g'*/  2);
-    videoMenu.add(MI_VIDEO_04,    		new IntMenuItem		("Scale                x%d", 2,  4,/*'s'*/  0, reinterpret_cast<int *>(&settingsChanged.scale), 1, 5, 1));
-    videoMenu.add(MI_VIDEO_05,  (		new BoolMenuItem	("Mode                 %s",  2,  5,/*'m'*/  0, &settingsChanged.fullscreen))->setValueStrings("Fullscreen", "Window"));
-    videoMenu.add(MI_VIDEO_06, 			new StringMenuItem	("Filter               %s",  2,  6,/*'f'*/  0, &settingsChanged.filter, screenGetFilterNames()));
-    videoMenu.add(MI_VIDEO_08,    		new IntMenuItem		("Gamma                %s",  2,  7,/*'a'*/  1, &settingsChanged.gamma, 50, 150, 10, MENU_OUTPUT_GAMMA));
+    videoMenu.add(MI_VIDEO_04,    		new IntMenuItem		("Scale                x%d", 2,  4,/*'s'*/  0, reinterpret_cast<int *>(&settingsChanged._scale), 1, 5, 1));
+    videoMenu.add(MI_VIDEO_05,  (		new BoolMenuItem	("Mode                 %s",  2,  5,/*'m'*/  0, &settingsChanged._fullscreen))->setValueStrings("Fullscreen", "Window"));
+    videoMenu.add(MI_VIDEO_06, 			new StringMenuItem	("Filter               %s",  2,  6,/*'f'*/  0, &settingsChanged._filter, screenGetFilterNames()));
+    videoMenu.add(MI_VIDEO_08,    		new IntMenuItem		("Gamma                %s",  2,  7,/*'a'*/  1, &settingsChanged._gamma, 50, 150, 10, MENU_OUTPUT_GAMMA));
     videoMenu.add(USE_SETTINGS,                   "\010 Use These Settings",  2, 11,/*'u'*/  2);
     videoMenu.add(CANCEL,                         "\010 Cancel",              2, 12,/*'c'*/  2);
     videoMenu.addShortcutKey(CANCEL, ' ');
@@ -220,21 +220,21 @@ IntroController::IntroController() :
     videoMenu.setClosesMenu(CANCEL);
     
     gfxMenu.setTitle("Game Graphics Options", 0,0);
-    gfxMenu.add(MI_GFX_SCHEME, new StringMenuItem		 	 			("Graphics Scheme    %s", 2, 2, /*'G'*/ 0, &settingsChanged.videoType, imageMgr->getSetNames()));
-    gfxMenu.add(MI_GFX_TILE_TRANSPARENCY, new BoolMenuItem              ("Transparency Hack  %s", 2, 4, /*'t'*/ 0, &settingsChanged.enhancementsOptions.u4TileTransparencyHack));
-    gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_SIZE, new IntMenuItem   ("  Shadow Size:     %d", 2, 5, /*'s'*/ 9, &settingsChanged.enhancementsOptions.u4TrileTransparencyHackShadowBreadth, 0, 16, 1));
-    gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_OPACITY, new IntMenuItem("  Shadow Opacity:  %d", 2, 6, /*'o'*/ 9, &settingsChanged.enhancementsOptions.u4TileTransparencyHackPixelShadowOpacity, 8, 256, 8));
-    gfxMenu.add(MI_VIDEO_02, 				new StringMenuItem			("Gem Layout         %s",  2,  8,/*'e'*/  1, &settingsChanged.gemLayout, screenGetGemLayoutNames()));
-    gfxMenu.add(MI_VIDEO_03, 			new StringMenuItem				("Line Of Sight      %s",  2,  9,/*'l'*/  0, &settingsChanged.lineOfSight, screenGetLineOfSightStyles()));
-    gfxMenu.add(MI_VIDEO_07,   		new BoolMenuItem					("Screen Shaking     %s",  2, 10,/*'k'*/ 8, &settingsChanged.screenShakes));
+    gfxMenu.add(MI_GFX_SCHEME, new StringMenuItem		 	 			("Graphics Scheme    %s", 2, 2, /*'G'*/ 0, &settingsChanged._videoType, imageMgr->getSetNames()));
+    gfxMenu.add(MI_GFX_TILE_TRANSPARENCY, new BoolMenuItem              ("Transparency Hack  %s", 2, 4, /*'t'*/ 0, &settingsChanged._enhancementsOptions._u4TileTransparencyHack));
+    gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_SIZE, new IntMenuItem   ("  Shadow Size:     %d", 2, 5, /*'s'*/ 9, &settingsChanged._enhancementsOptions._u4TrileTransparencyHackShadowBreadth, 0, 16, 1));
+    gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_OPACITY, new IntMenuItem("  Shadow Opacity:  %d", 2, 6, /*'o'*/ 9, &settingsChanged._enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity, 8, 256, 8));
+    gfxMenu.add(MI_VIDEO_02, 				new StringMenuItem			("Gem Layout         %s",  2,  8,/*'e'*/  1, &settingsChanged._gemLayout, screenGetGemLayoutNames()));
+    gfxMenu.add(MI_VIDEO_03, 			new StringMenuItem				("Line Of Sight      %s",  2,  9,/*'l'*/  0, &settingsChanged._lineOfSight, screenGetLineOfSightStyles()));
+    gfxMenu.add(MI_VIDEO_07,   		new BoolMenuItem					("Screen Shaking     %s",  2, 10,/*'k'*/ 8, &settingsChanged._screenShakes));
     gfxMenu.add(MI_GFX_RETURN,               "\010 Return to Video Options",              2,  12,/*'r'*/  2);
     gfxMenu.setClosesMenu(MI_GFX_RETURN);
 
 
     soundMenu.setTitle("Sound Options:", 0, 0);
-    soundMenu.add(MI_SOUND_01,  new IntMenuItem("Music Volume         %s", 2,  2,/*'m'*/  0, &settingsChanged.musicVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
-    soundMenu.add(MI_SOUND_02,  new IntMenuItem("Sound Effect Volume  %s", 2,  3,/*'s'*/  0, &settingsChanged.soundVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
-    soundMenu.add(MI_SOUND_03, new BoolMenuItem("Fading               %s", 2,  4,/*'f'*/  0, &settingsChanged.volumeFades));
+    soundMenu.add(MI_SOUND_01,  new IntMenuItem("Music Volume         %s", 2,  2,/*'m'*/  0, &settingsChanged._musicVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
+    soundMenu.add(MI_SOUND_02,  new IntMenuItem("Sound Effect Volume  %s", 2,  3,/*'s'*/  0, &settingsChanged._soundVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
+    soundMenu.add(MI_SOUND_03, new BoolMenuItem("Fading               %s", 2,  4,/*'f'*/  0, &settingsChanged._volumeFades));
     soundMenu.add(USE_SETTINGS,                 "\010 Use These Settings", 2, 11,/*'u'*/  2);
     soundMenu.add(CANCEL,                       "\010 Cancel",             2, 12,/*'c'*/  2);
     soundMenu.addShortcutKey(CANCEL, ' ');
@@ -242,10 +242,10 @@ IntroController::IntroController() :
     soundMenu.setClosesMenu(CANCEL);
 
     inputMenu.setTitle("Keyboard Options:", 0, 0);
-    inputMenu.add(MI_INPUT_01,  new IntMenuItem("Repeat Delay        %4d msec", 2,  2,/*'d'*/  7, &settingsChanged.keydelay, 100, MAX_KEY_DELAY, 100));
-    inputMenu.add(MI_INPUT_02,  new IntMenuItem("Repeat Interval     %4d msec", 2,  3,/*'i'*/  7, &settingsChanged.keyinterval, 10, MAX_KEY_INTERVAL, 10));
+    inputMenu.add(MI_INPUT_01,  new IntMenuItem("Repeat Delay        %4d msec", 2,  2,/*'d'*/  7, &settingsChanged._keydelay, 100, MAX_KEY_DELAY, 100));
+    inputMenu.add(MI_INPUT_02,  new IntMenuItem("Repeat Interval     %4d msec", 2,  3,/*'i'*/  7, &settingsChanged._keyinterval, 10, MAX_KEY_INTERVAL, 10));
     /* "Mouse Options:" is drawn in the updateInputMenu() function */
-    inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s",      2,  7,/*'m'*/  0, &settingsChanged.mouseOptions.enabled));
+    inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s",      2,  7,/*'m'*/  0, &settingsChanged._mouseOptions.enabled));
     inputMenu.add(USE_SETTINGS,                 "\010 Use These Settings",      2, 11,/*'u'*/  2);
     inputMenu.add(CANCEL,                       "\010 Cancel",                  2, 12,/*'c'*/  2);
     inputMenu.addShortcutKey(CANCEL, ' ');
@@ -253,13 +253,13 @@ IntroController::IntroController() :
     inputMenu.setClosesMenu(CANCEL);
     
     speedMenu.setTitle("Speed Options:", 0, 0);
-    speedMenu.add(MI_SPEED_01, new IntMenuItem("Game Cycles per Second    %3d",      2,  2,/*'g'*/  0, &settingsChanged.gameCyclesPerSecond, 1, MAX_CYCLES_PER_SECOND, 1));
-    speedMenu.add(MI_SPEED_02, new IntMenuItem("Battle Speed              %3d",      2,  3,/*'b'*/  0, &settingsChanged.battleSpeed, 1, MAX_BATTLE_SPEED, 1));
-    speedMenu.add(MI_SPEED_03, new IntMenuItem("Spell Effect Length       %s",       2,  4,/*'p'*/  1, &settingsChanged.spellEffectSpeed, 1, MAX_SPELL_EFFECT_SPEED, 1, MENU_OUTPUT_SPELL));
-    speedMenu.add(MI_SPEED_04, new IntMenuItem("Camping Length            %3d sec",  2,  5,/*'m'*/  2, &settingsChanged.campTime, 1, MAX_CAMP_TIME, 1));
-    speedMenu.add(MI_SPEED_05, new IntMenuItem("Inn Rest Length           %3d sec",  2,  6,/*'i'*/  0, &settingsChanged.innTime, 1, MAX_INN_TIME, 1));
-    speedMenu.add(MI_SPEED_06, new IntMenuItem("Shrine Meditation Length  %3d sec",  2,  7,/*'s'*/  0, &settingsChanged.shrineTime, 1, MAX_SHRINE_TIME, 1));
-    speedMenu.add(MI_SPEED_07, new IntMenuItem("Screen Shake Interval     %3d msec", 2,  8,/*'r'*/  2, &settingsChanged.shakeInterval, MIN_SHAKE_INTERVAL, MAX_SHAKE_INTERVAL, 10));
+    speedMenu.add(MI_SPEED_01, new IntMenuItem("Game Cycles per Second    %3d",      2,  2,/*'g'*/  0, &settingsChanged._gameCyclesPerSecond, 1, MAX_CYCLES_PER_SECOND, 1));
+    speedMenu.add(MI_SPEED_02, new IntMenuItem("Battle Speed              %3d",      2,  3,/*'b'*/  0, &settingsChanged._battleSpeed, 1, MAX_BATTLE_SPEED, 1));
+    speedMenu.add(MI_SPEED_03, new IntMenuItem("Spell Effect Length       %s",       2,  4,/*'p'*/  1, &settingsChanged._spellEffectSpeed, 1, MAX_SPELL_EFFECT_SPEED, 1, MENU_OUTPUT_SPELL));
+    speedMenu.add(MI_SPEED_04, new IntMenuItem("Camping Length            %3d sec",  2,  5,/*'m'*/  2, &settingsChanged._campTime, 1, MAX_CAMP_TIME, 1));
+    speedMenu.add(MI_SPEED_05, new IntMenuItem("Inn Rest Length           %3d sec",  2,  6,/*'i'*/  0, &settingsChanged._innTime, 1, MAX_INN_TIME, 1));
+    speedMenu.add(MI_SPEED_06, new IntMenuItem("Shrine Meditation Length  %3d sec",  2,  7,/*'s'*/  0, &settingsChanged._shrineTime, 1, MAX_SHRINE_TIME, 1));
+    speedMenu.add(MI_SPEED_07, new IntMenuItem("Screen Shake Interval     %3d msec", 2,  8,/*'r'*/  2, &settingsChanged._shakeInterval, MIN_SHAKE_INTERVAL, MAX_SHAKE_INTERVAL, 10));
     speedMenu.add(USE_SETTINGS,                "\010 Use These Settings",            2, 11,/*'u'*/  2);
     speedMenu.add(CANCEL,                      "\010 Cancel",                        2, 12,/*'c'*/  2);
     speedMenu.addShortcutKey(CANCEL, ' ');
@@ -268,12 +268,12 @@ IntroController::IntroController() :
 
     /* move the BATTLE DIFFICULTY, DEBUG, and AUTOMATIC ACTIONS settings to "enhancementsOptions" */
     gameplayMenu.setTitle							   ("Enhanced Gameplay Options:", 0, 0);
-    gameplayMenu.add(MI_GAMEPLAY_01, new StringMenuItem("Battle Difficulty          %s", 2,  2,/*'b'*/  0, &settingsChanged.battleDiff, settings.getBattleDiffs()));
-    gameplayMenu.add(MI_GAMEPLAY_02,   new BoolMenuItem("Fixed Chest Traps          %s", 2,  3,/*'t'*/ 12, &settingsChanged.enhancementsOptions.c64chestTraps));
-    gameplayMenu.add(MI_GAMEPLAY_03,   new BoolMenuItem("Gazer Spawns Insects       %s", 2,  4,/*'g'*/  0, &settingsChanged.enhancementsOptions.gazerSpawnsInsects));
-    gameplayMenu.add(MI_GAMEPLAY_04,   new BoolMenuItem("Gem View Shows Objects     %s", 2,  5,/*'e'*/  1, &settingsChanged.enhancementsOptions.peerShowsObjects));
-    gameplayMenu.add(MI_GAMEPLAY_05,   new BoolMenuItem("Slime Divides              %s", 2,  6,/*'s'*/  0, &settingsChanged.enhancementsOptions.slimeDivides));
-    gameplayMenu.add(MI_GAMEPLAY_06,   new BoolMenuItem("Debug Mode (Cheats)        %s", 2,  8,/*'d'*/  0, &settingsChanged.debug)); 
+    gameplayMenu.add(MI_GAMEPLAY_01, new StringMenuItem("Battle Difficulty          %s", 2,  2,/*'b'*/  0, &settingsChanged._battleDiff, settings.getBattleDiffs()));
+    gameplayMenu.add(MI_GAMEPLAY_02,   new BoolMenuItem("Fixed Chest Traps          %s", 2,  3,/*'t'*/ 12, &settingsChanged._enhancementsOptions._c64chestTraps));
+    gameplayMenu.add(MI_GAMEPLAY_03,   new BoolMenuItem("Gazer Spawns Insects       %s", 2,  4,/*'g'*/  0, &settingsChanged._enhancementsOptions._gazerSpawnsInsects));
+    gameplayMenu.add(MI_GAMEPLAY_04,   new BoolMenuItem("Gem View Shows Objects     %s", 2,  5,/*'e'*/  1, &settingsChanged._enhancementsOptions._peerShowsObjects));
+    gameplayMenu.add(MI_GAMEPLAY_05,   new BoolMenuItem("Slime Divides              %s", 2,  6,/*'s'*/  0, &settingsChanged._enhancementsOptions._slimeDivides));
+    gameplayMenu.add(MI_GAMEPLAY_06,   new BoolMenuItem("Debug Mode (Cheats)        %s", 2,  8,/*'d'*/  0, &settingsChanged._debug)); 
     gameplayMenu.add(USE_SETTINGS,                      "\010 Use These Settings",       2, 11,/*'u'*/  2);
     gameplayMenu.add(CANCEL,                            "\010 Cancel",                   2, 12,/*'c'*/  2);
     gameplayMenu.addShortcutKey(CANCEL, ' ');
@@ -281,13 +281,13 @@ IntroController::IntroController() :
     gameplayMenu.setClosesMenu(CANCEL);
 
     interfaceMenu.setTitle("Enhanced Interface Options:", 0, 0);
-    interfaceMenu.add(MI_INTERFACE_01, new BoolMenuItem("Automatic Actions          %s", 2,  2,/*'a'*/  0, &settingsChanged.shortcutCommands));
+    interfaceMenu.add(MI_INTERFACE_01, new BoolMenuItem("Automatic Actions          %s", 2,  2,/*'a'*/  0, &settingsChanged._shortcutCommands));
     /* "(Open, Jimmy, etc.)" */
-    interfaceMenu.add(MI_INTERFACE_02, new BoolMenuItem("Set Active Player          %s", 2,  4,/*'p'*/ 11, &settingsChanged.enhancementsOptions.activePlayer));
-    interfaceMenu.add(MI_INTERFACE_03, new BoolMenuItem("Smart 'Enter' Key          %s", 2,  5,/*'e'*/  7, &settingsChanged.enhancementsOptions.smartEnterKey));
-    interfaceMenu.add(MI_INTERFACE_04, new BoolMenuItem("Text Colorization          %s", 2,  6,/*'t'*/  0, &settingsChanged.enhancementsOptions.textColorization));
-    interfaceMenu.add(MI_INTERFACE_05, new BoolMenuItem("Ultima V Shrines           %s", 2,  7,/*'s'*/  9, &settingsChanged.enhancementsOptions.u5shrines));
-    interfaceMenu.add(MI_INTERFACE_06, new BoolMenuItem("Ultima V Spell Mixing      %s", 2,  8,/*'m'*/ 15, &settingsChanged.enhancementsOptions.u5spellMixing));
+    interfaceMenu.add(MI_INTERFACE_02, new BoolMenuItem("Set Active Player          %s", 2,  4,/*'p'*/ 11, &settingsChanged._enhancementsOptions._activePlayer));
+    interfaceMenu.add(MI_INTERFACE_03, new BoolMenuItem("Smart 'Enter' Key          %s", 2,  5,/*'e'*/  7, &settingsChanged._enhancementsOptions._smartEnterKey));
+    interfaceMenu.add(MI_INTERFACE_04, new BoolMenuItem("Text Colorization          %s", 2,  6,/*'t'*/  0, &settingsChanged._enhancementsOptions._textColorization));
+    interfaceMenu.add(MI_INTERFACE_05, new BoolMenuItem("Ultima V Shrines           %s", 2,  7,/*'s'*/  9, &settingsChanged._enhancementsOptions._u5shrines));
+    interfaceMenu.add(MI_INTERFACE_06, new BoolMenuItem("Ultima V Spell Mixing      %s", 2,  8,/*'m'*/ 15, &settingsChanged._enhancementsOptions._u5spellMixing));
     interfaceMenu.add(USE_SETTINGS,                     "\010 Use These Settings",       2, 11,/*'u'*/  2);
     interfaceMenu.add(CANCEL,                           "\010 Cancel",                   2, 12,/*'c'*/  2);
     interfaceMenu.addShortcutKey(CANCEL, ' ');
@@ -768,15 +768,15 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 
     avatar.init();
     strcpy(avatar.name, nameBuffer.c_str());
-    avatar.sex = sex;
+    avatar._sex = sex;
     saveGame.init(&avatar);
     screenHideCursor();
     initPlayers(&saveGame);
-    saveGame.food = 30000;
-    saveGame.gold = 200;
-    saveGame.reagents[REAG_GINSENG] = 3;
-    saveGame.reagents[REAG_GARLIC] = 4;
-    saveGame.torches = 2;
+    saveGame._food = 30000;
+    saveGame._gold = 200;
+    saveGame._reagents[REAG_GINSENG] = 3;
+    saveGame._reagents[REAG_GARLIC] = 4;
+    saveGame._torches = 2;
     saveGame.write(saveGameFile);
 
 	saveGameFile->finalize();
@@ -942,7 +942,7 @@ void IntroController::journeyOnward() {
         // In the Ultima Collection CD, party.sav exists, but does
         // not contain valid info to journey onward        
         saveGame->read(saveGameFile);        
-        if (saveGame->members > 0)
+        if (saveGame->_members > 0)
             validSave = true;
         delete saveGame;
         delete saveGameFile;
@@ -1097,8 +1097,8 @@ void IntroController::updateConfMenu(MenuEvent &event) {
         event.getType() == MenuEvent::DECREMENT) {
 
         // show or hide game enhancement options if enhancements are enabled/disabled
-        confMenu.getItemById(MI_CONF_GAMEPLAY)->setVisible(settingsChanged.enhancements);
-        confMenu.getItemById(MI_CONF_INTERFACE)->setVisible(settingsChanged.enhancements);
+        confMenu.getItemById(MI_CONF_GAMEPLAY)->setVisible(settingsChanged._enhancements);
+        confMenu.getItemById(MI_CONF_INTERFACE)->setVisible(settingsChanged._enhancements);
 
         // save settings
         settings.setData(settingsChanged);
@@ -1201,10 +1201,10 @@ void IntroController::updateSoundMenu(MenuEvent &event) {
 
         switch(event.getMenuItem()->getId()) {
             case MI_SOUND_01:
-                musicMgr->setMusicVolume(settingsChanged.musicVol);
+                musicMgr->setMusicVolume(settingsChanged._musicVol);
                 break;
             case MI_SOUND_02:
-                musicMgr->setSoundVolume(settingsChanged.soundVol);
+                musicMgr->setSoundVolume(settingsChanged._soundVol);
                 soundPlay(SOUND_FLEE);
                 break;
             case USE_SETTINGS:
@@ -1214,8 +1214,8 @@ void IntroController::updateSoundMenu(MenuEvent &event) {
                 musicMgr->intro();
                 break;
             case CANCEL:
-                musicMgr->setMusicVolume(settings.musicVol);
-                musicMgr->setSoundVolume(settings.soundVol);
+                musicMgr->setMusicVolume(settings._musicVol);
+                musicMgr->setSoundVolume(settings._soundVol);
                 // discard settings
                 settingsChanged = settings;
                 break;
@@ -1240,7 +1240,7 @@ void IntroController::updateInputMenu(MenuEvent &event) {
             settings.write();
 
             // re-initialize keyboard
-            KeyHandler::setKeyRepeat(settingsChanged.keydelay, settingsChanged.keyinterval);
+            KeyHandler::setKeyRepeat(settingsChanged._keydelay, settingsChanged._keyinterval);
 
 #ifdef SLACK_ON_SDL_AGNOSTICISM
             if (settings.mouseOptions.enabled) {
@@ -1280,7 +1280,7 @@ void IntroController::updateSpeedMenu(MenuEvent &event) {
             settings.write();
     
             // re-initialize events
-            eventTimerGranularity = (1000 / settings.gameCyclesPerSecond);
+            eventTimerGranularity = (1000 / settings._gameCyclesPerSecond);
             eventHandler->getTimer()->reset(eventTimerGranularity);            
         
             break;
@@ -1438,51 +1438,51 @@ void IntroController::initPlayers(SaveGame *saveGame) {
         { "Katrina",  11, 12, 10, SEX_FEMALE }  /* CLASS_SHEPHERD */
     };
 
-    saveGame->players[0].klass = static_cast<ClassType>(questionTree[14]);
+    saveGame->_players[0]._class = static_cast<ClassType>(questionTree[14]);
 
-    ASSERT(saveGame->players[0].klass < 8, "bad class: %d", saveGame->players[0].klass);
+    ASSERT(saveGame->_players[0]._class < 8, "bad class: %d", saveGame->_players[0]._class);
 
-    saveGame->players[0].weapon = initValuesForClass[saveGame->players[0].klass].weapon;
-    saveGame->players[0].armor = initValuesForClass[saveGame->players[0].klass].armor;
-    saveGame->players[0].xp = initValuesForClass[saveGame->players[0].klass].xp;
-    saveGame->x = initValuesForClass[saveGame->players[0].klass].x;
-    saveGame->y = initValuesForClass[saveGame->players[0].klass].y;
+    saveGame->_players[0]._weapon = initValuesForClass[saveGame->_players[0]._class].weapon;
+    saveGame->_players[0].armor = initValuesForClass[saveGame->_players[0]._class].armor;
+    saveGame->_players[0]._xp = initValuesForClass[saveGame->_players[0]._class].xp;
+    saveGame->_x = initValuesForClass[saveGame->_players[0]._class].x;
+    saveGame->_y = initValuesForClass[saveGame->_players[0]._class].y;
 
-    saveGame->players[0].str = 15;
-    saveGame->players[0].dex = 15;
-    saveGame->players[0].intel = 15;
+    saveGame->_players[0]._str = 15;
+    saveGame->_players[0]._dex = 15;
+    saveGame->_players[0]._intel = 15;
 
     for (i = 0; i < VIRT_MAX; i++)
-        saveGame->karma[i] = 50;
+        saveGame->_karma[i] = 50;
 
     for (i = 8; i < 15; i++) {
-        saveGame->karma[questionTree[i]] += 5;
+        saveGame->_karma[questionTree[i]] += 5;
         switch (questionTree[i]) {
         case VIRT_HONESTY:
-            saveGame->players[0].intel += 3;
+            saveGame->_players[0]._intel += 3;
             break;
         case VIRT_COMPASSION:
-            saveGame->players[0].dex += 3;
+            saveGame->_players[0]._dex += 3;
             break;
         case VIRT_VALOR:
-            saveGame->players[0].str += 3;
+            saveGame->_players[0]._str += 3;
             break;
         case VIRT_JUSTICE:
-            saveGame->players[0].intel++;
-            saveGame->players[0].dex++;
+            saveGame->_players[0]._intel++;
+            saveGame->_players[0]._dex++;
             break;
         case VIRT_SACRIFICE:
-            saveGame->players[0].dex++;
-            saveGame->players[0].str++;
+            saveGame->_players[0]._dex++;
+            saveGame->_players[0]._str++;
             break;
         case VIRT_HONOR:
-            saveGame->players[0].intel++;
-            saveGame->players[0].str++;
+            saveGame->_players[0]._intel++;
+            saveGame->_players[0]._str++;
             break;
         case VIRT_SPIRITUALITY:
-            saveGame->players[0].intel++;
-            saveGame->players[0].dex++;
-            saveGame->players[0].str++;
+            saveGame->_players[0]._intel++;
+            saveGame->_players[0]._dex++;
+            saveGame->_players[0]._str++;
             break;
         case VIRT_HUMILITY:
             /* no stats for you! */
@@ -1490,27 +1490,27 @@ void IntroController::initPlayers(SaveGame *saveGame) {
         }
     }
 
-    PartyMember player(NULL, &saveGame->players[0]);
-    saveGame->players[0].hp = saveGame->players[0].hpMax = player.getMaxLevel() * 100;
-    saveGame->players[0].mp = player.getMaxMp();
+    PartyMember player(NULL, &saveGame->_players[0]);
+    saveGame->_players[0]._hp = saveGame->_players[0]._hpMax = player.getMaxLevel() * 100;
+    saveGame->_players[0]._mp = player.getMaxMp();
 
     p = 1;
     for (i = 0; i < VIRT_MAX; i++) {
-        player = PartyMember(NULL, &saveGame->players[i]);
+        player = PartyMember(NULL, &saveGame->_players[i]);
 
         /* Initial setup for party members that aren't in your group yet... */
-        if (i != saveGame->players[0].klass) {
-            saveGame->players[p].klass = static_cast<ClassType>(i);
-            saveGame->players[p].xp = initValuesForClass[i].xp;
-            saveGame->players[p].str = initValuesForNpcClass[i].str;
-            saveGame->players[p].dex = initValuesForNpcClass[i].dex;
-            saveGame->players[p].intel = initValuesForNpcClass[i].intel;
-            saveGame->players[p].weapon = initValuesForClass[i].weapon;
-            saveGame->players[p].armor = initValuesForClass[i].armor;
-            strcpy(saveGame->players[p].name, initValuesForNpcClass[i].name);
-            saveGame->players[p].sex = initValuesForNpcClass[i].sex;
-            saveGame->players[p].hp = saveGame->players[p].hpMax = initValuesForClass[i].level * 100;
-            saveGame->players[p].mp = player.getMaxMp();
+        if (i != saveGame->_players[0]._class) {
+            saveGame->_players[p]._class = static_cast<ClassType>(i);
+            saveGame->_players[p]._xp = initValuesForClass[i].xp;
+            saveGame->_players[p]._str = initValuesForNpcClass[i].str;
+            saveGame->_players[p]._dex = initValuesForNpcClass[i].dex;
+            saveGame->_players[p]._intel = initValuesForNpcClass[i].intel;
+            saveGame->_players[p]._weapon = initValuesForClass[i].weapon;
+            saveGame->_players[p].armor = initValuesForClass[i].armor;
+            strcpy(saveGame->_players[p].name, initValuesForNpcClass[i].name);
+            saveGame->_players[p]._sex = initValuesForNpcClass[i].sex;
+            saveGame->_players[p]._hp = saveGame->_players[p]._hpMax = initValuesForClass[i].level * 100;
+            saveGame->_players[p]._mp = player.getMaxMp();
             p++;
         }
     }
@@ -1561,7 +1561,7 @@ void IntroController::initTitles()
     title = titles.begin();
 
     // speed up the timer while the intro titles are displayed
-    eventHandler->getTimer()->reset(settings.titleSpeedOther);
+    eventHandler->getTimer()->reset(settings._titleSpeedOther);
 }
 
 
@@ -1603,7 +1603,7 @@ void IntroController::getTitleSourceData()
     // will be scaled appropriately.
     ImageInfo *info = imageMgr->get(BKGD_INTRO, true);
     if (!info) {
-        errorFatal("ERROR 1007: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_INTRO, settings.game.c_str());
+        errorFatal("ERROR 1007: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_INTRO, settings._game.c_str());
     }
 
     if (info->width / info->prescale != 320 || info->height / info->prescale != 200)
@@ -1664,7 +1664,7 @@ void IntroController::getTitleSourceData()
                     x = srcData[titles[i].animStepMax] - 0x4C;
                     y = 0xC0 - srcData[titles[i].animStepMax+1];
 
-                    if (settings.videoType != "EGA")
+                    if (settings._videoType != "EGA")
                     {
                         // yellow gradient
                         color = info->image->setColor(255, (y == 2 ? 250 : 255), blue[y-1]);
@@ -1717,7 +1717,7 @@ void IntroController::getTitleSourceData()
                     transparentColor.b);
 
                 Image *scaled;      // the scaled and filtered image
-                scaled = screenScale(titles[i].srcImage, settings.scale / info->prescale, 1, 1);
+                scaled = screenScale(titles[i].srcImage, settings._scale / info->prescale, 1, 1);
                 if (transparentIndex >= 0)
                 	scaled->setTransparentIndex(transparentIndex);
 
@@ -1759,7 +1759,7 @@ void IntroController::getTitleSourceData()
 
     // scale the original image now
     Image *scaled = screenScale(info->image,
-                                settings.scale / info->prescale,
+                                settings._scale / info->prescale,
                                 info->image->isIndexed(),
                                 1);
     delete info->image;
@@ -2080,15 +2080,15 @@ bool IntroController::updateTitle()
         {
             // assume this is "Ultima IV" and pre-load sound
 //            soundLoad(SOUND_TITLE_FADE);
-            eventHandler->getTimer()->reset(settings.titleSpeedRandom);
+            eventHandler->getTimer()->reset(settings._titleSpeedRandom);
         }
         else if (title->method == MAP)
         {
-            eventHandler->getTimer()->reset(settings.titleSpeedOther);
+            eventHandler->getTimer()->reset(settings._titleSpeedOther);
         }
         else
         {
-            eventHandler->getTimer()->reset(settings.titleSpeedOther);
+            eventHandler->getTimer()->reset(settings._titleSpeedOther);
         }
     }
 
@@ -2122,7 +2122,7 @@ void IntroController::drawTitle()
     if (title->prescaled)
         scaled = title->destImage;
     else
-        scaled = screenScale(title->destImage, settings.scale, 1, 1);
+        scaled = screenScale(title->destImage, settings._scale, 1, 1);
 
     scaled->setTransparentIndex(transparentIndex);
     scaled->drawSubRect(

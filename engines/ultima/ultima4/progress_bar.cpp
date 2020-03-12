@@ -29,22 +29,22 @@ namespace Ultima4 {
 
 ProgressBar::ProgressBar(int x, int y, int width, int height, int _min, int _max) :
     View(x, y, width, height),
-    min(_min),
-    max(_max) {
-    current = min;
+    _min(_min),
+    _max(_max) {
+    _current = _min;
 }
 
-ProgressBar& ProgressBar::operator++()  { current++; draw(); return *this; }
-ProgressBar& ProgressBar::operator--()  { current--; draw(); return *this; }
+ProgressBar& ProgressBar::operator++()  { _current++; draw(); return *this; }
+ProgressBar& ProgressBar::operator--()  { _current--; draw(); return *this; }
 void ProgressBar::draw() {
     Image *bar = Image::create(SCALED(_width), SCALED(_height), false, Image::HARDWARE);
-    int pos = static_cast<int>((double(current - min) / double(max - min)) * (_width - (bwidth * 2)));
+    int pos = static_cast<int>((double(_current - _min) / double(_max - _min)) * (_width - (_bWidth * 2)));
 
     // border color
-    bar->fillRect(0, 0, SCALED(_width), SCALED(_height), bcolor.r, bcolor.g, bcolor.b); 
+    bar->fillRect(0, 0, SCALED(_width), SCALED(_height), _bColor.r, _bColor.g, _bColor.b); 
 
     // color
-    bar->fillRect(SCALED(bwidth), SCALED(bwidth), SCALED(pos), SCALED(_height - (bwidth * 2)), color.r, color.g, color.b); 
+    bar->fillRect(SCALED(_bWidth), SCALED(_bWidth), SCALED(pos), SCALED(_height - (_bWidth * 2)), _color.r, _color.g, _color.b); 
 
     bar->drawOn(screen, SCALED(_x), SCALED(_y));
     update();
@@ -53,21 +53,21 @@ void ProgressBar::draw() {
 }
 
 void ProgressBar::setBorderColor(int r, int g, int b, int a) {
-    bcolor.r = r;
-    bcolor.g = g;
-    bcolor.b = b;
-    bcolor.a = a;
+    _bColor.r = r;
+    _bColor.g = g;
+    _bColor.b = b;
+    _bColor.a = a;
 }
 
 void ProgressBar::setBorderWidth(unsigned int width) {
-    bwidth = width;
+    _bWidth = width;
 }
 
 void ProgressBar::setColor(int r, int g, int b, int a) {
-    color.r = r;
-    color.g = g;
-    color.b = b;
-    color.a = a;
+    _color.r = r;
+    _color.g = g;
+    _color.b = b;
+    _color.a = a;
 }
 
 } // End of namespace Ultima4
