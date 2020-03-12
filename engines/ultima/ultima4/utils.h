@@ -58,28 +58,6 @@ Common::String &uppercase(Common::String &val);
 Common::String xu4_to_string(int val);
 Std::vector<Common::String> split(const Common::String &s, const Common::String &separators);
 
-class Performance {
-    typedef Common::HashMap<Common::String, uint32> TimeMap;
-public:
-	Performance(const Common::String &s);
-
-	void init(const Common::String &s);
-
-	void reset();
-
-	void start();
-
-	void end(const Common::String &funcName);
-
-	void report(const char *pre = NULL);
-
-private:
-    Common::OutSaveFile *log;
-    Common::String filename;
-    uint32 s, e;
-    TimeMap times;
-};
-
 } // End of namespace Ultima4
 } // End of namespace Ultima
 
