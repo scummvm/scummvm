@@ -59,11 +59,6 @@ bool quit = false;
 bool useProfile = false;
 Common::String profileName = "";
 
-Performance perf("debug/performance.txt");
-
-using namespace std;
-
-
 
 int main(int argc, char *argv[]) {
     Debug::initGlobal("debug/global.txt");
@@ -211,7 +206,6 @@ int main(int argc, char *argv[]) {
 
     xu4_srandom();
 
-    perf.start();
     screenInit();
     ProgressBar pb((320/2) - (200/2), (200/2), 200, 10, 0, (skipIntro ? 4 : 7));
     pb.setBorderColor(240, 240, 240);
@@ -220,46 +214,29 @@ int main(int argc, char *argv[]) {
 
     screenTextAt(15, 11, "Loading...");
     screenRedrawScreen();
-    perf.end("Screen Initialization");
     ++pb;
 
-    perf.start();
     soundInit();
-    perf.end("Misc Initialization");
     ++pb;
 
-    perf.start();
     Tileset::loadAll();
-    perf.end("Tileset::loadAll()");
     ++pb;
 
-    perf.start();
     creatureMgr->getInstance();
-    perf.end("creatureMgr->getInstance()");
     ++pb;
 
     intro = new IntroController();
     if (!skipIntro)
     {
         /* do the intro */
-        perf.start();
         intro->init();
-        perf.end("introInit()");
         ++pb;
 
-        perf.start();
         intro->preloadMap();
-        perf.end("intro->preloadMap()");
         ++pb;
 
-        perf.start();
         musicMgr->init();
-        perf.end("musicMgr->init()");
         ++pb;
-
-        /* give a performance report */
-        if (settings.debug)
-            perf.report();
 
         eventHandler->pushController(intro);
         eventHandler->run();
@@ -271,17 +248,9 @@ int main(int argc, char *argv[]) {
     if (quit)
         return 0;
 
-    perf.reset();
-
     /* play the game! */
-    perf.start();
     game = new GameController();
     game->init();
-    perf.end("gameInit()");
-    
-    /* give a performance report */
-    if (settings.debug)
-        perf.report("\n===============================\n\n");
 
     eventHandler->pushController(game);
     eventHandler->run();
