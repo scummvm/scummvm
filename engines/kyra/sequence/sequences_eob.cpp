@@ -1634,12 +1634,16 @@ void EoBPC98FinalePlayer::credits() {
 }
 
 void EoBPC98FinalePlayer::bonus() {
-	if (_vm->shouldQuit() || _vm->skipFlag())
+	if (_vm->shouldQuit())
 		return;
 
-	wait(300);
 	if (!_vm->checkScriptFlags(0x1FFE))
 		return;
+
+	if (_vm->skipFlag())
+		_vm->_eventList.clear();
+	else
+		wait(300);
 
 	fadeToBlack(9, 3);
 	_screen->setCurPage(0);
