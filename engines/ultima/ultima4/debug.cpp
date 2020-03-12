@@ -125,7 +125,7 @@ Debug::Debug(const Common::String &fn, const Common::String &nm, bool append) : 
  * the debug info in its own debug file.
  */
 void Debug::initGlobal(const Common::String &filename) {    
-    if (settings.logging.empty())
+    if (settings._logging.empty())
         return;
 }
 
@@ -196,10 +196,10 @@ void Debug::trace(const Common::String &msg, const Common::String &fn, const Com
  * Determines whether or not this debug element is enabled in our game settings.
  */
 bool Debug::loggingEnabled(const Common::String &name) {
-    if (settings.logging == "all")
+    if (settings._logging == "all")
         return true;
 
-    Std::vector<Common::String> enabledLogs = split(settings.logging, ", ");
+    Std::vector<Common::String> enabledLogs = split(settings._logging, ", ");
     if (Common::find(enabledLogs.begin(), enabledLogs.end(), name) != enabledLogs.end())
         return true;
 

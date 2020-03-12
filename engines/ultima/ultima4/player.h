@@ -115,12 +115,12 @@ public:
     
     // Accessor methods
     virtual int getHp() const;
-    int getMaxHp() const   { return player->hpMax; }
-    int getExp() const     { return player->xp; }
-    int getStr() const     { return player->str; }
-    int getDex() const     { return player->dex; }
-    int getInt() const     { return player->intel; }
-    int getMp() const      { return player->mp; }
+    int getMaxHp() const   { return _player->_hpMax; }
+    int getExp() const     { return _player->_xp; }
+    int getStr() const     { return _player->_str; }
+    int getDex() const     { return _player->_dex; }
+    int getInt() const     { return _player->_intel; }
+    int getMp() const      { return _player->_mp; }
     int getMaxMp() const;
     const Weapon *getWeapon() const;
     const Armor *getArmor() const;
@@ -159,8 +159,8 @@ public:
 protected:
     static MapTile tileForClass(int klass);
 
-    SaveGamePlayerRecord *player;
-    class Party *party;    
+    SaveGamePlayerRecord *_player;
+    class Party *_party;    
 };
 
 /**
@@ -181,10 +181,10 @@ public:
         INVENTORY_ADDED,
     };
     
-    PartyEvent(Type type, PartyMember *partyMember) : type(type), player(partyMember) { }
+    PartyEvent(Type type, PartyMember *partyMember) : _type(type), _player(partyMember) { }
     
-    Type type;
-    PartyMember *player;
+    Type _type;
+    PartyMember *_player;
 };
 
 typedef Std::vector<PartyMember *> PartyMemberVector;
@@ -243,11 +243,11 @@ public:
     
 private:
     void syncMembers();
-    PartyMemberVector members;
-    SaveGame *saveGame;
-    MapTile transport;
-    int torchduration;
-    int activePlayer;
+    PartyMemberVector _members;
+    SaveGame *_saveGame;
+    MapTile _transport;
+    int _torchDuration;
+    int _activePlayer;
 #ifdef IOS
     friend void U4IOS::syncPartyMembersWithSaveGame();
 #endif

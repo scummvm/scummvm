@@ -328,7 +328,7 @@ void CombatController::end(bool adjustKarma) {
             else screenMessage("\n");
 
             if (_exitDir != DIR_NONE) {
-                c->_saveGame->orientation = _exitDir;  /* face the direction exiting the room */
+                c->_saveGame->_orientation = _exitDir;  /* face the direction exiting the room */
                 // XXX: why north, shouldn't this be orientation?
                 c->_location->move(DIR_NORTH, false);  /* advance 1 space outside of the room */
             }
@@ -403,12 +403,12 @@ int  CombatController::initialNumberOfCreatures(const Creature *creature) const 
                 ncreatures = 8;
         }
 
-        while (ncreatures > 2 * c->_saveGame->members) {
+        while (ncreatures > 2 * c->_saveGame->_members) {
             ncreatures = xu4_random(16) + 1;
         }
     } else {
         if (creature && creature->getId() == GUARD_ID)
-            ncreatures = c->_saveGame->members * 2;
+            ncreatures = c->_saveGame->_members * 2;
         else
             ncreatures = 1;
     }
@@ -851,7 +851,7 @@ bool CombatController::keyPressed(int key) {
         break;
 
     case U4_ESC:
-        if (settings.debug)            
+        if (settings._debug)            
             end(false);         /* don't adjust karma */        
         else screenMessage("Bad command\n");        
 
@@ -863,7 +863,7 @@ bool CombatController::keyPressed(int key) {
 
     case U4_FKEY:
         {
-            if (settings.debug)
+            if (settings._debug)
                 gameDestroyAllCreatures();
             else valid = false;
             break;
@@ -874,22 +874,22 @@ bool CombatController::keyPressed(int key) {
     case '-':
     case U4_KEYPAD_ENTER:
         {
-            int old_speed = settings.battleSpeed;
-            if (key == '+' && ++settings.battleSpeed > MAX_BATTLE_SPEED)
-                settings.battleSpeed = MAX_BATTLE_SPEED;        
-            else if (key == '-' && --settings.battleSpeed == 0)
-                settings.battleSpeed = 1;
+            int old_speed = settings._battleSpeed;
+            if (key == '+' && ++settings._battleSpeed > MAX_BATTLE_SPEED)
+                settings._battleSpeed = MAX_BATTLE_SPEED;        
+            else if (key == '-' && --settings._battleSpeed == 0)
+                settings._battleSpeed = 1;
             else if (key == U4_KEYPAD_ENTER)
-                settings.battleSpeed = DEFAULT_BATTLE_SPEED;
+                settings._battleSpeed = DEFAULT_BATTLE_SPEED;
 
-            if (old_speed != settings.battleSpeed) {        
-                if (settings.battleSpeed == DEFAULT_BATTLE_SPEED)
+            if (old_speed != settings._battleSpeed) {        
+                if (settings._battleSpeed == DEFAULT_BATTLE_SPEED)
                     screenMessage("Battle Speed:\nNormal\n");
                 else if (key == '+')
-                    screenMessage("Battle Speed:\nUp (%d)\n", settings.battleSpeed);
-                else screenMessage("Battle Speed:\nDown (%d)\n", settings.battleSpeed);
+                    screenMessage("Battle Speed:\nUp (%d)\n", settings._battleSpeed);
+                else screenMessage("Battle Speed:\nDown (%d)\n", settings._battleSpeed);
             }
-            else if (settings.battleSpeed == DEFAULT_BATTLE_SPEED)
+            else if (settings._battleSpeed == DEFAULT_BATTLE_SPEED)
                 screenMessage("Battle Speed:\nNormal\n");
         }        
 
@@ -940,7 +940,7 @@ bool CombatController::keyPressed(int key) {
         break;
 
     case 'l':
-        if (settings.debug) {
+        if (settings._debug) {
             Coords coords = getCurrentPlayer()->getCoords();
             screenMessage("\nLocation:\nx:%d\ny:%d\nz:%d\n", coords.x, coords.y, coords.z);
             screenPrompt();
@@ -955,7 +955,7 @@ bool CombatController::keyPressed(int key) {
         break;
 
     case 't':
-        if (settings.debug && _map->isDungeonRoom()) {
+        if (settings._debug && _map->isDungeonRoom()) {
             Dungeon *dungeon = dynamic_cast<Dungeon*>(c->_location->prev->map);
             Trigger *triggers = dungeon->rooms[dungeon->currentRoom].triggers;
             int i;
@@ -1040,7 +1040,7 @@ bool CombatController::keyPressed(int key) {
     case '7':
     case '8':
     case '9':
-        if (settings.enhancements && settings.enhancementsOptions.activePlayer)
+        if (settings._enhancements && settings._enhancementsOptions._activePlayer)
             gameSetActivePlayer(key - '1');            
         else screenMessage("Bad command\n");
 
@@ -1143,8 +1143,8 @@ void CombatController::attack() {
 }
 
 void CombatController::update(Party *party, PartyEvent &event) {
-    if (event.type == PartyEvent::PLAYER_KILLED)
-        screenMessage("\n%c%s is Killed!%c\n", FG_RED, event.player->getName().c_str(), FG_WHITE);
+    if (event._type == PartyEvent::PLAYER_KILLED)
+        screenMessage("\n%c%s is Killed!%c\n", FG_RED, event._player->getName().c_str(), FG_WHITE);
 }
 
 /**

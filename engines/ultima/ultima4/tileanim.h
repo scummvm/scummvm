@@ -91,7 +91,7 @@ public:
     virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);    
     virtual bool drawsTile() const;
 private:
-    int increment, current, lastOffset;
+    int _increment, _current, _lastOffset;
 };
 
 /**
@@ -100,11 +100,11 @@ private:
  */ 
 class TileAnimFrameTransform : public TileAnimTransform {
 public:
-	TileAnimFrameTransform() : currentFrame(0){}
+	TileAnimFrameTransform() : _currentFrame(0){}
     virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
     virtual bool drawsTile() const;
 protected:
-    int currentFrame;
+    int _currentFrame;
 };
 
 /**
@@ -119,7 +119,7 @@ public:
     virtual bool drawsTile() const;
 
     int x, y, w, h;
-    RGBA *start, *end;
+    RGBA *_start, *_end;
 };
 
 /**
@@ -137,11 +137,11 @@ public:
     
     void add(TileAnimTransform*);
     virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d) = 0;
-	TileAnimTransformList& getTransforms() {return animTransforms;}	/**< Returns a list of transformations under the context. */
+	TileAnimTransformList& getTransforms() {return _animTransforms;}	/**< Returns a list of transformations under the context. */
     virtual ~TileAnimContext() {}
 private:    
     
-    TileAnimTransformList animTransforms;
+    TileAnimTransformList _animTransforms;
 };
 
 /**

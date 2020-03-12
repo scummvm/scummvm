@@ -135,9 +135,9 @@ void moveAvatar(MoveEvent &event) {
  */
 void moveAvatarInDungeon(MoveEvent &event) {
     MapCoords newCoords;
-    Direction realDir = dirNormalize((Direction)c->_saveGame->orientation, event.dir); /* get our real direction */  
-    int advancing = realDir == c->_saveGame->orientation,
-        retreating = realDir == dirReverse((Direction)c->_saveGame->orientation);
+    Direction realDir = dirNormalize((Direction)c->_saveGame->_orientation, event.dir); /* get our real direction */  
+    int advancing = realDir == c->_saveGame->_orientation,
+        retreating = realDir == dirReverse((Direction)c->_saveGame->_orientation);
     MapTile *tile;
     
     /* we're not in a dungeon, failed! */
@@ -145,7 +145,7 @@ void moveAvatarInDungeon(MoveEvent &event) {
         
     /* you must turn first! */
     if (!advancing && !retreating) {        
-        c->_saveGame->orientation = realDir;
+        c->_saveGame->_orientation = realDir;
         event.result = MOVE_TURNED;
         return;
     }
@@ -464,10 +464,10 @@ bool slowedByTile(const Tile *tile) {
 bool slowedByWind(int direction) {
     /* 1 of 4 moves while trying to move into the wind succeeds */
     if (direction == c->_windDirection)
-        return (c->_saveGame->moves % 4) != 0;
+        return (c->_saveGame->_moves % 4) != 0;
     /* 1 of 4 moves while moving directly away from wind fails */
     else if (direction == dirReverse((Direction) c->_windDirection))
-        return (c->_saveGame->moves % 4) == 3;    
+        return (c->_saveGame->_moves % 4) == 3;    
     else
         return false;
 }

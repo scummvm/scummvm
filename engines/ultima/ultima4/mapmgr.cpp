@@ -256,73 +256,73 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 
     portal = new Portal;
 
-    portal->portalConditionsMet = NULL;
-    portal->retroActiveDest = NULL;
+    portal->_portalConditionsMet = NULL;
+    portal->_retroActiveDest = NULL;
  
-    portal->coords = MapCoords(
+    portal->_coords = MapCoords(
         portalConf.getInt("x"),
         portalConf.getInt("y"),
         portalConf.getInt("z", 0));
-    portal->destid = static_cast<MapId>(portalConf.getInt("destmapid"));
+    portal->_destid = static_cast<MapId>(portalConf.getInt("destmapid"));
     
-    portal->start.x = static_cast<unsigned short>(portalConf.getInt("startx"));
-    portal->start.y = static_cast<unsigned short>(portalConf.getInt("starty"));
-    portal->start.z = static_cast<unsigned short>(portalConf.getInt("startlevel", 0));
+    portal->_start.x = static_cast<unsigned short>(portalConf.getInt("startx"));
+    portal->_start.y = static_cast<unsigned short>(portalConf.getInt("starty"));
+    portal->_start.z = static_cast<unsigned short>(portalConf.getInt("startlevel", 0));
 
     Common::String prop = portalConf.getString("action");
     if (prop == "none")
-        portal->trigger_action = ACTION_NONE;
+        portal->_triggerAction = ACTION_NONE;
     else if (prop == "enter")
-        portal->trigger_action = ACTION_ENTER;
+        portal->_triggerAction = ACTION_ENTER;
     else if (prop == "klimb")
-        portal->trigger_action = ACTION_KLIMB;
+        portal->_triggerAction = ACTION_KLIMB;
     else if (prop == "descend")
-        portal->trigger_action = ACTION_DESCEND;
+        portal->_triggerAction = ACTION_DESCEND;
     else if (prop == "exit_north")
-        portal->trigger_action = ACTION_EXIT_NORTH;
+        portal->_triggerAction = ACTION_EXIT_NORTH;
     else if (prop == "exit_east")
-        portal->trigger_action = ACTION_EXIT_EAST;
+        portal->_triggerAction = ACTION_EXIT_EAST;
     else if (prop == "exit_south")
-        portal->trigger_action = ACTION_EXIT_SOUTH;
+        portal->_triggerAction = ACTION_EXIT_SOUTH;
     else if (prop == "exit_west")
-        portal->trigger_action = ACTION_EXIT_WEST;
+        portal->_triggerAction = ACTION_EXIT_WEST;
     else
         errorFatal("unknown trigger_action: %s", prop.c_str());
     
     prop = portalConf.getString("condition");
     if (!prop.empty()) {
         if (prop == "shrine")
-            portal->portalConditionsMet = &shrineCanEnter;
+            portal->_portalConditionsMet = &shrineCanEnter;
         else if (prop == "abyss")
-            portal->portalConditionsMet = &isAbyssOpened;
+            portal->_portalConditionsMet = &isAbyssOpened;
         else
             errorFatal("unknown portalConditionsMet: %s", prop.c_str());
     }
 
-    portal->saveLocation = portalConf.getBool("savelocation");
+    portal->_saveLocation = portalConf.getBool("savelocation");
 
-    portal->message = portalConf.getString("message");
+    portal->_message = portalConf.getString("message");
 
     prop = portalConf.getString("transport");
     if (prop == "foot")
-        portal->portalTransportRequisites = TRANSPORT_FOOT;
+        portal->_portalTransportRequisites = TRANSPORT_FOOT;
     else if (prop == "footorhorse")
-        portal->portalTransportRequisites = TRANSPORT_FOOT_OR_HORSE;
+        portal->_portalTransportRequisites = TRANSPORT_FOOT_OR_HORSE;
     else
         errorFatal("unknown transport: %s", prop.c_str());
 
-    portal->exitPortal = portalConf.getBool("exits");
+    portal->_exitPortal = portalConf.getBool("exits");
 
     vector<ConfigElement> children = portalConf.getChildren();
     for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
         if (i->getName() == "retroActiveDest") {
-            portal->retroActiveDest = new PortalDestination;
+            portal->_retroActiveDest = new PortalDestination;
             
-            portal->retroActiveDest->coords = MapCoords(
+            portal->_retroActiveDest->_coords = MapCoords(
                 i->getInt("x"),
                 i->getInt("y"),
                 i->getInt("z", 0));
-            portal->retroActiveDest->mapid = static_cast<MapId>(i->getInt("mapid"));
+            portal->_retroActiveDest->_mapid = static_cast<MapId>(i->getInt("mapid"));
         }
     }
     return portal;

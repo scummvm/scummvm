@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
         {
             if ((unsigned int)argc > i + 1)
             {
-                settings.filter = argv[i+1];
+                settings._filter = argv[i+1];
                 i++;
             }
             else
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
         {
             if ((unsigned int)argc > i + 1)
             {
-                settings.scale = strtoul(argv[i+1], NULL, 0);
+                settings._scale = strtoul(argv[i+1], NULL, 0);
                 i++;
             }
             else
@@ -167,14 +167,14 @@ int main(int argc, char *argv[]) {
               || strcmp(argv[i], "-fullscreen") == 0
               || strcmp(argv[i], "--fullscreen") == 0)
         {
-            settings.fullscreen = 1;
+            settings._fullscreen = 1;
         }
         else if (strcmp(argv[i], "-q") == 0
               || strcmp(argv[i], "-quiet") == 0
               || strcmp(argv[i], "--quiet") == 0)
         {
-            settings.musicVol = 0;
-            settings.soundVol = 0;
+            settings._musicVol = 0;
+            settings._soundVol = 0;
         }
         else if (strcmp(argv[i], "-h") == 0
               || strcmp(argv[i], "-help") == 0

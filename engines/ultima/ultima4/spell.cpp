@@ -143,7 +143,7 @@ void spellSetEffectCallback(SpellEffectCallback callback) {
 }
 
 Ingredients::Ingredients() {
-    memset(reagents, 0, sizeof(reagents));
+    memset(_reagents, 0, sizeof(_reagents));
 }
 
 bool Ingredients::addReagent(Reagent reagent) {
@@ -151,37 +151,37 @@ bool Ingredients::addReagent(Reagent reagent) {
     if (c->_party->getReagent(reagent) < 1)
         return false;
     c->_party->adjustReagent(reagent, -1);    
-    reagents[reagent]++;
+    _reagents[reagent]++;
     return true;
 }
 
 bool Ingredients::removeReagent(Reagent reagent) {
     ASSERT(reagent < REAG_MAX, "invalid reagent: %d", reagent);
-    if (reagents[reagent] == 0)
+    if (_reagents[reagent] == 0)
         return false;
     c->_party->adjustReagent(reagent, 1);    
-    reagents[reagent]--;
+    _reagents[reagent]--;
     return true;
 }
 
 int Ingredients::getReagent(Reagent reagent) const {
     ASSERT(reagent < REAG_MAX, "invalid reagent: %d", reagent);
-    return reagents[reagent];
+    return _reagents[reagent];
 }
 
 void Ingredients::revert() {
     int reg;
 
     for (reg = 0; reg < REAG_MAX; reg++) {
-        c->_saveGame->reagents[reg] += reagents[reg];
-        reagents[reg] = 0;
+        c->_saveGame->_reagents[reg] += _reagents[reg];
+        _reagents[reg] = 0;
     }
 }
 
 bool Ingredients::checkMultiple(int batches) const {
     for (int i = 0; i < REAG_MAX; i++) {
         /* see if there's enough reagents to mix (-1 because one is already counted) */
-        if (reagents[i] > 0 && c->_saveGame->reagents[i] < batches - 1) {
+        if (_reagents[i] > 0 && c->_saveGame->_reagents[i] < batches - 1) {
             return false;
         }
     }    
@@ -191,9 +191,9 @@ bool Ingredients::checkMultiple(int batches) const {
 void Ingredients::multiply(int batches) {
     ASSERT(checkMultiple(batches), "not enough reagents to multiply ingredients by %d\n", batches);
     for (int i = 0; i < REAG_MAX; i++) {
-        if (reagents[i] > 0) {
-            c->_saveGame->reagents[i] -= batches - 1;
-            reagents[i] += batches - 1;
+        if (_reagents[i] > 0) {
+            c->_saveGame->_reagents[i] -= batches - 1;
+            _reagents[i] += batches - 1;
         }
     }
 }
@@ -201,25 +201,25 @@ void Ingredients::multiply(int batches) {
 const char *spellGetName(unsigned int spell) {
     ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 
-    return spells[spell].name;
+    return spells[spell]._name;
 }
 
 int spellGetRequiredMP(unsigned int spell) {
     ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
     
-    return spells[spell].mp;
+    return spells[spell]._mp;
 }
 
 LocationContext spellGetContext(unsigned int spell) {
     ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 
-    return spells[spell].context;
+    return spells[spell]._context;
 }
 
 TransportContext spellGetTransportContext(unsigned int spell) {
     ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 
-    return spells[spell].transportContext;
+    return spells[spell]._transportContext;
 }
 
 Common::String spellGetErrorMessage(unsigned int spell, SpellCastError error) {
@@ -228,7 +228,7 @@ Common::String spellGetErrorMessage(unsigned int spell, SpellCastError error) {
 
     /* try to find a more specific error message */
     if (err == CASTERR_WRONGCONTEXT) {
-        switch(spells[spell].context) {
+        switch(spells[spell]._context) {
             case CTX_COMBAT: err = CASTERR_COMBATONLY; break;
             case CTX_DUNGEON: err = CASTERR_DUNGEONONLY; break;
             case CTX_WORLDMAP: err = CASTERR_WORLDMAPONLY; break;
@@ -260,10 +260,10 @@ int spellMix(unsigned int spell, const Ingredients *ingredients) {
             regmask |= (1 << reg);
     }
 
-    if (regmask != spells[spell].components)
+    if (regmask != spells[spell]._components)
         return 0;
 
-    c->_saveGame->mixtures[spell]++;
+    c->_saveGame->_mixtures[spell]++;
 
     return 1;
 }
@@ -271,7 +271,7 @@ int spellMix(unsigned int spell, const Ingredients *ingredients) {
 Spell::Param spellGetParamType(unsigned int spell) {
     ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 
-    return spells[spell].paramType;
+    return spells[spell]._paramType;
 }
 
 /**
@@ -281,18 +281,18 @@ Spell::Param spellGetParamType(unsigned int spell) {
  */
 SpellCastError spellCheckPrerequisites(unsigned int spell, int character) {
     ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
-    ASSERT(character >= 0 && character < c->_saveGame->members, "character out of range: %d", character);
+    ASSERT(character >= 0 && character < c->_saveGame->_members, "character out of range: %d", character);
 
-    if (c->_saveGame->mixtures[spell] == 0)
+    if (c->_saveGame->_mixtures[spell] == 0)
         return CASTERR_NOMIX;
 
-    if ((c->_location->context & spells[spell].context) == 0)
+    if ((c->_location->context & spells[spell]._context) == 0)
         return CASTERR_WRONGCONTEXT;        
 
-    if ((c->_transportContext & spells[spell].transportContext) == 0)
+    if ((c->_transportContext & spells[spell]._transportContext) == 0)
         return CASTERR_FAILED;
 
-    if (c->_party->member(character)->getMp() < spells[spell].mp)
+    if (c->_party->member(character)->getMp() < spells[spell]._mp)
         return CASTERR_MPTOOLOW;
 
     return CASTERR_NOERROR;
@@ -303,16 +303,16 @@ SpellCastError spellCheckPrerequisites(unsigned int spell, int character) {
  * The error code is updated with the reason for failure.
  */
 bool spellCast(unsigned int spell, int character, int param, SpellCastError *error, bool spellEffect) {
-    int subject = (spells[spell].paramType == Spell::PARAM_PLAYER) ? param : -1;
+    int subject = (spells[spell]._paramType == Spell::PARAM_PLAYER) ? param : -1;
     PartyMember *p = c->_party->member(character);
     
     ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
-    ASSERT(character >= 0 && character < c->_saveGame->members, "character out of range: %d", character);
+    ASSERT(character >= 0 && character < c->_saveGame->_members, "character out of range: %d", character);
 
     *error = spellCheckPrerequisites(spell, character);
 
     // subtract the mixture for even trying to cast the spell
-    AdjustValueMin(c->_saveGame->mixtures[spell], -1, 0);
+    AdjustValueMin(c->_saveGame->_mixtures[spell], -1, 0);
         
     if (*error != CASTERR_NOERROR)
         return false;
@@ -324,21 +324,21 @@ bool spellCast(unsigned int spell, int character, int param, SpellCastError *err
     }
 
     // subtract the mp needed for the spell
-    p->adjustMp(-spells[spell].mp);
+    p->adjustMp(-spells[spell]._mp);
 
     if (spellEffect) {
 		int time;
 		/* recalculate spell speed - based on 5/sec */
 		float MP_OF_LARGEST_SPELL = 45;
-		int spellMp = spells[spell].mp;
-		time = int(10000.0 / settings.spellEffectSpeed  *  spellMp / MP_OF_LARGEST_SPELL);
+		int spellMp = spells[spell]._mp;
+		time = int(10000.0 / settings._spellEffectSpeed  *  spellMp / MP_OF_LARGEST_SPELL);
 		soundPlay(SOUND_PREMAGIC_MANA_JUMBLE, false, time);
 		EventHandler::wait_msecs(time);
 
         (*spellEffectCallback)(spell + 'a', subject, SOUND_MAGIC);
     }
     
-    if (!(*spells[spell].spellFunc)(param)) {
+    if (!(*spells[spell]._spellFunc)(param)) {
         *error = CASTERR_FAILED;
         return false;
     }

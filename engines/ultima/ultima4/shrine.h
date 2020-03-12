@@ -32,11 +32,6 @@ namespace Ultima4 {
 #define SHRINE_MEDITATION_INTERVAL  100
 #define MEDITATION_MANTRAS_PER_CYCLE 16
 
-/*typedef struct _Shrine {
-    Virtue virtue;
-    const char *mantra;
-} Shrine;*/
-
 class Shrine : public Map {
 public:
     Shrine();
@@ -58,9 +53,9 @@ public:
 
     // Properties
 private:
-    Common::String name;
-    Virtue virtue;
-    Common::String mantra;   
+    Common::String _name;
+    Virtue _virtue;
+    Common::String _mantra;   
 };
 
 bool shrineCanEnter(const struct _Portal *p);

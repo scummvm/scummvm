@@ -42,19 +42,19 @@ namespace Ultima4 {
 void createDngLadder(Location *location, PortalTriggerAction action, Portal *p) {
     if (!p) return;
     else {
-        p->destid = location->map->id;
+        p->_destid = location->map->id;
         if (action == ACTION_KLIMB && location->coords.z == 0) {
-            p->exitPortal = true;
-            p->destid = 1;
+            p->_exitPortal = true;
+            p->_destid = 1;
         }
-        else p->exitPortal = false;
-        p->message = "";
-        p->portalConditionsMet = NULL;
-        p->portalTransportRequisites = TRANSPORT_FOOT_OR_HORSE;
-        p->retroActiveDest = NULL;
-        p->saveLocation = false;
-        p->start = location->coords;
-        p->start.z += (action == ACTION_KLIMB) ? -1 : 1;
+        else p->_exitPortal = false;
+        p->_message = "";
+        p->_portalConditionsMet = NULL;
+        p->_portalTransportRequisites = TRANSPORT_FOOT_OR_HORSE;
+        p->_retroActiveDest = NULL;
+        p->_saveLocation = false;
+        p->_start = location->coords;
+        p->_start.z += (action == ACTION_KLIMB) ? -1 : 1;
     }
 }
 
@@ -87,7 +87,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
     }
 
     /* conditions not met for portal to work */
-    if (portal && portal->portalConditionsMet && !(*portal->portalConditionsMet)(portal))
+    if (portal && portal->_portalConditionsMet && !(*portal->_portalConditionsMet)(portal))
         return 0;
     /* must klimb or descend on foot! */
     else if (c->_transportContext & ~TRANSPORT_FOOT && (action == ACTION_KLIMB || action == ACTION_DESCEND)) {
@@ -95,18 +95,18 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
         return 1;
     }    
     
-    destination = mapMgr->get(portal->destid);
+    destination = mapMgr->get(portal->_destid);
 
-    if (portal->message.empty()) {
+    if (portal->_message.empty()) {
 
         switch(action) {
         case ACTION_DESCEND:
-            sprintf(msg, "Descend down to level %d\n", portal->start.z+1);
+            sprintf(msg, "Descend down to level %d\n", portal->_start.z+1);
             break;
         case ACTION_KLIMB:
-            if (portal->exitPortal)
+            if (portal->_exitPortal)
                 sprintf(msg, "Klimb up!\nLeaving...\n");
-            else sprintf(msg, "Klimb up!\nTo level %d\n", portal->start.z+1);
+            else sprintf(msg, "Klimb up!\nTo level %d\n", portal->_start.z+1);
             break;
         case ACTION_ENTER:
             switch (destination->type) {
@@ -135,25 +135,25 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
     }
 
     /* check the transportation requisites of the portal */
-    if (c->_transportContext & ~portal->portalTransportRequisites) {
+    if (c->_transportContext & ~portal->_portalTransportRequisites) {
         screenMessage("Only on foot!\n");        
         return 1;
     }
     /* ok, we know the portal is going to work -- now display the custom message, if any */
-    else if (!portal->message.empty() || strlen(msg))
-        screenMessage("%s", portal->message.empty() ? msg : portal->message.c_str());
+    else if (!portal->_message.empty() || strlen(msg))
+        screenMessage("%s", portal->_message.empty() ? msg : portal->_message.c_str());
 
     /* portal just exits to parent map */
-    if (portal->exitPortal) {        
+    if (portal->_exitPortal) {        
         game->exitToParentMap();
         musicMgr->play();
         return 1;
     }
-    else if (portal->destid == location->map->id)
-        location->coords = portal->start;        
+    else if (portal->_destid == location->map->id)
+        location->coords = portal->_start;        
     
     else {
-        game->setMap(destination, portal->saveLocation, portal);
+        game->setMap(destination, portal->_saveLocation, portal);
         musicMgr->play();
     }
 
@@ -162,9 +162,9 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
      * note that we use c->location instead of location, since
      * location has probably been invalidated above 
      */
-    if (portal->retroActiveDest && c->_location->prev) {
-        c->_location->prev->coords = portal->retroActiveDest->coords;        
-        c->_location->prev->map = mapMgr->get(portal->retroActiveDest->mapid);
+    if (portal->_retroActiveDest && c->_location->prev) {
+        c->_location->prev->coords = portal->_retroActiveDest->_coords;        
+        c->_location->prev->map = mapMgr->get(portal->_retroActiveDest->_mapid);
     }
 
     if (destination->type == Map::SHRINE) {

@@ -82,12 +82,12 @@ void CampController::begin() {
     screenMessage("Resting...\n");
     screenDisableCursor();
 
-    EventHandler::wait_msecs(settings.campTime * 1000);
+    EventHandler::wait_msecs(settings._campTime * 1000);
 
     screenEnableCursor();
 
     /* Is the party ambushed during their rest? */
-    if (settings.campingAlwaysCombat || (xu4_random(8) == 0)) {        
+    if (settings._campingAlwaysCombat || (xu4_random(8) == 0)) {        
         const Creature *m = creatureMgr->randomAmbushing();
                 
         musicMgr->play();        
@@ -110,11 +110,12 @@ void CampController::begin() {
 
         /* Make sure we've waited long enough for camping to be effective */
         bool healed = false;
-        if (((c->_saveGame->moves / CAMP_HEAL_INTERVAL) >= 0x10000) || (((c->_saveGame->moves / CAMP_HEAL_INTERVAL) & 0xffff) != c->_saveGame->lastcamp))
+        if (((c->_saveGame->_moves / CAMP_HEAL_INTERVAL) >= 0x10000) ||
+				(((c->_saveGame->_moves / CAMP_HEAL_INTERVAL) & 0xffff) != c->_saveGame->_lastCamp))
             healed = heal();
 
         screenMessage(healed ? "Party Healed!\n" : "No effect.\n");
-        c->_saveGame->lastcamp = (c->_saveGame->moves / CAMP_HEAL_INTERVAL) & 0xffff;
+        c->_saveGame->_lastCamp = (c->_saveGame->_moves / CAMP_HEAL_INTERVAL) & 0xffff;
     
         eventHandler->popController();
         game->exitToParentMap();
@@ -157,7 +158,7 @@ void InnController::begin() {
     gameUpdateScreen();
 
     /* in the original, the vendor music plays straight through sleeping */
-    if (settings.enhancements)
+    if (settings._enhancements)
         musicMgr->fadeOut(INN_FADE_OUT_TIME); /* Fade volume out to ease into rest */
     
     EventHandler::wait_msecs(INN_FADE_OUT_TIME);
@@ -168,7 +169,7 @@ void InnController::begin() {
 
     screenDisableCursor();
 
-    EventHandler::wait_msecs(settings.innTime * 1000);
+    EventHandler::wait_msecs(settings._innTime * 1000);
 
     screenEnableCursor();
 
@@ -256,7 +257,7 @@ void InnController::maybeMeetIsaac()
 
 void InnController::maybeAmbush()
 {
-    if (settings.innAlwaysCombat || (xu4_random(8) == 0)) {
+    if (settings._innAlwaysCombat || (xu4_random(8) == 0)) {
         MapId mapid;
         Creature *creature;
         bool showMessage = true;

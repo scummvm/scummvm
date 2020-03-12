@@ -52,7 +52,7 @@ Std::vector<Common::String> shrineAdvice;
  * Returns true if the player can use the portal to the shrine
  */ 
 bool shrineCanEnter(const Portal *p) {
-    Shrine *shrine = dynamic_cast<Shrine*>(mapMgr->get(p->destid));
+    Shrine *shrine = dynamic_cast<Shrine*>(mapMgr->get(p->_destid));
     if (!c->_party->canEnterShrine(shrine->getVirtue())) {
         screenMessage("Thou dost not bear the rune of entry!  A strange force keeps you out!\n");
         return 0;
@@ -77,17 +77,17 @@ bool isShrine(Map *punknown) {
 Shrine::Shrine() {}
 
 Common::String Shrine::getName() {
-    if (name.empty()) {
-        name = "Shrine of ";
-        name += getVirtueName(virtue);
+    if (_name.empty()) {
+        _name = "Shrine of ";
+        _name += getVirtueName(_virtue);
     }
-    return name;
+    return _name;
 }
-Virtue Shrine::getVirtue() const    { return virtue; }
-Common::String Shrine::getMantra() const    { return mantra; }
+Virtue Shrine::getVirtue() const    { return _virtue; }
+Common::String Shrine::getMantra() const    { return _mantra; }
 
-void Shrine::setVirtue(Virtue v)    { virtue = v; }
-void Shrine::setMantra(Common::String m)    { mantra = m; }
+void Shrine::setVirtue(Virtue v)    { _virtue = v; }
+void Shrine::setMantra(Common::String m)    { _mantra = m; }
 
 /**
  * Enter the shrine
@@ -104,7 +104,7 @@ void Shrine::enter() {
 #ifdef IOS
     U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
-    if (settings.enhancements && settings.enhancementsOptions.u5shrines)
+    if (settings._enhancements && settings._enhancementsOptions._u5shrines)
         enhancedSequence();
     else  
         screenMessage("You enter the ancient shrine and sit before the altar...");
@@ -147,11 +147,11 @@ void Shrine::enter() {
         return;
     }
 
-    if (((c->_saveGame->moves / SHRINE_MEDITATION_INTERVAL) >= 0x10000) || (((c->_saveGame->moves / SHRINE_MEDITATION_INTERVAL) & 0xffff) != c->_saveGame->lastmeditation)) {
+    if (((c->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) >= 0x10000) ||
+			(((c->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff) != c->_saveGame->_lastMeditation)) {
         screenMessage("Begin Meditation\n");
         meditationCycle();
-    }
-    else { 
+    } else { 
         screenMessage("Thy mind is still weary from thy last Meditation!\n");
         eject();
     }
@@ -163,7 +163,7 @@ void Shrine::enhancedSequence() {
 
     screenDisableCursor();
     screenMessage("You approach\nthe ancient\nshrine...\n");
-    gameUpdateScreen(); EventHandler::wait_cycles(settings.gameCyclesPerSecond);
+    gameUpdateScreen(); EventHandler::wait_cycles(settings._gameCyclesPerSecond);
         
     Object *obj = addCreature(creatureMgr->getById(BEGGAR_ID), Coords(5, 10, c->_location->coords.z));
     obj->setTile(tileset->getByName("avatar")->getId());
@@ -177,19 +177,19 @@ void Shrine::enhancedSequence() {
     gameUpdateScreen();
         
     screenMessage("\n...and kneel before the altar.\n");        
-    EventHandler::wait_cycles(settings.gameCyclesPerSecond);
+    EventHandler::wait_cycles(settings._gameCyclesPerSecond);
     screenEnableCursor();
 }
 
 void Shrine::meditationCycle() {
     /* find our interval for meditation */
-    int interval = (settings.shrineTime * 1000) / MEDITATION_MANTRAS_PER_CYCLE;
+    int interval = (settings._shrineTime * 1000) / MEDITATION_MANTRAS_PER_CYCLE;
     interval -= (interval % eventTimerGranularity);
     interval /= eventTimerGranularity;
     if (interval <= 0)
         interval = 1;    
 
-    c->_saveGame->lastmeditation = (c->_saveGame->moves / SHRINE_MEDITATION_INTERVAL) & 0xffff;
+    c->_saveGame->_lastMeditation = (c->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff;
 
     screenDisableCursor();
     for (int i = 0; i < MEDITATION_MANTRAS_PER_CYCLE; i++) {

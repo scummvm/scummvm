@@ -85,9 +85,9 @@ private:
         bool    isSet() const;
     
     private:
-        int i_val;
-        Common::String s_val;
-        bool set;
+        int _iVal;
+        Common::String _sVal;
+        bool _set;
     };
 
 public:
@@ -233,32 +233,32 @@ private:
      */
 private:
     typedef Std::map<Common::String, Action> ActionMap;
-    static ActionMap action_map;
+    static ActionMap _actionMap;
 
 private:
     void removeCurrentVariable(const Common::String &name);
-    xmlDocPtr vendorScriptDoc;
-    xmlNodePtr scriptNode;
-    Common::DumpFile *debug;
+    xmlDocPtr _vendorScriptDoc;
+    xmlNodePtr _scriptNode;
+    Common::DumpFile *_debug;
     
-    State state;                    /**< The state the script is in */
-    xmlNodePtr currentScript;       /**< The currently running script */
-    xmlNodePtr currentItem;         /**< The current position in the script */
-    Std::list<xmlNodePtr> translationContext;  /**< A list of nodes that make up our translation context */
-    Common::String target;                  /**< The name of a target script */
-    InputType inputType;            /**< The type of input required */
-    Common::String inputName;               /**< The variable in which to place the input (by default, "input") */
-    int inputMaxLen;                /**< The maximum length allowed for input */
+    State _state;                    /**< The state the script is in */
+    xmlNodePtr _currentScript;       /**< The currently running script */
+    xmlNodePtr _currentItem;         /**< The current position in the script */
+    Std::list<xmlNodePtr> _translationContext;  /**< A list of nodes that make up our translation context */
+    Common::String _target;                  /**< The name of a target script */
+    InputType _inputType;            /**< The type of input required */
+    Common::String _inputName;               /**< The variable in which to place the input (by default, "input") */
+    int _inputMaxLen;                /**< The maximum length allowed for input */
 
-    Common::String nounName;                /**< The name that identifies a node name of noun nodes */
-    Common::String idPropName;              /**< The name of the property that uniquely identifies a noun node
+    Common::String _nounName;                /**< The name that identifies a node name of noun nodes */
+    Common::String _idPropName;              /**< The name of the property that uniquely identifies a noun node
                                          and is used to find a new translation context */
     
-    Common::String choices;
-    int iterator;   
+    Common::String _choices;
+    int _iterator;   
 
-    Std::map<Common::String, Variable*> variables;    
-    Std::map<Common::String, Provider*> providers;
+    Std::map<Common::String, Variable*> _variables;    
+    Std::map<Common::String, Provider*> _providers;
 };
 
 } // End of namespace Ultima4

@@ -317,8 +317,8 @@ const Portal *Map::portalAt(const Coords &coords, int actionFlags) {
     PortalList::const_iterator i;    
 
     for(i = portals.begin(); i != portals.end(); i++) {
-        if (((*i)->coords == coords) &&
-            ((*i)->trigger_action & actionFlags))
+        if (((*i)->_coords == coords) &&
+            ((*i)->_triggerAction & actionFlags))
             return *i;
     }
     return NULL;
@@ -849,12 +849,12 @@ bool Map::fillMonsterTable() {
         Coords c = monsters[i]->getCoords(),
                prevc = monsters[i]->getPrevCoords();
 
-        monsterTable[i].tile = translateToRawTileIndex(monsters[i]->getTile());
-        monsterTable[i].x = c.x;
-        monsterTable[i].y = c.y;
-        monsterTable[i].prevTile = translateToRawTileIndex(monsters[i]->getPrevTile());
-        monsterTable[i].prevx = prevc.x;
-        monsterTable[i].prevy = prevc.y;
+        monsterTable[i]._tile = translateToRawTileIndex(monsters[i]->getTile());
+        monsterTable[i]._x = c.x;
+        monsterTable[i]._y = c.y;
+        monsterTable[i]._prevTile = translateToRawTileIndex(monsters[i]->getPrevTile());
+        monsterTable[i]._prevX = prevc.x;
+        monsterTable[i]._prevY = prevc.y;
     }
     
     return true;

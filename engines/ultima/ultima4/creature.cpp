@@ -153,9 +153,9 @@ void Creature::load(const ConfigElement &conf) {
     /* get the base hp */
     basehp = conf.getInt("basehp", 0);
     /* adjust basehp according to battle difficulty setting */
-    if (settings.battleDiff == "Hard")
+    if (settings._battleDiff == "Hard")
         basehp *= 2;
-    if (settings.battleDiff == "Expert")
+    if (settings._battleDiff == "Expert")
         basehp *= 4;
 
     /* get the camouflaged tile */
@@ -711,7 +711,7 @@ bool Creature::divide() {
     Direction d = dirRandomDir(dirmask);
 
     /* this is a game enhancement, make sure it's turned on! */
-    if (!settings.enhancements || !settings.enhancementsOptions.slimeDivides)
+    if (!settings._enhancements || !settings._enhancementsOptions._slimeDivides)
         return false;
     
     /* make sure there's a place to put the divided creature! */
@@ -737,7 +737,7 @@ bool Creature::spawnOnDeath() {
     Map *map = getMap();
 
     /* this is a game enhancement, make sure it's turned on! */
-    if (!settings.enhancements || !settings.enhancementsOptions.gazerSpawnsInsects)
+    if (!settings._enhancements || !settings._enhancementsOptions._gazerSpawnsInsects)
         return false;
     
     /* make sure there's a place to put the divided creature! */
@@ -1012,10 +1012,10 @@ Creature *CreatureMgr::randomForTile(const Tile *tile) {
     if (!tile->isCreatureWalkable())
         return NULL;
 
-    //if (c->saveGame->moves > 100000) // FIXME: what's 100,000 moves all about (if anything)?
-    if (c->_saveGame->moves > 30000)
+    //if (c->saveGame->_moves > 100000) // FIXME: what's 100,000 moves all about (if anything)?
+    if (c->_saveGame->_moves > 30000)
         era = 0x0f;
-    else if (c->_saveGame->moves > 20000)
+    else if (c->_saveGame->_moves > 20000)
         era = 0x07;
     else
         era = 0x03;

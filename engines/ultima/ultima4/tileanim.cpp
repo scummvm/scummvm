@@ -85,8 +85,8 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
                 if (i->getName() == "color") {
                     RGBA *rgba = loadColorFromConf(*i);
                     if (i == children.begin())
-                        ((TileAnimPixelColorTransform *)transform)->start = rgba;
-                    else ((TileAnimPixelColorTransform *)transform)->end = rgba;
+                        ((TileAnimPixelColorTransform *)transform)->_start = rgba;
+                    else ((TileAnimPixelColorTransform *)transform)->_end = rgba;
                 }
             }
         }
@@ -144,22 +144,22 @@ void TileAnimPixelTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 }
 
 bool TileAnimScrollTransform::drawsTile() const { return true; }
-TileAnimScrollTransform::TileAnimScrollTransform(int i) : increment(i), current(0), lastOffset(0) {}
+TileAnimScrollTransform::TileAnimScrollTransform(int i) : _increment(i), _current(0), _lastOffset(0) {}
 void TileAnimScrollTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
-    if (increment == 0)
-        increment = tile->getScale();
+    if (_increment == 0)
+        _increment = tile->getScale();
 
     int offset = screenCurrentCycle * 4 / SCR_CYCLE_PER_SECOND * tile->getScale();
-    if (lastOffset != offset) {
-        lastOffset = offset;
-        current += increment;
-        if (current >= tile->getHeight())
-            current = 0;
+    if (_lastOffset != offset) {
+        _lastOffset = offset;
+        _current += _increment;
+        if (_current >= tile->getHeight())
+            _current = 0;
     }
     
-    tile->getImage()->drawSubRectOn(dest, 0, current, 0, tile->getHeight() * mapTile._frame, tile->getWidth(), tile->getHeight() - current);
-    if (current != 0)
-        tile->getImage()->drawSubRectOn(dest, 0, 0, 0, (tile->getHeight() * mapTile._frame) + tile->getHeight() - current, tile->getWidth(), current);
+    tile->getImage()->drawSubRectOn(dest, 0, _current, 0, tile->getHeight() * mapTile._frame, tile->getWidth(), tile->getHeight() - _current);
+    if (_current != 0)
+        tile->getImage()->drawSubRectOn(dest, 0, 0, 0, (tile->getHeight() * mapTile._frame) + tile->getHeight() - _current, tile->getWidth(), _current);
 
 }
 
@@ -168,9 +168,9 @@ void TileAnimScrollTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
  */ 
 bool TileAnimFrameTransform::drawsTile() const { return true; }
 void TileAnimFrameTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
-    if (++currentFrame >= tile->getFrames())
-    	currentFrame = 0;
-    tile->getImage()->drawSubRectOn(dest, 0, 0, 0, currentFrame * tile->getHeight(), tile->getWidth(), tile->getHeight());
+    if (++_currentFrame >= tile->getFrames())
+    	_currentFrame = 0;
+    tile->getImage()->drawSubRectOn(dest, 0, 0, 0, _currentFrame * tile->getHeight(), tile->getWidth(), tile->getHeight());
 
 
 }
@@ -184,11 +184,11 @@ TileAnimPixelColorTransform::TileAnimPixelColorTransform(int x, int y, int w, in
 
 bool TileAnimPixelColorTransform::drawsTile() const { return false; }
 void TileAnimPixelColorTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
-    RGBA diff = *end;
+    RGBA diff = *_end;
     int scale = tile->getScale();
-    diff.r -= start->r;
-    diff.g -= start->g;
-    diff.b -= start->b;
+    diff.r -= _start->r;
+    diff.g -= _start->g;
+    diff.b -= _start->b;
 
     Image *tileImage = tile->getImage();
 
@@ -197,10 +197,10 @@ void TileAnimPixelColorTransform::draw(Image *dest, Tile *tile, MapTile &mapTile
             RGBA pixelAt;
             
             tileImage->getPixel(i, j + (mapTile._frame * tile->getHeight()), pixelAt.r, pixelAt.g, pixelAt.b, pixelAt.a);
-            if (pixelAt.r >= start->r && pixelAt.r <= end->r &&
-                pixelAt.g >= start->g && pixelAt.g <= end->g &&
-                pixelAt.b >= start->b && pixelAt.b <= end->b) {
-                dest->putPixel(i, j, start->r + xu4_random(diff.r), start->g + xu4_random(diff.g), start->b + xu4_random(diff.b), pixelAt.a);
+            if (pixelAt.r >= _start->r && pixelAt.r <= _end->r &&
+                pixelAt.g >= _start->g && pixelAt.g <= _end->g &&
+                pixelAt.b >= _start->b && pixelAt.b <= _end->b) {
+                dest->putPixel(i, j, _start->r + xu4_random(diff.r), _start->g + xu4_random(diff.g), _start->b + xu4_random(diff.b), pixelAt.a);
             }
         }
     }
@@ -249,7 +249,7 @@ TileAnimContext* TileAnimContext::create(const ConfigElement &conf) {
  * Adds a tile transform to the context
  */ 
 void TileAnimContext::add(TileAnimTransform* transform) {
-    animTransforms.push_back(transform);
+    _animTransforms.push_back(transform);
 }
 
 /**

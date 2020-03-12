@@ -454,7 +454,7 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
         reply = processResponse(cnv, kw->getResponse());
     }
 
-    else if (settings.debug && scumm_strnicmp(inquiry, "dump", 4) == 0) {
+    else if (settings._debug && scumm_strnicmp(inquiry, "dump", 4) == 0) {
         vector<Common::String> words = split(inquiry, " \t");
         if (words.size() <= 1)
             reply = dialogue->dump("");

@@ -31,71 +31,71 @@ namespace Ultima4 {
 int SaveGame::write(Common::WriteStream *f) const {
     int i;
 
-    if (!writeInt(unknown1, f) ||
-        !writeInt(moves, f))
+    if (!writeInt(_unknown1, f) ||
+        !writeInt(_moves, f))
         return 0;
 
     for (i = 0; i < 8; i++) {
-        if (!players[i].write(f))
+        if (!_players[i].write(f))
             return 0;
     }
 
-    if (!writeInt(food, f) ||
-        !writeShort(gold, f))
+    if (!writeInt(_food, f) ||
+        !writeShort(_gold, f))
         return 0;
 
     for (i = 0; i < 8; i++) {
-        if (!writeShort(karma[i], f))
+        if (!writeShort(_karma[i], f))
             return 0;
     }
 
-    if (!writeShort(torches, f) ||
-        !writeShort(gems, f) ||
-        !writeShort(keys, f) ||
-        !writeShort(sextants, f))
+    if (!writeShort(_torches, f) ||
+        !writeShort(_gems, f) ||
+        !writeShort(_keys, f) ||
+        !writeShort(_sextants, f))
         return 0;
 
     for (i = 0; i < ARMR_MAX; i++) {
-        if (!writeShort(armor[i], f))
+        if (!writeShort(_armor[i], f))
             return 0;
     }
 
     for (i = 0; i < WEAP_MAX; i++) {
-        if (!writeShort(weapons[i], f))
+        if (!writeShort(_weapons[i], f))
             return 0;
     }
 
     for (i = 0; i < REAG_MAX; i++) {
-        if (!writeShort(reagents[i], f))
+        if (!writeShort(_reagents[i], f))
             return 0;
     }
 
     for (i = 0; i < SPELL_MAX; i++) {
-        if (!writeShort(mixtures[i], f))
+        if (!writeShort(_mixtures[i], f))
             return 0;
     }
 
-    if (!writeShort(items, f) ||
-        !writeChar(x, f) ||
-        !writeChar(y, f) ||
-        !writeChar(stones, f) ||
-        !writeChar(runes, f) ||
-        !writeShort(members, f) ||
-        !writeShort(transport, f) ||
-        !writeShort(balloonstate, f) ||
-        !writeShort(trammelphase, f) ||
-        !writeShort(feluccaphase, f) ||
-        !writeShort(shiphull, f) ||
-        !writeShort(lbintro, f) ||
-        !writeShort(lastcamp, f) ||
-        !writeShort(lastreagent, f) ||
-        !writeShort(lastmeditation, f) ||
-        !writeShort(lastvirtue, f) ||
-        !writeChar(dngx, f) ||
-        !writeChar(dngy, f) ||
-        !writeShort(orientation, f) ||
-        !writeShort(dnglevel, f) ||
-        !writeShort(location, f))
+    if (!writeShort(_items, f) ||
+        !writeChar(_x, f) ||
+        !writeChar(_y, f) ||
+        !writeChar(_stones, f) ||
+        !writeChar(_runes, f) ||
+        !writeShort(_members, f) ||
+        !writeShort(_transport, f) ||
+        !writeShort(_balloonstate, f) ||
+        !writeShort(_trammelPhase, f) ||
+        !writeShort(_feluccaPhase, f) ||
+        !writeShort(_shipHull, f) ||
+        !writeShort(_lbIntro, f) ||
+        !writeShort(_lastCamp, f) ||
+        !writeShort(_lastReagent, f) ||
+        !writeShort(_lastMeditation, f) ||
+        !writeShort(_lastVirtue, f) ||
+        !writeChar(_dngX, f) ||
+        !writeChar(_dngY, f) ||
+        !writeShort(_orientation, f) ||
+        !writeShort(_dngLevel, f) ||
+        !writeShort(_location, f))
         return 0;
 
     return 1;
@@ -104,76 +104,76 @@ int SaveGame::write(Common::WriteStream *f) const {
 int SaveGame::read(Common::ReadStream *f) {
     int i;
 
-    if (!readInt(&unknown1, f) ||
-        !readInt(&moves, f))
+    if (!readInt(&_unknown1, f) ||
+        !readInt(&_moves, f))
         return 0;
 
     for (i = 0; i < 8; i++) {
-        if (!players[i].read(f))
+        if (!_players[i].read(f))
             return 0;
     }
 
-    if (!readInt((unsigned int*)&food, f) ||
-        !readShort((unsigned short*)&gold, f))
+    if (!readInt((unsigned int*)&_food, f) ||
+        !readShort((unsigned short*)&_gold, f))
         return 0;
 
     for (i = 0; i < 8; i++) {
-        if (!readShort((unsigned short*)&(karma[i]), f))
+        if (!readShort((unsigned short*)&(_karma[i]), f))
             return 0;
     }
 
-    if (!readShort((unsigned short*)&torches, f) ||
-        !readShort((unsigned short*)&gems, f) ||
-        !readShort((unsigned short*)&keys, f) ||
-        !readShort((unsigned short*)&sextants, f))
+    if (!readShort((unsigned short*)&_torches, f) ||
+        !readShort((unsigned short*)&_gems, f) ||
+        !readShort((unsigned short*)&_keys, f) ||
+        !readShort((unsigned short*)&_sextants, f))
         return 0;
 
     for (i = 0; i < ARMR_MAX; i++) {
-        if (!readShort((unsigned short*)&(armor[i]), f))
+        if (!readShort((unsigned short*)&(_armor[i]), f))
             return 0;
     }
 
     for (i = 0; i < WEAP_MAX; i++) {
-        if (!readShort((unsigned short*)&(weapons[i]), f))
+        if (!readShort((unsigned short*)&(_weapons[i]), f))
             return 0;
     }
 
     for (i = 0; i < REAG_MAX; i++) {
-        if (!readShort((unsigned short*)&(reagents[i]), f))
+        if (!readShort((unsigned short*)&(_reagents[i]), f))
             return 0;
     }
 
     for (i = 0; i < SPELL_MAX; i++) {
-        if (!readShort((unsigned short*)&(mixtures[i]), f))
+        if (!readShort((unsigned short*)&(_mixtures[i]), f))
             return 0;
     }
 
-    if (!readShort(&items, f) ||
-        !readChar(&x, f) ||
-        !readChar(&y, f) ||
-        !readChar(&stones, f) ||
-        !readChar(&runes, f) ||
-        !readShort(&members, f) ||
-        !readShort(&transport, f) ||
-        !readShort(&balloonstate, f) ||
-        !readShort(&trammelphase, f) ||
-        !readShort(&feluccaphase, f) ||
-        !readShort(&shiphull, f) ||
-        !readShort(&lbintro, f) ||
-        !readShort(&lastcamp, f) ||
-        !readShort(&lastreagent, f) ||
-        !readShort(&lastmeditation, f) ||
-        !readShort(&lastvirtue, f) ||
-        !readChar(&dngx, f) ||
-        !readChar(&dngy, f) ||
-        !readShort(&orientation, f) ||
-        !readShort(&dnglevel, f) ||
-        !readShort(&location, f))
+    if (!readShort(&_items, f) ||
+        !readChar(&_x, f) ||
+        !readChar(&_y, f) ||
+        !readChar(&_stones, f) ||
+        !readChar(&_runes, f) ||
+        !readShort(&_members, f) ||
+        !readShort(&_transport, f) ||
+        !readShort(&_balloonstate, f) ||
+        !readShort(&_trammelPhase, f) ||
+        !readShort(&_feluccaPhase, f) ||
+        !readShort(&_shipHull, f) ||
+        !readShort(&_lbIntro, f) ||
+        !readShort(&_lastCamp, f) ||
+        !readShort(&_lastReagent, f) ||
+        !readShort(&_lastMeditation, f) ||
+        !readShort(&_lastVirtue, f) ||
+        !readChar(&_dngX, f) ||
+        !readChar(&_dngY, f) ||
+        !readShort(&_orientation, f) ||
+        !readShort(&_dngLevel, f) ||
+        !readShort(&_location, f))
         return 0;
 
     /* workaround of U4DOS bug to retain savegame compatibility */
-    if (location == 0 && dnglevel == 0)
-        dnglevel = 0xFFFF;
+    if (_location == 0 && _dngLevel == 0)
+        _dngLevel = 0xFFFF;
 
     return 1;
 }
@@ -181,71 +181,71 @@ int SaveGame::read(Common::ReadStream *f) {
 void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
     int i;
 
-    unknown1 = 0;
-    moves = 0;
+    _unknown1 = 0;
+	_moves = 0;
 
-    players[0] = *avatarInfo;
+	_players[0] = *avatarInfo;
     for (i = 1; i < 8; i++)
-        players[i].init();
+        _players[i].init();
 
-    food = 0;
-    gold = 0;
+	_food = 0;
+	_gold = 0;
 
     for (i = 0; i < 8; i++)
-        karma[i] = 20;
+		_karma[i] = 20;
 
-    torches = 0;
-    gems = 0;
-    keys = 0;
-    sextants = 0;
+	_torches = 0;
+	_gems = 0;
+	_keys = 0;
+	_sextants = 0;
 
     for (i = 0; i < ARMR_MAX; i++)
-        armor[i] = 0;
+		_armor[i] = 0;
 
     for (i = 0; i < WEAP_MAX; i++)
-        weapons[i] = 0;
+		_weapons[i] = 0;
 
     for (i = 0; i < REAG_MAX; i++)
-        reagents[i] = 0;
+		_reagents[i] = 0;
 
     for (i = 0; i < SPELL_MAX; i++)
-        mixtures[i] = 0;
+		_mixtures[i] = 0;
 
-    items = 0;
-    x = 0;
-    y = 0;
-    stones = 0;
-    runes = 0;
-    members = 1;
-    transport = 0x1f;
-    balloonstate = 0;
-    trammelphase = 0;
-    feluccaphase = 0;
-    shiphull = 50;
-    lbintro = 0;
-    lastcamp = 0;
-    lastreagent = 0;
-    lastmeditation = 0;
-    lastvirtue = 0;
-    dngx = 0;
-    dngy = 0;
-    orientation = 0;
-    dnglevel = 0xFFFF;
-    location = 0;
+	_items = 0;
+	_x = 0;
+	_y = 0;
+	_stones = 0;
+	_runes = 0;
+	_members = 1;
+    _transport = 0x1f;
+    _balloonstate = 0;
+    _trammelPhase = 0;
+    _feluccaPhase = 0;
+    _shipHull = 50;
+    _lbIntro = 0;
+    _lastCamp = 0;
+    _lastReagent = 0;
+    _lastMeditation = 0;
+    _lastVirtue = 0;
+    _dngX = 0;
+    _dngY = 0;
+    _orientation = 0;
+    _dngLevel = 0xFFFF;
+    _location = 0;
 }
 
 int SaveGamePlayerRecord::write(Common::WriteStream *f) const {
     int i;
 
-    if (!writeShort(hp, f) ||
-        !writeShort(hpMax, f) ||
-        !writeShort(xp, f) ||
-        !writeShort(str, f) ||
-        !writeShort(dex, f) ||
-        !writeShort(intel, f) ||
-        !writeShort(mp, f) ||
-        !writeShort(unknown, f) ||
-        !writeShort((unsigned short)weapon, f) ||
+    if (!writeShort(_hp, f) ||
+        !writeShort(_hpMax, f) ||
+        !writeShort(_xp, f) ||
+        !writeShort(_str, f) ||
+        !writeShort(_dex, f) ||
+        !writeShort(_intel, f) ||
+        !writeShort(_mp, f) ||
+        !writeShort(_unknown, f) ||
+        !writeShort((unsigned short)_weapon, f) ||
         !writeShort((unsigned short)armor, f))
         return 0;
 
@@ -254,9 +254,9 @@ int SaveGamePlayerRecord::write(Common::WriteStream *f) const {
             return 0;
     }
 
-    if (!writeChar((unsigned char)sex, f) ||
-        !writeChar((unsigned char)klass, f) ||
-        !writeChar((unsigned char)status, f))
+    if (!writeChar((unsigned char)_sex, f) ||
+        !writeChar((unsigned char)_class, f) ||
+        !writeChar((unsigned char)_status, f))
         return 0;
 
     return 1;
@@ -267,19 +267,19 @@ int SaveGamePlayerRecord::read(Common::ReadStream *f) {
     unsigned char ch;
     unsigned short s;
 
-    if (!readShort(&hp, f) ||
-        !readShort(&hpMax, f) ||
-        !readShort(&xp, f) ||
-        !readShort(&str, f) ||
-        !readShort(&dex, f) ||
-        !readShort(&intel, f) ||
-        !readShort(&mp, f) ||
-        !readShort(&unknown, f))
+    if (!readShort(&_hp, f) ||
+        !readShort(&_hpMax, f) ||
+        !readShort(&_xp, f) ||
+        !readShort(&_str, f) ||
+        !readShort(&_dex, f) ||
+        !readShort(&_intel, f) ||
+        !readShort(&_mp, f) ||
+        !readShort(&_unknown, f))
         return 0;
         
     if (!readShort(&s, f))
         return 0;
-    weapon = (WeaponType) s;
+    _weapon = (WeaponType) s;
     if (!readShort(&s, f))
         return 0;
     armor = (ArmorType) s;
@@ -291,13 +291,13 @@ int SaveGamePlayerRecord::read(Common::ReadStream *f) {
 
     if (!readChar(&ch, f))
         return 0;
-    sex = (SexType) ch;
+    _sex = (SexType) ch;
     if (!readChar(&ch, f))
       return 0;
-    klass = (ClassType) ch;
+    _class = (ClassType) ch;
     if (!readChar(&ch, f))
         return 0;
-    status = (StatusType) ch;
+    _status = (StatusType) ch;
 
     return 1;
 }
@@ -305,23 +305,23 @@ int SaveGamePlayerRecord::read(Common::ReadStream *f) {
 void SaveGamePlayerRecord::init() {
     int i;
 
-    hp = 0;
-    hpMax = 0;
-    xp = 0;
-    str = 0;
-    dex = 0;
-    intel = 0;
-    mp = 0;
-    unknown = 0;
-    weapon = WEAP_HANDS;
+    _hp = 0;
+    _hpMax = 0;
+    _xp = 0;
+    _str = 0;
+    _dex = 0;
+    _intel = 0;
+    _mp = 0;
+    _unknown = 0;
+    _weapon = WEAP_HANDS;
     armor = ARMR_NONE;
 
     for (i = 0; i < 16; i++)
       name[i] = '\0';
 
-    sex = SEX_MALE;
-    klass = CLASS_MAGE;
-    status = STAT_GOOD;
+    _sex = SEX_MALE;
+    _class = CLASS_MAGE;
+    _status = STAT_GOOD;
 }
 
 int saveGameMonstersWrite(SaveGameMonsterRecord *monsterTable, Common::WriteStream *f) {
@@ -329,21 +329,21 @@ int saveGameMonstersWrite(SaveGameMonsterRecord *monsterTable, Common::WriteStre
     
     if (monsterTable) {
         for (i = 0; i < MONSTERTABLE_SIZE; i++)
-            if (!writeChar(monsterTable[i].tile, f)) return 0;
+            if (!writeChar(monsterTable[i]._tile, f)) return 0;
         for (i = 0; i < MONSTERTABLE_SIZE; i++)
-            if (!writeChar(monsterTable[i].x, f)) return 0;
+            if (!writeChar(monsterTable[i]._x, f)) return 0;
         for (i = 0; i < MONSTERTABLE_SIZE; i++)
-            if (!writeChar(monsterTable[i].y, f)) return 0;
+            if (!writeChar(monsterTable[i]._y, f)) return 0;
         for (i = 0; i < MONSTERTABLE_SIZE; i++)
-            if (!writeChar(monsterTable[i].prevTile, f)) return 0;
+            if (!writeChar(monsterTable[i]._prevTile, f)) return 0;
         for (i = 0; i < MONSTERTABLE_SIZE; i++)
-            if (!writeChar(monsterTable[i].prevx, f)) return 0;
+            if (!writeChar(monsterTable[i]._prevX, f)) return 0;
         for (i = 0; i < MONSTERTABLE_SIZE; i++)
-            if (!writeChar(monsterTable[i].prevy, f)) return 0;
+            if (!writeChar(monsterTable[i]._prevY, f)) return 0;
         for (i = 0; i < MONSTERTABLE_SIZE; i++)
-            if (!writeChar(monsterTable[i].unused1, f)) return 0;
+            if (!writeChar(monsterTable[i]._unused1, f)) return 0;
         for (i = 0; i < MONSTERTABLE_SIZE; i++)
-            if (!writeChar(monsterTable[i].unused2, f)) return 0;
+            if (!writeChar(monsterTable[i]._unused2, f)) return 0;
     }
     else {
         max = MONSTERTABLE_SIZE * 8;
@@ -357,21 +357,21 @@ int saveGameMonstersRead(SaveGameMonsterRecord *monsterTable, Common::ReadStream
     int i;
         
     for (i = 0; i < MONSTERTABLE_SIZE; i++)
-        if (!readChar(&monsterTable[i].tile, f)) return 0;
+        if (!readChar(&monsterTable[i]._tile, f)) return 0;
     for (i = 0; i < MONSTERTABLE_SIZE; i++)
-        if (!readChar(&monsterTable[i].x, f)) return 0;
+        if (!readChar(&monsterTable[i]._x, f)) return 0;
     for (i = 0; i < MONSTERTABLE_SIZE; i++)
-        if (!readChar(&monsterTable[i].y, f)) return 0;
+        if (!readChar(&monsterTable[i]._y, f)) return 0;
     for (i = 0; i < MONSTERTABLE_SIZE; i++)
-        if (!readChar(&monsterTable[i].prevTile, f)) return 0;
+        if (!readChar(&monsterTable[i]._prevTile, f)) return 0;
     for (i = 0; i < MONSTERTABLE_SIZE; i++)
-        if (!readChar(&monsterTable[i].prevx, f)) return 0;
+        if (!readChar(&monsterTable[i]._prevX, f)) return 0;
     for (i = 0; i < MONSTERTABLE_SIZE; i++)
-        if (!readChar(&monsterTable[i].prevy, f)) return 0;
+        if (!readChar(&monsterTable[i]._prevY, f)) return 0;
     for (i = 0; i < MONSTERTABLE_SIZE; i++)
-        if (!readChar(&monsterTable[i].unused1, f)) return 0;
+        if (!readChar(&monsterTable[i]._unused1, f)) return 0;
     for (i = 0; i < MONSTERTABLE_SIZE; i++)
-        if (!readChar(&monsterTable[i].unused1, f)) return 0;
+        if (!readChar(&monsterTable[i]._unused2, f)) return 0;
 
     return 1;    
 }

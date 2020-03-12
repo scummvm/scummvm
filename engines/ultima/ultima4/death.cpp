@@ -80,7 +80,7 @@ void deathStart(int delay) {
     timerCount = 0;
     timerMsg = 0;
 
-    WaitController waitCtrl(delay * settings.gameCyclesPerSecond);
+    WaitController waitCtrl(delay * settings._gameCyclesPerSecond);
     eventHandler->pushController(&waitCtrl);
     waitCtrl.wait();
     
@@ -89,7 +89,7 @@ void deathStart(int delay) {
     eventHandler->pushKeyHandler(&KeyHandler::ignoreKeys);
     screenDisableCursor();
 
-    eventHandler->getTimer()->add(&deathTimer, settings.gameCyclesPerSecond);
+    eventHandler->getTimer()->add(&deathTimer, settings._gameCyclesPerSecond);
 }
 
 void deathTimer(void *data) {
@@ -121,7 +121,7 @@ void deathRevive() {
     gameSetViewMode(VIEW_NORMAL);
 
     /* Move our world map location to Lord British's Castle */
-    c->_location->coords = c->_location->map->portals[0]->coords;
+    c->_location->coords = c->_location->map->portals[0]->_coords;
     
     /* Now, move the avatar into the castle and put him
        in front of Lord British */

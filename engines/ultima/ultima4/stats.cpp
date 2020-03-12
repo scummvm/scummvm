@@ -42,10 +42,10 @@ extern bool verbose;
  * StatsArea class implementation
  */
 StatsArea::StatsArea() : 
-    title(STATS_AREA_X * CHAR_WIDTH, 0 * CHAR_HEIGHT, STATS_AREA_WIDTH, 1),
-    mainArea(STATS_AREA_X * CHAR_WIDTH, STATS_AREA_Y * CHAR_HEIGHT, STATS_AREA_WIDTH, STATS_AREA_HEIGHT),
-    summary(STATS_AREA_X * CHAR_WIDTH, (STATS_AREA_Y + STATS_AREA_HEIGHT + 1) * CHAR_HEIGHT, STATS_AREA_WIDTH, 1),
-    view(STATS_PARTY_OVERVIEW)
+    _title(STATS_AREA_X * CHAR_WIDTH, 0 * CHAR_HEIGHT, STATS_AREA_WIDTH, 1),
+    _mainArea(STATS_AREA_X * CHAR_WIDTH, STATS_AREA_Y * CHAR_HEIGHT, STATS_AREA_WIDTH, STATS_AREA_HEIGHT),
+    _summary(STATS_AREA_X * CHAR_WIDTH, (STATS_AREA_Y + STATS_AREA_HEIGHT + 1) * CHAR_HEIGHT, STATS_AREA_WIDTH, 1),
+    _view(STATS_PARTY_OVERVIEW)
 {
     // Generate a formatted Common::String for each menu item,
     // and then add the item to the menu.  The Y value
@@ -54,14 +54,14 @@ StatsArea::StatsArea() :
     {
         char outputBuffer[16];
         snprintf(outputBuffer, sizeof(outputBuffer), "-%-11s%%s", getReagentName((Reagent)count));
-        reagentsMixMenu.add(count, new IntMenuItem(outputBuffer, 1, 0, -1, (int *)c->_party->getReagentPtr((Reagent)count), 0, 99, 1, MENU_OUTPUT_REAGENT));
+        _reagentsMixMenu.add(count, new IntMenuItem(outputBuffer, 1, 0, -1, (int *)c->_party->getReagentPtr((Reagent)count), 0, 99, 1, MENU_OUTPUT_REAGENT));
     }
 
-    reagentsMixMenu.addObserver(this);
+    _reagentsMixMenu.addObserver(this);
 }
  
 void StatsArea::setView(StatsView view) {
-    this->view = view;
+    this->_view = view;
     update();
 }
 
@@ -69,11 +69,11 @@ void StatsArea::setView(StatsView view) {
  * Sets the stats item to the previous in sequence.
  */
 void StatsArea::prevItem() {
-    view = (StatsView)(view - 1);
-    if (view < STATS_CHAR1)
-        view = STATS_MIXTURES;
-    if (view <= STATS_CHAR8 && (view - STATS_CHAR1 + 1) > c->_party->size())
-        view = (StatsView) (STATS_CHAR1 - 1 + c->_party->size());
+    _view = (StatsView)(_view - 1);
+    if (_view < STATS_CHAR1)
+        _view = STATS_MIXTURES;
+    if (_view <= STATS_CHAR8 && (_view - STATS_CHAR1 + 1) > c->_party->size())
+        _view = (StatsView) (STATS_CHAR1 - 1 + c->_party->size());
     update();
 }
 
@@ -81,11 +81,11 @@ void StatsArea::prevItem() {
  * Sets the stats item to the next in sequence.
  */
 void StatsArea::nextItem() {
-    view = (StatsView)(view + 1);    
-    if (view > STATS_MIXTURES)
-        view = STATS_CHAR1;
-    if (view <= STATS_CHAR8 && (view - STATS_CHAR1 + 1) > c->_party->size())
-        view = STATS_WEAPONS;
+    _view = (StatsView)(_view + 1);    
+    if (_view > STATS_MIXTURES)
+        _view = STATS_CHAR1;
+    if (_view <= STATS_CHAR8 && (_view - STATS_CHAR1 + 1) > c->_party->size())
+        _view = STATS_WEAPONS;
     update();
 }
 
@@ -98,7 +98,7 @@ void StatsArea::update(bool avatarOnly) {
     /*
      * update the upper stats box
      */
-    switch(view) {
+    switch(_view) {
     case STATS_PARTY_OVERVIEW:
         showPartyView(avatarOnly);
         break;
@@ -139,9 +139,9 @@ void StatsArea::update(bool avatarOnly) {
      * update the lower stats box (food, gold, etc.)
      */
     if (c->_transportContext == TRANSPORT_SHIP)
-        summary.textAt(0, 0, "F:%04d   SHP:%02d", c->_saveGame->food / 100, c->_saveGame->shiphull);
+        _summary.textAt(0, 0, "F:%04d   SHP:%02d", c->_saveGame->_food / 100, c->_saveGame->_shipHull);
     else
-        summary.textAt(0, 0, "F:%04d   G:%04d", c->_saveGame->food / 100, c->_saveGame->gold);
+        _summary.textAt(0, 0, "F:%04d   G:%04d", c->_saveGame->_food / 100, c->_saveGame->_gold);
 
     update(c->_aura);
 
@@ -151,37 +151,37 @@ void StatsArea::update(bool avatarOnly) {
 void StatsArea::update(Aura *aura) {
     unsigned char mask = 0xff;
     for (int i = 0; i < VIRT_MAX; i++) {
-        if (c->_saveGame->karma[i] == 0)
+        if (c->_saveGame->_karma[i] == 0)
             mask &= ~(1 << i);
     }
 
     switch (aura->getType()) {
     case Aura::NONE:
-        summary.drawCharMasked(0, STATS_AREA_WIDTH/2, 0, mask);
+        _summary.drawCharMasked(0, STATS_AREA_WIDTH/2, 0, mask);
         break;
     case Aura::HORN:
-        summary.drawChar(CHARSET_REDDOT, STATS_AREA_WIDTH/2, 0);
+        _summary.drawChar(CHARSET_REDDOT, STATS_AREA_WIDTH/2, 0);
         break;
     case Aura::JINX:
-        summary.drawChar('J', STATS_AREA_WIDTH/2, 0);
+        _summary.drawChar('J', STATS_AREA_WIDTH/2, 0);
         break;
     case Aura::NEGATE:
-        summary.drawChar('N', STATS_AREA_WIDTH/2, 0);
+        _summary.drawChar('N', STATS_AREA_WIDTH/2, 0);
         break;
     case Aura::PROTECTION:
-        summary.drawChar('P', STATS_AREA_WIDTH/2, 0);
+        _summary.drawChar('P', STATS_AREA_WIDTH/2, 0);
         break;
     case Aura::QUICKNESS:
-        summary.drawChar('Q', STATS_AREA_WIDTH/2, 0);
+        _summary.drawChar('Q', STATS_AREA_WIDTH/2, 0);
         break;
     }    
 
-    summary.update();
+    _summary.update();
 }
 
 void StatsArea::highlightPlayer(int player) {
     ASSERT(player < c->_party->size(), "player number out of range: %d", player);
-    mainArea.highlight(0, player * CHAR_HEIGHT, STATS_AREA_WIDTH * CHAR_WIDTH, CHAR_HEIGHT);
+    _mainArea.highlight(0, player * CHAR_HEIGHT, STATS_AREA_WIDTH * CHAR_WIDTH, CHAR_HEIGHT);
 #ifdef IOS
     U4IOS::updateActivePartyMember(player);
 #endif
@@ -189,19 +189,19 @@ void StatsArea::highlightPlayer(int player) {
 
 void StatsArea::clear() {
     for (int i = 0; i < STATS_AREA_WIDTH; i++)
-        title.drawChar(CHARSET_HORIZBAR, i, 0);
+        _title.drawChar(CHARSET_HORIZBAR, i, 0);
 
-    mainArea.clear();
-    summary.clear();
+    _mainArea.clear();
+    _summary.clear();
 }
 
 /**
  * Redraws the entire stats area
  */
 void StatsArea::redraw() {
-    title.update();
-    mainArea.update();
-    summary.update();
+    _title.update();
+    _mainArea.update();
+    _summary.update();
 }
 
 /**
@@ -209,7 +209,7 @@ void StatsArea::redraw() {
  */
 void StatsArea::setTitle(const Common::String &s) {
     int titleStart = (STATS_AREA_WIDTH / 2) - ((s.size() + 2) / 2);
-    title.textAt(titleStart, 0, "%c%s%c", 16, s.c_str(), 17);
+    _title.textAt(titleStart, 0, "%c%s%c", 16, s.c_str(), 17);
 }
 
 /**
@@ -226,12 +226,12 @@ void StatsArea::showPartyView(bool avatarOnly) {
     if (!avatarOnly) {
         for (int i = 0; i < c->_party->size(); i++) {
             p = c->_party->member(i);
-            mainArea.textAt(0, i, format, i+1, (i==activePlayer) ? CHARSET_BULLET : '-', p->getName().c_str(), p->getHp(), mainArea.colorizeStatus(p->getStatus()).c_str());
+            _mainArea.textAt(0, i, format, i+1, (i==activePlayer) ? CHARSET_BULLET : '-', p->getName().c_str(), p->getHp(), _mainArea.colorizeStatus(p->getStatus()).c_str());
         }
     }
     else {        
         p = c->_party->member(0);
-        mainArea.textAt(0, 0, format, 1, (activePlayer==0) ? CHARSET_BULLET : '-', p->getName().c_str(), p->getHp(), mainArea.colorizeStatus(p->getStatus()).c_str());
+        _mainArea.textAt(0, 0, format, 1, (activePlayer==0) ? CHARSET_BULLET : '-', p->getName().c_str(), p->getHp(), _mainArea.colorizeStatus(p->getStatus()).c_str());
     }
 }
 
@@ -239,22 +239,22 @@ void StatsArea::showPartyView(bool avatarOnly) {
  * The individual character view.
  */
 void StatsArea::showPlayerDetails() {
-    int player = view - STATS_CHAR1;
+    int player = _view - STATS_CHAR1;
 
     ASSERT(player < 8, "character number out of range: %d", player);
 
     PartyMember *p = c->_party->member(player);
     setTitle(p->getName());
-    mainArea.textAt(0, 0, "%c             %c", p->getSex(), p->getStatus());
+    _mainArea.textAt(0, 0, "%c             %c", p->getSex(), p->getStatus());
     Common::String classStr = getClassName(p->getClass());
     int classStart = (STATS_AREA_WIDTH / 2) - (classStr.size() / 2);
-    mainArea.textAt(classStart, 0, "%s", classStr.c_str());
-    mainArea.textAt(0, 2, " MP:%02d  LV:%d", p->getMp(), p->getRealLevel());
-    mainArea.textAt(0, 3, "STR:%02d  HP:%04d", p->getStr(), p->getHp());
-    mainArea.textAt(0, 4, "DEX:%02d  HM:%04d", p->getDex(), p->getMaxHp());
-    mainArea.textAt(0, 5, "INT:%02d  EX:%04d", p->getInt(), p->getExp());
-    mainArea.textAt(0, 6, "W:%s", p->getWeapon()->getName().c_str());
-    mainArea.textAt(0, 7, "A:%s", p->getArmor()->getName().c_str());
+    _mainArea.textAt(classStart, 0, "%s", classStr.c_str());
+    _mainArea.textAt(0, 2, " MP:%02d  LV:%d", p->getMp(), p->getRealLevel());
+    _mainArea.textAt(0, 3, "STR:%02d  HP:%04d", p->getStr(), p->getHp());
+    _mainArea.textAt(0, 4, "DEX:%02d  HM:%04d", p->getDex(), p->getMaxHp());
+    _mainArea.textAt(0, 5, "INT:%02d  EX:%04d", p->getInt(), p->getExp());
+    _mainArea.textAt(0, 6, "W:%s", p->getWeapon()->getName().c_str());
+    _mainArea.textAt(0, 7, "A:%s", p->getArmor()->getName().c_str());
 }
 
 /**
@@ -265,15 +265,15 @@ void StatsArea::showWeapons() {
 
     int line = 0;
     int col = 0;
-    mainArea.textAt(0, line++, "A-%s", Weapon::get(WEAP_HANDS)->getName().c_str());
+    _mainArea.textAt(0, line++, "A-%s", Weapon::get(WEAP_HANDS)->getName().c_str());
     for (int w = WEAP_HANDS + 1; w < WEAP_MAX; w++) {
-        int n = c->_saveGame->weapons[w];
+        int n = c->_saveGame->_weapons[w];
         if (n >= 100)
             n = 99;
         if (n >= 1) {
             const char *format = (n >= 10) ? "%c%d-%s" : "%c-%d-%s";
 
-            mainArea.textAt(col, line++, format, w - WEAP_HANDS + 'A', n, Weapon::get((WeaponType) w)->getAbbrev().c_str());
+            _mainArea.textAt(col, line++, format, w - WEAP_HANDS + 'A', n, Weapon::get((WeaponType) w)->getAbbrev().c_str());
             if (line >= (STATS_AREA_HEIGHT)) {
                 line = 0;
                 col += 8;
@@ -289,12 +289,12 @@ void StatsArea::showArmor() {
     setTitle("Armour");
 
     int line = 0;
-    mainArea.textAt(0, line++, "A  -No Armour");
+    _mainArea.textAt(0, line++, "A  -No Armour");
     for (int a = ARMR_NONE + 1; a < ARMR_MAX; a++) {
-        if (c->_saveGame->armor[a] > 0) {
-            const char *format = (c->_saveGame->armor[a] >= 10) ? "%c%d-%s" : "%c-%d-%s";
+        if (c->_saveGame->_armor[a] > 0) {
+            const char *format = (c->_saveGame->_armor[a] >= 10) ? "%c%d-%s" : "%c-%d-%s";
 
-            mainArea.textAt(0, line++, format, a - ARMR_NONE + 'A', c->_saveGame->armor[a], Armor::get((ArmorType) a)->getName().c_str());
+            _mainArea.textAt(0, line++, format, a - ARMR_NONE + 'A', c->_saveGame->_armor[a], Armor::get((ArmorType) a)->getName().c_str());
         }
     }
 }
@@ -306,11 +306,11 @@ void StatsArea::showEquipment() {
     setTitle("Equipment");
 
     int line = 0;
-    mainArea.textAt(0, line++, "%2d Torches", c->_saveGame->torches);
-    mainArea.textAt(0, line++, "%2d Gems", c->_saveGame->gems);
-    mainArea.textAt(0, line++, "%2d Keys", c->_saveGame->keys);
-    if (c->_saveGame->sextants > 0)
-        mainArea.textAt(0, line++, "%2d Sextants", c->_saveGame->sextants);    
+    _mainArea.textAt(0, line++, "%2d Torches", c->_saveGame->_torches);
+    _mainArea.textAt(0, line++, "%2d Gems", c->_saveGame->_gems);
+    _mainArea.textAt(0, line++, "%2d Keys", c->_saveGame->_keys);
+    if (c->_saveGame->_sextants > 0)
+        _mainArea.textAt(0, line++, "%2d Sextants", c->_saveGame->_sextants);    
 }
 
 /**
@@ -323,57 +323,57 @@ void StatsArea::showItems() {
     setTitle("Items");
 
     int line = 0;
-    if (c->_saveGame->stones != 0) {
+    if (c->_saveGame->_stones != 0) {
         j = 0;
         for (i = 0; i < 8; i++) {
-            if (c->_saveGame->stones & (1 << i))
+            if (c->_saveGame->_stones & (1 << i))
                 buffer[j++] = getStoneName((Virtue) i)[0];
         }
         buffer[j] = '\0';
-        mainArea.textAt(0, line++, "Stones:%s", buffer);
+        _mainArea.textAt(0, line++, "Stones:%s", buffer);
     }
-    if (c->_saveGame->runes != 0) {
+    if (c->_saveGame->_runes != 0) {
         j = 0;
         for (i = 0; i < 8; i++) {
-            if (c->_saveGame->runes & (1 << i))
+            if (c->_saveGame->_runes & (1 << i))
                 buffer[j++] = getVirtueName((Virtue) i)[0];
         }
         buffer[j] = '\0';
-        mainArea.textAt(0, line++, "Runes:%s", buffer);
+        _mainArea.textAt(0, line++, "Runes:%s", buffer);
     }
-    if (c->_saveGame->items & (ITEM_CANDLE | ITEM_BOOK | ITEM_BELL)) {
+    if (c->_saveGame->_items & (ITEM_CANDLE | ITEM_BOOK | ITEM_BELL)) {
         buffer[0] = '\0';
-        if (c->_saveGame->items & ITEM_BELL) {
+        if (c->_saveGame->_items & ITEM_BELL) {
             strcat(buffer, getItemName(ITEM_BELL));
             strcat(buffer, " ");
         }
-        if (c->_saveGame->items & ITEM_BOOK) {
+        if (c->_saveGame->_items & ITEM_BOOK) {
             strcat(buffer, getItemName(ITEM_BOOK));
             strcat(buffer, " ");
         }
-        if (c->_saveGame->items & ITEM_CANDLE) {
+        if (c->_saveGame->_items & ITEM_CANDLE) {
             strcat(buffer, getItemName(ITEM_CANDLE));
             buffer[15] = '\0';
         }
-        mainArea.textAt(0, line++, "%s", buffer);
+        _mainArea.textAt(0, line++, "%s", buffer);
     }
-    if (c->_saveGame->items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
+    if (c->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
         j = 0;
-        if (c->_saveGame->items & ITEM_KEY_T)
+        if (c->_saveGame->_items & ITEM_KEY_T)
             buffer[j++] = getItemName(ITEM_KEY_T)[0];
-        if (c->_saveGame->items & ITEM_KEY_L)
+        if (c->_saveGame->_items & ITEM_KEY_L)
             buffer[j++] = getItemName(ITEM_KEY_L)[0];
-        if (c->_saveGame->items & ITEM_KEY_C)
+        if (c->_saveGame->_items & ITEM_KEY_C)
             buffer[j++] = getItemName(ITEM_KEY_C)[0];
         buffer[j] = '\0';
-        mainArea.textAt(0, line++, "3 Part Key:%s", buffer);
+        _mainArea.textAt(0, line++, "3 Part Key:%s", buffer);
     }
-    if (c->_saveGame->items & ITEM_HORN)
-        mainArea.textAt(0, line++, "%s", getItemName(ITEM_HORN));
-    if (c->_saveGame->items & ITEM_WHEEL)
-        mainArea.textAt(0, line++, "%s", getItemName(ITEM_WHEEL));
-    if (c->_saveGame->items & ITEM_SKULL)
-        mainArea.textAt(0, line++, "%s", getItemName(ITEM_SKULL));    
+    if (c->_saveGame->_items & ITEM_HORN)
+        _mainArea.textAt(0, line++, "%s", getItemName(ITEM_HORN));
+    if (c->_saveGame->_items & ITEM_WHEEL)
+        _mainArea.textAt(0, line++, "%s", getItemName(ITEM_WHEEL));
+    if (c->_saveGame->_items & ITEM_SKULL)
+        _mainArea.textAt(0, line++, "%s", getItemName(ITEM_SKULL));    
 }
 
 /**
@@ -388,18 +388,18 @@ void StatsArea::showReagents(bool active)
         r = REAG_ASH;
     Common::String shortcut ("A");
 
-    reagentsMixMenu.show(&mainArea);
+    _reagentsMixMenu.show(&_mainArea);
 
-    for (i = reagentsMixMenu.begin(); i != reagentsMixMenu.end(); i++, r++)
+    for (i = _reagentsMixMenu.begin(); i != _reagentsMixMenu.end(); i++, r++)
     {
         if ((*i)->isVisible())
         {
             // Insert the reagent menu item shortcut character
             shortcut.setChar('A' + r, 0);
             if (active)
-                mainArea.textAt(0, line++, "%s", mainArea.colorizeString(shortcut, FG_YELLOW, 0, 1).c_str());
+                _mainArea.textAt(0, line++, "%s", _mainArea.colorizeString(shortcut, FG_YELLOW, 0, 1).c_str());
             else
-                mainArea.textAt(0, line++, "%s", shortcut.c_str());
+                _mainArea.textAt(0, line++, "%s", shortcut.c_str());
         }
     }
 }
@@ -413,11 +413,11 @@ void StatsArea::showMixtures() {
     int line = 0;
     int col = 0;
     for (int s = 0; s < SPELL_MAX; s++) {
-        int n = c->_saveGame->mixtures[s];
+        int n = c->_saveGame->_mixtures[s];
         if (n >= 100)
             n = 99;
         if (n >= 1) {
-            mainArea.textAt(col, line++, "%c-%02d", s + 'A', n);
+            _mainArea.textAt(col, line++, "%c-%02d", s + 'A', n);
             if (line >= (STATS_AREA_HEIGHT)) {
                 if (col >= 10)
                     break;
@@ -433,9 +433,9 @@ void StatsArea::resetReagentsMenu() {
     int i = 0,
         row = 0;
 
-    for (current = reagentsMixMenu.begin(); current != reagentsMixMenu.end(); current++)
+    for (current = _reagentsMixMenu.begin(); current != _reagentsMixMenu.end(); current++)
     {
-        if (c->_saveGame->reagents[i++] > 0)
+        if (c->_saveGame->_reagents[i++] > 0)
         {
             (*current)->setVisible(true);
             (*current)->setY(row++);
@@ -443,7 +443,7 @@ void StatsArea::resetReagentsMenu() {
         else (*current)->setVisible(false);
     }
 
-    reagentsMixMenu.reset(false);
+    _reagentsMixMenu.reset(false);
 }
 
 /**
@@ -477,9 +477,9 @@ bool ReagentsMenuController::keyPressed(int key) {
             item->setSelected(!item->isSelected());
                         
             if (item->isSelected())
-                ingredients->addReagent((Reagent)item->getId());
+                _ingredients->addReagent((Reagent)item->getId());
             else
-                ingredients->removeReagent((Reagent)item->getId());
+                _ingredients->removeReagent((Reagent)item->getId());
         }
         break;
     case U4_ENTER:
@@ -487,7 +487,7 @@ bool ReagentsMenuController::keyPressed(int key) {
         break;
 
     case U4_ESC:
-        ingredients->revert();
+        _ingredients->revert();
         eventHandler->setControllerDone();
         break;
 

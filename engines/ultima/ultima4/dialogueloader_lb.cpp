@@ -117,22 +117,22 @@ Response *lordBritishGetHelp(const DynamicResponse *resp) {
     fullAvatar = true;
     partialAvatar = false;
     for (v = 0; v < VIRT_MAX; v++) {
-        fullAvatar &= (c->_saveGame->karma[v] == 0);
-        partialAvatar |= (c->_saveGame->karma[v] == 0);
+        fullAvatar &= (c->_saveGame->_karma[v] == 0);
+        partialAvatar |= (c->_saveGame->_karma[v] == 0);
     }
 
-    if (c->_saveGame->moves <= 1000) {
+    if (c->_saveGame->_moves <= 1000) {
         text = "To survive in this hostile land thou must first know thyself! Seek ye to master thy weapons and thy magical ability!\n"
                "\nTake great care in these thy first travels in Britannia.\n"
                "\nUntil thou dost well know thyself, travel not far from the safety of the townes!\n";        
     }
 
-    else if (c->_saveGame->members == 1) {
+    else if (c->_saveGame->_members == 1) {
         text = "Travel not the open lands alone. There are many worthy people in the diverse townes whom it would be wise to ask to Join thee!\n"
                "\nBuild thy party unto eight travellers, for only a true leader can win the Quest!\n";        
     }
 
-    else if (c->_saveGame->runes == 0) {
+    else if (c->_saveGame->_runes == 0) {
         text = "Learn ye the paths of virtue. Seek to gain entry unto the eight shrines!\n"
                "\nFind ye the Runes, needed for entry into each shrine, and learn each chant or \"Mantra\" used to focus thy meditations.\n"
                "\nWithin the Shrines thou shalt learn of the deeds which show thy inner virtue or vice!\n"
@@ -145,7 +145,7 @@ Response *lordBritishGetHelp(const DynamicResponse *resp) {
                "\nSeek ye to become a partial Avatar in all eight virtues, for only then shalt thou be ready to seek the codex!\n";        
     }
 
-    else if (c->_saveGame->stones == 0) {
+    else if (c->_saveGame->_stones == 0) {
         text = "Go ye now into the depths of the dungeons. Therein recover the 8 colored stones from the altar pedestals in the halls of the dungeons.\n"
                "\nFind the uses of these stones for they can help thee in the Abyss!\n";        
     }
@@ -154,15 +154,15 @@ Response *lordBritishGetHelp(const DynamicResponse *resp) {
         text = "Thou art doing very well indeed on the path to Avatarhood! Strive ye to achieve the Elevation in all eight virtues!\n";
     }
 
-    else if ((c->_saveGame->items & ITEM_BELL) == 0 ||
-             (c->_saveGame->items & ITEM_BOOK) == 0 ||
-             (c->_saveGame->items & ITEM_CANDLE) == 0) {
+    else if ((c->_saveGame->_items & ITEM_BELL) == 0 ||
+             (c->_saveGame->_items & ITEM_BOOK) == 0 ||
+             (c->_saveGame->_items & ITEM_CANDLE) == 0) {
         text = "Find ye the Bell, Book and Candle!  With these three things, one may enter the Great Stygian Abyss!\n";
     }
 
-    else if ((c->_saveGame->items & ITEM_KEY_C) == 0 ||
-             (c->_saveGame->items & ITEM_KEY_L) == 0 ||
-             (c->_saveGame->items & ITEM_KEY_T) == 0) {
+    else if ((c->_saveGame->_items & ITEM_KEY_C) == 0 ||
+             (c->_saveGame->_items & ITEM_KEY_L) == 0 ||
+             (c->_saveGame->_items & ITEM_KEY_T) == 0) {
         text = "Before thou dost enter the Abyss thou shalt need the Key of Three Parts, and the Word of Passage.\n"
                "\nThen might thou enter the Chamber of the Codex of Ultimate Wisdom!\n";
     }
@@ -180,12 +180,12 @@ Response *lordBritishGetIntro(const DynamicResponse *resp) {
     Response *intro = new Response("");
     intro->add(ResponsePart::STARTMUSIC_LB);
 
-    if (c->_saveGame->lbintro) {
-        if (c->_saveGame->members == 1) {
+    if (c->_saveGame->_lbIntro) {
+        if (c->_saveGame->_members == 1) {
             intro->add(Common::String("\n\n\nLord British\nsays:  Welcome\n") + 
                        c->_party->member(0)->getName() + "!\n\n");
         }
-        else if (c->_saveGame->members == 2) {
+        else if (c->_saveGame->_members == 2) {
             intro->add(Common::String("\n\nLord British\nsays:  Welcome\n") +
                        c->_party->member(0)->getName() + 
                        " and thee also " + 
@@ -211,7 +211,7 @@ Response *lordBritishGetIntro(const DynamicResponse *resp) {
                    "\n\nLord British sits and says: A new age is upon Britannia. The great evil Lords are gone but our people lack direction and purpose in their lives...\n\n\n"
                    "A champion of virtue is called for. Thou may be this champion, but only time shall tell.  I will aid thee any way that I can!\n\n"
                    "How may I help thee?\n");
-        c->_saveGame->lbintro = 1;
+        c->_saveGame->_lbIntro = 1;
     }
 
     return intro;

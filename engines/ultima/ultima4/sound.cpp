@@ -44,20 +44,20 @@ void soundStop(int channel) {
     SoundManager::getInstance()->stop(channel);
 }
 
-SoundManager *SoundManager::instance = 0;
+SoundManager *SoundManager::_instance = 0;
 
 SoundManager::SoundManager() {
 }
 
 SoundManager::~SoundManager() {
     del();
-    instance = 0;
+    _instance = 0;
 }
 
 SoundManager *SoundManager::getInstance() {
-    if (!instance)
-        instance = new SoundManager();
-    return instance;
+    if (!_instance)
+        _instance = new SoundManager();
+    return _instance;
 }
 
 int SoundManager::init() {
@@ -65,8 +65,8 @@ int SoundManager::init() {
      * load sound track filenames from xml config file
      */
     const Config *config = Config::getInstance();
-    soundFilenames.reserve(SOUND_MAX);
-    soundChunk.resize(SOUND_MAX);
+    _soundFilenames.reserve(SOUND_MAX);
+    _soundChunk.resize(SOUND_MAX);
     
     vector<ConfigElement> soundConfs = config->getElement("sound").getChildren();
     vector<ConfigElement>::const_iterator i = soundConfs.begin();
@@ -75,7 +75,7 @@ int SoundManager::init() {
         if (i->getName() != "track")
             continue;
         
-        soundFilenames.push_back(i->getString("file"));
+        _soundFilenames.push_back(i->getString("file"));
     }
     return init_sys();
 }
@@ -84,11 +84,11 @@ bool SoundManager::load(Sound sound) {
     ASSERT(sound < SOUND_MAX, "Attempted to load an invalid sound in soundLoad()");
     
     // If music didn't initialize correctly, then we can't play it anyway
-    if (!Music::functional || !settings.soundVol)
+    if (!Music::functional || !settings._soundVol)
         return false;
     
-    if (soundChunk[sound] == NULL) {
-        Common::String pathname(u4find_sound(soundFilenames[sound]));
+    if (_soundChunk[sound] == NULL) {
+        Common::String pathname(u4find_sound(_soundFilenames[sound]));
         Common::String basename = pathname.substr(pathname.findLastOf("/") + 1);
         if (!basename.empty())
             return load_sys(sound, pathname);
@@ -101,10 +101,10 @@ void SoundManager::play(Sound sound, bool onlyOnce, int specificDurationInTicks)
     ASSERT(sound < SOUND_MAX, "Attempted to play an invalid sound in soundPlay()");
     
     // If music didn't initialize correctly, then we can't play it anyway
-    if (!Music::functional || !settings.soundVol)
+    if (!Music::functional || !settings._soundVol)
         return;
     
-    if (soundChunk[sound] == NULL)
+    if (_soundChunk[sound] == NULL)
     {
         if (!load(sound)) {
             return;

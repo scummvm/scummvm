@@ -68,12 +68,12 @@ bool CheatMenuController::keyPressed(int key) {
         break;
 
     case 'a': {
-        int newTrammelphase = c->_saveGame->trammelphase + 1;
+        int newTrammelphase = c->_saveGame->_trammelPhase + 1;
         if (newTrammelphase > 7)
             newTrammelphase = 0;
 
         screenMessage("Advance Moons!\n");
-        while (c->_saveGame->trammelphase != newTrammelphase)
+        while (c->_saveGame->_trammelPhase != newTrammelphase)
             game->updateMoons(true);
         break;
     }
@@ -86,27 +86,27 @@ bool CheatMenuController::keyPressed(int key) {
     case 'e':
         screenMessage("Equipment!\n");
         for (i = ARMR_NONE + 1; i < ARMR_MAX; i++)
-            c->_saveGame->armor[i] = 8;
+            c->_saveGame->_armor[i] = 8;
         for (i = WEAP_HANDS + 1; i < WEAP_MAX; i++) {
             const Weapon *weapon = Weapon::get(static_cast<WeaponType>(i));
             if (weapon->loseWhenUsed() || weapon->loseWhenRanged())
-                c->_saveGame->weapons[i] = 99;
+                c->_saveGame->_weapons[i] = 99;
             else
-                c->_saveGame->weapons[i] = 8;
+                c->_saveGame->_weapons[i] = 8;
         }
         break;
 
     case 'f':
         screenMessage("Full Stats!\n");
-        for (i = 0; i < c->_saveGame->members; i++) {
-            c->_saveGame->players[i].str = 50;
-            c->_saveGame->players[i].dex = 50;
-            c->_saveGame->players[i].intel = 50;
+        for (i = 0; i < c->_saveGame->_members; i++) {
+            c->_saveGame->_players[i]._str = 50;
+            c->_saveGame->_players[i]._dex = 50;
+            c->_saveGame->_players[i]._intel = 50;
 
-            if (c->_saveGame->players[i].hpMax < 800) {
-                c->_saveGame->players[i].xp = 9999;
-                c->_saveGame->players[i].hpMax = 800;
-                c->_saveGame->players[i].hp = 800;
+            if (c->_saveGame->_players[i]._hpMax < 800) {
+                c->_saveGame->_players[i]._xp = 9999;
+                c->_saveGame->_players[i]._hpMax = 800;
+                c->_saveGame->_players[i]._hp = 800;
             }
         }
         break;
@@ -118,12 +118,12 @@ bool CheatMenuController::keyPressed(int key) {
 
         bool found = false;
         for (unsigned p = 0; p < c->_location->map->portals.size(); p++) {
-            MapId destid = c->_location->map->portals[p]->destid;
+            MapId destid = c->_location->map->portals[p]->_destid;
             Common::String destNameLower = mapMgr->get(destid)->getName();
             lowercase(destNameLower);
             if (destNameLower.find(dest) != Common::String::npos) {
                 screenMessage("\n%s\n", mapMgr->get(destid)->getName().c_str());
-                c->_location->coords = c->_location->map->portals[p]->coords;
+                c->_location->coords = c->_location->map->portals[p]->_coords;
                 found = true;
                 break;
             }
@@ -184,25 +184,25 @@ bool CheatMenuController::keyPressed(int key) {
 
     case 'i':
         screenMessage("Items!\n");
-        c->_saveGame->torches = 99;
-        c->_saveGame->gems = 99;
-        c->_saveGame->keys = 99;
-        c->_saveGame->sextants = 1;
-        c->_saveGame->items = ITEM_SKULL | ITEM_CANDLE | ITEM_BOOK | ITEM_BELL | ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T | ITEM_HORN | ITEM_WHEEL;
-        c->_saveGame->stones = 0xff;
-        c->_saveGame->runes = 0xff;
-        c->_saveGame->food = 999900;
-        c->_saveGame->gold = 9999;
+        c->_saveGame->_torches = 99;
+        c->_saveGame->_gems = 99;
+        c->_saveGame->_keys = 99;
+        c->_saveGame->_sextants = 1;
+        c->_saveGame->_items = ITEM_SKULL | ITEM_CANDLE | ITEM_BOOK | ITEM_BELL | ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T | ITEM_HORN | ITEM_WHEEL;
+        c->_saveGame->_stones = 0xff;
+        c->_saveGame->_runes = 0xff;
+        c->_saveGame->_food = 999900;
+        c->_saveGame->_gold = 9999;
         c->_stats->update();
         break;
 
     case 'j':
         screenMessage("Joined by companions!\n");
-        for (int m = c->_saveGame->members; m < 8; m++) {
+        for (int m = c->_saveGame->_members; m < 8; m++) {
             debug("m = %d\n", m);
-            debug("n = %s\n", c->_saveGame->players[m].name);
-            if (c->_party->canPersonJoin(c->_saveGame->players[m].name, NULL)) {
-                c->_party->join(c->_saveGame->players[m].name);
+            debug("n = %s\n", c->_saveGame->_players[m].name);
+            if (c->_party->canPersonJoin(c->_saveGame->_players[m].name, NULL)) {
+                c->_party->join(c->_saveGame->_players[m].name);
             }
         }
         c->_stats->update();
@@ -215,8 +215,8 @@ bool CheatMenuController::keyPressed(int key) {
             screenMessage("%s:", getVirtueName(static_cast<Virtue>(i)));
             for (j = 13; j > strlen(getVirtueName(static_cast<Virtue>(i))); j--)
                 screenMessage(" ");
-            if (c->_saveGame->karma[i] > 0)                
-                screenMessage("%.2d\n", c->_saveGame->karma[i]);            
+            if (c->_saveGame->_karma[i] > 0)                
+                screenMessage("%.2d\n", c->_saveGame->_karma[i]);            
             else screenMessage("--\n");
         }
         break;
@@ -231,7 +231,7 @@ bool CheatMenuController::keyPressed(int key) {
     case 'm':
         screenMessage("Mixtures!\n");
         for (i = 0; i < SPELL_MAX; i++)
-            c->_saveGame->mixtures[i] = 99;
+            c->_saveGame->_mixtures[i] = 99;
         break;
 
     case 'o':
@@ -253,7 +253,7 @@ bool CheatMenuController::keyPressed(int key) {
     case 'r':
         screenMessage("Reagents!\n");
         for (i = 0; i < REAG_MAX; i++)
-            c->_saveGame->reagents[i] = 99;
+            c->_saveGame->_reagents[i] = 99;
         break;
 
     case 's':
@@ -324,7 +324,7 @@ bool CheatMenuController::keyPressed(int key) {
     case 'v':
         screenMessage("\nFull Virtues!\n");
         for (i = 0; i < 8; i++)
-            c->_saveGame->karma[i] = 0;        
+            c->_saveGame->_karma[i] = 0;        
         c->_stats->update();
         break;
 
@@ -370,12 +370,12 @@ bool CheatMenuController::keyPressed(int key) {
 	case Common::KEYCODE_F7:
 	case Common::KEYCODE_F8:
         screenMessage("Improve %s!\n", getVirtueName(static_cast<Virtue>(key - Common::KEYCODE_F1)));
-        if (c->_saveGame->karma[key - Common::KEYCODE_F1] == 99)
-            c->_saveGame->karma[key - Common::KEYCODE_F1] = 0;
-        else if (c->_saveGame->karma[key - Common::KEYCODE_F1] != 0)
-            c->_saveGame->karma[key - Common::KEYCODE_F1] += 10;
-        if (c->_saveGame->karma[key - Common::KEYCODE_F1] > 99)
-            c->_saveGame->karma[key - Common::KEYCODE_F1] = 99;
+        if (c->_saveGame->_karma[key - Common::KEYCODE_F1] == 99)
+            c->_saveGame->_karma[key - Common::KEYCODE_F1] = 0;
+        else if (c->_saveGame->_karma[key - Common::KEYCODE_F1] != 0)
+            c->_saveGame->_karma[key - Common::KEYCODE_F1] += 10;
+        if (c->_saveGame->_karma[key - Common::KEYCODE_F1] > 99)
+            c->_saveGame->_karma[key - Common::KEYCODE_F1] = 99;
         c->_stats->update();
         break;
 

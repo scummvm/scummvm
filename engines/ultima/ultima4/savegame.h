@@ -191,33 +191,33 @@ struct SaveGamePlayerRecord {
     int read(Common::ReadStream *f);
     void init();
 
-    unsigned short hp;
-    unsigned short hpMax;
-    unsigned short xp;
-    unsigned short str, dex, intel;
-    unsigned short mp;
-    unsigned short unknown;
-    WeaponType weapon;
+    unsigned short _hp;
+    unsigned short _hpMax;
+    unsigned short _xp;
+    unsigned short _str, _dex, _intel;
+    unsigned short _mp;
+    unsigned short _unknown;
+    WeaponType _weapon;
     ArmorType armor;
     char name[16];
-    SexType sex;
-    ClassType klass;
-    StatusType status;
+    SexType _sex;
+    ClassType _class;
+    StatusType _status;
 };
 
 /**
  * How Ultima IV stores monster information
  */
-typedef struct _SaveGameMonsterRecord {
-    unsigned char tile;
-    unsigned char x;
-    unsigned char y;
-    unsigned char prevTile;
-    unsigned char prevx;
-    unsigned char prevy;
-    unsigned char unused1;
-    unsigned char unused2;
-} SaveGameMonsterRecord;
+struct SaveGameMonsterRecord {
+    byte _tile;
+    byte _x;
+    byte _y;
+    byte _prevTile;
+    byte _prevX;
+    byte _prevY;
+    byte _unused1;
+    byte _unused2;
+};
 
 /**
  * Represents the on-disk contents of PARTY.SAV.
@@ -227,42 +227,42 @@ struct SaveGame {
     int read(Common::ReadStream *f);
     void init(const SaveGamePlayerRecord *avatarInfo);
 
-    unsigned int unknown1;
-    unsigned int moves;
-    SaveGamePlayerRecord players[8];
-    int food;
-    short gold;
-    short karma[VIRT_MAX];
-    short torches;
-    short gems;
-    short keys;
-    short sextants;
-    short armor[ARMR_MAX];
-    short weapons[WEAP_MAX];
-    short reagents[REAG_MAX];
-    short mixtures[SPELL_MAX];
-    unsigned short items;
-    unsigned char x, y;
-    unsigned char stones;
-    unsigned char runes;
-    unsigned short members;
-    unsigned short transport;
+    unsigned int _unknown1;
+    unsigned int _moves;
+    SaveGamePlayerRecord _players[8];
+    int _food;
+    short _gold;
+    short _karma[VIRT_MAX];
+    short _torches;
+    short _gems;
+    short _keys;
+    short _sextants;
+    short _armor[ARMR_MAX];
+    short _weapons[WEAP_MAX];
+    short _reagents[REAG_MAX];
+    short _mixtures[SPELL_MAX];
+    unsigned short _items;
+    byte _x, _y;
+    byte _stones;
+    byte _runes;
+    unsigned short _members;
+    unsigned short _transport;
     union {
-        unsigned short balloonstate;
-        unsigned short torchduration;
+        unsigned short _balloonstate;
+        unsigned short _torchduration;
     };
-    unsigned short trammelphase;
-    unsigned short feluccaphase;
-    unsigned short shiphull;
-    unsigned short lbintro;
-    unsigned short lastcamp;
-    unsigned short lastreagent;
-    unsigned short lastmeditation;
-    unsigned short lastvirtue;
-    unsigned char dngx, dngy;
-    unsigned short orientation;
-    unsigned short dnglevel;
-    unsigned short location;
+    unsigned short _trammelPhase;
+    unsigned short _feluccaPhase;
+    unsigned short _shipHull;
+    unsigned short _lbIntro;
+    unsigned short _lastCamp;
+    unsigned short _lastReagent;
+    unsigned short _lastMeditation;
+    unsigned short _lastVirtue;
+    byte _dngX, _dngY;
+    unsigned short _orientation;
+    unsigned short _dngLevel;
+    unsigned short _location;
 };
 
 int saveGameMonstersWrite(SaveGameMonsterRecord *monsterTable, Common::WriteStream *f);

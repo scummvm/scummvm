@@ -41,10 +41,10 @@ public:
     void setColor(int r, int g, int b, int a = IM_OPAQUE);
     
 protected:
-    int min, max;
-    int current;
-    RGBA color, bcolor;
-    int bwidth;    
+    int _min, _max;
+    int _current;
+    RGBA _color, _bColor;
+    int _bWidth;    
 };  
 
 } // End of namespace Ultima4
