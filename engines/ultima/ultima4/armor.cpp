@@ -33,8 +33,8 @@ namespace Ultima4 {
 using Std::vector;
 using Common::String;
 
-bool Armor::confLoaded = false;
-vector<Armor *> Armor::armors;
+bool Armor::_confLoaded = false;
+vector<Armor *> Armor::_armors;
 
 /**
  * Returns armor by ArmorType.
@@ -43,9 +43,9 @@ const Armor *Armor::get(ArmorType a) {
     // Load in XML if it hasn't been already
     loadConf();
 
-    if (static_cast<unsigned>(a) >= armors.size())
+    if (static_cast<unsigned>(a) >= _armors.size())
         return NULL;
-    return armors[a];
+    return _armors[a];
 }
 
 /**
@@ -55,19 +55,19 @@ const Armor *Armor::get(const string &name) {
     // Load in XML if it hasn't been already
     loadConf();
 
-    for (unsigned i = 0; i < armors.size(); i++) {
-        if (scumm_stricmp(name.c_str(), armors[i]->name.c_str()) == 0)
-            return armors[i];
+    for (unsigned i = 0; i < _armors.size(); i++) {
+        if (scumm_stricmp(name.c_str(), _armors[i]->_name.c_str()) == 0)
+            return _armors[i];
     }
     return NULL;
 }
 
 Armor::Armor(const ConfigElement &conf) {
-    type = static_cast<ArmorType>(armors.size());
-    name = conf.getString("name");
-    canuse = 0xFF;
-    defense = conf.getInt("defense");
-    mask = 0;
+	_type = static_cast<ArmorType>(_armors.size());
+    _name = conf.getString("name");
+    _canUse = 0xFF;
+    _defense = conf.getInt("defense");
+    _mask = 0;
 
     vector<ConfigElement> contraintConfs = conf.getChildren();
     for (Std::vector<ConfigElement>::iterator i = contraintConfs.begin(); i != contraintConfs.end(); i++) {
@@ -87,15 +87,15 @@ Armor::Armor(const ConfigElement &conf) {
                        i->getString("class").c_str());
         }
         if (i->getBool("canuse"))
-            canuse |= useMask;
+            _canUse |= useMask;
         else
-            canuse &= ~useMask;
+            _canUse &= ~useMask;
     }
 }
 
 void Armor::loadConf() {
-    if (!confLoaded)
-        confLoaded = true;
+    if (!_confLoaded)
+        _confLoaded = true;
     else
         return;
 
@@ -106,7 +106,7 @@ void Armor::loadConf() {
         if (i->getName() != "armor")
             continue;
 
-        armors.push_back(new Armor(*i));
+        _armors.push_back(new Armor(*i));
     }
 }
 

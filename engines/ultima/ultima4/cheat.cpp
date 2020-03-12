@@ -40,7 +40,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-CheatMenuController::CheatMenuController(GameController *game) : game(game) {
+CheatMenuController::CheatMenuController(GameController *game) : _game(game) {
 }
 
 bool CheatMenuController::keyPressed(int key) {
@@ -58,22 +58,22 @@ bool CheatMenuController::keyPressed(int key) {
     case '8':
         screenMessage("Gate %d!\n", key - '0');
 
-        if (c->location->map->isWorldMap()) {
+        if (c->_location->map->isWorldMap()) {
             const Coords *moongate = moongateGetGateCoordsForPhase(key - '1');
             if (moongate)
-                c->location->coords = *moongate;                
+                c->_location->coords = *moongate;                
         }
         else
             screenMessage("Not here!\n");
         break;
 
     case 'a': {
-        int newTrammelphase = c->saveGame->trammelphase + 1;
+        int newTrammelphase = c->_saveGame->trammelphase + 1;
         if (newTrammelphase > 7)
             newTrammelphase = 0;
 
         screenMessage("Advance Moons!\n");
-        while (c->saveGame->trammelphase != newTrammelphase)
+        while (c->_saveGame->trammelphase != newTrammelphase)
             game->updateMoons(true);
         break;
     }
@@ -86,27 +86,27 @@ bool CheatMenuController::keyPressed(int key) {
     case 'e':
         screenMessage("Equipment!\n");
         for (i = ARMR_NONE + 1; i < ARMR_MAX; i++)
-            c->saveGame->armor[i] = 8;
+            c->_saveGame->armor[i] = 8;
         for (i = WEAP_HANDS + 1; i < WEAP_MAX; i++) {
             const Weapon *weapon = Weapon::get(static_cast<WeaponType>(i));
             if (weapon->loseWhenUsed() || weapon->loseWhenRanged())
-                c->saveGame->weapons[i] = 99;
+                c->_saveGame->weapons[i] = 99;
             else
-                c->saveGame->weapons[i] = 8;
+                c->_saveGame->weapons[i] = 8;
         }
         break;
 
     case 'f':
         screenMessage("Full Stats!\n");
-        for (i = 0; i < c->saveGame->members; i++) {
-            c->saveGame->players[i].str = 50;
-            c->saveGame->players[i].dex = 50;
-            c->saveGame->players[i].intel = 50;
+        for (i = 0; i < c->_saveGame->members; i++) {
+            c->_saveGame->players[i].str = 50;
+            c->_saveGame->players[i].dex = 50;
+            c->_saveGame->players[i].intel = 50;
 
-            if (c->saveGame->players[i].hpMax < 800) {
-                c->saveGame->players[i].xp = 9999;
-                c->saveGame->players[i].hpMax = 800;
-                c->saveGame->players[i].hp = 800;
+            if (c->_saveGame->players[i].hpMax < 800) {
+                c->_saveGame->players[i].xp = 9999;
+                c->_saveGame->players[i].hpMax = 800;
+                c->_saveGame->players[i].hp = 800;
             }
         }
         break;
@@ -117,22 +117,22 @@ bool CheatMenuController::keyPressed(int key) {
         lowercase(dest);
 
         bool found = false;
-        for (unsigned p = 0; p < c->location->map->portals.size(); p++) {
-            MapId destid = c->location->map->portals[p]->destid;
+        for (unsigned p = 0; p < c->_location->map->portals.size(); p++) {
+            MapId destid = c->_location->map->portals[p]->destid;
             Common::String destNameLower = mapMgr->get(destid)->getName();
             lowercase(destNameLower);
             if (destNameLower.find(dest) != Common::String::npos) {
                 screenMessage("\n%s\n", mapMgr->get(destid)->getName().c_str());
-                c->location->coords = c->location->map->portals[p]->coords;
+                c->_location->coords = c->_location->map->portals[p]->coords;
                 found = true;
                 break;
             }
         }
         if (!found) {
-            MapCoords coords = c->location->map->getLabel(dest);
+            MapCoords coords = c->_location->map->getLabel(dest);
             if (coords != MapCoords::nowhere) {
                 screenMessage("\n%s\n", dest.c_str());
-                c->location->coords = coords;
+                c->_location->coords = coords;
                 found = true;
             }
         }
@@ -184,28 +184,28 @@ bool CheatMenuController::keyPressed(int key) {
 
     case 'i':
         screenMessage("Items!\n");
-        c->saveGame->torches = 99;
-        c->saveGame->gems = 99;
-        c->saveGame->keys = 99;
-        c->saveGame->sextants = 1;
-        c->saveGame->items = ITEM_SKULL | ITEM_CANDLE | ITEM_BOOK | ITEM_BELL | ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T | ITEM_HORN | ITEM_WHEEL;
-        c->saveGame->stones = 0xff;
-        c->saveGame->runes = 0xff;
-        c->saveGame->food = 999900;
-        c->saveGame->gold = 9999;
-        c->stats->update();
+        c->_saveGame->torches = 99;
+        c->_saveGame->gems = 99;
+        c->_saveGame->keys = 99;
+        c->_saveGame->sextants = 1;
+        c->_saveGame->items = ITEM_SKULL | ITEM_CANDLE | ITEM_BOOK | ITEM_BELL | ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T | ITEM_HORN | ITEM_WHEEL;
+        c->_saveGame->stones = 0xff;
+        c->_saveGame->runes = 0xff;
+        c->_saveGame->food = 999900;
+        c->_saveGame->gold = 9999;
+        c->_stats->update();
         break;
 
     case 'j':
         screenMessage("Joined by companions!\n");
-        for (int m = c->saveGame->members; m < 8; m++) {
+        for (int m = c->_saveGame->members; m < 8; m++) {
             debug("m = %d\n", m);
-            debug("n = %s\n", c->saveGame->players[m].name);
-            if (c->party->canPersonJoin(c->saveGame->players[m].name, NULL)) {
-                c->party->join(c->saveGame->players[m].name);
+            debug("n = %s\n", c->_saveGame->players[m].name);
+            if (c->_party->canPersonJoin(c->_saveGame->players[m].name, NULL)) {
+                c->_party->join(c->_saveGame->players[m].name);
             }
         }
-        c->stats->update();
+        c->_stats->update();
         break;
 
     case 'k':
@@ -215,37 +215,37 @@ bool CheatMenuController::keyPressed(int key) {
             screenMessage("%s:", getVirtueName(static_cast<Virtue>(i)));
             for (j = 13; j > strlen(getVirtueName(static_cast<Virtue>(i))); j--)
                 screenMessage(" ");
-            if (c->saveGame->karma[i] > 0)                
-                screenMessage("%.2d\n", c->saveGame->karma[i]);            
+            if (c->_saveGame->karma[i] > 0)                
+                screenMessage("%.2d\n", c->_saveGame->karma[i]);            
             else screenMessage("--\n");
         }
         break;
 
     case 'l':
-        if (c->location->map->isWorldMap())
-            screenMessage("\nLocation:\n%s\nx: %d\ny: %d\n", "World Map", c->location->coords.x, c->location->coords.y);
+        if (c->_location->map->isWorldMap())
+            screenMessage("\nLocation:\n%s\nx: %d\ny: %d\n", "World Map", c->_location->coords.x, c->_location->coords.y);
         else
-            screenMessage("\nLocation:\n%s\nx: %d\ny: %d\nz: %d\n", c->location->map->getName().c_str(), c->location->coords.x, c->location->coords.y, c->location->coords.z);
+            screenMessage("\nLocation:\n%s\nx: %d\ny: %d\nz: %d\n", c->_location->map->getName().c_str(), c->_location->coords.x, c->_location->coords.y, c->_location->coords.z);
         break;
 
     case 'm':
         screenMessage("Mixtures!\n");
         for (i = 0; i < SPELL_MAX; i++)
-            c->saveGame->mixtures[i] = 99;
+            c->_saveGame->mixtures[i] = 99;
         break;
 
     case 'o':
-        c->opacity = !c->opacity;
-        screenMessage("Opacity %s!\n", c->opacity ? "on" : "off");
+        c->_opacity = !c->_opacity;
+        screenMessage("Opacity %s!\n", c->_opacity ? "on" : "off");
         break;
 
     case 'p':        
-        if ((c->location->viewMode == VIEW_NORMAL) || (c->location->viewMode == VIEW_DUNGEON))
-            c->location->viewMode = VIEW_GEM;
-        else if (c->location->context == CTX_DUNGEON)
-            c->location->viewMode = VIEW_DUNGEON;
+        if ((c->_location->viewMode == VIEW_NORMAL) || (c->_location->viewMode == VIEW_DUNGEON))
+            c->_location->viewMode = VIEW_GEM;
+        else if (c->_location->context == CTX_DUNGEON)
+            c->_location->viewMode = VIEW_DUNGEON;
         else 
-            c->location->viewMode = VIEW_NORMAL;
+            c->_location->viewMode = VIEW_NORMAL;
         
         screenMessage("\nToggle View!\n");
         break;
@@ -253,7 +253,7 @@ bool CheatMenuController::keyPressed(int key) {
     case 'r':
         screenMessage("Reagents!\n");
         for (i = 0; i < REAG_MAX; i++)
-            c->saveGame->reagents[i] = 99;
+            c->_saveGame->reagents[i] = 99;
         break;
 
     case 's':
@@ -263,11 +263,11 @@ bool CheatMenuController::keyPressed(int key) {
         break;
 
     case 't':
-        if (c->location->map->isWorldMap()) {
-            MapCoords coords = c->location->coords;
-            static MapTile horse = c->location->map->tileset->getByName("horse")->getId(),
-                ship = c->location->map->tileset->getByName("ship")->getId(),
-                balloon = c->location->map->tileset->getByName("balloon")->getId();
+        if (c->_location->map->isWorldMap()) {
+            MapCoords coords = c->_location->coords;
+            static MapTile horse = c->_location->map->tileset->getByName("horse")->getId(),
+                ship = c->_location->map->tileset->getByName("ship")->getId(),
+                balloon = c->_location->map->tileset->getByName("balloon")->getId();
             MapTile *choice; 
             Tile *tile;
             
@@ -286,7 +286,7 @@ bool CheatMenuController::keyPressed(int key) {
 
             if (choice) {
                 ReadDirController readDir;
-                tile = c->location->map->tileset->get(choice->getId());
+                tile = c->_location->map->tileset->get(choice->getId());
 
                 screenMessage("%s\n", tile->getName().c_str());
 
@@ -294,10 +294,10 @@ bool CheatMenuController::keyPressed(int key) {
                 eventHandler->pushController(&readDir);                
 
                 screenMessage("Dir: ");
-                coords.move(readDir.waitFor(), c->location->map);
-                if (coords != c->location->coords) {            
+                coords.move(readDir.waitFor(), c->_location->map);
+                if (coords != c->_location->coords) {            
                     bool ok = false;
-                    MapTile *ground = c->location->map->tileAt(coords, WITHOUT_OBJECTS);
+                    MapTile *ground = c->_location->map->tileAt(coords, WITHOUT_OBJECTS);
 
                     screenMessage("%s\n", getDirectionName(readDir.getValue()));
 
@@ -309,7 +309,7 @@ bool CheatMenuController::keyPressed(int key) {
                     }
 
                     if (choice && ok) {
-                        c->location->map->addObject(*choice, *choice, coords);
+                        c->_location->map->addObject(*choice, *choice, coords);
                         screenMessage("%s created!\n", tile->getName().c_str());
                     }
                     else if (!choice)
@@ -324,8 +324,8 @@ bool CheatMenuController::keyPressed(int key) {
     case 'v':
         screenMessage("\nFull Virtues!\n");
         for (i = 0; i < 8; i++)
-            c->saveGame->karma[i] = 0;        
-        c->stats->update();
+            c->_saveGame->karma[i] = 0;        
+        c->_stats->update();
         break;
 
     case 'w': {
@@ -345,8 +345,8 @@ bool CheatMenuController::keyPressed(int key) {
 
     case 'y':
         screenMessage("Y-up!\n");
-        if ((c->location->context & CTX_DUNGEON) && (c->location->coords.z > 0))
-            c->location->coords.z--;
+        if ((c->_location->context & CTX_DUNGEON) && (c->_location->coords.z > 0))
+            c->_location->coords.z--;
         else {
             screenMessage("Leaving...\n");
             game->exitToParentMap();
@@ -356,8 +356,8 @@ bool CheatMenuController::keyPressed(int key) {
 
     case 'z':
         screenMessage("Z-down!\n");
-        if ((c->location->context & CTX_DUNGEON) && (c->location->coords.z < 7))
-            c->location->coords.z++;
+        if ((c->_location->context & CTX_DUNGEON) && (c->_location->coords.z < 7))
+            c->_location->coords.z++;
         else screenMessage("Not Here!\n");
         break;
 
@@ -370,13 +370,13 @@ bool CheatMenuController::keyPressed(int key) {
 	case Common::KEYCODE_F7:
 	case Common::KEYCODE_F8:
         screenMessage("Improve %s!\n", getVirtueName(static_cast<Virtue>(key - Common::KEYCODE_F1)));
-        if (c->saveGame->karma[key - Common::KEYCODE_F1] == 99)
-            c->saveGame->karma[key - Common::KEYCODE_F1] = 0;
-        else if (c->saveGame->karma[key - Common::KEYCODE_F1] != 0)
-            c->saveGame->karma[key - Common::KEYCODE_F1] += 10;
-        if (c->saveGame->karma[key - Common::KEYCODE_F1] > 99)
-            c->saveGame->karma[key - Common::KEYCODE_F1] = 99;
-        c->stats->update();
+        if (c->_saveGame->karma[key - Common::KEYCODE_F1] == 99)
+            c->_saveGame->karma[key - Common::KEYCODE_F1] = 0;
+        else if (c->_saveGame->karma[key - Common::KEYCODE_F1] != 0)
+            c->_saveGame->karma[key - Common::KEYCODE_F1] += 10;
+        if (c->_saveGame->karma[key - Common::KEYCODE_F1] > 99)
+            c->_saveGame->karma[key - Common::KEYCODE_F1] = 99;
+        c->_stats->update();
         break;
 
 	case Common::KEYCODE_ESCAPE:
@@ -438,14 +438,14 @@ bool WindCmdController::keyPressed(int key) {
     case Common::KEYCODE_LEFT:
     case Common::KEYCODE_DOWN:
     case Common::KEYCODE_RIGHT:
-        c->windDirection = keyToDirection(key);
-        screenMessage("Wind %s!\n", getDirectionName(static_cast<Direction>(c->windDirection)));
+        c->_windDirection = keyToDirection(key);
+        screenMessage("Wind %s!\n", getDirectionName(static_cast<Direction>(c->_windDirection)));
         doneWaiting();
         return true;
 
     case 'l':
-        c->windLock = !c->windLock;
-        screenMessage("Wind direction is %slocked!\n", c->windLock ? "" : "un");
+        c->_windLock = !c->_windLock;
+        screenMessage("Wind direction is %slocked!\n", c->_windLock ? "" : "un");
         doneWaiting();
         return true;
     }

@@ -616,7 +616,7 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
     // get the creature object, if it exists (the one that's moving)
     m = creatureMgr->getByTile(transport);
 
-    bool isAvatar = (c->location->coords == coords);
+    bool isAvatar = (c->_location->coords == coords);
     if (m && m->canMoveOntoPlayer())
     	isAvatar = false;
 
@@ -638,7 +638,7 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
         obj = objectAt(coords);
 
         // see if it's trying to move onto the avatar
-        if ((flags & SHOW_AVATAR) && (coords == c->location->coords))
+        if ((flags & SHOW_AVATAR) && (coords == c->_location->coords))
             ontoAvatar = 1;
         
         // see if it's trying to move onto a person or creature
@@ -648,7 +648,7 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
         // get the destination tile
         MapTile tile;
         if (ontoAvatar)
-            tile = c->party->getTransport();
+            tile = c->_party->getTransport();
         else if (ontoCreature)
             tile = obj->getTile();
         else 

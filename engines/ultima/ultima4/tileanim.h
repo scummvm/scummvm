@@ -46,10 +46,10 @@ public:
     virtual bool drawsTile() const = 0;
     
     // Properties
-    int random;
+    int _randomVal;
 
 private:    
-    bool replaces;
+    bool _replaces;
 };
 
 /**
@@ -78,7 +78,7 @@ public:
     virtual bool drawsTile() const;
 
     int x, y;
-    Std::vector<RGBA *> colors;
+    Std::vector<RGBA *> _colors;
 };
 
 /**
@@ -153,7 +153,7 @@ public:
     virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
 
 private:
-    int frame;
+    int _frame;
 };
 
 /**
@@ -165,7 +165,7 @@ public:
     virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
 
 private:
-    Direction dir;
+    Direction _dir;
 };
 
 /**
@@ -177,9 +177,9 @@ class TileAnim {
 public:
     TileAnim(const ConfigElement &conf);
 
-    Common::String name;
-    Std::vector<TileAnimTransform *> transforms;
-    Std::vector<TileAnimContext *> contexts;
+    Common::String _name;
+    Std::vector<TileAnimTransform *> _transforms;
+    Std::vector<TileAnimContext *> _contexts;
 
     /* returns the frame to set the mapTile to (only relevent if persistent) */
     void draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir);     
@@ -199,8 +199,8 @@ public:
 
     TileAnim *getByName(const Common::String &name);
 
-    Common::String name;
-    TileAnimMap tileanims;
+    Common::String _name;
+    TileAnimMap _tileAnims;
 };
 
 } // End of namespace Ultima4

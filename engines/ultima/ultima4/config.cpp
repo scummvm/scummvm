@@ -31,7 +31,7 @@ namespace Ultima4 {
 using namespace std;
 
 extern bool verbose;
-Config *Config::instance = NULL;
+Config *Config::_instance = NULL;
 
 const Config *Config::getInstance() {
 #ifdef TODO
@@ -40,7 +40,7 @@ const Config *Config::getInstance() {
         instance = new Config;
     }
 #endif
-	return instance;
+	return _instance;
 }
 
 ConfigElement Config::getElement(const Common::String &name) const {

@@ -47,9 +47,9 @@ public:
     virtual void unhighlight();
 
 protected:
-    const int x, y, width, height;
-    bool highlighted;
-    int highlightX, highlightY, highlightW, highlightH;
+    const int _x, _y, _width, _height;
+    bool _highlighted;
+    int _highlightX, _highlightY, _highlightW, _highlightH;
     void drawHighlighted();
 #ifdef IOS
     friend void U4IOS::updateScreenView();

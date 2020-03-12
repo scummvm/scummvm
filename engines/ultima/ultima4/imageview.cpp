@@ -42,7 +42,7 @@ ImageView::~ImageView() {
 void ImageView::draw(const Common::String &imageName, int x, int y) {
     ImageInfo *info = imageMgr->get(imageName);
     if (info) {
-        info->image->draw(SCALED(this->x + x), SCALED(this->y + y));
+        info->image->draw(SCALED(this->_x + x), SCALED(this->_y + y));
         return;
     }
 
@@ -51,7 +51,7 @@ void ImageView::draw(const Common::String &imageName, int x, int y) {
         info = imageMgr->get(subimage->srcImageName);
 
         if (info) {
-            info->image->drawSubRect(SCALED(this->x + x), SCALED(this->y + y),
+            info->image->drawSubRect(SCALED(this->_x + x), SCALED(this->_y + y),
                                      SCALED(subimage->x) / info->prescale,
                                      SCALED(subimage->y) / info->prescale,
                                      SCALED(subimage->width) / info->prescale,

@@ -58,14 +58,14 @@ public:
     static void destroy();
     
     void add(U4ZipPackage *package);
-    const Std::vector<U4ZipPackage *> &getPackages() const { return packages; }
+    const Std::vector<U4ZipPackage *> &getPackages() const { return _packages; }
 
 private:
     U4ZipPackageMgr();
     ~U4ZipPackageMgr();
 
-    static U4ZipPackageMgr *instance;
-    Std::vector<U4ZipPackage *> packages;
+    static U4ZipPackageMgr *_instance;
+    Std::vector<U4ZipPackage *> _packages;
 };
 
 #ifdef putc
@@ -100,8 +100,8 @@ public:
 	U4PATH() : defaultsHaveBeenInitd(false){}
     void initDefaultPaths();
 
-    static U4PATH * instance;
-    static U4PATH * getInstance();
+    static U4PATH *_instance;
+    static U4PATH *getInstance();
 
 
 	Common::List<Common::String> rootResourcePaths;

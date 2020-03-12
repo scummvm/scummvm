@@ -153,7 +153,7 @@ bool CityMapLoader::load(Map *map) {
     DialogueLoader *dlgLoader = DialogueLoader::getLoader("application/x-u4tlk");
 
     U4FILE *ult = u4fopen(city->fname);
-    U4FILE *tlk = u4fopen(city->tlk_fname);
+    U4FILE *tlk = u4fopen(city->_tlkFname);
     if (!ult || !tlk)
         errorFatal("unable to load map data");
 
@@ -225,7 +225,7 @@ bool CityMapLoader::load(Map *map) {
          * this
          */
         if (!found) {
-            city->extraDialogues.push_back(dialogues[i]);
+            city->_extraDialogues.push_back(dialogues[i]);
         }
     }    
 
@@ -235,13 +235,13 @@ bool CityMapLoader::load(Map *map) {
     for (i = 0; i < CITY_MAX_PERSONS; i++) {
         PersonRoleList::iterator current;
 
-        for (current = city->personroles.begin(); current != city->personroles.end(); current++) {
-            if ((unsigned)(*current)->id == (i + 1)) {
-                if ((*current)->role == NPC_LORD_BRITISH)
+        for (current = city->_personRoles.begin(); current != city->_personRoles.end(); current++) {
+            if ((unsigned)(*current)->_id == (i + 1)) {
+                if ((*current)->_role == NPC_LORD_BRITISH)
                     people[i]->setDialogue(DialogueLoader::getLoader("application/x-u4lbtlk")->load(NULL));
-                else if ((*current)->role == NPC_HAWKWIND)
+                else if ((*current)->_role == NPC_HAWKWIND)
                     people[i]->setDialogue(DialogueLoader::getLoader("application/x-u4hwtlk")->load(NULL));
-                people[i]->setNpcType(static_cast<PersonNpcType>((*current)->role));
+                people[i]->setNpcType(static_cast<PersonNpcType>((*current)->_role));
             }
         }
     }
@@ -251,7 +251,7 @@ bool CityMapLoader::load(Map *map) {
      */
     for (i = 0; i < CITY_MAX_PERSONS; i++) {
         if (people[i]->getTile() != 0)            
-            city->persons.push_back(people[i]);        
+            city->_persons.push_back(people[i]);        
         else
             delete people[i];
     }
@@ -337,7 +337,7 @@ bool DngMapLoader::load(Map *map) {
         for (j = 0; j < DNGROOM_NTRIGGERS; j++) {
             int tmp;
 
-            dungeon->rooms[i].triggers[j].tile = TileMap::get("base")->translate(u4fgetc(dng)).id;
+            dungeon->rooms[i].triggers[j].tile = TileMap::get("base")->translate(u4fgetc(dng))._id;
 
             tmp = u4fgetc(dng);
             if (tmp == EOF)
@@ -374,7 +374,7 @@ bool DngMapLoader::load(Map *map) {
 
         /* translate each creature tile to a tile id */
         for (j = 0; j < sizeof(dungeon->rooms[i].creature_tiles); j++)
-            dungeon->rooms[i].creature_tiles[j] = TileMap::get("base")->translate(dungeon->rooms[i].creature_tiles[j]).id;
+            dungeon->rooms[i].creature_tiles[j] = TileMap::get("base")->translate(dungeon->rooms[i].creature_tiles[j])._id;
 
         /* translate each map tile to a tile id */
         for (j = 0; j < sizeof(room_tiles); j++)

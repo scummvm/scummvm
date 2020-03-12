@@ -26,9 +26,9 @@ namespace Ultima {
 namespace Ultima4 {
 
 Context::Context()
-	: party(NULL)
-	, saveGame(NULL)
-	, location(NULL) {
+	: _party(NULL)
+	, _saveGame(NULL)
+	, _location(NULL) {
 
 }
 

@@ -39,7 +39,7 @@ public:
 private:
     void summonCreature(const Common::String &name);
 
-    GameController *game;
+    GameController *_game;
 };
 
 /**

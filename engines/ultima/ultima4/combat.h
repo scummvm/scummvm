@@ -122,21 +122,21 @@ public:
 
     // Properties
 protected:
-    CombatMap *map;
+    CombatMap *_map;
     
-    PartyMemberVector party;
-    unsigned char focus;
+    PartyMemberVector _party;
+    unsigned char _focus;
 
     const Creature *creatureTable[AREA_CREATURES];
     Creature *_creature;    
 
-    bool camping;
-    bool forceStandardEncounterSize;
-    bool placePartyOnMap;
-    bool placeCreaturesOnMap;
-    bool winOrLose;
-    bool showMessage;
-    Direction exitDir;
+    bool _camping;
+    bool _forceStandardEncounterSize;
+    bool _placePartyOnMap;
+    bool _placeCreaturesOnMap;
+    bool _winOrLose;
+    bool _showMessage;
+    Direction _exitDir;
 
 private:
     CombatController(const CombatController&);
@@ -158,21 +158,21 @@ public:
     static MapId mapForTile(const Tile *ground, const Tile *transport, Object *obj);
 
     // Getters
-    bool isDungeonRoom() const      {return dungeonRoom;}
-    bool isAltarRoom() const        {return altarRoom != VIRT_NONE;}
-    bool isContextual() const       {return contextual;}
-    BaseVirtue getAltarRoom() const {return altarRoom;}
+    bool isDungeonRoom() const      {return _dungeonRoom;}
+    bool isAltarRoom() const        {return _altarRoom != VIRT_NONE;}
+    bool isContextual() const       {return _contextual;}
+    BaseVirtue getAltarRoom() const {return _altarRoom;}
 
     // Setters
-    void setAltarRoom(BaseVirtue ar){altarRoom = ar;}
-    void setDungeonRoom(bool d)     {dungeonRoom = d;}
-    void setContextual(bool c)      {contextual = c;}
+    void setAltarRoom(BaseVirtue ar){_altarRoom = ar;}
+    void setDungeonRoom(bool d)     {_dungeonRoom = d;}
+    void setContextual(bool c)      {_contextual = c;}
     
     // Properties
 protected:
-    bool dungeonRoom;
-    BaseVirtue altarRoom;
-    bool contextual;
+    bool _dungeonRoom;
+    BaseVirtue _altarRoom;
+    bool _contextual;
 
 public:
     Coords creature_start[AREA_CREATURES];

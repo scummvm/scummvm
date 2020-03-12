@@ -51,8 +51,8 @@ private:
     static void *fileOpen(const char *filename);
     static void accumError(void *l, const char *fmt, ...);
 
-    static Config *instance;
-    xmlDocPtr doc;
+    static Config *_instance;
+    xmlDocPtr _doc;
 };
 
 /**

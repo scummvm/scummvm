@@ -48,28 +48,28 @@ public:
     void debug_output() const;
 
     // Getters
-    const Coords& getCoords() const {return coords; } /**< Returns the coordinates of the annotation */
-    MapTile& getTile()              {return tile;   } /**< Returns the annotation's tile */
-    bool isVisualOnly() const {return visual; } /**< Returns true for visual-only annotations */
-    const int getTTL() const        {return ttl;    } /**< Returns the number of turns the annotation has left to live */
-    bool isCoverUp()                {return coverUp;}
+    const Coords& getCoords() const {return _coords; } /**< Returns the coordinates of the annotation */
+    MapTile& getTile()              {return _tile;   } /**< Returns the annotation's tile */
+    bool isVisualOnly() const {return _visual; } /**< Returns true for visual-only annotations */
+    const int getTTL() const        {return _ttl;    } /**< Returns the number of turns the annotation has left to live */
+    bool isCoverUp()                {return _coverUp;}
 
     // Setters
-    void setCoords(const Coords &c) {coords = c;    } /**< Sets the coordinates for the annotation */
-    void setTile(const MapTile &t)  {tile = t;      } /**< Sets the tile for the annotation */
-    void setVisualOnly(bool v)      {visual = v;    } /**< Sets whether or not the annotation is visual-only */
-    void setTTL(int turns)          {ttl = turns;   } /**< Sets the number of turns the annotation will live */
-    void passTurn()                 {if (ttl > 0) ttl--; } /**< Passes a turn for the annotation */
+    void setCoords(const Coords &c) {_coords = c;    } /**< Sets the coordinates for the annotation */
+    void setTile(const MapTile &t)  {_tile = t;      } /**< Sets the tile for the annotation */
+    void setVisualOnly(bool v)      {_visual = v;    } /**< Sets whether or not the annotation is visual-only */
+    void setTTL(int turns)          {_ttl = turns;   } /**< Sets the number of turns the annotation will live */
+    void passTurn()                 {if (_ttl > 0) _ttl--; } /**< Passes a turn for the annotation */
 
     bool operator==(const Annotation&) const;    
 
     // Properties
 private:        
-    Coords coords;
-    MapTile tile;        
-    bool visual;
-    int ttl;
-    bool coverUp;
+    Coords _coords;
+    MapTile _tile;        
+    bool _visual;
+    int _ttl;
+    bool _coverUp;
 };
 
 /** 
@@ -92,8 +92,8 @@ public:
     int              size();
 
 private:        
-    Annotation::List  annotations;
-    Annotation::List::iterator i;
+    Annotation::List  _annotations;
+    Annotation::List::iterator _it;
 };
 
 } // End of namespace Ultima4

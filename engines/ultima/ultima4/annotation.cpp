@@ -39,29 +39,29 @@ namespace Ultima4 {
  * Constructors
  */ 
 Annotation::Annotation(const Coords &pos, MapTile t, bool v, bool coverUp) :
-    coords(pos), 
-    tile(t),
-    visual(v),
-    ttl(-1),
-    coverUp(coverUp)
+    _coords(pos), 
+    _tile(t),
+    _visual(v),
+    _ttl(-1),
+    _coverUp(coverUp)
 {}
 
 /**
  * Members
  */ 
 void Annotation::debug_output() const {        
-    debug(1, "x: %d\n", coords.x);
-    debug(1, "y: %d\n", coords.y);
-    debug(1, "z: %d\n", coords.z);
-    debug(1, "tile: %d\n", tile.getId());
-    debug(1, "visual: %s\n", visual ? "Yes" : "No");
+    debug(1, "x: %d\n", _coords.x);
+    debug(1, "y: %d\n", _coords.y);
+    debug(1, "z: %d\n", _coords.z);
+    debug(1, "tile: %d\n", _tile.getId());
+    debug(1, "visual: %s\n", _visual ? "Yes" : "No");
 }
 
 /**
  * Operators
  */ 
 bool Annotation::operator==(const Annotation &a) const {
-    return ((coords == a.getCoords()) && (tile == a.tile)) ? true : false;        
+    return ((_coords == a.getCoords()) && (_tile == a._tile)) ? true : false;        
 }
 
 /**
@@ -81,8 +81,8 @@ AnnotationMgr::AnnotationMgr() {}
  */
 Annotation *AnnotationMgr::add(Coords coords, MapTile tile, bool visual, bool isCoverUp) {
     /* new annotations go to the front so they're handled "on top" */
-    annotations.push_front(Annotation(coords, tile, visual, isCoverUp));
-    return &annotations.front();
+    _annotations.push_front(Annotation(coords, tile, visual, isCoverUp));
+    return &_annotations.front();
 }        
 
 /**
@@ -91,9 +91,9 @@ Annotation *AnnotationMgr::add(Coords coords, MapTile tile, bool visual, bool is
 Annotation::List AnnotationMgr::allAt(Coords coords) {
     Annotation::List list;
 
-    for (i = annotations.begin(); i != annotations.end(); i++) {
-        if (i->getCoords() == coords)
-            list.push_back(*i);
+    for (_it = _annotations.begin(); _it != _annotations.end(); _it++) {
+        if (_it->getCoords() == coords)
+            list.push_back(*_it);
     }
     
     return list;
@@ -105,9 +105,9 @@ Annotation::List AnnotationMgr::allAt(Coords coords) {
 Common::List<Annotation *> AnnotationMgr::ptrsToAllAt(Coords coords) {
     Common::List<Annotation *> list;
 
-    for (i = annotations.begin(); i != annotations.end(); i++) {
-        if (i->getCoords() == coords)
-            list.push_back(&(*i));
+    for (_it = _annotations.begin(); _it != _annotations.end(); _it++) {
+        if (_it->getCoords() == coords)
+            list.push_back(&(*_it));
     }
     
     return list;
@@ -117,7 +117,7 @@ Common::List<Annotation *> AnnotationMgr::ptrsToAllAt(Coords coords) {
  * Removes all annotations on the map 
  */ 
 void AnnotationMgr::clear() {
-    annotations.clear();        
+    _annotations.clear();        
 }    
 
 /**
@@ -125,14 +125,14 @@ void AnnotationMgr::clear() {
  * annotations whose TTL has expired
  */ 
 void AnnotationMgr::passTurn() {
-    for (i = annotations.begin(); i != annotations.end(); i++) {
-        if (i->getTTL() == 0) {
-            i = annotations.erase(i);
-            if (i == annotations.end())
+    for (_it = _annotations.begin(); _it != _annotations.end(); _it++) {
+        if (_it->getTTL() == 0) {
+            _it = _annotations.erase(_it);
+            if (_it == _annotations.end())
                 break;
-        }
-        else if (i->getTTL() > 0)
-            i->passTurn();
+		} else if (_it->getTTL() > 0) {
+			_it->passTurn();
+		}
     }
 }
 
@@ -145,9 +145,9 @@ void AnnotationMgr::remove(Coords coords, MapTile tile) {
 }
 
 void AnnotationMgr::remove(Annotation &a) {
-    for (i = annotations.begin(); i != annotations.end(); i++) {
-        if (*i == a) {
-            i = annotations.erase(i);
+    for (_it = _annotations.begin(); _it != _annotations.end(); _it++) {
+        if (*_it == a) {
+            _it = _annotations.erase(_it);
             break;
         }
     }
@@ -167,7 +167,7 @@ void AnnotationMgr::remove(Annotation::List l) {
  * Returns the number of annotations on the map
  */ 
 int AnnotationMgr::size() {
-    return annotations.size();
+    return _annotations.size();
 }
 
 } // End of namespace Ultima4

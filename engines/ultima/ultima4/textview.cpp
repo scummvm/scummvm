@@ -61,8 +61,8 @@ void TextView::drawChar(int chr, int x, int y) {
     ASSERT(x < columns, "x value of %d out of range", x);
     ASSERT(y < rows, "y value of %d out of range", y);
 
-    charset->drawSubRect(SCALED(this->x + (x * CHAR_WIDTH)),
-                         SCALED(this->y + (y * CHAR_HEIGHT)),
+    charset->drawSubRect(SCALED(this->_x + (x * CHAR_WIDTH)),
+                         SCALED(this->_y + (y * CHAR_HEIGHT)),
                          0, SCALED(chr * CHAR_HEIGHT),
                          SCALED(CHAR_WIDTH),
                          SCALED(CHAR_HEIGHT));
@@ -78,8 +78,8 @@ void TextView::drawCharMasked(int chr, int x, int y, unsigned char mask) {
     drawChar(chr, x, y);
     for (int i = 0; i < 8; i++) {
         if (mask & (1 << i)) {
-            screen->fillRect(SCALED(this->x + (x * CHAR_WIDTH)),
-                             SCALED(this->y + (y * CHAR_HEIGHT) + i),
+            screen->fillRect(SCALED(this->_x + (x * CHAR_WIDTH)),
+                             SCALED(this->_y + (y * CHAR_HEIGHT) + i),
                              SCALED(CHAR_WIDTH),
                              SCALED(1),
                              0, 0, 0);
@@ -208,16 +208,16 @@ void TextView::textAt(int x, int y, const char *fmt, ...) {
 
 void TextView::scroll() {
     screen->drawSubRectOn(screen,
-                          SCALED(x),
-                          SCALED(y),
-                          SCALED(x),
-                          SCALED(y) + SCALED(CHAR_HEIGHT),
-                          SCALED(width),
-                          SCALED(height) - SCALED(CHAR_HEIGHT));
+                          SCALED(_x),
+                          SCALED(_y),
+                          SCALED(_x),
+                          SCALED(_y) + SCALED(CHAR_HEIGHT),
+                          SCALED(_width),
+                          SCALED(_height) - SCALED(CHAR_HEIGHT));
 
-    screen->fillRect(SCALED(x),
-                     SCALED(y + (CHAR_HEIGHT * (rows - 1))),
-                     SCALED(width),
+    screen->fillRect(SCALED(_x),
+                     SCALED(_y + (CHAR_HEIGHT * (rows - 1))),
+                     SCALED(_width),
                      SCALED(CHAR_HEIGHT),
                      0, 0, 0);
 

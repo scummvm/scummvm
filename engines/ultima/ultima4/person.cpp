@@ -172,7 +172,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
             // unload the previous script if it wasn't already unloaded
             if (script->getState() != Script::STATE_UNLOADED)
                 script->unload();
-            script->load("vendorScript.xml", ids[npcType - NPC_VENDOR_WEAPONS], "vendor", c->location->map->getName());
+            script->load("vendorScript.xml", ids[npcType - NPC_VENDOR_WEAPONS], "vendor", c->_location->map->getName());
             script->run("intro");       
 #ifdef IOS
             U4IOS::IOSConversationChoiceHelper choiceDialog;
@@ -206,7 +206,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
                         U4IOS::IOSConversationHelper ipadNumberInput;
                         ipadNumberInput.beginConversation(U4IOS::UIKeyboardTypeNumberPad, "Amount?");
 #endif
-                        int val = ReadIntController::get(script->getInputMaxLen(), TEXT_AREA_X + c->col, TEXT_AREA_Y + c->line);
+                        int val = ReadIntController::get(script->getInputMaxLen(), TEXT_AREA_X + c->col, TEXT_AREA_Y + c->_line);
                         script->setVar(script->getInputName(), val);
                     } break;
 
@@ -215,7 +215,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
                         U4IOS::IOSConversationHelper ipadNumberInput;
                         ipadNumberInput.beginConversation(U4IOS::UIKeyboardTypeDefault);
 #endif
-                        Common::String str = ReadStringController::get(script->getInputMaxLen(), TEXT_AREA_X + c->col, TEXT_AREA_Y + c->line);
+                        Common::String str = ReadStringController::get(script->getInputMaxLen(), TEXT_AREA_X + c->col, TEXT_AREA_Y + c->_line);
                         if (str.size()) {
                             lowercase(str);                        
                             script->setVar(script->getInputName(), str);
@@ -238,7 +238,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
                     } // } switch
 
                     // Continue running the script!
-                    c->line++;
+                    c->_line++;
                     script->_continue();
                 } // } if 
             } // } while
@@ -383,10 +383,10 @@ void Person::runCommand(Conversation *cnv, const ResponsePart &command) {
         cnv->state = Conversation::ATTACK;
     }
     else if (command == ResponsePart::BRAGGED) {
-        c->party->adjustKarma(KA_BRAGGED);
+        c->_party->adjustKarma(KA_BRAGGED);
     }
     else if (command == ResponsePart::HUMBLE) {
-        c->party->adjustKarma(KA_HUMBLE);
+        c->_party->adjustKarma(KA_HUMBLE);
     }
     else if (command == ResponsePart::ADVANCELEVELS) {
         cnv->state = Conversation::ADVANCELEVELS;
@@ -404,7 +404,7 @@ void Person::runCommand(Conversation *cnv, const ResponsePart &command) {
         musicMgr->play();
     }
     else if (command == ResponsePart::HAWKWIND) {
-        c->party->adjustKarma(KA_HAWKWIND);
+        c->_party->adjustKarma(KA_HAWKWIND);
     }
     else {
         ASSERT(0, "unknown command trigger in dialogue response: %s\n", Common::String(command).c_str());
@@ -434,12 +434,12 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
     }
 
     else if (scumm_strnicmp(inquiry, "join", 4) == 0 &&
-             c->party->canPersonJoin(getName(), &v)) {
-        CannotJoinError join = c->party->join(getName());
+             c->_party->canPersonJoin(getName(), &v)) {
+        CannotJoinError join = c->_party->join(getName());
 
         if (join == JOIN_SUCCEEDED) {
             reply += "I am honored to join thee!";
-            c->location->map->removeObject(this);
+            c->_location->map->removeObject(this);
             cnv->state = Conversation::DONE;
         } else {
             reply += "Thou art not ";
@@ -494,7 +494,7 @@ Common::String Person::beggarGetQuantityResponse(Conversation *cnv, const char *
     cnv->state = Conversation::TALK;
 
     if (cnv->quant > 0) {
-        if (c->party->donate(cnv->quant)) {
+        if (c->_party->donate(cnv->quant)) {
             reply = "\n";
             reply += dialogue->getPronoun();
             reply += " says: Oh Thank thee! I shall never forget thy kindness!\n";

@@ -31,8 +31,6 @@ namespace Ultima4 {
 
 class ConfigElement;
 
-using Common::String;
-
 /**
  * A tilemap maps the raw bytes in a map file to MapTiles.
  */
@@ -49,9 +47,9 @@ public:
 
 private:
     static void load(const ConfigElement &tilemapConf);
-    static TileIndexMapMap tileMaps;
+    static TileIndexMapMap _tileMaps;
 
-    Std::map<unsigned int, MapTile> tilemap;
+    Std::map<unsigned int, MapTile> _tileMap;
 };
 
 } // End of namespace Ultima4

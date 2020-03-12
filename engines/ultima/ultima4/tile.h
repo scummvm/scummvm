@@ -83,38 +83,38 @@ public:
     bool isLandForeground() const       {return foreground;}
     bool isWaterForeground() const      {return waterForeground;}
 
-    int canWalkOn(Direction d) const   {return DIR_IN_MASK(d, rule->walkonDirs);}
-	int canWalkOff(Direction d) const  { return DIR_IN_MASK(d, rule->walkoffDirs); }
+    int canWalkOn(Direction d) const   {return DIR_IN_MASK(d, rule->_walkOnDirs);}
+	int canWalkOff(Direction d) const  { return DIR_IN_MASK(d, rule->_walkOffDirs); }
 
     /**
      * All tiles that you can walk, swim, or sail on, can be attacked over. All others must declare
      * themselves
      */
-	int  canAttackOver() const      {return isWalkable() || isSwimable() || isSailable() || (rule->mask & MASK_ATTACKOVER); }
-	int  canLandBalloon() const     {return rule->mask & MASK_CANLANDBALLOON; }
-	int  isLivingObject() const     {return rule->mask & MASK_LIVING_THING; }
-	int  isReplacement() const      {return rule->mask & MASK_REPLACEMENT; }
-	int  isWaterReplacement() const {return rule->mask & MASK_WATER_REPLACEMENT; }
+	int  canAttackOver() const      {return isWalkable() || isSwimable() || isSailable() || (rule->_mask & MASK_ATTACKOVER); }
+	int  canLandBalloon() const     {return rule->_mask & MASK_CANLANDBALLOON; }
+	int  isLivingObject() const     {return rule->_mask & MASK_LIVING_THING; }
+	int  isReplacement() const      {return rule->_mask & MASK_REPLACEMENT; }
+	int  isWaterReplacement() const {return rule->_mask & MASK_WATER_REPLACEMENT; }
 
-	int  isWalkable() const         {return rule->walkonDirs > 0; }
-    bool isCreatureWalkable() const {return canWalkOn(DIR_ADVANCE) && !(rule->movementMask & MASK_CREATURE_UNWALKABLE);}
+	int  isWalkable() const         {return rule->_walkOnDirs > 0; }
+    bool isCreatureWalkable() const {return canWalkOn(DIR_ADVANCE) && !(rule->_movementMask & MASK_CREATURE_UNWALKABLE);}
     bool isDungeonWalkable() const;
     bool isDungeonFloor() const;
-    int  isSwimable() const         {return rule->movementMask & MASK_SWIMABLE;}
-    int  isSailable() const         {return rule->movementMask & MASK_SAILABLE;}
+    int  isSwimable() const         {return rule->_movementMask & MASK_SWIMABLE;}
+    int  isSailable() const         {return rule->_movementMask & MASK_SAILABLE;}
     bool isWater() const            {return (isSwimable() || isSailable());}
-    int  isFlyable() const          {return !(rule->movementMask & MASK_UNFLYABLE);}
-    int  isDoor() const             {return rule->mask & MASK_DOOR;}
-    int  isLockedDoor() const       {return rule->mask & MASK_LOCKEDDOOR;}
-    int  isChest() const            {return rule->mask & MASK_CHEST;}
-    int  isShip() const             {return rule->mask & MASK_SHIP;}
+    int  isFlyable() const          {return !(rule->_movementMask & MASK_UNFLYABLE);}
+    int  isDoor() const             {return rule->_mask & MASK_DOOR;}
+    int  isLockedDoor() const       {return rule->_mask & MASK_LOCKEDDOOR;}
+    int  isChest() const            {return rule->_mask & MASK_CHEST;}
+    int  isShip() const             {return rule->_mask & MASK_SHIP;}
     bool isPirateShip() const       {return name == "pirate_ship";}
-    int  isHorse() const            {return rule->mask & MASK_HORSE;}
-    int  isBalloon() const          {return rule->mask & MASK_BALLOON;}
-    int  canDispel() const          {return rule->mask & MASK_DISPEL;}
-    int  canTalkOver() const        {return rule->mask & MASK_TALKOVER;}
-    TileSpeed getSpeed() const      {return rule->speed;}
-    TileEffect getEffect() const    {return rule->effect;}
+    int  isHorse() const            {return rule->_mask & MASK_HORSE;}
+    int  isBalloon() const          {return rule->_mask & MASK_BALLOON;}
+    int  canDispel() const          {return rule->_mask & MASK_DISPEL;}
+    int  canTalkOver() const        {return rule->_mask & MASK_TALKOVER;}
+    TileSpeed getSpeed() const      {return rule->_speed;}
+    TileEffect getEffect() const    {return rule->_effect;}
 
     bool isOpaque() const;
     bool isForeground() const;

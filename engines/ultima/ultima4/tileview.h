@@ -54,10 +54,10 @@ public:
     void setTileset(Tileset *tileset);
 
 protected:
-    int columns, rows;
-    int tileWidth, tileHeight;
-    Tileset *tileset;
-    Image *animated;            /**< a scratchpad image for drawing animations */
+    int _columns, _rows;
+    int _tileWidth, _tileHeight;
+    Tileset *_tileset;
+    Image *_animated;            /**< a scratchpad image for drawing animations */
 };
 
 } // End of namespace Ultima4

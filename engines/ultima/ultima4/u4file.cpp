@@ -79,13 +79,13 @@ private:
 
 extern bool verbose;
 
-U4PATH * U4PATH::instance = NULL;
+U4PATH * U4PATH::_instance = NULL;
 U4PATH * U4PATH::getInstance() {
-	if (!instance) {
-		instance = new U4PATH();
-		instance->initDefaultPaths();
+	if (!_instance) {
+		_instance = new U4PATH();
+		_instance->initDefaultPaths();
 	}
-	return instance;
+	return _instance;
 }
 
 void U4PATH::initDefaultPaths() {
@@ -199,24 +199,24 @@ const Common::String &U4ZipPackage::translate(const Common::String &name) const 
         return name;
 }
 
-U4ZipPackageMgr *U4ZipPackageMgr::instance = NULL;
+U4ZipPackageMgr *U4ZipPackageMgr::_instance = NULL;
 
 U4ZipPackageMgr *U4ZipPackageMgr::getInstance() {
-    if (instance == NULL) {
-        instance = new U4ZipPackageMgr();
+    if (_instance == NULL) {
+        _instance = new U4ZipPackageMgr();
     }
-    return instance;
+    return _instance;
 }
 
 void U4ZipPackageMgr::destroy() {
-    if (instance != NULL) {
-        delete instance;
-        instance = NULL;
+    if (_instance != NULL) {
+        delete _instance;
+        _instance = NULL;
     }
 }
     
 void U4ZipPackageMgr::add(U4ZipPackage *package) {
-    packages.push_back(package);
+    _packages.push_back(package);
 }
 
 U4ZipPackageMgr::U4ZipPackageMgr() {
@@ -370,7 +370,7 @@ U4ZipPackageMgr::U4ZipPackageMgr() {
 }
 
 U4ZipPackageMgr::~U4ZipPackageMgr() {
-    for (Std::vector<U4ZipPackage *>::iterator i = packages.begin(); i != packages.end(); i++)
+    for (Std::vector<U4ZipPackage *>::iterator i = _packages.begin(); i != _packages.end(); i++)
         delete *i;
 }
 

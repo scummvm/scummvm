@@ -139,7 +139,7 @@ void Music::callback(void *data) {
  * Main music loop
  */
 void Music::play() {
-    playMid(c->location->map->music);
+    playMid(c->_location->map->music);
 }
 
 /**
@@ -195,7 +195,7 @@ void Music::fadeIn(int msecs, bool loadFromMap) {
 	if (!isPlaying()) {
 		/* make sure we've got something loaded to play */
 		if (loadFromMap || !playing)
-			load(c->location->map->music);
+			load(c->_location->map->music);
 
 		if (!settings.volumeFades)
 			play();

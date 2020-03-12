@@ -28,12 +28,8 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-using Std::vector;
-
-
-bool Weapon::confLoaded = false;
-vector<Weapon *> Weapon::weapons;
+bool Weapon::_confLoaded = false;
+Std::vector<Weapon *> Weapon::_weapons;
 
 /**
  * Returns weapon by WeaponType.
@@ -42,36 +38,36 @@ const Weapon *Weapon::get(WeaponType w) {
     // Load in XML if it hasn't been already
     loadConf();
 
-    if (static_cast<unsigned>(w) >= weapons.size())
+    if (static_cast<unsigned>(w) >= _weapons.size())
         return NULL;
-    return weapons[w];
+    return _weapons[w];
 }
 
 /**
  * Returns weapon that has the given name
  */ 
-const Weapon *Weapon::get(const string &name) {
+const Weapon *Weapon::get(const Common::String &name) {
     // Load in XML if it hasn't been already
     loadConf();
 
-    for (unsigned i = 0; i < weapons.size(); i++) {
-        if (scumm_stricmp(name.c_str(), weapons[i]->name.c_str()) == 0)
-            return weapons[i];
+    for (unsigned i = 0; i < _weapons.size(); i++) {
+        if (scumm_stricmp(name.c_str(), _weapons[i]->_name.c_str()) == 0)
+            return _weapons[i];
     }
     return NULL;
 }
 
 Weapon::Weapon(const ConfigElement &conf)
-	: type (static_cast<WeaponType>(weapons.size()))
-	, name (conf.getString("name"))
-	, abbr (conf.getString("abbr"))
-	, canuse (0xFF)
-	, range (0)
-	, damage (conf.getInt("damage"))
-	, hittile ("hit_flash")
-	, misstile ("miss_flash")
-	, leavetile ("")
-	, flags (0) {
+	: _type (static_cast<WeaponType>(_weapons.size()))
+	, _name (conf.getString("name"))
+	, _abbr (conf.getString("abbr"))
+	, _canUse (0xFF)
+	, _range (0)
+	, _damage (conf.getInt("damage"))
+	, _hitTile ("hit_flash")
+	, _missTile ("miss_flash")
+	, _leaveTile ("")
+	, _flags (0) {
     static const struct {
         const char *name;
         unsigned int flag;
@@ -87,38 +83,38 @@ Weapon::Weapon(const ConfigElement &conf)
     };    
 
     /* Get the range of the weapon, whether it is absolute or normal range */
-    string _range = conf.getString("range");
-    if (_range.empty()) {
-        _range = conf.getString("absolute_range");
-        if (!_range.empty())
-            flags |= WEAP_ABSOLUTERANGE;
+    Common::String range = conf.getString("range");
+    if (range.empty()) {
+        range = conf.getString("absolute_range");
+        if (!range.empty())
+            _flags |= WEAP_ABSOLUTERANGE;
     }
-    if (_range.empty())
-        errorFatal("malformed weapons.xml file: range or absolute_range not found for weapon %s", name.c_str());
+    if (range.empty())
+        errorFatal("malformed weapons.xml file: range or absolute_range not found for weapon %s", _name.c_str());
 
-    range = atoi(_range.c_str());
+    _range = atoi(range.c_str());
 
     /* Load weapon attributes */
     for (unsigned at = 0; at < sizeof(booleanAttributes) / sizeof(booleanAttributes[0]); at++) {
         if (conf.getBool(booleanAttributes[at].name)) {
-            flags |= booleanAttributes[at].flag;
+            _flags |= booleanAttributes[at].flag;
         }
     }
 
     /* Load hit tiles */
     if (conf.exists("hittile"))
-        hittile = conf.getString("hittile");
+        _hitTile = conf.getString("hittile");
     
     /* Load miss tiles */
     if (conf.exists("misstile"))
-        misstile = conf.getString("misstile");
+        _missTile = conf.getString("misstile");
     
     /* Load leave tiles */
     if (conf.exists("leavetile")) {
-        leavetile = conf.getString("leavetile");
+        _leaveTile = conf.getString("leavetile");
     }
     
-    vector<ConfigElement> contraintConfs = conf.getChildren();
+    Std::vector<ConfigElement> contraintConfs = conf.getChildren();
     for (Std::vector<ConfigElement>::iterator i = contraintConfs.begin(); i != contraintConfs.end(); i++) {
         unsigned char mask = 0;
 
@@ -136,25 +132,25 @@ Weapon::Weapon(const ConfigElement &conf)
                        i->getString("class").c_str());
         }
         if (i->getBool("canuse"))
-            canuse |= mask;
+            _canUse |= mask;
         else
-            canuse &= ~mask;
+            _canUse &= ~mask;
     }
 }
 
 void Weapon::loadConf() {
-    if (confLoaded)
+    if (_confLoaded)
         return;
 
-    confLoaded = true;
+    _confLoaded = true;
     const Config *config = Config::getInstance();
 
-    vector<ConfigElement> weaponConfs = config->getElement("weapons").getChildren();
+    Std::vector<ConfigElement> weaponConfs = config->getElement("weapons").getChildren();
     for (Std::vector<ConfigElement>::iterator i = weaponConfs.begin(); i != weaponConfs.end(); i++) {
         if (i->getName() != "weapon")
             continue;
 
-        weapons.push_back(new Weapon(*i));
+        _weapons.push_back(new Weapon(*i));
     }
 }
 

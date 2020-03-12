@@ -84,8 +84,8 @@ bool KeyHandler::defaultHandler(int key, void *data) {
 
     switch (key) {
     case '`':
-        if (c && c->location)
-            debug(1, "x = %d, y = %d, level = %d, tile = %d (%s)\n", c->location->coords.x, c->location->coords.y, c->location->coords.z, c->location->map->translateToRawTileIndex(*c->location->map->tileAt(c->location->coords, WITH_OBJECTS)), c->location->map->tileTypeAt(c->location->coords, WITH_OBJECTS)->getName().c_str());
+        if (c && c->_location)
+            debug(1, "x = %d, y = %d, level = %d, tile = %d (%s)\n", c->_location->coords.x, c->_location->coords.y, c->_location->coords.z, c->_location->map->translateToRawTileIndex(*c->_location->map->tileAt(c->_location->coords, WITH_OBJECTS)), c->_location->map->tileTypeAt(c->_location->coords, WITH_OBJECTS)->getName().c_str());
         break;
     default:
         valid = false;

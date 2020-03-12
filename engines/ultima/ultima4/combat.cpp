@@ -73,7 +73,7 @@ bool isCombatMap(Map *punknown) {
  * is not a combat map.
  */
 CombatMap *getCombatMap(Map *punknown) {
-    Map *m = punknown ? punknown : c->location->map;
+    Map *m = punknown ? punknown : c->_location->map;
     if (!isCombatMap(m))
         return NULL;
     else return dynamic_cast<CombatMap*>(m);
@@ -82,40 +82,40 @@ CombatMap *getCombatMap(Map *punknown) {
 /**
  * CombatController class implementation
  */
-CombatController::CombatController() : map(NULL) {
-    c->party->addObserver(this);
+CombatController::CombatController() : _map(NULL) {
+    c->_party->addObserver(this);
 }
 
-CombatController::CombatController(CombatMap *m) : map(m) {
-    game->setMap(map, true, NULL, this);
-    c->party->addObserver(this);
+CombatController::CombatController(CombatMap *m) : _map(m) {
+    game->setMap(_map, true, NULL, this);
+    c->_party->addObserver(this);
 }
 
 CombatController::CombatController(MapId id) {
-    map = getCombatMap(mapMgr->get(id));
-    game->setMap(map, true, NULL, this);
-    c->party->addObserver(this);
-    forceStandardEncounterSize = false;
+    _map = getCombatMap(mapMgr->get(id));
+    game->setMap(_map, true, NULL, this);
+    c->_party->addObserver(this);
+    _forceStandardEncounterSize = false;
 }
 
 CombatController::~CombatController() {
-    c->party->deleteObserver(this);
+    c->_party->deleteObserver(this);
 }
 
 // Accessor Methods    
-bool CombatController::isCamping() const                    { return camping; }
-bool CombatController::isWinOrLose() const                  { return winOrLose; }
-Direction CombatController::getExitDir() const              { return exitDir; }
-unsigned char CombatController::getFocus() const            { return focus; }
-CombatMap *CombatController::getMap() const                 { return map; }
+bool CombatController::isCamping() const                    { return _camping; }
+bool CombatController::isWinOrLose() const                  { return _winOrLose; }
+Direction CombatController::getExitDir() const              { return _exitDir; }
+unsigned char CombatController::getFocus() const            { return _focus; }
+CombatMap *CombatController::getMap() const                 { return _map; }
 Creature *CombatController::getCreature() const               { return _creature; }
-PartyMemberVector *CombatController::getParty()             { return &party; }
-PartyMember* CombatController::getCurrentPlayer()           { return party[focus]; }
+PartyMemberVector *CombatController::getParty()             { return &_party; }
+PartyMember* CombatController::getCurrentPlayer()           { return _party[_focus]; }
 
-void CombatController::setExitDir(Direction d)              { exitDir = d; }
+void CombatController::setExitDir(Direction d)              { _exitDir = d; }
 void CombatController::setCreature(Creature *m)               { _creature = m; }
-void CombatController::setWinOrLose(bool worl)              { winOrLose = worl; }
-void CombatController::showCombatMessage(bool show)         { showMessage = show; }
+void CombatController::setWinOrLose(bool worl)              { _winOrLose = worl; }
+void CombatController::showCombatMessage(bool show)         { _showMessage = show; }
 
 /**
  * Initializes the combat controller with combat information
@@ -124,13 +124,13 @@ void CombatController::init(class Creature *m) {
     int i;
     
     _creature = m;    
-    placeCreaturesOnMap = (m == NULL) ? false : true;
-    placePartyOnMap = true;    
-    winOrLose = true;
-    map->setDungeonRoom(false);
-    map->setAltarRoom(VIRT_NONE);
-    showMessage = true;
-    camping = false;
+    _placeCreaturesOnMap = (m == NULL) ? false : true;
+    _placePartyOnMap = true;    
+    _winOrLose = true;
+    _map->setDungeonRoom(false);
+    _map->setAltarRoom(VIRT_NONE);
+    _showMessage = true;
+    _camping = false;
 
     /* initialize creature info */
     for (i = 0; i < AREA_CREATURES; i++) {
@@ -138,14 +138,14 @@ void CombatController::init(class Creature *m) {
     }
 
     for (i = 0; i < AREA_PLAYERS; i++) {
-        party.push_back(NULL);
+        _party.push_back(NULL);
     }
 
     /* fill the creature table if a creature was provided to create */    
     fillCreatureTable(m);
 
     /* initialize focus */
-    focus = 0; 
+    _focus = 0; 
 }
 
 /**
@@ -155,36 +155,36 @@ void CombatController::initDungeonRoom(int room, Direction from) {
     int offset, i;
     init(NULL);
 
-    ASSERT(c->location->prev->context & CTX_DUNGEON, "Error: called initDungeonRoom from non-dungeon context");
+    ASSERT(c->_location->prev->context & CTX_DUNGEON, "Error: called initDungeonRoom from non-dungeon context");
     {
-        Dungeon *dng = dynamic_cast<Dungeon*>(c->location->prev->map);
+        Dungeon *dng = dynamic_cast<Dungeon*>(c->_location->prev->map);
         unsigned char
             *party_x = &dng->rooms[room].party_north_start_x[0], 
             *party_y = &dng->rooms[room].party_north_start_y[0];
 
         /* load the dungeon room properties */
-        winOrLose = false;
-        map->setDungeonRoom(true);
-        exitDir = DIR_NONE;
+        _winOrLose = false;
+        _map->setDungeonRoom(true);
+        _exitDir = DIR_NONE;
         
         /* FIXME: this probably isn't right way to see if you're entering an altar room... but maybe it is */
-        if ((c->location->prev->map->id != MAP_ABYSS) && (room == 0xF)) {            
+        if ((c->_location->prev->map->id != MAP_ABYSS) && (room == 0xF)) {            
             /* figure out which dungeon room they're entering */
-            if (c->location->prev->coords.x == 3)
-                map->setAltarRoom(VIRT_LOVE);
-            else if (c->location->prev->coords.x <= 2)
-                map->setAltarRoom(VIRT_TRUTH);
-            else map->setAltarRoom(VIRT_COURAGE);
+            if (c->_location->prev->coords.x == 3)
+                _map->setAltarRoom(VIRT_LOVE);
+            else if (c->_location->prev->coords.x <= 2)
+                _map->setAltarRoom(VIRT_TRUTH);
+            else _map->setAltarRoom(VIRT_COURAGE);
         }        
         
         /* load in creatures and creature start coordinates */
         for (i = 0; i < AREA_CREATURES; i++) {
             if (dng->rooms[room].creature_tiles[i] > 0) {
-                placeCreaturesOnMap = true;
+                _placeCreaturesOnMap = true;
                 creatureTable[i] = creatureMgr->getByTile(dng->rooms[room].creature_tiles[i]);
             }
-            map->creature_start[i].x = dng->rooms[room].creature_start_x[i];
-            map->creature_start[i].y = dng->rooms[room].creature_start_y[i];            
+            _map->creature_start[i].x = dng->rooms[room].creature_start_x[i];
+            _map->creature_start[i].y = dng->rooms[room].creature_start_y[i];            
         }
         
         /* figure out party start coordinates */
@@ -200,8 +200,8 @@ void CombatController::initDungeonRoom(int room, Direction from) {
         }
 
         for (i = 0; i < AREA_PLAYERS; i++) {
-            map->player_start[i].x = *(party_x + (offset * AREA_PLAYERS * 2) + i);
-            map->player_start[i].y = *(party_y + (offset * AREA_PLAYERS * 2) + i);
+            _map->player_start[i].x = *(party_x + (offset * AREA_PLAYERS * 2) + i);
+            _map->player_start[i].y = *(party_y + (offset * AREA_PLAYERS * 2) + i);
         }
     }
 }
@@ -210,12 +210,12 @@ void CombatController::initDungeonRoom(int room, Direction from) {
  * Apply tile effects to all creatures depending on what they're standing on
  */
 void CombatController::applyCreatureTileEffects() {
-    CreatureVector creatures = map->getCreatures();
+    CreatureVector creatures = _map->getCreatures();
     CreatureVector::iterator i;
 
     for (i = creatures.begin(); i != creatures.end(); i++) {        
         Creature *m = *i;
-        TileEffect effect = map->tileTypeAt(m->getCoords(), WITH_GROUND_OBJECTS)->getEffect();
+        TileEffect effect = _map->tileTypeAt(m->getCoords(), WITH_GROUND_OBJECTS)->getEffect();
         m->applyTileEffect(effect);
     }
 }
@@ -227,25 +227,25 @@ void CombatController::begin() {
     bool partyIsReadyToFight = false;    
     
     /* place party members on the map */    
-    if (placePartyOnMap)        
+    if (_placePartyOnMap)        
         placePartyMembers();    
 
     /* place creatures on the map */
-    if (placeCreaturesOnMap)
+    if (_placeCreaturesOnMap)
         placeCreatures();
 
     /* if we entered an altar room, show the name */
-    if (map->isAltarRoom()) {
-        screenMessage("\nThe Altar Room of %s\n", getBaseVirtueName(map->getAltarRoom()));    
-        c->location->context = static_cast<LocationContext>(c->location->context | CTX_ALTAR_ROOM);
+    if (_map->isAltarRoom()) {
+        screenMessage("\nThe Altar Room of %s\n", getBaseVirtueName(_map->getAltarRoom()));    
+        c->_location->context = static_cast<LocationContext>(c->_location->context | CTX_ALTAR_ROOM);
     }    
  
     /* if there are creatures around, start combat! */    
-    if (showMessage && placeCreaturesOnMap && winOrLose)
+    if (_showMessage && _placeCreaturesOnMap && _winOrLose)
         screenMessage("\n%c****%c COMBAT %c****%c\n", FG_GREY, FG_WHITE, FG_GREY, FG_WHITE);
     
     /* FIXME: there should be a better way to accomplish this */
-    if (!camping) {
+    if (!_camping) {
         musicMgr->play();
     }
 
@@ -257,8 +257,8 @@ void CombatController::begin() {
         }
     }    
 
-    if (!camping && !partyIsReadyToFight)
-        c->location->turnCompleter->finishTurn();
+    if (!_camping && !partyIsReadyToFight)
+        c->_location->turnCompleter->finishTurn();
 
     eventHandler->pushController(this);
 }
@@ -267,10 +267,10 @@ void CombatController::end(bool adjustKarma) {
     eventHandler->popController();
 
     /* The party is dead -- start the death sequence */
-    if (c->party->isDead()) {
+    if (c->_party->isDead()) {
         /* remove the creature */
         if (_creature)
-            c->location->map->removeObject(_creature);
+            c->_location->map->removeObject(_creature);
 
         deathStart(5);
     }
@@ -283,35 +283,35 @@ void CombatController::end(bool adjustKarma) {
         game->exitToParentMap();
         musicMgr->play();
     
-        if (winOrLose) {
+        if (_winOrLose) {
             if (won) {
                 if (_creature) {
                     if (_creature->isEvil())
-                        c->party->adjustKarma(KA_KILLED_EVIL);
+                        c->_party->adjustKarma(KA_KILLED_EVIL);
                     awardLoot();
                 }
             
                 screenMessage("\nVictory!\n\n");
             }
-            else if (!c->party->isDead()) {
+            else if (!c->_party->isDead()) {
                 /* minus points for fleeing from evil creatures */
                 if (adjustKarma && _creature && _creature->isEvil()) {
                     screenMessage("\nBattle is lost!\n\n");
-                    c->party->adjustKarma(KA_FLED_EVIL);
+                    c->_party->adjustKarma(KA_FLED_EVIL);
                 }
                 else if (adjustKarma && _creature && _creature->isGood())
-                    c->party->adjustKarma(KA_FLED_GOOD);
+                    c->_party->adjustKarma(KA_FLED_GOOD);
             }
         }
 
         /* exiting a dungeon room */
-        if (map->isDungeonRoom()) {
+        if (_map->isDungeonRoom()) {
             screenMessage("Leave Room!\n");
-            if (map->isAltarRoom()) {            
+            if (_map->isAltarRoom()) {            
                 PortalTriggerAction action = ACTION_NONE;
 
                 /* when exiting altar rooms, you exit to other dungeons.  Here it goes... */
-                switch(exitDir) {
+                switch(_exitDir) {
                 case DIR_NORTH: action = ACTION_EXIT_NORTH; break;
                 case DIR_EAST:  action = ACTION_EXIT_EAST; break;
                 case DIR_SOUTH: action = ACTION_EXIT_SOUTH; break;
@@ -319,28 +319,28 @@ void CombatController::end(bool adjustKarma) {
                 case DIR_NONE:  break;
                 case DIR_ADVANCE:
                 case DIR_RETREAT:
-                default: ASSERT(0, "Invalid exit dir %d", exitDir); break;
+                default: ASSERT(0, "Invalid exit dir %d", _exitDir); break;
                 }
 
                 if (action != ACTION_NONE)
-                    usePortalAt(c->location, c->location->coords, action);
+                    usePortalAt(c->_location, c->_location->coords, action);
             }
             else screenMessage("\n");
 
-            if (exitDir != DIR_NONE) {
-                c->saveGame->orientation = exitDir;  /* face the direction exiting the room */
+            if (_exitDir != DIR_NONE) {
+                c->_saveGame->orientation = _exitDir;  /* face the direction exiting the room */
                 // XXX: why north, shouldn't this be orientation?
-                c->location->move(DIR_NORTH, false);  /* advance 1 space outside of the room */
+                c->_location->move(DIR_NORTH, false);  /* advance 1 space outside of the room */
             }
         }
 
         /* remove the creature */
         if (_creature)
-            c->location->map->removeObject(_creature);
+            c->_location->map->removeObject(_creature);
 
         /* Make sure finishturn only happens if a new combat has not begun */
         if (! eventHandler->getController()->isCombatController())
-            c->location->turnCompleter->finishTurn();
+            c->_location->turnCompleter->finishTurn();
     }
 
     delete this;
@@ -389,11 +389,11 @@ void CombatController::fillCreatureTable(const Creature *creature) {
  */
 int  CombatController::initialNumberOfCreatures(const Creature *creature) const {
     int ncreatures;
-    Map *map = c->location->prev ? c->location->prev->map : c->location->map;
+    Map *map = c->_location->prev ? c->_location->prev->map : c->_location->map;
 
     /* if in an unusual combat situation, generally we stick to normal encounter sizes,
        (such as encounters from sleeping in an inn, etc.) */
-    if (forceStandardEncounterSize || map->isWorldMap() || (c->location->prev && c->location->prev->context & CTX_DUNGEON)) {
+    if (_forceStandardEncounterSize || map->isWorldMap() || (c->_location->prev && c->_location->prev->context & CTX_DUNGEON)) {
         ncreatures = xu4_random(8) + 1;
         
         if (ncreatures == 1) {
@@ -403,12 +403,12 @@ int  CombatController::initialNumberOfCreatures(const Creature *creature) const 
                 ncreatures = 8;
         }
 
-        while (ncreatures > 2 * c->saveGame->members) {
+        while (ncreatures > 2 * c->_saveGame->members) {
             ncreatures = xu4_random(16) + 1;
         }
     } else {
         if (creature && creature->getId() == GUARD_ID)
-            ncreatures = c->saveGame->members * 2;
+            ncreatures = c->_saveGame->members * 2;
         else
             ncreatures = 1;
     }
@@ -420,7 +420,7 @@ int  CombatController::initialNumberOfCreatures(const Creature *creature) const 
  * Returns true if the player has won.
  */
 bool CombatController::isWon() const {
-    CreatureVector creatures = map->getCreatures();    
+    CreatureVector creatures = _map->getCreatures();    
     if (creatures.size())
         return false;    
     return true;
@@ -430,7 +430,7 @@ bool CombatController::isWon() const {
  * Returns true if the player has lost.
  */
 bool CombatController::isLost() const {
-    PartyMemberVector party = map->getPartyMembers();
+    PartyMemberVector party = _map->getPartyMembers();
     if (party.size())
         return false;
     return true;
@@ -445,12 +445,12 @@ void CombatController::moveCreatures() {
     // XXX: this iterator is rather complex; but the vector::iterator can
     // break and crash if we delete elements while iterating it, which we do
     // if a jinxed monster kills another
-    for (unsigned int i = 0; i < map->getCreatures().size(); i++) {
-        m = map->getCreatures().at(i);
+    for (unsigned int i = 0; i < _map->getCreatures().size(); i++) {
+        m = _map->getCreatures().at(i);
         //GameController::doScreenAnimationsWhilePausing(1);
         m->act(this);
 
-        if (i < map->getCreatures().size() && map->getCreatures().at(i) != m) {
+        if (i < _map->getCreatures().size() && _map->getCreatures().at(i) != m) {
             // don't skip a later creature when an earlier one flees
             i--;
         }
@@ -466,7 +466,7 @@ void CombatController::placeCreatures() {
     for (i = 0; i < AREA_CREATURES; i++) {        
         const Creature *m = creatureTable[i];
         if (m)
-            map->addCreature(m, map->creature_start[i]);
+            _map->addCreature(m, _map->creature_start[i]);
     }
 }
 
@@ -478,17 +478,17 @@ void CombatController::placePartyMembers() {
 //  The following line caused a crash upon entering combat (MSVC8 binary)
 //    party.clear();
 
-    for (i = 0; i < c->party->size(); i++) {
-        PartyMember *p = c->party->member(i);
+    for (i = 0; i < c->_party->size(); i++) {
+        PartyMember *p = c->_party->member(i);
         p->setFocus(false); // take the focus off of everyone        
 
         /* don't place dead party members */
         if (p->getStatus() != STAT_DEAD) {
             /* add the party member to the map */
-            p->setCoords(map->player_start[i]);
-            p->setMap(map);
-            map->objects.push_back(p);
-            party[i] = p;
+            p->setCoords(_map->player_start[i]);
+            p->setMap(_map);
+            _map->objects.push_back(p);
+            _party[i] = p;
         }
     }
 }
@@ -497,17 +497,17 @@ void CombatController::placePartyMembers() {
  * Sets the active player for combat, showing which weapon they're weilding, etc.
  */
 bool CombatController::setActivePlayer(int player) {
-    PartyMember *p = party[player];
+    PartyMember *p = _party[player];
     
     if (p && !p->isDisabled()) {        
-        if (party[focus])
-            party[focus]->setFocus(false);        
+        if (_party[_focus])
+            _party[_focus]->setFocus(false);        
 
         p->setFocus();
-        focus = player;
+        _focus = player;
 
         screenMessage("\n%s with %s\n\020", p->getName().c_str(), p->getWeapon()->getName().c_str());        
-        c->stats->highlightPlayer(focus);        
+        c->_stats->highlightPlayer(_focus);        
         return true;
     }
     
@@ -516,20 +516,20 @@ bool CombatController::setActivePlayer(int player) {
 
 void CombatController::awardLoot() {
     Coords coords = _creature->getCoords();
-    const Tile *ground = c->location->map->tileTypeAt(coords, WITHOUT_OBJECTS);
+    const Tile *ground = c->_location->map->tileTypeAt(coords, WITHOUT_OBJECTS);
 
     /* add a chest, if the creature leaves one */
     if (_creature->leavesChest() && 
         ground->isCreatureWalkable() &&
-        (!(c->location->context & CTX_DUNGEON) || ground->isDungeonFloor())) {
-        MapTile chest = c->location->map->tileset->getByName("chest")->getId();
-        c->location->map->addObject(chest, chest, coords);
+        (!(c->_location->context & CTX_DUNGEON) || ground->isDungeonFloor())) {
+        MapTile chest = c->_location->map->tileset->getByName("chest")->getId();
+        c->_location->map->addObject(chest, chest, coords);
     }
     /* add a ship if you just defeated a pirate ship */
     else if (_creature->getTile().getTileType()->isPirateShip()) {
-        MapTile ship = c->location->map->tileset->getByName("ship")->getId();
+        MapTile ship = c->_location->map->tileset->getByName("ship")->getId();
         ship.setDirection(_creature->getTile().getDirection());
-        c->location->map->addObject(ship, ship, coords);
+        c->_location->map->addObject(ship, ship, coords);
     }
 }
 
@@ -547,11 +547,11 @@ bool CombatController::attackAt(const Coords &coords, PartyMember *attacker, int
     const Weapon *weapon = attacker->getWeapon();
     bool wrongRange = weapon->rangeAbsolute() && (distance != range);
 
-    MapTile hittile = map->tileset->getByName(weapon->getHitTile())->getId();
-    MapTile misstile = map->tileset->getByName(weapon->getMissTile())->getId();
+    MapTile hittile = _map->tileset->getByName(weapon->getHitTile())->getId();
+    MapTile misstile = _map->tileset->getByName(weapon->getMissTile())->getId();
 
     // Check to see if something hit
-    Creature *creature = map->creatureAt(coords);
+    Creature *creature = _map->creatureAt(coords);
 
     /* If we haven't hit a creature, or the weapon's range is absolute
        and we're testing the wrong range, stop now! */
@@ -567,7 +567,7 @@ bool CombatController::attackAt(const Coords &coords, PartyMember *attacker, int
     }
     
     /* Did the weapon miss? */
-    if ((c->location->prev->map->id == MAP_ABYSS && !weapon->isMagic()) || /* non-magical weapon in the Abyss */
+    if ((c->_location->prev->map->id == MAP_ABYSS && !weapon->isMagic()) || /* non-magical weapon in the Abyss */
         !attackHit(attacker, creature)) { /* player naturally missed */
         screenMessage("Missed!\n");
 
@@ -592,10 +592,10 @@ bool CombatController::attackAt(const Coords &coords, PartyMember *attacker, int
 }
 
 bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
-    MapTile hittile = map->tileset->getByName(attacker->getHitTile())->getId();
-    MapTile misstile = map->tileset->getByName(attacker->getMissTile())->getId();
+    MapTile hittile = _map->tileset->getByName(attacker->getHitTile())->getId();
+    MapTile misstile = _map->tileset->getByName(attacker->getMissTile())->getId();
 
-    Creature *target = isCreature(attacker) ? map->partyMemberAt(coords) : map->creatureAt(coords);
+    Creature *target = isCreature(attacker) ? _map->partyMemberAt(coords) : _map->creatureAt(coords);
 
     /* If we haven't hit something valid, stop now */
     if (!target) {
@@ -671,21 +671,21 @@ bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
 
 void CombatController::rangedMiss(const Coords &coords, Creature *attacker) {
     /* If the creature leaves a tile behind, do it here! (lava lizard, etc) */
-    const Tile *ground = map->tileTypeAt(coords, WITH_GROUND_OBJECTS);
+    const Tile *ground = _map->tileTypeAt(coords, WITH_GROUND_OBJECTS);
     if (attacker->leavesTile() && ground->isWalkable())
-        map->annotations->add(coords, map->tileset->getByName(attacker->getHitTile())->getId());
+        _map->annotations->add(coords, _map->tileset->getByName(attacker->getHitTile())->getId());
 }
 
 bool CombatController::returnWeaponToOwner(const Coords &coords, int distance, int dir, const Weapon *weapon) {
     MapCoords new_coords = coords;
 
-    MapTile misstile = map->tileset->getByName(weapon->getMissTile())->getId();
+    MapTile misstile = _map->tileset->getByName(weapon->getMissTile())->getId();
 
     /* reverse the direction of the weapon */
     Direction returnDir = dirReverse(dirFromMask(dir));
 
     for (int i = distance; i > 1; i--) {
-        new_coords.move(returnDir, map);        
+        new_coords.move(returnDir, _map);        
         
         GameController::flashTile(new_coords, misstile, 1);
     }
@@ -699,9 +699,9 @@ void CombatController::finishTurn() {
     int quick;
 
     /* return to party overview */
-    c->stats->setView(STATS_PARTY_OVERVIEW);
+    c->_stats->setView(STATS_PARTY_OVERVIEW);
 
-    if (isWon() && winOrLose) {        
+    if (isWon() && _winOrLose) {        
         end(true);
         return;
     }
@@ -709,16 +709,16 @@ void CombatController::finishTurn() {
     /* make sure the player with the focus is still in battle (hasn't fled or died) */
     if (player) {
         /* apply effects from tile player is standing on */
-        player->applyEffect(c->location->map->tileTypeAt(player->getCoords(), WITH_GROUND_OBJECTS)->getEffect());
+        player->applyEffect(c->_location->map->tileTypeAt(player->getCoords(), WITH_GROUND_OBJECTS)->getEffect());
     }
 
-    quick = (*c->aura == Aura::QUICKNESS) && player && (xu4_random(2) == 0) ? 1 : 0;
+    quick = (*c->_aura == Aura::QUICKNESS) && player && (xu4_random(2) == 0) ? 1 : 0;
 
     /* check to see if the player gets to go again (and is still alive) */
     if (!quick || player->isDisabled()){    
 
         do {
-            c->location->map->annotations->passTurn();
+            c->_location->map->annotations->passTurn();
 
             /* put a sleeping person in place of the player,
                or restore an awakened member to their original state */            
@@ -730,26 +730,26 @@ void CombatController::finishTurn() {
                 player->setFocus(false);
 
                 /* eat some food */
-                c->party->adjustFood(-1);
+                c->_party->adjustFood(-1);
             }
 
             /* put the focus on the next party member */
-            focus++;
+            _focus++;
 
             /* move creatures and wrap around at end */
-            if (focus >= c->party->size()) {   
+            if (_focus >= c->_party->size()) {   
                 
                 /* reset the focus to the avatar and start the party's turn over again */
-                focus = 0;
+                _focus = 0;
 
                 gameUpdateScreen();
                 EventHandler::sleep(50); /* give a slight pause in case party members are asleep for awhile */
 
                 /* adjust moves */
-                c->party->endTurn();
+                c->_party->endTurn();
 
                 /* count down our aura (if we have one) */
-                c->aura->passTurn();                
+                c->_aura->passTurn();                
 
                 /** 
                  * ====================
@@ -770,7 +770,7 @@ void CombatController::finishTurn() {
                 }
 
                 /* end combat immediately if the enemy has fled */
-                else if (isWon() && winOrLose) {                    
+                else if (isWon() && _winOrLose) {                    
                     end(true);
                     return;
                 }
@@ -781,12 +781,12 @@ void CombatController::finishTurn() {
 
         } while (!player || 
                   player->isDisabled() || /* dead or sleeping */                 
-                 ((c->party->getActivePlayer() >= 0) && /* active player is set */
-                  (party[c->party->getActivePlayer()]) && /* and the active player is still in combat */
-                  !party[c->party->getActivePlayer()]->isDisabled() && /* and the active player is not disabled */
-                  (c->party->getActivePlayer() != focus)));
+                 ((c->_party->getActivePlayer() >= 0) && /* active player is set */
+                  (_party[c->_party->getActivePlayer()]) && /* and the active player is still in combat */
+                  !_party[c->_party->getActivePlayer()]->isDisabled() && /* and the active player is not disabled */
+                  (c->_party->getActivePlayer() != _focus)));
     }
-    else c->location->map->annotations->passTurn();
+    else c->_location->map->annotations->passTurn();
     
 #if 0
     if (focus != 0) {
@@ -796,7 +796,7 @@ void CombatController::finishTurn() {
     else setActivePlayer(focus);
 #else
     /* display info about the current player */
-    setActivePlayer(focus);
+    setActivePlayer(_focus);
 #endif
 }
 
@@ -805,12 +805,12 @@ void CombatController::finishTurn() {
  */
 void CombatController::movePartyMember(MoveEvent &event) {
     /* active player left/fled combat */
-    if ((event.result & MOVE_EXIT_TO_PARENT) && (c->party->getActivePlayer() == focus)) {
-        c->party->setActivePlayer(-1);
+    if ((event.result & MOVE_EXIT_TO_PARENT) && (c->_party->getActivePlayer() == _focus)) {
+        c->_party->setActivePlayer(-1);
         /* assign active player to next available party member */
-        for (int i = 0; i < c->party->size(); i++) {
-            if (party[i] && !party[i]->isDisabled()) {
-                c->party->setActivePlayer(i);
+        for (int i = 0; i < c->_party->size(); i++) {
+            if (_party[i] && !_party[i]->isDisabled()) {
+                c->_party->setActivePlayer(i);
                 break;
             }
         }
@@ -829,7 +829,7 @@ void CombatController::movePartyMember(MoveEvent &event) {
         soundPlay(SOUND_WALK_SLOWED);                                          // WALK_SLOWED move
         screenMessage("%cSlow progress!%c\n", FG_GREY, FG_WHITE);
     }
-    else if (winOrLose && getCreature()->isEvil() && (event.result & (MOVE_EXIT_TO_PARENT | MOVE_MAP_CHANGE))) {
+    else if (_winOrLose && getCreature()->isEvil() && (event.result & (MOVE_EXIT_TO_PARENT | MOVE_MAP_CHANGE))) {
         soundPlay(SOUND_FLEE);                                                 // FLEE move
     }
     else {
@@ -847,7 +847,7 @@ bool CombatController::keyPressed(int key) {
     case U4_DOWN:
     case U4_LEFT:
     case U4_RIGHT:
-        c->location->move(keyToDirection(key), true);
+        c->_location->move(keyToDirection(key), true);
         break;
 
     case U4_ESC:
@@ -928,7 +928,7 @@ bool CombatController::keyPressed(int key) {
 
     case 'c':
         screenMessage("Cast Spell!\n");
-        castSpell(focus);
+        castSpell(_focus);
         break;
 
 #ifdef IOS
@@ -936,7 +936,7 @@ bool CombatController::keyPressed(int key) {
 #endif
     case 'g':
         screenMessage("Get Chest!\n");
-        getChest(focus);
+        getChest(_focus);
         break;
 
     case 'l':
@@ -955,8 +955,8 @@ bool CombatController::keyPressed(int key) {
         break;
 
     case 't':
-        if (settings.debug && map->isDungeonRoom()) {
-            Dungeon *dungeon = dynamic_cast<Dungeon*>(c->location->prev->map);
+        if (settings.debug && _map->isDungeonRoom()) {
+            Dungeon *dungeon = dynamic_cast<Dungeon*>(c->_location->prev->map);
             Trigger *triggers = dungeon->rooms[dungeon->currentRoom].triggers;
             int i;
 
@@ -980,7 +980,7 @@ bool CombatController::keyPressed(int key) {
 
     case 'u':
         screenMessage("Use which item:\n");
-        c->stats->setView(STATS_ITEMS);
+        c->_stats->setView(STATS_ITEMS);
 #ifdef IOS
         U4IOS::IOSConversationHelper::setIntroString("Use which item?");
 #endif            
@@ -997,11 +997,11 @@ bool CombatController::keyPressed(int key) {
 
     case 'z': 
         {            
-            c->stats->setView(StatsView(STATS_CHAR1 + getFocus()));
+            c->_stats->setView(StatsView(STATS_CHAR1 + getFocus()));
 
             /* reset the spell mix menu and un-highlight the current item,
                and hide reagents that you don't have */            
-            c->stats->resetReagentsMenu();
+            c->_stats->resetReagentsMenu();
 
             screenMessage("Ztats\n");        
             ZtatsController ctrl;
@@ -1052,9 +1052,9 @@ bool CombatController::keyPressed(int key) {
     }
 
     if (valid) {
-        c->lastCommandTime = g_system->getMillis();
+        c->_lastCommandTime = g_system->getMillis();
         if (endTurn && (eventHandler->getController() == this))
-            c->location->turnCompleter->finishTurn();
+            c->_location->turnCompleter->finishTurn();
     }
 
     return valid;
@@ -1126,9 +1126,9 @@ void CombatController::attack() {
     }
 
     // does weapon leave a tile behind? (e.g. flaming oil)
-    const Tile *ground = map->tileTypeAt(targetCoords, WITHOUT_OBJECTS);
+    const Tile *ground = _map->tileTypeAt(targetCoords, WITHOUT_OBJECTS);
     if (!weapon->leavesTile().empty() && ground->isWalkable())
-        map->annotations->add(targetCoords, map->tileset->getByName(weapon->leavesTile())->getId());
+        _map->annotations->add(targetCoords, _map->tileset->getByName(weapon->leavesTile())->getId());
 
     /* show the 'miss' tile */
     if (!foundTarget) {
@@ -1150,7 +1150,7 @@ void CombatController::update(Party *party, PartyEvent &event) {
 /**
  * CombatMap class implementation
  */ 
-CombatMap::CombatMap() : Map(), dungeonRoom(false), altarRoom(VIRT_NONE), contextual(false) {}
+CombatMap::CombatMap() : Map(), _dungeonRoom(false), _altarRoom(VIRT_NONE), _contextual(false) {}
 
 /**
  * Returns a vector containing all of the creatures on the map
@@ -1214,7 +1214,7 @@ Creature *CombatMap::creatureAt(Coords coords) {
 MapId CombatMap::mapForTile(const Tile *groundTile, const Tile *transport, Object *obj) {
     bool fromShip = false,
         toShip = false;
-    Object *objUnder = c->location->map->objectAt(c->location->coords);
+    Object *objUnder = c->_location->map->objectAt(c->_location->coords);
 
     static Std::map<const Tile *, MapId, Std::PointerHash> tileMap;
     if (!tileMap.size()) {        
@@ -1251,7 +1251,7 @@ MapId CombatMap::mapForTile(const Tile *groundTile, const Tile *transport, Objec
         dungeontileMap[Tileset::get("dungeon")->getByName("secret_door")] = MAP_DNG6_CON;
     }
 
-    if (c->location->context & CTX_DUNGEON) {
+    if (c->_location->context & CTX_DUNGEON) {
         if (dungeontileMap.find(groundTile) != dungeontileMap.end())
             return dungeontileMap[groundTile];    
 
@@ -1268,7 +1268,7 @@ MapId CombatMap::mapForTile(const Tile *groundTile, const Tile *transport, Objec
 
     /* We can fight creatures and townsfolk */       
     if (obj->getType() != Object::UNKNOWN) {
-        const Tile *tileUnderneath = c->location->map->tileTypeAt(obj->getCoords(), WITHOUT_OBJECTS);
+        const Tile *tileUnderneath = c->_location->map->tileTypeAt(obj->getCoords(), WITHOUT_OBJECTS);
 
         if (toShip)
             return MAP_SHORSHIP_CON;
