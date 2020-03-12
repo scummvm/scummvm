@@ -34,7 +34,7 @@ namespace Ultima4 {
  * channel.
  */
 class PngImageLoader : public ImageLoader {
-    static ImageLoader *instance;
+    static ImageLoader *_instance;
 
 public:
     virtual Image *load(U4FILE *file, int width, int height, int bpp);

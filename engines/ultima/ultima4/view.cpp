@@ -33,14 +33,14 @@ Image *View::screen = NULL;
 View::View(int x, int y, int width, int height) : _x(x), _y(y), _width(width), _height(height),
 		_highlighted(false), _highlightX(0), _highlightY(0), _highlightW(0), _highlightH(0) {
     if (screen == NULL)
-        screen = imageMgr->get("screen")->image;
+        screen = imageMgr->get("screen")->_image;
 }
 
 /**
  * Hook for reinitializing when graphics reloaded.
  */
 void View::reinit() {
-    screen = imageMgr->get("screen")->image;
+    screen = imageMgr->get("screen")->_image;
 }
 
 /**
@@ -93,7 +93,7 @@ void View::unhighlight() {
 }
 
 void View::drawHighlighted() {
-    Image *screen = imageMgr->get("screen")->image;
+    Image *screen = imageMgr->get("screen")->_image;
     
     Image *tmp = Image::create(SCALED(_highlightW), SCALED(_highlightH), false, Image::SOFTWARE);
     if (!tmp)

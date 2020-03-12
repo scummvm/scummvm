@@ -159,20 +159,20 @@ void Shrine::enter() {
 
 void Shrine::enhancedSequence() {
     /* replace the 'static' avatar tile with grass */        
-    annotations->add(Coords(5, 6, c->_location->coords.z), tileset->getByName("grass")->getId(), false, true);
+    _annotations->add(Coords(5, 6, c->_location->_coords.z), _tileset->getByName("grass")->getId(), false, true);
 
     screenDisableCursor();
     screenMessage("You approach\nthe ancient\nshrine...\n");
     gameUpdateScreen(); EventHandler::wait_cycles(settings._gameCyclesPerSecond);
         
-    Object *obj = addCreature(creatureMgr->getById(BEGGAR_ID), Coords(5, 10, c->_location->coords.z));
-    obj->setTile(tileset->getByName("avatar")->getId());
+    Object *obj = addCreature(creatureMgr->getById(BEGGAR_ID), Coords(5, 10, c->_location->_coords.z));
+    obj->setTile(_tileset->getByName("avatar")->getId());
 
     gameUpdateScreen(); EventHandler::wait_msecs(400);        
-    c->_location->map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
-    c->_location->map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
-    c->_location->map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
-    c->_location->map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(800);
+    c->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
+    c->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
+    c->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
+    c->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(800);
     obj->setTile(creatureMgr->getById(BEGGAR_ID)->getTile());
     gameUpdateScreen();
         
@@ -273,7 +273,7 @@ void Shrine::showVision(bool elevated) {
 void Shrine::eject() {
     game->exitToParentMap();
     musicMgr->play();
-    c->_location->turnCompleter->finishTurn();
+    c->_location->_turnCompleter->finishTurn();
 }
 
 } // End of namespace Ultima4

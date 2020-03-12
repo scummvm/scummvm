@@ -46,27 +46,27 @@ namespace Ultima4 {
 using Std::vector;
 using Std::pair;
 
-MapMgr *MapMgr::instance = NULL;
+MapMgr *MapMgr::_instance = NULL;
 
 extern bool isAbyssOpened(const Portal *p);
 extern bool shrineCanEnter(const Portal *p);
 
 MapMgr *MapMgr::getInstance() {
-    if (instance == NULL)
-        instance = new MapMgr();
-    return instance;
+    if (_instance == NULL)
+        _instance = new MapMgr();
+    return _instance;
 }
 
 void MapMgr::destroy() {
-    if (instance != NULL) {
-        delete instance;
-        instance = NULL;
+    if (_instance != NULL) {
+        delete _instance;
+        _instance = NULL;
     }
 }
 
 MapMgr::MapMgr() {
-    logger = new Debug("debug/mapmgr.txt", "MapMgr"); 
-    TRACE(*logger, "creating MapMgr");
+    _logger = new Debug("debug/mapmgr.txt", "MapMgr"); 
+    TRACE(*_logger, "creating MapMgr");
 
     const Config *config = Config::getInstance();
     Map *map;
@@ -81,21 +81,21 @@ MapMgr::MapMgr() {
 }
 
 MapMgr::~MapMgr() {
-    for (Std::vector<Map *>::iterator i = mapList.begin(); i != mapList.end(); i++)
+    for (Std::vector<Map *>::iterator i = _mapList.begin(); i != _mapList.end(); i++)
         delete *i;
 
-    delete logger;
+    delete _logger;
 }
 
 void MapMgr::unloadMap(MapId id) {
-    delete mapList[id];
+    delete _mapList[id];
     const Config *config = Config::getInstance();
     vector<ConfigElement> maps = config->getElement("maps").getChildren();
 
     for (Std::vector<ConfigElement>::const_iterator i = maps.begin(); i != maps.end(); ++i) {
         if (id == static_cast<MapId>((*i).getInt("id"))) {
             Map *map = initMapFromConf(*i);
-            mapList[id] = map;
+            _mapList[id] = map;
             break;
         }
     }
@@ -136,26 +136,26 @@ Map *MapMgr::initMap(Map::Type type) {
 
 Map *MapMgr::get(MapId id) {    
     /* if the map hasn't been loaded yet, load it! */
-    if (!mapList[id]->data.size()) {
-        MapLoader *loader = MapLoader::getLoader(mapList[id]->type);
+    if (!_mapList[id]->_data.size()) {
+        MapLoader *loader = MapLoader::getLoader(_mapList[id]->_type);
         if (loader == NULL)
-            errorFatal("can't load map of type \"%d\"", mapList[id]->type);
+            errorFatal("can't load map of type \"%d\"", _mapList[id]->_type);
 
-        TRACE_LOCAL(*logger, Common::String("loading map data for map \'") + mapList[id]->fname + "\'");
+        TRACE_LOCAL(*_logger, Common::String("loading map data for map \'") + _mapList[id]->_fname + "\'");
 
-        loader->load(mapList[id]);
+        loader->load(_mapList[id]);
     }
-    return mapList[id];
+    return _mapList[id];
 }
 
 void MapMgr::registerMap(Map *map) {
-    if (mapList.size() <= map->id)
-        mapList.resize(map->id + 1, NULL);
+    if (_mapList.size() <= map->_id)
+        _mapList.resize(map->_id + 1, NULL);
 
-    if (mapList[map->id] != NULL)
-        errorFatal("Error: A map with id '%d' already exists", map->id);
+    if (_mapList[map->_id] != NULL)
+        errorFatal("Error: A map with id '%d' already exists", map->_id);
 
-    mapList[map->id] = map;
+    _mapList[map->_id] = map;
 }
 
 Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
@@ -167,36 +167,36 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
     if (!map)
         return NULL;
 
-    map->id = static_cast<MapId>(mapConf.getInt("id"));
-    map->type = static_cast<Map::Type>(mapConf.getEnum("type", mapTypeEnumStrings));
-    map->fname = mapConf.getString("fname");
-    map->width = mapConf.getInt("width");
-    map->height = mapConf.getInt("height");
-    map->levels = mapConf.getInt("levels");
-    map->chunk_width = mapConf.getInt("chunkwidth");
-    map->chunk_height = mapConf.getInt("chunkheight");
-    map->offset = mapConf.getInt("offset");
-    map->border_behavior = static_cast<Map::BorderBehavior>(mapConf.getEnum("borderbehavior", borderBehaviorEnumStrings));    
+    map->_id = static_cast<MapId>(mapConf.getInt("id"));
+    map->_type = static_cast<Map::Type>(mapConf.getEnum("type", mapTypeEnumStrings));
+    map->_fname = mapConf.getString("fname");
+    map->_width = mapConf.getInt("width");
+    map->_height = mapConf.getInt("height");
+    map->_levels = mapConf.getInt("levels");
+    map->_chunkWidth = mapConf.getInt("chunkwidth");
+    map->_chunkHeight = mapConf.getInt("chunkheight");
+    map->_offset = mapConf.getInt("offset");
+    map->_borderBehavior = static_cast<Map::BorderBehavior>(mapConf.getEnum("borderbehavior", borderBehaviorEnumStrings));    
 
     if (isCombatMap(map)) {
         CombatMap *cm = dynamic_cast<CombatMap*>(map);
         cm->setContextual(mapConf.getBool("contextual"));
     }
 
-    TRACE_LOCAL(*logger, Common::String("loading configuration for map \'") + map->fname + "\'");
+    TRACE_LOCAL(*_logger, Common::String("loading configuration for map \'") + map->_fname + "\'");
 
     if (mapConf.getBool("showavatar"))
-        map->flags |= SHOW_AVATAR;
+        map->_flags |= SHOW_AVATAR;
 
     if (mapConf.getBool("nolineofsight"))
-        map->flags |= NO_LINE_OF_SIGHT;
+        map->_flags |= NO_LINE_OF_SIGHT;
     
     if (mapConf.getBool("firstperson"))
-        map->flags |= FIRST_PERSON;
+        map->_flags |= FIRST_PERSON;
 
-    map->music = static_cast<Music::Type>(mapConf.getInt("music"));
-    map->tileset = Tileset::get(mapConf.getString("tileset"));
-    map->tilemap = TileMap::get(mapConf.getString("tilemap"));
+    map->_music = static_cast<Music::Type>(mapConf.getInt("music"));
+    map->_tileset = Tileset::get(mapConf.getString("tileset"));
+    map->_tilemap = TileMap::get(mapConf.getString("tilemap"));
 
     vector<ConfigElement> children = mapConf.getChildren();
     for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
@@ -213,13 +213,13 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
             initDungeonFromConf(*i, dungeon);
         }
         else if (i->getName() == "portal")
-            map->portals.push_back(initPortalFromConf(*i));
+            map->_portals.push_back(initPortalFromConf(*i));
         else if (i->getName() == "moongate")
             createMoongateFromConf(*i);
         else if (i->getName() == "compressedchunk")
-            map->compressed_chunks.push_back(initCompressedChunkFromConf(*i));
+            map->_compressedChunks.push_back(initCompressedChunkFromConf(*i));
         else if (i->getName() == "label")
-            map->labels.insert(initLabelFromConf(*i));
+            map->_labels.insert(initLabelFromConf(*i));
     }
     
     return map;
@@ -336,10 +336,10 @@ void MapMgr::initShrineFromConf(const ConfigElement &shrineConf, Shrine *shrine)
 }
 
 void MapMgr::initDungeonFromConf(const ConfigElement &dungeonConf, Dungeon *dungeon) {
-    dungeon->n_rooms = dungeonConf.getInt("rooms");
-    dungeon->rooms = NULL;
-    dungeon->roomMaps = NULL;
-    dungeon->name = dungeonConf.getString("name");
+    dungeon->_nRooms = dungeonConf.getInt("rooms");
+    dungeon->_rooms = NULL;
+    dungeon->_roomMaps = NULL;
+    dungeon->_name = dungeonConf.getString("name");
 }
 
 void MapMgr::createMoongateFromConf(const ConfigElement &moongateConf) {

@@ -41,13 +41,13 @@ DungeonView::DungeonView(int x, int y, int columns, int rows) : TileView(x, y, r
 }
 
 
-DungeonView * DungeonView::instance(NULL);
+DungeonView * DungeonView::_instance(NULL);
 DungeonView * DungeonView::getInstance()
 {
-	if (!instance) 	{
-		instance = new DungeonView(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H);
+	if (!_instance) 	{
+		_instance = new DungeonView(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H);
 	}
-	return instance;
+	return _instance;
 }
 
 void DungeonView::display(Context * c, TileView *view)
@@ -88,11 +88,11 @@ void DungeonView::display(Context * c, TileView *view)
                		DungeonGraphicType distant_type = tilesToGraphic(distant_tiles);
 
 					if ((distant_type == DNGGRAPHIC_DNGTILE) || (distant_type == DNGGRAPHIC_BASETILE))
-						drawTile(c->_location->map->tileset->get(distant_tiles.front().getId()),0, y_obj, Direction(c->_saveGame->_orientation));
+						drawTile(c->_location->_map->_tileset->get(distant_tiles.front().getId()),0, y_obj, Direction(c->_saveGame->_orientation));
                		}
                	}
 				if ((type == DNGGRAPHIC_DNGTILE) || (type == DNGGRAPHIC_BASETILE))
-					drawTile(c->_location->map->tileset->get(tiles.front().getId()), 0, y, Direction(c->_saveGame->_orientation));
+					drawTile(c->_location->_map->_tileset->get(tiles.front().getId()), 0, y, Direction(c->_saveGame->_orientation));
             }
         }
     }
@@ -101,8 +101,8 @@ void DungeonView::display(Context * c, TileView *view)
     else {
     	Std::vector<MapTile> tiles;
 
-        static MapTile black = c->_location->map->tileset->getByName("black")->getId();
-        static MapTile avatar = c->_location->map->tileset->getByName("avatar")->getId();
+        static MapTile black = c->_location->_map->_tileset->getByName("black")->getId();
+        static MapTile avatar = c->_location->_map->_tileset->getByName("avatar")->getId();
 
         for (y = 0; y < VIEWPORT_H; y++) {
             for (x = 0; x < VIEWPORT_W; x++) {
@@ -254,7 +254,7 @@ void DungeonView::drawTile(Tile *tile, int x_offset, int distance, Direction ori
 }
 
 Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
-    MapCoords coords = c->_location->coords;
+    MapCoords coords = c->_location->_coords;
 
     switch (c->_saveGame->_orientation) {
     case DIR_WEST:
@@ -284,7 +284,7 @@ Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
     }
 
     // Wrap the coordinates if necessary
-    coords.wrap(c->_location->map);
+    coords.wrap(c->_location->_map);
 
     bool focus;
     return c->_location->tilesAt(coords, focus);
@@ -293,10 +293,10 @@ Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
 DungeonGraphicType DungeonView::tilesToGraphic(const Std::vector<MapTile> &tiles) {
     MapTile tile = tiles.front();
 
-    static const MapTile corridor = c->_location->map->tileset->getByName("brick_floor")->getId();
-    static const MapTile up_ladder = c->_location->map->tileset->getByName("up_ladder")->getId();
-    static const MapTile down_ladder = c->_location->map->tileset->getByName("down_ladder")->getId();
-    static const MapTile updown_ladder = c->_location->map->tileset->getByName("up_down_ladder")->getId();
+    static const MapTile corridor = c->_location->_map->_tileset->getByName("brick_floor")->getId();
+    static const MapTile up_ladder = c->_location->_map->_tileset->getByName("up_ladder")->getId();
+    static const MapTile down_ladder = c->_location->_map->_tileset->getByName("down_ladder")->getId();
+    static const MapTile updown_ladder = c->_location->_map->_tileset->getByName("up_down_ladder")->getId();
 
     /*
      * check if the dungeon tile has an annotation or object on top
@@ -319,7 +319,7 @@ DungeonGraphicType DungeonView::tilesToGraphic(const Std::vector<MapTile> &tiles
      * if not an annotation or object, then the tile is a dungeon
      * token
      */
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->map);
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->_map);
     DungeonToken token = dungeon->tokenForTile(tile);
 
     switch (token) {

@@ -36,7 +36,7 @@ namespace Ultima4 {
 
 using Common::String;
 
-#define MAP_IS_OOB(mapptr, c) (((c).x) < 0 || ((c).x) >= (static_cast<int>((mapptr)->width)) || ((c).y) < 0 || ((c).y) >= (static_cast<int>((mapptr)->height)) || ((c).z) < 0 || ((c).z) >= (static_cast<int>((mapptr)->levels)))
+#define MAP_IS_OOB(mapptr, c) (((c).x) < 0 || ((c).x) >= (static_cast<int>((mapptr)->_width)) || ((c).y) < 0 || ((c).y) >= (static_cast<int>((mapptr)->_height)) || ((c).z) < 0 || ((c).z) >= (static_cast<int>((mapptr)->_levels)))
 
 class AnnotationMgr;
 class Map;
@@ -111,10 +111,10 @@ public:
     class Source {
     public:
         Source() {}
-        Source(const Common::String &f, Type t) : fname(f), type(t) {}
+        Source(const Common::String &f, Type t) : _fname(f), _type(t) {}
 
-        Common::String fname;
-        Type type;
+        Common::String _fname;
+        Type _type;
     };
 
     Map();
@@ -150,34 +150,34 @@ public:
     unsigned int translateToRawTileIndex(MapTile &tile) const;
 
 public:
-    MapId           id;    
-    Common::String          fname;
-    Type            type;
-    unsigned int    width,
-                    height,
-                    levels;
-    unsigned int    chunk_width,
-                    chunk_height;
-    unsigned int    offset;
+    MapId           _id;    
+    Common::String  _fname;
+    Type            _type;
+    unsigned int    _width,
+                    _height,
+                    _levels;
+    unsigned int    _chunkWidth,
+                    _chunkHeight;
+    unsigned int    _offset;
 
-    Source          baseSource;
-    Common::List<Source> extraSources;
+    Source          _baseSource;
+    Common::List<Source> _extraSources;
     
-    CompressedChunkList     compressed_chunks;
-    BorderBehavior          border_behavior;
+    CompressedChunkList     _compressedChunks;
+    BorderBehavior          _borderBehavior;
 
-    PortalList      portals;
-    AnnotationMgr  *annotations;
-    int             flags;
-    Music::Type     music;
-    MapData         data;
-    ObjectDeque     objects;
-    Std::map<Common::String, MapCoords> labels;
-    Tileset        *tileset;
-    TileMap        *tilemap;
+    PortalList      _portals;
+    AnnotationMgr  *_annotations;
+    int             _flags;
+    Music::Type     _music;
+    MapData         _data;
+    ObjectDeque     _objects;
+    Std::map<Common::String, MapCoords> _labels;
+    Tileset        *_tileset;
+    TileMap        *_tilemap;
 
     // u4dos compatibility
-    SaveGameMonsterRecord monsterTable[MONSTERTABLE_SIZE];
+    SaveGameMonsterRecord _monsterTable[MONSTERTABLE_SIZE];
 
 private:
     // disallow map copying: all maps should be created and accessed

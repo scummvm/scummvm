@@ -27,7 +27,7 @@ namespace Ultima {
 namespace Ultima4 {
 
 Controller::Controller(int timerInterval) {
-    this->timerInterval = timerInterval;
+    this->_timerInterval = timerInterval;
 }
 
 Controller::~Controller() {
@@ -47,7 +47,7 @@ bool Controller::notifyKeyPressed(int key) {
 }
 
 int Controller::getTimerInterval() {
-    return timerInterval;
+    return _timerInterval;
 }
 
 /**

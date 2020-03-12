@@ -27,20 +27,20 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Std::map<Common::String, DialogueLoader *> *DialogueLoader::loaderMap = NULL;
+Std::map<Common::String, DialogueLoader *> *DialogueLoader::_loaderMap = NULL;
 
 DialogueLoader *DialogueLoader::getLoader(const Common::String &mimeType) {
-    ASSERT(loaderMap != NULL, "DialogueLoader::getLoader loaderMap not initialized");
-    if (loaderMap->find(mimeType) == loaderMap->end())
+    ASSERT(_loaderMap != NULL, "DialogueLoader::getLoader loaderMap not initialized");
+    if (_loaderMap->find(mimeType) == _loaderMap->end())
         return NULL;
-    return (*loaderMap)[mimeType];
+    return (*_loaderMap)[mimeType];
 }
 
 DialogueLoader *DialogueLoader::registerLoader(DialogueLoader *loader, const Common::String &mimeType) {
-    if (loaderMap == NULL) {
-        loaderMap = new Std::map<Common::String, DialogueLoader *>;
+    if (_loaderMap == NULL) {
+        _loaderMap = new Std::map<Common::String, DialogueLoader *>;
     }
-    (*loaderMap)[mimeType] = loader;
+    (*_loaderMap)[mimeType] = loader;
     return loader;
 }
 

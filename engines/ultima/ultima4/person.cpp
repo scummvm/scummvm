@@ -105,52 +105,52 @@ Common::List<Common::String> replySplit(const Common::String &text) {
     return reply;
 }
 
-Person::Person(MapTile tile) : Creature(tile), start(0, 0) {
+Person::Person(MapTile tile) : Creature(tile), _start(0, 0) {
     setType(Object::PERSON);
-    dialogue = NULL;
-    npcType = NPC_EMPTY;
+    _dialogue = NULL;
+    _npcType = NPC_EMPTY;
 }
 
-Person::Person(const Person *p) : Creature(p->tile) {
+Person::Person(const Person *p) : Creature(p->_tile) {
     *this = *p;
 }
 
 bool Person::canConverse() const {
-    return isVendor() || dialogue != NULL;
+    return isVendor() || _dialogue != NULL;
 }
 
 bool Person::isVendor() const {
     return
-        npcType >= NPC_VENDOR_WEAPONS &&
-        npcType <= NPC_VENDOR_STABLE;
+        _npcType >= NPC_VENDOR_WEAPONS &&
+        _npcType <= NPC_VENDOR_STABLE;
 }
 
 Common::String Person::getName() const {
-    if (dialogue)
-        return dialogue->getName();
-    else if (npcType == NPC_EMPTY)
+    if (_dialogue)
+        return _dialogue->getName();
+    else if (_npcType == NPC_EMPTY)
         return Creature::getName();
     else
         return "(unnamed person)";
 }
 
 void Person::goToStartLocation() {
-    setCoords(start);
+    setCoords(_start);
 }
 
 void Person::setDialogue(Dialogue *d) {
-    dialogue = d;
-    if (tile.getTileType()->getName() == "beggar")
-        npcType = NPC_TALKER_BEGGAR;
-    else if (tile.getTileType()->getName() == "guard")
-        npcType = NPC_TALKER_GUARD;
+    _dialogue = d;
+    if (_tile.getTileType()->getName() == "beggar")
+        _npcType = NPC_TALKER_BEGGAR;
+    else if (_tile.getTileType()->getName() == "guard")
+        _npcType = NPC_TALKER_GUARD;
     else
-        npcType = NPC_TALKER;
+        _npcType = NPC_TALKER;
 }
 
 void Person::setNpcType(PersonNpcType t) {
-    npcType = t;
-    ASSERT(!isVendor() || dialogue == NULL, "vendor has dialogue");
+    _npcType = t;
+    ASSERT(!isVendor() || _dialogue == NULL, "vendor has dialogue");
 }
 
 Common::List<Common::String> Person::getConversationText(Conversation *cnv, const char *inquiry) {
@@ -172,7 +172,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
             // unload the previous script if it wasn't already unloaded
             if (script->getState() != Script::STATE_UNLOADED)
                 script->unload();
-            script->load("vendorScript.xml", ids[npcType - NPC_VENDOR_WEAPONS], "vendor", c->_location->map->getName());
+            script->load("vendorScript.xml", ids[_npcType - NPC_VENDOR_WEAPONS], "vendor", c->_location->_map->getName());
             script->run("intro");       
 #ifdef IOS
             U4IOS::IOSConversationChoiceHelper choiceDialog;
@@ -265,18 +265,18 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
             break;
 
         case Conversation::CONFIRMATION:
-            ASSERT(npcType == NPC_LORD_BRITISH, "invalid state: %d", cnv->state);
+            ASSERT(_npcType == NPC_LORD_BRITISH, "invalid state: %d", cnv->state);
             text += lordBritishGetQuestionResponse(cnv, inquiry);
             break;
 
         case Conversation::ASK:
         case Conversation::ASKYESNO:
-            ASSERT(npcType != NPC_HAWKWIND, "invalid state for hawkwind conversation");            
+            ASSERT(_npcType != NPC_HAWKWIND, "invalid state for hawkwind conversation");            
             text += talkerGetQuestionResponse(cnv, inquiry) + "\n";
             break;
 
         case Conversation::GIVEBEGGAR:
-            ASSERT(npcType == NPC_TALKER_BEGGAR, "invalid npc type: %d", npcType);
+            ASSERT(_npcType == NPC_TALKER_BEGGAR, "invalid npc type: %d", _npcType);
             text = beggarGetQuantityResponse(cnv, inquiry);
             break;
 
@@ -308,7 +308,7 @@ Common::String Person::getPrompt(Conversation *cnv) {
     else if (cnv->state == Conversation::CONFIRMATION)
         prompt = "\n\nHe asks: Art thou well?";
     else if (cnv->state != Conversation::ASKYESNO)
-        prompt = dialogue->getPrompt();
+        prompt = _dialogue->getPrompt();
 
     return prompt;
 }
@@ -336,7 +336,7 @@ const char *Person::getChoices(Conversation *cnv) {
 }
 
 Common::String Person::getIntro(Conversation *cnv) {
-    if (npcType == NPC_EMPTY) {
+    if (_npcType == NPC_EMPTY) {
         cnv->state = Conversation::DONE;
         return Common::String("Funny, no\nresponse!\n");
     }
@@ -345,9 +345,9 @@ Common::String Person::getIntro(Conversation *cnv) {
     // name in the introduction
     Response *intro;
     if (xu4_random(2) == 0)
-        intro = dialogue->getIntro();
+        intro = _dialogue->getIntro();
     else
-        intro = dialogue->getLongIntro();
+        intro = _dialogue->getLongIntro();
 
     cnv->state = Conversation::TALK;
     Common::String text = processResponse(cnv, intro);
@@ -373,7 +373,7 @@ Common::String Person::processResponse(Conversation *cnv, Response *response) {
 
 void Person::runCommand(Conversation *cnv, const ResponsePart &command) {
     if (command == ResponsePart::ASK) {
-        cnv->question = dialogue->getQuestion();
+        cnv->question = _dialogue->getQuestion();
         cnv->state = Conversation::ASK;
     }
     else if (command == ResponsePart::END) {
@@ -414,21 +414,21 @@ void Person::runCommand(Conversation *cnv, const ResponsePart &command) {
 Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
     Common::String reply;
     Virtue v;
-    const ResponsePart &action = dialogue->getAction();
+    const ResponsePart &action = _dialogue->getAction();
 
     reply = "\n";
     
     /* Does the person take action during the conversation? */
     if (action == ResponsePart::END) {
         runCommand(cnv, action);
-        return dialogue->getPronoun() + " turns away!\n";
+        return _dialogue->getPronoun() + " turns away!\n";
     }
     else if (action == ResponsePart::ATTACK) {
         runCommand(cnv, action);
         return Common::String("\n") + getName() + " says: On guard! Fool!";
     }
 
-    if (npcType == NPC_TALKER_BEGGAR && scumm_strnicmp(inquiry, "give", 4) == 0) {
+    if (_npcType == NPC_TALKER_BEGGAR && scumm_strnicmp(inquiry, "give", 4) == 0) {
         reply.clear();
         cnv->state = Conversation::GIVEBEGGAR;
     }
@@ -439,7 +439,7 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
 
         if (join == JOIN_SUCCEEDED) {
             reply += "I am honored to join thee!";
-            c->_location->map->removeObject(this);
+            c->_location->_map->removeObject(this);
             cnv->state = Conversation::DONE;
         } else {
             reply += "Thou art not ";
@@ -448,8 +448,8 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
         }
     }
 
-    else if ((*dialogue)[inquiry]) {        
-        Dialogue::Keyword *kw = (*dialogue)[inquiry];
+    else if ((*_dialogue)[inquiry]) {        
+        Dialogue::Keyword *kw = (*_dialogue)[inquiry];
 
         reply = processResponse(cnv, kw->getResponse());
     }
@@ -457,13 +457,13 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
     else if (settings._debug && scumm_strnicmp(inquiry, "dump", 4) == 0) {
         vector<Common::String> words = split(inquiry, " \t");
         if (words.size() <= 1)
-            reply = dialogue->dump("");
+            reply = _dialogue->dump("");
         else
-            reply = dialogue->dump(words[1]);
+            reply = _dialogue->dump(words[1]);
     }
 
     else
-        reply += processResponse(cnv, dialogue->getDefaultAnswer());
+        reply += processResponse(cnv, _dialogue->getDefaultAnswer());
 
     return reply;
 }
@@ -496,7 +496,7 @@ Common::String Person::beggarGetQuantityResponse(Conversation *cnv, const char *
     if (cnv->quant > 0) {
         if (c->_party->donate(cnv->quant)) {
             reply = "\n";
-            reply += dialogue->getPronoun();
+            reply += _dialogue->getPronoun();
             reply += " says: Oh Thank thee! I shall never forget thy kindness!\n";
         }
 

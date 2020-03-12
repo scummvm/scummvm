@@ -67,7 +67,7 @@ Person *City::addPerson(Person *person) {
     p->setMap(this);
     p->goToStartLocation();
 
-    objects.push_back(p);    
+    _objects.push_back(p);    
     return p;
 }
 
@@ -95,7 +95,7 @@ void City::addPeople() {
  */
 void City::removeAllPeople() {
     ObjectDeque::iterator obj;
-    for (obj = objects.begin(); obj != objects.end();) {
+    for (obj = _objects.begin(); obj != _objects.end();) {
         if (isPerson(*obj))
             obj = removeObject(obj);
         else obj++;

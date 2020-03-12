@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-ImageLoader *PngImageLoader::instance = ImageLoader::registerLoader(new PngImageLoader, "image/png");
+ImageLoader *PngImageLoader::_instance = ImageLoader::registerLoader(new PngImageLoader, "image/png");
 
 #ifdef TODO
 static void png_read_xu4(png_structp png_ptr, png_bytep data, png_size_t length) {

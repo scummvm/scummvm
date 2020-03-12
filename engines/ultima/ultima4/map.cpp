@@ -64,15 +64,15 @@ bool MapCoords::operator<(const MapCoords &a)  const {
 
 
 MapCoords& MapCoords::wrap(const Map *map) {
-    if (map && map->border_behavior == Map::BORDER_WRAP) {
+    if (map && map->_borderBehavior == Map::BORDER_WRAP) {
         while (x < 0)
-            x += map->width;
+            x += map->_width;
         while (y < 0)
-            y += map->height;
-        while (x >= (int)map->width)
-            x -= map->width;
-        while (y >= (int)map->height)
-            y -= map->height;
+            y += map->_height;
+        while (x >= (int)map->_width)
+            x -= map->_width;
+        while (y >= (int)map->_height)
+            y -= map->_height;
     }
     return *this;
 }
@@ -81,16 +81,16 @@ MapCoords& MapCoords::putInBounds(const Map *map) {
     if (map) {
         if (x < 0)
             x = 0;
-        if (x >= (int) map->width)
-            x = map->width - 1;
+        if (x >= (int) map->_width)
+            x = map->_width - 1;
         if (y < 0)
             y = 0;
-        if (y >= (int) map->height)
-            y = map->height - 1;
+        if (y >= (int) map->_height)
+            y = map->_height - 1;
         if (z < 0)
             z = 0;
-        if (z >= (int) map->levels)
-            z = map->levels - 1;
+        if (z >= (int) map->_levels)
+            z = map->_levels - 1;
     }
     return *this;
 }
@@ -137,18 +137,18 @@ int MapCoords::getRelativeDirection(const MapCoords &c, const Map *map) const {
         return dirmask;
     
     /* adjust our coordinates to find the closest path */
-    if (map && map->border_behavior == Map::BORDER_WRAP) {
+    if (map && map->_borderBehavior == Map::BORDER_WRAP) {
         MapCoords me = *this;            
         
-        if (abs(int(me.x - c.x)) > abs(int(me.x + map->width - c.x)))
-            me.x += map->width;
-        else if (abs(int(me.x - c.x)) > abs(int(me.x - map->width - c.x)))
-            me.x -= map->width;
+        if (abs(int(me.x - c.x)) > abs(int(me.x + map->_width - c.x)))
+            me.x += map->_width;
+        else if (abs(int(me.x - c.x)) > abs(int(me.x - map->_width - c.x)))
+            me.x -= map->_width;
 
-        if (abs(int(me.y - c.y)) > abs(int(me.y + map->width - c.y)))
-            me.y += map->height;
-        else if (abs(int(me.y - c.y)) > abs(int(me.y - map->width - c.y)))
-            me.y -= map->height;
+        if (abs(int(me.y - c.y)) > abs(int(me.y + map->_width - c.y)))
+            me.y += map->_height;
+        else if (abs(int(me.y - c.y)) > abs(int(me.y - map->_width - c.y)))
+            me.y -= map->_height;
 
         dx = me.x - c.x;
         dy = me.y - c.y;
@@ -259,27 +259,27 @@ int MapCoords::distance(const MapCoords &c, const Map *map) const {
  */ 
 
 Map::Map() {
-    annotations = new AnnotationMgr();
-    flags = 0;
-    width = 0;
-    height = 0;
-    levels = 1;
-    chunk_width = 0;
-    chunk_height = 0;    
-    offset = 0;    
-    id = 0;
-    tileset = NULL;
-    tilemap = NULL;
+    _annotations = new AnnotationMgr();
+    _flags = 0;
+    _width = 0;
+    _height = 0;
+    _levels = 1;
+    _chunkWidth = 0;
+    _chunkHeight = 0;    
+    _offset = 0;    
+    _id = 0;
+    _tileset = NULL;
+    _tilemap = NULL;
 }
 
 Map::~Map() {
-    for (PortalList::iterator i = portals.begin(); i != portals.end(); i++)
+    for (PortalList::iterator i = _portals.begin(); i != _portals.end(); i++)
         delete *i;
-    delete annotations;
+    delete _annotations;
 }
 
 Common::String Map::getName() {
-    return baseSource.fname;
+    return _baseSource._fname;
 }
 
 /**
@@ -291,7 +291,7 @@ Object *Map::objectAt(const Coords &coords) {
     ObjectDeque::const_iterator i;        
     Object *objAt = NULL;    
 
-    for(i = objects.begin(); i != objects.end(); i++) {
+    for(i = _objects.begin(); i != _objects.end(); i++) {
         Object *obj = *i;
         
         if (obj->getCoords() == coords) {
@@ -316,7 +316,7 @@ Object *Map::objectAt(const Coords &coords) {
 const Portal *Map::portalAt(const Coords &coords, int actionFlags) {
     PortalList::const_iterator i;    
 
-    for(i = portals.begin(); i != portals.end(); i++) {
+    for(i = _portals.begin(); i != _portals.end(); i++) {
         if (((*i)->_coords == coords) &&
             ((*i)->_triggerAction & actionFlags))
             return *i;
@@ -333,8 +333,8 @@ MapTile *Map::getTileFromData(const Coords &coords) {
     if (MAP_IS_OOB(this, coords))
         return &blank;
 
-    int index = coords.x + (coords.y * width) + (width * height * coords.z);
-    return &data[index];
+    int index = coords.x + (coords.y * _width) + (_width * _height * coords.z);
+    return &_data[index];
 }
 
 /**
@@ -345,7 +345,7 @@ MapTile *Map::getTileFromData(const Coords &coords) {
 MapTile *Map::tileAt(const Coords &coords, int withObjects) {
     /* FIXME: this should return a list of tiles, with the most visible at the front */
     MapTile *tile;
-    Common::List<Annotation *> a = annotations->ptrsToAllAt(coords);
+    Common::List<Annotation *> a = _annotations->ptrsToAllAt(coords);
     Common::List<Annotation *>::iterator i;
     Object *obj = objectAt(coords);
  
@@ -378,7 +378,7 @@ const Tile *Map::tileTypeAt(const Coords &coords, int withObjects) {
  * Returns true if the given map is the world map
  */
 bool Map::isWorldMap() {
-    return type == WORLD;
+    return _type == WORLD;
 }
 
 
@@ -390,25 +390,25 @@ bool Map::isEnclosed(const Coords &party) {
     unsigned int x, y;
     int *path_data;
 
-    if (border_behavior != BORDER_WRAP)
+    if (_borderBehavior != BORDER_WRAP)
         return true;
 
-    path_data = new int[width * height];
-    memset(path_data, -1, sizeof(int) * width * height);
+    path_data = new int[_width * _height];
+    memset(path_data, -1, sizeof(int) * _width * _height);
 
     // Determine what's walkable (1), and what's border-walkable (2)
     findWalkability(party, path_data);
 
     // Find two connecting pathways where the avatar can reach both without wrapping
-    for (x = 0; x < width; x++) {
+    for (x = 0; x < _width; x++) {
         int index = x;
-        if (path_data[index] == 2 && path_data[index + ((height-1)*width)] == 2)
+        if (path_data[index] == 2 && path_data[index + ((_height-1)*_width)] == 2)
             return false;        
     }
 
-    for (y = 0; y < width; y++) {
-        int index = (y * width);
-        if (path_data[index] == 2 && path_data[index + width - 1] == 2)
+    for (y = 0; y < _width; y++) {
+        int index = (y * _width);
+        if (path_data[index] == 2 && path_data[index + _width - 1] == 2)
             return false;
     }
 
@@ -417,19 +417,19 @@ bool Map::isEnclosed(const Coords &party) {
 
 void Map::findWalkability(Coords coords, int *path_data) {
     const Tile *mt = tileTypeAt(coords, WITHOUT_OBJECTS);
-    int index = coords.x + (coords.y * width);
+    int index = coords.x + (coords.y * _width);
 
     if (mt->isWalkable()) {        
-        bool isBorderTile = (coords.x == 0) || (coords.x == signed(width-1)) || (coords.y == 0) || (coords.y == signed(height-1));
+        bool isBorderTile = (coords.x == 0) || (coords.x == signed(_width-1)) || (coords.y == 0) || (coords.y == signed(_height-1));
         path_data[index] = isBorderTile ? 2 : 1;
 
-        if ((coords.x > 0) && path_data[coords.x - 1 + (coords.y * width)] < 0)
+        if ((coords.x > 0) && path_data[coords.x - 1 + (coords.y * _width)] < 0)
             findWalkability(Coords(coords.x - 1, coords.y, coords.z), path_data);
-        if ((coords.x < signed(width-1)) && path_data[coords.x + 1 + (coords.y * width)] < 0)
+        if ((coords.x < signed(_width-1)) && path_data[coords.x + 1 + (coords.y * _width)] < 0)
             findWalkability(Coords(coords.x + 1, coords.y, coords.z), path_data);
-        if ((coords.y > 0) && path_data[coords.x + ((coords.y - 1) * width)] < 0)
+        if ((coords.y > 0) && path_data[coords.x + ((coords.y - 1) * _width)] < 0)
             findWalkability(Coords(coords.x, coords.y - 1, coords.z), path_data);
-        if ((coords.y < signed(height-1)) && path_data[coords.x + ((coords.y + 1) * width)] < 0)
+        if ((coords.y < signed(_height-1)) && path_data[coords.x + ((coords.y + 1) * _width)] < 0)
             findWalkability(Coords(coords.x, coords.y + 1, coords.z), path_data);    
     }
     else path_data[index] = 0;    
@@ -457,11 +457,11 @@ Creature *Map::addCreature(const Creature *creature, Coords coords) {
     else m->setMovementBehavior(MOVEMENT_ATTACK_AVATAR);
 
     /* hide camouflaged creatures from view during combat */
-    if (m->camouflages() && (type == COMBAT))
+    if (m->camouflages() && (_type == COMBAT))
         m->setVisible(false);
     
     /* place the creature on the map */
-    objects.push_back(m);
+    _objects.push_back(m);
     return m;
 }
 
@@ -469,7 +469,7 @@ Creature *Map::addCreature(const Creature *creature, Coords coords) {
  * Adds an object to the given map
  */
 Object *Map::addObject(Object *obj, Coords coords) {
-    objects.push_front(obj);
+    _objects.push_front(obj);
     return obj;
 }
 
@@ -482,7 +482,7 @@ Object *Map::addObject(MapTile tile, MapTile prevtile, Coords coords) {
     obj->setPrevCoords(coords);
     obj->setMap(this);
     
-    objects.push_front(obj);    
+    _objects.push_front(obj);    
 
     return obj;
 }
@@ -497,12 +497,12 @@ Object *Map::addObject(MapTile tile, MapTile prevtile, Coords coords) {
 // below.
 void Map::removeObject(const Object *rem, bool deleteObject) {
     ObjectDeque::iterator i;
-    for (i = objects.begin(); i != objects.end(); i++) {
+    for (i = _objects.begin(); i != _objects.end(); i++) {
         if (*i == rem) {
             /* Party members persist through different maps, so don't delete them! */
             if (!isPartyMember(*i) && deleteObject)
                 delete (*i);
-            objects.erase(i);
+            _objects.erase(i);
             return;
         }
     }
@@ -512,7 +512,7 @@ ObjectDeque::iterator Map::removeObject(ObjectDeque::iterator rem, bool deleteOb
     /* Party members persist through different maps, so don't delete them! */
     if (!isPartyMember(*rem) && deleteObject)
         delete (*rem);
-    return objects.erase(rem);
+    return _objects.erase(rem);
 }
 
 /**
@@ -523,8 +523,8 @@ ObjectDeque::iterator Map::removeObject(ObjectDeque::iterator rem, bool deleteOb
 Creature *Map::moveObjects(MapCoords avatar) {        
     Creature *attacker = NULL;
     
-    for (unsigned int i = 0; i < objects.size(); i++) {
-        Creature *m = dynamic_cast<Creature *>(objects[i]);
+    for (unsigned int i = 0; i < _objects.size(); i++) {
+        Creature *m = dynamic_cast<Creature *>(_objects[i]);
         
         if (m) {
             /* check if the object is an attacking creature and not
@@ -570,7 +570,7 @@ Creature *Map::moveObjects(MapCoords avatar) {
 void Map::resetObjectAnimations() {
     ObjectDeque::iterator i;
     
-    for (i = objects.begin(); i != objects.end(); i++) {
+    for (i = _objects.begin(); i != _objects.end(); i++) {
         Object *obj = *i;
         
         if (obj->getType() == Object::CREATURE)
@@ -582,7 +582,7 @@ void Map::resetObjectAnimations() {
  * Removes all objects from the given map
  */
 void Map::clearObjects() {
-    objects.clear();    
+    _objects.clear();    
 }
 
 /**
@@ -592,7 +592,7 @@ int Map::getNumberOfCreatures() {
     ObjectDeque::const_iterator i;
     int n = 0;
 
-    for (i = objects.begin(); i != objects.end(); i++) {
+    for (i = _objects.begin(); i != _objects.end(); i++) {
         Object *obj = *i;
 
         if (obj->getType() == Object::CREATURE)
@@ -616,7 +616,7 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
     // get the creature object, if it exists (the one that's moving)
     m = creatureMgr->getByTile(transport);
 
-    bool isAvatar = (c->_location->coords == coords);
+    bool isAvatar = (c->_location->_coords == coords);
     if (m && m->canMoveOntoPlayer())
     	isAvatar = false;
 
@@ -638,7 +638,7 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
         obj = objectAt(coords);
 
         // see if it's trying to move onto the avatar
-        if ((flags & SHOW_AVATAR) && (coords == c->_location->coords))
+        if ((_flags & SHOW_AVATAR) && (coords == c->_location->_coords))
             ontoAvatar = 1;
         
         // see if it's trying to move onto a person or creature
@@ -689,7 +689,7 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
             else if (transport.getTileType()->isBalloon() && tile.getTileType()->isFlyable())
                 retval = DIR_ADD_TO_MASK(d, retval);        
             // avatar or horseback: check walkable
-            else if (transport == tileset->getByName("avatar")->getId() || transport.getTileType()->isHorse()) {
+            else if (transport == _tileset->getByName("avatar")->getId() || transport.getTileType()->isHorse()) {
                 if (tile.getTileType()->canWalkOn(d) &&
                 	(!transport.getTileType()->isHorse() || tile.getTileType()->isCreatureWalkable()) &&
                     prev_tile.getTileType()->canWalkOff(d))
@@ -769,7 +769,7 @@ void Map::alertGuards() {
     const Creature *m;
 
     /* switch all the guards to attack mode */
-    for (i = objects.begin(); i != objects.end(); i++) {
+    for (i = _objects.begin(); i != _objects.end(); i++) {
         m = creatureMgr->getByTile((*i)->getTile());
         if (m && (m->getId() == GUARD_ID || m->getId() == LORDBRITISH_ID))
             (*i)->setMovementBehavior(MOVEMENT_ATTACK_AVATAR);
@@ -777,8 +777,8 @@ void Map::alertGuards() {
 }
 
 const MapCoords &Map::getLabel(const Common::String &name) const {
-    Std::map<Common::String, MapCoords>::const_iterator i = labels.find(name);
-    if (i == labels.end())
+    Std::map<Common::String, MapCoords>::const_iterator i = _labels.find(name);
+    if (i == _labels.end())
         return MapCoords::nowhere;
     return i->_value;
 }
@@ -795,12 +795,12 @@ bool Map::fillMonsterTable() {
     int nObjects = 0;    
     int i;
     
-    memset(monsterTable, 0, MONSTERTABLE_SIZE * sizeof(SaveGameMonsterRecord));
+    memset(_monsterTable, 0, MONSTERTABLE_SIZE * sizeof(SaveGameMonsterRecord));
 
     /**
      * First, categorize all the objects we have
      */
-    for (current = objects.begin(); current != objects.end(); current++) {
+    for (current = _objects.begin(); current != _objects.end(); current++) {
         obj = *current;
 
         /* moving objects first */
@@ -849,25 +849,25 @@ bool Map::fillMonsterTable() {
         Coords c = monsters[i]->getCoords(),
                prevc = monsters[i]->getPrevCoords();
 
-        monsterTable[i]._tile = translateToRawTileIndex(monsters[i]->getTile());
-        monsterTable[i]._x = c.x;
-        monsterTable[i]._y = c.y;
-        monsterTable[i]._prevTile = translateToRawTileIndex(monsters[i]->getPrevTile());
-        monsterTable[i]._prevX = prevc.x;
-        monsterTable[i]._prevY = prevc.y;
+        _monsterTable[i]._tile = translateToRawTileIndex(monsters[i]->getTile());
+        _monsterTable[i]._x = c.x;
+        _monsterTable[i]._y = c.y;
+        _monsterTable[i]._prevTile = translateToRawTileIndex(monsters[i]->getPrevTile());
+        _monsterTable[i]._prevX = prevc.x;
+        _monsterTable[i]._prevY = prevc.y;
     }
     
     return true;
 }
 
 MapTile Map::translateFromRawTileIndex(int raw) const {
-    ASSERT(tilemap != NULL, "tilemap hasn't been set");
+    ASSERT(_tilemap != NULL, "tilemap hasn't been set");
 
-    return tilemap->translate(raw);
+    return _tilemap->translate(raw);
 }
 
 unsigned int Map::translateToRawTileIndex(MapTile &tile) const {
-    return tilemap->untranslate(tile);
+    return _tilemap->untranslate(tile);
 }
 
 } // End of namespace Ultima4

@@ -129,9 +129,9 @@ private:
     int initCompressedChunkFromConf(const ConfigElement &compressedChunkConf);
     Std::pair<Common::String, MapCoords> initLabelFromConf(const ConfigElement &labelConf);
 
-    static MapMgr *instance;
-    Std::vector<Map *> mapList;
-    Debug *logger;
+    static MapMgr *_instance;
+    Std::vector<Map *> _mapList;
+    Debug *_logger;
 };
 
 #define mapMgr (MapMgr::getInstance())

@@ -56,12 +56,12 @@ public:
     int getCurrentPosition(MapCoords *coords);
     MoveResult move(Direction dir, bool userEvent);
 
-    MapCoords coords;    
-    Map *map;
-    int viewMode;
-    LocationContext context;
-    TurnCompleter *turnCompleter;
-    Location *prev;
+    MapCoords _coords;    
+    Map *_map;
+    int _viewMode;
+    LocationContext _context;
+    TurnCompleter *_turnCompleter;
+    Location *_prev;
 };
 
 void locationFree(Location **stack);

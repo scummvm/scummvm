@@ -41,7 +41,7 @@ TextView::TextView(int x, int y, int columns, int rows) : View(x, y, columns * C
     this->_cursorY = 0;
     this->_cursorPhase = 0;
     if (_charset == NULL)
-        _charset = imageMgr->get(BKGD_CHARSET)->image;
+        _charset = imageMgr->get(BKGD_CHARSET)->_image;
     eventHandler->getTimer()->add(&cursorTimer, /*SCR_CYCLE_PER_SECOND*/4, this);
 }
 
@@ -51,7 +51,7 @@ TextView::~TextView() {
 
 void TextView::reinit() {
     View::reinit();
-    _charset = imageMgr->get(BKGD_CHARSET)->image;
+    _charset = imageMgr->get(BKGD_CHARSET)->_image;
 }
 
 /**

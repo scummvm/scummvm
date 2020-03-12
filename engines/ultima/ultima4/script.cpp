@@ -965,14 +965,14 @@ Script::ReturnCode Script::random(xmlNodePtr script, xmlNodePtr current) {
  */ 
 Script::ReturnCode Script::move(xmlNodePtr script, xmlNodePtr current) {
     if (xmlPropExists(current, "x"))
-        c->_location->coords.x = getPropAsInt(current, "x");
+        c->_location->_coords.x = getPropAsInt(current, "x");
     if (xmlPropExists(current, "y"))
-        c->_location->coords.y = getPropAsInt(current, "y");
+        c->_location->_coords.y = getPropAsInt(current, "y");
     if (xmlPropExists(current, "z"))
-        c->_location->coords.z = getPropAsInt(current, "z");
+        c->_location->_coords.z = getPropAsInt(current, "z");
 
     if (_debug)
-        ::debug("\nMove: x-%d y-%d z-%d", c->_location->coords.x, c->_location->coords.y, c->_location->coords.z);
+        ::debug("\nMove: x-%d y-%d z-%d", c->_location->_coords.x, c->_location->_coords.y, c->_location->_coords.z);
     
     gameUpdateScreen();
     return RET_OK;

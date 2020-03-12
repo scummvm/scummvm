@@ -52,7 +52,7 @@ bool isDungeon(Map *punknown) {
  * Returns the name of the dungeon
  */ 
 Common::String Dungeon::getName() {
-    return name;
+    return _name;
 }
 
 /**
@@ -70,7 +70,7 @@ DungeonToken Dungeon::tokenForTile(MapTile tile) {
     const static Common::String fieldNames[] = { "poison_field", "energy_field", "fire_field", "sleep_field", "" };
 
     int i;
-    Tile *t = tileset->get(tile.getId());
+    Tile *t = _tileset->get(tile.getId());
 
     for (i = 0; !tileNames[i].empty(); i++) {        
         if (t->getName() == tileNames[i])
@@ -89,7 +89,7 @@ DungeonToken Dungeon::tokenForTile(MapTile tile) {
  * Returns the dungeon token for the current location
  */
 DungeonToken Dungeon::currentToken() {
-    return tokenAt(c->_location->coords);
+    return tokenAt(c->_location->_coords);
 }
 
 /**
@@ -100,7 +100,7 @@ DungeonToken Dungeon::currentToken() {
  * Returns the dungeon sub-token for the current location
  */
 unsigned char Dungeon::currentSubToken() {
-    return subTokenAt(c->_location->coords);
+    return subTokenAt(c->_location->_coords);
 }
 
 /**
@@ -118,17 +118,17 @@ DungeonToken Dungeon::tokenAt(MapCoords coords) {
  * necessary
  */
 unsigned char Dungeon::subTokenAt(MapCoords coords) {
-    int index = coords.x + (coords.y * width) + (width * height * coords.z);
-    return dataSubTokens[index];
+    int index = coords.x + (coords.y * _width) + (_width * _height * coords.z);
+    return _dataSubTokens[index];
 }
 
 /**
  * Handles 's'earching while in dungeons
  */
 void dungeonSearch(void) {
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->map);
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->_map);
     DungeonToken token = dungeon->currentToken(); 
-    Annotation::List a = dungeon->annotations->allAt(c->_location->coords);
+    Annotation::List a = dungeon->_annotations->allAt(c->_location->_coords);
     const ItemLocation *item;
     if (a.size() > 0)
         token = DUNGEON_CORRIDOR;
@@ -148,14 +148,14 @@ void dungeonSearch(void) {
     default: 
         {
             /* see if there is an item at the current location (stones on altars, etc.) */
-            item = itemAtLocation(dungeon, c->_location->coords);
+            item = itemAtLocation(dungeon, c->_location->_coords);
             if (item) {
-                if (*item->isItemInInventory != NULL && (*item->isItemInInventory)(item->data))
+                if (*item->_isItemInInventory != NULL && (*item->_isItemInInventory)(item->_data))
                     screenMessage("Nothing Here!\n");
                 else {                
-                    if (item->name)
-                        screenMessage("You find...\n%s!\n", item->name);
-                    (*item->putItemInInventory)(item->data);
+                    if (item->_name)
+                        screenMessage("You find...\n%s!\n", item->_name);
+                    (*item->_putItemInInventory)(item->_data);
                 }
             } else
                 screenMessage("\nYou find Nothing!\n");
@@ -174,7 +174,7 @@ void dungeonDrinkFountain() {
     if (player == -1)
         return;
 
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->map);
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->_map);
     FountainType type = (FountainType) dungeon->currentSubToken();    
 
     switch(type) {
@@ -232,10 +232,10 @@ void dungeonTouchOrb() {
     int damage = 0;    
     
     /* Get current position and find a replacement tile for it */   
-    Tile * orb_tile = c->_location->map->tileset->getByName("magic_orb");
-    MapTile replacementTile(c->_location->getReplacementTile(c->_location->coords, orb_tile));
+    Tile * orb_tile = c->_location->_map->_tileset->getByName("magic_orb");
+    MapTile replacementTile(c->_location->getReplacementTile(c->_location->_coords, orb_tile));
 
-    switch(c->_location->map->id) {
+    switch(c->_location->_map->_id) {
     case MAP_DECEIT:    stats = STATSBONUS_INT; break;
     case MAP_DESPISE:   stats = STATSBONUS_DEX; break;
     case MAP_DESTARD:   stats = STATSBONUS_STR; break;
@@ -266,14 +266,14 @@ void dungeonTouchOrb() {
     /* deal damage to the party member who touched the orb */
     c->_party->member(player)->applyDamage(damage);    
     /* remove the orb from the map */
-    c->_location->map->annotations->add(c->_location->coords, replacementTile);
+    c->_location->_map->_annotations->add(c->_location->_coords, replacementTile);
 }
 
 /**
  * Handles dungeon traps
  */
 bool dungeonHandleTrap(TrapType trap) {
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->map);
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->_map);
     switch((TrapType)dungeon->currentSubToken()) {
     case TRAP_WINDS:
         screenMessage("\nWinds!\n");
@@ -299,7 +299,7 @@ bool dungeonHandleTrap(TrapType trap) {
  * Returns true if a ladder-up is found at the given coordinates
  */
 bool Dungeon::ladderUpAt(MapCoords coords) {    
-    Annotation::List a = annotations->allAt(coords);
+    Annotation::List a = _annotations->allAt(coords);
 
     if (tokenAt(coords) == DUNGEON_LADDER_UP ||
         tokenAt(coords) == DUNGEON_LADDER_UPDOWN)
@@ -308,7 +308,7 @@ bool Dungeon::ladderUpAt(MapCoords coords) {
     if (a.size() > 0) {
         Annotation::List::iterator i;
         for (i = a.begin(); i != a.end(); i++) {
-            if (i->getTile() == tileset->getByName("up_ladder")->getId())
+            if (i->getTile() == _tileset->getByName("up_ladder")->getId())
                 return true;
         }
     }
@@ -319,7 +319,7 @@ bool Dungeon::ladderUpAt(MapCoords coords) {
  * Returns true if a ladder-down is found at the given coordinates
  */
 bool Dungeon::ladderDownAt(MapCoords coords) {
-    Annotation::List a = annotations->allAt(coords);
+    Annotation::List a = _annotations->allAt(coords);
 
     if (tokenAt(coords) == DUNGEON_LADDER_DOWN ||
         tokenAt(coords) == DUNGEON_LADDER_UPDOWN)
@@ -328,7 +328,7 @@ bool Dungeon::ladderDownAt(MapCoords coords) {
     if (a.size() > 0) {
         Annotation::List::iterator i;
         for (i = a.begin(); i != a.end(); i++) {
-            if (i->getTile() == tileset->getByName("down_ladder")->getId())
+            if (i->getTile() == _tileset->getByName("down_ladder")->getId())
                 return true;
         }
     }

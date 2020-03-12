@@ -30,7 +30,7 @@ namespace Ultima4 {
 
 using Common::String;
 
-DialogueLoader* U4TlkDialogueLoader::instance = DialogueLoader::registerLoader(new U4TlkDialogueLoader, "application/x-u4tlk");
+DialogueLoader* U4TlkDialogueLoader::_instance = DialogueLoader::registerLoader(new U4TlkDialogueLoader, "application/x-u4tlk");
 
 /**
  * A dialogue loader for standard u4dos .tlk files.

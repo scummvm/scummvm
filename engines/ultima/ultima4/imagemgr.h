@@ -98,18 +98,18 @@ class ImageInfo {
 public:
     ~ImageInfo();
 
-    Common::String name;
-    Common::String filename;
-    int width, height, depth;
-    int prescale;
-    Common::String filetype;
-    int tiles;                  /**< used to scale the without bleeding colors between adjacent tiles */
-    bool introOnly;             /**< whether can be freed after the intro */
-    int transparentIndex;       /**< color index to consider transparent */
-    bool xu4Graphic;            /**< an original xu4 graphic not part of u4dos or the VGA upgrade */
-    ImageFixup fixup;           /**< a routine to do miscellaneous fixes to the image */
-    Image *image;               /**< the image we're describing */
-    Std::map<Common::String, SubImage *> subImages;
+    Common::String _name;
+    Common::String _filename;
+    int _width, _height, _depth;
+    int _prescale;
+    Common::String _filetype;
+    int _tiles;                  /**< used to scale the without bleeding colors between adjacent tiles */
+    bool _introOnly;             /**< whether can be freed after the intro */
+    int _transparentIndex;       /**< color index to consider transparent */
+    bool _xu4Graphic;            /**< an original xu4 graphic not part of u4dos or the VGA upgrade */
+    ImageFixup _fixup;           /**< a routine to do miscellaneous fixes to the image */
+    Image *_image;               /**< the image we're describing */
+    Std::map<Common::String, SubImage *> _subImages;
 
     bool hasBlackBackground();
 };

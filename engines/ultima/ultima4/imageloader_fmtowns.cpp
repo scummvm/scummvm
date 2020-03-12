@@ -35,7 +35,7 @@ namespace Ultima4 {
 using Std::vector;
 
 //ImageLoader *FMTOWNSImageLoader::instance_pic = ImageLoader::registerLoader(new FMTOWNSImageLoader(0), "image/fmtowns-pic"); Doesn't work so easily, different graphics format.
-ImageLoader *FMTOWNSImageLoader::instance_tif = ImageLoader::registerLoader(new FMTOWNSImageLoader(510), "image/fmtowns-tif");
+ImageLoader *FMTOWNSImageLoader::_instanceTif = ImageLoader::registerLoader(new FMTOWNSImageLoader(510), "image/fmtowns-tif");
 
 /**
  * Loads in an FM TOWNS files, which we assume is 16 bits.
@@ -47,8 +47,8 @@ Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 
     ASSERT((bpp == 16) | (bpp == 4), "invalid bpp: %d", bpp);
 
-    long rawLen = file->length() - offset;
-    file->seek(offset,0);
+    long rawLen = file->length() - _offset;
+    file->seek(_offset,0);
     unsigned char *raw = (unsigned char *) malloc(rawLen);
     file->read(raw, 1, rawLen);
 
@@ -96,11 +96,11 @@ Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
     //Masks
     //------------------------	//  0000000011111111	--Byte 0 and 1
     //------------------------	//	RRRRRGGGGGBBBBB?
-    unsigned char low5 = 0x1F;	//  11111000--------	low5
-    unsigned char high6 = ~3;	//	--------00111111	high6
-    unsigned char high3 = ~31;	//	00000111--------	high3
-    unsigned char low2 = 3;		//	--------11000000	low2
-    unsigned char lastbit=128;	//	--------00000001	low2
+    unsigned char low5 = 0x1F;          //  11111000--------	low5
+    unsigned char high6 = (byte)~3U;	//	--------00111111	high6
+    unsigned char high3 = (byte)~31U;	//	00000111--------	high3
+    unsigned char low2 = 3;		        //	--------11000000	low2
+    unsigned char lastbit=128;	        //	--------00000001	low2
     // Warning, this diagram is left-to-right, not standard right-to-left
 
     for (int y = 0; y < height; y++) {

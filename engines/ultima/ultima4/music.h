@@ -84,7 +84,7 @@ public:
 #ifdef IOS
         on = true; // Force iOS to turn this back on from going in the background.
 #endif
-        playMid(introMid);
+        playMid(_introMid);
     } /**< Play the introduction music on title loadup */
     void introSwitch(int n);
     bool toggle();
@@ -126,11 +126,11 @@ public:
     /*
      * Properties
      */
-    Std::vector<Common::String> filenames;
-    Type introMid;
-    Type current;
-    OSMusicMixer *playing;
-    Debug *logger;
+    Std::vector<Common::String> _filenames;
+    Type _introMid;
+    Type _current;
+    OSMusicMixer *_playing;
+    Debug *_logger;
 };
 
 } // End of namespace Ultima4

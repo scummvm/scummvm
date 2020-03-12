@@ -39,27 +39,27 @@ enum StatsBonusType {
 };
 
 struct Trigger {
-    unsigned char tile;
+    unsigned char _tile;
     unsigned char x, y;
-    unsigned char change_x1, change_y1, change_x2, change_y2;
+    unsigned char _changeX1, _changeY1, changeX2, changeY2;
 };
 
 struct DngRoom {
-    Trigger triggers[DNGROOM_NTRIGGERS];
-    unsigned char creature_tiles[16];
-    unsigned char creature_start_x[16];
-    unsigned char creature_start_y[16];
-    unsigned char party_north_start_x[8];
-    unsigned char party_north_start_y[8];
-    unsigned char party_east_start_x[8];
-    unsigned char party_east_start_y[8];
-    unsigned char party_south_start_x[8];
-    unsigned char party_south_start_y[8];
-    unsigned char party_west_start_x[8];
-    unsigned char party_west_start_y[8];
-    MapData  map_data;  // This is OK to change to MapData since sizeof(DngRoom) or 
+    Trigger _triggers[DNGROOM_NTRIGGERS];
+    unsigned char _creatureTiles[16];
+    unsigned char _creatureStartX[16];
+    unsigned char _creatureStartY[16];
+    unsigned char _partyNorthStartX[8];
+    unsigned char _partyNorthStartY[8];
+    unsigned char _partyEastStartX[8];
+    unsigned char _partyEastStartY[8];
+    unsigned char _partySouthStartX[8];
+    unsigned char _partySouthStartY[8];
+    unsigned char _partyWestStartX[8];
+    unsigned char _partyWestStartY[8];
+    MapData  _mapData;  // This is OK to change to MapData since sizeof(DngRoom) or 
                         // anything like it is not being used.
-    unsigned char buffer[7];
+    unsigned char _buffer[7];
 };
 
 /**
@@ -103,14 +103,14 @@ public:
     bool validTeleportLocation(MapCoords coords);
 
     // Properties
-    Common::String name;
-    unsigned int n_rooms;
-    Std::vector<unsigned char> dataSubTokens;
-    DngRoom *rooms;
-    CombatMap **roomMaps;
-    int currentRoom;
-    unsigned char party_startx[8];
-    unsigned char party_starty[8];
+    Common::String _name;
+    unsigned int _nRooms;
+    Std::vector<unsigned char> _dataSubTokens;
+    DngRoom *_rooms;
+    CombatMap **_roomMaps;
+    int _currentRoom;
+    unsigned char _partyStartX[8];
+    unsigned char _partyStartY[8];
 };
 
 /**

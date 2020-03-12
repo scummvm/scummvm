@@ -52,7 +52,7 @@ protected:
     static void setFromRawData(Image *image, int width, int height, int bpp, unsigned char *rawData);
 
 private:
-    static Std::map<Common::String, ImageLoader *> *loaderMap;
+    static Std::map<Common::String, ImageLoader *> *_loaderMap;
 };
 
 } // End of namespace Ultima4

@@ -27,17 +27,17 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Std::map<Common::String, ImageLoader *> *ImageLoader::loaderMap = NULL;
+Std::map<Common::String, ImageLoader *> *ImageLoader::_loaderMap = NULL;
 
 /**
  * This class method returns the registered concrete subclass
  * appropriate for loading images of a type given by fileType.
  */
 ImageLoader *ImageLoader::getLoader(const Common::String &fileType) {
-    ASSERT(loaderMap != NULL, "ImageLoader::getLoader loaderMap not initialized");
-    if (loaderMap->find(fileType) == loaderMap->end())
+    ASSERT(_loaderMap != NULL, "ImageLoader::getLoader loaderMap not initialized");
+    if (_loaderMap->find(fileType) == _loaderMap->end())
         return NULL;
-    return (*loaderMap)[fileType];
+    return (*_loaderMap)[fileType];
 }
 
 /**
@@ -46,10 +46,10 @@ ImageLoader *ImageLoader::getLoader(const Common::String &fileType) {
  * object constructor or static initializer.
  */
 ImageLoader *ImageLoader::registerLoader(ImageLoader *loader, const Common::String &type) {
-    if (loaderMap == NULL) {
-        loaderMap = new Std::map<Common::String, ImageLoader *>;
+    if (_loaderMap == NULL) {
+        _loaderMap = new Std::map<Common::String, ImageLoader *>;
     }
-    (*loaderMap)[type] = loader;
+    (*_loaderMap)[type] = loader;
     return loader;
 }
 

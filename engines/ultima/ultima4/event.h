@@ -75,16 +75,16 @@ public:
 
     /** Additional information to be passed as data param for read buffer key handler */
     typedef struct ReadBuffer {
-        int (*handleBuffer)(Common::String *);
-        Common::String *buffer;
-        int bufferLen;
-        int screenX, screenY;
+        int (*_handleBuffer)(Common::String *);
+        Common::String *_buffer;
+        int _bufferLen;
+        int _screenX, _screenY;
     } ReadBuffer;
 
     /** Additional information to be passed as data param for get choice key handler */
     typedef struct GetChoice {
-        Common::String choices;
-        int (*handleChoice)(int);
+        Common::String _choices;
+        int (*_handleChoice)(int);
     } GetChoice;
 
     /* Constructors */
@@ -106,9 +106,9 @@ public:
     virtual bool isKeyIgnored(int key);
 
 protected:
-    Callback handler;
-    bool async;
-    void *data;
+    Callback _handler;
+    bool _async;
+    void *_data;
 };
 
 /**

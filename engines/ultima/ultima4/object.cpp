@@ -32,34 +32,34 @@ namespace Ultima4 {
 using namespace Std;
 
 bool Object::setDirection(Direction d) {
-    return tile.setDirection(d);
+    return _tile.setDirection(d);
 }
 
 void Object::setMap(class Map *m) {
-	if (Common::find(maps.begin(), maps.end(), m) == maps.end())
-        maps.push_back(m);
+	if (Common::find(_maps.begin(), _maps.end(), m) == _maps.end())
+        _maps.push_back(m);
 }
 
 Map *Object::getMap() {
-    if (maps.empty())
+    if (_maps.empty())
         return NULL;
-    return maps.back();
+    return _maps.back();
 }
 
 void Object::remove() {
-    unsigned int size = maps.size();
+    unsigned int size = _maps.size();
     for (unsigned int i = 0; i < size; i++) {
         if (i == size - 1)
-            maps[i]->removeObject(this);
-        else maps[i]->removeObject(this, false);
+            _maps[i]->removeObject(this);
+        else _maps[i]->removeObject(this, false);
     }
 }
 
 void Object::animateMovement()
 {
 	//TODO abstract movement - also make screen.h and game.h not required
-    screenTileUpdate(&game->mapArea, prevCoords, false);
-    if (screenTileUpdate(&game->mapArea, coords, false))
+    screenTileUpdate(&game->_mapArea, _prevCoords, false);
+    if (screenTileUpdate(&game->_mapArea, _coords, false))
     	screenWait(1);
 }
 

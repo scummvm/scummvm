@@ -41,7 +41,7 @@ Image *screenScale(Image *src, int scale, int n, int filter);
 
 bool ImageInfo::hasBlackBackground()
 {
-	return this->filetype == "image/x-u4raw";
+	return this->_filetype == "image/x-u4raw";
 }
 
 
@@ -97,19 +97,19 @@ void ImageMgr::init() {
     Image *screen = Image::createScreenImage();
     ImageInfo *screenInfo = new ImageInfo;
 
-    screenInfo->name = "screen";
-    screenInfo->filename = "";
-    screenInfo->width = screen->width();
-    screenInfo->height = screen->height();
-    screenInfo->depth = 0;
-    screenInfo->prescale = 0;
-    screenInfo->filetype = "";
-    screenInfo->tiles = 0;
-    screenInfo->introOnly = false;
-    screenInfo->transparentIndex = -1;
-    screenInfo->xu4Graphic = false;
-    screenInfo->fixup = FIXUP_NONE;
-    screenInfo->image = screen;
+    screenInfo->_name = "screen";
+    screenInfo->_filename = "";
+    screenInfo->_width = screen->width();
+    screenInfo->_height = screen->height();
+    screenInfo->_depth = 0;
+    screenInfo->_prescale = 0;
+    screenInfo->_filetype = "";
+    screenInfo->_tiles = 0;
+    screenInfo->_introOnly = false;
+    screenInfo->_transparentIndex = -1;
+    screenInfo->_xu4Graphic = false;
+    screenInfo->_fixup = FIXUP_NONE;
+    screenInfo->_image = screen;
 
     /*
      * register all the images declared in the config files
@@ -122,7 +122,7 @@ void ImageMgr::init() {
             imageSets[set->name] = set;
 
             // all image sets include the "screen" image
-            set->info[screenInfo->name] = screenInfo;
+            set->info[screenInfo->_name] = screenInfo;
         }
     }
 
@@ -147,12 +147,12 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
     for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
         if (i->getName() == "image") {
             ImageInfo *info = loadImageInfoFromConf(*i);
-            Std::map<Common::String, ImageInfo *>::iterator dup = set->info.find(info->name);
+            Std::map<Common::String, ImageInfo *>::iterator dup = set->info.find(info->_name);
             if (dup != set->info.end()) {
                 delete dup->_value;
                 set->info.erase(dup);
             }
-            set->info[info->name] = info;
+            set->info[info->_name] = info;
         }
     }
 
@@ -164,26 +164,26 @@ ImageInfo *ImageMgr::loadImageInfoFromConf(const ConfigElement &conf) {
     static const char *fixupEnumStrings[] = { "none", "intro", "abyss", "abacus", "dungns", "blackTransparencyHack", "fmtownsscreen", NULL };
 
     info = new ImageInfo;
-    info->name = conf.getString("name");
-    info->filename = conf.getString("filename");
-    info->width = conf.getInt("width", -1);
-    info->height = conf.getInt("height", -1);
-    info->depth = conf.getInt("depth", -1);
-    info->prescale = conf.getInt("prescale");
-    info->filetype = conf.getString("filetype");
-    info->tiles = conf.getInt("tiles");
-    info->introOnly = conf.getBool("introOnly");
-    info->transparentIndex = conf.getInt("transparentIndex", -1);
+    info->_name = conf.getString("name");
+    info->_filename = conf.getString("filename");
+    info->_width = conf.getInt("width", -1);
+    info->_height = conf.getInt("height", -1);
+    info->_depth = conf.getInt("depth", -1);
+    info->_prescale = conf.getInt("prescale");
+    info->_filetype = conf.getString("filetype");
+    info->_tiles = conf.getInt("tiles");
+    info->_introOnly = conf.getBool("introOnly");
+    info->_transparentIndex = conf.getInt("transparentIndex", -1);
 
-    info->xu4Graphic = conf.getBool("xu4Graphic");
-    info->fixup = static_cast<ImageFixup>(conf.getEnum("fixup", fixupEnumStrings));
-    info->image = NULL;
+    info->_xu4Graphic = conf.getBool("xu4Graphic");
+    info->_fixup = static_cast<ImageFixup>(conf.getEnum("fixup", fixupEnumStrings));
+    info->_image = NULL;
 
     vector<ConfigElement> children = conf.getChildren();
     for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
         if (i->getName() == "subimage") {
             SubImage *subimage = loadSubImageFromConf(info, *i);
-            info->subImages[subimage->name] = subimage;
+            info->_subImages[subimage->_name] = subimage;
         }
     }
 
@@ -198,10 +198,10 @@ SubImage *ImageMgr::loadSubImageFromConf(const ImageInfo *info, const ConfigElem
                last_height = 0;    
 
     subimage = new SubImage;
-    subimage->name = conf.getString("name");    
+    subimage->_name = conf.getString("name");    
     subimage->width = conf.getInt("width");
     subimage->height = conf.getInt("height");
-    subimage->srcImageName = info->name;
+    subimage->_srcImageName = info->_name;
     if (conf.exists("x") && conf.exists("y")) {
         x = subimage->x = conf.getInt("x");
         y = subimage->y = conf.getInt("y");
@@ -348,11 +348,11 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
         if (!borderInfo)
             errorFatal("ERROR 1001: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_BORDERS, settings._game.c_str());
 
-        delete borderInfo->image;
-        borderInfo->image = NULL;
+        delete borderInfo->_image;
+        borderInfo->_image = NULL;
         borderInfo = imageMgr->get(BKGD_BORDERS, true);
 
-        im->setPaletteFromImage(borderInfo->image);
+        im->setPaletteFromImage(borderInfo->_image);
 
         // update the color of "and" and "present"
         im->setPaletteIndex(15, im->setColor(226, 226, 255));
@@ -360,20 +360,20 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
         // update the color of "Origin Systems, Inc."
         im->setPaletteIndex(9, im->setColor(129, 129, 255));
 
-        borderInfo->image->save("border.png");
+        borderInfo->_image->save("border.png");
         // update the border appearance
-        borderInfo->image->alphaOff();
-        borderInfo->image->drawSubRectOn(im, 0, 96, 0, 0, 16, 56);
+        borderInfo->_image->alphaOff();
+        borderInfo->_image->drawSubRectOn(im, 0, 96, 0, 0, 16, 56);
         for (int i=0; i < 9; i++)
         {
-            borderInfo->image->drawSubRectOn(im, 16+(i*32), 96, 144, 0, 48, 48);
+            borderInfo->_image->drawSubRectOn(im, 16+(i*32), 96, 144, 0, 48, 48);
         }
         im->drawSubRectInvertedOn(im, 0, 144, 0, 104, 320, 40);
         im->drawSubRectOn(im, 0, 184, 0, 96, 320, 8);
-        borderInfo->image->alphaOn();
+        borderInfo->_image->alphaOn();
 
-        delete borderInfo->image;
-        borderInfo->image = NULL;
+        delete borderInfo->_image;
+        borderInfo->_image = NULL;
     }
 
     /* -----------------------------
@@ -547,7 +547,7 @@ Common::String ImageMgr::guessFileType(const Common::String &filename) {
 
 bool ImageMgr::imageExists(ImageInfo * info)
 {
-	if (info->filename == "") //If it is an abstract image like "screen"
+	if (info->_filename == "") //If it is an abstract image like "screen"
 		return true;
 	U4FILE * file = getImageFile(info);
 	if (file)
@@ -561,7 +561,7 @@ bool ImageMgr::imageExists(ImageInfo * info)
 
 U4FILE * ImageMgr::getImageFile(ImageInfo *info)
 {
-	Common::String filename = info->filename;
+	Common::String filename = info->_filename;
 
     /*
      * If the u4 VGA upgrade is installed (i.e. setup has been run and
@@ -570,18 +570,18 @@ U4FILE * ImageMgr::getImageFile(ImageInfo *info)
      * .old extention.  The charset and tiles have a .vga extention
      * and are not renamed in the upgrade installation process
      */
-	if (u4isUpgradeInstalled() && getInfoFromSet(info->name, getSet("VGA"))->filename.find(".old") != Common::String::npos) {
+	if (u4isUpgradeInstalled() && getInfoFromSet(info->_name, getSet("VGA"))->_filename.find(".old") != Common::String::npos) {
         if (settings._videoType == "EGA")
-            filename = getInfoFromSet(info->name, getSet("VGA"))->filename;
+            filename = getInfoFromSet(info->_name, getSet("VGA"))->_filename;
         else
-            filename = getInfoFromSet(info->name, getSet("EGA"))->filename;
+            filename = getInfoFromSet(info->_name, getSet("EGA"))->_filename;
     }
 
     if (filename == "")
     	return NULL;
 
     U4FILE *file = NULL;
-    if (info->xu4Graphic) {
+    if (info->_xu4Graphic) {
         Common::String pathname(u4find_graphics(filename));
 
         if (!pathname.empty())
@@ -602,27 +602,27 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
         return NULL;
 
     /* return if already loaded */
-    if (info->image != NULL)
+    if (info->_image != NULL)
         return info;
 
     U4FILE *file = getImageFile(info);
     Image *unscaled = NULL;
     if (file) {
-        TRACE(*logger, Common::String("loading image from file '") + info->filename + Common::String("'"));
+        TRACE(*logger, Common::String("loading image from file '") + info->_filename + Common::String("'"));
 
-        if (info->filetype.empty())
-            info->filetype = guessFileType(info->filename);
-        Common::String filetype = info->filetype;
+        if (info->_filetype.empty())
+            info->_filetype = guessFileType(info->_filename);
+        Common::String filetype = info->_filetype;
         ImageLoader *loader = ImageLoader::getLoader(filetype);
         if (loader == NULL)
-            errorWarning("can't find loader to load image \"%s\" with type \"%s\"", info->filename.c_str(), filetype.c_str());
+            errorWarning("can't find loader to load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
         else
         {
-			unscaled = loader->load(file, info->width, info->height, info->depth);
-			if (info->width == -1) {
+			unscaled = loader->load(file, info->_width, info->_height, info->_depth);
+			if (info->_width == -1) {
 				// Write in the values for later use.
-				info->width = unscaled->width();
-				info->height = unscaled->height();
+				info->_width = unscaled->width();
+				info->_height = unscaled->height();
 	// ###            info->depth = ???
 			}
         }
@@ -630,39 +630,39 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
     }
     else
     {
-        errorWarning("Failed to open file %s for reading.", info->filename.c_str());
+        errorWarning("Failed to open file %s for reading.", info->_filename.c_str());
         return NULL;
     }
 
     if (unscaled == NULL)
         return NULL;
 
-    if (info->transparentIndex != -1)
-        unscaled->setTransparentIndex(info->transparentIndex);
+    if (info->_transparentIndex != -1)
+        unscaled->setTransparentIndex(info->_transparentIndex);
 
-    if (info->prescale == 0)
-        info->prescale = 1;
+    if (info->_prescale == 0)
+        info->_prescale = 1;
 
     /*
      * fixup the image before scaling it
      */
-    switch (info->fixup) {
+    switch (info->_fixup) {
     case FIXUP_NONE:
         break;
     case FIXUP_INTRO:
-        fixupIntro(unscaled, info->prescale);
+        fixupIntro(unscaled, info->_prescale);
         break;
     case FIXUP_ABYSS:
-        fixupAbyssVision(unscaled, info->prescale);
+        fixupAbyssVision(unscaled, info->_prescale);
         break;
     case FIXUP_ABACUS:
-        fixupAbacus(unscaled, info->prescale);
+        fixupAbacus(unscaled, info->_prescale);
         break;
     case FIXUP_DUNGNS:
-        fixupDungNS(unscaled, info->prescale);
+        fixupDungNS(unscaled, info->_prescale);
         break;
     case FIXUP_FMTOWNSSCREEN:
-    	fixupFMTowns(unscaled, info->prescale);
+    	fixupFMTowns(unscaled, info->_prescale);
     	break;
     case FIXUP_BLACKTRANSPARENCYHACK:
         //Apply transparency shadow hack to ultima4 ega and vga upgrade classic graphics.
@@ -675,7 +675,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
     		int black_index = 0;
     		int opacity = Settings::getInstance()._enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity;
 
-    		int frames = info->tiles;
+    		int frames = info->_tiles;
     		for (int f = 0; f < frames; ++f)
     			unscaled->performTransparencyHack(black_index, frames, f, transparency_shadow_size, opacity);
     	}
@@ -684,20 +684,20 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 
     if (returnUnscaled)
     {
-        info->image = unscaled;
+        info->_image = unscaled;
         return info;
     }
 
     int imageScale = settings._scale;
-    if ((settings._scale % info->prescale) != 0) {
+    if ((settings._scale % info->_prescale) != 0) {
         int orig_scale = settings._scale;
-        settings._scale = info->prescale;
+        settings._scale = info->_prescale;
         settings.write();
-    	errorFatal("image %s is prescaled to an incompatible size: %d\nResetting the scale to %d. Sorry about the inconvenience, please restart.", info->filename.c_str(), orig_scale, settings._scale);
+    	errorFatal("image %s is prescaled to an incompatible size: %d\nResetting the scale to %d. Sorry about the inconvenience, please restart.", info->_filename.c_str(), orig_scale, settings._scale);
     }
-    imageScale /= info->prescale;
+    imageScale /= info->_prescale;
 
-    info->image = screenScale(unscaled, imageScale, info->tiles, 1);
+    info->_image = screenScale(unscaled, imageScale, info->_tiles, 1);
 
     delete unscaled;
     return info;
@@ -714,8 +714,8 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
     while (set != NULL) {
         for (Std::map<Common::String, ImageInfo *>::iterator i = set->info.begin(); i != set->info.end(); i++) {
             ImageInfo *info = (ImageInfo *) i->_value;
-            Std::map<Common::String, SubImage *>::iterator j = info->subImages.find(name);
-            if (j != info->subImages.end())
+            Std::map<Common::String, SubImage *>::iterator j = info->_subImages.find(name);
+            if (j != info->_subImages.end())
                 return j->_value;
         }
 
@@ -733,9 +733,9 @@ void ImageMgr::freeIntroBackgrounds() {
         ImageSet *set = i->_value;
         for (Std::map<Common::String, ImageInfo *>::iterator j = set->info.begin(); j != set->info.end(); j++) {
             ImageInfo *info = j->_value;
-            if (info->image != NULL && info->introOnly) {
-                delete info->image;
-                info->image = NULL;
+            if (info->_image != NULL && info->_introOnly) {
+                delete info->_image;
+                info->_image = NULL;
             }
         }
     }
@@ -761,16 +761,16 @@ void ImageMgr::update(Settings *newSettings) {
 ImageSet::~ImageSet() {
     for (Std::map<Common::String, ImageInfo *>::iterator i = info.begin(); i != info.end(); i++) {
         ImageInfo *imageInfo = i->_value;
-        if (imageInfo->name != "screen")
+        if (imageInfo->_name != "screen")
             delete imageInfo;
     }
 }
 
 ImageInfo::~ImageInfo() {
-    for (Std::map<Common::String, SubImage *>::iterator i = subImages.begin(); i != subImages.end(); i++)
+    for (Std::map<Common::String, SubImage *>::iterator i = _subImages.begin(); i != _subImages.end(); i++)
         delete i->_value;
-    if (image != NULL)
-        delete image;
+    if (_image != NULL)
+        delete _image;
 }
 
 } // End of namespace Ultima4

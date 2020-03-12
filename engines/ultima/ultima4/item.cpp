@@ -296,7 +296,7 @@ void putItemInInventory(int item) {
 void useBBC(int item) {
     Coords abyssEntrance(0xe9, 0xe9);
     /* on top of the Abyss entrance */
-    if (c->_location->coords == abyssEntrance) {
+    if (c->_location->_coords == abyssEntrance) {
         /* must use bell first */
         if (item == ITEM_BELL) {
 #ifdef IOS
@@ -361,7 +361,7 @@ void useSkull(int item) {
     }
 
     /* destroy the skull! pat yourself on the back */
-    if (c->_location->coords.x == 0xe9 && c->_location->coords.y == 0xe9) {
+    if (c->_location->_coords.x == 0xe9 && c->_location->_coords.y == 0xe9) {
         screenMessage("\n\nYou cast the Skull of Mondain into the Abyss!\n");
 #ifdef IOS
         U4IOS::testFlightPassCheckPoint("You cast the Skull of Mondain into the Abyss!");
@@ -409,7 +409,7 @@ void useStone(int item) {
 
         if (needStoneNames) {
             /* named a stone while in a dungeon altar room */
-            if (c->_location->context & CTX_ALTAR_ROOM) {
+            if (c->_location->_context & CTX_ALTAR_ROOM) {
                 needStoneNames--;                
 
                 switch(cm->getAltarRoom()) {
@@ -481,13 +481,13 @@ void useStone(int item) {
             /* Otherwise, we're asking for a stone while in the abyss on top of an altar */
             else {                
                 /* see if they entered the correct stone */
-                if (stone == (1 << c->_location->coords.z)) {
-                    if (c->_location->coords.z < 7) {
+                if (stone == (1 << c->_location->_coords.z)) {
+                    if (c->_location->_coords.z < 7) {
                         /* replace the altar with a down-ladder */
                         MapCoords coords;
                         screenMessage("\n\nThe altar changes before thyne eyes!\n");
                         c->_location->getCurrentPosition(&coords);
-                        c->_location->map->annotations->add(coords, c->_location->map->tileset->getByName("down_ladder")->getId());
+                        c->_location->_map->_annotations->add(coords, c->_location->_map->_tileset->getByName("down_ladder")->getId());
                     }
                     /* start chamber of the codex sequence... */
                     else {
@@ -506,11 +506,11 @@ void useStone(int item) {
     /**
      * in the abyss, on an altar to place the stones
      */
-    else if ((c->_location->map->id == MAP_ABYSS) &&
-             (c->_location->context & CTX_DUNGEON) && 
-             (dynamic_cast<Dungeon *>(c->_location->map)->currentToken() == DUNGEON_ALTAR)) {
+    else if ((c->_location->_map->_id == MAP_ABYSS) &&
+             (c->_location->_context & CTX_DUNGEON) && 
+             (dynamic_cast<Dungeon *>(c->_location->_map)->currentToken() == DUNGEON_ALTAR)) {
 
-        int virtueMask = getBaseVirtues((Virtue)c->_location->coords.z);
+        int virtueMask = getBaseVirtues((Virtue)c->_location->_coords.z);
         if (virtueMask > 0)
             screenMessage("\n\nAs thou doth approach, a voice rings out: What virtue dost stem from %s?\n\n", getBaseVirtueName(virtueMask));
         else screenMessage("\n\nA voice rings out:  What virtue exists independently of Truth, Love, and Courage?\n\n");
@@ -519,7 +519,7 @@ void useStone(int item) {
 #endif
         Common::String virtue = gameGetInput();
 
-        if (scumm_strnicmp(virtue.c_str(), getVirtueName((Virtue)c->_location->coords.z), 6) == 0) {
+        if (scumm_strnicmp(virtue.c_str(), getVirtueName((Virtue)c->_location->_coords.z), 6) == 0) {
             /* now ask for stone */
             screenMessage("\n\nThe Voice says: Use thy Stone.\n\nColor:\n");
             needStoneNames = 1;
@@ -536,7 +536,7 @@ void useStone(int item) {
     /**
      * in a dungeon altar room, on the altar
      */
-    else if ((c->_location->context & CTX_ALTAR_ROOM) &&
+    else if ((c->_location->_context & CTX_ALTAR_ROOM) &&
              coords.x == 5 && coords.y == 5) {
         needStoneNames = 4;
         screenMessage("\n\nThere are holes for 4 stones.\nWhat colors:\nA:");        
@@ -662,10 +662,10 @@ bool itemConditionsMet(unsigned char conditions) {
 const ItemLocation *itemAtLocation(const Map *map, const Coords &coords) {
     unsigned int i;
     for (i = 0; i < N_ITEMS; i++) {
-        if (!items[i].locationLabel)
+        if (!items[i]._locationLabel)
             continue;
-        if (map->getLabel(items[i].locationLabel) == coords &&
-            itemConditionsMet(items[i].conditions))
+        if (map->getLabel(items[i]._locationLabel) == coords &&
+            itemConditionsMet(items[i]._conditions))
             return &(items[i]);
     }
     return NULL;
@@ -679,19 +679,19 @@ void itemUse(const Common::String &shortname) {
     const ItemLocation *item = NULL;
 
     for (i = 0; i < N_ITEMS; i++) {
-        if (items[i].shortname &&
-            scumm_stricmp(items[i].shortname, shortname.c_str()) == 0) {
+        if (items[i]._shortName &&
+            scumm_stricmp(items[i]._shortName, shortname.c_str()) == 0) {
             
             item = &items[i];
 
             /* item name found, see if we have that item in our inventory */
-            if (!items[i].isItemInInventory || (*items[i].isItemInInventory)(items[i].data)) {
+            if (!items[i]._isItemInInventory || (*items[i]._isItemInInventory)(items[i]._data)) {
 
                 /* use the item, if we can! */
-                if (!item || !item->useItem)
+                if (!item || !item->_useItem)
                     screenMessage("\nNot a Usable item!\n");
                 else
-                    (*item->useItem)(items[i].data);
+                    (*item->_useItem)(items[i]._data);
             }
             else
                 screenMessage("\nNone owned!\n");            

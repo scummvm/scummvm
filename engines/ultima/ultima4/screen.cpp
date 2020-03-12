@@ -371,13 +371,13 @@ Layout *screenLoadLayoutFromConf(const ConfigElement &conf) {
 
 
 Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height, int x, int y, bool &focus) {
-    MapCoords center = c->_location->coords;    
-    static MapTile grass = c->_location->map->tileset->getByName("grass")->getId();
+    MapCoords center = c->_location->_coords;    
+    static MapTile grass = c->_location->_map->_tileset->getByName("grass")->getId();
     
-    if (c->_location->map->width <= width &&
-        c->_location->map->height <= height) {
-        center.x = c->_location->map->width / 2;
-        center.y = c->_location->map->height / 2;
+    if (c->_location->_map->_width <= width &&
+        c->_location->_map->_height <= height) {
+        center.x = c->_location->_map->_width / 2;
+        center.y = c->_location->_map->_height / 2;
     }
 
     MapCoords tc = center;
@@ -386,10 +386,10 @@ Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height,
     tc.y += y - (height / 2);
 
     /* Wrap the location if we can */    
-    tc.wrap(c->_location->map);
+    tc.wrap(c->_location->_map);
 
     /* off the edge of the map: pad with grass tiles */
-    if (MAP_IS_OOB(c->_location->map, tc)) {        
+    if (MAP_IS_OOB(c->_location->_map, tc)) {        
         focus = false;
         Std::vector<MapTile> result;
         result.push_back(grass);
@@ -401,24 +401,24 @@ Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height,
 
 bool screenTileUpdate(TileView *view, const Coords &coords, bool redraw)
 {
-	if (c->_location->map->flags & FIRST_PERSON)
+	if (c->_location->_map->_flags & FIRST_PERSON)
 		return false;
 
 	// Get the tiles
 	bool focus;
 	MapCoords mc(coords);
-	mc.wrap(c->_location->map);
+	mc.wrap(c->_location->_map);
 	Std::vector<MapTile> tiles = c->_location->tilesAt(mc, focus);
 
 	// Get the screen coordinates
 	int x = coords.x;
 	int y = coords.y;
 
-	if (c->_location->map->width > VIEWPORT_W || c->_location->map->height > VIEWPORT_H)
+	if (c->_location->_map->_width > VIEWPORT_W || c->_location->_map->_height > VIEWPORT_H)
 	{
 		//Center the coordinates to the viewport if you're on centered-view map.
-		x = x - c->_location->coords.x + VIEWPORT_W / 2;
-		y = y - c->_location->coords.y + VIEWPORT_H / 2;
+		x = x - c->_location->_coords.x + VIEWPORT_W / 2;
+		y = y - c->_location->_coords.y + VIEWPORT_H / 2;
 	}
 
 	// Draw if it is on screen
@@ -449,14 +449,14 @@ void screenUpdate(TileView *view, bool showmap, bool blackout) {
     {
     	screenEraseMapArea();
     }
-    else if (c->_location->map->flags & FIRST_PERSON) {
+    else if (c->_location->_map->_flags & FIRST_PERSON) {
     	DungeonViewer.display(c, view);
         screenRedrawMapArea();
     }
 
     else if (showmap) {
-        static MapTile black = c->_location->map->tileset->getByName("black")->getId();
-        static MapTile avatar = c->_location->map->tileset->getByName("avatar")->getId();
+        static MapTile black = c->_location->_map->_tileset->getByName("black")->getId();
+        static MapTile avatar = c->_location->_map->_tileset->getByName("avatar")->getId();
 
         int x, y;
 
@@ -496,24 +496,24 @@ void screenUpdate(TileView *view, bool showmap, bool blackout) {
 void screenDrawImage(const Common::String &name, int x, int y) {
     ImageInfo *info = imageMgr->get(name);
     if (info) {
-    	info->image->alphaOn();
-        info->image->draw(x, y);
+    	info->_image->alphaOn();
+        info->_image->draw(x, y);
         return;
     }
     
     SubImage *subimage = imageMgr->getSubImage(name);
     if (subimage) 
-        info = imageMgr->get(subimage->srcImageName);
+        info = imageMgr->get(subimage->_srcImageName);
     
 	if (info) {
-		info->image->alphaOn();
+		info->_image->alphaOn();
         
         if (info) {
-            info->image->drawSubRect(x, y,
-                                     subimage->x * (settings._scale / info->prescale),
-                                     subimage->y * (settings._scale / info->prescale),
-                                     subimage->width * (settings._scale / info->prescale),
-                                     subimage->height * (settings._scale / info->prescale));
+            info->_image->drawSubRect(x, y,
+                                     subimage->x * (settings._scale / info->_prescale),
+                                     subimage->y * (settings._scale / info->_prescale),
+                                     subimage->width * (settings._scale / info->_prescale),
+                                     subimage->height * (settings._scale / info->_prescale));
             return;
         }
     }
@@ -527,7 +527,7 @@ void screenDrawImageInMapArea(const Common::String &name) {
     if (!info)
         errorFatal("ERROR 1004: Unable to load data files.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", settings._game.c_str());
     
-    info->image->drawSubRect(BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
+    info->_image->drawSubRect(BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
                              BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
                              VIEWPORT_W * TILE_WIDTH * settings._scale, 
                              VIEWPORT_H * TILE_HEIGHT * settings._scale);
@@ -557,7 +557,7 @@ void screenTextColor(int color) {
 		case FG_RED:
 		case FG_YELLOW:
 		case FG_WHITE:
-			charsetInfo->image->setFontColorFG((ColorFG)color);
+			charsetInfo->_image->setFontColorFG((ColorFG)color);
 	}
 }
 
@@ -571,31 +571,31 @@ void screenShowChar(int chr, int x, int y) {
             errorFatal("ERROR 1001: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_CHARSET, settings._game.c_str());
     }
     
-    charsetInfo->image->drawSubRect(x * charsetInfo->image->width(), y * (CHAR_HEIGHT * settings._scale),
+    charsetInfo->_image->drawSubRect(x * charsetInfo->_image->width(), y * (CHAR_HEIGHT * settings._scale),
                                     0, chr * (CHAR_HEIGHT * settings._scale),
-                                    charsetInfo->image->width(), CHAR_HEIGHT * settings._scale);
+                                    charsetInfo->_image->width(), CHAR_HEIGHT * settings._scale);
 }
 
 /**
  * Scroll the text in the message area up one position.
  */
 void screenScrollMessageArea() {
-    ASSERT(charsetInfo != NULL && charsetInfo->image != NULL, "charset not initialized!");
+    ASSERT(charsetInfo != NULL && charsetInfo->_image != NULL, "charset not initialized!");
     
-    Image *screen = imageMgr->get("screen")->image;
+    Image *screen = imageMgr->get("screen")->_image;
     
     screen->drawSubRectOn(screen, 
-                          TEXT_AREA_X * charsetInfo->image->width(), 
+                          TEXT_AREA_X * charsetInfo->_image->width(), 
                           TEXT_AREA_Y * CHAR_HEIGHT * settings._scale,
-                          TEXT_AREA_X * charsetInfo->image->width(),
+                          TEXT_AREA_X * charsetInfo->_image->width(),
                           (TEXT_AREA_Y + 1) * CHAR_HEIGHT * settings._scale,
-                          TEXT_AREA_W * charsetInfo->image->width(),
+                          TEXT_AREA_W * charsetInfo->_image->width(),
                           (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings._scale);
     
     
-    screen->fillRect(TEXT_AREA_X * charsetInfo->image->width(),
+    screen->fillRect(TEXT_AREA_X * charsetInfo->_image->width(),
                      TEXT_AREA_Y * CHAR_HEIGHT * settings._scale + (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings._scale,
-                     TEXT_AREA_W * charsetInfo->image->width(),
+                     TEXT_AREA_W * charsetInfo->_image->width(),
                      CHAR_HEIGHT * settings._scale,
                      0, 0, 0);
     
@@ -623,12 +623,12 @@ void screenUpdateMoons() {
     int trammelChar, feluccaChar;
 
     /* show "L?" for the dungeon level */
-    if (c->_location->context == CTX_DUNGEON) {
+    if (c->_location->_context == CTX_DUNGEON) {
         screenShowChar('L', 11, 0);
-        screenShowChar('1'+c->_location->coords.z, 12, 0);        
+        screenShowChar('1'+c->_location->_coords.z, 12, 0);        
     }
     /* show the current moons (non-combat) */
-    else if ((c->_location->context & CTX_NON_COMBAT) == c->_location->context) {
+    else if ((c->_location->_context & CTX_NON_COMBAT) == c->_location->_context) {
         trammelChar = (c->_saveGame->_trammelPhase == 0) ?
             MOON_CHAR + 7 :
             MOON_CHAR + c->_saveGame->_trammelPhase - 1;
@@ -646,12 +646,12 @@ void screenUpdateMoons() {
 void screenUpdateWind() {   
     
     /* show the direction we're facing in the dungeon */
-    if (c->_location->context == CTX_DUNGEON) {
+    if (c->_location->_context == CTX_DUNGEON) {
         screenEraseTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
         screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Dir: %5s", getDirectionName((Direction)c->_saveGame->_orientation));        
     }
     /* show the wind direction */
-    else if ((c->_location->context & CTX_NON_COMBAT) == c->_location->context) {
+    else if ((c->_location->_context & CTX_NON_COMBAT) == c->_location->_context) {
         screenEraseTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
         screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Wind %5s", getDirectionName((Direction) c->_windDirection));
     }
@@ -700,7 +700,7 @@ void screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWP
     /*
      * if the map has the no line of sight flag, all is visible
      */
-    if (c->_location->map->flags & NO_LINE_OF_SIGHT) {
+    if (c->_location->_map->_flags & NO_LINE_OF_SIGHT) {
         for (y = 0; y < VIEWPORT_H; y++) {
             for (x = 0; x < VIEWPORT_W; x++) {
                 screenLos[x][y] = 1;
@@ -1100,11 +1100,11 @@ int screenPointInMouseArea(int x, int y, MouseArea *area) {
 }
 
 void screenRedrawMapArea() {
-    game->mapArea.update();
+    game->_mapArea.update();
 }
 
 void screenEraseMapArea() {
-    Image *screen = imageMgr->get("screen")->image;
+    Image *screen = imageMgr->get("screen")->_image;
     screen->fillRect(BORDER_WIDTH * settings._scale,
                      BORDER_WIDTH * settings._scale,
                      VIEWPORT_W * TILE_WIDTH * settings._scale,
@@ -1113,7 +1113,7 @@ void screenEraseMapArea() {
 }
 
 void screenEraseTextArea(int x, int y, int width, int height) {
-    Image *screen = imageMgr->get("screen")->image;
+    Image *screen = imageMgr->get("screen")->_image;
     screen->fillRect(x * CHAR_WIDTH * settings._scale,
                      y * CHAR_HEIGHT * settings._scale,
                      width * CHAR_WIDTH * settings._scale,
@@ -1127,7 +1127,7 @@ void screenEraseTextArea(int x, int y, int width, int height) {
 void screenShake(int iterations) {
     int shakeOffset;
     unsigned short i;
-    Image *screen = imageMgr->get("screen")->image;
+    Image *screen = imageMgr->get("screen")->_image;
     Image *bottom;
     
     // the MSVC8 binary was generating a Access Violation when using
@@ -1171,15 +1171,15 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
     // Make sure we account for tiles that look like other tiles (dungeon tiles, mainly)
     Common::String looks_like = t.getTileType()->getLooksLike();
     if (!looks_like.empty())
-        t = map->tileset->getByName(looks_like)->getId();
+        t = map->_tileset->getByName(looks_like)->getId();
     
     unsigned int tile = map->translateToRawTileIndex(t);
     
-    if (map->type == Map::DUNGEON) {
+    if (map->_type == Map::DUNGEON) {
         ASSERT(charsetInfo, "charset not initialized");
         Std::map<Common::String, int>::iterator charIndex = dungeonTileChars.find(t.getTileType()->getName());
         if (charIndex != dungeonTileChars.end()) {
-            charsetInfo->image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
+            charsetInfo->_image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
                                             (layout->viewport.y + (y * layout->tileshape.height)) * settings._scale,
                                             0, 
                                             charIndex->_value * layout->tileshape.height * settings._scale, 
@@ -1195,14 +1195,14 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
         }
         
         if (tile < 128) {
-            gemTilesInfo->image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
+            gemTilesInfo->_image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
                                              (layout->viewport.y + (y * layout->tileshape.height)) * settings._scale,
                                              0, 
                                              tile * layout->tileshape.height * settings._scale,
                                              layout->tileshape.width * settings._scale,
                                              layout->tileshape.height * settings._scale);
         } else {
-            Image *screen = imageMgr->get("screen")->image;
+            Image *screen = imageMgr->get("screen")->_image;
             screen->fillRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
                              (layout->viewport.y + (y * layout->tileshape.height)) * settings._scale,
                              layout->tileshape.width * settings._scale,
@@ -1213,7 +1213,7 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
 }
 
 Layout *screenGetGemLayout(const Map *map) {
-    if (map->type == Map::DUNGEON) {
+    if (map->_type == Map::DUNGEON) {
         Std::vector<Layout *>::const_iterator i;
         for (i = layouts.begin(); i != layouts.end(); i++) {
             Layout *layout = *i;
@@ -1232,7 +1232,7 @@ Layout *screenGetGemLayout(const Map *map) {
 void screenGemUpdate() {
     MapTile tile;
     int x, y;
-    Image *screen = imageMgr->get("screen")->image;
+    Image *screen = imageMgr->get("screen")->_image;
     
     screen->fillRect(BORDER_WIDTH * settings._scale, 
                      BORDER_HEIGHT * settings._scale,
@@ -1240,11 +1240,11 @@ void screenGemUpdate() {
                      VIEWPORT_H * TILE_HEIGHT * settings._scale,
                      0, 0, 0);
     
-    Layout *layout = screenGetGemLayout(c->_location->map);
+    Layout *layout = screenGetGemLayout(c->_location->_map);
     
     
     //TODO, move the code responsible for determining 'peer' visibility to a non SDL specific part of the code.
-    if (c->_location->map->type == Map::DUNGEON) {
+    if (c->_location->_map->_type == Map::DUNGEON) {
     	//DO THE SPECIAL DUNGEON MAP TRAVERSAL
     	Std::vector<Std::vector<int> > drawnTiles(layout->viewport.width, Std::vector<int>(layout->viewport.height, 0));
     	Common::List<Std::pair<int,int> > coordStack;
@@ -1252,8 +1252,8 @@ void screenGemUpdate() {
     	//Put the avatar's position on the stack
     	int center_x = layout->viewport.width / 2 - 1;
     	int center_y = layout->viewport.height / 2 - 1;
-    	int avt_x = c->_location->coords.x - 1;
-    	int avt_y = c->_location->coords.y - 1;
+    	int avt_x = c->_location->_coords.x - 1;
+    	int avt_y = c->_location->_coords.y - 1;
         
     	coordStack.push_back(Std::pair<int,int>(center_x, center_y));
     	bool weAreDrawingTheAvatarTile = true;
@@ -1283,17 +1283,17 @@ void screenGemUpdate() {
                                                        layout->viewport.height, x - center_x + avt_x, y - center_y + avt_y, focus);
 			tile = tiles.front();
             
-			TileId avatarTileId = c->_location->map->tileset->getByName("avatar")->getId();
+			TileId avatarTileId = c->_location->_map->_tileset->getByName("avatar")->getId();
             
             
 			if (!weAreDrawingTheAvatarTile)
 			{
 				//Hack to avoid showing the avatar tile multiple times in cycling dungeon maps
 				if (tile.getId() == avatarTileId)
-					tile = c->_location->map->getTileFromData(c->_location->coords)->getId();
+					tile = c->_location->_map->getTileFromData(c->_location->_coords)->getId();
 			}
             
-			screenShowGemTile(layout, c->_location->map, tile, focus, x, y);
+			screenShowGemTile(layout, c->_location->_map, tile, focus, x, y);
             
 			if (!tile.getTileType()->isOpaque() || tile.getTileType()->isWalkable() ||  weAreDrawingTheAvatarTile)
 			{
@@ -1324,7 +1324,7 @@ void screenGemUpdate() {
 				bool focus;
 				tile = screenViewportTile(layout->viewport.width,
                                           layout->viewport.height, x, y, focus).front();
-				screenShowGemTile(layout, c->_location->map, tile, focus, x, y);
+				screenShowGemTile(layout, c->_location->_map, tile, focus, x, y);
 			}
 		}
 	}

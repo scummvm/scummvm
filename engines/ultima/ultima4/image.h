@@ -49,8 +49,8 @@ bool operator==(const RGBA &lhs, const RGBA &rhs);
 class Image;
 
 struct SubImage {
-    Common::String name;
-    Common::String srcImageName;
+    Common::String _name;
+    Common::String _srcImageName;
     int x, y, width, height;
 };
 
@@ -159,23 +159,23 @@ public:
 
     int width() const { return w; }
     int height() const { return h; }
-    bool isIndexed() const { return indexed; }
-    BackendSurface getSurface() { return surface; }
+    bool isIndexed() const { return _indexed; }
+    BackendSurface getSurface() { return _surface; }
     void save(const Common::String &filename);
     void drawHighlighted();
 
 
 private:
     unsigned int w, h;
-    bool indexed;
-    RGBA backgroundColor;
+    bool _indexed;
+    RGBA _backgroundColor;
     Image();                    /* use create method to construct images */
 
     // disallow assignments, copy contruction
     Image(const Image&);
     const Image &operator=(const Image&);
 
-    BackendSurface surface;
+    BackendSurface _surface;
 };
 
 } // End of namespace Ultima4

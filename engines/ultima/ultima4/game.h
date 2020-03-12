@@ -72,14 +72,14 @@ public:
  */
 class AlphaActionController : public WaitableController<int> {
 public:
-    AlphaActionController(char letter, const Common::String &p) : lastValidLetter(letter), prompt(p) {}
+    AlphaActionController(char letter, const Common::String &p) : _lastValidLetter(letter), _prompt(p) {}
     bool keyPressed(int key);
     
     static int get(char lastValidLetter, const Common::String &prompt, EventHandler *eh = NULL);
 
 private:
-    char lastValidLetter;
-    Common::String prompt;
+    char _lastValidLetter;
+    Common::String _prompt;
 };
 
 /**
@@ -131,9 +131,9 @@ public:
     static void flashTile(const Coords &coords, const Common::String &tilename, int timeFactor);
     static void doScreenAnimationsWhilePausing(int timeFactor);
 
-    TileView mapArea;
-    bool paused;
-    int pausedTimer;
+    TileView _mapArea;
+    bool _paused;
+    int _pausedTimer;
 
 private:
     void avatarMoved(MoveEvent &event);

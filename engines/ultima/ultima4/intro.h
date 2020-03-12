@@ -60,15 +60,15 @@ public:
 
     bool load();
 
-    Std::vector<MapTile> introMap;
-    unsigned char *sigData;
-    unsigned char *scriptTable;
-    Tile **baseTileTable;
-    unsigned char *beastie1FrameTable;
-    unsigned char *beastie2FrameTable;
-    Std::vector<Common::String> introText;
-    Std::vector<Common::String> introQuestions;
-    Std::vector<Common::String> introGypsy;
+    Std::vector<MapTile> _introMap;
+    unsigned char *_sigData;
+    unsigned char *_scriptTable;
+    Tile **_baseTileTable;
+    unsigned char *_beastie1FrameTable;
+    unsigned char *_beastie2FrameTable;
+    Std::vector<Common::String> _introText;
+    Std::vector<Common::String> _introQuestions;
+    Std::vector<Common::String> _introGypsy;
 
 private:
     // disallow assignments, copy contruction
@@ -160,7 +160,7 @@ private:
         INTRO_TITLES,                       // displaying the animated intro titles
         INTRO_MAP,                          // displaying the animated intro map
         INTRO_MENU                          // displaying the main menu: journey onward, etc.
-    } mode;
+    } _mode;
 
     enum MenuConstants {
         MI_CONF_VIDEO,
@@ -212,40 +212,40 @@ private:
         CANCEL = 0xFF
     };
 
-    ImageView backgroundArea;
-    TextView menuArea;
-    TextView extendedMenuArea;
-    TextView questionArea;
-    TileView mapArea;
+    ImageView _backgroundArea;
+    TextView _menuArea;
+    TextView _extendedMenuArea;
+    TextView _questionArea;
+    TileView _mapArea;
 
     // menus
-    Menu mainMenu;
-    Menu confMenu;
-    Menu videoMenu;
-    Menu gfxMenu;
-    Menu soundMenu;
-    Menu inputMenu;
-    Menu speedMenu;
-    Menu gameplayMenu;
-    Menu interfaceMenu;
+    Menu _mainMenu;
+    Menu _confMenu;
+    Menu _videoMenu;
+    Menu _gfxMenu;
+    Menu _soundMenu;
+    Menu _inputMenu;
+    Menu _speedMenu;
+    Menu _gameplayMenu;
+    Menu _interfaceMenu;
 
     // data loaded in from title.exe
     IntroBinData *binData;
 
     // additional introduction state data
-    Common::String errorMessage;
-    int answerInd;
-    int questionRound;
-    int questionTree[15];
-    int beastie1Cycle;
-    int beastie2Cycle;
-    int beastieOffset;
-    bool beastiesVisible;
-    int sleepCycles;
-    int scrPos;  /* current position in the script table */
-    IntroObjectState *objectStateTable;
+    Common::String _errorMessage;
+    int _answerInd;
+    int _questionRound;
+    int __questionTree[15];
+    int _beastie1Cycle;
+    int _beastie2Cycle;
+    int _beastieOffset;
+    bool _beastiesVisible;
+    int _sleepCycles;
+    int _scrPos;  /* current position in the script table */
+    IntroObjectState *_objectStateTable;
 
-    bool justInitiatedNewGame;
+    bool _justInitiatedNewGame;
 
     //
     // Title defs, structs, methods, and data members
@@ -267,18 +267,18 @@ private:
     };
 
     struct AnimElement {
-        int rx, ry;                         // screen/source x and y
-        int rw, rh;                         // source width and height
-        AnimType method;                    // render method
-        int animStep;                       // tracks animation position
-        int animStepMax;
-        int timeBase;                       // initial animation time
-        int timeDelay;                      // delay before rendering begins
-        int timeDuration;                   // total animation time
-        Image *srcImage;                    // storage for the source image
-        Image *destImage;                   // storage for the animation frame
-        Std::vector <AnimPlot> plotData;    // plot data
-        bool prescaled;
+        int _rx, _ry;                         // screen/source x and y
+        int _rw, _rh;                         // source width and height
+        AnimType _method;                    // render method
+        int _animStep;                       // tracks animation position
+        int _animStepMax;
+        int _timeBase;                       // initial animation time
+        int _timeDelay;                      // delay before rendering begins
+        int _timeDuration;                   // total animation time
+        Image *_srcImage;                    // storage for the source image
+        Image *_destImage;                   // storage for the animation frame
+        Std::vector <AnimPlot> _plotData;    // plot data
+        bool _prescaled;
     };
 
     void addTitle(int x, int y, int w, int h, AnimType method, int delay, int duration);
@@ -289,10 +289,10 @@ private:
     Std::vector<AnimElement> titles;            // list of title elements
     Std::vector<AnimElement>::iterator title;   // current title element
 
-    int transparentIndex;           // palette index for transparency
-    RGBA transparentColor;     // palette color for transparency
+    int _transparentIndex;           // palette index for transparency
+    RGBA _transparentColor;     // palette color for transparency
 
-    bool bSkipTitles;
+    bool _bSkipTitles;
 };
 
 extern IntroController *intro;

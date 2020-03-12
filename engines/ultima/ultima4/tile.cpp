@@ -140,7 +140,7 @@ void Tile::loadImage() {
         if (!info) {
             subimage = imageMgr->getSubImage(_imageName);
             if (subimage)            
-                info = imageMgr->get(subimage->srcImageName);            
+                info = imageMgr->get(subimage->_srcImageName);            
         }
         if (!info) //IF still no info loaded
         {
@@ -160,12 +160,12 @@ void Tile::loadImage() {
         }
 
 
-        if (info->image)
-        	info->image->alphaOff();
+        if (info->_image)
+        	info->_image->alphaOff();
 
         if (info) {
-            _w = (subimage ? subimage->width * _scale : info->width * _scale / info->prescale);
-            _h = (subimage ? (subimage->height * _scale) / _frames : (info->height * _scale / info->prescale) / _frames);
+            _w = (subimage ? subimage->width * _scale : info->_width * _scale / info->_prescale);
+            _h = (subimage ? (subimage->height * _scale) / _frames : (info->_height * _scale / info->_prescale) / _frames);
             _image = Image::create(_w, _h * _frames, false, Image::HARDWARE);
 
 
@@ -173,10 +173,10 @@ void Tile::loadImage() {
 
             /* draw the tile from the image we found to our tile image */
             if (subimage) {
-                Image *tiles = info->image;
+                Image *tiles = info->_image;
                 tiles->drawSubRectOn(_image, 0, 0, subimage->x * _scale, subimage->y * _scale, subimage->width * _scale, subimage->height * _scale);
             }
-            else info->image->drawOn(_image, 0, 0);
+            else info->_image->drawOn(_image, 0, 0);
         }
 
         if (_animationRule.size() > 0) {

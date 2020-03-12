@@ -56,7 +56,7 @@ CampController::CampController() {
     MapId id;
 
     /* setup camp (possible, but not for-sure combat situation */
-    if (c->_location->context & CTX_DUNGEON)
+    if (c->_location->_context & CTX_DUNGEON)
         id = MAP_CAMP_DNG;
     else
         id = MAP_CAMP_CON;
@@ -94,7 +94,7 @@ void CampController::begin() {
         screenMessage("Ambushed!\n");
         
         /* create an ambushing creature (so it leaves a chest) */
-        setCreature(c->_location->prev->map->addCreature(m, c->_location->prev->coords));
+        setCreature(c->_location->_prev->_map->addCreature(m, c->_location->_prev->_coords));
         
         /* fill the creature table with creatures and place them */
         fillCreatureTable(m);
@@ -164,7 +164,7 @@ void InnController::begin() {
     EventHandler::wait_msecs(INN_FADE_OUT_TIME);
 
     /* show the sleeping avatar */
-    c->_party->setTransport(c->_location->map->tileset->getByName("corpse")->getId());
+    c->_party->setTransport(c->_location->_map->_tileset->getByName("corpse")->getId());
     gameUpdateScreen();
 
     screenDisableCursor();
@@ -174,7 +174,7 @@ void InnController::begin() {
     screenEnableCursor();
 
     /* restore the avatar to normal */
-    c->_party->setTransport(c->_location->map->tileset->getByName("avatar")->getId());
+    c->_party->setTransport(c->_location->_map->_tileset->getByName("avatar")->getId());
     gameUpdateScreen();
 
     /* the party is always healed */
@@ -220,17 +220,17 @@ void InnController::maybeMeetIsaac()
 	//	if ((location == skara_brae) && (random(4) = 0) {
 	//			// create Isaac the Ghost
 	//	}
-    if ((c->_location->map->id == 11) && (xu4_random(4) == 0)) {
-        City *city = dynamic_cast<City*>(c->_location->map);
+    if ((c->_location->_map->_id == 11) && (xu4_random(4) == 0)) {
+        City *city = dynamic_cast<City*>(c->_location->_map);
 
         if (city->_extraDialogues.size() == 1 &&
             city->_extraDialogues[0]->getName() == "Isaac") {
 
-            Coords coords(27, xu4_random(3) + 10, c->_location->coords.z);
+            Coords coords(27, xu4_random(3) + 10, c->_location->_coords.z);
 
             // If Isaac is already around, just bring him back to the inn
-            for (ObjectDeque::iterator i = c->_location->map->objects.begin();
-                 i != c->_location->map->objects.end();
+            for (ObjectDeque::iterator i = c->_location->_map->_objects.begin();
+                 i != c->_location->_map->_objects.end();
                  i++) {
                 Person *p = dynamic_cast<Person*>(*i);
                 if (p && p->getName() == "Isaac") {
@@ -266,11 +266,11 @@ void InnController::maybeAmbush()
         if (xu4_random(4) == 0) {
             /* Rats! */
             mapid = MAP_BRICK_CON;
-            creature = c->_location->map->addCreature(creatureMgr->getById(RAT_ID), c->_location->coords);
+            creature = c->_location->_map->addCreature(creatureMgr->getById(RAT_ID), c->_location->_coords);
         } else {
             /* While strolling down the street, attacked by rogues! */
             mapid = MAP_INN_CON;
-            creature = c->_location->map->addCreature(creatureMgr->getById(ROGUE_ID), c->_location->coords);
+            creature = c->_location->_map->addCreature(creatureMgr->getById(ROGUE_ID), c->_location->_coords);
             screenMessage("\nIn the middle of the night while out on a stroll...\n\n");
             showMessage = false;
         }

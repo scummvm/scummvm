@@ -53,18 +53,18 @@ bool Music::functional = true;
 /**
  * Initiliaze the music
  */
-Music::Music() : introMid(TOWNS), current(NONE), playing(NULL), logger(new Debug("debug/music.txt", "Music")) {
-    filenames.reserve(MAX);
-    filenames.push_back("");    // filename for MUSIC_NONE;
+Music::Music() : _introMid(TOWNS), _current(NONE), _playing(NULL), _logger(new Debug("debug/music.txt", "Music")) {
+    _filenames.reserve(MAX);
+    _filenames.push_back("");    // filename for MUSIC_NONE;
 
-    TRACE(*logger, "Initializing music");
+    TRACE(*_logger, "Initializing music");
 
     /*
      * load music track filenames from xml config file
      */
     const Config *config = Config::getInstance();
 
-    TRACE_LOCAL(*logger, "Loading music tracks");
+    TRACE_LOCAL(*_logger, "Loading music tracks");
 
     vector<ConfigElement> musicConfs = config->getElement("music").getChildren();
     Std::vector<ConfigElement>::const_iterator i = musicConfs.begin();
@@ -73,8 +73,8 @@ Music::Music() : introMid(TOWNS), current(NONE), playing(NULL), logger(new Debug
         if (i->getName() != "track")
             continue;
 
-        filenames.push_back(i->getString("file"));
-        TRACE_LOCAL(*logger, Common::String("\tTrack file: ") + filenames.back());
+        _filenames.push_back(i->getString("file"));
+        TRACE_LOCAL(*_logger, Common::String("\tTrack file: ") + _filenames.back());
     }
 
 	create_sys(); // Call the Sound System specific creation file.
@@ -83,19 +83,19 @@ Music::Music() : introMid(TOWNS), current(NONE), playing(NULL), logger(new Debug
     on = settings._musicVol;
     setMusicVolume(settings._musicVol);
     setSoundVolume(settings._soundVol);
-    TRACE(*logger, Common::String("Music initialized: volume is ") + (on ? "on" : "off"));
+    TRACE(*_logger, Common::String("Music initialized: volume is ") + (on ? "on" : "off"));
 }
 
 /**
  * Stop playing the music and cleanup
  */
 Music::~Music() {
-    TRACE(*logger, "Uninitializing music");
+    TRACE(*_logger, "Uninitializing music");
     eventHandler->getTimer()->remove(&Music::callback);
 	destroy_sys(); // Call the Sound System specific destruction file.
 
-    TRACE(*logger, "Music uninitialized");
-    delete logger;
+    TRACE(*_logger, "Music uninitialized");
+    delete _logger;
 }
 
 
@@ -103,7 +103,7 @@ bool Music::load(Type music) {
     ASSERT(music < MAX, "Attempted to load an invalid piece of music in Music::load()");
 
     /* music already loaded */
-    if (music == current) {
+    if (music == _current) {
         /* tell calling function it didn't load correctly (because it's already playing) */
         if (isPlaying())
             return false;
@@ -112,11 +112,11 @@ bool Music::load(Type music) {
             return true;
     }
 
-    Common::String pathname(u4find_music(filenames[music]));
+    Common::String pathname(u4find_music(_filenames[music]));
     if (!pathname.empty()) {
 		bool status = load_sys(pathname);
 		if (status)
-			current = music;
+			_current = music;
 		return status;
     }
     return false;
@@ -139,7 +139,7 @@ void Music::callback(void *data) {
  * Main music loop
  */
 void Music::play() {
-    playMid(c->_location->map->music);
+    playMid(c->_location->_map->_music);
 }
 
 /**
@@ -147,7 +147,7 @@ void Music::play() {
  */
 void Music::introSwitch(int n) {
     if (n > NONE && n < MAX) {
-        introMid = static_cast<Type>(n);
+        _introMid = static_cast<Type>(n);
         intro();
     }
 }
@@ -194,8 +194,8 @@ void Music::fadeIn(int msecs, bool loadFromMap) {
 
 	if (!isPlaying()) {
 		/* make sure we've got something loaded to play */
-		if (loadFromMap || !playing)
-			load(c->_location->map->music);
+		if (loadFromMap || !_playing)
+			load(c->_location->_map->_music);
 
 		if (!settings._volumeFades)
 			play();

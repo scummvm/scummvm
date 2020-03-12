@@ -246,7 +246,7 @@ bool Creature::isAttackable() const  {
     if (mattr & MATTR_NONATTACKABLE)
         return false;
     /* can't attack horse transport */
-    if (tile.getTileType()->isHorse() && getMovementBehavior() == MOVEMENT_FIXED)
+    if (_tile.getTileType()->isHorse() && getMovementBehavior() == MOVEMENT_FIXED)
         return false;
     return true; 
 }
@@ -319,13 +319,13 @@ CreatureStatus Creature::getState() const {
 bool Creature::specialAction() {
     bool retval = false;        
 
-    int dx = abs(c->_location->coords.x - coords.x);
-    int dy = abs(c->_location->coords.y - coords.y);
-    int mapdist = c->_location->coords.distance(coords, c->_location->map);
+    int dx = abs(c->_location->_coords.x - _coords.x);
+    int dy = abs(c->_location->_coords.y - _coords.y);
+    int mapdist = c->_location->_coords.distance(_coords, c->_location->_map);
 
     /* find out which direction the avatar is in relation to the creature */
-    MapCoords mapcoords(coords);
-    int dir = mapcoords.getRelativeDirection(c->_location->coords, c->_location->map);
+    MapCoords mapcoords(_coords);
+    int dir = mapcoords.getRelativeDirection(c->_location->_coords, c->_location->_map);
 
     //Init outside of switch
     int broadsidesDirs = 0;
@@ -341,8 +341,8 @@ bool Creature::specialAction() {
            and not in a city
            Note: Monsters in settlements in U3 do fire on party
         */
-        if (mapdist <= 3 && xu4_random(2) == 0 && (c->_location->context & CTX_CITY) == 0) {
-            Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, coords,
+        if (mapdist <= 3 && xu4_random(2) == 0 && (c->_location->_context & CTX_CITY) == 0) {
+            Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, _coords,
                                                                1, 3, NULL, false);
             for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
                 if (creatureRangeAttack(*i, this))
@@ -356,14 +356,14 @@ bool Creature::specialAction() {
         
         /* Fire cannon: Pirates only fire broadsides and only when they can hit you :) */
         retval = true;
-        broadsidesDirs = dirGetBroadsidesDirs(tile.getDirection());
+        broadsidesDirs = dirGetBroadsidesDirs(_tile.getDirection());
 
         if ((((dx == 0) && (dy <= 3)) ||          /* avatar is close enough and on the same column, OR */
              ((dy == 0) && (dx <= 3))) &&         /* avatar is close enough and on the same row, AND */
             ((broadsidesDirs & dir) > 0)) { /* pirate ship is firing broadsides */
 
             // nothing (not even mountains!) can block cannonballs
-            Std::vector<Coords> path = gameGetDirectionalActionPath(dir, broadsidesDirs, coords,
+            Std::vector<Coords> path = gameGetDirectionalActionPath(dir, broadsidesDirs, _coords,
                                                                1, 3, NULL, false);
             for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
                 if (fireAt(*i, false))
@@ -396,7 +396,7 @@ bool Creature::specialEffect() {
         {
             ObjectDeque::iterator i;
 
-            if (coords == c->_location->coords) {
+            if (_coords == c->_location->_coords) {
 
                 /* damage the ship */
                 if (c->_transportContext == TRANSPORT_SHIP) {
@@ -412,14 +412,14 @@ bool Creature::specialEffect() {
             }
 
             /* See if the storm is on top of any objects and destroy them! */
-            for (i = c->_location->map->objects.begin();
-                 i != c->_location->map->objects.end();) {
+            for (i = c->_location->_map->_objects.begin();
+                 i != c->_location->_map->_objects.end();) {
 
                 obj = *i;
                 if (this != obj &&
-                    obj->getCoords() == coords) {
+                    obj->getCoords() == _coords) {
                     /* Converged with an object, destroy the object! */
-                    i = c->_location->map->removeObject(i);
+                    i = c->_location->_map->removeObject(i);
                     retval = true;
                 }
                 else i++;
@@ -431,13 +431,13 @@ bool Creature::specialEffect() {
         {
             ObjectDeque::iterator i;
 
-            if (coords == c->_location->coords && (c->_transportContext == TRANSPORT_SHIP)) {                    
+            if (_coords == c->_location->_coords && (c->_transportContext == TRANSPORT_SHIP)) {                    
                                 
                 /* Deal 10 damage to the ship */
                 gameDamageShip(-1, 10);
 
                 /* Send the party to Locke Lake */
-                c->_location->coords = c->_location->map->getLabel("lockelake");
+                c->_location->_coords = c->_location->_map->getLabel("lockelake");
 
                 /* Teleport the whirlpool that sent you there far away from lockelake */
                 this->setCoords(Coords(0,0,0));
@@ -446,20 +446,20 @@ bool Creature::specialEffect() {
             }
 
             /* See if the whirlpool is on top of any objects and destroy them! */
-            for (i = c->_location->map->objects.begin();
-                 i != c->_location->map->objects.end();) {
+            for (i = c->_location->_map->_objects.begin();
+                 i != c->_location->_map->_objects.end();) {
 
                 obj = *i;
 
                 if (this != obj &&
-                	obj->getCoords() == coords) {
+                	obj->getCoords() == _coords) {
 
                 	Creature *m = dynamic_cast<Creature*>(obj);
 
                     /* Make sure the object isn't a flying creature or object */
                     if (!m || (m && (m->swims() || m->sails()) && !m->flies())) {
                         /* Destroy the object it met with */
-                        i = c->_location->map->removeObject(i);
+                        i = c->_location->_map->removeObject(i);
                         retval = true;
                     }
                     else {
@@ -583,7 +583,7 @@ void Creature::act(CombatController *controller) {
         
         while (!valid) {
             Map *map = getMap();
-            new_c = Coords(xu4_random(map->width), xu4_random(map->height), c->_location->coords.z);
+            new_c = Coords(xu4_random(map->_width), xu4_random(map->_height), c->_location->_coords.z);
                 
             const Tile *tile = map->tileTypeAt(new_c, WITH_OBJECTS);
             
@@ -787,7 +787,7 @@ Creature *Creature::nearestOpponent(int *dist, bool ranged) {
     bool jinx = (*c->_aura == Aura::JINX);
     Map *map = getMap();
 
-    for (i = map->objects.begin(); i != map->objects.end(); ++i) {
+    for (i = map->_objects.begin(); i != map->_objects.end(); ++i) {
         if (!isCreature(*i))
             continue;
 

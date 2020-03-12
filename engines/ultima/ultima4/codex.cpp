@@ -98,7 +98,7 @@ void codexStart() {
     U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
     screenDisableCursor();
-    screenUpdate(&game->mapArea, false, true);
+    screenUpdate(&game->_mapArea, false, true);
     
     /**
      * make the avatar alone
@@ -217,12 +217,12 @@ void codexEject(CodexEjectCode code) {
      */
     if (code >= CODEX_EJECT_HONESTY && code <= CODEX_EJECT_HUMILITY) {
         int virtue = code - CODEX_EJECT_HONESTY;
-        c->_location->coords.x = startLocations[virtue].x;
-        c->_location->coords.y = startLocations[virtue].y;        
+        c->_location->_coords.x = startLocations[virtue].x;
+        c->_location->_coords.y = startLocations[virtue].y;        
     }
 
     /* finally, finish the turn */
-    c->_location->turnCompleter->finishTurn();
+    c->_location->_turnCompleter->finishTurn();
     eventHandler->setController(game);
 }
 
