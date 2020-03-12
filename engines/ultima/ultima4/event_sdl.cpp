@@ -38,9 +38,9 @@ extern bool verbose, quit;
 extern int eventTimerGranularity;
 
 KeyHandler::KeyHandler(Callback func, void *d, bool asyncronous) :
-    handler(func),
-    async(asyncronous),
-    data(d)
+    _handler(func),
+    _async(asyncronous),
+    _data(d)
 {}
 
 /**
@@ -85,7 +85,7 @@ bool KeyHandler::defaultHandler(int key, void *data) {
     switch (key) {
     case '`':
         if (c && c->_location)
-            debug(1, "x = %d, y = %d, level = %d, tile = %d (%s)\n", c->_location->coords.x, c->_location->coords.y, c->_location->coords.z, c->_location->map->translateToRawTileIndex(*c->_location->map->tileAt(c->_location->coords, WITH_OBJECTS)), c->_location->map->tileTypeAt(c->_location->coords, WITH_OBJECTS)->getName().c_str());
+            debug(1, "x = %d, y = %d, level = %d, tile = %d (%s)\n", c->_location->_coords.x, c->_location->_coords.y, c->_location->_coords.z, c->_location->_map->translateToRawTileIndex(*c->_location->_map->tileAt(c->_location->_coords, WITH_OBJECTS)), c->_location->_map->tileTypeAt(c->_location->_coords, WITH_OBJECTS)->getName().c_str());
         break;
     default:
         valid = false;
@@ -115,7 +115,7 @@ bool KeyHandler::handle(int key) {
     if (!isKeyIgnored(key)) {
         processed = globalHandler(key);
         if (!processed)
-            processed = handler(key, data);
+            processed = _handler(key, _data);
     }
     
     return processed;
@@ -141,7 +141,7 @@ bool KeyHandler::isKeyIgnored(int key) {
 }
 
 bool KeyHandler::operator==(Callback cb) const {
-    return (handler == cb) ? true : false;        
+    return (_handler == cb) ? true : false;        
 }
 
 KeyHandlerController::KeyHandlerController(KeyHandler *handler) {

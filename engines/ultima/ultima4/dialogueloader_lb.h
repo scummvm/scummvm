@@ -32,7 +32,7 @@ namespace Ultima4 {
  * The dialogue loader for Lord British
  */
 class U4LBDialogueLoader : public DialogueLoader {
-    static DialogueLoader *instance;
+    static DialogueLoader *_instance;
 
 public:
     virtual Dialogue *load(void *source);

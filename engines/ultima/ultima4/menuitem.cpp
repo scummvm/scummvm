@@ -33,26 +33,26 @@ namespace Ultima4 {
  * MenuItem class
  */
 MenuItem::MenuItem(Common::String t, short xpos, short ypos, int sc) :
-		id(-1), x(xpos), y(ypos), text(t), highlighted(false),
-		selected(false), visible(true), scOffset(sc), closesMenu(false) {
+		_id(-1), x(xpos), y(ypos), _text(t), _highlighted(false),
+		_selected(false), _visible(true), _scOffset(sc), _closesMenu(false) {
     // if the sc/scOffset is outside the range of the text string, assert
-    ASSERT(sc==-1 || (sc >= 0 && sc <= (int)text.size()), "sc value of %d out of range!", sc);
-    if (sc != -1) addShortcutKey(tolower(text[sc]));
+    ASSERT(sc==-1 || (sc >= 0 && sc <= (int)_text.size()), "sc value of %d out of range!", sc);
+    if (sc != -1) addShortcutKey(tolower(_text[sc]));
 }
 
-int MenuItem::getId() const                         { return id; }
+int MenuItem::getId() const                         { return _id; }
 short MenuItem::getX() const                        { return x; }
 short MenuItem::getY() const                        { return y; }
-int MenuItem::getScOffset() const                   { return scOffset; }
-Common::String MenuItem::getText() const                    { return text; }
-bool MenuItem::isHighlighted() const                { return highlighted; }
-bool MenuItem::isSelected() const                   { return selected; }
-bool MenuItem::isVisible() const                    { return visible; }
-const Std::set<int> &MenuItem::getShortcutKeys() const   { return shortcutKeys; }
-bool MenuItem::getClosesMenu() const                { return closesMenu; }
+int MenuItem::getScOffset() const                   { return _scOffset; }
+Common::String MenuItem::getText() const                    { return _text; }
+bool MenuItem::isHighlighted() const                { return _highlighted; }
+bool MenuItem::isSelected() const                   { return _selected; }
+bool MenuItem::isVisible() const                    { return _visible; }
+const Std::set<int> &MenuItem::getShortcutKeys() const   { return _shortcutKeys; }
+bool MenuItem::getClosesMenu() const                { return _closesMenu; }
 
 void MenuItem::setId(int i) {
-    id = i;
+    _id = i;
 }
 
 void MenuItem::setX(int xpos) {
@@ -64,27 +64,27 @@ void MenuItem::setY(int ypos) {
 }
 
 void MenuItem::setText(Common::String t) {
-    text = t;
+    _text = t;
 }
 
 void MenuItem::setHighlighted(bool h) {
-    highlighted = h;
+    _highlighted = h;
 }
 
 void MenuItem::setSelected(bool s) {
-    selected = s;
+    _selected = s;
 }
 
 void MenuItem::setVisible(bool v) {
-    visible = v;
+    _visible = v;
 }
 
 void MenuItem::addShortcutKey(int sc) {
-    shortcutKeys.insert(sc);
+    _shortcutKeys.insert(sc);
 }
 
 void MenuItem::setClosesMenu(bool closesMenu) {
-    this->closesMenu = closesMenu;
+    this->_closesMenu = closesMenu;
 }
 
 BoolMenuItem::BoolMenuItem(Common::String text, short x, short y, int shortcutKey, bool *val) : 
@@ -103,7 +103,7 @@ BoolMenuItem *BoolMenuItem::setValueStrings(const Common::String &onString, cons
 
 Common::String BoolMenuItem::getText() const { 
     char buffer[64];
-    snprintf(buffer, sizeof(buffer), text.c_str(), *val ? on.c_str() : off.c_str());
+    snprintf(buffer, sizeof(buffer), _text.c_str(), *val ? on.c_str() : off.c_str());
     return buffer;
 }
 
@@ -124,7 +124,7 @@ StringMenuItem::StringMenuItem(Common::String text, short x, short y, int shortc
 
 Common::String StringMenuItem::getText() const { 
     char buffer[64];
-    snprintf(buffer, sizeof(buffer), text.c_str(), val->c_str());
+    snprintf(buffer, sizeof(buffer), _text.c_str(), val->c_str());
     return buffer;
 }
 
@@ -221,9 +221,9 @@ Common::String IntMenuItem::getText() const {
     // %d, whereas all others use %s
     char buffer[64];
     if (output != MENU_OUTPUT_INT)
-        snprintf(buffer, sizeof(buffer), text.c_str(), outputBuffer);
+        snprintf(buffer, sizeof(buffer), _text.c_str(), outputBuffer);
     else
-        snprintf(buffer, sizeof(buffer), text.c_str(), *val);
+        snprintf(buffer, sizeof(buffer), _text.c_str(), *val);
     return buffer;
 }
 

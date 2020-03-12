@@ -31,12 +31,12 @@ namespace Ultima4 {
 
 typedef Std::deque<class Object *> ObjectDeque;
 
-typedef enum {
+enum ObjectMovementBehavior {
     MOVEMENT_FIXED,
     MOVEMENT_WANDER,
     MOVEMENT_FOLLOW_AVATAR,
     MOVEMENT_ATTACK_AVATAR
-} ObjectMovementBehavior;
+};
 
 class Object {
 public:
@@ -47,38 +47,38 @@ public:
     };
 
     Object(Type type = UNKNOWN) :    
-      tile(0),
-      prevTile(0),      
-      movement_behavior(MOVEMENT_FIXED),
-      objType(type), 
-      focused(false),
-      visible(true),
-      animated(true)
+      _tile(0),
+      _prevTile(0),      
+      _movementBehavior(MOVEMENT_FIXED),
+      _objType(type), 
+      _focused(false),
+      _visible(true),
+      _animated(true)
     {}
     
     virtual ~Object() {}    
 
     // Methods
-    MapTile& getTile()                      { return tile; }
-    MapTile& getPrevTile()                  { return prevTile; }
-    const Coords& getCoords() const         { return coords; }
-    const Coords& getPrevCoords() const     { return prevCoords; }    
-    const ObjectMovementBehavior getMovementBehavior() const    { return movement_behavior; }
-    const Type getType() const              { return objType; }
-    bool hasFocus() const                   { return focused; }
-    bool isVisible() const                  { return visible; }
-    bool isAnimated() const                 { return animated; }    
+    MapTile& getTile()                      { return _tile; }
+    MapTile& getPrevTile()                  { return _prevTile; }
+    const Coords& getCoords() const         { return _coords; }
+    const Coords& getPrevCoords() const     { return _prevCoords; }    
+    const ObjectMovementBehavior getMovementBehavior() const    { return _movementBehavior; }
+    const Type getType() const              { return _objType; }
+    bool hasFocus() const                   { return _focused; }
+    bool isVisible() const                  { return _visible; }
+    bool isAnimated() const                 { return _animated; }    
 
-    void setTile(MapTile t)                 { tile = t; }
-    void setTile(Tile *t)                   {tile = t->getId();}
-    void setPrevTile(MapTile t)             { prevTile = t; }
-    void setCoords(Coords c)                { prevCoords = coords; coords = c; }
-    void setPrevCoords(Coords c)            { prevCoords = c; }    
-    void setMovementBehavior(ObjectMovementBehavior b)          { movement_behavior = b; }
-    void setType(Type t)                    { objType = t; }
-    void setFocus(bool f = true)            { focused = f; }
-    void setVisible(bool v = true)          { visible = v; }
-    void setAnimated(bool a = true)         { animated = a; }
+    void setTile(MapTile t)                 { _tile = t; }
+    void setTile(Tile *t)                   {_tile = t->getId();}
+    void setPrevTile(MapTile t)             { _prevTile = t; }
+    void setCoords(Coords c)                { _prevCoords = _coords; _coords = c; }
+    void setPrevCoords(Coords c)            { _prevCoords = c; }    
+    void setMovementBehavior(ObjectMovementBehavior b)          { _movementBehavior = b; }
+    void setType(Type t)                    { _objType = t; }
+    void setFocus(bool f = true)            { _focused = f; }
+    void setVisible(bool v = true)          { _visible = v; }
+    void setAnimated(bool a = true)         { _animated = a; }
     
     void setMap(class Map *m);
     Map *getMap();    
@@ -90,15 +90,15 @@ public:
 
     // Properties
 protected:
-    MapTile tile, prevTile;
-    Coords coords, prevCoords;
-    ObjectMovementBehavior movement_behavior;
-    Type objType;
-    Std::deque<class Map *> maps;           /**< A list of maps this object is a part of */    
+    MapTile _tile, _prevTile;
+    Coords _coords, _prevCoords;
+    ObjectMovementBehavior _movementBehavior;
+    Type _objType;
+    Std::deque<class Map *> _maps;           /**< A list of maps this object is a part of */    
     
-    bool focused;
-    bool visible;
-    bool animated;    
+    bool _focused;
+    bool _visible;
+    bool _animated;    
 };
 
 } // End of namespace Ultima4

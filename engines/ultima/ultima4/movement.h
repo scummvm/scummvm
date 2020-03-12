@@ -53,11 +53,11 @@ enum MoveResult {
 
 class MoveEvent {
 public:
-    MoveEvent(Direction d, bool user) : dir(d), userEvent(user), result(MOVE_SUCCEEDED) {}
+    MoveEvent(Direction d, bool user) : _dir(d), _userEvent(user), _result(MOVE_SUCCEEDED) {}
 
-    Direction dir;              /**< the direction of the move */
-    bool userEvent;             /**< whether the user initiated the move */
-    MoveResult result;          /**< how the movement was resolved */
+    Direction _dir;              /**< the direction of the move */
+    bool _userEvent;             /**< whether the user initiated the move */
+    MoveResult _result;          /**< how the movement was resolved */
 };
 
 void moveAvatar(MoveEvent &event);

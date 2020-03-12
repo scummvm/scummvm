@@ -45,42 +45,42 @@ namespace Ultima4 {
 template <class O, class A = NoArg*>
 class Observable {
 public:
-    Observable() : changed(false) {}
+    Observable() : _changed(false) {}
 
     void addObserver(Observer<O, A> *o) {
         typename Std::vector< Observer<O, A> *>::iterator i;
-        i = Common::find(observers.begin(), observers.end(), o);
-        if (i == observers.end())
-            observers.push_back(o);
+        i = Common::find(_observers.begin(), _observers.end(), o);
+        if (i == _observers.end())
+            _observers.push_back(o);
     }
 
     int countObservers() const { 
-        return observers.size();
+        return _observers.size();
     }
 
     void deleteObserver(Observer<O, A> *o) {
         typename Std::vector< Observer<O, A> *>::iterator i;
-        i = Common::find(observers.begin(), observers.end(), o);
-        if (i != observers.end())
-            observers.erase(i);
+        i = Common::find(_observers.begin(), _observers.end(), o);
+        if (i != _observers.end())
+            _observers.erase(i);
     }
 
     void deleteObservers() { 
-        observers.clear(); 
+        _observers.clear(); 
     }
 
     bool hasChanged() const { 
-        return changed; 
+        return _changed; 
     }
 
     void notifyObservers(A arg) {
-        if (!changed)
+        if (!_changed)
             return;
 
         // vector iterators are invalidated if erase is called, so a copy
         // is used to prevent problems if the observer removes itself (or
         // otherwise changes the observer list)
-        typename Std::vector< Observer<O, A> *> tmp = observers;
+        typename Std::vector< Observer<O, A> *> tmp = _observers;
         typename Std::vector< Observer<O, A> *>::iterator i;
 
         clearChanged();
@@ -92,12 +92,12 @@ public:
     }
 
 protected:
-    void clearChanged() { changed = false; }
-    void setChanged() { changed = true; }
+    void clearChanged() { _changed = false; }
+    void setChanged() { _changed = true; }
 
 private:
-    bool changed;
-    Std::vector< Observer<O, A> *> observers;
+    bool _changed;
+    Std::vector< Observer<O, A> *> _observers;
 };
 
 } // End of namespace Ultima4

@@ -47,7 +47,7 @@ public:
     virtual void timerFired();
 
 private:
-    int timerInterval;
+    int _timerInterval;
 };
 
 // helper functions for the waitable controller; they just avoid
@@ -63,27 +63,27 @@ void Controller_endWait();
 template<class T>
 class WaitableController : public Controller {
 public:
-    WaitableController() : exitWhenDone(false) {}
+    WaitableController() : _exitWhenDone(false) {}
 
     virtual T getValue() {
-        return value;
+        return _value;
     }
 
     virtual T waitFor() {
-        exitWhenDone = true;
+        _exitWhenDone = true;
         Controller_startWait();
         return getValue();
     }
 
 protected:
-    T value;
+    T _value;
     void doneWaiting() {
-        if (exitWhenDone)
+        if (_exitWhenDone)
             Controller_endWait();
     }
 
 private:
-    bool exitWhenDone;
+    bool _exitWhenDone;
 };
 
 } // End of namespace Ultima4

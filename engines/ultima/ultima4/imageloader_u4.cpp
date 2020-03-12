@@ -34,13 +34,13 @@ namespace Ultima4 {
 
 using Std::vector;
 
-ImageLoader *U4RawImageLoader::instance = ImageLoader::registerLoader(new U4RawImageLoader, "image/x-u4raw");
-ImageLoader *U4RleImageLoader::instance = ImageLoader::registerLoader(new U4RleImageLoader, "image/x-u4rle");
-ImageLoader *U4LzwImageLoader::instance = ImageLoader::registerLoader(new U4LzwImageLoader, "image/x-u4lzw");
+ImageLoader *U4RawImageLoader::_instance = ImageLoader::registerLoader(new U4RawImageLoader, "image/x-u4raw");
+ImageLoader *U4RleImageLoader::_instance = ImageLoader::registerLoader(new U4RleImageLoader, "image/x-u4rle");
+ImageLoader *U4LzwImageLoader::_instance = ImageLoader::registerLoader(new U4LzwImageLoader, "image/x-u4lzw");
 
-RGBA *U4PaletteLoader::bwPalette = NULL;
-RGBA *U4PaletteLoader::egaPalette = NULL;
-RGBA *U4PaletteLoader::vgaPalette = NULL;
+RGBA *U4PaletteLoader::_bwPalette = NULL;
+RGBA *U4PaletteLoader::_egaPalette = NULL;
+RGBA *U4PaletteLoader::_vgaPalette = NULL;
 
 /**
  * Loads in the raw image and apply the standard U4 16 or 256 color
@@ -188,30 +188,30 @@ Image *U4LzwImageLoader::load(U4FILE *file, int width, int height, int bpp) {
  * Loads a simple black & white palette
  */
 RGBA *U4PaletteLoader::loadBWPalette() {
-    if (bwPalette == NULL) {
-        bwPalette = new RGBA[2];
+    if (_bwPalette == NULL) {
+        _bwPalette = new RGBA[2];
 
-        bwPalette[0].r = 0;
-        bwPalette[0].g = 0;
-        bwPalette[0].b = 0;
+        _bwPalette[0].r = 0;
+        _bwPalette[0].g = 0;
+        _bwPalette[0].b = 0;
 
-        bwPalette[1].r = 255;
-        bwPalette[1].g = 255;
-        bwPalette[1].b = 255;
+        _bwPalette[1].r = 255;
+        _bwPalette[1].g = 255;
+        _bwPalette[1].b = 255;
 
     }
-    return bwPalette;
+    return _bwPalette;
 }
 
 /**
  * Loads the basic EGA palette from egaPalette.xml
  */
 RGBA *U4PaletteLoader::loadEgaPalette() {
-    if (egaPalette == NULL) {
+    if (_egaPalette == NULL) {
         int index = 0;
         const Config *config = Config::getInstance();
         
-        egaPalette = new RGBA[16];
+        _egaPalette = new RGBA[16];
 
         vector<ConfigElement> paletteConf = config->getElement("egaPalette").getChildren();
         for (Std::vector<ConfigElement>::iterator i = paletteConf.begin(); i != paletteConf.end(); i++) {
@@ -219,37 +219,37 @@ RGBA *U4PaletteLoader::loadEgaPalette() {
             if (i->getName() != "color")
                 continue;
         
-            egaPalette[index].r = i->getInt("red");
-            egaPalette[index].g = i->getInt("green");
-            egaPalette[index].b = i->getInt("blue");
+            _egaPalette[index].r = i->getInt("red");
+            _egaPalette[index].g = i->getInt("green");
+            _egaPalette[index].b = i->getInt("blue");
 
             index++;
         }
     }
-    return egaPalette;
+    return _egaPalette;
 }
 
 /**
  * Load the 256 color VGA palette from a file.
  */
 RGBA *U4PaletteLoader::loadVgaPalette() {
-    if (vgaPalette == NULL) {
+    if (_vgaPalette == NULL) {
         U4FILE *pal = u4fopen("u4vga.pal");
         if (!pal)
             return NULL;
 
-        vgaPalette = new RGBA[256];
+        _vgaPalette = new RGBA[256];
 
         for (int i = 0; i < 256; i++) {
-            vgaPalette[i].r = u4fgetc(pal) * 255 / 63;
-            vgaPalette[i].g = u4fgetc(pal) * 255 / 63;
-            vgaPalette[i].b = u4fgetc(pal) * 255 / 63;
+            _vgaPalette[i].r = u4fgetc(pal) * 255 / 63;
+            _vgaPalette[i].g = u4fgetc(pal) * 255 / 63;
+            _vgaPalette[i].b = u4fgetc(pal) * 255 / 63;
         }
         u4fclose(pal);
 
     }
 
-    return vgaPalette;
+    return _vgaPalette;
 }
 
 } // End of namespace Ultima4

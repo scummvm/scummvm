@@ -461,17 +461,17 @@ bool ReagentsMenuController::keyPressed(int key) {
     case 'h':
         {
             /* select the corresponding reagent (if visible) */
-            Menu::MenuItemList::iterator mi = menu->getById(key-'a');
+            Menu::MenuItemList::iterator mi = _menu->getById(key-'a');
             if ((*mi)->isVisible()) {
-                menu->setCurrent(menu->getById(key-'a'));
+                _menu->setCurrent(_menu->getById(key-'a'));
                 keyPressed(U4_SPACE);
             }
         } break;
     case U4_LEFT:
     case U4_RIGHT:
     case U4_SPACE:
-        if (menu->isVisible()) {            
-            MenuItem *item = *menu->getCurrent();
+        if (_menu->isVisible()) {            
+            MenuItem *item = *_menu->getCurrent();
             
             /* change whether or not it's selected */
             item->setSelected(!item->isSelected());

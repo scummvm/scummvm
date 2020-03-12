@@ -64,8 +64,8 @@ public:
     virtual Common::String getName() const;
     void goToStartLocation();
     void setDialogue(Dialogue *d);
-    MapCoords &getStart() { return start; }
-    PersonNpcType getNpcType() const { return npcType; }
+    MapCoords &getStart() { return _start; }
+    PersonNpcType getNpcType() const { return _npcType; }
     void setNpcType(PersonNpcType t);
 
     Common::List<Common::String> getConversationText(Conversation *cnv, const char *inquiry);
@@ -82,9 +82,9 @@ public:
     Common::String getQuestion(Conversation *cnv);
 
 private:
-    Dialogue* dialogue;
-    MapCoords start;    
-    PersonNpcType npcType;
+    Dialogue *_dialogue;
+    MapCoords _start;    
+    PersonNpcType _npcType;
 };
 
 bool isPerson(Object *punknown);

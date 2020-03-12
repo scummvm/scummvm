@@ -111,7 +111,7 @@ void deathTimer(void *data) {
 }
 
 void deathRevive() {
-    while(!c->_location->map->isWorldMap() && c->_location->prev != NULL) {
+    while(!c->_location->_map->isWorldMap() && c->_location->_prev != NULL) {
         game->exitToParentMap();        
     }
 
@@ -121,14 +121,14 @@ void deathRevive() {
     gameSetViewMode(VIEW_NORMAL);
 
     /* Move our world map location to Lord British's Castle */
-    c->_location->coords = c->_location->map->portals[0]->_coords;
+    c->_location->_coords = c->_location->_map->_portals[0]->_coords;
     
     /* Now, move the avatar into the castle and put him
        in front of Lord British */
     game->setMap(mapMgr->get(100), 1, NULL);
-    c->_location->coords.x = REVIVE_CASTLE_X;
-    c->_location->coords.y = REVIVE_CASTLE_Y;
-    c->_location->coords.z = 0;
+    c->_location->_coords.x = REVIVE_CASTLE_X;
+    c->_location->_coords.y = REVIVE_CASTLE_Y;
+    c->_location->_coords.z = 0;
 
     c->_aura->set();
     c->_horseSpeed = 0;

@@ -63,8 +63,8 @@ private:
     DungeonView(int x, int y, int columns, int rows);
     bool screen3dDungeonViewEnabled;
 public:
-    static DungeonView * instance;
-    static DungeonView * getInstance();
+    static DungeonView *_instance;
+    static DungeonView *getInstance();
 
     void drawInDungeon(Tile *tile, int x_offset, int distance, Direction orientation, bool tiled);
     int graphicIndex(int xoffset, int distance, Direction orientation, DungeonGraphicType type);

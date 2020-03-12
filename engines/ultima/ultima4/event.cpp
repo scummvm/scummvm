@@ -250,7 +250,7 @@ ReadStringController::ReadStringController(int maxlen, TextView *view, const Com
 
 bool ReadStringController::keyPressed(int key) {
     int valid = true,
-        len = value.size();
+        len = _value.size();
     Common::String::value_type pos = Common::String::npos;
 
 #ifdef TODO
@@ -262,7 +262,7 @@ bool ReadStringController::keyPressed(int key) {
         if (key == Common::KEYCODE_BACKSPACE) {
             if (len > 0) {
                 /* remove the last character */
-                value.erase(len - 1, 1);
+                _value.erase(len - 1, 1);
 
                 if (view) {
                     view->textAt(screenX + len - 1, screenY, " ");
@@ -280,7 +280,7 @@ bool ReadStringController::keyPressed(int key) {
         }
         else if (len < maxlen) {
             /* add a character to the end */
-            value += key;
+            _value += key;
 
             if (view) {
                 view->textAt(screenX + len, screenY, "%c", key);
@@ -329,7 +329,7 @@ int ReadIntController::get(int maxlen, int screenX, int screenY, EventHandler *e
 }
 
 int ReadIntController::getInt() const {
-    return static_cast<int>(strtol(value.c_str(), NULL, 10));
+    return static_cast<int>(strtol(_value.c_str(), NULL, 10));
 }
 
 ReadChoiceController::ReadChoiceController(const Common::String &choices) {
@@ -342,9 +342,9 @@ bool ReadChoiceController::keyPressed(int key) {
     if ((key <= 0x7F) && (Common::isUpper(key)))
         key = tolower(key);
 
-    value = key;
+    _value = key;
 
-    if (choices.empty() || choices.findFirstOf(value) < choices.size()) {
+    if (choices.empty() || choices.findFirstOf(_value) < choices.size()) {
         // If the value is printable, display it
         if (!Common::isSpace(key))
         	screenMessage("%c", toupper(key));
@@ -365,7 +365,7 @@ char ReadChoiceController::get(const Common::String &choices, EventHandler *eh) 
 }
 
 ReadDirController::ReadDirController() {
-    value = DIR_NONE;
+    _value = DIR_NONE;
 }
 
 bool ReadDirController::keyPressed(int key) {
@@ -376,13 +376,13 @@ bool ReadDirController::keyPressed(int key) {
 	case Common::KEYCODE_ESCAPE:
 	case Common::KEYCODE_SPACE:
 	case Common::KEYCODE_RETURN:
-        value = DIR_NONE;
+        _value = DIR_NONE;
         doneWaiting();
         return true;
 
     default:
         if (valid) {
-            value = d;
+            _value = d;
             doneWaiting();
             return true;
         }

@@ -36,14 +36,14 @@ class MenuEvent;
  * to perform special calculations before displaying
  * its associated value
  */
-typedef enum {
+enum menuOutputType {
     MENU_OUTPUT_INT,
     MENU_OUTPUT_GAMMA,
     MENU_OUTPUT_SHRINE,
     MENU_OUTPUT_SPELL,
     MENU_OUTPUT_VOLUME,
     MENU_OUTPUT_REAGENT
-} menuOutputType;
+};
 
 class MenuItem {
 public:
@@ -76,15 +76,15 @@ public:
     void setClosesMenu(bool closesMenu);
     
 protected:
-    int id;
+    int _id;
     short x, y;
-    Common::String text;
-    bool highlighted;
-    bool selected;
-    bool visible;
-    int scOffset;
-	Std::set<int> shortcutKeys;
-    bool closesMenu;
+    Common::String _text;
+    bool _highlighted;
+    bool _selected;
+    bool _visible;
+    int _scOffset;
+	Std::set<int> _shortcutKeys;
+    bool _closesMenu;
 };
 
 /**

@@ -447,10 +447,10 @@ bool PartyMember::applyDamage(int damage, bool) {
     _player->_hp = newHp;
     notifyOfChange();
 
-    if (isCombatMap(c->_location->map) && getStatus() == STAT_DEAD) {
+    if (isCombatMap(c->_location->_map) && getStatus() == STAT_DEAD) {
         Coords p = getCoords();                    
         Map *map = getMap();
-        map->annotations->add(p, Tileset::findTileByName("corpse")->getId())->setTTL(_party->size() * 2);
+        map->_annotations->add(p, Tileset::findTileByName("corpse")->getId())->setTTL(_party->size() * 2);
 
         if (_party) {
             _party->setChanged();
@@ -969,7 +969,7 @@ void Party::endTurn() {
     for (i = 0; i < size(); i++) {
 
         /* Handle player status (only for non-combat turns) */
-        if ((c->_location->context & CTX_NON_COMBAT) == c->_location->context) {
+        if ((c->_location->_context & CTX_NON_COMBAT) == c->_location->_context) {
             
             /* party members eat food (also non-combat) */
             if (!_members[i]->isDead())
@@ -1003,14 +1003,14 @@ void Party::endTurn() {
     }
 
     /* The party is starving! */
-    if ((_saveGame->_food == 0) && ((c->_location->context & CTX_NON_COMBAT) == c->_location->context)) {
+    if ((_saveGame->_food == 0) && ((c->_location->_context & CTX_NON_COMBAT) == c->_location->_context)) {
         setChanged();
         PartyEvent event(PartyEvent::STARVING, 0);
         notifyObservers(event);
     }
     
     /* heal ship (25% chance it is healed each turn) */
-    if ((c->_location->context == CTX_WORLDMAP) && (_saveGame->_shipHull < 50) && xu4_random(4) == 0)
+    if ((c->_location->_context == CTX_WORLDMAP) && (_saveGame->_shipHull < 50) && xu4_random(4) == 0)
         healShip(1);
 }
 

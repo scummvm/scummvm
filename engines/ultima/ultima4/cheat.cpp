@@ -58,10 +58,10 @@ bool CheatMenuController::keyPressed(int key) {
     case '8':
         screenMessage("Gate %d!\n", key - '0');
 
-        if (c->_location->map->isWorldMap()) {
+        if (c->_location->_map->isWorldMap()) {
             const Coords *moongate = moongateGetGateCoordsForPhase(key - '1');
             if (moongate)
-                c->_location->coords = *moongate;                
+                c->_location->_coords = *moongate;                
         }
         else
             screenMessage("Not here!\n");
@@ -117,22 +117,22 @@ bool CheatMenuController::keyPressed(int key) {
         lowercase(dest);
 
         bool found = false;
-        for (unsigned p = 0; p < c->_location->map->portals.size(); p++) {
-            MapId destid = c->_location->map->portals[p]->_destid;
+        for (unsigned p = 0; p < c->_location->_map->_portals.size(); p++) {
+            MapId destid = c->_location->_map->_portals[p]->_destid;
             Common::String destNameLower = mapMgr->get(destid)->getName();
             lowercase(destNameLower);
             if (destNameLower.find(dest) != Common::String::npos) {
                 screenMessage("\n%s\n", mapMgr->get(destid)->getName().c_str());
-                c->_location->coords = c->_location->map->portals[p]->_coords;
+                c->_location->_coords = c->_location->_map->_portals[p]->_coords;
                 found = true;
                 break;
             }
         }
         if (!found) {
-            MapCoords coords = c->_location->map->getLabel(dest);
+            MapCoords coords = c->_location->_map->getLabel(dest);
             if (coords != MapCoords::nowhere) {
                 screenMessage("\n%s\n", dest.c_str());
-                c->_location->coords = coords;
+                c->_location->_coords = coords;
                 found = true;
             }
         }
@@ -222,10 +222,10 @@ bool CheatMenuController::keyPressed(int key) {
         break;
 
     case 'l':
-        if (c->_location->map->isWorldMap())
-            screenMessage("\nLocation:\n%s\nx: %d\ny: %d\n", "World Map", c->_location->coords.x, c->_location->coords.y);
+        if (c->_location->_map->isWorldMap())
+            screenMessage("\nLocation:\n%s\nx: %d\ny: %d\n", "World Map", c->_location->_coords.x, c->_location->_coords.y);
         else
-            screenMessage("\nLocation:\n%s\nx: %d\ny: %d\nz: %d\n", c->_location->map->getName().c_str(), c->_location->coords.x, c->_location->coords.y, c->_location->coords.z);
+            screenMessage("\nLocation:\n%s\nx: %d\ny: %d\nz: %d\n", c->_location->_map->getName().c_str(), c->_location->_coords.x, c->_location->_coords.y, c->_location->_coords.z);
         break;
 
     case 'm':
@@ -240,12 +240,12 @@ bool CheatMenuController::keyPressed(int key) {
         break;
 
     case 'p':        
-        if ((c->_location->viewMode == VIEW_NORMAL) || (c->_location->viewMode == VIEW_DUNGEON))
-            c->_location->viewMode = VIEW_GEM;
-        else if (c->_location->context == CTX_DUNGEON)
-            c->_location->viewMode = VIEW_DUNGEON;
+        if ((c->_location->_viewMode == VIEW_NORMAL) || (c->_location->_viewMode == VIEW_DUNGEON))
+            c->_location->_viewMode = VIEW_GEM;
+        else if (c->_location->_context == CTX_DUNGEON)
+            c->_location->_viewMode = VIEW_DUNGEON;
         else 
-            c->_location->viewMode = VIEW_NORMAL;
+            c->_location->_viewMode = VIEW_NORMAL;
         
         screenMessage("\nToggle View!\n");
         break;
@@ -263,11 +263,11 @@ bool CheatMenuController::keyPressed(int key) {
         break;
 
     case 't':
-        if (c->_location->map->isWorldMap()) {
-            MapCoords coords = c->_location->coords;
-            static MapTile horse = c->_location->map->tileset->getByName("horse")->getId(),
-                ship = c->_location->map->tileset->getByName("ship")->getId(),
-                balloon = c->_location->map->tileset->getByName("balloon")->getId();
+        if (c->_location->_map->isWorldMap()) {
+            MapCoords coords = c->_location->_coords;
+            static MapTile horse = c->_location->_map->_tileset->getByName("horse")->getId(),
+                ship = c->_location->_map->_tileset->getByName("ship")->getId(),
+                balloon = c->_location->_map->_tileset->getByName("balloon")->getId();
             MapTile *choice; 
             Tile *tile;
             
@@ -286,7 +286,7 @@ bool CheatMenuController::keyPressed(int key) {
 
             if (choice) {
                 ReadDirController readDir;
-                tile = c->_location->map->tileset->get(choice->getId());
+                tile = c->_location->_map->_tileset->get(choice->getId());
 
                 screenMessage("%s\n", tile->getName().c_str());
 
@@ -294,10 +294,10 @@ bool CheatMenuController::keyPressed(int key) {
                 eventHandler->pushController(&readDir);                
 
                 screenMessage("Dir: ");
-                coords.move(readDir.waitFor(), c->_location->map);
-                if (coords != c->_location->coords) {            
+                coords.move(readDir.waitFor(), c->_location->_map);
+                if (coords != c->_location->_coords) {            
                     bool ok = false;
-                    MapTile *ground = c->_location->map->tileAt(coords, WITHOUT_OBJECTS);
+                    MapTile *ground = c->_location->_map->tileAt(coords, WITHOUT_OBJECTS);
 
                     screenMessage("%s\n", getDirectionName(readDir.getValue()));
 
@@ -309,7 +309,7 @@ bool CheatMenuController::keyPressed(int key) {
                     }
 
                     if (choice && ok) {
-                        c->_location->map->addObject(*choice, *choice, coords);
+                        c->_location->_map->addObject(*choice, *choice, coords);
                         screenMessage("%s created!\n", tile->getName().c_str());
                     }
                     else if (!choice)
@@ -345,8 +345,8 @@ bool CheatMenuController::keyPressed(int key) {
 
     case 'y':
         screenMessage("Y-up!\n");
-        if ((c->_location->context & CTX_DUNGEON) && (c->_location->coords.z > 0))
-            c->_location->coords.z--;
+        if ((c->_location->_context & CTX_DUNGEON) && (c->_location->_coords.z > 0))
+            c->_location->_coords.z--;
         else {
             screenMessage("Leaving...\n");
             game->exitToParentMap();
@@ -356,8 +356,8 @@ bool CheatMenuController::keyPressed(int key) {
 
     case 'z':
         screenMessage("Z-down!\n");
-        if ((c->_location->context & CTX_DUNGEON) && (c->_location->coords.z < 7))
-            c->_location->coords.z++;
+        if ((c->_location->_context & CTX_DUNGEON) && (c->_location->_coords.z < 7))
+            c->_location->_coords.z++;
         else screenMessage("Not Here!\n");
         break;
 

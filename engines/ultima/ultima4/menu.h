@@ -46,19 +46,19 @@ public:
     };
 
     MenuEvent(const Menu *menu, Type type, const MenuItem *item = NULL) {
-        this->menu = menu;
-        this->type = type;
-        this->item = item;
+        this->_menu = menu;
+        this->_type = type;
+        this->_item = item;
     }
 
-    const Menu *getMenu() { return menu; }
-    Type getType() { return type; }
-    const MenuItem *getMenuItem() { return item; }
+    const Menu *getMenu() { return _menu; }
+    Type getType() { return _type; }
+    const MenuItem *getMenuItem() { return _item; }
 
 private:
-    const Menu *menu;
-    Type type;
-    const MenuItem *item;
+    const Menu *_menu;
+    Type _type;
+    const MenuItem *_item;
 };
 
 /**
@@ -99,12 +99,12 @@ public:
     void                    setTitle(const Common::String &text, int x, int y);
 
 private:    
-    MenuItemList items;
-    MenuItemList::iterator current;
-    MenuItemList::iterator selected;
-    bool closed;
-    Common::String title;
-    int titleX, titleY;
+    MenuItemList _items;
+    MenuItemList::iterator _current;
+    MenuItemList::iterator _selected;
+    bool _closed;
+    Common::String _title;
+    int _titleX, _titleY;
 };
 
 /**
@@ -117,8 +117,8 @@ public:
     bool keyPressed(int key);
 
 protected:
-    Menu *menu;
-    TextView *view;
+    Menu *_menu;
+    TextView *_view;
 };
 
 } // End of namespace Ultima4

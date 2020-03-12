@@ -51,7 +51,7 @@ protected:
     static DialogueLoader *registerLoader(DialogueLoader *loader, const Common::String &mimeType);    
 
 private:
-    static Std::map<Common::String, DialogueLoader *> *loaderMap;
+    static Std::map<Common::String, DialogueLoader *> *_loaderMap;
 };
 
 } // End of namespace Ultima4

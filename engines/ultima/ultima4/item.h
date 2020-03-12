@@ -40,14 +40,14 @@ enum SearchCondition {
 };
 
 struct ItemLocation {
-    const char *name;
-    const char *shortname;
-    const char *locationLabel;
-    bool (*isItemInInventory)(int item);
-    void (*putItemInInventory)(int item);
-    void (*useItem)(int item);
-    int data;
-    unsigned char conditions;
+    const char *_name;
+    const char *_shortName;
+    const char *_locationLabel;
+    bool (*_isItemInInventory)(int item);
+    void (*_putItemInInventory)(int item);
+    void (*_useItem)(int item);
+    int _data;
+    unsigned char _conditions;
 };
 
 typedef void (*DestroyAllCreaturesCallback)(void);

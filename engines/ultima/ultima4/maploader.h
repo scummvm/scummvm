@@ -69,7 +69,7 @@ private:
 };
 
 class CityMapLoader : public MapLoader {
-    static MapLoader *instance;
+    static MapLoader *_instance;
 
 public:
     virtual bool load(Map *map);
@@ -77,7 +77,7 @@ public:
 };
 
 class ConMapLoader : public MapLoader {
-    static MapLoader *instance;
+    static MapLoader *_instance;
 
 public:
     virtual bool load(Map *map);
@@ -85,7 +85,7 @@ public:
 };
 
 class DngMapLoader : public MapLoader {
-    static MapLoader *instance;
+    static MapLoader *_instance;
 
 public:
     virtual bool load(Map *map);
@@ -95,7 +95,7 @@ private:
 };
 
 class WorldMapLoader : public MapLoader {
-    static MapLoader *instance;
+    static MapLoader *_instance;
 
 public:
     virtual bool load(Map *map);

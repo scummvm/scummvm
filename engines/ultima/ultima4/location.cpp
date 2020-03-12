@@ -46,11 +46,11 @@ Location *locationPop(Location **stack);
 Location::Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx,
                    TurnCompleter *turnCompleter, Location *prev) {
 
-    this->coords = coords;
-    this->map = map;
-    this->viewMode = viewmode;
-    this->context = ctx;
-    this->turnCompleter = turnCompleter;
+    this->_coords = coords;
+    this->_map = map;
+    this->_viewMode = viewmode;
+    this->_context = ctx;
+    this->_turnCompleter = turnCompleter;
 
     locationPush(prev, this);
 }
@@ -60,28 +60,28 @@ Location::Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx
  */
 Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
     Std::vector<MapTile> tiles;
-    Common::List<Annotation *> a = map->annotations->ptrsToAllAt(coords);
+    Common::List<Annotation *> a = _map->_annotations->ptrsToAllAt(coords);
     Common::List<Annotation *>::iterator i;
-    Object *obj = map->objectAt(coords);
+    Object *obj = _map->objectAt(coords);
     Creature *m = dynamic_cast<Creature *>(obj);
     focus = false;
 
-    bool avatar = this->coords == coords;
+    bool avatar = this->_coords == coords;
 
     /* Do not return objects for VIEW_GEM mode, show only the avatar and tiles */
-    if (viewMode == VIEW_GEM && (!settings._enhancements || !settings._enhancementsOptions._peerShowsObjects)) {        
+    if (_viewMode == VIEW_GEM && (!settings._enhancements || !settings._enhancementsOptions._peerShowsObjects)) {        
         // When viewing a gem, always show the avatar regardless of whether or not
         // it is shown in our normal view
         if (avatar)
             tiles.push_back(c->_party->getTransport());
         else             
-            tiles.push_back(*map->getTileFromData(coords));
+            tiles.push_back(*_map->getTileFromData(coords));
 
         return tiles;
     }
 
     /* Add the avatar to gem view */
-    if (avatar && viewMode == VIEW_GEM)
+    if (avatar && _viewMode == VIEW_GEM)
         tiles.push_back(c->_party->getTransport());
     
     /* Add visual-only annotations to the list */
@@ -100,14 +100,14 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
     }
 
     /* then the avatar is drawn (unless on a ship) */
-    if ((map->flags & SHOW_AVATAR) && (c->_transportContext != TRANSPORT_SHIP) && avatar)
+    if ((_map->_flags & SHOW_AVATAR) && (c->_transportContext != TRANSPORT_SHIP) && avatar)
         //tiles.push_back(map->tileset->getByName("avatar")->id);
         tiles.push_back(c->_party->getTransport());
 
     /* then camouflaged creatures that have a disguise */
     if (obj && (obj->getType() == Object::CREATURE) && !obj->isVisible() && (!m->getCamouflageTile().empty())) {
         focus = focus || obj->hasFocus();
-        tiles.push_back(map->tileset->getByName(m->getCamouflageTile())->getId());
+        tiles.push_back(_map->_tileset->getByName(m->getCamouflageTile())->getId());
     }
     /* then visible creatures and objects */
     else if (obj && obj->isVisible()) {
@@ -120,7 +120,7 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
     }
 
     /* then the party's ship (because twisters and whirlpools get displayed on top of ships) */
-    if ((map->flags & SHOW_AVATAR) && (c->_transportContext == TRANSPORT_SHIP) && avatar)
+    if ((_map->_flags & SHOW_AVATAR) && (c->_transportContext == TRANSPORT_SHIP) && avatar)
         tiles.push_back(c->_party->getTransport());
 
     /* then permanent annotations */
@@ -138,8 +138,8 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
     }
 
     /* finally the base tile */
-    MapTile tileFromMapData = *map->getTileFromData(coords);
-    const Tile * tileType = map->getTileFromData(coords)->getTileType();
+    MapTile tileFromMapData = *_map->getTileFromData(coords);
+    const Tile * tileType = _map->getTileFromData(coords)->getTileType();
     if (tileType->isLivingObject())
     {
     	//This animation should be frozen because a living object represented on the map data is usually a statue of a monster or something
@@ -189,9 +189,9 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile * forTile) {
     	for (int i = 0; i < dirs_per_step; i++)
 		{
 			MapCoords newStep(currentStep);
-			newStep.move(dirs[i][0], dirs[i][1], map);
+			newStep.move(dirs[i][0], dirs[i][1], _map);
 
-			Tile const * tileType = map->tileTypeAt(newStep,WITHOUT_OBJECTS);
+			Tile const * tileType = _map->tileTypeAt(newStep,WITHOUT_OBJECTS);
 
 			if (!tileType->isOpaque()) {
 				//if (searched.find(newStep) == searched.end()) -- the find mechanism doesn't work.
@@ -236,7 +236,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile * forTile) {
 	} while (++loop_count < 128 && searchQueue.size() > 0 && searchQueue.size() < 64);
 
     /* couldn't find a tile, give it the classic default */
-    return map->tileset->getByName("brick_floor")->getId();
+    return _map->_tileset->getByName("brick_floor")->getId();
 }
 
 /**
@@ -245,20 +245,20 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile * forTile) {
  *     If elsewhere - returns the coordinates of the avatar
  */
 int Location::getCurrentPosition(MapCoords *coords) {
-    if (context & CTX_COMBAT) {
+    if (_context & CTX_COMBAT) {
         CombatController *cc = dynamic_cast<CombatController *>(eventHandler->getController());
         PartyMemberVector *party = cc->getParty();
         *coords = (*party)[cc->getFocus()]->getCoords();    
     }
     else
-        *coords = this->coords;
+        *coords = this->_coords;
 
     return 1;
 }
 
 MoveResult Location::move(Direction dir, bool userEvent) {
     MoveEvent event(dir, userEvent);
-    switch (map->type) {
+    switch (_map->_type) {
 
     case Map::DUNGEON:
         moveAvatarInDungeon(event);
@@ -276,7 +276,7 @@ MoveResult Location::move(Direction dir, bool userEvent) {
     setChanged();
     notifyObservers(event);
 
-    return event.result;
+    return event._result;
 }
 
 
@@ -291,7 +291,7 @@ void locationFree(Location **stack) {
  * Push a location onto the stack
  */
 Location *locationPush(Location *stack, Location *loc) {
-    loc->prev = stack;
+    loc->_prev = stack;
     return loc;
 }
 
@@ -300,8 +300,8 @@ Location *locationPush(Location *stack, Location *loc) {
  */
 Location *locationPop(Location **stack) {
     Location *loc = *stack;
-    *stack = (*stack)->prev;
-    loc->prev = NULL;
+    *stack = (*stack)->_prev;
+    loc->_prev = NULL;
     return loc;
 }
 

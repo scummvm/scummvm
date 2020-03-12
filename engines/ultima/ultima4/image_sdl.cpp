@@ -34,7 +34,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Image::Image() : surface(NULL) {
+Image::Image() : _surface(NULL) {
 }
 
 /**
@@ -50,16 +50,16 @@ Image *Image::create(int w, int h, bool indexed, Image::Type type) {
 
     im->w = w;
     im->h = h;
-    im->indexed = indexed;
+    im->_indexed = indexed;
 
 	if (indexed)
-		im->surface = new Graphics::ManagedSurface(w, h);
+		im->_surface = new Graphics::ManagedSurface(w, h);
 	else
-		im->surface = new Graphics::ManagedSurface(w, h,
+		im->_surface = new Graphics::ManagedSurface(w, h,
 			Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
 		);
 
-    if (!im->surface) {
+    if (!im->_surface) {
         delete im;
         return NULL;
     }
@@ -73,10 +73,10 @@ Image *Image::create(int w, int h, bool indexed, Image::Type type) {
 Image *Image::createScreenImage() {
     Image *screen = new Image();
 
-	screen->surface = new Graphics::Screen(g_system->getWidth(), g_system->getHeight());
-    screen->w = screen->surface->w;
-    screen->h = screen->surface->h;
-	screen->indexed = g_system->getScreenFormat().bytesPerPixel == 1;
+	screen->_surface = new Graphics::Screen(g_system->getWidth(), g_system->getHeight());
+    screen->w = screen->_surface->w;
+    screen->h = screen->_surface->h;
+	screen->_indexed = g_system->getScreenFormat().bytesPerPixel == 1;
 
     return screen;
 }
@@ -100,7 +100,7 @@ Image *Image::duplicate(Image *image) {
     if (alphaOn)
         image->alphaOn();
 
-    im->backgroundColor = image->backgroundColor;
+    im->_backgroundColor = image->_backgroundColor;
 
     return im;
 }
@@ -109,14 +109,14 @@ Image *Image::duplicate(Image *image) {
  * Frees the image.
  */
 Image::~Image() {
-    delete surface;
+    delete _surface;
 }
 
 /**
  * Sets the palette
  */
 void Image::setPalette(const RGBA *colors, unsigned n_colors) {
-    ASSERT(indexed, "imageSetPalette called on non-indexed image");
+    ASSERT(_indexed, "imageSetPalette called on non-indexed image");
 
 	byte *pal = new byte[n_colors * 3];
 	byte *palP = pal;
@@ -126,7 +126,7 @@ void Image::setPalette(const RGBA *colors, unsigned n_colors) {
         palP[2] = colors[i].b;
     }
 
-	surface->setPalette(pal, 0, n_colors);
+	_surface->setPalette(pal, 0, n_colors);
     delete[] pal;
 }
 
@@ -134,18 +134,18 @@ void Image::setPalette(const RGBA *colors, unsigned n_colors) {
  * Copies the palette from another image.
  */
 void Image::setPaletteFromImage(const Image *src) {
-    ASSERT(indexed && src->indexed, "imageSetPaletteFromImage called on non-indexed image");
+    ASSERT(_indexed && src->_indexed, "imageSetPaletteFromImage called on non-indexed image");
 
-	const uint32 *srcPal = src->surface->getPalette();
-	surface->setPalette(srcPal, 0, PALETTE_COUNT);
+	const uint32 *srcPal = src->_surface->getPalette();
+	_surface->setPalette(srcPal, 0, PALETTE_COUNT);
 }
 
 // returns the color of the specified palette index
 RGBA Image::getPaletteColor(int index) {
 	RGBA color = RGBA(0, 0, 0, 0);
 
-    if (indexed) {
-		uint32 pal = surface->getPalette()[index];
+    if (_indexed) {
+		uint32 pal = _surface->getPalette()[index];
 		color.r = (pal & 0xff);
 		color.g = (pal >> 8) & 0xff;
 		color.b = (pal >> 16) & 0xff;
@@ -157,10 +157,10 @@ RGBA Image::getPaletteColor(int index) {
 
 /* returns the palette index of the specified RGB color */
 int Image::getPaletteIndex(RGBA color) {
-    if (!indexed)
+    if (!_indexed)
         return -1;
 
-	const uint32 *pal = surface->getPalette();
+	const uint32 *pal = _surface->getPalette();
 	uint32 color32 = color;
 
 	for (int i = 0; i < PALETTE_COUNT; ++i, ++pal) {
@@ -241,29 +241,29 @@ bool Image::setFontColorBG(ColorBG bg) {
 
 /* sets the specified palette index to the specified RGB color */
 bool Image::setPaletteIndex(unsigned int index, RGBA color) {
-    if (!indexed)
+    if (!_indexed)
         return false;
 
 	uint32 color32 = color;
-	surface->setPalette(&color32, index, 1);
+	_surface->setPalette(&color32, index, 1);
 
     // success
     return true;
 }
 
 bool Image::getTransparentIndex(unsigned int &index) const {
-	if (!indexed)
+	if (!_indexed)
 		return false;
 
-	index = surface->getTransparentColor();
+	index = _surface->getTransparentColor();
 	return true;
 }
 
 void Image::initializeToBackgroundColor(RGBA backgroundColor)
 {
-	if (indexed)
+	if (_indexed)
 		error("Not supported"); //TODO, this better
-	this->backgroundColor = backgroundColor;
+	this->_backgroundColor = backgroundColor;
     this->fillRect(0,0,this->w,this->h,
     		backgroundColor.r,
     		backgroundColor.g,
@@ -272,7 +272,7 @@ void Image::initializeToBackgroundColor(RGBA backgroundColor)
 }
 
 bool Image::isAlphaOn() const {
-	return !indexed;
+	return !_indexed;
 }
 
 void Image::alphaOn() {
@@ -282,19 +282,19 @@ void Image::alphaOff() {
 }
 
 void Image::putPixel(int x, int y, int r, int g, int b, int a) {
-	assert(surface->format.bytesPerPixel == 4);
-	uint32 color = surface->format.ARGBToColor(a, r, g, b);
+	assert(_surface->format.bytesPerPixel == 4);
+	uint32 color = _surface->format.ARGBToColor(a, r, g, b);
 
 	putPixelIndex(x, y, color);
 }
 
 
 void Image::makeBackgroundColorTransparent(int haloSize, int shadowOpacity) {
-	uint32 bgColor = surface->format.ARGBToColor(
-		static_cast<byte>(backgroundColor.a),
-		static_cast<byte>(backgroundColor.r),
-		static_cast<byte>(backgroundColor.g),
-		static_cast<byte>(backgroundColor.b)
+	uint32 bgColor = _surface->format.ARGBToColor(
+		static_cast<byte>(_backgroundColor.a),
+		static_cast<byte>(_backgroundColor.r),
+		static_cast<byte>(_backgroundColor.g),
+		static_cast<byte>(_backgroundColor.b)
 	);
 
 	performTransparencyHack(bgColor, 1, 0, haloSize,shadowOpacity);
@@ -308,7 +308,7 @@ void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFra
     unsigned int x, y;
     byte t_r, t_g, t_b;
 
-	surface->format.colorToRGB(colorValue, t_r, t_g, t_b);
+	_surface->format.colorToRGB(colorValue, t_r, t_g, t_b);
 
     unsigned int frameHeight = h / numFrames;
     //Min'd so that they never go out of range (>=h)
@@ -362,8 +362,8 @@ void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFra
 }
 
 void Image::setTransparentIndex(unsigned int index) {
-    if (indexed) {
-		surface->setTransparentColor(index);
+    if (_indexed) {
+		_surface->setTransparentColor(index);
     } else {
     	//errorWarning("Setting transparent index for non indexed");
     }
@@ -378,8 +378,8 @@ void Image::putPixelIndex(int x, int y, unsigned int index) {
     int bpp;
     byte *p;
 
-    bpp = surface->format.bytesPerPixel;
-	p = (byte *)surface->getBasePtr(x, y);
+    bpp = _surface->format.bytesPerPixel;
+	p = (byte *)_surface->getBasePtr(x, y);
 
     switch(bpp) {
     case 1:
@@ -403,8 +403,8 @@ void Image::putPixelIndex(int x, int y, unsigned int index) {
  * Fills a rectangle in the image with a given color.
  */
 void Image::fillRect(int x, int y, int w, int h, int r, int g, int b, int a) {
-	uint32 pixel = surface->format.ARGBToColor(a, r, g, b);
-	surface->fillRect(Common::Rect(x, y, x + w, y + h), pixel);
+	uint32 pixel = _surface->format.ARGBToColor(a, r, g, b);
+	_surface->fillRect(Common::Rect(x, y, x + w, y + h), pixel);
 }
 
 /**
@@ -416,7 +416,7 @@ void Image::getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned in
 
     getPixelIndex(x, y, index);
 
-	surface->format.colorToARGB(index, a1, r1, g1, b1);
+	_surface->format.colorToARGB(index, a1, r1, g1, b1);
     r = r1;
     g = g1;
     b = b1;
@@ -429,9 +429,9 @@ void Image::getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned in
  * If the image is RGB, it is a packed RGB triplet.
  */
 void Image::getPixelIndex(int x, int y, unsigned int &index) const {
-    int bpp = surface->format.bytesPerPixel;
+    int bpp = _surface->format.bytesPerPixel;
 
-	byte *p = (byte *)surface->getBasePtr(x, y);
+	byte *p = (byte *)_surface->getBasePtr(x, y);
 
     switch(bpp) {
     case 1:
@@ -455,8 +455,8 @@ void Image::getPixelIndex(int x, int y, unsigned int &index) const {
  */
 void Image::drawOn(Image *d, int x, int y) const {
 	// TODO: Support d being nullptr to draw to screen
-	Graphics::ManagedSurface *destSurface = d->surface;
-	destSurface->blitFrom(*surface, Common::Point(x, y));
+	Graphics::ManagedSurface *destSurface = d->_surface;
+	destSurface->blitFrom(*_surface, Common::Point(x, y));
 }
 
 /**
@@ -464,8 +464,8 @@ void Image::drawOn(Image *d, int x, int y) const {
  */
 void Image::drawSubRectOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const {
 	// TODO: Support d being nullptr to draw to screen
-	Graphics::ManagedSurface *destSurface = d->surface;
-	destSurface->blitFrom(*surface, Common::Rect(rx, ry, rx + rw, ry + rh), Common::Point(x, y));
+	Graphics::ManagedSurface *destSurface = d->_surface;
+	destSurface->blitFrom(*_surface, Common::Rect(rx, ry, rx + rw, ry + rh), Common::Point(x, y));
 }
 
 /**
@@ -473,7 +473,7 @@ void Image::drawSubRectOn(Image *d, int x, int y, int rx, int ry, int rw, int rh
  */
 void Image::drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const {
 	// TODO: Support d being nullptr to draw to screen
-	Graphics::ManagedSurface *destSurface = d->surface;
+	Graphics::ManagedSurface *destSurface = d->_surface;
 	int i;
 	Common::Rect src;
 	Common::Point destPos;
@@ -487,7 +487,7 @@ void Image::drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw
 		destPos.x = x;
 		destPos.y = y + rh - i - 1;
 
-		destSurface->blitFrom(*surface, src, destPos);
+		destSurface->blitFrom(*_surface, src, destPos);
     }
 }
 

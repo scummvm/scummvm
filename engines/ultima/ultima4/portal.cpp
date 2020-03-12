@@ -42,8 +42,8 @@ namespace Ultima4 {
 void createDngLadder(Location *location, PortalTriggerAction action, Portal *p) {
     if (!p) return;
     else {
-        p->_destid = location->map->id;
-        if (action == ACTION_KLIMB && location->coords.z == 0) {
+        p->_destid = location->_map->_id;
+        if (action == ACTION_KLIMB && location->_coords.z == 0) {
             p->_exitPortal = true;
             p->_destid = 1;
         }
@@ -53,7 +53,7 @@ void createDngLadder(Location *location, PortalTriggerAction action, Portal *p) 
         p->_portalTransportRequisites = TRANSPORT_FOOT_OR_HORSE;
         p->_retroActiveDest = NULL;
         p->_saveLocation = false;
-        p->_start = location->coords;
+        p->_start = location->_coords;
         p->_start.z += (action == ACTION_KLIMB) ? -1 : 1;
     }
 }
@@ -67,15 +67,15 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
     Map *destination;
     char msg[32] = {0};
     
-    const Portal *portal = location->map->portalAt(coords, action);
+    const Portal *portal = location->_map->portalAt(coords, action);
     Portal dngLadder;
 
     /* didn't find a portal there */
     if (!portal) {
         
         /* if it's a dungeon, then ladders are predictable.  Create one! */
-        if (location->context == CTX_DUNGEON) {
-            Dungeon *dungeon = dynamic_cast<Dungeon *>(location->map);
+        if (location->_context == CTX_DUNGEON) {
+            Dungeon *dungeon = dynamic_cast<Dungeon *>(location->_map);
             if ((action & ACTION_KLIMB) && dungeon->ladderUpAt(coords)) 
                 createDngLadder(location, action, &dngLadder);                
             else if ((action & ACTION_DESCEND) && dungeon->ladderDownAt(coords))
@@ -109,7 +109,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
             else sprintf(msg, "Klimb up!\nTo level %d\n", portal->_start.z+1);
             break;
         case ACTION_ENTER:
-            switch (destination->type) {
+            switch (destination->_type) {
             case Map::CITY: 
                 {
                     City *city = dynamic_cast<City*>(destination);
@@ -149,8 +149,8 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
         musicMgr->play();
         return 1;
     }
-    else if (portal->_destid == location->map->id)
-        location->coords = portal->_start;        
+    else if (portal->_destid == location->_map->_id)
+        location->_coords = portal->_start;        
     
     else {
         game->setMap(destination, portal->_saveLocation, portal);
@@ -162,12 +162,12 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
      * note that we use c->location instead of location, since
      * location has probably been invalidated above 
      */
-    if (portal->_retroActiveDest && c->_location->prev) {
-        c->_location->prev->coords = portal->_retroActiveDest->_coords;        
-        c->_location->prev->map = mapMgr->get(portal->_retroActiveDest->_mapid);
+    if (portal->_retroActiveDest && c->_location->_prev) {
+        c->_location->_prev->_coords = portal->_retroActiveDest->_coords;        
+        c->_location->_prev->_map = mapMgr->get(portal->_retroActiveDest->_mapid);
     }
 
-    if (destination->type == Map::SHRINE) {
+    if (destination->_type == Map::SHRINE) {
         Shrine *shrine = dynamic_cast<Shrine*>(destination);
         shrine->enter();
     }
