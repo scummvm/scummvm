@@ -49,8 +49,8 @@ CreditsGump::CreditsGump(const Std::string &text, int parskip,
 	_parSkip = parskip;
 
 	_timer = 0;
-	_title = 0;
-	_nextTitle = 0;
+	_title = nullptr;
+	_nextTitle = nullptr;
 	_state = CS_PLAYING;
 }
 
@@ -211,7 +211,7 @@ void CreditsGump::run() {
 
 				if (!_title) {
 					_title = _nextTitle;
-					_nextTitle = 0;
+					_nextTitle = nullptr;
 				} else {
 					_nextTitleSurf = nextblock;
 					_scrollHeight[nextblock] = 160; // skip some space
@@ -336,7 +336,7 @@ void CreditsGump::run() {
 		if (_nextTitle && _currentSurface == _nextTitleSurf) {
 			delete _title;
 			_title = _nextTitle;
-			_nextTitle = 0;
+			_nextTitle = nullptr;
 		}
 	}
 }

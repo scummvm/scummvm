@@ -618,7 +618,7 @@ bool AnimationTracker::load(IDataSource *ids, uint32 version) {
 	uint32 shapenum = ids->read4();
 	uint32 action = ids->read4();
 	if (shapenum == 0) {
-		_animAction = 0;
+		_animAction = nullptr;
 	} else {
 		_animAction = GameData::get_instance()->getMainShapes()->
 		             getAnim(shapenum, action);

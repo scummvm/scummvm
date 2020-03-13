@@ -134,7 +134,7 @@ public:
 			uint32 pos_y;
 			uint32 end_y = dh;
 			uint32 dst_y = 0;
-			uint8 *next_block = 0;
+			uint8 *next_block = nullptr;
 
 			// Src Loop Y
 			do {
@@ -179,7 +179,7 @@ public:
 			uint32 pos_y;
 			uint32 end_y = dh;
 			uint32 dst_y = 0;
-			uint8 *next_block = 0;
+			uint8 *next_block = nullptr;
 
 			// Src Loop Y
 			do {
@@ -222,8 +222,8 @@ public:
 			uint32 pos_y = 0, pos_x = 0;
 			uint32 end_y = dh;
 			uint32 dst_y = 0;
-			uint8 *blockline_start = 0;
-			uint8 *next_block = 0;
+			uint8 *blockline_start = nullptr;
+			uint8 *next_block = nullptr;
 
 			// Src Loop Y
 			do {
@@ -242,7 +242,7 @@ public:
 					// Inner loops
 					//
 					blockline_start = next_block;
-					next_block = 0;
+					next_block = nullptr;
 
 					// Dest Loop Y
 					while (pos_y < end_y) {

@@ -51,13 +51,13 @@ public:
 			return false;
 	}
 
-	uint8 *getObject(uint32 index, uint32 *size = 0) override;
-	uint8 *getObject(const Std::string &name, uint32 *size = 0) override {
+	uint8 *getObject(uint32 index, uint32 *size = nullptr) override;
+	uint8 *getObject(const Std::string &name, uint32 *size = nullptr) override {
 		uint32 index;
 		if (nameToIndex(name, index))
 			return getObject(index, size);
 		else
-			return 0;
+			return nullptr;
 	}
 
 

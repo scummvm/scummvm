@@ -100,7 +100,7 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 		do {
 			if (p == c)
 				return false;
-		} while ((p = p->getParentAsContainer()) != 0);
+		} while ((p = p->getParentAsContainer()) != nullptr);
 	}
 
 	if (checkwghtvol) {

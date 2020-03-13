@@ -41,11 +41,11 @@ namespace Ultima8 {
 // Desc: Constructor for BaseSoftRenderSurface from a managed surface
 //
 BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
-	_pixels(0), _pixels00(0), _zBuffer(0), _zBuffer00(0),
-	_bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+	_pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr),
+	_zBuffer00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
 	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
 	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
-	_surface(s), _rttTex(0) {
+	_surface(s), _rttTex(nullptr) {
 	_clipWindow.ResizeAbs(_width = _surface->w, _height = _surface->h);
 	_pitch = _surface->pitch;
 	_bitsPerPixel = _surface->format.bpp();
@@ -118,10 +118,11 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 //
 BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp,
         int rsft, int gsft, int bsft, int asft) :
-	_pixels(0), _pixels00(0), _zBuffer(0), _zBuffer00(0),
-	_bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+	_pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr),
+	_zBuffer00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
 	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
-	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(0), _rttTex(0) {
+	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(nullptr),
+	_rttTex(nullptr) {
 	_clipWindow.ResizeAbs(_width = w, _height = h);
 
 	switch (bpp) {
@@ -180,10 +181,11 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp,
 // Desc: Constructor for Generic BaseSoftRenderSurface which matches screen params
 //
 BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf) :
-	_pixels(0), _pixels00(0), _zBuffer(0), _zBuffer00(0),
-	_bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+	_pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr),
+	_zBuffer00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
 	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
-	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(0), _rttTex(0) {
+	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
+	_surface(nullptr), _rttTex(nullptr) {
 	_clipWindow.ResizeAbs(_width = w, _height = h);
 
 	int bpp = RenderSurface::_format.s_bpp;
@@ -202,10 +204,11 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf) :
 // Desc: Constructor for Generic BaseSoftRenderSurface which matches screen params
 //
 BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
-	_pixels(0), _pixels00(0), _zBuffer(0), _zBuffer00(0),
+	_pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr), _zBuffer00(nullptr),
 	_bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
 	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
-	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(0), _rttTex(0) {
+	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(nullptr),
+	_rttTex(nullptr) {
 	_clipWindow.ResizeAbs(_width = w, _height = h);
 
 	int bpp = RenderSurface::_format.s_bpp;
@@ -235,13 +238,13 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
 BaseSoftRenderSurface::~BaseSoftRenderSurface() {
 	if (_rttTex) {
 		delete _rttTex;
-		_rttTex = 0;
+		_rttTex = nullptr;
 
 		delete [] _pixels00;
-		_pixels00 = 0;
+		_pixels00 = nullptr;
 
 		delete [] _zBuffer00;
-		_zBuffer00 = 0;
+		_zBuffer00 = nullptr;
 	}
 }
 
@@ -270,7 +273,7 @@ ECode BaseSoftRenderSurface::BeginPainting() {
 
 	_lockCount++;
 
-	if (_pixels00 == 0) {
+	if (_pixels00 == nullptr) {
 		// TODO: SetLastError(GR_SOFT_ERROR_LOCKED_NULL_PIXELS, "Surface Locked with NULL BaseSoftRenderSurface::_pixels pointer!");
 		perr << "Error: Surface Locked with NULL BaseSoftRenderSurface::_pixels pointer!" << Std::endl;
 		return GR_SOFT_ERROR_LOCKED_NULL_PIXELS;

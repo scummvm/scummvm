@@ -79,7 +79,7 @@ enum UCSegments {
 	SEG_GLOBAL     = 0x8003
 };
 
-UCMachine *UCMachine::_ucMachine = 0;
+UCMachine *UCMachine::_ucMachine = nullptr;
 
 UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	debugN(MM_INFO, "Creating UCMachine...\n");
@@ -104,16 +104,16 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 
 UCMachine::~UCMachine() {
 	debugN(MM_INFO, "Destroying UCMachine...\n");
-	_ucMachine = 0;
+	_ucMachine = nullptr;
 
 	delete _globals;
-	_globals = 0;
+	_globals = nullptr;
 	delete _convUse;
-	_convUse = 0;
+	_convUse = nullptr;
 	delete _listIDs;
-	_listIDs = 0;
+	_listIDs = nullptr;
 	delete _stringIDs;
-	_stringIDs = 0;
+	_stringIDs = nullptr;
 }
 
 void UCMachine::reset() {
@@ -1987,7 +1987,7 @@ UCList *UCMachine::getList(uint16 l) {
 	if (iter != _listHeap.end())
 		return iter->_value;
 
-	return 0;
+	return nullptr;
 }
 
 

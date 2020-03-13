@@ -62,22 +62,18 @@ static const int watchactor = WATCHACTOR;
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess, Process)
 
-ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(0) {
+ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr) {
 
 }
 
 ActorAnimProcess::ActorAnimProcess(Actor *actor_, Animation::Sequence action_,
-                                   uint32 dir_, uint32 steps_) {
+                                   uint32 dir_, uint32 steps_) :
+		_dir(dir_), _action(action_), _steps(steps_), _tracker(nullptr),
+		_firstFrame(true), _currentStep(0) {
 	assert(actor_);
 	_itemNum = actor_->getObjId();
-	_dir = dir_;
-	_action = action_;
-	_steps = steps_;
 
 	_type = 0x00F0; // CONSTANT !
-	_firstFrame = true;
-	_tracker = 0;
-	_currentStep = 0;
 }
 
 bool ActorAnimProcess::init() {
@@ -117,7 +113,7 @@ bool ActorAnimProcess::init() {
 	_tracker = new AnimationTracker();
 	if (!_tracker->init(actor, _action, _dir)) {
 		delete _tracker;
-		_tracker = 0;
+		_tracker = nullptr;
 		return false;
 	}
 
@@ -372,7 +368,7 @@ void ActorAnimProcess::doSpecial() {
 
 	// ghosts
 	if (a->getShape() == 0x19b) {
-		Actor *hostile = 0;
+		Actor *hostile = nullptr;
 		if (_action == Animation::attack) {
 			// fireball on attack
 			unsigned int skullcount = a->countNearby(0x19d, 6 * 256);
@@ -669,7 +665,7 @@ bool ActorAnimProcess::loadData(IDataSource *ids, uint32 version) {
 	_repeatCounter = ids->read2();
 	_currentStep = ids->read2();
 
-	assert(_tracker == 0);
+	assert(_tracker == nullptr);
 	if (ids->read1() != 0) {
 		_tracker = new AnimationTracker();
 		if (!_tracker->load(ids, version))

@@ -96,7 +96,7 @@ void CurrentMap::clear() {
 	}
 
 	_fastXMin =  _fastYMin = _fastXMax = _fastYMax = -1;
-	_currentMap = 0;
+	_currentMap = nullptr;
 
 	Process *ehp = Kernel::get_instance()->getProcess(_eggHatcher);
 	if (ehp)
@@ -105,7 +105,7 @@ void CurrentMap::clear() {
 }
 
 uint32 CurrentMap::getNum() const {
-	if (_currentMap == 0)
+	if (_currentMap == nullptr)
 		return 0;
 
 	return _currentMap->_mapNum;
@@ -190,7 +190,7 @@ void CurrentMap::loadItems(list<Item *> itemlist, bool callCacheIn) {
 
 void CurrentMap::loadMap(Map *map) {
 	// don't call the cachein events at startup or when loading a savegame
-	bool callCacheIn = (_currentMap != 0);
+	bool callCacheIn = (_currentMap != nullptr);
 
 	_currentMap = map;
 
@@ -639,8 +639,15 @@ TeleportEgg *CurrentMap::findDestination(uint16 id) {
 			}
 		}
 	}
-	return 0;
+	return nullptr;
 }
+
+const Std::list<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
+	if (gx < 0 || gy < 0 || gx >= MAP_NUM_CHUNKS || gy >= MAP_NUM_CHUNKS)
+		return nullptr;
+	return &_items[gx][gy];
+}
+
 
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  uint32 shape,
@@ -683,7 +690,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
 	bool valid = true;
-	const Item *support = 0;
+	const Item *support = nullptr;
 	ObjId roof = 0;
 	int32 roofz = 1 << 24; //!! semi-constant
 
@@ -1189,7 +1196,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 
 Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags) {
-	Item *top = 0;
+	Item *top = nullptr;
 
 	if (ztop < zbot) {
 		int32 temp = ztop;
@@ -1241,7 +1248,7 @@ Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId i
 					top->getLocation(tix, tiy, tiz);
 					top->getFootpadWorld(tixd, tiyd, tizd);
 
-					if ((tiz + tizd) < (iz + izd)) top = 0;
+					if ((tiz + tizd) < (iz + izd)) top = nullptr;
 				}
 
 				if (!top) top = item;

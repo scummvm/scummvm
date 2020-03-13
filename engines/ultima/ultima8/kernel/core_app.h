@@ -115,7 +115,7 @@ protected:
 	void setupGameList();
 
 	//! return default game
-	//! \return 0 if no default game (implies go to Pentagram Menu)
+	//! \return nullptr if no default game (implies go to Pentagram Menu)
 	GameInfo *getDefaultGame();
 
 	//! Setup up a game

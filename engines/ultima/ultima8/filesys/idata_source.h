@@ -110,7 +110,7 @@ public:
 	virtual bool eof() const = 0;
 
 	virtual Common::SeekableReadStream *GetRawStream() {
-		return 0;
+		return nullptr;
 	}
 };
 
@@ -206,7 +206,7 @@ public:
 	IBufferDataSource(const void *data, unsigned int len, bool is_text = false,
 	                  bool delete_data = false) {
 		assert(!is_text);
-		assert(data != 0 || len == 0);
+		assert(data != nullptr || len == 0);
 		_buf = _bufPtr = static_cast<const uint8 *>(data);
 		_size = len;
 		_freeBuffer = delete_data;
@@ -218,9 +218,9 @@ public:
 		if (_freeBuffer && _buf)
 			delete[] const_cast<uint8 *>(_buf);
 		_freeBuffer = false;
-		_buf = _bufPtr = 0;
+		_buf = _bufPtr = nullptr;
 
-		assert(data != 0 || len == 0);
+		assert(data != nullptr || len == 0);
 		_buf = _bufPtr = static_cast<const uint8 *>(data);
 		_size = len;
 		_freeBuffer = delete_data;
@@ -230,7 +230,7 @@ public:
 		if (_freeBuffer && _buf)
 			delete[] const_cast<uint8 *>(_buf);
 		_freeBuffer = false;
-		_buf = _bufPtr = 0;
+		_buf = _bufPtr = nullptr;
 	}
 
 	uint8 read1() override {

@@ -49,7 +49,7 @@ void *SegmentedAllocator::allocate(size_t size) {
 	SegmentedPool *p;
 
 	if (size > _nodeCapacity)
-		return 0;
+		return nullptr;
 
 	for (i = _pools.begin(); i != _pools.end(); ++i) {
 		if (!(*i)->isFull())
@@ -67,7 +67,7 @@ void *SegmentedAllocator::allocate(size_t size) {
 	}
 
 	// fail
-	return 0;
+	return nullptr;
 }
 
 Pool *SegmentedAllocator::findPool(void *ptr) {
@@ -76,7 +76,7 @@ Pool *SegmentedAllocator::findPool(void *ptr) {
 		if ((*i)->inPool(ptr))
 			return *i;
 	}
-	return 0;
+	return nullptr;
 }
 
 void SegmentedAllocator::freeResources() {

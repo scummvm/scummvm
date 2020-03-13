@@ -32,6 +32,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
+
+Texture::Texture() : _format(TEX_FMT_STANDARD), _glTex(0), _next(nullptr) {
+}
+
 //
 // Destructor
 //
@@ -46,7 +50,7 @@ Texture::~Texture() {
 	/* If read failed, delete the texture. */   \
 	if (!tex->Read(ds)) {                       \
 		delete tex;                             \
-		tex = 0;                                \
+		tex = nullptr;                          \
 	}                                           \
 	else {                                      \
 		/* Worked so return it */               \
@@ -87,7 +91,7 @@ Texture *Texture::Create(IDataSource *ds, const char *filename) {
 	TRY_TYPE(TextureTarga);
 
 	// Couldn't find it
-	return 0;
+	return nullptr;
 }
 
 void Texture::loadSurface(const Graphics::Surface *surf) {

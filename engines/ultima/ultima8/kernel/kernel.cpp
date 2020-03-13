@@ -32,7 +32,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-Kernel *Kernel::_kernel = 0;
+Kernel *Kernel::_kernel = nullptr;
 
 Kernel::Kernel() : _loading(false) {
 	debugN(MM_INFO, "Creating Kernel...\n");
@@ -42,7 +42,7 @@ Kernel::Kernel() : _loading(false) {
 	current_process = _processes.end();
 	_frameNum = 0;
 	_paused = 0;
-	_runningProcess = 0;
+	_runningProcess = nullptr;
 	_frameByFrame = false;
 }
 
@@ -50,7 +50,7 @@ Kernel::~Kernel() {
 	reset();
 	debugN(MM_INFO, "Destroying Kernel...\n");
 
-	_kernel = 0;
+	_kernel = nullptr;
 
 	delete _pIDs;
 }
@@ -67,7 +67,7 @@ void Kernel::reset() {
 	_pIDs->clearAll();
 
 	_paused = 0;
-	_runningProcess = 0;
+	_runningProcess = nullptr;
 
 	// if we're in frame-by-frame mode, reset to a _paused state
 	if (_frameByFrame) _paused = 1;
@@ -185,7 +185,7 @@ void Kernel::runProcesses() {
 			if (!_runningProcess)
 				return; // If this happens then the list was reset so leave NOW!
 
-			_runningProcess = 0;
+			_runningProcess = nullptr;
 		}
 		if (!_paused && (p->_flags & Process::PROC_TERMINATED)) {
 			// process is killed, so remove it from the list
@@ -234,7 +234,7 @@ Process *Kernel::getProcess(ProcId pid) {
 		if (p->_pid == pid)
 			return p;
 	}
-	return 0;
+	return nullptr;
 }
 
 void Kernel::kernelStats() {
@@ -285,7 +285,7 @@ Process *Kernel::findProcess(ObjId objid, uint16 processtype) {
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 
@@ -360,7 +360,7 @@ Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
 
 	if (iter == _processLoaders.end()) {
 		perr << "Unknown Process class: " << classname << Std::endl;
-		return 0;
+		return nullptr;
 	}
 
 

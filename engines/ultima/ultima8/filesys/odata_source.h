@@ -54,7 +54,7 @@ public:
 	}
 
 	virtual Common::WriteStream *GetRawStream() {
-		return 0;
+		return nullptr;
 	}
 
 	virtual void seek(uint32 pos) = 0;

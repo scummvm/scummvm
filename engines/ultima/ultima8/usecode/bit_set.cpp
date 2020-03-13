@@ -29,12 +29,11 @@
 namespace Ultima {
 namespace Ultima8 {
 
-BitSet::BitSet() : _size(0), _bytes(0), _data(0) {
+BitSet::BitSet() : _size(0), _bytes(0), _data(nullptr) {
 }
 
 
-BitSet::BitSet(unsigned int size) {
-	_data = 0;
+BitSet::BitSet(unsigned int size) : _data(nullptr) {
 	setSize(size);
 }
 

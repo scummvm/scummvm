@@ -177,11 +177,7 @@ public:
 	}
 
 	//! Set this Item's shape number
-	void setShape(uint32 shape_) {
-		_shape = shape_;
-		_cachedShapeInfo = 0;
-		_cachedShape = 0;
-	}
+	void setShape(uint32 shape_);
 
 	//! Get this Item's frame number
 	uint32 getFrame() const {

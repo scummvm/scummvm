@@ -138,7 +138,7 @@ bool AskGump::loadData(IDataSource *ids, uint32 version) {
 
 	for (unsigned int i = 0; i < _answers->getSize(); ++i) {
 
-		ButtonWidget *child = 0;
+		ButtonWidget *child = nullptr;
 
 		Std::list<Gump *>::iterator it;
 		for (it = _children.begin(); it != _children.end(); ++it) {

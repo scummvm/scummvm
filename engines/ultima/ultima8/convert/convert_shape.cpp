@@ -34,6 +34,29 @@ namespace Ultima8 {
 extern int shapenum;
 #endif
 
+void ConvertShapeFrame::Free() {
+	delete [] _line_offsets;
+	_line_offsets = nullptr;
+
+	delete [] _rle_data;
+	_rle_data = nullptr;
+}
+
+ConvertShape::ConvertShape() : _num_frames(0), _frames(nullptr)
+{
+}
+
+void ConvertShape::Free()
+{
+	if (_frames)
+		for(uint32 i = 0; i < _num_frames; ++i)
+			_frames[i].Free();
+
+	delete [] _frames;
+	_frames = nullptr;
+	_num_frames = 0;
+}
+
 void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint32 real_len)
 {
 	// Just to be safe
@@ -195,19 +218,19 @@ void ConvertShapeFrame::Read(IDataSource *source, const ConvertShapeFormat *csf,
 		
 #endif
 	} else 
-		_line_offsets = 0;
+		_line_offsets = nullptr;
 
 	// Read the RLE Data
 	if (_bytes_rle) {
 		_rle_data = new uint8[_bytes_rle];
 		source->read(_rle_data, _bytes_rle);
 	} else 
-		_rle_data = 0;
+		_rle_data = nullptr;
 }
 
 void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeFormat *csf, const uint8 special[256], ConvertShapeFrame *prev)
 {
-	static OAutoBufferDataSource *rlebuf = 0;
+	static OAutoBufferDataSource *rlebuf = nullptr;
 	uint8 outbuf[512];
 
 	// Read unknown

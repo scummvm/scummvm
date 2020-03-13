@@ -45,7 +45,7 @@ INIFile::~INIFile() {
 }
 
 bool INIFile::Section::hasKey(istring key) {
-	return (getKey(key) != 0);
+	return (getKey(key) != nullptr);
 }
 
 INIFile::KeyValue *INIFile::Section::getKey(istring key) {
@@ -55,7 +55,7 @@ INIFile::KeyValue *INIFile::Section::getKey(istring key) {
 			return &(*i);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 void INIFile::Section::setKey(istring key, string value) {
@@ -322,7 +322,7 @@ INIFile::Section *INIFile::getSection(istring section) {
 			return &(*i);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 bool INIFile::splitKey(istring key, istring &section, istring &sectionkey) {
@@ -340,7 +340,7 @@ bool INIFile::splitKey(istring key, istring &section, istring &sectionkey) {
 bool INIFile::hasSection(istring section) {
 	if (!stripRoot(section)) return false;
 
-	return (getSection(section) != 0);
+	return (getSection(section) != nullptr);
 }
 
 bool INIFile::hasKey(istring key) {

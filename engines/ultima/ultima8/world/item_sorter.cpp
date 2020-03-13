@@ -42,7 +42,8 @@ namespace Ultima8 {
 
 // This does NOT need to be in the header
 struct SortItem {
-	SortItem(SortItem *n) : _next(n), _prev(0), _itemNum(0), _shape(0), _order(-1), _depends() { }
+	SortItem(SortItem *n) : _next(n), _prev(nullptr), _itemNum(0),
+			_shape(nullptr), _order(-1), _depends() { }
 
 	SortItem                *_next;
 	SortItem                *_prev;
@@ -117,7 +118,7 @@ struct SortItem {
 			Node        *_next;
 			Node        *_prev;
 			SortItem    *val;
-			Node() : _next(0), _prev(0), val(0) { }
+			Node() : _next(nullptr), _prev(nullptr), val(nullptr) { }
 		};
 
 		Node *list;
@@ -143,15 +144,15 @@ struct SortItem {
 			return iterator(list);
 		}
 		iterator end() {
-			return iterator(0);
+			return iterator(nullptr);
 		}
 
 		void clear() {
 			if (tail) {
 				tail->_next = unused;
 				unused = list;
-				tail = 0;
-				list = 0;
+				tail = nullptr;
+				list = nullptr;
 			}
 		}
 
@@ -164,7 +165,7 @@ struct SortItem {
 			// Put it at the end
 			if (tail) tail->_next = nn;
 			if (!list) list = nn;
-			nn->_next = 0;
+			nn->_next = nullptr;
 			nn->_prev = tail;
 			tail = nn;
 		}
@@ -175,7 +176,7 @@ struct SortItem {
 			unused = unused->_next;
 			nn->val = other;
 
-			for (Node *n = list; n != 0; n = n->_next) {
+			for (Node *n = list; n != nullptr; n = n->_next) {
 				// Get the insert point... which is before the first item that has higher z than us
 				if (other->ListLessThan(n->val)) {
 					nn->_next = n;
@@ -190,12 +191,12 @@ struct SortItem {
 			// No suitable, so put at end
 			if (tail) tail->_next = nn;
 			if (!list) list = nn;
-			nn->_next = 0;
+			nn->_next = nullptr;
 			nn->_prev = tail;
 			tail = nn;
 		}
 
-		DependsList() : list(0), tail(0), unused(0) { }
+		DependsList() : list(nullptr), tail(nullptr), unused(nullptr) { }
 
 		~DependsList() {
 			clear();
@@ -596,7 +597,8 @@ inline bool SortItem::operator<<(const SortItem &si2) const {
 //
 
 ItemSorter::ItemSorter() :
-	_shapes(0), _surf(0), _items(0), _itemsTail(0), _itemsUnused(0), _sortLimit(0) {
+	_shapes(nullptr), _surf(nullptr), _items(nullptr), _itemsTail(nullptr),
+	_itemsUnused(nullptr), _sortLimit(0) {
 	int i = 2048;
 	while (i--) _itemsUnused = new SortItem(_itemsUnused);
 }
@@ -607,8 +609,8 @@ ItemSorter::~ItemSorter() {
 		_itemsTail->_next = _itemsUnused;
 		_itemsUnused = _items;
 	}
-	_items = 0;
-	_itemsTail = 0;
+	_items = nullptr;
+	_itemsTail = nullptr;
 
 	while (_itemsUnused) {
 		SortItem *_next = _itemsUnused->_next;
@@ -629,8 +631,8 @@ void ItemSorter::BeginDisplayList(RenderSurface *rs,
 		_itemsTail->_next = _itemsUnused;
 		_itemsUnused = _items;
 	}
-	_items = 0;
-	_itemsTail = 0;
+	_items = nullptr;
+	_itemsTail = nullptr;
 
 	// Set the RenderSurface, and reset the item list
 	_surf = rs;
@@ -764,8 +766,8 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	// Iterate the list and compare _shapes
 
 	// Ok,
-	SortItem *addpoint = 0;
-	for (SortItem *si2 = _items; si2 != 0; si2 = si2->_next) {
+	SortItem *addpoint = nullptr;
+	for (SortItem *si2 = _items; si2 != nullptr; si2 = si2->_next) {
 		// Get the insert point... which is before the first item that has higher z than us
 		if (!addpoint && si->ListLessThan(si2)) addpoint = si2;
 
@@ -807,7 +809,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	else {
 		if (_itemsTail) _itemsTail->_next = si;
 		if (!_items) _items = si;
-		si->_next = 0;
+		si->_next = nullptr;
 		si->_prev = _itemsTail;
 		_itemsTail = si;
 	}
@@ -941,8 +943,8 @@ void ItemSorter::AddItem(Item *add) {
 	// Iterate the list and compare _shapes
 
 	// Ok,
-	SortItem *addpoint = 0;
-	for (SortItem *si2 = _items; si2 != 0; si2 = si2->_next) {
+	SortItem *addpoint = nullptr;
+	for (SortItem *si2 = _items; si2 != nullptr; si2 = si2->_next) {
 		// Get the insert point... which is before the first item that has higher z than us
 		if (!addpoint && si->ListLessThan(si2)) addpoint = si2;
 
@@ -984,7 +986,7 @@ void ItemSorter::AddItem(Item *add) {
 	else {
 		if (_itemsTail) _itemsTail->_next = si;
 		if (!_items) _items = si;
-		si->_next = 0;
+		si->_next = nullptr;
 		si->_prev = _itemsTail;
 		_itemsTail = si;
 	}
@@ -994,9 +996,9 @@ void ItemSorter::AddItem(Item *add) {
 SortItem *_prev = 0;
 
 void ItemSorter::PaintDisplayList(bool item_highlight) {
-	_prev = 0;
+	_prev = nullptr;
 	SortItem *it = _items;
-	SortItem *end = 0;
+	SortItem *end = nullptr;
 	_orderCounter = 0;  // Reset the _orderCounter
 	while (it != end) {
 		if (it->_order == -1) if (PaintSortItem(it)) return;
@@ -1070,7 +1072,7 @@ bool ItemSorter::PaintSortItem(SortItem *si) {
 	// FIXME: use highlight/invisibility, also add to Trace() ?
 	if (si->_shapeNum == 1 && si->_itemNum == 1) {
 		MainActor *av = getMainActor();
-		const WeaponOverlayFrame *wo_frame = 0;
+		const WeaponOverlayFrame *wo_frame = nullptr;
 		uint32 wo_shapenum;
 		av->getWeaponOverlay(wo_frame, wo_shapenum);
 		if (wo_frame) {
@@ -1135,7 +1137,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 	if (!_orderCounter) { // If no _orderCounter we need to sort the _items
 		it = _items;
 		_orderCounter = 0;  // Reset the _orderCounter
-		while (it != 0) {
+		while (it != nullptr) {
 			if (it->_order == -1) if (NullPaintSortItem(it)) break;
 
 			it = it->_next;
@@ -1143,13 +1145,12 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 	}
 
 	// Firstly, we check for highlighted _items
-	selected = 0;
+	selected = nullptr;
 
 	if (item_highlight) {
-		it = _itemsTail;
-		selected = 0;
+		selected = nullptr;
 
-		for (it = _itemsTail; it != 0; it = it->_prev) {
+		for (it = _itemsTail; it != nullptr; it = it->_prev) {
 			if (!(it->_flags & (Item::FLG_DISPOSABLE | Item::FLG_FAST_ONLY)) && !it->_fixed) {
 
 				if (!it->_itemNum) continue;
@@ -1179,7 +1180,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 	// We then check to see if the item has a point where the trace goes.
 	// Finally we then set the selected SortItem if it's '_order' is highest
 
-	if (!selected) for (it = _items; it != 0; it = it->_next) {
+	if (!selected) for (it = _items; it != nullptr; it = it->_next) {
 			if (!it->_itemNum) continue;
 
 			// Doesn't Overlap

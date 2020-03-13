@@ -51,7 +51,8 @@ void GumpShapeArchive::loadGumpage(IDataSource *ds) {
 }
 
 Rect *GumpShapeArchive::getGumpItemArea(uint32 shapenum) {
-	if (shapenum >= _gumpItemArea.size()) return 0;
+	if (shapenum >= _gumpItemArea.size())
+		return nullptr;
 	return _gumpItemArea[shapenum];
 }
 

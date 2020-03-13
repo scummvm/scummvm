@@ -185,12 +185,7 @@ public:
 	TeleportEgg *findDestination(uint16 id);
 
 	// Not allowed to modify the list. Remember to use const_iterator
-	const Std::list<Item *> *getItemList(int32 gx, int32 gy) {
-		// CONSTANTS!
-		if (gx < 0 || gy < 0 || gx >= MAP_NUM_CHUNKS || gy >= MAP_NUM_CHUNKS)
-			return 0;
-		return &_items[gx][gy];
-	}
+	const Std::list<Item *> *getItemList(int32 gx, int32 gy) const;
 
 	bool isChunkFast(int32 cx, int32 cy) {
 		// CONSTANTS!

@@ -51,13 +51,13 @@ public:
 	//! Open a file as readable. Streamed.
 	//! \param vfn the (virtual) filename
 	//! \param is_text open in text mode?
-	//! \return 0 on failure
+	//! \return nullptr on failure
 	IDataSource *ReadFile(const Std::string &vfn, bool is_text = false);
 
 	//! Open a file as writable. Streamed.
 	//! \param vfn the (virtual) filename
 	//! \param is_text open in text mode?
-	//! \return 0 on failure
+	//! \return nullptr on failure
 	ODataSource *WriteFile(const Std::string &vfn, bool is_text = false);
 
 	//! Mount a virtual path
@@ -111,7 +111,7 @@ private:
 	Std::map<Common::String, Std::string> _virtualPaths;
 
 	//! Check if the given file is a builtin data file.
-	//! If so, return an IDataSource for it. If not, return 0.
+	//! If so, return an IDataSource for it. If not, return nullptr.
 	IDataSource *checkBuiltinData(const Std::string &vfn, bool is_text = false);
 
 	struct MemoryFile {
