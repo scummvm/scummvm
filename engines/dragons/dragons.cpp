@@ -1534,13 +1534,34 @@ void DragonsEngine::mainMenu() {
 	_fontManager->clearText();
 	actor->updateSequence(1);
 
-	for (int i = 0; i < 3; i++) {
-		_fontManager->addAsciiText(centerText(&menuItems[i][0]) * 8, (0x12 + i) * 8, &menuItems[i][0], strlen(menuItems[i]), 1);
-	}
-
+	bool startGame = false;
 	do {
-		waitForFrames(1);
-	} while (!isActionButtonPressed() && !shouldQuit());
+		uint16 curMenuItem = 0;
+		do {
+			for (int i = 0; i < 3; i++) {
+				_fontManager->addAsciiText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, &menuItems[i][0],
+										   strlen(menuItems[i]), i == curMenuItem ? 0 : 1);
+			}
+			if (checkForDownKeyRelease() && curMenuItem < 2) {
+				curMenuItem++;
+				playOrStopSound(0x8009);
+			}
+
+			if (checkForUpKeyRelease() && curMenuItem > 0) {
+				curMenuItem--;
+				playOrStopSound(0x8009);
+			}
+			waitForFrames(1);
+		} while (!checkForActionButtonRelease() && !shouldQuit());
+
+		if (curMenuItem == 0) {
+			startGame = true;
+		} else if (curMenuItem == 1) {
+			//TODO options menu
+		} else if (curMenuItem == 2) {
+			_strPlayer->playVideo("previews.str");
+		}
+	} while (!shouldQuit() && !startGame);
 
 	_inMenu = false;
 }
