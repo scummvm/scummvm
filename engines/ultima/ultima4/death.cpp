@@ -97,7 +97,7 @@ void deathTimer(void *data) {
     timerCount++;
     if ((timerMsg < N_MSGS) && (timerCount > deathMsgs[timerMsg].timeout)) {
 
-        screenMessage(deathMsgs[timerMsg].text, c->_party->member(0)->getName().c_str());
+        screenMessage(deathMsgs[timerMsg].text, g_context->_party->member(0)->getName().c_str());
         screenHideCursor();
 
         timerCount = 0;
@@ -111,35 +111,35 @@ void deathTimer(void *data) {
 }
 
 void deathRevive() {
-    while(!c->_location->_map->isWorldMap() && c->_location->_prev != NULL) {
-        game->exitToParentMap();        
+    while(!g_context->_location->_map->isWorldMap() && g_context->_location->_prev != NULL) {
+        g_game->exitToParentMap();        
     }
 
-    eventHandler->setController(game);
+    eventHandler->setController(g_game);
     
     deathSequenceRunning = 0;
     gameSetViewMode(VIEW_NORMAL);
 
     /* Move our world map location to Lord British's Castle */
-    c->_location->_coords = c->_location->_map->_portals[0]->_coords;
+    g_context->_location->_coords = g_context->_location->_map->_portals[0]->_coords;
     
     /* Now, move the avatar into the castle and put him
        in front of Lord British */
-    game->setMap(mapMgr->get(100), 1, NULL);
-    c->_location->_coords.x = REVIVE_CASTLE_X;
-    c->_location->_coords.y = REVIVE_CASTLE_Y;
-    c->_location->_coords.z = 0;
+    g_game->setMap(mapMgr->get(100), 1, NULL);
+    g_context->_location->_coords.x = REVIVE_CASTLE_X;
+    g_context->_location->_coords.y = REVIVE_CASTLE_Y;
+    g_context->_location->_coords.z = 0;
 
-    c->_aura->set();
-    c->_horseSpeed = 0;
-	c->_lastCommandTime = g_system->getMillis();
+    g_context->_aura->set();
+    g_context->_horseSpeed = 0;
+	g_context->_lastCommandTime = g_system->getMillis();
     musicMgr->play();
 
-    c->_party->reviveParty();
+    g_context->_party->reviveParty();
 
     screenEnableCursor();
     screenShowCursor();
-    c->_stats->setView(STATS_PARTY_OVERVIEW);
+    g_context->_stats->setView(STATS_PARTY_OVERVIEW);
     screenRedrawScreen();
 }
 

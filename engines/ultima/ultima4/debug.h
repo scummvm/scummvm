@@ -90,9 +90,9 @@ private:
 
     static bool loggingEnabled(const Common::String &name);
 
-    bool disabled;
-    Common::String filename, name;
-    Common::File *file;
+    bool _disabled;
+    Common::String _filename, _name;
+    Common::File *_file;
 
     Common::String l_filename, l_func;
     int l_line;

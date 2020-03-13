@@ -54,7 +54,7 @@ protected:
 #ifdef IOS
     friend void U4IOS::updateScreenView();
 #endif
-    static Image *screen;
+    static Image *_screen;
 };
 
 } // End of namespace Ultima4

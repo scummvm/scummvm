@@ -98,13 +98,13 @@ void codexStart() {
     U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
     screenDisableCursor();
-    screenUpdate(&game->_mapArea, false, true);
+    screenUpdate(&g_game->_mapArea, false, true);
     
     /**
      * make the avatar alone
      */
-    c->_stats->setView(STATS_PARTY_OVERVIEW);
-    c->_stats->update(true);     /* show just the avatar */
+    g_context->_stats->setView(STATS_PARTY_OVERVIEW);
+    g_context->_stats->update(true);     /* show just the avatar */
     screenRedrawScreen();
 
     /**
@@ -118,7 +118,7 @@ void codexStart() {
     /**
      * check to see if you have the 3-part key
      */
-    if ((c->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) != (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
+    if ((g_context->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) != (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
         codexEject(CODEX_EJECT_NO_3_PART_KEY);
         return;
     }
@@ -207,7 +207,7 @@ void codexEject(CodexEjectCode code) {
         
     /* return view to normal and exit the Abyss */
     gameSetViewMode(VIEW_NORMAL);
-    game->exitToParentMap();    
+    g_game->exitToParentMap();    
     musicMgr->play();
     
     /**
@@ -217,13 +217,13 @@ void codexEject(CodexEjectCode code) {
      */
     if (code >= CODEX_EJECT_HONESTY && code <= CODEX_EJECT_HUMILITY) {
         int virtue = code - CODEX_EJECT_HONESTY;
-        c->_location->_coords.x = startLocations[virtue].x;
-        c->_location->_coords.y = startLocations[virtue].y;        
+        g_context->_location->_coords.x = startLocations[virtue].x;
+        g_context->_location->_coords.y = startLocations[virtue].y;        
     }
 
     /* finally, finish the turn */
-    c->_location->_turnCompleter->finishTurn();
-    eventHandler->setController(game);
+    g_context->_location->_turnCompleter->finishTurn();
+    eventHandler->setController(g_game);
 }
 
 /**
@@ -245,14 +245,14 @@ void codexHandleWOP(const Common::String &word) {
         tries = 1; /* reset 'tries' in case we need to enter this again later */
 
         /* eject them if they don't have all 8 party members */
-        if (c->_saveGame->_members != 8) {
+        if (g_context->_saveGame->_members != 8) {
             codexEject(CODEX_EJECT_NO_FULL_PARTY);
             return;
         }
         
         /* eject them if they're not a full avatar at this point */
         for (i = 0; i < VIRT_MAX; i++) {
-            if (c->_saveGame->_karma[i] != 0) {
+            if (g_context->_saveGame->_karma[i] != 0) {
                 codexEject(CODEX_EJECT_NO_FULL_AVATAR);
                 return;
             }
@@ -467,7 +467,7 @@ bool codexHandleEndgameAnyKey(int key, void *data) {
     else {
         /* CONGRATULATIONS!... you have completed the game in x turns */    
         screenDisableCursor();
-        screenMessage("%s%d%s", codexEndgameText2[index-7].c_str(), c->_saveGame->_moves, codexEndgameText2[index-6].c_str());
+        screenMessage("%s%d%s", codexEndgameText2[index-7].c_str(), g_context->_saveGame->_moves, codexEndgameText2[index-6].c_str());
 #ifdef IOS
         U4IOS::endChoiceConversation();
 #endif

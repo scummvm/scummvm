@@ -148,7 +148,7 @@ private:
     bool createBalloon(Map *map);
 };
 
-extern GameController *game;
+extern GameController *g_game;
 
 /* map and screen functions */
 void gameSetViewMode(ViewMode newMode);

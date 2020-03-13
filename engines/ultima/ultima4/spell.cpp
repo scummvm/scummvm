@@ -148,9 +148,9 @@ Ingredients::Ingredients() {
 
 bool Ingredients::addReagent(Reagent reagent) {
     ASSERT(reagent < REAG_MAX, "invalid reagent: %d", reagent);    
-    if (c->_party->getReagent(reagent) < 1)
+    if (g_context->_party->getReagent(reagent) < 1)
         return false;
-    c->_party->adjustReagent(reagent, -1);    
+    g_context->_party->adjustReagent(reagent, -1);    
     _reagents[reagent]++;
     return true;
 }
@@ -159,7 +159,7 @@ bool Ingredients::removeReagent(Reagent reagent) {
     ASSERT(reagent < REAG_MAX, "invalid reagent: %d", reagent);
     if (_reagents[reagent] == 0)
         return false;
-    c->_party->adjustReagent(reagent, 1);    
+    g_context->_party->adjustReagent(reagent, 1);    
     _reagents[reagent]--;
     return true;
 }
@@ -173,7 +173,7 @@ void Ingredients::revert() {
     int reg;
 
     for (reg = 0; reg < REAG_MAX; reg++) {
-        c->_saveGame->_reagents[reg] += _reagents[reg];
+        g_context->_saveGame->_reagents[reg] += _reagents[reg];
         _reagents[reg] = 0;
     }
 }
@@ -181,7 +181,7 @@ void Ingredients::revert() {
 bool Ingredients::checkMultiple(int batches) const {
     for (int i = 0; i < REAG_MAX; i++) {
         /* see if there's enough reagents to mix (-1 because one is already counted) */
-        if (_reagents[i] > 0 && c->_saveGame->_reagents[i] < batches - 1) {
+        if (_reagents[i] > 0 && g_context->_saveGame->_reagents[i] < batches - 1) {
             return false;
         }
     }    
@@ -192,7 +192,7 @@ void Ingredients::multiply(int batches) {
     ASSERT(checkMultiple(batches), "not enough reagents to multiply ingredients by %d\n", batches);
     for (int i = 0; i < REAG_MAX; i++) {
         if (_reagents[i] > 0) {
-            c->_saveGame->_reagents[i] -= batches - 1;
+            g_context->_saveGame->_reagents[i] -= batches - 1;
             _reagents[i] += batches - 1;
         }
     }
@@ -263,7 +263,7 @@ int spellMix(unsigned int spell, const Ingredients *ingredients) {
     if (regmask != spells[spell]._components)
         return 0;
 
-    c->_saveGame->_mixtures[spell]++;
+    g_context->_saveGame->_mixtures[spell]++;
 
     return 1;
 }
@@ -281,18 +281,18 @@ Spell::Param spellGetParamType(unsigned int spell) {
  */
 SpellCastError spellCheckPrerequisites(unsigned int spell, int character) {
     ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
-    ASSERT(character >= 0 && character < c->_saveGame->_members, "character out of range: %d", character);
+    ASSERT(character >= 0 && character < g_context->_saveGame->_members, "character out of range: %d", character);
 
-    if (c->_saveGame->_mixtures[spell] == 0)
+    if (g_context->_saveGame->_mixtures[spell] == 0)
         return CASTERR_NOMIX;
 
-    if ((c->_location->_context & spells[spell]._context) == 0)
+    if ((g_context->_location->_context & spells[spell]._context) == 0)
         return CASTERR_WRONGCONTEXT;        
 
-    if ((c->_transportContext & spells[spell]._transportContext) == 0)
+    if ((g_context->_transportContext & spells[spell]._transportContext) == 0)
         return CASTERR_FAILED;
 
-    if (c->_party->member(character)->getMp() < spells[spell]._mp)
+    if (g_context->_party->member(character)->getMp() < spells[spell]._mp)
         return CASTERR_MPTOOLOW;
 
     return CASTERR_NOERROR;
@@ -304,21 +304,21 @@ SpellCastError spellCheckPrerequisites(unsigned int spell, int character) {
  */
 bool spellCast(unsigned int spell, int character, int param, SpellCastError *error, bool spellEffect) {
     int subject = (spells[spell]._paramType == Spell::PARAM_PLAYER) ? param : -1;
-    PartyMember *p = c->_party->member(character);
+    PartyMember *p = g_context->_party->member(character);
     
     ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
-    ASSERT(character >= 0 && character < c->_saveGame->_members, "character out of range: %d", character);
+    ASSERT(character >= 0 && character < g_context->_saveGame->_members, "character out of range: %d", character);
 
     *error = spellCheckPrerequisites(spell, character);
 
     // subtract the mixture for even trying to cast the spell
-    AdjustValueMin(c->_saveGame->_mixtures[spell], -1, 0);
+    AdjustValueMin(g_context->_saveGame->_mixtures[spell], -1, 0);
         
     if (*error != CASTERR_NOERROR)
         return false;
 
     // If there's a negate magic aura, spells fail!
-    if (*c->_aura == Aura::NEGATE) {
+    if (*g_context->_aura == Aura::NEGATE) {
         *error = CASTERR_FAILED;
         return false;
     }
@@ -358,7 +358,7 @@ void spellMagicAttack(const Common::String &tilename, Direction dir, int minDama
     CombatController *controller = spellCombatController();
     PartyMemberVector *party = controller->getParty();
 
-    MapTile tile = c->_location->_map->_tileset->getByName(tilename)->getId();
+    MapTile tile = g_context->_location->_map->_tileset->getByName(tilename)->getId();
 
     int attackDamage = ((minDamage >= 0) && (minDamage < maxDamage)) ?
         xu4_random((maxDamage + 1) - minDamage) + minDamage :
@@ -401,9 +401,9 @@ bool spellMagicAttackAt(const Coords &coords, MapTile attackTile, int attackDama
 
 static int spellAwaken(int player) {
     ASSERT(player < 8, "player out of range: %d", player);
-    PartyMember *p = c->_party->member(player);
+    PartyMember *p = g_context->_party->member(player);
 
-    if ((player < c->_party->size()) && (p->getStatus() == STAT_SLEEPING)) {
+    if ((player < g_context->_party->size()) && (p->getStatus() == STAT_SLEEPING)) {
         p->wakeUp();
         return 1;
     }
@@ -418,7 +418,7 @@ static int spellBlink(int dir) {
         diff,
         *var;
     Direction reverseDir = dirReverse((Direction)dir);
-    MapCoords coords = c->_location->_coords;
+    MapCoords coords = g_context->_location->_coords;
     
     /* Blink doesn't work near the mouth of the abyss */
     /* Note: This means you can teleport to Hythloth from the top of the map,
@@ -442,19 +442,19 @@ static int spellBlink(int dir) {
 
     /* test our distance, and see if it works */
     for (i = 0; i < distance; i++)
-        coords.move((Direction)dir, c->_location->_map);    
+        coords.move((Direction)dir, g_context->_location->_map);    
     
     i = distance;   
     /* begin walking backward until you find a valid spot */
-    while ((i-- > 0) && !c->_location->_map->tileTypeAt(coords, WITH_OBJECTS)->isWalkable())
-        coords.move(reverseDir, c->_location->_map);
+    while ((i-- > 0) && !g_context->_location->_map->tileTypeAt(coords, WITH_OBJECTS)->isWalkable())
+        coords.move(reverseDir, g_context->_location->_map);
     
-    if (c->_location->_map->tileTypeAt(coords, WITH_OBJECTS)->isWalkable()) {
+    if (g_context->_location->_map->tileTypeAt(coords, WITH_OBJECTS)->isWalkable()) {
         /* we didn't move! */
-        if (c->_location->_coords == coords)
+        if (g_context->_location->_coords == coords)
             failed = 1;
 
-        c->_location->_coords = coords;
+        g_context->_location->_coords = coords;
     } else failed = 1;    
 
     return (failed ? 0 : 1);
@@ -463,8 +463,8 @@ static int spellBlink(int dir) {
 static int spellCure(int player) {
     ASSERT(player < 8, "player out of range: %d", player);
 
-    GameController::flashTile(c->_party->member(player)->getCoords(), "wisp", 1);
-    return c->_party->member(player)->heal(HT_CURE);
+    GameController::flashTile(g_context->_party->member(player)->getCoords(), "wisp", 1);
+    return g_context->_party->member(player)->heal(HT_CURE);
 }
 
 static int spellDispel(int dir) {    
@@ -474,12 +474,12 @@ static int spellDispel(int dir) {
     /* 
      * get the location of the avatar (or current party member, if in battle)
      */
-    c->_location->getCurrentPosition(&field);        
+    g_context->_location->getCurrentPosition(&field);        
 
     /*
      * find where we want to dispel the field
      */
-    field.move((Direction)dir, c->_location->_map);    
+    field.move((Direction)dir, g_context->_location->_map);    
 
     GameController::flashTile(field, "wisp", 2);
     /*
@@ -489,7 +489,7 @@ static int spellDispel(int dir) {
      * (or other unwalkable surface).  So, we need to provide a valid replacement
      * annotation to fill in the gap :)
      */
-    Annotation::List a = c->_location->_map->_annotations->allAt(field);
+    Annotation::List a = g_context->_location->_map->_annotations->allAt(field);
     if (a.size() > 0) {
         Annotation::List::iterator i;
         for (i = a.begin(); i != a.end(); i++) {            
@@ -498,10 +498,10 @@ static int spellDispel(int dir) {
                 /*
                  * get a replacement tile for the field
                  */
-                MapTile newTile(c->_location->getReplacementTile(field, i->getTile().getTileType()));
+                MapTile newTile(g_context->_location->getReplacementTile(field, i->getTile().getTileType()));
 
-                c->_location->_map->_annotations->remove(*i);
-                c->_location->_map->_annotations->add(field, newTile, false, true);
+                g_context->_location->_map->_annotations->remove(*i);
+                g_context->_location->_map->_annotations->add(field, newTile, false, true);
                 return 1;
             }                
         }
@@ -511,16 +511,16 @@ static int spellDispel(int dir) {
      * if the map tile itself is a field, overlay it with a replacement tile
      */
 
-    tile = c->_location->_map->tileAt(field, WITHOUT_OBJECTS);    
+    tile = g_context->_location->_map->tileAt(field, WITHOUT_OBJECTS);    
     if (!tile->getTileType()->canDispel())
         return 0;
 
     /*
      * get a replacement tile for the field
      */
-    MapTile newTile(c->_location->getReplacementTile(field, tile->getTileType()));
+    MapTile newTile(g_context->_location->getReplacementTile(field, tile->getTileType()));
     
-    c->_location->_map->_annotations->add(field, newTile, false, true);
+    g_context->_location->_map->_annotations->add(field, newTile, false, true);
 
     return 1;
 }
@@ -537,17 +537,17 @@ static int spellEField(int param) {
     
     /* Make sure params valid */
     switch (fieldType) {
-        case ENERGYFIELD_FIRE: fieldTile = c->_location->_map->_tileset->getByName("fire_field")->getId(); break;
-        case ENERGYFIELD_LIGHTNING: fieldTile = c->_location->_map->_tileset->getByName("energy_field")->getId(); break;
-        case ENERGYFIELD_POISON: fieldTile = c->_location->_map->_tileset->getByName("poison_field")->getId(); break;
-        case ENERGYFIELD_SLEEP: fieldTile = c->_location->_map->_tileset->getByName("sleep_field")->getId(); break;
+        case ENERGYFIELD_FIRE: fieldTile = g_context->_location->_map->_tileset->getByName("fire_field")->getId(); break;
+        case ENERGYFIELD_LIGHTNING: fieldTile = g_context->_location->_map->_tileset->getByName("energy_field")->getId(); break;
+        case ENERGYFIELD_POISON: fieldTile = g_context->_location->_map->_tileset->getByName("poison_field")->getId(); break;
+        case ENERGYFIELD_SLEEP: fieldTile = g_context->_location->_map->_tileset->getByName("sleep_field")->getId(); break;
         default: return 0; break;
     }
 
-    c->_location->getCurrentPosition(&coords);        
+    g_context->_location->getCurrentPosition(&coords);        
     
-    coords.move((Direction)dir, c->_location->_map);    
-    if (MAP_IS_OOB(c->_location->_map, coords))
+    coords.move((Direction)dir, g_context->_location->_map);    
+    if (MAP_IS_OOB(g_context->_location->_map, coords))
         return 0;
     else {
         /*
@@ -558,20 +558,20 @@ static int spellEField(int param) {
          * Field cast on top of field and then dispel = no fields left
          * The code below seems to produce this behaviour.
          */
-        const Tile *tile = c->_location->_map->tileTypeAt(coords, WITH_GROUND_OBJECTS);
+        const Tile *tile = g_context->_location->_map->tileTypeAt(coords, WITH_GROUND_OBJECTS);
         if (!tile->isWalkable()) return 0;
         
         /* Get rid of old field, if any */
-        Annotation::List a = c->_location->_map->_annotations->allAt(coords);
+        Annotation::List a = g_context->_location->_map->_annotations->allAt(coords);
         if (a.size() > 0) {
             Annotation::List::iterator i;
             for (i = a.begin(); i != a.end(); i++) {                
                 if (i->getTile().getTileType()->canDispel())
-                    c->_location->_map->_annotations->remove(*i);
+                    g_context->_location->_map->_annotations->remove(*i);
             }
         }     
             
-        c->_location->_map->_annotations->add(coords, fieldTile);
+        g_context->_location->_map->_annotations->add(coords, fieldTile);
     }
 
     return 1;
@@ -585,11 +585,11 @@ static int spellFireball(int dir) {
 static int spellGate(int phase) {
     const Coords *moongate;
 
-    GameController::flashTile(c->_location->_coords, "moongate", 2);
+    GameController::flashTile(g_context->_location->_coords, "moongate", 2);
 
     moongate = moongateGetGateCoordsForPhase(phase);
     if (moongate) 
-        c->_location->_coords = *moongate;
+        g_context->_location->_coords = *moongate;
 
     return 1;    
 }
@@ -597,8 +597,8 @@ static int spellGate(int phase) {
 static int spellHeal(int player) {
     ASSERT(player < 8, "player out of range: %d", player);
 
-    GameController::flashTile(c->_party->member(player)->getCoords(), "wisp", 1);
-    c->_party->member(player)->heal(HT_HEAL);
+    GameController::flashTile(g_context->_party->member(player)->getCoords(), "wisp", 1);
+    g_context->_party->member(player)->heal(HT_HEAL);
     return 1;
 }
 
@@ -608,7 +608,7 @@ static int spellIceball(int dir) {
 }
 
 static int spellJinx(int unused) {
-    c->_aura->set(Aura::JINX, 10);    
+    g_context->_aura->set(Aura::JINX, 10);    
     return 1;
 }
 
@@ -618,7 +618,7 @@ static int spellKill(int dir) {
 }
 
 static int spellLight(int unused) {
-    c->_party->lightTorch(100, false);
+    g_context->_party->lightTorch(100, false);
     return 1;
 }
 
@@ -628,7 +628,7 @@ static int spellMMissle(int dir) {
 }
 
 static int spellNegate(int unused) {
-    c->_aura->set(Aura::NEGATE, 10);    
+    g_context->_aura->set(Aura::NEGATE, 10);    
     return 1;
 }
 
@@ -638,18 +638,18 @@ static int spellOpen(int unused) {
 }
 
 static int spellProtect(int unused) {
-    c->_aura->set(Aura::PROTECTION, 10);    
+    g_context->_aura->set(Aura::PROTECTION, 10);    
     return 1;
 }
 
 static int spellRez(int player) {
     ASSERT(player < 8, "player out of range: %d", player);
 
-    return c->_party->member(player)->heal(HT_RESURRECT);
+    return g_context->_party->member(player)->heal(HT_RESURRECT);
 }
 
 static int spellQuick(int unused) {
-    c->_aura->set(Aura::QUICKNESS, 10);    
+    g_context->_aura->set(Aura::QUICKNESS, 10);    
     return 1;
 }
 
@@ -739,14 +739,14 @@ static int spellView(int unsued) {
 }
 
 static int spellWinds(int fromdir) {
-    c->_windDirection = fromdir;
+    g_context->_windDirection = fromdir;
     return 1;
 }
 
 static int spellXit(int unused) {
-    if (!c->_location->_map->isWorldMap()) {
+    if (!g_context->_location->_map->isWorldMap()) {
         screenMessage("Leaving...\n");
-        game->exitToParentMap();
+        g_game->exitToParentMap();
         musicMgr->play();
         return 1;
     }
@@ -754,25 +754,25 @@ static int spellXit(int unused) {
 }
 
 static int spellYup(int unused) {
-    MapCoords coords = c->_location->_coords;
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->_map);
+    MapCoords coords = g_context->_location->_coords;
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
 
     /* can't cast in the Abyss */
-    if (c->_location->_map->_id == MAP_ABYSS)
+    if (g_context->_location->_map->_id == MAP_ABYSS)
         return 0;
     /* staying in the dungeon */
     else if (coords.z > 0) {
         for (int i = 0; i < 0x20; i++) {
-            coords = MapCoords(xu4_random(8), xu4_random(8), c->_location->_coords.z - 1);
+            coords = MapCoords(xu4_random(8), xu4_random(8), g_context->_location->_coords.z - 1);
             if (dungeon->validTeleportLocation(coords)) {
-                c->_location->_coords = coords;
+                g_context->_location->_coords = coords;
                 return 1;
             }
         }
     /* exiting the dungeon */
     } else {
         screenMessage("Leaving...\n");
-        game->exitToParentMap();
+        g_game->exitToParentMap();
         musicMgr->play();
         return 1;
     }
@@ -782,20 +782,20 @@ static int spellYup(int unused) {
 }
 
 static int spellZdown(int unused) {
-    MapCoords coords = c->_location->_coords;
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->_map);
+    MapCoords coords = g_context->_location->_coords;
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
     
     /* can't cast in the Abyss */
-    if (c->_location->_map->_id == MAP_ABYSS)
+    if (g_context->_location->_map->_id == MAP_ABYSS)
         return 0;
     /* can't go lower than level 8 */
     else if (coords.z >= 7)
         return 0;
     else {
         for (int i = 0; i < 0x20; i++) {
-            coords = MapCoords(xu4_random(8), xu4_random(8), c->_location->_coords.z + 1);
+            coords = MapCoords(xu4_random(8), xu4_random(8), g_context->_location->_coords.z + 1);
             if (dungeon->validTeleportLocation(coords)) {
-                c->_location->_coords = coords;
+                g_context->_location->_coords = coords;
                 return 1;
             }
         }

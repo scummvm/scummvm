@@ -78,7 +78,7 @@ void TextView::drawCharMasked(int chr, int x, int y, unsigned char mask) {
     drawChar(chr, x, y);
     for (int i = 0; i < 8; i++) {
         if (mask & (1 << i)) {
-            screen->fillRect(SCALED(this->_x + (x * CHAR_WIDTH)),
+            _screen->fillRect(SCALED(this->_x + (x * CHAR_WIDTH)),
                              SCALED(this->_y + (y * CHAR_HEIGHT) + i),
                              SCALED(CHAR_WIDTH),
                              SCALED(1),
@@ -127,8 +127,8 @@ Common::String TextView::colorizeString(Common::String input, ColorFG color, uns
         return input;
 
     Common::String output = "";
-    Common::String::value_type length = input.size();
-    Common::String::value_type i;
+	size_t length = input.size();
+	size_t i;
     bool colorization = false;
 
     // loop through the entire Common::String and 
@@ -207,7 +207,7 @@ void TextView::textAt(int x, int y, const char *fmt, ...) {
 }
 
 void TextView::scroll() {
-    screen->drawSubRectOn(screen,
+    _screen->drawSubRectOn(_screen,
                           SCALED(_x),
                           SCALED(_y),
                           SCALED(_x),
@@ -215,7 +215,7 @@ void TextView::scroll() {
                           SCALED(_width),
                           SCALED(_height) - SCALED(CHAR_HEIGHT));
 
-    screen->fillRect(SCALED(_x),
+    _screen->fillRect(SCALED(_x),
                      SCALED(_y + (CHAR_HEIGHT * (_rows - 1))),
                      SCALED(_width),
                      SCALED(CHAR_HEIGHT),

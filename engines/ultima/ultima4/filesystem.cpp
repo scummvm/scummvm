@@ -39,7 +39,6 @@ const char Path::delim = '/';
  * Creates a path to a directory or file
  */
 Path::Path(const Common::String &p) : path(p) {
-    char src_char, dest_char;
     unsigned int pos;
     bool _exists = false, isDir = false;
 

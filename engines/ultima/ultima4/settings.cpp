@@ -118,11 +118,13 @@ void Settings::setData(const SettingsData &data) {
  * Read settings in from the settings file.
  */
 bool Settings::read() {
-    char buffer[256];    
-    Common::File settingsFile;
+#ifdef TODO
+	char buffer[256];    
     extern int eventTimerGranularity;   
+#endif
+	Common::File settingsFile;
 
-    /* default settings */
+	/* default settings */
     _scale                 = DEFAULT_SCALE;
     _fullscreen            = DEFAULT_FULLSCREEN;
     _filter                = DEFAULT_FILTER;

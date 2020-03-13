@@ -55,7 +55,7 @@ Common::String &trim(Common::String &val, const Common::String &chars_to_trim) {
     using namespace std;
     Common::String::iterator i;
     if (val.size()) {
-        Common::String::value_type pos;
+		size_t pos;
         for (i = val.begin(); (i != val.end()) && (pos = chars_to_trim.find(*i)) != Common::String::npos; )
             i = val.erase(i);    
         for (i = val.end()-1; (i != val.begin()) && (pos = chars_to_trim.find(*i)) != Common::String::npos; )

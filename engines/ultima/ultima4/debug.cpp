@@ -107,15 +107,15 @@ void ASSERT(bool exp, const char *desc, ...) {
  * @param append    If true, appends to the debug file
  *                  instead of overwriting it.
  */
-Debug::Debug(const Common::String &fn, const Common::String &nm, bool append) : disabled(false), filename(fn), name(nm) {
-    if (!loggingEnabled(name)) {
-        disabled = true;
+Debug::Debug(const Common::String &fn, const Common::String &nm, bool append) : _disabled(false), _filename(fn), _name(nm) {
+    if (!loggingEnabled(_name)) {
+        _disabled = true;
         return;
     }
 
-    if (!file) {} // FIXME: throw exception here
-    else if (!name.empty())
-        debug(1, "=== %s ===\n", name.c_str());
+    if (!_file) {} // FIXME: throw exception here
+    else if (!_name.empty())
+        debug(1, "=== %s ===\n", _name.c_str());
 }
 
 /**
@@ -135,7 +135,7 @@ void Debug::initGlobal(const Common::String &filename) {
  * macros to provide trace functionality.
  */
 void Debug::trace(const Common::String &msg, const Common::String &fn, const Common::String &func, const int line, bool glbl) {
-    if (disabled)
+    if (_disabled)
         return;
 
     bool brackets = false;
@@ -144,7 +144,7 @@ void Debug::trace(const Common::String &msg, const Common::String &fn, const Com
     Path path(fn);
     filename = path.getFilename();    
     
-    if (!file)
+    if (!_file)
         return;
     
     if (!msg.empty())

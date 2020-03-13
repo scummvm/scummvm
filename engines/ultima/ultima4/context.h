@@ -86,7 +86,7 @@ public:
     }
 };
 
-extern Context *c;
+extern Context *g_context;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

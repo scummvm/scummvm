@@ -45,11 +45,10 @@ Image::Image() : _surface(NULL) {
  * or software (i.e. normal ram) image.
  */
 Image *Image::create(int w, int h, bool indexed, Image::Type type) {
-    uint32 rmask, gmask, bmask, amask;
     Image *im = new Image;
 
-    im->w = w;
-    im->h = h;
+    im->_w = w;
+    im->_h = h;
     im->_indexed = indexed;
 
 	if (indexed)
@@ -74,8 +73,8 @@ Image *Image::createScreenImage() {
     Image *screen = new Image();
 
 	screen->_surface = new Graphics::Screen(g_system->getWidth(), g_system->getHeight());
-    screen->w = screen->_surface->w;
-    screen->h = screen->_surface->h;
+    screen->_w = screen->_surface->w;
+    screen->_h = screen->_surface->h;
 	screen->_indexed = g_system->getScreenFormat().bytesPerPixel == 1;
 
     return screen;
@@ -164,7 +163,7 @@ int Image::getPaletteIndex(RGBA color) {
 	uint32 color32 = color;
 
 	for (int i = 0; i < PALETTE_COUNT; ++i, ++pal) {
-		if (*pal == color)
+		if (*pal == color32)
 			return i;
 	}
 
@@ -264,7 +263,7 @@ void Image::initializeToBackgroundColor(RGBA backgroundColor)
 	if (_indexed)
 		error("Not supported"); //TODO, this better
 	this->_backgroundColor = backgroundColor;
-    this->fillRect(0,0,this->w,this->h,
+    this->fillRect(0,0,this->_w,this->_h,
     		backgroundColor.r,
     		backgroundColor.g,
     		backgroundColor.b,
@@ -310,14 +309,14 @@ void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFra
 
 	_surface->format.colorToRGB(colorValue, t_r, t_g, t_b);
 
-    unsigned int frameHeight = h / numFrames;
+    unsigned int frameHeight = _h / numFrames;
     //Min'd so that they never go out of range (>=h)
-    unsigned int top = MIN(h, currentFrameIndex * frameHeight);
-    unsigned int bottom = MIN(h, top + frameHeight);
+    unsigned int top = MIN(_h, currentFrameIndex * frameHeight);
+    unsigned int bottom = MIN(_h, top + frameHeight);
 
     for (y = top; y < bottom; y++) {
 
-        for (x = 0; x < w; x++) {
+        for (x = 0; x < _w; x++) {
             unsigned int r, g, b, a;
             getPixel(x, y, r, g, b, a);
             if (r == t_r &&
@@ -340,7 +339,7 @@ void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFra
     	oy = xy->second;
     	int span = int(haloWidth);
     	unsigned int x_start = MAX(0,ox - span);
-    	unsigned int x_finish = MIN(int(w), ox + span + 1);
+    	unsigned int x_finish = MIN(int(_w), ox + span + 1);
     	for (x = x_start; x < x_finish; ++x)
     	{
     		unsigned int y_start = MAX(int(top),oy - span);
@@ -504,8 +503,8 @@ void Image::save(const Common::String &filename) {
 
 void Image::drawHighlighted() {
     RGBA c;
-    for (unsigned i = 0; i < h; i++) {
-        for (unsigned j = 0; j < w; j++) {
+    for (unsigned i = 0; i < _h; i++) {
+        for (unsigned j = 0; j < _w; j++) {
             getPixel(j, i, c.r, c.g, c.b, c.a);
             putPixel(j, i, 0xff - c.r, 0xff - c.g, 0xff - c.b, c.a);
         }

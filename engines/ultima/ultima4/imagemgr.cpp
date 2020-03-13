@@ -364,8 +364,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
         // update the border appearance
         borderInfo->_image->alphaOff();
         borderInfo->_image->drawSubRectOn(im, 0, 96, 0, 0, 16, 56);
-        for (int i=0; i < 9; i++)
-        {
+        for (i = 0; i < 9; i++) {
             borderInfo->_image->drawSubRectOn(im, 16+(i*32), 96, 144, 0, 48, 48);
         }
         im->drawSubRectInvertedOn(im, 0, 144, 0, 104, 320, 40);

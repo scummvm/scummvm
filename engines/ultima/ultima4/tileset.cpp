@@ -37,14 +37,14 @@ using Std::vector;
 /**
  * TileRule Class Implementation
  */
-TileRuleMap TileRule::rules;
+TileRuleMap TileRule::_rules;
 
 /**
  * Returns the tile rule with the given name, or NULL if none could be found
  */
 TileRule *TileRule::findByName(const Common::String &name) {
-    TileRuleMap::iterator i = rules.find(name);
-    if (i != rules.end())
+    TileRuleMap::iterator i = _rules.find(name);
+    if (i != _rules.end())
         return i->_value;
     return NULL;
 }
@@ -59,7 +59,7 @@ void TileRule::load() {
     for (Std::vector<ConfigElement>::iterator i = rules.begin(); i != rules.end(); i++) {
         TileRule *rule = new TileRule;
         rule->initFromConf(*i);
-        TileRule::rules[rule->_name] = rule;
+        TileRule::_rules[rule->_name] = rule;
     }    
     
     if (TileRule::findByName("default") == NULL)
@@ -187,7 +187,7 @@ void Tileset::loadAll() {
     
     // load tile rules
     TRACE_LOCAL(dbg, "Loading tile rules");
-    if (!TileRule::rules.size())
+    if (!TileRule::_rules.size())
         TileRule::load();
 
     // load all of the tilesets

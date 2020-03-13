@@ -119,12 +119,12 @@ void TileMap::load(const ConfigElement &tilemapConf) {
             frames = i->getInt("frames");
 
         /* insert the tile into the tile map */
-        for (int i = 0; i < frames; i++) {
-            if (i < t->getFrames())
-                tm->_tileMap[index+i] = MapTile(t->getId(), i);
+        for (int idx = 0; idx < frames; idx++) {
+            if (idx < t->getFrames())
+                tm->_tileMap[index+idx] = MapTile(t->getId(), idx);
             /* frame fell out of the scope of the tile -- frame is set to 0 */
             else
-                tm->_tileMap[index+i] = MapTile(t->getId(), 0);
+                tm->_tileMap[index+idx] = MapTile(t->getId(), 0);
         }
         
         index += frames;

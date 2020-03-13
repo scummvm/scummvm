@@ -157,8 +157,8 @@ public:
     void drawSubRectOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const;
     void drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const;
 
-    int width() const { return w; }
-    int height() const { return h; }
+    int width() const { return _w; }
+    int height() const { return _h; }
     bool isIndexed() const { return _indexed; }
     BackendSurface getSurface() { return _surface; }
     void save(const Common::String &filename);
@@ -166,7 +166,7 @@ public:
 
 
 private:
-    unsigned int w, h;
+    unsigned int _w, _h;
     bool _indexed;
     RGBA _backgroundColor;
     Image();                    /* use create method to construct images */

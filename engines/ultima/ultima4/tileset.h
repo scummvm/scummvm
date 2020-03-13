@@ -41,7 +41,7 @@ class TileRule {
 public:    
     static TileRule *findByName(const Common::String &name);
     static void load();
-    static TileRuleMap rules;   // A map of rule names to rules
+    static TileRuleMap _rules;   // A map of rule names to rules
 
     bool initFromConf(const ConfigElement &tileRuleConf);
 
