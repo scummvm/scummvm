@@ -150,7 +150,9 @@ void Decompressor::decompress(byte *source, byte *dest, uint32 destSize) {
 			if (_dst >= destEnd) {
 				return;
 			}
-			*_dst = *(_dst - offset);
+
+			if (_dst - offset >= dest)
+				*_dst = *(_dst - offset);
 			_dst++;
 		}
 	}
