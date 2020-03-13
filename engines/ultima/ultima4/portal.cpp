@@ -90,7 +90,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
     if (portal && portal->_portalConditionsMet && !(*portal->_portalConditionsMet)(portal))
         return 0;
     /* must klimb or descend on foot! */
-    else if (c->_transportContext & ~TRANSPORT_FOOT && (action == ACTION_KLIMB || action == ACTION_DESCEND)) {
+    else if (g_context->_transportContext & ~TRANSPORT_FOOT && (action == ACTION_KLIMB || action == ACTION_DESCEND)) {
         screenMessage("%sOnly on foot!\n", action == ACTION_KLIMB ? "Klimb\n" : "");
         return 1;
     }    
@@ -135,7 +135,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
     }
 
     /* check the transportation requisites of the portal */
-    if (c->_transportContext & ~portal->_portalTransportRequisites) {
+    if (g_context->_transportContext & ~portal->_portalTransportRequisites) {
         screenMessage("Only on foot!\n");        
         return 1;
     }
@@ -145,7 +145,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 
     /* portal just exits to parent map */
     if (portal->_exitPortal) {        
-        game->exitToParentMap();
+        g_game->exitToParentMap();
         musicMgr->play();
         return 1;
     }
@@ -153,7 +153,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
         location->_coords = portal->_start;        
     
     else {
-        game->setMap(destination, portal->_saveLocation, portal);
+        g_game->setMap(destination, portal->_saveLocation, portal);
         musicMgr->play();
     }
 
@@ -162,9 +162,9 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
      * note that we use c->location instead of location, since
      * location has probably been invalidated above 
      */
-    if (portal->_retroActiveDest && c->_location->_prev) {
-        c->_location->_prev->_coords = portal->_retroActiveDest->_coords;        
-        c->_location->_prev->_map = mapMgr->get(portal->_retroActiveDest->_mapid);
+    if (portal->_retroActiveDest && g_context->_location->_prev) {
+        g_context->_location->_prev->_coords = portal->_retroActiveDest->_coords;        
+        g_context->_location->_prev->_map = mapMgr->get(portal->_retroActiveDest->_mapid);
     }
 
     if (destination->_type == Map::SHRINE) {

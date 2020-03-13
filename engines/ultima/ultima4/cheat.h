@@ -33,7 +33,7 @@ class GameController;
 
 class CheatMenuController : public WaitableController<void *> {
 public:
-    CheatMenuController(GameController *game);
+    CheatMenuController(GameController *gc);
     bool keyPressed(int key);
 
 private:

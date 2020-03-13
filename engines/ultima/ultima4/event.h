@@ -347,7 +347,7 @@ protected:
     TimedEventMgr timer;
     Std::vector<Controller *> controllers;
     MouseAreaList mouseAreaSets;
-    updateScreenCallback updateScreen;
+    updateScreenCallback _updateScreen;
 
 private:
     static EventHandler *instance;

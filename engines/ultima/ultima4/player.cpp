@@ -57,7 +57,7 @@ PartyMember::PartyMember(Party *p, SaveGamePlayerRecord *pr) :
 {
     /* FIXME: we need to rename movement behaviors */
     setMovementBehavior(MOVEMENT_ATTACK_AVATAR);
-    this->ranged = Weapon::get(pr->_weapon)->getRange() ? 1 : 0;
+    this->_ranged = Weapon::get(pr->_weapon)->getRange() ? 1 : 0;
     setStatus(pr->_status);
 }
 
@@ -219,7 +219,7 @@ int PartyMember::getMaxLevel() const {
  */ 
 void PartyMember::addStatus(StatusType s) {
     Creature::addStatus(s);
-    _player->_status = status.back();
+    _player->_status = _status.back();
     notifyOfChange();
 }
 
@@ -369,7 +369,7 @@ bool PartyMember::heal(HealType type) {
  */
 void PartyMember::removeStatus(StatusType s) {
     Creature::removeStatus(s);
-    _player->_status = status.back();
+    _player->_status = _status.back();
     notifyOfChange();
 }
 
@@ -447,7 +447,7 @@ bool PartyMember::applyDamage(int damage, bool) {
     _player->_hp = newHp;
     notifyOfChange();
 
-    if (isCombatMap(c->_location->_map) && getStatus() == STAT_DEAD) {
+    if (isCombatMap(g_context->_location->_map) && getStatus() == STAT_DEAD) {
         Coords p = getCoords();                    
         Map *map = getMap();
         map->_annotations->add(p, Tileset::findTileByName("corpse")->getId())->setTTL(_party->size() * 2);
@@ -638,13 +638,13 @@ Common::String Party::translate(Std::vector<Common::String>& parts) {
     else if (parts.size() == 1) {
         // Translate some different items for the script
         if (parts[0] == "transport") {
-            if (c->_transportContext & TRANSPORT_FOOT)
+            if (g_context->_transportContext & TRANSPORT_FOOT)
                 return "foot";
-            if (c->_transportContext & TRANSPORT_HORSE)
+            if (g_context->_transportContext & TRANSPORT_HORSE)
                 return "horse";
-            if (c->_transportContext & TRANSPORT_SHIP)
+            if (g_context->_transportContext & TRANSPORT_SHIP)
                 return "ship";
-            if (c->_transportContext & TRANSPORT_BALLOON)
+            if (g_context->_transportContext & TRANSPORT_BALLOON)
                 return "balloon";
         }
         else if (parts[0] == "gold")
@@ -678,7 +678,7 @@ Common::String Party::translate(Std::vector<Common::String>& parts) {
 
             // Find the member we'll be working with
             Common::String str = parts[0];
-            Common::String::value_type pos = str.findFirstOf("1234567890");
+            size_t pos = str.findFirstOf("1234567890");
             if (pos != Common::String::npos) {
                 str = str.substr(pos);
                 int p_member = (int)strtol(str.c_str(), NULL, 10);
@@ -969,7 +969,7 @@ void Party::endTurn() {
     for (i = 0; i < size(); i++) {
 
         /* Handle player status (only for non-combat turns) */
-        if ((c->_location->_context & CTX_NON_COMBAT) == c->_location->_context) {
+        if ((g_context->_location->_context & CTX_NON_COMBAT) == g_context->_location->_context) {
             
             /* party members eat food (also non-combat) */
             if (!_members[i]->isDead())
@@ -1003,14 +1003,14 @@ void Party::endTurn() {
     }
 
     /* The party is starving! */
-    if ((_saveGame->_food == 0) && ((c->_location->_context & CTX_NON_COMBAT) == c->_location->_context)) {
+    if ((_saveGame->_food == 0) && ((g_context->_location->_context & CTX_NON_COMBAT) == g_context->_location->_context)) {
         setChanged();
         PartyEvent event(PartyEvent::STARVING, 0);
         notifyObservers(event);
     }
     
     /* heal ship (25% chance it is healed each turn) */
-    if ((c->_location->_context == CTX_WORLDMAP) && (_saveGame->_shipHull < 50) && xu4_random(4) == 0)
+    if ((g_context->_location->_context == CTX_WORLDMAP) && (_saveGame->_shipHull < 50) && xu4_random(4) == 0)
         healShip(1);
 }
 
@@ -1137,9 +1137,9 @@ CannotJoinError Party::join(Common::String name) {
  */
 bool Party::lightTorch(int duration, bool loseTorch) {
     if (loseTorch) { 
-        if (c->_saveGame->_torches <= 0)
+        if (g_context->_saveGame->_torches <= 0)
             return false;
-        c->_saveGame->_torches--;
+        g_context->_saveGame->_torches--;
     }
     
     _torchDuration += duration;
@@ -1171,9 +1171,9 @@ void Party::reviveParty() {
         _saveGame->_players[i]._hp = _saveGame->_players[i]._hpMax;
     }
     
-    for (int i = ARMR_NONE + 1; i < ARMR_MAX; i++)
+    for (i = ARMR_NONE + 1; i < ARMR_MAX; i++)
         _saveGame->_armor[i] = 0;
-    for (int i = WEAP_HANDS + 1; i < WEAP_MAX; i++)
+    for (i = WEAP_HANDS + 1; i < WEAP_MAX; i++)
         _saveGame->_weapons[i] = 0;
     _saveGame->_food = 20099;
     _saveGame->_gold = 200;
@@ -1195,12 +1195,12 @@ void Party::setTransport(MapTile tile) {
     _transport = tile;
     
     if (tile.getTileType()->isHorse())
-        c->_transportContext = TRANSPORT_HORSE;
+        g_context->_transportContext = TRANSPORT_HORSE;
     else if (tile.getTileType()->isShip())
-        c->_transportContext = TRANSPORT_SHIP;
+        g_context->_transportContext = TRANSPORT_SHIP;
     else if (tile.getTileType()->isBalloon())
-        c->_transportContext = TRANSPORT_BALLOON;
-    else c->_transportContext = TRANSPORT_FOOT;
+        g_context->_transportContext = TRANSPORT_BALLOON;
+    else g_context->_transportContext = TRANSPORT_FOOT;
 
     notifyOfChange();
 }
@@ -1224,20 +1224,20 @@ void Party::setDirection(Direction dir) {
 }
 
 void Party::adjustReagent(int reagent, int amt) {
-    int oldVal = c->_saveGame->_reagents[reagent];
-    AdjustValue(c->_saveGame->_reagents[reagent], amt, 99, 0);
+    int oldVal = g_context->_saveGame->_reagents[reagent];
+    AdjustValue(g_context->_saveGame->_reagents[reagent], amt, 99, 0);
 
-    if (oldVal != c->_saveGame->_reagents[reagent]) {        
+    if (oldVal != g_context->_saveGame->_reagents[reagent]) {        
         notifyOfChange();
     }
 }
 
 int Party::getReagent(int reagent) const {
-    return c->_saveGame->_reagents[reagent];
+    return g_context->_saveGame->_reagents[reagent];
 }
 
 short* Party::getReagentPtr(int reagent) const {
-    return &c->_saveGame->_reagents[reagent];
+    return &g_context->_saveGame->_reagents[reagent];
 }
 
 void Party::setActivePlayer(int p) {
@@ -1256,8 +1256,8 @@ void Party::swapPlayers(int p1, int p2) {
     ASSERT(p2 < _saveGame->_members, "p2 out of range: %d", p2);
 
     SaveGamePlayerRecord tmp = _saveGame->_players[p1];
-    _saveGame->_players[p1] = c->_saveGame->_players[p2];
-    c->_saveGame->_players[p2] = tmp;
+    _saveGame->_players[p1] = g_context->_saveGame->_players[p2];
+    g_context->_saveGame->_players[p2] = tmp;
 
     syncMembers();
 

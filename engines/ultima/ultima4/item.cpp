@@ -78,7 +78,7 @@ void putReagentInInventory(int reag);
 bool isAbyssOpened(const Portal *p);
 void itemHandleStones(const Common::String &color);
 
-static const ItemLocation items[] = {
+static const ItemLocation ITEMS[] = {
     { "Mandrake Root", NULL, "mandrake1",
       &isReagentInInventory, &putReagentInInventory, NULL, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY },
     { "Mandrake Root", NULL, "mandrake2",
@@ -150,16 +150,16 @@ static const ItemLocation items[] = {
       &isRuneInInventory, &putRuneInInventory, NULL, RUNE_HUMILITY, 0 }
 };
 
-#define N_ITEMS (sizeof(items) / sizeof(items[0]))
+#define N_ITEMS (sizeof(ITEMS) / sizeof(ITEMS[0]))
 
 bool isRuneInInventory(int virt) {
-    return c->_saveGame->_runes & virt;
+    return g_context->_saveGame->_runes & virt;
 }
 
 void putRuneInInventory(int virt) {
-    c->_party->member(0)->awardXp(100);    
-    c->_party->adjustKarma(KA_FOUND_ITEM);
-    c->_saveGame->_runes |= virt;
+    g_context->_party->member(0)->awardXp(100);    
+    g_context->_party->adjustKarma(KA_FOUND_ITEM);
+    g_context->_saveGame->_runes |= virt;
 #ifdef IOS
     Common::String virtueName;
     switch (virt) {
@@ -191,21 +191,21 @@ void putRuneInInventory(int virt) {
     }
     U4IOS::testFlightPassCheckPoint("Player got stone: " + virtueName);
 #endif
-    c->_saveGame->_lastReagent = c->_saveGame->_moves & 0xF0;
+    g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
 }
 
 bool isStoneInInventory(int virt) {
     /* generic test: does the party have any stones yet? */
     if (virt == -1) 
-        return (c->_saveGame->_stones > 0);
+        return (g_context->_saveGame->_stones > 0);
     /* specific test: does the party have a specific stone? */
-    else return c->_saveGame->_stones & virt;
+    else return g_context->_saveGame->_stones & virt;
 }
 
 void putStoneInInventory(int virt) {
-    c->_party->member(0)->awardXp(200);
-    c->_party->adjustKarma(KA_FOUND_ITEM);
-    c->_saveGame->_stones |= virt;
+    g_context->_party->member(0)->awardXp(200);
+    g_context->_party->adjustKarma(KA_FOUND_ITEM);
+    g_context->_saveGame->_stones |= virt;
 #ifdef IOS
     Common::String stoneName;
     switch (virt) {
@@ -237,21 +237,21 @@ void putStoneInInventory(int virt) {
     }
     U4IOS::testFlightPassCheckPoint("Player got rune: " + stoneName);
 #endif
-    c->_saveGame->_lastReagent = c->_saveGame->_moves & 0xF0;
+    g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
 }
 
 bool isItemInInventory(int item) {
-    return c->_saveGame->_items & item;
+    return g_context->_saveGame->_items & item;
 }
 
 bool isSkullInInventory(int unused) {
-    return (c->_saveGame->_items & (ITEM_SKULL | ITEM_SKULL_DESTROYED));
+    return (g_context->_saveGame->_items & (ITEM_SKULL | ITEM_SKULL_DESTROYED));
 }
 
 void putItemInInventory(int item) {
-    c->_party->member(0)->awardXp(400);
-    c->_party->adjustKarma(KA_FOUND_ITEM);
-    c->_saveGame->_items |= item;
+    g_context->_party->member(0)->awardXp(400);
+    g_context->_party->adjustKarma(KA_FOUND_ITEM);
+    g_context->_saveGame->_items |= item;
 #ifdef IOS
     Common::String itemName;
     switch (item) {
@@ -287,7 +287,7 @@ void putItemInInventory(int item) {
     }
     U4IOS::testFlightPassCheckPoint("Player got rune: " + itemName);
 #endif    
-    c->_saveGame->_lastReagent = c->_saveGame->_moves & 0xF0;
+    g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
 }
 
 /**
@@ -296,30 +296,30 @@ void putItemInInventory(int item) {
 void useBBC(int item) {
     Coords abyssEntrance(0xe9, 0xe9);
     /* on top of the Abyss entrance */
-    if (c->_location->_coords == abyssEntrance) {
+    if (g_context->_location->_coords == abyssEntrance) {
         /* must use bell first */
         if (item == ITEM_BELL) {
 #ifdef IOS
             U4IOS::testFlightPassCheckPoint("The Bell rings on and on!");
 #endif
             screenMessage("\nThe Bell rings on and on!\n");
-            c->_saveGame->_items |= ITEM_BELL_USED;
+            g_context->_saveGame->_items |= ITEM_BELL_USED;
         }
         /* then the book */
-        else if ((item == ITEM_BOOK) && (c->_saveGame->_items & ITEM_BELL_USED)) {
+        else if ((item == ITEM_BOOK) && (g_context->_saveGame->_items & ITEM_BELL_USED)) {
 #ifdef IOS
             U4IOS::testFlightPassCheckPoint("The words resonate with the ringing!");
 #endif
             screenMessage("\nThe words resonate with the ringing!\n");
-            c->_saveGame->_items |= ITEM_BOOK_USED;
+            g_context->_saveGame->_items |= ITEM_BOOK_USED;
         }
         /* then the candle */
-        else if ((item == ITEM_CANDLE) && (c->_saveGame->_items & ITEM_BOOK_USED)) {
+        else if ((item == ITEM_CANDLE) && (g_context->_saveGame->_items & ITEM_BOOK_USED)) {
             screenMessage("\nAs you light the Candle the Earth Trembles!\n");    
 #ifdef IOS
             U4IOS::testFlightPassCheckPoint("As you light the Candle the Earth Trembles!");
 #endif
-            c->_saveGame->_items |= ITEM_CANDLE_USED;
+            g_context->_saveGame->_items |= ITEM_CANDLE_USED;
         }
         else screenMessage("\nHmm...No effect!\n");
     }
@@ -332,16 +332,16 @@ void useBBC(int item) {
  */
 void useHorn(int item) {
     screenMessage("\nThe Horn sounds an eerie tone!\n");
-    c->_aura->set(Aura::HORN, 10);    
+    g_context->_aura->set(Aura::HORN, 10);    
 }
 
 /**
  * Uses the wheel (if on board a ship)
  */
 void useWheel(int item) {
-    if ((c->_transportContext == TRANSPORT_SHIP) && (c->_saveGame->_shipHull == 50)) {
+    if ((g_context->_transportContext == TRANSPORT_SHIP) && (g_context->_saveGame->_shipHull == 50)) {
         screenMessage("\nOnce mounted, the Wheel glows with a blue light!\n");
-        c->_party->setShipHull(99);
+        g_context->_party->setShipHull(99);
     }
     else screenMessage("\nHmm...No effect!\n");    
 }
@@ -355,20 +355,20 @@ void useSkull(int item) {
 
     /* We do the check here instead of in the table, because we need to distinguish between a 
        never-found skull and a destroyed skull. */ 
-    if (c->_saveGame->_items & ITEM_SKULL_DESTROYED) {
+    if (g_context->_saveGame->_items & ITEM_SKULL_DESTROYED) {
         screenMessage("\nNone owned!\n");
         return;
     }
 
     /* destroy the skull! pat yourself on the back */
-    if (c->_location->_coords.x == 0xe9 && c->_location->_coords.y == 0xe9) {
+    if (g_context->_location->_coords.x == 0xe9 && g_context->_location->_coords.y == 0xe9) {
         screenMessage("\n\nYou cast the Skull of Mondain into the Abyss!\n");
 #ifdef IOS
         U4IOS::testFlightPassCheckPoint("You cast the Skull of Mondain into the Abyss!");
 #endif
 
-        c->_saveGame->_items = (c->_saveGame->_items & ~ITEM_SKULL) | ITEM_SKULL_DESTROYED;
-        c->_party->adjustKarma(KA_DESTROYED_SKULL);
+        g_context->_saveGame->_items = (g_context->_saveGame->_items & ~ITEM_SKULL) | ITEM_SKULL_DESTROYED;
+        g_context->_party->adjustKarma(KA_DESTROYED_SKULL);
     }
 
     /* use the skull... bad, very bad */
@@ -383,7 +383,7 @@ void useSkull(int item) {
     
         /* we don't lose the skull until we toss it into the abyss */
         //c->saveGame->_items = (c->saveGame->_items & ~ITEM_SKULL);
-        c->_party->adjustKarma(KA_USED_SKULL);
+        g_context->_party->adjustKarma(KA_USED_SKULL);
     }
 }
 
@@ -399,7 +399,7 @@ void useStone(int item) {
     static unsigned char courage = STONE_WHITE | STONE_RED    | STONE_PURPLE | STONE_ORANGE;
     static unsigned char *attr   = NULL;
     
-    c->_location->getCurrentPosition(&coords);
+    g_context->_location->getCurrentPosition(&coords);
 
     /**
      * Named a specific stone (after using "stone" or "stones")
@@ -409,7 +409,7 @@ void useStone(int item) {
 
         if (needStoneNames) {
             /* named a stone while in a dungeon altar room */
-            if (c->_location->_context & CTX_ALTAR_ROOM) {
+            if (g_context->_location->_context & CTX_ALTAR_ROOM) {
                 needStoneNames--;                
 
                 switch(cm->getAltarRoom()) {
@@ -453,7 +453,7 @@ void useStone(int item) {
                     }
 
                     /* in an altar room, named all of the stones, and don't have the key yet... */
-                    if (attr && (stoneMask == *attr) && !(c->_saveGame->_items & key)) {
+                    if (attr && (stoneMask == *attr) && !(g_context->_saveGame->_items & key)) {
 #ifdef IOS
                         Common::String keyName;
                         switch (key) {
@@ -470,7 +470,7 @@ void useStone(int item) {
                         U4IOS::testFlightPassCheckPoint("Receive a key: " + keyName);
 #endif
                         screenMessage("\nThou doth find one third of the Three Part Key!\n");
-                        c->_saveGame->_items |= key;
+                        g_context->_saveGame->_items |= key;
                     }
                     else screenMessage("\nHmm...No effect!\n");
 
@@ -481,13 +481,13 @@ void useStone(int item) {
             /* Otherwise, we're asking for a stone while in the abyss on top of an altar */
             else {                
                 /* see if they entered the correct stone */
-                if (stone == (1 << c->_location->_coords.z)) {
-                    if (c->_location->_coords.z < 7) {
+                if (stone == (1 << g_context->_location->_coords.z)) {
+                    if (g_context->_location->_coords.z < 7) {
                         /* replace the altar with a down-ladder */
-                        MapCoords coords;
+                        MapCoords pos;
                         screenMessage("\n\nThe altar changes before thyne eyes!\n");
-                        c->_location->getCurrentPosition(&coords);
-                        c->_location->_map->_annotations->add(coords, c->_location->_map->_tileset->getByName("down_ladder")->getId());
+                        g_context->_location->getCurrentPosition(&pos);
+                        g_context->_location->_map->_annotations->add(pos, g_context->_location->_map->_tileset->getByName("down_ladder")->getId());
                     }
                     /* start chamber of the codex sequence... */
                     else {
@@ -506,11 +506,11 @@ void useStone(int item) {
     /**
      * in the abyss, on an altar to place the stones
      */
-    else if ((c->_location->_map->_id == MAP_ABYSS) &&
-             (c->_location->_context & CTX_DUNGEON) && 
-             (dynamic_cast<Dungeon *>(c->_location->_map)->currentToken() == DUNGEON_ALTAR)) {
+    else if ((g_context->_location->_map->_id == MAP_ABYSS) &&
+             (g_context->_location->_context & CTX_DUNGEON) && 
+             (dynamic_cast<Dungeon *>(g_context->_location->_map)->currentToken() == DUNGEON_ALTAR)) {
 
-        int virtueMask = getBaseVirtues((Virtue)c->_location->_coords.z);
+        int virtueMask = getBaseVirtues((Virtue)g_context->_location->_coords.z);
         if (virtueMask > 0)
             screenMessage("\n\nAs thou doth approach, a voice rings out: What virtue dost stem from %s?\n\n", getBaseVirtueName(virtueMask));
         else screenMessage("\n\nA voice rings out:  What virtue exists independently of Truth, Love, and Courage?\n\n");
@@ -519,7 +519,7 @@ void useStone(int item) {
 #endif
         Common::String virtue = gameGetInput();
 
-        if (scumm_strnicmp(virtue.c_str(), getVirtueName((Virtue)c->_location->_coords.z), 6) == 0) {
+        if (scumm_strnicmp(virtue.c_str(), getVirtueName((Virtue)g_context->_location->_coords.z), 6) == 0) {
             /* now ask for stone */
             screenMessage("\n\nThe Voice says: Use thy Stone.\n\nColor:\n");
             needStoneNames = 1;
@@ -536,7 +536,7 @@ void useStone(int item) {
     /**
      * in a dungeon altar room, on the altar
      */
-    else if ((c->_location->_context & CTX_ALTAR_ROOM) &&
+    else if ((g_context->_location->_context & CTX_ALTAR_ROOM) &&
              coords.x == 5 && coords.y == 5) {
         needStoneNames = 4;
         screenMessage("\n\nThere are holes for 4 stones.\nWhat colors:\nA:");        
@@ -566,32 +566,32 @@ bool isMysticInInventory(int mystic) {
        format.
     */
     if (mystic == WEAP_MYSTICSWORD)
-        return c->_saveGame->_weapons[WEAP_MYSTICSWORD] > 0;
+        return g_context->_saveGame->_weapons[WEAP_MYSTICSWORD] > 0;
     else if (mystic == ARMR_MYSTICROBES)
-        return c->_saveGame->_armor[ARMR_MYSTICROBES] > 0;
+        return g_context->_saveGame->_armor[ARMR_MYSTICROBES] > 0;
     else
         ASSERT(0, "Invalid mystic item was tested in isMysticInInventory()");    
     return false;
 }
 
 void putMysticInInventory(int mystic) {
-    c->_party->member(0)->awardXp(400);
-    c->_party->adjustKarma(KA_FOUND_ITEM);
+    g_context->_party->member(0)->awardXp(400);
+    g_context->_party->adjustKarma(KA_FOUND_ITEM);
     if (mystic == WEAP_MYSTICSWORD)
-        c->_saveGame->_weapons[WEAP_MYSTICSWORD] += 8;
+        g_context->_saveGame->_weapons[WEAP_MYSTICSWORD] += 8;
     else if (mystic == ARMR_MYSTICROBES)
-        c->_saveGame->_armor[ARMR_MYSTICROBES] += 8;
+        g_context->_saveGame->_armor[ARMR_MYSTICROBES] += 8;
     else
         ASSERT(0, "Invalid mystic item was added in putMysticInInventory()");        
-    c->_saveGame->_lastReagent = c->_saveGame->_moves & 0xF0;
+    g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
 }
 
 bool isWeaponInInventory(int weapon) {
-    if (c->_saveGame->_weapons[weapon])
+    if (g_context->_saveGame->_weapons[weapon])
         return true;
     else {
-        for (int i = 0; i < c->_party->size(); i++) {
-            if (c->_party->member(i)->getWeapon()->getType() == weapon)
+        for (int i = 0; i < g_context->_party->size(); i++) {
+            if (g_context->_party->member(i)->getWeapon()->getType() == weapon)
                 return true;
         }
     }
@@ -599,7 +599,7 @@ bool isWeaponInInventory(int weapon) {
 }
 
 void putWeaponInInventory(int weapon) {
-    c->_saveGame->_weapons[weapon]++;
+    g_context->_saveGame->_weapons[weapon]++;
 }
 
 void useTelescope(int notused) {
@@ -621,12 +621,12 @@ bool isReagentInInventory(int reag) {
 }
 
 void putReagentInInventory(int reag) {
-    c->_party->adjustKarma(KA_FOUND_ITEM);
-    c->_saveGame->_reagents[reag] += xu4_random(8) + 2;
-    c->_saveGame->_lastReagent = c->_saveGame->_moves & 0xF0;
+    g_context->_party->adjustKarma(KA_FOUND_ITEM);
+    g_context->_saveGame->_reagents[reag] += xu4_random(8) + 2;
+    g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
 
-    if (c->_saveGame->_reagents[reag] > 99) {
-        c->_saveGame->_reagents[reag] = 99;
+    if (g_context->_saveGame->_reagents[reag] > 99) {
+        g_context->_saveGame->_reagents[reag] = 99;
         screenMessage("Dropped some!\n");
     }
 }
@@ -638,18 +638,18 @@ bool itemConditionsMet(unsigned char conditions) {
     int i;
 
     if ((conditions & SC_NEWMOONS) &&
-        !(c->_saveGame->_trammelPhase == 0 && c->_saveGame->_feluccaPhase == 0))
+        !(g_context->_saveGame->_trammelPhase == 0 && g_context->_saveGame->_feluccaPhase == 0))
         return false;
 
     if (conditions & SC_FULLAVATAR) {
         for (i = 0; i < VIRT_MAX; i++) {
-            if (c->_saveGame->_karma[i] != 0)
+            if (g_context->_saveGame->_karma[i] != 0)
                 return false;
         }
     }
 
     if ((conditions & SC_REAGENTDELAY) &&
-        (c->_saveGame->_moves & 0xF0) == c->_saveGame->_lastReagent)
+        (g_context->_saveGame->_moves & 0xF0) == g_context->_saveGame->_lastReagent)
         return false;
 
     return true;
@@ -662,11 +662,11 @@ bool itemConditionsMet(unsigned char conditions) {
 const ItemLocation *itemAtLocation(const Map *map, const Coords &coords) {
     unsigned int i;
     for (i = 0; i < N_ITEMS; i++) {
-        if (!items[i]._locationLabel)
+        if (!ITEMS[i]._locationLabel)
             continue;
-        if (map->getLabel(items[i]._locationLabel) == coords &&
-            itemConditionsMet(items[i]._conditions))
-            return &(items[i]);
+        if (map->getLabel(ITEMS[i]._locationLabel) == coords &&
+            itemConditionsMet(ITEMS[i]._conditions))
+            return &(ITEMS[i]);
     }
     return NULL;
 }
@@ -679,19 +679,19 @@ void itemUse(const Common::String &shortname) {
     const ItemLocation *item = NULL;
 
     for (i = 0; i < N_ITEMS; i++) {
-        if (items[i]._shortName &&
-            scumm_stricmp(items[i]._shortName, shortname.c_str()) == 0) {
+        if (ITEMS[i]._shortName &&
+            scumm_stricmp(ITEMS[i]._shortName, shortname.c_str()) == 0) {
             
-            item = &items[i];
+            item = &ITEMS[i];
 
             /* item name found, see if we have that item in our inventory */
-            if (!items[i]._isItemInInventory || (*items[i]._isItemInInventory)(items[i]._data)) {
+            if (!ITEMS[i]._isItemInInventory || (*ITEMS[i]._isItemInInventory)(ITEMS[i]._data)) {
 
                 /* use the item, if we can! */
                 if (!item || !item->_useItem)
                     screenMessage("\nNot a Usable item!\n");
                 else
-                    (*item->_useItem)(items[i]._data);
+                    (*item->_useItem)(ITEMS[i]._data);
             }
             else
                 screenMessage("\nNone owned!\n");            
@@ -711,7 +711,7 @@ void itemUse(const Common::String &shortname) {
  */
 bool isAbyssOpened(const Portal *p) {
     /* make sure the bell, book and candle have all been used */
-    int items = c->_saveGame->_items;
+    int items = g_context->_saveGame->_items;
     int isopened = (items & ITEM_BELL_USED) && (items & ITEM_BOOK_USED) && (items & ITEM_CANDLE_USED);
     
     if (!isopened)

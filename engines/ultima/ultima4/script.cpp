@@ -151,9 +151,10 @@ void Script::addProvider(const Common::String &name, Provider *p) {
  * Loads the vendor script
  */ 
 bool Script::load(const Common::String &filename, const Common::String &baseId, const Common::String &subNodeName, const Common::String &subNodeId) {
-    xmlNodePtr root, node, child;
-    this->_state = STATE_NORMAL;
 #ifdef TODO
+	xmlNodePtr root, node, child;
+    this->_state = STATE_NORMAL;
+
     /* unload previous script */
     unload();
 
@@ -528,7 +529,7 @@ void Script::translate(Common::String *text) {
 
             xmlNodePtr itemShowScript = find(node, itemScript);
 
-            xmlNodePtr item;
+            xmlNodePtr nodePtr;
             prop.clear();
             
             /**
@@ -539,19 +540,19 @@ void Script::translate(Common::String *text) {
             /* start iterator at 0 */
             this->_iterator = 0;
             
-            for (item = node->children; item; item = item->next) {
-                if (xmlStrcmp(item->name, (const xmlChar *)_nounName.c_str()) == 0) {
-                    bool hidden = (bool)xmlGetPropAsBool(item, "hidden");                    
+            for (nodePtr = node->children; nodePtr; nodePtr = nodePtr->next) {
+                if (xmlStrcmp(nodePtr->name, (const xmlChar *)_nounName.c_str()) == 0) {
+                    bool hidden = (bool)xmlGetPropAsBool(nodePtr, "hidden");                    
 
                     if (!hidden) {
-                        /* make sure the item's requisites are met */
-                        if (!xmlPropExists(item, "req") || compare(getPropAsStr(item, "req"))) {
+                        /* make sure the nodePtr's requisites are met */
+                        if (!xmlPropExists(nodePtr, "req") || compare(getPropAsStr(nodePtr, "req"))) {
                             /* put a newline after each */
                             if (this->_iterator > 0)
                                 prop += "\n";                            
 
-                            /* set translation context to item */
-                            _translationContext.push_back(item);
+                            /* set translation context to nodePtr */
+                            _translationContext.push_back(nodePtr);
                             execute(itemShowScript, NULL, &prop);
                             _translationContext.pop_back();
 
@@ -572,14 +573,14 @@ void Script::translate(Common::String *text) {
          * vendor's inventory (i.e. "bcde")
          */ 
         else if (item == "inventory_choices") {
-            xmlNodePtr item;
+            xmlNodePtr nodePtr;
             Common::String ids;
 
-            for (item = node->children; item; item = item->next) {
-                if (xmlStrcmp(item->name, (const xmlChar *)_nounName.c_str()) == 0) {
-                    Common::String id = getPropAsStr(item, _idPropName.c_str());
-                    /* make sure the item's requisites are met */
-                    if (!xmlPropExists(item, "req") || (compare(getPropAsStr(item, "req"))))
+            for (nodePtr = node->children; nodePtr; nodePtr = nodePtr->next) {
+                if (xmlStrcmp(nodePtr->name, (const xmlChar *)_nounName.c_str()) == 0) {
+                    Common::String id = getPropAsStr(nodePtr, _idPropName.c_str());
+                    /* make sure the nodePtr's requisites are met */
+                    if (!xmlPropExists(nodePtr, "req") || (compare(getPropAsStr(nodePtr, "req"))))
                         ids += id[0];
                 }
             }
@@ -591,12 +592,12 @@ void Script::translate(Common::String *text) {
          * Ask our providers if they have a valid translation for us
          */
         else if (item.findFirstOf(":") != Common::String::npos) {
-            int pos = item.findFirstOf(":");
+            int index = item.findFirstOf(":");
             Common::String provider = item;
             Common::String to_find;
 
-            provider = item.substr(0, pos);
-            to_find = item.substr(pos + 1);
+            provider = item.substr(0, index);
+            to_find = item.substr(index + 1);
             if (_providers.find(provider) != _providers.end()) {
                 Std::vector<Common::String> parts = split(to_find, ":");
                 Provider* p = _providers[provider];
@@ -644,17 +645,17 @@ void Script::translate(Common::String *text) {
 
                 /* make the Common::String upper case */
                 else if (funcName == "toupper") {
-                    Common::String::iterator current;
-                    for (current = content.begin(); current != content.end(); current++)
-                        *current = toupper(*current);
+                    Common::String::iterator it;
+                    for (it = content.begin(); it != content.end(); it++)
+                        *it = toupper(*it);
                 
                     prop = content;
                 }
                 /* make the Common::String lower case */
                 else if (funcName == "tolower") {
-                    Common::String::iterator current;
-                    for (current = content.begin(); current != content.end(); current++)
-                        *current = tolower(*current);
+                    Common::String::iterator it;
+                    for (it = content.begin(); it != content.end(); it++)
+                        *it = tolower(*it);
                     
                     prop = content;
                 }
@@ -965,14 +966,14 @@ Script::ReturnCode Script::random(xmlNodePtr script, xmlNodePtr current) {
  */ 
 Script::ReturnCode Script::move(xmlNodePtr script, xmlNodePtr current) {
     if (xmlPropExists(current, "x"))
-        c->_location->_coords.x = getPropAsInt(current, "x");
+        g_context->_location->_coords.x = getPropAsInt(current, "x");
     if (xmlPropExists(current, "y"))
-        c->_location->_coords.y = getPropAsInt(current, "y");
+        g_context->_location->_coords.y = getPropAsInt(current, "y");
     if (xmlPropExists(current, "z"))
-        c->_location->_coords.z = getPropAsInt(current, "z");
+        g_context->_location->_coords.z = getPropAsInt(current, "z");
 
     if (_debug)
-        ::debug("\nMove: x-%d y-%d z-%d", c->_location->_coords.x, c->_location->_coords.y, c->_location->_coords.z);
+        ::debug("\nMove: x-%d y-%d z-%d", g_context->_location->_coords.x, g_context->_location->_coords.y, g_context->_location->_coords.z);
     
     gameUpdateScreen();
     return RET_OK;
@@ -1017,21 +1018,21 @@ Script::ReturnCode Script::pay(xmlNodePtr script, xmlNodePtr current) {
 
     if (_debug) {
         ::debug("\nPay: price(%d) quantity(%d)", price, quant);                
-        ::debug("\n\tParty gold:  %d -", c->_saveGame->_gold);
+        ::debug("\n\tParty gold:  %d -", g_context->_saveGame->_gold);
         ::debug("\n\tTotal price: %d", price * quant);
     }
     
     price *= quant;
-    if (price > c->_saveGame->_gold) {
+    if (price > g_context->_saveGame->_gold) {
         if (_debug)
             ::debug("\n\t=== Can't pay! ===");
         run(cantpay);
         return RET_STOP;
     }
-    else c->_party->adjustGold(-price);
+    else g_context->_party->adjustGold(-price);
 
     if (_debug)
-        ::debug("\n\tBalance:     %d\n", c->_saveGame->_gold);
+        ::debug("\n\tBalance:     %d\n", g_context->_saveGame->_gold);
 
     return RET_OK;
 }
@@ -1129,36 +1130,36 @@ Script::ReturnCode Script::add(xmlNodePtr script, xmlNodePtr current) {
     }
 
     if (type == "gold")        
-        c->_party->adjustGold(quant);    
+        g_context->_party->adjustGold(quant);    
     else if (type == "food") {
         quant *= 100;
-        c->_party->adjustFood(quant);
+        g_context->_party->adjustFood(quant);
     }
     else if (type == "horse")
-        c->_party->setTransport(Tileset::findTileByName("horse")->getId());
+        g_context->_party->setTransport(Tileset::findTileByName("horse")->getId());
     else if (type == "torch") {
-        AdjustValueMax(c->_saveGame->_torches, quant, 99);
-        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(g_context->_saveGame->_torches, quant, 99);
+        g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "gem") {
-        AdjustValueMax(c->_saveGame->_gems, quant, 99);
-        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(g_context->_saveGame->_gems, quant, 99);
+        g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "key") {
-        AdjustValueMax(c->_saveGame->_keys, quant, 99);
-        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(g_context->_saveGame->_keys, quant, 99);
+        g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "sextant") {
-        AdjustValueMax(c->_saveGame->_sextants, quant, 99);
-        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(g_context->_saveGame->_sextants, quant, 99);
+        g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "weapon") {
-        AdjustValueMax(c->_saveGame->_weapons[subtype[0] - 'a'], quant, 99);
-        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(g_context->_saveGame->_weapons[subtype[0] - 'a'], quant, 99);
+        g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "armor") {
-        AdjustValueMax(c->_saveGame->_armor[subtype[0] - 'a'], quant, 99);
-        c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+        AdjustValueMax(g_context->_saveGame->_armor[subtype[0] - 'a'], quant, 99);
+        g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
     }
     else if (type == "reagent") {
         int reagent;
@@ -1172,9 +1173,9 @@ Script::ReturnCode Script::add(xmlNodePtr script, xmlNodePtr current) {
         }
 
         if (reagents[reagent].size()) {
-            AdjustValueMax(c->_saveGame->_reagents[reagent], quant, 99);
-            c->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
-            c->_stats->resetReagentsMenu();
+            AdjustValueMax(g_context->_saveGame->_reagents[reagent], quant, 99);
+            g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
+            g_context->_stats->resetReagentsMenu();
         }
         else errorWarning("Error: reagent '%s' not found", subtype.c_str());
     }
@@ -1194,9 +1195,9 @@ Script::ReturnCode Script::lose(xmlNodePtr script, xmlNodePtr current) {
     int quant = getPropAsInt(current, "quantity");
 
     if (type == "weapon")
-        AdjustValueMin(c->_saveGame->_weapons[subtype[0] - 'a'], -quant, 0);            
+        AdjustValueMin(g_context->_saveGame->_weapons[subtype[0] - 'a'], -quant, 0);            
     else if (type == "armor")
-        AdjustValueMin(c->_saveGame->_armor[subtype[0] - 'a'], -quant, 0);            
+        AdjustValueMin(g_context->_saveGame->_armor[subtype[0] - 'a'], -quant, 0);            
 
     if (_debug) {
         ::debug("\nLose: %s ", type.c_str());
@@ -1213,7 +1214,7 @@ Script::ReturnCode Script::lose(xmlNodePtr script, xmlNodePtr current) {
  */ 
 Script::ReturnCode Script::heal(xmlNodePtr script, xmlNodePtr current) {
     Common::String type = getPropAsStr(current, "type");
-    PartyMember *p = c->_party->member(getPropAsInt(current, "player")-1);
+    PartyMember *p = g_context->_party->member(getPropAsInt(current, "player")-1);
 
     if (type == "cure")
         p->heal(HT_CURE);
@@ -1246,7 +1247,7 @@ Script::ReturnCode Script::damage(xmlNodePtr script, xmlNodePtr current) {
     int pts = getPropAsInt(current, "pts");
     PartyMember *p;
     
-    p = c->_party->member(player);
+    p = g_context->_party->member(player);
     p->applyDamage(pts);
 
     if (_debug)
@@ -1292,7 +1293,7 @@ Script::ReturnCode Script::karma(xmlNodePtr script, xmlNodePtr current) {
 
     KarmaActionMap::iterator ka = action_map.find(action);
     if (ka != action_map.end())
-        c->_party->adjustKarma(ka->_value);
+        g_context->_party->adjustKarma(ka->_value);
     else if (_debug)
         ::debug(" <FAILED - action '%s' not found>", action.c_str());
 
@@ -1381,11 +1382,11 @@ Script::ReturnCode Script::ztats(xmlNodePtr script, xmlNodePtr current) {
          */ 
         view = view_map.find(screen);
         if (view != view_map.end()) 
-            c->_stats->setView(view->_value); /* change it! */
+            g_context->_stats->setView(view->_value); /* change it! */
         else if (_debug)
             ::debug(" <FAILED - view could not be found>");
     }
-    else c->_stats->setView(STATS_PARTY_OVERVIEW);
+    else g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 
     return RET_OK;
 }

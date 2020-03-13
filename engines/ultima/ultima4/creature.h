@@ -166,55 +166,55 @@ public:
     void load(const ConfigElement &conf);
 
     // Accessor methods
-    virtual Common::String getName() const              {return name;}
-    virtual const Common::String &getHitTile() const    {return rangedhittile;}
-    virtual const Common::String &getMissTile() const   {return rangedmisstile;}
-    CreatureId getId() const                    {return id;}
-    CreatureId getLeader() const                {return leader;}
-    virtual int getHp() const                   {return hp;}
-    virtual int getXp() const                   {return xp;}
-    virtual const Common::String &getWorldrangedtile() const {return worldrangedtile;}
-    SlowedType getSlowedType() const            {return slowedType;}
-    int getEncounterSize() const                {return encounterSize;}
-    unsigned char getResists() const            {return resists;}
+    virtual Common::String getName() const              {return _name;}
+    virtual const Common::String &getHitTile() const    {return _rangedHitTile;}
+    virtual const Common::String &getMissTile() const   {return _rangedMissTile;}
+    CreatureId getId() const                    {return _id;}
+    CreatureId getLeader() const                {return _leader;}
+    virtual int getHp() const                   {return _hp;}
+    virtual int getXp() const                   {return _xp;}
+    virtual const Common::String &getWorldrangedtile() const {return _worldRangedTile;}
+    SlowedType getSlowedType() const            {return _slowedType;}
+    int getEncounterSize() const                {return _encounterSize;}
+    unsigned char getResists() const            {return _resists;}
 
     // Setters
-    void setName(Common::String s)                      {name = s;}
-    void setHitTile(const Common::String &t)            {rangedhittile = t;}
-    void setMissTile(const Common::String &t)           {rangedmisstile = t;}
-    virtual void setHp(int points)              {hp = points;}
+    void setName(Common::String s)                      {_name = s;}
+    void setHitTile(const Common::String &t)            {_rangedHitTile = t;}
+    void setMissTile(const Common::String &t)           {_rangedMissTile = t;}
+    virtual void setHp(int points)              {_hp = points;}
 
     // Query methods
-    bool isGood() const                 {return mattr & MATTR_GOOD;}
+    bool isGood() const                 {return _mAttr & MATTR_GOOD;}
     bool isEvil() const                 {return !isGood();}
-    bool isUndead() const               {return mattr & MATTR_UNDEAD;}
-    bool leavesChest() const            {return !isAquatic() && !(mattr & MATTR_NOCHEST);}
-    bool isAquatic() const              {return mattr & MATTR_WATER;}
-    bool wanders() const                {return movementAttr & MATTR_WANDERS;}
-    bool isStationary() const           {return movementAttr & MATTR_STATIONARY;}
-    bool flies() const                  {return movementAttr & MATTR_FLIES;}
-    bool teleports() const              {return movementAttr & MATTR_TELEPORT;}
-    bool swims() const                  {return movementAttr & MATTR_SWIMS;}
-    bool sails() const                  {return movementAttr & MATTR_SAILS;}
+    bool isUndead() const               {return _mAttr & MATTR_UNDEAD;}
+    bool leavesChest() const            {return !isAquatic() && !(_mAttr & MATTR_NOCHEST);}
+    bool isAquatic() const              {return _mAttr & MATTR_WATER;}
+    bool wanders() const                {return _movementAttr & MATTR_WANDERS;}
+    bool isStationary() const           {return _movementAttr & MATTR_STATIONARY;}
+    bool flies() const                  {return _movementAttr & MATTR_FLIES;}
+    bool teleports() const              {return _movementAttr & MATTR_TELEPORT;}
+    bool swims() const                  {return _movementAttr & MATTR_SWIMS;}
+    bool sails() const                  {return _movementAttr & MATTR_SAILS;}
     bool walks() const                  {return !(flies() || swims() || sails());}
-    bool divides() const                {return mattr & MATTR_DIVIDES;}
-    bool spawnsOnDeath() const          {return mattr & MATTR_SPAWNSONDEATH;}
-    bool canMoveOntoCreatures() const   {return movementAttr & MATTR_CANMOVECREATURES;}
-    bool canMoveOntoPlayer() const      {return movementAttr & MATTR_CANMOVEAVATAR;}
+    bool divides() const                {return _mAttr & MATTR_DIVIDES;}
+    bool spawnsOnDeath() const          {return _mAttr & MATTR_SPAWNSONDEATH;}
+    bool canMoveOntoCreatures() const   {return _movementAttr & MATTR_CANMOVECREATURES;}
+    bool canMoveOntoPlayer() const      {return _movementAttr & MATTR_CANMOVEAVATAR;}
     bool isAttackable() const;
-    bool willAttack() const             {return !(mattr & MATTR_NOATTACK);}
-    bool stealsGold() const             {return mattr & MATTR_STEALGOLD;}
-    bool stealsFood() const             {return mattr & MATTR_STEALFOOD;}
-    bool negates() const                {return mattr & MATTR_NEGATE;}
-    bool camouflages() const            {return mattr & MATTR_CAMOUFLAGE;}
-    bool ambushes() const               {return mattr & MATTR_AMBUSHES;}
-    bool isIncorporeal() const          {return mattr & MATTR_INCORPOREAL;}
-    bool hasRandomRanged() const        {return mattr & MATTR_RANDOMRANGED;}
-    bool leavesTile() const             {return leavestile;}
-    bool castsSleep() const             {return mattr & MATTR_CASTS_SLEEP;}
-    bool isForceOfNature() const        {return mattr & MATTR_FORCE_OF_NATURE;}
+    bool willAttack() const             {return !(_mAttr & MATTR_NOATTACK);}
+    bool stealsGold() const             {return _mAttr & MATTR_STEALGOLD;}
+    bool stealsFood() const             {return _mAttr & MATTR_STEALFOOD;}
+    bool negates() const                {return _mAttr & MATTR_NEGATE;}
+    bool camouflages() const            {return _mAttr & MATTR_CAMOUFLAGE;}
+    bool ambushes() const               {return _mAttr & MATTR_AMBUSHES;}
+    bool isIncorporeal() const          {return _mAttr & MATTR_INCORPOREAL;}
+    bool hasRandomRanged() const        {return _mAttr & MATTR_RANDOMRANGED;}
+    bool leavesTile() const             {return _leavesTile;}
+    bool castsSleep() const             {return _mAttr & MATTR_CASTS_SLEEP;}
+    bool isForceOfNature() const        {return _mAttr & MATTR_FORCE_OF_NATURE;}
     int getDamage() const;    
-    const Common::String &getCamouflageTile() const {return camouflageTile;}
+    const Common::String &getCamouflageTile() const {return _camouflageTile;}
     void setRandomRanged();
     int setInitialHp(int hp = -1);
 
@@ -244,25 +244,25 @@ public:
 
     // Properties
 protected:
-    Common::String name;
-    Common::String rangedhittile;
-    Common::String rangedmisstile;
-    CreatureId     id;    
-    Common::String camouflageTile;    
-    CreatureId     leader;
-    int            basehp;
-    int            hp;
-    StatusList     status;
-    int            xp;
-    unsigned char  ranged;
-    Common::String worldrangedtile;    
-    bool           leavestile;
-    CreatureAttrib mattr;
-    CreatureMovementAttrib movementAttr;
-    SlowedType     slowedType;
-    int            encounterSize;
-    unsigned char  resists;
-    CreatureId     spawn;
+    Common::String _name;
+    Common::String _rangedHitTile;
+    Common::String _rangedMissTile;
+    CreatureId     _id;    
+    Common::String _camouflageTile;    
+    CreatureId     _leader;
+    int            _baseHp;
+    int            _hp;
+    StatusList     _status;
+    int            _xp;
+    unsigned char  _ranged;
+    Common::String _worldRangedTile;    
+    bool           _leavesTile;
+    CreatureAttrib _mAttr;
+    CreatureMovementAttrib _movementAttr;
+    SlowedType     _slowedType;
+    int            _encounterSize;
+    unsigned char  _resists;
+    CreatureId     _spawn;
 };
 
 /**
@@ -288,9 +288,9 @@ private:
     CreatureMgr(const CreatureMgr&);
     const CreatureMgr &operator=(const CreatureMgr&);
 
-    static CreatureMgr *instance;
+    static CreatureMgr *_instance;
 
-    CreatureMap creatures;    
+    CreatureMap _creatures;    
 };
 
 bool isCreature(Object *punknown);

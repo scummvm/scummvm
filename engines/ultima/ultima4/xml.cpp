@@ -69,8 +69,9 @@ void xmlRegisterIO() {
  * triggered if the parsing or validation fail.
  */
 xmlDocPtr xmlParse(const char *filename) {
-    xmlDocPtr doc;
 #ifdef TODO
+	xmlDocPtr doc;
+
     if (!ioRegistered)
         xmlRegisterIO();
 
@@ -91,8 +92,11 @@ xmlDocPtr xmlParse(const char *filename) {
         if (!xmlValidateDocument(&cvp, doc))            
             errorFatal("xml parse error:\n%s", errorMessage.c_str());        
     }
-#endif
+
     return doc;
+#else
+	return nullptr;
+#endif
 }
 
 void xmlAccumError(void *l, const char *fmt, ...) {

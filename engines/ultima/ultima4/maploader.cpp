@@ -94,10 +94,6 @@ bool MapLoader::loadData(Map *map, U4FILE *f) {
         map->_chunkWidth = map->_width;
 
     uint32 total = 0;
-#ifndef NPERF
-    uint32 start = g_system->getMillis();
-#endif
-
     u4fseek(f, map->_offset, SEEK_CUR);
 
     for(ych = 0; ych < (map->_height / map->_chunkHeight); ++ych) {
@@ -433,8 +429,7 @@ bool DngMapLoader::load(Map *map) {
                                         Coords(1, 8, 0x16),
                                         Coords(0, 9, 0x16) };
 
-                for (int j=0; j < int(sizeof(tile)/sizeof(Coords)); j++)
-                {
+                for (j=0; j < int(sizeof(tile)/sizeof(Coords)); j++) {
                     const int index = (tile[j].y * CON_WIDTH) + tile[j].x;
                     dungeon->_rooms[i]._mapData[index] = TileMap::get("base")->translate(tile[j].z);
                 }

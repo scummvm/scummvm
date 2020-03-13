@@ -90,14 +90,18 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
                 }
             }
         }
+
+	default:
+		error("Unknown type");
     }
 
     /**
      * See if the transform is performed randomely
      */
     if (conf.exists("random"))
-        transform->_randomVal = conf.getInt("random");
-    else transform->_randomVal = 0;
+        transform->_random = conf.getInt("random");
+    else
+		transform->_random = 0;
 
     return transform;
 }
@@ -330,7 +334,7 @@ void TileAnim::draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir) {
     for (t = _transforms.begin(); t != _transforms.end(); t++) {
         TileAnimTransform *transform = *t;
         
-        if (!transform->_randomVal || xu4_random(100) < transform->_randomVal) {
+        if (!transform->_random || xu4_random(100) < transform->_random) {
             if (!transform->drawsTile() && !drawn)
                 tile->getImage()->drawSubRectOn(dest, 0, 0, 0, mapTile._frame * tile->getHeight(), tile->getWidth(), tile->getHeight());
             transform->draw(dest, tile, mapTile);
@@ -347,7 +351,7 @@ void TileAnim::draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir) {
             for (t = ctx_transforms.begin(); t != ctx_transforms.end(); t++) {
                 TileAnimTransform *transform = *t;
 
-                if (!transform->_randomVal || xu4_random(100) < transform->_randomVal) {
+                if (!transform->_random || xu4_random(100) < transform->_random) {
                     if (!transform->drawsTile() && !drawn)
                         tile->getImage()->drawSubRectOn(dest, 0, 0, 0, mapTile._frame * tile->getHeight(), tile->getWidth(), tile->getHeight());
                     transform->draw(dest, tile, mapTile);

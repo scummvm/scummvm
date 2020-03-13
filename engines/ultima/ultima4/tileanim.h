@@ -46,7 +46,7 @@ public:
     virtual bool drawsTile() const = 0;
     
     // Properties
-    int _randomVal;
+    int _random;
 
 private:    
     bool _replaces;

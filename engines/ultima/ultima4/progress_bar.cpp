@@ -46,7 +46,7 @@ void ProgressBar::draw() {
     // color
     bar->fillRect(SCALED(_bWidth), SCALED(_bWidth), SCALED(pos), SCALED(_height - (_bWidth * 2)), _color.r, _color.g, _color.b); 
 
-    bar->drawOn(screen, SCALED(_x), SCALED(_y));
+    bar->drawOn(_screen, SCALED(_x), SCALED(_y));
     update();
 
     delete bar;

@@ -53,7 +53,7 @@ Std::vector<Common::String> shrineAdvice;
  */ 
 bool shrineCanEnter(const Portal *p) {
     Shrine *shrine = dynamic_cast<Shrine*>(mapMgr->get(p->_destid));
-    if (!c->_party->canEnterShrine(shrine->getVirtue())) {
+    if (!g_context->_party->canEnterShrine(shrine->getVirtue())) {
         screenMessage("Thou dost not bear the rune of entry!  A strange force keeps you out!\n");
         return 0;
     }
@@ -116,7 +116,7 @@ void Shrine::enter() {
     U4IOS::IOSConversationHelper inputVirture;
     inputVirture.beginConversation(U4IOS::UIKeyboardTypeDefault, "Upon which virtue dost thou meditate?");
 #endif
-    virtue = ReadStringController::get(32, TEXT_AREA_X + c->col, TEXT_AREA_Y + c->_line);
+    virtue = ReadStringController::get(32, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
 #ifdef IOS
     }
 #endif
@@ -147,8 +147,8 @@ void Shrine::enter() {
         return;
     }
 
-    if (((c->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) >= 0x10000) ||
-			(((c->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff) != c->_saveGame->_lastMeditation)) {
+    if (((g_context->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) >= 0x10000) ||
+			(((g_context->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff) != g_context->_saveGame->_lastMeditation)) {
         screenMessage("Begin Meditation\n");
         meditationCycle();
     } else { 
@@ -159,20 +159,20 @@ void Shrine::enter() {
 
 void Shrine::enhancedSequence() {
     /* replace the 'static' avatar tile with grass */        
-    _annotations->add(Coords(5, 6, c->_location->_coords.z), _tileset->getByName("grass")->getId(), false, true);
+    _annotations->add(Coords(5, 6, g_context->_location->_coords.z), _tileset->getByName("grass")->getId(), false, true);
 
     screenDisableCursor();
     screenMessage("You approach\nthe ancient\nshrine...\n");
     gameUpdateScreen(); EventHandler::wait_cycles(settings._gameCyclesPerSecond);
         
-    Object *obj = addCreature(creatureMgr->getById(BEGGAR_ID), Coords(5, 10, c->_location->_coords.z));
+    Object *obj = addCreature(creatureMgr->getById(BEGGAR_ID), Coords(5, 10, g_context->_location->_coords.z));
     obj->setTile(_tileset->getByName("avatar")->getId());
 
     gameUpdateScreen(); EventHandler::wait_msecs(400);        
-    c->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
-    c->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
-    c->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
-    c->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(800);
+    g_context->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
+    g_context->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
+    g_context->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(400);
+    g_context->_location->_map->move(obj, DIR_NORTH); gameUpdateScreen(); EventHandler::wait_msecs(800);
     obj->setTile(creatureMgr->getById(BEGGAR_ID)->getTile());
     gameUpdateScreen();
         
@@ -189,7 +189,7 @@ void Shrine::meditationCycle() {
     if (interval <= 0)
         interval = 1;    
 
-    c->_saveGame->_lastMeditation = (c->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff;
+    g_context->_saveGame->_lastMeditation = (g_context->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff;
 
     screenDisableCursor();
     for (int i = 0; i < MEDITATION_MANTRAS_PER_CYCLE; i++) {
@@ -212,27 +212,27 @@ void Shrine::askMantra() {
     U4IOS::IOSConversationHelper mantraHelper;
     mantraHelper.beginConversation(U4IOS::UIKeyboardTypeASCIICapable, "Mantra?");
 #endif
-    mantra = ReadStringController::get(4, TEXT_AREA_X + c->col, TEXT_AREA_Y + c->_line);
+    mantra = ReadStringController::get(4, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
     screenMessage("\n");
 #ifdef IOS
     }
 #endif
 
     if (scumm_stricmp(mantra.c_str(), getMantra().c_str()) != 0) {
-        c->_party->adjustKarma(KA_BAD_MANTRA);
+        g_context->_party->adjustKarma(KA_BAD_MANTRA);
         screenMessage("Thou art not able to focus thy thoughts with that Mantra!\n");
         eject();
     }
     else if (--cycles > 0) {
         completedCycles++;
-        c->_party->adjustKarma(KA_MEDITATION);
+        g_context->_party->adjustKarma(KA_MEDITATION);
         meditationCycle();
     }
     else {
         completedCycles++;
-        c->_party->adjustKarma(KA_MEDITATION);
+        g_context->_party->adjustKarma(KA_MEDITATION);
 
-        bool elevated = completedCycles == 3 && c->_party->attemptElevation(getVirtue());
+        bool elevated = completedCycles == 3 && g_context->_party->attemptElevation(getVirtue());
         if (elevated)
             screenMessage("\nThou hast achieved partial Avatarhood in the Virtue of %s\n\n",
                           getVirtueName(getVirtue()));
@@ -271,9 +271,9 @@ void Shrine::showVision(bool elevated) {
 }
 
 void Shrine::eject() {
-    game->exitToParentMap();
+    g_game->exitToParentMap();
     musicMgr->play();
-    c->_location->_turnCompleter->finishTurn();
+    g_context->_location->_turnCompleter->finishTurn();
 }
 
 } // End of namespace Ultima4

@@ -89,7 +89,7 @@ DungeonToken Dungeon::tokenForTile(MapTile tile) {
  * Returns the dungeon token for the current location
  */
 DungeonToken Dungeon::currentToken() {
-    return tokenAt(c->_location->_coords);
+    return tokenAt(g_context->_location->_coords);
 }
 
 /**
@@ -100,7 +100,7 @@ DungeonToken Dungeon::currentToken() {
  * Returns the dungeon sub-token for the current location
  */
 unsigned char Dungeon::currentSubToken() {
-    return subTokenAt(c->_location->_coords);
+    return subTokenAt(g_context->_location->_coords);
 }
 
 /**
@@ -126,9 +126,9 @@ unsigned char Dungeon::subTokenAt(MapCoords coords) {
  * Handles 's'earching while in dungeons
  */
 void dungeonSearch(void) {
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->_map);
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
     DungeonToken token = dungeon->currentToken(); 
-    Annotation::List a = dungeon->_annotations->allAt(c->_location->_coords);
+    Annotation::List a = dungeon->_annotations->allAt(g_context->_location->_coords);
     const ItemLocation *item;
     if (a.size() > 0)
         token = DUNGEON_CORRIDOR;
@@ -148,7 +148,7 @@ void dungeonSearch(void) {
     default: 
         {
             /* see if there is an item at the current location (stones on altars, etc.) */
-            item = itemAtLocation(dungeon, c->_location->_coords);
+            item = itemAtLocation(dungeon, g_context->_location->_coords);
             if (item) {
                 if (*item->_isItemInInventory != NULL && (*item->_isItemInInventory)(item->_data))
                     screenMessage("Nothing Here!\n");
@@ -174,7 +174,7 @@ void dungeonDrinkFountain() {
     if (player == -1)
         return;
 
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->_map);
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
     FountainType type = (FountainType) dungeon->currentSubToken();    
 
     switch(type) {
@@ -185,30 +185,30 @@ void dungeonDrinkFountain() {
 
     /* healing fountain */
     case FOUNTAIN_HEALING: 
-        if (c->_party->member(player)->heal(HT_FULLHEAL))
+        if (g_context->_party->member(player)->heal(HT_FULLHEAL))
             screenMessage("\nAhh-Refreshing!\n");
         else screenMessage("\nHmmm--No Effect!\n");
         break;
     
     /* acid fountain */
     case FOUNTAIN_ACID:
-        c->_party->member(player)->applyDamage(100); /* 100 damage to drinker */        
+        g_context->_party->member(player)->applyDamage(100); /* 100 damage to drinker */        
         screenMessage("\nBleck--Nasty!\n");
         break;
 
     /* cure fountain */
     case FOUNTAIN_CURE:
-        if (c->_party->member(player)->heal(HT_CURE))        
+        if (g_context->_party->member(player)->heal(HT_CURE))        
             screenMessage("\nHmmm--Delicious!\n");
         else screenMessage("\nHmmm--No Effect!\n");
         break;
 
     /* poison fountain */
     case FOUNTAIN_POISON: 
-        if (c->_party->member(player)->getStatus() != STAT_POISONED) {
+        if (g_context->_party->member(player)->getStatus() != STAT_POISONED) {
             soundPlay(SOUND_POISON_DAMAGE);
-            c->_party->member(player)->applyEffect(EFFECT_POISON);
-            c->_party->member(player)->applyDamage(100); /* 100 damage to drinker also */            
+            g_context->_party->member(player)->applyEffect(EFFECT_POISON);
+            g_context->_party->member(player)->applyDamage(100); /* 100 damage to drinker also */            
             screenMessage("\nArgh-Choke-Gasp!\n");
         }
         else screenMessage("\nHmm--No Effect!\n");
@@ -232,10 +232,10 @@ void dungeonTouchOrb() {
     int damage = 0;    
     
     /* Get current position and find a replacement tile for it */   
-    Tile * orb_tile = c->_location->_map->_tileset->getByName("magic_orb");
-    MapTile replacementTile(c->_location->getReplacementTile(c->_location->_coords, orb_tile));
+    Tile * orb_tile = g_context->_location->_map->_tileset->getByName("magic_orb");
+    MapTile replacementTile(g_context->_location->getReplacementTile(g_context->_location->_coords, orb_tile));
 
-    switch(c->_location->_map->_id) {
+    switch(g_context->_location->_map->_id) {
     case MAP_DECEIT:    stats = STATSBONUS_INT; break;
     case MAP_DESPISE:   stats = STATSBONUS_DEX; break;
     case MAP_DESTARD:   stats = STATSBONUS_STR; break;
@@ -249,45 +249,45 @@ void dungeonTouchOrb() {
     /* give stats bonuses */
     if (stats & STATSBONUS_STR) {
         screenMessage("Strength + 5\n");
-        AdjustValueMax(c->_saveGame->_players[player]._str, 5, 50);
+        AdjustValueMax(g_context->_saveGame->_players[player]._str, 5, 50);
         damage += 200;
     }
     if (stats & STATSBONUS_DEX) {
         screenMessage("Dexterity + 5\n");
-        AdjustValueMax(c->_saveGame->_players[player]._dex, 5, 50);        
+        AdjustValueMax(g_context->_saveGame->_players[player]._dex, 5, 50);        
         damage += 200;
     }
     if (stats & STATSBONUS_INT) {
         screenMessage("Intelligence + 5\n");
-        AdjustValueMax(c->_saveGame->_players[player]._intel, 5, 50);        
+        AdjustValueMax(g_context->_saveGame->_players[player]._intel, 5, 50);        
         damage += 200;
     }   
     
     /* deal damage to the party member who touched the orb */
-    c->_party->member(player)->applyDamage(damage);    
+    g_context->_party->member(player)->applyDamage(damage);    
     /* remove the orb from the map */
-    c->_location->_map->_annotations->add(c->_location->_coords, replacementTile);
+    g_context->_location->_map->_annotations->add(g_context->_location->_coords, replacementTile);
 }
 
 /**
  * Handles dungeon traps
  */
 bool dungeonHandleTrap(TrapType trap) {
-    Dungeon *dungeon = dynamic_cast<Dungeon *>(c->_location->_map);
+    Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
     switch((TrapType)dungeon->currentSubToken()) {
     case TRAP_WINDS:
         screenMessage("\nWinds!\n");
-        c->_party->quenchTorch();
+        g_context->_party->quenchTorch();
         break;
     case TRAP_FALLING_ROCK:
         // Treat falling rocks and pits like bomb traps
         // XXX: That's a little harsh.
         screenMessage("\nFalling Rocks!\n");
-        c->_party->applyEffect(EFFECT_LAVA);
+        g_context->_party->applyEffect(EFFECT_LAVA);
         break;
     case TRAP_PIT:
         screenMessage("\nPit!\n");
-        c->_party->applyEffect(EFFECT_LAVA);
+        g_context->_party->applyEffect(EFFECT_LAVA);
         break;
     default: break;
     }

@@ -51,43 +51,43 @@ void moveAvatar(MoveEvent &event) {
     SlowedType slowedType = SLOWED_BY_TILE;
 
     /* Check to see if we're on the balloon */
-    if (c->_transportContext == TRANSPORT_BALLOON && event._userEvent) {
+    if (g_context->_transportContext == TRANSPORT_BALLOON && event._userEvent) {
         event._result = (MoveResult)(MOVE_DRIFT_ONLY | MOVE_END_TURN);
         return;
     }
 
-    if (c->_transportContext == TRANSPORT_SHIP)
+    if (g_context->_transportContext == TRANSPORT_SHIP)
         slowedType = SLOWED_BY_WIND;
-    else if (c->_transportContext == TRANSPORT_BALLOON)
+    else if (g_context->_transportContext == TRANSPORT_BALLOON)
         slowedType = SLOWED_BY_NOTHING;
 
     /* if you're on ship, you must turn first! */
-    if (c->_transportContext == TRANSPORT_SHIP) {
-        if (c->_party->getDirection() != event._dir) {
-            c->_party->setDirection(event._dir);
+    if (g_context->_transportContext == TRANSPORT_SHIP) {
+        if (g_context->_party->getDirection() != event._dir) {
+            g_context->_party->setDirection(event._dir);
             event._result = (MoveResult)(MOVE_TURNED | MOVE_END_TURN);
             return;
         }
     }
     
     /* change direction of horse, if necessary */
-    if (c->_transportContext == TRANSPORT_HORSE) {
-        if ((event._dir == DIR_WEST || event._dir == DIR_EAST) && (c->_party->getDirection() != event._dir))
-            c->_party->setDirection(event._dir);
+    if (g_context->_transportContext == TRANSPORT_HORSE) {
+        if ((event._dir == DIR_WEST || event._dir == DIR_EAST) && (g_context->_party->getDirection() != event._dir))
+            g_context->_party->setDirection(event._dir);
     }
 
     /* figure out our new location we're trying to move to */
-    newCoords = c->_location->_coords;    
-    newCoords.move(event._dir, c->_location->_map);
+    newCoords = g_context->_location->_coords;    
+    newCoords.move(event._dir, g_context->_location->_map);
 
     /* see if we moved off the map */
-    if (MAP_IS_OOB(c->_location->_map, newCoords)) {
+    if (MAP_IS_OOB(g_context->_location->_map, newCoords)) {
         event._result = (MoveResult)(MOVE_MAP_CHANGE | MOVE_EXIT_TO_PARENT | MOVE_SUCCEEDED);
         return;
     }
 
-    if (!collisionOverride && !c->_party->isFlying()) {
-        int movementMask = c->_location->_map->getValidMoves(c->_location->_coords, c->_party->getTransport());
+    if (!collisionOverride && !g_context->_party->isFlying()) {
+        int movementMask = g_context->_location->_map->getValidMoves(g_context->_location->_coords, g_context->_party->getTransport());
         /* See if movement was blocked */
         if (!DIR_IN_MASK(event._dir, movementMask)) {
             event._result = (MoveResult)(MOVE_BLOCKED | MOVE_END_TURN);
@@ -99,7 +99,7 @@ void moveAvatar(MoveEvent &event) {
         case SLOWED_BY_TILE:
           // TODO: CHEST: Make a user option to not make chests always fast to
           // travel over
-            slowed = slowedByTile(c->_location->_map->tileTypeAt(newCoords, WITH_OBJECTS));
+            slowed = slowedByTile(g_context->_location->_map->tileTypeAt(newCoords, WITH_OBJECTS));
             break;
         case SLOWED_BY_WIND:
             slowed = slowedByWind(event._dir);
@@ -116,7 +116,7 @@ void moveAvatar(MoveEvent &event) {
     }
 
     /* move succeeded */
-    c->_location->_coords = newCoords;    
+    g_context->_location->_coords = newCoords;    
 
     /* if the avatar moved onto a creature (whirlpool, twister), then do the creature's special effect (this current code does double damage according to changeset 2753.
       
@@ -135,35 +135,35 @@ void moveAvatar(MoveEvent &event) {
  */
 void moveAvatarInDungeon(MoveEvent &event) {
     MapCoords newCoords;
-    Direction realDir = dirNormalize((Direction)c->_saveGame->_orientation, event._dir); /* get our real direction */  
-    int advancing = realDir == c->_saveGame->_orientation,
-        retreating = realDir == dirReverse((Direction)c->_saveGame->_orientation);
+    Direction realDir = dirNormalize((Direction)g_context->_saveGame->_orientation, event._dir); /* get our real direction */  
+    int advancing = realDir == g_context->_saveGame->_orientation,
+        retreating = realDir == dirReverse((Direction)g_context->_saveGame->_orientation);
     MapTile *tile;
     
     /* we're not in a dungeon, failed! */
-    ASSERT(c->_location->_context & CTX_DUNGEON, "moveAvatarInDungeon() called outside of dungeon, failed!");    
+    ASSERT(g_context->_location->_context & CTX_DUNGEON, "moveAvatarInDungeon() called outside of dungeon, failed!");    
         
     /* you must turn first! */
     if (!advancing && !retreating) {        
-        c->_saveGame->_orientation = realDir;
+        g_context->_saveGame->_orientation = realDir;
         event._result = MOVE_TURNED;
         return;
     }
     
     /* figure out our new location */
-    newCoords = c->_location->_coords;    
-    newCoords.move(realDir, c->_location->_map);
+    newCoords = g_context->_location->_coords;    
+    newCoords.move(realDir, g_context->_location->_map);
 
-    tile = c->_location->_map->tileAt(newCoords, WITH_OBJECTS);
+    tile = g_context->_location->_map->tileAt(newCoords, WITH_OBJECTS);
 
     /* see if we moved off the map (really, this should never happen in a dungeon) */
-    if (MAP_IS_OOB(c->_location->_map, newCoords)) {
+    if (MAP_IS_OOB(g_context->_location->_map, newCoords)) {
         event._result = (MoveResult)(MOVE_MAP_CHANGE | MOVE_EXIT_TO_PARENT | MOVE_SUCCEEDED);
         return;
     }
 
     if (!collisionOverride) {
-        int movementMask = c->_location->_map->getValidMoves(c->_location->_coords, c->_party->getTransport());
+        int movementMask = g_context->_location->_map->getValidMoves(g_context->_location->_coords, g_context->_party->getTransport());
 
         if (advancing && !tile->getTileType()->canWalkOn(DIR_ADVANCE))
             movementMask = DIR_REMOVE_FROM_MASK(realDir, movementMask);
@@ -177,7 +177,7 @@ void moveAvatarInDungeon(MoveEvent &event) {
     }
 
     /* move succeeded */
-    c->_location->_coords = newCoords;    
+    g_context->_location->_coords = newCoords;    
 
     event._result = (MoveResult)(MOVE_SUCCEEDED | MOVE_END_TURN);
 }
@@ -219,13 +219,13 @@ int moveObject(Map *map, Creature *obj, MapCoords avatar) {
             break;
         }
 
-        dir = new_coords.pathTo(avatar, dirmask, true, c->_location->_map);
+        dir = new_coords.pathTo(avatar, dirmask, true, g_context->_location->_map);
         break;
     }
     
     /* now, get a new x and y for the object */
     if (dir)
-        new_coords.move(dir, c->_location->_map);        
+        new_coords.move(dir, g_context->_location->_map);        
     else
         return 0;
 
@@ -303,7 +303,7 @@ int moveCombatObject(int act, Map *map, Creature *obj, MapCoords target) {
     }
 
     if (dir)
-        new_coords.move(dir, c->_location->_map);
+        new_coords.move(dir, g_context->_location->_map);
     else
         return 0;
 
@@ -348,21 +348,21 @@ void movePartyMember(MoveEvent &event) {
 
     /* find our new location */
     newCoords = (*party)[member]->getCoords();
-    newCoords.move(event._dir, c->_location->_map);
+    newCoords.move(event._dir, g_context->_location->_map);
 
-    if (MAP_IS_OOB(c->_location->_map, newCoords)) {
+    if (MAP_IS_OOB(g_context->_location->_map, newCoords)) {
         bool sameExit = (!cm->isDungeonRoom() || (ct->getExitDir() == DIR_NONE) || (event._dir == ct->getExitDir()));
         if (sameExit) {
             /* if in a win-or-lose battle and not camping, then it can be bad to flee while healthy */
             if (ct->isWinOrLose() && !ct->isCamping()) {
                 /* A fully-healed party member fled from an evil creature :( */
                 if (ct->getCreature() && ct->getCreature()->isEvil() && 
-                    c->_party->member(member)->getHp() == c->_party->member(member)->getMaxHp())
-                    c->_party->adjustKarma(KA_HEALTHY_FLED_EVIL);
+                    g_context->_party->member(member)->getHp() == g_context->_party->member(member)->getMaxHp())
+                    g_context->_party->adjustKarma(KA_HEALTHY_FLED_EVIL);
             }
 
             ct->setExitDir(event._dir);
-            c->_location->_map->removeObject((*party)[member]);
+            g_context->_location->_map->removeObject((*party)[member]);
             (*party)[member] = NULL;
             event._result = (MoveResult)(MOVE_EXIT_TO_PARENT | MOVE_MAP_CHANGE | MOVE_SUCCEEDED | MOVE_END_TURN);
             return;
@@ -373,21 +373,21 @@ void movePartyMember(MoveEvent &event) {
         }
     }
 
-    int movementMask = c->_location->_map->getValidMoves((*party)[member]->getCoords(), (*party)[member]->getTile());
+    int movementMask = g_context->_location->_map->getValidMoves((*party)[member]->getCoords(), (*party)[member]->getTile());
     if (!DIR_IN_MASK(event._dir, movementMask)) {
         event._result = (MoveResult)(MOVE_BLOCKED | MOVE_END_TURN);
         return;
     }
 
     /* is the party member slowed? */
-    if (!slowedByTile(c->_location->_map->tileTypeAt(newCoords, WITHOUT_OBJECTS)))
+    if (!slowedByTile(g_context->_location->_map->tileTypeAt(newCoords, WITHOUT_OBJECTS)))
     {
         /* move succeeded */        
         (*party)[member]->setCoords(newCoords);
 
         /* handle dungeon room triggers */
         if (cm->isDungeonRoom()) {
-            Dungeon *dungeon = dynamic_cast<Dungeon*>(c->_location->_prev->_map);
+            Dungeon *dungeon = dynamic_cast<Dungeon*>(g_context->_location->_prev->_map);
             int i;
             Trigger *triggers = dungeon->_rooms[dungeon->_currentRoom]._triggers;            
 
@@ -399,27 +399,27 @@ void movePartyMember(MoveEvent &event) {
                    wipe the creature table and replace it with the triggered creatures. Thus, retriggering
                    it will reset the creatures.
                    */
-                MapCoords trigger(triggers[i].x, triggers[i].y, c->_location->_coords.z);
+                MapCoords trigger(triggers[i].x, triggers[i].y, g_context->_location->_coords.z);
 
                 /* see if we're on a trigger */
                 if (newCoords == trigger) {
-                    MapCoords change1(triggers[i]._changeX1, triggers[i]._changeY1, c->_location->_coords.z),
-                              change2(triggers[i].changeX2, triggers[i].changeY2, c->_location->_coords.z);
+                    MapCoords change1(triggers[i]._changeX1, triggers[i]._changeY1, g_context->_location->_coords.z),
+                              change2(triggers[i].changeX2, triggers[i].changeY2, g_context->_location->_coords.z);
 
                     /**
                      * Remove any previous annotations placed at our target coordinates
                      */ 
-                    c->_location->_map->_annotations->remove(c->_location->_map->_annotations->allAt(change1));
-                    c->_location->_map->_annotations->remove(c->_location->_map->_annotations->allAt(change2));
+                    g_context->_location->_map->_annotations->remove(g_context->_location->_map->_annotations->allAt(change1));
+                    g_context->_location->_map->_annotations->remove(g_context->_location->_map->_annotations->allAt(change2));
 
                     /* change the tiles! */
                     if (change1.x || change1.y) {
                         /*if (m) combatAddCreature(m, triggers[i].change_x1, triggers[i].change_y1, c->location->coords.z);
-                        else*/ c->_location->_map->_annotations->add(change1, triggers[i]._tile, false, true);
+                        else*/ g_context->_location->_map->_annotations->add(change1, triggers[i]._tile, false, true);
                     }
                     if (change2.x || change2.y) {
                         /*if (m) combatAddCreature(m, triggers[i].change_x2, triggers[i].change_y2, c->location->coords.z);
-                        else*/ c->_location->_map->_annotations->add(change2, triggers[i]._tile, false, true);
+                        else*/ g_context->_location->_map->_annotations->add(change2, triggers[i]._tile, false, true);
                     }
                 }
             }
@@ -463,11 +463,11 @@ bool slowedByTile(const Tile *tile) {
  */
 bool slowedByWind(int direction) {
     /* 1 of 4 moves while trying to move into the wind succeeds */
-    if (direction == c->_windDirection)
-        return (c->_saveGame->_moves % 4) != 0;
+    if (direction == g_context->_windDirection)
+        return (g_context->_saveGame->_moves % 4) != 0;
     /* 1 of 4 moves while moving directly away from wind fails */
-    else if (direction == dirReverse((Direction) c->_windDirection))
-        return (c->_saveGame->_moves % 4) == 3;    
+    else if (direction == dirReverse((Direction) g_context->_windDirection))
+        return (g_context->_saveGame->_moves % 4) == 3;    
     else
         return false;
 }

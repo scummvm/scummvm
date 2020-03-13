@@ -251,7 +251,7 @@ ReadStringController::ReadStringController(int maxlen, TextView *view, const Com
 bool ReadStringController::keyPressed(int key) {
     int valid = true,
         len = _value.size();
-    Common::String::value_type pos = Common::String::npos;
+    size_t pos = Common::String::npos;
 
 #ifdef TODO
     if (key < U4_ALT)
@@ -288,7 +288,7 @@ bool ReadStringController::keyPressed(int key) {
                 screenHideCursor();
                 screenTextAt(screenX + len, screenY, "%c", key);
                 screenSetCursorPos(screenX + len + 1, screenY);
-                c->col = len + 1;
+                g_context->col = len + 1;
                 screenShowCursor();            
             }
         }

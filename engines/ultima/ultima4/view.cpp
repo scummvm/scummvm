@@ -28,19 +28,19 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Image *View::screen = NULL;
+Image *View::_screen = NULL;
 
 View::View(int x, int y, int width, int height) : _x(x), _y(y), _width(width), _height(height),
 		_highlighted(false), _highlightX(0), _highlightY(0), _highlightW(0), _highlightH(0) {
-    if (screen == NULL)
-        screen = imageMgr->get("screen")->_image;
+    if (_screen == NULL)
+        _screen = imageMgr->get("screen")->_image;
 }
 
 /**
  * Hook for reinitializing when graphics reloaded.
  */
 void View::reinit() {
-    screen = imageMgr->get("screen")->_image;
+    _screen = imageMgr->get("screen")->_image;
 }
 
 /**
@@ -48,7 +48,7 @@ void View::reinit() {
  */
 void View::clear() {
     unhighlight();
-    screen->fillRect(SCALED(_x), SCALED(_y), SCALED(_width), SCALED(_height), 0, 0, 0);
+    _screen->fillRect(SCALED(_x), SCALED(_y), SCALED(_width), SCALED(_height), 0, 0, 0);
 }
 
 /**

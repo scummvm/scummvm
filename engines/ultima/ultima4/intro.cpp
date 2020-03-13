@@ -1698,7 +1698,7 @@ void IntroController::getTitleSourceData()
                         titles[i]._srcImage->getPixel(x*info->_prescale, y*info->_prescale, r, g, b, a);
                         if (r || g || b)
                         {
-                            AnimPlot plot = {(uint8)x+1, (uint8)y+1, (uint8)r, (uint8)g, (uint8)b, (uint8)a};
+                            AnimPlot plot = { (uint8)(x+1), (uint8)(y+1), (uint8)r, (uint8)g, (uint8)b, (uint8)a };
                             titles[i]._plotData.push_back(plot);
                         }
                     }

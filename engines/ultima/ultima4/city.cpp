@@ -83,8 +83,8 @@ void City::addPeople() {
     for (current = _persons.begin(); current != _persons.end(); current++) {
         Person *p = *current;
         if ( (p->getTile() != 0)
-             && !(c->_party->canPersonJoin(p->getName(), NULL)
-                  && c->_party->isPersonJoined(p->getName()))
+             && !(g_context->_party->canPersonJoin(p->getName(), NULL)
+                  && g_context->_party->isPersonJoined(p->getName()))
             )
             addPerson(p);
     }

@@ -84,8 +84,8 @@ bool KeyHandler::defaultHandler(int key, void *data) {
 
     switch (key) {
     case '`':
-        if (c && c->_location)
-            debug(1, "x = %d, y = %d, level = %d, tile = %d (%s)\n", c->_location->_coords.x, c->_location->_coords.y, c->_location->_coords.z, c->_location->_map->translateToRawTileIndex(*c->_location->_map->tileAt(c->_location->_coords, WITH_OBJECTS)), c->_location->_map->tileTypeAt(c->_location->_coords, WITH_OBJECTS)->getName().c_str());
+        if (g_context && g_context->_location)
+            debug(1, "x = %d, y = %d, level = %d, tile = %d (%s)\n", g_context->_location->_coords.x, g_context->_location->_coords.y, g_context->_location->_coords.z, g_context->_location->_map->translateToRawTileIndex(*g_context->_location->_map->tileAt(g_context->_location->_coords, WITH_OBJECTS)), g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_OBJECTS)->getName().c_str());
         break;
     default:
         valid = false;
@@ -242,7 +242,7 @@ void TimedEventMgr::start() {
 /**
  * Constructs an event handler object. 
  */
-EventHandler::EventHandler() : timer(eventTimerGranularity), updateScreen(NULL) {
+EventHandler::EventHandler() : timer(eventTimerGranularity), _updateScreen(NULL) {
 }
 
 static void handleMouseMotionEvent(const Common::Event &event) {    
@@ -350,8 +350,8 @@ void EventHandler::sleep(unsigned int msec) {
 }
 
 void EventHandler::run() {
-    if (updateScreen)
-        (*updateScreen)();
+    if (_updateScreen)
+        (*_updateScreen)();
     screenRedrawScreen();
 
     while (!ended && !controllerDone) {
@@ -360,13 +360,13 @@ void EventHandler::run() {
 
         switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-            handleKeyDownEvent(event, getController(), updateScreen);
+            handleKeyDownEvent(event, getController(), _updateScreen);
             break;
 
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_MBUTTONDOWN:
-            handleMouseButtonDownEvent(event, getController(), updateScreen);
+            handleMouseButtonDownEvent(event, getController(), _updateScreen);
             break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -392,7 +392,7 @@ void EventHandler::run() {
 }
 
 void EventHandler::setScreenUpdate(void (*updateScreen)(void)) {
-    this->updateScreen = updateScreen;
+    this->_updateScreen = updateScreen;
 }
 
 /**

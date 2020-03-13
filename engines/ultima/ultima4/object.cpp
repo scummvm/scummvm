@@ -58,8 +58,8 @@ void Object::remove() {
 void Object::animateMovement()
 {
 	//TODO abstract movement - also make screen.h and game.h not required
-    screenTileUpdate(&game->_mapArea, _prevCoords, false);
-    if (screenTileUpdate(&game->_mapArea, _coords, false))
+    screenTileUpdate(&g_game->_mapArea, _prevCoords, false);
+    if (screenTileUpdate(&g_game->_mapArea, _coords, false))
     	screenWait(1);
 }
 

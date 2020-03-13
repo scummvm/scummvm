@@ -40,7 +40,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-CreatureMgr *CreatureMgr::instance = NULL;
+CreatureMgr *CreatureMgr::_instance = NULL;
 
 bool isCreature(Object *punknown) {
     Creature *m;
@@ -130,46 +130,46 @@ void Creature::load(const ConfigElement &conf) {
         { "sleep", EFFECT_SLEEP }
     };    
 
-    name = conf.getString("name");
-    id = static_cast<unsigned short>(conf.getInt("id"));
+    _name = conf.getString("name");
+    _id = static_cast<unsigned short>(conf.getInt("id"));
         
     /* Get the leader if it's been included, otherwise the leader is itself */
-    leader = static_cast<unsigned char>(conf.getInt("leader", id));
+    _leader = static_cast<unsigned char>(conf.getInt("leader", _id));
         
-    xp = static_cast<unsigned short>(conf.getInt("exp"));
-    ranged = conf.getBool("ranged");
+    _xp = static_cast<unsigned short>(conf.getInt("exp"));
+    _ranged = conf.getBool("ranged");
     setTile(Tileset::findTileByName(conf.getString("tile")));
 
     setHitTile("hit_flash");
     setMissTile("miss_flash");
 
-    mattr = static_cast<CreatureAttrib>(0);
-    movementAttr = static_cast<CreatureMovementAttrib>(0);
-    resists = 0;
+    _mAttr = static_cast<CreatureAttrib>(0);
+    _movementAttr = static_cast<CreatureMovementAttrib>(0);
+    _resists = 0;
 
     /* get the encounter size */
-    encounterSize = conf.getInt("encounterSize", 0);
+    _encounterSize = conf.getInt("encounterSize", 0);
 
     /* get the base hp */
-    basehp = conf.getInt("basehp", 0);
+    _baseHp = conf.getInt("basehp", 0);
     /* adjust basehp according to battle difficulty setting */
     if (settings._battleDiff == "Hard")
-        basehp *= 2;
+        _baseHp *= 2;
     if (settings._battleDiff == "Expert")
-        basehp *= 4;
+        _baseHp *= 4;
 
     /* get the camouflaged tile */
     if (conf.exists("camouflageTile"))
-        camouflageTile = conf.getString("camouflageTile");
+        _camouflageTile = conf.getString("camouflageTile");
 
     /* get the ranged tile for world map attacks */
     if (conf.exists("worldrangedtile"))
-        worldrangedtile = conf.getString("worldrangedtile");
+        _worldRangedTile = conf.getString("worldrangedtile");
 
     /* get ranged hit tile */
     if (conf.exists("rangedhittile")) {
         if (conf.getString("rangedhittile") == "random")
-            mattr = static_cast<CreatureAttrib>(mattr | MATTR_RANDOMRANGED);
+            _mAttr = static_cast<CreatureAttrib>(_mAttr | MATTR_RANDOMRANGED);
         else 
             setHitTile(conf.getString("rangedhittile"));
     }
@@ -177,73 +177,73 @@ void Creature::load(const ConfigElement &conf) {
     /* get ranged miss tile */
     if (conf.exists("rangedmisstile")) {
         if (conf.getString("rangedmisstile") ==  "random")
-            mattr = static_cast<CreatureAttrib>(mattr | MATTR_RANDOMRANGED);
+            _mAttr = static_cast<CreatureAttrib>(_mAttr | MATTR_RANDOMRANGED);
         else
             setMissTile(conf.getString("rangedmisstile"));
     }
 
     /* find out if the creature leaves a tile behind on ranged attacks */
-    leavestile = conf.getBool("leavestile");
+    _leavesTile = conf.getBool("leavestile");
 
     /* get effects that this creature is immune to */
     for (idx = 0; idx < sizeof(effects) / sizeof(effects[0]); idx++) {
         if (conf.getString("resists") == effects[idx].name) {
-            resists = effects[idx].effect;
+            _resists = effects[idx].effect;
         }
     }
         
     /* Load creature attributes */
     for (idx = 0; idx < sizeof(booleanAttributes) / sizeof(booleanAttributes[0]); idx++) {
         if (conf.getBool(booleanAttributes[idx].name)) {
-            mattr = static_cast<CreatureAttrib>(mattr | booleanAttributes[idx].mask);
+            _mAttr = static_cast<CreatureAttrib>(_mAttr | booleanAttributes[idx].mask);
         }
     }
         
     /* Load boolean attributes that affect movement */
     for (idx = 0; idx < sizeof(movementBoolean) / sizeof(movementBoolean[0]); idx++) {
         if (conf.getBool(movementBoolean[idx].name)) {
-            movementAttr = static_cast<CreatureMovementAttrib>(movementAttr | movementBoolean[idx].mask);
+            _movementAttr = static_cast<CreatureMovementAttrib>(_movementAttr | movementBoolean[idx].mask);
         }
     }
 
     /* steals="" */
     for (idx = 0; idx < sizeof(steals) / sizeof(steals[0]); idx++) {
         if (conf.getString("steals") == steals[idx].name) {
-            mattr = static_cast<CreatureAttrib>(mattr | steals[idx].mask);
+            _mAttr = static_cast<CreatureAttrib>(_mAttr | steals[idx].mask);
         }
     }
 
     /* casts="" */
     for (idx = 0; idx < sizeof(casts) / sizeof(casts[0]); idx++) {
         if (conf.getString("casts") == casts[idx].name) {
-            mattr = static_cast<CreatureAttrib>(mattr | casts[idx].mask);
+            _mAttr = static_cast<CreatureAttrib>(_mAttr | casts[idx].mask);
         }
     }
 
     /* movement="" */
     for (idx = 0; idx < sizeof(movement) / sizeof(movement[0]); idx++) {
         if (conf.getString("movement") == movement[idx].name) {
-            movementAttr = static_cast<CreatureMovementAttrib>(movementAttr | movement[idx].mask);
+            _movementAttr = static_cast<CreatureMovementAttrib>(_movementAttr | movement[idx].mask);
         }
     }
 
     if (conf.exists("spawnsOnDeath")) {
-        mattr = static_cast<CreatureAttrib>(mattr | MATTR_SPAWNSONDEATH);
-        spawn = static_cast<unsigned char>(conf.getInt("spawnsOnDeath"));
+        _mAttr = static_cast<CreatureAttrib>(_mAttr | MATTR_SPAWNSONDEATH);
+        _spawn = static_cast<unsigned char>(conf.getInt("spawnsOnDeath"));
     }
 
     /* Figure out which 'slowed' function to use */
-    slowedType = SLOWED_BY_TILE;
+    _slowedType = SLOWED_BY_TILE;
     if (sails())
         /* sailing creatures (pirate ships) */
-        slowedType = SLOWED_BY_WIND;
+        _slowedType = SLOWED_BY_WIND;
     else if (flies() || isIncorporeal())
         /* flying creatures (dragons, bats, etc.) and incorporeal creatures (ghosts, zorns) */
-        slowedType = SLOWED_BY_NOTHING;
+        _slowedType = SLOWED_BY_NOTHING;
 }
 
 bool Creature::isAttackable() const  { 
-    if (mattr & MATTR_NONATTACKABLE)
+    if (_mAttr & MATTR_NONATTACKABLE)
         return false;
     /* can't attack horse transport */
     if (_tile.getTileType()->isHorse() && getMovementBehavior() == MOVEMENT_FIXED)
@@ -253,7 +253,7 @@ bool Creature::isAttackable() const  {
 
 int  Creature::getDamage() const {
     int damage, val, x;
-    val = basehp;    
+    val = _baseHp;    
     x = xu4_random(val >> 2);
     damage = (x >> 4) + ((x >> 2) & 0xfc);
     damage += x % 10;
@@ -262,29 +262,29 @@ int  Creature::getDamage() const {
 
 int Creature::setInitialHp(int points) {
     if (points < 0)
-        hp = xu4_random(basehp) | (basehp / 2);
+        _hp = xu4_random(_baseHp) | (_baseHp / 2);
     else
-        hp = points;
+        _hp = points;
     
     /* make sure the creature doesn't flee initially */
-    if (hp < 24) hp = 24;
+    if (_hp < 24) _hp = 24;
 
-    return hp;
+    return _hp;
 }
 
 void Creature::setRandomRanged() {
     switch(xu4_random(4)) {
     case 0:
-        rangedhittile = rangedmisstile = "poison_field";
+        _rangedHitTile = _rangedMissTile = "poison_field";
         break;
     case 1:
-        rangedhittile = rangedmisstile = "energy_field";
+        _rangedHitTile = _rangedMissTile = "energy_field";
         break;
     case 2:
-        rangedhittile = rangedmisstile = "fire_field";
+        _rangedHitTile = _rangedMissTile = "fire_field";
         break;
     case 3:
-        rangedhittile = rangedmisstile = "sleep_field";
+        _rangedHitTile = _rangedMissTile = "sleep_field";
         break;
     }
 }
@@ -292,19 +292,19 @@ void Creature::setRandomRanged() {
 CreatureStatus Creature::getState() const {
     int heavy_threshold, light_threshold, crit_threshold;
     
-    crit_threshold = basehp >> 2;  /* (basehp / 4) */
-    heavy_threshold = basehp >> 1; /* (basehp / 2) */
+    crit_threshold = _baseHp >> 2;  /* (basehp / 4) */
+    heavy_threshold = _baseHp >> 1; /* (basehp / 2) */
     light_threshold = crit_threshold + heavy_threshold;
 
-    if (hp <= 0)
+    if (_hp <= 0)
         return MSTAT_DEAD;
-    else if (hp < 24)
+    else if (_hp < 24)
         return MSTAT_FLEEING;
-    else if (hp < crit_threshold)
+    else if (_hp < crit_threshold)
         return MSTAT_CRITICAL;
-    else if (hp < heavy_threshold)
+    else if (_hp < heavy_threshold)
         return MSTAT_HEAVILYWOUNDED;
-    else if (hp < light_threshold)
+    else if (_hp < light_threshold)
         return MSTAT_LIGHTLYWOUNDED;
     else
         return MSTAT_BARELYWOUNDED;
@@ -319,18 +319,18 @@ CreatureStatus Creature::getState() const {
 bool Creature::specialAction() {
     bool retval = false;        
 
-    int dx = abs(c->_location->_coords.x - _coords.x);
-    int dy = abs(c->_location->_coords.y - _coords.y);
-    int mapdist = c->_location->_coords.distance(_coords, c->_location->_map);
+    int dx = abs(g_context->_location->_coords.x - _coords.x);
+    int dy = abs(g_context->_location->_coords.y - _coords.y);
+    int mapdist = g_context->_location->_coords.distance(_coords, g_context->_location->_map);
 
     /* find out which direction the avatar is in relation to the creature */
     MapCoords mapcoords(_coords);
-    int dir = mapcoords.getRelativeDirection(c->_location->_coords, c->_location->_map);
+    int dir = mapcoords.getRelativeDirection(g_context->_location->_coords, g_context->_location->_map);
 
     //Init outside of switch
     int broadsidesDirs = 0;
 
-    switch(id) {
+    switch(_id) {
     
     case LAVA_LIZARD_ID:
     case SEA_SERPENT_ID:
@@ -341,7 +341,7 @@ bool Creature::specialAction() {
            and not in a city
            Note: Monsters in settlements in U3 do fire on party
         */
-        if (mapdist <= 3 && xu4_random(2) == 0 && (c->_location->_context & CTX_CITY) == 0) {
+        if (mapdist <= 3 && xu4_random(2) == 0 && (g_context->_location->_context & CTX_CITY) == 0) {
             Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, _coords,
                                                                1, 3, NULL, false);
             for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
@@ -390,21 +390,21 @@ bool Creature::specialEffect() {
     Object *obj;    
     bool retval = false;
     
-    switch(id) {
+    switch(_id) {
 
     case STORM_ID:
         {
             ObjectDeque::iterator i;
 
-            if (_coords == c->_location->_coords) {
+            if (_coords == g_context->_location->_coords) {
 
                 /* damage the ship */
-                if (c->_transportContext == TRANSPORT_SHIP) {
+                if (g_context->_transportContext == TRANSPORT_SHIP) {
                     /* FIXME: Check actual damage from u4dos */                           
                     gameDamageShip(10, 30);                        
                 }
                 /* anything else but balloon damages the party */
-                else if (c->_transportContext != TRANSPORT_BALLOON) {
+                else if (g_context->_transportContext != TRANSPORT_BALLOON) {
                     /* FIXME: formula for twister damage is guesstimated from u4dos */
                     gameDamageParty(0, 75);
                 }
@@ -412,14 +412,14 @@ bool Creature::specialEffect() {
             }
 
             /* See if the storm is on top of any objects and destroy them! */
-            for (i = c->_location->_map->_objects.begin();
-                 i != c->_location->_map->_objects.end();) {
+            for (i = g_context->_location->_map->_objects.begin();
+                 i != g_context->_location->_map->_objects.end();) {
 
                 obj = *i;
                 if (this != obj &&
                     obj->getCoords() == _coords) {
                     /* Converged with an object, destroy the object! */
-                    i = c->_location->_map->removeObject(i);
+                    i = g_context->_location->_map->removeObject(i);
                     retval = true;
                 }
                 else i++;
@@ -431,13 +431,13 @@ bool Creature::specialEffect() {
         {
             ObjectDeque::iterator i;
 
-            if (_coords == c->_location->_coords && (c->_transportContext == TRANSPORT_SHIP)) {                    
+            if (_coords == g_context->_location->_coords && (g_context->_transportContext == TRANSPORT_SHIP)) {                    
                                 
                 /* Deal 10 damage to the ship */
                 gameDamageShip(-1, 10);
 
                 /* Send the party to Locke Lake */
-                c->_location->_coords = c->_location->_map->getLabel("lockelake");
+                g_context->_location->_coords = g_context->_location->_map->getLabel("lockelake");
 
                 /* Teleport the whirlpool that sent you there far away from lockelake */
                 this->setCoords(Coords(0,0,0));
@@ -446,8 +446,8 @@ bool Creature::specialEffect() {
             }
 
             /* See if the whirlpool is on top of any objects and destroy them! */
-            for (i = c->_location->_map->_objects.begin();
-                 i != c->_location->_map->_objects.end();) {
+            for (i = g_context->_location->_map->_objects.begin();
+                 i != g_context->_location->_map->_objects.end();) {
 
                 obj = *i;
 
@@ -459,7 +459,7 @@ bool Creature::specialEffect() {
                     /* Make sure the object isn't a flying creature or object */
                     if (!m || (m && (m->swims() || m->sails()) && !m->flies())) {
                         /* Destroy the object it met with */
-                        i = c->_location->_map->removeObject(i);
+                        i = g_context->_location->_map->removeObject(i);
                         retval = true;
                     }
                     else {
@@ -490,7 +490,7 @@ void Creature::act(CombatController *controller) {
         return;
 
     if (negates())
-        c->_aura->set(Aura::NEGATE, 2);
+        g_context->_aura->set(Aura::NEGATE, 2);
 
     /*
      * figure out what to do
@@ -501,11 +501,11 @@ void Creature::act(CombatController *controller) {
         action = CA_TELEPORT;
     // creatures who ranged attack do so 1/4 of the time.  Make sure
     // their ranged attack is not negated!
-    else if (ranged != 0 && xu4_random(4) == 0 && 
-             (rangedhittile != "magic_flash" || (*c->_aura != Aura::NEGATE)))
+    else if (_ranged != 0 && xu4_random(4) == 0 && 
+             (_rangedHitTile != "magic_flash" || (*g_context->_aura != Aura::NEGATE)))
         action = CA_RANGED;
     // creatures who cast sleep do so 1/4 of the time they don't ranged attack
-    else if (castsSleep() && (*c->_aura != Aura::NEGATE) && (xu4_random(4) == 0))
+    else if (castsSleep() && (*g_context->_aura != Aura::NEGATE) && (xu4_random(4) == 0))
         action = CA_CAST_SLEEP;
     else if (getState() == MSTAT_FLEEING)
         action = CA_FLEE;
@@ -544,13 +544,13 @@ void Creature::act(CombatController *controller) {
                 /* steal gold if the creature steals gold */
                 if (stealsGold() && xu4_random(4) == 0) {
                     soundPlay(SOUND_ITEM_STOLEN, false);                       // ITEM_STOLEN, gold
-                    c->_party->adjustGold(-(xu4_random(0x3f)));
+                    g_context->_party->adjustGold(-(xu4_random(0x3f)));
                 }
             
                 /* steal food if the creature steals food */
                 if (stealsFood()) {
                     soundPlay(SOUND_ITEM_STOLEN, false);                       // ITEM_STOLEN, food
-                    c->_party->adjustFood(-2500);
+                    g_context->_party->adjustFood(-2500);
                 }
             }
         } else {
@@ -583,7 +583,7 @@ void Creature::act(CombatController *controller) {
         
         while (!valid) {
             Map *map = getMap();
-            new_c = Coords(xu4_random(map->_width), xu4_random(map->_height), c->_location->_coords.z);
+            new_c = Coords(xu4_random(map->_width), xu4_random(map->_height), g_context->_location->_coords.z);
                 
             const Tile *tile = map->tileTypeAt(new_c, WITH_OBJECTS);
             
@@ -638,11 +638,11 @@ void Creature::act(CombatController *controller) {
             Coords coords = getCoords();
 
             if (MAP_IS_OOB(map, coords)) {
-                screenMessage("\n%c%s Flees!%c\n", FG_YELLOW, name.c_str(), FG_WHITE);
+                screenMessage("\n%c%s Flees!%c\n", FG_YELLOW, _name.c_str(), FG_WHITE);
                 
                 /* Congrats, you have a heart! */
                 if (isGood())
-                    c->_party->adjustKarma(KA_SPARED_GOOD);
+                    g_context->_party->adjustKarma(KA_SPARED_GOOD);
 
                 map->removeObject(this);                
             }
@@ -657,13 +657,13 @@ void Creature::act(CombatController *controller) {
  * Add status effects to the creature, in order of importance
  */
 void Creature::addStatus(StatusType s) {
-    if (status.size() && status.back() > s) {
-        StatusType prev = status.back();
-        status.pop_back();
-        status.push_back(s);
-        status.push_back(prev);
+    if (_status.size() && _status.back() > s) {
+        StatusType prev = _status.back();
+        _status.pop_back();
+        _status.push_back(s);
+        _status.push_back(prev);
     }
-    else status.push_back(s);
+    else _status.push_back(s);
 }
 
 void Creature::applyTileEffect(TileEffect effect) {        
@@ -673,21 +673,21 @@ void Creature::applyTileEffect(TileEffect effect) {
         switch(effect) {
         case EFFECT_SLEEP:
             /* creature fell asleep! */
-            if ((resists != EFFECT_SLEEP) &&
-                (xu4_random(0xFF) >= hp))
+            if ((_resists != EFFECT_SLEEP) &&
+                (xu4_random(0xFF) >= _hp))
                 putToSleep();            
             break;
 
         case EFFECT_LAVA:
         case EFFECT_FIRE:
             /* deal 0 - 127 damage to the creature if it is not immune to fire damage */
-            if ((resists != EFFECT_FIRE) && (resists != EFFECT_LAVA))
+            if ((_resists != EFFECT_FIRE) && (_resists != EFFECT_LAVA))
                 applyDamage(xu4_random(0x7F), false);
             break;
 
         case EFFECT_POISONFIELD:
             /* deal 0 - 127 damage to the creature if it is not immune to poison field damage */
-            if (resists != EFFECT_POISONFIELD)
+            if (_resists != EFFECT_POISONFIELD)
                 applyDamage(xu4_random(0x7F), false);
             break;
 
@@ -718,16 +718,16 @@ bool Creature::divide() {
     if (d != DIR_NONE) {                            
         MapCoords coords(getCoords());
         
-        screenMessage("%s Divides!\n", name.c_str());
+        screenMessage("%s Divides!\n", _name.c_str());
 
         /* find a spot to put our new creature */        
         coords.move(d, map);
 
         /* create our new creature! */
         Creature * addedCreature = map->addCreature(this, coords);
-        int dividedHp = (this->hp + 1) / 2;
-        addedCreature->hp = dividedHp;
-        this->hp = dividedHp;
+        int dividedHp = (this->_hp + 1) / 2;
+        addedCreature->_hp = dividedHp;
+        this->_hp = dividedHp;
         return true;
     }
     return false;
@@ -744,17 +744,17 @@ bool Creature::spawnOnDeath() {
     MapCoords coords(getCoords());
         
     /* create our new creature! */
-    map->addCreature(creatureMgr->getById(spawn), coords);                
+    map->addCreature(creatureMgr->getById(_spawn), coords);                
     return true;
 }
 
 StatusType Creature::getStatus() const {
-    return status.back();
+    return _status.back();
 }
 
 bool Creature::isAsleep() const {
-	for (StatusList::const_iterator itr = this->status.begin();
-		itr != this->status.end();
+	for (StatusList::const_iterator itr = this->_status.begin();
+		itr != this->_status.end();
 		++itr)
 		if (*itr == STAT_SLEEPING)
 			return true;
@@ -784,7 +784,7 @@ Creature *Creature::nearestOpponent(int *dist, bool ranged) {
     Creature *opponent = NULL;
     int d, leastDist = 0xFFFF;    
     ObjectDeque::iterator i;
-    bool jinx = (*c->_aura == Aura::JINX);
+    bool jinx = (*g_context->_aura == Aura::JINX);
     Map *map = getMap();
 
     for (i = map->_objects.begin(); i != map->_objects.end(); ++i) {
@@ -828,20 +828,20 @@ void Creature::putToSleep() {
 
 void Creature::removeStatus(StatusType s) {
     StatusList::iterator i;
-    for (i = status.begin(); i != status.end();) {
+    for (i = _status.begin(); i != _status.end();) {
         if (*i == s)
-            i = status.erase(i);
+            i = _status.erase(i);
         else i++;
     }
 
     // Just to be sure, if a player is poisoned from a savegame, then they won't have
     // a STAT_GOOD in the stack yet.
-    if (status.empty())
+    if (_status.empty())
         addStatus(STAT_GOOD);
 }
 
 void Creature::setStatus(StatusType s) {
-    status.clear();
+    _status.clear();
     this->addStatus(s);
 }
 
@@ -861,16 +861,16 @@ void Creature::wakeUp() {
  */
 bool Creature::applyDamage(int damage, bool byplayer) {
     /* deal the damage */
-    if (id != LORDBRITISH_ID)
-        AdjustValueMin(hp, -damage, 0);    
+    if (_id != LORDBRITISH_ID)
+        AdjustValueMin(_hp, -damage, 0);    
 
     switch (getState()) {
 
     case MSTAT_DEAD:        
         if (byplayer)
-            screenMessage("%c%s Killed!%c\nExp. %d\n", FG_RED, name.c_str(), FG_WHITE, xp);
+            screenMessage("%c%s Killed!%c\nExp. %d\n", FG_RED, _name.c_str(), FG_WHITE, _xp);
         else
-            screenMessage("%c%s Killed!%c\n", FG_RED, name.c_str(), FG_WHITE);        
+            screenMessage("%c%s Killed!%c\n", FG_RED, _name.c_str(), FG_WHITE);        
 
         /*
          * the creature is dead; let it spawns something else on
@@ -885,23 +885,23 @@ bool Creature::applyDamage(int damage, bool byplayer) {
         return false;        
 
     case MSTAT_FLEEING:
-        screenMessage("%c%s Fleeing!%c\n", FG_YELLOW, name.c_str(), FG_WHITE);
+        screenMessage("%c%s Fleeing!%c\n", FG_YELLOW, _name.c_str(), FG_WHITE);
         break;
 
     case MSTAT_CRITICAL:
-        screenMessage("%s Critical!\n", name.c_str());
+        screenMessage("%s Critical!\n", _name.c_str());
         break;
 
     case MSTAT_HEAVILYWOUNDED:
-        screenMessage("%s Heavily Wounded!\n", name.c_str());
+        screenMessage("%s Heavily Wounded!\n", _name.c_str());
         break;
 
     case MSTAT_LIGHTLYWOUNDED:
-        screenMessage("%s Lightly Wounded!\n", name.c_str());
+        screenMessage("%s Lightly Wounded!\n", _name.c_str());
         break;
 
     case MSTAT_BARELYWOUNDED:
-        screenMessage("%s Barely Wounded!\n", name.c_str());
+        screenMessage("%s Barely Wounded!\n", _name.c_str());
         break;
     }
 
@@ -920,11 +920,11 @@ bool Creature::dealDamage(Creature *m, int damage) {
  * CreatureMgr class implementation
  */
 CreatureMgr *CreatureMgr::getInstance() {
-    if (instance == NULL) {
-        instance = new CreatureMgr();
-        instance->loadAll();
+    if (_instance == NULL) {
+        _instance = new CreatureMgr();
+        _instance->loadAll();
     }
-    return instance;
+    return _instance;
 }
 
 void CreatureMgr::loadAll() {
@@ -939,7 +939,7 @@ void CreatureMgr::loadAll() {
         m->load(*i);
 
         /* add the creature to the list */
-        creatures[m->getId()] = m;
+        _creatures[m->getId()] = m;
     }
 }
 
@@ -950,7 +950,7 @@ void CreatureMgr::loadAll() {
 Creature *CreatureMgr::getByTile(MapTile tile) {
     CreatureMap::const_iterator i;
 
-    for (i = creatures.begin(); i != creatures.end(); i++) {
+    for (i = _creatures.begin(); i != _creatures.end(); i++) {
         if (i->_value->getTile() == tile)
             return i->_value;        
     }
@@ -966,8 +966,8 @@ Creature *CreatureMgr::getByTile(MapTile tile) {
  * be found.
  */
 Creature *CreatureMgr::getById(CreatureId id) {
-    CreatureMap::const_iterator i = creatures.find(id);
-    if (i != creatures.end())
+    CreatureMap::const_iterator i = _creatures.find(id);
+    if (i != _creatures.end())
         return i->_value;
     else return NULL;
 }
@@ -979,7 +979,7 @@ Creature *CreatureMgr::getById(CreatureId id) {
  */ 
 Creature *CreatureMgr::getByName(Common::String name) {
     CreatureMap::const_iterator i;
-    for (i = creatures.begin(); i != creatures.end(); i++) {
+    for (i = _creatures.begin(); i != _creatures.end(); i++) {
         if (scumm_stricmp(i->_value->getName().c_str(), name.c_str()) == 0)
             return i->_value;
     }
@@ -999,12 +999,12 @@ Creature *CreatureMgr::randomForTile(const Tile *tile) {
     TileId randTile;
 
     if (tile->isSailable()) {        
-		randTile = creatures.find(PIRATE_ID)->_value->getTile().getId();
+		randTile = _creatures.find(PIRATE_ID)->_value->getTile().getId();
         randTile += xu4_random(7);
         return getByTile(randTile);        
     }
     else if (tile->isSwimable()) {
-		randTile = creatures.find(NIXIE_ID)->_value->getTile().getId();
+		randTile = _creatures.find(NIXIE_ID)->_value->getTile().getId();
         randTile += xu4_random(5);
         return getByTile(randTile);
     }
@@ -1013,14 +1013,14 @@ Creature *CreatureMgr::randomForTile(const Tile *tile) {
         return NULL;
 
     //if (c->saveGame->_moves > 100000) // FIXME: what's 100,000 moves all about (if anything)?
-    if (c->_saveGame->_moves > 30000)
+    if (g_context->_saveGame->_moves > 30000)
         era = 0x0f;
-    else if (c->_saveGame->_moves > 20000)
+    else if (g_context->_saveGame->_moves > 20000)
         era = 0x07;
     else
         era = 0x03;
 
-	randTile = creatures.find(ORC_ID)->_value->getTile().getId();
+	randTile = _creatures.find(ORC_ID)->_value->getTile().getId();
     randTile += era & xu4_random(0x10) & xu4_random(0x10);
     return getByTile(randTile);
 }
@@ -1051,7 +1051,7 @@ Creature *CreatureMgr::randomAmbushing() {
         randCreature;
 
     /* first, find out how many creatures exist that might ambush you */
-    for (i = creatures.begin(); i != creatures.end(); i++) {
+    for (i = _creatures.begin(); i != _creatures.end(); i++) {
         if (i->_value->ambushes())
             numAmbushingCreatures++;
     }
@@ -1062,7 +1062,7 @@ Creature *CreatureMgr::randomAmbushing() {
         numAmbushingCreatures = 0;
 
         /* now, find the one we selected */
-        for (i = creatures.begin(); i != creatures.end(); i++) {
+        for (i = _creatures.begin(); i != _creatures.end(); i++) {
             if (i->_value->ambushes()) {
                 /* found the creature - return it! */
                 if (numAmbushingCreatures == randCreature)

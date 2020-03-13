@@ -249,10 +249,10 @@ int main(int argc, char *argv[]) {
         return 0;
 
     /* play the game! */
-    game = new GameController();
-    game->init();
+    g_game = new GameController();
+    g_game->init();
 
-    eventHandler->pushController(game);
+    eventHandler->pushController(g_game);
     eventHandler->run();
     eventHandler->popController();
 

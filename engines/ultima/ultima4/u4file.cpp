@@ -565,7 +565,6 @@ long U4FILE_zip::length() {
  */
 U4FILE *u4fopen(const Common::String &fname) {
     U4FILE *u4f = NULL;
-    unsigned int i;
 
     if (verbose)
         debug("looking for %s\n", fname.c_str());
