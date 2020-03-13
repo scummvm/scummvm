@@ -58,6 +58,22 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+
+	{
+		// Ultima IV - Quest of the Avatar
+		{
+			"ultima4",
+			0,
+			AD_ENTRY1s("britain.ult", "304fe52ce5f34b9181052363d74d7505", 1280),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GAME_ULTIMA4,
+		0
+	},
+
 	// GOG Ultima VI
 	{
 		{
