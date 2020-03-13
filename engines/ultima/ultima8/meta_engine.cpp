@@ -126,7 +126,7 @@ Common::KeymapArray MetaEngine::initKeymaps(bool isMenuActive) {
 		keymapArray.push_back(keyMap);
 
 		for (const KeybindingRecord *r = CHEAT_KEYS; r->_id; ++r) {
-			Common::Action *act = new Common::Action(r->_id, _(r->_desc));
+			act = new Common::Action(r->_id, _(r->_desc));
 			act->setCustomEngineActionEvent(r->_action);
 			act->addDefaultInputMapping(r->_key);
 			if (r->_joy)
@@ -140,7 +140,7 @@ Common::KeymapArray MetaEngine::initKeymaps(bool isMenuActive) {
 		keymapArray.push_back(keyMap);
 
 		for (const KeybindingRecord *r = DEBUG_KEYS; r->_id; ++r) {
-			Common::Action *act = new Common::Action(r->_id, _(r->_desc));
+			act = new Common::Action(r->_id, _(r->_desc));
 			act->setCustomEngineActionEvent(r->_action);
 			act->addDefaultInputMapping(r->_key);
 			if (r->_joy)
