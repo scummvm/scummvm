@@ -2935,6 +2935,10 @@ case $_host_os in
 		#use link time optimization to further reduce exe size
 		append_var CXXFLAGS "-flto=20"
 		append_var LDFLAGS "-flto=20"
+		#ensure verbose output during linking to prevent buildbot kills after 1200 seconds
+		if test "$_verbose_build" = yes ; then
+			append_var LDFLAGS "-Wl,-v --verbose"
+		fi
 		#use linker dead code elimination to further reduce exe size
 		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
 		append_var LDFLAGS "-Wl,--gc-sections"
