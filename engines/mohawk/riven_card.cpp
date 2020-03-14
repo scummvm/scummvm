@@ -928,6 +928,7 @@ RivenHotspot *RivenCard::getCurHotspot() const {
 
 RivenScriptPtr RivenCard::onMouseDown(const Common::Point &mouse) {
 	RivenScriptPtr script = onMouseMove(mouse);
+	updateMouseCursor();
 
 	_pressedHotspot = _hoveredHotspot;
 
