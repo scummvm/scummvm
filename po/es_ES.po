@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-02-22 10:46+0100\n"
-"PO-Revision-Date: 2020-03-05 13:44+0000\n"
+"PO-Revision-Date: 2020-03-14 22:14+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6239,7 +6239,7 @@ msgstr "Salir"
 
 #: engines/wintermute/detection.cpp:637
 msgid "Light helper window"
-msgstr "Ventana de ayuda ligera"
+msgstr "Ventana de ayuda rápida"
 
 #: engines/wintermute/detection.cpp:662
 msgid "Run forward"
@@ -6516,7 +6516,7 @@ msgstr "Usar vídeos MPEG de alta resolución"
 #: engines/zvision/detection_tables.h:91
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Utiliza los vídeos MPEG de la versión DVD en vez de los AVI de baja "
+"Utiliza los vídeos MPEG de la versión en DVD en vez de los AVI de baja "
 "resolución"
 
 #: engines/zvision/file/save_manager.cpp:222
@@ -6525,8 +6525,9 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
-"Esta partida guardada usa la versión %u, pero este motor soporta hasta la "
-"versión %d. Necesitarás una versión actualizada del motor para poder usarla."
+"Esta partida utiliza la versión %u, pero este motor solo soporta hasta la "
+"versión %d. Necesitarás una versión actualizada del motor para poder usar "
+"esta partida."
 
 #~ msgid "Mouse click"
 #~ msgstr "Clic de ratón"
