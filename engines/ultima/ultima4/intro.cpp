@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/config.h"
 #include "ultima/ultima4/intro.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/error.h"
