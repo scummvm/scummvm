@@ -29,6 +29,7 @@
 #include "mohawk/riven_video.h"
 
 #include "common/system.h"
+#include "common/memstream.h"
 
 #include "engines/util.h"
 
@@ -354,7 +355,11 @@ RivenGraphics::~RivenGraphics() {
 }
 
 MohawkSurface *RivenGraphics::decodeImage(uint16 id) {
-	MohawkSurface *surface = _bitmapDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
+	Common::SeekableReadStream *resourceStream = _vm->getResource(ID_TBMP, id);
+	Common::SeekableReadStream *memResourceStream = resourceStream->readStream(resourceStream->size());
+	delete resourceStream;
+
+	MohawkSurface *surface = _bitmapDecoder->decodeImage(memResourceStream);
 	surface->convertToTrueColor();
 	return surface;
 }
