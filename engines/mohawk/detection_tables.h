@@ -1358,6 +1358,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("BookOutline", "82d0b24a6400bec8e94cde021a4c876b"),
+			Common::IT_ITA,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		"La Tartaruga e la Lepre"
+	},
+
 	{
 		{
 			"tortoise",
@@ -1768,6 +1784,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		"GRANDMA.EXE"
+	},
+
+	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
+	{
+		{
+			"grandma",
+			"Demo v1.2",
+			AD_ENTRY1("BookOutline", "599fece5d71cdd19c9726c28dbf634d8"),
+			Common::IT_ITA,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		GF_DEMO,
+		"Al mare con la Nonna"
 	},
 
 	{
