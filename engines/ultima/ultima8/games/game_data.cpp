@@ -49,14 +49,14 @@ namespace Ultima8 {
 
 GameData *GameData::_gameData = nullptr;
 
-
 GameData::GameData(GameInfo *gameInfo)
 	: _fixed(nullptr), _mainShapes(nullptr), _mainUsecode(nullptr), _globs(),
 	  _fonts(nullptr), _gumps(nullptr), _mouse(nullptr), _music(nullptr),
-	  _weaponOverlay(nullptr), _soundFlex(nullptr), _speech(1024), _gameInfo(gameInfo) {
+	  _weaponOverlay(nullptr), _soundFlex(nullptr), _gameInfo(gameInfo) {
 	debugN(MM_INFO, "Creating GameData...\n");
 
 	_gameData = this;
+	_speech.resize(1024);
 }
 
 GameData::~GameData() {
