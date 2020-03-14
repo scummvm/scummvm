@@ -2933,8 +2933,8 @@ case $_host_os in
 		append_var CXXFLAGS "-mword-relocations"
 		append_var CXXFLAGS "-fomit-frame-pointer"
 		#use link time optimization to further reduce exe size
-		append_var CXXFLAGS "-flto"
-		append_var LDFLAGS "-flto"
+		append_var CXXFLAGS "-flto=20"
+		append_var LDFLAGS "-flto=20"
 		#use linker dead code elimination to further reduce exe size
 		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
 		append_var LDFLAGS "-Wl,--gc-sections"
