@@ -719,7 +719,7 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 		
 		bitmap = &_face->glyph->bitmap;
 #elif FAKE_BOLD >= 1
-		FT_Bitmap_Init(&ownBitmap);
+		FT_Bitmap_New(&ownBitmap);
 
 		if (FT_Bitmap_Copy(_face->glyph->library, &_face->glyph->bitmap, &ownBitmap))
 			return false;
