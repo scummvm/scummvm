@@ -160,8 +160,14 @@ Common::Error Pink::PinkEngine::run() {
 }
 
 void PinkEngine::pauseEngine(void *engine, bool pause) {
-	PinkEngine *vm = (PinkEngine*)engine;
-	vm->pauseEngineIntern(pause);
+	Engine *vm = (Engine *)engine;
+	if (pause) {
+		vm->pauseEngine(true);
+	} else {
+		while (vm->isPaused()) {
+			vm->pauseEngine(false);
+		}
+	}
 }
 
 void PinkEngine::load(Archive &archive) {
