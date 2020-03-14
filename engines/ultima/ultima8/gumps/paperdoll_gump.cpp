@@ -102,7 +102,6 @@ PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
 PaperdollGump::~PaperdollGump() {
 	for (int i = 0; i < 14; ++i) { // ! constant
 		delete _cachedText[i];
-		_cachedText[i] = nullptr;
 	}
 }
 

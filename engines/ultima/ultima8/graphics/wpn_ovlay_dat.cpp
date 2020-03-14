@@ -40,7 +40,6 @@ WpnOvlayDat::WpnOvlayDat() {
 WpnOvlayDat::~WpnOvlayDat() {
 	for (unsigned int i = 0; i < _overlay.size(); i++)
 		delete _overlay[i];
-	_overlay.clear();
 }
 
 const AnimWeaponOverlay *WpnOvlayDat::getAnimOverlay(uint32 action) const {

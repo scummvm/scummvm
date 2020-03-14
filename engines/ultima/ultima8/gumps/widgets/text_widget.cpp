@@ -52,7 +52,6 @@ TextWidget::TextWidget(int x, int y, const Std::string &txt, bool gamefont_, int
 
 TextWidget::~TextWidget(void) {
 	delete _cachedText;
-	_cachedText = nullptr;
 }
 
 // Init the gump, call after construction

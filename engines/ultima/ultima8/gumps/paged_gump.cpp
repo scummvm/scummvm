@@ -42,7 +42,6 @@ PagedGump::PagedGump(int left, int right, int top, int shape):
 }
 
 PagedGump::~PagedGump(void) {
-	_gumps.clear();
 }
 
 void PagedGump::Close(bool no_del) {

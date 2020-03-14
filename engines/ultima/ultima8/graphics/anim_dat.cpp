@@ -39,7 +39,6 @@ AnimDat::AnimDat() {
 AnimDat::~AnimDat() {
 	for (unsigned int i = 0; i < _anims.size(); i++)
 		delete _anims[i];
-	_anims.clear();
 }
 
 ActorAnim *AnimDat::getAnim(uint32 shape) const {

@@ -238,13 +238,8 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
 BaseSoftRenderSurface::~BaseSoftRenderSurface() {
 	if (_rttTex) {
 		delete _rttTex;
-		_rttTex = nullptr;
-
 		delete [] _pixels00;
-		_pixels00 = nullptr;
-
 		delete [] _zBuffer00;
-		_zBuffer00 = nullptr;
 	}
 }
 

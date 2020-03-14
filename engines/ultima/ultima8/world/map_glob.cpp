@@ -33,7 +33,6 @@ MapGlob::MapGlob() {
 
 
 MapGlob::~MapGlob() {
-	_contents.clear();
 }
 
 void MapGlob::read(IDataSource *ds) {

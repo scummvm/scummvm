@@ -41,7 +41,6 @@ MusicFlex::~MusicFlex() {
 	uint32 i;
 	for (i = 0; i < 128; i++) {
 		delete _info[i];
-		_info[i] = 0;
 	}
 
 	Archive::uncache();
@@ -56,7 +55,6 @@ MusicFlex::SongInfo::SongInfo() : _numMeasures(0), _loopJump(0) {
 MusicFlex::SongInfo::~SongInfo() {
 	for (int i = 0; i < 128; i++) {
 		delete [] _transitions[i];
-		_transitions[i] = nullptr;
 	}
 }
 

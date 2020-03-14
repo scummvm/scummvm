@@ -107,13 +107,9 @@ UCMachine::~UCMachine() {
 	_ucMachine = nullptr;
 
 	delete _globals;
-	_globals = nullptr;
 	delete _convUse;
-	_convUse = nullptr;
 	delete _listIDs;
-	_listIDs = nullptr;
 	delete _stringIDs;
-	_stringIDs = nullptr;
 }
 
 void UCMachine::reset() {
