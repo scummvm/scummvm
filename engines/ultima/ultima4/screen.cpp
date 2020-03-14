@@ -47,7 +47,7 @@ namespace Ultima {
 namespace Ultima4 {
 
 void Screen::init() {
-	initGraphics(320, 200);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 enum LayoutType {
