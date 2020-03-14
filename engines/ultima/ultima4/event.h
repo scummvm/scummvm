@@ -59,7 +59,7 @@ namespace Ultima4 {
 
 extern int eventTimerGranularity;
 
-struct _MouseArea;
+struct MouseArea;
 class EventHandler;
 class TextView;
 
@@ -296,7 +296,7 @@ typedef void(*updateScreenCallback)(void);
 class EventHandler {
 public:    
     /* Typedefs */
-    typedef Common::List<_MouseArea *> MouseAreaList;    
+    typedef Common::List<MouseArea *> MouseAreaList;
 
     /* Constructors */
     EventHandler();    
@@ -336,21 +336,21 @@ public:
     void setKeyHandler(KeyHandler kh);
 
     /* Mouse area functions */
-    void pushMouseAreaSet(_MouseArea *mouseAreas);
+    void pushMouseAreaSet(MouseArea *mouseAreas);
     void popMouseAreaSet();
-    _MouseArea* getMouseAreaSet() const;
-    _MouseArea* mouseAreaForPoint(int x, int y);
+    MouseArea *getMouseAreaSet() const;
+    MouseArea *mouseAreaForPoint(int x, int y);
 
 protected:    
-    static bool controllerDone;
-    static bool ended;
-    TimedEventMgr timer;
-    Std::vector<Controller *> controllers;
-    MouseAreaList mouseAreaSets;
+    static bool _controllerDone;
+    static bool _ended;
+    TimedEventMgr _timer;
+    Std::vector<Controller *> _controllers;
+    MouseAreaList _mouseAreaSets;
     updateScreenCallback _updateScreen;
 
 private:
-    static EventHandler *instance;
+    static EventHandler *_instance;
 };
 
 } // End of namespace Ultima4

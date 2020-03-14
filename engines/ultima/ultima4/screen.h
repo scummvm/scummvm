@@ -36,12 +36,6 @@ namespace Ultima4 {
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 
-class Image;
-class Map;
-class Tile;
-class TileView;
-class Coords;
-
 /*
  * bitmasks for LOS shadows
  */
@@ -60,25 +54,53 @@ class Coords;
 #define _NVC_ 0x86
 #define _NV__ 0x84
 
-typedef enum {
-    MC_DEFAULT,
-    MC_WEST,
-    MC_NORTH,
-    MC_EAST,
-    MC_SOUTH
-} MouseCursor;
 
-typedef struct _MouseArea {
-    int npoints;
-    struct {
-        int x, y;
-    } point[4];
-    MouseCursor cursor;
-    int command[3];
-} MouseArea;
+enum LayoutType {
+	LAYOUT_STANDARD,
+	LAYOUT_GEM,
+	LAYOUT_DUNGEONGEM
+};
+
+enum MouseCursor {
+	MC_DEFAULT,
+	MC_WEST,
+	MC_NORTH,
+	MC_EAST,
+	MC_SOUTH
+};
+
+class Image;
+class Map;
+class Tile;
+class TileView;
+class Coords;
+
+struct MouseArea {
+	int _nPoints;
+	struct {
+		int x, y;
+	} _point[4];
+	MouseCursor _cursor;
+	int _command[3];
+};
+
+struct Layout {
+	Common::String _name;
+	LayoutType _type;
+	struct {
+		int width, height;
+	} _tileShape;
+	struct {
+		int x, y;
+		int width, height;
+	} _viewport;
+};
 
 class Screen : public Graphics::Screen {
 public:
+	Screen();
+	~Screen();
+
 	void init();
 };
 

@@ -46,27 +46,19 @@
 namespace Ultima {
 namespace Ultima4 {
 
+Screen *g_screen;
+
+Screen::Screen() {
+	g_screen = this;
+}
+
+Screen::~Screen() {
+	g_screen = nullptr;
+}
+
 void Screen::init() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
-
-enum LayoutType {
-    LAYOUT_STANDARD,
-    LAYOUT_GEM,
-    LAYOUT_DUNGEONGEM
-};
-
-struct Layout {
-    Common::String name;
-    LayoutType type;
-    struct {
-        int width, height;
-    } tileshape;
-    struct {
-        int x, y;
-        int width, height;
-    } viewport;
-};
 
 #define DBL_MAX 1e99
 
@@ -328,8 +320,8 @@ void screenLoadGraphicsFromConf() {
     Std::vector<Layout *>::const_iterator i;
     for (i = layouts.begin(); i != layouts.end(); i++) {
         Layout *layout = *i;
-        if (layout->type == LAYOUT_GEM) {
-            gemLayoutNames.push_back(layout->name);
+        if (layout->_type == LAYOUT_GEM) {
+            gemLayoutNames.push_back(layout->_name);
         }
     }
     
@@ -339,7 +331,7 @@ void screenLoadGraphicsFromConf() {
     for (i = layouts.begin(); i != layouts.end(); i++) {
         Layout *layout = *i;
         
-        if (layout->type == LAYOUT_GEM && layout->name == settings._gemLayout) {
+        if (layout->_type == LAYOUT_GEM && layout->_name == settings._gemLayout) {
             gemlayout = layout;
             break;
         }
@@ -353,20 +345,20 @@ Layout *screenLoadLayoutFromConf(const ConfigElement &conf) {
     static const char *typeEnumStrings[] = { "standard", "gem", "dungeon_gem", NULL };
     
     layout = new Layout;
-    layout->name = conf.getString("name");
-    layout->type = static_cast<LayoutType>(conf.getEnum("type", typeEnumStrings));
+    layout->_name = conf.getString("name");
+    layout->_type = static_cast<LayoutType>(conf.getEnum("type", typeEnumStrings));
     
     Std::vector<ConfigElement> children = conf.getChildren();
     for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
         if (i->getName() == "tileshape") {
-            layout->tileshape.width = i->getInt("width");
-            layout->tileshape.height = i->getInt("height");
+            layout->_tileShape.width = i->getInt("width");
+            layout->_tileShape.height = i->getInt("height");
         }
         else if (i->getName() == "viewport") {
-            layout->viewport.x = i->getInt("x");
-            layout->viewport.y = i->getInt("y");
-            layout->viewport.width = i->getInt("width");
-            layout->viewport.height = i->getInt("height");
+            layout->_viewport.x = i->getInt("x");
+            layout->_viewport.y = i->getInt("y");
+            layout->_viewport.width = i->getInt("width");
+            layout->_viewport.height = i->getInt("height");
         }
     }
     
@@ -1080,24 +1072,24 @@ static int screenPointInTriangle(int x, int y, int tx1, int ty1, int tx2, int ty
  * Determine if the given point is within a mouse area.
  */
 int screenPointInMouseArea(int x, int y, MouseArea *area) {
-    ASSERT(area->npoints == 2 || area->npoints == 3, "unsupported number of points in area: %d", area->npoints);
+    ASSERT(area->_nPoints == 2 || area->_nPoints == 3, "unsupported number of points in area: %d", area->_nPoints);
 
     /* two points define a rectangle */
-    if (area->npoints == 2) {
-        if (x >= (int)(area->point[0].x * settings._scale) &&
-            y >= (int)(area->point[0].y * settings._scale) &&
-            x < (int)(area->point[1].x * settings._scale) &&
-            y < (int)(area->point[1].y * settings._scale)) {
+    if (area->_nPoints == 2) {
+        if (x >= (int)(area->_point[0].x * settings._scale) &&
+            y >= (int)(area->_point[0].y * settings._scale) &&
+            x < (int)(area->_point[1].x * settings._scale) &&
+            y < (int)(area->_point[1].y * settings._scale)) {
             return 1;
         }
     }
 
     /* three points define a triangle */
-    else if (area->npoints == 3) {
+    else if (area->_nPoints == 3) {
         return screenPointInTriangle(x, y, 
-                                     area->point[0].x * settings._scale, area->point[0].y * settings._scale,
-                                     area->point[1].x * settings._scale, area->point[1].y * settings._scale,
-                                     area->point[2].x * settings._scale, area->point[2].y * settings._scale);
+                                     area->_point[0].x * settings._scale, area->_point[0].y * settings._scale,
+                                     area->_point[1].x * settings._scale, area->_point[1].y * settings._scale,
+                                     area->_point[2].x * settings._scale, area->_point[2].y * settings._scale);
     }
 
     return 0;
@@ -1183,12 +1175,12 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
         ASSERT(charsetInfo, "charset not initialized");
         Std::map<Common::String, int>::iterator charIndex = dungeonTileChars.find(t.getTileType()->getName());
         if (charIndex != dungeonTileChars.end()) {
-            charsetInfo->_image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
-                                            (layout->viewport.y + (y * layout->tileshape.height)) * settings._scale,
+            charsetInfo->_image->drawSubRect((layout->_viewport.x + (x * layout->_tileShape.width)) * settings._scale,
+                                            (layout->_viewport.y + (y * layout->_tileShape.height)) * settings._scale,
                                             0, 
-                                            charIndex->_value * layout->tileshape.height * settings._scale, 
-                                            layout->tileshape.width * settings._scale,
-                                            layout->tileshape.height * settings._scale);
+                                            charIndex->_value * layout->_tileShape.height * settings._scale, 
+                                            layout->_tileShape.width * settings._scale,
+                                            layout->_tileShape.height * settings._scale);
         }
     }
     else {
@@ -1199,18 +1191,18 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
         }
         
         if (tile < 128) {
-            gemTilesInfo->_image->drawSubRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
-                                             (layout->viewport.y + (y * layout->tileshape.height)) * settings._scale,
+            gemTilesInfo->_image->drawSubRect((layout->_viewport.x + (x * layout->_tileShape.width)) * settings._scale,
+                                             (layout->_viewport.y + (y * layout->_tileShape.height)) * settings._scale,
                                              0, 
-                                             tile * layout->tileshape.height * settings._scale,
-                                             layout->tileshape.width * settings._scale,
-                                             layout->tileshape.height * settings._scale);
+                                             tile * layout->_tileShape.height * settings._scale,
+                                             layout->_tileShape.width * settings._scale,
+                                             layout->_tileShape.height * settings._scale);
         } else {
             Image *screen = imageMgr->get("screen")->_image;
-            screen->fillRect((layout->viewport.x + (x * layout->tileshape.width)) * settings._scale,
-                             (layout->viewport.y + (y * layout->tileshape.height)) * settings._scale,
-                             layout->tileshape.width * settings._scale,
-                             layout->tileshape.height * settings._scale,
+            screen->fillRect((layout->_viewport.x + (x * layout->_tileShape.width)) * settings._scale,
+                             (layout->_viewport.y + (y * layout->_tileShape.height)) * settings._scale,
+                             layout->_tileShape.width * settings._scale,
+                             layout->_tileShape.height * settings._scale,
                              0, 0, 0);
         }
     }
@@ -1222,7 +1214,7 @@ Layout *screenGetGemLayout(const Map *map) {
         for (i = layouts.begin(); i != layouts.end(); i++) {
             Layout *layout = *i;
             
-            if (layout->type == LAYOUT_DUNGEONGEM)
+            if (layout->_type == LAYOUT_DUNGEONGEM)
                 return layout;
         }
         errorFatal("no dungeon gem layout found!\n");
@@ -1250,12 +1242,12 @@ void screenGemUpdate() {
     //TODO, move the code responsible for determining 'peer' visibility to a non SDL specific part of the code.
     if (g_context->_location->_map->_type == Map::DUNGEON) {
     	//DO THE SPECIAL DUNGEON MAP TRAVERSAL
-    	Std::vector<Std::vector<int> > drawnTiles(layout->viewport.width, Std::vector<int>(layout->viewport.height, 0));
+    	Std::vector<Std::vector<int> > drawnTiles(layout->_viewport.width, Std::vector<int>(layout->_viewport.height, 0));
     	Common::List<Std::pair<int,int> > coordStack;
         
     	//Put the avatar's position on the stack
-    	int center_x = layout->viewport.width / 2 - 1;
-    	int center_y = layout->viewport.height / 2 - 1;
+    	int center_x = layout->_viewport.width / 2 - 1;
+    	int center_y = layout->_viewport.height / 2 - 1;
     	int avt_x = g_context->_location->_coords.x - 1;
     	int avt_y = g_context->_location->_coords.y - 1;
         
@@ -1270,8 +1262,8 @@ void screenGemUpdate() {
     		x = currentXY.first;
     		y = currentXY.second;
             
-    		if (	x < 0 || x >= layout->viewport.width ||
-                y < 0 || y >= layout->viewport.height)
+    		if (	x < 0 || x >= layout->_viewport.width ||
+                y < 0 || y >= layout->_viewport.height)
     			continue;	//Skip out of range tiles
             
     		if (drawnTiles[x][y])
@@ -1283,8 +1275,8 @@ void screenGemUpdate() {
     		bool focus;
             
             
-			Std::vector<MapTile> tiles = screenViewportTile(layout->viewport.width,
-                                                       layout->viewport.height, x - center_x + avt_x, y - center_y + avt_y, focus);
+			Std::vector<MapTile> tiles = screenViewportTile(layout->_viewport.width,
+                                                       layout->_viewport.height, x - center_x + avt_x, y - center_y + avt_y, focus);
 			tile = tiles.front();
             
 			TileId avatarTileId = g_context->_location->_map->_tileset->getByName("avatar")->getId();
@@ -1323,11 +1315,11 @@ void screenGemUpdate() {
         
 	} else {
 		//DO THE REGULAR EVERYTHING-IS-VISIBLE MAP TRAVERSAL
-		for (x = 0; x < layout->viewport.width; x++) {
-			for (y = 0; y < layout->viewport.height; y++) {
+		for (x = 0; x < layout->_viewport.width; x++) {
+			for (y = 0; y < layout->_viewport.height; y++) {
 				bool focus;
-				tile = screenViewportTile(layout->viewport.width,
-                                          layout->viewport.height, x, y, focus).front();
+				tile = screenViewportTile(layout->_viewport.width,
+                                          layout->_viewport.height, x, y, focus).front();
 				screenShowGemTile(layout, g_context->_location->_map, tile, focus, x, y);
 			}
 		}
