@@ -242,7 +242,7 @@ void TimedEventMgr::start() {
 /**
  * Constructs an event handler object. 
  */
-EventHandler::EventHandler() : timer(eventTimerGranularity), _updateScreen(NULL) {
+EventHandler::EventHandler() : _timer(eventTimerGranularity), _updateScreen(NULL) {
 }
 
 static void handleMouseMotionEvent(const Common::Event &event) {    
@@ -252,7 +252,7 @@ static void handleMouseMotionEvent(const Common::Event &event) {
     MouseArea *area;
     area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
     if (area)
-        screenSetMouseCursor(area->cursor);
+        screenSetMouseCursor(area->_cursor);
     else
         screenSetMouseCursor(MC_DEFAULT);
 }
@@ -283,9 +283,9 @@ static void handleMouseButtonDownEvent(const Common::Event &event, Controller *c
     if (button > 2)
         button = 0;
     MouseArea *area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
-    if (!area || area->command[button] == 0)
+    if (!area || area->_command[button] == 0)
         return;
-    controller->keyPressed(area->command[button]);            
+    controller->keyPressed(area->_command[button]);            
     if (updateScreen)
         (*updateScreen)();
     screenRedrawScreen();
@@ -354,7 +354,7 @@ void EventHandler::run() {
         (*_updateScreen)();
     screenRedrawScreen();
 
-    while (!ended && !controllerDone) {
+    while (!_ended && !_controllerDone) {
         Common::Event event;
 		g_system->getEventManager()->pollEvent(event);
 
@@ -427,7 +427,7 @@ void EventHandler::pushKeyHandler(KeyHandler kh) {
  * the current handler is popped.
  */ 
 void EventHandler::popKeyHandler() {
-    if (controllers.empty())
+    if (_controllers.empty())
         return;
 
     popController();
@@ -438,10 +438,10 @@ void EventHandler::popKeyHandler() {
  * Returns NULL if there is no key handler.
  */ 
 KeyHandler *EventHandler::getKeyHandler() const {
-    if (controllers.empty())
+    if (_controllers.empty())
         return NULL;
 
-    KeyHandlerController *khc = dynamic_cast<KeyHandlerController *>(controllers.back());
+    KeyHandlerController *khc = dynamic_cast<KeyHandlerController *>(_controllers.back());
     ASSERT(khc != NULL, "EventHandler::getKeyHandler called when controller wasn't a keyhandler");
     if (khc == NULL)
         return NULL;
@@ -468,7 +468,7 @@ MouseArea* EventHandler::mouseAreaForPoint(int x, int y) {
     if (!areas)
         return NULL;
 
-    for (i = 0; areas[i].npoints != 0; i++) {
+    for (i = 0; areas[i]._nPoints != 0; i++) {
         if (screenPointInMouseArea(x, y, &(areas[i]))) {
             return &(areas[i]);
         }

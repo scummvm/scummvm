@@ -38,15 +38,15 @@ using namespace Std;
 int eventTimerGranularity = 250;
 
 extern bool quit;
-bool EventHandler::controllerDone = false;
-bool EventHandler::ended = false;
+bool EventHandler::_controllerDone = false;
+bool EventHandler::_ended = false;
 unsigned int TimedEventMgr::instances = 0;
 
-EventHandler *EventHandler::instance = NULL;
+EventHandler *EventHandler::_instance = NULL;
 EventHandler *EventHandler::getInstance() {
-    if (instance == NULL) 
-        instance = new EventHandler();
-    return instance;
+    if (_instance == NULL) 
+        _instance = new EventHandler();
+    return _instance;
 }
 
 /**
@@ -76,39 +76,39 @@ void EventHandler::wait_cycles(unsigned int cycles) {
 
 void EventHandler::setControllerDone(bool done) 
 { 
-	controllerDone = done; 
+	_controllerDone = done; 
 #if defined(IOS)
     if (done)
         controllerStopped_helper();
 #endif
 }     /**< Sets the controller exit flag for the event handler */
-bool EventHandler::getControllerDone()         { return controllerDone; }      /**< Returns the current value of the global exit flag */
-void EventHandler::end() { ended = true; }                                     /**< End all event processing */
-TimedEventMgr* EventHandler::getTimer()  { return &timer;}
+bool EventHandler::getControllerDone()         { return _controllerDone; }      /**< Returns the current value of the global exit flag */
+void EventHandler::end() { _ended = true; }                                     /**< End all event processing */
+TimedEventMgr* EventHandler::getTimer()  { return &_timer;}
 
 Controller *EventHandler::pushController(Controller *c) {
-    controllers.push_back(c);
+    _controllers.push_back(c);
     getTimer()->add(&Controller::timerCallback, c->getTimerInterval(), c);
     return c;
 }
 
 Controller *EventHandler::popController() {
-    if (controllers.empty())
+    if (_controllers.empty())
         return NULL;
 
-    Controller *controller = controllers.back();
+    Controller *controller = _controllers.back();
     getTimer()->remove(&Controller::timerCallback, controller);
-    controllers.pop_back();
+    _controllers.pop_back();
 
     return getController();
 }
 
 
 Controller *EventHandler::getController() const {
-    if (controllers.empty())
+    if (_controllers.empty())
         return NULL;
 
-    return controllers.back();
+    return _controllers.back();
 }
 
 void EventHandler::setController(Controller *c) {
@@ -208,20 +208,20 @@ void TimedEventMgr::lock()      { locked = true; }
 void TimedEventMgr::unlock()    { locked = false; }
 
 void EventHandler::pushMouseAreaSet(MouseArea *mouseAreas) {
-    mouseAreaSets.push_front(mouseAreas);
+    _mouseAreaSets.push_front(mouseAreas);
 }
 
 void EventHandler::popMouseAreaSet() {
-    if (mouseAreaSets.size())
-        mouseAreaSets.pop_front();
+    if (_mouseAreaSets.size())
+        _mouseAreaSets.pop_front();
 }
 
 /**
  * Get the currently active mouse area set off the top of the stack.
  */
 MouseArea* EventHandler::getMouseAreaSet() const {
-    if (mouseAreaSets.size())
-        return mouseAreaSets.front();
+    if (_mouseAreaSets.size())
+        return _mouseAreaSets.front();
     else
         return NULL;
 }
