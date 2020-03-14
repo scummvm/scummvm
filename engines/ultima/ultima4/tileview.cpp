@@ -20,6 +20,7 @@
  *
  */
 
+#include "ultima/ultima4/config.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/image.h"
 #include "ultima/ultima4/imagemgr.h"
