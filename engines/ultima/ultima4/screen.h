@@ -26,6 +26,7 @@
 #include "ultima/ultima4/direction.h"
 #include "ultima/ultima4/types.h"
 #include "ultima/ultima4/u4file.h"
+#include "graphics/screen.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -78,6 +79,11 @@ typedef struct _MouseArea {
 } MouseArea;
 
 #define SCR_CYCLE_PER_SECOND 4
+
+class Screen : public Graphics::Screen {
+public:
+	void init();
+};
 
 void screenInit(void);
 void screenRefreshTimerInit(void);

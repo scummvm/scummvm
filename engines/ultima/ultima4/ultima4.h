@@ -28,12 +28,20 @@
 namespace Ultima {
 namespace Ultima4 {
 
+class GameController;
+class Screen;
+
 class Ultima4Engine : public Shared::UltimaEngine {
+private:
+	void startup();
 protected:
 	// Engine APIs
 	Common::Error run() override;
 
 	bool initialize() override;
+public:
+	GameController *_game;
+	Screen *_screen;
 public:
 	Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima4Engine() override;

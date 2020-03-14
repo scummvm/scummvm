@@ -47,9 +47,9 @@ namespace Ultima4 {
 
 using namespace std;
 
-extern bool useProfile;
-extern Common::String profileName;
 extern bool quit;
+Common::String profileName;
+bool useProfile;
 
 IntroController *intro = NULL;
 

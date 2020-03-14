@@ -41,9 +41,14 @@
 #include "ultima/ultima4/tileset.h"
 #include "ultima/ultima4/tileview.h"
 #include "ultima/ultima4/annotation.h"
+#include "engines/util.h"
 
 namespace Ultima {
 namespace Ultima4 {
+
+void Screen::init() {
+	initGraphics(320, 200);
+}
 
 enum LayoutType {
     LAYOUT_STANDARD,
