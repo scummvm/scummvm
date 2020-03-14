@@ -1,0 +1,5 @@
+<!-- $Id: constraint.dtd 1906 2004-05-23 05:27:19Z andrewtaylor $ -->
+
+<!ELEMENT constraint EMPTY >
+<!ATTLIST constraint canuse             %bool;  #REQUIRED
+                     class              %class; #REQUIRED>

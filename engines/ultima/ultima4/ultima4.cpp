@@ -124,5 +124,12 @@ Common::Error Ultima4Engine::run() {
 	return Common::kNoError;
 }
 
+bool Ultima4Engine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
+	folder = "ultima4";
+	majorVersion = 1;
+	minorVersion = 0;
+	return true;
+}
+
 } // End of namespace Ultima4
 } // End of namespace Ultima

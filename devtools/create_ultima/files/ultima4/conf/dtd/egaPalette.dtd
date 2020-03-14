@@ -1,0 +1,3 @@
+<!-- $Id: egaPalette.dtd 1942 2004-05-26 05:48:22Z andrewtaylor $ -->
+
+<!ELEMENT egaPalette ( color+ ) >

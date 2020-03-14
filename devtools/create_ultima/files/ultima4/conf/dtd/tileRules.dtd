@@ -1,0 +1,32 @@
+<!-- $Id: tileRules.dtd 2785 2011-01-24 07:24:12Z darren_janeczek $ -->
+
+<!ENTITY % bool '( true | false )'>
+<!ENTITY % dir '( west | north | east | south | advance | retreat | all )'>
+<!ENTITY % effect '( fire | sleep | poison | poisonField | electricity | lava )'>
+<!ENTITY % speed '( slow | vslow | vvslow )'>
+
+<!ELEMENT tileRules ( rule+ ) >
+
+<!ELEMENT rule EMPTY >
+<!ATTLIST rule name               CDATA    #REQUIRED
+               balloon            %bool;   #IMPLIED
+               canattackover      %bool;   #IMPLIED
+               canlandballoon     %bool;   #IMPLIED
+               cantwalkoff        %dir;    #IMPLIED
+               cantwalkon         %dir;    #IMPLIED
+               chest              %bool;   #IMPLIED
+               dispel             %bool;   #IMPLIED
+               door               %bool;   #IMPLIED
+               effect             %effect; #IMPLIED
+               horse              %bool;   #IMPLIED
+               lockeddoor         %bool;   #IMPLIED
+               creatureunwalkable %bool;   #IMPLIED               
+               replacement        %bool;   #IMPLIED
+               onWaterOnlyReplacement %bool; #IMPLIED
+               sailable           %bool;   #IMPLIED
+               ship               %bool;   #IMPLIED
+               speed              %speed;  #IMPLIED
+               swimable           %bool;   #IMPLIED
+               talkover           %bool;   #IMPLIED
+               unflyable          %bool;   #IMPLIED
+               livingthing        %bool;   #IMPLIED>

@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<!-- <!DOCTYPE tilemap SYSTEM "dtd/tilemap.dtd">-->
+<!-- $Id: tilemap-base.xml 2773 2011-01-17 10:06:40Z darren_janeczek $ -->
+
+<tilemap name="base" tileset="base">
+    <mapping tile="sea"/>
+    <mapping tile="water"/>
+    <mapping tile="shallows"/>
+    <mapping tile="swamp"/>
+    <mapping tile="grass"/>
+    <mapping tile="brush"/>
+    <mapping tile="forest"/>
+    <mapping tile="hills"/>
+    <mapping tile="mountains"/>
+    <mapping tile="dungeon"/>
+    <mapping tile="city"/>
+    <mapping tile="castle"/>
+    <mapping tile="town"/>
+    <mapping tile="lcb_west"/>
+    <mapping tile="lcb_entrance"/>
+    <mapping tile="lcb_east"/>
+    <mapping frames="4" tile="ship"/>
+    <mapping frames="2" tile="horse"/>
+    <mapping tile="dungeon_floor"/>    
+    <mapping tile="bridge"/>
+    <mapping tile="balloon"/>
+    <mapping frames="2" tile="bridge_pieces"/>
+    <mapping tile="up_ladder"/>
+    <mapping tile="down_ladder"/>
+    <mapping tile="ruins"/>    
+    <mapping tile="shrine"/>
+    <mapping tile="avatar"/>
+    <mapping frames="2" tile="mage"/>
+    <mapping frames="2" tile="bard"/>
+    <mapping frames="2" tile="fighter"/>
+    <mapping frames="2" tile="druid"/>
+    <mapping frames="2" tile="tinker"/>
+    <mapping frames="2" tile="paladin"/>
+    <mapping frames="2" tile="ranger"/>
+    <mapping frames="2" tile="shepherd"/>
+    <mapping tile="column"/>
+    <mapping frames="4" tile="solids"/>
+    <mapping tile="shipmast"/>
+    <mapping tile="shipwheel"/>
+    <mapping tile="rocks"/>
+    <mapping tile="corpse"/>
+    <mapping tile="stone_wall"/>
+    <mapping tile="locked_door"/>
+    <mapping tile="door"/>
+    <mapping tile="chest"/>
+    <mapping tile="ankh"/>
+    <mapping tile="brick_floor"/>
+    <mapping tile="wood_floor"/>
+    <mapping frames="3" tile="moongate_opening"/>
+    <mapping tile="moongate"/>
+    <mapping tile="poison_field"/>
+    <mapping tile="energy_field"/>
+    <mapping tile="fire_field"/>
+    <mapping tile="sleep_field"/>
+    <mapping tile="solid"/>
+    <mapping tile="secret_door"/>
+    <mapping tile="altar"/>
+    <mapping tile="campfire"/>
+    <mapping tile="lava"/>
+    <mapping tile="miss_flash"/>
+    <mapping tile="magic_flash"/>
+    <mapping tile="hit_flash"/>
+    <mapping frames="2" tile="guard"/>
+    <mapping frames="2" tile="villager"/>
+    <mapping frames="2" tile="bard_singing"/>
+    <mapping frames="2" tile="jester"/>
+    <mapping frames="2" tile="beggar"/>
+    <mapping frames="2" tile="child"/>
+    <mapping frames="2" tile="bull"/>
+    <mapping frames="2" tile="lord_british"/>
+    <mapping tile="A"/>
+    <mapping tile="B"/>
+    <mapping tile="C"/>
+    <mapping tile="D"/>
+    <mapping tile="E"/>
+    <mapping tile="F"/>
+    <mapping tile="G"/>
+    <mapping tile="H"/>
+    <mapping tile="I"/>
+    <mapping tile="J"/>
+    <mapping tile="K"/>
+    <mapping tile="L"/>
+    <mapping tile="M"/>
+    <mapping tile="N"/>
+    <mapping tile="O"/>
+    <mapping tile="P"/>
+    <mapping tile="Q"/>
+    <mapping tile="R"/>
+    <mapping tile="S"/>
+    <mapping tile="T"/>
+    <mapping tile="U"/>
+    <mapping tile="V"/>
+    <mapping tile="W"/>
+    <mapping tile="X"/>
+    <mapping tile="Y"/>
+    <mapping tile="Z"/>
+    <mapping tile="space"/>
+    <mapping frames="3" tile="spacers"/>
+    <mapping tile="black"/>
+    <mapping tile="brick_wall"/>
+
+    <!-- Water monsters -->
+    <mapping frames="4" tile="pirate_ship"/>
+    <mapping frames="2" tile="nixie"/>
+    <mapping frames="2" tile="giant_squid"/>
+    <mapping frames="2" tile="sea_serpent"/>
+    <mapping frames="2" tile="sea_horse"/>
+    <mapping frames="2" tile="whirlpool"/>
+    <mapping frames="2" tile="twister"/>
+    
+    <!-- Land monsters -->    
+    <mapping frames="4" tile="rat"/>
+    <mapping frames="4" tile="bat"/>
+    <mapping frames="4" tile="spider"/>
+    <mapping frames="4" tile="ghost"/>
+    <mapping frames="4" tile="slime"/>
+    <mapping frames="4" tile="troll"/>
+    <mapping frames="4" tile="gremlin"/>
+    <mapping frames="4" tile="mimic"/>
+    <mapping frames="4" tile="reaper"/>
+    <mapping frames="4" tile="insect_swarm"/>
+    <mapping frames="4" tile="gazer"/>
+    <mapping frames="4" tile="phantom"/>
+    <mapping frames="4" tile="orc"/>
+    <mapping frames="4" tile="skeleton"/>
+    <mapping frames="4" tile="rogue"/>
+    <mapping frames="4" tile="python"/>
+    <mapping frames="4" tile="ettin"/>
+    <mapping frames="4" tile="headless"/>
+    <mapping frames="4" tile="cyclops"/>
+    <mapping frames="4" tile="wisp"/>
+    <mapping frames="4" tile="evil_mage"/>
+    <mapping frames="4" tile="liche"/>
+    <mapping frames="4" tile="lava_lizard"/>
+    <mapping frames="4" tile="zorn"/>
+    <mapping frames="4" tile="daemon"/>
+    <mapping frames="4" tile="hydra"/>
+    <mapping frames="4" tile="dragon"/>
+    <mapping frames="4" tile="balron"/>
+</tilemap>

@@ -1,0 +1,26 @@
+<!-- $Id: tileset.dtd 2785 2011-01-24 07:24:12Z darren_janeczek $ -->
+
+<!ENTITY % bool '( true | false )'>
+<!ENTITY % comp '( none | rle | lzw )'>
+<!ENTITY % anim '( scroll | frame | slow_frame | cityflag | castleflag | lcbflag | shipflag | pirateflag | campfire | none )'>
+
+<!ELEMENT tileset ( tile+ ) >
+<!ATTLIST tileset name               CDATA    #REQUIRED
+                  imageName          CDATA    #IMPLIED
+                  extends            CDATA    #IMPLIED>
+
+<!ELEMENT tile EMPTY >
+<!ATTLIST tile  name               CDATA    #REQUIRED
+                image              CDATA    #IMPLIED
+                rule               CDATA    #IMPLIED
+                index              NMTOKEN  #IMPLIED
+                frames             NMTOKEN  #IMPLIED
+                directions         CDATA    #IMPLIED
+                animation          %anim;   #IMPLIED 
+                rowtoswap          NMTOKEN  #IMPLIED
+                opaque             %bool;   #IMPLIED                
+                frame              NMTOKEN  #IMPLIED
+                tiledInDungeon     %bool;   #IMPLIED
+                usesReplacementTileAsBackground %bool; #IMPLIED
+                usesWaterReplacementTileAsBackground %bool; #IMPLIED
+                >
