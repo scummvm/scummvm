@@ -31,17 +31,16 @@
 namespace Ultima {
 namespace Ultima4 {
 
+#define SCR_CYCLE_PER_SECOND 4
+#define SCR_CYCLE_MAX 16
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 200
+
 class Image;
 class Map;
 class Tile;
 class TileView;
 class Coords;
-
-#if __GNUC__
-#define PRINTF_LIKE(x,y)  __attribute__ ((format (printf, (x), (y))))
-#else
-#define PRINTF_LIKE(x,y)
-#endif
 
 /*
  * bitmasks for LOS shadows
@@ -78,8 +77,6 @@ typedef struct _MouseArea {
     int command[3];
 } MouseArea;
 
-#define SCR_CYCLE_PER_SECOND 4
-
 class Screen : public Graphics::Screen {
 public:
 	void init();
@@ -107,7 +104,7 @@ void screenEraseMapArea(void);
 void screenEraseTextArea(int x, int y, int width, int height);
 void screenGemUpdate(void);
 
-void screenMessage(const char *fmt, ...) PRINTF_LIKE(1, 2);
+void screenMessage(const char *fmt, ...) GCC_PRINTF(1, 2);
 void screenPrompt(void);
 void screenRedrawMapArea(void);
 void screenRedrawScreen(void);
@@ -116,7 +113,7 @@ void screenScrollMessageArea(void);
 void screenShake(int iterations);
 void screenShowChar(int chr, int x, int y);
 void screenShowCharMasked(int chr, int x, int y, unsigned char mask);
-void screenTextAt(int x, int y, const char *fmt, ...) PRINTF_LIKE(3, 4);
+void screenTextAt(int x, int y, const char *fmt, ...) GCC_PRINTF(3, 4);
 void screenTextColor(int color);
 bool screenTileUpdate(TileView *view, const Coords &coords, bool redraw = true); //Returns true if the screen was affected
 void screenUpdate(TileView *view, bool showmap, bool blackout);
@@ -138,8 +135,6 @@ Image *screenScale(Image *src, int scale, int n, int filter);
 Image *screenScaleDown(Image *src, int scale);
 
 extern int screenCurrentCycle;
-
-#define SCR_CYCLE_MAX 16
 
 } // End of namespace Ultima4
 } // End of namespace Ultima
