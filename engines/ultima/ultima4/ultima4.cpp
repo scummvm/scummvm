@@ -53,7 +53,6 @@ Ultima4Engine::~Ultima4Engine() {
 
 	delete musicMgr;
 	soundDelete();
-	screenDelete();
 }
 
 bool Ultima4Engine::initialize() {

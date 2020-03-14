@@ -48,17 +48,34 @@ namespace Ultima4 {
 
 Screen *g_screen;
 
+// Just extern the system functions here. That way people aren't tempted to call them as part of the public API.
+extern void screenInit_sys();
+extern void screenDelete_sys();
+
+
 Screen::Screen() {
 	g_screen = this;
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 Screen::~Screen() {
+	clear();
 	g_screen = nullptr;
 }
 
 void Screen::init() {
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
+
+void Screen::clear() {
+	Std::vector<Layout *>::const_iterator i;
+	for (i = _layouts.begin(); i != _layouts.end(); ++i)
+		delete (*i);
+	_layouts.clear();
+	screenDelete_sys();
+
+	ImageMgr::destroy();
+}
+
 
 #define DBL_MAX 1e99
 
@@ -66,7 +83,6 @@ void screenLoadGraphicsFromConf(void);
 Layout *screenLoadLayoutFromConf(const ConfigElement &conf);
 void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, int y);
 
-Std::vector<Layout *> layouts;
 Std::vector<TileAnimSet *> tileanimSets;
 Std::vector<Common::String> gemLayoutNames;
 Std::vector<Common::String> filterNames;
@@ -92,10 +108,6 @@ int screenLos[VIEWPORT_W][VIEWPORT_H];
 static const int BufferSize = 1024;
 
 extern bool verbose;
-
-// Just extern the system functions here. That way people aren't tempted to call them as part of the public API.
-extern void screenInit_sys();
-extern void screenDelete_sys();
 
 void screenInit() {
     filterNames.clear();
@@ -159,17 +171,6 @@ void screenInit() {
     dungeonTileChars["sleep_field"] = '^';
 }
 
-void screenDelete() {
-    Std::vector<Layout *>::const_iterator i;
-    for (i = layouts.begin(); i != layouts.end(); i++)
-        delete(*i);
-    layouts.clear();
-    screenDelete_sys();
-    
-    ImageMgr::destroy();
-}
-
-
 /**
  * Re-initializes the screen and implements any changes made in settings
  */
@@ -178,8 +179,8 @@ void screenReInit() {
     Tileset::unloadAllImages(); /* unload tilesets, which will be reloaded lazily as needed */
     ImageMgr::destroy();
     tileanims = NULL;
-    screenDelete(); /* delete screen stuff */
-    screenInit();   /* re-init screen stuff (loading new backgrounds, etc.) */
+	g_screen->clear();
+	g_screen->init();			// re-init screen stuff (loading new backgrounds, etc.)
     intro->init();    /* re-fix the backgrounds loaded and scale images, etc. */
 }
 
@@ -311,14 +312,14 @@ void screenLoadGraphicsFromConf() {
     for (Std::vector<ConfigElement>::iterator conf = graphicsConf.begin(); conf != graphicsConf.end(); conf++) {
         
         if (conf->getName() == "layout")
-            layouts.push_back(screenLoadLayoutFromConf(*conf));
+			g_screen->_layouts.push_back(screenLoadLayoutFromConf(*conf));
         else if (conf->getName() == "tileanimset")
             tileanimSets.push_back(new TileAnimSet(*conf));
     }
     
     gemLayoutNames.clear();
     Std::vector<Layout *>::const_iterator i;
-    for (i = layouts.begin(); i != layouts.end(); i++) {
+    for (i = g_screen->_layouts.begin(); i != g_screen->_layouts.end(); i++) {
         Layout *layout = *i;
         if (layout->_type == LAYOUT_GEM) {
             gemLayoutNames.push_back(layout->_name);
@@ -328,7 +329,7 @@ void screenLoadGraphicsFromConf() {
     /*
      * Find gem layout to use.
      */
-    for (i = layouts.begin(); i != layouts.end(); i++) {
+    for (i = g_screen->_layouts.begin(); i != g_screen->_layouts.end(); i++) {
         Layout *layout = *i;
         
         if (layout->_type == LAYOUT_GEM && layout->_name == settings._gemLayout) {
@@ -351,14 +352,13 @@ Layout *screenLoadLayoutFromConf(const ConfigElement &conf) {
     Std::vector<ConfigElement> children = conf.getChildren();
     for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
         if (i->getName() == "tileshape") {
-            layout->_tileShape.width = i->getInt("width");
-            layout->_tileShape.height = i->getInt("height");
-        }
-        else if (i->getName() == "viewport") {
-            layout->_viewport.x = i->getInt("x");
-            layout->_viewport.y = i->getInt("y");
-            layout->_viewport.width = i->getInt("width");
-            layout->_viewport.height = i->getInt("height");
+            layout->_tileShape.x = i->getInt("width");
+            layout->_tileShape.y = i->getInt("height");
+        } else if (i->getName() == "viewport") {
+            layout->_viewport.left = i->getInt("x");
+            layout->_viewport.top = i->getInt("y");
+            layout->_viewport.setWidth(i->getInt("width"));
+            layout->_viewport.setHeight(i->getInt("height"));
         }
     }
     
@@ -1175,12 +1175,12 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
         ASSERT(charsetInfo, "charset not initialized");
         Std::map<Common::String, int>::iterator charIndex = dungeonTileChars.find(t.getTileType()->getName());
         if (charIndex != dungeonTileChars.end()) {
-            charsetInfo->_image->drawSubRect((layout->_viewport.x + (x * layout->_tileShape.width)) * settings._scale,
-                                            (layout->_viewport.y + (y * layout->_tileShape.height)) * settings._scale,
+            charsetInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
+                                            (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,
                                             0, 
-                                            charIndex->_value * layout->_tileShape.height * settings._scale, 
-                                            layout->_tileShape.width * settings._scale,
-                                            layout->_tileShape.height * settings._scale);
+                                            charIndex->_value * layout->_tileShape.y * settings._scale, 
+                                            layout->_tileShape.x * settings._scale,
+                                            layout->_tileShape.y * settings._scale);
         }
     }
     else {
@@ -1191,18 +1191,18 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
         }
         
         if (tile < 128) {
-            gemTilesInfo->_image->drawSubRect((layout->_viewport.x + (x * layout->_tileShape.width)) * settings._scale,
-                                             (layout->_viewport.y + (y * layout->_tileShape.height)) * settings._scale,
+            gemTilesInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
+                                             (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,
                                              0, 
-                                             tile * layout->_tileShape.height * settings._scale,
-                                             layout->_tileShape.width * settings._scale,
-                                             layout->_tileShape.height * settings._scale);
+                                             tile * layout->_tileShape.y * settings._scale,
+                                             layout->_tileShape.x * settings._scale,
+                                             layout->_tileShape.y * settings._scale);
         } else {
             Image *screen = imageMgr->get("screen")->_image;
-            screen->fillRect((layout->_viewport.x + (x * layout->_tileShape.width)) * settings._scale,
-                             (layout->_viewport.y + (y * layout->_tileShape.height)) * settings._scale,
-                             layout->_tileShape.width * settings._scale,
-                             layout->_tileShape.height * settings._scale,
+            screen->fillRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
+                             (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,
+                             layout->_tileShape.x * settings._scale,
+                             layout->_tileShape.y * settings._scale,
                              0, 0, 0);
         }
     }
@@ -1211,7 +1211,7 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
 Layout *screenGetGemLayout(const Map *map) {
     if (map->_type == Map::DUNGEON) {
         Std::vector<Layout *>::const_iterator i;
-        for (i = layouts.begin(); i != layouts.end(); i++) {
+        for (i = g_screen->_layouts.begin(); i != g_screen->_layouts.end(); i++) {
             Layout *layout = *i;
             
             if (layout->_type == LAYOUT_DUNGEONGEM)
@@ -1219,8 +1219,7 @@ Layout *screenGetGemLayout(const Map *map) {
         }
         errorFatal("no dungeon gem layout found!\n");
         return NULL;
-    }
-    else
+    } else
         return gemlayout;
 }
 
@@ -1242,12 +1241,12 @@ void screenGemUpdate() {
     //TODO, move the code responsible for determining 'peer' visibility to a non SDL specific part of the code.
     if (g_context->_location->_map->_type == Map::DUNGEON) {
     	//DO THE SPECIAL DUNGEON MAP TRAVERSAL
-    	Std::vector<Std::vector<int> > drawnTiles(layout->_viewport.width, Std::vector<int>(layout->_viewport.height, 0));
+    	Std::vector<Std::vector<int> > drawnTiles(layout->_viewport.width(), Std::vector<int>(layout->_viewport.height(), 0));
     	Common::List<Std::pair<int,int> > coordStack;
         
     	//Put the avatar's position on the stack
-    	int center_x = layout->_viewport.width / 2 - 1;
-    	int center_y = layout->_viewport.height / 2 - 1;
+    	int center_x = layout->_viewport.width() / 2 - 1;
+    	int center_y = layout->_viewport.height() / 2 - 1;
     	int avt_x = g_context->_location->_coords.x - 1;
     	int avt_y = g_context->_location->_coords.y - 1;
         
@@ -1262,8 +1261,8 @@ void screenGemUpdate() {
     		x = currentXY.first;
     		y = currentXY.second;
             
-    		if (	x < 0 || x >= layout->_viewport.width ||
-                y < 0 || y >= layout->_viewport.height)
+    		if (	x < 0 || x >= layout->_viewport.width() ||
+                y < 0 || y >= layout->_viewport.height())
     			continue;	//Skip out of range tiles
             
     		if (drawnTiles[x][y])
@@ -1275,8 +1274,8 @@ void screenGemUpdate() {
     		bool focus;
             
             
-			Std::vector<MapTile> tiles = screenViewportTile(layout->_viewport.width,
-                                                       layout->_viewport.height, x - center_x + avt_x, y - center_y + avt_y, focus);
+			Std::vector<MapTile> tiles = screenViewportTile(layout->_viewport.width(),
+				layout->_viewport.height(), x - center_x + avt_x, y - center_y + avt_y, focus);
 			tile = tiles.front();
             
 			TileId avatarTileId = g_context->_location->_map->_tileset->getByName("avatar")->getId();
@@ -1314,12 +1313,12 @@ void screenGemUpdate() {
     	}
         
 	} else {
-		//DO THE REGULAR EVERYTHING-IS-VISIBLE MAP TRAVERSAL
-		for (x = 0; x < layout->_viewport.width; x++) {
-			for (y = 0; y < layout->_viewport.height; y++) {
+		// DO THE REGULAR EVERYTHING-IS-VISIBLE MAP TRAVERSAL
+		for (x = 0; x < layout->_viewport.width(); x++) {
+			for (y = 0; y < layout->_viewport.height(); y++) {
 				bool focus;
-				tile = screenViewportTile(layout->_viewport.width,
-                                          layout->_viewport.height, x, y, focus).front();
+				tile = screenViewportTile(layout->_viewport.width(), layout->_viewport.height(),
+					x, y, focus).front();
 				screenShowGemTile(layout, g_context->_location->_map, tile, focus, x, y);
 			}
 		}
