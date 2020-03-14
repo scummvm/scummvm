@@ -197,6 +197,7 @@ int AlphaActionController::get(char lastValidLetter, const Common::String &promp
 }
 
 GameController::GameController() : _mapArea(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H), _paused(false), _pausedTimer(0) {
+	g_game = this;
 }
 
 void GameController::initScreen()
