@@ -48,7 +48,6 @@ EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont_, int font,
 
 EditWidget::~EditWidget(void) {
 	delete _cachedText;
-	_cachedText = nullptr;
 }
 
 // Init the gump, call after construction

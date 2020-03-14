@@ -35,12 +35,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MainShapeArchive, ShapeArchive)
 MainShapeArchive::~MainShapeArchive() {
 	if (_typeFlags) {
 		delete _typeFlags;
-		_typeFlags = nullptr;
 	}
 
 	if (_animDat) {
 		delete _animDat;
-		_animDat = nullptr;
 	}
 }
 

@@ -43,7 +43,7 @@ MemoryManager::MemoryManager() {
 }
 
 MemoryManager::~MemoryManager() {
-	_memoryManager = 0;
+	_memoryManager = nullptr;
 
 	setAllocationFunctions(malloc, free);
 	delete _allocators[0];
