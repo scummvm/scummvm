@@ -87,26 +87,28 @@ struct MouseArea {
 struct Layout {
 	Common::String _name;
 	LayoutType _type;
-	struct {
-		int width, height;
-	} _tileShape;
-	struct {
-		int x, y;
-		int width, height;
-	} _viewport;
+	Common::Point _tileShape;
+	Common::Rect _viewport;
 };
 
-class Screen : public Graphics::Screen {
+class Screen {
+public:
+	Graphics::Screen _surface;
+	Std::vector<Layout *> _layouts;
 public:
 	Screen();
 	~Screen();
 
 	void init();
+
+	/**
+	 * Reset the screen
+	 */
+	void clear();
 };
 
 void screenInit(void);
 void screenRefreshTimerInit(void);
-void screenDelete(void);
 void screenReInit(void);
 void screenLock();
 void screenUnlock();
