@@ -2930,6 +2930,14 @@ case $_host_os in
 		append_var CXXFLAGS "-fno-optimize-sibling-calls"
 		#the next line fixes "branch out of range" error in gob engine when -Os is used
 		append_var CXXFLAGS "-mlong-calls"
+		append_var CXXFLAGS "-mword-relocations"
+		append_var CXXFLAGS "-fomit-frame-pointer"
+		#use link time optimization to further reduce exe size
+		append_var CXXFLAGS "-flto"
+		append_var LDFLAGS "-flto"
+		#use linker dead code elimination to further reduce exe size
+		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+		append_var LDFLAGS "-Wl,--gc-sections"
 		if test "$_debug_build" = no; then
 		#optimize for smallest file size. This is necessary to prevent a crash on startup
 		#due to the large executable file size when many engines are enabled
@@ -3429,6 +3437,9 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_timidity=no
 			_port_mk="backends/platform/sdl/psp2/psp2.mk"
+			#the -gcc- variants allow link time optimization
+			_ar="$_host_alias-gcc-ar cru"
+			_ranlib=$_host_alias-gcc-ranlib
 			;;
 		psp)
 			_backend="psp"
