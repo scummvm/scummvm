@@ -1,10 +1,15 @@
-psp2vpk: $(EXECUTABLE)
+PSP2_EXE_STRIPPED := scummvm_stripped$(EXEEXT)
+
+$(PSP2_EXE_STRIPPED): $(EXECUTABLE)
+	$(STRIP) --strip-debug $< -o $@
+
+psp2vpk: $(PSP2_EXE_STRIPPED)
 	rm -rf psp2pkg
 	rm -f $(EXECUTABLE).vpk
 	mkdir -p psp2pkg/sce_sys/livearea/contents
 	mkdir -p psp2pkg/data/
 	mkdir -p psp2pkg/doc/
-	vita-elf-create $(EXECUTABLE) $(EXECUTABLE).velf
+	vita-elf-create $(PSP2_EXE_STRIPPED) $(EXECUTABLE).velf
 	vita-make-fself -s -c $(EXECUTABLE).velf psp2pkg/eboot.bin
 	vita-mksfoex -s TITLE_ID=VSCU00001 -d ATTRIBUTE2=12 "$(EXECUTABLE)" psp2pkg/sce_sys/param.sfo
 	cp $(srcdir)/dists/psp2/icon0.png psp2pkg/sce_sys/
