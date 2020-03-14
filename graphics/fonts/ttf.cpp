@@ -50,6 +50,27 @@
 #include FT_TRUETYPE_TABLES_H
 #include FT_TRUETYPE_TAGS_H
 
+#if (FREETYPE_MAJOR > 2 ||                                                          \
+        (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 3 ||                              \
+                                 (FREETYPE_MINOR == 3 && FREETYPE_PATCH >= 8))))
+// FT2.3.8+, nothing to do, FT_GlyphSlot_Own_Bitmap is in FT_BITMAP_H
+#define FAKE_BOLD 2
+#elif (FREETYPE_MAJOR > 2 ||                                                        \
+        (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 2 ||                              \
+                                 (FREETYPE_MINOR == 2 && FREETYPE_PATCH >= 0))))
+// FT2.2.0+ have FT_GlyphSlot_Own_Bitmap in FT_SYNTHESIS_H
+#include FT_SYNTHESIS_H
+#define FAKE_BOLD 2
+#elif (FREETYPE_MAJOR > 2 ||                                                        \
+        (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 1 ||                              \
+                                 (FREETYPE_MINOR == 1 && FREETYPE_PATCH >= 10))))
+// FT2.1.10+ don't have FT_GlyphSlot_Own_Bitmap but they have FT_Bitmap_Embolden, do workaround
+#define FAKE_BOLD 1
+#else
+// Older versions don't have FT_Bitmap_Embolden
+#define FAKE_BOLD 0
+#endif
+
 namespace Graphics {
 
 namespace {
@@ -118,7 +139,7 @@ public:
 
 	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode,
 	          uint dpi, TTFRenderMode renderMode, const uint32 *mapping);
-	bool load(uint8 *ttfFile, uint32 sizeFile, int faceIndex, bool fakeBold, bool fakeItalic,
+	bool load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool fakeBold, bool fakeItalic,
 	          int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping);
 
 	virtual int getFontHeight() const;
@@ -290,10 +311,13 @@ bool TTFFont::load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool bold, 
 	_width = ftCeil26_6(FT_MulFix(_face->max_advance_width, _face->size->metrics.x_scale));
 	_height = _ascent - _descent + 1;
 
+#if FAKE_BOLD > 0
+	// Width isn't modified when we can't fake bold
 	if (_fakeBold) {
 		// Embolden by 1 pixel width
 		_width += 1;
 	}
+#endif
 
 	// Apply a matrix transform for all loaded glyphs
 	if (_fakeItalic) {
@@ -676,7 +700,13 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 
 	glyph.advance = ftCeil26_6(_face->glyph->advance.x);
 
+	const FT_Bitmap *bitmap;
+#if FAKE_BOLD == 1
+	FT_Bitmap ownBitmap;
+#endif
+
 	if (_fakeBold) {
+#if FAKE_BOLD >= 2
 		// Embolden by 1 pixel in x and 0 in y
 		glyph.advance += 1;
 
@@ -686,29 +716,50 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 		// That's 26.6 fixed-point units
 		if (FT_Bitmap_Embolden(_face->glyph->library, &_face->glyph->bitmap, 1 << 6, 0))
 			return false;
+		
+		bitmap = &_face->glyph->bitmap;
+#elif FAKE_BOLD >= 1
+		FT_Bitmap_Init(&ownBitmap);
+
+		if (FT_Bitmap_Copy(_face->glyph->library, &_face->glyph->bitmap, &ownBitmap))
+			return false;
+
+		// Embolden by 1 pixel in x and 0 in y
+		glyph.advance += 1;
+
+		// That's 26.6 fixed-point units
+		if (FT_Bitmap_Embolden(_face->glyph->library, &ownBitmap, 1 << 6, 0))
+			return false;
+
+		bitmap = &ownBitmap;
+#else
+		// Can't do anything, just don't fake bold
+		bitmap = &_face->glyph->bitmap;
+#endif
+	} else {
+		bitmap = &_face->glyph->bitmap;
 	}
 
-	const FT_Bitmap &bitmap = _face->glyph->bitmap;
 
-	glyph.image.create(bitmap.width, bitmap.rows, PixelFormat::createFormatCLUT8());
+	glyph.image.create(bitmap->width, bitmap->rows, PixelFormat::createFormatCLUT8());
 
-	const uint8 *src = bitmap.buffer;
-	int srcPitch = bitmap.pitch;
+	const uint8 *src = bitmap->buffer;
+	int srcPitch = bitmap->pitch;
 	if (srcPitch < 0) {
-		src += (bitmap.rows - 1) * srcPitch;
+		src += (bitmap->rows - 1) * srcPitch;
 		srcPitch = -srcPitch;
 	}
 
 	uint8 *dst = (uint8 *)glyph.image.getPixels();
 	memset(dst, 0, glyph.image.h * glyph.image.pitch);
 
-	switch (bitmap.pixel_mode) {
+	switch (bitmap->pixel_mode) {
 	case FT_PIXEL_MODE_MONO:
-		for (int y = 0; y < (int)bitmap.rows; ++y) {
+		for (int y = 0; y < (int)bitmap->rows; ++y) {
 			const uint8 *curSrc = src;
 			uint8 mask = 0;
 
-			for (int x = 0; x < (int)bitmap.width; ++x) {
+			for (int x = 0; x < (int)bitmap->width; ++x) {
 				if ((x % 8) == 0)
 					mask = *curSrc++;
 
@@ -724,18 +775,24 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 		break;
 
 	case FT_PIXEL_MODE_GRAY:
-		for (int y = 0; y < (int)bitmap.rows; ++y) {
-			memcpy(dst, src, bitmap.width);
+		for (int y = 0; y < (int)bitmap->rows; ++y) {
+			memcpy(dst, src, bitmap->width);
 			dst += glyph.image.pitch;
 			src += srcPitch;
 		}
 		break;
 
 	default:
-		warning("TTFFont::cacheGlyph: Unsupported pixel mode %d", bitmap.pixel_mode);
+		warning("TTFFont::cacheGlyph: Unsupported pixel mode %d", bitmap->pixel_mode);
 		glyph.image.free();
 		return false;
 	}
+
+#if FAKE_BOLD == 1
+	if (_fakeBold) {
+		FT_Bitmap_Done(_face->glyph->library, &ownBitmap);
+	}
+#endif
 
 	return true;
 }
