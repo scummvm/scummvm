@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!-- $Id: sound.xml 2880 2011-04-02 16:49:32Z twschulz $ -->
+<sound>
+    <track file="title_fade.caf"/>      <!-- C64 TITLE_FADE     -->
+    <track file="walk_normal.caf"/>     <!-- C64 WALK           -->
+    <track file="walk_slowed.caf"/>     <!-- C64 WALK_SLOW      -->
+    <track file="walk_combat.caf"/>     <!-- C64 WALK_COMBAT    -->
+    <track file="blocked.caf"/>         <!-- C64 BLOCKED        -->
+    <track file="error.caf"/>           <!-- C64 ERROR          -->
+    <track file="pc_attack.caf"/>       <!-- C64 PC_ATTACK      -->
+    <track file="pc_struck.caf"/>       <!-- C64 PC_STRUCK      -->
+    <track file="npc_attack.caf"/>      <!-- C64 NPC_ATTACK     -->
+    <track file="npc_struck.caf"/>      <!-- C64 NPC_STRUCK     -->
+    <track file="enemy_magic_proj_hit.caf"/>                    <!--     ACID           -->
+    <track file="enemy_magic_proj_hit.caf"/>                    <!--     SLEEP          -->
+    <track file="poison_effect.caf"/>   <!-- C64 POISON_EFFECT  -->  <!-- same as PC_STRUCK -->
+    <track file="poison_damage.caf"/>   <!-- C64 POISON_DAMAGE  -->  <!-- same as NPC_STRUCK -->
+    <track file="evade.caf"/>           <!-- C64 EVADE          -->
+    <track file="flee.caf"/>            <!-- C64 FLEE           -->  <!-- same as EVADE -->
+    <track file="flee.caf"/>            <!--     ITEM_STOLEN    -->
+    <track file="magic.caf"/>           <!--     LBHEAL         -->
+    <track file="reaper_sleeper.caf"/>  <!--     LEVELUP        -->
+    <track file="moongate_flash.caf"/>  <!--     MOONGATE       -->
+    <track file="enemy_magic_proj.caf"/><!--     CANNON         -->
+    <track file="fx_tremor.caf"/>       <!--     RUMBLE         -->
+    <track file="spell_precast_R_with_mp45.caf"/>  <!--PREMAGIC_MANA_JUMBLE-->
+    <track file="spell_flash_25.caf"/>           <!-- C64 MAGIC          -->
+    <track file="fire_field_walking.caf"/>      <!--     WHIRLPOOL      -->
+    <track file="fire_field_walking.caf"/>      <!--     STORM          -->
+    <track file="badcommand.caf"/>      <!--     MISSED  THERE IS NO MISSED SOUND!!!       -->
+    <track file="attack2.caf"/>         <!--     CREATUREATTACK -->
+    <track file="hit2.caf"/>            <!--     PLAYERHIT      -->
+</sound>
+
+
+
+
+
+
+<!--
+
+horse
+horse fast
+steal
+
+
+ccs2.wav
+	6s		bad command
+	15s		move
+	34s		blocked
+	90s		sleep
+	170s	heal (LB)
+	340s	moongate
+	365s	attack
+	366s	kill
+	368s	acid trap
+	394s	attack
+	398s	flee
+	404s	trap evaded
+	436s	move in combat
+	474		move slow
+	482s	attack
+	491s 	monster attack
+	492s    monster hit
+	532s	attack
+	533s	hit
+
+ccs3.wav
+	39s		monster attack
+	40s     monster hit
+	160s	monster range attack (nixie)
+	174s    monster range hit
+	307		move slow
+	308		move
+	313		poisoned!
+	370s	poison damage
+	886s	poison damage (2 PCs)
+	890s	poison damage (1 PC)
+	950s	sleep trap
+	1140s	poison damage (1 PC)
+	1190s	level up (LB)
+	1200s	heal (LB)
+-->

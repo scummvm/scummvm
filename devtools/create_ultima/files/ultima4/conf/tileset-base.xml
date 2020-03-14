@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<!DOCTYPE tileset SYSTEM "dtd/tileset.dtd">
+<!-- $Id: tileset-base.xml 2946 2011-07-10 19:32:28Z darren_janeczek $ -->
+
+<tileset name="base" imageName="tiles">
+    
+    <!--
+        By default, the tile uses the image that matches its name,
+        precluded with "tile_" (e.g. "tile_sea", "tile_mage", etc.)
+        To override this behavior, use the "image" property to identify
+        a different image for the tile (e.g. image="tile_bridge").
+     -->
+
+    <tile name="sea" rule="water" animation="scroll"/>
+    <tile name="water" rule="water" animation="scroll"/>
+    <tile name="shallows" rule="shallows" animation="scroll"/>
+    <tile name="swamp" rule="swamp" />
+    <tile name="grass" rule="grass"/>
+    <tile name="brush" rule="brush"/>
+    <tile name="forest" rule="brush" opaque="true"/>
+    <tile name="hills" rule="hills"/>
+    <tile name="mountains" rule="mountains" opaque="true"/>
+    <tile name="dungeon"/>
+    <tile name="city" animation="cityflag" usesReplacementTileAsBackground="true"/>
+    <tile name="castle" animation="castleflag" usesReplacementTileAsBackground="true"/>
+    <tile name="town" usesReplacementTileAsBackground="true"/>
+    <tile name="lcb_west" rule="lcb" usesReplacementTileAsBackground="true"/>
+    <tile name="lcb_entrance" rule="lcb_entrance" animation="lcbflag" usesReplacementTileAsBackground="true"/>
+    <tile name="lcb_east" rule="lcb" usesReplacementTileAsBackground="true"/>    
+    <tile name="ship" rule="ship" frames="4" directions="wnes" animation="shipflag"/>
+    <tile name="horse" rule="horse" frames="2" directions="we"/>
+    <tile name="dungeon_floor" rule="floors"/>
+    <tile name="bridge" usesWaterReplacementTileAsBackground="true" usesReplacementTileAsBackground="true"/>
+    <tile name="balloon" rule="balloon"/>
+    <tile name="bridge_pieces" frames="2" usesWaterReplacementTileAsBackground="true" usesReplacementTileAsBackground="true"/>
+    <tile name="up_ladder" usesReplacementTileAsBackground="true"/>
+    <tile name="down_ladder" usesReplacementTileAsBackground="true"/>
+    <tile name="ruins" usesReplacementTileAsBackground="true"/>
+    <tile name="shrine" usesReplacementTileAsBackground="true"/>
+    <tile name="avatar" rule="person"/>
+    <tile name="mage" rule="person" frames="2" animation="frame"/>
+    <tile name="bard" rule="person" frames="2" animation="frame"/>
+    <tile name="fighter" rule="person" frames="2" animation="frame"/>
+    <tile name="druid" rule="person" frames="2" animation="frame"/>
+    <tile name="tinker" rule="person" frames="2" animation="frame"/>
+    <tile name="paladin" rule="person" frames="2" animation="frame"/>
+    <tile name="ranger" rule="person" frames="2" animation="frame"/>
+    <tile name="shepherd" rule="person" frames="2" animation="frame"/>
+    <tile name="column" rule="solid" usesReplacementTileAsBackground="true" /> 
+    <tile name="solids" rule="solid_attackover" frames="4" usesReplacementTileAsBackground="true" usesWaterReplacementTileAsBackground="true"/>
+    <tile name="shipmast" rule="solid"/>
+    <tile name="shipwheel" rule="solid"/>
+    <tile name="rocks" rule="solid" usesReplacementTileAsBackground="true"/>
+    <tile name="corpse" rule="solid" usesReplacementTileAsBackground="true"/>
+    <tile name="stone_wall" rule="walls"/>
+    <tile name="locked_door" rule="locked_door"/>
+    <tile name="door" rule="door"/>
+    <tile name="chest" rule="chest" usesReplacementTileAsBackground="true"/>
+    <tile name="ankh" rule="solid" usesReplacementTileAsBackground="true" usesWaterReplacementTileAsBackground="true"/>
+    <tile name="brick_floor" rule="floors"/>
+    <tile name="wood_floor" rule="floors"/>
+    <tile name="moongate_opening" rule="solid" frames="3"/>
+    <tile name="moongate"/>
+    <tile name="poison_field" rule="poison_field" animation="scroll" tiledInDungeon="true" usesReplacementTileAsBackground="true" usesWaterReplacementTileAsBackground="true"/>
+    <tile name="energy_field" rule="energy_field" animation="scroll" tiledInDungeon="true" usesReplacementTileAsBackground="true" usesWaterReplacementTileAsBackground="true"/>
+    <tile name="fire_field" rule="fire_field" animation="scroll" tiledInDungeon="true" usesReplacementTileAsBackground="true" usesWaterReplacementTileAsBackground="true"/>
+    <tile name="sleep_field" rule="sleep_field" animation="scroll" tiledInDungeon="true" usesReplacementTileAsBackground="true" usesWaterReplacementTileAsBackground="true"/>
+    <tile name="solid" rule="solid_attackover"/>
+    <tile name="secret_door" rule="secret_door" opaque="true"/>
+    <tile name="altar" usesReplacementTileAsBackground="true" />
+    <tile name="campfire" rule="solid" animation="campfire" usesReplacementTileAsBackground="true" />
+    <tile name="lava" rule="lava" animation="scroll"/>
+    <tile name="miss_flash" usesReplacementTileAsBackground="true"/>
+    <tile name="magic_flash" usesReplacementTileAsBackground="true"/>
+    <tile name="hit_flash" usesReplacementTileAsBackground="true"/>
+    <tile name="guard" rule="person" frames="4" animation="slow_frame"/>
+    <tile name="villager" rule="person" frames="2" animation="frame"/>
+    <tile name="bard_singing" rule="person" frames="2" animation="frame"/>    
+    <tile name="jester" rule="person" frames="2" animation="frame"/>
+    <tile name="beggar" rule="person" frames="2" animation="frame"/>
+    <tile name="child" rule="person" frames="2" animation="frame"/>
+    <tile name="bull" rule="person" frames="2" animation="frame"/>
+    <tile name="lord_british" rule="person" frames="2" animation="frame"/>
+    <tile name="A" rule="signs"/> <!-- the alphabet -->
+    <tile name="B" rule="signs"/>
+    <tile name="C" rule="signs"/>
+    <tile name="D" rule="signs"/>
+    <tile name="E" rule="signs"/>
+    <tile name="F" rule="signs"/>
+    <tile name="G" rule="signs"/>
+    <tile name="H" rule="signs"/>
+    <tile name="I" rule="signs"/>
+    <tile name="J" rule="signs"/>
+    <tile name="K" rule="signs"/>
+    <tile name="L" rule="signs"/>
+    <tile name="M" rule="signs"/>
+    <tile name="N" rule="signs"/>
+    <tile name="O" rule="signs"/>
+    <tile name="P" rule="signs"/>
+    <tile name="Q" rule="signs"/>
+    <tile name="R" rule="signs"/>
+    <tile name="S" rule="signs"/>
+    <tile name="T" rule="signs"/>
+    <tile name="U" rule="signs"/>
+    <tile name="V" rule="signs"/>
+    <tile name="W" rule="signs"/>
+    <tile name="X" rule="signs"/>
+    <tile name="Y" rule="signs"/>
+    <tile name="Z" rule="signs"/>
+    <tile name="space" rule="signs"/>
+    <tile name="spacers" rule="spacers" frames="3"/> <!-- sign spacers -->
+    <tile name="black" rule="spacers"/> <!-- black square -->
+    <tile name="brick_wall" rule="walls" opaque="true"/>
+
+    <!-- Water monsters -->
+    <tile name="pirate_ship" rule="monster" frames="4" directions="wnes" animation="pirateflag"/>
+    <tile name="nixie" rule="monster" frames="2" animation="frame"/>
+    <tile name="giant_squid" rule="monster" frames="2" animation="frame"/>
+    <tile name="sea_serpent" rule="monster" frames="2" animation="frame"/>
+    <tile name="sea_horse" rule="monster" frames="2" animation="frame"/>
+    <tile name="whirlpool" rule="water" frames="2" animation="frame"/>
+    <tile name="twister" frames="2" animation="frame"/>
+    
+    <!-- Land monsters -->    
+    <tile name="rat" rule="monster" frames="4" animation="frame"/>
+    <tile name="bat" rule="monster" frames="4" animation="frame"/>
+    <tile name="spider" rule="monster" frames="4" animation="frame"/>
+    <tile name="ghost" rule="monster" frames="4" animation="frame"/>
+    <tile name="slime" rule="monster" frames="4" animation="frame"/>
+    <tile name="troll" rule="monster" frames="4" animation="frame"/>
+    <tile name="gremlin" rule="monster" frames="4" animation="frame"/>
+    <tile name="mimic" rule="monster" frames="4" animation="frame"/>
+    <tile name="reaper" rule="monster" frames="4" animation="frame"/>
+    <tile name="insect_swarm" rule="monster" frames="4" animation="frame"/>
+    <tile name="gazer" rule="monster" frames="4" animation="frame"/>
+    <tile name="phantom" rule="monster" frames="4" animation="frame"/>
+    <tile name="orc" rule="monster" frames="4" animation="frame"/>
+    <tile name="skeleton" rule="monster" frames="4" animation="frame"/>
+    <tile name="rogue" rule="monster" frames="4" animation="frame"/>
+    <tile name="python" rule="monster" frames="4" animation="frame"/>
+    <tile name="ettin" rule="monster" frames="4" animation="frame"/>
+    <tile name="headless" rule="monster" frames="4" animation="frame"/>
+    <tile name="cyclops" rule="monster" frames="4" animation="frame"/>
+    <tile name="wisp" rule="monster" frames="4" animation="frame"/>
+    <tile name="evil_mage" rule="monster" frames="4" animation="frame"/>
+    <tile name="liche" rule="monster" frames="4" animation="frame"/>
+    <tile name="lava_lizard" rule="monster" frames="4" animation="frame"/>
+    <tile name="zorn" rule="monster" frames="4" animation="frame"/>
+    <tile name="daemon" rule="monster" frames="4" animation="frame"/>
+    <tile name="hydra" rule="monster" frames="4" animation="frame"/>
+    <tile name="dragon" rule="monster" frames="4" animation="frame"/>
+    <tile name="balron" rule="monster" frames="4" animation="frame"/>
+</tileset>

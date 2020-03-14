@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- <!DOCTYPE tilemap SYSTEM "dtd/tilemap.dtd">-->
+<!-- $Id: tilemap-dungeon.xml 2553 2005-09-26 07:44:29Z andrewtaylor $ -->
+
+<tilemap name="dungeon" tileset="dungeon">
+    <mapping frames="16" tile="brick_floor"/>
+    <mapping frames="16" tile="up_ladder"/>
+    <mapping frames="16" tile="down_ladder"/>
+    <mapping frames="16" tile="up_down_ladder"/>
+    <mapping frames="16" tile="chest"/>
+    <mapping frames="16" tile="ceiling_hole"/>
+    <mapping frames="16" tile="floor_hole"/>
+    <mapping frames="16" tile="magic_orb"/>
+    
+    <mapping frames="16" tile="ceiling_hole"/>
+    <!--
+    <mapping tile="wind_trap"/>
+    <mapping tile="falling_rock_trap"/>
+    <mapping frames="12" tile="brick_floor"/>
+    <mapping tile="pit_trap"/>
+    <mapping tile="dungeon_floor"/>
+    -->
+
+    <mapping frames="16" tile="fountain"/>
+    <!--
+    <mapping tile="fountain_normal"/>
+    <mapping tile="fountain_healing"/>
+    <mapping tile="fountain_acid"/>
+    <mapping tile="fountain_cure"/>
+    <mapping tile="fountain_poison"/>
+    <mapping frames="11" tile="brick_floor"/>
+    -->
+
+    <mapping tile="poison_field"/>
+    <mapping tile="energy_field"/>
+    <mapping tile="fire_field"/>
+    <mapping tile="sleep_field"/>
+    <mapping frames="12" tile="brick_floor"/> <!-- unused fields -->
+    <mapping frames="16" tile="dungeon_altar"/>
+    <mapping frames="16" tile="dungeon_door"/>
+    <mapping frames="16" tile="dungeon_room"/>
+    <mapping frames="16" tile="secret_door"/>
+    <mapping frames="16" tile="brick_wall"/>
+</tilemap>

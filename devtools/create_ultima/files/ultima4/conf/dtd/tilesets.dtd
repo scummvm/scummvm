@@ -1,0 +1,3 @@
+<!-- $Id: tilesets.dtd 2543 2005-09-20 05:07:50Z andrewtaylor $ -->
+
+<!ELEMENT tilesets (tilemap*, tileset*) >

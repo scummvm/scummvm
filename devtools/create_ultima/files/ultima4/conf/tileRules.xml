@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE tileRules SYSTEM "dtd/tileRules.dtd">
+<!-- $Id: tileRules.xml 3082 2014-09-10 01:05:01Z darren_janeczek $ -->
+<tileRules>
+    <rule name="default"/>
+    <rule name="water" cantwalkon="all" swimable="true" sailable="true" onWaterOnlyReplacement="true"/>
+    <rule name="shallows" cantwalkon="all" swimable="true" onWaterOnlyReplacement="true"/>
+    <rule name="swamp" speed="slow" effect="poison" />
+    <rule name="grass" canlandballoon="true" replacement="true"/>
+    <rule name="brush" speed="vslow" />
+    <rule name="hills" speed="vvslow" />
+    <rule name="mountains" cantwalkon="all" unflyable="true" creatureunwalkable="true"/>
+    <rule name="lcb" cantwalkon="all" creatureunwalkable="true"/>
+    <rule name="lcb_entrance" cantwalkon="south" cantwalkoff="north" creatureunwalkable="true"/>
+    <rule name="ship" ship="true" creatureunwalkable="true"/>
+    <rule name="horse" horse="true" creatureunwalkable="true"/>
+    <rule name="floors" replacement="true"/>
+    <rule name="balloon" balloon="true" creatureunwalkable="true"/>
+    <rule name="person" cantwalkon="all" livingthing="true"/>
+    <rule name="solid" cantwalkon="all"/>
+    <rule name="solid_attackover" cantwalkon="all" canattackover="true"/>
+    <rule name="walls" cantwalkon="all" unflyable="true"/>
+    <rule name="locked_door" cantwalkon="all" lockeddoor="true"/>
+    <rule name="door" cantwalkon="all" door="true"/>
+    <rule name="secret_door" cantwalkon="retreat"/>
+    <rule name="chest" chest="true"/>
+    <rule name="poison_field" effect="poisonField" dispel="true"/>
+    <rule name="energy_field" cantwalkon="all" effect="electricity" creatureunwalkable="true" unflyable="true" dispel="true"/>
+    <rule name="fire_field" speed="vvslow" effect="fire" dispel="true"/>
+    <rule name="sleep_field" effect="sleep" dispel="true"/>
+    <rule name="lava" effect="lava" replacement="true"/>
+    <rule name="signs" cantwalkon="all" talkover="true"/>
+    <rule name="spacers" cantwalkon="all"/>
+    <rule name="monster" cantwalkon="all" livingthing="true"/>    
+
+    <!-- Dungeon tile rules -->
+    <rule name="dng_altar" creatureunwalkable="true" unflyable="true"/>
+    <rule name="dng_door" cantwalkon="retreat"/>
+    <rule name="dng_room" creatureunwalkable="true" cantwalkon="retreat" unflyable="true"/>
+</tileRules>
