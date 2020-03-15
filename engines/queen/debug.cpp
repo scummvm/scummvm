@@ -50,11 +50,11 @@ Debugger::Debugger(QueenEngine *vm)
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
 
 void Debugger::preEnter() {
-	_vm->pauseEngine(true);
+	GUI::Debugger::preEnter();
 }
 
 void Debugger::postEnter() {
-	_vm->pauseEngine(false);
+	GUI::Debugger::postEnter();
 	_vm->graphics()->setupMouseCursor();
 }
 
