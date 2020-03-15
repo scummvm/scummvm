@@ -56,6 +56,22 @@ class Dialog;
 void GUIErrorMessage(const Common::String &msg);
 void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
 
+class Engine;
+
+class PauseToken {
+public:
+	PauseToken();
+	PauseToken(const PauseToken &);
+	~PauseToken();
+
+	void operator=(const PauseToken &);
+private:
+	PauseToken(Engine *);
+
+	Engine *_engine;
+
+	friend class Engine;
+};
 
 class Engine {
 public:
@@ -343,13 +359,16 @@ public:
 	 * and other stuff. Called right before the system runs a global dialog
 	 * (like a global pause, main menu, options or 'confirm exit' dialog).
 	 *
-	 * This is a convenience tracker which automatically keeps track on how
-	 * often the engine has been paused, ensuring that after pausing an engine
-	 * e.g. twice, it has to be unpaused twice before actuallying resuming.
-	 *
-	 * @param pause		true to pause the engine, false to resume it
+	 * Returns a PauseToken. Multiple pause tokens may exist. The engine will
+	 * be resumed when all associated pause tokens reach the end of their lives.
 	 */
-	void pauseEngine(bool pause);
+	PauseToken pauseEngine();
+	private:
+		void resumeEngine();
+
+		friend class PauseToken;
+
+	public:
 
 	/**
 	 * Return whether the engine is currently paused or not.
