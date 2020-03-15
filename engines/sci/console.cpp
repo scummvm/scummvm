@@ -271,7 +271,7 @@ void Console::attach(const char *entry) {
 }
 
 void Console::preEnter() {
-	_engine->pauseEngine(true);
+	GUI::Debugger::preEnter();
 }
 
 extern void playVideo(Video::VideoDecoder &videoDecoder);
@@ -299,7 +299,7 @@ void Console::postEnter() {
 		_videoFrameDelay = 0;
 	}
 
-	_engine->pauseEngine(false);
+	GUI::Debugger::postEnter();
 }
 
 bool Console::cmdHelp(int argc, const char **argv) {
