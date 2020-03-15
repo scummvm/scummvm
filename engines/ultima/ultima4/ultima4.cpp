@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/config.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/error.h"
 #include "ultima/ultima4/event.h"
@@ -42,10 +43,11 @@ namespace Ultima4 {
 bool quit = false, verbose = false;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-	Shared::UltimaEngine(syst, gameDesc), _game(nullptr), _screen(nullptr) {
+	Shared::UltimaEngine(syst, gameDesc), _config(nullptr), _game(nullptr), _screen(nullptr) {
 }
 
 Ultima4Engine::~Ultima4Engine() {
+	delete _config;
 	delete _game;
 	delete _screen;
 
@@ -59,7 +61,8 @@ bool Ultima4Engine::initialize() {
 	if (!Shared::UltimaEngine::initialize())
 		return false;
 
-	// Initialize the screen
+	// Initialize the sub-systems
+	_config = new Config();
 	_game = new GameController();
 	_screen = new Screen();
 	_screen->init();
