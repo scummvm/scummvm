@@ -1018,14 +1018,12 @@ void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
 
 		// Can only save during a game and not in the demo
 		if (g_neighborhood && !isDemo()) {
-			pauseEngine(true);
+			PauseToken pt = pauseEngine();
 
 			Common::Error result = showSaveDialog();
 
 			if (result.getCode() != Common::kNoError && result.getCode() != Common::kUserCanceled)
 				showSaveFailedDialog(result);
-
-			pauseEngine(false);
 		}
 	}
 
@@ -1040,7 +1038,7 @@ void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
 		// Just use the pause menu's restore button since it's there for that
 		// for you to load anyway.
 		if (!isDemo() && !(_gameMenu && _gameMenu->getObjectID() == kPauseMenuID)) {
-			pauseEngine(true);
+			PauseToken pt = pauseEngine();
 
 			if (g_neighborhood) {
 				makeContinuePoint();
@@ -1062,8 +1060,6 @@ void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
 					resetIntroTimer();
 				}
 			}
-
-			pauseEngine(false);
 		}
 	}
 }
