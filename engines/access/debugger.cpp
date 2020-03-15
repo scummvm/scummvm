@@ -59,7 +59,7 @@ void Debugger::postEnter() {
 		_playMovieFile.clear();
 	}
 
-	_vm->pauseEngine(false);
+	GUI::Debugger::postEnter();
 }
 
 /*------------------------------------------------------------------------*/
