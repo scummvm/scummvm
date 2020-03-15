@@ -96,6 +96,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mentalrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
 	{"msos",            "Monday Starts on Saturday"},
+	{"mythguff",        "Myth: A Guff's Tale"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
 	{"one",             "One"},
@@ -1286,6 +1287,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Monday Starts on Saturday
 	WME_WINENTRY("msos", "",
 		WME_ENTRY1s("data.dcp", "2aa5ab924b05c9539a5a118bc263c2f8", 1049803074), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Myth: A Guff's Tale
+	WME_WINENTRY("mythguff", "",
+		WME_ENTRY1s("data.dcp", "ef53dddd2264a7d5b13f3d71da5261e4", 675663078), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "Demo",
