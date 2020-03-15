@@ -131,7 +131,7 @@ void FontManager::draw() {
 
 void FontManager::clearText() {
 	_numTextEntries = 0;
-	_surface->fillRect(Common::Rect(0, 0, _surface->w - 1, _surface->h - 1), 0);
+	_surface->fillRect(Common::Rect(_surface->w, _surface->h), 0);
 }
 
 Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {

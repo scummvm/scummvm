@@ -117,6 +117,7 @@ class Inventory;
 class Scene;
 class Screen;
 class ActorManager;
+class Actor;
 class SequenceOpcodes;
 class ScriptOpcodes;
 class Talk;
@@ -124,6 +125,21 @@ class SoundManager;
 class StrPlayer;
 struct DragonINI;
 
+struct LoadingScreenState {
+	Actor *flames[10];
+	uint16 quads[10];
+	int16 baseYOffset;
+	int16 flameOffsetIdx;
+	int16 loadingFlamesUpdateCounter;
+	int16 loadingFlamesRiseCounter;
+
+	LoadingScreenState() {
+		baseYOffset = 0;
+		flameOffsetIdx = 0;
+		loadingFlamesUpdateCounter = 0;
+		loadingFlamesRiseCounter = 0;
+	}
+};
 
 class DragonsEngine : public Engine {
 public:
@@ -171,6 +187,8 @@ private:
 	uint16 _run_func_ptr_unk_countdown_timer;
 
 	uint32 _randomState;
+
+	LoadingScreenState *_loadingScreenState;
 
 	// input
 	bool _leftMouseButtonUp;
@@ -286,6 +304,8 @@ public:
 
 	bool isInMenu();
 
+	void loadingScreenUpdate();
+
 	//TODO this logic should probably go in its own class.
 	uint32 getBigFileInfoTblFromDragonEXE();
 	uint32 getFontOffsetFromDragonEXE();
@@ -322,6 +342,8 @@ private:
 	void SomeInitSound_fun_8003f64c();
 
 	void initSubtitleFlag();
+
+	void loadingScreen();
 
 	void mainMenu();
 };

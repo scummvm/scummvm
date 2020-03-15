@@ -361,6 +361,8 @@ void Scene::draw() {
 			}
 		}
 
+		_screen->drawFlatQuads(priority);
+
 		for (int16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 			Actor *actor = _actorManager->getActorByDisplayOrder(i);
 			if (actor->_x_pos == -100 && actor->_y_pos == 100) {

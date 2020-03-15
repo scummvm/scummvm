@@ -434,4 +434,54 @@ void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, 
 	}
 }
 
+int16 Screen::addFlatQuad(int16 x0, int16 y0, int16 x1, int16 y1, int16 x3, int16 y3, int16 x2, int16 y2, uint16 colour,
+						 int16 priorityLayer, uint16 flags) {
+
+	assert(x0 == x2 && x1 == x3 && y0 == y1 && y2 == y3); //make sure this is a rectangle
+
+	for (int i = 0; i < DRAGONS_NUM_FLAT_QUADS; i++) {
+		if (!(_flatQuads[i].flags & 1u)) {
+			_flatQuads[i].flags = flags | 1u;
+			_flatQuads[i].points[0].x = x0;
+			_flatQuads[i].points[0].y = y0;
+			_flatQuads[i].points[1].x = x1;
+			_flatQuads[i].points[1].y = y1;
+			_flatQuads[i].points[2].x = x3;
+			_flatQuads[i].points[2].y = y3;
+			_flatQuads[i].points[3].x = x2;
+			_flatQuads[i].points[3].y = y2;
+			_flatQuads[i].colour = colour;
+			_flatQuads[i].priorityLayer = priorityLayer;
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void Screen::drawFlatQuads(uint16 priorityLayer) {
+	for (int i = 0; i < DRAGONS_NUM_FLAT_QUADS; i++) {
+		if (_flatQuads[i].flags & 1u && _flatQuads[i].priorityLayer == priorityLayer) {
+			//TODO need to support semitrans mode.
+			//TODO check if we need to support non-rectangular quads.
+			fillRect(_flatQuads[i].colour, Common::Rect(_flatQuads[i].points[0].x, _flatQuads[i].points[0].y, _flatQuads[i].points[2].x + 1, _flatQuads[i].points[2].y + 1));
+		}
+	}
+}
+
+void Screen::fillRect(uint16 colour, Common::Rect rect) {
+	_backSurface->fillRect(rect, colour);
+}
+
+void Screen::clearAllFlatQuads() {
+	for (int i = 0; i < DRAGONS_NUM_FLAT_QUADS; i++) {
+		_flatQuads[i].flags = 0;
+	}
+}
+
+FlatQuad *Screen::getFlatQuad(uint16 quadId) {
+	assert(quadId < DRAGONS_NUM_FLAT_QUADS);
+	return &_flatQuads[quadId];
+}
+
 } // End of namespace Dragons

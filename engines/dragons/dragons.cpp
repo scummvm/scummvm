@@ -1546,19 +1546,29 @@ void DragonsEngine::mainMenu() {
 				_fontManager->addAsciiText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, &menuItems[i][0],
 										   strlen(menuItems[i]), i == curMenuItem ? 0 : 1);
 			}
-			if (checkForDownKeyRelease() && curMenuItem < 2) {
-				curMenuItem++;
+			if (checkForDownKeyRelease()) {
+				if (curMenuItem < 2) {
+					curMenuItem++;
+				} else {
+					curMenuItem = 0;
+				}
 				playOrStopSound(0x8009);
 			}
 
-			if (checkForUpKeyRelease() && curMenuItem > 0) {
-				curMenuItem--;
+			if (checkForUpKeyRelease()) {
+				if (curMenuItem > 0) {
+					curMenuItem--;
+				} else {
+					curMenuItem = 2;
+				}
 				playOrStopSound(0x8009);
 			}
 			waitForFrames(1);
 		} while (!checkForActionButtonRelease() && !shouldQuit());
 
 		if (curMenuItem == 0) {
+			_screen->clearScreen();
+			loadingScreen();
 			startGame = true;
 		} else if (curMenuItem == 1) {
 			//TODO options menu
@@ -1572,6 +1582,84 @@ void DragonsEngine::mainMenu() {
 
 bool DragonsEngine::isInMenu() {
 	return _inMenu;
+}
+
+void loadingScreenUpdateFunction() {
+	getEngine()->loadingScreenUpdate();
+}
+
+void DragonsEngine::loadingScreen() {
+	const int flamesActorOffset[4] = {2, 0, 3, 1};
+	_loadingScreenState = new LoadingScreenState;
+	_fontManager->clearText();
+	_actorManager->clearActorFlags(2);
+	_screen->addFlatQuad(0,0,0x13f,0,0x13f,199,0,199,0x34a2,6,0);
+	Actor *actor = _actorManager->loadActor(0,0x82,0,0,6);
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->setFlag(ACTOR_FLAG_200);
+	actor->setFlag(ACTOR_FLAG_80);
+	actor = _actorManager->loadActor(0,0x83,0,0,6);
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->setFlag(ACTOR_FLAG_200);
+	actor->setFlag(ACTOR_FLAG_80);
+
+	for (int i = 0; i < 10; i++) {
+		actor = _actorManager->loadActor(0,flamesActorOffset[(i % 4)] + 0x7e,i * 0x20 + 0x10,0xbe,6);
+		actor->setFlag(ACTOR_FLAG_100);
+		actor->setFlag(ACTOR_FLAG_200);
+		actor->setFlag(ACTOR_FLAG_80);
+		_loadingScreenState->flames[i] = actor;
+		_loadingScreenState->baseYOffset = 0xbe;
+		int x0 = i * 0x20;
+		_loadingScreenState->quads[i] = _screen->addFlatQuad(x0,0,x0 + 0x20,0,x0 + 0x20,199,x0,199,0,7,0);
+	}
+
+	setVsyncUpdateFunction(loadingScreenUpdateFunction);
+	waitForFramesAllowSkip(400);
+	_actorManager->clearActorFlags(2);
+	_screen->clearAllFlatQuads();
+	setVsyncUpdateFunction(nullptr);
+	delete _loadingScreenState;
+	_loadingScreenState = nullptr;
+}
+
+void DragonsEngine::loadingScreenUpdate() {
+	const int16 flameOffsetTbl[26] = {
+			3,      4,      5,      6,
+			7,      5,      4,      3,
+			3,      4,      6,      7,
+			6,      5,      5,      6,
+			7,      6,      4,      3,
+			2,      3,      4,      5,
+			6,      5
+	};
+	FlatQuad *quad;
+	int16 flameYOffset;
+
+	if (_loadingScreenState->loadingFlamesUpdateCounter == 0) {
+		_loadingScreenState->loadingFlamesUpdateCounter = 4;
+		for (int i = 0; i < 10 ; i++) {
+			flameYOffset = _loadingScreenState->baseYOffset - flameOffsetTbl[(i + _loadingScreenState->flameOffsetIdx) % 27];
+			if (_loadingScreenState->flames[i]->_y_pos >= -0xb) {
+				_loadingScreenState->flames[i]->_y_pos = flameYOffset;
+			}
+			quad = _screen->getFlatQuad(_loadingScreenState->quads[i]);
+			if (quad->points[0].y >= -1) {
+				quad->points[0].y = flameYOffset + 2;
+				quad->points[1].y = flameYOffset + 2;
+			}
+		}
+		_loadingScreenState->flameOffsetIdx = (_loadingScreenState->flameOffsetIdx + 1) % 27;
+	} else {
+		_loadingScreenState->loadingFlamesUpdateCounter--;
+	}
+
+	if (_loadingScreenState->loadingFlamesRiseCounter == 0) {
+		_loadingScreenState->loadingFlamesRiseCounter = 1;
+		_loadingScreenState->baseYOffset--;
+	} else {
+		_loadingScreenState->loadingFlamesRiseCounter--;
+	}
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {
