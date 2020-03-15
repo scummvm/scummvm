@@ -546,9 +546,9 @@ Common::Error Sword2Engine::run() {
 				case Common::KEYCODE_p:
 					if (isPaused()) {
 						_screen->dimPalette(false);
-						pauseEngine(false);
+						_gamePauseToken.clear();
 					} else {
-						pauseEngine(true);
+						_gamePauseToken = pauseEngine();
 						_screen->dimPalette(true);
 					}
 					break;
