@@ -529,18 +529,25 @@ void Engine::errorString(const char *buf1, char *buf2, int size) {
 	Common::strlcpy(buf2, buf1, size);
 }
 
-void Engine::pauseEngine(bool pause) {
-	assert((pause && _pauseLevel >= 0) || (!pause && _pauseLevel));
+PauseToken Engine::pauseEngine() {
+	assert(_pauseLevel >= 0);
 
-	if (pause)
-		_pauseLevel++;
-	else
-		_pauseLevel--;
+	_pauseLevel++;
 
-	if (_pauseLevel == 1 && pause) {
+	if (_pauseLevel == 1) {
 		_pauseStartTime = _system->getMillis();
 		pauseEngineIntern(true);
-	} else if (_pauseLevel == 0) {
+	}
+
+	return PauseToken(this);
+}
+
+void Engine::resumeEngine() {
+	assert(_pauseLevel > 0);
+
+	_pauseLevel--;
+
+	if (_pauseLevel == 0) {
 		pauseEngineIntern(false);
 		_engineStartTime += _system->getMillis() - _pauseStartTime;
 		_pauseStartTime = 0;
@@ -617,9 +624,8 @@ void Engine::setTotalPlayTime(uint32 time) {
 }
 
 int Engine::runDialog(GUI::Dialog &dialog) {
-	pauseEngine(true);
+	PauseToken pt = pauseEngine();
 	int result = dialog.runModal();
-	pauseEngine(false);
 
 	return result;
 }
@@ -737,9 +743,13 @@ bool Engine::loadGameDialog() {
 	}
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-	pauseEngine(true);
-	int slotNum = dialog->runModalWithCurrentTarget();
-	pauseEngine(false);
+
+	int slotNum;
+	{
+		PauseToken pt = pauseEngine();
+		slotNum = dialog->runModalWithCurrentTarget();
+	}
+
 	delete dialog;
 
 	if (slotNum < 0)
@@ -762,9 +772,11 @@ bool Engine::saveGameDialog() {
 	}
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-	pauseEngine(true);
-	int slotNum = dialog->runModalWithCurrentTarget();
-	pauseEngine(false);
+	int slotNum;
+	{
+		PauseToken pt = pauseEngine();
+		slotNum = dialog->runModalWithCurrentTarget();
+	}
 
 	Common::String desc = dialog->getResultString();
 	if (desc.empty())
@@ -817,4 +829,34 @@ MetaEngine &Engine::getMetaEngine() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	assert(plugin);
 	return plugin->get<MetaEngine>();
+}
+
+PauseToken::PauseToken() : _engine(nullptr) {}
+
+PauseToken::PauseToken(Engine *engine) : _engine(engine) {}
+
+void PauseToken::operator=(const PauseToken &t2) {
+	if (t2._engine == _engine) {
+		return;
+	}
+
+	if (_engine) {
+		_engine->resumeEngine();
+	}
+	_engine = t2._engine;
+	if (_engine) {
+		_engine->_pauseLevel++;
+	}
+}
+
+PauseToken::PauseToken(const PauseToken &t2) : _engine(t2._engine) {
+	if (_engine) {
+		_engine->_pauseLevel++;
+	}
+}
+
+PauseToken::~PauseToken() {
+	if (_engine) {
+		_engine->resumeEngine();
+	}
 }
