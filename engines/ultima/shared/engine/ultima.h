@@ -114,13 +114,6 @@ public:
 	}
 
 	/**
-	 * Get a reference to the data archive
-	 */
-	Common::Archive *getDataArchive() const {
-		return _dataArchive;
-	}
-
-	/**
 	 * Returns a file system node for the game directory
 	 */
 	Common::FSNode getGameDirectory() const;

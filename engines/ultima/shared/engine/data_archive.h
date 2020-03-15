@@ -24,6 +24,7 @@
 #define ULTIMA_SHARED_ENGINE_DATA_ARCHIVE_H
 
 #include "common/archive.h"
+#include "common/fs.h"
 #include "common/str.h"
 
 namespace Ultima {
@@ -52,10 +53,14 @@ private:
 public:
 	/**
 	 * Creates a data archive wrapper for the ultima.dat datafile.
-	 * If the required data is found, it returns the new archive.
+	 * Firstly, for debugging purposes, if a "files" folder exists on any path that
+	 * has the given subfolder, it will be used first. This will allow for setting
+	 * the ScummVM Extra Path to the create_ultima folder, and it will give preference
+	 * the files there. Otherwise, it checks for the presence of ultima.dat, and
+	 * if the required data is found, it returns the new archive.
 	 * Otherwise, returns an error message in the errorMsg field
 	 */
-    static UltimaDataArchive *load(const Common::String &subfolder,
+    static bool load(const Common::String &subfolder,
 		int reqMajorVersion, int reqMinorVersion, Common::String &errorMsg);
 public:
 	~UltimaDataArchive() override {
@@ -100,6 +105,78 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(
 		const Common::String &name) const override;
 };
+
+#ifndef RELEASE_BUILD
+
+/**
+ * The data archive proxy class is used for debugging purposes to access engine data
+ * files when the create_ultima folder is in the search path. It will allow for
+ * local mucking around with the data files and committing changes without having to
+ * recreate the ultima.dat file every time a change is made. ultima.dat then just has
+ * to be recreated prior to a release or when the changes are completed and stable
+ */
+class UltimaDataArchiveProxy : public Common::Archive {
+	friend class UltimaDataArchive;
+private:
+	Common::FSNode _folder;
+	const Common::String _publicFolder;
+
+	UltimaDataArchiveProxy(const Common::FSNode &folder) : _folder(folder), _publicFolder("data/") {}
+
+	/**
+	 * Gets a file node from the passed filename
+	 */
+	Common::FSNode getNode(const Common::String &name) const;
+public:
+	~UltimaDataArchiveProxy() override {
+	}
+
+	/**
+	 * Check if a member with the given name is present in the Archive.
+	 * Patterns are not allowed, as this is meant to be a quick File::exists()
+	 * replacement.
+	 */
+	bool hasFile(const Common::String &name) const override {
+		return name.hasPrefixIgnoreCase(_publicFolder) && getNode(name).exists();
+	}
+
+	/**
+	 * Add all members of the Archive matching the specified pattern to list.
+	 * Must only append to list, and not remove elements from it.
+	 *
+	 * @return the number of members added to list
+	 */
+	int listMatchingMembers(Common::ArchiveMemberList &list,
+			const Common::String &pattern) const override {
+		return 0;
+	}
+
+	/**
+	 * Add all members of the Archive to list.
+	 * Must only append to list, and not remove elements from it.
+	 *
+	 * @return the number of names added to list
+	 */
+	int listMembers(Common::ArchiveMemberList &list) const override {
+		return 0;
+	}
+
+	/**
+	 * Returns a ArchiveMember representation of the given file.
+	 */
+	const Common::ArchiveMemberPtr getMember(const Common::String &name)
+		const override;
+
+	/**
+	 * Create a stream bound to a member with the specified name in the
+	 * archive. If no member with this name exists, 0 is returned.
+	 * @return the newly created input stream
+	 */
+	Common::SeekableReadStream *createReadStreamForMember(
+		const Common::String &name) const override;
+};
+
+#endif
 
 } // End of namespace Shared
 } // End of namespace Ultima
