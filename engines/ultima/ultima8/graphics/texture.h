@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_TEXTURE_H
 #define ULTIMA8_GRAPHICS_TEXTURE_H
 
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -87,10 +87,8 @@ class IDataSource;
 //
 // Basic 32 Bit Texture
 //
-struct Texture {
-	uint32          *_buffer;
-	int32           _width;
-	int32           _height;
+class Texture : public Graphics::ManagedSurface {
+public:
 	uint32          _format;
 
 	// Use CalcLOG2s to calculate these (can be -1 which indicates not log2)
@@ -101,23 +99,34 @@ struct Texture {
 	uint32          _glTex;
 	Texture         *_next;
 
-	Texture() : _buffer(0), _format(TEX_FMT_STANDARD), _glTex(0), _next(0) {
+	static Graphics::PixelFormat getPixelFormat() {
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, TEX32_R_SHIFT, TEX32_G_SHIFT, TEX32_B_SHIFT, TEX32_A_SHIFT);
 	}
+
+	Texture();
 
 	virtual ~Texture();
 
-	// Clear all texture data
-	virtual bool Clear();
+	void create(uint16 width, uint16 height) override {
+		Graphics::ManagedSurface::create(width, height);
+	}
+	void create(uint16 width, uint16 height, const Graphics::PixelFormat &pixelFormat) override {
+		Graphics::ManagedSurface::create(width, height, pixelFormat);
+	}
+	void create(ManagedSurface &surf, const Common::Rect &bounds) override {
+		Graphics::ManagedSurface::create(surf, bounds);
+	}
+	void create(uint16 width, uint16 height, TextureFormat textureFormat);
 
 	// Calc texture log2's
 	void CalcLOG2s() {
 		_wlog2 = -1;
 		_hlog2 = -1;
 		for (int i = 0; i < 32; i++) {
-			if (_width == (1 << i))
+			if (this->w == (1 << i))
 				_wlog2 = i;
 
-			if (_height == (1 << i))
+			if (this->h == (1 << i))
 				_hlog2 = i;
 		}
 	}

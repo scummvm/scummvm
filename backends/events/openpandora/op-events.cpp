@@ -66,40 +66,23 @@ void OPEventSource::ToggleTapMode() {
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
 
 bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
-	if (ev.button.button == SDL_BUTTON_LEFT) {
-		if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
-			event.type = Common::EVENT_RBUTTONDOWN;
-		else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
-			event.type = Common::EVENT_LBUTTONDOWN;
-		else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
-			event.type = Common::EVENT_RBUTTONDOWN;
-		else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
-			event.type = Common::EVENT_MOUSEMOVE;
-		else if (_tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
-			event.type = Common::EVENT_MOUSEMOVE;
-		else
-			event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
-	} else if (ev.button.button == SDL_BUTTON_RIGHT)
+	if (ev.button.button != SDL_BUTTON_LEFT)
+		return SdlEventSource::handleMouseButtonDown(ev, event);
+
+	if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
 		event.type = Common::EVENT_RBUTTONDOWN;
-#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
-	else if (ev.button.button == SDL_BUTTON_WHEELUP)
-		event.type = Common::EVENT_WHEELUP;
-	else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-		event.type = Common::EVENT_WHEELDOWN;
-#endif
-#if defined(SDL_BUTTON_MIDDLE)
-	else if (ev.button.button == SDL_BUTTON_MIDDLE)
-		event.type = Common::EVENT_MBUTTONDOWN;
-#endif
+	else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
+		event.type = Common::EVENT_LBUTTONDOWN;
+	else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
+		event.type = Common::EVENT_RBUTTONDOWN;
+	else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
+		event.type = Common::EVENT_MOUSEMOVE;
+	else if (_tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
+		event.type = Common::EVENT_MOUSEMOVE;
 	else
-		return false;
+		event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
 
-	processMouseEvent(event, ev.button.x, ev.button.y);
-	// update KbdMouse
-	_km.x = ev.button.x * MULTIPLIER;
-	_km.y = ev.button.y * MULTIPLIER;
-
-	return true;
+	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
 bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
@@ -126,9 +109,6 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 		return false;
 
 	processMouseEvent(event, ev.button.x, ev.button.y);
-	// update KbdMouse
-	_km.x = ev.button.x * MULTIPLIER;
-	_km.y = ev.button.y * MULTIPLIER;
 
 	return true;
 }
@@ -143,18 +123,18 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_LEFT:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseY, _mouseY);
 			return true;
 			break;
 		case SDLK_RIGHT:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 #if defined(SDL_BUTTON_MIDDLE)
 		case SDLK_UP:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_MBUTTONDOWN : Common::EVENT_MBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 #endif
@@ -167,12 +147,12 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_HOME:
 			event.type = Common::EVENT_LBUTTONDOWN;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 		case SDLK_END:
 			event.type = Common::EVENT_RBUTTONDOWN;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 		case SDLK_PAGEDOWN:
@@ -205,12 +185,12 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_HOME:
 			event.type = Common::EVENT_LBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 		case SDLK_END:
 			event.type = Common::EVENT_RBUTTONUP;
-			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+			processMouseEvent(event, _mouseX, _mouseY);
 			return true;
 			break;
 		case SDLK_PAGEDOWN:

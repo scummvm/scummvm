@@ -46,7 +46,7 @@ ShapeInfo *TypeFlags::getShapeInfo(uint32 shapenum) {
 	if (shapenum < _shapeInfo.size())
 		return &(_shapeInfo[shapenum]);
 	else
-		return 0;
+		return nullptr;
 }
 
 
@@ -149,8 +149,8 @@ void TypeFlags::load(IDataSource *ds) {
 
 		}
 
-		si._weaponInfo = 0;
-		si._armourInfo = 0;
+		si._weaponInfo = nullptr;
+		si._armourInfo = nullptr;
 
 		_shapeInfo[i] = si;
 	}

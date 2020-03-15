@@ -40,7 +40,7 @@ Keymapper::Keymapper(EventManager *eventMan) :
 		_backendDefaultBindings(nullptr),
 		_delayedEventSource(new DelayedEventSource()),
 		_enabled(true),
-		_enabledKeymapType(Keymap::kKeymapTypeGlobal) {
+		_enabledKeymapType(Keymap::kKeymapTypeGame) {
 	_eventMan->getEventDispatcher()->registerSource(_delayedEventSource, true);
 	resetInputState();
 }
@@ -90,9 +90,7 @@ void Keymapper::addGlobalKeymap(Keymap *keymap) {
 
 	ConfigManager::Domain *keymapperDomain = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 	initKeymap(keymap, keymapperDomain);
-
-	// Global keymaps have the lowest priority, they need to be first in the array
-	_keymaps.insert_at(0, keymap);
+	_keymaps.push_back(keymap);
 }
 
 void Keymapper::addGameKeymap(Keymap *keymap) {
@@ -150,9 +148,9 @@ void Keymapper::reloadAllMappings() {
 }
 
 void Keymapper::setEnabledKeymapType(Keymap::KeymapType type) {
+	assert(type == Keymap::kKeymapTypeGui || type == Keymap::kKeymapTypeGame);
 	_enabledKeymapType = type;
 }
-
 
 List<Event> Keymapper::mapEvent(const Event &ev) {
 	if (!_enabled) {
@@ -164,44 +162,11 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 	hardcodedEventMapping(ev);
 
 	List<Event> mappedEvents;
-	for (int i = _keymaps.size() - 1; i >= 0; --i) {
-		if (!_keymaps[i]->isEnabled()) {
-			continue;
-		}
-
-		Keymap::KeymapType keymapType = _keymaps[i]->getType();
-		if (keymapType != _enabledKeymapType && keymapType != Keymap::kKeymapTypeGlobal) {
-			continue; // Ignore GUI keymaps while in game and vice versa
-		}
-
-		debug(9, "Keymapper::mapKey keymap: %s", _keymaps[i]->getId().c_str());
-
-		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(ev);
-		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
-			Event mappedEvent = executeAction(*it, ev);
-			if (mappedEvent.type == EVENT_INVALID) {
-				continue;
-			}
-
-			// In case we mapped a mouse event to something else, we need to generate an artificial
-			// mouse move event so event observers can keep track of the mouse position.
-			// Makes it possible to reliably use the mouse position from EventManager when consuming
-			// custom action events.
-			if (isMouseEvent(ev) && !isMouseEvent(mappedEvent)) {
-				Event fakeMouseEvent;
-				fakeMouseEvent.type  = EVENT_MOUSEMOVE;
-				fakeMouseEvent.mouse = ev.mouse;
-
-				mappedEvents.push_back(fakeMouseEvent);
-			}
-
-			mappedEvents.push_back(mappedEvent);
-		}
-		if (!actions.empty()) {
-			// If we found actions matching this input in a keymap, no need to look at the other keymaps.
-			// An input resulting in actions from system and game keymaps would lead to unexpected user experience.
-			break;
-		}
+	if (!mapEvent(ev, _enabledKeymapType, mappedEvents)) {
+		// If we found actions matching this input in the game / gui keymaps,
+		// no need to look at the global keymaps. An input resulting in actions
+		// from system and game keymaps would lead to unexpected user experience.
+		mapEvent(ev, Keymap::kKeymapTypeGlobal, mappedEvents);
 	}
 
 	if (ev.type == EVENT_JOYAXIS_MOTION && ev.joystick.axis < ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
@@ -227,6 +192,44 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 	return mappedEvents;
 }
 
+bool Keymapper::mapEvent(const Event &ev, Keymap::KeymapType keymapType, List<Event> &mappedEvents) {
+	bool matchedAction = false;
+
+	for (uint i = 0; i < _keymaps.size(); i++) {
+		if (!_keymaps[i]->isEnabled() || _keymaps[i]->getType() != keymapType) {
+			continue;
+		}
+
+		Keymap::ActionArray actions = _keymaps[i]->getMappedActions(ev);
+		if (!actions.empty()) {
+			matchedAction = true;
+		}
+
+		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
+			Event mappedEvent = executeAction(*it, ev);
+			if (mappedEvent.type == EVENT_INVALID) {
+				continue;
+			}
+
+			// In case we mapped a mouse event to something else, we need to generate an artificial
+			// mouse move event so event observers can keep track of the mouse position.
+			// Makes it possible to reliably use the mouse position from EventManager when consuming
+			// custom action events.
+			if (isMouseEvent(ev) && !isMouseEvent(mappedEvent)) {
+				Event fakeMouseEvent;
+				fakeMouseEvent.type  = EVENT_MOUSEMOVE;
+				fakeMouseEvent.mouse = ev.mouse;
+
+				mappedEvents.push_back(fakeMouseEvent);
+			}
+
+			mappedEvents.push_back(mappedEvent);
+		}
+	}
+
+	return matchedAction;
+}
+
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
 	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE
 	           || ev.type == EVENT_WHEELDOWN
@@ -248,6 +251,8 @@ Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &
 	           || ev.type == EVENT_LBUTTONDOWN
 	           || ev.type == EVENT_RBUTTONDOWN
 	           || ev.type == EVENT_MBUTTONDOWN
+	           || ev.type == EVENT_X1BUTTONDOWN
+	           || ev.type == EVENT_X2BUTTONDOWN
 	           || ev.type == EVENT_JOYBUTTON_DOWN) {
 		return kIncomingEventStart;
 	} else {
@@ -255,22 +260,27 @@ Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &
 	}
 }
 
-bool Keymapper::isMouseEvent(const Event &event) {
-	return event.type == EVENT_LBUTTONDOWN
-	        || event.type == EVENT_LBUTTONUP
-	        || event.type == EVENT_RBUTTONDOWN
-	        || event.type == EVENT_RBUTTONUP
-	        || event.type == EVENT_MBUTTONDOWN
-	        || event.type == EVENT_MBUTTONUP
-	        || event.type == EVENT_WHEELDOWN
-	        || event.type == EVENT_WHEELUP
-	        || event.type == EVENT_MOUSEMOVE;
-}
-
 Event Keymapper::executeAction(const Action *action, const Event &incomingEvent) {
 	Event outgoingEvent = Event(action->event);
 
 	IncomingEventType incomingType = convertToIncomingEventType(incomingEvent);
+
+	if (outgoingEvent.type == EVENT_JOYAXIS_MOTION
+	        || outgoingEvent.type == EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
+		if (incomingEvent.type == EVENT_JOYAXIS_MOTION) {
+			// At the moment only half-axes can be bound to actions, hence taking
+			//  the absolute value. If full axes were to be mappable, the action
+			//  could carry the information allowing to distinguish cases here.
+			outgoingEvent.joystick.position = ABS(incomingEvent.joystick.position);
+		} else if (incomingType == kIncomingEventStart) {
+			outgoingEvent.joystick.position = JOYAXIS_MAX;
+		} else if (incomingType == kIncomingEventEnd) {
+			outgoingEvent.joystick.position = 0;
+		}
+
+		return outgoingEvent;
+	}
+
 	if (incomingType == kIncomingEventIgnored) {
 		outgoingEvent.type = EVENT_INVALID;
 		return outgoingEvent;
@@ -323,6 +333,12 @@ EventType Keymapper::convertStartToEnd(EventType type) {
 		break;
 	case EVENT_MBUTTONDOWN:
 		result = EVENT_MBUTTONUP;
+		break;
+	case EVENT_X1BUTTONDOWN:
+		result = EVENT_X1BUTTONUP;
+		break;
+	case EVENT_X2BUTTONDOWN:
+		result = EVENT_X2BUTTONUP;
 		break;
 	case EVENT_JOYBUTTON_DOWN:
 		result = EVENT_JOYBUTTON_UP;

@@ -23,6 +23,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/xa.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "dragons/dragons.h"
@@ -88,6 +89,7 @@ void SoundManager::playSpeech(uint32 textIndex) {
 		error("Failed to open dtspeech.xa");
 	}
 	CdIntToPos_0(speechLocation.sectorStart * 32);
+	//TODO move the stream creation logic inside PSXAudioTrack.
 	fd->seek(((speechLocation.sectorStart * 32) + speechLocation.startOffset) * RAW_CD_SECTOR_SIZE);
 	PSXAudioTrack *_audioTrack = new PSXAudioTrack(fd, Audio::Mixer::kSpeechSoundType);
 	for (int i = 0x0; i < speechLocation.sectorEnd - speechLocation.sectorStart; i++) {
@@ -98,7 +100,7 @@ void SoundManager::playSpeech(uint32 textIndex) {
 	fd->close();
 	delete fd;
 	_vm->setFlags(ENGINE_FLAG_8000);
-	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, _audioTrack->getAudioStream());
+	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, _audioTrack->getAudioStream(), -1, _speechVolume);
 	delete _audioTrack;
 }
 
@@ -259,7 +261,27 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 		  _bigFileArchive(bigFileArchive),
 		  _dragonRMS(dragonRMS) {
 	_dat_8006bb60_sound_related = 0;
-	// TODO: Set volumes
+
+	bool allSoundIsMuted = false;
+	if (ConfMan.hasKey("mute")) {
+		allSoundIsMuted = ConfMan.getBool("mute");
+	}
+	_speechVolume = ConfMan.getInt("speech_volume");
+	_sfxVolume = ConfMan.getInt("sfx_volume");
+	_musicVolume = ConfMan.getInt("music_volume");
+
+	if (ConfMan.hasKey("speech_mute") && !allSoundIsMuted) {
+		_vm->_mixer->muteSoundType(_vm->_mixer->kSpeechSoundType, ConfMan.getBool("speech_mute"));
+	}
+
+	if (ConfMan.hasKey("sfx_mute") && !allSoundIsMuted) {
+		_vm->_mixer->muteSoundType(_vm->_mixer->kSFXSoundType, ConfMan.getBool("sfx_mute"));
+	}
+
+	if (ConfMan.hasKey("music_mute") && !allSoundIsMuted) {
+		_vm->_mixer->muteSoundType(_vm->_mixer->kMusicSoundType, ConfMan.getBool("music_mute"));
+	}
+
 	SomeInitSound_FUN_8003f64c();
 	loadMusAndGlob();
 }
@@ -400,7 +422,7 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 
 	Audio::SoundHandle *handle = getVoiceHandle(soundId);
 	if (handle) {
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, key));
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, key), -1, _sfxVolume);
 	}
 }
 
@@ -450,7 +472,7 @@ Audio::SoundHandle *SoundManager::getVoiceHandle(uint16 soundID) {
 			return &_voice[i].handle;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void SoundManager::stopVoicePlaying(uint16 soundID) {

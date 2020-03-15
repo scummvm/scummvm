@@ -278,7 +278,7 @@ void CombatProcess::turnToDirection(int direction) {
 bool CombatProcess::inAttackRange() {
 	Actor *a = getActor(_itemNum);
 	ShapeInfo *shapeinfo = a->getShapeInfo();
-	MonsterInfo *mi = 0;
+	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_ranged)
@@ -301,7 +301,7 @@ bool CombatProcess::inAttackRange() {
 void CombatProcess::waitForTarget() {
 	Actor *a = getActor(_itemNum);
 	ShapeInfo *shapeinfo = a->getShapeInfo();
-	MonsterInfo *mi = 0;
+	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_shifter && a->getMapNum() != 43 && (getRandom() % 2) == 0) {

@@ -50,7 +50,7 @@ void CutScene::scene1() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 
 	_actor_80063514 = 0xb00;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	//fade_related_calls_with_1f();
@@ -258,9 +258,7 @@ void CutScene::scene1() {
 																									_vm->waitForFramesAllowSkip(0xe);
 																									// call_fade_related_1f();
 																									_actor_80072df0->startWalk(0xe8, 0xa8, 2);
-																									while (_actor_80072df0->isFlagSet(ACTOR_FLAG_10)) {
-																										_vm->waitForFrames(1);
-																									}
+																									_actor_80072df0->waitForWalkToFinish();
 																									_actor_80072de8->startWalk(0x97, 0x37, 2);
 																									_actor_80072dec->startWalk(0x97, 0x37, 2);
 																									_actor_80072df4->startWalk(0x97, 0x37, 2);
@@ -276,15 +274,7 @@ void CutScene::scene1() {
 																									_actor_80072df0->_y_pos = 0x90;
 																									_actor_80072df0->startWalk(0x97, 0x37, 2);
 																									_actor_80072df0->updateSequence(7);
-//TODO
-//																									if (((_actor_8008e7e8 != 0) || (_actor_8008e848 != 0))
-//																										|| ((_actor_8008e844 != 0 || (_actor_8008e874 != 0)))
-//																											) {
-//																										clearTextDialog((uint)_actor_8008e7e8,
-//																													 (uint)_actor_8008e844,
-//																													 (uint)_actor_8008e848,
-//																													 (uint)_actor_8008e874);
-//																									}
+																									_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 
 																									dialog[0] = 0;
 																									_vm->_talk->loadText(0x5ecc, dialog, 2000);
@@ -314,6 +304,7 @@ void CutScene::scene1() {
 			}
 		}
 	}
+	_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 	// fade_related_calls_with_1f();
 	_vm->clearFlags(ENGINE_FLAG_20000);
 	// DisableVSyncEvent();
@@ -382,7 +373,7 @@ void CutScene::fun_8003d388() {
 		_actor_80072dfc = _vm->_actorManager->loadActor(0x7e, 0x12, 0xcd, 0x8e, 1);
 	}
 	if ((_actor_80063514 & 1) == 0) {
-		_actor_80072e04 = _vm->_actorManager->loadActor(0x7e, 0x19, 0x10e, 0x89, 1);
+		_flameActor = _vm->_actorManager->loadActor(0x7e, 0x19, 0x10e, 0x89, 1);
 	}
 	if ((_actor_80063514 & 2) == 0) {
 		_actor_80072e08 = _vm->_actorManager->loadActor(0x8f, 2, 100, 0xbc, 1);
@@ -550,7 +541,7 @@ void CutScene::knightsSavedBackAtCastle() {
 
 	uVar1 = _vm->_dragonINIResource->getFlickerRecord();
 	_actor_80063514 = 0xa00;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	isFlag0x10Set = _vm->isFlagSet(ENGINE_FLAG_10);
 	//TODO fade_related_calls_with_1f();
@@ -578,15 +569,13 @@ void CutScene::knightsSavedBackAtCastle() {
 //			playSoundFromTxtIndex(0x78e8);
 			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 3, 0, 0x78e8, 0x2e01) != 2) {
 				wideAngleEveryoneAtTable();
-				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072e04, 0x1a, 0x19, 0x7a1e, 0x3e01) != 2) {
-					_actor_80072e04->_walkSpeed = 0x10000;
-					_actor_80072e04->setFlag(ACTOR_FLAG_800);
-					_actor_80072e04->updateSequence(0x21);
-					_actor_80072e04->startWalk(0x13f, 0x6e, 2);
+				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_flameActor, 0x1a, 0x19, 0x7a1e, 0x3e01) != 2) {
+					_flameActor->_walkSpeed = 0x10000;
+					_flameActor->setFlag(ACTOR_FLAG_800);
+					_flameActor->updateSequence(0x21);
+					_flameActor->startWalk(0x13f, 0x6e, 2);
 					// wait for pathfinding to complete
-					while (_actor_80072e04->isFlagSet(ACTOR_FLAG_10)) { //TODO move to method on Actor waitForPathfinding() ??
-						//empty
-					}
+					_flameActor->waitForWalkToFinish();
 					_actor_80063514 = _actor_80063514 | 1;
 					closeUpShotOnActor(0xd3, 0, 0x233, 0x17a);
 //					playSoundFromTxtIndex(0x7aba);
@@ -658,7 +647,7 @@ void CutScene::flameReturnsCutScene() {
 
 	uVar1 = _vm->_dragonINIResource->getFlickerRecord();
 	_actor_80063514 = 0x3f;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	engineFlag10Set = _vm->isFlagSet(ENGINE_FLAG_10);
 	//fade_related_calls_with_1f();
@@ -675,28 +664,26 @@ void CutScene::flameReturnsCutScene() {
 	_actor_80063514 = (_actor_80063514 & 0xfffe) | 0x600;
 	fun_8003d388();
 	_actor_80072de8->updateSequence(0x1f);
-	_actor_80072e04->_x_pos = 0x10b;
-	_actor_80072e04->_y_pos = 99;
+	_flameActor->_x_pos = 0x10b;
+	_flameActor->_y_pos = 99;
 	_actor_80072de8->_x_pos = 0x10a;
 	_actor_80072de8->_y_pos = 0x5a;
 	_actor_80072de8->_walkSpeed = 0x10000;
-	_actor_80072e04->_walkSpeed = 0x10000;
+	_flameActor->_walkSpeed = 0x10000;
 	_actor_80072de8->setFlag(ACTOR_FLAG_800);
-	_actor_80072e04->setFlag(ACTOR_FLAG_800);
+	_flameActor->setFlag(ACTOR_FLAG_800);
 	//	call_fade_related_1f();
 	_vm->setFlags(ENGINE_FLAG_20000);
 	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8ab2, 0x2e01) != 2) {
 		_actor_80072de8->updateSequence(0x1e);
 		_actor_80072de8->startWalk(0xb0, 0x6b, 2);
-		do {
-		} while (_actor_80072de8->isFlagSet(ACTOR_FLAG_10));
+		_actor_80072de8->waitForWalkToFinish();
 		_actor_80072de8->updateSequence(0x1f);
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8b40, 0x2e01) != 2) {
-			_actor_80072e04->updateSequence(0x1b);
-			_actor_80072e04->startWalk(0xd5, 0x6b, 2);
-			do {
-			} while (_actor_80072e04->isFlagSet(ACTOR_FLAG_10));
-			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072e04, 0x1a, 0x19, 0x8bb6, 0x3e01) != 2) {
+			_flameActor->updateSequence(0x1b);
+			_flameActor->startWalk(0xd5, 0x6b, 2);
+			_flameActor->waitForWalkToFinish();
+			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_flameActor, 0x1a, 0x19, 0x8bb6, 0x3e01) != 2) {
 				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8bd8, 0x2e01) != 2) {
 					closeUpShotOnActor(0xd8, 0, 0xfd, 0x60);
 //					playSoundFromTxtIndex(0x8c70);
@@ -736,7 +723,7 @@ void CutScene::knightsSavedAgain() {
 
 	flicker = _vm->_dragonINIResource->getFlickerRecord();
 	_actor_80063514 = 0;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	engineFlag10Set = _vm->isFlagSet(ENGINE_FLAG_10);
 	//fade_related_calls_with_1f();
@@ -839,7 +826,7 @@ void CutScene::tournamentCutScene() {
 
 	_vm->_talk->loadText(0x4C6E8, dialogText, 1000);
 	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C6E8);
-	_vm->setVsyncUpdateFunction(NULL);
+	_vm->setVsyncUpdateFunction(nullptr);
 	_vm->setFlags(ENGINE_FLAG_20000);
 	// fade_related_calls_with_1f();
 	Actor *actor = _vm->_dragonINIResource->getRecord(0x02BE)->actor;

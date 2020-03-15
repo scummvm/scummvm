@@ -262,6 +262,26 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_HEROCRAFT
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] GetCharCode
+	// Returns integer value of char at given position
+	// Used at "Pole Chudes" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetCharCode") == 0) {
+		stack->correctParams(1);
+
+		int index = stack->pop()->getInt();
+		int result = 0;
+		if (strlen(_string) > (uint32)index) {
+			result = _string[index];
+		}
+		stack->pushInt(result);
+		
+		return STATUS_OK;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Split
 	//////////////////////////////////////////////////////////////////////////

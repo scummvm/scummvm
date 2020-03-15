@@ -310,6 +310,10 @@ void OSystem_Android::initBackend() {
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("touchpad_mouse_mode", true);
 	ConfMan.registerDefault("onscreen_control", true);
+	// The swap_menu_and_back is a legacy configuration key
+	// It is no longer relevant, after introducing the keymapper functionality
+	// since the behaviour of the menu and back buttons is now handled by the keymapper.
+	// The key is thus registered to default to a "false" value
 	ConfMan.registerDefault("swap_menu_and_back", false);
 
 	ConfMan.setInt("autosave_period", 0);
@@ -416,6 +420,10 @@ bool OSystem_Android::getFeatureState(Feature f) {
 Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings() {
 	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
 
+	// The swap_menu_and_back is a legacy configuration key
+	// It is only checked here for compatibility with old config files
+	// where it may have been set as "true"
+	// TODO Why not just ignore it entirely anyway?
 	if (ConfMan.hasKey("swap_menu_and_back")  && ConfMan.getBool("swap_menu_and_back")) {
 		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "AC_BACK");
 		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "MENU");

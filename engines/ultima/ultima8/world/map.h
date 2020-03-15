@@ -57,6 +57,9 @@ private:
 	void loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 	                            uint32 extendedflags);
 
+	// Add a fixed item to patch game data errors
+	void addMapFix(uint32 shape, uint32 frame, int32 x, int32 y, int32 z);
+
 	// Q: How should we store the items in a map.
 	// It might make things more efficient if we order them by 'chunk'
 	// (512x512). This would mean we need about 128x128 item lists.

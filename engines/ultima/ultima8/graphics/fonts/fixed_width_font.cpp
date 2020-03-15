@@ -37,21 +37,22 @@ FixedWidthFont *FixedWidthFont::Create(const Std::string &iniroot) {
 	Std::string filename;
 	if (!config->get(iniroot + "/font/path", filename)) {
 		perr << "Error: 'path' key not found in font ini" << Std::endl;
-		return 0;
+		return nullptr;
 	}
 
 	IDataSource *ds = filesys->ReadFile(filename);
 
 	if (!ds) {
 		perr << "Error: Unable to open file " << filename << Std::endl;
-		return 0;
+		return nullptr;
 	}
 
 	Texture *fonttex = Texture::Create(ds, filename.c_str());
 
 	if (!fonttex) {
 		perr << "Error: Unable to read texture " << filename << Std::endl;
-		return 0;
+		// FIXME: This leaks ds
+		return nullptr;
 	}
 
 	delete ds;
@@ -61,11 +62,11 @@ FixedWidthFont *FixedWidthFont::Create(const Std::string &iniroot) {
 	fwf->_tex = fonttex;
 
 	if (!config->get(iniroot + "/font/width", fwf->_width)) {
-		fwf->_width = fwf->_tex->_width / 16;
+		fwf->_width = fwf->_tex->w / 16;
 	}
 
 	if (!config->get(iniroot + "/font/height", fwf->_height)) {
-		fwf->_height = fwf->_tex->_height / 16;
+		fwf->_height = fwf->_tex->h / 16;
 	}
 
 	if (!config->get(iniroot + "/font/align_x", fwf->_alignX)) {

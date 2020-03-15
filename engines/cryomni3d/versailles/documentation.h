@@ -95,12 +95,12 @@ private:
 	};
 	static const TimelineEntry kTimelineEntries[];
 
-	static char *getDocPartAddress(char *start, char *end, const char *patterns[]);
-	static const char *getDocTextAddress(char *start, char *end);
-	static const char *getRecordTitle(char *start, char *end);
-	static const char *getRecordSubtitle(char *start, char *end);
-	static const char *getRecordCaption(char *start, char *end);
-	static void getRecordHyperlinks(char *start, char *end, Common::StringArray &hyperlinks);
+	char *getDocPartAddress(char *start, char *end, const char *patterns[]);
+	const char *getDocTextAddress(char *start, char *end);
+	const char *getRecordTitle(char *start, char *end);
+	const char *getRecordSubtitle(char *start, char *end);
+	const char *getRecordCaption(char *start, char *end);
+	void getRecordHyperlinks(char *start, char *end, Common::StringArray &hyperlinks);
 
 	Common::String getRecordTitle(const Common::String &record);
 	Common::String getRecordData(const Common::String &record, Common::String &title,
@@ -120,6 +120,8 @@ private:
 	FontManager *_fontManager;
 	const Sprites *_sprites;
 	const Common::StringArray *_messages;
+
+	bool _multilineAttributes;
 
 	Common::StringArray _recordsOrdered;
 	Common::HashMap<Common::String, RecordInfo> _records;

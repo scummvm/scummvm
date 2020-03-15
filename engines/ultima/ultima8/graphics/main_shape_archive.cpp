@@ -35,19 +35,17 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MainShapeArchive, ShapeArchive)
 MainShapeArchive::~MainShapeArchive() {
 	if (_typeFlags) {
 		delete _typeFlags;
-		_typeFlags = 0;
 	}
 
 	if (_animDat) {
 		delete _animDat;
-		_animDat = 0;
 	}
 }
 
 void MainShapeArchive::loadTypeFlags(IDataSource *ds) {
 	if (_typeFlags) {
 		delete _typeFlags;
-		_typeFlags = 0;
+		_typeFlags = nullptr;
 	}
 
 	_typeFlags = new TypeFlags;
@@ -63,7 +61,7 @@ ShapeInfo *MainShapeArchive::getShapeInfo(uint32 shapenum) {
 void MainShapeArchive::loadAnimDat(IDataSource *ds) {
 	if (_animDat) {
 		delete _animDat;
-		_animDat = 0;
+		_animDat = nullptr;
 	}
 
 	_animDat = new AnimDat;

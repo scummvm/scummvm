@@ -47,52 +47,53 @@
 namespace Ultima {
 namespace Ultima8 {
 
-GameData *GameData::_gameData = 0;
-
+GameData *GameData::_gameData = nullptr;
 
 GameData::GameData(GameInfo *gameInfo)
-	: _fixed(0), _mainShapes(0), _mainUsecode(0), _globs(), _fonts(0), _gumps(0),
-	  _mouse(0), _music(0), _weaponOverlay(0), _soundFlex(0), _speech(1024), _gameInfo(gameInfo) {
+	: _fixed(nullptr), _mainShapes(nullptr), _mainUsecode(nullptr), _globs(),
+	  _fonts(nullptr), _gumps(nullptr), _mouse(nullptr), _music(nullptr),
+	  _weaponOverlay(nullptr), _soundFlex(nullptr), _gameInfo(gameInfo) {
 	debugN(MM_INFO, "Creating GameData...\n");
 
 	_gameData = this;
+	_speech.resize(1024);
 }
 
 GameData::~GameData() {
 	debugN(MM_INFO, "Destroying GameData...\n");
 
 	delete _fixed;
-	_fixed = 0;
+	_fixed = nullptr;
 
 	delete _mainShapes;
-	_mainShapes = 0;
+	_mainShapes = nullptr;
 
 	delete _mainUsecode;
-	_mainUsecode = 0;
+	_mainUsecode = nullptr;
 
 	for (unsigned int i = 0; i < _globs.size(); ++i)
 		delete _globs[i];
 	_globs.clear();
 
 	delete _fonts;
-	_fonts = 0;
+	_fonts = nullptr;
 
 	delete _gumps;
-	_gumps = 0;
+	_gumps = nullptr;
 
 	delete _mouse;
-	_mouse = 0;
+	_mouse = nullptr;
 
 	delete _music;
-	_music = 0;
+	_music = nullptr;
 
 	delete _weaponOverlay;
-	_weaponOverlay = 0;
+	_weaponOverlay = nullptr;
 
 	delete _soundFlex;
-	_soundFlex = 0;
+	_soundFlex = nullptr;
 
-	_gameData = 0;
+	_gameData = nullptr;
 
 	for (unsigned int i = 0; i < _speech.size(); ++i) {
 		SpeechFlex **s = _speech[i];
@@ -106,7 +107,7 @@ MapGlob *GameData::getGlob(uint32 glob) const {
 	if (glob < _globs.size())
 		return _globs[glob];
 	else
-		return 0;
+		return nullptr;
 }
 
 ShapeArchive *GameData::getShapeFlex(uint16 flexId) const {
@@ -118,19 +119,21 @@ ShapeArchive *GameData::getShapeFlex(uint16 flexId) const {
 	default:
 		break;
 	};
-	return 0;
+	return nullptr;
 }
 
 Shape *GameData::getShape(FrameID f) const {
 	ShapeArchive *sf = getShapeFlex(f._flexId);
-	if (!sf) return 0;
+	if (!sf)
+		return nullptr;
 	Shape *shape = sf->getShape(f._shapeNum);
 	return shape;
 }
 
 ShapeFrame *GameData::getFrame(FrameID f) const {
 	Shape *shape = getShape(f);
-	if (!shape) return 0;
+	if (!shape)
+		return nullptr;
 	ShapeFrame *frame = shape->getFrame(f._frameNum);
 	return frame;
 }
@@ -436,13 +439,14 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 }
 
 SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
-	if (shapeNum >= _speech.size()) return 0;
+	if (shapeNum >= _speech.size())
+		return nullptr;
 
 	SpeechFlex **s = _speech[shapeNum];
 	if (s) return *s;
 
 	s = new SpeechFlex*;
-	*s = 0;
+	*s = nullptr;
 
 	FileSystem *filesystem = FileSystem::get_instance();
 
@@ -453,7 +457,8 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 	char langletter = _gameInfo->getLanguageFileLetter();
 	if (!langletter) {
 		perr << "GameData::getSpeechFlex: Unknown language." << Std::endl;
-		return 0;
+		// FIXME: This leaks s
+		return nullptr;
 	}
 
 	IDataSource *sflx = filesystem->ReadFile(u8_sound_ + langletter + num_flx);
@@ -594,7 +599,7 @@ void GameData::loadRemorseData() {
 #endif
 
 	IDataSource *dummyds = filesystem->ReadFile("@data/empty.flx");
-	_music = 0; //new MusicFlex(dummyds);
+	_music = nullptr; //new MusicFlex(dummyds);
 	delete dummyds;
 #if 0
 	IDataSource *mf = filesystem->ReadFile("@game/sound/_music.flx");

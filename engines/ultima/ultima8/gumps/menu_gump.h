@@ -24,6 +24,7 @@
 #define ULTIMA8_GUMPS_MENUGUMP_H
 
 #include "ultima/ultima8/gumps/modal_gump.h"
+#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -55,7 +56,8 @@ public:
 
 protected:
 	bool _nameEntryMode;
-	int _oldMusicTrack;
+	MusicProcess::TrackState _oldMusicTrackState;
+	int16 _oldPalTransform[12];
 
 	virtual void selectEntry(int entry);
 };

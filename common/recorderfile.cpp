@@ -382,6 +382,10 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 		case EVENT_WHEELDOWN:
 		case EVENT_MBUTTONDOWN:
 		case EVENT_MBUTTONUP:
+		case EVENT_X1BUTTONDOWN:
+		case EVENT_X1BUTTONUP:
+		case EVENT_X2BUTTONDOWN:
+		case EVENT_X2BUTTONUP:
 			event.time = _tmpPlaybackFile.readUint32LE();
 			event.mouse.x = _tmpPlaybackFile.readSint16LE();
 			event.mouse.y = _tmpPlaybackFile.readSint16LE();
@@ -537,6 +541,10 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 		case EVENT_WHEELDOWN:
 		case EVENT_MBUTTONDOWN:
 		case EVENT_MBUTTONUP:
+		case EVENT_X1BUTTONDOWN:
+		case EVENT_X1BUTTONUP:
+		case EVENT_X2BUTTONDOWN:
+		case EVENT_X2BUTTONUP:
 			_tmpRecordFile.writeUint32LE(event.time);
 			_tmpRecordFile.writeSint16LE(event.mouse.x);
 			_tmpRecordFile.writeSint16LE(event.mouse.y);

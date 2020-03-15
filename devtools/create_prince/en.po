@@ -4396,7 +4396,7 @@ msgstr "OTHER: Get going then!"
 
 #: dialog0108.txt:1
 msgid "OTHER: Na pewno oddałem ci wszystkie|rzeczy?"
-msgstr "OTHRE: Are you sure you've got everything?"
+msgstr "OTHER: Are you sure you've got everything?"
 
 #: dialog0108.txt:2
 msgid "HERO: Tak, sprawdziłem dokładnie."
@@ -5138,18 +5138,22 @@ msgid "#E3"
 msgstr "#E3"
 
 #: dialog0146.txt:100401
-msgid "#X1"
-msgstr "#X1"
+msgid "#E3"
+msgstr "#E3"
 
 #: dialog0146.txt:100501
-msgid "#B1"
-msgstr "#B1"
+msgid "#X1"
+msgstr "#X1"
 
 #: dialog0146.txt:100601
 msgid "#B1"
 msgstr "#B1"
 
 #: dialog0146.txt:100701
+msgid "#B1"
+msgstr "#B1"
+
+#: dialog0146.txt:100801
 msgid "#B1"
 msgstr "#B1"
 
@@ -6962,7 +6966,7 @@ msgstr ""
 
 #: dialog0186.txt:4
 msgid "OTHER: Sio!"
-msgstr "Other: Shoo!"
+msgstr "OTHER: Shoo!"
 
 #: dialog0187.txt:1
 msgid "OTHER: Przepraszam, czy ma pan może jakieś|zbędne obole?"
@@ -7451,7 +7455,7 @@ msgstr "OTHER: Oh... This can't be true..."
 
 #: dialog0226.txt:1
 msgid "HERO: Oto trucizna."
-msgstr "HERE: Here is the poison."
+msgstr "HERO: Here is the poison."
 
 #: dialog0226.txt:2
 msgid "HERO: Najlepsza z najlepszych."
@@ -7908,7 +7912,7 @@ msgstr "HERO: Well, as the devil, I think I have the|right to enter."
 
 #: dialog0244.txt:5
 msgid "OTHER2: Coś ty jakiś taki dziwny..."
-msgstr "OTHER: You look somewhat strange..."
+msgstr "OTHER2: You look somewhat strange..."
 
 #: dialog0244.txt:6
 msgid "OTHER2: Różek złamany, ogona nie ma..."
@@ -10004,6 +10008,10 @@ msgstr "P#OTHER: Ahhh... I understand."
 #: dialog0418.txt:1
 msgid "OTHER: No, ale może jeszcze będą z ciebie ludzie."
 msgstr "OTHER: Well, but maybe you will become a man some day."
+
+#: invtxt.txt:0
+msgid "homunkulus - Nie jest najmądrzejszy, ale przynajmniej|jest magiczny."
+msgstr "homunculus - He's not the smartest, but at least|he's magical."
 
 #: invtxt.txt:1
 msgid "eliksir nieśmiertelności - Aż trudno uwierzyć, że coś takiego|naprawdę istnieje."

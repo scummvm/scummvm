@@ -36,8 +36,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ScalerGump, DesktopGump)
 
 ScalerGump::ScalerGump(int32 x, int32 y, int32 width, int32 height) :
 		DesktopGump(x, y, width, height),
-		_swidth1(width), _sheight1(height), _scaler1(0), _buffer1(0),
-		_swidth2(width), _sheight2(height), _scaler2(0), _buffer2(0),
+		_swidth1(width), _sheight1(height),
+		_scaler1(nullptr), _buffer1(nullptr),
+		_swidth2(width), _sheight2(height),
+		_scaler2(nullptr), _buffer2(nullptr),
 		_width(width), _height(height) {
 
 	setupScaling();

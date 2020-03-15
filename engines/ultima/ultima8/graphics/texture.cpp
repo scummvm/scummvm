@@ -25,29 +25,21 @@
 #include "ultima/ultima8/graphics/texture_bitmap.h"
 #include "ultima/ultima8/graphics/texture_targa.h"
 #include "ultima/ultima8/graphics/texture_png.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 
 #include <cstring>
 
 namespace Ultima {
 namespace Ultima8 {
 
-//
-// Base Clear Func
-//
-bool Texture::Clear() {
-	// Temporary fix to prevent us from freeing a RenderSurface's memory
-	if (_format != TEX_FMT_NATIVE)
-		delete [] _buffer;
-	_buffer = 0;
 
-	return true;
+Texture::Texture() : _format(TEX_FMT_STANDARD), _glTex(0), _next(nullptr) {
 }
 
 //
 // Destructor
 //
 Texture::~Texture() {
-	Clear();
 }
 
 //
@@ -58,12 +50,18 @@ Texture::~Texture() {
 	/* If read failed, delete the texture. */   \
 	if (!tex->Read(ds)) {                       \
 		delete tex;                             \
-		tex = 0;                                \
+		tex = nullptr;                          \
 	}                                           \
 	else {                                      \
 		/* Worked so return it */               \
 		return tex;                             \
 	}
+
+void Texture::create(uint16 width, uint16 height, TextureFormat textureFormat) {
+	_format = textureFormat;
+	create(width, height, (_format == TEX_FMT_NATIVE) ? RenderSurface::getPixelFormat() :
+		Texture::getPixelFormat());
+}
 
 //
 // Create a texture from a Data Source
@@ -93,20 +91,18 @@ Texture *Texture::Create(IDataSource *ds, const char *filename) {
 	TRY_TYPE(TextureTarga);
 
 	// Couldn't find it
-	return 0;
+	return nullptr;
 }
 
 void Texture::loadSurface(const Graphics::Surface *surf) {
 	assert(surf->format.bytesPerPixel == 2 || surf->format.bytesPerPixel == 4);
-	this->_width = surf->w;
-	this->_height = surf->h;
+	create(surf->w, surf->h, Texture::getPixelFormat());
 	this->_format = TEX_FMT_STANDARD;
 	this->_wlog2 = -1;
 	this->_hlog2 = -1;
 
-	_buffer = new uint32[_width * _height];
-
 	// Repack RGBA
+	uint32 *buffer = (uint32 *)getPixels();
 	uint32 pixel, i = 0;
 	byte r, g, b, a;
 	for (int y = 0; y < surf->h; ++y) {
@@ -116,7 +112,7 @@ void Texture::loadSurface(const Graphics::Surface *surf) {
 			pixel = (surf->format.bytesPerPixel == 2) ? *((const uint16 *)srcP) : *((const uint32 *)srcP);
 			surf->format.colorToARGB(pixel, a, r, g, b);
 
-			_buffer[i++] = (r << TEX32_R_SHIFT)
+			buffer[i++] = (r << TEX32_R_SHIFT)
 				| (g << TEX32_G_SHIFT)
 				| (b << TEX32_B_SHIFT)
 				| (a << TEX32_A_SHIFT);

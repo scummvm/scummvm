@@ -44,7 +44,7 @@ static unsigned int states[] = { 0, 8, 63, 211, 493, 945, 1594, 2459, 3552,
                                  64591, 65042, 65324, 65472, 65528, 65536
                                };
 
-InverterProcess *InverterProcess::_inverter = 0;
+InverterProcess *InverterProcess::_inverter = nullptr;
 
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(InverterProcess, Process)
@@ -61,7 +61,7 @@ InverterProcess::InverterProcess(unsigned int target)
 
 InverterProcess::~InverterProcess(void) {
 	if (_inverter == this)
-		_inverter = 0;
+		_inverter = nullptr;
 }
 
 void InverterProcess::run() {

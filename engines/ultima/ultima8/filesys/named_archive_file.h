@@ -44,14 +44,16 @@ public:
 
 	uint8 *getObject(uint32 index, uint32 *size = 0) override {
 		Std::string name;
-		if (!indexToName(index, name)) return 0;
+		if (!indexToName(index, name))
+			return nullptr;
 		return getObject(name, size);
 	}
 	uint8 *getObject(const Std::string &name, uint32 *size = 0) override = 0;
 
 	uint32 getSize(uint32 index) const override {
 		Std::string name;
-		if (!indexToName(index, name)) return 0;
+		if (!indexToName(index, name))
+			return 0;
 		return getSize(name);
 	}
 	uint32 getSize(const Std::string &name) const override = 0;

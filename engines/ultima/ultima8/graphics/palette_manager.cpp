@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-PaletteManager *PaletteManager::_paletteManager = 0;
+PaletteManager *PaletteManager::_paletteManager = nullptr;
 
 PaletteManager::PaletteManager(RenderSurface *rs)
 	: _renderSurface(rs) {
@@ -42,7 +42,7 @@ PaletteManager::PaletteManager(RenderSurface *rs)
 PaletteManager::~PaletteManager() {
 	reset();
 	debugN(MM_INFO, "Destroying PaletteManager...\n");
-	_paletteManager = 0;
+	_paletteManager = nullptr;
 }
 
 // Reset the Palette Manager
@@ -71,7 +71,8 @@ void PaletteManager::resetTransforms() {
 		Palette *pal = _palettes[i];
 		if (!pal) continue;
 		pal->_transform = Transform_None;
-		for (int j = 0; j < 12; j++) pal->_matrix[j] = matrix[j];
+		for (int j = 0; j < 12; j++)
+			pal->_matrix[j] = matrix[j];
 		_renderSurface->CreateNativePalette(pal); // convert to native format
 	}
 }
@@ -130,7 +131,7 @@ void PaletteManager::duplicate(PalIndex src, PalIndex dest) {
 
 Palette *PaletteManager::getPalette(PalIndex index) {
 	if (static_cast<unsigned int>(index) >= _palettes.size())
-		return 0;
+		return nullptr;
 
 	return _palettes[index];
 }
@@ -140,7 +141,8 @@ void PaletteManager::transformPalette(PalIndex index, int16 matrix[12]) {
 
 	if (!pal) return;
 
-	for (int i = 0; i < 12; i++) pal->_matrix[i] = matrix[i];
+	for (int i = 0; i < 12; i++)
+		pal->_matrix[i] = matrix[i];
 	_renderSurface->CreateNativePalette(pal); // convert to native format
 }
 
@@ -153,6 +155,16 @@ void PaletteManager::untransformPalette(PalIndex index) {
 	int16 matrix[12];
 	getTransformMatrix(matrix, Transform_None);
 	transformPalette(index, matrix);
+}
+
+bool PaletteManager::getTransformMatrix(int16 matrix[12], PalIndex index) {
+	Palette *pal = getPalette(index);
+
+	if (!pal) return false;
+
+	for (int i = 0; i < 12; i++)
+		matrix[i] = pal->_matrix[i];
+	return true;
 }
 
 void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {

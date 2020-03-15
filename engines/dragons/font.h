@@ -67,6 +67,7 @@ public:
 	FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive);
 	~FontManager();
 	void addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 fontType);
+	void addAsciiText(int16 x, int16 y, const char *text, uint16 length, uint8 fontType);
 	void draw();
 	void clearText();
 	void updatePalette();

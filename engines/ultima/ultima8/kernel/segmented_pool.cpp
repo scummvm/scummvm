@@ -102,20 +102,20 @@ void *SegmentedPool::allocate(size_t size) {
 	SegmentedPoolNode *node;
 
 	if (isFull() || size > _nodeCapacity)
-		return 0;
+		return nullptr;
 
 	--_freeNodeCount;
 	node = _firstFree;
 	node->size = size;
 
 	if (isFull()) {
-		_firstFree = 0;
-		_lastFree = 0;
+		_firstFree = nullptr;
+		_lastFree = nullptr;
 	} else {
 		_firstFree = _firstFree->nextFree;
 	}
 
-	node->nextFree = 0;
+	node->nextFree = nullptr;
 
 //	debugN"Allocating Node 0x%08X\n", node);
 	uint8 *p = reinterpret_cast<uint8 *>(node) +
@@ -155,15 +155,15 @@ void SegmentedPool::deallocate(void *ptr) {
 
 void SegmentedPool::printInfo() const {
 	uint16 i;
-	size_t max, min, total;
+	uint32 max, min, total;
 	SegmentedPoolNode *node;
 
 	debug(MM_INFO, "start address 0x%p\tend address 0x%p\tnodeOffset 0x%x",
-		_startOfPool, _endOfPool, _nodeOffset);
+		_startOfPool, _endOfPool, (uint32)_nodeOffset);
 	debug(MM_INFO, "_nodeCapacity %u b\n   total _nodes %u\tfree _nodes %u",
-		_nodeCapacity, _nodes, _freeNodeCount);
-	debug(MM_INFO, "total memory: %d\tfree memory: %d",
-		_nodeCapacity * _nodes, _nodeCapacity * _freeNodeCount);
+		(uint32)_nodeCapacity, _nodes, _freeNodeCount);
+	debug(MM_INFO, "total memory: %u\tfree memory: %u",
+		(uint32)(_nodeCapacity * _nodes), (uint32)(_nodeCapacity * _freeNodeCount));
 
 	max = 0;
 	min = _nodeCapacity;

@@ -33,9 +33,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
-AudioMixer *AudioMixer::_audioMixer = 0;
+AudioMixer *AudioMixer::_audioMixer = nullptr;
 
-AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(0) {
+AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(nullptr) {
 	_audioMixer = this;
 	
 	_channels.resize(CHANNEL_COUNT);

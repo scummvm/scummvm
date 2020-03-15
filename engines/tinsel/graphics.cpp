@@ -58,8 +58,8 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 
 	uint16 controlData;
 
-	uint8* dstIdx = NULL;
-	uint8* destinationBuffer = NULL;
+	uint8* dstIdx = nullptr;
+	uint8* destinationBuffer = nullptr;
 
 	if (!imageWidth || !imageHeight)
 		return NULL;
@@ -673,7 +673,7 @@ static void WrtAll(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClippi
 static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 							 bool applyClipping, bool horizFlipped, int packingType) {
 	uint8 numColors = 0;
-	uint8 *colorTable = NULL;
+	uint8 *colorTable = nullptr;
 	int topClip = 0;
 	int xOffset = 0;
 	int numBytes, color;
@@ -820,7 +820,7 @@ void UpdateScreenRect(const Common::Rect &pClip) {
  * Draws the specified object onto the screen surface buffer
  */
 void DrawObject(DRAWOBJECT *pObj) {
-	uint8 *srcPtr = NULL;
+	uint8 *srcPtr = nullptr;
 	uint8 *destPtr;
 	byte psxMapperTable[16];
 
@@ -836,7 +836,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 	if ((pObj->flags & DMA_CONST) == 0) {
 		if (TinselV2) {
 			srcPtr  = (byte *)LockMem(pObj->hBits);
-			pObj->charBase = NULL;
+			pObj->charBase = nullptr;
 			pObj->transOffset = 0;
 		} else {
 			byte *p = (byte *)LockMem(pObj->hBits & HANDLEMASK);

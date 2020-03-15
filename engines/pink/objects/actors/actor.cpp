@@ -38,6 +38,8 @@ Actor::~Actor() {
 	for (uint i = 0; i < _actions.size(); ++i) {
 		delete _actions[i];
 	}
+
+	_actions.clear();
 }
 
 void Actor::deserialize(Archive &archive) {

@@ -176,6 +176,9 @@ protected:
 	void fadeInPalette(const byte *colors);
 	void setBlackPalette();
 
+	void setHNMClipping(const Common::Rect &clip) { _hnmClipping = clip; _hnmHasClip = true; }
+	void unsetHNMClipping() { _hnmHasClip = false; }
+
 protected:
 	bool _canLoadSave;
 
@@ -194,6 +197,9 @@ protected:
 private:
 	uint _lockPaletteStartRW;
 	uint _lockPaletteEndRW;
+
+	Common::Rect _hnmClipping;
+	bool _hnmHasClip;
 };
 
 } // End of namespace CryOmni3D

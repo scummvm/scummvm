@@ -31,7 +31,6 @@ public:
 
 public:
 	virtual bool hasFeature(OSystem::Feature f) const override;
-	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 };
 
 #endif

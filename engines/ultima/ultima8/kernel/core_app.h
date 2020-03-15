@@ -77,24 +77,7 @@ public:
 	//! Get GameInfo for other configured game, or 0 for an invalid name.
 	GameInfo *getGameInfo(istring game) const;
 
-	virtual void helpMe();
-
-	bool help() const {
-		return _oHelp;
-	};
-	bool quiet() const {
-		return _oQuiet;
-	};
-	bool vquiet() const {
-		return _oVQuiet;
-	};
-
 protected:
-
-	//! Declare commandline arguments.
-	//! Should call parent class' DeclareArgs().
-	virtual void DeclareArgs();
-
 	bool _isRunning;
 
 	typedef Std::map<Common::String, GameInfo *, Common::IgnoreCase_Hash> GameMap;
@@ -132,7 +115,7 @@ protected:
 	void setupGameList();
 
 	//! return default game
-	//! \return 0 if no default game (implies go to Pentagram Menu)
+	//! \return nullptr if no default game (implies go to Pentagram Menu)
 	GameInfo *getDefaultGame();
 
 	//! Setup up a game
@@ -145,11 +128,6 @@ protected:
 	//! Setup the virtual game paths for the current game (set in gameinfo)
 	//! Specifically, @game and @work
 	void setupGamePaths(GameInfo *gameinfo);
-
-	Std::string _oGameName;
-	bool _oHelp;
-	bool _oQuiet;
-	bool _oVQuiet;
 };
 
 } // End of namespace Ultima8

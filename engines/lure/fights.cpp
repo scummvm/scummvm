@@ -184,7 +184,6 @@ const KeyMapping keyList[] = {
 
 void FightsManager::checkEvents() {
 	LureEngine &engine = LureEngine::getReference();
-	Game &game = Game::getReference();
 	Events &events = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
 	FighterRecord &rec = getDetails(PLAYER_ID);

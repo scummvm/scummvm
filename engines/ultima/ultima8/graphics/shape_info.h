@@ -151,7 +151,8 @@ public:
 		_flags(0), _x(0), _y(0), _z(0),
 		_family(0), _equipType(0), _animType(0), _animData(0),
 		_unknown(0), _weight(0), _volume(0),
-		_weaponInfo(0), _armourInfo(0), _monsterInfo(0) { }
+		_weaponInfo(nullptr), _armourInfo(nullptr),
+		_monsterInfo(nullptr) { }
 
 	~ShapeInfo() {
 		delete _weaponInfo;

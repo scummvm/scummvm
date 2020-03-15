@@ -32,7 +32,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Archive)
 
 
 MusicFlex::MusicFlex(IDataSource *ds) : Archive(ds) {
-	_songs = 0;
+	_songs = nullptr;
 	Std::memset(_info, 0, sizeof(SongInfo *) * 128);
 	loadSongInfo();
 }
@@ -41,7 +41,6 @@ MusicFlex::~MusicFlex() {
 	uint32 i;
 	for (i = 0; i < 128; i++) {
 		delete _info[i];
-		_info[i] = 0;
 	}
 
 	Archive::uncache();
@@ -56,8 +55,20 @@ MusicFlex::SongInfo::SongInfo() : _numMeasures(0), _loopJump(0) {
 MusicFlex::SongInfo::~SongInfo() {
 	for (int i = 0; i < 128; i++) {
 		delete [] _transitions[i];
-		_transitions[i] = 0;
 	}
+}
+
+XMidiFile *MusicFlex::getXMidi(uint32 index) {
+	if (index >= _count)
+		return nullptr;
+	cache(index);
+	return _songs[index];
+}
+
+const MusicFlex::SongInfo *MusicFlex::getSongInfo(uint32 index) const {
+	if (index > 127)
+		return nullptr;
+	return _info[index];
 }
 
 void MusicFlex::cache(uint32 index) {
@@ -72,7 +83,7 @@ bool MusicFlex::isCached(uint32 index) const {
 	if (index >= _count) return false;
 	if (!_songs) return false;
 
-	return (_songs[index] != 0);
+	return (_songs[index] != nullptr);
 }
 
 IDataSource *MusicFlex::getAdlibTimbres() {

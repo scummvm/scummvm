@@ -48,7 +48,7 @@ void Minigame4::run() {
 	// fade_related_calls_with_1f();
 	_vm->reset_screen_maybe();
 	_vm->_dragonINIResource->getFlickerRecord()->sceneId = 0;
-	_vm->_dragonINIResource->setFlickerRecord(NULL);
+	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->_inventory->setState(Closed);
 	_vm->_scene->setSceneId(7);
 	_vm->_scene->loadSceneData(0x8007, 0);
@@ -98,7 +98,7 @@ void Minigame4::run() {
 	_vm->waitForFrames(2 * 0x3c);
 //	fade_related_calls_with_1f();
 	//DisableVSyncEvent();
-	_vm->setVsyncUpdateFunction(NULL);
+	_vm->setVsyncUpdateFunction(nullptr);
 	_vm->setFlags(ENGINE_FLAG_1);
 	_vm->_videoFlags &= ~(uint16)4;
 	// EnableVSyncEvent();

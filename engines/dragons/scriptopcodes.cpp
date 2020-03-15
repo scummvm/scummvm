@@ -714,9 +714,7 @@ void ScriptOpcodes::opMoveActorToPoint(ScriptOpCall &scriptOpCall) {
 		ini->actor->startWalk(point.x, point.y, isFlicker ? 0 : 1);
 
 		if (waitForWalkToComplete) {
-			while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
-				_vm->waitForFrames(1);
-			}
+			ini->actor->waitForWalkToFinish();
 		}
 		ini->x = point.x;
 		ini->y = point.y;
@@ -767,9 +765,7 @@ void ScriptOpcodes::opMoveActorToXY(ScriptOpCall &scriptOpCall) {
 		ini->actor->startWalk(destX, destY, isFlicker ? 0 : 1);
 
 		if (waitForWalkToComplete) {
-			while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
-				_vm->waitForFrames(1);
-			}
+			ini->actor->waitForWalkToFinish();
 		}
 		ini->x = destX;
 		ini->y = destY;
@@ -875,9 +871,7 @@ void ScriptOpcodes::opMoveActorToObject(ScriptOpCall &scriptOpCall) {
 	}
 	secondIni->actor->startWalk(newXPosAgain, newYPosAgain, someBooleanFlag);
 	if (!bVar1) {
-		while (secondIni->actor->_flags & ACTOR_FLAG_10) {
-			_vm->waitForFrames(1);
-		}
+		secondIni->actor->waitForWalkToFinish();
 	}
 
 	secondIni->actor->_direction = firstIni->direction;
@@ -910,7 +904,7 @@ void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 	}
 
 	//TODO fade_related_calls_with_1f();
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 	_vm->_sound->PauseCDMusic();
 
 	if (newSceneID != 0) {
@@ -944,7 +938,7 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 
 	int sVar2 = -1; //TODO findTextToDtSpeechIndex(textIndex);
 
-	if (!_vm->isUnkFlagSet(1) && (!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || sVar2 == -1)) {
+	if (!_vm->isUnkFlagSet(1) && (!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED) || sVar2 == -1)) {
 		_vm->_talk->loadText(textIndex, dialog, 2048);
 	}
 
@@ -1207,9 +1201,7 @@ void ScriptOpcodes::opWaitForActorToFinishWalking(ScriptOpCall &scriptOpCall) {
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
 	if (ini->flags & 1) {
-		while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
-			_vm->waitForFrames(1);
-		}
+		ini->actor->waitForWalkToFinish();
 	}
 }
 
@@ -1222,7 +1214,7 @@ void ScriptOpcodes::opShowActor(ScriptOpCall &scriptOpCall) {
 	}
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
-	ini->actor->setFlag(ACTOR_FLAG_400);
+	ini->actor->clearFlag(ACTOR_FLAG_400);
 }
 
 void ScriptOpcodes::opHideActor(ScriptOpCall &scriptOpCall) {

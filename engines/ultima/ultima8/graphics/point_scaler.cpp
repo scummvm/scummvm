@@ -33,11 +33,11 @@ public:
 	static bool Scale(Texture *tex  , int32 sx, int32 sy, int32 sw, int32 sh,
 	                  uint8 *pixel, int32 dw, int32 dh, int32 pitch, bool clamp_src) {
 		// Source buffer pointers
-		uintS *texel = reinterpret_cast<uintS *>(tex->_buffer) + (sy * tex->_width + sx);
-		int tpitch = tex->_width;
+		uintS *texel = reinterpret_cast<uintS *>(tex->getPixels()) + (sy * tex->w + sx);
+		int tpitch = tex->w;
 		uintS *tline_end = texel + sw;
-		uintS *tex_end = texel + sh * tex->_width;
-		int tex_diff = tex->_width - sw;
+		uintS *tex_end = texel + sh * tex->w;
+		int tex_diff = tex->w - sw;
 
 
 		// First detect integer up scalings, since they are 'easy'
@@ -134,7 +134,7 @@ public:
 			uint32 pos_y;
 			uint32 end_y = dh;
 			uint32 dst_y = 0;
-			uint8 *next_block = 0;
+			uint8 *next_block = nullptr;
 
 			// Src Loop Y
 			do {
@@ -179,7 +179,7 @@ public:
 			uint32 pos_y;
 			uint32 end_y = dh;
 			uint32 dst_y = 0;
-			uint8 *next_block = 0;
+			uint8 *next_block = nullptr;
 
 			// Src Loop Y
 			do {
@@ -222,8 +222,8 @@ public:
 			uint32 pos_y = 0, pos_x = 0;
 			uint32 end_y = dh;
 			uint32 dst_y = 0;
-			uint8 *blockline_start = 0;
-			uint8 *next_block = 0;
+			uint8 *blockline_start = nullptr;
+			uint8 *next_block = nullptr;
 
 			// Src Loop Y
 			do {
@@ -242,7 +242,7 @@ public:
 					// Inner loops
 					//
 					blockline_start = next_block;
-					next_block = 0;
+					next_block = nullptr;
 
 					// Dest Loop Y
 					while (pos_y < end_y) {

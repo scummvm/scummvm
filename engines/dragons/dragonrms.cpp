@@ -47,6 +47,7 @@ DragonRMS::DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD) : _dr
 		_rmsObjects[i]._field16 = readStream->readSint32LE();
 		_rmsObjects[i]._field1a = readStream->readSint16LE();
 	}
+	delete readStream;
 }
 
 char *DragonRMS::getSceneName(uint32 sceneId) {

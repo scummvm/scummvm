@@ -40,7 +40,7 @@
 #endif
 
 #include "backends/events/default/default-events.h"
-#include "backends/events/sdl/sdl-events.h"
+#include "backends/events/sdl/legacy-sdl-events.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
@@ -86,9 +86,6 @@ OSystem_SDL::OSystem_SDL()
 	_mixerManager(0),
 	_eventSource(0),
 	_window(0) {
-
-	ConfMan.registerDefault("kbdmouse_speed", 3);
-	ConfMan.registerDefault("joystick_deadzone", 3);
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -747,39 +744,6 @@ void OSystem_SDL::setupGraphicsModes() {
 		mode->id = i++;
 		mode++;
 	}
-}
-#endif
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors) {
-	if (surface->format->palette) {
-		return !SDL_SetPaletteColors(surface->format->palette, colors, firstcolor, ncolors) ? 1 : 0;
-	} else {
-		return 0;
-	}
-}
-
-int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha) {
-	if (SDL_SetSurfaceAlphaMod(surface, alpha)) {
-		return -1;
-	}
-
-	if (alpha == 255 || !flag) {
-		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE)) {
-			return -1;
-		}
-	} else {
-		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND)) {
-			return -1;
-		}
-	}
-
-	return 0;
-}
-
-#undef SDL_SetColorKey
-int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
-	return SDL_SetColorKey(surface, SDL_TRUE, key) ? -1 : 0;
 }
 #endif
 

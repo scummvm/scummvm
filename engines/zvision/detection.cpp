@@ -30,6 +30,10 @@
 #include "zvision/file/save_manager.h"
 #include "zvision/scripting/script_manager.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/translation.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
@@ -76,6 +80,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -118,6 +123,134 @@ bool ZVision::ZVision::canLoadGameStateCurrently() {
 bool ZVision::ZVision::canSaveGameStateCurrently() {
 	Location currentLocation = _scriptManager->getCurrentLocation();
 	return !_videoIsPlaying && currentLocation.world != 'g' && !(currentLocation.room == 'j' || currentLocation.room == 'a');
+}
+
+Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace ZVision;
+
+	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, mainKeymapId, "Z-Vision");
+
+	Action *act;
+
+	act = new Action("LCLK", _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	mainKeymap->addAction(act);
+
+	act = new Action("RCLK", _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	mainKeymap->addAction(act);
+
+	Keymap *gameKeymap = new Keymap(Keymap::kKeymapTypeGame, gameKeymapId, "Z-Vision - Game");
+
+	act = new Action(kStandardActionMoveUp, _("Look Up"));
+	act->setCustomEngineActionEvent(kZVisionActionUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	gameKeymap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Look Down"));
+	act->setCustomEngineActionEvent(kZVisionActionDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	gameKeymap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Turn Left"));
+	act->setCustomEngineActionEvent(kZVisionActionLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	gameKeymap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Turn Right"));
+	act->setCustomEngineActionEvent(kZVisionActionRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	gameKeymap->addAction(act);
+
+	act = new Action("FPS", _("Show FPS"));
+	act->setCustomEngineActionEvent(kZVisionActionShowFPS);
+	act->addDefaultInputMapping("F10");
+	gameKeymap->addAction(act);
+
+	act = new Action("HELP", _("Help"));
+	act->setKeyEvent(KEYCODE_F1);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	gameKeymap->addAction(act);
+
+	act = new Action("INV", _("Inventory"));
+	act->setKeyEvent(KEYCODE_F5);
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeymap->addAction(act);
+
+	act = new Action("SPELL", _("Spellbook"));
+	act->setKeyEvent(KEYCODE_F6);
+	act->addDefaultInputMapping("F6");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	gameKeymap->addAction(act);
+
+	act = new Action("SCORE", _("Score"));
+	act->setKeyEvent(KEYCODE_F7);
+	act->addDefaultInputMapping("F7");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	gameKeymap->addAction(act);
+
+	act = new Action("AWAY", _("Put away object"));
+	act->setKeyEvent(KEYCODE_F8);
+	act->addDefaultInputMapping("F8");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeymap->addAction(act);
+
+	act = new Action("COIN", _("Extract coin"));
+	act->setKeyEvent(KEYCODE_F9);
+	act->addDefaultInputMapping("F9");
+	act->addDefaultInputMapping("JOY_Y");
+	gameKeymap->addAction(act);
+
+	act = new Action(kStandardActionSave, _("Save"));
+	act->setCustomEngineActionEvent(kZVisionActionSave);
+	act->addDefaultInputMapping("C+s");
+	gameKeymap->addAction(act);
+
+	act = new Action(kStandardActionLoad, _("Restore"));
+	act->setCustomEngineActionEvent(kZVisionActionRestore);
+	act->addDefaultInputMapping("C+r");
+	gameKeymap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setCustomEngineActionEvent(kZVisionActionQuit);
+	act->addDefaultInputMapping("C+q");
+	gameKeymap->addAction(act);
+
+	act = new Action(kStandardActionOpenSettings, _("Preferences"));
+	act->setCustomEngineActionEvent(kZVisionActionPreferences);
+	act->addDefaultInputMapping("C+p");
+	gameKeymap->addAction(act);
+
+	Keymap *cutscenesKeymap = new Keymap(Keymap::kKeymapTypeGame, cutscenesKeymapId, "Z-Vision - Cutscenes");
+
+	act = new Action(kStandardActionSkip, _("Skip cutscene"));
+	act->setCustomEngineActionEvent(kZVisionActionSkipCutscene);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_Y");
+	cutscenesKeymap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setCustomEngineActionEvent(kZVisionActionQuit);
+	act->addDefaultInputMapping("C+q");
+	cutscenesKeymap->addAction(act);
+
+	KeymapArray keymaps(3);
+	keymaps[0] = mainKeymap;
+	keymaps[1] = gameKeymap;
+	keymaps[2] = cutscenesKeymap;
+
+	return keymaps;
 }
 
 bool ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

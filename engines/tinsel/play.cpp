@@ -447,7 +447,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 
 	_ctx->lifeNoMatter = false;
 	_ctx->replaced = false;
-	_ctx->pActor = NULL;
+	_ctx->pActor= nullptr;
 	bNewMover = false;
 
 	pfilm = (const FILM *)LockMem(ppi->hFilm);

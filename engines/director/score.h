@@ -104,6 +104,8 @@ public:
 	void renderZoomBox(bool redraw = false);
 	bool haveZoomBox() { return !_zoomBoxes.empty(); }
 
+	int32 getStageColor() { return _stageColor; }
+
 private:
 	void update();
 	void readVersion(uint32 rid);

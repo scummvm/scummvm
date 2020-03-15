@@ -33,7 +33,7 @@ namespace Ultima8 {
 
 using Std::string;
 
-FileSystem *FileSystem::_fileSystem = 0;
+FileSystem *FileSystem::_fileSystem = nullptr;
 
 FileSystem::FileSystem(bool noforced)
 	: _noForcedVPaths(noforced), _allowDataOverride(true) {
@@ -46,7 +46,7 @@ FileSystem::FileSystem(bool noforced)
 FileSystem::~FileSystem() {
 	debugN(MM_INFO, "Destroying FileSystem...\n");
 
-	_fileSystem = 0;
+	_fileSystem = nullptr;
 }
 
 
@@ -62,7 +62,7 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 
 	Common::SeekableReadStream *readStream;
 	if (!rawOpen(readStream, filename))
-		return 0;
+		return nullptr;
 
 	return new IFileDataSource(readStream);
 }
@@ -73,7 +73,7 @@ ODataSource *FileSystem::WriteFile(const string &vfn, bool is_text) {
 	Common::WriteStream *writeStream;
 
 	if (!rawOpen(writeStream, filename))
-		return 0;
+		return nullptr;
 
 	return new OFileDataSource(writeStream);
 }
@@ -86,8 +86,7 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 	if (name.hasPrefix("@data/")) {
 		// It's a file specifically from the ultima.dat file
 		f = new Common::File();
-		if (f->open(Common::String::format("data/%s", name.substr(6).c_str()),
-			*Ultima8Engine::get_instance()->getDataArchive())) {
+		if (f->open(Common::String::format("data/%s", name.substr(6).c_str()))) {
 			in = f;
 			return true;
 		}
@@ -102,7 +101,7 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveStateName(slotNumber);
 
 		in = g_system->getSavefileManager()->openForLoading(saveFilename);
-		return in != 0;
+		return in != nullptr;
 	}
 
 	if (!rewrite_virtual_path(name))
@@ -134,7 +133,7 @@ bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveStateName(slotNumber);
 
 		out = g_system->getSavefileManager()->openForSaving(saveFilename, false);
-		return out != 0;
+		return out != nullptr;
 	} else {
 		return false;
 	}
@@ -263,7 +262,7 @@ IDataSource *FileSystem::checkBuiltinData(const Std::string &vfn, bool is_text) 
 		return new IBufferDataSource(mf->_value->_data,
 		                             mf->_value->_len, is_text);
 
-	return 0;
+	return nullptr;
 }
 
 bool FileSystem::rewrite_virtual_path(string &vfn) {

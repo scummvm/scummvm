@@ -111,10 +111,10 @@ void ItemRelativeGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir r) {
 }
 
 void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
-	Item *it = 0;
-	Item *next = 0;
-	Item *prev = 0;
-	Gump *gump = 0;
+	Item *it = nullptr;
+	Item *next = nullptr;
+	Item *prev = nullptr;
+	Gump *gump = nullptr;
 
 	it = getItem(_owner);
 
@@ -125,7 +125,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 		return;
 	}
 
-	while ((next = it->getParentAsContainer()) != 0) {
+	while ((next = it->getParentAsContainer()) != nullptr) {
 		prev = it;
 		it = next;
 		gump = getGump(it->getGump());

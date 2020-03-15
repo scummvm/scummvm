@@ -47,6 +47,7 @@
 #include "dragons/bag.h"
 #include "dragons/talk.h"
 #include "dragons/sound.h"
+#include "dragons/strplayer.h"
 
 namespace Dragons {
 
@@ -60,20 +61,21 @@ DragonsEngine *getEngine() {
 
 DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst) {
 	_language = desc->language;
-	_bigfileArchive = NULL;
-	_dragonRMS = NULL;
-	_backgroundResourceLoader = NULL;
-	_screen = NULL;
+	_bigfileArchive = nullptr;
+	_dragonRMS = nullptr;
+	_backgroundResourceLoader = nullptr;
+	_screen = nullptr;
 	_sequenceOpcodes = new SequenceOpcodes(this);
-	_scriptOpcodes = NULL;
+	_scriptOpcodes = nullptr;
 	_engine = this;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
-	_credits = NULL;
-	_talk = NULL;
-	_fontManager = NULL;
-	_sceneUpdateFunction = NULL;
-	_vsyncUpdateFunction = NULL;
+	_credits = nullptr;
+	_talk = nullptr;
+	_fontManager = nullptr;
+	_strPlayer = nullptr;
+	_sceneUpdateFunction = nullptr;
+	_vsyncUpdateFunction = nullptr;
 
 	_leftMouseButtonUp = false;
 	_leftMouseButtonDown = false;
@@ -95,6 +97,9 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 
 	_debugMode = false;
 	_isGamePaused = false;
+	_inMenu = false;
+
+	_bit_flags_8006fbd8 = 0;
 
 	reset();
 }
@@ -209,10 +214,17 @@ Common::Error DragonsEngine::run() {
 	_scene = new Scene(this, _screen, _scriptOpcodes, _actorManager, _dragonRMS, _dragonINIResource, _backgroundResourceLoader);
 
 	_sound = new SoundManager(this, _bigfileArchive, _dragonRMS);
+	_strPlayer = new StrPlayer(this, _screen);
 
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	} else {
+		_strPlayer->playVideo("crystald.str");
+		_strPlayer->playVideo("illusion.str");
+		_strPlayer->playVideo("labintro.str");
+
+		init();
+		mainMenu();
 		loadScene(0);
 	}
 
@@ -232,6 +244,7 @@ Common::Error DragonsEngine::run() {
 	delete _bigfileArchive;
 	delete _screen;
 	delete _sound;
+	delete _strPlayer;
 
 	debug("Ok");
 	return Common::kNoError;
@@ -860,7 +873,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		return;
 	}
 
-	if (isFlagSet(ENGINE_FLAG_8) && !isFlagSet(ENGINE_FLAG_80000000)) {
+	if (isFlagSet(ENGINE_FLAG_8) && !isFlagSet(ENGINE_FLAG_8000000)) {
 		_cursor->update();
 	}
 
@@ -868,10 +881,10 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 	DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
 	DragonINI *ini1 = getINI(1);
 
-	if (flickerINI != NULL) {
+	if (flickerINI != nullptr) {
 		if (flickerINI->sceneId == currentSceneId) {
-			if (flickerINI->actor == NULL || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
-				if (ini1->actor != NULL) {
+			if (flickerINI->actor == nullptr || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
+				if (ini1->actor != nullptr) {
 					ini1->actor->updateSequence(8);
 					ini1->actor->_priorityLayer = 0;
 				}
@@ -885,7 +898,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 						&& flickerINI->actor->_direction != flickerINI->actor->_sequenceID) {
 					flickerINI->actor->updateSequence(flickerINI->actor->_direction);
 				}
-				if (ini1->actor != NULL) {
+				if (ini1->actor != nullptr) {
 					ini1->actor->_priorityLayer = 0;
 				}
 			}
@@ -972,8 +985,8 @@ void DragonsEngine::performAction() {
 
 	uVar2 = _scriptOpcodes->_scriptTargetINI;
 	uVar1 = _flags;
-	local_58_code = NULL;
-	local_58_codeEnd = NULL;
+	local_58_code = nullptr;
+	local_58_codeEnd = nullptr;
 
 	uVar6 = 0;
 	_scriptOpcodes->_numDialogStackFramesToPop = 0;
@@ -1008,7 +1021,7 @@ void DragonsEngine::performAction() {
 		local_58_codeEnd = local_58_code + READ_LE_UINT16(local_48._code + 6);
 	}
 	uVar4 = uVar4 & 0xfffd;
-	if (local_58_code != NULL && local_58_codeEnd != NULL) {
+	if (local_58_code != nullptr && local_58_codeEnd != nullptr) {
 		clearFlags(ENGINE_FLAG_8);
 		ScriptOpCall local_58(local_58_code, local_58_codeEnd - local_58_code);
 		_scriptOpcodes->runScript(local_58);
@@ -1102,7 +1115,7 @@ void DragonsEngine::walkFlickerToObject() {
 				return;
 			}
 			flickerINI = _dragonINIResource->getFlickerRecord();
-			if (flickerINI != NULL && flickerINI->actor != NULL) {
+			if (flickerINI != nullptr && flickerINI->actor != nullptr) {
 				flickerINI->actor->clearFlag(ACTOR_FLAG_10);
 				flickerINI->actor->setFlag(ACTOR_FLAG_4);
 				targetINI = getINI(_cursor->_performActionTargetINI - 1);
@@ -1150,13 +1163,13 @@ bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-void DragonsEngine::loadScene(uint16 sceneId) {
+void DragonsEngine::init() {
 	_flags = 0x1046;
 	_flags &= 0x1c07040;
 	_flags |= 0x26;
 	_unkFlags1 = 0;
 
-	clearFlags(ENGINE_FLAG_1000_TEXT_ENABLED); //TODO wire this up to subtitle config.
+	initSubtitleFlag();
 
 	_scriptOpcodes->_scriptTargetINI = 0; //TODO this should be reset in scriptopcode.
 	_cursor->init(_actorManager, _dragonINIResource);
@@ -1172,7 +1185,9 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 
 	_screen->loadPalette(4, _cursor->getPalette());
 	_screen->updatePaletteTransparency(4, 1, 0xff, true);
+}
 
+void DragonsEngine::loadScene(uint16 sceneId) {
 	// TODO fun_80017010_update_actor_texture_maybe();
 	if (sceneId > 2) {
 		_dragonVAR->setVar(1, 1);
@@ -1215,18 +1230,22 @@ void DragonsEngine::reset() {
 		_paletteCyclingTbl[i].updateCounter = 0;
 	}
 
-	setSceneUpdateFunction(NULL);
+	clearSceneUpdateFunction();
 }
 
 void DragonsEngine::runSceneUpdaterFunction() {
 	if ((isFlagSet(ENGINE_FLAG_20) && (_run_func_ptr_unk_countdown_timer == 0)) &&
-			(_run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != NULL)) {
+			(_run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != nullptr)) {
 		_sceneUpdateFunction();
 	}
 }
 
 void DragonsEngine::setSceneUpdateFunction(void (*newUpdateFunction)()) {
 	_sceneUpdateFunction = newUpdateFunction;
+}
+
+void DragonsEngine::clearSceneUpdateFunction() {
+	setSceneUpdateFunction(nullptr);
 }
 
 void DragonsEngine::setVsyncUpdateFunction(void (*newUpdateFunction)()) {
@@ -1301,7 +1320,7 @@ bool DragonsEngine::isDebugMode() {
 }
 
 bool DragonsEngine::isVsyncUpdaterFunctionRunning() {
-	return _vsyncUpdateFunction != NULL;
+	return _vsyncUpdateFunction != nullptr;
 }
 
 void DragonsEngine::runVsyncUpdaterFunction() {
@@ -1469,6 +1488,177 @@ void DragonsEngine::updateCamera() {
 		if (_scene->getStageHeight() < _scene->_camera.y + 200) {
 			_scene->_camera.y = _scene->getStageHeight() + -200;
 		}
+	}
+}
+
+void DragonsEngine::initSubtitleFlag() {
+	bool showSubtitles = ConfMan.getBool("subtitles");
+	if (showSubtitles) {
+		clearFlags(ENGINE_FLAG_1000_SUBTITLES_DISABLED);
+	} else {
+		setFlags(ENGINE_FLAG_1000_SUBTITLES_DISABLED);
+	}
+}
+
+int centerText(const char *text) {
+	return 0x14 - (strlen(text) / 2 + 1);
+}
+
+void DragonsEngine::mainMenu() {
+	_inMenu = true;
+	//TODO need to support other languages.
+	const char copyright[6][40] = {
+			"Crystal Dynamics is a trademark",
+			"of Crystal Dynamics.",
+			"Blazing Dragons is a trademark and",
+			"copyright of Terry Jones and is",
+			"used with permission.",
+			"Licensed by Nelvana Marketing Inc."
+	};
+	const char menuItems[3][40] = {
+			"Start",
+			"Options",
+			"Previews"
+	};
+
+	_screen->clearScreen();
+	Actor *actor = _actorManager->loadActor(0xd9,0,0,0,3);
+	actor->setFlag(ACTOR_FLAG_8000);
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->setFlag(ACTOR_FLAG_80);
+
+	//TODO fix palette for copyright image.
+	_screen->loadPalette(0, _cursor->getPalette()); //actor->_actorResource->getPalette());
+
+	for (int i = 0; i < 6; i++) {
+		_fontManager->addAsciiText(centerText(&copyright[i][0]) * 8, (0x12 + i) * 8, &copyright[i][0], strlen(copyright[i]), 1);
+	}
+
+	waitForFramesAllowSkip(400);
+	_fontManager->clearText();
+	actor->updateSequence(1);
+
+	bool startGame = false;
+	do {
+		uint16 curMenuItem = 0;
+		do {
+			for (int i = 0; i < 3; i++) {
+				_fontManager->addAsciiText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, &menuItems[i][0],
+										   strlen(menuItems[i]), i == curMenuItem ? 0 : 1);
+			}
+			if (checkForDownKeyRelease()) {
+				if (curMenuItem < 2) {
+					curMenuItem++;
+				} else {
+					curMenuItem = 0;
+				}
+				playOrStopSound(0x8009);
+			}
+
+			if (checkForUpKeyRelease()) {
+				if (curMenuItem > 0) {
+					curMenuItem--;
+				} else {
+					curMenuItem = 2;
+				}
+				playOrStopSound(0x8009);
+			}
+			waitForFrames(1);
+		} while (!checkForActionButtonRelease() && !shouldQuit());
+
+		if (curMenuItem == 0) {
+			_screen->clearScreen();
+			loadingScreen();
+			startGame = true;
+		} else if (curMenuItem == 1) {
+			//TODO options menu
+		} else if (curMenuItem == 2) {
+			_strPlayer->playVideo("previews.str");
+		}
+	} while (!shouldQuit() && !startGame);
+
+	_inMenu = false;
+}
+
+bool DragonsEngine::isInMenu() {
+	return _inMenu;
+}
+
+void loadingScreenUpdateFunction() {
+	getEngine()->loadingScreenUpdate();
+}
+
+void DragonsEngine::loadingScreen() {
+	const int flamesActorOffset[4] = {2, 0, 3, 1};
+	_loadingScreenState = new LoadingScreenState;
+	_fontManager->clearText();
+	_actorManager->clearActorFlags(2);
+	_screen->addFlatQuad(0,0,0x13f,0,0x13f,199,0,199,0x34a2,6,0);
+	Actor *actor = _actorManager->loadActor(0,0x82,0,0,6);
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->setFlag(ACTOR_FLAG_200);
+	actor->setFlag(ACTOR_FLAG_80);
+	actor = _actorManager->loadActor(0,0x83,0,0,6);
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->setFlag(ACTOR_FLAG_200);
+	actor->setFlag(ACTOR_FLAG_80);
+
+	for (int i = 0; i < 10; i++) {
+		actor = _actorManager->loadActor(0,flamesActorOffset[(i % 4)] + 0x7e,i * 0x20 + 0x10,0xbe,6);
+		actor->setFlag(ACTOR_FLAG_100);
+		actor->setFlag(ACTOR_FLAG_200);
+		actor->setFlag(ACTOR_FLAG_80);
+		_loadingScreenState->flames[i] = actor;
+		_loadingScreenState->baseYOffset = 0xbe;
+		int x0 = i * 0x20;
+		_loadingScreenState->quads[i] = _screen->addFlatQuad(x0,0,x0 + 0x20,0,x0 + 0x20,199,x0,199,0,7,0);
+	}
+
+	setVsyncUpdateFunction(loadingScreenUpdateFunction);
+	waitForFramesAllowSkip(400);
+	_actorManager->clearActorFlags(2);
+	_screen->clearAllFlatQuads();
+	setVsyncUpdateFunction(nullptr);
+	delete _loadingScreenState;
+	_loadingScreenState = nullptr;
+}
+
+void DragonsEngine::loadingScreenUpdate() {
+	const int16 flameOffsetTbl[26] = {
+			3,      4,      5,      6,
+			7,      5,      4,      3,
+			3,      4,      6,      7,
+			6,      5,      5,      6,
+			7,      6,      4,      3,
+			2,      3,      4,      5,
+			6,      5
+	};
+	FlatQuad *quad;
+	int16 flameYOffset;
+
+	if (_loadingScreenState->loadingFlamesUpdateCounter == 0) {
+		_loadingScreenState->loadingFlamesUpdateCounter = 4;
+		for (int i = 0; i < 10 ; i++) {
+			flameYOffset = _loadingScreenState->baseYOffset - flameOffsetTbl[(i + _loadingScreenState->flameOffsetIdx) % 27];
+			if (_loadingScreenState->flames[i]->_y_pos >= -0xb) {
+				_loadingScreenState->flames[i]->_y_pos = flameYOffset;
+			}
+			quad = _screen->getFlatQuad(_loadingScreenState->quads[i]);
+			if (quad->points[0].y >= -1) {
+				quad->points[0].y = flameYOffset + 2;
+				quad->points[1].y = flameYOffset + 2;
+			}
+		}
+		_loadingScreenState->flameOffsetIdx = (_loadingScreenState->flameOffsetIdx + 1) % 27;
+	} else {
+		_loadingScreenState->loadingFlamesUpdateCounter--;
+	}
+
+	if (_loadingScreenState->loadingFlamesRiseCounter == 0) {
+		_loadingScreenState->loadingFlamesRiseCounter = 1;
+		_loadingScreenState->baseYOffset--;
+	} else {
+		_loadingScreenState->loadingFlamesRiseCounter--;
 	}
 }
 

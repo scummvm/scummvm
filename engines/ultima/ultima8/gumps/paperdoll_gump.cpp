@@ -102,7 +102,6 @@ PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
 PaperdollGump::~PaperdollGump() {
 	for (int i = 0; i < 14; ++i) { // ! constant
 		delete _cachedText[i];
-		_cachedText[i] = 0;
 	}
 }
 
@@ -232,7 +231,8 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 
 	Actor *a = getActor(_owner);
 
-	if (!a) return 0; // Container gone!?
+	if (!a)
+		return 0; // Container gone!?
 
 	for (int i = 1; i <= 6; ++i) {
 		Item *item = getItem(a->getEquip(i));

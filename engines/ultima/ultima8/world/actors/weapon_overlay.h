@@ -51,13 +51,16 @@ struct AnimWeaponOverlay {
 	//! \param type the overlay type
 	//! \param direction the direction
 	//! \param frame the animation frame
-	//! \return 0 if invalid, or pointer to a frame; don't delete it.
+	//! \return nullptr if invalid, or pointer to a frame; don't delete it.
 	const WeaponOverlayFrame *getFrame(unsigned int type,
 	                                   unsigned int direction,
 	                                   unsigned int frame) const {
-		if (type >= _overlay.size()) return 0;
-		if (direction >= _overlay[type]._dirCount) return 0;
-		if (frame >= _overlay[type]._frames[direction].size()) return 0;
+		if (type >= _overlay.size())
+			return nullptr;
+		if (direction >= _overlay[type]._dirCount)
+			return nullptr;
+		if (frame >= _overlay[type]._frames[direction].size())
+			return nullptr;
 		return &(_overlay[type]._frames[direction][frame]);
 	}
 

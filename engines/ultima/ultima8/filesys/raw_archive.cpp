@@ -50,7 +50,7 @@ void RawArchive::uncache(uint32 index) {
 
 	if (_objects[index]) {
 		delete[] _objects[index];
-		_objects[index] = 0;
+		_objects[index] = nullptr;
 	}
 }
 
@@ -58,22 +58,25 @@ bool RawArchive::isCached(uint32 index) const {
 	if (index >= _count) return false;
 	if (_objects.empty()) return false;
 
-	return (_objects[index] != 0);
+	return (_objects[index] != nullptr);
 }
 
 const uint8 *RawArchive::get_object_nodel(uint32 index) {
-	if (index >= _count) return 0;
+	if (index >= _count)
+		return nullptr;
 	cache(index);
 	return _objects[index];
 }
 
 uint8 *RawArchive::get_object(uint32 index) {
-	if (index >= _count) return 0;
+	if (index >= _count)
+		return nullptr;
 
 	if (index < _objects.size() && _objects[index]) {
 		// already cached
 		uint32 size = getRawSize(index);
-		if (size == 0) return 0;
+		if (size == 0)
+			return nullptr;
 		uint8 *object = new uint8[size];
 		Std::memcpy(object, _objects[index], size);
 		return object;
@@ -83,15 +86,18 @@ uint8 *RawArchive::get_object(uint32 index) {
 }
 
 uint32 RawArchive::get_size(uint32 index) {
-	if (index >= _count) return 0;
+	if (index >= _count)
+		return 0;
 	return getRawSize(index);
 }
 
 IDataSource *RawArchive::get_datasource(uint32 index) {
-	if (index >= _count) return 0;
+	if (index >= _count)
+		return nullptr;
 	cache(index);
 
-	if (!_objects[index]) return 0;
+	if (!_objects[index])
+		return nullptr;
 
 	return new IBufferDataSource(_objects[index], getRawSize(index));
 }

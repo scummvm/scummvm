@@ -92,10 +92,12 @@ bool U8SaveFile::exists(const Std::string &name) {
 
 uint8 *U8SaveFile::getObject(const Std::string &name, uint32 *sizep) {
 	uint32 index;
-	if (!findIndex(name, index)) return 0;
+	if (!findIndex(name, index))
+		return nullptr;
 
 	uint32 size = _sizes[index];
-	if (size == 0) return 0;
+	if (size == 0)
+		return nullptr;
 
 	uint8 *object = new uint8[size];
 	uint32 offset = _offsets[index];
@@ -111,7 +113,8 @@ uint8 *U8SaveFile::getObject(const Std::string &name, uint32 *sizep) {
 
 uint32 U8SaveFile::getSize(const Std::string &name) const {
 	uint32 index;
-	if (!findIndex(name, index)) return 0;
+	if (!findIndex(name, index))
+		return 0;
 
 	return _sizes[index];
 }

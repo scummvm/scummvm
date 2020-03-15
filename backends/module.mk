@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	keymapper/keymapper.o \
 	keymapper/remap-widget.o \
 	keymapper/standard-actions.o \
+	keymapper/virtual-mouse.o \
 	log/log.o \
 	midi/alsa.o \
 	midi/dmedia.o \
@@ -137,6 +138,7 @@ endif
 # derive from the SDL backend, and they all need the following files.
 ifdef SDL_BACKEND
 MODULE_OBJS += \
+	events/sdl/legacy-sdl-events.o \
 	events/sdl/sdl-events.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
@@ -287,12 +289,6 @@ ifeq ($(BACKEND),gph)
 MODULE_OBJS += \
 	events/gph/gph-events.o \
 	graphics/gph/gph-graphics.o
-endif
-
-ifeq ($(BACKEND),linuxmoto)
-MODULE_OBJS += \
-	events/linuxmotosdl/linuxmotosdl-events.o \
-	graphics/linuxmotosdl/linuxmotosdl-graphics.o
 endif
 
 ifeq ($(BACKEND),maemo)

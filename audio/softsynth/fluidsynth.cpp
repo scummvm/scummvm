@@ -57,21 +57,21 @@ protected:
 	void setNum(const char *name, double num);
 	void setStr(const char *name, const char *str);
 
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) override;
 
 public:
 	MidiDriver_FluidSynth(Audio::Mixer *mixer);
 
-	int open();
-	void close();
-	void send(uint32 b);
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
 
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override;
 
 	// AudioStream API
-	bool isStereo() const { return true; }
-	int getRate() const { return _outputRate; }
+	bool isStereo() const override { return true; }
+	int getRate() const override { return _outputRate; }
 };
 
 // MidiDriver method implementations
@@ -227,6 +227,8 @@ void MidiDriver_FluidSynth::close() {
 }
 
 void MidiDriver_FluidSynth::send(uint32 b) {
+	midiDriverCommonSend(b);
+
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
 	uint param2 = (byte) ((b >> 16) & 0xFF);
 	uint param1 = (byte) ((b >>  8) & 0xFF);

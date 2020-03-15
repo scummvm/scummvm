@@ -172,6 +172,17 @@ int WintermuteEngine::init() {
 		}
 	#endif
 
+	// check dependencies for games with HeroCraft subengine
+	#if not defined(ENABLE_HEROCRAFT)
+		if (_gameDescription->targetExecutable == WME_HEROCRAFT) {
+			GUI::MessageDialog dialog(_("This game requires the HeroCraft subengine, which is not compiled in."));
+			dialog.runModal();
+			delete _game;
+			_game = nullptr;
+			return false;
+		}
+	#endif
+
 	Common::ArchiveMemberList actors3d;
 	if (BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d")) {
 		GUI::MessageDialog dialog(

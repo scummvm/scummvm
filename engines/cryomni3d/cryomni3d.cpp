@@ -44,7 +44,7 @@ namespace CryOmni3D {
 CryOmni3DEngine::CryOmni3DEngine(OSystem *syst,
                                  const CryOmni3DGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc),
 	_canLoadSave(false), _fontManager(), _sprites(), _dragStatus(kDragStatus_NoDrag), _lastMouseButton(0),
-	_autoRepeatNextEvent(uint(-1)) {
+	_autoRepeatNextEvent(uint(-1)), _hnmHasClip(false) {
 	if (!_mixer->isReady()) {
 		error("Sound initialization failed");
 	}
@@ -172,7 +172,16 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 				if (beforeDraw) {
 					(this->*beforeDraw)(frameNum);
 				}
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, width, height);
+
+				if (_hnmHasClip) {
+					Common::Rect rct(width, height);
+					rct.clip(_hnmClipping);
+					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, rct.left, rct.top, rct.width(),
+					                           rct.height());
+				} else {
+					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, width, height);
+				}
+
 				if (afterDraw) {
 					(this->*afterDraw)(frameNum);
 				}

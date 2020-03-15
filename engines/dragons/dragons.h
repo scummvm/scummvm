@@ -67,7 +67,7 @@ enum Flags {
 	ENGINE_FLAG_200 = 0x200,
 	ENGINE_FLAG_400 = 0x400,
 	ENGINE_FLAG_800 = 0x800,
-	ENGINE_FLAG_1000_TEXT_ENABLED = 0x1000,
+	ENGINE_FLAG_1000_SUBTITLES_DISABLED = 0x1000,
 	ENGINE_FLAG_8000     =     0x8000, // speech dialog is playing.
 
 	ENGINE_FLAG_10000    =    0x10000,
@@ -117,12 +117,29 @@ class Inventory;
 class Scene;
 class Screen;
 class ActorManager;
+class Actor;
 class SequenceOpcodes;
 class ScriptOpcodes;
 class Talk;
 class SoundManager;
+class StrPlayer;
 struct DragonINI;
 
+struct LoadingScreenState {
+	Actor *flames[10];
+	uint16 quads[10];
+	int16 baseYOffset;
+	int16 flameOffsetIdx;
+	int16 loadingFlamesUpdateCounter;
+	int16 loadingFlamesRiseCounter;
+
+	LoadingScreenState() {
+		baseYOffset = 0;
+		flameOffsetIdx = 0;
+		loadingFlamesUpdateCounter = 0;
+		loadingFlamesRiseCounter = 0;
+	}
+};
 
 class DragonsEngine : public Engine {
 public:
@@ -140,6 +157,7 @@ public:
 	Credits *_credits;
 	Talk *_talk;
 	SoundManager *_sound;
+	StrPlayer *_strPlayer;
 
 	PaletteCyclingInstruction _paletteCyclingTbl[8];
 
@@ -170,6 +188,8 @@ private:
 
 	uint32 _randomState;
 
+	LoadingScreenState *_loadingScreenState;
+
 	// input
 	bool _leftMouseButtonUp;
 	bool _leftMouseButtonDown;
@@ -192,6 +212,7 @@ private:
 
 	bool _debugMode;
 	bool _isGamePaused;
+	bool _inMenu;
 
 	void (*_sceneUpdateFunction)();
 	void (*_vsyncUpdateFunction)();
@@ -246,12 +267,14 @@ public:
 
 	void reset_screen_maybe();
 
+	void init();
 	void loadScene(uint16 sceneId);
 
 	void reset();
 
 	void runSceneUpdaterFunction();
 	void setSceneUpdateFunction(void (*newUpdateFunction)());
+	void clearSceneUpdateFunction();
 	void (*getSceneUpdateFunction())();
 
 	void setVsyncUpdateFunction(void (*newUpdateFunction)());
@@ -278,6 +301,10 @@ public:
 	uint16 getRand(uint16 max);
 
 	void setupPalette1();
+
+	bool isInMenu();
+
+	void loadingScreenUpdate();
 
 	//TODO this logic should probably go in its own class.
 	uint32 getBigFileInfoTblFromDragonEXE();
@@ -313,6 +340,12 @@ private:
 	void initializeSound();
 
 	void SomeInitSound_fun_8003f64c();
+
+	void initSubtitleFlag();
+
+	void loadingScreen();
+
+	void mainMenu();
 };
 
 DragonsEngine *getEngine();

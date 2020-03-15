@@ -237,7 +237,7 @@ bool GlobalProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWai
 	CORO_BEGIN_CODE(_ctx);
 
 	uint32	i;		// Loop counter
-	_ctx->pProc = NULL;
+	_ctx->pProc= nullptr;
 
 	for (i = 0; i < g_numGlobalProcess; ++i)	{
 		if (g_pGlobalProcess[i].processId == procID) {

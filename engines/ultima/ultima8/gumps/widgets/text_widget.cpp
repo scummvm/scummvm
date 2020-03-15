@@ -40,19 +40,18 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget, Gump)
 
 TextWidget::TextWidget() : Gump(), _gameFont(false), _fontNum(0), _blendColour(0),
 		_tx(0), _ty(0), _currentStart(0), _currentEnd(0), _targetWidth(0), _targetHeight(0),
-		_cachedText(0), _textAlign(Font::TEXT_LEFT) {
+		_cachedText(nullptr), _textAlign(Font::TEXT_LEFT) {
 }
 
 TextWidget::TextWidget(int x, int y, const Std::string &txt, bool gamefont_, int font,
                        int w, int h, Font::TextAlign align) :
 	Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
 	_blendColour(0), _currentStart(0), _currentEnd(0),
-	_targetWidth(w), _targetHeight(h), _cachedText(0), _textAlign(align) {
+	_targetWidth(w), _targetHeight(h), _cachedText(nullptr), _textAlign(align) {
 }
 
 TextWidget::~TextWidget(void) {
 	delete _cachedText;
-	_cachedText = 0;
 }
 
 // Init the gump, call after construction
@@ -129,7 +128,7 @@ bool TextWidget::setupNextText() {
 	_currentEnd = _currentStart + remaining;
 
 	delete _cachedText;
-	_cachedText = 0;
+	_cachedText = nullptr;
 
 	if (_gameFont) {
 		Font *fontP = getFont();
@@ -188,28 +187,30 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	if (!_gameFont || !font->isHighRes()) return;
 
-	int32 x_ = 0, y_ = 0;
-	GumpToScreenSpace(x_, y_, ROUND_BOTTOMRIGHT);
+	int32 x = 0, y = 0;
+	GumpToScreenSpace(x, y, ROUND_BOTTOMRIGHT);
 
 	if (!_blendColour)
-		_cachedText->draw(surf, x_, y_, true);
+		_cachedText->draw(surf, x, y, true);
 	else
-		_cachedText->drawBlended(surf, x_, y_, _blendColour, true);
+		_cachedText->drawBlended(surf, x, y, _blendColour, true);
 
-	if (_parent->IsOfType<BarkGump>()) return;
+	if (_parent->IsOfType<BarkGump>())
+		return;
 
-	if (_parent->IsOfType<ButtonWidget>() && _parent->GetParent()->IsOfType<AskGump>()) return;
+	if (_parent->IsOfType<ButtonWidget>() && _parent->GetParent()->IsOfType<AskGump>())
+		return;
 
-	x_ = _dims.x;
-	y_ = _dims.y;
+	x = _dims.x;
+	y = _dims.y;
 	int32 w = _dims.w, h = _dims.h;
-	GumpRectToScreenSpace(x_, y_, w, h, ROUND_OUTSIDE);
-	surf->FillAlpha(0x00, x_, y_, w, h);
+	GumpRectToScreenSpace(x, y, w, h, ROUND_OUTSIDE);
+	surf->FillAlpha(0x00, x, y, w, h);
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.
 Gump *TextWidget::OnMouseMotion(int32 mx, int32 my) {
-	return 0;
+	return nullptr;
 }
 
 

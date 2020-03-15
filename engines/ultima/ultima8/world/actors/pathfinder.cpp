@@ -530,7 +530,7 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	PathNode *startnode = new PathNode();
 	startnode->state = _start;
 	startnode->cost = 0;
-	startnode->parent = 0;
+	startnode->parent = nullptr;
 	startnode->depth = 0;
 	startnode->stepsfromparent = 0;
 	_nodeList.push_back(startnode);

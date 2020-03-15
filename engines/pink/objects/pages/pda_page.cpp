@@ -27,11 +27,10 @@
 
 namespace Pink {
 
-PDAPage PDAPage::create(const Common::String &pageName, PDAMgr &pdaMgr) {
-	PDAPage page(pageName);
-	page._name = pageName;
-	page._resMgr.init(pdaMgr.getGame(), &page);
-	return page;
+PDAPage::PDAPage(const Common::String& name, PinkEngine *vm) {
+	_name = name;
+	_resMgr.init(vm, this);
+	init();
 }
 
 } // End of namespace Pink

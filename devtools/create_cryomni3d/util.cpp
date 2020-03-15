@@ -127,20 +127,9 @@ size_t writeString16(FILE *fp, const char *string) {
 	return written;
 }
 
-template<typename T, size_t (*Tf)(FILE *fp, T), typename U, size_t (*Uf)(FILE *fp, U)>
-size_t writeArray(FILE *fp, T const *array, U elems) {
-	size_t written = 0;
-	written += Uf(fp, elems);
-	for (U i = 0; i < elems; i++) {
-		written += Tf(fp, array[i]);
-	}
-	return written;
-}
-
 size_t writeString16Array16(FILE *fp, char const *const *array, uint16 elems) {
 	return writeArray<char const *, writeString16, uint16, writeUint16LE>(fp, array, elems);
 }
-
 
 //#define DEBUG
 static const char padBuf[PADDING_ALIGNMENT] = {

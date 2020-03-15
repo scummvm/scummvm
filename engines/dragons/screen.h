@@ -33,6 +33,8 @@ namespace Dragons {
 #define DRAGONS_SCREEN_WIDTH 320
 #define DRAGONS_SCREEN_HEIGHT 200
 
+#define DRAGONS_NUM_FLAT_QUADS 0xf
+
 enum AlphaBlendMode {
 	NONE,
 	NORMAL,       // 50% x Back + 50% x Sprite
@@ -41,12 +43,26 @@ enum AlphaBlendMode {
 	SUBTRACTIVE   // 100% x Back - 100% x Sprite
 };
 
+struct FlatQuad {
+	uint16 flags;
+	uint16 priorityLayer;
+	Common::Point points[4];
+	uint16 colour;
+
+	FlatQuad() {
+		flags = 0;
+		priorityLayer = 0;
+		colour = 0;
+	}
+};
+
 class Screen {
 private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::Surface *_backSurface;
 	byte _palettes[DRAGONS_NUM_PALETTES][512];
 	Common::Point _screenShakeOffset;
+	FlatQuad _flatQuads[DRAGONS_NUM_FLAT_QUADS];
 public:
 	virtual ~Screen();
 
@@ -56,6 +72,7 @@ public:
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY);
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, Common::Rect srcRect, bool flipX = false, AlphaBlendMode alpha = NONE);
 	void copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, Common::Rect srcRect, bool flipX = false, AlphaBlendMode alpha = NONE, uint16 scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE);
+	void copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, byte *palette, Common::Rect srcRect, AlphaBlendMode alpha = NONE);
 	void updateScreen();
 	void loadPalette(uint16 paletteNum, byte *palette);
 	byte *getPalette(uint16 paletteNum);
@@ -63,12 +80,18 @@ public:
 	void updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, uint16 endOffset, bool isTransparent);
 	void clearScreen();
 	void drawRect(uint16 colour, Common::Rect rect, int id);
+	void fillRect(uint16 colour, Common::Rect rect);
 	Common::Rect clipRectToScreen(int destX, int destY, const Common::Rect rect);
 	Common::Rect clipRectToRect(int destX, int destY, const Common::Rect rect, const Common::Rect containerRect);
 
 	void setScreenShakeOffset(int16 x, int16 y);
 
 	void copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, byte *palette, int yOffset);
+
+	int16 addFlatQuad(int16 x0, int16 y0, int16 x1, int16 y1, int16 x3, int16 y3, int16 x2, int16 y2, uint16 colour, int16 priorityLayer, uint16 flags);
+	void drawFlatQuads(uint16 priorityLayer);
+	FlatQuad *getFlatQuad(uint16 quadId);
+	void clearAllFlatQuads();
 
 private:
 	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha);

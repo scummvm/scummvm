@@ -86,10 +86,7 @@ PSP2SdlGraphicsManager::PSP2SdlGraphicsManager(SdlEventSource *sdlEventSource, S
 		_numShaders++;
 		p++;
 	}
-	_currentShader = ConfMan.getInt("shader");
-	if (_currentShader < 0 || _currentShader >= _numShaders) {
-		_currentShader = 0;
-	}
+	_currentShader = GFX_SHADER_NONE;
 
 	_shaders[0] = NULL;
 
@@ -138,6 +135,21 @@ void PSP2SdlGraphicsManager::PSP2_UpdateFiltering() {
 
 const OSystem::GraphicsMode *PSP2SdlGraphicsManager::getSupportedShaders() const {
 	return s_supportedShadersPSP2;
+}
+
+int PSP2SdlGraphicsManager::getDefaultShader() const {
+	return GFX_SHADER_SHARP;
+}
+
+int PSP2SdlGraphicsManager::getShader() const {
+	return _currentShader;
+}
+
+bool PSP2SdlGraphicsManager::setShader(int id) {
+	assert(id >= 0 && id < _numShaders);
+	_currentShader = id;
+	updateShader();
+	return true;
 }
 
 void PSP2SdlGraphicsManager::unloadGFXMode() {

@@ -61,7 +61,7 @@ bool Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
 
 	copyTextToBuffer(textBuffer, data + 10 + fileOffset, bufferLength);
 	bool status = (READ_LE_INT16(data) != 0);
-	delete data;
+	free(data);
 	return status;
 }
 
@@ -169,7 +169,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 		_vm->clearFlags(ENGINE_FLAG_8);
 	}
 	tmpTextPtr = findCharInU16Str(dialogText, 0x5c);
-	if (tmpTextPtr != NULL) {
+	if (tmpTextPtr != nullptr) {
 		sVar3 = tmpTextPtr[1];
 		*tmpTextPtr = sVar3;
 		while (sVar3 != 0) {
@@ -352,7 +352,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			_dat_8008e848_dialogBox_x2 = (uVar11 + _dat_8008e7e8_dialogBox_x1) - 1;
 			_dat_8008e844_dialogBox_y1 = (uVar19 - sVar4 * _dat_800726f0_tfont_field2) + 1;
 			_dat_8008e874_dialogBox_y2 = _dat_8008e844_dialogBox_y1 + sVar4 * _dat_800726f0_tfont_field2 + 1;
-			if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) && ((!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || (param_7 != 0)))) {
+			if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) && ((!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED) || (param_7 != 0)))) {
 				unaff_s4 = 0;
 				drawDialogBox((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
 							  (uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2, 0);
@@ -382,7 +382,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				return (uint)returnStatus;
 			}
 			uVar9 = ((int)((int)(short)unaff_s4 * (uint)1 * (int)sVar3) >> 3) * 0x3c;
-			if ((param_7 == 0) && _vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED)) {
+			if ((param_7 == 0) && _vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED)) {
 				uVar9 = 0;
 			}
 			do {
@@ -392,7 +392,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				if (_vm->_sound->_dat_8006bb60_sound_related != 0) {
 					_vm->_sound->_dat_8006bb60_sound_related = 0;
 					curDialogTextPtr = dialogText;
-					if (!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED)) {
+					if (!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED)) {
 						returnStatus = 1;
 						goto LAB_80032e18;
 					}
@@ -413,11 +413,11 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			LAB_80032e18:
 			//TODO CheckIfCdShellIsOpen();
 			if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
-				clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
+				_vm->_fontManager->clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
 								(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 			}
 		} while (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
-				 (((!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || (param_7 != 0)) && (*curDialogTextPtr != 0))));
+				 (((!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED) || (param_7 != 0)) && (*curDialogTextPtr != 0))));
 	}
 	if (param_5 != 0) {
 		if (_vm->isFlagSet(ENGINE_FLAG_8000)) {
@@ -579,7 +579,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 		}
 
 		selectedDialogText = displayTalkDialogMenu(dialogEntries);
-		if (selectedDialogText == NULL) {
+		if (selectedDialogText == nullptr) {
 			callMaybeResetData();
 			exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
 			return true;
@@ -660,7 +660,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	bool hasDialogEntries;
 	uint16 *_dat_80083104;
 
-	talkDialogEntry = NULL;
+	talkDialogEntry = nullptr;
 	for (int i = 0; i < 0x24; i++) {
 		local_430[i] = 0x20;
 	}
@@ -864,7 +864,7 @@ void Talk::talkFromIni(uint32 iniId, uint32 textIndex) {
 	if (textIndex == 0) {
 		return;
 	}
-	Actor *actor = NULL;
+	Actor *actor = nullptr;
 	if (iniId == 0) {
 		//TODO playSoundFromTxtIndex(textIndex);
 		actor = _vm->_dragonINIResource->getFlickerRecord()->actor;
@@ -892,7 +892,7 @@ void Talk::talkFromIni(uint32 iniId, uint32 textIndex) {
 //	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
 //		pcVar2 = load_string_from_dragon_txt(textIndex, acStack2016);
 //	}
-	_vm->_talk->displayDialogAroundINI(iniId, dialog, textIndex); //TODO need to pass dialog here (pcVar2). not NULL
+	_vm->_talk->displayDialogAroundINI(iniId, dialog, textIndex); //TODO need to pass dialog here (pcVar2). not nullptr
 	if (iniId == 0) {
 		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
 			if (_vm->getCurrentSceneId() != 0x32) {
@@ -1003,7 +1003,6 @@ uint32 Talk::strlenUTF16(uint16 *text) {
 }
 
 void Talk::drawDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2, uint16 unk) {
-	//TODO this might be rendering the box under the text.
 	debug("drawTextDialogBox(%d, %d, %d, %d, %d)", x1, y1, x2, y2, unk);
 	_vm->_fontManager->drawTextDialogBox(x1, y1, x2, y2);
 }
@@ -1015,7 +1014,7 @@ uint16 *Talk::findCharInU16Str(uint16 *text, uint16 chr) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint16 *Talk::UTF16ToUTF16Z(uint16 *dest, uint16 *src) {
@@ -1033,12 +1032,6 @@ uint16 *Talk::UTF16ToUTF16Z(uint16 *dest, uint16 *src) {
 		ptr++;
 	}
 	return dest;
-}
-
-void Talk::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
-	//TODO
-	debug("Clear text (%d,%d) -> (%d,%d)", x1, y1, x2, y2);
-	_vm->_fontManager->clearText();
 }
 
 uint16 Talk::FindLastPositionOf5cChar(uint16 *text) {
@@ -1111,7 +1104,7 @@ void Talk::clearDialogEntries() {
 }
 
 void Talk::FUN_8001a7c4_clearDialogBoxMaybe() {
-	clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
+	_vm->_fontManager->clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
 					(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 }
 

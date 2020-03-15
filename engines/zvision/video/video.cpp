@@ -29,6 +29,8 @@
 #include "engines/util.h"
 #include "graphics/surface.h"
 
+#include "backends/keymapper/keymap.h"
+
 #include "zvision/zvision.h"
 #include "zvision/core/clock.h"
 #include "zvision/graphics/render_manager.h"
@@ -91,18 +93,20 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 	vid.start();
 	_videoIsPlaying = true;
 
+	_cutscenesKeymap->setEnabled(true);
+	_gameKeymap->setEnabled(false);
+
 	// Only continue while the video is still playing
 	while (!shouldQuit() && !vid.endOfVideo() && vid.isPlaying()) {
 		// Check for engine quit and video stop key presses
 		while (_eventMan->pollEvent(_event)) {
 			switch (_event.type) {
-			case Common::EVENT_KEYDOWN:
-				switch (_event.kbd.keycode) {
-				case Common::KEYCODE_q:
-					if (_event.kbd.hasFlags(Common::KBD_CTRL))
-						quitGame();
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch ((ZVisionAction)_event.customType) {
+				case kZVisionActionQuit:
+					quitGame();
 					break;
-				case Common::KEYCODE_SPACE:
+				case kZVisionActionSkipCutscene:
 					if (skippable) {
 						vid.stop();
 					}
@@ -136,6 +140,9 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 
 		_system->delayMillis(vid.getTimeToNextFrame() / 2);
 	}
+
+	_cutscenesKeymap->setEnabled(false);
+	_gameKeymap->setEnabled(true);
 
 	_videoIsPlaying = false;
 	_clock.start();

@@ -43,7 +43,7 @@ enum ActorFlags {
 	ACTOR_FLAG_80 = 0x80,
 	ACTOR_FLAG_100 = 0x100,
 	ACTOR_FLAG_200 = 0x200,  // Use screen coordinates not map coordinates.
-	ACTOR_FLAG_400 = 0x400,
+	ACTOR_FLAG_400 = 0x400,  // Actor is hidden
 	ACTOR_FLAG_800 = 0x800,
 	ACTOR_FLAG_1000 = 0x1000,
 	ACTOR_FLAG_2000 = 0x2000,
@@ -131,6 +131,7 @@ public:
 	void waitUntilFlag8And4AreSet();
 	void waitUntilFlag8SetThenSet1000();
 	void waitUntilFlag8SetThenSet1000AndWaitFor4();
+	void waitForWalkToFinish();
 
 	bool waitUntilFlag4IsSetAllowSkip();
 	bool actorSetSequenceAndWaitAllowSkip(uint16 newSequenceID);

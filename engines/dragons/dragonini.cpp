@@ -49,7 +49,7 @@ void DragonINIResource::reset() {
 		_dragonINI[i].inventorySequenceId = readStream->readSint16LE();
 		uint16 v = readStream->readUint16LE();
 		assert(v == 0); // actorId
-		_dragonINI[i].actor = NULL;
+		_dragonINI[i].actor = nullptr;
 		_dragonINI[i].sceneId = readStream->readUint16LE();
 		_dragonINI[i].direction = readStream->readSint16LE();
 		_dragonINI[i].counter = readStream->readSint16LE();
@@ -64,6 +64,8 @@ void DragonINIResource::reset() {
 	}
 
 	_flickerINI = &_dragonINI[0];
+
+	delete readStream;
 }
 
 DragonINI *DragonINIResource::getRecord(uint16 index) {

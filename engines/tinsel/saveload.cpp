@@ -547,7 +547,7 @@ static void SaveFailure(Common::OutSaveFile *f) {
 		delete f;
 		_vm->getSaveFileMan()->removeSavefile(g_SaveSceneName);
 	}
-	g_SaveSceneName = NULL;	// Invalidate save name
+	g_SaveSceneName= nullptr;	// Invalidate save name
 	GUI::MessageDialog dialog(_("Failed to save game to file."));
 	dialog.runModal();
 }
@@ -623,7 +623,7 @@ static void DoSave() {
 
 	f->finalize();
 	delete f;
-	g_SaveSceneName = NULL;	// Invalidate save name
+	g_SaveSceneName= nullptr;	// Invalidate save name
 }
 
 /**

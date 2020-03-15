@@ -1868,7 +1868,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->pText = NULL;
+	_ctx->pText = nullptr;
 	_ctx->bSample = false;
 
 	// Don't do it if it's not wanted
@@ -2105,7 +2105,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				}
 			}
 		} else
-			_ctx->pText = NULL;
+			_ctx->pText = nullptr;
 
 		if (TinselV2) {
 			if (event == POINTED) {
@@ -2124,7 +2124,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					if (g_bNotPointedRunning) {
 						// Delete the text, and wait for the all-clear
 						MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-						_ctx->pText = NULL;
+						_ctx->pText = nullptr;
 
 						while (g_bNotPointedRunning)
 							CORO_SLEEP(1);
@@ -2242,7 +2242,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 			if (g_bNotPointedRunning) {
 				// Delete the text, and wait for the all-clear
 				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), pText);
-				pText = NULL;
+				pText = nullptr;
 				while (g_bNotPointedRunning)
 					CORO_SLEEP(1);
 
@@ -3173,7 +3173,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	_ctx->Loffset = 0;
 	_ctx->Toffset = 0;
 	_ctx->ticks = 0;
-	_ctx->pText = NULL;
+	_ctx->pText = nullptr;
 
 	// If waiting is enabled, wait for ongoing scroll
 	if (TinselV2 && SysVar(SV_SPEECHWAITS))
@@ -3297,7 +3297,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		 * Display the text.
 		 */
 		_ctx->bSample = _ctx->bSamples;
-		_ctx->pText = NULL;
+		_ctx->pText = nullptr;
 
 		if (_vm->_config->isJapanMode()) {
 			_ctx->ticks = JAP_TEXT_TIME;
@@ -3443,7 +3443,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 		if (_ctx->pText != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-			_ctx->pText = NULL;
+			_ctx->pText = nullptr;
 		}
 		if (TinselV2 && _ctx->bSample)
 			_vm->_sound->stopSpecSample(hText, _ctx->sub);

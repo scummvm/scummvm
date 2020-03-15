@@ -29,6 +29,17 @@
 
 namespace Common {
 
+// TODO: Maybe make 'Command' a separate mac-specific modifier so we can define
+//  defaults key bindings from the original mac game versions without binding
+//  them to the meta key on other platforms?
+#if defined(WIN32)
+#define META_KEY_NAME "Win"
+#elif defined(MACOSX) || defined(IPHONE)
+#define META_KEY_NAME "Cmd"
+#else
+#define META_KEY_NAME "Meta"
+#endif
+
 const KeyTableEntry defaultKeys[] = {
 	{"BACKSPACE", KEYCODE_BACKSPACE, "Backspace"},
 	{"TAB", KEYCODE_TAB, "Tab"},
@@ -206,37 +217,39 @@ const KeyTableEntry defaultKeys[] = {
 	{"AUDIOFASTFORWARD", KEYCODE_AUDIOFASTFORWARD, "Audio Fast-Forward"},
 
 	// Modifier keys
-	{"SCROLLOCK", KEYCODE_SCROLLOCK, "Scroll Lock"   },
-	{"CAPSLOCK",  KEYCODE_CAPSLOCK,  "Caps Lock"     },
-	{"NUMLOCK",   KEYCODE_NUMLOCK,   "Num Lock"      },
-	{"LSHIFT",    KEYCODE_LSHIFT,    "Left Shift"    },
-	{"RSHIFT",    KEYCODE_RSHIFT,    "Right Shift"   },
-	{"LALT",      KEYCODE_LALT,      "Left Alt"      },
-	{"RALT",      KEYCODE_RALT,      "Right Alt"     },
-	{"LCTRL",     KEYCODE_LCTRL,     "Left Control"  },
-	{"RCTRL",     KEYCODE_RCTRL,     "Right Control" },
-	{"LMETA",     KEYCODE_LMETA,     "Left Meta"     },
-	{"RMETA",     KEYCODE_RMETA,     "Right Meta"    },
+	{"SCROLLOCK", KEYCODE_SCROLLOCK, "Scroll Lock"          },
+	{"CAPSLOCK",  KEYCODE_CAPSLOCK,  "Caps Lock"            },
+	{"NUMLOCK",   KEYCODE_NUMLOCK,   "Num Lock"             },
+	{"LSHIFT",    KEYCODE_LSHIFT,    "Left Shift"           },
+	{"RSHIFT",    KEYCODE_RSHIFT,    "Right Shift"          },
+	{"LALT",      KEYCODE_LALT,      "Left Alt"             },
+	{"RALT",      KEYCODE_RALT,      "Right Alt"            },
+	{"LCTRL",     KEYCODE_LCTRL,     "Left Control"         },
+	{"RCTRL",     KEYCODE_RCTRL,     "Right Control"        },
+	{"LMETA",     KEYCODE_LMETA,     "Left "  META_KEY_NAME },
+	{"RMETA",     KEYCODE_RMETA,     "Right " META_KEY_NAME },
 
 	{0, KEYCODE_INVALID, 0}
 };
 
 // TODO: Add NUM_LOCK
 const ModifierTableEntry defaultModifiers[] = {
-	{ KBD_CTRL,  "C", "Ctrl+"  },
-	{ KBD_SHIFT, "S", "Shift+" },
-	{ KBD_ALT,   "A", "Alt+"   },
-	{ KBD_META,  "M", "Meta+"  },
-	{ 0,     nullptr, nullptr  }
+	{ KBD_CTRL,  "C", "Ctrl+"            },
+	{ KBD_SHIFT, "S", "Shift+"           },
+	{ KBD_ALT,   "A", "Alt+"             },
+	{ KBD_META,  "M", META_KEY_NAME "+"  },
+	{ 0,     nullptr, nullptr            }
 };
 
 const HardwareInputTableEntry defaultMouseButtons[] = {
-    { "MOUSE_LEFT",   MOUSE_BUTTON_LEFT,   _s("Left Mouse Button")   },
-    { "MOUSE_RIGHT",  MOUSE_BUTTON_RIGHT,  _s("Right Mouse Button")  },
-    { "MOUSE_MIDDLE", MOUSE_BUTTON_MIDDLE, _s("Middle Mouse Button") },
-    { "MOUSE_WHEEL_UP", MOUSE_WHEEL_UP, _s("Mouse Wheel Up") },
-    { "MOUSE_WHEEL_DOWN", MOUSE_WHEEL_DOWN, _s("Mouse Wheel Down") },
-    { nullptr,        0,                   nullptr                   }
+    { "MOUSE_LEFT",       MOUSE_BUTTON_LEFT,   _s("Left Mouse Button")   },
+    { "MOUSE_RIGHT",      MOUSE_BUTTON_RIGHT,  _s("Right Mouse Button")  },
+    { "MOUSE_MIDDLE",     MOUSE_BUTTON_MIDDLE, _s("Middle Mouse Button") },
+    { "MOUSE_WHEEL_UP",   MOUSE_WHEEL_UP,      _s("Mouse Wheel Up")      },
+    { "MOUSE_WHEEL_DOWN", MOUSE_WHEEL_DOWN,    _s("Mouse Wheel Down")    },
+    { "MOUSE_X1",         MOUSE_BUTTON_X1,     _s("X1 Mouse Button")     },
+    { "MOUSE_X2",         MOUSE_BUTTON_X2,     _s("X2 Mouse Button")     },
+    { nullptr,            0,                   nullptr                   }
 };
 
 const HardwareInputTableEntry defaultJoystickButtons[] = {
@@ -441,6 +454,14 @@ HardwareInput MouseHardwareInputSet::findHardwareInput(const Event &event) const
 		break;
 	case Common::EVENT_WHEELDOWN:
 		button = MOUSE_WHEEL_DOWN;
+		break;
+	case EVENT_X1BUTTONDOWN:
+	case EVENT_X1BUTTONUP:
+		button = MOUSE_BUTTON_X1;
+		break;
+	case EVENT_X2BUTTONDOWN:
+	case EVENT_X2BUTTONUP:
+		button = MOUSE_BUTTON_X2;
 		break;
 	default:
 		button = -1;

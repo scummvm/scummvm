@@ -136,7 +136,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 
-	if (flicker == NULL || flicker->sceneId == 0) {
+	if (flicker == nullptr || flicker->sceneId == 0) {
 		_vm->getINI(1)->sceneId = 0;
 	} else {
 		_currentSceneId = (uint16)(sceneId & 0x7fff);
@@ -338,21 +338,30 @@ void Scene::draw() {
 	_vm->_screen->clearScreen();
 
 	for (uint16 priority = 1; priority < 16; priority++) {
-		if (priority == 7 && _vm->isFlagSet(ENGINE_FLAG_200)) {
+		if (_vm->isInMenu() || (priority == 7 && _vm->isFlagSet(ENGINE_FLAG_200))) {
 			_vm->_fontManager->updatePalette();
+			_vm->_fontManager->draw();
 		}
 
-		if (priority == _stage->getBgLayerPriority()) {
-			drawBgLayer(0, rect, _stage->getBgLayer());
-		} else if (priority == _stage->getMgLayerPriority()) {
-			drawBgLayer(1, rect, _stage->getMgLayer());
-		} else if (priority == _stage->getFgLayerPriority()) {
-			drawBgLayer(2, rect, _stage->getFgLayer());
-		} else if (priority == 5) {
-			if (_vm->isFlagSet(ENGINE_FLAG_80)) {
-				_vm->_inventory->draw();
+		if (_vm->isFlagSet(ENGINE_FLAG_200)) {
+			if (priority == 5) {
+				if (_vm->isFlagSet(ENGINE_FLAG_80)) {
+					_vm->_inventory->draw();
+				}
+			}
+
+			if (priority == _stage->getFgLayerPriority()) {
+				drawBgLayer(2, rect, _stage->getFgLayer());
+			}
+			if (priority == _stage->getMgLayerPriority()) {
+				drawBgLayer(1, rect, _stage->getMgLayer());
+			}
+			if (priority == _stage->getBgLayerPriority()) {
+				drawBgLayer(0, rect, _stage->getBgLayer());
 			}
 		}
+
+		_screen->drawFlatQuads(priority);
 
 		for (int16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 			Actor *actor = _actorManager->getActorByDisplayOrder(i);
@@ -386,7 +395,6 @@ void Scene::draw() {
 			}
 		}
 	}
-	_vm->_fontManager->draw();
 	if (_vm->_credits->isRunning()) {
 		_vm->_credits->draw();
 	}
@@ -511,7 +519,7 @@ void Scene::drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface 
 		rect.bottom += offset.y;
 	}
 //	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
-	_screen->copyRectToSurface8bpp(*surface, _screen->getPalette(0), 0, 0, rect, false, _stage->getLayerAlphaMode(layerNumber));
+	_screen->copyRectToSurface8bppWrappedX(*surface, _screen->getPalette(0), rect, _stage->getLayerAlphaMode(layerNumber));
 }
 
 ScaleLayer *Scene::getScaleLayer() {

@@ -126,7 +126,7 @@ void SetupHandleTable() {
 				g_handleTable[i].filesize = f.readUint32();
 				// The pointer should always be NULL. We don't
 				// need to read that from the file.
-				g_handleTable[i]._node = NULL;
+				g_handleTable[i]._node= nullptr;
 				f.seek(4, SEEK_CUR);
 				// For Discworld 2, read in the flags2 field
 				g_handleTable[i].flags2 = t2Flag ? f.readUint32() : 0;
@@ -160,7 +160,7 @@ void SetupHandleTable() {
 		}
 #ifdef BODGE
 		else if ((pH->filesize & FSIZE_MASK) == 8) {
-			pH->_node = NULL;
+			pH->_node= nullptr;
 		}
 #endif
 		else {
@@ -175,10 +175,10 @@ void SetupHandleTable() {
 
 void FreeHandleTable() {
 	free(g_handleTable);
-	g_handleTable = NULL;
+	g_handleTable= nullptr;
 
 	delete g_cdGraphStream;
-	g_cdGraphStream = NULL;
+	g_cdGraphStream= nullptr;
 }
 
 /**

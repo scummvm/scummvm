@@ -36,7 +36,6 @@
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/kernel/allocator.h"
-#include "ultima/ultima8/kernel/hid_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/kernel/object_manager.h"
@@ -99,11 +98,6 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
 	registerCmd("GameMapGump::incrementSortOrder", WRAP_METHOD(Debugger, cmdIncrementSortOrder));
 	registerCmd("GameMapGump::decrementSortOrder", WRAP_METHOD(Debugger, cmdDecrementSortOrder));
-
-	registerCmd("HIDManager::bind", WRAP_METHOD(Debugger, cmdBind));
-	registerCmd("HIDManager::unbind", WRAP_METHOD(Debugger, cmdUnbind));
-	registerCmd("HIDManager::listbinds", WRAP_METHOD(Debugger, cmdListbinds));
-	registerCmd("HIDManager::save", WRAP_METHOD(Debugger, cmdSave));
 
 	registerCmd("Kernel::processTypes", WRAP_METHOD(Debugger, cmdProcessTypes));
 	registerCmd("Kernel::processInfo", WRAP_METHOD(Debugger, cmdProcessInfo));
@@ -330,13 +324,13 @@ bool Debugger::cmdMemberVar(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 
 	// Set the pointer to the correct type
-	bool *b = 0;
-	int *i = 0;
-	Std::string *str = 0;
-	istring *istr = 0;
+	bool *b = nullptr;
+	int *i = nullptr;
+	Std::string *str = nullptr;
+	istring *istr = nullptr;
 
 	// ini entry name if supported
-	const char *ini = 0;
+	const char *ini = nullptr;
 
 	if (!scumm_stricmp(argv[1], "_frameLimit")) {
 		b = &g->_frameLimit;
@@ -873,61 +867,6 @@ bool Debugger::cmdDecrementSortOrder(int argc, const char **argv) {
 	GameMapGump *gump = Ultima8Engine::get_instance()->getGameMapGump();
 	if (gump)
 		gump->IncSortOrder(-1);
-	return false;
-}
-
-
-bool Debugger::cmdBind(int argc, const char **argv) {
-	Debugger::ArgvType argv2;
-	Debugger::ArgvType::const_iterator it;
-	if (argc < 3) {
-		debugPrintf("Usage: %s <key> <action> [<arg> ...]: binds a key or button to an action\n",
-			argv[0]);
-		return true;
-	} else {
-		HIDManager *hid = HIDManager::get_instance();
-
-		istring control(argv[1]);
-		Common::Array<istring> args;
-		for (int i = 2; i < argc; ++i)
-			args.push_back(argv[i]);
-
-		it = args.begin();
-		++it;
-		++it;
-		argv2.assign(it, args.end());
-
-		hid->bind(control, argv2);
-		return false;
-	}
-}
-
-bool Debugger::cmdUnbind(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Usage: %s <key>: unbinds a key or button\n", argv[0]);
-		return true;
-	} else {
-		HIDManager *hid = HIDManager::get_instance();
-
-		istring control(argv[1]);
-
-		hid->unbind(control);
-		return false;
-	}
-}
-
-bool Debugger::cmdListbinds(int argc, const char **argv) {
-	HIDManager *hid = HIDManager::get_instance();
-	hid->listBindings();
-	return true;
-}
-
-bool Debugger::cmdSave(int argc, const char **argv) {
-	HIDManager *hid = HIDManager::get_instance();
-	hid->saveBindings();
-
-	SettingManager *settings = SettingManager::get_instance();
-	settings->write();
 	return false;
 }
 

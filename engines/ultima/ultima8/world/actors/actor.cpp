@@ -93,7 +93,7 @@ uint16 Actor::getMaxHP() const {
 
 bool Actor::loadMonsterStats() {
 	ShapeInfo *shapeinfo = getShapeInfo();
-	MonsterInfo *mi = 0;
+	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
 		return false;
@@ -122,7 +122,7 @@ bool Actor::loadMonsterStats() {
 bool Actor::giveTreasure() {
 	MainShapeArchive *mainshapes = GameData::get_instance()->getMainShapes();
 	ShapeInfo *shapeinfo = getShapeInfo();
-	MonsterInfo *mi = 0;
+	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
 		return false;
@@ -750,7 +750,7 @@ ProcId Actor::die(uint16 damageType) {
 	giveTreasure();
 
 	ShapeInfo *shapeinfo = getShapeInfo();
-	MonsterInfo *mi = 0;
+	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_resurrection && !(damageType & WeaponInfo::DMG_FIRE)) {
@@ -965,7 +965,8 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 
 CombatProcess *Actor::getCombatProcess() {
 	Process *p = Kernel::get_instance()->findProcess(_objId, 0xF2); // CONSTANT!
-	if (!p) return 0;
+	if (!p)
+		return nullptr;
 	CombatProcess *cp = p_dynamic_cast<CombatProcess *>(p);
 	assert(cp);
 
@@ -975,7 +976,7 @@ CombatProcess *Actor::getCombatProcess() {
 void Actor::setInCombat() {
 	if ((_actorFlags & ACT_INCOMBAT) != 0) return;
 
-	assert(getCombatProcess() == 0);
+	assert(getCombatProcess() == nullptr);
 
 	// kill any processes belonging to this actor
 	Kernel::get_instance()->killProcesses(getObjId(), 6, true);
@@ -1043,7 +1044,7 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 	                  Item::FLG_IN_NPC_LIST,
 	                  0, 0, 0, true);
 	if (!newactor)
-		return 0;
+		return nullptr;
 	uint16 objID = newactor->getObjId();
 
 	// set stats

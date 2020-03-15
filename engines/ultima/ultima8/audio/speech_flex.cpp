@@ -35,17 +35,21 @@ SpeechFlex::SpeechFlex(IDataSource *ds) : SoundFlex(ds) {
 	uint32 size = getRawSize(0);
 	const uint8 *buf = getRawObject(0);
 
-	istring strings(reinterpret_cast<const char *>(buf), size);
-	Std::vector<istring> s;
-	SplitString(strings, 0, s);
+	const char *cbuf = reinterpret_cast<const char *>(buf);
 
-	for (unsigned int i = 0; i < s.size(); ++i) {
-		TabsToSpaces(s[i], 1);
-		TrimSpaces(s[i]);
+	// Note: SplitString doesn't work here because Std::string can't
+	// hold multiple null-terminated strings.
+	unsigned int off = 0;
+	while (off < size) {
+		istring str(cbuf + off);
+		off += str.size() + 1;
 
-//		pout << "Found string: \"" << s[i] << "\"" << Std::endl;
+		TabsToSpaces(str, 1);
+		TrimSpaces(str);
 
-		_phrases.push_back(s[i]);
+		// pout << "Found string: \"" << str << "\"" << Std::endl;
+
+		_phrases.push_back(str);
 	}
 
 	delete [] buf;

@@ -32,7 +32,7 @@ namespace Dragons {
 #define TILEMAP_HEIGHT 25
 
 Bag::Bag(BigfileArchive *bigFileArchive, Screen *screen): _screen(screen) {
-	_surface = NULL;
+	_surface = nullptr;
 	_position.x = 0;
 	_position.y = 0;
 	load(bigFileArchive);

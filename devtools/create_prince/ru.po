@@ -4878,18 +4878,22 @@ msgid "#E3"
 msgstr "#E3"
 
 #: dialog0146.txt:100401
-msgid "#X1"
-msgstr "#X1"
+msgid "#E3"
+msgstr "#E3"
 
 #: dialog0146.txt:100501
-msgid "#B1"
-msgstr "#B1"
+msgid "#X1"
+msgstr "#X1"
 
 #: dialog0146.txt:100601
 msgid "#B1"
 msgstr "#B1"
 
 #: dialog0146.txt:100701
+msgid "#B1"
+msgstr "#B1"
+
+#: dialog0146.txt:100801
 msgid "#B1"
 msgstr "#B1"
 
@@ -9433,6 +9437,10 @@ msgstr "P#OTHER: Хм..."
 #: dialog0418.txt:1
 msgid "OTHER: No, ale może jeszcze będą z ciebie ludzie."
 msgstr "OTHER: Ну ладно, глядишь из тебя еще что и выйдет."
+
+#: invtxt.txt:0
+msgid "homunkulus - Nie jest najmądrzejszy, ale przynajmniej|jest magiczny."
+msgstr "Гомункул - Он не самый умный, но, по|крайней мере, магический..."
 
 #: invtxt.txt:1
 msgid "eliksir nieśmiertelności - Aż trudno uwierzyć, że coś takiego|naprawdę istnieje."

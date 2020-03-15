@@ -305,9 +305,9 @@ static SCNHANDLE g_hWinParts = 0;	// Window members and cursors' graphic data
 static SCNHANDLE g_flagFilm = 0;	// Window members and cursors' graphic data
 static SCNHANDLE g_configStrings[20];
 
-static INV_OBJECT *g_invObjects = NULL;	// Inventory objects' data
+static INV_OBJECT *g_invObjects = nullptr;	// Inventory objects' data
 static int g_numObjects = 0;				// Number of inventory objects
-static SCNHANDLE *g_invFilms = NULL;
+static SCNHANDLE *g_invFilms = nullptr;
 static bool g_bNoLanguage = false;
 static DIRECTION g_initialDirection;
 
@@ -481,7 +481,7 @@ static int g_numScenes;
 
 static int g_numEntries;
 
-static PHOPPER g_pChosenScene = NULL;
+static PHOPPER g_pChosenScene = nullptr;
 
 static int g_lastChosenScene;
 static bool g_bRemember;
@@ -1120,7 +1120,7 @@ static void PrimeSceneHopper() {
  */
 static void FreeSceneHopper() {
 	free(g_pHopper);
-	g_pHopper = NULL;
+	g_pHopper = nullptr;
 }
 
 static void FirstScene(int first) {
@@ -1218,7 +1218,7 @@ static void DumpIconArray() {
 	for (int i = 0; i < MAX_ICONS; i++) {
 		if (g_iconArray[i] != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[i]);
-			g_iconArray[i] = NULL;
+			g_iconArray[i] = nullptr;
 		}
 	}
 }
@@ -1230,7 +1230,7 @@ static void DumpDobjArray() {
 	for (int i = 0; i < MAX_WCOMP; i++) {
 		if (g_DobjArray[i] != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_DobjArray[i]);
-			g_DobjArray[i] = NULL;
+			g_DobjArray[i] = nullptr;
 		}
 	}
 }
@@ -1242,7 +1242,7 @@ static void DumpObjArray() {
 	for (int i = 0; i < MAX_WCOMP; i++) {
 		if (g_objArray[i] != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_objArray[i]);
-			g_objArray[i] = NULL;
+			g_objArray[i] = nullptr;
 		}
 	}
 }
@@ -1481,7 +1481,7 @@ static void FirstFile(int first) {
 
 	if (first == 0 && i < MAX_SAVED_FILES && cd.box == saveBox) {
 		// Blank first entry for new save
-		cd.box[0].boxText = NULL;
+		cd.box[0].boxText = nullptr;
 		cd.modifier = j = 1;
 	} else {
 		cd.modifier = j = 0;
@@ -1518,15 +1518,15 @@ static void InvLoadGame() {
 		cd.selBox = NOBOX;
 		if (g_iconArray[HL3] != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL3]);
-			g_iconArray[HL3] = NULL;
+			g_iconArray[HL3] = nullptr;
 		}
 		if (g_iconArray[HL2] != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL2]);
-			g_iconArray[HL2] = NULL;
+			g_iconArray[HL2] = nullptr;
 		}
 		if (g_iconArray[HL1] != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-			g_iconArray[HL1] = NULL;
+			g_iconArray[HL1] = nullptr;
 		}
 		RestoreGame(rGame+cd.extraBase);
 	}
@@ -1594,7 +1594,7 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 			*/
 			if (g_iconArray[HL3] != NULL) {
 				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL3]);
-				g_iconArray[HL3] = NULL;
+				g_iconArray[HL3] = nullptr;
 			}
 			g_iconArray[HL3] = ObjectTextOut(
 				_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_sedit, 0,
@@ -1637,11 +1637,11 @@ static void Select(int i, bool force) {
 	// Clear previous selected highlight and text
 	if (g_iconArray[HL2] != NULL) {
 		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL2]);
-		g_iconArray[HL2] = NULL;
+		g_iconArray[HL2] = nullptr;
 	}
 	if (g_iconArray[HL3] != NULL) {
 		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL3]);
-		g_iconArray[HL3] = NULL;
+		g_iconArray[HL3] = nullptr;
 	}
 
 	// New highlight box
@@ -2277,14 +2277,14 @@ static void InvBoxes(bool InBody, int curX, int curY) {
 		cd.pointBox = NOBOX;
 		if (g_iconArray[HL1] != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-			g_iconArray[HL1] = NULL;
+			g_iconArray[HL1] = nullptr;
 		}
 	} else if (index != cd.pointBox) {
 		cd.pointBox = index;
 		// A new box is pointed to - high-light it
 		if (g_iconArray[HL1] != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-			g_iconArray[HL1] = NULL;
+			g_iconArray[HL1] = nullptr;
 		}
 		if ((cd.box[cd.pointBox].boxType == ARSBUT && cd.selBox != NOBOX) ||
 ///* I don't agree */ cd.box[cd.pointBox].boxType == RGROUP ||
@@ -2396,7 +2396,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 	// Remove hilight image
 	if (g_iconArray[HL1] != NULL) {
 		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-		g_iconArray[HL1] = NULL;
+		g_iconArray[HL1] = nullptr;
 	}
 
 	// Hold normal image for 1 frame
@@ -2438,7 +2438,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 
 	// New state, normal
 	MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-	g_iconArray[HL1] = NULL;
+	g_iconArray[HL1] = nullptr;
 
 	// Hold normal image for 1 frame
 	CORO_SLEEP(1);
@@ -3132,7 +3132,7 @@ static void ConstructInventory(InventoryType filling) {
 	for (int i = 0; i < MAX_WCOMP; i++) {
 		if (retObj[i] != NULL) {
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), retObj[i]);
-			retObj[i] = NULL;
+			retObj[i] = nullptr;
 		}
 	}
 
@@ -3312,7 +3312,7 @@ static void ConstructInventory(InventoryType filling) {
 		}
 
 		if (g_ino == INV_CONV) {
-			g_SlideObject = NULL;
+			g_SlideObject = nullptr;
 
 			if (TinselV2) {
 				// !!!!! MAGIC NUMBER ALERT !!!!!

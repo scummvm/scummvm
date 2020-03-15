@@ -49,17 +49,10 @@ public:
 	~MusicFlex() override;
 
 	//! Get an xmidi
-	XMidiFile *getXMidi(uint32 index) {
-		if (index >= _count) return 0;
-		cache(index);
-		return _songs[index];
-	}
+	XMidiFile *getXMidi(uint32 index);
 
 	//! Get song info
-	const SongInfo *getSongInfo(uint32 index) const {
-		if (index > 127) return 0;
-		return _info[index];
-	}
+	const SongInfo *getSongInfo(uint32 index) const;
 
 	//! Get the Adlib Timbres (index 259)
 	IDataSource *getAdlibTimbres();

@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 class TTFont;
-struct Texture;
+class Texture;
 
 class TTFRenderedText : public RenderedText {
 public:

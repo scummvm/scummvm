@@ -75,7 +75,7 @@ void SplitItemProcess::run() {
 		targetitem->callUsecodeEvent_combine();
 	} else {
 		targetitem->destroy();
-		targetitem = 0;
+		targetitem = nullptr;
 	}
 
 	if (origcount > 0) {
@@ -83,7 +83,7 @@ void SplitItemProcess::run() {
 		original->callUsecodeEvent_combine();
 	} else {
 		original->destroy(); // note: this terminates us
-		original = 0;
+		original = nullptr;
 	}
 
 	_result = 0;

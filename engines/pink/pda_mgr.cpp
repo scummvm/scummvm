@@ -95,17 +95,14 @@ void PDAMgr::execute(const Command &command) {
 	}
 }
 
-void PDAMgr::goToPage(const Common::String &pageName) {
+void PDAMgr::goToPage(const Common::String pageName) {
 	if (_page && !_page->getName().compareToIgnoreCase(pageName))
 		return;
 
 	loadGlobal();
 
-	PDAPage *newPage = new PDAPage(PDAPage::create(pageName, *this));
 	delete _page;
-	_page = newPage;
-
-	_page->init();
+	_page = new PDAPage(pageName, getGame());
 
 	_previousPages.push(_page->getName());
 
@@ -188,8 +185,8 @@ void PDAMgr::loadGlobal() {
 	if (_globalPage)
 		return;
 
-	_globalPage = new PDAPage(PDAPage::create("GLOBAL", *this));
-	_globalPage->init();
+	delete _globalPage;
+	_globalPage = new PDAPage("GLOBAL", getGame());
 }
 
 void PDAMgr::initPerilButtons() {

@@ -825,7 +825,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_vm = this;
 
 	_gameId = 0;
-	_driver = NULL;
+	_driver = nullptr;
 
 	_config = new Config(this);
 
@@ -843,7 +843,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 	_mousePos.x = 0;
 	_mousePos.y = 0;
-	_keyHandler = NULL;
+	_keyHandler = nullptr;
 	_dosPlayerDir = 0;
 }
 

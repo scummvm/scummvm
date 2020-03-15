@@ -177,11 +177,7 @@ public:
 	}
 
 	//! Set this Item's shape number
-	void setShape(uint32 shape_) {
-		_shape = shape_;
-		_cachedShapeInfo = 0;
-		_cachedShape = 0;
-	}
+	void setShape(uint32 shape_);
 
 	//! Get this Item's frame number
 	uint32 getFrame() const {
@@ -611,7 +607,7 @@ inline ShapeInfo *Item::getShapeInfo() const {
 }
 
 inline void Item::getFootpadData(int32 &X, int32 &Y, int32 &Z) const {
-	ShapeInfo *si = getShapeInfo();
+	const ShapeInfo *si = getShapeInfo();
 	Z = si->_z;
 
 	if (_flags & Item::FLG_FLIPPED) {
@@ -625,16 +621,8 @@ inline void Item::getFootpadData(int32 &X, int32 &Y, int32 &Z) const {
 
 // like getFootpadData, but scaled to world coordinates
 inline void Item::getFootpadWorld(int32 &X, int32 &Y, int32 &Z) const {
-	ShapeInfo *si = getShapeInfo();
-	Z = si->_z * 8;
-
-	if (_flags & Item::FLG_FLIPPED) {
-		X = si->_y * 32;
-		Y = si->_x * 32;
-	} else {
-		X = si->_x * 32;
-		Y = si->_y * 32;
-	}
+	const ShapeInfo *si = getShapeInfo();
+	si->getFootpadWorld(X, Y, Z, _flags & Item::FLG_FLIPPED);
 }
 
 inline void Item::getLocation(int32 &X, int32 &Y, int32 &Z) const {

@@ -339,6 +339,8 @@ static void setupGraphics(OSystem &system) {
 			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 		if (ConfMan.hasKey("stretch_mode"))
 			system.setStretchMode(ConfMan.get("stretch_mode").c_str());
+		if (ConfMan.hasKey("shader"))
+			system.setShader(ConfMan.get("shader").c_str());
 	system.endGFXTransaction();
 
 	// When starting up launcher for the first time, the user might have specified
@@ -448,6 +450,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			warning("%s", res.getDesc().c_str());
 		return res.getCode();
 	}
+
+	if (settings.contains("dump-midi")) {
+		// Store this command line setting in ConfMan, since all transient settings are destroyed
+		ConfMan.registerDefault("dump_midi", true);
+	}
+
 
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.

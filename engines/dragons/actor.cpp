@@ -57,6 +57,7 @@ Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, in
 	} else {
 		//TODO run find by resource and remove from mem logic here. @0x800358c8
 		debug("Unable to find free actor slot!!");
+		delete resource;
 	}
 	resetDisplayOrder();
 	return actor;
@@ -72,7 +73,7 @@ Actor *ActorManager::findFreeActor(int16 resourceId) {
 			return actor;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Actor *ActorManager::getActor(uint16 actorId) {
@@ -132,7 +133,7 @@ Actor *ActorManager::getActorByDisplayOrder(uint16 position) {
 }
 
 Actor::Actor(uint16 id) : _actorID(id) {
-	_actorResource = NULL;
+	_actorResource = nullptr;
 	_resourceID = -1;
 	_seqCodeIp = 0;
 	_priorityLayer = 3;
@@ -143,12 +144,13 @@ Actor::Actor(uint16 id) : _actorID(id) {
 	_walkSpeed = 0;
 	_flags = 0;
 	_frame_flags = 0;
-	_frame = NULL;
-	_surface = NULL;
+	_frame = nullptr;
+	_surface = nullptr;
 }
 
 void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	debug(3, "actor %d Init", _actorID);
+	delete _actorResource;
 	_actorResource = resource;
 	_x_pos = x;
 	_y_pos = y;
@@ -186,7 +188,7 @@ void Actor::loadFrame(uint16 frameOffset) {
 		_frame_flags &= ~ACTOR_FRAME_FLAG_2;
 	}
 
-	_surface = _actorResource->loadFrame(*_frame, NULL); // TODO paletteId == 0xf1 ? getEngine()->getBackgroundPalette() : NULL);
+	_surface = _actorResource->loadFrame(*_frame, nullptr); // TODO paletteId == 0xf1 ? getEngine()->getBackgroundPalette() : nullptr);
 
 	debug(5, "ActorId: %d load frame header: (%d,%d)", _actorID, _frame->width, _frame->height);
 
@@ -197,8 +199,8 @@ void Actor::loadFrame(uint16 frameOffset) {
 void Actor::freeFrame() {
 	delete _frame;
 	delete _surface;
-	_frame = NULL;
-	_surface = NULL;
+	_frame = nullptr;
+	_surface = nullptr;
 }
 
 byte *Actor::getSeqIpAtOffset(uint32 offset) {
@@ -209,6 +211,8 @@ void Actor::reset_maybe() {
 	_flags = 0;
 	//TODO actor_find_by_resourceId_and_remove_resource_from_mem_maybe(resourceID);
 	freeFrame();
+	delete _actorResource;
+	_actorResource = nullptr;
 }
 
 uint32 calcDistance(int32 x1, int32 y1, int32 x2, int32 y2) {
@@ -789,6 +793,13 @@ byte *Actor::getPalette() {
 
 int16 Actor::getFrameYOffset() {
 	return _frame ? _frame->yOffset : 0;
+}
+
+void Actor::waitForWalkToFinish() {
+	DragonsEngine *vm = getEngine();
+	do {
+		vm->waitForFrames(1);
+	} while (isFlagSet(ACTOR_FLAG_10));
 }
 
 } // End of namespace Dragons

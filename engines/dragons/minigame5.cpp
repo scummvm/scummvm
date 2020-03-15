@@ -121,7 +121,7 @@ void Minigame5::run() {
 	pusherActor = _vm->_actorManager->loadActor
 			(0x26, 0, (int)(short)local_850, (int)(((uint)uVar1 + 5) * 0x10000) >> 0x10);
 //	EnableVSyncEvent();
-	if (pusherActor == NULL) {
+	if (pusherActor == nullptr) {
 		error("Couldn't alloc pusher!");
 	}
 	pusherActor->_flags = pusherActor->_flags | 0x380;
@@ -132,7 +132,7 @@ void Minigame5::run() {
 //	DisableVSyncEvent();
 	wheelsActor = _vm->_actorManager->loadActor(7, 0x11, 0, 0);
 //	EnableVSyncEvent();
-	if (wheelsActor == NULL) {
+	if (wheelsActor == nullptr) {
 		error("Couldn't alloc wheels!");
 	}
 	wheelsActor->_flags = wheelsActor->_flags | 0x380;
@@ -145,7 +145,7 @@ void Minigame5::run() {
 //	DisableVSyncEvent();
 	bombActor = _vm->_actorManager->loadActor(7, 0x1c, 0, 0);
 //	EnableVSyncEvent();
-	if (bombActor == NULL) {
+	if (bombActor == nullptr) {
 		error("Couldn't alloc bomb!");
 	}
 	bombActor->_flags = bombActor->_flags | 0x380;
@@ -154,7 +154,7 @@ void Minigame5::run() {
 //	DisableVSyncEvent();
 	dustActor = _vm->_actorManager->loadActor(8, 8, 100, 100, 0);
 //	EnableVSyncEvent();
-	if (dustActor == NULL) {
+	if (dustActor == nullptr) {
 		error("Couldn't alloc dust sprite!");
 	}
 	dustActor->_flags = dustActor->_flags | 0x380;

@@ -47,7 +47,7 @@ public:
 	int open();
 	bool isOpen() const { return hdl != NULL; }
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length);
 
 private:
@@ -80,6 +80,8 @@ void MidiDriver_Sndio::send(uint32 b) {
 	unsigned char buf[4];
 	unsigned int len;
 
+	midiDriverCommonSend(b);
+
 	if (!hdl)
 		return;
 	buf[0] = b & 0xff;
@@ -106,6 +108,8 @@ void MidiDriver_Sndio::sysEx(const byte *msg, uint16 length) {
 	unsigned char buf[266];
 
 	assert(length + 2 <= ARRAYSIZE(buf));
+
+	midiDriverCommonSysEx(msg, length);
 
 	// Add SysEx frame
 	buf[0] = 0xF0;

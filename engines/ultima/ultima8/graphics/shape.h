@@ -60,10 +60,7 @@ public:
 	//! (x,y) = coordinates of origin relative to top-left point of rectangle
 	void getTotalDimensions(int32 &w, int32 &h, int32 &x, int32 &y) const;
 
-	ShapeFrame *getFrame(unsigned int frame) {
-		if (frame < _frames.size()) return _frames[frame];
-		else return 0;
-	}
+	ShapeFrame *getFrame(unsigned int frame);
 
 	void getShapeId(uint16 &flexId, uint32 &shapenum);
 

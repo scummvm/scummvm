@@ -43,7 +43,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(CameraProcess, Process)
 //
 // Statics
 //
-CameraProcess *CameraProcess::_camera = 0;
+CameraProcess *CameraProcess::_camera = nullptr;
 int32 CameraProcess::_earthquake = 0;
 int32 CameraProcess::_eqX = 0;
 int32 CameraProcess::_eqY = 0;
@@ -53,7 +53,7 @@ CameraProcess::CameraProcess() : Process() {
 
 CameraProcess::~CameraProcess() {
 	if (_camera == this)
-		_camera = 0;
+		_camera = nullptr;
 }
 
 uint16 CameraProcess::SetCameraProcess(CameraProcess *cam) {
@@ -65,7 +65,7 @@ uint16 CameraProcess::SetCameraProcess(CameraProcess *cam) {
 
 void CameraProcess::ResetCameraProcess() {
 	if (_camera) _camera->terminate();
-	_camera = 0;
+	_camera = nullptr;
 }
 
 void CameraProcess::GetCameraLocation(int32 &x, int32 &y, int32 &z) {

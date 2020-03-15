@@ -25,7 +25,6 @@
 #ifdef __SYMBIAN32__
 
 #include "backends/graphics/symbiansdl/symbiansdl-graphics.h"
-#include "backends/platform/symbian/src/SymbianActions.h"
 
 SymbianSdlGraphicsManager::SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
 	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
@@ -38,18 +37,6 @@ bool SymbianSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 		return true;
 	default:
 		return false;
-	}
-}
-
-void SymbianSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	switch (f) {
-	case OSystem::kFeatureVirtualKeyboard:
-		break;
-	case OSystem::kFeatureDisableKeyFiltering:
-		GUI::Actions::Instance()->beginMapping(enable);
-		break;
-	default:
-		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
 	}
 }
 

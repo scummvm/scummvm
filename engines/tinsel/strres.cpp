@@ -90,7 +90,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 
 	// free the previous buffer
 	free(g_textBuffer);
-	g_textBuffer = NULL;
+	g_textBuffer = nullptr;
 
 	// Try and open the specified language file. If it fails, and the language
 	// isn't English, try falling back on opening 'english.txt' - some foreign
@@ -354,7 +354,7 @@ int SubStringCount(int id) {
 
 void FreeTextBuffer() {
 	free(g_textBuffer);
-	g_textBuffer = NULL;
+	g_textBuffer = nullptr;
 }
 
 /**
@@ -390,40 +390,6 @@ int NumberOfLanguages() {
 			count++;
 	}
 	return count;
-}
-
-LANGUAGE NextLanguage(LANGUAGE thisOne) {
-	int i;
-
-	for (i = thisOne+1; i < NUM_LANGUAGES; i++) {
-		if (g_languages[i].bPresent)
-			return (LANGUAGE)i;
-	}
-
-	for (i = 0; i < thisOne; i++) {
-		if (g_languages[i].bPresent)
-			return (LANGUAGE)i;
-	}
-
-	// No others!
-	return thisOne;
-}
-
-LANGUAGE PrevLanguage(LANGUAGE thisOne) {
-	int i;
-
-	for (i = thisOne-1; i >= 0; i--) {
-		if (g_languages[i].bPresent)
-			return (LANGUAGE)i;
-	}
-
-	for (i = NUM_LANGUAGES-1; i > thisOne; i--) {
-		if (g_languages[i].bPresent)
-			return (LANGUAGE)i;
-	}
-
-	// No others!
-	return thisOne;
 }
 
 SCNHANDLE LanguageDesc(LANGUAGE thisOne) {

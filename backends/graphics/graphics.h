@@ -54,6 +54,7 @@ public:
 		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {0, 0, 0}};
 		return no_shader;
 	};
+	virtual int getDefaultShader() const { return 0; }
 	virtual bool setShader(int id) { return false; }
 	virtual int getShader() const { return 0; }
 	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {

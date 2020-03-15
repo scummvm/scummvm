@@ -59,14 +59,8 @@ private:
 	Video::VideoDecoder *_animation;
 
 public:
-	void focus() override {
-		_focused = true;
-		_textChanged = true;
-	}
-	void unfocus() override {
-		_focused = false;
-		_textChanged = true;
-	}
+	void focus() override;
+	void unfocus() override;
 	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
 	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
 	bool onKeyDown(Common::KeyState keyState) override;

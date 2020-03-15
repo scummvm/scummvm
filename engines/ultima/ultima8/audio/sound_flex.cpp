@@ -32,13 +32,19 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SoundFlex, Archive)
 
 
-SoundFlex::SoundFlex(IDataSource *ds) : Archive(ds) {
-	_samples = 0;
+SoundFlex::SoundFlex(IDataSource *ds) : Archive(ds), _samples(nullptr) {
 }
 
 SoundFlex::~SoundFlex() {
 	Archive::uncache();
 	delete [] _samples;
+}
+
+AudioSample *SoundFlex::getSample(uint32 index) {
+	if (index >= _count)
+		return nullptr;
+	cache(index);
+	return _samples[index];
 }
 
 void SoundFlex::cache(uint32 index) {
@@ -65,14 +71,14 @@ void SoundFlex::uncache(uint32 index) {
 	if (!_samples) return;
 
 	delete _samples[index];
-	_samples[index] = 0;
+	_samples[index] = nullptr;
 }
 
 bool SoundFlex::isCached(uint32 index) const {
 	if (index >= _count) return false;
 	if (!_samples) return false;
 
-	return (_samples[index] != 0);
+	return (_samples[index] != nullptr);
 }
 
 } // End of namespace Ultima8

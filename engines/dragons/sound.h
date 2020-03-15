@@ -66,6 +66,10 @@ private:
 	BigfileArchive *_bigFileArchive;
 	DragonRMS *_dragonRMS;
 
+	uint8 _speechVolume;
+	uint8 _sfxVolume;
+	uint8 _musicVolume;
+
 	// SOUND_ARR_DAT_80071f6c
 	uint8 _soundArr[0x780];
 

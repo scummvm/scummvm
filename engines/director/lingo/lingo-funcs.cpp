@@ -345,6 +345,15 @@ void Lingo::func_cursor(int c, int m) {
 			return;
 		}
 
+		if (score->_loadedCast->getVal(c)->_surface == nullptr) {
+			warning("cursor: empty sprite %d surface", c);
+			return;
+		}
+		if (score->_loadedCast->getVal(m)->_surface == nullptr) {
+			warning("cursor: empty sprite %d surface", m);
+			return;
+		}
+
 		byte *assembly = (byte *)malloc(16 * 16);
 		byte *dst = assembly;
 

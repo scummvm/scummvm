@@ -34,7 +34,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(InverterGump, DesktopGump)
 
 InverterGump::InverterGump(int32 x, int32 y, int32 width, int32 height)
 	: DesktopGump(x, y, width, height) {
-	_buffer = 0;
+	_buffer = nullptr;
 }
 
 InverterGump::~InverterGump() {

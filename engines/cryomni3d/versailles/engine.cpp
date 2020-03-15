@@ -276,6 +276,31 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 	// Explainations below are based on original binaries, debug is not used in this engine
 	// Fonts loaded are not always the same: FR Mac and EN DOS don't use the same font for debug doc/unused
 	// The important is that the loaded one is present in all versions
+
+	if (getLanguage() == Common::ZH_TWN) {
+		fonts.push_back("tw13.CRF"); // 0: Doc titles
+		fonts.push_back("tw18.CRF"); // 1: Menu and T0 in credits
+		fonts.push_back("tw13.CRF"); // 2: T1 and T3 in credits
+		fonts.push_back("tw12.CRF"); // 3: Menu title, options messages boxes buttons
+		fonts.push_back("tw12.CRF"); // 4: T2 in credits, text in docs
+		fonts.push_back("tw12.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
+		fonts.push_back("tw12.CRF"); // 6: T5 in credits, doc subtitle
+		fonts.push_back("tw12.CRF"); // 7: dialogs texts
+		fonts.push_back("tw12.CRF"); // 8: unused
+		fonts.push_back("tw12.CRF"); // 9: Warp messages texts
+		fonts.push_back("tw12.CRF"); // 10: debug
+
+		_fontManager.loadFonts(fonts, Common::kWindows950);
+		return;
+	} else if (getLanguage() == Common::JA_JPN) {
+		_fontManager.loadTTFList("FONTS_JP.LST", Common::kWindows932);
+		return;
+	} else if (getLanguage() == Common::KO_KOR) {
+		_fontManager.loadTTFList("FONTS_KR.LST", Common::kWindows949);
+		return;
+	}
+
+	// Code below is for SBCS encodings (ie. non CJK)
 	uint8 fontsSet = getFeatures() & GF_VERSAILLES_FONTS_MASK;
 	switch (fontsSet) {
 	case GF_VERSAILLES_FONTS_NUMERIC:
@@ -352,13 +377,16 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 		error("Font set invalid");
 	}
 
-	_fontManager.loadFonts(fonts);
+	// Use a SBCS codepage as a placeholder, we won't convert characters anyway
+	_fontManager.loadFonts(fonts, Common::kWindows1250);
 }
 
 void CryOmni3DEngine_Versailles::setupSprites() {
 	Common::File file;
 
-	if (!file.open("all_spr.bin")) {
+	Common::String fName = getLanguage() == Common::ZH_TWN ? "allsprtw.bin" : "all_spr.bin";
+
+	if (!file.open(fName)) {
 		error("Failed to open all_spr.bin file");
 	}
 	_sprites.loadSprites(file);
@@ -653,8 +681,7 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 		}
 	}
 
-	// Videos are like music because if you mute music in game it will mute videos soundtracks
-	playHNM(video, Audio::Mixer::kMusicSoundType);
+	playSubtitledVideo(video);
 
 	clearKeys();
 	if (shouldAbort()) {
@@ -664,6 +691,22 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	fadeOutPalette();
 	if (shouldAbort()) {
 		return;
+	}
+
+	if (level == -2) {
+		if (getLanguage() == Common::JA_JPN && Common::File::exists("jvclogo.hnm")) {
+			// Display one more copyright
+			playHNM("jvclogo.hnm", Audio::Mixer::kMusicSoundType);
+			clearKeys();
+			if (shouldAbort()) {
+				return;
+			}
+
+			fadeOutPalette();
+			if (shouldAbort()) {
+				return;
+			}
+		}
 	}
 
 	// Display back cursor there once the palette has been zeroed
@@ -1606,6 +1649,81 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 		// WORKAROUND: Don't mess with mouse when not restoring cursors palette
 		showMouse(true);
 	}
+}
+
+void CryOmni3DEngine_Versailles::playSubtitledVideo(const Common::String &filename) {
+	Common::HashMap<Common::String, Common::Array<SubtitleEntry> >::const_iterator it;
+
+	if (!showSubtitles() ||
+	        (it = _subtitles.find(filename)) == _subtitles.end() ||
+	        it->_value.size() == 0) {
+		// No subtitle, don't try to handle them frame by frame
+		// Videos are like music because if you mute music in game it will mute videos soundtracks
+		playHNM(filename, Audio::Mixer::kMusicSoundType);
+		return;
+	}
+
+	// Keep 2 colors for background and text
+	setPalette(&_cursorPalette[3 * 242], 254, 1);
+	setPalette(&_cursorPalette[3 * 247], 255, 1);
+	lockPalette(0, 253);
+
+	_currentSubtitleSet = &it->_value;
+	_currentSubtitle = _currentSubtitleSet->begin();
+
+	_fontManager.setCurrentFont(8);
+	_fontManager.setTransparentBackground(true);
+	_fontManager.setForeColor(254u);
+	_fontManager.setLineHeight(22);
+	_fontManager.setSpaceWidth(2);
+	_fontManager.setCharSpacing(1);
+
+	// Videos are like music because if you mute music in game it will mute videos soundtracks
+	playHNM(filename, Audio::Mixer::kMusicSoundType,
+	        static_cast<HNMCallback>(&CryOmni3DEngine_Versailles::drawVideoSubtitles), nullptr);
+
+	clearKeys();
+	unlockPalette();
+}
+
+void CryOmni3DEngine_Versailles::drawVideoSubtitles(uint frameNum) {
+	if (_currentSubtitle == _currentSubtitleSet->end()) {
+		// No next subtitle to draw, just return
+		return;
+	}
+
+	if (frameNum < _currentSubtitle->frameStart) {
+		// Not yet the good frame, just return
+		return;
+	}
+
+	const Common::String &text = _currentSubtitle->text;
+	_currentSubtitle++;
+
+	if (text.size() == 0) {
+		// Empty text, reset clipping
+		unsetHNMClipping();
+		return;
+	}
+
+	uint lines = _fontManager.getLinesCount(text, 640 - 8);
+	uint top = 480 - (2 * 4) - _fontManager.lineHeight() * lines;
+
+	Graphics::ManagedSurface tmp(640, 480 - top, Graphics::PixelFormat::createFormatCLUT8());
+
+	tmp.clear(255u);
+
+	_fontManager.setSurface(&tmp);
+	_fontManager.setupBlock(Common::Rect(4, 4, tmp.w - 4,
+	                                     tmp.h - 4)); // +1 because bottom,right is excluded
+
+	_fontManager.displayBlockText(text);
+
+	// Enable clipping to avoid refreshing text at every frame
+	setHNMClipping(Common::Rect(0, 0, 640, top));
+
+	g_system->copyRectToScreen(tmp.getPixels(), tmp.pitch, 0, top, tmp.w, tmp.h);
+	g_system->updateScreen();
 }
 
 void CryOmni3DEngine_Versailles::loadBMPs(const char *pattern, Graphics::Surface *bmps,

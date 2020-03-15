@@ -73,8 +73,8 @@ Item::Item()
 	: _shape(0), _frame(0), _x(0), _y(0), _z(0),
 	  _flags(0), _quality(0), _npcNum(0), _mapNum(0),
 	  _extendedFlags(0), _parent(0),
-	  _cachedShape(0), _cachedShapeInfo(0), _gump(0), _gravityPid(0),
-	  _lastSetup(0) {
+	  _cachedShape(nullptr), _cachedShapeInfo(nullptr),
+	  _gump(0), _gravityPid(0), _lastSetup(0) {
 }
 
 
@@ -102,7 +102,8 @@ void Item::dumpInfo() const {
 
 Container *Item::getParentAsContainer() const {
 	// No _parent, no container
-	if (!_parent) return 0;
+	if (!_parent)
+		return nullptr;
 
 	Container *p = getContainer(_parent);
 
@@ -439,6 +440,12 @@ Box Item::getWorldBox() const {
 	int32 xd, yd, zd;
 	getFootpadWorld(xd, yd, zd);
 	return Box(_x, _y, _z, xd, yd, zd);
+}
+
+void Item::setShape(uint32 shape_) {
+	_shape = shape_;
+	_cachedShapeInfo = nullptr;
+	_cachedShape = nullptr;
 }
 
 bool Item::overlaps(Item &item2) const {
@@ -1445,7 +1452,7 @@ int32 Item::ascend(int delta) {
 }
 
 GravityProcess *Item::ensureGravityProcess() {
-	GravityProcess *p = 0;
+	GravityProcess *p = nullptr;
 	if (_gravityPid) {
 		p = p_dynamic_cast<GravityProcess *>(
 		        Kernel::get_instance()->getProcess(_gravityPid));

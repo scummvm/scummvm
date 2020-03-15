@@ -36,6 +36,7 @@
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/debugger.h"
 #include "common/events.h"
+#include "common/random.h"
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #endif
@@ -369,6 +370,15 @@ protected:
 
 public:
 	void autoSaveOnExit();
+
+#ifdef ENABLE_HEROCRAFT
+private:
+	// HeroCraft games specific random source with ability a in-script function to set the seed
+	Common::RandomSource *_rndHc;
+
+	// HeroCraft games specific checksum function, used in Papa's Daughters 2 selfcheck
+	uint8 getFilePartChecksumHc(const char *filename, uint32 begin, uint32 end);	
+#endif
 
 };
 

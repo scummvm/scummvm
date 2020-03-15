@@ -88,8 +88,6 @@ LANGUAGE TextLanguage();
 LANGUAGE SampleLanguage();
 
 int NumberOfLanguages();
-LANGUAGE NextLanguage(LANGUAGE thisOne);
-LANGUAGE PrevLanguage(LANGUAGE thisOne);
 SCNHANDLE LanguageDesc(LANGUAGE thisOne);
 SCNHANDLE LanguageFlag(LANGUAGE thisOne);
 

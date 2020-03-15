@@ -75,7 +75,7 @@ class Resources {
 public:
 	Resources(ToonEngine *vm);
 	~Resources();
-	void openPackage(const Common::String &file);
+	bool openPackage(const Common::String &file);
 	void closePackage(const Common::String &fileName);
 	Common::SeekableReadStream *openFile(const Common::String &file);
 	uint8 *getFileData(const Common::String &fileName, uint32 *fileSize); // this memory must be copied to your own structures!

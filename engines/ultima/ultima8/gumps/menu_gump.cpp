@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
-
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -32,22 +31,22 @@
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
-#include "ultima/ultima8/gumps/controls_gump.h"
-#include "ultima/ultima8/gumps/options_gump.h"
 #include "ultima/ultima8/gumps/paged_gump.h"
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/gumps/widgets/edit_widget.h"
 #include "ultima/ultima8/gumps/u8_save_gump.h"
 #include "ultima/ultima8/world/get_object.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
+#include "ultima/ultima8/meta_engine.h"
+#include "engines/dialogs.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -67,17 +66,33 @@ MenuGump::MenuGump(bool nameEntryMode_)
 
 	// Save old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();
-	if (musicprocess) _oldMusicTrack = musicprocess->getTrack();
-	else _oldMusicTrack = 0;
+	if (musicprocess) {
+		musicprocess->getTrackState(_oldMusicTrackState);
+		// Stop any playing music.
+		musicprocess->playCombatMusic(0);
+	} else {
+		_oldMusicTrackState = MusicProcess::TrackState();
+	}
+	// Save old palette transform
+	PaletteManager *palman = PaletteManager::get_instance();
+	palman->getTransformMatrix(_oldPalTransform, PaletteManager::Pal_Game);
+	palman->untransformPalette(PaletteManager::Pal_Game);
+
+	MetaEngine::setGameMenuActive(true);
 }
 
 MenuGump::~MenuGump() {
+	MetaEngine::setGameMenuActive(false);
 }
 
+
 void MenuGump::Close(bool no_del) {
-	// Restore old music state
+	// Restore old music state and palette.
+	// Music state can be changed by the Intro and Credits
 	MusicProcess *musicprocess = MusicProcess::get_instance();
-	if (musicprocess) musicprocess->playMusic(_oldMusicTrack);
+	if (musicprocess) musicprocess->setTrackState(_oldMusicTrackState);
+	PaletteManager *palman = PaletteManager::get_instance();
+	palman->transformPalette(PaletteManager::Pal_Game, _oldPalTransform);
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->popMouseCursor();
@@ -214,14 +229,10 @@ void MenuGump::selectEntry(int entry) {
 	case 3: // Read/Write Diary
 		U8SaveGump::showLoadSaveGump(this, entry == 3);
 		break;
-	case 4: { // Options
-		PagedGump *gump = new PagedGump(34, -38, 3, gumpShape);
-		gump->InitGump(this);
-
-		OptionsGump *options = new OptionsGump();
-		options->InitGump(gump, false);
-		gump->addPage(options);
-		gump->setRelativePosition(CENTER);
+	case 4: {
+		// Options - show the ScummVM options dialog
+		GUI::ConfigDialog dlg;
+		dlg.runModal();
 	}
 	break;
 	case 5: // Credits
@@ -249,9 +260,15 @@ bool MenuGump::OnTextInput(int unicode) {
 
 //static
 void MenuGump::showMenu() {
-	ModalGump *gump = new MenuGump();
-	gump->InitGump(0);
-	gump->setRelativePosition(CENTER);
+	Gump *gump = Ultima8Engine::get_instance()->getMenuGump();
+
+	if (gump) {
+		gump->Close();
+	} else {
+		gump = new MenuGump();
+		gump->InitGump(0);
+		gump->setRelativePosition(CENTER);
+	}
 }
 
 //static

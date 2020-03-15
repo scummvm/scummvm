@@ -72,10 +72,12 @@ uint32 FlexFile::getOffset(uint32 index) {
 }
 
 uint8 *FlexFile::getObject(uint32 index, uint32 *sizep) {
-	if (index >= _count) return 0;
+	if (index >= _count)
+		return nullptr;
 
 	uint32 size = getSize(index);
-	if (size == 0) return 0;
+	if (size == 0)
+		return nullptr;
 
 	uint8 *object = new uint8[size];
 	uint32 offset = getOffset(index);

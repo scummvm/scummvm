@@ -73,6 +73,8 @@ const Common::HardwareInputTableEntry ctrMouseButtons[] = {
     { nullptr,        0,                           nullptr     }
 };
 
+static const int16 CIRCLE_MAX = 160;
+
 static void pushEventQueue(Common::Queue<Common::Event> *queue, Common::Event &event) {
 	Common::StackLock lock(*eventMutex);
 	queue->push(event);
@@ -93,10 +95,8 @@ static void eventThreadFunc(void *arg) {
 	auto eventQueue = (Common::Queue<Common::Event> *)arg;
 
 	uint32 touchStartTime = osys->getMillis();
-	touchPosition lastTouch = {0, 0};
-	float cursorDeltaX = 0;
-	float cursorDeltaY = 0;
-	int circleDeadzone = 20;
+	touchPosition  lastTouch  = {0, 0};
+	circlePosition lastCircle = {0, 0};
 	int borderSnapZone = 6;
 	Common::Event event;
 
@@ -106,25 +106,13 @@ static void eventThreadFunc(void *arg) {
 		} while (osys->sleeping && !osys->exiting);
 
 		hidScanInput();
-		touchPosition touch;
-		circlePosition circle;
 		u32 held = hidKeysHeld();
 		u32 keysPressed = hidKeysDown();
 		u32 keysReleased = hidKeysUp();
 
-		// C-Pad used to control the cursor
-		hidCircleRead(&circle);
-		if (circle.dx < circleDeadzone && circle.dx > -circleDeadzone) {
-			circle.dx = 0;
-		}
-		if (circle.dy < circleDeadzone && circle.dy > -circleDeadzone) {
-			circle.dy = 0;
-		}
-		cursorDeltaX = (0.0002f + config.sensitivity / 100000.f) * circle.dx * abs(circle.dx);
-		cursorDeltaY = (0.0002f + config.sensitivity / 100000.f) * circle.dy * abs(circle.dy);
-
 		// Touch screen events
 		if (held & KEY_TOUCH) {
+			touchPosition touch;
 			hidTouchRead(&touch);
 			if (config.snapToBorder) {
 				if (touch.px < borderSnapZone) {
@@ -143,7 +131,6 @@ static void eventThreadFunc(void *arg) {
 
 			osys->transformPoint(touch);
 
-			osys->warpMouse(touch.px, touch.py);
 			event.mouse.x = touch.px;
 			event.mouse.y = touch.py;
 
@@ -174,20 +161,27 @@ static void eventThreadFunc(void *arg) {
 				event.type = Common::EVENT_LBUTTONUP;
 				pushEventQueue(eventQueue, event);
 			}
-		} else if (cursorDeltaX != 0 || cursorDeltaY != 0) {
-			float scaleRatio = osys->getScaleRatio();
+		}
 
-			lastTouch.px += cursorDeltaX / scaleRatio;
-			lastTouch.py -= cursorDeltaY / scaleRatio;
+		// C-Pad events
+		circlePosition circle;
+		hidCircleRead(&circle);
 
-			osys->clipPoint(lastTouch);
-			osys->warpMouse(lastTouch.px, lastTouch.py);
-
-			event.mouse.x = lastTouch.px;
-			event.mouse.y = lastTouch.py;
-			event.type = Common::EVENT_MOUSEMOVE;
+		if (circle.dx != lastCircle.dx) {
+			event.type              = Common::EVENT_JOYAXIS_MOTION;
+			event.joystick.axis     = Common::JOYSTICK_AXIS_LEFT_STICK_X;
+			event.joystick.position = (int32)circle.dx * Common::JOYAXIS_MAX / CIRCLE_MAX;
 			pushEventQueue(eventQueue, event);
 		}
+
+		if (circle.dy != lastCircle.dy) {
+			event.type              = Common::EVENT_JOYAXIS_MOTION;
+			event.joystick.axis     = Common::JOYSTICK_AXIS_LEFT_STICK_Y;
+			event.joystick.position = -(int32)circle.dy * Common::JOYAXIS_MAX / CIRCLE_MAX;
+			pushEventQueue(eventQueue, event);
+		}
+
+		lastCircle = circle;
 
 		// Button events
 		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_L,      Common::JOYSTICK_BUTTON_LEFT_SHOULDER);
@@ -367,6 +361,11 @@ bool OSystem_3DS::pollEvent(Common::Event &event) {
 	}
 
 	event = _eventQueue.pop();
+
+	if (Common::isMouseEvent(event)) {
+		warpMouse(event.mouse.x, event.mouse.y);
+	}
+
 	return true;
 }
 
@@ -458,7 +457,6 @@ void OSystem_3DS::runOptionsDialog() {
 		config.showCursor   = dialog.getShowCursor();
 		config.snapToBorder = dialog.getSnapToBorder();
 		config.stretchToFit = dialog.getStretchToFit();
-		config.sensitivity  = dialog.getSensitivity();
 		config.screen       = dialog.getScreen();
 
 		saveConfig();

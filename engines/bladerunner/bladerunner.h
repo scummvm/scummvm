@@ -188,6 +188,8 @@ public:
 
 	Graphics::Surface  _surfaceFront;
 	Graphics::Surface  _surfaceBack;
+	bool               _surfaceFrontCreated;
+	bool               _surfaceBackCreated;
 
 	ZBuffer           *_zbuffer;
 
@@ -216,6 +218,7 @@ public:
 	bool _shortyMode;
 	bool _noDelayMillisFramelimiter;
 	bool _framesPerSecondMax;
+	bool _disableStaminaDrain;
 	bool _cutContent;
 
 	int _walkSoundId;

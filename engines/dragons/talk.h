@@ -93,7 +93,6 @@ public:
 	void playDialogAudioDontWait(uint32 textIndex);
 
 private:
-	void clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2); //clear box maybe?
 	void copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength);
 	uint32 wideStrLen(uint16 *text);
 	TalkDialogEntry *displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries);

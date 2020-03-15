@@ -136,7 +136,7 @@ struct TAGACTOR {
 typedef TAGACTOR *PTAGACTOR;
 
 
-static ACTORINFO *actorInfo = NULL;
+static ACTORINFO *actorInfo = nullptr;
 
 static COLORREF defaultColor = 0;		// Text color
 
@@ -150,7 +150,7 @@ static TAGACTOR taggedActors[MAX_TAGACTORS];
 
 static int numTaggedActors = 0;
 
-static uint8 *zFactors = NULL;
+static uint8 *zFactors = nullptr;
 
 static Z_POSITIONS zPositions[NUM_ZPOSITIONS];
 
@@ -198,10 +198,10 @@ void RegisterActors(int num) {
 
 void FreeActors() {
 	free(actorInfo);
-	actorInfo = NULL;
+	actorInfo = nullptr;
 	if (TinselV2) {
 		free(zFactors);
-		zFactors = NULL;
+		zFactors = nullptr;
 	}
 }
 
@@ -357,7 +357,7 @@ void ActorEvent(int ano, TINSEL_EVENT event, PLR_EVENT be) {
 		atp.id = ano;
 		atp.event = event;
 		atp.bev = be;
-		atp.pic = NULL;
+		atp.pic = nullptr;
 		CoroScheduler.createProcess(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
 	}
 }
@@ -413,9 +413,9 @@ void StartActor(const T1_ACTOR_STRUC *as, bool bRunScript) {
 	actorInfo[hActorId - 1].completed = false;
 	actorInfo[hActorId - 1].x = 0;
 	actorInfo[hActorId - 1].y = 0;
-	actorInfo[hActorId - 1].presReel = NULL;
+	actorInfo[hActorId - 1].presReel = nullptr;
 	actorInfo[hActorId - 1].presFilm = 0;
-	actorInfo[hActorId - 1].presObj = NULL;
+	actorInfo[hActorId - 1].presObj = nullptr;
 
 	// Store current scene's parameters for this actor
 	actorInfo[hActorId - 1].mtype = FROM_32(as->masking);
@@ -502,9 +502,9 @@ void DropActors() {
 		} else {
 			// In Tinsel v1, only certain fields get reset
 			actorInfo[i].actorCode = 0;		// No script
-			actorInfo[i].presReel = NULL;	// No reel running
+			actorInfo[i].presReel = nullptr;	// No reel running
 			actorInfo[i].presFilm = 0;		//   ditto
-			actorInfo[i].presObj = NULL;	// No object
+			actorInfo[i].presObj = nullptr;	// No object
 			actorInfo[i].x = 0;				// No position
 			actorInfo[i].y = 0;				//   ditto
 
@@ -1450,7 +1450,7 @@ void dwEndActor(int ano) {
 
 	// Make play.c think it's been replaced
 // The following line may have been indirectly making text go away!
-//	actorInfo[ano - 1].presFilm = NULL;
+//	actorInfo[ano - 1].presFilm = nullptr;
 // but things were returning after a cut scene.
 // so re-instate it and de-register the object
 	actorInfo[ano - 1].presFilm = 0;
@@ -1460,7 +1460,7 @@ void dwEndActor(int ano) {
 		// It may take a frame to remove this, so make it invisible
 		if (actorInfo[ano-1].presObjs[i] != NULL) {
 			MultiHideObject(actorInfo[ano-1].presObjs[i]);
-			actorInfo[ano-1].presObjs[i] = NULL;
+			actorInfo[ano-1].presObjs[i] = nullptr;
 		}
 	}
 }
@@ -1648,7 +1648,7 @@ void StoreActorPresFilm(int ano, SCNHANDLE hFilm, int x, int y) {
 			MultiHideObject(actorInfo[ano - 1].presObjs[i]);
 
 		actorInfo[ano - 1].presColumns[i] = -1;
-		actorInfo[ano - 1].presObjs[i] = NULL;
+		actorInfo[ano - 1].presObjs[i] = nullptr;
 	}
 }
 
@@ -1705,7 +1705,7 @@ void NotPlayingReel(int actor, int filmNumber, int column) {
 	// De-register this reel
 	for (i = 0; i < MAX_REELS; i++) {
 		if (actorInfo[actor-1].presColumns[i] == column) {
-			actorInfo[actor-1].presObjs[i] = NULL;
+			actorInfo[actor-1].presObjs[i] = nullptr;
 			actorInfo[actor-1].presColumns[i] = -1;
 			break;
 		}

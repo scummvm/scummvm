@@ -30,7 +30,7 @@
 
 namespace Dragons {
 
-VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm): _toneAttrs(NULL), _vbData(NULL) {
+VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm): _toneAttrs(nullptr), _vbData(nullptr) {
 	loadHeader(msfData);
 
 	int32 dataSize = msfData->size() - msfData->pos();
@@ -46,7 +46,7 @@ VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm
 	delete msfData;
 }
 
-VabSound::VabSound(Common::SeekableReadStream *vhData, Common::SeekableReadStream *vbData): _toneAttrs(NULL), _vbData(NULL) {
+VabSound::VabSound(Common::SeekableReadStream *vhData, Common::SeekableReadStream *vbData): _toneAttrs(nullptr), _vbData(nullptr) {
 	loadHeader(vhData);
 
 	assert(vhData->pos() == vhData->size());

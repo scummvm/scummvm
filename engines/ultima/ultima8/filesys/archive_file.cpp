@@ -53,7 +53,8 @@ IDataSource *ArchiveFile::getDataSource(uint32 index, bool is_text) {
 	uint32 size;
 	uint8 *buf = getObject(index, &size);
 
-	if (!buf) return 0;
+	if (!buf)
+		return nullptr;
 
 	return new IBufferDataSource(buf, size, is_text, true);
 }
@@ -62,7 +63,8 @@ IDataSource *ArchiveFile::getDataSource(const Std::string &name, bool is_text) {
 	uint32 size;
 	uint8 *buf = getObject(name, &size);
 
-	if (!buf) return 0;
+	if (!buf)
+		return nullptr;
 
 	return new IBufferDataSource(buf, size, is_text, true);
 }

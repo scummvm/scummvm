@@ -25,11 +25,11 @@
 
 #include "common/array.h"
 #include "common/str.h"
+#include "common/str-enc.h"
+#include "common/ustr.h"
 #include "common/rect.h"
 
-namespace Common {
-class ReadStream;
-}
+#include "graphics/font.h"
 
 namespace Graphics {
 class ManagedSurface;
@@ -42,7 +42,8 @@ public:
 	FontManager();
 	virtual ~FontManager();
 
-	void loadFonts(const Common::Array<Common::String> &fontFiles);
+	void loadFonts(const Common::Array<Common::String> &fontFiles, Common::CodePage codepage);
+	void loadTTFList(const Common::String &listFile, Common::CodePage codepage);
 	void setCurrentFont(int currentFont);
 	uint getCurrentFont() { return _currentFontId; }
 	void setTransparentBackground(bool transparent) { _transparentBackground = transparent; }
@@ -53,52 +54,45 @@ public:
 	void setCharSpacing(uint w) { _charSpacing = w; }
 	void setSurface(Graphics::ManagedSurface *surface) { _currentSurface = surface; }
 
-	int getFontMaxHeight() { return _currentFont->maxHeight; }
+	int getFontMaxHeight() { return _currentFont->getFontHeight(); }
 
-	void displayInt(uint x, uint y, int value) const { displayStr_(x, y, Common::String::format("%d", value)); }
-	void displayStr(uint x, uint y, const Common::String &text) const { displayStr_(x, y, text); }
-	uint getStrWidth(const Common::String &text) const;
+	void displayInt(uint x, uint y, int value) const {
+		displayStr_(x, y,
+		            toU32(Common::String::format("%d", value)));
+	}
+	void displayStr(uint x, uint y, const Common::String &text) const { displayStr_(x, y, toU32(text)); }
+	void displayStr(uint x, uint y, const Common::U32String &text) const { displayStr_(x, y, text); }
+	uint getStrWidth(const Common::String &text) const { return getStrWidth(toU32(text)); }
+	uint getStrWidth(const Common::U32String &text) const;
 
-	uint getLinesCount(const Common::String &text, uint width);
+	uint getLinesCount(const Common::String &text, uint width) { return getLinesCount(toU32(text), width); }
 
-	void setupBlock(const Common::Rect &block, bool justifyText = false) { _blockRect = block; _blockPos.x = block.left; _blockPos.y = block.top; _justifyText = justifyText; }
-	bool displayBlockText(const Common::String &text) { return displayBlockText(text, text.begin()); }
-	bool displayBlockText(const Common::String &text, Common::String::const_iterator begin);
-	Common::String::const_iterator blockTextRemaining() { return _blockTextRemaining; }
+	void setupBlock(const Common::Rect &block, bool justifyText = false) {
+		_blockRect = block;
+		_blockPos.x = block.left;
+		_blockPos.y = block.top;
+		_justifyText = justifyText;
+	}
+	bool displayBlockText(const Common::String &text) {
+		_blockTextStr = toU32(text);
+		return displayBlockText(_blockTextStr, _blockTextStr.begin());
+	}
+	bool displayBlockTextContinue() { return displayBlockText(_blockTextStr, _blockTextRemaining); }
 	Common::Point blockTextLastPos() { return _blockPos; }
 
 private:
-	void loadFont(Common::ReadStream &font_fl);
-	uint displayStr_(uint x, uint y, const Common::String &text) const;
-	uint displayChar(uint x, uint y, unsigned char c) const;
-	void calculateWordWrap(const Common::String &text, Common::String::const_iterator *position,
-	                       uint *finalPos, bool *has_br, Common::Array<Common::String> &words) const;
+	Common::U32String toU32(const Common::String &text) const;
 
-	struct Character {
-		uint16 h;
-		uint16 w;
-		int16 offX;
-		int16 offY;
-		uint16 printedWidth;
+	uint displayStr_(uint x, uint y, const Common::U32String &text) const;
+	uint getLinesCount(const Common::U32String &text, uint width);
+	bool displayBlockText(const Common::U32String &text, Common::U32String::const_iterator begin);
+	void calculateWordWrap(const Common::U32String &text, Common::U32String::const_iterator *position,
+	                       uint *finalPos, bool *has_br, Common::Array<Common::U32String> &words) const;
 
-		byte *data;
-
-		Character();
-		~Character();
-
-		uint setup(uint16 width, uint16 height);
-	};
-
-	struct Font {
-		static const uint kCharactersCount = 223;
-
-		uint16 maxHeight;
-		byte comment[32];
-		Character chars[kCharactersCount];
-	};
-
-	Common::Array<Font *> _fonts;
-	const Font *_currentFont;
+	Common::CodePage _codepage;
+	bool _toUnicode;
+	Common::Array<Graphics::Font *> _fonts;
+	const Graphics::Font *_currentFont;
 	uint _currentFontId;
 	bool _transparentBackground;
 	uint _spaceWidth;
@@ -112,7 +106,13 @@ private:
 	Common::Point _blockPos;
 	int _lineHeight;
 	bool _justifyText;
-	Common::String::const_iterator _blockTextRemaining;
+	Common::U32String _blockTextStr;
+	Common::U32String::const_iterator _blockTextRemaining;
+
+	// Specific parameters for non alphabetic languages
+	void setupWrapParameters();
+	bool _useSpaceDelimiter;
+	bool _keepASCIIjoined;
 };
 
 } // End of namespace CryOmni3D

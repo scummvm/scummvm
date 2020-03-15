@@ -34,7 +34,7 @@ void creditsUpdateFunction() {
 }
 
 Credits::Credits(DragonsEngine *vm, FontManager *fontManager, BigfileArchive *bigfileArchive) : _vm(vm),
-				_fontManager(fontManager), _bigfileArchive(bigfileArchive), _surface(NULL), _curPtr(NULL) {
+				_fontManager(fontManager), _bigfileArchive(bigfileArchive), _surface(nullptr), _curPtr(nullptr) {
 	_running = false;
 	_updateCounter = 0;
 	_yOffset = 0;
@@ -64,7 +64,7 @@ void Credits::draw() {
 }
 
 void Credits::cleanup() {
-	_vm->setVsyncUpdateFunction(NULL);
+	_vm->setVsyncUpdateFunction(nullptr);
 	_surface->free();
 	delete _surface;
 }

@@ -165,7 +165,8 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 
 	Container *c = getContainer(_owner);
 
-	if (!c) return 0; // Container gone!?
+	if (!c)
+		return 0; // Container gone!?
 
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
@@ -285,14 +286,14 @@ Container *ContainerGump::getTargetContainer(Item *item, int mx, int my) {
 	Container *targetcontainer = getContainer(TraceObjId(px, py));
 
 	if (targetcontainer && targetcontainer->getObjId() == item->getObjId())
-		targetcontainer = 0;
+		targetcontainer = nullptr;
 
 	if (targetcontainer) {
 		ShapeInfo *targetinfo = targetcontainer->getShapeInfo();
 		if ((targetcontainer->getObjId() == item->getObjId()) ||
 		        targetinfo->is_land() ||
 		        (targetcontainer->getFlags() & Item::FLG_IN_NPC_LIST)) {
-			targetcontainer = 0;
+			targetcontainer = nullptr;
 		}
 	}
 
@@ -311,7 +312,7 @@ Gump *ContainerGump::OnMouseDown(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT)
 		return this;
 
-	return 0;
+	return nullptr;
 }
 
 void ContainerGump::OnMouseClick(int button, int32 mx, int32 my) {
@@ -452,7 +453,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 	        item->getQuality() > 1) {
 		// more than one, so see if we should ask if we should split it up
 
-		Item *splittarget = 0;
+		Item *splittarget = nullptr;
 
 		// also try to combine
 		if (targetitem && item->canMergeWith(targetitem)) {
@@ -504,7 +505,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 
 			// combined, so delete item
 			item->destroy();
-			item = 0;
+			item = nullptr;
 			return;
 		}
 	}

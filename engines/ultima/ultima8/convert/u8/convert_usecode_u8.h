@@ -52,7 +52,7 @@ public:
 	void readOpGeneric(TempOp &, IDataSource *, uint32 &, Std::vector<DebugSymbol> &,
 		bool &, const bool ) { }
 	Node *readOpGeneric(IDataSource *, uint32 &, Std::vector<DebugSymbol> &,
-		bool &, const bool ) { return 0; }
+		bool &, const bool ) { return nullptr; }
 };
 
 } // End of namespace Ultima8

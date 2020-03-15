@@ -36,12 +36,12 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(PagedGump, ModalGump)
 
 PagedGump::PagedGump(int left, int right, int top, int shape):
 	ModalGump(0, 0, 5, 5), _leftOff(left), _rightOff(right), _topOff(top),
-	_gumpShape(shape), _nextButton(0), _prevButton(0), _buttonsEnabled(true) {
+	_gumpShape(shape), _nextButton(nullptr), _prevButton(nullptr),
+	_buttonsEnabled(true) {
 	_current = _gumps.end();
 }
 
 PagedGump::~PagedGump(void) {
-	_gumps.clear();
 }
 
 void PagedGump::Close(bool no_del) {

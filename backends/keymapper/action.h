@@ -68,6 +68,12 @@ public:
 		event.customType = evtType;
 	}
 
+	void setCustomBackendActionAxisEvent(const CustomEventType evtType) {
+		event = Event();
+		event.type = EVENT_CUSTOM_BACKEND_ACTION_AXIS;
+		event.customType = evtType;
+	}
+
 	void setCustomEngineActionEvent(const CustomEventType evtType) {
 		event = Event();
 		event.type = EVENT_CUSTOM_ENGINE_ACTION_START;
@@ -98,6 +104,14 @@ public:
 
 	void setMouseWheelDownEvent() {
 		setEvent(EVENT_WHEELDOWN);
+	}
+
+	void setX1ClickEvent() {
+		setEvent(EVENT_X1BUTTONDOWN);
+	}
+
+	void setX2ClickEvent() {
+		setEvent(EVENT_X2BUTTONDOWN);
 	}
 
 	/**

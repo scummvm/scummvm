@@ -59,6 +59,7 @@ class UCMachine;
 class Game;
 class Gump;
 class GameMapGump;
+class MenuGump;
 class ScalerGump;
 class InverterGump;
 class RenderSurface;
@@ -67,12 +68,11 @@ class GameData;
 class World;
 class ObjectManager;
 class FontManager;
-class HIDManager;
 class Mouse;
 class AvatarMoverProcess;
 class IDataSource;
 class ODataSource;
-struct Texture;
+class Texture;
 class AudioMixer;
 
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
@@ -93,7 +93,6 @@ private:
 	Kernel *_kernel;
 	MemoryManager *_memoryManager;
 	ObjectManager *_objectManager;
-	HIDManager *_hidManager;
 	UCMachine *_ucMachine;
 	RenderSurface *_screen;
 	Mouse *_mouse;
@@ -171,8 +170,6 @@ protected:
 	Common::Error run() override;
 
 	bool initialize() override;
-
-	void DeclareArgs() override;
 
 	/**
 	 * Returns the data archive folder and version that's required
@@ -287,6 +284,16 @@ public:
 	bool canSaveGameStateCurrently(bool isAutosave = false) override;
 
 	/**
+	 * Load a game
+	 */
+	Common::Error loadGameState(int slot) override;
+
+	/**
+	 * Saves the game
+	 */
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
+	/**
 	 * Load a game state
 	 */
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
@@ -338,6 +345,7 @@ public:
 	void makeCheater() {
 		_hasCheated = true;
 	}
+	Gump *getMenuGump() const;
 };
 
 } // End of namespace Ultima8

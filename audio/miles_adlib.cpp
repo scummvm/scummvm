@@ -121,19 +121,19 @@ public:
 	virtual ~MidiDriver_Miles_AdLib();
 
 	// MidiDriver
-	int open();
-	void close();
-	void send(uint32 b);
-	MidiChannel *allocateChannel() { return NULL; }
-	MidiChannel *getPercussionChannel() { return NULL; }
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
+	MidiChannel *allocateChannel() override { return NULL; }
+	MidiChannel *getPercussionChannel() override { return NULL; }
 
-	bool isOpen() const { return _isOpen; }
-	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
+	bool isOpen() const override { return _isOpen; }
+	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setVolume(byte volume);
-	virtual uint32 property(int prop, uint32 param);
+	virtual uint32 property(int prop, uint32 param) override;
 
-	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
 
 private:
 	bool _modeOPL3;

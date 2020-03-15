@@ -48,9 +48,9 @@ namespace Ultima8 {
 
 //#define DUMP_ITEMS
 
-World *World::_world = 0;
+World *World::_world = nullptr;
 
-World::World() : _currentMap(0) {
+World::World() : _currentMap(nullptr) {
 	debugN(MM_INFO, "Creating World...\n");
 
 	_world = this;
@@ -61,7 +61,7 @@ World::~World() {
 	debugN(MM_INFO, "Destroying World...\n");
 	clear();
 
-	_world = 0;
+	_world = nullptr;
 }
 
 
@@ -78,7 +78,7 @@ void World::clear() {
 
 	if (_currentMap)
 		delete _currentMap;
-	_currentMap = 0;
+	_currentMap = nullptr;
 }
 
 void World::reset() {
@@ -107,7 +107,7 @@ bool World::switchMap(uint32 newmap) {
 	if (_currentMap->getNum() == newmap)
 		return true;
 
-	if (newmap >= _maps.size() || _maps[newmap] == 0)
+	if (newmap >= _maps.size() || _maps[newmap] == nullptr)
 		return false; // no such map
 
 	// Map switching procedure:
@@ -156,7 +156,7 @@ bool World::switchMap(uint32 newmap) {
 	if (oldmap != 0) {
 		perr << "Unloading map " << oldmap << Std::endl;
 
-		assert(oldmap < _maps.size() && _maps[oldmap] != 0);
+		assert(oldmap < _maps.size() && _maps[oldmap] != nullptr);
 
 		_currentMap->writeback();
 
@@ -195,7 +195,7 @@ void World::loadNonFixed(IDataSource *ds) {
 		// items in this map?
 		if (f->getSize(i) > 0) {
 			assert(_maps.size() > i);
-			assert(_maps[i] != 0);
+			assert(_maps[i] != nullptr);
 
 			IDataSource *items = f->getDataSource(i);
 
@@ -317,7 +317,7 @@ void World::worldStats() const {
 	unsigned int i, mapcount = 0;
 
 	for (i = 0; i < _maps.size(); i++) {
-		if (_maps[i] != 0 && !_maps[i]->isEmpty())
+		if (_maps[i] != nullptr && !_maps[i]->isEmpty())
 			mapcount++;
 	}
 

@@ -42,7 +42,7 @@ Shape::Shape(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format,
 
 	this->_data = data_;
 	this->_size = size_;
-	this->_palette = 0;
+	this->_palette = nullptr;
 
 	if (!format) format = DetectShapeFormat(data_, size_);
 
@@ -69,7 +69,7 @@ Shape::Shape(IDataSource *src, const ConvertShapeFormat *format)
 	uint8 *d = new uint8[this->_size];
 	this->_data = d;
 	src->read(d, this->_size);
-	this->_palette = 0;
+	this->_palette = nullptr;
 
 	if (!format)
 		format = DetectShapeFormat(_data, _size);
@@ -193,7 +193,7 @@ void Shape::LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShape
 		if (format->_bytes_frame_length) framesize = ds.readX(format->_bytes_frame_length) + format->_bytes_frame_length_kludge;
 		else framesize = size - frameoffset;
 
-		ConvertShapeFrame *prev = 0, p;
+		ConvertShapeFrame *prev = nullptr, p;
 
 		if (format->_bytes_special && i > 0) {
 			prev = &p;
@@ -211,7 +211,7 @@ const ConvertShapeFormat *Shape::DetectShapeFormat(const uint8 *data, uint32 siz
 }
 
 const ConvertShapeFormat *Shape::DetectShapeFormat(IDataSource *ds, uint32 size_) {
-	const ConvertShapeFormat *ret = 0;
+	const ConvertShapeFormat *ret = nullptr;
 
 	if (ConvertShape::CheckUnsafe(ds, &PentagramShapeFormat, size_))
 		ret = &PentagramShapeFormat;
@@ -260,6 +260,14 @@ void Shape::getTotalDimensions(int32 &w, int32 &h, int32 &x, int32 &y) const {
 	x = -minx;
 	y = -miny;
 }
+
+ShapeFrame *Shape::getFrame(unsigned int frame) {
+	if (frame < _frames.size())
+		return _frames[frame];
+	else
+		return nullptr;
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

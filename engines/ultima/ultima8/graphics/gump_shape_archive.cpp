@@ -34,7 +34,6 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(GumpShapeArchive, ShapeArchive)
 GumpShapeArchive::~GumpShapeArchive() {
 	for (unsigned int i = 0; i < _gumpItemArea.size(); ++i)
 		delete _gumpItemArea[i];
-	_gumpItemArea.clear();
 }
 
 void GumpShapeArchive::loadGumpage(IDataSource *ds) {
@@ -51,7 +50,8 @@ void GumpShapeArchive::loadGumpage(IDataSource *ds) {
 }
 
 Rect *GumpShapeArchive::getGumpItemArea(uint32 shapenum) {
-	if (shapenum >= _gumpItemArea.size()) return 0;
+	if (shapenum >= _gumpItemArea.size())
+		return nullptr;
 	return _gumpItemArea[shapenum];
 }
 
