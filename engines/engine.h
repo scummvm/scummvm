@@ -58,13 +58,27 @@ void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
 
 class Engine;
 
+
+/**
+* Manages pausing by Engine::pauseEngine handing out tokens that
+* each represent one requested level of pause.
+*/
 class PauseToken {
 public:
 	PauseToken();
 	PauseToken(const PauseToken &);
+#if __cplusplus >= 201103L
+	PauseToken(PauseToken &&);
+#endif
 	~PauseToken();
 
 	void operator=(const PauseToken &);
+#if __cplusplus >= 201103L
+	void operator=(PauseToken &&);
+#endif
+	/** Manually releases the PauseToken. Only allowed if the token
+	* currently represents a pause request.
+	*/
 	void clear();
 private:
 	PauseToken(Engine *);
@@ -356,7 +370,7 @@ public:
 	static MetaEngine &getMetaEngine();
 
 	/**
-	 * Pause or resume the engine. This should stop/resume any audio playback
+	 * Pause the engine. This should stop any audio playback
 	 * and other stuff. Called right before the system runs a global dialog
 	 * (like a global pause, main menu, options or 'confirm exit' dialog).
 	 *
@@ -364,12 +378,17 @@ public:
 	 * be resumed when all associated pause tokens reach the end of their lives.
 	 */
 	PauseToken pauseEngine();
-	private:
-		void resumeEngine();
+private:
+	/** Resume the engine. This should resume any audio playback and other stuff.
+	*
+	* Only PauseToken is allowed to call this member function. Use the PauseToken
+	* that you got from pauseEngine to resume the engine.
+	*/
+	void resumeEngine();
 
-		friend class PauseToken;
+	friend class PauseToken;
 
-	public:
+public:
 
 	/**
 	 * Return whether the engine is currently paused or not.
