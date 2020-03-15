@@ -62,6 +62,7 @@ private:
 	uint32 _lastTick;
 	int _gameSpeed;
 	bool _speedFlag;
+	PauseToken _gamePauseToken;
 
 	void initialize();
 	void deinitialize();
