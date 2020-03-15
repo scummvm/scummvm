@@ -2790,26 +2790,15 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 	}
 }
 
-int ScummEngine::runDialog(Dialog &dialog) {
-	// Pause engine
-	pauseEngine(true);
-
-	// Open & run the dialog
-	int result = dialog.runModal();
-
-	// Resume engine
-	pauseEngine(false);
-
-	// Return the result
-	return result;
-}
-
 #ifdef ENABLE_SCUMM_7_8
-int ScummEngine_v7::runDialog(Dialog &dialog) {
-	_splayer->pause();
-	int result = ScummEngine::runDialog(dialog);
-	_splayer->unpause();
-	return result;
+void ScummEngine_v7::pauseEngineIntern(bool pause) {
+	if (pause) {
+		_splayer->pause();
+	} else {
+		_splayer->unpause();
+	}
+
+	ScummEngine::pauseEngineIntern(pause);
 }
 #endif
 
