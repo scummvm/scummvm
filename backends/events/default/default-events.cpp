@@ -171,12 +171,11 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 #endif
 	case Common::EVENT_RTL:
 		if (ConfMan.getBool("confirm_exit")) {
+			PauseToken pt;
 			if (g_engine)
-				g_engine->pauseEngine(true);
+				pt = g_engine->pauseEngine();
 			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?"), _("Launcher"), _("Cancel"));
 			forwardEvent = _shouldRTL = (alert.runModal() == GUI::kMessageOK);
-			if (g_engine)
-				g_engine->pauseEngine(false);
 		} else
 			_shouldRTL = true;
 		break;
@@ -193,12 +192,14 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				break;
 			}
 			_confirmExitDialogActive = true;
-			if (g_engine)
-				g_engine->pauseEngine(true);
-			GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
-			forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
-			if (g_engine)
-				g_engine->pauseEngine(false);
+
+			{
+				PauseToken pt;
+				if (g_engine)
+					pt = g_engine->pauseEngine();
+				GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
+				forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
+			}
 			_confirmExitDialogActive = false;
 		} else {
 			_shouldQuit = true;
