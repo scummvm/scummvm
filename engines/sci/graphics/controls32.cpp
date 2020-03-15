@@ -913,8 +913,9 @@ int16 GfxControls32::showMessageBox(const Common::String &message, const char *c
 }
 
 reg_t GfxControls32::kernelMessageBox(const Common::String &message, const Common::String &title, const uint16 style) {
+	PauseToken pt;
 	if (g_engine) {
-		g_engine->pauseEngine(true);
+		pt = g_engine->pauseEngine();
 	}
 
 	int16 result;
@@ -928,10 +929,6 @@ reg_t GfxControls32::kernelMessageBox(const Common::String &message, const Commo
 	break;
 	default:
 		error("Unsupported MessageBox style 0x%x", style & 0xF);
-	}
-
-	if (g_engine) {
-		g_engine->pauseEngine(false);
 	}
 
 	return make_reg(0, result);
