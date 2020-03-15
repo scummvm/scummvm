@@ -89,6 +89,8 @@ private:
 	const char **getButtonCaptions() const;
 	void resetButtons();
 
+	PauseToken _pauseToken;
+
 };
 
 } // End of namespace MystStacks
