@@ -25,9 +25,9 @@
 
 namespace Sci {
 
-#ifndef REDUCE_MEMORY_USAGE
+//#ifndef REDUCE_MEMORY_USAGE
 extern const char *opcodeNames[];
-#endif
+//#endif
 
 void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType);
 

@@ -39,7 +39,8 @@ namespace Sci {
 // This table is only used for debugging. Don't include it for devices
 // with not enough available memory (e.g. phones), where REDUCE_MEMORY_USAGE
 // is defined
-#ifndef REDUCE_MEMORY_USAGE
+// Update: This is used in the VM hooks mechanism. TODO: Readd the memory check?
+//#ifndef REDUCE_MEMORY_USAGE
 const char *opcodeNames[] = {
 	   "bnot",       "add",      "sub",      "mul",      "div",
 		"mod",       "shr",      "shl",      "xor",      "and",
@@ -68,7 +69,7 @@ const char *opcodeNames[] = {
 	   "-agi",      "-ali",     "-ati",     "-api",     "-sgi",
 	   "-sli",      "-sti",     "-spi"
 };
-#endif	// REDUCE_MEMORY_USAGE
+//#endif	// REDUCE_MEMORY_USAGE
 
 void DebugState::updateActiveBreakpointTypes() {
 	int type = 0;
@@ -149,9 +150,9 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 		return retval;
 	}
 
-#ifndef REDUCE_MEMORY_USAGE
+//#ifndef REDUCE_MEMORY_USAGE
 	debugN("%-5s", opcodeNames[opcode]);
-#endif
+//#endif
 
 	static const char *defaultSeparator = "\t\t; ";
 

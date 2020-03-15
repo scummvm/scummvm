@@ -101,6 +101,9 @@ uint64 HookHashKey::hash() {
 	return ((uint64)scriptNumber << 32) + offset;
 }
 
+//#ifndef REDUCE_MEMORY_USAGE
+extern const char* opcodeNames[];
+//#endif
 
 // returns true if entry is matching to current state
 bool hook_exec_match(Sci::EngineState *s, HookEntry entry) {
