@@ -65,6 +65,7 @@ public:
 	~PauseToken();
 
 	void operator=(const PauseToken &);
+	void clear();
 private:
 	PauseToken(Engine *);
 
