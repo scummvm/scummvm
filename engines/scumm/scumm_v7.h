@@ -98,7 +98,6 @@ public:
 	bool isSmushActive() { return _smushActive; }
 
 protected:
-	int runDialog(Dialog &dialog) override;
 
 	void scummLoop_handleSound() override;
 	void scummLoop_handleDrawing() override;
@@ -131,6 +130,8 @@ protected:
 	void playSpeech(const byte *ptr);
 
 	void drawVerb(int verb, int mode) override;
+
+	void pauseEngineIntern(bool pause) override;
 
 
 	void o6_kernelSetFunctions() override;

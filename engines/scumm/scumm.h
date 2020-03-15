@@ -497,7 +497,6 @@ protected:
 	Dialog *_messageDialog;
 	Dialog *_versionDialog;
 
-	int runDialog(Dialog &dialog) override;
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
