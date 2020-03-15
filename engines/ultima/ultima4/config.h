@@ -108,6 +108,9 @@ class ConfigElement;
 class Config {
 public:
     static const Config *getInstance();
+public:
+	Config();
+	~Config();
 
     ConfigElement getElement(const Common::String &name) const;
 
@@ -118,7 +121,6 @@ public:
 
 
 private:
-    Config();
     static void *fileOpen(const char *filename);
     static void accumError(void *l, const char *fmt, ...);
 

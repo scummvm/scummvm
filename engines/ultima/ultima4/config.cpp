@@ -31,7 +31,40 @@ namespace Ultima4 {
 using namespace std;
 
 extern bool verbose;
-Config *Config::_instance = NULL;
+Config *Config::_instance;
+
+Config::Config() {
+	_instance = this;
+
+#ifdef TODO
+	doc = xmlParseFile(Config::CONFIG_XML_LOCATION_POINTER);
+	if (!doc) {
+		printf("Failed to read core config.xml. Assuming it is located at '%s'", Config::CONFIG_XML_LOCATION_POINTER);
+		errorFatal("error parsing config.xml");
+}
+
+	xmlXIncludeProcess(doc);
+
+	if (settings.validateXml && doc->intSubset) {
+		Common::String errorMessage;
+		xmlValidCtxt cvp;
+
+		if (verbose)
+			printf("validating config.xml\n");
+
+		cvp.userData = &errorMessage;
+		cvp.error = &accumError;
+
+		// Error changed to not fatal due to regression in libxml2
+		if (!xmlValidateDocument(&cvp, doc))
+			errorWarning("xml validation error:\n%s", errorMessage.c_str());
+	}
+#endif
+}
+
+Config::~Config() {
+	_instance = nullptr;
+}
 
 const Config *Config::getInstance() {
 #ifdef TODO
@@ -70,33 +103,6 @@ ConfigElement Config::getElement(const Common::String &name) const {
 
 char DEFAULT_CONFIG_XML_LOCATION[] = "config.xml";
 char * Config::CONFIG_XML_LOCATION_POINTER = &DEFAULT_CONFIG_XML_LOCATION[0];
-
-Config::Config() {
-#ifdef TODO
-    doc = xmlParseFile(Config::CONFIG_XML_LOCATION_POINTER);
-    if (!doc) {
-    	printf("Failed to read core config.xml. Assuming it is located at '%s'", Config::CONFIG_XML_LOCATION_POINTER);
-        errorFatal("error parsing config.xml");
-    }
-
-    xmlXIncludeProcess(doc);
-
-    if (settings.validateXml && doc->intSubset) {
-        Common::String errorMessage;
-        xmlValidCtxt cvp;
-
-        if (verbose)
-            printf("validating config.xml\n");
-
-        cvp.userData = &errorMessage;
-        cvp.error = &accumError;
-
-        // Error changed to not fatal due to regression in libxml2
-        if (!xmlValidateDocument(&cvp, doc))
-            errorWarning("xml validation error:\n%s", errorMessage.c_str());
-    }
-#endif
-}
 
 
 Std::vector<Common::String> Config::getGames() {
