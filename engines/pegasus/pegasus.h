@@ -278,6 +278,7 @@ private:
 	void doInterfaceOverview();
 	ScreenDimmer _screenDimmer;
 	void pauseMenu(bool menuUp);
+	PauseToken _menuPauseToken;
 
 	// Energy
 	int32 _savedEnergyValue;

@@ -2121,13 +2121,13 @@ void PegasusEngine::setAmbienceLevel(uint16 ambientLevel) {
 
 void PegasusEngine::pauseMenu(bool menuUp) {
 	if (menuUp) {
-		pauseEngine(true);
+		_menuPauseToken = pauseEngine();
 		_screenDimmer.startDisplaying();
 		_screenDimmer.show();
 		_gfx->updateDisplay();
 		useMenu(new PauseMenu());
 	} else {
-		pauseEngine(false);
+		_menuPauseToken.clear();
 		_screenDimmer.hide();
 		_screenDimmer.stopDisplaying();
 		useMenu(0);
