@@ -31,6 +31,8 @@
 #include "graphics/fontman.h"
 #include "graphics/macgui/macwindow.h"
 
+#include "engines/engine.h"
+
 namespace Graphics {
 
 namespace MacGUIConstants {
@@ -152,6 +154,9 @@ public:
 
 	void activateMenu();
 
+	void activateScreenCopy();
+	void disableScreenCopy();
+
 	bool isMenuActive();
 
 	/**
@@ -231,11 +236,11 @@ public:
 	void pushCustomCursor(const Graphics::Cursor *cursor);
 	void popCursor();
 
-	void pauseEngine(bool pause);
+	PauseToken pauseEngine();
 
 	void setMode(uint32 mode);
 
-	void setEnginePauseCallback(void *engine, void (*pauseCallback)(void *engine, bool pause));
+	void setEnginePauseCallback(Engine *engine);
 	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
@@ -282,14 +287,15 @@ private:
 	MacMenu *_menu;
 	uint32 _menuDelay;
 
-	void *_engineP;
+	Engine *_engineP;
 	void *_engineR;
-	void (*_pauseEngineCallback)(void *engine, bool pause);
 	void (*_redrawEngineCallback)(void *engine);
 
 	bool _cursorIsArrow;
 
 	MacWidget *_activeWidget;
+
+	PauseToken _screenCopyPauseToken;
 };
 
 } // End of namespace Graphics
