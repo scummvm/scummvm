@@ -132,7 +132,7 @@ static void menuCommandsCallback(int action, Common::U32String &, void *data) {
 }
 
 void PinkEngine::initMenu() {
-	_director->getWndManager().setEnginePauseCallback(this, &pauseEngine);
+	_director->getWndManager().setEnginePauseCallback(this);
 
 	_menu = Graphics::MacMenu::createMenuFromPEexe(_exeResources, &_director->getWndManager());
 	_menu->calcDimensions();

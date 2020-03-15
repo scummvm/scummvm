@@ -159,17 +159,6 @@ Common::Error Pink::PinkEngine::run() {
 	return Common::kNoError;
 }
 
-void PinkEngine::pauseEngine(void *engine, bool pause) {
-	Engine *vm = (Engine *)engine;
-	if (pause) {
-		vm->pauseEngine(true);
-	} else {
-		while (vm->isPaused()) {
-			vm->pauseEngine(false);
-		}
-	}
-}
-
 void PinkEngine::load(Archive &archive) {
 	archive.skipString();
 	archive.skipString();

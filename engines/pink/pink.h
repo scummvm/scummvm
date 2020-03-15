@@ -105,8 +105,6 @@ public:
 		return Common::String::format("%s.s%02d", _targetName.c_str(), slot);
 	}
 
-	static void pauseEngine(void *engine, bool pause); // for MacWndMgr
-
 	friend class Console;
 
 protected:
