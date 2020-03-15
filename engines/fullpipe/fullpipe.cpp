@@ -230,22 +230,6 @@ bool FullpipeEngine::shouldQuit() {
 	return !_gameContinue || Engine::shouldQuit();
 }
 
-Common::Error FullpipeEngine::loadGameState(int slot) {
-	deleteModalObject();
-
-	if (_gameLoader->readSavegame(getSavegameFile(slot)))
-		return Common::kNoError;
-	else
-		return Common::kUnknownError;
-}
-
-Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
-	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot), description))
-		return Common::kNoError;
-	else
-		return Common::kUnknownError;
-}
-
 Common::String FullpipeEngine::getSaveStateName(int slot) const {
 	return Common::String::format("fullpipe.s%02d", slot);
 }

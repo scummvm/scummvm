@@ -31,6 +31,13 @@
 
 namespace Fullpipe {
 
+Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
+	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot), description))
+		return Common::kNoError;
+	else
+		return Common::kUnknownError;
+}
+
 bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::String &description) {
 	GameVar *v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 

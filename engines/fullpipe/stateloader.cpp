@@ -38,6 +38,16 @@
 
 namespace Fullpipe {
 
+Common::Error FullpipeEngine::loadGameState(int slot) {
+	deleteModalObject();
+
+	if (_gameLoader->readSavegame(getSavegameFile(slot)))
+		return Common::kNoError;
+	else
+		return Common::kUnknownError;
+}
+
+
 bool GameLoader::readSavegame(const char *fname) {
 	SaveHeader header;
 	Common::ScopedPtr<Common::InSaveFile> saveFile(g_system->getSavefileManager()->openForLoading(fname));
