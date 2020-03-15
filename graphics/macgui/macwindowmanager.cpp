@@ -635,7 +635,7 @@ PauseToken MacWindowManager::pauseEngine() {
 	return _engineP->pauseEngine();
 }
 
-void MacWindowManager::setEnginePauseCallback(Engine *engine) {
+void MacWindowManager::setEngine(Engine *engine) {
 	_engineP = engine;
 }
 

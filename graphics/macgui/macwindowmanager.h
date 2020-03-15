@@ -240,7 +240,7 @@ public:
 
 	void setMode(uint32 mode);
 
-	void setEnginePauseCallback(Engine *engine);
+	void setEngine(Engine *engine);
 	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
