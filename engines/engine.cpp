@@ -855,6 +855,13 @@ PauseToken::PauseToken(const PauseToken &t2) : _engine(t2._engine) {
 	}
 }
 
+void PauseToken::clear() {
+	if (_engine) {
+		_engine->resumeEngine();
+	}
+	_engine = nullptr;
+}
+
 PauseToken::~PauseToken() {
 	if (_engine) {
 		_engine->resumeEngine();
