@@ -549,9 +549,7 @@ bool AgiEngine::handleController(uint16 key) {
 bool AgiEngine::showPredictiveDialog() {
 	GUI::PredictiveDialog predictiveDialog;
 
-	inGameTimerPause();
-	predictiveDialog.runModal();
-	inGameTimerResume();
+	runDialog(predictiveDialog);
 
 	Common::String predictiveResult(predictiveDialog.getResult());
 	uint16 predictiveResultLen = predictiveResult.size();
