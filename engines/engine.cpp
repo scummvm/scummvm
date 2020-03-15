@@ -863,3 +863,17 @@ PauseToken::~PauseToken() {
 		_engine->resumeEngine();
 	}
 }
+
+#if __cplusplus >= 201103L
+PauseToken::PauseToken(PauseToken &&t2) : _engine(t2._engine) {
+	t2._engine = nullptr;
+}
+
+void PauseToken::operator=(PauseToken &&t2) {
+	if (_engine) {
+		error("Tried to assign to an already busy PauseToken");
+	}
+	_engine = t2._engine;
+	t2._engine = nullptr;
+}
+#endif
