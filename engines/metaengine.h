@@ -23,6 +23,7 @@
 #ifndef ENGINES_METAENGINE_H
 #define ENGINES_METAENGINE_H
 
+#include "common/achievements.h"
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/array.h"
@@ -218,6 +219,19 @@ public:
 	 * @param target   name of a config manager target
 	 */
 	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
+
+	/**
+	 * Return a list of achievement descriptions for the specified target.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target    name of a config manager target
+	 * @return          a list of achievement descriptions for an engine plugin
+	 *                  and target
+	 */
+	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const {
+		return Common::AchievementsInfo();
+	}
 
 	/**
 	 * Return the maximum save slot that the engine supports.
