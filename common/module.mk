@@ -1,6 +1,7 @@
 MODULE := common
 
 MODULE_OBJS := \
+	achievements.o \
 	archive.o \
 	config-manager.o \
 	coroutines.o \
