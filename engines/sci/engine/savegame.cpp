@@ -639,8 +639,10 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		songcount = _playList.size();
 	s.syncAsUint32LE(songcount);
 
-	if (s.isLoading())
+	if (s.isLoading()) {
 		clearPlayList();
+		g_sci->_audio->stopAudio();		// fix #9953
+	}
 
 	Common::StackLock lock(_mutex);
 
