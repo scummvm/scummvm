@@ -1549,7 +1549,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
 		in.push_back(setup.srcDir + "/COPYING.OFL");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
-		in.push_back(setup.srcDir + "/NEWS");
+		in.push_back(setup.srcDir + "/NEWS.md");
 		in.push_back(setup.srcDir + "/README.md");
 		in.push_back(setup.srcDir + "/TODO");
 

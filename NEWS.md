@@ -1,0 +1,135 @@
+#### 0.4.0 (YYYY-MM-DD)
+
+ New Games:
+   - The Longest Journey is now supported
+
+ General:
+   - Enabled the window to be resized
+   - Added a GUI option to enable anti-aliasing
+   - Added support for saving screenshots
+
+ Myst III changes:
+   - Added automatic saves
+   - Added support for playing with a game controller
+   - Added support for inverting the mouse y axis using ctrl-i
+   - Fixed music tracks sometimes not playing (#1522)
+   - Fixed music tracks sometimes incorrectly restarting (#1476)
+   - Fixed a crash when opening the menu while on the Amateria tracks (#1514)
+   - Improved save file error handling
+   - Improved performance during node transitions on hi-resolution displays
+
+#### 0.3.1 (2018-06-13)
+
+ Myst III changes:
+   - Fixed a rare crash when walking near the magnetic rings in Amateria (#1249)
+   - Fixed unresponsive controls for the holographic projectors in J'nanin (#1400)
+
+#### 0.3.0 (2017-12-30)
+
+ General:
+   - Switched SDL backend to SDL2 by default. SDL1 is still a fallback
+   - Added support for selecting between the legacy OpenGL and shaders OpenGL
+     game renderers at runtime
+   - Improvements and fixes in TinyGL renderer
+   - Enabled support for multi language
+
+ Grim changes:
+   - Added support for German, French, Italian and Spanish Grim Fandango Demo
+   - Added support for English Grim Fandango Demo (with intro video version)
+   - Improved lighting
+   - Fixed buggy character in the Blue Casket when using the TinyGL Renderer (#1251)
+
+ Myst III changes:
+   - Added support for the XBox version of Myst III
+   - Added an option to take advantage of wide screens
+   - Updated the game scripts to the newest official version for non-DVD releases
+   - Implemented the Narayan shield effect
+   - Fixed the game running too fast in some conditions (#1277)
+   - Added support for the Hebrew version (#1348)
+   - Fixed hotspots sometimes being too small (#1329)
+   - Fixed ambient sounds sometimes not refreshing (#1349, #1350)
+   - Added fullscreen toggling
+
+#### 0.2.1 (2015-01-25)
+
+ Grim fixes:
+   - Fixed crash on IRIX platform
+
+ Myst III fixes:
+   - Fixed crash when Polish subtitles are enabled
+
+#### 0.2.0 (2014-12-31)
+
+ New Games:
+   - Myst III game supported
+
+ General:
+   - Improved TinyGL renderer
+   - Improved Fullscreen mode, see README.md file
+
+ Grim changes:
+   - Added game data integrity check
+   - Fixed: Shadow only rendered on stairs outside the DOD (#741)
+   - Fixed crash upon entering the Lola Engine Room Set (#843)
+   - Fixed: Year 4 - Character stuck on Aztec Temple (#861)
+   - Fixed: [Tim plays GRIM] Can see shirt through glottis' open mouth (#887)
+   - Fixed crash during animation of the guy at the photo-finish booth (#1039)
+   - Fixed crash when entering Domino's office (#1115)
+
+#### 0.1.1 (2013-02-10)
+
+ New features:
+   - New config option "use_arb_shaders" to cope with some graphics drivers lying about their capabilities
+     and causing rendering problems.
+
+ Engine fixes:
+   - Fixed bad rendering of the cats race animation
+   - Fixed characters' lipsync going sometimes out of sync
+   - Fixed wrong animation when entering Toto's scrimshaw parlor in year 2 (#621)
+   - Fixed Domino's mouth not stopping moving after talking sometimes (#633)
+   - Fixed bad render of Glottis outside the beavers dam (#143)
+   - Fixed Manny teleporting around in the High Rollers Lounge's elevator (#682)
+   - Fixed mixed up music at the Mayan temple and at the end of the game (#614)
+   - Fixed the Bonewagon and the monster disappearing in the tunnel when using the software renderer (#701)
+   - Fixed stuck music when opening the photofinish and examining it immediately later (#246)
+   - Fixed Manny freezing sometimes when talking to the Angelitos and in some other cases (#483)
+   - Fixed shadow artifacts when picking up some objects with the OpenGL renderer (#294)
+   - Fixed the spider orientation when entering the spiders room the first time (#368)
+   - Fixed Manny going inside some poles outside the Calavera Cafe and outside Velasco's garage (#578)
+   - Fixed Manny flickering with the OpenGL renderer outside the morgue (#678)
+   - Fixed subtitles overlapping when talking to Nick with Glottis screaming in the background (#685)
+   - Fixed the Bonewagon popping when Glottis starts driving in the Petrified Forest (#691)
+   - Fixed a crash happening sometimes in the beavers dam (#453)
+   - Fixed audio volumes resetting or changing on their own (#710)
+   - Fixed a crash happening sometimes when a character talks (#711)
+   - Fixed the cat race animation not stopping when changing room (#679)
+   - Fixed the gun not disappearing when Manny puts it away outside the greenhouse (#422)
+   - Fixed Toto abruptly interrupting when talking sometimes when Naranja is asleep
+
+ Game data fixes:
+   - Fixed vanishing of Manny's nautical hat in year 3 when using the inventory
+   - Fixed the sequence of Bowlsley pointing the gun at Manny in his shop
+   - Fixed bonewagon popping when entering and exiting the room with the pump tree (#280)
+   - Fixed the DOD door animation and duplicated sfx when using it
+   - Fixed Glottis' animation when he hands Manny the work order (#237)
+   - Fixed the wine cellar forklift not showing a part of its model (#707)
+   - Fixed the sound of punching bag in Dom's office occurring before the animation (#351)
+   - Fixed an animation glitch upon breaking the Neon-Lady (#300)
+   - Fixed the turkey baster becoming full again after Manny empties it (#680)
+   - Fixed Toto not looking at Manny when speaking to him (#285)
+   - Fixed Toto's phone being rendered two times when Manny uses it (#622)
+   - Fixed Manny's animations freezing when using Toto's phone and skipping dialogue lines
+   - Made walking from behind Manny's desk in his room in the Cafe easier
+   - Fixed wrong Manny positioning when going from the stairs of the cat race track to the folding bridge
+
+ Demo:
+   - Fixed invisible Domino's drawer (#29)
+   - Fixed Manny's walk/run animation not running (#28)
+   - Fixed wrong head orientation when looking at something
+   - Fixed various objects not showing
+
+
+#### 0.1.0 (2012-12-21)
+
+   - First release.
+   - Grim Fandango full game and demo supported.

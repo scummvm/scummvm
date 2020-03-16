@@ -52,7 +52,7 @@ endif
 	cp $(srcdir)/COPYING.TINYGL ResidualVM/COPYING.TINYGL.txt
 	cp $(srcdir)/COPYRIGHT ResidualVM/COPYRIGHT.txt
 	cp $(srcdir)/KNOWN_BUGS ResidualVM/KNOWN_BUGS.txt
-	cp $(srcdir)/NEWS ResidualVM/NEWS.txt
+	cp $(srcdir)/NEWS.md ResidualVM/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVM/QuickStart.txt
 	cp $(srcdir)/README.md ResidualVM/README.txt
 	zip -r residualvm-amigaos4.zip ResidualVM ResidualVM.info

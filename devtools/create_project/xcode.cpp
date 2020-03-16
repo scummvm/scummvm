@@ -781,7 +781,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("COPYING.BSD");
 		files.push_back("COPYING.FREEFONT");
 		files.push_back("COPYING.OFL");
-		files.push_back("NEWS");
+		files.push_back("NEWS.md");
 		files.push_back("README.md");
 	}
 	return files;
