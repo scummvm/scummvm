@@ -595,8 +595,11 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
+#ifdef ENABLE_SCI32
 		SegmentRef destReference = s->_segMan->dereference(dest);
-		if (destReference.maxSize == size - 4) {
+		SegmentObj *destObject = s->_segMan->getSegmentObj(dest.getSegment());
+
+		if (destReference.maxSize == size - 4 && destObject->getType() == SEG_TYPE_ARRAY) {
 			// This is an array structure, which starts with the number of
 			// elements in the array and the size of each element. Skip
 			// these bytes. These structures are stored in the ARC files of
@@ -604,6 +607,7 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 			f->_in->skip(4);
 			size -= 4;
 		}
+#endif
 
 		bytesRead = f->_in->read(buf, size);
 	}
