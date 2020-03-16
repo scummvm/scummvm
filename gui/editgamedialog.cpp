@@ -330,6 +330,18 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
 
+	//
+	// 9) The Achievements tab
+	//
+	if (plugin) {
+		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(domain);
+		if (achievementsInfo.descriptions.size() > 0) {
+			tab->addTab(_("Achievements"), "GameOptions_Achievements");
+			addAchievementsControls(tab, "GameOptions_Achievements.", achievementsInfo);
+		}
+	}
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 	_tabWidget = tab;

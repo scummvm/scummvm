@@ -330,6 +330,15 @@ ConfigDialog::ConfigDialog() :
 		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
 	}
 
+	//
+	// The Achievements tab
+	//
+	Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(gameDomain);
+	if (achievementsInfo.descriptions.size() > 0) {
+		tab->addTab(_("Achievements"), "GlobalConfig_Achievements");
+		addAchievementsControls(tab, "GlobalConfig_Achievements.", achievementsInfo);
+	}
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 
