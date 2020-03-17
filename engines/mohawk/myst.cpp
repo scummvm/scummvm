@@ -610,6 +610,8 @@ void MohawkEngine_Myst::doFrame() {
 					runSaveDialog();
 				}
 				break;
+			default:
+				break;
 			}
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
