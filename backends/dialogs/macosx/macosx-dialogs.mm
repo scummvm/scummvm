@@ -29,8 +29,6 @@
 #include "backends/dialogs/macosx/macosx-dialogs.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
-#include "common/events.h"
 #include "common/algorithm.h"
 #include "common/translation.h"
 
@@ -147,13 +145,7 @@ Common::DialogManager::DialogResult MacOSXDialogManager::showFileBrowser(const c
 	CFStringRef titleRef = CFStringCreateWithCString(0, title, stringEncoding);
 	CFStringRef chooseRef = CFStringCreateWithCString(0, _("Choose"), stringEncoding);
 
-	// If in fullscreen mode, switch to windowed mode
-	bool wasFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
-	if (wasFullscreen) {
-		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, false);
-		g_system->endGFXTransaction();
-	}
+	beginDialog();
 
 	// Temporarily show the real mouse
 	CGDisplayShowCursor(kCGDirectMainDisplay);
@@ -185,20 +177,7 @@ Common::DialogManager::DialogResult MacOSXDialogManager::showFileBrowser(const c
 	CFRelease(titleRef);
 	CFRelease(chooseRef);
 
-	// While the native macOS file browser is open, any input events (e.g. keypresses) are
-	// still received by the NSApplication. With SDL backend for example this results in the
-	// events beeing queued and processed after we return, thus dispatching events that were
-	// intended for the native file browser. For example: pressing Esc to cancel the native
-	// macOS file browser would cause the application to quit in addition to closing the
-	// file browser. To avoid this happening clear all pending events.
-	g_system->getEventManager()->getEventDispatcher()->clearEvents();
-
-	// If we were in fullscreen mode, switch back
-	if (wasFullscreen) {
-		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
-		g_system->endGFXTransaction();
-	}
+	endDialog();
 
 	return result;
 }
