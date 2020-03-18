@@ -170,7 +170,8 @@ MODULE_OBJS += \
 	fs/chroot/chroot-fs.o \
 	plugins/posix/posix-provider.o \
 	saves/posix/posix-saves.o \
-	taskbar/unity/unity-taskbar.o
+	taskbar/unity/unity-taskbar.o \
+	dialogs/gtk/gtk-dialogs.o
 
 ifdef USE_SPEECH_DISPATCHER
 ifdef USE_TTS
