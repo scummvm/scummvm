@@ -167,6 +167,7 @@ _libunity=auto
 _dialogs=auto
 _iconv=auto
 _tts=auto
+_gtk=auto
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -1137,6 +1138,9 @@ Optional Libraries:
   --with-libunity-prefix=DIR   prefix where libunity is installed (optional)
   --disable-libunity       disable Unity launcher integration [autodetect]
 
+  --with-gtk-prefix=DIR   prefix where gtk is installed (optional)
+  --disable-gtk       disable GTK dialog integration [autodetect]
+
   --with-sndio-prefix=DIR  prefix where sndio is installed (optional)
   --disable-sndio          disable sndio MIDI driver [autodetect]
 
@@ -1272,6 +1276,8 @@ for ac_option in $@; do
 	--disable-libunity)           _libunity=no           ;;
 	--enable-tts)                 _tts=yes               ;;
 	--disable-tts)                _tts=no                ;;
+	--enable-gtk)                 _gtk=yes               ;;
+	--disable-gtk)                _gtk=no                ;;
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
 	--opengl-mode=*)
@@ -1389,6 +1395,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		LIBUNITY_CFLAGS="-I$arg/include"
 		LIBUNITY_LIBS="-L$arg/lib"
+		;;
+	--with-gtk-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		GTK_CFLAGS="-I$arg/include"
+		GTK_LIBS="-L$arg/lib"
 		;;
 	--with-sdlnet-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5030,6 +5041,47 @@ fi
 echo "$_libunity"
 
 #
+# Check for GTK if system dialogs are enabled
+#
+echocheck "gtk"
+if test "$_unix" = no || test "$_dialogs" = no || test "$_pkg_config" = no; then
+	_gtk=no
+else
+if test "$_gtk" = auto ; then
+	case $_host_os in
+		mingw*)
+			# pkgconfig and gtk are not supported on mingw
+			_gtk=no
+			;;
+		*)
+			# GTK has a lots of dependencies, update the libs and cflags var with them
+			GTK_LIBS="$GTK_LIBS `$_pkgconfig --libs gtk+-3.0 2>> "$TMPLOG"`"
+			GTK_CFLAGS="$GTK_CFLAGS `$_pkgconfig --cflags gtk+-3.0 2>> "$TMPLOG"`"
+			_gtk=no
+			cat > $TMPC << EOF
+#include <gtk/gtk.h>
+int main(void) {
+	gtk_init_check(NULL, NULL);
+	return 0;
+}
+EOF
+			cc_check $GTK_CFLAGS $GTK_LIBS && _gtk=yes
+			;;
+	esac
+fi
+if test "$_gtk" = yes ; then
+	if test "$GTK_CFLAGS" = "" || test "$GTK_LIBS" = ""; then
+		GTK_LIBS="$GTK_LIBS `$_pkgconfig --libs gtk+-3.0 2>> "$TMPLOG"`"
+		GTK_CFLAGS="$GTK_CFLAGS `$_pkgconfig --cflags gtk+-3.0 2>> "$TMPLOG"`"
+	fi
+	append_var LIBS "$GTK_LIBS"
+	append_var CXXFLAGS "$GTK_CFLAGS"
+fi
+define_in_config_h_if_yes "$_gtk" 'USE_GTK'
+fi
+echo "$_gtk"
+
+#
 # Check for FreeType2 to be present
 #
 find_freetype() {
@@ -5486,8 +5538,13 @@ else
 		_dialogs=yes
 		;;
 	*)
-		echo "no"
-		_dialogs=no
+		if test "$_gtk" = yes; then
+			echo "gtk"
+			_dialogs=yes
+		else
+			echo "no"
+			_dialogs=no
+		fi
 		;;
 	esac
 fi
