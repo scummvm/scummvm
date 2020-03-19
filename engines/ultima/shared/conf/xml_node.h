@@ -56,6 +56,9 @@ public:
 	const Common::String &reference(const Common::String &, bool &);
 	const XMLNode *subtree(const Common::String &) const;
 
+	const Common::String &id() const {
+		return _id;
+	}
 	const Common::String &value(void) const {
 		return _content;
 	}

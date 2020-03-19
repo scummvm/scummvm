@@ -83,7 +83,7 @@ const XMLNode *XMLNode::subtree(const Common::String &h) const {
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 

@@ -36,30 +36,8 @@ Config *Config::_instance;
 Config::Config() {
 	_instance = this;
 
-#ifdef TODO
-	doc = xmlParseFile(Config::CONFIG_XML_LOCATION_POINTER);
-	if (!doc) {
-		printf("Failed to read core config.xml. Assuming it is located at '%s'", Config::CONFIG_XML_LOCATION_POINTER);
-		errorFatal("error parsing config.xml");
-}
-
-	xmlXIncludeProcess(doc);
-
-	if (settings.validateXml && doc->intSubset) {
-		Common::String errorMessage;
-		xmlValidCtxt cvp;
-
-		if (verbose)
-			printf("validating config.xml\n");
-
-		cvp.userData = &errorMessage;
-		cvp.error = &accumError;
-
-		// Error changed to not fatal due to regression in libxml2
-		if (!xmlValidateDocument(&cvp, doc))
-			errorWarning("xml validation error:\n%s", errorMessage.c_str());
-	}
-#endif
+	if (!_doc.readConfigFile("data/config.xml"))
+		error("Failed to read core configuration");
 }
 
 Config::~Config() {
@@ -67,43 +45,17 @@ Config::~Config() {
 }
 
 const Config *Config::getInstance() {
-#ifdef TODO
-    if (!instance) {
-        xmlRegisterInputCallbacks(&xmlFileMatch, &fileOpen, xmlFileRead, xmlFileClose);
-        instance = new Config;
+    if (!_instance) {
+        _instance = new Config();
     }
-#endif
+
 	return _instance;
 }
 
 ConfigElement Config::getElement(const Common::String &name) const {
-#ifdef TODO
-	xmlXPathContextPtr context;
-    xmlXPathObjectPtr result;
-
-    Common::String path = "/config/" + name;
-    context = xmlXPathNewContext(doc);
-    result = xmlXPathEvalExpression(reinterpret_cast<const xmlChar *>(path.c_str()), context);
-    if(xmlXPathNodeSetIsEmpty(result->nodesetval))
-        errorFatal("no match for xpath %s\n", path.c_str());
-
-    xmlXPathFreeContext(context);
-
-    if (result->nodesetval->nodeNr > 1)
-        errorWarning("more than one match for xpath %s\n", path.c_str());
-
-    xmlNodePtr node = result->nodesetval->nodeTab[0];
-    xmlXPathFreeObject(result);
-
-    return ConfigElement(node);
-#else
-		return ConfigElement();
-#endif
+	const Shared::XMLNode *node = _doc.getNode(name);
+	return ConfigElement(node);
 }
-
-char DEFAULT_CONFIG_XML_LOCATION[] = "config.xml";
-char * Config::CONFIG_XML_LOCATION_POINTER = &DEFAULT_CONFIG_XML_LOCATION[0];
-
 
 Std::vector<Common::String> Config::getGames() {
     Std::vector<Common::String> result;
@@ -114,39 +66,10 @@ Std::vector<Common::String> Config::getGames() {
 void Config::setGame(const Common::String &name) {
 }
 
-void *Config::fileOpen(const char *filename) {
-#ifdef TODO
-    void *result;
-    Common::String pathname(u4find_conf(filename));
+/*-------------------------------------------------------------------*/
 
-    if (pathname.empty())
-        return NULL;
-    result = xmlFileOpen(pathname.c_str());
-
-    if (verbose)
-        printf("xml parser opened %s: %s\n", pathname.c_str(), result ? "success" : "failed");
-
-    return result;
-#else
-	return nullptr;
-#endif
-}
-
-void Config::accumError(void *l, const char *fmt, ...) {
-#ifdef TODO
-    Common::String* errorMessage = static_cast<Common::String *>(l);
-    char buffer[1000];
-    va_list args;
-
-    va_start(args, fmt);
-    vsnprintf(buffer, sizeof(buffer), fmt, args);
-    va_end(args);
-
-    errorMessage->append(buffer);
-#endif
-}
-
-ConfigElement::ConfigElement(xmlNodePtr xmlNode) : _node(xmlNode), _name(reinterpret_cast<const char *>(xmlNode->name)) {
+ConfigElement::ConfigElement(const Shared::XMLNode *xmlNode) :
+		_node(xmlNode), _name(xmlNode->id().c_str()) {
 }
 
 ConfigElement::ConfigElement(const ConfigElement &e) : _node(e._node), _name(e._name) {
@@ -264,7 +187,7 @@ Std::vector<ConfigElement> ConfigElement::getChildren() const {
 	Std::vector<ConfigElement> result;
 #ifdef TODO
 
-    for (xmlNodePtr child = node->children; child; child = child->next) {
+    for (Shared::XMLNode * child = node->children; child; child = child->next) {
         if (child->type == XML_ELEMENT_NODE)
             result.push_back(ConfigElement(child));
     }

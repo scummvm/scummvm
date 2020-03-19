@@ -125,6 +125,10 @@ void XMLTree::write() {
 	}
 }
 
+const XMLNode *XMLTree::getNode(const Common::String &key) const {
+	return _tree->subtree(key);
+}
+
 bool XMLTree::hasNode(const Common::String &key) const {
 	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
