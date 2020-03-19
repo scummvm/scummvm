@@ -11,7 +11,9 @@ ResidualVM: A 3D game interpreter
   7. [ Troubleshooting             ](#7-troubleshooting-known-bugs-issues)
   8. [ Debugging                   ](#8-debugging)
   9. [ Bug reports                 ](#9-bug-reports)
- 10. [ Contact                     ](#10-contact)
+ 10. [ Changelog                   ](#10-changelog)
+ 11. [ Credits                     ](#11-credits)
+ 12. [ Contact                     ](#12-contact)
 
 
 ## 1. What is ResidualVM?
@@ -548,7 +550,15 @@ Remember to always provide the following information in your bug reports:
   * Preferably also a link to a save game right before the bug happened.
 
 
-## 10. Contact
+## 10. Changelog
+
+Please refer to our extensive Changelog [here](NEWS.md).
+
+## 11. Credits
+
+Please refer to our extensive Credits list [here](AUTHORS).
+
+## 12. Contact
   * Homepage: https://www.residualvm.org/
   * Wiki: https://wiki.residualvm.org/
   * Discord: https://discord.gg/VFQjRfa
