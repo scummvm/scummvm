@@ -23,7 +23,8 @@
 #ifndef ULTIMA4_CONFIG_H
 #define ULTIMA4_CONFIG_H
 
-#include "ultima/ultima4/xml.h"
+#include "ultima/shared/conf/xml_tree.h"
+#include "ultima/shared/conf/xml_node.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {
@@ -106,6 +107,9 @@ class ConfigElement;
  * Singleton class that manages the XML configuration tree.
  */
 class Config {
+private:
+	static Config *_instance;
+	Shared::XMLTree _doc;
 public:
     static const Config *getInstance();
 public:
@@ -116,16 +120,6 @@ public:
 
     static Std::vector<Common::String> getGames();
     static void setGame(const Common::String &name);
-
-    static char * CONFIG_XML_LOCATION_POINTER;
-
-
-private:
-    static void *fileOpen(const char *filename);
-    static void accumError(void *l, const char *fmt, ...);
-
-    static Config *_instance;
-    xmlDocPtr _doc;
 };
 
 /**
@@ -133,8 +127,11 @@ private:
  * thin wrapper around the XML DOM element.
  */
 class ConfigElement {
+private:
+	const Shared::XMLNode *_node;
+	Common::String _name;
 public:
-    ConfigElement(xmlNodePtr xmlNode);
+    ConfigElement(const Shared::XMLNode *xmlNode);
     ConfigElement(const ConfigElement &e);
 	ConfigElement();
     ~ConfigElement();
@@ -151,11 +148,7 @@ public:
 
     Std::vector<ConfigElement> getChildren() const;
 
-    xmlNodePtr getNode() const { return _node; }
-
-private:
-    xmlNodePtr _node;
-    Common::String _name;
+	const Shared::XMLNode *getNode() const { return _node; }
 };
 
 } // End of namespace Ultima4

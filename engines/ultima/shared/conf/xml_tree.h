@@ -61,6 +61,7 @@ public:
 		return _readOnly;
 	}
 
+	const XMLNode *getNode(const Common::String &key) const;
 	bool hasNode(const Common::String &key) const;
 	bool checkRoot(const Common::String &key) const;
 
