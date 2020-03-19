@@ -20,25 +20,14 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/misc.h"
-#include "ultima/nuvie/conf/xml_tree.h"
-#include "ultima/nuvie/conf/xml_node.h"
-#include "ultima/shared/std/string.h"
+#include "ultima/shared/conf/xml_tree.h"
+#include "ultima/shared/conf/xml_node.h"
+#include "ultima/shared/std/misc.h"
 #include "common/algorithm.h"
 #include "common/file.h"
 
 namespace Ultima {
-namespace Nuvie {
-
-Std::string to_uppercase(Std::string s) {
-	Std::string str = s;
-	Std::string::iterator X;
-	for (X = str.begin(); X != str.end(); ++X)
-		*X = Std::toUpper(*X);
-
-	return str;
-}
+namespace Shared {
 
 XMLTree::XMLTree()
 	: tree(new XMLNode("config")), root("config"), is_file(false),
@@ -46,7 +35,7 @@ XMLTree::XMLTree()
 
 }
 
-XMLTree::XMLTree(Std::string fname, Std::string root_)
+XMLTree::XMLTree(const Common::String &fname, const Common::String &root_)
 	: tree(new XMLNode(root_)), root(root_), is_file(true),
 	  readonly(false) {
 	readConfigFile(fname);
@@ -56,7 +45,7 @@ XMLTree::~XMLTree() {
 	delete tree;
 }
 
-void XMLTree::clear(Std::string root_) {
+void XMLTree::clear(const Common::String &root_) {
 	delete tree;
 	tree = new XMLNode(root_);
 	root = root_;
@@ -64,7 +53,7 @@ void XMLTree::clear(Std::string root_) {
 	readonly = false;
 }
 
-bool XMLTree::readConfigFile(Std::string fname) {
+bool XMLTree::readConfigFile(const Common::String &fname) {
 	Common::File f;
 
 //	if (!FileSystem::get_instance()->rawopen(f, fname, true))
@@ -72,13 +61,13 @@ bool XMLTree::readConfigFile(Std::string fname) {
 // mode = Std::ios::in;
 
 	if (f.open(fname)) {
-		DEBUG(0, LEVEL_CRITICAL, "Error opening config file");
+		warning("Error opening config file");
 		return false;
 	}
 
-	Std::string sbuf, line;
+	Common::String sbuf, line;
 	while (!f.err() && !f.eos()) {
-		line = readLine(&f);
+		line = f.readLine();
 		sbuf += line;
 	}
 
@@ -92,26 +81,26 @@ bool XMLTree::readConfigFile(Std::string fname) {
 	return true;
 }
 
-bool XMLTree::readConfigString(Std::string s) {
+bool XMLTree::readConfigString(const Common::String &s) {
 	is_file = false;
 
-	Std::string sbuf(s);
+	Common::String sbuf(s);
 	size_t nn = 0;
 	while (Common::isSpace(s[nn]))
 		++nn;
 
 	if (s[nn] != '<') {
-		DEBUG(0, LEVEL_ERROR, "expected '<' while reading config file, found %c\n", s[nn]);
+		warning("expected '<' while reading config file, found %c\n", s[nn]);
 		return false;
 	}
 	++nn;
 
-	tree->xmlparse(sbuf, nn);
+	tree->xmlParse(sbuf, nn);
 
 	return true;
 }
 
-Std::string XMLTree::dump() {
+Common::String XMLTree::dump() {
 	return tree->dump();
 }
 
@@ -122,13 +111,13 @@ void XMLTree::write() {
 	Common::DumpFile df;
 
 	if (df.open(filename)) {
-		Std::string content = dump();
+		Common::String content = dump();
 		df.write(content.c_str(), content.size());
 		df.close();
 	}
 }
 
-bool XMLTree::hasNode(Std::string key) const {
+bool XMLTree::hasNode(Common::String key) const {
 	const XMLNode *sub = tree->subtree(key);
 	if (sub)
 		return true;
@@ -136,12 +125,12 @@ bool XMLTree::hasNode(Std::string key) const {
 		return false;
 }
 
-bool XMLTree::checkRoot(Std::string key) const {
-	Std::string k = key.substr(0, key.find('/'));
+bool XMLTree::checkRoot(Common::String key) const {
+	Common::String k = key.substr(0, key.find('/'));
 	return (k == root);
 }
 
-void XMLTree::value(Std::string key, Std::string &ret,
+void XMLTree::value(Common::String key, Common::String &ret,
                     const char *defaultvalue) const {
 	const XMLNode *sub = tree->subtree(key);
 	if (sub)
@@ -150,7 +139,7 @@ void XMLTree::value(Std::string key, Std::string &ret,
 		ret = defaultvalue;
 }
 
-void XMLTree::value(Std::string key, int &ret,
+void XMLTree::value(Common::String key, int &ret,
                     int defaultvalue) const {
 	const XMLNode *sub = tree->subtree(key);
 	if (sub)
@@ -159,48 +148,48 @@ void XMLTree::value(Std::string key, int &ret,
 		ret = defaultvalue;
 }
 
-void XMLTree::value(Std::string key, bool &ret,
+void XMLTree::value(Common::String key, bool &ret,
                     bool defaultvalue) const {
 	const XMLNode *sub = tree->subtree(key);
 	if (sub)
-		ret = (to_uppercase(sub->value()) == "YES");
+		ret = sub->value().equalsIgnoreCase("YES");
 	else
 		ret = defaultvalue;
 }
 
-void XMLTree::set(Std::string key, Std::string value) {
-	tree->xmlassign(key, value);
+void XMLTree::set(Common::String key, Common::String value) {
+	tree->xmlAssign(key, value);
 }
 
-void XMLTree::set(Std::string key, const char *value) {
-	tree->xmlassign(key, value);
+void XMLTree::set(Common::String key, const char *value) {
+	tree->xmlAssign(key, value);
 }
 
-void XMLTree::set(Std::string key, int value) {
+void XMLTree::set(Common::String key, int value) {
 	char buf[32];
 	snprintf(buf, 32, "%d", value);
 	set(key, buf);
 }
 
-void XMLTree::set(Std::string key, bool value) {
+void XMLTree::set(Common::String key, bool value) {
 	if (value)
 		set(key, "yes");
 	else
 		set(key, "no");
 }
 
-Std::vector<Std::string> XMLTree::listKeys(Std::string key, bool longformat) {
-	Std::vector<Std::string> keys;
+Common::Array<Common::String> XMLTree::listKeys(Common::String key, bool longformat) {
+	Common::Array<Common::String> keys;
 	const XMLNode *sub = tree->subtree(key);
 	if (sub)
-		sub->listkeys(key, keys, longformat);
+		sub->listKeys(key, keys, longformat);
 
 	return keys;
 }
 
-void XMLTree::getSubkeys(KeyTypeList &ktl, Std::string basekey) {
-	tree->searchpairs(ktl, basekey, Std::string(), 0);
+void XMLTree::getSubkeys(KeyTypeList &ktl, Common::String basekey) {
+	tree->searchPairs(ktl, basekey, Common::String(), 0);
 }
 
-} // End of namespace Nuvie
+} // End of namespace Shared
 } // End of namespace Ultima

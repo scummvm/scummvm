@@ -20,32 +20,35 @@
  *
  */
 
-#ifndef NUVIE_CONF_XML_TREE_H
-#define NUVIE_CONF_XML_TREE_H
+#ifndef SHARED_CONF_XML_TREE_H
+#define SHARED_CONF_XML_TREE_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
-namespace Nuvie {
-
-Std::string to_uppercase(Std::string s);
+namespace Shared {
 
 class XMLNode;
 
 class XMLTree {
+private:
+	XMLNode *tree;
+	Common::String filename;
+	Common::String root;
+	bool is_file;
+	bool readonly;
 public:
 	XMLTree();
-	XMLTree(Std::string fname, Std::string root);
+	XMLTree(const Common::String &fname, const Common::String &root);
 	~XMLTree();
 
-	bool readConfigFile(Std::string fname);
-	bool readConfigString(Std::string s);
+	bool readConfigFile(const Common::String &fname);
+	bool readConfigString(const Common::String &s);
 
-	void clear(Std::string root);
+	void clear(const Common::String &root);
 
-	Std::string dump();
+	Common::String dump();
 	void write();
 
 	void setReadonly() {
@@ -55,39 +58,32 @@ public:
 		return readonly;
 	}
 
-	bool hasNode(Std::string key) const;
-	bool checkRoot(Std::string key) const;
+	bool hasNode(Common::String key) const;
+	bool checkRoot(Common::String key) const;
 
 	// get value
-	void value(Std::string key, Std::string &ret,
+	void value(Common::String key, Common::String &ret,
 	           const char *defaultvalue = "") const;
-	void value(Std::string key, int &ret,
+	void value(Common::String key, int &ret,
 	           int defaultvalue = 0) const;
-	void value(Std::string key, bool &ret,
+	void value(Common::String key, bool &ret,
 	           bool defaultvalue = false) const;
 
 	// set value
-	void set(Std::string key, Std::string value);
-	void set(Std::string key, const char *value);
-	void set(Std::string key, int value);
-	void set(Std::string key, bool value);
+	void set(Common::String key, Common::String value);
+	void set(Common::String key, const char *value);
+	void set(Common::String key, int value);
+	void set(Common::String key, bool value);
 
-	Std::vector<Std::string> listKeys(Std::string key, bool longformat = false);
+	Common::Array<Common::String> listKeys(Common::String key, bool longformat = false);
 
-	typedef Std::pair<Std::string, Std::string> KeyType;
-	typedef Std::vector<KeyType> KeyTypeList;
+	typedef Std::pair<Common::String, Common::String> KeyType;
+	typedef Common::Array<KeyType> KeyTypeList;
 
-	void getSubkeys(KeyTypeList &ktl, Std::string basekey);
-
-private:
-	XMLNode *tree;
-	Std::string filename;
-	Std::string root;
-	bool is_file;
-	bool readonly;
+	void getSubkeys(KeyTypeList &ktl, Common::String basekey);
 };
 
-} // End of namespace Nuvie
+} // End of namespace Shared
 } // End of namespace Ultima
 
 #endif
