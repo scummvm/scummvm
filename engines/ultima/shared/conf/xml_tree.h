@@ -24,6 +24,7 @@
 #define SHARED_CONF_XML_TREE_H
 
 #include "common/str.h"
+#include "common/stream.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {
@@ -40,10 +41,12 @@ private:
 	bool _readOnly;
 public:
 	XMLTree();
-	XMLTree(const Common::String &fname, const Common::String &root);
+	XMLTree(const Common::String &fname, const Common::String &root = "config");
+	XMLTree(Common::SeekableReadStream *stream, const Common::String &root = "config");
 	~XMLTree();
 
 	bool readConfigFile(const Common::String &fname);
+	bool readConfigStream(Common::SeekableReadStream *stream);
 	bool readConfigString(const Common::String &s);
 
 	void clear(const Common::String &root);

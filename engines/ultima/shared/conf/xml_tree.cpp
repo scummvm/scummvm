@@ -30,14 +30,20 @@ namespace Ultima {
 namespace Shared {
 
 XMLTree::XMLTree()
-	: _tree(new XMLNode("config")), _root("config"), _isFile(false),
-	  _readOnly(false) {
+		: _tree(new XMLNode("config")), _root("config"), _isFile(false),
+		_readOnly(false) {
 }
 
 XMLTree::XMLTree(const Common::String &fname, const Common::String &root)
-	: _tree(new XMLNode(root)), _root(root), _isFile(true),
+		: _tree(new XMLNode(root)), _root(root), _isFile(true),
 	  _readOnly(false) {
 	readConfigFile(fname);
+}
+
+XMLTree::XMLTree(Common::SeekableReadStream *stream, const Common::String &root)
+		: _tree(new XMLNode(root)), _root(root), _isFile(true),
+		_readOnly(false) {
+	readConfigStream(stream);
 }
 
 XMLTree::~XMLTree() {
@@ -60,24 +66,31 @@ bool XMLTree::readConfigFile(const Common::String &fname) {
 		return false;
 	}
 
-	Common::String sbuf, line;
-	while (!f.err() && !f.eos()) {
-		line = f.readLine();
-		sbuf += line;
-	}
+	bool result = readConfigStream(&f);
 
 	f.close();
+
+	_filename = fname;
+	return result;
+}
+
+bool XMLTree::readConfigStream(Common::SeekableReadStream *stream) {
+	Common::String sbuf, line;
+	while (!stream->err() && !stream->eos()) {
+		line = stream->readLine();
+		sbuf += line;
+	}
 
 	if (!readConfigString(sbuf))
 		return false;
 
-	_isFile = true; // readConfigString sets is_file = false
-	_filename = fname;
+	_isFile = true;		// readConfigString sets _isFile = false
 	return true;
 }
 
 bool XMLTree::readConfigString(const Common::String &s) {
 	_isFile = false;
+	_filename.clear();
 
 	Common::String sbuf(s);
 	size_t nn = 0;
