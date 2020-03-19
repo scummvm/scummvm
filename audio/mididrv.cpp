@@ -534,7 +534,7 @@ void MidiDriver_BASE::midiDumpFinish() {
 	midiDumpFile->close();
 	const char msg[] = "Ending MIDI dump, created 'dump.mid'";
 	g_system->displayMessageOnOSD(_(msg));		//TODO: why it doesn't appear?
-	debug(_(msg));
+	debug("%s", msg);
 }
 
 MidiDriver_BASE::MidiDriver_BASE() {
