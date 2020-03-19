@@ -33,11 +33,11 @@ class XMLNode;
 
 class XMLTree {
 private:
-	XMLNode *tree;
-	Common::String filename;
-	Common::String root;
-	bool is_file;
-	bool readonly;
+	XMLNode *_tree;
+	Common::String _filename;
+	Common::String _root;
+	bool _isFile;
+	bool _readOnly;
 public:
 	XMLTree();
 	XMLTree(const Common::String &fname, const Common::String &root);
@@ -52,35 +52,33 @@ public:
 	void write();
 
 	void setReadonly() {
-		readonly = true;
+		_readOnly = true;
 	}
 	bool isReadonly() const {
-		return readonly;
+		return _readOnly;
 	}
 
-	bool hasNode(Common::String key) const;
-	bool checkRoot(Common::String key) const;
+	bool hasNode(const Common::String &key) const;
+	bool checkRoot(const Common::String &key) const;
 
 	// get value
-	void value(Common::String key, Common::String &ret,
-	           const char *defaultvalue = "") const;
-	void value(Common::String key, int &ret,
-	           int defaultvalue = 0) const;
-	void value(Common::String key, bool &ret,
-	           bool defaultvalue = false) const;
+	void value(const Common::String &key, Common::String &ret,
+		const char *defaultvalue = "") const;
+	void value(const Common::String &key, int &ret, int defaultvalue = 0) const;
+	void value(const Common::String &key, bool &ret, bool defaultvalue = false) const;
 
 	// set value
-	void set(Common::String key, Common::String value);
-	void set(Common::String key, const char *value);
-	void set(Common::String key, int value);
-	void set(Common::String key, bool value);
+	void set(const Common::String &key, const Common::String &value);
+	void set(const Common::String &key, const char *value);
+	void set(const Common::String &key, int value);
+	void set(const Common::String &key, bool value);
 
-	Common::Array<Common::String> listKeys(Common::String key, bool longformat = false);
+	Common::Array<Common::String> listKeys(const Common::String &key, bool longformat = false);
 
 	typedef Std::pair<Common::String, Common::String> KeyType;
 	typedef Common::Array<KeyType> KeyTypeList;
 
-	void getSubkeys(KeyTypeList &ktl, Common::String basekey);
+	void getSubkeys(KeyTypeList &ktl, const Common::String &basekey);
 };
 
 } // End of namespace Shared

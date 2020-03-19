@@ -30,35 +30,30 @@ namespace Ultima {
 namespace Shared {
 
 XMLTree::XMLTree()
-	: tree(new XMLNode("config")), root("config"), is_file(false),
-	  readonly(false) {
-
+	: _tree(new XMLNode("config")), _root("config"), _isFile(false),
+	  _readOnly(false) {
 }
 
-XMLTree::XMLTree(const Common::String &fname, const Common::String &root_)
-	: tree(new XMLNode(root_)), root(root_), is_file(true),
-	  readonly(false) {
+XMLTree::XMLTree(const Common::String &fname, const Common::String &root)
+	: _tree(new XMLNode(root)), _root(root), _isFile(true),
+	  _readOnly(false) {
 	readConfigFile(fname);
 }
 
 XMLTree::~XMLTree() {
-	delete tree;
+	delete _tree;
 }
 
-void XMLTree::clear(const Common::String &root_) {
-	delete tree;
-	tree = new XMLNode(root_);
-	root = root_;
-	is_file = false;
-	readonly = false;
+void XMLTree::clear(const Common::String &root) {
+	delete _tree;
+	_tree = new XMLNode(root);
+	_root = root;
+	_isFile = false;
+	_readOnly = false;
 }
 
 bool XMLTree::readConfigFile(const Common::String &fname) {
 	Common::File f;
-
-//	if (!FileSystem::get_instance()->rawopen(f, fname, true))
-//		return false;
-// mode = Std::ios::in;
 
 	if (f.open(fname)) {
 		warning("Error opening config file");
@@ -76,13 +71,13 @@ bool XMLTree::readConfigFile(const Common::String &fname) {
 	if (!readConfigString(sbuf))
 		return false;
 
-	is_file = true; // readConfigString sets is_file = false
-	filename = fname;
+	_isFile = true; // readConfigString sets is_file = false
+	_filename = fname;
 	return true;
 }
 
 bool XMLTree::readConfigString(const Common::String &s) {
-	is_file = false;
+	_isFile = false;
 
 	Common::String sbuf(s);
 	size_t nn = 0;
@@ -95,100 +90,100 @@ bool XMLTree::readConfigString(const Common::String &s) {
 	}
 	++nn;
 
-	tree->xmlParse(sbuf, nn);
+	_tree->xmlParse(sbuf, nn);
 
 	return true;
 }
 
 Common::String XMLTree::dump() {
-	return tree->dump();
+	return _tree->dump();
 }
 
 void XMLTree::write() {
-	if (!is_file || readonly)
+	if (!_isFile || _readOnly)
 		return;
 
 	Common::DumpFile df;
 
-	if (df.open(filename)) {
+	if (df.open(_filename)) {
 		Common::String content = dump();
 		df.write(content.c_str(), content.size());
 		df.close();
 	}
 }
 
-bool XMLTree::hasNode(Common::String key) const {
-	const XMLNode *sub = tree->subtree(key);
+bool XMLTree::hasNode(const Common::String &key) const {
+	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
 		return true;
 	else
 		return false;
 }
 
-bool XMLTree::checkRoot(Common::String key) const {
+bool XMLTree::checkRoot(const Common::String &key) const {
 	Common::String k = key.substr(0, key.find('/'));
-	return (k == root);
+	return (k == _root);
 }
 
-void XMLTree::value(Common::String key, Common::String &ret,
+void XMLTree::value(const Common::String &key, Common::String &ret,
                     const char *defaultvalue) const {
-	const XMLNode *sub = tree->subtree(key);
+	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
 		ret = sub->value();
 	else
 		ret = defaultvalue;
 }
 
-void XMLTree::value(Common::String key, int &ret,
+void XMLTree::value(const Common::String &key, int &ret,
                     int defaultvalue) const {
-	const XMLNode *sub = tree->subtree(key);
+	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
 		ret = strtol(sub->value().c_str(), 0, 0);
 	else
 		ret = defaultvalue;
 }
 
-void XMLTree::value(Common::String key, bool &ret,
+void XMLTree::value(const Common::String &key, bool &ret,
                     bool defaultvalue) const {
-	const XMLNode *sub = tree->subtree(key);
+	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
 		ret = sub->value().equalsIgnoreCase("YES");
 	else
 		ret = defaultvalue;
 }
 
-void XMLTree::set(Common::String key, Common::String value) {
-	tree->xmlAssign(key, value);
+void XMLTree::set(const Common::String &key, const Common::String &value) {
+	_tree->xmlAssign(key, value);
 }
 
-void XMLTree::set(Common::String key, const char *value) {
-	tree->xmlAssign(key, value);
+void XMLTree::set(const Common::String &key, const char *value) {
+	_tree->xmlAssign(key, value);
 }
 
-void XMLTree::set(Common::String key, int value) {
+void XMLTree::set(const Common::String &key, int value) {
 	char buf[32];
 	snprintf(buf, 32, "%d", value);
 	set(key, buf);
 }
 
-void XMLTree::set(Common::String key, bool value) {
+void XMLTree::set(const Common::String &key, bool value) {
 	if (value)
 		set(key, "yes");
 	else
 		set(key, "no");
 }
 
-Common::Array<Common::String> XMLTree::listKeys(Common::String key, bool longformat) {
+Common::Array<Common::String> XMLTree::listKeys(const Common::String &key, bool longformat) {
 	Common::Array<Common::String> keys;
-	const XMLNode *sub = tree->subtree(key);
+	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
 		sub->listKeys(key, keys, longformat);
 
 	return keys;
 }
 
-void XMLTree::getSubkeys(KeyTypeList &ktl, Common::String basekey) {
-	tree->searchPairs(ktl, basekey, Common::String(), 0);
+void XMLTree::getSubkeys(KeyTypeList &ktl, const Common::String &basekey) {
+	_tree->searchPairs(ktl, basekey, Common::String(), 0);
 }
 
 } // End of namespace Shared
