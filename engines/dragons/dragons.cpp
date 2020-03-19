@@ -1639,7 +1639,7 @@ void DragonsEngine::loadingScreenUpdate() {
 	if (_loadingScreenState->loadingFlamesUpdateCounter == 0) {
 		_loadingScreenState->loadingFlamesUpdateCounter = 4;
 		for (int i = 0; i < 10 ; i++) {
-			flameYOffset = _loadingScreenState->baseYOffset - flameOffsetTbl[(i + _loadingScreenState->flameOffsetIdx) % 27];
+			flameYOffset = _loadingScreenState->baseYOffset - flameOffsetTbl[(i + _loadingScreenState->flameOffsetIdx) % 26];
 			if (_loadingScreenState->flames[i]->_y_pos >= -0xb) {
 				_loadingScreenState->flames[i]->_y_pos = flameYOffset;
 			}
@@ -1649,7 +1649,7 @@ void DragonsEngine::loadingScreenUpdate() {
 				quad->points[1].y = flameYOffset + 2;
 			}
 		}
-		_loadingScreenState->flameOffsetIdx = (_loadingScreenState->flameOffsetIdx + 1) % 27;
+		_loadingScreenState->flameOffsetIdx = (_loadingScreenState->flameOffsetIdx + 1) % 26;
 	} else {
 		_loadingScreenState->loadingFlamesUpdateCounter--;
 	}

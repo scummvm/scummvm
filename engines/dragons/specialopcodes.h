@@ -209,6 +209,7 @@ private:
 	void pizzaMakerStopWorking();
 
 	void clearSceneUpdateFunction();
+	void mapTransition(uint16 mode);
 
 };
 

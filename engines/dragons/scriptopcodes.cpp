@@ -908,7 +908,6 @@ void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 	_vm->_sound->PauseCDMusic();
 
 	if (newSceneID != 0) {
-		// load scene here.
 		_vm->_scene->_mapTransitionEffectSceneID = _vm->_scene->getSceneId();
 		_vm->_scene->setSceneId(newSceneID);
 		_vm->_flickerInitialSceneDirection = flickerDirection;
