@@ -5,6 +5,8 @@ MODULE_OBJS := \
 	shared/actions/action.o \
 	shared/actions/huh.o \
 	shared/actions/pass.o \
+	shared/conf/xml_node.o \
+	shared/conf/xml_tree.o \
 	shared/core/base_object.o \
 	shared/core/character.o \
 	shared/core/file.o \
@@ -221,8 +223,6 @@ MODULE_OBJS := \
 	nuvie/actors/wou_actor.o \
 	nuvie/conf/configuration.o \
 	nuvie/conf/misc.o \
-	nuvie/conf/xml_node.o \
-	nuvie/conf/xml_tree.o \
 	nuvie/core/anim_manager.o \
 	nuvie/core/book.o \
 	nuvie/core/converse.o \
