@@ -1,2 +1,3 @@
 Run <Obey$Dir>.!Boot
 Filer_Opendir <ResidualVM$Dir>.docs
+IfThere <ResidualVM$Dir>.FindHelp Then Run <ResidualVM$Dir>.FindHelp

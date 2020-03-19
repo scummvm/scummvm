@@ -36,6 +36,9 @@ ifdef DYNAMIC_MODULES
 endif
 	mkdir -p $(APP_NAME)/docs
 	cp ${srcdir}/dists/riscos/!Help,feb $(APP_NAME)/!Help,feb
+ifdef TOKENIZE
+	$(TOKENIZE) ${srcdir}/dists/riscos/FindHelp,fd1 -out $(APP_NAME)/FindHelp,ffb
+endif
 	@$(foreach file, $(DIST_FILES_DOCS) $(srcdir)/doc/QuickStart, echo '   ' ICONV '  ' $(APP_NAME)/docs/$(notdir $(file)),fff;iconv --to-code=$(ENCODING) $(file) > $(APP_NAME)/docs/$(notdir $(file)),fff;)
 
 clean: riscosclean
