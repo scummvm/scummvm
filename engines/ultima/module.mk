@@ -361,6 +361,7 @@ MODULE_OBJS := \
 	ultima8/graphics/anim_dat.o \
 	ultima8/graphics/base_soft_render_surface.o \
 	ultima8/graphics/frame_id.o \
+	ultima8/graphics/fade_to_modal_process.o \
 	ultima8/graphics/gump_shape_archive.o \
 	ultima8/graphics/inverter_process.o \
 	ultima8/graphics/main_shape_archive.o \

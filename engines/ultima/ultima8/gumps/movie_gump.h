@@ -52,7 +52,7 @@ public:
 
 	bool OnKeyDown(int key, int mod) override;
 
-	static ProcId U8MovieViewer(RawArchive *skf, bool introMusicHack = false);
+	static ProcId U8MovieViewer(RawArchive *skf, bool fade, bool introMusicHack = false);
 
 	bool loadData(IDataSource *ids);
 protected:

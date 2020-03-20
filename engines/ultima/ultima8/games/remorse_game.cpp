@@ -107,11 +107,11 @@ bool RemorseGame::startInitialUsecode(int saveSlot) {
 }
 
 
-ProcId RemorseGame::playIntroMovie() {
+ProcId RemorseGame::playIntroMovie(bool fade) {
 	return 0;
 }
 
-ProcId RemorseGame::playEndgameMovie() {
+ProcId RemorseGame::playEndgameMovie(bool fade) {
 	return 0;
 }
 

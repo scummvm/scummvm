@@ -25,6 +25,7 @@
 #include "ultima/ultima8/games/u8_game.h"
 
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/fade_to_modal_process.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -153,7 +154,7 @@ bool U8Game::startInitialUsecode(int saveSlot) {
 }
 
 
-ProcId U8Game::playIntroMovie() {
+ProcId U8Game::playIntroMovie(bool fade) {
 	GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
@@ -173,10 +174,10 @@ ProcId U8Game::playIntroMovie() {
 	}
 
 	RawArchive *flex = new RawArchive(skf);
-	return MovieGump::U8MovieViewer(flex, true);
+	return MovieGump::U8MovieViewer(flex, fade, true);
 }
 
-ProcId U8Game::playEndgameMovie() {
+ProcId U8Game::playEndgameMovie(bool fade) {
 	Std::string filename = "@game/static/endgame.skf";
 	FileSystem *filesys = FileSystem::get_instance();
 	IDataSource *skf = filesys->ReadFile(filename);
@@ -186,7 +187,7 @@ ProcId U8Game::playEndgameMovie() {
 	}
 
 	RawArchive *flex = new RawArchive(skf);
-	return MovieGump::U8MovieViewer(flex);
+	return MovieGump::U8MovieViewer(flex, fade);
 }
 
 void U8Game::playCredits() {
@@ -213,9 +214,9 @@ void U8Game::playCredits() {
 	if (musicproc) musicproc->playMusic(51); // CONSTANT!
 
 	CreditsGump *gump = new CreditsGump(text);
-	gump->InitGump(0);
 	gump->SetFlagWhenFinished("quotes");
-	gump->setRelativePosition(Gump::CENTER);
+	FadeToModalProcess *p = new FadeToModalProcess(gump);
+	Kernel::get_instance()->addProcess(p);
 }
 
 void U8Game::playQuotes() {
@@ -233,9 +234,9 @@ void U8Game::playQuotes() {
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) musicproc->playMusic(113); // CONSTANT!
 
-	Gump *gump = new CreditsGump(text, 80);
-	gump->InitGump(0);
-	gump->setRelativePosition(Gump::CENTER);
+	CreditsGump *gump = new CreditsGump(text, 80);
+	FadeToModalProcess *p = new FadeToModalProcess(gump);
+	Kernel::get_instance()->addProcess(p);
 }
 
 

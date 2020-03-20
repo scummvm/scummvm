@@ -20,40 +20,40 @@
  *
  */
 
-#ifndef ULTIMA8_GAMES_U8GAME_H
-#define ULTIMA8_GAMES_U8GAME_H
+#ifndef ULTIMA8_GRAPHICS_FADETOMODALPROCESS_H
+#define ULTIMA8_GRAPHICS_FADETOMODALPROCESS_H
 
-#include "ultima/ultima8/games/game.h"
+#include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/gumps/modal_gump.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
+class PaletteFaderProcess;
 
-class U8Game: public Game {
+class FadeToModalProcess : public Process {
+
+	enum FadeToModalState {
+		FS_OpenFadeOut,
+		FS_ShowGump,
+		FS_CloseFadeIn,
+		FS_Finshed
+	} _nextState;
+
+	ModalGump * _modal;
+	PaletteFaderProcess * _fader;
+
 public:
-	U8Game();
-	~U8Game() override;
+	// p_dynamic_class stuff
+	ENABLE_RUNTIME_CLASSTYPE()
+	FadeToModalProcess(ModalGump *modal);
+	~FadeToModalProcess(void) override;
 
-	//! load/init game's data files
-	bool loadFiles() override;
+	void onWakeUp() override;
 
-	//! initialize new game
-	bool startGame() override;
+	void run() override;
 
-	//! start initial usecode
-	bool startInitialUsecode(int saveSlot) override;
-
-	//! write game-specific savegame info (avatar stats, equipment, ...)
-	void writeSaveInfo(ODataSource *ods) override;
-
-	ProcId playIntroMovie(bool fade) override;
-	ProcId playEndgameMovie(bool fade) override;
-	void playCredits() override;
-	void playQuotes() override;
-
-protected:
-	Std::string getCreditText(IDataSource *ids);
 };
 
 } // End of namespace Ultima8
