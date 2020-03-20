@@ -231,6 +231,7 @@ void FontManager::drawTextDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2) 
 	drawBoxChar(x2, y1, kTileIndexTopRight);
 	drawBoxChar(x1, y2, kTileIndexBottomLeft);
 	drawBoxChar(x2, y2, kTileIndexBottomRight);
+	_numTextEntries++;
 }
 
 void FontManager::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {

@@ -1329,80 +1329,78 @@ void SpecialOpcodes::mapTransition(uint16 mode) {
 			0x2d, 0x30, 0x31
 	};
 
-	bool hasDoneFade = false;
-	uint16 state = _vm->getINI(0x1e)->objectState;
-	if (state == 0) {
-		state = 0xc;
+	uint16 targetLocation = _vm->getINI(0x1e)->objectState;
+	if (targetLocation == 0) {
+		targetLocation = 0xc;
 		for (int i = 1; i < 0xd; i++) {
 			if (_vm->_scene->_mapTransitionEffectSceneID < mapSceneIdTbl[i]) {
-				state = i - 1;
+				targetLocation = i - 1;
 				break;
 			}
 		}
 	}
 
-	_vm->_cursor->updatePosition(mapLookupTbl[state * 2], mapLookupTbl[state * 2 + 1]);
+	_vm->_cursor->updatePosition(mapLookupTbl[targetLocation * 2], mapLookupTbl[targetLocation * 2 + 1]);
 	_vm->setFlags(ENGINE_FLAG_20);
 
-	int32 uVar14 = (_vm->_cursor->_y << 0x10) >> 4;
-	int32 uVar6 = (DRAGONS_SCREEN_HEIGHT - _vm->_cursor->_y) * 0x10000 >> 4;
-	int32 uVar2 = _vm->_cursor->_x;
-	int32 uVar3 = (DRAGONS_SCREEN_WIDTH - uVar2) * 0x10000 >> 4;
+	int16 cursorX = _vm->_cursor->_x;
+	int16 cursorY = _vm->_cursor->_y;
+
+	int32 topIncrement = (cursorY << 0x10) >> 4;
+	int32 bottomIncrement = (DRAGONS_SCREEN_HEIGHT - cursorY) * 0x10000 >> 4;
+	int32 rightIncrement = (DRAGONS_SCREEN_WIDTH - cursorX) * 0x10000 >> 4;
 
 	if (mode == 0) { //Close map
 		FlatQuad *topQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0x140,0,0x140,0,0,0,1,4,0));
 		FlatQuad *bottomQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,200,0x140,200,0x140,200,0,200,1,4,0));
 		FlatQuad *leftQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0,0,0,200,0,200,1,4,0));
 		FlatQuad *rightQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0x140,0,0x140,0,0x140,200,0x140,200,1,4,0));
-		int32 iVar10 = topQuad->points[3].y << 0x10;
-		int32 iVar13 = bottomQuad->points[0].y << 0x10;
-		int32 iVar11 = rightQuad->points[0].x << 0x10;
-		int32 iVar12 = leftQuad->points[1].x << 0x10;
+		int32 topY = topQuad->points[3].y << 0x10;
+		int32 bottomY = bottomQuad->points[0].y << 0x10;
+		int32 rightX = rightQuad->points[0].x << 0x10;
+		int32 leftX = leftQuad->points[1].x << 0x10;
 
-
-
-		while (iVar10 < (_vm->_cursor->_y << 0x10)) {
-			iVar10 = iVar10 + uVar14;
-			iVar13 = iVar13 - uVar6;
-			iVar12 = iVar12 + uVar2 * 0x1000;
-			topQuad->points[3].y = iVar10 >> 0x10;
-			topQuad->points[2].y = iVar10 >> 0x10;
-			bottomQuad->points[0].y = iVar13 >> 0x10;
-			bottomQuad->points[1].y = iVar13 >> 0x10;
-			leftQuad->points[1].x = iVar12 >> 0x10;
-			leftQuad->points[3].x = iVar12 >> 0x10;
-			iVar11 = iVar11 - uVar3;
-			rightQuad->points[0].x = iVar11 >> 0x10;
-			rightQuad->points[2].x = iVar11 >> 0x10;
+		while (topY < (cursorY << 0x10)) {
+			topY = topY + topIncrement;
+			bottomY = bottomY - bottomIncrement;
+			leftX = leftX + cursorX * 0x1000;
+			topQuad->points[3].y = topY >> 0x10;
+			topQuad->points[2].y = topY >> 0x10;
+			bottomQuad->points[0].y = bottomY >> 0x10;
+			bottomQuad->points[1].y = bottomY >> 0x10;
+			leftQuad->points[1].x = leftX >> 0x10;
+			leftQuad->points[3].x = leftX >> 0x10;
+			rightX = rightX - rightIncrement;
+			rightQuad->points[0].x = rightX >> 0x10;
+			rightQuad->points[2].x = rightX >> 0x10;
 			_vm->waitForFrames(1);
 		}
 
 		// fade_related_calls_with_1f();
 	} else if (mode == 1) { // Open map
-		int16 cursorX = _vm->_cursor->_x;
-		int16 cursorY = _vm->_cursor->_y;
 		FlatQuad *topQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0x140,0,0x140,cursorY,0,cursorY,1,4,0));
-		FlatQuad *topQuad1 = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,cursorY,0x140,cursorY,0x140,200,0,200,1,4,0));
-		FlatQuad *bottomQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,cursorX,0,cursorX,200,0,200,1,4,0));
+		FlatQuad *bottomQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, cursorY, 0x140, cursorY, 0x140, 200, 0, 200, 1, 4, 0));
+		FlatQuad *leftQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, 0, cursorX, 0, cursorX, 200, 0, 200, 1, 4, 0));
 		FlatQuad *rightQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(cursorX,0,0x140,0,0x140,200,cursorX,200,1,4,0));
-		int32 iVar10 = topQuad->points[3].y << 0x10;
-		int32 iVar11 = topQuad1->points[0].y << 0x10;
-		int32 iVar12 = bottomQuad->points[1].x << 0x10;
-		int32 iVar13 = rightQuad->points[0].x << 0x10;
+		int32 topY = topQuad->points[3].y << 0x10;
+		int32 bottomY = bottomQuad->points[0].y << 0x10;
+		int32 leftX = leftQuad->points[1].x << 0x10;
+		int32 rightX = rightQuad->points[0].x << 0x10;
 		_vm->waitForFrames(2);
-		while (0 < iVar10) {
-			iVar10 = iVar10 - uVar14;
-			iVar11 = iVar11 + uVar6;
-			iVar12 = iVar12 + uVar2 * -0x1000;
-			topQuad->points[3].y = iVar10 >> 0x10;
-			topQuad->points[2].y = iVar10 >> 0x10;
-			topQuad1->points[0].y = iVar11 >> 0x10;
-			topQuad1->points[1].y = iVar11 >> 0x10;
-			bottomQuad->points[1].x = iVar12 >> 0x10;
-			bottomQuad->points[3].x = iVar12 >> 0x10;
-			iVar13 = iVar13 + uVar3;
-			rightQuad->points[0].x = iVar13 >> 0x10;
-			rightQuad->points[2].x = iVar13 >> 0x10;
+		bool hasDoneFade = false;
+		while (0 < topY) {
+			topY = topY - topIncrement;
+			bottomY = bottomY + bottomIncrement;
+			leftX = leftX + cursorX * -0x1000;
+			topQuad->points[3].y = topY >> 0x10;
+			topQuad->points[2].y = topY >> 0x10;
+			bottomQuad->points[0].y = bottomY >> 0x10;
+			bottomQuad->points[1].y = bottomY >> 0x10;
+			leftQuad->points[1].x = leftX >> 0x10;
+			leftQuad->points[3].x = leftX >> 0x10;
+			rightX = rightX + rightIncrement;
+			rightQuad->points[0].x = rightX >> 0x10;
+			rightQuad->points[2].x = rightX >> 0x10;
 			_vm->waitForFrames(1);
 			if (!hasDoneFade) {
 				// call_fade_related_1f();
