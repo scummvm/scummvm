@@ -240,8 +240,8 @@ static void trim(Common::String &s) {
 
 void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 	bool intag = true;
+	_id.clear();
 
-	_id = "";
 	while (pos < s.size()) {
 		switch (s[pos]) {
 		case '<': {
