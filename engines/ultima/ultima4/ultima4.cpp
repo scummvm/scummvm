@@ -26,6 +26,7 @@
 #include "ultima/ultima4/error.h"
 #include "ultima/ultima4/event.h"
 #include "ultima/ultima4/game.h"
+#include "ultima/ultima4/imagemgr.h"
 #include "ultima/ultima4/intro.h"
 #include "ultima/ultima4/music.h"
 #include "ultima/ultima4/person.h"
@@ -52,6 +53,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _screen;
 
 	Tileset::unloadAll();
+	ImageMgr::destroy();
 
 	delete musicMgr;
 	soundDelete();

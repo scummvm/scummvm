@@ -49,32 +49,32 @@ class ImageSet {
 public:
     ~ImageSet();
 
-    Common::String name;
-    Common::String location;
-    Common::String extends;
-    map<Common::String, ImageInfo *> info;
+    Common::String _name;
+    Common::String _location;
+    Common::String _extends;
+    map<Common::String, ImageInfo *> _info;
 };
 
-ImageMgr *ImageMgr::instance = NULL;
+ImageMgr *ImageMgr::_instance = NULL;
 
 ImageMgr *ImageMgr::getInstance() {
-    if (instance == NULL) {
-        instance = new ImageMgr();
-        instance->init();
+    if (_instance == NULL) {
+        _instance = new ImageMgr();
+        _instance->init();
     }
-    return instance;
+    return _instance;
 }
 
 void ImageMgr::destroy() {
-    if (instance != NULL) {
-        delete instance;
-        instance = NULL;
+    if (_instance != NULL) {
+        delete _instance;
+        _instance = NULL;
     }
 }
 
 ImageMgr::ImageMgr() {
-    logger = new Debug("debug/imagemgr.txt", "ImageMgr");
-    TRACE(*logger, "creating ImageMgr");
+    _logger = new Debug("debug/imagemgr.txt", "ImageMgr");
+    TRACE(*_logger, "creating ImageMgr");
 
     settings.addObserver(this);
 }
@@ -82,14 +82,14 @@ ImageMgr::ImageMgr() {
 ImageMgr::~ImageMgr() {
     settings.deleteObserver(this);
 
-    for (Std::map<Common::String, ImageSet *>::iterator i = imageSets.begin(); i != imageSets.end(); i++)
+    for (Std::map<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++)
         delete i->_value;
 
-    delete logger;
+    delete _logger;
 }
 
 void ImageMgr::init() {
-    TRACE(*logger, "initializing ImageMgr");
+    TRACE(*_logger, "initializing ImageMgr");
 
     /*
      * register the "screen" image representing the entire screen
@@ -119,16 +119,16 @@ void ImageMgr::init() {
     for (Std::vector<ConfigElement>::iterator conf = graphicsConf.begin(); conf != graphicsConf.end(); conf++) {
         if (conf->getName() == "imageset") {
             ImageSet *set = loadImageSetFromConf(*conf);
-            imageSets[set->name] = set;
+            _imageSets[set->_name] = set;
 
             // all image sets include the "screen" image
-            set->info[screenInfo->_name] = screenInfo;
+            set->_info[screenInfo->_name] = screenInfo;
         }
     }
 
-    imageSetNames.clear();
-    for (Std::map<Common::String, ImageSet *>::const_iterator set = imageSets.begin(); set != imageSets.end(); set++)
-        imageSetNames.push_back(set->_key);
+    _imageSetNames.clear();
+    for (Std::map<Common::String, ImageSet *>::const_iterator set = _imageSets.begin(); set != _imageSets.end(); set++)
+        _imageSetNames.push_back(set->_key);
 
     update(&settings);
 }
@@ -137,22 +137,22 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
     ImageSet *set;
 
     set = new ImageSet;
-    set->name = conf.getString("name");
-    set->location = conf.getString("location");
-    set->extends = conf.getString("extends");
+    set->_name = conf.getString("name");
+    set->_location = conf.getString("location");
+    set->_extends = conf.getString("extends");
 
-    TRACE(*logger, Common::String("loading image set ") + set->name);
+    TRACE(*_logger, Common::String("loading image set ") + set->_name);
 
     vector<ConfigElement> children = conf.getChildren();
     for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
         if (i->getName() == "image") {
             ImageInfo *info = loadImageInfoFromConf(*i);
-            Std::map<Common::String, ImageInfo *>::iterator dup = set->info.find(info->_name);
-            if (dup != set->info.end()) {
+            Std::map<Common::String, ImageInfo *>::iterator dup = set->_info.find(info->_name);
+            if (dup != set->_info.end()) {
                 delete dup->_value;
-                set->info.erase(dup);
+                set->_info.erase(dup);
             }
-            set->info[info->_name] = info;
+            set->_info[info->_name] = info;
         }
     }
 
@@ -499,8 +499,8 @@ void ImageMgr::fixupFMTowns(Image *im, int prescale) {
  * Returns information for the given image set.
  */
 ImageSet *ImageMgr::getSet(const Common::String &setname) {
-    Std::map<Common::String, ImageSet *>::iterator i = imageSets.find(setname);
-    if (i != imageSets.end())
+    Std::map<Common::String, ImageSet *>::iterator i = _imageSets.find(setname);
+    if (i != _imageSets.end())
         return i->_value;
     else
         return NULL;
@@ -510,7 +510,7 @@ ImageSet *ImageMgr::getSet(const Common::String &setname) {
  * Returns image information for the current image set.
  */
 ImageInfo *ImageMgr::getInfo(const Common::String &name) {
-    return getInfoFromSet(name, baseSet);
+    return getInfoFromSet(name, _baseSet);
 }
 
 /**
@@ -521,14 +521,14 @@ ImageInfo *ImageMgr::getInfoFromSet(const Common::String &name, ImageSet *images
         return NULL;
 
     /* if the image set contains the image we want, AND IT EXISTS we are done */
-    Std::map<Common::String, ImageInfo *>::iterator i = imageset->info.find(name);
-    if (i != imageset->info.end())
+    Std::map<Common::String, ImageInfo *>::iterator i = imageset->_info.find(name);
+    if (i != imageset->_info.end())
     	if (imageExists(i->_value))
     		return i->_value;
 
     /* otherwise if this image set extends another, check the base image set */
-    while (imageset->extends != "") {
-        imageset = getSet(imageset->extends);
+    while (imageset->_extends != "") {
+        imageset = getSet(imageset->_extends);
         return getInfoFromSet(name, imageset);
     }
 
@@ -607,7 +607,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
     U4FILE *file = getImageFile(info);
     Image *unscaled = NULL;
     if (file) {
-        TRACE(*logger, Common::String("loading image from file '") + info->_filename + Common::String("'"));
+        TRACE(*_logger, Common::String("loading image from file '") + info->_filename + Common::String("'"));
 
         if (info->_filetype.empty())
             info->_filetype = guessFileType(info->_filename);
@@ -708,17 +708,17 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 SubImage *ImageMgr::getSubImage(const Common::String &name) {
     Common::String setname;
 
-    ImageSet *set = baseSet;
+    ImageSet *set = _baseSet;
 
     while (set != NULL) {
-        for (Std::map<Common::String, ImageInfo *>::iterator i = set->info.begin(); i != set->info.end(); i++) {
+        for (Std::map<Common::String, ImageInfo *>::iterator i = set->_info.begin(); i != set->_info.end(); i++) {
             ImageInfo *info = (ImageInfo *) i->_value;
             Std::map<Common::String, SubImage *>::iterator j = info->_subImages.find(name);
             if (j != info->_subImages.end())
                 return j->_value;
         }
 
-        set = getSet(set->extends);
+        set = getSet(set->_extends);
     }
         
     return NULL;
@@ -728,9 +728,9 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
  * Free up any background images used only in the animations.
  */
 void ImageMgr::freeIntroBackgrounds() {
-    for (Std::map<Common::String, ImageSet *>::iterator i = imageSets.begin(); i != imageSets.end(); i++) {
+    for (Std::map<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++) {
         ImageSet *set = i->_value;
-        for (Std::map<Common::String, ImageInfo *>::iterator j = set->info.begin(); j != set->info.end(); j++) {
+        for (Std::map<Common::String, ImageInfo *>::iterator j = set->_info.begin(); j != set->_info.end(); j++) {
             ImageInfo *info = j->_value;
             if (info->_image != NULL && info->_introOnly) {
                 delete info->_image;
@@ -741,7 +741,7 @@ void ImageMgr::freeIntroBackgrounds() {
 }
 
 const vector<Common::String> &ImageMgr::getSetNames() {
-    return imageSetNames;
+    return _imageSetNames;
 }
 
 /**
@@ -752,13 +752,13 @@ void ImageMgr::update(Settings *newSettings) {
 
     setname = newSettings->_videoType;
 
-    TRACE(*logger, Common::String("base image set is '") + setname + Common::String("'"));
+    TRACE(*_logger, Common::String("base image set is '") + setname + Common::String("'"));
 
-    baseSet = getSet(setname);
+    _baseSet = getSet(setname);
 }
 
 ImageSet::~ImageSet() {
-    for (Std::map<Common::String, ImageInfo *>::iterator i = info.begin(); i != info.end(); i++) {
+    for (Std::map<Common::String, ImageInfo *>::iterator i = _info.begin(); i != _info.end(); i++) {
         ImageInfo *imageInfo = i->_value;
         if (imageInfo->_name != "screen")
             delete imageInfo;
