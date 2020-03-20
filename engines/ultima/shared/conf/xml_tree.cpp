@@ -94,18 +94,55 @@ bool XMLTree::readConfigString(const Common::String &s) {
 
 	Common::String sbuf(s);
 	size_t nn = 0;
-	while (Common::isSpace(s[nn]))
+	bool parsedXmlElement = false, parsedDocType = false;
+
+	for (;;) {
+		while (nn < s.size() && Common::isSpace(s[nn]))
+			++nn;
+
+		if (nn >= s.size()) {
+			warning("Unexpected end of XML");
+			return false;
+		}
+		if (s[nn] != '<') {
+			warning("expected '<' while reading config file, found %c\n", s[nn]);
+			return false;
+		}
 		++nn;
 
-	if (s[nn] != '<') {
-		warning("expected '<' while reading config file, found %c\n", s[nn]);
-		return false;
-	}
-	++nn;
+		if (nn < s.size() && s[nn] == '?') {
+			assert(!parsedXmlElement);
+			parsedXmlElement = true;
+			nn = s.findFirstOf('>', nn);
+		} else if (nn < s.size() && s.substr(nn, 8).equalsIgnoreCase("!doctype")) {
+			assert(!parsedDocType);
+			parsedDocType = true;
+			parseDocTypeElement(s, nn);
+		} else {
+			_tree->xmlParse(sbuf, nn);
+			continue;
+		}
 
-	_tree->xmlParse(sbuf, nn);
+		// If this point was reached, we just skipped ?xml or doctype element
+		++nn;
+	}
 
 	return true;
+}
+
+void XMLTree::parseDocTypeElement(const Common::String &s, size_t &nn) {
+	nn = s.findFirstOf(">[", nn);
+	if (nn == Common::String::npos)
+		// No ending tag
+		return;
+
+	if (s[nn] == '[') {
+		// Square bracketed area
+		nn = s.findFirstOf(']', nn) + 1;
+	}
+
+	if (nn >= s.size() || s[nn] != '>')
+		nn = Common::String::npos;
 }
 
 Common::String XMLTree::dump() {
