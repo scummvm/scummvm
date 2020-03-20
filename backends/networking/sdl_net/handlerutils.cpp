@@ -179,7 +179,7 @@ Common::String HandlerUtils::toUtf8(const char *text) {
 		char *utf8Text = Common::Encoding::convert("utf-8", guiEncoding, text, strlen(text));
 		if (utf8Text != nullptr) {
 			Common::String str(utf8Text);
-			delete [] utf8Text;
+			free(utf8Text);
 			return str;
 		}
 	}
