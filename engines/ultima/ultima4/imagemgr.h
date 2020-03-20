@@ -129,8 +129,6 @@ public:
     U4FILE * getImageFile(ImageInfo *info);
     bool imageExists(ImageInfo * info);
 
-
-
 private:
     ImageMgr();
     ~ImageMgr();
@@ -154,12 +152,12 @@ private:
 
     void update(Settings *newSettings);
 
-    static ImageMgr *instance;
-    Std::map<Common::String, ImageSet *> imageSets;
-    Std::vector<Common::String> imageSetNames;
-    ImageSet *baseSet;
+    static ImageMgr *_instance;
+    Std::map<Common::String, ImageSet *> _imageSets;
+    Std::vector<Common::String> _imageSetNames;
+    ImageSet *_baseSet;
 
-    Debug *logger;
+    Debug *_logger;
 };
 
 #define imageMgr (ImageMgr::getInstance())
