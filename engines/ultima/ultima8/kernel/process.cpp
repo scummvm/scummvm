@@ -69,6 +69,8 @@ void Process::wakeUp(uint32 result_) {
 	_flags &= ~PROC_SUSPENDED;
 
 	Kernel::get_instance()->setNextProcess(this);
+
+	onWakeUp();
 }
 
 void Process::waitFor(ProcId pid_) {

@@ -31,15 +31,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
-#define PALETTEFADER_COUNTER    30
-
 PaletteFaderProcess *PaletteFaderProcess::_fader = nullptr;
 
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(PaletteFaderProcess, Process)
 
 PaletteFaderProcess::PaletteFaderProcess() : Process() {
-
 }
 
 PaletteFaderProcess::PaletteFaderProcess(PalTransforms trans,

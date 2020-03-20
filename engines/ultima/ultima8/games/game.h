@@ -52,8 +52,8 @@ public:
 	//! write game-specific savegame info (avatar stats, equipment, ...)
 	virtual void writeSaveInfo(ODataSource *ods) = 0;
 
-	virtual ProcId playIntroMovie() = 0;
-	virtual ProcId playEndgameMovie() = 0;
+	virtual ProcId playIntroMovie(bool fade) = 0;
+	virtual ProcId playEndgameMovie(bool fade) = 0;
 	virtual void playCredits() = 0;
 	virtual void playQuotes() = 0;
 

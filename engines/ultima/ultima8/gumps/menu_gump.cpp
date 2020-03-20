@@ -223,7 +223,7 @@ void MenuGump::selectEntry(int entry) {
 
 	switch (entry) {
 	case 1: // Intro
-		Game::get_instance()->playIntroMovie();
+		Game::get_instance()->playIntroMovie(true);
 		break;
 	case 2:
 	case 3: // Read/Write Diary
@@ -245,7 +245,7 @@ void MenuGump::selectEntry(int entry) {
 		if (quotes) Game::get_instance()->playQuotes();
 		break;
 	case 8: // End Game
-		if (endgame) Game::get_instance()->playEndgameMovie();
+		if (endgame) Game::get_instance()->playEndgameMovie(true);
 		break;
 	default:
 		break;
