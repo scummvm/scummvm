@@ -398,6 +398,8 @@ protected:
 	void decRefCount(int *oldRefCount);
 	void initWithCStr(const char *str, uint32 len);
 
+	bool pointerInOwnBuffer(const char *str) const;
+
 	void decodeUTF8(U32String &dst) const;
 	void decodeOneByte(U32String &dst, CodePage page) const;
 };
