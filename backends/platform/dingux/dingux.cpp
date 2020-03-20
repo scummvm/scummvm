@@ -33,10 +33,12 @@ void OSystem_SDL_Dingux::initBackend() {
 	if (_eventSource == 0)
 		_eventSource = new DINGUXSdlEventSource();
 
+#ifndef GCW0
 	// Create the graphics manager
 	if (_graphicsManager == 0) {
 		_graphicsManager = new DINGUXSdlGraphicsManager(_eventSource, _window);
 	}
+#endif
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
