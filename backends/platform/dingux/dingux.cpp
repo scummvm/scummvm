@@ -24,7 +24,7 @@
 
 #include "backends/platform/dingux/dingux.h"
 #include "backends/events/dinguxsdl/dinguxsdl-events.h"
-#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
+#include "backends/graphics/downscalesdl/downscalesdl-graphics.h"
 
 void OSystem_SDL_Dingux::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
@@ -36,7 +36,7 @@ void OSystem_SDL_Dingux::initBackend() {
 #ifndef GCW0
 	// Create the graphics manager
 	if (_graphicsManager == 0) {
-		_graphicsManager = new DINGUXSdlGraphicsManager(_eventSource, _window);
+		_graphicsManager = new DownscaleSdlGraphicsManager(_eventSource, _window);
 	}
 #endif
 

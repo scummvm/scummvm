@@ -25,11 +25,7 @@
 
 #if defined(DINGUX)
 
-#include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl.h"
 #include "backends/platform/sdl/posix/posix.h"
-#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
-#include "backends/events/dinguxsdl/dinguxsdl-events.h"
 
 class OSystem_SDL_Dingux : public OSystem_POSIX {
 public:

@@ -20,21 +20,18 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SDL_DINGUX_H
-#define BACKENDS_GRAPHICS_SDL_DINGUX_H
+#ifndef BACKENDS_GRAPHICS_SDL_DOWNSCALE_H
+#define BACKENDS_GRAPHICS_SDL_DOWNSCALE_H
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
-
-#include "graphics/scaler/aspect.h"	// for aspect2Real
-#include "graphics/scaler/downscaler.h"
 
 enum {
 	GFX_HALF = 12
 };
 
-class DINGUXSdlGraphicsManager : public SurfaceSdlGraphicsManager {
+class DownscaleSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	DINGUXSdlGraphicsManager(SdlEventSource *boss, SdlWindow *window);
+	DownscaleSdlGraphicsManager(SdlEventSource *boss, SdlWindow *window);
 
 	int getDefaultGraphicsMode() const override;
 
@@ -55,4 +52,4 @@ protected:
 	void setupHardwareSize() override;
 };
 
-#endif /* BACKENDS_GRAPHICS_SDL_DINGUX_H */
+#endif /* BACKENDS_GRAPHICS_SDL_DOWNSCALE_H */
