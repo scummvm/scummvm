@@ -284,7 +284,7 @@ String &String::operator=(char c) {
 }
 
 String &String::operator+=(const char *str) {
-	if (_str <= str && str <= _str + _size)
+	if (pointerInOwnBuffer(str))
 		return operator+=(String(str));
 
 	int len = strlen(str);
@@ -295,6 +295,16 @@ String &String::operator+=(const char *str) {
 		_size += len;
 	}
 	return *this;
+}
+
+bool String::pointerInOwnBuffer(const char *str) const {
+	//compared pointers must be in the same array or UB
+	//cast to intptr however is IB
+	//which includes comparision of the values
+	uintptr ownBuffStart = (uintptr)_str;
+	uintptr ownBuffEnd = (uintptr)(_str + _size);
+	uintptr candidateAddr = (uintptr)str;
+	return ownBuffStart <= candidateAddr && candidateAddr <= ownBuffEnd;
 }
 
 String &String::operator+=(const String &str) {
