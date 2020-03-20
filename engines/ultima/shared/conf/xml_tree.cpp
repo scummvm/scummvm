@@ -61,7 +61,7 @@ void XMLTree::clear(const Common::String &root) {
 bool XMLTree::readConfigFile(const Common::String &fname) {
 	Common::File f;
 
-	if (f.open(fname)) {
+	if (!f.open(fname)) {
 		warning("Error opening config file");
 		return false;
 	}

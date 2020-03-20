@@ -111,7 +111,9 @@ private:
 	static Config *_instance;
 	Shared::XMLTree _doc;
 public:
-    static const Config *getInstance();
+	static const Config *getInstance() {
+		return _instance;
+	}
 public:
 	Config();
 	~Config();

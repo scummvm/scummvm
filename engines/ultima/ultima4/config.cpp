@@ -36,20 +36,12 @@ Config *Config::_instance;
 Config::Config() {
 	_instance = this;
 
-	if (!_doc.readConfigFile("data/config.xml"))
+	if (!_doc.readConfigFile("data/conf/config.xml"))
 		error("Failed to read core configuration");
 }
 
 Config::~Config() {
 	_instance = nullptr;
-}
-
-const Config *Config::getInstance() {
-    if (!_instance) {
-        _instance = new Config();
-    }
-
-	return _instance;
 }
 
 ConfigElement Config::getElement(const Common::String &name) const {
@@ -64,6 +56,7 @@ Std::vector<Common::String> Config::getGames() {
 }
 
 void Config::setGame(const Common::String &name) {
+	// No implementation
 }
 
 /*-------------------------------------------------------------------*/
