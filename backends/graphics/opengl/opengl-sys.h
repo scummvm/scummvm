@@ -30,6 +30,10 @@
 #include "backends/platform/sdl/sdl-sys.h"
 #endif
 
+#ifdef __MORPHOS__
+#define USE_GLES_MODE 1
+#endif
+
 // On OS X we only support GL contexts. The reason is that Apple's GL interface
 // uses "void *" for GLhandleARB which is not type compatible with GLint. This
 // kills our aliasing trick for extension functions and thus would force us to
