@@ -275,13 +275,14 @@ endif
 ifeq ($(BACKEND),dingux)
 MODULE_OBJS += \
 	events/dinguxsdl/dinguxsdl-events.o \
-	graphics/dinguxsdl/dinguxsdl-graphics.o
+	graphics/downscalesdl/downscalesdl-graphics.o
 endif
 
 ifeq ($(BACKEND),gph)
 MODULE_OBJS += \
 	events/gph/gph-events.o \
-	graphics/gph/gph-graphics.o
+	graphics/gph/gph-graphics.o \
+	graphics/downscalesdl/downscalesdl-graphics.o
 endif
 
 ifeq ($(BACKEND),maemo)

@@ -24,11 +24,6 @@
 #define BACKENDS_GRAPHICS_OP_H
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
-#include "graphics/scaler/downscaler.h"
-
-enum {
-	GFX_HALF = 12
-};
 
 class OPGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
