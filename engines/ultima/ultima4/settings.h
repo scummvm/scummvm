@@ -169,22 +169,18 @@ class Settings : public SettingsData, public Observable<Settings *> {
 
 public:
     /* Methods */
-	void init(bool useProfile, const Common::String profileName);
+	void init();
     static Settings &getInstance();
     void setData(const SettingsData &data);
     bool read();
     bool write();
 
-    const Common::String &getUserPath();
     const Std::vector<Common::String> &getBattleDiffs();
 
 private:
     Settings();
 
     static Settings *_instance;
-
-    Common::String _userPath;
-    Common::String _filename;
     Std::vector<Common::String> _battleDiffs;
 };
 

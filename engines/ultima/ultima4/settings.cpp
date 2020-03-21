@@ -37,12 +37,6 @@ using namespace std;
  */ 
 Settings *Settings::_instance = NULL;
 
-#if defined(_WIN32) || defined(__CYGWIN__)
-#define SETTINGS_BASE_FILENAME "xu4.cfg"
-#else
-#define SETTINGS_BASE_FILENAME "xu4rc"
-#endif
-
 bool SettingsData::operator==(const SettingsData &s) const {    
     int fieldsSize = (int *)&_end_of_bitwise_comparators - (int *)this;
     if (memcmp(this, &s, fieldsSize) != 0)
@@ -74,7 +68,9 @@ bool SettingsData::operator!=(const SettingsData &s) const {
 /**
  * Default contructor.  Settings is a singleton so this is private.
  */
-Settings::Settings() {    
+Settings::Settings() {
+	init();
+
     _battleDiffs.push_back("Normal");
     _battleDiffs.push_back("Hard");
     _battleDiffs.push_back("Expert");
@@ -84,18 +80,7 @@ Settings::Settings() {
 /**
  * Initialize the settings.
  */
-void Settings::init(bool useProfile, const Common::String profileName) {
-	if (useProfile) {
-		_userPath = "./profiles/";
-		_userPath += profileName.c_str();
-		_userPath += "/";
-	} else {
-        _userPath = "";
-	}
-    FileSystem::createDirectory(_userPath);
-
-    _filename = _userPath + SETTINGS_BASE_FILENAME;
-
+void Settings::init() {
     read();
 }
 
@@ -115,13 +100,9 @@ void Settings::setData(const SettingsData &data) {
 }
 
 /**
- * Read settings in from the settings file.
+ * Read settings
  */
 bool Settings::read() {
-#ifdef TODO
-	char buffer[256];    
-    extern int eventTimerGranularity;   
-#endif
 	Common::File settingsFile;
 
 	/* default settings */
@@ -182,10 +163,11 @@ bool Settings::read() {
     _logging = DEFAULT_LOGGING;
     _game = "Ultima IV";
 
-	if (!settingsFile.open(_filename))
-        return false;
 #ifdef TODO
-    while(fgets(buffer, sizeof(buffer), settingsFile) != NULL) {
+	if (!settingsFile.open(_filename))
+		return false;
+
+	while(fgets(buffer, sizeof(buffer), settingsFile) != NULL) {
         while (Common::isSpace(buffer[strlen(buffer) - 1]))
             buffer[strlen(buffer) - 1] = '\0';
 
@@ -434,13 +416,6 @@ bool Settings::write() {
     notifyObservers(NULL);
 #endif
     return true;
-}
-
-/**
- * Return the path where user settings are stored.
- */
-const Common::String &Settings::getUserPath() {
-    return _userPath;
 }
 
 const Std::vector<Common::String> &Settings::getBattleDiffs() { 
