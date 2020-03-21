@@ -699,6 +699,16 @@ static byte director3QuickDrawPatterns[][8] = {
 	{ 0xFF, 0x2A, 0xFF, 0xC8, 0xFF, 0x65, 0xFF, 0x9D }
 };
 
+
+/**
+ * The sprites colors are in reverse order with respect to the ids in director.
+ * To make loading images easier we the palette is in reverse order.
+ * All other color ids can be converted with: 255 - colorId.
+ */
+byte DirectorEngine::transformColor(byte color){
+	return 255 - color;
+}
+
 void DirectorEngine::loadPatterns() {
 	for (int i = 0; i < ARRAYSIZE(director3Patterns); i++)
 		_director3Patterns.push_back(director3Patterns[i]);
@@ -785,7 +795,7 @@ void DirectorEngine::testFontScaling() {
 
 			for (x = x1; x < x1 + 6; x++)
 				for (y = y1; y < y1 + 6; y++)
-					*((byte *)surface.getBasePtr(x, y)) = 255 - (i * 16 + j);
+					*((byte *)surface.getBasePtr(x, y)) = transformColor(i * 16 + j);
 		}
 	}
 

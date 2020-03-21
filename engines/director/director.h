@@ -114,6 +114,7 @@ public:
 	void loadSharedCastsFrom(Common::String filename);
 	void clearSharedCast();
 	void loadPatterns();
+	byte transformColor(byte color);
 	Graphics::MacPatterns &getPatterns();
 
 	void loadInitialMovie(const Common::String movie);
