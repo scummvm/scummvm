@@ -474,7 +474,8 @@ int gameSave() {
          * Write outmonst.sav
          */ 
 
-        monstersFile = g_system->getSavefileManager()->openForSaving((settings.getUserPath() + OUTMONST_SAV_BASE_FILENAME).c_str(), "wb");
+        monstersFile = g_system->getSavefileManager()->openForSaving(
+			OUTMONST_SAV_BASE_FILENAME);
         if (!monstersFile) {
             screenMessage("Error opening %s\n", OUTMONST_SAV_BASE_FILENAME);
             return 0;
