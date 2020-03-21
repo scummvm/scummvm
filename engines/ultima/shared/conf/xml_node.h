@@ -72,8 +72,11 @@ public:
 	const Common::StringMap &attributes() const {
 		return _attributes;
 	}
-	const Common::String &operator[](const Common::String &attrName) const {
-		return _attributes[attrName];
+	Common::String operator[](const Common::String &attrName) const {
+		return _attributes.contains(attrName) ? _attributes[attrName] : "";
+	}
+	const Common::Array<XMLNode *> &children() const {
+		return _nodeList;
 	}
 
 	typedef Std::pair<Common::String, Common::String> KeyType;

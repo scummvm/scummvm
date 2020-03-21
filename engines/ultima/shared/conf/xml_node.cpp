@@ -67,7 +67,7 @@ const Common::String &XMLNode::reference(const Common::String &h, bool &exists) 
 const XMLNode *XMLNode::subtree(const Common::String &h) const {
 	if (h.find('/') == Common::String::npos) {
 		// Must refer to me.
-		if (_id.compareToIgnoreCase(h))
+		if (_id.equalsIgnoreCase(h))
 			return this;
 	} else {
 		// Otherwise we want to split the Common::String at the first /
@@ -79,7 +79,7 @@ const XMLNode *XMLNode::subtree(const Common::String &h) const {
 		Common::String k2 = k.substr(0, k.find('/'));
 		for (Common::Array<XMLNode *>::const_iterator it = _nodeList.begin();
 		        it != _nodeList.end(); ++it) {
-			if ((*it)->_id.compareToIgnoreCase(k2)) {
+			if ((*it)->_id.equalsIgnoreCase(k2)) {
 				return (*it)->subtree(k);
 			}
 		}
