@@ -154,11 +154,11 @@ uint32 MiniMapGump::sampleAtPoint(int x, int y, CurrentMap *currentmap) {
 		ix -= x;
 		iy -= y;
 
-		Shape *sh = item->getShapeObject();
+		const Shape *sh = item->getShapeObject();
 		if (!sh)
 			return 0;
 
-		ShapeFrame *frame = sh->getFrame(item->getFrame());
+		const ShapeFrame *frame = sh->getFrame(item->getFrame());
 		if (!frame)
 			return 0;
 

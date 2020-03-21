@@ -656,7 +656,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_shape = _shapes->getShape(shapeNum);
 	si->_shapeNum = shapeNum;
 	si->_frame = frame_num;
-	ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
+	const ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
 	if (!_frame) {
 		perr << "Invalid _shape: " << si->_shapeNum << "," << si->_frame
 		     << Std::endl;
@@ -835,7 +835,7 @@ void ItemSorter::AddItem(Item *add) {
 	si->_shape = add->getShapeObject();
 	si->_shapeNum = add->getShape();
 	si->_frame = add->getFrame();
-	ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
+	const ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
 	if (!_frame) {
 		perr << "Invalid _shape: " << si->_shapeNum << "," << si->_frame
 		     << Std::endl;
@@ -1159,7 +1159,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 				if (x < it->_sx || x >= it->_sx2 || y < it->_sy || y >= it->_sy2) continue;
 
 				// Now check the _frame itself
-				ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
+				const ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
 				assert(_frame); // invalid frames shouldn't have been added to the list
 
 				// Nope, doesn't have a point
@@ -1187,7 +1187,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 			if (x < it->_sx || x >= it->_sx2 || y < it->_sy || y >= it->_sy2) continue;
 
 			// Now check the _frame itself
-			ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
+			const ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
 			assert(_frame); // invalid frames shouldn't have been added to the list
 
 			// Nope, doesn't have a point

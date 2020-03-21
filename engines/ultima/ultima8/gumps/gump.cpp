@@ -82,7 +82,7 @@ void Gump::SetShape(FrameID frame, bool adjustsize) {
 	_frameNum = frame._frameNum;
 
 	if (adjustsize && _shape) {
-		ShapeFrame *sf = _shape->getFrame(_frameNum);
+		const ShapeFrame *sf = _shape->getFrame(_frameNum);
 		_dims.w = sf->_width;
 		_dims.h = sf->_height;
 	}
@@ -406,7 +406,7 @@ bool Gump::PointOnGump(int mx, int my) {
 		return true;
 	}
 
-	ShapeFrame *sf = _shape->getFrame(_frameNum);
+	const ShapeFrame *sf = _shape->getFrame(_frameNum);
 	assert(sf);
 	if (sf->hasPoint(gx, gy)) {
 		return true;

@@ -74,7 +74,7 @@ void BookGump::InitGump(Gump *newparent, bool take_focus) {
 
 	SetShape(shapeP, 0);
 
-	ShapeFrame *sf = shapeP->getFrame(0);
+	const ShapeFrame *sf = shapeP->getFrame(0);
 	assert(sf);
 
 	_dims.w = sf->_width;

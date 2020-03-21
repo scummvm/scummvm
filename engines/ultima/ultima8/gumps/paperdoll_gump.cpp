@@ -243,9 +243,9 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 		itemy = equipcoords[i].y;
 		itemx += _itemArea.x;
 		itemy += _itemArea.y;
-		Shape *s = item->getShapeObject();
+		const Shape *s = item->getShapeObject();
 		assert(s);
-		ShapeFrame *frame = s->getFrame(item->getFrame() + 1);
+		const ShapeFrame *frame = s->getFrame(item->getFrame() + 1);
 
 		if (frame->hasPoint(mx - itemx, my - itemy)) {
 			// found it
@@ -298,9 +298,9 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 	bool ret = ContainerGump::StartDraggingItem(item, mx, my);
 
 	// set dragging offset to center of item
-	Shape *s = item->getShapeObject();
+	const Shape *s = item->getShapeObject();
 	assert(s);
-	ShapeFrame *frame = s->getFrame(item->getFrame());
+	const ShapeFrame *frame = s->getFrame(item->getFrame());
 	assert(frame);
 
 	Mouse::get_instance()->setDraggingOffset(frame->_width / 2 - frame->_xoff,

@@ -236,7 +236,7 @@ uint8 ShapeFrame::getPixelAtPoint(int32 x, int32 y) const {
 	return 0xFF;
 }
 
-void ShapeFrame::getConvertShapeFrame(ConvertShapeFrame &csf, bool need_bytes_rle) {
+void ShapeFrame::getConvertShapeFrame(ConvertShapeFrame &csf) {
 	csf._compression = _compressed;
 	csf._width = _width;
 	csf._height = _height;

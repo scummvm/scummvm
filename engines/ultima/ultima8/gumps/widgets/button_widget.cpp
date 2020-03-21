@@ -82,7 +82,7 @@ void ButtonWidget::InitGump(Gump *newparent, bool take_focus) {
 		_shape = _shapeUp;
 		_frameNum = _frameNumUp;
 
-		ShapeFrame *sf = _shape->getFrame(_frameNum);
+		const ShapeFrame *sf = _shape->getFrame(_frameNum);
 		assert(sf);
 		_dims.w = sf->_width;
 		_dims.h = sf->_height;
