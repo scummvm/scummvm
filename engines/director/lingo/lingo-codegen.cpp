@@ -485,6 +485,32 @@ void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
 	}
 }
 
+int Lingo::castIdFetch(Datum &var) {
+	Score *score = _vm->getCurrentScore();
+	if (!score) {
+		warning("castFetch: Score is empty");
+		return 0;
+	}
+
+	int id = 0;
+	if (var.type == STRING) {
+		if (score->_castsNames.contains(*var.u.s))
+			id = score->_castsNames[*var.u.s];
+		else
+			warning("castFetch: reference to non-existent cast member: %s", var.u.s->c_str());
+	} else if (var.type == INT || var.type == FLOAT) {
+		var.toInt();
+		if (!score->_loadedCast->contains(var.u.i))
+			warning("castFetch: reference to non-existent cast ID: %d", var.u.i);
+		else
+			id = var.u.i;
+	} else {
+		error("castFetch: was expecting STRING or INT, got %s", var.type2str());
+	}
+
+	return id;
+}
+
 void Lingo::varAssign(Datum &var, Datum &value) {
 	if (var.type != VAR && var.type != REFERENCE) {
 		warning("varAssign: assignment to non-variable");
