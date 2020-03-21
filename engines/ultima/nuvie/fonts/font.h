@@ -85,6 +85,7 @@ public:
 	}
 
 protected:
+	uint16 drawStringCentered(Screen *screen, const char *str, uint16 string_len, uint16 x, uint16 y, uint8 color, uint8 highlight_color);
 
 	uint8 get_char_num(uint8 c);
 
