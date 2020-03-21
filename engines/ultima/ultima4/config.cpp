@@ -45,7 +45,7 @@ Config::~Config() {
 }
 
 ConfigElement Config::getElement(const Common::String &name) const {
-	Common::String key = Common::String::format("/config/%s", name.c_str());
+	Common::String key = Common::String::format("config/%s", name.c_str());
 	const Shared::XMLNode *node = _doc.getNode(key);
 	return ConfigElement(node);
 }
@@ -87,105 +87,47 @@ ConfigElement &ConfigElement::operator=(const ConfigElement &e) {
  * Returns true if the property exists in the current config element
  */
 bool ConfigElement::exists(const Common::String &name) const {
-#ifdef TODO
-    xmlChar *prop = xmlGetProp(node, reinterpret_cast<const xmlChar *>(name.c_str()));
-    bool exists = prop != NULL;
-    xmlFree(prop);
-
-    return exists;
-#else
-	return false;
-#endif
+	return !(*_node)[name].empty();
 }
 
 Common::String ConfigElement::getString(const Common::String &name) const {
-#ifdef TODO
-    xmlChar *prop = xmlGetProp(node, reinterpret_cast<const xmlChar *>(name.c_str()));
-    if (!prop)
-        return "";
-
-    Common::String result(reinterpret_cast<const char *>(prop));
-    xmlFree(prop);
-    
-    return result;
-#else
-	return "";
-#endif
+	return (*_node)[name];
 }
 
 int ConfigElement::getInt(const Common::String &name, int defaultValue) const {
-#ifdef TODO
-	long result;
-    xmlChar *prop;
-
-    prop = xmlGetProp(node, reinterpret_cast<const xmlChar *>(name.c_str()));
-    if (!prop)
-        return defaultValue;
-
-    result = strtol(reinterpret_cast<const char *>(prop), NULL, 0);
-    xmlFree(prop);
-
-    return static_cast<int>(result);
-#else
-	return 0;
-#endif
+	Common::String str = (*_node)[name];
+	return str.empty() ? defaultValue : atol(str.c_str());
 }
 
 bool ConfigElement::getBool(const Common::String &name) const {
-#ifdef TODO
-	int result;
+	Common::String str = (*_node)[name];
+	if (str.empty())
+		return false;
 
-    xmlChar *prop = xmlGetProp(node, reinterpret_cast<const xmlChar *>(name.c_str()));
-    if (!prop)
-        return false;
-
-    if (xmlStrcmp(prop, reinterpret_cast<const xmlChar *>("true")) == 0)
-        result = true;
-    else
-        result = false;
-
-    xmlFree(prop);
-
-    return result;
-#else
-	return false;
-#endif
+	return toupper(str[0]) == 'T' || str == "1";
 }
 
 int ConfigElement::getEnum(const Common::String &name, const char *enumValues[]) const {
-#ifdef TODO
-    int result = -1, i;
-    xmlChar *prop;
+	Common::String str = (*_node)[name];
+	if (str.empty())
+		return 0;
 
-    prop = xmlGetProp(node, reinterpret_cast<const xmlChar *>(name.c_str()));
-    if (!prop)
-        return 0;
-
-    for (i = 0; enumValues[i]; i++) {
-        if (xmlStrcmp(prop, reinterpret_cast<const xmlChar *>(enumValues[i])) == 0)
-        result = i;
+    for (int i = 0; enumValues[i]; ++i) {
+		if (str.equalsIgnoreCase(enumValues[i]))
+			return i;
     }
 
-    if (result == -1)
-        errorFatal("invalid enum value for %s: %s", name.c_str(), prop);
-
-    xmlFree(prop);
-
-    return result;
-#else
-	return 0;
-#endif
+	error("invalid enum value for %s: %s", name.c_str(), str.c_str());
 }
 
 Std::vector<ConfigElement> ConfigElement::getChildren() const {
+	const Common::Array<Shared::XMLNode *> &children = _node->children();
 	Std::vector<ConfigElement> result;
-#ifdef TODO
 
-    for (Shared::XMLNode * child = node->children; child; child = child->next) {
-        if (child->type == XML_ELEMENT_NODE)
-            result.push_back(ConfigElement(child));
-    }
-#endif
+	for (Common::Array<Shared::XMLNode *>::const_iterator it = children.begin();
+			it != children.end(); ++it)
+		result.push_back(*it);
+
     return result;
 }
 
