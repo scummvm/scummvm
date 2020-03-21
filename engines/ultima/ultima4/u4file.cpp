@@ -79,65 +79,6 @@ private:
 
 extern bool verbose;
 
-U4PATH * U4PATH::_instance = NULL;
-U4PATH * U4PATH::getInstance() {
-	if (!_instance) {
-		_instance = new U4PATH();
-		_instance->initDefaultPaths();
-	}
-	return _instance;
-}
-
-void U4PATH::initDefaultPaths() {
-	if (defaultsHaveBeenInitd)
-		return;
-
-	//The first part of the path searched will be one of these root directories
-
-	/*Try to cover all root possibilities. These can be added to by separate modules*/
-	rootResourcePaths.push_back("");
-	rootResourcePaths.push_back(".");
-	rootResourcePaths.push_back("./ultima4");
-	rootResourcePaths.push_back("/usr/lib/u4");
-	rootResourcePaths.push_back("/usr/local/lib/u4");
-	rootResourcePaths.push_back("C:");
-	rootResourcePaths.push_back("C:/DOS");
-	rootResourcePaths.push_back("C:/GAMES");
-
-	//The second (specific) part of the path searched will be these various subdirectories
-
-	/* the possible paths where u4 for DOS can be installed */
-	u4ForDOSPaths.push_back(".");
-	u4ForDOSPaths.push_back("u4");
-	u4ForDOSPaths.push_back("ultima4");
-
-	/* the possible paths where the u4 zipfiles can be installed */
-	u4ZipPaths.push_back(".");
-	u4ZipPaths.push_back("u4");
-
-	/* the possible paths where the u4 music files can be installed */
-	musicPaths.push_back(".");
-	musicPaths.push_back("mid");
-	musicPaths.push_back("../mid");
-	musicPaths.push_back("music");
-	musicPaths.push_back("../music");
-
-	/* the possible paths where the u4 sound files can be installed */
-    soundPaths.push_back(".");
-    soundPaths.push_back("./sound");
-    soundPaths.push_back("../sound");
-
-    /* the possible paths where the u4 config files can be installed */
-    configPaths.push_back(".");
-    configPaths.push_back("conf");
-    configPaths.push_back("../conf");
-
-    /* the possible paths where the u4 graphics files can be installed */
-    graphicsPaths.push_back(".");
-	graphicsPaths.push_back("graphics");
-	graphicsPaths.push_back("../graphics");
-}
-
 /**
  * Returns true if the upgrade is present.
  */
@@ -552,23 +493,14 @@ long U4FILE_zip::length() {
 }
 
 /**
- * Open a data file from the Ultima 4 for DOS installation.  This
- * function checks the various places where it can be installed, and
- * maps the filenames to uppercase if necessary.  The files are always
- * opened for reading only.
- *
- * First, it looks in the zipfiles.  Next, it tries FILENAME, Filename
- * and filename in up to four paths, meaning up to twelve or more
- * opens per file.  Seems to be ok for performance, but could be
- * getting excessive.  The presence of the zipfiles should probably be
- * cached.
+ * Open a data file from the Ultima 4 for DOS installation
  */
 U4FILE *u4fopen(const Common::String &fname) {
     U4FILE *u4f = NULL;
 
     if (verbose)
         debug("looking for %s\n", fname.c_str());
-
+#ifdef TODO
     /**
      * search for file within zipfiles (ultima4.zip, u4upgrad.zip, etc.)
      */
@@ -583,30 +515,12 @@ U4FILE *u4fopen(const Common::String &fname) {
     /*
      * file not in a zipfile; check if it has been unzipped
      */
-    Common::String fname_copy(fname);
-
-    Common::String pathname = u4find_path(fname_copy, u4Path.u4ForDOSPaths);
-#if 0
-	if (pathname.empty()) {
-		using namespace std;
-        if (Common::isLower(fname_copy[0])) {
-            fname_copy[0] = toupper(fname_copy[0]);
-            pathname = u4find_path(fname_copy, u4Path.u4ForDOSPaths);
-        }
-
-        if (pathname.empty()) {
-            for (i = 0; fname_copy[i] != '\0'; i++) {
-                if (Common::isLower(fname_copy[i]))
-                    fname_copy[i] = toupper(fname_copy[i]);
-            }
-            pathname = u4find_path(fname_copy, u4Path.u4ForDOSPaths);
-        }
-    }
 #endif
-    if (!pathname.empty()) {
-        u4f = U4FILE_stdio::openForReading(pathname);
+
+	if (!fname.empty()) {
+        u4f = U4FILE_stdio::openForReading(fname);
         if (verbose && u4f != NULL)
-            debug("%s successfully opened\n", pathname.c_str());
+            debug("%s successfully opened\n", fname.c_str());
     }
 
     return u4f;
@@ -782,19 +696,19 @@ Common::String u4find_path(const Common::String &fname, Common::List<Common::Str
 }
 
 Common::String u4find_music(const Common::String &fname) {
-    return u4find_path(fname, u4Path.musicPaths);
+	return "data/music/" + fname;
 }
 
 Common::String u4find_sound(const Common::String &fname) {
-    return u4find_path(fname, u4Path.soundPaths);
+	return "data/sound/" + fname;
 }
 
 Common::String u4find_conf(const Common::String &fname) {
-    return u4find_path(fname, u4Path.configPaths);
+	return "data/conf/" + fname;
 }
 
 Common::String u4find_graphics(const Common::String &fname) {
-    return u4find_path(fname, u4Path.graphicsPaths);
+	return "data/graphics/" + fname;
 }
 
 } // End of namespace Ultima4

@@ -93,31 +93,6 @@ public:
     int getshort();
 };
 
-/** A replacement class to manage path searching. Very open-concept */
-#define u4Path (*U4PATH::getInstance())
-class U4PATH {
-public:
-	U4PATH() : defaultsHaveBeenInitd(false){}
-    void initDefaultPaths();
-
-    static U4PATH *_instance;
-    static U4PATH *getInstance();
-
-
-	Common::List<Common::String> rootResourcePaths;
-
-    Common::List<Common::String> u4ForDOSPaths;
-    Common::List<Common::String> u4ZipPaths;
-    Common::List<Common::String> musicPaths;
-    Common::List<Common::String> soundPaths;
-    Common::List<Common::String> configPaths;
-    Common::List<Common::String> graphicsPaths;
-
-private:
-    bool defaultsHaveBeenInitd;
-
-};
-
 bool u4isUpgradeAvailable();
 bool u4isUpgradeInstalled();
 U4FILE *u4fopen(const Common::String &fname);
