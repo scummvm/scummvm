@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-03-21 09:03+0100\n"
-"PO-Revision-Date: 2020-03-11 17:32+0000\n"
+"PO-Revision-Date: 2020-03-21 22:15+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -285,15 +285,13 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/editgamedialog.cpp:210
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Ignora le impostazioni audio globali"
+msgstr "Ignora impostazioni shader globali"
 
 #: gui/editgamedialog.cpp:212
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Ignora le impostazioni audio globali"
+msgstr "Ignora impostazioni shader globali"
 
 #: gui/editgamedialog.cpp:226 gui/options.cpp:1682 engines/dialogs.cpp:316
 msgid "Keymaps"
@@ -2293,7 +2291,7 @@ msgstr ""
 
 #: audio/mididrv.cpp:448
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "Avvio dump MIDI"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -2659,14 +2657,12 @@ msgid "Mouse Wheel Down"
 msgstr "Rotellina mouse Giù"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "Tasto sinistro mouse"
+msgstr "Tasto mouse X1"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "Tasto sinistro mouse"
+msgstr "Tasto mouse X2"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
@@ -2775,26 +2771,23 @@ msgstr "Azzera"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Mouse virtuale su"
 
 #: backends/keymapper/virtual-mouse.cpp:159
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Balla verso il basso"
+msgstr "Mouse virtuale giù"
 
 #: backends/keymapper/virtual-mouse.cpp:164
-#, fuzzy
 msgid "Virtual mouse left"
-msgstr "Balla verso sinistra"
+msgstr "Mouse virtuale sinistra"
 
 #: backends/keymapper/virtual-mouse.cpp:169
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "Balla verso destra"
+msgstr "Mouse virtuale destra"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Rallenta mouse virtuale"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
@@ -2995,19 +2988,16 @@ msgid "Use Screen:"
 msgstr "Usa schermo:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Top"
 msgstr "Superiore"
 
 #: backends/platform/3ds/options-dialog.cpp:59
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Bottom"
 msgstr "Inferiore"
 
 #: backends/platform/3ds/options-dialog.cpp:60
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Both"
 msgstr "Entrambi"
@@ -3836,13 +3826,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "Disabilita affaticamento rapido di McCoy"
 
 #: engines/bladerunner/detection.cpp:85
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
 msgstr ""
+"Quando sta correndo, McCoy non inizierà a rallentare al rilascio del tasto "
+"del mouse"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4263,14 +4255,12 @@ msgstr ""
 "Pulsante sinistro per attaccare, pulsante destro per raccogliere gli oggetti"
 
 #: engines/kyra/engine/eobcommon.cpp:348 engines/kyra/engine/lol.cpp:468
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Clic sinistro"
+msgstr "Interazione tramite Clic Sinistro"
 
 #: engines/kyra/engine/eobcommon.cpp:354 engines/kyra/engine/lol.cpp:474
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Clic destro"
+msgstr "Interazione tramite Clic Destro"
 
 #: engines/kyra/engine/eobcommon.cpp:360 engines/kyra/engine/lol.cpp:498
 msgid "Move Forward"
@@ -6116,9 +6106,9 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Impossibile caricare il salvataggio rapido #%d"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "File dati del motore '%s' non trovato."
+msgstr "File dati '%s' non trovato."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -6549,10 +6539,9 @@ msgstr ""
 "durante la compilazione."
 
 #: engines/wintermute/wintermute.cpp:178
-#, fuzzy
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
-"Questo gioco richiede il sotto-motore FoxTail, che non è stato incluso "
+"Questo gioco richiede il sotto-motore HeroCraft, che non è stato incluso "
 "durante la compilazione."
 
 #: engines/wintermute/wintermute.cpp:189
