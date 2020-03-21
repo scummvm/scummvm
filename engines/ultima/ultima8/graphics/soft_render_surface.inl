@@ -167,25 +167,13 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 // The Function
 //
 
-// All the variables we want
-
-	const uint8			*linedata;
-	int32				xpos;
-	sintptr				line; // sintptr for pointer arithmetic
-	int32				dlen;
-
-	uintX				*pixptr;
-	uintX				*endrun;
-	uintX				*line_start;
-	uint32				pix;
-
 	// Sanity check
 	if (framenum >= s->frameCount())
 		return;
 	if (s->getPalette() == 0)
 		return;
 
-	const ShapeFrame	*frame			= s->getFrame(framenum);
+	const ShapeFrame *frame			= s->getFrame(framenum);
 	const uint8		*rle_data		= frame->_rle_data;
 	const uint32	*line_offsets	= frame->_line_offsets;
 	const uint32	*pal			= untformed_pal?
@@ -199,21 +187,19 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 										&(s->getPalette()->_xform[0]);
 #endif
 
-	int32 width_ = frame->_width;
-	int32 height_ = frame->_height;
+	const int32 width_ = frame->_width;
+	const int32 height_ = frame->_height;
 	x -= XNEG(frame->_xoff);
 	y -= frame->_yoff;
 
 	// Do it this way if compressed
 	if (frame->_compressed) for (int i=0; i<height_; i++)  {
-		xpos = 0;
-		line = y+i;
+		int32 xpos = 0;
+		sintptr line = y+i;
 
 		if (NOT_CLIPPED_Y) {
-
-			linedata = rle_data + line_offsets[i];
-			line_start = reinterpret_cast<uintX *>(static_cast<uint8*>(OFFSET_PIXELS) + _pitch*line);
-
+			const uint8	*linedata = rle_data + line_offsets[i];
+			uintX *line_start = reinterpret_cast<uintX *>(static_cast<uint8*>(OFFSET_PIXELS) + _pitch*line);
 			LINE_END_ASSIGN();
 
 			do {
@@ -221,14 +207,15 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 			  
 				if (xpos == width_) break;
 
-				dlen = *linedata++;
-				int type = dlen & 1;
+				int32 dlen = *linedata++;
+				const int type = dlen & 1;
 				dlen >>= 1;
 
-				pixptr = line_start+x+XNEG(xpos);
-				endrun = pixptr + XNEG(dlen);
+				uintX *pixptr = line_start+x+XNEG(xpos);
+				uintX *endrun = pixptr + XNEG(dlen);
 				
 				if (!type) {
+					// Identical to the uncompressed case
 					while (pixptr != endrun)  {
 						if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED)  {
 							#ifdef XFORM_SHAPES
@@ -244,17 +231,18 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 						linedata++;
 					}
 				} else {
+					// a run of the same pixel
 					#ifdef XFORM_SHAPES
-					pix = xform_pal[*linedata];
 					if (USE_XFORM_FUNC) {
+						const uint32 pix = xform_pal[*linedata];
 						while (pixptr != endrun) {
-							if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED) *pixptr = CUSTOM_BLEND(BlendPreModulated(xform_pal[*linedata],*pixptr));
+							if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED) *pixptr = CUSTOM_BLEND(BlendPreModulated(pix,*pixptr));
 							pixptr += XNEG(1);
 						}
 					} else 
 					#endif
 					{
-						pix = pal[*linedata];
+						const uint32 pix = pal[*linedata];
 						while (pixptr != endrun) 
 						{
 							if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED) 
@@ -274,12 +262,12 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	}
 	// Uncompressed
 	else for (int i=0; i<height_; i++)  {
-		linedata = rle_data + line_offsets[i];
-		xpos = 0;
-		line = y+i;
+		int32 xpos = 0;
+		sintptr line = y+i;
 
 		if (NOT_CLIPPED_Y) {
-			line_start = reinterpret_cast<uintX *>(static_cast<uint8*>(OFFSET_PIXELS) + _pitch*line);
+			const uint8	*linedata = rle_data + line_offsets[i];
+			uintX *line_start = reinterpret_cast<uintX *>(static_cast<uint8*>(OFFSET_PIXELS) + _pitch*line);
 			LINE_END_ASSIGN();
 
 			do {
@@ -287,10 +275,10 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 			  
 				if (xpos == width_) break;
 
-				dlen = *linedata++;
+				const int32 dlen = *linedata++;
 
-				pixptr= line_start+x+XNEG(xpos);
-				endrun = pixptr + XNEG(dlen);
+				uintX *pixptr = line_start+x+XNEG(xpos);
+				uintX *endrun = pixptr + XNEG(dlen);
 
 				while (pixptr != endrun) {
 					if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED) {

@@ -943,35 +943,6 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintHighlightInvis(Shape *
 }
 
 //
-// void SoftRenderSurface::PaintHighlight(Shape* s, uint32 frame, int32 x, int32 y, bool mirrored)
-//
-// Desc: Standard shape drawing functions. Masked against Dest Alpha. Highlights, Clips, and conditionally Flips and Xforms
-//
-
-template<class uintX> void SoftRenderSurface<uintX>::PaintMasked(Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
-#define FLIP_SHAPES
-#define FLIP_CONDITIONAL mirrored
-#define XFORM_SHAPES
-#define XFORM_CONDITIONAL trans
-#define BLEND_SHAPES(src,dst) BlendHighlight(src,cr,cg,cb,ca,255-ca)
-#define DESTALPHA_MASK
-
-	uint32 ca = TEX32_A(col32);
-	uint32 cr = TEX32_R(col32);
-	uint32 cg = TEX32_G(col32);
-	uint32 cb = TEX32_B(col32);
-
-#include "ultima/ultima8/graphics/soft_render_surface.inl"
-
-#undef FLIP_SHAPES
-#undef FLIP_CONDITIONAL
-#undef XFORM_SHAPES
-#undef XFORM_CONDITIONAL
-#undef BLEND_SHAPES
-#undef DESTALPHA_MASK
-}
-
-//
 // Instantiate the SoftRenderSurface Class
 //
 template class SoftRenderSurface<uint16>;

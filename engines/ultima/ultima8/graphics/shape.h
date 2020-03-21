@@ -72,7 +72,7 @@ public:
 
 	ENABLE_CUSTOM_MEMORY_ALLOCATION()
 
-protected:
+private:
 
 	// This will load a u8 style shape 'optimized'.
 	void LoadU8Format(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
