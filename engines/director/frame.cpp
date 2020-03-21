@@ -202,10 +202,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._spriteType = stream->readByte();
 			sprite._enabled = sprite._spriteType != 0;
 			if (_vm->getVersion() >= 4) {
-				sprite._foreColor = 0xff - (uint8)stream->readByte();
-				sprite._backColor = 0xff - (uint8)stream->readByte();
+				sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
+				sprite._backColor = _vm->transformColor((uint8)stream->readByte());
 			} else {
-				sprite._foreColor = (127 - stream->readByte()) & 0xff; // -128 -> 0, 127 -> 256
+				sprite._foreColor = (127 - stream->readByte()) & 0xff; // -128 ... 127 -> 255 ... 0
 				sprite._backColor = (127 - stream->readByte()) & 0xff;
 			}
 
@@ -947,7 +947,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	}
 
 	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
-	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), 255 - _vm->getCurrentScore()->getStageColor());
+	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), _vm->getCurrentScore()->getStageColor());
 
 	if (textRect == NULL && boxShadow > 0) {
 		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);
@@ -1063,7 +1063,7 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 		for (int j = 0; j < srcRect.width(); j++) {
 			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0)) {
 				if (*src != skipColor) {
-					*dst = 0xff - *src;
+					*dst = _vm->transformColor(*src);
 				}
 			} else if (*src != skipColor) {
 				*dst = *src;
