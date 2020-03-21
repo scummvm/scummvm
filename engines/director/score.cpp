@@ -1369,10 +1369,10 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 	for (uint16 i = 0; i < count - 1; i++) {
 		Common::String entryString;
 
-		for (uint j = entries[i]; j < entries[i + 1]; j++)
+		for (uint j = entries[i] + 1; j < entries[i + 1]; j++) // Skip first byte which is string length
 			if (data[j] == '\r')
 				entryString += '\n';
-			else if (j > entries[i] || data[j] >= 0x20) // Skip first byte which is string length
+			else if (data[j] >= 0x20)
 				entryString += data[j];
 
 		strings.push_back(entryString);
