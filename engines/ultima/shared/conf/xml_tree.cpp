@@ -29,6 +29,8 @@
 namespace Ultima {
 namespace Shared {
 
+XMLTree *XMLTree::_currentTree;
+
 XMLTree::XMLTree()
 		: _tree(new XMLNode("config")), _root("config"), _isFile(false),
 		_readOnly(false) {
@@ -60,6 +62,7 @@ void XMLTree::clear(const Common::String &root) {
 
 bool XMLTree::readConfigFile(const Common::String &fname) {
 	Common::File f;
+	_filename = fname;
 
 	if (!f.open(fname)) {
 		warning("Error opening config file");
@@ -89,58 +92,13 @@ bool XMLTree::readConfigStream(Common::SeekableReadStream *stream) {
 }
 
 bool XMLTree::readConfigString(const Common::String &s) {
+	_currentTree = this;
+	bool result = _tree->xmlParseDoc(s);
+
 	_isFile = false;
 	_filename.clear();
 
-	Common::String sbuf(s);
-	size_t nn = 0;
-	bool parsedXmlElement = false, parsedDocType = false;
-
-	for (;;) {
-		while (nn < s.size() && Common::isSpace(s[nn]))
-			++nn;
-		if (nn >= s.size())
-			return true;
-
-		if (s[nn] != '<') {
-			warning("expected '<' while reading config file, found %c\n", s[nn]);
-			return false;
-		}
-		++nn;
-
-		if (nn < s.size() && s[nn] == '?') {
-			assert(!parsedXmlElement);
-			parsedXmlElement = true;
-			nn = s.findFirstOf('>', nn);
-		} else if (nn < s.size() && s.substr(nn, 8).equalsIgnoreCase("!doctype")) {
-			assert(!parsedDocType);
-			parsedDocType = true;
-			parseDocTypeElement(s, nn);
-		} else {
-			_tree->xmlParse(sbuf, nn);
-			continue;
-		}
-
-		// If this point was reached, we just skipped ?xml or doctype element
-		++nn;
-	}
-
-	return true;
-}
-
-void XMLTree::parseDocTypeElement(const Common::String &s, size_t &nn) {
-	nn = s.findFirstOf(">[", nn);
-	if (nn == Common::String::npos)
-		// No ending tag
-		return;
-
-	if (s[nn] == '[') {
-		// Square bracketed area
-		nn = s.findFirstOf(']', nn) + 1;
-	}
-
-	if (nn >= s.size() || s[nn] != '>')
-		nn = Common::String::npos;
+	return result;
 }
 
 Common::String XMLTree::dump() {
