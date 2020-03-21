@@ -43,6 +43,10 @@ public:
 		_maxScanDepth = 2;
 	}
 
+	const char *getEngineId() const override {
+		return "petka";
+	}
+
 	virtual const char *getName() const {
 		return "Red Comrades";
 	}
