@@ -26,6 +26,7 @@
 #include "ultima/shared/std/containers.h"
 #include "common/str.h"
 #include "common/array.h"
+#include "common/hash-str.h"
 
 namespace Ultima {
 namespace Shared {
@@ -35,9 +36,11 @@ private:
 	Common::String _id;
 	Common::String _content;
 	Common::Array<XMLNode *> _nodeList;
+	Common::StringMap _attributes;
 	bool _noClose;
 	Common::String _emptyString;
-
+private:
+	void parseNodeText(const Common::String &nodeText);
 public:
 	XMLNode() : _noClose(false) {}
 	XMLNode(const Common::String &i) : _id(i), _noClose(false) {}
@@ -61,6 +64,12 @@ public:
 	}
 	const Common::String &value(void) const {
 		return _content;
+	}
+	const Common::StringMap &attributes() const {
+		return _attributes;
+	}
+	const Common::String &operator[](const Common::String &attrName) const {
+		return _attributes[attrName];
 	}
 
 	typedef Std::pair<Common::String, Common::String> KeyType;

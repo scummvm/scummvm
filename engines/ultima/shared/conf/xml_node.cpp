@@ -242,6 +242,8 @@ void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 	bool intag = true;
 	_id.clear();
 
+	Common::String nodeText;
+
 	while (pos < s.size()) {
 		switch (s[pos]) {
 		case '<': {
@@ -254,7 +256,7 @@ void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 				trim(_content);
 				return;
 			}
-			XMLNode *t = new XMLNode;
+			XMLNode *t = new XMLNode();
 			++pos;
 			t->xmlParse(s, pos);
 			_nodeList.push_back(t);
@@ -267,15 +269,20 @@ void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 					++pos;
 					return; // An empty tag
 				} else {
+					nodeText.deleteLastChar();	// Remove ending /
+					parseNodeText(nodeText);
 					++pos;
 					_noClose = true;
 					return;
 				}
-			} else if ((_id[0] == '!') && (_id[1] == '-') && (_id[2] == '-')) {
+			} else if (nodeText.hasPrefix("!--")) {
+				// Comment element
 				++pos;
 				_noClose = true;
 				return;
 			}
+
+			parseNodeText(nodeText);
 			++pos;
 			intag = false;
 			if (s[pos] < 32)
@@ -286,12 +293,57 @@ void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 			break;
 		default:
 			if (intag)
-				_id += s[pos++];
+				nodeText += s[pos++];
 			else
 				_content += s[pos++];
 		}
 	}
 	trim(_content);
+}
+
+void XMLNode::parseNodeText(const Common::String &nodeText) {
+	size_t firstSpace = nodeText.findFirstOf(' ');
+	if (firstSpace == Common::String::npos) {
+		// The entire text is the id
+		_id = nodeText;
+	} else {
+		_id = Common::String(nodeText.c_str(), firstSpace);
+	}
+
+	Common::String attr(nodeText.c_str() + firstSpace);
+
+	for (;;) {
+		// Skip any spaces
+		while (!attr.empty() && Common::isSpace(attr[0]))
+			attr.deleteChar(0);
+		if (attr.empty())
+			return;
+
+		// Find the equals after the attribute name
+		size_t equalsPos = attr.findFirstOf('=');
+		if (equalsPos == Common::String::npos)
+			return;
+
+		// Get the name, and find the quotes start
+		Common::String name = Common::String(attr.c_str(), equalsPos);
+		++equalsPos;
+		while (equalsPos < attr.size() && Common::isSpace(attr[equalsPos]))
+			++equalsPos;
+
+		if (attr[equalsPos] == '\'' && attr[equalsPos] != '"')
+			return;
+
+		// Find the end of the attribute
+		size_t attrEnd = attr.findFirstOf(attr[equalsPos], equalsPos + 1);
+		if (attrEnd == Common::String::npos)
+			return;
+
+		// Add the parsed attribute
+		_attributes[name] = Common::String(attr.c_str() + equalsPos + 1, attr.c_str() + attrEnd);
+
+		// Remove the parsed attribute
+		attr = Common::String(attr.c_str() + attrEnd + 1);
+	}
 }
 
 bool XMLNode::searchPairs(KeyTypeList &ktl, const Common::String &basekey,

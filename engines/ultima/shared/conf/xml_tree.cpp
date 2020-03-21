@@ -99,11 +99,9 @@ bool XMLTree::readConfigString(const Common::String &s) {
 	for (;;) {
 		while (nn < s.size() && Common::isSpace(s[nn]))
 			++nn;
+		if (nn >= s.size())
+			return true;
 
-		if (nn >= s.size()) {
-			warning("Unexpected end of XML");
-			return false;
-		}
 		if (s[nn] != '<') {
 			warning("expected '<' while reading config file, found %c\n", s[nn]);
 			return false;
