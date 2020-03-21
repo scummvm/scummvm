@@ -300,6 +300,13 @@ void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 	Common::String nodeText;
 
 	while (pos < s.size()) {
+		if (nodeText.hasPrefix("!--") && (s[pos] != '>' || !nodeText.hasSuffix("--"))) {
+			// It's a > within the comment, but not the terminator
+			nodeText += s[pos];
+			++pos;
+			continue;
+		}
+
 		switch (s[pos]) {
 		case '<': {
 			// New tag?
