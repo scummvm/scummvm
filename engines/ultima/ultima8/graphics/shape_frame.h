@@ -53,7 +53,7 @@ public:
 
 	uint8 getPixelAtPoint(int32 x, int32 y) const;  // Get the pixel at the point
 
-	void getConvertShapeFrame(ConvertShapeFrame &csf, bool need_bytes_rle = false);
+	void getConvertShapeFrame(ConvertShapeFrame &csf);
 protected:
 
 	// This will load a u8 style shape 'optimized'.

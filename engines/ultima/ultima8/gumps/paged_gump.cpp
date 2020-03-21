@@ -60,7 +60,7 @@ void PagedGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	_shape = GameData::get_instance()->getGumps()->getShape(_gumpShape);
-	ShapeFrame *sf = _shape->getFrame(0);
+	const ShapeFrame *sf = _shape->getFrame(0);
 	assert(sf);
 
 	_dims.w = sf->_width;

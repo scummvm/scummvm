@@ -63,7 +63,7 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 
 	SetShape(shape_, 0);
 
-	ShapeFrame *sf = shape_->getFrame(0);
+	const ShapeFrame *sf = shape_->getFrame(0);
 	assert(sf);
 
 	_dims.w = sf->_width;

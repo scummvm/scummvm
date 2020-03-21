@@ -185,7 +185,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	if (s->getPalette() == 0)
 		return;
 
-	ShapeFrame		*frame			= s->getFrame(framenum);
+	const ShapeFrame	*frame			= s->getFrame(framenum);
 	const uint8		*rle_data		= frame->_rle_data;
 	const uint32	*line_offsets	= frame->_line_offsets;
 	const uint32	*pal			= untformed_pal?

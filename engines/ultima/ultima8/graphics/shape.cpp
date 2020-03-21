@@ -261,7 +261,7 @@ void Shape::getTotalDimensions(int32 &w, int32 &h, int32 &x, int32 &y) const {
 	y = -miny;
 }
 
-ShapeFrame *Shape::getFrame(unsigned int frame) {
+const ShapeFrame *Shape::getFrame(unsigned int frame) const {
 	if (frame < _frames.size())
 		return _frames[frame];
 	else

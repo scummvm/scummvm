@@ -69,7 +69,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 
 	Shape *entryShape;
 	entryShape = GameData::get_instance()->getShape(entry_id);
-	ShapeFrame *sf = entryShape->getFrame(entry_id._frameNum);
+	const ShapeFrame *sf = entryShape->getFrame(entry_id._frameNum);
 	int entrywidth = sf->_width;
 	int entryheight = sf->_height;
 

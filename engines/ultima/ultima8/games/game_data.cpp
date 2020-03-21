@@ -130,11 +130,11 @@ Shape *GameData::getShape(FrameID f) const {
 	return shape;
 }
 
-ShapeFrame *GameData::getFrame(FrameID f) const {
-	Shape *shape = getShape(f);
+const ShapeFrame *GameData::getFrame(FrameID f) const {
+	const Shape *shape = getShape(f);
 	if (!shape)
 		return nullptr;
-	ShapeFrame *frame = shape->getFrame(f._frameNum);
+	const ShapeFrame *frame = shape->getFrame(f._frameNum);
 	return frame;
 }
 
