@@ -27,6 +27,7 @@
 #include "director/cachedmactext.h"
 #include "director/cast.h"
 #include "director/score.h"
+#include "director/sound.h"
 #include "director/stxt.h"
 
 namespace Director {

@@ -97,10 +97,14 @@ void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) 
 
 void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(&stream);
+	playStream(*seekStream, soundChannel);
+}
+
+void DirectorSound::playStream(Audio::SeekableAudioStream &stream, uint8 soundChannel) {
 	if (soundChannel == 1)
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, seekStream);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, &stream);
 	else
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound2, seekStream);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound2, &stream);
 }
 
 bool DirectorSound::isChannelActive(uint8 channelID) {
@@ -115,6 +119,15 @@ bool DirectorSound::isChannelActive(uint8 channelID) {
 	return false;
 }
 
+void DirectorSound::stopSound(uint8 channelID) {
+	if (channelID == 1) {
+		_mixer->stopHandle(*_sound1);
+	} else if (channelID == 2) {
+		_mixer->stopHandle(*_sound2);
+	}
+	return;
+}
+
 void DirectorSound::stopSound() {
 	_mixer->stopHandle(*_sound1);
 	_mixer->stopHandle(*_sound2);
@@ -125,55 +138,78 @@ void DirectorSound::systemBeep() {
 	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
 }
 
+SNDDecoder::SNDDecoder() {
+	_data = nullptr;
+	_channels = 0;
+	_size = 0;
+	_rate = 0;
+	_flags = 0;
+}
 
-Audio::SeekableAudioStream *makeSNDStream(Common::SeekableSubReadStreamEndian *stream) {
+SNDDecoder::~SNDDecoder() {
+	if (_data) {
+		free(_data);
+	}
+}
+
+
+bool SNDDecoder::loadStream(Common::SeekableSubReadStreamEndian &stream) {
+	if (_data) {
+		free(_data);
+		_data = nullptr;
+	}
+
 	if (debugChannelSet(5, kDebugLoading)) {
 		debugC(5, kDebugLoading, "snd header:");
-		stream->hexdump(0x4e);
+		stream.hexdump(0x4e);
 	}
 
 	// unk1
 	for (uint32 i = 0; i < 0x14; i++) {
-		stream->readByte();
+		stream.readByte();
 	}
-	uint16 channels = stream->readUint16();
-	if (channels != 1 || channels != 2) {
+	_channels = stream.readUint16();
+	if (!(_channels == 1 || _channels == 2)) {
 		warning("STUB: loadSpriteSounds: no support for old sound format");
-		return NULL;
+		return false;
 	}
-	uint16 rate = stream->readUint16();
+	_rate = stream.readUint16();
 
 	// unk2
 	for (uint32 i = 0; i < 0x06; i++) {
-		stream->readByte();
+		stream.readByte();
 	}
-	uint32 length = stream->readUint32();
-	/*uint16 unk3 =*/stream->readUint16();
-	/*uint32 length_copy =*/stream->readUint32();
-	/*uint8 unk4 =*/stream->readByte();
-	/*uint8 unk5 =*/stream->readByte();
-	/*uint16 unk6 =*/stream->readUint16();
+	uint32 length = stream.readUint32();
+	/*uint16 unk3 =*/stream.readUint16();
+	/*uint32 length_copy =*/stream.readUint32();
+	/*uint8 unk4 =*/stream.readByte();
+	/*uint8 unk5 =*/stream.readByte();
+	/*uint16 unk6 =*/stream.readUint16();
 	// unk7
 	for (uint32 i = 0; i < 0x12; i++) {
-		stream->readByte();
+		stream.readByte();
 	}
-	uint16 bits = stream->readUint16();
+	uint16 bits = stream.readUint16();
 	// unk8
 	for (uint32 i = 0; i < 0x0c; i++) {
-		stream->readByte();
+		stream.readByte();
 	}
 
-	byte flags = 0;
-	flags |= channels == 2 ? Audio::FLAG_STEREO : 0;
-	flags |= bits == 16 ? Audio::FLAG_16BITS : 0;
-	flags |= bits == 8 ? Audio::FLAG_UNSIGNED : 0;
-	uint32 size = length * channels * (bits == 16 ? 2 : 1);
+	_flags = 0;
+	_flags |= _channels == 2 ? Audio::FLAG_STEREO : 0;
+	_flags |= bits == 16 ? Audio::FLAG_16BITS : 0;
+	_flags |= bits == 8 ? Audio::FLAG_UNSIGNED : 0;
+	_size = length * _channels * (bits == 16 ? 2 : 1);
 
-	byte *data = (byte *)malloc(size);
-	assert(data);
-	stream->read(data, size);
+	_data = (byte *)malloc(_size);
+	assert(_data);
+	stream.read(_data, _size);
 
-	return Audio::makeRawStream(data, size, rate, flags);
+	return true;
+}
+
+Audio::SeekableAudioStream *SNDDecoder::getAudioStream() {
+	return Audio::makeRawStream(_data, _size, _rate, _flags, DisposeAfterUse::NO);
 }
 
 

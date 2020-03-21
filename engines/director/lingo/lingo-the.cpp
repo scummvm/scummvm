@@ -698,27 +698,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 Datum Lingo::getTheCast(Datum &id1, int field) {
 	Datum d;
-	int id = 0;
+	int id = g_lingo->castIdFetch(id1);
+
 	Score *score = _vm->getCurrentScore();
-
-	if (!score) {
-		warning("Lingo::getTheCast(): The cast %d field \"%s\" setting over non-active score", id, field2str(field));
-		return d;
-	}
-
-	if (id1.type == INT) {
-		id = id1.u.i;
-	} else if (id1.type == STRING) {
-		if (score->_castsNames.contains(*id1.u.s)) {
-			id = score->_castsNames[*id1.u.s];
-		} else {
-			warning("Lingo::getTheCast(): Unknown the cast \"%s\"", id1.u.s->c_str());
-		}
-	} else {
-		warning("Lingo::getTheCast(): Unknown the cast id type: %s", id1.type2str());
-		return d;
-	}
-
 	// Setting default type
 	d.type = INT;
 

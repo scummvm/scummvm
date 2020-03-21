@@ -23,11 +23,13 @@
 #include "common/system.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/frame.h"
 #include "director/score.h"
+#include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
 
@@ -1394,11 +1396,33 @@ void LB::b_puppetPalette(int nargs) {
 }
 
 void LB::b_puppetSound(int nargs) {
-	g_lingo->convertVOIDtoString(0, nargs);
+	if (nargs != 1) {
+		error("b_puppetSound: expected 1 argument, got %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+	Score *score = g_director->getCurrentScore();
 
-	g_lingo->printSTUBWithArglist("b_puppetSound", nargs);
+	DirectorSound *sound = g_director->getSoundManager();
+	Datum castMember = g_lingo->pop();
+	int castId = g_lingo->castIdFetch(castMember);
 
-	g_lingo->dropStack(nargs);
+	if (castId == 0) {
+		sound->stopSound(1);
+	} else {
+		Cast *cast = score->_loadedCast->getVal(castId);
+		if (cast->_type != kCastSound) {
+			error("b_puppetSound: attempted to play a non-SoundCast cast member");
+			return;
+		}
+		SNDDecoder *sd = ((SoundCast *)cast)->_audio;
+		if (!sd) {
+			warning("b_puppetSound: no audio data attached to cast");
+			return;
+		}
+		sound->playStream(*sd->getAudioStream(), 1);
+	}
+
 }
 
 void LB::b_puppetSprite(int nargs) {
@@ -1802,29 +1826,7 @@ void LB::b_cast(int nargs) {
 void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
 
-	int id;
-
-	if (!g_director->getCurrentScore()) {
-		warning("b_field: Assigning to a field in an empty score");
-		d.u.i = 0;
-		d.type = INT;
-		g_lingo->push(d);
-		return;
-	}
-
-	if (d.type == STRING) {
-		if (g_director->getCurrentScore()->_castsNames.contains(*d.u.s))
-			id = g_director->getCurrentScore()->_castsNames[*d.u.s];
-		else
-			error("b_field: Reference to non-existent field: %s", d.u.s->c_str());
-	} else if (d.type == INT || d.type == FLOAT) {
-		d.toInt();
-		id = d.u.i;
-	} else {
-		error("b_field: Incorrect reference type: %s", d.type2str());
-	}
-
-	d.u.i = id;
+	d.u.i = g_lingo->castIdFetch(d);
 
 	d.type = REFERENCE;
 

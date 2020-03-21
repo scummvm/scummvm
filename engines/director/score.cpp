@@ -403,7 +403,8 @@ void Score::loadSpriteSounds(bool isSharedCast) {
 		}
 
 		if (sndData != NULL && soundCast != NULL) {
-			Audio::SeekableAudioStream *audio = makeSNDStream(sndData);
+			SNDDecoder *audio = new SNDDecoder();
+			audio->loadStream(*sndData);
 			soundCast->_audio = audio;
 		}
 	}

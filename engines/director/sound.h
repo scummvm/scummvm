@@ -50,12 +50,29 @@ public:
 	void playAIFF(Common::String filename, uint8 channelID);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
+	void playStream(Audio::SeekableAudioStream &stream, uint8 soundChannel);
 	void systemBeep();
 	bool isChannelActive(uint8 channelID);
+	void stopSound(uint8 channelID);
 	void stopSound();
 };
 
-Audio::SeekableAudioStream *makeSNDStream(Common::SeekableSubReadStreamEndian *stream);
+
+class SNDDecoder {
+public:
+	SNDDecoder();
+	~SNDDecoder();
+
+	bool loadStream(Common::SeekableSubReadStreamEndian &stream);
+	Audio::SeekableAudioStream *getAudioStream();
+
+private:
+	byte *_data;
+	uint16 _channels;
+	uint32 _size;
+	uint16 _rate;
+	byte _flags;
+};
 
 } // End of namespace Director
 

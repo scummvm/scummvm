@@ -30,10 +30,6 @@ namespace Graphics {
 struct Surface;
 }
 
-namespace Audio {
-struct SeekableAudioStream;
-}
-
 namespace Common {
 class SeekableReadStream;
 class ReadStreamEndian;
@@ -43,6 +39,7 @@ namespace Director {
 
 class Stxt;
 class CachedMacText;
+class SNDDecoder;
 
 class Cast {
 public:
@@ -80,7 +77,7 @@ public:
 	SoundCast(Common::ReadStreamEndian &stream, uint16 version);
 
 	bool _looping;
-	Audio::SeekableAudioStream *_audio;
+	SNDDecoder *_audio;
 };
 
 class ShapeCast : public Cast {
