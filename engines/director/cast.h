@@ -30,6 +30,10 @@ namespace Graphics {
 struct Surface;
 }
 
+namespace Audio {
+struct SeekableAudioStream;
+}
+
 namespace Common {
 class SeekableReadStream;
 class ReadStreamEndian;
@@ -69,6 +73,14 @@ public:
 	uint16 _bitsPerPixel;
 
 	uint32 _tag;
+};
+
+class SoundCast : public Cast {
+public:
+	SoundCast(Common::ReadStreamEndian &stream, uint16 version);
+
+	bool _looping;
+	Audio::SeekableAudioStream *_audio;
 };
 
 class ShapeCast : public Cast {

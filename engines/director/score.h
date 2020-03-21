@@ -89,6 +89,7 @@ public:
 	Sprite *getSpriteById(uint16 id);
 	void setSpriteCasts();
 	void loadSpriteImages(bool isSharedCast);
+	void loadSpriteSounds(bool isSharedCast);
 	void copyCastStxts();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
 

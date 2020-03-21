@@ -27,6 +27,7 @@ namespace Audio {
 	class AudioStream;
 	class SoundHandle;
 	class PCSpeaker;
+	class SeekableAudioStream;
 }
 
 namespace Director {
@@ -48,10 +49,13 @@ public:
 	void playWAV(Common::String filename, uint8 channelID);
 	void playAIFF(Common::String filename, uint8 channelID);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
+	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
 	void systemBeep();
 	bool isChannelActive(uint8 channelID);
 	void stopSound();
 };
+
+Audio::SeekableAudioStream *makeSNDStream(Common::SeekableSubReadStreamEndian *stream);
 
 } // End of namespace Director
 

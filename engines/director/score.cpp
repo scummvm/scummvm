@@ -26,6 +26,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 
+#include "audio/decoders/raw.h"
 #include "engines/util.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macfontmanager.h"
@@ -243,11 +244,6 @@ void Score::loadArchive() {
 		debug("STUB: Unhandled 'PICT' resource");
 	}
 
-	// Sound resources
-	if (_movieArchive->hasResource(MKTAG('s', 'n', 'd', ' '), -1)) {
-		debug("STUB: Unhandled 'snd ' resource");
-	}
-
 	// Film Loop resources
 	if (_movieArchive->hasResource(MKTAG('S', 'C', 'V', 'W'), -1)) {
 		debug("STUB: Unhandled 'SCVW' resource");
@@ -256,6 +252,7 @@ void Score::loadArchive() {
 
 	setSpriteCasts();
 	loadSpriteImages(false);
+	loadSpriteSounds(false);
 
 	// Now process STXTs
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
@@ -372,6 +369,43 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 		debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
 			imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
+	}
+}
+
+void Score::loadSpriteSounds(bool isSharedCast) {
+	debugC(1, kDebugLoading, "****** Preloading sprite sounds");
+
+	for (Common::HashMap<int, Cast *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
+		if (!c->_value)
+			continue;
+
+		if (c->_value->_type != kCastSound)
+			continue;
+
+		SoundCast *soundCast = (SoundCast *)c->_value;
+		uint32 tag = MKTAG('s', 'n', 'd', ' ');
+		uint16 sndId = (uint16)(c->_key + _castIDoffset);
+
+		if (_vm->getVersion() >= 4 && soundCast->_children.size() > 0) {
+			sndId = soundCast->_children[0].index;
+			tag = soundCast->_children[0].tag;
+		}
+
+		Common::SeekableSubReadStreamEndian *sndData = NULL;
+
+		switch (tag) {
+		case MKTAG('s', 'n', 'd', ' '):
+			if (_movieArchive->hasResource(MKTAG('s', 'n', 'd', ' '), sndId)) {
+				debugC(2, kDebugLoading, "****** Loading 'snd ' id: %d", sndId);
+				sndData = _movieArchive->getResource(MKTAG('s', 'n', 'd', ' '), sndId);
+			}
+			break;
+		}
+
+		if (sndData != NULL && soundCast != NULL) {
+			Audio::SeekableAudioStream *audio = makeSNDStream(sndData);
+			soundCast->_audio = audio;
+		}
 	}
 }
 
@@ -741,6 +775,10 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastBitmap (%d children)", res->children.size());
 		_loadedCast->setVal(id, new BitmapCast(castStream, res->tag, _vm->getVersion()));
 		break;
+	case kCastSound:
+		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastSound (%d children)", res->children.size());
+		_loadedCast->setVal(id, new SoundCast(castStream, _vm->getVersion()));
+		break;
 	case kCastText:
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastText (%d children)", res->children.size());
 		_loadedCast->setVal(id, new TextCast(castStream, _vm->getVersion(), _stageColor));
@@ -771,10 +809,6 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	case kCastPicture:
 		warning("STUB: Score::loadCastData(): kCastPicture (%d children)", res->children.size());
-		size2 = 0;
-		break;
-	case kCastSound:
-		warning("STUB: Score::loadCastData(): kCastSound (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	case kCastMovie:

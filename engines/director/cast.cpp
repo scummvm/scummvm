@@ -121,6 +121,18 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 	_tag = castTag;
 }
 
+SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
+	_type = kCastSound;
+	_audio = nullptr;
+
+	if (version == 4) {
+		for (int i = 0; i < 0xe; i++) {
+			stream.readByte();
+		}
+		_looping = stream.readByte() & 0x10;
+	}
+}
+
 TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor) {
 	_type = kCastText;
 

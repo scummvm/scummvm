@@ -21,12 +21,15 @@
  */
 
 #include "common/file.h"
+#include "common/substream.h"
 
 #include "audio/decoders/wave.h"
+#include "audio/decoders/raw.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
 #include "audio/decoders/aiff.h"
 
+#include "director/director.h"
 #include "director/sound.h"
 
 namespace Director {
@@ -92,6 +95,14 @@ void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, _scriptSound, subSeekStream);
 }
 
+void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
+	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(&stream);
+	if (soundChannel == 1)
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, seekStream);
+	else
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound2, seekStream);
+}
+
 bool DirectorSound::isChannelActive(uint8 channelID) {
 	if (channelID == 1) {
 		return _mixer->isSoundHandleActive(*_sound1);
@@ -113,5 +124,57 @@ void DirectorSound::stopSound() {
 void DirectorSound::systemBeep() {
 	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
 }
+
+
+Audio::SeekableAudioStream *makeSNDStream(Common::SeekableSubReadStreamEndian *stream) {
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "snd header:");
+		stream->hexdump(0x4e);
+	}
+
+	// unk1
+	for (uint32 i = 0; i < 0x14; i++) {
+		stream->readByte();
+	}
+	uint16 channels = stream->readUint16();
+	if (channels != 1 || channels != 2) {
+		warning("STUB: loadSpriteSounds: no support for old sound format");
+		return NULL;
+	}
+	uint16 rate = stream->readUint16();
+
+	// unk2
+	for (uint32 i = 0; i < 0x06; i++) {
+		stream->readByte();
+	}
+	uint32 length = stream->readUint32();
+	/*uint16 unk3 =*/stream->readUint16();
+	/*uint32 length_copy =*/stream->readUint32();
+	/*uint8 unk4 =*/stream->readByte();
+	/*uint8 unk5 =*/stream->readByte();
+	/*uint16 unk6 =*/stream->readUint16();
+	// unk7
+	for (uint32 i = 0; i < 0x12; i++) {
+		stream->readByte();
+	}
+	uint16 bits = stream->readUint16();
+	// unk8
+	for (uint32 i = 0; i < 0x0c; i++) {
+		stream->readByte();
+	}
+
+	byte flags = 0;
+	flags |= channels == 2 ? Audio::FLAG_STEREO : 0;
+	flags |= bits == 16 ? Audio::FLAG_16BITS : 0;
+	flags |= bits == 8 ? Audio::FLAG_UNSIGNED : 0;
+	uint32 size = length * channels * (bits == 16 ? 2 : 1);
+
+	byte *data = (byte *)malloc(size);
+	assert(data);
+	stream->read(data, size);
+
+	return Audio::makeRawStream(data, size, rate, flags);
+}
+
 
 } // End of namespace Director
