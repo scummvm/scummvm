@@ -705,7 +705,7 @@ static byte director3QuickDrawPatterns[][8] = {
  * To make loading images easier we the palette is in reverse order.
  * All other color ids can be converted with: 255 - colorId.
  */
-byte DirectorEngine::transformColor(byte color){
+uint32 DirectorEngine::transformColor(uint32 color) {
 	return 255 - color;
 }
 
