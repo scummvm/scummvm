@@ -33,14 +33,14 @@ namespace Shared {
 class XMLNode;
 
 class XMLTree {
+	friend class XMLNode;
 private:
+	static XMLTree *_currentTree;
 	XMLNode *_tree;
 	Common::String _filename;
 	Common::String _root;
 	bool _isFile;
 	bool _readOnly;
-
-	void parseDocTypeElement(const Common::String &s, size_t &nn);
 public:
 	XMLTree();
 	XMLTree(const Common::String &fname, const Common::String &root = "config");

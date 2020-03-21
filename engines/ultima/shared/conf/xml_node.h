@@ -40,7 +40,11 @@ private:
 	bool _noClose;
 	Common::String _emptyString;
 private:
+	void parseDocTypeElement(const Common::String &s, size_t &nn);
+
 	void parseNodeText(const Common::String &nodeText);
+
+	void xmlParseFile(const Common::String &fname);
 public:
 	XMLNode() : _noClose(false) {}
 	XMLNode(const Common::String &i) : _id(i), _noClose(false) {}
@@ -87,6 +91,7 @@ public:
 	Common::String dump(int depth = 0);
 
 	void xmlAssign(const Common::String &key, const Common::String &value);
+	bool xmlParseDoc(const Common::String &s);
 	void xmlParse(const Common::String &s, size_t &pos);
 
 	void listKeys(const Common::String &, Common::Array<Common::String> &,

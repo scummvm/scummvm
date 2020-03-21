@@ -21,6 +21,8 @@
  */
 
 #include "ultima/shared/conf/xml_node.h"
+#include "ultima/shared/conf/xml_tree.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Shared {
@@ -238,9 +240,62 @@ static void trim(Common::String &s) {
 	}
 }
 
+bool XMLNode::xmlParseDoc(const Common::String &s) {
+	Common::String sbuf(s);
+	size_t nn = 0;
+	bool parsedXmlElement = false, parsedDocType = false;
+
+	for (;;) {
+		while (nn < s.size() && Common::isSpace(s[nn]))
+			++nn;
+		if (nn >= s.size())
+			return true;
+
+		if (s[nn] != '<') {
+			warning("expected '<' while reading config file, found %c\n", s[nn]);
+			return false;
+		}
+		++nn;
+
+		if (nn < s.size() && s[nn] == '?') {
+			assert(!parsedXmlElement);
+			parsedXmlElement = true;
+			nn = s.findFirstOf('>', nn);
+		} else if (nn < s.size() && s.substr(nn, 8).equalsIgnoreCase("!doctype")) {
+			assert(!parsedDocType);
+			parsedDocType = true;
+			parseDocTypeElement(s, nn);
+		} else {
+			xmlParse(sbuf, nn);
+			continue;
+		}
+
+		// If this point was reached, we just skipped ?xml or doctype element
+		++nn;
+	}
+
+	return true;
+}
+
+void XMLNode::parseDocTypeElement(const Common::String &s, size_t &nn) {
+	nn = s.findFirstOf(">[", nn);
+	if (nn == Common::String::npos)
+		// No ending tag
+		return;
+
+	if (s[nn] == '[') {
+		// Square bracketed area
+		nn = s.findFirstOf(']', nn) + 1;
+	}
+
+	if (nn >= s.size() || s[nn] != '>')
+		nn = Common::String::npos;
+}
+
 void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 	bool intag = true;
 	_id.clear();
+	_attributes.clear();
 
 	Common::String nodeText;
 
@@ -273,6 +328,10 @@ void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 					parseNodeText(nodeText);
 					++pos;
 					_noClose = true;
+
+					if (_id.equalsIgnoreCase("xi:include"))
+						xmlParseFile(_attributes["href"]);
+
 					return;
 				}
 			} else if (nodeText.hasPrefix("!--")) {
@@ -306,10 +365,11 @@ void XMLNode::parseNodeText(const Common::String &nodeText) {
 	if (firstSpace == Common::String::npos) {
 		// The entire text is the id
 		_id = nodeText;
-	} else {
-		_id = Common::String(nodeText.c_str(), firstSpace);
+		return;
 	}
 
+	// Set the Id and get out the remaining attributes section, if any
+	_id = Common::String(nodeText.c_str(), firstSpace);
 	Common::String attr(nodeText.c_str() + firstSpace);
 
 	for (;;) {
@@ -344,6 +404,27 @@ void XMLNode::parseNodeText(const Common::String &nodeText) {
 		// Remove the parsed attribute
 		attr = Common::String(attr.c_str() + attrEnd + 1);
 	}
+}
+
+void XMLNode::xmlParseFile(const Common::String &fname) {
+	const Common::String rootFile = XMLTree::_currentTree->_filename;
+	Common::String filename = Common::String(rootFile.c_str(), rootFile.findLastOf('/') + 1) + fname;
+
+	Common::File f;
+	if (!f.open(filename))
+		error("Could not open xml file - %s", filename.c_str());
+
+	// Read in the file contents
+	char *buf = new char[f.size() + 1];
+	f.read(buf, f.size());
+	buf[f.size()] = '\0';
+	Common::String text(buf, buf + f.size());
+	delete[] buf;
+	f.close();
+
+	// Parse the sub-xml
+	if (!xmlParseDoc(text))
+		error("Error passing xml - %s", fname.c_str());
 }
 
 bool XMLNode::searchPairs(KeyTypeList &ktl, const Common::String &basekey,
