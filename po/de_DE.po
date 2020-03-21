@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-03-21 09:03+0100\n"
-"PO-Revision-Date: 2020-03-08 17:22+0000\n"
+"PO-Revision-Date: 2020-03-21 22:15+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -289,15 +289,13 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/editgamedialog.cpp:210
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Globale Audio-Einstellungen übergehen"
+msgstr "Globale Shader-Einstellungen übergehen"
 
 #: gui/editgamedialog.cpp:212
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Globale Audio-Einstellungen übergehen"
+msgstr "Globale Shader-Einstellungen übergehen"
 
 #: gui/editgamedialog.cpp:226 gui/options.cpp:1682 engines/dialogs.cpp:316
 msgid "Keymaps"
@@ -2295,7 +2293,7 @@ msgstr ""
 
 #: audio/mididrv.cpp:448
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "MIDI-Dump starten"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -2610,7 +2608,7 @@ msgstr "Skalier-Faktor verringern"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Switch to nearest neighbour scaling"
-msgstr ""
+msgstr "Nearest-Neighbour-Skalierung"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Switch to AdvMame 2x/3x scaling"
@@ -2661,14 +2659,12 @@ msgid "Mouse Wheel Down"
 msgstr "Mausrad nach unten"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "Linke Maustaste"
+msgstr "X1-Maustaste"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "Linke Maustaste"
+msgstr "X2-Maustaste"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
@@ -2691,7 +2687,6 @@ msgid "Joy Back"
 msgstr "Joystick zurück"
 
 #: backends/keymapper/hardware-input.cpp:261
-#, fuzzy
 msgid "Joy Guide"
 msgstr "Joystick-Hilfe"
 
@@ -2778,26 +2773,23 @@ msgstr "Belegung löschen"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Virtuelle Maus hoch"
 
 #: backends/keymapper/virtual-mouse.cpp:159
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Tanzbewegung nach unten"
+msgstr "Virtuelle Maus runter"
 
 #: backends/keymapper/virtual-mouse.cpp:164
-#, fuzzy
 msgid "Virtual mouse left"
-msgstr "Tanzbewegung nach links"
+msgstr "Virtuelle Maus links"
 
 #: backends/keymapper/virtual-mouse.cpp:169
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "Tanzbewegung nach rechts"
+msgstr "Virtuelle Maus rechts"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Virtuelle Maus verlangsamen"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
@@ -2997,19 +2989,16 @@ msgid "Use Screen:"
 msgstr "Verwende Bildschirm:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Top"
 msgstr "Oben"
 
 #: backends/platform/3ds/options-dialog.cpp:59
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Bottom"
 msgstr "Unten"
 
 #: backends/platform/3ds/options-dialog.cpp:60
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Both"
 msgstr "Beides"
@@ -3839,13 +3828,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "Deaktiviere McCoys schnelle Erschöpfung"
 
 #: engines/bladerunner/detection.cpp:85
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
 msgstr ""
+"Wenn McCoy läuft, wird er nicht langsamer laufen, sobald der Spieler "
+"aufhört, mit der Maus zu klicken"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4264,14 +4255,12 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Linker Button um anzugreifen, rechter Button, um Items aufzuheben"
 
 #: engines/kyra/engine/eobcommon.cpp:348 engines/kyra/engine/lol.cpp:468
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Linksklick"
+msgstr "Interaktion via Linksklick"
 
 #: engines/kyra/engine/eobcommon.cpp:354 engines/kyra/engine/lol.cpp:474
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Rechtsklick"
+msgstr "Interaktion via Rechtsklick"
 
 #: engines/kyra/engine/eobcommon.cpp:360 engines/kyra/engine/lol.cpp:498
 msgid "Move Forward"
@@ -6129,9 +6118,9 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Schnellladen des Spielstandes #%d nicht möglich"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "Engine-Datendatei '%s' kann nicht gefunden werden."
+msgstr "Datendatei '%s' kann nicht gefunden werden."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
