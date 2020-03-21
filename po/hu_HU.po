@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-03-21 09:03+0100\n"
-"PO-Revision-Date: 2020-03-10 12:14+0000\n"
+"PO-Revision-Date: 2020-03-21 22:15+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -284,15 +284,13 @@ msgid "Shader"
 msgstr "Árnyaló"
 
 #: gui/editgamedialog.cpp:210
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Globális audió beállítások felülbírálása"
+msgstr "Globális árnyékolóbeállítások felülbírálása"
 
 #: gui/editgamedialog.cpp:212
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Globális audió beállítások felülbírálása"
+msgstr "Globális árnyékolóbeállítások felülbírálása"
 
 #: gui/editgamedialog.cpp:226 gui/options.cpp:1682 engines/dialogs.cpp:316
 msgid "Keymaps"
@@ -2266,7 +2264,7 @@ msgstr ""
 
 #: audio/mididrv.cpp:448
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "MIDI tárolás indítása"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -2632,14 +2630,12 @@ msgid "Mouse Wheel Down"
 msgstr "Egér Kerék Le"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "Bal Egérgomb"
+msgstr "X1 Egérgomb"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "Bal Egérgomb"
+msgstr "X2 Egérgomb"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
@@ -2748,26 +2744,23 @@ msgstr "Mapping törlése"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Virtuális egér fel"
 
 #: backends/keymapper/virtual-mouse.cpp:159
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Tánc lefelé"
+msgstr "Virtuális egér le"
 
 #: backends/keymapper/virtual-mouse.cpp:164
-#, fuzzy
 msgid "Virtual mouse left"
-msgstr "Tánc lépés balra"
+msgstr "Virtuális egér balra"
 
 #: backends/keymapper/virtual-mouse.cpp:169
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "Tánc lépés jobbra"
+msgstr "Virtuális egér jobbra"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Virtuális egér lassítás"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
@@ -2967,19 +2960,16 @@ msgid "Use Screen:"
 msgstr "Használd képernyõt:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr "Felsõ"
+msgstr "Legfelsõ"
 
 #: backends/platform/3ds/options-dialog.cpp:59
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Bottom"
-msgstr "Alsó"
+msgstr "Legalsó"
 
 #: backends/platform/3ds/options-dialog.cpp:60
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Both"
 msgstr "Mind"
@@ -3800,13 +3790,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "McCoy gyors állóképesség-lefolyásának tiltása"
 
 #: engines/bladerunner/detection.cpp:85
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
 msgstr ""
+"Futás közben a McCoy nem kezd lelassulni, amíg a játékos abbahagyja az egér "
+"kattintást"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4223,14 +4215,12 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Bal gomb a támadás, jobb gomb a tárgyak felvétele"
 
 #: engines/kyra/engine/eobcommon.cpp:348 engines/kyra/engine/lol.cpp:468
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Bal katt"
+msgstr "Interakció bal kattintással"
 
 #: engines/kyra/engine/eobcommon.cpp:354 engines/kyra/engine/lol.cpp:474
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Jobb katt"
+msgstr "Interakció jobb kattintással"
 
 #: engines/kyra/engine/eobcommon.cpp:360 engines/kyra/engine/lol.cpp:498
 msgid "Move Forward"
@@ -6047,9 +6037,9 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Nem történt meg a #%d mentett játék gyors betöltése"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "Nem található a(z) '%s' motorhoz adat fájl."
+msgstr "Nem található a '%s' adatfájl."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -6475,9 +6465,8 @@ msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "Ehhez a játékhoz FoxTail almotor szükséges, ami nincs befordítva."
 
 #: engines/wintermute/wintermute.cpp:178
-#, fuzzy
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr "Ehhez a játékhoz FoxTail almotor szükséges, ami nincs befordítva."
+msgstr "Ehhez a játékhoz HeroCraft almotor szükséges, ami nincs befordítva."
 
 #: engines/wintermute/wintermute.cpp:189
 msgid ""
