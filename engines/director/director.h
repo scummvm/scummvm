@@ -121,7 +121,7 @@ public:
 	Archive *createArchive();
 	void cleanupMainArchive();
 
-	void processEvents(); // evetns.cpp
+	void processEvents(); // events.cpp
 	void setDraggedSprite(uint16 id); // events.cpp
 
 	Common::HashMap<Common::String, Score *> *_movies;
