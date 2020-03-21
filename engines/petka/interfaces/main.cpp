@@ -75,6 +75,7 @@ void InterfaceMain::start() {
 
 	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", false));
 	Common::INIFile bgsIni;
+	bgsIni.allowNonEnglishCharacters();
 	bgsIni.loadFromStream(*bgsStream);
 	Common::String startRoom;
 	bgsIni.getKey("StartRoom", "Settings", startRoom);

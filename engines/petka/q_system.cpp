@@ -104,10 +104,13 @@ bool QSystem::init() {
 	Common::INIFile castIni;
 	Common::INIFile bgsIni;
 
-	/*
+	namesIni.allowNonEnglishCharacters();
+	castIni.allowNonEnglishCharacters();
+	bgsIni.allowNonEnglishCharacters();
+
+
 	if (namesStream)
 		namesIni.loadFromStream(*namesStream); //fails because ini is broken for Russian letters
-	*/
 	if (castStream)
 		castIni.loadFromStream(*castStream);
 	if (bgsStream)
