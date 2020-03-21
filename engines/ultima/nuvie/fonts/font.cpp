@@ -54,19 +54,54 @@ uint16 Font::drawString(Screen *screen, const char *str, uint16 x, uint16 y, uin
 uint16 Font::drawString(Screen *screen, const char *str, uint16 string_len, uint16 x, uint16 y, uint8 color, uint8 highlight_color) {
 	uint16 i;
 	bool highlight = false;
-	uint16 font_len = 0;
+	uint16 font_len = getStringWidth(str, string_len);
 
-	for (i = 0; i < string_len; i++) {
-		if (str[i] == '@')
-			highlight = true;
-		else {
-			if (!Common::isAlpha(str[i]))
-				highlight = false;
-			font_len += drawChar(screen, get_char_num(str[i]), x + font_len, y,
-			                     highlight ? highlight_color : color);
+	if (font_len > (screen->get_width() - x)) {
+		char *str2 = (char *)malloc((string_len + 1) * sizeof(char));
+		strcpy(str2, str);
+		font_len = 0;
+		uint16 start = 0;
+		uint16 lastSp = 0;
+		for (i = 0; i < string_len; i++) {
+			if (str[i] == ' ') {
+				uint16 add_len = getStringWidth(str + lastSp, i - lastSp);
+				if (font_len + add_len > screen->get_width()) {
+					str2[lastSp] = 0;
+					drawStringCentered(screen, str2 + start, lastSp - start, x, y, color, highlight_color);
+					y += getCharHeight();
+					start = lastSp + 1;
+					font_len = 0;
+				}
+				font_len += add_len;
+				lastSp = i;
+			}
 		}
+		uint16 add_len = getStringWidth(str + lastSp, i - lastSp);
+		if (font_len + add_len > screen->get_width()) {
+			str2[lastSp] = 0;
+			drawStringCentered(screen, str2 + start, lastSp - start, x, y, color, highlight_color);
+			y += getCharHeight();
+			start = lastSp + 1;
+			font_len = 0;
+		}
+		font_len += add_len;
+		drawStringCentered(screen, str2 + start, string_len - start, x, y, color, highlight_color);
+		free(str2);
 	}
-	highlight = false;
+	else {
+		font_len = 0;
+		for (i = 0; i < string_len; i++) {
+			if (str[i] == '@')
+				highlight = true;
+			else {
+				if (!Common::isAlpha(str[i]))
+					highlight = false;
+				font_len += drawChar(screen, get_char_num(str[i]), x + font_len, y,
+									 highlight ? highlight_color : color);
+			}
+		}
+		highlight = false;
+	}
 	return font_len;
 }
 
@@ -88,7 +123,8 @@ uint16 Font::getStringWidth(const char *str, uint16 string_len) {
 	uint16 w = 0;
 
 	for (i = 0; i < string_len; i++) {
-		w += getCharWidth(str[i]);
+		if (str[i] != '@')
+			w += getCharWidth(str[i]);
 	}
 
 	return w;
@@ -96,6 +132,27 @@ uint16 Font::getStringWidth(const char *str, uint16 string_len) {
 
 uint16 Font::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y) {
 	return drawChar(screen, char_num, x, y, default_color);
+}
+
+uint16 Font::drawStringCentered(Screen *screen, const char *str, uint16 string_len, uint16 x, uint16 y, uint8 color, uint8 highlight_color) {
+	uint16 i;
+	bool highlight = false;
+	uint16 font_len = getStringWidth(str, string_len);
+	x += (screen->get_width() - x - font_len) / 2;
+
+	font_len = 0;
+	for (i = 0; i < string_len; i++) {
+		if (str[i] == '@')
+			highlight = true;
+		else {
+			if (!Common::isAlpha(str[i]))
+				highlight = false;
+			font_len += drawChar(screen, get_char_num(str[i]), x + font_len, y,
+			                     highlight ? highlight_color : color);
+		}
+	}
+	highlight = false;
+	return font_len;
 }
 
 } // End of namespace Nuvie
