@@ -565,7 +565,7 @@ void screenShowChar(int chr, int x, int y) {
     if (charsetInfo == NULL) {
         charsetInfo = imageMgr->get(BKGD_CHARSET);
         if (!charsetInfo)
-            errorFatal("ERROR 1001: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_CHARSET, settings._game.c_str());
+			error("ERROR 1001: Unable to load the \"%s\" data file", BKGD_CHARSET);
     }
     
     charsetInfo->_image->drawSubRect(x * charsetInfo->_image->width(), y * (CHAR_HEIGHT * settings._scale),
