@@ -598,7 +598,7 @@ void Ultima8Engine::GraphicSysInit() {
 		_screen->GetSurfaceDims(old_dims);
 		if (width == old_dims.w && height == old_dims.h)
 			return;
-		bpp = RenderSurface::_format.s_bpp;
+		bpp = RenderSurface::_format.bpp();
 
 		delete _screen;
 	}
