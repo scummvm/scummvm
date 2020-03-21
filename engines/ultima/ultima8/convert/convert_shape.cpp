@@ -631,7 +631,7 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 	bool result = true;
 
 	// Just to be safe
-	int start_pos = source->getPos();
+	const uint32 start_pos = source->getPos();
 
 	// Read the ident
 	if (csf->_bytes_ident)
@@ -739,7 +739,7 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 void ConvertShape::Write(ODataSource *dest, const ConvertShapeFormat *csf, uint32 &write_len)
 {
 	// Just to be safe
-	uint32 start_pos = dest->getPos();
+	const uint32 start_pos = dest->getPos();
 
 	// Write the ident
 	if (csf->_bytes_ident) dest->write(csf->_ident, csf->_bytes_ident);
