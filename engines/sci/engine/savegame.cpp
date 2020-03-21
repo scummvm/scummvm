@@ -433,16 +433,31 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 
 	g_sci->_soundCmd->syncPlayList(s);
 
-#ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
+#ifdef ENABLE_SCI32
 		g_sci->_gfxPalette32->saveLoadWithSerializer(s);
 		g_sci->_gfxRemap32->saveLoadWithSerializer(s);
 		g_sci->_gfxCursor32->saveLoadWithSerializer(s);
 		g_sci->_audio32->saveLoadWithSerializer(s);
 		g_sci->_video32->saveLoadWithSerializer(s);
-	} else
 #endif
+	} else {
 		g_sci->_gfxPalette16->saveLoadWithSerializer(s);
+	}
+
+	// Stop any currently playing audio when loading.
+	// Loading is not normally allowed while audio is being played in SCI games.
+	// Stopping sounds is needed in ScummVM, as the player may load via
+	// Control - F5 at any point, even while a sound is playing.
+	if (s.isLoading()) {
+		if (getSciVersion() >= SCI_VERSION_2) {
+#ifdef ENABLE_SCI32
+			g_sci->_audio32->stop(kAllChannels);
+#endif
+		} else {
+			g_sci->_audio->stopAllAudio();
+		}
+	}
 }
 
 void Vocabulary::saveLoadWithSerializer(Common::Serializer &s) {
