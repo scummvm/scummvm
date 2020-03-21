@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-03-21 09:03+0100\n"
-"PO-Revision-Date: 2020-03-14 22:14+0000\n"
+"PO-Revision-Date: 2020-03-21 22:15+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -286,12 +286,10 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/editgamedialog.cpp:210
-#, fuzzy
 msgid "Override global shader settings"
 msgstr "Ignorar opciones de sonido generales"
 
 #: gui/editgamedialog.cpp:212
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "Ignorar opciones de sonido generales"
@@ -2299,7 +2297,7 @@ msgstr ""
 
 #: audio/mididrv.cpp:448
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "Iniciando volcado de MIDI"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -2665,14 +2663,12 @@ msgid "Mouse Wheel Down"
 msgstr "Rueda del ratón abajo"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "Botón izquierdo del ratón"
+msgstr "Botón X1 del ratón"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "Botón izquierdo del ratón"
+msgstr "Botón X2 del ratón"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
@@ -2781,26 +2777,23 @@ msgstr "Limpiar mapeado"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Mover ratón virtual hacia arriba"
 
 #: backends/keymapper/virtual-mouse.cpp:159
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Movimiento de baile abajo"
+msgstr "Mover ratón virtual hacia abajo"
 
 #: backends/keymapper/virtual-mouse.cpp:164
-#, fuzzy
 msgid "Virtual mouse left"
-msgstr "Movimiento de baile izquierda"
+msgstr "Mover ratón virtual hacia la izda."
 
 #: backends/keymapper/virtual-mouse.cpp:169
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "Movimiento de baile derecha"
+msgstr "Mover ratón virtual hacia la dcha."
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Ralentizar ratón virtual"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
@@ -3000,22 +2993,19 @@ msgid "Use Screen:"
 msgstr "Pantalla:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Top"
 msgstr "Superior"
 
 #: backends/platform/3ds/options-dialog.cpp:59
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Bottom"
 msgstr "Inferior"
 
 #: backends/platform/3ds/options-dialog.cpp:60
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Both"
-msgstr "Ambos"
+msgstr "Ambas"
 
 #: backends/platform/3ds/osystem-events.cpp:48
 msgid "A"
@@ -3835,13 +3825,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "Desactivar pérdida de resistencia de McCoy"
 
 #: engines/bladerunner/detection.cpp:85
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
 msgstr ""
+"Cuando McCoy se ponga a correr, ya no empezará a ir más despacio en cuanto "
+"el jugador deje de hacer clic."
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4263,14 +4255,12 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Botón izquierdo para atacar, botón derecho para coger objetos"
 
 #: engines/kyra/engine/eobcommon.cpp:348 engines/kyra/engine/lol.cpp:468
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Clic izquierdo"
+msgstr "Interactuar con clic izquierdo"
 
 #: engines/kyra/engine/eobcommon.cpp:354 engines/kyra/engine/lol.cpp:474
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Clic derecho"
+msgstr "Interactuar con clic derecho"
 
 #: engines/kyra/engine/eobcommon.cpp:360 engines/kyra/engine/lol.cpp:498
 msgid "Move Forward"
@@ -6105,9 +6095,9 @@ msgid "Could not quick load the saved game #%d"
 msgstr "No se pudo cargar rápidamente la partida %d"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "No se puede localizar el archivo de datos del motor '%s'."
+msgstr "No se puede localizar el archivo de datos «%s»."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -6535,10 +6525,9 @@ msgstr ""
 "compilación."
 
 #: engines/wintermute/wintermute.cpp:178
-#, fuzzy
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
-"Este juego requiere el submotor FoxTail, el cual no está presente en la "
+"Este juego requiere el submotor HeroCraft, el cual no está presente en la "
 "compilación."
 
 #: engines/wintermute/wintermute.cpp:189
