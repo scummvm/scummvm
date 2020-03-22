@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/debug.h"
-#include "ultima/ultima4/image.h"
+#include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/error.h"
 #include "ultima/shared/std/containers.h"

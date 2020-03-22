@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_IMAGELOADER_U4_H
 #define ULTIMA4_IMAGELOADER_U4_H
 
-#include "ultima/ultima4/imageloader.h"
+#include "ultima/ultima4/graphics/imageloader.h"
 
 namespace Ultima {
 namespace Ultima4 {

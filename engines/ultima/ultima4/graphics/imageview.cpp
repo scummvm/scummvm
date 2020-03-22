@@ -22,9 +22,9 @@
 
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/error.h"
-#include "ultima/ultima4/image.h"
-#include "ultima/ultima4/imagemgr.h"
-#include "ultima/ultima4/imageview.h"
+#include "ultima/ultima4/graphics/image.h"
+#include "ultima/ultima4/graphics/imagemgr.h"
+#include "ultima/ultima4/graphics/imageview.h"
 #include "ultima/ultima4/settings.h"
 
 namespace Ultima {

@@ -28,7 +28,7 @@
 #include "ultima/ultima4/observable.h"
 #include "ultima/ultima4/savegame.h"
 #include "ultima/ultima4/script.h"
-#include "ultima/ultima4/tile.h"
+#include "ultima/ultima4/graphics/tile.h"
 #include "ultima/ultima4/types.h"
 
 namespace Ultima {

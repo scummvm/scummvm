@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/progress_bar.h"
-#include "ultima/ultima4/image.h"
+#include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/settings.h"
 
 namespace Ultima {

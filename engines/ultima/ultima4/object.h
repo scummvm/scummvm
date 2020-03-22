@@ -23,7 +23,7 @@
 #define ULTIMA4_OBJECT_H
 
 #include "ultima/ultima4/coords.h"
-#include "ultima/ultima4/tile.h"
+#include "ultima/ultima4/graphics/tile.h"
 #include "ultima/ultima4/types.h"
 
 namespace Ultima {

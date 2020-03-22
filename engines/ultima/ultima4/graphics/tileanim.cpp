@@ -22,12 +22,12 @@
 
 #include "ultima/ultima4/config.h"
 #include "ultima/ultima4/direction.h"
-#include "ultima/ultima4/image.h"
+#include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/screen.h"
-#include "ultima/ultima4/tileanim.h"
+#include "ultima/ultima4/graphics/tileanim.h"
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/utils.h"
-#include "ultima/ultima4/tile.h"
+#include "ultima/ultima4/graphics/tile.h"
 
 namespace Ultima {
 namespace Ultima4 {

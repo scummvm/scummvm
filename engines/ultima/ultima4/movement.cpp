@@ -32,7 +32,7 @@
 #include "ultima/ultima4/object.h"
 #include "ultima/ultima4/player.h"
 #include "ultima/ultima4/savegame.h"
-#include "ultima/ultima4/tile.h"
+#include "ultima/ultima4/graphics/tile.h"
 #include "ultima/ultima4/utils.h"
 
 namespace Ultima {

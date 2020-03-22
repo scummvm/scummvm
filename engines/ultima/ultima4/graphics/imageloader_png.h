@@ -20,22 +20,25 @@
  *
  */
 
-#ifndef ULTIMA4_IMAGELOADER_FMTOWNS_H_
-#define ULTIMA4_IMAGELOADER_FMTOWNS_H_
+#ifndef ULTIMA4_IMAGELOADER_PNG_H
+#define ULTIMA4_IMAGELOADER_PNG_H
 
-#include "ultima/ultima4/imageloader.h"
+#include "ultima/ultima4/graphics/imageloader.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-class FMTOWNSImageLoader : public ImageLoader {
-    static ImageLoader *_instancePic;
-    static ImageLoader *_instanceTif;
+/**
+ * Loader for PNG images.  All PNG images should be supported: indexed
+ * images with palette, or true color, with or without an alpha
+ * channel.
+ */
+class PngImageLoader : public ImageLoader {
+    static ImageLoader *_instance;
+
 public:
     virtual Image *load(U4FILE *file, int width, int height, int bpp);
-    FMTOWNSImageLoader(int offset) : _offset(offset){}
-protected:
-    int _offset;
+    
 };
 
 } // End of namespace Ultima4

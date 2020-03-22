@@ -25,7 +25,7 @@
 #include "ultima/ultima4/event.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/item.h"
-#include "ultima/ultima4/imagemgr.h"
+#include "ultima/ultima4/graphics/imagemgr.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/savegame.h"
 #include "ultima/ultima4/screen.h"

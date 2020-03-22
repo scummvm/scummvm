@@ -37,7 +37,7 @@
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/spell.h"
 #include "ultima/ultima4/stats.h"
-#include "ultima/ultima4/tileset.h"
+#include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/u4file.h"
 #include "ultima/ultima4/utils.h"
 #include "ultima/ultima4/weapon.h"

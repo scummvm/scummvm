@@ -31,7 +31,7 @@
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/shrine.h"
-#include "ultima/ultima4/tile.h"
+#include "ultima/ultima4/graphics/tile.h"
 
 namespace Ultima {
 namespace Ultima4 {

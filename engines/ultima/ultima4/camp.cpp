@@ -41,7 +41,7 @@
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/stats.h"
-#include "ultima/ultima4/tileset.h"
+#include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/utils.h"
 
 namespace Ultima {

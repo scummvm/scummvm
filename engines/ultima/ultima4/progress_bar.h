@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_PROGRESS_BAR_H
 #define ULTIMA4_PROGRESS_BAR_H
 
-#include "ultima/ultima4/image.h"
+#include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/view.h"
 
 namespace Ultima {
