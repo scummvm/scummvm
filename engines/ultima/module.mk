@@ -134,6 +134,11 @@ MODULE_OBJS := \
 	ultima1/widgets/urban_widget.o \
 	ultima1/widgets/wench.o \
 	ultima1/game.o \
+	ultima4/conversation/conversation.o \
+	ultima4/conversation/dialogueloader.o \
+	ultima4/conversation/dialogueloader_hw.o \
+	ultima4/conversation/dialogueloader_lb.o \
+	ultima4/conversation/dialogueloader_tlk.o \
 	ultima4/events/controller.o \
 	ultima4/events/event.o \
 	ultima4/events/event_sdl.o \
@@ -160,14 +165,9 @@ MODULE_OBJS := \
 	ultima4/combat.o \
 	ultima4/config.o \
 	ultima4/context.o \
-	ultima4/conversation.o \
 	ultima4/creature.o \
 	ultima4/death.o \
 	ultima4/debug.o \
-	ultima4/dialogueloader.o \
-	ultima4/dialogueloader_hw.o \
-	ultima4/dialogueloader_lb.o \
-	ultima4/dialogueloader_tlk.o \
 	ultima4/direction.o \
 	ultima4/dungeon.o \
 	ultima4/dungeonview.o \

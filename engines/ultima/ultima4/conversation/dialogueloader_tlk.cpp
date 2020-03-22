@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima4/conversation.h"
-#include "ultima/ultima4/dialogueloader_tlk.h"
+#include "ultima/ultima4/conversation/conversation.h"
+#include "ultima/ultima4/conversation/dialogueloader_tlk.h"
 #include "ultima/ultima4/u4file.h"
 #include "ultima/shared/std/containers.h"
 

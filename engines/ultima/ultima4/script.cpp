@@ -24,7 +24,7 @@
 #include "ultima/ultima4/armor.h"
 #include "ultima/ultima4/camp.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/conversation.h"
+#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/error.h"
 #include "ultima/ultima4/events/event.h"

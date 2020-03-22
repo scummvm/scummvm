@@ -22,7 +22,7 @@
 
 #include "ultima/ultima4/city.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/conversation.h"
+#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/creature.h"
 #include "ultima/ultima4/object.h"
 #include "ultima/ultima4/person.h"
