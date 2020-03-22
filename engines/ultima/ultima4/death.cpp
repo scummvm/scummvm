@@ -30,7 +30,7 @@
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/location.h"
 #include "ultima/ultima4/mapmgr.h"
-#include "ultima/ultima4/music.h"
+#include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/player.h"
 #include "ultima/ultima4/portal.h"
 #include "ultima/ultima4/screen.h"

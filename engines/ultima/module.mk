@@ -155,6 +155,10 @@ MODULE_OBJS := \
 	ultima4/graphics/tilemap.o \
 	ultima4/graphics/tileset.o \
 	ultima4/graphics/tileview.o \
+	ultima4/sound/music.o \
+	ultima4/sound/music_sdl.o \
+	ultima4/sound/sound.o \
+	ultima4/sound/sound_sdl.o \
 	ultima4/annotation.o \
 	ultima4/armor.o \
 	ultima4/aura.o \
@@ -185,8 +189,6 @@ MODULE_OBJS := \
 	ultima4/menuitem.o \
 	ultima4/moongate.o \
 	ultima4/movement.o \
-	ultima4/music.o \
-	ultima4/music_sdl.o \
 	ultima4/names.o \
 	ultima4/object.o \
 	ultima4/person.o \
@@ -201,8 +203,6 @@ MODULE_OBJS := \
 	ultima4/script.o \
 	ultima4/settings.o \
 	ultima4/shrine.o \
-	ultima4/sound.o \
-	ultima4/sound_sdl.o \
 	ultima4/spell.o \
 	ultima4/stats.o \
 	ultima4/textview.o \

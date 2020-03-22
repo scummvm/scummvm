@@ -33,7 +33,7 @@
 #include "ultima/ultima4/map.h"
 #include "ultima/ultima4/mapmgr.h"
 #include "ultima/ultima4/creature.h"
-#include "ultima/ultima4/music.h"
+#include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/object.h"
 #include "ultima/ultima4/person.h"
