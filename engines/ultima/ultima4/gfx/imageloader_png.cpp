@@ -73,6 +73,7 @@ Image *PngImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 
 	setFromRawData(image, width, height, bpp, (const byte *)img->getPixels());
 
+
 	return image;
 }
 

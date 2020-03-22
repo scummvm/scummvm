@@ -35,7 +35,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Image::Image() : _surface(NULL) {
+Image::Image() {
 }
 
 /**
@@ -45,26 +45,18 @@ Image::Image() : _surface(NULL) {
  * Image type determines whether to create a hardware (i.e. video ram)
  * or software (i.e. normal ram) image.
  */
-Image *Image::create(int w, int h, bool indexed, Image::Type type) {
-	Image *im = new Image;
-
-	im->_w = w;
-	im->_h = h;
-	im->_indexed = indexed;
-
-	if (indexed)
-		im->_surface = new Graphics::ManagedSurface(w, h);
-	else
-		im->_surface = new Graphics::ManagedSurface(w, h,
-		        Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
-		                                           );
-
-	if (!im->_surface) {
-		delete im;
-		return NULL;
-	}
+Image *Image::create(int w, int h, bool paletted, Image::Type type) {
+	Image *im = new Image();
+	im->create(w, h, paletted);
 
 	return im;
+}
+
+void Image::create(int w, int h, bool paletted) {
+	_paletted = paletted;
+	_surface = new Graphics::ManagedSurface(w, h, paletted ?
+		Graphics::PixelFormat::createFormatCLUT8() : g_screen->format);
+	_disposeAfterUse = DisposeAfterUse::YES;
 }
 
 /**
@@ -72,11 +64,9 @@ Image *Image::create(int w, int h, bool indexed, Image::Type type) {
  */
 Image *Image::createScreenImage() {
 	Image *screen = new Image();
-
-	screen->_surface = new Graphics::Screen(g_system->getWidth(), g_system->getHeight());
-	screen->_w = screen->_surface->w;
-	screen->_h = screen->_surface->h;
-	screen->_indexed = g_system->getScreenFormat().bytesPerPixel == 1;
+	screen->_surface = g_screen;
+	screen->_disposeAfterUse = DisposeAfterUse::NO;
+	screen->_paletted = false;
 
 	return screen;
 }
@@ -109,14 +99,15 @@ Image *Image::duplicate(Image *image) {
  * Frees the image.
  */
 Image::~Image() {
-	delete _surface;
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete _surface;
 }
 
 /**
  * Sets the palette
  */
 void Image::setPalette(const RGBA *colors, unsigned n_colors) {
-	ASSERT(_indexed, "imageSetPalette called on non-indexed image");
+	ASSERT(_paletted, "imageSetPalette called on non-paletted image");
 
 	byte *pal = new byte[n_colors * 3];
 	byte *palP = pal;
@@ -134,7 +125,7 @@ void Image::setPalette(const RGBA *colors, unsigned n_colors) {
  * Copies the palette from another image.
  */
 void Image::setPaletteFromImage(const Image *src) {
-	ASSERT(_indexed && src->_indexed, "imageSetPaletteFromImage called on non-indexed image");
+	ASSERT(_paletted && src->_paletted, "imageSetPaletteFromImage called on non-indexed image");
 
 	const uint32 *srcPal = src->_surface->getPalette();
 	_surface->setPalette(srcPal, 0, PALETTE_COUNT);
@@ -144,7 +135,7 @@ void Image::setPaletteFromImage(const Image *src) {
 RGBA Image::getPaletteColor(int index) {
 	RGBA color = RGBA(0, 0, 0, 0);
 
-	if (_indexed) {
+	if (_paletted) {
 		uint32 pal = _surface->getPalette()[index];
 		color.r = (pal & 0xff);
 		color.g = (pal >> 8) & 0xff;
@@ -157,7 +148,7 @@ RGBA Image::getPaletteColor(int index) {
 
 /* returns the palette index of the specified RGB color */
 int Image::getPaletteIndex(RGBA color) {
-	if (!_indexed)
+	if (!_paletted)
 		return -1;
 
 	const uint32 *pal = _surface->getPalette();
@@ -241,7 +232,7 @@ bool Image::setFontColorBG(ColorBG bg) {
 
 /* sets the specified palette index to the specified RGB color */
 bool Image::setPaletteIndex(unsigned int index, RGBA color) {
-	if (!_indexed)
+	if (!_paletted)
 		return false;
 
 	uint32 color32 = color;
@@ -252,7 +243,7 @@ bool Image::setPaletteIndex(unsigned int index, RGBA color) {
 }
 
 bool Image::getTransparentIndex(unsigned int &index) const {
-	if (!_indexed)
+	if (!_paletted)
 		return false;
 
 	index = _surface->getTransparentColor();
@@ -260,18 +251,15 @@ bool Image::getTransparentIndex(unsigned int &index) const {
 }
 
 void Image::initializeToBackgroundColor(RGBA backgroundColor) {
-	if (_indexed)
+	if (_paletted)
 		error("Not supported"); //TODO, this better
 	this->_backgroundColor = backgroundColor;
-	this->fillRect(0, 0, this->_w, this->_h,
-	               backgroundColor.r,
-	               backgroundColor.g,
-	               backgroundColor.b,
-	               backgroundColor.a);
+	this->fillRect(0, 0, _surface->w, _surface->h, backgroundColor.r,
+		backgroundColor.g, backgroundColor.b, backgroundColor.a);
 }
 
 bool Image::isAlphaOn() const {
-	return !_indexed;
+	return !_paletted;
 }
 
 void Image::alphaOn() {
@@ -309,14 +297,14 @@ void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFra
 
 	_surface->format.colorToRGB(colorValue, t_r, t_g, t_b);
 
-	unsigned int frameHeight = _h / numFrames;
+	unsigned int frameHeight = _surface->h / numFrames;
 	//Min'd so that they never go out of range (>=h)
-	unsigned int top = MIN(_h, currentFrameIndex * frameHeight);
-	unsigned int bottom = MIN(_h, top + frameHeight);
+	unsigned int top = MIN(_surface->h, (uint16)(currentFrameIndex * frameHeight));
+	unsigned int bottom = MIN(_surface->h, (uint16)(top + frameHeight));
 
 	for (y = top; y < bottom; y++) {
 
-		for (x = 0; x < _w; x++) {
+		for (x = 0; x < _surface->w; x++) {
 			unsigned int r, g, b, a;
 			getPixel(x, y, r, g, b, a);
 			if (r == t_r &&
@@ -338,7 +326,7 @@ void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFra
 		oy = xy->second;
 		int span = int(haloWidth);
 		unsigned int x_start = MAX(0, ox - span);
-		unsigned int x_finish = MIN(int(_w), ox + span + 1);
+		unsigned int x_finish = MIN(int(_surface->w), ox + span + 1);
 		for (x = x_start; x < x_finish; ++x) {
 			unsigned int y_start = MAX(int(top), oy - span);
 			unsigned int y_finish = MIN(int(bottom), oy + span + 1);
@@ -359,11 +347,8 @@ void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFra
 }
 
 void Image::setTransparentIndex(unsigned int index) {
-	if (_indexed) {
+	if (_paletted)
 		_surface->setTransparentColor(index);
-	} else {
-		//errorWarning("Setting transparent index for non indexed");
-	}
 }
 
 /**
@@ -506,8 +491,8 @@ void Image::save(const Common::String &filename) {
 
 void Image::drawHighlighted() {
 	RGBA c;
-	for (unsigned i = 0; i < _h; i++) {
-		for (unsigned j = 0; j < _w; j++) {
+	for (unsigned i = 0; i < _surface->h; i++) {
+		for (unsigned j = 0; j < _surface->w; j++) {
 			getPixel(j, i, c.r, c.g, c.b, c.a);
 			putPixel(j, i, 0xff - c.r, 0xff - c.g, 0xff - c.b, c.a);
 		}
