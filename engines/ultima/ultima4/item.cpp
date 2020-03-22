@@ -25,7 +25,7 @@
 #include "ultima/ultima4/codex.h"
 #include "ultima/ultima4/combat.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/dungeon.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/map/location.h"
@@ -34,11 +34,11 @@
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/player.h"
 #include "ultima/ultima4/portal.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/weapon.h"
 
 namespace Ultima {

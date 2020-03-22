@@ -21,10 +21,10 @@
  */
 
 #include "ultima/ultima4/graphics/tile.h"
-#include "ultima/ultima4/config.h"
+#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/creature.h"
-#include "ultima/ultima4/error.h"
+#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/graphics/imagemgr.h"
 #include "ultima/ultima4/map/location.h"
@@ -32,7 +32,7 @@
 #include "ultima/ultima4/graphics/tileanim.h"
 #include "ultima/ultima4/graphics/tilemap.h"
 #include "ultima/ultima4/graphics/tileset.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {

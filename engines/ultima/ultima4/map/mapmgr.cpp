@@ -24,9 +24,9 @@
 #include "ultima/ultima4/annotation.h"
 #include "ultima/ultima4/city.h"
 #include "ultima/ultima4/combat.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/dungeon.h"
-#include "ultima/ultima4/error.h"
+#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/mapmgr.h"
@@ -37,8 +37,8 @@
 #include "ultima/ultima4/graphics/tilemap.h"
 #include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/types.h"
-#include "ultima/ultima4/u4file.h"
-#include "ultima/ultima4/config.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/core/config.h"
 
 namespace Ultima {
 namespace Ultima4 {

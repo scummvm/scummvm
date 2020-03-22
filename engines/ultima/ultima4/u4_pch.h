@@ -22,9 +22,9 @@
 
 #include "ultima/ultima4/annotation.h"
 #include "ultima/ultima4/conversation/conversation.h"
-#include "ultima/ultima4/config.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/types.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/u4file.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/core/utils.h"

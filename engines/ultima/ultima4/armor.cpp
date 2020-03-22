@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima4/armor.h"
-#include "ultima/ultima4/config.h"
-#include "ultima/ultima4/error.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/graphics/tile.h"
 #include "common/algorithm.h"

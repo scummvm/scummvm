@@ -24,9 +24,9 @@
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader_hw.h"
 #include "ultima/ultima4/player.h"
-#include "ultima/ultima4/savegame.h"
-#include "ultima/ultima4/u4file.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {

@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima4/u4file.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/core/debug.h"
 #include "common/debug.h"
 #include "common/savefile.h"
 #include "common/system.h"

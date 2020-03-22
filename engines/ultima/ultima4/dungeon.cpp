@@ -23,7 +23,7 @@
 #include "ultima/ultima4/dungeon.h"
 #include "ultima/ultima4/annotation.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/item.h"
 #include "ultima/ultima4/map/location.h"
@@ -32,7 +32,7 @@
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/stats.h"
 #include "ultima/ultima4/graphics/tileset.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {

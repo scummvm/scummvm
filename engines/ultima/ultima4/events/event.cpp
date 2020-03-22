@@ -22,9 +22,9 @@
 
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/textview.h"

@@ -24,8 +24,8 @@
 #define ULTIMA4_IMAGE_H
 
 #include "ultima/ultima4/types.h"
-#include "ultima/ultima4/u4file.h"
-#include "ultima/ultima4/textcolor.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/graphics/textcolor.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {

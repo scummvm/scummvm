@@ -24,9 +24,9 @@
 #define ULTIMA4_DUNGEONVIEW_H
 
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/dungeon.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/direction.h"
 #include "ultima/ultima4/graphics/tileview.h"

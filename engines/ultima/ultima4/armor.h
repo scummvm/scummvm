@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_ARMOR_H
 #define ULTIMA4_ARMOR_H
 
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 

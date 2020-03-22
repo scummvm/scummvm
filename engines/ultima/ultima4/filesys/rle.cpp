@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/rle.h"
+#include "ultima/ultima4/filesys/rle.h"
 
 namespace Ultima {
 namespace Ultima4 {

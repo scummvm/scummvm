@@ -27,12 +27,12 @@
 #include "ultima/ultima4/item.h"
 #include "ultima/ultima4/graphics/imagemgr.h"
 #include "ultima/ultima4/names.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/stats.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/u4file.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {

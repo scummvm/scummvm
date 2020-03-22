@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/filesystem.h"
+#include "ultima/ultima4/filesys/filesystem.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/savefile.h"

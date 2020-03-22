@@ -25,7 +25,7 @@
 
 #include "ultima/ultima4/object.h"
 #include "ultima/ultima4/movement.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/types.h"
 
 namespace Ultima {
