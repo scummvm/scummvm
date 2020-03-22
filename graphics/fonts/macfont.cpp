@@ -680,7 +680,7 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 }
 
 static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
-	glyph->width++;
+	glyph->width += 2;
 	glyph->height++;
 
 	for (uint16 y = 0; y < height + 1; y++) {
@@ -688,8 +688,13 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 		byte *srcPtr2 = (byte *)src->getBasePtr(0, (y == height ? 0 : y + 1));
 		byte *dstPtr = (byte *)dst->getBasePtr(0, y);
 
-		for (uint16 x = 0; x < glyph->width - 1; x++, srcPtr++, srcPtr2++, dstPtr++) {
-			*dstPtr = (*srcPtr ^ srcPtr[1]) | (*srcPtr ^ (y == height ? 0 : *srcPtr2));
+		for (uint16 x = 0; x < glyph->width; x++, dstPtr++) {
+			byte pixX, pixR, pixB;
+			pixX = (x == 0 || x == glyph->width - 2) ? 0 : *srcPtr++;
+			pixB = (x == 0 || x == glyph->width - 2 || y == height) ? 0 : *srcPtr2++;
+			pixR = (x == glyph->width - 1) ? 0 : *srcPtr;
+
+			*dstPtr = (pixX ^ pixR) | (pixX ^ pixB);
 		}
 	}
 }
