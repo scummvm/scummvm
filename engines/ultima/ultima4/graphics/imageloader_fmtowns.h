@@ -29,13 +29,13 @@ namespace Ultima {
 namespace Ultima4 {
 
 class FMTOWNSImageLoader : public ImageLoader {
-    static ImageLoader *_instancePic;
-    static ImageLoader *_instanceTif;
-public:
-    virtual Image *load(U4FILE *file, int width, int height, int bpp);
-    FMTOWNSImageLoader(int offset) : _offset(offset){}
 protected:
-    int _offset;
+	int _offset;
+public:
+	FMTOWNSImageLoader(int offset) : _offset(offset) {}
+	virtual ~FMTOWNSImageLoader() {}
+
+	virtual Image *load(U4FILE *file, int width, int height, int bpp);
 };
 
 } // End of namespace Ultima4

@@ -34,10 +34,6 @@ namespace Ultima4 {
 
 using Std::vector;
 
-ImageLoader *U4RawImageLoader::_instance = ImageLoader::registerLoader(new U4RawImageLoader, "image/x-u4raw");
-ImageLoader *U4RleImageLoader::_instance = ImageLoader::registerLoader(new U4RleImageLoader, "image/x-u4rle");
-ImageLoader *U4LzwImageLoader::_instance = ImageLoader::registerLoader(new U4LzwImageLoader, "image/x-u4lzw");
-
 RGBA *U4PaletteLoader::_bwPalette = NULL;
 RGBA *U4PaletteLoader::_egaPalette = NULL;
 RGBA *U4PaletteLoader::_vgaPalette = NULL;

@@ -29,6 +29,7 @@ namespace Ultima {
 namespace Ultima4 {
 
 class Config;
+class ImageLoaders;
 class GameController;
 class Screen;
 
@@ -47,6 +48,7 @@ protected:
 	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
 public:
 	Config *_config;
+	ImageLoaders *_imageLoaders;
 	GameController *_game;
 	Screen *_screen;
 public:
@@ -68,6 +70,7 @@ public:
 	}
 };
 
+extern Ultima4Engine *g_ultima;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

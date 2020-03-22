@@ -27,14 +27,11 @@
 #include "ultima/ultima4/graphics/imageloader.h"
 #include "ultima/ultima4/graphics/imageloader_u4.h"
 #include "ultima/ultima4/graphics/imageloader_u5.h"
-//#include "ultima/ultima4/lzw/u6decode.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 using Std::vector;
-
-ImageLoader *U5LzwImageLoader::_instance = ImageLoader::registerLoader(new U5LzwImageLoader, "image/x-u5lzw");
 
 /**
  * Loads in the lzw-compressed image and apply the standard U4 16 or

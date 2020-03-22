@@ -34,9 +34,6 @@ namespace Ultima4 {
 
 using Std::vector;
 
-//ImageLoader *FMTOWNSImageLoader::instance_pic = ImageLoader::registerLoader(new FMTOWNSImageLoader(0), "image/fmtowns-pic"); Doesn't work so easily, different graphics format.
-ImageLoader *FMTOWNSImageLoader::_instanceTif = ImageLoader::registerLoader(new FMTOWNSImageLoader(510), "image/fmtowns-tif");
-
 /**
  * Loads in an FM TOWNS files, which we assume is 16 bits.
  */

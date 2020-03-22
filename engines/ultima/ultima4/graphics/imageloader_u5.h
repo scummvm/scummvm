@@ -34,11 +34,9 @@ namespace Ultima4 {
  * algorithm.
  */
 class U5LzwImageLoader : public ImageLoader {
-    static ImageLoader *_instance;
-
 public:
-    virtual Image *load(U4FILE *file, int width, int height, int bpp);
-    
+	virtual ~U5LzwImageLoader() {}
+    virtual Image *load(U4FILE *file, int width, int height, int bpp);    
 };
 
 } // End of namespace Ultima4

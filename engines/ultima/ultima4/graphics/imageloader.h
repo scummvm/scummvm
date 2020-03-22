@@ -30,7 +30,22 @@ namespace Ultima {
 namespace Ultima4 {
 
 class Image;
+class ImageLoader;
 class U4FILE;
+
+class ImageLoaders {
+private:
+	Common::HashMap<Common::String, ImageLoader *> _loaderMap;
+public:
+	ImageLoaders();
+	~ImageLoaders();
+
+	/**
+	 * This class method returns the registered concrete subclass
+	 * appropriate for loading images of a type given by fileType.
+	 */
+	ImageLoader *getLoader(const Common::String &fileType);
+};
 
 /**
  * The generic image loader interface.  Image loaders should override
@@ -41,18 +56,12 @@ class U4FILE;
  * (e.g. image/x-u4...).
  */
 class ImageLoader {
+protected:
+	static void setFromRawData(Image *image, int width, int height, int bpp, unsigned char *rawData);
 public:
-    ImageLoader() {}
+	ImageLoader() {}
     virtual ~ImageLoader() {}
     virtual Image *load(U4FILE *file, int width, int height, int bpp) = 0;
-    static ImageLoader *getLoader(const Common::String &fileType);
-
-protected:
-    static ImageLoader *registerLoader(ImageLoader *loader, const Common::String &type);
-    static void setFromRawData(Image *image, int width, int height, int bpp, unsigned char *rawData);
-
-private:
-    static Std::map<Common::String, ImageLoader *> *_loaderMap;
 };
 
 } // End of namespace Ultima4
