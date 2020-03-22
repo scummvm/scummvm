@@ -32,8 +32,8 @@ namespace Ultima4 {
 /**
  * MenuItem class
  */
-MenuItem::MenuItem(Common::String t, short xpos, short ypos, int sc) :
-	_id(-1), x(xpos), y(ypos), _text(t), _highlighted(false),
+MenuItem::MenuItem(Common::String t, short xp, short yp, int sc) :
+	_id(-1), x(xp), y(yp), _text(t), _highlighted(false),
 	_selected(false), _visible(true), _scOffset(sc), _closesMenu(false) {
 	// if the sc/scOffset is outside the range of the text string, assert
 	ASSERT(sc == -1 || (sc >= 0 && sc <= (int)_text.size()), "sc value of %d out of range!", sc);
@@ -107,22 +107,22 @@ void MenuItem::setClosesMenu(bool closesMenu) {
 	this->_closesMenu = closesMenu;
 }
 
-BoolMenuItem::BoolMenuItem(Common::String text, short x, short y, int shortcutKey, bool *val) :
-	MenuItem(text, x, y, shortcutKey),
-	val(val),
-	on("On"),
-	off("Off") {
+BoolMenuItem::BoolMenuItem(Common::String text, short xp, short yp, int shortcutKey, bool *val) :
+	MenuItem(text, xp, yp, shortcutKey),
+	_val(val),
+	_on("On"),
+	_off("Off") {
 }
 
 BoolMenuItem *BoolMenuItem::setValueStrings(const Common::String &onString, const Common::String &offString) {
-	on = onString;
-	off = offString;
+	_on = onString;
+	_off = offString;
 	return this;
 }
 
 Common::String BoolMenuItem::getText() const {
 	char buffer[64];
-	snprintf(buffer, sizeof(buffer), _text.c_str(), *val ? on.c_str() : off.c_str());
+	snprintf(buffer, sizeof(buffer), _text.c_str(), *_val ? _on.c_str() : _off.c_str());
 	return buffer;
 }
 
@@ -130,53 +130,53 @@ void BoolMenuItem::activate(MenuEvent &event) {
 	if (event.getType() == MenuEvent::DECREMENT ||
 	        event.getType() == MenuEvent::INCREMENT ||
 	        event.getType() == MenuEvent::ACTIVATE)
-		*val = !(*val);
+		*_val = !(*_val);
 }
 
-StringMenuItem::StringMenuItem(Common::String text, short x, short y, int shortcutKey,
+StringMenuItem::StringMenuItem(Common::String text, short xp, short yp, int shortcutKey,
                                Common::String *val, const Std::vector<Common::String> &validSettings) :
-	MenuItem(text, x, y, shortcutKey),
-	val(val),
-	validSettings(validSettings) {
+	MenuItem(text, xp, yp, shortcutKey),
+	_val(val),
+	_validSettings(validSettings) {
 }
 
 Common::String StringMenuItem::getText() const {
 	char buffer[64];
-	snprintf(buffer, sizeof(buffer), _text.c_str(), val->c_str());
+	snprintf(buffer, sizeof(buffer), _text.c_str(), _val->c_str());
 	return buffer;
 }
 
 void StringMenuItem::activate(MenuEvent &event) {
 	Std::vector<Common::String>::const_iterator current =
-	    find(validSettings.begin(), validSettings.end(), *val);
+	    find(_validSettings.begin(), _validSettings.end(), *_val);
 
-	if (current == validSettings.end())
-		errorFatal("Error: menu Common::String '%s' not a valid choice", val->c_str());
+	if (current == _validSettings.end())
+		errorFatal("Error: menu Common::String '%s' not a valid choice", _val->c_str());
 
 	if (event.getType() == MenuEvent::INCREMENT || event.getType() == MenuEvent::ACTIVATE) {
 		/* move to the next valid choice, wrapping if necessary */
 		current++;
-		if (current == validSettings.end())
-			current = validSettings.begin();
-		*val = *current;
+		if (current == _validSettings.end())
+			current = _validSettings.begin();
+		*_val = *current;
 
 	} else if (event.getType() == MenuEvent::DECREMENT) {
 		/* move back one, wrapping if necessary */
-		if (current == validSettings.begin())
-			current = validSettings.end();
+		if (current == _validSettings.begin())
+			current = _validSettings.end();
 		current--;
-		*val = *current;
+		*_val = *current;
 	}
 }
 
-IntMenuItem::IntMenuItem(Common::String text, short x, short y, int shortcutKey, int *val,
+IntMenuItem::IntMenuItem(Common::String text, short xp, short yp, int shortcutKey, int *val,
                          int min, int max, int increment, menuOutputType output) :
-	MenuItem(text, x, y, shortcutKey),
-	val(val),
-	min(min),
-	max(max),
-	increment(increment),
-	output(output) {
+	MenuItem(text, xp, yp, shortcutKey),
+	_val(val),
+	_min(min),
+	_max(max),
+	_increment(increment),
+	_output(output) {
 }
 
 Common::String IntMenuItem::getText() const {
@@ -184,12 +184,12 @@ Common::String IntMenuItem::getText() const {
 	// and generate a Common::String of the results
 	char outputBuffer[10];
 
-	switch (output) {
+	switch (_output) {
 	case MENU_OUTPUT_REAGENT:
-		snprintf(outputBuffer, sizeof(outputBuffer), "%2d", static_cast<short>(*val));
+		snprintf(outputBuffer, sizeof(outputBuffer), "%2d", static_cast<short>(*_val));
 		break;
 	case MENU_OUTPUT_GAMMA:
-		snprintf(outputBuffer, sizeof(outputBuffer), "%.1f", static_cast<float>(*val) / 100);
+		snprintf(outputBuffer, sizeof(outputBuffer), "%.1f", static_cast<float>(*_val) / 100);
 		break;
 	case MENU_OUTPUT_SHRINE:
 		/*
@@ -214,18 +214,18 @@ Common::String IntMenuItem::getText() const {
 		            }
 		 *
 		 */
-		snprintf(outputBuffer, sizeof(outputBuffer), "%d sec", *val);
+		snprintf(outputBuffer, sizeof(outputBuffer), "%d sec", *_val);
 		break;
 	case MENU_OUTPUT_SPELL:
-		snprintf(outputBuffer, sizeof(outputBuffer), "%3g sec", static_cast<double>(*val) / 5);
+		snprintf(outputBuffer, sizeof(outputBuffer), "%3g sec", static_cast<double>(*_val) / 5);
 		break;
 	case MENU_OUTPUT_VOLUME:
-		if (*val == 0) {
+		if (*_val == 0) {
 			snprintf(outputBuffer, sizeof(outputBuffer), "Disabled");
-		} else if (*val == MAX_VOLUME) {
+		} else if (*_val == MAX_VOLUME) {
 			snprintf(outputBuffer, sizeof(outputBuffer), "Full");
 		} else {
-			snprintf(outputBuffer, sizeof(outputBuffer), "%d%s%s", *val * 10, "%", "%");
+			snprintf(outputBuffer, sizeof(outputBuffer), "%d%s%s", *_val * 10, "%", "%");
 		}
 		break;
 	default:
@@ -236,23 +236,23 @@ Common::String IntMenuItem::getText() const {
 	// on the menuOutputType selected. MENU_OUTPUT_INT always uses
 	// %d, whereas all others use %s
 	char buffer[64];
-	if (output != MENU_OUTPUT_INT)
+	if (_output != MENU_OUTPUT_INT)
 		snprintf(buffer, sizeof(buffer), _text.c_str(), outputBuffer);
 	else
-		snprintf(buffer, sizeof(buffer), _text.c_str(), *val);
+		snprintf(buffer, sizeof(buffer), _text.c_str(), *_val);
 	return buffer;
 }
 
 void IntMenuItem::activate(MenuEvent &event) {
 	if (event.getType() == MenuEvent::INCREMENT || event.getType() == MenuEvent::ACTIVATE) {
-		*val += increment;
-		if (*val > max)
-			*val = min;
+		*_val += _increment;
+		if (*_val > _max)
+			*_val = _min;
 
 	} else if (event.getType() == MenuEvent::DECREMENT) {
-		*val -= increment;
-		if (*val < min)
-			*val = max;
+		*_val -= _increment;
+		if (*_val < _min)
+			*_val = _max;
 	}
 }
 

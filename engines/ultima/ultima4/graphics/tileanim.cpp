@@ -119,11 +119,11 @@ RGBA *TileAnimTransform::loadColorFromConf(const ConfigElement &conf) {
 	return rgba;
 }
 
-TileAnimInvertTransform::TileAnimInvertTransform(int x, int y, int w, int h) {
-	this->x = x;
-	this->y = y;
-	this->w = w;
-	this->h = h;
+TileAnimInvertTransform::TileAnimInvertTransform(int xp, int yp, int width, int height) {
+	this->x = xp;
+	this->y = yp;
+	this->w = width;
+	this->h = height;
 }
 
 bool TileAnimInvertTransform::drawsTile() const {
@@ -135,9 +135,9 @@ void TileAnimInvertTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 	                                        (tile->getHeight() * mapTile._frame) + (y * scale), w * scale, h * scale);
 }
 
-TileAnimPixelTransform::TileAnimPixelTransform(int x, int y) {
-	this->x = x;
-	this->y = y;
+TileAnimPixelTransform::TileAnimPixelTransform(int xp, int yp) {
+	this->x = xp;
+	this->y = yp;
 }
 
 bool TileAnimPixelTransform::drawsTile() const {
@@ -185,11 +185,11 @@ void TileAnimFrameTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 
 }
 
-TileAnimPixelColorTransform::TileAnimPixelColorTransform(int x, int y, int w, int h) {
-	this->x = x;
-	this->y = y;
-	this->w = w;
-	this->h = h;
+TileAnimPixelColorTransform::TileAnimPixelColorTransform(int xp, int yp, int width, int height) {
+	this->x = xp;
+	this->y = yp;
+	this->w = width;
+	this->h = height;
 }
 
 bool TileAnimPixelColorTransform::drawsTile() const {

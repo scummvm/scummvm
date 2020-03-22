@@ -39,7 +39,7 @@ Settings *Settings::_instance = NULL;
 
 bool SettingsData::operator==(const SettingsData &s) const {
 	// TODO: Refactor this to a clean comparison of individual settings
-	int fieldsSize = (int *)&_end_of_bitwise_comparators - (int *)this;
+	int fieldsSize = (const int *)&_end_of_bitwise_comparators - (const int *)this;
 	if (memcmp(this, &s, fieldsSize) != 0)
 		return false;
 

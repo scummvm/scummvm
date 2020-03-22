@@ -27,11 +27,11 @@
 namespace Ultima {
 namespace Ultima4 {
 
-ProgressBar::ProgressBar(int x, int y, int width, int height, int _min, int _max) :
-	View(x, y, width, height),
-	_min(_min),
-	_max(_max) {
-	_current = _min;
+ProgressBar::ProgressBar(int xp, int yp, int width, int height, int min, int max) :
+	View(xp, yp, width, height),
+	_min(min),
+	_max(max) {
+	_current = min;
 }
 
 ProgressBar &ProgressBar::operator++()  {

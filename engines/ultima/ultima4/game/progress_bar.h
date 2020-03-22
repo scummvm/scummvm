@@ -31,7 +31,7 @@ namespace Ultima4 {
 
 class ProgressBar : public View {
 public:
-	ProgressBar(int x, int y, int width, int height, int min, int max);
+	ProgressBar(int xp, int yp, int width, int height, int min, int max);
 
 	virtual ProgressBar &operator++();
 	virtual ProgressBar &operator--();

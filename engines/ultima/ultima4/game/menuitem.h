@@ -47,7 +47,7 @@ enum menuOutputType {
 
 class MenuItem {
 public:
-	MenuItem(Common::String text, short x, short y, int shortcutKey = -1);
+	MenuItem(Common::String text, short xp, short yp, int shortcutKey = -1);
 	virtual ~MenuItem() {}
 
 	virtual void activate(MenuEvent &event) {}
@@ -93,7 +93,7 @@ protected:
  */
 class BoolMenuItem : public MenuItem {
 public:
-	BoolMenuItem(Common::String text, short x, short y, int shortcutKey, bool *val);
+	BoolMenuItem(Common::String text, short xp, short yp, int shortcutKey, bool *val);
 
 	BoolMenuItem *setValueStrings(const Common::String &onString, const Common::String &offString);
 
@@ -101,8 +101,8 @@ public:
 	virtual Common::String getText() const;
 
 protected:
-	bool *val;
-	Common::String on, off;
+	bool *_val;
+	Common::String _on, _off;
 };
 
 /**
@@ -111,14 +111,14 @@ protected:
  */
 class StringMenuItem : public MenuItem {
 public:
-	StringMenuItem(Common::String text, short x, short y, int shortcutKey, Common::String *val, const Std::vector<Common::String> &validSettings);
+	StringMenuItem(Common::String text, short xp, short yp, int shortcutKey, Common::String *val, const Std::vector<Common::String> &validSettings);
 
 	virtual void activate(MenuEvent &event);
 	virtual Common::String getText() const;
 
 protected:
-	Common::String *val;
-	Std::vector<Common::String> validSettings;
+	Common::String *_val;
+	Std::vector<Common::String> _validSettings;
 };
 
 /**
@@ -127,15 +127,15 @@ protected:
  */
 class IntMenuItem : public MenuItem {
 public:
-	IntMenuItem(Common::String text, short x, short y, int shortcutKey, int *val, int min, int max, int increment, menuOutputType output = MENU_OUTPUT_INT);
+	IntMenuItem(Common::String text, short xp, short yp, int shortcutKey, int *val, int min, int max, int increment, menuOutputType output = MENU_OUTPUT_INT);
 
 	virtual void activate(MenuEvent &event);
 	virtual Common::String getText() const;
 
 protected:
-	int *val;
-	int min, max, increment;
-	menuOutputType output;
+	int *_val;
+	int _min, _max, _increment;
+	menuOutputType _output;
 };
 
 } // End of namespace Ultima4
