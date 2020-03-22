@@ -140,7 +140,7 @@ void deathRevive() {
 	screenEnableCursor();
 	screenShowCursor();
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
-	screenRedrawScreen();
+	g_screen->update();
 }
 
 } // End of namespace Ultima4

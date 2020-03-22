@@ -441,6 +441,7 @@ void Image::getPixelIndex(int x, int y, unsigned int &index) const {
 
 	case 4:
 		index = *reinterpret_cast<uint32 *>(p);
+		break;
 
 	default:
 		error("Unsupported format");

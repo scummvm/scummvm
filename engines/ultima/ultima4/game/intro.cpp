@@ -646,7 +646,7 @@ void IntroController::updateScreen() {
 		if (!_errorMessage.empty()) {
 			_menuArea.textAt(6, 5, "%s", _errorMessage.c_str());
 			drawBeasties();
-			screenRedrawScreen();
+			g_screen->update();
 			// wait for a couple seconds
 			EventHandler::wait_msecs(2000);
 			// clear the screen again
@@ -674,7 +674,7 @@ void IntroController::updateScreen() {
 	}
 
 	screenUpdateCursor();
-	screenRedrawScreen();
+	g_screen->update();
 }
 
 /**
@@ -700,7 +700,7 @@ void IntroController::initiateNewGame() {
 	_menuArea.enableCursor();
 
 	drawBeasties();
-	screenRedrawScreen();
+	g_screen->update();
 
 	Common::String nameBuffer = ReadStringController::get(12, &_menuArea);
 	if (nameBuffer.empty()) {
@@ -943,7 +943,7 @@ void IntroController::journeyOnward() {
 	if (!validSave) {
 		_errorMessage = "Initiate a new game first!";
 		updateScreen();
-		screenRedrawScreen();
+		g_screen->update();
 		return;
 	}
 
@@ -1047,7 +1047,7 @@ void IntroController::timerFired() {
 	 * i.e. drop a frame if another timer event is about to be fired
 	 */
 	if (EventHandler::timerQueueEmpty())
-		screenRedrawScreen();
+		g_screen->update();
 
 	if (xu4_random(2) && ++_beastie1Cycle >= IntroBinData::BEASTIE1_FRAMES)
 		_beastie1Cycle = 0;
