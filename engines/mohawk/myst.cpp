@@ -31,9 +31,11 @@
 #include "common/translation.h"
 #include "common/textconsole.h"
 
+#include "engines/dialogs.h"
 #include "gui/saveload.h"
 
 #include "mohawk/cursors.h"
+#include "mohawk/dialogs.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_card.h"
@@ -41,7 +43,6 @@
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_sound.h"
 #include "mohawk/myst_state.h"
-#include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
 #include "mohawk/resource_cache.h"
 #include "mohawk/video.h"
@@ -63,16 +64,6 @@
 
 namespace Mohawk {
 
-enum MystEventAction {
-	kMystActionOpenMainMenu,
-	kMystActionSkip,
-	kMystActionInteract,
-	kMystActionLoadGameState,
-	kMystActionSaveGameState,
-	kMystActionOpenOptionsDialog,
-	kMystActionPause
-};
-
 MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) :
 		MohawkEngine(syst, gamedesc) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
@@ -89,18 +80,23 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_currentCursor = 0;
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
+	_scheduledAction = kMystActionNone;
 
 	_sound = nullptr;
 	_video = nullptr;
 	_gfx = nullptr;
 	_gameState = nullptr;
-	_optionsDialog = nullptr;
 	_rnd = nullptr;
 
 	_mouseClicked = false;
 	_mouseMoved = false;
 	_escapePressed = false;
 	_waitingOnBlockingOperation = false;
+
+	// We have a custom GMM subclass to show the credits when quitting
+	// and to support the drop page and other actions in the options dialog.
+	assert(!_mainMenuDialog);
+	_mainMenuDialog = new MystMenuDialog(this);
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -110,7 +106,6 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _video;
 	delete _sound;
 	delete _gameState;
-	delete _optionsDialog;
 	delete _rnd;
 }
 
@@ -410,15 +405,11 @@ Common::Error MohawkEngine_Myst::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
-	ConfMan.registerDefault("zip_mode", false);
-	ConfMan.registerDefault("transition_mode", false);
-
 	_gfx = new MystGraphics(this);
 	_video = new VideoManager(this);
 	_sound = new MystSound(this);
 	setDebugger(new MystConsole(this));
 	_gameState = new MystGameState(this, _saveFileMan);
-	_optionsDialog = new MystOptionsDialog(this);
 	_cursor = new MystCursorManager(this);
 	_rnd = new Common::RandomSource("myst");
 
@@ -500,20 +491,35 @@ void MohawkEngine_Myst::loadArchive(const char *archiveName, const char *languag
 	_mhk.push_back(archive);
 }
 
+void MohawkEngine_Myst::registerDefaultSettings() {
+	ConfMan.registerDefault("playmystflyby", false);
+	ConfMan.registerDefault("zip_mode", false);
+	ConfMan.registerDefault("transition_mode", false);
+}
+
 Common::KeymapArray MohawkEngine_Myst::initKeymaps(const char *target) {
 	using namespace Common;
+
+	String guiOptions = ConfMan.get("guioptions", target);
+	bool isME = checkGameGUIOption(GAMEOPTION_ME, guiOptions);
+	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
+	bool isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "myst", "Myst");
 
 	Action *act;
 
-	if (checkGameGUIOption(GAMEOPTION_25TH, ConfMan.get("guioptions", target))) {
-		act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));
-		act->setCustomEngineActionEvent(kMystActionOpenMainMenu);
+	act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));
+	act->setCustomEngineActionEvent(kMystActionOpenMainMenu);
+	act->addDefaultInputMapping("JOY_X");
+	if (is25th) {
 		act->addDefaultInputMapping("ESCAPE");
-		act->addDefaultInputMapping("JOY_X");
-		engineKeyMap->addAction(act);
+	} else if (isDemo) {
+		// TODO: Check the original keybinding for the demo version menu
+	} else {
+		act->addDefaultInputMapping("F5");
 	}
+	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setCustomEngineActionEvent(kMystActionSkip);
@@ -539,13 +545,27 @@ Common::KeymapArray MohawkEngine_Myst::initKeymaps(const char *target) {
 
 	act = new Action(kStandardActionOpenSettings, _("Show options menu"));
 	act->setCustomEngineActionEvent(kMystActionOpenOptionsDialog);
-	act->addDefaultInputMapping("F5");
+	if (is25th || isDemo) {
+		act->addDefaultInputMapping("F5");
+	}
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionPause, _("Pause"));
 	act->setCustomEngineActionEvent(kMystActionPause);
 	act->addDefaultInputMapping("SPACE");
 	engineKeyMap->addAction(act);
+
+	act = new Action("DRPP", _("Drop page"));
+	act->setCustomEngineActionEvent(kMystActionDropPage);
+	act->addDefaultInputMapping("A+d");
+	engineKeyMap->addAction(act);
+
+	if (isME) {
+		act = new Action("SMAP", _("Show map"));
+		act->setCustomEngineActionEvent(kMystActionShowMap);
+		act->addDefaultInputMapping("A+F8");
+		engineKeyMap->addAction(act);
+	}
 
 	return Keymap::arrayOf(engineKeyMap);
 }
@@ -566,53 +586,7 @@ void MohawkEngine_Myst::doFrame() {
 			_mouseMoved = true;
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			switch ((MystEventAction)event.customType) {
-			case kMystActionInteract:
-				_mouseClicked = true;
-				break;
-			case kMystActionPause:
-				pauseGame();
-				break;
-			case kMystActionOpenOptionsDialog:
-				runOptionsDialog();
-				break;
-			case kMystActionOpenMainMenu:
-				if (_stack->getStackId() == kCreditsStack) {
-					// Don't allow going to the menu while the credits play
-					break;
-				}
-
-				if (getFeatures() & GF_25TH && isInteractive()) {
-					if (_stack->getStackId() == kMenuStack) {
-						// If the menu is active and a game is loaded, go back to the game
-						if (_prevStack) {
-							resumeFromMainMenu();
-						}
-					} else {
-						// If the game is interactive, open the main menu
-						goToMainMenu();
-					}
-				}
-				break;
-			case kMystActionSkip:
-				if (!isInteractive()) {
-					// Try to skip the currently playing video
-					_escapePressed = true;
-				}
-				break;
-			case kMystActionLoadGameState:
-				if (canLoadGameStateCurrently()) {
-					runLoadDialog();
-				}
-				break;
-			case kMystActionSaveGameState:
-				if (canSaveGameStateCurrently()) {
-					runSaveDialog();
-				}
-				break;
-			default:
-				break;
-			}
+			doAction((MystEventAction)event.customType);
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 			switch ((MystEventAction)event.customType) {
@@ -655,78 +629,128 @@ void MohawkEngine_Myst::doFrame() {
 	_system->delayMillis(10);
 }
 
-void MohawkEngine_Myst::runOptionsDialog() {
+bool MohawkEngine_Myst::canDoAction(MystEventAction action) {
 	bool inMenu = (_stack->getStackId() == kMenuStack) && _prevStack;
 	bool actionsAllowed = inMenu || isInteractive();
 
-	MystScriptParserPtr stack;
-	if (inMenu) {
-		stack = _prevStack;
-	} else {
-		stack = _stack;
-	}
+	const MystScriptParserPtr &stack = inMenu ? _prevStack : _stack;
 
-	if (isGameStarted()) {
-		_optionsDialog->setZipMode(_gameState->_globals.zipMode);
-		_optionsDialog->setTransitions(_gameState->_globals.transitions);
-	} else {
-		_optionsDialog->setZipMode(ConfMan.getBool("zip_mode"));
-		_optionsDialog->setTransitions(ConfMan.getBool("transition_mode"));
-	}
-
-	_optionsDialog->setCanDropPage(actionsAllowed && _gameState->_globals.heldPage != kNoPage);
-	_optionsDialog->setCanShowMap(actionsAllowed && stack->getMap());
-	_optionsDialog->setCanReturnToMenu(actionsAllowed && stack->getStackId() != kDemoStack);
-
-	switch (runDialog(*_optionsDialog)) {
-	case MystOptionsDialog::kActionDropPage:
-		if (inMenu) {
-			resumeFromMainMenu();
-		}
-
-		dropPage();
-		break;
-	case MystOptionsDialog::kActionShowMap:
-		if (inMenu) {
-			resumeFromMainMenu();
-		}
-
-		stack->showMap();
-		break;
-	case MystOptionsDialog::kActionGoToMenu:
-		if (inMenu) {
-			resumeFromMainMenu();
-		}
-
-		changeToStack(kDemoStack, 2002, 0, 0);
-		break;
-	case MystOptionsDialog::kActionShowCredits:
-		if (isInteractive() && getGameType() != GType_MAKINGOF) {
-			_cursor->hideCursor();
-			changeToStack(kCreditsStack, 10000, 0, 0);
-		} else {
-			// Showing the credits in the middle of a script is not possible
-			// because it unloads the previous age, removing data needed by the
-			// rest of the script. Instead we just quit without showing the credits.
-			quitGame();
-		}
-		break;
-	case MystOptionsDialog::kActionSaveSettings:
-		if (isGameStarted()) {
-			_gameState->_globals.zipMode = _optionsDialog->getZipMode();
-			_gameState->_globals.transitions = _optionsDialog->getTransitions();
-		} else {
-			ConfMan.setBool("zip_mode", _optionsDialog->getZipMode());
-			ConfMan.setBool("transition_mode", _optionsDialog->getTransitions());
-			ConfMan.flushToDisk();
-		}
-		break;
+	switch (action) {
+	case kMystActionDropPage:
+		return actionsAllowed && _gameState->_globals.heldPage != kNoPage;
+	case kMystActionShowMap:
+		return actionsAllowed && stack->getMap();
+	case kMystActionOpenMainMenu:
+		assert(getFeatures() & GF_DEMO);
+		return actionsAllowed && stack->getStackId() != kDemoStack;
 	default:
-		if (_optionsDialog->getLoadSlot() >= 0)
-			loadGameState(_optionsDialog->getLoadSlot());
-		if (_optionsDialog->getSaveSlot() >= 0)
-			saveGameState(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
+		// Not implemented yet
+		assert(false);
+	}
+}
+
+void MohawkEngine_Myst::doAction(MystEventAction action) {
+	switch (action) {
+	case kMystActionInteract:
+		_mouseClicked = true;
 		break;
+	case kMystActionPause:
+		pauseGame();
+		break;
+	case kMystActionOpenOptionsDialog:
+		runOptionsDialog();
+		break;
+	case kMystActionOpenMainMenu:
+		if (_stack->getStackId() == kCreditsStack) {
+			// Don't allow going to the menu while the credits play
+			break;
+		}
+
+		if (getFeatures() & GF_DEMO) {
+			if (_stack->getStackId() != kDemoStack && isInteractive()) {
+				changeToStack(kDemoStack, 2002, 0, 0);
+			}
+			break;
+		}
+
+		if (getFeatures() & GF_25TH && isInteractive()) {
+			if (_stack->getStackId() == kMenuStack) {
+				// If the menu is active and a game is loaded, go back to the game
+				if (_prevStack) {
+					resumeFromMainMenu();
+				}
+			} else {
+				// If the game is interactive, open the main menu
+				goToMainMenu();
+			}
+			break;
+		}
+
+		if (isInteractive()) {
+			openMainMenuDialog();
+		}
+
+		break;
+	case kMystActionSkip:
+		if (!isInteractive()) {
+			// Try to skip the currently playing video
+			_escapePressed = true;
+		}
+		break;
+	case kMystActionLoadGameState:
+		if (canLoadGameStateCurrently()) {
+			runLoadDialog();
+		}
+		break;
+	case kMystActionSaveGameState:
+		if (canSaveGameStateCurrently()) {
+			runSaveDialog();
+		}
+		break;
+	case kMystActionDropPage:
+		if (_gameState->_globals.heldPage != kNoPage && isInteractive()) {
+			dropPage();
+		}
+		break;
+	case kMystActionShowMap:
+		if (_stack->getMap() && isInteractive()) {
+			_stack->showMap();
+		}
+		break;
+	case kMystActionNone:
+		break;
+	}
+}
+
+void MohawkEngine_Myst::scheduleAction(MystEventAction action) {
+	_scheduledAction = action;
+}
+
+void MohawkEngine_Myst::runOptionsDialog() {
+	GUI::ConfigDialog dlg;
+	int result = runDialog(dlg);
+	if (result > 0) {
+		syncSoundSettings();
+	}
+
+	if (result > kMystActionNone && result <= kMystActionLast) {
+		if (_prevStack) {
+			resumeFromMainMenu();
+		}
+
+		doAction(static_cast<MystEventAction>(result));
+	}
+}
+
+void MohawkEngine_Myst::runCredits() {
+	if (isInteractive() && getGameType() != GType_MAKINGOF) {
+		_cursor->hideCursor();
+		changeToStack(kCreditsStack, 10000, 0, 0);
+	} else {
+		// Showing the credits in the middle of a script is not possible
+		// because it unloads the previous age, removing data needed by the
+		// rest of the script. Instead we just quit without showing the credits.
+		quitGame();
 	}
 }
 
@@ -757,7 +781,13 @@ void MohawkEngine_Myst::pauseEngineIntern(bool pause) {
 
 		// We may have missed events while paused
 		_mouseClicked = (_eventMan->getButtonState() & 1) != 0;
+
+		if (_scheduledAction != kMystActionNone) {
+			doAction(_scheduledAction);
+		}
 	}
+
+	_scheduledAction = kMystActionNone;
 }
 
 void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 linkSrcSound, uint16 linkDstSound) {
@@ -883,7 +913,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 
 	// Make sure the screen is updated
 	if (transition != kNoTransition) {
-		if (_gameState->_globals.transitions) {
+		if (ConfMan.getBool("transition_mode")) {
 			_gfx->runTransition(transition, Common::Rect(544, 333), 10, 0);
 		} else {
 			_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
@@ -1197,6 +1227,8 @@ bool MohawkEngine_Myst::isGameStarted() const {
 }
 
 void MohawkEngine_Myst::resumeFromMainMenu() {
+	assert(_prevStack);
+
 	_card->leave();
 	_card.reset();
 

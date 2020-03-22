@@ -25,6 +25,7 @@
 
 #include "mohawk/console.h"
 #include "mohawk/mohawk.h"
+#include "mohawk/myst_actions.h"
 #include "mohawk/resource_cache.h"
 #include "mohawk/video.h"
 
@@ -41,7 +42,7 @@ class MystGraphics;
 class MystScriptParser;
 class MystConsole;
 class MystGameState;
-class MystOptionsDialog;
+class MystOptionsWidget;
 class MystSound;
 class MystArea;
 class MystAreaImageSwitch;
@@ -194,6 +195,7 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override;
+	static void registerDefaultSettings();
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
 	void resumeFromMainMenu();
@@ -201,9 +203,13 @@ public:
 	void runLoadDialog();
 	void runSaveDialog();
 	void runOptionsDialog();
+	void runCredits();
+
+	bool canDoAction(MystEventAction action);
+	void doAction(MystEventAction action);
+	void scheduleAction(MystEventAction action);
 
 private:
-	MystOptionsDialog *_optionsDialog;
 	ResourceCache _cache;
 
 	MystScriptParserPtr _prevStack;
@@ -232,6 +238,8 @@ private:
 
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
+
+	MystEventAction _scheduledAction;
 };
 
 } // End of namespace Mohawk

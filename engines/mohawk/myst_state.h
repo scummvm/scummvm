@@ -131,8 +131,8 @@ public:
 		ActiveAge currentAge;
 		HeldPage heldPage;
 		uint16 u1;
-		uint16 transitions;
-		uint16 zipMode;
+		uint16 transitions; // Unused in ScummVM
+		uint16 zipMode;     // Unused in ScummVM
 		uint16 redPagesInBook;
 		uint16 bluePagesInBook;
 		DniEnding ending;
