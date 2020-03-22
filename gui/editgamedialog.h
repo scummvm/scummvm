@@ -26,6 +26,7 @@
 #include "engines/game.h"
 #include "gui/dialog.h"
 #include "gui/options.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
@@ -90,7 +91,7 @@ protected:
 	CheckboxWidget *_globalMT32Override;
 	CheckboxWidget *_globalVolumeOverride;
 
-	ExtraGuiOptions _engineOptions;
+	OptionsContainerWidget *_engineOptions;
 };
 
 } // End of namespace GUI

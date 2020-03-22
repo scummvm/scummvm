@@ -25,6 +25,7 @@
 
 #include "gui/dialog.h"
 #include "gui/options.h"
+#include "gui/widget.h"
 
 class Engine;
 
@@ -93,6 +94,24 @@ public:
 	~ConfigDialog() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+};
+
+class ExtraGuiOptionsWidget : public OptionsContainerWidget {
+public:
+	ExtraGuiOptionsWidget(GuiObject *widgetsBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options);
+	~ExtraGuiOptionsWidget() override;
+
+	// OptionsContainerWidget API
+	void load() override;
+	bool save() override;
+
+private:
+	typedef Common::Array<CheckboxWidget *> CheckboxWidgetList;
+
+	static Common::String dialogLayout(const Common::String &domain);
+
+	ExtraGuiOptions _options;
+	CheckboxWidgetList _checkboxes;
 };
 
 } // End of namespace GUI
