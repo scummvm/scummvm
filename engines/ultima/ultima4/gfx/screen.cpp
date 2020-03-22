@@ -439,8 +439,6 @@ bool screenTileUpdate(TileView *view, const Coords &coords, bool redraw) {
 void screenUpdate(TileView *view, bool showmap, bool blackout) {
 	ASSERT(g_context != NULL, "context has not yet been initialized");
 
-	screenLock();
-
 	if (blackout) {
 		screenEraseMapArea();
 	} else if (g_context->_location->_map->_flags & FIRST_PERSON) {
@@ -477,8 +475,6 @@ void screenUpdate(TileView *view, bool showmap, bool blackout) {
 	screenUpdateCursor();
 	screenUpdateMoons();
 	screenUpdateWind();
-
-	screenUnlock();
 }
 
 /**
@@ -589,13 +585,13 @@ void screenScrollMessageArea() {
 	                 CHAR_HEIGHT * settings._scale,
 	                 0, 0, 0);
 
-	screenRedrawScreen();
+	g_screen->update();
 }
 
 void screenCycle() {
 	if (++screenCurrentCycle >= SCR_CYCLE_MAX)
 		screenCurrentCycle = 0;
-	screenRedrawScreen();
+	g_screen->update();
 }
 
 void screenUpdateCursor() {
@@ -1182,13 +1178,13 @@ void screenShake(int iterations) {
 			screen->drawSubRectOn(screen, 0, SCALED(shakeOffset), 0, 0, SCALED(320), SCALED(200 - (shakeOffset + 1)));
 			bottom->drawOn(screen, 0, SCALED(200 - (shakeOffset)));
 			screen->fillRect(0, 0, SCALED(320), SCALED(shakeOffset), 0, 0, 0);
-			screenRedrawScreen();
+			g_screen->update();
 			EventHandler::sleep(settings._shakeInterval);
 
 			// shift the screen back up, and replace the bottom row
 			screen->drawOn(screen, 0, 0 - SCALED(shakeOffset));
 			bottom->drawOn(screen, 0, SCALED(200 - (shakeOffset + 1)));
-			screenRedrawScreen();
+			g_screen->update();
 			EventHandler::sleep(settings._shakeInterval);
 		}
 		// free the bottom row image

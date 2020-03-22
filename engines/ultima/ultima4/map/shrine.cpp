@@ -216,7 +216,7 @@ void Shrine::meditationCycle() {
 		eventHandler->pushController(&controller);
 		controller.wait();
 		screenMessage(".");
-		screenRedrawScreen();
+		g_screen->update();
 	}
 	askMantra();
 }
@@ -224,7 +224,7 @@ void Shrine::meditationCycle() {
 void Shrine::askMantra() {
 	screenEnableCursor();
 	screenMessage("\nMantra: ");
-	screenRedrawScreen();       // FIXME: needed?
+	g_screen->update();       // FIXME: needed?
 	Common::String mantra;
 #ifdef IOS
 	{

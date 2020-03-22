@@ -181,7 +181,7 @@ bool AlphaActionController::keyPressed(int key) {
 		doneWaiting();
 	} else {
 		screenMessage("\n%s", _prompt.c_str());
-		screenRedrawScreen();
+		g_screen->update();
 		return KeyHandler::defaultHandler(key, NULL);
 	}
 	return true;
@@ -204,7 +204,7 @@ void GameController::initScreen() {
 	Image *screen = imageMgr->get("screen")->_image;
 
 	screen->fillRect(0, 0, screen->width(), screen->height(), 0, 0, 0);
-	screenRedrawScreen();
+	g_screen->update();
 }
 
 void GameController::initScreenWithoutReloadingState() {
@@ -817,7 +817,7 @@ void gameSpellEffect(int spell, int player, Sound sound) {
 		g_game->_mapArea.highlight(0, 0, VIEWPORT_W * TILE_WIDTH, VIEWPORT_H * TILE_HEIGHT);
 		EventHandler::sleep(time);
 		g_game->_mapArea.unhighlight();
-		screenRedrawScreen();
+		g_screen->update();
 
 		if (effect == Spell::SFX_TREMOR) {
 			gameUpdateScreen();
@@ -3044,7 +3044,7 @@ void gameCheckHullIntegrity() {
 			g_context->_party->member(i)->setStatus(STAT_DEAD);
 		}
 
-		screenRedrawScreen();
+		g_screen->update();
 		deathStart(5);
 	}
 }

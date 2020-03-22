@@ -88,7 +88,7 @@ void Ultima4Engine::startup() {
 	pb.setBorderWidth(1);
 
 	screenTextAt(15, 11, "Loading...");
-	screenRedrawScreen();
+	g_screen->update();
 	++pb;
 
 	soundInit();

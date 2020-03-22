@@ -111,11 +111,7 @@ extern Screen *g_screen;
 void screenInit(void);
 void screenRefreshTimerInit(void);
 void screenReInit(void);
-void screenLock();
-void screenUnlock();
 void screenWait(int numberOfAnimationFrames);
-
-void screenIconify(void);
 
 const Std::vector<Common::String> &screenGetGemLayoutNames();
 const Std::vector<Common::String> &screenGetFilterNames();
@@ -132,7 +128,6 @@ void screenGemUpdate(void);
 void screenMessage(const char *fmt, ...) GCC_PRINTF(1, 2);
 void screenPrompt(void);
 void screenRedrawMapArea(void);
-void screenRedrawScreen(void);
 void screenRedrawTextArea(int x, int y, int width, int height);
 void screenScrollMessageArea(void);
 void screenShake(int iterations);

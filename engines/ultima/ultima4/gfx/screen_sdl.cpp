@@ -121,38 +121,11 @@ void screenDelete_sys() {
 }
 
 /**
- * Attempts to iconify the screen.
- */
-void screenIconify() {
-#ifdef TODO
-	SDL_WM_IconifyWindow();
-#endif
-}
-
-/**
  * Force a redraw.
  */
 
 //SDL_mutex *screenLockMutex = NULL;
 int frameDuration = 0;
-
-void screenLock() {
-//	SDL_mutexP(screenLockMutex);
-}
-
-void screenUnlock() {
-//	SDL_mutexV(screenLockMutex);
-}
-
-void screenRedrawScreen() {
-#ifdef TODO
-	screenLock();
-	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, 0, 0);
-	screenUnlock();
-#else
-	g_system->updateScreen();
-#endif
-}
 
 void screenRedrawTextArea(int x, int y, int width, int height) {
 #ifdef TODO
@@ -175,7 +148,7 @@ int screenRefreshThreadFunction(void *unused) {
 #ifdef TODO
 	while (continueScreenRefresh) {
 		SDL_Delay(frameDuration);
-		screenRedrawScreen();
+		g_screen->update();
 	}
 #endif
 	return 0;

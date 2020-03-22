@@ -265,7 +265,7 @@ static void handleActiveEvent(const Common::Event &event, updateScreenCallback u
 		if (event.active.gain) {
 			if (updateScreen)
 				(*updateScreen)();
-			screenRedrawScreen();
+			g_screen->update();
 		}
 	}
 #endif
@@ -289,7 +289,7 @@ static void handleMouseButtonDownEvent(const Common::Event &event, Controller *c
 	controller->keyPressed(area->_command[button]);
 	if (updateScreen)
 		(*updateScreen)();
-	screenRedrawScreen();
+	g_screen->update();
 }
 
 static void handleKeyDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
@@ -324,7 +324,7 @@ static void handleKeyDownEvent(const Common::Event &event, Controller *controlle
 	if (processed) {
 		if (updateScreen)
 			(*updateScreen)();
-		screenRedrawScreen();
+		g_screen->update();
 	}
 
 }
@@ -353,7 +353,7 @@ void EventHandler::sleep(unsigned int msec) {
 void EventHandler::run() {
 	if (_updateScreen)
 		(*_updateScreen)();
-	screenRedrawScreen();
+	g_screen->update();
 
 	while (!_ended && !_controllerDone) {
 		Common::Event event;

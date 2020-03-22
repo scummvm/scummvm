@@ -105,7 +105,7 @@ void codexStart() {
 	 */
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 	g_context->_stats->update(true);     /* show just the avatar */
-	screenRedrawScreen();
+	g_screen->update();
 
 	/**
 	 * change the view mode so the dungeon doesn't get shown
