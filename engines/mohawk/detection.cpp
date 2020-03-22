@@ -32,6 +32,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
+#include "mohawk/dialogs.h"
 #include "mohawk/livingbooks.h"
 
 #ifdef ENABLE_CSTIME
@@ -120,8 +121,9 @@ Common::String MohawkEngine::getDatafileLanguageName(const char *prefix) const {
 bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
 	return
 		MohawkEngine::hasFeature(f)
-		|| (f == kSupportsLoadingDuringRuntime)
-	        || (f == kSupportsSavingDuringRuntime);
+	        || (f == kSupportsLoadingDuringRuntime)
+	        || (f == kSupportsSavingDuringRuntime)
+	        || (f == kSupportsChangingOptionsDuringRuntime);
 }
 
 #endif
@@ -182,23 +184,9 @@ static const char *directoryGlobs[] = {
 	nullptr
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-		{
-				GAMEOPTION_PLAY_MYST_FLYBY,
-				{
-						_s("Play the Myst fly by movie"),
-						_s("The Myst fly by movie was not played by the original engine."),
-						"playmystflyby",
-						false
-				}
-		},
-
-		AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class MohawkMetaEngine : public AdvancedMetaEngine {
 public:
-	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames, optionsList) {
+	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -227,6 +215,8 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
+	void registerDefaultSettings(const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -346,6 +336,30 @@ Common::KeymapArray MohawkMetaEngine::initKeymaps(const char *target) const {
 #endif
 
 	return AdvancedMetaEngine::initKeymaps(target);
+}
+
+void MohawkMetaEngine::registerDefaultSettings(const Common::String &target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
+#ifdef ENABLE_MYST
+	if (gameId == "myst" || gameId == "makingofmyst") {
+		return Mohawk::MohawkEngine_Myst::registerDefaultSettings();
+	}
+#endif
+
+	return AdvancedMetaEngine::registerDefaultSettings(target);
+}
+
+GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
+#ifdef ENABLE_MYST
+	if (gameId == "myst" || gameId == "makingofmyst") {
+		return new Mohawk::MystOptionsWidget(boss, name, target);
+	}
+#endif
+
+	return AdvancedMetaEngine::buildEngineOptionsWidget(boss, name, target);
 }
 
 bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

@@ -95,9 +95,6 @@ void MystGameState::reset() {
 	_globals.u1 = 1;
 	_globals.ending = kDniNotVisited;
 
-	_globals.zipMode = ConfMan.getBool("zip_mode");
-	_globals.transitions = ConfMan.getBool("transition_mode");
-
 	// Library Bookcase Door - Default to Up
 	_myst.libraryBookcaseDoor = 1;
 	// Dock Imager Numeric Selection - Default to 67
@@ -577,7 +574,7 @@ void MystGameState::addZipDest(MystStack stack, uint16 view) {
 
 bool MystGameState::isReachableZipDest(MystStack stack, uint16 view) {
 	// Zip mode enabled
-	if (!_globals.zipMode)
+	if (!ConfMan.getBool("zip_mode"))
 		return false;
 
 	// The demo has no zip dest storage
