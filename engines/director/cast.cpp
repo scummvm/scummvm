@@ -298,8 +298,9 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Score::readRect(stream);
 		_pattern = stream.readUint16BE();
-		_fgCol = (127 - stream.readByte()) & 0xff; // -128 ... 127 -> 255 ... 0
-		_bgCol = (127 - stream.readByte()) & 0xff;
+		// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
+		_fgCol = g_director->transformColor((128 + stream.readByte()) & 0xff);
+		_bgCol = g_director->transformColor((128 + stream.readByte()) & 0xff);
 		_fillType = stream.readByte();
 		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();

@@ -205,8 +205,9 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
 				sprite._backColor = _vm->transformColor((uint8)stream->readByte());
 			} else {
-				sprite._foreColor = (127 - stream->readByte()) & 0xff; // -128 ... 127 -> 255 ... 0
-				sprite._backColor = (127 - stream->readByte()) & 0xff;
+				// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
+				sprite._foreColor = _vm->transformColor((128 + stream->readByte()) & 0xff);
+				sprite._backColor = _vm->transformColor((128 + stream->readByte()) & 0xff);
 			}
 
 			sprite._flags = stream->readUint16();
