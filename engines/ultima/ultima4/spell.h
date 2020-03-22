@@ -27,7 +27,7 @@
 #include "ultima/ultima4/location.h"
 #include "ultima/ultima4/map.h"
 #include "ultima/ultima4/savegame.h"
-#include "ultima/ultima4/sound.h"
+#include "ultima/ultima4/sound/sound.h"
 
 namespace Ultima {
 namespace Ultima4 {

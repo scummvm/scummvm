@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima4/music.h"
-#include "ultima/ultima4/sound.h"
+#include "ultima/ultima4/sound/music.h"
+#include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/config.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/debug.h"

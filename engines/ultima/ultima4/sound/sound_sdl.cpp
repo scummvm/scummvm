@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima4/sound_p.h"
-#include "ultima/ultima4/sound.h"
+#include "ultima/ultima4/sound/sound_p.h"
+#include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/config.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/error.h"
-#include "ultima/ultima4/music.h"
+#include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/u4file.h"
 

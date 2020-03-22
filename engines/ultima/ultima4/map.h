@@ -25,7 +25,7 @@
 
 #include "ultima/ultima4/coords.h"
 #include "ultima/ultima4/direction.h"
-#include "ultima/ultima4/music.h"
+#include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/object.h"
 #include "ultima/ultima4/savegame.h"
 #include "ultima/ultima4/types.h"

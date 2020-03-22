@@ -30,7 +30,7 @@
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/filesystem.h"
 #include "ultima/ultima4/game.h"
-#include "ultima/ultima4/music.h"
+#include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/player.h"
 #include "ultima/ultima4/savegame.h"
 #include "ultima/ultima4/screen.h"

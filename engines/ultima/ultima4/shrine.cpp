@@ -31,7 +31,7 @@
 #include "ultima/ultima4/location.h"
 #include "ultima/ultima4/mapmgr.h"
 #include "ultima/ultima4/creature.h"
-#include "ultima/ultima4/music.h"
+#include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/player.h"
 #include "ultima/ultima4/portal.h"
