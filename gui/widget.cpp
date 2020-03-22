@@ -33,18 +33,19 @@
 
 #include "gui/dialog.h"
 #include "gui/widgets/popup.h"
+#include "gui/widgets/scrollcontainer.h"
 
 namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss), _tooltip(tooltip),
-	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateEnabled) {
+	  _flags(0), _hasFocus(false), _state(ThemeEngine::kStateEnabled) {
 	init();
 }
 
 Widget::Widget(GuiObject *boss, const Common::String &name, const char *tooltip)
 	: GuiObject(name), _type(0), _boss(boss), _tooltip(tooltip),
-	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
+	  _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
 	init();
 }
 
@@ -192,9 +193,6 @@ void Widget::setEnabled(bool e) {
 }
 
 bool Widget::isEnabled() const {
-	if (g_gui.xmlEval()->getVar("Dialog." + _name + ".Enabled", 1) == 0) {
-		return false;
-	}
 	return ((_flags & WIDGET_ENABLED) != 0);
 }
 

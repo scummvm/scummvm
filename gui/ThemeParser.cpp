@@ -684,12 +684,6 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		var = node->values["name"];
 		int width = -1;
 		int height = -1;
-		bool enabled = true;
-
-		if (node->values.contains("enabled")) {
-			if (!Common::parseBool(node->values["enabled"], enabled))
-				return parserError("Invalid value for Widget enabling (expecting true/false)");
-		}
 
 		if (node->values.contains("width")) {
 			if (_theme->getEvaluator()->hasVar(node->values["width"]) == true)
@@ -714,7 +708,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 				return parserError("Invalid value for text alignment.");
 		}
 
-		_theme->getEvaluator()->addWidget(var, width, height, node->values["type"], enabled, alignH);
+		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH);
 	}
 
 	return true;
@@ -722,17 +716,11 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 
 bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	Common::String name = node->values["name"];
-	bool enabled = true;
 	int inset = 0;
 
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
-	}
-
-	if (node->values.contains("enabled")) {
-		if (!Common::parseBool(node->values["enabled"], enabled))
-			return parserError("Invalid value for Dialog enabling (expecting true/false)");
 	}
 
 	if (node->values.contains("inset")) {
@@ -757,7 +745,7 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 			return false;
 	}
 
-	_theme->getEvaluator()->addDialog(name, overlays, width, height, enabled, inset);
+	_theme->getEvaluator()->addDialog(name, overlays, width, height, inset);
 
 	if (node->values.contains("shading")) {
 		int shading = 0;
@@ -774,9 +762,13 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_import(ParserNode *node) {
+	Common::String importedName = node->values["layout"];
 
-	if (!_theme->getEvaluator()->addImportedLayout(node->values["layout"]))
-		return parserError("Error importing external layout");
+	if (!_theme->getEvaluator()->hasDialog(importedName))
+		return parserError("Imported layout was not found: " + importedName);
+
+	_theme->getEvaluator()->addImportedLayout(importedName);
+
 	return true;
 }
 

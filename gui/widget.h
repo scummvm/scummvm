@@ -99,7 +99,6 @@ protected:
 	uint32		_type;
 	GuiObject	*_boss;
 	Widget		*_next;
-	uint16		_id;
 	bool		_hasFocus;
 	ThemeEngine::WidgetStateInfo _state;
 	Common::String _tooltip;
