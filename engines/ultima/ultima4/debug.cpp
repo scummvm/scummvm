@@ -42,22 +42,22 @@ using Std::vector;
  * otherwise they will be simple hex offsets.
  */
 void print_trace(FILE *file) {
-    /* Code Taken from GNU C Library manual */
-    void *array[10];
-    size_t size;
-    char **strings;
-    size_t i;
+	/* Code Taken from GNU C Library manual */
+	void *array[10];
+	size_t size;
+	char **strings;
+	size_t i;
 
-    size = backtrace(array, 10);
-    strings = backtrace_symbols(array, size);
+	size = backtrace(array, 10);
+	strings = backtrace_symbols(array, size);
 
-    fprintf(file, "Stack trace:\n");
+	fprintf(file, "Stack trace:\n");
 
-    /* start at one to omit print_trace */
-    for (i = 1; i < size; i++) {
-        fprintf(file, "%s\n", strings[i]);
-    }
-    free(strings);
+	/* start at one to omit print_trace */
+	for (i = 1; i < size; i++) {
+		fprintf(file, "%s\n", strings[i]);
+	}
+	free(strings);
 }
 
 #else
@@ -80,14 +80,14 @@ void print_trace(Common::WriteStream *file) {
  */
 void ASSERT(bool exp, const char *desc, ...) {
 #ifndef NDEBUG
-    if (!exp) {
+	if (!exp) {
 		va_list args;
 		va_start(args, desc);
 		Common::String msg = Common::String::vformat(desc, args);
 		va_end(args);
 
 		error("Assertion failed: %s", msg.c_str());
-    }
+	}
 #endif
 }
 
@@ -108,14 +108,14 @@ void ASSERT(bool exp, const char *desc, ...) {
  *                  instead of overwriting it.
  */
 Debug::Debug(const Common::String &fn, const Common::String &nm, bool append) : _disabled(false), _filename(fn), _name(nm) {
-    if (!loggingEnabled(_name)) {
-        _disabled = true;
-        return;
-    }
+	if (!loggingEnabled(_name)) {
+		_disabled = true;
+		return;
+	}
 
-    if (!_file) {} // FIXME: throw exception here
-    else if (!_name.empty())
-        debug(1, "=== %s ===\n", _name.c_str());
+	if (!_file) {} // FIXME: throw exception here
+	else if (!_name.empty())
+		debug(1, "=== %s ===\n", _name.c_str());
 }
 
 /**
@@ -124,9 +124,9 @@ Debug::Debug(const Common::String &fn, const Common::String &nm, bool append) : 
  * macro used, whereas TRACE_LOCAL() only captures
  * the debug info in its own debug file.
  */
-void Debug::initGlobal(const Common::String &filename) {    
-    if (settings._logging.empty())
-        return;
+void Debug::initGlobal(const Common::String &filename) {
+	if (settings._logging.empty())
+		return;
 }
 
 /**
@@ -135,60 +135,59 @@ void Debug::initGlobal(const Common::String &filename) {
  * macros to provide trace functionality.
  */
 void Debug::trace(const Common::String &msg, const Common::String &fn, const Common::String &func, const int line, bool glbl) {
-    if (_disabled)
-        return;
+	if (_disabled)
+		return;
 
-    bool brackets = false;
-    Common::String message, filename;
+	bool brackets = false;
+	Common::String message, filename;
 
-    Path path(fn);
-    filename = path.getFilename();    
-    
-    if (!_file)
-        return;
-    
-    if (!msg.empty())
-        message += msg;        
-    
-    if (!filename.empty() || line > 0) {
-        brackets = true;
-        message += " [";        
-    }
+	Path path(fn);
+	filename = path.getFilename();
 
-    if ((l_filename == filename) && (l_func == func) && (l_line == line))
-        message += "...";
-    else {
-        if (!func.empty()) {
-            l_func = func;
-            message += func + "() - ";
+	if (!_file)
+		return;
+
+	if (!msg.empty())
+		message += msg;
+
+	if (!filename.empty() || line > 0) {
+		brackets = true;
+		message += " [";
+	}
+
+	if ((l_filename == filename) && (l_func == func) && (l_line == line))
+		message += "...";
+	else {
+		if (!func.empty()) {
+			l_func = func;
+			message += func + "() - ";
 		} else {
 			l_func.clear();
 		}
 
-        if (!filename.empty()) {
-            l_filename = filename;
-            message += filename + ": ";
+		if (!filename.empty()) {
+			l_filename = filename;
+			message += filename + ": ";
 		} else {
 			l_filename.clear();
 		}
 
-        if (line > 0) {
-            l_line = line;
-            char ln[8];
-            sprintf(ln, "%d", line);
-            message += "line ";
-            message += ln;        
-        }
-        else l_line = -1;
-    }
+		if (line > 0) {
+			l_line = line;
+			char ln[8];
+			sprintf(ln, "%d", line);
+			message += "line ";
+			message += ln;
+		} else l_line = -1;
+	}
 
-    if (brackets)
-        message += "]";
-    message += "\n";
+	if (brackets)
+		message += "]";
+	message += "\n";
 #ifdef TODO
-    fprintf(file, "%s", message.c_str());
-    if (global && glbl)
-        fprintf(global, "%12s: %s", name.c_str(), message.c_str());
+	fprintf(file, "%s", message.c_str());
+	if (global && glbl)
+		fprintf(global, "%12s: %s", name.c_str(), message.c_str());
 #endif
 }
 
@@ -196,14 +195,14 @@ void Debug::trace(const Common::String &msg, const Common::String &fn, const Com
  * Determines whether or not this debug element is enabled in our game settings.
  */
 bool Debug::loggingEnabled(const Common::String &name) {
-    if (settings._logging == "all")
-        return true;
+	if (settings._logging == "all")
+		return true;
 
-    Std::vector<Common::String> enabledLogs = split(settings._logging, ", ");
-    if (Common::find(enabledLogs.begin(), enabledLogs.end(), name) != enabledLogs.end())
-        return true;
+	Std::vector<Common::String> enabledLogs = split(settings._logging, ", ");
+	if (Common::find(enabledLogs.begin(), enabledLogs.end(), name) != enabledLogs.end())
+		return true;
 
-    return false;
+	return false;
 }
 
 } // End of namespace Ultima4

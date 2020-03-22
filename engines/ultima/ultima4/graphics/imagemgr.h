@@ -82,13 +82,13 @@ class Settings;
 #define BKGD_GEMTILES "gemtiles"
 
 enum ImageFixup {
-    FIXUP_NONE,
-    FIXUP_INTRO,
-    FIXUP_ABYSS,
-    FIXUP_ABACUS,
-    FIXUP_DUNGNS,
-    FIXUP_BLACKTRANSPARENCYHACK,
-    FIXUP_FMTOWNSSCREEN
+	FIXUP_NONE,
+	FIXUP_INTRO,
+	FIXUP_ABYSS,
+	FIXUP_ABACUS,
+	FIXUP_DUNGNS,
+	FIXUP_BLACKTRANSPARENCYHACK,
+	FIXUP_FMTOWNSSCREEN
 };
 
 /**
@@ -96,22 +96,22 @@ enum ImageFixup {
  */
 class ImageInfo {
 public:
-    ~ImageInfo();
+	~ImageInfo();
 
-    Common::String _name;
-    Common::String _filename;
-    int _width, _height, _depth;
-    int _prescale;
-    Common::String _filetype;
-    int _tiles;                  /**< used to scale the without bleeding colors between adjacent tiles */
-    bool _introOnly;             /**< whether can be freed after the intro */
-    int _transparentIndex;       /**< color index to consider transparent */
-    bool _xu4Graphic;            /**< an original xu4 graphic not part of u4dos or the VGA upgrade */
-    ImageFixup _fixup;           /**< a routine to do miscellaneous fixes to the image */
-    Image *_image;               /**< the image we're describing */
-    Std::map<Common::String, SubImage *> _subImages;
+	Common::String _name;
+	Common::String _filename;
+	int _width, _height, _depth;
+	int _prescale;
+	Common::String _filetype;
+	int _tiles;                  /**< used to scale the without bleeding colors between adjacent tiles */
+	bool _introOnly;             /**< whether can be freed after the intro */
+	int _transparentIndex;       /**< color index to consider transparent */
+	bool _xu4Graphic;            /**< an original xu4 graphic not part of u4dos or the VGA upgrade */
+	ImageFixup _fixup;           /**< a routine to do miscellaneous fixes to the image */
+	Image *_image;               /**< the image we're describing */
+	Std::map<Common::String, SubImage *> _subImages;
 
-    bool hasBlackBackground();
+	bool hasBlackBackground();
 };
 
 /**
@@ -119,45 +119,45 @@ public:
  */
 class ImageMgr : Observer<Settings *> {
 public:
-    static ImageMgr *getInstance();
-    static void destroy();
+	static ImageMgr *getInstance();
+	static void destroy();
 
-    ImageInfo *get(const Common::String &name, bool returnUnscaled=false);
-    SubImage *getSubImage(const Common::String &name);
-    void freeIntroBackgrounds();
-    const Std::vector<Common::String> &getSetNames();
-    U4FILE * getImageFile(ImageInfo *info);
-    bool imageExists(ImageInfo * info);
+	ImageInfo *get(const Common::String &name, bool returnUnscaled = false);
+	SubImage *getSubImage(const Common::String &name);
+	void freeIntroBackgrounds();
+	const Std::vector<Common::String> &getSetNames();
+	U4FILE *getImageFile(ImageInfo *info);
+	bool imageExists(ImageInfo *info);
 
 private:
-    ImageMgr();
-    ~ImageMgr();
-    void init();
+	ImageMgr();
+	~ImageMgr();
+	void init();
 
-    ImageSet *loadImageSetFromConf(const ConfigElement &conf);
-    ImageInfo *loadImageInfoFromConf(const ConfigElement &conf);
-    SubImage *loadSubImageFromConf(const ImageInfo *info, const ConfigElement &conf);
+	ImageSet *loadImageSetFromConf(const ConfigElement &conf);
+	ImageInfo *loadImageInfoFromConf(const ConfigElement &conf);
+	SubImage *loadSubImageFromConf(const ImageInfo *info, const ConfigElement &conf);
 
-    ImageSet *getSet(const Common::String &setname);
-    ImageInfo *getInfo(const Common::String &name);
-    ImageInfo *getInfoFromSet(const Common::String &name, ImageSet *set);
+	ImageSet *getSet(const Common::String &setname);
+	ImageInfo *getInfo(const Common::String &name);
+	ImageInfo *getInfoFromSet(const Common::String &name, ImageSet *set);
 
-    Common::String guessFileType(const Common::String &filename);
+	Common::String guessFileType(const Common::String &filename);
 
-    void fixupIntro(Image *im, int prescale);
-    void fixupAbyssVision(Image *im, int prescale);
-    void fixupAbacus(Image *im, int prescale);
-    void fixupDungNS(Image *im, int prescale);
-    void fixupFMTowns(Image *im, int prescale);
+	void fixupIntro(Image *im, int prescale);
+	void fixupAbyssVision(Image *im, int prescale);
+	void fixupAbacus(Image *im, int prescale);
+	void fixupDungNS(Image *im, int prescale);
+	void fixupFMTowns(Image *im, int prescale);
 
-    void update(Settings *newSettings);
+	void update(Settings *newSettings);
 
-    static ImageMgr *_instance;
-    Std::map<Common::String, ImageSet *> _imageSets;
-    Std::vector<Common::String> _imageSetNames;
-    ImageSet *_baseSet;
+	static ImageMgr *_instance;
+	Std::map<Common::String, ImageSet *> _imageSets;
+	Std::vector<Common::String> _imageSetNames;
+	ImageSet *_baseSet;
 
-    Debug *_logger;
+	Debug *_logger;
 };
 
 #define imageMgr (ImageMgr::getInstance())

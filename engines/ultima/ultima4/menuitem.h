@@ -37,54 +37,54 @@ class MenuEvent;
  * its associated value
  */
 enum menuOutputType {
-    MENU_OUTPUT_INT,
-    MENU_OUTPUT_GAMMA,
-    MENU_OUTPUT_SHRINE,
-    MENU_OUTPUT_SPELL,
-    MENU_OUTPUT_VOLUME,
-    MENU_OUTPUT_REAGENT
+	MENU_OUTPUT_INT,
+	MENU_OUTPUT_GAMMA,
+	MENU_OUTPUT_SHRINE,
+	MENU_OUTPUT_SPELL,
+	MENU_OUTPUT_VOLUME,
+	MENU_OUTPUT_REAGENT
 };
 
 class MenuItem {
 public:
-    MenuItem(Common::String text, short x, short y, int shortcutKey = -1);
-    virtual ~MenuItem() {}
+	MenuItem(Common::String text, short x, short y, int shortcutKey = -1);
+	virtual ~MenuItem() {}
 
-    virtual void activate(MenuEvent &event) {}
+	virtual void activate(MenuEvent &event) {}
 
-    // Accessor Methods
-    int getId() const;
-    short getX() const;
-    short getY() const;
-    int getScOffset() const;
+	// Accessor Methods
+	int getId() const;
+	short getX() const;
+	short getY() const;
+	int getScOffset() const;
 
-    virtual Common::String getText() const;
-    bool isHighlighted() const;
-    bool isSelected() const;
-    bool isVisible() const;
-    const Std::set<int> &getShortcutKeys() const;
-    bool getClosesMenu() const;
+	virtual Common::String getText() const;
+	bool isHighlighted() const;
+	bool isSelected() const;
+	bool isVisible() const;
+	const Std::set<int> &getShortcutKeys() const;
+	bool getClosesMenu() const;
 
-    void setId(int id);
-    void setX(int xpos);
-    void setY(int ypos);
-    void setText(Common::String text);
-    void setHighlighted(bool h = true);
-    void setSelected(bool s = true);
-    void setVisible(bool v = true);
-    void addShortcutKey(int shortcutKey);
-    void setClosesMenu(bool closesMenu);
-    
+	void setId(int id);
+	void setX(int xpos);
+	void setY(int ypos);
+	void setText(Common::String text);
+	void setHighlighted(bool h = true);
+	void setSelected(bool s = true);
+	void setVisible(bool v = true);
+	void addShortcutKey(int shortcutKey);
+	void setClosesMenu(bool closesMenu);
+
 protected:
-    int _id;
-    short x, y;
-    Common::String _text;
-    bool _highlighted;
-    bool _selected;
-    bool _visible;
-    int _scOffset;
+	int _id;
+	short x, y;
+	Common::String _text;
+	bool _highlighted;
+	bool _selected;
+	bool _visible;
+	int _scOffset;
 	Std::set<int> _shortcutKeys;
-    bool _closesMenu;
+	bool _closesMenu;
 };
 
 /**
@@ -93,16 +93,16 @@ protected:
  */
 class BoolMenuItem : public MenuItem {
 public:
-    BoolMenuItem(Common::String text, short x, short y, int shortcutKey, bool *val);
+	BoolMenuItem(Common::String text, short x, short y, int shortcutKey, bool *val);
 
-    BoolMenuItem *setValueStrings(const Common::String &onString, const Common::String &offString);
+	BoolMenuItem *setValueStrings(const Common::String &onString, const Common::String &offString);
 
-    virtual void activate(MenuEvent &event);
-    virtual Common::String getText() const;
+	virtual void activate(MenuEvent &event);
+	virtual Common::String getText() const;
 
 protected:
-    bool *val;
-    Common::String on, off;
+	bool *val;
+	Common::String on, off;
 };
 
 /**
@@ -111,14 +111,14 @@ protected:
  */
 class StringMenuItem : public MenuItem {
 public:
-    StringMenuItem(Common::String text, short x, short y, int shortcutKey, Common::String *val, const Std::vector<Common::String> &validSettings);
+	StringMenuItem(Common::String text, short x, short y, int shortcutKey, Common::String *val, const Std::vector<Common::String> &validSettings);
 
-    virtual void activate(MenuEvent &event);
-    virtual Common::String getText() const;
+	virtual void activate(MenuEvent &event);
+	virtual Common::String getText() const;
 
 protected:
-    Common::String *val;
-    Std::vector<Common::String> validSettings;
+	Common::String *val;
+	Std::vector<Common::String> validSettings;
 };
 
 /**
@@ -127,15 +127,15 @@ protected:
  */
 class IntMenuItem : public MenuItem {
 public:
-    IntMenuItem(Common::String text, short x, short y, int shortcutKey, int *val, int min, int max, int increment, menuOutputType output=MENU_OUTPUT_INT);
+	IntMenuItem(Common::String text, short x, short y, int shortcutKey, int *val, int min, int max, int increment, menuOutputType output = MENU_OUTPUT_INT);
 
-    virtual void activate(MenuEvent &event);
-    virtual Common::String getText() const;
+	virtual void activate(MenuEvent &event);
+	virtual Common::String getText() const;
 
 protected:
-    int *val;
-    int min, max, increment;
-    menuOutputType output;
+	int *val;
+	int min, max, increment;
+	menuOutputType output;
 };
 
 } // End of namespace Ultima4

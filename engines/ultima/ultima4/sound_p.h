@@ -35,23 +35,25 @@ typedef Mix_Chunk OSSoundChunk;
 
 class SoundManager {
 public:
-    ~SoundManager();
-    static SoundManager *getInstance();
-    int init(void);
-    void play(Sound sound, bool onlyOnce = true, int specificDurationInTicks = -1);
-    void stop(int channel = 1);
+	~SoundManager();
+	static SoundManager *getInstance();
+	int init(void);
+	void play(Sound sound, bool onlyOnce = true, int specificDurationInTicks = -1);
+	void stop(int channel = 1);
 private:
-    bool load(Sound sound);
+	bool load(Sound sound);
 	int init_sys();
-	void del()		{del_sys();}
+	void del()      {
+		del_sys();
+	}
 	void del_sys();
-    void play_sys(Sound sound, bool onlyOnce, int specificDurationInTicks);
-    bool load_sys(Sound sound, const Common::String &soundPathName);
-    void stop_sys(int channel);
-    Std::vector<Common::String> _soundFilenames;
-    Std::vector<OSSoundChunk *> _soundChunk;
-    SoundManager();
-    static SoundManager *_instance;
+	void play_sys(Sound sound, bool onlyOnce, int specificDurationInTicks);
+	bool load_sys(Sound sound, const Common::String &soundPathName);
+	void stop_sys(int channel);
+	Std::vector<Common::String> _soundFilenames;
+	Std::vector<OSSoundChunk *> _soundChunk;
+	SoundManager();
+	static SoundManager *_instance;
 };
 
 } // End of namespace Ultima4

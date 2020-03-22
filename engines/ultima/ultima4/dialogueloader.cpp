@@ -30,18 +30,18 @@ namespace Ultima4 {
 Std::map<Common::String, DialogueLoader *> *DialogueLoader::_loaderMap = NULL;
 
 DialogueLoader *DialogueLoader::getLoader(const Common::String &mimeType) {
-    ASSERT(_loaderMap != NULL, "DialogueLoader::getLoader loaderMap not initialized");
-    if (_loaderMap->find(mimeType) == _loaderMap->end())
-        return NULL;
-    return (*_loaderMap)[mimeType];
+	ASSERT(_loaderMap != NULL, "DialogueLoader::getLoader loaderMap not initialized");
+	if (_loaderMap->find(mimeType) == _loaderMap->end())
+		return NULL;
+	return (*_loaderMap)[mimeType];
 }
 
 DialogueLoader *DialogueLoader::registerLoader(DialogueLoader *loader, const Common::String &mimeType) {
-    if (_loaderMap == NULL) {
-        _loaderMap = new Std::map<Common::String, DialogueLoader *>;
-    }
-    (*_loaderMap)[mimeType] = loader;
-    return loader;
+	if (_loaderMap == NULL) {
+		_loaderMap = new Std::map<Common::String, DialogueLoader *>;
+	}
+	(*_loaderMap)[mimeType] = loader;
+	return loader;
 }
 
 } // End of namespace Ultima4

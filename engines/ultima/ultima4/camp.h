@@ -32,27 +32,27 @@ namespace Ultima4 {
 
 class CampController : public CombatController {
 public:
-    CampController();
-    virtual void init(Creature *m);
-    virtual void begin();
-    virtual void end(bool adjustKarma);
+	CampController();
+	virtual void init(Creature *m);
+	virtual void begin();
+	virtual void end(bool adjustKarma);
 
 private:
-    bool heal();
+	bool heal();
 };
 
 class InnController : public CombatController {
 public:
-    InnController();
+	InnController();
 
-    virtual void begin();
-    virtual void awardLoot();
+	virtual void begin();
+	virtual void awardLoot();
 
 
 private:
-    bool heal();
-    void maybeMeetIsaac();
-    void maybeAmbush();
+	bool heal();
+	void maybeMeetIsaac();
+	void maybeAmbush();
 
 };
 

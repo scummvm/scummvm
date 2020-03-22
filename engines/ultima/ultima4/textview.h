@@ -39,46 +39,56 @@ namespace Ultima4 {
  */
 class TextView : public View {
 public:
-    TextView(int x, int y, int columns, int rows);
-    virtual ~TextView();
+	TextView(int x, int y, int columns, int rows);
+	virtual ~TextView();
 
-    void reinit();
+	void reinit();
 
-    int getCursorX() const { return _cursorX; }
-    int getCursorY() const { return _cursorY; }
-    bool getCursorEnabled() const { return _cursorEnabled; }
-    int getWidth() const { return _columns; }
+	int getCursorX() const {
+		return _cursorX;
+	}
+	int getCursorY() const {
+		return _cursorY;
+	}
+	bool getCursorEnabled() const {
+		return _cursorEnabled;
+	}
+	int getWidth() const {
+		return _columns;
+	}
 
-    void drawChar(int chr, int x, int y);
-    void drawCharMasked(int chr, int x, int y, unsigned char mask);
-    void textAt(int x, int y, const char *fmt, ...) PRINTF_LIKE(4, 5);
-    void scroll();
+	void drawChar(int chr, int x, int y);
+	void drawCharMasked(int chr, int x, int y, unsigned char mask);
+	void textAt(int x, int y, const char *fmt, ...) PRINTF_LIKE(4, 5);
+	void scroll();
 
-    void setCursorFollowsText(bool follows) { _cursorFollowsText = follows; }
-    void setCursorPos(int x, int y, bool clearOld = true);
-    void enableCursor();
-    void disableCursor();
-    void drawCursor();
-    static void cursorTimer(void *data);
+	void setCursorFollowsText(bool follows) {
+		_cursorFollowsText = follows;
+	}
+	void setCursorPos(int x, int y, bool clearOld = true);
+	void enableCursor();
+	void disableCursor();
+	void drawCursor();
+	static void cursorTimer(void *data);
 
-    // functions to modify the charset font palette
-    void setFontColor(ColorFG fg, ColorBG bg);
-    void setFontColorFG(ColorFG fg);
-    void setFontColorBG(ColorBG bg);
+	// functions to modify the charset font palette
+	void setFontColor(ColorFG fg, ColorBG bg);
+	void setFontColorFG(ColorFG fg);
+	void setFontColorBG(ColorBG bg);
 
-    // functions to add color to strings
-    void textSelectedAt(int x, int y, const char *text);
-    Common::String colorizeStatus(char statustype);
-    Common::String colorizeString(Common::String input, ColorFG color, unsigned int colorstart, unsigned int colorlength=0);
+	// functions to add color to strings
+	void textSelectedAt(int x, int y, const char *text);
+	Common::String colorizeStatus(char statustype);
+	Common::String colorizeString(Common::String input, ColorFG color, unsigned int colorstart, unsigned int colorlength = 0);
 
 
 protected:
-    int _columns, _rows;         /**< size of the view in character cells  */
-    bool _cursorEnabled;         /**< whether the cursor is enabled */
-    bool _cursorFollowsText;     /**< whether the cursor is moved past the last character written */
-    int _cursorX, _cursorY;      /**< current position of cursor */
-    int _cursorPhase;            /**< the rotation state of the cursor */
-    static Image *_charset;      /**< image containing font */
+	int _columns, _rows;         /**< size of the view in character cells  */
+	bool _cursorEnabled;         /**< whether the cursor is enabled */
+	bool _cursorFollowsText;     /**< whether the cursor is moved past the last character written */
+	int _cursorX, _cursorY;      /**< current position of cursor */
+	int _cursorPhase;            /**< the rotation state of the cursor */
+	static Image *_charset;      /**< image containing font */
 };
 
 } // End of namespace Ultima4

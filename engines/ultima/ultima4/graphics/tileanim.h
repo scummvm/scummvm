@@ -38,18 +38,18 @@ struct RGBA;
  */
 class  TileAnimTransform {
 public:
-    static TileAnimTransform *create(const ConfigElement &config);    
-    static RGBA *loadColorFromConf(const ConfigElement &conf);
-    
-    virtual void draw(Image *dest, Tile *tile, MapTile &mapTile) = 0;
-    virtual ~TileAnimTransform() {}
-    virtual bool drawsTile() const = 0;
-    
-    // Properties
-    int _random;
+	static TileAnimTransform *create(const ConfigElement &config);
+	static RGBA *loadColorFromConf(const ConfigElement &conf);
 
-private:    
-    bool _replaces;
+	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile) = 0;
+	virtual ~TileAnimTransform() {}
+	virtual bool drawsTile() const = 0;
+
+	// Properties
+	int _random;
+
+private:
+	bool _replaces;
 };
 
 /**
@@ -58,12 +58,12 @@ private:
  */
 class TileAnimInvertTransform : public TileAnimTransform {
 public:
-    TileAnimInvertTransform(int x, int y, int w, int h);
-    virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
-    virtual bool drawsTile() const;
-    
+	TileAnimInvertTransform(int x, int y, int w, int h);
+	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
+	virtual bool drawsTile() const;
+
 private:
-    int x, y, w, h;
+	int x, y, w, h;
 };
 
 /**
@@ -73,99 +73,101 @@ private:
  */
 class TileAnimPixelTransform : public TileAnimTransform {
 public:
-    TileAnimPixelTransform(int x, int y);
-    virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
-    virtual bool drawsTile() const;
+	TileAnimPixelTransform(int x, int y);
+	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
+	virtual bool drawsTile() const;
 
-    int x, y;
-    Std::vector<RGBA *> _colors;
+	int x, y;
+	Std::vector<RGBA *> _colors;
 };
 
 /**
  * A tile animation transformation that scrolls the tile's contents
  * vertically within the tile's boundaries.
- */ 
+ */
 class TileAnimScrollTransform : public TileAnimTransform {
-public:    
-    TileAnimScrollTransform(int increment);
-    virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);    
-    virtual bool drawsTile() const;
+public:
+	TileAnimScrollTransform(int increment);
+	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
+	virtual bool drawsTile() const;
 private:
-    int _increment, _current, _lastOffset;
+	int _increment, _current, _lastOffset;
 };
 
 /**
  * A tile animation transformation that advances the tile's frame
  * by 1.
- */ 
+ */
 class TileAnimFrameTransform : public TileAnimTransform {
 public:
-	TileAnimFrameTransform() : _currentFrame(0){}
-    virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
-    virtual bool drawsTile() const;
+	TileAnimFrameTransform() : _currentFrame(0) {}
+	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
+	virtual bool drawsTile() const;
 protected:
-    int _currentFrame;
+	int _currentFrame;
 };
 
 /**
  * A tile animation transformation that changes pixels with colors
  * that fall in a given range to another color.  Used to animate
  * the campfire in VGA mode.
- */ 
+ */
 class TileAnimPixelColorTransform : public TileAnimTransform {
 public:
-    TileAnimPixelColorTransform(int x, int y, int w, int h);
-    virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
-    virtual bool drawsTile() const;
+	TileAnimPixelColorTransform(int x, int y, int w, int h);
+	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
+	virtual bool drawsTile() const;
 
-    int x, y, w, h;
-    RGBA *_start, *_end;
+	int x, y, w, h;
+	RGBA *_start, *_end;
 };
 
 /**
  * A context in which to perform the animation
- */ 
-class TileAnimContext {    
+ */
+class TileAnimContext {
 public:
-    typedef Std::vector<TileAnimTransform *> TileAnimTransformList;
-    typedef enum {
-        FRAME,
-        DIR
-    } Type;
+	typedef Std::vector<TileAnimTransform *> TileAnimTransformList;
+	typedef enum {
+		FRAME,
+		DIR
+	} Type;
 
-    static TileAnimContext* create(const ConfigElement &config);
-    
-    void add(TileAnimTransform*);
-    virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d) = 0;
-	TileAnimTransformList& getTransforms() {return _animTransforms;}	/**< Returns a list of transformations under the context. */
-    virtual ~TileAnimContext() {}
-private:    
-    
-    TileAnimTransformList _animTransforms;
+	static TileAnimContext *create(const ConfigElement &config);
+
+	void add(TileAnimTransform *);
+	virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d) = 0;
+	TileAnimTransformList &getTransforms() {
+		return _animTransforms;   /**< Returns a list of transformations under the context. */
+	}
+	virtual ~TileAnimContext() {}
+private:
+
+	TileAnimTransformList _animTransforms;
 };
 
 /**
  * An animation context which changes the animation based on the tile's current frame
- */ 
+ */
 class TileAnimFrameContext : public TileAnimContext {
 public:
-    TileAnimFrameContext(int frame);    
-    virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
+	TileAnimFrameContext(int frame);
+	virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
 
 private:
-    int _frame;
+	int _frame;
 };
 
 /**
  * An animation context which changes the animation based on the player's current facing direction
- */ 
+ */
 class TileAnimPlayerDirContext : public TileAnimContext {
 public:
-    TileAnimPlayerDirContext(Direction dir);
-    virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
+	TileAnimPlayerDirContext(Direction dir);
+	virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
 
 private:
-    Direction _dir;
+	Direction _dir;
 };
 
 /**
@@ -175,16 +177,16 @@ private:
  */
 class TileAnim {
 public:
-    TileAnim(const ConfigElement &conf);
+	TileAnim(const ConfigElement &conf);
 
-    Common::String _name;
-    Std::vector<TileAnimTransform *> _transforms;
-    Std::vector<TileAnimContext *> _contexts;
+	Common::String _name;
+	Std::vector<TileAnimTransform *> _transforms;
+	Std::vector<TileAnimContext *> _contexts;
 
-    /* returns the frame to set the mapTile to (only relevent if persistent) */
-    void draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir);     
+	/* returns the frame to set the mapTile to (only relevent if persistent) */
+	void draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir);
 
-    int _random;   /* true if the tile animation occurs randomely */
+	int _random;   /* true if the tile animation occurs randomely */
 };
 
 /**
@@ -192,15 +194,15 @@ public:
  * specific image set which shares the same name.
  */
 class TileAnimSet {
-    typedef Std::map<Common::String, TileAnim *> TileAnimMap;
+	typedef Std::map<Common::String, TileAnim *> TileAnimMap;
 
 public:
-    TileAnimSet(const ConfigElement &conf);
+	TileAnimSet(const ConfigElement &conf);
 
-    TileAnim *getByName(const Common::String &name);
+	TileAnim *getByName(const Common::String &name);
 
-    Common::String _name;
-    TileAnimMap _tileAnims;
+	Common::String _name;
+	TileAnimMap _tileAnims;
 };
 
 } // End of namespace Ultima4

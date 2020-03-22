@@ -38,76 +38,76 @@ vector<Armor *> Armor::_armors;
 
 /**
  * Returns armor by ArmorType.
- */ 
+ */
 const Armor *Armor::get(ArmorType a) {
-    // Load in XML if it hasn't been already
-    loadConf();
+	// Load in XML if it hasn't been already
+	loadConf();
 
-    if (static_cast<unsigned>(a) >= _armors.size())
-        return NULL;
-    return _armors[a];
+	if (static_cast<unsigned>(a) >= _armors.size())
+		return NULL;
+	return _armors[a];
 }
 
 /**
  * Returns armor that has the given name
- */ 
+ */
 const Armor *Armor::get(const string &name) {
-    // Load in XML if it hasn't been already
-    loadConf();
+	// Load in XML if it hasn't been already
+	loadConf();
 
-    for (unsigned i = 0; i < _armors.size(); i++) {
-        if (scumm_stricmp(name.c_str(), _armors[i]->_name.c_str()) == 0)
-            return _armors[i];
-    }
-    return NULL;
+	for (unsigned i = 0; i < _armors.size(); i++) {
+		if (scumm_stricmp(name.c_str(), _armors[i]->_name.c_str()) == 0)
+			return _armors[i];
+	}
+	return NULL;
 }
 
 Armor::Armor(const ConfigElement &conf) {
 	_type = static_cast<ArmorType>(_armors.size());
-    _name = conf.getString("name");
-    _canUse = 0xFF;
-    _defense = conf.getInt("defense");
-    _mask = 0;
+	_name = conf.getString("name");
+	_canUse = 0xFF;
+	_defense = conf.getInt("defense");
+	_mask = 0;
 
-    vector<ConfigElement> contraintConfs = conf.getChildren();
-    for (Std::vector<ConfigElement>::iterator i = contraintConfs.begin(); i != contraintConfs.end(); i++) {
-        unsigned char useMask = 0;
+	vector<ConfigElement> contraintConfs = conf.getChildren();
+	for (Std::vector<ConfigElement>::iterator i = contraintConfs.begin(); i != contraintConfs.end(); i++) {
+		unsigned char useMask = 0;
 
-        if (i->getName() != "constraint")
-            continue;
+		if (i->getName() != "constraint")
+			continue;
 
-        for (int cl = 0; cl < 8; cl++) {
-            if (scumm_stricmp(i->getString("class").c_str(), getClassName(static_cast<ClassType>(cl))) == 0)
-                useMask = (1 << cl);
-        }
-        if (useMask == 0 && scumm_stricmp(i->getString("class").c_str(), "all") == 0)
-            useMask = 0xFF;
-        if (useMask == 0) {
-            errorFatal("malformed armor.xml file: constraint has unknown class %s", 
-                       i->getString("class").c_str());
-        }
-        if (i->getBool("canuse"))
-            _canUse |= useMask;
-        else
-            _canUse &= ~useMask;
-    }
+		for (int cl = 0; cl < 8; cl++) {
+			if (scumm_stricmp(i->getString("class").c_str(), getClassName(static_cast<ClassType>(cl))) == 0)
+				useMask = (1 << cl);
+		}
+		if (useMask == 0 && scumm_stricmp(i->getString("class").c_str(), "all") == 0)
+			useMask = 0xFF;
+		if (useMask == 0) {
+			errorFatal("malformed armor.xml file: constraint has unknown class %s",
+			           i->getString("class").c_str());
+		}
+		if (i->getBool("canuse"))
+			_canUse |= useMask;
+		else
+			_canUse &= ~useMask;
+	}
 }
 
 void Armor::loadConf() {
-    if (!_confLoaded)
-        _confLoaded = true;
-    else
-        return;
+	if (!_confLoaded)
+		_confLoaded = true;
+	else
+		return;
 
-    const Config *config = Config::getInstance();
+	const Config *config = Config::getInstance();
 
-    vector<ConfigElement> armorConfs = config->getElement("armors").getChildren();    
-    for (Std::vector<ConfigElement>::iterator i = armorConfs.begin(); i != armorConfs.end(); i++) {
-        if (i->getName() != "armor")
-            continue;
+	vector<ConfigElement> armorConfs = config->getElement("armors").getChildren();
+	for (Std::vector<ConfigElement>::iterator i = armorConfs.begin(); i != armorConfs.end(); i++) {
+		if (i->getName() != "armor")
+			continue;
 
-        _armors.push_back(new Armor(*i));
-    }
+		_armors.push_back(new Armor(*i));
+	}
 }
 
 } // End of namespace Ultima4

@@ -42,22 +42,22 @@ class MapTile;
  */
 class TileView : public View {
 public:
-    TileView(int x, int y, int columns, int rows);
-    TileView(int x, int y, int columns, int rows, const Common::String &tileset);
-    virtual ~TileView();
+	TileView(int x, int y, int columns, int rows);
+	TileView(int x, int y, int columns, int rows, const Common::String &tileset);
+	virtual ~TileView();
 
-    void reinit();
-    void drawTile(MapTile &mapTile, bool focus, int x, int y);
-    void drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y);
-    void drawFocus(int x, int y);
-    void loadTile(MapTile &mapTile);
-    void setTileset(Tileset *tileset);
+	void reinit();
+	void drawTile(MapTile &mapTile, bool focus, int x, int y);
+	void drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y);
+	void drawFocus(int x, int y);
+	void loadTile(MapTile &mapTile);
+	void setTileset(Tileset *tileset);
 
 protected:
-    int _columns, _rows;
-    int _tileWidth, _tileHeight;
-    Tileset *_tileset;
-    Image *_animated;            /**< a scratchpad image for drawing animations */
+	int _columns, _rows;
+	int _tileWidth, _tileHeight;
+	Tileset *_tileset;
+	Image *_animated;            /**< a scratchpad image for drawing animations */
 };
 
 } // End of namespace Ultima4

@@ -28,35 +28,35 @@ namespace Ultima4 {
 Aura::Aura() : _type(NONE), _duration(0) {}
 
 void Aura::setDuration(int d) {
-    _duration = d;
-    setChanged();
-    notifyObservers(NULL);
+	_duration = d;
+	setChanged();
+	notifyObservers(NULL);
 }
 
 void Aura::set(Type t, int d) {
-    _type = t;
-    _duration = d;
-    setChanged();
-    notifyObservers(NULL);
+	_type = t;
+	_duration = d;
+	setChanged();
+	notifyObservers(NULL);
 }
 
 void Aura::setType(Type t) {
-    _type = t;
-    setChanged();
-    notifyObservers(NULL);
+	_type = t;
+	setChanged();
+	notifyObservers(NULL);
 }
 
 void Aura::passTurn() {
-    if (_duration > 0) {
-        _duration--;
-        
-        if (_duration == 0) {
-            _type = NONE;
+	if (_duration > 0) {
+		_duration--;
 
-            setChanged();
-            notifyObservers(NULL);
-        }
-    }
+		if (_duration == 0) {
+			_type = NONE;
+
+			setChanged();
+			notifyObservers(NULL);
+		}
+	}
 }
 
 } // End of namespace Ultima4

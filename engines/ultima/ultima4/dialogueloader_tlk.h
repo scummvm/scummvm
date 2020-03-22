@@ -32,10 +32,10 @@ namespace Ultima4 {
  * The dialogue loader for u4dos .tlk files
  */
 class U4TlkDialogueLoader : public DialogueLoader {
-    static DialogueLoader *_instance;
+	static DialogueLoader *_instance;
 
 public:
-    virtual Dialogue *load(void *source);
+	virtual Dialogue *load(void *source);
 };
 
 } // End of namespace Ultima4

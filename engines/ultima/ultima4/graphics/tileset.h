@@ -38,20 +38,20 @@ typedef Common::HashMap<Common::String, class TileRule *> TileRuleMap;
  * TileRule class
  */
 class TileRule {
-public:    
-    static TileRule *findByName(const Common::String &name);
-    static void load();
-    static TileRuleMap _rules;   // A map of rule names to rules
+public:
+	static TileRule *findByName(const Common::String &name);
+	static void load();
+	static TileRuleMap _rules;   // A map of rule names to rules
 
-    bool initFromConf(const ConfigElement &tileRuleConf);
+	bool initFromConf(const ConfigElement &tileRuleConf);
 
-    Common::String _name;
-    unsigned short _mask;    
-    unsigned short _movementMask;
-    TileSpeed _speed;
-    TileEffect _effect;
-    int _walkOnDirs;
-    int _walkOffDirs;
+	Common::String _name;
+	unsigned short _mask;
+	unsigned short _movementMask;
+	TileSpeed _speed;
+	TileEffect _effect;
+	int _walkOnDirs;
+	int _walkOffDirs;
 };
 
 /**
@@ -59,38 +59,38 @@ public:
  */
 class Tileset {
 public:
-    typedef Common::HashMap<Common::String, Tileset*> TilesetMap;
-    typedef Common::HashMap<TileId, Tile*> TileIdMap;
-    typedef Common::HashMap<Common::String, Tile*> TileStrMap;
+	typedef Common::HashMap<Common::String, Tileset *> TilesetMap;
+	typedef Common::HashMap<TileId, Tile *> TileIdMap;
+	typedef Common::HashMap<Common::String, Tile *> TileStrMap;
 
-    static void loadAll();
-    static void unloadAll();
-    static void unloadAllImages();
-    static Tileset* get(const Common::String &name);
+	static void loadAll();
+	static void unloadAll();
+	static void unloadAllImages();
+	static Tileset *get(const Common::String &name);
 
-    static Tile* findTileByName(const Common::String &name);        
-    static Tile* findTileById(TileId id);        
+	static Tile *findTileByName(const Common::String &name);
+	static Tile *findTileById(TileId id);
 
 public:
-    void load(const ConfigElement &tilesetConf);
-    void unload();
-    void unloadImages();
-    Tile* get(TileId id);
-    Tile* getByName(const Common::String &name);
-    Common::String getImageName() const;
-    unsigned int numTiles() const;
-    unsigned int numFrames() const;    
-    
+	void load(const ConfigElement &tilesetConf);
+	void unload();
+	void unloadImages();
+	Tile *get(TileId id);
+	Tile *getByName(const Common::String &name);
+	Common::String getImageName() const;
+	unsigned int numTiles() const;
+	unsigned int numFrames() const;
+
 private:
-    static TilesetMap tilesets;
+	static TilesetMap tilesets;
 
-    Common::String _name;
-    TileIdMap _tiles;
-    unsigned int _totalFrames;
-    Common::String _imageName;
-    Tileset *_extends;
+	Common::String _name;
+	TileIdMap _tiles;
+	unsigned int _totalFrames;
+	Common::String _imageName;
+	Tileset *_extends;
 
-    TileStrMap _nameMap;
+	TileStrMap _nameMap;
 };
 
 } // End of namespace Ultima4

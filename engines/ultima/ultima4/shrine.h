@@ -34,28 +34,28 @@ namespace Ultima4 {
 
 class Shrine : public Map {
 public:
-    Shrine();
+	Shrine();
 
-    // Methods
-    virtual Common::String  getName();
-    Virtue          getVirtue() const;
-    Common::String          getMantra() const;
+	// Methods
+	virtual Common::String  getName();
+	Virtue          getVirtue() const;
+	Common::String          getMantra() const;
 
-    void            setVirtue(Virtue v);
-    void            setMantra(Common::String mantra);
+	void            setVirtue(Virtue v);
+	void            setMantra(Common::String mantra);
 
-    void enter();
-    void enhancedSequence();
-    void meditationCycle();
-    void askMantra();
-    void eject();
-    void showVision(bool elevated);
+	void enter();
+	void enhancedSequence();
+	void meditationCycle();
+	void askMantra();
+	void eject();
+	void showVision(bool elevated);
 
-    // Properties
+	// Properties
 private:
-    Common::String _name;
-    Virtue _virtue;
-    Common::String _mantra;   
+	Common::String _name;
+	Virtue _virtue;
+	Common::String _mantra;
 };
 
 bool shrineCanEnter(const struct _Portal *p);

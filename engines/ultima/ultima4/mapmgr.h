@@ -105,33 +105,33 @@ class Shrine;
  */
 class MapMgr {
 public:
-    static MapMgr *getInstance();
-    static void destroy();
+	static MapMgr *getInstance();
+	static void destroy();
 
-    Map *get(MapId id);
-    Map *initMap(Map::Type type);
-    void unloadMap(MapId id);
+	Map *get(MapId id);
+	Map *initMap(Map::Type type);
+	void unloadMap(MapId id);
 
 private:
-    MapMgr();
-    ~MapMgr();
+	MapMgr();
+	~MapMgr();
 
-    void registerMap(Map *map);
+	void registerMap(Map *map);
 
-    Map *initMapFromConf(const ConfigElement &mapConf);
-    void initCityFromConf(const ConfigElement &cityConf, City *city);
-    PersonRole *initPersonRoleFromConf(const ConfigElement &cityConf);
-    Portal *initPortalFromConf(const ConfigElement &portalConf);
-    void initShrineFromConf(const ConfigElement &shrineConf, Shrine *shrine);
-    void initDungeonFromConf(const ConfigElement &dungeonConf, Dungeon *dungeon);
-    void initDungeonRoom(Dungeon *dng, int room);
-    void createMoongateFromConf(const ConfigElement &moongateConf);
-    int initCompressedChunkFromConf(const ConfigElement &compressedChunkConf);
-    Std::pair<Common::String, MapCoords> initLabelFromConf(const ConfigElement &labelConf);
+	Map *initMapFromConf(const ConfigElement &mapConf);
+	void initCityFromConf(const ConfigElement &cityConf, City *city);
+	PersonRole *initPersonRoleFromConf(const ConfigElement &cityConf);
+	Portal *initPortalFromConf(const ConfigElement &portalConf);
+	void initShrineFromConf(const ConfigElement &shrineConf, Shrine *shrine);
+	void initDungeonFromConf(const ConfigElement &dungeonConf, Dungeon *dungeon);
+	void initDungeonRoom(Dungeon *dng, int room);
+	void createMoongateFromConf(const ConfigElement &moongateConf);
+	int initCompressedChunkFromConf(const ConfigElement &compressedChunkConf);
+	Std::pair<Common::String, MapCoords> initLabelFromConf(const ConfigElement &labelConf);
 
-    static MapMgr *_instance;
-    Std::vector<Map *> _mapList;
-    Debug *_logger;
+	static MapMgr *_instance;
+	Std::vector<Map *> _mapList;
+	Debug *_logger;
 };
 
 #define mapMgr (MapMgr::getInstance())

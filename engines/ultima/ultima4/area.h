@@ -32,8 +32,8 @@ namespace Ultima4 {
 #define AREA_PLAYERS 8
 
 struct Area {
-    MapCoords _monsterStart[AREA_MONSTERS];
-    MapCoords _playerStart[AREA_PLAYERS];
+	MapCoords _monsterStart[AREA_MONSTERS];
+	MapCoords _playerStart[AREA_PLAYERS];
 };
 
 } // End of namespace Ultima4

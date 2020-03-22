@@ -47,63 +47,71 @@ using Common::String;
 #define STATS_AREA_Y 1
 
 enum StatsView {
-    STATS_PARTY_OVERVIEW,
-    STATS_CHAR1,
-    STATS_CHAR2,
-    STATS_CHAR3,
-    STATS_CHAR4,
-    STATS_CHAR5,
-    STATS_CHAR6,
-    STATS_CHAR7,
-    STATS_CHAR8,
-    STATS_WEAPONS,
-    STATS_ARMOR,
-    STATS_EQUIPMENT,
-    STATS_ITEMS,
-    STATS_REAGENTS,
-    STATS_MIXTURES,
-    MIX_REAGENTS
+	STATS_PARTY_OVERVIEW,
+	STATS_CHAR1,
+	STATS_CHAR2,
+	STATS_CHAR3,
+	STATS_CHAR4,
+	STATS_CHAR5,
+	STATS_CHAR6,
+	STATS_CHAR7,
+	STATS_CHAR8,
+	STATS_WEAPONS,
+	STATS_ARMOR,
+	STATS_EQUIPMENT,
+	STATS_ITEMS,
+	STATS_REAGENTS,
+	STATS_MIXTURES,
+	MIX_REAGENTS
 };
 
 class StatsArea : public Observer<Aura *>, public Observer<Party *, PartyEvent &>, public Observer<Menu *, MenuEvent &>, public Observable<StatsArea *, Common::String> {
 public:
-    StatsArea();
+	StatsArea();
 
-    void setView(StatsView view);
+	void setView(StatsView view);
 
-    void clear();
-    void prevItem();
-    void nextItem();
-    void update(bool avatarOnly = false);
-    virtual void update(Aura *aura);
-    virtual void update(Party *party, PartyEvent &event)    {update(); /* do a full update */}
-    virtual void update(Menu *menu, MenuEvent &event)       {update(); /* do a full update */}
-    void highlightPlayer(int player);
-    void redraw();
+	void clear();
+	void prevItem();
+	void nextItem();
+	void update(bool avatarOnly = false);
+	virtual void update(Aura *aura);
+	virtual void update(Party *party, PartyEvent &event)    {
+		update(); /* do a full update */
+	}
+	virtual void update(Menu *menu, MenuEvent &event)       {
+		update(); /* do a full update */
+	}
+	void highlightPlayer(int player);
+	void redraw();
 
-    TextView *getMainArea() { return &_mainArea; }
+	TextView *getMainArea() {
+		return &_mainArea;
+	}
 
-    void resetReagentsMenu();
-    Menu *getReagentsMenu() { return &_reagentsMixMenu; }
+	void resetReagentsMenu();
+	Menu *getReagentsMenu() {
+		return &_reagentsMixMenu;
+	}
 
 private:
-    void showPartyView(bool avatarOnly);
-    void showPlayerDetails();
-    void showWeapons();
-    void showArmor();
-    void showEquipment();
-    void showItems();
-    void showReagents(bool active = false);
-    void showMixtures();
-    void setTitle(const Common::String &s);
+	void showPartyView(bool avatarOnly);
+	void showPlayerDetails();
+	void showWeapons();
+	void showArmor();
+	void showEquipment();
+	void showItems();
+	void showReagents(bool active = false);
+	void showMixtures();
+	void setTitle(const Common::String &s);
 
-    TextView _title;
-    TextView _mainArea;
-    TextView _summary;
-    
-    StatsView _view;
+	TextView _title;
+	TextView _mainArea;
+	TextView _summary;
 
-    Menu _reagentsMixMenu;
+	StatsView _view;
+
+	Menu _reagentsMixMenu;
 };
 
 /**
@@ -112,12 +120,12 @@ private:
  */
 class ReagentsMenuController : public MenuController {
 public:
-    ReagentsMenuController(Menu *menu, Ingredients *i, TextView *view) : MenuController(menu, view), _ingredients(i) { }
+	ReagentsMenuController(Menu *menu, Ingredients *i, TextView *view) : MenuController(menu, view), _ingredients(i) { }
 
-    bool keyPressed(int key);
+	bool keyPressed(int key);
 
 private:
-    Ingredients *_ingredients;
+	Ingredients *_ingredients;
 };
 
 } // End of namespace Ultima4

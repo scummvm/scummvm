@@ -53,43 +53,43 @@ Response *hawkwindGetIntro(const DynamicResponse *dynResp);
 
 vector<Common::String> hawkwindText;
 
-DialogueLoader* U4HWDialogueLoader::_instance = DialogueLoader::registerLoader(new U4HWDialogueLoader, "application/x-u4hwtlk");
+DialogueLoader *U4HWDialogueLoader::_instance = DialogueLoader::registerLoader(new U4HWDialogueLoader, "application/x-u4hwtlk");
 
 /**
  * A special case dialogue loader for Hawkwind.
  */
-Dialogue* U4HWDialogueLoader::load(void *source) {
-    U4FILE *avatar = u4fopen("avatar.exe");
-    if (!avatar)
-        return NULL;
-    
-    hawkwindText = u4read_stringtable(avatar, 74729, 53);
+Dialogue *U4HWDialogueLoader::load(void *source) {
+	U4FILE *avatar = u4fopen("avatar.exe");
+	if (!avatar)
+		return NULL;
 
-    Dialogue *dlg = new Dialogue();
-    dlg->setTurnAwayProb(0);
+	hawkwindText = u4read_stringtable(avatar, 74729, 53);
 
-    dlg->setName("Hawkwind");
-    dlg->setPronoun("He");
-    dlg->setPrompt(hawkwindText[HW_PROMPT]);
-    Response *intro = new DynamicResponse(&hawkwindGetIntro);
-    dlg->setIntro(intro);
-    dlg->setLongIntro(intro);
-    dlg->setDefaultAnswer(new Response(Common::String("\n" + hawkwindText[HW_DEFAULT])));
+	Dialogue *dlg = new Dialogue();
+	dlg->setTurnAwayProb(0);
 
-    for (int v = 0; v < VIRT_MAX; v++) {
-        Common::String virtue(getVirtueName((Virtue) v));
-        lowercase(virtue);
-        virtue = virtue.substr(0, 4);
-        dlg->addKeyword(virtue, new DynamicResponse(&hawkwindGetAdvice, virtue));
-    }
+	dlg->setName("Hawkwind");
+	dlg->setPronoun("He");
+	dlg->setPrompt(hawkwindText[HW_PROMPT]);
+	Response *intro = new DynamicResponse(&hawkwindGetIntro);
+	dlg->setIntro(intro);
+	dlg->setLongIntro(intro);
+	dlg->setDefaultAnswer(new Response(Common::String("\n" + hawkwindText[HW_DEFAULT])));
 
-    Response *bye = new Response(hawkwindText[HW_BYE]);
-    bye->add(ResponsePart::STOPMUSIC);
-    bye->add(ResponsePart::END);
-    dlg->addKeyword("bye", bye);
-    dlg->addKeyword("", bye);
+	for (int v = 0; v < VIRT_MAX; v++) {
+		Common::String virtue(getVirtueName((Virtue) v));
+		lowercase(virtue);
+		virtue = virtue.substr(0, 4);
+		dlg->addKeyword(virtue, new DynamicResponse(&hawkwindGetAdvice, virtue));
+	}
 
-    return dlg;
+	Response *bye = new Response(hawkwindText[HW_BYE]);
+	bye->add(ResponsePart::STOPMUSIC);
+	bye->add(ResponsePart::END);
+	dlg->addKeyword("bye", bye);
+	dlg->addKeyword("", bye);
+
+	return dlg;
 }
 
 /**
@@ -99,55 +99,54 @@ Dialogue* U4HWDialogueLoader::load(void *source) {
  * the next one.
  */
 Response *hawkwindGetAdvice(const DynamicResponse *dynResp) {
-    Common::String text;
-    int virtue = -1, virtueLevel = -1;
+	Common::String text;
+	int virtue = -1, virtueLevel = -1;
 
-    /* check if asking about a virtue */
-    for (int v = 0; v < VIRT_MAX; v++) {
-        if (scumm_strnicmp(dynResp->getParam().c_str(), getVirtueName((Virtue) v), 4) == 0) {
-            virtue = v;
-            virtueLevel = g_context->_saveGame->_karma[v];
-            break;
-        }
-    }
-    if (virtue != -1) {
-        text = "\n\n";
-        if (virtueLevel == 0)            
-            text += hawkwindText[HW_ALREADYAVATAR] + "\n";        
-        else if (virtueLevel < 80)            
-            text += hawkwindText[(virtueLevel/20) * 8 + virtue];
-        else if (virtueLevel < 99)
-            text += hawkwindText[3 * 8 + virtue];
-        else /* virtueLevel >= 99 */
-            text = hawkwindText[4 * 8 + virtue] + hawkwindText[HW_GOTOSHRINE];
-    }
-    else {
-        text = Common::String("\n") + hawkwindText[HW_DEFAULT];
-    }
-        
-    return new Response(text);
+	/* check if asking about a virtue */
+	for (int v = 0; v < VIRT_MAX; v++) {
+		if (scumm_strnicmp(dynResp->getParam().c_str(), getVirtueName((Virtue) v), 4) == 0) {
+			virtue = v;
+			virtueLevel = g_context->_saveGame->_karma[v];
+			break;
+		}
+	}
+	if (virtue != -1) {
+		text = "\n\n";
+		if (virtueLevel == 0)
+			text += hawkwindText[HW_ALREADYAVATAR] + "\n";
+		else if (virtueLevel < 80)
+			text += hawkwindText[(virtueLevel / 20) * 8 + virtue];
+		else if (virtueLevel < 99)
+			text += hawkwindText[3 * 8 + virtue];
+		else /* virtueLevel >= 99 */
+			text = hawkwindText[4 * 8 + virtue] + hawkwindText[HW_GOTOSHRINE];
+	} else {
+		text = Common::String("\n") + hawkwindText[HW_DEFAULT];
+	}
+
+	return new Response(text);
 }
 
 Response *hawkwindGetIntro(const DynamicResponse *dynResp) {
-    Response *intro = new Response("");
+	Response *intro = new Response("");
 
-    if (g_context->_party->member(0)->getStatus() == STAT_SLEEPING ||
-        g_context->_party->member(0)->getStatus() == STAT_DEAD) {
-        intro->add(hawkwindText[HW_SPEAKONLYWITH] + g_context->_party->member(0)->getName() +
-                   hawkwindText[HW_RETURNWHEN] + g_context->_party->member(0)->getName() +
-                   hawkwindText[HW_ISREVIVED]);
-        intro->add(ResponsePart::END);
-    }
+	if (g_context->_party->member(0)->getStatus() == STAT_SLEEPING ||
+	        g_context->_party->member(0)->getStatus() == STAT_DEAD) {
+		intro->add(hawkwindText[HW_SPEAKONLYWITH] + g_context->_party->member(0)->getName() +
+		           hawkwindText[HW_RETURNWHEN] + g_context->_party->member(0)->getName() +
+		           hawkwindText[HW_ISREVIVED]);
+		intro->add(ResponsePart::END);
+	}
 
-    else {
-        intro->add(ResponsePart::STARTMUSIC_HW);
-        intro->add(ResponsePart::HAWKWIND);
+	else {
+		intro->add(ResponsePart::STARTMUSIC_HW);
+		intro->add(ResponsePart::HAWKWIND);
 
-        intro->add(hawkwindText[HW_WELCOME] + g_context->_party->member(0)->getName() +
-                   hawkwindText[HW_GREETING1] + hawkwindText[HW_GREETING2]);
-    }
+		intro->add(hawkwindText[HW_WELCOME] + g_context->_party->member(0)->getName() +
+		           hawkwindText[HW_GREETING1] + hawkwindText[HW_GREETING2]);
+	}
 
-    return intro;
+	return intro;
 }
 
 } // End of namespace Ultima4

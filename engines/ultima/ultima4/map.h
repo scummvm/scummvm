@@ -64,128 +64,133 @@ typedef Std::vector<MapTile> MapData;
 
 /**
  * MapCoords class
- */ 
-class MapCoords : public Coords {    
+ */
+class MapCoords : public Coords {
 public:
-    MapCoords(int initx = 0, int inity = 0, int initz = 0) : Coords(initx, inity, initz) {}
-    MapCoords(const Coords &a) : Coords(a.x, a.y, a.z) {}
-    
-    MapCoords &operator=(const Coords &a) { x = a.x; y = a.y; z = a.z; return *this; }
-    bool operator==(const MapCoords &a) const;
-    bool operator!=(const MapCoords &a) const;
-    bool operator<(const MapCoords &a)  const;
-    
-    MapCoords &wrap(const class Map *map);
-    MapCoords &putInBounds(const class Map *map);
-    MapCoords &move(Direction d, const class Map *map = NULL);
-    MapCoords &move(int dx, int dy, const class Map *map = NULL);    
-    int getRelativeDirection(const MapCoords &c, const class Map *map = NULL) const;
-    Direction pathTo(const MapCoords &c, int valid_dirs = MASK_DIR_ALL, bool towards = true, const class Map *map = NULL) const;
-    Direction pathAway(const MapCoords &c, int valid_dirs = MASK_DIR_ALL) const;
-    int movementDistance(const MapCoords &c, const class Map *map = NULL) const;
-    int distance(const MapCoords &c, const class Map *map = NULL) const;
+	MapCoords(int initx = 0, int inity = 0, int initz = 0) : Coords(initx, inity, initz) {}
+	MapCoords(const Coords &a) : Coords(a.x, a.y, a.z) {}
 
-    static MapCoords nowhere;
+	MapCoords &operator=(const Coords &a) {
+		x = a.x;
+		y = a.y;
+		z = a.z;
+		return *this;
+	}
+	bool operator==(const MapCoords &a) const;
+	bool operator!=(const MapCoords &a) const;
+	bool operator<(const MapCoords &a)  const;
+
+	MapCoords &wrap(const class Map *map);
+	MapCoords &putInBounds(const class Map *map);
+	MapCoords &move(Direction d, const class Map *map = NULL);
+	MapCoords &move(int dx, int dy, const class Map *map = NULL);
+	int getRelativeDirection(const MapCoords &c, const class Map *map = NULL) const;
+	Direction pathTo(const MapCoords &c, int valid_dirs = MASK_DIR_ALL, bool towards = true, const class Map *map = NULL) const;
+	Direction pathAway(const MapCoords &c, int valid_dirs = MASK_DIR_ALL) const;
+	int movementDistance(const MapCoords &c, const class Map *map = NULL) const;
+	int distance(const MapCoords &c, const class Map *map = NULL) const;
+
+	static MapCoords nowhere;
 };
 
 /**
  * Map class
- */ 
-class Map {    
+ */
+class Map {
 public:
-    enum Type {
-        WORLD,
-        CITY,    
-        SHRINE,
-        COMBAT,
-        DUNGEON
-    };
+	enum Type {
+		WORLD,
+		CITY,
+		SHRINE,
+		COMBAT,
+		DUNGEON
+	};
 
-    enum BorderBehavior {
-        BORDER_WRAP,
-        BORDER_EXIT2PARENT,
-        BORDER_FIXED
-    };
+	enum BorderBehavior {
+		BORDER_WRAP,
+		BORDER_EXIT2PARENT,
+		BORDER_FIXED
+	};
 
 
-    class Source {
-    public:
-        Source() {}
-        Source(const Common::String &f, Type t) : _fname(f), _type(t) {}
+	class Source {
+	public:
+		Source() {}
+		Source(const Common::String &f, Type t) : _fname(f), _type(t) {}
 
-        Common::String _fname;
-        Type _type;
-    };
+		Common::String _fname;
+		Type _type;
+	};
 
-    Map();
-    virtual ~Map();
+	Map();
+	virtual ~Map();
 
-    // Member functions
-    virtual Common::String getName();
-    
-    class Object *objectAt(const Coords &coords);    
-    const Portal *portalAt(const Coords &coords, int actionFlags);
-    MapTile* getTileFromData(const Coords &coords);
-    MapTile* tileAt(const Coords &coords, int withObjects);
-    const Tile *tileTypeAt(const Coords &coords, int withObjects);
-    bool isWorldMap();
-    bool isEnclosed(const Coords &party);
-    class Creature *addCreature(const class Creature *m, Coords coords);
-    class Object *addObject(MapTile tile, MapTile prevTile, Coords coords);
-    class Object *addObject(Object *obj, Coords coords);
-    void removeObject(const class Object *rem, bool deleteObject = true);
-    ObjectDeque::iterator removeObject(ObjectDeque::iterator rem, bool deleteObject = true);    
-    void clearObjects();
-    class Creature *moveObjects(MapCoords avatar);
-    void resetObjectAnimations();
-    int getNumberOfCreatures();
-    int getValidMoves(MapCoords from, MapTile transport);
-    bool move(Object *obj, Direction d);
-    void alertGuards();
-    const MapCoords &getLabel(const Common::String &name) const;
+	// Member functions
+	virtual Common::String getName();
 
-    // u4dos compatibility
-    bool fillMonsterTable();    
-    MapTile translateFromRawTileIndex(int c) const;
-    unsigned int translateToRawTileIndex(MapTile &tile) const;
+	class Object *objectAt(const Coords &coords);
+	const Portal *portalAt(const Coords &coords, int actionFlags);
+	MapTile *getTileFromData(const Coords &coords);
+	MapTile *tileAt(const Coords &coords, int withObjects);
+	const Tile *tileTypeAt(const Coords &coords, int withObjects);
+	bool isWorldMap();
+	bool isEnclosed(const Coords &party);
+	class Creature *addCreature(const class Creature *m, Coords coords);
+	class Object *addObject(MapTile tile, MapTile prevTile, Coords coords);
+	class Object *addObject(Object *obj, Coords coords);
+	void removeObject(const class Object *rem, bool deleteObject = true);
+	ObjectDeque::iterator removeObject(ObjectDeque::iterator rem, bool deleteObject = true);
+	void clearObjects();
+	class Creature *moveObjects(MapCoords avatar);
+	void resetObjectAnimations();
+	int getNumberOfCreatures();
+	int getValidMoves(MapCoords from, MapTile transport);
+	bool move(Object *obj, Direction d);
+	void alertGuards();
+	const MapCoords &getLabel(const Common::String &name) const;
+
+	// u4dos compatibility
+	bool fillMonsterTable();
+	MapTile translateFromRawTileIndex(int c) const;
+	unsigned int translateToRawTileIndex(MapTile &tile) const;
 
 public:
-    MapId           _id;    
-    Common::String  _fname;
-    Type            _type;
-    unsigned int    _width,
-                    _height,
-                    _levels;
-    unsigned int    _chunkWidth,
-                    _chunkHeight;
-    unsigned int    _offset;
+	MapId           _id;
+	Common::String  _fname;
+	Type            _type;
+	unsigned int    _width,
+	         _height,
+	         _levels;
+	unsigned int    _chunkWidth,
+	         _chunkHeight;
+	unsigned int    _offset;
 
-    Source          _baseSource;
-    Common::List<Source> _extraSources;
-    
-    CompressedChunkList     _compressedChunks;
-    BorderBehavior          _borderBehavior;
+	Source          _baseSource;
+	Common::List<Source> _extraSources;
 
-    PortalList      _portals;
-    AnnotationMgr  *_annotations;
-    int             _flags;
-    Music::Type     _music;
-    MapData         _data;
-    ObjectDeque     _objects;
-    Std::map<Common::String, MapCoords> _labels;
-    Tileset        *_tileset;
-    TileMap        *_tilemap;
+	CompressedChunkList     _compressedChunks;
+	BorderBehavior          _borderBehavior;
 
-    // u4dos compatibility
-    SaveGameMonsterRecord _monsterTable[MONSTERTABLE_SIZE];
+	PortalList      _portals;
+	AnnotationMgr  *_annotations;
+	int             _flags;
+	Music::Type     _music;
+	MapData         _data;
+	ObjectDeque     _objects;
+	Std::map<Common::String, MapCoords> _labels;
+	Tileset        *_tileset;
+	TileMap        *_tilemap;
+
+	// u4dos compatibility
+	SaveGameMonsterRecord _monsterTable[MONSTERTABLE_SIZE];
 
 private:
-    // disallow map copying: all maps should be created and accessed
-    // through the MapMgr
-    Map(const Map &map);
-    Map &operator=(const Map &map);
+	// disallow map copying: all maps should be created and accessed
+	// through the MapMgr
+	Map(const Map &map);
+	Map &operator=(const Map &map);
 
-    void findWalkability(Coords coords, int *path_data);
+	void findWalkability(Coords coords, int *path_data);
 };
 
 } // End of namespace Ultima4

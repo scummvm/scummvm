@@ -43,44 +43,44 @@ RGBA *U4PaletteLoader::_vgaPalette = NULL;
  * palette.
  */
 Image *U4RawImageLoader::load(U4FILE *file, int width, int height, int bpp) {
-    if (width == -1 || height == -1 || bpp == -1) {
-          errorFatal("dimensions not set for u4raw image");
-    }
+	if (width == -1 || height == -1 || bpp == -1) {
+		errorFatal("dimensions not set for u4raw image");
+	}
 
-    ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
+	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
-    long rawLen = file->length();
-    unsigned char *raw = (unsigned char *) malloc(rawLen);
-    file->read(raw, 1, rawLen);
+	long rawLen = file->length();
+	unsigned char *raw = (unsigned char *) malloc(rawLen);
+	file->read(raw, 1, rawLen);
 
-    long requiredLength = (width * height * bpp / 8);
-    if (rawLen < requiredLength) {
-        if (raw)
-            free(raw);
-        errorWarning("u4Raw Image of size %ld does not fit anticipated size %ld", rawLen, requiredLength);
-        return NULL;
-    }
+	long requiredLength = (width * height * bpp / 8);
+	if (rawLen < requiredLength) {
+		if (raw)
+			free(raw);
+		errorWarning("u4Raw Image of size %ld does not fit anticipated size %ld", rawLen, requiredLength);
+		return NULL;
+	}
 
-    Image *image = Image::create(width, height, bpp <= 8, Image::HARDWARE);
-    if (!image) {
-        if (raw)
-            free(raw);
-        return NULL;
-    }
+	Image *image = Image::create(width, height, bpp <= 8, Image::HARDWARE);
+	if (!image) {
+		if (raw)
+			free(raw);
+		return NULL;
+	}
 
-    U4PaletteLoader paletteLoader;
-    if (bpp == 8)
-        image->setPalette(paletteLoader.loadVgaPalette(), 256);
-    else if (bpp == 4)
-        image->setPalette(paletteLoader.loadEgaPalette(), 16);
-    else if (bpp == 1)
-        image->setPalette(paletteLoader.loadBWPalette(), 2);
+	U4PaletteLoader paletteLoader;
+	if (bpp == 8)
+		image->setPalette(paletteLoader.loadVgaPalette(), 256);
+	else if (bpp == 4)
+		image->setPalette(paletteLoader.loadEgaPalette(), 16);
+	else if (bpp == 1)
+		image->setPalette(paletteLoader.loadBWPalette(), 2);
 
-    setFromRawData(image, width, height, bpp, raw);
+	setFromRawData(image, width, height, bpp, raw);
 
-    free(raw);
+	free(raw);
 
-    return image;
+	return image;
 }
 
 /**
@@ -88,46 +88,46 @@ Image *U4RawImageLoader::load(U4FILE *file, int width, int height, int bpp) {
  * 256 color palette.
  */
 Image *U4RleImageLoader::load(U4FILE *file, int width, int height, int bpp) {
-    if (width == -1 || height == -1 || bpp == -1) {
-          errorFatal("dimensions not set for u4rle image");
-    }
+	if (width == -1 || height == -1 || bpp == -1) {
+		errorFatal("dimensions not set for u4rle image");
+	}
 
-    ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
+	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
-    long compressedLen = file->length();
-    unsigned char *compressed = (unsigned char *) malloc(compressedLen);
-    file->read(compressed, 1, compressedLen);
+	long compressedLen = file->length();
+	unsigned char *compressed = (unsigned char *) malloc(compressedLen);
+	file->read(compressed, 1, compressedLen);
 
-    unsigned char *raw = NULL;
-    long rawLen = rleDecompressMemory(compressed, compressedLen, (void **) &raw);
-    free(compressed);
+	unsigned char *raw = NULL;
+	long rawLen = rleDecompressMemory(compressed, compressedLen, (void **) &raw);
+	free(compressed);
 
-    if (rawLen != (width * height * bpp / 8)) {
-        if (raw)
-            free(raw);
-        return NULL;
-    }
+	if (rawLen != (width * height * bpp / 8)) {
+		if (raw)
+			free(raw);
+		return NULL;
+	}
 
-    Image *image = Image::create(width, height, bpp <= 8, Image::HARDWARE);
-    if (!image) {
-        if (raw)
-            free(raw);
-        return NULL;
-    }
+	Image *image = Image::create(width, height, bpp <= 8, Image::HARDWARE);
+	if (!image) {
+		if (raw)
+			free(raw);
+		return NULL;
+	}
 
-    U4PaletteLoader paletteLoader;
-    if (bpp == 8)
-        image->setPalette(paletteLoader.loadVgaPalette(), 256);
-    else if (bpp == 4)
-        image->setPalette(paletteLoader.loadEgaPalette(), 16);
-    else if (bpp == 1)
-        image->setPalette(paletteLoader.loadBWPalette(), 2);
+	U4PaletteLoader paletteLoader;
+	if (bpp == 8)
+		image->setPalette(paletteLoader.loadVgaPalette(), 256);
+	else if (bpp == 4)
+		image->setPalette(paletteLoader.loadEgaPalette(), 16);
+	else if (bpp == 1)
+		image->setPalette(paletteLoader.loadBWPalette(), 2);
 
-    setFromRawData(image, width, height, bpp, raw);
+	setFromRawData(image, width, height, bpp, raw);
 
-    free(raw);
+	free(raw);
 
-    return image;
+	return image;
 }
 
 /**
@@ -135,46 +135,46 @@ Image *U4RleImageLoader::load(U4FILE *file, int width, int height, int bpp) {
  * 256 color palette.
  */
 Image *U4LzwImageLoader::load(U4FILE *file, int width, int height, int bpp) {
-    if (width == -1 || height == -1 || bpp == -1) {
-          errorFatal("dimensions not set for u4lzw image");
-    }
+	if (width == -1 || height == -1 || bpp == -1) {
+		errorFatal("dimensions not set for u4lzw image");
+	}
 
-    ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
+	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
-    long compressedLen = file->length();
-    unsigned char *compressed = (unsigned char *) malloc(compressedLen);
-    file->read(compressed, 1, compressedLen);
+	long compressedLen = file->length();
+	unsigned char *compressed = (unsigned char *) malloc(compressedLen);
+	file->read(compressed, 1, compressedLen);
 #ifdef TODO
-    unsigned char *raw = NULL;
-    long rawLen = decompress_u4_memory(compressed, compressedLen, (void **) &raw);
-    free(compressed);
+	unsigned char *raw = NULL;
+	long rawLen = decompress_u4_memory(compressed, compressedLen, (void **) &raw);
+	free(compressed);
 
-    if (rawLen != (width * height * bpp / 8)) {
-        if (raw)
-            free(raw);
-        return NULL;
-    }
+	if (rawLen != (width * height * bpp / 8)) {
+		if (raw)
+			free(raw);
+		return NULL;
+	}
 
-    Image *image = Image::create(width, height, bpp <= 8, Image::HARDWARE);
-    if (!image) {
-        if (raw)
-            free(raw);
-        return NULL;
-    }
+	Image *image = Image::create(width, height, bpp <= 8, Image::HARDWARE);
+	if (!image) {
+		if (raw)
+			free(raw);
+		return NULL;
+	}
 
-    U4PaletteLoader paletteLoader;
-    if (bpp == 8)
-        image->setPalette(paletteLoader.loadVgaPalette(), 256);
-    else if (bpp == 4)
-        image->setPalette(paletteLoader.loadEgaPalette(), 16);
-    else if (bpp == 1)
-        image->setPalette(paletteLoader.loadBWPalette(), 2);
+	U4PaletteLoader paletteLoader;
+	if (bpp == 8)
+		image->setPalette(paletteLoader.loadVgaPalette(), 256);
+	else if (bpp == 4)
+		image->setPalette(paletteLoader.loadEgaPalette(), 16);
+	else if (bpp == 1)
+		image->setPalette(paletteLoader.loadBWPalette(), 2);
 
-    setFromRawData(image, width, height, bpp, raw);
+	setFromRawData(image, width, height, bpp, raw);
 
-    free(raw);
+	free(raw);
 
-    return image;
+	return image;
 #else
 	return nullptr;
 #endif
@@ -184,68 +184,68 @@ Image *U4LzwImageLoader::load(U4FILE *file, int width, int height, int bpp) {
  * Loads a simple black & white palette
  */
 RGBA *U4PaletteLoader::loadBWPalette() {
-    if (_bwPalette == NULL) {
-        _bwPalette = new RGBA[2];
+	if (_bwPalette == NULL) {
+		_bwPalette = new RGBA[2];
 
-        _bwPalette[0].r = 0;
-        _bwPalette[0].g = 0;
-        _bwPalette[0].b = 0;
+		_bwPalette[0].r = 0;
+		_bwPalette[0].g = 0;
+		_bwPalette[0].b = 0;
 
-        _bwPalette[1].r = 255;
-        _bwPalette[1].g = 255;
-        _bwPalette[1].b = 255;
+		_bwPalette[1].r = 255;
+		_bwPalette[1].g = 255;
+		_bwPalette[1].b = 255;
 
-    }
-    return _bwPalette;
+	}
+	return _bwPalette;
 }
 
 /**
  * Loads the basic EGA palette from egaPalette.xml
  */
 RGBA *U4PaletteLoader::loadEgaPalette() {
-    if (_egaPalette == NULL) {
-        int index = 0;
-        const Config *config = Config::getInstance();
-        
-        _egaPalette = new RGBA[16];
+	if (_egaPalette == NULL) {
+		int index = 0;
+		const Config *config = Config::getInstance();
 
-        vector<ConfigElement> paletteConf = config->getElement("egaPalette").getChildren();
-        for (Std::vector<ConfigElement>::iterator i = paletteConf.begin(); i != paletteConf.end(); i++) {
+		_egaPalette = new RGBA[16];
 
-            if (i->getName() != "color")
-                continue;
-        
-            _egaPalette[index].r = i->getInt("red");
-            _egaPalette[index].g = i->getInt("green");
-            _egaPalette[index].b = i->getInt("blue");
+		vector<ConfigElement> paletteConf = config->getElement("egaPalette").getChildren();
+		for (Std::vector<ConfigElement>::iterator i = paletteConf.begin(); i != paletteConf.end(); i++) {
 
-            index++;
-        }
-    }
-    return _egaPalette;
+			if (i->getName() != "color")
+				continue;
+
+			_egaPalette[index].r = i->getInt("red");
+			_egaPalette[index].g = i->getInt("green");
+			_egaPalette[index].b = i->getInt("blue");
+
+			index++;
+		}
+	}
+	return _egaPalette;
 }
 
 /**
  * Load the 256 color VGA palette from a file.
  */
 RGBA *U4PaletteLoader::loadVgaPalette() {
-    if (_vgaPalette == NULL) {
-        U4FILE *pal = u4fopen("u4vga.pal");
-        if (!pal)
-            return NULL;
+	if (_vgaPalette == NULL) {
+		U4FILE *pal = u4fopen("u4vga.pal");
+		if (!pal)
+			return NULL;
 
-        _vgaPalette = new RGBA[256];
+		_vgaPalette = new RGBA[256];
 
-        for (int i = 0; i < 256; i++) {
-            _vgaPalette[i].r = u4fgetc(pal) * 255 / 63;
-            _vgaPalette[i].g = u4fgetc(pal) * 255 / 63;
-            _vgaPalette[i].b = u4fgetc(pal) * 255 / 63;
-        }
-        u4fclose(pal);
+		for (int i = 0; i < 256; i++) {
+			_vgaPalette[i].r = u4fgetc(pal) * 255 / 63;
+			_vgaPalette[i].g = u4fgetc(pal) * 255 / 63;
+			_vgaPalette[i].b = u4fgetc(pal) * 255 / 63;
+		}
+		u4fclose(pal);
 
-    }
+	}
 
-    return _vgaPalette;
+	return _vgaPalette;
 }
 
 } // End of namespace Ultima4

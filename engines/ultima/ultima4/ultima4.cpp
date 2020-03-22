@@ -46,8 +46,8 @@ bool quit = false, verbose = false;
 Ultima4Engine *g_ultima;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Shared::UltimaEngine(syst, gameDesc), _config(nullptr), _game(nullptr),
-		_imageLoaders(nullptr), _screen(nullptr) {
+	Shared::UltimaEngine(syst, gameDesc), _config(nullptr), _game(nullptr),
+	_imageLoaders(nullptr), _screen(nullptr) {
 	g_ultima = this;
 }
 

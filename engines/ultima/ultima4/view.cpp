@@ -31,34 +31,34 @@ namespace Ultima4 {
 Image *View::_screen = NULL;
 
 View::View(int x, int y, int width, int height) : _x(x), _y(y), _width(width), _height(height),
-		_highlighted(false), _highlightX(0), _highlightY(0), _highlightW(0), _highlightH(0) {
-    if (_screen == NULL)
-        _screen = imageMgr->get("screen")->_image;
+	_highlighted(false), _highlightX(0), _highlightY(0), _highlightW(0), _highlightH(0) {
+	if (_screen == NULL)
+		_screen = imageMgr->get("screen")->_image;
 }
 
 /**
  * Hook for reinitializing when graphics reloaded.
  */
 void View::reinit() {
-    _screen = imageMgr->get("screen")->_image;
+	_screen = imageMgr->get("screen")->_image;
 }
 
 /**
  * Clear the view to black.
  */
 void View::clear() {
-    unhighlight();
-    _screen->fillRect(SCALED(_x), SCALED(_y), SCALED(_width), SCALED(_height), 0, 0, 0);
+	unhighlight();
+	_screen->fillRect(SCALED(_x), SCALED(_y), SCALED(_width), SCALED(_height), 0, 0, 0);
 }
 
 /**
  * Update the view to the screen.
  */
 void View::update() {
-    if (_highlighted)
-        drawHighlighted();
+	if (_highlighted)
+		drawHighlighted();
 #ifdef IOS
-    U4IOS::updateView();
+	U4IOS::updateView();
 #endif
 }
 
@@ -66,43 +66,43 @@ void View::update() {
  * Update a piece of the view to the screen.
  */
 void View::update(int x, int y, int width, int height) {
-    if (_highlighted)
-        drawHighlighted();
+	if (_highlighted)
+		drawHighlighted();
 #ifdef IOS
-    U4IOS::updateRectInView(x, y, width, height);
+	U4IOS::updateRectInView(x, y, width, height);
 #endif
 }
 
 /**
  * Highlight a piece of the screen by drawing it in inverted colors.
- */ 
+ */
 void View::highlight(int x, int y, int width, int height) {
-    _highlighted = true;
-    _highlightX = x;
-    _highlightY = y;
-    _highlightW = width;
-    _highlightH = height;
-    
-    update(x, y, width, height);
+	_highlighted = true;
+	_highlightX = x;
+	_highlightY = y;
+	_highlightW = width;
+	_highlightH = height;
+
+	update(x, y, width, height);
 }
 
 void View::unhighlight() {
-    _highlighted = false;
-    update(_highlightX, _highlightY, _highlightW, _highlightH);
-    _highlightX = _highlightY = _highlightW = _highlightH = 0;
+	_highlighted = false;
+	update(_highlightX, _highlightY, _highlightW, _highlightH);
+	_highlightX = _highlightY = _highlightW = _highlightH = 0;
 }
 
 void View::drawHighlighted() {
-    Image *screen = imageMgr->get("screen")->_image;
-    
-    Image *tmp = Image::create(SCALED(_highlightW), SCALED(_highlightH), false, Image::SOFTWARE);
-    if (!tmp)
-        return;
-    
-    screen->drawSubRectOn(tmp, 0, 0, SCALED(this->_x + _highlightX), SCALED(this->_y + _highlightY), SCALED(_highlightW), SCALED(_highlightH));
-    tmp->drawHighlighted();
-    tmp->draw(SCALED(this->_x + _highlightX), SCALED(this->_y + _highlightY));
-    delete tmp;    
+	Image *screen = imageMgr->get("screen")->_image;
+
+	Image *tmp = Image::create(SCALED(_highlightW), SCALED(_highlightH), false, Image::SOFTWARE);
+	if (!tmp)
+		return;
+
+	screen->drawSubRectOn(tmp, 0, 0, SCALED(this->_x + _highlightX), SCALED(this->_y + _highlightY), SCALED(_highlightW), SCALED(_highlightH));
+	tmp->drawHighlighted();
+	tmp->draw(SCALED(this->_x + _highlightX), SCALED(this->_y + _highlightY));
+	delete tmp;
 }
 
 } // End of namespace Ultima4

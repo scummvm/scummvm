@@ -34,31 +34,31 @@ typedef unsigned int TileId;
 typedef unsigned char MapId;
 
 enum TileSpeed {
-    FAST,
-    SLOW,
-    VSLOW,
-    VVSLOW
+	FAST,
+	SLOW,
+	VSLOW,
+	VVSLOW
 };
 
 enum TileEffect {
-    EFFECT_NONE,
-    EFFECT_FIRE,
-    EFFECT_SLEEP,
-    EFFECT_POISON,
-    EFFECT_POISONFIELD,
-    EFFECT_ELECTRICITY,
-    EFFECT_LAVA
+	EFFECT_NONE,
+	EFFECT_FIRE,
+	EFFECT_SLEEP,
+	EFFECT_POISON,
+	EFFECT_POISONFIELD,
+	EFFECT_ELECTRICITY,
+	EFFECT_LAVA
 };
 
 enum TileAnimationStyle {
-    ANIM_NONE,
-    ANIM_SCROLL,
-    ANIM_CAMPFIRE,
-    ANIM_CITYFLAG,
-    ANIM_CASTLEFLAG,
-    ANIM_SHIPFLAG,    
-    ANIM_LCBFLAG,
-    ANIM_FRAMES
+	ANIM_NONE,
+	ANIM_SCROLL,
+	ANIM_CAMPFIRE,
+	ANIM_CITYFLAG,
+	ANIM_CASTLEFLAG,
+	ANIM_SHIPFLAG,
+	ANIM_LCBFLAG,
+	ANIM_FRAMES
 };
 
 /**
@@ -66,29 +66,45 @@ enum TileAnimationStyle {
  */
 class MapTile {
 public:
-    MapTile() : _id(0), _frame(0) {}
-    MapTile(const TileId &i, unsigned char f = 0) : _id(i), _frame(f), _freezeAnimation(false) {}
-    MapTile(const MapTile &t) : _id(t._id), _frame(t._frame), _freezeAnimation(t._freezeAnimation) {}
+	MapTile() : _id(0), _frame(0) {}
+	MapTile(const TileId &i, unsigned char f = 0) : _id(i), _frame(f), _freezeAnimation(false) {}
+	MapTile(const MapTile &t) : _id(t._id), _frame(t._frame), _freezeAnimation(t._freezeAnimation) {}
 
-    TileId getId() const			{return _id;}
-    unsigned char getFrame() const	{return _frame;}
-    bool getFreezeAnimation() const {return _freezeAnimation;}
+	TileId getId() const            {
+		return _id;
+	}
+	unsigned char getFrame() const  {
+		return _frame;
+	}
+	bool getFreezeAnimation() const {
+		return _freezeAnimation;
+	}
 
-    bool operator==(const MapTile &m) const  { return _id == m._id; }
-    bool operator==(const TileId &i) const   { return _id == i; }
-    bool operator!=(const MapTile &m) const  { return _id != m._id; }
-    bool operator!=(const TileId &i) const   { return _id != i; }
-    bool operator<(const MapTile &m) const   { return _id < m._id; } /* for Std::less */
-    
-    Direction getDirection() const;
-    bool setDirection(Direction d);
+	bool operator==(const MapTile &m) const  {
+		return _id == m._id;
+	}
+	bool operator==(const TileId &i) const   {
+		return _id == i;
+	}
+	bool operator!=(const MapTile &m) const  {
+		return _id != m._id;
+	}
+	bool operator!=(const TileId &i) const   {
+		return _id != i;
+	}
+	bool operator<(const MapTile &m) const   {
+		return _id < m._id;    /* for Std::less */
+	}
 
-    const Tile *getTileType() const;
+	Direction getDirection() const;
+	bool setDirection(Direction d);
 
-    // Properties
-    TileId _id;
-    unsigned char _frame;
-    bool _freezeAnimation;
+	const Tile *getTileType() const;
+
+	// Properties
+	TileId _id;
+	unsigned char _frame;
+	bool _freezeAnimation;
 };
 
 /**
@@ -99,12 +115,12 @@ public:
  */
 class Uncopyable {
 protected:
-    Uncopyable() {}
-    ~Uncopyable() {}
+	Uncopyable() {}
+	~Uncopyable() {}
 
 private:
-    Uncopyable(const Uncopyable&);
-    const Uncopyable &operator=(const Uncopyable&);
+	Uncopyable(const Uncopyable &);
+	const Uncopyable &operator=(const Uncopyable &);
 };
 
 } // End of namespace Ultima4

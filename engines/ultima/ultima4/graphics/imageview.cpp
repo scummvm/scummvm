@@ -40,26 +40,26 @@ ImageView::~ImageView() {
  * Draw the image at the optionally specified offset.
  */
 void ImageView::draw(const Common::String &imageName, int x, int y) {
-    ImageInfo *info = imageMgr->get(imageName);
-    if (info) {
-        info->_image->draw(SCALED(this->_x + x), SCALED(this->_y + y));
-        return;
-    }
+	ImageInfo *info = imageMgr->get(imageName);
+	if (info) {
+		info->_image->draw(SCALED(this->_x + x), SCALED(this->_y + y));
+		return;
+	}
 
-    SubImage *subimage = imageMgr->getSubImage(imageName);
-    if (subimage) {
-        info = imageMgr->get(subimage->_srcImageName);
+	SubImage *subimage = imageMgr->getSubImage(imageName);
+	if (subimage) {
+		info = imageMgr->get(subimage->_srcImageName);
 
-        if (info) {
-            info->_image->drawSubRect(SCALED(this->_x + x), SCALED(this->_y + y),
-                                     SCALED(subimage->x) / info->_prescale,
-                                     SCALED(subimage->y) / info->_prescale,
-                                     SCALED(subimage->width) / info->_prescale,
-                                     SCALED(subimage->height) / info->_prescale);
-            return;
-        }
-    }
-    errorFatal("ERROR 1005: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", imageName.c_str(), settings._game.c_str());
+		if (info) {
+			info->_image->drawSubRect(SCALED(this->_x + x), SCALED(this->_y + y),
+			                          SCALED(subimage->x) / info->_prescale,
+			                          SCALED(subimage->y) / info->_prescale,
+			                          SCALED(subimage->width) / info->_prescale,
+			                          SCALED(subimage->height) / info->_prescale);
+			return;
+		}
+	}
+	errorFatal("ERROR 1005: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", imageName.c_str(), settings._game.c_str());
 }
 
 } // End of namespace Ultima4

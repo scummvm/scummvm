@@ -33,7 +33,9 @@ class U4FILE;
 class Dungeon;
 
 struct MapType_Hash {
-	uint operator()(const Map::Type &v) const { return (uint)v; }
+	uint operator()(const Map::Type &v) const {
+		return (uint)v;
+	}
 };
 
 
@@ -53,52 +55,52 @@ struct MapType_Hash {
  */
 class MapLoader {
 public:
-    virtual ~MapLoader() {}
+	virtual ~MapLoader() {}
 
-    static MapLoader *getLoader(Map::Type type);
+	static MapLoader *getLoader(Map::Type type);
 
-    virtual bool load(Map *map) = 0;
+	virtual bool load(Map *map) = 0;
 
 protected:
-    static MapLoader *registerLoader(MapLoader *loader, Map::Type type);
-    static bool loadData(Map *map, U4FILE *f);
-    static bool isChunkCompressed(Map *map, int chunk);
+	static MapLoader *registerLoader(MapLoader *loader, Map::Type type);
+	static bool loadData(Map *map, U4FILE *f);
+	static bool isChunkCompressed(Map *map, int chunk);
 
 private:
-    static Std::map<Map::Type, MapLoader *, MapType_Hash> *loaderMap;
+	static Std::map<Map::Type, MapLoader *, MapType_Hash> *loaderMap;
 };
 
 class CityMapLoader : public MapLoader {
-    static MapLoader *_instance;
+	static MapLoader *_instance;
 
 public:
-    virtual bool load(Map *map);
+	virtual bool load(Map *map);
 
 };
 
 class ConMapLoader : public MapLoader {
-    static MapLoader *_instance;
+	static MapLoader *_instance;
 
 public:
-    virtual bool load(Map *map);
+	virtual bool load(Map *map);
 
 };
 
 class DngMapLoader : public MapLoader {
-    static MapLoader *_instance;
+	static MapLoader *_instance;
 
 public:
-    virtual bool load(Map *map);
+	virtual bool load(Map *map);
 
 private:
-    void initDungeonRoom(Dungeon *dng, int room);
+	void initDungeonRoom(Dungeon *dng, int room);
 };
 
 class WorldMapLoader : public MapLoader {
-    static MapLoader *_instance;
+	static MapLoader *_instance;
 
 public:
-    virtual bool load(Map *map);
+	virtual bool load(Map *map);
 
 };
 

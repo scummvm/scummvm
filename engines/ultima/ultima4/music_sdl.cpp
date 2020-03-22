@@ -51,7 +51,7 @@ void Music::create_sys() {
 
 	if (u4_SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
 		errorWarning("unable to init SDL audio subsystem: %s",
-				SDL_GetError());
+		             SDL_GetError());
 		this->functional = false;
 		return;
 	}
@@ -59,7 +59,7 @@ void Music::create_sys() {
 	TRACE_LOCAL(*logger, "Opening audio");
 
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels,
-			audio_buffers)) {
+	                  audio_buffers)) {
 		fprintf(stderr, "Unable to open audio!\n");
 		this->functional = false;
 		return;
@@ -74,16 +74,16 @@ void Music::create_sys() {
 void Music::destroy_sys() {
 #ifdef TODO
 	if (playing) {
-        TRACE_LOCAL(*logger, "Stopping currently playing music");
-        Mix_FreeMusic(playing);
-        playing = NULL;
-    }
+		TRACE_LOCAL(*logger, "Stopping currently playing music");
+		Mix_FreeMusic(playing);
+		playing = NULL;
+	}
 
-    TRACE_LOCAL(*logger, "Closing audio");
-    Mix_CloseAudio();
+	TRACE_LOCAL(*logger, "Closing audio");
+	Mix_CloseAudio();
 
-    TRACE_LOCAL(*logger, "Quitting SDL audio subsystem");
-    u4_SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	TRACE_LOCAL(*logger, "Quitting SDL audio subsystem");
+	u4_SDL_QuitSubSystem(SDL_INIT_AUDIO);
 #endif
 }
 
@@ -97,7 +97,7 @@ bool Music::load_sys(const Common::String &pathname) {
 	playing = Mix_LoadMUS(pathname.c_str());
 	if (!playing) {
 		errorWarning("unable to load music file %s: %s", pathname.c_str(),
-				Mix_GetError());
+		             Mix_GetError());
 		return false;
 	}
 #endif
@@ -109,14 +109,14 @@ bool Music::load_sys(const Common::String &pathname) {
  */
 void Music::playMid(Type music) {
 #ifdef TODO
-    if (!functional || !on)
-        return;
+	if (!functional || !on)
+		return;
 
-    /* loaded a new piece of music */
-    if (load(music)) {
-        Mix_PlayMusic(playing, NLOOPS);
-        //Mix_SetMusicPosition(0.0);  //Could be useful if music was stored on different 'it/mod' patterns
-    }
+	/* loaded a new piece of music */
+	if (load(music)) {
+		Mix_PlayMusic(playing, NLOOPS);
+		//Mix_SetMusicPosition(0.0);  //Could be useful if music was stored on different 'it/mod' patterns
+	}
 #endif
 }
 
@@ -124,10 +124,9 @@ void Music::playMid(Type music) {
 /**
  * Stop playing a MIDI file.
  */
-void Music::stopMid()
-{
+void Music::stopMid() {
 #ifdef TODO
-    Mix_HaltMusic();
+	Mix_HaltMusic();
 #endif
 }
 /**
@@ -135,10 +134,10 @@ void Music::stopMid()
  */
 void Music::setSoundVolume_sys(int volume) {
 #ifdef TODO
-    /**
-     * Use Channel 1 for sound effects
-     */
-    Mix_Volume(1, int((float)MIX_MAX_VOLUME / MAX_VOLUME * volume));
+	/**
+	 * Use Channel 1 for sound effects
+	 */
+	Mix_Volume(1, int((float)MIX_MAX_VOLUME / MAX_VOLUME * volume));
 #endif
 }
 
@@ -147,7 +146,7 @@ void Music::setSoundVolume_sys(int volume) {
  */
 bool Music::isPlaying_sys() {
 #ifdef TODO
-    return Mix_PlayingMusic();
+	return Mix_PlayingMusic();
 #else
 	return false;
 #endif

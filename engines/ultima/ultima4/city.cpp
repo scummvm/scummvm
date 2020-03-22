@@ -39,67 +39,67 @@ City::City() : Map() {
 
 
 City::~City() {
-    for (PersonList::iterator i = _persons.begin(); i != _persons.end(); i++)
-        delete *i;
-    for (PersonRoleList::iterator j = _personRoles.begin(); j != _personRoles.end(); j++)
-        delete *j;
-    for (Std::vector<Dialogue *>::iterator k = _extraDialogues.begin(); k != _extraDialogues.end(); k++)
-        delete *k;
+	for (PersonList::iterator i = _persons.begin(); i != _persons.end(); i++)
+		delete *i;
+	for (PersonRoleList::iterator j = _personRoles.begin(); j != _personRoles.end(); j++)
+		delete *j;
+	for (Std::vector<Dialogue *>::iterator k = _extraDialogues.begin(); k != _extraDialogues.end(); k++)
+		delete *k;
 }
 
 /**
  * Returns the name of the city
- */ 
+ */
 Common::String City::getName() {
-    return _name;
+	return _name;
 }
 
 /**
  * Adds a person object to the map
  */
-Person *City::addPerson(Person *person) {    
-    // Make a copy of the person before adding them, so 
-    // things like angering the guards, etc. will be
-    // forgotten the next time you visit :)
-    Person *p = new Person(person);
-    
-    /* set the start coordinates for the person */
-    p->setMap(this);
-    p->goToStartLocation();
+Person *City::addPerson(Person *person) {
+	// Make a copy of the person before adding them, so
+	// things like angering the guards, etc. will be
+	// forgotten the next time you visit :)
+	Person *p = new Person(person);
 
-    _objects.push_back(p);    
-    return p;
+	/* set the start coordinates for the person */
+	p->setMap(this);
+	p->goToStartLocation();
+
+	_objects.push_back(p);
+	return p;
 }
 
 /**
  * Add people to the map
- */ 
+ */
 void City::addPeople() {
-    PersonList::iterator current;    
-    
-    // Make sure the city has no people in it already
-    removeAllPeople();
+	PersonList::iterator current;
 
-    for (current = _persons.begin(); current != _persons.end(); current++) {
-        Person *p = *current;
-        if ( (p->getTile() != 0)
-             && !(g_context->_party->canPersonJoin(p->getName(), NULL)
-                  && g_context->_party->isPersonJoined(p->getName()))
-            )
-            addPerson(p);
-    }
+	// Make sure the city has no people in it already
+	removeAllPeople();
+
+	for (current = _persons.begin(); current != _persons.end(); current++) {
+		Person *p = *current;
+		if ((p->getTile() != 0)
+		        && !(g_context->_party->canPersonJoin(p->getName(), NULL)
+		             && g_context->_party->isPersonJoined(p->getName()))
+		   )
+			addPerson(p);
+	}
 }
 
 /**
  * Removes all people from the current map
  */
 void City::removeAllPeople() {
-    ObjectDeque::iterator obj;
-    for (obj = _objects.begin(); obj != _objects.end();) {
-        if (isPerson(*obj))
-            obj = removeObject(obj);
-        else obj++;
-    }
+	ObjectDeque::iterator obj;
+	for (obj = _objects.begin(); obj != _objects.end();) {
+		if (isPerson(*obj))
+			obj = removeObject(obj);
+		else obj++;
+	}
 }
 
 /**
@@ -107,25 +107,25 @@ void City::removeAllPeople() {
  * Otherwise, returns NULL.
  */
 Person *City::personAt(const Coords &coords) {
-    Object *obj;
+	Object *obj;
 
-    obj = objectAt(coords);
-    if (isPerson(obj))
-        return dynamic_cast<Person*>(obj);    
-    else
-        return NULL;
+	obj = objectAt(coords);
+	if (isPerson(obj))
+		return dynamic_cast<Person *>(obj);
+	else
+		return NULL;
 }
 
 /**
  * Returns true if the Map pointed to by 'punknown'
  * is a City map
- */ 
+ */
 bool isCity(Map *punknown) {
-    City *pCity;
-    if ((pCity = dynamic_cast<City*>(punknown)) != NULL)
-        return true;
-    else 
-        return false;
+	City *pCity;
+	if ((pCity = dynamic_cast<City *>(punknown)) != NULL)
+		return true;
+	else
+		return false;
 }
 
 } // End of namespace Ultima4

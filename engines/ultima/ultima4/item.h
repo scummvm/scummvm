@@ -33,21 +33,21 @@ class Map;
 class Coords;
 
 enum SearchCondition {
-    SC_NONE         = 0x00,
-    SC_NEWMOONS     = 0x01,
-    SC_FULLAVATAR   = 0x02,
-    SC_REAGENTDELAY = 0x04
+	SC_NONE         = 0x00,
+	SC_NEWMOONS     = 0x01,
+	SC_FULLAVATAR   = 0x02,
+	SC_REAGENTDELAY = 0x04
 };
 
 struct ItemLocation {
-    const char *_name;
-    const char *_shortName;
-    const char *_locationLabel;
-    bool (*_isItemInInventory)(int item);
-    void (*_putItemInInventory)(int item);
-    void (*_useItem)(int item);
-    int _data;
-    unsigned char _conditions;
+	const char *_name;
+	const char *_shortName;
+	const char *_locationLabel;
+	bool (*_isItemInInventory)(int item);
+	void (*_putItemInInventory)(int item);
+	void (*_useItem)(int item);
+	int _data;
+	unsigned char _conditions;
 };
 
 typedef void (*DestroyAllCreaturesCallback)(void);

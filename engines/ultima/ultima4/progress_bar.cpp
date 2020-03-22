@@ -28,46 +28,54 @@ namespace Ultima {
 namespace Ultima4 {
 
 ProgressBar::ProgressBar(int x, int y, int width, int height, int _min, int _max) :
-    View(x, y, width, height),
-    _min(_min),
-    _max(_max) {
-    _current = _min;
+	View(x, y, width, height),
+	_min(_min),
+	_max(_max) {
+	_current = _min;
 }
 
-ProgressBar& ProgressBar::operator++()  { _current++; draw(); return *this; }
-ProgressBar& ProgressBar::operator--()  { _current--; draw(); return *this; }
+ProgressBar &ProgressBar::operator++()  {
+	_current++;
+	draw();
+	return *this;
+}
+ProgressBar &ProgressBar::operator--()  {
+	_current--;
+	draw();
+	return *this;
+}
 void ProgressBar::draw() {
-    Image *bar = Image::create(SCALED(_width), SCALED(_height), false, Image::HARDWARE);
-    int pos = static_cast<int>((double(_current - _min) / double(_max - _min)) * (_width - (_bWidth * 2)));
+	Image *bar = Image::create(SCALED(_width), SCALED(_height), false, Image::HARDWARE);
+	int pos = static_cast<int>((double(_current - _min) / double(_max - _min)) * (_width - (_bWidth * 2)));
 
-    // border color
-    bar->fillRect(0, 0, SCALED(_width), SCALED(_height), _bColor.r, _bColor.g, _bColor.b); 
+	// border color
+	bar->fillRect(0, 0, SCALED(_width), SCALED(_height), _bColor.r, _bColor.g, _bColor.b);
 
-    // color
-    bar->fillRect(SCALED(_bWidth), SCALED(_bWidth), SCALED(pos), SCALED(_height - (_bWidth * 2)), _color.r, _color.g, _color.b); 
+	// color
+	bar->fillRect(SCALED(_bWidth), SCALED(_bWidth), SCALED(pos), SCALED(_height - (_bWidth * 2)), _color.r, _color.g, _color.b);
 
-    bar->drawOn(_screen, SCALED(_x), SCALED(_y));
-    update();
+	bar->drawOn(_screen, SCALED(_x), SCALED(_y));
+	update();
 
-    delete bar;
+	delete bar;
 }
 
 void ProgressBar::setBorderColor(int r, int g, int b, int a) {
-    _bColor.r = r;
-    _bColor.g = g;
-    _bColor.b = b;
-    _bColor.a = a;
+	_bColor.r = r;
+	_bColor.g = g;
+	_bColor.b = b;
+	_bColor.a = a;
 }
 
 void ProgressBar::setBorderWidth(unsigned int width) {
-    _bWidth = width;
+	_bWidth = width;
 }
 
 void ProgressBar::setColor(int r, int g, int b, int a) {
-    _color.r = r;
-    _color.g = g;
-    _color.b = b;
-    _color.a = a;
+	_color.r = r;
+	_color.g = g;
+	_color.b = b;
+	_color.a = a;
 }
 
 } // End of namespace Ultima4

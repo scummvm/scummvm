@@ -37,63 +37,83 @@ class Annotation;
  * There are three types of annotations:
  * - permanent: lasts until annotationClear is called
  * - turn based: lasts a given number of cycles
- * - time based: lasts a given number of time units (1/4 seconds) 
+ * - time based: lasts a given number of time units (1/4 seconds)
  */
 class Annotation {
-public:    
-    typedef Common::List<Annotation> List;
+public:
+	typedef Common::List<Annotation> List;
 
-    Annotation(const Coords &coords, MapTile tile, bool visual = false, bool coverUp = false);
+	Annotation(const Coords &coords, MapTile tile, bool visual = false, bool coverUp = false);
 
-    void debug_output() const;
+	void debug_output() const;
 
-    // Getters
-    const Coords& getCoords() const {return _coords; } /**< Returns the coordinates of the annotation */
-    MapTile& getTile()              {return _tile;   } /**< Returns the annotation's tile */
-    bool isVisualOnly() const {return _visual; } /**< Returns true for visual-only annotations */
-    const int getTTL() const        {return _ttl;    } /**< Returns the number of turns the annotation has left to live */
-    bool isCoverUp()                {return _coverUp;}
+	// Getters
+	const Coords &getCoords() const {
+		return _coords;    /**< Returns the coordinates of the annotation */
+	}
+	MapTile &getTile()              {
+		return _tile;      /**< Returns the annotation's tile */
+	}
+	bool isVisualOnly() const {
+		return _visual;    /**< Returns true for visual-only annotations */
+	}
+	const int getTTL() const        {
+		return _ttl;       /**< Returns the number of turns the annotation has left to live */
+	}
+	bool isCoverUp()                {
+		return _coverUp;
+	}
 
-    // Setters
-    void setCoords(const Coords &c) {_coords = c;    } /**< Sets the coordinates for the annotation */
-    void setTile(const MapTile &t)  {_tile = t;      } /**< Sets the tile for the annotation */
-    void setVisualOnly(bool v)      {_visual = v;    } /**< Sets whether or not the annotation is visual-only */
-    void setTTL(int turns)          {_ttl = turns;   } /**< Sets the number of turns the annotation will live */
-    void passTurn()                 {if (_ttl > 0) _ttl--; } /**< Passes a turn for the annotation */
+	// Setters
+	void setCoords(const Coords &c) {
+		_coords = c;       /**< Sets the coordinates for the annotation */
+	}
+	void setTile(const MapTile &t)  {
+		_tile = t;         /**< Sets the tile for the annotation */
+	}
+	void setVisualOnly(bool v)      {
+		_visual = v;       /**< Sets whether or not the annotation is visual-only */
+	}
+	void setTTL(int turns)          {
+		_ttl = turns;      /**< Sets the number of turns the annotation will live */
+	}
+	void passTurn()                 {
+		if (_ttl > 0) _ttl--;    /**< Passes a turn for the annotation */
+	}
 
-    bool operator==(const Annotation&) const;    
+	bool operator==(const Annotation &) const;
 
-    // Properties
-private:        
-    Coords _coords;
-    MapTile _tile;        
-    bool _visual;
-    int _ttl;
-    bool _coverUp;
+	// Properties
+private:
+	Coords _coords;
+	MapTile _tile;
+	bool _visual;
+	int _ttl;
+	bool _coverUp;
 };
 
-/** 
+/**
  * Manages annotations for the current map.  This includes
  * adding and removing annotations, as well as finding annotations
  * and managing their existence.
  */
-class AnnotationMgr {    
-public:        
-    AnnotationMgr();
+class AnnotationMgr {
+public:
+	AnnotationMgr();
 
-    Annotation       *add(Coords coords, MapTile tile, bool visual = false, bool isCoverUp = false);
-    Annotation::List allAt(Coords pos);
-    Common::List<Annotation *> ptrsToAllAt(Coords pos);
-    void             clear();
-    void             passTurn();
-    void             remove(Coords pos, MapTile tile);
-    void             remove(Annotation&);
-    void             remove(Annotation::List);
-    int              size();
+	Annotation       *add(Coords coords, MapTile tile, bool visual = false, bool isCoverUp = false);
+	Annotation::List allAt(Coords pos);
+	Common::List<Annotation *> ptrsToAllAt(Coords pos);
+	void             clear();
+	void             passTurn();
+	void             remove(Coords pos, MapTile tile);
+	void             remove(Annotation &);
+	void             remove(Annotation::List);
+	int              size();
 
-private:        
-    Annotation::List  _annotations;
-    Annotation::List::iterator _it;
+private:
+	Annotation::List  _annotations;
+	Annotation::List::iterator _it;
 };
 
 } // End of namespace Ultima4

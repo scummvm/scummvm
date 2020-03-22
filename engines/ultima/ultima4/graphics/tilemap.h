@@ -36,20 +36,20 @@ class ConfigElement;
  */
 class TileMap {
 public:
-    typedef Std::map<Common::String, TileMap *> TileIndexMapMap;
-    
-    MapTile translate(unsigned int index);
-    unsigned int untranslate(MapTile &tile);
+	typedef Std::map<Common::String, TileMap *> TileIndexMapMap;
 
-    static void loadAll();
-    static void unloadAll();
-    static TileMap *get(Common::String name);
+	MapTile translate(unsigned int index);
+	unsigned int untranslate(MapTile &tile);
+
+	static void loadAll();
+	static void unloadAll();
+	static TileMap *get(Common::String name);
 
 private:
-    static void load(const ConfigElement &tilemapConf);
-    static TileIndexMapMap _tileMaps;
+	static void load(const ConfigElement &tilemapConf);
+	static TileIndexMapMap _tileMaps;
 
-    Std::map<unsigned int, MapTile> _tileMap;
+	Std::map<unsigned int, MapTile> _tileMap;
 };
 
 } // End of namespace Ultima4

@@ -33,13 +33,13 @@ class GameController;
 
 class CheatMenuController : public WaitableController<void *> {
 public:
-    CheatMenuController(GameController *gc);
-    bool keyPressed(int key);
+	CheatMenuController(GameController *gc);
+	bool keyPressed(int key);
 
 private:
-    void summonCreature(const Common::String &name);
+	void summonCreature(const Common::String &name);
 
-    GameController *_game;
+	GameController *_game;
 };
 
 /**
@@ -49,7 +49,7 @@ private:
  */
 class WindCmdController : public WaitableController<void *> {
 public:
-    bool keyPressed(int key);
+	bool keyPressed(int key);
 };
 
 } // End of namespace Ultima4

@@ -56,7 +56,7 @@ struct Cursor {
 Cursor *cursors[5];
 Scaler filterScaler;
 
-Cursor *screenInitCursor(const char * const xpm[]);
+Cursor *screenInitCursor(const char *const xpm[]);
 
 extern bool verbose;
 
@@ -67,55 +67,55 @@ void screenRefreshThreadEnd();
 void screenInit_sys() {
 #ifdef TODO
 	/* start SDL */
-    if (u4_SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
-        errorFatal("unable to init SDL: %s", SDL_GetError());    
-    SDL_EnableUNICODE(1);
-    SDL_SetGamma(settings.gamma / 100.0f, settings.gamma / 100.0f, settings.gamma / 100.0f);
-    atexit(SDL_Quit);
+	if (u4_SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
+		errorFatal("unable to init SDL: %s", SDL_GetError());
+	SDL_EnableUNICODE(1);
+	SDL_SetGamma(settings.gamma / 100.0f, settings.gamma / 100.0f, settings.gamma / 100.0f);
+	atexit(SDL_Quit);
 
-    SDL_WM_SetCaption("Ultima IV", NULL);
+	SDL_WM_SetCaption("Ultima IV", NULL);
 #ifdef ICON_FILE
-    SDL_WM_SetIcon(SDL_LoadBMP(ICON_FILE), NULL);
-#endif   
+	SDL_WM_SetIcon(SDL_LoadBMP(ICON_FILE), NULL);
+#endif
 
-    if (!SDL_SetVideoMode(320 * settings.scale, 200 * settings.scale, 0, SDL_HWSURFACE | SDL_ANYFORMAT | (settings.fullscreen ? SDL_FULLSCREEN : 0)))
-        errorFatal("unable to set video: %s", SDL_GetError());
+	if (!SDL_SetVideoMode(320 * settings.scale, 200 * settings.scale, 0, SDL_HWSURFACE | SDL_ANYFORMAT | (settings.fullscreen ? SDL_FULLSCREEN : 0)))
+		errorFatal("unable to set video: %s", SDL_GetError());
 
-    if (verbose) {
-        char driver[32];
-        printf("screen initialized [screenInit()], using %s video driver\n", SDL_VideoDriverName(driver, sizeof(driver)));
-    }
+	if (verbose) {
+		char driver[32];
+		printf("screen initialized [screenInit()], using %s video driver\n", SDL_VideoDriverName(driver, sizeof(driver)));
+	}
 #else
 	initGraphics(320 * settings._scale, 200 * settings._scale);
 #endif
-    /* enable or disable the mouse cursor */
-    if (settings._mouseOptions.enabled) {
+	/* enable or disable the mouse cursor */
+	if (settings._mouseOptions.enabled) {
 		g_system->showMouse(true);
 #ifdef TODO
 		cursors[0] = SDL_GetCursor();
 #endif
-        cursors[1] = screenInitCursor(w_xpm);
-        cursors[2] = screenInitCursor(n_xpm);
-        cursors[3] = screenInitCursor(e_xpm);
-        cursors[4] = screenInitCursor(s_xpm);
-    } else {
+		cursors[1] = screenInitCursor(w_xpm);
+		cursors[2] = screenInitCursor(n_xpm);
+		cursors[3] = screenInitCursor(e_xpm);
+		cursors[4] = screenInitCursor(s_xpm);
+	} else {
 		g_system->showMouse(false);
-    }
+	}
 
-    filterScaler = scalerGet(settings._filter);
-    if (!filterScaler)
-        errorFatal("%s is not a valid filter", settings._filter.c_str());
+	filterScaler = scalerGet(settings._filter);
+	if (!filterScaler)
+		errorFatal("%s is not a valid filter", settings._filter.c_str());
 
-    screenRefreshThreadInit();
+	screenRefreshThreadInit();
 }
 
 void screenDelete_sys() {
 	screenRefreshThreadEnd();
 	delete cursors[0];
 	delete cursors[1];
-    delete cursors[2];
-    delete cursors[3];
-    delete cursors[4];
+	delete cursors[2];
+	delete cursors[3];
+	delete cursors[4];
 #ifdef TODO
 	u4_SDL_QuitSubSystem(SDL_INIT_VIDEO);
 #endif
@@ -148,8 +148,8 @@ void screenUnlock() {
 void screenRedrawScreen() {
 #ifdef TODO
 	screenLock();
-    SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, 0, 0);
-    screenUnlock();
+	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, 0, 0);
+	screenUnlock();
 #else
 	g_system->updateScreen();
 #endif
@@ -214,12 +214,12 @@ void screenRefreshThreadEnd() {
 /**
  * Scale an image up.  The resulting image will be scale * the
  * original dimensions.  The original image is no longer deleted.
- * n is the number of tiles in the image; each tile is filtered 
- * seperately. filter determines whether or not to filter the 
+ * n is the number of tiles in the image; each tile is filtered
+ * seperately. filter determines whether or not to filter the
  * resulting image.
  */
 Image *screenScale(Image *src, int scale, int n, int filter) {
-    Image *dest = NULL;
+	Image *dest = NULL;
 	bool isTransparent;
 	unsigned int transparentIndex;
 	bool alpha = src->isAlphaOn();
@@ -256,7 +256,7 @@ Image *screenScale(Image *src, int scale, int n, int filter) {
 
 
 
-    return dest;
+	return dest;
 }
 
 /**
@@ -264,41 +264,41 @@ Image *screenScale(Image *src, int scale, int n, int filter) {
  * original dimensions.  The original image is no longer deleted.
  */
 Image *screenScaleDown(Image *src, int scale) {
-    int x, y;
-    Image *dest;
-    bool isTransparent;
-    unsigned int transparentIndex;
-    bool alpha = src->isAlphaOn();
+	int x, y;
+	Image *dest;
+	bool isTransparent;
+	unsigned int transparentIndex;
+	bool alpha = src->isAlphaOn();
 
-    isTransparent = src->getTransparentIndex(transparentIndex);
+	isTransparent = src->getTransparentIndex(transparentIndex);
 
-    src->alphaOff();
+	src->alphaOff();
 
-    dest = Image::create(src->width() / scale, src->height() / scale, src->isIndexed(), Image::HARDWARE);
-    if (!dest)
-        return NULL;
+	dest = Image::create(src->width() / scale, src->height() / scale, src->isIndexed(), Image::HARDWARE);
+	if (!dest)
+		return NULL;
 
 	if (!dest)
 		dest = Image::duplicate(src);
 
-    if (dest->isIndexed())
-        dest->setPaletteFromImage(src);
+	if (dest->isIndexed())
+		dest->setPaletteFromImage(src);
 
-    for (y = 0; y < src->height(); y+=scale) {
-        for (x = 0; x < src->width(); x+=scale) {
-            unsigned int index;
-            src->getPixelIndex(x, y, index);                
-            dest->putPixelIndex(x / scale, y / scale, index);
-        }
-    }    
+	for (y = 0; y < src->height(); y += scale) {
+		for (x = 0; x < src->width(); x += scale) {
+			unsigned int index;
+			src->getPixelIndex(x, y, index);
+			dest->putPixelIndex(x / scale, y / scale, index);
+		}
+	}
 
-    if (isTransparent)
-        dest->setTransparentIndex(transparentIndex);
+	if (isTransparent)
+		dest->setTransparentIndex(transparentIndex);
 
-    if (alpha)
-        src->alphaOn();
+	if (alpha)
+		src->alphaOn();
 
-    return dest;
+	return dest;
 }
 
 /**
@@ -310,35 +310,35 @@ Image *screenScaleDown(Image *src, int scale) {
 Cursor *screenInitCursor(const char *const xpm[]) {
 #ifdef TODO
 	int i, row, col;
-    uint8 data[(CURSORSIZE/8)*CURSORSIZE];
-    uint8 mask[(CURSORSIZE/8)*CURSORSIZE];
-    int hot_x, hot_y;
+	uint8 data[(CURSORSIZE / 8)*CURSORSIZE];
+	uint8 mask[(CURSORSIZE / 8)*CURSORSIZE];
+	int hot_x, hot_y;
 
-    i = -1;
-    for (row=0; row < CURSORSIZE; row++) {
-        for (col=0; col < CURSORSIZE; col++) {
-            if (col % 8) {
-                data[i] <<= 1;
-                mask[i] <<= 1;
-            } else {
-                i++;
-                data[i] = mask[i] = 0;
-            }
-            switch (xpm[4+row][col]) {
-            case 'X':
-                data[i] |= 0x01;
-                mask[i] |= 0x01;
-                break;
-            case '.':
-                mask[i] |= 0x01;
-                break;
-            case ' ':
-                break;
-            }
-        }
-    }
-    sscanf(xpm[4+row], "%d,%d", &hot_x, &hot_y);
-    return SDL_CreateCursor(data, mask, CURSORSIZE, CURSORSIZE, hot_x, hot_y);
+	i = -1;
+	for (row = 0; row < CURSORSIZE; row++) {
+		for (col = 0; col < CURSORSIZE; col++) {
+			if (col % 8) {
+				data[i] <<= 1;
+				mask[i] <<= 1;
+			} else {
+				i++;
+				data[i] = mask[i] = 0;
+			}
+			switch (xpm[4 + row][col]) {
+			case 'X':
+				data[i] |= 0x01;
+				mask[i] |= 0x01;
+				break;
+			case '.':
+				mask[i] |= 0x01;
+				break;
+			case ' ':
+				break;
+			}
+		}
+	}
+	sscanf(xpm[4 + row], "%d,%d", &hot_x, &hot_y);
+	return SDL_CreateCursor(data, mask, CURSORSIZE, CURSORSIZE, hot_x, hot_y);
 #else
 	return nullptr;
 #endif
@@ -348,10 +348,10 @@ void screenSetMouseCursor(MouseCursor cursor) {
 #ifdef TODO
 	static int current = 0;
 
-    if (cursor != current) {
-        SDL_SetCursor(cursors[cursor]);
-        current = cursor;
-    }
+	if (cursor != current) {
+		SDL_SetCursor(cursors[cursor]);
+		current = cursor;
+	}
 #endif
 }
 
