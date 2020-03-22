@@ -70,9 +70,9 @@ bool Ultima4Engine::initialize() {
 
 	// Initialize the sub-systems
 	_config = new Config();
+	_screen = new Screen();
 	_game = new GameController();
 	_imageLoaders = new ImageLoaders();
-	_screen = new Screen();
 	_screen->init();
 
 	return true;

@@ -67,16 +67,15 @@ struct SubImage {
  */
 class Image {
 private:
-	unsigned int _w, _h;
-	bool _indexed;
+	Graphics::ManagedSurface *_surface;
+	DisposeAfterUse::Flag _disposeAfterUse;
+	bool _paletted;
 	RGBA _backgroundColor;
 	Image();                    /* use create method to construct images */
 
 	// disallow assignments, copy contruction
 	Image(const Image &);
 	const Image &operator=(const Image &);
-
-	BackendSurface _surface;
 private:
 	Graphics::ManagedSurface *getSurface(Image *d) const;
 public:
@@ -85,10 +84,12 @@ public:
 		SOFTWARE
 	};
 
-	static Image *create(int w, int h, bool indexed, Type type);
+	static Image *create(int w, int h, bool paletted, Type type);
 	static Image *createScreenImage();
 	static Image *duplicate(Image *image);
 	~Image();
+
+	void create(int w, int h, bool paletted);
 
 	/* palette handling */
 	void setPalette(const RGBA *colors, unsigned n_colors);
@@ -96,7 +97,6 @@ public:
 	bool getTransparentIndex(unsigned int &index) const;
 	void performTransparencyHack(unsigned int colorValue, unsigned int numFrames, unsigned int currentFrameIndex, unsigned int haloWidth, unsigned int haloOpacityIncrementByPixelDistance);
 	void setTransparentIndex(unsigned int index);
-//    void invokeTransparencyHack(ImageInfo * info);
 
 	bool setFontColor(ColorFG fg, ColorBG bg);
 	bool setFontColorFG(ColorFG fg);
@@ -171,13 +171,13 @@ public:
 	void drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const;
 
 	int width() const {
-		return _w;
+		return _surface->w;
 	}
 	int height() const {
-		return _h;
+		return _surface->h;
 	}
 	bool isIndexed() const {
-		return _indexed;
+		return _paletted;
 	}
 	BackendSurface getSurface() {
 		return _surface;

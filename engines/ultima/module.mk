@@ -177,6 +177,7 @@ MODULE_OBJS := \
 	ultima4/game/textview.o \
 	ultima4/game/view.o \
 	ultima4/game/weapon.o \
+	ultima4/gfx/image.o \
 	ultima4/gfx/imageloader.o \
 	ultima4/gfx/imageloader_fmtowns.o \
 	ultima4/gfx/imageloader_png.o \
@@ -184,7 +185,6 @@ MODULE_OBJS := \
 	ultima4/gfx/imageloader_u5.o \
 	ultima4/gfx/imagemgr.o \
 	ultima4/gfx/imageview.o \
-	ultima4/gfx/image_sdl.o \
 	ultima4/gfx/scale.o \
 	ultima4/gfx/screen.o \
 	ultima4/gfx/screen_sdl.o \
