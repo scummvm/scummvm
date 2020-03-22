@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-03-21 09:03+0100\n"
-"PO-Revision-Date: 2020-02-29 00:14+0000\n"
+"PO-Revision-Date: 2020-03-23 05:15+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -285,15 +285,13 @@ msgid "Shader"
 msgstr "Sävytin"
 
 #: gui/editgamedialog.cpp:210
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Ohita globaalit ääniasetukset"
+msgstr "Ohita globaalit sävytinasetukset"
 
 #: gui/editgamedialog.cpp:212
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Ohita globaalit ääniasetukset"
+msgstr "Ohita globaalit sävytinasetukset"
 
 #: gui/editgamedialog.cpp:226 gui/options.cpp:1682 engines/dialogs.cpp:316
 msgid "Keymaps"
@@ -2275,7 +2273,7 @@ msgstr ""
 
 #: audio/mididrv.cpp:448
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "Aloitetaan MIDI-dumppaus"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -2641,14 +2639,12 @@ msgid "Mouse Wheel Down"
 msgstr "Hiirenrulla alas"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "Vasen hiirennappi"
+msgstr "X1 hiirennappi"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "Vasen hiirennappi"
+msgstr "X2 hiirennappi"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
@@ -2757,26 +2753,23 @@ msgstr "Tyhjennä valinnat"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Virtuaalihiiri ylös"
 
 #: backends/keymapper/virtual-mouse.cpp:159
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Tanssiliike alas"
+msgstr "Virtuaalihiiri alas"
 
 #: backends/keymapper/virtual-mouse.cpp:164
-#, fuzzy
 msgid "Virtual mouse left"
-msgstr "Tanssiliike vasemmalle"
+msgstr "Virtuaalihiiri vasemmalle"
 
 #: backends/keymapper/virtual-mouse.cpp:169
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "Tanssiliike oikealle"
+msgstr "Virtuaalihiiri oikealle"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Hidasta virtuaalihiirtä"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
@@ -2976,22 +2969,19 @@ msgid "Use Screen:"
 msgstr "Käytettävä näyttö:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr "Ylempi"
+msgstr "Yläosa"
 
 #: backends/platform/3ds/options-dialog.cpp:59
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Bottom"
-msgstr "Alempi"
+msgstr "Alaosa"
 
 #: backends/platform/3ds/options-dialog.cpp:60
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Both"
-msgstr "Molemmat"
+msgstr "Molempia"
 
 #: backends/platform/3ds/osystem-events.cpp:48
 msgid "A"
@@ -3809,13 +3799,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "Estä McCoy:n nopea staminan kuluminen"
 
 #: engines/bladerunner/detection.cpp:85
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
 msgstr ""
+"McCoy ei juostessaan ala hidastamaan heti kun pelaaja lakkaa klikkaamasta "
+"hiirellä"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4231,14 +4223,12 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Vasen painike hyökkää, oikea painike poimii esineitä"
 
 #: engines/kyra/engine/eobcommon.cpp:348 engines/kyra/engine/lol.cpp:468
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Vasen klikkaus"
+msgstr "Interaktio vasemmalla hiirennapilla"
 
 #: engines/kyra/engine/eobcommon.cpp:354 engines/kyra/engine/lol.cpp:474
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Oikea klikkaus"
+msgstr "Interaktio oikealla hiirennapilla"
 
 #: engines/kyra/engine/eobcommon.cpp:360 engines/kyra/engine/lol.cpp:498
 msgid "Move Forward"
@@ -6056,9 +6046,9 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Tallennuksen #%d pikalataus epäonnistui"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty."
+msgstr "Datatiedostoa \"%s\" ei löydetty."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -6487,10 +6477,9 @@ msgstr ""
 "tähän ScummVM:ään."
 
 #: engines/wintermute/wintermute.cpp:178
-#, fuzzy
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
-"Tämä peli vaatii toimiakseen FoxTail-pelimoottorin, jota ei ole käännetty "
+"Tämä peli vaatii toimiakseen HeroCraft-pelimoottorin, jota ei ole käännetty "
 "tähän ScummVM:ään."
 
 #: engines/wintermute/wintermute.cpp:189
