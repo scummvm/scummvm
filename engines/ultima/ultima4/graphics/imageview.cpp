@@ -25,7 +25,7 @@
 #include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/graphics/imagemgr.h"
 #include "ultima/ultima4/graphics/imageview.h"
-#include "ultima/ultima4/settings.h"
+#include "ultima/ultima4/game/settings.h"
 
 namespace Ultima {
 namespace Ultima4 {

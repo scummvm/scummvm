@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_TILEVIEW_H
 #define ULTIMA4_TILEVIEW_H
 
-#include "ultima/ultima4/view.h"
+#include "ultima/ultima4/game/view.h"
 
 namespace Ultima {
 namespace Ultima4 {

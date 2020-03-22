@@ -151,6 +151,35 @@ MODULE_OBJS := \
 	ultima4/filesys/rle.o \
 	ultima4/filesys/savegame.o \
 	ultima4/filesys/u4file.o \
+	ultima4/game/armor.o \
+	ultima4/game/aura.o \
+	ultima4/game/cheat.o \
+	ultima4/game/codex.o \
+	ultima4/game/context.o \
+	ultima4/game/creature.o \
+	ultima4/game/death.o \
+	ultima4/game/game.o \
+	ultima4/game/intro.o \
+	ultima4/game/item.o \
+	ultima4/game/menu.o \
+	ultima4/game/menuitem.o \
+	ultima4/game/moongate.o \
+	ultima4/game/names.o \
+	ultima4/game/object.o \
+	ultima4/game/person.o \
+	ultima4/game/player.o \
+	ultima4/game/portal.o \
+	ultima4/game/progress_bar.o \
+	ultima4/game/scale.o \
+	ultima4/game/screen.o \
+	ultima4/game/screen_sdl.o \
+	ultima4/game/script.o \
+	ultima4/game/settings.o \
+	ultima4/game/spell.o \
+	ultima4/game/stats.o \
+	ultima4/game/textview.o \
+	ultima4/game/view.o \
+	ultima4/game/weapon.o \
 	ultima4/graphics/imageloader.o \
 	ultima4/graphics/imageloader_fmtowns.o \
 	ultima4/graphics/imageloader_png.o \
@@ -181,36 +210,7 @@ MODULE_OBJS := \
 	ultima4/sound/music_sdl.o \
 	ultima4/sound/sound.o \
 	ultima4/sound/sound_sdl.o \
-	ultima4/armor.o \
-	ultima4/aura.o \
-	ultima4/cheat.o \
-	ultima4/codex.o \
-	ultima4/context.o \
-	ultima4/creature.o \
-	ultima4/death.o \
-	ultima4/game.o \
-	ultima4/intro.o \
-	ultima4/item.o \
-	ultima4/menu.o \
-	ultima4/menuitem.o \
-	ultima4/moongate.o \
-	ultima4/names.o \
-	ultima4/object.o \
-	ultima4/person.o \
-	ultima4/player.o \
-	ultima4/portal.o \
-	ultima4/progress_bar.o \
-	ultima4/scale.o \
-	ultima4/screen.o \
-	ultima4/screen_sdl.o \
-	ultima4/script.o \
-	ultima4/settings.o \
-	ultima4/spell.o \
-	ultima4/stats.o \
-	ultima4/textview.o \
 	ultima4/ultima4.o \
-	ultima4/view.o \
-	ultima4/weapon.o \
 	nuvie/meta_engine.o \
 	nuvie/nuvie.o \
 	nuvie/actors/actor.o \

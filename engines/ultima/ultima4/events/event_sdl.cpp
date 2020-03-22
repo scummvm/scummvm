@@ -22,11 +22,11 @@
 
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/context.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
-#include "ultima/ultima4/screen.h"
-#include "ultima/ultima4/settings.h"
+#include "ultima/ultima4/game/screen.h"
+#include "ultima/ultima4/game/settings.h"
 #include "common/debug.h"
 #include "common/system.h"
 
