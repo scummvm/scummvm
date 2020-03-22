@@ -84,51 +84,10 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 }
 
 enum {
-	kZipCmd = 'ZIPM',
-	kTransCmd = 'TRAN',
-	kWaterCmd = 'WATR',
 	kDropCmd = 'DROP',
-	kMapCmd = 'SMAP',
-	kMenuCmd = 'MENU',
-	kSaveCmd = 'SAVE',
-	kLoadCmd = 'LOAD',
-	kQuitCmd = 'QUIT'
+	kMapCmd  = 'SMAP',
+	kMenuCmd = 'MENU'
 };
-
-#if defined(ENABLE_MYST) || defined(ENABLE_RIVEN)
-
-MohawkOptionsDialog::MohawkOptionsDialog() :
-		GUI::Dialog(0, 0, 360, 200) {
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), nullptr, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), nullptr, GUI::kCloseCmd);
-}
-
-MohawkOptionsDialog::~MohawkOptionsDialog() {
-}
-
-void MohawkOptionsDialog::reflowLayout() {
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	// Center the dialog
-	_x = (screenW - getWidth()) / 2;
-	_y = (screenH - getHeight()) / 2;
-
-	GUI::Dialog::reflowLayout();
-}
-
-
-void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
-		case GUI::kCloseCmd:
-			close();
-			break;
-		default:
-			GUI::Dialog::handleCommand(sender, cmd, data);
-	}
-}
-
-#endif
 
 #ifdef ENABLE_MYST
 
@@ -296,54 +255,54 @@ void MystMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 
 #ifdef ENABLE_RIVEN
 
-RivenOptionsDialog::RivenOptionsDialog() : MohawkOptionsDialog() {
-	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
-	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 35, 220, 15, _("~W~ater Effect Enabled"), nullptr, kWaterCmd);
+RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		OptionsContainerWidget(boss, name, "RivenOptionsDialog", false, domain) {
 
-	_transitionModeCaption = new GUI::StaticTextWidget(this, 15, 60, 90, 20, _("Transitions:"), Graphics::kTextAlignRight);
-	_transitionModePopUp = new GUI::PopUpWidget(this, 115, 60, 120, 20);
+	_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.ZipMode", _("~Z~ip Mode Activated"));
+	_waterEffectCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.WaterEffect", _("~W~ater Effect Enabled"));
+
+	GUI::StaticTextWidget *transitionModeCaption = new GUI::StaticTextWidget(widgetsBoss(), "RivenOptionsDialog.TransistionsDesc", _("Transitions:"));
+	transitionModeCaption->setAlign(Graphics::kTextAlignRight);
+
+	_transitionModePopUp = new GUI::PopUpWidget(widgetsBoss(), "RivenOptionsDialog.Transistions");
 	_transitionModePopUp->appendEntry(_("Disabled"), kRivenTransitionModeDisabled);
 	_transitionModePopUp->appendEntry(_("Fastest"), kRivenTransitionModeFastest);
 	_transitionModePopUp->appendEntry(_("Normal"), kRivenTransitionModeNormal);
 	_transitionModePopUp->appendEntry(_("Best"), kRivenTransitionModeBest);
 }
 
-RivenOptionsDialog::~RivenOptionsDialog() {
+RivenOptionsWidget::~RivenOptionsWidget() {
 }
 
-bool RivenOptionsDialog::getZipMode() const {
-	return _zipModeCheckbox->getState();
+void RivenOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
+	            .addPadding(16, 16, 16, 16)
+	            .addWidget("ZipMode", "Checkbox")
+	            .addWidget("WaterEffect", "Checkbox")
+	            .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	                .addPadding(0, 0, 0, 0)
+	                .addWidget("TransistionsDesc", "OptionsLabel")
+	                .addWidget("Transistions", "PopUp")
+	            .closeLayout()
+	        .closeLayout()
+	    .closeDialog();
 }
 
-void RivenOptionsDialog::setZipMode(bool enabled) {
-	_zipModeCheckbox->setState(enabled);
+void RivenOptionsWidget::load() {
+	_zipModeCheckbox->setState(ConfMan.getBool("zip_mode", _domain));
+	_waterEffectCheckbox->setState(ConfMan.getBool("water_effects", _domain));
+
+	uint32 transitions = ConfMan.getInt("transition_mode", _domain);
+	_transitionModePopUp->setSelectedTag(RivenGraphics::sanitizeTransitionMode(transitions));
 }
 
-bool RivenOptionsDialog::getWaterEffect() const {
-	return _waterEffectCheckbox->getState();
-}
+bool RivenOptionsWidget::save() {
+	ConfMan.setBool("zip_mode", _zipModeCheckbox->getState(), _domain);
+	ConfMan.setBool("water_effects", _waterEffectCheckbox->getState(), _domain);
+	ConfMan.setInt("transition_mode", _transitionModePopUp->getSelectedTag(), _domain);
 
-void RivenOptionsDialog::setWaterEffect(bool enabled) {
-	_waterEffectCheckbox->setState(enabled);
-}
-
-uint32 RivenOptionsDialog::getTransitions() const {
-	return _transitionModePopUp->getSelectedTag();
-}
-
-void RivenOptionsDialog::setTransitions(uint32 mode) {
-	_transitionModePopUp->setSelectedTag(mode);
-}
-
-void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
-	case GUI::kOKCmd:
-		setResult(1);
-		close();
-		break;
-	default:
-		MohawkOptionsDialog::handleCommand(sender, cmd, data);
-	}
+	return true;
 }
 
 #endif

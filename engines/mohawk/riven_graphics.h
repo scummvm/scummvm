@@ -103,6 +103,7 @@ public:
 	void runScheduledTransition();
 	void fadeToBlack();
 	void setTransitionMode(RivenTransitionMode mode);
+	static RivenTransitionMode sanitizeTransitionMode(int mode);
 
 	// Main menu
 	void drawText(const Common::U32String &text, const Common::Rect &dest, uint8 greyLevel);

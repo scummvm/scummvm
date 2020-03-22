@@ -30,6 +30,7 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
+#include "engines/dialogs.h"
 #include "graphics/scaler.h"
 #include "gui/saveload.h"
 #include "gui/message.h"
@@ -72,7 +73,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_rnd = nullptr;
 	_scriptMan = nullptr;
 	_saveLoad = nullptr;
-	_optionsDialog = nullptr;
 	_card = nullptr;
 	_inventory = nullptr;
 	_lastSaveTime = 0;
@@ -106,7 +106,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _extrasFile;
 	delete _saveLoad;
 	delete _scriptMan;
-	delete _optionsDialog;
 	delete _inventory;
 	delete _rnd;
 
@@ -120,10 +119,6 @@ Common::Error MohawkEngine_Riven::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
-	ConfMan.registerDefault("zip_mode", false);
-	ConfMan.registerDefault("water_effects", true);
-	ConfMan.registerDefault("transition_mode", kRivenTransitionModeFastest);
-
 	// Let's try to open the installer file (it holds extras.mhk)
 	// Though, we set a low priority to prefer the extracted version
 	if (_installerArchive.open("arcriven.z"))
@@ -134,7 +129,6 @@ Common::Error MohawkEngine_Riven::run() {
 	_sound = new RivenSoundManager(this);
 	setDebugger(new RivenConsole(this));
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
-	_optionsDialog = new RivenOptionsDialog();
 	_scriptMan = new RivenScriptManager(this);
 	_inventory = new RivenInventory(this);
 
@@ -149,6 +143,7 @@ Common::Error MohawkEngine_Riven::run() {
 		_cursor = new MacCursorManager("Riven");
 
 	initVars();
+	applyGameSettings();
 
 	// Check the user has copied all the required datafiles
 	if (!checkDatafiles()) {
@@ -174,9 +169,6 @@ Common::Error MohawkEngine_Riven::run() {
 		warning("%s", message.c_str());
 		return Common::kNoGameDataFoundError;
 	}
-
-	// Set the transition speed
-	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
@@ -282,6 +274,8 @@ void MohawkEngine_Riven::processInput() {
 					} else {
 						resumeFromMainMenu();
 					}
+				} else if (!_scriptMan->hasQueuedScripts()) {
+					openMainMenuDialog();
 				}
 				break;
 			case kRivenActionPlayIntroVideos:
@@ -369,17 +363,6 @@ void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
 			_stack->onMouseMove(_eventMan->getMousePos());
 		}
 	}
-}
-
-uint32 MohawkEngine_Riven::sanitizeTransitionMode(uint32 mode) {
-	if (mode != kRivenTransitionModeDisabled
-	    && mode != kRivenTransitionModeFastest
-	    && mode != kRivenTransitionModeNormal
-	    && mode != kRivenTransitionModeBest) {
-		return kRivenTransitionModeFastest;
-	}
-
-	return mode;
 }
 
 // Stack/Card-Related Functions
@@ -658,10 +641,9 @@ void MohawkEngine_Riven::startNewGame() {
 
 	_vars.clear();
 	initVars();
+	applyGameSettings();
 
 	_zipModeData.clear();
-
-	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 
 	setTotalPlayTime(0);
 }
@@ -800,54 +782,56 @@ void MohawkEngine_Riven::setGameEnded() {
 }
 
 void MohawkEngine_Riven::runOptionsDialog() {
-	if (isGameStarted()) {
-		_optionsDialog->setZipMode(_vars["azip"] != 0);
-		_optionsDialog->setWaterEffect(_vars["waterenabled"] != 0);
-		_optionsDialog->setTransitions(_vars["transitionmode"]);
-	} else {
-		_optionsDialog->setZipMode(ConfMan.getBool("zip_mode"));
-		_optionsDialog->setWaterEffect(ConfMan.getBool("water_effects"));
-
-		uint32 transitions = ConfMan.getInt("transition_mode");
-		_optionsDialog->setTransitions(sanitizeTransitionMode(transitions));
+	GUI::ConfigDialog dlg;
+	if (runDialog(dlg)) {
+		syncSoundSettings();
+		applyGameSettings();
 	}
+}
 
-	if (runDialog(*_optionsDialog) > 0) {
-		if (isGameStarted()) {
-			_vars["azip"] = _optionsDialog->getZipMode() ? 1 : 0;
-			_vars["waterenabled"] = _optionsDialog->getWaterEffect() ? 1 : 0;
-			_vars["transitionmode"] = _optionsDialog->getTransitions();
-		} else {
-			ConfMan.setBool("zip_mode", _optionsDialog->getZipMode());
-			ConfMan.setBool("water_effects", _optionsDialog->getWaterEffect());
-			ConfMan.setInt("transition_mode", _optionsDialog->getTransitions());
-			ConfMan.flushToDisk();
-		}
+void MohawkEngine_Riven::applyGameSettings() {
+	int transitions = ConfMan.getInt("transition_mode");
+	RivenTransitionMode transitionsMode = RivenGraphics::sanitizeTransitionMode(transitions);
+
+	_vars["transitionmode"] = transitionsMode;
+	_vars["azip"]           = ConfMan.getBool("zip_mode");
+	_vars["waterenabled"]   = ConfMan.getBool("water_effects");
+
+	_gfx->setTransitionMode(transitionsMode);
+
+	if (_card) {
+		_card->initializeZipMode();
 	}
+}
 
-	if (hasGameEnded()) {
-		// Attempt to autosave before exiting
-		saveAutosaveIfEnabled();
-	}
-
-	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
-	_card->initializeZipMode();
+void MohawkEngine_Riven::registerDefaultSettings() {
+	ConfMan.registerDefault("zip_mode", false);
+	ConfMan.registerDefault("water_effects", true);
+	ConfMan.registerDefault("transition_mode", kRivenTransitionModeFastest);
 }
 
 Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	using namespace Common;
 
+	String guiOptions = ConfMan.get("guioptions", target);
+	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
+	bool isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
+
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven", "Riven");
 
 	Action *act;
 
-	if (checkGameGUIOption(GAMEOPTION_25TH, ConfMan.get("guioptions", target))) {
-		act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));
-		act->setCustomEngineActionEvent(kRivenActionOpenMainMenu);
+	act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));
+	act->setCustomEngineActionEvent(kRivenActionOpenMainMenu);
+	act->addDefaultInputMapping("JOY_X");
+	if (is25th) {
 		act->addDefaultInputMapping("ESCAPE");
-		act->addDefaultInputMapping("JOY_X");
-		engineKeyMap->addAction(act);
+	} else if (isDemo) {
+		act->addDefaultInputMapping("C+r");
+	} else {
+		act->addDefaultInputMapping("F5");
 	}
+	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setCustomEngineActionEvent(kRivenActionSkip);
@@ -873,7 +857,9 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 
 	act = new Action(kStandardActionOpenSettings, _("Show options menu"));
 	act->setCustomEngineActionEvent(kRivenActionOpenOptionsDialog);
-	act->addDefaultInputMapping("F5");
+	if (is25th) {
+		act->addDefaultInputMapping("F5");
+	}
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionPause, _("Pause"));
@@ -923,12 +909,7 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("PAGEDOWN");
 	engineKeyMap->addAction(act);
 
-	if (checkGameGUIOption(GAMEOPTION_DEMO, ConfMan.get("guioptions", target))) {
-		act = new Action(kStandardActionOpenMainMenu, _("Return to main menu"));
-		act->setCustomEngineActionEvent(kRivenActionOpenMainMenu);
-		act->addDefaultInputMapping("C+r");
-		engineKeyMap->addAction(act);
-
+	if (isDemo) {
 		act = new Action("INTV", _("Play intro videos"));
 		act->setCustomEngineActionEvent(kRivenActionPlayIntroVideos);
 		act->addDefaultInputMapping("C+p");
