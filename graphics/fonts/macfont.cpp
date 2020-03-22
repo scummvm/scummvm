@@ -233,6 +233,7 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 	_data._leading = 0;
 	_data._rowWords = 0;
 	_data._bitImage = nullptr;
+	_data._surfHeight = 0;
 
 	_data._family = nullptr;
 	_data._size = 12;
@@ -266,6 +267,8 @@ bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *fa
 	_data._leading     = stream.readUint16BE();	// leading measurement
 	_data._rowWords    = stream.readUint16BE() * 2; // row width of bit image in 16-bit wds
 
+	_data._surfHeight = _data._fRectHeight;
+
 	if (getDepth(_data._fontType) != 1) {
 		warning("MacFONTFont: %dbpp fonts are not supported", getDepth(_data._fontType));
 
@@ -286,7 +289,7 @@ bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *fa
 	_data._glyphs.resize(glyphCount);
 
 	// Bit image table
-	uint bitImageSize = _data._rowWords * _data._fRectHeight;
+	uint bitImageSize = _data._rowWords * _data._surfHeight;
 	_data._bitImage = new byte[bitImageSize];
 	stream.read(_data._bitImage, bitImageSize);
 
@@ -420,7 +423,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 	int dstGraySize = newSize * 2 * newSize;
 	int *dstGray = (int *)malloc(dstGraySize * sizeof(int));
 
-	tmpSurf.create(MAX(src->getFontSize() * 2, newSize * 2), MAX(src->getFontSize() * 2, newSize * 2),
+	tmpSurf.create(MAX(src->getFontSize() * 2, newSize * 2), MAX(src->getFontSize() * 2 + 2, newSize * 2 + 2),
 				PixelFormat::createFormatCLUT8());
 
 	float scale = (float)newSize / (float)src->getFontSize();
@@ -433,8 +436,9 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 	data._maxWidth = (int)((float)src->_data._maxWidth * scale);
 	data._kernMax = (int)((float)src->_data._kernMax * scale);
 	data._nDescent = (int)((float)src->_data._nDescent * scale);
-	data._fRectWidth = (int)((float)src->_data._fRectWidth * scale);
+	data._fRectWidth = (int)((float)src->_data._fRectWidth * scale + data._lastChar * 2);
 	data._fRectHeight = (int)((float)src->_data._fRectHeight * scale);
+	data._surfHeight = data._fRectHeight + 2;	// Outline
 	data._owTLoc = src->_data._owTLoc;
 	data._ascent = (int)((float)src->_data._ascent * scale);
 	data._descent = (int)((float)src->_data._descent * scale);
@@ -536,6 +540,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 
 		if (outline) {
 			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
+			srcSurf.copyFrom(tmpSurf);
 		}
 
 		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
@@ -676,13 +681,16 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 
 static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
 	glyph->width++;
+	glyph->height++;
 
-	for (uint16 y = 0; y < height; y++) {
+	for (uint16 y = 0; y < height + 1; y++) {
 		byte *srcPtr = (byte *)src->getBasePtr(0, y);
+		byte *srcPtr2 = (byte *)src->getBasePtr(0, (y == height ? 0 : y + 1));
 		byte *dstPtr = (byte *)dst->getBasePtr(0, y);
 
-		for (uint16 x = 0; x < glyph->width - 1; x++, srcPtr++, dstPtr++)
-			*dstPtr = *srcPtr ^ srcPtr[1];
+		for (uint16 x = 0; x < glyph->width - 1; x++, srcPtr++, srcPtr2++, dstPtr++) {
+			*dstPtr = (*srcPtr ^ srcPtr[1]) | (*srcPtr ^ (y == height ? 0 : *srcPtr2));
+		}
 	}
 }
 

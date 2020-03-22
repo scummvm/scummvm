@@ -128,6 +128,7 @@ struct MacFONTdata {
 	uint16 _descent;
 	uint16 _leading;
 	uint16 _rowWords;
+	uint16 _surfHeight;
 
 	byte *_bitImage;
 
