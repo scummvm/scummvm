@@ -30,7 +30,7 @@
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game.h"   // Included for ReadPlayerController
 #include "ultima/ultima4/io.h"
-#include "ultima/ultima4/location.h"
+#include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/player.h"

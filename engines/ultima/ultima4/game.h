@@ -25,7 +25,7 @@
 
 #include "ultima/ultima4/events/controller.h"
 #include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/observer.h"
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/graphics/tileview.h"

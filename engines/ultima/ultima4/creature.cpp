@@ -27,8 +27,8 @@
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/error.h"
 #include "ultima/ultima4/game.h"       /* required by specialAction and specialEffect functions */
-#include "ultima/ultima4/location.h"
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/player.h"     /* required by specialAction and specialEffect functions */
 #include "ultima/ultima4/savegame.h"
 #include "ultima/ultima4/screen.h"     /* FIXME: remove dependence on this */

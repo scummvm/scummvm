@@ -24,7 +24,7 @@
 #define ULTIMA4_COMBAT_H
 
 #include "ultima/ultima4/direction.h"
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/events/controller.h"
 #include "ultima/ultima4/creature.h"
 #include "ultima/ultima4/game.h"

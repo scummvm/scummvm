@@ -27,7 +27,7 @@
 #include "ultima/ultima4/error.h"
 #include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/graphics/imagemgr.h"
-#include "ultima/ultima4/location.h"
+#include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/graphics/tileanim.h"
 #include "ultima/ultima4/graphics/tilemap.h"

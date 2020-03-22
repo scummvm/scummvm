@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_SHRINE_H
 #define ULTIMA4_SHRINE_H
 
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/savegame.h"
 
 namespace Ultima {

@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_AREA_H
 #define ULTIMA4_AREA_H
 
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 
 namespace Ultima {
 namespace Ultima4 {

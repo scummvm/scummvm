@@ -21,12 +21,12 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/annotation.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/direction.h"
-#include "ultima/ultima4/location.h"
+#include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/movement.h"
 #include "ultima/ultima4/object.h"
 #include "ultima/ultima4/person.h"

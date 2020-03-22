@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_CONTEXT_H
 #define ULTIMA4_CONTEXT_H
 
-#include "ultima/ultima4/location.h"
+#include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/aura.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/person.h"

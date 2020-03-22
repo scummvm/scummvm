@@ -155,6 +155,10 @@ MODULE_OBJS := \
 	ultima4/graphics/tilemap.o \
 	ultima4/graphics/tileset.o \
 	ultima4/graphics/tileview.o \
+	ultima4/map/location.o \
+	ultima4/map/map.o \
+	ultima4/map/maploader.o \
+	ultima4/map/mapmgr.o \
 	ultima4/sound/music.o \
 	ultima4/sound/music_sdl.o \
 	ultima4/sound/sound.o \
@@ -181,10 +185,6 @@ MODULE_OBJS := \
 	ultima4/intro.o \
 	ultima4/io.o \
 	ultima4/item.o \
-	ultima4/location.o \
-	ultima4/map.o \
-	ultima4/maploader.o \
-	ultima4/mapmgr.o \
 	ultima4/menu.o \
 	ultima4/menuitem.o \
 	ultima4/moongate.o \

@@ -24,7 +24,7 @@
 #define ULTIMA4_PORTAL_H
 
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 
 namespace Ultima {
 namespace Ultima4 {

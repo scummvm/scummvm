@@ -28,7 +28,7 @@
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/error.h"
 #include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/location.h"
+#include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/u4file.h"
