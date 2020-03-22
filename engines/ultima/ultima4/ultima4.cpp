@@ -30,13 +30,13 @@
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/progress_bar.h"
-#include "ultima/ultima4/game/screen.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/graphics/imageloader.h"
-#include "ultima/ultima4/graphics/imagemgr.h"
-#include "ultima/ultima4/graphics/tileset.h"
+#include "ultima/ultima4/gfx/imageloader.h"
+#include "ultima/ultima4/gfx/imagemgr.h"
+#include "ultima/ultima4/map/tileset.h"
 #include "common/debug.h"
 
 namespace Ultima {

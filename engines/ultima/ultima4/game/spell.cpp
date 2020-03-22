@@ -36,10 +36,10 @@
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/game/screen.h"
-#include "ultima/ultima4/game/settings.h"
-#include "ultima/ultima4/graphics/tile.h"
-#include "ultima/ultima4/graphics/tileset.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/map/tile.h"
+#include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {

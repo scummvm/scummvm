@@ -29,7 +29,7 @@
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/object.h"
-#include "ultima/ultima4/game/observer.h"
+#include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/core/types.h"

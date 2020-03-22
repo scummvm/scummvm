@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_IMAGEMGR_H
 #define ULTIMA4_IMAGEMGR_H
 
-#include "ultima/ultima4/graphics/image.h"
-#include "ultima/ultima4/game/observer.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/core/observer.h"
 
 namespace Ultima {
 namespace Ultima4 {

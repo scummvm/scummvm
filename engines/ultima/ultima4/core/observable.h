@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_OBSERVABLE_H
 #define ULTIMA4_OBSERVABLE_H
 
-#include "ultima/ultima4/game/observer.h"
+#include "ultima/ultima4/core/observer.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {

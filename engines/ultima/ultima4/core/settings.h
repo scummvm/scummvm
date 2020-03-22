@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_SETTINGS_H
 #define ULTIMA4_SETTINGS_H
 
-#include "ultima/ultima4/game/observable.h"
+#include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/types.h"
 #include "common/hash-str.h"
 

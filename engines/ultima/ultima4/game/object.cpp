@@ -22,7 +22,7 @@
 
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/game/screen.h"
+#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/game/game.h"
 #include "common/algorithm.h"
 

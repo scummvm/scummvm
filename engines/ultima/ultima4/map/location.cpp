@@ -30,8 +30,8 @@
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/game/settings.h"
-#include "ultima/ultima4/graphics/tileset.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/map/tileset.h"
 
 namespace Ultima {
 namespace Ultima4 {

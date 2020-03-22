@@ -24,7 +24,7 @@
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/game/menu.h"
 #include "ultima/ultima4/game/menuitem.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/core/settings.h"
 
 namespace Ultima {
 namespace Ultima4 {

@@ -37,12 +37,12 @@
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/graphics/tilemap.h"
-#include "ultima/ultima4/graphics/tileset.h"
+#include "ultima/ultima4/map/tilemap.h"
+#include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/graphics/image.h"
-#include "ultima/ultima4/graphics/imagemgr.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/imagemgr.h"
 #include "common/system.h"
 
 namespace Ultima {

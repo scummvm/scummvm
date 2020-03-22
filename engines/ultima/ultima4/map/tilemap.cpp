@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima4/graphics/tilemap.h"
-#include "ultima/ultima4/graphics/tile.h"
+#include "ultima/ultima4/map/tilemap.h"
+#include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
-#include "ultima/ultima4/graphics/tileset.h"
+#include "ultima/ultima4/map/tileset.h"
 
 namespace Ultima {
 namespace Ultima4 {

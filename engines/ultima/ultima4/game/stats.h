@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_STATS_H
 #define ULTIMA4_STATS_H
 
-#include "ultima/ultima4/game/observable.h"
-#include "ultima/ultima4/game/observer.h"
+#include "ultima/ultima4/core/observable.h"
+#include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/game/menu.h"
 #include "ultima/ultima4/game/textview.h"
 

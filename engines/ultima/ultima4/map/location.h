@@ -25,7 +25,7 @@
 
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/movement.h"
-#include "ultima/ultima4/game/observable.h"
+#include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/types.h"
 
 namespace Ultima {

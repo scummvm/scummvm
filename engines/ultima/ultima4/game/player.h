@@ -25,10 +25,10 @@
 
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/game/observable.h"
+#include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/script.h"
-#include "ultima/ultima4/graphics/tile.h"
+#include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/core/types.h"
 
 namespace Ultima {

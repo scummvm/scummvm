@@ -26,7 +26,7 @@
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/core/settings.h"
 #include "common/debug.h"
 
 namespace Ultima {

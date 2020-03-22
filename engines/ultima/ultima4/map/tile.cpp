@@ -20,18 +20,18 @@
  *
  */
 
-#include "ultima/ultima4/graphics/tile.h"
+#include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/core/error.h"
-#include "ultima/ultima4/graphics/image.h"
-#include "ultima/ultima4/graphics/imagemgr.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/game/settings.h"
-#include "ultima/ultima4/graphics/tileanim.h"
-#include "ultima/ultima4/graphics/tilemap.h"
-#include "ultima/ultima4/graphics/tileset.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/map/tileanim.h"
+#include "ultima/ultima4/map/tilemap.h"
+#include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {

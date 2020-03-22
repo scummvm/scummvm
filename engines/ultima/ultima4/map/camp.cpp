@@ -38,10 +38,10 @@
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/game/screen.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/game/stats.h"
-#include "ultima/ultima4/graphics/tileset.h"
+#include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
