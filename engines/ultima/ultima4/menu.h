@@ -37,28 +37,34 @@ class TextView;
 
 class MenuEvent {
 public:
-    enum Type {
-        ACTIVATE,
-        INCREMENT,
-        DECREMENT,
-        SELECT,
-        RESET
-    };
+	enum Type {
+		ACTIVATE,
+		INCREMENT,
+		DECREMENT,
+		SELECT,
+		RESET
+	};
 
-    MenuEvent(const Menu *menu, Type type, const MenuItem *item = NULL) {
-        this->_menu = menu;
-        this->_type = type;
-        this->_item = item;
-    }
+	MenuEvent(const Menu *menu, Type type, const MenuItem *item = NULL) {
+		this->_menu = menu;
+		this->_type = type;
+		this->_item = item;
+	}
 
-    const Menu *getMenu() { return _menu; }
-    Type getType() { return _type; }
-    const MenuItem *getMenuItem() { return _item; }
+	const Menu *getMenu() {
+		return _menu;
+	}
+	Type getType() {
+		return _type;
+	}
+	const MenuItem *getMenuItem() {
+		return _item;
+	}
 
 private:
-    const Menu *_menu;
-    Type _type;
-    const MenuItem *_item;
+	const Menu *_menu;
+	Type _type;
+	const MenuItem *_item;
 };
 
 /**
@@ -66,45 +72,45 @@ private:
  */
 class Menu : public Observable<Menu *, MenuEvent &> {
 public:
-    typedef Common::List<MenuItem *> MenuItemList;
+	typedef Common::List<MenuItem *> MenuItemList;
 
 public:
-    Menu();
-    ~Menu();
+	Menu();
+	~Menu();
 
-    void                    removeAll();
+	void                    removeAll();
 
-    void                    add(int id, Common::String text, short x, short y, int shortcutKey = -1);
-    MenuItem *              add(int id, MenuItem *item);
-    void                    addShortcutKey(int id, int shortcutKey);
-    void                    setClosesMenu(int id);
-    MenuItemList::iterator  getCurrent();
-    void                    setCurrent(MenuItemList::iterator i);
-    void                    setCurrent(int id);
-    void                    show(TextView *view);
-    bool                    isVisible();
-    void                    next();
-    void                    prev();
-    void                    highlight(MenuItem *item);
-    MenuItemList::iterator  begin();
-    MenuItemList::iterator  end();
-    MenuItemList::iterator  begin_visible();
-    void                    reset(bool highlightFirst = true);
-    MenuItemList::iterator  getById(int id);
-    MenuItem*               getItemById(int id);
-    void                    activateItem(int id, MenuEvent::Type action);
-    bool                    activateItemByShortcut(int key, MenuEvent::Type action);
-    bool                    getClosed() const;
-    void                    setClosed(bool closed);
-    void                    setTitle(const Common::String &text, int x, int y);
+	void                    add(int id, Common::String text, short x, short y, int shortcutKey = -1);
+	MenuItem               *add(int id, MenuItem *item);
+	void                    addShortcutKey(int id, int shortcutKey);
+	void                    setClosesMenu(int id);
+	MenuItemList::iterator  getCurrent();
+	void                    setCurrent(MenuItemList::iterator i);
+	void                    setCurrent(int id);
+	void                    show(TextView *view);
+	bool                    isVisible();
+	void                    next();
+	void                    prev();
+	void                    highlight(MenuItem *item);
+	MenuItemList::iterator  begin();
+	MenuItemList::iterator  end();
+	MenuItemList::iterator  begin_visible();
+	void                    reset(bool highlightFirst = true);
+	MenuItemList::iterator  getById(int id);
+	MenuItem               *getItemById(int id);
+	void                    activateItem(int id, MenuEvent::Type action);
+	bool                    activateItemByShortcut(int key, MenuEvent::Type action);
+	bool                    getClosed() const;
+	void                    setClosed(bool closed);
+	void                    setTitle(const Common::String &text, int x, int y);
 
-private:    
-    MenuItemList _items;
-    MenuItemList::iterator _current;
-    MenuItemList::iterator _selected;
-    bool _closed;
-    Common::String _title;
-    int _titleX, _titleY;
+private:
+	MenuItemList _items;
+	MenuItemList::iterator _current;
+	MenuItemList::iterator _selected;
+	bool _closed;
+	Common::String _title;
+	int _titleX, _titleY;
 };
 
 /**
@@ -113,12 +119,12 @@ private:
  */
 class MenuController : public WaitableController<void *> {
 public:
-    MenuController(Menu *menu, TextView *view);
-    bool keyPressed(int key);
+	MenuController(Menu *menu, TextView *view);
+	bool keyPressed(int key);
 
 protected:
-    Menu *_menu;
-    TextView *_view;
+	Menu *_menu;
+	TextView *_view;
 };
 
 } // End of namespace Ultima4

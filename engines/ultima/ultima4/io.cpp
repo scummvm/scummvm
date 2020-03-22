@@ -27,23 +27,23 @@ namespace Ultima4 {
 
 int writeInt(unsigned int i, Common::WriteStream *f) {
 	f->writeUint32LE(i);
-    return 1;
+	return 1;
 }
 
 int writeShort(unsigned short s, Common::WriteStream *f) {
 	f->writeUint16LE(s);
-    return 1;
+	return 1;
 }
 
 int writeChar(unsigned char c, Common::WriteStream *f) {
 	f->writeByte(c);
 	return 1;
-    return 1;
+	return 1;
 }
 
 int readInt(unsigned int *i, Common::ReadStream *f) {
 	*i = f->readUint32LE();
-    return 1;
+	return 1;
 }
 
 int readShort(unsigned short *s, Common::ReadStream *f) {

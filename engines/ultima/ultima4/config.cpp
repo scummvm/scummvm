@@ -51,9 +51,9 @@ ConfigElement Config::getElement(const Common::String &name) const {
 }
 
 Std::vector<Common::String> Config::getGames() {
-    Std::vector<Common::String> result;
-    result.push_back("Ultima IV");
-    return result;
+	Std::vector<Common::String> result;
+	result.push_back("Ultima IV");
+	return result;
 }
 
 void Config::setGame(const Common::String &name) {
@@ -63,7 +63,7 @@ void Config::setGame(const Common::String &name) {
 /*-------------------------------------------------------------------*/
 
 ConfigElement::ConfigElement(const Shared::XMLNode *xmlNode) :
-		_node(xmlNode), _name(xmlNode->id().c_str()) {
+	_node(xmlNode), _name(xmlNode->id().c_str()) {
 }
 
 ConfigElement::ConfigElement(const ConfigElement &e) : _node(e._node), _name(e._name) {
@@ -76,11 +76,11 @@ ConfigElement::~ConfigElement() {
 }
 
 ConfigElement &ConfigElement::operator=(const ConfigElement &e) {
-    if (&e != this) {
-        _node = e._node;
-        _name = e._name;
-    }
-    return *this;
+	if (&e != this) {
+		_node = e._node;
+		_name = e._name;
+	}
+	return *this;
 }
 
 /**
@@ -112,10 +112,10 @@ int ConfigElement::getEnum(const Common::String &name, const char *enumValues[])
 	if (str.empty())
 		return 0;
 
-    for (int i = 0; enumValues[i]; ++i) {
+	for (int i = 0; enumValues[i]; ++i) {
 		if (str.equalsIgnoreCase(enumValues[i]))
 			return i;
-    }
+	}
 
 	error("invalid enum value for %s: %s", name.c_str(), str.c_str());
 }
@@ -125,10 +125,10 @@ Std::vector<ConfigElement> ConfigElement::getChildren() const {
 	Std::vector<ConfigElement> result;
 
 	for (Common::Array<Shared::XMLNode *>::const_iterator it = children.begin();
-			it != children.end(); ++it)
+	        it != children.end(); ++it)
 		result.push_back(*it);
 
-    return result;
+	return result;
 }
 
 } // End of namespace Ultima4

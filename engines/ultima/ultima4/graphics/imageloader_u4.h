@@ -38,7 +38,7 @@ struct RGBA;
  */
 class U4RawImageLoader : public ImageLoader {
 public:
-    virtual Image *load(U4FILE *file, int width, int height, int bpp);
+	virtual Image *load(U4FILE *file, int width, int height, int bpp);
 };
 
 /**
@@ -49,7 +49,7 @@ public:
  */
 class U4RleImageLoader : public ImageLoader {
 public:
-    virtual Image *load(U4FILE *file, int width, int height, int bpp);    
+	virtual Image *load(U4FILE *file, int width, int height, int bpp);
 };
 
 /**
@@ -60,18 +60,18 @@ public:
  */
 class U4LzwImageLoader : public ImageLoader {
 public:
-    virtual Image *load(U4FILE *file, int width, int height, int bpp);    
+	virtual Image *load(U4FILE *file, int width, int height, int bpp);
 };
 
 class U4PaletteLoader {
-    static RGBA *_bwPalette;
-    static RGBA *_egaPalette;
-    static RGBA *_vgaPalette;
+	static RGBA *_bwPalette;
+	static RGBA *_egaPalette;
+	static RGBA *_vgaPalette;
 
 public:
-    RGBA *loadBWPalette();
-    RGBA *loadEgaPalette();
-    RGBA *loadVgaPalette();
+	RGBA *loadBWPalette();
+	RGBA *loadEgaPalette();
+	RGBA *loadVgaPalette();
 };
 
 } // End of namespace Ultima4

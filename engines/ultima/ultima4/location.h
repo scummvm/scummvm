@@ -32,12 +32,12 @@ namespace Ultima {
 namespace Ultima4 {
 
 typedef enum {
-    CTX_WORLDMAP    = 0x0001,
-    CTX_COMBAT      = 0x0002,
-    CTX_CITY        = 0x0004,
-    CTX_DUNGEON     = 0x0008,
-    CTX_ALTAR_ROOM  = 0x0010,
-    CTX_SHRINE      = 0x0020
+	CTX_WORLDMAP    = 0x0001,
+	CTX_COMBAT      = 0x0002,
+	CTX_CITY        = 0x0004,
+	CTX_DUNGEON     = 0x0008,
+	CTX_ALTAR_ROOM  = 0x0010,
+	CTX_SHRINE      = 0x0020
 } LocationContext;
 
 #define CTX_ANY             (LocationContext)(0xffff)
@@ -49,19 +49,19 @@ class TurnCompleter;
 
 class Location : public Observable<Location *, MoveEvent &> {
 public:
-    Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx, TurnCompleter *turnCompleter, Location *prev);
+	Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx, TurnCompleter *turnCompleter, Location *prev);
 
-    Std::vector<MapTile> tilesAt(MapCoords coords, bool &focus);
-    TileId getReplacementTile(MapCoords atCoords, Tile const * forTile);
-    int getCurrentPosition(MapCoords *coords);
-    MoveResult move(Direction dir, bool userEvent);
+	Std::vector<MapTile> tilesAt(MapCoords coords, bool &focus);
+	TileId getReplacementTile(MapCoords atCoords, Tile const *forTile);
+	int getCurrentPosition(MapCoords *coords);
+	MoveResult move(Direction dir, bool userEvent);
 
-    MapCoords _coords;    
-    Map *_map;
-    int _viewMode;
-    LocationContext _context;
-    TurnCompleter *_turnCompleter;
-    Location *_prev;
+	MapCoords _coords;
+	Map *_map;
+	int _viewMode;
+	LocationContext _context;
+	TurnCompleter *_turnCompleter;
+	Location *_prev;
 };
 
 void locationFree(Location **stack);

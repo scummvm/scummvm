@@ -37,29 +37,33 @@ namespace Ultima4 {
  */
 class Path {
 public:
-    Path(const Common::String &p);
-    
-    bool exists() const;
-    bool isFile() const;
-    bool isDir() const;
-    Common::String getPath() const          { return path; } /**< Returns the full translated path */
-    Common::List<Common::String>* getDirTree() { return &dirs; } /**< Returns the list of directories for the path */
-    Common::String getDir() const;
-    Common::String getFilename() const;
-    Common::String getBaseFilename() const;
-    Common::String getExt() const;
+	Path(const Common::String &p);
 
-    static bool exists(const Common::String &path);
+	bool exists() const;
+	bool isFile() const;
+	bool isDir() const;
+	Common::String getPath() const          {
+		return path;    /**< Returns the full translated path */
+	}
+	Common::List<Common::String> *getDirTree() {
+		return &dirs;    /**< Returns the list of directories for the path */
+	}
+	Common::String getDir() const;
+	Common::String getFilename() const;
+	Common::String getBaseFilename() const;
+	Common::String getExt() const;
 
-    // Properties
-    static const char delim;
+	static bool exists(const Common::String &path);
+
+	// Properties
+	static const char delim;
 
 private:
-    Common::String path;
-    Common::List<Common::String> dirs;
-    Common::String file, ext;    
+	Common::String path;
+	Common::List<Common::String> dirs;
+	Common::String file, ext;
 };
- 
+
 /**
  * Provides cross-platform functionality for file and directory operations.
  * It currently only supports directory creation, but other operations

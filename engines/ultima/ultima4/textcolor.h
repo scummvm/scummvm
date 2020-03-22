@@ -36,21 +36,21 @@ namespace Ultima4 {
 // text foreground colors
 //
 enum ColorFG {
-    FG_GREY   = '\023',
-    FG_BLUE   = '\024',
-    FG_PURPLE = '\025',
-    FG_GREEN  = '\026',
-    FG_RED    = '\027',
-    FG_YELLOW = '\030',
-    FG_WHITE  = '\031'
+	FG_GREY   = '\023',
+	FG_BLUE   = '\024',
+	FG_PURPLE = '\025',
+	FG_GREEN  = '\026',
+	FG_RED    = '\027',
+	FG_YELLOW = '\030',
+	FG_WHITE  = '\031'
 };
 
 //
 // text background colors
 //
 enum ColorBG {
-    BG_NORMAL = '\032',
-    BG_BRIGHT = '\033'
+	BG_NORMAL = '\032',
+	BG_BRIGHT = '\033'
 };
 
 } // End of namespace Ultima4

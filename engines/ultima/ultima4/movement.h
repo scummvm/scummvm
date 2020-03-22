@@ -34,30 +34,30 @@ class Map;
 class Tile;
 
 enum SlowedType {
-    SLOWED_BY_NOTHING,
-    SLOWED_BY_TILE,
-    SLOWED_BY_WIND
+	SLOWED_BY_NOTHING,
+	SLOWED_BY_TILE,
+	SLOWED_BY_WIND
 };
 
 enum MoveResult {
-    MOVE_SUCCEEDED          = 0x0001,    
-    MOVE_END_TURN           = 0x0002,
-    MOVE_BLOCKED            = 0x0004,
-    MOVE_MAP_CHANGE         = 0x0008,
-    MOVE_TURNED             = 0x0010,  /* dungeons and ship movement */
-    MOVE_DRIFT_ONLY         = 0x0020,  /* balloon -- no movement */
-    MOVE_EXIT_TO_PARENT     = 0x0040,
-    MOVE_SLOWED             = 0x0080,
-    MOVE_MUST_USE_SAME_EXIT = 0x0100
+	MOVE_SUCCEEDED          = 0x0001,
+	MOVE_END_TURN           = 0x0002,
+	MOVE_BLOCKED            = 0x0004,
+	MOVE_MAP_CHANGE         = 0x0008,
+	MOVE_TURNED             = 0x0010,  /* dungeons and ship movement */
+	MOVE_DRIFT_ONLY         = 0x0020,  /* balloon -- no movement */
+	MOVE_EXIT_TO_PARENT     = 0x0040,
+	MOVE_SLOWED             = 0x0080,
+	MOVE_MUST_USE_SAME_EXIT = 0x0100
 };
 
 class MoveEvent {
 public:
-    MoveEvent(Direction d, bool user) : _dir(d), _userEvent(user), _result(MOVE_SUCCEEDED) {}
+	MoveEvent(Direction d, bool user) : _dir(d), _userEvent(user), _result(MOVE_SUCCEEDED) {}
 
-    Direction _dir;              /**< the direction of the move */
-    bool _userEvent;             /**< whether the user initiated the move */
-    MoveResult _result;          /**< how the movement was resolved */
+	Direction _dir;              /**< the direction of the move */
+	bool _userEvent;             /**< whether the user initiated the move */
+	MoveResult _result;          /**< how the movement was resolved */
 };
 
 void moveAvatar(MoveEvent &event);

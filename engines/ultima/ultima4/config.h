@@ -118,10 +118,10 @@ public:
 	Config();
 	~Config();
 
-    ConfigElement getElement(const Common::String &name) const;
+	ConfigElement getElement(const Common::String &name) const;
 
-    static Std::vector<Common::String> getGames();
-    static void setGame(const Common::String &name);
+	static Std::vector<Common::String> getGames();
+	static void setGame(const Common::String &name);
 };
 
 /**
@@ -133,24 +133,28 @@ private:
 	const Shared::XMLNode *_node;
 	Common::String _name;
 public:
-    ConfigElement(const Shared::XMLNode *xmlNode);
-    ConfigElement(const ConfigElement &e);
+	ConfigElement(const Shared::XMLNode *xmlNode);
+	ConfigElement(const ConfigElement &e);
 	ConfigElement();
-    ~ConfigElement();
+	~ConfigElement();
 
-    ConfigElement &operator=(const ConfigElement &e);
+	ConfigElement &operator=(const ConfigElement &e);
 
-    const Common::String getName() const { return _name; }
+	const Common::String getName() const {
+		return _name;
+	}
 
-    bool exists(const Common::String &name) const;
-    Common::String getString(const Common::String &name) const;
-    int getInt(const Common::String &name, int defaultValue = 0) const;
-    bool getBool(const Common::String &name) const;
-    int getEnum(const Common::String &name, const char *enumValues[]) const;
+	bool exists(const Common::String &name) const;
+	Common::String getString(const Common::String &name) const;
+	int getInt(const Common::String &name, int defaultValue = 0) const;
+	bool getBool(const Common::String &name) const;
+	int getEnum(const Common::String &name, const char *enumValues[]) const;
 
-    Std::vector<ConfigElement> getChildren() const;
+	Std::vector<ConfigElement> getChildren() const;
 
-	const Shared::XMLNode *getNode() const { return _node; }
+	const Shared::XMLNode *getNode() const {
+		return _node;
+	}
 };
 
 } // End of namespace Ultima4

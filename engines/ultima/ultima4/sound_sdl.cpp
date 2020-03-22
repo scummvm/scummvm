@@ -35,39 +35,39 @@ namespace Ultima4 {
 bool SoundManager::load_sys(Sound sound, const Common::String &pathname) {
 #ifdef TODO
 	soundChunk[sound] = Mix_LoadWAV(pathname.c_str());
-    if (!soundChunk[sound]) {
-        errorWarning("Unable to load sound effect file %s: %s", soundFilenames[sound].c_str(), Mix_GetError());
-        return false;
-    }
+	if (!soundChunk[sound]) {
+		errorWarning("Unable to load sound effect file %s: %s", soundFilenames[sound].c_str(), Mix_GetError());
+		return false;
+	}
 #endif
-    return true;
+	return true;
 }
 
 void SoundManager::play_sys(Sound sound, bool onlyOnce, int specificDurationInTicks) {
 #ifdef TODO
-    /**
-     * Use Channel 1 for sound effects
-     */
-    if (!onlyOnce || !Mix_Playing(1)) {
-        if (Mix_PlayChannelTimed(1, soundChunk[sound], specificDurationInTicks == -1 ? 0 : -1, specificDurationInTicks) == -1)
-            fprintf(stderr, "Error playing sound %d: %s\n", sound, Mix_GetError());
-    }
+	/**
+	 * Use Channel 1 for sound effects
+	 */
+	if (!onlyOnce || !Mix_Playing(1)) {
+		if (Mix_PlayChannelTimed(1, soundChunk[sound], specificDurationInTicks == -1 ? 0 : -1, specificDurationInTicks) == -1)
+			fprintf(stderr, "Error playing sound %d: %s\n", sound, Mix_GetError());
+	}
 #endif
 }
 
 void SoundManager::stop_sys(int channel) {
 #ifdef TODO
-    // If music didn't initialize correctly, then we shouldn't try to stop it
-    if (!musicMgr->functional || !settings.soundVol)
-        return;
+	// If music didn't initialize correctly, then we shouldn't try to stop it
+	if (!musicMgr->functional || !settings.soundVol)
+		return;
 
-    if (Mix_Playing(channel))
-        Mix_HaltChannel(channel);
+	if (Mix_Playing(channel))
+		Mix_HaltChannel(channel);
 #endif
 }
 
 int SoundManager::init_sys() {
-    return 1;
+	return 1;
 }
 
 void SoundManager::del_sys() {

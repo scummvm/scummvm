@@ -42,38 +42,38 @@ class Tile;
  */
 class IntroBinData {
 public:
-    const static int INTRO_TEXT_OFFSET;
-    const static int INTRO_MAP_OFFSET;
-    const static int INTRO_FIXUPDATA_OFFSET;
-    const static int INTRO_SCRIPT_TABLE_SIZE;
-    const static int INTRO_SCRIPT_TABLE_OFFSET;
-    const static int INTRO_BASETILE_TABLE_SIZE;
-    const static int INTRO_BASETILE_TABLE_OFFSET;
-    const static int BEASTIE1_FRAMES;
-    const static int BEASTIE2_FRAMES;
-    const static int BEASTIE_FRAME_TABLE_OFFSET;
-    const static int BEASTIE1_FRAMES_OFFSET;
-    const static int BEASTIE2_FRAMES_OFFSET;
+	const static int INTRO_TEXT_OFFSET;
+	const static int INTRO_MAP_OFFSET;
+	const static int INTRO_FIXUPDATA_OFFSET;
+	const static int INTRO_SCRIPT_TABLE_SIZE;
+	const static int INTRO_SCRIPT_TABLE_OFFSET;
+	const static int INTRO_BASETILE_TABLE_SIZE;
+	const static int INTRO_BASETILE_TABLE_OFFSET;
+	const static int BEASTIE1_FRAMES;
+	const static int BEASTIE2_FRAMES;
+	const static int BEASTIE_FRAME_TABLE_OFFSET;
+	const static int BEASTIE1_FRAMES_OFFSET;
+	const static int BEASTIE2_FRAMES_OFFSET;
 
-    IntroBinData();
-    ~IntroBinData();
+	IntroBinData();
+	~IntroBinData();
 
-    bool load();
+	bool load();
 
-    Std::vector<MapTile> _introMap;
-    unsigned char *_sigData;
-    unsigned char *_scriptTable;
-    Tile **_baseTileTable;
-    unsigned char *_beastie1FrameTable;
-    unsigned char *_beastie2FrameTable;
-    Std::vector<Common::String> _introText;
-    Std::vector<Common::String> _introQuestions;
-    Std::vector<Common::String> _introGypsy;
+	Std::vector<MapTile> _introMap;
+	unsigned char *_sigData;
+	unsigned char *_scriptTable;
+	Tile **_baseTileTable;
+	unsigned char *_beastie1FrameTable;
+	unsigned char *_beastie2FrameTable;
+	Std::vector<Common::String> _introText;
+	Std::vector<Common::String> _introQuestions;
+	Std::vector<Common::String> _introGypsy;
 
 private:
-    // disallow assignments, copy contruction
-    IntroBinData(const IntroBinData&);
-    const IntroBinData &operator=(const IntroBinData&);
+	// disallow assignments, copy contruction
+	IntroBinData(const IntroBinData &);
+	const IntroBinData &operator=(const IntroBinData &);
 };
 
 
@@ -93,206 +93,206 @@ private:
  */
 class IntroController : public Controller, public Observer<Menu *, MenuEvent &> {
 public:
-    IntroController();
+	IntroController();
 
-    bool init();
-    bool hasInitiatedNewGame();
+	bool init();
+	bool hasInitiatedNewGame();
 
-    void deleteIntro();
-    bool keyPressed(int key);
-    unsigned char *getSigData();
-    void updateScreen();
-    void timerFired();
+	void deleteIntro();
+	bool keyPressed(int key);
+	unsigned char *getSigData();
+	void updateScreen();
+	void timerFired();
 
-    void preloadMap();
+	void preloadMap();
 
-    void update(Menu *menu, MenuEvent &event);
-    void updateConfMenu(MenuEvent &event);
-    void updateVideoMenu(MenuEvent &event);
-    void updateGfxMenu(MenuEvent &event);
-    void updateSoundMenu(MenuEvent &event);
-    void updateInputMenu(MenuEvent &event);
-    void updateSpeedMenu(MenuEvent &event);
-    void updateGameplayMenu(MenuEvent &event);
-    void updateInterfaceMenu(MenuEvent &event);
+	void update(Menu *menu, MenuEvent &event);
+	void updateConfMenu(MenuEvent &event);
+	void updateVideoMenu(MenuEvent &event);
+	void updateGfxMenu(MenuEvent &event);
+	void updateSoundMenu(MenuEvent &event);
+	void updateInputMenu(MenuEvent &event);
+	void updateSpeedMenu(MenuEvent &event);
+	void updateGameplayMenu(MenuEvent &event);
+	void updateInterfaceMenu(MenuEvent &event);
 
-    //
-    // Title methods
-    //
-    void initTitles();
-    bool updateTitle();
+	//
+	// Title methods
+	//
+	void initTitles();
+	bool updateTitle();
 
 private:
-    void drawMap();
-    void drawMapStatic();
-    void drawMapAnimated();
-    void drawBeasties();
-    void drawBeastie(int beast, int vertoffset, int frame);
-    void animateTree(const Common::String &frame);
-    void drawCard(int pos, int card);
-    void drawAbacusBeads(int row, int selectedVirtue, int rejectedVirtue);
+	void drawMap();
+	void drawMapStatic();
+	void drawMapAnimated();
+	void drawBeasties();
+	void drawBeastie(int beast, int vertoffset, int frame);
+	void animateTree(const Common::String &frame);
+	void drawCard(int pos, int card);
+	void drawAbacusBeads(int row, int selectedVirtue, int rejectedVirtue);
 
-    void initQuestionTree();
-    bool doQuestion(int answer);
-    void initPlayers(SaveGame *saveGame);
-    Common::String getQuestion(int v1, int v2);
+	void initQuestionTree();
+	bool doQuestion(int answer);
+	void initPlayers(SaveGame *saveGame);
+	Common::String getQuestion(int v1, int v2);
 #ifdef IOS
 public:
-    void tryTriggerIntroMusic();
+	void tryTriggerIntroMusic();
 #endif
-    void initiateNewGame();
-    void finishInitiateGame(const Common::String &nameBuffer, SexType sex);
-    void startQuestions();
-    void showStory();
-    void journeyOnward();
-    void about();
+	void initiateNewGame();
+	void finishInitiateGame(const Common::String &nameBuffer, SexType sex);
+	void startQuestions();
+	void showStory();
+	void journeyOnward();
+	void about();
 #ifdef IOS
 private:
 #endif
-    void showText(const Common::String &text);
+	void showText(const Common::String &text);
 
-    void runMenu(Menu *menu, TextView *view, bool withBeasties);
+	void runMenu(Menu *menu, TextView *view, bool withBeasties);
 
-    /**
-     * The states of the intro.
-     */
-    enum {
-        INTRO_TITLES,                       // displaying the animated intro titles
-        INTRO_MAP,                          // displaying the animated intro map
-        INTRO_MENU                          // displaying the main menu: journey onward, etc.
-    } _mode;
+	/**
+	 * The states of the intro.
+	 */
+	enum {
+		INTRO_TITLES,                       // displaying the animated intro titles
+		INTRO_MAP,                          // displaying the animated intro map
+		INTRO_MENU                          // displaying the main menu: journey onward, etc.
+	} _mode;
 
-    enum MenuConstants {
-        MI_CONF_VIDEO,
-        MI_CONF_SOUND,
-        MI_CONF_INPUT,
-        MI_CONF_SPEED,
-        MI_CONF_GAMEPLAY,
-        MI_CONF_INTERFACE,
-        MI_CONF_01,
-        MI_VIDEO_CONF_GFX,
-        MI_VIDEO_02,
-        MI_VIDEO_03,
-        MI_VIDEO_04,
-        MI_VIDEO_05,
-        MI_VIDEO_06,
-        MI_VIDEO_07,
-        MI_VIDEO_08,
-        MI_GFX_SCHEME,
-        MI_GFX_TILE_TRANSPARENCY,
-        MI_GFX_TILE_TRANSPARENCY_SHADOW_SIZE,
-        MI_GFX_TILE_TRANSPARENCY_SHADOW_OPACITY,
-        MI_GFX_RETURN,
-        MI_SOUND_01,
-        MI_SOUND_02,
-        MI_SOUND_03,
-        MI_INPUT_01,
-        MI_INPUT_02,
-        MI_INPUT_03,
-        MI_SPEED_01,
-        MI_SPEED_02,
-        MI_SPEED_03,
-        MI_SPEED_04,
-        MI_SPEED_05,
-        MI_SPEED_06,
-        MI_SPEED_07,
-        MI_GAMEPLAY_01,
-        MI_GAMEPLAY_02,
-        MI_GAMEPLAY_03,
-        MI_GAMEPLAY_04,
-        MI_GAMEPLAY_05,
-        MI_GAMEPLAY_06,
-        MI_INTERFACE_01,
-        MI_INTERFACE_02,
-        MI_INTERFACE_03,
-        MI_INTERFACE_04,
-        MI_INTERFACE_05,
-        MI_INTERFACE_06,
-        USE_SETTINGS = 0xFE,
-        CANCEL = 0xFF
-    };
+	enum MenuConstants {
+		MI_CONF_VIDEO,
+		MI_CONF_SOUND,
+		MI_CONF_INPUT,
+		MI_CONF_SPEED,
+		MI_CONF_GAMEPLAY,
+		MI_CONF_INTERFACE,
+		MI_CONF_01,
+		MI_VIDEO_CONF_GFX,
+		MI_VIDEO_02,
+		MI_VIDEO_03,
+		MI_VIDEO_04,
+		MI_VIDEO_05,
+		MI_VIDEO_06,
+		MI_VIDEO_07,
+		MI_VIDEO_08,
+		MI_GFX_SCHEME,
+		MI_GFX_TILE_TRANSPARENCY,
+		MI_GFX_TILE_TRANSPARENCY_SHADOW_SIZE,
+		MI_GFX_TILE_TRANSPARENCY_SHADOW_OPACITY,
+		MI_GFX_RETURN,
+		MI_SOUND_01,
+		MI_SOUND_02,
+		MI_SOUND_03,
+		MI_INPUT_01,
+		MI_INPUT_02,
+		MI_INPUT_03,
+		MI_SPEED_01,
+		MI_SPEED_02,
+		MI_SPEED_03,
+		MI_SPEED_04,
+		MI_SPEED_05,
+		MI_SPEED_06,
+		MI_SPEED_07,
+		MI_GAMEPLAY_01,
+		MI_GAMEPLAY_02,
+		MI_GAMEPLAY_03,
+		MI_GAMEPLAY_04,
+		MI_GAMEPLAY_05,
+		MI_GAMEPLAY_06,
+		MI_INTERFACE_01,
+		MI_INTERFACE_02,
+		MI_INTERFACE_03,
+		MI_INTERFACE_04,
+		MI_INTERFACE_05,
+		MI_INTERFACE_06,
+		USE_SETTINGS = 0xFE,
+		CANCEL = 0xFF
+	};
 
-    ImageView _backgroundArea;
-    TextView _menuArea;
-    TextView _extendedMenuArea;
-    TextView _questionArea;
-    TileView _mapArea;
+	ImageView _backgroundArea;
+	TextView _menuArea;
+	TextView _extendedMenuArea;
+	TextView _questionArea;
+	TileView _mapArea;
 
-    // menus
-    Menu _mainMenu;
-    Menu _confMenu;
-    Menu _videoMenu;
-    Menu _gfxMenu;
-    Menu _soundMenu;
-    Menu _inputMenu;
-    Menu _speedMenu;
-    Menu _gameplayMenu;
-    Menu _interfaceMenu;
+	// menus
+	Menu _mainMenu;
+	Menu _confMenu;
+	Menu _videoMenu;
+	Menu _gfxMenu;
+	Menu _soundMenu;
+	Menu _inputMenu;
+	Menu _speedMenu;
+	Menu _gameplayMenu;
+	Menu _interfaceMenu;
 
-    // data loaded in from title.exe
-    IntroBinData *binData;
+	// data loaded in from title.exe
+	IntroBinData *binData;
 
-    // additional introduction state data
-    Common::String _errorMessage;
-    int _answerInd;
-    int _questionRound;
-    int __questionTree[15];
-    int _beastie1Cycle;
-    int _beastie2Cycle;
-    int _beastieOffset;
-    bool _beastiesVisible;
-    int _sleepCycles;
-    int _scrPos;  /* current position in the script table */
-    IntroObjectState *_objectStateTable;
+	// additional introduction state data
+	Common::String _errorMessage;
+	int _answerInd;
+	int _questionRound;
+	int __questionTree[15];
+	int _beastie1Cycle;
+	int _beastie2Cycle;
+	int _beastieOffset;
+	bool _beastiesVisible;
+	int _sleepCycles;
+	int _scrPos;  /* current position in the script table */
+	IntroObjectState *_objectStateTable;
 
-    bool _justInitiatedNewGame;
+	bool _justInitiatedNewGame;
 
-    //
-    // Title defs, structs, methods, and data members
-    //
-    enum AnimType {
-        SIGNATURE,
-        AND,
-        BAR,
-        ORIGIN,
-        PRESENT,
-        TITLE,
-        SUBTITLE,
-        MAP
-    };
+	//
+	// Title defs, structs, methods, and data members
+	//
+	enum AnimType {
+		SIGNATURE,
+		AND,
+		BAR,
+		ORIGIN,
+		PRESENT,
+		TITLE,
+		SUBTITLE,
+		MAP
+	};
 
-    struct AnimPlot {
-    	uint8 x, y;
-    	uint8 r, g, b, a;
-    };
+	struct AnimPlot {
+		uint8 x, y;
+		uint8 r, g, b, a;
+	};
 
-    struct AnimElement {
-        int _rx, _ry;                         // screen/source x and y
-        int _rw, _rh;                         // source width and height
-        AnimType _method;                    // render method
-        int _animStep;                       // tracks animation position
-        int _animStepMax;
-        int _timeBase;                       // initial animation time
-        int _timeDelay;                      // delay before rendering begins
-        int _timeDuration;                   // total animation time
-        Image *_srcImage;                    // storage for the source image
-        Image *_destImage;                   // storage for the animation frame
-        Std::vector <AnimPlot> _plotData;    // plot data
-        bool _prescaled;
-    };
+	struct AnimElement {
+		int _rx, _ry;                         // screen/source x and y
+		int _rw, _rh;                         // source width and height
+		AnimType _method;                    // render method
+		int _animStep;                       // tracks animation position
+		int _animStepMax;
+		int _timeBase;                       // initial animation time
+		int _timeDelay;                      // delay before rendering begins
+		int _timeDuration;                   // total animation time
+		Image *_srcImage;                    // storage for the source image
+		Image *_destImage;                   // storage for the animation frame
+		Std::vector <AnimPlot> _plotData;    // plot data
+		bool _prescaled;
+	};
 
-    void addTitle(int x, int y, int w, int h, AnimType method, int delay, int duration);
-    void compactTitle();
-    void drawTitle();
-    void getTitleSourceData();
-    void skipTitles();
-    Std::vector<AnimElement> titles;            // list of title elements
-    Std::vector<AnimElement>::iterator title;   // current title element
+	void addTitle(int x, int y, int w, int h, AnimType method, int delay, int duration);
+	void compactTitle();
+	void drawTitle();
+	void getTitleSourceData();
+	void skipTitles();
+	Std::vector<AnimElement> titles;            // list of title elements
+	Std::vector<AnimElement>::iterator title;   // current title element
 
-    int _transparentIndex;           // palette index for transparency
-    RGBA _transparentColor;     // palette color for transparency
+	int _transparentIndex;           // palette index for transparency
+	RGBA _transparentColor;     // palette color for transparency
 
-    bool _bSkipTitles;
+	bool _bSkipTitles;
 };
 
 extern IntroController *intro;

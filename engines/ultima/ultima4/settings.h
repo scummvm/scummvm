@@ -74,32 +74,32 @@ namespace Ultima4 {
 #define DEFAULT_TITLE_SPEED_RANDOM      150
 #define DEFAULT_TITLE_SPEED_OTHER       30
 
-#define DEFAULT_PAUSE_FOR_EACH_TURN		100
+#define DEFAULT_PAUSE_FOR_EACH_TURN     100
 #define DEFAULT_PAUSE_FOR_EACH_MOVEMENT 10
 
 //--Tile transparency stuff
-#define DEFAULT_SHADOW_PIXEL_OPACITY	64
-#define DEFAULT_SHADOW_PIXEL_SIZE		2
+#define DEFAULT_SHADOW_PIXEL_OPACITY    64
+#define DEFAULT_SHADOW_PIXEL_SIZE       2
 
 struct SettingsEnhancementOptions {
-    bool _activePlayer;
-    bool _u5spellMixing;
-    bool _u5shrines;
-    bool _u5combat;
-    bool _slimeDivides;
-    bool _gazerSpawnsInsects;
-    bool _textColorization;
-    bool _c64chestTraps;    
-    bool _smartEnterKey;
-    bool _peerShowsObjects;
-    bool _u4TileTransparencyHack;
-    int	 _u4TileTransparencyHackPixelShadowOpacity;
-    int	 _u4TrileTransparencyHackShadowBreadth;
+	bool _activePlayer;
+	bool _u5spellMixing;
+	bool _u5shrines;
+	bool _u5combat;
+	bool _slimeDivides;
+	bool _gazerSpawnsInsects;
+	bool _textColorization;
+	bool _c64chestTraps;
+	bool _smartEnterKey;
+	bool _peerShowsObjects;
+	bool _u4TileTransparencyHack;
+	int  _u4TileTransparencyHackPixelShadowOpacity;
+	int  _u4TrileTransparencyHackShadowBreadth;
 
 };
 
 struct MouseOptions {
-    bool enabled;
+	bool enabled;
 };
 
 /**
@@ -107,57 +107,57 @@ struct MouseOptions {
  */
 class SettingsData {
 public:
-    bool operator==(const SettingsData &) const;
-    bool operator!=(const SettingsData &) const;
+	bool operator==(const SettingsData &) const;
+	bool operator!=(const SettingsData &) const;
 
-    int                 _battleSpeed;
-    bool                _campingAlwaysCombat;
-    int                 _campTime;
-    bool                _debug;
-    bool                _enhancements;
-    SettingsEnhancementOptions _enhancementsOptions;    
-    bool                _filterMoveMessages;
-    bool                _fullscreen;
-    int                 _gameCyclesPerSecond;
-    int					_screenAnimationFramesPerSecond;
-    bool                _innAlwaysCombat;
-    int                 _innTime;
-    int                 _keydelay;
-    int                 _keyinterval;
-    MouseOptions        _mouseOptions;
-    int                 _musicVol;
-    unsigned int        _scale;
-    bool                _screenShakes;
-    int                 _gamma;
-    int                 _shakeInterval;
-    bool                _shortcutCommands;
-    int                 _shrineTime;
-    int                 _soundVol;
-    int                 _spellEffectSpeed;
-    bool                _validateXml;
-    bool                _volumeFades;
-    int                 _titleSpeedRandom;
-    int                 _titleSpeedOther;
+	int                 _battleSpeed;
+	bool                _campingAlwaysCombat;
+	int                 _campTime;
+	bool                _debug;
+	bool                _enhancements;
+	SettingsEnhancementOptions _enhancementsOptions;
+	bool                _filterMoveMessages;
+	bool                _fullscreen;
+	int                 _gameCyclesPerSecond;
+	int                 _screenAnimationFramesPerSecond;
+	bool                _innAlwaysCombat;
+	int                 _innTime;
+	int                 _keydelay;
+	int                 _keyinterval;
+	MouseOptions        _mouseOptions;
+	int                 _musicVol;
+	unsigned int        _scale;
+	bool                _screenShakes;
+	int                 _gamma;
+	int                 _shakeInterval;
+	bool                _shortcutCommands;
+	int                 _shrineTime;
+	int                 _soundVol;
+	int                 _spellEffectSpeed;
+	bool                _validateXml;
+	bool                _volumeFades;
+	int                 _titleSpeedRandom;
+	int                 _titleSpeedOther;
 
-    //Settings that aren't in file yet
-    int					_pauseForEachTurn;
-    int					_pauseForEachMovement;
+	//Settings that aren't in file yet
+	int                 _pauseForEachTurn;
+	int                 _pauseForEachMovement;
 
-    /**
-     * Strings, classes, and other objects that cannot
-     * be bitwise-compared must be placed here at the
-     * end of the list so that our == and != operators
-     * function correctly
-     */ 
-    long                _end_of_bitwise_comparators;
+	/**
+	 * Strings, classes, and other objects that cannot
+	 * be bitwise-compared must be placed here at the
+	 * end of the list so that our == and != operators
+	 * function correctly
+	 */
+	long                _end_of_bitwise_comparators;
 
-    Common::String              _filter;
-    Common::String              _gemLayout;
-    Common::String              _lineOfSight;
-    Common::String              _videoType;
-    Common::String              _battleDiff;
-    Common::String              _logging;
-    Common::String              _game;
+	Common::String              _filter;
+	Common::String              _gemLayout;
+	Common::String              _lineOfSight;
+	Common::String              _videoType;
+	Common::String              _battleDiff;
+	Common::String              _logging;
+	Common::String              _game;
 };
 
 /**
@@ -165,23 +165,23 @@ public:
  * information.  It is dynamically initialized when first accessed.
  */
 class Settings : public SettingsData, public Observable<Settings *> {
-    typedef Common::HashMap<Common::String, Common::String> SettingsMap;
+	typedef Common::HashMap<Common::String, Common::String> SettingsMap;
 
 public:
-    /* Methods */
+	/* Methods */
 	void init();
-    static Settings &getInstance();
-    void setData(const SettingsData &data);
-    bool read();
-    bool write();
+	static Settings &getInstance();
+	void setData(const SettingsData &data);
+	bool read();
+	bool write();
 
-    const Std::vector<Common::String> &getBattleDiffs();
+	const Std::vector<Common::String> &getBattleDiffs();
 
 private:
-    Settings();
+	Settings();
 
-    static Settings *_instance;
-    Std::vector<Common::String> _battleDiffs;
+	static Settings *_instance;
+	Std::vector<Common::String> _battleDiffs;
 };
 
 /* the global settings */

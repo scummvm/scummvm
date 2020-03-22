@@ -28,111 +28,103 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Menu::Menu() : 
-    _closed(false),
-    _title(""),
-    _titleX(0),
-    _titleY(0)
-{
+Menu::Menu() :
+	_closed(false),
+	_title(""),
+	_titleX(0),
+	_titleY(0) {
 }
 
 Menu::~Menu() {
-    for (MenuItemList::iterator i = _items.begin(); i != _items.end(); i++)
-        delete *i;
+	for (MenuItemList::iterator i = _items.begin(); i != _items.end(); i++)
+		delete *i;
 }
 
 void Menu::removeAll() {
-    _items.clear();
+	_items.clear();
 }
 
 /**
  * Adds an item to the menu list and returns the menu
  */
 void Menu::add(int id, Common::String text, short x, short y, int sc) {
-    MenuItem *item = new MenuItem(text, x, y, sc);
-    item->setId(id);
-    _items.push_back(item);
+	MenuItem *item = new MenuItem(text, x, y, sc);
+	item->setId(id);
+	_items.push_back(item);
 }
 
 MenuItem *Menu::add(int id, MenuItem *item) {
-    item->setId(id);
-    _items.push_back(item);
-    return item;
+	item->setId(id);
+	_items.push_back(item);
+	return item;
 }
 
 void Menu::addShortcutKey(int id, int shortcutKey) {
-    for (MenuItemList::iterator i = _items.begin(); i != _items.end(); i++) {
-        if ((*i)->getId() == id) {
-            (*i)->addShortcutKey(shortcutKey);
-            break;
-        }
-    }    
+	for (MenuItemList::iterator i = _items.begin(); i != _items.end(); i++) {
+		if ((*i)->getId() == id) {
+			(*i)->addShortcutKey(shortcutKey);
+			break;
+		}
+	}
 }
 
 void Menu::setClosesMenu(int id) {
-    for (MenuItemList::iterator i = _items.begin(); i != _items.end(); i++) {
-        if ((*i)->getId() == id) {
-            (*i)->setClosesMenu(true);
-            break;
-        }
-    }
+	for (MenuItemList::iterator i = _items.begin(); i != _items.end(); i++) {
+		if ((*i)->getId() == id) {
+			(*i)->setClosesMenu(true);
+			break;
+		}
+	}
 }
 
 /**
  * Returns the menu item that is currently selected/highlighted
  */
 Menu::MenuItemList::iterator Menu::getCurrent() {
-    return _selected;
+	return _selected;
 }
 
 /**
  * Sets the current menu item to the one indicated by the iterator
  */
 void Menu::setCurrent(MenuItemList::iterator i) {
-    _selected = i;
-    highlight(*_selected);
+	_selected = i;
+	highlight(*_selected);
 
-    MenuEvent event(this, MenuEvent::SELECT);
-    setChanged();
-    notifyObservers(event);
+	MenuEvent event(this, MenuEvent::SELECT);
+	setChanged();
+	notifyObservers(event);
 }
 
 void Menu::setCurrent(int id) {
-    setCurrent(getById(id));
+	setCurrent(getById(id));
 }
 
-void Menu::show(TextView *view)
-{
-    if (_title.size() > 0)
-        view->textAt(_titleX, _titleY, "%s", _title.c_str());
+void Menu::show(TextView *view) {
+	if (_title.size() > 0)
+		view->textAt(_titleX, _titleY, "%s", _title.c_str());
 
-    for (_current = _items.begin(); _current != _items.end(); _current++)
-    {
-        MenuItem *mi = *_current;
+	for (_current = _items.begin(); _current != _items.end(); _current++) {
+		MenuItem *mi = *_current;
 
-        if (mi->isVisible())
-        {
-            Common::String text (mi->getText());
+		if (mi->isVisible()) {
+			Common::String text(mi->getText());
 
-            if (mi->isSelected())
-            {
+			if (mi->isSelected()) {
 				text.setChar('\010', 0);
-            }
+			}
 
-            if (mi->isHighlighted())
-            {
-                view->textSelectedAt(mi->getX(), mi->getY(), view->colorizeString(text.c_str(), FG_YELLOW, mi->getScOffset(), 1).c_str());
-                // hack for the custom U5 mix reagents menu
-                // places cursor 1 column over, rather than 2.
-                view->setCursorPos(mi->getX() - (view->getWidth() == 15 ? 1 : 2), mi->getY(), true);
-                view->enableCursor();
-            }
-            else
-            {
-                view->textAt(mi->getX(), mi->getY(), "%s", view->colorizeString(text.c_str(), FG_YELLOW, mi->getScOffset(), 1).c_str());
-            }
-        }
-    }
+			if (mi->isHighlighted()) {
+				view->textSelectedAt(mi->getX(), mi->getY(), view->colorizeString(text.c_str(), FG_YELLOW, mi->getScOffset(), 1).c_str());
+				// hack for the custom U5 mix reagents menu
+				// places cursor 1 column over, rather than 2.
+				view->setCursorPos(mi->getX() - (view->getWidth() == 15 ? 1 : 2), mi->getY(), true);
+				view->enableCursor();
+			} else {
+				view->textAt(mi->getX(), mi->getY(), "%s", view->colorizeString(text.c_str(), FG_YELLOW, mi->getScOffset(), 1).c_str());
+			}
+		}
+	}
 }
 
 /**
@@ -141,89 +133,89 @@ void Menu::show(TextView *view)
  * item, false if nothing is visible.
  */
 bool Menu::isVisible() {
-    bool visible = false;
+	bool visible = false;
 
-    for (_current = _items.begin(); _current != _items.end(); _current++) {
-        if ((*_current)->isVisible())
-            visible = true;
-    }
+	for (_current = _items.begin(); _current != _items.end(); _current++) {
+		if ((*_current)->isVisible())
+			visible = true;
+	}
 
-    return visible;
+	return visible;
 }
 
 /**
  * Sets the selected iterator to the next visible menu item and highlights it
  */
 void Menu::next() {
-    MenuItemList::iterator i = _selected;
-    if (isVisible()) {
-        if (++i == _items.end())
-            i = _items.begin();
-        while (!(*i)->isVisible()) {
-            if (++i == _items.end())
-                i = _items.begin();
-        }
-    }
+	MenuItemList::iterator i = _selected;
+	if (isVisible()) {
+		if (++i == _items.end())
+			i = _items.begin();
+		while (!(*i)->isVisible()) {
+			if (++i == _items.end())
+				i = _items.begin();
+		}
+	}
 
-    setCurrent(i);
+	setCurrent(i);
 }
 
 /**
  * Sets the selected iterator to the previous visible menu item and highlights it
  */
 void Menu::prev() {
-    MenuItemList::iterator i = _selected;
-    if (isVisible()) {
-        if (i == _items.begin())
-            i = _items.end();
-        i--;
-        while (!(*i)->isVisible()) {
-            if (i == _items.begin())
-                i = _items.end();
-            i--;
-        }
-    }
+	MenuItemList::iterator i = _selected;
+	if (isVisible()) {
+		if (i == _items.begin())
+			i = _items.end();
+		i--;
+		while (!(*i)->isVisible()) {
+			if (i == _items.begin())
+				i = _items.end();
+			i--;
+		}
+	}
 
-    setCurrent(i);
+	setCurrent(i);
 }
 
 /**
  * Highlights a single menu item, un-highlighting any others
  */
 void Menu::highlight(MenuItem *item) {
-    // unhighlight all menu items first
-    for (_current = _items.begin(); _current != _items.end(); _current++)
-        (*_current)->setHighlighted(false);
-    if (item)
-        item->setHighlighted(true);
+	// unhighlight all menu items first
+	for (_current = _items.begin(); _current != _items.end(); _current++)
+		(*_current)->setHighlighted(false);
+	if (item)
+		item->setHighlighted(true);
 }
 
 /**
  * Returns an iterator pointing to the first menu item
  */
 Menu::MenuItemList::iterator Menu::begin() {
-    return _items.begin();
+	return _items.begin();
 }
 
 /**
  * Returns an iterator pointing just past the last menu item
  */
 Menu::MenuItemList::iterator Menu::end() {
-    return _items.end();
+	return _items.end();
 }
 
 /**
  * Returns an iterator pointing to the first visible menu item
  */
 Menu::MenuItemList::iterator Menu::begin_visible() {
-    if (!isVisible())
-        return _items.end();
+	if (!isVisible())
+		return _items.end();
 
-    _current = _items.begin();
-    while (!(*_current)->isVisible() && _current != _items.end())
-        _current++;
+	_current = _items.begin();
+	while (!(*_current)->isVisible() && _current != _items.end())
+		_current++;
 
-    return _current;
+	return _current;
 }
 
 /**
@@ -233,48 +225,48 @@ Menu::MenuItemList::iterator Menu::begin_visible() {
  *      - selects the first visible menu item
  */
 void Menu::reset(bool highlightFirst) {
-    _closed = false;
+	_closed = false;
 
-    /* get the first visible menu item */
-    _selected = begin_visible();
+	/* get the first visible menu item */
+	_selected = begin_visible();
 
-    /* un-highlight and deselect each menu item */
-    for (_current = _items.begin(); _current != _items.end(); _current++) {
-        (*_current)->setHighlighted(false);
-        (*_current)->setSelected(false);
-    }
+	/* un-highlight and deselect each menu item */
+	for (_current = _items.begin(); _current != _items.end(); _current++) {
+		(*_current)->setHighlighted(false);
+		(*_current)->setSelected(false);
+	}
 
-    /* highlight the first visible menu item */
-    if (highlightFirst)
-        highlight(*_selected);
+	/* highlight the first visible menu item */
+	if (highlightFirst)
+		highlight(*_selected);
 
-    MenuEvent event(this, MenuEvent::RESET);
-    setChanged();
-    notifyObservers(event);
+	MenuEvent event(this, MenuEvent::RESET);
+	setChanged();
+	notifyObservers(event);
 }
 
 /**
  * Returns an iterator pointing to the item associated with the given 'id'
  */
 Menu::MenuItemList::iterator Menu::getById(int id) {
-    if (id == -1)
-        return getCurrent();
+	if (id == -1)
+		return getCurrent();
 
-    for (_current = _items.begin(); _current != _items.end(); _current++) {
-        if ((*_current)->getId() == id)
-            return _current;
-    }
-    return _items.end();
+	for (_current = _items.begin(); _current != _items.end(); _current++) {
+		if ((*_current)->getId() == id)
+			return _current;
+	}
+	return _items.end();
 }
 
 /**
  * Returns the menu item associated with the given 'id'
  */
 MenuItem *Menu::getItemById(int id) {
-    _current = getById(id);
-    if (_current != _items.end())
-        return *_current;
-    return NULL;
+	_current = getById(id);
+	if (_current != _items.end())
+		return *_current;
+	return NULL;
 }
 
 /**
@@ -285,25 +277,25 @@ MenuItem *Menu::getItemById(int id) {
  * item that was found for 'id'.
  */
 void Menu::activateItem(int id, MenuEvent::Type action) {
-    MenuItem *mi;
-    
-    /* find the given menu item by id */
-    if (id >= 0)
-        mi = getItemById(id);
-    /* or use the current item */
-    else mi = *getCurrent();
-       
-    if (!mi)
-        errorFatal("Error: Unable to find menu item with id '%d'", id);
+	MenuItem *mi;
 
-    /* make sure the action given will activate the menu item */
-    if (mi->getClosesMenu())
-        setClosed(true);
+	/* find the given menu item by id */
+	if (id >= 0)
+		mi = getItemById(id);
+	/* or use the current item */
+	else mi = *getCurrent();
 
-    MenuEvent event(this, (MenuEvent::Type) action, mi);
-    mi->activate(event);
-    setChanged();
-    notifyObservers(event);
+	if (!mi)
+		errorFatal("Error: Unable to find menu item with id '%d'", id);
+
+	/* make sure the action given will activate the menu item */
+	if (mi->getClosesMenu())
+		setClosed(true);
+
+	MenuEvent event(this, (MenuEvent::Type) action, mi);
+	mi->activate(event);
+	setChanged();
+	notifyObservers(event);
 }
 
 /**
@@ -311,85 +303,84 @@ void Menu::activateItem(int id, MenuEvent::Type action) {
  * menu item get activated, false otherwise.
  */
 bool Menu::activateItemByShortcut(int key, MenuEvent::Type action) {
-    for (MenuItemList::iterator i = _items.begin(); i != _items.end(); ++i) {
-        const Std::set<int> &shortcuts = (*i)->getShortcutKeys();
-        if (shortcuts.find(key) != shortcuts.end()) {
-            activateItem((*i)->getId(), action);
-            // if the selection doesn't close the menu, highlight the selection
-            if (!(*i)->getClosesMenu())
-                setCurrent((*i)->getId());
-            return true;
-        }
-    }
-    return false;
+	for (MenuItemList::iterator i = _items.begin(); i != _items.end(); ++i) {
+		const Std::set<int> &shortcuts = (*i)->getShortcutKeys();
+		if (shortcuts.find(key) != shortcuts.end()) {
+			activateItem((*i)->getId(), action);
+			// if the selection doesn't close the menu, highlight the selection
+			if (!(*i)->getClosesMenu())
+				setCurrent((*i)->getId());
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
  * Returns true if the menu has been closed.
  */
 bool Menu::getClosed() const {
-    return _closed;
+	return _closed;
 }
 
 /**
  * Update whether the menu has been closed.
  */
 void Menu::setClosed(bool closed) {
-    this->_closed = closed;
+	this->_closed = closed;
 }
 
 void Menu::setTitle(const Common::String &text, int x, int y) {
-    _title = text;
-    _titleX = x;
-    _titleY = y;
+	_title = text;
+	_titleX = x;
+	_titleY = y;
 }
 
 MenuController::MenuController(Menu *menu, TextView *view) {
-    this->_menu = menu;
-    this->_view = view;
+	this->_menu = menu;
+	this->_view = view;
 }
 
 bool MenuController::keyPressed(int key) {
-    bool handled = true;
-    bool cursorOn = _view->getCursorEnabled();
+	bool handled = true;
+	bool cursorOn = _view->getCursorEnabled();
 
-    if (cursorOn)
-        _view->disableCursor();
+	if (cursorOn)
+		_view->disableCursor();
 
-    switch(key) {
-    case U4_UP:
-        _menu->prev();
-        break;
-    case U4_DOWN:
-        _menu->next();
-        break;
-    case U4_LEFT:
-    case U4_RIGHT:
-    case U4_ENTER:
-        {
-            MenuEvent::Type action = MenuEvent::ACTIVATE;
+	switch (key) {
+	case U4_UP:
+		_menu->prev();
+		break;
+	case U4_DOWN:
+		_menu->next();
+		break;
+	case U4_LEFT:
+	case U4_RIGHT:
+	case U4_ENTER: {
+		MenuEvent::Type action = MenuEvent::ACTIVATE;
 
-            if (key == U4_LEFT)
-                action = MenuEvent::DECREMENT;
-            else if (key == U4_RIGHT)
-                action = MenuEvent::INCREMENT;
-            _menu->activateItem(-1, action);
-        }
-        break;
-    default:
-        handled = _menu->activateItemByShortcut(key, MenuEvent::ACTIVATE);
-    }
+		if (key == U4_LEFT)
+			action = MenuEvent::DECREMENT;
+		else if (key == U4_RIGHT)
+			action = MenuEvent::INCREMENT;
+		_menu->activateItem(-1, action);
+	}
+	break;
+	default:
+		handled = _menu->activateItemByShortcut(key, MenuEvent::ACTIVATE);
+	}
 
-    _menu->show(_view);
+	_menu->show(_view);
 
-    if (cursorOn)
-        _view->enableCursor();
-    _view->update();
+	if (cursorOn)
+		_view->enableCursor();
+	_view->update();
 
-    if (_menu->getClosed())
-        doneWaiting();
+	if (_menu->getClosed())
+		doneWaiting();
 
-    return handled;
+	return handled;
 }
 
 } // End of namespace Ultima4

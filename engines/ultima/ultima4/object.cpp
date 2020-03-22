@@ -32,35 +32,34 @@ namespace Ultima4 {
 using namespace Std;
 
 bool Object::setDirection(Direction d) {
-    return _tile.setDirection(d);
+	return _tile.setDirection(d);
 }
 
 void Object::setMap(class Map *m) {
 	if (Common::find(_maps.begin(), _maps.end(), m) == _maps.end())
-        _maps.push_back(m);
+		_maps.push_back(m);
 }
 
 Map *Object::getMap() {
-    if (_maps.empty())
-        return NULL;
-    return _maps.back();
+	if (_maps.empty())
+		return NULL;
+	return _maps.back();
 }
 
 void Object::remove() {
-    unsigned int size = _maps.size();
-    for (unsigned int i = 0; i < size; i++) {
-        if (i == size - 1)
-            _maps[i]->removeObject(this);
-        else _maps[i]->removeObject(this, false);
-    }
+	unsigned int size = _maps.size();
+	for (unsigned int i = 0; i < size; i++) {
+		if (i == size - 1)
+			_maps[i]->removeObject(this);
+		else _maps[i]->removeObject(this, false);
+	}
 }
 
-void Object::animateMovement()
-{
+void Object::animateMovement() {
 	//TODO abstract movement - also make screen.h and game.h not required
-    screenTileUpdate(&g_game->_mapArea, _prevCoords, false);
-    if (screenTileUpdate(&g_game->_mapArea, _coords, false))
-    	screenWait(1);
+	screenTileUpdate(&g_game->_mapArea, _prevCoords, false);
+	if (screenTileUpdate(&g_game->_mapArea, _coords, false))
+		screenWait(1);
 }
 
 } // End of namespace Ultima4

@@ -37,14 +37,14 @@ namespace Ultima {
 namespace Ultima4 {
 
 typedef enum {
-    DNGGRAPHIC_NONE,
-    DNGGRAPHIC_WALL,
-    DNGGRAPHIC_LADDERUP,
-    DNGGRAPHIC_LADDERDOWN,
-    DNGGRAPHIC_LADDERUPDOWN,
-    DNGGRAPHIC_DOOR,
-    DNGGRAPHIC_DNGTILE,
-    DNGGRAPHIC_BASETILE
+	DNGGRAPHIC_NONE,
+	DNGGRAPHIC_WALL,
+	DNGGRAPHIC_LADDERUP,
+	DNGGRAPHIC_LADDERDOWN,
+	DNGGRAPHIC_LADDERUPDOWN,
+	DNGGRAPHIC_DOOR,
+	DNGGRAPHIC_DNGTILE,
+	DNGGRAPHIC_BASETILE
 } DungeonGraphicType;
 
 Std::vector<MapTile> dungeonViewGetTiles(int fwd, int side);
@@ -60,23 +60,25 @@ DungeonGraphicType dungeonViewTilesToGraphic(const Std::vector<MapTile> &tiles);
  */
 class DungeonView : public TileView {
 private:
-    DungeonView(int x, int y, int columns, int rows);
-    bool screen3dDungeonViewEnabled;
+	DungeonView(int x, int y, int columns, int rows);
+	bool screen3dDungeonViewEnabled;
 public:
-    static DungeonView *_instance;
-    static DungeonView *getInstance();
+	static DungeonView *_instance;
+	static DungeonView *getInstance();
 
-    void drawInDungeon(Tile *tile, int x_offset, int distance, Direction orientation, bool tiled);
-    int graphicIndex(int xoffset, int distance, Direction orientation, DungeonGraphicType type);
-    void drawTile(Tile *tile, int x_offset, int distance, Direction orientation);
-    void drawWall(int xoffset, int distance, Direction orientation, DungeonGraphicType type);
+	void drawInDungeon(Tile *tile, int x_offset, int distance, Direction orientation, bool tiled);
+	int graphicIndex(int xoffset, int distance, Direction orientation, DungeonGraphicType type);
+	void drawTile(Tile *tile, int x_offset, int distance, Direction orientation);
+	void drawWall(int xoffset, int distance, Direction orientation, DungeonGraphicType type);
 
-    void display(Context * c, TileView *view);
-    DungeonGraphicType tilesToGraphic(const Std::vector<MapTile> &tiles);
+	void display(Context *c, TileView *view);
+	DungeonGraphicType tilesToGraphic(const Std::vector<MapTile> &tiles);
 
-    bool toggle3DDungeonView(){return screen3dDungeonViewEnabled=!screen3dDungeonViewEnabled;}
+	bool toggle3DDungeonView() {
+		return screen3dDungeonViewEnabled = !screen3dDungeonViewEnabled;
+	}
 
-    Std::vector<MapTile> getTiles(int fwd, int side);
+	Std::vector<MapTile> getTiles(int fwd, int side);
 };
 
 } // End of namespace Ultima4

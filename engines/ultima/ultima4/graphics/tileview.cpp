@@ -37,110 +37,106 @@ namespace Ultima {
 namespace Ultima4 {
 
 TileView::TileView(int x, int y, int columns, int rows) : View(x, y, columns * TILE_WIDTH, rows * TILE_HEIGHT) {
-    this->_columns = columns;
-    this->_rows = rows;
-    this->_tileWidth = TILE_WIDTH;
-    this->_tileHeight = TILE_HEIGHT;
-    this->_tileset = Tileset::get("base");
-    _animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
+	this->_columns = columns;
+	this->_rows = rows;
+	this->_tileWidth = TILE_WIDTH;
+	this->_tileHeight = TILE_HEIGHT;
+	this->_tileset = Tileset::get("base");
+	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
 }
 
 TileView::TileView(int x, int y, int columns, int rows, const Common::String &tileset) :
-		View(x, y, columns * TILE_WIDTH, rows * TILE_HEIGHT) {
-    this->_columns = columns;
-    this->_rows = rows;
-    this->_tileWidth = TILE_WIDTH;
-    this->_tileHeight = TILE_HEIGHT;
-    this->_tileset = Tileset::get(tileset);
-    _animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
+	View(x, y, columns * TILE_WIDTH, rows * TILE_HEIGHT) {
+	this->_columns = columns;
+	this->_rows = rows;
+	this->_tileWidth = TILE_WIDTH;
+	this->_tileHeight = TILE_HEIGHT;
+	this->_tileset = Tileset::get(tileset);
+	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
 }
 
 TileView::~TileView() {
-    delete _animated;
+	delete _animated;
 }
 
 void TileView::reinit() {
-    View::reinit();
-    _tileset = Tileset::get("base");
+	View::reinit();
+	_tileset = Tileset::get("base");
 
-    //Scratchpad needs to be re-inited if we rescale...
-    if (_animated)
-    {
-    	delete _animated;
-    	_animated = NULL;
-    }
-    _animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
+	//Scratchpad needs to be re-inited if we rescale...
+	if (_animated) {
+		delete _animated;
+		_animated = NULL;
+	}
+	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
 }
 
-void TileView::loadTile(MapTile &mapTile)
-{
+void TileView::loadTile(MapTile &mapTile) {
 	//This attempts to preload tiles in advance
-    Tile *tile = _tileset->get(mapTile._id);
-    if (tile)
-    {
-    	tile->getImage();
-    }
-    //But may fail if the tiles don't exist directly in the expected imagesets
+	Tile *tile = _tileset->get(mapTile._id);
+	if (tile) {
+		tile->getImage();
+	}
+	//But may fail if the tiles don't exist directly in the expected imagesets
 }
 
 void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
-    Tile *tile = _tileset->get(mapTile._id);
-    Image *image = tile->getImage();
+	Tile *tile = _tileset->get(mapTile._id);
+	Image *image = tile->getImage();
 
-    ASSERT(x < _columns, "x value of %d out of range", x);
-    ASSERT(y < _rows, "y value of %d out of range", y);
+	ASSERT(x < _columns, "x value of %d out of range", x);
+	ASSERT(y < _rows, "y value of %d out of range", y);
 
-    //Blank scratch pad
-	_animated->fillRect(0,0,SCALED(_tileWidth),SCALED(_tileHeight),0,0,0, 255);
+	//Blank scratch pad
+	_animated->fillRect(0, 0, SCALED(_tileWidth), SCALED(_tileHeight), 0, 0, 0, 255);
 	//Draw blackness on the tile.
 	_animated->drawSubRect(SCALED(x * _tileWidth + this->_x),
-						  SCALED(y * _tileHeight + this->_y),
-						  0,
-						  0,
-						  SCALED(_tileWidth),
-						  SCALED(_tileHeight));
+	                       SCALED(y * _tileHeight + this->_y),
+	                       0,
+	                       0,
+	                       SCALED(_tileWidth),
+	                       SCALED(_tileHeight));
 
-    // draw the tile to the screen
-    if (tile->getAnim()) {
-        // First, create our animated version of the tile
+	// draw the tile to the screen
+	if (tile->getAnim()) {
+		// First, create our animated version of the tile
 #ifdef IOS
-        animated->clearImageContents();
+		animated->clearImageContents();
 #endif
-        tile->getAnim()->draw(_animated, tile, mapTile, DIR_NONE);
+		tile->getAnim()->draw(_animated, tile, mapTile, DIR_NONE);
 
-        // Then draw it to the screen
-        _animated->drawSubRect(SCALED(x * _tileWidth + this->_x),
-                              SCALED(y * _tileHeight + this->_y),
-                              0, 
-                              0, 
-                              SCALED(_tileWidth), 
-                              SCALED(_tileHeight));
-    }
-    else {
-        image->drawSubRect(SCALED(x * _tileWidth + this->_x), 
-                           SCALED(y * _tileHeight + this->_y),
-                           0,
-                           SCALED(_tileHeight * mapTile._frame),
-                           SCALED(_tileWidth),
-                           SCALED(_tileHeight));
-    }
+		// Then draw it to the screen
+		_animated->drawSubRect(SCALED(x * _tileWidth + this->_x),
+		                       SCALED(y * _tileHeight + this->_y),
+		                       0,
+		                       0,
+		                       SCALED(_tileWidth),
+		                       SCALED(_tileHeight));
+	} else {
+		image->drawSubRect(SCALED(x * _tileWidth + this->_x),
+		                   SCALED(y * _tileHeight + this->_y),
+		                   0,
+		                   SCALED(_tileHeight * mapTile._frame),
+		                   SCALED(_tileWidth),
+		                   SCALED(_tileHeight));
+	}
 
-    // draw the focus around the tile if it has the focus
-    if (focus)
-        drawFocus(x, y);
+	// draw the focus around the tile if it has the focus
+	if (focus)
+		drawFocus(x, y);
 }
 
 void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 	ASSERT(x < _columns, "x value of %d out of range", x);
 	ASSERT(y < _rows, "y value of %d out of range", y);
 
-	_animated->fillRect(0,0,SCALED(_tileWidth),SCALED(_tileHeight),0,0,0, 255);
+	_animated->fillRect(0, 0, SCALED(_tileWidth), SCALED(_tileHeight), 0, 0, 0, 255);
 	_animated->drawSubRect(SCALED(x * _tileWidth + this->_x),
-						  SCALED(y * _tileHeight + this->_y),
-						  0,
-						  0,
-						  SCALED(_tileWidth),
-						  SCALED(_tileHeight));
+	                       SCALED(y * _tileHeight + this->_y),
+	                       0,
+	                       0,
+	                       SCALED(_tileWidth),
+	                       SCALED(_tileHeight));
 
 	//int layer = 0;
 
@@ -148,8 +144,7 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 		MapTile &frontTile = *t;
 		Tile *frontTileType = _tileset->get(frontTile._id);
 
-		if (!frontTileType)
-		{
+		if (!frontTileType) {
 			//TODO, this leads to an error. It happens after graphics mode changes.
 			return;
 		}
@@ -161,74 +156,73 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 		if (frontTileType->getAnim()) {
 			// First, create our animated version of the tile
 			frontTileType->getAnim()->draw(_animated, frontTileType, frontTile, DIR_NONE);
-		}
-		else {
-            if (!image)
-                return; //This is a problem //FIXME, error message it. 
+		} else {
+			if (!image)
+				return; //This is a problem //FIXME, error message it.
 			image->drawSubRectOn(_animated,
-								0, 0,
-								0, SCALED(_tileHeight * frontTile._frame),
-								SCALED(_tileWidth),  SCALED(_tileHeight));
+			                     0, 0,
+			                     0, SCALED(_tileHeight * frontTile._frame),
+			                     SCALED(_tileWidth),  SCALED(_tileHeight));
 		}
 
 		// Then draw it to the screen
 		_animated->drawSubRect(SCALED(x * _tileWidth + this->_x),
-							  SCALED(y * _tileHeight + this->_y),
-							  0,
-							  0,
-							  SCALED(_tileWidth),
-							  SCALED(_tileHeight));
+		                       SCALED(y * _tileHeight + this->_y),
+		                       0,
+		                       0,
+		                       SCALED(_tileWidth),
+		                       SCALED(_tileHeight));
 	}
 
 
 	// draw the focus around the tile if it has the focus
 	if (focus)
-        drawFocus(x, y);
+		drawFocus(x, y);
 }
 
 /**
  * Draw a focus rectangle around the tile
  */
 void TileView::drawFocus(int x, int y) {
-    ASSERT(x < _columns, "x value of %d out of range", x);
-    ASSERT(y < _rows, "y value of %d out of range", y);
+	ASSERT(x < _columns, "x value of %d out of range", x);
+	ASSERT(y < _rows, "y value of %d out of range", y);
 
-    /*
-     * draw the focus rectangle around the tile
-     */
-    if ((screenCurrentCycle * 4 / SCR_CYCLE_PER_SECOND) % 2) {
-        /* left edge */
-        _screen->fillRect(SCALED(x * _tileWidth + this->_x),
-                         SCALED(y * _tileHeight + this->_y),
-                         SCALED(2),
-                         SCALED(_tileHeight),
-                         0xff, 0xff, 0xff);
+	/*
+	 * draw the focus rectangle around the tile
+	 */
+	if ((screenCurrentCycle * 4 / SCR_CYCLE_PER_SECOND) % 2) {
+		/* left edge */
+		_screen->fillRect(SCALED(x * _tileWidth + this->_x),
+		                  SCALED(y * _tileHeight + this->_y),
+		                  SCALED(2),
+		                  SCALED(_tileHeight),
+		                  0xff, 0xff, 0xff);
 
-        /* top edge */
-        _screen->fillRect(SCALED(x * _tileWidth + this->_x),
-                         SCALED(y * _tileHeight + this->_y),
-                         SCALED(_tileWidth),
-                         SCALED(2),
-                         0xff, 0xff, 0xff);
+		/* top edge */
+		_screen->fillRect(SCALED(x * _tileWidth + this->_x),
+		                  SCALED(y * _tileHeight + this->_y),
+		                  SCALED(_tileWidth),
+		                  SCALED(2),
+		                  0xff, 0xff, 0xff);
 
-        /* right edge */
-        _screen->fillRect(SCALED((x + 1) * _tileWidth + this->_x - 2),
-                         SCALED(y * _tileHeight + this->_y),
-                         SCALED(2),
-                         SCALED(_tileHeight),
-                         0xff, 0xff, 0xff);
+		/* right edge */
+		_screen->fillRect(SCALED((x + 1) * _tileWidth + this->_x - 2),
+		                  SCALED(y * _tileHeight + this->_y),
+		                  SCALED(2),
+		                  SCALED(_tileHeight),
+		                  0xff, 0xff, 0xff);
 
-        /* bottom edge */
-        _screen->fillRect(SCALED(x * _tileWidth + this->_x),
-                         SCALED((y + 1) * _tileHeight + this->_y - 2),
-                         SCALED(_tileWidth),
-                         SCALED(2),
-                         0xff, 0xff, 0xff);
-    }
+		/* bottom edge */
+		_screen->fillRect(SCALED(x * _tileWidth + this->_x),
+		                  SCALED((y + 1) * _tileHeight + this->_y - 2),
+		                  SCALED(_tileWidth),
+		                  SCALED(2),
+		                  0xff, 0xff, 0xff);
+	}
 }
 
 void TileView::setTileset(Tileset *tileset) {
-    this->_tileset = tileset;
+	this->_tileset = tileset;
 }
 
 } // End of namespace Ultima4

@@ -49,20 +49,20 @@ namespace Ultima4 {
 void print_trace(Common::WriteStream *file);
 
 #if HAVE_VARIADIC_MACROS
-#   ifdef NDEBUG        
+#   ifdef NDEBUG
 #       define ASSERT(exp, desc, ...)  /* nothing */
 #   else
 #       define ASSERT(exp, ...)                                             \
-            do {                                                            \
-                if (!(exp)) {                                               \
-                    fprintf(stderr, "%s:%s:%d: assertion `%s' failed. ",    \
-                           __FILE__, XU4_FUNCTION, __LINE__, #exp);         \
-                    fprintf(stderr, __VA_ARGS__);                           \
-                    fprintf(stderr, "\n\n");                                \
-                    print_trace(stderr);                                    \
-                    abort();                                                \
-                }                                                           \
-            } while(0)
+	do {                                                            \
+		if (!(exp)) {                                               \
+			fprintf(stderr, "%s:%s:%d: assertion `%s' failed. ",    \
+			        __FILE__, XU4_FUNCTION, __LINE__, #exp);         \
+			fprintf(stderr, __VA_ARGS__);                           \
+			fprintf(stderr, "\n\n");                                \
+			print_trace(stderr);                                    \
+			abort();                                                \
+		}                                                           \
+	} while(0)
 #   endif /* ifdef NDEBUG */
 #else
 
@@ -78,24 +78,24 @@ void ASSERT(bool exp, const char *desc, ...);
  */
 class Debug {
 public:
-    Debug(const Common::String &filename, const Common::String &name = "", bool append = false);
+	Debug(const Common::String &filename, const Common::String &name = "", bool append = false);
 
-    static void initGlobal(const Common::String &filename);
-    void trace(const Common::String &msg, const Common::String &file = "", const Common::String &func = "", const int line = -1, bool glbl = true);
+	static void initGlobal(const Common::String &filename);
+	void trace(const Common::String &msg, const Common::String &file = "", const Common::String &func = "", const int line = -1, bool glbl = true);
 
-private:        
-    // disallow assignments, copy contruction
-    Debug(const Debug&);
-    const Debug &operator=(const Debug &);
+private:
+	// disallow assignments, copy contruction
+	Debug(const Debug &);
+	const Debug &operator=(const Debug &);
 
-    static bool loggingEnabled(const Common::String &name);
+	static bool loggingEnabled(const Common::String &name);
 
-    bool _disabled;
-    Common::String _filename, _name;
-    Common::File *_file;
+	bool _disabled;
+	Common::String _filename, _name;
+	Common::File *_file;
 
-    Common::String l_filename, l_func;
-    int l_line;
+	Common::String l_filename, l_func;
+	int l_line;
 };
 
 } // End of namespace Ultima4

@@ -60,8 +60,8 @@ protected:
 	static void setFromRawData(Image *image, int width, int height, int bpp, unsigned char *rawData);
 public:
 	ImageLoader() {}
-    virtual ~ImageLoader() {}
-    virtual Image *load(U4FILE *file, int width, int height, int bpp) = 0;
+	virtual ~ImageLoader() {}
+	virtual Image *load(U4FILE *file, int width, int height, int bpp) = 0;
 };
 
 } // End of namespace Ultima4

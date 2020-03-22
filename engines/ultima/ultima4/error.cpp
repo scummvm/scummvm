@@ -28,8 +28,8 @@ namespace Ultima {
 namespace Ultima4 {
 
 void errorFatal(const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
+	va_list args;
+	va_start(args, fmt);
 	Common::String msg = Common::String::vformat(fmt, args);
 	va_end(args);
 

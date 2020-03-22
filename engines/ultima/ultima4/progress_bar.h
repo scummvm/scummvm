@@ -31,21 +31,21 @@ namespace Ultima4 {
 
 class ProgressBar : public View {
 public:
-    ProgressBar(int x, int y, int width, int height, int min, int max);
+	ProgressBar(int x, int y, int width, int height, int min, int max);
 
-    virtual ProgressBar& operator++();
-    virtual ProgressBar& operator--();
-    virtual void draw();
-    void setBorderColor(int r, int g, int b, int a = IM_OPAQUE);
-    void setBorderWidth(unsigned int width);
-    void setColor(int r, int g, int b, int a = IM_OPAQUE);
-    
+	virtual ProgressBar &operator++();
+	virtual ProgressBar &operator--();
+	virtual void draw();
+	void setBorderColor(int r, int g, int b, int a = IM_OPAQUE);
+	void setBorderWidth(unsigned int width);
+	void setColor(int r, int g, int b, int a = IM_OPAQUE);
+
 protected:
-    int _min, _max;
-    int _current;
-    RGBA _color, _bColor;
-    int _bWidth;    
-};  
+	int _min, _max;
+	int _current;
+	RGBA _color, _bColor;
+	int _bWidth;
+};
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

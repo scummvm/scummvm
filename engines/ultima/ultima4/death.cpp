@@ -54,93 +54,93 @@ void deathTimer(void *data);
 void deathRevive(void);
 
 const struct {
-    int timeout;                /* pause in seconds */
-    const char *text;           /* text of message */
+	int timeout;                /* pause in seconds */
+	const char *text;           /* text of message */
 } deathMsgs[] = {
-    { 5, "\n\n\nAll is Dark...\n" },
-    { 5, "\nBut wait...\n" },
-    { 5, "Where am I?...\n" },
-    { 5, "Am I dead?...\n" },
-    { 5, "Afterlife?...\n" },
-    { 5, "You hear:\n    %s\n" },
-    { 5, "I feel motion...\n" },
-    { 5, "\nLord British says: I have pulled thy spirit and some possessions from the void.  Be more careful in the future!\n\n\020" }
+	{ 5, "\n\n\nAll is Dark...\n" },
+	{ 5, "\nBut wait...\n" },
+	{ 5, "Where am I?...\n" },
+	{ 5, "Am I dead?...\n" },
+	{ 5, "Afterlife?...\n" },
+	{ 5, "You hear:\n    %s\n" },
+	{ 5, "I feel motion...\n" },
+	{ 5, "\nLord British says: I have pulled thy spirit and some possessions from the void.  Be more careful in the future!\n\n\020" }
 };
-    
+
 #define N_MSGS (sizeof(deathMsgs) / sizeof(deathMsgs[0]))
 
 void deathStart(int delay) {
-    if (deathSequenceRunning)
-        return;
-    
-    // stop playing music
-    musicMgr->fadeOut(1000);
+	if (deathSequenceRunning)
+		return;
 
-    deathSequenceRunning = 1;
-    timerCount = 0;
-    timerMsg = 0;
+	// stop playing music
+	musicMgr->fadeOut(1000);
 
-    WaitController waitCtrl(delay * settings._gameCyclesPerSecond);
-    eventHandler->pushController(&waitCtrl);
-    waitCtrl.wait();
-    
-    gameSetViewMode(VIEW_DEAD);
-    
-    eventHandler->pushKeyHandler(&KeyHandler::ignoreKeys);
-    screenDisableCursor();
+	deathSequenceRunning = 1;
+	timerCount = 0;
+	timerMsg = 0;
 
-    eventHandler->getTimer()->add(&deathTimer, settings._gameCyclesPerSecond);
+	WaitController waitCtrl(delay * settings._gameCyclesPerSecond);
+	eventHandler->pushController(&waitCtrl);
+	waitCtrl.wait();
+
+	gameSetViewMode(VIEW_DEAD);
+
+	eventHandler->pushKeyHandler(&KeyHandler::ignoreKeys);
+	screenDisableCursor();
+
+	eventHandler->getTimer()->add(&deathTimer, settings._gameCyclesPerSecond);
 }
 
 void deathTimer(void *data) {
 
-    timerCount++;
-    if ((timerMsg < N_MSGS) && (timerCount > deathMsgs[timerMsg].timeout)) {
+	timerCount++;
+	if ((timerMsg < N_MSGS) && (timerCount > deathMsgs[timerMsg].timeout)) {
 
-        screenMessage(deathMsgs[timerMsg].text, g_context->_party->member(0)->getName().c_str());
-        screenHideCursor();
+		screenMessage(deathMsgs[timerMsg].text, g_context->_party->member(0)->getName().c_str());
+		screenHideCursor();
 
-        timerCount = 0;
-        timerMsg++;
+		timerCount = 0;
+		timerMsg++;
 
-        if (timerMsg >= N_MSGS) {
-            eventHandler->getTimer()->remove(&deathTimer);
-            deathRevive();
-        }
-    }
+		if (timerMsg >= N_MSGS) {
+			eventHandler->getTimer()->remove(&deathTimer);
+			deathRevive();
+		}
+	}
 }
 
 void deathRevive() {
-    while(!g_context->_location->_map->isWorldMap() && g_context->_location->_prev != NULL) {
-        g_game->exitToParentMap();        
-    }
+	while (!g_context->_location->_map->isWorldMap() && g_context->_location->_prev != NULL) {
+		g_game->exitToParentMap();
+	}
 
-    eventHandler->setController(g_game);
-    
-    deathSequenceRunning = 0;
-    gameSetViewMode(VIEW_NORMAL);
+	eventHandler->setController(g_game);
 
-    /* Move our world map location to Lord British's Castle */
-    g_context->_location->_coords = g_context->_location->_map->_portals[0]->_coords;
-    
-    /* Now, move the avatar into the castle and put him
-       in front of Lord British */
-    g_game->setMap(mapMgr->get(100), 1, NULL);
-    g_context->_location->_coords.x = REVIVE_CASTLE_X;
-    g_context->_location->_coords.y = REVIVE_CASTLE_Y;
-    g_context->_location->_coords.z = 0;
+	deathSequenceRunning = 0;
+	gameSetViewMode(VIEW_NORMAL);
 
-    g_context->_aura->set();
-    g_context->_horseSpeed = 0;
+	/* Move our world map location to Lord British's Castle */
+	g_context->_location->_coords = g_context->_location->_map->_portals[0]->_coords;
+
+	/* Now, move the avatar into the castle and put him
+	   in front of Lord British */
+	g_game->setMap(mapMgr->get(100), 1, NULL);
+	g_context->_location->_coords.x = REVIVE_CASTLE_X;
+	g_context->_location->_coords.y = REVIVE_CASTLE_Y;
+	g_context->_location->_coords.z = 0;
+
+	g_context->_aura->set();
+	g_context->_horseSpeed = 0;
 	g_context->_lastCommandTime = g_system->getMillis();
-    musicMgr->play();
+	musicMgr->play();
 
-    g_context->_party->reviveParty();
+	g_context->_party->reviveParty();
 
-    screenEnableCursor();
-    screenShowCursor();
-    g_context->_stats->setView(STATS_PARTY_OVERVIEW);
-    screenRedrawScreen();
+	screenEnableCursor();
+	screenShowCursor();
+	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
+	screenRedrawScreen();
 }
 
 } // End of namespace Ultima4

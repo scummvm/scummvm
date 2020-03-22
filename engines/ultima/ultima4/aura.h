@@ -33,33 +33,43 @@ namespace Ultima4 {
  */
 class Aura : public Observable<Aura *> {
 public:
-    enum Type {
-        NONE,
-        HORN,
-        JINX,
-        NEGATE,
-        PROTECTION,
-        QUICKNESS
-    };
+	enum Type {
+		NONE,
+		HORN,
+		JINX,
+		NEGATE,
+		PROTECTION,
+		QUICKNESS
+	};
 
-    Aura();
+	Aura();
 
-    int getDuration() const         { return _duration; }
-    Aura::Type getType() const      { return _type; }
-    bool isActive() const           { return _duration > 0; }
+	int getDuration() const         {
+		return _duration;
+	}
+	Aura::Type getType() const      {
+		return _type;
+	}
+	bool isActive() const           {
+		return _duration > 0;
+	}
 
-    void setDuration(int d);
-    void set(Type = NONE, int d = 0);
-    void setType(Type t);
+	void setDuration(int d);
+	void set(Type = NONE, int d = 0);
+	void setType(Type t);
 
-    bool operator==(const Type &t) const    { return _type == t; }
-    bool operator!=(const Type &t) const    { return !operator==(t); }
+	bool operator==(const Type &t) const    {
+		return _type == t;
+	}
+	bool operator!=(const Type &t) const    {
+		return !operator==(t);
+	}
 
-    void passTurn();
+	void passTurn();
 
 private:
-    Type _type;
-    int _duration;
+	Type _type;
+	int _duration;
 };
 
 } // End of namespace Ultima4

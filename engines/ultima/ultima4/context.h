@@ -42,12 +42,12 @@ class Script;
 class StatsArea;
 
 enum TransportContext {
-    TRANSPORT_FOOT      = 0x1,
-    TRANSPORT_HORSE     = 0x2,
-    TRANSPORT_SHIP      = 0x4,
-    TRANSPORT_BALLOON		= 0x8,
-    TRANSPORT_FOOT_OR_HORSE	= TRANSPORT_FOOT | TRANSPORT_HORSE,
-    TRANSPORT_ANY			= 0xffff
+	TRANSPORT_FOOT      = 0x1,
+	TRANSPORT_HORSE     = 0x2,
+	TRANSPORT_SHIP      = 0x4,
+	TRANSPORT_BALLOON       = 0x8,
+	TRANSPORT_FOOT_OR_HORSE = TRANSPORT_FOOT | TRANSPORT_HORSE,
+	TRANSPORT_ANY           = 0xffff
 };
 
 /**
@@ -55,35 +55,35 @@ enum TransportContext {
  */
 class Context : public Script::Provider {
 public:
-    Context();
-    ~Context();
+	Context();
+	~Context();
 
-    Party *_party;
-    SaveGame *_saveGame;
-    class Location *_location;
-    int _line, col;
-    StatsArea *_stats;
-    int _moonPhase;
-    int _windDirection;
-    int _windCounter;
-    bool _windLock;
-    Aura *_aura;    
-    int _horseSpeed;
-    int _opacity;
-    TransportContext _transportContext;
-    uint32 _lastCommandTime;
-    class Object *_lastShip;
+	Party *_party;
+	SaveGame *_saveGame;
+	class Location *_location;
+	int _line, col;
+	StatsArea *_stats;
+	int _moonPhase;
+	int _windDirection;
+	int _windCounter;
+	bool _windLock;
+	Aura *_aura;
+	int _horseSpeed;
+	int _opacity;
+	TransportContext _transportContext;
+	uint32 _lastCommandTime;
+	class Object *_lastShip;
 
-    /**
-     * Provides scripts with information
-     */
-    virtual Common::String translate(Std::vector<Common::String> &parts) {
-        if (parts.size() == 1) {
-            if (parts[0] == "wind")
-                return getDirectionName(static_cast<Direction>(_windDirection));
-        }
-        return "";
-    }
+	/**
+	 * Provides scripts with information
+	 */
+	virtual Common::String translate(Std::vector<Common::String> &parts) {
+		if (parts.size() == 1) {
+			if (parts[0] == "wind")
+				return getDirectionName(static_cast<Direction>(_windDirection));
+		}
+		return "";
+	}
 };
 
 extern Context *g_context;

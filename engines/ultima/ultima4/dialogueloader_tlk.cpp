@@ -30,132 +30,139 @@ namespace Ultima4 {
 
 using Common::String;
 
-DialogueLoader* U4TlkDialogueLoader::_instance = DialogueLoader::registerLoader(new U4TlkDialogueLoader, "application/x-u4tlk");
+DialogueLoader *U4TlkDialogueLoader::_instance = DialogueLoader::registerLoader(new U4TlkDialogueLoader, "application/x-u4tlk");
 
 /**
  * A dialogue loader for standard u4dos .tlk files.
  */
-Dialogue* U4TlkDialogueLoader::load(void *source) {
-    U4FILE *file = static_cast<U4FILE*>(source);
-    
-    enum QTrigger {
-        NONE = 0,
-        JOB = 3,
-        HEALTH = 4,
-        KEYWORD1 = 5,
-        KEYWORD2 = 6
-    };
-    
-    /* there's no dialogues left in the file */
-    char tlk_buffer[288];
-    if (u4fread(tlk_buffer, 1, sizeof(tlk_buffer), file) != sizeof(tlk_buffer))
-        return NULL;
-    
-    char *ptr = &tlk_buffer[3];    
-    Std::vector<Common::String> strings;
-    for (int i = 0; i < 12; i++) {
-        strings.push_back(ptr);
-        ptr += strlen(ptr) + 1;
-    }
+Dialogue *U4TlkDialogueLoader::load(void *source) {
+	U4FILE *file = static_cast<U4FILE *>(source);
 
-    Dialogue *dlg = new Dialogue();
-    unsigned char prob = tlk_buffer[2];
-    QTrigger qtrigger = QTrigger(tlk_buffer[0]);
-    bool humilityTestQuestion = tlk_buffer[1] == 1;
+	enum QTrigger {
+		NONE = 0,
+		JOB = 3,
+		HEALTH = 4,
+		KEYWORD1 = 5,
+		KEYWORD2 = 6
+	};
 
-    dlg->setTurnAwayProb(prob);
+	/* there's no dialogues left in the file */
+	char tlk_buffer[288];
+	if (u4fread(tlk_buffer, 1, sizeof(tlk_buffer), file) != sizeof(tlk_buffer))
+		return NULL;
 
-    dlg->setName(strings[0]);
-    dlg->setPronoun(strings[1]);
-    dlg->setPrompt("\nYour Interest:\n");
+	char *ptr = &tlk_buffer[3];
+	Std::vector<Common::String> strings;
+	for (int i = 0; i < 12; i++) {
+		strings.push_back(ptr);
+		ptr += strlen(ptr) + 1;
+	}
 
-    // Fix the actor description Common::String, converting the first character
-    // to lower-case.
+	Dialogue *dlg = new Dialogue();
+	unsigned char prob = tlk_buffer[2];
+	QTrigger qtrigger = QTrigger(tlk_buffer[0]);
+	bool humilityTestQuestion = tlk_buffer[1] == 1;
+
+	dlg->setTurnAwayProb(prob);
+
+	dlg->setName(strings[0]);
+	dlg->setPronoun(strings[1]);
+	dlg->setPrompt("\nYour Interest:\n");
+
+	// Fix the actor description Common::String, converting the first character
+	// to lower-case.
 	strings[2].setChar(tolower(strings[2][0]), 0);
 
-    // ... then replace any newlines in the Common::String with spaces
-    size_t index = strings[2].find ("\n");
-    while (index != Common::String::npos)
-    {
+	// ... then replace any newlines in the Common::String with spaces
+	size_t index = strings[2].find("\n");
+	while (index != Common::String::npos) {
 		strings[2].setChar(' ', index);
-        index = strings[2].find ("\n");
-    }
+		index = strings[2].find("\n");
+	}
 
-    // ... then append a period to the end of the Common::String if one does
-    // not already exist
-    if (!Common::isPunct(strings[2][strings[2].size() - 1]))
-        strings[2] = strings[2] + Common::String(".");
+	// ... then append a period to the end of the Common::String if one does
+	// not already exist
+	if (!Common::isPunct(strings[2][strings[2].size() - 1]))
+		strings[2] = strings[2] + Common::String(".");
 
-    // ... and finally, a few characters in the game have descriptions
-    // that do not begin with a definite (the) or indefinite (a/an)
-    // article.  On those characters, insert the appropriate article.
-    if ((strings[0] == "Iolo")
-        || (strings[0] == "Tracie")
-        || (strings[0] == "Dupre")
-        || (strings[0] == "Traveling Dan"))
-        strings[2] = Common::String("a ") + strings[2];
+	// ... and finally, a few characters in the game have descriptions
+	// that do not begin with a definite (the) or indefinite (a/an)
+	// article.  On those characters, insert the appropriate article.
+	if ((strings[0] == "Iolo")
+	        || (strings[0] == "Tracie")
+	        || (strings[0] == "Dupre")
+	        || (strings[0] == "Traveling Dan"))
+		strings[2] = Common::String("a ") + strings[2];
 
-    Common::String introBase = Common::String("\nYou meet ") + strings[2] + "\n";
+	Common::String introBase = Common::String("\nYou meet ") + strings[2] + "\n";
 
-    dlg->setIntro(new Response(introBase + dlg->getPrompt()));
-    dlg->setLongIntro(new Response(introBase +
-                                   "\n" + dlg->getPronoun() + " says: I am " + dlg->getName() + "\n"
-                                   + dlg->getPrompt()));
-    dlg->setDefaultAnswer(new Response("That I cannot\nhelp thee with."));
+	dlg->setIntro(new Response(introBase + dlg->getPrompt()));
+	dlg->setLongIntro(new Response(introBase +
+	                               "\n" + dlg->getPronoun() + " says: I am " + dlg->getName() + "\n"
+	                               + dlg->getPrompt()));
+	dlg->setDefaultAnswer(new Response("That I cannot\nhelp thee with."));
 
-    Response *yes = new Response(strings[8]);
-    Response *no = new Response(strings[9]);
-    if (humilityTestQuestion) {
-        yes->add(ResponsePart::BRAGGED);
-        no->add(ResponsePart::HUMBLE);
-    }
-    dlg->setQuestion(new Dialogue::Question(strings[7], yes, no));
+	Response *yes = new Response(strings[8]);
+	Response *no = new Response(strings[9]);
+	if (humilityTestQuestion) {
+		yes->add(ResponsePart::BRAGGED);
+		no->add(ResponsePart::HUMBLE);
+	}
+	dlg->setQuestion(new Dialogue::Question(strings[7], yes, no));
 
-    // one of the following four keywords triggers the speaker's question
-    Response *job = new Response(Common::String("\n") + strings[3]);
-    Response *health = new Response(Common::String("\n") + strings[4]);
-    Response *kw1 = new Response(Common::String("\n") + strings[5]);
-    Response *kw2 = new Response(Common::String("\n") + strings[6]);
-    
-    switch(qtrigger) {
-    case JOB:       job->add(ResponsePart::ASK); break;
-    case HEALTH:    health->add(ResponsePart::ASK); break;
-    case KEYWORD1:  kw1->add(ResponsePart::ASK); break;
-    case KEYWORD2:  kw2->add(ResponsePart::ASK); break;
-    case NONE:
-    default:
-        break;
-    }
-    dlg->addKeyword("job", job);
-    dlg->addKeyword("heal", health);
-    dlg->addKeyword(strings[10], kw1);
-    dlg->addKeyword(strings[11], kw2);
+	// one of the following four keywords triggers the speaker's question
+	Response *job = new Response(Common::String("\n") + strings[3]);
+	Response *health = new Response(Common::String("\n") + strings[4]);
+	Response *kw1 = new Response(Common::String("\n") + strings[5]);
+	Response *kw2 = new Response(Common::String("\n") + strings[6]);
 
-    // NOTE: We let the talker's custom keywords override the standard
-    // keywords like HEAL and LOOK.  This behavior differs from u4dos,
-    // but fixes a couple conversation files which have keywords that
-    // conflict with the standard ones (e.g. Calabrini in Moonglow has
-    // HEAL for healer, which is unreachable in u4dos, but clearly
-    // more useful than "Fine." for health).
-    Common::String look = Common::String("\nYou see ") + strings[2];
-    dlg->addKeyword("look", new Response(look));
-    dlg->addKeyword("name", new Response(Common::String("\n") + dlg->getPronoun() + " says: I am " + dlg->getName()));
-    dlg->addKeyword("give", new Response(Common::String("\n") + dlg->getPronoun() + " says: I do not need thy gold.  Keep it!"));
-    dlg->addKeyword("join", new Response(Common::String("\n") + dlg->getPronoun() + " says: I cannot join thee."));
+	switch (qtrigger) {
+	case JOB:
+		job->add(ResponsePart::ASK);
+		break;
+	case HEALTH:
+		health->add(ResponsePart::ASK);
+		break;
+	case KEYWORD1:
+		kw1->add(ResponsePart::ASK);
+		break;
+	case KEYWORD2:
+		kw2->add(ResponsePart::ASK);
+		break;
+	case NONE:
+	default:
+		break;
+	}
+	dlg->addKeyword("job", job);
+	dlg->addKeyword("heal", health);
+	dlg->addKeyword(strings[10], kw1);
+	dlg->addKeyword(strings[11], kw2);
 
-    Response *bye = new Response("\nBye.");
-    bye->add(ResponsePart::END);
-    dlg->addKeyword("bye", bye);
-    dlg->addKeyword("", bye);
+	// NOTE: We let the talker's custom keywords override the standard
+	// keywords like HEAL and LOOK.  This behavior differs from u4dos,
+	// but fixes a couple conversation files which have keywords that
+	// conflict with the standard ones (e.g. Calabrini in Moonglow has
+	// HEAL for healer, which is unreachable in u4dos, but clearly
+	// more useful than "Fine." for health).
+	Common::String look = Common::String("\nYou see ") + strings[2];
+	dlg->addKeyword("look", new Response(look));
+	dlg->addKeyword("name", new Response(Common::String("\n") + dlg->getPronoun() + " says: I am " + dlg->getName()));
+	dlg->addKeyword("give", new Response(Common::String("\n") + dlg->getPronoun() + " says: I do not need thy gold.  Keep it!"));
+	dlg->addKeyword("join", new Response(Common::String("\n") + dlg->getPronoun() + " says: I cannot join thee."));
 
-    /* 
-     * This little easter egg appeared in the Amiga version of Ultima IV.
-     * I've never figured out what the number means.
-     * "Banjo" Bob Hardy was the programmer for the Amiga version.
-     */
-    dlg->addKeyword("ojna", new Response("\nHi Banjo Bob!\nYour secret\nnumber is\n4F4A4E0A"));
+	Response *bye = new Response("\nBye.");
+	bye->add(ResponsePart::END);
+	dlg->addKeyword("bye", bye);
+	dlg->addKeyword("", bye);
 
-    return dlg;
+	/*
+	 * This little easter egg appeared in the Amiga version of Ultima IV.
+	 * I've never figured out what the number means.
+	 * "Banjo" Bob Hardy was the programmer for the Amiga version.
+	 */
+	dlg->addKeyword("ojna", new Response("\nHi Banjo Bob!\nYour secret\nnumber is\n4F4A4E0A"));
+
+	return dlg;
 }
 
 } // End of namespace Ultima4

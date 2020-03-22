@@ -39,28 +39,28 @@ const char Path::delim = '/';
  * Creates a path to a directory or file
  */
 Path::Path(const Common::String &p) : path(p) {
-    unsigned int pos;
-    bool _exists = false, isDir = false;
+	unsigned int pos;
+	bool _exists = false, isDir = false;
 
-    /* determine if the path really exists */
+	/* determine if the path really exists */
 	Common::FSNode node(path);
 	_exists = node.exists();
 
-    /* if so, let's glean more information */
+	/* if so, let's glean more information */
 	if (_exists)
 		isDir = node.isDirectory();
 
-    /* If it's for sure a file, get file information! */
-    if (_exists && !isDir) {
+	/* If it's for sure a file, get file information! */
+	if (_exists && !isDir) {
 		file = node.getName();
 
 		if ((pos = file.findLastOf(".")) < file.size()) {
-            ext = file.substr(pos + 1);
-            file = file.substr(0, pos);
-        }
-    }    
+			ext = file.substr(pos + 1);
+			file = file.substr(0, pos);
+		}
+	}
 }
-    
+
 /**
  * Returns true if the path exists in the filesystem
  */
@@ -93,9 +93,15 @@ Common::String Path::getDir() const {
 }
 
 /** Returns the full filename of the file designated in the path */
-Common::String Path::getFilename() const        { return (ext.empty()) ? file : file + Common::String(".") + ext; }
-Common::String Path::getBaseFilename() const    { return file; }    /**< Returns the base filename of the file */
-Common::String Path::getExt() const             { return ext; }     /**< Returns the extension of the file (if it exists) */
+Common::String Path::getFilename() const        {
+	return (ext.empty()) ? file : file + Common::String(".") + ext;
+}
+Common::String Path::getBaseFilename() const    {
+	return file;    /**< Returns the base filename of the file */
+}
+Common::String Path::getExt() const             {
+	return ext;    /**< Returns the extension of the file (if it exists) */
+}
 
 /**
  * Returns true if the given path exists in the filesystem
@@ -136,8 +142,8 @@ void FileSystem::createDirectory(Path &path) {
  * Create a directory that composes the path
  */
 void FileSystem::createDirectory(const Common::String &filepath) {
-    Path path(filepath);
-    createDirectory(path);
+	Path path(filepath);
+	createDirectory(path);
 }
 
 } // End of namespace Ultima4

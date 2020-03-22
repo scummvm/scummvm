@@ -34,11 +34,11 @@ class NoArg;
  * This is the interface a class must implement to watch an
  * Observable.
  */
-template<class O, class A = NoArg*>
+template<class O, class A = NoArg *>
 class Observer {
 public:
-    virtual void update(O observable, A arg) = 0;
-    virtual ~Observer() {}
+	virtual void update(O observable, A arg) = 0;
+	virtual ~Observer() {}
 };
 
 /**
@@ -46,11 +46,13 @@ public:
  * "arg" parameter to update.
  */
 template<class O>
-class Observer<O, NoArg*> {
+class Observer<O, NoArg *> {
 public:
-    virtual void update(O observable, NoArg *arg) { update(observable); }
-    virtual void update(O observable) = 0;
-    virtual ~Observer() {}
+	virtual void update(O observable, NoArg *arg) {
+		update(observable);
+	}
+	virtual void update(O observable) = 0;
+	virtual ~Observer() {}
 };
 
 /**

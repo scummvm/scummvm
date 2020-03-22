@@ -36,25 +36,25 @@ class Image;
  */
 class View {
 public:
-    View(int x, int y, int width, int height);
-    virtual ~View() {}
+	View(int x, int y, int width, int height);
+	virtual ~View() {}
 
-    virtual void reinit();
-    virtual void clear();
-    virtual void update();
-    virtual void update(int x, int y, int width, int height);
-    virtual void highlight(int x, int y, int width, int height);
-    virtual void unhighlight();
+	virtual void reinit();
+	virtual void clear();
+	virtual void update();
+	virtual void update(int x, int y, int width, int height);
+	virtual void highlight(int x, int y, int width, int height);
+	virtual void unhighlight();
 
 protected:
-    const int _x, _y, _width, _height;
-    bool _highlighted;
-    int _highlightX, _highlightY, _highlightW, _highlightH;
-    void drawHighlighted();
+	const int _x, _y, _width, _height;
+	bool _highlighted;
+	int _highlightX, _highlightY, _highlightW, _highlightH;
+	void drawHighlighted();
 #ifdef IOS
-    friend void U4IOS::updateScreenView();
+	friend void U4IOS::updateScreenView();
 #endif
-    static Image *_screen;
+	static Image *_screen;
 };
 
 } // End of namespace Ultima4

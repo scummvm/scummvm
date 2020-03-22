@@ -64,51 +64,51 @@ class EventHandler;
 class TextView;
 
 /**
- * A class for handling keystrokes. 
+ * A class for handling keystrokes.
  */
 class KeyHandler {
 public:
-    virtual ~KeyHandler() {}
+	virtual ~KeyHandler() {}
 
-    /* Typedefs */
-    typedef bool (*Callback)(int, void*);
+	/* Typedefs */
+	typedef bool (*Callback)(int, void *);
 
-    /** Additional information to be passed as data param for read buffer key handler */
-    typedef struct ReadBuffer {
-        int (*_handleBuffer)(Common::String *);
-        Common::String *_buffer;
-        int _bufferLen;
-        int _screenX, _screenY;
-    } ReadBuffer;
+	/** Additional information to be passed as data param for read buffer key handler */
+	typedef struct ReadBuffer {
+		int (*_handleBuffer)(Common::String *);
+		Common::String *_buffer;
+		int _bufferLen;
+		int _screenX, _screenY;
+	} ReadBuffer;
 
-    /** Additional information to be passed as data param for get choice key handler */
-    typedef struct GetChoice {
-        Common::String _choices;
-        int (*_handleChoice)(int);
-    } GetChoice;
+	/** Additional information to be passed as data param for get choice key handler */
+	typedef struct GetChoice {
+		Common::String _choices;
+		int (*_handleChoice)(int);
+	} GetChoice;
 
-    /* Constructors */
-    KeyHandler(Callback func, void *data = NULL, bool asyncronous = true);
-    
-    /* Static functions */    
-    static int setKeyRepeat(int delay, int interval);
-    static bool globalHandler(int key);    
+	/* Constructors */
+	KeyHandler(Callback func, void *data = NULL, bool asyncronous = true);
 
-    /* Static default key handler functions */
-    static bool defaultHandler(int key, void *data);
-    static bool ignoreKeys(int key, void *data);
+	/* Static functions */
+	static int setKeyRepeat(int delay, int interval);
+	static bool globalHandler(int key);
 
-    /* Operators */
-    bool operator==(Callback cb) const;
-    
-    /* Member functions */    
-    bool handle(int key); 
-    virtual bool isKeyIgnored(int key);
+	/* Static default key handler functions */
+	static bool defaultHandler(int key, void *data);
+	static bool ignoreKeys(int key, void *data);
+
+	/* Operators */
+	bool operator==(Callback cb) const;
+
+	/* Member functions */
+	bool handle(int key);
+	virtual bool isKeyIgnored(int key);
 
 protected:
-    Callback _handler;
-    bool _async;
-    void *_data;
+	Callback _handler;
+	bool _async;
+	void *_data;
 };
 
 /**
@@ -117,14 +117,14 @@ protected:
  */
 class KeyHandlerController : public Controller {
 public:
-    KeyHandlerController(KeyHandler *handler);
-    ~KeyHandlerController();
+	KeyHandlerController(KeyHandler *handler);
+	~KeyHandlerController();
 
-    virtual bool keyPressed(int key);
-    KeyHandler *getKeyHandler();
+	virtual bool keyPressed(int key);
+	KeyHandler *getKeyHandler();
 
 private:
-    KeyHandler *handler;
+	KeyHandler *handler;
 };
 
 /**
@@ -132,22 +132,22 @@ private:
  */
 class ReadStringController : public WaitableController<Common::String> {
 public:
-    ReadStringController(int maxlen, int screenX, int screenY, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
-    ReadStringController(int maxlen, TextView *view, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
-    virtual bool keyPressed(int key);
+	ReadStringController(int maxlen, int screenX, int screenY, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
+	ReadStringController(int maxlen, TextView *view, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
+	virtual bool keyPressed(int key);
 
-    static Common::String get(int maxlen, int screenX, int screenY, EventHandler *eh = NULL);
-    static Common::String get(int maxlen, TextView *view, EventHandler *eh = NULL);
+	static Common::String get(int maxlen, int screenX, int screenY, EventHandler *eh = NULL);
+	static Common::String get(int maxlen, TextView *view, EventHandler *eh = NULL);
 #ifdef IOS
-    void setValue(const Common::String &utf8StringValue) {
-        value = utf8StringValue;
-    }
+	void setValue(const Common::String &utf8StringValue) {
+		value = utf8StringValue;
+	}
 #endif
 
 protected:
-    int maxlen, screenX, screenY;
-    TextView *view;
-    Common::String accepted;
+	int maxlen, screenX, screenY;
+	TextView *view;
+	Common::String accepted;
 };
 
 /**
@@ -156,10 +156,10 @@ protected:
  */
 class ReadIntController : public ReadStringController {
 public:
-    ReadIntController(int maxlen, int screenX, int screenY);
+	ReadIntController(int maxlen, int screenX, int screenY);
 
-    static int get(int maxlen, int screenX, int screenY, EventHandler *eh = NULL);
-    int getInt() const;
+	static int get(int maxlen, int screenX, int screenY, EventHandler *eh = NULL);
+	int getInt() const;
 };
 
 /**
@@ -167,22 +167,22 @@ public:
  */
 class ReadChoiceController : public WaitableController<int> {
 public:
-    ReadChoiceController(const Common::String &choices);
-    virtual bool keyPressed(int key);
+	ReadChoiceController(const Common::String &choices);
+	virtual bool keyPressed(int key);
 
-    static char get(const Common::String &choices, EventHandler *eh = NULL);
+	static char get(const Common::String &choices, EventHandler *eh = NULL);
 
 protected:
-    Common::String choices;
+	Common::String choices;
 };
 
 /**
  * A controller to read a direction enter with the arrow keys.
  */
 class ReadDirController : public WaitableController<Direction> {
-public:    
-    ReadDirController();
-    virtual bool keyPressed(int key);    
+public:
+	ReadDirController();
+	virtual bool keyPressed(int key);
 };
 
 /**
@@ -191,41 +191,41 @@ public:
  */
 class WaitController : public Controller {
 public:
-    WaitController(unsigned int cycles);
-    virtual bool keyPressed(int key);
-    virtual void timerFired();
+	WaitController(unsigned int cycles);
+	virtual bool keyPressed(int key);
+	virtual void timerFired();
 
-    void wait();
-    void setCycles(int c);
+	void wait();
+	void setCycles(int c);
 
 private:
-    unsigned int cycles;
-    unsigned int current;
+	unsigned int cycles;
+	unsigned int current;
 };
 
 /**
  * A class for handling timed events.
- */ 
+ */
 class TimedEvent {
 public:
-    /* Typedefs */
-    typedef Common::List<TimedEvent*> List;
-    typedef void (*Callback)(void *);
+	/* Typedefs */
+	typedef Common::List<TimedEvent *> List;
+	typedef void (*Callback)(void *);
 
-    /* Constructors */
-    TimedEvent(Callback callback, int interval, void *data = NULL);
+	/* Constructors */
+	TimedEvent(Callback callback, int interval, void *data = NULL);
 
-    /* Member functions */
-    Callback getCallback() const;
-    void *getData();
-    void tick();
-    
-    /* Properties */
-protected:    
-    Callback callback;
-    void *data;
-    int interval;
-    int current;
+	/* Member functions */
+	Callback getCallback() const;
+	void *getData();
+	void tick();
+
+	/* Properties */
+protected:
+	Callback callback;
+	void *data;
+	int interval;
+	int current;
 };
 
 #if defined(IOS)
@@ -241,116 +241,118 @@ typedef void *UIEvent;
 
 /**
  * A class for managing timed events
- */ 
+ */
 class TimedEventMgr {
 public:
-    /* Typedefs */
-    typedef TimedEvent::List List;    
+	/* Typedefs */
+	typedef TimedEvent::List List;
 
-    /* Constructors */
-    TimedEventMgr(int baseInterval);
-    ~TimedEventMgr();
+	/* Constructors */
+	TimedEventMgr(int baseInterval);
+	~TimedEventMgr();
 
-    /* Static functions */
-    static unsigned int callback(unsigned int interval, void *param);
+	/* Static functions */
+	static unsigned int callback(unsigned int interval, void *param);
 
-    /* Member functions */
-    bool isLocked() const;      /**< Returns true if the event list is locked (in use) */    
+	/* Member functions */
+	bool isLocked() const;      /**< Returns true if the event list is locked (in use) */
 
-    void add(TimedEvent::Callback callback, int interval, void *data = NULL);
-    List::iterator remove(List::iterator i);
-    void remove(TimedEvent* event);
-    void remove(TimedEvent::Callback callback, void *data = NULL);
-    void tick();
-    void stop();
-    void start();
-    
-    void reset(unsigned int interval);     /**< Re-initializes the event manager to a new base interval */
+	void add(TimedEvent::Callback callback, int interval, void *data = NULL);
+	List::iterator remove(List::iterator i);
+	void remove(TimedEvent *event);
+	void remove(TimedEvent::Callback callback, void *data = NULL);
+	void tick();
+	void stop();
+	void start();
+
+	void reset(unsigned int interval);     /**< Re-initializes the event manager to a new base interval */
 #if defined(IOS)
-    bool hasActiveTimer() const;
+	bool hasActiveTimer() const;
 #endif
 
 private:
-    void lock();                /**< Locks the event list */
-    void unlock();              /**< Unlocks the event list */
+	void lock();                /**< Locks the event list */
+	void unlock();              /**< Unlocks the event list */
 
-    /* Properties */
+	/* Properties */
 protected:
-    /* Static properties */
-    static unsigned int instances;
+	/* Static properties */
+	static unsigned int instances;
 
-    void *id;
-    int baseInterval;
-    bool locked;
-    List events;
-    List deferredRemovals;
+	void *id;
+	int baseInterval;
+	bool locked;
+	List events;
+	List deferredRemovals;
 #if defined(IOS)
-    TimedManagerHelper *m_helper;
+	TimedManagerHelper *m_helper;
 #endif
 };
 
 typedef void(*updateScreenCallback)(void);
 /**
- * A class for handling game events. 
+ * A class for handling game events.
  */
 class EventHandler {
-public:    
-    /* Typedefs */
-    typedef Common::List<MouseArea *> MouseAreaList;
+public:
+	/* Typedefs */
+	typedef Common::List<MouseArea *> MouseAreaList;
 
-    /* Constructors */
-    EventHandler();    
+	/* Constructors */
+	EventHandler();
 
-    /* Static functions */    
-    static EventHandler *getInstance();
-    static void sleep(unsigned int usec);
-    static void wait_msecs(unsigned int msecs);
-    static void wait_cycles(unsigned int cycles);
-    static void setControllerDone(bool exit = true);
-    static bool getControllerDone();
-    static void end();
-    static bool timerQueueEmpty();
+	/* Static functions */
+	static EventHandler *getInstance();
+	static void sleep(unsigned int usec);
+	static void wait_msecs(unsigned int msecs);
+	static void wait_cycles(unsigned int cycles);
+	static void setControllerDone(bool exit = true);
+	static bool getControllerDone();
+	static void end();
+	static bool timerQueueEmpty();
 
-    /* Member functions */
-    TimedEventMgr* getTimer();
+	/* Member functions */
+	TimedEventMgr *getTimer();
 
-    /* Event functions */    
-    void run();
-    void setScreenUpdate(void (*updateScreen)(void));
+	/* Event functions */
+	void run();
+	void setScreenUpdate(void (*updateScreen)(void));
 #if defined(IOS)
-    void handleEvent(UIEvent *);
-    static void controllerStopped_helper();
-    updateScreenCallback screenCallback() { return updateScreen; }
+	void handleEvent(UIEvent *);
+	static void controllerStopped_helper();
+	updateScreenCallback screenCallback() {
+		return updateScreen;
+	}
 #endif
 
-    /* Controller functions */
-    Controller *pushController(Controller *c);
-    Controller *popController();
-    Controller *getController() const;
-    void setController(Controller *c);
+	/* Controller functions */
+	Controller *pushController(Controller *c);
+	Controller *popController();
+	Controller *getController() const;
+	void setController(Controller *c);
 
-    /* Key handler functions */
-    void pushKeyHandler(KeyHandler kh);
-    void popKeyHandler();
-    KeyHandler *getKeyHandler() const;
-    void setKeyHandler(KeyHandler kh);
+	/* Key handler functions */
+	void pushKeyHandler(KeyHandler kh);
+	void popKeyHandler();
+	KeyHandler *getKeyHandler() const;
+	void setKeyHandler(KeyHandler kh);
 
-    /* Mouse area functions */
-    void pushMouseAreaSet(MouseArea *mouseAreas);
-    void popMouseAreaSet();
-    MouseArea *getMouseAreaSet() const;
-    MouseArea *mouseAreaForPoint(int x, int y);
+	/* Mouse area functions */
+	void pushMouseAreaSet(MouseArea *mouseAreas);
+	void popMouseAreaSet();
+	MouseArea *getMouseAreaSet() const;
+	MouseArea *mouseAreaForPoint(int x, int y);
 
-protected:    
-    static bool _controllerDone;
-    static bool _ended;
-    TimedEventMgr _timer;
-    Std::vector<Controller *> _controllers;
-    MouseAreaList _mouseAreaSets;
-    updateScreenCallback _updateScreen;
+protected:
+	static bool _controllerDone;
+	static bool _ended;
+	TimedEventMgr _timer;
+	Std::vector<Controller *> _controllers;
+	MouseAreaList _mouseAreaSets;
+	updateScreenCallback _updateScreen;
 
 private:
-    static EventHandler *_instance;
+	static EventHandler *_instance;
 };
 
 } // End of namespace Ultima4

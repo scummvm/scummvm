@@ -27,13 +27,13 @@ namespace Ultima {
 namespace Ultima4 {
 
 enum Direction {
-    DIR_NONE,
-    DIR_WEST,
-    DIR_NORTH,
-    DIR_EAST,
-    DIR_SOUTH,
-    DIR_ADVANCE,
-    DIR_RETREAT
+	DIR_NONE,
+	DIR_WEST,
+	DIR_NORTH,
+	DIR_EAST,
+	DIR_SOUTH,
+	DIR_ADVANCE,
+	DIR_RETREAT
 };
 
 #define MASK_DIR(dir) (1 << (dir))

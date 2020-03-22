@@ -52,47 +52,47 @@ int xu4_random(int upperRange) {
  * @param chars_to_trim A list of characters that will be trimmed
  */
 Common::String &trim(Common::String &val, const Common::String &chars_to_trim) {
-    using namespace std;
-    Common::String::iterator i;
-    if (val.size()) {
+	using namespace std;
+	Common::String::iterator i;
+	if (val.size()) {
 		size_t pos;
-        for (i = val.begin(); (i != val.end()) && (pos = chars_to_trim.find(*i)) != Common::String::npos; )
-            i = val.erase(i);    
-        for (i = val.end()-1; (i != val.begin()) && (pos = chars_to_trim.find(*i)) != Common::String::npos; )
-            i = val.erase(i)-1;
-    }
-    return val;
+		for (i = val.begin(); (i != val.end()) && (pos = chars_to_trim.find(*i)) != Common::String::npos;)
+			i = val.erase(i);
+		for (i = val.end() - 1; (i != val.begin()) && (pos = chars_to_trim.find(*i)) != Common::String::npos;)
+			i = val.erase(i) - 1;
+	}
+	return val;
 }
 
 /**
  * Converts the Common::String to lowercase
- */ 
-Common::String& lowercase(Common::String &val) {
-    using namespace std;
-    Common::String::iterator i;
-    for (i = val.begin(); i != val.end(); i++)
-        *i = tolower(*i);
-    return val;
+ */
+Common::String &lowercase(Common::String &val) {
+	using namespace std;
+	Common::String::iterator i;
+	for (i = val.begin(); i != val.end(); i++)
+		*i = tolower(*i);
+	return val;
 }
 
 /**
  * Converts the Common::String to uppercase
- */ 
-Common::String& uppercase(Common::String &val) {
-    using namespace std;
-    Common::String::iterator i;
-    for (i = val.begin(); i != val.end(); i++)
-        *i = toupper(*i);
-    return val;
+ */
+Common::String &uppercase(Common::String &val) {
+	using namespace std;
+	Common::String::iterator i;
+	for (i = val.begin(); i != val.end(); i++)
+		*i = toupper(*i);
+	return val;
 }
 
 /**
  * Converts an integer value to a Common::String
- */ 
+ */
 Common::String xu4_to_string(int val) {
-    char buffer[16];    
-    sprintf(buffer, "%d", val);
-    return buffer;
+	char buffer[16];
+	sprintf(buffer, "%d", val);
+	return buffer;
 }
 
 /**
@@ -100,22 +100,22 @@ Common::String xu4_to_string(int val) {
  * separators.  Multiple adjacent seperators are treated as one.
  */
 Std::vector<Common::String> split(const Common::String &s, const Common::String &separators) {
-    Std::vector<Common::String> result;
-    Common::String current;
+	Std::vector<Common::String> result;
+	Common::String current;
 
-    for (unsigned i = 0; i < s.size(); i++) {
-        if (separators.find(s[i]) != Common::String::npos) {
-            if (current.size() > 0)
-                result.push_back(current);
-            current.clear();
-        } else
-            current += s[i];
-    }
+	for (unsigned i = 0; i < s.size(); i++) {
+		if (separators.find(s[i]) != Common::String::npos) {
+			if (current.size() > 0)
+				result.push_back(current);
+			current.clear();
+		} else
+			current += s[i];
+	}
 
-    if (current.size() > 0)
-        result.push_back(current);
+	if (current.size() > 0)
+		result.push_back(current);
 
-    return result;
+	return result;
 }
 
 } // End of namespace Ultima4

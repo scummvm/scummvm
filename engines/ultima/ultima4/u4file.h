@@ -34,19 +34,25 @@ namespace Ultima4 {
  */
 class U4ZipPackage {
 public:
-    U4ZipPackage(const Common::String &name, const Common::String &path, bool extension);
-    void addTranslation(const Common::String &value, const Common::String &translation);
+	U4ZipPackage(const Common::String &name, const Common::String &path, bool extension);
+	void addTranslation(const Common::String &value, const Common::String &translation);
 
-    const Common::String &getFilename() const { return _name; }
-    const Common::String &getInternalPath() const { return _path; }
-    bool isExtension() const { return _extension; }
-    const Common::String &translate(const Common::String &name) const;
+	const Common::String &getFilename() const {
+		return _name;
+	}
+	const Common::String &getInternalPath() const {
+		return _path;
+	}
+	bool isExtension() const {
+		return _extension;
+	}
+	const Common::String &translate(const Common::String &name) const;
 
-private:    
-    Common::String _name;                /**< filename */
-    Common::String _path;                /**< the path within the zipfile where resources are located */
-    bool _extension;             /**< whether this zipfile is an extension with config information */
-    Common::HashMap<Common::String, Common::String> _translations; /**< mapping from standard resource names to internal names */
+private:
+	Common::String _name;                /**< filename */
+	Common::String _path;                /**< the path within the zipfile where resources are located */
+	bool _extension;             /**< whether this zipfile is an extension with config information */
+	Common::HashMap<Common::String, Common::String> _translations; /**< mapping from standard resource names to internal names */
 };
 
 /**
@@ -54,18 +60,20 @@ private:
  */
 class U4ZipPackageMgr {
 public:
-    static U4ZipPackageMgr *getInstance();
-    static void destroy();
-    
-    void add(U4ZipPackage *package);
-    const Std::vector<U4ZipPackage *> &getPackages() const { return _packages; }
+	static U4ZipPackageMgr *getInstance();
+	static void destroy();
+
+	void add(U4ZipPackage *package);
+	const Std::vector<U4ZipPackage *> &getPackages() const {
+		return _packages;
+	}
 
 private:
-    U4ZipPackageMgr();
-    ~U4ZipPackageMgr();
+	U4ZipPackageMgr();
+	~U4ZipPackageMgr();
 
-    static U4ZipPackageMgr *_instance;
-    Std::vector<U4ZipPackage *> _packages;
+	static U4ZipPackageMgr *_instance;
+	Std::vector<U4ZipPackage *> _packages;
 };
 
 #ifdef putc
@@ -80,17 +88,17 @@ private:
  */
 class U4FILE {
 public:
-    virtual ~U4FILE() {}
+	virtual ~U4FILE() {}
 
-    virtual void close() = 0;
-    virtual int seek(long offset, int whence) = 0;
-    virtual long tell() = 0;
-    virtual size_t read(void *ptr, size_t size, size_t nmemb) = 0;
-    virtual int getc() = 0;
-    virtual int putc(int c) = 0;
-    virtual long length() = 0;
+	virtual void close() = 0;
+	virtual int seek(long offset, int whence) = 0;
+	virtual long tell() = 0;
+	virtual size_t read(void *ptr, size_t size, size_t nmemb) = 0;
+	virtual int getc() = 0;
+	virtual int putc(int c) = 0;
+	virtual long length() = 0;
 
-    int getshort();
+	int getshort();
 };
 
 bool u4isUpgradeAvailable();

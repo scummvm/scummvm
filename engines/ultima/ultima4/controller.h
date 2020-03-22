@@ -33,21 +33,23 @@ namespace Ultima4 {
  */
 class Controller {
 public:
-    Controller(int timerInterval = 1);
-    virtual ~Controller();
+	Controller(int timerInterval = 1);
+	virtual ~Controller();
 
-    /* methods for interacting with event manager */
-    virtual bool isCombatController() const { return false; }
-    bool notifyKeyPressed(int key);
-    int getTimerInterval();
-    static void timerCallback(void *data);
+	/* methods for interacting with event manager */
+	virtual bool isCombatController() const {
+		return false;
+	}
+	bool notifyKeyPressed(int key);
+	int getTimerInterval();
+	static void timerCallback(void *data);
 
-    /* control methods subclasses may want to override */
-    virtual bool keyPressed(int key) = 0;
-    virtual void timerFired();
+	/* control methods subclasses may want to override */
+	virtual bool keyPressed(int key) = 0;
+	virtual void timerFired();
 
 private:
-    int _timerInterval;
+	int _timerInterval;
 };
 
 // helper functions for the waitable controller; they just avoid
@@ -63,27 +65,27 @@ void Controller_endWait();
 template<class T>
 class WaitableController : public Controller {
 public:
-    WaitableController() : _exitWhenDone(false) {}
+	WaitableController() : _exitWhenDone(false) {}
 
-    virtual T getValue() {
-        return _value;
-    }
+	virtual T getValue() {
+		return _value;
+	}
 
-    virtual T waitFor() {
-        _exitWhenDone = true;
-        Controller_startWait();
-        return getValue();
-    }
+	virtual T waitFor() {
+		_exitWhenDone = true;
+		Controller_startWait();
+		return getValue();
+	}
 
 protected:
-    T _value;
-    void doneWaiting() {
-        if (_exitWhenDone)
-            Controller_endWait();
-    }
+	T _value;
+	void doneWaiting() {
+		if (_exitWhenDone)
+			Controller_endWait();
+	}
 
 private:
-    bool _exitWhenDone;
+	bool _exitWhenDone;
 };
 
 } // End of namespace Ultima4

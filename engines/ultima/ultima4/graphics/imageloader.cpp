@@ -42,8 +42,8 @@ ImageLoaders::ImageLoaders() {
 
 ImageLoaders::~ImageLoaders() {
 	for (Common::HashMap<Common::String, ImageLoader *>::iterator it = _loaderMap.begin();
-			it != _loaderMap.end(); ++it) {
-		delete (*it)._value;
+	        it != _loaderMap.end(); ++it) {
+		delete(*it)._value;
 	}
 }
 
@@ -60,66 +60,66 @@ ImageLoader *ImageLoaders::getLoader(const Common::String &fileType) {
  * Fill in the image pixel data from an uncompressed string of bytes.
  */
 void ImageLoader::setFromRawData(Image *image, int width, int height, int bpp, unsigned char *rawData) {
-    int x, y;
+	int x, y;
 
-    switch (bpp) {
+	switch (bpp) {
 
-    case 32:
-        for (y = 0; y < height; y++) {
-            for (x = 0; x < width; x++)
-                image->putPixel(x, y, 
-                                rawData[(y * width + x) * 4], 
-                                rawData[(y * width + x) * 4 + 1], 
-                                rawData[(y * width + x) * 4 + 2],
-                                rawData[(y * width + x) * 4 + 3]);
-        }
-        break;
+	case 32:
+		for (y = 0; y < height; y++) {
+			for (x = 0; x < width; x++)
+				image->putPixel(x, y,
+				                rawData[(y * width + x) * 4],
+				                rawData[(y * width + x) * 4 + 1],
+				                rawData[(y * width + x) * 4 + 2],
+				                rawData[(y * width + x) * 4 + 3]);
+		}
+		break;
 
-    case 24:
-        for (y = 0; y < height; y++) {
-            for (x = 0; x < width; x++)
-                image->putPixel(x, y, 
-                                rawData[(y * width + x) * 3], 
-                                rawData[(y * width + x) * 3 + 1], 
-                                rawData[(y * width + x) * 3 + 2],
-                                IM_OPAQUE);
-        }
-        break;
+	case 24:
+		for (y = 0; y < height; y++) {
+			for (x = 0; x < width; x++)
+				image->putPixel(x, y,
+				                rawData[(y * width + x) * 3],
+				                rawData[(y * width + x) * 3 + 1],
+				                rawData[(y * width + x) * 3 + 2],
+				                IM_OPAQUE);
+		}
+		break;
 
-    case 8:
-        for (y = 0; y < height; y++) {
-            for (x = 0; x < width; x++)
-                image->putPixelIndex(x, y, rawData[y * width + x]);
-        }
-        break;
+	case 8:
+		for (y = 0; y < height; y++) {
+			for (x = 0; x < width; x++)
+				image->putPixelIndex(x, y, rawData[y * width + x]);
+		}
+		break;
 
-    case 4:
-        for (y = 0; y < height; y++) {
-            for (x = 0; x < width; x+=2) {
-                image->putPixelIndex(x, y, rawData[(y * width + x) / 2] >> 4);
-                image->putPixelIndex(x + 1, y, rawData[(y * width + x) / 2] & 0x0f);
-            }
-        }
-        break;
+	case 4:
+		for (y = 0; y < height; y++) {
+			for (x = 0; x < width; x += 2) {
+				image->putPixelIndex(x, y, rawData[(y * width + x) / 2] >> 4);
+				image->putPixelIndex(x + 1, y, rawData[(y * width + x) / 2] & 0x0f);
+			}
+		}
+		break;
 
-    case 1:
-        for (y = 0; y < height; y++) {
-            for (x = 0; x < width; x+=8) {
-                image->putPixelIndex(x + 0, y, (rawData[(y * width + x) / 8] >> 7) & 0x01);
-                image->putPixelIndex(x + 1, y, (rawData[(y * width + x) / 8] >> 6) & 0x01);
-                image->putPixelIndex(x + 2, y, (rawData[(y * width + x) / 8] >> 5) & 0x01);
-                image->putPixelIndex(x + 3, y, (rawData[(y * width + x) / 8] >> 4) & 0x01);
-                image->putPixelIndex(x + 4, y, (rawData[(y * width + x) / 8] >> 3) & 0x01);
-                image->putPixelIndex(x + 5, y, (rawData[(y * width + x) / 8] >> 2) & 0x01);
-                image->putPixelIndex(x + 6, y, (rawData[(y * width + x) / 8] >> 1) & 0x01);
-                image->putPixelIndex(x + 7, y, (rawData[(y * width + x) / 8] >> 0) & 0x01);
-            }
-        }
-        break;
+	case 1:
+		for (y = 0; y < height; y++) {
+			for (x = 0; x < width; x += 8) {
+				image->putPixelIndex(x + 0, y, (rawData[(y * width + x) / 8] >> 7) & 0x01);
+				image->putPixelIndex(x + 1, y, (rawData[(y * width + x) / 8] >> 6) & 0x01);
+				image->putPixelIndex(x + 2, y, (rawData[(y * width + x) / 8] >> 5) & 0x01);
+				image->putPixelIndex(x + 3, y, (rawData[(y * width + x) / 8] >> 4) & 0x01);
+				image->putPixelIndex(x + 4, y, (rawData[(y * width + x) / 8] >> 3) & 0x01);
+				image->putPixelIndex(x + 5, y, (rawData[(y * width + x) / 8] >> 2) & 0x01);
+				image->putPixelIndex(x + 6, y, (rawData[(y * width + x) / 8] >> 1) & 0x01);
+				image->putPixelIndex(x + 7, y, (rawData[(y * width + x) / 8] >> 0) & 0x01);
+			}
+		}
+		break;
 
-    default:
-        ASSERT(0, "invalid bits-per-pixel (bpp): %d", bpp);
-    }
+	default:
+		ASSERT(0, "invalid bits-per-pixel (bpp): %d", bpp);
+	}
 }
 
 } // End of namespace Ultima4

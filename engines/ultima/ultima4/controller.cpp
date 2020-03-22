@@ -27,7 +27,7 @@ namespace Ultima {
 namespace Ultima4 {
 
 Controller::Controller(int timerInterval) {
-    this->_timerInterval = timerInterval;
+	this->_timerInterval = timerInterval;
 }
 
 Controller::~Controller() {
@@ -39,15 +39,15 @@ Controller::~Controller() {
  * to the virtual keyPressed method.
  */
 bool Controller::notifyKeyPressed(int key) {
-    bool processed = KeyHandler::globalHandler(key);
-    if (!processed)
-        processed = keyPressed(key);
-    
-    return processed;
+	bool processed = KeyHandler::globalHandler(key);
+	if (!processed)
+		processed = keyPressed(key);
+
+	return processed;
 }
 
 int Controller::getTimerInterval() {
-    return _timerInterval;
+	return _timerInterval;
 }
 
 /**
@@ -63,18 +63,18 @@ void Controller::timerFired() {
  * call.
  */
 void Controller::timerCallback(void *data) {
-    Controller *controller = static_cast<Controller *>(data);
-    controller->timerFired();
+	Controller *controller = static_cast<Controller *>(data);
+	controller->timerFired();
 }
 
 void Controller_startWait() {
-    eventHandler->run();
-    eventHandler->setControllerDone(false);
-    eventHandler->popController();
+	eventHandler->run();
+	eventHandler->setControllerDone(false);
+	eventHandler->popController();
 }
 
 void Controller_endWait() {
-    eventHandler->setControllerDone();
+	eventHandler->setControllerDone();
 }
 
 } // End of namespace Ultima4

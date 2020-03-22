@@ -35,56 +35,60 @@ class Response;
 class ResponsePart;
 
 typedef enum {
-   NPC_EMPTY,
-   NPC_TALKER,
-   NPC_TALKER_BEGGAR,
-   NPC_TALKER_GUARD,
-   NPC_TALKER_COMPANION,
-   NPC_VENDOR_WEAPONS,
-   NPC_VENDOR_ARMOR,
-   NPC_VENDOR_FOOD,
-   NPC_VENDOR_TAVERN,
-   NPC_VENDOR_REAGENTS,
-   NPC_VENDOR_HEALER,
-   NPC_VENDOR_INN,
-   NPC_VENDOR_GUILD,
-   NPC_VENDOR_STABLE,
-   NPC_LORD_BRITISH,
-   NPC_HAWKWIND,
-   NPC_MAX
+	NPC_EMPTY,
+	NPC_TALKER,
+	NPC_TALKER_BEGGAR,
+	NPC_TALKER_GUARD,
+	NPC_TALKER_COMPANION,
+	NPC_VENDOR_WEAPONS,
+	NPC_VENDOR_ARMOR,
+	NPC_VENDOR_FOOD,
+	NPC_VENDOR_TAVERN,
+	NPC_VENDOR_REAGENTS,
+	NPC_VENDOR_HEALER,
+	NPC_VENDOR_INN,
+	NPC_VENDOR_GUILD,
+	NPC_VENDOR_STABLE,
+	NPC_LORD_BRITISH,
+	NPC_HAWKWIND,
+	NPC_MAX
 } PersonNpcType;
 
 class Person : public Creature {
 public:
-    Person(MapTile tile);
-    Person(const Person *p);
+	Person(MapTile tile);
+	Person(const Person *p);
 
-    bool canConverse() const;
-    bool isVendor() const;
-    virtual Common::String getName() const;
-    void goToStartLocation();
-    void setDialogue(Dialogue *d);
-    MapCoords &getStart() { return _start; }
-    PersonNpcType getNpcType() const { return _npcType; }
-    void setNpcType(PersonNpcType t);
+	bool canConverse() const;
+	bool isVendor() const;
+	virtual Common::String getName() const;
+	void goToStartLocation();
+	void setDialogue(Dialogue *d);
+	MapCoords &getStart() {
+		return _start;
+	}
+	PersonNpcType getNpcType() const {
+		return _npcType;
+	}
+	void setNpcType(PersonNpcType t);
 
-    Common::List<Common::String> getConversationText(Conversation *cnv, const char *inquiry);
-    Common::String getPrompt(Conversation *cnv);
-    const char *getChoices(Conversation *cnv);
+	Common::List<Common::String> getConversationText(Conversation *cnv, const char *inquiry);
+	Common::String getPrompt(Conversation *cnv);
+	const char *getChoices(Conversation *cnv);
 
-    Common::String getIntro(Conversation *cnv);
-    Common::String processResponse(Conversation *cnv, Response *response);
-    void runCommand(Conversation *cnv, const ResponsePart &command);
-    Common::String getResponse(Conversation *cnv, const char *inquiry);
-    Common::String talkerGetQuestionResponse(Conversation *cnv, const char *inquiry);
-    Common::String beggarGetQuantityResponse(Conversation *cnv, const char *response);
-    Common::String lordBritishGetQuestionResponse(Conversation *cnv, const char *answer);
-    Common::String getQuestion(Conversation *cnv);
+	Common::String getIntro(Conversation *cnv);
+	Common::String processResponse(Conversation *cnv, Response *response);
+	void runCommand(Conversation *cnv, const ResponsePart &command);
+	Common::String getResponse(Conversation *cnv, const char *inquiry);
+	Common::String talkerGetQuestionResponse(Conversation *cnv, const char *inquiry);
+	Common::String beggarGetQuantityResponse(Conversation *cnv, const char *response);
+	Common::String lordBritishGetQuestionResponse(Conversation *cnv, const char *answer);
+	Common::String getQuestion(Conversation *cnv);
 
 private:
-    Dialogue *_dialogue;
-    MapCoords _start;    
-    PersonNpcType _npcType;
+	Dialogue *_dialogue;
+	MapCoords _start;
+	PersonNpcType _npcType;
 };
 
 bool isPerson(Object *punknown);
