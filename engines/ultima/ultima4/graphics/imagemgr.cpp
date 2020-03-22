@@ -29,6 +29,7 @@
 #include "ultima/ultima4/intro.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/u4file.h"
+#include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -608,11 +609,10 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
         if (info->_filetype.empty())
             info->_filetype = guessFileType(info->_filename);
         Common::String filetype = info->_filetype;
-        ImageLoader *loader = ImageLoader::getLoader(filetype);
+        ImageLoader *loader = g_ultima->_imageLoaders->getLoader(filetype);
         if (loader == NULL)
             errorWarning("can't find loader to load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
-        else
-        {
+        else {
 			unscaled = loader->load(file, info->_width, info->_height, info->_depth);
 			if (info->_width == -1) {
 				// Write in the values for later use.

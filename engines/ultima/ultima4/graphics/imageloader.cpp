@@ -23,35 +23,38 @@
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/graphics/imageloader.h"
+#include "ultima/ultima4/graphics/imageloader_u4.h"
+#include "ultima/ultima4/graphics/imageloader_u5.h"
+#include "ultima/ultima4/graphics/imageloader_png.h"
+#include "ultima/ultima4/graphics/imageloader_fmtowns.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-Std::map<Common::String, ImageLoader *> *ImageLoader::_loaderMap = NULL;
-
-/**
- * This class method returns the registered concrete subclass
- * appropriate for loading images of a type given by fileType.
- */
-ImageLoader *ImageLoader::getLoader(const Common::String &fileType) {
-    ASSERT(_loaderMap != NULL, "ImageLoader::getLoader loaderMap not initialized");
-    if (_loaderMap->find(fileType) == _loaderMap->end())
-        return NULL;
-    return (*_loaderMap)[fileType];
+ImageLoaders::ImageLoaders() {
+	_loaderMap["image/png"] = new PngImageLoader();
+	_loaderMap["image/x-u4raw"] = new U4RawImageLoader();
+	_loaderMap["image/x-u4rle"] = new U4RleImageLoader();
+	_loaderMap["image/x-u4lzw"] = new U4LzwImageLoader();
+	_loaderMap["image/x-u5lzw"] = new U5LzwImageLoader();
+	_loaderMap["image/fmtowns-tif"] = new FMTOWNSImageLoader(510);
 }
 
-/**
- * Register an image loader.  Concrete subclasses should register an
- * instance at startup.  This method is safe to call from a global
- * object constructor or static initializer.
- */
-ImageLoader *ImageLoader::registerLoader(ImageLoader *loader, const Common::String &type) {
-    if (_loaderMap == NULL) {
-        _loaderMap = new Std::map<Common::String, ImageLoader *>;
-    }
-    (*_loaderMap)[type] = loader;
-    return loader;
+ImageLoaders::~ImageLoaders() {
+	for (Common::HashMap<Common::String, ImageLoader *>::iterator it = _loaderMap.begin();
+			it != _loaderMap.end(); ++it) {
+		delete (*it)._value;
+	}
 }
+
+ImageLoader *ImageLoaders::getLoader(const Common::String &fileType) {
+	if (!_loaderMap.contains(fileType))
+		return nullptr;
+
+	return _loaderMap[fileType];
+}
+
+/*-------------------------------------------------------------------*/
 
 /**
  * Fill in the image pixel data from an uncompressed string of bytes.

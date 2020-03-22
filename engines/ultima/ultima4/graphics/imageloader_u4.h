@@ -37,11 +37,8 @@ struct RGBA;
  * well as the 8-bit VGA upgrade images.
  */
 class U4RawImageLoader : public ImageLoader {
-    static ImageLoader *_instance;
-
 public:
     virtual Image *load(U4FILE *file, int width, int height, int bpp);
-
 };
 
 /**
@@ -51,11 +48,8 @@ public:
  * 4-bit images, as well as the 8-bit VGA upgrade images.
  */
 class U4RleImageLoader : public ImageLoader {
-    static ImageLoader *_instance;
-
 public:
-    virtual Image *load(U4FILE *file, int width, int height, int bpp);
-    
+    virtual Image *load(U4FILE *file, int width, int height, int bpp);    
 };
 
 /**
@@ -65,11 +59,8 @@ public:
  * images, as well as the 8-bit VGA upgrade images.
  */
 class U4LzwImageLoader : public ImageLoader {
-    static ImageLoader *_instance;
-
 public:
-    virtual Image *load(U4FILE *file, int width, int height, int bpp);
-    
+    virtual Image *load(U4FILE *file, int width, int height, int bpp);    
 };
 
 class U4PaletteLoader {
