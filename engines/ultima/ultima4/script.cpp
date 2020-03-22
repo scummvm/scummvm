@@ -41,7 +41,7 @@
 #include "ultima/ultima4/u4file.h"
 #include "ultima/ultima4/utils.h"
 #include "ultima/ultima4/weapon.h"
-#include "ultima/ultima4/xml.h"
+#include "ultima/shared/conf/xml_tree.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -151,102 +151,101 @@ void Script::addProvider(const Common::String &name, Provider *p) {
  * Loads the vendor script
  */ 
 bool Script::load(const Common::String &filename, const Common::String &baseId, const Common::String &subNodeName, const Common::String &subNodeId) {
-#ifdef TODO
-	xmlNodePtr root, node, child;
-    this->_state = STATE_NORMAL;
+	Shared::XMLNode *root, *node, *child;
+    _state = STATE_NORMAL;
 
     /* unload previous script */
     unload();
 
     /**
      * Open and parse the .xml file
-     */ 
-    this->vendorScriptDoc = xmlParse(filename.c_str());
-    root = xmlDocGetRootElement(vendorScriptDoc);
-    if (xmlStrcmp(root->name, (const xmlChar *) "scripts") != 0)
-        errorFatal("malformed %s", filename.c_str());
+     */
+	Shared::XMLTree *doc = new Shared::XMLTree(filename);
+	_vendorScriptDoc = root = doc->getTree();
+
+    if (!root->id().equalsIgnoreCase("scripts"))
+        error("malformed %s", filename.c_str());
 
     /**
      * If the script is set to debug, then open our script debug file
      */ 
-    if (xmlPropExists(root, "debug")) {
+    if (root->hasProperty("debug")) {
         static const char *dbg_filename = "debug/script.txt";
         // Our script is going to hog all the debug info
-        if (xmlGetPropAsBool(root, "debug"))
-            debug = FileSystem::openFile(dbg_filename, "wt");
+        if (root->getPropertyBool("debug"))
+            _debug = FileSystem::openForWriting(dbg_filename);
         else {
             // See if we share our debug space with other scripts
-            Common::String val = xmlGetPropAsString(root, "debug");
+            Common::String val = root->getProperty("debug");
             if (val == "share")
-                debug = FileSystem::openFile(dbg_filename, "at");
+                _debug = FileSystem::openForWriting(dbg_filename);
         }
     }
 
     /**
      * Get a new global item name or id name
      */
-    if (xmlPropExists(root, "noun"))
-        nounName = xmlGetPropAsString(root, "noun");
-    if (xmlPropExists(root, "id_prop"))
-        idPropName = xmlGetPropAsString(root, "id_prop");
+    if (root->hasProperty("noun"))
+        _nounName = root->getProperty("noun");
+    if (root->hasProperty("id_prop"))
+        _idPropName = root->getProperty("id_prop");
 
-    this->currentScript = NULL;
-    this->currentItem = NULL;
+    _currentScript = NULL;
+    _currentItem = NULL;
 
-    for (node = root->xmlChildrenNode; node; node = node->next) {
-        if (xmlNodeIsText(node) || (xmlStrcmp(node->name, (const xmlChar *) "script") != 0))
+    for (node = root->firstChild(); node; node = node->getNext()) {
+        if (node->nodeIsText() || !node->id().equalsIgnoreCase("script"))
             continue;
         
-        if (baseId == xmlGetPropAsString(node, "id")) {
+        if (baseId == node->getProperty("id")) {
             /**
              * We use the base node as our main script node
              */
             if (subNodeName.empty()) {
-                this->scriptNode = node;            
-                this->translationContext.push_back(node);
+                _scriptNode = node;            
+                _translationContext.push_back(node);
 
                 break;                
             }
 
-            for (child = node->xmlChildrenNode; child; child = child->next) {
-                if (xmlNodeIsText(child) ||
-                    xmlStrcmp(child->name, (const xmlChar *) subNodeName.c_str()) != 0)
+            for (child = node->firstChild(); child; child = child->getNext()) {
+                if (child->nodeIsText() || !child->id().equalsIgnoreCase(subNodeName))
                     continue;
          
-                Common::String id = xmlGetPropAsString(child, "id");
+                Common::String id = child->getProperty("id");
 
                 if (id == subNodeId) {                    
-                    this->scriptNode = child;                    
-                    this->translationContext.push_back(child);
+                    _scriptNode = child;                    
+                    _translationContext.push_back(child);
 
                     /**
                      * Get a new local item name or id name
                      */
-                    if (xmlPropExists(node, "noun"))
-                        nounName = xmlGetPropAsString(node, "noun");
-                    if (xmlPropExists(node, "id_prop"))
-                        idPropName = xmlGetPropAsString(node, "id_prop");
+                    if (node->hasProperty("noun"))
+                        _nounName = node->getProperty("noun");
+                    if (node->hasProperty("id_prop"))
+                        _idPropName = node->getProperty("id_prop");
 
                     break;
                 }                
             }    
             
-            if (scriptNode) 
+            if (_scriptNode) 
                 break;
         }
     }
 
-    if (scriptNode) {
+    if (_scriptNode) {
         /**
          * Get a new local item name or id name
          */
-        if (xmlPropExists(scriptNode, "noun"))
-            nounName = xmlGetPropAsString(scriptNode, "noun");
-        if (xmlPropExists(scriptNode, "id_prop"))
-            idPropName = xmlGetPropAsString(scriptNode, "id_prop");
+        if (_scriptNode->hasProperty("noun"))
+            _nounName = _scriptNode->getProperty("noun");
+        if (_scriptNode->hasProperty("id_prop"))
+            _idPropName = _scriptNode->getProperty("id_prop");
 
-        if (debug)
-            ::debug("\n<Loaded subscript '%s' where id='%s' for script '%s'>\n", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str());
+        if (_debug)
+            debug("\n<Loaded subscript '%s' where id='%s' for script '%s'>\n", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str());
     }
     else {    
         if (subNodeName.empty())
@@ -254,10 +253,7 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
         else errorFatal("Couldn't find subscript '%s' where id='%s' in script '%s' in %s", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str(), filename.c_str());
     }
 
-    this->state = STATE_UNLOADED;
-#else
-	error("TODO");
-#endif
+    _state = STATE_UNLOADED;
 
     return false;
 }
@@ -267,7 +263,7 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
  */ 
 void Script::unload() {
     if (_vendorScriptDoc) {
-        xmlFreeDoc(_vendorScriptDoc);
+		_vendorScriptDoc->freeDoc();
         _vendorScriptDoc = NULL;
     }
 
@@ -281,7 +277,7 @@ void Script::unload() {
  * Runs a script after it's been loaded
  */ 
  void Script::run(const Common::String &script) {
-    xmlNodePtr scriptNode;
+    Shared::XMLNode *scriptNode;
     Common::String search_id;
     
     if (_variables.find(_idPropName) != _variables.end()) {
@@ -290,7 +286,7 @@ void Script::unload() {
         else search_id = "null";
     }
     
-    scriptNode = find(this->_scriptNode, script, search_id);
+    scriptNode = find(_scriptNode, script, search_id);
 
     if (!scriptNode)
         errorFatal("Script '%s' not found in vendorScript.xml", script.c_str());
@@ -301,38 +297,39 @@ void Script::unload() {
 /**
  * Executes the subscript 'script' of the main script
  */ 
-Script::ReturnCode Script::execute(xmlNodePtr script, xmlNodePtr currentItem, Common::String *output) {
-    xmlNodePtr current;    
+Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *currentItem, Common::String *output) {
+    Shared::XMLNode *current;    
     Script::ReturnCode retval = RET_OK;
     
-    if (!script->children) {
+    if (!script->hasChildren()) {
         /* redirect the script to another node */
-        if (xmlPropExists(script, "redirect"))
+        if (script->hasProperty("redirect"))
             retval = redirect(NULL, script);        
         /* end the conversation */
         else {
             if (_debug)
                 ::debug("\nA script with no children found (nowhere to go). Ending script...\n");
             screenMessage("\n");            
-            this->_state = STATE_DONE;
+            _state = STATE_DONE;
         }
     }
 
     /* do we start where we left off, or start from the beginning? */
     if (currentItem) {
-        current = currentItem->next;
+        current = currentItem->getNext();
         if (_debug)
-            ::debug("\nReturning to execution from end of '%s' script\n", currentItem->name);
-    }
-    else current = script->children;
-        
-    for (; current; current = current->next) {
-        Common::String name = (char *)current->name;        
+            ::debug("\nReturning to execution from end of '%s' script\n", currentItem->id().c_str());
+	} else {
+		current = script->firstChild();
+	}
+
+    for (; current; current = current->getNext()) {
+        Common::String name = current->id();        
         retval = RET_OK;
         ActionMap::iterator action;
 
         /* nothing left to do */
-        if (this->_state == STATE_DONE)
+        if (_state == STATE_DONE)
             break;
 
         /* begin execution of script */       
@@ -340,7 +337,7 @@ Script::ReturnCode Script::execute(xmlNodePtr script, xmlNodePtr currentItem, Co
         /**
          * Handle Text
          */
-        if (xmlNodeIsText(current)) {
+        if (current->nodeIsText()) {
             Common::String content = getContent(current);
             if (output)
                 *output += content;
@@ -348,10 +345,7 @@ Script::ReturnCode Script::execute(xmlNodePtr script, xmlNodePtr currentItem, Co
 
             if (_debug && content.size())
                 ::debug("\nOutput: \n====================\n%s\n====================", content.c_str());
-        }
-        /* skip comments */
-        else if (current->type == XML_COMMENT_NODE) {}
-        else {
+        } else {
             /**
              * Search for the corresponding action and execute it!
              */ 
@@ -451,7 +445,7 @@ int Script::getInputMaxLen()            { return _inputMaxLen; }
 void Script::translate(Common::String *text) {
     unsigned int pos;
     bool nochars = true;
-    xmlNodePtr node = this->_translationContext.back();
+    Shared::XMLNode *node = _translationContext.back();
     
     /* determine if the script is completely whitespace */
     for (Common::String::iterator current = text->begin(); current != text->end(); current++) {
@@ -522,33 +516,33 @@ void Script::translate(Common::String *text) {
         }        
         // Get the current iterator for our loop
         else if (item == "iterator")
-            prop = xu4_to_string(this->_iterator);
+            prop = xu4_to_string(_iterator);
         else if ((pos = item.find("show_inventory:")) < item.size()) {
             pos = item.find(":");
             Common::String itemScript = item.substr(pos+1);
 
-            xmlNodePtr itemShowScript = find(node, itemScript);
+            Shared::XMLNode *itemShowScript = find(node, itemScript);
 
-            xmlNodePtr nodePtr;
+            Shared::XMLNode *nodePtr;
             prop.clear();
             
             /**
              * Save iterator
              */ 
-            int oldIterator = this->_iterator;            
+            int oldIterator = _iterator;            
 
             /* start iterator at 0 */
-            this->_iterator = 0;
+            _iterator = 0;
             
-            for (nodePtr = node->children; nodePtr; nodePtr = nodePtr->next) {
-                if (xmlStrcmp(nodePtr->name, (const xmlChar *)_nounName.c_str()) == 0) {
-                    bool hidden = (bool)xmlGetPropAsBool(nodePtr, "hidden");                    
+            for (nodePtr = node->firstChild(); nodePtr; nodePtr = nodePtr->getNext()) {
+                if (nodePtr->id().equalsIgnoreCase(_nounName)) {
+					bool hidden = nodePtr->getPropertyBool("hidden");
 
                     if (!hidden) {
                         /* make sure the nodePtr's requisites are met */
-                        if (!xmlPropExists(nodePtr, "req") || compare(getPropAsStr(nodePtr, "req"))) {
+                        if (!nodePtr->hasProperty("req") || compare(nodePtr->getProperty("req"))) {
                             /* put a newline after each */
-                            if (this->_iterator > 0)
+                            if (_iterator > 0)
                                 prop += "\n";                            
 
                             /* set translation context to nodePtr */
@@ -556,7 +550,7 @@ void Script::translate(Common::String *text) {
                             execute(itemShowScript, NULL, &prop);
                             _translationContext.pop_back();
 
-                            this->_iterator++;
+                            _iterator++;
                         }
                     }                    
                 }
@@ -565,7 +559,7 @@ void Script::translate(Common::String *text) {
             /**
              * Restore iterator to previous value
              */             
-            this->_iterator = oldIterator;
+            _iterator = oldIterator;
         }
 
         /**
@@ -573,14 +567,14 @@ void Script::translate(Common::String *text) {
          * vendor's inventory (i.e. "bcde")
          */ 
         else if (item == "inventory_choices") {
-            xmlNodePtr nodePtr;
+            Shared::XMLNode *nodePtr;
             Common::String ids;
 
-            for (nodePtr = node->children; nodePtr; nodePtr = nodePtr->next) {
-                if (xmlStrcmp(nodePtr->name, (const xmlChar *)_nounName.c_str()) == 0) {
+            for (nodePtr = node->firstChild(); nodePtr; nodePtr = nodePtr->getNext()) {
+                if (nodePtr->id().equalsIgnoreCase(_nounName)) {
                     Common::String id = getPropAsStr(nodePtr, _idPropName.c_str());
                     /* make sure the nodePtr's requisites are met */
-                    if (!xmlPropExists(nodePtr, "req") || (compare(getPropAsStr(nodePtr, "req"))))
+                    if (!nodePtr->hasProperty("req") || (compare(getPropAsStr(nodePtr, "req"))))
                         ids += id[0];
                 }
             }
@@ -695,23 +689,23 @@ void Script::translate(Common::String *text) {
 /**
  * Finds a subscript of script 'node'
  */ 
- xmlNodePtr Script::find(xmlNodePtr node, const Common::String &script_to_find, const Common::String &id, bool _default) {
-    xmlNodePtr current;
+ Shared::XMLNode *Script::find(Shared::XMLNode *node, const Common::String &script_to_find, const Common::String &id, bool _default) {
+    Shared::XMLNode *current;
     if (node) {
-        for (current = node->children; current; current = current->next) {
-            if (!xmlNodeIsText(current) && (script_to_find == (char *)current->name)) {
-                if (id.empty() && !xmlPropExists(current, _idPropName.c_str()) && !_default)
+        for (current = node->firstChild(); current; current = current->getNext()) {
+			if (!current->nodeIsText() && (script_to_find == current->id().c_str())) {
+                if (id.empty() && !current->hasProperty(_idPropName.c_str()) && !_default)
                     return current;
-                else if (xmlPropExists(current, _idPropName.c_str()) && (id == xmlGetPropAsString(current, _idPropName.c_str())))
+                else if (current->hasProperty(_idPropName.c_str()) && (id == current->getProperty(_idPropName)))
                     return current;
-                else if (_default && xmlPropExists(current, "default") && xmlGetPropAsBool(current, "default"))
+                else if (_default && current->hasProperty("default") && current->getPropertyBool("default"))
                     return current;
             }
         }
 
         /* only search the parent nodes if we haven't hit the base <script> node */
-        if (xmlStrcmp(node->name, (const xmlChar *)"script") != 0)
-            current = find(node->parent, script_to_find, id);
+        if (!node->id().equalsIgnoreCase("script"))
+            current = find(node->getParent(), script_to_find, id);
 
         /* find the default script instead */
         if (!current && !id.empty() && !_default)
@@ -725,23 +719,23 @@ void Script::translate(Common::String *text) {
  * Gets a property as Common::String from the script, and
  * translates it using scriptTranslate.
  */ 
-Common::String Script::getPropAsStr(Std::list<xmlNodePtr> &nodes, const Common::String &prop, bool recursive) {
+Common::String Script::getPropAsStr(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive) {
     Common::String propvalue;
-    Std::list<xmlNodePtr>::reverse_iterator i;
+    Std::list<Shared::XMLNode *>::reverse_iterator i;
     
     for (i = nodes.rbegin(); i != nodes.rend(); ++i) {
-        xmlNodePtr node = *i;
-        if (xmlPropExists(node, prop.c_str())) {
-            propvalue = xmlGetPropAsString(node, prop.c_str());
+        Shared::XMLNode *node = *i;
+        if (node->hasProperty(prop)) {
+            propvalue = node->getProperty(prop);
             break;
         }
     }
 
     if (propvalue.empty() && recursive) {
         for (i = nodes.rbegin(); i != nodes.rend(); ++i) {
-            xmlNodePtr node = *i;
-            if (node->parent) {
-                propvalue = getPropAsStr(node->parent, prop, recursive);
+            Shared::XMLNode *node = *i;
+            if (node->getParent()) {
+                propvalue = getPropAsStr(node->getParent(), prop, recursive);
                 break;
             }
         }
@@ -750,8 +744,8 @@ Common::String Script::getPropAsStr(Std::list<xmlNodePtr> &nodes, const Common::
     translate(&propvalue);
     return propvalue;
 }
-Common::String Script::getPropAsStr(xmlNodePtr node, const Common::String &prop, bool recursive) {
-    Std::list<xmlNodePtr> list;
+Common::String Script::getPropAsStr(Shared::XMLNode *node, const Common::String &prop, bool recursive) {
+    Std::list<Shared::XMLNode *> list;
     list.push_back(node);
     return getPropAsStr(list, prop, recursive);    
 }
@@ -759,11 +753,11 @@ Common::String Script::getPropAsStr(xmlNodePtr node, const Common::String &prop,
 /**
  * Gets a property as int from the script
  */ 
-int Script::getPropAsInt(Std::list<xmlNodePtr>& nodes, const Common::String &prop, bool recursive) {
+int Script::getPropAsInt(Std::list<Shared::XMLNode *>& nodes, const Common::String &prop, bool recursive) {
     Common::String propvalue = getPropAsStr(nodes, prop, recursive);
     return mathValue(propvalue);
 }
-int Script::getPropAsInt(xmlNodePtr node, const Common::String &prop, bool recursive) {
+int Script::getPropAsInt(Shared::XMLNode *node, const Common::String &prop, bool recursive) {
     Common::String propvalue = getPropAsStr(node, prop, recursive);
     return mathValue(propvalue);
 }
@@ -771,10 +765,8 @@ int Script::getPropAsInt(xmlNodePtr node, const Common::String &prop, bool recur
 /**
  * Gets the content of a script node
  */ 
-Common::String Script::getContent(xmlNodePtr node) {
-    xmlChar *nodeContent = xmlNodeGetContent(node);
-    Common::String content = reinterpret_cast<char *>(nodeContent);
-    xmlFree(nodeContent);
+Common::String Script::getContent(Shared::XMLNode *node) {
+	Common::String content = node->value();
     translate(&content);
     return content;
 }
@@ -782,11 +774,11 @@ Common::String Script::getContent(xmlNodePtr node) {
 /**
  * Sets a new translation context for the script
  */ 
-Script::ReturnCode Script::pushContext(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::pushContext(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String nodeName = getPropAsStr(current, "name");
     Common::String search_id;
 
-    if (xmlPropExists(current, _idPropName.c_str()))         
+    if (current->hasProperty(_idPropName.c_str()))
         search_id = getPropAsStr(current, _idPropName);
     else if (_variables.find(_idPropName) != _variables.end()) {
         if (_variables[_idPropName]->isSet())
@@ -797,7 +789,7 @@ Script::ReturnCode Script::pushContext(xmlNodePtr script, xmlNodePtr current) {
     // When looking for a new context, start from within our old one
     _translationContext.push_back(find(_translationContext.back(), nodeName, search_id));
     if (_debug) {
-        if (!this->_translationContext.back())
+        if (!_translationContext.back())
             ::debug("\nWarning!!! Invalid translation context <%s %s=\"%s\" ...>", nodeName.c_str(), _idPropName.c_str(), search_id.c_str());
         else ::debug("\nChanging translation context to <%s %s=\"%s\" ...>", nodeName.c_str(), _idPropName.c_str(), search_id.c_str());
     }
@@ -808,11 +800,11 @@ Script::ReturnCode Script::pushContext(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Removes a node from the translation context
  */ 
-Script::ReturnCode Script::popContext(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::popContext(Shared::XMLNode *script, Shared::XMLNode *current) {
     if (_translationContext.size() > 1) {
         _translationContext.pop_back();
         if (_debug)
-            ::debug("\nReverted translation context to <%s ...>", _translationContext.back()->name);
+            ::debug("\nReverted translation context to <%s ...>", _translationContext.back()->id().c_str());
     }
     return RET_OK;
 }
@@ -820,18 +812,18 @@ Script::ReturnCode Script::popContext(xmlNodePtr script, xmlNodePtr current) {
 /**
  * End script execution
  */ 
-Script::ReturnCode Script::end(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::end(Shared::XMLNode *script, Shared::XMLNode *current) {
     /**
      * See if there's a global 'end' node declared for cleanup
      */
-    xmlNodePtr endScript = find(_scriptNode, "end");
+    Shared::XMLNode *endScript = find(_scriptNode, "end");
     if (endScript)
         execute(endScript);
 
     if (_debug)
         ::debug("\n<End script>");
     
-    this->_state = STATE_DONE;
+    _state = STATE_DONE;
     
     return RET_STOP;
 }
@@ -839,13 +831,13 @@ Script::ReturnCode Script::end(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Wait for keypress from the user
  */ 
-Script::ReturnCode Script::waitForKeypress(xmlNodePtr script, xmlNodePtr current) {
-    this->_currentScript = script;
-    this->_currentItem = current;
-    this->_choices = "abcdefghijklmnopqrstuvwxyz01234567890\015 \033";
-    this->_target.clear();
-    this->_state = STATE_INPUT;
-    this->_inputType = INPUT_KEYPRESS;
+Script::ReturnCode Script::waitForKeypress(Shared::XMLNode *script, Shared::XMLNode *current) {
+    _currentScript = script;
+    _currentItem = current;
+    _choices = "abcdefghijklmnopqrstuvwxyz01234567890\015 \033";
+    _target.clear();
+    _state = STATE_INPUT;
+    _inputType = INPUT_KEYPRESS;
 
     if (_debug)
         ::debug("\n<Wait>");
@@ -856,17 +848,17 @@ Script::ReturnCode Script::waitForKeypress(xmlNodePtr script, xmlNodePtr current
 /**
  * Redirects script execution to another script
  */ 
-Script::ReturnCode Script::redirect(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::redirect(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String target;
     
-    if (xmlPropExists(current, "redirect"))
+    if (current->hasProperty("redirect"))
         target = getPropAsStr(current, "redirect");
     else target = getPropAsStr(current, "target");
 
     /* set a new search id */
     Common::String search_id = getPropAsStr(current, _idPropName);
     
-    xmlNodePtr newScript = find(this->_scriptNode, target, search_id);
+    Shared::XMLNode *newScript = find(_scriptNode, target, search_id);
     if (!newScript)
         errorFatal("Error: redirect failed -- could not find target script '%s' with %s=\"%s\"", target.c_str(), _idPropName.c_str(), search_id.c_str());
 
@@ -884,11 +876,11 @@ Script::ReturnCode Script::redirect(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Includes a script to be executed
  */ 
-Script::ReturnCode Script::include(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::include(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String scriptName = getPropAsStr(current, "script");
     Common::String id = getPropAsStr(current, _idPropName);
 
-    xmlNodePtr newScript = find(this->_scriptNode, scriptName, id);
+    Shared::XMLNode *newScript = find(_scriptNode, scriptName, id);
     if (!newScript)
         errorFatal("Error: include failed -- could not find target script '%s' with %s=\"%s\"", scriptName.c_str(), _idPropName.c_str(), id.c_str());
 
@@ -906,7 +898,7 @@ Script::ReturnCode Script::include(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Waits a given number of milliseconds before continuing execution
  */ 
-Script::ReturnCode Script::wait(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::wait(Shared::XMLNode *script, Shared::XMLNode *current) {
     int msecs = getPropAsInt(current, "msecs");
     EventHandler::wait_msecs(msecs);    
     return RET_OK;
@@ -915,20 +907,20 @@ Script::ReturnCode Script::wait(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Executes a 'for' loop script
  */ 
-Script::ReturnCode Script::forLoop(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::forLoop(Shared::XMLNode *script, Shared::XMLNode *current) {
     Script::ReturnCode retval = RET_OK;
     int start = getPropAsInt(current, "start"),
         end = getPropAsInt(current, "end"),
         /* save the iterator in case this loop is nested */
-        oldIterator = this->_iterator,
+        oldIterator = _iterator,
         i;
 
     if (_debug)
         ::debug("\n\n<For Start=%d End=%d>\n", start, end);
     
-    for (i = start, this->_iterator = start;
+    for (i = start, _iterator = start;
          i <= end;
-         i++, this->_iterator++) {
+         i++, _iterator++) {
         
         if (_debug)
             ::debug("\n%d: ", i);
@@ -939,7 +931,7 @@ Script::ReturnCode Script::forLoop(xmlNodePtr script, xmlNodePtr current) {
     }
 
     /* restore the previous iterator */
-    this->_iterator = oldIterator;
+    _iterator = oldIterator;
 
     return retval;
 }
@@ -947,7 +939,7 @@ Script::ReturnCode Script::forLoop(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Randomely executes script code
  */ 
-Script::ReturnCode Script::random(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::random(Shared::XMLNode *script, Shared::XMLNode *current) {
     int perc = getPropAsInt(current, "chance");
     int num = xu4_random(100);
     Script::ReturnCode retval = RET_OK;
@@ -964,12 +956,12 @@ Script::ReturnCode Script::random(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Moves the player's current position
  */ 
-Script::ReturnCode Script::move(xmlNodePtr script, xmlNodePtr current) {
-    if (xmlPropExists(current, "x"))
+Script::ReturnCode Script::move(Shared::XMLNode *script, Shared::XMLNode *current) {
+    if (current->hasProperty("x"))
         g_context->_location->_coords.x = getPropAsInt(current, "x");
-    if (xmlPropExists(current, "y"))
+    if (current->hasProperty("y"))
         g_context->_location->_coords.y = getPropAsInt(current, "y");
-    if (xmlPropExists(current, "z"))
+    if (current->hasProperty("z"))
         g_context->_location->_coords.z = getPropAsInt(current, "z");
 
     if (_debug)
@@ -982,7 +974,7 @@ Script::ReturnCode Script::move(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Puts the player to sleep. Useful when coding inn scripts
  */ 
-Script::ReturnCode Script::sleep(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::sleep(Shared::XMLNode *script, Shared::XMLNode *current) {
     if (_debug)
         ::debug("\nSleep!\n");
 
@@ -995,8 +987,8 @@ Script::ReturnCode Script::sleep(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Enables/Disables the keyboard cursor
  */ 
-Script::ReturnCode Script::cursor(xmlNodePtr script, xmlNodePtr current) {
-    bool enable = (bool)xmlGetPropAsBool(current, "enable");
+Script::ReturnCode Script::cursor(Shared::XMLNode *script, Shared::XMLNode *current) {
+    bool enable = current->getPropertyBool("enable");
     if (enable)
         screenEnableCursor();
     else screenDisableCursor();
@@ -1007,7 +999,7 @@ Script::ReturnCode Script::cursor(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Pay gold to someone
  */ 
-Script::ReturnCode Script::pay(xmlNodePtr script, xmlNodePtr current) {    
+Script::ReturnCode Script::pay(Shared::XMLNode *script, Shared::XMLNode *current) {    
     int price = getPropAsInt(current, "price");
     int quant = getPropAsInt(current, "quantity");       
 
@@ -1040,7 +1032,7 @@ Script::ReturnCode Script::pay(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Perform a limited 'if' statement
  */ 
-Script::ReturnCode Script::_if(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::_if(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String test = getPropAsStr(current, "test");
     Script::ReturnCode retval = RET_OK;
 
@@ -1049,11 +1041,10 @@ Script::ReturnCode Script::_if(xmlNodePtr script, xmlNodePtr current) {
 
     if (compare(test)) {
         if (_debug)
-            ::debug("True - Executing '%s'", current->name);
+            ::debug("True - Executing '%s'", current->id().c_str());
 
         retval = execute(current);                
-    }
-    else if (_debug)
+    } else if (_debug)
         ::debug("False");
 
     return retval;
@@ -1062,47 +1053,47 @@ Script::ReturnCode Script::_if(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Get input from the player
  */ 
-Script::ReturnCode Script::input(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::input(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String type = getPropAsStr(current, "type");
             
-    this->_currentScript = script;
-    this->_currentItem = current;
+    _currentScript = script;
+    _currentItem = current;
 
-    if (xmlPropExists(current, "target"))
-        this->_target = getPropAsStr(current, "target");
-    else this->_target.clear();
+    if (current->hasProperty("target"))
+        _target = getPropAsStr(current, "target");
+    else _target.clear();
 
-    this->_state = STATE_INPUT;
-    this->_inputName = "input";
+    _state = STATE_INPUT;
+    _inputName = "input";
 
     // Does the variable have a maximum length?
-    if (xmlPropExists(current, "maxlen"))
-        this->_inputMaxLen = getPropAsInt(current, "maxlen");
-    else this->_inputMaxLen = Conversation::BUFFERLEN;
+    if (current->hasProperty("maxlen"))
+        _inputMaxLen = getPropAsInt(current, "maxlen");
+    else _inputMaxLen = Conversation::BUFFERLEN;
 
     // Should we name the variable something other than "input"
-    if (xmlPropExists(current, "name"))
-        this->_inputName = getPropAsStr(current, "name");
+    if (current->hasProperty("name"))
+        _inputName = getPropAsStr(current, "name");
     else {
         if (type == "choice")
-            this->_inputName = _idPropName;
+            _inputName = _idPropName;
     }
         
     if (type == "number")
-        this->_inputType = INPUT_NUMBER;
+        _inputType = INPUT_NUMBER;
     else if (type == "keypress")
-        this->_inputType = INPUT_KEYPRESS;
+        _inputType = INPUT_KEYPRESS;
     else if (type == "choice") {
-        this->_inputType = INPUT_CHOICE;
-        this->_choices = getPropAsStr(current, "options");
-        this->_choices += " \015\033";
+        _inputType = INPUT_CHOICE;
+        _choices = getPropAsStr(current, "options");
+        _choices += " \015\033";
     }
     else if (type == "text")
-        this->_inputType = INPUT_STRING;
+        _inputType = INPUT_STRING;
     else if (type == "direction")
-        this->_inputType = INPUT_DIRECTION;
+        _inputType = INPUT_DIRECTION;
     else if (type == "player")
-        this->_inputType = INPUT_PLAYER;        
+        _inputType = INPUT_PLAYER;        
 
     if (_debug)
         ::debug("\nInput: %s", type.c_str());
@@ -1114,10 +1105,10 @@ Script::ReturnCode Script::input(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Add item to inventory
  */ 
-Script::ReturnCode Script::add(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String type = getPropAsStr(current, "type");
     Common::String subtype = getPropAsStr(current, "subtype");
-    int quant = getPropAsInt(this->_translationContext.back(), "quantity");
+    int quant = getPropAsInt(_translationContext.back(), "quantity");
     if (quant == 0)
         quant = getPropAsInt(current, "quantity");
     else
@@ -1189,7 +1180,7 @@ Script::ReturnCode Script::add(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Lose item
  */ 
-Script::ReturnCode Script::lose(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::lose(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String type = getPropAsStr(current, "type");
     Common::String subtype = getPropAsStr(current, "subtype");
     int quant = getPropAsInt(current, "quantity");
@@ -1212,7 +1203,7 @@ Script::ReturnCode Script::lose(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Heals a party member
  */ 
-Script::ReturnCode Script::heal(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::heal(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String type = getPropAsStr(current, "type");
     PartyMember *p = g_context->_party->member(getPropAsInt(current, "player")-1);
 
@@ -1231,7 +1222,7 @@ Script::ReturnCode Script::heal(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Performs all of the visual/audio effects of casting a spell
  */ 
-Script::ReturnCode Script::castSpell(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::castSpell(Shared::XMLNode *script, Shared::XMLNode *current) {
     (*spellEffectCallback)('r', -1, SOUND_MAGIC);
     if (_debug)
         ::debug("\n<Spell effect>");
@@ -1242,7 +1233,7 @@ Script::ReturnCode Script::castSpell(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Apply damage to a player
  */ 
-Script::ReturnCode Script::damage(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::damage(Shared::XMLNode *script, Shared::XMLNode *current) {
     int player = getPropAsInt(current, "player") - 1;
     int pts = getPropAsInt(current, "pts");
     PartyMember *p;
@@ -1259,7 +1250,7 @@ Script::ReturnCode Script::damage(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Apply karma changes based on the action taken
  */ 
-Script::ReturnCode Script::karma(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::karma(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String action = getPropAsStr(current, "action");            
 
     if (_debug)
@@ -1304,15 +1295,15 @@ Script::ReturnCode Script::karma(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Set the currently playing music
  */ 
-Script::ReturnCode Script::music(xmlNodePtr script, xmlNodePtr current) {
-    if (xmlGetPropAsBool(current, "reset"))        
+Script::ReturnCode Script::music(Shared::XMLNode *script, Shared::XMLNode *current) {
+    if (current->getPropertyBool("reset"))        
         musicMgr->play();
     else {
         Common::String type = getPropAsStr(current, "type");
 
-        if (xmlGetPropAsBool(current, "play"))
+        if (current->getPropertyBool("play"))
             musicMgr->play();
-        if (xmlGetPropAsBool(current, "stop"))
+        if (current->getPropertyBool("stop"))
             musicMgr->stop();
         else if (type == "shopping")
             musicMgr->shopping();
@@ -1326,7 +1317,7 @@ Script::ReturnCode Script::music(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Sets a variable
  */ 
-Script::ReturnCode Script::setVar(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::setVar(Shared::XMLNode *script, Shared::XMLNode *current) {
     Common::String name = getPropAsStr(current, "name");
     Common::String value = getPropAsStr(current, "value");
 
@@ -1348,7 +1339,7 @@ Script::ReturnCode Script::setVar(xmlNodePtr script, xmlNodePtr current) {
 /**
  * Display a different ztats screen
  */ 
-Script::ReturnCode Script::ztats(xmlNodePtr script, xmlNodePtr current) {
+Script::ReturnCode Script::ztats(Shared::XMLNode *script, Shared::XMLNode *current) {
     typedef Std::map<Common::String, StatsView/*, Std::less<Common::String>*/ > StatsViewMap;
     static StatsViewMap view_map;
 
@@ -1370,7 +1361,7 @@ Script::ReturnCode Script::ztats(xmlNodePtr script, xmlNodePtr current) {
         view_map["mixtures"]    = STATS_MIXTURES;
     }
 
-    if (xmlPropExists(current, "screen")) {
+    if (current->hasProperty("screen")) {
         Common::String screen = getPropAsStr(current, "screen");
         StatsViewMap::iterator view;
 
@@ -1397,15 +1388,15 @@ Script::ReturnCode Script::ztats(xmlNodePtr script, xmlNodePtr current) {
  * 
  * ie. <math>5*<math>6/3</math></math>
  */
-void Script::mathParseChildren(xmlNodePtr math, Common::String *result) {
-    xmlNodePtr current;
+void Script::mathParseChildren(Shared::XMLNode *math, Common::String *result) {
+    Shared::XMLNode *current;
     result->clear();
 
-    for (current = math->children; current; current = current->next) {
-        if (xmlNodeIsText(current)) {
+    for (current = math->firstChild(); current; current = current->getNext()) {
+        if (current->nodeIsText()) {
             *result = getContent(current);        
         }
-        else if (xmlStrcmp(current->name, (const xmlChar *)"math") == 0) {
+        else if (current->id().equalsIgnoreCase("math")) {
             Common::String children_results;            
             
             mathParseChildren(current, &children_results);

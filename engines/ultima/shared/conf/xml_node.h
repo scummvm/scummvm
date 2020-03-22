@@ -31,8 +31,12 @@
 namespace Ultima {
 namespace Shared {
 
+class XMLTree;
+
 class XMLNode {
 private:
+	XMLTree *_tree;
+	XMLNode *_parent;
 	Common::String _id;
 	Common::String _content;
 	Common::Array<XMLNode *> _nodeList;
@@ -46,10 +50,13 @@ private:
 
 	void xmlParseFile(const Common::String &fname);
 public:
-	XMLNode() : _noClose(false) {}
-	XMLNode(const Common::String &i) : _id(i), _noClose(false) {}
-	XMLNode(const XMLNode &n) : _id(n._id), _content(n._content),
-		_nodeList(n._nodeList), _noClose(false) {}
+	XMLNode(XMLTree *tree, XMLNode *parent) : _tree(tree), _parent(parent), _noClose(false) {}
+	XMLNode(XMLTree *tree, XMLNode *parent, const Common::String &i) :
+		_tree(tree), _parent(parent), _id(i), _noClose(false) {}
+	XMLNode(XMLTree *tree, const Common::String &i) : _tree(tree), _parent(nullptr),
+		_id(i), _noClose(false) {}
+	XMLNode(const XMLNode &n) : _tree(n._tree), _parent(n._parent), _id(n._id),
+		_content(n._content), _nodeList(n._nodeList), _noClose(false) {}
 	~XMLNode();
 
 	XMLNode &operator=(const XMLNode &n) {
@@ -69,12 +76,38 @@ public:
 	const Common::String &value(void) const {
 		return _content;
 	}
+	bool nodeIsText() const {
+		return !_content.empty();
+	}
+	XMLNode *getParent() const {
+		return _parent;
+	}
+	bool hasChildren() const {
+		return !_nodeList.empty();
+	}
+	XMLNode *firstChild() const {
+		return _nodeList.empty() ? nullptr : _nodeList[0];
+	}
 	const Common::StringMap &attributes() const {
 		return _attributes;
 	}
-	Common::String operator[](const Common::String &attrName) const {
-		return _attributes.contains(attrName) ? _attributes[attrName] : "";
+	bool hasProperty(const Common::String &attrName) const {
+		return _attributes.contains(attrName);
 	}
+	const Common::String &getProperty(const Common::String &attrName) const {
+		return _attributes[attrName];
+	}
+	int getPropertyInt(const Common::String &attrName) const {
+		return atol(_attributes[attrName].c_str());
+	}
+	bool getPropertyBool(const Common::String &attrName) const {
+		Common::String str = _attributes[attrName];
+		return toupper(str[0]) == 'T' || str == "1";
+	}
+	Common::String operator[](const Common::String &attrName) const {
+		return getProperty(attrName);
+	}
+
 	const Common::Array<XMLNode *> &children() const {
 		return _nodeList;
 	}
@@ -99,6 +132,21 @@ public:
 
 	void listKeys(const Common::String &, Common::Array<Common::String> &,
 		bool longformat = true) const;
+
+	/**
+	 * Deletes the entire tree this node belongs to, including itself
+	 */
+	void freeDoc();
+
+	/**
+	 * Gets the prior sibling to this one
+	 */
+	XMLNode *getPrior() const;
+
+	/**
+	 * Gets the following sibling to this one
+	 */
+	XMLNode *getNext() const;
 };
 
 } // End of namespace Shared
