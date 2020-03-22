@@ -1105,7 +1105,7 @@ static int screenPointInTriangle(int x, int y, int tx1, int ty1, int tx2, int ty
 /**
  * Determine if the given point is within a mouse area.
  */
-int screenPointInMouseArea(int x, int y, MouseArea *area) {
+int screenPointInMouseArea(int x, int y, const MouseArea *area) {
 	ASSERT(area->_nPoints == 2 || area->_nPoints == 3, "unsupported number of points in area: %d", area->_nPoints);
 
 	/* two points define a rectangle */

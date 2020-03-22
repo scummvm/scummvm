@@ -57,7 +57,7 @@ public:
 	bool isVisualOnly() const {
 		return _visual;    /**< Returns true for visual-only annotations */
 	}
-	const int getTTL() const        {
+	int getTTL() const        {
 		return _ttl;       /**< Returns the number of turns the annotation has left to live */
 	}
 	bool isCoverUp()                {

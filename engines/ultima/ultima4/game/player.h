@@ -190,7 +190,7 @@ public:
 		ACTIVE_PLAYER_CHANGED,
 		MEMBER_JOINED,
 		PARTY_REVIVED,
-		INVENTORY_ADDED,
+		INVENTORY_ADDED
 	};
 
 	PartyEvent(Type type, PartyMember *partyMember) : _type(type), _player(partyMember) { }

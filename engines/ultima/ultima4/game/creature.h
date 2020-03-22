@@ -104,7 +104,7 @@ typedef enum {
 	DAEMON_ID       = 49,
 	HYDRA_ID        = 50,
 	DRAGON_ID       = 51,
-	BALRON_ID       = 52,
+	BALRON_ID       = 52
 } CreatureType;
 
 typedef enum {

@@ -60,8 +60,8 @@ public:
 	bool isCommand() const;
 
 private:
-	Common::String value, arg;
-	bool command;
+	Common::String _value, _arg;
+	bool _command;
 };
 
 /**
@@ -100,13 +100,13 @@ public:
 	virtual const Std::vector<ResponsePart> &getParts() const;
 
 	const Common::String &getParam() const {
-		return param;
+		return _param;
 	}
 
 private:
-	Response *(*generator)(const DynamicResponse *);
-	Response *currentResponse;
-	Common::String param;
+	Response *(*_generator)(const DynamicResponse *);
+	Response *_currentResponse;
+	Common::String _param;
 };
 
 /**

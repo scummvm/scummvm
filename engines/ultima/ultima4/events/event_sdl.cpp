@@ -146,20 +146,20 @@ bool KeyHandler::operator==(Callback cb) const {
 }
 
 KeyHandlerController::KeyHandlerController(KeyHandler *handler) {
-	this->handler = handler;
+	this->_handler = handler;
 }
 
 KeyHandlerController::~KeyHandlerController() {
-	delete handler;
+	delete _handler;
 }
 
 bool KeyHandlerController::keyPressed(int key) {
-	ASSERT(handler != NULL, "key handler must be initialized");
-	return handler->handle(key);
+	ASSERT(_handler != NULL, "key handler must be initialized");
+	return _handler->handle(key);
 }
 
 KeyHandler *KeyHandlerController::getKeyHandler() {
-	return handler;
+	return _handler;
 }
 
 /**
@@ -168,7 +168,7 @@ KeyHandler *KeyHandlerController::getKeyHandler() {
  * will drive all of the timed events that this object
  * controls.
  */
-TimedEventMgr::TimedEventMgr(int i) : baseInterval(i) {
+TimedEventMgr::TimedEventMgr(int i) : _baseInterval(i) {
 	/* start the SDL timer */
 #ifdef TODO
 	if (instances == 0) {
@@ -178,7 +178,7 @@ TimedEventMgr::TimedEventMgr(int i) : baseInterval(i) {
 
 	id = static_cast<void *>(SDL_AddTimer(i, &TimedEventMgr::callback, this));
 #endif
-	instances++;
+	_instances++;
 }
 
 /**
@@ -195,8 +195,8 @@ TimedEventMgr::~TimedEventMgr() {
 	if (instances == 1)
 		u4_SDL_QuitSubSystem(SDL_INIT_TIMER);
 #endif
-	if (instances > 0)
-		instances--;
+	if (_instances > 0)
+		_instances--;
 }
 
 /**
@@ -219,7 +219,7 @@ unsigned int TimedEventMgr::callback(unsigned int interval, void *param) {
  * Re-initializes the timer manager to a new timer granularity
  */
 void TimedEventMgr::reset(unsigned int interval) {
-	baseInterval = interval;
+	_baseInterval = interval;
 	stop();
 	start();
 }
@@ -250,7 +250,7 @@ static void handleMouseMotionEvent(const Common::Event &event) {
 	if (!settings._mouseOptions.enabled)
 		return;
 
-	MouseArea *area;
+	const MouseArea *area;
 	area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
 	if (area)
 		screenSetMouseCursor(area->_cursor);
@@ -283,7 +283,7 @@ static void handleMouseButtonDownEvent(const Common::Event &event, Controller *c
 
 	if (button > 2)
 		button = 0;
-	MouseArea *area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
+	const MouseArea *area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
 	if (!area || area->_command[button] == 0)
 		return;
 	controller->keyPressed(area->_command[button]);
@@ -462,9 +462,9 @@ void EventHandler::setKeyHandler(KeyHandler kh) {
 	pushKeyHandler(kh);
 }
 
-MouseArea *EventHandler::mouseAreaForPoint(int x, int y) {
+const MouseArea *EventHandler::mouseAreaForPoint(int x, int y) {
 	int i;
-	MouseArea *areas = getMouseAreaSet();
+	const MouseArea *areas = getMouseAreaSet();
 
 	if (!areas)
 		return NULL;

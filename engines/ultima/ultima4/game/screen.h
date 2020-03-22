@@ -79,7 +79,7 @@ struct MouseArea {
 	int _nPoints;
 	struct {
 		int x, y;
-	} _point[4];
+	} _point[3];
 	MouseCursor _cursor;
 	int _command[3];
 };
@@ -153,7 +153,7 @@ void screenDisableCursor(void);
 void screenSetCursorPos(int x, int y);
 
 void screenSetMouseCursor(MouseCursor cursor);
-int screenPointInMouseArea(int x, int y, MouseArea *area);
+int screenPointInMouseArea(int x, int y, const MouseArea *area);
 
 Image *screenScale(Image *src, int scale, int n, int filter);
 Image *screenScaleDown(Image *src, int scale);
