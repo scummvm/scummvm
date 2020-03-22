@@ -21,12 +21,12 @@
  */
 
 #include "ultima/ultima4/map/city.h"
-#include "ultima/ultima4/context.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/conversation/conversation.h"
-#include "ultima/ultima4/creature.h"
-#include "ultima/ultima4/object.h"
-#include "ultima/ultima4/person.h"
-#include "ultima/ultima4/player.h"
+#include "ultima/ultima4/game/creature.h"
+#include "ultima/ultima4/game/object.h"
+#include "ultima/ultima4/game/person.h"
+#include "ultima/ultima4/game/player.h"
 
 namespace Ultima {
 namespace Ultima4 {

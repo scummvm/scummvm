@@ -26,8 +26,8 @@
 #include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/graphics/imageloader.h"
 #include "ultima/ultima4/graphics/imagemgr.h"
-#include "ultima/ultima4/intro.h"
-#include "ultima/ultima4/settings.h"
+#include "ultima/ultima4/game/intro.h"
+#include "ultima/ultima4/game/settings.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/ultima4.h"
 

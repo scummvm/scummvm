@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/ultima4/context.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader_hw.h"
-#include "ultima/ultima4/player.h"
+#include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/utils.h"

@@ -27,7 +27,7 @@
 #include "ultima/ultima4/graphics/imageloader.h"
 #include "ultima/ultima4/graphics/imageloader_fmtowns.h"
 #include "ultima/ultima4/graphics/imageloader_u4.h"
-//#include "ultima/ultima4/lzw/u4decode.h"
+//#include "ultima/ultima4/game/lzw/u4decode.h"
 
 namespace Ultima {
 namespace Ultima4 {

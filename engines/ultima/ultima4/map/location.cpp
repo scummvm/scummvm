@@ -22,15 +22,15 @@
 
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/context.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/map/combat.h"
-#include "ultima/ultima4/creature.h"
+#include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/game.h"
+#include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/object.h"
+#include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/settings.h"
+#include "ultima/ultima4/game/settings.h"
 #include "ultima/ultima4/graphics/tileset.h"
 
 namespace Ultima {
