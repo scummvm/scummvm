@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/ultima4/graphics/image.h"
-#include "ultima/ultima4/graphics/imagemgr.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/imagemgr.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/game/view.h"
 
 namespace Ultima {

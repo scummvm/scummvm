@@ -23,7 +23,7 @@
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/filesys/filesystem.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/shared/std/containers.h"
 #include "common/debug.h"

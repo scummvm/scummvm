@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima4/core/debug.h"
-#include "ultima/ultima4/graphics/image.h"
-#include "ultima/ultima4/game/scale.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/scale.h"
 
 namespace Ultima {
 namespace Ultima4 {

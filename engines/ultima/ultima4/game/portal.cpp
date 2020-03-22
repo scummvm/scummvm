@@ -29,9 +29,9 @@
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/game/names.h"
-#include "ultima/ultima4/game/screen.h"
+#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/shrine.h"
-#include "ultima/ultima4/graphics/tile.h"
+#include "ultima/ultima4/map/tile.h"
 
 namespace Ultima {
 namespace Ultima4 {

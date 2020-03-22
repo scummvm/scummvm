@@ -26,9 +26,9 @@
 #include "ultima/ultima4/events/controller.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/game/observer.h"
+#include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/sound/sound.h"
-#include "ultima/ultima4/graphics/tileview.h"
+#include "ultima/ultima4/map/tileview.h"
 #include "ultima/ultima4/core/types.h"
 
 namespace Ultima {

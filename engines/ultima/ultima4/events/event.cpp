@@ -25,8 +25,8 @@
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/game/screen.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/game/textview.h"
 #include "common/events.h"
 

@@ -142,6 +142,7 @@ MODULE_OBJS := \
 	ultima4/core/config.o \
 	ultima4/core/debug.o \
 	ultima4/core/error.o \
+	ultima4/core/settings.o \
 	ultima4/core/utils.o \
 	ultima4/events/controller.o \
 	ultima4/events/event.o \
@@ -170,29 +171,23 @@ MODULE_OBJS := \
 	ultima4/game/player.o \
 	ultima4/game/portal.o \
 	ultima4/game/progress_bar.o \
-	ultima4/game/scale.o \
-	ultima4/game/screen.o \
-	ultima4/game/screen_sdl.o \
 	ultima4/game/script.o \
-	ultima4/game/settings.o \
 	ultima4/game/spell.o \
 	ultima4/game/stats.o \
 	ultima4/game/textview.o \
 	ultima4/game/view.o \
 	ultima4/game/weapon.o \
-	ultima4/graphics/imageloader.o \
-	ultima4/graphics/imageloader_fmtowns.o \
-	ultima4/graphics/imageloader_png.o \
-	ultima4/graphics/imageloader_u4.o \
-	ultima4/graphics/imageloader_u5.o \
-	ultima4/graphics/imagemgr.o \
-	ultima4/graphics/imageview.o \
-	ultima4/graphics/image_sdl.o \
-	ultima4/graphics/tile.o \
-	ultima4/graphics/tileanim.o \
-	ultima4/graphics/tilemap.o \
-	ultima4/graphics/tileset.o \
-	ultima4/graphics/tileview.o \
+	ultima4/gfx/imageloader.o \
+	ultima4/gfx/imageloader_fmtowns.o \
+	ultima4/gfx/imageloader_png.o \
+	ultima4/gfx/imageloader_u4.o \
+	ultima4/gfx/imageloader_u5.o \
+	ultima4/gfx/imagemgr.o \
+	ultima4/gfx/imageview.o \
+	ultima4/gfx/image_sdl.o \
+	ultima4/gfx/scale.o \
+	ultima4/gfx/screen.o \
+	ultima4/gfx/screen_sdl.o \
 	ultima4/map/annotation.o \
 	ultima4/map/camp.o \
 	ultima4/map/city.o \
@@ -206,6 +201,11 @@ MODULE_OBJS := \
 	ultima4/map/map.o \
 	ultima4/map/maploader.o \
 	ultima4/map/mapmgr.o \
+	ultima4/map/tile.o \
+	ultima4/map/tileanim.o \
+	ultima4/map/tilemap.o \
+	ultima4/map/tileset.o \
+	ultima4/map/tileview.o \
 	ultima4/sound/music.o \
 	ultima4/sound/music_sdl.o \
 	ultima4/sound/sound.o \

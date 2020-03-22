@@ -27,9 +27,9 @@
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/graphics/tileset.h"
+#include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/graphics/tileview.h"
+#include "ultima/ultima4/map/tileview.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/map/location.h"
 

@@ -35,7 +35,7 @@
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/game/stats.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"

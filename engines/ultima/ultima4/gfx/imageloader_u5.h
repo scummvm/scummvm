@@ -20,21 +20,24 @@
  *
  */
 
-#ifndef ULTIMA4_SCALE_H
-#define ULTIMA4_SCALE_H
+#ifndef ULTIMA4_IMAGELOADER_U5_H
+#define ULTIMA4_IMAGELOADER_U5_H
 
-#include "ultima/ultima4/game/settings.h"
-#include "common/str.h"
+#include "ultima/ultima4/gfx/imageloader.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-class Image;
-
-typedef Image *(*Scaler)(Image *src, int scale, int n);
-
-Scaler scalerGet(const Common::String &filter);
-int scaler3x(const Common::String &filter);
+/**
+ * Loader for U5 images with LZW compression.  Similar to U4 LZW
+ * images, but with a slightly different variation on the LZW
+ * algorithm.
+ */
+class U5LzwImageLoader : public ImageLoader {
+public:
+	virtual ~U5LzwImageLoader() {}
+	virtual Image *load(U4FILE *file, int width, int height, int bpp);
+};
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

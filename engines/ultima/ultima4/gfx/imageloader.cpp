@@ -21,12 +21,12 @@
  */
 
 #include "ultima/ultima4/core/debug.h"
-#include "ultima/ultima4/graphics/image.h"
-#include "ultima/ultima4/graphics/imageloader.h"
-#include "ultima/ultima4/graphics/imageloader_u4.h"
-#include "ultima/ultima4/graphics/imageloader_u5.h"
-#include "ultima/ultima4/graphics/imageloader_png.h"
-#include "ultima/ultima4/graphics/imageloader_fmtowns.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/imageloader.h"
+#include "ultima/ultima4/gfx/imageloader_u4.h"
+#include "ultima/ultima4/gfx/imageloader_u5.h"
+#include "ultima/ultima4/gfx/imageloader_png.h"
+#include "ultima/ultima4/gfx/imageloader_fmtowns.h"
 
 namespace Ultima {
 namespace Ultima4 {

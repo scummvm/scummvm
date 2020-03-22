@@ -25,7 +25,7 @@
 
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/ultima4/graphics/textcolor.h"
+#include "ultima/ultima4/gfx/textcolor.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {

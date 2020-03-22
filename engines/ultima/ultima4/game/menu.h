@@ -25,7 +25,7 @@
 
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/menuitem.h"
-#include "ultima/ultima4/game/observable.h"
+#include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/shared/std/containers.h"
 

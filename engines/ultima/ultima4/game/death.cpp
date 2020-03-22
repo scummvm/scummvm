@@ -33,8 +33,8 @@
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/game/screen.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/game/stats.h"
 #include "common/system.h"
 

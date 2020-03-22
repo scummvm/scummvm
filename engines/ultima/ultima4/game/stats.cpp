@@ -31,7 +31,7 @@
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/spell.h"
-#include "ultima/ultima4/graphics/tile.h"
+#include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/game/weapon.h"
 
 namespace Ultima {

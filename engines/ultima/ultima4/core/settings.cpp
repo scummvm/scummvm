@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"

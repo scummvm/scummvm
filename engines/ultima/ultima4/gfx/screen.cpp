@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/game/screen.h"
+#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/core/debug.h"
@@ -29,17 +29,17 @@
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/intro.h"
-#include "ultima/ultima4/graphics/imagemgr.h"
+#include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/game/settings.h"
-#include "ultima/ultima4/graphics/textcolor.h"
-#include "ultima/ultima4/graphics/tileanim.h"
-#include "ultima/ultima4/graphics/tileset.h"
-#include "ultima/ultima4/graphics/tileview.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/gfx/textcolor.h"
+#include "ultima/ultima4/map/tileanim.h"
+#include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/map/tileview.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "engines/util.h"
 
@@ -442,11 +442,9 @@ void screenUpdate(TileView *view, bool showmap, bool blackout) {
 	} else if (g_context->_location->_map->_flags & FIRST_PERSON) {
 		DungeonViewer.display(g_context, view);
 		screenRedrawMapArea();
-	}
-
-	else if (showmap) {
+	} else if (showmap) {
 		static MapTile black = g_context->_location->_map->_tileset->getByName("black")->getId();
-		static MapTile avatar = g_context->_location->_map->_tileset->getByName("avatar")->getId();
+		//static MapTile avatar = g_context->_location->_map->_tileset->getByName("avatar")->getId();
 
 		int x, y;
 

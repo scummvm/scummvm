@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_AURA_H
 #define ULTIMA4_AURA_H
 
-#include "ultima/ultima4/game/observable.h"
+#include "ultima/ultima4/core/observable.h"
 
 namespace Ultima {
 namespace Ultima4 {

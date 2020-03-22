@@ -33,11 +33,11 @@
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/graphics/tileset.h"
-#include "ultima/ultima4/graphics/tilemap.h"
+#include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/game/settings.h"
+#include "ultima/ultima4/core/settings.h"
 
 namespace Ultima {
 namespace Ultima4 {

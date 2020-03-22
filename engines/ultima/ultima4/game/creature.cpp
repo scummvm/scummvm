@@ -31,10 +31,10 @@
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/game/player.h"     /* required by specialAction and specialEffect functions */
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/game/screen.h"     /* FIXME: remove dependence on this */
-#include "ultima/ultima4/game/settings.h"
-#include "ultima/ultima4/graphics/textcolor.h"  /* required to change the color of screen message text */
-#include "ultima/ultima4/graphics/tileset.h"
+#include "ultima/ultima4/gfx/screen.h"     /* FIXME: remove dependence on this */
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/gfx/textcolor.h"  /* required to change the color of screen message text */
+#include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {

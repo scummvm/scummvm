@@ -22,9 +22,9 @@
 
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
-#include "ultima/ultima4/graphics/image.h"
-#include "ultima/ultima4/graphics/imageloader.h"
-#include "ultima/ultima4/graphics/imageloader_png.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/imageloader.h"
+#include "ultima/ultima4/gfx/imageloader_png.h"
 #include "common/memstream.h"
 #include "image/png.h"
 
