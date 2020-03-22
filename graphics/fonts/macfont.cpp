@@ -401,8 +401,9 @@ bool dododo;
 
 static void magnifyGray(Surface *src, int *dstGray, int width, int height, float scale);
 static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height);
+static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height);
 
-MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bold, bool italic) {
+MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bold, bool italic, bool outline) {
 	if (!src) {
 		warning("Empty font reference in scale font");
 		return NULL;
@@ -413,11 +414,14 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 		return NULL;
 	}
 
-	Graphics::Surface srcSurf;
+	Graphics::Surface srcSurf, tmpSurf;
 	srcSurf.create(MAX(src->getFontSize() * 2, newSize * 2), MAX(src->getFontSize() * 2, newSize * 2),
 				PixelFormat::createFormatCLUT8());
 	int dstGraySize = newSize * 2 * newSize;
 	int *dstGray = (int *)malloc(dstGraySize * sizeof(int));
+
+	tmpSurf.create(MAX(src->getFontSize() * 2, newSize * 2), MAX(src->getFontSize() * 2, newSize * 2),
+				PixelFormat::createFormatCLUT8());
 
 	float scale = (float)newSize / (float)src->getFontSize();
 
@@ -528,6 +532,10 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 					debugN("\n");
 #endif
 			}
+		}
+
+		if (outline) {
+			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
 		}
 
 		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
@@ -663,6 +671,18 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 
 			*dst = res ? 1 : 0;
 		}
+	}
+}
+
+static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
+	glyph->width++;
+
+	for (uint16 y = 0; y < height; y++) {
+		byte *srcPtr = (byte *)src->getBasePtr(0, y);
+		byte *dstPtr = (byte *)dst->getBasePtr(0, y);
+
+		for (uint16 x = 0; x < glyph->width - 1; x++, srcPtr++, dstPtr++)
+			*dstPtr = *srcPtr ^ srcPtr[1];
 	}
 }
 
