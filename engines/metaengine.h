@@ -48,6 +48,11 @@ namespace Graphics {
 struct Surface;
 }
 
+namespace GUI {
+class GuiObject;
+class OptionsContainerWidget;
+}
+
 /**
  * Per-game extra GUI options structure.
  * Currently, this can only be used for options with checkboxes.
@@ -189,6 +194,30 @@ public:
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
 		return ExtraGuiOptions();
 	}
+
+	/**
+	 * Register the default values for the settings the engine uses into the
+	 * configuration manager.
+	 *
+	 * @param target    name of a config manager target
+	 */
+	virtual void registerDefaultSettings(const Common::String &target) const;
+
+	/**
+	 * Return a GUI widget container for configuring the specified target options.
+	 *
+	 * The returned widget is shown in the Engine tab in the edit game dialog.
+	 * Engines can build custom options dialogs, but by default a simple widget
+	 * allowing to configure the extra GUI options is used.
+	 *
+	 * Engines that don't want to have an Engine tab in the edit game dialog
+	 * can return nullptr.
+	 *
+	 * @param boss     the widget / dialog the returned widget is a child of
+	 * @param name     the name the returned widget must use
+	 * @param target   name of a config manager target
+	 */
+	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
 
 	/**
 	 * Return the maximum save slot that the engine supports.

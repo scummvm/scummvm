@@ -358,4 +358,59 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 	}
 }
 
+ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
+		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), false, domain),
+		_options(options) {
+
+	// Note: up to 7 engine options can currently fit on screen (the most that
+	// can fit in a 320x200 screen with the classic theme).
+	// TODO: Increase this number by including the checkboxes inside a scroll
+	// widget. The appropriate number of checkboxes will need to be added to
+	// the theme files.
+
+	uint i = 1;
+	ExtraGuiOptions::const_iterator iter;
+	for (iter = _options.begin(); iter != _options.end(); ++iter, ++i) {
+		Common::String id = Common::String::format("%d", i);
+		_checkboxes.push_back(new CheckboxWidget(widgetsBoss(),
+			_dialogLayout + ".customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));
+	}
+}
+
+ExtraGuiOptionsWidget::~ExtraGuiOptionsWidget() {
+}
+
+Common::String ExtraGuiOptionsWidget::dialogLayout(const Common::String &domain) {
+	if (ConfMan.getActiveDomainName().equals(domain)) {
+		return "GlobalConfig_Engine_Container";
+	} else {
+		return "GameOptions_Engine_Container";
+	}
+}
+
+void ExtraGuiOptionsWidget::load() {
+	// Set the state of engine-specific checkboxes
+	for (uint j = 0; j < _options.size(); ++j) {
+		// The default values for engine-specific checkboxes are not set when
+		// ScummVM starts, as this would require us to load and poll all of the
+		// engine plugins on startup. Thus, we set the state of each custom
+		// option checkbox to what is specified by the engine plugin, and
+		// update it only if a value has been set in the configuration of the
+		// currently selected game.
+		bool isChecked = _options[j].defaultState;
+		if (ConfMan.hasKey(_options[j].configOption, _domain))
+			isChecked = ConfMan.getBool(_options[j].configOption, _domain);
+		_checkboxes[j]->setState(isChecked);
+	}
+}
+
+bool ExtraGuiOptionsWidget::save() {
+	// Set the state of engine-specific checkboxes
+	for (uint i = 0; i < _options.size(); i++) {
+		ConfMan.setBool(_options[i].configOption, _checkboxes[i]->getState(), _domain);
+	}
+
+	return true;
+}
+
 } // End of namespace GUI

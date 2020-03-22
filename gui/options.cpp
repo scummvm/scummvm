@@ -269,7 +269,7 @@ void OptionsDialog::build() {
 
 	// Keymapper options
 	if (_keymapperWidget) {
-		_keymapperWidget->build();
+		_keymapperWidget->load();
 	}
 
 	// Graphic options
@@ -1402,22 +1402,6 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 	_enableVolumeSettings = true;
-}
-
-void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOptions &engineOptions) {
-	// Note: up to 7 engine options can currently fit on screen (the most that
-	// can fit in a 320x200 screen with the classic theme).
-	// TODO: Increase this number by including the checkboxes inside a scroll
-	// widget. The appropriate number of checkboxes will need to be added to
-	// the theme files.
-
-	uint i = 1;
-	ExtraGuiOptions::const_iterator iter;
-	for (iter = engineOptions.begin(); iter != engineOptions.end(); ++iter, ++i) {
-		Common::String id = Common::String::format("%d", i);
-		_engineCheckboxes.push_back(new CheckboxWidget(boss,
-			prefix + "customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));
-	}
 }
 
 bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType) {
