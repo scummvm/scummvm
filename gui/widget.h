@@ -37,6 +37,8 @@
 
 namespace GUI {
 
+class ScrollContainerWidget;
+
 enum {
 	WIDGET_ENABLED		= 1 <<  0,
 	WIDGET_INVISIBLE	= 1 <<  1,
@@ -442,6 +444,64 @@ protected:
 	void drawWidget() override;
 
 	ThemeEngine::WidgetBackground _backgroundType;
+};
+
+/* OptionsContainerWidget */
+class OptionsContainerWidget : public Widget {
+public:
+	/**
+	 * @param widgetsBoss  parent widget for the container widget
+	 * @param name         name of the container widget in the layout system
+	 * @param dialogLayout name of the layout used by the contained widgets, empty string for manually layed out widgets
+	 * @param scrollable   whether the container is made scrollable through a ScrollContainerWidget
+	 * @param domain       the configuration manager domain this widget is meant to edit
+	 */
+	OptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout,
+	                       bool scrollable, const Common::String &domain);
+	~OptionsContainerWidget() override;
+
+	/** Implementing classes should (re)initialize their widgets with state from the configuration domain */
+	virtual void load() = 0;
+
+	/**
+	 * Implementing classes should save their widget's state to the configuration domain
+	 *
+	 * @return true if changes were made to the configuration since the last call to load()
+	 */
+	virtual bool save() = 0;
+
+	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
+
+protected:
+	enum {
+		/** The command that gets sent when the scroll container needs to reflow its contents */
+		kReflowCmd = 'REFL'
+	};
+
+	// Widget API
+	void reflowLayout() override;
+	void drawWidget() override {}
+	bool containsWidget(Widget *widget) const override;
+	Widget *findWidget(int x, int y) override;
+	void removeWidget(Widget *widget) override;
+
+	/** The pareent object to use when creating child widgets */
+	GuiObject *widgetsBoss();
+
+	/**
+	 * Child classes can override this method to define the layout used by the contained widgets in the layout system
+	 *
+	 * This is called only when the layout was not found in the theme definition files.
+	 */
+	virtual void defineLayout(ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {}
+
+	const Common::String _domain;
+	const Common::String _dialogLayout;
+
+	Dialog *_parentDialog;
+
+private:
+	ScrollContainerWidget *_scrollContainer;
 };
 
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0);
