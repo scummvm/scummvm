@@ -25,7 +25,7 @@
 #include "ultima/ultima4/armor.h"
 #include "ultima/ultima4/combat.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
@@ -33,7 +33,7 @@
 #include "ultima/ultima4/graphics/tilemap.h"
 #include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/types.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/weapon.h"
 
 namespace Ultima {

@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_CONVERSATION_H
 #define ULTIMA4_CONVERSATION_H
 
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {

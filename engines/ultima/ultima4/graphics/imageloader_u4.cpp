@@ -20,14 +20,13 @@
  *
  */
 
-#include "ultima/ultima4/config.h"
-#include "ultima/ultima4/debug.h"
-#include "ultima/ultima4/error.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/debug.h"
+#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/graphics/imageloader.h"
 #include "ultima/ultima4/graphics/imageloader_u4.h"
-#include "ultima/ultima4/rle.h"
-//#include "ultima/ultima4/lzw/u4decode.h"
+#include "ultima/ultima4/filesys/rle.h"
 
 namespace Ultima {
 namespace Ultima4 {

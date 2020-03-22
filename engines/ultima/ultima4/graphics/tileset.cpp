@@ -21,9 +21,9 @@
  */
 
 #include "ultima/ultima4/graphics/tileset.h"
-#include "ultima/ultima4/config.h"
-#include "ultima/ultima4/debug.h"
-#include "ultima/ultima4/error.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/debug.h"
+#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/graphics/tile.h"

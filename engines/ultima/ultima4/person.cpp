@@ -21,25 +21,25 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/config.h"
+#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/person.h"
 #include "ultima/ultima4/city.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/conversation/conversation.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game.h"   // Included for ReadPlayerController
-#include "ultima/ultima4/io.h"
+#include "ultima/ultima4/filesys/io.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/player.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/stats.h"
 #include "ultima/ultima4/types.h"
-#include "ultima/ultima4/u4file.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/script.h"
 
 namespace Ultima {

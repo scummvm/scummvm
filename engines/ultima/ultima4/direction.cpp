@@ -21,9 +21,9 @@
  */
 
 #include "ultima/ultima4/direction.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {

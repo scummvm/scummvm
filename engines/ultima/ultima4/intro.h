@@ -26,7 +26,7 @@
 #include "ultima/ultima4/events/controller.h"
 #include "ultima/ultima4/menu.h"
 #include "ultima/ultima4/observer.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/graphics/imageview.h"
 #include "ultima/ultima4/textview.h"
 #include "ultima/ultima4/graphics/tileview.h"

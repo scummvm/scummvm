@@ -139,9 +139,18 @@ MODULE_OBJS := \
 	ultima4/conversation/dialogueloader_hw.o \
 	ultima4/conversation/dialogueloader_lb.o \
 	ultima4/conversation/dialogueloader_tlk.o \
+	ultima4/core/config.o \
+	ultima4/core/debug.o \
+	ultima4/core/error.o \
+	ultima4/core/utils.o \
 	ultima4/events/controller.o \
 	ultima4/events/event.o \
 	ultima4/events/event_sdl.o \
+	ultima4/filesys/filesystem.o \
+	ultima4/filesys/io.o \
+	ultima4/filesys/rle.o \
+	ultima4/filesys/savegame.o \
+	ultima4/filesys/u4file.o \
 	ultima4/graphics/imageloader.o \
 	ultima4/graphics/imageloader_fmtowns.o \
 	ultima4/graphics/imageloader_png.o \
@@ -171,19 +180,14 @@ MODULE_OBJS := \
 	ultima4/city.o \
 	ultima4/codex.o \
 	ultima4/combat.o \
-	ultima4/config.o \
 	ultima4/context.o \
 	ultima4/creature.o \
 	ultima4/death.o \
-	ultima4/debug.o \
 	ultima4/direction.o \
 	ultima4/dungeon.o \
 	ultima4/dungeonview.o \
-	ultima4/error.o \
-	ultima4/filesystem.o \
 	ultima4/game.o \
 	ultima4/intro.o \
-	ultima4/io.o \
 	ultima4/item.o \
 	ultima4/menu.o \
 	ultima4/menuitem.o \
@@ -195,8 +199,6 @@ MODULE_OBJS := \
 	ultima4/player.o \
 	ultima4/portal.o \
 	ultima4/progress_bar.o \
-	ultima4/rle.o \
-	ultima4/savegame.o \
 	ultima4/scale.o \
 	ultima4/screen.o \
 	ultima4/screen_sdl.o \
@@ -207,8 +209,6 @@ MODULE_OBJS := \
 	ultima4/stats.o \
 	ultima4/textview.o \
 	ultima4/ultima4.o \
-	ultima4/u4file.o \
-	ultima4/utils.o \
 	ultima4/view.o \
 	ultima4/weapon.o \
 	nuvie/meta_engine.o \

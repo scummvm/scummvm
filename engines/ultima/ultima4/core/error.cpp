@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/error.h"
+#include "ultima/ultima4/core/error.h"
 #include "common/textconsole.h"
 #include "common/str.h"
 

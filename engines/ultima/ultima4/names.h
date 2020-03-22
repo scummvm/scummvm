@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_NAMES_H
 #define ULTIMA4_NAMES_H
 
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/direction.h"
 
 namespace Ultima {

@@ -27,9 +27,9 @@
 #include "ultima/ultima4/direction.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/object.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/types.h"
-#include "ultima/ultima4/u4file.h"
+#include "ultima/ultima4/filesys/u4file.h"
 
 namespace Ultima {
 namespace Ultima4 {

@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/ultima4/config.h"
+#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/dungeonview.h"
-#include "ultima/ultima4/error.h"
+#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/intro.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/scale.h"
 #include "ultima/ultima4/screen.h"
@@ -37,8 +37,8 @@
 #include "ultima/ultima4/graphics/tileanim.h"
 #include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/u4file.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/core/utils.h"
 #include "common/system.h"
 #include "engines/util.h"
 

@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_UTILS_H
 #define ULTIMA4_UTILS_H
 
-#include "ultima/ultima4/filesystem.h"
+#include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/shared/std/containers.h"
 #include "common/savefile.h"

@@ -32,7 +32,7 @@
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/stats.h"
 #include "ultima/ultima4/graphics/tileset.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/weapon.h"
 #include "common/debug.h"
 #include "common/events.h"

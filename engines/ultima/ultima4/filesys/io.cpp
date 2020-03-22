@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/io.h"
+#include "ultima/ultima4/filesys/io.h"
 
 namespace Ultima {
 namespace Ultima4 {

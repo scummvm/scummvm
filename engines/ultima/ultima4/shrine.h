@@ -24,7 +24,7 @@
 #define ULTIMA4_SHRINE_H
 
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 
 namespace Ultima {
 namespace Ultima4 {

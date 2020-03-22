@@ -21,15 +21,15 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/config.h"
+#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/stats.h"
 #include "ultima/ultima4/armor.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/menu.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/player.h"
-#include "ultima/ultima4/savegame.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/spell.h"
 #include "ultima/ultima4/graphics/tile.h"
 #include "ultima/ultima4/weapon.h"

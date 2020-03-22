@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/error.h"
+#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/coords.h"
 #include "ultima/ultima4/moongate.h"
 #include "ultima/ultima4/types.h"

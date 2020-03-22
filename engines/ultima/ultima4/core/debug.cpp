@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/ultima4/debug.h"
-#include "ultima/ultima4/debug.h"
-#include "ultima/ultima4/filesystem.h"
+#include "ultima/ultima4/core/debug.h"
+#include "ultima/ultima4/core/debug.h"
+#include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/settings.h"
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/shared/std/containers.h"
 #include "common/debug.h"
 

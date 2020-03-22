@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/utils.h"
+#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {

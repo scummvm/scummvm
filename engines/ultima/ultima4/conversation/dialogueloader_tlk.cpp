@@ -22,7 +22,7 @@
 
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader_tlk.h"
-#include "ultima/ultima4/u4file.h"
+#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {

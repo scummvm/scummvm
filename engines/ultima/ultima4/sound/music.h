@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_MUSIC_H
 #define ULTIMA4_MUSIC_H
 
-#include "ultima/ultima4/debug.h"
+#include "ultima/ultima4/core/debug.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {

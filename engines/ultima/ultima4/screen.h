@@ -25,7 +25,7 @@
 
 #include "ultima/ultima4/direction.h"
 #include "ultima/ultima4/types.h"
-#include "ultima/ultima4/u4file.h"
+#include "ultima/ultima4/filesys/u4file.h"
 #include "graphics/screen.h"
 
 namespace Ultima {
