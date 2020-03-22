@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_SCREEN_H
 #define ULTIMA4_SCREEN_H
 
-#include "ultima/ultima4/direction.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "graphics/screen.h"
 

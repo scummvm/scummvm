@@ -20,11 +20,43 @@
  *
  */
 
-#include "ultima/ultima4/annotation.h"
-#include "ultima/ultima4/conversation/conversation.h"
-#include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/debug.h"
-#include "ultima/ultima4/types.h"
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/ultima4/core/utils.h"
+#ifndef ULTIMA4_CAMP_H
+#define ULTIMA4_CAMP_H
+
+#include "ultima/ultima4/map/combat.h"
+
+namespace Ultima {
+namespace Ultima4 {
+
+#define CAMP_HEAL_INTERVAL  100   /* Number of moves before camping will heal the party */
+
+class CampController : public CombatController {
+public:
+	CampController();
+	virtual void init(Creature *m);
+	virtual void begin();
+	virtual void end(bool adjustKarma);
+
+private:
+	bool heal();
+};
+
+class InnController : public CombatController {
+public:
+	InnController();
+
+	virtual void begin();
+	virtual void awardLoot();
+
+
+private:
+	bool heal();
+	void maybeMeetIsaac();
+	void maybeAmbush();
+
+};
+
+} // End of namespace Ultima4
+} // End of namespace Ultima
+
+#endif

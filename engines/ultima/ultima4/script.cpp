@@ -22,7 +22,7 @@
 
 #include "ultima/ultima4/script.h"
 #include "ultima/ultima4/armor.h"
-#include "ultima/ultima4/camp.h"
+#include "ultima/ultima4/map/camp.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/core/debug.h"

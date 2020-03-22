@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_TILEMAP_H
 #define ULTIMA4_TILEMAP_H
 
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {

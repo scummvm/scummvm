@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_ITEM_H
 #define ULTIMA4_ITEM_H
 
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 #include "common/str.h"
 
 namespace Ultima {

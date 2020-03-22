@@ -22,8 +22,8 @@
 
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/shrine.h"
-#include "ultima/ultima4/annotation.h"
+#include "ultima/ultima4/map/shrine.h"
+#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game.h"
@@ -38,7 +38,7 @@
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/graphics/tileset.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {

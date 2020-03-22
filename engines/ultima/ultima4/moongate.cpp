@@ -21,9 +21,9 @@
  */
 
 #include "ultima/ultima4/core/error.h"
-#include "ultima/ultima4/coords.h"
+#include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/moongate.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {

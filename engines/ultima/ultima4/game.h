@@ -29,7 +29,7 @@
 #include "ultima/ultima4/observer.h"
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/graphics/tileview.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {

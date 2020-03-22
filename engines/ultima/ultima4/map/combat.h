@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_COMBAT_H
 #define ULTIMA4_COMBAT_H
 
-#include "ultima/ultima4/direction.h"
+#include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/events/controller.h"
 #include "ultima/ultima4/creature.h"
@@ -32,7 +32,7 @@
 #include "ultima/ultima4/observer.h"
 #include "ultima/ultima4/player.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {

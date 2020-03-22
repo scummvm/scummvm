@@ -21,10 +21,10 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/camp.h"
-#include "ultima/ultima4/annotation.h"
-#include "ultima/ultima4/city.h"
-#include "ultima/ultima4/combat.h"
+#include "ultima/ultima4/map/camp.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/city.h"
+#include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/events/event.h"

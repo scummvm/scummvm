@@ -23,7 +23,7 @@
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/filesys/io.h"
 #include "ultima/ultima4/object.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {

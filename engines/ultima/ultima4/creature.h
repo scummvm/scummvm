@@ -24,9 +24,9 @@
 #define ULTIMA4_CREATURE_H
 
 #include "ultima/ultima4/object.h"
-#include "ultima/ultima4/movement.h"
+#include "ultima/ultima4/map/movement.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {

@@ -21,16 +21,16 @@
  */
 
 #include "ultima/ultima4/portal.h"
-#include "ultima/ultima4/annotation.h"
-#include "ultima/ultima4/city.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/dungeon.h"
+#include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/screen.h"
-#include "ultima/ultima4/shrine.h"
+#include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/graphics/tile.h"
 
 namespace Ultima {

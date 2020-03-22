@@ -22,7 +22,7 @@
 
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/debug.h"
-#include "ultima/ultima4/dungeonview.h"
+#include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/graphics/imagemgr.h"
 #include "ultima/ultima4/settings.h"

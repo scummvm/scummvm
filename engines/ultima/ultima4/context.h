@@ -28,7 +28,7 @@
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/person.h"
 #include "ultima/ultima4/script.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/shared/std/containers.h"
 
