@@ -24,8 +24,8 @@
 #define ULTIMA4_SPELL_H
 
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/location.h"
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/savegame.h"
 #include "ultima/ultima4/sound/sound.h"
 

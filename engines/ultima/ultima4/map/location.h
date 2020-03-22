@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_LOCATION_H
 #define ULTIMA4_LOCATION_H
 
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/movement.h"
 #include "ultima/ultima4/observable.h"
 #include "ultima/ultima4/types.h"

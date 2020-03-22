@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_MAPMGR_H
 #define ULTIMA4_MAPMGR_H
 
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/shared/std/misc.h"
 
 namespace Ultima {

@@ -30,7 +30,7 @@
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/intro.h"
 #include "ultima/ultima4/graphics/imagemgr.h"
-#include "ultima/ultima4/location.h"
+#include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/names.h"
 #include "ultima/ultima4/object.h"
 #include "ultima/ultima4/player.h"

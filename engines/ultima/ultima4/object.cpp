@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/object.h"
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/game.h"
 #include "common/algorithm.h"

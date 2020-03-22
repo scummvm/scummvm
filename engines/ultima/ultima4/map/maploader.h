@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_MAPLOADER_H
 #define ULTIMA4_MAPLOADER_H
 
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {

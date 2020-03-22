@@ -21,11 +21,11 @@
  */
 
 #include "ultima/ultima4/cheat.h"
-#include "ultima/ultima4/location.h"
-#include "ultima/ultima4/map.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/game.h"
-#include "ultima/ultima4/mapmgr.h"
+#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/moongate.h"
 #include "ultima/ultima4/portal.h"
 #include "ultima/ultima4/player.h"
