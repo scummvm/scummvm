@@ -45,7 +45,6 @@ Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
 Widget::Widget(GuiObject *boss, const Common::String &name, const char *tooltip)
 	: GuiObject(name), _type(0), _boss(boss), _tooltip(tooltip),
 	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
-	reflowLayout();
 	init();
 }
 
@@ -546,12 +545,6 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
 		return;
 	}
 
-
-	if (gfx->w > _w || gfx->h > _h) {
-		warning("PicButtonWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
-		return;
-	}
-
 	_gfx[statenum].copyFrom(*gfx);
 }
 
@@ -812,11 +805,6 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 
 	if (gfx->format.bytesPerPixel == 1) {
 		warning("GraphicsWidget::setGfx got paletted surface passed");
-		return;
-	}
-
-	if (gfx->w > _w || gfx->h > _h) {
-		warning("GraphicsWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
 		return;
 	}
 
