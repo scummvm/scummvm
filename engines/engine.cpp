@@ -580,6 +580,7 @@ void Engine::openMainMenuDialog() {
 		}
 	}
 
+	applyGameSettings();
 	syncSoundSettings();
 #ifdef USE_TTS
 	ttsMan->popState();
