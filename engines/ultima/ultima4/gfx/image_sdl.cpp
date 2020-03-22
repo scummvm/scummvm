@@ -22,6 +22,7 @@
 
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/shared/std/containers.h"
@@ -446,12 +447,18 @@ void Image::getPixelIndex(int x, int y, unsigned int &index) const {
 	}
 }
 
+Graphics::ManagedSurface *Image::getSurface(Image *d) const {
+	if (d)
+		return d->_surface;
+
+	return g_screen;
+}
+
 /**
  * Draws the image onto another image.
  */
 void Image::drawOn(Image *d, int x, int y) const {
-	// TODO: Support d being nullptr to draw to screen
-	Graphics::ManagedSurface *destSurface = d->_surface;
+	Graphics::ManagedSurface *destSurface = getSurface(d);
 	destSurface->blitFrom(*_surface, Common::Point(x, y));
 }
 
@@ -459,8 +466,7 @@ void Image::drawOn(Image *d, int x, int y) const {
  * Draws a piece of the image onto another image.
  */
 void Image::drawSubRectOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const {
-	// TODO: Support d being nullptr to draw to screen
-	Graphics::ManagedSurface *destSurface = d->_surface;
+	Graphics::ManagedSurface *destSurface = getSurface(d);
 	destSurface->blitFrom(*_surface, Common::Rect(rx, ry, rx + rw, ry + rh), Common::Point(x, y));
 }
 
@@ -468,8 +474,7 @@ void Image::drawSubRectOn(Image *d, int x, int y, int rx, int ry, int rw, int rh
  * Draws a piece of the image onto another image, inverted.
  */
 void Image::drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const {
-	// TODO: Support d being nullptr to draw to screen
-	Graphics::ManagedSurface *destSurface = d->_surface;
+	Graphics::ManagedSurface *destSurface = getSurface(d);
 	int i;
 	Common::Rect src;
 	Common::Point destPos;
