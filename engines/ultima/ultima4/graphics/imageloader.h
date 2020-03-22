@@ -57,7 +57,7 @@ public:
  */
 class ImageLoader {
 protected:
-	static void setFromRawData(Image *image, int width, int height, int bpp, unsigned char *rawData);
+	static void setFromRawData(Image *image, int width, int height, int bpp, const byte *rawData);
 public:
 	ImageLoader() {}
 	virtual ~ImageLoader() {}

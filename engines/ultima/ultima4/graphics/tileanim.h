@@ -58,7 +58,7 @@ private:
  */
 class TileAnimInvertTransform : public TileAnimTransform {
 public:
-	TileAnimInvertTransform(int x, int y, int w, int h);
+	TileAnimInvertTransform(int xp, int yp, int width, int height);
 	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
 	virtual bool drawsTile() const;
 
@@ -73,7 +73,7 @@ private:
  */
 class TileAnimPixelTransform : public TileAnimTransform {
 public:
-	TileAnimPixelTransform(int x, int y);
+	TileAnimPixelTransform(int xp, int yp);
 	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
 	virtual bool drawsTile() const;
 
@@ -100,7 +100,8 @@ private:
  */
 class TileAnimFrameTransform : public TileAnimTransform {
 public:
-	TileAnimFrameTransform() : _currentFrame(0) {}
+	TileAnimFrameTransform() : _currentFrame(0) {
+	}
 	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
 	virtual bool drawsTile() const;
 protected:
@@ -114,7 +115,7 @@ protected:
  */
 class TileAnimPixelColorTransform : public TileAnimTransform {
 public:
-	TileAnimPixelColorTransform(int x, int y, int w, int h);
+	TileAnimPixelColorTransform(int xp, int yp, int width, int height);
 	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
 	virtual bool drawsTile() const;
 

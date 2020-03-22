@@ -59,7 +59,7 @@ ImageLoader *ImageLoaders::getLoader(const Common::String &fileType) {
 /**
  * Fill in the image pixel data from an uncompressed string of bytes.
  */
-void ImageLoader::setFromRawData(Image *image, int width, int height, int bpp, unsigned char *rawData) {
+void ImageLoader::setFromRawData(Image *image, int width, int height, int bpp, const byte *rawData) {
 	int x, y;
 
 	switch (bpp) {
