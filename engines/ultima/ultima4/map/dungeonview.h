@@ -25,12 +25,12 @@
 
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/core/debug.h"
-#include "ultima/ultima4/dungeon.h"
+#include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/graphics/tileset.h"
-#include "ultima/ultima4/direction.h"
+#include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/graphics/tileview.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/map/location.h"
 
 namespace Ultima {

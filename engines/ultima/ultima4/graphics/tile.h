@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_TILE_H
 #define ULTIMA4_TILE_H
 
-#include "ultima/ultima4/direction.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/shared/std/containers.h"
 

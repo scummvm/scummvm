@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/creature.h"
-#include "ultima/ultima4/combat.h"
+#include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/core/debug.h"

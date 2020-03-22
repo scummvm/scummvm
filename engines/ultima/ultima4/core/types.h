@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_TYPEDEFS_H
 #define ULTIMA4_TYPEDEFS_H
 
-#include "ultima/ultima4/direction.h"
+#include "ultima/ultima4/map/direction.h"
 
 namespace Ultima {
 namespace Ultima4 {

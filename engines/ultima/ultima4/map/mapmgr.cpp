@@ -21,11 +21,11 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/annotation.h"
-#include "ultima/ultima4/city.h"
-#include "ultima/ultima4/combat.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/city.h"
+#include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/core/debug.h"
-#include "ultima/ultima4/dungeon.h"
+#include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/maploader.h"
@@ -33,10 +33,10 @@
 #include "ultima/ultima4/moongate.h"
 #include "ultima/ultima4/person.h"
 #include "ultima/ultima4/portal.h"
-#include "ultima/ultima4/shrine.h"
+#include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/graphics/tilemap.h"
 #include "ultima/ultima4/graphics/tileset.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/config.h"
 

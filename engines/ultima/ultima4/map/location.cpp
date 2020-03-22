@@ -21,9 +21,9 @@
  */
 
 #include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/annotation.h"
+#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/combat.h"
+#include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/creature.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game.h"

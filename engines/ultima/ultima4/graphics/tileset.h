@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_TILESET_H
 #define ULTIMA4_TILESET_H
 
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 #include "common/hash-str.h"
 
 namespace Ultima {

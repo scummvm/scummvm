@@ -24,7 +24,7 @@
 #define ULTIMA4_PERSON_H
 
 #include "ultima/ultima4/creature.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {

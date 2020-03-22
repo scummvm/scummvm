@@ -26,7 +26,7 @@
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/menuitem.h"
 #include "ultima/ultima4/observable.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {

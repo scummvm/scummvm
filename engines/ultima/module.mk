@@ -164,6 +164,15 @@ MODULE_OBJS := \
 	ultima4/graphics/tilemap.o \
 	ultima4/graphics/tileset.o \
 	ultima4/graphics/tileview.o \
+	ultima4/map/annotation.o \
+	ultima4/map/camp.o \
+	ultima4/map/city.o \
+	ultima4/map/combat.o \
+	ultima4/map/direction.o \
+	ultima4/map/dungeon.o \
+	ultima4/map/dungeonview.o \
+	ultima4/map/movement.o \
+	ultima4/map/shrine.o \
 	ultima4/map/location.o \
 	ultima4/map/map.o \
 	ultima4/map/maploader.o \
@@ -172,27 +181,19 @@ MODULE_OBJS := \
 	ultima4/sound/music_sdl.o \
 	ultima4/sound/sound.o \
 	ultima4/sound/sound_sdl.o \
-	ultima4/annotation.o \
 	ultima4/armor.o \
 	ultima4/aura.o \
-	ultima4/camp.o \
 	ultima4/cheat.o \
-	ultima4/city.o \
 	ultima4/codex.o \
-	ultima4/combat.o \
 	ultima4/context.o \
 	ultima4/creature.o \
 	ultima4/death.o \
-	ultima4/direction.o \
-	ultima4/dungeon.o \
-	ultima4/dungeonview.o \
 	ultima4/game.o \
 	ultima4/intro.o \
 	ultima4/item.o \
 	ultima4/menu.o \
 	ultima4/menuitem.o \
 	ultima4/moongate.o \
-	ultima4/movement.o \
 	ultima4/names.o \
 	ultima4/object.o \
 	ultima4/person.o \
@@ -204,7 +205,6 @@ MODULE_OBJS := \
 	ultima4/screen_sdl.o \
 	ultima4/script.o \
 	ultima4/settings.o \
-	ultima4/shrine.o \
 	ultima4/spell.o \
 	ultima4/stats.o \
 	ultima4/textview.o \

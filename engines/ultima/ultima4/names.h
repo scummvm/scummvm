@@ -24,7 +24,7 @@
 #define ULTIMA4_NAMES_H
 
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/direction.h"
+#include "ultima/ultima4/map/direction.h"
 
 namespace Ultima {
 namespace Ultima4 {

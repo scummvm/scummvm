@@ -34,7 +34,7 @@
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/settings.h"
-#include "ultima/ultima4/shrine.h"
+#include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/graphics/tilemap.h"
 #include "ultima/ultima4/filesys/u4file.h"

@@ -24,12 +24,12 @@
 #define ULTIMA4_PLAYER_H
 
 #include "ultima/ultima4/creature.h"
-#include "ultima/ultima4/direction.h"
+#include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/observable.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/script.h"
 #include "ultima/ultima4/graphics/tile.h"
-#include "ultima/ultima4/types.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {

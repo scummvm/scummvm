@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/annotation.h"
+#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"

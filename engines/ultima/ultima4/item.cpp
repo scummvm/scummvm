@@ -21,12 +21,12 @@
  */
 
 #include "ultima/ultima4/item.h"
-#include "ultima/ultima4/annotation.h"
+#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/codex.h"
-#include "ultima/ultima4/combat.h"
+#include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/core/debug.h"
-#include "ultima/ultima4/dungeon.h"
+#include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/map.h"

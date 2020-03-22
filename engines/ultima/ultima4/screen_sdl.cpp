@@ -23,7 +23,7 @@
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/core/debug.h"
-#include "ultima/ultima4/dungeonview.h"
+#include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/intro.h"
 #include "ultima/ultima4/filesys/savegame.h"
