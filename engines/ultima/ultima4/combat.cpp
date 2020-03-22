@@ -28,7 +28,7 @@
 #include "ultima/ultima4/death.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/dungeon.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/item.h"
 #include "ultima/ultima4/location.h"

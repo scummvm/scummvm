@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_MENU_H
 #define ULTIMA4_MENU_H
 
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/menuitem.h"
 #include "ultima/ultima4/observable.h"
 #include "ultima/ultima4/types.h"

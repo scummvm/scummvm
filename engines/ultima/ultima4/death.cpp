@@ -26,7 +26,7 @@
 #include "ultima/ultima4/annotation.h"
 #include "ultima/ultima4/city.h"
 #include "ultima/ultima4/context.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/location.h"
 #include "ultima/ultima4/mapmgr.h"

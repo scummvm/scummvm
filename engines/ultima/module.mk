@@ -134,6 +134,9 @@ MODULE_OBJS := \
 	ultima1/widgets/urban_widget.o \
 	ultima1/widgets/wench.o \
 	ultima1/game.o \
+	ultima4/events/controller.o \
+	ultima4/events/event.o \
+	ultima4/events/event_sdl.o \
 	ultima4/graphics/imageloader.o \
 	ultima4/graphics/imageloader_fmtowns.o \
 	ultima4/graphics/imageloader_png.o \
@@ -157,7 +160,6 @@ MODULE_OBJS := \
 	ultima4/combat.o \
 	ultima4/config.o \
 	ultima4/context.o \
-	ultima4/controller.o \
 	ultima4/conversation.o \
 	ultima4/creature.o \
 	ultima4/death.o \
@@ -170,8 +172,6 @@ MODULE_OBJS := \
 	ultima4/dungeon.o \
 	ultima4/dungeonview.o \
 	ultima4/error.o \
-	ultima4/event.o \
-	ultima4/event_sdl.o \
 	ultima4/filesystem.o \
 	ultima4/game.o \
 	ultima4/intro.o \

@@ -23,7 +23,7 @@
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/error.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/filesystem.h"
 #include "ultima/ultima4/utils.h"
 

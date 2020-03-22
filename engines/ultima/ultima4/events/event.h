@@ -26,7 +26,7 @@
 #include "common/events.h"
 #include "common/list.h"
 #include "common/str.h"
-#include "ultima/ultima4/controller.h"
+#include "ultima/ultima4/events/controller.h"
 #include "ultima/ultima4/types.h"
 #include "ultima/shared/std/containers.h"
 

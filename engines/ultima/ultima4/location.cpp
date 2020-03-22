@@ -25,7 +25,7 @@
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/combat.h"
 #include "ultima/ultima4/creature.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/map.h"
 #include "ultima/ultima4/object.h"
