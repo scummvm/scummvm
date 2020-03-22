@@ -121,7 +121,7 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		save();
 		break;
 	case kOptionsCmd: {
-		GUI::ConfigDialog configDialog(_engine->hasFeature(Engine::kSupportsSubtitleOptions));
+		GUI::ConfigDialog configDialog;
 		configDialog.runModal();
 		break;
 	}
@@ -270,17 +270,36 @@ namespace GUI {
 // These changes will achieve two things at once: Allow us to get rid of using
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
-ConfigDialog::ConfigDialog(bool subtitleControls) : GUI::OptionsDialog("", "GlobalConfig") {
-	init(subtitleControls);
-}
+ConfigDialog::ConfigDialog() :
+		GUI::OptionsDialog("", "GlobalConfig"),
+		_engineOptions(nullptr) {
+	assert(g_engine);
 
-ConfigDialog::ConfigDialog() : GUI::OptionsDialog("", "GlobalConfig") {
-	init(g_engine->hasFeature(Engine::kSupportsSubtitleOptions));
-}
+	const Common::String &gameDomain = ConfMan.getActiveDomainName();
+	const MetaEngine &metaEngine = g_engine->getMetaEngine();
 
-void ConfigDialog::init(bool subtitleControls) {
 	// GUI:  Add tab widget
 	GUI::TabWidget *tab = new GUI::TabWidget(this, "GlobalConfig.TabWidget");
+
+	//
+	// The game specific options tab
+	//
+
+	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
+
+	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
+		_engineOptions = metaEngine.buildEngineOptionsWidget(tab, "GlobalConfig_Engine.Container", gameDomain);
+	}
+
+	if (_engineOptions) {
+		_engineOptions->setParentDialog(this);
+	} else {
+		tab->removeTab(tabId);
+	}
+
+	//
+	// The Audio / Subtitles tab
+	//
 
 	tab->addTab(_("Audio"), "GlobalConfig_Audio");
 
@@ -295,7 +314,7 @@ void ConfigDialog::init(bool subtitleControls) {
 	// Subtitle speed and toggle controllers
 	//
 
-	if (subtitleControls) {
+	if (g_engine->hasFeature(Engine::kSupportsSubtitleOptions)) {
 		// Global talkspeed range of 0-255
 		addSubtitleControls(tab, "GlobalConfig_Audio.", 255);
 		setSubtitleSettingsState(true); // could disable controls by GUI options
@@ -304,14 +323,8 @@ void ConfigDialog::init(bool subtitleControls) {
 	//
 	// The Keymap tab
 	//
-	const Common::String &gameDomain = ConfMan.getActiveDomainName();
-	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 
-	Common::KeymapArray keymaps;
-	if (plugin) {
-		keymaps = plugin->get<MetaEngine>().initKeymaps(gameDomain.c_str());
-	}
-
+	Common::KeymapArray keymaps = metaEngine.initKeymaps(gameDomain.c_str());
 	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper");
 		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
@@ -337,6 +350,23 @@ ConfigDialog::~ConfigDialog() {
 #ifdef GUI_ENABLE_KEYSDIALOG
 	delete _keysDialog;
 #endif
+}
+
+void ConfigDialog::build() {
+	OptionsDialog::build();
+
+	// Engine options
+	if (_engineOptions) {
+		_engineOptions->load();
+	}
+}
+
+void ConfigDialog::apply() {
+	if (_engineOptions) {
+		_engineOptions->save();
+	}
+
+	OptionsDialog::apply();
 }
 
 void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
