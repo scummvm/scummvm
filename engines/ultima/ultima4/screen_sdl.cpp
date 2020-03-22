@@ -37,7 +37,6 @@
 #include "ultima/ultima4/graphics/tileanim.h"
 #include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/u4_sdl.h"
 #include "ultima/ultima4/u4file.h"
 #include "ultima/ultima4/utils.h"
 #include "common/system.h"

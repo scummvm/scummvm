@@ -27,7 +27,6 @@
 #include "ultima/ultima4/error.h"
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/settings.h"
-#include "ultima/ultima4/u4_sdl.h"
 #include "common/debug.h"
 #include "common/system.h"
 

@@ -208,7 +208,6 @@ MODULE_OBJS := \
 	ultima4/textview.o \
 	ultima4/ultima4.o \
 	ultima4/u4file.o \
-	ultima4/u4_sdl.o \
 	ultima4/utils.o \
 	ultima4/view.o \
 	ultima4/weapon.o \
