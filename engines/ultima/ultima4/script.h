@@ -24,8 +24,7 @@
 #define ULTIMA4_SCRIPT_H
 
 #include "ultima/ultima4/types.h"
-#include "ultima/ultima4/xml.h"
-#include "ultima/shared/std/containers.h"
+#include "ultima/shared/conf/xml_node.h"
 #include "common/file.h"
 
 namespace Ultima {
@@ -160,7 +159,7 @@ public:
     bool load(const Common::String &filename, const Common::String &baseId, const Common::String &subNodeName = "", const Common::String &subNodeId = "");
     void unload();
     void run(const Common::String &script);
-    ReturnCode execute(xmlNodePtr script, xmlNodePtr currentItem = NULL, Common::String *output = NULL);    
+    ReturnCode execute(Shared::XMLNode *script, Shared::XMLNode *currentItem = NULL, Common::String *output = NULL);    
     void _continue();
     
     void resetState();
@@ -181,46 +180,46 @@ public:
     
 private:
     void        translate(Common::String *script);
-    xmlNodePtr  find(xmlNodePtr node, const Common::String &script, const Common::String &choice = "", bool _default = false);    
-    Common::String      getPropAsStr(Std::list<xmlNodePtr> &nodes, const Common::String &prop, bool recursive);
-    Common::String      getPropAsStr(xmlNodePtr node, const Common::String &prop, bool recursive = false);
-    int         getPropAsInt(Std::list<xmlNodePtr> &nodes, const Common::String &prop, bool recursive);
-    int         getPropAsInt(xmlNodePtr node, const Common::String &prop, bool recursive = false);
-    Common::String      getContent(xmlNodePtr node);   
+    Shared::XMLNode * find(Shared::XMLNode *node, const Common::String &script, const Common::String &choice = "", bool _default = false);    
+    Common::String      getPropAsStr(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
+    Common::String      getPropAsStr(Shared::XMLNode *node, const Common::String &prop, bool recursive = false);
+    int         getPropAsInt(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
+    int         getPropAsInt(Shared::XMLNode *node, const Common::String &prop, bool recursive = false);
+    Common::String      getContent(Shared::XMLNode *node);   
 
     /*
      * Action Functions
      */     
-    ReturnCode pushContext(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode popContext(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode end(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode waitForKeypress(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode redirect(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode include(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode wait(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode forLoop(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode random(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode move(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode sleep(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode cursor(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode pay(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode _if(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode input(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode add(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode lose(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode heal(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode castSpell(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode damage(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode karma(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode music(xmlNodePtr script, xmlNodePtr current);    
-    ReturnCode setVar(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode setId(xmlNodePtr script, xmlNodePtr current);
-    ReturnCode ztats(xmlNodePtr script, xmlNodePtr current);
+    ReturnCode pushContext(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode popContext(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode end(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode waitForKeypress(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode redirect(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode include(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode wait(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode forLoop(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode random(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode move(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode sleep(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode cursor(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode pay(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode _if(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode input(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode add(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode lose(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode heal(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode castSpell(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode damage(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode karma(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode music(Shared::XMLNode *script, Shared::XMLNode *current);    
+    ReturnCode setVar(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode setId(Shared::XMLNode *script, Shared::XMLNode *current);
+    ReturnCode ztats(Shared::XMLNode *script, Shared::XMLNode *current);
 
     /*
      * Math and comparison functions
      */
-    void mathParseChildren(xmlNodePtr math, Common::String *result);
+    void mathParseChildren(Shared::XMLNode *math, Common::String *result);
     int mathValue(const Common::String &str);
     int math(int lval, int rval, Common::String &op);
     bool mathParse(const Common::String &str, int *lval, int *rval, Common::String *op);
@@ -237,14 +236,14 @@ private:
 
 private:
     void removeCurrentVariable(const Common::String &name);
-    xmlDocPtr _vendorScriptDoc;
-    xmlNodePtr _scriptNode;
-    Common::DumpFile *_debug;
+    Shared::XMLNode *_vendorScriptDoc;
+    Shared::XMLNode *_scriptNode;
+    Common::WriteStream *_debug;
     
     State _state;                    /**< The state the script is in */
-    xmlNodePtr _currentScript;       /**< The currently running script */
-    xmlNodePtr _currentItem;         /**< The current position in the script */
-    Std::list<xmlNodePtr> _translationContext;  /**< A list of nodes that make up our translation context */
+    Shared::XMLNode *_currentScript;       /**< The currently running script */
+    Shared::XMLNode *_currentItem;         /**< The current position in the script */
+    Std::list<Shared::XMLNode *> _translationContext;  /**< A list of nodes that make up our translation context */
     Common::String _target;                  /**< The name of a target script */
     InputType _inputType;            /**< The type of input required */
     Common::String _inputName;               /**< The variable in which to place the input (by default, "input") */

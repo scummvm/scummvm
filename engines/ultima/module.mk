@@ -212,7 +212,6 @@ MODULE_OBJS := \
 	ultima4/utils.o \
 	ultima4/view.o \
 	ultima4/weapon.o \
-	ultima4/xml.o \
 	nuvie/meta_engine.o \
 	nuvie/nuvie.o \
 	nuvie/actors/actor.o \

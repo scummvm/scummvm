@@ -35,7 +35,6 @@ class XMLNode;
 class XMLTree {
 	friend class XMLNode;
 private:
-	static XMLTree *_currentTree;
 	XMLNode *_tree;
 	Common::String _filename;
 	Common::String _root;
@@ -61,6 +60,9 @@ public:
 	}
 	bool isReadonly() const {
 		return _readOnly;
+	}
+	XMLNode *getTree() const {
+		return _tree;
 	}
 
 	const XMLNode *getNode(const Common::String &key) const;

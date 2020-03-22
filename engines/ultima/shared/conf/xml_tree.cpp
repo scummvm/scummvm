@@ -29,21 +29,19 @@
 namespace Ultima {
 namespace Shared {
 
-XMLTree *XMLTree::_currentTree;
-
 XMLTree::XMLTree()
-		: _tree(new XMLNode("config")), _root("config"), _isFile(false),
+		: _tree(new XMLNode(this, "config")), _root("config"), _isFile(false),
 		_readOnly(false) {
 }
 
 XMLTree::XMLTree(const Common::String &fname, const Common::String &root)
-		: _tree(new XMLNode(root)), _root(root), _isFile(true),
+		: _tree(new XMLNode(this, root)), _root(root), _isFile(true),
 	  _readOnly(false) {
 	readConfigFile(fname);
 }
 
 XMLTree::XMLTree(Common::SeekableReadStream *stream, const Common::String &root)
-		: _tree(new XMLNode(root)), _root(root), _isFile(true),
+		: _tree(new XMLNode(this, root)), _root(root), _isFile(true),
 		_readOnly(false) {
 	readConfigStream(stream);
 }
@@ -54,7 +52,7 @@ XMLTree::~XMLTree() {
 
 void XMLTree::clear(const Common::String &root) {
 	delete _tree;
-	_tree = new XMLNode(root);
+	_tree = new XMLNode(this, root);
 	_root = root;
 	_isFile = false;
 	_readOnly = false;
@@ -92,7 +90,6 @@ bool XMLTree::readConfigStream(Common::SeekableReadStream *stream) {
 }
 
 bool XMLTree::readConfigString(const Common::String &s) {
-	_currentTree = this;
 	bool result = _tree->xmlParseDoc(s);
 
 	_isFile = false;

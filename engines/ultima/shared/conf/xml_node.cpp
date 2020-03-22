@@ -151,7 +151,7 @@ void XMLNode::xmlAssign(const Common::String &key, const Common::String &value) 
 	}
 
 	// No match, so create a new node and do recursion
-	XMLNode *t = new XMLNode(k2);
+	XMLNode *t = new XMLNode(_tree, this, k2);
 	_nodeList.push_back(t);
 	(*t).xmlAssign(k, value);
 }
@@ -318,7 +318,7 @@ void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 				trim(_content);
 				return;
 			}
-			XMLNode *t = new XMLNode();
+			XMLNode *t = new XMLNode(_tree, this);
 			++pos;
 			t->xmlParse(s, pos);
 			_nodeList.push_back(t);
@@ -414,7 +414,7 @@ void XMLNode::parseNodeText(const Common::String &nodeText) {
 }
 
 void XMLNode::xmlParseFile(const Common::String &fname) {
-	const Common::String rootFile = XMLTree::_currentTree->_filename;
+	const Common::String rootFile = _tree->_filename;
 	Common::String filename = Common::String(rootFile.c_str(), rootFile.findLastOf('/') + 1) + fname;
 
 	Common::File f;
@@ -467,6 +467,30 @@ void XMLNode::selectPairs(KeyTypeList &ktl, const Common::String currkey) {
 	        i != _nodeList.end(); ++i) {
 		(*i)->selectPairs(ktl, currkey + _id + '/');
 	}
+}
+
+XMLNode *XMLNode::getPrior() const {
+	const Common::Array<XMLNode *> &siblings = _parent->_nodeList;
+	for (uint idx = 0; idx < siblings.size(); ++idx) {
+		if (siblings[idx] == this)
+			return (idx > 0) ? siblings[idx - 1] : nullptr;
+	}
+
+	return nullptr;
+}
+
+XMLNode *XMLNode::getNext() const {
+	const Common::Array<XMLNode *> &siblings = _parent->_nodeList;
+	for (uint idx = 0; idx < siblings.size(); ++idx) {
+		if (siblings[idx] == this)
+			return (idx < (siblings.size() - 1)) ? siblings[idx + 1] : nullptr;
+	}
+
+	return nullptr;
+}
+
+void XMLNode::freeDoc() {
+	delete _tree;
 }
 
 } // End of namespace Shared
