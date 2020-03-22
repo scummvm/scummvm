@@ -37,6 +37,11 @@ namespace Common {
 class Keymap;
 }
 
+namespace GUI {
+class GuiObject;
+class OptionsContainerWidget;
+}
+
 namespace Mohawk {
 
 struct MohawkGameDescription;
@@ -44,7 +49,7 @@ class MohawkArchive;
 class RivenGraphics;
 class RivenConsole;
 class RivenSaveLoad;
-class RivenOptionsDialog;
+class RivenOptionsWidget;
 class RivenStack;
 class RivenCard;
 class RivenHotspot;
@@ -109,6 +114,8 @@ public:
 		return Common::String::format("riven-%03d.rvn", slot);
 	}
 	bool hasFeature(EngineFeature f) const override;
+	static void registerDefaultSettings();
+	void applyGameSettings() override;
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
 	void doFrame();
@@ -122,7 +129,6 @@ private:
 	bool checkDatafiles();
 
 	RivenSaveLoad *_saveLoad;
-	RivenOptionsDialog *_optionsDialog;
 	InstallerArchive _installerArchive;
 
 	// Stack/Card-related functions and variables
@@ -140,7 +146,7 @@ private:
 	void initVars();
 
 	void pauseEngineIntern(bool) override;
-	uint32 sanitizeTransitionMode(uint32 mode);
+
 public:
 	// Stack/card/script funtions
 	RivenStack *constructStackById(uint16 id);

@@ -76,19 +76,6 @@ public:
 	void handleKeyDown(Common::KeyState state) override;
 };
 
-#if defined(ENABLE_MYST) || defined(ENABLE_RIVEN)
-
-class MohawkOptionsDialog : public GUI::Dialog {
-public:
-	explicit MohawkOptionsDialog();
-	~MohawkOptionsDialog() override;
-
-	void reflowLayout() override;
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-};
-
-#endif
-
 #ifdef ENABLE_MYST
 
 class MystOptionsWidget : public GUI::OptionsContainerWidget {
@@ -131,23 +118,21 @@ public:
 
 #ifdef ENABLE_RIVEN
 
-class RivenOptionsDialog : public MohawkOptionsDialog {
+class RivenOptionsWidget : public GUI::OptionsContainerWidget {
 public:
-	explicit RivenOptionsDialog();
-	~RivenOptionsDialog() override;
+	explicit RivenOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	~RivenOptionsWidget() override;
 
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	// OptionsContainerWidget API
+	void load() override;
+	bool save() override;
 
-	bool getZipMode() const;
-	void setZipMode(bool enabled);
-	bool getWaterEffect() const;
-	void setWaterEffect(bool enabled);
-	uint32 getTransitions() const;
-	void setTransitions(uint32 mode);
 private:
+	// OptionsContainerWidget API
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_waterEffectCheckbox;
-	GUI::StaticTextWidget *_transitionModeCaption;
 	GUI::PopUpWidget *_transitionModePopUp;
 };
 

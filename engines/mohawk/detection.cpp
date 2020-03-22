@@ -133,8 +133,9 @@ bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
 bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 	return
 		MohawkEngine::hasFeature(f)
-		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime);
+	        || (f == kSupportsLoadingDuringRuntime)
+	        || (f == kSupportsSavingDuringRuntime)
+	        || (f == kSupportsChangingOptionsDuringRuntime);
 }
 
 #endif
@@ -346,6 +347,11 @@ void MohawkMetaEngine::registerDefaultSettings(const Common::String &target) con
 		return Mohawk::MohawkEngine_Myst::registerDefaultSettings();
 	}
 #endif
+#ifdef ENABLE_RIVEN
+	if (gameId == "riven") {
+		return Mohawk::MohawkEngine_Riven::registerDefaultSettings();
+	}
+#endif
 
 	return AdvancedMetaEngine::registerDefaultSettings(target);
 }
@@ -356,6 +362,11 @@ GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidget(GUI::Gui
 #ifdef ENABLE_MYST
 	if (gameId == "myst" || gameId == "makingofmyst") {
 		return new Mohawk::MystOptionsWidget(boss, name, target);
+	}
+#endif
+#ifdef ENABLE_RIVEN
+	if (gameId == "riven") {
+		return new Mohawk::RivenOptionsWidget(boss, name, target);
 	}
 #endif
 

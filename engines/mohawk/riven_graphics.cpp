@@ -523,6 +523,17 @@ void RivenGraphics::setTransitionMode(RivenTransitionMode mode) {
 	}
 }
 
+RivenTransitionMode RivenGraphics::sanitizeTransitionMode(int mode) {
+	if (mode != kRivenTransitionModeDisabled
+	    && mode != kRivenTransitionModeFastest
+	    && mode != kRivenTransitionModeNormal
+	    && mode != kRivenTransitionModeBest) {
+		return kRivenTransitionModeFastest;
+	}
+
+	return static_cast<RivenTransitionMode>(mode);
+}
+
 void RivenGraphics::scheduleTransition(RivenTransition id, const Common::Rect &rect) {
 	_scheduledTransition = id;
 	_transitionRect = rect;
