@@ -71,10 +71,10 @@ public:
 	const Coords &getPrevCoords() const     {
 		return _prevCoords;
 	}
-	const ObjectMovementBehavior getMovementBehavior() const    {
+	ObjectMovementBehavior getMovementBehavior() const {
 		return _movementBehavior;
 	}
-	const Type getType() const              {
+	Type getType() const					{
 		return _objType;
 	}
 	bool hasFocus() const                   {

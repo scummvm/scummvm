@@ -124,7 +124,7 @@ public:
 	KeyHandler *getKeyHandler();
 
 private:
-	KeyHandler *handler;
+	KeyHandler *_handler;
 };
 
 /**
@@ -145,9 +145,9 @@ public:
 #endif
 
 protected:
-	int maxlen, screenX, screenY;
-	TextView *view;
-	Common::String accepted;
+	int _maxLen, _screenX, _screenY;
+	TextView *_view;
+	Common::String _accepted;
 };
 
 /**
@@ -173,7 +173,7 @@ public:
 	static char get(const Common::String &choices, EventHandler *eh = NULL);
 
 protected:
-	Common::String choices;
+	Common::String _choices;
 };
 
 /**
@@ -199,8 +199,8 @@ public:
 	void setCycles(int c);
 
 private:
-	unsigned int cycles;
-	unsigned int current;
+	unsigned int _cycles;
+	unsigned int _current;
 };
 
 /**
@@ -222,10 +222,10 @@ public:
 
 	/* Properties */
 protected:
-	Callback callback;
-	void *data;
-	int interval;
-	int current;
+	Callback _callback;
+	void *_data;
+	int _interval;
+	int _current;
 };
 
 #if defined(IOS)
@@ -257,10 +257,10 @@ public:
 	/* Member functions */
 	bool isLocked() const;      /**< Returns true if the event list is locked (in use) */
 
-	void add(TimedEvent::Callback callback, int interval, void *data = NULL);
+	void add(TimedEvent::Callback theCallback, int interval, void *data = NULL);
 	List::iterator remove(List::iterator i);
 	void remove(TimedEvent *event);
-	void remove(TimedEvent::Callback callback, void *data = NULL);
+	void remove(TimedEvent::Callback theCallback, void *data = NULL);
 	void tick();
 	void stop();
 	void start();
@@ -277,13 +277,13 @@ private:
 	/* Properties */
 protected:
 	/* Static properties */
-	static unsigned int instances;
+	static unsigned int _instances;
 
-	void *id;
-	int baseInterval;
-	bool locked;
-	List events;
-	List deferredRemovals;
+	void *_id;
+	int _baseInterval;
+	bool _locked;
+	List _events;
+	List _deferredRemovals;
 #if defined(IOS)
 	TimedManagerHelper *m_helper;
 #endif
@@ -296,7 +296,7 @@ typedef void(*updateScreenCallback)(void);
 class EventHandler {
 public:
 	/* Typedefs */
-	typedef Common::List<MouseArea *> MouseAreaList;
+	typedef Common::List<const MouseArea *> MouseAreaList;
 
 	/* Constructors */
 	EventHandler();
@@ -338,10 +338,10 @@ public:
 	void setKeyHandler(KeyHandler kh);
 
 	/* Mouse area functions */
-	void pushMouseAreaSet(MouseArea *mouseAreas);
+	void pushMouseAreaSet(const MouseArea *mouseAreas);
 	void popMouseAreaSet();
-	MouseArea *getMouseAreaSet() const;
-	MouseArea *mouseAreaForPoint(int x, int y);
+	const MouseArea *getMouseAreaSet() const;
+	const MouseArea *mouseAreaForPoint(int x, int y);
 
 protected:
 	static bool _controllerDone;

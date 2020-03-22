@@ -75,38 +75,38 @@ void Response::release() {
 }
 
 ResponsePart::ResponsePart(const Common::String &value, const Common::String &arg, bool command) {
-	this->value = value;
-	this->arg = arg;
-	this->command = command;
+	_value = value;
+	_arg = arg;
+	_command = command;
 }
 
 ResponsePart::operator Common::String() const {
-	return value;
+	return _value;
 }
 
 bool ResponsePart::operator==(const ResponsePart &rhs) const {
-	return value == rhs.value;
+	return _value == rhs._value;
 }
 
 bool ResponsePart::isCommand() const {
-	return command;
+	return _command;
 }
 
 DynamicResponse::DynamicResponse(Response * (*generator)(const DynamicResponse *), const Common::String &param) :
-	Response(""), param(param) {
-	this->generator = generator;
-	currentResponse = NULL;
+	Response(""), _param(param) {
+	_generator = generator;
+	_currentResponse = NULL;
 }
 
 DynamicResponse::~DynamicResponse() {
-	if (currentResponse)
-		delete currentResponse;
+	if (_currentResponse)
+		delete _currentResponse;
 }
 
 const Std::vector<ResponsePart> &DynamicResponse::getParts() const {
 	// blah, must cast away constness
-	const_cast<DynamicResponse *>(this)->currentResponse = (*generator)(this);
-	return currentResponse->getParts();
+	const_cast<DynamicResponse *>(this)->_currentResponse = (*_generator)(this);
+	return _currentResponse->getParts();
 }
 
 /*

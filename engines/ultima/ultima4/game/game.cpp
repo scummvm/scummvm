@@ -127,12 +127,12 @@ Context *g_context = NULL;
 
 Debug gameDbg("debug/game.txt", "Game");
 
-MouseArea mouseAreas[] = {
+static const MouseArea mouseAreas[] = {
 	{ 3, { { 8, 8 }, { 8, 184 }, { 96, 96 } }, MC_WEST, { U4_ENTER, 0, U4_LEFT } },
 	{ 3, { { 8, 8 }, { 184, 8 }, { 96, 96 } }, MC_NORTH, { U4_ENTER, 0, U4_UP }  },
 	{ 3, { { 184, 8 }, { 184, 184 }, { 96, 96 } }, MC_EAST, { U4_ENTER, 0, U4_RIGHT } },
 	{ 3, { { 8, 184 }, { 184, 184 }, { 96, 96 } }, MC_SOUTH, { U4_ENTER, 0, U4_DOWN } },
-	{ 0 }
+	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 } }, MC_NORTH, { 0, 0, 0 } }
 };
 
 ReadPlayerController::ReadPlayerController() : ReadChoiceController("12345678 \033\n") {

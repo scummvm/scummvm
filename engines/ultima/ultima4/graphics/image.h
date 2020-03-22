@@ -36,7 +36,7 @@ typedef Graphics::ManagedSurface *BackendSurface;
 #define DARK_GRAY_HALO RGBA(14,15,16,255)
 
 struct RGBA {
-	RGBA(int r, int g, int b, int a) : r(r), g(g), b(b), a(a) {}
+	RGBA(int red, int green, int blue, int alpha) : r(red), g(green), b(blue), a(alpha) {}
 	RGBA() : r(0), g(0), b(0), a(255) {}
 	unsigned int r, g, b, a;
 
