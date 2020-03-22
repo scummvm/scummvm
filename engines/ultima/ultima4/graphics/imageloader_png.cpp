@@ -25,6 +25,8 @@
 #include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/graphics/imageloader.h"
 #include "ultima/ultima4/graphics/imageloader_png.h"
+#include "common/memstream.h"
+#include "image/png.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -49,94 +51,41 @@ Image *PngImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 		errorWarning("dimensions set for PNG image, will be ignored");
 	}
 
-#ifdef TODO
-	char header[8];
-	file->read(header, 1, sizeof(header));
-	if (png_sig_cmp((png_byte *)header, 0, sizeof(header)) != 0)
-		return NULL;
+	size_t fileSize = file->length();
+	byte *buffer = (byte *)malloc(fileSize);
+	file->read(buffer, fileSize, 1);
+	Common::MemoryReadStream src(buffer, fileSize, DisposeAfterUse::YES);
 
-	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!png_ptr)
-		return NULL;
+	::Image::PNGDecoder decoder;
+	if (!decoder.loadStream(src))
+		return nullptr;
 
-	png_infop info_ptr = png_create_info_struct(png_ptr);
-	if (!info_ptr) {
-		png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-		return NULL;
-	}
+	const Graphics::Surface *img = decoder.getSurface();
+	bpp = img->format.bpp();
+	if (img->format.bytesPerPixel == 1)
+		bpp = decoder.getPaletteColorCount() == 256 ? 8 : 4;
 
-	png_infop end_info = png_create_info_struct(png_ptr);
-	if (!end_info) {
-		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-		return NULL;
-	}
+	Image *image = Image::create(img->w, img->h, bpp == 4 || bpp == 8, Image::HARDWARE);
 
-	if (setjmp(png_jmpbuf(png_ptr))) {
-		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-		return NULL;
-	}
+	if (img->format.bytesPerPixel == 1) {
+		int palCount = decoder.getPaletteColorCount();
+		const byte *pal = decoder.getPalette();
 
-	png_set_read_fn(png_ptr, file, &png_read_xu4);
-
-	png_set_sig_bytes(png_ptr, sizeof(header));
-
-	png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-
-	png_uint_32 pwidth, pheight;
-	int bit_depth, color_type, interlace_type, compression_type, filter_method;
-	png_get_IHDR(png_ptr, info_ptr, &pwidth, &pheight, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-	width = pwidth;
-	height = pheight;
-
-	if (color_type == PNG_COLOR_TYPE_PALETTE)
-		bpp = bit_depth;
-	else if (color_type == PNG_COLOR_TYPE_RGB)
-		bpp = bit_depth * 3;
-	else if (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-		bpp = bit_depth * 4;
-
-	png_byte **row_pointers = png_get_rows(png_ptr, info_ptr);
-
-	unsigned char *raw = new unsigned char[width * height * bpp / 8];
-
-	unsigned char *p = raw;
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width * bpp / 8; j++) {
-			*p++ = row_pointers[i][j];
-		}
-	}
-
-	Image *image = Image::create(width, height, bpp == 4 || bpp == 8, Image::HARDWARE);
-	if (!image) {
-		delete [] raw;
-		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-		return NULL;
-	}
-
-	if (bpp == 4 || bpp == 8) {
-		int num_pngpalette;
-		png_colorp pngpalette;
-		png_get_PLTE(png_ptr, info_ptr, &pngpalette, &num_pngpalette);
-		RGBA *palette = new RGBA[num_pngpalette];
-		for (int c = 0; c < num_pngpalette; c++) {
-			palette[c].r = pngpalette[c].red;
-			palette[c].g = pngpalette[c].green;
-			palette[c].b = pngpalette[c].blue;
+		RGBA *palette = new RGBA[palCount];
+		for (int c = 0; c < palCount; ++c, pal += 3) {
+			palette[c].r = pal[0];
+			palette[c].g = pal[1];
+			palette[c].b = pal[2];
 			palette[c].a = IM_OPAQUE;
 		}
-		image->setPalette(palette, num_pngpalette);
-		delete [] palette;
+
+		image->setPalette(palette, palCount);
+		delete[] palette;
 	}
 
-	setFromRawData(image, width, height, bpp, raw);
+	setFromRawData(image, width, height, bpp, (unsigned char *)img->getPixels());
 
-	delete [] raw;
-	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 	return image;
-#else
-	return nullptr;
-#endif
 }
 
 } // End of namespace Ultima4
