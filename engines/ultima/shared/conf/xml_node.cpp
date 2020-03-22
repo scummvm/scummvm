@@ -294,8 +294,6 @@ void XMLNode::parseDocTypeElement(const Common::String &s, size_t &nn) {
 
 void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 	bool intag = true;
-	_id.clear();
-	_attributes.clear();
 
 	Common::String nodeText;
 

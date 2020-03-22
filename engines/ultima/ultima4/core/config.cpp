@@ -47,6 +47,7 @@ Config::~Config() {
 ConfigElement Config::getElement(const Common::String &name) const {
 	Common::String key = Common::String::format("config/%s", name.c_str());
 	const Shared::XMLNode *node = _doc.getNode(key);
+	assert(node);
 	return ConfigElement(node);
 }
 
