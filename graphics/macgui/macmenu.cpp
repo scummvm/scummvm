@@ -50,16 +50,6 @@ enum {
 };
 
 enum {
-	kFontStyleBold = 1,
-	kFontStyleItalic = 2,
-	kFontStyleUnderline = 4,
-	kFontStyleOutline = 8,
-	kFontStyleShadow = 16,
-	kFontStyleCondensed = 32,
-	kFontStyleExtended = 64
-};
-
-enum {
 	kGrayed = 1,
 	kInactive = 2,
 	kPopUp = 16,
@@ -528,19 +518,19 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 			while (item.size() >= 2 && item[item.size() - 2] == '<') {
 				char c = item.lastChar();
 				if (c == 'B') {
-					style |= kFontStyleBold;
+					style |= kMacFontBold;
 				} else if (c == 'I') {
-					style |= kFontStyleItalic;
+					style |= kMacFontItalic;
 				} else if (c == 'U') {
-					style |= kFontStyleUnderline;
+					style |= kMacFontUnderline;
 				} else if (c == 'O') {
-					style |= kFontStyleOutline;
+					style |= kMacFontOutline;
 				} else if (c == 'S') {
-					style |= kFontStyleShadow;
+					style |= kMacFontShadow;
 				} else if (c == 'C') {
-					style |= kFontStyleCondensed;
+					style |= kMacFontCondense;
 				} else if (c == 'E') {
-					style |= kFontStyleExtended;
+					style |= kMacFontExtend;
 				}
 				item.deleteLastChar();
 				item.deleteLastChar();
@@ -874,7 +864,9 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 				_font->drawString(s, unicodeText, tx, ty, r->width(), color);
 				underlineAccelerator(s, _font, unicodeText, tx, ty, shortcutPos, color);
 			} else {
-				_font->drawString(s, text, tx, ty, r->width(), color);
+				const Font *font = getMenuFont(menu->items[i]->style);
+
+				font->drawString(s, text, tx, ty, r->width(), color);
 			}
 
 			if (!acceleratorText.empty() && shortcutPos == -1)
