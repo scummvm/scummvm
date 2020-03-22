@@ -91,9 +91,8 @@ struct Layout {
 	Common::Rect _viewport;
 };
 
-class Screen {
+class Screen : public Graphics::Screen {
 public:
-	Graphics::Screen _surface;
 	Std::vector<Layout *> _layouts;
 public:
 	Screen();
@@ -106,6 +105,8 @@ public:
 	 */
 	void clear();
 };
+
+extern Screen *g_screen;
 
 void screenInit(void);
 void screenRefreshTimerInit(void);

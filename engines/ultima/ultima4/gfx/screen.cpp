@@ -56,6 +56,7 @@ extern void screenDelete_sys();
 Screen::Screen() {
 	g_screen = this;
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
+	create(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 Screen::~Screen() {

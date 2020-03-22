@@ -66,6 +66,19 @@ struct SubImage {
  *  </ul>
  */
 class Image {
+private:
+	unsigned int _w, _h;
+	bool _indexed;
+	RGBA _backgroundColor;
+	Image();                    /* use create method to construct images */
+
+	// disallow assignments, copy contruction
+	Image(const Image &);
+	const Image &operator=(const Image &);
+
+	BackendSurface _surface;
+private:
+	Graphics::ManagedSurface *getSurface(Image *d) const;
 public:
 	enum Type {
 		HARDWARE,
@@ -171,19 +184,6 @@ public:
 	}
 	void save(const Common::String &filename);
 	void drawHighlighted();
-
-
-private:
-	unsigned int _w, _h;
-	bool _indexed;
-	RGBA _backgroundColor;
-	Image();                    /* use create method to construct images */
-
-	// disallow assignments, copy contruction
-	Image(const Image &);
-	const Image &operator=(const Image &);
-
-	BackendSurface _surface;
 };
 
 } // End of namespace Ultima4
