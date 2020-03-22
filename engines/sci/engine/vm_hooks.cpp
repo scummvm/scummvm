@@ -121,10 +121,23 @@ static const byte sci0_hebrew_input_prompt[] = {
 };
 
 
+// solves one of the issues described at #11265 - the puker alien's sound is still heard on next room
+// it seems like a script bug, which assumes the sound to be always 4 seconds, while it has varying length
+// depending on whether it's digital or midi (both are longer than 4 seconds...)
+// we solve that by calling:
+// (gLongSong2 stop:)
+const byte sq4_puker_stop_sound[] = {
+	0x38, 0xa7, 0x00,               // pushi    #stop
+	0x76,                           // push0
+	0x81, 0x9a,                     // lag      gLongSong2
+	0x4a, 0x04                      // send     4
+};
+
+
 
 /** Write here all games hooks
  *  From this we'll build _hooksMap, which contains only relevant hooks to current game
- *  The match is performed according to PC, script number, opcode (only opcode name, as seen in ScummVM debugger),
+ *  The match is performed according to PC (of next instruction to execute), script number, opcode (only opcode name, as seen in ScummVM debugger),
  *  and either:
  *  - objName and selector	(and then externID is -1)
  *  - external function ID  (and then selector is "")
@@ -133,9 +146,13 @@ static const byte sci0_hebrew_input_prompt[] = {
 
 static const GeneralHookEntry allGamesHooks[] = {
 	// GID, script, lang,        PC.offset, objName,  selector,  externID, opcode,  hook array
-	{GID_QFG1, Common::UNK_LANG, {58,  0x144d}, {"egoRuns", "changeState", -1 , "push0", HOOKARRAY(qfg1_die_after_running_on_ice)}},
-	{GID_SQ3,  Common::HE_ISR,   {255, 0x1103}, {"User",    "",            -1 , "pushi", HOOKARRAY(sci0_hebrew_input_prompt)}}
+	{GID_QFG1, Common::UNK_LANG, {58,  0x144d}, {"egoRuns", "changeState",   -1 , "push0", HOOKARRAY(qfg1_die_after_running_on_ice)}},
+	{GID_SQ3,  Common::HE_ISR,   {255, 0x1103}, {"User",    "",              -1 , "pushi", HOOKARRAY(sci0_hebrew_input_prompt)}},
+	{GID_SQ4 , Common::UNK_LANG, {15, 0x07d7},  {"barScript", "changeState", -1 , "pushi", HOOKARRAY(sq4_puker_stop_sound)} }
 };
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 VmHooks::VmHooks() {
