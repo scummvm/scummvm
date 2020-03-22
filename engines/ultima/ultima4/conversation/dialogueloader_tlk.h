@@ -20,18 +20,18 @@
  *
  */
 
-#ifndef ULTIMA4_DIALOGUELOADER_LB_H
-#define ULTIMA4_DIALOGUELOADER_LB_H
+#ifndef ULTIMA4_DIALOGUELOADER_TLK_H
+#define ULTIMA4_DIALOGUELOADER_TLK_H
 
-#include "ultima/ultima4/dialogueloader.h"
+#include "ultima/ultima4/conversation/dialogueloader.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 /**
- * The dialogue loader for Lord British
+ * The dialogue loader for u4dos .tlk files
  */
-class U4LBDialogueLoader : public DialogueLoader {
+class U4TlkDialogueLoader : public DialogueLoader {
 	static DialogueLoader *_instance;
 
 public:

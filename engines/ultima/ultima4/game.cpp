@@ -28,7 +28,7 @@
 #include "ultima/ultima4/camp.h"
 #include "ultima/ultima4/cheat.h"
 #include "ultima/ultima4/city.h"
-#include "ultima/ultima4/conversation.h"
+#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/dungeon.h"
 #include "ultima/ultima4/combat.h"

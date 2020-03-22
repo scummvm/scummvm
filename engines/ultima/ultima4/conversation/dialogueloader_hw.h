@@ -20,29 +20,25 @@
  *
  */
 
-#include "ultima/ultima4/debug.h"
-#include "ultima/ultima4/conversation.h"
-#include "ultima/ultima4/dialogueloader.h"
+#ifndef ULTIMA4_DIALOGUELOADER_HW_H
+#define ULTIMA4_DIALOGUELOADER_HW_H
+
+#include "ultima/ultima4/conversation/dialogueloader.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-Std::map<Common::String, DialogueLoader *> *DialogueLoader::_loaderMap = NULL;
+/**
+ * The dialogue loader for Hawkwind.
+ */
+class U4HWDialogueLoader : public DialogueLoader {
+	static DialogueLoader *_instance;
 
-DialogueLoader *DialogueLoader::getLoader(const Common::String &mimeType) {
-	ASSERT(_loaderMap != NULL, "DialogueLoader::getLoader loaderMap not initialized");
-	if (_loaderMap->find(mimeType) == _loaderMap->end())
-		return NULL;
-	return (*_loaderMap)[mimeType];
-}
-
-DialogueLoader *DialogueLoader::registerLoader(DialogueLoader *loader, const Common::String &mimeType) {
-	if (_loaderMap == NULL) {
-		_loaderMap = new Std::map<Common::String, DialogueLoader *>;
-	}
-	(*_loaderMap)[mimeType] = loader;
-	return loader;
-}
+public:
+	virtual Dialogue *load(void *source);
+};
 
 } // End of namespace Ultima4
 } // End of namespace Ultima
+
+#endif

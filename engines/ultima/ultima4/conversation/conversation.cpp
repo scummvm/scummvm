@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/conversation.h"
+#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/person.h"
 #include "ultima/ultima4/script.h"
