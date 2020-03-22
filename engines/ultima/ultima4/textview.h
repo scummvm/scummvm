@@ -24,7 +24,7 @@
 #define ULTIMA4_TEXTVIEW_H
 
 #include "ultima/ultima4/view.h"
-#include "ultima/ultima4/image.h"
+#include "ultima/ultima4/graphics/image.h"
 
 namespace Ultima {
 namespace Ultima4 {

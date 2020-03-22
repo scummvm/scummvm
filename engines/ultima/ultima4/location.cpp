@@ -31,7 +31,7 @@
 #include "ultima/ultima4/object.h"
 #include "ultima/ultima4/savegame.h"
 #include "ultima/ultima4/settings.h"
-#include "ultima/ultima4/tileset.h"
+#include "ultima/ultima4/graphics/tileset.h"
 
 namespace Ultima {
 namespace Ultima4 {

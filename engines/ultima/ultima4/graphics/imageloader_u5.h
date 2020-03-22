@@ -20,20 +20,20 @@
  *
  */
 
-#ifndef ULTIMA4_IMAGELOADER_PNG_H
-#define ULTIMA4_IMAGELOADER_PNG_H
+#ifndef ULTIMA4_IMAGELOADER_U5_H
+#define ULTIMA4_IMAGELOADER_U5_H
 
-#include "ultima/ultima4/imageloader.h"
+#include "ultima/ultima4/graphics/imageloader.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 /**
- * Loader for PNG images.  All PNG images should be supported: indexed
- * images with palette, or true color, with or without an alpha
- * channel.
+ * Loader for U5 images with LZW compression.  Similar to U4 LZW
+ * images, but with a slightly different variation on the LZW
+ * algorithm.
  */
-class PngImageLoader : public ImageLoader {
+class U5LzwImageLoader : public ImageLoader {
     static ImageLoader *_instance;
 
 public:

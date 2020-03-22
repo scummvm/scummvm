@@ -26,7 +26,7 @@
 #include "ultima/ultima4/error.h"
 #include "ultima/ultima4/event.h"
 #include "ultima/ultima4/game.h"
-#include "ultima/ultima4/imagemgr.h"
+#include "ultima/ultima4/graphics/imagemgr.h"
 #include "ultima/ultima4/intro.h"
 #include "ultima/ultima4/music.h"
 #include "ultima/ultima4/person.h"
@@ -34,7 +34,7 @@
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/sound.h"
-#include "ultima/ultima4/tileset.h"
+#include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/utils.h"
 #include "common/debug.h"
 

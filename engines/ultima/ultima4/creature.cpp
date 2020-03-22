@@ -34,7 +34,7 @@
 #include "ultima/ultima4/screen.h"     /* FIXME: remove dependence on this */
 #include "ultima/ultima4/settings.h"
 #include "ultima/ultima4/textcolor.h"  /* required to change the color of screen message text */
-#include "ultima/ultima4/tileset.h"
+#include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/utils.h"
 
 namespace Ultima {

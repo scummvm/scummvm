@@ -20,25 +20,22 @@
  *
  */
 
-#ifndef ULTIMA4_IMAGELOADER_U5_H
-#define ULTIMA4_IMAGELOADER_U5_H
+#ifndef ULTIMA4_IMAGELOADER_FMTOWNS_H_
+#define ULTIMA4_IMAGELOADER_FMTOWNS_H_
 
-#include "ultima/ultima4/imageloader.h"
+#include "ultima/ultima4/graphics/imageloader.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-/**
- * Loader for U5 images with LZW compression.  Similar to U4 LZW
- * images, but with a slightly different variation on the LZW
- * algorithm.
- */
-class U5LzwImageLoader : public ImageLoader {
-    static ImageLoader *_instance;
-
+class FMTOWNSImageLoader : public ImageLoader {
+    static ImageLoader *_instancePic;
+    static ImageLoader *_instanceTif;
 public:
     virtual Image *load(U4FILE *file, int width, int height, int bpp);
-    
+    FMTOWNSImageLoader(int offset) : _offset(offset){}
+protected:
+    int _offset;
 };
 
 } // End of namespace Ultima4

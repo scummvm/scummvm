@@ -36,7 +36,7 @@
 #include "ultima/ultima4/portal.h"
 #include "ultima/ultima4/savegame.h"
 #include "ultima/ultima4/screen.h"
-#include "ultima/ultima4/tileset.h"
+#include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/utils.h"
 #include "ultima/ultima4/weapon.h"

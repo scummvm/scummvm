@@ -134,6 +134,19 @@ MODULE_OBJS := \
 	ultima1/widgets/urban_widget.o \
 	ultima1/widgets/wench.o \
 	ultima1/game.o \
+	ultima4/graphics/imageloader.o \
+	ultima4/graphics/imageloader_fmtowns.o \
+	ultima4/graphics/imageloader_png.o \
+	ultima4/graphics/imageloader_u4.o \
+	ultima4/graphics/imageloader_u5.o \
+	ultima4/graphics/imagemgr.o \
+	ultima4/graphics/imageview.o \
+	ultima4/graphics/image_sdl.o \
+	ultima4/graphics/tile.o \
+	ultima4/graphics/tileanim.o \
+	ultima4/graphics/tilemap.o \
+	ultima4/graphics/tileset.o \
+	ultima4/graphics/tileview.o \
 	ultima4/annotation.o \
 	ultima4/armor.o \
 	ultima4/aura.o \
@@ -161,14 +174,6 @@ MODULE_OBJS := \
 	ultima4/event_sdl.o \
 	ultima4/filesystem.o \
 	ultima4/game.o \
-	ultima4/imageloader.o \
-	ultima4/imageloader_fmtowns.o \
-	ultima4/imageloader_png.o \
-	ultima4/imageloader_u4.o \
-	ultima4/imageloader_u5.o \
-	ultima4/imagemgr.o \
-	ultima4/imageview.o \
-	ultima4/image_sdl.o \
 	ultima4/intro.o \
 	ultima4/io.o \
 	ultima4/item.o \
@@ -201,11 +206,6 @@ MODULE_OBJS := \
 	ultima4/spell.o \
 	ultima4/stats.o \
 	ultima4/textview.o \
-	ultima4/tile.o \
-	ultima4/tileanim.o \
-	ultima4/tilemap.o \
-	ultima4/tileset.o \
-	ultima4/tileview.o \
 	ultima4/ultima4.o \
 	ultima4/u4file.o \
 	ultima4/u4_sdl.o \

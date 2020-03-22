@@ -27,7 +27,7 @@
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/event.h"
 #include "ultima/ultima4/game.h"
-#include "ultima/ultima4/imagemgr.h"
+#include "ultima/ultima4/graphics/imagemgr.h"
 #include "ultima/ultima4/location.h"
 #include "ultima/ultima4/mapmgr.h"
 #include "ultima/ultima4/creature.h"
@@ -37,7 +37,7 @@
 #include "ultima/ultima4/portal.h"
 #include "ultima/ultima4/screen.h"
 #include "ultima/ultima4/settings.h"
-#include "ultima/ultima4/tileset.h"
+#include "ultima/ultima4/graphics/tileset.h"
 #include "ultima/ultima4/types.h"
 
 namespace Ultima {
