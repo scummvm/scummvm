@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/debug.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/graphics/image.h"
 #include "ultima/ultima4/graphics/imagemgr.h"
 #include "ultima/ultima4/settings.h"

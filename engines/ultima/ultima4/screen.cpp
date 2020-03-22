@@ -27,7 +27,7 @@
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/dungeonview.h"
 #include "ultima/ultima4/error.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/intro.h"
 #include "ultima/ultima4/graphics/imagemgr.h"
 #include "ultima/ultima4/location.h"

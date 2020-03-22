@@ -27,7 +27,7 @@
 #include "ultima/ultima4/conversation.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/error.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/filesystem.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/music.h"

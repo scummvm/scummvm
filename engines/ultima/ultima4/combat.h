@@ -25,7 +25,7 @@
 
 #include "ultima/ultima4/direction.h"
 #include "ultima/ultima4/map.h"
-#include "ultima/ultima4/controller.h"
+#include "ultima/ultima4/events/controller.h"
 #include "ultima/ultima4/creature.h"
 #include "ultima/ultima4/game.h"
 #include "ultima/ultima4/object.h"

@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/debug.h"
 #include "ultima/ultima4/location.h"

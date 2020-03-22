@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_INTRO_H
 #define ULTIMA4_INTRO_H
 
-#include "ultima/ultima4/controller.h"
+#include "ultima/ultima4/events/controller.h"
 #include "ultima/ultima4/menu.h"
 #include "ultima/ultima4/observer.h"
 #include "ultima/ultima4/savegame.h"

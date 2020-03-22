@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_CHEAT_H
 #define ULTIMA4_CHEAT_H
 
-#include "ultima/ultima4/controller.h"
+#include "ultima/ultima4/events/controller.h"
 #include "common/str.h"
 
 namespace Ultima {

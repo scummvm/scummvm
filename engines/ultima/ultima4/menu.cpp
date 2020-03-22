@@ -22,7 +22,7 @@
 
 #include "ultima/ultima4/menu.h"
 #include "ultima/ultima4/error.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/textview.h"
 
 namespace Ultima {

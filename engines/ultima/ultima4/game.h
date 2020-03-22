@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_GAME_H
 #define ULTIMA4_GAME_H
 
-#include "ultima/ultima4/controller.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/controller.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/map.h"
 #include "ultima/ultima4/observer.h"
 #include "ultima/ultima4/sound.h"

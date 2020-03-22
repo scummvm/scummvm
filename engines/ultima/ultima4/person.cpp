@@ -27,7 +27,7 @@
 #include "ultima/ultima4/context.h"
 #include "ultima/ultima4/conversation.h"
 #include "ultima/ultima4/debug.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game.h"   // Included for ReadPlayerController
 #include "ultima/ultima4/io.h"
 #include "ultima/ultima4/location.h"

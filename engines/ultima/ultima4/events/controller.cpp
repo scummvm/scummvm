@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima4/controller.h"
-#include "ultima/ultima4/event.h"
+#include "ultima/ultima4/events/controller.h"
+#include "ultima/ultima4/events/event.h"
 
 namespace Ultima {
 namespace Ultima4 {
