@@ -57,9 +57,10 @@ Screen::Screen() {
 	g_screen = this;
 
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, &SCREEN_FORMAT);
+	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
+	initGraphics(size.x, size.y, &SCREEN_FORMAT);
 
-	create(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FORMAT);
+	create(size.x, size.y, SCREEN_FORMAT);
 }
 
 Screen::~Screen() {

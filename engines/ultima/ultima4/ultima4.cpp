@@ -60,7 +60,7 @@ Ultima4Engine::~Ultima4Engine() {
 	Tileset::unloadAll();
 	ImageMgr::destroy();
 
-	delete musicMgr;
+	//delete musicMgr;
 	soundDelete();
 }
 
