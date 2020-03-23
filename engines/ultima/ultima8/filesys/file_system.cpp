@@ -271,7 +271,7 @@ bool FileSystem::rewrite_virtual_path(string &vfn) const {
 
 	while ((pos = vfn.rfind('/', pos)) != Std::string::npos) {
 //		perr << vfn << ", " << vfn.substr(0, pos) << ", " << pos << Std::endl;
-		Std::map<Common::String, string>::iterator p = _virtualPaths.find(
+		Std::map<Common::String, string>::const_iterator p = _virtualPaths.find(
 		            vfn.substr(0, pos));
 
 		if (p != _virtualPaths.end()) {
