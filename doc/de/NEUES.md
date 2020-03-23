@@ -17,6 +17,9 @@ Programmcodes finden Sie auf Englisch unter:
  Sword1:
    - Unterstützung für lokalisierte Menüs in der russischen Version der Novy Disk Trilogy hinzugefügt.
 
+ Linux-Portierung:
+   - Anstelle des Datei-Browsers von ScummVM kann nun der Datei-Browser des Betriebssystems verwendet werden.
+
 #### 2.1.1 ":More sheep:" (31.01.2020)
 
  Allgemein:

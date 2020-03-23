@@ -16,6 +16,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
 
+ Linux port:
+   - Added option to use the system file browser instead of the ScummVM file browser.
 
 #### 2.1.1 ":More sheep:" (2020-01-31)
 
