@@ -44,7 +44,6 @@ class GumpNotifyProcess;
 //
 
 class Gump : public Object {
-	friend class GumpList;
 protected:
 	uint16 _owner;        // Owner item
 	Gump *_parent;        // Parent gump
