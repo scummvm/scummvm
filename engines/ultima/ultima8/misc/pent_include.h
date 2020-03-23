@@ -133,7 +133,6 @@ void setAllocationFunctions(allocFunc a, deallocFunc d);
 #include <fstream>
 #include <cstdio>
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/containers.h"
 
 // Useful Pentagram headers
 #include "ultima/ultima8/world/get_object.h"
