@@ -1405,6 +1405,13 @@ void LB::b_puppetSound(int nargs) {
 
 	DirectorSound *sound = g_director->getSoundManager();
 	Datum castMember = g_lingo->pop();
+
+	if (!score) {
+		warning("b_puppetSound(): no score");
+
+		return;
+	}
+
 	int castId = g_lingo->castIdFetch(castMember);
 
 	if (castId == 0) {
