@@ -122,7 +122,7 @@ public:
 	}
 
 	//
-	// Access a value from a location in the stacck
+	// Access a value from a location in the stack
 	//
 
 	inline uint8 access1(const uint32 offset) const {
