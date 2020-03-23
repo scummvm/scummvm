@@ -135,6 +135,8 @@ public:
 
 	void fillRect(int x, int y, int w, int h, int r, int g, int b, int a = IM_OPAQUE);
 
+	void blitFrom(const Graphics::Surface &src);
+
 	/* reading from image */
 	void getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a) const;
 	void getPixelIndex(int x, int y, unsigned int &index) const;
@@ -184,6 +186,12 @@ public:
 	}
 	void save(const Common::String &filename);
 	void drawHighlighted();
+
+	/**
+	 * Debug method that dumps a given image directly to the screen
+	 * and does a screen update. Useful for validating images are correct
+	 */
+	void dump();
 };
 
 } // End of namespace Ultima4

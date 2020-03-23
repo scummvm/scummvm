@@ -122,5 +122,9 @@ void ImageLoader::setFromRawData(Image *image, int width, int height, int bpp, c
 	}
 }
 
+void ImageLoader::setFromSurface(Image *image, const Graphics::ManagedSurface &src) {
+	image->blitFrom(src);
+}
+
 } // End of namespace Ultima4
 } // End of namespace Ultima
