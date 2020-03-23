@@ -125,6 +125,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
 	_type = kCastSound;
 	_audio = nullptr;
+	_looping = 0;
 
 	if (version == 4) {
 		for (int i = 0; i < 0xe; i++) {
