@@ -62,7 +62,7 @@ public:
 
 	const ShapeFrame *getFrame(unsigned int frame) const;
 
-	void getShapeId(uint16 &flexId, uint32 &shapenum);
+	void getShapeId(uint16 &flexId, uint32 &shapenum) const;
 
 	// This will detect the format of a shape
 	static const ConvertShapeFormat *DetectShapeFormat(const uint8 *data, uint32 size);

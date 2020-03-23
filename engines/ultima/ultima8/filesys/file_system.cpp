@@ -265,7 +265,7 @@ IDataSource *FileSystem::checkBuiltinData(const Std::string &vfn, bool is_text) 
 	return nullptr;
 }
 
-bool FileSystem::rewrite_virtual_path(string &vfn) {
+bool FileSystem::rewrite_virtual_path(string &vfn) const {
 	bool ret = false;
 	string::size_type pos = vfn.size();
 

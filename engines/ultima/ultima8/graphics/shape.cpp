@@ -96,7 +96,7 @@ Shape::~Shape() {
 	delete[] const_cast<uint8 *>(_data);
 }
 
-void Shape::getShapeId(uint16 &id, uint32 &shape) {
+void Shape::getShapeId(uint16 &id, uint32 &shape) const {
 	id = _flexId;
 	shape = _shapeNum;
 }
