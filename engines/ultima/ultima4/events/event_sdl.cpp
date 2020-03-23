@@ -243,7 +243,8 @@ void TimedEventMgr::start() {
 /**
  * Constructs an event handler object.
  */
-EventHandler::EventHandler() : _timer(eventTimerGranularity), _updateScreen(NULL) {
+EventHandler::EventHandler() : _timer(eventTimerGranularity), _updateScreen(NULL),
+		_lastTickTime(0) {
 }
 
 static void handleMouseMotionEvent(const Common::Event &event) {
@@ -351,11 +352,20 @@ void EventHandler::sleep(unsigned int msec) {
 }
 
 void EventHandler::run() {
+	const int FRAME_TIME = 1000 / settings._gameCyclesPerSecond;
+
 	if (_updateScreen)
 		(*_updateScreen)();
 	g_screen->update();
 
 	while (!_ended && !_controllerDone) {
+		uint32 time = g_system->getMillis();
+		if (time >= (_lastTickTime + FRAME_TIME)) {
+			_lastTickTime = time;
+			eventHandler->getTimer()->tick();
+			g_screen->update();
+		}
+
 		Common::Event event;
 		g_system->getEventManager()->pollEvent(event);
 
@@ -374,22 +384,18 @@ void EventHandler::run() {
 			handleMouseMotionEvent(event);
 			break;
 #ifdef TODO
-		case SDL_USEREVENT:
-			eventHandler->getTimer()->tick();
-			break;
-
 		case SDL_ACTIVEEVENT:
 			handleActiveEvent(event, updateScreen);
 			break;
 #endif
 		case Common::EVENT_QUIT:
+			_ended = true;
 			return;
 
 		default:
 			break;
 		}
 	}
-
 }
 
 void EventHandler::setScreenUpdate(void (*updateScreen)(void)) {

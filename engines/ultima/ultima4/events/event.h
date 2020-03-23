@@ -353,6 +353,7 @@ protected:
 
 private:
 	static EventHandler *_instance;
+	uint32 _lastTickTime;
 };
 
 } // End of namespace Ultima4

@@ -39,11 +39,7 @@ void xu4_srandom() {
  * lower bits (e.g. MacOS X).
  */
 int xu4_random(int upperRange) {
-#ifdef TODO
-	int r = rand();
-#else
-	error("TODO");
-#endif
+	return g_ultima->getRandomNumber(0x7fffffff);
 }
 
 /**
