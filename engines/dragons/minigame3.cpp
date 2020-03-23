@@ -169,7 +169,7 @@ void Minigame3::run() {
 	delete fd;
 
 	origInventoryType = _vm->_inventory->getState();
-//	fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->_inventory->setState(Closed);
 	_vm->reset_screen_maybe();
 	flicker = _vm->_dragonINIResource->getFlickerRecord();
@@ -292,7 +292,7 @@ void Minigame3::run() {
 	updateBackgroundLayerOffset(2, 0x280, 0);
 	updateBackgroundLayerOffset(1, 0, 0);
 	updateBackgroundLayerOffset(0, 0, 0);
-//	call_fade_related_1f();
+	_vm->fadeFromBlack();
 	_vm->waitForFrames(0xf);
 	_vm->_talk->loadAndDisplayDialogAroundPoint(0x479A, 0x14, 3, 0x1e01, 0);
 	_vm->waitForFrames(0x1e);
@@ -732,7 +732,7 @@ void Minigame3::run() {
 	}
 	_vm->waitForFrames(0x3c * 2);
 	_vm->_sound->PauseCDMusic();
-//	fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 //	fun_80017f28_noop();
 //	DAT_80093234 = DAT_80093234 + 1;
 	_vm->_dragonINIResource->setFlickerRecord(flicker);

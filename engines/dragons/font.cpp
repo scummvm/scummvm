@@ -235,9 +235,13 @@ void FontManager::drawTextDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2) 
 }
 
 void FontManager::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
-	//TODO clear just specified Area.
 	debug("Clear text (%d,%d) -> (%d,%d)", x1, y1, x2, y2);
-	clearText();
+//	assert(x1 > 0);
+//	assert(y1 > 0);
+	_surface->fillRect(Common::Rect((x1-1) * 8, (y1-1) * 8, (x2 + 1) * 8 + 1, (y2 + 1) * 8 + 1), 0);
+	if (_numTextEntries > 0) {
+		_numTextEntries--; //TODO need a better way to check if we should still draw the font surface.
+	}
 }
 
 void FontManager::drawBoxChar(uint32 x, uint32 y, uint8 tileIndex) {

@@ -151,7 +151,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	_dat_80093ca0 = param_1;
 	_dat_80093cc4 = _dat_80093ca4;
 	_dat_80093cc8 = _dat_80093ca4;
-	//fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->reset_screen_maybe();
 	_vm->_inventory->setState(Closed);
 	flicker->sceneId = 0;
@@ -245,14 +245,14 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	uVar13->_x_pos = loungealotLeftUpperArm->_x_pos - flickerArm->_frame->field_e;
 	uVar13->_y_pos = loungealotLeftUpperArm->_y_pos - flickerArm->_frame->field_10;
 	_vm->waitForFrames(2);
-	// call_fade_related_1f();
+	_vm->fadeFromBlack();
 
 	do {
 		_vm->waitForFrames(1);
 
 		if ((_dat_80093c9c != 0) && !_vm->isFlagSet(ENGINE_FLAG_8000)) {
 			loungealotHeadActor->updateSequence(0);
-			_vm->_fontManager->clearText();
+			_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 			_dat_80093c9c = 0;
 		}
 		if (_dat_80093c94 != 0) {
@@ -411,7 +411,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 							_vm->waitForFrames(1);
 							_vm->_screen->loadPalette(0, paletteData);
 							_vm->_screen->loadPalette(1, paletteData);
-							_vm->_fontManager->clearText();
+							_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 							//punched in the face.
 							break;
 						}
@@ -678,7 +678,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		}
 	} while (true);
 
-//	fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->_fontManager->clearText();
 	_vm->_sound->PauseCDMusic();
 //	DisableVSyncEvent();
@@ -708,7 +708,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	uVar13->clearFlag(ACTOR_FLAG_40);
 //	EnableVSyncEvent();
 	if (param_3 == 0) {
-//		fade_related_calls_with_1f();
+		_vm->fadeToBlack();
 		_vm->_screen->clearAllFlatQuads();
 		flickerPortrait->clearFlag(ACTOR_FLAG_40);
 		loungealotPortrait->clearFlag(ACTOR_FLAG_40);
@@ -719,13 +719,13 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		flicker->sceneId = 0x17;
 		_vm->_scene->loadSceneData((uint)(0x17 | 0x8000), 0);
 		_vm->setAllFlags((origEngineFlags & 0xfefdffff) | (_vm->getAllFlags() & 0x1000000) | 0x40);
-//		call_fade_related_1f();
+		_vm->fadeFromBlack();
 	}
 }
 
 void Minigame2::fun_80093aec_dialog(uint32 textId, int16 x, int16 y) {
 	uint16 auStack4024 [2000];
-	_vm->_fontManager->clearText();
+	_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 	_vm->_talk->loadText(textId, auStack4024, 2000);
 	_vm->_talk->displayDialogAroundPoint(auStack4024, x, y, 0, 0, textId);
 	_dat_80093c9c = 1;

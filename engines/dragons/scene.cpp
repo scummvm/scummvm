@@ -43,7 +43,7 @@ Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, Ac
 }
 void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 	if (!_vm->isFlagSet(ENGINE_FLAG_40)) {
-		//TODO fade_related_calls_with_1f();
+		_vm->fadeToBlack();
 	}
 	bool unkFlag2Set = _vm->isUnkFlagSet(ENGINE_UNK1_FLAG_2);
 	bool flag8set = _vm->isFlagSet(ENGINE_FLAG_8);
@@ -67,7 +67,7 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 		_vm->_cursor->updateSequenceID((int16)_vm->_cursor->_sequenceID);
 	}
 	_vm->waitForFrames(2);
-	// TODO call_fade_related_1f();
+	_vm->fadeFromBlack();
 	if (!unkFlag2Set) {
 		_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
 	}
@@ -126,7 +126,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->clearFlags(ENGINE_FLAG_20);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_10);
 
-	_vm->call_fade_related_1f();
+	_vm->fadeFromBlack();
 	// TODO 0x8002f7c4
 
 	_vm->_cursor->updatePosition(160, 100);
@@ -207,7 +207,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	debug("Camera: (%d, %d)", _camera.x, _camera.y);
 
 	// 0x8002ff80
-	// TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_10);
 	_vm->setFlags(ENGINE_FLAG_20);
 	// TODO reset vsync_updater_function

@@ -315,11 +315,11 @@ void SpecialOpcodes::spcUnkA() {
 }
 
 void SpecialOpcodes::spcUnkC() {
-	//TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 }
 
 void SpecialOpcodes::spcFadeScreen() {
-	_vm->call_fade_related_1f();
+	_vm->fadeFromBlack();
 }
 
 void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
@@ -1138,12 +1138,11 @@ void SpecialOpcodes::spcCaveOfDilemmaSceneLogic() {
 }
 
 void SpecialOpcodes::spcFadeCreditsToBackStageScene() {
-//	call_fade_related();
+	_vm->fadeToBlackExcludingFont();
 	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
 	_vm->_scene->_camera.x = 0x140;
 	_vm->waitForFrames(0x3c);
-//	Call_SomeShadeTexThingB1E();
-//TODO
+	_vm->fadeFromBlackExcludingFont();
 }
 
 void SpecialOpcodes::spcRunCredits() {
@@ -1172,7 +1171,7 @@ void SpecialOpcodes::spcRunCredits() {
 }
 
 void SpecialOpcodes::spcEndCreditsAndRestartGame() {
-//	call_fade_related();
+	_vm->fadeToBlackExcludingFont();
 //	_volumeSFX = 0;
 //	setCDAVolumes();
 	while (_vm->_credits->isRunning()) {
@@ -1376,7 +1375,7 @@ void SpecialOpcodes::mapTransition(uint16 mode) {
 			_vm->waitForFrames(1);
 		}
 
-		// fade_related_calls_with_1f();
+		_vm->fadeToBlack();
 	} else if (mode == 1) { // Open map
 		FlatQuad *topQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0x140,0,0x140,cursorY,0,cursorY,1,4,0));
 		FlatQuad *bottomQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, cursorY, 0x140, cursorY, 0x140, 200, 0, 200, 1, 4, 0));
@@ -1403,7 +1402,7 @@ void SpecialOpcodes::mapTransition(uint16 mode) {
 			rightQuad->points[2].x = rightX >> 0x10;
 			_vm->waitForFrames(1);
 			if (!hasDoneFade) {
-				// call_fade_related_1f();
+				_vm->fadeFromBlack();
 				hasDoneFade = true;
 			}
 		}

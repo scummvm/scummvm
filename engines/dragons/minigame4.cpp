@@ -45,7 +45,7 @@ void Minigame4::run() {
 	uVar3 = _vm->_inventory->getState();
 	flicker = _vm->_dragonINIResource->getFlickerRecord();
 	uVar1 = _vm->getCurrentSceneId();
-	// fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->reset_screen_maybe();
 	_vm->_dragonINIResource->getFlickerRecord()->sceneId = 0;
 	_vm->_dragonINIResource->setFlickerRecord(nullptr);
@@ -81,7 +81,7 @@ void Minigame4::run() {
 	_bruteActor->_priorityLayer = 3;
 	//DAT_800830e0_soundRelated = 0xf;
 	//UnkSoundFunc5(0xf);
-	//call_fade_related_1f();
+	_vm->fadeFromBlack();
 	if (_vm->_dragonINIResource->getRecord(0x1f5)->objectState == 3) {
 		actorTalk(_bruteActor, 0x3321, 0x4A84);
 	} else {
@@ -96,7 +96,7 @@ void Minigame4::run() {
 	}
 
 	_vm->waitForFrames(2 * 0x3c);
-//	fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	//DisableVSyncEvent();
 	_vm->setVsyncUpdateFunction(nullptr);
 	_vm->setFlags(ENGINE_FLAG_1);

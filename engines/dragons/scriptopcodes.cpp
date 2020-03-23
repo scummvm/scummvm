@@ -903,7 +903,7 @@ void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 		return;
 	}
 
-	//TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->clearSceneUpdateFunction();
 	_vm->_sound->PauseCDMusic();
 
