@@ -54,6 +54,7 @@ Image *PngImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 		bpp = decoder.getPaletteColorCount() == 256 ? 8 : 4;
 
 	Image *image = Image::create(img->w, img->h, bpp == 4 || bpp == 8, Image::HARDWARE);
+	image->blitFrom(*img);
 
 	if (img->format.bytesPerPixel == 1) {
 		int palCount = decoder.getPaletteColorCount();
@@ -70,8 +71,6 @@ Image *PngImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 		image->setPalette(palette, palCount);
 		delete[] palette;
 	}
-
-	image->blitFrom(*img);
 
 	return image;
 }
