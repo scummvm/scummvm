@@ -58,6 +58,7 @@ public:
 class ImageLoader {
 protected:
 	static void setFromRawData(Image *image, int width, int height, int bpp, const byte *rawData);
+	static void setFromSurface(Image *image, const Graphics::ManagedSurface &src);
 public:
 	ImageLoader() {}
 	virtual ~ImageLoader() {}

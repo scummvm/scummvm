@@ -71,8 +71,7 @@ Image *PngImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 		delete[] palette;
 	}
 
-	setFromRawData(image, width, height, bpp, (const byte *)img->getPixels());
-
+	image->blitFrom(*img);
 
 	return image;
 }

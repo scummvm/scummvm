@@ -35,7 +35,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Image::Image() {
+Image::Image() : _surface(nullptr), _disposeAfterUse(DisposeAfterUse::NO) {
 }
 
 /**
@@ -57,6 +57,10 @@ void Image::create(int w, int h, bool paletted) {
 	_surface = new Graphics::ManagedSurface(w, h, paletted ?
 		Graphics::PixelFormat::createFormatCLUT8() : g_screen->format);
 	_disposeAfterUse = DisposeAfterUse::YES;
+}
+
+void Image::blitFrom(const Graphics::Surface &src) {
+	_surface->blitFrom(src);
 }
 
 /**
@@ -488,6 +492,10 @@ void Image::save(const Common::String &filename) {
 #endif
 }
 
+void Image::dump() {
+	g_screen->blitFrom(*_surface, Common::Point(0, 0));
+	g_screen->update();
+}
 
 void Image::drawHighlighted() {
 	RGBA c;

@@ -225,9 +225,6 @@ Image *screenScale(Image *src, int scale, int n, int filter) {
 	if (alpha)
 		src->alphaOn();
 
-
-
-
 	return dest;
 }
 
