@@ -59,30 +59,32 @@ void Frame::playTransition(Score *score) {
 		}
 		break;
 
-	case kTransCoverUp:		// 34
-		{
-			uint16 stepSize = score->_movieRect.height() / steps;
-			Common::Rect r = score->_movieRect;
-
-			for (uint16 i = 1; i < steps; i++) {
-				r.setHeight(stepSize * i);
-
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
-
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
-		}
-		break;
-
-	case kTransCoverRight:	// 33
+	case kTransCoverDownLeft: // 30
 		{
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
 
 			for (uint16 i = 1; i < steps; i++) {
 				r.setWidth(stepSize * i);
+				r.setHeight(stepSize * i);
+
+				g_system->delayMillis(stepDuration);
+				processQuitEvent();
+
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height()); // transition
+				g_system->updateScreen();
+			}
+		}
+		break;
+
+	case kTransCoverDownRight: // 31
+		{
+			uint16 stepSize = score->_movieRect.width() / steps;
+			Common::Rect r = score->_movieRect;
+
+			for (uint16 i = 1; i < steps; i++) {
+				r.setWidth(stepSize * i);
+				r.setHeight(stepSize * i);
 
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
@@ -105,6 +107,40 @@ void Frame::playTransition(Score *score) {
 				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height()); // transition
+				g_system->updateScreen();
+			}
+		}
+		break;
+
+	case kTransCoverRight:	// 33
+		{
+			uint16 stepSize = score->_movieRect.width() / steps;
+			Common::Rect r = score->_movieRect;
+
+			for (uint16 i = 1; i < steps; i++) {
+				r.setWidth(stepSize * i);
+
+				g_system->delayMillis(stepDuration);
+				processQuitEvent();
+
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
+				g_system->updateScreen();
+			}
+		}
+		break;
+
+	case kTransCoverUp:		// 34
+		{
+			uint16 stepSize = score->_movieRect.height() / steps;
+			Common::Rect r = score->_movieRect;
+
+			for (uint16 i = 1; i < steps; i++) {
+				r.setHeight(stepSize * i);
+
+				g_system->delayMillis(stepDuration);
+				processQuitEvent();
+
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -141,42 +177,6 @@ void Frame::playTransition(Score *score) {
 				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
-		}
-		break;
-
-	case kTransCoverDownLeft: // 30
-		{
-			uint16 stepSize = score->_movieRect.width() / steps;
-			Common::Rect r = score->_movieRect;
-
-			for (uint16 i = 1; i < steps; i++) {
-				r.setWidth(stepSize * i);
-				r.setHeight(stepSize * i);
-
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
-
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
-		}
-		break;
-
-	case kTransCoverDownRight: // 31
-		{
-			uint16 stepSize = score->_movieRect.width() / steps;
-			Common::Rect r = score->_movieRect;
-
-			for (uint16 i = 1; i < steps; i++) {
-				r.setWidth(stepSize * i);
-				r.setHeight(stepSize * i);
-
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
-
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
