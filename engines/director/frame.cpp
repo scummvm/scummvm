@@ -131,7 +131,7 @@ void Frame::readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offs
 }
 
 void Frame::readChannels(Common::ReadStreamEndian *stream) {
-	byte unk[16];
+	byte unk[48];
 
 	if (_vm->getVersion() < 4) {
 		// Sound/Tempo/Transition
@@ -247,20 +247,18 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 
 		_palette->colorCode = stream->readByte();
 		stream->readByte();
+	} else if (_vm->getVersion() == 5) {
+		// Sound/Tempo/Transition channel
+		stream->read(unk, 24);
+
+		// palette
+		stream->read(unk, 24);
 	} else {
 		// Sound[2]
 		// palette
 		// Transition
 		// Tempo
 		// Script
-		stream->read(unk, 16);
-		stream->read(unk, 16);
-		stream->read(unk, 10);
-
-		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-			stream->read(unk, 11);
-			stream->read(unk, 7);
-		}
 	}
 
 	for (int i = 0; i < _numChannels; i++) {
