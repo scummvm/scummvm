@@ -170,7 +170,7 @@ bool SNDDecoder::loadStream(Common::SeekableSubReadStreamEndian &stream) {
 	}
 	_channels = stream.readUint16();
 	if (!(_channels == 1 || _channels == 2)) {
-		warning("STUB: loadSpriteSounds: no support for old sound format");
+		warning("STUB: SNDDecoder::loadStream: no support for old sound format");
 		return false;
 	}
 	_rate = stream.readUint16();
@@ -191,7 +191,7 @@ bool SNDDecoder::loadStream(Common::SeekableSubReadStreamEndian &stream) {
 	}
 	uint16 bits = stream.readUint16();
 	// unk8
-	for (uint32 i = 0; i < 0x0c; i++) {
+	for (uint32 i = 0; i < 0x0e; i++) {
 		stream.readByte();
 	}
 
