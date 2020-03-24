@@ -58,6 +58,12 @@ Frame::Frame(DirectorEngine *vm, int numChannels) {
 
 	_palette = NULL;
 
+	_colorTempo = 0;
+	_colorSound1 = 0;
+	_colorSound2 = 0;
+	_colorScript = 0;
+	_colorTrans = 0;
+
 	_sprites.resize(_numChannels + 1);
 
 	for (uint16 i = 0; i < _sprites.size(); i++) {
@@ -81,6 +87,13 @@ Frame::Frame(const Frame &frame) {
 	_soundType2 = frame._soundType2;
 	_skipFrameFlag = frame._skipFrameFlag;
 	_blend = frame._blend;
+
+	_colorTempo = frame._colorTempo;
+	_colorSound1 = frame._colorSound1;
+	_colorSound2 = frame._colorSound2;
+	_colorScript = frame._colorScript;
+	_colorTrans = frame._colorTrans;
+
 	_palette = new PaletteInfo();
 
 	debugC(1, kDebugLoading, "Frame. action: %d transType: %d transDuration: %d", _actionId, _transType, _transDuration);
@@ -137,9 +150,6 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		_transType = static_cast<TransitionType>(stream->readByte());
 		_sound1 = stream->readUint16();
 
-		if (_tempo & 0x80 && _sound1 & 0x8000)
-			warning("D4-style transition");
-
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 			_sound2 = stream->readUint16();
 			_soundType2 = stream->readByte();
@@ -173,12 +183,70 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		_palette->frameCount = stream->readUint16();
 
 		_palette->cycleCount = stream->readUint16();
-	} else if (_vm->getVersion() < 5) {
-		// Sound/Tempo/Transitio
-		// palette
-		stream->read(unk, 16);
+
+		stream->read(unk, 6);
+
+		if (_vm->getPlatform() == Common::kPlatformMacintosh)
+			stream->read(unk, 3);
+	} else if (_vm->getVersion() == 4) {
+		// Sound/Tempo/Transition
+		_actionId = stream->readByte();
+		_soundType1 = stream->readByte(); // type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
+		uint8 transFlags = stream->readByte(); // 0x80 is whole stage (vs changed area), rest is duration in 1/4ths of a second
+
+		if (transFlags & 0x80)
+			_transArea = 1;
+		else
+			_transArea = 0;
+		_transDuration = transFlags & 0x7f;
+
+		_transChunkSize = stream->readByte();
+		_tempo = stream->readByte();
+		_transType = static_cast<TransitionType>(stream->readByte());
+		_sound1 = stream->readUint16();
+
+		_sound2 = stream->readUint16();
+		_soundType2 = stream->readByte();
+
+		_skipFrameFlag = stream->readByte();
+		_blend = stream->readByte();
+
+		_colorTempo = stream->readByte();
+		_colorSound1 = stream->readByte();
+		_colorSound2 = stream->readByte();
+
 		_actionId = stream->readUint16();
-		stream->read(unk, 5);
+
+		_colorScript = stream->readByte();
+		_colorTrans = stream->readByte();
+
+		// palette
+		uint16 palette = stream->readUint16();
+
+		if (palette) {
+			warning("Frame::readChannels(): STUB: Palette info");
+		}
+
+		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+
+		_palette = new PaletteInfo();
+		_palette->firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
+		_palette->lastColor = stream->readByte();
+		_palette->flags = stream->readByte();
+		_palette->speed = stream->readByte();
+		_palette->frameCount = stream->readUint16();
+
+		_palette->cycleCount = stream->readUint16();
+		_palette->fade = stream->readByte();
+		_palette->delay = stream->readByte();
+		_palette->style = stream->readByte();
+
+		stream->readByte();
+		stream->readUint16();
+		stream->readUint16();
+
+		_palette->colorCode = stream->readByte();
+		stream->readByte();
 	} else {
 		// Sound[2]
 		// palette
@@ -188,22 +256,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		stream->read(unk, 16);
 		stream->read(unk, 16);
 		stream->read(unk, 10);
-	}
 
-
-	stream->read(unk, 6);
-
-	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-		if (_vm->getVersion() < 4) {
-			stream->read(unk, 3);
-		} else {
+		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 			stream->read(unk, 11);
-			//Common::hexdump(unk, 11);
-
-			if (_vm->getVersion() >= 5) {
-				stream->read(unk, 7);
-				//Common::hexdump(unk, 7);
-			}
+			stream->read(unk, 7);
 		}
 	}
 
