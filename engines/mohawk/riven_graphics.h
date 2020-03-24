@@ -106,6 +106,7 @@ public:
 	static RivenTransitionMode sanitizeTransitionMode(int mode);
 
 	// Main menu
+	void loadMenuFont();
 	void drawText(const Common::U32String &text, const Common::Rect &dest, uint8 greyLevel);
 
 	// Credits
@@ -147,7 +148,6 @@ private:
 
 	// Main menu
 	Graphics::Font *_menuFont;
-	void loadMenuFont();
 	const Graphics::Font *getMenuFont() const;
 
 	// Credits

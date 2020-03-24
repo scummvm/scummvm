@@ -76,6 +76,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_card = nullptr;
 	_inventory = nullptr;
 	_lastSaveTime = 0;
+	_currentLanguage = getLanguage();
 
 	_menuSavedCard = -1;
 	_menuSavedStack = -1;
@@ -385,15 +386,13 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	_gfx->clearCache();
 
 	// Clear the old stack files out
-	for (uint32 i = 0; i < _mhk.size(); i++)
-		delete _mhk[i];
-	_mhk.clear();
+	closeAllArchives();
 
 	// Get the prefix character for the destination stack
 	char prefix = RivenStacks::getName(stackId)[0];
 
 	// Load the localization override file if any
-	if (getFeatures() & GF_LANGUAGE_FILES) {
+	if (getFeatures() & GF_25TH) {
 		loadLanguageDatafile(prefix, stackId);
 	}
 
@@ -419,6 +418,17 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	// Set the mouse position to the correct value so the mouse
 	// cursor can be computed accurately when loading a card.
 	_stack->onMouseMove(getEventManager()->getMousePos());
+}
+
+void MohawkEngine_Riven::reloadCurrentCard() {
+	assert(_stack && _card);
+
+	uint16 cardId = _card->getId();
+
+	closeAllArchives();
+
+	changeToStack(_stack->getId());
+	changeToCard(cardId);
 }
 
 const char **MohawkEngine_Riven::listExpectedDatafiles() const {
@@ -497,13 +507,43 @@ bool MohawkEngine_Riven::checkDatafiles() {
 	return false;
 }
 
+const RivenLanguage *MohawkEngine_Riven::listLanguages() {
+	static const RivenLanguage languages[] = {
+	    { Common::EN_ANY,   "english"  },
+	    { Common::FR_FRA,   "french"   },
+	    { Common::DE_DEU,   "german"   },
+	    { Common::IT_ITA,   "italian"  },
+	    { Common::JA_JPN,   "japanese" },
+	    { Common::PL_POL,   "polish"   },
+	    { Common::RU_RUS,   "russian"  },
+	    { Common::ES_ESP,   "spanish"  },
+	    { Common::UNK_LANG, nullptr    }
+	};
+	return languages;
+}
+
+const RivenLanguage *MohawkEngine_Riven::getLanguageDesc(Common::Language language) {
+	const RivenLanguage *languages = listLanguages();
+
+	while (languages->language != Common::UNK_LANG) {
+		if (languages->language == language) {
+			return languages;
+		}
+
+		languages++;
+	}
+
+	return nullptr;
+}
+
 void MohawkEngine_Riven::loadLanguageDatafile(char prefix, uint16 stackId) {
-	Common::String language = getDatafileLanguageName("a_data_");
-	if (language.empty()) {
+	Common::Language language = getLanguage();
+	const RivenLanguage *languageDesc = getLanguageDesc(language);
+	if (!languageDesc) {
 		return;
 	}
 
-	Common::String languageDatafile = Common::String::format("%c_data_%s.mhk", prefix, language.c_str());
+	Common::String languageDatafile = Common::String::format("%c_data_%s.mhk", prefix, languageDesc->archiveSuffix);
 
 	MohawkArchive *mhk = new MohawkArchive();
 	if (mhk->openFile(languageDatafile)) {
@@ -718,6 +758,21 @@ Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &
 	return error;
 }
 
+Common::Language MohawkEngine_Riven::getLanguage() const {
+	Common::Language language = MohawkEngine::getLanguage();
+
+	// The language can be changed at run time in the 25th anniversary edition
+	if (language == Common::UNK_LANG) {
+		language = Common::parseLanguage(ConfMan.get("language"));
+	}
+
+	if (language == Common::UNK_LANG) {
+		language = Common::EN_ANY;
+	}
+
+	return language;
+}
+
 void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::String &desc) {
 	assert(slot >= 0 && !desc.empty());
 
@@ -799,9 +854,20 @@ void MohawkEngine_Riven::applyGameSettings() {
 
 	_gfx->setTransitionMode(transitionsMode);
 
+	Common::Language newLanguage = getLanguage();
+	if (_stack && newLanguage != _currentLanguage) {
+		_gfx->loadMenuFont();
+		reloadCurrentCard();
+	}
+	_currentLanguage = newLanguage;
+
 	if (_card) {
 		_card->initializeZipMode();
 	}
+}
+
+bool MohawkEngine_Riven::isInteractive() const {
+	return !_scriptMan->hasQueuedScripts() && !hasGameEnded();
 }
 
 void MohawkEngine_Riven::registerDefaultSettings() {

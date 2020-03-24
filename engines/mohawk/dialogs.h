@@ -134,6 +134,7 @@ private:
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_waterEffectCheckbox;
 	GUI::PopUpWidget *_transitionModePopUp;
+	GUI::PopUpWidget *_languagePopUp;
 };
 
 #endif

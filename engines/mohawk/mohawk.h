@@ -91,7 +91,7 @@ public:
 	const char *getAppName() const;
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
-	Common::Language getLanguage() const;
+	virtual Common::Language getLanguage() const;
 	Common::String getDatafileLanguageName(const char *prefix) const;
 
 	bool hasFeature(EngineFeature f) const override;
@@ -104,6 +104,7 @@ public:
 	uint32 getResourceOffset(uint32 tag, uint16 id);
 	uint16 findResourceID(uint32 type, const Common::String &resName);
 	Common::String getResourceName(uint32 tag, uint16 id);
+	void closeAllArchives();
 
 	void pauseGame();
 

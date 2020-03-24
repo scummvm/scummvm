@@ -256,7 +256,10 @@ void MystMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 #ifdef ENABLE_RIVEN
 
 RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "RivenOptionsDialog", false, domain) {
+		OptionsContainerWidget(boss, name, "RivenOptionsDialog", false, domain),
+		_languagePopUp(nullptr) {
+	Common::String guiOptions = ConfMan.get("guioptions", domain);
+	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
 
 	_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.ZipMode", _("~Z~ip Mode Activated"));
 	_waterEffectCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.WaterEffect", _("~W~ater Effect Enabled"));
@@ -269,6 +272,27 @@ RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &na
 	_transitionModePopUp->appendEntry(_("Fastest"), kRivenTransitionModeFastest);
 	_transitionModePopUp->appendEntry(_("Normal"), kRivenTransitionModeNormal);
 	_transitionModePopUp->appendEntry(_("Best"), kRivenTransitionModeBest);
+
+	// Only the 25th anniversary edition is multi-language
+	// Only allow changing the language at run-time, so that there is only one
+	//  language selection drop down in the edit game dialog.
+	if (is25th && g_engine) {
+		bool canChangeLanguage = true;
+		MohawkEngine_Riven *vm = static_cast<MohawkEngine_Riven *>(g_engine);
+		canChangeLanguage = vm->isInteractive();
+
+		GUI::StaticTextWidget *languageCaption = new GUI::StaticTextWidget(widgetsBoss(), "RivenOptionsDialog.LanguageDesc", _("Language:"));
+		languageCaption->setAlign(Graphics::kTextAlignRight);
+
+		_languagePopUp = new GUI::PopUpWidget(widgetsBoss(), "RivenOptionsDialog.Language");
+		_languagePopUp->setEnabled(canChangeLanguage);
+
+		const RivenLanguage *languages = MohawkEngine_Riven::listLanguages();
+		while (languages->language != Common::UNK_LANG) {
+			_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
+			languages++;
+		}
+	}
 }
 
 RivenOptionsWidget::~RivenOptionsWidget() {
@@ -285,6 +309,11 @@ void RivenOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Str
 	                .addWidget("TransistionsDesc", "OptionsLabel")
 	                .addWidget("Transistions", "PopUp")
 	            .closeLayout()
+	            .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	                .addPadding(0, 0, 0, 0)
+	                .addWidget("LanguageDesc", "OptionsLabel")
+	                .addWidget("Language", "PopUp")
+	            .closeLayout()
 	        .closeLayout()
 	    .closeDialog();
 }
@@ -295,12 +324,32 @@ void RivenOptionsWidget::load() {
 
 	uint32 transitions = ConfMan.getInt("transition_mode", _domain);
 	_transitionModePopUp->setSelectedTag(RivenGraphics::sanitizeTransitionMode(transitions));
+
+	if (_languagePopUp) {
+		Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
+		const RivenLanguage *languageDesc = MohawkEngine_Riven::getLanguageDesc(language);
+		if (languageDesc) {
+			_languagePopUp->setSelectedTag(languageDesc->language);
+		}
+	}
 }
 
 bool RivenOptionsWidget::save() {
 	ConfMan.setBool("zip_mode", _zipModeCheckbox->getState(), _domain);
 	ConfMan.setBool("water_effects", _waterEffectCheckbox->getState(), _domain);
 	ConfMan.setInt("transition_mode", _transitionModePopUp->getSelectedTag(), _domain);
+
+	if (_languagePopUp) {
+		int32 selectedLanguage = _languagePopUp->getSelectedTag();
+		const RivenLanguage *languageDesc = nullptr;
+		if (selectedLanguage >= 0) {
+			languageDesc = MohawkEngine_Riven::getLanguageDesc(static_cast<Common::Language>(selectedLanguage));
+		}
+
+		if (languageDesc != nullptr) {
+			ConfMan.set("language", Common::getLanguageCode(languageDesc->language));
+		}
+	}
 
 	return true;
 }

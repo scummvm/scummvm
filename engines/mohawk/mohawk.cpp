@@ -45,10 +45,7 @@ MohawkEngine::MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc)
 MohawkEngine::~MohawkEngine() {
 	delete _pauseDialog;
 	delete _cursor;
-
-	for (uint32 i = 0; i < _mhk.size(); i++)
-		delete _mhk[i];
-	_mhk.clear();
+	closeAllArchives();
 }
 
 Common::Error MohawkEngine::run() {
@@ -108,6 +105,13 @@ Common::String MohawkEngine::getResourceName(uint32 tag, uint16 id) {
 		}
 
 	error("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
+}
+
+void MohawkEngine::closeAllArchives() {
+	for (uint32 i = 0; i < _mhk.size(); i++)
+		delete _mhk[i];
+
+	_mhk.clear();
 }
 
 } // End of namespace Mohawk
