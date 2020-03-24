@@ -263,7 +263,9 @@ function advance_time(num_turns)
 	end
 end
 
---function can_get_obj_override(obj)
+function can_get_obj_override(obj)
+    return false
+end
 
 function actor_get_obj(actor, obj) -- FIXME need to limit inventory slots
 
