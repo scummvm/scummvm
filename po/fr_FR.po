@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-03-21 09:03+0100\n"
-"PO-Revision-Date: 2020-03-23 05:15+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2020-03-24 21:01+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -6337,7 +6337,7 @@ msgstr "Sortir"
 
 #: engines/wintermute/detection.cpp:637
 msgid "Light helper window"
-msgstr "Eclairer la fenêtre d'aide"
+msgstr "Fenêtre de l'assistant d'éclairage"
 
 #: engines/wintermute/detection.cpp:662
 msgid "Run forward"
