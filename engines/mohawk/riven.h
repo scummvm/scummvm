@@ -48,6 +48,7 @@ struct MohawkGameDescription;
 class MohawkArchive;
 class RivenGraphics;
 class RivenConsole;
+struct RivenLanguage;
 class RivenSaveLoad;
 class RivenOptionsWidget;
 class RivenStack;
@@ -113,11 +114,17 @@ public:
 	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("riven-%03d.rvn", slot);
 	}
+
+	static const RivenLanguage *listLanguages();
+	static const RivenLanguage *getLanguageDesc(Common::Language language);
+	Common::Language getLanguage() const override;
+
 	bool hasFeature(EngineFeature f) const override;
 	static void registerDefaultSettings();
 	void applyGameSettings() override;
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
+	bool isInteractive() const;
 	void doFrame();
 	void processInput();
 
@@ -141,6 +148,7 @@ private:
 
 	bool _gameEnded;
 	uint32 _lastSaveTime;
+	Common::Language _currentLanguage;
 
 	// Variables
 	void initVars();
@@ -152,6 +160,7 @@ public:
 	RivenStack *constructStackById(uint16 id);
 	void changeToCard(uint16 dest);
 	void changeToStack(uint16 stackId);
+	void reloadCurrentCard();
 	RivenCard *getCard() const { return _card; }
 	RivenStack *getStack() const { return _stack; }
 
@@ -195,6 +204,11 @@ public:
 	bool isInMainMenu() const;
 	bool isGameStarted() const;
 	void startNewGame();
+};
+
+struct RivenLanguage {
+	Common::Language language;
+	const char *archiveSuffix;
 };
 
 } // End of namespace Mohawk

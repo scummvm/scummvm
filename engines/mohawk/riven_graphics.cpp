@@ -802,6 +802,9 @@ void RivenGraphics::drawText(const Common::U32String &text, const Common::Rect &
 }
 
 void RivenGraphics::loadMenuFont() {
+	delete _menuFont;
+	_menuFont = nullptr;
+
 	const char *fontName;
 
 	if (_vm->getLanguage() != Common::JA_JPN) {

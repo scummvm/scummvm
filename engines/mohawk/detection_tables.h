@@ -676,174 +676,29 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst - 25th anniversary
-	// English - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				// The french datafile is included in the list because
-				// in the 25th anniversary edition, all the files sit in the same
-				// package. All the detection entries need to have the same amount
-				// of files to show in the detection results.
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_french.mhk", 0, "ad7547ed7159a97be98a005f62862f85", 7088579 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// French - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_french.mhk", 0, "ad7547ed7159a97be98a005f62862f85", 7088579 },
-				AD_LISTEND
-			},
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// German - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_german.mhk", 0, "5ebd301bd4bf6fd7667c4a46eebf6532", 7098655 },
-				AD_LISTEND
-			},
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Italian - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_italian.mhk", 0, "9d53b178510ce90f10b32ad3ca967d38", 6677740 },
-				AD_LISTEND
-			},
-			Common::IT_ITA,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Japanese - Created by the ScummVM team
+	// Created by the ScummVM team
 	{
 		{
 			"riven",
 			"25th Anniversary",
 			{
 				{ "a_data.mhk",          0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_japanese.mhk", 0, "bf43cf8af21fefc5a02881f7cfb68f52", 7237370 },
+				{ "a_data_french.mhk",   0, "ad7547ed7159a97be98a005f62862f85", 7088579  },
+				{ "a_data_german.mhk",   0, "5ebd301bd4bf6fd7667c4a46eebf6532", 7098655  },
+				{ "a_data_italian.mhk",  0, "9d53b178510ce90f10b32ad3ca967d38", 6677740  },
+				{ "a_data_japanese.mhk", 0, "bf43cf8af21fefc5a02881f7cfb68f52", 7237370  },
+				{ "a_data_polish.mhk",   0, "5c7cd4b1a1a4c63cc670485816b0b5ec", 14588293 },
+				{ "a_data_russian.mhk",  0, "76e12906637f5274bb6af8ab42871c25", 14349136 },
+				{ "a_data_spanish.mhk",  0, "6226a3e1748e64962971b2f6536ef283", 8133297  },
 				AD_LISTEND
 			},
-			Common::JA_JPN,
+			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
 			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Polish - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_polish.mhk", 0, "5c7cd4b1a1a4c63cc670485816b0b5ec", 14588293 },
-				AD_LISTEND
-			},
-			Common::PL_POL,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Russian - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_russian.mhk", 0, "76e12906637f5274bb6af8ab42871c25", 14349136 },
-				AD_LISTEND
-			},
-			Common::RU_RUS,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Spanish - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_spanish.mhk", 0, "6226a3e1748e64962971b2f6536ef283", 8133297 },
-				AD_LISTEND
-			},
-			Common::ES_ESP,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
+		GF_DVD | GF_25TH,
 		0,
 	},
 
