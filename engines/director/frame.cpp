@@ -227,8 +227,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._inkData = stream->readByte();
 
 			sprite._castId = stream->readUint16();
+
 			sprite._startPoint.y = stream->readUint16();
 			sprite._startPoint.x = stream->readUint16();
+
 			sprite._height = stream->readUint16();
 			sprite._width = stream->readUint16();
 
@@ -241,12 +243,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				// 0x80 moveable
 				sprite._colorcode = stream->readByte();
 				sprite._blendAmount = stream->readByte();
-				sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
-
-				if (_vm->getVersion() >= 5)
-					sprite._unk3 = stream->readUint32();
 			}
-		} else {
+		} else if (_vm->getVersion() == 5) {
 			sprite._spriteType = stream->readByte();
 			sprite._inkData = stream->readByte();
 
@@ -255,13 +253,38 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 
 			sprite._scriptCastIndex = stream->readUint16();
 			sprite._scriptId = stream->readUint16();
+
 			sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
 			sprite._backColor = _vm->transformColor((uint8)stream->readByte());
 
 			sprite._startPoint.y = stream->readUint16();
 			sprite._startPoint.x = stream->readUint16();
+
 			sprite._height = stream->readUint16();
 			sprite._width = stream->readUint16();
+
+			sprite._colorcode = stream->readByte();
+			sprite._blendAmount = stream->readByte();
+			sprite._thickness = stream->readByte();
+			stream->readByte();	// unused
+		} else if (_vm->getVersion() == 6) {
+			sprite._spriteType = stream->readByte();
+			sprite._inkData = stream->readByte();
+
+			sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
+			sprite._backColor = _vm->transformColor((uint8)stream->readByte());
+
+			sprite._castIndex = stream->readUint16();
+			sprite._castId = stream->readUint16();
+
+			/* uint32 spriteId = */stream->readUint32();
+
+			sprite._startPoint.y = stream->readUint16();
+			sprite._startPoint.x = stream->readUint16();
+
+			sprite._height = stream->readUint16();
+			sprite._width = stream->readUint16();
+
 			sprite._colorcode = stream->readByte();
 			sprite._blendAmount = stream->readByte();
 			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
@@ -276,6 +299,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		else
 			sprite._trails = 0;
 
+		sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 
 		if (sprite._castId) {
 			debugC(4, kDebugLoading, "CH: %-3d castId: %03d(%s) [flags:%04x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %d, flags2: %x, unk2: %x, unk3: %x",
