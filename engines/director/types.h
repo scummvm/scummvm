@@ -181,52 +181,52 @@ enum TransitionType {
 	kTransWipeLeft,
 	kTransWipeDown,
 	kTransWipeUp,
-	kTransCenterOutHorizontal,
+	kTransCenterOutHorizontal,	// 5
 	kTransEdgesInHorizontal,
 	kTransCenterOutVertical,
 	kTransEdgesInVertical,
 	kTransCenterOutSquare,
-	kTransEdgesInSquare,
+	kTransEdgesInSquare,		// 10
 	kTransPushLeft,
 	kTransPushRight,
 	kTransPushDown,
 	kTransPushUp,
-	kTransRevealUp,
+	kTransRevealUp,				// 15
 	kTransRevealUpRight,
 	kTransRevealRight,
 	kTransRevealDown,
 	kTransRevealDownRight,
-	kTransRevealDownLeft,
+	kTransRevealDownLeft,		// 20
 	kTransRevealLeft,
 	kTransRevealUpLeft,
 	kTransDissolvePixelsFast,
 	kTransDissolveBoxyRects,
-	kTransDissolveBoxySquares,
+	kTransDissolveBoxySquares,	// 25
 	kTransDissolvePatterns,
 	kTransRandomRows,
 	kTransRandomColumns,
 	kTransCoverDown,
-	kTransCoverDownLeft,
+	kTransCoverDownLeft,		// 30
 	kTransCoverDownRight,
 	kTransCoverLeft,
 	kTransCoverRight,
 	kTransCoverUp,
-	kTransCoverUpLeft,
+	kTransCoverUpLeft,			// 35
 	kTransCoverUpRight,
 	kTransTypeVenitianBlind,
 	kTransTypeCheckerboard,
 	kTransTypeStripsBottomBuildLeft,
-	kTransTypeStripsBottomBuildRight,
+	kTransTypeStripsBottomBuildRight,	// 40
 	kTransTypeStripsLeftBuildDown,
 	kTransTypeStripsLeftBuildUp,
 	kTransTypeStripsRightBuildDown,
 	kTransTypeStripsRightBuildUp,
-	kTransTypeStripsTopBuildLeft,
+	kTransTypeStripsTopBuildLeft,		// 45
 	kTransTypeStripsTopBuildRight,
 	kTransZoomOpen,
 	kTransZoomClose,
 	kTransVerticalBinds,
-	kTransDissolveBitsTrans,
+	kTransDissolveBitsTrans,	// 50
 	kTransDissolvePixels,
 	kTransDissolveBits
 };

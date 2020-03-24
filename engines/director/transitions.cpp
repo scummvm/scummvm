@@ -42,7 +42,7 @@ void Frame::playTransition(Score *score) {
 	uint16 steps = duration / stepDuration;
 
 	switch (_transType) {
-	case kTransCoverDown:
+	case kTransCoverDown:	// 29
 		{
 			uint16 stepSize = score->_movieRect.height() / steps;
 			Common::Rect r = score->_movieRect;
@@ -58,7 +58,8 @@ void Frame::playTransition(Score *score) {
 			}
 		}
 		break;
-	case kTransCoverUp:
+
+	case kTransCoverUp:		// 34
 		{
 			uint16 stepSize = score->_movieRect.height() / steps;
 			Common::Rect r = score->_movieRect;
@@ -74,7 +75,9 @@ void Frame::playTransition(Score *score) {
 			}
 		}
 		break;
-	case kTransCoverRight: {
+
+	case kTransCoverRight:	// 33
+		{
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
 
@@ -89,7 +92,9 @@ void Frame::playTransition(Score *score) {
 			}
 		}
 		break;
-	case kTransCoverLeft: {
+
+	case kTransCoverLeft:	// 32
+		{
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
 
@@ -104,7 +109,9 @@ void Frame::playTransition(Score *score) {
 			}
 		}
 		break;
-	case kTransCoverUpLeft: {
+
+	case kTransCoverUpLeft:	// 35
+		{
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
 
@@ -120,7 +127,9 @@ void Frame::playTransition(Score *score) {
 			}
 		}
 		break;
-	case kTransCoverUpRight: {
+
+	case kTransCoverUpRight:	// 36
+		{
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
 
@@ -136,7 +145,9 @@ void Frame::playTransition(Score *score) {
 			}
 		}
 		break;
-	case kTransCoverDownLeft: {
+
+	case kTransCoverDownLeft: // 30
+		{
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
 
@@ -152,7 +163,9 @@ void Frame::playTransition(Score *score) {
 			}
 		}
 		break;
-	case kTransCoverDownRight: {
+
+	case kTransCoverDownRight: // 31
+		{
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
 
@@ -168,6 +181,7 @@ void Frame::playTransition(Score *score) {
 			}
 		}
 		break;
+
 	default:
 		warning("Frame::playTransition(): Unhandled transition type %d %d %d", _transType, duration, _transChunkSize);
 		break;
