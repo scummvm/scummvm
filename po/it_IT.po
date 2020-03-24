@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-03-21 09:03+0100\n"
-"PO-Revision-Date: 2020-03-21 22:15+0000\n"
+"PO-Revision-Date: 2020-03-24 21:01+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -951,7 +951,7 @@ msgstr "Modalità di resa grafica speciali supportate da alcuni giochi"
 
 #: gui/options.cpp:1170
 msgid "Stretch mode:"
-msgstr "Ridimensionamento:"
+msgstr "Ridimensiona:"
 
 #: gui/options.cpp:1181 backends/graphics/sdl/sdl-graphics.cpp:348
 msgid "Fullscreen mode"
@@ -2763,7 +2763,7 @@ msgstr "Levetta Destra Y"
 #: backends/keymapper/remap-widget.cpp:286
 #: backends/keymapper/remap-widget.cpp:316
 msgid "Reset to defaults"
-msgstr "Ripristina predefiniti"
+msgstr "Ripristina predef."
 
 #: backends/keymapper/remap-widget.cpp:287
 msgid "Clear mapping"
