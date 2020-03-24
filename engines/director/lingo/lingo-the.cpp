@@ -523,7 +523,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_left;
 		break;
 	case kTheLineSize:
-		d.u.i = sprite->_lineSize;
+		d.u.i = sprite->_thickness & 0x3;
 		break;
 	case kTheLocH:
 		d.u.i = sprite->_startPoint.x;
@@ -640,7 +640,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_left = d.u.i;
 		break;
 	case kTheLineSize:
-		sprite->_lineSize = d.u.i;
+		sprite->_thickness = d.u.i;
 		break;
 	case kTheLocH:
 		sprite->_startPoint.x = d.u.i;

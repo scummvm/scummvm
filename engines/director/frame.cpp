@@ -223,15 +223,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				sprite._backColor = _vm->transformColor((128 + stream->readByte()) & 0xff);
 			}
 
-			sprite._flags = stream->readUint16();
-			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
-
-			if (sprite._flags & 0x40)
-				sprite._trails = 1;
-			else
-				sprite._trails = 0;
-
-			sprite._lineSize = ((sprite._flags >> 8) & 0x07);
+			sprite._thickness = stream->readByte();
+			sprite._inkData = stream->readByte();
 
 			sprite._castId = stream->readUint16();
 			sprite._startPoint.y = stream->readUint16();
@@ -255,12 +248,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			}
 		} else {
 			sprite._spriteType = stream->readByte();
-			sprite._flags = stream->readByte();
-			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
-			if (sprite._flags & 0x40)
-				sprite._trails = 1;
-			else
-				sprite._trails = 0;
+			sprite._inkData = stream->readByte();
 
 			sprite._castIndex = stream->readUint16();
 			sprite._castId = stream->readUint16();
@@ -277,14 +265,22 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._colorcode = stream->readByte();
 			sprite._blendAmount = stream->readByte();
 			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
-			sprite._lineSize = stream->readByte();
+			sprite._thickness = stream->readByte();
 			stream->readByte();	// unused
 		}
 
+		sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
+
+		if (sprite._inkData & 0x40)
+			sprite._trails = 1;
+		else
+			sprite._trails = 0;
+
+
 		if (sprite._castId) {
 			debugC(4, kDebugLoading, "CH: %-3d castId: %03d(%s) [flags:%04x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %d, flags2: %x, unk2: %x, unk3: %x",
-				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._flags,
-				sprite._ink, sprite._trails, sprite._lineSize, sprite._width, sprite._height,
+				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._inkData,
+				sprite._ink, sprite._trails, sprite._thickness, sprite._width, sprite._height,
 				sprite._startPoint.x, sprite._startPoint.y,
 				sprite._spriteType, sprite._foreColor, sprite._backColor, sprite._scriptId, sprite._colorcode, sprite._blendAmount, sprite._unk3);
 		} else {
@@ -399,10 +395,11 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 			fieldPosition += 2;
 			break;
 		case kSpritePositionFlags:
-			sprite._flags = stream.readUint16();
-			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
+			sprite._thickness = stream.readByte();
+			sprite._inkData = stream.readByte();
+			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 
-			if (sprite._flags & 0x40)
+			if (sprite._inkData & 0x40)
 				sprite._trails = 1;
 			else
 				sprite._trails = 0;
@@ -436,7 +433,7 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 			break;
 		}
 	}
-	warning("Frame::readSprite(): %03d(%d)[%x,%x,%04x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, x1, x2, sprite._flags, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
+	warning("Frame::readSprite(): %03d(%d)[%x,%x,%02x %02x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, x1, x2, sprite._thickness, sprite._inkData, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
 
 }
 
@@ -571,7 +568,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	byte spriteType = sp->_spriteType;
 	byte foreColor = sp->_foreColor;
 	byte backColor = sp->_backColor;
-	int lineSize = sp->_lineSize;
+	int lineSize = sp->_thickness & 0x3;
 	if (spriteType == kCastMemberSprite && sp->_cast != NULL) {
 		switch (sp->_cast->_type) {
 		case kCastShape:

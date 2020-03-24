@@ -31,7 +31,7 @@ Sprite::Sprite() {
 	_trails = 0;
 	_width = 0;
 	_ink = kInkTypeCopy;
-	_flags = 0;
+	_inkData = 0;
 	_height = 0;
 	_castId = 0;
 	_constraint = 0;
@@ -56,7 +56,7 @@ Sprite::Sprite() {
 	_cast = nullptr;
 
 	_blend = 0;
-	_lineSize = 1;
+	_thickness = 0;
 
 	_scriptId = 0;
 	_scriptCastIndex = 0;
@@ -70,9 +70,9 @@ Sprite::Sprite(const Sprite &sprite) {
 	_enabled = sprite._enabled;
 	_castId = sprite._castId;
 	_castIndex = sprite._castIndex;
-	_flags = sprite._flags;
 	_trails = sprite._trails;
 	_ink = sprite._ink;
+	_inkData = sprite._inkData;
 	_width = sprite._width;
 	_height = sprite._height;
 	_startPoint.x = sprite._startPoint.x;
@@ -97,7 +97,7 @@ Sprite::Sprite(const Sprite &sprite) {
 	_moveable = sprite._moveable;
 	_blend = sprite._blend;
 	_startTime = sprite._startTime;
-	_lineSize = sprite._lineSize;
+	_thickness = sprite._thickness;
 
 	_scriptId = sprite._scriptId;
 	_scriptCastIndex = sprite._scriptCastIndex;
