@@ -42,6 +42,18 @@ void Frame::playTransition(Score *score) {
 	uint16 steps = duration / stepDuration;
 
 	switch (_transType) {
+	case kTransCenterOutHorizontal: // 5
+		{
+			warning("Frame::playTransition(): Unhandled transition type kTransCenterOutHorizontal %d %d", duration, _transChunkSize);
+		}
+		break;
+
+	case kTransCenterOutVertical: // 7
+		{
+			warning("Frame::playTransition(): Unhandled transition type kTransCenterOutVertical %d %d", duration, _transChunkSize);
+		}
+		break;
+
 	case kTransCoverDown:	// 29
 		{
 			uint16 stepSize = score->_movieRect.height() / steps;
@@ -179,6 +191,12 @@ void Frame::playTransition(Score *score) {
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
+		}
+		break;
+
+	case kTransDissolvePixels: // 51
+		{
+			warning("Frame::playTransition(): Unhandled transition type kTransDissolvePixels %d %d", duration, _transChunkSize);
 		}
 		break;
 
