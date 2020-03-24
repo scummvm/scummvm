@@ -150,7 +150,7 @@ void ObjectManager::objectTypes() {
 		objecttypes[o->GetClassType()._className]++;
 	}
 
-	Std::map<Common::String, unsigned int>::iterator iter;
+	Std::map<Common::String, unsigned int>::const_iterator iter;
 	for (iter = objecttypes.begin(); iter != objecttypes.end(); ++iter) {
 		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
 	}

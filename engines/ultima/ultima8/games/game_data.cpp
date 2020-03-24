@@ -373,7 +373,7 @@ void GameData::setupJPOverrides() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	FontManager *fontmanager = FontManager::get_instance();
 	KeyMap jpkeyvals;
-	KeyMap::iterator iter;
+	KeyMap::const_iterator iter;
 
 	jpkeyvals = config->listKeyValues("language/jpfonts");
 	for (iter = jpkeyvals.begin(); iter != jpkeyvals.end(); ++iter) {
@@ -407,7 +407,7 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 	SettingManager *settingman = SettingManager::get_instance();
 	FontManager *fontmanager = FontManager::get_instance();
 	KeyMap ttfkeyvals;
-	KeyMap::iterator iter;
+	KeyMap::const_iterator iter;
 
 	bool ttfoverrides = false;
 	settingman->get("ttf", ttfoverrides);

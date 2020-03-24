@@ -249,7 +249,7 @@ void Kernel::processTypes() {
 		Process *p = *it;
 		processtypes[p->GetClassType()._className]++;
 	}
-	Std::map<Common::String, unsigned int>::iterator iter;
+	Std::map<Common::String, unsigned int>::const_iterator iter;
 	for (iter = processtypes.begin(); iter != processtypes.end(); ++iter) {
 		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
 	}

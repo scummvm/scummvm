@@ -195,7 +195,7 @@ public:
 	virtual void        Close(bool no_del = false);
 
 	//! Check to see if a Gump is Closing
-	bool                IsClosing() {
+	bool                IsClosing() const {
 		return (_flags & FLAG_CLOSING) != 0;
 	}
 

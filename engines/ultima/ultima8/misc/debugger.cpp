@@ -262,9 +262,9 @@ bool Debugger::cmdListGames(int argc, const char **argv) {
 	Ultima8Engine *app = Ultima8Engine::get_instance();
 	Std::vector<istring> games;
 	games = app->_settingMan->listGames();
-	Std::vector<istring>::iterator iter;
+	Std::vector<istring>::const_iterator iter;
 	for (iter = games.begin(); iter != games.end(); ++iter) {
-		istring _game = *iter;
+		const istring &_game = *iter;
 		GameInfo *info = app->getGameInfo(_game);
 		debugPrintf("%s: ", _game.c_str());
 		if (info) {
@@ -392,7 +392,7 @@ bool Debugger::cmdListSFX(int argc, const char **argv) {
 		debugPrintf("Error: No AudioProcess\n");
 
 	} else {
-		Std::list<AudioProcess::SampleInfo>::iterator it;
+		Std::list<AudioProcess::SampleInfo>::const_iterator it;
 		for (it = ap->_sampleInfo.begin(); it != ap->_sampleInfo.end(); ++it) {
 			debugPrintf("Sample: num %d, obj %d, loop %d, prio %d",
 				it->_sfxNum, it->_objId, it->_loops, it->_priority);
@@ -1041,7 +1041,7 @@ bool Debugger::cmdListMarks(int argc, const char **argv) {
 	SettingManager *settings = SettingManager::get_instance();
 	Std::vector<istring> marks;
 	marks = settings->listDataKeys("marks");
-	for (Std::vector<istring>::iterator iter = marks.begin();
+	for (Std::vector<istring>::const_iterator iter = marks.begin();
 		iter != marks.end(); ++iter) {
 		debugPrintf("%s\n", iter->c_str());
 	}

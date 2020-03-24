@@ -47,7 +47,7 @@ ShapeRenderedText::~ShapeRenderedText() {
 void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmasked*/) {
 	// TODO support masking here???
 
-	Std::list<PositionedText>::iterator iter;
+	Std::list<PositionedText>::const_iterator iter;
 
 	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
 		int line_x = x + iter->_dims.x;
@@ -78,7 +78,7 @@ void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,
                                     uint32 col, bool /*destmasked*/) {
 	// TODO Support masking here ????
 
-	Std::list<PositionedText>::iterator iter;
+	Std::list<PositionedText>::const_iterator iter;
 
 	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
 		int line_x = x + iter->_dims.x;

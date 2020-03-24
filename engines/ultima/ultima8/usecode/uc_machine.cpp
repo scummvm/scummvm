@@ -2199,17 +2199,17 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 	}
 }
 
-void UCMachine::usecodeStats() {
+void UCMachine::usecodeStats() const {
 	g_debugger->debugPrintf("Usecode Machine memory stats:\n");
 	g_debugger->debugPrintf("Strings    : %u/65534\n", _stringHeap.size());
 #ifdef DUMPHEAP
-	Std::map<uint16, Std::string>::iterator iter;
+	Std::map<uint16, Std::string>::const_iterator iter;
 	for (iter = _stringHeap.begin(); iter != _stringHeap.end(); ++iter)
 		g_debugger->debugPrintf("%d:%s\n", iter->_key << ":" << iter->_value.c_str());
 #endif
 	g_debugger->debugPrintf("Lists      : %u/65534\n", _listHeap.size());
 #ifdef DUMPHEAP
-	Std::map<uint16, UCList *>::iterator iterl;
+	Std::map<uint16, UCList *>::const_iterator iterl;
 	for (iterl = _listHeap.begin(); iterl != _listHeap.end(); ++iterl) {
 		if (!iterl->_value) {
 			g_debugger->debugPrintf("%d: <null>\n", iterl->_key);

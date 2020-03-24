@@ -93,8 +93,8 @@ void SegmentedAllocator::freeResources() {
 	}
 }
 
-void SegmentedAllocator::printInfo() {
-	Std::vector<SegmentedPool *>::iterator it;
+void SegmentedAllocator::printInfo() const {
+	Std::vector<SegmentedPool *>::const_iterator it;
 	int i = 0;
 
 	pout << "Pools: " <<  _pools.size() << Std::endl;

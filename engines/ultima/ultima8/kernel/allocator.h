@@ -45,7 +45,7 @@ public:
 
 	virtual size_t getCapacity() = 0;
 
-	virtual void printInfo() = 0;
+	virtual void printInfo() const = 0;
 };
 
 } // End of namespace Ultima8
