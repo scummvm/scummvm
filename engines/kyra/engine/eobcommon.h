@@ -202,6 +202,8 @@ struct EoBMonsterInPlay {
 	int8 mode;
 	int8 stray;
 	int8 curAttackFrame;
+	uint8 animProgress;
+	uint8 animType;
 	int8 spellStatusLeft;
 	int16 hitPointsMax;
 	int16 hitPointsCur;
@@ -646,6 +648,7 @@ protected:
 
 	uint32 _drawSceneTimer;
 	uint32 _flashShapeTimer;
+	uint32 _flashShapeTimerIntv;
 	uint32 _envAudioTimer;
 	uint16 _teleporterPulse;
 

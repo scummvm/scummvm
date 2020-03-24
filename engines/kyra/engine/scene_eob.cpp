@@ -490,7 +490,7 @@ void EoBCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int d
 				error("Error trying to make decoration %d (x: %d, y: %d, w: %d, h: %d)", decIndex, r->x, r->y, r->w, r->h);
 
 			if (_flags.platform == Common::kPlatformSegaCD) {
-				_levelDecorationShapes[t] = _screen->sega_encodeShape(_dcrShpDataPos, r->w << 3, r->h, 0);
+				_levelDecorationShapes[t] = _screen->sega_convertShape(_dcrShpDataPos, r->w << 3, r->h, 0);
 				_dcrShpDataPos += ((r->w << 2) * r->h);
 			} else {
 				_levelDecorationShapes[t] = _screen->encodeShape(r->x, r->y, r->w, r->h, false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
@@ -582,7 +582,7 @@ void EoBCoreEngine::drawScene(int refresh) {
 		_screen->updateScreen();
 
 	if (_sceneDefaultUpdate) {
-		_sceneDefaultUpdate = false;
+		_sceneDefaultUpdate = 0;
 		_drawSceneTimer = _system->getMillis() + 4 * _tickLength;
 	}
 

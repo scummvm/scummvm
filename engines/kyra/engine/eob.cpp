@@ -56,6 +56,7 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_seqPlayer = 0;
 	_sres = 0;
 	_levelCurTrack = 0;
+	_dcrResCur = -1;
 }
 
 EoBEngine::~EoBEngine() {
@@ -448,7 +449,7 @@ void EoBEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool h
 	assert(size <= 18);
 
 	for (int i = 0; i < size; i++) {
-		_monsterShapes[monsterIndex + i] = _screen->sega_encodeShape(pos, enc[0], enc[1], 2);
+		_monsterShapes[monsterIndex + i] = _screen->sega_convertShape(pos, enc[0], enc[1], 2);
 		pos += ((enc[0] * enc[1]) >> 1);
 		enc += 2;
 	}
@@ -563,6 +564,7 @@ const uint8 *EoBEngine::getBlockFileData(int level) {
 	Common::SeekableReadStream *s = _sres->resStream(6);
 	_screen->loadFileDataToPage(s, 15, s->size());
 	delete s;
+	_dcrResCur = -1;
 	return _screen->getCPagePtr(15);
 }
 
@@ -574,13 +576,18 @@ Common::SeekableReadStreamEndian *EoBEngine::getDecDefinitions(const char *decFi
 }
 
 void EoBEngine::loadDecShapesToPage3(const char *shpFile) {
-	if (_flags.platform != Common::kPlatformSegaCD)
-		return EoBCoreEngine::loadDecShapesToPage3(shpFile);
-	_sres->loadContainer(Common::String::format("L%d", _currentLevel));
-	Common::SeekableReadStream *s = _sres->resStream(2);
-	_screen->loadFileDataToPage(s, 3, s->size());
-	_dcrShpDataPos = _screen->getCPagePtr(3);
-	delete s;
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::loadDecShapesToPage3(shpFile);
+		return;
+	}
+	if (_dcrResCur != _currentLevel) {
+		_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+		Common::SeekableReadStream *s = _sres->resStream(2);
+		_screen->loadFileDataToPage(s, 3, s->size());
+		_dcrShpDataPos = _screen->getCPagePtr(3);
+		_dcrResCur = _currentLevel;
+		delete s;
+	}
 }
 
 void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {
@@ -606,9 +613,9 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 			if (_flags.platform == Common::kPlatformSegaCD) {
 				int offs = lvlIndex[_currentLevel] * 6 + shapeId[a] + i;
 				const uint8 *enc = &_doorShapeEncodeDefs[offs << 2];
-				_doorShapes[shapeId[a] + i] = _screen->sega_encodeShape(_doorShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0);
+				_doorShapes[shapeId[a] + i] = _screen->sega_convertShape(_doorShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0);
 				enc = &_doorSwitchShapeEncodeDefs[(offs << 2) - shapeId[a]];
-				_doorSwitches[shapeId[a] + i].shp = _screen->sega_encodeShape(_doorSwitchShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0);
+				_doorSwitches[shapeId[a] + i].shp = _screen->sega_convertShape(_doorSwitchShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0);
 			} else {
 				const uint8 *enc = &_doorShapeEncodeDefs[(doorType[a] * 3 + i) << 2];
 				_doorShapes[shapeId[a] + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);

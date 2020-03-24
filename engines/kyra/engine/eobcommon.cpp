@@ -56,8 +56,10 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 
 	_enableHiResDithering = false;
 
+	_tickLength = 55;
 	_envAudioTimer = 0;
 	_flashShapeTimer = 0;
+	_flashShapeTimerIntv = (_flags.platform == Common::kPlatformSegaCD ? 16 : _tickLength) * 8;
 	_drawSceneTimer = 0;
 	_vcnFilePattern = "%s.VCN";
 	_vmpFilePattern = "%s.VMP";
@@ -372,10 +374,6 @@ Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 }
 
 Common::Error EoBCoreEngine::init() {
-	// In EOB the timer proc is directly invoked via interrupt 0x1C, 18.2 times per second.
-	// This makes a tick length of 54.94.
-	_tickLength = 55;
-
 	if (ConfMan.hasKey("render_mode"))
 		_configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 

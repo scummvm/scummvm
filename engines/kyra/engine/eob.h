@@ -155,6 +155,8 @@ private:
 	const uint8 *const *_doorShapesSrc;
 	const uint8 *const *_doorSwitchShapesSrc;
 
+	int _dcrResCur;
+
 	// Fight
 	static const uint8 _monsterAcHitChanceTbl1[];
 	static const uint8 _monsterAcHitChanceTbl2[];

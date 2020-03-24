@@ -249,6 +249,8 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 			m->directionChanged = in.readByte();
 			m->stepsTillRemoteAttack = in.readByte();
 			m->sub = in.readByte();
+			m->animType = 0;
+			m->animProgress = 0;
 		}
 
 		for (int ii = 0; ii < _numFlyingObjects; ii++) {
