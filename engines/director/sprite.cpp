@@ -37,6 +37,7 @@ Sprite::Sprite() {
 	_constraint = 0;
 	_moveable = 0;
 	_castId = 0;
+	_castIndex = 0;
 	_backColor = 255;
 	_foreColor = 0;
 	_left = 0;
@@ -58,8 +59,9 @@ Sprite::Sprite() {
 	_lineSize = 1;
 
 	_scriptId = 0;
-	_flags2 = 0;
-	_unk2 = 0;
+	_scriptCastIndex = 0;
+	_colorcode = 0;
+	_blendAmount = 0;
 	_unk3 = 0;
 	_spriteType = 0;
 }
@@ -67,6 +69,7 @@ Sprite::Sprite() {
 Sprite::Sprite(const Sprite &sprite) {
 	_enabled = sprite._enabled;
 	_castId = sprite._castId;
+	_castIndex = sprite._castIndex;
 	_flags = sprite._flags;
 	_trails = sprite._trails;
 	_ink = sprite._ink;
@@ -97,8 +100,9 @@ Sprite::Sprite(const Sprite &sprite) {
 	_lineSize = sprite._lineSize;
 
 	_scriptId = sprite._scriptId;
-	_flags2 = sprite._flags2;
-	_unk2 = sprite._unk2;
+	_scriptCastIndex = sprite._scriptCastIndex;
+	_colorcode = sprite._colorcode;
+	_blendAmount = sprite._blendAmount;
 	_unk3 = sprite._unk3;
 	_spriteType = sprite._spriteType;
 }

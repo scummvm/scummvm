@@ -121,6 +121,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 	byte unk[16];
 
 	if (_vm->getVersion() < 4) {
+		// Sound/Tempo/Transition
 		_actionId = stream->readByte();
 		_soundType1 = stream->readByte(); // type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
 		uint8 transFlags = stream->readByte(); // 0x80 is whole stage (vs changed area), rest is duration in 1/4ths of a second
@@ -135,6 +136,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		_tempo = stream->readByte();
 		_transType = static_cast<TransitionType>(stream->readByte());
 		_sound1 = stream->readUint16();
+
+		if (_tempo & 0x80 && _sound1 & 0x8000)
+			warning("D4-style transition");
+
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 			_sound2 = stream->readUint16();
 			_soundType2 = stream->readByte();
@@ -151,6 +156,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			_soundType2 = stream->readByte();
 		}
 
+		// palette
 		uint16 palette = stream->readUint16();
 
 		if (palette) {
@@ -168,10 +174,17 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 
 		_palette->cycleCount = stream->readUint16();
 	} else if (_vm->getVersion() < 5) {
+		// Sound/Tempo/Transitio
+		// palette
 		stream->read(unk, 16);
 		_actionId = stream->readUint16();
 		stream->read(unk, 5);
 	} else {
+		// Sound[2]
+		// palette
+		// Transition
+		// Tempo
+		// Script
 		stream->read(unk, 16);
 		stream->read(unk, 16);
 		stream->read(unk, 10);
@@ -201,7 +214,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._scriptId = stream->readByte();
 			sprite._spriteType = stream->readByte();
 			sprite._enabled = sprite._spriteType != 0;
-			if (_vm->getVersion() >= 4) {
+			if (_vm->getVersion() == 4) {
 				sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
 				sprite._backColor = _vm->transformColor((uint8)stream->readByte());
 			} else {
@@ -226,30 +239,46 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._height = stream->readUint16();
 			sprite._width = stream->readUint16();
 
-			if (_vm->getPlatform() == Common::kPlatformMacintosh && _vm->getVersion() >= 4) {
+			if (_vm->getPlatform() == Common::kPlatformMacintosh && _vm->getVersion() == 4) {
 				sprite._scriptId = stream->readUint16();
-				sprite._flags2 = stream->readByte(); // 0x40 editable, 0x80 moveable
-				sprite._unk2 = stream->readByte();
-				sprite._moveable = ((sprite._flags2 & 0x80) == 0x80);
+				// & 0x0f scorecolor
+				// 0x10 forecolor is rgb
+				// 0x20 bgcolor is rgb
+				// 0x40 editable
+				// 0x80 moveable
+				sprite._colorcode = stream->readByte();
+				sprite._blendAmount = stream->readByte();
+				sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 
 				if (_vm->getVersion() >= 5)
 					sprite._unk3 = stream->readUint32();
 			}
 		} else {
-			stream->readUint16();
-			sprite._scriptId = stream->readByte();
 			sprite._spriteType = stream->readByte();
-			sprite._enabled = sprite._spriteType != 0;
+			sprite._flags = stream->readByte();
+			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
+			if (sprite._flags & 0x40)
+				sprite._trails = 1;
+			else
+				sprite._trails = 0;
+
+			sprite._castIndex = stream->readUint16();
 			sprite._castId = stream->readUint16();
-			stream->readUint32();
-			sprite._flags = stream->readUint16();
+
+			sprite._scriptCastIndex = stream->readUint16();
+			sprite._scriptId = stream->readUint16();
+			sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
+			sprite._backColor = _vm->transformColor((uint8)stream->readByte());
+
 			sprite._startPoint.y = stream->readUint16();
 			sprite._startPoint.x = stream->readUint16();
 			sprite._height = stream->readUint16();
 			sprite._width = stream->readUint16();
-			stream->readUint16();
-			stream->readUint16();
-
+			sprite._colorcode = stream->readByte();
+			sprite._blendAmount = stream->readByte();
+			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			sprite._lineSize = stream->readByte();
+			stream->readByte();	// unused
 		}
 
 		if (sprite._castId) {
@@ -257,7 +286,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._flags,
 				sprite._ink, sprite._trails, sprite._lineSize, sprite._width, sprite._height,
 				sprite._startPoint.x, sprite._startPoint.y,
-				sprite._spriteType, sprite._foreColor, sprite._backColor, sprite._scriptId, sprite._flags2, sprite._unk2, sprite._unk3);
+				sprite._spriteType, sprite._foreColor, sprite._backColor, sprite._scriptId, sprite._colorcode, sprite._blendAmount, sprite._unk3);
 		} else {
 			debugC(4, kDebugLoading, "CH: %-3d castId: 000", i + 1);
 		}
