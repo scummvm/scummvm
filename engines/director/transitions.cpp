@@ -44,7 +44,23 @@ void Frame::playTransition(Score *score) {
 	switch (_transType) {
 	case kTransCenterOutHorizontal: // 5
 		{
-			warning("Frame::playTransition(): Unhandled transition type kTransCenterOutHorizontal %d %d", duration, _transChunkSize);
+			uint16 stepSize = score->_movieRect.width() / steps / 2;
+			Common::Rect r = score->_movieRect;
+
+			 score->_backSurface->copyFrom(*score->_surface);
+
+			for (uint16 i = 1; i < steps; i++) {
+				r.setWidth(stepSize * i * 2);
+				r.moveTo(score->_movieRect.width() / 2 - stepSize * i, 0);
+
+				g_system->delayMillis(stepDuration);
+				processQuitEvent();
+
+				score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
+
+				g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, score->_movieRect.width() / 2 - stepSize * i, 0, r.width(), r.height()); // transition
+				g_system->updateScreen();
+			}
 		}
 		break;
 
