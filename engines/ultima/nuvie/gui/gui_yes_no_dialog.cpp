@@ -94,7 +94,7 @@ GUI_status GUI_YesNoDialog::callback(uint16 msg, GUI_CallBack *caller, void *dat
 		return (GUI_status)yes_callback_object->callback(YESNODIALOG_CB_YES, nullptr);
 
 	if (caller == no_button)
-		return (GUI_status)no_callback_object->callback(YESNODIALOG_CB_NO, nullptr);
+		return (GUI_status)no_callback_object->callback(YESNODIALOG_CB_NO, nullptr, this);
 
 	return GUI_PASS;
 }
