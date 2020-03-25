@@ -21,9 +21,7 @@
 */
 
 #include "larryScale.h"
-#include <cassert>
 #include "common/array.h"
-#include <cstring>
 
 namespace Graphics {
 
@@ -404,4 +402,3 @@ void larryScale(
 }
 
 }
-
