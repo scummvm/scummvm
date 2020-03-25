@@ -185,8 +185,8 @@ IntroController::IntroController() :
 	_questionArea(INTRO_TEXT_X * CHAR_WIDTH, INTRO_TEXT_Y * CHAR_HEIGHT, INTRO_TEXT_WIDTH, INTRO_TEXT_HEIGHT),
 	_mapArea(BORDER_WIDTH, (TILE_HEIGHT * 6) + BORDER_HEIGHT, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, "base"),
 	binData(NULL),
-	titles(),                   // element list
-	title(titles.begin()),      // element iterator
+	_titles(),                   // element list
+	_title(_titles.begin()),      // element iterator
 	_transparentIndex(13),       // palette index for transparency
 	_transparentColor(),         // palette color for transparency
 	_bSkipTitles(false) {
@@ -1553,7 +1553,7 @@ void IntroController::initTitles() {
 	getTitleSourceData();
 
 	// reset the iterator
-	title = titles.begin();
+	_title = _titles.begin();
 
 	// speed up the timer while the intro titles are displayed
 	eventHandler->getTimer()->reset(settings._titleSpeedOther);
@@ -1578,7 +1578,7 @@ void IntroController::addTitle(int x, int y, int w, int h, AnimType method, int 
 		Std::vector<AnimPlot>(),
 		false
 	};             // prescaled
-	titles.push_back(data);
+	_titles.push_back(data);
 }
 
 
@@ -1589,6 +1589,10 @@ void IntroController::addTitle(int x, int y, int w, int h, AnimType method, int 
 void IntroController::getTitleSourceData() {
 	unsigned int r, g, b, a;        // color values
 	unsigned char *srcData;         // plot data
+	const int BLUE[16] = {
+		255, 250, 226, 226, 210, 194, 161, 161,
+		129,  97,  97,  64,  64,  32,  32,   0
+	};
 
 	// The BKGD_INTRO image is assumed to have not been
 	// loaded yet.  The unscaled version will be loaded
@@ -1613,49 +1617,42 @@ void IntroController::getTitleSourceData() {
 	info->_image->alphaOff();
 
 	// for each element, get the source data
-	for (unsigned i = 0; i < titles.size(); i++) {
-		if ((titles[i]._method != SIGNATURE)
-		        && (titles[i]._method != BAR)) {
+	for (unsigned i = 0; i < _titles.size(); i++) {
+		if ((_titles[i]._method != SIGNATURE) && (_titles[i]._method != BAR)) {
 			// create a place to store the source image
-			titles[i]._srcImage = Image::create(
-			                          titles[i]._rw * info->_prescale,
-			                          titles[i]._rh * info->_prescale,
-			                          false,
-			                          Image::HARDWARE);
-			if (titles[i]._srcImage->isIndexed())
-				titles[i]._srcImage->setPaletteFromImage(info->_image);
+			_titles[i]._srcImage = Image::create(
+				_titles[i]._rw * info->_prescale,
+				_titles[i]._rh * info->_prescale,
+			    info->_image->isIndexed(), Image::HARDWARE);
+			if (_titles[i]._srcImage->isIndexed())
+				_titles[i]._srcImage->setPaletteFromImage(info->_image);
 
 			// get the source image
 			info->_image->drawSubRectOn(
-			    titles[i]._srcImage,
+			    _titles[i]._srcImage,
 			    0,
 			    0,
-			    titles[i]._rx * info->_prescale,
-			    titles[i]._ry * info->_prescale,
-			    titles[i]._rw * info->_prescale,
-			    titles[i]._rh * info->_prescale);
+			    _titles[i]._rx * info->_prescale,
+			    _titles[i]._ry * info->_prescale,
+			    _titles[i]._rw * info->_prescale,
+			    _titles[i]._rh * info->_prescale);
 		}
 
 		// after getting the srcImage
-		switch (titles[i]._method) {
+		switch (_titles[i]._method) {
 		case SIGNATURE: {
 			// PLOT: "Lord British"
 			srcData = intro->getSigData();
-
 			RGBA color = info->_image->setColor(0, 255, 255);    // cyan for EGA
-			int blue[16] = {255, 250, 226, 226, 210, 194, 161, 161,
-			                129,  97,  97,  64,  64,  32,  32,   0
-			               };
-			int x = 0;
-			int y = 0;
+			int x = 0, y = 0;
 
-			while (srcData[titles[i]._animStepMax] != 0) {
-				x = srcData[titles[i]._animStepMax] - 0x4C;
-				y = 0xC0 - srcData[titles[i]._animStepMax + 1];
+			while (srcData[_titles[i]._animStepMax] != 0) {
+				x = srcData[_titles[i]._animStepMax] - 0x4C;
+				y = 0xC0 - srcData[_titles[i]._animStepMax + 1];
 
 				if (settings._videoType != "EGA") {
 					// yellow gradient
-					color = info->_image->setColor(255, (y == 2 ? 250 : 255), blue[y - 1]);
+					color = info->_image->setColor(255, (y == 2 ? 250 : 255), BLUE[y - 1]);
 				}
 				AnimPlot plot = {
 					(uint8)x,
@@ -1665,72 +1662,72 @@ void IntroController::getTitleSourceData() {
 					(uint8)color.b,
 					255
 				};
-				titles[i]._plotData.push_back(plot);
-				titles[i]._animStepMax += 2;
+				_titles[i]._plotData.push_back(plot);
+				_titles[i]._animStepMax += 2;
 			}
-			titles[i]._animStepMax = titles[i]._plotData.size();
+			_titles[i]._animStepMax = _titles[i]._plotData.size();
 			break;
 		}
 
 		case BAR: {
-			titles[i]._animStepMax = titles[i]._rw;  // image width
+			_titles[i]._animStepMax = _titles[i]._rw;  // image width
 			break;
 		}
 
 		case TITLE: {
-			for (int y = 0; y < titles[i]._rh; y++) {
-				for (int x = 0; x < titles[i]._rw ; x++) {
-					titles[i]._srcImage->getPixel(x * info->_prescale, y * info->_prescale, r, g, b, a);
+			for (int y = 0; y < _titles[i]._rh; y++) {
+				for (int x = 0; x < _titles[i]._rw ; x++) {
+					_titles[i]._srcImage->getPixel(x * info->_prescale, y * info->_prescale, r, g, b, a);
 					if (r || g || b) {
 						AnimPlot plot = { (uint8)(x + 1), (uint8)(y + 1), (uint8)r, (uint8)g, (uint8)b, (uint8)a };
-						titles[i]._plotData.push_back(plot);
+						_titles[i]._plotData.push_back(plot);
 					}
 				}
 			}
-			titles[i]._animStepMax = titles[i]._plotData.size();
+			_titles[i]._animStepMax = _titles[i]._plotData.size();
 			break;
 		}
 
 		case MAP: {
 			// fill the map area with the transparent color
-			titles[i]._srcImage->fillRect(
+			_titles[i]._srcImage->fillRect(
 			    8, 8, 304, 80,
 			    _transparentColor.r,
 			    _transparentColor.g,
 			    _transparentColor.b);
 
 			Image *scaled;      // the scaled and filtered image
-			scaled = screenScale(titles[i]._srcImage, settings._scale / info->_prescale, 1, 1);
+			scaled = screenScale(_titles[i]._srcImage, settings._scale / info->_prescale, 1, 1);
 			if (_transparentIndex >= 0)
 				scaled->setTransparentIndex(_transparentIndex);
 
-			titles[i]._prescaled = true;
-			delete titles[i]._srcImage;
-			titles[i]._srcImage = scaled;
+			_titles[i]._prescaled = true;
+			delete _titles[i]._srcImage;
+			_titles[i]._srcImage = scaled;
 
-			titles[i]._animStepMax = 20;
+			_titles[i]._animStepMax = 20;
 			break;
 		}
 
 		default: {
-			titles[i]._animStepMax = titles[i]._rh ;  // image height
+			_titles[i]._animStepMax = _titles[i]._rh ;  // image height
 			break;
 		}
 		}
 
 		// permanently disable alpha
-		if (titles[i]._srcImage)
-			titles[i]._srcImage->alphaOff();
+		if (_titles[i]._srcImage)
+			_titles[i]._srcImage->alphaOff();
 
-		bool indexed = info->_image->isIndexed() && titles[i]._method != MAP;
+		bool indexed = info->_image->isIndexed() && _titles[i]._method != MAP;
 		// create the initial animation frame
-		titles[i]._destImage = Image::create(
-		                           2 + (titles[i]._prescaled ? SCALED(titles[i]._rw) : titles[i]._rw) * info->_prescale ,
-		                           2 + (titles[i]._prescaled ? SCALED(titles[i]._rh) : titles[i]._rh) * info->_prescale,
-		                           indexed,
-		                           Image::HARDWARE);
+		_titles[i]._destImage = Image::create(
+			2 + (_titles[i]._prescaled ? SCALED(_titles[i]._rw) : _titles[i]._rw) * info->_prescale ,
+		    2 + (_titles[i]._prescaled ? SCALED(_titles[i]._rh) : _titles[i]._rh) * info->_prescale,
+		    indexed,
+			Image::HARDWARE);
 		if (indexed)
-			titles[i]._destImage->setPaletteFromImage(info->_image);
+			_titles[i]._destImage->setPaletteFromImage(info->_image);
 	}
 
 	// turn alpha back on
@@ -1778,67 +1775,67 @@ bool IntroController::updateTitle() {
 	int timeCurrent = getTicks();
 	float timePercent = 0;
 
-	if (title->_animStep == 0 && !_bSkipTitles) {
-		if (title->_timeBase == 0) {
+	if (_title->_animStep == 0 && !_bSkipTitles) {
+		if (_title->_timeBase == 0) {
 			// reset the base time
-			title->_timeBase = timeCurrent;
+			_title->_timeBase = timeCurrent;
 		}
-		if (title == titles.begin()) {
+		if (_title == _titles.begin()) {
 			// clear the screen
 			Image *screen = imageMgr->get("screen")->_image;
 			screen->fillRect(0, 0, screen->width(), screen->height(), 0, 0, 0);
 		}
-		if (title->_method == TITLE) {
+		if (_title->_method == TITLE) {
 			// assume this is the first frame of "Ultima IV" and begin sound
 			soundPlay(SOUND_TITLE_FADE);
 		}
 	}
 
 	// abort after processing all elements
-	if (title == titles.end()) {
+	if (_title == _titles.end()) {
 		return false;
 	}
 
 	// delay the drawing of this phase
-	if ((timeCurrent - title->_timeBase) < title->_timeDelay) {
+	if ((timeCurrent - _title->_timeBase) < _title->_timeDelay) {
 		return true;
 	}
 
 	// determine how much of the animation should have been drawn up until now
-	timePercent = float(timeCurrent - title->_timeBase - title->_timeDelay) / title->_timeDuration;
+	timePercent = float(timeCurrent - _title->_timeBase - _title->_timeDelay) / _title->_timeDuration;
 	if (timePercent > 1 || _bSkipTitles)
 		timePercent = 1;
-	animStepTarget = int(title->_animStepMax * timePercent);
+	animStepTarget = int(_title->_animStepMax * timePercent);
 
 	// perform the animation
-	switch (title->_method) {
+	switch (_title->_method) {
 	case SIGNATURE: {
-		while (animStepTarget > title->_animStep) {
+		while (animStepTarget > _title->_animStep) {
 			// blit the pixel-pair to the src surface
-			title->_destImage->fillRect(
-			    title->_plotData[title->_animStep].x,
-			    title->_plotData[title->_animStep].y,
+			_title->_destImage->fillRect(
+			    _title->_plotData[_title->_animStep].x,
+			    _title->_plotData[_title->_animStep].y,
 			    2,
 			    1,
-			    title->_plotData[title->_animStep].r,
-			    title->_plotData[title->_animStep].g,
-			    title->_plotData[title->_animStep].b);
-			title->_animStep++;
+			    _title->_plotData[_title->_animStep].r,
+			    _title->_plotData[_title->_animStep].g,
+			    _title->_plotData[_title->_animStep].b);
+			_title->_animStep++;
 		}
 		break;
 	}
 
 	case BAR: {
 		RGBA color;
-		while (animStepTarget > title->_animStep) {
-			title->_animStep++;
-			color = title->_destImage->setColor(128, 0, 0); // dark red for the underline
+		while (animStepTarget > _title->_animStep) {
+			_title->_animStep++;
+			color = _title->_destImage->setColor(128, 0, 0); // dark red for the underline
 
 			// blit bar to the canvas
-			title->_destImage->fillRect(
+			_title->_destImage->fillRect(
 			    1,
 			    1,
-			    title->_animStep,
+			    _title->_animStep,
 			    1,
 			    color.r,
 			    color.g,
@@ -1849,75 +1846,75 @@ bool IntroController::updateTitle() {
 
 	case AND: {
 		// blit the entire src to the canvas
-		title->_srcImage->drawOn(title->_destImage, 1, 1);
-		title->_animStep = title->_animStepMax;
+		_title->_srcImage->drawOn(_title->_destImage, 1, 1);
+		_title->_animStep = _title->_animStepMax;
 		break;
 	}
 
 	case ORIGIN: {
 		if (_bSkipTitles)
-			title->_animStep = title->_animStepMax;
+			_title->_animStep = _title->_animStepMax;
 		else {
-			title->_animStep++;
-			title->_timeDelay = getTicks() - title->_timeBase + 100;
+			_title->_animStep++;
+			_title->_timeDelay = getTicks() - _title->_timeBase + 100;
 		}
 
 		// blit src to the canvas one row at a time, bottom up
-		title->_srcImage->drawSubRectOn(
-		    title->_destImage,
+		_title->_srcImage->drawSubRectOn(
+		    _title->_destImage,
 		    1,
-		    title->_destImage->height() - 1 - title->_animStep,
+		    _title->_destImage->height() - 1 - _title->_animStep,
 		    0,
 		    0,
-		    title->_srcImage->width(),
-		    title->_animStep);
+		    _title->_srcImage->width(),
+		    _title->_animStep);
 		break;
 	}
 
 	case PRESENT: {
 		if (_bSkipTitles)
-			title->_animStep = title->_animStepMax;
+			_title->_animStep = _title->_animStepMax;
 		else {
-			title->_animStep++;
-			title->_timeDelay = getTicks() - title->_timeBase + 100;
+			_title->_animStep++;
+			_title->_timeDelay = getTicks() - _title->_timeBase + 100;
 		}
 
 		// blit src to the canvas one row at a time, top down
-		title->_srcImage->drawSubRectOn(
-		    title->_destImage,
+		_title->_srcImage->drawSubRectOn(
+		    _title->_destImage,
 		    1,
 		    1,
 		    0,
-		    title->_srcImage->height() - title->_animStep,
-		    title->_srcImage->width(),
-		    title->_animStep);
+		    _title->_srcImage->height() - _title->_animStep,
+		    _title->_srcImage->width(),
+		    _title->_animStep);
 		break;
 	}
 
 	case TITLE: {
 		// blit src to the canvas in a random pixelized manner
-		title->_animStep = animStepTarget;
+		_title->_animStep = animStepTarget;
 #ifdef TODO
 		random_shuffle(title->plotData.begin(), title->plotData.end());
 #endif
-		title->_destImage->fillRect(1, 1, title->_rw, title->_rh, 0, 0, 0);
+		_title->_destImage->fillRect(1, 1, _title->_rw, _title->_rh, 0, 0, 0);
 
 		// @TODO: animStepTarget (for this loop) should not exceed
 		// half of animStepMax.  If so, instead draw the entire
 		// image, and then black out the necessary pixels.
 		// this should speed the loop up at the end
 		for (int i = 0; i < animStepTarget; ++i) {
-			title->_destImage->putPixel(
-			    title->_plotData[i].x,
-			    title->_plotData[i].y,
-			    title->_plotData[i].r,
-			    title->_plotData[i].g,
-			    title->_plotData[i].b,
-			    title->_plotData[i].a);
+			_title->_destImage->putPixel(
+			    _title->_plotData[i].x,
+			    _title->_plotData[i].y,
+			    _title->_plotData[i].r,
+			    _title->_plotData[i].g,
+			    _title->_plotData[i].b,
+			    _title->_plotData[i].a);
 		}
 
 		// cover the "present" area with the transparent color
-		title->_destImage->fillRect(
+		_title->_destImage->fillRect(
 		    75, 1, 54, 5,
 		    _transparentColor.r,
 		    _transparentColor.g,
@@ -1927,57 +1924,57 @@ bool IntroController::updateTitle() {
 
 	case SUBTITLE: {
 		if (_bSkipTitles)
-			title->_animStep = title->_animStepMax;
+			_title->_animStep = _title->_animStepMax;
 		else {
-			title->_animStep++;
-			title->_timeDelay = getTicks() - title->_timeBase + 100;
+			_title->_animStep++;
+			_title->_timeDelay = getTicks() - _title->_timeBase + 100;
 		}
 
 		// blit src to the canvas one row at a time, center out
-		int y = int(title->_rh / 2) - title->_animStep + 1;
-		title->_srcImage->drawSubRectOn(
-		    title->_destImage,
+		int y = int(_title->_rh / 2) - _title->_animStep + 1;
+		_title->_srcImage->drawSubRectOn(
+		    _title->_destImage,
 		    1,
 		    y + 1,
 		    0,
 		    y,
-		    title->_srcImage->width(),
-		    1 + ((title->_animStep - 1) * 2));
+		    _title->_srcImage->width(),
+		    1 + ((_title->_animStep - 1) * 2));
 		break;
 	}
 
 	case MAP: {
 		if (_bSkipTitles)
-			title->_animStep = title->_animStepMax;
+			_title->_animStep = _title->_animStepMax;
 		else {
-			title->_animStep++;
-			title->_timeDelay = getTicks() - title->_timeBase + 100;
+			_title->_animStep++;
+			_title->_timeDelay = getTicks() - _title->_timeBase + 100;
 		}
 
-		int step = (title->_animStep == title->_animStepMax ? title->_animStepMax - 1 : title->_animStep);
+		int step = (_title->_animStep == _title->_animStepMax ? _title->_animStepMax - 1 : _title->_animStep);
 
 		// blit src to the canvas one row at a time, center out
-		title->_srcImage->drawSubRectOn(
-		    title->_destImage,
+		_title->_srcImage->drawSubRectOn(
+		    _title->_destImage,
 		    SCALED(153 - (step * 8)),
 		    SCALED(1),
 		    0,
 		    0,
 		    SCALED((step + 1) * 8),
-		    SCALED(title->_srcImage->height()));
-		title->_srcImage->drawSubRectOn(
-		    title->_destImage,
+		    SCALED(_title->_srcImage->height()));
+		_title->_srcImage->drawSubRectOn(
+		    _title->_destImage,
 		    SCALED(161),
 		    SCALED(1),
 		    SCALED(312 - (step * 8)),
 		    0,
 		    SCALED((step + 1) * 8),
-		    SCALED(title->_srcImage->height()));
+		    SCALED(_title->_srcImage->height()));
 
 
 		// create a destimage for the map tiles
 		int newtime = getTicks();
-		if (newtime > title->_timeDuration + 250 / 4) {
+		if (newtime > _title->_timeDuration + 250 / 4) {
 			// grab the map from the screen
 			Image *screen = imageMgr->get("screen")->_image;
 
@@ -1985,7 +1982,7 @@ bool IntroController::updateTitle() {
 			intro->drawMapStatic();
 
 			screen->drawSubRectOn(
-			    title->_srcImage,
+			    _title->_srcImage,
 			    SCALED(8),
 			    SCALED(8),
 			    SCALED(8),
@@ -1993,11 +1990,11 @@ bool IntroController::updateTitle() {
 			    SCALED(38 * 8),
 			    SCALED(10 * 8));
 
-			title->_timeDuration = newtime + 250 / 4;
+			_title->_timeDuration = newtime + 250 / 4;
 		}
 
-		title->_srcImage->drawSubRectOn(
-		    title->_destImage,
+		_title->_srcImage->drawSubRectOn(
+		    _title->_destImage,
 		    SCALED(161 - (step * 8)),
 		    SCALED(9),
 		    SCALED(160 - (step * 8)),
@@ -2014,12 +2011,12 @@ bool IntroController::updateTitle() {
 
 	// if the animation for this title has completed,
 	// move on to the next title
-	if (title->_animStep >= title->_animStepMax) {
+	if (_title->_animStep >= _title->_animStepMax) {
 		// free memory that is no longer needed
 		compactTitle();
-		title++;
+		_title++;
 
-		if (title == titles.end()) {
+		if (_title == _titles.end()) {
 			// reset the timer to the pre-titles granularity
 			eventHandler->getTimer()->reset(eventTimerGranularity);
 
@@ -2029,11 +2026,11 @@ bool IntroController::updateTitle() {
 			return false;
 		}
 
-		if (title->_method == TITLE) {
+		if (_title->_method == TITLE) {
 			// assume this is "Ultima IV" and pre-load sound
 //            soundLoad(SOUND_TITLE_FADE);
 			eventHandler->getTimer()->reset(settings._titleSpeedRandom);
-		} else if (title->_method == MAP) {
+		} else if (_title->_method == MAP) {
 			eventHandler->getTimer()->reset(settings._titleSpeedOther);
 		} else {
 			eventHandler->getTimer()->reset(settings._titleSpeedOther);
@@ -2049,11 +2046,11 @@ bool IntroController::updateTitle() {
 // delete, remove, or free data that is no longer needed
 //
 void IntroController::compactTitle() {
-	if (title->_srcImage) {
-		delete title->_srcImage;
-		title->_srcImage = NULL;
+	if (_title->_srcImage) {
+		delete _title->_srcImage;
+		_title->_srcImage = NULL;
 	}
-	title->_plotData.clear();
+	_title->_plotData.clear();
 }
 
 
@@ -2064,21 +2061,21 @@ void IntroController::drawTitle() {
 	Image *scaled;      // the scaled and filtered image
 
 	// blit the scaled and filtered surface to the screen
-	if (title->_prescaled)
-		scaled = title->_destImage;
+	if (_title->_prescaled)
+		scaled = _title->_destImage;
 	else
-		scaled = screenScale(title->_destImage, settings._scale, 1, 1);
+		scaled = screenScale(_title->_destImage, settings._scale, 1, 1);
 
 	scaled->setTransparentIndex(_transparentIndex);
 	scaled->drawSubRect(
-	    SCALED(title->_rx),    // dest x, y
-	    SCALED(title->_ry),
+	    SCALED(_title->_rx),    // dest x, y
+	    SCALED(_title->_ry),
 	    SCALED(1),              // src x, y, w, h
 	    SCALED(1),
-	    SCALED(title->_rw),
-	    SCALED(title->_rh));
+	    SCALED(_title->_rw),
+	    SCALED(_title->_rh));
 
-	if (!title->_prescaled) {
+	if (!_title->_prescaled) {
 		delete scaled;
 		scaled = NULL;
 	}

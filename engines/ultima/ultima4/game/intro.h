@@ -286,8 +286,8 @@ private:
 	void drawTitle();
 	void getTitleSourceData();
 	void skipTitles();
-	Std::vector<AnimElement> titles;            // list of title elements
-	Std::vector<AnimElement>::iterator title;   // current title element
+	Std::vector<AnimElement> _titles;            // list of title elements
+	Std::vector<AnimElement>::iterator _title;   // current title element
 
 	int _transparentIndex;           // palette index for transparency
 	RGBA _transparentColor;     // palette color for transparency
