@@ -59,7 +59,8 @@ void ImageView::draw(const Common::String &imageName, int x, int y) {
 			return;
 		}
 	}
-	errorFatal("ERROR 1005: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", imageName.c_str(), settings._game.c_str());
+
+	errorFatal("ERROR 1005: Unable to load the image \"%s\"", imageName.c_str());
 }
 
 } // End of namespace Ultima4

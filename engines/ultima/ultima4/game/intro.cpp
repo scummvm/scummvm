@@ -857,15 +857,15 @@ void IntroController::startQuestions() {
 			_backgroundArea.draw(BKGD_ABACUS);
 
 		// draw the cards and show the lead up text
-		drawCard(0, __questionTree[_questionRound * 2]);
-		drawCard(1, __questionTree[_questionRound * 2 + 1]);
+		drawCard(0, _questionTree[_questionRound * 2]);
+		drawCard(1, _questionTree[_questionRound * 2 + 1]);
 
 		_questionArea.clear();
 		_questionArea.textAt(0, 0, "%s", binData->_introGypsy[_questionRound == 0 ? GYP_PLACES_FIRST : (_questionRound == 6 ? GYP_PLACES_LAST : GYP_PLACES_TWOMORE)].c_str());
 		_questionArea.textAt(0, 1, "%s", binData->_introGypsy[GYP_UPON_TABLE].c_str());
 		_questionArea.textAt(0, 2, "%s and %s.  She says",
-		                     binData->_introGypsy[__questionTree[_questionRound * 2] + 4].c_str(),
-		                     binData->_introGypsy[__questionTree[_questionRound * 2 + 1] + 4].c_str());
+		                     binData->_introGypsy[_questionTree[_questionRound * 2] + 4].c_str(),
+		                     binData->_introGypsy[_questionTree[_questionRound * 2 + 1] + 4].c_str());
 		_questionArea.textAt(0, 3, "\"Consider this:\"");
 
 #ifdef IOS
@@ -877,7 +877,7 @@ void IntroController::startQuestions() {
 
 		screenEnableCursor();
 		// show the question to choose between virtues
-		showText(getQuestion(__questionTree[_questionRound * 2], __questionTree[_questionRound * 2 + 1]));
+		showText(getQuestion(_questionTree[_questionRound * 2], _questionTree[_questionRound * 2 + 1]));
 
 #ifdef IOS
 		U4IOS::switchU4IntroControllerToABButtons();
@@ -1353,20 +1353,20 @@ void IntroController::initQuestionTree() {
 	int i, tmp, r;
 
 	for (i = 0; i < 8; i++)
-		__questionTree[i] = i;
+		_questionTree[i] = i;
 
 	for (i = 0; i < 8; i++) {
 		r = xu4_random(8);
-		tmp = __questionTree[r];
-		__questionTree[r] = __questionTree[i];
-		__questionTree[i] = tmp;
+		tmp = _questionTree[r];
+		_questionTree[r] = _questionTree[i];
+		_questionTree[i] = tmp;
 	}
 	_answerInd = 8;
 
-	if (__questionTree[0] > __questionTree[1]) {
-		tmp = __questionTree[0];
-		__questionTree[0] = __questionTree[1];
-		__questionTree[1] = tmp;
+	if (_questionTree[0] > _questionTree[1]) {
+		tmp = _questionTree[0];
+		_questionTree[0] = _questionTree[1];
+		_questionTree[1] = tmp;
 	}
 
 }
@@ -1378,12 +1378,12 @@ void IntroController::initQuestionTree() {
  */
 bool IntroController::doQuestion(int answer) {
 	if (!answer)
-		__questionTree[_answerInd] = __questionTree[_questionRound * 2];
+		_questionTree[_answerInd] = _questionTree[_questionRound * 2];
 	else
-		__questionTree[_answerInd] = __questionTree[_questionRound * 2 + 1];
+		_questionTree[_answerInd] = _questionTree[_questionRound * 2 + 1];
 
-	drawAbacusBeads(_questionRound, __questionTree[_answerInd],
-	                __questionTree[_questionRound * 2 + ((answer) ? 0 : 1)]);
+	drawAbacusBeads(_questionRound, _questionTree[_answerInd],
+	                _questionTree[_questionRound * 2 + ((answer) ? 0 : 1)]);
 
 	_answerInd++;
 	_questionRound++;
@@ -1391,10 +1391,10 @@ bool IntroController::doQuestion(int answer) {
 	if (_questionRound > 6)
 		return true;
 
-	if (__questionTree[_questionRound * 2] > __questionTree[_questionRound * 2 + 1]) {
-		int tmp = __questionTree[_questionRound * 2];
-		__questionTree[_questionRound * 2] = __questionTree[_questionRound * 2 + 1];
-		__questionTree[_questionRound * 2 + 1] = tmp;
+	if (_questionTree[_questionRound * 2] > _questionTree[_questionRound * 2 + 1]) {
+		int tmp = _questionTree[_questionRound * 2];
+		_questionTree[_questionRound * 2] = _questionTree[_questionRound * 2 + 1];
+		_questionTree[_questionRound * 2 + 1] = tmp;
 	}
 
 	return false;
@@ -1435,7 +1435,7 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 		{ "Katrina",  11, 12, 10, SEX_FEMALE }  /* CLASS_SHEPHERD */
 	};
 
-	saveGame->_players[0]._class = static_cast<ClassType>(__questionTree[14]);
+	saveGame->_players[0]._class = static_cast<ClassType>(_questionTree[14]);
 
 	ASSERT(saveGame->_players[0]._class < 8, "bad class: %d", saveGame->_players[0]._class);
 
@@ -1453,8 +1453,8 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 		saveGame->_karma[i] = 50;
 
 	for (i = 8; i < 15; i++) {
-		saveGame->_karma[__questionTree[i]] += 5;
-		switch (__questionTree[i]) {
+		saveGame->_karma[_questionTree[i]] += 5;
+		switch (_questionTree[i]) {
 		case VIRT_HONESTY:
 			saveGame->_players[0]._intel += 3;
 			break;
