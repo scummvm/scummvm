@@ -62,7 +62,6 @@ SegmentedPool::SegmentedPool(size_t nodeCapacity_, uint32 nodes)
 	// Give it its real capacity.
 	// One redzone is added after the memory block.
 	_nodeCapacity = OFFSET_ALIGN(nodeCapacity_ + redzoneSize);
-	_nodes = nodes;
 
 	// Node offsets are aligned to the next uintptr offset after the real size.
 	// Another redzone is added between the node and the memory block.

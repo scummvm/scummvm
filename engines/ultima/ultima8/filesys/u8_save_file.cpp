@@ -31,9 +31,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveFile, NamedArchiveFile)
 
 
-U8SaveFile::U8SaveFile(IDataSource *ds_) {
-	_ds = ds_;
-	_count = 0;
+U8SaveFile::U8SaveFile(IDataSource *ds_) : _ds(ds_), _count(0) {
 	_valid = isU8SaveFile(_ds);
 
 	if (_valid)

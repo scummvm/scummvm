@@ -31,8 +31,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Archive)
 
 
-MusicFlex::MusicFlex(IDataSource *ds) : Archive(ds) {
-	_songs = nullptr;
+MusicFlex::MusicFlex(IDataSource *ds) : Archive(ds), _songs(nullptr) {
 	Std::memset(_info, 0, sizeof(SongInfo *) * 128);
 	loadSongInfo();
 }

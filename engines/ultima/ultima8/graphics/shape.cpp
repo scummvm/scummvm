@@ -62,14 +62,13 @@ Shape::Shape(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format,
 }
 
 Shape::Shape(IDataSource *src, const ConvertShapeFormat *format)
-	: _flexId(0), _shapeNum(0) {
+	: _flexId(0), _shapeNum(0), _palette(nullptr) {
 	// NB: U8 style!
 
 	this->_size = src->getSize();
 	uint8 *d = new uint8[this->_size];
 	this->_data = d;
 	src->read(d, this->_size);
-	this->_palette = nullptr;
 
 	if (!format)
 		format = DetectShapeFormat(_data, _size);

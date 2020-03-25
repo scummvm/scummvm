@@ -31,7 +31,7 @@ bool SonarcAudioSample::_generatedOneTable = false;
 int SonarcAudioSample::_oneTable[256];
 
 SonarcAudioSample::SonarcAudioSample(uint8 const *buffer, uint32 size) :
-	AudioSample(buffer, size), _srcOffset(0x20) {
+	AudioSample(buffer, size, 8, false), _srcOffset(0x20) {
 	if (!_generatedOneTable) GenerateOneTable();
 
 	_length = *_buffer;
@@ -41,8 +41,6 @@ SonarcAudioSample::SonarcAudioSample(uint8 const *buffer, uint32 size) :
 
 	_sampleRate  = *(_buffer + 4);
 	_sampleRate |= *(_buffer + 5) << 8;
-	_bits = 8;
-	_stereo = false;
 
 	// Get frame bytes... we need to compensate for 'large' files
 	uint32 frame_bytes = *(_buffer + _srcOffset);

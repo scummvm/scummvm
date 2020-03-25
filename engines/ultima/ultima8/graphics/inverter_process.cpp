@@ -55,8 +55,7 @@ InverterProcess::InverterProcess()
 }
 
 InverterProcess::InverterProcess(unsigned int target)
-	: Process() {
-	_targetState = target;
+	: Process(), _targetState(target) {
 }
 
 InverterProcess::~InverterProcess(void) {

@@ -69,8 +69,7 @@ private:
 	Common::WriteStream *_out;
 
 public:
-	OFileDataSource(Common::WriteStream *data_stream) {
-		_out = data_stream;
+	OFileDataSource(Common::WriteStream *data_stream) : _out(data_stream) {
 	}
 
 	~OFileDataSource() override {
@@ -146,10 +145,9 @@ protected:
 	uint8 *_bufPtr;
 	uint32 _size;
 public:
-	OBufferDataSource(void *data, uint32 len) {
+	OBufferDataSource(void *data, uint32 len) : _size(len) {
 		assert(data == 0 || len == 0);
 		_buf = _bufPtr = reinterpret_cast<uint8 *>(data);
-		_size = len;
 	};
 
 	void load(char *data, uint32 len) {
@@ -331,15 +329,11 @@ protected:
 	}
 
 public:
-	OAutoBufferDataSource(uint32 initial_len) {
-		_allocated = initial_len;
-		_size = 0;
-
+	OAutoBufferDataSource(uint32 initial_len) : _size(0), _loc(0), _allocated(initial_len) {
 		// Make the min allocated size 16 bytes
 		if (_allocated < 16)
 			_allocated = 16;
 		_buf = _bufPtr = new uint8[_allocated];
-		_loc = 0;
 	};
 
 	//! Get a pointer to the data buffer.

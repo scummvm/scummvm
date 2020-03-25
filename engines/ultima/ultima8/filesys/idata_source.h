@@ -120,8 +120,7 @@ private:
 	Common::SeekableReadStream *_in;
 
 public:
-	IFileDataSource(Common::SeekableReadStream *data_stream) {
-		_in = data_stream;
+	IFileDataSource(Common::SeekableReadStream *data_stream) : _in(data_stream) {
 	}
 
 	~IFileDataSource() override {
@@ -204,12 +203,10 @@ protected:
 
 public:
 	IBufferDataSource(const void *data, unsigned int len, bool is_text = false,
-	                  bool delete_data = false) {
+	                  bool delete_data = false) : _size(len), _freeBuffer(delete_data) {
 		assert(!is_text);
 		assert(data != nullptr || len == 0);
 		_buf = _bufPtr = static_cast<const uint8 *>(data);
-		_size = len;
-		_freeBuffer = delete_data;
 	}
 
 	virtual void load(const void *data, unsigned int len, bool is_text = false,

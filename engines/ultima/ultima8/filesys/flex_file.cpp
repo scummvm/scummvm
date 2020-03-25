@@ -31,9 +31,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(FlexFile, ArchiveFile)
 
 
 
-FlexFile::FlexFile(IDataSource *ds_) {
-	_ds = ds_;
-	_count = 0;
+FlexFile::FlexFile(IDataSource *ds_) : _ds(ds_), _count(0) {
 	_valid = isFlexFile(_ds);
 
 	if (_valid) {
