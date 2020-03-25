@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_WIDGET_H
 #define MUTATIONOFJB_WIDGET_H
 
-#include <common/scummsys.h>
-#include <common/rect.h>
+#include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Common {
 struct Event;
