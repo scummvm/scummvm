@@ -500,6 +500,13 @@ public:
 	}
 
 	/**
+	 * Returns true if a transparent color has been set
+	 */
+	bool hasTransparentColor() const {
+		return _transparentColorSet;
+	}
+
+	/**
 	 * Clear any existing palette
 	 */
 	void clearPalette() {
