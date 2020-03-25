@@ -102,7 +102,7 @@ public:
 	int _numChannels;
 	byte _channelData[kChannelDataSize];
 	uint8 _actionId;
-	uint8 _transDuration;
+	uint16 _transDuration;
 	uint8 _transArea; // 1 - Whole Stage, 0 - Changing Area
 	uint8 _transChunkSize;
 	TransitionType _transType;

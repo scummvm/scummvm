@@ -32,8 +32,7 @@
 namespace Director {
 
 void Frame::playTransition(Score *score) {
-	uint16 duration = _transDuration * 250; // _transDuration in 1/4 of sec
-	duration = (duration == 0 ? 250 : duration); // director supports transition duration = 0, but animation play like value = 1, idk.
+	uint16 duration = MAX<uint16>(250, _transDuration); // When duration is < 1/4s, make it 1/4
 
 	if (_transChunkSize == 0)
 		_transChunkSize = 1; // equal to 1 step

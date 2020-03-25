@@ -143,7 +143,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			_transArea = 1;
 		else
 			_transArea = 0;
-		_transDuration = transFlags & 0x7f;
+		_transDuration = (transFlags & 0x7f) * 250; // Duration is in 1/4 secs
 
 		_transChunkSize = stream->readByte();
 		_tempo = stream->readByte();
@@ -198,7 +198,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			_transArea = 1;
 		else
 			_transArea = 0;
-		_transDuration = transFlags & 0x7f;
+		_transDuration = (transFlags & 0x7f) * 250; // Duration is 1/4 secs
 
 		_transChunkSize = stream->readByte();
 		_tempo = stream->readByte();
@@ -260,6 +260,9 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		// Tempo
 		// Script
 	}
+
+	_transChunkSize = CLIP<byte>(_transChunkSize, 0, 128);
+	_transDuration = CLIP<uint16>(_transDuration, 0, 32000);  // restrict to 32 secs
 
 	for (int i = 0; i < _numChannels; i++) {
 		Sprite &sprite = *_sprites[i + 1];
@@ -386,7 +389,7 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 					_transArea = 1;
 				else
 					_transArea = 0;
-				_transDuration = transFlags & 0x7f;
+				_transDuration = (transFlags & 0x7f) * 250; // Duration is in 1/4 secs
 				offset++;
 			}
 			break;
