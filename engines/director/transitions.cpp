@@ -31,6 +31,117 @@
 
 namespace Director {
 
+enum TransitionAlgo {
+	kTransAlgoBlinds,
+	kTransAlgoBoxy,
+	kTransAlgoBuildStrips,
+	kTransAlgoCenterOut,
+	kTransAlgoCheckerBoard,
+	kTransAlgoCover,
+	kTransAlgoDissolve,
+	kTransAlgoEdgesIn,
+	kTransAlgoPush,
+	kTransAlgoRandomLines,
+	kTransAlgoReveal,
+	kTransAlgoWipe,
+	kTransAlgoZoom
+};
+
+enum TransitionDirection {
+	kTransDirBits,
+	kTransDirBitsFast,
+	kTransDirBottomBuildLeft,
+	kTransDirBottomBuildRight,
+	kTransDirEast,
+	kTransDirHorizontal,
+	kTransDirIn,
+	kTransDirLeftBuildDown,
+	kTransDirLeftBuildUp,
+	kTransDirNormal,
+	kTransDirNorth,
+	kTransDirNorthEast,
+	kTransDirNorthWest,
+	kTransDirOut,
+	kTransDirPattern,
+	kTransDirPixels,
+	kTransDirPixelsFast,
+	kTransDirRectangular,
+	kTransDirRightBuildDown,
+	kTransDirRightBuildUp,
+	kTransDirSouth,
+	kTransDirSouthEast,
+	kTransDirSouthWest,
+	kTransDirSquare,
+	kTransDirSymmetrical,
+	kTransDirTopBuildLeft,
+	kTransDirTopBuildRight,
+	kTransDirVertical,
+	kTransDirWest
+};
+
+#define TRANS(t,a,d) {t,#t,a,d}
+
+struct {
+	TransitionType type;
+	const char *name;
+	TransitionAlgo algo;
+	TransitionDirection dir;
+} static const transProps[] = {
+	TRANS(kTransNone, 					kTransAlgoWipe,		kTransDirEast),
+	TRANS(kTransWipeRight, 				kTransAlgoWipe,		kTransDirEast),
+	TRANS(kTransWipeLeft,				kTransAlgoWipe,		kTransDirWest),
+	TRANS(kTransWipeDown,				kTransAlgoWipe,		kTransDirSouth),
+	TRANS(kTransWipeUp,					kTransAlgoWipe,		kTransDirNorth),
+	TRANS(kTransCenterOutHorizontal, 	kTransAlgoCenterOut,kTransDirHorizontal),	// 5
+	TRANS(kTransEdgesInHorizontal, 		kTransAlgoEdgesIn,	kTransDirHorizontal),
+	TRANS(kTransCenterOutVertical,		kTransAlgoCenterOut,kTransDirVertical),
+	TRANS(kTransEdgesInVertical,		kTransAlgoEdgesIn,	kTransDirVertical),
+	TRANS(kTransCenterOutSquare,		kTransAlgoCenterOut,kTransDirSymmetrical),
+	TRANS(kTransEdgesInSquare,			kTransAlgoEdgesIn,	kTransDirSymmetrical),	// 10
+	TRANS(kTransPushLeft,				kTransAlgoPush,		kTransDirWest),
+	TRANS(kTransPushRight,				kTransAlgoPush,		kTransDirEast),
+	TRANS(kTransPushDown,				kTransAlgoPush,		kTransDirSouth),
+	TRANS(kTransPushUp,					kTransAlgoPush,		kTransDirNorth),
+	TRANS(kTransRevealUp,				kTransAlgoReveal,	kTransDirNorth),		// 15
+	TRANS(kTransRevealUpRight,			kTransAlgoReveal,	kTransDirNorthEast),
+	TRANS(kTransRevealRight,			kTransAlgoReveal,	kTransDirEast),
+	TRANS(kTransRevealDown,				kTransAlgoReveal,	kTransDirSouthEast),
+	TRANS(kTransRevealDownRight,		kTransAlgoReveal,	kTransDirSouth),
+	TRANS(kTransRevealDownLeft,			kTransAlgoReveal,	kTransDirSouthWest),	// 20
+	TRANS(kTransRevealLeft,				kTransAlgoReveal,	kTransDirWest),
+	TRANS(kTransRevealUpLeft,			kTransAlgoReveal,	kTransDirNorthWest),
+	TRANS(kTransDissolvePixelsFast,		kTransAlgoDissolve,	kTransDirPixelsFast),
+	TRANS(kTransDissolveBoxyRects,		kTransAlgoBoxy,		kTransDirRectangular),
+	TRANS(kTransDissolveBoxySquares,	kTransAlgoBoxy,		kTransDirSquare),		// 25
+	TRANS(kTransDissolvePatterns,		kTransAlgoDissolve,	kTransDirPattern),
+	TRANS(kTransRandomRows,				kTransAlgoRandomLines,kTransDirHorizontal),
+	TRANS(kTransRandomColumns,			kTransAlgoRandomLines,kTransDirVertical),
+	TRANS(kTransCoverDown,				kTransAlgoCover,	kTransDirSouth),
+	TRANS(kTransCoverDownLeft,			kTransAlgoCover,	kTransDirSouthWest),	// 30
+	TRANS(kTransCoverDownRight,			kTransAlgoCover,	kTransDirSouthEast),
+	TRANS(kTransCoverLeft,				kTransAlgoCover,	kTransDirWest),
+	TRANS(kTransCoverRight,				kTransAlgoCover,	kTransDirEast),
+	TRANS(kTransCoverUp,				kTransAlgoCover,	kTransDirNorth),
+	TRANS(kTransCoverUpLeft,			kTransAlgoCover,	kTransDirNorthWest),	// 35
+	TRANS(kTransCoverUpRight,			kTransAlgoCover,	kTransDirNorthEast),
+	TRANS(kTransTypeVenitianBlind,		kTransAlgoBlinds,	kTransDirHorizontal),
+	TRANS(kTransTypeCheckerboard,		kTransAlgoCheckerBoard, kTransDirNormal),
+	TRANS(kTransTypeStripsBottomBuildLeft, kTransAlgoBuildStrips, kTransDirBottomBuildLeft),
+	TRANS(kTransTypeStripsBottomBuildRight, kTransAlgoBuildStrips, kTransDirBottomBuildRight), // 40
+	TRANS(kTransTypeStripsLeftBuildDown, kTransAlgoBuildStrips, kTransDirLeftBuildDown),
+	TRANS(kTransTypeStripsLeftBuildUp, kTransAlgoBuildStrips, kTransDirLeftBuildUp),
+	TRANS(kTransTypeStripsRightBuildDown, kTransAlgoBuildStrips, kTransDirRightBuildDown),
+	TRANS(kTransTypeStripsRightBuildUp, kTransAlgoBuildStrips, kTransDirRightBuildUp),
+	TRANS(kTransTypeStripsTopBuildLeft,	kTransAlgoBuildStrips, kTransDirTopBuildLeft),// 45
+	TRANS(kTransTypeStripsTopBuildRight, kTransAlgoBuildStrips, kTransDirTopBuildRight),
+	TRANS(kTransZoomOpen,				kTransAlgoZoom,		kTransDirIn),
+	TRANS(kTransZoomClose,				kTransAlgoZoom,		kTransDirOut),
+	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirVertical),
+	TRANS(kTransDissolveBitsTrans,		kTransAlgoDissolve,	kTransDirBitsFast),		// 50
+	TRANS(kTransDissolvePixels,			kTransAlgoDissolve,	kTransDirPixels),
+	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirBits)
+};
+
 void Frame::playTransition(Score *score) {
 	uint16 duration = MAX<uint16>(250, _transDuration); // When duration is < 1/4s, make it 1/4
 
@@ -223,12 +334,12 @@ void Frame::playTransition(Score *score) {
 
 	case kTransDissolvePixels: // 51
 		{
-			warning("Frame::playTransition(): Unhandled transition type kTransDissolvePixels %d %d", duration, _transChunkSize);
+			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[_transType].name, duration, _transChunkSize);
 		}
 		break;
 
 	default:
-		warning("Frame::playTransition(): Unhandled transition type %d %d %d", _transType, duration, _transChunkSize);
+		warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[_transType].name, duration, _transChunkSize);
 		break;
 
 	}
