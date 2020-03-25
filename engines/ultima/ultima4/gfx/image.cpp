@@ -247,7 +247,7 @@ bool Image::setPaletteIndex(unsigned int index, RGBA color) {
 }
 
 bool Image::getTransparentIndex(unsigned int &index) const {
-	if (!_paletted)
+	if (!_paletted || !_surface->hasTransparentColor())
 		return false;
 
 	index = _surface->getTransparentColor();
