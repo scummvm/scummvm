@@ -136,7 +136,7 @@ void ImageMgr::init() {
 ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
 	ImageSet *set;
 
-	set = new ImageSet;
+	set = new ImageSet();
 	set->_name = conf.getString("name");
 	set->_location = conf.getString("location");
 	set->_extends = conf.getString("extends");
@@ -147,11 +147,8 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "image") {
 			ImageInfo *info = loadImageInfoFromConf(*i);
-			Std::map<Common::String, ImageInfo *>::iterator dup = set->_info.find(info->_name);
-			if (dup != set->_info.end()) {
-				delete dup->_value;
-				set->_info.erase(dup);
-			}
+			if (set->_info.contains(info->_name))
+				delete set->_info[info->_name];
 			set->_info[info->_name] = info;
 		}
 	}
@@ -577,6 +574,7 @@ U4FILE *ImageMgr::getImageFile(ImageInfo *info) {
 		if (!pathname.empty())
 			file = u4fopen_stdio(pathname);
 	} else {
+		filename = u4find_graphics(filename);
 		file = u4fopen(filename);
 	}
 	return file;

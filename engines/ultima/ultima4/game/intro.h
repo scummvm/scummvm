@@ -236,7 +236,7 @@ private:
 	Common::String _errorMessage;
 	int _answerInd;
 	int _questionRound;
-	int __questionTree[15];
+	int _questionTree[15];
 	int _beastie1Cycle;
 	int _beastie2Cycle;
 	int _beastieOffset;
