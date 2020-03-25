@@ -253,8 +253,8 @@ private:
 	uint8 _outputMute[16];
 	bool _updateOutputVol;
 
-	const uint32 _tickLength;
-	const uint32 _envDuration;
+	const uint32 _intRate;
+	const uint32 _extRate;
 	uint32 _timer;
 
 	uint16 _musicVolume;
@@ -277,10 +277,9 @@ private:
 
 TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutex) :
 	TownsPC98_FmSynth(mixer, kTypeTowns), _fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
-	_tickLength(0x08), _envDuration(0x30), _timer(0), _drv(driver), _drvOwner(owner), _externalMutex(externalMutex), _pcmSfxChanMask(0), _outputVolumeFlags(0),
+	_intRate(72), _extRate(384), _timer(0), _drv(driver), _drvOwner(owner), _externalMutex(externalMutex), _pcmSfxChanMask(0), _outputVolumeFlags(0),
 	_fmChanPlaying(0), _musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
 	_numReservedChannels(0), _numWaveTables(0), _updateOutputVol(false), _ready(false) {
-
 #define INTCB(x) &TownsAudioInterfaceInternal::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
 		// 0
@@ -540,9 +539,9 @@ void TownsAudioInterfaceInternal::nextTickEx(int32 *buffer, uint32 bufferSize) {
 		updateOutputVolumeInternal();
 
 	for (uint32 i = 0; i < bufferSize; i++) {
-		_timer += _tickLength;
-		while (_timer >= _envDuration) {
-			_timer -= _envDuration;
+		_timer += _intRate;
+		while (_timer >= _extRate) {
+			_timer -= _extRate;
 
 			for (int ii = 0; ii < 8; ii++)
 				_pcmChan[ii].updateOutput();
