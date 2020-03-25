@@ -1623,7 +1623,8 @@ void IntroController::getTitleSourceData() {
 			_titles[i]._srcImage = Image::create(
 				_titles[i]._rw * info->_prescale,
 				_titles[i]._rh * info->_prescale,
-			    info->_image->isIndexed(), Image::HARDWARE);
+			    info->_image->isIndexed() && _titles[i]._method != MAP,
+				Image::HARDWARE);
 			if (_titles[i]._srcImage->isIndexed())
 				_titles[i]._srcImage->setPaletteFromImage(info->_image);
 
