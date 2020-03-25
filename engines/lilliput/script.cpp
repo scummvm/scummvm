@@ -25,7 +25,6 @@
 #include "common/debug.h"
 
 #include "common/system.h"
-#include <climits>
 
 namespace Lilliput {
 
@@ -2464,7 +2463,7 @@ void LilliputScript::sendSignal(int16 var1, byte var2h, byte characterId, int16 
 	for (int i = 0; i < 10; i++) {
 		if (_vm->_signalArray[index + 1] == -1) {
 			_vm->_signalArray[index + 1] = var1;
-			_vm->_signalArray[index + 2] = (var2h << 8) + characterId; 
+			_vm->_signalArray[index + 2] = (var2h << 8) + characterId;
 			_vm->_signalArray[index + 0] = _vm->_signalTimer + var4;
 			return;
 		}
@@ -2916,7 +2915,7 @@ void LilliputScript::OC_spawnCharacterAtPos() {
 	byte *isoMapBuf = getMapPtr(pt);
 
 	if (isoMapBuf[1] != 0xFF) {
-		int minVal = INT_MAX;
+		int minVal = 0x7fffffff;
 		for (int var2 = 7; var2 >= 0; var2--) {
 			for (int var3 = 7; var3 >= 0; var3--) {
 				Common::Point(_viewportPos.x + var2, _viewportPos.y + var3);
