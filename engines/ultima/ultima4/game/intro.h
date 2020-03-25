@@ -230,7 +230,7 @@ private:
 	Menu _interfaceMenu;
 
 	// data loaded in from title.exe
-	IntroBinData *binData;
+	IntroBinData *_binData;
 
 	// additional introduction state data
 	Common::String _errorMessage;

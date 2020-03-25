@@ -184,7 +184,7 @@ IntroController::IntroController() :
 	_extendedMenuArea(2 * CHAR_WIDTH, 10 * CHAR_HEIGHT, 36, 13),
 	_questionArea(INTRO_TEXT_X * CHAR_WIDTH, INTRO_TEXT_Y * CHAR_HEIGHT, INTRO_TEXT_WIDTH, INTRO_TEXT_HEIGHT),
 	_mapArea(BORDER_WIDTH, (TILE_HEIGHT * 6) + BORDER_HEIGHT, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, "base"),
-	binData(NULL),
+	_binData(NULL),
 	_titles(),                   // element list
 	_title(_titles.begin()),      // element iterator
 	_transparentIndex(13),       // palette index for transparency
@@ -304,8 +304,8 @@ bool IntroController::init() {
 	_justInitiatedNewGame = false;
 
 	// sigData is referenced during Titles initialization
-	binData = new IntroBinData();
-	binData->load();
+	_binData = new IntroBinData();
+	_binData->load();
 
 	if (_bSkipTitles) {
 		// the init() method is called again from within the
@@ -355,8 +355,8 @@ bool IntroController::hasInitiatedNewGame() {
  * Frees up data not needed after introduction.
  */
 void IntroController::deleteIntro() {
-	delete binData;
-	binData = NULL;
+	delete _binData;
+	_binData = NULL;
 
 	delete [] _objectStateTable;
 	_objectStateTable = NULL;
@@ -365,8 +365,8 @@ void IntroController::deleteIntro() {
 }
 
 unsigned char *IntroController::getSigData() {
-	ASSERT(binData->_sigData != NULL, "intro sig data not loaded");
-	return binData->_sigData;
+	ASSERT(_binData->_sigData != NULL, "intro sig data not loaded");
+	return _binData->_sigData;
 }
 
 /**
@@ -457,7 +457,7 @@ void IntroController::drawMap() {
 		unsigned char dataNibble;
 
 		do {
-			commandNibble = binData->_scriptTable[_scrPos] >> 4;
+			commandNibble = _binData->_scriptTable[_scrPos] >> 4;
 
 			switch (commandNibble) {
 			/* 0-4 = set object position and tile frame */
@@ -474,18 +474,18 @@ void IntroController::drawMap() {
 				   y = y coordinate
 				   t = tile frame (3 most significant bits of second byte)
 				   ---------------------------------------------------------- */
-				dataNibble = binData->_scriptTable[_scrPos] & 0xf;
-				_objectStateTable[dataNibble].x = binData->_scriptTable[_scrPos + 1] & 0x1f;
+				dataNibble = _binData->_scriptTable[_scrPos] & 0xf;
+				_objectStateTable[dataNibble].x = _binData->_scriptTable[_scrPos + 1] & 0x1f;
 				_objectStateTable[dataNibble].y = commandNibble;
 
 				// See if the tile id needs to be recalculated
-				if ((binData->_scriptTable[_scrPos + 1] >> 5) >= binData->_baseTileTable[dataNibble]->getFrames()) {
-					int frame = (binData->_scriptTable[_scrPos + 1] >> 5) - binData->_baseTileTable[dataNibble]->getFrames();
-					_objectStateTable[dataNibble].tile = MapTile(binData->_baseTileTable[dataNibble]->getId() + 1);
+				if ((_binData->_scriptTable[_scrPos + 1] >> 5) >= _binData->_baseTileTable[dataNibble]->getFrames()) {
+					int frame = (_binData->_scriptTable[_scrPos + 1] >> 5) - _binData->_baseTileTable[dataNibble]->getFrames();
+					_objectStateTable[dataNibble].tile = MapTile(_binData->_baseTileTable[dataNibble]->getId() + 1);
 					_objectStateTable[dataNibble].tile._frame = frame;
 				} else {
-					_objectStateTable[dataNibble].tile = MapTile(binData->_baseTileTable[dataNibble]->getId());
-					_objectStateTable[dataNibble].tile._frame = (binData->_scriptTable[_scrPos + 1] >> 5);
+					_objectStateTable[dataNibble].tile = MapTile(_binData->_baseTileTable[dataNibble]->getId());
+					_objectStateTable[dataNibble].tile._frame = (_binData->_scriptTable[_scrPos + 1] >> 5);
 				}
 
 				_scrPos += 2;
@@ -496,7 +496,7 @@ void IntroController::drawMap() {
 				   Format: 7i
 				   i = table index
 				   --------------- */
-				dataNibble = binData->_scriptTable[_scrPos] & 0xf;
+				dataNibble = _binData->_scriptTable[_scrPos] & 0xf;
 				_objectStateTable[dataNibble].tile = 0;
 				_scrPos++;
 				break;
@@ -510,7 +510,7 @@ void IntroController::drawMap() {
 				drawMapAnimated();
 
 				/* set sleep cycles */
-				_sleepCycles = binData->_scriptTable[_scrPos] & 0xf;
+				_sleepCycles = _binData->_scriptTable[_scrPos] & 0xf;
 				_scrPos++;
 				break;
 			case 0xf:
@@ -537,7 +537,7 @@ void IntroController::drawMapStatic() {
 	// draw unmodified map
 	for (y = 0; y < INTRO_MAP_HEIGHT; y++)
 		for (x = 0; x < INTRO_MAP_WIDTH; x++)
-			_mapArea.drawTile(binData->_introMap[x + (y * INTRO_MAP_WIDTH)], false, x, y);
+			_mapArea.drawTile(_binData->_introMap[x + (y * INTRO_MAP_WIDTH)], false, x, y);
 }
 
 void IntroController::drawMapAnimated() {
@@ -548,7 +548,7 @@ void IntroController::drawMapAnimated() {
 		if (_objectStateTable[i].tile != 0) {
 			Std::vector<MapTile> tiles;
 			tiles.push_back(_objectStateTable[i].tile);
-			tiles.push_back(binData->_introMap[_objectStateTable[i].x + (_objectStateTable[i].y * INTRO_MAP_WIDTH)]);
+			tiles.push_back(_binData->_introMap[_objectStateTable[i].x + (_objectStateTable[i].y * INTRO_MAP_WIDTH)]);
 			_mapArea.drawTile(tiles, false, _objectStateTable[i].x, _objectStateTable[i].y);
 		}
 }
@@ -557,8 +557,8 @@ void IntroController::drawMapAnimated() {
  * Draws the animated beasts in the upper corners of the screen.
  */
 void IntroController::drawBeasties() {
-	drawBeastie(0, _beastieOffset, binData->_beastie1FrameTable[_beastie1Cycle]);
-	drawBeastie(1, _beastieOffset, binData->_beastie2FrameTable[_beastie2Cycle]);
+	drawBeastie(0, _beastieOffset, _binData->_beastie1FrameTable[_beastie1Cycle]);
+	drawBeastie(1, _beastieOffset, _binData->_beastie2FrameTable[_beastie2Cycle]);
 	if (_beastieOffset < 0)
 		_beastieOffset++;
 }
@@ -782,7 +782,7 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 	_justInitiatedNewGame = true;
 
 	// show the text thats segues into the main game
-	showText(binData->_introGypsy[GYP_SEGUE1]);
+	showText(_binData->_introGypsy[GYP_SEGUE1]);
 #ifdef IOS
 	U4IOS::switchU4IntroControllerToContinueButton();
 #endif
@@ -790,7 +790,7 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 	eventHandler->pushController(&pauseController);
 	pauseController.waitFor();
 
-	showText(binData->_introGypsy[GYP_SEGUE2]);
+	showText(_binData->_introGypsy[GYP_SEGUE2]);
 
 	eventHandler->pushController(&pauseController);
 	pauseController.waitFor();
@@ -831,7 +831,7 @@ void IntroController::showStory() {
 		else if (storyInd == 23)
 			_backgroundArea.draw(BKGD_ABACUS);
 
-		showText(binData->_introText[storyInd]);
+		showText(_binData->_introText[storyInd]);
 
 		eventHandler->pushController(&pauseController);
 		// enable the cursor here to avoid drawing in undesirable locations
@@ -861,11 +861,11 @@ void IntroController::startQuestions() {
 		drawCard(1, _questionTree[_questionRound * 2 + 1]);
 
 		_questionArea.clear();
-		_questionArea.textAt(0, 0, "%s", binData->_introGypsy[_questionRound == 0 ? GYP_PLACES_FIRST : (_questionRound == 6 ? GYP_PLACES_LAST : GYP_PLACES_TWOMORE)].c_str());
-		_questionArea.textAt(0, 1, "%s", binData->_introGypsy[GYP_UPON_TABLE].c_str());
+		_questionArea.textAt(0, 0, "%s", _binData->_introGypsy[_questionRound == 0 ? GYP_PLACES_FIRST : (_questionRound == 6 ? GYP_PLACES_LAST : GYP_PLACES_TWOMORE)].c_str());
+		_questionArea.textAt(0, 1, "%s", _binData->_introGypsy[GYP_UPON_TABLE].c_str());
 		_questionArea.textAt(0, 2, "%s and %s.  She says",
-		                     binData->_introGypsy[_questionTree[_questionRound * 2] + 4].c_str(),
-		                     binData->_introGypsy[_questionTree[_questionRound * 2 + 1] + 4].c_str());
+		                     _binData->_introGypsy[_questionTree[_questionRound * 2] + 4].c_str(),
+		                     _binData->_introGypsy[_questionTree[_questionRound * 2 + 1] + 4].c_str());
 		_questionArea.textAt(0, 3, "\"Consider this:\"");
 
 #ifdef IOS
@@ -912,7 +912,7 @@ Common::String IntroController::getQuestion(int v1, int v2) {
 
 	ASSERT((i + v2 - 1) < 28, "calculation failed");
 
-	return binData->_introQuestions[i + v2 - 1];
+	return _binData->_introQuestions[i + v2 - 1];
 }
 
 /**
@@ -1523,7 +1523,7 @@ void IntroController::preloadMap() {
 	// draw unmodified map
 	for (y = 0; y < INTRO_MAP_HEIGHT; y++)
 		for (x = 0; x < INTRO_MAP_WIDTH; x++)
-			_mapArea.loadTile(binData->_introMap[x + (y * INTRO_MAP_WIDTH)]);
+			_mapArea.loadTile(_binData->_introMap[x + (y * INTRO_MAP_WIDTH)]);
 
 	// draw animated objects
 	for (i = 0; i < IntroBinData::INTRO_BASETILE_TABLE_SIZE; i++) {

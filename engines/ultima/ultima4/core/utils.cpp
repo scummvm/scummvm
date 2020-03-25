@@ -33,13 +33,10 @@ void xu4_srandom() {
 }
 
 /**
- * Generate a random number between 0 and (upperRange - 1).  This
- * routine uses the upper bits of the random number provided by rand()
- * to compensate for older generators that have low entropy in the
- * lower bits (e.g. MacOS X).
+ * Generate a random number between 0 and (upperRange - 1)
  */
 int xu4_random(int upperRange) {
-	return g_ultima->getRandomNumber(0x7fffffff);
+	return g_ultima->getRandomNumber(upperRange - 1);
 }
 
 /**
