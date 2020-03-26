@@ -48,35 +48,10 @@ enum TransitionAlgo {
 };
 
 enum TransitionDirection {
-	kTransDirBits,
-	kTransDirBitsFast,
-	kTransDirBottomBuildLeft,
-	kTransDirBottomBuildRight,
-	kTransDirEast,
+	kTransDirNone,
 	kTransDirHorizontal,
-	kTransDirIn,
-	kTransDirLeftBuildDown,
-	kTransDirLeftBuildUp,
-	kTransDirNormal,
-	kTransDirNorth,
-	kTransDirNorthEast,
-	kTransDirNorthWest,
-	kTransDirOut,
-	kTransDirPattern,
-	kTransDirPixels,
-	kTransDirPixelsFast,
-	kTransDirRectangular,
-	kTransDirRightBuildDown,
-	kTransDirRightBuildUp,
-	kTransDirSouth,
-	kTransDirSouthEast,
-	kTransDirSouthWest,
-	kTransDirSquare,
-	kTransDirSymmetrical,
-	kTransDirTopBuildLeft,
-	kTransDirTopBuildRight,
 	kTransDirVertical,
-	kTransDirWest
+	kTransDirBoth
 };
 
 #define TRANS(t,a,d) {t,#t,a,d}
@@ -87,59 +62,59 @@ struct {
 	TransitionAlgo algo;
 	TransitionDirection dir;
 } static const transProps[] = {
-	TRANS(kTransNone, 					kTransAlgoWipe,		kTransDirEast),
-	TRANS(kTransWipeRight, 				kTransAlgoWipe,		kTransDirEast),
-	TRANS(kTransWipeLeft,				kTransAlgoWipe,		kTransDirWest),
-	TRANS(kTransWipeDown,				kTransAlgoWipe,		kTransDirSouth),
-	TRANS(kTransWipeUp,					kTransAlgoWipe,		kTransDirNorth),
+	TRANS(kTransNone, 					kTransAlgoWipe,		kTransDirNone),
+	TRANS(kTransWipeRight, 				kTransAlgoWipe,		kTransDirHorizontal),
+	TRANS(kTransWipeLeft,				kTransAlgoWipe,		kTransDirHorizontal),
+	TRANS(kTransWipeDown,				kTransAlgoWipe,		kTransDirVertical),
+	TRANS(kTransWipeUp,					kTransAlgoWipe,		kTransDirVertical),
 	TRANS(kTransCenterOutHorizontal, 	kTransAlgoCenterOut,kTransDirHorizontal),	// 5
 	TRANS(kTransEdgesInHorizontal, 		kTransAlgoEdgesIn,	kTransDirHorizontal),
 	TRANS(kTransCenterOutVertical,		kTransAlgoCenterOut,kTransDirVertical),
 	TRANS(kTransEdgesInVertical,		kTransAlgoEdgesIn,	kTransDirVertical),
-	TRANS(kTransCenterOutSquare,		kTransAlgoCenterOut,kTransDirSymmetrical),
-	TRANS(kTransEdgesInSquare,			kTransAlgoEdgesIn,	kTransDirSymmetrical),	// 10
-	TRANS(kTransPushLeft,				kTransAlgoPush,		kTransDirWest),
-	TRANS(kTransPushRight,				kTransAlgoPush,		kTransDirEast),
-	TRANS(kTransPushDown,				kTransAlgoPush,		kTransDirSouth),
-	TRANS(kTransPushUp,					kTransAlgoPush,		kTransDirNorth),
-	TRANS(kTransRevealUp,				kTransAlgoReveal,	kTransDirNorth),		// 15
-	TRANS(kTransRevealUpRight,			kTransAlgoReveal,	kTransDirNorthEast),
-	TRANS(kTransRevealRight,			kTransAlgoReveal,	kTransDirEast),
-	TRANS(kTransRevealDownRight,		kTransAlgoReveal,	kTransDirSouthEast),
-	TRANS(kTransRevealDown,				kTransAlgoReveal,	kTransDirSouth),
-	TRANS(kTransRevealDownLeft,			kTransAlgoReveal,	kTransDirSouthWest),	// 20
-	TRANS(kTransRevealLeft,				kTransAlgoReveal,	kTransDirWest),
-	TRANS(kTransRevealUpLeft,			kTransAlgoReveal,	kTransDirNorthWest),
-	TRANS(kTransDissolvePixelsFast,		kTransAlgoDissolve,	kTransDirPixelsFast),
-	TRANS(kTransDissolveBoxyRects,		kTransAlgoBoxy,		kTransDirRectangular),
-	TRANS(kTransDissolveBoxySquares,	kTransAlgoBoxy,		kTransDirSquare),		// 25
-	TRANS(kTransDissolvePatterns,		kTransAlgoDissolve,	kTransDirPattern),
+	TRANS(kTransCenterOutSquare,		kTransAlgoCenterOut,kTransDirBoth),
+	TRANS(kTransEdgesInSquare,			kTransAlgoEdgesIn,	kTransDirBoth),	// 10
+	TRANS(kTransPushLeft,				kTransAlgoPush,		kTransDirHorizontal),
+	TRANS(kTransPushRight,				kTransAlgoPush,		kTransDirHorizontal),
+	TRANS(kTransPushDown,				kTransAlgoPush,		kTransDirVertical),
+	TRANS(kTransPushUp,					kTransAlgoPush,		kTransDirVertical),
+	TRANS(kTransRevealUp,				kTransAlgoReveal,	kTransDirVertical),		// 15
+	TRANS(kTransRevealUpRight,			kTransAlgoReveal,	kTransDirBoth),
+	TRANS(kTransRevealRight,			kTransAlgoReveal,	kTransDirHorizontal),
+	TRANS(kTransRevealDownRight,		kTransAlgoReveal,	kTransDirBoth),
+	TRANS(kTransRevealDown,				kTransAlgoReveal,	kTransDirVertical),
+	TRANS(kTransRevealDownLeft,			kTransAlgoReveal,	kTransDirBoth),	// 20
+	TRANS(kTransRevealLeft,				kTransAlgoReveal,	kTransDirHorizontal),
+	TRANS(kTransRevealUpLeft,			kTransAlgoReveal,	kTransDirBoth),
+	TRANS(kTransDissolvePixelsFast,		kTransAlgoDissolve,	kTransDirNone),
+	TRANS(kTransDissolveBoxyRects,		kTransAlgoBoxy,		kTransDirBoth),
+	TRANS(kTransDissolveBoxySquares,	kTransAlgoBoxy,		kTransDirBoth),		// 25
+	TRANS(kTransDissolvePatterns,		kTransAlgoDissolve,	kTransDirNone),
 	TRANS(kTransRandomRows,				kTransAlgoRandomLines,kTransDirHorizontal),
 	TRANS(kTransRandomColumns,			kTransAlgoRandomLines,kTransDirVertical),
-	TRANS(kTransCoverDown,				kTransAlgoCover,	kTransDirSouth),
-	TRANS(kTransCoverDownLeft,			kTransAlgoCover,	kTransDirSouthWest),	// 30
-	TRANS(kTransCoverDownRight,			kTransAlgoCover,	kTransDirSouthEast),
-	TRANS(kTransCoverLeft,				kTransAlgoCover,	kTransDirWest),
-	TRANS(kTransCoverRight,				kTransAlgoCover,	kTransDirEast),
-	TRANS(kTransCoverUp,				kTransAlgoCover,	kTransDirNorth),
-	TRANS(kTransCoverUpLeft,			kTransAlgoCover,	kTransDirNorthWest),	// 35
-	TRANS(kTransCoverUpRight,			kTransAlgoCover,	kTransDirNorthEast),
+	TRANS(kTransCoverDown,				kTransAlgoCover,	kTransDirVertical),
+	TRANS(kTransCoverDownLeft,			kTransAlgoCover,	kTransDirBoth),	// 30
+	TRANS(kTransCoverDownRight,			kTransAlgoCover,	kTransDirBoth),
+	TRANS(kTransCoverLeft,				kTransAlgoCover,	kTransDirHorizontal),
+	TRANS(kTransCoverRight,				kTransAlgoCover,	kTransDirHorizontal),
+	TRANS(kTransCoverUp,				kTransAlgoCover,	kTransDirVertical),
+	TRANS(kTransCoverUpLeft,			kTransAlgoCover,	kTransDirBoth),	// 35
+	TRANS(kTransCoverUpRight,			kTransAlgoCover,	kTransDirBoth),
 	TRANS(kTransTypeVenitianBlind,		kTransAlgoBlinds,	kTransDirHorizontal),
-	TRANS(kTransTypeCheckerboard,		kTransAlgoCheckerBoard, kTransDirNormal),
-	TRANS(kTransTypeStripsBottomBuildLeft, kTransAlgoBuildStrips, kTransDirBottomBuildLeft),
-	TRANS(kTransTypeStripsBottomBuildRight, kTransAlgoBuildStrips, kTransDirBottomBuildRight), // 40
-	TRANS(kTransTypeStripsLeftBuildDown, kTransAlgoBuildStrips, kTransDirLeftBuildDown),
-	TRANS(kTransTypeStripsLeftBuildUp, kTransAlgoBuildStrips, kTransDirLeftBuildUp),
-	TRANS(kTransTypeStripsRightBuildDown, kTransAlgoBuildStrips, kTransDirRightBuildDown),
-	TRANS(kTransTypeStripsRightBuildUp, kTransAlgoBuildStrips, kTransDirRightBuildUp),
-	TRANS(kTransTypeStripsTopBuildLeft,	kTransAlgoBuildStrips, kTransDirTopBuildLeft),// 45
-	TRANS(kTransTypeStripsTopBuildRight, kTransAlgoBuildStrips, kTransDirTopBuildRight),
-	TRANS(kTransZoomOpen,				kTransAlgoZoom,		kTransDirIn),
-	TRANS(kTransZoomClose,				kTransAlgoZoom,		kTransDirOut),
-	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirVertical),
-	TRANS(kTransDissolveBitsFast,		kTransAlgoDissolve,	kTransDirBitsFast),		// 50
-	TRANS(kTransDissolvePixels,			kTransAlgoDissolve,	kTransDirPixels),
-	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirBits)
+	TRANS(kTransTypeCheckerboard,		kTransAlgoCheckerBoard, kTransDirBoth),
+	TRANS(kTransTypeStripsBottomBuildLeft, kTransAlgoBuildStrips, kTransDirBoth),
+	TRANS(kTransTypeStripsBottomBuildRight, kTransAlgoBuildStrips, kTransDirBoth), // 40
+	TRANS(kTransTypeStripsLeftBuildDown, kTransAlgoBuildStrips, kTransDirBoth),
+	TRANS(kTransTypeStripsLeftBuildUp, kTransAlgoBuildStrips, kTransDirBoth),
+	TRANS(kTransTypeStripsRightBuildDown, kTransAlgoBuildStrips, kTransDirBoth),
+	TRANS(kTransTypeStripsRightBuildUp, kTransAlgoBuildStrips, kTransDirBoth),
+	TRANS(kTransTypeStripsTopBuildLeft,	kTransAlgoBuildStrips, kTransDirBoth),// 45
+	TRANS(kTransTypeStripsTopBuildRight, kTransAlgoBuildStrips, kTransDirBoth),
+	TRANS(kTransZoomOpen,				kTransAlgoZoom,		kTransDirBoth),
+	TRANS(kTransZoomClose,				kTransAlgoZoom,		kTransDirBoth),
+	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirBoth),
+	TRANS(kTransDissolveBitsFast,		kTransAlgoDissolve,	kTransDirNone),		// 50
+	TRANS(kTransDissolvePixels,			kTransAlgoDissolve,	kTransDirNone),
+	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirNone)
 };
 
 struct TransParams {
@@ -224,10 +199,8 @@ void Frame::playTransition(Score *score) {
 
 	case kTransCoverDown:	// 29
 		{
-			uint16 stepSize = clipRect.height() / t.steps;
-
 			for (uint16 i = 1; i < t.steps; i++) {
-				r.setHeight(stepSize * i);
+				r.setHeight(t.yStepSize * i);
 				r.clip(clipRect);
 
 				g_system->delayMillis(t.stepDuration);
@@ -241,12 +214,10 @@ void Frame::playTransition(Score *score) {
 
 	case kTransCoverDownLeft: // 30
 		{
-			uint16 stepSize = clipRect.width() / t.steps;
-
 			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(stepSize * i);
-				r.setHeight(stepSize * i);
-				r.moveTo(clipRect.width() - stepSize * i, 0);
+				r.setWidth(t.xStepSize * i);
+				r.setHeight(t.yStepSize * i);
+				r.moveTo(clipRect.width() - t.xStepSize * i, 0);
 				r.clip(clipRect);
 
 				g_system->delayMillis(t.stepDuration);
@@ -260,11 +231,9 @@ void Frame::playTransition(Score *score) {
 
 	case kTransCoverDownRight: // 31
 		{
-			uint16 stepSize = clipRect.width() / t.steps;
-
 			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(stepSize * i);
-				r.setHeight(stepSize * i);
+				r.setWidth(t.xStepSize * i);
+				r.setHeight(t.yStepSize * i);
 				r.clip(clipRect);
 
 				g_system->delayMillis(t.stepDuration);
@@ -278,11 +247,9 @@ void Frame::playTransition(Score *score) {
 
 	case kTransCoverLeft:	// 32
 		{
-			uint16 stepSize = clipRect.width() / t.steps;
-
 			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(stepSize * i);
-				r.moveTo(clipRect.width() - stepSize * i, 0);
+				r.setWidth(t.xStepSize * i);
+				r.moveTo(clipRect.width() - t.xStepSize * i, 0);
 				r.clip(clipRect);
 
 				g_system->delayMillis(t.stepDuration);
@@ -296,10 +263,8 @@ void Frame::playTransition(Score *score) {
 
 	case kTransCoverRight:	// 33
 		{
-			uint16 stepSize = clipRect.width() / t.steps;
-
 			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(stepSize * i);
+				r.setWidth(t.xStepSize * i);
 				r.clip(clipRect);
 
 				g_system->delayMillis(t.stepDuration);
@@ -313,11 +278,9 @@ void Frame::playTransition(Score *score) {
 
 	case kTransCoverUp:		// 34
 		{
-			uint16 stepSize = clipRect.height() / t.steps;
-
 			for (uint16 i = 1; i < t.steps; i++) {
-				r.setHeight(stepSize * i);
-				r.moveTo(0, clipRect.height() - stepSize * i);
+				r.setHeight(t.yStepSize * i);
+				r.moveTo(0, clipRect.height() - t.yStepSize * i);
 				r.clip(clipRect);
 
 				g_system->delayMillis(t.stepDuration);
@@ -331,13 +294,10 @@ void Frame::playTransition(Score *score) {
 
 	case kTransCoverUpLeft:	// 35
 		{
-			uint16 xStepSize = clipRect.width() / t.steps;
-			uint16 yStepSize = clipRect.height() / t.steps;
-
 			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(xStepSize * i);
-				r.setHeight(yStepSize * i);
-				r.moveTo(clipRect.width() - xStepSize * i, clipRect.height() - yStepSize * i);
+				r.setWidth(t.xStepSize * i);
+				r.setHeight(t.yStepSize * i);
+				r.moveTo(clipRect.width() - t.xStepSize * i, clipRect.height() - t.yStepSize * i);
 				r.clip(clipRect);
 
 				g_system->delayMillis(t.stepDuration);
@@ -351,13 +311,10 @@ void Frame::playTransition(Score *score) {
 
 	case kTransCoverUpRight:	// 36
 		{
-			uint16 xStepSize = clipRect.width() / t.steps;
-			uint16 yStepSize = clipRect.height() / t.steps;
-
 			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(xStepSize * i);
-				r.setHeight(yStepSize * i);
-				r.moveTo(0, clipRect.height() - yStepSize * i);
+				r.setWidth(t.xStepSize * i);
+				r.setHeight(t.yStepSize * i);
+				r.moveTo(0, clipRect.height() - t.yStepSize * i);
 				r.clip(clipRect);
 
 				g_system->delayMillis(t.stepDuration);
@@ -383,23 +340,28 @@ void Frame::playTransition(Score *score) {
 }
 
 static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect) {
-	if (transProps[t.type].dir == kTransDirHorizontal) {
-		int w = clipRect.width() / 2;
+	int w = clipRect.width();
+	int h = clipRect.height();
+	int m = MIN(w, h);
+	TransitionDirection d = transProps[t.type].dir;
+	TransitionAlgo a = transProps[t.type].algo;
 
-		t.steps = w / t.chunkSize;
-		t.xStepSize = w / t.steps;
-		t.xpos = w % t.steps;
-	} else if (transProps[t.type].dir == kTransDirVertical) {
-		int h = clipRect.height() / 2;
-
-		t.steps = h / t.chunkSize;
-		t.yStepSize = h / t.steps;
-		t.ypos = h % t.steps;
-	} else {
-		t.steps = clipRect.width() / t.chunkSize;
+	if (a == kTransAlgoCenterOut || a == kTransAlgoEdgesIn) {
+		w = (w + 1) >> 1;	// round up
+		h = (h + 1) >> 1;
 	}
 
+	t.steps = m / t.chunkSize;
 	t.stepDuration = t.duration / t.steps;
+
+	if (d == kTransDirHorizontal || d == kTransDirBoth) {
+		t.xStepSize = w / t.steps;
+		t.xpos = w % t.steps;
+	}
+	if (d == kTransDirVertical || d == kTransDirBoth) {
+		t.yStepSize = h / t.steps;
+		t.ypos = h % t.steps;
+	}
 }
 
 
