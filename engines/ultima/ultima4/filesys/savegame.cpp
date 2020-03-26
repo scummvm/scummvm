@@ -28,154 +28,59 @@
 namespace Ultima {
 namespace Ultima4 {
 
-int SaveGame::write(Common::WriteStream *f) const {
+void SaveGame::synchronize(Common::Serializer &s) {
 	int i;
 
-	if (!writeInt(_unknown1, f) ||
-	        !writeInt(_moves, f))
-		return 0;
+	s.syncAsUint32LE(_unknown1);
+	s.syncAsUint32LE(_moves);
 
-	for (i = 0; i < 8; i++) {
-		if (!_players[i].write(f))
-			return 0;
-	}
+	for (i = 0; i < 8; ++i)
+		_players[i].synchronize(s);
 
-	if (!writeInt(_food, f) ||
-	        !writeShort(_gold, f))
-		return 0;
+	s.syncAsUint32LE(_food);
+	s.syncAsUint16LE(_gold);
 
-	for (i = 0; i < 8; i++) {
-		if (!writeShort(_karma[i], f))
-			return 0;
-	}
+	for (i = 0; i < 8; ++i)
+		s.syncAsUint16LE(_karma[i]);
 
-	if (!writeShort(_torches, f) ||
-	        !writeShort(_gems, f) ||
-	        !writeShort(_keys, f) ||
-	        !writeShort(_sextants, f))
-		return 0;
+	s.syncAsUint16LE(_torches);
+	s.syncAsUint16LE(_gems);
+	s.syncAsUint16LE(_keys);
+	s.syncAsUint16LE(_sextants);
 
-	for (i = 0; i < ARMR_MAX; i++) {
-		if (!writeShort(_armor[i], f))
-			return 0;
-	}
+	for (i = 0; i < ARMR_MAX; ++i)
+		s.syncAsUint16LE(_armor[i]);
 
-	for (i = 0; i < WEAP_MAX; i++) {
-		if (!writeShort(_weapons[i], f))
-			return 0;
-	}
+	for (i = 0; i < WEAP_MAX; ++i)
+		s.syncAsUint16LE(_weapons[i]);
 
-	for (i = 0; i < REAG_MAX; i++) {
-		if (!writeShort(_reagents[i], f))
-			return 0;
-	}
+	for (i = 0; i < REAG_MAX; ++i)
+		s.syncAsUint16LE(_reagents[i]);
 
-	for (i = 0; i < SPELL_MAX; i++) {
-		if (!writeShort(_mixtures[i], f))
-			return 0;
-	}
+	for (i = 0; i < SPELL_MAX; ++i)
+		s.syncAsUint16LE(_mixtures[i]);
 
-	if (!writeShort(_items, f) ||
-	        !writeChar(_x, f) ||
-	        !writeChar(_y, f) ||
-	        !writeChar(_stones, f) ||
-	        !writeChar(_runes, f) ||
-	        !writeShort(_members, f) ||
-	        !writeShort(_transport, f) ||
-	        !writeShort(_balloonState, f) ||
-	        !writeShort(_trammelPhase, f) ||
-	        !writeShort(_feluccaPhase, f) ||
-	        !writeShort(_shipHull, f) ||
-	        !writeShort(_lbIntro, f) ||
-	        !writeShort(_lastCamp, f) ||
-	        !writeShort(_lastReagent, f) ||
-	        !writeShort(_lastMeditation, f) ||
-	        !writeShort(_lastVirtue, f) ||
-	        !writeChar(_dngX, f) ||
-	        !writeChar(_dngY, f) ||
-	        !writeShort(_orientation, f) ||
-	        !writeShort(_dngLevel, f) ||
-	        !writeShort(_location, f))
-		return 0;
-
-	return 1;
-}
-
-int SaveGame::read(Common::ReadStream *f) {
-	int i;
-
-	if (!readInt(&_unknown1, f) ||
-	        !readInt(&_moves, f))
-		return 0;
-
-	for (i = 0; i < 8; i++) {
-		if (!_players[i].read(f))
-			return 0;
-	}
-
-	if (!readInt((unsigned int *)&_food, f) ||
-	        !readShort((unsigned short *)&_gold, f))
-		return 0;
-
-	for (i = 0; i < 8; i++) {
-		if (!readShort((unsigned short *) & (_karma[i]), f))
-			return 0;
-	}
-
-	if (!readShort((unsigned short *)&_torches, f) ||
-	        !readShort((unsigned short *)&_gems, f) ||
-	        !readShort((unsigned short *)&_keys, f) ||
-	        !readShort((unsigned short *)&_sextants, f))
-		return 0;
-
-	for (i = 0; i < ARMR_MAX; i++) {
-		if (!readShort((unsigned short *) & (_armor[i]), f))
-			return 0;
-	}
-
-	for (i = 0; i < WEAP_MAX; i++) {
-		if (!readShort((unsigned short *) & (_weapons[i]), f))
-			return 0;
-	}
-
-	for (i = 0; i < REAG_MAX; i++) {
-		if (!readShort((unsigned short *) & (_reagents[i]), f))
-			return 0;
-	}
-
-	for (i = 0; i < SPELL_MAX; i++) {
-		if (!readShort((unsigned short *) & (_mixtures[i]), f))
-			return 0;
-	}
-
-	if (!readShort(&_items, f) ||
-	        !readChar(&_x, f) ||
-	        !readChar(&_y, f) ||
-	        !readChar(&_stones, f) ||
-	        !readChar(&_runes, f) ||
-	        !readShort(&_members, f) ||
-	        !readShort(&_transport, f) ||
-	        !readShort(&_balloonState, f) ||
-	        !readShort(&_trammelPhase, f) ||
-	        !readShort(&_feluccaPhase, f) ||
-	        !readShort(&_shipHull, f) ||
-	        !readShort(&_lbIntro, f) ||
-	        !readShort(&_lastCamp, f) ||
-	        !readShort(&_lastReagent, f) ||
-	        !readShort(&_lastMeditation, f) ||
-	        !readShort(&_lastVirtue, f) ||
-	        !readChar(&_dngX, f) ||
-	        !readChar(&_dngY, f) ||
-	        !readShort(&_orientation, f) ||
-	        !readShort(&_dngLevel, f) ||
-	        !readShort(&_location, f))
-		return 0;
-
-	/* workaround of U4DOS bug to retain savegame compatibility */
-	if (_location == 0 && _dngLevel == 0)
-		_dngLevel = 0xFFFF;
-
-	return 1;
+	s.syncAsUint16LE(_items);
+	s.syncAsByte(_x);
+	s.syncAsByte(_y);
+	s.syncAsByte(_stones);
+	s.syncAsByte(_runes);
+	s.syncAsUint16LE(_members);
+	s.syncAsUint16LE(_transport);
+	s.syncAsUint16LE(_balloonState);
+	s.syncAsUint16LE(_trammelPhase);
+	s.syncAsUint16LE(_feluccaPhase);
+	s.syncAsUint16LE(_shipHull);
+	s.syncAsUint16LE(_lbIntro);
+	s.syncAsUint16LE(_lastCamp);
+	s.syncAsUint16LE(_lastReagent);
+	s.syncAsUint16LE(_lastMeditation);
+	s.syncAsUint16LE(_lastVirtue);
+	s.syncAsByte(_dngX);
+	s.syncAsByte(_dngY);
+	s.syncAsUint16LE(_orientation);
+	s.syncAsUint16LE(_dngLevel);
+	s.syncAsUint16LE(_location);
 }
 
 void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
@@ -185,13 +90,13 @@ void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
 	_moves = 0;
 
 	_players[0] = *avatarInfo;
-	for (i = 1; i < 8; i++)
+	for (i = 1; i < 8; ++i)
 		_players[i].init();
 
 	_food = 0;
 	_gold = 0;
 
-	for (i = 0; i < 8; i++)
+	for (i = 0; i < 8; ++i)
 		_karma[i] = 20;
 
 	_torches = 0;
@@ -199,16 +104,16 @@ void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
 	_keys = 0;
 	_sextants = 0;
 
-	for (i = 0; i < ARMR_MAX; i++)
+	for (i = 0; i < ARMR_MAX; ++i)
 		_armor[i] = 0;
 
-	for (i = 0; i < WEAP_MAX; i++)
+	for (i = 0; i < WEAP_MAX; ++i)
 		_weapons[i] = 0;
 
-	for (i = 0; i < REAG_MAX; i++)
+	for (i = 0; i < REAG_MAX; ++i)
 		_reagents[i] = 0;
 
-	for (i = 0; i < SPELL_MAX; i++)
+	for (i = 0; i < SPELL_MAX; ++i)
 		_mixtures[i] = 0;
 
 	_items = 0;
@@ -234,72 +139,21 @@ void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
 	_location = 0;
 }
 
-int SaveGamePlayerRecord::write(Common::WriteStream *f) const {
-	int i;
-
-	if (!writeShort(_hp, f) ||
-	        !writeShort(_hpMax, f) ||
-	        !writeShort(_xp, f) ||
-	        !writeShort(_str, f) ||
-	        !writeShort(_dex, f) ||
-	        !writeShort(_intel, f) ||
-	        !writeShort(_mp, f) ||
-	        !writeShort(_unknown, f) ||
-	        !writeShort((unsigned short)_weapon, f) ||
-	        !writeShort((unsigned short)armor, f))
-		return 0;
-
-	for (i = 0; i < 16; i++) {
-		if (!writeChar(name[i], f))
-			return 0;
-	}
-
-	if (!writeChar((unsigned char)_sex, f) ||
-	        !writeChar((unsigned char)_class, f) ||
-	        !writeChar((unsigned char)_status, f))
-		return 0;
-
-	return 1;
-}
-
-int SaveGamePlayerRecord::read(Common::ReadStream *f) {
-	int i;
-	unsigned char ch;
-	unsigned short s;
-
-	if (!readShort(&_hp, f) ||
-	        !readShort(&_hpMax, f) ||
-	        !readShort(&_xp, f) ||
-	        !readShort(&_str, f) ||
-	        !readShort(&_dex, f) ||
-	        !readShort(&_intel, f) ||
-	        !readShort(&_mp, f) ||
-	        !readShort(&_unknown, f))
-		return 0;
-
-	if (!readShort(&s, f))
-		return 0;
-	_weapon = (WeaponType) s;
-	if (!readShort(&s, f))
-		return 0;
-	armor = (ArmorType) s;
-
-	for (i = 0; i < 16; i++) {
-		if (!readChar((unsigned char *) & (name[i]), f))
-			return 0;
-	}
-
-	if (!readChar(&ch, f))
-		return 0;
-	_sex = (SexType) ch;
-	if (!readChar(&ch, f))
-		return 0;
-	_class = (ClassType) ch;
-	if (!readChar(&ch, f))
-		return 0;
-	_status = (StatusType) ch;
-
-	return 1;
+void SaveGamePlayerRecord::synchronize(Common::Serializer &s) {
+	s.syncAsUint16LE(_hp);
+	s.syncAsUint16LE(_hpMax);
+	s.syncAsUint16LE(_xp);
+	s.syncAsUint16LE(_str);
+	s.syncAsUint16LE(_dex);
+	s.syncAsUint16LE(_intel);
+	s.syncAsUint16LE(_mp);
+	s.syncAsUint16LE(_unknown);
+	s.syncAsUint16LE(_weapon);
+	s.syncAsUint16LE(armor);
+	s.syncBytes((byte *)name, 16);
+	s.syncAsByte(_sex);
+	s.syncAsByte(_class);
+	s.syncAsByte(_status);
 }
 
 void SaveGamePlayerRecord::init() {
@@ -316,7 +170,7 @@ void SaveGamePlayerRecord::init() {
 	_weapon = WEAP_HANDS;
 	armor = ARMR_NONE;
 
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < 16; ++i)
 		name[i] = '\0';
 
 	_sex = SEX_MALE;
@@ -336,21 +190,21 @@ void SaveGameMonsterRecord::synchronize(SaveGameMonsterRecord *monsterTable, Com
 		return;
 	}
 
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+	for (i = 0; i < MONSTERTABLE_SIZE; ++i)
 		s.syncAsByte(monsterTable[i]._tile);
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+	for (i = 0; i < MONSTERTABLE_SIZE; ++i)
 		s.syncAsByte(monsterTable[i]._x);
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+	for (i = 0; i < MONSTERTABLE_SIZE; ++i)
 		s.syncAsByte(monsterTable[i]._y);
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+	for (i = 0; i < MONSTERTABLE_SIZE; ++i)
 		s.syncAsByte(monsterTable[i]._prevTile);
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+	for (i = 0; i < MONSTERTABLE_SIZE; ++i)
 		s.syncAsByte(monsterTable[i]._prevX);
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+	for (i = 0; i < MONSTERTABLE_SIZE; ++i)
 		s.syncAsByte(monsterTable[i]._prevY);
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+	for (i = 0; i < MONSTERTABLE_SIZE; ++i)
 		s.syncAsByte(monsterTable[i]._unused1);
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+	for (i = 0; i < MONSTERTABLE_SIZE; ++i)
 		s.syncAsByte(monsterTable[i]._unused2);
 }
 

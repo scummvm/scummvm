@@ -188,8 +188,7 @@ enum Rune {
  * The Ultima IV savegame player record data.
  */
 struct SaveGamePlayerRecord {
-	int write(Common::WriteStream *f) const;
-	int read(Common::ReadStream *f);
+	void synchronize(Common::Serializer &s);
 	void init();
 
 	unsigned short _hp;
@@ -226,8 +225,7 @@ struct SaveGameMonsterRecord {
  * Represents the on-disk contents of PARTY.SAV.
  */
 struct SaveGame {
-	int write(Common::WriteStream *f) const;
-	int read(Common::ReadStream *f);
+	void synchronize(Common::Serializer &s);
 	void init(const SaveGamePlayerRecord *avatarInfo);
 
 	unsigned int _unknown1;
