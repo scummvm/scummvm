@@ -25,6 +25,7 @@
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/intro.h"
 #include "ultima/ultima4/sound/music.h"
@@ -49,6 +50,9 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 	Shared::UltimaEngine(syst, gameDesc), _config(nullptr), _game(nullptr),
 	_imageLoaders(nullptr), _screen(nullptr) {
 	g_ultima = this;
+	g_context = nullptr;
+	g_game = nullptr;
+	g_screen = nullptr;
 }
 
 Ultima4Engine::~Ultima4Engine() {
@@ -140,6 +144,23 @@ bool Ultima4Engine::isDataRequired(Common::String &folder, int &majorVersion, in
 	majorVersion = 1;
 	minorVersion = 0;
 	return true;
+}
+
+bool Ultima4Engine::canSaveGameStateCurrently(bool isAutosave) {
+	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game;
+}
+
+Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) {
+	Common::Serializer ser(stream, nullptr);
+	g_context->_saveGame->synchronize(ser);
+
+	return Common::kNoError;
+}
+
+Common::Error Ultima4Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	Common::Serializer ser(nullptr, stream);
+	g_context->_saveGame->synchronize(ser);
+	return Common::kNoError;
 }
 
 } // End of namespace Ultima4
