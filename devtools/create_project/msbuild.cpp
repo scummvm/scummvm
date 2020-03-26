@@ -367,6 +367,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t\t<CompileAs>Default</CompileAs>\n"
 	              "\t\t\t<MultiProcessorCompilation>true</MultiProcessorCompilation>\n"
 	              "\t\t\t<ConformanceMode>true</ConformanceMode>\n"
+	              "\t\t\t<AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>\n"
 	              "\t\t</ClCompile>\n"
 	              "\t\t<Link>\n"
 	              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
