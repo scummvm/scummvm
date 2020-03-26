@@ -43,10 +43,12 @@ public:
 	~EoBEngine() override;
 
 private:
-	// Init / Release
+	// Init
 	Common::Error init() override;
 	void initStaticResource();
 	void initSpells() override;
+	void loadItemsAndDecorationsShapes() override;
+	Common::SeekableReadStreamEndian *getItemDefinitionFile(int index) override;
 
 	// Main Menu
 	int mainMenu() override;
@@ -74,10 +76,6 @@ private:
 	static const RenderModePalFile _renderModePalFiles[3];
 	static const TitleScreenConfig _titleConfig[5];
 	const TitleScreenConfig *_ttlCfg;
-
-	// Init
-	void loadItemsAndDecorationsShapes() override;
-	Common::SeekableReadStreamEndian *getItemDefinitionFile(int index) override;
 
 	// Main loop
 	void startupNew() override;

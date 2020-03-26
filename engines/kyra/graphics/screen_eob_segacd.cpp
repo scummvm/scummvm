@@ -289,13 +289,13 @@ void Screen_EoB::sega_drawClippedLine(uint8 *dst, int pW, int pH, int x, int y, 
 	}
 }
 
-uint8 *Screen_EoB::sega_convertShape(const uint8 *src, int w, int h, int pal) {
+uint8 *Screen_EoB::sega_convertShape(const uint8 *src, int w, int h, int pal, int hOffs) {
 	uint8 *shp = new uint8[(w >> 1) * h + 20];
 	uint8 *dst = shp;
 	*dst++ = 2;
 	*dst++ = h;
 	*dst++ = w >> 3;
-	*dst++ = h;
+	*dst++ = h + hOffs;
 	*dst++ = 0;
 
 	for (int i = 1; i < 16; i++)

@@ -137,19 +137,42 @@ Common::Error EoBEngine::init() {
 	_screen->sega_encodeShapesFromSprites(shapeBuffer, in, numShapes, width, height, 3); \
 	delete[] in
 
+#define loadAndEncodeShapes(resID, resOffset, shapeBuffer, numShapes, width, height, size) \
+	shapeBuffer = new const uint8 *[numShapes]; \
+	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
+	in = _sres->resData(resID); \
+	for (int ii = 0; ii < numShapes; ++ii) \
+		shapeBuffer[ii] = _screen->sega_convertShape(in + resOffset + ii * size, width, height, 3); \
+	delete[] in
+
 void EoBEngine::loadItemsAndDecorationsShapes() {
 	if (_flags.platform != Common::kPlatformSegaCD) {
 		EoBCoreEngine::loadItemsAndDecorationsShapes();
 		return;
 	}
 
-	uint8 *in = 0;
+	releaseItemsAndDecorationsShapes();
 	_sres->loadContainer("ITEM");
+	uint8 *in = 0;
+
 	loadSpritesAndEncodeToShapes(0, _itemIconShapes, _numItemIconShapes, 16, 16);
 	loadSpritesAndEncodeToShapes(14, _blueItemIconShapes, _numItemIconShapes, 16, 16);
 	loadSpritesAndEncodeToShapes(13, _xtraItemIconShapes, 3, 16, 16);
+
+	loadAndEncodeShapes(1, 0, _smallItemShapes, _numSmallItemShapes, 32, 24, 768);
+	loadAndEncodeShapes(2, 0, _largeItemShapes, _numLargeItemShapes, 64, 24, 1472);
+	loadAndEncodeShapes(11, 0, _thrownItemShapes, _numThrownItemShapes, 32, 24, 768);
+	int offset1 = 0, offset2 = 0;
+	for (int i = 0; i < 3; ++i) {
+		offset1 += (0x180 / (i + 1));
+		offset2 += (0x300 / (i + 1));
+		loadAndEncodeShapes(1, offset1, _smallItemShapesScl[i], _numSmallItemShapes, (3 - i) << 3, 16 - ((i >> 1) << 3), 768);
+		loadAndEncodeShapes(2, offset2, _largeItemShapesScl[i], _numLargeItemShapes, (6 - 2 * i) << 3, 16 - ((i >> 1) << 3), 1472);
+		loadAndEncodeShapes(11, offset1, _thrownItemShapesScl[i], _numThrownItemShapes, (3 - i) << 3, 16 - ((i >> 1) << 3), 768);
+	}
 }
 
+#undef loadAndEncodeShapes
 #undef loadSpritesAndEncodeToShapes
 
 Common::SeekableReadStreamEndian *EoBEngine::getItemDefinitionFile(int index) {
@@ -613,9 +636,9 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 			if (_flags.platform == Common::kPlatformSegaCD) {
 				int offs = lvlIndex[_currentLevel] * 6 + shapeId[a] + i;
 				const uint8 *enc = &_doorShapeEncodeDefs[offs << 2];
-				_doorShapes[shapeId[a] + i] = _screen->sega_convertShape(_doorShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0);
+				_doorShapes[shapeId[a] + i] = _screen->sega_convertShape(_doorShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0, enc[2] - enc[3]);
 				enc = &_doorSwitchShapeEncodeDefs[(offs << 2) - shapeId[a]];
-				_doorSwitches[shapeId[a] + i].shp = _screen->sega_convertShape(_doorSwitchShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0);
+				_doorSwitches[shapeId[a] + i].shp = _screen->sega_convertShape(_doorSwitchShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0, enc[2] - enc[3]);
 			} else {
 				const uint8 *enc = &_doorShapeEncodeDefs[(doorType[a] * 3 + i) << 2];
 				_doorShapes[shapeId[a] + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
@@ -644,7 +667,7 @@ void EoBEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 	case 4:
 	case 5:
 	case 6:
-		y = _dscDoorY7[mDim] - shp[1];
+		y = _dscDoorY7[mDim] - shp[3];
 		d1 = _dscDoorCoordsExt[index << 1] >> 3;
 		d2 = _dscDoorCoordsExt[(index << 1) + 1] >> 3;
 		if (_shpDmX1 > d1)
@@ -664,7 +687,7 @@ void EoBEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 	case 7:
 	case 8:
 	case 9:
-		y = _dscDoorY3[mDim] - _doorShapes[shapeIndex + 3][1];
+		y = _dscDoorY3[mDim] - _doorShapes[shapeIndex + 3][3];
 		d1 = x - (_doorShapes[shapeIndex + 3][2] << 2);
 		x -= (shp[2] << 2);
 		drawBlockObject(0, 2, _doorShapes[shapeIndex + 3], d1, y, 5);
@@ -689,7 +712,7 @@ void EoBEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 		break;
 
 	default:
-		y = (_currentLevel == 12 ? _dscDoorY6[mDim] : _dscDoorY1[mDim]) - shp[1];
+		y = (_currentLevel == 12 ? _dscDoorY6[mDim] : _dscDoorY1[mDim]) - shp[3];
 		x -= (shp[2] << 2);
 		y -= (wall >= 30 ? _dscDoorScaleMult2[mDim] : (wall - _dscDoorScaleOffs[wall]) * _dscDoorScaleMult1[mDim]);
 		drawBlockObject(0, 2, shp, x, y, 5);

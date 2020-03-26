@@ -339,16 +339,15 @@ void EoBCoreEngine::drawBlockItems(int index) {
 	uint8 w = _visibleBlocks[index]->walls[_sceneDrawVarDown];
 	uint8 flg = (index == 16) ? 0x80 : _wllWallFlags[w];
 
-	//if (_wllVmpMap[w] && !(flg & 0x80))
+	if (_wllVmpMap[w] && !(flg & 0x80))
 		return;
 
 	uint16 o2 = o = _items[o].next;
-	bool forceLoop = true;
 	static const int8 itemPosYNiche[] = { 0x25, 0x31, 0x38, 0x00 };
 	static const int8 itemPosFin[] = { 0, -2, 1, -1, 2, 0, 1, -1 };
 	int tile2 = 0;
 
-	while (o != o2 || forceLoop) {
+	for (bool loop = true; o != o2 || loop; ) {
 		EoBItem *itm = &_items[o];
 		if (itm->pos == 8 || itm->pos < 4) {
 			tile2 = -1;
@@ -360,6 +359,14 @@ void EoBCoreEngine::drawBlockItems(int index) {
 
 			if (itm->pos == 8) {
 				x = _dscItemShpX[index];
+
+				if (_flags.gameID == Common::kPlatformSegaCD && _currentLevel == 12 && (_currentBlock & 0x1F) < 17 && (_currentBlock >> 5) < 20) {
+					if (index == 8)
+						x += 20;
+					else if (index == 10)
+						x -= 20;
+				}
+
 				y = itemPosYNiche[_dscDimMap[index]];
 				ps = 0;
 			} else {
@@ -393,7 +400,7 @@ void EoBCoreEngine::drawBlockItems(int index) {
 		}
 
 		o = itm->next;
-		forceLoop = false;
+		loop = false;
 		if (tile2 != -1)
 			setLevelShapesDim(index, _shpDmX1, _shpDmX2, 5);
 	}
@@ -653,7 +660,7 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 		}
 
 		x -= (shp[2] << 2);
-		y -= (y == 44 ? (shp[1]  >> 1) : shp[1]);
+		y -= (y == 44 ? (shp[1] >> 1) : shp[1]);
 
 		drawBlockObject(flipped, 2, shp, x, y, 5);
 		_screen->setShapeFadingLevel(0);

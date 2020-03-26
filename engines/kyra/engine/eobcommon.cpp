@@ -772,38 +772,28 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	int size = 0;
 
 	_largeItemShapes = new const uint8*[_numLargeItemShapes];
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		for (int i = 0; i < _numLargeItemShapes; i++)
-			_largeItemShapes[i] = _staticres->loadRawData(kEoB2LargeItemsShapeData00 + i, size);
-	} else {
-		_screen->loadShapeSetBitmap("ITEML1", 5, 3);
-		for (int i = 0; i < _numLargeItemShapes; i++)
-			_largeItemShapes[i] = _screen->encodeShape((i / div) << 3, (i % div) * mul, 8, 24, false, _cgaMappingItemsL);
+	_screen->loadShapeSetBitmap("ITEML1", 5, 3);
+	for (int i = 0; i < _numLargeItemShapes; i++)
+		_largeItemShapes[i] = _screen->encodeShape((i / div) << 3, (i % div) * mul, 8, 24, false, _cgaMappingItemsL);
 
-		if (_flags.gameID == GI_EOB1) {
-			for (int c = 0; c < 3; ++c) {
-				_largeItemShapesScl[c] = new const uint8*[_numLargeItemShapes];
-				for (int i = 0; i < _numLargeItemShapes; i++)
-					_largeItemShapesScl[c][i] = _screen->encodeShape((i / div) << 3, (i % div) * mul + 24 + (c << 4), 6 - 2 * c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsL);
-			}
+	if (_flags.gameID == GI_EOB1) {
+		for (int c = 0; c < 3; ++c) {
+			_largeItemShapesScl[c] = new const uint8*[_numLargeItemShapes];
+			for (int i = 0; i < _numLargeItemShapes; i++)
+				_largeItemShapesScl[c][i] = _screen->encodeShape((i / div) << 3, (i % div) * mul + 24 + (c << 4), 6 - 2 * c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsL);
 		}
 	}
 
 	_smallItemShapes = new const uint8*[_numSmallItemShapes];
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		for (int i = 0; i < _numSmallItemShapes; i++)
-			_smallItemShapes[i] = _staticres->loadRawData(kEoB2SmallItemsShapeData00 + i, size);
-	} else {
-		_screen->loadShapeSetBitmap("ITEMS1", 5, 3);
-		for (int i = 0; i < _numSmallItemShapes; i++)
-			_smallItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingItemsS);
+	_screen->loadShapeSetBitmap("ITEMS1", 5, 3);
+	for (int i = 0; i < _numSmallItemShapes; i++)
+		_smallItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingItemsS);
 
-		if (_flags.gameID == GI_EOB1) {
-			for (int c = 0; c < 3; ++c) {
-				_smallItemShapesScl[c] = new const uint8*[_numSmallItemShapes];
-				for (int i = 0; i < _numSmallItemShapes; i++)
-					_smallItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsS);
-			}
+	if (_flags.gameID == GI_EOB1) {
+		for (int c = 0; c < 3; ++c) {
+			_smallItemShapesScl[c] = new const uint8*[_numSmallItemShapes];
+			for (int i = 0; i < _numSmallItemShapes; i++)
+				_smallItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsS);
 		}
 	}
 
@@ -812,55 +802,40 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		_spellShapes = new const uint8*[4];
 	_firebeamShapes = new const uint8*[3];
 
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		for (int i = 0; i < _numThrownItemShapes; i++)
-			_thrownItemShapes[i] = _staticres->loadRawData(kEoB2ThrownShapeData00 + i, size);
-		for (int i = 0; i < 4; i++)
-			_spellShapes[i] = _staticres->loadRawData(kEoB2SpellShapeData00 + i, size);
-		for (int i = 0; i < 3; i++)
-			_firebeamShapes[i] = _staticres->loadRawData(kEoB2FirebeamShapeData00 + i, size);
-		_redSplatShape = _staticres->loadRawData(kEoB2RedSplatShapeData, size);
-		_greenSplatShape = _staticres->loadRawData(kEoB2GreenSplatShapeData, size);
-	} else {
-		_screen->loadShapeSetBitmap("THROWN", 5, 3);
-		for (int i = 0; i < _numThrownItemShapes; i++)
-			_thrownItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingThrown);
+	_screen->loadShapeSetBitmap("THROWN", 5, 3);
+	for (int i = 0; i < _numThrownItemShapes; i++)
+		_thrownItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingThrown);
 
-		if (_flags.gameID == GI_EOB1) {
-			for (int c = 0; c < 3; ++c) {
-				_thrownItemShapesScl[c] = new const uint8*[_numThrownItemShapes];
-				for (int i = 0; i < _numThrownItemShapes; i++)
-					_thrownItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingThrown);
-			}
-		} else {
-			for (int i = 0; i < 4; i++)
-				_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32, false, _cgaMappingThrown);
+	if (_flags.gameID == GI_EOB1) {
+		for (int c = 0; c < 3; ++c) {
+			_thrownItemShapesScl[c] = new const uint8*[_numThrownItemShapes];
+			for (int i = 0; i < _numThrownItemShapes; i++)
+				_thrownItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingThrown);
 		}
-
-		_firebeamShapes[0] = _screen->encodeShape(16, 0, 4, 24, false, _cgaMappingThrown);
-		_firebeamShapes[1] = _screen->encodeShape(16, 24, 4, 24, false, _cgaMappingThrown);
-		_firebeamShapes[2] = _screen->encodeShape(16, 48, 3, 24, false, _cgaMappingThrown);
-		_redSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 144 : 72, 5, 24, false, _cgaMappingThrown);
-		_greenSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 168 : 96, 5, 16, false, _cgaMappingThrown);
+	} else {
+		for (int i = 0; i < 4; i++)
+			_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32, false, _cgaMappingThrown);
 	}
 
+	_firebeamShapes[0] = _screen->encodeShape(16, 0, 4, 24, false, _cgaMappingThrown);
+	_firebeamShapes[1] = _screen->encodeShape(16, 24, 4, 24, false, _cgaMappingThrown);
+	_firebeamShapes[2] = _screen->encodeShape(16, 48, 3, 24, false, _cgaMappingThrown);
+	_redSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 144 : 72, 5, 24, false, _cgaMappingThrown);
+	_greenSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 168 : 96, 5, 16, false, _cgaMappingThrown);
+
+
 	_itemIconShapes = new const uint8*[_numItemIconShapes];
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		for (int i = 0; i < _numItemIconShapes; i++)
-			_itemIconShapes[i] = _staticres->loadRawData(kEoB2ItemIconShapeData00 + i, size);
-	} else {
-		_screen->loadShapeSetBitmap("ITEMICN", 5, 3);
-		for (int i = 0; i < _numItemIconShapes; i++)
-			_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
+	_screen->loadShapeSetBitmap("ITEMICN", 5, 3);
+	for (int i = 0; i < _numItemIconShapes; i++)
+		_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
 		
-		if (_flags.platform == Common::kPlatformAmiga) {
-			const uint8 offsY = (_flags.gameID == GI_EOB1) ? 80 : 96;
-			_blueItemIconShapes = new const uint8*[_numItemIconShapes];
-			for (int i = 0; i < _numItemIconShapes; i++) {
-				int bx = (i % 0x14) << 1;
-				int by = (i / 0x14) << 4;
-				_blueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + offsY + 8) ? _screen->encodeShape(bx, by + offsY, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
-			}
+	if (_flags.platform == Common::kPlatformAmiga) {
+		const uint8 offsY = (_flags.gameID == GI_EOB1) ? 80 : 96;
+		_blueItemIconShapes = new const uint8*[_numItemIconShapes];
+		for (int i = 0; i < _numItemIconShapes; i++) {
+			int bx = (i % 0x14) << 1;
+			int by = (i / 0x14) << 4;
+			_blueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + offsY + 8) ? _screen->encodeShape(bx, by + offsY, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
 		}
 	}
 
@@ -870,50 +845,31 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	if (_flags.gameID == GI_EOB2)
 		_wallOfForceShapes = new const uint8*[6];
 
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		_lightningColumnShape = _staticres->loadRawData(kEoB2LightningColumnShapeData, size);
+	_screen->loadShapeSetBitmap("DECORATE", 5, 3);
+	if (_flags.gameID == GI_EOB2) {
+		_lightningColumnShape = _screen->encodeShape(18, 88, 4, 64);
 		for (int i = 0; i < 6; i++)
-			_wallOfForceShapes[i] = _staticres->loadRawData(kEoB2WallOfForceShapeData00 + i, size);
-		for (int i = 0; i < 6; i++)
-			_teleporterShapes[i] = _staticres->loadRawData(kEoB2TeleporterShapeData00 + i, size);
-		for (int i = 0; i < 3; i++)
-			_sparkShapes[i] = _staticres->loadRawData(kEoB2SparkShapeData00 + i, size);
-		for (int i = 0; i < 12; i++)
-			_compassShapes[i] = _staticres->loadRawData(kEoB2CompassShapeData00 + i, size);
+			_wallOfForceShapes[i] = _screen->encodeShape(_wallOfForceShapeDefs[(i << 2)], _wallOfForceShapeDefs[(i << 2) + 1], _wallOfForceShapeDefs[(i << 2) + 2], _wallOfForceShapeDefs[(i << 2) + 3]);
+	}
 
-		_deadCharShape = _staticres->loadRawData(kEoB2DeadCharShapeData, size);
-		_disabledCharGrid = _staticres->loadRawData(kEoB2DisabledCharGridShapeData, size);
-		_blackBoxSmallGrid = _staticres->loadRawData(kEoB2SmallGridShapeData, size);
-		_weaponSlotGrid = _staticres->loadRawData(kEoB2WeaponSlotGridShapeData, size);
-		_blackBoxWideGrid = _staticres->loadRawData(kEoB2WideGridShapeData, size);
-
-	} else {
-		_screen->loadShapeSetBitmap("DECORATE", 5, 3);
-		if (_flags.gameID == GI_EOB2) {
-			_lightningColumnShape = _screen->encodeShape(18, 88, 4, 64);
-			for (int i = 0; i < 6; i++)
-				_wallOfForceShapes[i] = _screen->encodeShape(_wallOfForceShapeDefs[(i << 2)], _wallOfForceShapeDefs[(i << 2) + 1], _wallOfForceShapeDefs[(i << 2) + 2], _wallOfForceShapeDefs[(i << 2) + 3]);
-		}
-
-		for (int i = 0; i < 6; i++)
-			_teleporterShapes[i] = _screen->encodeShape(_teleporterShapeDefs[(i << 2)], _teleporterShapeDefs[(i << 2) + 1], _teleporterShapeDefs[(i << 2) + 2], _teleporterShapeDefs[(i << 2) + 3], false, _cgaMappingDefault);
+	for (int i = 0; i < 6; i++)
+		_teleporterShapes[i] = _screen->encodeShape(_teleporterShapeDefs[(i << 2)], _teleporterShapeDefs[(i << 2) + 1], _teleporterShapeDefs[(i << 2) + 2], _teleporterShapeDefs[(i << 2) + 3], false, _cgaMappingDefault);
 		
-		_sparkShapes[0] = _screen->encodeShape(29, 0, 2, 16, false, _cgaMappingDeco);
-		_sparkShapes[1] = _screen->encodeShape(31, 0, 2, 16, false, _cgaMappingDeco);
-		_sparkShapes[2] = _screen->encodeShape(33, 0, 2, 16, false, _cgaMappingDeco);
-		_deadCharShape = _screen->encodeShape(0, 88, 4, 32, false, _cgaMappingDeco);
-		_disabledCharGrid = _screen->encodeShape(4, 88, 4, 32, false, _cgaMappingDeco);
-		_blackBoxSmallGrid = _screen->encodeShape(9, 88, 2, 8, false, _cgaMappingDeco);
-		_weaponSlotGrid = _screen->encodeShape(8, 88, 4, 16, false, _cgaMappingDeco);
-		_blackBoxWideGrid = _screen->encodeShape(8, 104, 4, 8, false, _cgaMappingDeco);
+	_sparkShapes[0] = _screen->encodeShape(29, 0, 2, 16, false, _cgaMappingDeco);
+	_sparkShapes[1] = _screen->encodeShape(31, 0, 2, 16, false, _cgaMappingDeco);
+	_sparkShapes[2] = _screen->encodeShape(33, 0, 2, 16, false, _cgaMappingDeco);
+	_deadCharShape = _screen->encodeShape(0, 88, 4, 32, false, _cgaMappingDeco);
+	_disabledCharGrid = _screen->encodeShape(4, 88, 4, 32, false, _cgaMappingDeco);
+	_blackBoxSmallGrid = _screen->encodeShape(9, 88, 2, 8, false, _cgaMappingDeco);
+	_weaponSlotGrid = _screen->encodeShape(8, 88, 4, 16, false, _cgaMappingDeco);
+	_blackBoxWideGrid = _screen->encodeShape(8, 104, 4, 8, false, _cgaMappingDeco);
 
-		static const uint8 dHeight[] = { 17, 10, 10 };
-		static const uint8 dY[] = { 120, 137, 147 };
+	static const uint8 dHeight[] = { 17, 10, 10 };
+	static const uint8 dY[] = { 120, 137, 147 };
 		
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 4; x++)
-				_compassShapes[(y << 2) + x] = _screen->encodeShape(x * 3, dY[y], 3, dHeight[y], false, _cgaMappingDeco);
-		}
+	for (int y = 0; y < 3; y++) {
+		for (int x = 0; x < 4; x++)
+			_compassShapes[(y << 2) + x] = _screen->encodeShape(x * 3, dY[y], 3, dHeight[y], false, _cgaMappingDeco);
 	}
 }
 

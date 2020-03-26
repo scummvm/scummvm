@@ -52,10 +52,11 @@ public:
 	~DarkMoonEngine() override;
 
 private:
-	// Init / Release
+	// Init
 	Common::Error init() override;
 	void initStaticResource();
 	void initSpells() override;
+	void loadItemsAndDecorationsShapes() override;
 
 	// Main Menu
 	int mainMenu() override;
