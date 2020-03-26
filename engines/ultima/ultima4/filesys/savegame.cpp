@@ -82,7 +82,7 @@ int SaveGame::write(Common::WriteStream *f) const {
 	        !writeChar(_runes, f) ||
 	        !writeShort(_members, f) ||
 	        !writeShort(_transport, f) ||
-	        !writeShort(_balloonstate, f) ||
+	        !writeShort(_balloonState, f) ||
 	        !writeShort(_trammelPhase, f) ||
 	        !writeShort(_feluccaPhase, f) ||
 	        !writeShort(_shipHull, f) ||
@@ -155,7 +155,7 @@ int SaveGame::read(Common::ReadStream *f) {
 	        !readChar(&_runes, f) ||
 	        !readShort(&_members, f) ||
 	        !readShort(&_transport, f) ||
-	        !readShort(&_balloonstate, f) ||
+	        !readShort(&_balloonState, f) ||
 	        !readShort(&_trammelPhase, f) ||
 	        !readShort(&_feluccaPhase, f) ||
 	        !readShort(&_shipHull, f) ||
@@ -218,7 +218,7 @@ void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
 	_runes = 0;
 	_members = 1;
 	_transport = 0x1f;
-	_balloonstate = 0;
+	_balloonState = 0;
 	_trammelPhase = 0;
 	_feluccaPhase = 0;
 	_shipHull = 50;
