@@ -1109,7 +1109,7 @@ bool GameController::keyPressed(int key) {
 					if (!g_context->_party->isFlying())
 						screenMessage("%cAlready Landed!%c\n", FG_GREY, FG_WHITE);
 					else if (g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_OBJECTS)->canLandBalloon()) {
-						g_context->_saveGame->_balloonstate = 0;
+						g_context->_saveGame->_balloonState = 0;
 						g_context->_opacity = 1;
 					} else screenMessage("%cNot Here!%c\n", FG_GREY, FG_WHITE);
 				} else screenMessage("%cDescend what?%c\n", FG_GREY, FG_WHITE);
@@ -1154,7 +1154,7 @@ bool GameController::keyPressed(int key) {
 		case 'k':
 			if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_KLIMB)) {
 				if (g_context->_transportContext == TRANSPORT_BALLOON) {
-					g_context->_saveGame->_balloonstate = 1;
+					g_context->_saveGame->_balloonState = 1;
 					g_context->_opacity = 0;
 					screenMessage("Klimb altitude\n");
 				} else

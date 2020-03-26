@@ -617,7 +617,7 @@ MapTile PartyMember::tileForClass(int klass) {
  */
 Party::Party(SaveGame *s) : _saveGame(s), _transport(0), _torchDuration(0), _activePlayer(-1) {
 	if (MAP_DECEIT <= _saveGame->_location && _saveGame->_location <= MAP_ABYSS)
-		_torchDuration = _saveGame->_torchduration;
+		_torchDuration = _saveGame->_torchDuration;
 	for (int i = 0; i < _saveGame->_members; i++) {
 		// add the members to the party
 		_members.push_back(new PartyMember(this, &_saveGame->_players[i]));
@@ -901,7 +901,7 @@ void Party::burnTorch(int turns) {
 	if (_torchDuration <= 0)
 		_torchDuration = 0;
 
-	_saveGame->_torchduration = _torchDuration;
+	_saveGame->_torchDuration = _torchDuration;
 
 	notifyOfChange();
 }
@@ -1050,7 +1050,7 @@ void Party::healShip(unsigned int pts) {
  * Returns true if the balloon is currently in the air
  */
 bool Party::isFlying() const {
-	return (_saveGame->_balloonstate && _torchDuration <= 0);
+	return (_saveGame->_balloonState && _torchDuration <= 0);
 }
 
 /**
@@ -1147,7 +1147,7 @@ bool Party::lightTorch(int duration, bool loseTorch) {
 	}
 
 	_torchDuration += duration;
-	_saveGame->_torchduration = _torchDuration;
+	_saveGame->_torchDuration = _torchDuration;
 
 	notifyOfChange();
 
@@ -1158,7 +1158,7 @@ bool Party::lightTorch(int duration, bool loseTorch) {
  * Extinguishes a torch
  */
 void Party::quenchTorch() {
-	_torchDuration = _saveGame->_torchduration = 0;
+	_torchDuration = _saveGame->_torchDuration = 0;
 
 	notifyOfChange();
 }

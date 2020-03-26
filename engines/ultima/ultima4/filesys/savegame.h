@@ -248,8 +248,8 @@ struct SaveGame {
 	unsigned short _members;
 	unsigned short _transport;
 	union {
-		unsigned short _balloonstate;
-		unsigned short _torchduration;
+		unsigned short _balloonState;
+		unsigned short _torchDuration;
 	};
 	unsigned short _trammelPhase;
 	unsigned short _feluccaPhase;
