@@ -59,15 +59,28 @@ public:
 	 * Returns true if a savegame can be loaded
 	 */
 	bool canLoadGameStateCurrently(bool isAutosave = false) override {
-		return false;
+		return canSaveGameStateCurrently(isAutosave);
 	}
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	bool canSaveGameStateCurrently(bool isAutosave = false) override {
-		return false;
-	}
+	bool canSaveGameStateCurrently(bool isAutosave = false) override;
+
+	/**
+	 * Load a game state.
+	 * @param stream	the stream to load the savestate from
+	 * @return returns kNoError on success, else an error code.
+	 */
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+
+	/**
+	 * Save a game state.
+	 * @param stream	The write stream to save the savegame data to
+	 * @param isAutosave	Expected to be true if an autosave is being created
+	 * @return returns kNoError on success, else an error code.
+	 */
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 };
 
 extern Ultima4Engine *g_ultima;
