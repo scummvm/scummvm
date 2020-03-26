@@ -3004,8 +3004,9 @@ void GameController::timerFired() {
 		 * force pass if no commands within last 20 seconds
 		 */
 		Controller *controller = eventHandler->getController();
-		if (controller != NULL && (eventHandler->getController() == g_game || dynamic_cast<CombatController *>(eventHandler->getController()) != NULL) &&
-		        gameTimeSinceLastCommand() > 20) {
+		if (controller != NULL && (eventHandler->getController() == g_game ||
+			dynamic_cast<CombatController *>(eventHandler->getController()) != NULL) &&
+			gameTimeSinceLastCommand() > 20) {
 
 			/* pass the turn, and redraw the text area so the prompt is shown */
 			controller->keyPressed(U4_SPACE);
@@ -3172,7 +3173,7 @@ void gameFixupObjects(Map *map) {
 }
 
 time_t gameTimeSinceLastCommand() {
-	return g_system->getMillis() - g_context->_lastCommandTime;
+	return (g_system->getMillis() - g_context->_lastCommandTime) / 1000;
 }
 
 /**
