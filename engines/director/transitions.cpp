@@ -160,169 +160,149 @@ void Frame::playTransition(Score *score) {
 
 	switch (_transType) {
 	case kTransCenterOutHorizontal: // 5
-		{
-			for (uint16 i = 0; i < t.steps; i++) {
-				t.xpos += t.xStepSize;
+		for (uint16 i = 0; i < t.steps; i++) {
+			t.xpos += t.xStepSize;
 
-				r.setWidth(t.xpos * 2);
-				r.moveTo(clipRect.width() / 2 - t.xpos, 0);
+			r.setWidth(t.xpos * 2);
+			r.moveTo(clipRect.width() / 2 - t.xpos, 0);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
+			score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
 
-				g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, r.left, r.top, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, r.left, r.top, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
 	case kTransCenterOutVertical: // 7
-		{
-			for (uint16 i = 0; i < t.steps; i++) {
-				t.ypos += t.yStepSize;
+		for (uint16 i = 0; i < t.steps; i++) {
+			t.ypos += t.yStepSize;
 
-				r.setHeight(t.ypos * 2);
-				r.moveTo(0, clipRect.height() / 2 - t.ypos);
+			r.setHeight(t.ypos * 2);
+			r.moveTo(0, clipRect.height() / 2 - t.ypos);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
+			score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
 
-				g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, r.left, r.top, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, r.left, r.top, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
 	case kTransCoverDown:	// 29
-		{
-			for (uint16 i = 1; i < t.steps; i++) {
-				r.setHeight(t.yStepSize * i);
-				r.clip(clipRect);
+		for (uint16 i = 1; i < t.steps; i++) {
+			r.setHeight(t.yStepSize * i);
+			r.clip(clipRect);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
 	case kTransCoverDownLeft: // 30
-		{
-			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(t.xStepSize * i);
-				r.setHeight(t.yStepSize * i);
-				r.moveTo(clipRect.width() - t.xStepSize * i, 0);
-				r.clip(clipRect);
+		for (uint16 i = 1; i < t.steps; i++) {
+			r.setWidth(t.xStepSize * i);
+			r.setHeight(t.yStepSize * i);
+			r.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			r.clip(clipRect);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
 	case kTransCoverDownRight: // 31
-		{
-			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(t.xStepSize * i);
-				r.setHeight(t.yStepSize * i);
-				r.clip(clipRect);
+		for (uint16 i = 1; i < t.steps; i++) {
+			r.setWidth(t.xStepSize * i);
+			r.setHeight(t.yStepSize * i);
+			r.clip(clipRect);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
 	case kTransCoverLeft:	// 32
-		{
-			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(t.xStepSize * i);
-				r.moveTo(clipRect.width() - t.xStepSize * i, 0);
-				r.clip(clipRect);
+		for (uint16 i = 1; i < t.steps; i++) {
+			r.setWidth(t.xStepSize * i);
+			r.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			r.clip(clipRect);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
 	case kTransCoverRight:	// 33
-		{
-			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(t.xStepSize * i);
-				r.clip(clipRect);
+		for (uint16 i = 1; i < t.steps; i++) {
+			r.setWidth(t.xStepSize * i);
+			r.clip(clipRect);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
 	case kTransCoverUp:		// 34
-		{
-			for (uint16 i = 1; i < t.steps; i++) {
-				r.setHeight(t.yStepSize * i);
-				r.moveTo(0, clipRect.height() - t.yStepSize * i);
-				r.clip(clipRect);
+		for (uint16 i = 1; i < t.steps; i++) {
+			r.setHeight(t.yStepSize * i);
+			r.moveTo(0, clipRect.height() - t.yStepSize * i);
+			r.clip(clipRect);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
 	case kTransCoverUpLeft:	// 35
-		{
-			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(t.xStepSize * i);
-				r.setHeight(t.yStepSize * i);
-				r.moveTo(clipRect.width() - t.xStepSize * i, clipRect.height() - t.yStepSize * i);
-				r.clip(clipRect);
+		for (uint16 i = 1; i < t.steps; i++) {
+			r.setWidth(t.xStepSize * i);
+			r.setHeight(t.yStepSize * i);
+			r.moveTo(clipRect.width() - t.xStepSize * i, clipRect.height() - t.yStepSize * i);
+			r.clip(clipRect);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
 	case kTransCoverUpRight:	// 36
-		{
-			for (uint16 i = 1; i < t.steps; i++) {
-				r.setWidth(t.xStepSize * i);
-				r.setHeight(t.yStepSize * i);
-				r.moveTo(0, clipRect.height() - t.yStepSize * i);
-				r.clip(clipRect);
+		for (uint16 i = 1; i < t.steps; i++) {
+			r.setWidth(t.xStepSize * i);
+			r.setHeight(t.yStepSize * i);
+			r.moveTo(0, clipRect.height() - t.yStepSize * i);
+			r.clip(clipRect);
 
-				g_system->delayMillis(t.stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(t.stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
+			g_system->updateScreen();
 		}
 		break;
 
