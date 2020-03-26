@@ -24,6 +24,7 @@
 #define ULTIMA4_SAVEGAME_H
 
 #include "common/stream.h"
+#include "common/serializer.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -217,6 +218,8 @@ struct SaveGameMonsterRecord {
 	byte _prevY;
 	byte _unused1;
 	byte _unused2;
+
+	static void synchronize(SaveGameMonsterRecord *monsterTable, Common::Serializer &s);
 };
 
 /**
@@ -264,9 +267,6 @@ struct SaveGame {
 	unsigned short _dngLevel;
 	unsigned short _location;
 };
-
-int saveGameMonstersWrite(SaveGameMonsterRecord *monsterTable, Common::WriteStream *f);
-int saveGameMonstersRead(SaveGameMonsterRecord *monsterTable, Common::ReadStream *f);
 
 } // End of namespace Ultima4
 } // End of namespace Ultima
