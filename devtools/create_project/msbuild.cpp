@@ -275,8 +275,10 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	           "\t\t<ClCompile>\n";
 
 	// Language Extensions
-	if (setup.devTools || setup.tests || name == setup.projectName || enableLanguageExtensions)
+	if (setup.devTools || setup.tests || name == setup.projectName || enableLanguageExtensions) {
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
+		project << "\t\t\t<ConformanceMode>false</ConformanceMode>\n"; // Required for Windows SDK 8.1
+	}
 
 	// Edit and Continue
 	if ((name == setup.projectName || disableEditAndContinue) && !isRelease)
