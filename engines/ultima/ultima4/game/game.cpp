@@ -258,7 +258,8 @@ void GameController::init() {
 	/* load in the save game */
 	saveGameFile = g_system->getSavefileManager()->openForLoading(PARTY_SAV_BASE_FILENAME);
 	if (saveGameFile) {
-		g_context->_saveGame->read(saveGameFile);
+		Common::Serializer ser(saveGameFile, nullptr);
+		g_context->_saveGame->synchronize(ser);
 		delete saveGameFile;
 	} else {
 		errorFatal("no savegame found!");
@@ -388,11 +389,8 @@ int gameSave() {
 		return 0;
 	}
 
-	if (!save.write(saveGameFile)) {
-		screenMessage("Error writing to " PARTY_SAV_BASE_FILENAME "\n");
-		delete saveGameFile;
-		return 0;
-	}
+	Common::Serializer ser(nullptr, saveGameFile);
+	save.synchronize(ser);
 	delete saveGameFile;
 
 	monstersFile = g_system->getSavefileManager()->openForSaving(MONSTERS_SAV_BASE_FILENAME);
@@ -405,8 +403,8 @@ int gameSave() {
 	g_context->_location->_map->resetObjectAnimations();
 	g_context->_location->_map->fillMonsterTable(); /* fill the monster table so we can save it */
 
-	Common::Serializer ser(nullptr, monstersFile);
-	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
+	Common::Serializer ser2(nullptr, monstersFile);
+	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser2);
 	delete monstersFile;
 
 	/**
@@ -484,8 +482,8 @@ int gameSave() {
 		g_context->_location->_prev->_map->resetObjectAnimations();
 		g_context->_location->_prev->_map->fillMonsterTable(); /* fill the monster table so we can save it */
 
-		Common::Serializer ser2(nullptr, monstersFile);
-		SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, ser2);
+		Common::Serializer ser3(nullptr, monstersFile);
+		SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, ser3);
 		delete monstersFile;
 	}
 

@@ -769,15 +769,17 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 	saveGame._reagents[REAG_GINSENG] = 3;
 	saveGame._reagents[REAG_GARLIC] = 4;
 	saveGame._torches = 2;
-	saveGame.write(saveGameFile);
+
+	Common::Serializer ser(nullptr, saveGameFile);
+	saveGame.synchronize(ser);
 
 	saveGameFile->finalize();
 	delete saveGameFile;
 
 	saveGameFile = g_system->getSavefileManager()->openForSaving(MONSTERS_SAV_BASE_FILENAME);
 	if (saveGameFile) {
-		Common::Serializer ser(nullptr, saveGameFile);
-		SaveGameMonsterRecord::synchronize(nullptr, ser);
+		Common::Serializer ser2(nullptr, saveGameFile);
+		SaveGameMonsterRecord::synchronize(nullptr, ser2);
 		delete saveGameFile;
 	}
 	_justInitiatedNewGame = true;
@@ -934,7 +936,9 @@ void IntroController::journeyOnward() {
 		// Make sure there are players in party.sav --
 		// In the Ultima Collection CD, party.sav exists, but does
 		// not contain valid info to journey onward
-		saveGame->read(saveGameFile);
+		Common::Serializer ser(saveGameFile, nullptr);
+		saveGame->synchronize(ser);
+
 		if (saveGame->_members > 0)
 			validSave = true;
 		delete saveGame;
