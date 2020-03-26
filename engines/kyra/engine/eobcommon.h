@@ -648,7 +648,9 @@ protected:
 
 	uint32 _drawSceneTimer;
 	uint32 _flashShapeTimer;
-	uint32 _flashShapeTimerIntv;
+	uint32 _flashShapeTimerIntv0;
+	uint32 _flashShapeTimerIntv1;
+	uint32 _flashShapeTimerIntv2;
 	uint32 _envAudioTimer;
 	uint16 _teleporterPulse;
 

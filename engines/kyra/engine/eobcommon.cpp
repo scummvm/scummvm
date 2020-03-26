@@ -56,10 +56,12 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 
 	_enableHiResDithering = false;
 
-	_tickLength = 55;
+	_tickLength = (_flags.platform == Common::kPlatformSegaCD) ? 38 : 55;
 	_envAudioTimer = 0;
 	_flashShapeTimer = 0;
-	_flashShapeTimerIntv = (_flags.platform == Common::kPlatformSegaCD ? 16 : _tickLength) * 8;
+	_flashShapeTimerIntv0 = (_flags.platform == Common::kPlatformSegaCD ? 2 * _tickLength : 0);
+	_flashShapeTimerIntv1 = _tickLength * (_flags.platform == Common::kPlatformSegaCD ? 2 : 8);
+	_flashShapeTimerIntv2 = _tickLength * 8;
 	_drawSceneTimer = 0;
 	_vcnFilePattern = "%s.VCN";
 	_vmpFilePattern = "%s.VMP";
@@ -822,7 +824,6 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	_firebeamShapes[2] = _screen->encodeShape(16, 48, 3, 24, false, _cgaMappingThrown);
 	_redSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 144 : 72, 5, 24, false, _cgaMappingThrown);
 	_greenSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 168 : 96, 5, 16, false, _cgaMappingThrown);
-
 
 	_itemIconShapes = new const uint8*[_numItemIconShapes];
 	_screen->loadShapeSetBitmap("ITEMICN", 5, 3);

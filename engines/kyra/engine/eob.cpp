@@ -137,7 +137,7 @@ Common::Error EoBEngine::init() {
 	_screen->sega_encodeShapesFromSprites(shapeBuffer, in, numShapes, width, height, 3); \
 	delete[] in
 
-#define loadAndEncodeShapes(resID, resOffset, shapeBuffer, numShapes, width, height, size) \
+#define loadAndConvertShapes(resID, resOffset, shapeBuffer, numShapes, width, height, size) \
 	shapeBuffer = new const uint8 *[numShapes]; \
 	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
 	in = _sres->resData(resID); \
@@ -159,20 +159,20 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	loadSpritesAndEncodeToShapes(14, _blueItemIconShapes, _numItemIconShapes, 16, 16);
 	loadSpritesAndEncodeToShapes(13, _xtraItemIconShapes, 3, 16, 16);
 
-	loadAndEncodeShapes(1, 0, _smallItemShapes, _numSmallItemShapes, 32, 24, 768);
-	loadAndEncodeShapes(2, 0, _largeItemShapes, _numLargeItemShapes, 64, 24, 1472);
-	loadAndEncodeShapes(11, 0, _thrownItemShapes, _numThrownItemShapes, 32, 24, 768);
+	loadAndConvertShapes(1, 0, _smallItemShapes, _numSmallItemShapes, 32, 24, 768);
+	loadAndConvertShapes(2, 0, _largeItemShapes, _numLargeItemShapes, 64, 24, 1472);
+	loadAndConvertShapes(11, 0, _thrownItemShapes, _numThrownItemShapes, 32, 24, 768);
 	int offset1 = 0, offset2 = 0;
 	for (int i = 0; i < 3; ++i) {
 		offset1 += (0x180 / (i + 1));
 		offset2 += (0x300 / (i + 1));
-		loadAndEncodeShapes(1, offset1, _smallItemShapesScl[i], _numSmallItemShapes, (3 - i) << 3, 16 - ((i >> 1) << 3), 768);
-		loadAndEncodeShapes(2, offset2, _largeItemShapesScl[i], _numLargeItemShapes, (6 - 2 * i) << 3, 16 - ((i >> 1) << 3), 1472);
-		loadAndEncodeShapes(11, offset1, _thrownItemShapesScl[i], _numThrownItemShapes, (3 - i) << 3, 16 - ((i >> 1) << 3), 768);
+		loadAndConvertShapes(1, offset1, _smallItemShapesScl[i], _numSmallItemShapes, (3 - i) << 3, 16 - ((i >> 1) << 3), 768);
+		loadAndConvertShapes(2, offset2, _largeItemShapesScl[i], _numLargeItemShapes, (6 - 2 * i) << 3, 16 - ((i >> 1) << 3), 1472);
+		loadAndConvertShapes(11, offset1, _thrownItemShapesScl[i], _numThrownItemShapes, (3 - i) << 3, 16 - ((i >> 1) << 3), 768);
 	}
 }
 
-#undef loadAndEncodeShapes
+#undef loadAndConvertShapes
 #undef loadSpritesAndEncodeToShapes
 
 Common::SeekableReadStreamEndian *EoBEngine::getItemDefinitionFile(int index) {

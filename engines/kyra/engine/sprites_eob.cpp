@@ -1040,14 +1040,14 @@ bool EoBCoreEngine::updateMonsterTryCloseAttack(EoBMonsterInPlay *m, int block) 
 			if ((_flags.platform == Common::kPlatformSegaCD) == (m->type != 4))
 				snd_updateEnvironmentalSfx(_monsterProps[m->type].sound1);
 
-			_flashShapeTimer = 0;
+			_flashShapeTimer = _flashShapeTimerIntv0;
 			m->curAttackFrame = -2;
 
 			for (int i = 0; i < 16 && m->curAttackFrame < 0; ++i) {
 				if (m->type != 4 && m->curAttackFrame == -1)
 					snd_updateEnvironmentalSfx(_monsterProps[m->type].sound1);
 				drawScene(1);
-				_flashShapeTimer = _system->getMillis() + _flashShapeTimerIntv;
+				_flashShapeTimer = _system->getMillis() + _flashShapeTimerIntv1;
 			}
 
 		} else {
@@ -1061,7 +1061,7 @@ bool EoBCoreEngine::updateMonsterTryCloseAttack(EoBMonsterInPlay *m, int block) 
 			m->animStep ^= 1;
 			_sceneUpdateRequired = 1;
 			enableSysTimer(2);
-			_flashShapeTimer = _system->getMillis() + _flashShapeTimerIntv;
+			_flashShapeTimer = _system->getMillis() + _flashShapeTimerIntv2;
 		}
 	} else {
 		int b = m->block;
