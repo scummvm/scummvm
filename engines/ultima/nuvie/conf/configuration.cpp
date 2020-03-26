@@ -53,7 +53,7 @@ bool Configuration::readConfigFile(Std::string fname, Std::string root,
                                    bool readonly) {
 	_configFilename = fname;
 	Shared::XMLTree *tree = new Shared::XMLTree();
-	tree->clear(root);
+
 	if (!tree->readConfigFile(fname)) {
 		delete tree;
 		return false;

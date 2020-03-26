@@ -44,17 +44,13 @@ private:
 	bool _noClose;
 	Common::String _emptyString;
 private:
-	void parseDocTypeElement(const Common::String &s, size_t &nn);
+	static void parseDocTypeElement(const Common::String &s, size_t &nn);
 
 	void parseNodeText(const Common::String &nodeText);
 
-	void xmlParseFile(const Common::String &fname);
+	static XMLNode *xmlParseFile(XMLTree *tree, const Common::String &fname);
 public:
-	XMLNode(XMLTree *tree, XMLNode *parent) : _tree(tree), _parent(parent), _noClose(false) {}
-	XMLNode(XMLTree *tree, XMLNode *parent, const Common::String &i) :
-		_tree(tree), _parent(parent), _id(i), _noClose(false) {}
-	XMLNode(XMLTree *tree, const Common::String &i) : _tree(tree), _parent(nullptr),
-		_id(i), _noClose(false) {}
+	XMLNode(XMLTree *tree, XMLNode *parent = nullptr) : _tree(tree), _parent(parent), _noClose(false) {}
 	XMLNode(const XMLNode &n) : _tree(n._tree), _parent(n._parent), _id(n._id),
 		_content(n._content), _nodeList(n._nodeList), _noClose(false) {}
 	~XMLNode();
@@ -127,8 +123,8 @@ public:
 	Common::String dump(int depth = 0);
 
 	void xmlAssign(const Common::String &key, const Common::String &value);
-	bool xmlParseDoc(const Common::String &s);
-	void xmlParse(const Common::String &s, size_t &pos);
+	static XMLNode *xmlParseDoc(XMLTree *tree, const Common::String &s);
+	static XMLNode *xmlParse(XMLTree *tree, const Common::String &s, size_t &pos);
 
 	void listKeys(const Common::String &, Common::Array<Common::String> &,
 		bool longformat = true) const;

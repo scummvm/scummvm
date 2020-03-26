@@ -151,7 +151,9 @@ void XMLNode::xmlAssign(const Common::String &key, const Common::String &value) 
 	}
 
 	// No match, so create a new node and do recursion
-	XMLNode *t = new XMLNode(_tree, this, k2);
+	XMLNode *t = new XMLNode(_tree);
+	t->_parent = this;
+	t->_id = k2;
 	_nodeList.push_back(t);
 	(*t).xmlAssign(k, value);
 }
@@ -199,7 +201,7 @@ static Common::String encodeEntity(const Common::String &s) {
 }
 
 static Common::String decode_entity(const Common::String &s, size_t &pos) {
-	size_t old_pos = pos;
+//	size_t old_pos = pos;
 	size_t entityNameLen = s.findFirstOf("; \t\r\n", pos) - pos - 1;
 
 	/* Call me paranoid... but I don't think having an end-of-line or similar
@@ -212,13 +214,32 @@ static Common::String decode_entity(const Common::String &s, size_t &pos) {
 
 	// Std::cout << "DECODE: " << entity_name << endl;
 
-	if (entity_name == "amp")  return Common::String("&");
-	else if (entity_name == "apos") return Common::String("'");
-	else if (entity_name == "quot") return Common::String("\"");
-	else if (entity_name == "lt")   return Common::String("<");
-	else if (entity_name == "gt")   return Common::String(">");
+	if (entity_name == "amp")
+		return Common::String("&");
+	else if (entity_name == "apos")
+		return Common::String("'");
+	else if (entity_name == "quot")
+		return Common::String("\"");
+	else if (entity_name == "lt")
+		return Common::String("<");
+	else if (entity_name == "gt")
+		return Common::String(">");
+	else if (entity_name.hasPrefix("#")) {
+		entity_name.deleteChar(0);
 
-	return s.substr(old_pos, entityNameLen + 2);
+		if (entity_name.hasPrefix("x")) {
+			uint tmp = 0;
+			int read = sscanf(entity_name.c_str() + 1, "%xh", &tmp);
+			if (read < 1)
+				error("strToInt failed on string \"%s\"", entity_name.c_str());
+			return Common::String((char)tmp);
+		} else {
+			uint tmp = atol(entity_name.c_str());
+			return Common::String((char)tmp);
+		}
+	} else {
+		error("Invalid xml encoded entity - %s", entity_name.c_str());
+	}
 }
 
 static Common::String closeTag(const Common::String &s) {
@@ -240,20 +261,21 @@ static void trim(Common::String &s) {
 	}
 }
 
-bool XMLNode::xmlParseDoc(const Common::String &s) {
+XMLNode *XMLNode::xmlParseDoc(XMLTree *tree, const Common::String &s) {
 	Common::String sbuf(s);
 	size_t nn = 0;
 	bool parsedXmlElement = false, parsedDocType = false;
+	XMLNode *node = nullptr, *child = nullptr;
 
 	for (;;) {
 		while (nn < s.size() && Common::isSpace(s[nn]))
 			++nn;
 		if (nn >= s.size())
-			return true;
+			return node;
 
 		if (s[nn] != '<') {
 			warning("expected '<' while reading config file, found %c\n", s[nn]);
-			return false;
+			return nullptr;
 		}
 		++nn;
 
@@ -266,7 +288,13 @@ bool XMLNode::xmlParseDoc(const Common::String &s) {
 			parsedDocType = true;
 			parseDocTypeElement(s, nn);
 		} else {
-			xmlParse(sbuf, nn);
+			child = xmlParse(tree, sbuf, nn);
+			if (child) {
+				if (node)
+					error("Invalid multiple xml nodes at same level");
+				node = child;
+			}
+
 			continue;
 		}
 
@@ -274,7 +302,7 @@ bool XMLNode::xmlParseDoc(const Common::String &s) {
 		++nn;
 	}
 
-	return true;
+	return node;
 }
 
 void XMLNode::parseDocTypeElement(const Common::String &s, size_t &nn) {
@@ -292,9 +320,9 @@ void XMLNode::parseDocTypeElement(const Common::String &s, size_t &nn) {
 		nn = Common::String::npos;
 }
 
-void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
+XMLNode *XMLNode::xmlParse(XMLTree *tree, const Common::String &s, size_t &pos) {
 	bool intag = true;
-
+	XMLNode *node = nullptr;
 	Common::String nodeText;
 
 	while (pos < s.size()) {
@@ -313,13 +341,17 @@ void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 				while (s[pos] != '>')
 					pos++;
 				++pos;
-				trim(_content);
-				return;
+				trim(node->_content);
+				return node;
 			}
-			XMLNode *t = new XMLNode(_tree, this);
+
 			++pos;
-			t->xmlParse(s, pos);
-			_nodeList.push_back(t);
+			XMLNode *t = xmlParse(tree, s, pos);
+			if (t) {
+				t->_parent = node;
+				node->_nodeList.push_back(t);
+			}
+
 			break;
 		}
 		case '>':
@@ -327,42 +359,53 @@ void XMLNode::xmlParse(const Common::String &s, size_t &pos) {
 			if (s[pos - 1] == '/') {
 				if (s[pos - 2] == '<') {
 					++pos;
-					return; // An empty tag
+					trim(node->_content);
+					return node; // An empty tag
 				} else {
-					nodeText.deleteLastChar();	// Remove ending /
-					parseNodeText(nodeText);
 					++pos;
-					_noClose = true;
+					nodeText.deleteLastChar();	// Remove ending /
+					node = new XMLNode(tree);
+					node->parseNodeText(nodeText);
 
-					if (_id.equalsIgnoreCase("xi:include"))
-						xmlParseFile(_attributes["href"]);
+					if (node->_id.equalsIgnoreCase("xi:include")) {
+						Common::String fname = node->_attributes["href"];
+						delete node;
+						node = xmlParseFile(tree, fname);
+					}
 
-					return;
+					return node;
 				}
 			} else if (nodeText.hasPrefix("!--")) {
 				// Comment element
 				++pos;
-				_noClose = true;
-				return;
+				return nullptr;
 			}
 
-			parseNodeText(nodeText);
+			assert(!node);
+			node = new XMLNode(tree);
+			node->parseNodeText(nodeText);
+
 			++pos;
 			intag = false;
 			if (s[pos] < 32)
 				++pos;
 			break;
 		case '&':
-			_content += decode_entity(s, pos);
+			if (intag)
+				nodeText += decode_entity(s, pos);
+			else
+				node->_content += decode_entity(s, pos);
 			break;
 		default:
 			if (intag)
 				nodeText += s[pos++];
 			else
-				_content += s[pos++];
+				node->_content += s[pos++];
 		}
 	}
-	trim(_content);
+
+	trim(node->_content);
+	return node;
 }
 
 void XMLNode::parseNodeText(const Common::String &nodeText) {
@@ -411,8 +454,8 @@ void XMLNode::parseNodeText(const Common::String &nodeText) {
 	}
 }
 
-void XMLNode::xmlParseFile(const Common::String &fname) {
-	const Common::String rootFile = _tree->_filename;
+XMLNode *XMLNode::xmlParseFile(XMLTree *tree, const Common::String &fname) {
+	const Common::String rootFile = tree->_filename;
 	Common::String filename = Common::String(rootFile.c_str(), rootFile.findLastOf('/') + 1) + fname;
 
 	Common::File f;
@@ -428,8 +471,11 @@ void XMLNode::xmlParseFile(const Common::String &fname) {
 	f.close();
 
 	// Parse the sub-xml
-	if (!xmlParseDoc(text))
+	XMLNode *result = xmlParseDoc(tree, text);
+	if (!result)
 		error("Error passing xml - %s", fname.c_str());
+
+	return result;
 }
 
 bool XMLNode::searchPairs(KeyTypeList &ktl, const Common::String &basekey,
