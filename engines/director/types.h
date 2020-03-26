@@ -194,8 +194,8 @@ enum TransitionType {
 	kTransRevealUp,				// 15
 	kTransRevealUpRight,
 	kTransRevealRight,
-	kTransRevealDown,
 	kTransRevealDownRight,
+	kTransRevealDown,
 	kTransRevealDownLeft,		// 20
 	kTransRevealLeft,
 	kTransRevealUpLeft,
@@ -226,7 +226,7 @@ enum TransitionType {
 	kTransZoomOpen,
 	kTransZoomClose,
 	kTransVerticalBinds,
-	kTransDissolveBitsTrans,	// 50
+	kTransDissolveBitsFast,	// 50
 	kTransDissolvePixels,
 	kTransDissolveBits
 };

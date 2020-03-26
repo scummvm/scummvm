@@ -105,8 +105,8 @@ struct {
 	TRANS(kTransRevealUp,				kTransAlgoReveal,	kTransDirNorth),		// 15
 	TRANS(kTransRevealUpRight,			kTransAlgoReveal,	kTransDirNorthEast),
 	TRANS(kTransRevealRight,			kTransAlgoReveal,	kTransDirEast),
-	TRANS(kTransRevealDown,				kTransAlgoReveal,	kTransDirSouthEast),
-	TRANS(kTransRevealDownRight,		kTransAlgoReveal,	kTransDirSouth),
+	TRANS(kTransRevealDownRight,		kTransAlgoReveal,	kTransDirSouthEast),
+	TRANS(kTransRevealDown,				kTransAlgoReveal,	kTransDirSouth),
 	TRANS(kTransRevealDownLeft,			kTransAlgoReveal,	kTransDirSouthWest),	// 20
 	TRANS(kTransRevealLeft,				kTransAlgoReveal,	kTransDirWest),
 	TRANS(kTransRevealUpLeft,			kTransAlgoReveal,	kTransDirNorthWest),
@@ -137,7 +137,7 @@ struct {
 	TRANS(kTransZoomOpen,				kTransAlgoZoom,		kTransDirIn),
 	TRANS(kTransZoomClose,				kTransAlgoZoom,		kTransDirOut),
 	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirVertical),
-	TRANS(kTransDissolveBitsTrans,		kTransAlgoDissolve,	kTransDirBitsFast),		// 50
+	TRANS(kTransDissolveBitsFast,		kTransAlgoDissolve,	kTransDirBitsFast),		// 50
 	TRANS(kTransDissolvePixels,			kTransAlgoDissolve,	kTransDirPixels),
 	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirBits)
 };
