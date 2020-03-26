@@ -32,13 +32,22 @@
 
 namespace Director {
 
-void processQuitEvent() {
+bool processQuitEvent(bool click) {
 	Common::Event event;
 
 	while (g_system->getEventManager()->pollEvent(event)) {
-		if (event.type == Common::EVENT_QUIT)
+		if (event.type == Common::EVENT_QUIT) {
 			g_director->getCurrentScore()->_stopPlay = true;
+			return true;
+		}
+
+		if (click) {
+			if (event.type == Common::EVENT_LBUTTONDOWN)
+				return true;
+		}
 	}
+
+	return false;
 }
 
 void DirectorEngine::processEvents() {

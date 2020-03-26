@@ -167,7 +167,8 @@ void Frame::playTransition(Score *score) {
 			r.moveTo(clipRect.width() / 2 - t.xpos, 0);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+			if (processQuitEvent(true))
+				break;
 
 			score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
 
@@ -184,7 +185,8 @@ void Frame::playTransition(Score *score) {
 			r.moveTo(0, clipRect.height() / 2 - t.ypos);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+			if (processQuitEvent(true))
+				break;
 
 			score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
 
@@ -199,7 +201,8 @@ void Frame::playTransition(Score *score) {
 			r.clip(clipRect);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+			if (processQuitEvent(true))
+				break;
 
 			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 			g_system->updateScreen();
@@ -214,7 +217,8 @@ void Frame::playTransition(Score *score) {
 			r.clip(clipRect);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+			if (processQuitEvent(true))
+				break;
 
 			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
 			g_system->updateScreen();
@@ -228,7 +232,8 @@ void Frame::playTransition(Score *score) {
 			r.clip(clipRect);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+			if (processQuitEvent(true))
+				break;
 
 			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 			g_system->updateScreen();
@@ -242,7 +247,8 @@ void Frame::playTransition(Score *score) {
 			r.clip(clipRect);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+			if (processQuitEvent(true))
+				break;
 
 			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
 			g_system->updateScreen();
@@ -255,7 +261,8 @@ void Frame::playTransition(Score *score) {
 			r.clip(clipRect);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+			if (processQuitEvent(true))
+				break;
 
 			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 			g_system->updateScreen();
@@ -269,7 +276,9 @@ void Frame::playTransition(Score *score) {
 			r.clip(clipRect);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+
+			if (processQuitEvent(true))
+				break;
 
 			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
 			g_system->updateScreen();
@@ -284,7 +293,8 @@ void Frame::playTransition(Score *score) {
 			r.clip(clipRect);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+			if (processQuitEvent(true))
+				break;
 
 			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
 			g_system->updateScreen();
@@ -299,7 +309,8 @@ void Frame::playTransition(Score *score) {
 			r.clip(clipRect);
 
 			g_system->delayMillis(t.stepDuration);
-			processQuitEvent();
+			if (processQuitEvent(true))
+				break;
 
 			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, r.left, r.top, r.width(), r.height()); // transition
 			g_system->updateScreen();

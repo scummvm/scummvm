@@ -42,7 +42,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive = true);
 
 Common::String convertMacFilename(const char *name);
 
-void processQuitEvent(); // events.cpp
+bool processQuitEvent(bool click = false); // events.cpp
 
 } // End of namespace Director
 
