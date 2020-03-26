@@ -121,7 +121,7 @@ struct DetectedGame {
 
 	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
-	Common::String getGUIOptions() const { return _guiOptions; }
+	const Common::String &getGUIOptions() const { return _guiOptions; }
 
 	Common::String engineId;
 
