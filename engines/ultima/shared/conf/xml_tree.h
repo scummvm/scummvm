@@ -37,20 +37,19 @@ class XMLTree {
 private:
 	XMLNode *_tree;
 	Common::String _filename;
-	Common::String _root;
 	bool _isFile;
 	bool _readOnly;
 public:
 	XMLTree();
-	XMLTree(const Common::String &fname, const Common::String &root = "config");
-	XMLTree(Common::SeekableReadStream *stream, const Common::String &root = "config");
+	XMLTree(const Common::String &fname);
+	XMLTree(Common::SeekableReadStream *stream);
 	~XMLTree();
 
 	bool readConfigFile(const Common::String &fname);
 	bool readConfigStream(Common::SeekableReadStream *stream);
 	bool readConfigString(const Common::String &s);
 
-	void clear(const Common::String &root);
+	void clear();
 
 	Common::String dump();
 	void write();

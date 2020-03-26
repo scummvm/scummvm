@@ -29,20 +29,17 @@
 namespace Ultima {
 namespace Shared {
 
-XMLTree::XMLTree()
-		: _tree(new XMLNode(this, "config")), _root("config"), _isFile(false),
+XMLTree::XMLTree() : _tree(nullptr), _isFile(false),
 		_readOnly(false) {
 }
 
-XMLTree::XMLTree(const Common::String &fname, const Common::String &root)
-		: _tree(new XMLNode(this, root)), _root(root), _isFile(true),
+XMLTree::XMLTree(const Common::String &fname) : _tree(nullptr), _isFile(true),
 	  _readOnly(false) {
 	readConfigFile(fname);
 }
 
-XMLTree::XMLTree(Common::SeekableReadStream *stream, const Common::String &root)
-		: _tree(new XMLNode(this, root)), _root(root), _isFile(true),
-		_readOnly(false) {
+XMLTree::XMLTree(Common::SeekableReadStream *stream)
+		: _tree(nullptr), _isFile(true), _readOnly(false) {
 	readConfigStream(stream);
 }
 
@@ -50,10 +47,9 @@ XMLTree::~XMLTree() {
 	delete _tree;
 }
 
-void XMLTree::clear(const Common::String &root) {
+void XMLTree::clear() {
 	delete _tree;
-	_tree = new XMLNode(this, root);
-	_root = root;
+	_tree = nullptr;
 	_isFile = false;
 	_readOnly = false;
 }
@@ -90,12 +86,12 @@ bool XMLTree::readConfigStream(Common::SeekableReadStream *stream) {
 }
 
 bool XMLTree::readConfigString(const Common::String &s) {
-	bool result = _tree->xmlParseDoc(s);
+	_tree = _tree->xmlParseDoc(this, s);
 
 	_isFile = false;
 	_filename.clear();
 
-	return result;
+	return _tree != nullptr;
 }
 
 Common::String XMLTree::dump() {
@@ -129,7 +125,7 @@ bool XMLTree::hasNode(const Common::String &key) const {
 
 bool XMLTree::checkRoot(const Common::String &key) const {
 	Common::String k = key.substr(0, key.find('/'));
-	return (k == _root);
+	return _tree && k == _tree->id();
 }
 
 void XMLTree::value(const Common::String &key, Common::String &ret,
