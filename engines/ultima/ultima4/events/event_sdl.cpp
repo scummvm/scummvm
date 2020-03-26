@@ -383,11 +383,7 @@ void EventHandler::run() {
 		case Common::EVENT_MOUSEMOVE:
 			handleMouseMotionEvent(event);
 			break;
-#ifdef TODO
-		case SDL_ACTIVEEVENT:
-			handleActiveEvent(event, updateScreen);
-			break;
-#endif
+
 		case Common::EVENT_QUIT:
 			_ended = true;
 			return;

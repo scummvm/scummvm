@@ -125,13 +125,13 @@ Common::Error Ultima4Engine::run() {
 		if (!shouldQuit()) {
 			g_game->init();
 
+			eventHandler->setControllerDone(false);
 			eventHandler->pushController(g_game);
 			eventHandler->run();
 			eventHandler->popController();
 		}
-
-
 	}
+
 	return Common::kNoError;
 }
 
