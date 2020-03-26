@@ -324,55 +324,34 @@ void SaveGamePlayerRecord::init() {
 	_status = STAT_GOOD;
 }
 
-int saveGameMonstersWrite(SaveGameMonsterRecord *monsterTable, Common::WriteStream *f) {
-	int i, max;
-
-	if (monsterTable) {
-		for (i = 0; i < MONSTERTABLE_SIZE; i++)
-			if (!writeChar(monsterTable[i]._tile, f)) return 0;
-		for (i = 0; i < MONSTERTABLE_SIZE; i++)
-			if (!writeChar(monsterTable[i]._x, f)) return 0;
-		for (i = 0; i < MONSTERTABLE_SIZE; i++)
-			if (!writeChar(monsterTable[i]._y, f)) return 0;
-		for (i = 0; i < MONSTERTABLE_SIZE; i++)
-			if (!writeChar(monsterTable[i]._prevTile, f)) return 0;
-		for (i = 0; i < MONSTERTABLE_SIZE; i++)
-			if (!writeChar(monsterTable[i]._prevX, f)) return 0;
-		for (i = 0; i < MONSTERTABLE_SIZE; i++)
-			if (!writeChar(monsterTable[i]._prevY, f)) return 0;
-		for (i = 0; i < MONSTERTABLE_SIZE; i++)
-			if (!writeChar(monsterTable[i]._unused1, f)) return 0;
-		for (i = 0; i < MONSTERTABLE_SIZE; i++)
-			if (!writeChar(monsterTable[i]._unused2, f)) return 0;
-	} else {
-		max = MONSTERTABLE_SIZE * 8;
-		for (i = 0; i < max; i++)
-			if (!writeChar((unsigned char)0, f)) return 0;
-	}
-	return 1;
-}
-
-int saveGameMonstersRead(SaveGameMonsterRecord *monsterTable, Common::ReadStream *f) {
+void SaveGameMonsterRecord::synchronize(SaveGameMonsterRecord *monsterTable, Common::Serializer &s) {
 	int i;
 
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
-		if (!readChar(&monsterTable[i]._tile, f)) return 0;
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
-		if (!readChar(&monsterTable[i]._x, f)) return 0;
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
-		if (!readChar(&monsterTable[i]._y, f)) return 0;
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
-		if (!readChar(&monsterTable[i]._prevTile, f)) return 0;
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
-		if (!readChar(&monsterTable[i]._prevX, f)) return 0;
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
-		if (!readChar(&monsterTable[i]._prevY, f)) return 0;
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
-		if (!readChar(&monsterTable[i]._unused1, f)) return 0;
-	for (i = 0; i < MONSTERTABLE_SIZE; i++)
-		if (!readChar(&monsterTable[i]._unused2, f)) return 0;
+	if (s.isSaving() && !monsterTable) {
+		int dataSize = MONSTERTABLE_SIZE * 8;
+		byte b = 0;
+		while (dataSize-- > 0)
+			s.syncAsByte(b);
 
-	return 1;
+		return;
+	}
+
+	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+		s.syncAsByte(monsterTable[i]._tile);
+	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+		s.syncAsByte(monsterTable[i]._x);
+	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+		s.syncAsByte(monsterTable[i]._y);
+	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+		s.syncAsByte(monsterTable[i]._prevTile);
+	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+		s.syncAsByte(monsterTable[i]._prevX);
+	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+		s.syncAsByte(monsterTable[i]._prevY);
+	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+		s.syncAsByte(monsterTable[i]._unused1);
+	for (i = 0; i < MONSTERTABLE_SIZE; i++)
+		s.syncAsByte(monsterTable[i]._unused2);
 }
 
 } // End of namespace Ultima4

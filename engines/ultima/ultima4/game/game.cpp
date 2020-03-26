@@ -314,7 +314,8 @@ void GameController::init() {
 	/* load in creatures.sav */
 	monstersFile = g_system->getSavefileManager()->openForLoading(MONSTERS_SAV_BASE_FILENAME);
 	if (monstersFile) {
-		saveGameMonstersRead(g_context->_location->_map->_monsterTable, monstersFile);
+		Common::Serializer ser(monstersFile, nullptr);
+		SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
 		delete monstersFile;
 	}
 	gameFixupObjects(g_context->_location->_map);
@@ -323,7 +324,8 @@ void GameController::init() {
 	if (g_context->_location->_prev) {
 		monstersFile = g_system->getSavefileManager()->openForLoading(OUTMONST_SAV_BASE_FILENAME);
 		if (monstersFile) {
-			saveGameMonstersRead(g_context->_location->_prev->_map->_monsterTable, monstersFile);
+			Common::Serializer ser(monstersFile, nullptr);
+			SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, ser);
 			delete monstersFile;
 		}
 		gameFixupObjects(g_context->_location->_prev->_map);
@@ -403,11 +405,8 @@ int gameSave() {
 	g_context->_location->_map->resetObjectAnimations();
 	g_context->_location->_map->fillMonsterTable(); /* fill the monster table so we can save it */
 
-	if (!saveGameMonstersWrite(g_context->_location->_map->_monsterTable, monstersFile)) {
-		screenMessage("Error opening creatures.sav\n");
-		delete monstersFile;
-		return 0;
-	}
+	Common::Serializer ser(nullptr, monstersFile);
+	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
 	delete monstersFile;
 
 	/**
@@ -471,9 +470,9 @@ int gameSave() {
 		delete dngMapFile;
 
 		/**
-		 * Write outmonst.sav
+		 * Write out monsters
 		 */
-
+	
 		monstersFile = g_system->getSavefileManager()->openForSaving(
 		                   OUTMONST_SAV_BASE_FILENAME);
 		if (!monstersFile) {
@@ -485,11 +484,8 @@ int gameSave() {
 		g_context->_location->_prev->_map->resetObjectAnimations();
 		g_context->_location->_prev->_map->fillMonsterTable(); /* fill the monster table so we can save it */
 
-		if (!saveGameMonstersWrite(g_context->_location->_prev->_map->_monsterTable, monstersFile)) {
-			screenMessage("Error opening %s\n", OUTMONST_SAV_BASE_FILENAME);
-			delete monstersFile;
-			return 0;
-		}
+		Common::Serializer ser2(nullptr, monstersFile);
+		SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, ser2);
 		delete monstersFile;
 	}
 

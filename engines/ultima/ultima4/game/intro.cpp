@@ -776,7 +776,8 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 
 	saveGameFile = g_system->getSavefileManager()->openForSaving(MONSTERS_SAV_BASE_FILENAME);
 	if (saveGameFile) {
-		saveGameMonstersWrite(NULL, saveGameFile);
+		Common::Serializer ser(nullptr, saveGameFile);
+		SaveGameMonsterRecord::synchronize(nullptr, ser);
 		delete saveGameFile;
 	}
 	_justInitiatedNewGame = true;
