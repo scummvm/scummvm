@@ -133,7 +133,7 @@ public:
 	void sega_gfxScale(uint8 *out, uint16 w, uint16 h, uint16 pitch, const uint8 *in, const uint16 *stampMap, const uint16 *traceVectors);
 	void sega_drawClippedLine(uint8 *dst, int pW, int pH, int x, int y, int w, int h, uint8 color);
 	uint8 *sega_convertShape(const uint8 *src, int w, int h, int pal, int hOffs = 0);
-	void sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *src, int numShapes, int w, int h, int pal);
+	void sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *src, int numShapes, int w, int h, int pal, bool removeSprites = true);
 
 	SegaRenderer *sega_getRenderer() const { return _segaRenderer; }
 	SegaAnimator *sega_getAnimator() const { return _segaAnimator; }

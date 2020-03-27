@@ -35,6 +35,15 @@ class Keymap;
 
 namespace Kyra {
 
+#define releaseShpArr(shapes, num) \
+if (shapes) { \
+	for (int iii = 0; iii < num; iii++) { \
+		if (shapes[iii]) \
+			delete[] shapes[iii]; \
+	} \
+} \
+shapes = 0
+
 struct DarkMoonShapeDef {
 	int16 index;
 	uint8 x, y, w, h;
@@ -293,6 +302,7 @@ protected:
 	const uint8 **_largeItemShapesScl[3];
 	const uint8 **_smallItemShapesScl[3];
 	const uint8 **_thrownItemShapesScl[3];
+	const uint8 **_strikeAnimShapes[7];
 	const uint8 **_blueItemIconShapes;
 	const uint8 **_xtraItemIconShapes;
 	const int _numLargeItemShapes;
@@ -704,7 +714,8 @@ protected:
 	void gui_drawCharPortraitWithStats(int index);
 	void gui_drawFaceShape(int index);
 	void gui_drawWeaponSlot(int charIndex, int slot);
-	void gui_drawWeaponSlotStatus(int x, int y, int status);
+	virtual void gui_drawWeaponSlotStatus(int x, int y, int status);
+	virtual void gui_printInventoryDigits(int x, int y, int val) {}
 	void gui_drawHitpoints(int index);
 	void gui_drawFoodStatusGraph(int index);
 	void gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2) override;
@@ -797,6 +808,7 @@ protected:
 	Screen::FontId _conFont;
 	const uint8 **_compassShapes;
 	uint8 _charExchangeSwap;
+	uint8 *_swapShape;
 	bool _configHpBarGraphs;
 	bool _configMouseBtSwap;
 

@@ -181,8 +181,13 @@ private:
 
 	// GUI
 	void gui_drawPlayField(bool refresh) override;
+	void gui_drawWeaponSlotStatus(int x, int y, int status) override;
+	void gui_printInventoryDigits(int x, int y, int val) override;
 	const KyraRpgGUISettings *guiSettings() const override;
 	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }
+
+	const uint8 **_invSmallDigits;
+	const uint8 **_weaponSlotShapes;
 
 	static const KyraRpgGUISettings _guiSettingsVGA;
 	static const KyraRpgGUISettings _guiSettingsEGA;

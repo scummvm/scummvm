@@ -2726,7 +2726,7 @@ void EoBEngine::seq_segaRestoreAfterSequence() {
 	r->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
-	r->render(0);
+	_screen->clearPage(0);
 }
 
 bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool init) {

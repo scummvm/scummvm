@@ -49,6 +49,7 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_doorSwitchShapeEncodeDefs = _doorSwitchCoords = 0;
 	_doorShapesSrc = _doorSwitchShapesSrc = 0;
 	_dscDoorCoordsExt = 0;
+	_invSmallDigits = _weaponSlotShapes = 0;
 	_useMainMenuGUISettings = false;
 	_ttlCfg = 0;
 	_xdth = false;
@@ -60,6 +61,8 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 }
 
 EoBEngine::~EoBEngine() {
+	releaseShpArr(_invSmallDigits, 32);
+	releaseShpArr(_weaponSlotShapes, 6);
 	delete[] _doorShapesSrc;
 	delete[] _doorSwitchShapesSrc;
 	delete[] _itemsOverlay;
@@ -130,11 +133,26 @@ Common::Error EoBEngine::init() {
 	return Common::kNoError;
 }
 
-#define loadSpritesAndEncodeToShapes(resID, shapeBuffer, numShapes, width, height) \
+#define loadSpritesAndEncodeToShapes(resID, resOffset, shapeBuffer, numShapes, width, height) \
 	shapeBuffer = new const uint8 *[numShapes]; \
 	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
 	in = _sres->resData(resID); \
-	_screen->sega_encodeShapesFromSprites(shapeBuffer, in, numShapes, width, height, 3); \
+	_screen->sega_encodeShapesFromSprites(shapeBuffer, in + (resOffset), numShapes, width, height, 3); \
+	delete[] in
+
+#define loadSpritesAndMergeToSingleShape(resID, resOffset, singleShape, numSprites, spriteWidth, spriteHeight) \
+	in = _sres->resData(resID); \
+	{ \
+	const uint8 **shapeBuffer = new const uint8 *[numSprites]; \
+	_screen->sega_encodeShapesFromSprites(shapeBuffer, in + (resOffset), numSprites, spriteWidth, spriteHeight, 3, false); \
+	releaseShpArr(shapeBuffer, numSprites); \
+	_screen->sega_getRenderer()->render(7, true); \
+	_screen->sega_getAnimator()->clearSprites(); \
+	int cp = _screen->setCurPage(7); \
+	singleShape = _screen->encodeShape(0, 0, numSprites, spriteHeight); \
+	_screen->setCurPage(cp); \
+	_screen->clearPage(7); \
+	} \
 	delete[] in
 
 #define loadAndConvertShapes(resID, resOffset, shapeBuffer, numShapes, width, height, size) \
@@ -142,7 +160,7 @@ Common::Error EoBEngine::init() {
 	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
 	in = _sres->resData(resID); \
 	for (int ii = 0; ii < numShapes; ++ii) \
-		shapeBuffer[ii] = _screen->sega_convertShape(in + resOffset + ii * size, width, height, 3); \
+		shapeBuffer[ii] = _screen->sega_convertShape(in + (resOffset) + ii * size, width, height, 3); \
 	delete[] in
 
 void EoBEngine::loadItemsAndDecorationsShapes() {
@@ -155,9 +173,13 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	_sres->loadContainer("ITEM");
 	uint8 *in = 0;
 
-	loadSpritesAndEncodeToShapes(0, _itemIconShapes, _numItemIconShapes, 16, 16);
-	loadSpritesAndEncodeToShapes(14, _blueItemIconShapes, _numItemIconShapes, 16, 16);
-	loadSpritesAndEncodeToShapes(13, _xtraItemIconShapes, 3, 16, 16);
+	loadSpritesAndEncodeToShapes(0, 0, _itemIconShapes, _numItemIconShapes, 16, 16);
+	loadSpritesAndEncodeToShapes(14, 0, _blueItemIconShapes, _numItemIconShapes, 16, 16);
+	loadSpritesAndEncodeToShapes(13, 0, _xtraItemIconShapes, 3, 16, 16);
+
+	for (int i = 0; i < 7; ++i) {
+		loadAndConvertShapes(0, i << 11, _strikeAnimShapes[i], 5, 32, 32, 512);
+	}
 
 	loadAndConvertShapes(1, 0, _smallItemShapes, _numSmallItemShapes, 32, 24, 768);
 	loadAndConvertShapes(2, 0, _largeItemShapes, _numLargeItemShapes, 64, 24, 1472);
@@ -170,10 +192,20 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 		loadAndConvertShapes(2, offset2, _largeItemShapesScl[i], _numLargeItemShapes, (6 - 2 * i) << 3, 16 - ((i >> 1) << 3), 1472);
 		loadAndConvertShapes(11, offset1, _thrownItemShapesScl[i], _numThrownItemShapes, (3 - i) << 3, 16 - ((i >> 1) << 3), 768);
 	}
+
+	loadSpritesAndMergeToSingleShape(5, 0, _redSplatShape, 5, 8, 24);
+	loadSpritesAndMergeToSingleShape(5, 2016, _swapShape, 7, 8, 8);
+	loadSpritesAndEncodeToShapes(5, 480, _weaponSlotShapes, 6, 32, 16);
+	loadSpritesAndEncodeToShapes(6, 0, _invSmallDigits, 32, 16, 8);
+
+	in = _res->fileData("FACE", 0);
+	_screen->sega_encodeShapesFromSprites(&_deadCharShape, in + 53 * 512, 1, 32, 32, 3);
+	delete[] in;	
 }
 
 #undef loadAndConvertShapes
 #undef loadSpritesAndEncodeToShapes
+#undef loadSpritesAndMergeToSingleShape
 
 Common::SeekableReadStreamEndian *EoBEngine::getItemDefinitionFile(int index) {
 	assert(index == 0 || index == 1);
@@ -889,11 +921,49 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 		return;
 	}
 
+	if (!_loading)
+		_screen->sega_fadeToBlack(1);
+
+	_screen->sega_getAnimator()->clearSprites();
+	SegaRenderer *r = _screen->sega_getRenderer();
+	
+
 	uint8 *data = _res->fileData("PLAYFLD", 0);
 
 	delete[] data;
 
-	_screen->sega_fadeToNeutral(0);
+	if (refresh && !_sceneDrawPage2)
+		drawScene(0);
+
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+
+	if (!_loading) {
+		_screen->sega_fadeToNeutral(1);
+		_screen->updateScreen()
+	}
+}
+
+void EoBEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::gui_drawWeaponSlotStatus(x, y, status);
+		return;
+	}
+
+	if (status < 0) {
+		_screen->drawShape(_screen->_curPage, _weaponSlotShapes[status < -2 ? -status - 1 : 3 - status], x - 1, y, 0);
+	} else {
+		_screen->drawShape(_screen->_curPage, _weaponSlotShapes[0], x - 1, y, 0);
+		gui_printInventoryDigits(x + 8, y + 6, status);
+	}
+}
+
+void EoBEngine::gui_printInventoryDigits(int x, int y, int val) {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::gui_printInventoryDigits(x, y, val);
+		return;
+	}
+	_screen->drawShape(_screen->_curPage, _invSmallDigits[(val < 10) ? 22 + val : (val >= 100 ? 1 : 2 + val / 10)], x, y);
+	_screen->drawShape(_screen->_curPage, (val >= 10 && val < 100) ? _invSmallDigits[12 + (val % 10)] : 0, x, y);
 }
 
 const KyraRpgGUISettings *EoBEngine::guiSettings() const {

@@ -68,12 +68,13 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = 0;
 	_itemIconShapes = _blueItemIconShapes = _xtraItemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
-	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = 0;
+	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = _swapShape = 0;
 	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 
 	memset(_largeItemShapesScl, 0, sizeof(_largeItemShapesScl));
 	memset(_smallItemShapesScl, 0, sizeof(_smallItemShapesScl));
 	memset(_thrownItemShapesScl, 0, sizeof(_thrownItemShapesScl));
+	memset(_strikeAnimShapes, 0, sizeof(_strikeAnimShapes));
 
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTable2 = 0;
 	
@@ -874,15 +875,6 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	}
 }
 
-#define releaseShpArr(shapes, num) \
-if (shapes) { \
-	for (int iii = 0; iii < num; iii++) { \
-		if (shapes[iii]) \
-			delete[] shapes[iii]; \
-	} \
-} \
-shapes = 0
-
 void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	if (_flags.platform != Common::kPlatformFMTowns || _flags.gameID != GI_EOB2) {
 		releaseShpArr(_largeItemShapes, _numLargeItemShapes);
@@ -900,6 +892,7 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 
 		delete[] _redSplatShape;
 		delete[] _greenSplatShape;
+		delete[] _swapShape;
 		delete[] _deadCharShape;
 		delete[] _disabledCharGrid;
 		delete[] _blackBoxSmallGrid;
@@ -929,9 +922,12 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 		delete[] _smallItemShapesScl[i];
 		delete[] _thrownItemShapesScl[i];
 	}
-}
 
-#undef releaseShpArr
+	for (int i = 0; i < 7; ++i) {
+		releaseShpArr(_strikeAnimShapes[i], 5);
+		delete[] _strikeAnimShapes[i];
+	}
+}
 
 void EoBCoreEngine::setHandItem(Item itemIndex) {
 	if (itemIndex == -1) {

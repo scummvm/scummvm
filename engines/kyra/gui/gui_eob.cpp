@@ -71,15 +71,6 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 			_screen->getPalette(7).copy(_screen->getPalette(1), 0, 32);
 		}
 	}
-
-	// load playfield etc.
-	/*_screen->sega_getAnimator()->clearSprites();
-	_screen->sega_getRenderer()->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
-	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
-	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
-	_screen->sega_selectPalette(6, 1, false);
-	_screen->sega_selectPalette(7, 3, true);*/
-	//_screen->sega_fadeToNeutral(0);
 }
 
 void EoBCoreEngine::gui_restorePlayField() {
@@ -98,6 +89,8 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 	if (!testCharacter(index, 1))
 		return;
 
+	// , , 23 * 8 = 184, 32 * 8 = 256
+	// 1 * 8 , 8 * 8, 15 * 8
 	static const uint16 charPortraitPosX[] = { 8, 80, 184, 256 };
 	static const uint16 charPortraitPosY[] = { 2, 54, 106 };
 
@@ -120,11 +113,14 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 
 		Screen::FontId cf = _screen->setFont(_invFont1);
 
-		if (index == _exchangeCharacterId)
-			_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, guiSettings()->colors.guiColorDarkRed, guiSettings()->colors.fill);
-		else
+		if (index == _exchangeCharacterId) {
+			if (_flags.platform == Common::kPlatformSegaCD)
+				_screen->drawShape(_screen->_curPage, _swapShape, x2 + 2, y2 + 2);
+			else
+				_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, guiSettings()->colors.guiColorDarkRed, guiSettings()->colors.fill);
+		} else {
 			_screen->printText(c->name, x2 + 2, y2 + (_flags.platform == Common::kPlatformFMTowns ? 1 : 2), txtCol1, _flags.use16ColorMode ? 0 : guiSettings()->colors.fill);
-
+		}
 		_screen->setFont(_invFont2);
 
 		gui_drawFaceShape(index);
@@ -137,8 +133,12 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 
 		if (c->damageTaken > 0) {
 			_screen->drawShape(2, _redSplatShape, x2 + 13, y2 + 30, 0);
-			Common::String tmpStr = Common::String::format("%d", c->damageTaken);
-			_screen->printText(tmpStr.c_str(), x2 + 34 - tmpStr.size() * 3, y2 + 42, (_configRenderMode == Common::kRenderCGA) ? 12 : guiSettings()->colors.guiColorWhite, 0);
+			if (_flags.platform == Common::kPlatformSegaCD) {
+				gui_printInventoryDigits(x2 + 25, y2 + 40, c->damageTaken);
+			} else {
+				Common::String tmpStr = Common::String::format("%d", c->damageTaken);
+				_screen->printText(tmpStr.c_str(), x2 + 34 - tmpStr.size() * 3, y2 + 42, (_configRenderMode == Common::kRenderCGA) ? 12 : guiSettings()->colors.guiColorWhite, 0);
+			}
 		}
 
 		_screen->setCurPage(cp);
@@ -561,11 +561,15 @@ void EoBCoreEngine::gui_drawInventoryItem(int slot, int redraw, int pageNum) {
 		if (slot == 16) {
 			_screen->fillRect(227, 65, 238, 69, guiSettings()->colors.guiColorBlack);
 			int cnt = countQueuedItems(_characters[_updateCharNum].inventory[slot], -1, -1, 1, 1);
-			x = cnt >= 10 ? 227 : 233;
-			Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
-			Common::String str = Common::String::format("%d", cnt);
-			_screen->printText(str.c_str(), x, 65, guiSettings()->colors.guiColorWhite, 0);
-			_screen->setFont(cf);
+			if (_flags.platform != Common::kPlatformSegaCD) {
+				x = cnt >= 10 ? 227 : 233;
+				Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
+				Common::String str = Common::String::format("%d", cnt);
+				_screen->printText(str.c_str(), x, 65, guiSettings()->colors.guiColorWhite, 0);
+				_screen->setFont(cf);
+			} else {
+				gui_printInventoryDigits(227, 65, cnt);
+			}
 		}
 	}
 
