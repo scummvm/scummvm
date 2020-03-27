@@ -231,6 +231,12 @@ enum TransitionType {
 	kTransDissolveBits
 };
 
+enum {
+	kCursorDefault,
+	kCursorMouseDown,
+	kCursorMouseUp
+};
+
 struct Datum;
 typedef Common::Array<Datum> DatumArray;
 

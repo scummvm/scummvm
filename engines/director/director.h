@@ -116,6 +116,7 @@ public:
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
+	void setCursor(int type); // graphics.cpp
 
 	void loadInitialMovie(const Common::String movie);
 	Archive *openMainArchive(const Common::String movie);
