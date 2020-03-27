@@ -151,4 +151,28 @@ void DirectorEngine::setDraggedSprite(uint16 id) {
 	warning("STUB: DirectorEngine::setDraggedSprite(%d)", id);
 }
 
+void DirectorEngine::waitForClick() {
+	setCursor(kCursorMouseUp);
+
+	bool cursor = false;
+	uint32 nextTime = g_system->getMillis() + 1000;
+
+	while (!processQuitEvent(true)) {
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+
+		if (g_system->getMillis() >= nextTime) {
+			nextTime = g_system->getMillis() + 1000;
+
+			setCursor(kCursorDefault);
+
+			setCursor(cursor ? kCursorMouseDown : kCursorMouseUp);
+
+			cursor = !cursor;
+		}
+	}
+
+	setCursor(kCursorDefault);
+}
+
 } // End of namespace Director

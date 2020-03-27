@@ -123,9 +123,12 @@ public:
 	Archive *createArchive();
 	void cleanupMainArchive();
 
-	void processEvents(); // events.cpp
-	void setDraggedSprite(uint16 id); // events.cpp
+	// events.cpp
+	void processEvents();
+	void setDraggedSprite(uint16 id);
+	void waitForClick();
 
+public:
 	Common::HashMap<Common::String, Score *> *_movies;
 
 	Common::RandomSource _rnd;

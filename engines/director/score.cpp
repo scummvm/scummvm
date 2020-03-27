@@ -1562,8 +1562,7 @@ void Score::update() {
 			// TODO Wait for channel tempo - 135
 			warning("STUB: tempo >= 136");
 		} else if (tempo == 128) {
-			// TODO Wait for Click/Key
-			warning("STUB: tempo == 128");
+			_vm->waitForClick();
 		} else if (tempo == 135) {
 			// Wait for sound channel 1
 			while (_soundManager->isChannelActive(1)) {
