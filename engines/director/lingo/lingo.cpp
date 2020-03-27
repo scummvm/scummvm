@@ -316,34 +316,22 @@ int Lingo::alignTypes(Datum &d1, Datum &d2) {
 
 	if (d1.type == STRING) {
 		char *endPtr = 0;
-		int i = strtol(d1.u.s->c_str(), &endPtr, 10);
+		double d = strtod(d1.u.s->c_str(), &endPtr);
 		if (*endPtr == 0) {
-			d1.type = INT;
-			d1.u.i = i;
+			d1.type = FLOAT;
+			d1.u.f = d;
 		} else {
-			double d = strtod(d1.u.s->c_str(), &endPtr);
-			if (*endPtr == 0) {
-				d1.type = FLOAT;
-				d1.u.f = d;
-			} else {
-				warning("Unable to parse '%s' as a number", d1.u.s->c_str());
-			}
+			warning("Unable to parse '%s' as a number", d1.u.s->c_str());
 		}
 	}
 	if (d2.type == STRING) {
 		char *endPtr = 0;
-		int i = strtol(d2.u.s->c_str(), &endPtr, 10);
+		double d = strtod(d2.u.s->c_str(), &endPtr);
 		if (*endPtr == 0) {
-			d2.type = INT;
-			d2.u.i = i;
+			d2.type = FLOAT;
+			d2.u.f = d;
 		} else {
-			double d = strtod(d2.u.s->c_str(), &endPtr);
-			if (*endPtr == 0) {
-				d2.type = FLOAT;
-				d2.u.f = d;
-			} else {
-				warning("Unable to parse '%s' as a number", d2.u.s->c_str());
-			}
+			warning("Unable to parse '%s' as a number", d2.u.s->c_str());
 		}
 	}
 
