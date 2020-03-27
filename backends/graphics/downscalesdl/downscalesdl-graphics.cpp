@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(GPH_DEVICE) || defined(DINGUX)
+#if (defined(GPH_DEVICE) || defined(DINGUX)) && defined(USE_SCALERS)
 
 #include "backends/graphics/downscalesdl/downscalesdl-graphics.h"
 #include "backends/events/sdl/sdl-events.h"
