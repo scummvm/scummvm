@@ -24,6 +24,7 @@
 #include "mohawk/dialogs.h"
 
 #include "gui/gui-manager.h"
+#include "gui/message.h"
 #include "gui/saveload.h"
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
@@ -96,18 +97,22 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 		_zipModeCheckbox(nullptr),
 		_transitionsCheckbox(nullptr),
 		_mystFlyByCheckbox(nullptr),
+		_languagePopUp(nullptr),
 		_dropPageButton(nullptr),
 		_showMapButton(nullptr),
 		_returnToMenuButton(nullptr) {
+	Common::String guiOptions = ConfMan.get("guioptions", _domain);
+	bool isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
+	bool isME = checkGameGUIOption(GAMEOPTION_ME, guiOptions);
 
-	if (!checkGameGUIOption(GAMEOPTION_DEMO, ConfMan.get("guioptions", _domain))) {
+	if (!isDemo) {
 		// I18N: Option for fast scene switching
 		_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystOptionsDialog.ZipMode", _("~Z~ip Mode Activated"));
 	}
 
 	_transitionsCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystOptionsDialog.Transistions", _("~T~ransitions Enabled"));
 
-	if (checkGameGUIOption(GAMEOPTION_ME, ConfMan.get("guioptions", _domain))) {
+	if (isME) {
 		_mystFlyByCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystOptionsDialog.PlayMystFlyBy", _("Play the Myst fly by movie"),
 		                                             _("The Myst fly by movie was not played by the original engine."));
 	}
@@ -128,6 +133,19 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 		if (vm->getFeatures() & GF_DEMO) {
 			_returnToMenuButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.MainMenu", _("Main Men~u~"), nullptr, kMenuCmd);
 		}
+
+		if (vm->getFeatures() & GF_25TH) {
+			GUI::StaticTextWidget *languageCaption = new GUI::StaticTextWidget(widgetsBoss(), "MystOptionsDialog.LanguageDesc", _("Language:"));
+			languageCaption->setAlign(Graphics::kTextAlignRight);
+
+			_languagePopUp = new GUI::PopUpWidget(widgetsBoss(), "MystOptionsDialog.Language");
+
+			const MystLanguage *languages = MohawkEngine_Myst::listLanguages();
+			while (languages->language != Common::UNK_LANG) {
+				_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
+				languages++;
+			}
+		}
 	}
 }
 
@@ -141,6 +159,11 @@ void MystOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	                .addWidget("ZipMode", "Checkbox")
 	                .addWidget("Transistions", "Checkbox")
 	                .addWidget("PlayMystFlyBy", "Checkbox")
+	                .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	                    .addPadding(0, 0, 0, 0)
+	                    .addWidget("LanguageDesc", "OptionsLabel")
+	                    .addWidget("Language", "PopUp")
+	                .closeLayout()
 	                .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
 	                    .addPadding(0, 0, 16, 0)
 	                    .addSpace()
@@ -166,6 +189,14 @@ void MystOptionsWidget::load() {
 
 	if (_mystFlyByCheckbox) {
 		_mystFlyByCheckbox->setState(ConfMan.getBool("playmystflyby", _domain));
+	}
+
+	if (_languagePopUp) {
+		Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
+		const MystLanguage *languageDesc = MohawkEngine_Myst::getLanguageDesc(language);
+		if (languageDesc) {
+			_languagePopUp->setSelectedTag(languageDesc->language);
+		}
 	}
 
 	if (isInGame()) {
@@ -194,6 +225,29 @@ bool MystOptionsWidget::save() {
 
 	if (_mystFlyByCheckbox) {
 		ConfMan.setBool("playmystflyby", _mystFlyByCheckbox->getState(), _domain);
+	}
+
+	if (_languagePopUp) {
+		MohawkEngine_Myst *vm = static_cast<MohawkEngine_Myst *>(g_engine);
+		assert(vm);
+
+		int32 selectedLanguage = _languagePopUp->getSelectedTag();
+		const MystLanguage *languageDesc = nullptr;
+		if (selectedLanguage >= 0) {
+			languageDesc = MohawkEngine_Myst::getLanguageDesc(static_cast<Common::Language>(selectedLanguage));
+		}
+
+		Common::Language newLanguage = Common::UNK_LANG;
+		if (languageDesc != nullptr) {
+			newLanguage = languageDesc->language;
+			ConfMan.set("language", Common::getLanguageCode(languageDesc->language));
+		}
+
+		Common::Language currentLanguage = vm->getLanguage();
+		if (newLanguage != currentLanguage && vm->isGameStarted()) {
+			GUI::MessageDialog dialog(_("The new language will be applied after restarting the game."));
+			dialog.runModal();
+		}
 	}
 
 	return true;

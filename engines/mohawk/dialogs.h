@@ -99,6 +99,7 @@ private:
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_transitionsCheckbox;
 	GUI::CheckboxWidget *_mystFlyByCheckbox;
+	GUI::PopUpWidget *_languagePopUp;
 
 	GUI::ButtonWidget *_dropPageButton;
 	GUI::ButtonWidget *_showMapButton;

@@ -98,24 +98,6 @@ bool MohawkEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsRTL);
 }
 
-Common::String MohawkEngine::getDatafileLanguageName(const char *prefix) const {
-	const ADGameFileDescription *fileDesc;
-	for (fileDesc = _gameDescription->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
-		if (Common::String(fileDesc->fileName).hasPrefix(prefix)) {
-			break;
-		}
-	}
-
-	if (!fileDesc->fileName) {
-		warning("Malformed detection entry");
-
-		return "";
-	}
-
-	size_t prefixLength = strlen(prefix);
-	return Common::String(&fileDesc->fileName[prefixLength], strlen(fileDesc->fileName) - prefixLength - 4);
-}
-
 #ifdef ENABLE_MYST
 
 bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
@@ -230,6 +212,19 @@ DetectedGames MohawkMetaEngine::detectGames(const Common::FSList &fslist) const 
 	// Here we amend the detected games to set the list of supported languages.
 	for (uint i = 0; i < detectedGames.size(); i++) {
 		DetectedGame &game = detectedGames[i];
+
+#ifdef ENABLE_MYST
+		if (game.gameId == "myst"
+		        && Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())
+		        && Common::checkGameGUIOption(GAMEOPTION_ME, game.getGUIOptions())) {
+			const Mohawk::MystLanguage *languages = Mohawk::MohawkEngine_Myst::listLanguages();
+			while (languages->language != Common::UNK_LANG) {
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(languages->language));
+				languages++;
+			}
+		}
+#endif
+
 #ifdef ENABLE_RIVEN
 		if (game.gameId == "riven"
 		        && Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())) {

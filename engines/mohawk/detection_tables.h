@@ -339,107 +339,27 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst Masterpiece Edition - 25th Anniversary
-	// English Windows - Created by the ScummVM team
+	// Repacked by the ScummVM team
 	{
 		{
 			"myst",
 			"Masterpiece Edition - 25th Anniversary",
 			{
 				{"myst.dat", 0, "c4cae9f143b5947262e6cb2397e1617e", -1},
+				{"myst_french.dat", 0, "7c8230be50ffcac588e7db8788ad7614", -1},
+				{"myst_german.dat", 0, "3952554439960b22a360e8e006dfed58", -1},
+				{"myst_polish.dat", 0, "9ca82ff26fcbfacf40e4164523a50854", -1},
+				{"myst_spanish.dat", 0, "822ed3c0de912c10b877dcd2cc078493", -1},
 				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
 				AD_LISTEND
 			},
-			Common::EN_ANY,
+			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUI_OPTIONS_MYST_ME_25TH
 		},
 		GType_MYST,
 		GF_ME | GF_25TH,
-		0,
-	},
-
-	// Myst Masterpiece Edition - 25th Anniversary
-	// French Windows - Repacked by the ScummVM team
-	{
-		{
-			"myst",
-			"Masterpiece Edition - 25th Anniversary",
-			{
-				{"myst_french.dat", 0, "7c8230be50ffcac588e7db8788ad7614", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
-				AD_LISTEND
-			},
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME_25TH
-		},
-		GType_MYST,
-		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Myst Masterpiece Edition - 25th Anniversary
-	// German Windows - Repacked by the ScummVM team
-	{
-		{
-			"myst",
-			"Masterpiece Edition - 25th Anniversary",
-			{
-				{"myst_german.dat", 0, "3952554439960b22a360e8e006dfed58", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
-				AD_LISTEND
-			},
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME_25TH
-		},
-		GType_MYST,
-		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Myst Masterpiece Edition - 25th Anniversary
-	// Polish Windows - Repacked by the ScummVM team
-	{
-		{
-			"myst",
-			"Masterpiece Edition - 25th Anniversary",
-			{
-				{"myst_polish.dat", 0, "9ca82ff26fcbfacf40e4164523a50854", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
-				AD_LISTEND
-			},
-			Common::PL_POL,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME_25TH
-		},
-		GType_MYST,
-		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Myst Masterpiece Edition - 25th Anniversary
-	// Spanish Windows - Repacked by the ScummVM team
-	{
-		{
-			"myst",
-			"Masterpiece Edition - 25th Anniversary",
-			{
-				{"myst_spanish.dat", 0, "822ed3c0de912c10b877dcd2cc078493", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
-				AD_LISTEND
-			},
-			Common::ES_ESP,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME_25TH
-		},
-		GType_MYST,
-		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
