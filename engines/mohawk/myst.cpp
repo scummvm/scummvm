@@ -81,6 +81,8 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
 	_scheduledAction = kMystActionNone;
+	_currentLanguage = Common::UNK_LANG;
+	_currentLanguage = getLanguage();
 
 	_sound = nullptr;
 	_video = nullptr;
@@ -233,17 +235,19 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieN
 }
 
 Common::String MohawkEngine_Myst::selectLocalizedMovieFilename(const Common::String &movieName) {
-	Common::String language;
-	if (getFeatures() & GF_LANGUAGE_FILES) {
-		language = getDatafileLanguageName("myst_");
-	}
+	Common::Language language = getLanguage();
+	const MystLanguage *languageDesc = getLanguageDesc(language);
 
-	Common::String localizedMovieName = Common::String::format("%s/%s", language.c_str(), movieName.c_str());
-	if (!language.empty() && SearchMan.hasFile(localizedMovieName)) {
-		return localizedMovieName;
-	} else {
+	if (!languageDesc) {
 		return movieName;
 	}
+
+	Common::String localizedMovieName = Common::String::format("%s/%s", languageDesc->archiveSuffix, movieName.c_str());
+	if (!SearchMan.hasFile(localizedMovieName)) {
+		return movieName;
+	}
+
+	return localizedMovieName;
 }
 
 VideoEntryPtr MohawkEngine_Myst::playMovie(const Common::String &name, MystStack stack) {
@@ -440,26 +444,66 @@ Common::Error MohawkEngine_Myst::run() {
 	return Common::kNoError;
 }
 
+const MystLanguage *MohawkEngine_Myst::listLanguages() {
+	static const MystLanguage languages[] = {
+	    { Common::EN_ANY,   "english"  },
+	    { Common::FR_FRA,   "french"   },
+	    { Common::DE_DEU,   "german"   },
+	    { Common::PL_POL,   "polish"   },
+	    { Common::ES_ESP,   "spanish"  },
+	    { Common::UNK_LANG, nullptr    }
+	};
+	return languages;
+}
+
+const MystLanguage *MohawkEngine_Myst::getLanguageDesc(Common::Language language) {
+	const MystLanguage *languages = listLanguages();
+
+	while (languages->language != Common::UNK_LANG) {
+		if (languages->language == language) {
+			return languages;
+		}
+
+		languages++;
+	}
+
+	return nullptr;
+}
+
+Common::Language MohawkEngine_Myst::getLanguage() const {
+	Common::Language language = MohawkEngine::getLanguage();
+
+	if (language == Common::UNK_LANG) {
+		language = _currentLanguage;
+	}
+
+	// The language can be changed at run time in the 25th anniversary edition
+	if (language == Common::UNK_LANG) {
+		language = Common::parseLanguage(ConfMan.get("language"));
+	}
+
+	if (language == Common::UNK_LANG) {
+		language = Common::EN_ANY;
+	}
+
+	return language;
+}
+
 void MohawkEngine_Myst::loadStackArchives(MystStack stackId) {
-	for (uint i = 0; i < _mhk.size(); i++) {
-		delete _mhk[i];
-	}
-	_mhk.clear();
+	closeAllArchives();
 
-	Common::String language;
-	if (getFeatures() & GF_LANGUAGE_FILES) {
-		language = getDatafileLanguageName("myst_");
-	}
+	Common::Language language = getLanguage();
+	const MystLanguage *languageDesc = getLanguageDesc(language);
 
-	if (!language.empty()) {
-		loadArchive(mystFiles[stackId], language.c_str(), false);
+	if (languageDesc) {
+		loadArchive(mystFiles[stackId], languageDesc->archiveSuffix, false);
 	}
 
 	loadArchive(mystFiles[stackId], nullptr, true);
 
 	if (getFeatures() & GF_ME) {
-		if (!language.empty()) {
-			loadArchive("help", language.c_str(), false);
+		if (languageDesc) {
+			loadArchive("help", languageDesc->archiveSuffix, false);
 		}
 
 		loadArchive("help", nullptr, true);
@@ -495,6 +539,17 @@ void MohawkEngine_Myst::registerDefaultSettings() {
 	ConfMan.registerDefault("playmystflyby", false);
 	ConfMan.registerDefault("zip_mode", false);
 	ConfMan.registerDefault("transition_mode", false);
+}
+
+void MohawkEngine_Myst::applyGameSettings() {
+	// Allow changing the language when in the main menu when the game has not yet been started.
+	// It's not possible to reliably change the language one the game is started as the current
+	//  view cannot be reconstructed using the save / stack state.
+	if ((getFeatures() & GF_25TH) && !isGameStarted()) {
+		_currentLanguage = Common::parseLanguage(ConfMan.get("language"));
+		_gfx->loadMenuFont();
+		changeToStack(_stack->getStackId(), _card->getId(), 0, 0);
+	}
 }
 
 Common::KeymapArray MohawkEngine_Myst::initKeymaps(const char *target) {
@@ -731,6 +786,7 @@ void MohawkEngine_Myst::runOptionsDialog() {
 	int result = runDialog(dlg);
 	if (result > 0) {
 		syncSoundSettings();
+		applyGameSettings();
 	}
 
 	if (result > kMystActionNone && result <= kMystActionLast) {
@@ -1006,7 +1062,7 @@ bool MohawkEngine_Myst::hasGameSaveSupport() const {
 	return !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
 }
 
-bool MohawkEngine_Myst::isInteractive() {
+bool MohawkEngine_Myst::isInteractive() const {
 	return !_stack->isScriptRunning() && !_waitingOnBlockingOperation;
 }
 

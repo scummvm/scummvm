@@ -67,24 +67,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) :
 	_mainMenuBackupBackBuffer.reset(new Graphics::Surface());
 
 	if (_vm->getFeatures() & GF_25TH) {
-		const char *menuFontName = "NotoSans-ExtraBold.ttf";
-#ifdef USE_FREETYPE2
-		int fontSize;
-		if (_vm->getLanguage() == Common::PL_POL) {
-			fontSize = 11; // The Polish diacritics need significantly more space, so we use a smaller font
-		} else {
-			fontSize = 16;
-		}
-
-		Common::SeekableReadStream *fontStream = SearchMan.createReadStreamForMember(menuFontName);
-		if (fontStream) {
-			_menuFont = Graphics::loadTTFFont(*fontStream, fontSize);
-			delete fontStream;
-		} else
-#endif
-		{
-			warning("Unable to open the menu font file '%s'", menuFontName);
-		}
+		loadMenuFont();
 	}
 }
 
@@ -94,6 +77,30 @@ MystGraphics::~MystGraphics() {
 	_backBuffer->free();
 	delete _backBuffer;
 	delete _menuFont;
+}
+
+void MystGraphics::loadMenuFont() {
+	delete _menuFont;
+	_menuFont = nullptr;
+
+	const char *menuFontName = "NotoSans-ExtraBold.ttf";
+#ifdef USE_FREETYPE2
+	int fontSize;
+	if (_vm->getLanguage() == Common::PL_POL) {
+		fontSize = 11; // The Polish diacritics need significantly more space, so we use a smaller font
+	} else {
+		fontSize = 16;
+	}
+
+	Common::SeekableReadStream *fontStream = SearchMan.createReadStreamForMember(menuFontName);
+	if (fontStream) {
+		_menuFont = Graphics::loadTTFFont(*fontStream, fontSize);
+		delete fontStream;
+	} else
+#endif
+	{
+		warning("Unable to open the menu font file '%s'", menuFontName);
+	}
 }
 
 MohawkSurface *MystGraphics::decodeImage(uint16 id) {

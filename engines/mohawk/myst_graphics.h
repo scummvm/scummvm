@@ -64,6 +64,7 @@ public:
 	void restoreStateForMainMenu();
 	Graphics::Surface *getThumbnailForMainMenu() const;
 
+	void loadMenuFont();
 	Common::Rect getTextBoundingBox(const Common::U32String &text, const Common::Rect &dest, Graphics::TextAlign align);
 	void drawText(uint16 image, const Common::U32String &text, const Common::Rect &dest, uint8 r, uint8 g, uint8 b, Graphics::TextAlign align, int16 deltaY);
 
