@@ -47,8 +47,8 @@ bool quit = false, verbose = false;
 Ultima4Engine *g_ultima;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-	Shared::UltimaEngine(syst, gameDesc), _config(nullptr), _game(nullptr),
-	_imageLoaders(nullptr), _screen(nullptr) {
+		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _config(nullptr), _game(nullptr),
+		_imageLoaders(nullptr), _screen(nullptr) {
 	g_ultima = this;
 	g_context = nullptr;
 	g_game = nullptr;
@@ -79,12 +79,13 @@ bool Ultima4Engine::initialize() {
 	_imageLoaders = new ImageLoaders();
 	_screen->init();
 
+	_saveSlotToLoad = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
 	return true;
 }
 
 void Ultima4Engine::startup() {
-	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
-	bool skipInfo = saveSlot != -1;
+	bool skipInfo = _saveSlotToLoad != -1;
 
 	ProgressBar pb((320 / 2) - (200 / 2), (200 / 2), 200, 10, 0, (skipInfo ? 4 : 7));
 	pb.setBorderColor(240, 240, 240);
@@ -129,9 +130,8 @@ Common::Error Ultima4Engine::run() {
 		if (!shouldQuit()) {
 			g_game->init();
 
-			int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
-			if (saveSlot != -1) {
-				if (loadGameState(saveSlot).getCode() != Common::kNoError)
+			if (_saveSlotToLoad != -1) {
+				if (loadGameState(_saveSlotToLoad).getCode() != Common::kNoError)
 					error("Error loading save");
 			}
 
@@ -152,9 +152,25 @@ bool Ultima4Engine::isDataRequired(Common::String &folder, int &majorVersion, in
 	return true;
 }
 
+void Ultima4Engine::setToJourneyOnwards() {
+	_saveSlotToLoad = ConfMan.hasKey("last_save") ? ConfMan.getInt("last_save") : -1;
+	assert(_saveSlotToLoad);
+}
+
 bool Ultima4Engine::canSaveGameStateCurrently(bool isAutosave) {
 	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game;
 }
+
+Common::Error Ultima4Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::Error result = Shared::UltimaEngine::saveGameState(slot, desc, isAutosave);
+	if (!isAutosave && result.getCode() == Common::kNoError) {
+		ConfMan.setInt("last_save", slot);
+		ConfMan.flushToDisk();
+	}
+
+	return result;
+}
+
 
 Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Serializer ser(stream, nullptr);

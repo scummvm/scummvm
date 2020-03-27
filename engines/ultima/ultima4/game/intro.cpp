@@ -922,37 +922,26 @@ Common::String IntroController::getQuestion(int v1, int v2) {
  * Starts the game.
  */
 void IntroController::journeyOnward() {
-	Common::InSaveFile *saveGameFile;
 	bool validSave = false;
+	int lastSave = ConfMan.hasKey("last_save") ? ConfMan.getInt("last_save") : -1;
 
-	/*
-	 * ensure a party.sav file exists, otherwise require user to
-	 * initiate game
-	 */
-	saveGameFile = g_system->getSavefileManager()->openForLoading(PARTY_SAV_BASE_FILENAME);
-	if (saveGameFile) {
-		SaveGame *saveGame = new SaveGame;
-
-		// Make sure there are players in party.sav --
-		// In the Ultima Collection CD, party.sav exists, but does
-		// not contain valid info to journey onward
-		Common::Serializer ser(saveGameFile, nullptr);
-		saveGame->synchronize(ser);
-
-		if (saveGame->_members > 0)
-			validSave = true;
-		delete saveGame;
-		delete saveGameFile;
+	if (lastSave != -1) {
+		// At this point the game context hasn't been created yet, so we only
+		// want to validate that the given savegame file exists without loading it
+		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+			g_ultima->getSaveStateName(lastSave));
+		validSave = saveFile != nullptr;
+		delete saveFile;
 	}
 
-	if (!validSave) {
+	if (validSave) {
+		EventHandler::setControllerDone();
+		g_ultima->setToJourneyOnwards();
+	} else {
 		_errorMessage = "Initiate a new game first!";
 		updateScreen();
 		g_screen->update();
-		return;
 	}
-
-	EventHandler::setControllerDone();
 }
 
 /**

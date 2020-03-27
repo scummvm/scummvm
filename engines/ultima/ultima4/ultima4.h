@@ -35,6 +35,8 @@ class Screen;
 
 class Ultima4Engine : public Shared::UltimaEngine {
 private:
+	int _saveSlotToLoad;
+private:
 	void startup();
 protected:
 	// Engine APIs
@@ -68,6 +70,15 @@ public:
 	bool canSaveGameStateCurrently(bool isAutosave = false) override;
 
 	/**
+	 * Save a game state.
+	 * @param slot	the slot into which the savestate should be stored
+	 * @param desc	a description for the savestate, entered by the user
+	 * @param isAutosave	Expected to be true if an autosave is being created
+	 * @return returns kNoError on success, else an error code.
+	 */
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
+	/**
 	 * Load a game state.
 	 * @param stream	the stream to load the savestate from
 	 * @return returns kNoError on success, else an error code.
@@ -81,6 +92,12 @@ public:
 	 * @return returns kNoError on success, else an error code.
 	 */
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+
+	/**
+	 * Specifies to load the previous save as the actual game starts. Used by
+	 * the main menu when the Journey Onwards option is selected
+	 */
+	void setToJourneyOnwards();
 };
 
 extern Ultima4Engine *g_ultima;
