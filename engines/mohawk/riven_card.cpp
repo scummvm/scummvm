@@ -219,7 +219,7 @@ void RivenCard::applyPropertiesPatch2E76(uint32 globalId) {
 	//     }
 	//   break;
 	// }
-	if (globalId == 0x2E76 && !(_vm->getFeatures() & GF_DVD)) {
+	if (globalId == 0x2E76 && !_vm->isGameVariant(GF_DVD)) {
 		uint16 aGehnVariable = _vm->getStack()->getIdFromName(kVariableNames, "agehn");
 		uint16 aTrapBookVariable = _vm->getStack()->getIdFromName(kVariableNames, "atrapbook");
 		uint16 patchData[] = {
@@ -398,7 +398,7 @@ void RivenCard::applyPropertiesPatch22118(uint32 globalId) {
 }
 
 void RivenCard::applyPropertiesPatchE2E(uint32 globalId) {
-	if (!(_vm->getFeatures() & GF_25TH))
+	if (!_vm->isGameVariant(GF_25TH))
 		return;
 
 	// The main menu in the Myst 25th anniversary version is patched to include new items:

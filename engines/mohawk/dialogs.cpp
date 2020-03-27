@@ -125,16 +125,16 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 		_dropPageButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.DropPage", _("~D~rop Page"), nullptr, kDropCmd);
 
 		// Myst ME only has maps
-		if (vm->getFeatures() & GF_ME) {
+		if (vm->isGameVariant(GF_ME)) {
 			_showMapButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.ShowMap", _("Show ~M~ap"), nullptr, kMapCmd);
 		}
 
 		// Myst demo only has a menu
-		if (vm->getFeatures() & GF_DEMO) {
+		if (vm->isGameVariant(GF_DEMO)) {
 			_returnToMenuButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.MainMenu", _("Main Men~u~"), nullptr, kMenuCmd);
 		}
 
-		if (vm->getFeatures() & GF_25TH) {
+		if (vm->isGameVariant(GF_25TH)) {
 			GUI::StaticTextWidget *languageCaption = new GUI::StaticTextWidget(widgetsBoss(), "MystOptionsDialog.LanguageDesc", _("Language:"));
 			languageCaption->setAlign(Graphics::kTextAlignRight);
 

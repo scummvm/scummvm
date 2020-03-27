@@ -165,7 +165,7 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 }
 
 Common::Error RivenSaveLoad::loadGame(const int slot) {
-	if (_vm->getFeatures() & GF_DEMO) // Don't load games in the demo
+	if (_vm->isGameVariant(GF_DEMO)) // Don't load games in the demo
 		return Common::kNoError;
 
 	Common::String filename = buildSaveFilename(slot);
@@ -187,8 +187,8 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 	Common::SeekableReadStream *vers = mhk->getResource(ID_VERS, 1);
 	uint32 saveGameVersion = vers->readUint32BE();
 	delete vers;
-	if ((saveGameVersion == kCDSaveGameVersion && (_vm->getFeatures() & GF_DVD))
-		|| (saveGameVersion == kDVDSaveGameVersion && !(_vm->getFeatures() & GF_DVD))) {
+	if ((saveGameVersion == kCDSaveGameVersion && _vm->isGameVariant(GF_DVD))
+		|| (saveGameVersion == kDVDSaveGameVersion && !_vm->isGameVariant(GF_DVD))) {
 		warning("Unable to load: Saved game created using an incompatible game version - CD vs DVD");
 		delete mhk;
 		return Common::Error(Common::kUnknownError, "Saved game created using an incompatible game version - CD vs DVD");
@@ -297,7 +297,7 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
-	if (_vm->getFeatures() & GF_DVD)
+	if (_vm->isGameVariant(GF_DVD))
 		stream->writeUint32BE(kDVDSaveGameVersion);
 	else
 		stream->writeUint32BE(kCDSaveGameVersion);

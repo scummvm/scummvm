@@ -73,6 +73,10 @@ uint32 MohawkEngine::getFeatures() const {
 	return _gameDescription->features;
 }
 
+bool MohawkEngine::isGameVariant(MohawkGameFeatures feature) const {
+	return (_gameDescription->features & feature) != 0;
+}
+
 Common::Platform MohawkEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }

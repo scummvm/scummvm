@@ -116,7 +116,7 @@ void Intro::introMovies_run() {
 	case 4:
 		_introStep = 5;
 
-		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
+		if (!_vm->isGameVariant(GF_DEMO)) { // The demo doesn't have the intro video
 			video = _vm->playMovieFullscreen("intro", kIntroStack);
 		}
 		break;
@@ -125,7 +125,7 @@ void Intro::introMovies_run() {
 			_introStep = 6;
 		break;
 	default:
-		if (_vm->getFeatures() & GF_DEMO)
+		if (_vm->isGameVariant(GF_DEMO))
 			_vm->changeToCard(2001, kTransitionRightToLeft);
 		else
 			_vm->changeToCard(2, kTransitionRightToLeft);
@@ -135,7 +135,7 @@ void Intro::introMovies_run() {
 void Intro::o_playIntroMovies(uint16 var, const ArgumentsArray &args) {
 	_introMoviesRunning = true;
 
-	if (_vm->getFeatures() & GF_25TH) {
+	if (_vm->isGameVariant(GF_25TH)) {
 		// In the 25th anniversary version, the Broderbund / Cyan Logo were already shown
 		// before the main menu. No need to play them again here.
 		_introStep = 4;

@@ -127,7 +127,7 @@ void MystCursorManager::setCursor(uint16 id) {
 
 		// We're using the screen palette for the original game, but we need
 		// to use this for any 8bpp cursor in ME.
-		if (_vm->getFeatures() & GF_ME)
+		if (_vm->isGameVariant(GF_ME))
 			CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
