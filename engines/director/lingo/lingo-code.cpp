@@ -476,83 +476,153 @@ void LC::c_swap() {
 	g_lingo->push(d1);
 }
 
-void LC::c_add() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum, Datum), Datum d1, Datum d2) {
+	// At least one of d1 and d2 must be an array
+	uint arraySize;
+	if (d1.type == ARRAY && d2.type == ARRAY) {
+		arraySize = MIN(d1.u.farr->size(), d2.u.farr->size());
+	} else if (d1.type == ARRAY) {
+		arraySize = d1.u.farr->size();
+	} else {
+		arraySize = d2.u.farr->size();
+	}
+	Datum res;
+	res.type = ARRAY;
+	res.u.farr = new DatumArray(arraySize);
+	Datum a = d1;
+	Datum b = d2;
+	for (uint i = 0; i < arraySize; i++) {
+		if (d1.type == ARRAY) {
+			a = d1.u.farr->operator[](i);
+		}
+		if (d2.type == ARRAY) {
+			b = d2.u.farr->operator[](i);
+		}
+		res.u.farr->operator[](i) = mapFunc(a, b);
+	}
+	return res;
+}
 
+Datum LC::addData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::mapBinaryOp(LC::addData, d1, d2);
+	}
 	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
 		d1.u.f += d2.u.f;
 	} else {
 		d1.u.i += d2.u.i;
 	}
-	g_lingo->push(d1);
+	return d1;
 }
 
-void LC::c_sub() {
+void LC::c_add() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
+	g_lingo->push(LC::addData(d1, d2));
+}
 
+Datum LC::subData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::mapBinaryOp(LC::subData, d1, d2);
+	}
 	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
 		d1.u.f -= d2.u.f;
 	} else {
 		d1.u.i -= d2.u.i;
 	}
-	g_lingo->push(d1);
+	return d1;
 }
 
-void LC::c_mul() {
+void LC::c_sub() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
+	g_lingo->push(LC::subData(d1, d2));
+}
 
+Datum LC::mulData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::mapBinaryOp(LC::mulData, d1, d2);
+	}
 	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
 		d1.u.f *= d2.u.f;
 	} else {
 		d1.u.i *= d2.u.i;
 	}
-	g_lingo->push(d1);
+	return d1;
 }
 
-void LC::c_div() {
+void LC::c_mul() {
 	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+	g_lingo->push(LC::mulData(d1, d2));
+}
+
+Datum LC::divData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::mapBinaryOp(LC::divData, d1, d2);
+	}
 
 	if ((d2.type == INT && d2.u.i == 0) ||
 			(d2.type == FLOAT && d2.u.f == 0.0))
 		error("division by zero");
-
-	Datum d1 = g_lingo->pop();
 
 	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
 		d1.u.f /= d2.u.f;
 	} else {
 		d1.u.i /= d2.u.i;
 	}
-	g_lingo->push(d1);
+	return d1;
+}
+
+void LC::c_div() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+	g_lingo->push(divData(d1, d2));
+}
+
+Datum LC::modData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::mapBinaryOp(LC::modData, d1, d2);
+	}
+
+	d1.toInt();
+	d2.toInt();
+	if (d2.u.i == 0)
+		error("division by zero");
+
+	d1.u.i %= d2.u.i;
+	return d1;
 }
 
 void LC::c_mod() {
 	Datum d2 = g_lingo->pop();
-	d2.toInt();
-
-	if (d2.u.i == 0)
-		error("division by zero");
-
 	Datum d1 = g_lingo->pop();
-	d1.toInt();
+	g_lingo->push(LC::modData(d1, d2));
+}
 
-	d1.u.i %= d2.u.i;
+Datum LC::negateData(Datum d) {
+	if (d.type == ARRAY) {
+		uint arraySize = d.u.farr->size();
+		Datum res;
+		res.type = ARRAY;
+		res.u.farr = new DatumArray(arraySize);
+		for (uint i = 0; i < arraySize; i++) {
+			res.u.farr->operator[](i) = LC::negateData(d.u.farr->operator[](i));
+		}
+		return res;
+	}
 
-	g_lingo->push(d1);
+	if (d.type == INT) {
+		d.u.i = -d.u.i;
+	} else if (d.type == FLOAT) {
+		d.u.f = -d.u.f;
+	}
+	return d;
 }
 
 void LC::c_negate() {
 	Datum d = g_lingo->pop();
-
-	if (d.type == INT)
-		d.u.i = -d.u.i;
-	else if (d.type == FLOAT)
-		d.u.f = -d.u.f;
-
-	g_lingo->push(d);
+	g_lingo->push(negateData(d));
 }
 
 void LC::c_ampersand() {
