@@ -313,7 +313,7 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 	// switchCard(534);
 	// playSound(112, 256, 0);
 	if (cardGlobalId == 0x2E900 && scriptType == kMouseDownScript && hotspotId == 3
-			&& !(vm->getFeatures() & GF_DVD)) {
+			&& !vm->isGameVariant(GF_DVD)) {
 		shouldApplyPatches = true;
 		RivenSimpleCommand::ArgumentArray arguments;
 		arguments.push_back(112);
@@ -325,7 +325,7 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 
 	// Second part of the patch to fix the invalid card change when entering Gehn's office
 	// The first part is in the card patches.
-	if (cardGlobalId == 0x2E76 && scriptType == kCardUpdateScript && !(vm->getFeatures() & GF_DVD)) {
+	if (cardGlobalId == 0x2E76 && scriptType == kCardUpdateScript && !vm->isGameVariant(GF_DVD)) {
 		shouldApplyPatches = true;
 
 		for (uint i = 0; i < _commands.size(); i++) {
@@ -367,7 +367,7 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 	// Override the main menu new game script to call an external command.
 	// This way we can reset all the state when starting a new game while a game is already started.
 	if (cardGlobalId == 0xE2E && scriptType == kMouseDownScript && hotspotId == 16
-			&& (vm->getFeatures() & GF_25TH)) {
+			&& vm->isGameVariant(GF_25TH)) {
 		shouldApplyPatches = true;
 		_commands.clear();
 

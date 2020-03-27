@@ -87,6 +87,7 @@ public:
 	const MohawkGameDescription *_gameDescription;
 	const char *getGameId() const;
 	uint32 getFeatures() const;
+	bool isGameVariant(MohawkGameFeatures feature) const;
 	const char *getAppName() const;
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;

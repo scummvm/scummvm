@@ -176,7 +176,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_cursor->showCursor();
 
 	// Let's begin, shall we?
-	if (getFeatures() & GF_DEMO) {
+	if (isGameVariant(GF_DEMO)) {
 		// Start the demo off with the videos
 		changeToStack(kStackAspit);
 		changeToCard(6);
@@ -263,12 +263,12 @@ void MohawkEngine_Riven::processInput() {
 				runOptionsDialog();
 				break;
 			case kRivenActionOpenMainMenu:
-				if (getFeatures() & GF_DEMO) {
+				if (isGameVariant(GF_DEMO)) {
 					// Return to the main menu in the demo
 					if (_stack->getId() != kStackAspit)
 						changeToStack(kStackAspit);
 					changeToCard(1);
-				} else if (!_scriptMan->hasQueuedScripts() && getFeatures() & GF_25TH) {
+				} else if (!_scriptMan->hasQueuedScripts() && isGameVariant(GF_25TH)) {
 					// Check if we haven't jumped to menu
 					if (_menuSavedStack == -1) {
 						goToMainMenu();
@@ -281,7 +281,7 @@ void MohawkEngine_Riven::processInput() {
 				break;
 			case kRivenActionPlayIntroVideos:
 				// Play the intro videos in the demo
-				if (getFeatures() & GF_DEMO) {
+				if (isGameVariant(GF_DEMO)) {
 					if (_stack->getId() != kStackAspit)
 						changeToStack(kStackAspit);
 					changeToCard(6);
@@ -392,7 +392,7 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	char prefix = RivenStacks::getName(stackId)[0];
 
 	// Load the localization override file if any
-	if (getFeatures() & GF_25TH) {
+	if (isGameVariant(GF_25TH)) {
 		loadLanguageDatafile(prefix, stackId);
 	}
 
@@ -467,9 +467,9 @@ const char **MohawkEngine_Riven::listExpectedDatafiles() const {
 	};
 
 	const char **datafiles;
-	if (getFeatures() & GF_DEMO) {
+	if (isGameVariant(GF_DEMO)) {
 		datafiles = datafilesDemo;
-	} else if (getFeatures() & GF_DVD) {
+	} else if (isGameVariant(GF_DVD)) {
 		datafiles = datafilesDVD;
 	} else {
 		datafiles = datafilesCD;
@@ -624,7 +624,7 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 	// on different cards).
 	_gfx->clearCache();
 
-	if (!(getFeatures() & GF_DEMO)) {
+	if (!isGameVariant(GF_DEMO)) {
 		for (byte i = 0; i < ARRAYSIZE(rivenSpecialChange); i++)
 			if (_stack->getId() == rivenSpecialChange[i].startStack && dest == _stack->getCardStackId(
 					rivenSpecialChange[i].startCardRMAP)) {
@@ -813,7 +813,7 @@ bool MohawkEngine_Riven::isZipVisitedCard(const Common::String &hotspotName) con
 }
 
 bool MohawkEngine_Riven::canLoadGameStateCurrently() {
-	if (getFeatures() & GF_DEMO) {
+	if (isGameVariant(GF_DEMO)) {
 		return false;
 	}
 

@@ -340,7 +340,9 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) :
 	_effectScreen = new Graphics::Surface();
 	_effectScreen->create(608, 392, _pixelFormat);
 
-	loadMenuFont();
+	if (_vm->isGameVariant(GF_25TH)) {
+		loadMenuFont();
+	}
 }
 
 RivenGraphics::~RivenGraphics() {

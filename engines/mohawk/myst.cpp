@@ -144,7 +144,7 @@ void MohawkEngine_Myst::cachePreload(uint32 tag, uint16 id) {
 
 	for (uint32 i = 0; i < _mhk.size(); i++) {
 		// Check for MJMP in Myst ME
-		if ((getFeatures() & GF_ME) && tag == ID_MSND && _mhk[i]->hasResource(ID_MJMP, id)) {
+		if (isGameVariant(GF_ME) && tag == ID_MSND && _mhk[i]->hasResource(ID_MJMP, id)) {
 			Common::SeekableReadStream *tempData = _mhk[i]->getResource(ID_MJMP, id);
 			uint16 msndId = tempData->readUint16LE();
 			delete tempData;
@@ -429,9 +429,9 @@ Common::Error MohawkEngine_Myst::run() {
 		// Start us on the first stack.
 		if (getGameType() == GType_MAKINGOF)
 			changeToStack(kMakingOfStack, 1, 0, 0);
-		else if (getFeatures() & GF_DEMO)
+		else if (isGameVariant(GF_DEMO))
 			changeToStack(kDemoStack, 2000, 0, 0);
-		else if (getFeatures() & GF_25TH)
+		else if (isGameVariant(GF_25TH))
 			changeToStack(kMenuStack, 1, 0, 0);
 		else
 			changeToStack(kIntroStack, 1, 0, 0);
@@ -501,7 +501,7 @@ void MohawkEngine_Myst::loadStackArchives(MystStack stackId) {
 
 	loadArchive(mystFiles[stackId], nullptr, true);
 
-	if (getFeatures() & GF_ME) {
+	if (isGameVariant(GF_ME)) {
 		if (languageDesc) {
 			loadArchive("help", languageDesc->archiveSuffix, false);
 		}
@@ -509,7 +509,7 @@ void MohawkEngine_Myst::loadStackArchives(MystStack stackId) {
 		loadArchive("help", nullptr, true);
 	}
 
-	if (getFeatures() & GF_25TH) {
+	if (isGameVariant(GF_25TH)) {
 		loadArchive("menu", nullptr, true);
 	}
 }
@@ -543,9 +543,9 @@ void MohawkEngine_Myst::registerDefaultSettings() {
 
 void MohawkEngine_Myst::applyGameSettings() {
 	// Allow changing the language when in the main menu when the game has not yet been started.
-	// It's not possible to reliably change the language one the game is started as the current
+	// It's not possible to reliably change the language once the game is started as the current
 	//  view cannot be reconstructed using the save / stack state.
-	if ((getFeatures() & GF_25TH) && !isGameStarted()) {
+	if (isGameVariant(GF_25TH) && !isGameStarted()) {
 		_currentLanguage = Common::parseLanguage(ConfMan.get("language"));
 		_gfx->loadMenuFont();
 		changeToStack(_stack->getStackId(), _card->getId(), 0, 0);
@@ -696,7 +696,7 @@ bool MohawkEngine_Myst::canDoAction(MystEventAction action) {
 	case kMystActionShowMap:
 		return actionsAllowed && stack->getMap();
 	case kMystActionOpenMainMenu:
-		assert(getFeatures() & GF_DEMO);
+		assert(isGameVariant(GF_DEMO));
 		return actionsAllowed && stack->getStackId() != kDemoStack;
 	default:
 		// Not implemented yet
@@ -721,14 +721,14 @@ void MohawkEngine_Myst::doAction(MystEventAction action) {
 			break;
 		}
 
-		if (getFeatures() & GF_DEMO) {
+		if (isGameVariant(GF_DEMO)) {
 			if (_stack->getStackId() != kDemoStack && isInteractive()) {
 				changeToStack(kDemoStack, 2002, 0, 0);
 			}
 			break;
 		}
 
-		if (getFeatures() & GF_25TH && isInteractive()) {
+		if (isGameVariant(GF_25TH) && isInteractive()) {
 			if (_stack->getStackId() == kMenuStack) {
 				// If the menu is active and a game is loaded, go back to the game
 				if (_prevStack) {
@@ -858,7 +858,7 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 
 	// In Myst ME, play a fullscreen flyby movie, except when loading saves.
 	// Also play a flyby when first linking to Myst.
-	if (getFeatures() & GF_ME
+	if (isGameVariant(GF_ME)
 			&& ((_stack && _stack->getStackId() == kMystStack) || (stackId == kMystStack && card == 4134))) {
 		playFlybyMovie(stackId);
 	}
@@ -962,7 +962,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	_card->enter();
 
 	// The demo resets the cursor at each card change except when in the library
-	if (getFeatures() & GF_DEMO
+	if (isGameVariant(GF_DEMO)
 			&& _gameState->_globals.currentAge != kMystLibrary) {
 		_cursor->setDefaultCursor();
 	}
@@ -1059,7 +1059,7 @@ Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &d
 }
 
 bool MohawkEngine_Myst::hasGameSaveSupport() const {
-	return !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
+	return !isGameVariant(GF_DEMO) && getGameType() != GType_MAKINGOF;
 }
 
 bool MohawkEngine_Myst::isInteractive() const {

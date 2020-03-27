@@ -764,7 +764,7 @@ void MystScriptParser::o_changeStack(uint16 var, const ArgumentsArray &args) {
 
 	_vm->_sound->stopEffect();
 
-	if (_vm->getFeatures() & GF_DEMO) {
+	if (_vm->isGameVariant(GF_DEMO)) {
 		// No need to have a table for just this data...
 		if (targetStack == 1)
 			_vm->changeToStack(kDemoSlidesStack, 1000, soundIdLinkSrc, soundIdLinkDst);

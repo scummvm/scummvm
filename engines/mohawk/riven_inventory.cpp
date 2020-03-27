@@ -54,7 +54,7 @@ void RivenInventory::draw() {
 	clearArea();
 
 	// Draw the demo's exit button
-	if (_vm->getFeatures() & GF_DEMO) {
+	if (_vm->isGameVariant(GF_DEMO)) {
 		// extras.mhk tBMP 101 contains "EXIT" instead of Atrus' journal in the demo!
 		// The demo's extras.mhk contains all the other inventory/marble/credits image
 		// but has hacked tBMP 101 with "EXIT". *sigh*
@@ -100,7 +100,7 @@ void RivenInventory::checkClick(const Common::Point &mousePos) {
 	}
 
 	// In the demo, check if we've clicked the exit button
-	if (_vm->getFeatures() & GF_DEMO) {
+	if (_vm->isGameVariant(GF_DEMO)) {
 		if (_demoExitRect.contains(mousePos)) {
 			if (_vm->getStack()->getId() == kStackAspit && _vm->getCard()->getId() == 1) {
 				// From the main menu, go to the "quit" screen
@@ -181,7 +181,7 @@ bool RivenInventory::isVisible() const {
 		return false;
 	}
 
-	if (_vm->getFeatures() & GF_DEMO) {
+	if (_vm->isGameVariant(GF_DEMO)) {
 		// The inventory is always visible in the demo
 		return true;
 	}
