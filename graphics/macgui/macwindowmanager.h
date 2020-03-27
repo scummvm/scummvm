@@ -211,7 +211,7 @@ public:
 	void pushCrossHairCursor();
 	void pushCrossBarCursor();
 	void pushWatchCursor();
-	void pushCustomCursor(byte *data, int w, int h, int transcolor);
+	void pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor);
 	void popCursor();
 
 	void pauseEngine(bool pause);

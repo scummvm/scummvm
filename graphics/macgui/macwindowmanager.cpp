@@ -499,14 +499,14 @@ void MacWindowManager::pushWatchCursor() {
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 }
 
-void MacWindowManager::pushCustomCursor(byte *data, int w, int h, int transcolor) {
-	CursorMan.pushCursor(data, w, h, 1, 1, transcolor);
+void MacWindowManager::pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor) {
+	CursorMan.pushCursor(data, w, h, hx, hy, transcolor);
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 }
 
 void MacWindowManager::popCursor() {
 	CursorMan.popCursor();
-	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
+	CursorMan.popCursorPalette();
 }
 
 ///////////////////
