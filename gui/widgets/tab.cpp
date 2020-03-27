@@ -71,8 +71,8 @@ void TabWidget::init() {
 	int y = _butTP - _tabHeight;
 	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, "<", nullptr, kCmdLeft);
 	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, ">", nullptr, kCmdRight);
-	_navLeft->setVisible(false);
-	_navRight->setVisible(true);
+	_navLeft->setEnabled(false);
+	_navRight->setEnabled(true);
 
 	_lastRead = -1;
 }
@@ -189,28 +189,28 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 	switch (cmd) {
 	case kCmdLeft:
-		if (!_navRight->isVisible()) {
-			_navRight->setVisible(true);
+		if (!_navRight->isEnabled()) {
+			_navRight->setEnabled(true);
 		}
 
 		if (_firstVisibleTab > 0) {
 			setFirstVisible(_firstVisibleTab - 1);
 		}
 		if (_firstVisibleTab == 0) {
-			_navLeft->setVisible(false);
+			_navLeft->setEnabled(false);
 		}
 		break;
 
 	case kCmdRight:
-		if (!_navLeft->isVisible()) {
-			_navLeft->setVisible(true);
+		if (!_navLeft->isEnabled()) {
+			_navLeft->setEnabled(true);
 		}
 
 		if (_lastVisibleTab + 1 < (int)_tabs.size()) {
 			setFirstVisible(_firstVisibleTab + 1, false);
 		}
 		if (_lastVisibleTab + 1 == (int)_tabs.size()) {
-			_navRight->setVisible(false);
+			_navRight->setEnabled(false);
 		}
 		break;
 
