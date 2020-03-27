@@ -104,9 +104,9 @@ void Ultima4Engine::startup() {
 	creatureMgr->getInstance();
 	++pb;
 
-	intro = new IntroController();
 	if (!skipInfo) {
 		/* do the intro */
+		intro = new IntroController();
 		intro->init();
 		++pb;
 
@@ -128,6 +128,12 @@ Common::Error Ultima4Engine::run() {
 		startup();
 		if (!shouldQuit()) {
 			g_game->init();
+
+			int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+			if (saveSlot != -1) {
+				if (loadGameState(saveSlot).getCode() != Common::kNoError)
+					error("Error loading save");
+			}
 
 			eventHandler->setControllerDone(false);
 			eventHandler->pushController(g_game);
