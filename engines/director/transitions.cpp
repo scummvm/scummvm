@@ -168,7 +168,7 @@ void Frame::playTransition(Score *score) {
 	for (uint16 i = 1; i < t.steps; i++) {
 		bool stop = false;
 
-		switch (_transType) {
+		switch (t.type) {
 		case kTransCenterOutHorizontal: // 5
 			t.xpos += t.xStepSize;
 			r.setWidth(t.xpos * 2);
@@ -222,12 +222,12 @@ void Frame::playTransition(Score *score) {
 			r.moveTo(0, clipRect.height() - t.yStepSize * i);
 
 		case kTransDissolvePixels: // 51
-			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[_transType].name, t.duration, _transChunkSize);
+			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, _transChunkSize);
 			stop = true;
 			break;
 
 		default:
-			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[_transType].name, t.duration, _transChunkSize);
+			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, _transChunkSize);
 			stop = true;
 			break;
 		}
