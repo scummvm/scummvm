@@ -249,8 +249,10 @@ Common::SeekableSubReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 
 	assert(_resFork);
 	Common::SeekableReadStream *stream = _resFork->getResource(tag, id);
 
-	if (stream == nullptr)
-		error("MacArchive::getResource('%s', %d): Resource doesn't exit", tag2str(tag), id);
+	if (stream == nullptr) {
+		warning("MacArchive::getResource('%s', %d): Resource doesn't exit", tag2str(tag), id);
+		return nullptr;
+	}
 
 	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::NO);
 }
