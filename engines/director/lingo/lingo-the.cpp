@@ -435,6 +435,14 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 }
 
 void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
+	if (debugChannelSet(3, kDebugLingoExec)) {
+		Datum idCopy = id;
+		Datum dCopy = d;
+		idCopy.toString();
+		dCopy.toString();
+		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(\"%s\", %s, \"%s\", %s)", field2str(field), idCopy.u.s->c_str(), entity2str(entity), dCopy.u.s->c_str());
+	}
+
 	switch (entity) {
 	case kTheCast:
 		setTheCast(id, field, d);
