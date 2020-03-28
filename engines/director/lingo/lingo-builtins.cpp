@@ -197,6 +197,7 @@ static struct BuiltinProto {
 	{ "beep",	 		LB::b_beep,			0, 1, false, 2, BLTIN },	// D2
 	{ "mci",	 		LB::b_mci,			1, 1, false, 3, BLTIN },	//		D3.1 c
 	{ "mciwait",		LB::b_mciwait,		1, 1, false, 4, BLTIN },	//			D4 c
+	{ "sound",			LB::b_sound,		2, 3, false, 3, BLTIN },	//		D3 c
 	{ "sound-close",	LB::b_soundClose, 	1, 1, false, 4, BLTIN },	//			D4 c
 	{ "sound-fadeIn",	LB::b_soundFadeIn, 	1, 2, false, 3, BLTIN },	//		D3 c
 	{ "sound-fadeOut",	LB::b_soundFadeOut, 1, 2, false, 3, BLTIN },	//		D3 c
@@ -1693,6 +1694,54 @@ void LB::b_mciwait(int nargs) {
 	d.toString();
 
 	g_lingo->func_mciwait(*d.u.s);
+}
+
+void LB::b_sound(int nargs) {
+	// Builtin function for sound as used by the Director bytecode engine.
+	//
+	// Accepted arguments:
+	// "close", INT soundChannel
+	// "fadeIn", INT soundChannel(, INT ticks)
+	// "fadeOut", INT soundChannel(, INT ticks)
+	// "playFile", INT soundChannel, STRING fileName
+	// "stop", INT soundChannel
+
+	if (nargs >= 2 && nargs <= 3) {
+		Datum verb;
+		Datum firstArg = g_lingo->pop();
+		Datum secondArg = g_lingo->pop();
+		if (nargs > 2) {
+			verb = g_lingo->pop();
+			g_lingo->push(secondArg);
+			g_lingo->push(firstArg);
+		} else {
+			verb = secondArg;
+			g_lingo->push(firstArg);
+		}
+
+		if (verb.type != STRING) {
+			warning("b_sound: verb arg should be of type STRING, not %s", verb.type2str());
+			return;
+		}
+
+		if (*verb.u.s == "close") {
+			b_soundClose(nargs - 1);
+		} else if (*verb.u.s == "fadeIn") {
+			b_soundFadeIn(nargs - 1);
+		} else if (*verb.u.s == "fadeOut") {
+			b_soundFadeOut(nargs - 1);
+		} else if (*verb.u.s == "playFile") {
+			b_soundPlayFile(nargs - 1);
+		} else if (*verb.u.s == "stop") {
+			b_soundStop(nargs - 1);
+		} else {
+			warning("b_sound: unknown verb %s", verb.u.s->c_str());
+		}
+
+	} else {
+		warning("b_sound: expected 2 or 3 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+	}
 }
 
 void LB::b_soundBusy(int nargs) {
