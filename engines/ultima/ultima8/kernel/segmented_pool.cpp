@@ -37,18 +37,9 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(SegmentedPool, Pool)
 
 #define OFFSET_ALIGN(X) ( (X + sizeof(uintptr) - 1) & ~(sizeof(uintptr) - 1) )
 
-#ifdef USE_VALGRIND
-const int redzoneSize = 8;
-#else
-const int redzoneSize = 0;
-#endif
-
 struct SegmentedPoolNode {
 	SegmentedPool *pool;
 	SegmentedPoolNode *nextFree;
-#ifdef USE_VALGRIND
-	int valgrind_handle;
-#endif
 	size_t size;
 };
 
@@ -61,16 +52,14 @@ SegmentedPool::SegmentedPool(size_t nodeCapacity_, uint32 nodes)
 
 	// Give it its real capacity.
 	// One redzone is added after the memory block.
-	_nodeCapacity = OFFSET_ALIGN(nodeCapacity_ + redzoneSize);
+	_nodeCapacity = OFFSET_ALIGN(nodeCapacity_);
 
 	// Node offsets are aligned to the next uintptr offset after the real size.
 	// Another redzone is added between the node and the memory block.
-	_nodeOffset = OFFSET_ALIGN(sizeof(SegmentedPoolNode) + redzoneSize) + _nodeCapacity;
+	_nodeOffset = OFFSET_ALIGN(sizeof(SegmentedPoolNode)) + _nodeCapacity;
 
 	_startOfPool = new uint8[_nodeOffset * nodes];
 	_endOfPool = _startOfPool + (_nodeOffset * nodes);
-
-	VALGRIND_CREATE_MEMPOOL(_startOfPool, redzoneSize, 0);
 
 	_firstFree = reinterpret_cast<SegmentedPoolNode *>(_startOfPool);
 	_firstFree->pool = this;
@@ -91,8 +80,6 @@ SegmentedPool::SegmentedPool(size_t nodeCapacity_, uint32 nodes)
 
 SegmentedPool::~SegmentedPool() {
 	assert(isEmpty());
-
-	VALGRIND_DESTROY_MEMPOOL(_startOfPool);
 
 	delete [] _startOfPool;
 }
@@ -118,13 +105,7 @@ void *SegmentedPool::allocate(size_t size) {
 
 //	debugN"Allocating Node 0x%08X\n", node);
 	uint8 *p = reinterpret_cast<uint8 *>(node) +
-	           OFFSET_ALIGN(sizeof(SegmentedPoolNode) + redzoneSize);
-
-	VALGRIND_MEMPOOL_ALLOC(_startOfPool, p, size);
-#ifdef USE_VALGRIND
-	node->valgrind_handle = VALGRIND_CREATE_BLOCK(p, size,
-	                        "SegmentedPoolBlock");
-#endif
+	           OFFSET_ALIGN(sizeof(SegmentedPoolNode));
 
 	return p;
 }
@@ -136,9 +117,6 @@ void SegmentedPool::deallocate(void *ptr) {
 		node = getPoolNode(ptr);
 		node->size = 0;
 		assert(node->pool == this);
-
-		VALGRIND_MEMPOOL_FREE(_startOfPool, ptr);
-		VALGRIND_DISCARD(node->valgrind_handle);
 
 //	debugN"Free Node 0x%08X\n", node);
 		if (isFull()) {

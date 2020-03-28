@@ -94,10 +94,6 @@
 //
 #define CANT_HAPPEN_MSG(msg) do { assert(msg && false); } while(0)
 
-//
-// Wrapper around valgrind functions.
-#include "ultima/ultima8/misc/pent_valgrind.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
