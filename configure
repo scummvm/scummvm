@@ -2767,6 +2767,38 @@ case $_host_os in
 			fi
 		fi
 
+		# When building for MacOS X 10.5 we need to use the legacy icon
+		echocheck "macOS SDK target version at least 10.6"
+		_macos_atleast_10_6=no
+		cat > $TMPC << EOF
+#include "AvailabilityMacros.h"
+#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+error
+#endif
+int main(int argc, char *argv[]) { return 0; }
+EOF
+		cc_check && _macos_atleast_10_6=yes
+		echo ${_macos_atleast_10_6}
+		if test "$_macos_atleast_10_6" = no ; then
+			add_line_to_config_mk 'MACOSX_USE_LEGACY_ICONS = 1'
+		fi
+
+		# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
+		echocheck "macOS SDK target version at least 10.14"
+		_macos_atleast_10_14=no
+		cat > $TMPC << EOF
+#include "AvailabilityMacros.h"
+#if !defined(MAC_OS_X_VERSION_10_14) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_14
+error
+#endif
+int main(int argc, char *argv[]) { return 0; }
+EOF
+		cc_check && _macos_atleast_10_14=yes
+		echo ${_macos_atleast_10_14}
+		if test "$_macos_atleast_10_14" = yes ; then
+			add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
+		fi
+
 		# Use pandoc to generate README and NEWS file for the bundle
 		# Also default to  HTML rather than plain text as it gives a nicer
 		# formating, especially for the README. We could consider using RTF
