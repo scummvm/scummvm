@@ -170,7 +170,6 @@ MODULE_OBJS := \
 	ultima4/game/person.o \
 	ultima4/game/player.o \
 	ultima4/game/portal.o \
-	ultima4/game/progress_bar.o \
 	ultima4/game/script.o \
 	ultima4/game/spell.o \
 	ultima4/game/stats.o \

@@ -52,7 +52,6 @@
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/game/progress_bar.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/settings.h"
@@ -228,13 +227,6 @@ void GameController::init() {
 
 	initScreen();
 
-	ProgressBar pb((320 / 2) - (200 / 2), (200 / 2), 200, 10, 0, 4);
-	pb.setBorderColor(240, 240, 240);
-	pb.setBorderWidth(1);
-	pb.setColor(0, 0, 128);
-
-	screenTextAt(13, 11, "%s", "Loading Game...");
-
 	/* initialize the global game context */
 	g_context = new Context;
 	g_context->_saveGame = new SaveGame;
@@ -265,9 +257,6 @@ void GameController::init() {
 		errorFatal("no savegame found!");
 	}
 
-	TRACE_LOCAL(gameDbg, "Save game loaded.");
-	++pb;
-
 	/* initialize our party */
 	g_context->_party = new Party(g_context->_saveGame);
 	g_context->_party->addObserver(this);
@@ -275,9 +264,6 @@ void GameController::init() {
 	/* set the map to the world map by default */
 	setMap(mapMgr->get(MAP_WORLD), 0, NULL);
 	g_context->_location->_map->clearObjects();
-
-	TRACE_LOCAL(gameDbg, "World map set.");
-	++pb;
 
 	/* initialize our start location */
 	Map *map = mapMgr->get(MapId(g_context->_saveGame->_location));
@@ -309,9 +295,6 @@ void GameController::init() {
 	if (MAP_IS_OOB(g_context->_location->_map, g_context->_location->_coords))
 		g_context->_location->_coords.putInBounds(g_context->_location->_map);
 
-	TRACE_LOCAL(gameDbg, "Loading monsters.");
-	++pb;
-
 	/* load in creatures.sav */
 	monstersFile = g_system->getSavefileManager()->openForLoading(MONSTERS_SAV_BASE_FILENAME);
 	if (monstersFile) {
@@ -335,8 +318,6 @@ void GameController::init() {
 	spellSetEffectCallback(&gameSpellEffect);
 	itemSetDestroyAllCreaturesCallback(&gameDestroyAllCreatures);
 
-	++pb;
-
 	TRACE_LOCAL(gameDbg, "Settings up reagent menu.");
 	g_context->_stats->resetReagentsMenu();
 
@@ -347,8 +328,6 @@ void GameController::init() {
 	c->aura->addObserver(U4IOS::IOSObserver::sharedInstance());
 	c->party->addObserver(U4IOS::IOSObserver::sharedInstance());
 #endif
-
-
 
 	initScreenWithoutReloadingState();
 	TRACE(gameDbg, "gameInit() completed successfully.");
