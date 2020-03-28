@@ -861,6 +861,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			return;
 		}
 		d.toString();
+		addCode(d.u.s->c_str(), kSpriteScript, id);
+
 		castInfo->script = *d.u.s;
 		break;
 	case kTheText:

@@ -152,9 +152,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 	if (getScriptContext(type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
-		// Abort on double definitions.
-		error("Script already defined for type %d, id %d", id, type);
-		return;
+		// Although it has a legit case when kTheScriptText re sets code.
+		// Warn on double definitions.
+		warning("Script already defined for type %d, id %d", id, type);
 	}
 
 	_currentScriptContext = new ScriptContext;
