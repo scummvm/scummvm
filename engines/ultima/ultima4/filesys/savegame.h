@@ -225,8 +225,25 @@ struct SaveGameMonsterRecord {
  * Represents the on-disk contents of PARTY.SAV.
  */
 struct SaveGame {
-	void synchronize(Common::Serializer &s);
+	/**
+	 * Initialize a new savegame structure
+	 */
 	void init(const SaveGamePlayerRecord *avatarInfo);
+
+	/**
+	 * Load an entire savegame, including monsters
+	 */
+	void save(Common::WriteStream *stream);
+
+	/**
+	 * Save an entire savegame, including monsters
+	 */
+	void load(Common::SeekableReadStream *stream);
+
+	/**
+	 * Synchronizes data for the savegame structure
+	 */
+	void synchronize(Common::Serializer &s);
 
 	unsigned int _unknown1;
 	unsigned int _moves;

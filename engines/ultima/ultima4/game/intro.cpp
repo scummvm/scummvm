@@ -746,17 +746,12 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 	// ask questions that determine character class
 	startQuestions();
 
-	// write out save game an segue into game
-	SaveGame saveGame;
+	// Setup savegame fields. The original wrote out multiple files and
+	// then loaded them up once the game starts. Now we're simply setting
+	// up the savegame fields and letting the game read from them later,
+	// as if a savegame had been loaded
+	SaveGame &saveGame = *g_ultima->_saveGame;
 	SaveGamePlayerRecord avatar;
-
-	Common::OutSaveFile *saveGameFile = g_system->getSavefileManager()->openForSaving(PARTY_SAV_BASE_FILENAME);
-	if (!saveGameFile) {
-		_questionArea.disableCursor();
-		_errorMessage = "Unable to create save game!";
-		updateScreen();
-		return;
-	}
 
 	avatar.init();
 	strcpy(avatar.name, nameBuffer.c_str());
@@ -770,18 +765,6 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 	saveGame._reagents[REAG_GARLIC] = 4;
 	saveGame._torches = 2;
 
-	Common::Serializer ser(nullptr, saveGameFile);
-	saveGame.synchronize(ser);
-
-	saveGameFile->finalize();
-	delete saveGameFile;
-
-	saveGameFile = g_system->getSavefileManager()->openForSaving(MONSTERS_SAV_BASE_FILENAME);
-	if (saveGameFile) {
-		Common::Serializer ser2(nullptr, saveGameFile);
-		SaveGameMonsterRecord::synchronize(nullptr, ser2);
-		delete saveGameFile;
-	}
 	_justInitiatedNewGame = true;
 
 	// show the text thats segues into the main game
