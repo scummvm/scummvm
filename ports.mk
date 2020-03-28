@@ -81,21 +81,18 @@ ScummVMDockTilePlugin64.o:
 ScummVMDockTilePlugin64: ScummVMDockTilePlugin64.o
 	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin64.o -o ScummVMDockTilePlugin64
 
+ifdef MACOSX_64_BITS_ONLY
+ScummVMDockTilePlugin: ScummVMDockTilePlugin64
+	cp ScummVMDockTilePlugin64 ScummVMDockTilePlugin
+else
 ScummVMDockTilePlugin: ScummVMDockTilePlugin32 ScummVMDockTilePlugin64
 	lipo -create ScummVMDockTilePlugin32 ScummVMDockTilePlugin64 -output ScummVMDockTilePlugin
+endif
 
 scummvm.docktileplugin: ScummVMDockTilePlugin
 	mkdir -p scummvm.docktileplugin/Contents
 	cp $(srcdir)/dists/macosx/dockplugin/Info.plist scummvm.docktileplugin/Contents
 	mkdir -p scummvm.docktileplugin/Contents/MacOS
-	cp ScummVMDockTilePlugin scummvm.docktileplugin/Contents/MacOS/
-	chmod 644 scummvm.docktileplugin/Contents/MacOS/ScummVMDockTilePlugin
-
-scummvm.docktileplugin64: ScummVMDockTilePlugin64
-	mkdir -p scummvm.docktileplugin/Contents
-	cp $(srcdir)/dists/macosx/dockplugin/Info.plist scummvm.docktileplugin/Contents
-	mkdir -p scummvm.docktileplugin/Contents/MacOS
-	mv ScummVMDockTilePlugin64 ScummVMDockTilePlugin
 	cp ScummVMDockTilePlugin scummvm.docktileplugin/Contents/MacOS/
 	chmod 644 scummvm.docktileplugin/Contents/MacOS/ScummVMDockTilePlugin
 
@@ -114,7 +111,11 @@ ifdef USE_SPARKLE
 	rm -rf $(bundle_name)/Contents/Frameworks/Sparkle.framework
 	cp -R $(SPARKLEPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
 endif
-	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
+ifdef MACOSX_USE_LEGACY_ICONS
+	cp $(srcdir)/icons/scummvm_legacy.icns $(bundle_name)/Contents/Resources/scummvm.icns
+else
+	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/scummvm.icns
+endif
 	cp $(DIST_FILES_DOCS) $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
 ifdef DIST_FILES_NETWORKING
@@ -143,12 +144,8 @@ endif
 
 ifdef USE_DOCKTILEPLUGIN
 bundle: scummvm-static scummvm.docktileplugin bundle-pack
-
-bundle64: scummvm-static scummvm.docktileplugin64 bundle-pack
 else
 bundle: scummvm-static bundle-pack
-
-bundle64: scummvm-static bundle-pack
 endif
 
 iphonebundle: iphone
