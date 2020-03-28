@@ -35,8 +35,15 @@
 namespace Director {
 
 DirectorSound::DirectorSound() {
-	_sound1 = new Audio::SoundHandle();
-	_sound2 = new Audio::SoundHandle();
+	uint numChannels = 2;
+	if (g_director->getVersion() >= 4) {
+		numChannels = 4;
+	}
+
+	for (uint i = 0; i < numChannels; i++) {
+		_channels.push_back(new Audio::SoundHandle());
+	}
+
 	_scriptSound = new Audio::SoundHandle();
 	_mixer = g_system->getMixer();
 
@@ -47,8 +54,9 @@ DirectorSound::DirectorSound() {
 }
 
 DirectorSound::~DirectorSound() {
-	delete _sound1;
-	delete _sound2;
+	for (uint i = 0; i < _channels.size(); i++) {
+		delete _channels[i];
+	}
 	delete _scriptSound;
 }
 
@@ -82,6 +90,11 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 void DirectorSound::playWAV(Common::String filename, uint8 soundChannel) {
 	Common::File *file = new Common::File();
 
+	if (soundChannel == 0 || soundChannel > _channels.size()) {
+		warning("Invalid sound channel %d", soundChannel);
+		return;
+	}
+
 	if (!file->open(filename)) {
 		warning("Failed to open %s", filename.c_str());
 
@@ -92,14 +105,16 @@ void DirectorSound::playWAV(Common::String filename, uint8 soundChannel) {
 
 	Audio::RewindableAudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 
-	if (soundChannel == 1)
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, sound);
-	else
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound2, sound);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, _channels[soundChannel - 1], sound);
 }
 
 void DirectorSound::playAIFF(Common::String filename, uint8 soundChannel) {
 	Common::File *file = new Common::File();
+
+	if (soundChannel == 0 || soundChannel > _channels.size()) {
+		warning("Invalid sound channel %d", soundChannel);
+		return;
+	}
 
 	if (!file->open(filename)) {
 		warning("Failed to open %s", filename.c_str());
@@ -109,10 +124,7 @@ void DirectorSound::playAIFF(Common::String filename, uint8 soundChannel) {
 
 	Audio::RewindableAudioStream *sound = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
 
-	if (soundChannel == 1)
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, sound);
-	else
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound2, sound);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, _channels[soundChannel - 1], sound);
 }
 
 void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) {
@@ -128,36 +140,38 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 }
 
 void DirectorSound::playStream(Audio::SeekableAudioStream &stream, uint8 soundChannel) {
-	if (soundChannel == 1)
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, &stream);
-	else
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound2, &stream);
-}
-
-bool DirectorSound::isChannelActive(uint8 channelID) {
-	if (channelID == 1) {
-		return _mixer->isSoundHandleActive(*_sound1);
-	} else if (channelID == 2) {
-		return _mixer->isSoundHandleActive(*_sound2);
+	if (soundChannel == 0 || soundChannel > _channels.size()) {
+		warning("Invalid sound channel %d", soundChannel);
+		return;
 	}
 
-	error("Incorrect sound channel");
-
-	return false;
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, _channels[soundChannel - 1], &stream);
 }
 
-void DirectorSound::stopSound(uint8 channelID) {
-	if (channelID == 1) {
-		_mixer->stopHandle(*_sound1);
-	} else if (channelID == 2) {
-		_mixer->stopHandle(*_sound2);
+bool DirectorSound::isChannelActive(uint8 soundChannel) {
+	if (soundChannel == 0 || soundChannel > _channels.size()) {
+		warning("Invalid sound channel %d", soundChannel);
+		return false;
 	}
+
+	return _mixer->isSoundHandleActive(*_channels[soundChannel - 1]);
+}
+
+void DirectorSound::stopSound(uint8 soundChannel) {
+	if (soundChannel == 0 || soundChannel > _channels.size()) {
+		warning("Invalid sound channel %d", soundChannel);
+		return;
+	}
+
+	_mixer->stopHandle(*_channels[soundChannel - 1]);
 	return;
 }
 
 void DirectorSound::stopSound() {
-	_mixer->stopHandle(*_sound1);
-	_mixer->stopHandle(*_sound2);
+	for (uint i = 0; i < _channels.size(); i++) {
+		_mixer->stopHandle(*_channels[i]);
+	}
+	_mixer->stopHandle(*_scriptSound);
 	_mixer->stopHandle(*_pcSpeakerHandle);
 }
 
@@ -178,7 +192,6 @@ SNDDecoder::~SNDDecoder() {
 		free(_data);
 	}
 }
-
 
 bool SNDDecoder::loadStream(Common::SeekableSubReadStreamEndian &stream) {
 	if (_data) {

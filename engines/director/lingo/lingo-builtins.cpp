@@ -32,6 +32,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
+#include "director/util.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
@@ -1800,7 +1801,7 @@ void LB::b_soundPlayFile(int nargs) {
 		return;
 	}
 
-	sound->playFile(*whichFile.u.s, whichChannel.u.i);
+	sound->playFile(pathMakeRelative(*whichFile.u.s), whichChannel.u.i);
 }
 
 void LB::b_soundStop(int nargs) {

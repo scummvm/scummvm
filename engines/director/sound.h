@@ -35,8 +35,7 @@ namespace Director {
 class DirectorSound {
 
 private:
-	Audio::SoundHandle *_sound1;
-	Audio::SoundHandle *_sound2;
+	Common::Array<Audio::SoundHandle *> _channels;
 	Audio::SoundHandle *_scriptSound;
 	Audio::Mixer *_mixer;
 	Audio::PCSpeaker *_speaker;
@@ -46,15 +45,15 @@ public:
 	DirectorSound();
 	~DirectorSound();
 
-	void playWAV(Common::String filename, uint8 channelID);
-	void playAIFF(Common::String filename, uint8 channelID);
-	void playFile(Common::String filename, uint8 channelID);
+	void playWAV(Common::String filename, uint8 soundChannel);
+	void playAIFF(Common::String filename, uint8 soundChannel);
+	void playFile(Common::String filename, uint8 soundChannel);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
 	void playStream(Audio::SeekableAudioStream &stream, uint8 soundChannel);
 	void systemBeep();
-	bool isChannelActive(uint8 channelID);
-	void stopSound(uint8 channelID);
+	bool isChannelActive(uint8 soundChannel);
+	void stopSound(uint8 soundChannel);
 	void stopSound();
 };
 
