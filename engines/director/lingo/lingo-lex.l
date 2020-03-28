@@ -128,9 +128,8 @@ end([ \t]+{identifier})?	{
 ^[ \t]*factory { count(); return tFACTORY; }
 exit		{ count(); return tEXIT; }
 global		{ count(); return tGLOBAL; }
-go[ \t]+to[ \t]+frame	{ count(); return tGO; }
-go[ \t]+to	{ count(); return tGO; }
-go			{ count(); return tGO; }
+go[ \t]+(to[ \t]+)?frame	{ count(); return tGO; }
+go[ \t]+(to)?	{ count(); return tGO; }
 instance	{ count(); return tINSTANCE; }
 intersects	{ count(); return tINTERSECTS; }
 into		{ count(); return tINTO; }
