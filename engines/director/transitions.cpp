@@ -326,6 +326,8 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 	int hMask = (1L << hBits) - 1;
 	int vShift = hBits;
 
+	warning("w: %d h: %d  vBits: %d hBits: %d hMask: %x", w, h, vBits, hBits, hMask);
+
 	// Calculate steps
 	uint32 pixPerStepInit = 1;
 	t.steps = (1 << (hBits + vBits)) - 1;
@@ -336,13 +338,15 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 	}
 	t.steps++;
 
+	t.stepDuration = t.duration / t.steps;
+
 	Common::Rect r(1, 1);
 
 	while (t.steps) {
 		uint32 pixPerStep = pixPerStepInit;
 		do {
-			uint32 x = rnd & hMask;
-			uint32 y = rnd >> vShift;
+			uint32 x = rnd >> vShift;
+			uint32 y = rnd & hMask;
 
 			if (x < w && y < h) {
 				r.moveTo(x, y);
@@ -361,7 +365,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 		r.moveTo(0, 0);
 		score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
 
-		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, score->_backSurface->w, score->_backSurface->h);
+		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, w, h);
 
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))
