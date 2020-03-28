@@ -262,17 +262,17 @@ void dungeonTouchOrb() {
 	/* give stats bonuses */
 	if (stats & STATSBONUS_STR) {
 		screenMessage("Strength + 5\n");
-		AdjustValueMax(g_context->_saveGame->_players[player]._str, 5, 50);
+		AdjustValueMax(g_ultima->_saveGame->_players[player]._str, 5, 50);
 		damage += 200;
 	}
 	if (stats & STATSBONUS_DEX) {
 		screenMessage("Dexterity + 5\n");
-		AdjustValueMax(g_context->_saveGame->_players[player]._dex, 5, 50);
+		AdjustValueMax(g_ultima->_saveGame->_players[player]._dex, 5, 50);
 		damage += 200;
 	}
 	if (stats & STATSBONUS_INT) {
 		screenMessage("Intelligence + 5\n");
-		AdjustValueMax(g_context->_saveGame->_players[player]._intel, 5, 50);
+		AdjustValueMax(g_ultima->_saveGame->_players[player]._intel, 5, 50);
 		damage += 200;
 	}
 

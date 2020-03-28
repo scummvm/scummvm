@@ -368,7 +368,7 @@ void CombatController::end(bool adjustKarma) {
 			} else screenMessage("\n");
 
 			if (_exitDir != DIR_NONE) {
-				g_context->_saveGame->_orientation = _exitDir;  /* face the direction exiting the room */
+				g_ultima->_saveGame->_orientation = _exitDir;  /* face the direction exiting the room */
 				// XXX: why north, shouldn't this be orientation?
 				g_context->_location->move(DIR_NORTH, false);  /* advance 1 space outside of the room */
 			}
@@ -445,12 +445,12 @@ int  CombatController::initialNumberOfCreatures(const Creature *creature) const 
 				ncreatures = 8;
 		}
 
-		while (ncreatures > 2 * g_context->_saveGame->_members) {
+		while (ncreatures > 2 * g_ultima->_saveGame->_members) {
 			ncreatures = xu4_random(16) + 1;
 		}
 	} else {
 		if (creature && creature->getId() == GUARD_ID)
-			ncreatures = g_context->_saveGame->_members * 2;
+			ncreatures = g_ultima->_saveGame->_members * 2;
 		else
 			ncreatures = 1;
 	}

@@ -25,14 +25,11 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Context::Context()
-	: _party(NULL)
-	, _saveGame(NULL)
-	, _location(NULL) {
-
+Context::Context() : _party(NULL), _location(NULL) {
 }
 
-Context::~Context() {}
+Context::~Context() {
+}
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

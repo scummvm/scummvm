@@ -59,7 +59,6 @@ public:
 	~Context();
 
 	Party *_party;
-	SaveGame *_saveGame;
 	class Location *_location;
 	int _line, col;
 	StatsArea *_stats;

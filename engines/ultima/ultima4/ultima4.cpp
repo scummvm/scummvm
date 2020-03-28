@@ -25,6 +25,7 @@
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/intro.h"
@@ -47,7 +48,7 @@ Ultima4Engine *g_ultima;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _config(nullptr), _game(nullptr),
-		_imageLoaders(nullptr), _screen(nullptr) {
+		_imageLoaders(nullptr), _saveGame(nullptr), _screen(nullptr) {
 	g_ultima = this;
 	g_context = nullptr;
 	g_game = nullptr;
@@ -58,6 +59,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _config;
 	delete _game;
 	delete _imageLoaders;
+	delete _saveGame;
 	delete _screen;
 
 	Tileset::unloadAll();
@@ -76,6 +78,8 @@ bool Ultima4Engine::initialize() {
 	_screen = new Screen();
 	_game = new GameController();
 	_imageLoaders = new ImageLoaders();
+	_saveGame = new SaveGame();
+
 	_screen->init();
 
 	_saveSlotToLoad = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
@@ -155,14 +159,14 @@ Common::Error Ultima4Engine::saveGameState(int slot, const Common::String &desc,
 
 Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Serializer ser(stream, nullptr);
-	g_context->_saveGame->synchronize(ser);
+	g_ultima->_saveGame->synchronize(ser);
 
 	return Common::kNoError;
 }
 
 Common::Error Ultima4Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	Common::Serializer ser(nullptr, stream);
-	g_context->_saveGame->synchronize(ser);
+	g_ultima->_saveGame->synchronize(ser);
 	return Common::kNoError;
 }
 

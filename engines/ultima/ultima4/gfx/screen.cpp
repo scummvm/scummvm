@@ -616,12 +616,12 @@ void screenUpdateMoons() {
 	}
 	/* show the current moons (non-combat) */
 	else if ((g_context->_location->_context & CTX_NON_COMBAT) == g_context->_location->_context) {
-		trammelChar = (g_context->_saveGame->_trammelPhase == 0) ?
+		trammelChar = (g_ultima->_saveGame->_trammelPhase == 0) ?
 		              MOON_CHAR + 7 :
-		              MOON_CHAR + g_context->_saveGame->_trammelPhase - 1;
-		feluccaChar = (g_context->_saveGame->_feluccaPhase == 0) ?
+		              MOON_CHAR + g_ultima->_saveGame->_trammelPhase - 1;
+		feluccaChar = (g_ultima->_saveGame->_feluccaPhase == 0) ?
 		              MOON_CHAR + 7 :
-		              MOON_CHAR + g_context->_saveGame->_feluccaPhase - 1;
+		              MOON_CHAR + g_ultima->_saveGame->_feluccaPhase - 1;
 
 		screenShowChar(trammelChar, 11, 0);
 		screenShowChar(feluccaChar, 12, 0);
@@ -635,7 +635,7 @@ void screenUpdateWind() {
 	/* show the direction we're facing in the dungeon */
 	if (g_context->_location->_context == CTX_DUNGEON) {
 		screenEraseTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
-		screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Dir: %5s", getDirectionName((Direction)g_context->_saveGame->_orientation));
+		screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Dir: %5s", getDirectionName((Direction)g_ultima->_saveGame->_orientation));
 	}
 	/* show the wind direction */
 	else if ((g_context->_location->_context & CTX_NON_COMBAT) == g_context->_location->_context) {

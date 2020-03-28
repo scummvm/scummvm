@@ -1141,9 +1141,9 @@ CannotJoinError Party::join(Common::String name) {
  */
 bool Party::lightTorch(int duration, bool loseTorch) {
 	if (loseTorch) {
-		if (g_context->_saveGame->_torches <= 0)
+		if (g_ultima->_saveGame->_torches <= 0)
 			return false;
-		g_context->_saveGame->_torches--;
+		g_ultima->_saveGame->_torches--;
 	}
 
 	_torchDuration += duration;
@@ -1228,20 +1228,20 @@ void Party::setDirection(Direction dir) {
 }
 
 void Party::adjustReagent(int reagent, int amt) {
-	int oldVal = g_context->_saveGame->_reagents[reagent];
-	AdjustValue(g_context->_saveGame->_reagents[reagent], amt, 99, 0);
+	int oldVal = g_ultima->_saveGame->_reagents[reagent];
+	AdjustValue(g_ultima->_saveGame->_reagents[reagent], amt, 99, 0);
 
-	if (oldVal != g_context->_saveGame->_reagents[reagent]) {
+	if (oldVal != g_ultima->_saveGame->_reagents[reagent]) {
 		notifyOfChange();
 	}
 }
 
 int Party::getReagent(int reagent) const {
-	return g_context->_saveGame->_reagents[reagent];
+	return g_ultima->_saveGame->_reagents[reagent];
 }
 
 short *Party::getReagentPtr(int reagent) const {
-	return &g_context->_saveGame->_reagents[reagent];
+	return &g_ultima->_saveGame->_reagents[reagent];
 }
 
 void Party::setActivePlayer(int p) {
@@ -1260,8 +1260,8 @@ void Party::swapPlayers(int p1, int p2) {
 	ASSERT(p2 < _saveGame->_members, "p2 out of range: %d", p2);
 
 	SaveGamePlayerRecord tmp = _saveGame->_players[p1];
-	_saveGame->_players[p1] = g_context->_saveGame->_players[p2];
-	g_context->_saveGame->_players[p2] = tmp;
+	_saveGame->_players[p1] = g_ultima->_saveGame->_players[p2];
+	g_ultima->_saveGame->_players[p2] = tmp;
 
 	syncMembers();
 

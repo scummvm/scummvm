@@ -118,7 +118,7 @@ void codexStart() {
 	/**
 	 * check to see if you have the 3-part key
 	 */
-	if ((g_context->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) != (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
+	if ((g_ultima->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) != (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
 		codexEject(CODEX_EJECT_NO_3_PART_KEY);
 		return;
 	}
@@ -245,14 +245,14 @@ void codexHandleWOP(const Common::String &word) {
 		tries = 1; /* reset 'tries' in case we need to enter this again later */
 
 		/* eject them if they don't have all 8 party members */
-		if (g_context->_saveGame->_members != 8) {
+		if (g_ultima->_saveGame->_members != 8) {
 			codexEject(CODEX_EJECT_NO_FULL_PARTY);
 			return;
 		}
 
 		/* eject them if they're not a full avatar at this point */
 		for (i = 0; i < VIRT_MAX; i++) {
-			if (g_context->_saveGame->_karma[i] != 0) {
+			if (g_ultima->_saveGame->_karma[i] != 0) {
 				codexEject(CODEX_EJECT_NO_FULL_AVATAR);
 				return;
 			}
@@ -461,7 +461,7 @@ bool codexHandleEndgameAnyKey(int key, void *data) {
 	} else {
 		/* CONGRATULATIONS!... you have completed the game in x turns */
 		screenDisableCursor();
-		screenMessage("%s%d%s", codexEndgameText2[index - 7].c_str(), g_context->_saveGame->_moves, codexEndgameText2[index - 6].c_str());
+		screenMessage("%s%d%s", codexEndgameText2[index - 7].c_str(), g_ultima->_saveGame->_moves, codexEndgameText2[index - 6].c_str());
 #ifdef IOS
 		U4IOS::endChoiceConversation();
 #endif
