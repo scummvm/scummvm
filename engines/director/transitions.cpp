@@ -310,7 +310,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 
 	// Calculate steps
 	uint32 pixPerStepInit = 1;
-	t.steps = (1 << (hBits * vBits)) - 1;
+	t.steps = (1 << (hBits + vBits)) - 1;
 
 	while (t.steps > 64) {
 		pixPerStepInit <<= 1;
@@ -333,13 +333,6 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			rnd = (rnd & 1) ? (rnd >> 1) ^ seed : rnd >> 1;
 
 			if (pixPerStep > 0) {
-				if (pixPerStep % 10000 == 0) {
-					g_system->delayMillis(10);
-					if (processQuitEvent(true))
-						break;
-
-					g_system->updateScreen();
-				}
 				if (--pixPerStep == 0) {
 					break;
 				}
