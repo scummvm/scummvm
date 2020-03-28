@@ -11007,11 +11007,19 @@ msgid "Młyn - "
 msgstr ""
 
 #: mob.lst:52001
-msgid "powrót - "
+msgid "dźwignia - "
+msgstr ""
+
+#: mob.lst:52001
+msgid "przycisk - "
 msgstr ""
 
 #: mob.lst:52002
 msgid "powrót - "
+msgstr ""
+
+#: variatxt.txt:9
+msgid "Nie mogę tego wząć."
 msgstr ""
 
 #: variatxt.txt:10
