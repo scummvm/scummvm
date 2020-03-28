@@ -295,6 +295,32 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 		return;
 	}
 
+	// play "done"
+	if (frame.type == STRING) {
+		if (_vm->_movieStack.empty()) {	// No op if no nested movies
+			return;
+		}
+		ref = _vm->_movieStack.back();
+
+		_vm->_movieStack.pop_back();
+
+		Datum m, f;
+
+		if (ref.movie.empty()) {
+			m.type = VOID;
+		} else {
+			m.type = STRING;
+			m.u.s = new Common::String(ref.movie);
+		}
+
+		f.type = INT;
+		f.u.i = ref.frameI;
+
+		func_goto(f, m);
+
+		return;
+	}
+
 	if (!_vm->getCurrentScore()) {
 		warning("Lingo::func_play(): no score");
 		return;
@@ -305,29 +331,6 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	_vm->_movieStack.push_back(ref);
 
 	func_goto(frame, movie);
-}
-
-void Lingo::func_playdone() {
-	if (_vm->_movieStack.empty()) {	// No op if no nested movies
-		return;
-	}
-	MovieReference ref = _vm->_movieStack.back();
-
-	_vm->_movieStack.pop_back();
-
-	Datum m, f;
-
-	if (ref.movie.empty()) {
-		m.type = VOID;
-	} else {
-		m.type = STRING;
-		m.u.s = new Common::String(ref.movie);
-	}
-
-	f.type = INT;
-	f.u.i = ref.frameI;
-
-	func_goto(f, m);
 }
 
 void Lingo::func_cursor(int c, int m) {

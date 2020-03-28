@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.5.1.  */
+/* A Bison parser, made by GNU Bison 3.5.3.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -106,34 +106,33 @@ extern int yydebug;
     tFACTORY = 312,
     tOPEN = 313,
     tPLAY = 314,
-    tDONE = 315,
-    tINSTANCE = 316,
-    tGE = 317,
-    tLE = 318,
-    tEQ = 319,
-    tNEQ = 320,
-    tAND = 321,
-    tOR = 322,
-    tNOT = 323,
-    tMOD = 324,
-    tAFTER = 325,
-    tBEFORE = 326,
-    tCONCAT = 327,
-    tCONTAINS = 328,
-    tSTARTS = 329,
-    tCHAR = 330,
-    tITEM = 331,
-    tLINE = 332,
-    tWORD = 333,
-    tSPRITE = 334,
-    tINTERSECTS = 335,
-    tWITHIN = 336,
-    tTELL = 337,
-    tPROPERTY = 338,
-    tON = 339,
-    tENDIF = 340,
-    tENDREPEAT = 341,
-    tENDTELL = 342
+    tINSTANCE = 315,
+    tGE = 316,
+    tLE = 317,
+    tEQ = 318,
+    tNEQ = 319,
+    tAND = 320,
+    tOR = 321,
+    tNOT = 322,
+    tMOD = 323,
+    tAFTER = 324,
+    tBEFORE = 325,
+    tCONCAT = 326,
+    tCONTAINS = 327,
+    tSTARTS = 328,
+    tCHAR = 329,
+    tITEM = 330,
+    tLINE = 331,
+    tWORD = 332,
+    tSPRITE = 333,
+    tINTERSECTS = 334,
+    tWITHIN = 335,
+    tTELL = 336,
+    tPROPERTY = 337,
+    tON = 338,
+    tENDIF = 339,
+    tENDREPEAT = 340,
+    tENDTELL = 341
   };
 #endif
 
@@ -161,7 +160,7 @@ union YYSTYPE
 		Common::String *field;
 	} objectref;
 
-#line 165 "engines/director/lingo/lingo-gr.h"
+#line 164 "engines/director/lingo/lingo-gr.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

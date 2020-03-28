@@ -25,6 +25,9 @@
 
 namespace Director {
 
+Common::String preprocessReturn(Common::String in);
+Common::String preprocessPlay(Common::String in);
+
 bool isspec(char c) {
 	return strchr("-+*/%%^:,()><&[]=", c) != NULL;
 }
@@ -161,6 +164,7 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 		debugC(2, kDebugLingoParse, "line: %d                         '%s'", iflevel, line.c_str());
 
 		res1 = preprocessReturn(res1);
+		res1 = preprocessPlay(res1);
 
 		res += res1;
 
@@ -335,7 +339,7 @@ const char *strcasestr(const char *s, const char *find) {
 }
 #endif
 
-Common::String Lingo::preprocessReturn(Common::String in) {
+Common::String preprocessReturn(Common::String in) {
 	Common::String res, prev, next;
 	const char *ptr = in.c_str();
 	const char *beg = ptr;
@@ -365,6 +369,35 @@ Common::String Lingo::preprocessReturn(Common::String in) {
 
 	if (in.size() != res.size())
 		debugC(2, kDebugLingoParse, "RETURN: in: %s\nout: %s", in.c_str(), res.c_str());
+
+	return res;
+}
+
+Common::String preprocessPlay(Common::String in) {
+	Common::String res, next;
+	const char *ptr = in.c_str();
+	const char *beg = ptr;
+
+	while ((ptr = strcasestr(beg, "play")) != NULL) {
+		ptr += 5; // end of 'play'
+		res += Common::String(beg, ptr);
+
+		next = nexttok(ptr);
+
+		debugC(2, kDebugLingoParse, "PLAY: nexttok: %s", next.c_str());
+
+		if (next.equals("done")) {
+			res += "\"done\""; // Turn it into STRING
+		}
+
+		ptr += 4; // Skip "done"
+		beg = ptr;
+	}
+
+	res += Common::String(beg);
+
+	if (in.size() != res.size())
+		debugC(2, kDebugLingoParse, "PLAY: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }

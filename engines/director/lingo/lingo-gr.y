@@ -115,7 +115,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<objectref> THEOBJECTREF
 %token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tIF tIN tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
-%token tWITH tWHILE tNLELSE tFACTORY tOPEN tPLAY tDONE tINSTANCE
+%token tWITH tWHILE tNLELSE tFACTORY tOPEN tPLAY tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
@@ -564,8 +564,7 @@ gotofunc: tGO tLOOP				{ g_lingo->code1(LC::c_gotoloop); }
 gotomovie: tOF tMOVIE expr
 	| tMOVIE expr
 
-playfunc: tPLAY tDONE			{ g_lingo->code1(LC::c_playdone); }
-	| tPLAY expr 			{
+playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
 		g_lingo->code1(LC::c_play); }

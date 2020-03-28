@@ -112,7 +112,6 @@ static struct FuncDescr {
 	{ LC::c_open,			"c_open",			"" },
 	{ LC::c_or,				"c_or",				"" },
 	{ LC::c_play,			"c_play",			"" },
-	{ LC::c_playdone,		"c_playdone",		"" },
 	{ LC::c_printtop,		"c_printtop",		""  },
 	{ LC::c_procret,		"c_procret",		"" },
 	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
@@ -1296,10 +1295,6 @@ void LC::c_play() {
 		frame = g_lingo->pop();
 
 	g_lingo->func_play(frame, movie);
-}
-
-void LC::c_playdone() {
-	g_lingo->func_playdone();
 }
 
 void LC::c_call() {

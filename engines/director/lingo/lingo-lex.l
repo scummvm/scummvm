@@ -103,7 +103,6 @@ and			{ count(); return tAND; }
 before		{ count(); return tBEFORE; }	// D3
 char		{ count(); return tCHAR; }		// D3
 contains	{ count(); return tCONTAINS; }
-done		{ count(); return tDONE; }
 down		{ count(); return tDOWN; }
 if			{ count(); return tIF; }
 else[ \t]+if { count(); return tELSIF; }

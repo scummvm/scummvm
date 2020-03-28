@@ -127,7 +127,6 @@ namespace LC {
 	void c_property();
 
 	void c_play();
-	void c_playdone();
 
 	void c_open();
 	void c_hilite();
