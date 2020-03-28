@@ -739,9 +739,9 @@ static const byte mouseDown[] = {
 
 /**
  * The sprites colors are in reverse order with respect to the ids in director.
- * To make loading images easier we the palette is in reverse order.
+ * The palette is in reverse order, this eases the code for loading files.
  * All other color ids can be converted with: 255 - colorId.
- */
+ **/
 uint32 DirectorEngine::transformColor(uint32 color) {
 	return 255 - color;
 }
