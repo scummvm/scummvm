@@ -175,6 +175,11 @@ Common::Error DirectorEngine::run() {
 	} else {
 		loadInitialMovie(getEXEName());
 
+		if (!_mainArchive) {
+			warning("Cannot open main movie");
+			return Common::kNoGameDataFoundError;
+		}
+
 		// Let's check if it is a projector file
 		// So far tested with Spaceship Warlock, D2
 		if (_mainArchive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
