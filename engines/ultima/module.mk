@@ -369,6 +369,7 @@ MODULE_OBJS := \
 	ultima8/graphics/palette_fader_process.o \
 	ultima8/graphics/palette_manager.o \
 	ultima8/graphics/point_scaler.o \
+	ultima8/graphics/raw_shape_frame.o \
 	ultima8/graphics/render_surface.o \
 	ultima8/graphics/shape.o \
 	ultima8/graphics/shape_archive.o \

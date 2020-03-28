@@ -30,6 +30,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 class ShapeFrame;
+class RawShapeFrame;
 struct Palette;
 struct Rect;
 struct ConvertShapeFormat;
@@ -73,23 +74,22 @@ public:
 	ENABLE_CUSTOM_MEMORY_ALLOCATION()
 
 private:
+	void loadFrames(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
 	// This will load a u8 style shape 'optimized'.
-	void LoadU8Format(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
+	static Common::Array<RawShapeFrame *> loadU8Format(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
 	// This will load a pentagram style shape 'optimized'.
-	void LoadPentagramFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
+	static Common::Array<RawShapeFrame *> loadPentagramFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
 	// This will load any sort of shape via a ConvertShapeFormat struct
 	// Crusader shapes must be loaded this way
-	void LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
+	static Common::Array<RawShapeFrame *> loadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
-	Std::vector<ShapeFrame *> _frames;
+	Common::Array<ShapeFrame *> _frames;
 
 	const Palette *_palette;
 
-	const uint8 *_data;
-	uint32 _size;
 	const uint16 _flexId;
 	const uint32 _shapeNum;
 };
