@@ -108,7 +108,7 @@ public:
 private:
 	Myst3Engine *_vm;
 
-	Common::MemoryReadStream *_movieStream;
+	Common::SeekableReadStream *_movieStream;
 	Video::BinkDecoder _bink;
 
 	uint16 _frame;

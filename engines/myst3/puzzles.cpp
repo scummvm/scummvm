@@ -1140,12 +1140,12 @@ void Puzzles::journalSaavedro(int16 move) {
 
 		// Does the left page need to be loaded from a different node?
 		if (nodeLeft != nodeRight) {
-			const DirectorySubEntry *jpegDesc = _vm->getFileDescription("", nodeLeft, 0, DirectorySubEntry::kFrame);
+			ResourceDescription jpegDesc = _vm->getFileDescription("", nodeLeft, 0, Archive::kFrame);
 
-			if (!jpegDesc)
+			if (!jpegDesc.isValid())
 				error("Frame %d does not exist", nodeLeft);
 
-			Graphics::Surface *bitmap = Myst3Engine::decodeJpeg(jpegDesc);
+			Graphics::Surface *bitmap = Myst3Engine::decodeJpeg(&jpegDesc);
 
 			// Copy the left half of the node to a new surface
 			Graphics::Surface *leftBitmap = new Graphics::Surface();
@@ -1182,12 +1182,12 @@ int16 Puzzles::_journalSaavedroLastPageLastChapterValue() {
 }
 
 uint16 Puzzles::_journalSaavedroGetNode(uint16 chapter) {
-	const DirectorySubEntry *desc = _vm->getFileDescription("", 1200, 0, DirectorySubEntry::kNumMetadata);
+	ResourceDescription desc = _vm->getFileDescription("", 1200, 0, Archive::kNumMetadata);
 
-	if (!desc)
+	if (!desc.isValid())
 		error("Node 1200 does not exist");
 
-	return desc->getMiscData(chapter) + 199;
+	return desc.getMiscData(chapter) + 199;
 }
 
 uint16 Puzzles::_journalSaavedroPageCount(uint16 chapter) {
@@ -1216,7 +1216,7 @@ uint16 Puzzles::_journalSaavedroNextChapter(uint16 chapter, bool forward) {
 void Puzzles::journalAtrus(uint16 node, uint16 var) {
 	uint numPages = 0;
 
-	while (_vm->getFileDescription("", node++, 0, DirectorySubEntry::kFrame))
+	while (_vm->getFileDescription("", node++, 0, Archive::kFrame).isValid())
 		numPages++;
 
 	_vm->_state->setVar(var, numPages - 1);
@@ -1525,13 +1525,13 @@ void Puzzles::projectorLoadBitmap(uint16 bitmap) {
 	_vm->_projectorBackground = new Graphics::Surface();
 	_vm->_projectorBackground->create(1024, 1024, Texture::getRGBAPixelFormat());
 
-	const DirectorySubEntry *movieDesc = _vm->getFileDescription("", bitmap, 0, DirectorySubEntry::kStillMovie);
+	ResourceDescription movieDesc = _vm->getFileDescription("", bitmap, 0, Archive::kStillMovie);
 
-	if (!movieDesc)
+	if (!movieDesc.isValid())
 		error("Movie %d does not exist", bitmap);
 
 	// Rebuild the complete background image from the frames of the bink movie
-	Common::MemoryReadStream *movieStream = movieDesc->getData();
+	Common::SeekableReadStream *movieStream = movieDesc.getData();
 	Video::BinkDecoder bink;
 	bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	bink.loadStream(movieStream);
@@ -1552,13 +1552,13 @@ void Puzzles::projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y) {
 	if (!_vm->_state->getVar(26))
 		return;
 
-	const DirectorySubEntry *movieDesc = _vm->getFileDescription("", bitmap, 0, DirectorySubEntry::kStillMovie);
+	ResourceDescription movieDesc = _vm->getFileDescription("", bitmap, 0, Archive::kStillMovie);
 
-	if (!movieDesc)
+	if (!movieDesc.isValid())
 		error("Movie %d does not exist", bitmap);
 
 	// Rebuild the complete background image from the frames of the bink movie
-	Common::MemoryReadStream *movieStream = movieDesc->getData();
+	Common::SeekableReadStream *movieStream = movieDesc.getData();
 	Video::BinkDecoder bink;
 	bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	bink.loadStream(movieStream);

@@ -49,7 +49,7 @@ protected:
 private:
 	void loadCharset(int32 id);
 	void createTexture();
-	void readPhrases(const DirectorySubEntry *desc);
+	void readPhrases(const ResourceDescription *desc);
 	static Common::String fakeBidiProcessing(const Common::String &phrase);
 
 	const Graphics::Font *_font;
@@ -108,11 +108,11 @@ void FontSubtitles::loadResources() {
 }
 
 void FontSubtitles::loadCharset(int32 id) {
-	const DirectorySubEntry *fontCharset = _vm->getFileDescription("CHAR", id, 0, DirectorySubEntry::kRawData);
+	ResourceDescription fontCharset = _vm->getFileDescription("CHAR", id, 0, Archive::kRawData);
 
 	// Load the font charset if any
-	if (fontCharset) {
-		Common::MemoryReadStream *data = fontCharset->getData();
+	if (fontCharset.isValid()) {
+		Common::SeekableReadStream *data = fontCharset.getData();
 
 		_charset = new uint8[data->size()];
 
@@ -130,12 +130,12 @@ bool FontSubtitles::loadSubtitles(int32 id) {
 
 	int32 overridenId = checkOverridenId(id);
 
-	const DirectorySubEntry *desc = loadText(overridenId, overridenId != id);
+	ResourceDescription desc = loadText(overridenId, overridenId != id);
 
-	if (!desc)
+	if (!desc.isValid())
 		return false;
 
-	readPhrases(desc);
+	readPhrases(&desc);
 
 	if (_vm->getGameLanguage() == Common::HE_ISR) {
 		for (uint i = 0; i < _phrases.size(); i++) {
@@ -146,8 +146,8 @@ bool FontSubtitles::loadSubtitles(int32 id) {
 	return true;
 }
 
-void FontSubtitles::readPhrases(const DirectorySubEntry *desc) {
-	Common::MemoryReadStream *crypted = desc->getData();
+void FontSubtitles::readPhrases(const ResourceDescription *desc) {
+	Common::SeekableReadStream *crypted = desc->getData();
 
 	// Read the frames and associated text offsets
 	while (true) {
@@ -312,8 +312,8 @@ protected:
 	void drawToTexture(const Phrase *phrase) override;
 
 private:
-	const DirectorySubEntry *loadMovie(int32 id, bool overriden);
-	void readPhrases(const DirectorySubEntry *desc);
+	ResourceDescription loadMovie(int32 id, bool overriden);
+	void readPhrases(const ResourceDescription *desc);
 
 	Video::BinkDecoder _bink;
 };
@@ -325,8 +325,8 @@ MovieSubtitles::MovieSubtitles(Myst3Engine *vm) :
 MovieSubtitles::~MovieSubtitles() {
 }
 
-void MovieSubtitles::readPhrases(const DirectorySubEntry *desc) {
-	Common::MemoryReadStream *frames = desc->getData();
+void MovieSubtitles::readPhrases(const ResourceDescription *desc) {
+	Common::SeekableReadStream *frames = desc->getData();
 
 	// Read the frames
 	uint index = 0;
@@ -345,12 +345,12 @@ void MovieSubtitles::readPhrases(const DirectorySubEntry *desc) {
 	delete frames;
 }
 
-const DirectorySubEntry *MovieSubtitles::loadMovie(int32 id, bool overriden) {
-	const DirectorySubEntry *desc;
+ResourceDescription MovieSubtitles::loadMovie(int32 id, bool overriden) {
+	ResourceDescription desc;
 	if (overriden) {
-		desc = _vm->getFileDescription("IMGR", 200000 + id, 0, DirectorySubEntry::kMovie);
+		desc = _vm->getFileDescription("IMGR", 200000 + id, 0, Archive::kMovie);
 	} else {
-		desc = _vm->getFileDescription("", 200000 + id, 0, DirectorySubEntry::kMovie);
+		desc = _vm->getFileDescription("", 200000 + id, 0, Archive::kMovie);
 	}
 	return desc;
 }
@@ -358,16 +358,16 @@ const DirectorySubEntry *MovieSubtitles::loadMovie(int32 id, bool overriden) {
 bool MovieSubtitles::loadSubtitles(int32 id) {
 	int32 overridenId = checkOverridenId(id);
 
-	const DirectorySubEntry *phrases = loadText(overridenId, overridenId != id);
-	const DirectorySubEntry *movie = loadMovie(overridenId, overridenId != id);
+	ResourceDescription phrases = loadText(overridenId, overridenId != id);
+	ResourceDescription movie = loadMovie(overridenId, overridenId != id);
 
-	if (!phrases || !movie)
+	if (!phrases.isValid() || !movie.isValid())
 		return false;
 
-	readPhrases(phrases);
+	readPhrases(&phrases);
 
 	// Load the movie
-	Common::MemoryReadStream *movieStream = movie->getData();
+	Common::SeekableReadStream *movieStream = movie.getData();
 	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	_bink.loadStream(movieStream);
 	_bink.start();
@@ -403,19 +403,19 @@ Subtitles::~Subtitles() {
 
 void Subtitles::loadFontSettings(int32 id) {
 	// Load font settings
-	const DirectorySubEntry *fontNums = _vm->getFileDescription("NUMB", id, 0, DirectorySubEntry::kNumMetadata);
+	const ResourceDescription fontNums = _vm->getFileDescription("NUMB", id, 0, Archive::kNumMetadata);
 
-	if (!fontNums)
+	if (!fontNums.isValid())
 		error("Unable to load font settings values");
 
-	_fontSize = fontNums->getMiscData(0);
-	_fontBold = fontNums->getMiscData(1);
-	_surfaceHeight = fontNums->getMiscData(2);
-	_singleLineTop = fontNums->getMiscData(3);
-	_line1Top = fontNums->getMiscData(4);
-	_line2Top = fontNums->getMiscData(5);
-	_surfaceTop = fontNums->getMiscData(6);
-	_fontCharsetCode = fontNums->getMiscData(7);
+	_fontSize = fontNums.getMiscData(0);
+	_fontBold = fontNums.getMiscData(1);
+	_surfaceHeight = fontNums.getMiscData(2);
+	_singleLineTop = fontNums.getMiscData(3);
+	_line1Top = fontNums.getMiscData(4);
+	_line2Top = fontNums.getMiscData(5);
+	_surfaceTop = fontNums.getMiscData(6);
+	_fontCharsetCode = fontNums.getMiscData(7);
 
 	if (_fontCharsetCode > 0) {
 		_fontCharsetCode = 128; // The Japanese subtitles are encoded in CP 932 / Shift JIS
@@ -430,12 +430,12 @@ void Subtitles::loadFontSettings(int32 id) {
 		_fontCharsetCode = -_fontCharsetCode; // Negative values are GDI charset codes
 	}
 
-	const DirectorySubEntry *fontText = _vm->getFileDescription("TEXT", id, 0, DirectorySubEntry::kTextMetadata);
+	ResourceDescription fontText = _vm->getFileDescription("TEXT", id, 0, Archive::kTextMetadata);
 
-	if (!fontText)
+	if (!fontText.isValid())
 		error("Unable to load font face");
 
-	_fontFace = fontText->getTextData(0);
+	_fontFace = fontText.getTextData(0);
 }
 
 int32 Subtitles::checkOverridenId(int32 id) {
@@ -447,12 +447,12 @@ int32 Subtitles::checkOverridenId(int32 id) {
 	return id;
 }
 
-const DirectorySubEntry *Subtitles::loadText(int32 id, bool overriden) {
-	const DirectorySubEntry *desc;
+ResourceDescription Subtitles::loadText(int32 id, bool overriden) {
+	ResourceDescription desc;
 	if (overriden) {
-		desc = _vm->getFileDescription("IMGR", 100000 + id, 0, DirectorySubEntry::kText);
+		desc = _vm->getFileDescription("IMGR", 100000 + id, 0, Archive::kText);
 	} else {
-		desc = _vm->getFileDescription("", 100000 + id, 0, DirectorySubEntry::kText);
+		desc = _vm->getFileDescription("", 100000 + id, 0, Archive::kText);
 	}
 	return desc;
 }

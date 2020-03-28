@@ -111,7 +111,7 @@ private:
 	DECLARE_OPCODE(movieInitCondPreload);
 	DECLARE_OPCODE(movieInitFrameVar);
 	DECLARE_OPCODE(movieInitFrameVarPreload);
-	DECLARE_OPCODE(movieInitOverrridePosition);
+	DECLARE_OPCODE(movieInitOverridePosition);
 	DECLARE_OPCODE(movieInitScriptedPosition);
 	DECLARE_OPCODE(movieInitCondScriptedPosition);
 	DECLARE_OPCODE(movieRemove);

@@ -65,15 +65,15 @@ Effect::~Effect() {
 	}
 }
 
-bool Effect::loadMasks(const Common::String &room, uint32 id, DirectorySubEntry::ResourceType type) {
+bool Effect::loadMasks(const Common::String &room, uint32 id, Archive::ResourceType type) {
 	bool isFrame = _vm->_state->getViewType() == kFrame;
 
 	// Load the mask of each face
 	for (uint i = 0; i < 6; i++) {
-		const DirectorySubEntry *desc = _vm->getFileDescription(room, id, i + 1, type);
+		ResourceDescription desc = _vm->getFileDescription(room, id, i + 1, type);
 
-		if (desc) {
-			Common::SeekableReadStream *data = desc->getData();
+		if (desc.isValid()) {
+			Common::SeekableReadStream *data = desc.getData();
 
 			// Check if we are overriding an existing mask
 			delete _facesMasks[i];
@@ -171,7 +171,7 @@ WaterEffect::~WaterEffect() {
 WaterEffect *WaterEffect::create(Myst3Engine *vm, uint32 id) {
 	WaterEffect *s = new WaterEffect(vm);
 
-	if (!s->loadMasks("", id, DirectorySubEntry::kWaterEffectMask)) {
+	if (!s->loadMasks("", id, Archive::kWaterEffectMask)) {
 		delete s;
 		return 0;
 	}
@@ -347,7 +347,7 @@ LavaEffect::~LavaEffect() {
 LavaEffect *LavaEffect::create(Myst3Engine *vm, uint32 id) {
 	LavaEffect *s = new LavaEffect(vm);
 
-	if (!s->loadMasks("", id, DirectorySubEntry::kLavaEffectMask)) {
+	if (!s->loadMasks("", id, Archive::kLavaEffectMask)) {
 		delete s;
 		return 0;
 	}
@@ -446,7 +446,7 @@ MagnetEffect *MagnetEffect::create(Myst3Engine *vm, uint32 id) {
 	}
 
 	MagnetEffect *s = new MagnetEffect(vm);
-	s->loadMasks("", id, DirectorySubEntry::kMagneticEffectMask);
+	s->loadMasks("", id, Archive::kMagneticEffectMask);
 	return s;
 }
 
@@ -467,12 +467,12 @@ bool MagnetEffect::update() {
 		// The sound changed since last update
 		_lastSoundId = soundId;
 
-		const DirectorySubEntry *desc = _vm->getFileDescription("", _vm->_state->getMagnetEffectNode(), 0, DirectorySubEntry::kRawData);
-		if (!desc)
+		ResourceDescription desc = _vm->getFileDescription("", _vm->_state->getMagnetEffectNode(), 0, Archive::kRawData);
+		if (!desc.isValid())
 			error("Magnet effect support file %d does not exist", _vm->_state->getMagnetEffectNode());
 
 		delete _shakeStrength;
-		_shakeStrength = desc->getData();
+		_shakeStrength = desc.getData();
 	}
 
 	int32 soundPosition = _vm->_sound->playedFrames(soundId);
@@ -658,12 +658,12 @@ void RotationEffect::applyForFace(uint face, Graphics::Surface* src, Graphics::S
 
 bool ShieldEffect::loadPattern() {
 	// Read the shield effect support data
-	const DirectorySubEntry *desc = _vm->getFileDescription("NARA", 10000, 0, DirectorySubEntry::kRawData);
-	if (!desc) {
+	ResourceDescription desc = _vm->getFileDescription("NARA", 10000, 0, Archive::kRawData);
+	if (!desc.isValid()) {
 		return false;
 	}
 
-	Common::MemoryReadStream *stream = desc->getData();
+	Common::SeekableReadStream *stream = desc.getData();
 	if (stream->size() != 4096) {
 		error("Incorrect shield effect support file size %d", stream->size());
 	}
@@ -713,18 +713,18 @@ ShieldEffect *ShieldEffect::create(Myst3Engine *vm, uint32 id) {
 	}
 
 	if (outerShieldUp) {
-		hasMasks |= s->loadMasks("NARA", node + 300, DirectorySubEntry::kShieldEffectMask);
+		hasMasks |= s->loadMasks("NARA", node + 300, Archive::kShieldEffectMask);
 		if (saavedroStatus == 2) {
 			innerShieldMaskNode = node + 200;
 		}
 	}
 
 	if (innerShieldMaskNode) {
-		hasMasks |= s->loadMasks("NARA", innerShieldMaskNode, DirectorySubEntry::kShieldEffectMask);
+		hasMasks |= s->loadMasks("NARA", innerShieldMaskNode, Archive::kShieldEffectMask);
 	}
 
 	if (innerShieldMaskNode && innerShieldUp && node > 6) {
-		hasMasks |= s->loadMasks("NARA", node + 100, DirectorySubEntry::kShieldEffectMask);
+		hasMasks |= s->loadMasks("NARA", node + 100, Archive::kShieldEffectMask);
 	}
 
 	if (!hasMasks) {

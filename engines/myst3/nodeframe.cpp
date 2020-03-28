@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/myst3/directorysubentry.h"
+#include "engines/myst3/archive.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/nodeframe.h"
 #include "engines/myst3/scene.h"
@@ -30,19 +30,19 @@ namespace Myst3 {
 
 NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
 		Node(vm, id) {
-	const DirectorySubEntry *jpegDesc = _vm->getFileDescription("", id, 1, DirectorySubEntry::kLocalizedFrame);
+	ResourceDescription jpegDesc = _vm->getFileDescription("", id, 1, Archive::kLocalizedFrame);
 
-	if (!jpegDesc)
-		jpegDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kFrame);
+	if (!jpegDesc.isValid())
+		jpegDesc = _vm->getFileDescription("", id, 0, Archive::kFrame);
 
-	if (!jpegDesc)
-		jpegDesc = _vm->getFileDescription("", id, 1, DirectorySubEntry::kFrame);
+	if (!jpegDesc.isValid())
+		jpegDesc = _vm->getFileDescription("", id, 1, Archive::kFrame);
 
-	if (!jpegDesc)
+	if (!jpegDesc.isValid())
 		error("Frame %d does not exist", id);
 
 	_faces[0] = new Face(_vm);
-	_faces[0]->setTextureFromJPEG(jpegDesc);
+	_faces[0]->setTextureFromJPEG(&jpegDesc);
 }
 
 NodeFrame::~NodeFrame() {

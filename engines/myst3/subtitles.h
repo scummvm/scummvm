@@ -30,7 +30,7 @@
 namespace Myst3 {
 
 class Myst3Engine;
-class DirectorySubEntry;
+class ResourceDescription;
 
 class Subtitles : public Window {
 public:
@@ -60,7 +60,7 @@ protected:
 	void freeTexture();
 
 	int32 checkOverridenId(int32 id);
-	const DirectorySubEntry *loadText(int32 id, bool overriden);
+	ResourceDescription loadText(int32 id, bool overriden);
 
 	Myst3Engine *_vm;
 

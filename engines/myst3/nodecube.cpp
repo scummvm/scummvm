@@ -20,8 +20,8 @@
  *
  */
 
+#include "engines/myst3/archive.h"
 #include "engines/myst3/nodecube.h"
-#include "engines/myst3/directorysubentry.h"
 #include "engines/myst3/myst3.h"
 
 #include "common/debug.h"
@@ -33,13 +33,13 @@ NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
 	_is3D = true;
 
 	for (int i = 0; i < 6; i++) {
-		const DirectorySubEntry *jpegDesc = _vm->getFileDescription("", id, i + 1, DirectorySubEntry::kCubeFace);
+		ResourceDescription jpegDesc = _vm->getFileDescription("", id, i + 1, Archive::kCubeFace);
 
-		if (!jpegDesc)
+		if (!jpegDesc.isValid())
 			error("Face %d does not exist", id);
 
 		_faces[i] = new Face(_vm);
-		_faces[i]->setTextureFromJPEG(jpegDesc);
+		_faces[i]->setTextureFromJPEG(&jpegDesc);
 	}
 }
 

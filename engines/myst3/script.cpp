@@ -67,7 +67,7 @@ Script::Script(Myst3Engine *vm):
 	OP( 22, movieInitCondPreload,                     "ec"    );
 	OP( 23, movieInitFrameVar,                        "ev"    );
 	OP( 24, movieInitFrameVarPreload,                 "ev"    );
-	OP( 25, movieInitOverrridePosition,               "ecii"  );
+	OP( 25, movieInitOverridePosition,                "ecii"  );
 	OP( 26, movieInitScriptedPosition,                "evv"   );
 	OP( 27, movieRemove,                              "e"     );
 	OP( 28, movieRemoveAll,                           ""      );
@@ -598,7 +598,7 @@ void Script::movieInitFrameVarPreload(Context &c, const Opcode &cmd) {
 	_vm->loadMovie(movieid, condition, false, true);
 }
 
-void Script::movieInitOverrridePosition(Context &c, const Opcode &cmd) {
+void Script::movieInitOverridePosition(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Preload movie %d with condition %d and position U %d V %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 

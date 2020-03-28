@@ -7,8 +7,6 @@ MODULE_OBJS := \
 	cursor.o \
 	database.o \
 	detection.o \
-	directoryentry.o \
-	directorysubentry.o \
 	effects.o \
 	gfx.o \
 	gfx_opengl.o \

@@ -20,8 +20,8 @@
  *
  */
 
+#include "engines/myst3/archive.h"
 #include "engines/myst3/cursor.h"
-#include "engines/myst3/directorysubentry.h"
 #include "engines/myst3/gfx.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/scene.h"
@@ -83,11 +83,11 @@ void Cursor::loadAvailableCursors() {
 		if (_textures.contains(availableCursors[i].nodeID)) continue;
 
 		// Load the cursor bitmap
-		const DirectorySubEntry *cursorDesc = _vm->getFileDescription("GLOB", availableCursors[i].nodeID, 0, DirectorySubEntry::kRawData);
-		if (!cursorDesc)
+		ResourceDescription cursorDesc = _vm->getFileDescription("GLOB", availableCursors[i].nodeID, 0, Archive::kRawData);
+		if (!cursorDesc.isValid())
 			error("Cursor %d does not exist", availableCursors[i].nodeID);
 
-		Common::MemoryReadStream *bmpStream = cursorDesc->getData();
+		Common::SeekableReadStream *bmpStream = cursorDesc.getData();
 
 		Image::BitmapDecoder bitmapDecoder;
 		if (!bitmapDecoder.loadStream(*bmpStream))

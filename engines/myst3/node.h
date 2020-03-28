@@ -23,8 +23,8 @@
 #ifndef MYST3_ROOM_H
 #define MYST3_ROOM_H
 
+#include "engines/myst3/archive.h"
 #include "engines/myst3/gfx.h"
-#include "engines/myst3/directorysubentry.h"
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -47,7 +47,7 @@ public:
 	Face(Myst3Engine *vm);
 	~Face();
 
-	void setTextureFromJPEG(const DirectorySubEntry *jpegDesc);
+	void setTextureFromJPEG(const ResourceDescription *jpegDesc);
 
 	void addTextureDirtyRect(const Common::Rect &rect);
 	bool isTextureDirty() { return _textureDirty; }
@@ -67,7 +67,7 @@ public:
 	~SpotItemFace();
 
 	void initBlack(uint16 width, uint16 height);
-	void loadData(const DirectorySubEntry *jpegDesc);
+	void loadData(const ResourceDescription *jpegDesc);
 	void updateData(const Graphics::Surface *surface);
 	void clear();
 

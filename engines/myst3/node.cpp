@@ -33,7 +33,7 @@
 
 namespace Myst3 {
 
-void Face::setTextureFromJPEG(const DirectorySubEntry *jpegDesc) {
+void Face::setTextureFromJPEG(const ResourceDescription *jpegDesc) {
 	_bitmap = Myst3Engine::decodeJpeg(jpegDesc);
 	_texture = _vm->_gfx->createTexture(_bitmap);
 
@@ -165,20 +165,21 @@ void Node::loadSpotItem(uint16 id, int16 condition, bool fade) {
 	spotItem->setFadeVar(abs(condition));
 
 	for (int i = 0; i < 6; i++) {
-		DirectorySubEntryList spotItemImages = _vm->listFilesMatching("", id, i + 1, DirectorySubEntry::kLocalizedSpotItem);
+		ResourceDescriptionArray spotItemImages = _vm->listFilesMatching("", id, i + 1, Archive::kLocalizedSpotItem);
 
 		if (spotItemImages.empty())
-			spotItemImages = _vm->listFilesMatching("", id, i + 1, DirectorySubEntry::kSpotItem);
+			spotItemImages = _vm->listFilesMatching("", id, i + 1, Archive::kSpotItem);
 
 		for (uint j = 0; j < spotItemImages.size(); j++) {
-			const DirectorySubEntry *image = spotItemImages[j];
+			const ResourceDescription &image = spotItemImages[j];
+			ResourceDescription::SpotItemData spotItemData = image.getSpotItemData();
 
 			SpotItemFace *spotItemFace = new SpotItemFace(
 					_faces[i],
-					image->getSpotItemData().u,
-					image->getSpotItemData().v);
+					spotItemData.u,
+					spotItemData.v);
 
-			spotItemFace->loadData(image);
+			spotItemFace->loadData(&image);
 
 			// SpotItems with an always true conditions cannot be undrawn.
 			// Draw them now to make sure the "non drawn backups" for other, potentially
@@ -378,7 +379,7 @@ void SpotItemFace::initBlack(uint16 width, uint16 height) {
 	_drawn = false;
 }
 
-void SpotItemFace::loadData(const DirectorySubEntry *jpegDesc) {
+void SpotItemFace::loadData(const ResourceDescription *jpegDesc) {
 	// Convert active SpotItem image to raw data
 	_bitmap = Myst3Engine::decodeJpeg(jpegDesc);
 

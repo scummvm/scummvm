@@ -1330,38 +1330,38 @@ void Myst3Engine::loadNodeSubtitles(uint32 id) {
 	_node->loadSubtitles(id);
 }
 
-const DirectorySubEntry *Myst3Engine::getFileDescription(const Common::String &room, uint32 index, uint16 face,
-                                                         DirectorySubEntry::ResourceType type) {
+ResourceDescription Myst3Engine::getFileDescription(const Common::String &room, uint32 index, uint16 face,
+                                                    Archive::ResourceType type) {
 	Common::String archiveRoom = room;
 	if (archiveRoom == "") {
 		archiveRoom = _db->getRoomName(_state->getLocationRoom(), _state->getLocationAge());
 	}
 
-	const DirectorySubEntry *desc = 0;
+	ResourceDescription desc;
 
 	// Search common archives
 	uint i = 0;
-	while (!desc && i < _archivesCommon.size()) {
+	while (!desc.isValid() && i < _archivesCommon.size()) {
 		desc = _archivesCommon[i]->getDescription(archiveRoom, index, face, type);
 		i++;
 	}
 
 	// Search currently loaded node archive
-	if (!desc && _archiveNode)
+	if (!desc.isValid() && _archiveNode)
 		desc = _archiveNode->getDescription(archiveRoom, index, face, type);
 
 	return desc;
 }
 
-DirectorySubEntryList Myst3Engine::listFilesMatching(const Common::String &room, uint32 index, uint16 face,
-                                                     DirectorySubEntry::ResourceType type) {
+ResourceDescriptionArray Myst3Engine::listFilesMatching(const Common::String &room, uint32 index, uint16 face,
+                                                     Archive::ResourceType type) {
 	Common::String archiveRoom = room;
 	if (archiveRoom == "") {
 		archiveRoom = _db->getRoomName(_state->getLocationRoom(), _state->getLocationAge());
 	}
 
 	for (uint i = 0; i < _archivesCommon.size(); i++) {
-		DirectorySubEntryList list = _archivesCommon[i]->listFilesMatching(archiveRoom, index, face, type);
+		ResourceDescriptionArray list = _archivesCommon[i]->listFilesMatching(archiveRoom, index, face, type);
 		if (!list.empty()) {
 			return list;
 		}
@@ -1371,12 +1371,12 @@ DirectorySubEntryList Myst3Engine::listFilesMatching(const Common::String &room,
 }
 
 Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
-	const DirectorySubEntry *desc = getFileDescription("GLOB", id, 0, DirectorySubEntry::kRawData);
+	ResourceDescription desc = getFileDescription("GLOB", id, 0, Archive::kRawData);
 
-	if (!desc)
+	if (!desc.isValid())
 		error("Texture %d does not exist", id);
 
-	Common::MemoryReadStream *data = desc->getData();
+	Common::SeekableReadStream *data = desc.getData();
 
 	uint32 magic = data->readUint32LE();
 	if (magic != MKTAG('.', 'T', 'E', 'X'))
@@ -1405,8 +1405,8 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	return s;
 }
 
-Graphics::Surface *Myst3Engine::decodeJpeg(const DirectorySubEntry *jpegDesc) {
-	Common::MemoryReadStream *jpegStream = jpegDesc->getData();
+Graphics::Surface *Myst3Engine::decodeJpeg(const ResourceDescription *jpegDesc) {
+	Common::SeekableReadStream *jpegStream = jpegDesc->getData();
 
 	Image::JPEGDecoder jpeg;
 	jpeg.setOutputPixelFormat(Texture::getRGBAPixelFormat());
@@ -1712,19 +1712,19 @@ void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading,
 }
 
 void Myst3Engine::getMovieLookAt(uint16 id, bool start, float &pitch, float &heading) {
-	const DirectorySubEntry *desc = getFileDescription("", id, 0, DirectorySubEntry::kMovie);
+	ResourceDescription desc = getFileDescription("", id, 0, Archive::kMovie);
 
-	if (!desc)
-		desc = getFileDescription("", id, 0, DirectorySubEntry::kMultitrackMovie);
+	if (!desc.isValid())
+		desc = getFileDescription("", id, 0, Archive::kMultitrackMovie);
 
-	if (!desc)
+	if (!desc.isValid())
 		error("Movie %d does not exist", id);
 
 	Math::Vector3d v;
 	if (start)
-		v = desc->getVideoData().v1;
+		v = desc.getVideoData().v1;
 	else
-		v = desc->getVideoData().v2;
+		v = desc.getVideoData().v2;
 
 	Math::Vector2d horizontalProjection(v.x(), v.z());
 	horizontalProjection.normalize();

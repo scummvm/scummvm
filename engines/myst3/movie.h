@@ -31,7 +31,6 @@
 
 namespace Myst3 {
 
-struct VideoData;
 class Myst3Engine;
 class Texture;
 class Subtitles;
@@ -85,7 +84,7 @@ protected:
 	int32 _transparency;
 
 	int32 adjustFrameForRate(int32 frame, bool dataToBink);
-	void loadPosition(const VideoData &videoData);
+	void loadPosition(const ResourceDescription::VideoData &videoData);
 	void drawNextFrameToTexture();
 
 	void draw2d();

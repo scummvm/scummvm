@@ -48,16 +48,16 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 		_additiveBlending(false),
 		_transparency(100) {
 
-	const DirectorySubEntry *binkDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kMultitrackMovie);
+	ResourceDescription binkDesc = _vm->getFileDescription("", id, 0, Archive::kMultitrackMovie);
 
-	if (!binkDesc)
-		binkDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kDialogMovie);
+	if (!binkDesc.isValid())
+		binkDesc = _vm->getFileDescription("", id, 0, Archive::kDialogMovie);
 
-	if (!binkDesc)
-		binkDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kStillMovie);
+	if (!binkDesc.isValid())
+		binkDesc = _vm->getFileDescription("", id, 0, Archive::kStillMovie);
 
-	if (!binkDesc)
-		binkDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kMovie);
+	if (!binkDesc.isValid())
+		binkDesc = _vm->getFileDescription("", id, 0, Archive::kMovie);
 
 	// Check whether the video is optional
 	bool optional = false;
@@ -66,22 +66,22 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 		_vm->_state->setMovieOptional(0);
 	}
 
-	if (!binkDesc) {
+	if (!binkDesc.isValid()) {
 		if (!optional)
 			error("Movie %d does not exist", id);
 		else
 			return;
 	}
 
-	loadPosition(binkDesc->getVideoData());
+	loadPosition(binkDesc.getVideoData());
 
-	Common::MemoryReadStream *binkStream = binkDesc->getData();
+	Common::SeekableReadStream *binkStream = binkDesc.getData();
 	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	_bink.setSoundType(Audio::Mixer::kSFXSoundType);
 	_bink.loadStream(binkStream);
 
-	if (binkDesc->getType() == DirectorySubEntry::kMultitrackMovie
-			|| binkDesc->getType() == DirectorySubEntry::kDialogMovie) {
+	if (binkDesc.getType() == Archive::kMultitrackMovie
+			|| binkDesc.getType() == Archive::kDialogMovie) {
 		uint language = ConfMan.getInt("audio_language");
 		_bink.setAudioTrack(language);
 	}
@@ -94,7 +94,7 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_vm->_state->setMovieOverrideSubtitles(0);
 }
 
-void Movie::loadPosition(const VideoData &videoData) {
+void Movie::loadPosition(const ResourceDescription::VideoData &videoData) {
 	static const float scale = 50.0f;
 
 	_is3D = _vm->_state->getViewType() == kCube;

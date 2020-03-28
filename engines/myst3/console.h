@@ -43,7 +43,7 @@ private:
 	Myst3Engine *_vm;
 
 	void describeScript(const Common::Array<Opcode> &script);
-	bool dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceType type);
+	bool dumpFaceMask(uint16 index, int face, Archive::ResourceType type);
 
 	bool Cmd_Infos(int argc, const char **argv);
 	bool Cmd_LookAt(int argc, const char **argv);

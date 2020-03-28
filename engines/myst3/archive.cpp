@@ -21,12 +21,14 @@
  */
 
 #include "engines/myst3/archive.h"
+
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 
 namespace Myst3 {
 
-void Archive::_decryptHeader(Common::SeekableReadStream &inStream, Common::WriteStream &outStream) {
+void Archive::decryptHeader(Common::SeekableReadStream &inStream, Common::WriteStream &outStream) {
 	static const uint32 addKey = 0x3C6EF35F;
 	static const uint32 multKey = 0x0019660D;
 
@@ -53,68 +55,148 @@ void Archive::_decryptHeader(Common::SeekableReadStream &inStream, Common::Write
 	}
 }
 
-void Archive::_readDirectory() {
+static Common::String readFixedString(Common::ReadStream &stream, uint32 length) {
+	Common::String value;
+
+	for (uint i = 0; i < length; i++) {
+		value += stream.readByte();
+	}
+
+	return value;
+}
+
+static uint32 readUint24(Common::ReadStream &stream) {
+	uint32 value = stream.readUint16LE();
+	value |= stream.readByte() << 16;
+	return value;
+}
+
+Archive::DirectorySubEntry Archive::readSubEntry(Common::ReadStream &stream) {
+	DirectorySubEntry subEntry;
+
+	subEntry.offset = stream.readUint32LE();
+	subEntry.size = stream.readUint32LE();
+	uint16 metadataSize = stream.readUint16LE();
+	subEntry.face = stream.readByte();
+	subEntry.type = static_cast<ResourceType>(stream.readByte());
+
+	subEntry.metadata.resize(metadataSize);
+	for (uint i = 0; i < metadataSize; i++) {
+		subEntry.metadata[i] = stream.readUint32LE();
+	}
+
+	return subEntry;
+}
+
+Archive::DirectoryEntry Archive::readEntry(Common::ReadStream &stream) {
+	DirectoryEntry entry;
+	if (_roomName.empty()) {
+		entry.roomName = readFixedString(stream, 4);
+	} else {
+		entry.roomName = _roomName;
+	}
+	entry.index = readUint24(stream);
+
+	byte subItemCount = stream.readByte();
+	entry.subentries.resize(subItemCount);
+
+	for (uint i = 0; i < subItemCount; i++) {
+		entry.subentries[i] = readSubEntry(stream);
+	}
+
+	return entry;
+}
+
+void Archive::readDirectory() {
 	Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::YES);
-	_decryptHeader(_file, buf);
+	decryptHeader(_file, buf);
 
 	Common::MemoryReadStream directory(buf.getData(), buf.size());
-	directory.skip(sizeof(uint32));
+	_directorySize = directory.readUint32LE();
 
 	while (directory.pos() + 4 < directory.size()) {
-		DirectoryEntry entry(this);
-		
-		if (_multipleRoom)
-			entry.readFromStream(directory, 0);
-		else
-			entry.readFromStream(directory, _roomName);
-
-		_directory.push_back(entry);
+		_directory.push_back(readEntry(directory));
 	}
 }
 
-void Archive::dumpToFiles() {
+void Archive::visit(ArchiveVisitor &visitor) {
+	visitor.visitArchive(*this);
+
 	for (uint i = 0; i < _directory.size(); i++) {
-		_directory[i].dumpToFiles(_file);
+		visitor.visitDirectoryEntry(_directory[i]);
+
+		for (uint j = 0; j < _directory[i].subentries.size(); j++) {
+			visitor.visitDirectorySubEntry(_directory[i].subentries[j]);
+		}
 	}
 }
 
-Common::MemoryReadStream *Archive::dumpToMemory(uint32 offset, uint32 size) {
+Common::SeekableReadStream *Archive::dumpToMemory(uint32 offset, uint32 size) {
 	_file.seek(offset);
-	return static_cast<Common::MemoryReadStream *>(_file.readStream(size));
+	return _file.readStream(size);
 }
 
-const DirectorySubEntry *Archive::getDescription(const Common::String &room, uint32 index, uint16 face,
-                                                 DirectorySubEntry::ResourceType type) {
+uint32 Archive::copyTo(uint32 offset, uint32 size, Common::WriteStream &out) {
+	Common::SeekableSubReadStream subStream(&_file, offset, offset + size);
+	subStream.seek(0);
+	return out.writeStream(&subStream);
+}
+
+const Archive::DirectoryEntry *Archive::getEntry(const Common::String &room, uint32 index) const {
 	for (uint i = 0; i < _directory.size(); i++) {
-		if (_directory[i].getIndex() == index && _directory[i].getRoom() == room) {
-			return _directory[i].getItemDescription(face, type);
+		const DirectoryEntry &entry = _directory[i];
+		if (entry.index == index && entry.roomName == room) {
+			return &entry;
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
-DirectorySubEntryList Archive::listFilesMatching(const Common::String &room, uint32 index, uint16 face,
-                                                 DirectorySubEntry::ResourceType type) {
-	for (uint i = 0; i < _directory.size(); i++) {
-		if (_directory[i].getIndex() == index && _directory[i].getRoom() == room) {
-			return _directory[i].listItemsMatching(face, type);
+ResourceDescription Archive::getDescription(const Common::String &room, uint32 index, uint16 face,
+                                                 ResourceType type) {
+	const DirectoryEntry *entry = getEntry(room, index);
+	if (!entry) {
+		return ResourceDescription();
+	}
+
+	for (uint i = 0; i < entry->subentries.size(); i++) {
+		const DirectorySubEntry &subentry = entry->subentries[i];
+		if (subentry.face == face && subentry.type == type) {
+			return ResourceDescription(this, subentry);
 		}
 	}
 
-	return DirectorySubEntryList();
+	return ResourceDescription();
+}
+
+ResourceDescriptionArray Archive::listFilesMatching(const Common::String &room, uint32 index, uint16 face,
+                                                 ResourceType type) {
+	const DirectoryEntry *entry = getEntry(room, index);
+	if (!entry) {
+		return ResourceDescriptionArray();
+	}
+
+	ResourceDescriptionArray list;
+	for (uint i = 0; i < entry->subentries.size(); i++) {
+		const DirectorySubEntry &subentry = entry->subentries[i];
+		if (subentry.face == face && subentry.type == type) {
+			list.push_back(ResourceDescription(this, subentry));
+		}
+	}
+
+	return list;
 }
 
 bool Archive::open(const char *fileName, const char *room) {
-	// Copy the room name if provided
 	// If the room name is not provided, it is assumed that
 	// we are opening a multi-room archive
-	_multipleRoom = room == 0;
-	if (!_multipleRoom)
-		Common::strlcpy(_roomName, room, sizeof(_roomName));
+	if (room) {
+		_roomName = room;
+	}
 
 	if (_file.open(fileName)) {
-		_readDirectory();
+		readDirectory();
 		return true;
 	}
 	
@@ -122,15 +204,103 @@ bool Archive::open(const char *fileName, const char *room) {
 }
 
 void Archive::close() {
+	_directorySize = 0;
+	_roomName.clear();
 	_directory.clear();
 	_file.close();
 }
 
-Common::String Archive::getRoomName() const {
-	if (_multipleRoom) {
-		error("'%s' is a multi-room archive", _file.getName());
+ResourceDescription::ResourceDescription() :
+		_archive(nullptr),
+		_subentry(nullptr) {
+}
+
+ResourceDescription::ResourceDescription(Archive *archive, const Archive::DirectorySubEntry &subentry) :
+		_archive(archive),
+		_subentry(&subentry) {
+}
+
+Common::SeekableReadStream *ResourceDescription::getData() const {
+	return _archive->dumpToMemory(_subentry->offset, _subentry->size);
+}
+
+ResourceDescription::SpotItemData ResourceDescription::getSpotItemData() const {
+	assert(_subentry->type == Archive::kSpotItem || _subentry->type == Archive::kLocalizedSpotItem);
+
+	SpotItemData spotItemData;
+	spotItemData.u = _subentry->metadata[0];
+	spotItemData.v = _subentry->metadata[1];
+
+	return spotItemData;
+}
+
+ResourceDescription::VideoData ResourceDescription::getVideoData() const {
+	VideoData videoData;
+
+	if (_subentry->type == Archive::kMovie || _subentry->type == Archive::kMultitrackMovie) {
+		videoData.v1.setValue(0, static_cast<int32>(_subentry->metadata[0]) * 0.000001f);
+		videoData.v1.setValue(1, static_cast<int32>(_subentry->metadata[1]) * 0.000001f);
+		videoData.v1.setValue(2, static_cast<int32>(_subentry->metadata[2]) * 0.000001f);
+
+		videoData.v2.setValue(0, static_cast<int32>(_subentry->metadata[3]) * 0.000001f);
+		videoData.v2.setValue(1, static_cast<int32>(_subentry->metadata[4]) * 0.000001f);
+		videoData.v2.setValue(2, static_cast<int32>(_subentry->metadata[5]) * 0.000001f);
+
+		videoData.u      = static_cast<int32>(_subentry->metadata[6]);
+		videoData.v      = static_cast<int32>(_subentry->metadata[7]);
+		videoData.width  = static_cast<int32>(_subentry->metadata[8]);
+		videoData.height = static_cast<int32>(_subentry->metadata[9]);
 	}
 
-	return _roomName;
+	return videoData;
 }
+
+uint32 ResourceDescription::getMiscData(uint index) const {
+	assert(_subentry->type == Archive::kNumMetadata || _subentry->type == Archive::kTextMetadata);
+
+	if (index == 0) {
+		return _subentry->offset;
+	} else if (index == 1) {
+		return _subentry->size;
+	} else {
+		return _subentry->metadata[index - 2];
+	}
+}
+
+Common::String ResourceDescription::getTextData(uint index) const {
+	assert(_subentry->type == Archive::kTextMetadata);
+
+	uint8 key = 35;
+	uint8 cnt = 0;
+	uint8 decrypted[89];
+	memset(decrypted, 0, sizeof(decrypted));
+
+	uint8 *out = &decrypted[0];
+	while (cnt / 4 < (_subentry->metadata.size() + 2) && cnt < 89) {
+		// XORed text stored in little endian 32 bit words
+		*out++ = (getMiscData(cnt / 4) >> (8 * (3 - (cnt % 4)))) ^ key++;
+		cnt++;
+	}
+
+	// decrypted contains a null separated string array
+	// extract the wanted one
+	cnt = 0;
+	int i = 0;
+	Common::String text;
+	while (cnt <= index && i < 89) {
+		if (cnt == index)
+			text += decrypted[i];
+
+		if (!decrypted[i])
+			cnt++;
+
+		i++;
+	}
+
+	return text;
+}
+
+ArchiveVisitor::~ArchiveVisitor() {
+}
+
 } // End of namespace Myst3

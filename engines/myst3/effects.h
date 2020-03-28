@@ -26,7 +26,7 @@
 #include "common/hashmap.h"
 #include "common/rect.h"
 
-#include "engines/myst3/directorysubentry.h"
+#include "engines/myst3/archive.h"
 
 namespace Graphics {
 struct Surface;
@@ -62,7 +62,7 @@ public:
 protected:
 	Effect(Myst3Engine *vm);
 
-	bool loadMasks(const Common::String &room, uint32 id, DirectorySubEntry::ResourceType type);
+	bool loadMasks(const Common::String &room, uint32 id, Archive::ResourceType type);
 
 	Myst3Engine *_vm;
 
@@ -129,7 +129,7 @@ protected:
 	void apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics::Surface *mask, int32 position);
 
 	int32 _lastSoundId;
-	Common::MemoryReadStream *_shakeStrength;
+	Common::SeekableReadStream *_shakeStrength;
 
 	uint32 _lastTime;
 	float _position;

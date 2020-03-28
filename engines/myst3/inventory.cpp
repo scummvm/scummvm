@@ -333,13 +333,13 @@ DragItem::DragItem(Myst3Engine *vm, uint id):
 	_isConstrainedToWindow = false;
 	_scaled = !_vm->isWideScreenModEnabled();
 
-	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DRAG", id, 0, DirectorySubEntry::kStillMovie);
+	ResourceDescription movieDesc = _vm->getFileDescription("DRAG", id, 0, Archive::kStillMovie);
 
-	if (!movieDesc)
+	if (!movieDesc.isValid())
 		error("Movie %d does not exist", id);
 
 	// Load the movie
-	_movieStream = movieDesc->getData();
+	_movieStream = movieDesc.getData();
 	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	_bink.loadStream(_movieStream);
 	_bink.start();
