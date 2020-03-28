@@ -143,6 +143,7 @@ struct TransParams {
 };
 
 static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect);
+static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect);
 
 void Frame::playTransition(Score *score) {
 	TransParams t;
@@ -157,6 +158,12 @@ void Frame::playTransition(Score *score) {
 	Common::Rect r = clipRect;
 
 	initTransParams(t, score, clipRect);
+
+	if (transProps[t.type].algo == kTransAlgoDissolve) {
+		dissolveTrans(t, score, clipRect);
+
+		return;
+	}
 
 	for (uint16 i = 1; i < t.steps; i++) {
 		bool stop = false;
@@ -266,5 +273,84 @@ static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect
 	}
 }
 
+static int getLog2(int n) {
+	int res;
+
+	for (res = 0; n != 0; res++)
+		n >>= 1;
+
+	return res;
+}
+
+uint32 randomSeed[33] = {
+	0x00000000UL,
+	0x00000000UL, 0x00000003UL, 0x00000006UL, 0x0000000cUL,
+	0x00000014UL, 0x00000030UL, 0x00000060UL, 0x000000b8UL,
+	0x00000110UL, 0x00000240UL, 0x00000500UL, 0x00000ca0UL,
+	0x00001b00UL, 0x00003500UL, 0x00006000UL, 0x0000b400UL,
+	0x00012000UL, 0x00020400UL, 0x00072000UL, 0x00090000UL,
+	0x00140000UL, 0x00300000UL, 0x00420000UL, 0x00d80000UL,
+	0x01200000UL, 0x03880000UL, 0x07200000UL, 0x09000000UL,
+	0x14000000UL, 0x32800000UL, 0x48000000UL, 0xa3000000UL
+};
+
+static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) {
+	uint w = clipRect.width();
+	uint h = clipRect.height();
+	int vBits = getLog2(w);
+	int hBits = getLog2(h);
+	uint32 rnd, seed;
+
+	if (hBits <= 0 || vBits <= 0)
+		return;
+
+	rnd = seed = randomSeed[hBits + vBits];
+	int hMask = (1L << hBits) - 1;
+	int vShift = hBits;
+
+	// Calculate steps
+	uint32 pixPerStepInit = 1;
+	t.steps = (1 << (hBits * vBits)) - 1;
+
+	while (t.steps > 64) {
+		pixPerStepInit <<= 1;
+		t.steps >>= 1;
+	}
+	t.steps++;
+
+	while (t.steps) {
+		uint32 pixPerStep = pixPerStepInit;
+		do {
+			uint32 x = rnd & hMask;
+			uint32 y = rnd >> vShift;
+
+			if (x < w && y < h) {
+				uint32 color = *(uint32 *)score->_surface->getBasePtr(x, y);
+				*(uint32 *)score->_backSurface->getBasePtr(0, 0) = color;
+				g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, x, y, 2, 2);
+			}
+
+			rnd = (rnd & 1) ? (rnd >> 1) ^ seed : rnd >> 1;
+
+			if (pixPerStep > 0) {
+				if (--pixPerStep == 0) {
+					break;
+				}
+			}
+		} while (rnd != seed);
+
+		uint32 color = *(uint32 *)score->_surface->getBasePtr(0, 0);
+		*(uint32 *)score->_backSurface->getBasePtr(0, 0) = color;
+		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, 1, 1);
+
+		g_system->delayMillis(t.stepDuration);
+		if (processQuitEvent(true))
+			break;
+
+		g_system->updateScreen();
+
+		t.steps--;
+	}
+}
 
 } // End of namespace Director
