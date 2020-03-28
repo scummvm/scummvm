@@ -1424,12 +1424,16 @@ void LB::b_puppetSound(int nargs) {
 			error("b_puppetSound: attempted to play a non-SoundCast cast member");
 			return;
 		}
+		bool looping = ((SoundCast *)cast)->_looping;
 		SNDDecoder *sd = ((SoundCast *)cast)->_audio;
 		if (!sd) {
 			warning("b_puppetSound: no audio data attached to cast");
 			return;
 		}
-		sound->playStream(*sd->getAudioStream(), 1);
+		if (looping)
+			sound->playStream(*sd->getLoopingAudioStream(), 1);
+		else
+			sound->playStream(*sd->getAudioStream(), 1);
 	}
 
 }

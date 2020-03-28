@@ -50,7 +50,6 @@ public:
 	void playFile(Common::String filename, uint8 soundChannel);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
-	void playStream(Audio::SeekableAudioStream &stream, uint8 soundChannel);
 	void systemBeep();
 	bool isChannelActive(uint8 soundChannel);
 	void stopSound(uint8 soundChannel);
@@ -65,6 +64,7 @@ public:
 
 	bool loadStream(Common::SeekableSubReadStreamEndian &stream);
 	Audio::SeekableAudioStream *getAudioStream();
+	Audio::AudioStream *getLoopingAudioStream();
 
 private:
 	byte *_data;

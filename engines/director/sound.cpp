@@ -138,11 +138,6 @@ void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) 
 }
 
 void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
-	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(&stream);
-	playStream(*seekStream, soundChannel);
-}
-
-void DirectorSound::playStream(Audio::SeekableAudioStream &stream, uint8 soundChannel) {
 	if (soundChannel == 0 || soundChannel > _channels.size()) {
 		warning("Invalid sound channel %d", soundChannel);
 		return;
@@ -255,6 +250,11 @@ bool SNDDecoder::loadStream(Common::SeekableSubReadStreamEndian &stream) {
 Audio::SeekableAudioStream *SNDDecoder::getAudioStream() {
 	return Audio::makeRawStream(_data, _size, _rate, _flags, DisposeAfterUse::NO);
 }
+
+Audio::AudioStream *SNDDecoder::getLoopingAudioStream() {
+	return new Audio::LoopingAudioStream(Audio::makeRawStream(_data, _size, _rate, _flags, DisposeAfterUse::NO), 0);
+}
+
 
 
 } // End of namespace Director
