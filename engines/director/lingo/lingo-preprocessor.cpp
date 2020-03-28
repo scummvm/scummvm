@@ -387,10 +387,10 @@ Common::String preprocessPlay(Common::String in) {
 		debugC(2, kDebugLingoParse, "PLAY: nexttok: %s", next.c_str());
 
 		if (next.equals("done")) {
-			res += "\"done\""; // Turn it into STRING
+			res += "#"; // Turn it into SYMBOL
 		}
 
-		ptr += 4; // Skip "done"
+		res += *ptr++; // We advance one character, so 'one' is left
 		beg = ptr;
 	}
 
