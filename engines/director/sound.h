@@ -48,6 +48,7 @@ public:
 
 	void playWAV(Common::String filename, uint8 channelID);
 	void playAIFF(Common::String filename, uint8 channelID);
+	void playFile(Common::String filename, uint8 channelID);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
 	void playStream(Audio::SeekableAudioStream &stream, uint8 soundChannel);

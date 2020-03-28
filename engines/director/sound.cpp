@@ -52,6 +52,33 @@ DirectorSound::~DirectorSound() {
 	delete _scriptSound;
 }
 
+void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
+	Common::File *file = new Common::File();
+
+	if (!file->open(filename)) {
+		warning("Failed to open %s", filename.c_str());
+
+		delete file;
+
+		return;
+	}
+
+	uint32 magic1 = file->readUint32BE();
+	file->readUint32BE();
+	uint32 magic2 = file->readUint32BE();
+	delete file;
+
+	if (magic1 == MKTAG('R', 'I', 'F', 'F') &&
+		magic2 == MKTAG('W', 'A', 'V', 'E')) {
+		playWAV(filename, soundChannel);
+	} else if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
+				magic2 == MKTAG('A', 'I', 'F', 'F')) {
+		playAIFF(filename, soundChannel);
+	} else {
+		warning("Unknown file type for %s", filename.c_str());
+	}
+}
+
 void DirectorSound::playWAV(Common::String filename, uint8 soundChannel) {
 	Common::File *file = new Common::File();
 

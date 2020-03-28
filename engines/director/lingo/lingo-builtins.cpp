@@ -1696,15 +1696,27 @@ void LB::b_mciwait(int nargs) {
 }
 
 void LB::b_soundBusy(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundBusy", nargs);
+	if (nargs != 1) {
+		error("b_soundBusy: expected 1 argument, got %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
 
-	g_lingo->dropStack(nargs);
+	DirectorSound *sound = g_director->getSoundManager();
+	Datum whichChannel = g_lingo->pop();
+	if (whichChannel.type != INT) {
+		warning("b_soundBusy(): whichChannel arg should be of type INT, not %s", whichChannel.type2str());
+		return;
+	}
+	bool isBusy = sound->isChannelActive(whichChannel.u.i);
+	Datum result;
+	result.type = INT;
+	result.u.i = isBusy ? 1 : 0;
+	g_lingo->push(result);
 }
 
 void LB::b_soundClose(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundClose", nargs);
-
-	g_lingo->dropStack(nargs);
+	b_soundStop(nargs);
 }
 
 void LB::b_soundFadeIn(int nargs) {
@@ -1720,15 +1732,42 @@ void LB::b_soundFadeOut(int nargs) {
 }
 
 void LB::b_soundPlayFile(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundPlayFile", nargs);
+	if (nargs != 2) {
+		error("b_soundPlayFile: expected 2 arguments, got %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
 
-	g_lingo->dropStack(nargs);
+	Datum whichFile = g_lingo->pop();
+	if (whichFile.type != STRING) {
+		warning("b_soundPlayFile(): whichFile arg should be of type STRING, not %s", whichFile.type2str());
+		return;
+	}
+
+	DirectorSound *sound = g_director->getSoundManager();
+	Datum whichChannel = g_lingo->pop();
+	if (whichChannel.type != INT) {
+		warning("b_soundPlayFile(): whichChannel arg should be of type INT, not %s", whichChannel.type2str());
+		return;
+	}
+
+	sound->playFile(*whichFile.u.s, whichChannel.u.i);
 }
 
 void LB::b_soundStop(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundStop", nargs);
+	if (nargs != 1) {
+		error("b_soundStop: expected 1 argument, got %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
 
-	g_lingo->dropStack(nargs);
+	DirectorSound *sound = g_director->getSoundManager();
+	Datum whichChannel = g_lingo->pop();
+	if (whichChannel.type != INT) {
+		warning("b_soundStop(): whichChannel arg should be of type INT, not %s", whichChannel.type2str());
+		return;
+	}
+	sound->stopSound(whichChannel.u.i);
 }
 
 ///////////////////
