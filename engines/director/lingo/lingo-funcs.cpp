@@ -308,6 +308,9 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 }
 
 void Lingo::func_playdone() {
+	if (_vm->_movieStack.empty()) {	// No op if no nested movies
+		return;
+	}
 	MovieReference ref = _vm->_movieStack.back();
 
 	_vm->_movieStack.pop_back();
