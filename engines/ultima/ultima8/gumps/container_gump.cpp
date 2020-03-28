@@ -505,7 +505,6 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 
 			// combined, so delete item
 			item->destroy();
-			item = nullptr;
 			return;
 		}
 	}

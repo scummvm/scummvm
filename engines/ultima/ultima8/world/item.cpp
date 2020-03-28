@@ -1452,7 +1452,7 @@ int32 Item::ascend(int delta) {
 }
 
 GravityProcess *Item::ensureGravityProcess() {
-	GravityProcess *p = nullptr;
+	GravityProcess *p;
 	if (_gravityPid) {
 		p = p_dynamic_cast<GravityProcess *>(
 		        Kernel::get_instance()->getProcess(_gravityPid));
