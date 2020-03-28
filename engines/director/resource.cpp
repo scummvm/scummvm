@@ -89,7 +89,7 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	_lingo->processEvent(kEventStart);
 
 	uint32 initialTag = exeStream->readUint32LE();
-	if (initialTag == MKTAG('R', 'I', 'F', 'X')) {
+	if (initialTag == MKTAG('R', 'I', 'F', 'X') || initialTag == MKTAG('X', 'F', 'I', 'R')) {
 		// we've encountered a movie saved from Director, not a projector.
 		loadEXERIFX(exeStream, 0);
 	} else if (initialTag == MKTAG('R', 'I', 'F', 'F') || initialTag == MKTAG('F', 'F', 'I', 'R')) { // This is just a normal movie
