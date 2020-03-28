@@ -861,7 +861,7 @@ void Screen::clearalphamap8(uint16 x, uint16 y, uint16 w, uint16 h, uint8 opacit
 			shading_rect.setWidth((w + (SHADING_BORDER * 2)) * 16 + 8);
 			shading_rect.setHeight((h + (SHADING_BORDER * 2)) * 16 + 8);
 		}
-		shading_data = (byte *)malloc(sizeof(char) * shading_rect.width() * shading_rect.height());
+		shading_data = (byte *)malloc(sizeof(byte) * shading_rect.width() * shading_rect.height());
 		if (shading_data == NULL) {
 			/* We couldn't allocate memory for the opacity map, so just disable lighting */
 			shading_ambient = 0xFF;
