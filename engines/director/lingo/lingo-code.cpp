@@ -263,10 +263,13 @@ void LC::c_stringpush() {
 void LC::c_symbolpush() {
 	char *s = g_lingo->readString();
 
-	warning("STUB: c_symbolpush()");
+	// TODO: FIXME: Currently we push string
+	// If you change it, you must also fix func_play for "play done"
+	// command
+	Datum d(new Common::String(s));
+	d.type = SYMBOL;
 
-	// TODO: FIXME: Must push symbol instead of string
-	g_lingo->push(Datum(new Common::String(s)));
+	g_lingo->push(d);
 }
 
 void LC::c_namepush() {

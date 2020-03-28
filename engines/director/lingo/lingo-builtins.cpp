@@ -1046,7 +1046,7 @@ void LB::b_floatP(int nargs) {
 
 void LB::b_ilk(int nargs) {
 	Datum d = g_lingo->pop();
-	d.u.i = d.type;
+	d.u.s = new Common::String(d.type2str(true));
 	d.type = SYMBOL;
 	g_lingo->push(d);
 }
