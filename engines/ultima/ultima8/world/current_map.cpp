@@ -517,6 +517,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 				// check item against loopscript
 				if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
+					assert(itemlist->getElementSize() == 2);
 					uint16 objid = (*iter)->getObjId();
 					uint8 buf[2];
 					buf[0] = static_cast<uint8>(objid);
@@ -614,6 +615,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 
 				// check item against loopscript
 				if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
+					assert(itemlist->getElementSize() == 2);
 					uint16 objid = (*iter)->getObjId();
 					uint8 buf[2];
 					buf[0] = static_cast<uint8>(objid);

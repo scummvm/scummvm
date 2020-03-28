@@ -346,8 +346,7 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 		_draggingY = equipcoords[equiptype].y;
 	} else {
 		// drop in backpack
-
-		if (!backpack->CanAddItem(item, true)) {
+		if (backpack && !backpack->CanAddItem(item, true)) {
 			_displayDragging = false;
 			return false;
 		}
