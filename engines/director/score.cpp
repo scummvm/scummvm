@@ -142,7 +142,10 @@ void Score::loadArchive() {
 	}
 
 	// Score
-	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1));
+	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
+		warning("Score::loadArchive(): Wrong movie format. VWSC resource missing");
+		return;
+	}
 	loadFrames(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C')));
 
 	// Configuration Information
