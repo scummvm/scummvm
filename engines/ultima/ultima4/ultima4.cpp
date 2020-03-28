@@ -30,7 +30,6 @@
 #include "ultima/ultima4/game/intro.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/game/person.h"
-#include "ultima/ultima4/game/progress_bar.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/sound/sound.h"
@@ -87,35 +86,17 @@ bool Ultima4Engine::initialize() {
 void Ultima4Engine::startup() {
 	bool skipInfo = _saveSlotToLoad != -1;
 
-	ProgressBar pb((320 / 2) - (200 / 2), (200 / 2), 200, 10, 0, (skipInfo ? 4 : 7));
-	pb.setBorderColor(240, 240, 240);
-	pb.setColor(0, 0, 128);
-	pb.setBorderWidth(1);
-
-	screenTextAt(15, 11, "Loading...");
-	g_screen->update();
-	++pb;
-
 	soundInit();
-	++pb;
-
 	Tileset::loadAll();
-	++pb;
-
 	creatureMgr->getInstance();
-	++pb;
 
 	if (!skipInfo) {
-		/* do the intro */
+		// do the intro
 		intro = new IntroController();
 		intro->init();
-		++pb;
-
 		intro->preloadMap();
-		++pb;
 
 		musicMgr->init();
-		++pb;
 
 		eventHandler->pushController(intro);
 		eventHandler->run();
