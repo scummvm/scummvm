@@ -1721,21 +1721,24 @@ void UCMachine::execProcess(UCProcess *p) {
 				perr << "Unhandled search type " << searchtype << Std::endl;
 				error = true;
 				delete[] script;
+				script = nullptr;
 				break;
 			}
 
-			p->_stack.push0(stacksize - scriptsize - 8); // filler
-			p->_stack.push(script, scriptsize);
-			p->_stack.push2(scriptsize);
-			p->_stack.push2(static_cast<uint16>(si16a));
-			p->_stack.push2(0);
-			uint16 itemlistID = assignList(itemlist);
-			p->_stack.push2(itemlistID);
+			if (script != nullptr) {
+				p->_stack.push0(stacksize - scriptsize - 8); // filler
+				p->_stack.push(script, scriptsize);
+				p->_stack.push2(scriptsize);
+				p->_stack.push2(static_cast<uint16>(si16a));
+				p->_stack.push2(0);
+				uint16 itemlistID = assignList(itemlist);
+				p->_stack.push2(itemlistID);
 
-			delete[] script;
+				delete[] script;
 
-			LOGPF(("loop\t\t%s %02X %02X\n", print_bp(si16a),
-			       scriptsize, searchtype));
+				LOGPF(("loop\t\t%s %02X %02X\n", print_bp(si16a),
+					   scriptsize, searchtype));
+			}
 		}
 		// Intentional fall-through
 
