@@ -326,8 +326,6 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 	int hMask = (1L << hBits) - 1;
 	int vShift = hBits;
 
-	warning("w: %d h: %d  vBits: %d hBits: %d hMask: %x", w, h, vBits, hBits, hMask);
-
 	// Calculate steps
 	uint32 pixPerStepInit = 1;
 	t.steps = (1 << (hBits + vBits)) - 1;
