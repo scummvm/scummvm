@@ -1008,9 +1008,9 @@ Creature *CreatureMgr::randomForTile(const Tile *tile) {
 		return NULL;
 
 	//if (c->saveGame->_moves > 100000) // FIXME: what's 100,000 moves all about (if anything)?
-	if (g_context->_saveGame->_moves > 30000)
+	if (g_ultima->_saveGame->_moves > 30000)
 		era = 0x0f;
-	else if (g_context->_saveGame->_moves > 20000)
+	else if (g_ultima->_saveGame->_moves > 20000)
 		era = 0x07;
 	else
 		era = 0x03;

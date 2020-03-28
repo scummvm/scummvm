@@ -183,7 +183,7 @@ void Ingredients::revert() {
 	int reg;
 
 	for (reg = 0; reg < REAG_MAX; reg++) {
-		g_context->_saveGame->_reagents[reg] += _reagents[reg];
+		g_ultima->_saveGame->_reagents[reg] += _reagents[reg];
 		_reagents[reg] = 0;
 	}
 }
@@ -191,7 +191,7 @@ void Ingredients::revert() {
 bool Ingredients::checkMultiple(int batches) const {
 	for (int i = 0; i < REAG_MAX; i++) {
 		/* see if there's enough reagents to mix (-1 because one is already counted) */
-		if (_reagents[i] > 0 && g_context->_saveGame->_reagents[i] < batches - 1) {
+		if (_reagents[i] > 0 && g_ultima->_saveGame->_reagents[i] < batches - 1) {
 			return false;
 		}
 	}
@@ -202,7 +202,7 @@ void Ingredients::multiply(int batches) {
 	ASSERT(checkMultiple(batches), "not enough reagents to multiply ingredients by %d\n", batches);
 	for (int i = 0; i < REAG_MAX; i++) {
 		if (_reagents[i] > 0) {
-			g_context->_saveGame->_reagents[i] -= batches - 1;
+			g_ultima->_saveGame->_reagents[i] -= batches - 1;
 			_reagents[i] += batches - 1;
 		}
 	}
@@ -280,7 +280,7 @@ int spellMix(unsigned int spell, const Ingredients *ingredients) {
 	if (regmask != spells[spell]._components)
 		return 0;
 
-	g_context->_saveGame->_mixtures[spell]++;
+	g_ultima->_saveGame->_mixtures[spell]++;
 
 	return 1;
 }
@@ -298,9 +298,9 @@ Spell::Param spellGetParamType(unsigned int spell) {
  */
 SpellCastError spellCheckPrerequisites(unsigned int spell, int character) {
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
-	ASSERT(character >= 0 && character < g_context->_saveGame->_members, "character out of range: %d", character);
+	ASSERT(character >= 0 && character < g_ultima->_saveGame->_members, "character out of range: %d", character);
 
-	if (g_context->_saveGame->_mixtures[spell] == 0)
+	if (g_ultima->_saveGame->_mixtures[spell] == 0)
 		return CASTERR_NOMIX;
 
 	if ((g_context->_location->_context & spells[spell]._context) == 0)
@@ -324,12 +324,12 @@ bool spellCast(unsigned int spell, int character, int param, SpellCastError *err
 	PartyMember *p = g_context->_party->member(character);
 
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
-	ASSERT(character >= 0 && character < g_context->_saveGame->_members, "character out of range: %d", character);
+	ASSERT(character >= 0 && character < g_ultima->_saveGame->_members, "character out of range: %d", character);
 
 	*error = spellCheckPrerequisites(spell, character);
 
 	// subtract the mixture for even trying to cast the spell
-	AdjustValueMin(g_context->_saveGame->_mixtures[spell], -1, 0);
+	AdjustValueMin(g_ultima->_saveGame->_mixtures[spell], -1, 0);
 
 	if (*error != CASTERR_NOERROR)
 		return false;

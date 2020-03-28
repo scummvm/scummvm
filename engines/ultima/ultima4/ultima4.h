@@ -31,6 +31,7 @@ namespace Ultima4 {
 class Config;
 class ImageLoaders;
 class GameController;
+struct SaveGame;
 class Screen;
 
 class Ultima4Engine : public Shared::UltimaEngine {
@@ -52,6 +53,7 @@ public:
 	Config *_config;
 	ImageLoaders *_imageLoaders;
 	GameController *_game;
+	SaveGame *_saveGame;
 	Screen *_screen;
 public:
 	Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

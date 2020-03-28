@@ -67,15 +67,15 @@ void DungeonView::display(Context *c, TileView *view) {
 				//FIXME: Maybe this should be in a loop
 				tiles = getTiles(y, -1);
 				type = tilesToGraphic(tiles);
-				drawWall(-1, y, (Direction)c->_saveGame->_orientation, type);
+				drawWall(-1, y, (Direction)g_ultima->_saveGame->_orientation, type);
 
 				tiles = getTiles(y, 1);
 				type = tilesToGraphic(tiles);
-				drawWall(1, y, (Direction)c->_saveGame->_orientation, type);
+				drawWall(1, y, (Direction)g_ultima->_saveGame->_orientation, type);
 
 				tiles = getTiles(y, 0);
 				type = tilesToGraphic(tiles);
-				drawWall(0, y, (Direction)c->_saveGame->_orientation, type);
+				drawWall(0, y, (Direction)g_ultima->_saveGame->_orientation, type);
 
 				//This only checks that the tile at y==3 is opaque
 				if (y == 3 && !tiles.front().getTileType()->isOpaque()) {
@@ -84,11 +84,11 @@ void DungeonView::display(Context *c, TileView *view) {
 						DungeonGraphicType distant_type = tilesToGraphic(distant_tiles);
 
 						if ((distant_type == DNGGRAPHIC_DNGTILE) || (distant_type == DNGGRAPHIC_BASETILE))
-							drawTile(c->_location->_map->_tileset->get(distant_tiles.front().getId()), 0, y_obj, Direction(c->_saveGame->_orientation));
+							drawTile(c->_location->_map->_tileset->get(distant_tiles.front().getId()), 0, y_obj, Direction(g_ultima->_saveGame->_orientation));
 					}
 				}
 				if ((type == DNGGRAPHIC_DNGTILE) || (type == DNGGRAPHIC_BASETILE))
-					drawTile(c->_location->_map->_tileset->get(tiles.front().getId()), 0, y, Direction(c->_saveGame->_orientation));
+					drawTile(c->_location->_map->_tileset->get(tiles.front().getId()), 0, y, Direction(g_ultima->_saveGame->_orientation));
 			}
 		}
 	}
@@ -245,7 +245,7 @@ void DungeonView::drawTile(Tile *tile, int x_offset, int distance, Direction ori
 Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
 	MapCoords coords = g_context->_location->_coords;
 
-	switch (g_context->_saveGame->_orientation) {
+	switch (g_ultima->_saveGame->_orientation) {
 	case DIR_WEST:
 		coords.x -= fwd;
 		coords.y -= side;

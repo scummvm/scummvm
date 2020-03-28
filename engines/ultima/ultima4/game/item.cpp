@@ -211,13 +211,13 @@ static const ItemLocation ITEMS[] = {
 #define N_ITEMS (sizeof(ITEMS) / sizeof(ITEMS[0]))
 
 bool isRuneInInventory(int virt) {
-	return g_context->_saveGame->_runes & virt;
+	return g_ultima->_saveGame->_runes & virt;
 }
 
 void putRuneInInventory(int virt) {
 	g_context->_party->member(0)->awardXp(100);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
-	g_context->_saveGame->_runes |= virt;
+	g_ultima->_saveGame->_runes |= virt;
 #ifdef IOS
 	Common::String virtueName;
 	switch (virt) {
@@ -249,21 +249,21 @@ void putRuneInInventory(int virt) {
 	}
 	U4IOS::testFlightPassCheckPoint("Player got stone: " + virtueName);
 #endif
-	g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
+	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 }
 
 bool isStoneInInventory(int virt) {
 	/* generic test: does the party have any stones yet? */
 	if (virt == -1)
-		return (g_context->_saveGame->_stones > 0);
+		return (g_ultima->_saveGame->_stones > 0);
 	/* specific test: does the party have a specific stone? */
-	else return g_context->_saveGame->_stones & virt;
+	else return g_ultima->_saveGame->_stones & virt;
 }
 
 void putStoneInInventory(int virt) {
 	g_context->_party->member(0)->awardXp(200);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
-	g_context->_saveGame->_stones |= virt;
+	g_ultima->_saveGame->_stones |= virt;
 #ifdef IOS
 	Common::String stoneName;
 	switch (virt) {
@@ -295,21 +295,21 @@ void putStoneInInventory(int virt) {
 	}
 	U4IOS::testFlightPassCheckPoint("Player got rune: " + stoneName);
 #endif
-	g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
+	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 }
 
 bool isItemInInventory(int item) {
-	return g_context->_saveGame->_items & item;
+	return g_ultima->_saveGame->_items & item;
 }
 
 bool isSkullInInventory(int unused) {
-	return (g_context->_saveGame->_items & (ITEM_SKULL | ITEM_SKULL_DESTROYED));
+	return (g_ultima->_saveGame->_items & (ITEM_SKULL | ITEM_SKULL_DESTROYED));
 }
 
 void putItemInInventory(int item) {
 	g_context->_party->member(0)->awardXp(400);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
-	g_context->_saveGame->_items |= item;
+	g_ultima->_saveGame->_items |= item;
 #ifdef IOS
 	Common::String itemName;
 	switch (item) {
@@ -345,7 +345,7 @@ void putItemInInventory(int item) {
 	}
 	U4IOS::testFlightPassCheckPoint("Player got rune: " + itemName);
 #endif
-	g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
+	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 }
 
 /**
@@ -361,23 +361,23 @@ void useBBC(int item) {
 			U4IOS::testFlightPassCheckPoint("The Bell rings on and on!");
 #endif
 			screenMessage("\nThe Bell rings on and on!\n");
-			g_context->_saveGame->_items |= ITEM_BELL_USED;
+			g_ultima->_saveGame->_items |= ITEM_BELL_USED;
 		}
 		/* then the book */
-		else if ((item == ITEM_BOOK) && (g_context->_saveGame->_items & ITEM_BELL_USED)) {
+		else if ((item == ITEM_BOOK) && (g_ultima->_saveGame->_items & ITEM_BELL_USED)) {
 #ifdef IOS
 			U4IOS::testFlightPassCheckPoint("The words resonate with the ringing!");
 #endif
 			screenMessage("\nThe words resonate with the ringing!\n");
-			g_context->_saveGame->_items |= ITEM_BOOK_USED;
+			g_ultima->_saveGame->_items |= ITEM_BOOK_USED;
 		}
 		/* then the candle */
-		else if ((item == ITEM_CANDLE) && (g_context->_saveGame->_items & ITEM_BOOK_USED)) {
+		else if ((item == ITEM_CANDLE) && (g_ultima->_saveGame->_items & ITEM_BOOK_USED)) {
 			screenMessage("\nAs you light the Candle the Earth Trembles!\n");
 #ifdef IOS
 			U4IOS::testFlightPassCheckPoint("As you light the Candle the Earth Trembles!");
 #endif
-			g_context->_saveGame->_items |= ITEM_CANDLE_USED;
+			g_ultima->_saveGame->_items |= ITEM_CANDLE_USED;
 		} else screenMessage("\nHmm...No effect!\n");
 	}
 	/* somewhere else */
@@ -396,7 +396,7 @@ void useHorn(int item) {
  * Uses the wheel (if on board a ship)
  */
 void useWheel(int item) {
-	if ((g_context->_transportContext == TRANSPORT_SHIP) && (g_context->_saveGame->_shipHull == 50)) {
+	if ((g_context->_transportContext == TRANSPORT_SHIP) && (g_ultima->_saveGame->_shipHull == 50)) {
 		screenMessage("\nOnce mounted, the Wheel glows with a blue light!\n");
 		g_context->_party->setShipHull(99);
 	} else screenMessage("\nHmm...No effect!\n");
@@ -411,7 +411,7 @@ void useSkull(int item) {
 
 	/* We do the check here instead of in the table, because we need to distinguish between a
 	   never-found skull and a destroyed skull. */
-	if (g_context->_saveGame->_items & ITEM_SKULL_DESTROYED) {
+	if (g_ultima->_saveGame->_items & ITEM_SKULL_DESTROYED) {
 		screenMessage("\nNone owned!\n");
 		return;
 	}
@@ -423,7 +423,7 @@ void useSkull(int item) {
 		U4IOS::testFlightPassCheckPoint("You cast the Skull of Mondain into the Abyss!");
 #endif
 
-		g_context->_saveGame->_items = (g_context->_saveGame->_items & ~ITEM_SKULL) | ITEM_SKULL_DESTROYED;
+		g_ultima->_saveGame->_items = (g_ultima->_saveGame->_items & ~ITEM_SKULL) | ITEM_SKULL_DESTROYED;
 		g_context->_party->adjustKarma(KA_DESTROYED_SKULL);
 	}
 
@@ -522,7 +522,7 @@ void useStone(int item) {
 					}
 
 					/* in an altar room, named all of the stones, and don't have the key yet... */
-					if (attr && (stoneMask == *attr) && !(g_context->_saveGame->_items & key)) {
+					if (attr && (stoneMask == *attr) && !(g_ultima->_saveGame->_items & key)) {
 #ifdef IOS
 						Common::String keyName;
 						switch (key) {
@@ -539,7 +539,7 @@ void useStone(int item) {
 						U4IOS::testFlightPassCheckPoint("Receive a key: " + keyName);
 #endif
 						screenMessage("\nThou doth find one third of the Three Part Key!\n");
-						g_context->_saveGame->_items |= key;
+						g_ultima->_saveGame->_items |= key;
 					} else screenMessage("\nHmm...No effect!\n");
 
 					stoneMask = 0; /* reset the mask so you can try again */
@@ -630,9 +630,9 @@ bool isMysticInInventory(int mystic) {
 	   format.
 	*/
 	if (mystic == WEAP_MYSTICSWORD)
-		return g_context->_saveGame->_weapons[WEAP_MYSTICSWORD] > 0;
+		return g_ultima->_saveGame->_weapons[WEAP_MYSTICSWORD] > 0;
 	else if (mystic == ARMR_MYSTICROBES)
-		return g_context->_saveGame->_armor[ARMR_MYSTICROBES] > 0;
+		return g_ultima->_saveGame->_armor[ARMR_MYSTICROBES] > 0;
 	else
 		ASSERT(0, "Invalid mystic item was tested in isMysticInInventory()");
 	return false;
@@ -642,16 +642,16 @@ void putMysticInInventory(int mystic) {
 	g_context->_party->member(0)->awardXp(400);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
 	if (mystic == WEAP_MYSTICSWORD)
-		g_context->_saveGame->_weapons[WEAP_MYSTICSWORD] += 8;
+		g_ultima->_saveGame->_weapons[WEAP_MYSTICSWORD] += 8;
 	else if (mystic == ARMR_MYSTICROBES)
-		g_context->_saveGame->_armor[ARMR_MYSTICROBES] += 8;
+		g_ultima->_saveGame->_armor[ARMR_MYSTICROBES] += 8;
 	else
 		ASSERT(0, "Invalid mystic item was added in putMysticInInventory()");
-	g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
+	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 }
 
 bool isWeaponInInventory(int weapon) {
-	if (g_context->_saveGame->_weapons[weapon])
+	if (g_ultima->_saveGame->_weapons[weapon])
 		return true;
 	else {
 		for (int i = 0; i < g_context->_party->size(); i++) {
@@ -663,7 +663,7 @@ bool isWeaponInInventory(int weapon) {
 }
 
 void putWeaponInInventory(int weapon) {
-	g_context->_saveGame->_weapons[weapon]++;
+	g_ultima->_saveGame->_weapons[weapon]++;
 }
 
 void useTelescope(int notused) {
@@ -686,11 +686,11 @@ bool isReagentInInventory(int reag) {
 
 void putReagentInInventory(int reag) {
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
-	g_context->_saveGame->_reagents[reag] += xu4_random(8) + 2;
-	g_context->_saveGame->_lastReagent = g_context->_saveGame->_moves & 0xF0;
+	g_ultima->_saveGame->_reagents[reag] += xu4_random(8) + 2;
+	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 
-	if (g_context->_saveGame->_reagents[reag] > 99) {
-		g_context->_saveGame->_reagents[reag] = 99;
+	if (g_ultima->_saveGame->_reagents[reag] > 99) {
+		g_ultima->_saveGame->_reagents[reag] = 99;
 		screenMessage("Dropped some!\n");
 	}
 }
@@ -702,18 +702,18 @@ bool itemConditionsMet(unsigned char conditions) {
 	int i;
 
 	if ((conditions & SC_NEWMOONS) &&
-	        !(g_context->_saveGame->_trammelPhase == 0 && g_context->_saveGame->_feluccaPhase == 0))
+	        !(g_ultima->_saveGame->_trammelPhase == 0 && g_ultima->_saveGame->_feluccaPhase == 0))
 		return false;
 
 	if (conditions & SC_FULLAVATAR) {
 		for (i = 0; i < VIRT_MAX; i++) {
-			if (g_context->_saveGame->_karma[i] != 0)
+			if (g_ultima->_saveGame->_karma[i] != 0)
 				return false;
 		}
 	}
 
 	if ((conditions & SC_REAGENTDELAY) &&
-	        (g_context->_saveGame->_moves & 0xF0) == g_context->_saveGame->_lastReagent)
+	        (g_ultima->_saveGame->_moves & 0xF0) == g_ultima->_saveGame->_lastReagent)
 		return false;
 
 	return true;
@@ -774,7 +774,7 @@ void itemUse(const Common::String &shortname) {
  */
 bool isAbyssOpened(const Portal *p) {
 	/* make sure the bell, book and candle have all been used */
-	int items = g_context->_saveGame->_items;
+	int items = g_ultima->_saveGame->_items;
 	int isopened = (items & ITEM_BELL_USED) && (items & ITEM_BOOK_USED) && (items & ITEM_CANDLE_USED);
 
 	if (!isopened)

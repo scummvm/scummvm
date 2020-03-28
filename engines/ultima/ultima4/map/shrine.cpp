@@ -156,8 +156,8 @@ void Shrine::enter() {
 		return;
 	}
 
-	if (((g_context->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) >= 0x10000) ||
-	        (((g_context->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff) != g_context->_saveGame->_lastMeditation)) {
+	if (((g_ultima->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) >= 0x10000) ||
+	        (((g_ultima->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff) != g_ultima->_saveGame->_lastMeditation)) {
 		screenMessage("Begin Meditation\n");
 		meditationCycle();
 	} else {
@@ -208,7 +208,7 @@ void Shrine::meditationCycle() {
 	if (interval <= 0)
 		interval = 1;
 
-	g_context->_saveGame->_lastMeditation = (g_context->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff;
+	g_ultima->_saveGame->_lastMeditation = (g_ultima->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff;
 
 	screenDisableCursor();
 	for (int i = 0; i < MEDITATION_MANTRAS_PER_CYCLE; i++) {

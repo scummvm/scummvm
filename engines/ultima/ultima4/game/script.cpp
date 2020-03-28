@@ -1098,12 +1098,12 @@ Script::ReturnCode Script::pay(Shared::XMLNode *script, Shared::XMLNode *current
 
 	if (_debug) {
 		::debug("\nPay: price(%d) quantity(%d)", price, quant);
-		::debug("\n\tParty gold:  %d -", g_context->_saveGame->_gold);
+		::debug("\n\tParty gold:  %d -", g_ultima->_saveGame->_gold);
 		::debug("\n\tTotal price: %d", price * quant);
 	}
 
 	price *= quant;
-	if (price > g_context->_saveGame->_gold) {
+	if (price > g_ultima->_saveGame->_gold) {
 		if (_debug)
 			::debug("\n\t=== Can't pay! ===");
 		run(cantpay);
@@ -1111,7 +1111,7 @@ Script::ReturnCode Script::pay(Shared::XMLNode *script, Shared::XMLNode *current
 	} else g_context->_party->adjustGold(-price);
 
 	if (_debug)
-		::debug("\n\tBalance:     %d\n", g_context->_saveGame->_gold);
+		::debug("\n\tBalance:     %d\n", g_ultima->_saveGame->_gold);
 
 	return RET_OK;
 }
@@ -1214,22 +1214,22 @@ Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current
 	} else if (type == "horse")
 		g_context->_party->setTransport(Tileset::findTileByName("horse")->getId());
 	else if (type == "torch") {
-		AdjustValueMax(g_context->_saveGame->_torches, quant, 99);
+		AdjustValueMax(g_ultima->_saveGame->_torches, quant, 99);
 		g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
 	} else if (type == "gem") {
-		AdjustValueMax(g_context->_saveGame->_gems, quant, 99);
+		AdjustValueMax(g_ultima->_saveGame->_gems, quant, 99);
 		g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
 	} else if (type == "key") {
-		AdjustValueMax(g_context->_saveGame->_keys, quant, 99);
+		AdjustValueMax(g_ultima->_saveGame->_keys, quant, 99);
 		g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
 	} else if (type == "sextant") {
-		AdjustValueMax(g_context->_saveGame->_sextants, quant, 99);
+		AdjustValueMax(g_ultima->_saveGame->_sextants, quant, 99);
 		g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
 	} else if (type == "weapon") {
-		AdjustValueMax(g_context->_saveGame->_weapons[subtype[0] - 'a'], quant, 99);
+		AdjustValueMax(g_ultima->_saveGame->_weapons[subtype[0] - 'a'], quant, 99);
 		g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
 	} else if (type == "armor") {
-		AdjustValueMax(g_context->_saveGame->_armor[subtype[0] - 'a'], quant, 99);
+		AdjustValueMax(g_ultima->_saveGame->_armor[subtype[0] - 'a'], quant, 99);
 		g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
 	} else if (type == "reagent") {
 		int reagent;
@@ -1243,7 +1243,7 @@ Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current
 		}
 
 		if (reagents[reagent].size()) {
-			AdjustValueMax(g_context->_saveGame->_reagents[reagent], quant, 99);
+			AdjustValueMax(g_ultima->_saveGame->_reagents[reagent], quant, 99);
 			g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
 			g_context->_stats->resetReagentsMenu();
 		} else errorWarning("Error: reagent '%s' not found", subtype.c_str());
@@ -1264,9 +1264,9 @@ Script::ReturnCode Script::lose(Shared::XMLNode *script, Shared::XMLNode *curren
 	int quant = getPropAsInt(current, "quantity");
 
 	if (type == "weapon")
-		AdjustValueMin(g_context->_saveGame->_weapons[subtype[0] - 'a'], -quant, 0);
+		AdjustValueMin(g_ultima->_saveGame->_weapons[subtype[0] - 'a'], -quant, 0);
 	else if (type == "armor")
-		AdjustValueMin(g_context->_saveGame->_armor[subtype[0] - 'a'], -quant, 0);
+		AdjustValueMin(g_ultima->_saveGame->_armor[subtype[0] - 'a'], -quant, 0);
 
 	if (_debug) {
 		::debug("\nLose: %s ", type.c_str());

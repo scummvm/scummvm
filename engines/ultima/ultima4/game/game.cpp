@@ -150,7 +150,7 @@ bool ReadPlayerController::keyPressed(int key) {
 	bool valid = ReadChoiceController::keyPressed(key);
 	if (valid) {
 		if (_value < '1' ||
-		        _value > ('0' + g_context->_saveGame->_members))
+		        _value > ('0' + g_ultima->_saveGame->_members))
 			_value = '0';
 	} else {
 		_value = '0';
@@ -229,7 +229,7 @@ void GameController::init() {
 
 	/* initialize the global game context */
 	g_context = new Context;
-	g_context->_saveGame = new SaveGame;
+	g_ultima->_saveGame = new SaveGame;
 
 	TRACE_LOCAL(gameDbg, "Global context initialized.");
 
@@ -251,14 +251,14 @@ void GameController::init() {
 	saveGameFile = g_system->getSavefileManager()->openForLoading(PARTY_SAV_BASE_FILENAME);
 	if (saveGameFile) {
 		Common::Serializer ser(saveGameFile, nullptr);
-		g_context->_saveGame->synchronize(ser);
+		g_ultima->_saveGame->synchronize(ser);
 		delete saveGameFile;
 	} else {
 		errorFatal("no savegame found!");
 	}
 
 	/* initialize our party */
-	g_context->_party = new Party(g_context->_saveGame);
+	g_context->_party = new Party(g_ultima->_saveGame);
 	g_context->_party->addObserver(this);
 
 	/* set the map to the world map by default */
@@ -266,7 +266,7 @@ void GameController::init() {
 	g_context->_location->_map->clearObjects();
 
 	/* initialize our start location */
-	Map *map = mapMgr->get(MapId(g_context->_saveGame->_location));
+	Map *map = mapMgr->get(MapId(g_ultima->_saveGame->_location));
 	TRACE_LOCAL(gameDbg, "Initializing start location.");
 
 	/* if our map is not the world map, then load our map */
@@ -281,10 +281,10 @@ void GameController::init() {
 	 * Translate info from the savegame to something we can use
 	 */
 	if (g_context->_location->_prev) {
-		g_context->_location->_coords = MapCoords(g_context->_saveGame->_x, g_context->_saveGame->_y, g_context->_saveGame->_dngLevel);
-		g_context->_location->_prev->_coords = MapCoords(g_context->_saveGame->_dngX, g_context->_saveGame->_dngY);
-	} else g_context->_location->_coords = MapCoords(g_context->_saveGame->_x, g_context->_saveGame->_y, (int)g_context->_saveGame->_dngLevel);
-	g_context->_saveGame->_orientation = (Direction)(g_context->_saveGame->_orientation + DIR_WEST);
+		g_context->_location->_coords = MapCoords(g_ultima->_saveGame->_x, g_ultima->_saveGame->_y, g_ultima->_saveGame->_dngLevel);
+		g_context->_location->_prev->_coords = MapCoords(g_ultima->_saveGame->_dngX, g_ultima->_saveGame->_dngY);
+	} else g_context->_location->_coords = MapCoords(g_ultima->_saveGame->_x, g_ultima->_saveGame->_y, (int)g_ultima->_saveGame->_dngLevel);
+	g_ultima->_saveGame->_orientation = (Direction)(g_ultima->_saveGame->_orientation + DIR_WEST);
 
 	/**
 	 * Fix the coordinates if they're out of bounds.  This happens every
@@ -338,7 +338,7 @@ void GameController::init() {
  */
 int gameSave() {
 	Common::OutSaveFile *saveGameFile, *monstersFile, *dngMapFile;
-	SaveGame save = *g_context->_saveGame;
+	SaveGame save = *g_ultima->_saveGame;
 
 	/*************************************************/
 	/* Make sure the savegame struct is accurate now */
@@ -353,11 +353,11 @@ int gameSave() {
 		save._x = g_context->_location->_coords.x;
 		save._y = g_context->_location->_coords.y;
 		save._dngLevel = g_context->_location->_coords.z;
-		save._dngX = g_context->_saveGame->_dngX;
-		save._dngY = g_context->_saveGame->_dngY;
+		save._dngX = g_ultima->_saveGame->_dngX;
+		save._dngY = g_ultima->_saveGame->_dngY;
 	}
 	save._location = g_context->_location->_map->_id;
-	save._orientation = (Direction)(g_context->_saveGame->_orientation - DIR_WEST);
+	save._orientation = (Direction)(g_ultima->_saveGame->_orientation - DIR_WEST);
 
 	/* Done making sure the savegame struct is accurate */
 	/****************************************************/
@@ -530,7 +530,7 @@ void GameController::setMap(Map *map, bool saveLocation, const Portal *portal, T
 		context = CTX_DUNGEON;
 		viewMode = VIEW_DUNGEON;
 		if (portal)
-			g_context->_saveGame->_orientation = DIR_EAST;
+			g_ultima->_saveGame->_orientation = DIR_EAST;
 		break;
 	case Map::COMBAT:
 		coords = MapCoords(-1, -1); /* set these to -1 just to be safe; we don't need them */
@@ -731,7 +731,7 @@ void GameController::update(Party *party, PartyEvent &event) {
 		/* FIXME: add sound effect here */
 
 		// 2 damage to each party member for starving!
-		for (i = 0; i < g_context->_saveGame->_members; i++)
+		for (i = 0; i < g_ultima->_saveGame->_members; i++)
 			g_context->_party->member(i)->applyDamage(2);
 		break;
 	default:
@@ -938,7 +938,7 @@ bool GameController::keyPressed(int key) {
 			if (settings._debug && (g_context->_location->_context & CTX_WORLDMAP)) {
 				setMap(mapMgr->get(MAP_DECEIT), 1, NULL);
 				g_context->_location->_coords = MapCoords(1, 0, 7);
-				g_context->_saveGame->_orientation = DIR_SOUTH;
+				g_ultima->_saveGame->_orientation = DIR_SOUTH;
 			} else valid = false;
 			break;
 
@@ -946,7 +946,7 @@ bool GameController::keyPressed(int key) {
 			if (settings._debug && (g_context->_location->_context & CTX_WORLDMAP)) {
 				setMap(mapMgr->get(MAP_DESPISE), 1, NULL);
 				g_context->_location->_coords = MapCoords(3, 2, 7);
-				g_context->_saveGame->_orientation = DIR_SOUTH;
+				g_ultima->_saveGame->_orientation = DIR_SOUTH;
 			} else valid = false;
 			break;
 
@@ -954,7 +954,7 @@ bool GameController::keyPressed(int key) {
 			if (settings._debug && (g_context->_location->_context & CTX_WORLDMAP)) {
 				setMap(mapMgr->get(MAP_DESTARD), 1, NULL);
 				g_context->_location->_coords = MapCoords(7, 6, 7);
-				g_context->_saveGame->_orientation = DIR_SOUTH;
+				g_ultima->_saveGame->_orientation = DIR_SOUTH;
 			} else valid = false;
 			break;
 
@@ -1082,7 +1082,7 @@ bool GameController::keyPressed(int key) {
 					if (!g_context->_party->isFlying())
 						screenMessage("%cAlready Landed!%c\n", FG_GREY, FG_WHITE);
 					else if (g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_OBJECTS)->canLandBalloon()) {
-						g_context->_saveGame->_balloonState = 0;
+						g_ultima->_saveGame->_balloonState = 0;
 						g_context->_opacity = 1;
 					} else screenMessage("%cNot Here!%c\n", FG_GREY, FG_WHITE);
 				} else screenMessage("%cDescend what?%c\n", FG_GREY, FG_WHITE);
@@ -1127,7 +1127,7 @@ bool GameController::keyPressed(int key) {
 		case 'k':
 			if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_KLIMB)) {
 				if (g_context->_transportContext == TRANSPORT_BALLOON) {
-					g_context->_saveGame->_balloonState = 1;
+					g_ultima->_saveGame->_balloonState = 1;
 					g_context->_opacity = 0;
 					screenMessage("Klimb altitude\n");
 				} else
@@ -1138,7 +1138,7 @@ bool GameController::keyPressed(int key) {
 		case 'l':
 			/* can't use sextant in dungeon or in combat */
 			if (g_context->_location->_context & ~(CTX_DUNGEON | CTX_COMBAT)) {
-				if (g_context->_saveGame->_sextants >= 1)
+				if (g_ultima->_saveGame->_sextants >= 1)
 					screenMessage("Locate position\nwith sextant\n Latitude: %c'%c\"\nLongitude: %c'%c\"\n",
 					              g_context->_location->_coords.y / 16 + 'A', g_context->_location->_coords.y % 16 + 'A',
 					              g_context->_location->_coords.x / 16 + 'A', g_context->_location->_coords.x % 16 + 'A');
@@ -1169,7 +1169,7 @@ bool GameController::keyPressed(int key) {
 			break;
 
 		case 'q':
-			screenMessage("Quit & Save...\n%d moves\n", g_context->_saveGame->_moves);
+			screenMessage("Quit & Save...\n%d moves\n", g_ultima->_saveGame->_moves);
 			if (g_context->_location->_context & CTX_CAN_SAVE_GAME) {
 				gameSave();
 				screenMessage("Press Alt-x to quit\n");
@@ -1456,7 +1456,7 @@ Common::String gameGetInput(int maxlen) {
 
 int gameGetPlayer(bool canBeDisabled, bool canBeActivePlayer) {
 	int player;
-	if (g_context->_saveGame->_members <= 1) {
+	if (g_ultima->_saveGame->_members <= 1) {
 		player = 0;
 	} else {
 		if (canBeActivePlayer && (g_context->_party->getActivePlayer() >= 0)) {
@@ -1475,7 +1475,7 @@ int gameGetPlayer(bool canBeDisabled, bool canBeActivePlayer) {
 
 	g_context->col--;// display the selected character name, in place of the number
 	if ((player >= 0) && (player < 8)) {
-		screenMessage("%s\n", g_context->_saveGame->_players[player].name); //Write player's name after prompt
+		screenMessage("%s\n", g_ultima->_saveGame->_players[player].name); //Write player's name after prompt
 	}
 
 	if (!canBeDisabled && g_context->_party->member(player)->isDisabled()) {
@@ -1520,8 +1520,8 @@ bool gameSpellMixHowMany(int spell, int num, Ingredients *ingredients) {
 	}
 
 	/* if they ask for more than will give them 99, only use what they need */
-	if (num > 99 - g_context->_saveGame->_mixtures[spell]) {
-		num = 99 - g_context->_saveGame->_mixtures[spell];
+	if (num > 99 - g_ultima->_saveGame->_mixtures[spell]) {
+		num = 99 - g_ultima->_saveGame->_mixtures[spell];
 		screenMessage("\n%cOnly need %d!%c\n", FG_GREY, num, FG_WHITE);
 	}
 
@@ -1565,7 +1565,7 @@ bool ZtatsController::keyPressed(int key) {
 	case '6':
 	case '7':
 	case '8':
-		if (g_context->_saveGame->_members >= key - '0')
+		if (g_ultima->_saveGame->_members >= key - '0')
 			g_context->_stats->setView(StatsView(STATS_CHAR1 + key - '1'));
 		return true;
 	case '0':
@@ -1775,7 +1775,7 @@ void castSpell(int player) {
 	}
 	case Spell::PARAM_DIR:
 		if (g_context->_location->_context == CTX_DUNGEON)
-			gameCastSpell(spell, player, g_context->_saveGame->_orientation);
+			gameCastSpell(spell, player, g_ultima->_saveGame->_orientation);
 		else {
 			screenMessage("Dir: ");
 			Direction dir = gameGetDirection();
@@ -1814,7 +1814,7 @@ void castSpell(int player) {
 
 			Direction dir;
 			if (g_context->_location->_context == CTX_DUNGEON)
-				dir = (Direction)g_context->_saveGame->_orientation;
+				dir = (Direction)g_ultima->_saveGame->_orientation;
 			else {
 				screenMessage("Dir: ");
 				dir = gameGetDirection();
@@ -2041,7 +2041,7 @@ bool getChestTrapHandler(int player) {
 		// evaded by testing the PC's dex
 		//
 		if ((player >= 0) &&
-		        (g_context->_saveGame->_players[player]._dex + 25 < xu4_random(100))) {
+		        (g_ultima->_saveGame->_players[player]._dex + 25 < xu4_random(100))) {
 			if (trapType == EFFECT_LAVA) /* bomb trap */
 				g_context->_party->applyEffect(trapType);
 			else g_context->_party->member(player)->applyEffect(trapType);
@@ -2077,18 +2077,18 @@ void holeUp() {
  * to make sure trammel and felucca stay in sync
  */
 void GameController::initMoons() {
-	int trammelphase = g_context->_saveGame->_trammelPhase,
-	    feluccaphase = g_context->_saveGame->_feluccaPhase;
+	int trammelphase = g_ultima->_saveGame->_trammelPhase,
+	    feluccaphase = g_ultima->_saveGame->_feluccaPhase;
 
 	ASSERT(g_context != NULL, "Game context doesn't exist!");
-	ASSERT(g_context->_saveGame != NULL, "Savegame doesn't exist!");
+	ASSERT(g_ultima->_saveGame != NULL, "Savegame doesn't exist!");
 	//ASSERT(mapIsWorldMap(c->location->map) && c->location->viewMode == VIEW_NORMAL, "Can only call gameInitMoons() from the world map!");
 
-	g_context->_saveGame->_trammelPhase = g_context->_saveGame->_feluccaPhase = 0;
+	g_ultima->_saveGame->_trammelPhase = g_ultima->_saveGame->_feluccaPhase = 0;
 	g_context->_moonPhase = 0;
 
-	while ((g_context->_saveGame->_trammelPhase != trammelphase) ||
-	        (g_context->_saveGame->_feluccaPhase != feluccaphase))
+	while ((g_ultima->_saveGame->_trammelPhase != trammelphase) ||
+	        (g_ultima->_saveGame->_feluccaPhase != feluccaphase))
 		updateMoons(false);
 }
 
@@ -2103,7 +2103,7 @@ void GameController::updateMoons(bool showmoongates) {
 	const Coords *gate;
 
 	if (g_context->_location->_map->isWorldMap()) {
-		oldTrammel = g_context->_saveGame->_trammelPhase;
+		oldTrammel = g_ultima->_saveGame->_trammelPhase;
 
 		if (++g_context->_moonPhase >= MOON_PHASES * MOON_SECONDS_PER_PHASE * 4)
 			g_context->_moonPhase = 0;
@@ -2111,11 +2111,11 @@ void GameController::updateMoons(bool showmoongates) {
 		trammelSubphase = g_context->_moonPhase % (MOON_SECONDS_PER_PHASE * 4 * 3);
 		realMoonPhase = (g_context->_moonPhase / (4 * MOON_SECONDS_PER_PHASE));
 
-		g_context->_saveGame->_trammelPhase = realMoonPhase / 3;
-		g_context->_saveGame->_feluccaPhase = realMoonPhase % 8;
+		g_ultima->_saveGame->_trammelPhase = realMoonPhase / 3;
+		g_ultima->_saveGame->_feluccaPhase = realMoonPhase % 8;
 
-		if (g_context->_saveGame->_trammelPhase > 7)
-			g_context->_saveGame->_trammelPhase = 7;
+		if (g_ultima->_saveGame->_trammelPhase > 7)
+			g_ultima->_saveGame->_trammelPhase = 7;
 
 		if (showmoongates) {
 			/* update the moongates if trammel changed */
@@ -2123,47 +2123,47 @@ void GameController::updateMoons(bool showmoongates) {
 				gate = moongateGetGateCoordsForPhase(oldTrammel);
 				if (gate)
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x40));
-				gate = moongateGetGateCoordsForPhase(g_context->_saveGame->_trammelPhase);
+				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate)
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x40));
 			} else if (trammelSubphase == 1) {
-				gate = moongateGetGateCoordsForPhase(g_context->_saveGame->_trammelPhase);
+				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x40));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x41));
 				}
 			} else if (trammelSubphase == 2) {
-				gate = moongateGetGateCoordsForPhase(g_context->_saveGame->_trammelPhase);
+				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x41));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x42));
 				}
 			} else if (trammelSubphase == 3) {
-				gate = moongateGetGateCoordsForPhase(g_context->_saveGame->_trammelPhase);
+				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x42));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x43));
 				}
 			} else if ((trammelSubphase > 3) && (trammelSubphase < (MOON_SECONDS_PER_PHASE * 4 * 3) - 3)) {
-				gate = moongateGetGateCoordsForPhase(g_context->_saveGame->_trammelPhase);
+				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x43));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x43));
 				}
 			} else if (trammelSubphase == (MOON_SECONDS_PER_PHASE * 4 * 3) - 3) {
-				gate = moongateGetGateCoordsForPhase(g_context->_saveGame->_trammelPhase);
+				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x43));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x42));
 				}
 			} else if (trammelSubphase == (MOON_SECONDS_PER_PHASE * 4 * 3) - 2) {
-				gate = moongateGetGateCoordsForPhase(g_context->_saveGame->_trammelPhase);
+				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x42));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x41));
 				}
 			} else if (trammelSubphase == (MOON_SECONDS_PER_PHASE * 4 * 3) - 1) {
-				gate = moongateGetGateCoordsForPhase(g_context->_saveGame->_trammelPhase);
+				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x41));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x40));
@@ -2264,17 +2264,17 @@ void GameController::avatarMoved(MoveEvent &event) {
  */
 void GameController::avatarMovedInDungeon(MoveEvent &event) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
-	Direction realDir = dirNormalize((Direction)g_context->_saveGame->_orientation, event._dir);
+	Direction realDir = dirNormalize((Direction)g_ultima->_saveGame->_orientation, event._dir);
 
 	if (!settings._filterMoveMessages) {
 		if (event._userEvent) {
 			if (event._result & MOVE_TURNED) {
-				if (dirRotateCCW((Direction)g_context->_saveGame->_orientation) == realDir)
+				if (dirRotateCCW((Direction)g_ultima->_saveGame->_orientation) == realDir)
 					screenMessage("Turn Left\n");
 				else screenMessage("Turn Right\n");
 			}
 			/* show 'Advance' or 'Retreat' in dungeons */
-			else screenMessage("%s\n", realDir == g_context->_saveGame->_orientation ? "Advance" : "Retreat");
+			else screenMessage("%s\n", realDir == g_ultima->_saveGame->_orientation ? "Advance" : "Retreat");
 		}
 
 		if (event._result & MOVE_BLOCKED)
@@ -2340,10 +2340,10 @@ bool jimmyAt(const Coords &coords) {
 	if (!tile->getTileType()->isLockedDoor())
 		return false;
 
-	if (g_context->_saveGame->_keys) {
+	if (g_ultima->_saveGame->_keys) {
 		Tile *door = g_context->_location->_map->_tileset->getByName("door");
 		ASSERT(door, "no door tile found in tileset");
-		g_context->_saveGame->_keys--;
+		g_ultima->_saveGame->_keys--;
 		g_context->_location->_map->_annotations->add(coords, door->getId());
 		screenMessage("\nUnlocked!\n");
 	} else
@@ -2506,7 +2506,7 @@ void mixReagents() {
 		// Verify that there are reagents remaining in the inventory
 		bool found = false;
 		for (int i = 0; i < 8; i++) {
-			if (g_context->_saveGame->_reagents[i] > 0) {
+			if (g_ultima->_saveGame->_reagents[i] > 0) {
 				found = true;
 				break;
 			}
@@ -2526,7 +2526,7 @@ void mixReagents() {
 			screenMessage("%s\n", spellGetName(spell));
 
 			// ensure the mixtures for the spell isn't already maxed out
-			if (g_context->_saveGame->_mixtures[spell] == 99) {
+			if (g_ultima->_saveGame->_mixtures[spell] == 99) {
 				screenMessage("\n%cYou cannot mix any more of that spell!%c\n", FG_GREY, FG_WHITE);
 				break;
 			}
@@ -2686,12 +2686,12 @@ bool gamePeerCity(int city, void *data) {
 void peer(bool useGem) {
 
 	if (useGem) {
-		if (g_context->_saveGame->_gems <= 0) {
+		if (g_ultima->_saveGame->_gems <= 0) {
 			screenMessage("%cPeer at What?%c\n", FG_GREY, FG_WHITE);
 			return;
 		}
 
-		g_context->_saveGame->_gems--;
+		g_ultima->_saveGame->_gems--;
 		screenMessage("Peer at a Gem!\n");
 	}
 
@@ -2998,7 +2998,7 @@ void gameCheckHullIntegrity() {
 
 	bool killAll = false;
 	/* see if the ship has sunk */
-	if ((g_context->_transportContext == TRANSPORT_SHIP) && g_context->_saveGame->_shipHull <= 0) {
+	if ((g_context->_transportContext == TRANSPORT_SHIP) && g_ultima->_saveGame->_shipHull <= 0) {
 		screenMessage("\nThy ship sinks!\n\n");
 		killAll = true;
 	}
@@ -3079,7 +3079,7 @@ void GameController::checkSpecialCreatures(Direction dir) {
 bool GameController::checkMoongates() {
 	Coords dest;
 
-	if (moongateFindActiveGateAt(g_context->_saveGame->_trammelPhase, g_context->_saveGame->_feluccaPhase, g_context->_location->_coords, dest)) {
+	if (moongateFindActiveGateAt(g_ultima->_saveGame->_trammelPhase, g_ultima->_saveGame->_feluccaPhase, g_context->_location->_coords, dest)) {
 
 		gameSpellEffect(-1, -1, SOUND_MOONGATE); // Default spell effect (screen inversion without 'spell' sound effects)
 
@@ -3088,7 +3088,7 @@ bool GameController::checkMoongates() {
 			gameSpellEffect(-1, -1, SOUND_MOONGATE); // Again, after arriving
 		}
 
-		if (moongateIsEntryToShrineOfSpirituality(g_context->_saveGame->_trammelPhase, g_context->_saveGame->_feluccaPhase)) {
+		if (moongateIsEntryToShrineOfSpirituality(g_ultima->_saveGame->_trammelPhase, g_ultima->_saveGame->_feluccaPhase)) {
 			Shrine *shrine_spirituality;
 
 			shrine_spirituality = dynamic_cast<Shrine *>(mapMgr->get(MAP_SHRINE_SPIRITUALITY));
@@ -3587,7 +3587,7 @@ showMixturesSuper(int page = 0) {
 		int line = i + 8;
 		screenTextAt(2, line, "%s", s->_name);
 
-		snprintf(buf, 4, "%3d", g_context->_saveGame->_mixtures[i + 13 * page]);
+		snprintf(buf, 4, "%3d", g_ultima->_saveGame->_mixtures[i + 13 * page]);
 		screenTextAt(6, line, "%s", buf);
 
 		screenShowChar(32, 9, line);
@@ -3665,12 +3665,12 @@ mixReagentsSuper() {
 			showMixturesSuper(page);
 
 			// how many can we mix?
-			int mixQty = 99 - g_context->_saveGame->_mixtures[spell];
+			int mixQty = 99 - g_ultima->_saveGame->_mixtures[spell];
 			int ingQty = 99;
 			int comp = s->_components;
 			for (int i = 0; i < 8; i++) {
 				if (comp & 1 << i) {
-					int reagentQty = g_context->_saveGame->_reagents[i];
+					int reagentQty = g_ultima->_saveGame->_reagents[i];
 					if (reagentQty < ingQty)
 						ingQty = reagentQty;
 				}
@@ -3687,10 +3687,10 @@ mixReagentsSuper() {
 			} else if (howmany > ingQty) {
 				screenMessage("\n%cYou don't have enough reagents to mix %d spells!%c\n", FG_GREY, howmany, FG_WHITE);
 			} else {
-				g_context->_saveGame->_mixtures[spell] += howmany;
+				g_ultima->_saveGame->_mixtures[spell] += howmany;
 				for (int i = 0; i < 8; i++) {
 					if (comp & 1 << i) {
-						g_context->_saveGame->_reagents[i] -= howmany;
+						g_ultima->_saveGame->_reagents[i] -= howmany;
 					}
 				}
 				screenMessage("\nSuccess!\n\n");

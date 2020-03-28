@@ -138,9 +138,9 @@ void StatsArea::update(bool avatarOnly) {
 	 * update the lower stats box (food, gold, etc.)
 	 */
 	if (g_context->_transportContext == TRANSPORT_SHIP)
-		_summary.textAt(0, 0, "F:%04d   SHP:%02d", g_context->_saveGame->_food / 100, g_context->_saveGame->_shipHull);
+		_summary.textAt(0, 0, "F:%04d   SHP:%02d", g_ultima->_saveGame->_food / 100, g_ultima->_saveGame->_shipHull);
 	else
-		_summary.textAt(0, 0, "F:%04d   G:%04d", g_context->_saveGame->_food / 100, g_context->_saveGame->_gold);
+		_summary.textAt(0, 0, "F:%04d   G:%04d", g_ultima->_saveGame->_food / 100, g_ultima->_saveGame->_gold);
 
 	update(g_context->_aura);
 
@@ -150,7 +150,7 @@ void StatsArea::update(bool avatarOnly) {
 void StatsArea::update(Aura *aura) {
 	unsigned char mask = 0xff;
 	for (int i = 0; i < VIRT_MAX; i++) {
-		if (g_context->_saveGame->_karma[i] == 0)
+		if (g_ultima->_saveGame->_karma[i] == 0)
 			mask &= ~(1 << i);
 	}
 
@@ -265,7 +265,7 @@ void StatsArea::showWeapons() {
 	int col = 0;
 	_mainArea.textAt(0, line++, "A-%s", Weapon::get(WEAP_HANDS)->getName().c_str());
 	for (int w = WEAP_HANDS + 1; w < WEAP_MAX; w++) {
-		int n = g_context->_saveGame->_weapons[w];
+		int n = g_ultima->_saveGame->_weapons[w];
 		if (n >= 100)
 			n = 99;
 		if (n >= 1) {
@@ -289,10 +289,10 @@ void StatsArea::showArmor() {
 	int line = 0;
 	_mainArea.textAt(0, line++, "A  -No Armour");
 	for (int a = ARMR_NONE + 1; a < ARMR_MAX; a++) {
-		if (g_context->_saveGame->_armor[a] > 0) {
-			const char *format = (g_context->_saveGame->_armor[a] >= 10) ? "%c%d-%s" : "%c-%d-%s";
+		if (g_ultima->_saveGame->_armor[a] > 0) {
+			const char *format = (g_ultima->_saveGame->_armor[a] >= 10) ? "%c%d-%s" : "%c-%d-%s";
 
-			_mainArea.textAt(0, line++, format, a - ARMR_NONE + 'A', g_context->_saveGame->_armor[a], Armor::get((ArmorType) a)->getName().c_str());
+			_mainArea.textAt(0, line++, format, a - ARMR_NONE + 'A', g_ultima->_saveGame->_armor[a], Armor::get((ArmorType) a)->getName().c_str());
 		}
 	}
 }
@@ -304,11 +304,11 @@ void StatsArea::showEquipment() {
 	setTitle("Equipment");
 
 	int line = 0;
-	_mainArea.textAt(0, line++, "%2d Torches", g_context->_saveGame->_torches);
-	_mainArea.textAt(0, line++, "%2d Gems", g_context->_saveGame->_gems);
-	_mainArea.textAt(0, line++, "%2d Keys", g_context->_saveGame->_keys);
-	if (g_context->_saveGame->_sextants > 0)
-		_mainArea.textAt(0, line++, "%2d Sextants", g_context->_saveGame->_sextants);
+	_mainArea.textAt(0, line++, "%2d Torches", g_ultima->_saveGame->_torches);
+	_mainArea.textAt(0, line++, "%2d Gems", g_ultima->_saveGame->_gems);
+	_mainArea.textAt(0, line++, "%2d Keys", g_ultima->_saveGame->_keys);
+	if (g_ultima->_saveGame->_sextants > 0)
+		_mainArea.textAt(0, line++, "%2d Sextants", g_ultima->_saveGame->_sextants);
 }
 
 /**
@@ -321,56 +321,56 @@ void StatsArea::showItems() {
 	setTitle("Items");
 
 	int line = 0;
-	if (g_context->_saveGame->_stones != 0) {
+	if (g_ultima->_saveGame->_stones != 0) {
 		j = 0;
 		for (i = 0; i < 8; i++) {
-			if (g_context->_saveGame->_stones & (1 << i))
+			if (g_ultima->_saveGame->_stones & (1 << i))
 				buffer[j++] = getStoneName((Virtue) i)[0];
 		}
 		buffer[j] = '\0';
 		_mainArea.textAt(0, line++, "Stones:%s", buffer);
 	}
-	if (g_context->_saveGame->_runes != 0) {
+	if (g_ultima->_saveGame->_runes != 0) {
 		j = 0;
 		for (i = 0; i < 8; i++) {
-			if (g_context->_saveGame->_runes & (1 << i))
+			if (g_ultima->_saveGame->_runes & (1 << i))
 				buffer[j++] = getVirtueName((Virtue) i)[0];
 		}
 		buffer[j] = '\0';
 		_mainArea.textAt(0, line++, "Runes:%s", buffer);
 	}
-	if (g_context->_saveGame->_items & (ITEM_CANDLE | ITEM_BOOK | ITEM_BELL)) {
+	if (g_ultima->_saveGame->_items & (ITEM_CANDLE | ITEM_BOOK | ITEM_BELL)) {
 		buffer[0] = '\0';
-		if (g_context->_saveGame->_items & ITEM_BELL) {
+		if (g_ultima->_saveGame->_items & ITEM_BELL) {
 			strcat(buffer, getItemName(ITEM_BELL));
 			strcat(buffer, " ");
 		}
-		if (g_context->_saveGame->_items & ITEM_BOOK) {
+		if (g_ultima->_saveGame->_items & ITEM_BOOK) {
 			strcat(buffer, getItemName(ITEM_BOOK));
 			strcat(buffer, " ");
 		}
-		if (g_context->_saveGame->_items & ITEM_CANDLE) {
+		if (g_ultima->_saveGame->_items & ITEM_CANDLE) {
 			strcat(buffer, getItemName(ITEM_CANDLE));
 			buffer[15] = '\0';
 		}
 		_mainArea.textAt(0, line++, "%s", buffer);
 	}
-	if (g_context->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
+	if (g_ultima->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
 		j = 0;
-		if (g_context->_saveGame->_items & ITEM_KEY_T)
+		if (g_ultima->_saveGame->_items & ITEM_KEY_T)
 			buffer[j++] = getItemName(ITEM_KEY_T)[0];
-		if (g_context->_saveGame->_items & ITEM_KEY_L)
+		if (g_ultima->_saveGame->_items & ITEM_KEY_L)
 			buffer[j++] = getItemName(ITEM_KEY_L)[0];
-		if (g_context->_saveGame->_items & ITEM_KEY_C)
+		if (g_ultima->_saveGame->_items & ITEM_KEY_C)
 			buffer[j++] = getItemName(ITEM_KEY_C)[0];
 		buffer[j] = '\0';
 		_mainArea.textAt(0, line++, "3 Part Key:%s", buffer);
 	}
-	if (g_context->_saveGame->_items & ITEM_HORN)
+	if (g_ultima->_saveGame->_items & ITEM_HORN)
 		_mainArea.textAt(0, line++, "%s", getItemName(ITEM_HORN));
-	if (g_context->_saveGame->_items & ITEM_WHEEL)
+	if (g_ultima->_saveGame->_items & ITEM_WHEEL)
 		_mainArea.textAt(0, line++, "%s", getItemName(ITEM_WHEEL));
-	if (g_context->_saveGame->_items & ITEM_SKULL)
+	if (g_ultima->_saveGame->_items & ITEM_SKULL)
 		_mainArea.textAt(0, line++, "%s", getItemName(ITEM_SKULL));
 }
 
@@ -408,7 +408,7 @@ void StatsArea::showMixtures() {
 	int line = 0;
 	int col = 0;
 	for (int s = 0; s < SPELL_MAX; s++) {
-		int n = g_context->_saveGame->_mixtures[s];
+		int n = g_ultima->_saveGame->_mixtures[s];
 		if (n >= 100)
 			n = 99;
 		if (n >= 1) {
@@ -429,7 +429,7 @@ void StatsArea::resetReagentsMenu() {
 	    row = 0;
 
 	for (current = _reagentsMixMenu.begin(); current != _reagentsMixMenu.end(); current++) {
-		if (g_context->_saveGame->_reagents[i++] > 0) {
+		if (g_ultima->_saveGame->_reagents[i++] > 0) {
 			(*current)->setVisible(true);
 			(*current)->setY(row++);
 		} else (*current)->setVisible(false);
