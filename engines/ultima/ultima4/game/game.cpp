@@ -85,7 +85,6 @@ void gameInnHandler(void);
 void gameLostEighth(Virtue virtue);
 void gamePartyStarving(void);
 time_t gameTimeSinceLastCommand(void);
-int gameSave(void);
 
 /* spell functions */
 void gameCastSpell(unsigned int spell, int caster, int param);
@@ -331,142 +330,6 @@ void GameController::init() {
 
 	initScreenWithoutReloadingState();
 	TRACE(gameDbg, "gameInit() completed successfully.");
-}
-
-/**
- * Saves the game state into party.sav and creatures.sav.
- */
-int gameSave() {
-	Common::OutSaveFile *saveGameFile, *monstersFile, *dngMapFile;
-	SaveGame save = *g_ultima->_saveGame;
-
-	/*************************************************/
-	/* Make sure the savegame struct is accurate now */
-
-	if (g_context->_location->_prev) {
-		save._x = g_context->_location->_coords.x;
-		save._y = g_context->_location->_coords.y;
-		save._dngLevel = g_context->_location->_coords.z;
-		save._dngX = g_context->_location->_prev->_coords.x;
-		save._dngY = g_context->_location->_prev->_coords.y;
-	} else {
-		save._x = g_context->_location->_coords.x;
-		save._y = g_context->_location->_coords.y;
-		save._dngLevel = g_context->_location->_coords.z;
-		save._dngX = g_ultima->_saveGame->_dngX;
-		save._dngY = g_ultima->_saveGame->_dngY;
-	}
-	save._location = g_context->_location->_map->_id;
-	save._orientation = (Direction)(g_ultima->_saveGame->_orientation - DIR_WEST);
-
-	/* Done making sure the savegame struct is accurate */
-	/****************************************************/
-
-	saveGameFile = g_system->getSavefileManager()->openForSaving(PARTY_SAV_BASE_FILENAME);
-	if (!saveGameFile) {
-		screenMessage("Error opening " PARTY_SAV_BASE_FILENAME "\n");
-		return 0;
-	}
-
-	Common::Serializer ser(nullptr, saveGameFile);
-	save.synchronize(ser);
-	delete saveGameFile;
-
-	monstersFile = g_system->getSavefileManager()->openForSaving(MONSTERS_SAV_BASE_FILENAME);
-	if (!monstersFile) {
-		screenMessage("Error opening %s\n", MONSTERS_SAV_BASE_FILENAME);
-		return 0;
-	}
-
-	/* fix creature animations so they are compatible with u4dos */
-	g_context->_location->_map->resetObjectAnimations();
-	g_context->_location->_map->fillMonsterTable(); /* fill the monster table so we can save it */
-
-	Common::Serializer ser2(nullptr, monstersFile);
-	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser2);
-	delete monstersFile;
-
-	/**
-	 * Write dungeon info
-	 */
-	if (g_context->_location->_context & CTX_DUNGEON) {
-		unsigned int x, y, z;
-
-		typedef Std::map<const Creature *, int, Std::PointerHash> DngCreatureIdMap;
-		static DngCreatureIdMap id_map;
-
-		/**
-		 * Map creatures to u4dos dungeon creature Ids
-		 */
-		if (id_map.size() == 0) {
-			id_map[creatureMgr->getById(RAT_ID)]          = 1;
-			id_map[creatureMgr->getById(BAT_ID)]          = 2;
-			id_map[creatureMgr->getById(GIANT_SPIDER_ID)] = 3;
-			id_map[creatureMgr->getById(GHOST_ID)]        = 4;
-			id_map[creatureMgr->getById(SLIME_ID)]        = 5;
-			id_map[creatureMgr->getById(TROLL_ID)]        = 6;
-			id_map[creatureMgr->getById(GREMLIN_ID)]      = 7;
-			id_map[creatureMgr->getById(MIMIC_ID)]        = 8;
-			id_map[creatureMgr->getById(REAPER_ID)]       = 9;
-			id_map[creatureMgr->getById(INSECT_SWARM_ID)] = 10;
-			id_map[creatureMgr->getById(GAZER_ID)]        = 11;
-			id_map[creatureMgr->getById(PHANTOM_ID)]      = 12;
-			id_map[creatureMgr->getById(ORC_ID)]          = 13;
-			id_map[creatureMgr->getById(SKELETON_ID)]     = 14;
-			id_map[creatureMgr->getById(ROGUE_ID)]        = 15;
-		}
-
-		dngMapFile = g_system->getSavefileManager()->openForSaving("dngmap.sav");
-		if (!dngMapFile) {
-			screenMessage("Error opening dngmap.sav\n");
-			return 0;
-		}
-
-		for (z = 0; z < g_context->_location->_map->_levels; z++) {
-			for (y = 0; y < g_context->_location->_map->_height; y++) {
-				for (x = 0; x < g_context->_location->_map->_width; x++) {
-					unsigned char tile = g_context->_location->_map->translateToRawTileIndex(*g_context->_location->_map->getTileFromData(MapCoords(x, y, z)));
-					Object *obj = g_context->_location->_map->objectAt(MapCoords(x, y, z));
-
-					/**
-					 * Add the creature to the tile
-					 */
-					if (obj && obj->getType() == Object::CREATURE) {
-						const Creature *m = dynamic_cast<Creature *>(obj);
-						DngCreatureIdMap::iterator m_id = id_map.find(m);
-						if (m_id != id_map.end())
-							tile |= m_id->_value;
-					}
-
-					// Write the tile
-					dngMapFile->writeByte(tile);
-				}
-			}
-		}
-
-		delete dngMapFile;
-
-		/**
-		 * Write out monsters
-		 */
-	
-		monstersFile = g_system->getSavefileManager()->openForSaving(
-		                   OUTMONST_SAV_BASE_FILENAME);
-		if (!monstersFile) {
-			screenMessage("Error opening %s\n", OUTMONST_SAV_BASE_FILENAME);
-			return 0;
-		}
-
-		/* fix creature animations so they are compatible with u4dos */
-		g_context->_location->_prev->_map->resetObjectAnimations();
-		g_context->_location->_prev->_map->fillMonsterTable(); /* fill the monster table so we can save it */
-
-		Common::Serializer ser3(nullptr, monstersFile);
-		SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, ser3);
-		delete monstersFile;
-	}
-
-	return 1;
 }
 
 /**
@@ -1171,9 +1034,11 @@ bool GameController::keyPressed(int key) {
 		case 'q':
 			screenMessage("Quit & Save...\n%d moves\n", g_ultima->_saveGame->_moves);
 			if (g_context->_location->_context & CTX_CAN_SAVE_GAME) {
-				gameSave();
-				screenMessage("Press Alt-x to quit\n");
-			} else screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
+				if (g_ultima->saveGameDialog())
+					screenMessage("Press Alt-x to quit\n");
+			} else {
+				screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
+			}
 
 			break;
 

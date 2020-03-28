@@ -22,11 +22,114 @@
 
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/filesys/io.h"
-#include "ultima/ultima4/game/object.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/game/object.h"
+#include "ultima/ultima4/map/location.h"
 
 namespace Ultima {
 namespace Ultima4 {
+
+void SaveGame::save(Common::WriteStream *stream) {
+	Common::Serializer ser(nullptr, stream);
+
+	if (g_context->_location->_prev) {
+		_x = g_context->_location->_coords.x;
+		_y = g_context->_location->_coords.y;
+		_dngLevel = g_context->_location->_coords.z;
+		_dngX = g_context->_location->_prev->_coords.x;
+		_dngY = g_context->_location->_prev->_coords.y;
+	} else {
+		_x = g_context->_location->_coords.x;
+		_y = g_context->_location->_coords.y;
+		_dngLevel = g_context->_location->_coords.z;
+	}
+
+	_location = g_context->_location->_map->_id;
+//	_orientation = (Direction)(g_ultima->_saveGame->_orientation - DIR_WEST);
+
+	synchronize(ser);
+
+	/*
+	 * Save monsters
+	 */
+
+	// fix creature animations. This was done for compatibility with u4dos,
+	// so may be redundant now
+	g_context->_location->_map->resetObjectAnimations();
+	g_context->_location->_map->fillMonsterTable();
+
+	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
+
+	/**
+	 * Write dungeon info
+	 */
+	if (g_context->_location->_context & CTX_DUNGEON) {
+		unsigned int x, y, z;
+
+		typedef Std::map<const Creature *, int, Std::PointerHash> DngCreatureIdMap;
+		static DngCreatureIdMap id_map;
+
+		/**
+		 * Map creatures to u4dos dungeon creature Ids
+		 */
+		if (id_map.size() == 0) {
+			id_map[creatureMgr->getById(RAT_ID)] = 1;
+			id_map[creatureMgr->getById(BAT_ID)] = 2;
+			id_map[creatureMgr->getById(GIANT_SPIDER_ID)] = 3;
+			id_map[creatureMgr->getById(GHOST_ID)] = 4;
+			id_map[creatureMgr->getById(SLIME_ID)] = 5;
+			id_map[creatureMgr->getById(TROLL_ID)] = 6;
+			id_map[creatureMgr->getById(GREMLIN_ID)] = 7;
+			id_map[creatureMgr->getById(MIMIC_ID)] = 8;
+			id_map[creatureMgr->getById(REAPER_ID)] = 9;
+			id_map[creatureMgr->getById(INSECT_SWARM_ID)] = 10;
+			id_map[creatureMgr->getById(GAZER_ID)] = 11;
+			id_map[creatureMgr->getById(PHANTOM_ID)] = 12;
+			id_map[creatureMgr->getById(ORC_ID)] = 13;
+			id_map[creatureMgr->getById(SKELETON_ID)] = 14;
+			id_map[creatureMgr->getById(ROGUE_ID)] = 15;
+		}
+
+		for (z = 0; z < g_context->_location->_map->_levels; z++) {
+			for (y = 0; y < g_context->_location->_map->_height; y++) {
+				for (x = 0; x < g_context->_location->_map->_width; x++) {
+					unsigned char tile = g_context->_location->_map->translateToRawTileIndex(*g_context->_location->_map->getTileFromData(MapCoords(x, y, z)));
+					Object *obj = g_context->_location->_map->objectAt(MapCoords(x, y, z));
+
+					/**
+					 * Add the creature to the tile
+					 */
+					if (obj && obj->getType() == Object::CREATURE) {
+						const Creature *m = dynamic_cast<Creature *>(obj);
+						DngCreatureIdMap::iterator m_id = id_map.find(m);
+						if (m_id != id_map.end())
+							tile |= m_id->_value;
+					}
+
+					// Write the tile
+					stream->writeByte(tile);
+				}
+			}
+		}
+
+
+		/**
+		 * Write out monsters
+		 */
+
+		// fix creature animations so they are compatible with u4dos.
+		// This may be redundant now for ScummVM
+		g_context->_location->_prev->_map->resetObjectAnimations();
+		g_context->_location->_prev->_map->fillMonsterTable(); /* fill the monster table so we can save it */
+
+		SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, ser);
+	}
+}
+
+void SaveGame::load(Common::SeekableReadStream *stream) {
+
+}
 
 void SaveGame::synchronize(Common::Serializer &s) {
 	int i;
@@ -180,6 +283,12 @@ void SaveGamePlayerRecord::init() {
 
 void SaveGameMonsterRecord::synchronize(SaveGameMonsterRecord *monsterTable, Common::Serializer &s) {
 	int i;
+	const uint32 IDENT = MKTAG('M', 'O', 'N', 'S');
+	uint32 val = IDENT;
+
+	s.syncAsUint32BE(val);
+	if (s.isLoading() && val != IDENT)
+		error("Invalid savegame");
 
 	if (s.isSaving() && !monsterTable) {
 		int dataSize = MONSTERTABLE_SIZE * 8;
