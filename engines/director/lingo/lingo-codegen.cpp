@@ -160,6 +160,14 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 					res += Common::String::format(" %s", field2str(v));
 					break;
 				}
+			case 'N':
+				{
+					i = (*sd)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" \"%s\"", getName(v).c_str());
+					break;
+				}
 			default:
 				warning("decodeInstruction: Unknown parameter type: %c", pars[-1]);
 			}

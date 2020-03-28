@@ -138,7 +138,7 @@ static struct FuncDescr {
 	{ LC::c_wordOf,			"c_wordOf",			"" },	// D3
 	{ LC::c_wordToOf,		"c_wordToOf",		"" },	// D3
 	{ LC::c_xpop,			"c_xpop",			""  },
-	{ LC::cb_call,			"cb_call",			"i" },
+	{ LC::cb_call,			"cb_call",			"N" },
 	{ LC::cb_field,			"cb_field",			"" },
 	{ LC::cb_globalassign,	"cb_globalassign",	"i" },
 	{ LC::cb_globalpush,	"cb_globalpush",	"i" },
