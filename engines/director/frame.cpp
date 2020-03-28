@@ -270,7 +270,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		if (_vm->getVersion() <= 4) {
 			sprite._scriptId = stream->readByte();
 			sprite._spriteType = stream->readByte();
-			sprite._enabled = sprite._spriteType != 0;
+			sprite._enabled = sprite._spriteType != kInactiveSprite;
 			if (_vm->getVersion() == 4) {
 				sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
 				sprite._backColor = _vm->transformColor((uint8)stream->readByte());
