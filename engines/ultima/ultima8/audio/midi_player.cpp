@@ -23,8 +23,6 @@
 #include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/ultima8.h"
 #include "audio/midiparser.h"
-#include "audio/miles.h"
-#include "common/config-manager.h"
 
 namespace Ultima {
 namespace Ultima8 {

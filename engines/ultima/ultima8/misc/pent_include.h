@@ -23,8 +23,6 @@
 #ifndef ULTIMA8_MISC_PENT_INCLUDE_H
 #define ULTIMA8_MISC_PENT_INCLUDE_H
 
-#define PENTAGRAM_NEW
-
 //
 // Common/base types
 //
@@ -123,44 +121,6 @@ void setAllocationFunctions(allocFunc a, deallocFunc d);
 	void Classname::operator delete(void * ptr) {                       \
 		pfree(ptr);                                          \
 	}
-
-//
-// Precompiled Header Support
-//
-#ifdef USE_PRECOMPILED_HEADER
-
-// C Standard Library and STL
-#include <fstream>
-#include <cstdio>
-#include "ultima/shared/std/containers.h"
-
-// Useful Pentagram headers
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/kernel/object.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/container.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-#include "ultima/ultima8/graphics/shape_archive.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/usecode/usecode.h"
-#include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/usecode/uc_process.h"
-#endif
 
 } // End of namespace Ultima8
 } // End of namespace Ultima
