@@ -44,10 +44,6 @@ public:
 		return _fileSystem;
 	}
 
-	//! Get the current users pentagram home path
-	//! \returns ~/.pentagram or equivilant
-	static Std::string getHomePath();
-
 	//! Open a file as readable. Streamed.
 	//! \param vfn the (virtual) filename
 	//! \param is_text open in text mode?

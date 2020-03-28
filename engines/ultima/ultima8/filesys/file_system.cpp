@@ -307,14 +307,5 @@ bool FileSystem::MkDir(const string &path) {
 	return newDir.createDirectory();
 }
 
-/*
- *  Get the current users pentagram home path
- */
-
-Std::string FileSystem::getHomePath() {
-	Common::FSNode gameDir = Ultima8Engine::get_instance()->getGameDirectory();
-	return gameDir.getPath();
-}
-
 } // End of namespace Ultima8
 } // End of namespace Ultima

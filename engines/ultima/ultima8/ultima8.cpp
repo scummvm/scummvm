@@ -549,14 +549,9 @@ void Ultima8Engine::paint() {
 	prev = now;
 	++t;
 
-	_painting = true;
-
 	// Begin _painting
+	_painting = true;
 	_screen->BeginPainting();
-
-	// We need to get the dims
-	Rect dims;
-	_screen->GetSurfaceDims(dims);
 
 	tpaint -= g_system->getMillis();
 	_desktopGump->Paint(_screen, _lerpFactor, false);
@@ -567,7 +562,6 @@ void Ultima8Engine::paint() {
 
 	// End _painting
 	_screen->EndPainting();
-
 	_painting = false;
 }
 
@@ -580,18 +574,6 @@ void Ultima8Engine::GraphicSysInit() {
 	_settingMan->get("width", width);
 	_settingMan->get("height", height);
 	_settingMan->get("bpp", bpp);
-
-#ifdef UNDER_CE
-	width = 240;
-	height = 320;
-#endif
-
-#if 0
-	// store values in user's config file
-	_settingMan->set("width", width);
-	_settingMan->set("height", height);
-	_settingMan->set("bpp", bpp);
-#endif
 
 	if (_screen) {
 		Rect old_dims;

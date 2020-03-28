@@ -28,12 +28,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-template<class T> T to_uppercase(const T s) {
-	T str = s;
-	str.toUppercase();
-	return str;
-}
-
 template<class T> void StringToArgv(const T &args, Std::vector<T> &argv) {
 	// Clear the vector
 	argv.clear();

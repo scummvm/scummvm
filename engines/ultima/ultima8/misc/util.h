@@ -30,8 +30,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-template<class T> T to_uppercase(const T s);
-
 template<class T> void StringToArgv(const T &args, Std::vector<T> &argv);
 template<class T> void ArgvToString(const Std::vector<T> &argv, T &args);
 

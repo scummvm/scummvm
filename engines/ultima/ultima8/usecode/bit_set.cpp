@@ -45,7 +45,6 @@ void BitSet::setSize(unsigned int size) {
 	if (_data) delete[] _data;
 
 	_size = size;
-	_bytes = 0;
 	_bytes = _size / 8;
 	if (_size % 8 != 0) _bytes++;
 
