@@ -105,6 +105,7 @@ void DirectorSound::playWAV(Common::String filename, uint8 soundChannel) {
 
 	Audio::RewindableAudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 
+	_mixer->stopHandle(*_channels[soundChannel - 1]);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, _channels[soundChannel - 1], sound);
 }
 
@@ -124,6 +125,7 @@ void DirectorSound::playAIFF(Common::String filename, uint8 soundChannel) {
 
 	Audio::RewindableAudioStream *sound = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
 
+	_mixer->stopHandle(*_channels[soundChannel - 1]);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, _channels[soundChannel - 1], sound);
 }
 
@@ -131,6 +133,7 @@ void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) 
 	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(&stream);
 	Audio::SubSeekableAudioStream *subSeekStream = new Audio::SubSeekableAudioStream(seekStream, Audio::Timestamp(from, seekStream->getRate()), Audio::Timestamp(to, seekStream->getRate()));
 
+	_mixer->stopHandle(*_scriptSound);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, _scriptSound, subSeekStream);
 }
 
@@ -145,6 +148,7 @@ void DirectorSound::playStream(Audio::SeekableAudioStream &stream, uint8 soundCh
 		return;
 	}
 
+	_mixer->stopHandle(*_channels[soundChannel - 1]);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, _channels[soundChannel - 1], &stream);
 }
 
