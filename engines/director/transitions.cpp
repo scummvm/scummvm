@@ -252,7 +252,6 @@ static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect
 	int w = clipRect.width();
 	int h = clipRect.height();
 	int m = MIN(w, h);
-	TransitionDirection d = transProps[t.type].dir;
 	TransitionAlgo a = transProps[t.type].algo;
 
 	if (a == kTransAlgoCenterOut || a == kTransAlgoEdgesIn) {
@@ -260,17 +259,33 @@ static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect
 		h = (h + 1) >> 1;
 	}
 
-	t.steps = m / t.chunkSize;
-	t.stepDuration = t.duration / t.steps;
-
-	if (d == kTransDirHorizontal || d == kTransDirBoth) {
+	switch (transProps[t.type].dir) {
+	case kTransDirHorizontal:
+		t.steps = w / t.chunkSize;
 		t.xStepSize = w / t.steps;
 		t.xpos = w % t.steps;
-	}
-	if (d == kTransDirVertical || d == kTransDirBoth) {
+		break;
+
+	case kTransDirVertical:
+		t.steps = h / t.chunkSize;
 		t.yStepSize = h / t.steps;
 		t.ypos = h % t.steps;
+		break;
+
+	case kTransDirBoth:
+		t.steps = m / t.chunkSize;
+
+		t.xStepSize = w / t.steps;
+		t.xpos = w % t.steps;
+		t.yStepSize = h / t.steps;
+		t.ypos = h % t.steps;
+		break;
+
+	default:
+		t.steps = 1;
 	}
+
+	t.stepDuration = t.duration / t.steps;
 }
 
 static int getLog2(int n) {
