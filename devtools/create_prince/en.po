@@ -12089,6 +12089,46 @@ msgstr "Dragon's Lair  - "
 msgid "Młyn - "
 msgstr "The Mill - "
 
+#: mob.lst:51001
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51002
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51003
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51004
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51005
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51006
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51007
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51008
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51009
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51010
+msgid " - "
+msgstr " - "
+
 #: mob.lst:52001
 msgid "dźwignia - "
 msgstr "lever - "
@@ -12100,6 +12140,14 @@ msgstr "button - "
 #: mob.lst:52003
 msgid "powrót - "
 msgstr "exit - "
+
+#: mob.lst:52004
+msgid "powrót - "
+msgstr "exit - "
+
+#: mob.lst:58001
+msgid " - "
+msgstr " - "
 
 #: variatxt.txt:9
 msgid "Nie mogę tego wząć."
