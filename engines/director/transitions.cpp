@@ -327,12 +327,19 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			if (x < w && y < h) {
 				uint32 color = *(uint32 *)score->_surface->getBasePtr(x, y);
 				*(uint32 *)score->_backSurface->getBasePtr(0, 0) = color;
-				g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, x, y, 2, 2);
+				g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, x, y, 1, 1);
 			}
 
 			rnd = (rnd & 1) ? (rnd >> 1) ^ seed : rnd >> 1;
 
 			if (pixPerStep > 0) {
+				if (pixPerStep % 10000 == 0) {
+					g_system->delayMillis(10);
+					if (processQuitEvent(true))
+						break;
+
+					g_system->updateScreen();
+				}
 				if (--pixPerStep == 0) {
 					break;
 				}
