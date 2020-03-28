@@ -12151,7 +12151,7 @@ msgstr " - "
 
 #: variatxt.txt:9
 msgid "Nie mogę tego wząć."
-msgstr "I cannot take it."
+msgstr "I cannot pick it up."
 
 #: variatxt.txt:10
 msgid "Nie mogę tego użyć."
