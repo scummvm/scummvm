@@ -71,6 +71,7 @@ Score::Score(DirectorEngine *vm) {
 	_surface = nullptr;
 	_trailSurface = nullptr;
 	_backSurface = nullptr;
+	_backSurface2 = nullptr;
 	_lingo = _vm->getLingo();
 	_soundManager = _vm->getSoundManager();
 	_currentMouseDownSpriteId = 0;
@@ -421,7 +422,11 @@ Score::~Score() {
 	if (_backSurface && _backSurface->w)
 		_backSurface->free();
 
+	if (_backSurface2 && _backSurface2->w)
+		_backSurface2->free();
+
 	delete _backSurface;
+	delete _backSurface2;
 	delete _surface;
 	delete _trailSurface;
 
@@ -1440,10 +1445,12 @@ void Score::startLoop() {
 	_surface = new Graphics::ManagedSurface;
 	_trailSurface = new Graphics::ManagedSurface;
 	_backSurface = new Graphics::ManagedSurface;
+	_backSurface2 = new Graphics::ManagedSurface;
 
 	_surface->create(_movieRect.width(), _movieRect.height());
 	_trailSurface->create(_movieRect.width(), _movieRect.height());
 	_backSurface->create(_movieRect.width(), _movieRect.height());
+	_backSurface2->create(_movieRect.width(), _movieRect.height());
 
 	g_director->_wm->setScreen(_surface);
 
@@ -1525,6 +1532,9 @@ void Score::update() {
 	}
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
+
+	if (_frames[_currentFrame]->_transType != 0)	// Store screen, so we could draw a nice transition
+		_backSurface2->copyFrom(*_surface);
 
 	_surface->clear(_stageColor);
 	_surface->copyFrom(*_trailSurface);

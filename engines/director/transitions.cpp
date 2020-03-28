@@ -304,6 +304,9 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 	if (hBits <= 0 || vBits <= 0)
 		return;
 
+	// Get previous frame
+	score->_backSurface->copyFrom(*score->_backSurface2);
+
 	rnd = seed = randomSeed[hBits + vBits];
 	int hMask = (1L << hBits) - 1;
 	int vShift = hBits;
@@ -318,6 +321,8 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 	}
 	t.steps++;
 
+	Common::Rect r(1, 1);
+
 	while (t.steps) {
 		uint32 pixPerStep = pixPerStepInit;
 		do {
@@ -325,9 +330,8 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			uint32 y = rnd >> vShift;
 
 			if (x < w && y < h) {
-				uint32 color = *(uint32 *)score->_surface->getBasePtr(x, y);
-				*(uint32 *)score->_backSurface->getBasePtr(0, 0) = color;
-				g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, x, y, 1, 1);
+				r.moveTo(x, y);
+				score->_backSurface->copyRectToSurface(*score->_surface, x, y, r);
 			}
 
 			rnd = (rnd & 1) ? (rnd >> 1) ^ seed : rnd >> 1;
@@ -339,9 +343,10 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			}
 		} while (rnd != seed);
 
-		uint32 color = *(uint32 *)score->_surface->getBasePtr(0, 0);
-		*(uint32 *)score->_backSurface->getBasePtr(0, 0) = color;
-		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, 1, 1);
+		r.moveTo(0, 0);
+		score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
+
+		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, score->_backSurface->w, score->_backSurface->h);
 
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))

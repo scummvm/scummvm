@@ -135,6 +135,7 @@ public:
 	Graphics::ManagedSurface *_surface;
 	Graphics::ManagedSurface *_trailSurface;
 	Graphics::ManagedSurface *_backSurface;
+	Graphics::ManagedSurface *_backSurface2;
 	Graphics::Font *_font;
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
