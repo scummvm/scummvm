@@ -338,8 +338,12 @@ SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 	return saveList;
 }
 
-void MetaEngine::registerDefaultSettings(const Common::String &target) const {
-	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);
+void MetaEngine::registerDefaultSettings(const Common::String &) const {
+	// Note that as we don't pass the target to getExtraGuiOptions
+	//  we get all the options, even those not relevant for the current
+	//  game. This is necessary because some engines unconditionally
+	//  access the configuration.
+	const ExtraGuiOptions engineOptions = getExtraGuiOptions("");
 	for (uint i = 0; i < engineOptions.size(); i++) {
 		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
 	}
