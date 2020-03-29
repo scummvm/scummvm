@@ -1030,6 +1030,14 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 			break;
 	}
 
+	bool *scriptRefs = (bool *)calloc(_actions.size() + 1, sizeof(int));
+
+	// Now let's scan which scripts are actually referenced
+	for (int i = 0; i < _frames.size(); i++) {
+		if (_frames[i]->_actionId <= _actions.size())
+			scriptRefs[_frames[i]->_actionId] = true;
+	}
+
 	Common::HashMap<uint16, Common::String>::iterator j;
 
 	if (ConfMan.getBool("dump_scripts"))
@@ -1038,12 +1046,19 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 				dumpScript(j->_value.c_str(), kFrameScript, j->_key);
 		}
 
-	for (j = _actions.begin(); j != _actions.end(); ++j)
+	for (j = _actions.begin(); j != _actions.end(); ++j) {
+		if (!scriptRefs[j->_key]) {
+			warning("Action id %d is not referenced, skipping", j->_key);
+			continue;
+		}
 		if (!j->_value.empty()) {
 			_lingo->addCode(j->_value.c_str(), kFrameScript, j->_key);
 
 			processImmediateFrameScript(j->_value, j->_key);
 		}
+	}
+
+	free(scriptRefs);
 }
 
 bool Score::processImmediateFrameScript(Common::String s, int id) {
