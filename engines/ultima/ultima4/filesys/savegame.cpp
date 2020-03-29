@@ -22,39 +22,38 @@
 
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/filesys/io.h"
-#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/item.h"
 #include "ultima/ultima4/game/object.h"
+#include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/game/spell.h"
+#include "ultima/ultima4/game/stats.h"
 #include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/mapmgr.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-void SaveGame::saveNew(Common::WriteStream *stream) {
-	Common::Serializer ser(nullptr, stream);
-
-	synchronize(ser);
-
-	SaveGameMonsterRecord::synchronize(nullptr, ser);
-}
-
 void SaveGame::save(Common::WriteStream *stream) {
 	Common::Serializer ser(nullptr, stream);
 
-	if (g_context->_location->_prev) {
-		_x = g_context->_location->_coords.x;
-		_y = g_context->_location->_coords.y;
-		_dngLevel = g_context->_location->_coords.z;
-		_dngX = g_context->_location->_prev->_coords.x;
-		_dngY = g_context->_location->_prev->_coords.y;
-	} else {
-		_x = g_context->_location->_coords.x;
-		_y = g_context->_location->_coords.y;
-		_dngLevel = g_context->_location->_coords.z;
-	}
+	if (g_context->_location) {
+		if (g_context->_location->_prev) {
+			_x = g_context->_location->_coords.x;
+			_y = g_context->_location->_coords.y;
+			_dngLevel = g_context->_location->_coords.z;
+			_dngX = g_context->_location->_prev->_coords.x;
+			_dngY = g_context->_location->_prev->_coords.y;
+		} else {
+			_x = g_context->_location->_coords.x;
+			_y = g_context->_location->_coords.y;
+			_dngLevel = g_context->_location->_coords.z;
+		}
 
-	_location = g_context->_location->_map->_id;
-//	_orientation = (Direction)(g_ultima->_saveGame->_orientation - DIR_WEST);
+		_location = g_context->_location->_map->_id;
+	}
 
 	synchronize(ser);
 
@@ -62,17 +61,21 @@ void SaveGame::save(Common::WriteStream *stream) {
 	 * Save monsters
 	 */
 
-	// fix creature animations. This was done for compatibility with u4dos,
-	// so may be redundant now
-	g_context->_location->_map->resetObjectAnimations();
-	g_context->_location->_map->fillMonsterTable();
+	if (g_context->_location) {
+		// fix creature animations. This was done for compatibility with u4dos,
+		// so may be redundant now
+		g_context->_location->_map->resetObjectAnimations();
+		g_context->_location->_map->fillMonsterTable();
 
-	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
+		SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
+	} else {
+		SaveGameMonsterRecord::synchronize(nullptr, ser);
+	}
 
 	/**
 	 * Write dungeon info
 	 */
-	if (g_context->_location->_context & CTX_DUNGEON) {
+	if (g_context->_location && g_context->_location->_context & CTX_DUNGEON) {
 		unsigned int x, y, z;
 
 		typedef Std::map<const Creature *, int, Std::PointerHash> DngCreatureIdMap;
@@ -136,7 +139,70 @@ void SaveGame::save(Common::WriteStream *stream) {
 }
 
 void SaveGame::load(Common::SeekableReadStream *stream) {
+	Common::Serializer ser(stream, nullptr);
+	synchronize(ser);
 
+	// initialize our party
+	if (g_context->_party) {
+		g_context->_party->deleteObserver(g_game);
+	}
+	g_context->_party = new Party(this);
+	g_context->_party->addObserver(g_game);
+
+	// set the map to the world map
+	g_game->setMap(mapMgr->get(MAP_WORLD), 0, NULL);
+	g_context->_location->_map->clearObjects();
+
+	// initialize our start location
+	Map *map = mapMgr->get(MapId(_location));
+
+	// if our map is not the world map, then load our map
+	if (map->_type != Map::WORLD)
+		g_game->setMap(map, 1, NULL);
+	else
+		// initialize the moons (must be done from the world map)
+		g_game->initMoons();
+
+
+	/**
+	 * Translate info from the savegame to something we can use
+	 */
+	if (g_context->_location->_prev) {
+		g_context->_location->_coords = MapCoords(_x, _y, _dngLevel);
+		g_context->_location->_prev->_coords = MapCoords(_dngX, _dngY);
+	} else {
+		g_context->_location->_coords = MapCoords(_x, _y, (int)_dngLevel);
+	}
+
+	/**
+	 * Fix the coordinates if they're out of bounds.  This happens every
+	 * time on the world map because (z == -1) is no longer valid.
+	 * To maintain compatibility with u4dos, this value gets translated
+	 * when the game is saved and loaded
+	 */
+	if (MAP_IS_OOB(g_context->_location->_map, g_context->_location->_coords))
+		g_context->_location->_coords.putInBounds(g_context->_location->_map);
+
+	/* load in creatures.sav */
+	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
+	gameFixupObjects(g_context->_location->_map);
+
+	/* we have previous creature information as well, load it! */
+	if (g_context->_location->_prev) {
+		SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, ser);
+		gameFixupObjects(g_context->_location->_prev->_map);
+	}
+
+	spellSetEffectCallback(&gameSpellEffect);
+	itemSetDestroyAllCreaturesCallback(&gameDestroyAllCreatures);
+
+	g_context->_stats->resetReagentsMenu();
+
+	/* add some observers */
+	g_context->_aura->addObserver(g_context->_stats);
+	g_context->_party->addObserver(g_context->_stats);
+
+	g_game->initScreenWithoutReloadingState();
 }
 
 void SaveGame::synchronize(Common::Serializer &s) {

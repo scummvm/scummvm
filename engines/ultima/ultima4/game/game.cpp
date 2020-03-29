@@ -113,8 +113,6 @@ void ztatsFor(int player = -1);
 void gameLordBritishCheckLevels(void);
 
 /* creature functions */
-void gameDestroyAllCreatures(void);
-void gameFixupObjects(Map *map);
 void gameCreatureAttack(Creature *obj);
 
 /* Functions END */
@@ -242,84 +240,6 @@ void GameController::init() {
 	g_context->_opacity = 1;
 	g_context->_lastCommandTime = g_system->getMillis();
 	g_context->_lastShip = NULL;
-
-	/* load in the save game */
-	saveGameFile = g_system->getSavefileManager()->openForLoading(
-		g_ultima->getSaveStateName(1));
-	assert(saveGameFile);
-	
-	Common::Serializer ser(saveGameFile, nullptr);
-	g_ultima->_saveGame->synchronize(ser);
-
-	/* initialize our party */
-	g_context->_party = new Party(g_ultima->_saveGame);
-	g_context->_party->addObserver(this);
-
-	/* set the map to the world map by default */
-	setMap(mapMgr->get(MAP_WORLD), 0, NULL);
-	g_context->_location->_map->clearObjects();
-
-	/* initialize our start location */
-	Map *map = mapMgr->get(MapId(g_ultima->_saveGame->_location));
-	TRACE_LOCAL(gameDbg, "Initializing start location.");
-
-	/* if our map is not the world map, then load our map */
-	if (map->_type != Map::WORLD)
-		setMap(map, 1, NULL);
-	else
-		/* initialize the moons (must be done from the world map) */
-		initMoons();
-
-
-	/**
-	 * Translate info from the savegame to something we can use
-	 */
-	if (g_context->_location->_prev) {
-		g_context->_location->_coords = MapCoords(g_ultima->_saveGame->_x, g_ultima->_saveGame->_y, g_ultima->_saveGame->_dngLevel);
-		g_context->_location->_prev->_coords = MapCoords(g_ultima->_saveGame->_dngX, g_ultima->_saveGame->_dngY);
-	} else g_context->_location->_coords = MapCoords(g_ultima->_saveGame->_x, g_ultima->_saveGame->_y, (int)g_ultima->_saveGame->_dngLevel);
-	g_ultima->_saveGame->_orientation = (Direction)(g_ultima->_saveGame->_orientation + DIR_WEST);
-
-	/**
-	 * Fix the coordinates if they're out of bounds.  This happens every
-	 * time on the world map because (z == -1) is no longer valid.
-	 * To maintain compatibility with u4dos, this value gets translated
-	 * when the game is saved and loaded
-	 */
-	if (MAP_IS_OOB(g_context->_location->_map, g_context->_location->_coords))
-		g_context->_location->_coords.putInBounds(g_context->_location->_map);
-
-	/* load in creatures.sav */
-	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
-	gameFixupObjects(g_context->_location->_map);
-
-	/* we have previous creature information as well, load it! */
-	if (g_context->_location->_prev) {
-		monstersFile = g_system->getSavefileManager()->openForLoading(OUTMONST_SAV_BASE_FILENAME);
-		if (monstersFile) {
-			Common::Serializer ser(monstersFile, nullptr);
-			SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, ser);
-			delete monstersFile;
-		}
-		gameFixupObjects(g_context->_location->_prev->_map);
-	}
-
-	spellSetEffectCallback(&gameSpellEffect);
-	itemSetDestroyAllCreaturesCallback(&gameDestroyAllCreatures);
-
-	TRACE_LOCAL(gameDbg, "Settings up reagent menu.");
-	g_context->_stats->resetReagentsMenu();
-
-	/* add some observers */
-	g_context->_aura->addObserver(g_context->_stats);
-	g_context->_party->addObserver(g_context->_stats);
-#ifdef IOS
-	c->aura->addObserver(U4IOS::IOSObserver::sharedInstance());
-	c->party->addObserver(U4IOS::IOSObserver::sharedInstance());
-#endif
-
-	initScreenWithoutReloadingState();
-	TRACE(gameDbg, "gameInit() completed successfully.");
 }
 
 /**

@@ -110,22 +110,20 @@ void Ultima4Engine::startup() {
 		eventHandler->popController();
 		intro->deleteIntro();
 	}
+//	saveGameState(1, "Desc"); ///****DEBUG****
 }
 
 Common::Error Ultima4Engine::run() {
 	if (initialize()) {
 		startup();
 		if (!shouldQuit()) {
-			// ***DEBUG****
-			saveGameState(1, "Desc");
-
 			g_game->init();
-			/*
+
 			if (_saveSlotToLoad != -1) {
 				if (loadGameState(_saveSlotToLoad).getCode() != Common::kNoError)
 					error("Error loading save");
 			}
-			*/
+
 			eventHandler->setControllerDone(false);
 			eventHandler->pushController(g_game);
 			eventHandler->run();
@@ -164,19 +162,12 @@ Common::Error Ultima4Engine::saveGameState(int slot, const Common::String &desc,
 
 
 Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) {
-	Common::Serializer ser(stream, nullptr);
-	g_ultima->_saveGame->synchronize(ser);
-
+	g_ultima->_saveGame->load(stream);
 	return Common::kNoError;
 }
 
 Common::Error Ultima4Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	if (g_context->_location)
-		g_ultima->_saveGame->save(stream);
-	else
-		// DEBUG: For getting savegames before the game starts
-		g_ultima->_saveGame->saveNew(stream);
-
+	g_ultima->_saveGame->save(stream);
 	return Common::kNoError;
 }
 

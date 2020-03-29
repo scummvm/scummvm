@@ -181,6 +181,8 @@ void gameCheckHullIntegrity(void);
 bool creatureRangeAttack(const Coords &coords, Creature *m);
 void gameCreatureCleanup(void);
 bool gameSpawnCreature(const class Creature *m);
+void gameFixupObjects(Map *map);
+void gameDestroyAllCreatures(void);
 
 /* etc */
 Common::String gameGetInput(int maxlen = 32);
