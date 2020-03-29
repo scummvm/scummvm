@@ -94,6 +94,9 @@ public:
 
 	void                        SetShape(FrameID frame, bool adjustsize = false);
 
+	//! Update the width/height to match the gump's current shape frame
+	void 						UpdateDimsFromShape();
+
 	//! Set the Gump's frame
 	inline void                 Set_frameNum(uint32 frameNum) {
 		_frameNum = frameNum;

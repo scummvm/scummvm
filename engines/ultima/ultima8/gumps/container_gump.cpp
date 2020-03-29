@@ -66,11 +66,7 @@ ContainerGump::~ContainerGump() {
 }
 
 void ContainerGump::InitGump(Gump *newparent, bool take_focus) {
-	const ShapeFrame *sf = _shape->getFrame(_frameNum);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 
 	// Wait with ItemRelativeGump initialization until we calculated our size.
 	ItemRelativeGump::InitGump(newparent, take_focus);

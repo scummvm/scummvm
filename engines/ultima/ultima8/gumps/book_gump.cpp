@@ -73,12 +73,7 @@ void BookGump::InitGump(Gump *newparent, bool take_focus) {
 	Shape *shapeP = GameData::get_instance()->getGumps()->getShape(6);
 
 	SetShape(shapeP, 0);
-
-	const ShapeFrame *sf = shapeP->getFrame(0);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 }
 
 void BookGump::NextText() {

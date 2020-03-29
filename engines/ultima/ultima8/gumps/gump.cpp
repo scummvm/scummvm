@@ -82,12 +82,16 @@ void Gump::SetShape(FrameID frame, bool adjustsize) {
 	_frameNum = frame._frameNum;
 
 	if (adjustsize && _shape) {
-		const ShapeFrame *sf = _shape->getFrame(_frameNum);
-		_dims.w = sf->_width;
-		_dims.h = sf->_height;
+		UpdateDimsFromShape();
 	}
 }
 
+void Gump::UpdateDimsFromShape() {
+	const ShapeFrame *sf = _shape->getFrame(_frameNum);
+	assert(sf);
+	_dims.w = sf->_width;
+	_dims.h = sf->_height;
+}
 
 void Gump::CreateNotifier() {
 	assert(_notifier == 0);

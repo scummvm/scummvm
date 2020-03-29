@@ -108,15 +108,11 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
-	const ShapeFrame *sf = _shape->getFrame(0);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 
 	Shape *logoShape;
 	logoShape = GameData::get_instance()->getGumps()->getShape(paganShape);
-	sf = logoShape->getFrame(0);
+	const ShapeFrame *sf = logoShape->getFrame(0);
 	assert(sf);
 
 	Gump *logo = new Gump(42, 10, sf->_width, sf->_height);
