@@ -153,6 +153,8 @@ namespace LC {
 	void cb_localcall();
 	void cb_methodcall();
 	void cb_objectpush();
+	void cb_stackpeek();
+	void cb_stackdrop();
 	void cb_varassign();
 	void cb_varpush();
 	void cb_v4assign();

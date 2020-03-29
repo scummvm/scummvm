@@ -358,6 +358,7 @@ public:
 public:
 	void push(Datum d);
 	Datum pop(void);
+	Datum peek(uint offset);
 
 public:
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;

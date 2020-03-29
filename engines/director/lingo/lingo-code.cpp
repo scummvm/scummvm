@@ -188,6 +188,13 @@ Datum Lingo::pop(void) {
 	return ret;
 }
 
+Datum Lingo::peek(uint offset) {
+	assert (_stack.size() > offset);
+
+	Datum ret = _stack[_stack.size() - 1 - offset];
+	return ret;
+}
+
 void LC::c_xpop() {
 	g_lingo->pop();
 }
