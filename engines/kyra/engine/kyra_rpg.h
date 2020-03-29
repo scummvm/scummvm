@@ -130,6 +130,29 @@ struct KyraRpgGUISettings {
 		uint8 guiColorDarkGreen;
 		uint8 guiColorBlack;
 	} colors;
+
+	struct CharacterBoxCoords {
+		int16 boxX[3];
+		int16 boxY[3];
+		uint8 boxWidth;
+		uint8 boxHeight;
+		int16 facePosX_1[3];
+		int16 facePosY_1[3];
+		int16 facePosX_2[3];
+		int16 facePosY_2[3];
+		int16 weaponSlotX[3];
+		int16 weaponSlotY[6];
+		int16 hpBarX_1[3];
+		int16 hpBarY_1[3];
+		uint8 hpBarWidth_1;
+		uint8 hpBarHeight_1;
+		int16 hpFoodBarX_2[3];
+		int16 hpFoodBarY_2[3];
+		uint8 hpFoodBarWidth_2;
+		uint8 hpFoodBarHeight_2;
+		int16 redSplatOffsetX;
+		int16 redSplatOffsetY;
+	} charBoxCoords;
 };
 
 class KyraRpgEngine : public KyraEngine_v1 {
@@ -197,10 +220,6 @@ protected:
 	// Level
 	virtual void addLevelItems() = 0;
 	virtual void loadBlockProperties(const char *file) = 0;
-
-	virtual void drawScene(int pageNum) = 0;
-	virtual void drawSceneShapes(int start) = 0;
-	virtual void drawDecorations(int index) = 0;
 
 	virtual const uint8 *getBlockFileData(int levelIndex) = 0;
 	void setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim);

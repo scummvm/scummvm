@@ -1149,6 +1149,7 @@ void EoBCoreEngine::initSpells() {
 }
 
 void EoBEngine::initStaticResource() {
+	bool bigEndian = (_flags.platform == Common::kPlatformAmiga || _flags.platform == Common::kPlatformSegaCD);
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEoB1MainMenuStrings, temp);
 	_finBonusStrings = _staticres->loadStrings(kEoB1BonusStrings, temp);
@@ -1217,9 +1218,9 @@ void EoBEngine::initStaticResource() {
 		p->dmgDc[2].base = (int8)*ps++;
 		ps++;
 		p->capsFlags = *ps++;
-		p->typeFlags = (_flags.platform == Common::kPlatformAmiga) ? READ_BE_UINT32(++ps) : READ_LE_UINT32(ps);
+		p->typeFlags = bigEndian ? READ_BE_UINT32(++ps) : READ_LE_UINT32(ps);
 		ps += 4;
-		p->experience = (_flags.platform == Common::kPlatformAmiga) ? READ_BE_UINT16(ps) : READ_LE_UINT16(ps);
+		p->experience = bigEndian ? READ_BE_UINT16(ps) : READ_LE_UINT16(ps);
 		ps += 2;
 		p->u30 = *ps++;
 		p->sound1 = (int8)*ps++;
@@ -1240,6 +1241,12 @@ void EoBEngine::initStaticResource() {
 		SoundResourceInfo_PC finale(files, temp);
 		_sound->initAudioResourceInfo(kMusicFinale, &finale);
 	}
+
+	_addrTbl1 = _staticres->loadRawDataBe16(kEoB1PatternAddTable1, temp);
+	_textFieldPattern = _staticres->loadRawDataBe16(kEoB1PatternAddTable2, temp);
+	_playFldPattern1 = _staticres->loadRawDataBe16(kEoB1PatternTable0, temp);
+	_invPattern = _staticres->loadRawDataBe16(kEoB1PatternTable3, temp);
+	_statsPattern = _staticres->loadRawDataBe16(kEoB1PatternTable4, temp);
 
 	// Build offset tables for door shapes encoding
 	if (_flags.platform == Common::kPlatformSegaCD) {
@@ -1379,27 +1386,78 @@ void EoBEngine::initSpells() {
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
 	{ 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 135, 130, 132, 180, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ 135, 130, 132, 180, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
 	{ 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsPC98 = {
 	{ 9, 15, 95, 11, 1, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmiga = {
 	{ 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 18, 17, 10, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
+	{ 18, 17, 10, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmigaMainMenu = {
 	{ 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 22, 28, 30, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
+	{ 22, 28, 30, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
+};
+
+const KyraRpgGUISettings EoBEngine::_guiSettingsSegaCD = {
+	{ 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 135, 130, 132, 180, 0x00, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 0x31, 9, 2, 0x35, 4, 0x33, 12 },
+	{	{ 184, 256, -1}, { 1, 57, 113 }, 64, 55,
+		{ 8, 80, -1 }, { 16, 72, 128 }, { 184, -1, -1 }, { 8, -1, -1 },
+		{ 40, 112, -1 }, { 16, 32, 72, 88, 128, 146 },
+		{ 24, 96, -1}, { 51, 107, 163 }, 40, 2, { 248, 248, -1}, { 19, 27, -1 }, 47, 2,
+		16, 39
+	}
+
+};
+
+const uint8 EoBEngine::_redGridTile[8] = {
+	0x1C, 0x1C, 0x1C, 0x1C, 0xC1, 0xC1, 0xC1, 0xC1
+};
+
+const int8 EoBEngine::_sceneShakeOffsets[66] = {
+	0, 0, -1, -1, -1, 1, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -2, -2, -2, 2, 2, 2, 2, -2, -2, -2, -2, 2, 2, 2, 2,
+	-2, -2, -2, -2, 2, 2, 2, 2, -2, -3, -3, -3, 3, 3, 3, 3, -3, -3, -3, -3, 3, 3, 3, 3, -3, -3, -3, -3, 3, 3, 3, 3, -3
 };
 
 const uint8 EoBEngine::_egaDefaultPalette[] = {
@@ -1597,17 +1655,35 @@ void DarkMoonEngine::initSpells() {
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
 	{ 9, 15, 95, 11, 1, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
-	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
 	{ 9, 15, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
-	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsAmiga = {
 	{ 28, 31, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
-	{ 18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
+	{ 18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const uint8 DarkMoonEngine::_egaDefaultPalette[] = {

@@ -220,6 +220,7 @@ bool SegaSequencePlayer::play(int id) {
 
 	_scrollManager->setVScrollTimers(0, 1, 0, 0, 1, 0);
 	_scrollManager->setHScrollTimers(0, 1, 0, 0, 1, 0);
+	_scrollManager->updateScrollTimers();
 
 	_vm->_allowSkip = false;
 	_vm->resetSkipFlag();

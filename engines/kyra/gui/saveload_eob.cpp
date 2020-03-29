@@ -108,6 +108,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 
 	setupCharacterTimers();
 
+	makeNameShapes();
 	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
 	for (int i = 0; i < 6; i++) {
 		EoBCharacter *c = &_characters[i];

@@ -81,6 +81,8 @@ private:
 	void startupNew() override;
 	void startupLoad() override;
 
+	void updateSpecialGfx() override;
+
 	// Intro/Outro/Sequence Playback
 	enum IntroPart {
 		kOnlyCredits = 0,
@@ -156,6 +158,10 @@ private:
 	int _dcrResCur;
 
 	// Fight
+	void playStrikeAnimation(uint8 pos, Item itm) override;
+
+	const uint8 *_redGrid;
+	const uint8 **_strikeAnimShapes[7];
 	static const uint8 _monsterAcHitChanceTbl1[];
 	static const uint8 _monsterAcHitChanceTbl2[];
 
@@ -175,6 +181,12 @@ private:
 	bool checkPartyStatusExtra() override;
 	int resurrectionSelectDialogue() override;
 	void healParty();
+	void makeNameShapes() override;
+
+	int _sceneShakeOffsetX;
+	int _sceneShakeOffsetY;
+	uint8 *_shakeBackBuffer1;
+	uint8 *_shakeBackBuffer2;
 
 	// Resource
 	SegaCDResource *_sres;
@@ -183,18 +195,29 @@ private:
 	void gui_drawPlayField(bool refresh) override;
 	void gui_drawWeaponSlotStatus(int x, int y, int status) override;
 	void gui_printInventoryDigits(int x, int y, int val) override;
+
 	const KyraRpgGUISettings *guiSettings() const override;
 	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }
 
 	const uint8 **_invSmallDigits;
 	const uint8 **_weaponSlotShapes;
 
+	const uint16 *_addrTbl1;
+	const uint16 *_textFieldPattern;
+	const uint16 *_playFldPattern1;
+	const uint16 *_invPattern;
+	const uint16 *_statsPattern;
+	uint16 *_playFldPattern2;
+
 	static const KyraRpgGUISettings _guiSettingsVGA;
 	static const KyraRpgGUISettings _guiSettingsEGA;
 	static const KyraRpgGUISettings _guiSettingsPC98;
 	static const KyraRpgGUISettings _guiSettingsAmiga;
 	static const KyraRpgGUISettings _guiSettingsAmigaMainMenu;
+	static const KyraRpgGUISettings _guiSettingsSegaCD;
 	static const uint8 _egaDefaultPalette[];
+	static const uint8 _redGridTile[8];
+	static const int8 _sceneShakeOffsets[66];
 	bool _useMainMenuGUISettings;
 };
 

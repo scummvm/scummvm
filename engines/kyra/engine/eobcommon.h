@@ -41,6 +41,7 @@ if (shapes) { \
 		if (shapes[iii]) \
 			delete[] shapes[iii]; \
 	} \
+	delete[] shapes; \
 } \
 shapes = 0
 
@@ -117,6 +118,7 @@ struct EoBCharacter {
 	uint8 level[3];
 	uint32 experience[3];
 	const uint8 *faceShape;
+	const uint8 *nameShape;
 
 	int8 mageSpells[80];
 	int8 clericSpells[80];
@@ -129,6 +131,8 @@ struct EoBCharacter {
 	uint32 effectFlags;
 	uint8 damageTaken;
 	int8 slotStatus[5];
+
+	int8 specialGfxCountdown;
 };
 
 struct EoBItem {
@@ -302,7 +306,6 @@ protected:
 	const uint8 **_largeItemShapesScl[3];
 	const uint8 **_smallItemShapesScl[3];
 	const uint8 **_thrownItemShapesScl[3];
-	const uint8 **_strikeAnimShapes[7];
 	const uint8 **_blueItemIconShapes;
 	const uint8 **_xtraItemIconShapes;
 	const int _numLargeItemShapes;
@@ -324,6 +327,7 @@ protected:
 	const uint8 *_blackBoxWideGrid;
 	const uint8 *_lightningColumnShape;
 
+	uint8 *_redSplatBG[6];
 	uint8 *_itemsOverlay;
 	static const uint8 _itemsOverlayCGA[];
 
@@ -338,6 +342,7 @@ protected:
 	void runLoop();
 	void update() override { screen()->updateScreen(); }
 	bool checkPartyStatus(bool handleDeath);
+	virtual void updateSpecialGfx() {}
 
 	bool _runFlag;
 
@@ -380,6 +385,12 @@ protected:
 
 	uint32 _disableElapsedTime;
 	uint32 _restPartyElapsedTime;
+
+	uint32 _lastVIntTick;
+	uint32 _lastSecTick;
+	uint32 _totalPlaySecs;
+	uint32 _totalEnemiesKilled;
+	uint32 _totalSteps;
 
 	// Mouse
 	void setHandItem(Item itemIndex) override;
@@ -561,6 +572,8 @@ protected:
 
 	uint8 *_monsterFlashOverlay;
 	uint8 *_monsterStoneOverlay;
+	int16 _shapeShakeOffsetX;
+	int16 _shapeShakeOffsetY;
 
 	SpriteDecoration *_monsterDecorations;
 	EoBMonsterProperty *_monsterProps;
@@ -625,9 +638,9 @@ protected:
 	virtual const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) = 0;
 	virtual void setLevelPalettes(int level) {}
 
-	void drawScene(int refresh) override;
-	void drawSceneShapes(int start = 0) override;
-	void drawDecorations(int index) override;
+	void drawScene(int refresh);
+	void drawSceneShapes(int start = 0, int drawFlags = 0xFF);
+	void drawDecorations(int index);
 
 	int calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction);
 	void notifyBlockNotPassable();
@@ -716,6 +729,7 @@ protected:
 	void gui_drawWeaponSlot(int charIndex, int slot);
 	virtual void gui_drawWeaponSlotStatus(int x, int y, int status);
 	virtual void gui_printInventoryDigits(int x, int y, int val) {}
+	virtual void gui_playStrikeAnimation(uint8 pos, Item itm) {}
 	void gui_drawHitpoints(int index);
 	void gui_drawFoodStatusGraph(int index);
 	void gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2) override;
@@ -888,6 +902,7 @@ protected:
 	virtual void drawLightningColumn() {}
 	virtual int charSelectDialogue() { return -1; }
 	virtual void characterLevelGain(int charIndex) {}
+	virtual void makeNameShapes() {}
 
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
@@ -942,6 +957,7 @@ protected:
 	int closeDistanceAttack(int charIndex, Item item);
 	int thrownAttack(int charIndex, int slotIndex, Item item);
 	int projectileWeaponAttack(int charIndex, Item item);
+	virtual void playStrikeAnimation(uint8 pos, Item itm) {}
 
 	void inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool giveExperience);
 	void calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
@@ -974,6 +990,7 @@ protected:
 
 	int _dstMonsterIndex;
 	bool _preventMonsterFlash;
+	int8 _specialGfxCountdown;
 	int16 _foundMonstersArray[5];
 	int8 _monsterBlockPosArray[6];
 	const uint8 *_monsterAcHitChanceTable1;

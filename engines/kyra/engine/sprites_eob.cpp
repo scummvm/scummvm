@@ -285,7 +285,7 @@ void EoBCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, i
 	if (_flags.gameID == GI_EOB1)
 		x &= ~1;
 	
-	_screen->drawShape(page, shape, x - (d->sx << 3), y - d->sy, sd, flipped | (ovl ? 2 : 0), ovl);
+	_screen->drawShape(page, shape, x - (d->sx << 3) + _shapeShakeOffsetX, y - d->sy + _shapeShakeOffsetY, sd, flipped | (ovl ? 2 : 0), ovl);
 }
 
 void EoBCoreEngine::drawMonsterShape(const uint8 *shape, int x, int y, int flipped, int flags, int palIndex) {

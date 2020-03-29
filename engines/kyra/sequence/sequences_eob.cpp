@@ -2414,7 +2414,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 
 	_sres->loadContainer("CREDIT");
 	Common::SeekableReadStreamEndian *in = _sres->resStreamEndian(1);
-	r->loadToVRAM(in, 32, true);
+	r->loadStreamToVRAM(in, 32, true);
 	delete in;
 
 	_screen->sega_selectPalette(50, 0, 0);
@@ -2431,7 +2431,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 		_screen->sega_selectPalette(i == 3 ? 59 : 50, 0, true);
 
 		in = _sres->resStreamEndian(i);
-		r->loadToVRAM(in, 32, true);
+		r->loadStreamToVRAM(in, 32, true);
 		delete in;
 
 		r->render(0);
@@ -2478,7 +2478,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 	_screen->sega_selectPalette(0, 0);
 
 	in = _sres->resStreamEndian(8);
-	r->loadToVRAM(in, 32, true);
+	r->loadStreamToVRAM(in, 32, true);
 	delete in;
 
 	r->memsetVRAM(0x8C20, 0xCC, 0x700);
@@ -2490,7 +2490,8 @@ void EoBEngine::seq_segaOpeningCredits() {
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 1, true);
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	r->render(0);
-	_screen->sega_fadeToNeutral(3);
+	if (!(shouldQuit() || skipFlag()))
+		_screen->sega_fadeToNeutral(3);
 
 	while (!(shouldQuit() || skipFlag()))
 		delay(20);
@@ -2500,7 +2501,7 @@ void EoBEngine::seq_segaOpeningCredits() {
 
 	r->fillRectWithTiles(1, 0, 19, 40, 9, 1);
 	r->render(0);
-	_screen->updateScreen();
+	_screen->sega_fadeToNeutral(3);
 }
 
 void EoBEngine::seq_segaFinalCredits() {
@@ -2639,9 +2640,6 @@ void EoBEngine::seq_segaShowStats() {
 
 	////
 	////
-	uint32 totalPlayTicks = 0;
-	uint32 totalEnemiesKilled = 0;
-	uint32 totalSteps = 0;
 	uint32 partyArrows = 0;
 	uint32 numMaps = 0;
 	/////
@@ -2653,9 +2651,9 @@ void EoBEngine::seq_segaShowStats() {
 			++specialSearches;
 	}
 
-	_txt->printShadowedText(Common::String::format("%u:%02u:%02u", totalPlayTicks / 216000, totalPlayTicks / 3600, totalPlayTicks / 60).c_str(), 148, 28, 0xFF, 0x00, false);
-	_txt->printShadowedText(Common::String::format("%u", totalEnemiesKilled).c_str(), 148, 40, 0xFF, 0x00, false);
-	_txt->printShadowedText(Common::String::format("%u", totalSteps).c_str(), 148, 52, 0xFF, 0x00, false);
+	_txt->printShadowedText(Common::String::format("%u:%02u:%02u", _totalPlaySecs / 3600, _totalPlaySecs / 60, _totalPlaySecs).c_str(), 148, 28, 0xFF, 0x00, false);
+	_txt->printShadowedText(Common::String::format("%u", _totalEnemiesKilled).c_str(), 148, 40, 0xFF, 0x00, false);
+	_txt->printShadowedText(Common::String::format("%u", _totalSteps).c_str(), 148, 52, 0xFF, 0x00, false);
 	_txt->printShadowedText(Common::String::format("%u(%u%%)", partyArrows, partyArrows * 100 / 26).c_str(), 148, 64, 0xFF, 0x00, false);
 	_txt->printShadowedText(Common::String::format("%u(%u%%)", numMaps, numMaps * 100 / 12).c_str(), 148, 76, 0xFF, 0x00, false);
 	_txt->printShadowedText(Common::String::format("%u(%u%%)", specialSearches, specialSearches * 100 / 12).c_str(), 148, 88, 0xFF, 0x00, false);
@@ -2704,7 +2702,7 @@ void EoBEngine::seq_segaShowStats() {
 void EoBEngine::seq_segaSetupSequence(int sequenceId) {
 	if (_flags.platform != Common::kPlatformSegaCD || sequenceId == -1)
 		return;
-	
+
 	_screen->sega_fadeToBlack(1);
 	for (int i = 0; i < 6; i++) {
 		_characters[i].damageTaken = 0;
@@ -2712,6 +2710,7 @@ void EoBEngine::seq_segaSetupSequence(int sequenceId) {
 		gui_drawCharPortraitWithStats(i);
 	}
 
+	// transposeScreenOutputY(0);
 	_screen->sega_getRenderer()->setupWindowPlane(0, (sequenceId == 53 || sequenceId == 54) ? 23 : 18, SegaRenderer::kWinToRight, SegaRenderer::kWinToBottom);
 	_screen->sega_getRenderer()->memsetVRAM(0xD840, 0xEE, 512);
 	_screen->sega_getAnimator()->clearSprites();

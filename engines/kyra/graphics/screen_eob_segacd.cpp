@@ -317,7 +317,7 @@ uint8 *Screen_EoB::sega_convertShape(const uint8 *src, int w, int h, int pal, in
 void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *src, int numShapes, int w, int h, int pal, bool removeSprites) {
 	int spriteSize = (w * h) >> 1;
 	_segaRenderer->loadToVRAM(src, numShapes * spriteSize, 0);
-	int hw = (((h >> 3) - 1) << 2) | ((w >> 3) - 1);
+	int hw = (((w >> 3) - 1) << 2) | ((h >> 3) - 1);
 
 	int cp = setCurPage(7);
 
@@ -330,11 +330,11 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 		
 		_segaAnimator->update();
 
-		_segaRenderer->render(0, true);
+/*		_segaRenderer->render(0, true);
 		sega_selectPalette(7, 3, true);
 		sega_fadeToNeutral(0);
 		updateScreen();
-
+*/
 		_segaRenderer->render(7, true);
 
 		for (int i = l; i < s; ++i)
@@ -348,6 +348,7 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 		_segaAnimator->update();
 		_segaRenderer->memsetVRAM(0, 0, numShapes * spriteSize);
 	}
+
 	setCurPage(cp);
 }
 
@@ -490,14 +491,14 @@ void SegaRenderer::setVScrollMode(int mode) {
 	_vScrollMode = mode;
 }
 
-void SegaRenderer::loadToVRAM(const void *data, int dataSize, int addr) {
+void SegaRenderer::loadToVRAM(const void *data, uint16 dataSize, uint16 addr) {
 	assert(data);
 	assert(addr + dataSize <= 0x10000);
 	memcpy(_vram + addr, data, dataSize);
 	checkUpdateDirtyRects(addr, dataSize);
 }
 
-void SegaRenderer::loadToVRAM(Common::SeekableReadStreamEndian *in, int addr, bool compressedData) {
+void SegaRenderer::loadStreamToVRAM(Common::SeekableReadStreamEndian *in, uint16 addr, bool compressedData) {
 	assert(in);
 	assert(addr <= 0xFFFF);
 
@@ -638,8 +639,8 @@ void SegaRenderer::render(int destPageNum, bool spritesOnly) {
 	const uint16 *pos = _spriteTable;
 	for (int i = 0; i < _numSpritesMax && pos; ++i) {
 		int y = *pos++ & 0x3FF;
-		uint8 bW = ((*pos >> 8) & 3) + 1;
-		uint8 bH = ((*pos >> 10) & 3) + 1;
+		uint8 bH = ((*pos >> 8) & 3) + 1;
+		uint8 bW = ((*pos >> 10) & 3) + 1;
 		uint8 next = *pos++ & 0x7F;
 		uint16 pal = ((*pos >> 13) & 3) << 4;
 		bool prio = (*pos & 0x8000);

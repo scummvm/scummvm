@@ -589,7 +589,7 @@ void EoBCoreEngine::drawScene(int refresh) {
 	_sceneUpdateRequired = false;
 }
 
-void EoBCoreEngine::drawSceneShapes(int start) {
+void EoBCoreEngine::drawSceneShapes(int start, int drawFlags) {
 	for (int i = start; i < 18; i++) {
 		uint8 t = _dscTileIndex[i];
 		uint8 s = _visibleBlocks[t]->walls[_sceneDrawVarDown];
@@ -602,31 +602,33 @@ void EoBCoreEngine::drawSceneShapes(int start) {
 		if (_shpDmX2 <= _shpDmX1)
 			continue;
 
-		drawDecorations(t);
+		if (drawFlags & 0x01)
+			drawDecorations(t);
 
-		if (_visibleBlocks[t]->drawObjects)
+		if ((drawFlags & 0x02) && _visibleBlocks[t]->drawObjects)
 			drawBlockItems(t);
 
 		if (t < 15) {
 			uint16 w = _wllWallFlags[s];
 
-			if (w & 8)
+			if ((drawFlags & 0x04) && (w & 8))
 				drawDoor(t);
 
-			if (_visibleBlocks[t]->flags & 7) {
+			if ((drawFlags & 0x08) && (_visibleBlocks[t]->flags & 7)) {
 				const ScreenDim *dm = _screen->getScreenDim(5);
 				_screen->modifyScreenDim(5, dm->sx, _lvlShapeTop[t], dm->w, _lvlShapeBottom[t] - _lvlShapeTop[t]);
 				drawMonsters(t);
 				drawLevelModifyScreenDim(5, _lvlShapeLeftRight[(t << 1)], 0, _lvlShapeLeftRight[(t << 1) + 1], 15);
 			}
 
-			if (_flags.gameID == GI_EOB2 && s == 74)
+			if ((drawFlags & 0x10) && _flags.gameID == GI_EOB2 && s == 74)
 				drawWallOfForce(t);
 		}
 
-		drawFlyingObjects(t);
+		if (drawFlags & 0x20)
+			drawFlyingObjects(t);
 
-		if (s == _teleporterWallId)
+		if ((drawFlags & 0x40) && s == _teleporterWallId)
 			drawTeleporter(t);
 	}
 }

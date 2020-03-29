@@ -30,6 +30,8 @@
 #include "kyra/sound/sound.h"
 #include "kyra/text/text_eob_segacd.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
@@ -51,8 +53,16 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_dscDoorCoordsExt = 0;
 	_invSmallDigits = _weaponSlotShapes = 0;
 	_useMainMenuGUISettings = false;
+	_addrTbl1 = _textFieldPattern = 0;
+	_playFldPattern1 = _invPattern = _statsPattern;
+	_playFldPattern2 = 0;
 	_ttlCfg = 0;
 	_xdth = false;
+
+	memset(_strikeAnimShapes, 0, sizeof(_strikeAnimShapes));
+	_sceneShakeOffsetX = _sceneShakeOffsetY = 0;
+	_shakeBackBuffer1 = _shakeBackBuffer2 = 0;
+	_redGrid = 0;
 
 	_seqPlayer = 0;
 	_sres = 0;
@@ -61,11 +71,21 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 }
 
 EoBEngine::~EoBEngine() {
-	releaseShpArr(_invSmallDigits, 32);
+	for (int i = 0; i < 7; ++i) {
+		releaseShpArr(_strikeAnimShapes[i], 4);
+	}
+
 	releaseShpArr(_weaponSlotShapes, 6);
+	releaseShpArr(_invSmallDigits, 32);
+	delete[] _redGrid;
+
 	delete[] _doorShapesSrc;
 	delete[] _doorSwitchShapesSrc;
 	delete[] _itemsOverlay;
+	delete[] _playFldPattern2;
+	delete[] _shakeBackBuffer1;
+	delete[] _shakeBackBuffer2;
+
 	delete _seqPlayer;
 	delete _sres;
 }
@@ -128,6 +148,9 @@ Common::Error EoBEngine::init() {
 		assert(_seqPlayer);
 		_txt = new TextDisplayer_SegaCD(this, _screen);
 		assert(_txt);
+		_playFldPattern2 = new uint16[1040];
+		_shakeBackBuffer1 = new uint8[120 * 6];
+		_shakeBackBuffer2 = new uint8[179 * 6];
 	}
 
 	return Common::kNoError;
@@ -149,7 +172,7 @@ Common::Error EoBEngine::init() {
 	_screen->sega_getRenderer()->render(7, true); \
 	_screen->sega_getAnimator()->clearSprites(); \
 	int cp = _screen->setCurPage(7); \
-	singleShape = _screen->encodeShape(0, 0, numSprites, spriteHeight); \
+	singleShape = _screen->encodeShape(0, 0, numSprites  * (spriteWidth >> 3), spriteHeight); \
 	_screen->setCurPage(cp); \
 	_screen->clearPage(7); \
 	} \
@@ -178,7 +201,7 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	loadSpritesAndEncodeToShapes(13, 0, _xtraItemIconShapes, 3, 16, 16);
 
 	for (int i = 0; i < 7; ++i) {
-		loadAndConvertShapes(0, i << 11, _strikeAnimShapes[i], 5, 32, 32, 512);
+		loadAndConvertShapes(15, i << 11, _strikeAnimShapes[i], 4, 32, 32, 512);
 	}
 
 	loadAndConvertShapes(1, 0, _smallItemShapes, _numSmallItemShapes, 32, 24, 768);
@@ -195,12 +218,35 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 
 	loadSpritesAndMergeToSingleShape(5, 0, _redSplatShape, 5, 8, 24);
 	loadSpritesAndMergeToSingleShape(5, 2016, _swapShape, 7, 8, 8);
+	loadSpritesAndMergeToSingleShape(12, 0, _deadCharShape, 1, 32, 32);
 	loadSpritesAndEncodeToShapes(5, 480, _weaponSlotShapes, 6, 32, 16);
 	loadSpritesAndEncodeToShapes(6, 0, _invSmallDigits, 32, 16, 8);
 
-	in = _res->fileData("FACE", 0);
-	_screen->sega_encodeShapesFromSprites(&_deadCharShape, in + 53 * 512, 1, 32, 32, 3);
-	delete[] in;	
+	/*
+	// CAMP MENU
+	str = _sres->resStreamEndian(8);
+	_screen->sega_getRenderer()->loadStreamToVRAM(str, 0x20, true);
+	delete str;
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 15, 0);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 22, 21, 0x4001, true);
+	_screen->sega_getRenderer()->render(0);
+	_screen->sega_selectPalette(40, 2, true);
+	*/
+
+	int cp = _screen->setCurPage(7);
+	for (int i = 0; i < 4; ++i)
+		_screen->sega_getRenderer()->loadToVRAM(_redGridTile, 8, 0x52A0 + i * 8);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 4, 4, 4, 0x6295);
+	_screen->sega_getRenderer()->render(7);
+	_screen->drawShape(7, _weaponSlotShapes[1], 0, 0, 0);
+	_screen->drawShape(7, _weaponSlotShapes[1], 0, 16, 0);
+	_weaponSlotGrid = _screen->encodeShape(0, 0, 4, 16);
+	_disabledCharGrid = _screen->encodeShape(0, 0, 4, 32);
+	_blackBoxSmallGrid = _screen->encodeShape(0, 0, 2, 8);
+	_blackBoxWideGrid = _screen->encodeShape(0, 0, 4, 8);
+	_redGrid = _screen->encodeShape(0, 32, 4, 32);
+	_screen->clearPage(7);
+	_screen->setCurPage(cp);
 }
 
 #undef loadAndConvertShapes
@@ -225,7 +271,7 @@ void EoBEngine::startupNew() {
 		_screen->sega_selectPalette(6, 1);
 		_screen->sega_selectPalette(8, 2);
 		_screen->sega_selectPalette(7, 3);
-
+		makeNameShapes();
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
 		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
 		_txt->clearDim(0);
@@ -244,6 +290,58 @@ void EoBEngine::startupLoad() {
 	_sound->selectAudioResourceSet(kMusicIngame);
 	_sound->loadSoundFile(0);
 	_screen->selectPC98Palette(0, _screen->getPalette(0));
+}
+
+void EoBEngine::updateSpecialGfx() {
+	bool updScreen = false;
+
+	// Red grid effect
+	for (int i = 0; i < 6; ++i) {
+		if (!_characters[i].specialGfxCountdown)
+			continue;
+		_characters[i].specialGfxCountdown--;
+		int cp = _screen->setCurPage(0);
+
+		if (!_currentControlMode && (_characters[i].specialGfxCountdown & 1))
+			_screen->drawShape(0, _redGrid, 176 + guiSettings()->charBoxCoords.facePosX_1[i & 1], guiSettings()->charBoxCoords.facePosY_1[i >> 1], 0);
+		else if (_currentControlMode && _updateCharNum == i && (_characters[i].specialGfxCountdown & 1))
+			_screen->drawShape(0, _redGrid, guiSettings()->charBoxCoords.facePosX_2[0], guiSettings()->charBoxCoords.facePosY_2[0], 0);
+		else
+			gui_drawFaceShape(i);
+
+		_screen->setCurPage(cp);
+		updScreen = true;
+	}
+
+	// Scene shake
+	if (_specialGfxCountdown) {
+		--_specialGfxCountdown;
+		_sceneShakeOffsetX = _sceneShakeOffsets[_specialGfxCountdown << 1];
+		_sceneShakeOffsetY = _sceneShakeOffsets[(_specialGfxCountdown << 1) + 1];
+		_screen->fillRect(0, 0, 2, 119, 0, _sceneDrawPage1);
+		_screen->fillRect(0, 0, 175, 2, 0, _sceneDrawPage1);
+		_screen->copyBlockToPage(_sceneDrawPage1, 173, 0, 6, 120, _shakeBackBuffer1);
+		_screen->copyBlockToPage(_sceneDrawPage1, 0, 117, 179, 6, _shakeBackBuffer2);
+		_screen->copyBlockToPage(_sceneDrawPage1, _sceneXoffset + _sceneShakeOffsetX, _sceneShakeOffsetY, 176, 120, _sceneWindowBuffer);
+
+		// For whatever reason the original shakes all types of shapes (decorations, doors, etc.) except the monsters and
+		// the items lying on the floor. So we do the same. I've added drawing flags to drawSceneShapes() which allow
+		// separate drawing passes for the different shape types.
+		_shapeShakeOffsetX = _sceneShakeOffsetX;
+		_shapeShakeOffsetY = _sceneShakeOffsetY;
+		// All shapes except monsters and items
+		drawSceneShapes(0, 0xFF & ~0x2A);
+		_shapeShakeOffsetX = _shapeShakeOffsetY = 0;
+		// Monsters and items
+		drawSceneShapes(0, 0x2A);
+
+		_screen->copyRegion(0, 0, 0, 0, 179, 123, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
+		updScreen = true;
+	}
+
+	if (updScreen)
+		_screen->updateScreen();
+	_sceneDrawPage1 = 2;
 }
 
 void EoBEngine::drawNpcScene(int npcIndex) {
@@ -766,6 +864,45 @@ void EoBEngine::setLevelPalettes(int level) {
 	_screen->sega_selectPalette(palette2[level], 2);
 }
 
+void EoBEngine::playStrikeAnimation(uint8 pos, Item itm) {
+	static const uint8 aX[5] = { 28, 116, 28, 116, 72 };
+	static const uint8 aY[5] = { 60, 60, 40, 40, 50 };
+	static const uint8 aTypes[5][5] = {
+		{ 1,  3, 27,  48, 255 },
+		{ 2, 24, 26,  54,  77 },
+		{ 4,  6, 86, 255, 255 },
+		{ 5, 73, 90, 255, 255 },
+		{ 6, 35, 81, 255, 255 }
+	};
+
+	if (!_strikeAnimShapes[0])
+		return;
+
+	int aType = -1;
+	for (int i = 0; i < 5 && aType == -1; ++i) {
+		const uint8 *p = aTypes[i];
+		uint8 t = *p++;
+		for (int ii = 1; ii < 5 && aType == -1; ++ii) {
+			if (_items[itm].nameUnid == *p++)
+				aType = t;
+		}
+	}
+
+	if (aType < 0)
+		return;
+
+	int16 x = aX[pos];
+	int16 y = aY[pos];
+	for (int i = 0; i < 5; ++i) {
+		uint32 del = _system->getMillis() + _tickLength;
+		_screen->copyRegionToBuffer(0, x, y, 32, 32, _spellAnimBuffer);
+		_screen->drawShape(0, _strikeAnimShapes[aType][MIN(i, 3)], x, y);
+		_screen->updateScreen();
+		_screen->copyBlockToPage(0, x, y, 32, 32, _spellAnimBuffer);
+		delayUntil(del);
+	}
+}
+
 void EoBEngine::turnUndeadAuto() {
 	if (_currentLevel != 2 && _currentLevel != 7)
 		return;
@@ -915,6 +1052,39 @@ void EoBEngine::healParty() {
 	}
 }
 
+void EoBEngine::makeNameShapes() {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return;
+
+	int cd = _txt->clearDim(4);
+	int cp = _screen->setCurPage(2);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 30, 28, 0x600A, true);
+	_screen->sega_clearTextBuffer(0);
+
+	for (int i = 0; i < 6; ++i) {
+		if (!_characters[i].flags)
+			continue;
+		_txt->printShadowedText(_characters[i].name, 0, i << 4, 0xFF, 0xCC);
+	}
+
+	_screen->sega_getRenderer()->render(_screen->_curPage);
+
+	for (int i = 0; i < 6; ++i) {
+		if (!_characters[i].flags)
+			continue;
+		delete[] _characters[i].nameShape;
+		_characters[i].nameShape = _screen->encodeShape(0, i << 4, (_screen->getTextWidth(_characters[i].name) + 8) >> 3, 13);
+	}
+
+	_screen->clearPage(2);
+	_screen->setCurPage(cp);
+	_screen->sega_clearTextBuffer(0);
+
+	_txt->clearDim(4);
+	_txt->clearDim(cd);
+}
+
 void EoBEngine::gui_drawPlayField(bool refresh) {
 	if (_flags.platform != Common::kPlatformSegaCD) {
 		EoBCoreEngine::gui_drawPlayField(refresh);
@@ -924,23 +1094,73 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 	if (!_loading)
 		_screen->sega_fadeToBlack(1);
 
+	// transposeScreenOutputY(8);
+	_txt->clearDim(0);
 	_screen->sega_getAnimator()->clearSprites();
 	SegaRenderer *r = _screen->sega_getRenderer();
-	
 
 	uint8 *data = _res->fileData("PLAYFLD", 0);
-
+	for (int i = 0; i < 256; ++i)
+		r->loadToVRAM(&data[i << 5], 32, _addrTbl1[i] << 5);
 	delete[] data;
+
+	const uint16 *pattern = _playFldPattern1;
+	uint16 *dst = _playFldPattern2;
+
+	for (int i = 0; i < 1040; ++i) {
+		int ix = (*pattern++) - 11;
+		*dst++ = (ix < 0) ? 0 : _addrTbl1[ix];
+	}
+
+	const uint16 ps[] = { 0xCE, 0xE0, 0x2FE, 0x310, 0x52E, 0x540 };
+
+	for (int i = 0; i < 4; ++i) {
+		dst = &_playFldPattern2[ps[i] >> 1];
+		memset(dst, 0, 8);
+		memset(&dst[40], 0, 8);
+		memset(&dst[80], 0, 8);
+		memset(&dst[120], 0, 8);
+	}
+
+	r->fillRectWithTiles(1, 0, 0, 40, 26, 0x2000, true, false, _playFldPattern2);
+	r->fillRectWithTiles(0, 0, 21, 40, 5, 0x2000, true, false, _textFieldPattern);
+
+	// Name tables for scene window vcn block tiles. We don't need that. We draw the blocks with our "normal" graphics code.
+	// r->fillRectWithTiles(1, 0, 0, 22, 15, 0xC14B, true, true);
+	// Name tables for scene window shapes tiles. We don't need that, since we're not going to draw any shapes with the renderer.
+	// r->fillRectWithTiles(0, 0, 1, 22, 14, 0xE295, true, true);
+
+	// Text field tiles
+	r->fillRectWithTiles(0, 1, 22, 35, 3, 0x2597, true);
+	r->render(0);
+
+	_sres->loadContainer("ITEM");
+	Common::SeekableReadStreamEndian *str = _sres->resStreamEndian(7);
+	r->loadStreamToVRAM(str, 0x8880, true);
+	delete str;
+	r->fillRectWithTiles(1, 22, 0, 18, 21, 0x6444, true, true, _invPattern);
+	r->render(2);
+	r->fillRectWithTiles(1, 22, 0, 18, 21, 0x6444, true, true, _statsPattern);
+	r->render(4);
 
 	if (refresh && !_sceneDrawPage2)
 		drawScene(0);
 
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(184, 1, 176, 168, guiSettings()->charBoxCoords.boxWidth, 24, 0, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(184, 25, 240, 168, guiSettings()->charBoxCoords.boxWidth, guiSettings()->charBoxCoords.boxHeight - 24, 0, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegionToBuffer(0, 173, 0, 6, 120, _shakeBackBuffer1);
+	_screen->copyRegionToBuffer(0, 0, 117, 179, 6, _shakeBackBuffer2);
 
-	if (!_loading) {
-		_screen->sega_fadeToNeutral(1);
-		_screen->updateScreen()
+	// Since we're no going to draw with the SegaRenderer but rather with our "normal" code, we have to backup some parts of
+	// the background between the character portraits. Unlike the other versions the red splat shape overlaps with that space.
+	for (int i = 0; i < 6; ++i) {
+		delete[] _redSplatBG[i];
+		_redSplatBG[i] = new uint8[_redSplatShape[2] << 5];
+		_screen->copyRegionToBuffer(0, guiSettings()->charBoxCoords.boxX[i & 1] + guiSettings()->charBoxCoords.redSplatOffsetX, guiSettings()->charBoxCoords.boxY[i >> 1] + guiSettings()->charBoxCoords.boxHeight - 1, _redSplatShape[2] << 3, 4, _redSplatBG[i]);
 	}
+
+	if (!_loading)
+		_screen->sega_fadeToNeutral(1);
 }
 
 void EoBEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
@@ -973,6 +1193,8 @@ const KyraRpgGUISettings *EoBEngine::guiSettings() const {
 		return &_guiSettingsEGA;
 	else if (_flags.platform == Common::kPlatformPC98)
 		return &_guiSettingsPC98;
+	else if (_flags.platform == Common::kPlatformSegaCD)
+		return &_guiSettingsSegaCD;
 	else
 		return &_guiSettingsVGA;
 }

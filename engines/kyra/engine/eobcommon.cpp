@@ -71,10 +71,10 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = _swapShape = 0;
 	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 
+	memset(_redSplatBG, 0, sizeof(_redSplatBG));
 	memset(_largeItemShapesScl, 0, sizeof(_largeItemShapesScl));
 	memset(_smallItemShapesScl, 0, sizeof(_smallItemShapesScl));
 	memset(_thrownItemShapesScl, 0, sizeof(_thrownItemShapesScl));
-	memset(_strikeAnimShapes, 0, sizeof(_strikeAnimShapes));
 
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTable2 = 0;
 	
@@ -109,6 +109,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_monsters = 0;
 	_dstMonsterIndex = 0;
 	_preventMonsterFlash = false;
+	_specialGfxCountdown = 0;
 
 	_teleporterPulse = 0;
 
@@ -125,6 +126,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_dscDoorY1 = 0;
 	_dscDoorXE = 0;
 
+	_shapeShakeOffsetX = _shapeShakeOffsetY = 0;
 	_greenFadingTable = _blueFadingTable = _lightBlueFadingTable = _blackFadingTable = _greyFadingTable = 0;
 
 	_menuDefs = 0;
@@ -235,7 +237,9 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_dcrShpDataPos = 0;
 	_amigaSoundMap = 0;
 	_amigaCurSoundFile = -1;
-	_prefMenuPlatformOffset = 0;
+	_prefMenuPlatformOffset = 0;	
+	_lastVIntTick = _lastSecTick = _totalPlaySecs = _totalEnemiesKilled = _totalSteps = 0;
+
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
 	memset(_saveThrowTables, 0, sizeof(_saveThrowTables));
@@ -279,18 +283,17 @@ EoBCoreEngine::~EoBCoreEngine() {
 	}
 
 	if (_characters) {
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 6; i++) {
 			delete[] _characters[i].faceShape;
+			delete[] _characters[i].nameShape;
+		}
 	}
 
 	delete[] _characters;
 	delete[] _items;
 	delete[] _itemTypes;
-	if (_itemNames) {
-		for (int i = 0; i < 130; i++)
-			delete[] _itemNames[i];
-	}
-	delete[] _itemNames;
+
+	releaseShpArr(_itemNames, 130);
 	delete[] _flyingObjects;
 
 	delete[] _monsterFlashOverlay;
@@ -328,6 +331,9 @@ EoBCoreEngine::~EoBCoreEngine() {
 	delete[] _spellAnimBuffer;
 	delete[] _wallsOfForce;
 	delete[] _buttonDefs;
+
+	for (int i = 0; i < 6; i++)
+		delete[] _redSplatBG[i];
 
 	delete _gui;
 	_gui = 0;
@@ -728,11 +734,23 @@ void EoBCoreEngine::runLoop() {
 		updateScriptTimers();
 		updateWallOfForceTimers();
 
-		if (_sceneUpdateRequired)
+		if (_sceneUpdateRequired && !_specialGfxCountdown)
 			drawScene(1);
 
-		if (_envAudioTimer < _system->getMillis() && !(_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformAmiga || _currentLevel == 0 || _currentLevel > 3))) {
-			_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
+		uint32 curTime = _system->getMillis();
+		if (_lastVIntTick + 1000 <= curTime) {
+			_lastSecTick = curTime;
+			_totalPlaySecs++;
+		}
+
+		if (_lastVIntTick + 16 <= curTime) {
+			_lastVIntTick = curTime;
+			updateSpecialGfx();
+			curTime = _system->getMillis();
+		}
+		
+		if (_envAudioTimer < curTime && !(_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformSegaCD || _flags.platform == Common::kPlatformAmiga || _currentLevel == 0 || _currentLevel > 3))) {
+			_envAudioTimer = curTime + (rollDice(1, 10, 3) * 18 * _tickLength);
 			snd_processEnvironmentalSoundEffect(_flags.gameID == GI_EOB1 ? 30 : (rollDice(1, 2, -1) ? 27 : 28), _currentBlock + rollDice(1, 12, -1));
 		}
 
@@ -772,7 +790,6 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	releaseItemsAndDecorationsShapes();
 	int div = (_flags.gameID == GI_EOB1) ? 3 : 8;
 	int mul = (_flags.gameID == GI_EOB1) ? 64 : 24;
-	int size = 0;
 
 	_largeItemShapes = new const uint8*[_numLargeItemShapes];
 	_screen->loadShapeSetBitmap("ITEML1", 5, 3);
@@ -921,11 +938,6 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 		delete[] _largeItemShapesScl[i];
 		delete[] _smallItemShapesScl[i];
 		delete[] _thrownItemShapesScl[i];
-	}
-
-	for (int i = 0; i < 7; ++i) {
-		releaseShpArr(_strikeAnimShapes[i], 5);
-		delete[] _strikeAnimShapes[i];
 	}
 }
 
@@ -1998,6 +2010,7 @@ void EoBCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
 		if (!inflict)
 			inflict = -1;
 		snd_playSoundEffect(32);
+		playStrikeAnimation(inflict > 0 ? (_monsters[_dstMonsterIndex].pos == 4 ? 4 : _dscItemPosIndex[(_currentDirection << 2) | (_monsters[_dstMonsterIndex].pos & 3)]) : 4, item);
 	} else if (ep == 2) {
 		inflict = thrownAttack(charIndex, slotIndex, item);
 	} else if (ep == 3) {
@@ -2206,6 +2219,8 @@ void EoBCoreEngine::inflictCharacterDamage(int charIndex, int damage) {
 
 	if (c->hitPointsCur > -10) {
 		snd_playSoundEffect(21);
+		if (_flags.platform == Common::kPlatformSegaCD)
+			_specialGfxCountdown = c->specialGfxCountdown = 32;
 	} else {
 		c->hitPointsCur = -10;
 		c->flags &= 1;

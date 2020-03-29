@@ -928,10 +928,10 @@ private:
 	bool testWallFlag(int block, int direction, int flag);
 	bool testWallInvisibility(int block, int direction);
 
-	void drawScene(int pageNum) override;
+	void drawScene(int pageNum);
+	void drawSceneShapes(int start = 0);
+	void drawDecorations(int index);
 
-	void drawSceneShapes(int start = 0) override;
-	void drawDecorations(int index) override;
 	void drawBlockEffects(int index, int type);
 	void drawSpecialGuiShape(int pageNum);
 	void setWallType(int block, int wall, int val);
