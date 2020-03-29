@@ -275,6 +275,11 @@ protected:
 
 	int _mouseX, _mouseY;
 
+	// This is a somewhat hacky but probably least invasive way to move
+	// the whole ingame screen output down a couple of lines for EOB SegaCD.
+	void transposeScreenOutputY(int yAdd);
+	int _transOffsY;
+
 	struct Event {
 		Common::Event event;
 		bool causedSkip;

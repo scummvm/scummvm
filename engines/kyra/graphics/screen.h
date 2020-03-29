@@ -479,6 +479,11 @@ public:
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	virtual void setScreenPalette(const Palette &pal);
 
+	// SegaCD version
+	// This is a somewhat hacky but probably least invasive way to
+	// move the whole ingame screen output down a couple of lines.
+	void transposeScreenOutputY(int yAdd);
+
 	// AMIGA version only
 	bool isInterfacePaletteEnabled() const { return _dualPaletteModeSplitY; }
 	void enableDualPaletteMode(int splitY);
@@ -635,6 +640,7 @@ protected:
 	int _bytesPerPixel;
 	int _screenPageSize;
 	const int _screenHeight;
+	int _yTransOffs;
 	
 	Common::SharedPtr<Graphics::FontSJIS> _sjisFontShared;
 	uint8 _sjisInvisibleColor;

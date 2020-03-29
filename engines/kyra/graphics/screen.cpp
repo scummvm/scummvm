@@ -77,6 +77,8 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_textMarginRight = SCREEN_W;
 	_customDimTable = 0;
 	_curDim = 0;
+
+	_yTransOffs = 0;
 }
 
 Screen::~Screen() {
@@ -365,12 +367,12 @@ void Screen::updateScreen() {
 
 void Screen::updateDirtyRects() {
 	if (_forceFullUpdate) {
-		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, _screenHeight);
+		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, _yTransOffs, SCREEN_W, _screenHeight - _yTransOffs);
 	} else {
 		const byte *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;
 		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-			_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
+			_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top + _yTransOffs, it->width(), it->height());
 		}
 	}
 	_forceFullUpdate = false;
@@ -919,6 +921,11 @@ void Screen::setScreenPalette(const Palette &pal) {
 	}
 
 	_system->getPaletteManager()->setPalette(screenPal, 0, pal.getNumColors());
+}
+
+void Screen::transposeScreenOutputY(int yAdd) {
+	updateScreen();
+	_yTransOffs = yAdd;
 }
 
 void Screen::enableDualPaletteMode(int splitY) {
@@ -3387,7 +3394,7 @@ void Screen::addDirtyRect(int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w, y + h);
 
 	// Clip rectangle
-	r.clip(SCREEN_W, _screenHeight);
+	r.clip(SCREEN_W, _screenHeight - _yTransOffs);
 
 	// If it is empty after clipping, we are done
 	if (r.isEmpty())
