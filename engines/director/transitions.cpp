@@ -187,6 +187,15 @@ void Frame::playTransition(Score *score) {
 			rfrom = rto;
 			break;
 
+		case kTransCenterOutSquare: // 9
+			t.ypos += t.yStepSize;
+			rto.setHeight(t.ypos * 2);
+			t.xpos += t.xStepSize;
+			rto.setWidth(t.xpos * 2);
+			rto.moveTo(clipRect.width() / 2 - t.xpos, clipRect.height() / 2 - t.ypos);
+			rfrom = rto;
+			break;
+
 		case kTransCoverDown:	// 29
 			rto.setHeight(clipRect.height());
 			rto.moveTo(0, -clipRect.height() + t.yStepSize * i);
