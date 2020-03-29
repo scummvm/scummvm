@@ -155,7 +155,7 @@ void Frame::playTransition(Score *score) {
 	Common::Rect clipRect(score->_movieRect);
 	clipRect.moveTo(0, 0);
 
-	Common::Rect r = clipRect;
+	Common::Rect rfrom, rto;
 
 	initTransParams(t, score, clipRect);
 
@@ -165,61 +165,68 @@ void Frame::playTransition(Score *score) {
 		return;
 	}
 
+	rfrom = clipRect;
+	rto = clipRect;
+
 	for (uint16 i = 1; i < t.steps; i++) {
 		bool stop = false;
+		rto = clipRect;
 
 		switch (t.type) {
 		case kTransCenterOutHorizontal: // 5
 			t.xpos += t.xStepSize;
-			r.setWidth(t.xpos * 2);
-			r.moveTo(clipRect.width() / 2 - t.xpos, 0);
+			rto.setWidth(t.xpos * 2);
+			rto.moveTo(clipRect.width() / 2 - t.xpos, 0);
+			rfrom = rto;
 			break;
 
 		case kTransCenterOutVertical: // 7
 			t.ypos += t.yStepSize;
-			r.setHeight(t.ypos * 2);
-			r.moveTo(0, clipRect.height() / 2 - t.ypos);
+			rto.setHeight(t.ypos * 2);
+			rto.moveTo(0, clipRect.height() / 2 - t.ypos);
+			rfrom = rto;
 			break;
 
 		case kTransCoverDown:	// 29
-			r.setHeight(t.yStepSize * i);
+			rto.setHeight(clipRect.height());
+			rto.moveTo(0, -clipRect.height() + t.yStepSize * i);
 			break;
 
 		case kTransCoverDownLeft: // 30
-			r.setWidth(t.xStepSize * i);
-			r.setHeight(t.yStepSize * i);
-			r.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			rto.setWidth(t.xStepSize * i);
+			rto.setHeight(t.yStepSize * i);
+			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
 			break;
 
 		case kTransCoverDownRight: // 31
-			r.setWidth(t.xStepSize * i);
-			r.setHeight(t.yStepSize * i);
+			rto.setWidth(t.xStepSize * i);
+			rto.setHeight(t.yStepSize * i);
 			break;
 
 		case kTransCoverLeft:	// 32
-			r.setWidth(t.xStepSize * i);
-			r.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			rto.setWidth(t.xStepSize * i);
+			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
 			break;
 
 		case kTransCoverRight:	// 33
-			r.setWidth(t.xStepSize * i);
+			rto.setWidth(t.xStepSize * i);
 			break;
 
 		case kTransCoverUp:		// 34
-			r.setHeight(t.yStepSize * i);
-			r.moveTo(0, clipRect.height() - t.yStepSize * i);
+			rto.setHeight(t.yStepSize * i);
+			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
 			break;
 
 		case kTransCoverUpLeft:	// 35
-			r.setWidth(t.xStepSize * i);
-			r.setHeight(t.yStepSize * i);
-			r.moveTo(clipRect.width() - t.xStepSize * i, clipRect.height() - t.yStepSize * i);
+			rto.setWidth(t.xStepSize * i);
+			rto.setHeight(t.yStepSize * i);
+			rto.moveTo(clipRect.width() - t.xStepSize * i, clipRect.height() - t.yStepSize * i);
 			break;
 
 		case kTransCoverUpRight:	// 36
-			r.setWidth(t.xStepSize * i);
-			r.setHeight(t.yStepSize * i);
-			r.moveTo(0, clipRect.height() - t.yStepSize * i);
+			rto.setWidth(t.xStepSize * i);
+			rto.setHeight(t.yStepSize * i);
+			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
 
 		case kTransDissolvePixels: // 51
 			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, _transChunkSize);
@@ -235,15 +242,17 @@ void Frame::playTransition(Score *score) {
 		if (stop)
 			break;
 
-		r.clip(clipRect);
+		score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+
+		rto.clip(clipRect);
 
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))
 			break;
 
-		score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
+		if (rto.height() > 0 && rto.width() > 0)
+			g_system->copyRectToScreen(score->_backSurface->getBasePtr(rto.left, rto.top), score->_backSurface->pitch, rto.left, rto.top, rto.width(), rto.height()); // transition
 
-		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, r.left, r.top, r.width(), r.height()); // transition
 		g_system->updateScreen();
 	}
 }
