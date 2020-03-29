@@ -121,7 +121,6 @@ void gameCreatureAttack(Creature *obj);
 /*---------------*/
 
 //extern Object *party[8];
-Context *g_context = NULL;
 
 Debug gameDbg("debug/game.txt", "Game");
 
@@ -227,10 +226,8 @@ void GameController::init() {
 	initScreen();
 
 	/* initialize the global game context */
-	g_context = new Context;
+	g_context = new Context();
 	g_ultima->_saveGame = new SaveGame;
-
-	TRACE_LOCAL(gameDbg, "Global context initialized.");
 
 	/* initialize conversation and game state variables */
 	g_context->_line = TEXT_AREA_H - 1;
@@ -247,14 +244,12 @@ void GameController::init() {
 	g_context->_lastShip = NULL;
 
 	/* load in the save game */
-	saveGameFile = g_system->getSavefileManager()->openForLoading(PARTY_SAV_BASE_FILENAME);
-	if (saveGameFile) {
-		Common::Serializer ser(saveGameFile, nullptr);
-		g_ultima->_saveGame->synchronize(ser);
-		delete saveGameFile;
-	} else {
-		errorFatal("no savegame found!");
-	}
+	saveGameFile = g_system->getSavefileManager()->openForLoading(
+		g_ultima->getSaveStateName(1));
+	assert(saveGameFile);
+	
+	Common::Serializer ser(saveGameFile, nullptr);
+	g_ultima->_saveGame->synchronize(ser);
 
 	/* initialize our party */
 	g_context->_party = new Party(g_ultima->_saveGame);
@@ -295,12 +290,7 @@ void GameController::init() {
 		g_context->_location->_coords.putInBounds(g_context->_location->_map);
 
 	/* load in creatures.sav */
-	monstersFile = g_system->getSavefileManager()->openForLoading(MONSTERS_SAV_BASE_FILENAME);
-	if (monstersFile) {
-		Common::Serializer ser(monstersFile, nullptr);
-		SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
-		delete monstersFile;
-	}
+	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
 	gameFixupObjects(g_context->_location->_map);
 
 	/* we have previous creature information as well, load it! */
