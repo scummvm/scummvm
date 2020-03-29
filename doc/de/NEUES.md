@@ -2,7 +2,17 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.1 (31.01.2020)
+#### 2.1.2 "Fixing Powerful Windows" (31.03.2020)
+
+ Windows-Portierung:
+   - Fehler korrigiert, der zu einer Update-Schleife des Sparkle-Updaters geführt hat.
+
+ MacOS X-Portierung:
+   - Fehler behoben, der dazu führt, dass ScummVM beim Start unter Mac OS X 10.5 und älter einfriert.
+   - Anwendungs-Icon unter Mac OS X 10.5 und älter korrigiert.
+
+
+#### 2.1.1 ":More Sheep" (31.01.2020)
 
  Allgemein:
    - Absturz beim Wechsel zwischen einigen Sprachen der Benutzeroberfläche korrigiert.

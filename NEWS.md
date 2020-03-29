@@ -1,7 +1,17 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.1 (2020-01-31)
+#### 2.1.2 "Fixing Powerful Windows" (2020-03-31)
+
+ Windows port:
+   - Fixed an issue with the Sparkle updater which lead to an infinite update loop.
+
+ MacOS X port:
+   - Fixed application freeze on start on Mac OS X 10.5 and older.
+   - Fixed application icon on Mac OS X 10.5 and older.
+
+
+#### 2.1.1 ":More Sheep:" (2020-01-31)
 
  General:
    - Fixed crash when switching certain languages in GUI.
