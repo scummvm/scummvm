@@ -280,8 +280,37 @@ uint32 randomSeed[33] = {
 };
 
 static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) {
+	uint pixsize = 8;
+	uint numbytes = 1;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
+	uint realw = w, realh = h;
+
+	if (t.type == kTransDissolveBitsFast ||
+			t.type == kTransDissolveBits) {
+
+		if (t.chunkSize >= 32) {
+			pixsize = 32;
+			w = (w + 3) >> 2;
+			numbytes = 4;
+		} else if (t.chunkSize >= 16) {
+			pixsize = 16;
+			w = (w + 1) >> 1;
+			numbytes = 2;
+		} else if (t.chunkSize >= 8) {
+			pixsize = 8;
+		} else if (t.chunkSize >= 4) {
+			pixsize = 4;
+			w <<= 1;
+		} else if (t.chunkSize >= 2) {
+			pixsize = 2;
+			w <<= 2;
+		} else {
+			pixsize = 1;
+			w <<= 3;
+		}
+	}
+
 	int vBits = getLog2(w);
 	int hBits = getLog2(h);
 	uint32 rnd, seed;
@@ -312,7 +341,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			t.type == kTransDissolveBitsFast)
 		t.stepDuration = 0;						// No delay
 
-	Common::Rect r(1, 1);
+	Common::Rect r(numbytes, 1);
 
 	while (t.steps) {
 		uint32 pixPerStep = pixPerStepInit;
@@ -321,6 +350,10 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			uint32 y = rnd & hMask;
 
 			if (x < w && y < h) {
+				if (numbytes > 1) {
+					x = MIN(x * numbytes, realw - numbytes);
+				}
+
 				r.moveTo(x, y);
 				score->_backSurface->copyRectToSurface(*score->_surface, x, y, r);
 			}
@@ -337,7 +370,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 		r.moveTo(0, 0);
 		score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
 
-		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, w, h);
+		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, realw, realh);
 
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))
