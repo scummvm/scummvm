@@ -79,6 +79,9 @@ void SoundManager::playSpeech(uint32 textIndex) {
 		return;
 	}
 
+	// Reduce music volume while playing dialog.
+	_midiPlayer->setVolume(_musicVolume / 2);
+
 	struct SpeechLocation speechLocation;
 	if (!getSpeechLocation(textIndex, &speechLocation)) {
 		return;
@@ -132,11 +135,13 @@ bool SoundManager::getSpeechLocation(uint32 talkId, struct SpeechLocation *locat
 	return foundId;
 }
 
-void SoundManager::PauseCDMusic() {
-	//TODO check PauseCDMusic() to see if we need any more logic.
+void SoundManager::resumeMusic() {
 	if (isSpeechPlaying()) {
 		_vm->_mixer->stopHandle(_speechHandle);
 		_vm->clearFlags(ENGINE_FLAG_8000);
+	}
+	if (_currentSong != -1) {
+		_midiPlayer->resume();
 	}
 }
 
@@ -262,6 +267,7 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 		  _bigFileArchive(bigFileArchive),
 		  _dragonRMS(dragonRMS) {
 	_dat_8006bb60_sound_related = 0;
+	_currentSong = -1;
 
 	bool allSoundIsMuted = false;
 	if (ConfMan.hasKey("mute")) {
@@ -284,7 +290,9 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 	}
 
 	SomeInitSound_FUN_8003f64c();
-	loadMusAndGlob();
+	initVabData();
+	_midiPlayer = new MidiMusicPlayer(_vabMusx);
+	_midiPlayer->setVolume(_musicVolume);
 }
 
 SoundManager::~SoundManager() {
@@ -294,7 +302,11 @@ SoundManager::~SoundManager() {
 
 	stopAllVoices();
 
+	_midiPlayer->stop();
+
+	delete _midiPlayer;
 	delete _vabMusx;
+	delete _vabMsf;
 	delete _vabGlob;
 }
 
@@ -360,8 +372,9 @@ void SoundManager::SomeInitSound_FUN_8003f64c() {
 	_soundArr[1612] = 0x0b;
 }
 
-void SoundManager::loadMusAndGlob() {
+void SoundManager::initVabData() {
 	_vabMusx = loadVab("musx.vh", "musx.vb");
+	_vabMsf = loadVab("musx.vh", "musx.vb");
 	_vabGlob = loadVab("glob.vh", "glob.vb");
 }
 
@@ -402,7 +415,7 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 	volume = _soundArr[volumeId];
 	_soundArr[volumeId] = _soundArr[volumeId] | 0x40u;      // Set bit 0x40
 
-	VabSound *vabSound = ((soundId & 0x8000u) != 0) ? _vabGlob : _vabMusx;
+	VabSound *vabSound = ((soundId & 0x8000u) != 0) ? _vabGlob : _vabMsf;
 
 	// TODO: CdVolume!
 	int cdVolume = 1;
@@ -452,8 +465,8 @@ void SoundManager::loadMsf(uint32 sceneId) {
 
 		stopAllVoices();
 
-		delete _vabMusx;
-		_vabMusx = new VabSound(msfStream, _vm);
+		delete _vabMsf;
+		_vabMsf = new VabSound(msfStream, _vm);
 	}
 }
 
@@ -489,6 +502,27 @@ void SoundManager::stopAllVoices() {
 	for (int i = 0; i < NUM_VOICES; i++) {
 		_vm->_mixer->stopHandle(_voice[i].handle);
 	}
+}
+
+void SoundManager::playMusic(int16 song) {
+	char sceneName[5] = "nnnn";
+	char filename[12] = "xxxxznn.msq";
+
+	if (_currentSong == song) {
+		return;
+	}
+
+	_currentSong = song;
+
+	memcpy(sceneName, _vm->_dragonRMS->getSceneName(_vm->getCurrentSceneId()), 4);
+	snprintf(filename, 12, "%sz%02d.msq", sceneName, song);
+	debug("Load music file %s", filename);
+
+	uint32 dataSize;
+	byte *seqData = _bigFileArchive->load(filename, dataSize);
+	Common::MemoryReadStream *seq = new Common::MemoryReadStream(seqData, dataSize, DisposeAfterUse::YES);
+	_midiPlayer->playSong(seq);
+	delete seq;
 }
 
 } // End of namespace Dragons

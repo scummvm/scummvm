@@ -693,7 +693,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 
 	_vm->fadeToBlack();
 	_vm->_fontManager->clearText();
-	_vm->_sound->PauseCDMusic();
+	_vm->_sound->resumeMusic();
 //	DisableVSyncEvent();
 	_vm->_dragonINIResource->getRecord(0)->x = 0x91;
 	_vm->_dragonINIResource->getRecord(0)->y = 0x9b;
