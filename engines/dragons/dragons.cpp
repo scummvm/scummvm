@@ -654,7 +654,9 @@ void DragonsEngine::updateHandler() {
 
 	// 0x8001b200
 	if (isFlagSet(ENGINE_FLAG_8000) && !_sound->isSpeechPlaying()) {
+		//dialog finished playing.
 		clearFlags(ENGINE_FLAG_8000);
+		_sound->resumeMusic();
 	}
 
 	//TODO logic here

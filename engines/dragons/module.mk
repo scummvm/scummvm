@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	dragons.o \
 	font.o \
 	inventory.o \
+	midimusicplayer.o \
 	minigame1.o \
 	minigame2.o \
 	minigame3.o \

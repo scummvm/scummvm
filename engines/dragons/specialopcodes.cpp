@@ -330,7 +330,7 @@ void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
 
 void SpecialOpcodes::spcStopLadyOfTheLakeCapturedSceneLogic() {
 	_vm->clearSceneUpdateFunction();
-	_vm->_sound->PauseCDMusic();
+	_vm->_sound->resumeMusic();
 	if ((_dat_80083148 != 0) || (_uint16_t_80083154 != 0)) {
 		//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 	}

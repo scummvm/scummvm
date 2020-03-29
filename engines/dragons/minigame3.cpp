@@ -731,7 +731,7 @@ void Minigame3::run() {
 		_vm->_dragonINIResource->getRecord(0x178)->objectState2 = 0;
 	}
 	_vm->waitForFrames(0x3c * 2);
-	_vm->_sound->PauseCDMusic();
+	_vm->_sound->resumeMusic();
 	_vm->fadeToBlack();
 //	fun_80017f28_noop();
 //	DAT_80093234 = DAT_80093234 + 1;

@@ -477,10 +477,10 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::opPlayMusic(ScriptOpCall &scriptOpCall) {
-	//byte *code = scriptOpCall._code;
-	scriptOpCall._code += 4;
+	ARG_SKIP(2);
+	ARG_INT16(songNumber);
 	if (scriptOpCall._field8 == 0) {
-		//TODO play music here.
+		_vm->_sound->playMusic(songNumber);
 	}
 }
 
@@ -534,7 +534,7 @@ void ScriptOpcodes::opPreLoadSceneData(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_INT16(sceneId);
 
-	_vm->_sound->PauseCDMusic();
+	_vm->_sound->resumeMusic();
 	_vm->_isLoadingDialogAudio = true;
 
 	if (sceneId >= 2) {
@@ -547,7 +547,7 @@ void ScriptOpcodes::opPauseCurrentSpeechAndFetchNextDialog(ScriptOpCall &scriptO
 	ARG_UINT32(textIndex);
 
 	if (scriptOpCall._field8 == 0) {
-		_vm->_sound->PauseCDMusic();
+		_vm->_sound->resumeMusic();
 		//The original starts seeking the CD-ROM here for the `textIndex` dialog but we don't need to do that.
 	}
 }
@@ -907,7 +907,7 @@ void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 
 	_vm->fadeToBlack();
 	_vm->clearSceneUpdateFunction();
-	_vm->_sound->PauseCDMusic();
+	_vm->_sound->resumeMusic();
 
 	if (newSceneID != 0) {
 		_vm->_scene->_mapTransitionEffectSceneID = _vm->_scene->getSceneId();

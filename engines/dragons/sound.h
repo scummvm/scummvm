@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "midimusicplayer.h"
 
 
 namespace Dragons {
@@ -54,9 +55,10 @@ public:
 	void loadMsf(uint32 sceneId);
 	void playOrStopSound(uint16 soundId);
 
+	void playMusic(int16 song);
 	void playSpeech(uint32 textIndex);
 	bool isSpeechPlaying();
-	void PauseCDMusic();
+	void resumeMusic();
 
 public:
 	uint16 _dat_8006bb60_sound_related;
@@ -74,15 +76,19 @@ private:
 	uint8 _soundArr[0x780];
 
 	VabSound* _vabMusx;
+	VabSound* _vabMsf;
 	VabSound* _vabGlob;
 
 	Audio::SoundHandle _speechHandle;
+	MidiMusicPlayer *_midiPlayer;
+
 	Voice _voice[NUM_VOICES];
+	int16 _currentSong;
 
 private:
 	void SomeInitSound_FUN_8003f64c();
 
-	void loadMusAndGlob();
+	void initVabData();
 
 	void playSound(uint16 soundId, uint16 i);
 

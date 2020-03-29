@@ -427,7 +427,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 	}
 	if (param_5 != 0) {
 		if (_vm->isFlagSet(ENGINE_FLAG_8000)) {
-			_vm->_sound->PauseCDMusic();
+			_vm->_sound->resumeMusic();
 		}
 		if (isFlag8Set) {
 			_vm->setFlags(ENGINE_FLAG_8);
