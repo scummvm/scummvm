@@ -202,40 +202,32 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		case kTransCoverDownLeft: // 30
-			rto.setWidth(t.xStepSize * i);
-			rto.setHeight(t.yStepSize * i);
-			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			rto.moveTo(clipRect.width() - t.xStepSize * i, -clipRect.height() + t.yStepSize * i);
 			break;
 
 		case kTransCoverDownRight: // 31
-			rto.setWidth(t.xStepSize * i);
-			rto.setHeight(t.yStepSize * i);
+			rto.moveTo(-clipRect.width() + t.xStepSize * i, -clipRect.height() + t.yStepSize * i);
 			break;
 
 		case kTransCoverLeft:	// 32
-			rto.setWidth(t.xStepSize * i);
 			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
 			break;
 
 		case kTransCoverRight:	// 33
-			rto.setWidth(t.xStepSize * i);
+			rto.moveTo(-clipRect.width() + t.xStepSize * i, 0);
 			break;
 
 		case kTransCoverUp:		// 34
-			rto.setHeight(t.yStepSize * i);
 			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
 			break;
 
 		case kTransCoverUpLeft:	// 35
-			rto.setWidth(t.xStepSize * i);
-			rto.setHeight(t.yStepSize * i);
 			rto.moveTo(clipRect.width() - t.xStepSize * i, clipRect.height() - t.yStepSize * i);
 			break;
 
 		case kTransCoverUpRight:	// 36
-			rto.setWidth(t.xStepSize * i);
-			rto.setHeight(t.yStepSize * i);
-			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
+			rto.moveTo(-clipRect.width() + t.xStepSize * i, clipRect.height() - t.yStepSize * i);
+			break;
 
 		case kTransDissolvePixels: // 51
 			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, _transChunkSize);
