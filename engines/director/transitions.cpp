@@ -348,6 +348,10 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 
 	t.stepDuration = t.duration / t.steps;
 
+	if (t.type == kTransDissolvePixelsFast ||
+			t.type == kTransDissolveBitsFast)
+		t.stepDuration = 0;						// No delay
+
 	Common::Rect r(1, 1);
 
 	while (t.steps) {
