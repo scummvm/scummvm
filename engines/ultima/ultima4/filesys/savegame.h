@@ -234,6 +234,7 @@ struct SaveGame {
 	 * Load an entire savegame, including monsters
 	 */
 	void save(Common::WriteStream *stream);
+	void saveNew(Common::WriteStream *stream);
 
 	/**
 	 * Save an entire savegame, including monsters

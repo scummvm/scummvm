@@ -25,10 +25,14 @@
 namespace Ultima {
 namespace Ultima4 {
 
+Context *g_context;
+
 Context::Context() : _party(NULL), _location(NULL) {
+	g_context = this;
 }
 
 Context::~Context() {
+	g_context = nullptr;
 }
 
 } // End of namespace Ultima4

@@ -47,8 +47,9 @@ bool quit = false, verbose = false;
 Ultima4Engine *g_ultima;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _config(nullptr), _game(nullptr),
-		_imageLoaders(nullptr), _saveGame(nullptr), _screen(nullptr) {
+		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _config(nullptr),
+		_context(nullptr), _game(nullptr), _imageLoaders(nullptr), _saveGame(nullptr),
+		_screen(nullptr) {
 	g_ultima = this;
 	g_context = nullptr;
 	g_game = nullptr;
@@ -57,6 +58,7 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 
 Ultima4Engine::~Ultima4Engine() {
 	delete _config;
+	delete _context;
 	delete _game;
 	delete _imageLoaders;
 	delete _saveGame;
@@ -75,6 +77,7 @@ bool Ultima4Engine::initialize() {
 
 	// Initialize the sub-systems
 	_config = new Config();
+	_context = new Context();
 	_screen = new Screen();
 	_game = new GameController();
 	_imageLoaders = new ImageLoaders();
@@ -113,13 +116,16 @@ Common::Error Ultima4Engine::run() {
 	if (initialize()) {
 		startup();
 		if (!shouldQuit()) {
-			g_game->init();
+			// ***DEBUG****
+			saveGameState(1, "Desc");
 
+			g_game->init();
+			/*
 			if (_saveSlotToLoad != -1) {
 				if (loadGameState(_saveSlotToLoad).getCode() != Common::kNoError)
 					error("Error loading save");
 			}
-
+			*/
 			eventHandler->setControllerDone(false);
 			eventHandler->pushController(g_game);
 			eventHandler->run();
@@ -165,8 +171,12 @@ Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) 
 }
 
 Common::Error Ultima4Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	Common::Serializer ser(nullptr, stream);
-	g_ultima->_saveGame->synchronize(ser);
+	if (g_context->_location)
+		g_ultima->_saveGame->save(stream);
+	else
+		// DEBUG: For getting savegames before the game starts
+		g_ultima->_saveGame->saveNew(stream);
+
 	return Common::kNoError;
 }
 

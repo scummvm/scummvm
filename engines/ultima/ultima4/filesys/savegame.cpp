@@ -30,6 +30,14 @@
 namespace Ultima {
 namespace Ultima4 {
 
+void SaveGame::saveNew(Common::WriteStream *stream) {
+	Common::Serializer ser(nullptr, stream);
+
+	synchronize(ser);
+
+	SaveGameMonsterRecord::synchronize(nullptr, ser);
+}
+
 void SaveGame::save(Common::WriteStream *stream) {
 	Common::Serializer ser(nullptr, stream);
 

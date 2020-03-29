@@ -29,6 +29,7 @@ namespace Ultima {
 namespace Ultima4 {
 
 class Config;
+class Context;
 class ImageLoaders;
 class GameController;
 struct SaveGame;
@@ -51,6 +52,7 @@ protected:
 	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
 public:
 	Config *_config;
+	Context *_context;
 	ImageLoaders *_imageLoaders;
 	GameController *_game;
 	SaveGame *_saveGame;

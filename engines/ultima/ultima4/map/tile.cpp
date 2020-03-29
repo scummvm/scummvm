@@ -229,7 +229,6 @@ bool Tile::isDungeonFloor() const {
 }
 
 bool Tile::isOpaque() const {
-	extern Context *g_context;
 	return g_context->_opacity ? _opaque : false;
 }
 
