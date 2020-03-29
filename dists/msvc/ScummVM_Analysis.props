@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ImportGroup Label="PropertySheets">
+		<Import Project="ScummVM_Global.props" />
+	</ImportGroup>
+	<PropertyGroup>
+		<_PropertySheetDisplayName>ScummVM_Analysis32</_PropertySheetDisplayName>
+		<LinkIncremental>true</LinkIncremental>
+		<GenerateManifest>false</GenerateManifest>
+	</PropertyGroup>
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<Optimization>Disabled</Optimization>
+			<PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+			<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+			<FunctionLevelLinking>true</FunctionLevelLinking>
+			<TreatWarningAsError>false</TreatWarningAsError>
+			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+			<EnablePREfast>true</EnablePREfast>
+		</ClCompile>
+		<Link>
+			<GenerateDebugInformation>true</GenerateDebugInformation>
+			<ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+		</Link>
+	</ItemDefinitionGroup>
+</Project>
