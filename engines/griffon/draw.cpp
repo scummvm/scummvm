@@ -823,8 +823,6 @@ void GriffonEngine::drawNPCs(int mode) {
 							rcDest.left = (float)(sx + 36 - ii * 8 + ii * cos(3.14159 * 2 * (fr3 - ii) / 16) * 2);
 							rcDest.top = (float)(sy + 16 + ii * sin(3.14159 * 2 * (fr3 - ii) / 16) * 3 - ii); //  * 4
 
-							_spellImg->setAlpha(i2 / 3 * 224, true);
-
 							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 							xloc = rcDest.left;
