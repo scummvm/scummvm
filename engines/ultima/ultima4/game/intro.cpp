@@ -752,7 +752,6 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 	// as if a savegame had been loaded
 	SaveGame &saveGame = *g_ultima->_saveGame;
 	SaveGamePlayerRecord avatar;
-
 	avatar.init();
 	strcpy(avatar.name, nameBuffer.c_str());
 	avatar._sex = sex;

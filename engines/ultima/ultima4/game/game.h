@@ -119,8 +119,8 @@ public:
 	void initScreenWithoutReloadingState();
 	void setMap(Map *map, bool saveLocation, const Portal *portal, TurnCompleter *turnCompleter = NULL);
 	int exitToParentMap();
-	virtual void finishTurn();
 
+	virtual void finishTurn();
 	virtual void update(Party *party, PartyEvent &event);
 	virtual void update(Location *location, MoveEvent &event);
 

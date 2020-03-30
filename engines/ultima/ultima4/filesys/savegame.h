@@ -241,6 +241,12 @@ struct SaveGame {
 	void load(Common::SeekableReadStream *stream);
 
 	/**
+	 * Called when a new game is started without loading an existing
+	 * savegame from launcher.
+	 */
+	void newGame();
+
+	/**
 	 * Synchronizes data for the savegame structure
 	 */
 	void synchronize(Common::Serializer &s);

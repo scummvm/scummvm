@@ -122,6 +122,8 @@ Common::Error Ultima4Engine::run() {
 			if (_saveSlotToLoad != -1) {
 				if (loadGameState(_saveSlotToLoad).getCode() != Common::kNoError)
 					error("Error loading save");
+			} else {
+				_saveGame->newGame();
 			}
 
 			eventHandler->setControllerDone(false);

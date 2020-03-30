@@ -217,17 +217,12 @@ void GameController::initScreenWithoutReloadingState() {
 
 
 void GameController::init() {
-	Common::InSaveFile *saveGameFile, *monstersFile;
-
 	TRACE(gameDbg, "gameInit() running.");
 
 	initScreen();
 
-	/* initialize the global game context */
+	// initialize the global game context, conversation and game state variables
 	g_context = new Context();
-	g_ultima->_saveGame = new SaveGame;
-
-	/* initialize conversation and game state variables */
 	g_context->_line = TEXT_AREA_H - 1;
 	g_context->col = 0;
 	g_context->_stats = new StatsArea();
