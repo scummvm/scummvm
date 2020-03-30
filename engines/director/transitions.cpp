@@ -239,6 +239,34 @@ void Frame::playTransition(Score *score) {
 			rto.moveTo(0, -t.yStepSize * i);
 			break;
 
+		case kTransRevealUpRight:	// 16
+			rto.moveTo(t.xStepSize * i, -t.yStepSize * i);
+			break;
+
+		case kTransRevealRight:		// 17
+			rto.moveTo(t.xStepSize * i, 0);
+			break;
+
+		case kTransRevealDownRight:	// 18
+			rto.moveTo(t.xStepSize * i, t.yStepSize * i);
+			break;
+
+		case kTransRevealDown:		// 19
+			rto.moveTo(0, t.yStepSize * i);
+			break;
+
+		case kTransRevealDownLeft:	// 20
+			rto.moveTo(-t.xStepSize * i, t.yStepSize * i);
+			break;
+
+		case kTransRevealLeft:		// 21
+			rto.moveTo(-t.xStepSize * i, 0);
+			break;
+
+		case kTransRevealUpLeft:	// 22
+			rto.moveTo(-t.xStepSize * i, -t.yStepSize * i);
+			break;
+
 		case kTransCoverDown:	// 29
 			rto.setHeight(clipRect.height());
 			rto.moveTo(0, -clipRect.height() + t.yStepSize * i);
