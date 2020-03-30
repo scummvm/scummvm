@@ -280,34 +280,40 @@ uint32 randomSeed[33] = {
 };
 
 static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) {
-	uint pixsize = 8;
-	uint numbytes = 1;
+	int numbytes = 1;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
 	uint realw = w, realh = h;
+	byte pixmask[8];
 
 	if (t.type == kTransDissolveBitsFast ||
 			t.type == kTransDissolveBits) {
 
 		if (t.chunkSize >= 32) {
-			pixsize = 32;
 			w = (w + 3) >> 2;
 			numbytes = 4;
 		} else if (t.chunkSize >= 16) {
-			pixsize = 16;
 			w = (w + 1) >> 1;
 			numbytes = 2;
 		} else if (t.chunkSize >= 8) {
-			pixsize = 8;
+			numbytes = 1;
 		} else if (t.chunkSize >= 4) {
-			pixsize = 4;
 			w <<= 1;
+			numbytes = -2;
+			pixmask[0] = 0x0f;
+			pixmask[1] = 0xf0;
 		} else if (t.chunkSize >= 2) {
-			pixsize = 2;
 			w <<= 2;
+			numbytes = -4;
+
+			for (int i = 0; i < 4; i++)
+				pixmask[i] = 0x3 << (i * 2);
 		} else {
-			pixsize = 1;
 			w <<= 3;
+			numbytes = -8;
+
+			for (int i = 0; i < 8; i++)
+				pixmask[i] = 1 << i;
 		}
 	}
 
@@ -341,21 +347,37 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			t.type == kTransDissolveBitsFast)
 		t.stepDuration = 0;						// No delay
 
-	Common::Rect r(numbytes, 1);
+	Common::Rect r(numbytes > 0 ? numbytes : 1, 1);
 
 	while (t.steps) {
 		uint32 pixPerStep = pixPerStepInit;
 		do {
 			uint32 x = rnd >> vShift;
 			uint32 y = rnd & hMask;
+			byte mask = 0;
 
 			if (x < w && y < h) {
-				if (numbytes > 1) {
+				if (numbytes >= 1) {
 					x = MIN(x * numbytes, realw - numbytes);
-				}
+					r.moveTo(x, y);
 
-				r.moveTo(x, y);
-				score->_backSurface->copyRectToSurface(*score->_surface, x, y, r);
+					score->_backSurface->copyRectToSurface(*score->_surface, x, y, r);
+				} else if (numbytes < 1) {
+					x = x / -numbytes;
+					mask = pixmask[x % -numbytes];
+
+					if (x % -numbytes)
+						mask = 0xf;
+					else
+						mask = 0xf0;
+
+					byte *color1 = (byte *)score->_backSurface->getBasePtr(x, y);
+					byte *color2 = (byte *)score->_surface->getBasePtr(x, y);
+
+					byte newcolor = (*color1 & ~mask) | (*color2 & mask);
+					//warning("color1: %02x | %02x [%02x] -> %02x", *color1, *color2, mask, newcolor);
+					*color1 = *color1 + 2;
+				}
 			}
 
 			rnd = (rnd & 1) ? (rnd >> 1) ^ seed : rnd >> 1;
@@ -366,9 +388,6 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 				}
 			}
 		} while (rnd != seed);
-
-		r.moveTo(0, 0);
-		score->_backSurface->copyRectToSurface(*score->_surface, 0, 0, r);
 
 		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, realw, realh);
 
