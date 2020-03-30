@@ -279,7 +279,7 @@ static int getLog2(int n) {
 	return res;
 }
 
-uint32 randomSeed[33] = {
+static uint32 randomSeed[33] = {
 	0x00000000UL,
 	0x00000000UL, 0x00000003UL, 0x00000006UL, 0x0000000cUL,
 	0x00000014UL, 0x00000030UL, 0x00000060UL, 0x000000b8UL,
@@ -397,12 +397,12 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 		} while (rnd != seed);
 
 		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, realw, realh);
+		g_system->updateScreen();
 
-		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))
 			break;
 
-		g_system->updateScreen();
+		g_system->delayMillis(t.stepDuration);
 
 		t.steps--;
 	}
@@ -507,9 +507,10 @@ static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &cl
 		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, w, h);
 		g_system->updateScreen();
 
-		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))
 			break;
+
+		g_system->delayMillis(t.stepDuration);
 	}
 }
 
