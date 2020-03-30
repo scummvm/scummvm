@@ -368,8 +368,8 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 
 					score->_backSurface->copyRectToSurface(*score->_surface, x, y, r);
 				} else if (numbytes < 1) {
-					x = x / -numbytes;
 					mask = pixmask[x % -numbytes];
+					x = x / -numbytes;
 
 					byte *color1 = (byte *)score->_backSurface->getBasePtr(x, y);
 					byte *color2 = (byte *)score->_surface->getBasePtr(x, y);
