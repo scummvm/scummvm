@@ -177,12 +177,39 @@ void Frame::playTransition(Score *score) {
 		return;
 	}
 
+	Graphics::ManagedSurface *blitFrom;
+	bool fullredraw = false;
+
+	switch (transProps[t.type].algo) {
+	case kTransAlgoDissolve:
+		dissolveTrans(t, score, clipRect);
+		return;
+
+	case kTransAlgoCenterOut:
+	case kTransAlgoCover:
+		blitFrom = score->_surface;
+		break;
+
+	case kTransAlgoReveal:
+		blitFrom = score->_backSurface2;
+		fullredraw = true;
+		break;
+
+	default:
+		blitFrom = score->_surface;
+		break;
+	}
+
 	rfrom = clipRect;
 	rto = clipRect;
 
 	for (uint16 i = 1; i < t.steps; i++) {
 		bool stop = false;
 		rto = clipRect;
+
+		if (transProps[t.type].algo == kTransAlgoReveal) {
+			score->_backSurface->copyFrom(*score->_surface);
+		}
 
 		switch (t.type) {
 		case kTransCenterOutHorizontal: // 5
@@ -206,6 +233,10 @@ void Frame::playTransition(Score *score) {
 			rto.setWidth(t.xpos * 2);
 			rto.moveTo(clipRect.width() / 2 - t.xpos, clipRect.height() / 2 - t.ypos);
 			rfrom = rto;
+			break;
+
+		case kTransRevealUp:		// 15
+			rto.moveTo(0, -t.yStepSize * i);
 			break;
 
 		case kTransCoverDown:	// 29
@@ -255,7 +286,7 @@ void Frame::playTransition(Score *score) {
 		if (stop)
 			break;
 
-		score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+		score->_backSurface->blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
 
 		rto.clip(clipRect);
 
@@ -263,8 +294,11 @@ void Frame::playTransition(Score *score) {
 		if (processQuitEvent(true))
 			break;
 
-		if (rto.height() > 0 && rto.width() > 0)
+		if (fullredraw) {
+			g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, clipRect.width(), clipRect.height());
+		} else if (rto.height() > 0 && rto.width() > 0) {
 			g_system->copyRectToScreen(score->_backSurface->getBasePtr(rto.left, rto.top), score->_backSurface->pitch, rto.left, rto.top, rto.width(), rto.height()); // transition
+		}
 
 		g_system->updateScreen();
 	}
