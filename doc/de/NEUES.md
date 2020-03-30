@@ -20,6 +20,17 @@ Programmcodes finden Sie auf Englisch unter:
  Linux-Portierung:
    - Anstelle des Datei-Browsers von ScummVM kann nun der Datei-Browser des Betriebssystems verwendet werden.
 
+
+#### 2.1.2 "Fixing Powerful Windows" (31.03.2020)
+
+ Windows-Portierung:
+   - Fehler korrigiert, der zu einer Update-Schleife des Sparkle-Updaters geführt hat.
+
+ MacOS X-Portierung:
+   - Fehler behoben, der dazu führt, dass ScummVM beim Start unter Mac OS X 10.5 und älter einfriert.
+   - Anwendungs-Icon unter Mac OS X 10.5 und älter korrigiert.
+
+
 #### 2.1.1 ":More sheep:" (31.01.2020)
 
  Allgemein:
@@ -210,7 +221,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Sound-Treiber für die Amiga-Versionen von Monkey Island 2 und Indiana Jones and the Fate of Atlantis hinzugefügt.
 
  Sherlock:
-   - Absturz in der spanischen Version behoben, der auftritt, wenn mit der Dame im Geschäft des 
+   - Absturz in der spanischen Version behoben, der auftritt, wenn mit der Dame im Geschäft des
      Schneiders gesprochen wird.
 
  SKY:
@@ -435,7 +446,7 @@ Programmcodes finden Sie auf Englisch unter:
      abgespielt werden.
    - Fehler behoben, der verursacht, dass sich die Caponier nicht tarnen, wenn der blaue
      Kristall in Zak McKracken verwendet wird.
-   - Fehler in Maniac Mansion behoben, der verursacht, dass Dr. Fred in der 
+   - Fehler in Maniac Mansion behoben, der verursacht, dass Dr. Fred in der
      Labor-Zwischensequenz in die falsche Richtung schaut.
    - Fehler behoben, der verursacht, dass in V0 und V1-Spielen die Charaktere eine Zeile
      zu hoch dargstellt werden.
