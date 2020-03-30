@@ -376,7 +376,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 
 					byte newcolor = (*color1 & ~mask) | (*color2 & mask);
 					//warning("color1: %02x | %02x [%02x] -> %02x", *color1, *color2, mask, newcolor);
-					*color1 = *color1 + 2;
+					*color1 = newcolor;
 				}
 			}
 
