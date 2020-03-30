@@ -351,6 +351,12 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "09e57d77b68dafa73a0924f11f61b059", 630742753,
 					"i18n.dcp", "583940f6d3fb4097e7cb1e2cc9a43a7b", 156078991), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_1),
 
+	// Art of Murder: FBI Confidential (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "7e4c1dc8b1fb08541f7784d6288acfc8", 633692059,
+					"it.dcp", "c3c10399644a1e9f7e977df73fb017e0", 166794517), Common::IT_ITA, ADGF_UNSTABLE, WME_1_8_1),
+
 	// Art of Murder: FBI Confidential (Spanish)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("artofmurder1", "",
@@ -362,6 +368,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "592862a5dd1ae90d53561815a535ab2e", 630734278,
 					"i18n.dcp", "b43bd7b64991ad9d5d285753767fe3f4", 176591837), Common::PL_POL, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "4f383bd02fb0eea54e9b5825c3056b52", 23761530,
+					"ru.dcp", "57af214554547437c823a01f6cf51b24", 201702190), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
 
 	// Art of Murder: FBI Confidential (English Demo)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
@@ -1023,10 +1035,25 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("framed", "Beta",
 		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_11),
 
-	// Ghost in the Sheet
+	// Ghost in the Sheet (Engligh, v1.00)
+	WME_WINENTRY("ghostsheet", "",
+		WME_ENTRY2s("english.dcp", "f53acdc5510aa184f6f968e38d8c9ad7", 12008908,
+					"data.dcp", "5e7f7d98680825bb81fca11e5493c1ad", 168658), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
+
+	// Ghost in the Sheet (Engligh, BigFish)
 	WME_WINENTRY("ghostsheet", "",
 		WME_ENTRY2s("english.dcp", "e6d0aad2c89996bcabe416105a3d6d3a", 12221017,
 					"data.dcp", "b2f8b05328e4881e15e98e845b63f451", 168003), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
+
+	// Ghost in the Sheet (Italian)
+	WME_WINENTRY("ghostsheet", "",
+		WME_ENTRY2s("italiano.dcp", "b258151caddee5ecdaf0fdd3afe62151", 11220994,
+					"data.dcp", "99ae5d9977d9a542a35c09d27df0ab22", 167980), Common::IT_ITA, ADGF_UNSTABLE, WME_1_8_0),
+
+	// Ghost in the Sheet (Russian)
+	WME_WINENTRY("ghostsheet", "",
+		WME_ENTRY2s("russian.dcp", "e32a235e77886e4b95ca362252584373", 19283033,
+					"data.dcp", "45471184e40fb0e95b2c05c5e2ec8502", 167945), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_0),
 
 	// Ghost in the Sheet (Demo)
 	WME_WINENTRY("ghostsheet", "Demo",
@@ -1210,9 +1237,61 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data_hd.dcp", "f40b3d0778e37c61cf309d214446d233", 5264780,
 					"german_hd.dcp", "8d85f83a3fc8f1bec4e5ba2158b05b1e", 152499998), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
-	// J.U.L.I.A.: Untold
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (Steam) (Spanish fanmade translation)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "HD Ready Version",
+		WME_ENTRY2s("data_sd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554,
+					"data_sd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (Steam) (Spanish fanmade translation)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "Full HD Version",
+		WME_ENTRY2s("data_hd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554,
+					"data_hd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GoG) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "HD Ready Version",
+		WME_ENTRY2s("data_sd.dcp", "da1f147a5f2ee6eb0750678a8b955c93", 4526792,
+					"data_sd.dcp", "da1f147a5f2ee6eb0750678a8b955c93", 4526792), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (GoG) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "Full HD Version",
+		WME_ENTRY2s("data_hd.dcp", "91dcb65523da943f22fca0c025a2ce8e", 5281911,
+					"data_hd.dcp", "91dcb65523da943f22fca0c025a2ce8e", 5281911), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GoG) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "HD Ready Version",
+		WME_ENTRY2s("data_sd.dcp", "070d13b70e35cd95855ddc1687446631", 4526795,
+					"german_sd.dcp", "85eb39225083465225c30261a6bcd63e", 123326134), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (GoG) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "Full HD Version",
+		WME_ENTRY2s("data_hd.dcp", "7973ca635255d3791123fd750cb848f2", 5281925,
+					"german_hd.dcp", "19a771b1a933b71b889026d53734b0c0", 152500044), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GoG) (Spanish fanmade translation)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "HD Ready Version",
+		WME_ENTRY2s("data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
+					"data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (GoG) (Spanish fanmade translation)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "Full HD Version",
+		WME_ENTRY2s("data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
+					"data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Untold (Steam, January 2016)
 	WME_WINENTRY("juliauntold", "",
 		WME_ENTRY1s("data.dcp", "fe995e26253f6e0a925dd7850fce17a9", 26459827), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Untold (GoG)
+	WME_WINENTRY("juliauntold", "",
+		WME_ENTRY1s("data.dcp", "b0aefd82647a26425fe3ee21aabb6283", 26462676), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
 
 	// K'NOSSOS
 	WME_WINENTRY("knossos", "",
