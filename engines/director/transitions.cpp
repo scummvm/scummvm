@@ -152,6 +152,11 @@ void Frame::playTransition(Score *score) {
 	t.duration = MAX<uint16>(250, _transDuration); // When duration is < 1/4s, make it 1/4
 	t.chunkSize = MAX<uint>(1, _transChunkSize);
 
+#if 0
+	t.type = kTransDissolveBits;
+	t.chunkSize = 4;
+#endif
+
 	Common::Rect clipRect(score->_movieRect);
 	clipRect.moveTo(0, 0);
 
@@ -366,15 +371,10 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 					x = x / -numbytes;
 					mask = pixmask[x % -numbytes];
 
-					if (x % -numbytes)
-						mask = 0xf;
-					else
-						mask = 0xf0;
-
 					byte *color1 = (byte *)score->_backSurface->getBasePtr(x, y);
 					byte *color2 = (byte *)score->_surface->getBasePtr(x, y);
 
-					byte newcolor = (*color1 & ~mask) | (*color2 & mask);
+					byte newcolor = ((*color1 & ~mask) | (*color2 & mask)) & 0xff;
 					//warning("color1: %02x | %02x [%02x] -> %02x", *color1, *color2, mask, newcolor);
 					*color1 = newcolor;
 				}
