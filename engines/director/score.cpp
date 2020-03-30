@@ -433,6 +433,9 @@ Score::~Score() {
 	delete _surface;
 	delete _trailSurface;
 
+	for (uint i = 0; i < _frames.size(); i++)
+		delete _frames[i];
+
 	if (_movieArchive)
 		_movieArchive->close();
 
