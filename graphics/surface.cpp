@@ -544,8 +544,10 @@ FloodFill::~FloodFill() {
 
 	free(_visited);
 
-	if (_mask)
+	if (_mask) {
+		_mask->free();
 		delete _mask;
+	}
 }
 
 void FloodFill::addSeed(int x, int y) {
