@@ -212,21 +212,21 @@ void Frame::playTransition(Score *score) {
 		}
 
 		switch (t.type) {
-		case kTransCenterOutHorizontal: // 5
+		case kTransCenterOutHorizontal:						// 5
 			t.xpos += t.xStepSize;
 			rto.setWidth(t.xpos * 2);
 			rto.moveTo(clipRect.width() / 2 - t.xpos, 0);
 			rfrom = rto;
 			break;
 
-		case kTransCenterOutVertical: // 7
+		case kTransCenterOutVertical:						// 7
 			t.ypos += t.yStepSize;
 			rto.setHeight(t.ypos * 2);
 			rto.moveTo(0, clipRect.height() / 2 - t.ypos);
 			rfrom = rto;
 			break;
 
-		case kTransCenterOutSquare: // 9
+		case kTransCenterOutSquare: 						// 9
 			t.ypos += t.yStepSize;
 			rto.setHeight(t.ypos * 2);
 			t.xpos += t.xStepSize;
@@ -235,74 +235,89 @@ void Frame::playTransition(Score *score) {
 			rfrom = rto;
 			break;
 
-		case kTransRevealUp:		// 15
+		case kTransRevealUp:								// 15
 			rto.moveTo(0, -t.yStepSize * i);
 			break;
 
-		case kTransRevealUpRight:	// 16
+		case kTransRevealUpRight:							// 16
 			rto.moveTo(t.xStepSize * i, -t.yStepSize * i);
 			break;
 
-		case kTransRevealRight:		// 17
+		case kTransRevealRight:								// 17
 			rto.moveTo(t.xStepSize * i, 0);
 			break;
 
-		case kTransRevealDownRight:	// 18
+		case kTransRevealDownRight:							// 18
 			rto.moveTo(t.xStepSize * i, t.yStepSize * i);
 			break;
 
-		case kTransRevealDown:		// 19
+		case kTransRevealDown:								// 19
 			rto.moveTo(0, t.yStepSize * i);
 			break;
 
-		case kTransRevealDownLeft:	// 20
+		case kTransRevealDownLeft:							// 20
 			rto.moveTo(-t.xStepSize * i, t.yStepSize * i);
 			break;
 
-		case kTransRevealLeft:		// 21
+		case kTransRevealLeft:								// 21
 			rto.moveTo(-t.xStepSize * i, 0);
 			break;
 
-		case kTransRevealUpLeft:	// 22
+		case kTransRevealUpLeft:							// 22
 			rto.moveTo(-t.xStepSize * i, -t.yStepSize * i);
 			break;
 
-		case kTransCoverDown:	// 29
+		case kTransDissolvePixelsFast:						// 23
+			error("Frame::playTransition(): Fall through to dissolve transition");
+			break;
+
+		case kTransDissolvePatterns:						// 26
+			error("Frame::playTransition(): Fall through to dissolve transition");
+			break;
+
+		case kTransCoverDown:								// 29
 			rto.setHeight(clipRect.height());
 			rto.moveTo(0, -clipRect.height() + t.yStepSize * i);
 			break;
 
-		case kTransCoverDownLeft: // 30
+		case kTransCoverDownLeft:							// 30
 			rto.moveTo(clipRect.width() - t.xStepSize * i, -clipRect.height() + t.yStepSize * i);
 			break;
 
-		case kTransCoverDownRight: // 31
+		case kTransCoverDownRight:							// 31
 			rto.moveTo(-clipRect.width() + t.xStepSize * i, -clipRect.height() + t.yStepSize * i);
 			break;
 
-		case kTransCoverLeft:	// 32
+		case kTransCoverLeft:								// 32
 			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
 			break;
 
-		case kTransCoverRight:	// 33
+		case kTransCoverRight:								// 33
 			rto.moveTo(-clipRect.width() + t.xStepSize * i, 0);
 			break;
 
-		case kTransCoverUp:		// 34
+		case kTransCoverUp:									// 34
 			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
 			break;
 
-		case kTransCoverUpLeft:	// 35
+		case kTransCoverUpLeft:								// 35
 			rto.moveTo(clipRect.width() - t.xStepSize * i, clipRect.height() - t.yStepSize * i);
 			break;
 
-		case kTransCoverUpRight:	// 36
+		case kTransCoverUpRight:							// 36
 			rto.moveTo(-clipRect.width() + t.xStepSize * i, clipRect.height() - t.yStepSize * i);
 			break;
 
-		case kTransDissolvePixels: // 51
-			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, _transChunkSize);
-			stop = true;
+		case kTransDissolveBitsFast:						// 50
+			error("Frame::playTransition(): Fall through to dissolve transition");
+			break;
+
+		case kTransDissolvePixels:							// 51
+			error("Frame::playTransition(): Fall through to dissolve transition");
+			break;
+
+		case kTransDissolveBits:							// 52
+			error("Frame::playTransition(): Fall through to dissolve transition");
 			break;
 
 		default:
