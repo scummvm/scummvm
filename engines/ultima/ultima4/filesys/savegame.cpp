@@ -139,8 +139,11 @@ void SaveGame::save(Common::WriteStream *stream) {
 }
 
 void SaveGame::load(Common::SeekableReadStream *stream) {
-	Common::Serializer ser(stream, nullptr);
-	synchronize(ser);
+	Common::Serializer *ser = nullptr;
+	if (stream) {
+		ser = new Common::Serializer(stream, nullptr);
+		synchronize(*ser);
+	}
 
 	// initialize our party
 	if (g_context->_party) {
@@ -183,13 +186,15 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 	if (MAP_IS_OOB(g_context->_location->_map, g_context->_location->_coords))
 		g_context->_location->_coords.putInBounds(g_context->_location->_map);
 
-	/* load in creatures.sav */
-	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
+	// load in creatures
+	if (ser)
+		SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, *ser);
 	gameFixupObjects(g_context->_location->_map);
 
 	/* we have previous creature information as well, load it! */
 	if (g_context->_location->_prev) {
-		SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, ser);
+		if (ser)
+			SaveGameMonsterRecord::synchronize(g_context->_location->_prev->_map->_monsterTable, *ser);
 		gameFixupObjects(g_context->_location->_prev->_map);
 	}
 
@@ -203,6 +208,14 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 	g_context->_party->addObserver(g_context->_stats);
 
 	g_game->initScreenWithoutReloadingState();
+
+	delete ser;
+}
+
+void SaveGame::newGame() {
+	// Most default state has already been set up by the IntroController.
+	// Call the load method with no stream to handle pre-game setup
+	load(nullptr);
 }
 
 void SaveGame::synchronize(Common::Serializer &s) {
@@ -315,6 +328,8 @@ void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
 	_dngLevel = 0xFFFF;
 	_location = 0;
 }
+
+/*-------------------------------------------------------------------*/
 
 void SaveGamePlayerRecord::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_hp);
