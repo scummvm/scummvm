@@ -131,7 +131,6 @@ protected:
 
 	// ResidualVM specific code
 	// Graphics capabilities
-	void detectDesktopResolution();
 	void detectFramebufferSupport();
 	void detectAntiAliasingSupport();
 	ResVmSdlGraphicsManager::Capabilities _capabilities;

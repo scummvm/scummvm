@@ -194,7 +194,6 @@ void OSystem_SDL::initBackend() {
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
 // ResidualVM specific code start
-	detectDesktopResolution();
 #ifdef USE_OPENGL
 	detectFramebufferSupport();
 	detectAntiAliasingSupport();
@@ -256,24 +255,6 @@ void OSystem_SDL::initBackend() {
 }
 
 // ResidualVM specific code
-void OSystem_SDL::detectDesktopResolution() {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_DisplayMode displayMode;
-	if (!SDL_GetDesktopDisplayMode(0, &displayMode)) {
-		_capabilities.desktopWidth = displayMode.w;
-		_capabilities.desktopHeight = displayMode.h;
-	}
-#else
-	// Query the desktop resolution. We simply hope nothing tried to change
-	// the resolution so far.
-	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
-	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
-		_capabilities.desktopWidth = videoInfo->current_w;
-		_capabilities.desktopHeight = videoInfo->current_h;
-	}
-#endif
-}
-
 #ifdef USE_OPENGL
 void OSystem_SDL::detectFramebufferSupport() {
 	_capabilities.openGLFrameBuffer = false;
