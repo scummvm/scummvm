@@ -165,6 +165,7 @@ Common::Error Ultima4Engine::saveGameState(int slot, const Common::String &desc,
 
 Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) {
 	g_ultima->_saveGame->load(stream);
+	screenUpdate(&g_game->_mapArea, true, false);
 	return Common::kNoError;
 }
 
