@@ -29,6 +29,7 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "common/achievements.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/fs.h"
@@ -37,6 +38,7 @@
 
 #include "engines/metaengine.h"
 
+#include "engines/wintermute/achievements_tables.h"
 #include "engines/wintermute/detection_tables.h"
 
 namespace Wintermute {
@@ -215,6 +217,34 @@ public:
 		return retVal;
 	}
 
+	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override {
+		Common::String gameId = ConfMan.get("gameid", target);
+
+		// HACK: "juliauntold" is a DLC of "juliastars", they share the same achievements list
+		if (gameId == "juliauntold") {
+			gameId = "juliastars";
+		}
+
+		Common::AchievementsPlatform platform = Common::STEAM_ACHIEVEMENTS;
+		if (ConfMan.get("extra", target).contains("GOG")) {
+			platform = Common::GALAXY_ACHIEVEMENTS;
+		}
+
+		// "(gameId, platform) -> result" search
+		Common::AchievementsInfo result;
+		for (const AchievementDescriptionList *i = achievementDescriptionList; i->gameId; i++) {
+			if (i->gameId == gameId && i->platform == platform) {
+				result.platform = i->platform;
+				result.appId = i->appId;
+				for (const Common::AchievementDescription *it = i->descriptions; it->id; it++) {
+					result.descriptions.push_back(*it);
+				}
+				break;
+			}
+		}
+		return result;
+	}
+	
 	Common::KeymapArray initKeymaps(const char *target) const override {
 		using namespace Common;
 
