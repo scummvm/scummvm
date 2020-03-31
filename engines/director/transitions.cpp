@@ -86,8 +86,8 @@ struct {
 	TRANS(kTransRevealLeft,				kTransAlgoReveal,	kTransDirHorizontal),
 	TRANS(kTransRevealUpLeft,			kTransAlgoReveal,	kTransDirBoth),
 	TRANS(kTransDissolvePixelsFast,		kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransDissolveBoxyRects,		kTransAlgoBoxy,		kTransDirBoth),
-	TRANS(kTransDissolveBoxySquares,	kTransAlgoBoxy,		kTransDirBoth),			// 25
+	TRANS(kTransDissolveBoxyRects,		kTransAlgoDissolve,	kTransDirNone),
+	TRANS(kTransDissolveBoxySquares,	kTransAlgoDissolve,	kTransDirNone),			// 25
 	TRANS(kTransDissolvePatterns,		kTransAlgoDissolve,	kTransDirNone),
 	TRANS(kTransRandomRows,				kTransAlgoDissolve,	kTransDirNone),
 	TRANS(kTransRandomColumns,			kTransAlgoDissolve,	kTransDirNone),
@@ -351,6 +351,14 @@ void Frame::playTransition(Score *score) {
 			// Dissolve
 			break;
 
+		case kTransDissolveBoxyRects:						// 24
+			// Dissolve
+			break;
+
+		case kTransDissolveBoxySquares:						// 25
+			// Dissolve
+			break;
+
 		case kTransDissolvePatterns:						// 26
 			// Dissolve
 			break;
@@ -512,6 +520,26 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 		h = 1;
 		break;
 
+	case kTransDissolveBoxyRects:
+		t.xStepSize = t.chunkSize;
+		t.yStepSize = t.chunkSize;
+		w = (w + t.chunkSize - 1) / t.chunkSize;
+		h = (h + t.chunkSize - 1) / t.chunkSize;
+		break;
+
+	case kTransDissolveBoxySquares:
+		if (w < h) {
+			t.xStepSize = t.chunkSize;
+			t.yStepSize = w / t.chunkSize;
+		} else {
+			t.xStepSize = h / t.chunkSize;
+			t.yStepSize = t.chunkSize;
+		}
+
+		w = (w + t.chunkSize - 1) / t.chunkSize;
+		h = (h + t.chunkSize - 1) / t.chunkSize;
+		break;
+
 	default:
 		break;
 	}
@@ -572,9 +600,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 					byte *color1 = (byte *)score->_backSurface->getBasePtr(x, y);
 					byte *color2 = (byte *)score->_surface->getBasePtr(x, y);
 
-					byte newcolor = ((*color1 & ~mask) | (*color2 & mask)) & 0xff;
-					//warning("color1: %02x | %02x [%02x] -> %02x", *color1, *color2, mask, newcolor);
-					*color1 = newcolor;
+					*color1 = ((*color1 & ~mask) | (*color2 & mask)) & 0xff;
 				}
 			}
 
