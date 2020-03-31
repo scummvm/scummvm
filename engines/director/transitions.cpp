@@ -193,6 +193,7 @@ void Frame::playTransition(Score *score) {
 
 	case kTransAlgoEdgesIn:
 	case kTransAlgoReveal:
+	case kTransAlgoPush:
 		blitFrom = score->_backSurface2;
 		fullredraw = true;
 		break;
@@ -208,6 +209,7 @@ void Frame::playTransition(Score *score) {
 	for (uint16 i = 1; i < t.steps; i++) {
 		bool stop = false;
 		rto = clipRect;
+		rfrom = clipRect;
 
 		if (transProps[t.type].algo == kTransAlgoReveal ||
 				transProps[t.type].algo == kTransAlgoEdgesIn) {
@@ -277,6 +279,46 @@ void Frame::playTransition(Score *score) {
 			rto.setWidth(clipRect.width() - t.xStepSize * i * 2);
 			rto.moveTo(t.xStepSize * i, t.yStepSize * i);
 			rfrom = rto;
+			break;
+
+		case kTransPushLeft:								// 11
+			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+
+			rfrom.moveTo(t.xStepSize * i, 0);
+			rfrom.setWidth(clipRect.width() - t.xStepSize * i);
+			rto.moveTo(0, 0);
+			break;
+
+		case kTransPushRight:								// 12
+			rfrom.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			rfrom.setWidth(t.xStepSize * i);
+			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+
+			rto.setWidth(clipRect.width() - t.xStepSize * i);
+			rto.moveTo(t.xStepSize * i, 0);
+			rfrom.moveTo(0, 0);
+			rfrom.setWidth(clipRect.width() - t.xStepSize * i);
+			break;
+
+		case kTransPushDown:								// 13
+			rfrom.moveTo(0, clipRect.height() - t.yStepSize * i);
+			rfrom.setHeight(t.yStepSize * i);
+			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+
+			rto.setHeight(clipRect.height() - t.yStepSize * i);
+			rto.moveTo(0, t.yStepSize * i);
+			rfrom.moveTo(0, 0);
+			rfrom.setHeight(clipRect.height() - t.yStepSize * i);
+			break;
+
+		case kTransPushUp:									// 14
+			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
+			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+
+			rfrom.moveTo(0, t.yStepSize * i);
+			rfrom.setHeight(clipRect.height() - t.yStepSize * i);
+			rto.moveTo(0, 0);
 			break;
 
 		case kTransRevealUp:								// 15
@@ -375,16 +417,18 @@ void Frame::playTransition(Score *score) {
 
 		score->_backSurface->blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
 
-		rto.clip(clipRect);
-
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))
 			break;
 
 		if (fullredraw) {
 			g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, clipRect.width(), clipRect.height());
-		} else if (rto.height() > 0 && rto.width() > 0) {
-			g_system->copyRectToScreen(score->_backSurface->getBasePtr(rto.left, rto.top), score->_backSurface->pitch, rto.left, rto.top, rto.width(), rto.height()); // transition
+		} else {
+			rto.clip(clipRect);
+
+			if (rto.height() > 0 && rto.width() > 0) {
+				g_system->copyRectToScreen(score->_backSurface->getBasePtr(rto.left, rto.top), score->_backSurface->pitch, rto.left, rto.top, rto.width(), rto.height());
+			}
 		}
 
 		g_system->updateScreen();
