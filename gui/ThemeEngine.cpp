@@ -141,9 +141,10 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDSliderHover,                "slider_hover",     kDrawLayerForeground,  kDDNone},
 	{kDDSliderDisabled,             "slider_disabled",  kDrawLayerForeground,  kDDNone},
 
-	{kDDCheckboxDefault,            "checkbox_default",         kDrawLayerBackground,   kDDNone},
-	{kDDCheckboxDisabled,           "checkbox_disabled",        kDrawLayerBackground,   kDDNone},
-	{kDDCheckboxSelected,           "checkbox_selected",        kDrawLayerForeground,  kDDCheckboxDefault},
+	{kDDCheckboxDefault,            "checkbox_default",           kDrawLayerBackground,   kDDNone},
+	{kDDCheckboxDisabled,           "checkbox_disabled",          kDrawLayerBackground,   kDDNone},
+	{kDDCheckboxSelected,           "checkbox_selected",          kDrawLayerForeground,  kDDCheckboxDefault},
+	{kDDCheckboxDisabledSelected,   "checkbox_disabled_selected", kDrawLayerForeground,  kDDCheckboxDisabled},
 
 	{kDDRadiobuttonDefault,         "radiobutton_default",      kDrawLayerBackground,   kDDNone},
 	{kDDRadiobuttonDisabled,        "radiobutton_disabled",     kDrawLayerBackground,   kDDNone},
@@ -994,7 +995,7 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 		dd = kDDCheckboxSelected;
 
 	if (state == kStateDisabled)
-		dd = kDDCheckboxDisabled;
+		dd = checked ? kDDCheckboxDisabledSelected : kDDCheckboxDisabled;
 
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
