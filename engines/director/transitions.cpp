@@ -191,6 +191,7 @@ void Frame::playTransition(Score *score) {
 		blitFrom = score->_surface;
 		break;
 
+	case kTransAlgoEdgesIn:
 	case kTransAlgoReveal:
 		blitFrom = score->_backSurface2;
 		fullredraw = true;
@@ -208,7 +209,8 @@ void Frame::playTransition(Score *score) {
 		bool stop = false;
 		rto = clipRect;
 
-		if (transProps[t.type].algo == kTransAlgoReveal) {
+		if (transProps[t.type].algo == kTransAlgoReveal ||
+				transProps[t.type].algo == kTransAlgoEdgesIn) {
 			score->_backSurface->copyFrom(*score->_surface);
 		}
 
@@ -242,10 +244,22 @@ void Frame::playTransition(Score *score) {
 			rfrom = rto;
 			break;
 
+		case kTransEdgesInHorizontal:						// 6
+			rto.setWidth(clipRect.width() - t.xStepSize * i * 2);
+			rto.moveTo(t.xStepSize * i, 0);
+			rfrom = rto;
+			break;
+
 		case kTransCenterOutVertical:						// 7
 			t.ypos += t.yStepSize;
 			rto.setHeight(t.ypos * 2);
 			rto.moveTo(0, clipRect.height() / 2 - t.ypos);
+			rfrom = rto;
+			break;
+
+		case kTransEdgesInVertical:							// 8
+			rto.setHeight(clipRect.height() - t.yStepSize * i * 2);
+			rto.moveTo(0, t.yStepSize * i);
 			rfrom = rto;
 			break;
 
@@ -255,6 +269,13 @@ void Frame::playTransition(Score *score) {
 			t.xpos += t.xStepSize;
 			rto.setWidth(t.xpos * 2);
 			rto.moveTo(clipRect.width() / 2 - t.xpos, clipRect.height() / 2 - t.ypos);
+			rfrom = rto;
+			break;
+
+		case kTransEdgesInSquare:							// 10
+			rto.setHeight(clipRect.height() - t.yStepSize * i * 2);
+			rto.setWidth(clipRect.width() - t.xStepSize * i * 2);
+			rto.moveTo(t.xStepSize * i, t.yStepSize * i);
 			rfrom = rto;
 			break;
 
