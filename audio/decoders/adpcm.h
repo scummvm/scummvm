@@ -59,7 +59,8 @@ enum ADPCMType {
 	kADPCMMS,                  // Microsoft ADPCM
 	kADPCMDVI,                 // Intel DVI IMA ADPCM
 	kADPCMApple,               // Apple QuickTime IMA ADPCM
-	kADPCMDK3                  // Duck DK3 IMA ADPCM
+	kADPCMDK3,                 // Duck DK3 IMA ADPCM
+	kADPCMXA                   // XA ADPCM
 };
 
 /**
@@ -88,7 +89,7 @@ SeekableAudioStream *makeADPCMStream(
  * packets as individual AudioStreams like returned by makeADPCMStream.
  *
  * Due to the ADPCM types not necessarily supporting stateless
- * streaming, OKI and DVI are not supported by this function
+ * streaming, OKI, XA and DVI are not supported by this function
  * and will return NULL.
  *
  * @param type              the compression type used

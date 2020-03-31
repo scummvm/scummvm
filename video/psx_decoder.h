@@ -140,11 +140,9 @@ private:
 
 		Audio::QueuingAudioStream *_audStream;
 
-		struct ADPCMStatus {
-			int16 sample[2];
-		} _adpcmStatus[2];
-
 		bool _endOfTrack;
+		bool _stereo;
+		uint _rate;
 	};
 
 	CDSpeed _speed;
