@@ -89,8 +89,8 @@ struct {
 	TRANS(kTransDissolveBoxyRects,		kTransAlgoBoxy,		kTransDirBoth),
 	TRANS(kTransDissolveBoxySquares,	kTransAlgoBoxy,		kTransDirBoth),			// 25
 	TRANS(kTransDissolvePatterns,		kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransRandomRows,				kTransAlgoRandomLines,kTransDirHorizontal),
-	TRANS(kTransRandomColumns,			kTransAlgoRandomLines,kTransDirVertical),
+	TRANS(kTransRandomRows,				kTransAlgoDissolve,	kTransDirNone),
+	TRANS(kTransRandomColumns,			kTransAlgoDissolve,	kTransDirNone),
 	TRANS(kTransCoverDown,				kTransAlgoCover,	kTransDirVertical),
 	TRANS(kTransCoverDownLeft,			kTransAlgoCover,	kTransDirBoth),			// 30
 	TRANS(kTransCoverDownRight,			kTransAlgoCover,	kTransDirBoth),
@@ -165,24 +165,15 @@ void Frame::playTransition(Score *score) {
 
 	initTransParams(t, score, clipRect);
 
-	if (t.type == kTransDissolvePatterns) {
-		dissolvePatternsTrans(t, score, clipRect);
-
-		return;
-	}
-
-	if (transProps[t.type].algo == kTransAlgoDissolve) {
-		dissolveTrans(t, score, clipRect);
-
-		return;
-	}
-
 	Graphics::ManagedSurface *blitFrom;
 	bool fullredraw = false;
 
 	switch (transProps[t.type].algo) {
 	case kTransAlgoDissolve:
-		dissolveTrans(t, score, clipRect);
+		if (t.type == kTransDissolvePatterns)
+			dissolvePatternsTrans(t, score, clipRect);
+		else
+			dissolveTrans(t, score, clipRect);
 		return;
 
 	case kTransAlgoCenterOut:
@@ -357,11 +348,19 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		case kTransDissolvePixelsFast:						// 23
-			error("Frame::playTransition(): Fall through to dissolve transition");
+			// Dissolve
 			break;
 
 		case kTransDissolvePatterns:						// 26
-			error("Frame::playTransition(): Fall through to dissolve transition");
+			// Dissolve
+			break;
+
+		case kTransRandomRows:								// 27
+			// Dissolve
+			break;
+
+		case kTransRandomColumns:							// 28
+			// Dissolve
 			break;
 
 		case kTransCoverDown:								// 29
@@ -398,15 +397,15 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		case kTransDissolveBitsFast:						// 50
-			error("Frame::playTransition(): Fall through to dissolve transition");
+			// Dissolve
 			break;
 
 		case kTransDissolvePixels:							// 51
-			error("Frame::playTransition(): Fall through to dissolve transition");
+			// Dissolve
 			break;
 
 		case kTransDissolveBits:							// 52
-			error("Frame::playTransition(): Fall through to dissolve transition");
+			// Dissolve
 			break;
 
 		default:
@@ -460,41 +459,61 @@ static uint32 randomSeed[33] = {
 };
 
 static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) {
-	int numbytes = 1;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
 	uint realw = w, realh = h;
 	byte pixmask[8];
 
-	if (t.type == kTransDissolveBitsFast ||
-			t.type == kTransDissolveBits) {
+	t.xStepSize = 1;
+	t.yStepSize = 1;
 
+	switch (t.type) {
+	case kTransDissolveBitsFast:
+	case kTransDissolveBits:
 		if (t.chunkSize >= 32) {
 			w = (w + 3) >> 2;
-			numbytes = 4;
+			t.xStepSize = 4;
 		} else if (t.chunkSize >= 16) {
 			w = (w + 1) >> 1;
-			numbytes = 2;
+			t.xStepSize = 2;
 		} else if (t.chunkSize >= 8) {
-			numbytes = 1;
+			t.xStepSize = 1;
 		} else if (t.chunkSize >= 4) {
 			w <<= 1;
-			numbytes = -2;
+			t.xStepSize = -2;
 			pixmask[0] = 0x0f;
 			pixmask[1] = 0xf0;
 		} else if (t.chunkSize >= 2) {
 			w <<= 2;
-			numbytes = -4;
+			t.xStepSize = -4;
 
 			for (int i = 0; i < 4; i++)
 				pixmask[i] = 0x3 << (i * 2);
 		} else {
 			w <<= 3;
-			numbytes = -8;
+			t.xStepSize = -8;
 
 			for (int i = 0; i < 8; i++)
 				pixmask[i] = 1 << i;
 		}
+		break;
+
+	case kTransRandomRows:
+		t.xStepSize = realw;
+		t.yStepSize = t.chunkSize;
+		w = 1;
+		h = (h + t.chunkSize - 1) / t.chunkSize;
+		break;
+
+	case kTransRandomColumns:
+		t.xStepSize = t.chunkSize;
+		t.yStepSize = realh;
+		w = (w + t.chunkSize - 1) / t.chunkSize;
+		h = 1;
+		break;
+
+	default:
+		break;
 	}
 
 	int vBits = getLog2(w);
@@ -527,7 +546,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			t.type == kTransDissolveBitsFast)
 		t.stepDuration = 0;						// No delay
 
-	Common::Rect r(numbytes > 0 ? numbytes : 1, 1);
+	Common::Rect r(MAX(1, t.xStepSize), t.yStepSize);
 
 	while (t.steps) {
 		uint32 pixPerStep = pixPerStepInit;
@@ -537,14 +556,18 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			byte mask = 0;
 
 			if (x < w && y < h) {
-				if (numbytes >= 1) {
-					x = MIN(x * numbytes, realw - numbytes);
-					r.moveTo(x, y);
+				if (t.xStepSize >= 1) {
+					x = x * t.xStepSize;
+					y = y * t.yStepSize;
 
-					score->_backSurface->copyRectToSurface(*score->_surface, x, y, r);
-				} else if (numbytes < 1) {
-					mask = pixmask[x % -numbytes];
-					x = x / -numbytes;
+					if (x < realw && y < realh) {
+						r.moveTo(x, y);
+						r.clip(clipRect);
+						score->_backSurface->copyRectToSurface(*score->_surface, x, y, r);
+					}
+				} else if (t.xStepSize < 1) {
+					mask = pixmask[x % -t.xStepSize];
+					x = x / -t.xStepSize;
 
 					byte *color1 = (byte *)score->_backSurface->getBasePtr(x, y);
 					byte *color2 = (byte *)score->_surface->getBasePtr(x, y);
