@@ -30,6 +30,7 @@ namespace Ultima4 {
 
 class Config;
 class Context;
+class DialogueLoaders;
 class ImageLoaders;
 class GameController;
 struct SaveGame;
@@ -53,6 +54,7 @@ protected:
 public:
 	Config *_config;
 	Context *_context;
+	DialogueLoaders *_dialogueLoaders;
 	ImageLoaders *_imageLoaders;
 	GameController *_game;
 	SaveGame *_saveGame;

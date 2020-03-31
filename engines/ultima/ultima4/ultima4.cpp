@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/conversation/dialogueloader.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
@@ -48,8 +49,8 @@ Ultima4Engine *g_ultima;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _config(nullptr),
-		_context(nullptr), _game(nullptr), _imageLoaders(nullptr), _saveGame(nullptr),
-		_screen(nullptr) {
+		_context(nullptr), _dialogueLoaders(nullptr), _game(nullptr), _imageLoaders(nullptr),
+		_saveGame(nullptr), _screen(nullptr) {
 	g_ultima = this;
 	g_context = nullptr;
 	g_game = nullptr;
@@ -59,6 +60,7 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 Ultima4Engine::~Ultima4Engine() {
 	delete _config;
 	delete _context;
+	delete _dialogueLoaders;
 	delete _game;
 	delete _imageLoaders;
 	delete _saveGame;
@@ -78,6 +80,7 @@ bool Ultima4Engine::initialize() {
 	// Initialize the sub-systems
 	_config = new Config();
 	_context = new Context();
+	_dialogueLoaders = new DialogueLoaders();
 	_screen = new Screen();
 	_game = new GameController();
 	_imageLoaders = new ImageLoaders();

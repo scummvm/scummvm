@@ -20,28 +20,33 @@
  *
  */
 
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
+#include "ultima/ultima4/conversation/dialogueloader_hw.h"
+#include "ultima/ultima4/conversation/dialogueloader_lb.h"
+#include "ultima/ultima4/conversation/dialogueloader_tlk.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-Std::map<Common::String, DialogueLoader *> *DialogueLoader::_loaderMap = NULL;
+static DialogueLoaders *g_loaders;
 
-DialogueLoader *DialogueLoader::getLoader(const Common::String &mimeType) {
-	ASSERT(_loaderMap != NULL, "DialogueLoader::getLoader loaderMap not initialized");
-	if (_loaderMap->find(mimeType) == _loaderMap->end())
-		return NULL;
-	return (*_loaderMap)[mimeType];
+DialogueLoaders::DialogueLoaders() {
+	g_loaders = this;
+	registerLoader(new U4HWDialogueLoader, "application/x-u4hwtlk");
+	registerLoader(new U4LBDialogueLoader, "application/x-u4lbtlk");
+	registerLoader(new U4TlkDialogueLoader(), "application/x-u4tlk");
 }
 
-DialogueLoader *DialogueLoader::registerLoader(DialogueLoader *loader, const Common::String &mimeType) {
-	if (_loaderMap == NULL) {
-		_loaderMap = new Std::map<Common::String, DialogueLoader *>;
-	}
-	(*_loaderMap)[mimeType] = loader;
-	return loader;
+DialogueLoaders::~DialogueLoaders() {
+	for (Common::HashMap<Common::String, DialogueLoader *>::iterator it = _loaders.begin();
+			it != _loaders.end(); ++it)
+		delete it->_value;
+	g_loaders = nullptr;
+}
+
+DialogueLoader *DialogueLoaders::getLoader(const Common::String &mimeType) {
+	return (*g_loaders)[mimeType];
 }
 
 } // End of namespace Ultima4

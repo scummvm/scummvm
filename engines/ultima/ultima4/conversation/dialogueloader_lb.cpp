@@ -36,8 +36,6 @@ using Std::vector;
 Response *lordBritishGetHelp(const DynamicResponse *resp);
 Response *lordBritishGetIntro(const DynamicResponse *resp);
 
-DialogueLoader *U4LBDialogueLoader::_instance = DialogueLoader::registerLoader(new U4LBDialogueLoader, "application/x-u4lbtlk");
-
 /**
  * A special case dialogue loader for Lord British.  Loads most of the
  * keyword/responses from a hardcoded location in avatar.exe.  The
