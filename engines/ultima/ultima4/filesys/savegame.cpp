@@ -152,6 +152,18 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 	g_context->_party = new Party(this);
 	g_context->_party->addObserver(g_game);
 
+	// Delete any prior map
+	if (g_context->_location && g_context->_location->_prev) {
+		g_context->_location->_prev->deleteObserver(g_game);
+		delete g_context->_location->_prev;
+		g_context->_location->_prev = nullptr;
+	}
+	if (g_context->_location) {
+		g_context->_location->deleteObserver(g_game);
+		delete g_context->_location;
+		g_context->_location = nullptr;
+	}
+
 	// set the map to the world map
 	g_game->setMap(mapMgr->get(MAP_WORLD), 0, NULL);
 	g_context->_location->_map->clearObjects();
