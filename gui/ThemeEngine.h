@@ -94,6 +94,7 @@ enum DrawData {
 	kDDCheckboxDefault,
 	kDDCheckboxDisabled,
 	kDDCheckboxSelected,
+	kDDCheckboxDisabledSelected,
 
 	kDDRadiobuttonDefault,
 	kDDRadiobuttonDisabled,
