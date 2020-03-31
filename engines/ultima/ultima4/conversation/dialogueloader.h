@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_DIALOGUELOADER_H
 #define ULTIMA4_DIALOGUELOADER_H
 
-#include "ultima/shared/std/containers.h"
+#include "common/hashmap.h"
 #include "common/str.h"
 
 namespace Ultima {
@@ -44,14 +44,25 @@ class DialogueLoader {
 public:
 	virtual ~DialogueLoader() {}
 
-	static DialogueLoader *getLoader(const Common::String &mimeType);
 	virtual Dialogue *load(void *source) = 0;
+};
 
-protected:
-	static DialogueLoader *registerLoader(DialogueLoader *loader, const Common::String &mimeType);
-
+class DialogueLoaders {
 private:
-	static Std::map<Common::String, DialogueLoader *> *_loaderMap;
+	Common::HashMap<Common::String, DialogueLoader *> _loaders;
+public:
+	static DialogueLoader *getLoader(const Common::String &mimeType);
+public:
+	DialogueLoaders();
+	~DialogueLoaders();
+
+	void registerLoader(DialogueLoader *loader, const Common::String &mimeType) {
+		_loaders[mimeType] = loader;
+	}
+
+	DialogueLoader *operator[](const Common::String &mimeType) {
+		return _loaders[mimeType];
+	}
 };
 
 } // End of namespace Ultima4

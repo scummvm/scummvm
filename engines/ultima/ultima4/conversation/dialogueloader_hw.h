@@ -32,8 +32,6 @@ namespace Ultima4 {
  * The dialogue loader for Hawkwind.
  */
 class U4HWDialogueLoader : public DialogueLoader {
-	static DialogueLoader *_instance;
-
 public:
 	virtual Dialogue *load(void *source);
 };

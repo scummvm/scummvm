@@ -53,8 +53,6 @@ Response *hawkwindGetIntro(const DynamicResponse *dynResp);
 
 vector<Common::String> hawkwindText;
 
-DialogueLoader *U4HWDialogueLoader::_instance = DialogueLoader::registerLoader(new U4HWDialogueLoader, "application/x-u4hwtlk");
-
 /**
  * A special case dialogue loader for Hawkwind.
  */
