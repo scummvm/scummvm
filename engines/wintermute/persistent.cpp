@@ -81,6 +81,8 @@
 #include "engines/wintermute/base/scriptables/script_ext_mem_buffer.h"
 #include "engines/wintermute/base/scriptables/script_ext_object.h"
 #include "engines/wintermute/base/scriptables/script_ext_string.h"
+#include "engines/wintermute/base/scriptables/script_ext_steam_api.h"
+#include "engines/wintermute/base/scriptables/script_ext_wme_galaxy_api.h"
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_edit.h"
 #include "engines/wintermute/ui/ui_entity.h"
@@ -156,6 +158,8 @@ void SystemClassRegistry::registerClasses() {
 	REGISTER_CLASS(SXMemBuffer, false)
 	REGISTER_CLASS(SXObject, false)
 	REGISTER_CLASS(SXString, false)
+	REGISTER_CLASS(SXSteamAPI, false)
+	REGISTER_CLASS(SXWMEGalaxyAPI, false)
 
 	REGISTER_CLASS(UIButton, false)
 	REGISTER_CLASS(UIEdit, false)

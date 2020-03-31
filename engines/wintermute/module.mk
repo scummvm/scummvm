@@ -41,6 +41,8 @@ MODULE_OBJS := \
 	base/scriptables/script_ext_object.o \
 	base/scriptables/script_ext_mem_buffer.o \
 	base/scriptables/script_ext_string.o \
+	base/scriptables/script_ext_steam_api.o \
+	base/scriptables/script_ext_wme_galaxy_api.o \
 	base/file/base_disk_file.o \
 	base/file/base_file.o \
 	base/file/base_file_entry.o \
