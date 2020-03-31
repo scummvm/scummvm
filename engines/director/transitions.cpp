@@ -187,6 +187,7 @@ void Frame::playTransition(Score *score) {
 
 	case kTransAlgoCenterOut:
 	case kTransAlgoCover:
+	case kTransAlgoWipe:
 		blitFrom = score->_surface;
 		break;
 
@@ -212,6 +213,28 @@ void Frame::playTransition(Score *score) {
 		}
 
 		switch (t.type) {
+		case kTransWipeRight:								// 1
+			rto.setWidth(t.xStepSize * i);
+			rfrom = rto;
+			break;
+
+		case kTransWipeLeft:								// 2
+			rto.setWidth(t.xStepSize * i);
+			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			rfrom = rto;
+			break;
+
+		case kTransWipeDown:								// 3
+			rto.setHeight(t.yStepSize * i);
+			rfrom = rto;
+			break;
+
+		case kTransWipeUp:									// 4
+			rto.setHeight(t.yStepSize * i);
+			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
+			rfrom = rto;
+			break;
+
 		case kTransCenterOutHorizontal:						// 5
 			t.xpos += t.xStepSize;
 			rto.setWidth(t.xpos * 2);
