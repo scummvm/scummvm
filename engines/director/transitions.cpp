@@ -206,6 +206,9 @@ void Frame::playTransition(Score *score) {
 	rfrom = clipRect;
 	rto = clipRect;
 
+	uint w = clipRect.width();
+	uint h = clipRect.height();
+
 	for (uint16 i = 1; i < t.steps; i++) {
 		bool stop = false;
 		rto = clipRect;
@@ -224,7 +227,7 @@ void Frame::playTransition(Score *score) {
 
 		case kTransWipeLeft:								// 2
 			rto.setWidth(t.xStepSize * i);
-			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			rto.moveTo(w - t.xStepSize * i, 0);
 			rfrom = rto;
 			break;
 
@@ -235,19 +238,19 @@ void Frame::playTransition(Score *score) {
 
 		case kTransWipeUp:									// 4
 			rto.setHeight(t.yStepSize * i);
-			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
+			rto.moveTo(0, h - t.yStepSize * i);
 			rfrom = rto;
 			break;
 
 		case kTransCenterOutHorizontal:						// 5
 			t.xpos += t.xStepSize;
 			rto.setWidth(t.xpos * 2);
-			rto.moveTo(clipRect.width() / 2 - t.xpos, 0);
+			rto.moveTo(w / 2 - t.xpos, 0);
 			rfrom = rto;
 			break;
 
 		case kTransEdgesInHorizontal:						// 6
-			rto.setWidth(clipRect.width() - t.xStepSize * i * 2);
+			rto.setWidth(w - t.xStepSize * i * 2);
 			rto.moveTo(t.xStepSize * i, 0);
 			rfrom = rto;
 			break;
@@ -255,12 +258,12 @@ void Frame::playTransition(Score *score) {
 		case kTransCenterOutVertical:						// 7
 			t.ypos += t.yStepSize;
 			rto.setHeight(t.ypos * 2);
-			rto.moveTo(0, clipRect.height() / 2 - t.ypos);
+			rto.moveTo(0, h / 2 - t.ypos);
 			rfrom = rto;
 			break;
 
 		case kTransEdgesInVertical:							// 8
-			rto.setHeight(clipRect.height() - t.yStepSize * i * 2);
+			rto.setHeight(h - t.yStepSize * i * 2);
 			rto.moveTo(0, t.yStepSize * i);
 			rfrom = rto;
 			break;
@@ -270,54 +273,54 @@ void Frame::playTransition(Score *score) {
 			rto.setHeight(t.ypos * 2);
 			t.xpos += t.xStepSize;
 			rto.setWidth(t.xpos * 2);
-			rto.moveTo(clipRect.width() / 2 - t.xpos, clipRect.height() / 2 - t.ypos);
+			rto.moveTo(w / 2 - t.xpos, h / 2 - t.ypos);
 			rfrom = rto;
 			break;
 
 		case kTransEdgesInSquare:							// 10
-			rto.setHeight(clipRect.height() - t.yStepSize * i * 2);
-			rto.setWidth(clipRect.width() - t.xStepSize * i * 2);
+			rto.setHeight(h - t.yStepSize * i * 2);
+			rto.setWidth(w - t.xStepSize * i * 2);
 			rto.moveTo(t.xStepSize * i, t.yStepSize * i);
 			rfrom = rto;
 			break;
 
 		case kTransPushLeft:								// 11
-			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			rto.moveTo(w - t.xStepSize * i, 0);
 			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.moveTo(t.xStepSize * i, 0);
-			rfrom.setWidth(clipRect.width() - t.xStepSize * i);
+			rfrom.setWidth(w - t.xStepSize * i);
 			rto.moveTo(0, 0);
 			break;
 
 		case kTransPushRight:								// 12
-			rfrom.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			rfrom.moveTo(w - t.xStepSize * i, 0);
 			rfrom.setWidth(t.xStepSize * i);
 			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
 
-			rto.setWidth(clipRect.width() - t.xStepSize * i);
+			rto.setWidth(w - t.xStepSize * i);
 			rto.moveTo(t.xStepSize * i, 0);
 			rfrom.moveTo(0, 0);
-			rfrom.setWidth(clipRect.width() - t.xStepSize * i);
+			rfrom.setWidth(w - t.xStepSize * i);
 			break;
 
 		case kTransPushDown:								// 13
-			rfrom.moveTo(0, clipRect.height() - t.yStepSize * i);
+			rfrom.moveTo(0, h - t.yStepSize * i);
 			rfrom.setHeight(t.yStepSize * i);
 			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
 
-			rto.setHeight(clipRect.height() - t.yStepSize * i);
+			rto.setHeight(h - t.yStepSize * i);
 			rto.moveTo(0, t.yStepSize * i);
 			rfrom.moveTo(0, 0);
-			rfrom.setHeight(clipRect.height() - t.yStepSize * i);
+			rfrom.setHeight(h - t.yStepSize * i);
 			break;
 
 		case kTransPushUp:									// 14
-			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
+			rto.moveTo(0, h - t.yStepSize * i);
 			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.moveTo(0, t.yStepSize * i);
-			rfrom.setHeight(clipRect.height() - t.yStepSize * i);
+			rfrom.setHeight(h - t.yStepSize * i);
 			rto.moveTo(0, 0);
 			break;
 
@@ -362,36 +365,36 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		case kTransCoverDown:								// 29
-			rto.setHeight(clipRect.height());
-			rto.moveTo(0, -clipRect.height() + t.yStepSize * i);
+			rto.setHeight(h);
+			rto.moveTo(0, -h + t.yStepSize * i);
 			break;
 
 		case kTransCoverDownLeft:							// 30
-			rto.moveTo(clipRect.width() - t.xStepSize * i, -clipRect.height() + t.yStepSize * i);
+			rto.moveTo(w - t.xStepSize * i, -h + t.yStepSize * i);
 			break;
 
 		case kTransCoverDownRight:							// 31
-			rto.moveTo(-clipRect.width() + t.xStepSize * i, -clipRect.height() + t.yStepSize * i);
+			rto.moveTo(-w + t.xStepSize * i, -h + t.yStepSize * i);
 			break;
 
 		case kTransCoverLeft:								// 32
-			rto.moveTo(clipRect.width() - t.xStepSize * i, 0);
+			rto.moveTo(w - t.xStepSize * i, 0);
 			break;
 
 		case kTransCoverRight:								// 33
-			rto.moveTo(-clipRect.width() + t.xStepSize * i, 0);
+			rto.moveTo(-w + t.xStepSize * i, 0);
 			break;
 
 		case kTransCoverUp:									// 34
-			rto.moveTo(0, clipRect.height() - t.yStepSize * i);
+			rto.moveTo(0, h - t.yStepSize * i);
 			break;
 
 		case kTransCoverUpLeft:								// 35
-			rto.moveTo(clipRect.width() - t.xStepSize * i, clipRect.height() - t.yStepSize * i);
+			rto.moveTo(w - t.xStepSize * i, h - t.yStepSize * i);
 			break;
 
 		case kTransCoverUpRight:							// 36
-			rto.moveTo(-clipRect.width() + t.xStepSize * i, clipRect.height() - t.yStepSize * i);
+			rto.moveTo(-w + t.xStepSize * i, h - t.yStepSize * i);
 			break;
 
 		case kTransDissolveBitsFast:						// 50
@@ -422,7 +425,7 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		if (fullredraw) {
-			g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, clipRect.width(), clipRect.height());
+			g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, w, h);
 		} else {
 			rto.clip(clipRect);
 
