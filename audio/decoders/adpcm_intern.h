@@ -54,6 +54,7 @@ protected:
 		struct {
 			int32 last;
 			int32 stepIndex;
+			int16 sample[2];
 		} ima_ch[2];
 	} _status;
 
@@ -95,6 +96,24 @@ protected:
 private:
 	uint8 _decodedSampleCount;
 	int16 _decodedSamples[2];
+};
+
+class XA_ADPCMStream : public ADPCMStream {
+public:
+	XA_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
+		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
+
+	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
+
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+
+protected:
+	void decodeXA(const byte *src);
+
+private:
+	uint8 _decodedSampleCount;
+	uint8 _decodedSampleIndex;
+	int16 _decodedSamples[28 * 2 * 4];
 };
 
 class Ima_ADPCMStream : public ADPCMStream {

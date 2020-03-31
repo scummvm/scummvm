@@ -39,6 +39,8 @@ namespace Audio {
 //
 // In addition, also MS IMA ADPCM is supported. See
 //   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
+//
+// XA ADPCM support is based on FFmpeg/libav
 
 ADPCMStream::ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
 	: _stream(stream, disposeAfterUse),
@@ -113,6 +115,106 @@ int16 Oki_ADPCMStream::decodeOKI(byte code) {
 
 	// * 16 effectively converts 12-bit input to 16-bit output
 	return samp * 16;
+}
+
+
+#pragma mark -
+
+
+int XA_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samples;
+	byte *data = new byte[128];
+
+	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
+		if (_decodedSampleCount == 0) {
+			uint32 bytesLeft = _stream->size() - _stream->pos();
+			if (bytesLeft < 128) {
+				_stream->skip(bytesLeft);
+				memset(&buffer[samples], 0, (numSamples - samples) * sizeof(uint16));
+				samples = numSamples;
+				break;
+			}
+			_stream->read(data, 128);
+			decodeXA(data);
+			_decodedSampleIndex = 0;
+		}
+
+		// _decodedSamples acts as a FIFO of depth 2 or 4;
+		buffer[samples] = _decodedSamples[_decodedSampleIndex++];
+		_decodedSampleCount--;
+	}
+
+	delete[] data;
+	return samples;
+}
+
+static const int s_xaTable[5][2] = {
+   {   0,   0 },
+   {  60,   0 },
+   { 115, -52 },
+   {  98, -55 },
+   { 122, -60 }
+};
+
+void XA_ADPCMStream::decodeXA(const byte *src) {
+	int16 *leftChannel = _decodedSamples;
+	int16 *rightChannel = _decodedSamples + 1;
+
+	for (int i = 0; i < 4; i++) {
+		int shift = 12 - (src[4 + i * 2] & 0xf);
+		int filter = src[4 + i * 2] >> 4;
+		int f0 = s_xaTable[filter][0];
+		int f1 = s_xaTable[filter][1];
+		int16 s_1 = _status.ima_ch[0].sample[0];
+		int16 s_2 = _status.ima_ch[0].sample[1];
+
+		for (int j = 0; j < 28; j++) {
+			byte d = src[16 + i + j * 4];
+			int t = (int8)(d << 4) >> 4;
+			int s = (t << shift) + ((s_1 * f0 + s_2 * f1 + 32) >> 6);
+			s_2 = s_1;
+			s_1 = CLIP<int>(s, -32768, 32767);
+			*leftChannel = s_1;
+			leftChannel += _channels;
+			_decodedSampleCount++;
+		}
+
+		if (_channels == 2) {
+			_status.ima_ch[0].sample[0] = s_1;
+			_status.ima_ch[0].sample[1] = s_2;
+			s_1 = _status.ima_ch[1].sample[0];
+			s_2 = _status.ima_ch[1].sample[1];
+		}
+
+		shift = 12 - (src[5 + i * 2] & 0xf);
+		filter = src[5 + i * 2] >> 4;
+		f0 = s_xaTable[filter][0];
+		f1 = s_xaTable[filter][1];
+
+		for (int j = 0; j < 28; j++) {
+			byte d = src[16 + i + j * 4];
+			int t = (int8)d >> 4;
+			int s = (t << shift) + ((s_1 * f0 + s_2 * f1 + 32) >> 6);
+			s_2 = s_1;
+			s_1 = CLIP<int>(s, -32768, 32767);
+
+			if (_channels == 2) {
+				*rightChannel = s_1;
+				rightChannel += 2;
+			} else {
+				*leftChannel++ = s_1;
+			}
+			_decodedSampleCount++;
+		}
+
+		if (_channels == 2) {
+			_status.ima_ch[1].sample[0] = s_1;
+			_status.ima_ch[1].sample[1] = s_2;
+		} else {
+			_status.ima_ch[0].sample[0] = s_1;
+			_status.ima_ch[0].sample[1] = s_2;
+		}
+	}
 }
 
 
@@ -474,6 +576,8 @@ SeekableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispose
 		return new Apple_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMDK3:
 		return new DK3_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
+	case kADPCMXA:
+		return new XA_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	default:
 		error("Unsupported ADPCM encoding");
 		break;
@@ -501,6 +605,7 @@ PacketizedAudioStream *makePacketizedADPCMStream(ADPCMType type, int rate, int c
 	// Filter out types we can't support (they're not fully stateless)
 	switch (type) {
 	case kADPCMOki:
+	case kADPCMXA:
 	case kADPCMDVI:
 		return 0;
 	default:
