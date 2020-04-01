@@ -99,7 +99,7 @@ Script::ActionMap Script::_actionMap;
 /**
  * Constructs a script object
  */
-Script::Script() : _vendorScriptDoc(NULL), _scriptNode(NULL), _debug(NULL), _state(STATE_UNLOADED),
+Script::Script() : _vendorScriptDoc(NULL), _scriptNode(NULL), _debug(false), _state(STATE_UNLOADED),
 	_nounName("item"), _idPropName("id") {
 	_actionMap["context"]           = ACTION_SET_CONTEXT;
 	_actionMap["unset_context"]     = ACTION_UNSET_CONTEXT;
@@ -179,21 +179,8 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 	if (!root->id().equalsIgnoreCase("scripts"))
 		error("malformed %s", filename.c_str());
 
-	/**
-	 * If the script is set to debug, then open our script debug file
-	 */
-	if (root->hasProperty("debug")) {
-		static const char *dbg_filename = "debug/script.txt";
-		// Our script is going to hog all the debug info
-		if (root->getPropertyBool("debug"))
-			_debug = FileSystem::openForWriting(dbg_filename);
-		else {
-			// See if we share our debug space with other scripts
-			Common::String val = root->getProperty("debug");
-			if (val == "share")
-				_debug = FileSystem::openForWriting(dbg_filename);
-		}
-	}
+	// Check whether script is set to debug
+	_debug = root->hasProperty("debug");
 
 	/**
 	 * Get a new global item name or id name
@@ -278,11 +265,6 @@ void Script::unload() {
 		_vendorScriptDoc->freeDoc();
 		_vendorScriptDoc = NULL;
 	}
-
-	if (_debug) {
-		delete _debug;
-		_debug = NULL;
-	}
 }
 
 /**
@@ -320,7 +302,7 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 		/* end the conversation */
 		else {
 			if (_debug)
-				::debug("\nA script with no children found (nowhere to go). Ending script...\n");
+				debug("A script with no children found (nowhere to go). Ending script...");
 			screenMessage("\n");
 			_state = STATE_DONE;
 		}
@@ -330,7 +312,7 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 	if (currentItem) {
 		current = currentItem->getNext();
 		if (_debug)
-			::debug("\nReturning to execution from end of '%s' script\n", currentItem->id().c_str());
+			debug("Returning to execution from end of '%s' script", currentItem->id().c_str());
 	} else {
 		current = script->firstChild();
 	}
@@ -356,7 +338,7 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 			else screenMessage("%s", content.c_str());
 
 			if (_debug && content.size())
-				::debug("\nOutput: \n====================\n%s\n====================", content.c_str());
+				debug("Output: \n====================\n%s\n====================", content.c_str());
 		} else {
 			/**
 			 * Search for the corresponding action and execute it!
@@ -451,7 +433,7 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 			 * Didn't find the corresponding action...
 			 */
 			else if (_debug)
-				::debug("ERROR: '%s' method not found", name.c_str());
+				debug("ERROR: '%s' method not found", name.c_str());
 
 			/* The script was redirected or stopped, stop now! */
 			if ((retval == RET_REDIRECTED) || (retval == RET_STOP))
@@ -459,7 +441,7 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 		}
 
 		if (_debug)
-			::debug("\n");
+			debug("\n");
 	}
 
 	return retval;
@@ -589,7 +571,7 @@ void Script::translate(Common::String *text) {
 		item = item.substr(0, pos);
 
 		if (_debug)
-			::debug("\n{%s} == ", item.c_str());
+			debugN("{%s} == ", item.c_str());
 
 		/* translate any stuff contained in the item */
 		translate(&item);
@@ -756,10 +738,10 @@ void Script::translate(Common::String *text) {
 		}
 
 		if (prop.empty() && _debug)
-			::debug("\nWarning: dynamic property '{%s}' not found in vendor script (was this intentional?)", item.c_str());
+			debug("Warning: dynamic property '{%s}' not found in vendor script (was this intentional?)", item.c_str());
 
 		if (_debug)
-			::debug("\"%s\"", prop.c_str());
+			debug("\"%s\"", prop.c_str());
 
 		/* put the script back together */
 		*text = pre + prop + post;
@@ -878,8 +860,9 @@ Script::ReturnCode Script::pushContext(Shared::XMLNode *script, Shared::XMLNode 
 	_translationContext.push_back(find(_translationContext.back(), nodeName, search_id));
 	if (_debug) {
 		if (!_translationContext.back())
-			::debug("\nWarning!!! Invalid translation context <%s %s=\"%s\" ...>", nodeName.c_str(), _idPropName.c_str(), search_id.c_str());
-		else ::debug("\nChanging translation context to <%s %s=\"%s\" ...>", nodeName.c_str(), _idPropName.c_str(), search_id.c_str());
+			debug("Warning!!! Invalid translation context <%s %s=\"%s\" ...>", nodeName.c_str(), _idPropName.c_str(), search_id.c_str());
+		else
+			debug("Changing translation context to <%s %s=\"%s\" ...>", nodeName.c_str(), _idPropName.c_str(), search_id.c_str());
 	}
 
 	return RET_OK;
@@ -892,7 +875,7 @@ Script::ReturnCode Script::popContext(Shared::XMLNode *script, Shared::XMLNode *
 	if (_translationContext.size() > 1) {
 		_translationContext.pop_back();
 		if (_debug)
-			::debug("\nReverted translation context to <%s ...>", _translationContext.back()->id().c_str());
+			debug("Reverted translation context to <%s ...>", _translationContext.back()->id().c_str());
 	}
 	return RET_OK;
 }
@@ -909,7 +892,7 @@ Script::ReturnCode Script::end(Shared::XMLNode *script, Shared::XMLNode *current
 		execute(endScript);
 
 	if (_debug)
-		::debug("\n<End script>");
+		debug("<End script>");
 
 	_state = STATE_DONE;
 
@@ -928,7 +911,7 @@ Script::ReturnCode Script::waitForKeypress(Shared::XMLNode *script, Shared::XMLN
 	_inputType = INPUT_KEYPRESS;
 
 	if (_debug)
-		::debug("\n<Wait>");
+		debug("<Wait>");
 
 	return RET_STOP;
 }
@@ -951,10 +934,10 @@ Script::ReturnCode Script::redirect(Shared::XMLNode *script, Shared::XMLNode *cu
 		errorFatal("Error: redirect failed -- could not find target script '%s' with %s=\"%s\"", target.c_str(), _idPropName.c_str(), search_id.c_str());
 
 	if (_debug) {
-		::debug("\nRedirected to <%s", target.c_str());
+		debugN("Redirected to <%s", target.c_str());
 		if (search_id.size())
-			::debug(" %s=\"%s\"", _idPropName.c_str(), search_id.c_str());
-		::debug(" .../>");
+			debugN(" %s=\"%s\"", _idPropName.c_str(), search_id.c_str());
+		debug(" .../>");
 	}
 
 	execute(newScript);
@@ -973,10 +956,10 @@ Script::ReturnCode Script::include(Shared::XMLNode *script, Shared::XMLNode *cur
 		errorFatal("Error: include failed -- could not find target script '%s' with %s=\"%s\"", scriptName.c_str(), _idPropName.c_str(), id.c_str());
 
 	if (_debug) {
-		::debug("\nIncluded script <%s", scriptName.c_str());
+		debugN("Included script <%s", scriptName.c_str());
 		if (!id.empty())
-			::debug(" %s=\"%s\"", _idPropName.c_str(), id.c_str());
-		::debug(" .../>");
+			debugN(" %s=\"%s\"", _idPropName.c_str(), id.c_str());
+		debug(" .../>");
 	}
 
 	execute(newScript);
@@ -1004,14 +987,14 @@ Script::ReturnCode Script::forLoop(Shared::XMLNode *script, Shared::XMLNode *cur
 	    i;
 
 	if (_debug)
-		::debug("\n\n<For Start=%d End=%d>\n", start, end);
+		debug("\n<For Start=%d End=%d>", start, end);
 
 	for (i = start, _iterator = start;
 	        i <= end;
 	        i++, _iterator++) {
 
 		if (_debug)
-			::debug("\n%d: ", i);
+			debug("%d: ", i);
 
 		retval = execute(current);
 		if ((retval == RET_REDIRECTED) || (retval == RET_STOP))
@@ -1036,7 +1019,7 @@ Script::ReturnCode Script::random(Shared::XMLNode *script, Shared::XMLNode *curr
 		retval = execute(current);
 
 	if (_debug)
-		::debug("\nRandom (%d%%): rolled %d (%s)", perc, num, (num < perc) ? "Succeeded" : "Failed");
+		debug("Random (%d%%): rolled %d (%s)", perc, num, (num < perc) ? "Succeeded" : "Failed");
 
 	return retval;
 }
@@ -1053,7 +1036,7 @@ Script::ReturnCode Script::move(Shared::XMLNode *script, Shared::XMLNode *curren
 		g_context->_location->_coords.z = getPropAsInt(current, "z");
 
 	if (_debug)
-		::debug("\nMove: x-%d y-%d z-%d", g_context->_location->_coords.x, g_context->_location->_coords.y, g_context->_location->_coords.z);
+		debug("Move: x-%d y-%d z-%d", g_context->_location->_coords.x, g_context->_location->_coords.y, g_context->_location->_coords.z);
 
 	gameUpdateScreen();
 	return RET_OK;
@@ -1064,7 +1047,7 @@ Script::ReturnCode Script::move(Shared::XMLNode *script, Shared::XMLNode *curren
  */
 Script::ReturnCode Script::sleep(Shared::XMLNode *script, Shared::XMLNode *current) {
 	if (_debug)
-		::debug("\nSleep!\n");
+		debug("Sleep!");
 
 	CombatController *cc = new InnController();
 	cc->begin();
@@ -1097,21 +1080,21 @@ Script::ReturnCode Script::pay(Shared::XMLNode *script, Shared::XMLNode *current
 		errorFatal("Error: could not find price for item");
 
 	if (_debug) {
-		::debug("\nPay: price(%d) quantity(%d)", price, quant);
-		::debug("\n\tParty gold:  %d -", g_ultima->_saveGame->_gold);
-		::debug("\n\tTotal price: %d", price * quant);
+		debug("Pay: price(%d) quantity(%d)", price, quant);
+		debug("\tParty gold:  %d -", g_ultima->_saveGame->_gold);
+		debug("\tTotal price: %d", price * quant);
 	}
 
 	price *= quant;
 	if (price > g_ultima->_saveGame->_gold) {
 		if (_debug)
-			::debug("\n\t=== Can't pay! ===");
+			debug("\t=== Can't pay! ===");
 		run(cantpay);
 		return RET_STOP;
 	} else g_context->_party->adjustGold(-price);
 
 	if (_debug)
-		::debug("\n\tBalance:     %d\n", g_ultima->_saveGame->_gold);
+		debug("\tBalance:     %d\n", g_ultima->_saveGame->_gold);
 
 	return RET_OK;
 }
@@ -1124,15 +1107,15 @@ Script::ReturnCode Script::_if(Shared::XMLNode *script, Shared::XMLNode *current
 	Script::ReturnCode retval = RET_OK;
 
 	if (_debug)
-		::debug("\nIf(%s) - ", test.c_str());
+		debugN("If(%s) - ", test.c_str());
 
 	if (compare(test)) {
 		if (_debug)
-			::debug("True - Executing '%s'", current->id().c_str());
+			debug("True - Executing '%s'", current->id().c_str());
 
 		retval = execute(current);
 	} else if (_debug)
-		::debug("False");
+		debug("False");
 
 	return retval;
 }
@@ -1182,7 +1165,7 @@ Script::ReturnCode Script::input(Shared::XMLNode *script, Shared::XMLNode *curre
 		_inputType = INPUT_PLAYER;
 
 	if (_debug)
-		::debug("\nInput: %s", type.c_str());
+		debug("Input: %s", type.c_str());
 
 	/* the script stops here, at least for now */
 	return RET_STOP;
@@ -1201,9 +1184,9 @@ Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current
 		quant *= getPropAsInt(current, "quantity");
 
 	if (_debug) {
-		::debug("\nAdd: %s ", type.c_str());
+		debugN("Add: %s ", type.c_str());
 		if (!subtype.empty())
-			::debug("- %s ", subtype.c_str());
+			debug("- %s ", subtype.c_str());
 	}
 
 	if (type == "gold")
@@ -1250,7 +1233,7 @@ Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current
 	}
 
 	if (_debug)
-		::debug("(x%d)", quant);
+		debug("(x%d)", quant);
 
 	return RET_OK;
 }
@@ -1269,10 +1252,10 @@ Script::ReturnCode Script::lose(Shared::XMLNode *script, Shared::XMLNode *curren
 		AdjustValueMin(g_ultima->_saveGame->_armor[subtype[0] - 'a'], -quant, 0);
 
 	if (_debug) {
-		::debug("\nLose: %s ", type.c_str());
+		debugN("Lose: %s ", type.c_str());
 		if (subtype.size())
-			::debug("- %s ", subtype.c_str());
-		::debug("(x%d)", quant);
+			debug("- %s ", subtype.c_str());
+		debug("(x%d)", quant);
 	}
 
 	return RET_OK;
@@ -1303,7 +1286,7 @@ Script::ReturnCode Script::heal(Shared::XMLNode *script, Shared::XMLNode *curren
 Script::ReturnCode Script::castSpell(Shared::XMLNode *script, Shared::XMLNode *current) {
 	(*spellEffectCallback)('r', -1, SOUND_MAGIC);
 	if (_debug)
-		::debug("\n<Spell effect>");
+		debug("<Spell effect>");
 
 	return RET_OK;
 }
@@ -1320,7 +1303,7 @@ Script::ReturnCode Script::damage(Shared::XMLNode *script, Shared::XMLNode *curr
 	p->applyDamage(pts);
 
 	if (_debug)
-		::debug("\nDamage: %d damage to player %d", pts, player + 1);
+		debug("Damage: %d damage to player %d", pts, player + 1);
 
 	return RET_OK;
 }
@@ -1332,7 +1315,7 @@ Script::ReturnCode Script::karma(Shared::XMLNode *script, Shared::XMLNode *curre
 	Common::String action = getPropAsStr(current, "action");
 
 	if (_debug)
-		::debug("\nKarma: adjusting - '%s'", action.c_str());
+		debugN("Karma: adjusting - '%s'", action.c_str());
 
 	typedef Std::map<Common::String, KarmaAction /*, Std::less<Common::String> */> KarmaActionMap;
 	static KarmaActionMap action_map;
@@ -1364,10 +1347,9 @@ Script::ReturnCode Script::karma(Shared::XMLNode *script, Shared::XMLNode *curre
 	if (ka != action_map.end())
 		g_context->_party->adjustKarma(ka->_value);
 	else if (_debug)
-		::debug(" <FAILED - action '%s' not found>", action.c_str());
+		debug(" <FAILED - action '%s' not found>", action.c_str());
 
 	return RET_OK;
-
 }
 
 /**
@@ -1401,7 +1383,7 @@ Script::ReturnCode Script::setVar(Shared::XMLNode *script, Shared::XMLNode *curr
 
 	if (name.empty()) {
 		if (_debug)
-			::debug("Variable name empty!");
+			debug("Variable name empty!");
 		return RET_STOP;
 	}
 
@@ -1409,7 +1391,7 @@ Script::ReturnCode Script::setVar(Shared::XMLNode *script, Shared::XMLNode *curr
 	_variables[name] = new Variable(value);
 
 	if (_debug)
-		::debug("\nSet Variable: %s=%s", name.c_str(), _variables[name]->getString().c_str());
+		debug("Set Variable: %s=%s", name.c_str(), _variables[name]->getString().c_str());
 
 	return RET_OK;
 }
@@ -1444,7 +1426,7 @@ Script::ReturnCode Script::ztats(Shared::XMLNode *script, Shared::XMLNode *curre
 		StatsViewMap::iterator view;
 
 		if (_debug)
-			::debug("\nZtats: %s", screen.c_str());
+			debug("Ztats: %s", screen.c_str());
 
 		/**
 		 * Find the correct stats view
@@ -1453,7 +1435,7 @@ Script::ReturnCode Script::ztats(Shared::XMLNode *script, Shared::XMLNode *curre
 		if (view != view_map.end())
 			g_context->_stats->setView(view->_value); /* change it! */
 		else if (_debug)
-			::debug(" <FAILED - view could not be found>");
+			debug(" <FAILED - view could not be found>");
 	} else g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 
 	return RET_OK;
