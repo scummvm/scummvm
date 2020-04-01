@@ -99,7 +99,7 @@ struct {
 	TRANS(kTransCoverUp,				kTransAlgoCover,	kTransDirVertical),
 	TRANS(kTransCoverUpLeft,			kTransAlgoCover,	kTransDirBoth),			// 35
 	TRANS(kTransCoverUpRight,			kTransAlgoCover,	kTransDirBoth),
-	TRANS(kTransTypeVenitianBlind,		kTransAlgoBlinds,	kTransDirHorizontal),
+	TRANS(kTransTypeVenetianBlind,		kTransAlgoBlinds,	kTransDirHorizontal),
 	TRANS(kTransTypeCheckerboard,		kTransAlgoCheckerBoard, kTransDirBoth),
 	TRANS(kTransTypeStripsBottomBuildLeft, kTransAlgoBuildStrips, kTransDirBoth),
 	TRANS(kTransTypeStripsBottomBuildRight, kTransAlgoBuildStrips, kTransDirBoth),	// 40
@@ -591,7 +591,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 						r.clip(clipRect);
 						score->_backSurface->copyRectToSurface(*score->_surface, x, y, r);
 					}
-				} else if (t.xStepSize < 1) {
+				} else {
 					mask = pixmask[x % -t.xStepSize];
 					x = x / -t.xStepSize;
 
