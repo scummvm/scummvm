@@ -556,7 +556,8 @@ void Screen::processImage(BuildUnit *build_unit) {
 	if ( (Sword2Engine::isPsx() &&  _vm->_logic->readVar(DEMO)) &&
 		 ((build_unit->anim_resource == 369 && build_unit->anim_pc == 0) ||
 		 (build_unit->anim_resource == 296 && build_unit->anim_pc == 5)  ||
-		 (build_unit->anim_resource == 534 && build_unit->anim_pc == 13)) )
+		 (build_unit->anim_resource == 534 && build_unit->anim_pc == 13) ||
+		 (build_unit->anim_resource == 416 && build_unit->anim_pc == 41)) )
 		return;
 
 	byte *file = _vm->_resman->openResource(build_unit->anim_resource);
