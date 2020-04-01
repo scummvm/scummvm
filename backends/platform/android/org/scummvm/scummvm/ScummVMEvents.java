@@ -184,6 +184,10 @@ public class ScummVMEvents implements
 
 		int type;
 		switch (keyCode) {
+		case KeyEvent.KEYCODE_VOLUME_DOWN:
+		case KeyEvent.KEYCODE_VOLUME_UP:
+			// We ignore these so that they can be handled by Android.
+			return false;
 		case KeyEvent.KEYCODE_DPAD_UP:
 		case KeyEvent.KEYCODE_DPAD_DOWN:
 		case KeyEvent.KEYCODE_DPAD_LEFT:
