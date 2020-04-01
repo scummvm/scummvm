@@ -112,16 +112,16 @@ struct {
 	TRANS(kTransCoverUp,				kTransAlgoCover,	kTransDirVertical),
 	TRANS(kTransCoverUpLeft,			kTransAlgoCover,	kTransDirBoth),			// 35
 	TRANS(kTransCoverUpRight,			kTransAlgoCover,	kTransDirBoth),
-	TRANS(kTransTypeVenetianBlind,		kTransAlgoBlinds,	kTransDirBlindsH),
-	TRANS(kTransTypeCheckerboard,		kTransAlgoCheckerBoard, kTransDirCheckers),
-	TRANS(kTransTypeStripsBottomBuildLeft, kTransAlgoBuildStrips, kTransDirStepsV),
-	TRANS(kTransTypeStripsBottomBuildRight, kTransAlgoBuildStrips, kTransDirStepsV),// 40
-	TRANS(kTransTypeStripsLeftBuildDown, kTransAlgoBuildStrips, kTransDirStepsH),
-	TRANS(kTransTypeStripsLeftBuildUp, kTransAlgoBuildStrips, kTransDirStepsH),
-	TRANS(kTransTypeStripsRightBuildDown, kTransAlgoBuildStrips, kTransDirStepsH),
-	TRANS(kTransTypeStripsRightBuildUp, kTransAlgoBuildStrips, kTransDirStepsH),
-	TRANS(kTransTypeStripsTopBuildLeft,	kTransAlgoBuildStrips, kTransDirStepsV),	// 45
-	TRANS(kTransTypeStripsTopBuildRight, kTransAlgoBuildStrips, kTransDirStepsV),
+	TRANS(kTransVenetianBlind,		kTransAlgoBlinds,	kTransDirBlindsH),
+	TRANS(kTransCheckerboard,		kTransAlgoCheckerBoard, kTransDirCheckers),
+	TRANS(kTransStripsBottomBuildLeft, kTransAlgoBuildStrips, kTransDirStepsV),
+	TRANS(kTransStripsBottomBuildRight, kTransAlgoBuildStrips, kTransDirStepsV),	// 40
+	TRANS(kTransStripsLeftBuildDown, kTransAlgoBuildStrips, kTransDirStepsH),
+	TRANS(kTransStripsLeftBuildUp, kTransAlgoBuildStrips, kTransDirStepsH),
+	TRANS(kTransStripsRightBuildDown, kTransAlgoBuildStrips, kTransDirStepsH),
+	TRANS(kTransStripsRightBuildUp, kTransAlgoBuildStrips, kTransDirStepsH),
+	TRANS(kTransStripsTopBuildLeft,	kTransAlgoBuildStrips, kTransDirStepsV),		// 45
+	TRANS(kTransStripsTopBuildRight, kTransAlgoBuildStrips, kTransDirStepsV),
 	TRANS(kTransZoomOpen,				kTransAlgoZoom,		kTransDirBoth),
 	TRANS(kTransZoomClose,				kTransAlgoZoom,		kTransDirBoth),
 	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirBlindsV),
@@ -409,16 +409,16 @@ void Frame::playTransition(Score *score) {
 			rto.moveTo(-w + t.xStepSize * i, h - t.yStepSize * i);
 			break;
 
-		case kTransTypeVenetianBlind:						// 37
-		case kTransTypeCheckerboard:						// 38
-		case kTransTypeStripsBottomBuildLeft:				// 39
-		case kTransTypeStripsBottomBuildRight:				// 40
-		case kTransTypeStripsLeftBuildDown:					// 41
-		case kTransTypeStripsLeftBuildUp:					// 42
-		case kTransTypeStripsRightBuildDown:				// 43
-		case kTransTypeStripsRightBuildUp:					// 44
-		case kTransTypeStripsTopBuildLeft:					// 45
-		case kTransTypeStripsTopBuildRight:					// 46
+		case kTransVenetianBlind:							// 37
+		case kTransCheckerboard:							// 38
+		case kTransStripsBottomBuildLeft:					// 39
+		case kTransStripsBottomBuildRight:					// 40
+		case kTransStripsLeftBuildDown:						// 41
+		case kTransStripsLeftBuildUp:						// 42
+		case kTransStripsRightBuildDown:					// 43
+		case kTransStripsRightBuildUp:						// 44
+		case kTransStripsTopBuildLeft:						// 45
+		case kTransStripsTopBuildRight:						// 46
 			// Multipass
 			break;
 
@@ -763,7 +763,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 		rto = clipRect;
 
 		switch (t.type) {
-		case kTransTypeVenetianBlind:						// 37
+		case kTransVenetianBlind:							// 37
 			rto.setHeight(t.yStepSize * i);
 			for (int r = 0; r < kNumBlinds; r++) {
 				rto.moveTo(0, r * t.stripSize);
@@ -771,7 +771,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransTypeCheckerboard:						// 38
+		case kTransCheckerboard:							// 38
 			rto.setWidth(t.stripSize);
 			rto.setHeight((i % ((t.steps + 1) / 2)) * t.chunkSize);
 
@@ -787,7 +787,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransTypeStripsBottomBuildLeft:				// 39
+		case kTransStripsBottomBuildLeft:					// 39
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.yStepSize * i - (kNumStrips - r - 1) * t.stripSize;
 				if (len > 0) {
@@ -799,7 +799,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransTypeStripsBottomBuildRight:				// 40
+		case kTransStripsBottomBuildRight:					// 40
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.yStepSize * i - r * t.stripSize;
 				if (len > 0) {
@@ -811,7 +811,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransTypeStripsLeftBuildDown:					// 41
+		case kTransStripsLeftBuildDown:						// 41
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.xStepSize * i - r * t.stripSize;
 				if (len > 0) {
@@ -823,7 +823,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransTypeStripsLeftBuildUp:					// 42
+		case kTransStripsLeftBuildUp:						// 42
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.xStepSize * i - (kNumStrips - r - 1) * t.stripSize;
 				if (len > 0) {
@@ -835,7 +835,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransTypeStripsRightBuildDown:				// 43
+		case kTransStripsRightBuildDown:					// 43
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.xStepSize * i - r * t.stripSize;
 				if (len > 0) {
@@ -847,7 +847,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransTypeStripsRightBuildUp:					// 44
+		case kTransStripsRightBuildUp:						// 44
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.xStepSize * i - (kNumStrips - r - 1) * t.stripSize;
 				if (len > 0) {
@@ -859,7 +859,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransTypeStripsTopBuildLeft:					// 45
+		case kTransStripsTopBuildLeft:						// 45
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.yStepSize * i - (kNumStrips - r - 1) * t.stripSize;
 				if (len > 0) {
@@ -871,7 +871,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransTypeStripsTopBuildRight:					// 46
+		case kTransStripsTopBuildRight:						// 46
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.yStepSize * i - r * t.stripSize;
 				if (len > 0) {
@@ -892,7 +892,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			break;
 
 		default:
-			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
+			warning("Frame::transMultiPass(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
 			stop = true;
 			break;
 		}

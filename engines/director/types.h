@@ -213,16 +213,16 @@ enum TransitionType {
 	kTransCoverUp,
 	kTransCoverUpLeft,			// 35
 	kTransCoverUpRight,
-	kTransTypeVenetianBlind,
-	kTransTypeCheckerboard,
-	kTransTypeStripsBottomBuildLeft,
-	kTransTypeStripsBottomBuildRight,	// 40
-	kTransTypeStripsLeftBuildDown,
-	kTransTypeStripsLeftBuildUp,
-	kTransTypeStripsRightBuildDown,
-	kTransTypeStripsRightBuildUp,
-	kTransTypeStripsTopBuildLeft,		// 45
-	kTransTypeStripsTopBuildRight,
+	kTransVenetianBlind,
+	kTransCheckerboard,
+	kTransStripsBottomBuildLeft,
+	kTransStripsBottomBuildRight,	// 40
+	kTransStripsLeftBuildDown,
+	kTransStripsLeftBuildUp,
+	kTransStripsRightBuildDown,
+	kTransStripsRightBuildUp,
+	kTransStripsTopBuildLeft,		// 45
+	kTransStripsTopBuildRight,
 	kTransZoomOpen,
 	kTransZoomClose,
 	kTransVerticalBinds,
