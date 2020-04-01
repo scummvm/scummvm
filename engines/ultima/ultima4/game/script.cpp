@@ -837,7 +837,7 @@ int Script::getPropAsInt(Shared::XMLNode *node, const Common::String &prop, bool
  * Gets the content of a script node
  */
 Common::String Script::getContent(Shared::XMLNode *node) {
-	Common::String content = node->value();
+	Common::String content = node->text();
 	translate(&content);
 	return content;
 }

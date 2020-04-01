@@ -132,7 +132,7 @@ void XMLTree::value(const Common::String &key, Common::String &ret,
                     const char *defaultvalue) const {
 	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
-		ret = sub->value();
+		ret = sub->text();
 	else
 		ret = defaultvalue;
 }
@@ -141,7 +141,7 @@ void XMLTree::value(const Common::String &key, int &ret,
                     int defaultvalue) const {
 	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
-		ret = strtol(sub->value().c_str(), 0, 0);
+		ret = strtol(sub->text().c_str(), 0, 0);
 	else
 		ret = defaultvalue;
 }
@@ -150,7 +150,7 @@ void XMLTree::value(const Common::String &key, bool &ret,
                     bool defaultvalue) const {
 	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
-		ret = sub->value().equalsIgnoreCase("YES");
+		ret = sub->text().equalsIgnoreCase("YES");
 	else
 		ret = defaultvalue;
 }
