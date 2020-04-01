@@ -238,7 +238,7 @@ private:
 	void removeCurrentVariable(const Common::String &name);
 	Shared::XMLNode *_vendorScriptDoc;
 	Shared::XMLNode *_scriptNode;
-	Common::WriteStream *_debug;
+	bool _debug;
 
 	State _state;                    /**< The state the script is in */
 	Shared::XMLNode *_currentScript;       /**< The currently running script */
