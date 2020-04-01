@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- $Id: vendorScript.xml 2852 2011-03-27 04:50:22Z darren_janeczek $ -->
 
-<scripts xml:space="preserve" debug="true" id_prop="choice">
+<scripts xml:space="preserve" debug="false" id_prop="choice">
     <!--
     /**
      * Weapons
