@@ -53,11 +53,13 @@ enum TransitionDirection {
 	kTransDirVertical,
 	kTransDirBoth,
 	kTransDirStepsH,
-	kTransDirStepsV
+	kTransDirStepsV,
+	kTransDirCheckers
 };
 
 enum {
-	kNumStrips = 16
+	kNumStrips = 16,
+	kNumChecks = 16
 };
 
 #define TRANS(t,a,d) {t,#t,a,d}
@@ -106,7 +108,7 @@ struct {
 	TRANS(kTransCoverUpLeft,			kTransAlgoCover,	kTransDirBoth),			// 35
 	TRANS(kTransCoverUpRight,			kTransAlgoCover,	kTransDirBoth),
 	TRANS(kTransTypeVenetianBlind,		kTransAlgoBlinds,	kTransDirHorizontal),
-	TRANS(kTransTypeCheckerboard,		kTransAlgoCheckerBoard, kTransDirBoth),
+	TRANS(kTransTypeCheckerboard,		kTransAlgoCheckerBoard, kTransDirCheckers),
 	TRANS(kTransTypeStripsBottomBuildLeft, kTransAlgoBuildStrips, kTransDirStepsV),
 	TRANS(kTransTypeStripsBottomBuildRight, kTransAlgoBuildStrips, kTransDirStepsV),// 40
 	TRANS(kTransTypeStripsLeftBuildDown, kTransAlgoBuildStrips, kTransDirStepsH),
@@ -186,6 +188,7 @@ void Frame::playTransition(Score *score) {
 			dissolveTrans(t, score, clipRect);
 		return;
 
+	case kTransAlgoCheckerBoard:
 	case kTransAlgoBuildStrips:
 		transMultiPass(t, score, clipRect);
 		return;
@@ -207,9 +210,6 @@ void Frame::playTransition(Score *score) {
 		blitFrom = score->_surface;
 		break;
 	}
-
-	rfrom = clipRect;
-	rto = clipRect;
 
 	uint w = clipRect.width();
 	uint h = clipRect.height();
@@ -403,6 +403,7 @@ void Frame::playTransition(Score *score) {
 			rto.moveTo(-w + t.xStepSize * i, h - t.yStepSize * i);
 			break;
 
+		case kTransTypeCheckerboard:						// 38
 		case kTransTypeStripsBottomBuildLeft:				// 39
 		case kTransTypeStripsBottomBuildRight:				// 40
 		case kTransTypeStripsLeftBuildDown:					// 41
@@ -734,21 +735,34 @@ static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &cl
 }
 
 static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect) {
-	Common::Rect rfrom, rto;
+	Common::Rect rto;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
-
-	rfrom = clipRect;
-	rto = clipRect;
+	bool flag = false;
 
 	Common::Array<Common::Rect> rects;
 
 	for (uint16 i = 1; i < t.steps; i++) {
 		bool stop = false;
 		rto = clipRect;
-		rfrom = clipRect;
 
 		switch (t.type) {
+		case kTransTypeCheckerboard:						// 38
+			rto.setWidth(t.stripSize);
+			rto.setHeight((i % ((t.steps + 1) / 2)) * t.chunkSize);
+
+			flag = i + i > t.steps;
+
+			for (int y = 0; y < t.yStepSize; y++) {
+				for (int x = 0; x < t.xStepSize; x++) {
+					if ((x & 2) ^ (y & 2) ^ flag) {
+						rto.moveTo(x * t.stripSize, y * t.stripSize);
+						rects.push_back(rto);
+					}
+				}
+			}
+			break;
+
 		case kTransTypeStripsBottomBuildLeft:				// 39
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.yStepSize * i - (kNumStrips - r - 1) * t.stripSize;
@@ -919,6 +933,17 @@ static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect
 		t.yStepSize = t.chunkSize;
 		t.stripSize = (h + kNumStrips - 1) / kNumStrips;
 		t.steps = ((h + t.yStepSize - 1) / t.yStepSize) * 2;
+		break;
+
+	case kTransDirCheckers:
+		if (w > h)
+			t.stripSize = (w + kNumStrips - 1) / kNumStrips;
+		else
+			t.stripSize = (h + kNumStrips - 1) / kNumStrips;
+
+		t.steps = ((t.stripSize + t.chunkSize - 1) / t.chunkSize) * 2 + 2;
+		t.xStepSize = (w + t.stripSize - 1) / t.stripSize;		// number of checkers
+		t.yStepSize = (h + t.stripSize - 1) / t.stripSize;		// number of checkers
 		break;
 
 	default:
