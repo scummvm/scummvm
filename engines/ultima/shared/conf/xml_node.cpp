@@ -42,7 +42,7 @@ const Common::String &XMLNode::reference(const Common::String &h, bool &exists) 
 		// Must refer to me.
 		if (_id == h) {
 			exists = true;
-			return _content;
+			return _text;
 		}
 	} else {
 		// Otherwise we want to split the Common::String at the first /
@@ -105,9 +105,9 @@ Common::String XMLNode::dump(int depth) {
 			s += (**it).dump(depth + 1);
 		}
 
-		if (_content.size()) {
+		if (!_text.empty()) {
 			//s += Common::String(depth,' ');
-			s += encodeEntity(_content);
+			s += encodeEntity(_text);
 		}
 		if (_id[0] == '?') {
 			return s;
@@ -116,7 +116,7 @@ Common::String XMLNode::dump(int depth) {
 		//  s += "\n";
 
 		if (!_noClose) {
-			if (!_content.size()) {
+			if (_text.empty()) {
 				for (int i = 0; i < depth; ++i)
 					s += ' ';
 			}
@@ -134,7 +134,7 @@ void XMLNode::xmlAssign(const Common::String &key, const Common::String &value) 
 	if (key.find('/') == Common::String::npos) {
 		// Must refer to me.
 		if (_id == key)
-			_content = value;
+			_text = value;
 		else
 			error("Walking the XML tree failed to create a final node.");
 		return;
@@ -288,6 +288,7 @@ XMLNode *XMLNode::xmlParseDoc(XMLTree *tree, const Common::String &s) {
 			parsedDocType = true;
 			parseDocTypeElement(s, nn);
 		} else {
+			--nn;
 			child = xmlParse(tree, sbuf, nn);
 			if (child) {
 				if (node)
@@ -321,12 +322,12 @@ void XMLNode::parseDocTypeElement(const Common::String &s, size_t &nn) {
 }
 
 XMLNode *XMLNode::xmlParse(XMLTree *tree, const Common::String &s, size_t &pos) {
-	bool intag = true;
-	XMLNode *node = nullptr;
-	Common::String nodeText;
+	bool inTag = false, isSelfEnding = false;
+	XMLNode *node = nullptr, *child = nullptr;
+	Common::String nodeText, plainText;
 
 	while (pos < s.size()) {
-		if (nodeText.hasPrefix("!--") && (s[pos] != '>' || !nodeText.hasSuffix("--"))) {
+		if (inTag && nodeText.hasPrefix("!--") && (s[pos] != '>' || !nodeText.hasSuffix("--"))) {
 			// It's a > within the comment, but not the terminator
 			nodeText += s[pos];
 			++pos;
@@ -334,77 +335,81 @@ XMLNode *XMLNode::xmlParse(XMLTree *tree, const Common::String &s, size_t &pos) 
 		}
 
 		switch (s[pos]) {
-		case '<': {
+		case '<':
+			// Start of tag
+			assert(!inTag);
+
+			trim(plainText);
+			if (!plainText.empty()) {
+				// Plain text, return it
+				child = new XMLNode(tree);
+				child->_text = plainText;
+				return child;
+			}
+
 			// New tag?
 			if (s[pos + 1] == '/') {
-				// No. Close tag.
+				// No. It's a close tag. Move beyond it
 				while (s[pos] != '>')
 					pos++;
 				++pos;
-				trim(node->_content);
-				return node;
-			}
-
-			++pos;
-			XMLNode *t = xmlParse(tree, s, pos);
-			if (t) {
-				t->_parent = node;
-				node->_nodeList.push_back(t);
-			}
-
-			break;
-		}
-		case '>':
-			// End of tag
-			if (s[pos - 1] == '/') {
-				if (s[pos - 2] == '<') {
-					++pos;
-					trim(node->_content);
-					return node; // An empty tag
-				} else {
-					++pos;
-					nodeText.deleteLastChar();	// Remove ending /
-					node = new XMLNode(tree);
-					node->parseNodeText(nodeText);
-
-					if (node->_id.equalsIgnoreCase("xi:include")) {
-						Common::String fname = node->_attributes["href"];
-						delete node;
-						node = xmlParseFile(tree, fname);
-					}
-
-					return node;
-				}
-			} else if (nodeText.hasPrefix("!--")) {
-				// Comment element
-				++pos;
+				// Return nullptr as indication that the end was reached
 				return nullptr;
 			}
 
-			assert(!node);
+			inTag = true;
+			++pos;
+			break;
+
+		case '>':
+			// End of tag
+			isSelfEnding = nodeText.hasSuffix("/");
+			++pos;
+
+			if (isSelfEnding) {
+				nodeText.deleteLastChar();
+			} else if (nodeText.hasPrefix("!--")) {
+				// Comment element that can be ignored
+				inTag = false;
+				nodeText.clear();
+				plainText.clear();
+				break;
+			}
+
+			// Create a node for the tag, and parse it's attributes, if any
 			node = new XMLNode(tree);
 			node->parseNodeText(nodeText);
 
-			++pos;
-			intag = false;
-			if (s[pos] < 32)
-				++pos;
-			break;
+			if (!isSelfEnding) {
+				// Iterate through parsing and adding sub-elements
+				while ((child = xmlParse(tree, s, pos)) != nullptr) {
+					child->_parent = node;
+					node->_nodeList.push_back(child);
+				}
+			} else if (node->_id.equalsIgnoreCase("xi:include")) {
+				// Element is a placeholder for inclusion of a secondary XML file
+				Common::String fname = node->_attributes["href"];
+				delete node;
+				node = xmlParseFile(tree, fname);
+			}
+
+			return node;
+
 		case '&':
-			if (intag)
+			if (inTag)
 				nodeText += decode_entity(s, pos);
 			else
-				node->_content += decode_entity(s, pos);
+				plainText += decode_entity(s, pos);
 			break;
 		default:
-			if (intag)
+			if (inTag)
 				nodeText += s[pos++];
 			else
-				node->_content += s[pos++];
+				plainText += s[pos++];
+			break;
 		}
 	}
 
-	trim(node->_content);
 	return node;
 }
 
@@ -505,7 +510,7 @@ bool XMLNode::searchPairs(KeyTypeList &ktl, const Common::String &basekey,
 
 /* Just adds every key->value pair under the this node to the ktl */
 void XMLNode::selectPairs(KeyTypeList &ktl, const Common::String currkey) {
-	ktl.push_back(KeyType(currkey + _id, _content));
+	ktl.push_back(KeyType(currkey + _id, currkey));
 
 	for (Common::Array<XMLNode *>::iterator i = _nodeList.begin();
 	        i != _nodeList.end(); ++i) {

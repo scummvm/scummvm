@@ -38,7 +38,7 @@ private:
 	XMLTree *_tree;
 	XMLNode *_parent;
 	Common::String _id;
-	Common::String _content;
+	Common::String _text;
 	Common::Array<XMLNode *> _nodeList;
 	Common::StringMap _attributes;
 	bool _noClose;
@@ -52,12 +52,12 @@ private:
 public:
 	XMLNode(XMLTree *tree, XMLNode *parent = nullptr) : _tree(tree), _parent(parent), _noClose(false) {}
 	XMLNode(const XMLNode &n) : _tree(n._tree), _parent(n._parent), _id(n._id),
-		_content(n._content), _nodeList(n._nodeList), _noClose(false) {}
+		_text(n._text), _nodeList(n._nodeList), _noClose(false) {}
 	~XMLNode();
 
 	XMLNode &operator=(const XMLNode &n) {
 		_id = n._id;
-		_content = n._content;
+		_text = n._text;
 		_nodeList = n._nodeList;
 		_noClose = n._noClose;
 		return *this;
@@ -69,11 +69,11 @@ public:
 	const Common::String &id() const {
 		return _id;
 	}
-	const Common::String &value(void) const {
-		return _content;
+	const Common::String &text(void) const {
+		return _text;
 	}
 	bool nodeIsText() const {
-		return !_content.empty();
+		return !_text.empty();
 	}
 	XMLNode *getParent() const {
 		return _parent;
