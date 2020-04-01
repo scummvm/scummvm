@@ -23,6 +23,8 @@
 #include "common/system.h"
 
 #include "graphics/managed_surface.h"
+#include "graphics/primitives.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/frame.h"
@@ -157,6 +159,7 @@ static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect
 static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect);
 static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &clipRect);
 static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect);
+static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect);
 
 void Frame::playTransition(Score *score) {
 	TransParams t;
@@ -191,6 +194,10 @@ void Frame::playTransition(Score *score) {
 	case kTransAlgoCheckerBoard:
 	case kTransAlgoBuildStrips:
 		transMultiPass(t, score, clipRect);
+		return;
+
+	case kTransAlgoZoom:
+		transZoom(t, score, clipRect);
 		return;
 
 	case kTransAlgoCenterOut:
@@ -413,6 +420,11 @@ void Frame::playTransition(Score *score) {
 		case kTransTypeStripsTopBuildLeft:					// 45
 		case kTransTypeStripsTopBuildRight:					// 46
 			// Multipass
+			break;
+
+		case kTransZoomOpen:								// 47
+		case kTransZoomClose:								// 48
+			// Zoom
 			break;
 
 		case kTransDissolveBitsFast:						// 50
@@ -888,13 +900,63 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 	}
 }
 
+static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect) {
+	Common::Rect r = clipRect;
+	uint w = clipRect.width();
+	uint h = clipRect.height();
+
+	t.steps += 2;
+
+	Graphics::MacPlotData pd(score->_backSurface, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
+
+	for (uint16 i = 1; i < t.steps; i++) {
+		bool stop = false;
+
+		score->_backSurface->copyFrom(*score->_backSurface2);
+
+		for (int s = 2; s >= 0; s--) {
+			if (i - s < 0 || i - s > t.steps - 2)
+				continue;
+
+			if (t.type == kTransZoomOpen) {
+				r.setHeight(t.yStepSize * (i - s) * 2);
+				r.setWidth(t.xStepSize * (i - s) * 2);
+				r.moveTo(w / 2 - t.xStepSize * (i - s), h / 2 - t.yStepSize * (i - s));
+			} else {
+				r.setHeight(h - t.yStepSize * (i - s) * 2);
+				r.setWidth(w - t.xStepSize * (i - s) * 2);
+				r.moveTo(t.xStepSize * (i - s), t.yStepSize * (i - s));
+			}
+
+			Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xffff, Graphics::macDrawPixel, &pd);
+			Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+			Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+			Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+		}
+
+		r.setHeight(t.yStepSize * i * 2);
+		r.setWidth(t.xStepSize * i * 2);
+		r.moveTo(w / 2 - t.xStepSize * i, h / 2 - t.yStepSize * i);
+
+		if (stop)
+			break;
+
+		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, w, h);
+		g_system->updateScreen();
+
+		g_system->delayMillis(t.stepDuration);
+		if (processQuitEvent(true))
+			break;
+	}
+}
+
 static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect) {
 	int w = clipRect.width();
 	int h = clipRect.height();
 	int m = MIN(w, h);
 	TransitionAlgo a = transProps[t.type].algo;
 
-	if (a == kTransAlgoCenterOut || a == kTransAlgoEdgesIn) {
+	if (a == kTransAlgoCenterOut || a == kTransAlgoEdgesIn || a == kTransAlgoZoom) {
 		w = (w + 1) >> 1;	// round up
 		h = (h + 1) >> 1;
 	}
