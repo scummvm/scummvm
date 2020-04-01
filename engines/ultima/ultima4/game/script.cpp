@@ -181,7 +181,7 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 		error("malformed %s", filename.c_str());
 
 	// Check whether script is set to debug
-	_debug = root->hasProperty("debug");
+	_debug = root->getPropertyBool("debug");
 
 	/**
 	 * Get a new global item name or id name
