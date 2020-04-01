@@ -91,14 +91,18 @@ public:
 		return _attributes.contains(attrName);
 	}
 	const Common::String &getProperty(const Common::String &attrName) const {
-		return _attributes[attrName];
+		return _attributes.contains(attrName) ? _attributes[attrName] : "";
 	}
 	int getPropertyInt(const Common::String &attrName) const {
-		return atol(_attributes[attrName].c_str());
+		return _attributes.contains(attrName) ? atol(_attributes[attrName].c_str()) : 0;
 	}
 	bool getPropertyBool(const Common::String &attrName) const {
-		Common::String str = _attributes[attrName];
-		return toupper(str[0]) == 'T' || str == "1";
+		if (_attributes.contains(attrName)) {
+			Common::String str = _attributes[attrName];
+			return toupper(str[0]) == 'T' || str == "1";
+		} else {
+			return false;
+		}
 	}
 	Common::String operator[](const Common::String &attrName) const {
 		return getProperty(attrName);
