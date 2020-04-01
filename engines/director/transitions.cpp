@@ -528,16 +528,11 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 		break;
 
 	case kTransDissolveBoxySquares:
-		if (w < h) {
-			t.xStepSize = t.chunkSize;
-			t.yStepSize = w / t.chunkSize;
-		} else {
-			t.xStepSize = h / t.chunkSize;
-			t.yStepSize = t.chunkSize;
-		}
+		t.xStepSize = w * t.chunkSize / h;
+		t.yStepSize = h * t.chunkSize / w;
 
-		w = (w + t.chunkSize - 1) / t.chunkSize;
-		h = (h + t.chunkSize - 1) / t.chunkSize;
+		w = (w + t.xStepSize - 1) / t.xStepSize;
+		h = (h + t.yStepSize - 1) / t.yStepSize;
 		break;
 
 	default:
@@ -582,6 +577,9 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			uint32 x = rnd >> vShift;
 			uint32 y = rnd & hMask;
 			byte mask = 0;
+
+			r.setWidth(MAX(1, t.xStepSize));
+			r.setHeight(t.yStepSize);
 
 			if (x < w && y < h) {
 				if (t.xStepSize >= 1) {
