@@ -52,8 +52,6 @@ FileSystem::~FileSystem() {
 
 // Open a streaming file as readable. Streamed (0 on failure)
 IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
-	string filename = vfn;
-
 	IDataSource *data = checkBuiltinData(vfn, is_text);
 
 	// allow data-override?
@@ -61,7 +59,7 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 		return data;
 
 	Common::SeekableReadStream *readStream;
-	if (!rawOpen(readStream, filename))
+	if (!rawOpen(readStream, vfn))
 		return nullptr;
 
 	return new IFileDataSource(readStream);
