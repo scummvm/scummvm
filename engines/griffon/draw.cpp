@@ -220,7 +220,7 @@ void GriffonEngine::drawHud() {
 			if (ico != 99)
 				_itemImg[ico]->blit(*_videoBuffer, rcDest.left, rcDest.top);
 			if (ico == 99) {
-				_spellImg->setAlpha((int)(RND() * 96) + 96, true);
+				int alpha = (int)(RND() * 96) + 96;
 
 				rcSrc.left = 16 * (int)(RND() * 2);
 				rcSrc.top = 80;
@@ -230,7 +230,7 @@ void GriffonEngine::drawHud() {
 				rcDest.left = ix;
 				rcDest.top = iy;
 
-				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, TS_ARGB(alpha, 255, 255, 255));
 			}
 		}
 	}
@@ -588,8 +588,7 @@ void GriffonEngine::drawNPCs(int mode) {
 							int x = 192 + ((int)(_itemyloc + ff * 5) % 3) * 64;
 							if (x > 255)
 								x = 255;
-							_spellImg->setAlpha(x, true);
-							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, TS_ARGB(x, 255, 255, 255));
 
 							for (int f = 1; f <= 8; f++) {
 								rcSrc.left = 16 * (int)(RND() * 2);
@@ -603,8 +602,7 @@ void GriffonEngine::drawNPCs(int mode) {
 								x = 192 + f % 3 * 64;
 								if (x > 255)
 									x = 255;
-								_spellImg->setAlpha(x, true);
-								_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+								_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, TS_ARGB(x, 255, 255, 255));
 							}
 
 							rcSrc.left = 0;
@@ -770,7 +768,7 @@ void GriffonEngine::drawNPCs(int mode) {
 					int sy = (float)(npy + 12 - 50 - 3 * sin(3.141592 * 2 * _npcInfo[i].floating / 16));
 
 					for (int fr = 0; fr <= 3; fr++) {
-						_spellImg->setAlpha(128 + (int)(RND() * 96), true);
+						int alpha = 128 + (int)(RND() * 96);
 
 						rcSrc.left = 16 * (int)(RND() * 2);
 						rcSrc.top = 80;
@@ -780,7 +778,7 @@ void GriffonEngine::drawNPCs(int mode) {
 						rcDest.left = sx + 32 + (int)(RND() * 3) - 1;
 						rcDest.top = sy - (int)(RND() * 6);
 
-						_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, TS_ARGB(alpha, 255, 255, 255));
 					}
 
 					for (int ii = 0; ii <= 8; ii++) {
@@ -797,9 +795,9 @@ void GriffonEngine::drawNPCs(int mode) {
 							rcDest.left = (float)(sx + 36 + ii * 8 - ii * cos(3.14159 * 2 * (fr3 - ii) / 16) * 2);
 							rcDest.top = (float)(sy + 16 + ii * sin(3.14159 * 2 * (fr3 - ii) / 16) * 3 - ii); //  * 4
 
-							_spellImg->setAlpha(i2 / 3 * 224, true);
+							int alpha = i2 / 3 * 224;
 
-							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, TS_ARGB(alpha, 255, 255, 255));
 
 							int xloc = rcDest.left;
 							int yloc = rcDest.top;
