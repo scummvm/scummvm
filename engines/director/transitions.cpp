@@ -56,12 +56,15 @@ enum TransitionDirection {
 	kTransDirBoth,
 	kTransDirStepsH,
 	kTransDirStepsV,
-	kTransDirCheckers
+	kTransDirCheckers,
+	kTransDirBlindsV,
+	kTransDirBlindsH
 };
 
 enum {
 	kNumStrips = 16,
-	kNumChecks = 16
+	kNumChecks = 16,
+	kNumBlinds = 12
 };
 
 #define TRANS(t,a,d) {t,#t,a,d}
@@ -109,7 +112,7 @@ struct {
 	TRANS(kTransCoverUp,				kTransAlgoCover,	kTransDirVertical),
 	TRANS(kTransCoverUpLeft,			kTransAlgoCover,	kTransDirBoth),			// 35
 	TRANS(kTransCoverUpRight,			kTransAlgoCover,	kTransDirBoth),
-	TRANS(kTransTypeVenetianBlind,		kTransAlgoBlinds,	kTransDirHorizontal),
+	TRANS(kTransTypeVenetianBlind,		kTransAlgoBlinds,	kTransDirBlindsH),
 	TRANS(kTransTypeCheckerboard,		kTransAlgoCheckerBoard, kTransDirCheckers),
 	TRANS(kTransTypeStripsBottomBuildLeft, kTransAlgoBuildStrips, kTransDirStepsV),
 	TRANS(kTransTypeStripsBottomBuildRight, kTransAlgoBuildStrips, kTransDirStepsV),// 40
@@ -121,7 +124,7 @@ struct {
 	TRANS(kTransTypeStripsTopBuildRight, kTransAlgoBuildStrips, kTransDirStepsV),
 	TRANS(kTransZoomOpen,				kTransAlgoZoom,		kTransDirBoth),
 	TRANS(kTransZoomClose,				kTransAlgoZoom,		kTransDirBoth),
-	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirBoth),
+	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirBlindsV),
 	TRANS(kTransDissolveBitsFast,		kTransAlgoDissolve,	kTransDirNone),			// 50
 	TRANS(kTransDissolvePixels,			kTransAlgoDissolve,	kTransDirNone),
 	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirNone)
@@ -168,11 +171,6 @@ void Frame::playTransition(Score *score) {
 	t.duration = MAX<uint16>(250, _transDuration); // When duration is < 1/4s, make it 1/4
 	t.chunkSize = MAX<uint>(1, _transChunkSize);
 
-#if 0
-	t.type = kTransDissolveBits;
-	t.chunkSize = 4;
-#endif
-
 	Common::Rect clipRect(score->_movieRect);
 	clipRect.moveTo(0, 0);
 
@@ -193,6 +191,7 @@ void Frame::playTransition(Score *score) {
 
 	case kTransAlgoCheckerBoard:
 	case kTransAlgoBuildStrips:
+	case kTransAlgoBlinds:
 		transMultiPass(t, score, clipRect);
 		return;
 
@@ -410,6 +409,7 @@ void Frame::playTransition(Score *score) {
 			rto.moveTo(-w + t.xStepSize * i, h - t.yStepSize * i);
 			break;
 
+		case kTransTypeVenetianBlind:						// 37
 		case kTransTypeCheckerboard:						// 38
 		case kTransTypeStripsBottomBuildLeft:				// 39
 		case kTransTypeStripsBottomBuildRight:				// 40
@@ -425,6 +425,10 @@ void Frame::playTransition(Score *score) {
 		case kTransZoomOpen:								// 47
 		case kTransZoomClose:								// 48
 			// Zoom
+			break;
+
+		case kTransVerticalBinds:							// 49
+			// Multipass
 			break;
 
 		case kTransDissolveBitsFast:						// 50
@@ -759,6 +763,14 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 		rto = clipRect;
 
 		switch (t.type) {
+		case kTransTypeVenetianBlind:						// 37
+			rto.setHeight(t.yStepSize * i);
+			for (int r = 0; r < kNumBlinds; r++) {
+				rto.moveTo(0, r * t.stripSize);
+				rects.push_back(rto);
+			}
+			break;
+
 		case kTransTypeCheckerboard:						// 38
 			rto.setWidth(t.stripSize);
 			rto.setHeight((i % ((t.steps + 1) / 2)) * t.chunkSize);
@@ -868,6 +880,14 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 					rto.moveTo(t.xStepSize * r, 0);
 					rects.push_back(rto);
 				}
+			}
+			break;
+
+		case kTransVerticalBinds:							// 49
+			rto.setWidth(t.xStepSize * i);
+			for (int r = 0; r < kNumBlinds; r++) {
+				rto.moveTo(r * t.stripSize, 0);
+				rects.push_back(rto);
 			}
 			break;
 
@@ -1006,6 +1026,20 @@ static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect
 		t.steps = ((t.stripSize + t.chunkSize - 1) / t.chunkSize) * 2 + 2;
 		t.xStepSize = (w + t.stripSize - 1) / t.stripSize;		// number of checkers
 		t.yStepSize = (h + t.stripSize - 1) / t.stripSize;		// number of checkers
+		break;
+
+	case kTransDirBlindsV:
+		t.xStepSize = t.chunkSize;
+		t.yStepSize = t.chunkSize;
+		t.stripSize = (w + kNumBlinds - 1) / kNumBlinds;
+		t.steps = (w + t.stripSize - 1) / t.stripSize;
+		break;
+
+	case kTransDirBlindsH:
+		t.xStepSize = t.chunkSize;
+		t.yStepSize = t.chunkSize;
+		t.stripSize = (h + kNumBlinds - 1) / kNumBlinds;
+		t.steps = (h + t.stripSize - 1) / t.stripSize;
 		break;
 
 	default:
