@@ -36,6 +36,10 @@ public class ScummVMEvents implements
 	public static final int JE_JOYSTICK = 15;
 	public static final int JE_MMB_DOWN = 16;
 	public static final int JE_MMB_UP = 17;
+	public static final int JE_BMB_DOWN = 18;
+	public static final int JE_BMB_UP = 19;
+	public static final int JE_FMB_DOWN = 20;
+	public static final int JE_FMB_UP = 21;
 	public static final int JE_QUIT = 0x1000;
 
 	final protected Context _context;
