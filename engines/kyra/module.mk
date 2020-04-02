@@ -126,6 +126,7 @@ MODULE_OBJS += \
 	graphics/screen_eob_segacd.o \
 	graphics/screen_eob_towns.o \
 	gui/gui_eob.o \
+	gui/gui_eob_segacd.o \
 	gui/saveload_eob.o \
 	resource/resource_segacd.o \
 	resource/staticres_eob.o \

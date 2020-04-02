@@ -669,19 +669,31 @@ void EoBCoreEngine::initButtonData() {
 		{ 116, 117, 0x1100, 320, 200, 1, 1, 2 },
 		{ 7, 0, 0x1100, 158, 121, 15, 10, 5 },
 		{ 0, 0, 0x1100, 146, 168, 32, 10, 0 },
-
-		// EOB1 spellbook modifications
-		{ 2, 0, 0x1100, 71, 122, 20, 8, 0 },
-		{ 3, 0, 0x1100, 92, 122, 20, 8, 1 },
-		{ 4, 0, 0x1100, 113, 122, 20, 8, 2 },
-		{ 5, 0, 0x1100, 134, 122, 20, 8, 3 },
-		{ 6, 0, 0x1100, 155, 122, 20, 8, 4 },
-		{ 110, 0, 0x1100, 75, 168, 97, 6, 0 }
 	};
 
 	_buttonDefs = new EoBGuiButtonDef[ARRAYSIZE(buttonDefs)];
 	memcpy(_buttonDefs, buttonDefs, sizeof(buttonDefs));
 
+	// The spellbook buttons in the table above are from EOB II. We make the necessary coordinates modifications for EOB I.
+	if (_flags.gameID == GI_EOB1) {
+		static const EoBGuiButtonDef eob1SpellbookButtonDefs[6] = {
+			{ 2, 0, 0x1100, 71, 122, 20, 8, 0 },
+			{ 3, 0, 0x1100, 92, 122, 20, 8, 1 },
+			{ 4, 0, 0x1100, 113, 122, 20, 8, 2 },
+			{ 5, 0, 0x1100, 134, 122, 20, 8, 3 },
+			{ 6, 0, 0x1100, 155, 122, 20, 8, 4 },
+			{ 110, 0, 0x1100, 75, 168, 97, 6, 0 }
+		};
+
+		memcpy(&_buttonDefs[61], eob1SpellbookButtonDefs, 5 * sizeof(EoBGuiButtonDef));
+		memcpy(&_buttonDefs[88], &eob1SpellbookButtonDefs[5], sizeof(EoBGuiButtonDef));
+		for (int i = 67; i < 73; ++i)
+			_buttonDefs[i].y++;
+		for (int i = 77; i < 79; ++i)
+			_buttonDefs[i].y++;
+	}
+
+	// Replace keycodes for EOB II FM-Towns
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		static const uint16 keyCodesFMTowns[] = {
 			93, 94, 95, 96, 67, 27, 24, 349, 350, 351, 352, 80, 27, 24, 30, 0, 31, 0, 29, 0, 28, 0, 127, 18, 27, 93, 94, 95, 96,
@@ -695,6 +707,20 @@ void EoBCoreEngine::initButtonData() {
 			if (_buttonDefs[i].keyCode2)
 				_buttonDefs[i].keyCode2 = *c++;
 		}
+	}
+
+	// Match the inventory button coords to the values that are used for drawing the inventory slots, so that
+	// the buttons get fixed if the target uses a different inventory screen layout (currently only EOB I SegaCD).
+	int temp = 0;
+	const uint16 *invX = _staticres->loadRawDataBe16(kEoBBaseInvSlotX, temp);
+	const uint8 *invY = _staticres->loadRawData(kEoBBaseInvSlotY, temp);
+	for (int i = 0; i < 25; ++i) {
+		_buttonDefs[21 + i].x = invX[i];
+		_buttonDefs[21 + i].y = invY[i];
+	}
+	for (int i = 25; i < 27; ++i) {
+		_buttonDefs[59 + i].x = invX[i];
+		_buttonDefs[59 + i].y = invY[i];
 	}
 
 	_buttonCallbacks.clear();
@@ -738,8 +764,6 @@ void EoBCoreEngine::initButtonData() {
 	EOB_CBI(1, 60);
 	EOB_CBI(1, 61);
 	EOB_CBN(1, clickedSpellbookScroll);
-	EOB_CBI(5, 61);
-	EOB_CBI(1, 88);
 #undef EOB_CBI
 #undef EOB_CBN
 }
@@ -1247,6 +1271,7 @@ void EoBEngine::initStaticResource() {
 	_playFldPattern1 = _staticres->loadRawDataBe16(kEoB1PatternTable0, temp);
 	_invPattern = _staticres->loadRawDataBe16(kEoB1PatternTable3, temp);
 	_statsPattern = _staticres->loadRawDataBe16(kEoB1PatternTable4, temp);
+	_charTilesTable = _staticres->loadRawData(kEoB1CharTilesTable, temp);
 
 	// Build offset tables for door shapes encoding
 	if (_flags.platform == Common::kPlatformSegaCD) {

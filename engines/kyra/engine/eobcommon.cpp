@@ -239,6 +239,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_amigaCurSoundFile = -1;
 	_prefMenuPlatformOffset = 0;	
 	_lastVIntTick = _lastSecTick = _totalPlaySecs = _totalEnemiesKilled = _totalSteps = 0;
+	_levelMaps = 0;
 
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
@@ -1940,7 +1941,7 @@ void EoBCoreEngine::seq_portal() {
 bool EoBCoreEngine::checkPassword() {
 	char answ[20];
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
-	_screen->copyPage(0, 10);
+	_screen->copyPage(0, Screen_EoB::kCheckPwBackupPage);
 
 	_screen->setScreenDim(13);
 	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, guiSettings()->colors.frame1, guiSettings()->colors.frame2, -1);
@@ -1967,7 +1968,7 @@ bool EoBCoreEngine::checkPassword() {
 
 	_screen->modifyScreenDim(13, _screen->_curDim->sx - 1, _screen->_curDim->sy - 2, _screen->_curDim->w + 2, _screen->_curDim->h + 16);
 	_screen->setFont(of);
-	_screen->copyPage(10, 0);
+	_screen->copyPage(Screen_EoB::kCheckPwBackupPage, 0);
 	return true;
 }
 
@@ -2609,6 +2610,27 @@ void EoBCoreEngine::explodeMonster(EoBMonsterInPlay *m) {
 		explodeObject(0, m->block, 2);
 	}
 	m->flags &= ~2;
+}
+
+void EoBCoreEngine::addCurrentLevelMap() {
+	assert(_currentLevel);
+	_levelMaps |= (1 << (_currentLevel - 1));
+}
+
+uint32 EoBCoreEngine::countMaps() const {
+	uint32 res = 0;
+	for (int i = 0; i < 12; ++i) {
+		if (_levelMaps & (1 << i))
+			res++;
+	}
+	return res;
+}
+
+uint32 EoBCoreEngine::countArrows() const {
+	uint32 res = 0;
+	for (int i = 0; i < 6; ++i)
+		res += countQueuedItems(_characters[i].inventory[16], -1, -1, 1, 1);
+	return res;
 }
 
 void EoBCoreEngine::snd_playSong(int track, bool loop) {

@@ -208,6 +208,49 @@ void Screen_EoB::sega_clearTextBuffer(uint8 col) {
 	memset(_textRenderBuffer, col, _textRenderBufferSize);
 }
 
+void Screen_EoB::sega_clearTextBufferLine(uint16 y, uint16 lineHeight, uint16 pitch, uint8 col) {
+	uint32 *dst = (uint32*)(_textRenderBuffer + (((y >> 3) * pitch) << 5) + ((y & 7) << 2));
+	int ln = y;
+	uint32 c = col | (col << 8) | (col << 16) | (col << 24);
+	while (lineHeight--) {
+		uint32 *dst2 = dst;
+		for (uint16 w = pitch; w; --w) {
+			*dst = c;
+			dst += 8;
+		}
+		dst = dst2 + 1;
+		if (((++ln) & 7) == 0)
+			dst += ((pitch - 1) << 3);
+	}
+}
+
+
+void Screen_EoB::sega_copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 lineHeight, uint16 pitch) {
+	uint32 *src = (uint32*)(_textRenderBuffer + (((srcY >> 3) * pitch) << 5) + ((srcY & 7) << 2));
+	uint32 *dst = (uint32*)(_textRenderBuffer + (((dstY >> 3) * pitch) << 5) + ((dstY & 7) << 2));
+	int src_ln = srcY;
+	int dst_ln = dstY;
+
+	while (lineHeight--) {
+		uint32 *src2 = src;
+		uint32 *dst2 = dst;
+
+		for (uint16 w = pitch; w; --w) {
+			*dst = *src;
+			src += 8;
+			dst += 8;
+		}
+
+		src = src2 + 1;
+		dst = dst2 + 1;
+
+		if (((++dst_ln) & 7) == 0)
+			dst += ((pitch - 1) << 3);
+		if (((++src_ln) & 7) == 0)
+			src += ((pitch - 1) << 3);
+	}
+}
+
 void Screen_EoB::sega_drawTextBox(int pW, int pH, int x, int y, int w, int h, uint8 color1, uint8 color2) {
 	sega_drawClippedLine(_textRenderBuffer, 26, 5, x, y, w, 1, color1);
 	sega_drawClippedLine(_textRenderBuffer, 26, 5, x, y + h - 1, w, 1, color1);
@@ -217,7 +260,6 @@ void Screen_EoB::sega_drawTextBox(int pW, int pH, int x, int y, int w, int h, ui
 	sega_drawClippedLine(_textRenderBuffer, 26, 5, x + 1, y + h - 2, w - 2, 1, color2);
 	sega_drawClippedLine(_textRenderBuffer, 26, 5, x + 1, y + 1, 1, h - 2, color2);
 	sega_drawClippedLine(_textRenderBuffer, 26, 5, x + w - 2, y + 1, 1, h - 2, color2);
-	
 }
 
 void Screen_EoB::sega_loadTextBufferToVRAM(uint16 srcOffset, uint16 addr, int size) {
@@ -319,7 +361,7 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 	_segaRenderer->loadToVRAM(src, numShapes * spriteSize, 0);
 	int hw = (((w >> 3) - 1) << 2) | ((h >> 3) - 1);
 
-	int cp = setCurPage(7);
+	int cp = setCurPage(Screen_EoB::kSegaInitShapesPage);
 
 	for (int l = 0, s = 0; s < numShapes; l = s) {
 		for (int i = s; i < numShapes; ++i) {
@@ -335,12 +377,12 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 		sega_fadeToNeutral(0);
 		updateScreen();
 */
-		_segaRenderer->render(7, true);
+		_segaRenderer->render(Screen_EoB::kSegaInitShapesPage, true);
 
 		for (int i = l; i < s; ++i)
 			dst[i] = encodeShape((((i % 80) * w) % SCREEN_W) >> 3, ((i % 80) / (SCREEN_W / w)) * h, w >> 3, h);
 
-		clearPage(7);
+		clearPage(Screen_EoB::kSegaInitShapesPage);
 	}
 
 	if (removeSprites) {
@@ -585,9 +627,23 @@ void SegaRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, u
 	}
 }
 
-void SegaRenderer::writeVSRAMValue(int addr, uint16 value) {
+void SegaRenderer::writeUint16VSRAM(int addr, uint16 value) {
 	assert(addr < 80);
+	assert(!(addr & 1));
 	_vsram[addr >> 1] = value;
+	checkUpdateDirtyRects(addr, 2);
+}
+
+void SegaRenderer::writeUint8VRAM(int addr, uint8 value) {
+	assert(addr < 0x10000);
+	_vram[addr] = value;
+	checkUpdateDirtyRects(addr, 1);
+}
+
+void SegaRenderer::writeUint16VRAM(int addr, uint16 value) {
+	assert(addr < 0x10000);
+	*((uint16*)(_vram + addr)) = value;
+	checkUpdateDirtyRects(addr, 2);
 }
 
 void SegaRenderer::clearPlanes() {
@@ -1132,7 +1188,7 @@ const uint8 *SegaCDFont::getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHei
 	uint16 lo = 0;
 	uint16 hi = 0;
 
-	if (c == 0) {
+	if (c == 0 || c == 13) {
 		charWidth = charHeight = pitch = 0;
 		return 0;
 	}
@@ -1262,10 +1318,10 @@ void ScrollManager::updateScrollTimers() {
 		t._timer = t._delay;
 	}
 
-	_renderer->writeVSRAMValue(0, _vScrollTimers[0]._offsCur);
-	_renderer->writeVSRAMValue(2, _vScrollTimers[1]._offsCur);
-	uint16 hscr[2] = { (uint16)_hScrollTimers[0]._offsCur, (uint16)_hScrollTimers[1]._offsCur };
-	_renderer->loadToVRAM(hscr, 4, 0xD800);
+	_renderer->writeUint16VSRAM(0, _vScrollTimers[0]._offsCur);
+	_renderer->writeUint16VSRAM(2, _vScrollTimers[1]._offsCur);
+	_renderer->writeUint16VRAM(0xD800, _hScrollTimers[0]._offsCur);
+	_renderer->writeUint16VRAM(0xD802, _hScrollTimers[1]._offsCur);
 }
 
 } // End of namespace Kyra

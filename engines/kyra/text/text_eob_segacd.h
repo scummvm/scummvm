@@ -37,29 +37,20 @@ public:
 	TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr);
 	virtual ~TextDisplayer_SegaCD();
 
-	/*void setupField(int dim, bool mode);
-
-	void printDialogueText(int stringId, const char *pageBreakString);
-	void printDialogueText(const char *str, bool wait = false);
-	void printMessage(const char *str, int textColor = -1, ...);*/
 	void printShadowedText(const char *str, int x = -1, int y = -1, int textColor = -1, int shadowColor = -1, bool noScreenUpdate = false) override;
-
 	int clearDim(int dim) override;
-	//void clearCurDim() override;
-	
-	/*void resetDimTextPositions(int dim);
-	void resetPageBreakString();
-	void setPageBreakFlag();
-	void removePageBreakFlag();
-	*/
-	//void allowPageBreak(bool mode) { _allowPageBreak = mode; }
-	//void setWaitButtonMode(int mode) { _waitButtonMode = mode; }
-	//int lineCount() const { return _lineCount; }
 
 private:
+	void displayText(char *str, ...) override;
+	uint8 fetchCharacter(char *dest, const char *&src);
+	void linefeed();
+
 	Screen_EoB *_screen;
 	SegaRenderer *_renderer;
 	int _curDim;
+	int _curPosY;
+	int _curPosX;
+	int _textColor;
 
 	static const ScreenDim _dimTable[6];
 };

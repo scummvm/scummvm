@@ -309,14 +309,14 @@ bool EoBCoreEngine::deletePartyItems(int16 itemType, int16 itemValue) {
 	return res;
 }
 
-int EoBCoreEngine::itemUsableByCharacter(int charIndex, Item item) {
+int EoBCoreEngine::itemUsableByCharacter(int charIndex, Item item) const {
 	if (!item)
 		return 1;
 
 	return (_itemTypes[_items[item].type].allowedClasses & _classModifierFlags[_characters[charIndex].cClass]);
 }
 
-int EoBCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems) {
+int EoBCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems) const {
 	uint16 o1 = itemQueue;
 	uint16 o2 = o1;
 

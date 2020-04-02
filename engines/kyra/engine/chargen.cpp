@@ -347,6 +347,7 @@ void CharacterGenerator::createDefaultParty() {
 		c.raceSex = *pos++;
 		c.cClass = *pos++;
 		c.alignment = *pos++;
+		generateStats(i);
 		c.portrait = *pos++;
 		c.faceShape = _faceShapes[c.portrait];
 		c.strengthCur = *pos++;

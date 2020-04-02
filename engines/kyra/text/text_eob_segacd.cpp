@@ -29,12 +29,12 @@
 
 namespace Kyra {
 
-TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) : TextDisplayer_rpg(engine, scr), _screen(scr), _renderer(scr->sega_getRenderer()), _curDim(0) {
+TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) : TextDisplayer_rpg(engine, scr), _screen(scr), _renderer(scr->sega_getRenderer()),
+	_curDim(0), _textColor(0xFF), _curPosY(0), _curPosX(0) {
 	assert(_renderer);
 }
 
 TextDisplayer_SegaCD::~TextDisplayer_SegaCD() {
-
 }
 
 void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int textColor, int shadowColor, bool noScreenUpdate) {
@@ -65,10 +65,82 @@ void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int 
 int TextDisplayer_SegaCD::clearDim(int dim) {
 	int res = _curDim;
 	_curDim = dim;
+	_curPosY = _curPosX = 0;
 	const ScreenDim *s = &_dimTable[dim];
 	_renderer->memsetVRAM((s->unkC & 0x7FF) << 5, s->unkA, (s->w * s->h) >> 1);
 	_screen->sega_clearTextBuffer(s->unkA);
 	return res;
+}
+
+void TextDisplayer_SegaCD::displayText(char *str, ...) {
+	int cs = _screen->setFontStyles(Screen::FID_8_FNT, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat | Font::kStyleForceTwoByte);
+	char tmp[3] = "  ";
+	int posX = _curPosX;
+	bool updated = false;
+
+	for (const char *pos = str; *pos; updated = false) {
+		uint8 cmd = fetchCharacter(tmp, pos);
+
+		if (_dimTable[_curDim].h < _curPosY + _screen->getFontHeight()) {
+			_curPosY -= _screen->getFontHeight();
+			linefeed();
+		}
+
+		if (cmd == 6) {
+			_textColor = *pos++;
+		} else if (cmd == 2) {
+			pos++;
+		} else if (cmd == 13) {
+			_curPosX = 0;
+			_curPosY += _screen->getFontHeight();
+		} else if (cmd == 9) {
+			_curPosX = posX;
+			_curPosY += _screen->getFontHeight();
+		} else {
+			if (((tmp[0] == ' ' || (tmp[0] == '\x81' && tmp[1] == '\x40')) && (_curPosX + _screen->getTextWidth(tmp) + _screen->getTextWidth((const char*)(pos), true) >= _dimTable[_curDim].w)) || (_curPosX + _screen->getTextWidth(tmp) >= _dimTable[_curDim].w)) {
+				// Skip space at the beginning of the new line
+				if (tmp[0] == ' ' || (tmp[0] == '\x81' && tmp[1] == '\x40'))
+					fetchCharacter(tmp, pos);
+
+				_curPosX = 0;
+				_curPosY += _screen->getFontHeight();
+				if (_dimTable[_curDim].h < _curPosY + _screen->getFontHeight()) {
+					_curPosY -= _screen->getFontHeight();
+					linefeed();
+				}
+			}			
+
+			printShadowedText(tmp, _curPosX, _curPosY, _textColor);
+			_curPosX += _screen->getTextWidth(tmp);
+			updated = true;
+		}		
+	}
+
+	if (!updated)
+		printShadowedText("", _curPosX, _curPosY, _textColor);
+
+	_renderer->render(Screen_EoB::kSegaRenderPage);
+	_screen->setFontStyles(Screen::FID_8_FNT, cs);
+	_screen->copyRegion(8, 176, 8, 176, 280, 24, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+}
+
+uint8 TextDisplayer_SegaCD::fetchCharacter(char *dest, const char *&src) {
+	char c = *src++;
+
+	if (c <= '\r') {
+		dest[0] = '\0';
+		return (uint8)c;
+	}
+		
+	dest[0] = c;
+	dest[1] = (c <= 0x7F || (c >= 0xA1 && c <= 0xDF)) ? '\0' : *src++;
+
+	return 0;
+}
+
+void TextDisplayer_SegaCD::linefeed() {
+	_screen->sega_copyTextBufferLine(_screen->getFontHeight(), 0, (_dimTable[_curDim].h & ~7) - _screen->getFontHeight(), _dimTable[_curDim].w >> 3);
+	_screen->sega_clearTextBufferLine(_screen->getFontHeight(), _screen->getFontHeight(), _dimTable[_curDim].w >> 3, _dimTable[_curDim].unkA);
 }
 
 const ScreenDim TextDisplayer_SegaCD::_dimTable[6] = {

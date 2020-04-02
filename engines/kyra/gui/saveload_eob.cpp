@@ -310,7 +310,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		useMagicBookOrSymbol(_openBookChar, _openBookType);
 	}
 
-	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, Screen_EoB::kCampMenuBackupPage, Screen::CR_NO_P_CHECK);
 
 	gui_toggleButtons();
 	setHandItem(_itemInHand);

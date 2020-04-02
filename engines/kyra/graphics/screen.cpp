@@ -73,6 +73,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_useSJIS = _useOverlays = false;
 
 	_currentFont = FID_8_FNT;
+	_fontStyles = 0;
 	_paletteChanged = true;
 	_textMarginRight = SCREEN_W;
 	_customDimTable = 0;
@@ -1323,9 +1324,11 @@ void Screen::setTextColor16bit(const uint16 *cmap16) {
 	}
 }
 
-void Screen::setFontStyles(FontId fontId, int styles) {
+int Screen::setFontStyles(FontId fontId, int styles) {
 	assert(_fonts[fontId]);
-	_fonts[fontId]->setStyles(styles);
+	SWAP(_fontStyles, styles);
+	_fonts[fontId]->setStyles(_fontStyles);
+	return styles;
 }
 
 bool Screen::loadFont(FontId fontId, const char *filename) {
@@ -1393,7 +1396,7 @@ int Screen::getTextWidth(const char *str, bool nextWordOnly) {
 
 		uint c = fetchChar(str);
 
-		if (c == 0 || (nextWordOnly && (c == 32 || c == 0x4081))) {
+		if (c == 0 || (nextWordOnly && (c == 2 || c == 6 || c == 32 || c == 0x4081))) {
 			break;
 		} else if (c == '\r') {
 			if (curLineLen > maxLineLen)

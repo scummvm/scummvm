@@ -2621,7 +2621,7 @@ void EoBEngine::seq_segaShowStats() {
 	_txt->clearDim(5);
 
 	int styles = _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
-	_screen->setFontStyles(_screen->_currentFont, styles);
+	int cs = _screen->setFontStyles(_screen->_currentFont, styles);
 
 	_txt->printShadowedText(_finBonusStrings[2], 90, 8, 0xFF, 0x00, false);
 
@@ -2638,13 +2638,8 @@ void EoBEngine::seq_segaShowStats() {
 	styles &= ~(Font::kStyleNarrow2);
 	_screen->setFontStyles(_screen->_currentFont, styles);
 
-	////
-	////
-	uint32 partyArrows = 0;
-	uint32 numMaps = 0;
-	/////
-	////
-
+	uint32 partyArrows = countArrows();
+	uint32 numMaps = countMaps();
 	uint32 specialSearches = 0;
 	for (int i = 1; i <= 12; ++i) {
 		if (checkScriptFlags(1 << i))
@@ -2695,7 +2690,7 @@ void EoBEngine::seq_segaShowStats() {
 	_allowSkip = false;
 	resetSkipFlag();
 
-	_screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
+	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_fadeToBlack(3);
 }
 

@@ -181,7 +181,6 @@ private:
 	bool checkPartyStatusExtra() override;
 	int resurrectionSelectDialogue() override;
 	void healParty();
-	void makeNameShapes() override;
 
 	int _sceneShakeOffsetX;
 	int _sceneShakeOffsetY;
@@ -195,6 +194,10 @@ private:
 	void gui_drawPlayField(bool refresh) override;
 	void gui_drawWeaponSlotStatus(int x, int y, int status) override;
 	void gui_printInventoryDigits(int x, int y, int val) override;
+	void gui_drawCharacterStatsPage() override;
+
+	void makeNameShapes() override;
+	void printStatsString(const char *str, int x, int y);
 
 	const KyraRpgGUISettings *guiSettings() const override;
 	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }
@@ -207,7 +210,9 @@ private:
 	const uint16 *_playFldPattern1;
 	const uint16 *_invPattern;
 	const uint16 *_statsPattern;
+	const uint8 *_charTilesTable;
 	uint16 *_playFldPattern2;
+	uint16 *_statsPattern2;
 
 	static const KyraRpgGUISettings _guiSettingsVGA;
 	static const KyraRpgGUISettings _guiSettingsEGA;

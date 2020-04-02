@@ -81,7 +81,9 @@ public:
 	void loadStreamToVRAM(Common::SeekableReadStreamEndian *in, uint16 addr, bool compressedData = false);
 	void memsetVRAM(int addr, uint8 val, int len);
 	void fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr = false, bool topToBottom = false, const uint16 *patternTable = 0);
-	void writeVSRAMValue(int addr, uint16 value);
+	void writeUint16VSRAM(int addr, uint16 value);
+	void writeUint8VRAM(int addr, uint8 value);
+	void writeUint16VRAM(int addr, uint16 value);
 	void clearPlanes();
 	
 	void render(int destPageNum, bool spritesOnly = false);

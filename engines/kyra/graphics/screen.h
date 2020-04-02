@@ -515,7 +515,7 @@ public:
 	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
 	void setTextColor16bit(const uint16 *cmap16);
-	void setFontStyles(FontId fontId, int styles);
+	int setFontStyles(FontId fontId, int styles);
 
 	const ScreenDim *getScreenDim(int dim) const;
 	void modifyScreenDim(int dim, int x, int y, int w, int h);
@@ -628,6 +628,20 @@ protected:
 
 	bool _useOverlays;
 	bool _useSJIS;
+	int _fontStyles;
+
+	Font *_fonts[FID_NUM];
+	uint8 _textColorsMap[16];
+	uint16 _textColorsMap16bit[2];
+
+	uint8 *_textRenderBuffer;
+	int _textRenderBufferSize;
+
+	Common::SharedPtr<Graphics::FontSJIS> _sjisFontShared;
+	uint8 _sjisInvisibleColor;
+	bool _sjisMixedFontMode;
+
+	// colors/palette specific
 	bool _use16ColorMode;
 	bool _useShapeShading;
 	bool _4bitPixelPacking;
@@ -641,10 +655,6 @@ protected:
 	int _screenPageSize;
 	const int _screenHeight;
 	int _yTransOffs;
-	
-	Common::SharedPtr<Graphics::FontSJIS> _sjisFontShared;
-	uint8 _sjisInvisibleColor;
-	bool _sjisMixedFontMode;
 
 	Palette *_screenPalette;
 	Common::Array<Palette *> _palettes;
@@ -655,13 +665,6 @@ protected:
 	uint16 *_16bitPalette;
 	uint16 *_16bitConversionPalette;
 	uint8 _16bitShadingLevel;
-
-	Font *_fonts[FID_NUM];
-	uint8 _textColorsMap[16];
-	uint16 _textColorsMap16bit[2];
-
-	uint8 *_textRenderBuffer;
-	int _textRenderBufferSize;
 
 	uint8 *_animBlockPtr;
 	int _animBlockSize;

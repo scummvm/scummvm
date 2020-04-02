@@ -35,6 +35,23 @@ class SegaAnimator;
 class Screen_EoB : public Screen {
 friend class SegaRenderer;
 public:
+	// The purpose of this enum is to keep better track of which page is used
+	// when and for which purpose. We use the pages for more backup operations
+	// than the original and also have to deal with the different ports which
+	// all do their own things. This is supposed to help avoid using pages that
+	// are already in use for something else. It also allows for quick fixes
+	// if necessary.
+	enum {
+		kSegaInitShapesPage		=	7,
+		kSegaRenderPage			=	8,
+		kDefeatMsgBackupPage	=	10,
+		kCheckPwBackupPage		=	10,
+		kSpellbookBackupPage	=	10,
+		kEoB2ScriptHelperPage	=	12,
+		kCampMenuBackupPage		=	12
+	};
+
+public:
 	Screen_EoB(EoBCoreEngine *vm, OSystem *system);
 	~Screen_EoB() override;
 
@@ -128,6 +145,8 @@ public:
 	void sega_fadeToNeutral(int delay) { sega_fadePalette(delay, 0); }
 	void sega_paletteOps(int16 opPal, int16 par1, int16 par2);
 	void sega_clearTextBuffer(uint8 col);
+	void sega_clearTextBufferLine(uint16 y, uint16 lineHeight, uint16 pitch, uint8 col);
+	void sega_copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 lineHeight, uint16 pitch);
 	void sega_drawTextBox(int pW, int pH, int x, int y, int w, int h, uint8 color1, uint8 color2);
 	void sega_loadTextBufferToVRAM(uint16 srcOffset, uint16 addr, int size);
 	void sega_gfxScale(uint8 *out, uint16 w, uint16 h, uint16 pitch, const uint8 *in, const uint16 *stampMap, const uint16 *traceVectors);

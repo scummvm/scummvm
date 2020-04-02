@@ -465,8 +465,8 @@ protected:
 	int stripPartyItems(int16 itemType, int16 itemValue, int handleValueMode, int numItems);
 	bool deletePartyItems(int16 itemType, int16 itemValue);
 	virtual void updateUsedCharacterHandItem(int charIndex, int slot) = 0;
-	int itemUsableByCharacter(int charIndex, Item item);
-	int countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems);
+	int itemUsableByCharacter(int charIndex, Item item) const;
+	int countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems) const;
 	int getQueuedItem(Item *items, int pos, int id);
 	void printFullItemName(Item item);
 	void identifyQueuedItems(Item itemQueue);
@@ -656,6 +656,10 @@ protected:
 	void openDoor(int block);
 	void closeDoor(int block);
 
+	void addCurrentLevelMap();
+	uint32 countMaps() const;
+	uint32 countArrows() const;
+
 	int16 _doorType[2];
 	int16 _noDoorSwitch[2];
 
@@ -703,6 +707,8 @@ protected:
 	const uint8 *_teleporterShapeCoords;
 	const int8 *_portalSeq;
 
+	uint32 _levelMaps;
+
 	// Script
 	void runLevelScript(int block, int flags) override;
 	void setScriptFlags(uint32 flags);
@@ -735,6 +741,7 @@ protected:
 	void gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2) override;
 	void gui_drawCharPortraitStatusFrame(int index);
 	void gui_drawInventoryItem(int slot, int redraw, int pageNum);
+	virtual void gui_drawCharacterStatsPage();
 	void gui_drawCompass(bool force);
 	void gui_drawDialogueBox();
 	void gui_drawSpellbook();

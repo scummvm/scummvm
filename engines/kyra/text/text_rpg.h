@@ -61,7 +61,7 @@ protected:
 	virtual KyraRpgEngine *vm() { return _vm; }
 	virtual Screen *screen() { return _screen; }
 
-	void displayText(char *str, ...);
+	virtual void displayText(char *str, ...);
 	char parseCommand();
 	void readNextPara();
 	void printLine(char *str);
@@ -104,9 +104,9 @@ protected:
 	};
 
 	TextDimData *_textDimData;
+	KyraRpgEngine *_vm;
 
 private:
-	KyraRpgEngine *_vm;
 	Screen *_screen;
 
 	char *_table1;
