@@ -436,8 +436,15 @@ Score::~Score() {
 	for (uint i = 0; i < _frames.size(); i++)
 		delete _frames[i];
 
-	if (_movieArchive)
+	if (_loadedStxts)
+		for (Common::HashMap<int, const Stxt *>::iterator it = _loadedStxts->begin(); it != _loadedStxts->end(); ++it)
+			delete it->_value;
+
+	if (_movieArchive) {
 		_movieArchive->close();
+		delete _movieArchive;
+		_movieArchive = nullptr;
+	}
 
 	delete _font;
 	delete _labels;

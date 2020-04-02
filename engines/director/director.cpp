@@ -105,7 +105,10 @@ DirectorEngine::~DirectorEngine() {
 	delete _sharedScore;
 	delete _currentScore;
 
-	cleanupMainArchive();
+	if (_macBinary) {
+		delete _macBinary;
+		_macBinary = nullptr;
+	}
 
 	delete _soundManager;
 	delete _lingo;

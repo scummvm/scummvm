@@ -254,7 +254,7 @@ Common::SeekableSubReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 
 		return nullptr;
 	}
 
-	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::NO);
+	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::YES);
 }
 
 // RIFF Archive code

@@ -292,6 +292,11 @@ void Lingo::initBuiltIns() {
 	}
 }
 
+void Lingo::cleanupBuiltins() {
+	for (FuncHash::iterator it = _functions.begin(); it != _functions.end(); ++it)
+		delete it->_value;
+}
+
 void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *prefix) {
 	Common::String s(funcname);
 

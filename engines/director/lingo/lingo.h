@@ -168,6 +168,7 @@ public:
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
 
 	void initBuiltIns();
+	void cleanupBuiltins();
 	void initFuncs();
 	void initBytecode();
 

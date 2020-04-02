@@ -121,7 +121,6 @@ public:
 	void loadInitialMovie(const Common::String movie);
 	Archive *openMainArchive(const Common::String movie);
 	Archive *createArchive();
-	void cleanupMainArchive();
 
 	// events.cpp
 	void processEvents();

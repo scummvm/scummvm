@@ -76,11 +76,6 @@ Archive *DirectorEngine::openMainArchive(const Common::String movie) {
 	return _mainArchive;
 }
 
-void DirectorEngine::cleanupMainArchive() {
-	delete _mainArchive;
-	delete _macBinary;
-}
-
 void DirectorEngine::loadEXE(const Common::String movie) {
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(movie);
 	if (!exeStream)

@@ -88,6 +88,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 }
 
 Lingo::~Lingo() {
+	cleanupBuiltins();
 }
 
 ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
