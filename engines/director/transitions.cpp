@@ -171,6 +171,9 @@ void Frame::playTransition(Score *score) {
 	t.duration = MAX<uint16>(250, _transDuration); // When duration is < 1/4s, make it 1/4
 	t.chunkSize = MAX<uint>(1, _transChunkSize);
 
+	if (_transArea)
+		warning("STUB: Changed area transition");
+
 	Common::Rect clipRect(score->_movieRect);
 	clipRect.moveTo(0, 0);
 
