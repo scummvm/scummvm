@@ -40,8 +40,7 @@ DIBDecoder::~DIBDecoder() {
 }
 
 void DIBDecoder::destroy() {
-	delete _surface;
-	_surface = 0;
+	_surface = 0;	// It is deleted by BitmapRawDecoder
 
 	delete[] _palette;
 	_palette = 0;
@@ -149,6 +148,7 @@ BITDDecoder::~BITDDecoder() {
 }
 
 void BITDDecoder::destroy() {
+	_surface->free();
 	delete _surface;
 	_surface = 0;
 
