@@ -82,8 +82,8 @@ Score::Score(DirectorEngine *vm) {
 		_lingo->executeScript(kMovieScript, 0, 0);
 	}
 	_movieScriptCount = 0;
-	_labels = NULL;
-	_font = NULL;
+	_labels = nullptr;
+	_font = nullptr;
 
 	_versionMinor = _versionMajor = 0;
 	_currentFrameRate = 20;
@@ -473,6 +473,10 @@ Score::~Score() {
 	if (_loadedCast)
 		for (Common::HashMap<int, Cast *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
 			delete it->_value;
+
+	if (_labels)
+		for (Common::SortedArray<Label *>::iterator it = _labels->begin(); it != _labels->end(); ++it)
+			delete *it;
 
 	delete _font;
 	delete _labels;

@@ -96,6 +96,9 @@ Lingo::~Lingo() {
 
 	for (SymbolHash::iterator it = _globalvars.begin(); it != _globalvars.end(); ++it)
 		delete it->_value;
+
+	for (Common::HashMap<uint32, Symbol *>::iterator it = _handlers.begin(); it != _handlers.end(); ++it)
+		delete it->_value;
 }
 
 ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
