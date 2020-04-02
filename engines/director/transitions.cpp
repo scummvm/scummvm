@@ -724,7 +724,7 @@ static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &cl
 	t.steps = 64;
 	t.stepDuration = t.duration / t.steps;
 
-	for (uint i = 0; i < t.steps; i++) {
+	for (int i = 0; i < t.steps; i++) {
 		for (uint y = 0; y < h; y++) {
 			byte pat = dissolvePatterns[i][y % 8];
 			byte *dst = (byte *)score->_backSurface->getBasePtr(0, y);
