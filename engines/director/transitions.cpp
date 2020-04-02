@@ -724,13 +724,13 @@ static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &cl
 	t.steps = 64;
 	t.stepDuration = t.duration / t.steps;
 
-	for (int i = 0; i < t.steps; i++) {
-		for (int y = 0; y < h; y++) {
+	for (uint i = 0; i < t.steps; i++) {
+		for (uint y = 0; y < h; y++) {
 			byte pat = dissolvePatterns[i][y % 8];
 			byte *dst = (byte *)score->_backSurface->getBasePtr(0, y);
 			byte *src = (byte *)score->_surface->getBasePtr(0, y);
 
-			for (int x = 0; x < w;) {
+			for (uint x = 0; x < w;) {
 				byte mask = 0x80;
 				for (int b = 0; b < 8 && x < w; b++, x++) {
 					if (pat & mask)
@@ -903,7 +903,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 		if (stop)
 			break;
 
-		for (int r = 0; r < rects.size(); r++) {
+		for (uint r = 0; r < rects.size(); r++) {
 			rto = rects[r];
 			rto.clip(clipRect);
 

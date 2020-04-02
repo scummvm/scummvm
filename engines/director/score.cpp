@@ -1036,7 +1036,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	bool *scriptRefs = (bool *)calloc(_actions.size() + 1, sizeof(int));
 
 	// Now let's scan which scripts are actually referenced
-	for (int i = 0; i < _frames.size(); i++) {
+	for (uint i = 0; i < _frames.size(); i++) {
 		if (_frames[i]->_actionId <= _actions.size())
 			scriptRefs[_frames[i]->_actionId] = true;
 	}
