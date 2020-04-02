@@ -48,7 +48,18 @@ private:
 
 	void parseNodeText(const Common::String &nodeText);
 
+	/**
+	 * Trim down any whitespaces in the passed text
+	 */
+	static void trim(Common::String &s);
+
+	/**
+	 * Parses a specified file and returns the root node for it
+	 */
 	static XMLNode *xmlParseFile(XMLTree *tree, const Common::String &fname);
+
+	static Common::String closeTag(const Common::String &s);
+	static Common::String encodeEntity(const Common::String &s);
 public:
 	XMLNode(XMLTree *tree, XMLNode *parent = nullptr) : _tree(tree), _parent(parent), _noClose(false) {}
 	XMLNode(const XMLNode &n) : _tree(n._tree), _parent(n._parent), _id(n._id),
