@@ -1093,7 +1093,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	for (j = _actions.begin(); j != _actions.end(); ++j) {
 		if (!scriptRefs[j->_key]) {
 			warning("Action id %d is not referenced, skipping, the code was:\n-----\n%s\n------", j->_key, j->_value.c_str());
-			continue;
+			// continue;
 		}
 		if (!j->_value.empty()) {
 			_lingo->addCode(j->_value.c_str(), kFrameScript, j->_key);
