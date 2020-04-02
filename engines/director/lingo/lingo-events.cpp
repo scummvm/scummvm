@@ -243,10 +243,9 @@ void Lingo::processFrameEvent(LEvent event) {
 
 void Lingo::processGenericEvent(LEvent event) {
 	// Movie Script
-	int id = -1;
 	if (event == kEventStart || event == kEventPrepareMovie ||
-		event == kEventStartMovie || event == kEventStopMovie)
-		id = 0;
+			event == kEventStartMovie || event == kEventStopMovie)
+		; // we're OK
 	else
 		warning("STUB: processGenericEvent called for unprocessed event, additional logic probably needed");
 

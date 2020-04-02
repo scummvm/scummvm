@@ -789,7 +789,7 @@ void LC::c_of() {
 		}
 	}
 
-	if (first_item.u.i > 0) {
+	if (first_item.u.i > 0 || last_item.u.i > 0) {
 		warning("STUB: c_of item indexing");
 	}
 
