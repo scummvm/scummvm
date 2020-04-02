@@ -32,6 +32,7 @@
 #include "common/memstream.h"
 
 #include "gui/saveload.h"
+#include "gui/message.h"
 
 #include "sci/sci.h"
 #include "sci/engine/file.h"
@@ -401,7 +402,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			const int skip = name.firstChar() < '0' || name.firstChar() > '9';
 
 			if (sscanf(name.c_str() + skip, "%i.DTA", &saveNo) != 1) {
-				warning("Could not parse game filename %s", name.c_str());
+				GUI::warningGuiAndConsole(_("Could not parse game filename %s"), name.c_str());
 			}
 
 			saveNo += kSaveIdShift;
@@ -1159,17 +1160,17 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 	out = saveFileMan->openForSaving(filename);
 	if (!out) {
-		warning("Error opening savegame \"%s\" for writing", filename.c_str());
+		GUI::warningGuiAndConsole(_("Error opening savegame \"%s\" for writing"), filename.c_str());
 	} else {
 		if (!gamestate_save(s, out, game_description, version)) {
-			warning("Saving the game failed");
+			GUI::warningGuiAndConsole(_("Saving the game failed"));
 		} else {
 			s->r_acc = TRUE_REG; // save successful
 		}
 
 		out->finalize();
 		if (out->err()) {
-			warning("Writing the savegame failed");
+			GUI::warningGuiAndConsole(_("Writing the savegame failed"));
 			s->r_acc = NULL_REG; // write failure
 		}
 		delete out;
@@ -1399,12 +1400,12 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 	Common::OutSaveFile *saveStream = saveFileMan->openForSaving(filename);
 
 	if (saveStream == nullptr) {
-		warning("Error opening savegame \"%s\" for writing", filename.c_str());
+		GUI::warningGuiAndConsole(_("Error opening savegame \"%s\" for writing"), filename.c_str());
 		return NULL_REG;
 	}
 
 	if (!gamestate_save(s, saveStream, saveDescription, gameVersion)) {
-		warning("Saving the game failed");
+		GUI::warningGuiAndConsole(_("Saving the game failed"));
 		saveStream->finalize();
 		delete saveStream;
 		return NULL_REG;
@@ -1412,7 +1413,7 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 
 	saveStream->finalize();
 	if (saveStream->err()) {
-		warning("Writing the savegame failed");
+		GUI::warningGuiAndConsole(_("Writing the savegame failed"));
 		delete saveStream;
 		return NULL_REG;
 	}
@@ -1455,7 +1456,7 @@ reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
 	Common::SeekableReadStream *saveStream = saveFileMan->openForLoading(filename);
 
 	if (saveStream == nullptr) {
-		warning("Savegame #%d not found", saveNo);
+		GUI::warningGuiAndConsole(_("Savegame #%d not found"), saveNo);
 		return NULL_REG;
 	}
 
@@ -1487,17 +1488,17 @@ reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (save.version < MINIMUM_SCI32_SAVEGAME_VERSION) {
-		warning("Save version %d is below minimum SCI32 savegame version %d", save.version, MINIMUM_SCI32_SAVEGAME_VERSION);
+		GUI::warningGuiAndConsole(_("Save version %d is below minimum SCI32 savegame version %d"), save.version, MINIMUM_SCI32_SAVEGAME_VERSION);
 		return NULL_REG;
 	}
 
 	if (save.version > CURRENT_SAVEGAME_VERSION) {
-		warning("Save version %d is above maximum SCI32 savegame version %d", save.version, CURRENT_SAVEGAME_VERSION);
+		GUI::warningGuiAndConsole(_("Save version %d is above maximum SCI32 savegame version %d"), save.version, CURRENT_SAVEGAME_VERSION);
 		return NULL_REG;
 	}
 
 	if (save.gameVersion != gameVersion) {
-		warning("Save game was created for game version %s, but the current game version is %s", save.gameVersion.c_str(), gameVersion.c_str());
+		GUI::warningGuiAndConsole(_("Save game was created for game version %s, but the current game version is %s"), save.gameVersion.c_str(), gameVersion.c_str());
 		return NULL_REG;
 	}
 
@@ -1506,12 +1507,12 @@ reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		assert(script0);
 
 		if (save.script0Size != script0->size()) {
-			warning("Save game was created for a game with a script 0 size of %u, but the current game script 0 size is %u", save.script0Size, script0->size());
+			GUI::warningGuiAndConsole(_("Save game was created for a game with a script 0 size of %u, but the current game script 0 size is %u"), save.script0Size, script0->size());
 			return NULL_REG;
 		}
 
 		if (save.gameObjectOffset != g_sci->getGameObject().getOffset()) {
-			warning("Save game was created for a game with the main game object at offset %u, but the current main game object offset is %u", save.gameObjectOffset, g_sci->getGameObject().getOffset());
+			GUI::warningGuiAndConsole(_("Save game was created for a game with the main game object at offset %u, but the current main game object offset is %u"), save.gameObjectOffset, g_sci->getGameObject().getOffset());
 			return NULL_REG;
 		}
 	}

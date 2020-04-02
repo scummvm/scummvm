@@ -22,6 +22,7 @@
 
 #include "common/str.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "gui/message.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
@@ -119,6 +120,25 @@ void TimedMessageDialog::handleTickle() {
 	MessageDialog::handleTickle();
 	if (g_system->getMillis() > _timer)
 		close();
+}
+
+void warningGuiAndConsole(const char *s, ...) {
+	Common::String output;
+	va_list va;
+
+	va_start(va, s);
+	output = Common::String::vformat(Common::TranslationManager::getLastOrigMessage().c_str(), va);
+	va_end(va);
+
+	warning(output.c_str());
+
+	if (GuiManager::hasInstance()) {
+		va_start(va, s);
+		output = Common::String::vformat(s, va);
+		va_end(va);
+		MessageDialog dialog(output, "OK");
+		dialog.runModal();
+	};
 }
 
 } // End of namespace GUI

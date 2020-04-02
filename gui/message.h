@@ -59,6 +59,8 @@ protected:
 	uint32 _timer;
 };
 
+void warningGuiAndConsole(const char *s, ...);
+
 } // End of namespace GUI
 
 #endif
