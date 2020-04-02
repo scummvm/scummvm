@@ -22,6 +22,7 @@
 
 #include "common/substream.h"
 #include "graphics/surface.h"
+#include "image/image_decoder.h"
 
 #include "director/director.h"
 #include "director/cachedmactext.h"
@@ -35,12 +36,14 @@ namespace Director {
 Cast::Cast() {
 	_type = kCastTypeNull;
 	_surface = nullptr;
+	_img = nullptr;
 
 	_modified = true;
 }
 
 Cast::~Cast() {
-	delete _surface;
+	if (_img)
+		delete _img;
 }
 
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
@@ -250,9 +253,12 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 	}
 
 	_cachedMacText = new CachedMacText(this, _bgcolor, version, -1, g_director->_wm);
-	// TODO Destroy me
 
 	_modified = false;
+}
+
+TextCast::~TextCast() {
+	delete _cachedMacText;
 }
 
 void TextCast::importStxt(const Stxt *stxt) {

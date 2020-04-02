@@ -373,6 +373,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		delete pic;
 
 		bitmapCast->_surface = img->getSurface();
+		bitmapCast->_img = img;
 
 		debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
 			imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);

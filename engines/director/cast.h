@@ -35,6 +35,10 @@ class SeekableReadStream;
 class ReadStreamEndian;
 }
 
+namespace Image {
+class ImageDecoder;
+}
+
 namespace Director {
 
 class Stxt;
@@ -52,6 +56,7 @@ public:
 	Common::Array<Resource> _children;
 
 	const Graphics::Surface *_surface;
+	Image::ImageDecoder *_img;
 
 	bool _modified;
 };
@@ -97,6 +102,7 @@ public:
 class TextCast : public Cast {
 public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor);
+	virtual ~TextCast();
 
 	void setText(const char *text);
 
