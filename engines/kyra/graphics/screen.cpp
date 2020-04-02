@@ -1074,6 +1074,7 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 		h = _screenHeight - y;
 	}
 
+	int pitch = w;
 	if (x < 0) {
 		src += -x * _bytesPerPixel;
 		w += x;
@@ -1095,7 +1096,7 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 	while (h--) {
 		memcpy(dst, src, w * _bytesPerPixel);
 		dst += SCREEN_W * _bytesPerPixel;
-		src += w * _bytesPerPixel;
+		src += pitch * _bytesPerPixel;
 	}
 }
 
