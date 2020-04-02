@@ -112,6 +112,7 @@ DirectorEngine::~DirectorEngine() {
 
 	delete _soundManager;
 	delete _lingo;
+	delete _wm;
 }
 
 Common::Error DirectorEngine::run() {

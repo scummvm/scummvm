@@ -89,6 +89,13 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 Lingo::~Lingo() {
 	cleanupBuiltins();
+
+	if (_localvars)
+		for (SymbolHash::iterator it = _localvars->begin(); it != _localvars->end(); ++it)
+			delete it->_value;
+
+	for (SymbolHash::iterator it = _globalvars.begin(); it != _globalvars.end(); ++it)
+		delete it->_value;
 }
 
 ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
