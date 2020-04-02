@@ -195,6 +195,9 @@ MacWindowManager::~MacWindowManager() {
 	for (Common::HashMap<uint, BaseMacWindow *>::iterator it = _windows.begin(); it != _windows.end(); it++)
 		delete it->_value;
 
+	if (_palette)
+		free(_palette);
+
 	delete _fontMan;
 	delete _screenCopy;
 
