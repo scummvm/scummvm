@@ -589,7 +589,7 @@ Common::SeekableSubReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16
 	uint32 offset = res.offset + 8;
 	uint32 size = res.size;
 
-	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, true, DisposeAfterUse::NO);
+	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, true, DisposeAfterUse::YES);
 }
 
 Resource RIFXArchive::getResourceDetail(uint32 tag, uint16 id) {

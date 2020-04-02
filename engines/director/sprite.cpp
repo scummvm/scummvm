@@ -108,8 +108,6 @@ Sprite::Sprite(const Sprite &sprite) {
 }
 
 Sprite::~Sprite() {
-	if (_cast)
-		delete _cast;
 }
 
 uint16 Sprite::getPattern() {

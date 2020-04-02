@@ -107,6 +107,9 @@ Frame::Frame(const Frame &frame) {
 
 Frame::~Frame() {
 	delete _palette;
+
+	for (uint16 i = 0; i < _sprites.size(); i++)
+		delete _sprites[i];
 }
 
 void Frame::readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size) {

@@ -369,6 +369,9 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		}
 
 		img->loadStream(*pic);
+
+		delete pic;
+
 		bitmapCast->_surface = img->getSurface();
 
 		debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
@@ -445,6 +448,10 @@ Score::~Score() {
 		delete _movieArchive;
 		_movieArchive = nullptr;
 	}
+
+	if (_loadedCast)
+		for (Common::HashMap<int, Cast *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
+			delete it->_value;
 
 	delete _font;
 	delete _labels;
