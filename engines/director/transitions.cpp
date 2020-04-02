@@ -36,9 +36,9 @@ namespace Director {
 enum TransitionAlgo {
 	kTransAlgoBlinds,
 	kTransAlgoBoxy,
-	kTransAlgoBuildStrips,
+	kTransAlgoStrips,
 	kTransAlgoCenterOut,
-	kTransAlgoCheckerBoard,
+	kTransAlgoChecker,
 	kTransAlgoCover,
 	kTransAlgoDissolve,
 	kTransAlgoEdgesIn,
@@ -112,16 +112,16 @@ struct {
 	TRANS(kTransCoverUp,				kTransAlgoCover,	kTransDirVertical),
 	TRANS(kTransCoverUpLeft,			kTransAlgoCover,	kTransDirBoth),			// 35
 	TRANS(kTransCoverUpRight,			kTransAlgoCover,	kTransDirBoth),
-	TRANS(kTransVenetianBlind,		kTransAlgoBlinds,	kTransDirBlindsH),
-	TRANS(kTransCheckerboard,		kTransAlgoCheckerBoard, kTransDirCheckers),
-	TRANS(kTransStripsBottomBuildLeft, kTransAlgoBuildStrips, kTransDirStepsV),
-	TRANS(kTransStripsBottomBuildRight, kTransAlgoBuildStrips, kTransDirStepsV),	// 40
-	TRANS(kTransStripsLeftBuildDown, kTransAlgoBuildStrips, kTransDirStepsH),
-	TRANS(kTransStripsLeftBuildUp, kTransAlgoBuildStrips, kTransDirStepsH),
-	TRANS(kTransStripsRightBuildDown, kTransAlgoBuildStrips, kTransDirStepsH),
-	TRANS(kTransStripsRightBuildUp, kTransAlgoBuildStrips, kTransDirStepsH),
-	TRANS(kTransStripsTopBuildLeft,	kTransAlgoBuildStrips, kTransDirStepsV),		// 45
-	TRANS(kTransStripsTopBuildRight, kTransAlgoBuildStrips, kTransDirStepsV),
+	TRANS(kTransVenetianBlind,			kTransAlgoBlinds,	kTransDirBlindsH),
+	TRANS(kTransCheckerboard,			kTransAlgoChecker,	kTransDirCheckers),
+	TRANS(kTransStripsBottomBuildLeft, 	kTransAlgoStrips,	kTransDirStepsV),
+	TRANS(kTransStripsBottomBuildRight,	kTransAlgoStrips,	kTransDirStepsV),		// 40
+	TRANS(kTransStripsLeftBuildDown, 	kTransAlgoStrips,	kTransDirStepsH),
+	TRANS(kTransStripsLeftBuildUp,		kTransAlgoStrips,	kTransDirStepsH),
+	TRANS(kTransStripsRightBuildDown,	kTransAlgoStrips,	kTransDirStepsH),
+	TRANS(kTransStripsRightBuildUp,		kTransAlgoStrips,	kTransDirStepsH),
+	TRANS(kTransStripsTopBuildLeft,		kTransAlgoStrips,	kTransDirStepsV),		// 45
+	TRANS(kTransStripsTopBuildRight,	kTransAlgoStrips,	kTransDirStepsV),
 	TRANS(kTransZoomOpen,				kTransAlgoZoom,		kTransDirBoth),
 	TRANS(kTransZoomClose,				kTransAlgoZoom,		kTransDirBoth),
 	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirBlindsV),
@@ -189,8 +189,8 @@ void Frame::playTransition(Score *score) {
 			dissolveTrans(t, score, clipRect);
 		return;
 
-	case kTransAlgoCheckerBoard:
-	case kTransAlgoBuildStrips:
+	case kTransAlgoChecker:
+	case kTransAlgoStrips:
 	case kTransAlgoBlinds:
 		transMultiPass(t, score, clipRect);
 		return;
