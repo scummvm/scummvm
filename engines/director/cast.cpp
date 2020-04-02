@@ -423,6 +423,8 @@ void RTECast::loadChunks() {
 	buffer[rte1->size()] = '\n';
 	buffer[rte1->size() + 1] = '\0';
 	_loadedText->getVal(id)->importRTE(buffer);
+
+	delete rte1;
 #endif
 }
 

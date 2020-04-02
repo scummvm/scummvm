@@ -53,7 +53,10 @@ void CachedMacText::makeMacText() {
 	uint color = _wm->findBestColor(_textCast->_palinfo1 & 0xff, _textCast->_palinfo2 & 0xff, _textCast->_palinfo3 & 0xff);
 
 	_macText = new Graphics::MacText(_textCast->_ftext, _wm, macFont, color, _bgcolor, _width, _align, 1);
-	// TODO destroy me
+}
+
+CachedMacText::~CachedMacText() {
+	delete _macText;
 }
 
 CachedMacText::CachedMacText(TextCast *const textCast, int32 bgcolor, int version, int defaultWidth,

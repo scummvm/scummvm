@@ -116,12 +116,15 @@ void Score::setArchive(Archive *archive) {
 
 	// Frame Labels
 	if (archive->hasResource(MKTAG('V', 'W', 'L', 'B'), -1)) {
-		loadLabels(*archive->getFirstResource(MKTAG('V', 'W', 'L', 'B')));
+		Common::SeekableSubReadStreamEndian *r;
+		loadLabels(*(r = archive->getFirstResource(MKTAG('V', 'W', 'L', 'B'))));
+		delete r;
 	}
 }
 
 void Score::loadArchive() {
 	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
+	Common::SeekableSubReadStreamEndian *r = nullptr;
 
 	if (clutList.size() > 1)
 		warning("More than one palette was found (%d)", clutList.size());
@@ -134,6 +137,8 @@ void Score::loadArchive() {
 
 		debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[0]);
 		loadPalette(*pal);
+
+		delete pal;
 	}
 
 	// Font Directory
@@ -146,11 +151,13 @@ void Score::loadArchive() {
 		warning("Score::loadArchive(): Wrong movie format. VWSC resource missing");
 		return;
 	}
-	loadFrames(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C')));
+	loadFrames(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C'))));
+	delete r;
 
 	// Configuration Information
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
-		loadConfig(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F')));
+		loadConfig(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F'))));
+		delete r;
 	} else {
 		// TODO: Source this from somewhere!
 		_movieRect = Common::Rect(0, 0, 640, 480);
@@ -160,24 +167,28 @@ void Score::loadArchive() {
 	// Cast Information Array
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
 		_castIDoffset = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
-		loadCastDataVWCR(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'R'), _castIDoffset));
+		loadCastDataVWCR(*(r = _movieArchive->getResource(MKTAG('V', 'W', 'C', 'R'), _castIDoffset)));
+		delete r;
 	}
 
 	// Action list
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'A', 'C'), -1)) {
-		loadActions(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'A', 'C')));
+		loadActions(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'A', 'C'))));
+		delete r;
 	}
 
 	// File Info
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), -1)) {
-		loadFileInfo(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'I')));
+		loadFileInfo(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'I'))));
+		delete r;
 	}
 
 	// Font Mapping
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), -1)) {
 		_vm->_wm->_fontMan->clearFontMapping();
 
-		loadFontMap(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'M')));
+		loadFontMap(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'M'))));
+		delete r;
 	}
 
 	// Pattern Tiles
@@ -202,7 +213,8 @@ void Score::loadArchive() {
 			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
 
 			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
-				loadLingoContext(*_movieArchive->getResource(MKTAG('L','c','t','x'), *iterator));
+				loadLingoContext(*(r = _movieArchive->getResource(MKTAG('L','c','t','x'), *iterator)));
+				delete r;
 			}
 		}
 	}
@@ -217,7 +229,8 @@ void Score::loadArchive() {
 				maxLnam = MAX(maxLnam, (int)*iterator);
 			}
 			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
-			loadLingoNames(*_movieArchive->getResource(MKTAG('L','n','a','m'), maxLnam));
+			loadLingoNames(*(r = _movieArchive->getResource(MKTAG('L','n','a','m'), maxLnam)));
+			delete r;
 		}
 	}
 
@@ -225,8 +238,10 @@ void Score::loadArchive() {
 	if (vwci.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading %d CastInfos VWCI", vwci.size());
 
-		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
-			loadCastInfo(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator), *iterator);
+		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator) {
+			loadCastInfo(*(r = _movieArchive->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator)), *iterator);
+			delete r;
+		}
 	}
 
 	Common::Array<uint16> cast = _movieArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
@@ -240,6 +255,7 @@ void Score::loadArchive() {
 			Common::SeekableSubReadStreamEndian *stream = _movieArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			Resource res = _movieArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
 			loadCastData(*stream, *iterator, &res);
+			delete stream;
 		}
 	}
 
@@ -266,11 +282,14 @@ void Score::loadArchive() {
 
 	for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 		_loadedStxts->setVal(*iterator,
-				 new Stxt(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator)));
+				 new Stxt(*(r = _movieArchive->getResource(MKTAG('S','T','X','T'), *iterator))));
+
+		delete r;
 
 		// Try to load movie script, it starts with a comment
 		if (_vm->getVersion() <= 3) {
-			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
+			loadScriptText(*(r = _movieArchive->getResource(MKTAG('S','T','X','T'), *iterator)));
+			delete r;
 		}
 
 	}
@@ -413,6 +432,7 @@ void Score::loadSpriteSounds(bool isSharedCast) {
 		if (sndData != NULL && soundCast != NULL) {
 			SNDDecoder *audio = new SNDDecoder();
 			audio->loadStream(*sndData);
+			delete sndData;
 			soundCast->_audio = audio;
 		}
 	}
@@ -914,7 +934,9 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 			uint scriptId = ((ScriptCast *)(*_loadedCast)[id])->_id - 1;
 			if (scriptId < _castScriptIds.size()) {
 				int resourceId = _castScriptIds[scriptId];
-				_lingo->addCodeV4(*_movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId), ((ScriptCast *)_loadedCast->getVal(id))->_scriptType, id);
+				Common::SeekableSubReadStreamEndian *r;
+				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId)), ((ScriptCast *)_loadedCast->getVal(id))->_scriptType, id);
+				delete r;
 			} else {
 				warning("Score::loadCastData(): Lingo context missing a resource entry for script %d referenced in cast %d", scriptId, id);
 			}
