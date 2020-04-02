@@ -382,11 +382,8 @@ XMLNode *XMLNode::xmlParse(XMLTree *tree, const Common::String &s, size_t &pos) 
 		default:
 			if (inTag)
 				nodeText += s[pos++];
-			else {
+			else
 				plainText += s[pos++];
-				if (plainText.hasPrefix("Welcome to"))
-					warning("hi");
-			}
 			break;
 		}
 	}
@@ -533,6 +530,17 @@ void XMLNode::trim(Common::String &s) {
 		s.deleteChar(0);
 	while (!s.empty() && Common::isSpace(s.lastChar()))
 		s.deleteLastChar();
+
+	// Scan for any newlines, and if found, remove any whitespaces after them.
+	// This will properly handle indented XML
+	uint index = 0;
+	while ((index = s.findFirstOf('\n', index + 1)) != Common::String::npos) {
+		while (index < (s.size() - 1) && s[index + 1] != '\r' && s[index + 1] != '\n'
+			&& Common::isSpace(s[index + 1]))
+			s.deleteChar(index + 1);
+		if (index > 0 && s[index - 1] == '\r')
+			s.deleteChar(--index);
+	}
 
 	if (!s.empty()) {
 		if (hasPrefixSpaces)
