@@ -485,9 +485,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 					} else {
 						saveName = getRamaSaveName(s, saveNo - kSaveIdShift);
 					}
-					Common::ScopedPtr<Common::SeekableReadStream> versionFile(SearchMan.createReadStreamForMember("VERSION"));
-					const Common::String gameVersion = versionFile->readLine();
-					set_savegame_metadata(out, saveName, gameVersion);
+					set_savegame_metadata(out, saveName, g_sci->getGameVersion());
 					valid = true;
 				}
 			}

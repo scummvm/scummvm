@@ -462,13 +462,6 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	const char *viewTypeDesc[] = { "Unknown", "EGA", "Amiga ECS 32 colors", "Amiga AGA 64 colors", "VGA", "VGA SCI1.1" };
 
 	bool hasVocab997 = g_sci->getResMan()->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
-	Common::String gameVersion = "N/A";
-
-	Common::File versionFile;
-	if (versionFile.open("VERSION")) {
-		gameVersion = versionFile.readLine();
-		versionFile.close();
-	}
 
 	debugPrintf("Game ID: %s\n", _engine->getGameIdStr());
 	debugPrintf("Emulated interpreter version: %s\n", getSciVersionDesc(getSciVersion()));
@@ -500,7 +493,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	if (getSciVersion() >= SCI_VERSION_2) {
 		debugPrintf("Plane id base: %d\n", g_sci->_features->detectPlaneIdBase());
 	}
-	debugPrintf("Game version (VERSION file): %s\n", gameVersion.c_str());
+	debugPrintf("Game version (VERSION file): %s\n", g_sci->getGameVersion().c_str());
 	debugPrintf("\n");
 
 	return true;

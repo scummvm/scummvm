@@ -270,6 +270,7 @@ public:
 
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;
+	const Common::String getGameVersion();
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
@@ -350,9 +351,9 @@ public:
 	// Initializes ports and paint16 for non-sci32 games, also sets default palette
 	void initGraphics();
 
-	// Suggest to download the GK2 subtitles patch
+	// Suggest to download patch
 	// in the future, we might refactor it to something more generic, if needed
-	void suggestDownloadGK2SubTitlesPatch();
+	void suggestDownloadPatch(const Common::String &message, const char *url);
 
 public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx

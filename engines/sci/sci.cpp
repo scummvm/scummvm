@@ -436,7 +436,21 @@ Common::Error SciEngine::run() {
 	}
 
 	if (getGameId() == GID_GK2 && ConfMan.getBool("subtitles") && !_resMan->testResource(ResourceId(kResourceTypeSync, 10))) {
-		suggestDownloadGK2SubTitlesPatch();
+		suggestDownloadPatch(_("GK2 has a fan made subtitles, available thanks to the good persons at SierraHelp.\n\n"
+			"Installation:\n"
+			"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n"
+			"- extract zip file\n"
+			"- no need to run the .exe file\n"
+			"- extract the .exe file with a file archiver, like 7-zip\n"
+			"- create a PATCHES subdirectory inside your GK2 directory\n"
+			"- copy the content of GK2Subtitles\\SUBPATCH to the PATCHES subdirectory\n"
+			"- replace files with similar names\n"
+			"- restart the game\n"), "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip");
+	}
+
+	if (getGameId() == GID_GK2 && getGameVersion() == "1.0") {
+		suggestDownloadPatch(_("Your current GK2 version is 1.0 , which is known to suffer from few problems.\n"
+			"You might want to install the official Sierra patch, available at http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2(GK2PAT).zip\n"), "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2(GK2PAT).zip");
 	}
 
 	runGame();
@@ -509,32 +523,16 @@ bool SciEngine::gameHasFanMadePatch() {
 	return false;
 }
 
-void SciEngine::suggestDownloadGK2SubTitlesPatch() {
+void SciEngine::suggestDownloadPatch(const Common::String &message, const char *url) {
 	const char* altButton;
-	Common::String downloadMessage;
 
-	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
+	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) 
 		altButton = _("Download patch");
-		downloadMessage = _("(or click 'Download patch' button. But note - it only downloads, you will have to continue from there)\n");
-	}
-	else {
+	else
 		altButton = nullptr;
-		downloadMessage = "";
-	}
 
-	int result = showScummVMDialog(_("GK2 has a fan made subtitles, available thanks to the good persons at SierraHelp.\n\n"
-		"Installation:\n"
-		"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n" +
-		downloadMessage +
-		"- extract zip file\n"
-		"- no need to run the .exe file\n"
-		"- extract the .exe file with a file archiver, like 7-zip\n"
-		"- create a PATCHES subdirectory inside your GK2 directory\n"
-		"- copy the content of GK2Subtitles\\SUBPATCH to the PATCHES subdirectory\n"
-		"- replace files with similar names\n"
-		"- restart the game\n"), altButton, false);
+	int result = showScummVMDialog(message, altButton, false);
 	if (!result) {
-		char url[] = "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip";
 		g_system->openUrl(url);
 	}
 }
@@ -778,6 +776,17 @@ Console *SciEngine::getSciDebugger() {
 
 const char *SciEngine::getGameIdStr() const {
 	return _gameDescription->gameId;
+}
+
+const Common::String SciEngine::getGameVersion() {
+	Common::String gameVersion = "N/A";
+
+	Common::File versionFile;
+	if (versionFile.open("VERSION")) {
+		gameVersion = versionFile.readLine();
+		versionFile.close();
+	}
+	return gameVersion;
 }
 
 Common::Language SciEngine::getLanguage() const {
