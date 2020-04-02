@@ -27,9 +27,6 @@
 namespace Ultima {
 namespace Shared {
 
-static Common::String encodeEntity(const Common::String &s);
-static Common::String closeTag(const Common::String &s);
-
 XMLNode::~XMLNode() {
 	for (Common::Array<XMLNode *>::iterator i = _nodeList.begin();
 			i != _nodeList.end(); ++i) {
@@ -173,7 +170,7 @@ void XMLNode::listKeys(const Common::String &key, Common::Array<Common::String> 
 	}
 }
 
-static Common::String encodeEntity(const Common::String &s) {
+Common::String XMLNode::encodeEntity(const Common::String &s) {
 	Common::String  ret;
 
 	for (Common::String::const_iterator it = s.begin(); it != s.end(); ++it) {
@@ -239,25 +236,6 @@ static Common::String decode_entity(const Common::String &s, size_t &pos) {
 		}
 	} else {
 		error("Invalid xml encoded entity - %s", entity_name.c_str());
-	}
-}
-
-static Common::String closeTag(const Common::String &s) {
-	if (s.find(" ") == Common::String::npos)
-		return s;
-
-	return s.substr(0, s.find(" "));
-}
-
-
-static void trim(Common::String &s) {
-	// Clean off leading whitespace
-	while (s.size() && s[0] <= 32) {
-		s = s.substr(1);
-	}
-	// Clean off trailing whitespace
-	while (s.size() && s[s.size() - 1] <= 32) {
-		s.erase(s.size() - 1);
 	}
 }
 
@@ -404,8 +382,11 @@ XMLNode *XMLNode::xmlParse(XMLTree *tree, const Common::String &s, size_t &pos) 
 		default:
 			if (inTag)
 				nodeText += s[pos++];
-			else
+			else {
 				plainText += s[pos++];
+				if (plainText.hasPrefix("Welcome to"))
+					warning("hi");
+			}
 			break;
 		}
 	}
@@ -540,6 +521,32 @@ XMLNode *XMLNode::getNext() const {
 
 void XMLNode::freeDoc() {
 	delete _tree;
+}
+
+void XMLNode::trim(Common::String &s) {
+	// Flag whether there's whitespaces at start and/or end
+	bool hasPrefixSpaces = !s.empty() && Common::isSpace(s[0]);
+	bool hasSuffixSpaces = !s.empty() && Common::isSpace(s.lastChar());
+
+	// Remove the spaces
+	while (!s.empty() && Common::isSpace(s[0]))
+		s.deleteChar(0);
+	while (!s.empty() && Common::isSpace(s.lastChar()))
+		s.deleteLastChar();
+
+	if (!s.empty()) {
+		if (hasPrefixSpaces)
+			s = " " + s;
+		if (hasSuffixSpaces)
+			s += " ";
+	}
+}
+
+Common::String XMLNode::closeTag(const Common::String &s) {
+	if (s.find(" ") == Common::String::npos)
+		return s;
+
+	return s.substr(0, s.find(" "));
 }
 
 } // End of namespace Shared
