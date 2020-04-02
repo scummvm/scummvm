@@ -72,15 +72,16 @@ bool XMLTree::readConfigFile(const Common::String &fname) {
 }
 
 bool XMLTree::readConfigStream(Common::SeekableReadStream *stream) {
-	Common::String sbuf, line;
-	while (!stream->err() && !stream->eos()) {
-		line = stream->readLine();
-		sbuf += line;
-	}
+	// Read in the stream contents
+	char *buf = new char[stream->size() + 1];
+	stream->read(buf, stream->size());
+	buf[stream->size()] = '\0';
+	Common::String text(buf, buf + stream->size());
 
-	if (!readConfigString(sbuf))
+	if (!readConfigString(buf))
 		return false;
 
+	delete[] buf;
 	_isFile = true;		// readConfigString sets _isFile = false
 	return true;
 }
