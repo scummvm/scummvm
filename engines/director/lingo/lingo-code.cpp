@@ -781,8 +781,8 @@ void LC::c_of() {
 				break;
 			}
 		}
-		if (firstIndex < 0) {
-			warning("c_of: first_line out of range");
+		if (firstIndex < 0 || lastIndex < 0) {
+			warning("c_of: first_line or last_line out of range");
 			result = "";
 		} else {
 			result = result.substr(firstIndex, lastIndex);
