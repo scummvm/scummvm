@@ -27,6 +27,7 @@ namespace Director {
 
 Common::String preprocessReturn(Common::String in);
 Common::String preprocessPlay(Common::String in);
+Common::String preprocessSound(Common::String in);
 
 bool isspec(char c) {
 	return strchr("-+*/%%^:,()><&[]=", c) != NULL;
@@ -165,6 +166,7 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 
 		res1 = preprocessReturn(res1);
 		res1 = preprocessPlay(res1);
+		res1 = preprocessSound(res1);
 
 		res += res1;
 
@@ -386,8 +388,8 @@ Common::String preprocessPlay(Common::String in) {
 
 		debugC(2, kDebugLingoParse, "PLAY: nexttok: %s", next.c_str());
 
-		if (next.equals("done")) {
-			res += "#"; // Turn it into SYMBOL
+		if (next.equalsIgnoreCase("done")) {
+			res += '#'; // Turn it into SYMBOL
 		}
 
 		res += *ptr++; // We advance one character, so 'one' is left
@@ -398,6 +400,41 @@ Common::String preprocessPlay(Common::String in) {
 
 	if (in.size() != res.size())
 		debugC(2, kDebugLingoParse, "PLAY: in: %s\nout: %s", in.c_str(), res.c_str());
+
+	return res;
+}
+
+Common::String preprocessSound(Common::String in) {
+	Common::String res, next;
+	const char *ptr = in.c_str();
+	const char *beg = ptr;
+
+	while ((ptr = strcasestr(beg, "sound")) != NULL) {
+		ptr += 6; // end of 'sound'
+		res += Common::String(beg, ptr);
+
+		next = nexttok(ptr);
+
+		debugC(2, kDebugLingoParse, "SOUND: nexttok: %s", next.c_str());
+
+		if (next.equalsIgnoreCase("close") ||
+				next.equalsIgnoreCase("fadeIn") ||
+				next.equalsIgnoreCase("fadeOut") ||
+				next.equalsIgnoreCase("playFile") ||
+				next.equalsIgnoreCase("stop")) {
+			res += '#'; // Turn it into SYMBOL
+		}
+
+		res += next;
+		res += ',';
+		ptr += next.size();
+		beg = ptr;
+	}
+
+	res += Common::String(beg);
+
+	if (in.size() != res.size())
+		debugC(2, kDebugLingoParse, "SOUND: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }
