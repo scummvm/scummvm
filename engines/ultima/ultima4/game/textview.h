@@ -57,7 +57,17 @@ public:
 		return _columns;
 	}
 
+	/**
+	 * Draw a character from the charset onto the view.
+	 */
 	void drawChar(int chr, int x, int y);
+
+	/**
+	 * Draw a character from the charset onto the view, but mask it with
+	 * horizontal lines.  This is used for the avatar symbol in the
+	 * statistics area, where a line is masked out for each virtue in
+	 * which the player is not an avatar.
+	 */
 	void drawCharMasked(int chr, int x, int y, unsigned char mask);
 	void textAt(int x, int y, const char *fmt, ...) PRINTF_LIKE(4, 5);
 	void scroll();
@@ -77,10 +87,20 @@ public:
 	void setFontColorBG(ColorBG bg);
 
 	// functions to add color to strings
+	/**
+	 * Highlight the selected row using a background color
+	 */
 	void textSelectedAt(int x, int y, const char *text);
-	Common::String colorizeStatus(char statustype);
-	Common::String colorizeString(Common::String input, ColorFG color, unsigned int colorstart, unsigned int colorlength = 0);
 
+	/**
+	 * Depending on the status type, apply colorization to the character
+	 */
+	Common::String colorizeStatus(char statustype);
+
+	/**
+	 * Depending on the status type, apply colorization to the character
+	 */
+	Common::String colorizeString(Common::String input, ColorFG color, unsigned int colorstart, unsigned int colorlength = 0);
 
 protected:
 	int _columns, _rows;         /**< size of the view in character cells  */

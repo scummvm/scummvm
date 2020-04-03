@@ -55,9 +55,6 @@ MapLoader *ConMapLoader::_instance = MapLoader::registerLoader(MapLoader::regist
 MapLoader *DngMapLoader::_instance = MapLoader::registerLoader(new DngMapLoader, Map::DUNGEON);
 MapLoader *WorldMapLoader::_instance = MapLoader::registerLoader(new WorldMapLoader, Map::WORLD);
 
-/**
- * Gets a map loader for the given map type.
- */
 MapLoader *MapLoader::getLoader(Map::Type type) {
 	ASSERT(loaderMap != NULL, "ImageLoader::getLoader loaderMap not initialized");
 	if (loaderMap->find(type) == loaderMap->end())
@@ -65,9 +62,6 @@ MapLoader *MapLoader::getLoader(Map::Type type) {
 	return (*loaderMap)[type];
 }
 
-/**
- * Registers a loader for the given map type.
- */
 MapLoader *MapLoader::registerLoader(MapLoader *loader, Map::Type type) {
 	if (loaderMap == NULL)
 		loaderMap = new Std::map<Map::Type, MapLoader *, MapType_Hash>();
@@ -79,9 +73,6 @@ MapLoader *MapLoader::registerLoader(MapLoader *loader, Map::Type type) {
 	return loader;
 }
 
-/**
- * Loads raw data from the given file.
- */
 bool MapLoader::loadData(Map *map, U4FILE *f) {
 	unsigned int x, xch, y, ych;
 
@@ -137,9 +128,6 @@ bool MapLoader::isChunkCompressed(Map *map, int chunk) {
 	return false;
 }
 
-/**
- * Load city data from 'ult' and 'tlk' files.
- */
 bool CityMapLoader::load(Map *map) {
 	City *city = dynamic_cast<City *>(map);
 
@@ -258,9 +246,6 @@ bool CityMapLoader::load(Map *map) {
 	return true;
 }
 
-/**
- * Loads a combat map from the 'con' file
- */
 bool ConMapLoader::load(Map *map) {
 	int i;
 
@@ -298,9 +283,6 @@ bool ConMapLoader::load(Map *map) {
 	return true;
 }
 
-/**
- * Loads a dungeon map from the 'dng' file
- */
 bool DngMapLoader::load(Map *map) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(map);
 
@@ -442,9 +424,6 @@ bool DngMapLoader::load(Map *map) {
 	return true;
 }
 
-/**
- * Loads a dungeon room into map->dungeon->room
- */
 void DngMapLoader::initDungeonRoom(Dungeon *dng, int room) {
 	dng->_roomMaps[room] = dynamic_cast<CombatMap *>(mapMgr->initMap(Map::COMBAT));
 
@@ -458,9 +437,6 @@ void DngMapLoader::initDungeonRoom(Dungeon *dng, int room) {
 	dng->_roomMaps[room]->_tileset = Tileset::get("base");
 }
 
-/**
- * Loads the world map data in from the 'world' file.
- */
 bool WorldMapLoader::load(Map *map) {
 	U4FILE *world = u4fopen(map->_fname);
 	if (!world)

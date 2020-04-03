@@ -44,6 +44,9 @@ public:
 	void            setVirtue(Virtue v);
 	void            setMantra(Common::String mantra);
 
+	/**
+	 * Enter the shrine
+	 */
 	void enter();
 	void enhancedSequence();
 	void meditationCycle();

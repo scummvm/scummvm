@@ -64,9 +64,6 @@ void StatsArea::setView(StatsView view) {
 	update();
 }
 
-/**
- * Sets the stats item to the previous in sequence.
- */
 void StatsArea::prevItem() {
 	_view = (StatsView)(_view - 1);
 	if (_view < STATS_CHAR1)
@@ -76,9 +73,6 @@ void StatsArea::prevItem() {
 	update();
 }
 
-/**
- * Sets the stats item to the next in sequence.
- */
 void StatsArea::nextItem() {
 	_view = (StatsView)(_view + 1);
 	if (_view > STATS_MIXTURES)
@@ -88,9 +82,6 @@ void StatsArea::nextItem() {
 	update();
 }
 
-/**
- * Update the stats (ztats) box on the upper right of the screen.
- */
 void StatsArea::update(bool avatarOnly) {
 	clear();
 
@@ -194,26 +185,17 @@ void StatsArea::clear() {
 	_summary.clear();
 }
 
-/**
- * Redraws the entire stats area
- */
 void StatsArea::redraw() {
 	_title.update();
 	_mainArea.update();
 	_summary.update();
 }
 
-/**
- * Sets the title of the stats area.
- */
 void StatsArea::setTitle(const Common::String &s) {
 	int titleStart = (STATS_AREA_WIDTH / 2) - ((s.size() + 2) / 2);
 	_title.textAt(titleStart, 0, "%c%s%c", 16, s.c_str(), 17);
 }
 
-/**
- * The basic party view.
- */
 void StatsArea::showPartyView(bool avatarOnly) {
 	const char *format = "%d%c%-9.8s%3d%s";
 
@@ -233,9 +215,6 @@ void StatsArea::showPartyView(bool avatarOnly) {
 	}
 }
 
-/**
- * The individual character view.
- */
 void StatsArea::showPlayerDetails() {
 	int player = _view - STATS_CHAR1;
 
@@ -255,9 +234,6 @@ void StatsArea::showPlayerDetails() {
 	_mainArea.textAt(0, 7, "A:%s", p->getArmor()->getName().c_str());
 }
 
-/**
- * Weapons in inventory.
- */
 void StatsArea::showWeapons() {
 	setTitle("Weapons");
 
@@ -280,9 +256,6 @@ void StatsArea::showWeapons() {
 	}
 }
 
-/**
- * Armor in inventory.
- */
 void StatsArea::showArmor() {
 	setTitle("Armour");
 
@@ -297,9 +270,6 @@ void StatsArea::showArmor() {
 	}
 }
 
-/**
- * Equipment: touches, gems, keys, and sextants.
- */
 void StatsArea::showEquipment() {
 	setTitle("Equipment");
 
@@ -311,9 +281,6 @@ void StatsArea::showEquipment() {
 		_mainArea.textAt(0, line++, "%2d Sextants", g_ultima->_saveGame->_sextants);
 }
 
-/**
- * Items: runes, stones, and other miscellaneous quest items.
- */
 void StatsArea::showItems() {
 	int i, j;
 	char buffer[17];
@@ -374,9 +341,6 @@ void StatsArea::showItems() {
 		_mainArea.textAt(0, line++, "%s", getItemName(ITEM_SKULL));
 }
 
-/**
- * Unmixed reagents in inventory.
- */
 void StatsArea::showReagents(bool active) {
 	setTitle("Reagents");
 
@@ -399,9 +363,6 @@ void StatsArea::showReagents(bool active) {
 	}
 }
 
-/**
- * Mixed reagents in inventory.
- */
 void StatsArea::showMixtures() {
 	setTitle("Mixtures");
 
@@ -438,9 +399,6 @@ void StatsArea::resetReagentsMenu() {
 	_reagentsMixMenu.reset(false);
 }
 
-/**
- * Handles spell mixing for the Ultima V-style menu-system
- */
 bool ReagentsMenuController::keyPressed(int key) {
 	switch (key) {
 	case 'a':
@@ -489,7 +447,6 @@ bool ReagentsMenuController::keyPressed(int key) {
 
 	return true;
 }
-
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

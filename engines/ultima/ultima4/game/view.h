@@ -39,10 +39,29 @@ public:
 	View(int x, int y, int width, int height);
 	virtual ~View() {}
 
+	/**
+	 * Hook for reinitializing when graphics reloaded.
+	 */
 	virtual void reinit();
+
+	/**
+	 * Clear the view to black.
+	 */
 	virtual void clear();
+
+	/**
+	 * Update the view to the screen.
+	 */
 	virtual void update();
+
+	/**
+	 * Update a piece of the view to the screen.
+	 */
 	virtual void update(int x, int y, int width, int height);
+
+	/**
+	 * Highlight a piece of the screen by drawing it in inverted colors.
+	 */
 	virtual void highlight(int x, int y, int width, int height);
 	virtual void unhighlight();
 

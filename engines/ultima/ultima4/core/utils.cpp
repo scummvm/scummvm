@@ -25,25 +25,14 @@
 namespace Ultima {
 namespace Ultima4 {
 
-/**
- * Seed the random number generator.
- */
 void xu4_srandom() {
 //    srand((unsigned int)time(NULL));
 }
 
-/**
- * Generate a random number between 0 and (upperRange - 1)
- */
 int xu4_random(int upperRange) {
 	return g_ultima->getRandomNumber(upperRange - 1);
 }
 
-/**
- * Trims whitespace from a Common::String
- * @param val The Common::String you are trimming
- * @param chars_to_trim A list of characters that will be trimmed
- */
 Common::String &trim(Common::String &val, const Common::String &chars_to_trim) {
 	using namespace std;
 	Common::String::iterator i;
@@ -57,9 +46,6 @@ Common::String &trim(Common::String &val, const Common::String &chars_to_trim) {
 	return val;
 }
 
-/**
- * Converts the Common::String to lowercase
- */
 Common::String &lowercase(Common::String &val) {
 	using namespace std;
 	Common::String::iterator i;
@@ -68,9 +54,6 @@ Common::String &lowercase(Common::String &val) {
 	return val;
 }
 
-/**
- * Converts the Common::String to uppercase
- */
 Common::String &uppercase(Common::String &val) {
 	using namespace std;
 	Common::String::iterator i;
@@ -79,19 +62,12 @@ Common::String &uppercase(Common::String &val) {
 	return val;
 }
 
-/**
- * Converts an integer value to a Common::String
- */
 Common::String xu4_to_string(int val) {
 	char buffer[16];
 	sprintf(buffer, "%d", val);
 	return buffer;
 }
 
-/**
- * Splits a Common::String into substrings, divided by the charactars in
- * separators.  Multiple adjacent seperators are treated as one.
- */
 Std::vector<Common::String> split(const Common::String &s, const Common::String &separators) {
 	Std::vector<Common::String> result;
 	Common::String current;

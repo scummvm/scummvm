@@ -40,12 +40,30 @@ public:
 	virtual bool isCombatController() const {
 		return false;
 	}
+
+	/**
+	 * The event manager will call this method to notify the active
+	 * controller that a key has been pressed.  The key will be passed on
+	 * to the virtual keyPressed method.
+	 */
 	bool notifyKeyPressed(int key);
+
 	int getTimerInterval();
+
+	/**
+	 * A simple adapter to make a timer callback into a controller method
+	 * call.
+	 */
 	static void timerCallback(void *data);
 
 	/* control methods subclasses may want to override */
 	virtual bool keyPressed(int key) = 0;
+
+	/**
+	 * The default timerFired handler for a controller.  By default,
+	 * timers are ignored, but subclasses can override this method and it
+	 * will be called every <interval> 1/4 seconds.
+	 */
 	virtual void timerFired();
 
 private:

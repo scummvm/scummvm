@@ -169,15 +169,35 @@ class Settings : public SettingsData, public Observable<Settings *> {
 
 public:
 	/* Methods */
+
+	/**
+	 * Initialize the settings.
+	 */
 	void init();
+
+	/**
+	 * Return the global instance of settings.
+	 */
 	static Settings &getInstance();
 	void setData(const SettingsData &data);
+
+	/**
+	 * Read settings
+	 */
 	bool read();
+
+	/**
+	 * Write the settings out into a human readable file.  This also
+	 * notifies observers that changes have been commited.
+	 */
 	bool write();
 
 	const Std::vector<Common::String> &getBattleDiffs();
 
 private:
+	/**
+	 * Default contructor.  Settings is a singleton so this is private.
+	 */
 	Settings();
 
 	static Settings *_instance;

@@ -84,10 +84,44 @@ public:
 	MapCoords &putInBounds(const class Map *map);
 	MapCoords &move(Direction d, const class Map *map = NULL);
 	MapCoords &move(int dx, int dy, const class Map *map = NULL);
+
+	/**
+	 * Returns a mask of directions that indicate where one point is relative
+	 * to another.  For instance, if the object at (x, y) is
+	 * northeast of (c.x, c.y), then this function returns
+	 * (MASK_DIR(DIR_NORTH) | MASK_DIR(DIR_EAST))
+	 * This function also takes into account map boundaries and adjusts
+	 * itself accordingly. If the two coordinates are not on the same z-plane,
+	 * then this function return DIR_NONE.
+	 */
 	int getRelativeDirection(const MapCoords &c, const class Map *map = NULL) const;
+
+	/**
+	 * Finds the appropriate direction to travel to get from one point to
+	 * another.  This algorithm will avoid getting trapped behind simple
+	 * obstacles, but still fails with anything mildly complicated.
+	 * This function also takes into account map boundaries and adjusts
+	 * itself accordingly, provided the 'map' parameter is passed
+	 */
 	Direction pathTo(const MapCoords &c, int valid_dirs = MASK_DIR_ALL, bool towards = true, const class Map *map = NULL) const;
+
+	/**
+	 * Finds the appropriate direction to travel to move away from one point
+	 */
 	Direction pathAway(const MapCoords &c, int valid_dirs = MASK_DIR_ALL) const;
+
+	/**
+	 * Finds the movement distance (not using diagonals) from point a to point b
+	 * on a map, taking into account map boundaries and such.  If the two coords
+	 * are not on the same z-plane, then this function returns -1;
+	 */
 	int movementDistance(const MapCoords &c, const class Map *map = NULL) const;
+
+	/**
+	 * Finds the distance (using diagonals) from point a to point b on a map
+	 * If the two coordinates are not on the same z-plane, then this function
+	 * returns -1. This function also takes into account map boundaries.
+	 */
 	int distance(const MapCoords &c, const class Map *map = NULL) const;
 
 	static MapCoords nowhere;
@@ -128,24 +162,95 @@ public:
 	// Member functions
 	virtual Common::String getName();
 
+	/**
+	 * Returns the object at the given (x,y,z) coords, if one exists.
+	 * Otherwise, returns NULL.
+	 */
 	class Object *objectAt(const Coords &coords);
+
+	/**
+	 * Returns the portal for the correspoding action(s) given.
+	 * If there is no portal that corresponds to the actions flagged
+	 * by 'actionFlags' at the given (x,y,z) coords, it returns NULL.
+	 */
 	const Portal *portalAt(const Coords &coords, int actionFlags);
+
+	/**
+	 * Returns the raw tile for the given (x,y,z) coords for the given map
+	 */
 	MapTile *getTileFromData(const Coords &coords);
+
+	/**
+	 * Returns the current ground tile at the given point on a map.  Visual-only
+	 * annotations like moongates and attack icons are ignored.  Any walkable tiles
+	 * are taken into account (treasure chests, ships, balloon, etc.)
+	 */
 	MapTile *tileAt(const Coords &coords, int withObjects);
 	const Tile *tileTypeAt(const Coords &coords, int withObjects);
+
+	/**
+	 * Returns true if the given map is the world map
+	 */
 	bool isWorldMap();
+
+	/**
+	 * Returns true if the map is enclosed (to see if gem layouts should cut themselves off)
+	 */
 	bool isEnclosed(const Coords &party);
-	class Creature *addCreature(const class Creature *m, Coords coords);
-	class Object *addObject(MapTile tile, MapTile prevTile, Coords coords);
-	class Object *addObject(Object *obj, Coords coords);
+
+	/**
+	 * Adds a creature object to the given map
+	 */
+	Creature *addCreature(const class Creature *m, Coords coords);
+	Object *addObject(MapTile tile, MapTile prevTile, Coords coords);
+
+	/**
+	 * Adds an object to the given map
+	 */
+	Object *addObject(Object *obj, Coords coords);
+
+	/**
+	 * Removes an object from the map
+	 *
+	 * This function should only be used when not iterating through an
+	 * ObjectDeque, as the iterator will be invalidated and the
+	 * results will be unpredictable.  Instead, use the function below.
+	 */
 	void removeObject(const class Object *rem, bool deleteObject = true);
 	ObjectDeque::iterator removeObject(ObjectDeque::iterator rem, bool deleteObject = true);
+
+	/**
+	 * Removes all objects from the given map
+	 */
 	void clearObjects();
-	class Creature *moveObjects(MapCoords avatar);
+
+	/**
+	 * Moves all of the objects on the given map.
+	 * Returns an attacking object if there is a creature attacking.
+	 * Also performs special creature actions and creature effects.
+	 */
+	Creature *moveObjects(MapCoords avatar);
+
+	/**
+	 * Resets object animations to a value that is acceptable for
+	 * savegame compatibility with u4dos.
+	 */
 	void resetObjectAnimations();
+
+	/**
+	 * Returns the number of creatures on the given map
+	 */
 	int getNumberOfCreatures();
+
+	/**
+	 * Returns a mask of valid moves for the given transport on the given map
+	 */
 	int getValidMoves(MapCoords from, MapTile transport);
 	bool move(Object *obj, Direction d);
+
+	/**
+	 * Alerts the guards that the avatar is doing something bad
+	 */
 	void alertGuards();
 	const MapCoords &getLabel(const Common::String &name) const;
 

@@ -73,7 +73,15 @@ public:
 	void setNpcType(PersonNpcType t);
 
 	Common::List<Common::String> getConversationText(Conversation *cnv, const char *inquiry);
+
+	/**
+	 * Get the prompt shown after each reply.
+	 */
 	Common::String getPrompt(Conversation *cnv);
+
+	/**
+	 * Returns the valid keyboard choices for a given conversation.
+	 */
 	const char *getChoices(Conversation *cnv);
 
 	Common::String getIntro(Conversation *cnv);

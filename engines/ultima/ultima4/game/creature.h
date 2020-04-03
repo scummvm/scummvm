@@ -161,6 +161,9 @@ class Creature : public Object {
 	typedef Common::List<StatusType> StatusList;
 
 public:
+	/**
+	 * Creature class implementation
+	 */
 	Creature(MapTile tile = MapTile(0));
 
 	void load(const ConfigElement &conf);
@@ -304,11 +307,26 @@ public:
 	void setRandomRanged();
 	int setInitialHp(int hp = -1);
 
+	/**
+	 * Performs a special action for the creature
+	 * Returns true if the action takes up the creatures
+	 * whole turn (i.e. it cant move afterwords)
+	 */
 	bool specialAction();
+
+	/**
+	 * Performs a special effect for the creature
+	 * Returns true if something special happened,
+	 * or false if nothing happened
+	 */
 	bool specialEffect();
 
 	/* combat methods */
 	void act(CombatController *controller);
+
+	/**
+	 * Add status effects to the creature, in order of importance
+	 */
 	virtual void addStatus(StatusType status);
 	void applyTileEffect(TileEffect effect);
 	virtual int getAttackBonus() const;
@@ -318,13 +336,28 @@ public:
 	virtual CreatureStatus getState() const;
 	StatusType getStatus() const;
 	bool isAsleep() const;
+
+	/**
+	 * Hides or shows a camouflaged creature, depending on its distance from
+	 * the nearest opponent
+	 */
 	bool hideOrShow();
+
 	Creature *nearestOpponent(int *dist, bool ranged);
 	virtual void putToSleep();
 	virtual void removeStatus(StatusType status);
 	virtual void setStatus(StatusType status);
 	virtual void wakeUp();
 
+	/**
+	 * Applies damage to the creature.
+	 * Returns true if the creature still exists after the damage has been applied
+	 * or false, if the creature was destroyed
+	 *
+	 * If byplayer is false (when a monster is killed by walking through
+	 * fire or poison, or as a result of jinx) we don't report experience
+	 * on death
+	 */
 	virtual bool applyDamage(int damage, bool byplayer = true);
 	virtual bool dealDamage(Creature *m, int damage);
 
@@ -360,11 +393,39 @@ public:
 
 	void loadAll();
 
+	/**
+	 * Returns a creature using a tile to find which one to create
+	 * or NULL if a creature with that tile cannot be found
+	 */
 	Creature *getByTile(MapTile tile);
+
+	/**
+	 * Returns the creature that has the corresponding id
+	 * or returns NULL if no creature with that id could
+	 * be found.
+	 */
 	Creature *getById(CreatureId id);
+
+	/**
+	 * Returns the creature that has the corresponding name
+	 * or returns NULL if no creature can be found with
+	 * that name (case insensitive)
+	 */
 	Creature *getByName(Common::String name);
+
+	/**
+	 * Creates a random creature based on the tile given
+	 */
 	Creature *randomForTile(const Tile *tile);
+
+	/**
+	 * Creates a random creature based on the dungeon level given
+	 */
 	Creature *randomForDungeon(int dnglevel);
+
+	/**
+	 * Creates a random ambushing creature
+	 */
 	Creature *randomAmbushing();
 
 private:

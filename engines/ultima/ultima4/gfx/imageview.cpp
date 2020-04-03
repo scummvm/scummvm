@@ -36,9 +36,6 @@ ImageView::ImageView(int x, int y, int width, int height) : View(x, y, width, he
 ImageView::~ImageView() {
 }
 
-/**
- * Draw the image at the optionally specified offset.
- */
 void ImageView::draw(const Common::String &imageName, int x, int y) {
 	ImageInfo *info = imageMgr->get(imageName);
 	if (info) {

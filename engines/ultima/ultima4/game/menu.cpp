@@ -44,9 +44,6 @@ void Menu::removeAll() {
 	_items.clear();
 }
 
-/**
- * Adds an item to the menu list and returns the menu
- */
 void Menu::add(int id, Common::String text, short x, short y, int sc) {
 	MenuItem *item = new MenuItem(text, x, y, sc);
 	item->setId(id);
@@ -77,16 +74,10 @@ void Menu::setClosesMenu(int id) {
 	}
 }
 
-/**
- * Returns the menu item that is currently selected/highlighted
- */
 Menu::MenuItemList::iterator Menu::getCurrent() {
 	return _selected;
 }
 
-/**
- * Sets the current menu item to the one indicated by the iterator
- */
 void Menu::setCurrent(MenuItemList::iterator i) {
 	_selected = i;
 	highlight(*_selected);
@@ -127,11 +118,6 @@ void Menu::show(TextView *view) {
 	}
 }
 
-/**
- * Checks the menu to ensure that there is at least 1 visible
- * item in the list.  Returns true if there is at least 1 visible
- * item, false if nothing is visible.
- */
 bool Menu::isVisible() {
 	bool visible = false;
 
@@ -143,9 +129,6 @@ bool Menu::isVisible() {
 	return visible;
 }
 
-/**
- * Sets the selected iterator to the next visible menu item and highlights it
- */
 void Menu::next() {
 	MenuItemList::iterator i = _selected;
 	if (isVisible()) {
@@ -160,9 +143,6 @@ void Menu::next() {
 	setCurrent(i);
 }
 
-/**
- * Sets the selected iterator to the previous visible menu item and highlights it
- */
 void Menu::prev() {
 	MenuItemList::iterator i = _selected;
 	if (isVisible()) {
@@ -179,9 +159,6 @@ void Menu::prev() {
 	setCurrent(i);
 }
 
-/**
- * Highlights a single menu item, un-highlighting any others
- */
 void Menu::highlight(MenuItem *item) {
 	// unhighlight all menu items first
 	for (_current = _items.begin(); _current != _items.end(); _current++)
@@ -190,23 +167,14 @@ void Menu::highlight(MenuItem *item) {
 		item->setHighlighted(true);
 }
 
-/**
- * Returns an iterator pointing to the first menu item
- */
 Menu::MenuItemList::iterator Menu::begin() {
 	return _items.begin();
 }
 
-/**
- * Returns an iterator pointing just past the last menu item
- */
 Menu::MenuItemList::iterator Menu::end() {
 	return _items.end();
 }
 
-/**
- * Returns an iterator pointing to the first visible menu item
- */
 Menu::MenuItemList::iterator Menu::begin_visible() {
 	if (!isVisible())
 		return _items.end();
@@ -218,12 +186,6 @@ Menu::MenuItemList::iterator Menu::begin_visible() {
 	return _current;
 }
 
-/**
- * 'Resets' the menu.  This does the following:
- *      - un-highlights all menu items
- *      - highlights the first menu item
- *      - selects the first visible menu item
- */
 void Menu::reset(bool highlightFirst) {
 	_closed = false;
 
@@ -245,9 +207,6 @@ void Menu::reset(bool highlightFirst) {
 	notifyObservers(event);
 }
 
-/**
- * Returns an iterator pointing to the item associated with the given 'id'
- */
 Menu::MenuItemList::iterator Menu::getById(int id) {
 	if (id == -1)
 		return getCurrent();
@@ -259,9 +218,6 @@ Menu::MenuItemList::iterator Menu::getById(int id) {
 	return _items.end();
 }
 
-/**
- * Returns the menu item associated with the given 'id'
- */
 MenuItem *Menu::getItemById(int id) {
 	_current = getById(id);
 	if (_current != _items.end())
@@ -269,13 +225,6 @@ MenuItem *Menu::getItemById(int id) {
 	return NULL;
 }
 
-/**
- * Activates the menu item given by 'id', using 'action' to
- * activate it.  If the menu item cannot be activated using
- * 'action', then it is not activated.  This also un-highlights
- * the menu item given by 'menu' and highlights the new menu
- * item that was found for 'id'.
- */
 void Menu::activateItem(int id, MenuEvent::Type action) {
 	MenuItem *mi;
 
@@ -298,10 +247,6 @@ void Menu::activateItem(int id, MenuEvent::Type action) {
 	notifyObservers(event);
 }
 
-/**
- * Activates a menu item by it's shortcut key.  True is returned if a
- * menu item get activated, false otherwise.
- */
 bool Menu::activateItemByShortcut(int key, MenuEvent::Type action) {
 	for (MenuItemList::iterator i = _items.begin(); i != _items.end(); ++i) {
 		const Std::set<int> &shortcuts = (*i)->getShortcutKeys();
@@ -316,16 +261,10 @@ bool Menu::activateItemByShortcut(int key, MenuEvent::Type action) {
 	return false;
 }
 
-/**
- * Returns true if the menu has been closed.
- */
 bool Menu::getClosed() const {
 	return _closed;
 }
 
-/**
- * Update whether the menu has been closed.
- */
 void Menu::setClosed(bool closed) {
 	this->_closed = closed;
 }

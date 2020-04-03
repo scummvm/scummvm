@@ -53,7 +53,16 @@ struct ItemLocation {
 typedef void (*DestroyAllCreaturesCallback)(void);
 
 void itemSetDestroyAllCreaturesCallback(DestroyAllCreaturesCallback callback);
+
+/**
+ * Returns an item location record if a searchable object exists at
+ * the given location. NULL is returned if nothing is there.
+ */
 const ItemLocation *itemAtLocation(const Map *map, const Coords &coords);
+
+/**
+ * Uses the item indicated by 'shortname'
+ */
 void itemUse(const Common::String &shortname);
 
 } // End of namespace Ultima4

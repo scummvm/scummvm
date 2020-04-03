@@ -180,9 +180,6 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 		drawFocus(x, y);
 }
 
-/**
- * Draw a focus rectangle around the tile
- */
 void TileView::drawFocus(int x, int y) {
 	ASSERT(x < _columns, "x value of %d out of range", x);
 	ASSERT(y < _rows, "y value of %d out of range", y);

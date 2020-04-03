@@ -36,7 +36,14 @@ class Armor {
 public:
 	typedef Common::String string;
 
+	/**
+	 * Returns armor by ArmorType.
+	 */
 	static const Armor *get(ArmorType a);
+
+	/**
+	 * Returns armor that has the given name
+	 */
 	static const Armor *get(const string &name);
 
 	// Getters

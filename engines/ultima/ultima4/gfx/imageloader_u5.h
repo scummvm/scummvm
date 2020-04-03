@@ -36,6 +36,11 @@ namespace Ultima4 {
 class U5LzwImageLoader : public ImageLoader {
 public:
 	virtual ~U5LzwImageLoader() {}
+
+	/**
+	 * Loads in the lzw-compressed image and apply the standard U4 16 or
+	 * 256 color palette.
+	 */
 	virtual Image *load(U4FILE *file, int width, int height, int bpp);
 };
 

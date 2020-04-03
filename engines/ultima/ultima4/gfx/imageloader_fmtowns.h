@@ -35,6 +35,9 @@ public:
 	FMTOWNSImageLoader(int offset) : _offset(offset) {}
 	virtual ~FMTOWNSImageLoader() {}
 
+	/**
+	 * Loads in an FM TOWNS files, which we assume is 16 bits.
+	 */
 	virtual Image *load(U4FILE *file, int width, int height, int bpp);
 };
 

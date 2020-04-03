@@ -89,15 +89,48 @@ public:
 	Dungeon() {}
 
 	// Members
+	/**
+	 * Returns the name of the dungeon
+	 */
 	virtual Common::String getName();
 
+	/**
+	 * Returns the dungeon token associated with the given dungeon tile
+	 */
 	DungeonToken tokenForTile(MapTile tile);
+
+	/**
+	 * Returns the dungeon token for the current location
+	 */
 	DungeonToken currentToken();
+
+	/**
+	 * Returns the dungeon sub-token for the current location
+	 */
 	unsigned char currentSubToken();
+
+	/**
+	 * Returns the dungeon token for the given coordinates
+	 */
 	DungeonToken tokenAt(MapCoords coords);
+
+	/**
+	 * Returns the dungeon sub-token for the given coordinates.  The
+	 * subtoken is encoded in the lower bits of the map raw data.  For
+	 * instance, for the raw value 0x91, returns FOUNTAIN_HEALING NOTE:
+	 * This function will always need type-casting to the token type
+	 * necessary
+	 */
 	unsigned char subTokenAt(MapCoords coords);
 
+	/**
+	 * Returns true if a ladder-up is found at the given coordinates
+	 */
 	bool ladderUpAt(MapCoords coords);
+
+	/**
+	 * Returns true if a ladder-down is found at the given coordinates
+	 */
 	bool ladderDownAt(MapCoords coords);
 
 	bool validTeleportLocation(MapCoords coords);

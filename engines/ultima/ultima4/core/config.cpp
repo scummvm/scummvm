@@ -84,9 +84,6 @@ ConfigElement &ConfigElement::operator=(const ConfigElement &e) {
 	return *this;
 }
 
-/**
- * Returns true if the property exists in the current config element
- */
 bool ConfigElement::exists(const Common::String &name) const {
 	return !(*_node)[name].empty();
 }

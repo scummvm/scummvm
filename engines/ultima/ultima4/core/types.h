@@ -96,6 +96,9 @@ public:
 		return _id < m._id;    /* for Std::less */
 	}
 
+	/**
+	 * MapTile Class Implementation
+	 */
 	Direction getDirection() const;
 	bool setDirection(Direction d);
 

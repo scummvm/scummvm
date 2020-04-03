@@ -46,10 +46,30 @@ public:
 	~City();
 
 	// Members
+	/**
+	 * Returns the name of the city
+	 */
 	virtual Common::String getName();
+
+	/**
+	 * Adds a person object to the map
+	 */
 	Person *addPerson(Person *p);
+
+	/**
+	 * Add people to the map
+	 */
 	void addPeople();
+
+	/**
+	 * Removes all people from the current map
+	 */
 	void removeAllPeople();
+
+	/**
+	 * Returns the person object at the given (x,y,z) coords, if one exists.
+	 * Otherwise, returns NULL.
+	 */
 	Person *personAt(const Coords &coords);
 
 	// Properties

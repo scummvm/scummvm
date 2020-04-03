@@ -50,9 +50,6 @@ bool isCreature(Object *punknown) {
 		return false;
 }
 
-/**
- * Creature class implementation
- */
 Creature::Creature(MapTile tile) :
 	Object(Object::CREATURE) {
 	const Creature *m = creatureMgr->getByTile(tile);
@@ -311,11 +308,6 @@ CreatureStatus Creature::getState() const {
 
 }
 
-/**
- * Performs a special action for the creature
- * Returns true if the action takes up the creatures
- * whole turn (i.e. it cant move afterwords)
- */
 bool Creature::specialAction() {
 	bool retval = false;
 
@@ -381,11 +373,6 @@ bool Creature::specialAction() {
 	return retval;
 }
 
-/**
- * Performs a special effect for the creature
- * Returns true if something special happened,
- * or false if nothing happened
- */
 bool Creature::specialEffect() {
 	Object *obj;
 	bool retval = false;
@@ -649,9 +636,6 @@ void Creature::act(CombatController *controller) {
 	this->animateMovement();
 }
 
-/**
- * Add status effects to the creature, in order of importance
- */
 void Creature::addStatus(StatusType s) {
 	if (_status.size() && _status.back() > s) {
 		StatusType prev = _status.back();
@@ -757,10 +741,6 @@ bool Creature::isAsleep() const {
 	return false;
 }
 
-/**
- * Hides or shows a camouflaged creature, depending on its distance from
- * the nearest opponent
- */
 bool Creature::hideOrShow() {
 	/* find the nearest opponent */
 	int dist;
@@ -846,15 +826,6 @@ void Creature::wakeUp() {
 	setAnimated(); /* reanimate creature */
 }
 
-/**
- * Applies damage to the creature.
- * Returns true if the creature still exists after the damage has been applied
- * or false, if the creature was destroyed
- *
- * If byplayer is false (when a monster is killed by walking through
- * fire or poison, or as a result of jinx) we don't report experience
- * on death
- */
 bool Creature::applyDamage(int damage, bool byplayer) {
 	/* deal the damage */
 	if (_id != LORDBRITISH_ID)
@@ -939,10 +910,6 @@ void CreatureMgr::loadAll() {
 	}
 }
 
-/**
- * Returns a creature using a tile to find which one to create
- * or NULL if a creature with that tile cannot be found
- */
 Creature *CreatureMgr::getByTile(MapTile tile) {
 	CreatureMap::const_iterator i;
 
@@ -956,11 +923,6 @@ Creature *CreatureMgr::getByTile(MapTile tile) {
 	return NULL;
 }
 
-/**
- * Returns the creature that has the corresponding id
- * or returns NULL if no creature with that id could
- * be found.
- */
 Creature *CreatureMgr::getById(CreatureId id) {
 	CreatureMap::const_iterator i = _creatures.find(id);
 	if (i != _creatures.end())
@@ -968,11 +930,6 @@ Creature *CreatureMgr::getById(CreatureId id) {
 	else return NULL;
 }
 
-/**
- * Returns the creature that has the corresponding name
- * or returns NULL if no creature can be found with
- * that name (case insensitive)
- */
 Creature *CreatureMgr::getByName(Common::String name) {
 	CreatureMap::const_iterator i;
 	for (i = _creatures.begin(); i != _creatures.end(); i++) {
@@ -982,9 +939,6 @@ Creature *CreatureMgr::getByName(Common::String name) {
 	return NULL;
 }
 
-/**
- * Creates a random creature based on the tile given
- */
 Creature *CreatureMgr::randomForTile(const Tile *tile) {
 	/* FIXME: this is too dependent on the tile system, and easily
 	   broken when tileset changes are made.  Methinks the logic
@@ -1020,10 +974,6 @@ Creature *CreatureMgr::randomForTile(const Tile *tile) {
 	return getByTile(randTile);
 }
 
-
-/**
- * Creates a random creature based on the dungeon level given
- */
 Creature *CreatureMgr::randomForDungeon(int dngLevel) {
 	// Based on u4dos observations, see:
 	//  https://sourceforge.net/p/xu4/patches/37/
@@ -1036,10 +986,6 @@ Creature *CreatureMgr::randomForDungeon(int dngLevel) {
 	return getById(monster);
 }
 
-
-/**
- * Creates a random ambushing creature
- */
 Creature *CreatureMgr::randomAmbushing() {
 	CreatureMap::const_iterator i;
 	int numAmbushingCreatures = 0,

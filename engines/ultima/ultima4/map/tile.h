@@ -67,6 +67,9 @@ class Tile : private Uncopyable {
 public:
 	Tile(Tileset *tileset);
 
+	/**
+	 * Loads tile information.
+	 */
 	void loadProperties(const ConfigElement &conf);
 
 	TileId getId() const                {
@@ -187,6 +190,11 @@ public:
 	}
 
 	bool isOpaque() const;
+
+	/**
+	 * Is tile a foreground tile (i.e. has transparent parts).
+	 * Deprecated? Never used in XML. Other mechanisms exist, though this could help?
+	 */
 	bool isForeground() const;
 	Direction directionForFrame(int frame) const;
 	int frameForDirection(Direction d) const;
@@ -203,6 +211,9 @@ public:
 	void deleteImage();
 
 private:
+	/**
+	 * Loads the tile image
+	 */
 	void loadImage();
 
 private:

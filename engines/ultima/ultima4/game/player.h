@@ -108,9 +108,14 @@ public:
 	PartyMember(Party *p, SaveGamePlayerRecord *pr);
 	virtual ~PartyMember();
 
+	/**
+	 * Notify the party that this player has changed somehow
+	 */
 	void notifyOfChange();
 
-	// Used to translate script values into something useful
+	/**
+	 * Used to translate script values into something useful
+	 */
 	virtual Common::String translate(Std::vector<Common::String> &parts);
 
 	// Accessor methods
@@ -133,39 +138,118 @@ public:
 	int getMp() const      {
 		return _player->_mp;
 	}
+
+	/**
+	 * Determine the most magic points a character could have
+	 * given his class and intelligence.
+	 */
 	int getMaxMp() const;
+
 	const Weapon *getWeapon() const;
 	const Armor *getArmor() const;
 	virtual Common::String getName() const;
 	SexType getSex() const;
 	ClassType getClass() const;
 	virtual CreatureStatus getState() const;
+
+	/**
+	 * Determine what level a character has.
+	 */
 	int getRealLevel() const;
+
+	/**
+	 * Determine the highest level a character could have with the number
+	 * of experience points he has.
+	 */
 	int getMaxLevel() const;
 
+	/**
+	 * Adds a status effect to the player
+	 */
 	virtual void addStatus(StatusType status);
+
+	/**
+	 * Adjusts the player's mp by 'pts'
+	 */
 	void adjustMp(int pts);
+
+	/**
+	 * Advances the player to the next level if they have enough experience
+	 */
 	void advanceLevel();
+
+	/**
+	 * Apply an effect to the party member
+	 */
 	void applyEffect(TileEffect effect);
+
+	/**
+	 * Award a player experience points.  Maxs out the players xp at 9999.
+	 */
 	void awardXp(int xp);
+
+	/**
+	 * Perform a certain type of healing on the party member
+	 */
 	bool heal(HealType type);
+
+	/**
+	 * Remove status effects from the party member
+	 */
 	virtual void removeStatus(StatusType status);
+
 	virtual void setHp(int hp);
 	void setMp(int mp);
 	EquipError setArmor(const Armor *a);
 	EquipError setWeapon(const Weapon *w);
 
+	/**
+	 * Applies damage to a player, and changes status to dead if hit
+	 * points drop below zero.
+	 *
+	 * Byplayer is ignored for now, since it should always be false for U4.  (Is
+	 * there anything special about being killed by a party member in U5?)  Also
+	 * keeps interface consistent for virtual base function Creature::applydamage()
+	 */
 	virtual bool applyDamage(int damage, bool byplayer = false);
 	virtual int getAttackBonus() const;
 	virtual int getDefense() const;
 	virtual bool dealDamage(Creature *m, int damage);
+
+	/**
+	 * Calculate damage for an attack.
+	 */
 	int getDamage();
+
+	/**
+	 * Returns the tile that will be displayed when the party
+	 * member's attack hits
+	 */
 	virtual const Common::String &getHitTile() const;
+
+	/**
+	 * Returns the tile that will be displayed when the party
+	 * member's attack fails
+	 */
 	virtual const Common::String &getMissTile() const;
 	bool isDead();
 	bool isDisabled();
+
+	/**
+	 * Lose the equipped weapon for the player (flaming oil, ranged daggers, etc.)
+	 * Returns the number of weapons left of that type, including the one in
+	 * the players hand
+	 */
 	int  loseWeapon();
+
+	/**
+	 * Put the party member to sleep
+	 */
 	virtual void putToSleep();
+
+	/**
+	 * Wakes up the party member
+	 */
 	virtual void wakeUp();
 
 protected:
@@ -207,6 +291,9 @@ public:
 	Party(SaveGame *saveGame);
 	virtual ~Party();
 
+	/**
+	 * Notify the party that something about it has changed
+	 */
 	void notifyOfChange(PartyMember *partyMember = 0, PartyEvent::Type = PartyEvent::GENERIC);
 
 	// Used to translate script values into something useful
@@ -214,25 +301,110 @@ public:
 
 	void adjustFood(int food);
 	void adjustGold(int gold);
+
+	/**
+	 * Adjusts the avatar's karma level for the given action.  Notify
+	 * observers with a lost eighth event if the player has lost
+	 * avatarhood.
+	 */
 	void adjustKarma(KarmaAction action);
+
+	/**
+	 * Apply effects to the entire party
+	 */
 	void applyEffect(TileEffect effect);
+
+	/**
+	 * Attempt to elevate in the given virtue
+	 */
 	bool attemptElevation(Virtue virtue);
+
+	/**
+	 * Burns a torch's duration down a certain number of turns
+	 */
 	void burnTorch(int turns = 1);
+
+	/**
+	 * Returns true if the party can enter the shrine
+	 */
 	bool canEnterShrine(Virtue virtue);
+
+	/**
+	 * Returns true if the person can join the party
+	 */
 	bool canPersonJoin(Common::String name, Virtue *v);
+
+	/**
+	 * Damages the party's ship
+	 */
 	void damageShip(unsigned int pts);
+
+	/**
+	 * Donates 'quantity' gold. Returns true if the donation succeeded,
+	 * or false if there was not enough gold to make the donation
+	 */
 	bool donate(int quantity);
+
+	/**
+	 * Ends the party's turn
+	 */
 	void endTurn();
+
+	/**
+	 * Adds a chest worth of gold to the party's inventory
+	 */
 	int  getChest();
+
+	/**
+	 * Returns the number of turns a currently lit torch will last (or 0 if no torch lit)
+	 */
 	int  getTorchDuration() const;
+
+	/**
+	 * Heals the ship's hull strength by 'pts' points
+	 */
 	void healShip(unsigned int pts);
+
+	/**
+	 * Returns true if the balloon is currently in the air
+	 */
 	bool isFlying() const;
+
+	/**
+	 * Whether or not the party can make an action.
+	 */
 	bool isImmobilized();
+
+	/**
+	 * Whether or not all the party members are dead.
+	 */
 	bool isDead();
+
+	/**
+	 * Returns true if the person with that name
+	 * is already in the party
+	 */
 	bool isPersonJoined(Common::String name);
+
+	/**
+	 * Attempts to add the person to the party.
+	 * Returns JOIN_SUCCEEDED if successful.
+	 */
 	CannotJoinError join(Common::String name);
+
+	/**
+	 * Lights a torch with a default duration of 100
+	 */
 	bool lightTorch(int duration = 100, bool loseTorch = true);
+
+	/**
+	 * Extinguishes a torch
+	 */
 	void quenchTorch();
+
+	/**
+	 * Revives the party after the entire party has been killed
+	 */
 	void reviveParty();
 	MapTile getTransport() const;
 	void setTransport(MapTile transport);
@@ -250,7 +422,14 @@ public:
 
 	void swapPlayers(int p1, int p2);
 
+	/**
+	 * Returns the size of the party
+	 */
 	int size() const;
+
+	/**
+	 * Returns a pointer to the party member indicated
+	 */
 	PartyMember *member(int index) const;
 
 private:

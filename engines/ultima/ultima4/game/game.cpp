@@ -332,12 +332,6 @@ void GameController::setMap(Map *map, bool saveLocation, const Portal *portal, T
 	}
 }
 
-/**
- * Exits the current map and location and returns to its parent location
- * This restores all relevant information from the previous location,
- * such as the map, map position, etc. (such as exiting a city)
- **/
-
 int GameController::exitToParentMap() {
 	if (!g_context->_location)
 		return 0;
@@ -369,11 +363,6 @@ int GameController::exitToParentMap() {
 	return 0;
 }
 
-/**
- * Terminates a game turn.  This performs the post-turn housekeeping
- * tasks like adjusting the party's food, incrementing the number of
- * moves, etc.
- */
 void GameController::finishTurn() {
 	g_context->_lastCommandTime = g_system->getMillis();
 	Creature *attacker = NULL;
@@ -456,11 +445,6 @@ void GameController::finishTurn() {
 	//screenRedrawTextArea(TEXT_AREA_X, TEXT_AREA_Y, TEXT_AREA_W, TEXT_AREA_H);
 }
 
-/**
- * Show an attack flash at x, y on the current map.
- * This is used for 'being hit' or 'being missed'
- * by weapons, cannon fire, spells, etc.
- */
 void GameController::flashTile(const Coords &coords, MapTile tile, int frames) {
 	g_context->_location->_map->_annotations->add(coords, tile, true);
 
@@ -478,10 +462,6 @@ void GameController::flashTile(const Coords &coords, const Common::String &tilen
 	flashTile(coords, tile->getId(), timeFactor);
 }
 
-
-/**
- * Provide feedback to user after a party event happens.
- */
 void GameController::update(Party *party, PartyEvent &event) {
 	int i;
 
@@ -507,9 +487,6 @@ void GameController::update(Party *party, PartyEvent &event) {
 	}
 }
 
-/**
- * Provide feedback to user after a movement event happens.
- */
 void GameController::update(Location *location, MoveEvent &event) {
 	switch (location->_map->_type) {
 	case Map::DUNGEON:
@@ -582,10 +559,6 @@ void gameCastSpell(unsigned int spell, int caster, int param) {
 	}
 }
 
-/**
- * The main key handler for the game.  Interpretes each key as a
- * command - 'a' for attack, 't' for talk, etc.
- */
 bool GameController::keyPressed(int key) {
 	bool valid = true;
 	int endTurn = 1;
@@ -1841,11 +1814,6 @@ void holeUp() {
 	cc->begin();
 }
 
-/**
- * Initializes the moon state according to the savegame file. This method of
- * initializing the moons (rather than just setting them directly) is necessary
- * to make sure trammel and felucca stay in sync
- */
 void GameController::initMoons() {
 	int trammelphase = g_ultima->_saveGame->_trammelPhase,
 	    feluccaphase = g_ultima->_saveGame->_feluccaPhase;
@@ -1862,10 +1830,6 @@ void GameController::initMoons() {
 		updateMoons(false);
 }
 
-/**
- * Updates the phases of the moons and shows
- * the visual moongates on the map, if desired
- */
 void GameController::updateMoons(bool showmoongates) {
 	int realMoonPhase,
 	    oldTrammel,
@@ -1943,9 +1907,6 @@ void GameController::updateMoons(bool showmoongates) {
 	}
 }
 
-/**
- * Handles feedback after avatar moved during normal 3rd-person view.
- */
 void GameController::avatarMoved(MoveEvent &event) {
 	if (event._userEvent) {
 
@@ -2029,9 +1990,6 @@ void GameController::avatarMoved(MoveEvent &event) {
 	}
 }
 
-/**
- * Handles feedback after moving the avatar in the 3-d dungeon view.
- */
 void GameController::avatarMovedInDungeon(MoveEvent &event) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
 	Direction realDir = dirNormalize((Direction)g_ultima->_saveGame->_orientation, event._dir);
@@ -2706,11 +2664,7 @@ void ztatsFor(int player) {
 	ctrl.waitFor();
 }
 
-/**
- * This function is called every quarter second.
- */
 void GameController::timerFired() {
-
 	if (_pausedTimer > 0) {
 		_pausedTimer--;
 		if (_pausedTimer <= 0) {
@@ -2793,11 +2747,6 @@ void gameCheckHullIntegrity() {
 	}
 }
 
-/**
- * Checks for valid conditions and handles
- * special creatures guarding the entrance to the
- * abyss and to the shrine of spirituality
- */
 void GameController::checkSpecialCreatures(Direction dir) {
 	int i;
 	Object *obj;
@@ -2843,9 +2792,6 @@ void GameController::checkSpecialCreatures(Direction dir) {
 	}
 }
 
-/**
- * Checks for and handles when the avatar steps on a moongate
- */
 bool GameController::checkMoongates() {
 	Coords dest;
 
@@ -3109,9 +3055,6 @@ void gameSetActivePlayer(int player) {
 	}
 }
 
-/**
- * Removes creatures from the current map if they are too far away from the avatar
- */
 void GameController::creatureCleanup() {
 	ObjectDeque::iterator i;
 	Map *map = g_context->_location->_map;
@@ -3129,9 +3072,6 @@ void GameController::creatureCleanup() {
 	}
 }
 
-/**
- * Checks creature conditions and spawns new creatures if necessary
- */
 void GameController::checkRandomCreatures() {
 	int canSpawnHere = g_context->_location->_map->isWorldMap() || g_context->_location->_context & CTX_DUNGEON;
 #ifdef IOS
@@ -3150,9 +3090,6 @@ void GameController::checkRandomCreatures() {
 	gameSpawnCreature(NULL);
 }
 
-/**
- * Handles trolls under bridges
- */
 void GameController::checkBridgeTrolls() {
 	const Tile *bridge = g_context->_location->_map->_tileset->getByName("bridge");
 	if (!bridge)
@@ -3321,9 +3258,6 @@ void gameDestroyAllCreatures(void) {
 	g_context->_location->_map->alertGuards();
 }
 
-/**
- * Creates the balloon near Hythloth, but only if the balloon doesn't already exists somewhere
- */
 bool GameController::createBalloon(Map *map) {
 	ObjectDeque::iterator i;
 
@@ -3347,8 +3281,7 @@ const int colors[] = {
 	FG_YELLOW, FG_GREY, FG_BLUE, FG_WHITE, FG_RED, FG_GREY, FG_GREEN, FG_RED
 };
 
-void
-showMixturesSuper(int page = 0) {
+void showMixturesSuper(int page = 0) {
 	screenTextColor(FG_WHITE);
 	for (int i = 0; i < 13; i++) {
 		char buf[4];
@@ -3373,9 +3306,7 @@ showMixturesSuper(int page = 0) {
 	}
 }
 
-void
-mixReagentsSuper() {
-
+void mixReagentsSuper() {
 	screenMessage("Mix reagents\n");
 
 	static int page = 0;

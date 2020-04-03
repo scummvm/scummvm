@@ -80,12 +80,42 @@ inline void AdjustValue(unsigned short &v, int val, int max, int min) {
 	if (v < min) v = min;
 }
 
+/**
+ * Seed the random number generator.
+ */
 void xu4_srandom(void);
+
+/**
+ * Generate a random number between 0 and (upperRange - 1)
+ */
 int xu4_random(int upperval);
+
+/**
+ * Trims whitespace from a Common::String
+ * @param val The Common::String you are trimming
+ * @param chars_to_trim A list of characters that will be trimmed
+ */
 Common::String &trim(Common::String &val, const Common::String &chars_to_trim = "\t\013\014 \n\r");
+
+/**
+ * Converts the Common::String to lowercase
+ */
 Common::String &lowercase(Common::String &val);
+
+/**
+ * Converts the Common::String to uppercase
+ */
 Common::String &uppercase(Common::String &val);
+
+/**
+ * Converts an integer value to a Common::String
+ */
 Common::String xu4_to_string(int val);
+
+/**
+ * Splits a Common::String into substrings, divided by the charactars in
+ * separators.  Multiple adjacent seperators are treated as one.
+ */
 Std::vector<Common::String> split(const Common::String &s, const Common::String &separators);
 
 } // End of namespace Ultima4

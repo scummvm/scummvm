@@ -84,24 +84,76 @@ public:
 	void showCombatMessage(bool show = true);
 
 	// Methods
+	/**
+	 * Initializes the combat controller with combat information
+	 */
 	virtual void init(Creature *m);
+
+	/**
+	 * Initializes dungeon room combat
+	 */
 	void initDungeonRoom(int room, Direction from);
 
+	/**
+	 * Apply tile effects to all creatures depending on what they're standing on
+	 */
 	void applyCreatureTileEffects();
+
+	/**
+	 * Begin combat
+	 */
 	virtual void begin();
 	virtual void end(bool adjustKarma);
+
+	/**
+	 * Fills the combat creature table with the creatures that the party will be facing.
+	 * The creature table only contains *which* creatures will be encountered and
+	 * *where* they are placed (by position in the table).  Information like
+	 * hit points and creature status will be created when the creature is actually placed
+	 */
 	void fillCreatureTable(const Creature *creature);
+
+	/**
+	 * Generate the number of creatures in a group.
+	 */
 	int  initialNumberOfCreatures(const Creature *creature) const;
+
+	/**
+	 * Returns true if the player has won.
+	 */
 	bool isWon() const;
+
+	/**
+	 * Returns true if the player has lost.
+	 */
 	bool isLost() const;
+
+	/**
+	 * Performs all of the creature's actions
+	 */
 	void moveCreatures();
+
+	/**
+	 * Places creatures on the map from the creature table and from the creature_start coords
+	 */
 	void placeCreatures();
+
+	/**
+	 * Places the party members on the map
+	 */
 	void placePartyMembers();
+
+	/**
+	 * Sets the active player for combat, showing which weapon they're weilding, etc.
+	 */
 	bool setActivePlayer(int player);
 	bool attackHit(Creature *attacker, Creature *defender);
 	virtual void awardLoot();
 
 	// attack functions
+	/**
+	 * Key handler for choosing an attack direction
+	 */
 	void attack();
 	bool attackAt(const Coords &coords, PartyMember *attacker, int dir, int range, int distance);
 	bool rangedAttack(const Coords &coords, Creature *attacker);
@@ -119,6 +171,10 @@ public:
 	virtual bool keyPressed(int key);
 
 	virtual void finishTurn();
+
+	/**
+	 * Move a party member during combat and display the appropriate messages
+	 */
 	void movePartyMember(MoveEvent &event);
 	virtual void update(Party *party, PartyEvent &event);
 
@@ -152,11 +208,31 @@ class CombatMap : public Map {
 public:
 	CombatMap();
 
+	/**
+	 * Returns a vector containing all of the creatures on the map
+	 */
 	CreatureVector getCreatures();
+
+	/**
+	 * Returns a vector containing all of the party members on the map
+	 */
 	PartyMemberVector getPartyMembers();
+
+	/**
+	 * Returns the party member at the given coords, if there is one,
+	 * NULL if otherwise.
+	 */
 	PartyMember *partyMemberAt(Coords coords);
+
+	/**
+	 * Returns the creature at the given coords, if there is one,
+	 * NULL if otherwise.
+	 */
 	Creature *creatureAt(Coords coords);
 
+	/**
+	 * Returns a valid combat map given the provided information
+	 */
 	static MapId mapForTile(const Tile *ground, const Tile *transport, Object *obj);
 
 	// Getters

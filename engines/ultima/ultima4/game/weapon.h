@@ -47,7 +47,14 @@ public:
 	};
 
 public:
+	/**
+	 * Returns weapon by WeaponType.
+	 */
 	static const Weapon *get(WeaponType w);
+
+	/**
+	 * Returns weapon that has the given name
+	 */
 	static const Weapon *get(const Common::String &name);
 
 	WeaponType getType() const          {

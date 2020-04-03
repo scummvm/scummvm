@@ -85,9 +85,6 @@ void codexDelete() {
 	codexEndgameText2.clear();
 }
 
-/**
- * Begins the Chamber of the Codex sequence
- */
 void codexStart() {
 	codexInit();
 

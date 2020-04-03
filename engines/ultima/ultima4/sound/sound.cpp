@@ -38,12 +38,15 @@ using Std::vector;
 int soundInit(void) {
 	return SoundManager::getInstance()->init();
 }
+
 void soundDelete(void) {
 	delete SoundManager::getInstance();
 }
+
 void soundPlay(Sound sound, bool onlyOnce, int specificDurationInTicks) {
 	SoundManager::getInstance()->play(sound, onlyOnce, specificDurationInTicks);
 }
+
 void soundStop(int channel) {
 	SoundManager::getInstance()->stop(channel);
 }

@@ -31,9 +31,6 @@ namespace Ultima4 {
 bool Weapon::_confLoaded = false;
 Std::vector<Weapon *> Weapon::_weapons;
 
-/**
- * Returns weapon by WeaponType.
- */
 const Weapon *Weapon::get(WeaponType w) {
 	// Load in XML if it hasn't been already
 	loadConf();
@@ -43,9 +40,6 @@ const Weapon *Weapon::get(WeaponType w) {
 	return _weapons[w];
 }
 
-/**
- * Returns weapon that has the given name
- */
 const Weapon *Weapon::get(const Common::String &name) {
 	// Load in XML if it hasn't been already
 	loadConf();

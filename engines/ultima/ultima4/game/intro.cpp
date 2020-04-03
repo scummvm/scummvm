@@ -295,12 +295,7 @@ IntroController::IntroController() :
 	_interfaceMenu.setClosesMenu(CANCEL);
 }
 
-/**
- * Initializes intro state and loads in introduction graphics, text
- * and map data from title.exe.
- */
 bool IntroController::init() {
-
 	_justInitiatedNewGame = false;
 
 	// sigData is referenced during Titles initialization
@@ -351,9 +346,6 @@ bool IntroController::hasInitiatedNewGame() {
 	return this->_justInitiatedNewGame;
 }
 
-/**
- * Frees up data not needed after introduction.
- */
 void IntroController::deleteIntro() {
 	delete _binData;
 	_binData = NULL;
@@ -369,9 +361,6 @@ unsigned char *IntroController::getSigData() {
 	return _binData->_sigData;
 }
 
-/**
- * Handles keystrokes during the introduction.
- */
 bool IntroController::keyPressed(int key) {
 	bool valid = true;
 
@@ -444,9 +433,6 @@ bool IntroController::keyPressed(int key) {
 	return valid || KeyHandler::defaultHandler(key, NULL);
 }
 
-/**
- * Draws the small map on the intro screen.
- */
 void IntroController::drawMap() {
 	if (0 && _sleepCycles > 0) {
 		drawMapStatic();
@@ -553,9 +539,6 @@ void IntroController::drawMapAnimated() {
 		}
 }
 
-/**
- * Draws the animated beasts in the upper corners of the screen.
- */
 void IntroController::drawBeasties() {
 	drawBeastie(0, _beastieOffset, _binData->_beastie1FrameTable[_beastie1Cycle]);
 	drawBeastie(1, _beastieOffset, _binData->_beastie2FrameTable[_beastie2Cycle]);
@@ -563,13 +546,6 @@ void IntroController::drawBeasties() {
 		_beastieOffset++;
 }
 
-/**
- * Animates the "beasties".  The animate intro image is made up frames
- * for the two creatures in the top left and top right corners of the
- * screen.  This function draws the frame for the given beastie on the
- * screen.  vertoffset is used lower the creatures down from the top
- * of the screen.
- */
 void IntroController::drawBeastie(int beast, int vertoffset, int frame) {
 	char buffer[128];
 	int destx;
@@ -582,21 +558,10 @@ void IntroController::drawBeastie(int beast, int vertoffset, int frame) {
 	_backgroundArea.draw(buffer, destx, vertoffset);
 }
 
-/**
- * Animates the moongate in the tree intro image.  There are two
- * overlays in the part of the image normally covered by the text.  If
- * the frame parameter is "moongate", the moongate overlay is painted
- * over the image.  If frame is "items", the second overlay is
- * painted: the circle without the moongate, but with a small white
- * dot representing the anhk and history book.
- */
 void IntroController::animateTree(const Common::String &frame) {
 	_backgroundArea.draw(frame, 72, 68);
 }
 
-/**
- * Draws the cards in the character creation sequence with the gypsy.
- */
 void IntroController::drawCard(int pos, int card) {
 	static const char *cardNames[] = {
 		"honestycard", "compassioncard", "valorcard", "justicecard",
@@ -609,9 +574,6 @@ void IntroController::drawCard(int pos, int card) {
 	_backgroundArea.draw(cardNames[card], pos ? 218 : 12, 12);
 }
 
-/**
- * Draws the beads in the abacus during the character creation sequence
- */
 void IntroController::drawAbacusBeads(int row, int selectedVirtue, int rejectedVirtue) {
 	ASSERT(row >= 0 && row < 7, "invalid row: %d", row);
 	ASSERT(selectedVirtue < 8 && selectedVirtue >= 0, "invalid virtue: %d", selectedVirtue);
@@ -621,9 +583,6 @@ void IntroController::drawAbacusBeads(int row, int selectedVirtue, int rejectedV
 	_backgroundArea.draw("blackbead", 128 + (rejectedVirtue * 9), 24 + (row * 15));
 }
 
-/**
- * Paints the screen.
- */
 void IntroController::updateScreen() {
 	screenHideCursor();
 
@@ -677,10 +636,6 @@ void IntroController::updateScreen() {
 	g_screen->update();
 }
 
-/**
- * Initiate a new savegame by reading the name, sex, then presenting a
- * series of questions to determine the class of the new character.
- */
 void IntroController::initiateNewGame() {
 	// disable the screen cursor because a text cursor will now be used
 	screenDisableCursor();
@@ -825,10 +780,6 @@ void IntroController::showStory() {
 	}
 }
 
-/**
- * Starts the gypsys questioning that eventually determines the new
- * characters class.
- */
 void IntroController::startQuestions() {
 	ReadChoiceController pauseController("");
 	ReadChoiceController questionController("ab");
@@ -878,10 +829,6 @@ void IntroController::startQuestions() {
 	}
 }
 
-/**
- * Get the text for the question giving a choice between virtue v1 and
- * virtue v2 (zero based virtue index, starting at honesty).
- */
 Common::String IntroController::getQuestion(int v1, int v2) {
 	int i = 0;
 	int d = 7;
@@ -900,9 +847,6 @@ Common::String IntroController::getQuestion(int v1, int v2) {
 	return _binData->_introQuestions[i + v2 - 1];
 }
 
-/**
- * Starts the game.
- */
 void IntroController::journeyOnward() {
 	bool validSave = false;
 	int lastSave = ConfMan.hasKey("last_save") ? ConfMan.getInt("last_save") : -1;
@@ -926,9 +870,6 @@ void IntroController::journeyOnward() {
 	}
 }
 
-/**
- * Shows an about box.
- */
 void IntroController::about() {
 #ifdef TODO
 	// draw the extended background for all option screens
@@ -952,9 +893,6 @@ void IntroController::about() {
 #endif
 }
 
-/**
- * Shows text in the question area.
- */
 void IntroController::showText(const Common::String &text) {
 	Common::String current = text;
 	int lineNo = 0;
@@ -972,10 +910,6 @@ void IntroController::showText(const Common::String &text) {
 	_questionArea.textAt(0, lineNo++, "%s", current.substr(0, pos).c_str());
 }
 
-/**
- * Run a menu and return when the menu has been closed.  Screen
- * updates are handled by observing the menu.
- */
 void IntroController::runMenu(Menu *menu, TextView *view, bool withBeasties) {
 	menu->addObserver(this);
 	menu->reset();
@@ -995,10 +929,6 @@ void IntroController::runMenu(Menu *menu, TextView *view, bool withBeasties) {
 	view->disableCursor();
 }
 
-/**
- * Timer callback for the intro sequence.  Handles animating the intro
- * map, the beasties, etc..
- */
 void IntroController::timerFired() {
 	screenCycle();
 	screenUpdateCursor();
@@ -1031,11 +961,6 @@ void IntroController::timerFired() {
 		_beastie2Cycle = 0;
 }
 
-/**
- * Update the screen when an observed menu is reset or has an item
- * activated.
- * TODO, reduce duped code.
- */
 void IntroController::update(Menu *menu, MenuEvent &event) {
 	if (menu == &_confMenu)
 		updateConfMenu(event);
@@ -1321,10 +1246,6 @@ void IntroController::updateInterfaceMenu(MenuEvent &event) {
 	_extendedMenuArea.textAt(2, 3, "  (Open, Jimmy, etc.)");
 }
 
-/**
- * Initializes the question tree.  The tree starts off with the first
- * eight entries set to the numbers 0-7 in a random order.
- */
 void IntroController::initQuestionTree() {
 	int i, tmp, r;
 
@@ -1347,11 +1268,6 @@ void IntroController::initQuestionTree() {
 
 }
 
-/**
- * Updates the question tree with the given answer, and advances to
- * the next round.
- * @return true if all questions have been answered, false otherwise
- */
 bool IntroController::doQuestion(int answer) {
 	if (!answer)
 		_questionTree[_answerInd] = _questionTree[_questionRound * 2];
@@ -1376,10 +1292,6 @@ bool IntroController::doQuestion(int answer) {
 	return false;
 }
 
-/**
- * Build the initial avatar player record from the answers to the
- * gypsy's questions.
- */
 void IntroController::initPlayers(SaveGame *saveGame) {
 	int i, p;
 	static const struct {
@@ -1489,10 +1401,6 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 	}
 }
 
-
-/**
- * Preload map tiles
- */
 void IntroController::preloadMap() {
 	int x, y, i;
 
@@ -1509,9 +1417,6 @@ void IntroController::preloadMap() {
 }
 
 
-//
-// Initialize the title elements
-//
 void IntroController::initTitles() {
 	// add the intro elements
 	//          x,  y,   w,  h, method,  delay, duration
@@ -1535,10 +1440,6 @@ void IntroController::initTitles() {
 	eventHandler->getTimer()->reset(settings._titleSpeedOther);
 }
 
-
-//
-// Add the intro element to the element list
-//
 void IntroController::addTitle(int x, int y, int w, int h, AnimType method, int delay, int duration) {
 	AnimElement data = {
 		x, y,               // source x and y
@@ -1557,11 +1458,6 @@ void IntroController::addTitle(int x, int y, int w, int h, AnimType method, int 
 	_titles.push_back(data);
 }
 
-
-//
-// Get the source data for title elements
-// that have already been initialized
-//
 void IntroController::getTitleSourceData() {
 	unsigned int r, g, b, a;        // color values
 	unsigned char *srcData;         // plot data
@@ -1735,9 +1631,6 @@ int getTicks() {
 }
 #endif
 
-//
-// Update the title element, drawing the appropriate frame of animation
-//
 bool IntroController::updateTitle() {
 #ifdef IOS
 	static bool firstTime = true;
@@ -2017,11 +1910,6 @@ bool IntroController::updateTitle() {
 	return true;
 }
 
-
-//
-// The title element has finished drawing all frames, so
-// delete, remove, or free data that is no longer needed
-//
 void IntroController::compactTitle() {
 	if (_title->_srcImage) {
 		delete _title->_srcImage;
@@ -2030,10 +1918,6 @@ void IntroController::compactTitle() {
 	_title->_plotData.clear();
 }
 
-
-//
-// Scale the animation canvas, then draw it to the screen
-//
 void IntroController::drawTitle() {
 	Image *scaled;      // the scaled and filtered image
 
@@ -2058,18 +1942,12 @@ void IntroController::drawTitle() {
 	}
 }
 
-
-//
-// skip the remaining titles
-//
 void IntroController::skipTitles() {
 	_bSkipTitles = true;
 	soundStop();
 }
 
 #ifdef IOS
-// Try to put the intro music back at just the correct moment on iOS;
-// don't play it at the very beginning.
 void IntroController::tryTriggerIntroMusic() {
 	if (mode == INTRO_MAP)
 		musicMgr->intro();

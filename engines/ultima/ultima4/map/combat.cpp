@@ -141,9 +141,6 @@ void CombatController::showCombatMessage(bool show)         {
 	_showMessage = show;
 }
 
-/**
- * Initializes the combat controller with combat information
- */
 void CombatController::init(class Creature *m) {
 	int i;
 
@@ -172,9 +169,6 @@ void CombatController::init(class Creature *m) {
 	_focus = 0;
 }
 
-/**
- * Initializes dungeon room combat
- */
 void CombatController::initDungeonRoom(int room, Direction from) {
 	int offset, i;
 	init(NULL);
@@ -238,9 +232,6 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 	}
 }
 
-/**
- * Apply tile effects to all creatures depending on what they're standing on
- */
 void CombatController::applyCreatureTileEffects() {
 	CreatureVector creatures = _map->getCreatures();
 	CreatureVector::iterator i;
@@ -252,9 +243,6 @@ void CombatController::applyCreatureTileEffects() {
 	}
 }
 
-/**
- * Begin combat
- */
 void CombatController::begin() {
 	bool partyIsReadyToFight = false;
 
@@ -386,12 +374,6 @@ void CombatController::end(bool adjustKarma) {
 	delete this;
 }
 
-/**
- * Fills the combat creature table with the creatures that the party will be facing.
- * The creature table only contains *which* creatures will be encountered and
- * *where* they are placed (by position in the table).  Information like
- * hit points and creature status will be created when the creature is actually placed
- */
 void CombatController::fillCreatureTable(const Creature *creature) {
 	int i, j;
 
@@ -426,9 +408,6 @@ void CombatController::fillCreatureTable(const Creature *creature) {
 	}
 }
 
-/**
- * Generate the number of creatures in a group.
- */
 int  CombatController::initialNumberOfCreatures(const Creature *creature) const {
 	int ncreatures;
 	Map *map = g_context->_location->_prev ? g_context->_location->_prev->_map : g_context->_location->_map;
@@ -458,9 +437,6 @@ int  CombatController::initialNumberOfCreatures(const Creature *creature) const 
 	return ncreatures;
 }
 
-/**
- * Returns true if the player has won.
- */
 bool CombatController::isWon() const {
 	CreatureVector creatures = _map->getCreatures();
 	if (creatures.size())
@@ -468,9 +444,6 @@ bool CombatController::isWon() const {
 	return true;
 }
 
-/**
- * Returns true if the player has lost.
- */
 bool CombatController::isLost() const {
 	PartyMemberVector party = _map->getPartyMembers();
 	if (party.size())
@@ -478,9 +451,6 @@ bool CombatController::isLost() const {
 	return true;
 }
 
-/**
- * Performs all of the creature's actions
- */
 void CombatController::moveCreatures() {
 	Creature *m;
 
@@ -499,9 +469,6 @@ void CombatController::moveCreatures() {
 	}
 }
 
-/**
- * Places creatures on the map from the creature table and from the creature_start coords
- */
 void CombatController::placeCreatures() {
 	int i;
 
@@ -512,9 +479,6 @@ void CombatController::placeCreatures() {
 	}
 }
 
-/**
- * Places the party members on the map
- */
 void CombatController::placePartyMembers() {
 	int i;
 //  The following line caused a crash upon entering combat (MSVC8 binary)
@@ -535,9 +499,6 @@ void CombatController::placePartyMembers() {
 	}
 }
 
-/**
- * Sets the active player for combat, showing which weapon they're weilding, etc.
- */
 bool CombatController::setActivePlayer(int player) {
 	PartyMember *p = _party[player];
 
@@ -837,9 +798,6 @@ void CombatController::finishTurn() {
 #endif
 }
 
-/**
- * Move a party member during combat and display the appropriate messages
- */
 void CombatController::movePartyMember(MoveEvent &event) {
 	/* active player left/fled combat */
 	if ((event._result & MOVE_EXIT_TO_PARENT) && (g_context->_party->getActivePlayer() == _focus)) {
@@ -1087,9 +1045,6 @@ bool CombatController::keyPressed(int key) {
 	return valid;
 }
 
-/**
- * Key handler for choosing an attack direction
- */
 void CombatController::attack() {
 	screenMessage("Dir: ");
 
@@ -1174,14 +1129,10 @@ void CombatController::update(Party *party, PartyEvent &event) {
 		screenMessage("\n%c%s is Killed!%c\n", FG_RED, event._player->getName().c_str(), FG_WHITE);
 }
 
-/**
- * CombatMap class implementation
- */
+/*-------------------------------------------------------------------*/
+
 CombatMap::CombatMap() : Map(), _dungeonRoom(false), _altarRoom(VIRT_NONE), _contextual(false) {}
 
-/**
- * Returns a vector containing all of the creatures on the map
- */
 CreatureVector CombatMap::getCreatures() {
 	ObjectDeque::iterator i;
 	CreatureVector creatures;
@@ -1192,9 +1143,6 @@ CreatureVector CombatMap::getCreatures() {
 	return creatures;
 }
 
-/**
- * Returns a vector containing all of the party members on the map
- */
 PartyMemberVector CombatMap::getPartyMembers() {
 	ObjectDeque::iterator i;
 	PartyMemberVector party;
@@ -1205,10 +1153,6 @@ PartyMemberVector CombatMap::getPartyMembers() {
 	return party;
 }
 
-/**
- * Returns the party member at the given coords, if there is one,
- * NULL if otherwise.
- */
 PartyMember *CombatMap::partyMemberAt(Coords coords) {
 	PartyMemberVector party = getPartyMembers();
 	PartyMemberVector::iterator i;
@@ -1220,10 +1164,6 @@ PartyMember *CombatMap::partyMemberAt(Coords coords) {
 	return NULL;
 }
 
-/**
- * Returns the creature at the given coords, if there is one,
- * NULL if otherwise.
- */
 Creature *CombatMap::creatureAt(Coords coords) {
 	CreatureVector creatures = getCreatures();
 	CreatureVector::iterator i;
@@ -1235,9 +1175,6 @@ Creature *CombatMap::creatureAt(Coords coords) {
 	return NULL;
 }
 
-/**
- * Returns a valid combat map given the provided information
- */
 MapId CombatMap::mapForTile(const Tile *groundTile, const Tile *transport, Object *obj) {
 	bool fromShip = false,
 	     toShip = false;

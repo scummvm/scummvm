@@ -101,15 +101,47 @@ class AnnotationMgr {
 public:
 	AnnotationMgr();
 
-	Annotation       *add(Coords coords, MapTile tile, bool visual = false, bool isCoverUp = false);
+	/**
+	 * Adds an annotation to the current map
+	 */
+	Annotation *add(Coords coords, MapTile tile, bool visual = false, bool isCoverUp = false);
+
+	/**
+	 * Returns all annotations found at the given map coordinates
+	 */
 	Annotation::List allAt(Coords pos);
+
+	/**
+	 * Returns pointers to all annotations found at the given map coordinates
+	 */
 	Common::List<Annotation *> ptrsToAllAt(Coords pos);
-	void             clear();
-	void             passTurn();
-	void             remove(Coords pos, MapTile tile);
-	void             remove(Annotation &);
-	void             remove(Annotation::List);
-	int              size();
+
+	/**
+	 * Removes all annotations on the map
+	 */
+	void clear();
+
+	/**
+	 * Passes a turn for annotations and removes any
+	 * annotations whose TTL has expired
+	 */
+	void passTurn();
+
+	/**
+	 * Removes an annotation from the current map
+	 */
+	void remove(Coords pos, MapTile tile);
+	void remove(Annotation &);
+
+	/**
+	 * Removes an entire list of annotations
+	 */
+	void remove(Annotation::List);
+
+	/**
+	 * Returns the number of annotations on the map
+	 */
+	int size() const;
 
 private:
 	Annotation::List  _annotations;

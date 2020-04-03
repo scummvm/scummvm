@@ -96,9 +96,6 @@ bool    Script::Variable::isSet() const             {
  */
 Script::ActionMap Script::_actionMap;
 
-/**
- * Constructs a script object
- */
 Script::Script() : _vendorScriptDoc(NULL), _scriptNode(NULL), _debug(false), _state(STATE_UNLOADED),
 	_nounName("item"), _idPropName("id") {
 	_actionMap["context"]           = ACTION_SET_CONTEXT;
@@ -153,16 +150,10 @@ void Script::removeCurrentVariable(const Common::String &name) {
 	}
 }
 
-/**
- * Adds an information provider for the script
- */
 void Script::addProvider(const Common::String &name, Provider *p) {
 	_providers[name] = p;
 }
 
-/**
- * Loads the vendor script
- */
 bool Script::load(const Common::String &filename, const Common::String &baseId, const Common::String &subNodeName, const Common::String &subNodeId) {
 	Shared::XMLNode *root, *node, *child;
 	_state = STATE_NORMAL;
@@ -258,9 +249,6 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 	return false;
 }
 
-/**
- * Unloads the script
- */
 void Script::unload() {
 	if (_vendorScriptDoc) {
 		_vendorScriptDoc->freeDoc();
@@ -268,9 +256,6 @@ void Script::unload() {
 	}
 }
 
-/**
- * Runs a script after it's been loaded
- */
 void Script::run(const Common::String &script) {
 	Shared::XMLNode *scriptNode;
 	Common::String search_id;
@@ -289,9 +274,6 @@ void Script::run(const Common::String &script) {
 	execute(scriptNode);
 }
 
-/**
- * Executes the subscript 'script' of the main script
- */
 Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *currentItem, Common::String *output) {
 	Shared::XMLNode *current;
 	Script::ReturnCode retval = RET_OK;
@@ -448,9 +430,6 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 	return retval;
 }
 
-/**
- * Continues the script from where it left off, or where the last script indicated
- */
 void Script::_continue() {
 	/* reset our script state to normal */
 	resetState();
@@ -461,29 +440,32 @@ void Script::_continue() {
 	else run(_target);
 }
 
-/**
- * Set and retrieve property values
- */
 void Script::resetState()               {
 	_state = STATE_NORMAL;
 }
+
 void Script::setState(Script::State s)  {
 	_state = s;
 }
+
 void Script::setTarget(const Common::String &val)      {
 	_target = val;
 }
+
 void Script::setChoices(const Common::String &val)     {
 	_choices = val;
 }
+
 void Script::setVar(const Common::String &name, const Common::String &val)    {
 	removeCurrentVariable(name);
 	_variables[name] = new Variable(val);
 }
+
 void Script::setVar(const Common::String &name, int val)       {
 	removeCurrentVariable(name);
 	_variables[name] = new Variable(val);
 }
+
 void Script::unsetVar(const Common::String &name) {
 	// Ensure that the variable at least exists, but has no value
 	if (_variables.find(name) != _variables.end())
@@ -494,25 +476,27 @@ void Script::unsetVar(const Common::String &name) {
 Script::State Script::getState()        {
 	return _state;
 }
+
 Common::String Script::getTarget()              {
 	return _target;
 }
+
 Script::InputType Script::getInputType() {
 	return _inputType;
 }
+
 Common::String Script::getChoices()             {
 	return _choices;
 }
+
 Common::String Script::getInputName()           {
 	return _inputName;
 }
+
 int Script::getInputMaxLen()            {
 	return _inputMaxLen;
 }
 
-/**
- * Translates a script Common::String with dynamic variables
- */
 void Script::translate(Common::String *text) {
 	unsigned int pos;
 	bool nochars = true;
@@ -757,9 +741,6 @@ void Script::translate(Common::String *text) {
 		text->replace(pos, 2, "\n");
 }
 
-/**
- * Finds a subscript of script 'node'
- */
 Shared::XMLNode *Script::find(Shared::XMLNode *node, const Common::String &script_to_find, const Common::String &id, bool _default) {
 	Shared::XMLNode *current;
 	if (node) {
@@ -786,10 +767,6 @@ Shared::XMLNode *Script::find(Shared::XMLNode *node, const Common::String &scrip
 	return NULL;
 }
 
-/**
- * Gets a property as Common::String from the script, and
- * translates it using scriptTranslate.
- */
 Common::String Script::getPropAsStr(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive) {
 	Common::String propvalue;
 	Std::list<Shared::XMLNode *>::reverse_iterator i;
@@ -815,36 +792,29 @@ Common::String Script::getPropAsStr(Std::list<Shared::XMLNode *> &nodes, const C
 	translate(&propvalue);
 	return propvalue;
 }
+
 Common::String Script::getPropAsStr(Shared::XMLNode *node, const Common::String &prop, bool recursive) {
 	Std::list<Shared::XMLNode *> list;
 	list.push_back(node);
 	return getPropAsStr(list, prop, recursive);
 }
 
-/**
- * Gets a property as int from the script
- */
 int Script::getPropAsInt(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive) {
 	Common::String propvalue = getPropAsStr(nodes, prop, recursive);
 	return mathValue(propvalue);
 }
+
 int Script::getPropAsInt(Shared::XMLNode *node, const Common::String &prop, bool recursive) {
 	Common::String propvalue = getPropAsStr(node, prop, recursive);
 	return mathValue(propvalue);
 }
 
-/**
- * Gets the content of a script node
- */
 Common::String Script::getContent(Shared::XMLNode *node) {
 	Common::String content = node->text();
 	translate(&content);
 	return content;
 }
 
-/**
- * Sets a new translation context for the script
- */
 Script::ReturnCode Script::pushContext(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String nodeName = getPropAsStr(current, "name");
 	Common::String search_id;
@@ -869,9 +839,6 @@ Script::ReturnCode Script::pushContext(Shared::XMLNode *script, Shared::XMLNode 
 	return RET_OK;
 }
 
-/**
- * Removes a node from the translation context
- */
 Script::ReturnCode Script::popContext(Shared::XMLNode *script, Shared::XMLNode *current) {
 	if (_translationContext.size() > 1) {
 		_translationContext.pop_back();
@@ -881,9 +848,6 @@ Script::ReturnCode Script::popContext(Shared::XMLNode *script, Shared::XMLNode *
 	return RET_OK;
 }
 
-/**
- * End script execution
- */
 Script::ReturnCode Script::end(Shared::XMLNode *script, Shared::XMLNode *current) {
 	/**
 	 * See if there's a global 'end' node declared for cleanup
@@ -900,9 +864,6 @@ Script::ReturnCode Script::end(Shared::XMLNode *script, Shared::XMLNode *current
 	return RET_STOP;
 }
 
-/**
- * Wait for keypress from the user
- */
 Script::ReturnCode Script::waitForKeypress(Shared::XMLNode *script, Shared::XMLNode *current) {
 	_currentScript = script;
 	_currentItem = current;
@@ -917,9 +878,6 @@ Script::ReturnCode Script::waitForKeypress(Shared::XMLNode *script, Shared::XMLN
 	return RET_STOP;
 }
 
-/**
- * Redirects script execution to another script
- */
 Script::ReturnCode Script::redirect(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String target;
 
@@ -945,9 +903,6 @@ Script::ReturnCode Script::redirect(Shared::XMLNode *script, Shared::XMLNode *cu
 	return RET_REDIRECTED;
 }
 
-/**
- * Includes a script to be executed
- */
 Script::ReturnCode Script::include(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String scriptName = getPropAsStr(current, "script");
 	Common::String id = getPropAsStr(current, _idPropName);
@@ -967,18 +922,12 @@ Script::ReturnCode Script::include(Shared::XMLNode *script, Shared::XMLNode *cur
 	return RET_OK;
 }
 
-/**
- * Waits a given number of milliseconds before continuing execution
- */
 Script::ReturnCode Script::wait(Shared::XMLNode *script, Shared::XMLNode *current) {
 	int msecs = getPropAsInt(current, "msecs");
 	EventHandler::wait_msecs(msecs);
 	return RET_OK;
 }
 
-/**
- * Executes a 'for' loop script
- */
 Script::ReturnCode Script::forLoop(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Script::ReturnCode retval = RET_OK;
 	int start = getPropAsInt(current, "start"),
@@ -1008,9 +957,6 @@ Script::ReturnCode Script::forLoop(Shared::XMLNode *script, Shared::XMLNode *cur
 	return retval;
 }
 
-/**
- * Randomely executes script code
- */
 Script::ReturnCode Script::random(Shared::XMLNode *script, Shared::XMLNode *current) {
 	int perc = getPropAsInt(current, "chance");
 	int num = xu4_random(100);
@@ -1025,9 +971,6 @@ Script::ReturnCode Script::random(Shared::XMLNode *script, Shared::XMLNode *curr
 	return retval;
 }
 
-/**
- * Moves the player's current position
- */
 Script::ReturnCode Script::move(Shared::XMLNode *script, Shared::XMLNode *current) {
 	if (current->hasProperty("x"))
 		g_context->_location->_coords.x = getPropAsInt(current, "x");
@@ -1043,9 +986,6 @@ Script::ReturnCode Script::move(Shared::XMLNode *script, Shared::XMLNode *curren
 	return RET_OK;
 }
 
-/**
- * Puts the player to sleep. Useful when coding inn scripts
- */
 Script::ReturnCode Script::sleep(Shared::XMLNode *script, Shared::XMLNode *current) {
 	if (_debug)
 		debug("Sleep!");
@@ -1056,9 +996,6 @@ Script::ReturnCode Script::sleep(Shared::XMLNode *script, Shared::XMLNode *curre
 	return RET_OK;
 }
 
-/**
- * Enables/Disables the keyboard cursor
- */
 Script::ReturnCode Script::cursor(Shared::XMLNode *script, Shared::XMLNode *current) {
 	bool enable = current->getPropertyBool("enable");
 	if (enable)
@@ -1068,9 +1005,6 @@ Script::ReturnCode Script::cursor(Shared::XMLNode *script, Shared::XMLNode *curr
 	return RET_OK;
 }
 
-/**
- * Pay gold to someone
- */
 Script::ReturnCode Script::pay(Shared::XMLNode *script, Shared::XMLNode *current) {
 	int price = getPropAsInt(current, "price");
 	int quant = getPropAsInt(current, "quantity");
@@ -1100,9 +1034,6 @@ Script::ReturnCode Script::pay(Shared::XMLNode *script, Shared::XMLNode *current
 	return RET_OK;
 }
 
-/**
- * Perform a limited 'if' statement
- */
 Script::ReturnCode Script::_if(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String test = getPropAsStr(current, "test");
 	Script::ReturnCode retval = RET_OK;
@@ -1121,9 +1052,6 @@ Script::ReturnCode Script::_if(Shared::XMLNode *script, Shared::XMLNode *current
 	return retval;
 }
 
-/**
- * Get input from the player
- */
 Script::ReturnCode Script::input(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String type = getPropAsStr(current, "type");
 
@@ -1172,9 +1100,6 @@ Script::ReturnCode Script::input(Shared::XMLNode *script, Shared::XMLNode *curre
 	return RET_STOP;
 }
 
-/**
- * Add item to inventory
- */
 Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String type = getPropAsStr(current, "type");
 	Common::String subtype = getPropAsStr(current, "subtype");
@@ -1239,9 +1164,6 @@ Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current
 	return RET_OK;
 }
 
-/**
- * Lose item
- */
 Script::ReturnCode Script::lose(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String type = getPropAsStr(current, "type");
 	Common::String subtype = getPropAsStr(current, "subtype");
@@ -1262,9 +1184,6 @@ Script::ReturnCode Script::lose(Shared::XMLNode *script, Shared::XMLNode *curren
 	return RET_OK;
 }
 
-/**
- * Heals a party member
- */
 Script::ReturnCode Script::heal(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String type = getPropAsStr(current, "type");
 	PartyMember *p = g_context->_party->member(getPropAsInt(current, "player") - 1);
@@ -1281,9 +1200,6 @@ Script::ReturnCode Script::heal(Shared::XMLNode *script, Shared::XMLNode *curren
 	return RET_OK;
 }
 
-/**
- * Performs all of the visual/audio effects of casting a spell
- */
 Script::ReturnCode Script::castSpell(Shared::XMLNode *script, Shared::XMLNode *current) {
 	(*spellEffectCallback)('r', -1, SOUND_MAGIC);
 	if (_debug)
@@ -1292,9 +1208,6 @@ Script::ReturnCode Script::castSpell(Shared::XMLNode *script, Shared::XMLNode *c
 	return RET_OK;
 }
 
-/**
- * Apply damage to a player
- */
 Script::ReturnCode Script::damage(Shared::XMLNode *script, Shared::XMLNode *current) {
 	int player = getPropAsInt(current, "player") - 1;
 	int pts = getPropAsInt(current, "pts");
@@ -1309,9 +1222,6 @@ Script::ReturnCode Script::damage(Shared::XMLNode *script, Shared::XMLNode *curr
 	return RET_OK;
 }
 
-/**
- * Apply karma changes based on the action taken
- */
 Script::ReturnCode Script::karma(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String action = getPropAsStr(current, "action");
 
@@ -1353,9 +1263,6 @@ Script::ReturnCode Script::karma(Shared::XMLNode *script, Shared::XMLNode *curre
 	return RET_OK;
 }
 
-/**
- * Set the currently playing music
- */
 Script::ReturnCode Script::music(Shared::XMLNode *script, Shared::XMLNode *current) {
 	if (current->getPropertyBool("reset"))
 		musicMgr->play();
@@ -1375,9 +1282,6 @@ Script::ReturnCode Script::music(Shared::XMLNode *script, Shared::XMLNode *curre
 	return RET_OK;
 }
 
-/**
- * Sets a variable
- */
 Script::ReturnCode Script::setVar(Shared::XMLNode *script, Shared::XMLNode *current) {
 	Common::String name = getPropAsStr(current, "name");
 	Common::String value = getPropAsStr(current, "value");
@@ -1397,9 +1301,6 @@ Script::ReturnCode Script::setVar(Shared::XMLNode *script, Shared::XMLNode *curr
 	return RET_OK;
 }
 
-/**
- * Display a different ztats screen
- */
 Script::ReturnCode Script::ztats(Shared::XMLNode *script, Shared::XMLNode *current) {
 	typedef Std::map<Common::String, StatsView/*, Std::less<Common::String>*/ > StatsViewMap;
 	static StatsViewMap view_map;
@@ -1442,12 +1343,6 @@ Script::ReturnCode Script::ztats(Shared::XMLNode *script, Shared::XMLNode *curre
 	return RET_OK;
 }
 
-/**
- * Parses a math Common::String's children into results so
- * there is only 1 equation remaining.
- *
- * ie. <math>5*<math>6/3</math></math>
- */
 void Script::mathParseChildren(Shared::XMLNode *math, Common::String *result) {
 	Shared::XMLNode *current;
 	result->clear();
@@ -1464,11 +1359,6 @@ void Script::mathParseChildren(Shared::XMLNode *math, Common::String *result) {
 	}
 }
 
-/**
- * Parses a Common::String into left integer value, right integer value,
- * and operator. Returns false if the Common::String is not a valid
- * math equation
- */
 bool Script::mathParse(const Common::String &str, int *lval, int *rval, Common::String *op) {
 	Common::String left, right;
 	parseOperation(str, &left, &right, op);
@@ -1488,10 +1378,6 @@ bool Script::mathParse(const Common::String &str, int *lval, int *rval, Common::
 	return true;
 }
 
-/**
- * Parses a Common::String containing an operator (+, -, *, /, etc.) into 3 parts,
- * left, right, and operator.
- */
 void Script::parseOperation(const Common::String &str, Common::String *left, Common::String *right, Common::String *op) {
 	/* list the longest operators first, so they're detected correctly */
 	static const Common::String ops[] = {"==", ">=", "<=", "+", "-", "*", "/", "%", "=", ">", "<", ""};
@@ -1513,9 +1399,6 @@ void Script::parseOperation(const Common::String &str, Common::String *left, Com
 	 *right = str.substr(pos + ops[i].size());
 }
 
-/**
- * Takes a simple equation Common::String and returns the value
- */
 int Script::mathValue(const Common::String &str) {
 	int lval, rval;
 	Common::String op;
@@ -1526,9 +1409,6 @@ int Script::mathValue(const Common::String &str) {
 	else return math(lval, rval, op);
 }
 
-/**
- * Performs simple math operations in the script
- */
 int Script::math(int lval, int rval, Common::String &op) {
 	if (op == "+")
 		return lval + rval;
@@ -1556,10 +1436,6 @@ int Script::math(int lval, int rval, Common::String &op) {
 	return 0;
 }
 
-/**
- * Does a boolean comparison on a Common::String (math or Common::String),
- * fails if the Common::String doesn't contain a valid comparison
- */
 bool Script::compare(const Common::String &statement) {
 	Common::String str = statement;
 	int lval, rval;
@@ -1621,9 +1497,6 @@ bool Script::compare(const Common::String &statement) {
 	return invert;
 }
 
-/**
- * Parses a function into its name and contents
- */
 void Script::funcParse(const Common::String &str, Common::String *funcName, Common::String *contents) {
 	unsigned int pos;
 	*funcName = str;

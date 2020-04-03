@@ -34,7 +34,6 @@ namespace Ultima4 {
 using Common::String;
 
 City::City() : Map() {
-
 }
 
 
@@ -47,16 +46,10 @@ City::~City() {
 		delete *k;
 }
 
-/**
- * Returns the name of the city
- */
 Common::String City::getName() {
 	return _name;
 }
 
-/**
- * Adds a person object to the map
- */
 Person *City::addPerson(Person *person) {
 	// Make a copy of the person before adding them, so
 	// things like angering the guards, etc. will be
@@ -71,9 +64,6 @@ Person *City::addPerson(Person *person) {
 	return p;
 }
 
-/**
- * Add people to the map
- */
 void City::addPeople() {
 	PersonList::iterator current;
 
@@ -90,9 +80,6 @@ void City::addPeople() {
 	}
 }
 
-/**
- * Removes all people from the current map
- */
 void City::removeAllPeople() {
 	ObjectDeque::iterator obj;
 	for (obj = _objects.begin(); obj != _objects.end();) {
@@ -102,10 +89,6 @@ void City::removeAllPeople() {
 	}
 }
 
-/**
- * Returns the person object at the given (x,y,z) coords, if one exists.
- * Otherwise, returns NULL.
- */
 Person *City::personAt(const Coords &coords) {
 	Object *obj;
 

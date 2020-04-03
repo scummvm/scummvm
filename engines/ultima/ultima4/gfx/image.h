@@ -84,27 +84,75 @@ public:
 		SOFTWARE
 	};
 
+	/**
+	 * Creates a new image.  Scale is stored to allow drawing using U4
+	 * (320x200) coordinates, regardless of the actual image scale.
+	 * Indexed is true for palette based images, or false for RGB images.
+	 * Image type determines whether to create a hardware (i.e. video ram)
+	 * or software (i.e. normal ram) image.
+	 */
 	static Image *create(int w, int h, bool paletted, Type type);
+
+	/**
+	 * Create a special purpose image the represents the whole screen.
+	 */
 	static Image *createScreenImage();
+
+	/**
+	 * Creates a duplicate of another image
+	 */
 	static Image *duplicate(Image *image);
+
+	/**
+	 * Frees the image.
+	 */
 	~Image();
 
 	void create(int w, int h, bool paletted);
 
 	/* palette handling */
+	/**
+	 * Sets the palette
+	 */
 	void setPalette(const RGBA *colors, unsigned n_colors);
+
+	/**
+	 * Copies the palette from another image.
+	 */
 	void setPaletteFromImage(const Image *src);
 	bool getTransparentIndex(unsigned int &index) const;
 	void performTransparencyHack(unsigned int colorValue, unsigned int numFrames, unsigned int currentFrameIndex, unsigned int haloWidth, unsigned int haloOpacityIncrementByPixelDistance);
 	void setTransparentIndex(unsigned int index);
 
+	/**
+	 * Sets the specified font colors
+	 */
 	bool setFontColor(ColorFG fg, ColorBG bg);
+
+	/**
+	 * Sets the specified font colors
+	 */
 	bool setFontColorFG(ColorFG fg);
+
+	/**
+	 * Sets the specified font colors
+	 */
 	bool setFontColorBG(ColorBG bg);
 
+	/**
+	 * Returns the color of the specified palette index
+	 */
 	RGBA getPaletteColor(int index);       // returns the color of the specified palette index
-	bool setPaletteIndex(unsigned int index, RGBA color);  // sets the specified palette index to the specified RGB color
-	int getPaletteIndex(RGBA color);              // returns the palette index of the specified RGB color
+
+	/**
+	 * Sets the specified palette index to the specified RGB color
+	 */
+	bool setPaletteIndex(unsigned int index, RGBA color);
+
+	/**
+	 * Returns the palette index of the specified RGB color
+	 */
+	int getPaletteIndex(RGBA color);
 	RGBA setColor(uint8 r, uint8 g, uint8 b, uint8 a = IM_OPAQUE);
 
 
@@ -129,16 +177,31 @@ public:
 	 */
 	void putPixel(int x, int y, int r, int g, int b, int a); //TODO Consider using &
 
-
+	/**
+	 * Sets the palette index of a single pixel.  If the image is in
+	 * indexed mode, then the index is simply the palette entry number.
+	 * If the image is RGB, it is a packed RGB triplet.
+	 */
 	void putPixelIndex(int x, int y, unsigned int index);
 
-
+	/**
+	 * Fills a rectangle in the image with a given color.
+	 */
 	void fillRect(int x, int y, int w, int h, int r, int g, int b, int a = IM_OPAQUE);
 
 	void blitFrom(const Graphics::Surface &src);
 
 	/* reading from image */
+	/**
+	 * Gets the color of a single pixel.
+	 */
 	void getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a) const;
+
+	/**
+	 * Gets the palette index of a single pixel.  If the image is in
+	 * indexed mode, then the index is simply the palette entry number.
+	 * If the image is RGB, it is a packed RGB triplet.
+	 */
 	void getPixelIndex(int x, int y, unsigned int &index) const;
 
 	/* image drawing methods */
@@ -168,8 +231,19 @@ public:
 	}
 
 	/* image drawing methods for drawing onto another image instead of the screen */
+	/**
+	 * Draws the image onto another image.
+	 */
 	void drawOn(Image *d, int x, int y) const;
+
+	/**
+	 * Draws a piece of the image onto another image.
+	 */
 	void drawSubRectOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const;
+
+	/**
+	 * Draws a piece of the image onto another image, inverted.
+	 */
 	void drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const;
 
 	int width() const {
@@ -184,6 +258,11 @@ public:
 	BackendSurface getSurface() {
 		return _surface;
 	}
+
+	/**
+	 * Dumps the image to a file.  The file is always saved in .bmp
+	 * format.  This is mainly used for debugging.
+	 */
 	void save(const Common::String &filename);
 	void drawHighlighted();
 
