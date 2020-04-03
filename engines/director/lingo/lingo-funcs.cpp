@@ -399,6 +399,8 @@ void Lingo::func_cursor(int c, int m) {
 		warning("STUB: func_cursor(): Hotspot is the registration point of the cast member");
 		_vm->getMacWindowManager()->pushCustomCursor(assembly, 16, 16, 1, 1, 3);
 
+		free(assembly);
+
 		return;
 	}
 
