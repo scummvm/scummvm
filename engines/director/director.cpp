@@ -228,25 +228,25 @@ Common::Error DirectorEngine::run() {
 			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 			_currentScore->loadArchive();
-		}
 
-		// If we came in a loop, then skip as requested
-		if (!_nextMovie.frameS.empty()) {
-			_currentScore->setStartToLabel(_nextMovie.frameS);
-			_nextMovie.frameS.clear();
-		}
+			// If we came in a loop, then skip as requested
+			if (!_nextMovie.frameS.empty()) {
+				_currentScore->setStartToLabel(_nextMovie.frameS);
+				_nextMovie.frameS.clear();
+			}
 
-		if (_nextMovie.frameI != -1) {
-			_currentScore->setCurrentFrame(_nextMovie.frameI);
-			_nextMovie.frameI = -1;
-		}
+			if (_nextMovie.frameI != -1) {
+				_currentScore->setCurrentFrame(_nextMovie.frameI);
+				_nextMovie.frameI = -1;
+			}
 
-		if (!debugChannelSet(-1, kDebugLingoCompileOnly) && _currentScore) {
-			debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
+			if (!debugChannelSet(-1, kDebugLingoCompileOnly)) {
+				debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
 
-			_currentScore->startLoop();
+				_currentScore->startLoop();
 
-			debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+				debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+			}
 		}
 
 		if (getGameID() == GID_TESTALL) {
