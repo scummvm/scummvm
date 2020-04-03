@@ -274,7 +274,7 @@ void Lingo::initTheEntities() {
 	_objectEntityId = kTheObject;
 
 	TheEntity *e = entities;
-	_entityNames.reserve(kTheMaxTheEntityType);
+	_entityNames.resize(kTheMaxTheEntityType);
 
 	while (e->entity != kTheNOEntity) {
 		if (e->version <= _vm->getVersion()) {
@@ -287,7 +287,7 @@ void Lingo::initTheEntities() {
 	}
 
 	TheEntityField *f = fields;
-	_fieldNames.reserve(kTheMaxTheFieldType);
+	_fieldNames.resize(kTheMaxTheFieldType);
 
 	while (f->entity != kTheNOEntity) {
 		if (f->version <= _vm->getVersion()) {
