@@ -64,7 +64,7 @@ CachedMacText::~CachedMacText() {
 CachedMacText::CachedMacText(TextCast *const textCast, int32 bgcolor, int version, int defaultWidth,
 								Graphics::MacWindowManager *const wm) :
 		_surface(NULL), _macText(NULL), _width(defaultWidth), _dirty(true),
-		_textCast(textCast), _wm(wm), _bgcolor(bgcolor) {
+		_textCast(textCast), _wm(wm), _bgcolor(bgcolor), _align(Graphics::kTextAlignLeft) {
 
 	debugC(5, kDebugText, "CachedMacText::CachedMacText(): font id: %d '%s'", _textCast->_fontId, Common::toPrintable(_textCast->_ftext).c_str());
 

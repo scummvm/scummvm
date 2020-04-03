@@ -328,7 +328,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		BitmapCast *bitmapCast = (BitmapCast *)c->_value;
 		uint32 tag = bitmapCast->_tag;
 		uint16 imgId = c->_key;
-		uint16 realId;
+		uint16 realId = 0;
 
 		Image::ImageDecoder *img = NULL;
 		Common::SeekableReadStream *pic = NULL;
@@ -386,6 +386,9 @@ void Score::loadSpriteImages(bool isSharedCast) {
 			warning("Score::loadSpriteImages(): Unknown Bitmap Cast Tag: [%d] %s", tag, tag2str(tag));
 			break;
 		}
+
+		if (!img)
+			continue;
 
 		img->loadStream(*pic);
 
