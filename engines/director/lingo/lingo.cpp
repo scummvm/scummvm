@@ -37,11 +37,15 @@ Lingo *g_lingo;
 
 Symbol::Symbol() {
 	type = VOID;
-	u.s = NULL;
+	u.s = nullptr;
 	nargs = 0;
 	maxArgs = 0;
 	parens = true;
 	global = false;
+	argNames = nullptr;
+	varNames = nullptr;
+	ctx = nullptr;
+	archiveIndex = 0;
 }
 
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
