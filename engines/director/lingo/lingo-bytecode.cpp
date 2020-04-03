@@ -678,6 +678,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 	// copy the storage area first.
 	uint32 constsStoreOffset = constsOffset + 6 * constsCount;
+
+	if (constsStoreOffset > stream.size()) {
+		warning("Lingo::addCodeV4(): Too big constsStoreOffset. %d > %d", constsStoreOffset, stream.size());
+		return;
+	}
+
 	uint32 constsStoreSize = stream.size() - constsStoreOffset;
 
 	if ((uint32)stream.size() < constsStoreOffset) {
