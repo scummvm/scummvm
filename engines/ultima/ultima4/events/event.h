@@ -92,17 +92,42 @@ public:
 
 	/* Static functions */
 	static int setKeyRepeat(int delay, int interval);
+
+	/**
+	 * Handles any and all keystrokes.
+	 * Generally used to exit the application, switch applications,
+	 * minimize, maximize, etc.
+	 */
 	static bool globalHandler(int key);
 
 	/* Static default key handler functions */
+	/**
+	 * A default key handler that should be valid everywhere
+	 */
 	static bool defaultHandler(int key, void *data);
+
+	/**
+	 * A key handler that ignores keypresses
+	 */
 	static bool ignoreKeys(int key, void *data);
 
 	/* Operators */
 	bool operator==(Callback cb) const;
 
 	/* Member functions */
+	/**
+	 * Handles a keypress.
+	 * First it makes sure the key combination is not ignored
+	 * by the current key handler. Then, it passes the keypress
+	 * through the global key handler. If the global handler
+	 * does not process the keystroke, then the key handler
+	 * handles it itself by calling its handler callback function.
+	 */
 	bool handle(int key);
+
+	/**
+	 * Returns true if the key or key combination is always ignored by xu4
+	 */
 	virtual bool isKeyIgnored(int key);
 
 protected:
@@ -132,6 +157,12 @@ private:
  */
 class ReadStringController : public WaitableController<Common::String> {
 public:
+	/**
+	 * @param maxlen the maximum length of the Common::String
+	 * @param screenX the screen column where to begin input
+	 * @param screenY the screen row where to begin input
+	 * @param accepted_chars a Common::String characters to be accepted for input
+	 */
 	ReadStringController(int maxlen, int screenX, int screenY, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
 	ReadStringController(int maxlen, TextView *view, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
 	virtual bool keyPressed(int key);
@@ -218,6 +249,11 @@ public:
 	/* Member functions */
 	Callback getCallback() const;
 	void *getData();
+
+	/**
+	 * Advances the timed event forward a tick.
+	 * When (current >= interval), then it executes its callback function.
+	 */
 	void tick();
 
 	/* Properties */
@@ -248,23 +284,57 @@ public:
 	typedef TimedEvent::List List;
 
 	/* Constructors */
+	/**
+	 * Constructs a timed event manager object.
+	 * Adds a timer callback to the SDL subsystem, which
+	 * will drive all of the timed events that this object
+	 * controls.
+	 */
 	TimedEventMgr(int baseInterval);
+
+	/**
+	 * Destructs a timed event manager object.
+	 * It removes the callback timer and un-initializes the
+	 * SDL subsystem if there are no other active TimedEventMgr
+	 * objects.
+	 */
 	~TimedEventMgr();
 
 	/* Static functions */
+	/**
+	 * Adds an SDL timer event to the message queue.
+	 */
 	static unsigned int callback(unsigned int interval, void *param);
 
 	/* Member functions */
-	bool isLocked() const;      /**< Returns true if the event list is locked (in use) */
 
+	/**
+	 * Returns true if the event queue is locked (in use)
+	 */
+	bool isLocked() const;
+
+	/**
+	 * Adds a timed event to the event queue.
+	 */
 	void add(TimedEvent::Callback theCallback, int interval, void *data = NULL);
+
+	/**
+	 * Removes a timed event from the event queue.
+	 */
 	List::iterator remove(List::iterator i);
 	void remove(TimedEvent *event);
 	void remove(TimedEvent::Callback theCallback, void *data = NULL);
+
+	/**
+	 * Runs each of the callback functions of the TimedEvents associated with this manager.
+	 */
 	void tick();
 	void stop();
 	void start();
 
+	/**
+	 * Re-initializes the timer manager to a new timer granularity
+	 */
 	void reset(unsigned int interval);     /**< Re-initializes the event manager to a new base interval */
 #if defined(IOS)
 	bool hasActiveTimer() const;
@@ -299,16 +369,38 @@ public:
 	typedef Common::List<const MouseArea *> MouseAreaList;
 
 	/* Constructors */
+	/**
+	 * Constructs an event handler object.
+	 */
 	EventHandler();
 
 	/* Static functions */
 	static EventHandler *getInstance();
+
+	/**
+	 * Delays program execution for the specified number of milliseconds.
+	 * This doesn't actually stop events, but it stops the user from interacting
+	 * While some important event happens (e.g., getting hit by a cannon ball or a spell effect).
+	 */
 	static void sleep(unsigned int usec);
+
+	/**
+	 * Waits a given number of milliseconds before continuing
+	 */
 	static void wait_msecs(unsigned int msecs);
+
+	/**
+	 * Waits a given number of game cycles before continuing
+	 */
 	static void wait_cycles(unsigned int cycles);
+
 	static void setControllerDone(bool exit = true);
 	static bool getControllerDone();
 	static void end();
+
+	/**
+	 * Returns true if the queue is empty of events that match 'mask'.
+	 */
 	static bool timerQueueEmpty();
 
 	/* Member functions */
@@ -332,15 +424,42 @@ public:
 	void setController(Controller *c);
 
 	/* Key handler functions */
+	/**
+	 * Adds a key handler to the stack.
+	 */
 	void pushKeyHandler(KeyHandler kh);
+
+	/**
+	 * Pops a key handler off the stack.
+	 * Returns a pointer to the resulting key handler after
+	 * the current handler is popped.
+	 */
 	void popKeyHandler();
+
+	/**
+	 * Returns a pointer to the current key handler.
+	 * Returns NULL if there is no key handler.
+	 */
 	KeyHandler *getKeyHandler() const;
+
+	/**
+	 * Eliminates all key handlers and begins stack with new handler.
+	 * This pops all key handlers off the stack and adds
+	 * the key handler provided to the stack, making it the
+	 * only key handler left. Use this function only if you
+	 * are sure the key handlers in the stack are disposable.
+	 */
 	void setKeyHandler(KeyHandler kh);
 
 	/* Mouse area functions */
 	void pushMouseAreaSet(const MouseArea *mouseAreas);
 	void popMouseAreaSet();
+
+	/**
+	 * Get the currently active mouse area set off the top of the stack.
+	 */
 	const MouseArea *getMouseAreaSet() const;
+
 	const MouseArea *mouseAreaForPoint(int x, int y);
 
 protected:

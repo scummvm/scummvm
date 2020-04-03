@@ -38,14 +38,33 @@ class TileMap {
 public:
 	typedef Std::map<Common::String, TileMap *> TileIndexMapMap;
 
+	/**
+	 * Translates a raw index to a MapTile.
+	 */
 	MapTile translate(unsigned int index);
 	unsigned int untranslate(MapTile &tile);
 
+	/**
+	 * Load all tilemaps from the specified xml file
+	 */
 	static void loadAll();
+
+	/**
+	 * Delete all tilemaps
+	 */
 	static void unloadAll();
+
+	/**
+	 * Returns the Tile index map with the specified name
+	 */
 	static TileMap *get(Common::String name);
 
 private:
+	/**
+	 * Loads a tile map which translates between tile indices and tile
+	 * names.  Tile maps are useful to translate from dos tile indices to
+	 * xu4 tile ids.
+	 */
 	static void load(const ConfigElement &tilemapConf);
 	static TileIndexMapMap _tileMaps;
 

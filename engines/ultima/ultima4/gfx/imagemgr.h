@@ -122,8 +122,19 @@ public:
 	static ImageMgr *getInstance();
 	static void destroy();
 
+	/**
+	 * Load in a background image from a ".ega" file.
+	 */
 	ImageInfo *get(const Common::String &name, bool returnUnscaled = false);
+
+	/**
+	 * Returns information for the given image set.
+	 */
 	SubImage *getSubImage(const Common::String &name);
+
+	/**
+	 * Free up any background images used only in the animations.
+	 */
 	void freeIntroBackgrounds();
 	const Std::vector<Common::String> &getSetNames();
 	U4FILE *getImageFile(ImageInfo *info);
@@ -138,8 +149,19 @@ private:
 	ImageInfo *loadImageInfoFromConf(const ConfigElement &conf);
 	SubImage *loadSubImageFromConf(const ImageInfo *info, const ConfigElement &conf);
 
+	/**
+	 * Returns information for the given image set.
+	 */
 	ImageSet *getSet(const Common::String &setname);
+
+	/**
+	 * Returns image information for the current image set.
+	 */
 	ImageInfo *getInfo(const Common::String &name);
+
+	/**
+	 * Returns information for the given image set.
+	 */
 	ImageInfo *getInfoFromSet(const Common::String &name, ImageSet *set);
 
 	Common::String guessFileType(const Common::String &filename);
@@ -147,9 +169,22 @@ private:
 	void fixupIntro(Image *im, int prescale);
 	void fixupAbyssVision(Image *im, int prescale);
 	void fixupAbacus(Image *im, int prescale);
+
+	/**
+	 * Swap blue and green for the dungeon walls when facing north or
+	 * south.
+	 */
 	void fixupDungNS(Image *im, int prescale);
+
+	/**
+	 * The FMTowns images have a different screen dimension. This moves them
+	 * up to what xu4 is accustomed to. south.
+	 */
 	void fixupFMTowns(Image *im, int prescale);
 
+	/**
+	 * Find the new base image set when settings have changed.
+	 */
 	void update(Settings *newSettings);
 
 	static ImageMgr *_instance;

@@ -104,9 +104,6 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 	return transform;
 }
 
-/**
- * Loads a color from a config element
- */
 RGBA *TileAnimTransform::loadColorFromConf(const ConfigElement &conf) {
 	RGBA *rgba;
 
@@ -129,6 +126,7 @@ TileAnimInvertTransform::TileAnimInvertTransform(int xp, int yp, int width, int 
 bool TileAnimInvertTransform::drawsTile() const {
 	return false;
 }
+
 void TileAnimInvertTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 	int scale = tile->getScale();
 	tile->getImage()->drawSubRectInvertedOn(dest, x * scale, y * scale, x * scale,
@@ -143,6 +141,7 @@ TileAnimPixelTransform::TileAnimPixelTransform(int xp, int yp) {
 bool TileAnimPixelTransform::drawsTile() const {
 	return false;
 }
+
 void TileAnimPixelTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 	RGBA *color = _colors[xu4_random(_colors.size())];
 	int scale = tile->getScale();
@@ -152,7 +151,9 @@ void TileAnimPixelTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 bool TileAnimScrollTransform::drawsTile() const {
 	return true;
 }
+
 TileAnimScrollTransform::TileAnimScrollTransform(int i) : _increment(i), _current(0), _lastOffset(0) {}
+
 void TileAnimScrollTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 	if (_increment == 0)
 		_increment = tile->getScale();
@@ -171,12 +172,10 @@ void TileAnimScrollTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 
 }
 
-/**
- * Advance the frame by one and draw it!
- */
 bool TileAnimFrameTransform::drawsTile() const {
 	return true;
 }
+
 void TileAnimFrameTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 	if (++_currentFrame >= tile->getFrames())
 		_currentFrame = 0;
@@ -195,6 +194,7 @@ TileAnimPixelColorTransform::TileAnimPixelColorTransform(int xp, int yp, int wid
 bool TileAnimPixelColorTransform::drawsTile() const {
 	return false;
 }
+
 void TileAnimPixelColorTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 	RGBA diff = *_end;
 	int scale = tile->getScale();
@@ -218,9 +218,6 @@ void TileAnimPixelColorTransform::draw(Image *dest, Tile *tile, MapTile &mapTile
 	}
 }
 
-/**
- * Creates a new animation context which controls if animation transforms are performed or not
- */
 TileAnimContext *TileAnimContext::create(const ConfigElement &conf) {
 	TileAnimContext *context;
 	static const char *contextTypeEnumStrings[] = { "frame", "dir", NULL };
@@ -257,25 +254,18 @@ TileAnimContext *TileAnimContext::create(const ConfigElement &conf) {
 	return context;
 }
 
-/**
- * Adds a tile transform to the context
- */
 void TileAnimContext::add(TileAnimTransform *transform) {
 	_animTransforms.push_back(transform);
 }
 
-/**
- * A context which depends on the tile's current frame for animation
- */
 TileAnimFrameContext::TileAnimFrameContext(int f) : _frame(f) {}
+
 bool TileAnimFrameContext::isInContext(Tile *t, MapTile &mapTile, Direction dir) {
 	return (mapTile._frame == _frame);
 }
 
-/**
- * An animation context which changes the animation based on the player's current facing direction
- */
 TileAnimPlayerDirContext::TileAnimPlayerDirContext(Direction d) : _dir(d) {}
+
 bool TileAnimPlayerDirContext::isInContext(Tile *t, MapTile &mapTile, Direction d) {
 	return (d == _dir);
 }
@@ -295,9 +285,6 @@ TileAnimSet::TileAnimSet(const ConfigElement &conf) {
 	}
 }
 
-/**
- * Returns the tile animation with the given name from the current set
- */
 TileAnim *TileAnimSet::getByName(const Common::String &name) {
 	TileAnimMap::iterator i = _tileAnims.find(name);
 	if (i == _tileAnims.end())

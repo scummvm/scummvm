@@ -36,24 +36,15 @@ View::View(int x, int y, int width, int height) : _x(x), _y(y), _width(width), _
 		_screen = imageMgr->get("screen")->_image;
 }
 
-/**
- * Hook for reinitializing when graphics reloaded.
- */
 void View::reinit() {
 	_screen = imageMgr->get("screen")->_image;
 }
 
-/**
- * Clear the view to black.
- */
 void View::clear() {
 	unhighlight();
 	_screen->fillRect(SCALED(_x), SCALED(_y), SCALED(_width), SCALED(_height), 0, 0, 0);
 }
 
-/**
- * Update the view to the screen.
- */
 void View::update() {
 	if (_highlighted)
 		drawHighlighted();
@@ -62,9 +53,6 @@ void View::update() {
 #endif
 }
 
-/**
- * Update a piece of the view to the screen.
- */
 void View::update(int x, int y, int width, int height) {
 	if (_highlighted)
 		drawHighlighted();
@@ -73,9 +61,6 @@ void View::update(int x, int y, int width, int height) {
 #endif
 }
 
-/**
- * Highlight a piece of the screen by drawing it in inverted colors.
- */
 void View::highlight(int x, int y, int width, int height) {
 	_highlighted = true;
 	_highlightX = x;

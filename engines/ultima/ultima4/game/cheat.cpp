@@ -408,11 +408,6 @@ bool CheatMenuController::keyPressed(int key) {
 	return valid;
 }
 
-/**
- * Summons a creature given by 'creatureName'. This can either be given
- * as the creature's name, or the creature's id.  Once it finds the
- * creature to be summoned, it calls gameSpawnCreature() to spawn it.
- */
 void CheatMenuController::summonCreature(const Common::String &name) {
 	const Creature *m = NULL;
 	Common::String creatureName = name;

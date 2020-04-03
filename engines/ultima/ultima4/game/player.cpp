@@ -47,9 +47,6 @@ bool isPartyMember(Object *punknown) {
 		return false;
 }
 
-/**
- * PartyMember class implementation
- */
 PartyMember::PartyMember(Party *p, SaveGamePlayerRecord *pr) :
 	Creature(tileForClass(pr->_class)),
 	_player(pr),
@@ -63,18 +60,12 @@ PartyMember::PartyMember(Party *p, SaveGamePlayerRecord *pr) :
 PartyMember::~PartyMember() {
 }
 
-/**
- * Notify the party that this player has changed somehow
- */
 void PartyMember::notifyOfChange() {
 	if (_party) {
 		_party->notifyOfChange(this);
 	}
 }
 
-/**
- * Provides some translation information for scripts
- */
 Common::String PartyMember::translate(Std::vector<Common::String> &parts) {
 	if (parts.size() == 0)
 		return "";
@@ -132,10 +123,6 @@ int PartyMember::getHp() const      {
 	return _player->_hp;
 }
 
-/**
- * Determine the most magic points a character could have
- * given his class and intelligence.
- */
 int PartyMember::getMaxMp() const {
 	int max_mp = -1;
 
@@ -177,15 +164,19 @@ int PartyMember::getMaxMp() const {
 const Weapon *PartyMember::getWeapon() const {
 	return Weapon::get(_player->_weapon);
 }
+
 const Armor *PartyMember::getArmor() const   {
 	return Armor::get(_player->armor);
 }
+
 Common::String PartyMember::getName() const          {
 	return _player->name;
 }
+
 SexType PartyMember::getSex() const          {
 	return _player->_sex;
 }
+
 ClassType PartyMember::getClass() const      {
 	return _player->_class;
 }
@@ -199,17 +190,10 @@ CreatureStatus PartyMember::getState() const {
 		return MSTAT_BARELYWOUNDED;
 }
 
-/**
- * Determine what level a character has.
- */
 int PartyMember::getRealLevel() const {
 	return _player->_hpMax / 100;
 }
 
-/**
- * Determine the highest level a character could have with the number
- * of experience points he has.
- */
 int PartyMember::getMaxLevel() const {
 	int level = 1;
 	int next = 100;
@@ -222,26 +206,17 @@ int PartyMember::getMaxLevel() const {
 	return level;
 }
 
-/**
- * Adds a status effect to the player
- */
 void PartyMember::addStatus(StatusType s) {
 	Creature::addStatus(s);
 	_player->_status = _status.back();
 	notifyOfChange();
 }
 
-/**
- * Adjusts the player's mp by 'pts'
- */
 void PartyMember::adjustMp(int pts) {
 	AdjustValueMax(_player->_mp, pts, getMaxMp());
 	notifyOfChange();
 }
 
-/**
- * Advances the player to the next level if they have enough experience
- */
 void PartyMember::advanceLevel() {
 	if (getRealLevel() == getMaxLevel())
 		return;
@@ -266,9 +241,6 @@ void PartyMember::advanceLevel() {
 	}
 }
 
-/**
- * Apply an effect to the party member
- */
 void PartyMember::applyEffect(TileEffect effect) {
 	if (getStatus() == STAT_DEAD)
 		return;
@@ -303,17 +275,11 @@ void PartyMember::applyEffect(TileEffect effect) {
 		notifyOfChange();
 }
 
-/**
- * Award a player experience points.  Maxs out the players xp at 9999.
- */
 void PartyMember::awardXp(int xp) {
 	AdjustValueMax(_player->_xp, xp, 9999);
 	notifyOfChange();
 }
 
-/**
- * Perform a certain type of healing on the party member
- */
 bool PartyMember::heal(HealType type) {
 	switch (type) {
 
@@ -373,9 +339,6 @@ bool PartyMember::heal(HealType type) {
 	return true;
 }
 
-/**
- * Remove status effects from the party member
- */
 void PartyMember::removeStatus(StatusType s) {
 	Creature::removeStatus(s);
 	_player->_status = _status.back();
@@ -432,14 +395,6 @@ EquipError PartyMember::setWeapon(const Weapon *w) {
 	return EQUIP_SUCCEEDED;
 }
 
-/**
- * Applies damage to a player, and changes status to dead if hit
- * points drop below zero.
- *
- * Byplayer is ignored for now, since it should always be false for U4.  (Is
- * there anything special about being killed by a party member in U5?)  Also
- * keeps interface consistent for virtual base function Creature::applydamage()
- */
 bool PartyMember::applyDamage(int damage, bool) {
 	int newHp = _player->_hp;
 
@@ -499,9 +454,6 @@ bool PartyMember::dealDamage(Creature *m, int damage) {
 	return true;
 }
 
-/**
- * Calculate damage for an attack.
- */
 int PartyMember::getDamage() {
 	int maxDamage;
 
@@ -513,18 +465,10 @@ int PartyMember::getDamage() {
 	return xu4_random(maxDamage);
 }
 
-/**
- * Returns the tile that will be displayed when the party
- * member's attack hits
- */
 const Common::String &PartyMember::getHitTile() const {
 	return getWeapon()->getHitTile();
 }
 
-/**
- * Returns the tile that will be displayed when the party
- * member's attack fails
- */
 const Common::String &PartyMember::getMissTile() const {
 	return getWeapon()->getMissTile();
 }
@@ -538,11 +482,6 @@ bool PartyMember::isDisabled() {
 	        getStatus() == STAT_POISONED) ? false : true;
 }
 
-/**
- * Lose the equipped weapon for the player (flaming oil, ranged daggers, etc.)
- * Returns the number of weapons left of that type, including the one in
- * the players hand
- */
 int PartyMember::loseWeapon() {
 	int weapon = _player->_weapon;
 
@@ -556,9 +495,6 @@ int PartyMember::loseWeapon() {
 	}
 }
 
-/**
- * Put the party member to sleep
- */
 void PartyMember::putToSleep() {
 	if (getStatus() != STAT_DEAD) {
 		soundPlay(SOUND_SLEEP, false);
@@ -567,9 +503,6 @@ void PartyMember::putToSleep() {
 	}
 }
 
-/**
- * Wakes up the party member
- */
 void PartyMember::wakeUp() {
 	removeStatus(STAT_SLEEPING);
 	setTile(tileForClass(getClass()));
@@ -612,9 +545,8 @@ MapTile PartyMember::tileForClass(int klass) {
 	return tile->getId();
 }
 
-/**
- * Party class implementation
- */
+/*-------------------------------------------------------------------*/
+
 Party::Party(SaveGame *s) : _saveGame(s), _transport(0), _torchDuration(0), _activePlayer(-1) {
 	if (MAP_DECEIT <= _saveGame->_location && _saveGame->_location <= MAP_ABYSS)
 		_torchDuration = _saveGame->_torchDuration;
@@ -629,12 +561,8 @@ Party::Party(SaveGame *s) : _saveGame(s), _transport(0), _torchDuration(0), _act
 }
 
 Party::~Party() {
-
 }
 
-/**
- * Notify the party that something about it has changed
- */
 void Party::notifyOfChange(PartyMember *pm, PartyEvent::Type eventType) {
 	setChanged();
 	PartyEvent event(eventType, pm);
@@ -724,11 +652,6 @@ void Party::adjustGold(int gold) {
 	notifyOfChange();
 }
 
-/**
- * Adjusts the avatar's karma level for the given action.  Notify
- * observers with a lost eighth event if the player has lost
- * avatarhood.
- */
 void Party::adjustKarma(KarmaAction action) {
 	int timeLimited = 0;
 	int v, newKarma[VIRT_MAX], maxVal[VIRT_MAX];
@@ -857,9 +780,6 @@ void Party::adjustKarma(KarmaAction action) {
 	}
 }
 
-/**
- * Apply effects to the entire party
- */
 void Party::applyEffect(TileEffect effect) {
 	int i;
 
@@ -881,9 +801,6 @@ void Party::applyEffect(TileEffect effect) {
 	}
 }
 
-/**
- * Attempt to elevate in the given virtue
- */
 bool Party::attemptElevation(Virtue virtue) {
 	if (_saveGame->_karma[virtue] == 99) {
 		_saveGame->_karma[virtue] = 0;
@@ -893,9 +810,6 @@ bool Party::attemptElevation(Virtue virtue) {
 		return false;
 }
 
-/**
- * Burns a torch's duration down a certain number of turns
- */
 void Party::burnTorch(int turns) {
 	_torchDuration -= turns;
 	if (_torchDuration <= 0)
@@ -906,9 +820,6 @@ void Party::burnTorch(int turns) {
 	notifyOfChange();
 }
 
-/**
- * Returns true if the party can enter the shrine
- */
 bool Party::canEnterShrine(Virtue virtue) {
 	if (_saveGame->_runes & (1 << (int) virtue))
 		return true;
@@ -916,9 +827,6 @@ bool Party::canEnterShrine(Virtue virtue) {
 		return false;
 }
 
-/**
- * Returns true if the person can join the party
- */
 bool Party::canPersonJoin(Common::String name, Virtue *v) {
 	int i;
 
@@ -935,9 +843,6 @@ bool Party::canPersonJoin(Common::String name, Virtue *v) {
 	return false;
 }
 
-/**
- * Damages the party's ship
- */
 void Party::damageShip(unsigned int pts) {
 	_saveGame->_shipHull -= pts;
 	if ((short)_saveGame->_shipHull < 0)
@@ -946,10 +851,6 @@ void Party::damageShip(unsigned int pts) {
 	notifyOfChange();
 }
 
-/**
- * Donates 'quantity' gold. Returns true if the donation succeeded,
- * or false if there was not enough gold to make the donation
- */
 bool Party::donate(int quantity) {
 	if (quantity > _saveGame->_gold)
 		return false;
@@ -962,9 +863,6 @@ bool Party::donate(int quantity) {
 	return true;
 }
 
-/**
- * Ends the party's turn
- */
 void Party::endTurn() {
 	int i;
 
@@ -1018,9 +916,6 @@ void Party::endTurn() {
 		healShip(1);
 }
 
-/**
- * Adds a chest worth of gold to the party's inventory
- */
 int Party::getChest() {
 	int gold = xu4_random(50) + xu4_random(8) + 10;
 	adjustGold(gold);
@@ -1028,16 +923,10 @@ int Party::getChest() {
 	return gold;
 }
 
-/**
- * Returns the number of turns a currently lit torch will last (or 0 if no torch lit)
- */
 int Party::getTorchDuration() const {
 	return _torchDuration;
 }
 
-/**
- * Heals the ship's hull strength by 'pts' points
- */
 void Party::healShip(unsigned int pts) {
 	_saveGame->_shipHull += pts;
 	if (_saveGame->_shipHull > 50)
@@ -1046,16 +935,10 @@ void Party::healShip(unsigned int pts) {
 	notifyOfChange();
 }
 
-/**
- * Returns true if the balloon is currently in the air
- */
 bool Party::isFlying() const {
 	return (_saveGame->_balloonState && _torchDuration <= 0);
 }
 
-/**
- * Whether or not the party can make an action.
- */
 bool Party::isImmobilized() {
 	int i;
 	bool immobile = true;
@@ -1068,9 +951,6 @@ bool Party::isImmobilized() {
 	return immobile;
 }
 
-/**
- * Whether or not all the party members are dead.
- */
 bool Party::isDead() {
 	int i;
 	bool dead = true;
@@ -1084,10 +964,6 @@ bool Party::isDead() {
 	return dead;
 }
 
-/**
- * Returns true if the person with that name
- * is already in the party
- */
 bool Party::isPersonJoined(Common::String name) {
 	int i;
 
@@ -1101,10 +977,6 @@ bool Party::isPersonJoined(Common::String name) {
 	return false;
 }
 
-/**
- * Attempts to add the person to the party.
- * Returns JOIN_SUCCEEDED if successful.
- */
 CannotJoinError Party::join(Common::String name) {
 	int i;
 	SaveGamePlayerRecord tmp;
@@ -1136,9 +1008,6 @@ CannotJoinError Party::join(Common::String name) {
 	return JOIN_NOT_EXPERIENCED;
 }
 
-/**
- * Lights a torch with a default duration of 100
- */
 bool Party::lightTorch(int duration, bool loseTorch) {
 	if (loseTorch) {
 		if (g_ultima->_saveGame->_torches <= 0)
@@ -1154,18 +1023,12 @@ bool Party::lightTorch(int duration, bool loseTorch) {
 	return true;
 }
 
-/**
- * Extinguishes a torch
- */
 void Party::quenchTorch() {
 	_torchDuration = _saveGame->_torchDuration = 0;
 
 	notifyOfChange();
 }
 
-/**
- * Revives the party after the entire party has been killed
- */
 void Party::reviveParty() {
 	int i;
 
@@ -1281,16 +1144,10 @@ void Party::syncMembers() {
 	}
 }
 
-/**
- * Returns the size of the party
- */
 int Party::size() const {
 	return _members.size();
 }
 
-/**
- * Returns a pointer to the party member indicated
- */
 PartyMember *Party::member(int index) const {
 	return _members[index];
 }

@@ -95,17 +95,45 @@ class IntroController : public Controller, public Observer<Menu *, MenuEvent &> 
 public:
 	IntroController();
 
+	/**
+	 * Initializes intro state and loads in introduction graphics, text
+	 * and map data from title.exe.
+	 */
 	bool init();
 	bool hasInitiatedNewGame();
 
+	/**
+	 * Frees up data not needed after introduction.
+	 */
 	void deleteIntro();
+
+	/**
+	 * Handles keystrokes during the introduction.
+	 */
 	bool keyPressed(int key);
 	unsigned char *getSigData();
+
+	/**
+	 * Paints the screen.
+	 */
 	void updateScreen();
+
+	/**
+	 * Timer callback for the intro sequence.  Handles animating the intro
+	 * map, the beasties, etc..
+	 */
 	void timerFired();
 
+	/**
+	 * Preload map tiles
+	 */
 	void preloadMap();
 
+	/**
+	 * Update the screen when an observed menu is reset or has an item
+	 * activated.
+	 * TODO, reduce duped code.
+	 */
 	void update(Menu *menu, MenuEvent &event);
 	void updateConfMenu(MenuEvent &event);
 	void updateVideoMenu(MenuEvent &event);
@@ -119,38 +147,126 @@ public:
 	//
 	// Title methods
 	//
+	/**
+	 * Initialize the title elements
+	 */
 	void initTitles();
+
+	/**
+	 * Update the title element, drawing the appropriate frame of animation
+	 */
 	bool updateTitle();
 
 private:
+	/**
+	 * Draws the small map on the intro screen.
+	 */
 	void drawMap();
 	void drawMapStatic();
 	void drawMapAnimated();
+
+	/**
+	 * Draws the animated beasts in the upper corners of the screen.
+	 */
 	void drawBeasties();
+
+	/**
+	 * Animates the "beasties".  The animate intro image is made up frames
+	 * for the two creatures in the top left and top right corners of the
+	 * screen.  This function draws the frame for the given beastie on the
+	 * screen.  vertoffset is used lower the creatures down from the top
+	 * of the screen.
+	 */
 	void drawBeastie(int beast, int vertoffset, int frame);
+
+	/**
+	 * Animates the moongate in the tree intro image.  There are two
+	 * overlays in the part of the image normally covered by the text.  If
+	 * the frame parameter is "moongate", the moongate overlay is painted
+	 * over the image.  If frame is "items", the second overlay is
+	 * painted: the circle without the moongate, but with a small white
+	 * dot representing the anhk and history book.
+	 */
 	void animateTree(const Common::String &frame);
+
+	/**
+	 * Draws the cards in the character creation sequence with the gypsy.
+	 */
 	void drawCard(int pos, int card);
+
+	/**
+	 * Draws the beads in the abacus during the character creation sequence
+	 */
 	void drawAbacusBeads(int row, int selectedVirtue, int rejectedVirtue);
 
+	/**
+	 * Initializes the question tree.  The tree starts off with the first
+	 * eight entries set to the numbers 0-7 in a random order.
+	 */
 	void initQuestionTree();
+
+	/**
+	 * Updates the question tree with the given answer, and advances to
+	 * the next round.
+	 * @return true if all questions have been answered, false otherwise
+	 */
 	bool doQuestion(int answer);
+
+	/**
+	 * Build the initial avatar player record from the answers to the
+	 * gypsy's questions.
+	 */
 	void initPlayers(SaveGame *saveGame);
+
+	/**
+	 * Get the text for the question giving a choice between virtue v1 and
+	 * virtue v2 (zero based virtue index, starting at honesty).
+	 */
 	Common::String getQuestion(int v1, int v2);
 #ifdef IOS
 public:
+	/**
+	 * Try to put the intro music back at just the correct moment on iOS;
+	 * don't play it at the very beginning.
+	 */
 	void tryTriggerIntroMusic();
 #endif
+
+	/**
+	 * Initiate a new savegame by reading the name, sex, then presenting a
+	 * series of questions to determine the class of the new character.
+	 */
 	void initiateNewGame();
 	void finishInitiateGame(const Common::String &nameBuffer, SexType sex);
+
+	/**
+	 * Starts the gypsys questioning that eventually determines the new
+	 * characters class.
+	 */
 	void startQuestions();
 	void showStory();
+
+	/**
+	 * Starts the game.
+	 */
 	void journeyOnward();
+
+	/**
+	 * Shows an about box.
+	 */
 	void about();
 #ifdef IOS
 private:
 #endif
+	/**
+	 * Shows text in the question area.
+	 */
 	void showText(const Common::String &text);
 
+	/**
+	 * Run a menu and return when the menu has been closed.  Screen
+	 * updates are handled by observing the menu.
+	 */
 	void runMenu(Menu *menu, TextView *view, bool withBeasties);
 
 	/**
@@ -281,11 +397,32 @@ private:
 		bool _prescaled;
 	};
 
+	/**
+	 * Add the intro element to the element list
+	 */
 	void addTitle(int x, int y, int w, int h, AnimType method, int delay, int duration);
+
+	/**
+	 * The title element has finished drawing all frames, so delete, remove,
+	 * or free data that is no longer needed
+	 */
 	void compactTitle();
+
+	/**
+	 * Scale the animation canvas, then draw it to the screen
+	 */
 	void drawTitle();
+
+	/**
+	 * Get the source data for title elements that have already been initialized
+	 */
 	void getTitleSourceData();
+
+	/**
+	 * skip the remaining titles
+	 */
 	void skipTitles();
+
 	Std::vector<AnimElement> _titles;            // list of title elements
 	Std::vector<AnimElement>::iterator _title;   // current title element
 

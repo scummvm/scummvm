@@ -297,9 +297,6 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 	return replySplit(text);
 }
 
-/**
- * Get the prompt shown after each reply.
- */
 Common::String Person::getPrompt(Conversation *cnv) {
 	if (isVendor())
 		return "";
@@ -317,9 +314,6 @@ Common::String Person::getPrompt(Conversation *cnv) {
 	return prompt;
 }
 
-/**
- * Returns the valid keyboard choices for a given conversation.
- */
 const char *Person::getChoices(Conversation *cnv) {
 	if (isVendor())
 		return cnv->script->getChoices().c_str();

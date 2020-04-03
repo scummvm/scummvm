@@ -39,9 +39,6 @@ using Std::vector;
  */
 TileRuleMap TileRule::_rules;
 
-/**
- * Returns the tile rule with the given name, or NULL if none could be found
- */
 TileRule *TileRule::findByName(const Common::String &name) {
 	TileRuleMap::iterator i = _rules.find(name);
 	if (i != _rules.end())
@@ -49,9 +46,6 @@ TileRule *TileRule::findByName(const Common::String &name) {
 	return NULL;
 }
 
-/**
- * Load tile information from xml.
- */
 void TileRule::load() {
 	const Config *config = Config::getInstance();
 	vector<ConfigElement> rules = config->getElement("tileRules").getChildren();
@@ -66,9 +60,6 @@ void TileRule::load() {
 		errorFatal("no 'default' rule found in tile rules");
 }
 
-/**
- * Load properties for the current rule node
- */
 bool TileRule::initFromConf(const ConfigElement &conf) {
 	unsigned int i;
 
@@ -169,10 +160,6 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 /* static member variables */
 Tileset::TilesetMap Tileset::tilesets;
 
-/**
- * Loads all tilesets using the filename
- * indicated by 'filename' as a definition
- */
 void Tileset::loadAll() {
 	Debug dbg("debug/tileset.txt", "Tileset");
 	const Config *config = Config::getInstance();
@@ -208,9 +195,6 @@ void Tileset::loadAll() {
 	TRACE(dbg, "Successfully Loaded Tilesets");
 }
 
-/**
- * Delete all tilesets
- */
 void Tileset::unloadAll() {
 	TilesetMap::iterator i;
 
@@ -226,9 +210,6 @@ void Tileset::unloadAll() {
 	Tile::resetNextId();
 }
 
-/**
- * Delete all tileset images
- */
 void Tileset::unloadAllImages() {
 	TilesetMap::iterator i;
 
@@ -239,19 +220,12 @@ void Tileset::unloadAllImages() {
 	Tile::resetNextId();
 }
 
-
-/**
- * Returns the tileset with the given name, if it exists
- */
 Tileset *Tileset::get(const Common::String &name) {
 	if (tilesets.find(name) != tilesets.end())
 		return tilesets[name];
 	else return NULL;
 }
 
-/**
- * Returns the tile that has the given name from any tileset, if there is one
- */
 Tile *Tileset::findTileByName(const Common::String &name) {
 	TilesetMap::iterator i;
 	for (i = tilesets.begin(); i != tilesets.end(); i++) {
@@ -274,9 +248,6 @@ Tile *Tileset::findTileById(TileId id) {
 	return NULL;
 }
 
-/**
- * Loads a tileset.
- */
 void Tileset::load(const ConfigElement &tilesetConf) {
 	Debug dbg("debug/tileset.txt", "Tileset", true);
 
@@ -318,9 +289,6 @@ void Tileset::unloadImages() {
 	}
 }
 
-/**
- * Unload the current tileset
- */
 void Tileset::unload() {
 	Tileset::TileIdMap::iterator i;
 
@@ -333,9 +301,6 @@ void Tileset::unload() {
 	_imageName.clear();
 }
 
-/**
- * Returns the tile with the given id in the tileset
- */
 Tile *Tileset::get(TileId id) {
 	if (_tiles.find(id) != _tiles.end())
 		return _tiles[id];
@@ -344,9 +309,6 @@ Tile *Tileset::get(TileId id) {
 	return NULL;
 }
 
-/**
- * Returns the tile with the given name from the tileset, if it exists
- */
 Tile *Tileset::getByName(const Common::String &name) {
 	if (_nameMap.find(name) != _nameMap.end())
 		return _nameMap[name];
@@ -355,25 +317,16 @@ Tile *Tileset::getByName(const Common::String &name) {
 	else return NULL;
 }
 
-/**
- * Returns the image name for the tileset, if it exists
- */
 Common::String Tileset::getImageName() const {
 	if (_imageName.empty() && _extends)
 		return _extends->getImageName();
 	else return _imageName;
 }
 
-/**
- * Returns the number of tiles in the tileset
- */
 unsigned int Tileset::numTiles() const {
 	return _tiles.size();
 }
 
-/**
- * Returns the total number of frames in the tileset
- */
 unsigned int Tileset::numFrames() const {
 	return _totalFrames;
 }

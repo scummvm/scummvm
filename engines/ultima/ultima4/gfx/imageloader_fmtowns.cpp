@@ -34,9 +34,6 @@ namespace Ultima4 {
 
 using Std::vector;
 
-/**
- * Loads in an FM TOWNS files, which we assume is 16 bits.
- */
 Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		errorFatal("dimensions not set for fmtowns image");

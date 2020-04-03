@@ -36,6 +36,10 @@ namespace Ultima4 {
 class PngImageLoader : public ImageLoader {
 public:
 	virtual ~PngImageLoader() {}
+
+	/**
+	 * Loads in the PNG with the libpng library.
+	 */
 	virtual Image *load(U4FILE *file, int width, int height, int bpp);
 };
 

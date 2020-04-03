@@ -39,6 +39,10 @@ struct RGBA;
 class  TileAnimTransform {
 public:
 	static TileAnimTransform *create(const ConfigElement &config);
+
+	/**
+	 * Loads a color from a config element
+	 */
 	static RGBA *loadColorFromConf(const ConfigElement &conf);
 
 	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile) = 0;
@@ -103,6 +107,10 @@ public:
 	TileAnimFrameTransform() : _currentFrame(0) {
 	}
 	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
+
+	/**
+	 * Advance the frame by one and draw it!
+	 */
 	virtual bool drawsTile() const;
 protected:
 	int _currentFrame;
@@ -134,8 +142,14 @@ public:
 		DIR
 	} Type;
 
+	/**
+	 * Creates a new animation context which controls if animation transforms are performed or not
+	 */
 	static TileAnimContext *create(const ConfigElement &config);
 
+	/**
+	 * Adds a tile transform to the context
+	 */
 	void add(TileAnimTransform *);
 	virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d) = 0;
 	TileAnimTransformList &getTransforms() {
@@ -152,6 +166,9 @@ private:
  */
 class TileAnimFrameContext : public TileAnimContext {
 public:
+	/**
+	 * A context which depends on the tile's current frame for animation
+	 */
 	TileAnimFrameContext(int frame);
 	virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
 
@@ -164,6 +181,9 @@ private:
  */
 class TileAnimPlayerDirContext : public TileAnimContext {
 public:
+	/**
+	 * An animation context which changes the animation based on the player's current facing direction
+	 */
 	TileAnimPlayerDirContext(Direction dir);
 	virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
 
@@ -200,6 +220,9 @@ class TileAnimSet {
 public:
 	TileAnimSet(const ConfigElement &conf);
 
+	/**
+	 * Returns the tile animation with the given name from the current set
+	 */
 	TileAnim *getByName(const Common::String &name);
 
 	Common::String _name;

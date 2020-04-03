@@ -29,9 +29,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-/**
- * MenuItem class
- */
 MenuItem::MenuItem(Common::String t, short xp, short yp, int sc) :
 	_id(-1), x(xp), y(yp), _text(t), _highlighted(false),
 	_selected(false), _visible(true), _scOffset(sc), _closesMenu(false) {

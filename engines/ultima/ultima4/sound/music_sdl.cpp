@@ -103,9 +103,6 @@ bool Music::load_sys(const Common::String &pathname) {
 	return true;
 }
 
-/**
- * Play a midi file
- */
 void Music::playMid(Type music) {
 #ifdef TODO
 	if (!functional || !on)
@@ -119,18 +116,12 @@ void Music::playMid(Type music) {
 #endif
 }
 
-
-/**
- * Stop playing a MIDI file.
- */
 void Music::stopMid() {
 #ifdef TODO
 	Mix_HaltMusic();
 #endif
 }
-/**
- * Set, increase, and decrease sound volume
- */
+
 void Music::setSoundVolume_sys(int volume) {
 #ifdef TODO
 	/**
@@ -140,9 +131,6 @@ void Music::setSoundVolume_sys(int volume) {
 #endif
 }
 
-/**
- * System specific version to check if the version is still playing.
- */
 bool Music::isPlaying_sys() {
 #ifdef TODO
 	return Mix_PlayingMusic();
@@ -151,10 +139,6 @@ bool Music::isPlaying_sys() {
 #endif
 } /**< Returns true if the mixer is playing any audio */
 
-
-/**
- * Set, increase, and decrease music volume
- */
 void Music::setMusicVolume_sys(int volume) {
 #ifdef TODO
 	Mix_VolumeMusic(int((float)MIX_MAX_VOLUME / MAX_VOLUME * volume));

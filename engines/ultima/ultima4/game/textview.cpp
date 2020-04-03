@@ -54,9 +54,6 @@ void TextView::reinit() {
 	_charset = imageMgr->get(BKGD_CHARSET)->_image;
 }
 
-/**
- * Draw a character from the charset onto the view.
- */
 void TextView::drawChar(int chr, int x, int y) {
 	ASSERT(x < _columns, "x value of %d out of range", x);
 	ASSERT(y < _rows, "y value of %d out of range", y);
@@ -68,12 +65,6 @@ void TextView::drawChar(int chr, int x, int y) {
 	                      SCALED(CHAR_HEIGHT));
 }
 
-/**
- * Draw a character from the charset onto the view, but mask it with
- * horizontal lines.  This is used for the avatar symbol in the
- * statistics area, where a line is masked out for each virtue in
- * which the player is not an avatar.
- */
 void TextView::drawCharMasked(int chr, int x, int y, unsigned char mask) {
 	drawChar(chr, x, y);
 	for (int i = 0; i < 8; i++) {
@@ -87,7 +78,6 @@ void TextView::drawCharMasked(int chr, int x, int y, unsigned char mask) {
 	}
 }
 
-/* highlight the selected row using a background color */
 void TextView::textSelectedAt(int x, int y, const char *text) {
 	if (!settings._enhancements || !settings._enhancementsOptions._textColorization) {
 		this->textAt(x, y, "%s", text);
@@ -101,7 +91,6 @@ void TextView::textSelectedAt(int x, int y, const char *text) {
 	this->setFontColorBG(BG_NORMAL);
 }
 
-/* depending on the status type, apply colorization to the character */
 Common::String TextView::colorizeStatus(char statustype) {
 	Common::String output;
 
@@ -129,7 +118,6 @@ Common::String TextView::colorizeStatus(char statustype) {
 	return output;
 }
 
-/* depending on the status type, apply colorization to the character */
 Common::String TextView::colorizeString(Common::String input, ColorFG color, unsigned int colorstart, unsigned int colorlength) {
 	if (!settings._enhancements || !settings._enhancementsOptions._textColorization)
 		return input;
@@ -171,6 +159,7 @@ void TextView::setFontColor(ColorFG fg, ColorBG bg) {
 void TextView::setFontColorFG(ColorFG fg) {
 	_charset->setFontColorFG(fg);
 }
+
 void TextView::setFontColorBG(ColorBG bg) {
 	_charset->setFontColorBG(bg);
 }

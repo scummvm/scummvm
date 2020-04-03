@@ -47,6 +47,9 @@ enum menuOutputType {
 
 class MenuItem {
 public:
+	/**
+	 * MenuItem class
+	 */
 	MenuItem(Common::String text, short xp, short yp, int shortcutKey = -1);
 	virtual ~MenuItem() {}
 

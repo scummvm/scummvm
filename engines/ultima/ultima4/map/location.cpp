@@ -39,10 +39,6 @@ namespace Ultima4 {
 Location *locationPush(Location *stack, Location *loc);
 Location *locationPop(Location **stack);
 
-/**
- * Add a new location to the stack, or
- * start a new stack if 'prev' is NULL
- */
 Location::Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx,
                    TurnCompleter *turnCompleter, Location *prev) {
 
@@ -55,9 +51,6 @@ Location::Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx
 	locationPush(prev, this);
 }
 
-/**
- * Return the entire stack of objects at the given location.
- */
 Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 	Std::vector<MapTile> tiles;
 	Common::List<Annotation *> a = _map->_annotations->ptrsToAllAt(coords);
@@ -156,13 +149,6 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 	return tiles;
 }
 
-
-/**
- * Finds a valid replacement tile for the given location, using surrounding tiles
- * as guidelines to choose the new tile.  The new tile will only be chosen if it
- * is marked as a valid replacement (or waterReplacement) tile in tiles.xml.  If a valid replacement
- * cannot be found, it returns a "best guess" tile.
- */
 TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 	Std::map<TileId, int> validMapTileCount;
 
@@ -227,11 +213,6 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 	return _map->_tileset->getByName("brick_floor")->getId();
 }
 
-/**
- * Returns the current coordinates of the location given:
- *     If in combat - returns the coordinates of party member with focus
- *     If elsewhere - returns the coordinates of the avatar
- */
 int Location::getCurrentPosition(MapCoords *coords) {
 	if (_context & CTX_COMBAT) {
 		CombatController *cc = dynamic_cast<CombatController *>(eventHandler->getController());

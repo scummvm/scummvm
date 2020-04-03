@@ -62,9 +62,6 @@ Tile::Tile(Tileset *tileset)
 	, _animationRule("") {
 }
 
-/**
- * Loads tile information.
- */
 void Tile::loadProperties(const ConfigElement &conf) {
 	if (conf.getName() != "tile")
 		return;
@@ -126,9 +123,6 @@ Image *Tile::getImage() {
 	return _image;
 }
 
-/**
- * Loads the tile image
- */
 void Tile::loadImage() {
 	if (!_image) {
 		_scale = settings._scale;
@@ -199,9 +193,6 @@ void Tile::deleteImage() {
 	_scale = settings._scale;
 }
 
-/**
- * MapTile Class Implementation
- */
 Direction MapTile::getDirection() const {
 	return getTileType()->directionForFrame(_frame);
 }
@@ -232,10 +223,6 @@ bool Tile::isOpaque() const {
 	return g_context->_opacity ? _opaque : false;
 }
 
-/**
- * Is tile a foreground tile (i.e. has transparent parts).
- * Deprecated? Never used in XML. Other mechanisms exist, though this could help?
- */
 bool Tile::isForeground() const {
 	return (rule->_mask & MASK_FOREGROUND);
 }

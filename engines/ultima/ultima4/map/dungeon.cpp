@@ -48,16 +48,10 @@ bool isDungeon(Map *punknown) {
 		return false;
 }
 
-/**
- * Returns the name of the dungeon
- */
 Common::String Dungeon::getName() {
 	return _name;
 }
 
-/**
- * Returns the dungeon token associated with the given dungeon tile
- */
 DungeonToken Dungeon::tokenForTile(MapTile tile) {
 	const static Common::String tileNames[] = {
 		"brick_floor", "up_ladder", "down_ladder", "up_down_ladder", "chest",
@@ -85,9 +79,6 @@ DungeonToken Dungeon::tokenForTile(MapTile tile) {
 	return (DungeonToken)0;
 }
 
-/**
- * Returns the dungeon token for the current location
- */
 DungeonToken Dungeon::currentToken() {
 	return tokenAt(g_context->_location->_coords);
 }
@@ -96,27 +87,14 @@ DungeonToken Dungeon::currentToken() {
  * Return the dungeon sub-token associated with the given dungeon tile.
  *
  */
-/**
- * Returns the dungeon sub-token for the current location
- */
 unsigned char Dungeon::currentSubToken() {
 	return subTokenAt(g_context->_location->_coords);
 }
 
-/**
- * Returns the dungeon token for the given coordinates
- */
 DungeonToken Dungeon::tokenAt(MapCoords coords) {
 	return tokenForTile(*getTileFromData(coords));
 }
 
-/**
- * Returns the dungeon sub-token for the given coordinates.  The
- * subtoken is encoded in the lower bits of the map raw data.  For
- * instance, for the raw value 0x91, returns FOUNTAIN_HEALING NOTE:
- * This function will always need type-casting to the token type
- * necessary
- */
 unsigned char Dungeon::subTokenAt(MapCoords coords) {
 	int index = coords.x + (coords.y * _width) + (_width * _height * coords.z);
 	return _dataSubTokens[index];
@@ -309,9 +287,6 @@ bool dungeonHandleTrap(TrapType trap) {
 	return true;
 }
 
-/**
- * Returns true if a ladder-up is found at the given coordinates
- */
 bool Dungeon::ladderUpAt(MapCoords coords) {
 	Annotation::List a = _annotations->allAt(coords);
 
@@ -329,9 +304,6 @@ bool Dungeon::ladderUpAt(MapCoords coords) {
 	return false;
 }
 
-/**
- * Returns true if a ladder-down is found at the given coordinates
- */
 bool Dungeon::ladderDownAt(MapCoords coords) {
 	Annotation::List a = _annotations->allAt(coords);
 

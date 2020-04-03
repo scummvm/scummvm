@@ -36,9 +36,6 @@ using Common::String;
 bool Armor::_confLoaded = false;
 vector<Armor *> Armor::_armors;
 
-/**
- * Returns armor by ArmorType.
- */
 const Armor *Armor::get(ArmorType a) {
 	// Load in XML if it hasn't been already
 	loadConf();
@@ -48,9 +45,6 @@ const Armor *Armor::get(ArmorType a) {
 	return _armors[a];
 }
 
-/**
- * Returns armor that has the given name
- */
 const Armor *Armor::get(const string &name) {
 	// Load in XML if it hasn't been already
 	loadConf();

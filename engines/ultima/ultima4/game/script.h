@@ -152,16 +152,45 @@ public:
 		ACTION_ZTATS
 	};
 
+	/**
+	 * Constructs a script object
+	 */
 	Script();
 	~Script();
 
+	/**
+	 * Adds an information provider for the script
+	 */
 	void addProvider(const Common::String &name, Provider *p);
+
+	/**
+	 * Loads the vendor script
+	 */
 	bool load(const Common::String &filename, const Common::String &baseId, const Common::String &subNodeName = "", const Common::String &subNodeId = "");
+
+	/**
+	 * Unloads the script
+	 */
 	void unload();
+
+	/**
+	 * Runs a script after it's been loaded
+	 */
 	void run(const Common::String &script);
+
+	/**
+	 * Executes the subscript 'script' of the main script
+	 */
 	ReturnCode execute(Shared::XMLNode *script, Shared::XMLNode *currentItem = NULL, Common::String *output = NULL);
+
+	/**
+	 * Continues the script from where it left off, or where the last script indicated
+	 */
 	void _continue();
 
+	/**
+	 * Set and retrieve property values
+	 */
 	void resetState();
 	void setState(State state);
 	State getState();
@@ -179,52 +208,203 @@ public:
 	int getInputMaxLen();
 
 private:
-	void        translate(Common::String *script);
+	/**
+	 * Translates a script Common::String with dynamic variables
+	 */
+	void translate(Common::String *script);
+
+	/**
+	 * Finds a subscript of script 'node'
+	 */
 	Shared::XMLNode *find(Shared::XMLNode *node, const Common::String &script, const Common::String &choice = "", bool _default = false);
-	Common::String      getPropAsStr(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
-	Common::String      getPropAsStr(Shared::XMLNode *node, const Common::String &prop, bool recursive = false);
-	int         getPropAsInt(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
-	int         getPropAsInt(Shared::XMLNode *node, const Common::String &prop, bool recursive = false);
-	Common::String      getContent(Shared::XMLNode *node);
+
+	/**
+	 * Gets a property as Common::String from the script, and
+	 * translates it using scriptTranslate.
+	 */
+	Common::String getPropAsStr(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
+
+	Common::String getPropAsStr(Shared::XMLNode *node, const Common::String &prop, bool recursive = false);
+
+	/**
+	 * Gets a property as int from the script
+	 */
+	int getPropAsInt(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
+
+	int getPropAsInt(Shared::XMLNode *node, const Common::String &prop, bool recursive = false);
+
+	/**
+	 * Gets the content of a script node
+	 */
+	Common::String getContent(Shared::XMLNode *node);
 
 	/*
 	 * Action Functions
 	 */
+	/**
+	 * Sets a new translation context for the script
+	 */
 	ReturnCode pushContext(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Removes a node from the translation context
+	 */
 	ReturnCode popContext(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * End script execution
+	 */
 	ReturnCode end(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Wait for keypress from the user
+	 */
 	ReturnCode waitForKeypress(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Redirects script execution to another script
+	 */
 	ReturnCode redirect(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Includes a script to be executed
+	 */
 	ReturnCode include(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Waits a given number of milliseconds before continuing execution
+	 */
 	ReturnCode wait(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Executes a 'for' loop script
+	 */
 	ReturnCode forLoop(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Randomely executes script code
+	 */
 	ReturnCode random(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Moves the player's current position
+	 */
 	ReturnCode move(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Puts the player to sleep. Useful when coding inn scripts
+	 */
 	ReturnCode sleep(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Enables/Disables the keyboard cursor
+	 */
 	ReturnCode cursor(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Pay gold to someone
+	 */
 	ReturnCode pay(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Perform a limited 'if' statement
+	 */
 	ReturnCode _if(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Get input from the player
+	 */
 	ReturnCode input(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Add item to inventory
+	 */
 	ReturnCode add(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Lose item
+	 */
 	ReturnCode lose(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Heals a party member
+	 */
 	ReturnCode heal(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Performs all of the visual/audio effects of casting a spell
+	 */
 	ReturnCode castSpell(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Apply damage to a player
+	 */
 	ReturnCode damage(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Apply karma changes based on the action taken
+	 */
 	ReturnCode karma(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Set the currently playing music
+	 */
 	ReturnCode music(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Sets a variable
+	 */
 	ReturnCode setVar(Shared::XMLNode *script, Shared::XMLNode *current);
-	ReturnCode setId(Shared::XMLNode *script, Shared::XMLNode *current);
+
+	/**
+	 * Display a different ztats screen
+	 */
 	ReturnCode ztats(Shared::XMLNode *script, Shared::XMLNode *current);
 
 	/*
 	 * Math and comparison functions
 	 */
+
+	 /**
+	  * Parses a math Common::String's children into results so
+	  * there is only 1 equation remaining.
+	  *
+	  * ie. <math>5*<math>6/3</math></math>
+	  */
 	void mathParseChildren(Shared::XMLNode *math, Common::String *result);
+
+	/**
+	 * Takes a simple equation Common::String and returns the value
+	 */
 	int mathValue(const Common::String &str);
+
+	/**
+	 * Performs simple math operations in the script
+	 */
 	int math(int lval, int rval, Common::String &op);
+
+	/**
+	 * Parses a Common::String into left integer value, right integer value,
+	 * and operator. Returns false if the Common::String is not a valid
+	 * math equation
+	 */
 	bool mathParse(const Common::String &str, int *lval, int *rval, Common::String *op);
+
+	/**
+	 * Parses a Common::String containing an operator (+, -, *, /, etc.) into 3 parts,
+	 * left, right, and operator.
+	 */
 	void parseOperation(const Common::String &str, Common::String *lval, Common::String *rval, Common::String *op);
+
+	/**
+	 * Does a boolean comparison on a Common::String (math or Common::String),
+	 * fails if the Common::String doesn't contain a valid comparison
+	 */
 	bool compare(const Common::String &str);
+
+	/**
+	 * Parses a function into its name and contents
+	 */
 	void funcParse(const Common::String &str, Common::String *funcName, Common::String *contents);
 
 	/*

@@ -50,9 +50,6 @@ bool Music::functional = true;
  * Constructors/Destructors
  */
 
-/**
- * Initiliaze the music
- */
 Music::Music() : _introMid(TOWNS), _current(NONE), _playing(NULL), _logger(new Debug("debug/music.txt", "Music")) {
 	_filenames.reserve(MAX);
 	_filenames.push_back("");    // filename for MUSIC_NONE;
@@ -86,9 +83,6 @@ Music::Music() : _introMid(TOWNS), _current(NONE), _playing(NULL), _logger(new D
 	TRACE(*_logger, Common::String("Music initialized: volume is ") + (on ? "on" : "off"));
 }
 
-/**
- * Stop playing the music and cleanup
- */
 Music::~Music() {
 	TRACE(*_logger, "Uninitializing music");
 	eventHandler->getTimer()->remove(&Music::callback);
@@ -122,10 +116,6 @@ bool Music::load(Type music) {
 	return false;
 }
 
-/**
- * Ensures that the music is playing if it is supposed to be, or off
- * if it is supposed to be turned off.
- */
 void Music::callback(void *data) {
 	eventHandler->getTimer()->remove(&Music::callback);
 
@@ -135,16 +125,10 @@ void Music::callback(void *data) {
 		musicMgr->stop();
 }
 
-/**
- * Main music loop
- */
 void Music::play() {
 	playMid(g_context->_location->_map->_music);
 }
 
-/**
- * Cycle through the introduction music
- */
 void Music::introSwitch(int n) {
 	if (n > NONE && n < MAX) {
 		_introMid = static_cast<Type>(n);
@@ -152,9 +136,6 @@ void Music::introSwitch(int n) {
 	}
 }
 
-/**
- * Toggle the music on/off (usually by pressing 'v')
- */
 bool Music::toggle() {
 	eventHandler->getTimer()->remove(&Music::callback);
 
@@ -168,9 +149,6 @@ bool Music::toggle() {
 	return on;
 }
 
-/**
- * Fade out the music
- */
 void Music::fadeOut(int msecs) {
 	// fade the music out even if 'on' is false
 	if (!functional)
@@ -185,9 +163,6 @@ void Music::fadeOut(int msecs) {
 	}
 }
 
-/**
- * Fade in the music
- */
 void Music::fadeIn(int msecs, bool loadFromMap) {
 	if (!functional || !on)
 		return;
@@ -220,8 +195,6 @@ int Music::decreaseMusicVolume() {
 		setMusicVolume(settings._musicVol);
 	return (settings._musicVol * 100 / MAX_VOLUME);  // percentage
 }
-
-
 
 int Music::increaseSoundVolume() {
 	if (++settings._soundVol > MAX_VOLUME)

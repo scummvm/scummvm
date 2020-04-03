@@ -39,10 +39,20 @@ typedef Common::HashMap<Common::String, class TileRule *> TileRuleMap;
  */
 class TileRule {
 public:
+	/**
+	 * Returns the tile rule with the given name, or NULL if none could be found
+	 */
 	static TileRule *findByName(const Common::String &name);
+
+	/**
+	 * Load tile information from xml.
+	 */
 	static void load();
 	static TileRuleMap _rules;   // A map of rule names to rules
 
+	/**
+	 * Load properties for the current rule node
+	 */
 	bool initFromConf(const ConfigElement &tileRuleConf);
 
 	Common::String _name;
@@ -63,22 +73,68 @@ public:
 	typedef Common::HashMap<TileId, Tile *> TileIdMap;
 	typedef Common::HashMap<Common::String, Tile *> TileStrMap;
 
+	/**
+	 * Loads all tilesets using the filename
+	 * indicated by 'filename' as a definition
+	 */
 	static void loadAll();
+
+	/**
+	 * Delete all tilesets
+	 */
 	static void unloadAll();
+
+	/**
+	 * Delete all tileset images
+	 */
 	static void unloadAllImages();
+
+	/**
+	 * Returns the tileset with the given name, if it exists
+	 */
 	static Tileset *get(const Common::String &name);
 
+	/**
+	 * Returns the tile that has the given name from any tileset, if there is one
+	 */
 	static Tile *findTileByName(const Common::String &name);
 	static Tile *findTileById(TileId id);
 
 public:
+	/**
+	 * Loads a tileset.
+	 */
 	void load(const ConfigElement &tilesetConf);
+
+	/**
+	 * Unload the current tileset
+	 */
 	void unload();
 	void unloadImages();
+
+	/**
+	 * Returns the tile with the given id in the tileset
+	 */
 	Tile *get(TileId id);
+
+	/**
+	 * Returns the tile with the given name from the tileset, if it exists
+	 */
 	Tile *getByName(const Common::String &name);
+
+	/**
+	 * Returns the image name for the tileset, if it exists
+	 */
 	Common::String getImageName() const;
+
+	/**
+	 * Returns the number of tiles in the tileset
+	 */
 	unsigned int numTiles() const;
+
+	/**
+	 * Returns the total number of frames in the tileset
+	 */
 	unsigned int numFrames() const;
 
 private:

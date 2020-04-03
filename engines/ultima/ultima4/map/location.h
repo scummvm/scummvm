@@ -49,10 +49,29 @@ class TurnCompleter;
 
 class Location : public Observable<Location *, MoveEvent &> {
 public:
+	/**
+	 * Add a new location to the stack, or start a new stack if 'prev' is NULL
+	 */
 	Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx, TurnCompleter *turnCompleter, Location *prev);
 
+	/**
+	 * Return the entire stack of objects at the given location.
+	 */
 	Std::vector<MapTile> tilesAt(MapCoords coords, bool &focus);
+
+	/**
+	 * Finds a valid replacement tile for the given location, using surrounding tiles
+	 * as guidelines to choose the new tile.  The new tile will only be chosen if it
+	 * is marked as a valid replacement (or waterReplacement) tile in tiles.xml.  If a valid replacement
+	 * cannot be found, it returns a "best guess" tile.
+	 */
 	TileId getReplacementTile(MapCoords atCoords, Tile const *forTile);
+
+	/**
+	 * Returns the current coordinates of the location given:
+	 *     If in combat - returns the coordinates of party member with focus
+	 *     If elsewhere - returns the coordinates of the avatar
+	 */
 	int getCurrentPosition(MapCoords *coords);
 	MoveResult move(Direction dir, bool userEvent);
 

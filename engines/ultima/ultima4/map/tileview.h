@@ -49,6 +49,10 @@ public:
 	void reinit();
 	void drawTile(MapTile &mapTile, bool focus, int x, int y);
 	void drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y);
+
+	/**
+	 * Draw a focus rectangle around the tile
+	 */
 	void drawFocus(int x, int y);
 	void loadTile(MapTile &mapTile);
 	void setTileset(Tileset *tileset);

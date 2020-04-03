@@ -66,9 +66,6 @@ bool SettingsData::operator!=(const SettingsData &s) const {
 }
 
 
-/**
- * Default contructor.  Settings is a singleton so this is private.
- */
 Settings::Settings() {
 	init();
 
@@ -77,18 +74,10 @@ Settings::Settings() {
 	_battleDiffs.push_back("Expert");
 }
 
-
-/**
- * Initialize the settings.
- */
 void Settings::init() {
 	read();
 }
 
-
-/**
- * Return the global instance of settings.
- */
 Settings &Settings::getInstance() {
 	if (_instance == NULL)
 		_instance = new Settings();
@@ -100,9 +89,6 @@ void Settings::setData(const SettingsData &data) {
 	*(SettingsData *)this = data;
 }
 
-/**
- * Read settings
- */
 bool Settings::read() {
 	Common::File settingsFile;
 
@@ -303,10 +289,6 @@ bool Settings::read() {
 	return true;
 }
 
-/**
- * Write the settings out into a human readable file.  This also
- * notifies observers that changes have been commited.
- */
 bool Settings::write() {
 #ifdef TODO
 	FILE *settingsFile;

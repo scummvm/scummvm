@@ -72,8 +72,20 @@ public:
 	void setView(StatsView view);
 
 	void clear();
+
+	/**
+	 * Sets the stats item to the previous in sequence.
+	 */
 	void prevItem();
+
+	/**
+	 * Sets the stats item to the next in sequence.
+	 */
 	void nextItem();
+
+	/**
+	 * Update the stats (ztats) box on the upper right of the screen.
+	 */
 	void update(bool avatarOnly = false);
 	virtual void update(Aura *aura);
 	virtual void update(Party *party, PartyEvent &event)    {
@@ -83,6 +95,10 @@ public:
 		update(); /* do a full update */
 	}
 	void highlightPlayer(int player);
+
+	/**
+	 * Redraws the entire stats area
+	 */
 	void redraw();
 
 	TextView *getMainArea() {
@@ -95,14 +111,49 @@ public:
 	}
 
 private:
+	/**
+	 * The basic party view.
+	 */
 	void showPartyView(bool avatarOnly);
+
+	/**
+	 * The individual character view.
+	 */
 	void showPlayerDetails();
+
+	/**
+	 * Weapons in inventory.
+	 */
 	void showWeapons();
+
+	/**
+	 * Armor in inventory.
+	 */
 	void showArmor();
+
+	/**
+	 * Equipment: touches, gems, keys, and sextants.
+	 */
 	void showEquipment();
+
+	/**
+	 * Items: runes, stones, and other miscellaneous quest items.
+	 */
 	void showItems();
+
+	/**
+	 * Unmixed reagents in inventory.
+	 */
 	void showReagents(bool active = false);
+
+	/**
+	 * Mixed reagents in inventory.
+	 */
 	void showMixtures();
+
+	/**
+	 * Sets the title of the stats area.
+	 */
 	void setTitle(const Common::String &s);
 
 	TextView _title;
@@ -122,6 +173,9 @@ class ReagentsMenuController : public MenuController {
 public:
 	ReagentsMenuController(Menu *menu, Ingredients *i, TextView *view) : MenuController(menu, view), _ingredients(i) { }
 
+	/**
+	 * Handles spell mixing for the Ultima V-style menu-system
+	 */
 	bool keyPressed(int key);
 
 private:

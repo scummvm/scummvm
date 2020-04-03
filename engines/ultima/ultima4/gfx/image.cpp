@@ -38,13 +38,6 @@ namespace Ultima4 {
 Image::Image() : _surface(nullptr), _disposeAfterUse(DisposeAfterUse::NO) {
 }
 
-/**
- * Creates a new image.  Scale is stored to allow drawing using U4
- * (320x200) coordinates, regardless of the actual image scale.
- * Indexed is true for palette based images, or false for RGB images.
- * Image type determines whether to create a hardware (i.e. video ram)
- * or software (i.e. normal ram) image.
- */
 Image *Image::create(int w, int h, bool paletted, Image::Type type) {
 	Image *im = new Image();
 	im->create(w, h, paletted);
@@ -63,9 +56,6 @@ void Image::blitFrom(const Graphics::Surface &src) {
 	_surface->blitFrom(src);
 }
 
-/**
- * Create a special purpose image the represents the whole screen.
- */
 Image *Image::createScreenImage() {
 	Image *screen = new Image();
 	screen->_surface = g_screen;
@@ -75,9 +65,6 @@ Image *Image::createScreenImage() {
 	return screen;
 }
 
-/**
- * Creates a duplicate of another image
- */
 Image *Image::duplicate(Image *image) {
 	bool alphaOn = image->isAlphaOn();
 	Image *im = create(image->width(), image->height(), false, HARDWARE);
@@ -99,17 +86,11 @@ Image *Image::duplicate(Image *image) {
 	return im;
 }
 
-/**
- * Frees the image.
- */
 Image::~Image() {
 	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _surface;
 }
 
-/**
- * Sets the palette
- */
 void Image::setPalette(const RGBA *colors, unsigned n_colors) {
 	ASSERT(_paletted, "imageSetPalette called on non-paletted image");
 
@@ -125,9 +106,6 @@ void Image::setPalette(const RGBA *colors, unsigned n_colors) {
 	delete[] pal;
 }
 
-/**
- * Copies the palette from another image.
- */
 void Image::setPaletteFromImage(const Image *src) {
 	ASSERT(_paletted && src->_paletted, "imageSetPaletteFromImage called on non-indexed image");
 
@@ -135,7 +113,6 @@ void Image::setPaletteFromImage(const Image *src) {
 	_surface->setPalette(srcPal, 0, PALETTE_COUNT);
 }
 
-// returns the color of the specified palette index
 RGBA Image::getPaletteColor(int index) {
 	RGBA color = RGBA(0, 0, 0, 0);
 
@@ -150,7 +127,6 @@ RGBA Image::getPaletteColor(int index) {
 	return color;
 }
 
-/* returns the palette index of the specified RGB color */
 int Image::getPaletteIndex(RGBA color) {
 	if (!_paletted)
 		return -1;
@@ -172,14 +148,12 @@ RGBA Image::setColor(uint8 r, uint8 g, uint8 b, uint8 a) {
 	return color;
 }
 
-/* sets the specified font colors */
 bool Image::setFontColor(ColorFG fg, ColorBG bg) {
 	if (!setFontColorFG(fg)) return false;
 	if (!setFontColorBG(bg)) return false;
 	return true;
 }
 
-/* sets the specified font colors */
 bool Image::setFontColorFG(ColorFG fg) {
 	switch (fg) {
 	case FG_GREY:
@@ -220,7 +194,6 @@ bool Image::setFontColorFG(ColorFG fg) {
 	return true;
 }
 
-/* sets the specified font colors */
 bool Image::setFontColorBG(ColorBG bg) {
 	switch (bg) {
 	case BG_BRIGHT:
@@ -234,7 +207,6 @@ bool Image::setFontColorBG(ColorBG bg) {
 	return true;
 }
 
-/* sets the specified palette index to the specified RGB color */
 bool Image::setPaletteIndex(unsigned int index, RGBA color) {
 	if (!_paletted)
 		return false;
@@ -355,11 +327,6 @@ void Image::setTransparentIndex(unsigned int index) {
 		_surface->setTransparentColor(index);
 }
 
-/**
- * Sets the palette index of a single pixel.  If the image is in
- * indexed mode, then the index is simply the palette entry number.
- * If the image is RGB, it is a packed RGB triplet.
- */
 void Image::putPixelIndex(int x, int y, unsigned int index) {
 	int bpp;
 	byte *p;
@@ -385,17 +352,11 @@ void Image::putPixelIndex(int x, int y, unsigned int index) {
 	}
 }
 
-/**
- * Fills a rectangle in the image with a given color.
- */
 void Image::fillRect(int x, int y, int w, int h, int r, int g, int b, int a) {
 	uint32 pixel = _surface->format.ARGBToColor(a, r, g, b);
 	_surface->fillRect(Common::Rect(x, y, x + w, y + h), pixel);
 }
 
-/**
- * Gets the color of a single pixel.
- */
 void Image::getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a) const {
 	unsigned int index;
 	byte r1, g1, b1, a1;
@@ -409,11 +370,6 @@ void Image::getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned in
 	a = a1;
 }
 
-/**
- * Gets the palette index of a single pixel.  If the image is in
- * indexed mode, then the index is simply the palette entry number.
- * If the image is RGB, it is a packed RGB triplet.
- */
 void Image::getPixelIndex(int x, int y, unsigned int &index) const {
 	int bpp = _surface->format.bytesPerPixel;
 
@@ -444,25 +400,16 @@ Graphics::ManagedSurface *Image::getSurface(Image *d) const {
 	return g_screen;
 }
 
-/**
- * Draws the image onto another image.
- */
 void Image::drawOn(Image *d, int x, int y) const {
 	Graphics::ManagedSurface *destSurface = getSurface(d);
 	destSurface->blitFrom(*_surface, Common::Point(x, y));
 }
 
-/**
- * Draws a piece of the image onto another image.
- */
 void Image::drawSubRectOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const {
 	Graphics::ManagedSurface *destSurface = getSurface(d);
 	destSurface->blitFrom(*_surface, Common::Rect(rx, ry, rx + rw, ry + rh), Common::Point(x, y));
 }
 
-/**
- * Draws a piece of the image onto another image, inverted.
- */
 void Image::drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const {
 	Graphics::ManagedSurface *destSurface = getSurface(d);
 	int i;
@@ -482,10 +429,6 @@ void Image::drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw
 	}
 }
 
-/**
- * Dumps the image to a file.  The file is always saved in .bmp
- * format.  This is mainly used for debugging.
- */
 void Image::save(const Common::String &filename) {
 #ifdef TODO
 	SDL_SaveBMP(surface, filename.c_str());

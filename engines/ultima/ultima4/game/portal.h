@@ -64,7 +64,16 @@ struct Portal {
 	bool _exitPortal;
 };
 
+/**
+ * Creates a dungeon ladder portal based on the action given
+ */
 void createDngLadder(Location *location, PortalTriggerAction action, Portal *p);
+
+/**
+ * Finds a portal at the given (x,y,z) coords that will work with the action given
+ * and uses it.  If in a dungeon and trying to use a ladder, it creates a portal
+ * based on the ladder and uses it.
+ */
 int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action);
 
 } // End of namespace Ultima4

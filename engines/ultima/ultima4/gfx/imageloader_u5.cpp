@@ -33,10 +33,6 @@ namespace Ultima4 {
 
 using Std::vector;
 
-/**
- * Loads in the lzw-compressed image and apply the standard U4 16 or
- * 256 color palette.
- */
 Image *U5LzwImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		errorFatal("dimensions not set for u5lzw image");

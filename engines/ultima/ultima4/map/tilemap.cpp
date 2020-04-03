@@ -39,9 +39,6 @@ Debug dbg("debug/tilemap.txt", "TileMap");
  */
 TileMap::TileIndexMapMap TileMap::_tileMaps;
 
-/**
- * Load all tilemaps from the specified xml file
- */
 void TileMap::loadAll() {
 	const Config *config = Config::getInstance();
 	vector<ConfigElement> conf;
@@ -65,9 +62,6 @@ void TileMap::loadAll() {
 	}
 }
 
-/**
- * Delete all tilemaps
- */
 void TileMap::unloadAll() {
 	TileIndexMapMap::iterator map;
 
@@ -81,11 +75,6 @@ void TileMap::unloadAll() {
 	_tileMaps.clear();
 }
 
-/**
- * Loads a tile map which translates between tile indices and tile
- * names.  Tile maps are useful to translate from dos tile indices to
- * xu4 tile ids.
- */
 void TileMap::load(const ConfigElement &tilemapConf) {
 	TileMap *tm = new TileMap;
 
@@ -134,18 +123,12 @@ void TileMap::load(const ConfigElement &tilemapConf) {
 	_tileMaps[name] = tm;
 }
 
-/**
- * Returns the Tile index map with the specified name
- */
 TileMap *TileMap::get(Common::String name) {
 	if (_tileMaps.find(name) != _tileMaps.end())
 		return _tileMaps[name];
 	else return NULL;
 }
 
-/**
- * Translates a raw index to a MapTile.
- */
 MapTile TileMap::translate(unsigned int index) {
 	return _tileMap[index];
 }

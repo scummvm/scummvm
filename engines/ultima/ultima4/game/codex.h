@@ -45,6 +45,9 @@ enum CodexEjectCode {
 	CODEX_EJECT_BAD_INFINITY
 };
 
+/**
+ * Begins the Chamber of the Codex sequence
+ */
 void codexStart();
 
 } // End of namespace Ultima4

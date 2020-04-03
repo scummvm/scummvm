@@ -719,10 +719,6 @@ bool itemConditionsMet(unsigned char conditions) {
 	return true;
 }
 
-/**
- * Returns an item location record if a searchable object exists at
- * the given location. NULL is returned if nothing is there.
- */
 const ItemLocation *itemAtLocation(const Map *map, const Coords &coords) {
 	unsigned int i;
 	for (i = 0; i < N_ITEMS; i++) {
@@ -735,9 +731,6 @@ const ItemLocation *itemAtLocation(const Map *map, const Coords &coords) {
 	return NULL;
 }
 
-/**
- * Uses the item indicated by 'shortname'
- */
 void itemUse(const Common::String &shortname) {
 	unsigned int i;
 	const ItemLocation *item = NULL;

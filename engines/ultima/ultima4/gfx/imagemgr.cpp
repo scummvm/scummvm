@@ -455,10 +455,6 @@ void ImageMgr::fixupAbacus(Image *im, int prescale) {
 	im->fillRect(24 * prescale, 199 * prescale, prescale * 8, prescale, 0, 255, 80); /* green */
 }
 
-/**
- * Swap blue and green for the dungeon walls when facing north or
- * south.
- */
 void ImageMgr::fixupDungNS(Image *im, int prescale) {
 	for (int y = 0; y < im->height(); y++) {
 		for (int x = 0; x < im->width(); x++) {
@@ -472,10 +468,6 @@ void ImageMgr::fixupDungNS(Image *im, int prescale) {
 	}
 }
 
-/**
- * The FMTowns images have a different screen dimension. This moves them up to what xu4 is accustomed to.
- * south.
- */
 void ImageMgr::fixupFMTowns(Image *im, int prescale) {
 	for (int y = 20; y < im->height(); y++) {
 		for (int x = 0; x < im->width(); x++) {
@@ -486,9 +478,6 @@ void ImageMgr::fixupFMTowns(Image *im, int prescale) {
 	}
 }
 
-/**
- * Returns information for the given image set.
- */
 ImageSet *ImageMgr::getSet(const Common::String &setname) {
 	Std::map<Common::String, ImageSet *>::iterator i = _imageSets.find(setname);
 	if (i != _imageSets.end())
@@ -497,16 +486,10 @@ ImageSet *ImageMgr::getSet(const Common::String &setname) {
 		return NULL;
 }
 
-/**
- * Returns image information for the current image set.
- */
 ImageInfo *ImageMgr::getInfo(const Common::String &name) {
 	return getInfoFromSet(name, _baseSet);
 }
 
-/**
- * Returns information for the given image set.
- */
 ImageInfo *ImageMgr::getInfoFromSet(const Common::String &name, ImageSet *imageset) {
 	if (!imageset)
 		return NULL;
@@ -580,9 +563,6 @@ U4FILE *ImageMgr::getImageFile(ImageInfo *info) {
 	return file;
 }
 
-/**
- * Load in a background image from a ".ega" file.
- */
 ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 	ImageInfo *info = getInfo(name);
 	if (!info)
@@ -685,9 +665,6 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 	return info;
 }
 
-/**
- * Returns information for the given image set.
- */
 SubImage *ImageMgr::getSubImage(const Common::String &name) {
 	Common::String setname;
 
@@ -707,9 +684,6 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
 	return NULL;
 }
 
-/**
- * Free up any background images used only in the animations.
- */
 void ImageMgr::freeIntroBackgrounds() {
 	for (Std::map<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++) {
 		ImageSet *set = i->_value;
@@ -727,9 +701,6 @@ const vector<Common::String> &ImageMgr::getSetNames() {
 	return _imageSetNames;
 }
 
-/**
- * Find the new base image set when settings have changed.
- */
 void ImageMgr::update(Settings *newSettings) {
 	Common::String setname;
 

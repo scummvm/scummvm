@@ -53,11 +53,6 @@ int KeyHandler::setKeyRepeat(int delay, int interval) {
 #endif
 }
 
-/**
- * Handles any and all keystrokes.
- * Generally used to exit the application, switch applications,
- * minimize, maximize, etc.
- */
 bool KeyHandler::globalHandler(int key) {
 	switch (key) {
 #if defined(MACOSX)
@@ -76,9 +71,6 @@ bool KeyHandler::globalHandler(int key) {
 	}
 }
 
-/**
- * A default key handler that should be valid everywhere
- */
 bool KeyHandler::defaultHandler(int key, void *data) {
 	bool valid = true;
 
@@ -95,21 +87,10 @@ bool KeyHandler::defaultHandler(int key, void *data) {
 	return valid;
 }
 
-/**
- * A key handler that ignores keypresses
- */
 bool KeyHandler::ignoreKeys(int key, void *data) {
 	return true;
 }
 
-/**
- * Handles a keypress.
- * First it makes sure the key combination is not ignored
- * by the current key handler. Then, it passes the keypress
- * through the global key handler. If the global handler
- * does not process the keystroke, then the key handler
- * handles it itself by calling its handler callback function.
- */
 bool KeyHandler::handle(int key) {
 	bool processed = false;
 	if (!isKeyIgnored(key)) {
@@ -121,9 +102,6 @@ bool KeyHandler::handle(int key) {
 	return processed;
 }
 
-/**
- * Returns true if the key or key combination is always ignored by xu4
- */
 bool KeyHandler::isKeyIgnored(int key) {
 	switch (key) {
 	case U4_RIGHT_SHIFT:
@@ -162,12 +140,6 @@ KeyHandler *KeyHandlerController::getKeyHandler() {
 	return _handler;
 }
 
-/**
- * Constructs a timed event manager object.
- * Adds a timer callback to the SDL subsystem, which
- * will drive all of the timed events that this object
- * controls.
- */
 TimedEventMgr::TimedEventMgr(int i) : _baseInterval(i) {
 	/* start the SDL timer */
 #ifdef TODO
@@ -181,12 +153,6 @@ TimedEventMgr::TimedEventMgr(int i) : _baseInterval(i) {
 	_instances++;
 }
 
-/**
- * Destructs a timed event manager object.
- * It removes the callback timer and un-initializes the
- * SDL subsystem if there are no other active TimedEventMgr
- * objects.
- */
 TimedEventMgr::~TimedEventMgr() {
 #ifdef TODO
 	SDL_RemoveTimer(static_cast<SDL_TimerID>(id));
@@ -199,9 +165,6 @@ TimedEventMgr::~TimedEventMgr() {
 		_instances--;
 }
 
-/**
- * Adds an SDL timer event to the message queue.
- */
 unsigned int TimedEventMgr::callback(unsigned int interval, void *param) {
 #ifdef TODO
 	Common::Event event;
@@ -215,9 +178,6 @@ unsigned int TimedEventMgr::callback(unsigned int interval, void *param) {
 	return interval;
 }
 
-/**
- * Re-initializes the timer manager to a new timer granularity
- */
 void TimedEventMgr::reset(unsigned int interval) {
 	_baseInterval = interval;
 	stop();
@@ -240,9 +200,6 @@ void TimedEventMgr::start() {
 #endif
 }
 
-/**
- * Constructs an event handler object.
- */
 EventHandler::EventHandler() : _timer(eventTimerGranularity), _updateScreen(NULL),
 		_lastTickTime(0) {
 }
@@ -342,11 +299,6 @@ static uint32 sleepTimerCallback(uint32 interval, void *) {
 	return 0;
 }
 
-/**
- * Delays program execution for the specified number of milliseconds.
- * This doesn't actually stop events, but it stops the user from interacting
- * While some important event happens (e.g., getting hit by a cannon ball or a spell effect).
- */
 void EventHandler::sleep(unsigned int msec) {
 	g_system->delayMillis(msec);
 }
@@ -398,9 +350,6 @@ void EventHandler::setScreenUpdate(void (*updateScreen)(void)) {
 	this->_updateScreen = updateScreen;
 }
 
-/**
- * Returns true if the queue is empty of events that match 'mask'.
- */
 bool EventHandler::timerQueueEmpty() {
 #ifdef TODO
 	Common::Event event;
@@ -414,21 +363,12 @@ bool EventHandler::timerQueueEmpty() {
 #endif
 }
 
-
-/**
- * Adds a key handler to the stack.
- */
 void EventHandler::pushKeyHandler(KeyHandler kh) {
 	KeyHandler *new_kh = new KeyHandler(kh);
 	KeyHandlerController *khc = new KeyHandlerController(new_kh);
 	pushController(khc);
 }
 
-/**
- * Pops a key handler off the stack.
- * Returns a pointer to the resulting key handler after
- * the current handler is popped.
- */
 void EventHandler::popKeyHandler() {
 	if (_controllers.empty())
 		return;
@@ -436,10 +376,6 @@ void EventHandler::popKeyHandler() {
 	popController();
 }
 
-/**
- * Returns a pointer to the current key handler.
- * Returns NULL if there is no key handler.
- */
 KeyHandler *EventHandler::getKeyHandler() const {
 	if (_controllers.empty())
 		return NULL;
@@ -452,13 +388,6 @@ KeyHandler *EventHandler::getKeyHandler() const {
 	return khc->getKeyHandler();
 }
 
-/**
- * Eliminates all key handlers and begins stack with new handler.
- * This pops all key handlers off the stack and adds
- * the key handler provided to the stack, making it the
- * only key handler left. Use this function only if you
- * are sure the key handlers in the stack are disposable.
- */
 void EventHandler::setKeyHandler(KeyHandler kh) {
 	while (popController() != NULL) {}
 	pushKeyHandler(kh);

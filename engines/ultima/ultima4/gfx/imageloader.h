@@ -57,7 +57,14 @@ public:
  */
 class ImageLoader {
 protected:
+	/**
+	 * Fill in the image pixel data from an uncompressed string of bytes.
+	 */
 	static void setFromRawData(Image *image, int width, int height, int bpp, const byte *rawData);
+
+	/**
+	 * Sets the image from a source image
+	 */
 	static void setFromSurface(Image *image, const Graphics::ManagedSurface &src);
 public:
 	ImageLoader() {}

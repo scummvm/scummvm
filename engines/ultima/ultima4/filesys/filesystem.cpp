@@ -35,9 +35,6 @@ const char Path::delim = '/';
 #define S_IFDIR _S_IFDIR
 #endif
 
-/**
- * Creates a path to a directory or file
- */
 Path::Path(const Common::String &p) : path(p) {
 	unsigned int pos;
 	bool _exists = false, isDir = false;
@@ -61,58 +58,41 @@ Path::Path(const Common::String &p) : path(p) {
 	}
 }
 
-/**
- * Returns true if the path exists in the filesystem
- */
 bool Path::exists() const {
 	return Common::FSNode(path).exists();
 }
 
-/**
- * Returns true if the path points to a file
- */
 bool Path::isFile() const {
 	Common::FSNode node(path);
 	return node.exists() && !node.isDirectory();
 }
 
-/**
- * Returns true if the path points to a directory
- */
 bool Path::isDir() const {
 	Common::FSNode node(path);
 	return node.exists() && node.isDirectory();
 }
 
-/**
- * Returns the directory indicated in the path.
- */
 Common::String Path::getDir() const {
 	Common::FSNode node(path);
 	return !node.exists() || node.isDirectory() ? node.getPath() : node.getParent().getPath();
 }
 
-/** Returns the full filename of the file designated in the path */
 Common::String Path::getFilename() const        {
 	return (ext.empty()) ? file : file + Common::String(".") + ext;
 }
+
 Common::String Path::getBaseFilename() const    {
-	return file;    /**< Returns the base filename of the file */
-}
-Common::String Path::getExt() const             {
-	return ext;    /**< Returns the extension of the file (if it exists) */
+	return file;
 }
 
-/**
- * Returns true if the given path exists in the filesystem
- */
+Common::String Path::getExt() const             {
+	return ext;
+}
+
 bool Path::exists(const Common::String &path) {
 	return Common::FSNode(path).exists();
 }
 
-/**
- * Opens a file and attempts to create the directory structure beneath it before opening the file.
- */
 Common::SeekableReadStream *FileSystem::openForReading(const Common::String &filepath) {
 	Common::File *f = new Common::File();
 	if (f->open(filepath)) {
@@ -127,20 +107,11 @@ Common::WriteStream *FileSystem::openForWriting(const Common::String &filepath) 
 	return g_system->getSavefileManager()->openForSaving(filepath);
 }
 
-
-/**
- * Create the directory that composes the path.
- * If any directories that make up the path do not exist,
- * they are created.
- */
 void FileSystem::createDirectory(Path &path) {
 	Common::FSNode node(path.getPath());
 	node.createDirectory();
 }
 
-/**
- * Create a directory that composes the path
- */
 void FileSystem::createDirectory(const Common::String &filepath) {
 	Path path(filepath);
 	createDirectory(path);

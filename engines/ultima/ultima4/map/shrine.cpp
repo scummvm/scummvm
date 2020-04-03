@@ -84,9 +84,11 @@ Common::String Shrine::getName() {
 	}
 	return _name;
 }
+
 Virtue Shrine::getVirtue() const    {
 	return _virtue;
 }
+
 Common::String Shrine::getMantra() const    {
 	return _mantra;
 }
@@ -94,15 +96,12 @@ Common::String Shrine::getMantra() const    {
 void Shrine::setVirtue(Virtue v)    {
 	_virtue = v;
 }
+
 void Shrine::setMantra(Common::String m)    {
 	_mantra = m;
 }
 
-/**
- * Enter the shrine
- */
 void Shrine::enter() {
-
 	if (shrineAdvice.empty()) {
 		U4FILE *avatar = u4fopen("avatar.exe");
 		if (!avatar)

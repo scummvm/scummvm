@@ -38,6 +38,9 @@ struct RGBA;
  */
 class U4RawImageLoader : public ImageLoader {
 public:
+	/**
+	 * Loads in the raw image and apply the standard U4 16 or 256 color palette.
+	 */
 	virtual Image *load(U4FILE *file, int width, int height, int bpp);
 };
 

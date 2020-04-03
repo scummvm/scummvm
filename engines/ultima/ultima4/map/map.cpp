@@ -129,15 +129,6 @@ MapCoords &MapCoords::move(int dx, int dy, const Map *map) {
 	return *this;
 }
 
-/**
- * Returns a mask of directions that indicate where one point is relative
- * to another.  For instance, if the object at (x, y) is
- * northeast of (c.x, c.y), then this function returns
- * (MASK_DIR(DIR_NORTH) | MASK_DIR(DIR_EAST))
- * This function also takes into account map boundaries and adjusts
- * itself accordingly. If the two coordinates are not on the same z-plane,
- * then this function return DIR_NONE.
- */
 int MapCoords::getRelativeDirection(const MapCoords &c, const Map *map) const {
 	int dx, dy, dirmask;
 
@@ -178,13 +169,6 @@ int MapCoords::getRelativeDirection(const MapCoords &c, const Map *map) const {
 	return dirmask;
 }
 
-/**
- * Finds the appropriate direction to travel to get from one point to
- * another.  This algorithm will avoid getting trapped behind simple
- * obstacles, but still fails with anything mildly complicated.
- * This function also takes into account map boundaries and adjusts
- * itself accordingly, provided the 'map' parameter is passed
- */
 Direction MapCoords::pathTo(const MapCoords &c, int valid_directions, bool towards, const Map *map) const {
 	int directionsToObject;
 
@@ -202,18 +186,10 @@ Direction MapCoords::pathTo(const MapCoords &c, int valid_directions, bool towar
 	else return dirRandomDir(valid_directions);
 }
 
-/**
- * Finds the appropriate direction to travel to move away from one point
- */
 Direction MapCoords::pathAway(const MapCoords &c, int valid_directions) const {
 	return pathTo(c, valid_directions, false);
 }
 
-/**
- * Finds the movement distance (not using diagonals) from point a to point b
- * on a map, taking into account map boundaries and such.  If the two coords
- * are not on the same z-plane, then this function returns -1;
- */
 int MapCoords::movementDistance(const MapCoords &c, const Map *map) const {
 	int dirmask = DIR_NONE;
 	int dist = 0;
@@ -245,11 +221,6 @@ int MapCoords::movementDistance(const MapCoords &c, const Map *map) const {
 	return dist;
 }
 
-/**
- * Finds the distance (using diagonals) from point a to point b on a map
- * If the two coordinates are not on the same z-plane, then this function
- * returns -1. This function also takes into account map boundaries.
- */
 int MapCoords::distance(const MapCoords &c, const Map *map) const {
 	int dist = movementDistance(c, map);
 	if (dist <= 0)
@@ -261,9 +232,7 @@ int MapCoords::distance(const MapCoords &c, const Map *map) const {
 	return dist;
 }
 
-/**
- * Map Class Implementation
- */
+/*-------------------------------------------------------------------*/
 
 Map::Map() {
 	_annotations = new AnnotationMgr();
@@ -289,10 +258,6 @@ Common::String Map::getName() {
 	return _baseSource._fname;
 }
 
-/**
- * Returns the object at the given (x,y,z) coords, if one exists.
- * Otherwise, returns NULL.
- */
 Object *Map::objectAt(const Coords &coords) {
 	/* FIXME: return a list instead of one object */
 	ObjectDeque::const_iterator i;
@@ -315,11 +280,6 @@ Object *Map::objectAt(const Coords &coords) {
 	return objAt;
 }
 
-/**
- * Returns the portal for the correspoding action(s) given.
- * If there is no portal that corresponds to the actions flagged
- * by 'actionFlags' at the given (x,y,z) coords, it returns NULL.
- */
 const Portal *Map::portalAt(const Coords &coords, int actionFlags) {
 	PortalList::const_iterator i;
 
@@ -331,9 +291,6 @@ const Portal *Map::portalAt(const Coords &coords, int actionFlags) {
 	return NULL;
 }
 
-/**
- * Returns the raw tile for the given (x,y,z) coords for the given map
- */
 MapTile *Map::getTileFromData(const Coords &coords) {
 	static MapTile blank(0);
 
@@ -344,11 +301,6 @@ MapTile *Map::getTileFromData(const Coords &coords) {
 	return &_data[index];
 }
 
-/**
- * Returns the current ground tile at the given point on a map.  Visual-only
- * annotations like moongates and attack icons are ignored.  Any walkable tiles
- * are taken into account (treasure chests, ships, balloon, etc.)
- */
 MapTile *Map::tileAt(const Coords &coords, int withObjects) {
 	/* FIXME: this should return a list of tiles, with the most visible at the front */
 	MapTile *tile;
@@ -381,18 +333,10 @@ const Tile *Map::tileTypeAt(const Coords &coords, int withObjects) {
 	return tile->getTileType();
 }
 
-/**
- * Returns true if the given map is the world map
- */
 bool Map::isWorldMap() {
 	return _type == WORLD;
 }
 
-
-
-/**
- * Returns true if the map is enclosed (to see if gem layouts should cut themselves off)
- */
 bool Map::isEnclosed(const Coords &party) {
 	unsigned int x, y;
 	int *path_data;
@@ -441,9 +385,6 @@ void Map::findWalkability(Coords coords, int *path_data) {
 	} else path_data[index] = 0;
 }
 
-/**
- * Adds a creature object to the given map
- */
 Creature *Map::addCreature(const Creature *creature, Coords coords) {
 	Creature *m = new Creature;
 
@@ -471,9 +412,6 @@ Creature *Map::addCreature(const Creature *creature, Coords coords) {
 	return m;
 }
 
-/**
- * Adds an object to the given map
- */
 Object *Map::addObject(Object *obj, Coords coords) {
 	_objects.push_front(obj);
 	return obj;
@@ -493,14 +431,6 @@ Object *Map::addObject(MapTile tile, MapTile prevtile, Coords coords) {
 	return obj;
 }
 
-/**
- * Removes an object from the map
- */
-
-// This function should only be used when not iterating through an
-// ObjectDeque, as the iterator will be invalidated and the
-// results will be unpredictable.  Instead, use the function
-// below.
 void Map::removeObject(const Object *rem, bool deleteObject) {
 	ObjectDeque::iterator i;
 	for (i = _objects.begin(); i != _objects.end(); i++) {
@@ -521,11 +451,6 @@ ObjectDeque::iterator Map::removeObject(ObjectDeque::iterator rem, bool deleteOb
 	return _objects.erase(rem);
 }
 
-/**
- * Moves all of the objects on the given map.
- * Returns an attacking object if there is a creature attacking.
- * Also performs special creature actions and creature effects.
- */
 Creature *Map::moveObjects(MapCoords avatar) {
 	Creature *attacker = NULL;
 
@@ -567,10 +492,6 @@ Creature *Map::moveObjects(MapCoords avatar) {
 	return attacker;
 }
 
-/**
- * Resets object animations to a value that is acceptable for
- * savegame compatibility with u4dos.
- */
 void Map::resetObjectAnimations() {
 	ObjectDeque::iterator i;
 
@@ -582,16 +503,10 @@ void Map::resetObjectAnimations() {
 	}
 }
 
-/**
- * Removes all objects from the given map
- */
 void Map::clearObjects() {
 	_objects.clear();
 }
 
-/**
- * Returns the number of creatures on the given map
- */
 int Map::getNumberOfCreatures() {
 	ObjectDeque::const_iterator i;
 	int n = 0;
@@ -606,9 +521,6 @@ int Map::getNumberOfCreatures() {
 	return n;
 }
 
-/**
- * Returns a mask of valid moves for the given transport on the given map
- */
 int Map::getValidMoves(MapCoords from, MapTile transport) {
 	int retval;
 	Direction d;
@@ -764,9 +676,6 @@ bool Map::move(Object *obj, Direction d) {
 	return false;
 }
 
-/**
- * Alerts the guards that the avatar is doing something bad
- */
 void Map::alertGuards() {
 	ObjectDeque::iterator i;
 	const Creature *m;

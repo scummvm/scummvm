@@ -57,12 +57,22 @@ class MapLoader {
 public:
 	virtual ~MapLoader() {}
 
+	/**
+	 * Gets a map loader for the given map type.
+	 */
 	static MapLoader *getLoader(Map::Type type);
 
 	virtual bool load(Map *map) = 0;
 
 protected:
+	/**
+	 * Registers a loader for the given map type.
+	 */
 	static MapLoader *registerLoader(MapLoader *loader, Map::Type type);
+
+	/**
+	 * Loads raw data from the given file.
+	 */
 	static bool loadData(Map *map, U4FILE *f);
 	static bool isChunkCompressed(Map *map, int chunk);
 
@@ -74,34 +84,45 @@ class CityMapLoader : public MapLoader {
 	static MapLoader *_instance;
 
 public:
+	/**
+	 * Load city data from 'ult' and 'tlk' files.
+	 */
 	virtual bool load(Map *map);
-
 };
 
 class ConMapLoader : public MapLoader {
 	static MapLoader *_instance;
 
 public:
+	/**
+	 * Loads a combat map from the 'con' file
+	 */
 	virtual bool load(Map *map);
-
 };
 
 class DngMapLoader : public MapLoader {
 	static MapLoader *_instance;
 
 public:
+	/**
+	 * Loads a dungeon map from the 'dng' file
+	 */
 	virtual bool load(Map *map);
 
 private:
+	/**
+	 * Loads a dungeon room into map->dungeon->room
+	 */
 	void initDungeonRoom(Dungeon *dng, int room);
 };
 
 class WorldMapLoader : public MapLoader {
 	static MapLoader *_instance;
-
 public:
+	/**
+	 * Loads the world map data in from the 'world' file.
+	 */
 	virtual bool load(Map *map);
-
 };
 
 } // End of namespace Ultima4

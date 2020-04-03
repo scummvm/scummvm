@@ -49,9 +49,6 @@ EventHandler *EventHandler::getInstance() {
 	return _instance;
 }
 
-/**
- * Waits a given number of milliseconds before continuing
- */
 void EventHandler::wait_msecs(unsigned int msecs) {
 	int msecs_per_cycle = (1000 / settings._gameCyclesPerSecond);
 	int cycles = msecs / msecs_per_cycle;
@@ -65,9 +62,6 @@ void EventHandler::wait_msecs(unsigned int msecs) {
 	EventHandler::sleep(msecs % msecs_per_cycle);
 }
 
-/**
- * Waits a given number of game cycles before continuing
- */
 void EventHandler::wait_cycles(unsigned int cycles) {
 	WaitController waitCtrl(cycles);
 	getInstance()->pushController(&waitCtrl);
@@ -81,12 +75,15 @@ void EventHandler::setControllerDone(bool done) {
 		controllerStopped_helper();
 #endif
 }     /**< Sets the controller exit flag for the event handler */
+
 bool EventHandler::getControllerDone()         {
 	return _controllerDone;    /**< Returns the current value of the global exit flag */
 }
+
 void EventHandler::end() {
 	_ended = true;    /**< End all event processing */
 }
+
 TimedEventMgr *EventHandler::getTimer()  {
 	return &_timer;
 }
@@ -107,7 +104,6 @@ Controller *EventHandler::popController() {
 
 	return getController();
 }
-
 
 Controller *EventHandler::getController() const {
 	if (_controllers.empty())
@@ -133,14 +129,11 @@ TimedEvent::TimedEvent(TimedEvent::Callback cb, int i, void *d) :
 TimedEvent::Callback TimedEvent::getCallback() const    {
 	return _callback;
 }
+
 void *TimedEvent::getData()                             {
 	return _data;
 }
 
-/**
- * Advances the timed event forward a tick.
- * When (current >= interval), then it executes its callback function.
- */
 void TimedEvent::tick() {
 	if (++_current >= _interval) {
 		(*_callback)(_data);
@@ -148,23 +141,14 @@ void TimedEvent::tick() {
 	}
 }
 
-/**
- * Returns true if the event queue is locked
- */
 bool TimedEventMgr::isLocked() const {
 	return _locked;
 }
 
-/**
- * Adds a timed event to the event queue.
- */
 void TimedEventMgr::add(TimedEvent::Callback theCallback, int interval, void *data) {
 	_events.push_back(new TimedEvent(theCallback, interval, data));
 }
 
-/**
- * Removes a timed event from the event queue.
- */
 TimedEventMgr::List::iterator TimedEventMgr::remove(List::iterator i) {
 	if (isLocked()) {
 		_deferredRemovals.push_back(*i);
@@ -195,9 +179,6 @@ void TimedEventMgr::remove(TimedEvent::Callback theCallback, void *data) {
 	}
 }
 
-/**
- * Runs each of the callback functions of the TimedEvents associated with this manager.
- */
 void TimedEventMgr::tick() {
 	List::iterator i;
 	lock();
@@ -215,6 +196,7 @@ void TimedEventMgr::tick() {
 void TimedEventMgr::lock()      {
 	_locked = true;
 }
+
 void TimedEventMgr::unlock()    {
 	_locked = false;
 }
@@ -228,9 +210,6 @@ void EventHandler::popMouseAreaSet() {
 		_mouseAreaSets.pop_front();
 }
 
-/**
- * Get the currently active mouse area set off the top of the stack.
- */
 const MouseArea *EventHandler::getMouseAreaSet() const {
 	if (_mouseAreaSets.size())
 		return _mouseAreaSets.front();
@@ -238,12 +217,6 @@ const MouseArea *EventHandler::getMouseAreaSet() const {
 		return NULL;
 }
 
-/**
- * @param maxlen the maximum length of the Common::String
- * @param screenX the screen column where to begin input
- * @param screenY the screen row where to begin input
- * @param accepted_chars a Common::String characters to be accepted for input
- */
 ReadStringController::ReadStringController(int maxlen, int screenX, int screenY, const Common::String &accepted_chars) {
 	_maxLen = maxlen;
 	_screenX = screenX;

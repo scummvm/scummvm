@@ -55,7 +55,15 @@ public:
 		CASTLES,
 		MAX
 	};
+
+	/**
+	 * Initiliaze the music
+	 */
 	Music();
+
+	/**
+	 * Stop playing the music and cleanup
+	 */
 	~Music();
 
 
@@ -70,15 +78,32 @@ public:
 	static bool isPlaying() {
 		return getInstance()->isPlaying_sys();
 	}
+
+	/**
+	 * Ensures that the music is playing if it is supposed to be, or off
+	 * if it is supposed to be turned off.
+	 */
 	static void callback(void *);
 
 	void init() {}
+
+	/**
+	 * Main music loop
+	 */
 	void play();
 	void stop()         {
 		on = false;    /**< Stop playing music */
 		stopMid();
 	}
+
+	/**
+	 * Fade out the music
+	 */
 	void fadeOut(int msecs);
+
+	/**
+	 * Fade in the music
+	 */
 	void fadeIn(int msecs, bool loadFromMap);
 	void lordBritish()  {
 		playMid(RULEBRIT);    /**< Music when you talk to Lord British */
@@ -97,8 +122,16 @@ public:
 		on = true; // Force iOS to turn this back on from going in the background.
 #endif
 		playMid(_introMid);
-	} /**< Play the introduction music on title loadup */
+	}
+
+	/**
+	 * Cycle through the introduction music
+	 */
 	void introSwitch(int n);
+
+	/**
+	 * Toggle the music on/off (usually by pressing 'v')
+	 */
 	bool toggle();
 
 	int decreaseMusicVolume();
@@ -119,10 +152,22 @@ public:
 private:
 	void create_sys();
 	void destroy_sys();
+
+	/**
+	 * Set, increase, and decrease music volume
+	 */
 	void setMusicVolume_sys(int volume);
+
+	/**
+	 * Set, increase, and decrease sound volume
+	 */
 	void setSoundVolume_sys(int volume);
 	void fadeOut_sys(int msecs);
 	void fadeIn_sys(int msecs, bool loadFromMap);
+
+	/**
+	 * System specific version to check if the version is still playing.
+	 */
 	bool isPlaying_sys();
 
 	static Music *instance;
@@ -131,7 +176,15 @@ private:
 
 
 	bool load_sys(const Common::String &pathname);
+
+	/**
+	 * Play a midi file
+	 */
 	void playMid(Type music);
+
+	/**
+	 * Stop playing a MIDI file.
+	 */
 	void stopMid();
 
 	bool load(Type music);
