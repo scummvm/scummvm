@@ -98,7 +98,7 @@ Frame::Frame(const Frame &frame) {
 
 	debugC(1, kDebugLoading, "Frame. action: %d transType: %d transDuration: %d", _actionId, _transType, _transDuration);
 
-	_sprites.resize(_numChannels + 1);
+	_sprites.reserve(_numChannels + 1);
 
 	for (uint16 i = 0; i <= _numChannels; i++) {
 		_sprites[i] = new Sprite(*frame._sprites[i]);
