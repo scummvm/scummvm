@@ -102,7 +102,7 @@ Lingo::~Lingo() {
 }
 
 ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
-	if (type > ARRAYSIZE(_archives[_archiveIndex].scriptContexts) ||
+	if (type >= ARRAYSIZE(_archives[_archiveIndex].scriptContexts) ||
 			!_archives[_archiveIndex].scriptContexts[type].contains(id)) {
 		return NULL;
 	}
