@@ -242,7 +242,7 @@ bool GlkInterface::initPictures() {
 		return true;
 	}
 
-	if (h_version == V6)
+	if (h_version == V6 && _storyId != MILLIWAYS)
 		error("Could not locate MG1 file");
 	return false;
 }
