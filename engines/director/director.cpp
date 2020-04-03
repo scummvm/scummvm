@@ -333,7 +333,10 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 void DirectorEngine::enqueueAllMovies() {
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::FSList files;
-	dir.getChildren(files, Common::FSNode::kListFilesOnly);
+	if (!dir.getChildren(files, Common::FSNode::kListFilesOnly)) {
+		warning("DirectorEngine::enqueueAllMovies(): Failed inquiring file list");
+		return;
+	}
 
 	for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file)
 		_movieQueue.push_back((*file).getName());

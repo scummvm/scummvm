@@ -654,7 +654,11 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	byte foreColor = sp->_foreColor;
 	byte backColor = sp->_backColor;
 	int lineSize = sp->_thickness & 0x3;
-	if (spriteType == kCastMemberSprite && sp->_cast != NULL) {
+	if (spriteType == kCastMemberSprite) {
+		if (!sp->_cast) {
+			warning("Frame::renderShape(): kCastMemberSprite has no cast defined");
+			return;
+		}
 		switch (sp->_cast->_type) {
 		case kCastShape:
 			{
