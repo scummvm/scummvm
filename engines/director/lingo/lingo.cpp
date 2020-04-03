@@ -388,8 +388,11 @@ int Datum::toInt() {
 		// no-op
 		break;
 	case FLOAT:
-		u.i = (int)u.f;
-		break;
+		{
+			int tmp = (int)u.f;
+			u.i = tmp;
+			break;
+		}
 	default:
 		warning("Incorrect operation toInt() for type: %s", type2str());
 	}
@@ -420,7 +423,10 @@ double Datum::toFloat() {
 		u.f = 0.0;
 		break;
 	case INT:
-		u.f = (double)u.i;
+		{
+			double tmp = (double)u.i;
+			u.f = tmp;
+		}
 		break;
 	case FLOAT:
 		// no-op
