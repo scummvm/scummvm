@@ -297,8 +297,8 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 
 	// play #done
 	if (frame.type == SYMBOL) {
-		if (!frame.u.s->equals("#done")) {
-			warning("Lingo::func_play: unknown symbol: %s", frame.u.s->c_str());
+		if (!frame.u.s->equals("done")) {
+			warning("Lingo::func_play: unknown symbol: #%s", frame.u.s->c_str());
 			return;
 		}
 		if (_vm->_movieStack.empty()) {	// No op if no nested movies

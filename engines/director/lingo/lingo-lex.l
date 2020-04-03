@@ -96,7 +96,7 @@ whitespace [ \t]
 ^{whitespace}+	{ count(); }
 [\t]+			{ count(); return ' '; }
 
-[#]{identifier}	{ count(); yylval.s = new Common::String(yytext); return SYMBOL; }	// D3
+[#]{identifier}	{ count(); yylval.s = new Common::String(yytext + 1); return SYMBOL; }	// D3, skip '#'
 
 after		{ count(); return tAFTER; }		// D3
 and			{ count(); return tAND; }

@@ -459,7 +459,7 @@ Common::String *Datum::toString() {
 		*s = *u.s;
 		break;
 	case SYMBOL:
-		*s = Common::String::format("%s", u.s->c_str());
+		*s = Common::String::format("#%s", u.s->c_str());
 		break;
 	case OBJECT:
 		*s = Common::String::format("#%s", u.s->c_str());
