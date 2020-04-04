@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/filesys/io.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"

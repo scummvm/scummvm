@@ -148,7 +148,6 @@ MODULE_OBJS := \
 	ultima4/events/event.o \
 	ultima4/events/event_sdl.o \
 	ultima4/filesys/filesystem.o \
-	ultima4/filesys/io.o \
 	ultima4/filesys/rle.o \
 	ultima4/filesys/savegame.o \
 	ultima4/filesys/u4file.o \
