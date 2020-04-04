@@ -254,7 +254,7 @@ Common::SeekableSubReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 
 		return nullptr;
 	}
 
-	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::NO);
+	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::YES);
 }
 
 // RIFF Archive code
@@ -346,7 +346,7 @@ Common::SeekableSubReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16
 		size--;
 	}
 
-	return new Common::SeekableSubReadStreamEndian(_stream, _startOffset + offset, _startOffset + offset + size, true, DisposeAfterUse::NO);
+	return new Common::SeekableSubReadStreamEndian(_stream, _startOffset + offset, _startOffset + offset + size, true, DisposeAfterUse::YES);
 }
 
 // RIFX Archive code
