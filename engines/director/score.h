@@ -165,6 +165,7 @@ private:
 	uint16 _castArrayStart;
 	uint16 _currentFrame;
 	uint16 _nextFrame;
+	uint16 _framesRan; // used by kDebugFewFramesOnly
 	int _currentLabel;
 	uint32 _flags;
 	uint16 _castArrayEnd;
