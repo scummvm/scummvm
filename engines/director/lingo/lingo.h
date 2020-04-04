@@ -316,7 +316,6 @@ public:
 	Common::Array<int> _labelstack;
 
 	SymbolHash _builtins;
-	Common::HashMap<Common::String, bool> _twoWordBuiltins;
 	Common::HashMap<uint32, Symbol *> _handlers;
 
 	int _linenumber;

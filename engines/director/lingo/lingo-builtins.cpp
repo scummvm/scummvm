@@ -199,11 +199,6 @@ static struct BuiltinProto {
 	{ "mci",	 		LB::b_mci,			1, 1, false, 3, BLTIN },	//		D3.1 c
 	{ "mciwait",		LB::b_mciwait,		1, 1, false, 4, BLTIN },	//			D4 c
 	{ "sound",			LB::b_sound,		2, 3, false, 3, BLTIN },	//		D3 c
-	{ "sound-close",	LB::b_soundClose, 	1, 1, false, 4, BLTIN },	//			D4 c
-	{ "sound-fadeIn",	LB::b_soundFadeIn, 	1, 2, false, 3, BLTIN },	//		D3 c
-	{ "sound-fadeOut",	LB::b_soundFadeOut, 1, 2, false, 3, BLTIN },	//		D3 c
-	{ "sound-playFile",	LB::b_soundPlayFile,2, 2, false, 3, BLTIN },	//		D3 c
-	{ "sound-stop",		LB::b_soundStop,	1, 1, false, 2, BLTIN },	//		D2 c
 	{ "soundBusy",		LB::b_soundBusy,	1, 1, true,  3, FBLTIN },	//		D3 f
 	// Window
 	{ "close",			LB::b_close,		1, 1, false, 4, BLTIN },	//			D4 c
@@ -240,13 +235,6 @@ static struct BuiltinProto {
 	{ 0, 0, 0, 0, false, 0, 0 }
 };
 
-static const char *twoWordBuiltins[] = {
-	//"duplicate",
-	//"erase",
-	"sound",
-	0
-};
-
 static const char *predefinedMethods[] = {
 	"mAtFrame",				// D3
 	"mDescribe",			// D3
@@ -280,9 +268,6 @@ void Lingo::initBuiltIns() {
 
 		_functions[(void *)sym->u.s] = new FuncDesc(blt->name, "");
 	}
-
-	for (const char **b = twoWordBuiltins; *b; b++)
-		_twoWordBuiltins[*b] = true;
 
 	// Set predefined methods
 	for (const char **b = predefinedMethods; *b; b++) {
