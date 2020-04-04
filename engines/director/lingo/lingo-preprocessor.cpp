@@ -341,6 +341,10 @@ const char *strcasestr(const char *s, const char *find) {
 }
 #endif
 
+// "hello" & return && "world" -> "hello" & scummvm_return && "world"
+//
+// This is to let the grammar not confuse RETURN constant with
+// return command
 Common::String preprocessReturn(Common::String in) {
 	Common::String res, prev, next;
 	const char *ptr = in.c_str();
@@ -375,6 +379,7 @@ Common::String preprocessReturn(Common::String in) {
 	return res;
 }
 
+// play done -> play #done
 Common::String preprocessPlay(Common::String in) {
 	Common::String res, next;
 	const char *ptr = in.c_str();
@@ -404,6 +409,7 @@ Common::String preprocessPlay(Common::String in) {
 	return res;
 }
 
+// sound fadeIn 5, 10 -> sound #fadeIn, 5, 10
 Common::String preprocessSound(Common::String in) {
 	Common::String res, next;
 	const char *ptr = in.c_str();
@@ -417,16 +423,20 @@ Common::String preprocessSound(Common::String in) {
 
 		debugC(2, kDebugLingoParse, "SOUND: nexttok: %s", next.c_str());
 
+		bool modified = false;
+
 		if (next.equalsIgnoreCase("close") ||
 				next.equalsIgnoreCase("fadeIn") ||
 				next.equalsIgnoreCase("fadeOut") ||
 				next.equalsIgnoreCase("playFile") ||
 				next.equalsIgnoreCase("stop")) {
 			res += '#'; // Turn it into SYMBOL
+			modified = true;
 		}
 
 		res += next;
-		res += ',';
+		if (modified)
+			res += ',';
 		ptr += next.size();
 		beg = ptr;
 	}
