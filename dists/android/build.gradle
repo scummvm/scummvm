@@ -33,7 +33,7 @@ android {
         setProperty("archivesBaseName", "ScummVM")
 
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 28
 
         versionName "2.2.0git"
         versionCode 45
