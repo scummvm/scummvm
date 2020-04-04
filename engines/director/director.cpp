@@ -257,6 +257,12 @@ Common::Error DirectorEngine::run() {
 		if (!_nextMovie.movie.empty()) {
 			_lingo->restartLingo();
 
+			// Persist screen between the movies
+			// TODO: this is a workaround until the rendering pipeline is reworked
+			if (_currentScore && _currentScore->_surface) {
+				_backSurface.copyFrom(*_currentScore->_surface);
+			}
+
 			delete _currentScore;
 			_currentScore = nullptr;
 

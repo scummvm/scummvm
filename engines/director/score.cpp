@@ -1519,7 +1519,19 @@ void Score::startLoop() {
 	_backSurface->create(_movieRect.width(), _movieRect.height());
 	_backSurface2->create(_movieRect.width(), _movieRect.height());
 
-	g_director->_wm->setScreen(_surface);
+	if (_vm->_backSurface.w > 0) {
+		// Persist screen between the movies
+		// TODO: this is a workaround until the rendering pipeline is reworked
+
+		_backSurface2->copyFrom(g_director->_backSurface);
+		_surface->copyFrom(g_director->_backSurface);
+
+		_vm->_backSurface.free();
+	}
+
+	_vm->_backSurface.create(_movieRect.width(), _movieRect.height());
+
+	_vm->_wm->setScreen(_surface);
 
 	_trailSurface->clear(_stageColor);
 

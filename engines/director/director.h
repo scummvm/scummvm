@@ -29,6 +29,8 @@
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
+#include "graphics/managed_surface.h"
+
 #include "director/types.h"
 
 namespace Common {
@@ -143,6 +145,8 @@ public:
 
 	MovieReference _nextMovie;
 	Common::List<MovieReference> _movieStack;
+
+	Graphics::ManagedSurface _backSurface;
 
 protected:
 	Common::Error run() override;
