@@ -386,7 +386,7 @@ void Map::findWalkability(Coords coords, int *path_data) {
 }
 
 Creature *Map::addCreature(const Creature *creature, Coords coords) {
-	Creature *m = new Creature;
+	Creature *m = new Creature();
 
 	/* make a copy of the creature before placing it */
 	*m = *creature;
@@ -418,7 +418,7 @@ Object *Map::addObject(Object *obj, Coords coords) {
 }
 
 Object *Map::addObject(MapTile tile, MapTile prevtile, Coords coords) {
-	Object *obj = new Object;
+	Object *obj = new Object();
 
 	obj->setTile(tile);
 	obj->setPrevTile(prevtile);

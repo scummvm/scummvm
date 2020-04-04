@@ -470,7 +470,7 @@ void Script::unsetVar(const Common::String &name) {
 	// Ensure that the variable at least exists, but has no value
 	if (_variables.find(name) != _variables.end())
 		_variables[name]->unset();
-	else _variables[name] = new Variable;
+	else _variables[name] = new Variable();
 }
 
 Script::State Script::getState()        {

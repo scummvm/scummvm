@@ -76,7 +76,7 @@ void TileMap::unloadAll() {
 }
 
 void TileMap::load(const ConfigElement &tilemapConf) {
-	TileMap *tm = new TileMap;
+	TileMap *tm = new TileMap();
 
 	Common::String name = tilemapConf.getString("name");
 	TRACE_LOCAL(dbg, Common::String("Tilemap name is: ") + name);

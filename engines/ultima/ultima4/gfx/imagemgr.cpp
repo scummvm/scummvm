@@ -160,7 +160,7 @@ ImageInfo *ImageMgr::loadImageInfoFromConf(const ConfigElement &conf) {
 	ImageInfo *info;
 	static const char *fixupEnumStrings[] = { "none", "intro", "abyss", "abacus", "dungns", "blackTransparencyHack", "fmtownsscreen", NULL };
 
-	info = new ImageInfo;
+	info = new ImageInfo();
 	info->_name = conf.getString("name");
 	info->_filename = conf.getString("filename");
 	info->_width = conf.getInt("width", -1);
@@ -194,7 +194,7 @@ SubImage *ImageMgr::loadSubImageFromConf(const ImageInfo *info, const ConfigElem
 	           last_width = 0,
 	           last_height = 0;
 
-	subimage = new SubImage;
+	subimage = new SubImage();
 	subimage->_name = conf.getString("name");
 	subimage->width = conf.getInt("width");
 	subimage->height = conf.getInt("height");

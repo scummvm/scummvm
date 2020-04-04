@@ -398,7 +398,7 @@ U4FILE *U4FILE_zip::open(const Common::String &fname, const U4ZipPackage *packag
 	}
 	unzOpenCurrentFile(f);
 
-	u4f = new U4FILE_zip;
+	u4f = new U4FILE_zip();
 	u4f->zfile = f;
 
 	return u4f;
