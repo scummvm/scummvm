@@ -29,7 +29,6 @@
 #include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/game.h"   // Included for ReadPlayerController
-#include "ultima/ultima4/filesys/io.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/game/names.h"
