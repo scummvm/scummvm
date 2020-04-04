@@ -349,7 +349,7 @@ Layout *screenLoadLayoutFromConf(const ConfigElement &conf) {
 	Layout *layout;
 	static const char *typeEnumStrings[] = { "standard", "gem", "dungeon_gem", NULL };
 
-	layout = new Layout;
+	layout = new Layout();
 	layout->_name = conf.getString("name");
 	layout->_type = static_cast<LayoutType>(conf.getEnum("type", typeEnumStrings));
 

@@ -107,23 +107,23 @@ Map *MapMgr::initMap(Map::Type type) {
 
 	switch (type) {
 	case Map::WORLD:
-		map = new Map;
+		map = new Map();
 		break;
 
 	case Map::COMBAT:
-		map = new CombatMap;
+		map = new CombatMap();
 		break;
 
 	case Map::SHRINE:
-		map = new Shrine;
+		map = new Shrine();
 		break;
 
 	case Map::DUNGEON:
-		map = new Dungeon;
+		map = new Dungeon();
 		break;
 
 	case Map::CITY:
-		map = new City;
+		map = new City();
 		break;
 
 	default:
@@ -241,7 +241,7 @@ PersonRole *MapMgr::initPersonRoleFromConf(const ConfigElement &personRoleConf) 
 	                                         "lordbritish", "hawkwind", NULL
 	                                       };
 
-	personrole = new PersonRole;
+	personrole = new PersonRole();
 
 	personrole->_role = personRoleConf.getEnum("role", roleEnumStrings) + NPC_TALKER_COMPANION;
 	personrole->_id = personRoleConf.getInt("id");
@@ -252,7 +252,7 @@ PersonRole *MapMgr::initPersonRoleFromConf(const ConfigElement &personRoleConf) 
 Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 	Portal *portal;
 
-	portal = new Portal;
+	portal = new Portal();
 
 	portal->_portalConditionsMet = NULL;
 	portal->_retroActiveDest = NULL;
@@ -314,7 +314,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 	vector<ConfigElement> children = portalConf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "retroActiveDest") {
-			portal->_retroActiveDest = new PortalDestination;
+			portal->_retroActiveDest = new PortalDestination();
 
 			portal->_retroActiveDest->_coords = MapCoords(
 			                                        i->getInt("x"),

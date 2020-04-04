@@ -51,7 +51,7 @@ void TileRule::load() {
 	vector<ConfigElement> rules = config->getElement("tileRules").getChildren();
 
 	for (Std::vector<ConfigElement>::iterator i = rules.begin(); i != rules.end(); i++) {
-		TileRule *rule = new TileRule;
+		TileRule *rule = new TileRule();
 		rule->initFromConf(*i);
 		TileRule::_rules[rule->_name] = rule;
 	}
@@ -181,7 +181,7 @@ void Tileset::loadAll() {
 	for (Std::vector<ConfigElement>::iterator i = conf.begin(); i != conf.end(); i++) {
 		if (i->getName() == "tileset") {
 
-			Tileset *tileset = new Tileset;
+			Tileset *tileset = new Tileset();
 			tileset->load(*i);
 
 			tilesets[tileset->_name] = tileset;
