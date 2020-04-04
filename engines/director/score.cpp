@@ -104,6 +104,9 @@ Score::Score(DirectorEngine *vm) {
 	_loadedCast = nullptr;
 
 	_numChannelsDisplayed = 0;
+
+	_framesRan = 0; // used by kDebugFewFramesOnly
+
 }
 
 void Score::setArchive(Archive *archive) {
@@ -1558,6 +1561,11 @@ void Score::startLoop() {
 
 		if (_currentFrame < _frames.size())
 			_vm->processEvents();
+
+		if (debugChannelSet(-1, kDebugFewFramesOnly) && _framesRan > 9) {
+			warning("Score::startLoop(): exiting due to debug few frames only");
+			break;
+		}
 	}
 
 	_lingo->processEvent(kEventStopMovie);
@@ -1675,6 +1683,9 @@ void Score::update() {
 
 	if (debugChannelSet(-1, kDebugFast))
 		_nextFrameTime = g_system->getMillis();
+
+	if (debugChannelSet(-1, kDebugFewFramesOnly))
+		_framesRan++;
 }
 
 Sprite *Score::getSpriteById(uint16 id) {

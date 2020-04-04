@@ -56,6 +56,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugFast, "fast", "Fast (no delay) playback");
 	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
 	DebugMan.addDebugChannel(kDebugBytecode, "bytecode", "Execute Lscr bytecode");
+	DebugMan.addDebugChannel(kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames");
 
 	g_director = this;
 
