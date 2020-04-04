@@ -101,7 +101,7 @@ public:
 	bool hasProperty(const Common::String &attrName) const {
 		return _attributes.contains(attrName);
 	}
-	const Common::String &getProperty(const Common::String &attrName) const {
+	Common::String getProperty(const Common::String &attrName) const {
 		return _attributes.contains(attrName) ? _attributes[attrName] : "";
 	}
 	int getPropertyInt(const Common::String &attrName) const {
