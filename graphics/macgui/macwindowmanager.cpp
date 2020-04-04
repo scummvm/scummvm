@@ -239,7 +239,10 @@ void MacWindowManager::addWindowInitialized(MacWindow *macwindow) {
 }
 
 MacMenu *MacWindowManager::addMenu() {
-	delete _menu;
+	if (_menu) {
+		_windows[_menu->getId()] = nullptr;
+		delete _menu;
+	}
 
 	_menu = new MacMenu(getNextId(), _screen->getBounds(), this);
 
