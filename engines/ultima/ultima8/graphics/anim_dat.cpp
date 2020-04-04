@@ -118,9 +118,9 @@ void AnimDat::load(IDataSource *ds) {
 						f._frame = ds->readByte(); // & 0x7FF;
 						uint8 x = ds->readByte();
 						f._frame += (x & 0x7) << 8;
-						f._deltaZ = ds->readXS(1);
+						f._deltaZ = ds->readSByte();
 						f._sfx = ds->readByte();
-						f._deltaDir = ds->readXS(1);
+						f._deltaDir = ds->readSByte();
 						f._flags = ds->readByte();
 						f._flags += (x & 0xF8) << 8;
 					} else if (GAME_IS_CRUSADER) {
@@ -132,7 +132,7 @@ void AnimDat::load(IDataSource *ds) {
 						// byte 2, 3: unknown; byte 3 might contain flags
 						ds->skip(2);
 						// byte 4: deltadir (signed)
-						f._deltaDir = ds->readXS(1);
+						f._deltaDir = ds->readSByte();
 						// byte 5: flags?
 						f._flags = ds->readByte();
 						// byte 6, 7: unknown

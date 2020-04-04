@@ -1611,7 +1611,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// yy == num bytes in string
 			// zz == type
 		{
-			si16a = cs.readXS(1);
+			si16a = cs.readSByte();
 			uint32 scriptsize = cs.readByte();
 			uint32 searchtype = cs.readByte();
 

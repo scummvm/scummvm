@@ -211,9 +211,9 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 
 	for (uint32 i = 0; i < itemcount; ++i) {
 		// These are ALL unsigned on disk
-		int32 x = static_cast<int32>(ds->readX(2));
-		int32 y = static_cast<int32>(ds->readX(2));
-		int32 z = static_cast<int32>(ds->readX(1));
+		int32 x = static_cast<int32>(ds->readUint16LE());
+		int32 y = static_cast<int32>(ds->readUint16LE());
+		int32 z = static_cast<int32>(ds->readByte());
 
 		if (GAME_IS_CRUSADER) {
 			x *= 2;
