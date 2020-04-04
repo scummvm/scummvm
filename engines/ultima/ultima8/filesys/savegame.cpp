@@ -134,7 +134,7 @@ bool SavegameWriter::writeFile(const Std::string &name, const uint8 *data, uint3
 }
 
 bool SavegameWriter::writeFile(const Std::string &name, OAutoBufferDataSource *ods) {
-	return writeFile(name, ods->getBuf(), ods->getSize());
+	return writeFile(name, ods->getData(), ods->size());
 }
 
 } // End of namespace Ultima8

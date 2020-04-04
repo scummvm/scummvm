@@ -71,7 +71,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 		IDataSource *ds = overlaydat->get_datasource(action);
 		_overlay[action] = nullptr;
 
-		if (ds && ds->getSize()) {
+		if (ds && ds->size()) {
 			// get Avatar's animation
 			AnimAction *anim = msf->getAnim(1, action);
 			if (!anim) {
@@ -85,7 +85,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 			unsigned int animlength = anim->_size;
 			unsigned int dircount = anim->_dirCount;
 
-			unsigned int typecount = ds->getSize() / (4 * dircount * animlength);
+			unsigned int typecount = ds->size() / (4 * dircount * animlength);
 			awo->_overlay.resize(typecount);
 
 			for (unsigned int type = 0; type < typecount; type++) {
@@ -100,7 +100,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 						ds->seek(4 * offset);
 						f._xOff = ds->readXS(1);
 						f._yOff = ds->readXS(1);
-						f._frame = ds->read2();
+						f._frame = ds->readUint16LE();
 
 						awo->_overlay[type]._frames[dir][frame] = f;
 					}

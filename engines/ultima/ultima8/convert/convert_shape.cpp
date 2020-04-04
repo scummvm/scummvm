@@ -60,7 +60,7 @@ void ConvertShape::Free()
 void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint32 real_len)
 {
 	// Just to be safe
-	uint32 start_pos = source->getPos();
+	uint32 start_pos = source->pos();
 
 	// Read the ident
 	if (csf->_bytes_ident)
@@ -79,7 +79,7 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 	uint8 special[256];
 	if (csf->_bytes_special) {
 		memset(special, 0, 256);
-		for (uint32 i = 0; i < csf->_bytes_special; i++) special[source->read1()&0xFF] = i+2;
+		for (uint32 i = 0; i < csf->_bytes_special; i++) special[source->readByte()&0xFF] = i+2;
 	}
 
 	// Read the header unknown
@@ -126,7 +126,7 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 		source->seek(start_pos + csf->_len_header + (csf->_len_frameheader*f));
 
 #ifdef COMP_SHAPENUM
-		if (shapenum == COMP_SHAPENUM) pout << "seeked to " << source->getPos() << Std::endl;
+		if (shapenum == COMP_SHAPENUM) pout << "seeked to " << source->pos() << Std::endl;
 #endif
 
 		// Read the offset
@@ -250,13 +250,13 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 
 	for(int32 y = 0; y < _height; ++y) 
 	{
-		_line_offsets[y] = rlebuf->getPos();
+		_line_offsets[y] = rlebuf->pos();
 
 		int32 xpos = 0;
 
 		do
 		{
-			uint8 skip = source->read1();
+			uint8 skip = source->readByte();
 			xpos += skip;
 
 			if (xpos > _width) {
@@ -264,18 +264,18 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 				skip = _width-(xpos-skip);
 			}
 
-			rlebuf->write1(skip);
+			rlebuf->writeByte(skip);
 
 			if (xpos >= _width) break;
 
-			uint32 dlen = source->read1();
+			uint32 dlen = source->readByte();
 			uint8 *o = outbuf;
 
 			// Is this required???? It seems hacky and pointless
 			if (dlen == 0 || dlen == 1) {
 				source->skip(-1); 
 				rlebuf->skip(-1);
-				rlebuf->write1(skip+(_width-xpos));
+				rlebuf->writeByte(skip+(_width-xpos));
 				break;
 			}
 
@@ -292,7 +292,7 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 
 				for (uint32 j = 0; j < dlen; j++) {
 
-					uint8 c = source->read1();
+					uint8 c = source->readByte();
 
 					if (special[c] && prev) {
 						int32 count = special[c];
@@ -302,7 +302,7 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 						xpos += count;
 					}
 					else if (c == 0xFF && prev) {
-						int32 count = source->read1();
+						int32 count = source->readByte();
 						prev->GetPixels(o,count,xpos-_xoff,y-_yoff);
 						o+=count;
 						extra += count-2;
@@ -319,21 +319,21 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 					perr << "Error! Corrupt Frame. RLE dlen too large" << Std::endl;
 				}
 
-				rlebuf->write1((dlen+extra) << _compression);
+				rlebuf->writeByte((dlen+extra) << _compression);
 				rlebuf->write(outbuf,dlen+extra);
 			}
 			else {
-				rlebuf->write1((dlen<<1)|1);
-				rlebuf->write1(source->read1());
+				rlebuf->writeByte((dlen<<1)|1);
+				rlebuf->writeByte(source->readByte());
 				xpos+=dlen;
 			}
 
 		} while (xpos < _width);
 	}
 
-	_bytes_rle = rlebuf->getPos();
+	_bytes_rle = rlebuf->pos();
 	_rle_data = new uint8[_bytes_rle];
-	memcpy (_rle_data, rlebuf->getBuf(), _bytes_rle);
+	memcpy (_rle_data, rlebuf->getData(), _bytes_rle);
 }
 
 void ConvertShapeFrame::GetPixels(uint8 *buf, int32 count, int32 x, int32 y)
@@ -404,14 +404,14 @@ int ConvertShape::CalcNumFrames(IDataSource *source, const ConvertShapeFormat *c
 	int f=0;
 	uint32 first_offset = 0xFFFFFFFF;
 
-	uint32 save_pos = source->getPos();
+	uint32 save_pos = source->pos();
 
 	for (f=0;;f++) {
 
 		// Seek to initial pos
 		source->seek(start_pos + csf->_len_header + (csf->_len_frameheader*f));
 
-		if ((source->getPos()-start_pos) >= first_offset) break;
+		if ((source->pos()-start_pos) >= first_offset) break;
 
 		// Read the offset
 		uint32 frame_offset = csf->_len_header + (csf->_len_frameheader*f);
@@ -442,7 +442,7 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 	bool result = true;
 
 	// Just to be safe
-	int start_pos = source->getPos();
+	int start_pos = source->pos();
 
 	// Read the ident
 	if (csf->_bytes_ident)
@@ -575,10 +575,10 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 				// Compressed
 				if (frame->_compression) do
 				{
-					xpos += source->read1();
+					xpos += source->readByte();
 					if (xpos == frame->_width) break;
 
-					dlen = source->read1();
+					dlen = source->readByte();
 					int type = dlen & 1;
 					dlen >>= 1;
 
@@ -591,17 +591,17 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 				// Uncompressed
 				else do
 				{
-					xpos += source->read1();
+					xpos += source->readByte();
 					if (xpos == frame->_width) break;
 
-					dlen = source->read1();
+					dlen = source->readByte();
 					source->skip(dlen);
 
 					xpos += dlen;
 				} while (xpos < frame->_width);
 
 				// Calc 'real' bytes rle
-				int32 highest_rle_byte = source->getPos();
+				int32 highest_rle_byte = source->pos();
 				highest_rle_byte -= start_pos + frame_offset + csf->_len_frameheader2 + frame->_height*csf->_bytes_line_offset;
 
 				// Too many bytes
@@ -631,7 +631,7 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 	bool result = true;
 
 	// Just to be safe
-	const uint32 start_pos = source->getPos();
+	const uint32 start_pos = source->pos();
 
 	// Read the ident
 	if (csf->_bytes_ident)
@@ -739,7 +739,7 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 void ConvertShape::Write(ODataSource *dest, const ConvertShapeFormat *csf, uint32 &write_len)
 {
 	// Just to be safe
-	const uint32 start_pos = dest->getPos();
+	const uint32 start_pos = dest->pos();
 
 	// Write the ident
 	if (csf->_bytes_ident) dest->write(csf->_ident, csf->_bytes_ident);
@@ -756,7 +756,7 @@ void ConvertShape::Write(ODataSource *dest, const ConvertShapeFormat *csf, uint3
 	}
 
 	// Write filler space for the frame details
-	for (uint32 i = 0; i < _num_frames*csf->_len_frameheader; i++) dest->write1(0);
+	for (uint32 i = 0; i < _num_frames*csf->_len_frameheader; i++) dest->writeByte(0);
 
 	// Now write the _frames
 	for(uint32 f = 0; f < _num_frames; f++) 
@@ -764,7 +764,7 @@ void ConvertShape::Write(ODataSource *dest, const ConvertShapeFormat *csf, uint3
 		ConvertShapeFrame *frame = _frames+f;
 
 		// Get the frame offset
-		uint32 frame_offset = dest->getPos() - start_pos;
+		uint32 frame_offset = dest->pos() - start_pos;
 
 		// Seek to the frame header pos
 		dest->seek(start_pos + csf->_len_header + (csf->_len_frameheader*f));
@@ -812,7 +812,7 @@ void ConvertShape::Write(ODataSource *dest, const ConvertShapeFormat *csf, uint3
 	}
 
 	// Just cheat
-	write_len = dest->getPos() - start_pos;
+	write_len = dest->pos() - start_pos;
 }
 
 

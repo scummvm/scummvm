@@ -1271,7 +1271,7 @@ void CurrentMap::setWholeMapFast() {
 void CurrentMap::save(ODataSource *ods) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS / 32; ++j) {
-			ods->write4(_fast[i][j]);
+			ods->writeUint32LE(_fast[i][j]);
 		}
 	}
 }
@@ -1279,7 +1279,7 @@ void CurrentMap::save(ODataSource *ods) {
 bool CurrentMap::load(IDataSource *ids, uint32 version) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS / 32; ++j) {
-			_fast[i][j] = ids->read4();
+			_fast[i][j] = ids->readUint32LE();
 		}
 	}
 

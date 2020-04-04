@@ -181,25 +181,25 @@ Gump *BarkGump::OnMouseDown(int button, int32 mx, int32 my) {
 void BarkGump::saveData(ODataSource *ods) {
 	ItemRelativeGump::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_counter));
-	ods->write2(_textWidget);
-	ods->write4(_speechShapeNum);
-	ods->write4(_speechLength);
-	ods->write4(_totalTextHeight);
-	ods->write4(static_cast<uint32>(_barked.size()));
+	ods->writeUint32LE(static_cast<uint32>(_counter));
+	ods->writeUint16LE(_textWidget);
+	ods->writeUint32LE(_speechShapeNum);
+	ods->writeUint32LE(_speechLength);
+	ods->writeUint32LE(_totalTextHeight);
+	ods->writeUint32LE(static_cast<uint32>(_barked.size()));
 	ods->write(_barked.c_str(), _barked.size());
 }
 
 bool BarkGump::loadData(IDataSource *ids, uint32 version) {
 	if (!ItemRelativeGump::loadData(ids, version)) return false;
 
-	_counter = static_cast<int32>(ids->read4());
-	_textWidget = ids->read2();
-	_speechShapeNum = ids->read4();
-	_speechLength = ids->read4();
-	_totalTextHeight = ids->read4();
+	_counter = static_cast<int32>(ids->readUint32LE());
+	_textWidget = ids->readUint16LE();
+	_speechShapeNum = ids->readUint32LE();
+	_speechLength = ids->readUint32LE();
+	_totalTextHeight = ids->readUint32LE();
 
-	uint32 slen = ids->read4();
+	uint32 slen = ids->readUint32LE();
 	if (slen > 0) {
 		char *buf = new char[slen + 1];
 		ids->read(buf, slen);

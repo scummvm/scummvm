@@ -349,19 +349,19 @@ void GravityProcess::dumpInfo() const {
 void GravityProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_gravity));
-	ods->write4(static_cast<uint32>(_xSpeed));
-	ods->write4(static_cast<uint32>(_ySpeed));
-	ods->write4(static_cast<uint32>(_zSpeed));
+	ods->writeUint32LE(static_cast<uint32>(_gravity));
+	ods->writeUint32LE(static_cast<uint32>(_xSpeed));
+	ods->writeUint32LE(static_cast<uint32>(_ySpeed));
+	ods->writeUint32LE(static_cast<uint32>(_zSpeed));
 }
 
 bool GravityProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_gravity = static_cast<int>(ids->read4());
-	_xSpeed = static_cast<int>(ids->read4());
-	_ySpeed = static_cast<int>(ids->read4());
-	_zSpeed = static_cast<int>(ids->read4());
+	_gravity = static_cast<int>(ids->readUint32LE());
+	_xSpeed = static_cast<int>(ids->readUint32LE());
+	_ySpeed = static_cast<int>(ids->readUint32LE());
+	_zSpeed = static_cast<int>(ids->readUint32LE());
 
 	return true;
 }

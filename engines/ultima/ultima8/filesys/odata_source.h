@@ -37,20 +37,20 @@ public:
 	ODataSource() {}
 	virtual ~ODataSource() {}
 
-	virtual void write1(uint32) = 0;
-	virtual void write2(uint16) = 0;
+	virtual void writeByte(uint32) = 0;
+	virtual void writeUint16LE(uint16) = 0;
 	virtual void write2high(uint16) = 0;
 	virtual void write3(uint32) = 0;
-	virtual void write4(uint32) = 0;
+	virtual void writeUint32LE(uint32) = 0;
 	virtual void write4high(uint32) = 0;
 	virtual void write(const void *str, uint32 num_bytes) = 0;
 
 	void writeX(uint32 val, uint32 num_bytes) {
 		assert(num_bytes > 0 && num_bytes <= 4);
-		if (num_bytes == 1) write1(static_cast<uint8>(val));
-		else if (num_bytes == 2) write2(static_cast<uint16>(val));
+		if (num_bytes == 1) writeByte(static_cast<uint8>(val));
+		else if (num_bytes == 2) writeUint16LE(static_cast<uint16>(val));
 		else if (num_bytes == 3) write3(val);
-		else write4(val);
+		else writeUint32LE(val);
 	}
 
 	virtual Common::WriteStream *GetRawStream() {
@@ -59,8 +59,8 @@ public:
 
 	virtual void seek(uint32 pos) = 0;
 	virtual void skip(int32 delta) = 0;
-	virtual uint32 getSize() const = 0;
-	virtual uint32 getPos() const = 0;
+	virtual uint32 size() const = 0;
+	virtual uint32 pos() const = 0;
 };
 
 
@@ -80,11 +80,11 @@ public:
 		return !_out->err();
 	}
 
-	void write1(uint32 val) override {
+	void writeByte(uint32 val) override {
 		_out->writeByte(val & 0xff);
 	}
 
-	void write2(uint16 val) override {
+	void writeUint16LE(uint16 val) override {
 		_out->writeUint16LE(val);
 	}
 
@@ -98,7 +98,7 @@ public:
 		_out->writeByte(static_cast<byte>((val >> 16) & 0xff));
 	}
 
-	void write4(uint32 val) override {
+	void writeUint32LE(uint32 val) override {
 		_out->writeUint32LE(val);
 	}
 
@@ -122,13 +122,13 @@ public:
 		ws->seek(amount, SEEK_CUR);
 	}
 
-	uint32 getSize() const override {
+	uint32 size() const override {
 		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
 		assert(ws);
 		return ws->size();
 	}
 
-	uint32 getPos() const override {
+	uint32 pos() const override {
 		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
 		assert(ws);
 		return _out->pos();
@@ -158,11 +158,11 @@ public:
 
 	~OBufferDataSource() override {};
 
-	void write1(uint32 val) override {
+	void writeByte(uint32 val) override {
 		*_bufPtr++ = val & 0xff;
 	};
 
-	void write2(uint16 val) override {
+	void writeUint16LE(uint16 val) override {
 		*_bufPtr++ = val & 0xff;
 		*_bufPtr++ = (val >> 8) & 0xff;
 	};
@@ -178,7 +178,7 @@ public:
 		*_bufPtr++ = (val >> 16) & 0xff;
 	};
 
-	void write4(uint32 val) override {
+	void writeUint32LE(uint32 val) override {
 		*_bufPtr++ = val & 0xff;
 		*_bufPtr++ = (val >> 8) & 0xff;
 		*_bufPtr++ = (val >> 16) & 0xff;
@@ -205,92 +205,13 @@ public:
 		_bufPtr += pos;
 	};
 
-	uint32 getSize() const override {
+	uint32 size() const override {
 		return _size;
 	};
 
-	uint32 getPos() const override {
+	uint32 pos() const override {
 		return static_cast<uint32>(_bufPtr - _buf);
 	};
-};
-
-class ODequeDataSource : public ODataSource {
-private:
-	Std::deque<byte> _out;
-
-public:
-	ODequeDataSource() {}
-
-	~ODequeDataSource() override {}
-
-	const Std::deque<byte> &buf() const {
-		return _out;
-	}
-
-	void write1(uint32 val) override {
-		_out.push_back(static_cast<byte>(val & 0xff));
-	}
-
-	void write2(uint16 val) override {
-		_out.push_back(static_cast<byte>(val & 0xff));
-		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
-	}
-
-	void write2high(uint16 val) override {
-		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
-		_out.push_back(static_cast<byte>(val & 0xff));
-	}
-
-	void write3(uint32 val) override {
-		_out.push_back(static_cast<byte>(val & 0xff));
-		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
-		_out.push_back(static_cast<byte>((val >> 16) & 0xff));
-	}
-
-	void write4(uint32 val) override {
-		_out.push_back(static_cast<byte>(val & 0xff));
-		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
-		_out.push_back(static_cast<byte>((val >> 16) & 0xff));
-		_out.push_back(static_cast<byte>((val >> 24) & 0xff));
-	}
-
-	void write4high(uint32 val) override {
-		_out.push_back(static_cast<byte>((val >> 24) & 0xff));
-		_out.push_back(static_cast<byte>((val >> 16) & 0xff));
-		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
-		_out.push_back(static_cast<byte>(val & 0xff));
-	}
-
-	void write(const void *b, uint32 length) override {
-		write(b, length, length);
-	}
-
-	virtual void write(const void *b, uint32 length, uint32 pad_length) {
-		for (uint32 i = 0; i < length; i++)
-			_out.push_back(static_cast<const char *>(b)[i]);
-		if (pad_length > length)
-			for (pad_length -= length; pad_length > 0; --pad_length)
-				_out.push_back(static_cast<byte>(0x00));
-	}
-
-	virtual void clear()          {
-		_out.clear();
-	}
-
-	void seek(uint32 /*pos*/) override {
-		/*_out->seekp(pos); FIXME: Do something here. */
-	}
-	void skip(int32 /*pos*/) override {
-		/*_out->seekp(pos, Std::ios::cur); FIXME: Do something here. */
-	}
-
-	uint32 getSize() const override {
-		return static_cast<uint32>(_out.size());
-	}
-
-	uint32 getPos() const override {
-		return static_cast<uint32>(_out.size()); /*return _out->tellp(); FIXME: Do something here. */
-	}
 };
 
 class OAutoBufferDataSource: public ODataSource {
@@ -337,7 +258,7 @@ public:
 	};
 
 	//! Get a pointer to the data buffer.
-	const uint8 *getBuf() {
+	const uint8 *getData() {
 		return _buf;
 	}
 
@@ -345,12 +266,12 @@ public:
 		delete [] _buf;
 	}
 
-	void write1(uint32 val) override {
+	void writeByte(uint32 val) override {
 		checkResize(1);
 		*_bufPtr++ = val & 0xff;
 	};
 
-	void write2(uint16 val) override {
+	void writeUint16LE(uint16 val) override {
 		checkResize(2);
 		*_bufPtr++ = val & 0xff;
 		*_bufPtr++ = (val >> 8) & 0xff;
@@ -369,7 +290,7 @@ public:
 		*_bufPtr++ = (val >> 16) & 0xff;
 	};
 
-	void write4(uint32 val) override {
+	void writeUint32LE(uint32 val) override {
 		checkResize(4);
 		*_bufPtr++ = val & 0xff;
 		*_bufPtr++ = (val >> 8) & 0xff;
@@ -414,11 +335,11 @@ public:
 		_bufPtr = const_cast<unsigned char *>(_buf) + _loc;
 	};
 
-	uint32 getSize() const override {
+	uint32 size() const override {
 		return _size;
 	};
 
-	uint32 getPos() const override {
+	uint32 pos() const override {
 		return static_cast<uint32>(_bufPtr - _buf);
 	};
 

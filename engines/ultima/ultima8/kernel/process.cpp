@@ -128,31 +128,31 @@ void Process::writeProcessHeader(ODataSource *ods) {
 	const char *cname = GetClassType()._className; // virtual
 	uint16 clen = strlen(cname);
 
-	ods->write2(clen);
+	ods->writeUint16LE(clen);
 	ods->write(cname, clen);
 }
 
 void Process::saveData(ODataSource *ods) {
-	ods->write2(_pid);
-	ods->write4(_flags);
-	ods->write2(_itemNum);
-	ods->write2(_type);
-	ods->write4(_result);
-	ods->write4(static_cast<uint32>(_waiting.size()));
+	ods->writeUint16LE(_pid);
+	ods->writeUint32LE(_flags);
+	ods->writeUint16LE(_itemNum);
+	ods->writeUint16LE(_type);
+	ods->writeUint32LE(_result);
+	ods->writeUint32LE(static_cast<uint32>(_waiting.size()));
 	for (unsigned int i = 0; i < _waiting.size(); ++i)
-		ods->write2(_waiting[i]);
+		ods->writeUint16LE(_waiting[i]);
 }
 
 bool Process::loadData(IDataSource *ids, uint32 version) {
-	_pid = ids->read2();
-	_flags = ids->read4();
-	_itemNum = ids->read2();
-	_type = ids->read2();
-	_result = ids->read4();
-	uint32 waitcount = ids->read4();
+	_pid = ids->readUint16LE();
+	_flags = ids->readUint32LE();
+	_itemNum = ids->readUint16LE();
+	_type = ids->readUint16LE();
+	_result = ids->readUint32LE();
+	uint32 waitcount = ids->readUint32LE();
 	_waiting.resize(waitcount);
 	for (unsigned int i = 0; i < waitcount; ++i)
-		_waiting[i] = ids->read2();
+		_waiting[i] = ids->readUint16LE();
 
 	return true;
 }

@@ -322,20 +322,20 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 }
 
 void Kernel::save(ODataSource *ods) {
-	ods->write4(_frameNum);
+	ods->writeUint32LE(_frameNum);
 	_pIDs->save(ods);
-	ods->write4(_processes.size());
+	ods->writeUint32LE(_processes.size());
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		(*it)->save(ods);
 	}
 }
 
 bool Kernel::load(IDataSource *ids, uint32 version) {
-	_frameNum = ids->read4();
+	_frameNum = ids->readUint32LE();
 
 	if (!_pIDs->load(ids, version)) return false;
 
-	const uint32 pcount = ids->read4();
+	const uint32 pcount = ids->readUint32LE();
 
 	for (unsigned int i = 0; i < pcount; ++i) {
 		Process *p = loadProcess(ids, version);
@@ -347,7 +347,7 @@ bool Kernel::load(IDataSource *ids, uint32 version) {
 }
 
 Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
-	const uint16 classlen = ids->read2();
+	const uint16 classlen = ids->readUint16LE();
 	char *buf = new char[classlen + 1];
 	ids->read(buf, classlen);
 	buf[classlen] = 0;

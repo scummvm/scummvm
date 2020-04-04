@@ -202,46 +202,46 @@ void ButtonWidget::saveData(ODataSource *ods) {
 	if (_shapeUp) {
 		_shapeUp->getShapeId(flex, shapenum);
 	}
-	ods->write2(flex);
-	ods->write4(shapenum);
-	ods->write4(_frameNumUp);
+	ods->writeUint16LE(flex);
+	ods->writeUint32LE(shapenum);
+	ods->writeUint32LE(_frameNumUp);
 
 	flex = 0;
 	shapenum = 0;
 	if (_shapeDown) {
 		_shapeDown->getShapeId(flex, shapenum);
 	}
-	ods->write2(flex);
-	ods->write4(shapenum);
-	ods->write4(_frameNumDown);
-	ods->write2(_textWidget);
-	ods->write4(_mouseOverBlendCol);
+	ods->writeUint16LE(flex);
+	ods->writeUint32LE(shapenum);
+	ods->writeUint32LE(_frameNumDown);
+	ods->writeUint16LE(_textWidget);
+	ods->writeUint32LE(_mouseOverBlendCol);
 
 	uint8 m = (_mouseOver ? 1 : 0);
-	ods->write1(m);
+	ods->writeByte(m);
 }
 
 bool ButtonWidget::loadData(IDataSource *ids, uint32 version) {
 	if (!Gump::loadData(ids, version)) return false;
 
 	_shapeUp = nullptr;
-	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(ids->read2());
-	uint32 shapenum = ids->read4();
+	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(ids->readUint16LE());
+	uint32 shapenum = ids->readUint32LE();
 	if (flex) {
 		_shapeUp = flex->getShape(shapenum);
 	}
-	_frameNumUp = ids->read4();
+	_frameNumUp = ids->readUint32LE();
 
 	_shapeDown = nullptr;
-	flex = GameData::get_instance()->getShapeFlex(ids->read2());
-	shapenum = ids->read4();
+	flex = GameData::get_instance()->getShapeFlex(ids->readUint16LE());
+	shapenum = ids->readUint32LE();
 	if (flex) {
 		_shapeDown = flex->getShape(shapenum);
 	}
-	_frameNumDown = ids->read4();
-	_textWidget = ids->read2();
-	_mouseOverBlendCol = ids->read4();
-	_mouseOver = (ids->read1() != 0);
+	_frameNumDown = ids->readUint32LE();
+	_textWidget = ids->readUint16LE();
+	_mouseOverBlendCol = ids->readUint32LE();
+	_mouseOver = (ids->readByte() != 0);
 
 	// HACK ALERT
 	if (_textWidget != 0) {

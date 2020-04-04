@@ -201,7 +201,7 @@ void Map::unloadFixed() {
 void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
                                  uint32 extendedflags) {
 	if (!ds) return;
-	uint32 size = ds->getSize();
+	uint32 size = ds->size();
 	if (size == 0) return;
 
 	uint32 itemcount = size / 16;
@@ -220,13 +220,13 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 			y *= 2;
 		}
 
-		uint32 shape = ds->read2();
-		uint32 frame = ds->read1();
-		uint16 flags = ds->read2();
-		uint16 quality = ds->read2();
-		uint16 npcNum = static_cast<uint16>(ds->read1());
-		uint16 mapNum = static_cast<uint16>(ds->read1());
-		uint16 next = ds->read2(); // do we need next for anything?
+		uint32 shape = ds->readUint16LE();
+		uint32 frame = ds->readByte();
+		uint16 flags = ds->readUint16LE();
+		uint16 quality = ds->readUint16LE();
+		uint16 npcNum = static_cast<uint16>(ds->readByte());
+		uint16 mapNum = static_cast<uint16>(ds->readByte());
+		uint16 next = ds->readUint16LE(); // do we need next for anything?
 
 		// find container this item belongs to, if any.
 		// the x coordinate stores the container-depth of this item,
@@ -279,7 +279,7 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 
 
 void Map::save(ODataSource *ods) {
-	ods->write4(static_cast<uint32>(_dynamicItems.size()));
+	ods->writeUint32LE(static_cast<uint32>(_dynamicItems.size()));
 
 	Std::list<Item *>::iterator iter;
 	for (iter = _dynamicItems.begin(); iter != _dynamicItems.end(); ++iter) {
@@ -289,7 +289,7 @@ void Map::save(ODataSource *ods) {
 
 
 bool Map::load(IDataSource *ids, uint32 version) {
-	uint32 itemcount = ids->read4();
+	uint32 itemcount = ids->readUint32LE();
 
 	for (unsigned int i = 0; i < itemcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(ids, version);

@@ -784,32 +784,32 @@ bool Gump::mustSave(bool toplevel) const {
 void Gump::saveData(ODataSource *ods) {
 	Object::saveData(ods);
 
-	ods->write2(_owner);
-	ods->write4(static_cast<uint32>(_x));
-	ods->write4(static_cast<uint32>(_y));
-	ods->write4(static_cast<uint32>(_dims.x));
-	ods->write4(static_cast<uint32>(_dims.y));
-	ods->write4(static_cast<uint32>(_dims.w));
-	ods->write4(static_cast<uint32>(_dims.h));
-	ods->write4(_flags);
-	ods->write4(static_cast<uint32>(_layer));
-	ods->write4(static_cast<uint32>(_index));
+	ods->writeUint16LE(_owner);
+	ods->writeUint32LE(static_cast<uint32>(_x));
+	ods->writeUint32LE(static_cast<uint32>(_y));
+	ods->writeUint32LE(static_cast<uint32>(_dims.x));
+	ods->writeUint32LE(static_cast<uint32>(_dims.y));
+	ods->writeUint32LE(static_cast<uint32>(_dims.w));
+	ods->writeUint32LE(static_cast<uint32>(_dims.h));
+	ods->writeUint32LE(_flags);
+	ods->writeUint32LE(static_cast<uint32>(_layer));
+	ods->writeUint32LE(static_cast<uint32>(_index));
 
 	uint16 flex = 0;
 	uint32 shapenum = 0;
 	if (_shape) {
 		_shape->getShapeId(flex, shapenum);
 	}
-	ods->write2(flex);
-	ods->write4(shapenum);
+	ods->writeUint16LE(flex);
+	ods->writeUint32LE(shapenum);
 
-	ods->write4(_frameNum);
+	ods->writeUint32LE(_frameNum);
 	if (_focusChild)
-		ods->write2(_focusChild->getObjId());
+		ods->writeUint16LE(_focusChild->getObjId());
 	else
-		ods->write2(0);
-	ods->write2(_notifier);
-	ods->write4(_processResult);
+		ods->writeUint16LE(0);
+	ods->writeUint16LE(_notifier);
+	ods->writeUint32LE(_processResult);
 
 	unsigned int childcount = 0;
 	Std::list<Gump *>::iterator it;
@@ -819,7 +819,7 @@ void Gump::saveData(ODataSource *ods) {
 	}
 
 	// write children:
-	ods->write4(childcount);
+	ods->writeUint32LE(childcount);
 	for (it = _children.begin(); it != _children.end(); ++it) {
 		if (!(*it)->mustSave(false)) continue;
 
@@ -830,35 +830,35 @@ void Gump::saveData(ODataSource *ods) {
 bool Gump::loadData(IDataSource *ids, uint32 version) {
 	if (!Object::loadData(ids, version)) return false;
 
-	_owner = ids->read2();
-	_x = static_cast<int32>(ids->read4());
-	_y = static_cast<int32>(ids->read4());
+	_owner = ids->readUint16LE();
+	_x = static_cast<int32>(ids->readUint32LE());
+	_y = static_cast<int32>(ids->readUint32LE());
 
-	int dx = static_cast<int32>(ids->read4());
-	int dy = static_cast<int32>(ids->read4());
-	int dw = static_cast<int32>(ids->read4());
-	int dh = static_cast<int32>(ids->read4());
+	int dx = static_cast<int32>(ids->readUint32LE());
+	int dy = static_cast<int32>(ids->readUint32LE());
+	int dw = static_cast<int32>(ids->readUint32LE());
+	int dh = static_cast<int32>(ids->readUint32LE());
 	_dims.Set(dx, dy, dw, dh);
 
-	_flags = ids->read4();
-	_layer = static_cast<int32>(ids->read4());
-	_index = static_cast<int32>(ids->read4());
+	_flags = ids->readUint32LE();
+	_layer = static_cast<int32>(ids->readUint32LE());
+	_index = static_cast<int32>(ids->readUint32LE());
 
 	_shape = nullptr;
-	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(ids->read2());
-	uint32 shapenum = ids->read4();
+	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(ids->readUint16LE());
+	uint32 shapenum = ids->readUint32LE();
 	if (flex) {
 		_shape = flex->getShape(shapenum);
 	}
 
-	_frameNum = ids->read4();
-	uint16 focusid = ids->read2();
+	_frameNum = ids->readUint32LE();
+	uint16 focusid = ids->readUint16LE();
 	_focusChild = nullptr;
-	_notifier = ids->read2();
-	_processResult = ids->read4();
+	_notifier = ids->readUint16LE();
+	_processResult = ids->readUint32LE();
 
 	// read children
-	uint32 childcount = ids->read4();
+	uint32 childcount = ids->readUint32LE();
 	for (unsigned int i = 0; i < childcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(ids, version);
 		Gump *child = p_dynamic_cast<Gump *>(obj);

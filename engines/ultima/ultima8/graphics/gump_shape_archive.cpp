@@ -37,14 +37,14 @@ GumpShapeArchive::~GumpShapeArchive() {
 }
 
 void GumpShapeArchive::loadGumpage(IDataSource *ds) {
-	unsigned int total = ds->getSize() / 8;
+	unsigned int total = ds->size() / 8;
 	_gumpItemArea.resize(total + 1);
 	for (unsigned int i = 1; i <= total; ++i) {
 		int x, y, w, h;
-		x = static_cast<int16>(ds->read2());
-		y = static_cast<int16>(ds->read2());
-		w = static_cast<int16>(ds->read2()) - x;
-		h = static_cast<int16>(ds->read2()) - y;
+		x = static_cast<int16>(ds->readUint16LE());
+		y = static_cast<int16>(ds->readUint16LE());
+		w = static_cast<int16>(ds->readUint16LE()) - x;
+		h = static_cast<int16>(ds->readUint16LE()) - y;
 		_gumpItemArea[i] = new Rect(x, y, w, h);
 	}
 }

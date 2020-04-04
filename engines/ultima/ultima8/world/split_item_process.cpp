@@ -93,13 +93,13 @@ void SplitItemProcess::run() {
 void SplitItemProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(_target);
+	ods->writeUint16LE(_target);
 }
 
 bool SplitItemProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_target = ids->read2();
+	_target = ids->readUint16LE();
 
 	return true;
 }

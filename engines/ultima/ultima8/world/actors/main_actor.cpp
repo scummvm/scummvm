@@ -396,29 +396,29 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 void MainActor::saveData(ODataSource *ods) {
 	Actor::saveData(ods);
 	uint8 jt = _justTeleported ? 1 : 0;
-	ods->write1(jt);
-	ods->write4(_accumStr);
-	ods->write4(_accumDex);
-	ods->write4(_accumInt);
+	ods->writeByte(jt);
+	ods->writeUint32LE(_accumStr);
+	ods->writeUint32LE(_accumDex);
+	ods->writeUint32LE(_accumInt);
 	uint8 namelength = static_cast<uint8>(_name.size());
-	ods->write1(namelength);
+	ods->writeByte(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		ods->write1(static_cast<uint8>(_name[i]));
+		ods->writeByte(static_cast<uint8>(_name[i]));
 
 }
 
 bool MainActor::loadData(IDataSource *ids, uint32 version) {
 	if (!Actor::loadData(ids, version)) return false;
 
-	_justTeleported = (ids->read1() != 0);
-	_accumStr = static_cast<int32>(ids->read4());
-	_accumDex = static_cast<int32>(ids->read4());
-	_accumInt = static_cast<int32>(ids->read4());
+	_justTeleported = (ids->readByte() != 0);
+	_accumStr = static_cast<int32>(ids->readUint32LE());
+	_accumDex = static_cast<int32>(ids->readUint32LE());
+	_accumInt = static_cast<int32>(ids->readUint32LE());
 
-	uint8 namelength = ids->read1();
+	uint8 namelength = ids->readByte();
 	_name.resize(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		_name[i] = ids->read1();
+		_name[i] = ids->readByte();
 
 	return true;
 }

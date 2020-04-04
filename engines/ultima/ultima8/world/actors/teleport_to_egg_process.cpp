@@ -56,15 +56,15 @@ void TeleportToEggProcess::run() {
 void TeleportToEggProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_mapNum));
-	ods->write4(static_cast<uint32>(_teleportId));
+	ods->writeUint32LE(static_cast<uint32>(_mapNum));
+	ods->writeUint32LE(static_cast<uint32>(_teleportId));
 }
 
 bool TeleportToEggProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_mapNum = static_cast<int>(ids->read4());
-	_teleportId = static_cast<int>(ids->read4());
+	_mapNum = static_cast<int>(ids->readUint32LE());
+	_teleportId = static_cast<int>(ids->readUint32LE());
 	return true;
 }
 

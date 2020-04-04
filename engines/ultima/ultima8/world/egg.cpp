@@ -63,13 +63,13 @@ void Egg::saveData(ODataSource *ods) {
 	Item::saveData(ods);
 
 	uint8 h = _hatched ? 1 :  0;
-	ods->write1(h);
+	ods->writeByte(h);
 }
 
 bool Egg::loadData(IDataSource *ids, uint32 version) {
 	if (!Item::loadData(ids, version)) return false;
 
-	_hatched = (ids->read1() != 0);
+	_hatched = (ids->readByte() != 0);
 
 	return true;
 }

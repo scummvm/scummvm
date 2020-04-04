@@ -29,14 +29,14 @@ namespace Ultima {
 namespace Ultima8 {
 
 void UCStack::save(ODataSource *ods) {
-	ods->write4(_size);
-	ods->write4(getSP());
+	ods->writeUint32LE(_size);
+	ods->writeUint32LE(getSP());
 
 	ods->write(_bufPtr, stacksize());
 }
 
 bool UCStack::load(IDataSource *ids, uint32 version) {
-	_size = ids->read4();
+	_size = ids->readUint32LE();
 #ifdef USE_DYNAMIC_UCSTACK
 	if (_buf) delete[] _buf;
 	_buf = new uint8[_size];
@@ -47,7 +47,7 @@ bool UCStack::load(IDataSource *ids, uint32 version) {
 	}
 	_buf = _bufArray;
 #endif
-	uint32 sp = ids->read4();
+	uint32 sp = ids->readUint32LE();
 	_bufPtr = _buf + sp;
 
 	ids->read(_bufPtr, _size - sp);

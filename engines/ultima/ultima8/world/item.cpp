@@ -1760,48 +1760,48 @@ bool Item::canMergeWith(Item *other) {
 
 void Item::saveData(ODataSource *ods) {
 	Object::saveData(ods);
-	ods->write2(static_cast<uint16>(_extendedFlags));
-	ods->write2(_flags);
-	ods->write2(static_cast<uint16>(_shape));
-	ods->write2(static_cast<uint16>(_frame));
-	ods->write2(static_cast<uint16>(_x));
-	ods->write2(static_cast<uint16>(_y));
-	ods->write2(static_cast<uint16>(_z));
-	ods->write2(_quality);
-	ods->write2(_npcNum);
-	ods->write2(_mapNum);
+	ods->writeUint16LE(static_cast<uint16>(_extendedFlags));
+	ods->writeUint16LE(_flags);
+	ods->writeUint16LE(static_cast<uint16>(_shape));
+	ods->writeUint16LE(static_cast<uint16>(_frame));
+	ods->writeUint16LE(static_cast<uint16>(_x));
+	ods->writeUint16LE(static_cast<uint16>(_y));
+	ods->writeUint16LE(static_cast<uint16>(_z));
+	ods->writeUint16LE(_quality);
+	ods->writeUint16LE(_npcNum);
+	ods->writeUint16LE(_mapNum);
 	if (getObjId() != 0xFFFF) {
 		// these only make sense in currently loaded items
-		ods->write2(_gump);
-		ods->write2(_gravityPid);
+		ods->writeUint16LE(_gump);
+		ods->writeUint16LE(_gravityPid);
 	}
 	if ((_flags & FLG_ETHEREAL) && (_flags & (FLG_CONTAINED | FLG_EQUIPPED)))
-		ods->write2(_parent);
+		ods->writeUint16LE(_parent);
 }
 
 bool Item::loadData(IDataSource *ids, uint32 version) {
 	if (!Object::loadData(ids, version)) return false;
 
-	_extendedFlags = ids->read2();
-	_flags = ids->read2();
-	_shape = ids->read2();
-	_frame = ids->read2();
-	_x = ids->read2();
-	_y = ids->read2();
-	_z = ids->read2();
+	_extendedFlags = ids->readUint16LE();
+	_flags = ids->readUint16LE();
+	_shape = ids->readUint16LE();
+	_frame = ids->readUint16LE();
+	_x = ids->readUint16LE();
+	_y = ids->readUint16LE();
+	_z = ids->readUint16LE();
 
-	_quality = ids->read2();
-	_npcNum = ids->read2();
-	_mapNum = ids->read2();
+	_quality = ids->readUint16LE();
+	_npcNum = ids->readUint16LE();
+	_mapNum = ids->readUint16LE();
 	if (getObjId() != 0xFFFF) {
-		_gump = ids->read2();
-		_gravityPid = ids->read2();
+		_gump = ids->readUint16LE();
+		_gravityPid = ids->readUint16LE();
 	} else {
 		_gump = _gravityPid = 0;
 	}
 
 	if ((_flags & FLG_ETHEREAL) && (_flags & (FLG_CONTAINED | FLG_EQUIPPED)))
-		_parent = ids->read2();
+		_parent = ids->readUint16LE();
 	else
 		_parent = 0;
 

@@ -222,13 +222,13 @@ void GrantPeaceProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
 	uint8 ht = _haveTarget ? 1 : 0;
-	ods->write1(ht);
+	ods->writeByte(ht);
 }
 
 bool GrantPeaceProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_haveTarget = (ids->read1() != 0);
+	_haveTarget = (ids->readByte() != 0);
 
 	return true;
 }

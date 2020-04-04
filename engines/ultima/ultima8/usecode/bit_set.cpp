@@ -116,12 +116,12 @@ void BitSet::setBits(unsigned int pos, unsigned int n, uint32 bits) {
 }
 
 void BitSet::save(ODataSource *ods) {
-	ods->write4(_size);
+	ods->writeUint32LE(_size);
 	ods->write(_data, _bytes);
 }
 
 bool BitSet::load(IDataSource *ids, uint32 version) {
-	uint32 s = ids->read4();
+	uint32 s = ids->readUint32LE();
 	setSize(s);
 	ids->read(_data, _bytes);
 

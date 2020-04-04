@@ -98,7 +98,7 @@ bool INIFile::readConfigFile(string fname) {
 	if (!f) return false;
 
 	string sbuf, line;
-	while (!f->eof()) {
+	while (!f->eos()) {
 		f->readline(line);
 		string::size_type pos = line.findFirstOf("\n\r");
 		if (pos != string::npos) {

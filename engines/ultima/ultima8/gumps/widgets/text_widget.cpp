@@ -217,31 +217,31 @@ Gump *TextWidget::OnMouseMotion(int32 mx, int32 my) {
 void TextWidget::saveData(ODataSource *ods) {
 	Gump::saveData(ods);
 
-	ods->write1(_gameFont ? 1 : 0);
-	ods->write4(static_cast<uint32>(_fontNum));
-	ods->write4(_blendColour);
-	ods->write4(static_cast<uint32>(_currentStart));
-	ods->write4(static_cast<uint32>(_currentEnd));
-	ods->write4(static_cast<uint32>(_targetWidth));
-	ods->write4(static_cast<uint32>(_targetHeight));
-	ods->write2(static_cast<uint16>(_textAlign));
-	ods->write4(_text.size());
+	ods->writeByte(_gameFont ? 1 : 0);
+	ods->writeUint32LE(static_cast<uint32>(_fontNum));
+	ods->writeUint32LE(_blendColour);
+	ods->writeUint32LE(static_cast<uint32>(_currentStart));
+	ods->writeUint32LE(static_cast<uint32>(_currentEnd));
+	ods->writeUint32LE(static_cast<uint32>(_targetWidth));
+	ods->writeUint32LE(static_cast<uint32>(_targetHeight));
+	ods->writeUint16LE(static_cast<uint16>(_textAlign));
+	ods->writeUint32LE(_text.size());
 	ods->write(_text.c_str(), _text.size());
 }
 
 bool TextWidget::loadData(IDataSource *ids, uint32 version) {
 	if (!Gump::loadData(ids, version)) return false;
 
-	_gameFont = (ids->read1() != 0);
-	_fontNum = static_cast<int>(ids->read4());
-	_blendColour = ids->read4();
-	_currentStart = static_cast<int>(ids->read4());
-	_currentEnd = static_cast<int>(ids->read4());
-	_targetWidth = static_cast<int>(ids->read4());
-	_targetHeight = static_cast<int>(ids->read4());
-	_textAlign = static_cast<Font::TextAlign>(ids->read2());
+	_gameFont = (ids->readByte() != 0);
+	_fontNum = static_cast<int>(ids->readUint32LE());
+	_blendColour = ids->readUint32LE();
+	_currentStart = static_cast<int>(ids->readUint32LE());
+	_currentEnd = static_cast<int>(ids->readUint32LE());
+	_targetWidth = static_cast<int>(ids->readUint32LE());
+	_targetHeight = static_cast<int>(ids->readUint32LE());
+	_textAlign = static_cast<Font::TextAlign>(ids->readUint16LE());
 
-	uint32 slen = ids->read4();
+	uint32 slen = ids->readUint32LE();
 	if (slen > 0) {
 		char *buf = new char[slen + 1];
 		ids->read(buf, slen);

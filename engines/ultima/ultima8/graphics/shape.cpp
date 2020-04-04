@@ -51,7 +51,7 @@ Shape::Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
 Shape::Shape(IDataSource *src, const ConvertShapeFormat *format)
 	: _flexId(0), _shapeNum(0), _palette(nullptr) {
 	// NB: U8 style!
-	uint32 size = src->getSize();
+	uint32 size = src->size();
 	uint8 *data = new uint8[size];
 	src->read(data, size);
 
@@ -170,7 +170,7 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 	uint8 special[256];
 	if (format->_bytes_special) {
 		memset(special, 0, 256);
-		for (uint32 i = 0; i < format->_bytes_special; i++) special[ds.read1() & 0xFF] = i + 2;
+		for (uint32 i = 0; i < format->_bytes_special; i++) special[ds.readByte() & 0xFF] = i + 2;
 	}
 
 	// Skip unknown

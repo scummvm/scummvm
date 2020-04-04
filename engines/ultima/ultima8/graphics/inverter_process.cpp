@@ -79,13 +79,13 @@ void InverterProcess::run() {
 void InverterProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(static_cast<uint16>(_targetState));
+	ods->writeUint16LE(static_cast<uint16>(_targetState));
 }
 
 bool InverterProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_targetState = ids->read2();
+	_targetState = ids->readUint16LE();
 
 	_inverter = this; //static
 	return true;

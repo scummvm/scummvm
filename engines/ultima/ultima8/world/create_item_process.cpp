@@ -66,31 +66,31 @@ void CreateItemProcess::run() {
 void CreateItemProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(_shape);
-	ods->write4(_frame);
-	ods->write2(_quality);
-	ods->write2(_flags);
-	ods->write2(_npcNum);
-	ods->write2(_mapNum);
-	ods->write4(_extendedFlags);
-	ods->write4(static_cast<uint32>(_x));
-	ods->write4(static_cast<uint32>(_y));
-	ods->write4(static_cast<uint32>(_z));
+	ods->writeUint32LE(_shape);
+	ods->writeUint32LE(_frame);
+	ods->writeUint16LE(_quality);
+	ods->writeUint16LE(_flags);
+	ods->writeUint16LE(_npcNum);
+	ods->writeUint16LE(_mapNum);
+	ods->writeUint32LE(_extendedFlags);
+	ods->writeUint32LE(static_cast<uint32>(_x));
+	ods->writeUint32LE(static_cast<uint32>(_y));
+	ods->writeUint32LE(static_cast<uint32>(_z));
 }
 
 bool CreateItemProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_shape = ids->read4();
-	_frame = ids->read4();
-	_quality = ids->read2();
-	_flags = ids->read2();
-	_npcNum = ids->read2();
-	_mapNum = ids->read2();
-	_extendedFlags = ids->read4();
-	_x = static_cast<int32>(ids->read4());
-	_y = static_cast<int32>(ids->read4());
-	_z = static_cast<int32>(ids->read4());
+	_shape = ids->readUint32LE();
+	_frame = ids->readUint32LE();
+	_quality = ids->readUint16LE();
+	_flags = ids->readUint16LE();
+	_npcNum = ids->readUint16LE();
+	_mapNum = ids->readUint16LE();
+	_extendedFlags = ids->readUint32LE();
+	_x = static_cast<int32>(ids->readUint32LE());
+	_y = static_cast<int32>(ids->readUint32LE());
+	_z = static_cast<int32>(ids->readUint32LE());
 	return true;
 }
 

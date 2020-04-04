@@ -31,7 +31,7 @@ namespace Ultima8 {
 void Palette::load(IDataSource &ds, IDataSource &xformds) {
 	load(ds);
 	for (int i = 0; i < 256; i++)
-		_xform_untransformed[i] = xformds.read4();
+		_xform_untransformed[i] = xformds.readUint32LE();
 }
 
 void Palette::load(IDataSource &ds) {

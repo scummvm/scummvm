@@ -93,15 +93,15 @@ SKFPlayer::~SKFPlayer() {
 }
 
 void SKFPlayer::parseEventList(IDataSource *eventlist) {
-	uint16 frame = eventlist->read2();
+	uint16 frame = eventlist->readUint16LE();
 	while (frame != 0xFFFF) {
 		SKFEvent *ev = new SKFEvent;
 		ev->_frame = frame;
-		ev->_action = static_cast<SKFAction>(eventlist->read2());
-		ev->_data = eventlist->read2();
+		ev->_action = static_cast<SKFAction>(eventlist->readUint16LE());
+		ev->_data = eventlist->readUint16LE();
 		_events.push_back(ev);
 
-		frame = eventlist->read2();
+		frame = eventlist->readUint16LE();
 	}
 }
 
@@ -279,10 +279,10 @@ void SKFPlayer::run() {
 
 		// read object
 		object = _skf->get_datasource(_curObject);
-		if (!object || object->getSize() < 2)
+		if (!object || object->size() < 2)
 			continue;
 
-		objecttype = object->read2();
+		objecttype = object->readUint16LE();
 
 //		pout << "Object " << _curObject << "/" << _skf->getCount()
 //			 << ", type = " << objecttype << Std::endl;

@@ -54,14 +54,14 @@ void DelayProcess::dumpInfo() const {
 bool DelayProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_count = static_cast<int>(ids->read4());
+	_count = static_cast<int>(ids->readUint32LE());
 
 	return true;
 }
 
 void DelayProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
-	ods->write4(static_cast<uint32>(_count));
+	ods->writeUint32LE(static_cast<uint32>(_count));
 }
 
 } // End of namespace Ultima8

@@ -161,7 +161,7 @@ void QuickAvatarMoverProcess::startMover(int x, int y, int z, int dir) {
 void QuickAvatarMoverProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(_dir);
+	ods->writeUint32LE(_dir);
 	// don't save more information. We plan to terminate upon load
 }
 
@@ -169,7 +169,7 @@ bool QuickAvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
 	// small safety precaution
-	_dir = ids->read4();
+	_dir = ids->readUint32LE();
 	if (_dir < 6)
 		_amp[_dir] = 0;
 	else

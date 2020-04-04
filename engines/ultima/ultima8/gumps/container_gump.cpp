@@ -537,19 +537,19 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 void ContainerGump::saveData(ODataSource *ods) {
 	ItemRelativeGump::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_itemArea.x));
-	ods->write4(static_cast<uint32>(_itemArea.y));
-	ods->write4(static_cast<uint32>(_itemArea.w));
-	ods->write4(static_cast<uint32>(_itemArea.h));
+	ods->writeUint32LE(static_cast<uint32>(_itemArea.x));
+	ods->writeUint32LE(static_cast<uint32>(_itemArea.y));
+	ods->writeUint32LE(static_cast<uint32>(_itemArea.w));
+	ods->writeUint32LE(static_cast<uint32>(_itemArea.h));
 }
 
 bool ContainerGump::loadData(IDataSource *ids, uint32 version) {
 	if (!ItemRelativeGump::loadData(ids, version)) return false;
 
-	int32 iax = static_cast<int32>(ids->read4());
-	int32 iay = static_cast<int32>(ids->read4());
-	int32 iaw = static_cast<int32>(ids->read4());
-	int32 iah = static_cast<int32>(ids->read4());
+	int32 iax = static_cast<int32>(ids->readUint32LE());
+	int32 iay = static_cast<int32>(ids->readUint32LE());
+	int32 iaw = static_cast<int32>(ids->readUint32LE());
+	int32 iah = static_cast<int32>(ids->readUint32LE());
 	_itemArea.Set(iax, iay, iaw, iah);
 
 	return true;

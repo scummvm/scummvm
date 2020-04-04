@@ -163,15 +163,15 @@ void UCProcess::dumpInfo() const {
 void UCProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(_bp);
-	ods->write2(_classId);
-	ods->write2(_ip);
-	ods->write4(_temp32);
-	ods->write4(static_cast<uint32>(_freeOnTerminate.size()));
+	ods->writeUint16LE(_bp);
+	ods->writeUint16LE(_classId);
+	ods->writeUint16LE(_ip);
+	ods->writeUint32LE(_temp32);
+	ods->writeUint32LE(static_cast<uint32>(_freeOnTerminate.size()));
 	Std::list<Std::pair<uint16, int> >::iterator iter;
 	for (iter = _freeOnTerminate.begin(); iter != _freeOnTerminate.end(); ++iter) {
-		ods->write2(iter->first);
-		ods->write4(static_cast<uint32>(iter->second));
+		ods->writeUint16LE(iter->first);
+		ods->writeUint32LE(static_cast<uint32>(iter->second));
 	}
 	_stack.save(ods);
 }
@@ -179,15 +179,15 @@ void UCProcess::saveData(ODataSource *ods) {
 bool UCProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_bp = ids->read2();
-	_classId = ids->read2();
-	_ip = ids->read2();
-	_temp32 = ids->read4();
-	uint32 freecount = ids->read4();
+	_bp = ids->readUint16LE();
+	_classId = ids->readUint16LE();
+	_ip = ids->readUint16LE();
+	_temp32 = ids->readUint32LE();
+	uint32 freecount = ids->readUint32LE();
 	for (unsigned int i = 0; i < freecount; ++i) {
 		Std::pair<uint16, int> p;
-		p.first = ids->read2();
-		p.second = static_cast<int>(ids->read4());
+		p.first = ids->readUint16LE();
+		p.second = static_cast<int>(ids->readUint32LE());
 		_freeOnTerminate.push_back(p);
 	}
 	_stack.load(ids, version);

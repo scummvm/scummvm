@@ -101,28 +101,28 @@ void PaletteFaderProcess::run() {
 void PaletteFaderProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_priority));
-	ods->write4(static_cast<uint32>(_counter));
-	ods->write4(static_cast<uint32>(_maxCounter));
+	ods->writeUint32LE(static_cast<uint32>(_priority));
+	ods->writeUint32LE(static_cast<uint32>(_counter));
+	ods->writeUint32LE(static_cast<uint32>(_maxCounter));
 	unsigned int i;
 	for (i = 0; i < 12; ++i)
-		ods->write2(_oldMatrix[i]);
+		ods->writeUint16LE(_oldMatrix[i]);
 	for (i = 0; i < 12; ++i)
-		ods->write2(_newMatrix[i]);
+		ods->writeUint16LE(_newMatrix[i]);
 }
 
 bool PaletteFaderProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_priority = static_cast<int>(ids->read4());
-	_counter = static_cast<int>(ids->read4());
-	_maxCounter = static_cast<int>(ids->read4());
+	_priority = static_cast<int>(ids->readUint32LE());
+	_counter = static_cast<int>(ids->readUint32LE());
+	_maxCounter = static_cast<int>(ids->readUint32LE());
 
 	unsigned int i;
 	for (i = 0; i < 12; ++i)
-		_oldMatrix[i] = ids->read2();
+		_oldMatrix[i] = ids->readUint16LE();
 	for (i = 0; i < 12; ++i)
-		_newMatrix[i] = ids->read2();
+		_newMatrix[i] = ids->readUint16LE();
 
 	_fader = this; //static
 	return true;

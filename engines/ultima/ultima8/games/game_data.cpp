@@ -303,7 +303,7 @@ void GameData::loadU8Data() {
 		MapGlob *glob = 0;
 		IDataSource *globds = globflex->get_datasource(i);
 
-		if (globds && globds->getSize()) {
+		if (globds && globds->size()) {
 			glob = new MapGlob();
 			glob->read(globds);
 		}
@@ -554,7 +554,7 @@ void GameData::loadRemorseData() {
 		MapGlob *glob = 0;
 		IDataSource *globds = globflex->get_datasource(i);
 
-		if (globds && globds->getSize()) {
+		if (globds && globds->size()) {
 			glob = new MapGlob();
 			glob->read(globds);
 		}
