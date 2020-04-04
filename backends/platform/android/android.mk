@@ -4,6 +4,8 @@ PATH_DIST = $(srcdir)/dists/android
 
 PORT_DISTFILES = $(PATH_DIST)/README.Android
 
+GRADLE_FILES = $(shell find $(PATH_DIST)/gradle -type f) $(PATH_DIST)/gradlew $(PATH_DIST)/build.gradle
+
 PATH_BUILD = ./android_project
 PATH_BUILD_GRADLE = $(PATH_BUILD)/build.gradle
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
@@ -15,7 +17,7 @@ APK_MAIN_RELEASE = ScummVM-release-unsigned.apk
 $(PATH_BUILD):
 	$(MKDIR) $(PATH_BUILD)
 
-$(PATH_BUILD_GRADLE): $(PATH_BUILD)
+$(PATH_BUILD_GRADLE): $(GRADLE_FILES) | $(PATH_BUILD)
 	$(CP) -r $(PATH_DIST)/gradle/ $(PATH_BUILD)
 	$(INSTALL) -c -m 755 $(PATH_DIST)/gradlew $(PATH_BUILD)
 	$(INSTALL) -c -m 644 $(PATH_DIST)/build.gradle $(PATH_BUILD)
