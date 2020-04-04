@@ -1966,31 +1966,45 @@ esac
 
 # Toolchain for Android is in NDK and is using different naming convention
 if test "$_host_os" = android; then
-	case $_host_cpu in
-	arm)
-		_android_target="armv7a-linux-androideabi16"
-		;;
-	aarch64)
-		# Platform version 21 is needed as earlier versions of platform do not support this architecture.
-		_android_target="aarch64-linux-android21"
-		;;
-	i686)
-		_android_target="i686-linux-android16"
-		;;
-	x86_64)
-		# Platform version 21 is needed as earlier versions of platform do not support this architecture.
-		_android_target="x86_64-linux-android21"
-		;;
-	esac
+	# Try to use a known to work (on linux) toolchain
+	_android_toolchain="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64"
+	if test -n "$ANDROID_TOOLCHAIN"; then
+		_android_toolchain="$ANDROID_TOOLCHAIN"
+	fi
 
-	CXX="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
-	append_var CXXFLAGS "-target $_android_target"
-	append_var LDFLAGS "-target $_android_target"
+	# If CXX environment variable is not set, try to set known to work defaults
+	if test -z "$CXX"; then
+		case $_host_cpu in
+		arm)
+			_android_target="armv7a-linux-androideabi16"
+			;;
+		aarch64)
+			# Platform version 21 is needed as earlier versions of platform do not support this architecture.
+			_android_target="aarch64-linux-android21"
+			;;
+		i686)
+			_android_target="i686-linux-android16"
+			;;
+		x86_64)
+			# Platform version 21 is needed as earlier versions of platform do not support this architecture.
+			_android_target="x86_64-linux-android21"
+			;;
+		esac
 
-	_ar="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/$_ar"
-	_as="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/$_as"
-	_ranlib="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/$_ranlib"
-	_strip="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/$_strip"
+		CXX="$_android_toolchain/bin/clang++"
+		# If CXX is defined don't alter CXXFLAGS and LDFLAGS as the user can do it himself
+		append_var CXXFLAGS "-target ${_android_target}"
+		append_var LDFLAGS "-target ${_android_target}"
+	fi
+
+	# These values can get overriden below by environments variables
+	_ar="$_android_toolchain/bin/$_ar"
+	_as="$_android_toolchain/bin/$_as"
+	_ranlib="$_android_toolchain/bin/$_ranlib"
+	_strip="$_android_toolchain/bin/$_strip"
+	if test -z "$STRINGS"; then
+		STRINGS="$_android_toolchain/bin/$_host_alias-strings"
+	fi
 fi
 
 #
