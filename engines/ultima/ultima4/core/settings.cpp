@@ -31,41 +31,61 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace std;
-
 /*
  * Initialize static members
  */
 Settings *Settings::_instance = NULL;
 
+bool SettingsEnhancementOptions::operator==(const SettingsEnhancementOptions &s) const {
+	return _activePlayer == s._activePlayer
+		&& _u5spellMixing == s._u5spellMixing
+		&& _u5shrines == s._u5shrines
+		&& _u5combat == s._u5combat
+		&& _slimeDivides == s._slimeDivides
+		&& _gazerSpawnsInsects == s._gazerSpawnsInsects
+		&& _textColorization == s._textColorization
+		&& _c64chestTraps == s._c64chestTraps
+		&& _smartEnterKey == s._smartEnterKey
+		&& _peerShowsObjects == s._peerShowsObjects
+		&& _u4TileTransparencyHack == s._u4TileTransparencyHack
+		&& _u4TileTransparencyHackPixelShadowOpacity == s._u4TileTransparencyHackPixelShadowOpacity
+		&& _u4TrileTransparencyHackShadowBreadth == s._u4TrileTransparencyHackShadowBreadth;
+}
+
+/*-------------------------------------------------------------------*/
+
 bool SettingsData::operator==(const SettingsData &s) const {
-	// TODO: Refactor this to a clean comparison of individual settings
-	int fieldsSize = (const int *)&_end_of_bitwise_comparators - (const int *)this;
-	if (memcmp(this, &s, fieldsSize) != 0)
-		return false;
-
-	if (_filter != s._filter)
-		return false;
-	if (_gemLayout != s._gemLayout)
-		return false;
-	if (_lineOfSight != s._lineOfSight)
-		return false;
-	if (_videoType != s._videoType)
-		return false;
-	if (_battleDiff != s._battleDiff)
-		return false;
-	if (_logging != s._logging)
-		return false;
-	if (_game != s._game)
-		return false;
-
-	return true;
+	return _battleSpeed == s._battleSpeed
+		&& _campingAlwaysCombat == s._campingAlwaysCombat
+		&& _campTime == s._campTime
+		&& _debug == s._debug
+		&& _enhancements == s._enhancements
+		&& _enhancementsOptions == s._enhancementsOptions
+		&& _filterMoveMessages == s._filterMoveMessages
+		&& _gameCyclesPerSecond == s._gameCyclesPerSecond
+		&& _screenAnimationFramesPerSecond == s._screenAnimationFramesPerSecond
+		&& _innAlwaysCombat == s._innAlwaysCombat
+		&& _innTime == s._innTime
+		&& _keydelay == s._keydelay
+		&& _keyinterval == s._keyinterval
+		&& _mouseOptions == s._mouseOptions
+		&& _screenShakes == s._screenShakes
+		&& _gamma == s._gamma
+		&& _shakeInterval == s._shakeInterval
+		&& _shortcutCommands == s._shortcutCommands
+		&& _shrineTime == s._shrineTime
+		&& _spellEffectSpeed == s._spellEffectSpeed
+		&& _validateXml == s._validateXml
+		&& _volumeFades == s._volumeFades
+		&& _titleSpeedRandom == s._titleSpeedRandom
+		&& _titleSpeedOther == s._titleSpeedOther;
 }
 
 bool SettingsData::operator!=(const SettingsData &s) const {
 	return !operator==(s);
 }
 
+/*-------------------------------------------------------------------*/
 
 Settings::Settings() {
 	init();
@@ -144,7 +164,7 @@ bool Settings::read() {
 	_campingAlwaysCombat = 0;
 
 	// mouse defaults to on
-	_mouseOptions.enabled = 1;
+	_mouseOptions._enabled = 1;
 
 	_logging = DEFAULT_LOGGING;
 	_game = "Ultima IV";
@@ -222,7 +242,7 @@ bool Settings::read() {
 
 	// mouse options
 	if (ConfMan.hasKey("mouseEnabled"))
-		_mouseOptions.enabled = ConfMan.getBool("mouseEnabled");
+		_mouseOptions._enabled = ConfMan.getBool("mouseEnabled");
 	if (ConfMan.hasKey("logging"))
 		_logging = ConfMan.get("logging");
 
@@ -279,7 +299,7 @@ bool Settings::write() {
 	ConfMan.setBool("innAlwaysCombat", _innAlwaysCombat);
 	ConfMan.setBool("campingAlwaysCombat", _campingAlwaysCombat);
 
-	ConfMan.setBool("mouseEnabled", _mouseOptions.enabled);
+	ConfMan.setBool("mouseEnabled", _mouseOptions._enabled);
 	ConfMan.set("logging", _logging);
 
 	ConfMan.setBool("renderTileTransparency",

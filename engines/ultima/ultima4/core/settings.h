@@ -96,10 +96,15 @@ struct SettingsEnhancementOptions {
 	int  _u4TileTransparencyHackPixelShadowOpacity;
 	int  _u4TrileTransparencyHackShadowBreadth;
 
+	bool operator==(const SettingsEnhancementOptions &s) const;
 };
 
 struct MouseOptions {
-	bool enabled;
+	bool _enabled;
+
+	bool operator==(const MouseOptions &s) const {
+		return _enabled == s._enabled;
+	}
 };
 
 /**
@@ -119,7 +124,6 @@ public:
 	bool _filterMoveMessages;
 	bool _fullscreen;
 	int _gameCyclesPerSecond;
-	int _eventTimerGranularity;
 	int _screenAnimationFramesPerSecond;
 	bool _innAlwaysCombat;
 	int _innTime;
@@ -144,14 +148,8 @@ public:
 	int _pauseForEachTurn;
 	int _pauseForEachMovement;
 
-	/**
-	 * Strings, classes, and other objects that cannot
-	 * be bitwise-compared must be placed here at the
-	 * end of the list so that our == and != operators
-	 * function correctly
-	 */
-	long _end_of_bitwise_comparators;
 
+	int _eventTimerGranularity;
 	Common::String _filter;
 	Common::String _gemLayout;
 	Common::String _lineOfSight;

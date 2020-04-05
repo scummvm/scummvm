@@ -202,7 +202,7 @@ EventHandler::EventHandler() : _timer(settings._eventTimerGranularity), _updateS
 }
 
 static void handleMouseMotionEvent(const Common::Event &event) {
-	if (!settings._mouseOptions.enabled)
+	if (!settings._mouseOptions._enabled)
 		return;
 
 	const MouseArea *area;
@@ -233,7 +233,7 @@ static void handleMouseButtonDownEvent(const Common::Event &event, Controller *c
 	else if (event.type == Common::EVENT_MBUTTONDOWN)
 		button = 2;
 
-	if (!settings._mouseOptions.enabled)
+	if (!settings._mouseOptions._enabled)
 		return;
 
 	if (button > 2)
