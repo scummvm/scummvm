@@ -329,6 +329,12 @@ void Lingo::restartLingo() {
 int Lingo::alignTypes(Datum &d1, Datum &d2) {
 	int opType = VOID;
 
+	if (d1.type == REFERENCE)
+		d1.toString();
+
+	if (d2.type == REFERENCE)
+		d2.toString();
+
 	if (d1.type == STRING) {
 		char *endPtr = 0;
 		double d = strtod(d1.u.s->c_str(), &endPtr);
