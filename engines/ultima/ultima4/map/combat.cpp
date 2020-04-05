@@ -26,7 +26,6 @@
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/death.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/game.h"
@@ -347,7 +346,7 @@ void CombatController::end(bool adjustKarma) {
 				case DIR_ADVANCE:
 				case DIR_RETREAT:
 				default:
-					ASSERT(0, "Invalid exit dir %d", _exitDir);
+					error("Invalid exit dir %d", _exitDir);
 					break;
 				}
 

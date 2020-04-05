@@ -295,8 +295,6 @@ public:
 	/* Static variables */
 	static const unsigned int BUFFERLEN;    /**< The default maxixum length of input */
 
-private:
-	Debug *logger;
 public:
 	State state;                /**< The state of the conversation */
 	Common::String playerInput;         /**< A Common::String holding the text the player inputs */

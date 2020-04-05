@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_u4.h"
 #include "ultima/ultima4/gfx/imageloader_u5.h"
 #include "ultima/ultima4/gfx/imageloader_png.h"
 #include "ultima/ultima4/gfx/imageloader_fmtowns.h"
+#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -115,7 +115,7 @@ void ImageLoader::setFromRawData(Image *image, int width, int height, int bpp, c
 		break;
 
 	default:
-		ASSERT(0, "invalid bits-per-pixel (bpp): %d", bpp);
+		error("invalid bits-per-pixel (bpp): %d", bpp);
 	}
 }
 

@@ -29,12 +29,10 @@
 #include "ultima/ultima4/game/cheat.h"
 #include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/conversation/conversation.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/death.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"
@@ -117,10 +115,6 @@ void gameCreatureAttack(Creature *obj);
 
 /* Functions END */
 /*---------------*/
-
-//extern Object *party[8];
-
-Debug gameDbg("debug/game.txt", "Game");
 
 static const MouseArea mouseAreas[] = {
 	{ 3, { { 8, 8 }, { 8, 184 }, { 96, 96 } }, MC_WEST, { U4_ENTER, 0, U4_LEFT } },
@@ -217,8 +211,6 @@ void GameController::initScreenWithoutReloadingState() {
 
 
 void GameController::init() {
-	TRACE(gameDbg, "gameInit() running.");
-
 	initScreen();
 
 	// initialize the global game context, conversation and game state variables
@@ -266,7 +258,7 @@ void gameUpdateScreen() {
 	case VIEW_MIXTURES: /* still testing */
 		break;
 	default:
-		ASSERT(0, "invalid view mode: %d", g_context->_location->_viewMode);
+		error("invalid view mode: %d", g_context->_location->_viewMode);
 	}
 }
 
@@ -1929,7 +1921,7 @@ void GameController::avatarMoved(MoveEvent &event) {
 				screenMessage("%cDrift Only!%c\n", FG_GREY, FG_WHITE);
 				break;
 			default:
-				ASSERT(0, "bad transportContext %d in avatarMoved()", g_context->_transportContext);
+				error("bad transportContext %d in avatarMoved()", g_context->_transportContext);
 			}
 		}
 
@@ -2478,7 +2470,6 @@ bool talkAt(const Coords &coords) {
 	}
 
 	Conversation conv;
-	TRACE_LOCAL(gameDbg, "Setting up script information providers.");
 	conv.script->addProvider("party", g_context->_party);
 	conv.script->addProvider("context", g_context);
 

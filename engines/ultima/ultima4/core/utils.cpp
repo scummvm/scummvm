@@ -25,6 +25,17 @@
 namespace Ultima {
 namespace Ultima4 {
 
+void ASSERT(bool exp, const char *desc, ...) {
+	if (!exp) {
+		va_list args;
+		va_start(args, desc);
+		Common::String msg = Common::String::vformat(desc, args);
+		va_end(args);
+
+		error("Assertion failed: %s", msg.c_str());
+	}
+}
+
 void xu4_srandom() {
 //    srand((unsigned int)time(NULL));
 }

@@ -140,7 +140,6 @@ MODULE_OBJS := \
 	ultima4/conversation/dialogueloader_lb.o \
 	ultima4/conversation/dialogueloader_tlk.o \
 	ultima4/core/config.o \
-	ultima4/core/debug.o \
 	ultima4/core/error.o \
 	ultima4/core/settings.o \
 	ultima4/core/utils.o \

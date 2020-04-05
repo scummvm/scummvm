@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
@@ -73,9 +72,6 @@ void ImageMgr::destroy() {
 }
 
 ImageMgr::ImageMgr() {
-	_logger = new Debug("debug/imagemgr.txt", "ImageMgr");
-	TRACE(*_logger, "creating ImageMgr");
-
 	settings.addObserver(this);
 }
 
@@ -84,13 +80,9 @@ ImageMgr::~ImageMgr() {
 
 	for (Std::map<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++)
 		delete i->_value;
-
-	delete _logger;
 }
 
 void ImageMgr::init() {
-	TRACE(*_logger, "initializing ImageMgr");
-
 	/*
 	 * register the "screen" image representing the entire screen
 	 */
@@ -140,8 +132,6 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
 	set->_name = conf.getString("name");
 	set->_location = conf.getString("location");
 	set->_extends = conf.getString("extends");
-
-	TRACE(*_logger, Common::String("loading image set ") + set->_name);
 
 	vector<ConfigElement> children = conf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
@@ -575,8 +565,6 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 	U4FILE *file = getImageFile(info);
 	Image *unscaled = NULL;
 	if (file) {
-		TRACE(*_logger, Common::String("loading image from file '") + info->_filename + Common::String("'"));
-
 		if (info->_filetype.empty())
 			info->_filetype = guessFileType(info->_filename);
 		Common::String filetype = info->_filetype;
@@ -705,8 +693,6 @@ void ImageMgr::update(Settings *newSettings) {
 	Common::String setname;
 
 	setname = newSettings->_videoType;
-
-	TRACE(*_logger, Common::String("base image set is '") + setname + Common::String("'"));
 
 	_baseSet = getSet(setname);
 }

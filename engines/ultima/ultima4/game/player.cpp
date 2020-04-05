@@ -25,7 +25,6 @@
 #include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
@@ -151,7 +150,7 @@ int PartyMember::getMaxMp() const {
 		break;
 
 	default:
-		ASSERT(0, "invalid player class: %d", _player->_class);
+		error("invalid player class: %d", _player->_class);
 	}
 
 	/* mp always maxes out at 99 */
@@ -268,7 +267,7 @@ void PartyMember::applyEffect(TileEffect effect) {
 	case EFFECT_ELECTRICITY:
 		break;
 	default:
-		ASSERT(0, "invalid effect: %d", effect);
+		error("invalid effect: %d", effect);
 	}
 
 	if (effect != EFFECT_NONE)
@@ -537,7 +536,7 @@ MapTile PartyMember::tileForClass(int klass) {
 		name = "shepherd";
 		break;
 	default:
-		ASSERT(0, "invalid class %d in tileForClass", klass);
+		error("invalid class %d in tileForClass", klass);
 	}
 
 	const Tile *tile = Tileset::get("base")->getByName(name);

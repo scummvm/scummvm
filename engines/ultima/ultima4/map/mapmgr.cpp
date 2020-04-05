@@ -24,7 +24,6 @@
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/map/combat.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/map/map.h"
@@ -65,9 +64,6 @@ void MapMgr::destroy() {
 }
 
 MapMgr::MapMgr() {
-	_logger = new Debug("debug/mapmgr.txt", "MapMgr");
-	TRACE(*_logger, "creating MapMgr");
-
 	const Config *config = Config::getInstance();
 	Map *map;
 
@@ -83,8 +79,6 @@ MapMgr::MapMgr() {
 MapMgr::~MapMgr() {
 	for (Std::vector<Map *>::iterator i = _mapList.begin(); i != _mapList.end(); i++)
 		delete *i;
-
-	delete _logger;
 }
 
 void MapMgr::unloadMap(MapId id) {
@@ -141,8 +135,6 @@ Map *MapMgr::get(MapId id) {
 		if (loader == NULL)
 			errorFatal("can't load map of type \"%d\"", _mapList[id]->_type);
 
-		TRACE_LOCAL(*_logger, Common::String("loading map data for map \'") + _mapList[id]->_fname + "\'");
-
 		loader->load(_mapList[id]);
 	}
 	return _mapList[id];
@@ -182,8 +174,6 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 		CombatMap *cm = dynamic_cast<CombatMap *>(map);
 		cm->setContextual(mapConf.getBool("contextual"));
 	}
-
-	TRACE_LOCAL(*_logger, Common::String("loading configuration for map \'") + map->_fname + "\'");
 
 	if (mapConf.getBool("showavatar"))
 		map->_flags |= SHOW_AVATAR;

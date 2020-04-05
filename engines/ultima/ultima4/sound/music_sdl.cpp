@@ -25,7 +25,6 @@
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/map/location.h"

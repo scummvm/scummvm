@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima4/conversation/conversation.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/script.h"
 
@@ -231,8 +230,7 @@ Common::String Dialogue::dump(const Common::String &arg) {
  * Conversation class
  */
 
-Conversation::Conversation() : logger(0), state(INTRO), script(new Script()) {
-	logger = new Debug("debug/conversation.txt", "Conversation");
+Conversation::Conversation() : state(INTRO), script(new Script()) {
 #ifdef IOS
 	U4IOS::incrementConversationCount();
 #endif
@@ -243,7 +241,6 @@ Conversation::~Conversation() {
 #ifdef IOS
 	U4IOS::decrementConversationCount();
 #endif
-	delete logger;
 	delete script;
 }
 
@@ -289,7 +286,7 @@ Conversation::InputType Conversation::getInputRequired(int *bufferlen) {
 		return INPUT_NONE;
 	}
 
-	ASSERT(0, "invalid state: %d", state);
+	error("invalid state: %d", state);
 	return INPUT_NONE;
 }
 

@@ -26,7 +26,6 @@
 #include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/conversation/conversation.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/game.h"   // Included for ReadPlayerController
 #include "ultima/ultima4/map/location.h"
@@ -289,7 +288,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 			break;
 
 		default:
-			ASSERT(0, "invalid state: %d", cnv->state);
+			error("invalid state: %d", cnv->state);
 		}
 	}
 
@@ -326,7 +325,7 @@ const char *Person::getChoices(Conversation *cnv) {
 		return "012345678\015 \033";
 
 	default:
-		ASSERT(0, "invalid state: %d", cnv->state);
+		error("invalid state: %d", cnv->state);
 	}
 
 	return NULL;
@@ -393,7 +392,7 @@ void Person::runCommand(Conversation *cnv, const ResponsePart &command) {
 	} else if (command == ResponsePart::HAWKWIND) {
 		g_context->_party->adjustKarma(KA_HAWKWIND);
 	} else {
-		ASSERT(0, "unknown command trigger in dialogue response: %s\n", Common::String(command).c_str());
+		error("unknown command trigger in dialogue response: %s\n", Common::String(command).c_str());
 	}
 }
 

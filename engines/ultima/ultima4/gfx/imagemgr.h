@@ -191,8 +191,6 @@ private:
 	Std::map<Common::String, ImageSet *> _imageSets;
 	Std::vector<Common::String> _imageSetNames;
 	ImageSet *_baseSet;
-
-	Debug *_logger;
 };
 
 #define imageMgr (ImageMgr::getInstance())

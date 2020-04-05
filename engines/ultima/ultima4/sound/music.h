@@ -23,7 +23,6 @@
 #ifndef ULTIMA4_MUSIC_H
 #define ULTIMA4_MUSIC_H
 
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {
@@ -199,7 +198,6 @@ public:
 	Type _introMid;
 	Type _current;
 	OSMusicMixer *_playing;
-	Debug *_logger;
 };
 
 } // End of namespace Ultima4

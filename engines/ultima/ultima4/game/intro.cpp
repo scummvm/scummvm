@@ -23,7 +23,6 @@
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/game/intro.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
@@ -426,7 +425,7 @@ bool IntroController::keyPressed(int key) {
 		break;
 
 	default:
-		ASSERT(0, "key handler called in wrong mode");
+		error("key handler called in wrong mode");
 		return true;
 	}
 
@@ -629,7 +628,7 @@ void IntroController::updateScreen() {
 		break;
 
 	default:
-		ASSERT(0, "bad mode in updateScreen");
+		error("bad mode in updateScreen");
 	}
 
 	screenUpdateCursor();
