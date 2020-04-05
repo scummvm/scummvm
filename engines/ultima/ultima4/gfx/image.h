@@ -259,11 +259,6 @@ public:
 		return _surface;
 	}
 
-	/**
-	 * Dumps the image to a file.  The file is always saved in .bmp
-	 * format.  This is mainly used for debugging.
-	 */
-	void save(const Common::String &filename);
 	void drawHighlighted();
 
 	/**

@@ -23,7 +23,6 @@
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_u4.h"
-#include "ultima/ultima4/gfx/imageloader_u5.h"
 #include "ultima/ultima4/gfx/imageloader_png.h"
 #include "ultima/ultima4/gfx/imageloader_fmtowns.h"
 #include "ultima/ultima4/core/utils.h"
@@ -36,7 +35,6 @@ ImageLoaders::ImageLoaders() {
 	_loaderMap["image/x-u4raw"] = new U4RawImageLoader();
 	_loaderMap["image/x-u4rle"] = new U4RleImageLoader();
 	_loaderMap["image/x-u4lzw"] = new U4LzwImageLoader();
-	_loaderMap["image/x-u5lzw"] = new U5LzwImageLoader();
 	_loaderMap["image/fmtowns-tif"] = new FMTOWNSImageLoader(510);
 }
 

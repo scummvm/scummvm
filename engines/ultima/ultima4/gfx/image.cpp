@@ -449,12 +449,6 @@ void Image::drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw
 	}
 }
 
-void Image::save(const Common::String &filename) {
-#ifdef TODO
-	SDL_SaveBMP(surface, filename.c_str());
-#endif
-}
-
 void Image::dump() {
 	g_screen->blitFrom(*_surface, Common::Point(0, 0));
 	g_screen->update();

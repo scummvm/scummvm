@@ -139,6 +139,9 @@ MODULE_OBJS := \
 	ultima4/conversation/dialogueloader_hw.o \
 	ultima4/conversation/dialogueloader_lb.o \
 	ultima4/conversation/dialogueloader_tlk.o \
+	ultima4/core/lzw/hash.o \
+	ultima4/core/lzw/lzw.o \
+	ultima4/core/lzw/u4decode.o \
 	ultima4/core/config.o \
 	ultima4/core/error.o \
 	ultima4/core/settings.o \
@@ -179,7 +182,6 @@ MODULE_OBJS := \
 	ultima4/gfx/imageloader_fmtowns.o \
 	ultima4/gfx/imageloader_png.o \
 	ultima4/gfx/imageloader_u4.o \
-	ultima4/gfx/imageloader_u5.o \
 	ultima4/gfx/imagemgr.o \
 	ultima4/gfx/imageview.o \
 	ultima4/gfx/scale.o \
