@@ -88,6 +88,15 @@ const int IntroBinData::BEASTIE_FRAME_TABLE_OFFSET = 0x7380;
 const int IntroBinData::BEASTIE1_FRAMES_OFFSET = 0;
 const int IntroBinData::BEASTIE2_FRAMES_OFFSET = 0x78;
 
+void IntroController::AnimElement::shufflePlotData() {
+	for (int idx = 0; idx < ((int)_plotData.size() - 1); ++idx) {
+		// Pick a random element from the remainder of the plot data
+		int srcIndex = idx + g_ultima->getRandomNumber(_plotData.size() - idx - 1);
+		if (srcIndex != idx)
+			SWAP(_plotData[srcIndex], _plotData[idx]);
+	}
+}
+
 IntroBinData::IntroBinData() :
 	_sigData(NULL),
 	_scriptTable(NULL),
@@ -1755,9 +1764,9 @@ bool IntroController::updateTitle() {
 	case TITLE: {
 		// blit src to the canvas in a random pixelized manner
 		_title->_animStep = animStepTarget;
-#ifdef TODO
-		random_shuffle(title->plotData.begin(), title->plotData.end());
-#endif
+
+		_title->shufflePlotData();
+
 		_title->_destImage->fillRect(1, 1, _title->_rw, _title->_rh, 0, 0, 0);
 
 		// @TODO: animStepTarget (for this loop) should not exceed
