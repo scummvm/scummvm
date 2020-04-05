@@ -869,26 +869,19 @@ void IntroController::journeyOnward() {
 }
 
 void IntroController::about() {
-#ifdef TODO
 	// draw the extended background for all option screens
-	backgroundArea.draw(BKGD_INTRO);
-	backgroundArea.draw(BKGD_OPTIONS_BTM, 0, 120);
+	_backgroundArea.draw(BKGD_INTRO);
+	_backgroundArea.draw(BKGD_OPTIONS_BTM, 0, 120);
 
 	screenHideCursor();
-	menuArea.textAt(14, 1, "XU4 %s", VERSION);
-	menuArea.textAt(1, 3, "xu4 is free software; you can redist-");
-	menuArea.textAt(1, 4, "ribute it and/or modify it under the");
-	menuArea.textAt(1, 5, "terms of the GNU GPL as published by");
-	menuArea.textAt(1, 6, "the FSF.  See COPYING.");
-	menuArea.textAt(4, 8, "Copyright \011 2002-2006, xu4 Team");
-	menuArea.textAt(4, 9, "Copyright \011 1987, Lord British");
+	_menuArea.textAt(11, 1, "ScummVM Ultima IV");
+	_menuArea.textAt(1, 3, "Based on the xu4 project");
 	drawBeasties();
 
 	ReadChoiceController::get("");
 
 	screenShowCursor();
 	updateScreen();
-#endif
 }
 
 void IntroController::showText(const Common::String &text) {
