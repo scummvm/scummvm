@@ -110,38 +110,39 @@ public:
 	bool operator==(const SettingsData &) const;
 	bool operator!=(const SettingsData &) const;
 
-	int                 _battleSpeed;
-	bool                _campingAlwaysCombat;
-	int                 _campTime;
-	bool                _debug;
-	bool                _enhancements;
+	int _battleSpeed;
+	bool _campingAlwaysCombat;
+	int _campTime;
+	bool _debug;
+	bool _enhancements;
 	SettingsEnhancementOptions _enhancementsOptions;
-	bool                _filterMoveMessages;
-	bool                _fullscreen;
-	int                 _gameCyclesPerSecond;
-	int                 _screenAnimationFramesPerSecond;
-	bool                _innAlwaysCombat;
-	int                 _innTime;
-	int                 _keydelay;
-	int                 _keyinterval;
-	MouseOptions        _mouseOptions;
-	int                 _musicVol;
-	unsigned int        _scale;
-	bool                _screenShakes;
-	int                 _gamma;
-	int                 _shakeInterval;
-	bool                _shortcutCommands;
-	int                 _shrineTime;
-	int                 _soundVol;
-	int                 _spellEffectSpeed;
-	bool                _validateXml;
-	bool                _volumeFades;
-	int                 _titleSpeedRandom;
-	int                 _titleSpeedOther;
+	bool _filterMoveMessages;
+	bool _fullscreen;
+	int _gameCyclesPerSecond;
+	int _eventTimerGranularity;
+	int _screenAnimationFramesPerSecond;
+	bool _innAlwaysCombat;
+	int _innTime;
+	int _keydelay;
+	int _keyinterval;
+	MouseOptions _mouseOptions;
+	int _musicVol;
+	uint _scale;
+	bool _screenShakes;
+	int _gamma;
+	int _shakeInterval;
+	bool _shortcutCommands;
+	int _shrineTime;
+	int _soundVol;
+	int _spellEffectSpeed;
+	bool _validateXml;
+	bool _volumeFades;
+	int _titleSpeedRandom;
+	int _titleSpeedOther;
 
 	//Settings that aren't in file yet
-	int                 _pauseForEachTurn;
-	int                 _pauseForEachMovement;
+	int _pauseForEachTurn;
+	int _pauseForEachMovement;
 
 	/**
 	 * Strings, classes, and other objects that cannot
@@ -149,15 +150,15 @@ public:
 	 * end of the list so that our == and != operators
 	 * function correctly
 	 */
-	long                _end_of_bitwise_comparators;
+	long _end_of_bitwise_comparators;
 
-	Common::String              _filter;
-	Common::String              _gemLayout;
-	Common::String              _lineOfSight;
-	Common::String              _videoType;
-	Common::String              _battleDiff;
-	Common::String              _logging;
-	Common::String              _game;
+	Common::String _filter;
+	Common::String _gemLayout;
+	Common::String _lineOfSight;
+	Common::String _videoType;
+	Common::String _battleDiff;
+	Common::String _logging;
+	Common::String _game;
 };
 
 /**

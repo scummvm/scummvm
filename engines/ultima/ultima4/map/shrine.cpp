@@ -202,8 +202,8 @@ void Shrine::enhancedSequence() {
 void Shrine::meditationCycle() {
 	/* find our interval for meditation */
 	int interval = (settings._shrineTime * 1000) / MEDITATION_MANTRAS_PER_CYCLE;
-	interval -= (interval % eventTimerGranularity);
-	interval /= eventTimerGranularity;
+	interval -= (interval % settings._eventTimerGranularity);
+	interval /= settings._eventTimerGranularity;
 	if (interval <= 0)
 		interval = 1;
 
