@@ -37,8 +37,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-extern bool verbose;
-
 /**
  * StatsArea class implementation
  */

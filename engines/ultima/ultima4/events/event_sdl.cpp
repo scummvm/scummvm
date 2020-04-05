@@ -33,7 +33,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-extern bool verbose;
 extern int eventTimerGranularity;
 
 KeyHandler::KeyHandler(Callback func, void *d, bool asyncronous) :
@@ -272,9 +271,8 @@ static void handleKeyDownEvent(const Common::Event &event, Controller *controlle
 	         event.kbd.keycode == Common::KEYCODE_DELETE)
 		key = U4_BACKSPACE;
 
-	if (verbose)
-		debug(1, "key event: sym = %d, mod = %d; translated = %d",
-		      event.kbd.keycode,  event.kbd.flags,  key);
+	debug(1, "key event: sym = %d, mod = %d; translated = %d",
+		    event.kbd.keycode,  event.kbd.flags,  key);
 
 	/* handle the keypress */
 	processed = controller->notifyKeyPressed(key);

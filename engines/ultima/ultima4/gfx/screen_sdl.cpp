@@ -56,8 +56,6 @@ Scaler filterScaler;
 
 Cursor *screenInitCursor(const char *const xpm[]);
 
-extern bool verbose;
-
 
 void screenRefreshThreadInit();
 void screenRefreshThreadEnd();
