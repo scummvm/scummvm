@@ -92,7 +92,7 @@ void Lingo::printStack(const char *s, uint pc) {
 
 	for (uint i = 0; i < _stack.size(); i++) {
 		Datum d = _stack[i];
-		d.toString();
+		d.makeString();
 		stack += Common::String::format("<%s> ", d.u.s->c_str());
 	}
 	debugC(5, kDebugLingoExec, "[%3d]: %s", pc, stack.c_str());
@@ -507,7 +507,7 @@ int Lingo::castIdFetch(Datum &var) {
 		else
 			warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
 	} else if (var.type == INT || var.type == FLOAT) {
-		var.toInt();
+		var.makeInt();
 		if (!score->_loadedCast->contains(var.u.i))
 			warning("castIdFetch: reference to non-existent cast ID: %d", var.u.i);
 		else
@@ -583,7 +583,7 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		if (cast) {
 			switch (cast->_type) {
 			case kCastText:
-				value.toString();
+				value.makeString();
 				((TextCast *)cast)->setText(value.u.s->c_str());
 				delete value.u.s;
 				break;

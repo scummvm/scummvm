@@ -181,7 +181,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 
 	if (movie.type != VOID) {
-		movie.toString();
+		movie.makeString();
 
 		Common::String movieFilename = pathMakeRelative(*movie.u.s);
 		Common::String cleanedFilename;
@@ -235,7 +235,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		frame.toInt();
+		frame.makeInt();
 
 		_vm->_nextMovie.frameI = frame.u.i;
 
@@ -253,7 +253,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 	}
 
-	frame.toInt();
+	frame.makeInt();
 
 	if (_vm->getCurrentScore())
 		_vm->getCurrentScore()->setCurrentFrame(frame.u.i);

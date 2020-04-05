@@ -217,7 +217,7 @@ void LC::c_printtop(void) {
 		warning("%s", d.u.s->c_str());
 		break;
 	case POINT:
-		warning("point(%s, %s", (*d.u.farr)[0].toString()->c_str(), (*d.u.farr)[1].toString()->c_str());
+		warning("point(%s, %s", (*d.u.farr)[0].makeString()->c_str(), (*d.u.farr)[1].makeString()->c_str());
 		break;
 	case SYMBOL:
 		warning("%s", d.type2str(true));
@@ -226,7 +226,7 @@ void LC::c_printtop(void) {
 		warning("#%s", d.u.s->c_str());
 		break;
 	case ARRAY:
-		warning("%s", d.toString()->c_str());
+		warning("%s", d.makeString()->c_str());
 		break;
 	default:
 		warning("--unknown--");
@@ -587,8 +587,8 @@ Datum LC::modData(Datum d1, Datum d2) {
 		return LC::mapBinaryOp(LC::modData, d1, d2);
 	}
 
-	d1.toInt();
-	d2.toInt();
+	d1.makeInt();
+	d2.makeInt();
 	if (d2.u.i == 0)
 		error("division by zero");
 
@@ -631,8 +631,8 @@ void LC::c_ampersand() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.toString();
-	d2.toString();
+	d1.makeString();
+	d2.makeString();
 
 	*d1.u.s += *d2.u.s;
 
@@ -649,8 +649,8 @@ void LC::c_after() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.toString();
-	d2.toString();
+	d1.makeString();
+	d2.makeString();
 
 	*d1.u.s = *d2.u.s + *d1.u.s;
 
@@ -663,8 +663,8 @@ void LC::c_concat() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.toString();
-	d2.toString();
+	d1.makeString();
+	d2.makeString();
 
 	*d1.u.s += " ";
 	*d1.u.s += *d2.u.s;
@@ -678,8 +678,8 @@ void LC::c_contains() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.toString();
-	d2.toString();
+	d1.makeString();
+	d2.makeString();
 
 	Common::String *s1 = toLowercaseMac(d1.u.s);
 	Common::String *s2 = toLowercaseMac(d2.u.s);
@@ -701,8 +701,8 @@ void LC::c_starts() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.toString();
-	d2.toString();
+	d1.makeString();
+	d2.makeString();
 
 	Common::String *s1 = toLowercaseMac(d1.u.s);
 	Common::String *s2 = toLowercaseMac(d2.u.s);
@@ -750,7 +750,7 @@ void LC::c_of() {
 	Datum last_char = g_lingo->pop();
 	Datum first_char = g_lingo->pop();
 
-	target.toString();
+	target.makeString();
 	Common::String result = *target.u.s;
 
 	if (first_line.u.i > 0) {
@@ -937,8 +937,8 @@ void LC::c_and() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.toInt();
-	d2.toInt();
+	d1.makeInt();
+	d2.makeInt();
 
 	d1.u.i = (d1.u.i && d2.u.i) ? 1 : 0;
 
@@ -949,8 +949,8 @@ void LC::c_or() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.toInt();
-	d2.toInt();
+	d1.makeInt();
+	d2.makeInt();
 
 	d1.u.i = (d1.u.i || d2.u.i) ? 1 : 0;
 
@@ -960,7 +960,7 @@ void LC::c_or() {
 void LC::c_not() {
 	Datum d = g_lingo->pop();
 
-	d.toInt();
+	d.makeInt();
 
 	d.u.i = ~d.u.i ? 1 : 0;
 
@@ -1059,7 +1059,7 @@ void LC::c_jump() {
 void LC::c_jumpifz() {
 	uint jump = g_lingo->readInt();
 	Datum test = g_lingo->pop();
-	test.toInt();
+	test.makeInt();
 	if (test.u.i == 0) {
 		g_lingo->_pc = jump;
 	}
@@ -1074,7 +1074,7 @@ void LC::c_repeatwhilecode(void) {
 
 	g_lingo->execute(savepc + 2);	/* condition */
 	d = g_lingo->pop();
-	d.toInt();
+	d.makeInt();
 
 	while (d.u.i) {
 		g_lingo->execute(body + savepc - 1);	/* body */
@@ -1090,7 +1090,7 @@ void LC::c_repeatwhilecode(void) {
 
 		g_lingo->execute(savepc + 2);	/* condition */
 		d = g_lingo->pop();
-		d.toInt();
+		d.makeInt();
 	}
 
 	if (!g_lingo->_returning)
@@ -1139,7 +1139,7 @@ void LC::c_repeatwithcode(void) {
 
 	g_lingo->execute(init + savepc - 1);	/* condition */
 	d = g_lingo->pop();
-	d.toInt();
+	d.makeInt();
 	counter->u.i = d.u.i;
 	counter->type = INT;
 
@@ -1158,7 +1158,7 @@ void LC::c_repeatwithcode(void) {
 		counter->u.i += inc;
 		g_lingo->execute(finish + savepc - 1);	/* condition */
 		d = g_lingo->pop();
-		d.toInt();
+		d.makeInt();
 
 		if (counter->u.i == d.u.i + inc)
 			break;
@@ -1192,7 +1192,7 @@ void LC::c_ifcode(void) {
 
 	d = g_lingo->pop();
 
-	if (d.toInt()) {
+	if (d.makeInt()) {
 		debugC(8, kDebugLingoExec, "executing then");
 		g_lingo->execute(then + savepc - 1);
 	} else if (elsep) { /* else part? */
@@ -1244,7 +1244,7 @@ void LC::c_tellcode() {
 	uint start = g_lingo->_pc;
 	uint end = g_lingo->readInt() + start - 1;
 
-	warning("STUB: c_tellcode(%s)", d1.toString()->c_str());
+	warning("STUB: c_tellcode(%s)", d1.makeString()->c_str());
 
 	g_lingo->_pc = end;
 }
@@ -1521,8 +1521,8 @@ void LC::c_open() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.toString();
-	d2.toString();
+	d1.makeString();
+	d2.makeString();
 
 	warning("STUB: c_open(%s, %s)", d1.u.s->c_str(), d2.u.s->c_str());
 }

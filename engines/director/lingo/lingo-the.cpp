@@ -418,7 +418,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheSprite(id, field);
 		break;
 	case kTheSqrt:
-		id.toFloat();
+		id.makeFloat();
 		d.type = FLOAT;
 		d.u.f = sqrt(id.u.f);
 		break;
@@ -438,8 +438,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
 		Datum idCopy = id;
 		Datum dCopy = d;
-		idCopy.toString();
-		dCopy.toString();
+		idCopy.makeString();
+		dCopy.makeString();
 		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(\"%s\", %s, \"%s\", %s)", field2str(field), idCopy.u.s->c_str(), entity2str(entity), dCopy.u.s->c_str());
 	}
 
@@ -448,13 +448,13 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheCast(id, field, d);
 		break;
 	case kTheColorDepth:
-		_vm->_colorDepth = d.toInt();
+		_vm->_colorDepth = d.makeInt();
 
 		// bpp. 1, 2, 4, 8, 32
 		warning("STUB: Lingo::setTheEntity(): Set color depth to %d", _vm->_colorDepth);
 		break;
 	case kTheFloatPrecision:
-		_floatPrecision = d.toInt();
+		_floatPrecision = d.makeInt();
 		_floatPrecision = MAX(0, MIN(_floatPrecision, 19)); // 0 to 19
 		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
 		break;
@@ -470,8 +470,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 }
 
 void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
-	warning("STUB: setTheMenuItemEntity(%s, \"%s\", %s, \"%s\", %s)", entity2str(entity), menuId.toString()->c_str(), field2str(field),
-				menuItemId.toString()->c_str(), d.toString()->c_str());
+	warning("STUB: setTheMenuItemEntity(%s, \"%s\", %s, \"%s\", %s)", entity2str(entity), menuId.makeString()->c_str(), field2str(field),
+				menuItemId.makeString()->c_str(), d.makeString()->c_str());
 }
 
 Datum Lingo::getTheSprite(Datum &id1, int field) {
@@ -515,7 +515,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_constraint;
 		break;
 	case kTheEditableText:
-		d.toString();
+		d.makeString();
 		d.u.s = &sprite->_editableText;
 		break;
 	case kTheForeColor:
@@ -594,7 +594,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	int id = 0;
 	Score *score = _vm->getCurrentScore();
 
-	d.toInt(); // Enforce Integer
+	d.makeInt(); // Enforce Integer
 
 	if (!score) {
 		warning("Lingo::setTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
@@ -633,7 +633,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_constraint = d.u.i;
 		break;
 	case kTheEditableText:
-		sprite->_editableText = *d.toString();
+		sprite->_editableText = *d.makeString();
 		break;
 	case kTheForeColor:
 		sprite->_foreColor = d.u.i;
@@ -727,7 +727,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	castType = score->_loadedCast->getVal(id)->_type;
 	castInfo = score->_castsInfo[id];
-	
+
 	//TODO: castInfo uses full offsets, so check the higher value.
 	if (castInfo == nullptr)
 		castInfo = score->_castsInfo[id + score->_castIDoffset];
@@ -749,7 +749,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = castType;
 		break;
 	case kTheFileName:
-		d.toString();
+		d.makeString();
 		d.u.s = &castInfo->fileName;
 		break;
 	case kTheForeColor:
@@ -771,11 +771,11 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = 1; //Not loaded handled above
 		break;
 	case kTheName:
-		d.toString();
+		d.makeString();
 		d.u.s = &castInfo->name;
 		break;
 	case kTheScriptText:
-		d.toString();
+		d.makeString();
 		d.u.s = &castInfo->script;
 		break;
 	case kTheWidth:
@@ -820,7 +820,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			}
 			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
 
-			d.toInt();
+			d.makeInt();
 			shape->_bgCol = d.u.i;
 			shape->_modified = 1;
 		}
@@ -836,7 +836,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
-		d.toString();
+		d.makeString();
 		castInfo->fileName = *d.u.s;
 		break;
 	case kTheForeColor:
@@ -851,7 +851,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheHeight:
-		d.toInt();
+		d.makeInt();
 		score->getCastMemberInitialRect(id).setHeight(d.u.i);
 		score->setCastMemberModified(id);
 		break;
@@ -860,7 +860,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
-		d.toString();
+		d.makeString();
 		castInfo->name = *d.u.s;
 		break;
 	case kTheScriptText:
@@ -868,7 +868,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
-		d.toString();
+		d.makeString();
 		addCode(d.u.s->c_str(), kSpriteScript, id);
 
 		castInfo->script = *d.u.s;
@@ -876,7 +876,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheText:
 		if (castType == kCastText) {
 			if (score->_loadedCast->contains(id) && score->_loadedCast->getVal(id)->_type == kCastText) {
-				d.toString();
+				d.makeString();
 				((TextCast *)score->_loadedCast->getVal(id))->setText(d.u.s->c_str());
 			} else {
 				warning("Lingo::setTheCast(): Unknown STXT cast id %d", id);
@@ -887,7 +887,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheWidth:
-		d.toInt();
+		d.makeInt();
 		score->getCastMemberInitialRect(id).setWidth(d.u.i);
 		score->setCastMemberModified(id);
 		break;

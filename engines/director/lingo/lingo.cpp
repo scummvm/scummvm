@@ -330,10 +330,10 @@ int Lingo::alignTypes(Datum &d1, Datum &d2) {
 	int opType = VOID;
 
 	if (d1.type == REFERENCE)
-		d1.toString();
+		d1.makeString();
 
 	if (d2.type == REFERENCE)
-		d2.toString();
+		d2.makeString();
 
 	if (d1.type == STRING) {
 		char *endPtr = 0;
@@ -359,8 +359,8 @@ int Lingo::alignTypes(Datum &d1, Datum &d2) {
 
 	if (d1.type == FLOAT || d2.type == FLOAT) {
 		opType = FLOAT;
-		d1.toFloat();
-		d2.toFloat();
+		d1.makeFloat();
+		d2.makeFloat();
 	} else if (d1.type == INT && d2.type == INT) {
 		opType = INT;
 	} else {
@@ -370,10 +370,10 @@ int Lingo::alignTypes(Datum &d1, Datum &d2) {
 	return opType;
 }
 
-int Datum::toInt() {
+int Datum::makeInt() {
 	switch (type) {
 	case REFERENCE:
-		toString();
+		makeString();
 		// fallthrough
 	case STRING:
 		{
@@ -400,7 +400,7 @@ int Datum::toInt() {
 			break;
 		}
 	default:
-		warning("Incorrect operation toInt() for type: %s", type2str());
+		warning("Incorrect operation makeInt() for type: %s", type2str());
 	}
 
 	type = INT;
@@ -408,10 +408,10 @@ int Datum::toInt() {
 	return u.i;
 }
 
-double Datum::toFloat() {
+double Datum::makeFloat() {
 	switch (type) {
 	case REFERENCE:
-		toString();
+		makeString();
 		// fallthrough
 	case STRING:
 		{
@@ -438,7 +438,7 @@ double Datum::toFloat() {
 		// no-op
 		break;
 	default:
-		warning("Incorrect operation toFloat() for type: %s", type2str());
+		warning("Incorrect operation makeFloat() for type: %s", type2str());
 	}
 
 	type = FLOAT;
@@ -446,7 +446,7 @@ double Datum::toFloat() {
 	return u.f;
 }
 
-Common::String *Datum::toString() {
+Common::String *Datum::makeString() {
 	Common::String *s = new Common::String;
 	switch (type) {
 	case INT:
@@ -482,14 +482,14 @@ Common::String *Datum::toString() {
 			Score *score = g_director->getCurrentScore();
 
 			if (!score) {
-				warning("toString(): No score");
+				warning("makeString(): No score");
 				*s = "";
 				break;
 			}
 
 			if (!score->_loadedCast->contains(idx)) {
 				if (!score->_loadedCast->contains(idx - score->_castIDoffset)) {
-					warning("toString(): Unknown REFERENCE %d", idx);
+					warning("makeString(): Unknown REFERENCE %d", idx);
 					*s = "";
 					break;
 				} else {
@@ -507,13 +507,13 @@ Common::String *Datum::toString() {
 			if (i > 0)
 				*s += ", ";
 			Datum d = u.farr->operator[](i);
-			*s += *d.toString();
+			*s += *d.makeString();
 		}
 
 		*s += "]";
 		break;
 	default:
-		warning("Incorrect operation toString() for type: %s", type2str());
+		warning("Incorrect operation makeString() for type: %s", type2str());
 	}
 
 	u.s = s;

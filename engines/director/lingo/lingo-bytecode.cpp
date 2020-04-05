@@ -262,7 +262,7 @@ void LC::cb_localcall() {
 void LC::cb_methodcall() {
 	g_lingo->readInt();
 	Datum obj = g_lingo->pop();
-	obj.toString();
+	obj.makeString();
 	warning("STUB: cb_methodcall(%s)", obj.u.s->c_str());
 
 	Datum nargs = g_lingo->pop();
@@ -450,7 +450,7 @@ void LC::cb_v4theentitypush() {
 	int bank = g_lingo->readInt();
 
 	Datum firstArg = g_lingo->pop();
-	firstArg.toInt();
+	firstArg.makeInt();
 	Datum result;
 	result.u.s = NULL;
 	result.type = VOID;
@@ -536,7 +536,7 @@ void LC::cb_v4theentityassign() {
 	int bank = g_lingo->readInt();
 
 	Datum firstArg = g_lingo->pop();
-	firstArg.toInt();
+	firstArg.makeInt();
 	Datum value = g_lingo->pop();
 	Datum result;
 	result.u.s = NULL;

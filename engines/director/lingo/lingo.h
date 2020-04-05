@@ -108,9 +108,9 @@ struct Datum {	/* interpreter stack type */
 	Datum(double val) { u.f = val; type = FLOAT; }
 	Datum(Common::String *val) { u.s = val; type = STRING; }
 
-	double toFloat();
-	int toInt();
-	Common::String *toString();
+	double makeFloat();
+	int makeInt();
+	Common::String *makeString();
 
 	const char *type2str(bool isk = false);
 };
