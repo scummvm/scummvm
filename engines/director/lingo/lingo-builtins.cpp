@@ -1410,7 +1410,10 @@ void LB::b_puppetSound(int nargs) {
 		sound->stopSound(1);
 	} else {
 		Cast *cast = score->_loadedCast->getVal(castId);
-		if (cast->_type != kCastSound) {
+		if (!cast) {
+			warning("b_puppetSound: attempted to play a NULL cast member");
+			return;
+		} else if (cast->_type != kCastSound) {
 			error("b_puppetSound: attempted to play a non-SoundCast cast member");
 			return;
 		}
