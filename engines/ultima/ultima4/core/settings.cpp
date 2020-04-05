@@ -25,6 +25,7 @@
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/core/utils.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 
 namespace Ultima {
@@ -90,8 +91,6 @@ void Settings::setData(const SettingsData &data) {
 }
 
 bool Settings::read() {
-	Common::File settingsFile;
-
 	/* default settings */
 	_scale                 = DEFAULT_SCALE;
 	_fullscreen            = DEFAULT_FULLSCREEN;
@@ -112,7 +111,7 @@ bool Settings::read() {
 	_enhancements          = DEFAULT_ENHANCEMENTS;
 	_gameCyclesPerSecond   = DEFAULT_CYCLES_PER_SECOND;
 	_screenAnimationFramesPerSecond = DEFAULT_ANIMATION_FRAMES_PER_SECOND;
-	_debug                 = DEFAULT_DEBUG;
+	_debug                 = gDebugLevel > 0;
 	_battleDiff            = DEFAULT_BATTLE_DIFFICULTY;
 	_validateXml           = DEFAULT_VALIDATE_XML;
 	_spellEffectSpeed      = DEFAULT_SPELL_EFFECT_SPEED;
@@ -150,140 +149,93 @@ bool Settings::read() {
 	_logging = DEFAULT_LOGGING;
 	_game = "Ultima IV";
 
-#ifdef TODO
-	if (!settingsFile.open(_filename))
-		return false;
+	if (ConfMan.hasKey("gemLayout"))
+		_gemLayout = ConfMan.get("gemLayout");
+	if (ConfMan.hasKey("lineOfSight"))
+		_lineOfSight = ConfMan.get("lineOfSight");
+	if (ConfMan.hasKey("screenShakes"))
+		_screenShakes = ConfMan.getBool("screenShakes");
+	if (ConfMan.hasKey("gamma"))
+		_gamma = ConfMan.getInt("gamma");
 
-	while (fgets(buffer, sizeof(buffer), settingsFile) != NULL) {
-		while (Common::isSpace(buffer[strlen(buffer) - 1]))
-			buffer[strlen(buffer) - 1] = '\0';
+	if (ConfMan.hasKey("volumeFades"))
+		_volumeFades = ConfMan.getBool("volumeFades");
+	if (ConfMan.hasKey("shortcutCommands"))
+		_shortcutCommands = ConfMan.getBool("shortcutCommands");
+	if (ConfMan.hasKey("keydelay"))
+		_keydelay = ConfMan.getInt("keydelay");
+	if (ConfMan.hasKey("filterMoveMessages"))
+		_filterMoveMessages = ConfMan.getBool("filterMoveMessages");
+	if (ConfMan.hasKey("battlespeed"))
+		_battleSpeed = ConfMan.getInt("battlespeed");
+	if (ConfMan.hasKey("enhancements"))
+		_enhancements = ConfMan.getBool("enhancements");
+	if (ConfMan.hasKey("gameCyclesPerSecond"))
+		_gameCyclesPerSecond = ConfMan.getInt("gameCyclesPerSecond");
+	if (ConfMan.hasKey("battleDiff"))
+		_battleDiff = ConfMan.get("battleDiff");
+	if (ConfMan.hasKey("validateXml"))
+		_validateXml = ConfMan.getBool("validateXml");
 
-		if (strstr(buffer, "scale=") == buffer)
-			scale = (unsigned int) strtoul(buffer + strlen("scale="), NULL, 0);
-		else if (strstr(buffer, "fullscreen=") == buffer)
-			fullscreen = (int) strtoul(buffer + strlen("fullscreen="), NULL, 0);
-		else if (strstr(buffer, "filter=") == buffer)
-			filter = buffer + strlen("filter=");
-		else if (strstr(buffer, "video=") == buffer)
-			videoType = buffer + strlen("video=");
-		else if (strstr(buffer, "gemLayout=") == buffer)
-			gemLayout = buffer + strlen("gemLayout=");
-		else if (strstr(buffer, "lineOfSight=") == buffer)
-			lineOfSight = buffer + strlen("lineOfSight=");
-		else if (strstr(buffer, "screenShakes=") == buffer)
-			screenShakes = (int) strtoul(buffer + strlen("screenShakes="), NULL, 0);
-		else if (strstr(buffer, "gamma=") == buffer)
-			gamma = (int) strtoul(buffer + strlen("gamma="), NULL, 0);
-		else if (strstr(buffer, "musicVol=") == buffer)
-			musicVol = (int) strtoul(buffer + strlen("musicVol="), NULL, 0);
-		else if (strstr(buffer, "soundVol=") == buffer)
-			soundVol = (int) strtoul(buffer + strlen("soundVol="), NULL, 0);
-		else if (strstr(buffer, "volumeFades=") == buffer)
-			volumeFades = (int) strtoul(buffer + strlen("volumeFades="), NULL, 0);
-		else if (strstr(buffer, "shortcutCommands=") == buffer)
-			shortcutCommands = (int) strtoul(buffer + strlen("shortcutCommands="), NULL, 0);
-		else if (strstr(buffer, "keydelay=") == buffer)
-			keydelay = (int) strtoul(buffer + strlen("keydelay="), NULL, 0);
-		else if (strstr(buffer, "keyinterval=") == buffer)
-			keyinterval = (int) strtoul(buffer + strlen("keyinterval="), NULL, 0);
-		else if (strstr(buffer, "filterMoveMessages=") == buffer)
-			filterMoveMessages = (int) strtoul(buffer + strlen("filterMoveMessages="), NULL, 0);
-		else if (strstr(buffer, "battlespeed=") == buffer)
-			battleSpeed = (int) strtoul(buffer + strlen("battlespeed="), NULL, 0);
-		else if (strstr(buffer, "enhancements=") == buffer)
-			enhancements = (int) strtoul(buffer + strlen("enhancements="), NULL, 0);
-		else if (strstr(buffer, "gameCyclesPerSecond=") == buffer)
-			gameCyclesPerSecond = (int) strtoul(buffer + strlen("gameCyclesPerSecond="), NULL, 0);
-		else if (strstr(buffer, "debug=") == buffer)
-			debug = (int) strtoul(buffer + strlen("debug="), NULL, 0);
-		else if (strstr(buffer, "battleDiff=") == buffer)
-			battleDiff = buffer + strlen("battleDiff=");
-		else if (strstr(buffer, "validateXml=") == buffer)
-			validateXml = (int) strtoul(buffer + strlen("validateXml="), NULL, 0);
-		else if (strstr(buffer, "spellEffectSpeed=") == buffer)
-			spellEffectSpeed = (int) strtoul(buffer + strlen("spellEffectSpeed="), NULL, 0);
-		else if (strstr(buffer, "campTime=") == buffer)
-			campTime = (int) strtoul(buffer + strlen("campTime="), NULL, 0);
-		else if (strstr(buffer, "innTime=") == buffer)
-			innTime = (int) strtoul(buffer + strlen("innTime="), NULL, 0);
-		else if (strstr(buffer, "shrineTime=") == buffer)
-			shrineTime = (int) strtoul(buffer + strlen("shrineTime="), NULL, 0);
-		else if (strstr(buffer, "shakeInterval=") == buffer)
-			shakeInterval = (int) strtoul(buffer + strlen("shakeInterval="), NULL, 0);
-		else if (strstr(buffer, "titleSpeedRandom=") == buffer)
-			titleSpeedRandom = (int) strtoul(buffer + strlen("titleSpeedRandom="), NULL, 0);
-		else if (strstr(buffer, "titleSpeedOther=") == buffer)
-			titleSpeedOther = (int) strtoul(buffer + strlen("titleSpeedOther="), NULL, 0);
+	if (ConfMan.hasKey("spellEffectSpeed"))
+		_spellEffectSpeed = ConfMan.getInt("spellEffectSpeed");
+	if (ConfMan.hasKey("campTime"))
+		_campTime = ConfMan.getInt("campTime");
+	if (ConfMan.hasKey("innTime"))
+		_innTime = ConfMan.getInt("innTime");
+	if (ConfMan.hasKey("shrineTime"))
+		_shrineTime = ConfMan.getInt("shrineTime");
+	if (ConfMan.hasKey("shakeInterval"))
+		_shakeInterval = ConfMan.getInt("shakeInterval");
+	if (ConfMan.hasKey("titleSpeedRandom"))
+		_titleSpeedRandom = ConfMan.getInt("titleSpeedRandom");
+	if (ConfMan.hasKey("titleSpeedOther"))
+		_titleSpeedOther = ConfMan.getInt("titleSpeedOther");
 
-		/* minor enhancement options */
-		else if (strstr(buffer, "activePlayer=") == buffer)
-			enhancementsOptions.activePlayer = (int) strtoul(buffer + strlen("activePlayer="), NULL, 0);
-		else if (strstr(buffer, "u5spellMixing=") == buffer)
-			enhancementsOptions.u5spellMixing = (int) strtoul(buffer + strlen("u5spellMixing="), NULL, 0);
-		else if (strstr(buffer, "u5shrines=") == buffer)
-			enhancementsOptions.u5shrines = (int) strtoul(buffer + strlen("u5shrines="), NULL, 0);
-		else if (strstr(buffer, "slimeDivides=") == buffer)
-			enhancementsOptions.slimeDivides = (int) strtoul(buffer + strlen("slimeDivides="), NULL, 0);
-		else if (strstr(buffer, "gazerSpawnsInsects=") == buffer)
-			enhancementsOptions.gazerSpawnsInsects = (int) strtoul(buffer + strlen("gazerSpawnsInsects="), NULL, 0);
-		else if (strstr(buffer, "textColorization=") == buffer)
-			enhancementsOptions.textColorization = (int) strtoul(buffer + strlen("textColorization="), NULL, 0);
-		else if (strstr(buffer, "c64chestTraps=") == buffer)
-			enhancementsOptions.c64chestTraps = (int) strtoul(buffer + strlen("c64chestTraps="), NULL, 0);
-		else if (strstr(buffer, "smartEnterKey=") == buffer)
-			enhancementsOptions.smartEnterKey = (int) strtoul(buffer + strlen("smartEnterKey="), NULL, 0);
+	// minor enhancement options
+	if (ConfMan.hasKey("activePlayer"))
+		_enhancementsOptions._activePlayer = ConfMan.getBool("activePlayer");
+	if (ConfMan.hasKey("u5spellMixing"))
+		_enhancementsOptions._u5spellMixing = ConfMan.getBool("u5spellMixing");
+	if (ConfMan.hasKey("u5shrines"))
+		_enhancementsOptions._u5shrines = ConfMan.getBool("u5shrines");
+	if (ConfMan.hasKey("slimeDivides"))
+		_enhancementsOptions._slimeDivides = ConfMan.getBool("slimeDivides");
+	if (ConfMan.hasKey("gazerSpawnsInsects"))
+		_enhancementsOptions._gazerSpawnsInsects = ConfMan.getBool("gazerSpawnsInsects");
+	if (ConfMan.hasKey("textColorization"))
+		_enhancementsOptions._textColorization = ConfMan.getBool("textColorization");
+	if (ConfMan.hasKey("c64chestTraps"))
+		_enhancementsOptions._c64chestTraps = ConfMan.getBool("c64chestTraps");
+	if (ConfMan.hasKey("smartEnterKey"))
+		_enhancementsOptions._smartEnterKey = ConfMan.getBool("smartEnterKey");
 
-		/* major enhancement options */
-		else if (strstr(buffer, "peerShowsObjects=") == buffer)
-			enhancementsOptions.peerShowsObjects = (int) strtoul(buffer + strlen("peerShowsObjects="), NULL, 0);
-		else if (strstr(buffer, "u5combat=") == buffer)
-			enhancementsOptions.u5combat = (int) strtoul(buffer + strlen("u5combat="), NULL, 0);
-		else if (strstr(buffer, "innAlwaysCombat=") == buffer)
-			innAlwaysCombat = (int) strtoul(buffer + strlen("innAlwaysCombat="), NULL, 0);
-		else if (strstr(buffer, "campingAlwaysCombat=") == buffer)
-			campingAlwaysCombat = (int) strtoul(buffer + strlen("campingAlwaysCombat="), NULL, 0);
+	// major enhancement options
+	if (ConfMan.hasKey("peerShowsObjects"))
+		_enhancementsOptions._peerShowsObjects = ConfMan.getBool("peerShowsObjects");
+	if (ConfMan.hasKey("u5combat"))
+		_enhancementsOptions._u5combat = ConfMan.getBool("u5combat");
+	if (ConfMan.hasKey("innAlwaysCombat"))
+		_innAlwaysCombat = ConfMan.getBool("innAlwaysCombat");
+	if (ConfMan.hasKey("campingAlwaysCombat"))
+		_campingAlwaysCombat = ConfMan.getBool("campingAlwaysCombat");
 
-		/* mouse options */
-		else if (strstr(buffer, "mouseEnabled=") == buffer)
-			mouseOptions.enabled = (int) strtoul(buffer + strlen("mouseEnabled="), NULL, 0);
-		else if (strstr(buffer, "logging=") == buffer)
-			logging = buffer + strlen("logging=");
-		else if (strstr(buffer, "game=") == buffer)
-			game = buffer + strlen("game=");
+	// mouse options
+	if (ConfMan.hasKey("mouseEnabled"))
+		_mouseOptions.enabled = ConfMan.getBool("mouseEnabled");
+	if (ConfMan.hasKey("logging"))
+		_logging = ConfMan.get("logging");
 
-		/* graphics enhancements options */
-		else if (strstr(buffer, "renderTileTransparency=") == buffer)
-			enhancementsOptions.u4TileTransparencyHack = (int) strtoul(buffer + strlen("renderTileTransparency="), NULL, 0);
-		else if (strstr(buffer, "transparentTilePixelShadowOpacity=") == buffer)
-			enhancementsOptions.u4TileTransparencyHackPixelShadowOpacity = (int) strtoul(buffer + strlen("transparentTilePixelShadowOpacity="), NULL, 0);
-		else if (strstr(buffer, "transparentTileShadowSize=") == buffer)
-			enhancementsOptions.u4TrileTransparencyHackShadowBreadth = (int) strtoul(buffer + strlen("transparentTileShadowSize="), NULL, 0);
+	// graphics enhancements options
+	if (ConfMan.hasKey("renderTileTransparency"))
+		_enhancementsOptions._u4TileTransparencyHack = ConfMan.getBool("");
+	if (ConfMan.hasKey("transparentTilePixelShadowOpacity"))
+		_enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity =
+			ConfMan.getInt("transparentTilePixelShadowOpacity");
+	if (ConfMan.hasKey("transparentTileShadowSize"))
+		_enhancementsOptions._u4TrileTransparencyHackShadowBreadth =
+		ConfMan.getInt("transparentTileShadowSize");
 
-
-
-		/**
-		 * FIXME: this is just to avoid an error for those who have not written
-		 * a new xu4.cfg file since these items were removed.  Remove them after a reasonable
-		 * amount of time
-		 *
-		 * remove:  attackspeed, minorEnhancements, majorEnhancements, vol
-		 */
-
-		else if (strstr(buffer, "attackspeed=") == buffer);
-		else if (strstr(buffer, "minorEnhancements=") == buffer)
-			enhancements = (int)strtoul(buffer + strlen("minorEnhancements="), NULL, 0);
-		else if (strstr(buffer, "majorEnhancements=") == buffer);
-		else if (strstr(buffer, "vol=") == buffer)
-			musicVol = soundVol = (int) strtoul(buffer + strlen("vol="), NULL, 0);
-
-		/***/
-
-		else
-			errorWarning("invalid line in settings file %s", buffer);
-	}
-
-	fclose(settingsFile);
-#endif
 
 	eventTimerGranularity = (1000 / _gameCyclesPerSecond);
 	return true;
