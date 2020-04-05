@@ -33,7 +33,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-extern bool verbose, quit;
+extern bool verbose;
 extern int eventTimerGranularity;
 
 KeyHandler::KeyHandler(Callback func, void *d, bool asyncronous) :
@@ -63,7 +63,7 @@ bool KeyHandler::globalHandler(int key) {
 #if defined(WIN32)
 	case U4_ALT + U4_FKEY + 3:
 #endif
-		quit = true;
+		g_ultima->quitGame();
 		EventHandler::end();
 		return true;
 	default:

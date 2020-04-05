@@ -71,7 +71,6 @@ namespace Ultima4 {
 
 using namespace std;
 
-extern bool quit;
 GameController *g_game = NULL;
 
 /*-----------------*/
@@ -1114,7 +1113,7 @@ bool GameController::keyPressed(int key) {
 			eventHandler->run();
 
 
-			if (!quit) {
+			if (!g_ultima->shouldQuit()) {
 				eventHandler->setControllerDone(false);
 				eventHandler->popController();
 				eventHandler->pushController(this);

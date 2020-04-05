@@ -104,6 +104,11 @@ public:
 	 * the main menu when the Journey Onwards option is selected
 	 */
 	void setToJourneyOnwards();
+
+	/**
+	 * Flags to quit the game
+	 */
+	void quitGame();
 };
 
 extern Ultima4Engine *g_ultima;
