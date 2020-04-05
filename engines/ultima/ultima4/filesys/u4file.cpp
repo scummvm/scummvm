@@ -80,8 +80,6 @@ private:
 	Common::SeekableReadStream *_file;
 };
 
-extern bool verbose;
-
 /**
  * Returns true if the upgrade is present.
  */
@@ -116,8 +114,7 @@ bool u4isUpgradeInstalled() {
 			result = true;
 	}
 
-	if (verbose)
-		debug("u4isUpgradeInstalled %d\n", (int) result);
+	debug(1, "u4isUpgradeInstalled %d\n", (int) result);
 
 	return result;
 }
@@ -501,8 +498,7 @@ long U4FILE_zip::length() {
 U4FILE *u4fopen(const Common::String &fname) {
 	U4FILE *u4f = NULL;
 
-	if (verbose)
-		debug("looking for %s\n", fname.c_str());
+	debug(1, "looking for %s\n", fname.c_str());
 #ifdef TODO
 	/**
 	 * search for file within zipfiles (ultima4.zip, u4upgrad.zip, etc.)
@@ -522,8 +518,8 @@ U4FILE *u4fopen(const Common::String &fname) {
 
 	if (!fname.empty()) {
 		u4f = U4FILE_stdio::openForReading(fname);
-		if (verbose && u4f != NULL)
-			debug("%s successfully opened\n", fname.c_str());
+		if (u4f != NULL)
+			debug(1, "%s successfully opened\n", fname.c_str());
 	}
 
 	return u4f;

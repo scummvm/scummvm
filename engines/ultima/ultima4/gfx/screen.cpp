@@ -112,8 +112,6 @@ int screenLos[VIEWPORT_W][VIEWPORT_H];
 
 static const int BufferSize = 1024;
 
-extern bool verbose;
-
 void screenInit() {
 	filterNames.clear();
 	filterNames.push_back("point");
@@ -130,8 +128,7 @@ void screenInit() {
 
 	screenLoadGraphicsFromConf();
 
-	if (verbose)
-		debug("using %s scaler\n", settings._filter.c_str());
+	debug(1, "using %s scaler\n", settings._filter.c_str());
 
 	screenInit_sys();
 

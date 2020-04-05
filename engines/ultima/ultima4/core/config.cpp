@@ -30,7 +30,6 @@ namespace Ultima4 {
 
 using namespace std;
 
-extern bool verbose;
 Config *Config::_instance;
 
 Config::Config() {

@@ -44,7 +44,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-bool verbose = false;
 Ultima4Engine *g_ultima;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
