@@ -23,6 +23,7 @@
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/core/lzw/u4decode.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_u4.h"
@@ -139,9 +140,9 @@ Image *U4LzwImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 	long compressedLen = file->length();
 	unsigned char *compressed = (unsigned char *) malloc(compressedLen);
 	file->read(compressed, 1, compressedLen);
-#ifdef TODO
+
 	unsigned char *raw = NULL;
-	long rawLen = decompress_u4_memory(compressed, compressedLen, (void **) &raw);
+	long rawLen = LZW::decompress_u4_memory(compressed, compressedLen, (void **) &raw);
 	free(compressed);
 
 	if (rawLen != (width * height * bpp / 8)) {
@@ -170,9 +171,6 @@ Image *U4LzwImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 	free(raw);
 
 	return image;
-#else
-	return nullptr;
-#endif
 }
 
 /**
