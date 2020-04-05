@@ -242,114 +242,58 @@ bool Settings::read() {
 }
 
 bool Settings::write() {
-#ifdef TODO
-	FILE *settingsFile;
+	ConfMan.set("gemLayout", _gemLayout);
+	ConfMan.set("lineOfSight", _lineOfSight);
+	ConfMan.setBool("screenShakes", _screenShakes);
+	ConfMan.setInt("gamma", _gamma);
 
-	settingsFile = fopen(filename.c_str(), "wt");
-	if (!settingsFile) {
-		errorWarning("can't write settings file");
-		return false;
-	}
+	ConfMan.setBool("volumeFades", _volumeFades);
+	ConfMan.setBool("shortcutCommands", _shortcutCommands);
+	ConfMan.setInt("keydelay", _keydelay);
+	ConfMan.setBool("filterMoveMessages", _filterMoveMessages);
+	ConfMan.setInt("battlespeed", _battleSpeed);
+	ConfMan.setBool("enhancements", _enhancements);
+	ConfMan.setInt("gameCyclesPerSecond", _gameCyclesPerSecond);
+	ConfMan.set("battleDiff", _battleDiff);
+	ConfMan.setBool("validateXml", _validateXml);
 
-	fprintf(settingsFile,
-	        "scale=%d\n"
-	        "fullscreen=%d\n"
-	        "filter=%s\n"
-	        "video=%s\n"
-	        "gemLayout=%s\n"
-	        "lineOfSight=%s\n"
-	        "screenShakes=%d\n"
-	        "gamma=%d\n"
-	        "musicVol=%d\n"
-	        "soundVol=%d\n"
-	        "volumeFades=%d\n"
-	        "shortcutCommands=%d\n"
-	        "keydelay=%d\n"
-	        "keyinterval=%d\n"
-	        "filterMoveMessages=%d\n"
-	        "battlespeed=%d\n"
-	        "enhancements=%d\n"
-	        "gameCyclesPerSecond=%d\n"
-	        "debug=%d\n"
-	        "battleDiff=%s\n"
-	        "validateXml=%d\n"
-	        "spellEffectSpeed=%d\n"
-	        "campTime=%d\n"
-	        "innTime=%d\n"
-	        "shrineTime=%d\n"
-	        "shakeInterval=%d\n"
-	        "titleSpeedRandom=%d\n"
-	        "titleSpeedOther=%d\n"
-	        "activePlayer=%d\n"
-	        "u5spellMixing=%d\n"
-	        "u5shrines=%d\n"
-	        "slimeDivides=%d\n"
-	        "gazerSpawnsInsects=%d\n"
-	        "textColorization=%d\n"
-	        "c64chestTraps=%d\n"
-	        "smartEnterKey=%d\n"
-	        "peerShowsObjects=%d\n"
-	        "u5combat=%d\n"
-	        "innAlwaysCombat=%d\n"
-	        "campingAlwaysCombat=%d\n"
-	        "mouseEnabled=%d\n"
-	        "logging=%s\n"
-	        "game=%s\n"
-	        "renderTileTransparency=%d\n"
-	        "transparentTilePixelShadowOpacity=%d\n"
-	        "transparentTileShadowSize=%d\n",
-	        scale,
-	        fullscreen,
-	        filter.c_str(),
-	        videoType.c_str(),
-	        gemLayout.c_str(),
-	        lineOfSight.c_str(),
-	        screenShakes,
-	        gamma,
-	        musicVol,
-	        soundVol,
-	        volumeFades,
-	        shortcutCommands,
-	        keydelay,
-	        keyinterval,
-	        filterMoveMessages,
-	        battleSpeed,
-	        enhancements,
-	        gameCyclesPerSecond,
-	        debug,
-	        battleDiff.c_str(),
-	        validateXml,
-	        spellEffectSpeed,
-	        campTime,
-	        innTime,
-	        shrineTime,
-	        shakeInterval,
-	        titleSpeedRandom,
-	        titleSpeedOther,
-	        enhancementsOptions.activePlayer,
-	        enhancementsOptions.u5spellMixing,
-	        enhancementsOptions.u5shrines,
-	        enhancementsOptions.slimeDivides,
-	        enhancementsOptions.gazerSpawnsInsects,
-	        enhancementsOptions.textColorization,
-	        enhancementsOptions.c64chestTraps,
-	        enhancementsOptions.smartEnterKey,
-	        enhancementsOptions.peerShowsObjects,
-	        enhancementsOptions.u5combat,
-	        innAlwaysCombat,
-	        campingAlwaysCombat,
-	        mouseOptions.enabled,
-	        logging.c_str(),
-	        game.c_str(),
-	        enhancementsOptions.u4TileTransparencyHack,
-	        enhancementsOptions.u4TileTransparencyHackPixelShadowOpacity,
-	        enhancementsOptions.u4TrileTransparencyHackShadowBreadth);
+	ConfMan.setInt("spellEffectSpeed", _spellEffectSpeed);
+	ConfMan.setInt("campTime", _campTime);
+	ConfMan.setInt("innTime", _innTime);
+	ConfMan.setInt("shrineTime", _shrineTime);
+	ConfMan.setInt("shakeInterval", _shakeInterval);
+	ConfMan.setInt("titleSpeedRandom", _titleSpeedRandom);
+	ConfMan.setInt("titleSpeedOther", _titleSpeedOther);
 
-	fclose(settingsFile);
+	ConfMan.setBool("activePlayer", _enhancementsOptions._activePlayer);
+	ConfMan.setBool("u5spellMixing", _enhancementsOptions._u5spellMixing);
+	ConfMan.setBool("u5shrines", _enhancementsOptions._u5shrines);
+	ConfMan.setBool("slimeDivides", _enhancementsOptions._slimeDivides);
+	ConfMan.setBool("gazerSpawnsInsects", _enhancementsOptions._gazerSpawnsInsects);
+	ConfMan.setBool("textColorization", _enhancementsOptions._textColorization);
+	ConfMan.setBool("c64chestTraps", _enhancementsOptions._c64chestTraps);
+	ConfMan.setBool("smartEnterKey", _enhancementsOptions._smartEnterKey);
+
+	ConfMan.setBool("peerShowsObjects", _enhancementsOptions._peerShowsObjects);
+	ConfMan.setBool("u5combat", _enhancementsOptions._u5combat);
+	ConfMan.setBool("innAlwaysCombat", _innAlwaysCombat);
+	ConfMan.setBool("campingAlwaysCombat", _campingAlwaysCombat);
+
+	ConfMan.setBool("mouseEnabled", _mouseOptions.enabled);
+	ConfMan.set("logging", _logging);
+
+	ConfMan.setBool("renderTileTransparency",
+		_enhancementsOptions._u4TileTransparencyHack);
+	ConfMan.setInt("transparentTilePixelShadowOpacity",
+		_enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity);
+	ConfMan.setInt("transparentTileShadowSize",
+		_enhancementsOptions._u4TrileTransparencyHackShadowBreadth);
+
+	ConfMan.flushToDisk();
 
 	setChanged();
-	notifyObservers(NULL);
-#endif
+	notifyObservers(nullptr);
+
 	return true;
 }
 
