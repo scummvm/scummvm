@@ -649,8 +649,31 @@ void LB::b_getaProp(int nargs) {
 }
 
 void LB::b_getAt(int nargs) {
-	g_lingo->printSTUBWithArglist("b_getAt", nargs);
-	g_lingo->dropStack(nargs);
+	if (nargs != 2) {
+		warning("b_getAt: expected 2 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+	Datum index = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	if (index.type == FLOAT)
+		index.toInt();
+
+	if (index.type != INT) {
+		warning("b_getAt: index arg should be of type INT or FLOAT, not %s", index.type2str());
+		return;
+	}
+	if (list.type != ARRAY) {
+		warning("b_getAt: list arg should be of type ARRAY, not %s", list.type2str());
+		return;
+	}
+	if (index.u.i-1 < 0 || index.u.i > list.u.farr->size()){
+		warning("b_getAt: index %s out of bounds", index.type2str());
+		return;
+	}
+
+	Datum result = list.u.farr->operator[](index.u.i-1);
+	g_lingo->push(result);
 }
 
 void LB::b_getLast(int nargs) {
