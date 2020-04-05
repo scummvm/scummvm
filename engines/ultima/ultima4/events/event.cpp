@@ -36,7 +36,6 @@ using namespace Std;
 
 int eventTimerGranularity = 250;
 
-extern bool quit;
 bool EventHandler::_controllerDone = false;
 bool EventHandler::_ended = false;
 unsigned int TimedEventMgr::_instances = 0;

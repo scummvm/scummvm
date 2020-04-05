@@ -46,7 +46,6 @@ namespace Ultima4 {
 
 using namespace std;
 
-extern bool quit;
 Common::String profileName;
 bool useProfile;
 
@@ -405,7 +404,7 @@ bool IntroController::keyPressed(int key) {
 			break;
 		case 'q':
 			EventHandler::end();
-			quit = true;
+			g_ultima->quitGame();
 			break;
 		case '1':
 		case '2':

@@ -39,11 +39,12 @@
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "common/debug.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-bool quit = false, verbose = false;
+bool verbose = false;
 Ultima4Engine *g_ultima;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
@@ -174,6 +175,14 @@ Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) 
 Common::Error Ultima4Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	g_ultima->_saveGame->save(stream);
 	return Common::kNoError;
+}
+
+void Ultima4Engine::quitGame() {
+	UltimaEngine::quitGame();
+
+	// Do an event poll to all the quit message to be processed
+	Common::Event e;
+	g_system->getEventManager()->pollEvent(e);
 }
 
 } // End of namespace Ultima4
