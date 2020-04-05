@@ -351,7 +351,7 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 	_type = kCastButton;
 
 	if (version < 4) {
-		_buttonType = static_cast<ButtonType>(stream.readUint16BE());
+		_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
 	} else {
 		stream.readByte();
 		stream.readByte();

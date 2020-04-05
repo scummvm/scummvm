@@ -572,12 +572,25 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
 			case kOutlinedRoundedRectangleSprite:
 			case kOutlinedOvalSprite:
-			case kCastMemberSprite: 		// Face kit D3
-				castType = kCastShape;
+			case kCastMemberSprite:
+				if (_sprites[i]->_cast != nullptr) {
+					switch (_sprites[i]->_cast->_type) {
+					case kCastButton:
+						castType = kCastButton;
+					default:
+						castType = kCastShape;
+					}
+				} else {
+					castType = kCastShape;
+				}
 				break;
 			case kTextSprite:
 				castType = kCastText;
 				break;
+			case kButtonSprite:
+			case kCheckboxSprite:
+			case kRadioButtonSprite:
+				castType = kCastButton;
 			default:
 				warning("Frame::renderSprites(): Unhandled sprite type %d", _sprites[i]->_spriteType);
 				break;
@@ -654,7 +667,10 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	byte foreColor = sp->_foreColor;
 	byte backColor = sp->_backColor;
 	int lineSize = sp->_thickness & 0x3;
-	if (spriteType == kCastMemberSprite) {
+
+	// D3 Shared Cast Members don't have these values specified, they're provided when you add
+	// them to the score in each movie.
+	if (_vm->getVersion() > 3 && spriteType == kCastMemberSprite) {
 		if (!sp->_cast) {
 			warning("Frame::renderShape(): kCastMemberSprite has no cast defined");
 			return;
@@ -765,13 +781,40 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	uint16 castId = _sprites[spriteId]->_castId;
+
+	// This may not be a button cast. It could be a textcast with the channel forcing it
+	// to be a checkbox or radio button!
 	ButtonCast *button = (ButtonCast *)_vm->getCurrentScore()->_loadedCast->getVal(castId);
+
+	// Sometimes, at least in the D3 Workshop Examples, these buttons are just TextCast.
+	// If they are, then we just want to use the spriteType as the button type.
+	// If they are full-bown Cast members, then use the actual cast member type.
+	int buttonType = _sprites[spriteId]->_spriteType;
+	if (buttonType == kCastMemberSprite) {
+		switch (button->_buttonType) {
+		case kTypeCheckBox:
+			buttonType = kCheckboxSprite;
+			break;
+		case kTypeButton:
+			buttonType = kButtonSprite;
+			break;
+		case kTypeRadio:
+			buttonType = kRadioButtonSprite;
+			break;
+		}
+	}
 
 	uint32 rectLeft = button->_initialRect.left;
 	uint32 rectTop = button->_initialRect.top;
 
-	int x = _sprites[spriteId]->_startPoint.x + rectLeft;
-	int y = _sprites[spriteId]->_startPoint.y + rectTop;
+	int x = _sprites[spriteId]->_startPoint.x;
+	int y = _sprites[spriteId]->_startPoint.y;
+
+	if (_vm->getVersion() > 3) {
+		x += rectLeft;
+		y += rectTop;
+	}
+
 	int height = button->_initialRect.height();
 	int width = button->_initialRect.width() + 3;
 
@@ -791,14 +834,16 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	if (!invert)
 		renderText(surface, spriteId, &textRect);
 
-	switch (button->_buttonType) {
-	case kTypeCheckBox:
+	Graphics::MacPlotData plotStroke(&surface, &_vm->getPatterns(), 1, -_rect.left, -_rect.top, 1, 0);
+
+	switch (buttonType) {
+	case kCheckboxSprite:
 		// Magic numbers: checkbox square need to move left about 5px from text and 12px side size (D4)
-		_rect = Common::Rect(x - 17, y, x + 12, y + 12);
+		_rect = Common::Rect(x, y + 2, x + 12, y + 14);
 		surface.frameRect(_rect, 0);
 		addDrawRect(spriteId, _rect);
 		break;
-	case kTypeButton: {
+	case kButtonSprite: {
 			_rect = Common::Rect(x, y, x + width, y + height + 3);
 			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 0, 0, 1, invert ? Graphics::kColorBlack : Graphics::kColorWhite);
 
@@ -806,8 +851,10 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 			addDrawRect(spriteId, _rect);
 		}
 		break;
-	case kTypeRadio:
-		warning("STUB: renderButton: kTypeRadio");
+	case kRadioButtonSprite:
+		_rect = Common::Rect(x, y + 2, x + 12, y + 14);
+		Graphics::drawEllipse(x, y + 2, x + 11, y + 13, 0, false, Graphics::macDrawPixel, &plotStroke);
+		addDrawRect(spriteId, _rect);
 		break;
 	default:
 		warning("renderButton: Unknown buttonType");
@@ -827,9 +874,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	int width;
 
 	if (_vm->getVersion() >= 4) {
-		if (textRect == NULL)
+		if (textRect == NULL) {
 			width = textCast->_initialRect.right;
-		else {
+		} else {
 			width = textRect->width();
 		}
 	} else {
@@ -875,12 +922,13 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	if (textRect == NULL) {
 		if (borderSize > 0) {
-			if (_vm->getVersion() <= 3)
-				height++;
-			else
+			if (_vm->getVersion() <= 3) {
+				height += (borderSize * 2);
+				textX += (borderSize + 2);
+			} else {
 				height += borderSize;
-
-			textX += (borderSize + 1);
+				textX += (borderSize + 1);
+			}
 			textY += borderSize;
 		} else {
 			x += 1;
@@ -901,7 +949,40 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		x++;
 		if (width % 2 != 0)
 			x++;
-		y += 2;
+
+		if (_sprites[spriteId]->_spriteType != kCastMemberSprite) {
+			y += 2;
+			switch (_sprites[spriteId]->_spriteType) {
+			case kCheckboxSprite:
+				textX += 16;
+				break;
+			case kRadioButtonSprite:
+				textX += 17;
+				break;
+			default:
+				break;
+			}
+		} else {
+			ButtonType buttonType = ((ButtonCast*)textCast)->_buttonType;
+			switch (buttonType) {
+			case kTypeCheckBox:
+				width += 4;
+				textX += 16;
+				break;
+			case kTypeRadio:
+				width += 4;
+				textX += 17;
+				break;
+			case kTypeButton:
+				width += 4;
+				y += 2;
+				break;
+			default:
+				warning("Frame::renderText(): Expected button but got unexpected button type: %d", buttonType);
+				y += 2;
+				break;
+			}
+		}
 	}
 
 	switch (textCast->_textAlign) {
@@ -1033,7 +1114,13 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 		for (int j = 0; j < srcRect.width(); j++) {
 			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0)) {
 				if (*src != skipColor) {
-					*dst = _vm->transformColor(*src);
+					// TODO: Correctly implement reverse for fullColor... currently only works for black and white.
+					if (*src == *dst) {
+						*dst = 0xff - *src;
+					}
+					else {
+						*dst = *src;
+					}
 				}
 			} else if (*src != skipColor) {
 				*dst = *src;
