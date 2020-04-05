@@ -85,7 +85,7 @@ void screenInit_sys() {
 	initGraphics(320 * settings._scale, 200 * settings._scale);
 #endif
 	/* enable or disable the mouse cursor */
-	if (settings._mouseOptions.enabled) {
+	if (settings._mouseOptions._enabled) {
 		g_system->showMouse(true);
 #ifdef TODO
 		cursors[0] = SDL_GetCursor();

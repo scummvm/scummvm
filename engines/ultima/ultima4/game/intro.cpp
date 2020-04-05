@@ -243,7 +243,7 @@ IntroController::IntroController() :
 	_inputMenu.add(MI_INPUT_01,  new IntMenuItem("Repeat Delay        %4d msec", 2,  2,/*'d'*/  7, &settingsChanged._keydelay, 100, MAX_KEY_DELAY, 100));
 	_inputMenu.add(MI_INPUT_02,  new IntMenuItem("Repeat Interval     %4d msec", 2,  3,/*'i'*/  7, &settingsChanged._keyinterval, 10, MAX_KEY_INTERVAL, 10));
 	/* "Mouse Options:" is drawn in the updateInputMenu() function */
-	_inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s",      2,  7,/*'m'*/  0, &settingsChanged._mouseOptions.enabled));
+	_inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s",      2,  7,/*'m'*/  0, &settingsChanged._mouseOptions._enabled));
 	_inputMenu.add(USE_SETTINGS,                 "\010 Use These Settings",      2, 11,/*'u'*/  2);
 	_inputMenu.add(CANCEL,                       "\010 Cancel",                  2, 12,/*'c'*/  2);
 	_inputMenu.addShortcutKey(CANCEL, ' ');
