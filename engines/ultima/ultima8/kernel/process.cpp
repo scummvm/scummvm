@@ -74,6 +74,7 @@ void Process::wakeUp(uint32 result_) {
 }
 
 void Process::waitFor(ProcId pid_) {
+	assert(pid_ != _pid);
 	if (pid_) {
 		Kernel *kernel = Kernel::get_instance();
 
@@ -87,6 +88,7 @@ void Process::waitFor(ProcId pid_) {
 }
 
 void Process::waitFor(Process *proc) {
+	assert(this != proc);
 	ProcId pid_ = 0;
 	if (proc) pid_ = proc->getPid();
 
