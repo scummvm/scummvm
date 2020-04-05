@@ -110,7 +110,8 @@ struct Datum {	/* interpreter stack type */
 
 	double makeFloat();
 	int makeInt();
-	Common::String *makeString();
+	Common::String *makeString(bool printonly = false);
+	Common::String getPrintable() { return *makeString(true); }
 
 	const char *type2str(bool isk = false);
 };

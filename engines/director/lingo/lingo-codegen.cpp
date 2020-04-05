@@ -92,8 +92,7 @@ void Lingo::printStack(const char *s, uint pc) {
 
 	for (uint i = 0; i < _stack.size(); i++) {
 		Datum d = _stack[i];
-		d.makeString();
-		stack += Common::String::format("<%s> ", d.u.s->c_str());
+		stack += Common::String::format("<%s> ", d.getPrintable().c_str());
 	}
 	debugC(5, kDebugLingoExec, "[%3d]: %s", pc, stack.c_str());
 }

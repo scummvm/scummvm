@@ -290,8 +290,7 @@ void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *pr
 	for (int i = 0; i < nargs; i++) {
 		Datum d = _stack[_stack.size() - nargs + i];
 
-		d.makeString();
-		s += *d.u.s;
+		s += d.getPrintable();
 
 		if (i != nargs - 1)
 			s += ", ";

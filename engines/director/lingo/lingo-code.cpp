@@ -217,7 +217,7 @@ void LC::c_printtop(void) {
 		warning("%s", d.u.s->c_str());
 		break;
 	case POINT:
-		warning("point(%s, %s", (*d.u.farr)[0].makeString()->c_str(), (*d.u.farr)[1].makeString()->c_str());
+		warning("point(%s, %s", (*d.u.farr)[0].getPrintable().c_str(), (*d.u.farr)[1].getPrintable().c_str());
 		break;
 	case SYMBOL:
 		warning("%s", d.type2str(true));
@@ -226,7 +226,7 @@ void LC::c_printtop(void) {
 		warning("#%s", d.u.s->c_str());
 		break;
 	case ARRAY:
-		warning("%s", d.makeString()->c_str());
+		warning("%s", d.getPrintable().c_str());
 		break;
 	default:
 		warning("--unknown--");
@@ -1244,7 +1244,7 @@ void LC::c_tellcode() {
 	uint start = g_lingo->_pc;
 	uint end = g_lingo->readInt() + start - 1;
 
-	warning("STUB: c_tellcode(%s)", d1.makeString()->c_str());
+	warning("STUB: c_tellcode(%s)", d1.getPrintable().c_str());
 
 	g_lingo->_pc = end;
 }

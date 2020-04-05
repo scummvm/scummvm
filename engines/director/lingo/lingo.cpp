@@ -446,8 +446,8 @@ double Datum::makeFloat() {
 	return u.f;
 }
 
-Common::String *Datum::makeString() {
-	Common::String *s = new Common::String;
+Common::String *Datum::makeString(bool printonly) {
+	Common::String *s = new Common::String();
 	switch (type) {
 	case INT:
 		*s = Common::String::format("%d", u.i);
@@ -460,15 +460,29 @@ Common::String *Datum::makeString() {
 		break;
 	case FLOAT:
 		*s = Common::String::format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
+		if (printonly)
+			*s += "f";		// 0.0f
 		break;
 	case STRING:
-		*s = *u.s;
+		if (!printonly) {
+			*s = *u.s;
+		} else {
+			*s = Common::String::format("\"%s\"", u.s->c_str());
+		}
 		break;
 	case SYMBOL:
-		*s = Common::String::format("#%s", u.s->c_str());
+		if (!printonly) {
+			*s = Common::String::format("#%s", u.s->c_str());
+		} else {
+			*s = Common::String::format("symbol: #%s", u.s->c_str());
+		}
 		break;
 	case OBJECT:
-		*s = Common::String::format("#%s", u.s->c_str());
+		if (!printonly) {
+			*s = Common::String::format("#%s", u.s->c_str());
+		} else {
+			*s = Common::String::format("object: #%s", u.s->c_str());
+		}
 		break;
 	case VOID:
 		*s = "#void";
@@ -497,7 +511,11 @@ Common::String *Datum::makeString() {
 				}
 			}
 
-			*s = ((TextCast *)score->_loadedCast->getVal(idx))->_ptext;
+			if (!printonly) {
+				*s = ((TextCast *)score->_loadedCast->getVal(idx))->_ptext;
+			} else {
+				*s = Common::String::format("reference: \"%s\"", ((TextCast *)score->_loadedCast->getVal(idx))->_ptext.c_str());
+			}
 		}
 		break;
 	case ARRAY:
@@ -507,7 +525,7 @@ Common::String *Datum::makeString() {
 			if (i > 0)
 				*s += ", ";
 			Datum d = u.farr->operator[](i);
-			*s += *d.makeString();
+			*s += *d.makeString(printonly);
 		}
 
 		*s += "]";
@@ -515,6 +533,12 @@ Common::String *Datum::makeString() {
 	default:
 		warning("Incorrect operation makeString() for type: %s", type2str());
 	}
+
+	if (printonly)
+		return s;
+
+	if (type == STRING)
+		delete u.s;
 
 	u.s = s;
 	type = STRING;

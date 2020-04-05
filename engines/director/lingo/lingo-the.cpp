@@ -436,11 +436,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 
 void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
-		Datum idCopy = id;
-		Datum dCopy = d;
-		idCopy.makeString();
-		dCopy.makeString();
-		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(\"%s\", %s, \"%s\", %s)", field2str(field), idCopy.u.s->c_str(), entity2str(entity), dCopy.u.s->c_str());
+		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(\"%s\", %s, \"%s\", %s)", field2str(field), id.getPrintable().c_str(), entity2str(entity), d.getPrintable().c_str());
 	}
 
 	switch (entity) {
@@ -470,8 +466,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 }
 
 void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
-	warning("STUB: setTheMenuItemEntity(%s, \"%s\", %s, \"%s\", %s)", entity2str(entity), menuId.makeString()->c_str(), field2str(field),
-				menuItemId.makeString()->c_str(), d.makeString()->c_str());
+	warning("STUB: setTheMenuItemEntity(%s, \"%s\", %s, \"%s\", %s)", entity2str(entity), menuId.getPrintable().c_str(), field2str(field),
+				menuItemId.getPrintable().c_str(), d.getPrintable().c_str());
 }
 
 Datum Lingo::getTheSprite(Datum &id1, int field) {
