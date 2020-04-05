@@ -245,8 +245,20 @@ void Image::alphaOff() {
 }
 
 void Image::putPixel(int x, int y, int r, int g, int b, int a) {
-	assert(_surface->format.bytesPerPixel == 4);
-	uint32 color = _surface->format.ARGBToColor(a, r, g, b);
+	uint32 color;
+
+	if (_surface->format.bytesPerPixel == 1) {
+		const uint32 *pal = _surface->getPalette();
+		for (color = 0; color <= 0xfe; ++color, ++pal) {
+			byte rv = *pal & 0xff;
+			byte gv = (*pal >> 8) & 0xff;
+			byte bv = (*pal >> 16) & 0xff;
+			if (r == rv && g == gv && b == bv)
+				break;
+		}
+	} else {
+		color = _surface->format.ARGBToColor(a, r, g, b);
+	}
 
 	putPixelIndex(x, y, color);
 }
@@ -363,11 +375,19 @@ void Image::getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned in
 
 	getPixelIndex(x, y, index);
 
-	_surface->format.colorToARGB(index, a1, r1, g1, b1);
-	r = r1;
-	g = g1;
-	b = b1;
-	a = a1;
+	if (_surface->format.bytesPerPixel == 1) {
+		uint32 col = _surface->getPalette()[index];
+		r = col & 0xff;
+		g = (col >> 8) & 0xff;
+		b = (col >> 16) & 0xff;
+		a = (col >> 24) & 0xff;
+	} else {
+		_surface->format.colorToARGB(index, a1, r1, g1, b1);
+		r = r1;
+		g = g1;
+		b = b1;
+		a = a1;
+	}
 }
 
 void Image::getPixelIndex(int x, int y, unsigned int &index) const {

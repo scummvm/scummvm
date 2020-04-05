@@ -383,6 +383,8 @@ private:
 	};
 
 	struct AnimElement {
+		void shufflePlotData();
+
 		int _rx, _ry;                         // screen/source x and y
 		int _rw, _rh;                         // source width and height
 		AnimType _method;                    // render method
