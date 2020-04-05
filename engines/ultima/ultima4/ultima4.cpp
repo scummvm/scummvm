@@ -112,7 +112,6 @@ void Ultima4Engine::startup() {
 		eventHandler->popController();
 		intro->deleteIntro();
 	}
-//	saveGameState(1, "Desc"); ///****DEBUG****
 }
 
 Common::Error Ultima4Engine::run() {
