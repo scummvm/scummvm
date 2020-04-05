@@ -1388,7 +1388,10 @@ Common::String Score::getString(Common::String str) {
 		return "";
 	}
 
-	str.deleteChar(0);
+	//TODO: check if all versions need to cut off the first character.
+	if (_vm->getVersion() > 3) {
+		str.deleteChar(0);
+	}
 
 	if (str.lastChar() == '\x00') {
 		str.deleteLastChar();

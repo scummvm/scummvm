@@ -714,6 +714,10 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	CastType castType;
 	CastInfo *castInfo;
+	if (id > score->_castIDoffset) {
+		id -= score->_castIDoffset;
+	}
+
 	if (!score->_loadedCast->contains(id)) {
 		if (field == kTheLoaded)
 			d.u.i = 0;
@@ -723,6 +727,10 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	castType = score->_loadedCast->getVal(id)->_type;
 	castInfo = score->_castsInfo[id];
+	
+	//TODO: castInfo uses full offsets, so check the higher value.
+	if (castInfo == nullptr)
+		castInfo = score->_castsInfo[id + score->_castIDoffset];
 
 	switch (field) {
 	case kTheBackColor:
