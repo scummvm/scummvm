@@ -21,13 +21,12 @@
  */
 
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_fmtowns.h"
 #include "ultima/ultima4/gfx/imageloader_u4.h"
-//#include "ultima/ultima4/game/lzw/u4decode.h"
 
 namespace Ultima {
 namespace Ultima4 {

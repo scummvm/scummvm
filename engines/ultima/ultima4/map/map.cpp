@@ -24,7 +24,6 @@
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/movement.h"

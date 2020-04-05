@@ -23,14 +23,14 @@
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
-#include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -50,18 +50,14 @@ bool Music::functional = true;
  * Constructors/Destructors
  */
 
-Music::Music() : _introMid(TOWNS), _current(NONE), _playing(NULL), _logger(new Debug("debug/music.txt", "Music")) {
+Music::Music() : _introMid(TOWNS), _current(NONE), _playing(NULL) {
 	_filenames.reserve(MAX);
 	_filenames.push_back("");    // filename for MUSIC_NONE;
-
-	TRACE(*_logger, "Initializing music");
 
 	/*
 	 * load music track filenames from xml config file
 	 */
 	const Config *config = Config::getInstance();
-
-	TRACE_LOCAL(*_logger, "Loading music tracks");
 
 	vector<ConfigElement> musicConfs = config->getElement("music").getChildren();
 	Std::vector<ConfigElement>::const_iterator i = musicConfs.begin();
@@ -71,7 +67,6 @@ Music::Music() : _introMid(TOWNS), _current(NONE), _playing(NULL), _logger(new D
 			continue;
 
 		_filenames.push_back(i->getString("file"));
-		TRACE_LOCAL(*_logger, Common::String("\tTrack file: ") + _filenames.back());
 	}
 
 	create_sys(); // Call the Sound System specific creation file.
@@ -80,16 +75,11 @@ Music::Music() : _introMid(TOWNS), _current(NONE), _playing(NULL), _logger(new D
 	on = settings._musicVol;
 	setMusicVolume(settings._musicVol);
 	setSoundVolume(settings._soundVol);
-	TRACE(*_logger, Common::String("Music initialized: volume is ") + (on ? "on" : "off"));
 }
 
 Music::~Music() {
-	TRACE(*_logger, "Uninitializing music");
 	eventHandler->getTimer()->remove(&Music::callback);
 	destroy_sys(); // Call the Sound System specific destruction file.
-
-	TRACE(*_logger, "Music uninitialized");
-	delete _logger;
 }
 
 

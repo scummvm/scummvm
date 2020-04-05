@@ -32,6 +32,8 @@
 namespace Ultima {
 namespace Ultima4 {
 
+extern void ASSERT(bool exp, const char *desc, ...);
+
 /* The AdjustValue functions used to be #define'd macros, but these are
  * evil for several reasons, *especially* when they contain multiple
  * statements, and have if statements in them. The macros did both.

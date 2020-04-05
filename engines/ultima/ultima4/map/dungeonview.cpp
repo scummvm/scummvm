@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
@@ -269,7 +268,7 @@ Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
 	case DIR_ADVANCE:
 	case DIR_RETREAT:
 	default:
-		ASSERT(0, "Invalid dungeon orientation");
+		error("Invalid dungeon orientation");
 	}
 
 	// Wrap the coordinates if necessary

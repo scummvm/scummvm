@@ -21,8 +21,9 @@
  */
 
 #include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/ultima4/core/debug.h"
+#include "ultima/ultima4/core/utils.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -476,7 +477,7 @@ int U4FILE_zip::getc() {
 }
 
 int U4FILE_zip::putc(int c) {
-	ASSERT(0, "zipfiles must be read-only!");
+	error("zipfiles must be read-only!");
 	return c;
 }
 

@@ -21,10 +21,10 @@
  */
 
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/map/tileanim.h"

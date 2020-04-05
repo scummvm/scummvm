@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/scale.h"
+#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {

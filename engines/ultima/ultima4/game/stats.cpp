@@ -22,10 +22,10 @@
 
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/game/stats.h"
 #include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/game/menu.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/player.h"

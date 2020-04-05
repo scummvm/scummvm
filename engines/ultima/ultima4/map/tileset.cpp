@@ -22,7 +22,6 @@
 
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/settings.h"
@@ -161,19 +160,15 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 Tileset::TilesetMap Tileset::tilesets;
 
 void Tileset::loadAll() {
-	Debug dbg("debug/tileset.txt", "Tileset");
 	const Config *config = Config::getInstance();
 	vector<ConfigElement> conf;
 
-	TRACE(dbg, "Unloading all tilesets");
 	unloadAll();
 
 	// get the config element for all tilesets
-	TRACE_LOCAL(dbg, "Loading tilesets info from config");
 	conf = config->getElement("tilesets").getChildren();
 
 	// load tile rules
-	TRACE_LOCAL(dbg, "Loading tile rules");
 	if (!TileRule::_rules.size())
 		TileRule::load();
 
@@ -189,10 +184,7 @@ void Tileset::loadAll() {
 	}
 
 	// load tile maps, including translations from index to id
-	TRACE_LOCAL(dbg, "Loading tilemaps");
 	TileMap::loadAll();
-
-	TRACE(dbg, "Successfully Loaded Tilesets");
 }
 
 void Tileset::unloadAll() {
@@ -249,16 +241,12 @@ Tile *Tileset::findTileById(TileId id) {
 }
 
 void Tileset::load(const ConfigElement &tilesetConf) {
-	Debug dbg("debug/tileset.txt", "Tileset", true);
-
 	_name = tilesetConf.getString("name");
 	if (tilesetConf.exists("imageName"))
 		_imageName = tilesetConf.getString("imageName");
 	if (tilesetConf.exists("extends"))
 		_extends = Tileset::get(tilesetConf.getString("extends"));
 	else _extends = NULL;
-
-	TRACE_LOCAL(dbg, "\tLoading Tiles...");
 
 	int index = 0;
 	vector<ConfigElement> children = tilesetConf.getChildren();
@@ -268,8 +256,6 @@ void Tileset::load(const ConfigElement &tilesetConf) {
 
 		Tile *tile = new Tile(this);
 		tile->loadProperties(*i);
-
-		TRACE_LOCAL(dbg, Common::String("\t\tLoaded '") + tile->getName() + "'");
 
 		/* add the tile to our tileset */
 		_tiles[tile->getId()] = tile;

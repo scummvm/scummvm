@@ -25,7 +25,6 @@
 #include "ultima/ultima4/game/codex.h"
 #include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/map/location.h"
@@ -494,7 +493,7 @@ void useStone(int item) {
 						stoneMask = 0; /* reset the mask so you can try again */
 						return;
 					}
-				} else ASSERT(0, "Not in an altar room!");
+				} else error("Not in an altar room!");
 
 				/* see if we have all the stones, if not, get more names! */
 				if (attr && needStoneNames) {
@@ -634,7 +633,7 @@ bool isMysticInInventory(int mystic) {
 	else if (mystic == ARMR_MYSTICROBES)
 		return g_ultima->_saveGame->_armor[ARMR_MYSTICROBES] > 0;
 	else
-		ASSERT(0, "Invalid mystic item was tested in isMysticInInventory()");
+		error("Invalid mystic item was tested in isMysticInInventory()");
 	return false;
 }
 
@@ -646,7 +645,7 @@ void putMysticInInventory(int mystic) {
 	else if (mystic == ARMR_MYSTICROBES)
 		g_ultima->_saveGame->_armor[ARMR_MYSTICROBES] += 8;
 	else
-		ASSERT(0, "Invalid mystic item was added in putMysticInInventory()");
+		error("Invalid mystic item was added in putMysticInInventory()");
 	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 }
 

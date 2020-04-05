@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/core/utils.h"
 
@@ -49,7 +48,7 @@ Direction dirReverse(Direction dir) {
 		break;
 	}
 
-	ASSERT(0, "invalid direction: %d", dir);
+	error("invalid direction: %d", dir);
 	return DIR_NONE;
 }
 
@@ -167,7 +166,7 @@ int directionToKey(Direction dir) {
 		break;
 	}
 
-	ASSERT(0, "Invalid diration passed to directionToKey()");
+	error("Invalid diration passed to directionToKey()");
 	return 0;
 }
 

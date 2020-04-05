@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"

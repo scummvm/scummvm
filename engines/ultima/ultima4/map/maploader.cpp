@@ -27,7 +27,6 @@
 #include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/filesys/filesystem.h"

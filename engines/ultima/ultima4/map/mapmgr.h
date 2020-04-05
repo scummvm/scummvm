@@ -131,7 +131,6 @@ private:
 
 	static MapMgr *_instance;
 	Std::vector<Map *> _mapList;
-	Debug *_logger;
 };
 
 #define mapMgr (MapMgr::getInstance())

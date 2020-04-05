@@ -23,7 +23,6 @@
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/core/debug.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/item.h"
 #include "ultima/ultima4/map/location.h"
@@ -191,7 +190,7 @@ void dungeonDrinkFountain() {
 		break;
 
 	default:
-		ASSERT(0, "Invalid call to dungeonDrinkFountain: no fountain at current location");
+		error("Invalid call to dungeonDrinkFountain: no fountain at current location");
 	}
 }
 
