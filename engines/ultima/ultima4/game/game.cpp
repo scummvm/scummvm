@@ -749,8 +749,8 @@ bool GameController::keyPressed(int key) {
 				settings._gameCyclesPerSecond = DEFAULT_CYCLES_PER_SECOND;
 
 			if (old_cycles != settings._gameCyclesPerSecond) {
-				eventTimerGranularity = (1000 / settings._gameCyclesPerSecond);
-				eventHandler->getTimer()->reset(eventTimerGranularity);
+				settings._eventTimerGranularity = (1000 / settings._gameCyclesPerSecond);
+				eventHandler->getTimer()->reset(settings._eventTimerGranularity);
 
 				if (settings._gameCyclesPerSecond == DEFAULT_CYCLES_PER_SECOND)
 					screenMessage("Speed: Normal\n");

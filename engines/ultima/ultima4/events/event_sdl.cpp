@@ -33,8 +33,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-extern int eventTimerGranularity;
-
 KeyHandler::KeyHandler(Callback func, void *d, bool asyncronous) :
 	_handler(func),
 	_async(asyncronous),
@@ -199,7 +197,7 @@ void TimedEventMgr::start() {
 #endif
 }
 
-EventHandler::EventHandler() : _timer(eventTimerGranularity), _updateScreen(NULL),
+EventHandler::EventHandler() : _timer(settings._eventTimerGranularity), _updateScreen(NULL),
 		_lastTickTime(0) {
 }
 

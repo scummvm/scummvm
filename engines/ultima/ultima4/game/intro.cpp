@@ -1173,8 +1173,8 @@ void IntroController::updateSpeedMenu(MenuEvent &event) {
 			settings.write();
 
 			// re-initialize events
-			eventTimerGranularity = (1000 / settings._gameCyclesPerSecond);
-			eventHandler->getTimer()->reset(eventTimerGranularity);
+			settings._eventTimerGranularity = (1000 / settings._gameCyclesPerSecond);
+			eventHandler->getTimer()->reset(settings._eventTimerGranularity);
 
 			break;
 		case CANCEL:
@@ -1886,7 +1886,7 @@ bool IntroController::updateTitle() {
 
 		if (_title == _titles.end()) {
 			// reset the timer to the pre-titles granularity
-			eventHandler->getTimer()->reset(eventTimerGranularity);
+			eventHandler->getTimer()->reset(settings._eventTimerGranularity);
 
 			// make sure the titles only appear when the app first loads
 			_bSkipTitles = true;

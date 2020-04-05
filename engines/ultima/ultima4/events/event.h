@@ -57,8 +57,6 @@ namespace Ultima4 {
 #define U4_RIGHT_META   309
 #define U4_LEFT_META    310
 
-extern int eventTimerGranularity;
-
 struct MouseArea;
 class EventHandler;
 class TextView;

@@ -91,7 +91,7 @@ void Settings::setData(const SettingsData &data) {
 }
 
 bool Settings::read() {
-	/* default settings */
+	// default settings
 	_scale                 = DEFAULT_SCALE;
 	_fullscreen            = DEFAULT_FULLSCREEN;
 	_filter                = DEFAULT_FILTER;
@@ -123,9 +123,9 @@ bool Settings::read() {
 	_titleSpeedOther       = DEFAULT_TITLE_SPEED_OTHER;
 
 	_pauseForEachMovement  = DEFAULT_PAUSE_FOR_EACH_MOVEMENT;
-	_pauseForEachTurn     = DEFAULT_PAUSE_FOR_EACH_TURN;
+	_pauseForEachTurn      = DEFAULT_PAUSE_FOR_EACH_TURN;
 
-	/* all specific minor enhancements default to "on", any major enhancements default to "off" */
+	// all specific minor enhancements default to "on", any major enhancements default to "off"
 	_enhancementsOptions._activePlayer     = true;
 	_enhancementsOptions._u5spellMixing    = true;
 	_enhancementsOptions._u5shrines        = true;
@@ -143,7 +143,7 @@ bool Settings::read() {
 	_innAlwaysCombat = 0;
 	_campingAlwaysCombat = 0;
 
-	/* mouse defaults to on */
+	// mouse defaults to on
 	_mouseOptions.enabled = 1;
 
 	_logging = DEFAULT_LOGGING;
@@ -237,7 +237,7 @@ bool Settings::read() {
 		ConfMan.getInt("transparentTileShadowSize");
 
 
-	eventTimerGranularity = (1000 / _gameCyclesPerSecond);
+	_eventTimerGranularity = (1000 / _gameCyclesPerSecond);
 	return true;
 }
 
