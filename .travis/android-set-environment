@@ -1,5 +1,9 @@
 #!/bin/sh
-export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+if uname -s | grep -qi linux; then
+	export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+elif uname -s | grep -qi darwin; then
+	export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/darwin-x86_64
+fi
 export ANDROID_LEVEL=${ANDROID_LEVEL:-26}
 export ANDROID_TARGET_VERSION=${ANDROID_LEVEL}
 if [ "$CROSS_HOST" = "armv7a-linux-androideabi" ]; then
@@ -21,5 +25,5 @@ export STRIP=$TOOLCHAIN/bin/${CROSS_HOST}-strip
 export PATH=$TOOLCHAIN/bin:$ANDROID_NDK:$PATH
 export CXXFLAGS=-Wno-inconsistent-missing-override
 
-NPROC=$(nproc 2>/dev/null)
+NPROC=$(nproc 2>/dev/null || echo "")
 export MAKEFLAGS="-j${NPROC:-4}"

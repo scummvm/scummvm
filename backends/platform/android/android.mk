@@ -29,10 +29,11 @@ ifdef USE_OPENGL_SHADERS
 endif
 
 $(PATH_BUILD):
-	$(MKDIR) -p $(PATH_BUILD_ASSETS)
+	$(INSTALL) -d $(PATH_BUILD_ASSETS)
 
 $(PATH_BUILD_JNI): libresidualvm.so
-	$(INSTALL) -C -D -m 644 libresidualvm.so $(PATH_BUILD_JNI)
+	$(INSTALL) -d $(dir $(PATH_BUILD_JNI))
+	$(INSTALL) -C -m 644 libresidualvm.so $(PATH_BUILD_JNI)
 
 $(PATH_BUILD_GRADLE): $(PATH_BUILD_ASSETS) $(PATH_DIST)/build.gradle
 	$(eval ABIS = $(notdir $(wildcard $(PATH_BUILD)/jni/*)))
