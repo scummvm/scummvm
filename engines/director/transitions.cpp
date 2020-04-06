@@ -496,6 +496,8 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 	uint realw = w, realh = h;
 	byte pixmask[8];
 
+	memset(pixmask, 0, 8);
+
 	t.xStepSize = 1;
 	t.yStepSize = 1;
 
@@ -933,8 +935,6 @@ static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect) {
 	Graphics::MacPlotData pd(score->_backSurface, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
 
 	for (uint16 i = 1; i < t.steps; i++) {
-		bool stop = false;
-
 		score->_backSurface->copyFrom(*score->_backSurface2);
 
 		for (int s = 2; s >= 0; s--) {
@@ -960,9 +960,6 @@ static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect) {
 		r.setHeight(t.yStepSize * i * 2);
 		r.setWidth(t.xStepSize * i * 2);
 		r.moveTo(w / 2 - t.xStepSize * i, h / 2 - t.yStepSize * i);
-
-		if (stop)
-			break;
 
 		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, w, h);
 		g_system->updateScreen();

@@ -343,9 +343,10 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (vwci.size() > 0) {
 		debug(0, "****** Loading %d CastInfo resources", vwci.size());
 
-		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
+		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator) {
 			_sharedScore->loadCastInfo(*(r = sharedCast->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator)), *iterator);
 			delete r;
+		}
 	}
 
 	Common::Array<uint16> cast = sharedCast->getResourceIDList(MKTAG('C','A','S','t'));
