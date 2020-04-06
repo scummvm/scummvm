@@ -174,7 +174,7 @@ void Lingo::processInputEvent(LEvent event) {
 		processEvent(event, kCastScript, currentFrame->_sprites[spriteId]->_castId);
 		processEvent(event, kFrameScript, score->_frames[score->getCurrentFrame()]->_actionId);
 		// TODO: Is the kFrameScript call above correct?
-	} else if (event == kEventMouseUp || event == kEventMouseDown) {
+	} else if (event == kEventMouseUp) {
 		// Frame script overrides sprite script
 		if (!currentFrame->_sprites[spriteId]->_scriptId) {
 			processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);
@@ -182,6 +182,8 @@ void Lingo::processInputEvent(LEvent event) {
 		} else {
 			processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
 		}
+	} else if (event == kEventMouseDown) {
+		processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);
 	}
 	if (event == kEventKeyDown) {
 		// TODO: is the above condition necessary or useful?

@@ -577,8 +577,10 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					switch (_sprites[i]->_cast->_type) {
 					case kCastButton:
 						castType = kCastButton;
+						break;
 					default:
 						castType = kCastShape;
+						break;
 					}
 				} else {
 					castType = kCastShape;
@@ -591,6 +593,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			case kCheckboxSprite:
 			case kRadioButtonSprite:
 				castType = kCastButton;
+				break;
 			default:
 				warning("Frame::renderSprites(): Unhandled sprite type %d", _sprites[i]->_spriteType);
 				break;
