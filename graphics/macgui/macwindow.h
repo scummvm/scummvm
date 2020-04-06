@@ -30,6 +30,7 @@
 #include "graphics/nine_patch.h"
 #include "graphics/palette.h"
 
+#include "graphics/macgui/macwidget.h"
 #include "graphics/macgui/macwindowborder.h"
 
 namespace Graphics {
@@ -67,7 +68,7 @@ using namespace MacWindowConstants;
  * Abstract class that defines common functionality for all window classes.
  * It supports event callbacks and drawing.
  */
-class BaseMacWindow {
+class BaseMacWindow : public MacWidget {
 public:
 	/**
 	 * Base constructor.
@@ -77,12 +78,6 @@ public:
 	 */
 	BaseMacWindow(int id, bool editable, MacWindowManager *wm);
 	virtual ~BaseMacWindow() {}
-
-	/**
-	 * Accessor method for the complete dimensions of the window.
-	 * @return Dimensions of the window (including border) relative to the WM's screen.
-	 */
-	const Common::Rect &getDimensions() { return _dims; }
 
 	/**
 	 * Accessor method to the id of the window.
@@ -115,12 +110,6 @@ public:
 	 * @param active Desired state of the window.
 	 */
 	virtual void setActive(bool active) = 0;
-
-	/**
-	 * Method for marking the window for redraw.
-	 * @param dirty True if the window needs to be redrawn.
-	 */
-	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
 	/**
 	 * Method called to draw the window into the target surface.
@@ -158,9 +147,6 @@ protected:
 	bool _editable;
 
 	ManagedSurface _surface;
-	bool _contentIsDirty;
-
-	Common::Rect _dims;
 
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
@@ -208,7 +194,7 @@ public:
 	 * of the window, although move() and resize() might be more comfortable.
 	 * @param r The desired dimensions of the window.
 	 */
-	void setDimensions(const Common::Rect &r);
+	virtual void setDimensions(const Common::Rect &r);
 
 	/**
 	 * Accessor to retrieve the dimensions of the inner surface of the window

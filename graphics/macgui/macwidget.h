@@ -42,13 +42,28 @@ public:
 	MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable);
 	virtual ~MacWidget();
 
+	/**
+	 * Accessor method for the complete dimensions of the widget.
+	 * @return Dimensions of the widget relative to the parent's position.
+	 */
 	const Common::Rect &getDimensions() { return _dims; }
+
 	bool isFocusable() { return _focusable; }
 	virtual void setActive(bool active) = 0;
+
+	/**
+	 * Method for marking the widget for redraw.
+	 * @param dirty True if the widget needs to be redrawn.
+	 */
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
+
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
 	virtual bool processEvent(Common::Event &event) = 0;
 	virtual bool hasAllFocus() = 0;
+
+	virtual void setDimensions(const Common::Rect &r) {
+		_dims = r;
+	}
 
 	Common::Point getAbsolutePos();
 	MacWidget *findEventHandler(Common::Event &event, int dx, int dy);
