@@ -514,6 +514,10 @@ bool MacWindow::processEvent(Common::Event &event) {
 		return false;
 	}
 
+	MacWidget *w = findEventHandler(event, _dims.left, _dims.top);
+	if (w && w->processEvent(event))
+		return true;
+
 	if (_callback)
 		return (*_callback)(click, event, _dataPtr);
 	else
