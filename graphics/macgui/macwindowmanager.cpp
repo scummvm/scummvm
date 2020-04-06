@@ -20,7 +20,6 @@
  */
 
 #include "common/array.h"
-#include "common/events.h"
 #include "common/list.h"
 #include "common/system.h"
 #include "common/timer.h"

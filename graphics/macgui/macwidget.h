@@ -23,6 +23,8 @@
 #ifndef GRAPHICS_MACGUI_MACWIDGET_H
 #define GRAPHICS_MACGUI_MACWIDGET_H
 
+#include "common/array.h"
+#include "common/events.h"
 #include "common/rect.h"
 
 namespace Common {
@@ -31,15 +33,14 @@ namespace Common {
 
 namespace Graphics {
 
-class BaseMacWindow;
 class ManagedSurface;
 
 class MacWidget {
 	friend class MacEditableText;
 
 public:
-	MacWidget(int w, int h, bool focusable);
-	virtual ~MacWidget() {}
+	MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable);
+	virtual ~MacWidget();
 
 	const Common::Rect &getDimensions() { return _dims; }
 	bool isFocusable() { return _focusable; }
@@ -48,7 +49,11 @@ public:
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
 	virtual bool processEvent(Common::Event &event) = 0;
 	virtual bool hasAllFocus() = 0;
-	void setParent(BaseMacWindow *parent) { _parent = parent; }
+
+	Common::Point getAbsolutePos();
+	MacWidget *findEventHandler(Common::Event &event, int dx, int dy);
+
+	void removeWidget(MacWidget *child, bool del = true);
 
 protected:
 	bool _focusable;
@@ -57,7 +62,8 @@ protected:
 	Common::Rect _dims;
 
 public:
-	BaseMacWindow *_parent;
+	MacWidget *_parent;
+	Common::Array<MacWidget *> _children;
 };
 
 } // End of namespace Graphics
