@@ -228,9 +228,9 @@ static void handleActiveEvent(const Common::Event &event, updateScreenCallback u
 
 static void handleMouseButtonDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
 	int button = 0;
-	if (event.type == Common::EVENT_RBUTTONDOWN)
+	if (event.type == Common::EVENT_MBUTTONDOWN)
 		button = 1;
-	else if (event.type == Common::EVENT_MBUTTONDOWN)
+	else if (event.type == Common::EVENT_RBUTTONDOWN)
 		button = 2;
 
 	if (!settings._mouseOptions._enabled)
