@@ -115,7 +115,7 @@ void gameCreatureAttack(Creature *obj);
 /* Functions END */
 /*---------------*/
 
-static const MouseArea mouseAreas[] = {
+static const MouseArea MOUSE_AREAS[] = {
 	{ 3, { { 8, 8 }, { 8, 184 }, { 96, 96 } }, MC_WEST, { U4_ENTER, 0, U4_LEFT } },
 	{ 3, { { 8, 8 }, { 184, 8 }, { 96, 96 } }, MC_NORTH, { U4_ENTER, 0, U4_UP }  },
 	{ 3, { { 184, 8 }, { 184, 184 }, { 96, 96 } }, MC_EAST, { U4_ENTER, 0, U4_RIGHT } },
@@ -203,7 +203,7 @@ void GameController::initScreenWithoutReloadingState() {
 	screenMessage("Press Alt-h for help\n");
 	screenPrompt();
 
-	eventHandler->pushMouseAreaSet(mouseAreas);
+	eventHandler->pushMouseAreaSet(MOUSE_AREAS);
 
 	eventHandler->setScreenUpdate(&gameUpdateScreen);
 }
