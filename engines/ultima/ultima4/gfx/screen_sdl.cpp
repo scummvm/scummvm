@@ -30,7 +30,6 @@
 #include "ultima/ultima4/gfx/scale.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/events/cursors.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/map/tileanim.h"
@@ -38,38 +37,37 @@
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/shared/core/file.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 using Std::vector;
 
-struct Cursor {
-	Graphics::ManagedSurface _surface;
+struct Cursor : public Graphics::ManagedSurface {
 	Common::Point _hotspot;
 };
 
 Cursor *cursors[5];
 Scaler filterScaler;
+int currentCursor = -1;
 
-Cursor *screenInitCursor(const char *const xpm[]);
+Cursor *screenInitCursor(Shared::File &src);
 
 
 void screenInit_sys() {
-	initGraphics(320 * settings._scale, 200 * settings._scale);
-
 	// enable or disable the mouse cursor
 	if (settings._mouseOptions._enabled) {
 		g_system->showMouse(true);
-#ifdef TODO
-		cursors[0] = SDL_GetCursor();
-#endif
-		cursors[1] = screenInitCursor(w_xpm);
-		cursors[2] = screenInitCursor(n_xpm);
-		cursors[3] = screenInitCursor(e_xpm);
-		cursors[4] = screenInitCursor(s_xpm);
+
+		Shared::File cursorsFile("data/graphics/cursors.txt");
+
+		for (int idx = 0; idx < 5; ++idx)
+			cursors[idx] = screenInitCursor(cursorsFile);
+
 	} else {
 		g_system->showMouse(false);
 	}
@@ -192,57 +190,61 @@ Image *screenScaleDown(Image *src, int scale) {
 }
 
 /**
- * Create a cursor object from an xpm.  Derived from example in
- * SDL documentation project.
+ * Create a cursor object from the passed file
  */
-#define CURSORSIZE 32
+#define CURSOR_SIZE 20
 
-Cursor *screenInitCursor(const char *const xpm[]) {
-#ifdef TODO
-	int i, row, col;
-	uint8 data[(CURSORSIZE / 8)*CURSORSIZE];
-	uint8 mask[(CURSORSIZE / 8)*CURSORSIZE];
-	int hot_x, hot_y;
+Cursor *screenInitCursor(Shared::File &src) {
+	uint row, col, endCol, pixel;
+	int hotX, hotY;
+	Common::String line;
+	byte *destP;
+	const uint WHITE = g_screen->format.RGBToColor(0xff, 0xff, 0xff);
+	const uint BLACK = g_screen->format.RGBToColor(0, 0, 0);
+	const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
+	int bpp = g_screen->format.bytesPerPixel;
+	assert(bpp >= 2);
 
-	i = -1;
-	for (row = 0; row < CURSORSIZE; row++) {
-		for (col = 0; col < CURSORSIZE; col++) {
-			if (col % 8) {
-				data[i] <<= 1;
-				mask[i] <<= 1;
-			} else {
-				i++;
-				data[i] = mask[i] = 0;
-			}
-			switch (xpm[4 + row][col]) {
-			case 'X':
-				data[i] |= 0x01;
-				mask[i] |= 0x01;
-				break;
-			case '.':
-				mask[i] |= 0x01;
-				break;
-			case ' ':
-				break;
-			}
+	Cursor *c = new Cursor();
+	c->create(CURSOR_SIZE, CURSOR_SIZE, g_screen->format);
+
+	for (row = 0; row < CURSOR_SIZE; row++) {
+		line = src.readLine();
+		destP = (byte *)c->getBasePtr(0, row);
+		endCol = MIN(line.size(), (uint)CURSOR_SIZE);
+
+		for (col = 0; col < endCol; ++col, destP += bpp) {
+			pixel = TRANSPARENT;
+			if (line[col] == 'X')
+				pixel = BLACK;
+			else if (line[col] == '.')
+				pixel = WHITE;
+
+			if (bpp == 2)
+				*((uint16 *)destP) = pixel;
+			else
+				*((uint32 *)destP) = pixel;
 		}
 	}
-	sscanf(xpm[4 + row], "%d,%d", &hot_x, &hot_y);
-	return SDL_CreateCursor(data, mask, CURSORSIZE, CURSORSIZE, hot_x, hot_y);
-#else
-	return nullptr;
-#endif
+
+	// Read in the hotspot position
+	line = src.readLine();
+	sscanf(line.c_str(), "%d,%d", &hotX, &hotY);
+	c->_hotspot.x = hotX;
+	c->_hotspot.y = hotY;
+
+	return c;
 }
 
 void screenSetMouseCursor(MouseCursor cursor) {
-#ifdef TODO
-	static int current = 0;
+	const Cursor *c = cursors[cursor];
+	const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
 
-	if (cursor != current) {
-		SDL_SetCursor(cursors[cursor]);
-		current = cursor;
+	if (c && cursor != currentCursor) {
+		currentCursor = cursor;
+		CursorMan.replaceCursor(c->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
+			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &g_screen->format);
 	}
-#endif
 }
 
 } // End of namespace Ultima4

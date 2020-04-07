@@ -48,7 +48,7 @@ namespace Ultima4 {
 
 Screen *g_screen;
 
-// Just extern the system functions here. That way people aren't tempted to call them as part of the public API.
+/// TODO: Refactor methods into Screen class
 extern void screenInit_sys();
 extern void screenDelete_sys();
 
@@ -61,11 +61,13 @@ Screen::Screen() {
 	initGraphics(size.x, size.y, &SCREEN_FORMAT);
 
 	create(size.x, size.y, SCREEN_FORMAT);
+	screenInit_sys();
 }
 
 Screen::~Screen() {
 	clear();
 	g_screen = nullptr;
+	screenDelete_sys();
 }
 
 void Screen::init() {
@@ -76,7 +78,6 @@ void Screen::clear() {
 	for (i = _layouts.begin(); i != _layouts.end(); ++i)
 		delete(*i);
 	_layouts.clear();
-	screenDelete_sys();
 
 	ImageMgr::destroy();
 }
