@@ -1117,6 +1117,8 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 		for (int j = 0; j < srcRect.width(); j++) {
 			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0)) {
 				if (*src != skipColor) {
+					*dst = _vm->transformColor(*src);
+#if 0
 					// TODO: Correctly implement reverse for fullColor... currently only works for black and white.
 					if (*src == *dst) {
 						*dst = 0xff - *src;
@@ -1124,6 +1126,7 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 					else {
 						*dst = *src;
 					}
+#endif
 				}
 			} else if (*src != skipColor) {
 				*dst = *src;
