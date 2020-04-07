@@ -131,6 +131,7 @@ Cursor *Screen::loadCursor(Shared::File &src) {
 
 	Cursor *c = new Cursor();
 	c->create(CURSOR_SIZE, CURSOR_SIZE, g_screen->format);
+	c->clear(TRANSPARENT);
 
 	for (row = 0; row < CURSOR_SIZE; row++) {
 		line = src.readLine();
