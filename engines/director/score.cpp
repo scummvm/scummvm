@@ -107,6 +107,7 @@ Score::Score(DirectorEngine *vm) {
 
 	_framesRan = 0; // used by kDebugFewFramesOnly
 
+	_window = nullptr;
 }
 
 void Score::setArchive(Archive *archive) {
@@ -446,9 +447,6 @@ void Score::loadSpriteSounds(bool isSharedCast) {
 
 
 Score::~Score() {
-	if (_surface && _surface->w)
-		_surface->free();
-
 	if (_trailSurface && _trailSurface->w)
 		_trailSurface->free();
 
@@ -460,8 +458,10 @@ Score::~Score() {
 
 	delete _backSurface;
 	delete _backSurface2;
-	delete _surface;
 	delete _trailSurface;
+
+	if (_window)
+		_vm->_wm->removeWindow(_window);
 
 	for (uint i = 0; i < _frames.size(); i++)
 		delete _frames[i];
@@ -1515,12 +1515,15 @@ void Score::startLoop() {
 
 	initGraphics(_movieRect.width(), _movieRect.height());
 
-	_surface = new Graphics::ManagedSurface;
+	_window = _vm->_wm->addWindow(false, false, false);
+	_window->disableBorder();
+	_window->resize(_movieRect.width(), _movieRect.height());
+
+	_surface = _window->getSurface();
 	_trailSurface = new Graphics::ManagedSurface;
 	_backSurface = new Graphics::ManagedSurface;
 	_backSurface2 = new Graphics::ManagedSurface;
 
-	_surface->create(_movieRect.width(), _movieRect.height());
 	_trailSurface->create(_movieRect.width(), _movieRect.height());
 	_backSurface->create(_movieRect.width(), _movieRect.height());
 	_backSurface2->create(_movieRect.width(), _movieRect.height());

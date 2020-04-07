@@ -28,6 +28,7 @@
 namespace Graphics {
 	class ManagedSurface;
 	class Font;
+	class MacWindow;
 }
 
 namespace Common {
@@ -152,6 +153,8 @@ public:
 	uint16 _castIDoffset;
 
 	int _numChannelsDisplayed;
+
+	Graphics::MacWindow *_window;
 
 private:
 	uint16 _versionMinor;
