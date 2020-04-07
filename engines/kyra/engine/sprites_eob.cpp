@@ -501,10 +501,12 @@ void EoBCoreEngine::drawMonsters(int index) {
 				numFrames += ((frm[0] >> 6) & 1);
 				xAdd2 = (int8)frm[1];
 				yAdd2 = (int8)frm[2];
-				if (frm[4] == 0xFE)
+				if (frm[4] == 0xFE) {
 					d->animProgress = 0;
-				else if (frm[4] == 0xFF)
+				} else if (frm[4] == 0xFF) {
 					d->curAttackFrame = 0;
+					d->animType = 0;
+				}
 			}
 
 			const uint8 *shp = _screen->scaleShape(_monsterShapes[shpOffs], blockDistance);

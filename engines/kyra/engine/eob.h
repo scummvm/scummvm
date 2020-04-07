@@ -81,8 +81,6 @@ private:
 	void startupNew() override;
 	void startupLoad() override;
 
-	void updateSpecialGfx() override;
-
 	// Intro/Outro/Sequence Playback
 	enum IntroPart {
 		kOnlyCredits = 0,
@@ -195,12 +193,24 @@ private:
 	void gui_drawWeaponSlotStatus(int x, int y, int status) override;
 	void gui_printInventoryDigits(int x, int y, int val) override;
 	void gui_drawCharacterStatsPage() override;
+	void gui_displayMap() override;
 
 	void makeNameShapes() override;
 	void printStatsString(const char *str, int x, int y);
 
+	void updateGuiAnimations() override;
+
 	const KyraRpgGUISettings *guiSettings() const override;
 	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }
+
+	int _compassDirection2;
+	int _compassAnimDest;
+	int _compassAnimPhase;
+	int _compassAnimStep;
+	int _compassAnimDelayCounter;
+	bool _compassAnimSwitch;
+	bool _compassAnimDone;
+	uint8 *_compassData;
 
 	const uint8 **_invSmallDigits;
 	const uint8 **_weaponSlotShapes;

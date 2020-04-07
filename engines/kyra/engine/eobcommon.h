@@ -132,7 +132,7 @@ struct EoBCharacter {
 	uint8 damageTaken;
 	int8 slotStatus[5];
 
-	int8 specialGfxCountdown;
+	int8 gfxUpdateCountdown;
 };
 
 struct EoBItem {
@@ -342,7 +342,7 @@ protected:
 	void runLoop();
 	void update() override { screen()->updateScreen(); }
 	bool checkPartyStatus(bool handleDeath);
-	virtual void updateSpecialGfx() {}
+	virtual void updateGuiAnimations() {}
 
 	bool _runFlag;
 
@@ -742,6 +742,7 @@ protected:
 	void gui_drawCharPortraitStatusFrame(int index);
 	void gui_drawInventoryItem(int slot, int redraw, int pageNum);
 	virtual void gui_drawCharacterStatsPage();
+	virtual void gui_displayMap() {}
 	void gui_drawCompass(bool force);
 	void gui_drawDialogueBox();
 	void gui_drawSpellbook();
@@ -997,7 +998,7 @@ protected:
 
 	int _dstMonsterIndex;
 	bool _preventMonsterFlash;
-	int8 _specialGfxCountdown;
+	int8 _sceneShakeCountdown;
 	int16 _foundMonstersArray[5];
 	int8 _monsterBlockPosArray[6];
 	const uint8 *_monsterAcHitChanceTable1;

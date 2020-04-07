@@ -669,6 +669,7 @@ void EoBCoreEngine::initButtonData() {
 		{ 116, 117, 0x1100, 320, 200, 1, 1, 2 },
 		{ 7, 0, 0x1100, 158, 121, 15, 10, 5 },
 		{ 0, 0, 0x1100, 146, 168, 32, 10, 0 },
+		{ 0, 0, 0x1100, 296, 56, 16, 16, 27 }
 	};
 
 	_buttonDefs = new EoBGuiButtonDef[ARRAYSIZE(buttonDefs)];
@@ -707,6 +708,39 @@ void EoBCoreEngine::initButtonData() {
 			if (_buttonDefs[i].keyCode2)
 				_buttonDefs[i].keyCode2 = *c++;
 		}
+	}
+
+	// Adjust EOB I SegaCD button coordinates
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		// Arrow field
+		static const EoBGuiButtonDef eob1SegaArrowDefs[6] = {
+			{ 96, 352, 0x1100, 29, 128, 21, 19, 25 },
+			{ 98, 97, 0x1100, 29, 148, 21, 19, 25 },
+			{ 92, 348, 0x1100, 8, 148, 21, 19, 25 },
+			{ 102, 358, 0x1100, 50, 148, 21, 19, 25 },
+			{ 91, 0, 0x1100, 8, 128, 21, 19, 25 },
+			{ 101, 0, 0x1100, 50, 128, 21, 19, 25 }
+		};
+		memcpy(&_buttonDefs[49], eob1SegaArrowDefs, 6 * sizeof(EoBGuiButtonDef));
+		// Character portrait boxes
+		for (int i = 0; i < 4; ++i) {
+			_buttonDefs[i].y = _buttonDefs[i + 17].y = _buttonDefs[i + 72].y = guiSettings()->charBoxCoords.boxY[i >> 1];
+			_buttonDefs[i].h = _buttonDefs[i + 72].h = guiSettings()->charBoxCoords.boxHeight;
+			_buttonDefs[i + 17].h = 16;
+			_buttonDefs[9 + i].x = guiSettings()->charBoxCoords.facePosX_1[i & 1] + 176;
+			_buttonDefs[9 + i].y = guiSettings()->charBoxCoords.facePosY_1[i >> 1];
+			_buttonDefs[13 + i].y = guiSettings()->charBoxCoords.boxY[i >> 1] + 15;
+		}
+		for (int i = 4; i < 6; ++i) {
+			_buttonDefs[i + 78].y = _buttonDefs[i + 82].y = _buttonDefs[i + 86].y = guiSettings()->charBoxCoords.boxY[i >> 1];
+			_buttonDefs[i + 82].h = _buttonDefs[i + 86].h = guiSettings()->charBoxCoords.boxHeight;
+			_buttonDefs[i + 78].h = 16;
+			_buttonDefs[i + 74].x = guiSettings()->charBoxCoords.facePosX_1[i & 1] + 176;
+			_buttonDefs[i + 74].y = guiSettings()->charBoxCoords.facePosY_1[i >> 1];
+			_buttonDefs[i + 76].y = guiSettings()->charBoxCoords.boxY[i >> 1] + 15;
+		}
+		_buttonDefs[48].x = guiSettings()->charBoxCoords.facePosX_2[0];
+		_buttonDefs[48].y = guiSettings()->charBoxCoords.facePosY_2[0];
 	}
 
 	// Match the inventory button coords to the values that are used for drawing the inventory slots, so that
@@ -764,6 +798,7 @@ void EoBCoreEngine::initButtonData() {
 	EOB_CBI(1, 60);
 	EOB_CBI(1, 61);
 	EOB_CBN(1, clickedSpellbookScroll);
+	EOB_CBI(1, 21);
 #undef EOB_CBI
 #undef EOB_CBN
 }
@@ -1469,7 +1504,7 @@ const KyraRpgGUISettings EoBEngine::_guiSettingsSegaCD = {
 	{ 135, 130, 132, 180, 0x00, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 0x31, 9, 2, 0x35, 4, 0x33, 12 },
 	{	{ 184, 256, -1}, { 1, 57, 113 }, 64, 55,
 		{ 8, 80, -1 }, { 16, 72, 128 }, { 184, -1, -1 }, { 8, -1, -1 },
-		{ 40, 112, -1 }, { 16, 32, 72, 88, 128, 146 },
+		{ 40, 112, -1 }, { 16, 32, 72, 88, 128, 144 },
 		{ 24, 96, -1}, { 51, 107, 163 }, 40, 2, { 248, 248, -1}, { 19, 27, -1 }, 47, 2,
 		16, 39
 	}

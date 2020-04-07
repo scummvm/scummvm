@@ -371,12 +371,6 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 		}
 		
 		_segaAnimator->update();
-
-/*		_segaRenderer->render(0, true);
-		sega_selectPalette(7, 3, true);
-		sega_fadeToNeutral(0);
-		updateScreen();
-*/
 		_segaRenderer->render(Screen_EoB::kSegaInitShapesPage, true);
 
 		for (int i = l; i < s; ++i)

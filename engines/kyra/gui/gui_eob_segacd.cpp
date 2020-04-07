@@ -48,6 +48,7 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 	uint8 *data = _res->fileData("PLAYFLD", 0);
 	for (int i = 0; i < 256; ++i)
 		r->loadToVRAM(&data[i << 5], 32, _addrTbl1[i] << 5);
+	memcpy(_compassData, data + 0x2000, 0x5000);
 	delete[] data;
 
 	const uint16 *pattern = _playFldPattern1;
@@ -101,13 +102,20 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 	_screen->copyRegionToBuffer(0, 173, 0, 6, 120, _shakeBackBuffer1);
 	_screen->copyRegionToBuffer(0, 0, 117, 179, 6, _shakeBackBuffer2);
 
-	// Since we're no going to draw with the SegaRenderer but rather with our "normal" code, we have to backup some parts of
-	// the background between the character portraits. Unlike the other versions the red splat shape overlaps with that space.
+	// Since we're no going to draw the character portrait boxes with the SegaRenderer but rather with our "normal" code, we have to backup
+	// some parts of the background between the character portraits. Unlike in the other versions the red splat shapes overlaps with that space.
 	for (int i = 0; i < 6; ++i) {
 		delete[] _redSplatBG[i];
 		_redSplatBG[i] = new uint8[_redSplatShape[2] << 5];
 		_screen->copyRegionToBuffer(0, guiSettings()->charBoxCoords.boxX[i & 1] + guiSettings()->charBoxCoords.redSplatOffsetX, guiSettings()->charBoxCoords.boxY[i >> 1] + guiSettings()->charBoxCoords.boxHeight - 1, _redSplatShape[2] << 3, 4, _redSplatBG[i]);
 	}
+	for (int i = 2; i < 4; ++i) {
+		if (_characters[i + 2].flags & 1)
+			memcpy(_redSplatBG[i] + _redSplatShape[2] * 24, _redSplatBG[0] + _redSplatShape[2] * 24, _redSplatShape[2] << 3);
+	}
+
+	_compassDirection2 = -1;
+	gui_drawCompass(false);;
 
 	if (!_loading)
 		_screen->sega_fadeToNeutral(1);
@@ -158,12 +166,12 @@ void EoBEngine::gui_drawCharacterStatsPage() {
 	// no space left between the digits and the right stats row ("DEX" etc.). Maybe I should move that row one tile
 	// further to the right? There is space enough left over there.
 	printStatsString(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), c->strengthExtCur ? 4 : 5, 11);
-	printStatsString(Common::String::format("%d", c->intelligenceCur).c_str(), 5, 12);
-	printStatsString(Common::String::format("%d", c->wisdomCur).c_str(), 5, 13);
-	printStatsString(Common::String::format("%d", c->dexterityCur).c_str(), 13, 11);
-	printStatsString(Common::String::format("%d", c->constitutionCur).c_str(), 13, 12);
-	printStatsString(Common::String::format("%d", c->charismaCur).c_str(), 13, 13);
-	printStatsString(Common::String::format("%d", c->armorClass).c_str(), 5, 14);
+	printStatsString(Common::String::format("%2d", c->intelligenceCur).c_str(), 5, 12);
+	printStatsString(Common::String::format("%2d", c->wisdomCur).c_str(), 5, 13);
+	printStatsString(Common::String::format("%2d", c->dexterityCur).c_str(), 13, 11);
+	printStatsString(Common::String::format("%2d", c->constitutionCur).c_str(), 13, 12);
+	printStatsString(Common::String::format("%2d", c->charismaCur).c_str(), 13, 13);
+	printStatsString(Common::String::format("%2d", c->armorClass).c_str(), 5, 14);
 
 	for (int i = 0; i < 3; i++) {
 		int t = getCharacterClassType(c->cClass, i);
@@ -178,6 +186,10 @@ void EoBEngine::gui_drawCharacterStatsPage() {
 	r->render(Screen_EoB::kSegaRenderPage);
 
 	_screen->copyRegion(176, 40, 176, 40, 144, 128, Screen_EoB::kSegaRenderPage, 2, Screen::CR_NO_P_CHECK);
+}
+
+void EoBEngine::gui_displayMap() {
+
 }
 
 void EoBEngine::makeNameShapes() {
@@ -217,6 +229,100 @@ void EoBEngine::printStatsString(const char *str, int x, int y) {
 	uint16 *dst = &_statsPattern2[y * 18 + x];
 	for (const uint8 *pos = (const uint8*)str; *pos; ++pos)
 		*dst++ = 0x6525 + _charTilesTable[*pos];
+}
+
+void EoBEngine::updateGuiAnimations() {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return;
+
+	bool updScreen = false;
+	bool redrawCompass = false;
+
+	// Compass
+	if (_compassDirection != _compassDirection2) {
+		_compassAnimDest = _compassDirection << 2;
+		int diff = _compassAnimDest - _compassAnimPhase;
+		if (diff < 0)
+			diff += 16;
+		if (diff) {
+			_compassAnimStep = (diff < 8) ? 1 : -1;
+			_compassAnimDone = false;
+		}
+		_compassDirection2 = _compassDirection;
+		redrawCompass = true;
+	}
+	if (_compassAnimDelayCounter) {
+		--_compassAnimDelayCounter;
+	} else if (!redrawCompass) {
+		if (_compassAnimDest != _compassAnimPhase) {
+			_compassAnimPhase = (_compassAnimPhase + _compassAnimStep) & 0x0F;
+			_compassAnimDelayCounter = 6;
+			redrawCompass = true;
+		} else if (!_compassAnimDone) {
+			if (_compassAnimSwitch) {
+				_compassAnimPhase = (_compassAnimPhase + _compassAnimStep) & 0x0F;
+				_compassAnimDelayCounter = 6;
+				redrawCompass = true;
+				_compassAnimStep = -_compassAnimStep;
+				_compassAnimSwitch = false;
+			} else {
+				_compassAnimDone = _compassAnimSwitch = true;
+			}
+		}
+	}
+	if (redrawCompass) {
+		_screen->sega_getRenderer()->loadToVRAM(_compassData + (_compassAnimPhase & 0x0F) * 0x500, 0x500, 0xEE00);
+		_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+		_screen->copyRegion(88, 120, 88, 120, 80, 48, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+		updScreen = true;
+	}
+
+	// Red grid effect
+	for (int i = 0; i < 6; ++i) {
+		if (!_characters[i].gfxUpdateCountdown)
+			continue;
+		_characters[i].gfxUpdateCountdown--;
+		int cp = _screen->setCurPage(0);
+
+		if (!_currentControlMode && (_characters[i].gfxUpdateCountdown & 1))
+			_screen->drawShape(0, _redGrid, 176 + guiSettings()->charBoxCoords.facePosX_1[i & 1], guiSettings()->charBoxCoords.facePosY_1[i >> 1], 0);
+		else if (_currentControlMode && _updateCharNum == i && (_characters[i].gfxUpdateCountdown & 1))
+			_screen->drawShape(0, _redGrid, guiSettings()->charBoxCoords.facePosX_2[0], guiSettings()->charBoxCoords.facePosY_2[0], 0);
+		else
+			gui_drawFaceShape(i);
+
+		_screen->setCurPage(cp);
+		updScreen = true;
+	}
+
+	// Scene shake
+	if (_sceneShakeCountdown) {
+		--_sceneShakeCountdown;
+		_sceneShakeOffsetX = _sceneShakeOffsets[_sceneShakeCountdown << 1];
+		_sceneShakeOffsetY = _sceneShakeOffsets[(_sceneShakeCountdown << 1) + 1];
+		_screen->fillRect(0, 0, 2, 119, 0, _sceneDrawPage1);
+		_screen->fillRect(0, 0, 175, 2, 0, _sceneDrawPage1);
+		_screen->copyBlockToPage(_sceneDrawPage1, 173, 0, 6, 120, _shakeBackBuffer1);
+		_screen->copyBlockToPage(_sceneDrawPage1, 0, 117, 179, 6, _shakeBackBuffer2);
+		_screen->copyBlockToPage(_sceneDrawPage1, _sceneXoffset + _sceneShakeOffsetX, _sceneShakeOffsetY, 176, 120, _sceneWindowBuffer);
+
+		// For whatever reason the original shakes all types of shapes (decorations, doors, etc.) except the monsters and
+		// the items lying on the floor. So we do the same. I've added drawing flags to drawSceneShapes() which allow
+		// separate drawing passes for the different shape types.
+		_shapeShakeOffsetX = _sceneShakeOffsetX;
+		_shapeShakeOffsetY = _sceneShakeOffsetY;
+		// All shapes except monsters and items
+		drawSceneShapes(0, 0xFF & ~0x2A);
+		_shapeShakeOffsetX = _shapeShakeOffsetY = 0;
+		// Monsters and items
+		drawSceneShapes(0, 0x2A);
+
+		_screen->copyRegion(0, 0, 0, 0, 179, 123, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
+		updScreen = true;
+	}
+
+	if (updScreen)
+		_screen->updateScreen();
 }
 
 } // End of namespace Kyra

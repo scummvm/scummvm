@@ -62,8 +62,10 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	memset(_strikeAnimShapes, 0, sizeof(_strikeAnimShapes));
 	_sceneShakeOffsetX = _sceneShakeOffsetY = 0;
 	_shakeBackBuffer1 = _shakeBackBuffer2 = 0;
-	_redGrid = 0;
-	_charTilesTable = 0;
+	_compassDirection2 = _compassAnimDest = _compassAnimPhase = _compassAnimStep = _compassAnimDelayCounter = 0;
+	_compassAnimSwitch = _compassAnimDone = false;
+	_redGrid = _charTilesTable = 0;
+	_compassData = 0;
 
 	_seqPlayer = 0;
 	_sres = 0;
@@ -87,6 +89,7 @@ EoBEngine::~EoBEngine() {
 	delete[] _statsPattern2;
 	delete[] _shakeBackBuffer1;
 	delete[] _shakeBackBuffer2;
+	delete[] _compassData;
 
 	delete _seqPlayer;
 	delete _sres;
@@ -154,6 +157,7 @@ Common::Error EoBEngine::init() {
 		_statsPattern2 = new uint16[792];
 		_shakeBackBuffer1 = new uint8[120 * 6];
 		_shakeBackBuffer2 = new uint8[179 * 6];
+		_compassData = new uint8[0x5000];
 	}
 
 	return Common::kNoError;
@@ -293,58 +297,6 @@ void EoBEngine::startupLoad() {
 	_sound->selectAudioResourceSet(kMusicIngame);
 	_sound->loadSoundFile(0);
 	_screen->selectPC98Palette(0, _screen->getPalette(0));
-}
-
-void EoBEngine::updateSpecialGfx() {
-	bool updScreen = false;
-
-	// Red grid effect
-	for (int i = 0; i < 6; ++i) {
-		if (!_characters[i].specialGfxCountdown)
-			continue;
-		_characters[i].specialGfxCountdown--;
-		int cp = _screen->setCurPage(0);
-
-		if (!_currentControlMode && (_characters[i].specialGfxCountdown & 1))
-			_screen->drawShape(0, _redGrid, 176 + guiSettings()->charBoxCoords.facePosX_1[i & 1], guiSettings()->charBoxCoords.facePosY_1[i >> 1], 0);
-		else if (_currentControlMode && _updateCharNum == i && (_characters[i].specialGfxCountdown & 1))
-			_screen->drawShape(0, _redGrid, guiSettings()->charBoxCoords.facePosX_2[0], guiSettings()->charBoxCoords.facePosY_2[0], 0);
-		else
-			gui_drawFaceShape(i);
-
-		_screen->setCurPage(cp);
-		updScreen = true;
-	}
-
-	// Scene shake
-	if (_specialGfxCountdown) {
-		--_specialGfxCountdown;
-		_sceneShakeOffsetX = _sceneShakeOffsets[_specialGfxCountdown << 1];
-		_sceneShakeOffsetY = _sceneShakeOffsets[(_specialGfxCountdown << 1) + 1];
-		_screen->fillRect(0, 0, 2, 119, 0, _sceneDrawPage1);
-		_screen->fillRect(0, 0, 175, 2, 0, _sceneDrawPage1);
-		_screen->copyBlockToPage(_sceneDrawPage1, 173, 0, 6, 120, _shakeBackBuffer1);
-		_screen->copyBlockToPage(_sceneDrawPage1, 0, 117, 179, 6, _shakeBackBuffer2);
-		_screen->copyBlockToPage(_sceneDrawPage1, _sceneXoffset + _sceneShakeOffsetX, _sceneShakeOffsetY, 176, 120, _sceneWindowBuffer);
-
-		// For whatever reason the original shakes all types of shapes (decorations, doors, etc.) except the monsters and
-		// the items lying on the floor. So we do the same. I've added drawing flags to drawSceneShapes() which allow
-		// separate drawing passes for the different shape types.
-		_shapeShakeOffsetX = _sceneShakeOffsetX;
-		_shapeShakeOffsetY = _sceneShakeOffsetY;
-		// All shapes except monsters and items
-		drawSceneShapes(0, 0xFF & ~0x2A);
-		_shapeShakeOffsetX = _shapeShakeOffsetY = 0;
-		// Monsters and items
-		drawSceneShapes(0, 0x2A);
-
-		_screen->copyRegion(0, 0, 0, 0, 179, 123, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
-		updScreen = true;
-	}
-
-	if (updScreen)
-		_screen->updateScreen();
-	_sceneDrawPage1 = 2;
 }
 
 void EoBEngine::drawNpcScene(int npcIndex) {

@@ -109,15 +109,15 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		Screen::FontId cf = _screen->setFont(_invFont1);
 
 		if (_flags.platform == Common::kPlatformSegaCD) {
-			_screen->drawShape(_screen->_curPage, (index == _exchangeCharacterId) ? _swapShape : c->nameShape, x2 + 4, y2 + 4);
+			_screen->drawShape(_screen->_curPage, (index == _exchangeCharacterId) ? _swapShape : c->nameShape, x2 + 4, y2 + 4, 0);
 		} else {
 			if (index == _exchangeCharacterId)
 				_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, guiSettings()->colors.guiColorDarkRed, guiSettings()->colors.fill);
 			else
 				_screen->printText(c->name, x2 + 2, y2 + (_flags.platform == Common::kPlatformFMTowns ? 1 : 2), txtCol1, _flags.use16ColorMode ? 0 : guiSettings()->colors.fill);
 		}
-		_screen->setFont(_invFont2);
 
+		_screen->setFont(_invFont2);
 		gui_drawFaceShape(index);
 		gui_drawWeaponSlot(index, 0);
 		gui_drawWeaponSlot(index, 1);
@@ -606,15 +606,17 @@ void EoBCoreEngine::gui_drawCharacterStatsPage() {
 }
 
 void EoBCoreEngine::gui_drawCompass(bool force) {
-	//if (_currentDirection == _compassDirection && !force)
+	if (_currentDirection == _compassDirection && !force)
 		return;
 
-	static const uint8 shpX[2][3] = { { 0x70, 0x4D, 0x95 }, { 0x72, 0x4F, 0x97 } };
-	static const uint8 shpY[2][3] = { { 0x7F, 0x9A, 0x9A }, { 0x83, 0x9E, 0x9E } };
-	int g = _flags.gameID == GI_EOB1 ? 0 : 1;
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		const uint8 shpX[2][3] = { { 0x70, 0x4D, 0x95 }, { 0x72, 0x4F, 0x97 } };
+		const uint8 shpY[2][3] = { { 0x7F, 0x9A, 0x9A }, { 0x83, 0x9E, 0x9E } };
+		int shpId = _flags.gameID == GI_EOB1 ? 0 : 1;
 
-	for (int i = 0; i < 3; i++)
-		_screen->drawShape(_screen->_curPage, _compassShapes[(i << 2) + _currentDirection], shpX[g][i], shpY[g][i], 0);
+		for (int i = 0; i < 3; i++)
+			_screen->drawShape(_screen->_curPage, _compassShapes[(i << 2) + _currentDirection], shpX[shpId][i], shpY[shpId][i], 0);
+	}
 
 	_compassDirection = _currentDirection;
 }
@@ -787,6 +789,9 @@ void EoBCoreEngine::gui_setPlayFieldButtons() {
 void EoBCoreEngine::gui_setInventoryButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_updateFlags ? _buttonList5 : _buttonList3);
+
+	if (_flags.platform == Common::kPlatformSegaCD)
+		gui_initButton(95);
 }
 
 void EoBCoreEngine::gui_setStatsListButtons() {
@@ -808,7 +813,7 @@ void EoBCoreEngine::gui_initButton(int index, int, int, int) {
 	Button *b = 0;
 	int cnt = 1;
 
-	if (_flags.gameID == GI_EOB1 && index > 92)
+	if (_flags.gameID == GI_EOB1 && !(_flags.platform == Common::kPlatformSegaCD && index == 95) && index > 92)
 		return;
 
 	if (_activeButtons) {
@@ -1451,6 +1456,9 @@ void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 			gui_drawInventoryItem(slot, 1, 0);
 			setHandItem(itm);
 		}
+
+	} else if (slot == 27) {
+		gui_displayMap();
 
 	} else {
 		setHandItem(itm);

@@ -109,7 +109,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_monsters = 0;
 	_dstMonsterIndex = 0;
 	_preventMonsterFlash = false;
-	_specialGfxCountdown = 0;
+	_sceneShakeCountdown = 0;
 
 	_teleporterPulse = 0;
 
@@ -735,7 +735,7 @@ void EoBCoreEngine::runLoop() {
 		updateScriptTimers();
 		updateWallOfForceTimers();
 
-		if (_sceneUpdateRequired && !_specialGfxCountdown)
+		if (_sceneUpdateRequired && !_sceneShakeCountdown)
 			drawScene(1);
 
 		uint32 curTime = _system->getMillis();
@@ -746,7 +746,7 @@ void EoBCoreEngine::runLoop() {
 
 		if (_lastVIntTick + 16 <= curTime) {
 			_lastVIntTick = curTime;
-			updateSpecialGfx();
+			updateGuiAnimations();
 			curTime = _system->getMillis();
 		}
 		
@@ -2221,7 +2221,7 @@ void EoBCoreEngine::inflictCharacterDamage(int charIndex, int damage) {
 	if (c->hitPointsCur > -10) {
 		snd_playSoundEffect(21);
 		if (_flags.platform == Common::kPlatformSegaCD)
-			_specialGfxCountdown = c->specialGfxCountdown = 32;
+			_sceneShakeCountdown = c->gfxUpdateCountdown = 32;
 	} else {
 		c->hitPointsCur = -10;
 		c->flags &= 1;
