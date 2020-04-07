@@ -49,7 +49,7 @@
 %require "3.5"
 %defines "engines/director/lingo/lingo-gr.h"
 %output "engines/director/lingo/lingo-gr.cpp"
-
+%define parse.error verbose
 // %glr-parser
 
 %{
