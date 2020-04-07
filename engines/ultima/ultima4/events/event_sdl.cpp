@@ -137,7 +137,7 @@ KeyHandler *KeyHandlerController::getKeyHandler() {
 	return _handler;
 }
 
-TimedEventMgr::TimedEventMgr(int i) : _baseInterval(i) {
+TimedEventMgr::TimedEventMgr(int i) : _baseInterval(i), _id(nullptr), _locked(false) {
 	/* start the SDL timer */
 #ifdef TODO
 	if (instances == 0) {
@@ -307,13 +307,6 @@ void EventHandler::run() {
 	g_screen->update();
 
 	while (!_ended && !_controllerDone) {
-		uint32 time = g_system->getMillis();
-		if (time >= (_lastTickTime + FRAME_TIME)) {
-			_lastTickTime = time;
-			eventHandler->getTimer()->tick();
-			g_screen->update();
-		}
-
 		Common::Event event;
 		g_system->getEventManager()->pollEvent(event);
 
@@ -330,7 +323,7 @@ void EventHandler::run() {
 
 		case Common::EVENT_MOUSEMOVE:
 			handleMouseMotionEvent(event);
-			break;
+			continue;
 
 		case Common::EVENT_QUIT:
 			_ended = true;
@@ -338,6 +331,13 @@ void EventHandler::run() {
 
 		default:
 			break;
+		}
+
+		uint32 time = g_system->getMillis();
+		if (time >= (_lastTickTime + FRAME_TIME)) {
+			_lastTickTime = time;
+			eventHandler->getTimer()->tick();
+			g_screen->update();
 		}
 	}
 }
