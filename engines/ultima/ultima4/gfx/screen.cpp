@@ -1108,9 +1108,9 @@ int screenPointInMouseArea(int x, int y, const MouseArea *area) {
 	/* two points define a rectangle */
 	if (area->_nPoints == 2) {
 		if (x >= (int)(area->_point[0].x * settings._scale) &&
-		        y >= (int)(area->_point[0].y * settings._scale) &&
-		        x < (int)(area->_point[1].x * settings._scale) &&
-		        y < (int)(area->_point[1].y * settings._scale)) {
+				y >= (int)(area->_point[0].y * settings._scale) &&
+				x < (int)(area->_point[1].x * settings._scale) &&
+				y < (int)(area->_point[1].y * settings._scale)) {
 			return 1;
 		}
 	}
@@ -1118,9 +1118,9 @@ int screenPointInMouseArea(int x, int y, const MouseArea *area) {
 	/* three points define a triangle */
 	else if (area->_nPoints == 3) {
 		return screenPointInTriangle(x, y,
-		                             area->_point[0].x * settings._scale, area->_point[0].y * settings._scale,
-		                             area->_point[1].x * settings._scale, area->_point[1].y * settings._scale,
-		                             area->_point[2].x * settings._scale, area->_point[2].y * settings._scale);
+			area->_point[0].x * settings._scale, area->_point[0].y * settings._scale,
+			area->_point[1].x * settings._scale, area->_point[1].y * settings._scale,
+			area->_point[2].x * settings._scale, area->_point[2].y * settings._scale);
 	}
 
 	return 0;
