@@ -47,44 +47,6 @@ namespace Ultima4 {
 
 using Std::vector;
 
-struct Cursor : public Graphics::ManagedSurface {
-	Common::Point _hotspot;
-};
-
-Cursor *cursors[5];
-Scaler filterScaler;
-int currentCursor = -1;
-
-Cursor *screenInitCursor(Shared::File &src);
-
-
-void screenInit_sys() {
-	// enable or disable the mouse cursor
-	if (settings._mouseOptions._enabled) {
-		g_system->showMouse(true);
-
-		Shared::File cursorsFile("data/graphics/cursors.txt");
-
-		for (int idx = 0; idx < 5; ++idx)
-			cursors[idx] = screenInitCursor(cursorsFile);
-
-	} else {
-		g_system->showMouse(false);
-	}
-
-	filterScaler = scalerGet(settings._filter);
-	if (!filterScaler)
-		errorFatal("%s is not a valid filter", settings._filter.c_str());
-}
-
-void screenDelete_sys() {
-	delete cursors[0];
-	delete cursors[1];
-	delete cursors[2];
-	delete cursors[3];
-	delete cursors[4];
-}
-
 /**
  * Force a redraw.
  */
@@ -121,13 +83,13 @@ Image *screenScale(Image *src, int scale, int n, int filter) {
 	isTransparent = src->getTransparentIndex(transparentIndex);
 	src->alphaOff();
 
-	while (filter && filterScaler && (scale % 2 == 0)) {
-		dest = (*filterScaler)(src, 2, n);
+	while (filter && g_screen->_filterScaler && (scale % 2 == 0)) {
+		dest = (*g_screen->_filterScaler)(src, 2, n);
 		src = dest;
 		scale /= 2;
 	}
 	if (scale == 3 && scaler3x(settings._filter)) {
-		dest = (*filterScaler)(src, 3, n);
+		dest = (*g_screen->_filterScaler)(src, 3, n);
 		src = dest;
 		scale /= 3;
 	}
@@ -187,64 +149,6 @@ Image *screenScaleDown(Image *src, int scale) {
 		src->alphaOn();
 
 	return dest;
-}
-
-/**
- * Create a cursor object from the passed file
- */
-#define CURSOR_SIZE 20
-
-Cursor *screenInitCursor(Shared::File &src) {
-	uint row, col, endCol, pixel;
-	int hotX, hotY;
-	Common::String line;
-	byte *destP;
-	const uint WHITE = g_screen->format.RGBToColor(0xff, 0xff, 0xff);
-	const uint BLACK = g_screen->format.RGBToColor(0, 0, 0);
-	const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
-	int bpp = g_screen->format.bytesPerPixel;
-	assert(bpp >= 2);
-
-	Cursor *c = new Cursor();
-	c->create(CURSOR_SIZE, CURSOR_SIZE, g_screen->format);
-
-	for (row = 0; row < CURSOR_SIZE; row++) {
-		line = src.readLine();
-		destP = (byte *)c->getBasePtr(0, row);
-		endCol = MIN(line.size(), (uint)CURSOR_SIZE);
-
-		for (col = 0; col < endCol; ++col, destP += bpp) {
-			pixel = TRANSPARENT;
-			if (line[col] == 'X')
-				pixel = BLACK;
-			else if (line[col] == '.')
-				pixel = WHITE;
-
-			if (bpp == 2)
-				*((uint16 *)destP) = pixel;
-			else
-				*((uint32 *)destP) = pixel;
-		}
-	}
-
-	// Read in the hotspot position
-	line = src.readLine();
-	sscanf(line.c_str(), "%d,%d", &hotX, &hotY);
-	c->_hotspot.x = hotX;
-	c->_hotspot.y = hotY;
-
-	return c;
-}
-
-void screenSetMouseCursor(MouseCursor cursor) {
-	const Cursor *c = cursors[cursor];
-	const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
-
-	if (c && cursor != currentCursor) {
-		currentCursor = cursor;
-		CursorMan.replaceCursor(c->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
-			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &g_screen->format);
-	}
 }
 
 } // End of namespace Ultima4

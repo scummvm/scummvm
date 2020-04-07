@@ -208,9 +208,9 @@ static void handleMouseMotionEvent(const Common::Event &event) {
 	const MouseArea *area;
 	area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
 	if (area)
-		screenSetMouseCursor(area->_cursor);
+		g_screen->setCursor(area->_cursor);
 	else
-		screenSetMouseCursor(MC_DEFAULT);
+		g_screen->setCursor(MC_DEFAULT);
 }
 
 static void handleActiveEvent(const Common::Event &event, updateScreenCallback updateScreen) {

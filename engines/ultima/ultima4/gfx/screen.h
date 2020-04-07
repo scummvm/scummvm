@@ -24,9 +24,11 @@
 #define ULTIMA4_SCREEN_H
 
 #include "graphics/screen.h"
-#include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/gfx/scale.h"
+#include "ultima/ultima4/map/direction.h"
+#include "ultima/shared/core/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -63,10 +65,10 @@ enum LayoutType {
 
 enum MouseCursor {
 	MC_DEFAULT,
+	MC_WEST,
 	MC_NORTH,
 	MC_EAST,
-	MC_SOUTH,
-	MC_WEST
+	MC_SOUTH
 };
 
 class Image;
@@ -74,6 +76,10 @@ class Map;
 class Tile;
 class TileView;
 class Coords;
+
+struct Cursor : public Graphics::ManagedSurface {
+	Common::Point _hotspot;
+};
 
 struct MouseArea {
 	int _nPoints;
@@ -92,8 +98,22 @@ struct Layout {
 };
 
 class Screen : public Graphics::Screen {
+private:
+	Cursor *_cursors[5];
+	int _currentCursor;
+private:
+	/**
+	 * Load the cursors
+	 */
+	void loadCursors();
+
+	/**
+	 * Loads the data for a single cursor from the passed file
+	 */
+	Cursor *loadCursor(Shared::File &src);
 public:
 	Std::vector<Layout *> _layouts;
+	Scaler _filterScaler;
 public:
 	Screen();
 	~Screen();
@@ -104,6 +124,11 @@ public:
 	 * Reset the screen
 	 */
 	void clear();
+
+	/**
+	 * Sets a given mouse cursor
+	 */
+	void setCursor(MouseCursor cursor);
 };
 
 extern Screen *g_screen;
@@ -148,7 +173,6 @@ void screenEnableCursor(void);
 void screenDisableCursor(void);
 void screenSetCursorPos(int x, int y);
 
-void screenSetMouseCursor(MouseCursor cursor);
 int screenPointInMouseArea(int x, int y, const MouseArea *area);
 
 Image *screenScale(Image *src, int scale, int n, int filter);
