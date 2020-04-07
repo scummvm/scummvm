@@ -68,6 +68,28 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 MacWindow::~MacWindow() {
 }
 
+static const byte noborderData[3][3] = {
+	{ 0, 1, 0 },
+	{ 1, 0, 1 },
+	{ 0, 1, 0 },
+};
+
+void MacWindow::disableBorder() {
+	Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
+	noborder->create(3, 3, noborder->getSupportedPixelFormat());
+	uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
+	uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
+
+	for (int y = 0; y < 3; y++)
+		for (int x = 0; x < 3; x++)
+			*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
+
+	setBorder(noborder, true);
+
+	Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
+	setBorder(noborder2, false);
+}
+
 const Font *MacWindow::getTitleFont() {
 	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
 }
