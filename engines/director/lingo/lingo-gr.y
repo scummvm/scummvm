@@ -43,13 +43,12 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
-
-%debug
-
 %require "3.5"
 %defines "engines/director/lingo/lingo-gr.h"
 %output "engines/director/lingo/lingo-gr.cpp"
 %define parse.error verbose
+%define parse.trace
+
 // %glr-parser
 
 %{

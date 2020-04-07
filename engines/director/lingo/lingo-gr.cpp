@@ -66,7 +66,7 @@
 
 
 /* First part of user prologue.  */
-#line 55 "engines/director/lingo/lingo-gr.y"
+#line 54 "engines/director/lingo/lingo-gr.y"
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
@@ -236,7 +236,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 86 "engines/director/lingo/lingo-gr.y"
+#line 85 "engines/director/lingo/lingo-gr.y"
 
 	Common::String *s;
 	int i;
@@ -640,24 +640,24 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   141,   141,   142,   143,   145,   146,   147,   149,   155,
-     159,   170,   171,   172,   178,   185,   191,   198,   204,   211,
-     222,   229,   230,   231,   233,   234,   235,   236,   238,   239,
-     244,   255,   272,   284,   295,   297,   302,   306,   311,   315,
-     325,   336,   337,   339,   346,   356,   367,   369,   375,   381,
-     388,   390,   392,   393,   394,   396,   402,   405,   408,   412,
-     416,   420,   422,   423,   424,   427,   430,   433,   441,   447,
-     452,   458,   459,   460,   461,   462,   463,   464,   465,   466,
-     467,   468,   469,   470,   471,   472,   473,   474,   475,   476,
-     477,   478,   479,   480,   481,   483,   484,   485,   486,   487,
-     488,   489,   490,   492,   495,   497,   498,   499,   500,   501,
-     502,   502,   503,   503,   504,   505,   508,   511,   512,   514,
-     518,   523,   527,   532,   536,   548,   549,   550,   551,   555,
-     559,   564,   565,   567,   571,   575,   579,   579,   609,   609,
-     609,   616,   617,   617,   624,   634,   642,   642,   644,   645,
-     646,   647,   649,   650,   651,   653,   655,   663,   664,   665,
-     667,   668,   670,   672,   673,   674,   675,   677,   678,   680,
-     681,   683,   687
+       0,   140,   140,   141,   142,   144,   145,   146,   148,   154,
+     158,   169,   170,   171,   177,   184,   190,   197,   203,   210,
+     221,   228,   229,   230,   232,   233,   234,   235,   237,   238,
+     243,   254,   271,   283,   294,   296,   301,   305,   310,   314,
+     324,   335,   336,   338,   345,   355,   366,   368,   374,   380,
+     387,   389,   391,   392,   393,   395,   401,   404,   407,   411,
+     415,   419,   421,   422,   423,   426,   429,   432,   440,   446,
+     451,   457,   458,   459,   460,   461,   462,   463,   464,   465,
+     466,   467,   468,   469,   470,   471,   472,   473,   474,   475,
+     476,   477,   478,   479,   480,   482,   483,   484,   485,   486,
+     487,   488,   489,   491,   494,   496,   497,   498,   499,   500,
+     501,   501,   502,   502,   503,   504,   507,   510,   511,   513,
+     517,   522,   526,   531,   535,   547,   548,   549,   550,   554,
+     558,   563,   564,   566,   570,   574,   578,   578,   608,   608,
+     608,   615,   616,   616,   623,   633,   641,   641,   643,   644,
+     645,   646,   648,   649,   650,   652,   654,   662,   663,   664,
+     666,   667,   669,   671,   672,   673,   674,   676,   677,   679,
+     680,   682,   686
 };
 #endif
 
@@ -1718,73 +1718,73 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
   switch (yytype)
     {
     case 21: /* BLTIN  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1724 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 22: /* FBLTIN  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1730 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 23: /* RBLTIN  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1736 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 24: /* ID  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1742 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 25: /* STRING  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1748 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 26: /* HANDLER  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1754 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 27: /* SYMBOL  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1760 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 28: /* ENDCLAUSE  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1766 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 29: /* tPLAYACCEL  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1772 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 30: /* tMETHOD  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1778 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 31: /* THEOBJECTFIELD  */
-#line 137 "engines/director/lingo/lingo-gr.y"
+#line 136 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).objectfield).os; }
 #line 1784 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case 140: /* on  */
-#line 136 "engines/director/lingo/lingo-gr.y"
+#line 135 "engines/director/lingo/lingo-gr.y"
             { delete ((*yyvaluep).s); }
 #line 1790 "engines/director/lingo/lingo-gr.cpp"
         break;
@@ -2054,13 +2054,13 @@ yyreduce:
   switch (yyn)
     {
   case 4:
-#line 143 "engines/director/lingo/lingo-gr.y"
+#line 142 "engines/director/lingo/lingo-gr.y"
                                 { yyerrok; }
 #line 2060 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 8:
-#line 149 "engines/director/lingo/lingo-gr.y"
+#line 148 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2071,7 +2071,7 @@ yyreduce:
     break;
 
   case 9:
-#line 155 "engines/director/lingo/lingo-gr.y"
+#line 154 "engines/director/lingo/lingo-gr.y"
                                                 {
 		g_lingo->code1(LC::c_assign);
 		(yyval.code) = (yyvsp[-2].code); }
@@ -2079,7 +2079,7 @@ yyreduce:
     break;
 
   case 10:
-#line 159 "engines/director/lingo/lingo-gr.y"
+#line 158 "engines/director/lingo/lingo-gr.y"
                                                                 {
 		if (!(yyvsp[-3].s)->equalsIgnoreCase("menu")) {
 			warning("LEXER: keyword 'menu' expected");
@@ -2095,19 +2095,19 @@ yyreduce:
     break;
 
   case 11:
-#line 170 "engines/director/lingo/lingo-gr.y"
+#line 169 "engines/director/lingo/lingo-gr.y"
                                                 { (yyval.code) = g_lingo->code1(LC::c_after); }
 #line 2101 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 12:
-#line 171 "engines/director/lingo/lingo-gr.y"
+#line 170 "engines/director/lingo/lingo-gr.y"
                                                 { (yyval.code) = g_lingo->code1(LC::c_before); }
 #line 2107 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 13:
-#line 172 "engines/director/lingo/lingo-gr.y"
+#line 171 "engines/director/lingo/lingo-gr.y"
                                                 {
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[-2].s)->c_str());
@@ -2118,7 +2118,7 @@ yyreduce:
     break;
 
   case 14:
-#line 178 "engines/director/lingo/lingo-gr.y"
+#line 177 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
@@ -2130,7 +2130,7 @@ yyreduce:
     break;
 
   case 15:
-#line 185 "engines/director/lingo/lingo-gr.y"
+#line 184 "engines/director/lingo/lingo-gr.y"
                                                 {
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[-2].s)->c_str());
@@ -2141,7 +2141,7 @@ yyreduce:
     break;
 
   case 16:
-#line 191 "engines/director/lingo/lingo-gr.y"
+#line 190 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
@@ -2153,7 +2153,7 @@ yyreduce:
     break;
 
   case 17:
-#line 198 "engines/director/lingo/lingo-gr.y"
+#line 197 "engines/director/lingo/lingo-gr.y"
                                                         {
 		g_lingo->code1(LC::c_swap);
 		g_lingo->code1(LC::c_theentityassign);
@@ -2164,7 +2164,7 @@ yyreduce:
     break;
 
   case 18:
-#line 204 "engines/director/lingo/lingo-gr.y"
+#line 203 "engines/director/lingo/lingo-gr.y"
                                                         {
 		g_lingo->code1(LC::c_swap);
 		g_lingo->code1(LC::c_theentityassign);
@@ -2175,7 +2175,7 @@ yyreduce:
     break;
 
   case 19:
-#line 211 "engines/director/lingo/lingo-gr.y"
+#line 210 "engines/director/lingo/lingo-gr.y"
                                                                         {
 		if (!(yyvsp[-3].s)->equalsIgnoreCase("menu")) {
 			warning("LEXER: keyword 'menu' expected");
@@ -2191,7 +2191,7 @@ yyreduce:
     break;
 
   case 20:
-#line 222 "engines/director/lingo/lingo-gr.y"
+#line 221 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->code1(LC::c_objectfieldassign);
 		g_lingo->codeString((yyvsp[-2].objectfield).os->c_str());
@@ -2202,7 +2202,7 @@ yyreduce:
     break;
 
   case 30:
-#line 244 "engines/director/lingo/lingo-gr.y"
+#line 243 "engines/director/lingo/lingo-gr.y"
                                                                         {
 		inst body = 0, end = 0;
 		WRITE_UINT32(&body, (yyvsp[-3].code) - (yyvsp[-5].code));
@@ -2213,7 +2213,7 @@ yyreduce:
     break;
 
   case 31:
-#line 255 "engines/director/lingo/lingo-gr.y"
+#line 254 "engines/director/lingo/lingo-gr.y"
                                                                                                  {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
 		WRITE_UINT32(&init, (yyvsp[-8].code) - (yyvsp[-10].code));
@@ -2230,7 +2230,7 @@ yyreduce:
     break;
 
   case 32:
-#line 272 "engines/director/lingo/lingo-gr.y"
+#line 271 "engines/director/lingo/lingo-gr.y"
                                                                                                        {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
 		WRITE_UINT32(&init, (yyvsp[-9].code) - (yyvsp[-11].code));
@@ -2247,7 +2247,7 @@ yyreduce:
     break;
 
   case 33:
-#line 284 "engines/director/lingo/lingo-gr.y"
+#line 283 "engines/director/lingo/lingo-gr.y"
                                                                             {
 		inst list = 0, body = 0, end = 0;
 		WRITE_UINT32(&list, (yyvsp[-5].code) - (yyvsp[-7].code));
@@ -2262,14 +2262,14 @@ yyreduce:
     break;
 
   case 34:
-#line 295 "engines/director/lingo/lingo-gr.y"
+#line 294 "engines/director/lingo/lingo-gr.y"
                         {
 		g_lingo->code1(LC::c_nextRepeat); }
 #line 2269 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 35:
-#line 297 "engines/director/lingo/lingo-gr.y"
+#line 296 "engines/director/lingo/lingo-gr.y"
                                       {
 		inst end = 0;
 		WRITE_UINT32(&end, (yyvsp[0].code) - (yyvsp[-2].code));
@@ -2279,7 +2279,7 @@ yyreduce:
     break;
 
   case 36:
-#line 302 "engines/director/lingo/lingo-gr.y"
+#line 301 "engines/director/lingo/lingo-gr.y"
                                                           {
 		inst end;
 		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-3].code));
@@ -2288,7 +2288,7 @@ yyreduce:
     break;
 
   case 37:
-#line 306 "engines/director/lingo/lingo-gr.y"
+#line 305 "engines/director/lingo/lingo-gr.y"
                                                     {
 		inst end;
 		WRITE_UINT32(&end, (yyvsp[0].code) - (yyvsp[-2].code));
@@ -2297,7 +2297,7 @@ yyreduce:
     break;
 
   case 38:
-#line 311 "engines/director/lingo/lingo-gr.y"
+#line 310 "engines/director/lingo/lingo-gr.y"
                                                         {
 		(yyval.code) = g_lingo->code1(LC::c_tellcode);
 		g_lingo->code1(STOP); }
@@ -2305,7 +2305,7 @@ yyreduce:
     break;
 
   case 39:
-#line 315 "engines/director/lingo/lingo-gr.y"
+#line 314 "engines/director/lingo/lingo-gr.y"
                                                                                        {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, (yyvsp[-6].code) - (yyvsp[-8].code));
@@ -2320,7 +2320,7 @@ yyreduce:
     break;
 
   case 40:
-#line 325 "engines/director/lingo/lingo-gr.y"
+#line 324 "engines/director/lingo/lingo-gr.y"
                                                                                                               {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, (yyvsp[-9].code) - (yyvsp[-11].code));
@@ -2335,7 +2335,7 @@ yyreduce:
     break;
 
   case 43:
-#line 339 "engines/director/lingo/lingo-gr.y"
+#line 338 "engines/director/lingo/lingo-gr.y"
                                                         {
 		inst then = 0;
 		WRITE_UINT32(&then, (yyvsp[-3].code) - (yyvsp[-5].code));
@@ -2346,7 +2346,7 @@ yyreduce:
     break;
 
   case 44:
-#line 346 "engines/director/lingo/lingo-gr.y"
+#line 345 "engines/director/lingo/lingo-gr.y"
                                                                                                          {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, (yyvsp[-8].code) - (yyvsp[-10].code));
@@ -2361,7 +2361,7 @@ yyreduce:
     break;
 
   case 45:
-#line 356 "engines/director/lingo/lingo-gr.y"
+#line 355 "engines/director/lingo/lingo-gr.y"
                                                                    {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, (yyvsp[-4].code) - (yyvsp[-6].code));
@@ -2376,13 +2376,13 @@ yyreduce:
     break;
 
   case 46:
-#line 367 "engines/director/lingo/lingo-gr.y"
+#line 366 "engines/director/lingo/lingo-gr.y"
                                         { (yyval.code) = g_lingo->code3(LC::c_repeatwhilecode, STOP, STOP); }
 #line 2382 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 47:
-#line 369 "engines/director/lingo/lingo-gr.y"
+#line 368 "engines/director/lingo/lingo-gr.y"
                                                 {
 		(yyval.code) = g_lingo->code3(LC::c_repeatwithcode, STOP, STOP);
 		g_lingo->code3(STOP, STOP, STOP);
@@ -2392,7 +2392,7 @@ yyreduce:
     break;
 
   case 48:
-#line 375 "engines/director/lingo/lingo-gr.y"
+#line 374 "engines/director/lingo/lingo-gr.y"
                                                 {
 		(yyval.code) = g_lingo->code1(LC::c_ifcode);
 		g_lingo->code3(STOP, STOP, STOP);
@@ -2402,7 +2402,7 @@ yyreduce:
     break;
 
   case 49:
-#line 381 "engines/director/lingo/lingo-gr.y"
+#line 380 "engines/director/lingo/lingo-gr.y"
                                         {
 		inst skipEnd;
 		WRITE_UINT32(&skipEnd, 1); // We have to skip end to avoid multiple executions
@@ -2413,25 +2413,25 @@ yyreduce:
     break;
 
   case 50:
-#line 388 "engines/director/lingo/lingo-gr.y"
+#line 387 "engines/director/lingo/lingo-gr.y"
                                 { (yyval.code) = g_lingo->_currentScript->size(); }
 #line 2419 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 51:
-#line 390 "engines/director/lingo/lingo-gr.y"
+#line 389 "engines/director/lingo/lingo-gr.y"
                                 { g_lingo->code1(STOP); (yyval.code) = g_lingo->_currentScript->size(); }
 #line 2425 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 52:
-#line 392 "engines/director/lingo/lingo-gr.y"
+#line 391 "engines/director/lingo/lingo-gr.y"
                                                 { (yyval.code) = g_lingo->_currentScript->size(); }
 #line 2431 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 55:
-#line 396 "engines/director/lingo/lingo-gr.y"
+#line 395 "engines/director/lingo/lingo-gr.y"
                                 {
 		(yyval.code) = g_lingo->code1(LC::c_whencode);
 		g_lingo->code1(STOP);
@@ -2441,7 +2441,7 @@ yyreduce:
     break;
 
   case 56:
-#line 402 "engines/director/lingo/lingo-gr.y"
+#line 401 "engines/director/lingo/lingo-gr.y"
                         {
 		(yyval.code) = g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt((yyvsp[0].i)); }
@@ -2449,7 +2449,7 @@ yyreduce:
     break;
 
   case 57:
-#line 405 "engines/director/lingo/lingo-gr.y"
+#line 404 "engines/director/lingo/lingo-gr.y"
                         {
 		(yyval.code) = g_lingo->code1(LC::c_floatpush);
 		g_lingo->codeFloat((yyvsp[0].f)); }
@@ -2457,7 +2457,7 @@ yyreduce:
     break;
 
   case 58:
-#line 408 "engines/director/lingo/lingo-gr.y"
+#line 407 "engines/director/lingo/lingo-gr.y"
                         {											// D3
 		(yyval.code) = g_lingo->code1(LC::c_symbolpush);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2466,7 +2466,7 @@ yyreduce:
     break;
 
   case 59:
-#line 412 "engines/director/lingo/lingo-gr.y"
+#line 411 "engines/director/lingo/lingo-gr.y"
                                 {
 		(yyval.code) = g_lingo->code1(LC::c_stringpush);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2475,7 +2475,7 @@ yyreduce:
     break;
 
   case 60:
-#line 416 "engines/director/lingo/lingo-gr.y"
+#line 415 "engines/director/lingo/lingo-gr.y"
                         {
 		(yyval.code) = g_lingo->code1(LC::c_eval);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2484,13 +2484,13 @@ yyreduce:
     break;
 
   case 62:
-#line 422 "engines/director/lingo/lingo-gr.y"
+#line 421 "engines/director/lingo/lingo-gr.y"
                  { (yyval.code) = (yyvsp[0].code); }
 #line 2490 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 64:
-#line 424 "engines/director/lingo/lingo-gr.y"
+#line 423 "engines/director/lingo/lingo-gr.y"
                                  {
 		g_lingo->codeFunc((yyvsp[-3].s), (yyvsp[-1].narg));
 		delete (yyvsp[-3].s); }
@@ -2498,7 +2498,7 @@ yyreduce:
     break;
 
   case 65:
-#line 427 "engines/director/lingo/lingo-gr.y"
+#line 426 "engines/director/lingo/lingo-gr.y"
                                 {
 		g_lingo->codeFunc((yyvsp[-1].s), (yyvsp[0].narg));
 		delete (yyvsp[-1].s); }
@@ -2506,7 +2506,7 @@ yyreduce:
     break;
 
   case 66:
-#line 430 "engines/director/lingo/lingo-gr.y"
+#line 429 "engines/director/lingo/lingo-gr.y"
                                 {
 		(yyval.code) = g_lingo->codeFunc((yyvsp[-3].s), (yyvsp[-1].narg));
 		delete (yyvsp[-3].s); }
@@ -2514,7 +2514,7 @@ yyreduce:
     break;
 
   case 67:
-#line 433 "engines/director/lingo/lingo-gr.y"
+#line 432 "engines/director/lingo/lingo-gr.y"
                         {
 		(yyval.code) = g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
@@ -2527,7 +2527,7 @@ yyreduce:
     break;
 
   case 68:
-#line 441 "engines/director/lingo/lingo-gr.y"
+#line 440 "engines/director/lingo/lingo-gr.y"
                                      {
 		(yyval.code) = g_lingo->code1(LC::c_theentitypush);
 		inst e = 0, f = 0;
@@ -2538,7 +2538,7 @@ yyreduce:
     break;
 
   case 69:
-#line 447 "engines/director/lingo/lingo-gr.y"
+#line 446 "engines/director/lingo/lingo-gr.y"
                          {
 		g_lingo->code1(LC::c_objectfieldpush);
 		g_lingo->codeString((yyvsp[0].objectfield).os->c_str());
@@ -2548,7 +2548,7 @@ yyreduce:
     break;
 
   case 70:
-#line 452 "engines/director/lingo/lingo-gr.y"
+#line 451 "engines/director/lingo/lingo-gr.y"
                        {
 		g_lingo->code1(LC::c_objectrefpush);
 		g_lingo->codeString((yyvsp[0].objectref).obj->c_str());
@@ -2559,193 +2559,193 @@ yyreduce:
     break;
 
   case 72:
-#line 459 "engines/director/lingo/lingo-gr.y"
+#line 458 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_add); }
 #line 2565 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 73:
-#line 460 "engines/director/lingo/lingo-gr.y"
+#line 459 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_sub); }
 #line 2571 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 74:
-#line 461 "engines/director/lingo/lingo-gr.y"
+#line 460 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_mul); }
 #line 2577 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 75:
-#line 462 "engines/director/lingo/lingo-gr.y"
+#line 461 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_div); }
 #line 2583 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 76:
-#line 463 "engines/director/lingo/lingo-gr.y"
+#line 462 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_mod); }
 #line 2589 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 77:
-#line 464 "engines/director/lingo/lingo-gr.y"
+#line 463 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_gt); }
 #line 2595 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 78:
-#line 465 "engines/director/lingo/lingo-gr.y"
+#line 464 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_lt); }
 #line 2601 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 79:
-#line 466 "engines/director/lingo/lingo-gr.y"
+#line 465 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_eq); }
 #line 2607 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 80:
-#line 467 "engines/director/lingo/lingo-gr.y"
+#line 466 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_neq); }
 #line 2613 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 81:
-#line 468 "engines/director/lingo/lingo-gr.y"
+#line 467 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_ge); }
 #line 2619 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 82:
-#line 469 "engines/director/lingo/lingo-gr.y"
+#line 468 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_le); }
 #line 2625 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 83:
-#line 470 "engines/director/lingo/lingo-gr.y"
+#line 469 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_and); }
 #line 2631 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 84:
-#line 471 "engines/director/lingo/lingo-gr.y"
+#line 470 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_or); }
 #line 2637 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 85:
-#line 472 "engines/director/lingo/lingo-gr.y"
+#line 471 "engines/director/lingo/lingo-gr.y"
                                         { g_lingo->code1(LC::c_not); }
 #line 2643 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 86:
-#line 473 "engines/director/lingo/lingo-gr.y"
+#line 472 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_ampersand); }
 #line 2649 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 87:
-#line 474 "engines/director/lingo/lingo-gr.y"
+#line 473 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_concat); }
 #line 2655 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 88:
-#line 475 "engines/director/lingo/lingo-gr.y"
+#line 474 "engines/director/lingo/lingo-gr.y"
                                         { g_lingo->code1(LC::c_contains); }
 #line 2661 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 89:
-#line 476 "engines/director/lingo/lingo-gr.y"
+#line 475 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_starts); }
 #line 2667 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 90:
-#line 477 "engines/director/lingo/lingo-gr.y"
+#line 476 "engines/director/lingo/lingo-gr.y"
                                     { (yyval.code) = (yyvsp[0].code); }
 #line 2673 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 91:
-#line 478 "engines/director/lingo/lingo-gr.y"
+#line 477 "engines/director/lingo/lingo-gr.y"
                                     { (yyval.code) = (yyvsp[0].code); g_lingo->code1(LC::c_negate); }
 #line 2679 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 92:
-#line 479 "engines/director/lingo/lingo-gr.y"
+#line 478 "engines/director/lingo/lingo-gr.y"
                                                 { (yyval.code) = (yyvsp[-1].code); }
 #line 2685 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 93:
-#line 480 "engines/director/lingo/lingo-gr.y"
+#line 479 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_intersects); }
 #line 2691 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 94:
-#line 481 "engines/director/lingo/lingo-gr.y"
+#line 480 "engines/director/lingo/lingo-gr.y"
                                                         { g_lingo->code1(LC::c_within); }
 #line 2697 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 95:
-#line 483 "engines/director/lingo/lingo-gr.y"
+#line 482 "engines/director/lingo/lingo-gr.y"
                                                         { g_lingo->code1(LC::c_charOf); }
 #line 2703 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 96:
-#line 484 "engines/director/lingo/lingo-gr.y"
+#line 483 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_charToOf); }
 #line 2709 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 97:
-#line 485 "engines/director/lingo/lingo-gr.y"
+#line 484 "engines/director/lingo/lingo-gr.y"
                                                         { g_lingo->code1(LC::c_itemOf); }
 #line 2715 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 98:
-#line 486 "engines/director/lingo/lingo-gr.y"
+#line 485 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_itemToOf); }
 #line 2721 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 99:
-#line 487 "engines/director/lingo/lingo-gr.y"
+#line 486 "engines/director/lingo/lingo-gr.y"
                                                         { g_lingo->code1(LC::c_lineOf); }
 #line 2727 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 100:
-#line 488 "engines/director/lingo/lingo-gr.y"
+#line 487 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_lineToOf); }
 #line 2733 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 101:
-#line 489 "engines/director/lingo/lingo-gr.y"
+#line 488 "engines/director/lingo/lingo-gr.y"
                                                         { g_lingo->code1(LC::c_wordOf); }
 #line 2739 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 102:
-#line 490 "engines/director/lingo/lingo-gr.y"
+#line 489 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_wordToOf); }
 #line 2745 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 103:
-#line 492 "engines/director/lingo/lingo-gr.y"
+#line 491 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->codeFunc((yyvsp[-1].s), 1);
 		delete (yyvsp[-1].s); }
@@ -2753,49 +2753,49 @@ yyreduce:
     break;
 
   case 105:
-#line 497 "engines/director/lingo/lingo-gr.y"
+#line 496 "engines/director/lingo/lingo-gr.y"
                                         { g_lingo->code1(LC::c_printtop); }
 #line 2759 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 108:
-#line 500 "engines/director/lingo/lingo-gr.y"
+#line 499 "engines/director/lingo/lingo-gr.y"
                                         { g_lingo->code1(LC::c_exitRepeat); }
 #line 2765 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 109:
-#line 501 "engines/director/lingo/lingo-gr.y"
+#line 500 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_procret); }
 #line 2771 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 110:
-#line 502 "engines/director/lingo/lingo-gr.y"
+#line 501 "engines/director/lingo/lingo-gr.y"
                   { g_lingo->_indef = kStateInArgs; }
 #line 2777 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 111:
-#line 502 "engines/director/lingo/lingo-gr.y"
+#line 501 "engines/director/lingo/lingo-gr.y"
                                                                  { g_lingo->_indef = kStateNone; }
 #line 2783 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 112:
-#line 503 "engines/director/lingo/lingo-gr.y"
+#line 502 "engines/director/lingo/lingo-gr.y"
                     { g_lingo->_indef = kStateInArgs; }
 #line 2789 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 113:
-#line 503 "engines/director/lingo/lingo-gr.y"
+#line 502 "engines/director/lingo/lingo-gr.y"
                                                                      { g_lingo->_indef = kStateNone; }
 #line 2795 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 115:
-#line 505 "engines/director/lingo/lingo-gr.y"
+#line 504 "engines/director/lingo/lingo-gr.y"
                                                 {
 		g_lingo->codeFunc((yyvsp[-3].s), (yyvsp[-1].narg));
 		delete (yyvsp[-3].s); }
@@ -2803,7 +2803,7 @@ yyreduce:
     break;
 
   case 116:
-#line 508 "engines/director/lingo/lingo-gr.y"
+#line 507 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->codeFunc((yyvsp[-1].s), (yyvsp[0].narg));
 		delete (yyvsp[-1].s); }
@@ -2811,19 +2811,19 @@ yyreduce:
     break;
 
   case 117:
-#line 511 "engines/director/lingo/lingo-gr.y"
+#line 510 "engines/director/lingo/lingo-gr.y"
                                 { g_lingo->code1(LC::c_open); }
 #line 2817 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 118:
-#line 512 "engines/director/lingo/lingo-gr.y"
+#line 511 "engines/director/lingo/lingo-gr.y"
                                         { g_lingo->code2(LC::c_voidpush, LC::c_open); }
 #line 2823 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 119:
-#line 514 "engines/director/lingo/lingo-gr.y"
+#line 513 "engines/director/lingo/lingo-gr.y"
                                                 {
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2832,7 +2832,7 @@ yyreduce:
     break;
 
   case 120:
-#line 518 "engines/director/lingo/lingo-gr.y"
+#line 517 "engines/director/lingo/lingo-gr.y"
                                                 {
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2841,7 +2841,7 @@ yyreduce:
     break;
 
   case 121:
-#line 523 "engines/director/lingo/lingo-gr.y"
+#line 522 "engines/director/lingo/lingo-gr.y"
                                                 {
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2850,7 +2850,7 @@ yyreduce:
     break;
 
   case 122:
-#line 527 "engines/director/lingo/lingo-gr.y"
+#line 526 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2859,7 +2859,7 @@ yyreduce:
     break;
 
   case 123:
-#line 532 "engines/director/lingo/lingo-gr.y"
+#line 531 "engines/director/lingo/lingo-gr.y"
                                                 {
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2868,7 +2868,7 @@ yyreduce:
     break;
 
   case 124:
-#line 536 "engines/director/lingo/lingo-gr.y"
+#line 535 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
@@ -2877,25 +2877,25 @@ yyreduce:
     break;
 
   case 125:
-#line 548 "engines/director/lingo/lingo-gr.y"
+#line 547 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_gotoloop); }
 #line 2883 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 126:
-#line 549 "engines/director/lingo/lingo-gr.y"
+#line 548 "engines/director/lingo/lingo-gr.y"
                                                         { g_lingo->code1(LC::c_gotonext); }
 #line 2889 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 127:
-#line 550 "engines/director/lingo/lingo-gr.y"
+#line 549 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->code1(LC::c_gotoprevious); }
 #line 2895 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 128:
-#line 551 "engines/director/lingo/lingo-gr.y"
+#line 550 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
@@ -2904,7 +2904,7 @@ yyreduce:
     break;
 
   case 129:
-#line 555 "engines/director/lingo/lingo-gr.y"
+#line 554 "engines/director/lingo/lingo-gr.y"
                                 {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(3);
@@ -2913,7 +2913,7 @@ yyreduce:
     break;
 
   case 130:
-#line 559 "engines/director/lingo/lingo-gr.y"
+#line 558 "engines/director/lingo/lingo-gr.y"
                                                 {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(2);
@@ -2922,7 +2922,7 @@ yyreduce:
     break;
 
   case 133:
-#line 567 "engines/director/lingo/lingo-gr.y"
+#line 566 "engines/director/lingo/lingo-gr.y"
                                         { // "play #done" is also caught by this
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
@@ -2931,7 +2931,7 @@ yyreduce:
     break;
 
   case 134:
-#line 571 "engines/director/lingo/lingo-gr.y"
+#line 570 "engines/director/lingo/lingo-gr.y"
                                 {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(3);
@@ -2940,7 +2940,7 @@ yyreduce:
     break;
 
   case 135:
-#line 575 "engines/director/lingo/lingo-gr.y"
+#line 574 "engines/director/lingo/lingo-gr.y"
                                                         {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(2);
@@ -2949,13 +2949,13 @@ yyreduce:
     break;
 
   case 136:
-#line 579 "engines/director/lingo/lingo-gr.y"
+#line 578 "engines/director/lingo/lingo-gr.y"
                      { g_lingo->codeSetImmediate(true); }
 #line 2955 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 137:
-#line 579 "engines/director/lingo/lingo-gr.y"
+#line 578 "engines/director/lingo/lingo-gr.y"
                                                                         {
 		g_lingo->codeSetImmediate(false);
 		g_lingo->codeFunc((yyvsp[-2].s), (yyvsp[0].narg));
@@ -2964,19 +2964,19 @@ yyreduce:
     break;
 
   case 138:
-#line 609 "engines/director/lingo/lingo-gr.y"
+#line 608 "engines/director/lingo/lingo-gr.y"
              { g_lingo->_indef = kStateInArgs; }
 #line 2970 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 139:
-#line 609 "engines/director/lingo/lingo-gr.y"
+#line 608 "engines/director/lingo/lingo-gr.y"
                                                     { g_lingo->_currentFactory.clear(); }
 #line 2976 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 140:
-#line 610 "engines/director/lingo/lingo-gr.y"
+#line 609 "engines/director/lingo/lingo-gr.y"
                                                                         {
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg));
@@ -2987,19 +2987,19 @@ yyreduce:
     break;
 
   case 141:
-#line 616 "engines/director/lingo/lingo-gr.y"
+#line 615 "engines/director/lingo/lingo-gr.y"
                         { g_lingo->codeFactory(*(yyvsp[0].s)); delete (yyvsp[0].s); }
 #line 2993 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 142:
-#line 617 "engines/director/lingo/lingo-gr.y"
+#line 616 "engines/director/lingo/lingo-gr.y"
                   { g_lingo->_indef = kStateInArgs; }
 #line 2999 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 143:
-#line 618 "engines/director/lingo/lingo-gr.y"
+#line 617 "engines/director/lingo/lingo-gr.y"
                                                                         {
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg) + 1, &g_lingo->_currentFactory);
@@ -3010,7 +3010,7 @@ yyreduce:
     break;
 
   case 144:
-#line 624 "engines/director/lingo/lingo-gr.y"
+#line 623 "engines/director/lingo/lingo-gr.y"
                                                                      {	// D3
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*(yyvsp[-7].s), (yyvsp[-6].code), (yyvsp[-5].narg));
@@ -3025,7 +3025,7 @@ yyreduce:
     break;
 
   case 145:
-#line 634 "engines/director/lingo/lingo-gr.y"
+#line 633 "engines/director/lingo/lingo-gr.y"
                                                  {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*(yyvsp[-5].s), (yyvsp[-4].code), (yyvsp[-3].narg));
@@ -3037,61 +3037,61 @@ yyreduce:
     break;
 
   case 146:
-#line 642 "engines/director/lingo/lingo-gr.y"
+#line 641 "engines/director/lingo/lingo-gr.y"
          { g_lingo->_indef = kStateInArgs; }
 #line 3043 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 147:
-#line 642 "engines/director/lingo/lingo-gr.y"
+#line 641 "engines/director/lingo/lingo-gr.y"
                                                 { (yyval.s) = (yyvsp[0].s); g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 #line 3049 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 148:
-#line 644 "engines/director/lingo/lingo-gr.y"
+#line 643 "engines/director/lingo/lingo-gr.y"
                                 { (yyval.narg) = 0; }
 #line 3055 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 149:
-#line 645 "engines/director/lingo/lingo-gr.y"
+#line 644 "engines/director/lingo/lingo-gr.y"
                                                 { g_lingo->codeArg((yyvsp[0].s)); (yyval.narg) = 1; delete (yyvsp[0].s); }
 #line 3061 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 150:
-#line 646 "engines/director/lingo/lingo-gr.y"
+#line 645 "engines/director/lingo/lingo-gr.y"
                                         { g_lingo->codeArg((yyvsp[0].s)); (yyval.narg) = (yyvsp[-2].narg) + 1; delete (yyvsp[0].s); }
 #line 3067 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 151:
-#line 647 "engines/director/lingo/lingo-gr.y"
+#line 646 "engines/director/lingo/lingo-gr.y"
                                 { g_lingo->codeArg((yyvsp[0].s)); (yyval.narg) = (yyvsp[-3].narg) + 1; delete (yyvsp[0].s); }
 #line 3073 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 153:
-#line 650 "engines/director/lingo/lingo-gr.y"
+#line 649 "engines/director/lingo/lingo-gr.y"
                                                 { delete (yyvsp[0].s); }
 #line 3079 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 154:
-#line 651 "engines/director/lingo/lingo-gr.y"
+#line 650 "engines/director/lingo/lingo-gr.y"
                                         { delete (yyvsp[0].s); }
 #line 3085 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 155:
-#line 653 "engines/director/lingo/lingo-gr.y"
+#line 652 "engines/director/lingo/lingo-gr.y"
                                         { g_lingo->codeArgStore(); g_lingo->_indef = kStateInDef; }
 #line 3091 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 156:
-#line 655 "engines/director/lingo/lingo-gr.y"
+#line 654 "engines/director/lingo/lingo-gr.y"
                                 {
 		g_lingo->code1(LC::c_call);
 		g_lingo->codeString((yyvsp[-1].s)->c_str());
@@ -3103,91 +3103,91 @@ yyreduce:
     break;
 
   case 157:
-#line 663 "engines/director/lingo/lingo-gr.y"
+#line 662 "engines/director/lingo/lingo-gr.y"
                                 { (yyval.narg) = 0; }
 #line 3109 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 158:
-#line 664 "engines/director/lingo/lingo-gr.y"
+#line 663 "engines/director/lingo/lingo-gr.y"
                                                 { (yyval.narg) = 1; }
 #line 3115 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 159:
-#line 665 "engines/director/lingo/lingo-gr.y"
+#line 664 "engines/director/lingo/lingo-gr.y"
                                         { (yyval.narg) = (yyvsp[-2].narg) + 1; }
 #line 3121 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 160:
-#line 667 "engines/director/lingo/lingo-gr.y"
+#line 666 "engines/director/lingo/lingo-gr.y"
                                         { (yyval.narg) = 1; }
 #line 3127 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 161:
-#line 668 "engines/director/lingo/lingo-gr.y"
+#line 667 "engines/director/lingo/lingo-gr.y"
                                         { (yyval.narg) = (yyvsp[-2].narg) + 1; }
 #line 3133 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 162:
-#line 670 "engines/director/lingo/lingo-gr.y"
+#line 669 "engines/director/lingo/lingo-gr.y"
                                 { (yyval.code) = (yyvsp[-1].code); }
 #line 3139 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 163:
-#line 672 "engines/director/lingo/lingo-gr.y"
+#line 671 "engines/director/lingo/lingo-gr.y"
                                 { (yyval.code) = g_lingo->code2(LC::c_arraypush, 0); }
 #line 3145 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 164:
-#line 673 "engines/director/lingo/lingo-gr.y"
+#line 672 "engines/director/lingo/lingo-gr.y"
                                                 { (yyval.code) = g_lingo->code2(LC::c_proparraypush, 0); }
 #line 3151 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 165:
-#line 674 "engines/director/lingo/lingo-gr.y"
+#line 673 "engines/director/lingo/lingo-gr.y"
                      { (yyval.code) = g_lingo->code1(LC::c_arraypush); (yyval.code) = g_lingo->codeInt((yyvsp[0].narg)); }
 #line 3157 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 166:
-#line 675 "engines/director/lingo/lingo-gr.y"
+#line 674 "engines/director/lingo/lingo-gr.y"
                          { (yyval.code) = g_lingo->code1(LC::c_proparraypush); (yyval.code) = g_lingo->codeInt((yyvsp[0].narg)); }
 #line 3163 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 167:
-#line 677 "engines/director/lingo/lingo-gr.y"
+#line 676 "engines/director/lingo/lingo-gr.y"
                                         { (yyval.narg) = 1; }
 #line 3169 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 168:
-#line 678 "engines/director/lingo/lingo-gr.y"
+#line 677 "engines/director/lingo/lingo-gr.y"
                                 { (yyval.narg) = (yyvsp[-2].narg) + 1; }
 #line 3175 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 169:
-#line 680 "engines/director/lingo/lingo-gr.y"
+#line 679 "engines/director/lingo/lingo-gr.y"
                                         { (yyval.narg) = 1; }
 #line 3181 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 170:
-#line 681 "engines/director/lingo/lingo-gr.y"
+#line 680 "engines/director/lingo/lingo-gr.y"
                                 { (yyval.narg) = (yyvsp[-2].narg) + 1; }
 #line 3187 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 171:
-#line 683 "engines/director/lingo/lingo-gr.y"
+#line 682 "engines/director/lingo/lingo-gr.y"
                                 {
 		g_lingo->code1(LC::c_symbolpush);
 		g_lingo->codeString((yyvsp[-2].s)->c_str());
@@ -3196,7 +3196,7 @@ yyreduce:
     break;
 
   case 172:
-#line 687 "engines/director/lingo/lingo-gr.y"
+#line 686 "engines/director/lingo/lingo-gr.y"
                                 {
 		g_lingo->code1(LC::c_stringpush);
 		g_lingo->codeString((yyvsp[-2].s)->c_str());
@@ -3437,5 +3437,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 693 "engines/director/lingo/lingo-gr.y"
+#line 692 "engines/director/lingo/lingo-gr.y"
 
