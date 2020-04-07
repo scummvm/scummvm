@@ -63,10 +63,10 @@ enum LayoutType {
 
 enum MouseCursor {
 	MC_DEFAULT,
-	MC_WEST,
 	MC_NORTH,
 	MC_EAST,
-	MC_SOUTH
+	MC_SOUTH,
+	MC_WEST
 };
 
 class Image;
