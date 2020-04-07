@@ -292,6 +292,9 @@ void MacWindowManager::setActive(int id) {
 void MacWindowManager::removeWindow(MacWindow *target) {
 	_windowsToRemove.push_back(target);
 	_needsRemoval = true;
+
+	if (target->getId() == _activeWindow)
+		_activeWindow = -1;
 }
 
 void macDrawPixel(int x, int y, int color, void *data) {
@@ -442,7 +445,7 @@ void MacWindowManager::removeMarked() {
 		removeFromStack(*it);
 		removeFromWindowList(*it);
 		delete *it;
-		_activeWindow = 0;
+		_activeWindow = -1;
 		_fullRefresh = true;
 	}
 	_windowsToRemove.clear();
