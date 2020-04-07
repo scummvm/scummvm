@@ -41,33 +41,36 @@
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/map/tileview.h"
 #include "ultima/ultima4/map/annotation.h"
+#include "common/system.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
+#define CURSOR_SIZE 20
+
 Screen *g_screen;
 
-/// TODO: Refactor methods into Screen class
-extern void screenInit_sys();
-extern void screenDelete_sys();
-
-
-Screen::Screen() {
+Screen::Screen() : _filterScaler(nullptr), _currentCursor(-1) {
 	g_screen = this;
+	Common::fill(&_cursors[0], &_cursors[5], (Cursor *)nullptr);
 
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
 	initGraphics(size.x, size.y, &SCREEN_FORMAT);
 
 	create(size.x, size.y, SCREEN_FORMAT);
-	screenInit_sys();
+	loadCursors();
 }
 
 Screen::~Screen() {
 	clear();
 	g_screen = nullptr;
-	screenDelete_sys();
+
+	// Delete cursors
+	for (int idx = 0; idx < 5; ++idx)
+		delete _cursors[idx];
 }
 
 void Screen::init() {
@@ -82,6 +85,82 @@ void Screen::clear() {
 	ImageMgr::destroy();
 }
 
+void Screen::loadCursors() {
+	// enable or disable the mouse cursor
+	if (settings._mouseOptions._enabled) {
+		g_system->showMouse(true);
+
+		Shared::File cursorsFile("data/graphics/cursors.txt");
+
+		for (int idx = 0; idx < 5; ++idx)
+			_cursors[idx] = loadCursor(cursorsFile);
+
+	} else {
+		g_system->showMouse(false);
+	}
+
+	_filterScaler = scalerGet(settings._filter);
+	if (!_filterScaler)
+		errorFatal("%s is not a valid filter", settings._filter.c_str());
+}
+
+void Screen::setCursor(MouseCursor cursor) {
+	const Cursor *c = _cursors[cursor];
+	const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
+
+	if (c && cursor != _currentCursor) {
+		_currentCursor = cursor;
+		CursorMan.replaceCursor(c->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
+			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &g_screen->format);
+	}
+}
+
+
+#define CURSOR_SIZE 20
+
+Cursor *Screen::loadCursor(Shared::File &src) {
+	uint row, col, endCol, pixel;
+	int hotX, hotY;
+	Common::String line;
+	byte *destP;
+	const uint WHITE = g_screen->format.RGBToColor(0xff, 0xff, 0xff);
+	const uint BLACK = g_screen->format.RGBToColor(0, 0, 0);
+	const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
+	int bpp = g_screen->format.bytesPerPixel;
+	assert(bpp >= 2);
+
+	Cursor *c = new Cursor();
+	c->create(CURSOR_SIZE, CURSOR_SIZE, g_screen->format);
+
+	for (row = 0; row < CURSOR_SIZE; row++) {
+		line = src.readLine();
+		destP = (byte *)c->getBasePtr(0, row);
+		endCol = MIN(line.size(), (uint)CURSOR_SIZE);
+
+		for (col = 0; col < endCol; ++col, destP += bpp) {
+			pixel = TRANSPARENT;
+			if (line[col] == 'X')
+				pixel = BLACK;
+			else if (line[col] == '.')
+				pixel = WHITE;
+
+			if (bpp == 2)
+				*((uint16 *)destP) = pixel;
+			else
+				*((uint32 *)destP) = pixel;
+		}
+	}
+
+	// Read in the hotspot position
+	line = src.readLine();
+	sscanf(line.c_str(), "%d,%d", &hotX, &hotY);
+	c->_hotspot.x = hotX;
+	c->_hotspot.y = hotY;
+
+	return c;
+}
+
+/*-------------------------------------------------------------------*/
 
 #define DBL_MAX 1e99
 
@@ -130,8 +209,6 @@ void screenInit() {
 	screenLoadGraphicsFromConf();
 
 	debug(1, "using %s scaler\n", settings._filter.c_str());
-
-	screenInit_sys();
 
 	/* if we can't use vga, reset to default:ega */
 	if (!u4isUpgradeAvailable() && settings._videoType == "VGA")

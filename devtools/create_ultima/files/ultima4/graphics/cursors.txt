@@ -19,6 +19,27 @@ XX  X..X
 
 
 0,0
+           XX                   
+         XX.X                   
+       XX...X                   
+     XX....X                    
+   XX......X                    
+ XX........XXXXXXXX             
+X.................X             
+X.................X             
+ XX........XXXXXXXX             
+   XX......X                    
+     XX....X                    
+       XX...X                   
+         XX.X                   
+           XX                   
+                                
+                                
+                                
+                                
+                                
+                                
+0,6
       XX                        
      X..X                       
      X..X                       
@@ -82,24 +103,3 @@ X..XXX..XXX..X
       XX                        
                                 
 6,18
-           XX                   
-         XX.X                   
-       XX...X                   
-     XX....X                    
-   XX......X                    
- XX........XXXXXXXX             
-X.................X             
-X.................X             
- XX........XXXXXXXX             
-   XX......X                    
-     XX....X                    
-       XX...X                   
-         XX.X                   
-           XX                   
-                                
-                                
-                                
-                                
-                                
-                                
-0,6
