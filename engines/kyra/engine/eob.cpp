@@ -732,7 +732,7 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 				int offs = lvlIndex[_currentLevel] * 6 + shapeId[a] + i;
 				const uint8 *enc = &_doorShapeEncodeDefs[offs << 2];
 				_doorShapes[shapeId[a] + i] = _screen->sega_convertShape(_doorShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0, enc[2] - enc[3]);
-				enc = &_doorSwitchShapeEncodeDefs[(offs << 2) - shapeId[a]];
+				enc = &_doorSwitchShapeEncodeDefs[(offs - shapeId[a]) << 2];
 				_doorSwitches[shapeId[a] + i].shp = _screen->sega_convertShape(_doorSwitchShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0, enc[2] - enc[3]);
 			} else {
 				const uint8 *enc = &_doorShapeEncodeDefs[(doorType[a] * 3 + i) << 2];

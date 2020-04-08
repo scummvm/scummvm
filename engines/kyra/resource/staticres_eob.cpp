@@ -1310,13 +1310,13 @@ void EoBEngine::initStaticResource() {
 
 	// Build offset tables for door shapes encoding
 	if (_flags.platform == Common::kPlatformSegaCD) {
-		const uint8 *shp = _screen->getCPagePtr(2);
 		const uint8 *e1 = _doorShapeEncodeDefs;
 		const uint8 *e2 = _doorSwitchShapeEncodeDefs;
 		const uint8 **doorShapesSrc = new const uint8*[30];
 		const uint8 **doorSwitchShapesSrc = new const uint8*[30];
 
 		for (int i = 0; i < 5; ++i) {
+			const uint8 *shp = _screen->getCPagePtr(2);
 			for (int ii = 0; ii < 6; ++ii) {
 				doorShapesSrc[i * 6 + ii] = shp;
 				shp += ((e1[0] * e1[1]) << 5);
