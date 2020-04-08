@@ -61,32 +61,37 @@ Script::Variable::Variable(const int &v) : _set(true) {
 	_sVal = xu4_to_string(v);
 }
 
-int    &Script::Variable::getInt()      {
+int &Script::Variable::getInt() {
 	return _iVal;
 }
-Common::String &Script::Variable::getString()   {
+
+Common::String &Script::Variable::getString() {
 	return _sVal;
 }
 
-void    Script::Variable::setValue(const int &v)    {
+void Script::Variable::setValue(const int &v) {
 	_iVal = v;
 }
-void    Script::Variable::setValue(const Common::String &v) {
+
+void Script::Variable::setValue(const Common::String &v) {
 	_sVal = v;
 }
-void    Script::Variable::unset()                   {
+
+void Script::Variable::unset() {
 	_set = false;
 	_iVal = 0;
 	_sVal = "";
 }
 
-bool    Script::Variable::isInt() const             {
+bool Script::Variable::isInt() const {
 	return _iVal > 0;
 }
-bool    Script::Variable::isString() const          {
+
+bool Script::Variable::isString() const {
 	return _iVal == 0;
 }
-bool    Script::Variable::isSet() const             {
+
+bool Script::Variable::isSet() const {
 	return _set;
 }
 
@@ -317,7 +322,8 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 			Common::String content = getContent(current);
 			if (output)
 				*output += content;
-			else screenMessage("%s", content.c_str());
+			else
+				screenMessage("%s", content.c_str());
 
 			if (_debug && content.size())
 				debug("Output: \n====================\n%s\n====================", content.c_str());
@@ -823,7 +829,8 @@ Script::ReturnCode Script::pushContext(Shared::XMLNode *script, Shared::XMLNode 
 	else if (_variables.find(_idPropName) != _variables.end()) {
 		if (_variables[_idPropName]->isSet())
 			search_id = _variables[_idPropName]->getString();
-		else search_id = "null";
+		else
+			search_id = "null";
 	}
 
 	// When looking for a new context, start from within our old one
@@ -882,7 +889,8 @@ Script::ReturnCode Script::redirect(Shared::XMLNode *script, Shared::XMLNode *cu
 
 	if (current->hasProperty("redirect"))
 		target = getPropAsStr(current, "redirect");
-	else target = getPropAsStr(current, "target");
+	else
+		target = getPropAsStr(current, "target");
 
 	/* set a new search id */
 	Common::String search_id = getPropAsStr(current, _idPropName);
@@ -999,7 +1007,8 @@ Script::ReturnCode Script::cursor(Shared::XMLNode *script, Shared::XMLNode *curr
 	bool enable = current->getPropertyBool("enable");
 	if (enable)
 		screenEnableCursor();
-	else screenDisableCursor();
+	else
+		screenDisableCursor();
 
 	return RET_OK;
 }
@@ -1025,7 +1034,9 @@ Script::ReturnCode Script::pay(Shared::XMLNode *script, Shared::XMLNode *current
 			debug("\t=== Can't pay! ===");
 		run(cantpay);
 		return RET_STOP;
-	} else g_context->_party->adjustGold(-price);
+	} else {
+		g_context->_party->adjustGold(-price);
+	}
 
 	if (_debug)
 		debug("\tBalance:     %d\n", g_ultima->_saveGame->_gold);
@@ -1059,7 +1070,8 @@ Script::ReturnCode Script::input(Shared::XMLNode *script, Shared::XMLNode *curre
 
 	if (current->hasProperty("target"))
 		_target = getPropAsStr(current, "target");
-	else _target.clear();
+	else
+		_target.clear();
 
 	_state = STATE_INPUT;
 	_inputName = "input";
@@ -1067,7 +1079,8 @@ Script::ReturnCode Script::input(Shared::XMLNode *script, Shared::XMLNode *curre
 	// Does the variable have a maximum length?
 	if (current->hasProperty("maxlen"))
 		_inputMaxLen = getPropAsInt(current, "maxlen");
-	else _inputMaxLen = Conversation::BUFFERLEN;
+	else
+		_inputMaxLen = Conversation::BUFFERLEN;
 
 	// Should we name the variable something other than "input"
 	if (current->hasProperty("name"))
@@ -1154,7 +1167,9 @@ Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current
 			AdjustValueMax(g_ultima->_saveGame->_reagents[reagent], quant, 99);
 			g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
 			g_context->_stats->resetReagentsMenu();
-		} else errorWarning("Error: reagent '%s' not found", subtype.c_str());
+		} else {
+			errorWarning("Error: reagent '%s' not found", subtype.c_str());
+		}
 	}
 
 	if (_debug)
@@ -1337,7 +1352,9 @@ Script::ReturnCode Script::ztats(Shared::XMLNode *script, Shared::XMLNode *curre
 			g_context->_stats->setView(view->_value); /* change it! */
 		else if (_debug)
 			debug(" <FAILED - view could not be found>");
-	} else g_context->_stats->setView(STATS_PARTY_OVERVIEW);
+	} else {
+		g_context->_stats->setView(STATS_PARTY_OVERVIEW);
+	}
 
 	return RET_OK;
 }
@@ -1392,7 +1409,9 @@ void Script::parseOperation(const Common::String &str, Common::String *left, Com
 	if (ops[i].empty()) {
 		op->clear();
 		return;
-	} else *op = ops[i];
+	} else {
+		*op = ops[i];
+	}
 
 	*left = str.substr(0, pos),
 	 *right = str.substr(pos + ops[i].size());
@@ -1405,7 +1424,8 @@ int Script::mathValue(const Common::String &str) {
 	/* something was invalid, just return the integer value */
 	if (!mathParse(str, &lval, &rval, &op))
 		return (int)strtol(str.c_str(), NULL, 10);
-	else return math(lval, rval, op);
+	else
+		return math(lval, rval, op);
 }
 
 int Script::math(int lval, int rval, Common::String &op) {
@@ -1465,7 +1485,8 @@ bool Script::compare(const Common::String &statement) {
 
 		if (_and)
 			pos = and_pos;
-		else pos = or_pos;
+		else
+			pos = or_pos;
 
 		retsecond = compare(str.substr(pos + 2));
 		str = str.substr(0, pos);
@@ -1473,7 +1494,8 @@ bool Script::compare(const Common::String &statement) {
 
 		if (_and)
 			return (retfirst && retsecond);
-		else return (retfirst || retsecond);
+		else
+			return (retfirst || retsecond);
 	}
 
 	if (str[0] == '!') {
@@ -1508,7 +1530,8 @@ void Script::funcParse(const Common::String &str, Common::String *funcName, Comm
 		pos = contents->findFirstOf(")");
 		if (pos >= contents->size())
 			errorWarning("Error: No closing ) in function %s()", funcName->c_str());
-		else *contents = contents->substr(0, pos);
+		else
+			*contents = contents->substr(0, pos);
 	} else {
 		funcName->clear();
 	}
