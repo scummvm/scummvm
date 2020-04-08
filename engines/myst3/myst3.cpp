@@ -173,13 +173,13 @@ Common::Error Myst3Engine::run() {
 
 	_system->showMouse(false);
 
+	settingsInitDefaults();
+	syncSoundSettings();
 	openArchives();
 
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
 
-	settingsInitDefaults();
-	syncSoundSettings();
 
 	// Init the font
 	Graphics::Surface *font = loadTexture(1206);
