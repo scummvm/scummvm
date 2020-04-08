@@ -948,13 +948,6 @@ void IntroController::timerFired() {
 	if (_beastiesVisible)
 		drawBeasties();
 
-	/*
-	 * refresh the screen only if the timer queue is empty --
-	 * i.e. drop a frame if another timer event is about to be fired
-	 */
-	if (EventHandler::timerQueueEmpty())
-		g_screen->update();
-
 	if (xu4_random(2) && ++_beastie1Cycle >= IntroBinData::BEASTIE1_FRAMES)
 		_beastie1Cycle = 0;
 	if (xu4_random(2) && ++_beastie2Cycle >= IntroBinData::BEASTIE2_FRAMES)
