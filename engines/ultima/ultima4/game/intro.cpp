@@ -1673,7 +1673,7 @@ bool IntroController::updateTitle() {
 	// perform the animation
 	switch (_title->_method) {
 	case SIGNATURE: {
-		while (animStepTarget > _title->_animStep) {
+		for (; animStepTarget > _title->_animStep; _title->_animStep++) {
 			// blit the pixel-pair to the src surface
 			_title->_destImage->fillRect(
 			    _title->_plotData[_title->_animStep].x,
@@ -1683,7 +1683,6 @@ bool IntroController::updateTitle() {
 			    _title->_plotData[_title->_animStep].r,
 			    _title->_plotData[_title->_animStep].g,
 			    _title->_plotData[_title->_animStep].b);
-			_title->_animStep++;
 		}
 		break;
 	}

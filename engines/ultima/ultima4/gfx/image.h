@@ -76,8 +76,10 @@ private:
 	// disallow assignments, copy contruction
 	Image(const Image &);
 	const Image &operator=(const Image &);
-private:
+
 	Graphics::ManagedSurface *getSurface(Image *d) const;
+
+	uint getColor(byte r, byte g, byte b, byte a);
 public:
 	enum Type {
 		HARDWARE,
