@@ -48,7 +48,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, DisposeAfterUse::YES);
 	_loading = true;
 
-	if (slot != -1)
+	if (slot != -1 && _flags.gameID != Common::kPlatformSegaCD)
 		_screen->fadeToBlack(10);
 
 	enableSysTimer(2);
@@ -109,22 +109,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	setupCharacterTimers();
 
 	makeNameShapes();
-	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
-	for (int i = 0; i < 6; i++) {
-		EoBCharacter *c = &_characters[i];
-		if (!c->flags || c->portrait < 0)
-			continue;
-		c->faceShape = _screen->encodeShape((c->portrait % 10) << 2, (c->portrait / 10) << 5, 4, 32, true, _cgaMappingDefault);
-	}
-
-	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
-	for (int i = 0; i < 6; i++) {
-		EoBCharacter *c = &_characters[i];
-		if (!c->flags || c->portrait >= 0)
-			continue;
-		c->faceShape = _screen->encodeShape((-(c->portrait + 1)) << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true, _cgaMappingDefault);
-	}
-	_screen->_curPage = 0;
+	makeFaceShapes();
 
 	if (slot == -1) {
 		// Skip all settings which aren't necessary for party transfer.
@@ -154,6 +139,13 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_activeSpellCharacterPos = in.readByte();
 		_activeSpell = in.readByte();
 		_returnAfterSpellCallback = in.readByte() ? true : false;
+
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			_totalPlaySecs = in.readUint32BE();
+			_totalEnemiesKilled = in.readUint32BE();
+			_totalSteps = in.readUint32BE();
+			_levelMaps = in.readUint32BE();
+		}
 
 		_inf->loadState(in);
 	}
@@ -283,7 +275,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_screen->setScreenPalette(_screen->getPalette(0));
 
 	_sceneUpdateRequired = true;
-	_screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	_screen->setFont(_conFont);
 
 	for (int i = 0; i < 6; i++) {
 		for (int ii = 0; ii < 10; ii++) {
@@ -318,8 +310,10 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
 
+	if (_flags.platform != Common::kPlatformSegaCD)
+		_screen->fadeFromBlack(20);
+
 	_loading = false;
-	_screen->fadeFromBlack(20);
 	removeInputTop();
 
 	return Common::kNoError;
@@ -424,6 +418,13 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	out->writeByte(_activeSpellCharacterPos);
 	out->writeByte(_activeSpell);
 	out->writeByte(_returnAfterSpellCallback ? 1 : 0);
+
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		out->writeUint32BE(_totalPlaySecs);
+		out->writeUint32BE(_totalEnemiesKilled);
+		out->writeUint32BE(_totalSteps);
+		out->writeUint32BE(_levelMaps);
+	}
 
 	_inf->saveState(out);
 
@@ -541,6 +542,25 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	setHandItem(_itemInHand);
 
 	return Common::kNoError;
+}
+
+void EoBCoreEngine::makeFaceShapes() {
+	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
+	for (int i = 0; i < 6; i++) {
+		EoBCharacter *c = &_characters[i];
+		if (!c->flags || c->portrait < 0)
+			continue;
+		c->faceShape = _screen->encodeShape((c->portrait % 10) << 2, (c->portrait / 10) << 5, 4, 32, true, _cgaMappingDefault);
+	}
+
+	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
+	for (int i = 0; i < 6; i++) {
+		EoBCharacter *c = &_characters[i];
+		if (!c->flags || c->portrait >= 0)
+			continue;
+		c->faceShape = _screen->encodeShape((-(c->portrait + 1)) << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true, _cgaMappingDefault);
+	}
+	_screen->_curPage = 0;
 }
 
 bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile) {

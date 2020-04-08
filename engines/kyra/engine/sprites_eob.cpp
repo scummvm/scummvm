@@ -163,6 +163,9 @@ void EoBCoreEngine::killMonster(EoBMonsterInPlay *m, bool giveExperience) {
 	if (giveExperience)
 		increasePartyExperience(_monsterProps[m->type].experience);
 
+	if (_totalEnemiesKilled < 0xFFFF)
+		_totalEnemiesKilled++;
+
 	if (killMonsterExtra(m)) {
 		placeMonster(m, 0, -1);
 

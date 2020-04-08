@@ -738,18 +738,9 @@ void EoBCoreEngine::runLoop() {
 		if (_sceneUpdateRequired && !_sceneShakeCountdown)
 			drawScene(1);
 
-		uint32 curTime = _system->getMillis();
-		if (_lastVIntTick + 1000 <= curTime) {
-			_lastSecTick = curTime;
-			_totalPlaySecs++;
-		}
+		updateAnimTimers();
 
-		if (_lastVIntTick + 16 <= curTime) {
-			_lastVIntTick = curTime;
-			updateGuiAnimations();
-			curTime = _system->getMillis();
-		}
-		
+		uint32 curTime = _system->getMillis();
 		if (_envAudioTimer < curTime && !(_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformSegaCD || _flags.platform == Common::kPlatformAmiga || _currentLevel == 0 || _currentLevel > 3))) {
 			_envAudioTimer = curTime + (rollDice(1, 10, 3) * 18 * _tickLength);
 			snd_processEnvironmentalSoundEffect(_flags.gameID == GI_EOB1 ? 30 : (rollDice(1, 2, -1) ? 27 : 28), _currentBlock + rollDice(1, 12, -1));
@@ -785,6 +776,19 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 
 	quitGame();
 	return false;
+}
+
+void EoBCoreEngine::updateAnimTimers() {
+	uint32 curTime = _system->getMillis();
+	if (_lastVIntTick + 1000 <= curTime) {
+		_lastSecTick = curTime;
+		_totalPlaySecs++;
+	}
+
+	if (_lastVIntTick + 16 <= curTime) {
+		_lastVIntTick = curTime;
+		gui_updateAnimations();
+	}
 }
 
 void EoBCoreEngine::loadItemsAndDecorationsShapes() {
@@ -2612,9 +2616,9 @@ void EoBCoreEngine::explodeMonster(EoBMonsterInPlay *m) {
 	m->flags &= ~2;
 }
 
-void EoBCoreEngine::addCurrentLevelMap() {
-	assert(_currentLevel);
-	_levelMaps |= (1 << (_currentLevel - 1));
+void EoBCoreEngine::addLevelMap(int level) {
+	assert(level);
+	_levelMaps |= (1 << (level - 1));
 }
 
 uint32 EoBCoreEngine::countMaps() const {

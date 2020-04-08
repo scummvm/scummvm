@@ -37,7 +37,7 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 		return;
 	}
 
-	if (!_loading)
+	//if (!_loading)
 		_screen->sega_fadeToBlack(1);
 
 	// transposeScreenOutputY(8);
@@ -117,7 +117,7 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 	_compassDirection2 = -1;
 	gui_drawCompass(false);;
 
-	if (!_loading)
+	//if (!_loading)
 		_screen->sega_fadeToNeutral(1);
 }
 
@@ -225,13 +225,24 @@ void EoBEngine::makeNameShapes() {
 	_txt->clearDim(cd);
 }
 
+void EoBEngine::makeFaceShapes() {
+	uint8 *in = _res->fileData("FACE", 0);
+	for (int i = 0; i < 6; i++) {
+		EoBCharacter *c = &_characters[i];
+		if (!c->flags)
+			continue;
+		_screen->sega_encodeShapesFromSprites(&c->faceShape, &in[(c->portrait < 0 ? -c->portrait + 43 : c->portrait) << 9], 1, 32, 32, 3);
+	}	
+	delete[] in;
+}
+
 void EoBEngine::printStatsString(const char *str, int x, int y) {
 	uint16 *dst = &_statsPattern2[y * 18 + x];
 	for (const uint8 *pos = (const uint8*)str; *pos; ++pos)
 		*dst++ = 0x6525 + _charTilesTable[*pos];
 }
 
-void EoBEngine::updateGuiAnimations() {
+void EoBEngine::gui_updateAnimations() {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return;
 

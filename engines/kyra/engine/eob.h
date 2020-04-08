@@ -196,9 +196,10 @@ private:
 	void gui_displayMap() override;
 
 	void makeNameShapes() override;
+	void makeFaceShapes() override;
 	void printStatsString(const char *str, int x, int y);
 
-	void updateGuiAnimations() override;
+	void gui_updateAnimations() override;
 
 	const KyraRpgGUISettings *guiSettings() const override;
 	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }

@@ -561,6 +561,7 @@ void EoBCoreEngine::drawScene(int refresh) {
 		int diff = _flashShapeTimer - ct;
 		while ((diff > 0) && !shouldQuit()) {
 			updateInput();
+			updateAnimTimers();
 			uint32 step = MIN<uint32>(diff, _tickLength / 5);
 			_system->delayMillis(step);
 			diff -= step;
@@ -710,6 +711,11 @@ void EoBCoreEngine::notifyBlockNotPassable() {
 	_txt->printMessage(_warningStrings[0]);
 	snd_playSoundEffect(_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformPC98 ? 45 : 29);
 	removeInputTop();
+}
+
+void EoBCoreEngine::increaseStepsCounter() {
+	if (_totalSteps < 0xFFFFFFFF)
+		_totalSteps++;
 }
 
 void EoBCoreEngine::moveParty(uint16 block) {

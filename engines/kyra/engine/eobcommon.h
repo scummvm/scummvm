@@ -342,7 +342,7 @@ protected:
 	void runLoop();
 	void update() override { screen()->updateScreen(); }
 	bool checkPartyStatus(bool handleDeath);
-	virtual void updateGuiAnimations() {}
+	void updateAnimTimers();
 
 	bool _runFlag;
 
@@ -644,6 +644,7 @@ protected:
 
 	int calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction);
 	void notifyBlockNotPassable();
+	void increaseStepsCounter();
 	void moveParty(uint16 block);
 
 	int clickedDoorSwitch(uint16 block, uint16 direction) override;
@@ -656,7 +657,7 @@ protected:
 	void openDoor(int block);
 	void closeDoor(int block);
 
-	void addCurrentLevelMap();
+	void addLevelMap(int level);
 	uint32 countMaps() const;
 	uint32 countArrows() const;
 
@@ -791,6 +792,8 @@ protected:
 	void gui_processWeaponSlotClickRight(int charIndex, int slotIndex);
 	void gui_processInventorySlotClick(int slot);
 
+	virtual void gui_updateAnimations() {}
+
 	static const uint8 _buttonList1[];
 	int _buttonList1Size;
 	static const uint8 _buttonList2[];
@@ -910,10 +913,6 @@ protected:
 	virtual void drawLightningColumn() {}
 	virtual int charSelectDialogue() { return -1; }
 	virtual void characterLevelGain(int charIndex) {}
-	virtual void makeNameShapes() {}
-
-	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
 
 	const uint8 *_cgaMappingDefault;
 	const uint8 *_cgaMappingAlt;
@@ -931,6 +930,10 @@ protected:
 
 	bool _enableHiResDithering;
 
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
+	virtual void makeNameShapes() {}
+	virtual void makeFaceShapes();
 	// Default parameters will import all present original save files and push them to the top of the save dialog.
 	bool importOriginalSaveFile(int destSlot, const char *sourceFile = 0);
 	Common::String readOriginalSaveFile(Common::String &file);
