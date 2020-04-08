@@ -741,9 +741,7 @@ void MohawkEngine_Myst::doAction(MystEventAction action) {
 			break;
 		}
 
-		if (isInteractive()) {
-			openMainMenuDialog();
-		}
+		openMainMenuDialog();
 
 		break;
 	case kMystActionSkip:

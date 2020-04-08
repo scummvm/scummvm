@@ -297,6 +297,7 @@ void MystMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 	}
 	case kQuitCmd:
 		close();
+		vm->saveAutosaveIfEnabled();
 		vm->runCredits();
 		break;
 	default:
