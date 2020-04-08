@@ -396,11 +396,6 @@ public:
 	static bool getControllerDone();
 	static void end();
 
-	/**
-	 * Returns true if the queue is empty of events that match 'mask'.
-	 */
-	static bool timerQueueEmpty();
-
 	/* Member functions */
 	TimedEventMgr *getTimer();
 

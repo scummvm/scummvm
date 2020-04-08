@@ -2681,13 +2681,6 @@ void GameController::timerFired() {
 		screenCycle();
 
 		/*
-		 * refresh the screen only if the timer queue is empty --
-		 * i.e. drop a frame if another timer event is about to be fired
-		 */
-		if (eventHandler->timerQueueEmpty())
-			gameUpdateScreen();
-
-		/*
 		 * force pass if no commands within last 20 seconds
 		 */
 		Controller *controller = eventHandler->getController();

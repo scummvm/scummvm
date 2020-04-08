@@ -325,19 +325,6 @@ void EventHandler::setScreenUpdate(void (*updateScreen)(void)) {
 	this->_updateScreen = updateScreen;
 }
 
-bool EventHandler::timerQueueEmpty() {
-#ifdef TODO
-	Common::Event event;
-
-	if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_EVENTMASK(SDL_USEREVENT)))
-		return false;
-	else
-		return true;
-#else
-	return false;
-#endif
-}
-
 void EventHandler::pushKeyHandler(KeyHandler kh) {
 	KeyHandler *new_kh = new KeyHandler(kh);
 	KeyHandlerController *khc = new KeyHandlerController(new_kh);
