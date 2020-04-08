@@ -106,10 +106,11 @@ void Screen::loadCursors() {
 
 void Screen::setCursor(MouseCursor cursor) {
 	const Cursor *c = _cursors[cursor];
-	const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
 
 	if (c && cursor != _currentCursor) {
 		_currentCursor = cursor;
+
+		const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
 		CursorMan.replaceCursor(c->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
 			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &g_screen->format);
 	}
