@@ -333,6 +333,10 @@ void EventHandler::run() {
 			break;
 		}
 
+		// Brief delay
+		g_system->delayMillis(10);
+
+		// Check for frame expiry
 		uint32 time = g_system->getMillis();
 		if (time >= (_lastTickTime + FRAME_TIME)) {
 			_lastTickTime = time;
