@@ -199,6 +199,9 @@ Common::Error MohawkEngine_Riven::run() {
 	while (!hasGameEnded())
 		doFrame();
 
+	// Attempt to autosave before exiting from the GMM / when closing the window
+	saveAutosaveIfEnabled();
+
 	return Common::kNoError;
 }
 
@@ -275,7 +278,7 @@ void MohawkEngine_Riven::processInput() {
 					} else {
 						resumeFromMainMenu();
 					}
-				} else if (!_scriptMan->hasQueuedScripts()) {
+				} else {
 					openMainMenuDialog();
 				}
 				break;
@@ -301,11 +304,6 @@ void MohawkEngine_Riven::processInput() {
 				_stack->onAction((RivenAction)event.customType);
 				break;
 			}
-			break;
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
-			// Attempt to autosave before exiting
-			saveAutosaveIfEnabled();
 			break;
 		default:
 			break;
