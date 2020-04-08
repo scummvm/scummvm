@@ -245,7 +245,12 @@ void Image::alphaOff() {
 }
 
 void Image::putPixel(int x, int y, int r, int g, int b, int a) {
-	uint32 color;
+	uint32 color = getColor(r, g, b, a);
+	putPixelIndex(x, y, color);
+}
+
+uint Image::getColor(byte r, byte g, byte b, byte a) {
+	uint color;
 
 	if (_surface->format.bytesPerPixel == 1) {
 		const uint32 *pal = _surface->getPalette();
@@ -256,13 +261,12 @@ void Image::putPixel(int x, int y, int r, int g, int b, int a) {
 			if (r == rv && g == gv && b == bv)
 				break;
 		}
+
+		return color;
 	} else {
-		color = _surface->format.ARGBToColor(a, r, g, b);
+		return _surface->format.ARGBToColor(a, r, g, b);
 	}
-
-	putPixelIndex(x, y, color);
 }
-
 
 void Image::makeBackgroundColorTransparent(int haloSize, int shadowOpacity) {
 	uint32 bgColor = _surface->format.ARGBToColor(
@@ -365,8 +369,8 @@ void Image::putPixelIndex(int x, int y, unsigned int index) {
 }
 
 void Image::fillRect(int x, int y, int w, int h, int r, int g, int b, int a) {
-	uint32 pixel = _surface->format.ARGBToColor(a, r, g, b);
-	_surface->fillRect(Common::Rect(x, y, x + w, y + h), pixel);
+	uint32 color = getColor(r, g, b, a);
+	_surface->fillRect(Common::Rect(x, y, x + w, y + h), color);
 }
 
 void Image::getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a) const {
