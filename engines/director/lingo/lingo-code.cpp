@@ -967,88 +967,124 @@ void LC::c_not() {
 	g_lingo->push(d);
 }
 
+Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2) {
+	// At least one of d1 and d2 must be an array
+	uint arraySize;
+	if (d1.type == ARRAY && d2.type == ARRAY) {
+		arraySize = MIN(d1.u.farr->size(), d2.u.farr->size());
+	} else if (d1.type == ARRAY) {
+		arraySize = d1.u.farr->size();
+	} else {
+		arraySize = d2.u.farr->size();
+	}
+	Datum res;
+	res.type = INT;
+	res.u.i = 1;
+	Datum a = d1;
+	Datum b = d2;
+	for (uint i = 0; i < arraySize; i++) {
+		if (d1.type == ARRAY) {
+			a = d1.u.farr->operator[](i);
+		}
+		if (d2.type == ARRAY) {
+			b = d2.u.farr->operator[](i);
+		}
+		res = compareFunc(a, b);
+		if (res.u.i == 0) {
+			break;
+		}
+	}
+	return res;
+}
+
+Datum LC::eqData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::compareArrays(LC::eqData, d1, d2);
+	}
+	d1.u.i = (d1.compareToIgnoreCase(d2) == 0) ? 1 : 0;
+	d1.type = INT;
+	return d1;
+}
+
 void LC::c_eq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
+	g_lingo->push(LC::eqData(d1, d2));
+}
 
-	if (d1.type == STRING && d2.type == STRING) {
-		d1.u.i = (d1.u.s->equalsIgnoreCase(*d2.u.s)) ? 1 : 0;
-		d1.type = INT;
-	} else if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.i = (d1.u.f == d2.u.f) ? 1 : 0;
-		d1.type = INT;
-	} else {
-		d1.u.i = (d1.u.i == d2.u.i) ? 1 : 0;
+Datum LC::neqData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::compareArrays(LC::neqData, d1, d2);
 	}
-	g_lingo->push(d1);
+	d1.u.i = (d1.compareToIgnoreCase(d2) != 0) ? 1 : 0;
+	d1.type = INT;
+	return d1;
 }
 
 void LC::c_neq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
+	g_lingo->push(LC::neqData(d1, d2));
+}
 
-	if (d1.type == STRING && d2.type == STRING) {
-		d1.u.i = !(d1.u.s->equalsIgnoreCase(*d2.u.s)) ? 1 : 0;
-		d1.type = INT;
-	} else if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.i = (d1.u.f != d2.u.f) ? 1 : 0;
-		d1.type = INT;
-	} else {
-		d1.u.i = (d1.u.i != d2.u.i) ? 1 : 0;
+Datum LC::gtData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::compareArrays(LC::gtData, d1, d2);
 	}
-	g_lingo->push(d1);
+	d1.u.i = (d1.compareTo(d2) > 0) ? 1 : 0;
+	d1.type = INT;
+	return d1;
 }
 
 void LC::c_gt() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
+	g_lingo->push(LC::gtData(d1, d2));
+}
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.i = (d1.u.f > d2.u.f) ? 1 : 0;
-		d1.type = INT;
-	} else {
-		d1.u.i = (d1.u.i > d2.u.i) ? 1 : 0;
+Datum LC::ltData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::compareArrays(LC::ltData, d1, d2);
 	}
-	g_lingo->push(d1);
+	d1.u.i = (d1.compareTo(d2) < 0) ? 1 : 0;
+	d1.type = INT;
+	return d1;
 }
 
 void LC::c_lt() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
+	g_lingo->push(LC::ltData(d1, d2));
+}
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.i = (d1.u.f < d2.u.f) ? 1 : 0;
-		d1.type = INT;
-	} else {
-		d1.u.i = (d1.u.i < d2.u.i) ? 1 : 0;
+Datum LC::geData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::compareArrays(LC::geData, d1, d2);
 	}
-	g_lingo->push(d1);
+	d1.u.i = (d1.compareTo(d2) >= 0) ? 1 : 0;
+	d1.type = INT;
+	return d1;
 }
 
 void LC::c_ge() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
+	g_lingo->push(LC::geData(d1, d2));
+}
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.i = (d1.u.f >= d2.u.f) ? 1 : 0;
-		d1.type = INT;
-	} else {
-		d1.u.i = (d1.u.i >= d2.u.i) ? 1 : 0;
+Datum LC::leData(Datum d1, Datum d2) {
+	if (d1.type == ARRAY || d2.type == ARRAY) {
+		return LC::compareArrays(LC::leData, d1, d2);
 	}
-	g_lingo->push(d1);
+	d1.u.i = (d1.compareTo(d2) <= 0) ? 1 : 0;
+	d1.type = INT;
+	return d1;
 }
 
 void LC::c_le() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
-
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.i = (d1.u.f <= d2.u.f) ? 1 : 0;
-		d1.type = INT;
-	} else {
-		d1.u.i = (d1.u.i <= d2.u.i) ? 1 : 0;
-	}
-	g_lingo->push(d1);
+	g_lingo->push(LC::leData(d1, d2));
 }
 
 void LC::c_jump() {
