@@ -1578,7 +1578,8 @@ void Score::update() {
 	if (g_system->getMillis() < _nextFrameTime) {
 		renderZoomBox(true);
 
-		_vm->_wm->draw();
+		if (!_vm->_newMovieStarted)
+			_vm->_wm->draw();
 
 		return;
 	}
@@ -1626,8 +1627,10 @@ void Score::update() {
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
 
-	if (_frames[_currentFrame]->_transType != 0)	// Store screen, so we could draw a nice transition
+	if (_frames[_currentFrame]->_transType != 0 && !_vm->_newMovieStarted)	// Store screen, so we could draw a nice transition
 		_backSurface2->copyFrom(*_surface);
+
+	_vm->_newMovieStarted = false;
 
 	_surface->clear(_stageColor);
 	_surface->copyFrom(*_trailSurface);

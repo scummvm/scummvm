@@ -262,6 +262,8 @@ Common::Error DirectorEngine::run() {
 			// TODO: this is a workaround until the rendering pipeline is reworked
 			if (_currentScore && _currentScore->_surface) {
 				_backSurface.copyFrom(*_currentScore->_surface);
+
+				_newMovieStarted = true;
 			}
 
 			delete _currentScore;

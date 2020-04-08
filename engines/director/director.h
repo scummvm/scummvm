@@ -148,6 +148,7 @@ public:
 	Common::List<MovieReference> _movieStack;
 
 	Graphics::ManagedSurface _backSurface;
+	bool _newMovieStarted;
 
 protected:
 	Common::Error run() override;
