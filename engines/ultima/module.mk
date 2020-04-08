@@ -148,7 +148,7 @@ MODULE_OBJS := \
 	ultima4/core/utils.o \
 	ultima4/events/controller.o \
 	ultima4/events/event.o \
-	ultima4/events/event_sdl.o \
+	ultima4/events/event_scummvm.o \
 	ultima4/filesys/filesystem.o \
 	ultima4/filesys/rle.o \
 	ultima4/filesys/savegame.o \
@@ -186,7 +186,7 @@ MODULE_OBJS := \
 	ultima4/gfx/imageview.o \
 	ultima4/gfx/scale.o \
 	ultima4/gfx/screen.o \
-	ultima4/gfx/screen_sdl.o \
+	ultima4/gfx/screen_scummvm.o \
 	ultima4/map/annotation.o \
 	ultima4/map/camp.o \
 	ultima4/map/city.o \
@@ -206,9 +206,9 @@ MODULE_OBJS := \
 	ultima4/map/tileset.o \
 	ultima4/map/tileview.o \
 	ultima4/sound/music.o \
-	ultima4/sound/music_sdl.o \
+	ultima4/sound/music_scummvm.o \
 	ultima4/sound/sound.o \
-	ultima4/sound/sound_sdl.o \
+	ultima4/sound/sound_scummvm.o \
 	ultima4/ultima4.o \
 	nuvie/meta_engine.o \
 	nuvie/nuvie.o \
