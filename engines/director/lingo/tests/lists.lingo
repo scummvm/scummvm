@@ -24,3 +24,7 @@ set res to a + floats
 set res to a + strings
 set res to a + 1
 set res to 1 + b
+
+set res to a = a
+set res to a = b
+set res to a < b
