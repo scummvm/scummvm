@@ -114,6 +114,9 @@ struct Datum {	/* interpreter stack type */
 	Common::String getPrintable() { return *makeString(true); }
 
 	const char *type2str(bool isk = false);
+
+	int compareTo(Datum d);
+	int compareToIgnoreCase(Datum d);
 };
 
 struct Builtin {
