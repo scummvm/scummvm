@@ -184,25 +184,25 @@ void idMan::clearID(uint16 id) {
 }
 
 void idMan::save(ODataSource *ods) {
-	ods->write2(_begin);
-	ods->write2(_end);
-	ods->write2(_maxEnd);
-	ods->write2(_startCount);
-	ods->write2(_usedCount);
+	ods->writeUint16LE(_begin);
+	ods->writeUint16LE(_end);
+	ods->writeUint16LE(_maxEnd);
+	ods->writeUint16LE(_startCount);
+	ods->writeUint16LE(_usedCount);
 	uint16 cur = _first;
 	while (cur) {
-		ods->write2(cur);
+		ods->writeUint16LE(cur);
 		cur = _ids[cur];
 	}
-	ods->write2(0); // terminator
+	ods->writeUint16LE(0); // terminator
 }
 
 bool idMan::load(IDataSource *ds, uint32 version) {
-	_begin = ds->read2();
-	_end = ds->read2();
-	_maxEnd = ds->read2();
-	_startCount = ds->read2();
-	uint16 realusedcount = ds->read2();
+	_begin = ds->readUint16LE();
+	_end = ds->readUint16LE();
+	_maxEnd = ds->readUint16LE();
+	_startCount = ds->readUint16LE();
+	uint16 realusedcount = ds->readUint16LE();
 
 	_ids.resize(_end + 1);
 
@@ -211,10 +211,10 @@ bool idMan::load(IDataSource *ds, uint32 version) {
 	}
 	_first = _last = 0;
 
-	uint16 cur = ds->read2();
+	uint16 cur = ds->readUint16LE();
 	while (cur) {
 		clearID(cur);
-		cur = ds->read2();
+		cur = ds->readUint16LE();
 	}
 
 	_usedCount = realusedcount;

@@ -111,12 +111,9 @@ void ItemRelativeGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir r) {
 }
 
 void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
-	Item *it = nullptr;
-	Item *next = nullptr;
-	Item *prev = nullptr;
 	Gump *gump = nullptr;
 
-	it = getItem(_owner);
+	Item *it = getItem(_owner);
 
 	if (!it) {
 		// This shouldn't ever happen, the GumpNotifyProcess should
@@ -125,6 +122,8 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 		return;
 	}
 
+	Item *next;
+	Item *prev;
 	while ((next = it->getParentAsContainer()) != nullptr) {
 		prev = it;
 		it = next;

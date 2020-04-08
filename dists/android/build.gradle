@@ -1,0 +1,67 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.6.0'
+    }
+}
+
+dependencies {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+// Enable to see use of depracted API
+// tasks.withType(JavaCompile) {
+//     options.compilerArgs << "-Xlint:deprecation"
+// }
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+    ndkVersion "21.0.6113669"
+
+    defaultConfig {
+        applicationId "org.scummvm.scummvm"
+
+        setProperty("archivesBaseName", "ScummVM")
+
+        minSdkVersion 16
+        targetSdkVersion 28
+
+        versionName "2.2.0git"
+        versionCode 45
+        // versioncode must be incremented for each market upload
+        // Historical version codes:
+        // ScummVM 2.1.1: 40-44 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.1.0: 35-39 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.0.0: 30-34
+        // ScummVM 1.9.0.1: 25-28
+        // ScummVM 1.9.0: 19
+        // ScummVM 1.8.1: 15
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    sourceSets {
+        main {
+            assets.srcDirs 'assets/'
+            java.srcDirs srcdir + '/backends/platform/android/'
+            jniLibs.srcDirs 'lib/'
+            res.srcDirs srcdir + '/dists/android/res/'
+            manifest.srcFile srcdir + '/dists/android/AndroidManifest.xml'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+}

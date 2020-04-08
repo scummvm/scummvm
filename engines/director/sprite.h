@@ -67,19 +67,22 @@ public:
 	void setPattern(uint16 pattern);
 
 	uint16 _scriptId;
-	byte _flags2;  // x40 editable, 0x80 moveable
-	byte _unk2;
+	uint16 _scriptCastIndex;
+	byte _colorcode;  // x40 editable, 0x80 moveable
+	byte _blendAmount;
 	uint32 _unk3;
 
 	bool _enabled;
 	uint16 _castId;
+	uint16 _castIndex;
 	byte _spriteType;
+	byte _inkData;
 	InkType _ink;
 	uint16 _trails;
 
 	Cast *_cast;
 
-	uint16 _flags;
+	byte _thickness;
 	Common::Point _startPoint;
 	uint16 _width;
 	uint16 _height;
@@ -104,8 +107,7 @@ public:
 	uint16 _stopTime;
 	byte _volume;
 	byte _stretch;
-	// Using in shape sprites
-	byte _lineSize;
+
 	// Using in text sprites
 	Common::String _editableText;
 };

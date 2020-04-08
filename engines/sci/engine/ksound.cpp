@@ -188,14 +188,6 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			         ((argv[3].toUint16() & 0xff) << 16) |
 			         ((argv[4].toUint16() & 0xff) <<  8) |
 			          (argv[5].toUint16() & 0xff);
-			// Removed warning because of the high amount of console spam
-			/*if (argc == 8) {
-				// TODO: Handle the extra 2 SCI21 params
-				// argv[6] is always 1
-				// argv[7] is the contents of global 229 (0xE5)
-				warning("kDoAudio: Play called with SCI2.1 extra parameters: %04x:%04x and %04x:%04x",
-						PRINT_REG(argv[6]), PRINT_REG(argv[7]));
-			}*/
 		} else {
 			warning("kDoAudio: Play called with an unknown number of parameters (%d)", argc);
 			return NULL_REG;
@@ -293,7 +285,6 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		// more explicit.
 
 		return make_reg(0, 1);
-		break;
 	case 13:
 		// SSCI returns a serial number for the played audio
 		// here, used in the PointsSound class. The reason is severalfold:
@@ -308,7 +299,6 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		// return a constant here. This is equivalent to the
 		// old behavior, as above.
 		return make_reg(0, 1);
-		break;
 	case 17:
 		// Seems to be some sort of audio sync, used in SQ6. Silenced the
 		// warning due to the high level of spam it produces. (takes no params)

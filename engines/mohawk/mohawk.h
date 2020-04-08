@@ -57,17 +57,16 @@ enum MohawkGameType {
 	GType_LIVINGBOOKSV5
 };
 
-#define GAMEOPTION_PLAY_MYST_FLYBY         GUIO_GAMEOPTIONS1
-#define GAMEOPTION_25TH                    GUIO_GAMEOPTIONS2
-#define GAMEOPTION_DEMO                    GUIO_GAMEOPTIONS3
+#define GAMEOPTION_ME   GUIO_GAMEOPTIONS1
+#define GAMEOPTION_25TH GUIO_GAMEOPTIONS2
+#define GAMEOPTION_DEMO GUIO_GAMEOPTIONS3
 
 enum MohawkGameFeatures {
 	GF_ME             = (1 << 0), // Myst Masterpiece Edition
 	GF_25TH           = (1 << 1), // Myst and Riven 25th Anniversary
 	GF_DVD            = (1 << 2),
 	GF_DEMO           = (1 << 3),
-	GF_LB_10          = (1 << 4), // very early Living Books 1.0 games
-	GF_LANGUAGE_FILES = (1 << 5)  // Myst and Riven versions using language override files
+	GF_LB_10          = (1 << 4)  // very early Living Books 1.0 games
 };
 
 struct MohawkGameDescription;
@@ -88,11 +87,11 @@ public:
 	const MohawkGameDescription *_gameDescription;
 	const char *getGameId() const;
 	uint32 getFeatures() const;
+	bool isGameVariant(MohawkGameFeatures feature) const;
 	const char *getAppName() const;
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
-	Common::Language getLanguage() const;
-	Common::String getDatafileLanguageName(const char *prefix) const;
+	virtual Common::Language getLanguage() const;
 
 	bool hasFeature(EngineFeature f) const override;
 
@@ -104,6 +103,7 @@ public:
 	uint32 getResourceOffset(uint32 tag, uint16 id);
 	uint16 findResourceID(uint32 type, const Common::String &resName);
 	Common::String getResourceName(uint32 tag, uint16 id);
+	void closeAllArchives();
 
 	void pauseGame();
 

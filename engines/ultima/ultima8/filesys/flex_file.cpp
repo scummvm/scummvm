@@ -31,14 +31,12 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(FlexFile, ArchiveFile)
 
 
 
-FlexFile::FlexFile(IDataSource *ds_) {
-	_ds = ds_;
-	_count = 0;
+FlexFile::FlexFile(IDataSource *ds_) : _ds(ds_), _count(0) {
 	_valid = isFlexFile(_ds);
 
 	if (_valid) {
 		_ds->seek(0x54);
-		_count = _ds->read4();
+		_count = _ds->readUint32LE();
 	}
 }
 
@@ -68,7 +66,7 @@ bool FlexFile::isFlexFile(IDataSource *_ds) {
 
 uint32 FlexFile::getOffset(uint32 index) {
 	_ds->seek(0x80 + 8 * index);
-	return _ds->read4();
+	return _ds->readUint32LE();
 }
 
 uint8 *FlexFile::getObject(uint32 index, uint32 *sizep) {
@@ -94,7 +92,7 @@ uint32 FlexFile::getSize(uint32 index) const {
 	if (index >= _count) return 0;
 
 	_ds->seek(0x84 + 8 * index);
-	uint32 length = _ds->read4();
+	uint32 length = _ds->readUint32LE();
 
 	return length;
 }

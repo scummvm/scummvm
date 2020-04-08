@@ -40,7 +40,7 @@ public:
 	{
 		uint32 _maxOffset;
 	};
-	uint32 read4(IDataSource *) { return 0; }
+	uint32 readUint32LE(IDataSource *) { return 0; }
 	uint32 _curOffset;
 
 	virtual const char* const *intrinsics()=0;
@@ -74,7 +74,7 @@ public:
 		EventMap.clear();
 		for (uint32 i=0; i<32; ++i)
 		{
-			uint32 offset = read4(ucfile);
+			uint32 offset = readUint32LE(ucfile);
 			EventMap[offset] = i;
 #ifdef DISASM_DEBUG
 			pout << "Event " << i << ": " << Std::hex << Std::setw(4) << offset << Std::dec << endl;
@@ -412,15 +412,15 @@ const char * const ConvertUsecodeU8::_event_names[] = {
 void ConvertUsecodeU8::readheader(IDataSource *ucfile, UsecodeHeader &uch, uint32 &curOffset_) {
 	#ifdef DISASM_DEBUG
 	perr << Std::setfill('0') << Std::hex;
-	perr << "unknown1: " << Std::setw(4) << read4(ucfile) << endl; // unknown
-	uch.maxOffset = read4(ucfile) - 0x0C; // file size
+	perr << "unknown1: " << Std::setw(4) << readUint32LE(ucfile) << endl; // unknown
+	uch.maxOffset = readUint32LE(ucfile) - 0x0C; // file size
 	perr << "maxoffset: " << Std::setw(4) << maxOffset << endl;
-	perr << "unknown2: " << Std::setw(4) << read4(ucfile) << endl; // unknown
+	perr << "unknown2: " << Std::setw(4) << readUint32LE(ucfile) << endl; // unknown
 	curOffset_ = 0;
 	#else
-	read4(ucfile); // unknown
-	uch._maxOffset = read4(ucfile) - 0x0C; // file size
-	read4(ucfile); // unknown
+	readUint32LE(ucfile); // unknown
+	uch._maxOffset = readUint32LE(ucfile) - 0x0C; // file size
+	readUint32LE(ucfile); // unknown
 	curOffset_ = 0;
 	#endif
 }

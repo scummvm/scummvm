@@ -181,7 +181,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 
 	if (movie.type != VOID) {
-		movie.toString();
+		movie.makeString();
 
 		Common::String movieFilename = pathMakeRelative(*movie.u.s);
 		Common::String cleanedFilename;
@@ -235,7 +235,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		frame.toInt();
+		frame.makeInt();
 
 		_vm->_nextMovie.frameI = frame.u.i;
 
@@ -253,7 +253,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 	}
 
-	frame.toInt();
+	frame.makeInt();
 
 	if (_vm->getCurrentScore())
 		_vm->getCurrentScore()->setCurrentFrame(frame.u.i);
@@ -295,6 +295,36 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 		return;
 	}
 
+	// play #done
+	if (frame.type == SYMBOL) {
+		if (!frame.u.s->equals("done")) {
+			warning("Lingo::func_play: unknown symbol: #%s", frame.u.s->c_str());
+			return;
+		}
+		if (_vm->_movieStack.empty()) {	// No op if no nested movies
+			return;
+		}
+		ref = _vm->_movieStack.back();
+
+		_vm->_movieStack.pop_back();
+
+		Datum m, f;
+
+		if (ref.movie.empty()) {
+			m.type = VOID;
+		} else {
+			m.type = STRING;
+			m.u.s = new Common::String(ref.movie);
+		}
+
+		f.type = INT;
+		f.u.i = ref.frameI;
+
+		func_goto(f, m);
+
+		return;
+	}
+
 	if (!_vm->getCurrentScore()) {
 		warning("Lingo::func_play(): no score");
 		return;
@@ -305,26 +335,6 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	_vm->_movieStack.push_back(ref);
 
 	func_goto(frame, movie);
-}
-
-void Lingo::func_playdone() {
-	MovieReference ref = _vm->_movieStack.back();
-
-	_vm->_movieStack.pop_back();
-
-	Datum m, f;
-
-	if (ref.movie.empty()) {
-		m.type = VOID;
-	} else {
-		m.type = STRING;
-		m.u.s = new Common::String(ref.movie);
-	}
-
-	f.type = INT;
-	f.u.i = ref.frameI;
-
-	func_goto(f, m);
 }
 
 void Lingo::func_cursor(int c, int m) {
@@ -386,7 +396,10 @@ void Lingo::func_cursor(int c, int m) {
 			}
 		}
 
-		_vm->getMacWindowManager()->pushCustomCursor(assembly, 16, 16, 3);
+		warning("STUB: func_cursor(): Hotspot is the registration point of the cast member");
+		_vm->getMacWindowManager()->pushCustomCursor(assembly, 16, 16, 1, 1, 3);
+
+		free(assembly);
 
 		return;
 	}

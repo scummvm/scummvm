@@ -28,8 +28,8 @@
 #include "backends/platform/sdl/switch/switch.h"
 #include "backends/events/switchsdl/switchsdl-events.h"
 #include "backends/saves/posix/posix-saves.h"
-#include "backends/fs/posix/posix-fs-factory.h"
-#include "backends/fs/posix/posix-fs.h"
+#include "backends/fs/posix-drives/posix-drives-fs-factory.h"
+#include "backends/fs/posix-drives/posix-drives-fs.h"
 #include "backends/keymapper/hardware-input.h"
 
 static const Common::HardwareInputTableEntry switchJoystickButtons[] = {
@@ -62,8 +62,11 @@ static const Common::AxisTableEntry switchJoystickAxes[] = {
 
 void OSystem_Switch::init() {
 	
-	// Initialze File System Factory
-	_fsFactory = new POSIXFilesystemFactory();
+	DrivesPOSIXFilesystemFactory *fsFactory = new DrivesPOSIXFilesystemFactory();
+	fsFactory->addDrive("sdmc:");
+	fsFactory->configureBuffering(DrivePOSIXFilesystemNode::kBufferingModeScummVM, 2048);
+
+	_fsFactory = fsFactory;
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
@@ -71,7 +74,6 @@ void OSystem_Switch::init() {
 
 void OSystem_Switch::initBackend() {
 
-	ConfMan.registerDefault("joystick_num", 0);
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "2x");
@@ -80,10 +82,8 @@ void OSystem_Switch::initBackend() {
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
 
 	ConfMan.setBool("fullscreen", true);
+	ConfMan.setInt("joystick_num", 0);
 
-	if (!ConfMan.hasKey("joystick_num")) {
-		ConfMan.setInt("joystick_num", 0);
-	}
 	if (!ConfMan.hasKey("aspect_ratio")) {
 		ConfMan.setBool("aspect_ratio", false);
 	}
@@ -126,8 +126,6 @@ void OSystem_Switch::setFeatureState(Feature f, bool enable) {
 	case kFeatureTouchpadMode:
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 		break;
-	case kFeatureFullscreenMode:
-		break;
 	default:
 		OSystem_SDL::setFeatureState(f, enable);
 		break;
@@ -138,9 +136,6 @@ bool OSystem_Switch::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureTouchpadMode:
 		return ConfMan.getBool("touchpad_mouse_mode");
-		break;
-	case kFeatureFullscreenMode:
-		return true;
 		break;
 	default:
 		return OSystem_SDL::getFeatureState(f);

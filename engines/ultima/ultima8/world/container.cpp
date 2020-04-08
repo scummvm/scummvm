@@ -280,6 +280,7 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		// check item against loopscript
 		if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
+			assert(itemlist->getElementSize() == 2);
 			uint16 oId = (*iter)->getObjId();
 			uint8 buf[2];
 			buf[0] = static_cast<uint8>(oId);
@@ -306,7 +307,7 @@ void Container::dumpInfo() const {
 
 void Container::saveData(ODataSource *ods) {
 	Item::saveData(ods);
-	ods->write4(static_cast<uint32>(_contents.size()));
+	ods->writeUint32LE(static_cast<uint32>(_contents.size()));
 	Std::list<Item *>::iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		(*iter)->save(ods);
@@ -316,7 +317,7 @@ void Container::saveData(ODataSource *ods) {
 bool Container::loadData(IDataSource *ids, uint32 version) {
 	if (!Item::loadData(ids, version)) return false;
 
-	uint32 contentcount = ids->read4();
+	uint32 contentcount = ids->readUint32LE();
 
 	// read _contents
 	for (unsigned int i = 0; i < contentcount; ++i) {

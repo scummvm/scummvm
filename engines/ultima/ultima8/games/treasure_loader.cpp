@@ -41,7 +41,7 @@ void TreasureLoader::loadDefaults() {
 
 	// load default treasure types
 	lootkeyvals = config->listKeyValues("game/treasure");
-	KeyMap::iterator defaultiter;
+	KeyMap::const_iterator defaultiter;
 	for (defaultiter = lootkeyvals.begin();
 	        defaultiter != lootkeyvals.end(); ++defaultiter) {
 		TreasureInfo ti;
@@ -121,7 +121,7 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 		} else if (key == "type" && !loadingDefault) {
 			if (loadedDefault)
 				return false;
-			TreasureMap::iterator iter;
+			TreasureMap::const_iterator iter;
 			iter = _defaultTreasure.find(val);
 			if (iter != _defaultTreasure.end())
 				ti = iter->_value;

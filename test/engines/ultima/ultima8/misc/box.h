@@ -24,16 +24,13 @@ class U8BoxTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(box.IsValid());
 		TS_ASSERT(box.Overlaps(box));
 		TS_ASSERT(box == box);
-		// TODO: All these tests are disabled becasue the box uses reversed
-		// coordinates in x and y.. need to confirm if that's the correct
-		// behavior
-		/*
-		TS_ASSERT(box.InBox(0,0,1));
-		TS_ASSERT(box.InBox(0,1,0));
-		TS_ASSERT(box.InBox(1,0,0));
+
+		// Note: These tests expect Box has reversed coordinates in x and y.
+		TS_ASSERT(box.InBox(-1,-1,1));
+		TS_ASSERT(box.InBox(-1,-1,0));
 		box.MoveRel(0, 0, 1);
-		TS_ASSERT(!box.InBox(0,0,1));
-		TS_ASSERT(box.InBox(0,0,2));
+		TS_ASSERT(!box.InBox(-1,-1,0));
+		TS_ASSERT(box.InBox(-1,-1,2));
 
 		Ultima::Ultima8::Box box2(box);
 		TS_ASSERT(box == box2);
@@ -45,9 +42,8 @@ class U8BoxTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!(box2 == box3));
 		TS_ASSERT(box2.Overlaps(box3));
 		TS_ASSERT(box3.Overlaps(box2));
-		box3.ResizeAbs(1,2,2);
+		box3.ResizeAbs(1,1,1);
 		TS_ASSERT(!box3.Overlaps(box2));
-		*/
 	}
 
 };

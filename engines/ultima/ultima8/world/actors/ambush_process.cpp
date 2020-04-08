@@ -77,13 +77,13 @@ void AmbushProcess::run() {
 void AmbushProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(_delayCount);
+	ods->writeUint32LE(_delayCount);
 }
 
 bool AmbushProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_delayCount = ids->read4();
+	_delayCount = ids->readUint32LE();
 
 	return true;
 }

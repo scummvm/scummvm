@@ -130,11 +130,11 @@ Shape *GameData::getShape(FrameID f) const {
 	return shape;
 }
 
-ShapeFrame *GameData::getFrame(FrameID f) const {
-	Shape *shape = getShape(f);
+const ShapeFrame *GameData::getFrame(FrameID f) const {
+	const Shape *shape = getShape(f);
 	if (!shape)
 		return nullptr;
-	ShapeFrame *frame = shape->getFrame(f._frameNum);
+	const ShapeFrame *frame = shape->getFrame(f._frameNum);
 	return frame;
 }
 
@@ -303,7 +303,7 @@ void GameData::loadU8Data() {
 		MapGlob *glob = 0;
 		IDataSource *globds = globflex->get_datasource(i);
 
-		if (globds && globds->getSize()) {
+		if (globds && globds->size()) {
 			glob = new MapGlob();
 			glob->read(globds);
 		}
@@ -373,7 +373,7 @@ void GameData::setupJPOverrides() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	FontManager *fontmanager = FontManager::get_instance();
 	KeyMap jpkeyvals;
-	KeyMap::iterator iter;
+	KeyMap::const_iterator iter;
 
 	jpkeyvals = config->listKeyValues("language/jpfonts");
 	for (iter = jpkeyvals.begin(); iter != jpkeyvals.end(); ++iter) {
@@ -407,7 +407,7 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 	SettingManager *settingman = SettingManager::get_instance();
 	FontManager *fontmanager = FontManager::get_instance();
 	KeyMap ttfkeyvals;
-	KeyMap::iterator iter;
+	KeyMap::const_iterator iter;
 
 	bool ttfoverrides = false;
 	settingman->get("ttf", ttfoverrides);
@@ -554,7 +554,7 @@ void GameData::loadRemorseData() {
 		MapGlob *glob = 0;
 		IDataSource *globds = globflex->get_datasource(i);
 
-		if (globds && globds->getSize()) {
+		if (globds && globds->size()) {
 			glob = new MapGlob();
 			glob->read(globds);
 		}

@@ -107,14 +107,14 @@ void LoiterProcess::run() {
 void LoiterProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(_count);
+	ods->writeUint32LE(_count);
 }
 
 bool LoiterProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
 	if (version >= 3)
-		_count = ids->read4();
+		_count = ids->readUint32LE();
 	else
 		_count = 0; // default to loitering indefinitely
 

@@ -517,6 +517,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 				// check item against loopscript
 				if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
+					assert(itemlist->getElementSize() == 2);
 					uint16 objid = (*iter)->getObjId();
 					uint8 buf[2];
 					buf[0] = static_cast<uint8>(objid);
@@ -614,6 +615,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 
 				// check item against loopscript
 				if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
+					assert(itemlist->getElementSize() == 2);
 					uint16 objid = (*iter)->getObjId();
 					uint8 buf[2];
 					buf[0] = static_cast<uint8>(objid);
@@ -1269,7 +1271,7 @@ void CurrentMap::setWholeMapFast() {
 void CurrentMap::save(ODataSource *ods) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS / 32; ++j) {
-			ods->write4(_fast[i][j]);
+			ods->writeUint32LE(_fast[i][j]);
 		}
 	}
 }
@@ -1277,7 +1279,7 @@ void CurrentMap::save(ODataSource *ods) {
 bool CurrentMap::load(IDataSource *ids, uint32 version) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS / 32; ++j) {
-			_fast[i][j] = ids->read4();
+			_fast[i][j] = ids->readUint32LE();
 		}
 	}
 

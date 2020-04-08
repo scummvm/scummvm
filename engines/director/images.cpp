@@ -40,8 +40,7 @@ DIBDecoder::~DIBDecoder() {
 }
 
 void DIBDecoder::destroy() {
-	delete _surface;
-	_surface = 0;
+	_surface = 0;	// It is deleted by BitmapRawDecoder
 
 	delete[] _palette;
 	_palette = 0;
@@ -149,6 +148,7 @@ BITDDecoder::~BITDDecoder() {
 }
 
 void BITDDecoder::destroy() {
+	_surface->free();
 	delete _surface;
 	_surface = 0;
 
@@ -229,7 +229,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 				case 8:
 					// this calculation is wrong.. need a demo with colours.
-					*((byte *)_surface->getBasePtr(x, y)) = 0xff - pixels[(y * _surface->w) + x + (y * offset)];
+					*((byte *)_surface->getBasePtr(x, y)) = g_director->transformColor(pixels[(y * _surface->w) + x + (y * offset)]);
 					x++;
 					break;
 

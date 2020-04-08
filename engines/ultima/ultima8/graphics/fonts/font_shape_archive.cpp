@@ -67,7 +67,7 @@ void FontShapeArchive::setHVLeads() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 
 	KeyMap leadkeyvals = config->listKeyValues("game/fontleads");
-	KeyMap::iterator iter;
+	KeyMap::const_iterator iter;
 
 	for (iter = leadkeyvals.begin(); iter != leadkeyvals.end(); ++iter) {
 		int fontnum = Std::atoi(iter->_key.c_str());

@@ -220,6 +220,14 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		break;
 	}
 
+	case Common::EVENT_INPUT_CHANGED: {
+		Common::HardwareInputSet *inputSet = g_system->getHardwareInputSet();
+		Common::KeymapperDefaultBindings *backendDefaultBindings = g_system->getKeymapperDefaultBindings();
+
+		_keymapper->registerHardwareInputSet(inputSet, backendDefaultBindings);
+		break;
+	}
+
 	default:
 		break;
 	}

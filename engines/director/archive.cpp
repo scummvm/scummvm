@@ -249,8 +249,10 @@ Common::SeekableSubReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 
 	assert(_resFork);
 	Common::SeekableReadStream *stream = _resFork->getResource(tag, id);
 
-	if (stream == nullptr)
-		error("MacArchive::getResource('%s', %d): Resource doesn't exit", tag2str(tag), id);
+	if (stream == nullptr) {
+		warning("MacArchive::getResource('%s', %d): Resource doesn't exit", tag2str(tag), id);
+		return nullptr;
+	}
 
 	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::NO);
 }
@@ -461,6 +463,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 				 tag == MKTAG('R', 'T', 'E', '0') ||
 				 tag == MKTAG('R', 'T', 'E', '1') ||
 				 tag == MKTAG('R', 'T', 'E', '2') ||
+				 tag == MKTAG('s', 'n', 'd', ' ') ||
 				 tag == MKTAG('L', 'c', 't', 'x') ||
 				 tag == MKTAG('L', 'n', 'a', 'm') ||
 				 tag == MKTAG('L', 's', 'c', 'r'))

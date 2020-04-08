@@ -24,20 +24,31 @@
 
 #include "backends/platform/dingux/dingux.h"
 #include "backends/events/dinguxsdl/dinguxsdl-events.h"
-#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
+#include "backends/graphics/downscalesdl/downscalesdl-graphics.h"
 
 void OSystem_SDL_Dingux::initBackend() {
+	ConfMan.registerDefault("fullscreen", true);
+
 	// Create the events manager
 	if (_eventSource == 0)
 		_eventSource = new DINGUXSdlEventSource();
 
+#ifndef GCW0
 	// Create the graphics manager
 	if (_graphicsManager == 0) {
-		_graphicsManager = new DINGUXSdlGraphicsManager(_eventSource, _window);
+		_graphicsManager = new DownscaleSdlGraphicsManager(_eventSource, _window);
 	}
+#endif
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
+}
+
+bool OSystem_SDL_Dingux::hasFeature(Feature f) {
+	if (f == kFeatureFullscreenMode)
+		return false;
+
+	return OSystem_SDL::hasFeature(f);
 }
 
 #endif

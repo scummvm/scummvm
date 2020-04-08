@@ -38,7 +38,6 @@
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
 #include "common/unzip.h"
-#include <limits.h>
 
 namespace Wintermute {
 
@@ -174,7 +173,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	BaseRenderer *renderer = _gameRef->_renderer;
 
 	// find cached surface, if exists
-	uint32 minUseTime = UINT_MAX;
+	uint32 minUseTime = INT_MAX_VALUE;
 	int minIndex = -1;
 	BaseSurface *surface = nullptr;
 	int textOffset = 0;

@@ -25,6 +25,7 @@
 #include "ultima/ultima8/games/u8_game.h"
 
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/fade_to_modal_process.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -153,7 +154,7 @@ bool U8Game::startInitialUsecode(int saveSlot) {
 }
 
 
-ProcId U8Game::playIntroMovie() {
+ProcId U8Game::playIntroMovie(bool fade) {
 	GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
@@ -173,10 +174,10 @@ ProcId U8Game::playIntroMovie() {
 	}
 
 	RawArchive *flex = new RawArchive(skf);
-	return MovieGump::U8MovieViewer(flex, true);
+	return MovieGump::U8MovieViewer(flex, fade, true);
 }
 
-ProcId U8Game::playEndgameMovie() {
+ProcId U8Game::playEndgameMovie(bool fade) {
 	Std::string filename = "@game/static/endgame.skf";
 	FileSystem *filesys = FileSystem::get_instance();
 	IDataSource *skf = filesys->ReadFile(filename);
@@ -186,7 +187,7 @@ ProcId U8Game::playEndgameMovie() {
 	}
 
 	RawArchive *flex = new RawArchive(skf);
-	return MovieGump::U8MovieViewer(flex);
+	return MovieGump::U8MovieViewer(flex, fade);
 }
 
 void U8Game::playCredits() {
@@ -213,9 +214,9 @@ void U8Game::playCredits() {
 	if (musicproc) musicproc->playMusic(51); // CONSTANT!
 
 	CreditsGump *gump = new CreditsGump(text);
-	gump->InitGump(0);
 	gump->SetFlagWhenFinished("quotes");
-	gump->setRelativePosition(Gump::CENTER);
+	FadeToModalProcess *p = new FadeToModalProcess(gump);
+	Kernel::get_instance()->addProcess(p);
 }
 
 void U8Game::playQuotes() {
@@ -233,9 +234,9 @@ void U8Game::playQuotes() {
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) musicproc->playMusic(113); // CONSTANT!
 
-	Gump *gump = new CreditsGump(text, 80);
-	gump->InitGump(0);
-	gump->setRelativePosition(Gump::CENTER);
+	CreditsGump *gump = new CreditsGump(text, 80);
+	FadeToModalProcess *p = new FadeToModalProcess(gump);
+	Kernel::get_instance()->addProcess(p);
 }
 
 
@@ -245,45 +246,45 @@ void U8Game::writeSaveInfo(ODataSource *ods) {
 
 	const Std::string &avname = av->getName();
 	const uint8 namelength = static_cast<uint8>(avname.size());
-	ods->write1(namelength);
+	ods->writeByte(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		ods->write1(static_cast<uint8>(avname[i]));
+		ods->writeByte(static_cast<uint8>(avname[i]));
 
 	av->getLocation(x, y, z);
-	ods->write2(av->getMapNum());
-	ods->write4(static_cast<uint32>(x));
-	ods->write4(static_cast<uint32>(y));
-	ods->write4(static_cast<uint32>(z));
+	ods->writeUint16LE(av->getMapNum());
+	ods->writeUint32LE(static_cast<uint32>(x));
+	ods->writeUint32LE(static_cast<uint32>(y));
+	ods->writeUint32LE(static_cast<uint32>(z));
 
-	ods->write2(av->getStr());
-	ods->write2(av->getInt());
-	ods->write2(av->getDex());
-	ods->write2(av->getHP());
-	ods->write2(av->getMaxHP());
-	ods->write2(av->getMana());
-	ods->write2(av->getMaxMana());
-	ods->write2(av->getArmourClass());
-	ods->write2(av->getTotalWeight());
+	ods->writeUint16LE(av->getStr());
+	ods->writeUint16LE(av->getInt());
+	ods->writeUint16LE(av->getDex());
+	ods->writeUint16LE(av->getHP());
+	ods->writeUint16LE(av->getMaxHP());
+	ods->writeUint16LE(av->getMana());
+	ods->writeUint16LE(av->getMaxMana());
+	ods->writeUint16LE(av->getArmourClass());
+	ods->writeUint16LE(av->getTotalWeight());
 
 	for (unsigned int i = 1; i <= 6; i++) {
 		uint16 objid = av->getEquip(i);
 		Item *item = getItem(objid);
 		if (item) {
-			ods->write4(item->getShape());
-			ods->write4(item->getFrame());
+			ods->writeUint32LE(item->getShape());
+			ods->writeUint32LE(item->getFrame());
 		} else {
-			ods->write4(0);
-			ods->write4(0);
+			ods->writeUint32LE(0);
+			ods->writeUint32LE(0);
 		}
 	}
 }
 
 Std::string U8Game::getCreditText(IDataSource *ids) {
 	Std::string text;
-	unsigned int size = ids->getSize();
+	unsigned int size = ids->size();
 	text.resize(size);
 	for (unsigned int i = 0; i < size; ++i) {
-		uint8 c = ids->read1();
+		uint8 c = ids->readByte();
 		int x;
 		switch (i) {
 		case 0:

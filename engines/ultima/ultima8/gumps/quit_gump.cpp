@@ -57,17 +57,13 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
-	ShapeFrame *sf = _shape->getFrame(0);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 
 	FrameID askshape(GameData::GUMPS, askShapeId, 0);
 	askshape = _TL_SHP_(askshape);
 
 	Shape *askShape = GameData::get_instance()->getShape(askshape);
-	sf = askShape->getFrame(askshape._frameNum);
+	const ShapeFrame *sf = askShape->getFrame(askshape._frameNum);
 	assert(sf);
 
 	Gump *ask = new Gump(0, 0, sf->_width, sf->_height);

@@ -153,6 +153,7 @@ void OSystem_GPH::initBackend() {
 }
 
 void OSystem_GPH::initSDL() {
+#ifdef SDL_INIT_EVENTTHREAD
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
 
@@ -166,6 +167,8 @@ void OSystem_GPH::initSDL() {
 
 		_initedSDL = true;
 	}
+#endif
+	OSystem_SDL::initSDL();
 }
 
 void OSystem_GPH::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -205,6 +208,13 @@ void OSystem_GPH::quit() {
 #endif /* DUMP_STDOUT */
 
 	OSystem_POSIX::quit();
+}
+
+bool OSystem_GPH::hasFeature(Feature f) {
+	if (f == kFeatureFullscreenMode)
+		return false;
+
+	return OSystem_SDL::hasFeature(f);
 }
 
 #endif

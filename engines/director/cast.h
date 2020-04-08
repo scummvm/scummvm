@@ -35,10 +35,15 @@ class SeekableReadStream;
 class ReadStreamEndian;
 }
 
+namespace Image {
+class ImageDecoder;
+}
+
 namespace Director {
 
 class Stxt;
 class CachedMacText;
+class SNDDecoder;
 
 class Cast {
 public:
@@ -51,6 +56,7 @@ public:
 	Common::Array<Resource> _children;
 
 	const Graphics::Surface *_surface;
+	Image::ImageDecoder *_img;
 
 	bool _modified;
 };
@@ -71,6 +77,14 @@ public:
 	uint32 _tag;
 };
 
+class SoundCast : public Cast {
+public:
+	SoundCast(Common::ReadStreamEndian &stream, uint16 version);
+
+	bool _looping;
+	SNDDecoder *_audio;
+};
+
 class ShapeCast : public Cast {
 public:
 	ShapeCast(Common::ReadStreamEndian &stream, uint16 version);
@@ -88,6 +102,7 @@ public:
 class TextCast : public Cast {
 public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor);
+	virtual ~TextCast();
 
 	void setText(const char *text);
 

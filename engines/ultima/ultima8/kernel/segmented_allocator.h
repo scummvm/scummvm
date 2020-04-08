@@ -48,7 +48,7 @@ public:
 		return _nodeCapacity;
 	}
 
-	void printInfo() override;
+	void printInfo() const override;
 
 private:
 	Std::vector<SegmentedPool *> _pools;

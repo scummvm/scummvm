@@ -1137,7 +1137,13 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions_Engine' overlays = 'Dialog.GameOptions.TabWidget' shading = 'dim'>
+	<dialog name = 'GameOptions_Engine' overlays = 'Dialog.GameOptions.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GameOptions_Engine_Container' overlays = 'GameOptions_Engine.Container'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16'>
 			<widget name = 'customOption1Checkbox'
 					type = 'Checkbox'
@@ -1228,6 +1234,18 @@
 						type = 'Button'
 				/>
 			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalConfig_Engine' overlays = 'Dialog.GlobalConfig.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalConfig_Engine_Container' overlays = 'Dialog.GlobalConfig_Engine.Container'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+			<import layout = 'Dialog.GameOptions_Engine_Container' />
 		</layout>
 	</dialog>
 

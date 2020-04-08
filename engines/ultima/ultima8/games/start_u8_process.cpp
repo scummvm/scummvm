@@ -53,7 +53,7 @@ StartU8Process::StartU8Process(int saveSlot) : Process(),
 void StartU8Process::run() {
 	if (!_skipStart && !_init) {
 		_init = true;
-		ProcId moviepid = Game::get_instance()->playIntroMovie();
+		ProcId moviepid = Game::get_instance()->playIntroMovie(false);
 		Process *movieproc = Kernel::get_instance()->getProcess(moviepid);
 		if (movieproc) {
 			waitFor(movieproc);

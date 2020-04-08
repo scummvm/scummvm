@@ -63,7 +63,7 @@ public:
 
 	uint16 duplicateString(uint16 str);
 
-	void usecodeStats();
+	void usecodeStats() const;
 
 	static uint32 listToPtr(uint16 l);
 	static uint32 stringToPtr(uint16 s);

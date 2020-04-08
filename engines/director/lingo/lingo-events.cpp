@@ -182,6 +182,8 @@ void Lingo::processInputEvent(LEvent event) {
 		} else {
 			processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
 		}
+	} else if (event == kEventMouseDown) {
+		processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);
 	}
 	if (event == kEventKeyDown) {
 		// TODO: is the above condition necessary or useful?
@@ -243,10 +245,9 @@ void Lingo::processFrameEvent(LEvent event) {
 
 void Lingo::processGenericEvent(LEvent event) {
 	// Movie Script
-	int id = -1;
 	if (event == kEventStart || event == kEventPrepareMovie ||
-		event == kEventStartMovie || event == kEventStopMovie)
-		id = 0;
+			event == kEventStartMovie || event == kEventStopMovie)
+		; // we're OK
 	else
 		warning("STUB: processGenericEvent called for unprocessed event, additional logic probably needed");
 

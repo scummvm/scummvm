@@ -47,8 +47,8 @@ public:
 	//! write game-specific savegame info (avatar stats, equipment, ...)
 	void writeSaveInfo(ODataSource *ods) override;
 
-	ProcId playIntroMovie() override;
-	ProcId playEndgameMovie() override;
+	ProcId playIntroMovie(bool fade) override;
+	ProcId playEndgameMovie(bool fade) override;
 	void playCredits() override;
 	void playQuotes() override;
 

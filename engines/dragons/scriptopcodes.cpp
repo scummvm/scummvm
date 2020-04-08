@@ -903,12 +903,11 @@ void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 		return;
 	}
 
-	//TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->clearSceneUpdateFunction();
 	_vm->_sound->PauseCDMusic();
 
 	if (newSceneID != 0) {
-		// load scene here.
 		_vm->_scene->_mapTransitionEffectSceneID = _vm->_scene->getSceneId();
 		_vm->_scene->setSceneId(newSceneID);
 		_vm->_flickerInitialSceneDirection = flickerDirection;

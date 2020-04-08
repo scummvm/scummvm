@@ -45,13 +45,11 @@ Archive::~Archive() {
 }
 
 
-Archive::Archive(ArchiveFile *af) {
-	_count = 0;
+Archive::Archive(ArchiveFile *af) : _count(0) {
 	addSource(af);
 }
 
-Archive::Archive(IDataSource *ids) {
-	_count = 0;
+Archive::Archive(IDataSource *ids) : _count(0) {
 	addSource(ids);
 }
 

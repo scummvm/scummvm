@@ -178,7 +178,7 @@ private:
 		zword _release;
 		char _serial[7];
 	};
-	static const StoryEntry RECORDS[25];
+	static const StoryEntry RECORDS[26];
 public:
 	zbyte h_version;
 	zbyte h_config;

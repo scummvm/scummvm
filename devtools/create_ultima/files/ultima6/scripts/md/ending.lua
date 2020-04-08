@@ -10,7 +10,7 @@ function play()
    local text = sprite_new(nil, 0, 160, true)
    text.text_color = 4
    text.text = text_tbl[0]
-   text.text_align_centre = true
+   text.text_align = 2
    
    local bg = sprite_new(g_img_tbl[0][0], 0, 24, true)
    local jack = sprite_new(g_img_tbl[0][gender+1], 155, 151, true)

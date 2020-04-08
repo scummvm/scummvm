@@ -66,12 +66,7 @@ void ScrollGump::InitGump(Gump *newparent, bool take_focus) {
 	Shape *shape_ = GameData::get_instance()->getGumps()->getShape(19);
 
 	SetShape(shape_, 0);
-
-	ShapeFrame *sf = shape_->getFrame(0);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 }
 
 void ScrollGump::NextText() {

@@ -459,7 +459,7 @@ void ManagedSurface::setPalette(const byte *colors, uint start, uint num) {
 	uint32 *dest = &_palette[start];
 	
 	for (; num > 0; --num, colors += 3) {
-		*dest = colors[0] | (colors[1] << 8) | (colors[2] << 16) | (0xff << 24);
+		*dest++ = colors[0] | (colors[1] << 8) | (colors[2] << 16) | (0xff << 24);
 	}
 
 	_paletteSet = true;

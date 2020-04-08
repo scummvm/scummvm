@@ -258,9 +258,13 @@ public:
 
 	void playOrStopSound(uint16 soundId);
 
-	//TODO what are these functions really doing?
-	void call_fade_related_1f();
-	void fade_related(uint32 flags);
+	void fadeFromBlack();
+	void fadeFromBlackExcludingFont();
+	void fadeFromBlack(uint32 flags);
+
+	void fadeToBlack();
+	void fadeToBlackExcludingFont();
+	void fadeToBlack(uint32 flags);
 
 	uint16 ipt_img_file_related();
 	void performAction();

@@ -32,29 +32,13 @@
 namespace Graphics {
 
 BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
-		_id(id), _editable(editable), _wm(wm) {
+		MacWidget(nullptr, 0, 0, 0, 0, true), _id(id), _editable(editable), _wm(wm) {
 	_callback = 0;
 	_dataPtr = 0;
 
 	_contentIsDirty = true;
 
 	_type = kWindowUnknown;
-}
-
-WidgetInfo::WidgetInfo(MacWidget *widget_, int x, int y) {
-	widget = widget_;
-	bbox = widget->getDimensions();
-	bbox.moveTo(x, y);
-}
-
-WidgetInfo::~WidgetInfo() {
-	delete widget;
-}
-
-void BaseMacWindow::addWidget(MacWidget *widget, int x, int y) {
-	_widgets.push_back(new WidgetInfo(widget, x, y));
-
-	widget->setParent(this);
 }
 
 MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm) :
@@ -82,6 +66,28 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 }
 
 MacWindow::~MacWindow() {
+}
+
+static const byte noborderData[3][3] = {
+	{ 0, 1, 0 },
+	{ 1, 0, 1 },
+	{ 0, 1, 0 },
+};
+
+void MacWindow::disableBorder() {
+	Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
+	noborder->create(3, 3, noborder->getSupportedPixelFormat());
+	uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
+	uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
+
+	for (int y = 0; y < 3; y++)
+		for (int x = 0; x < 3; x++)
+			*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
+
+	setBorder(noborder, true);
+
+	Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
+	setBorder(noborder2, false);
 }
 
 const Font *MacWindow::getTitleFont() {
@@ -529,6 +535,10 @@ bool MacWindow::processEvent(Common::Event &event) {
 	default:
 		return false;
 	}
+
+	MacWidget *w = findEventHandler(event, _dims.left, _dims.top);
+	if (w && w != this && w->processEvent(event))
+		return true;
 
 	if (_callback)
 		return (*_callback)(click, event, _dataPtr);

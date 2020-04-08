@@ -243,9 +243,9 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 		itemy = equipcoords[i].y;
 		itemx += _itemArea.x;
 		itemy += _itemArea.y;
-		Shape *s = item->getShapeObject();
+		const Shape *s = item->getShapeObject();
 		assert(s);
-		ShapeFrame *frame = s->getFrame(item->getFrame() + 1);
+		const ShapeFrame *frame = s->getFrame(item->getFrame() + 1);
 
 		if (frame->hasPoint(mx - itemx, my - itemy)) {
 			// found it
@@ -298,9 +298,9 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 	bool ret = ContainerGump::StartDraggingItem(item, mx, my);
 
 	// set dragging offset to center of item
-	Shape *s = item->getShapeObject();
+	const Shape *s = item->getShapeObject();
 	assert(s);
-	ShapeFrame *frame = s->getFrame(item->getFrame());
+	const ShapeFrame *frame = s->getFrame(item->getFrame());
 	assert(frame);
 
 	Mouse::get_instance()->setDraggingOffset(frame->_width / 2 - frame->_xoff,
@@ -346,8 +346,7 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 		_draggingY = equipcoords[equiptype].y;
 	} else {
 		// drop in backpack
-
-		if (!backpack->CanAddItem(item, true)) {
+		if (backpack && !backpack->CanAddItem(item, true)) {
 			_displayDragging = false;
 			return false;
 		}
@@ -413,13 +412,13 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 void PaperdollGump::saveData(ODataSource *ods) {
 	ContainerGump::saveData(ods);
 
-	ods->write2(_statButtonId);
+	ods->writeUint16LE(_statButtonId);
 }
 
 bool PaperdollGump::loadData(IDataSource *ids, uint32 version) {
 	if (!ContainerGump::loadData(ids, version)) return false;
 
-	_statButtonId = ids->read2();
+	_statButtonId = ids->readUint16LE();
 
 	return true;
 }

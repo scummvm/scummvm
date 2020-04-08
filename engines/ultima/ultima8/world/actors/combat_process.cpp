@@ -332,17 +332,17 @@ void CombatProcess::dumpInfo() const {
 void CombatProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(_target);
-	ods->write2(_fixedTarget);
-	ods->write1(static_cast<uint8>(_combatMode));
+	ods->writeUint16LE(_target);
+	ods->writeUint16LE(_fixedTarget);
+	ods->writeByte(static_cast<uint8>(_combatMode));
 }
 
 bool CombatProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_target = ids->read2();
-	_fixedTarget = ids->read2();
-	_combatMode = static_cast<CombatMode>(ids->read1());
+	_target = ids->readUint16LE();
+	_fixedTarget = ids->readUint16LE();
+	_combatMode = static_cast<CombatMode>(ids->readByte());
 
 	return true;
 }

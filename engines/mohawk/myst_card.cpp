@@ -176,7 +176,7 @@ void MystCard::loadView() {
 
 	// Precache Card Resources
 	uint32 cacheImageType;
-	if (_vm->getFeatures() & GF_ME)
+	if (_vm->isGameVariant(GF_ME))
 		cacheImageType = ID_PICT;
 	else
 		cacheImageType = ID_WDIB;

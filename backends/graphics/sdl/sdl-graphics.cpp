@@ -337,7 +337,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 }
 
 void SdlGraphicsManager::toggleFullScreen() {
-	if (!hasFeature(OSystem::kFeatureFullscreenMode))
+	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode))
 		return;
 
 	beginGFXTransaction();
@@ -357,7 +357,7 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGlobal, "sdl-graphics", _("Graphics"));
 	Action *act;
 
-	if (hasFeature(OSystem::kFeatureFullscreenMode)) {
+	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
 		act = new Action("FULS", _("Toggle fullscreen"));
 		act->addDefaultInputMapping("A+RETURN");
 		act->addDefaultInputMapping("A+KP_ENTER");

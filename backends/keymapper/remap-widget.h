@@ -43,14 +43,15 @@ class Keymap;
 class Keymapper;
 class InputWatcher;
 
-class RemapWidget : public GUI::Widget {
+class RemapWidget : public GUI::OptionsContainerWidget {
 public:
 	typedef Common::Array<Keymap *> KeymapArray;
 
 	RemapWidget(GuiObject *boss, const Common::String &name, const KeymapArray &keymaps);
 	~RemapWidget() override;
-	void build();
-	bool save();
+	void load() override;
+	bool save() override;
+	void handleInputChanged();
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleTickle() override;
@@ -73,10 +74,6 @@ protected:
 		KeymapTitleRow() : descriptionText(nullptr), resetButton(nullptr) {}
 	};
 
-	void drawWidget() override {}
-	void reflowLayout() override;
-	Widget *findWidget(int x, int y) override;
-
 	void loadKeymap();
 	void refreshKeymap();
 	void reflowActionWidgets();
@@ -92,8 +89,6 @@ protected:
 	Keymap *_remapKeymap;
 	Action *_remapAction;
 	uint32 _remapTimeout;
-
-	GUI::ScrollContainerWidget *_scrollContainer;
 
 	static const uint32 kRemapTimeoutDelay = 3000;
 

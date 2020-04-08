@@ -144,7 +144,6 @@ public:
 	/**
 	 * Save this keymap's mappings to the config manager
 	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
-	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
 	 */
 	void saveMappings();
 

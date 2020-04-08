@@ -26,7 +26,6 @@
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/audio/audio_channel.h"
 #include "ultima/ultima8/audio/midi_player.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "audio/decoders/raw.h"
 

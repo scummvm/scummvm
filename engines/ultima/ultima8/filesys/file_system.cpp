@@ -52,8 +52,6 @@ FileSystem::~FileSystem() {
 
 // Open a streaming file as readable. Streamed (0 on failure)
 IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
-	string filename = vfn;
-
 	IDataSource *data = checkBuiltinData(vfn, is_text);
 
 	// allow data-override?
@@ -61,7 +59,7 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 		return data;
 
 	Common::SeekableReadStream *readStream;
-	if (!rawOpen(readStream, filename))
+	if (!rawOpen(readStream, vfn))
 		return nullptr;
 
 	return new IFileDataSource(readStream);
@@ -256,7 +254,7 @@ bool FileSystem::RemoveVirtualPath(const string &vpath) {
 
 IDataSource *FileSystem::checkBuiltinData(const Std::string &vfn, bool is_text) {
 	// Is it a Memory file?
-	Std::map<Common::String, MemoryFile *>::iterator mf = _memoryFiles.find(vfn);
+	Std::map<Common::String, MemoryFile *>::const_iterator mf = _memoryFiles.find(vfn);
 
 	if (mf != _memoryFiles.end())
 		return new IBufferDataSource(mf->_value->_data,
@@ -265,13 +263,13 @@ IDataSource *FileSystem::checkBuiltinData(const Std::string &vfn, bool is_text) 
 	return nullptr;
 }
 
-bool FileSystem::rewrite_virtual_path(string &vfn) {
+bool FileSystem::rewrite_virtual_path(string &vfn) const {
 	bool ret = false;
 	string::size_type pos = vfn.size();
 
 	while ((pos = vfn.rfind('/', pos)) != Std::string::npos) {
 //		perr << vfn << ", " << vfn.substr(0, pos) << ", " << pos << Std::endl;
-		Std::map<Common::String, string>::iterator p = _virtualPaths.find(
+		Std::map<Common::String, string>::const_iterator p = _virtualPaths.find(
 		            vfn.substr(0, pos));
 
 		if (p != _virtualPaths.end()) {
@@ -305,15 +303,6 @@ bool FileSystem::IsDir(const string &path) {
 bool FileSystem::MkDir(const string &path) {
 	Common::FSNode newDir(path);
 	return newDir.createDirectory();
-}
-
-/*
- *  Get the current users pentagram home path
- */
-
-Std::string FileSystem::getHomePath() {
-	Common::FSNode gameDir = Ultima8Engine::get_instance()->getGameDirectory();
-	return gameDir.getPath();
 }
 
 } // End of namespace Ultima8

@@ -293,12 +293,13 @@ void GriffonEngine::loadMap(int mapnum) {
 					rcDest.setWidth(16);
 					rcDest.setHeight(16);
 
+					int alpha = 255;
 					if (l == 2 && curtilel == 1) {
 						for (int ff = 0; ff <= 5; ff++) {
 							int ffa = 20 * 5 - 1 + ff * 20;
 							int ffb = 20 * 5 + 4 + ff * 20;
 							if (curtile > ffa && curtile < ffb) {
-								_tiles[curtilel]->setAlpha(128, true);
+								alpha = 128;
 							}
 						}
 					}
@@ -306,13 +307,12 @@ void GriffonEngine::loadMap(int mapnum) {
 						for (int ff = 0; ff <= 4; ff++) {
 							int ffa = 20 * (5 + ff) + 3;
 							if (curtile == ffa) {
-								_tiles[curtilel]->setAlpha(192, true);
+								alpha = 192;
 							}
 						}
 					}
 
-					_tiles[curtilel]->blit(*_mapBg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-					_tiles[curtilel]->setAlpha(255, true);
+					_tiles[curtilel]->blit(*_mapBg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, TS_ARGB(alpha, 255, 255, 255));
 
 					rcDest.left = x * 8;
 					rcDest.top = y * 8;

@@ -66,11 +66,7 @@ void MiniStatsGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
 	_shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
-	ShapeFrame *sf = _shape->getFrame(0);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 }
 
 void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {

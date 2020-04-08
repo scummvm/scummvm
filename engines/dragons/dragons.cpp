@@ -957,18 +957,64 @@ void DragonsEngine::updatePathfindingActors() {
 	}
 }
 
-void DragonsEngine::fade_related(uint32 flags) {
+void DragonsEngine::fadeFromBlack(uint32 flags) {
 	if (!isFlagSet(ENGINE_FLAG_40)) {
 		return;
 	}
+	bool isUnkFlag2Set = isUnkFlagSet(ENGINE_UNK1_FLAG_2);
+
 	setUnkFlags(ENGINE_UNK1_FLAG_2);
 	clearFlags(ENGINE_FLAG_40);
 
-	//TODO 0x80015a1c
+	//TODO 0x80015a1c implement fading logic here.
+
+	if (!isUnkFlag2Set) {
+		clearUnkFlags(ENGINE_UNK1_FLAG_2);
+	}
 }
 
-void DragonsEngine::call_fade_related_1f() {
-	fade_related(0x1f);
+void DragonsEngine::fadeFromBlack() {
+	fadeFromBlack(0x1f);
+}
+
+void DragonsEngine::fadeFromBlackExcludingFont() {
+	fadeFromBlack(0x1e);
+}
+
+void DragonsEngine::fadeToBlack() {
+	fadeToBlack(0x1f);
+}
+
+void DragonsEngine::fadeToBlackExcludingFont() {
+	fadeToBlack(0x1e);
+}
+
+void DragonsEngine::fadeToBlack(uint32 flags) {
+	bool isFlag2Set = isUnkFlagSet(ENGINE_UNK1_FLAG_2);
+	//TODO
+//	do {
+//		SetShadeTex(poly_ft4_tbl + uVar2,0);
+//		uVar5 = uVar5 + 1;
+//		uVar2 = (uint)uVar5;
+//	} while (uVar5 < 0x40);
+//	uVar5 = 0;
+//	uVar2 = 0;
+//	do {
+//		SetShadeTex(poly_f4_tbl + uVar2,0);
+//		uVar1 = unkFlags1;
+//		uVar5 = uVar5 + 1;
+//		uVar2 = (uint)uVar5;
+//	} while (uVar5 < 0xf);
+	if (!isFlagSet(ENGINE_FLAG_40)) {
+		setUnkFlags(ENGINE_UNK1_FLAG_2);
+
+		//TODO fade out here.
+
+		setFlags(ENGINE_FLAG_40);
+		if (!isFlag2Set) {
+			clearUnkFlags(ENGINE_UNK1_FLAG_2);
+		}
+	}
 }
 
 void DragonsEngine::performAction() {
@@ -1639,7 +1685,7 @@ void DragonsEngine::loadingScreenUpdate() {
 	if (_loadingScreenState->loadingFlamesUpdateCounter == 0) {
 		_loadingScreenState->loadingFlamesUpdateCounter = 4;
 		for (int i = 0; i < 10 ; i++) {
-			flameYOffset = _loadingScreenState->baseYOffset - flameOffsetTbl[(i + _loadingScreenState->flameOffsetIdx) % 27];
+			flameYOffset = _loadingScreenState->baseYOffset - flameOffsetTbl[(i + _loadingScreenState->flameOffsetIdx) % 26];
 			if (_loadingScreenState->flames[i]->_y_pos >= -0xb) {
 				_loadingScreenState->flames[i]->_y_pos = flameYOffset;
 			}
@@ -1649,7 +1695,7 @@ void DragonsEngine::loadingScreenUpdate() {
 				quad->points[1].y = flameYOffset + 2;
 			}
 		}
-		_loadingScreenState->flameOffsetIdx = (_loadingScreenState->flameOffsetIdx + 1) % 27;
+		_loadingScreenState->flameOffsetIdx = (_loadingScreenState->flameOffsetIdx + 1) % 26;
 	} else {
 		_loadingScreenState->loadingFlamesUpdateCounter--;
 	}

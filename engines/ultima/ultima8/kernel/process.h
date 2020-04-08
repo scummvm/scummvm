@@ -74,6 +74,11 @@ public:
 		_flags |= PROC_TERM_DEFERRED;
 	}
 
+	//! run even when paused
+	void setRunPaused() {
+		_flags |= PROC_RUNPAUSED;
+	};
+
 	//! suspend until process '_pid' returns. If _pid is 0, suspend indefinitely
 	void waitFor(ProcId _pid);
 
@@ -83,7 +88,11 @@ public:
 	//! suspend process
 	void suspend();
 
+	//! Wake up when the process we were waiting for has finished
 	void wakeUp(uint32 result);
+
+	//! A hook to add aditional behavior on wakeup, before anything else happens
+	virtual void onWakeUp() {};
 
 	void setItemNum(ObjId it) {
 		_itemNum = it;

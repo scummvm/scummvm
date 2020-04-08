@@ -272,37 +272,37 @@ uint16 CameraProcess::FindRoof(int32 factor) {
 void CameraProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_sx));
-	ods->write4(static_cast<uint32>(_sy));
-	ods->write4(static_cast<uint32>(_sz));
-	ods->write4(static_cast<uint32>(_ex));
-	ods->write4(static_cast<uint32>(_ey));
-	ods->write4(static_cast<uint32>(_ez));
-	ods->write4(static_cast<uint32>(_time));
-	ods->write4(static_cast<uint32>(_elapsed));
-	ods->write2(_itemNum);
-	ods->write4(_lastFrameNum);
-	ods->write4(static_cast<uint32>(_earthquake));
-	ods->write4(static_cast<uint32>(_eqX));
-	ods->write4(static_cast<uint32>(_eqY));
+	ods->writeUint32LE(static_cast<uint32>(_sx));
+	ods->writeUint32LE(static_cast<uint32>(_sy));
+	ods->writeUint32LE(static_cast<uint32>(_sz));
+	ods->writeUint32LE(static_cast<uint32>(_ex));
+	ods->writeUint32LE(static_cast<uint32>(_ey));
+	ods->writeUint32LE(static_cast<uint32>(_ez));
+	ods->writeUint32LE(static_cast<uint32>(_time));
+	ods->writeUint32LE(static_cast<uint32>(_elapsed));
+	ods->writeUint16LE(_itemNum);
+	ods->writeUint32LE(_lastFrameNum);
+	ods->writeUint32LE(static_cast<uint32>(_earthquake));
+	ods->writeUint32LE(static_cast<uint32>(_eqX));
+	ods->writeUint32LE(static_cast<uint32>(_eqY));
 }
 
 bool CameraProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_sx = static_cast<int32>(ids->read4());
-	_sy = static_cast<int32>(ids->read4());
-	_sz = static_cast<int32>(ids->read4());
-	_ex = static_cast<int32>(ids->read4());
-	_ey = static_cast<int32>(ids->read4());
-	_ez = static_cast<int32>(ids->read4());
-	_time = static_cast<int32>(ids->read4());
-	_elapsed = static_cast<int32>(ids->read4());
-	_itemNum = ids->read2();
-	_lastFrameNum = ids->read4();
-	_earthquake = static_cast<int32>(ids->read4()); //static
-	_eqX = static_cast<int32>(ids->read4()); //static
-	_eqY = static_cast<int32>(ids->read4()); //static
+	_sx = static_cast<int32>(ids->readUint32LE());
+	_sy = static_cast<int32>(ids->readUint32LE());
+	_sz = static_cast<int32>(ids->readUint32LE());
+	_ex = static_cast<int32>(ids->readUint32LE());
+	_ey = static_cast<int32>(ids->readUint32LE());
+	_ez = static_cast<int32>(ids->readUint32LE());
+	_time = static_cast<int32>(ids->readUint32LE());
+	_elapsed = static_cast<int32>(ids->readUint32LE());
+	_itemNum = ids->readUint16LE();
+	_lastFrameNum = ids->readUint32LE();
+	_earthquake = static_cast<int32>(ids->readUint32LE()); //static
+	_eqX = static_cast<int32>(ids->readUint32LE()); //static
+	_eqY = static_cast<int32>(ids->readUint32LE()); //static
 
 	_camera = this; //static
 

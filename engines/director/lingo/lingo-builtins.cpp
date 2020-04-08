@@ -23,13 +23,16 @@
 #include "common/system.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/frame.h"
 #include "director/score.h"
+#include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
+#include "director/util.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
@@ -195,11 +198,7 @@ static struct BuiltinProto {
 	{ "beep",	 		LB::b_beep,			0, 1, false, 2, BLTIN },	// D2
 	{ "mci",	 		LB::b_mci,			1, 1, false, 3, BLTIN },	//		D3.1 c
 	{ "mciwait",		LB::b_mciwait,		1, 1, false, 4, BLTIN },	//			D4 c
-	{ "sound-close",	LB::b_soundClose, 	1, 1, false, 4, BLTIN },	//			D4 c
-	{ "sound-fadeIn",	LB::b_soundFadeIn, 	1, 2, false, 3, BLTIN },	//		D3 c
-	{ "sound-fadeOut",	LB::b_soundFadeOut, 1, 2, false, 3, BLTIN },	//		D3 c
-	{ "sound-playFile",	LB::b_soundPlayFile,2, 2, false, 3, BLTIN },	//		D3 c
-	{ "sound-stop",		LB::b_soundStop,	1, 1, false, 2, BLTIN },	//		D2 c
+	{ "sound",			LB::b_sound,		2, 3, false, 3, BLTIN },	//		D3 c
 	{ "soundBusy",		LB::b_soundBusy,	1, 1, true,  3, FBLTIN },	//		D3 f
 	// Window
 	{ "close",			LB::b_close,		1, 1, false, 4, BLTIN },	//			D4 c
@@ -236,13 +235,6 @@ static struct BuiltinProto {
 	{ 0, 0, 0, 0, false, 0, 0 }
 };
 
-static const char *twoWordBuiltins[] = {
-	//"duplicate",
-	//"erase",
-	"sound",
-	0
-};
-
 static const char *predefinedMethods[] = {
 	"mAtFrame",				// D3
 	"mDescribe",			// D3
@@ -277,15 +269,17 @@ void Lingo::initBuiltIns() {
 		_functions[(void *)sym->u.s] = new FuncDesc(blt->name, "");
 	}
 
-	for (const char **b = twoWordBuiltins; *b; b++)
-		_twoWordBuiltins[*b] = true;
-
 	// Set predefined methods
 	for (const char **b = predefinedMethods; *b; b++) {
 		Symbol *s = g_lingo->lookupVar(*b, true, true);
 		s->type = SYMBOL;
 		s->u.s = new Common::String(*b);
 	}
+}
+
+void Lingo::cleanupBuiltins() {
+	for (FuncHash::iterator it = _functions.begin(); it != _functions.end(); ++it)
+		delete it->_value;
 }
 
 void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *prefix) {
@@ -296,8 +290,7 @@ void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *pr
 	for (int i = 0; i < nargs; i++) {
 		Datum d = _stack[_stack.size() - nargs + i];
 
-		d.toString();
-		s += *d.u.s;
+		s += d.getPrintable();
 
 		if (i != nargs - 1)
 			s += ", ";
@@ -347,48 +340,48 @@ void LB::b_abs(int nargs) {
 
 void LB::b_atan(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toFloat();
+	d.makeFloat();
 	d.u.f = atan(d.u.f);
 	g_lingo->push(d);
 }
 
 void LB::b_cos(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toFloat();
+	d.makeFloat();
 	d.u.f = cos(d.u.f);
 	g_lingo->push(d);
 }
 
 void LB::b_exp(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toInt(); // Lingo uses int, so we're enforcing it
-	d.toFloat();
+	d.makeInt(); // Lingo uses int, so we're enforcing it
+	d.makeFloat();
 	d.u.f = exp(d.u.f);
 	g_lingo->push(d);
 }
 
 void LB::b_float(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toFloat();
+	d.makeFloat();
 	g_lingo->push(d);
 }
 
 void LB::b_integer(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toInt();
+	d.makeInt();
 	g_lingo->push(d);
 }
 
 void LB::b_log(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toFloat();
+	d.makeFloat();
 	d.u.f = log(d.u.f);
 	g_lingo->push(d);
 }
 
 void LB::b_pi(int nargs) {
 	Datum d;
-	d.toFloat();
+	d.makeFloat();
 	d.u.f = M_PI;
 	g_lingo->push(d);
 }
@@ -396,8 +389,8 @@ void LB::b_pi(int nargs) {
 void LB::b_power(int nargs) {
 	Datum d1 = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
-	d1.toFloat();
-	d2.toFloat();
+	d1.makeFloat();
+	d2.makeFloat();
 	d1.u.f = pow(d2.u.f, d1.u.f);
 	g_lingo->push(d1);
 }
@@ -406,7 +399,7 @@ void LB::b_random(int nargs) {
 	Datum max = g_lingo->pop();
 	Datum res;
 
-	max.toInt();
+	max.makeInt();
 
 	res.u.i = g_lingo->_vm->_rnd.getRandomNumber(max.u.i - 1) + 1;
 	res.type = INT;
@@ -416,21 +409,21 @@ void LB::b_random(int nargs) {
 
 void LB::b_sin(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toFloat();
+	d.makeFloat();
 	d.u.f = sin(d.u.f);
 	g_lingo->push(d);
 }
 
 void LB::b_sqrt(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toFloat();
+	d.makeFloat();
 	d.u.f = sqrt(d.u.f);
 	g_lingo->push(d);
 }
 
 void LB::b_tan(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toFloat();
+	d.makeFloat();
 	d.u.f = tan(d.u.f);
 	g_lingo->push(d);
 }
@@ -446,8 +439,8 @@ void LB::b_chars(int nargs) {
 	if (s.type != STRING)
 		error("Incorrect type for 'chars' function: %s", s.type2str());
 
-	to.toInt();
-	from.toInt();
+	to.makeInt();
+	from.makeInt();
 
 	int len = strlen(s.u.s->c_str());
 	int f = MAX(0, MIN(len, from.u.i - 1));
@@ -479,7 +472,7 @@ void LB::b_charToNum(int nargs) {
 void LB::b_delete(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toInt();
+	d.makeInt();
 
 	warning("STUB: b_delete");
 
@@ -489,7 +482,7 @@ void LB::b_delete(int nargs) {
 void LB::b_hilite(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toInt();
+	d.makeInt();
 
 	warning("STUB: b_hilite");
 
@@ -499,7 +492,7 @@ void LB::b_hilite(int nargs) {
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
 	if (d.type == REFERENCE)
-		d.toString();
+		d.makeString();
 
 	if (d.type != STRING)
 		error("Incorrect type for 'length' function: %s", d.type2str());
@@ -515,7 +508,7 @@ void LB::b_length(int nargs) {
 void LB::b_numToChar(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toInt();
+	d.makeInt();
 
 	g_lingo->push(Datum((char)d.u.i));
 }
@@ -528,8 +521,8 @@ void LB::b_offset(int nargs) {
 	Datum target = g_lingo->pop();
 	Datum source = g_lingo->pop();
 
-	target.toString();
-	source.toString();
+	target.makeString();
+	source.makeString();
 
 	warning("STUB: b_offset()");
 
@@ -538,13 +531,13 @@ void LB::b_offset(int nargs) {
 
 void LB::b_string(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toString();
+	d.makeString();
 	g_lingo->push(d);
 }
 
 void LB::b_value(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toInt();
+	d.makeInt();
 	warning("STUB: b_value()");
 	g_lingo->push(d);
 }
@@ -655,8 +648,31 @@ void LB::b_getaProp(int nargs) {
 }
 
 void LB::b_getAt(int nargs) {
-	g_lingo->printSTUBWithArglist("b_getAt", nargs);
-	g_lingo->dropStack(nargs);
+	if (nargs != 2) {
+		warning("b_getAt: expected 2 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+	Datum index = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	if (index.type == FLOAT)
+		index.makeInt();
+
+	if (index.type != INT) {
+		warning("b_getAt: index arg should be of type INT or FLOAT, not %s", index.type2str());
+		return;
+	}
+	if (list.type != ARRAY) {
+		warning("b_getAt: list arg should be of type ARRAY, not %s", list.type2str());
+		return;
+	}
+	if (index.u.i-1 < 0 || index.u.i > list.u.farr->size()){
+		warning("b_getAt: index %s out of bounds", index.type2str());
+		return;
+	}
+
+	Datum result = list.u.farr->operator[](index.u.i-1);
+	g_lingo->push(result);
 }
 
 void LB::b_getLast(int nargs) {
@@ -741,7 +757,7 @@ void LB::b_closeDA(int nargs) {
 void LB::b_closeResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	warning("STUB: b_closeResFile(%s)", d.u.s->c_str());
 
@@ -751,7 +767,7 @@ void LB::b_closeResFile(int nargs) {
 void LB::b_closeXlib(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	warning("STUB: b_closeXlib(%s)", d.u.s->c_str());
 
@@ -769,7 +785,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 void LB::b_openDA(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	warning("STUB: b_openDA(%s)", d.u.s->c_str());
 
@@ -779,7 +795,7 @@ void LB::b_openDA(int nargs) {
 void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	warning("STUB: b_openResFile(%s)", d.u.s->c_str());
 
@@ -789,7 +805,7 @@ void LB::b_openResFile(int nargs) {
 void LB::b_openXlib(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	warning("STUB: b_openXlib(%s)", d.u.s->c_str());
 
@@ -809,7 +825,7 @@ void LB::b_setCallBack(int nargs) {
 void LB::b_showResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	warning("STUB: b_showResFile(%s)", d.u.s->c_str());
 
@@ -819,7 +835,7 @@ void LB::b_showResFile(int nargs) {
 void LB::b_showXlib(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	warning("STUB: b_showXlib(%s)", d.u.s->c_str());
 
@@ -829,7 +845,7 @@ void LB::b_showXlib(int nargs) {
 void LB::b_xFactoryList(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	warning("STUB: b_xFactoryList(%s)", d.u.s->c_str());
 
@@ -858,14 +874,14 @@ void LB::b_nothing(int nargs) {
 
 void LB::b_delay(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toInt();
+	d.makeInt();
 
 	g_director->getCurrentScore()->_nextFrameTime = g_system->getMillis() + (float)d.u.i / 60 * 1000;
 }
 
 void LB::b_do(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toString();
+	d.makeString();
 	warning("STUB: b_do(%s)", d.u.s->c_str());
 }
 
@@ -1025,7 +1041,7 @@ void LB::b_startTimer(int nargs) {
 ///////////////////
 void LB::b_factoryP(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toInt();
+	d.makeInt();
 	d.u.i = 1;
 	g_lingo->push(d);
 
@@ -1035,14 +1051,14 @@ void LB::b_factoryP(int nargs) {
 void LB::b_floatP(int nargs) {
 	Datum d = g_lingo->pop();
 	int res = (d.type == FLOAT) ? 1 : 0;
-	d.toInt();
+	d.makeInt();
 	d.u.i = res;
 	g_lingo->push(d);
 }
 
 void LB::b_ilk(int nargs) {
 	Datum d = g_lingo->pop();
-	d.u.i = d.type;
+	d.u.s = new Common::String(d.type2str(true));
 	d.type = SYMBOL;
 	g_lingo->push(d);
 }
@@ -1050,7 +1066,7 @@ void LB::b_ilk(int nargs) {
 void LB::b_integerp(int nargs) {
 	Datum d = g_lingo->pop();
 	int res = (d.type == INT) ? 1 : 0;
-	d.toInt();
+	d.makeInt();
 	d.u.i = res;
 	g_lingo->push(d);
 }
@@ -1058,7 +1074,7 @@ void LB::b_integerp(int nargs) {
 void LB::b_objectp(int nargs) {
 	Datum d = g_lingo->pop();
 	int res = (d.type == OBJECT) ? 1 : 0;
-	d.toInt();
+	d.makeInt();
 	d.u.i = res;
 	g_lingo->push(d);
 }
@@ -1072,7 +1088,7 @@ void LB::b_pictureP(int nargs) {
 void LB::b_stringp(int nargs) {
 	Datum d = g_lingo->pop();
 	int res = (d.type == STRING) ? 1 : 0;
-	d.toInt();
+	d.makeInt();
 	d.u.i = res;
 	g_lingo->push(d);
 }
@@ -1080,7 +1096,7 @@ void LB::b_stringp(int nargs) {
 void LB::b_symbolp(int nargs) {
 	Datum d = g_lingo->pop();
 	int res = (d.type == SYMBOL) ? 1 : 0;
-	d.toInt();
+	d.makeInt();
 	d.u.i = res;
 	g_lingo->push(d);
 }
@@ -1088,7 +1104,7 @@ void LB::b_symbolp(int nargs) {
 void LB::b_voidP(int nargs) {
 	Datum d = g_lingo->pop();
 	int res = (d.type == VOID) ? 1 : 0;
-	d.toInt();
+	d.makeInt();
 	d.u.i = res;
 	g_lingo->push(d);
 }
@@ -1100,7 +1116,7 @@ void LB::b_voidP(int nargs) {
 void LB::b_alert(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	warning("STUB: b_alert(%s)", d.u.s->c_str());
 
@@ -1127,12 +1143,12 @@ void LB::b_cursor(int nargs) {
 	if (d.type == ARRAY) {
 		Datum sprite = d.u.farr->operator[](0);
 		Datum mask = d.u.farr->operator[](1);
-		sprite.toInt();
-		mask.toInt();
+		sprite.makeInt();
+		mask.makeInt();
 
 		g_lingo->func_cursor(sprite.u.i, mask.u.i);
 	} else {
-		d.toInt();
+		d.makeInt();
 		g_lingo->func_cursor(d.u.i, -1);
 	}
 }
@@ -1152,8 +1168,8 @@ void LB::b_constrainH(int nargs) {
 	Datum num = g_lingo->pop();
 	Datum sprite = g_lingo->pop();
 
-	num.toInt();
-	sprite.toInt();
+	num.makeInt();
+	sprite.makeInt();
 
 	warning("STUB: b_constrainH(%d, %d)", sprite.u.i, num.u.i);
 
@@ -1164,8 +1180,8 @@ void LB::b_constrainV(int nargs) {
 	Datum num = g_lingo->pop();
 	Datum sprite = g_lingo->pop();
 
-	num.toInt();
-	sprite.toInt();
+	num.makeInt();
+	sprite.makeInt();
 
 	warning("STUB: b_constrainV(%d, %d)", sprite.u.i, num.u.i);
 
@@ -1218,7 +1234,7 @@ void LB::b_installMenu(int nargs) {
 	// installMenu castNum
 	Datum d = g_lingo->pop();
 
-	d.toInt();
+	d.makeInt();
 
 	if (g_director->getVersion() < 4)
 		d.u.i += g_director->getCurrentScore()->_castIDoffset;
@@ -1351,7 +1367,7 @@ Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {
 
 void LB::b_label(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toInt();
+	d.makeInt();
 	warning("STUB: b_label(%d)", d.u.i);
 
 	g_lingo->push(Datum(0));
@@ -1359,7 +1375,7 @@ void LB::b_label(int nargs) {
 
 void LB::b_marker(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toInt();
+	d.makeInt();
 	int marker = g_lingo->func_marker(d.u.i);
 	g_lingo->push(marker);
 }
@@ -1394,11 +1410,47 @@ void LB::b_puppetPalette(int nargs) {
 }
 
 void LB::b_puppetSound(int nargs) {
-	g_lingo->convertVOIDtoString(0, nargs);
+	if (nargs != 1) {
+		error("b_puppetSound: expected 1 argument, got %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+	Score *score = g_director->getCurrentScore();
 
-	g_lingo->printSTUBWithArglist("b_puppetSound", nargs);
+	DirectorSound *sound = g_director->getSoundManager();
+	Datum castMember = g_lingo->pop();
 
-	g_lingo->dropStack(nargs);
+	if (!score) {
+		warning("b_puppetSound(): no score");
+
+		return;
+	}
+
+	int castId = g_lingo->castIdFetch(castMember);
+
+	if (castId == 0) {
+		sound->stopSound(1);
+	} else {
+		Cast *cast = score->_loadedCast->getVal(castId);
+		if (!cast) {
+			warning("b_puppetSound: attempted to play a NULL cast member");
+			return;
+		} else if (cast->_type != kCastSound) {
+			error("b_puppetSound: attempted to play a non-SoundCast cast member");
+			return;
+		}
+		bool looping = ((SoundCast *)cast)->_looping;
+		SNDDecoder *sd = ((SoundCast *)cast)->_audio;
+		if (!sd) {
+			warning("b_puppetSound: no audio data attached to cast");
+			return;
+		}
+		if (looping)
+			sound->playStream(*sd->getLoopingAudioStream(), 1);
+		else
+			sound->playStream(*sd->getAudioStream(), 1);
+	}
+
 }
 
 void LB::b_puppetSprite(int nargs) {
@@ -1428,7 +1480,7 @@ void LB::b_ramNeeded(int nargs) {
 void LB::b_rollOver(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toInt();
+	d.makeInt();
 
 	int arg = d.u.i;
 
@@ -1486,7 +1538,7 @@ void LB::b_zoomBox(int nargs) {
 	int delayTicks = 1;
 	if (nargs > 2) {
 		Datum d = g_lingo->pop();
-		d.toInt();
+		d.makeInt();
 
 		delayTicks = d.u.i;
 	}
@@ -1494,8 +1546,8 @@ void LB::b_zoomBox(int nargs) {
 	Datum endSprite = g_lingo->pop();
 	Datum startSprite = g_lingo->pop();
 
-	startSprite.toInt();
-	endSprite.toInt();
+	startSprite.makeInt();
+	endSprite.makeInt();
 
 	Score *score = g_director->getCurrentScore();
 	uint16 curFrame = score->getCurrentFrame();
@@ -1574,8 +1626,8 @@ void LB::b_point(int nargs) {
 	Datum x = g_lingo->pop();
 	Datum d;
 
-	x.toFloat();
-	y.toFloat();
+	x.makeFloat();
+	y.makeFloat();
 
 	d.u.farr = new DatumArray;
 
@@ -1651,7 +1703,7 @@ void LB::b_beep(int nargs) {
 void LB::b_mci(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	g_lingo->func_mci(*d.u.s);
 }
@@ -1659,45 +1711,98 @@ void LB::b_mci(int nargs) {
 void LB::b_mciwait(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 
 	g_lingo->func_mciwait(*d.u.s);
 }
 
+void LB::b_sound(int nargs) {
+	// Builtin function for sound as used by the Director bytecode engine.
+	//
+	// Accepted arguments:
+	// "close", INT soundChannel
+	// "fadeIn", INT soundChannel(, INT ticks)
+	// "fadeOut", INT soundChannel(, INT ticks)
+	// "playFile", INT soundChannel, STRING fileName
+	// "stop", INT soundChannel
+
+	if (nargs < 2 || nargs > 3) {
+		warning("b_sound: expected 2 or 3 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+
+		return;
+	}
+
+	Datum secondArg = g_lingo->pop();
+	Datum firstArg = g_lingo->pop();
+	Datum verb;
+	if (nargs > 2) {
+		verb = g_lingo->pop();
+	} else {
+		verb = firstArg;
+		firstArg = secondArg;
+	}
+
+	if (verb.type != STRING && verb.type != SYMBOL) {
+		warning("b_sound: verb arg should be of type STRING, not %s", verb.type2str());
+		return;
+	}
+
+	if (verb.u.s->equalsIgnoreCase("close") || verb.u.s->equalsIgnoreCase("stop")) {
+		if (nargs != 2) {
+			warning("sound %s: expected 1 argument, got %d", verb.u.s->c_str(), nargs - 1);
+			return;
+		}
+
+		if (firstArg.type != INT) {
+			warning("sound close: whichChannel arg should be of type INT, not %s", firstArg.type2str());
+			return;
+		}
+		g_director->getSoundManager()->stopSound(firstArg.u.i);
+	} else if (verb.u.s->equalsIgnoreCase("fadeIn")) {
+		warning("STUB: sound fadeIn");
+		return;
+	} else if (verb.u.s->equalsIgnoreCase("fadeOut")) {
+		warning("STUB: sound fadeOut");
+		return;
+	} else if (verb.u.s->equalsIgnoreCase("playFile")) {
+		if (nargs != 3) {
+			warning("sound playFile: expected 2 arguments, got %d", nargs - 1);
+			return;
+		}
+		if (firstArg.type != INT) {
+			warning("sound playFile: whichChannel arg should be of type INT, not %s", firstArg.type2str());
+			return;
+		}
+		if (secondArg.type != STRING) {
+			warning("sound playFile: whichFile arg should be of type STRING, not %s", secondArg.type2str());
+			return;
+		}
+
+		g_director->getSoundManager()->playFile(pathMakeRelative(*secondArg.u.s), firstArg.u.i);
+	} else {
+		warning("b_sound: unknown verb %s", verb.u.s->c_str());
+	}
+}
+
 void LB::b_soundBusy(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundBusy", nargs);
+	if (nargs != 1) {
+		error("b_soundBusy: expected 1 argument, got %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
 
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_soundClose(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundClose", nargs);
-
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_soundFadeIn(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundFadeIn", nargs);
-
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_soundFadeOut(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundFadeOut", nargs);
-
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_soundPlayFile(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundPlayFile", nargs);
-
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_soundStop(int nargs) {
-	g_lingo->printSTUBWithArglist("b_soundStop", nargs);
-
-	g_lingo->dropStack(nargs);
+	DirectorSound *sound = g_director->getSoundManager();
+	Datum whichChannel = g_lingo->pop();
+	if (whichChannel.type != INT) {
+		warning("b_soundBusy(): whichChannel arg should be of type INT, not %s", whichChannel.type2str());
+		return;
+	}
+	bool isBusy = sound->isChannelActive(whichChannel.u.i);
+	Datum result;
+	result.type = INT;
+	result.u.i = isBusy ? 1 : 0;
+	g_lingo->push(result);
 }
 
 ///////////////////
@@ -1802,29 +1907,7 @@ void LB::b_cast(int nargs) {
 void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
 
-	int id;
-
-	if (!g_director->getCurrentScore()) {
-		warning("b_field: Assigning to a field in an empty score");
-		d.u.i = 0;
-		d.type = INT;
-		g_lingo->push(d);
-		return;
-	}
-
-	if (d.type == STRING) {
-		if (g_director->getCurrentScore()->_castsNames.contains(*d.u.s))
-			id = g_director->getCurrentScore()->_castsNames[*d.u.s];
-		else
-			error("b_field: Reference to non-existent field: %s", d.u.s->c_str());
-	} else if (d.type == INT || d.type == FLOAT) {
-		d.toInt();
-		id = d.u.i;
-	} else {
-		error("b_field: Incorrect reference type: %s", d.type2str());
-	}
-
-	d.u.i = id;
+	d.u.i = g_lingo->castIdFetch(d);
 
 	d.type = REFERENCE;
 
@@ -1855,7 +1938,7 @@ void LB::b_window(int nargs) {
 
 void LB::b_numberofchars(int nargs) {
 	Datum d = g_lingo->pop();
-	d.toString();
+	d.makeString();
 
 	int len = strlen(d.u.s->c_str());
 	delete d.u.s;
@@ -1868,7 +1951,7 @@ void LB::b_numberofchars(int nargs) {
 void LB::b_numberofitems(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 	int numberofitems = 1;
 	Common::String contents = *d.u.s;
 	for (uint32 i = 0;  i < d.u.s->size(); i++) {
@@ -1886,7 +1969,7 @@ void LB::b_numberofitems(int nargs) {
 void LB::b_numberoflines(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 	int numberoflines = 1;
 	Common::String contents = *d.u.s;
 	for (uint32 i = 0; i < d.u.s->size(); i++) {
@@ -1904,7 +1987,7 @@ void LB::b_numberoflines(int nargs) {
 void LB::b_numberofwords(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.toString();
+	d.makeString();
 	int numberofwords = 0;
 	Common::String contents = *d.u.s;
 	for (uint32 i = 1; i < d.u.s->size(); i++) {
@@ -1925,7 +2008,7 @@ void LB::b_lastcharof(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_lastcharof");
-	d.toInt();
+	d.makeInt();
 	d.u.i = 0;
 
 	g_lingo->push(d);
@@ -1935,7 +2018,7 @@ void LB::b_lastitemof(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_lastitemof");
-	d.toInt();
+	d.makeInt();
 	d.u.i = 0;
 
 	g_lingo->push(d);
@@ -1945,7 +2028,7 @@ void LB::b_lastlineof(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_lastlineof");
-	d.toInt();
+	d.makeInt();
 	d.u.i = 0;
 
 	g_lingo->push(d);
@@ -1955,7 +2038,7 @@ void LB::b_lastwordof(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_lastwordof");
-	d.toInt();
+	d.makeInt();
 	d.u.i = 0;
 
 	g_lingo->push(d);

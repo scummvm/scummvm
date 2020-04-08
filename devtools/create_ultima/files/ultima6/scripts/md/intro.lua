@@ -455,7 +455,7 @@ function show_home()
    local text = sprite_new(nil, 0, 160, true)
    text.text = text_tbl[1]
    text.text_color = 14
-   text.text_align_centre = true
+   text.text_align = 2
    fade_in()
    music_play("mdd_mus.lzc", 8)
    
@@ -673,7 +673,7 @@ function show_lab_present_day()
    local text = sprite_new(nil, 0, 160, true)
    text.text = text_tbl[1]
    text.text_color = 2
-   text.text_align_centre = true
+   text.text_align = 2
 
    local moongate_tbl = image_load_all("moongate.lzc")
          
@@ -792,7 +792,7 @@ function show_lab_1895()
    local text = sprite_new(nil, 0, 160, true)
    text.text = text_tbl[1]
    text.text_color = 6
-   text.text_align_centre = true
+   text.text_align = 2
    
    local bg = sprite_new(scene4a_tbl[0], 0, 24, true)
       
@@ -1812,7 +1812,7 @@ function create_character()
    local text = sprite_new(nil, 0, 160, true)
    text.text = text_tbl[0]
    text.text_color = 2
-   text.text_align_centre = true
+   text.text_align = 2
    
    local bg = sprite_new(create_tbl[0][0], 0, 24, true)
    local eyes_sprite = sprite_new(create_tbl[0][4], 0, 24, true)

@@ -549,14 +549,9 @@ void Ultima8Engine::paint() {
 	prev = now;
 	++t;
 
-	_painting = true;
-
 	// Begin _painting
+	_painting = true;
 	_screen->BeginPainting();
-
-	// We need to get the dims
-	Rect dims;
-	_screen->GetSurfaceDims(dims);
 
 	tpaint -= g_system->getMillis();
 	_desktopGump->Paint(_screen, _lerpFactor, false);
@@ -567,7 +562,6 @@ void Ultima8Engine::paint() {
 
 	// End _painting
 	_screen->EndPainting();
-
 	_painting = false;
 }
 
@@ -581,24 +575,12 @@ void Ultima8Engine::GraphicSysInit() {
 	_settingMan->get("height", height);
 	_settingMan->get("bpp", bpp);
 
-#ifdef UNDER_CE
-	width = 240;
-	height = 320;
-#endif
-
-#if 0
-	// store values in user's config file
-	_settingMan->set("width", width);
-	_settingMan->set("height", height);
-	_settingMan->set("bpp", bpp);
-#endif
-
 	if (_screen) {
 		Rect old_dims;
 		_screen->GetSurfaceDims(old_dims);
 		if (width == old_dims.w && height == old_dims.h)
 			return;
-		bpp = RenderSurface::_format.s_bpp;
+		bpp = RenderSurface::_format.bpp();
 
 		delete _screen;
 	}
@@ -932,17 +914,17 @@ void Ultima8Engine::writeSaveInfo(ODataSource *ods) {
 	TimeDate timeInfo;
 	g_system->getTimeAndDate(timeInfo);
 
-	ods->write2(static_cast<uint16>(timeInfo.tm_year + 1900));
-	ods->write1(static_cast<uint8>(timeInfo.tm_mon + 1));
-	ods->write1(static_cast<uint8>(timeInfo.tm_mday));
-	ods->write1(static_cast<uint8>(timeInfo.tm_hour));
-	ods->write1(static_cast<uint8>(timeInfo.tm_min));
-	ods->write1(static_cast<uint8>(timeInfo.tm_sec));
-	ods->write4(_saveCount);
-	ods->write4(getGameTimeInSeconds());
+	ods->writeUint16LE(static_cast<uint16>(timeInfo.tm_year + 1900));
+	ods->writeByte(static_cast<uint8>(timeInfo.tm_mon + 1));
+	ods->writeByte(static_cast<uint8>(timeInfo.tm_mday));
+	ods->writeByte(static_cast<uint8>(timeInfo.tm_hour));
+	ods->writeByte(static_cast<uint8>(timeInfo.tm_min));
+	ods->writeByte(static_cast<uint8>(timeInfo.tm_sec));
+	ods->writeUint32LE(_saveCount);
+	ods->writeUint32LE(getGameTimeInSeconds());
 
 	uint8 c = (_hasCheated ? 1 : 0);
-	ods->write1(c);
+	ods->writeByte(c);
 
 	// write _game-specific info
 	_game->writeSaveInfo(ods);
@@ -1397,49 +1379,49 @@ uint32 Ultima8Engine::getGameTimeInSeconds() {
 
 void Ultima8Engine::save(ODataSource *ods) {
 	uint8 s = (_avatarInStasis ? 1 : 0);
-	ods->write1(s);
+	ods->writeByte(s);
 
 	int32 absoluteTime = Kernel::get_instance()->getFrameNum() + _timeOffset;
-	ods->write4(static_cast<uint32>(absoluteTime));
-	ods->write2(_avatarMoverProcess->getPid());
+	ods->writeUint32LE(static_cast<uint32>(absoluteTime));
+	ods->writeUint16LE(_avatarMoverProcess->getPid());
 
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	for (int i = 0; i < 12; i++) ods->write2(pal->_matrix[i]);
-	ods->write2(pal->_transform);
+	for (int i = 0; i < 12; i++) ods->writeUint16LE(pal->_matrix[i]);
+	ods->writeUint16LE(pal->_transform);
 
-	ods->write2(static_cast<uint16>(_inversion));
+	ods->writeUint16LE(static_cast<uint16>(_inversion));
 
-	ods->write4(_saveCount);
+	ods->writeUint32LE(_saveCount);
 
 	uint8 c = (_hasCheated ? 1 : 0);
-	ods->write1(c);
+	ods->writeByte(c);
 }
 
 bool Ultima8Engine::load(IDataSource *ids, uint32 version) {
-	_avatarInStasis = (ids->read1() != 0);
+	_avatarInStasis = (ids->readByte() != 0);
 
 	// no gump should be moused over after load
 	_mouse->resetMouseOverGump();
 
-	int32 absoluteTime = static_cast<int32>(ids->read4());
+	int32 absoluteTime = static_cast<int32>(ids->readUint32LE());
 	_timeOffset = absoluteTime - Kernel::get_instance()->getFrameNum();
 
-	uint16 amppid = ids->read2();
+	uint16 amppid = ids->readUint16LE();
 	_avatarMoverProcess = p_dynamic_cast<AvatarMoverProcess *>(Kernel::get_instance()->getProcess(amppid));
 
 	int16 matrix[12];
 	for (int i = 0; i < 12; i++)
-		matrix[i] = ids->read2();
+		matrix[i] = ids->readUint16LE();
 
 	PaletteManager::get_instance()->transformPalette(PaletteManager::Pal_Game, matrix);
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	pal->_transform = static_cast<PalTransforms>(ids->read2());
+	pal->_transform = static_cast<PalTransforms>(ids->readUint16LE());
 
-	_inversion = ids->read2();
+	_inversion = ids->readUint16LE();
 
-	_saveCount = ids->read4();
+	_saveCount = ids->readUint32LE();
 
-	_hasCheated = (ids->read1() != 0);
+	_hasCheated = (ids->readByte() != 0);
 
 	return true;
 }

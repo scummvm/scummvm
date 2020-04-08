@@ -27,8 +27,6 @@
 #include "ultima/ultima8/graphics/texture_png.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 
-#include <cstring>
-
 namespace Ultima {
 namespace Ultima8 {
 

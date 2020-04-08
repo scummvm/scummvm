@@ -77,13 +77,13 @@ void GumpNotifyProcess::dumpInfo() const {
 void GumpNotifyProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(_gump);
+	ods->writeUint16LE(_gump);
 }
 
 bool GumpNotifyProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_gump = ids->read2();
+	_gump = ids->readUint16LE();
 
 	return true;
 }

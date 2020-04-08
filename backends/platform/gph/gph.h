@@ -39,6 +39,7 @@ public:
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	void initBackend();
 	void quit();
+	bool hasFeature(Feature f);
 
 protected:
 	bool _inited;

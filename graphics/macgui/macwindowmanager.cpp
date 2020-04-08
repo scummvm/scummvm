@@ -20,7 +20,6 @@
  */
 
 #include "common/array.h"
-#include "common/events.h"
 #include "common/list.h"
 #include "common/system.h"
 #include "common/timer.h"
@@ -195,6 +194,9 @@ MacWindowManager::~MacWindowManager() {
 	for (Common::HashMap<uint, BaseMacWindow *>::iterator it = _windows.begin(); it != _windows.end(); it++)
 		delete it->_value;
 
+	if (_palette)
+		free(_palette);
+
 	delete _fontMan;
 	delete _screenCopy;
 
@@ -236,7 +238,10 @@ void MacWindowManager::addWindowInitialized(MacWindow *macwindow) {
 }
 
 MacMenu *MacWindowManager::addMenu() {
-	delete _menu;
+	if (_menu) {
+		_windows[_menu->getId()] = nullptr;
+		delete _menu;
+	}
 
 	_menu = new MacMenu(getNextId(), _screen->getBounds(), this);
 
@@ -287,6 +292,9 @@ void MacWindowManager::setActive(int id) {
 void MacWindowManager::removeWindow(MacWindow *target) {
 	_windowsToRemove.push_back(target);
 	_needsRemoval = true;
+
+	if (target->getId() == _activeWindow)
+		_activeWindow = -1;
 }
 
 void macDrawPixel(int x, int y, int color, void *data) {
@@ -437,7 +445,7 @@ void MacWindowManager::removeMarked() {
 		removeFromStack(*it);
 		removeFromWindowList(*it);
 		delete *it;
-		_activeWindow = 0;
+		_activeWindow = -1;
 		_fullRefresh = true;
 	}
 	_windowsToRemove.clear();
@@ -499,14 +507,14 @@ void MacWindowManager::pushWatchCursor() {
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 }
 
-void MacWindowManager::pushCustomCursor(byte *data, int w, int h, int transcolor) {
-	CursorMan.pushCursor(data, w, h, 1, 1, transcolor);
+void MacWindowManager::pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor) {
+	CursorMan.pushCursor(data, w, h, hx, hy, transcolor);
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 }
 
 void MacWindowManager::popCursor() {
 	CursorMan.popCursor();
-	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
+	CursorMan.popCursorPalette();
 }
 
 ///////////////////

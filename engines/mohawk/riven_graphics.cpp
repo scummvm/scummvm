@@ -29,6 +29,7 @@
 #include "mohawk/riven_video.h"
 
 #include "common/system.h"
+#include "common/memstream.h"
 
 #include "engines/util.h"
 
@@ -339,7 +340,9 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) :
 	_effectScreen = new Graphics::Surface();
 	_effectScreen->create(608, 392, _pixelFormat);
 
-	loadMenuFont();
+	if (_vm->isGameVariant(GF_25TH)) {
+		loadMenuFont();
+	}
 }
 
 RivenGraphics::~RivenGraphics() {
@@ -354,7 +357,11 @@ RivenGraphics::~RivenGraphics() {
 }
 
 MohawkSurface *RivenGraphics::decodeImage(uint16 id) {
-	MohawkSurface *surface = _bitmapDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
+	Common::SeekableReadStream *resourceStream = _vm->getResource(ID_TBMP, id);
+	Common::SeekableReadStream *memResourceStream = resourceStream->readStream(resourceStream->size());
+	delete resourceStream;
+
+	MohawkSurface *surface = _bitmapDecoder->decodeImage(memResourceStream);
 	surface->convertToTrueColor();
 	return surface;
 }
@@ -516,6 +523,17 @@ void RivenGraphics::setTransitionMode(RivenTransitionMode mode) {
 		default:
 			error("Unknown transition mode %d", _transitionMode);
 	}
+}
+
+RivenTransitionMode RivenGraphics::sanitizeTransitionMode(int mode) {
+	if (mode != kRivenTransitionModeDisabled
+	    && mode != kRivenTransitionModeFastest
+	    && mode != kRivenTransitionModeNormal
+	    && mode != kRivenTransitionModeBest) {
+		return kRivenTransitionModeFastest;
+	}
+
+	return static_cast<RivenTransitionMode>(mode);
 }
 
 void RivenGraphics::scheduleTransition(RivenTransition id, const Common::Rect &rect) {
@@ -786,6 +804,9 @@ void RivenGraphics::drawText(const Common::U32String &text, const Common::Rect &
 }
 
 void RivenGraphics::loadMenuFont() {
+	delete _menuFont;
+	_menuFont = nullptr;
+
 	const char *fontName;
 
 	if (_vm->getLanguage() != Common::JA_JPN) {

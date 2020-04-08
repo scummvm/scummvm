@@ -47,8 +47,8 @@ MusicProcess::MusicProcess(MidiPlayer *player) : _midiPlayer(player),
 	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 
 	_theMusicProcess = this;
-	_flags |= PROC_RUNPAUSED;
 	_type = 1; // persistent
+	setRunPaused();
 }
 
 MusicProcess::~MusicProcess() {
@@ -230,19 +230,19 @@ void MusicProcess::run() {
 void MusicProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_trackState._wanted));
-	ods->write4(static_cast<uint32>(_trackState._lastRequest));
-	ods->write4(static_cast<uint32>(_trackState._queued));
+	ods->writeUint32LE(static_cast<uint32>(_trackState._wanted));
+	ods->writeUint32LE(static_cast<uint32>(_trackState._lastRequest));
+	ods->writeUint32LE(static_cast<uint32>(_trackState._queued));
 }
 
 bool MusicProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_trackState._wanted = static_cast<int32>(ids->read4());
+	_trackState._wanted = static_cast<int32>(ids->readUint32LE());
 
 	if (version >= 4) {
-		_trackState._lastRequest = static_cast<int32>(ids->read4());
-		_trackState._queued = static_cast<int32>(ids->read4());
+		_trackState._lastRequest = static_cast<int32>(ids->readUint32LE());
+		_trackState._queued = static_cast<int32>(ids->readUint32LE());
 	} else {
 		_trackState._lastRequest = _trackState._wanted;
 		_trackState._queued = 0;

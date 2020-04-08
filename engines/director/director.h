@@ -29,6 +29,8 @@
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
+#include "graphics/managed_surface.h"
+
 #include "director/types.h"
 
 namespace Common {
@@ -69,7 +71,8 @@ enum {
 	kDebugSlow				= 1 << 8,
 	kDebugFast				= 1 << 9,
 	kDebugNoLoop			= 1 << 10,
-	kDebugBytecode			= 1 << 11
+	kDebugBytecode			= 1 << 11,
+	kDebugFewFramesOnly		= 1 << 12
 };
 
 struct MovieReference {
@@ -114,16 +117,20 @@ public:
 	void loadSharedCastsFrom(Common::String filename);
 	void clearSharedCast();
 	void loadPatterns();
+	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
+	void setCursor(int type); // graphics.cpp
 
 	void loadInitialMovie(const Common::String movie);
 	Archive *openMainArchive(const Common::String movie);
 	Archive *createArchive();
-	void cleanupMainArchive();
 
-	void processEvents(); // evetns.cpp
-	void setDraggedSprite(uint16 id); // events.cpp
+	// events.cpp
+	void processEvents();
+	void setDraggedSprite(uint16 id);
+	void waitForClick();
 
+public:
 	Common::HashMap<Common::String, Score *> *_movies;
 
 	Common::RandomSource _rnd;
@@ -139,6 +146,8 @@ public:
 
 	MovieReference _nextMovie;
 	Common::List<MovieReference> _movieStack;
+
+	Graphics::ManagedSurface _backSurface;
 
 protected:
 	Common::Error run() override;

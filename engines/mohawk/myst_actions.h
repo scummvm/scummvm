@@ -20,24 +20,26 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef MOHAWK_MYST_ACTIONS_H
+#define MOHAWK_MYST_ACTIONS_H
 
-#ifdef __SYMBIAN32__
+namespace Mohawk {
 
-#include "backends/graphics/symbiansdl/symbiansdl-graphics.h"
+enum MystEventAction {
+	kMystActionNone = 100,
+	kMystActionOpenMainMenu,
+	kMystActionSkip,
+	kMystActionInteract,
+	kMystActionLoadGameState,
+	kMystActionSaveGameState,
+	kMystActionOpenOptionsDialog,
+	kMystActionPause,
+	kMystActionDropPage,
+	kMystActionShowMap,
 
-SymbianSdlGraphicsManager::SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
-}
+	kMystActionLast = kMystActionShowMap
+};
 
-bool SymbianSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
-	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-	case OSystem::kFeatureCursorPalette:
-		return true;
-	default:
-		return false;
-	}
-}
+} // End of namespace Mohawk
 
 #endif

@@ -174,12 +174,8 @@ namespace LB {
 	void b_beep(int nargs);
 	void b_mci(int nargs);
 	void b_mciwait(int nargs);
+	void b_sound(int nargs);
 	void b_soundBusy(int nargs);
-	void b_soundClose(int nargs);
-	void b_soundFadeIn(int nargs);
-	void b_soundFadeOut(int nargs);
-	void b_soundPlayFile(int nargs);
-	void b_soundStop(int nargs);
 
 	void b_backspace(int nargs);
 	void b_empty(int nargs);

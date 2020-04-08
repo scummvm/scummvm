@@ -149,7 +149,14 @@ public:
 		 * If this feature is supported, then the corresponding MetaEngine *must*
 		 * support the kSupportsListSaves feature.
 		 */
-		kSupportsSavingDuringRuntime
+		kSupportsSavingDuringRuntime,
+
+		/**
+		 * Changing the game settings during runtime is supported. This enables
+		 * showing the engine options tab in the config dialog accessed through
+		 * the Global Main Menu.
+		 */
+		kSupportsChangingOptionsDuringRuntime
 	};
 
 
@@ -209,8 +216,6 @@ public:
 	 */
 	virtual bool hasFeature(EngineFeature f) const { return false; }
 
-//	virtual EnginePlugin *getMetaEnginePlugin() const;
-
 	/**
 	 * Notify the engine that the sound settings in the config manager may have
 	 * changed and that it hence should adjust any internal volume etc. values
@@ -227,6 +232,13 @@ public:
 	 * @todo find a better name for this
 	 */
 	virtual void syncSoundSettings();
+
+	/**
+	 * Notify the engine that the settings editable from the game tab in the
+	 * in-game options dialog may have changed and that they need to be applied
+	 * if necessary.
+	 */
+	virtual void applyGameSettings() {}
 
 	/**
 	 * Flip mute all sound option.

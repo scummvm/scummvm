@@ -262,7 +262,7 @@ void LC::cb_localcall() {
 void LC::cb_methodcall() {
 	g_lingo->readInt();
 	Datum obj = g_lingo->pop();
-	obj.toString();
+	obj.makeString();
 	warning("STUB: cb_methodcall(%s)", obj.u.s->c_str());
 
 	Datum nargs = g_lingo->pop();
@@ -350,16 +350,17 @@ void LC::cb_globalpush() {
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
-		warning("Variable %s not found", name.c_str());
+		warning("cb_globalpush: variable %s not found", name.c_str());
 		g_lingo->push(result);
 		return;
 	} else if (s && !s->global) {
-		warning("Variable %s is local, not global", name.c_str());
+		warning("cb_globalpush: variable %s is local, not global", name.c_str());
 	}
 
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
+	debugC(3, kDebugLingoExec, "cb_globalpush: pushing %s to stack", name.c_str());
 	result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
@@ -377,12 +378,13 @@ void LC::cb_globalassign() {
 		s = g_lingo->lookupVar(name.c_str(), true, true);
 	}
 	if (s && !s->global) {
-		warning("Variable %s is local, not global", name.c_str());
+		warning("cb_globalassign: variable %s is local, not global", name.c_str());
 	}
 
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
+	debugC(3, kDebugLingoExec, "cb_globalassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
 	g_lingo->varAssign(target, source);
 }
@@ -406,16 +408,17 @@ void LC::cb_varpush() {
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
-		warning("Variable %s not found", name.c_str());
+		warning("cb_varpush: variable %s not found", name.c_str());
 		g_lingo->push(result);
 		return;
 	} else if (s && s->global) {
-		warning("Variable %s is global, not local", name.c_str());
+		warning("cb_varpush: variable %s is global, not local", name.c_str());
 	}
 
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
+	debugC(3, kDebugLingoExec, "cb_varpush: pushing %s to stack", name.c_str());
 	result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
@@ -427,16 +430,17 @@ void LC::cb_varassign() {
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
-		warning("Variable %s not found", name.c_str());
+		warning("cb_varassign: variable %s not found", name.c_str());
 		g_lingo->pop();
 		return;
 	} else if (s && s->global) {
-		warning("Variable %s is global, not local", name.c_str());
+		warning("cb_varassign: variable %s is global, not local", name.c_str());
 	}
 
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
+	debugC(3, kDebugLingoExec, "cb_varassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
 	g_lingo->varAssign(target, source);
 }
@@ -446,7 +450,7 @@ void LC::cb_v4theentitypush() {
 	int bank = g_lingo->readInt();
 
 	Datum firstArg = g_lingo->pop();
-	firstArg.toInt();
+	firstArg.makeInt();
 	Datum result;
 	result.u.s = NULL;
 	result.type = VOID;
@@ -532,7 +536,7 @@ void LC::cb_v4theentityassign() {
 	int bank = g_lingo->readInt();
 
 	Datum firstArg = g_lingo->pop();
-	firstArg.toInt();
+	firstArg.makeInt();
 	Datum value = g_lingo->pop();
 	Datum result;
 	result.u.s = NULL;
@@ -674,6 +678,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 	// copy the storage area first.
 	uint32 constsStoreOffset = constsOffset + 6 * constsCount;
+
+	if (constsStoreOffset > (uint32)stream.size()) {
+		warning("Lingo::addCodeV4(): Too big constsStoreOffset. %d > %d", constsStoreOffset, stream.size());
+		return;
+	}
+
 	uint32 constsStoreSize = stream.size() - constsStoreOffset;
 
 	if ((uint32)stream.size() < constsStoreOffset) {

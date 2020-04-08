@@ -140,7 +140,7 @@ void VideoEntry::setVolume(int volume) {
 
 VideoManager::VideoManager(MohawkEngine *vm) : _vm(vm) {
 	// Set dithering enabled, if required
-	_enableDither = (_vm->getGameType() == GType_MYST || _vm->getGameType() == GType_MAKINGOF) && !(_vm->getFeatures() & GF_ME);
+	_enableDither = (_vm->getGameType() == GType_MYST || _vm->getGameType() == GType_MAKINGOF) && !_vm->isGameVariant(GF_ME);
 }
 
 VideoManager::~VideoManager() {

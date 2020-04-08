@@ -160,19 +160,19 @@ bool AudioProcess::continueSpeech(SampleInfo &si) {
 void AudioProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write1(static_cast<uint8>(_sampleInfo.size()));
+	ods->writeByte(static_cast<uint8>(_sampleInfo.size()));
 
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		ods->write2(it->_sfxNum);
-		ods->write2(it->_priority);
-		ods->write2(it->_objId);
-		ods->write2(it->_loops);
-		ods->write4(it->_pitchShift);
-		ods->write2(it->_volume);
+		ods->writeUint16LE(it->_sfxNum);
+		ods->writeUint16LE(it->_priority);
+		ods->writeUint16LE(it->_objId);
+		ods->writeUint16LE(it->_loops);
+		ods->writeUint32LE(it->_pitchShift);
+		ods->writeUint16LE(it->_volume);
 
 		if (it->_sfxNum == -1) { // Speech
-			ods->write4(static_cast<uint32>(it->_barked.size()));
+			ods->writeUint32LE(static_cast<uint32>(it->_barked.size()));
 			ods->write(it->_barked.c_str(), static_cast<uint32>(it->_barked.size()));
 		}
 	}
@@ -181,15 +181,15 @@ void AudioProcess::saveData(ODataSource *ods) {
 bool AudioProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	uint32 count = ids->read1();
+	uint32 count = ids->readByte();
 
 	while (count--) {
-		int16 sfxNum = ids->read2();
-		int16 priority = ids->read2();
-		int16 objId = ids->read2();
-		int16 loops = ids->read2();
-		uint32 pitchShift = ids->read4();
-		uint16 volume = ids->read2();
+		int16 sfxNum = ids->readUint16LE();
+		int16 priority = ids->readUint16LE();
+		int16 objId = ids->readUint16LE();
+		int16 loops = ids->readUint16LE();
+		uint32 pitchShift = ids->readUint32LE();
+		uint16 volume = ids->readUint16LE();
 
 		if (sfxNum != -1) { // SFX
 			int16 lVol = 0;
@@ -200,7 +200,7 @@ bool AudioProcess::loadData(IDataSource *ids, uint32 version) {
 			}
 			playSFX(sfxNum, priority, objId, loops, false, pitchShift, volume, lVol, rVol);
 		} else {                // Speech
-			uint32 slen = ids->read4();
+			uint32 slen = ids->readUint32LE();
 
 			char *buf = new char[slen + 1];
 			ids->read(buf, slen);

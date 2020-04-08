@@ -69,7 +69,7 @@ uint32 Game::I_playEndgame(const uint8 *args, unsigned int /*argsize*/) {
 	Process *menuproc = new MainMenuProcess();
 	Kernel::get_instance()->addProcess(menuproc);
 
-	ProcId moviepid = Game::get_instance()->playEndgameMovie();
+	ProcId moviepid = Game::get_instance()->playEndgameMovie(false);
 	Process *movieproc = Kernel::get_instance()->getProcess(moviepid);
 	if (movieproc) {
 		menuproc->waitFor(movieproc);

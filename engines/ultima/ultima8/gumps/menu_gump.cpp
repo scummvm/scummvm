@@ -108,15 +108,11 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
-	ShapeFrame *sf = _shape->getFrame(0);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 
 	Shape *logoShape;
 	logoShape = GameData::get_instance()->getGumps()->getShape(paganShape);
-	sf = logoShape->getFrame(0);
+	const ShapeFrame *sf = logoShape->getFrame(0);
 	assert(sf);
 
 	Gump *logo = new Gump(42, 10, sf->_width, sf->_height);
@@ -223,7 +219,7 @@ void MenuGump::selectEntry(int entry) {
 
 	switch (entry) {
 	case 1: // Intro
-		Game::get_instance()->playIntroMovie();
+		Game::get_instance()->playIntroMovie(true);
 		break;
 	case 2:
 	case 3: // Read/Write Diary
@@ -245,7 +241,7 @@ void MenuGump::selectEntry(int entry) {
 		if (quotes) Game::get_instance()->playQuotes();
 		break;
 	case 8: // End Game
-		if (endgame) Game::get_instance()->playEndgameMovie();
+		if (endgame) Game::get_instance()->playEndgameMovie(true);
 		break;
 	default:
 		break;

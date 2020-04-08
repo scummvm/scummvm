@@ -215,6 +215,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
 	// Christmas Card 1992 - English DOS
+	// Unknown SCI interpreter version, reported by oblivioncth
+	{"christmas1992", "", {
+		{"resource.map", 0, "25c8b7ee5f1e79ae04dcdb5a21681402", 308},
+		{"resource.000", 0, "118f639435ebeee6e4d4c6d9cdbd70fc", 202728},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
+
+	// Christmas Card 1992 - English DOS
 	// SCI interpreter version 1.001.055
 	{"christmas1992", "", {
 		{"resource.map", 0, "f1f8c8a8443f523422af70b4ec85b71c", 318},

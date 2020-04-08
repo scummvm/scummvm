@@ -13,6 +13,35 @@ end
 function save_game()
 end
 
+local g_tile_to_object_map = {
+-- Trees
+[50] = 5000, [51] = 5000, [64] = 5000, [65] = 5000, [66] = 5000,
+[67] = 5000, [68] = 5000, [69] = 5000, [70] = 5000, [71] = 5000,
+[72] = 5000, [192] = 5000, [193] = 5000, [194] = 5000, [195] = 5000,
+[198] = 5000, [179] = 5000, [180] = 5000, [130] = 5000,
+-- Oven Fire
+[16] = 5001, [17] = 5001, [18] = 5001, [19] = 5001, [20] = 5001,
+[21] = 5001, [22] = 5001, [23] = 5001, [24] = 5001, [25] = 5001,
+[26] = 5001, [27] = 5001, [170] = 5001, [171] = 5001,
+-- Yucca Plant
+[52] = 5002,
+}
+
+function get_tile_to_object_mapping(tile_num)
+    return g_tile_to_object_map[tile_num]
+end
+
+local g_is_object_a_tile = {
+[5000] = true, [5001] = true, [5002] = true
+}
+
+function is_tile_object(obj_num)
+    if g_is_object_a_tile[obj_num] ~= nil then
+        return true
+    end
+    return false
+end
+
 local g_container_obj_tbl = {
 [59] = 1,  [60] = 1,  [97] = 1,
 [182] = 1, [183] = 1, [184] = 1

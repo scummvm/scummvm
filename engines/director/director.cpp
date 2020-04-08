@@ -56,6 +56,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugFast, "fast", "Fast (no delay) playback");
 	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
 	DebugMan.addDebugChannel(kDebugBytecode, "bytecode", "Execute Lscr bytecode");
+	DebugMan.addDebugChannel(kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames");
 
 	g_director = this;
 
@@ -105,10 +106,14 @@ DirectorEngine::~DirectorEngine() {
 	delete _sharedScore;
 	delete _currentScore;
 
-	cleanupMainArchive();
+	if (_macBinary) {
+		delete _macBinary;
+		_macBinary = nullptr;
+	}
 
 	delete _soundManager;
 	delete _lingo;
+	delete _wm;
 }
 
 Common::Error DirectorEngine::run() {
@@ -175,6 +180,11 @@ Common::Error DirectorEngine::run() {
 	} else {
 		loadInitialMovie(getEXEName());
 
+		if (!_mainArchive) {
+			warning("Cannot open main movie");
+			return Common::kNoGameDataFoundError;
+		}
+
 		// Let's check if it is a projector file
 		// So far tested with Spaceship Warlock, D2
 		if (_mainArchive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
@@ -219,25 +229,25 @@ Common::Error DirectorEngine::run() {
 			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 			_currentScore->loadArchive();
-		}
 
-		// If we came in a loop, then skip as requested
-		if (!_nextMovie.frameS.empty()) {
-			_currentScore->setStartToLabel(_nextMovie.frameS);
-			_nextMovie.frameS.clear();
-		}
+			// If we came in a loop, then skip as requested
+			if (!_nextMovie.frameS.empty()) {
+				_currentScore->setStartToLabel(_nextMovie.frameS);
+				_nextMovie.frameS.clear();
+			}
 
-		if (_nextMovie.frameI != -1) {
-			_currentScore->setCurrentFrame(_nextMovie.frameI);
-			_nextMovie.frameI = -1;
-		}
+			if (_nextMovie.frameI != -1) {
+				_currentScore->setCurrentFrame(_nextMovie.frameI);
+				_nextMovie.frameI = -1;
+			}
 
-		if (!debugChannelSet(-1, kDebugLingoCompileOnly) && _currentScore) {
-			debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
+			if (!debugChannelSet(-1, kDebugLingoCompileOnly)) {
+				debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
 
-			_currentScore->startLoop();
+				_currentScore->startLoop();
 
-			debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+				debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+			}
 		}
 
 		if (getGameID() == GID_TESTALL) {
@@ -247,6 +257,12 @@ Common::Error DirectorEngine::run() {
 		// If a loop was requested, do it
 		if (!_nextMovie.movie.empty()) {
 			_lingo->restartLingo();
+
+			// Persist screen between the movies
+			// TODO: this is a workaround until the rendering pipeline is reworked
+			if (_currentScore && _currentScore->_surface) {
+				_backSurface.copyFrom(*_currentScore->_surface);
+			}
 
 			delete _currentScore;
 			_currentScore = nullptr;
@@ -324,7 +340,10 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 void DirectorEngine::enqueueAllMovies() {
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::FSList files;
-	dir.getChildren(files, Common::FSNode::kListFilesOnly);
+	if (!dir.getChildren(files, Common::FSNode::kListFilesOnly)) {
+		warning("DirectorEngine::enqueueAllMovies(): Failed inquiring file list");
+		return;
+	}
 
 	for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file)
 		_movieQueue.push_back((*file).getName());

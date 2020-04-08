@@ -231,24 +231,24 @@ void World::loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata) {
 		int32 z = static_cast<int32>(itemds->readX(1));
 
 		itemds->seek(0x0B400 + i * 2);
-		uint32 shape = itemds->read2();
+		uint32 shape = itemds->readUint16LE();
 		itemds->seek(0x0FC00 + i * 1);
-		uint32 frame = itemds->read1();
+		uint32 frame = itemds->readByte();
 		itemds->seek(0x12000 + i * 2);
-		uint16 flags = itemds->read2();
+		uint16 flags = itemds->readUint16LE();
 		itemds->seek(0x16800 + i * 2);
-		uint16 quality = itemds->read2();
+		uint16 quality = itemds->readUint16LE();
 		itemds->seek(0x1B000 + i * 1);
-		uint16 npcnum = static_cast<uint8>(itemds->read1());
+		uint16 npcnum = static_cast<uint8>(itemds->readByte());
 		itemds->seek(0x1D400 + i * 1);
-		uint16 mapnum = static_cast<uint8>(itemds->read1());
+		uint16 mapnum = static_cast<uint8>(itemds->readByte());
 		itemds->seek(0x1F800 + i * 2);
 		//uint16 next;
-		(void)itemds->read2();
+		(void)itemds->readUint16LE();
 
 		// half the frame number is stored in npcdata.dat
 		npcds->seek(7 + i * 0x31);
-		frame += npcds->read1() << 8;
+		frame += npcds->readByte() << 8;
 
 		if (shape == 0) {
 			// U8's itemcach has a lot of garbage in it.
@@ -276,35 +276,35 @@ void World::loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata) {
 
 		// read npcdata:
 		npcds->seek(i * 0x31);
-		actor->setStr(npcds->read1()); // 0x00: strength
-		actor->setDex(npcds->read1()); // 0x01: dexterity
-		actor->setInt(npcds->read1()); // 0x02: intelligence
-		actor->setHP(npcds->read1());  // 0x03: hitpoints
-		actor->setDir(npcds->read1()); // 0x04: direction
-		uint16 la = npcds->read2();    // 0x05,0x06: last anim
+		actor->setStr(npcds->readByte()); // 0x00: strength
+		actor->setDex(npcds->readByte()); // 0x01: dexterity
+		actor->setInt(npcds->readByte()); // 0x02: intelligence
+		actor->setHP(npcds->readByte());  // 0x03: hitpoints
+		actor->setDir(npcds->readByte()); // 0x04: direction
+		uint16 la = npcds->readUint16LE();    // 0x05,0x06: last anim
 		actor->setLastAnim(static_cast<Animation::Sequence>(la));
 		npcds->skip(1); // 0x07: high byte of framenum
 		npcds->skip(1); // 0x08: current anim frame
 		npcds->skip(1); // 0x09: start Z of current fall
 		npcds->skip(1); // 0x0A: unknown, always zero
-		uint8 align = npcds->read1(); // 0x0B: alignments
+		uint8 align = npcds->readByte(); // 0x0B: alignments
 		actor->setAlignment(align & 0x0F);
 		actor->setEnemyAlignment(align & 0xF0);
-		actor->setUnk0C(npcds->read1()); // 0x0C: unknown;
+		actor->setUnk0C(npcds->readByte()); // 0x0C: unknown;
 		// 0x0C is almost always zero, except for
 		// the avatar (0xC0) and
 		// Malchir, Vardion, Gorgrond, Beren (0xE0)
 		npcds->skip(14); // 0x0D-0x1A: unknown, always zero
 		actor->clearActorFlag(0xFF);
-		actor->setActorFlag(npcds->read1()); // 0x1B: flags
+		actor->setActorFlag(npcds->readByte()); // 0x1B: flags
 		npcds->skip(1);  // 0x1C: unknown, always zero
 		npcds->skip(16); // 0x1D-0x2C: equipment
-		int16 mana = static_cast<int16>(npcds->read2()); // 0x2D,0x2E: mana
+		int16 mana = static_cast<int16>(npcds->readUint16LE()); // 0x2D,0x2E: mana
 		actor->setMana(mana);
 		actor->clearActorFlag(0xFFFF00);
-		uint32 flags2F = npcds->read1(); // 0x2F: flags
+		uint32 flags2F = npcds->readByte(); // 0x2F: flags
 		actor->setActorFlag(flags2F << 8);
-		uint32 flags30 = npcds->read1(); // 0x30: flags
+		uint32 flags30 = npcds->readByte(); // 0x30: flags
 		actor->setActorFlag(flags30 << 16);
 	}
 
@@ -337,16 +337,16 @@ void World::worldStats() const {
 }
 
 void World::save(ODataSource *ods) {
-	ods->write4(_currentMap->getNum());
+	ods->writeUint32LE(_currentMap->getNum());
 
-	ods->write2(_currentMap->_eggHatcher);
+	ods->writeUint16LE(_currentMap->_eggHatcher);
 
 	uint16 es = static_cast<uint16>(_ethereal.size());
-	ods->write4(es);
+	ods->writeUint32LE(es);
 
 	// empty stack and refill it again
 	uint16 *e = new uint16[es];
-	Std::list<ObjId>::iterator it = _ethereal.begin();
+	Std::list<ObjId>::const_iterator it = _ethereal.begin();
 	unsigned int i;
 	for (i = 0; i < es; ++i) {
 		e[es - i] = *it;
@@ -354,28 +354,28 @@ void World::save(ODataSource *ods) {
 	}
 
 	for (i = 0; i < es; ++i) {
-		ods->write2(e[i]);
+		ods->writeUint16LE(e[i]);
 	}
 	delete[] e;
 }
 
 // load items
 bool World::load(IDataSource *ids, uint32 version) {
-	uint16 curmapnum = ids->read4();
+	uint16 curmapnum = ids->readUint32LE();
 	_currentMap->setMap(_maps[curmapnum]);
 
-	_currentMap->_eggHatcher = ids->read2();
+	_currentMap->_eggHatcher = ids->readUint16LE();
 
-	uint32 etherealcount = ids->read4();
+	uint32 etherealcount = ids->readUint32LE();
 	for (unsigned int i = 0; i < etherealcount; ++i) {
-		_ethereal.push_front(ids->read2());
+		_ethereal.push_front(ids->readUint16LE());
 	}
 
 	return true;
 }
 
 void World::saveMaps(ODataSource *ods) {
-	ods->write4(static_cast<uint32>(_maps.size()));
+	ods->writeUint32LE(static_cast<uint32>(_maps.size()));
 	for (unsigned int i = 0; i < _maps.size(); ++i) {
 		_maps[i]->save(ods);
 	}
@@ -383,7 +383,7 @@ void World::saveMaps(ODataSource *ods) {
 
 
 bool World::loadMaps(IDataSource *ids, uint32 version) {
-	uint32 mapcount = ids->read4();
+	uint32 mapcount = ids->readUint32LE();
 
 	// Map objects have already been created by reset()
 	for (unsigned int i = 0; i < mapcount; ++i) {

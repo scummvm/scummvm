@@ -283,7 +283,7 @@ void Inventory::loadInventoryItemsFromSave() {
 void Inventory::openInventionBook() {
 	_inventionBookPrevSceneUpdateFunc = _vm->getSceneUpdateFunction();
 	_vm->clearSceneUpdateFunction();
-//	fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_sequenceId = 2;
 	_actor->updateSequence(2);
 	_inventionBookPrevSceneId = _vm->getCurrentSceneId();
@@ -300,7 +300,7 @@ void Inventory::openInventionBook() {
 void Inventory::closeInventionBook() {
 	uint sceneId;
 
-	// TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	if (flicker) {

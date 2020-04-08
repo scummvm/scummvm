@@ -52,19 +52,11 @@ public:
 	virtual List<Event> mapEvent(const Event &ev);
 
 	/**
-	 * Registers a HardwareInputSet with the Keymapper
-	 * @note should only be called once (during backend initialisation)
+	 * Registers a HardwareInputSet and platform-specific default mappings with the Keymapper
 	 *
 	 * Transfers ownership to the Keymapper
 	 */
-	void registerHardwareInputSet(HardwareInputSet *inputs);
-
-	/**
-	 * Registers platform-specific default mappings for keymap actions
-	 *
-	 * Transfers ownership to the Keymapper
-	 */
-	void registerBackendDefaultBindings(KeymapperDefaultBindings *backendDefaultBindings);
+	void registerHardwareInputSet(HardwareInputSet *inputs, KeymapperDefaultBindings *backendDefaultBindings);
 
 	/**
 	 * Add a keymap to the global domain.
@@ -131,6 +123,7 @@ public:
 	HardwareInput findHardwareInput(const Event &event);
 
 	void initKeymap(Keymap *keymap, ConfigManager::Domain *domain);
+	void reloadKeymapMappings(Keymap *keymap);
 
 private:
 	EventManager *_eventMan;

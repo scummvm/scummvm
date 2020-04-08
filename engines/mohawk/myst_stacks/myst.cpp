@@ -2975,7 +2975,7 @@ void Myst::clockGearForwardOneStep(uint16 gear) {
 void Myst::clockWeightDownOneStep() {
 	// The Myst ME version of this video is encoded faster than the original
 	// The weight goes on the floor one step too early. Original ME engine also has this behavior.
-	bool updateVideo = !(_vm->getFeatures() & GF_ME) || _clockWeightPosition < (2214 - 246);
+	bool updateVideo = !_vm->isGameVariant(GF_ME) || _clockWeightPosition < (2214 - 246);
 
 	// Set video bounds
 	if (updateVideo) {
@@ -3278,7 +3278,7 @@ Common::Point Myst::towerRotationMapComputeCoords(uint16 angle) {
 void Myst::towerRotationMapDrawLine(const Common::Point &end, bool rotationLabelVisible) {
 	uint32 color;
 
-	if (_vm->getFeatures() & GF_ME) {
+	if (_vm->isGameVariant(GF_ME)) {
 		Graphics::PixelFormat pf = _vm->_system->getScreenFormat();
 
 		if (!_towerRotationOverSpot)
@@ -3505,7 +3505,7 @@ void Myst::o_observatory_init(uint16 var, const ArgumentsArray &args) {
 
 bool Myst::observatoryIsDDMMYYYY2400() {
 	// TODO: Auto-detect based on the month rect position
-	return !(_vm->getFeatures() & GF_ME) && (_vm->getLanguage() == Common::FR_FRA
+	return !_vm->isGameVariant(GF_ME) && (_vm->getLanguage() == Common::FR_FRA
 			|| _vm->getLanguage() == Common::DE_DEU);
 }
 

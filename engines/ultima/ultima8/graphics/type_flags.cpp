@@ -60,7 +60,7 @@ void TypeFlags::load(IDataSource *ds) {
 		blocksize = 9;
 	}
 
-	uint32 size = ds->getSize();
+	uint32 size = ds->size();
 	uint32 count = size / blocksize;
 
 	_shapeInfo.clear();

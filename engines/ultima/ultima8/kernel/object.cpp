@@ -80,7 +80,7 @@ void Object::writeObjectHeader(ODataSource *ods) const {
 	const char *cname = GetClassType()._className; // note: virtual
 	uint16 clen = strlen(cname);
 
-	ods->write2(clen);
+	ods->writeUint16LE(clen);
 	ods->write(cname, clen);
 }
 
@@ -88,11 +88,11 @@ void Object::saveData(ODataSource *ods) {
 	// note: Object is unversioned. If we ever want to version it,
 	// increase the global savegame version
 
-	ods->write2(_objId);
+	ods->writeUint16LE(_objId);
 }
 
 bool Object::loadData(IDataSource *ids, uint32 version) {
-	_objId = ids->read2();
+	_objId = ids->readUint16LE();
 
 	return true;
 }

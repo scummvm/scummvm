@@ -170,7 +170,8 @@ MODULE_OBJS += \
 	fs/chroot/chroot-fs.o \
 	plugins/posix/posix-provider.o \
 	saves/posix/posix-saves.o \
-	taskbar/unity/unity-taskbar.o
+	taskbar/unity/unity-taskbar.o \
+	dialogs/gtk/gtk-dialogs.o
 
 ifdef USE_SPEECH_DISPATCHER
 ifdef USE_TTS
@@ -282,13 +283,14 @@ endif
 ifeq ($(BACKEND),dingux)
 MODULE_OBJS += \
 	events/dinguxsdl/dinguxsdl-events.o \
-	graphics/dinguxsdl/dinguxsdl-graphics.o
+	graphics/downscalesdl/downscalesdl-graphics.o
 endif
 
 ifeq ($(BACKEND),gph)
 MODULE_OBJS += \
 	events/gph/gph-events.o \
-	graphics/gph/gph-graphics.o
+	graphics/gph/gph-graphics.o \
+	graphics/downscalesdl/downscalesdl-graphics.o
 endif
 
 ifeq ($(BACKEND),maemo)
@@ -338,8 +340,7 @@ endif
 
 ifeq ($(BACKEND),samsungtv)
 MODULE_OBJS += \
-	events/samsungtvsdl/samsungtvsdl-events.o \
-	graphics/samsungtvsdl/samsungtvsdl-graphics.o
+	events/samsungtvsdl/samsungtvsdl-events.o
 endif
 
 ifeq ($(BACKEND),webos)

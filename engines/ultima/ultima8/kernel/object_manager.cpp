@@ -150,7 +150,7 @@ void ObjectManager::objectTypes() {
 		objecttypes[o->GetClassType()._className]++;
 	}
 
-	Std::map<Common::String, unsigned int>::iterator iter;
+	Std::map<Common::String, unsigned int>::const_iterator iter;
 	for (iter = objecttypes.begin(); iter != objecttypes.end(); ++iter) {
 		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
 	}
@@ -232,7 +232,7 @@ void ObjectManager::save(ODataSource *ods) {
 		object->save(ods);
 	}
 
-	ods->write2(0);
+	ods->writeUint16LE(0);
 }
 
 
@@ -242,7 +242,7 @@ bool ObjectManager::load(IDataSource *ids, uint32 version) {
 
 	do {
 		// peek ahead for terminator
-		uint16 classlen = ids->read2();
+		uint16 classlen = ids->readUint16LE();
 		if (classlen == 0) break;
 		char *buf = new char[classlen + 1];
 		ids->read(buf, classlen);
@@ -291,7 +291,7 @@ bool ObjectManager::load(IDataSource *ids, uint32 version) {
 }
 
 Object *ObjectManager::loadObject(IDataSource *ids, uint32 version) {
-	uint16 classlen = ids->read2();
+	uint16 classlen = ids->readUint16LE();
 	char *buf = new char[classlen + 1];
 	ids->read(buf, classlen);
 	buf[classlen] = 0;

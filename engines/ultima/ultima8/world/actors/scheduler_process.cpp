@@ -83,15 +83,15 @@ void SchedulerProcess::run() {
 void SchedulerProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(_lastRun);
-	ods->write2(_nextActor);
+	ods->writeUint32LE(_lastRun);
+	ods->writeUint16LE(_nextActor);
 }
 
 bool SchedulerProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_lastRun = ids->read4();
-	_nextActor = ids->read2();
+	_lastRun = ids->readUint32LE();
+	_nextActor = ids->readUint16LE();
 
 	return true;
 }

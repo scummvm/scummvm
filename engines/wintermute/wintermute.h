@@ -35,6 +35,8 @@ class SystemClassRegistry;
 class DebuggerController;
 struct WMEGameDescription;
 
+const int INT_MAX_VALUE = 0x7fffffff;
+
 // our engine debug channels
 enum {
 	kWintermuteDebugLog = 1 << 0, // The debug-logs from the original engine

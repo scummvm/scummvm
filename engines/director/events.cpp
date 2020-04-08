@@ -32,13 +32,22 @@
 
 namespace Director {
 
-void processQuitEvent() {
+bool processQuitEvent(bool click) {
 	Common::Event event;
 
 	while (g_system->getEventManager()->pollEvent(event)) {
-		if (event.type == Common::EVENT_QUIT)
+		if (event.type == Common::EVENT_QUIT) {
 			g_director->getCurrentScore()->_stopPlay = true;
+			return true;
+		}
+
+		if (click) {
+			if (event.type == Common::EVENT_LBUTTONDOWN)
+				return true;
+		}
 	}
+
+	return false;
 }
 
 void DirectorEngine::processEvents() {
@@ -140,6 +149,30 @@ void DirectorEngine::setDraggedSprite(uint16 id) {
 	_draggingSpritePos = g_system->getEventManager()->getMousePos();
 
 	warning("STUB: DirectorEngine::setDraggedSprite(%d)", id);
+}
+
+void DirectorEngine::waitForClick() {
+	setCursor(kCursorMouseUp);
+
+	bool cursor = false;
+	uint32 nextTime = g_system->getMillis() + 1000;
+
+	while (!processQuitEvent(true)) {
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+
+		if (g_system->getMillis() >= nextTime) {
+			nextTime = g_system->getMillis() + 1000;
+
+			setCursor(kCursorDefault);
+
+			setCursor(cursor ? kCursorMouseDown : kCursorMouseUp);
+
+			cursor = !cursor;
+		}
+	}
+
+	setCursor(kCursorDefault);
 }
 
 } // End of namespace Director

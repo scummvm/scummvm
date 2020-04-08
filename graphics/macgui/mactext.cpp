@@ -346,6 +346,12 @@ void MacText::render(int from, int to) {
 		else if (_textAlignment == kTextAlignCenter)
 			xOffset = (_textMaxWidth / 2) - (getLineWidth(i) / 2);
 
+		int maxHeightForRow = 0;
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (_textLines[i].chunks[j].font->getFontHeight() > maxHeightForRow)
+				maxHeightForRow = _textLines[i].chunks[j].font->getFontHeight();
+		}
+
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
 			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d",
@@ -355,7 +361,14 @@ void MacText::render(int from, int to) {
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
 
-			_textLines[i].chunks[j].getFont()->drawString(_surface, _textLines[i].chunks[j].text, xOffset, _textLines[i].y, w, _fgcolor);
+			//TODO: There might be a vertical alignment setting somewhere for differing font sizes in a single row?
+			int yOffset = 0;
+			if (_textLines[i].chunks[j].font->getFontHeight() < maxHeightForRow) {
+				//TODO: determine where the magic value 2 comes from
+				yOffset = maxHeightForRow - _textLines[i].chunks[j].font->getFontHeight() - 2;
+			}
+
+			_textLines[i].chunks[j].getFont()->drawString(_surface, _textLines[i].chunks[j].text, xOffset, _textLines[i].y + yOffset, w, _fgcolor);
 			xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 		}
 	}

@@ -323,7 +323,7 @@ function look_obelisk(obj)
       canvas_set_solid_bg(false)
    else
       text_sprite = sprite_new(nil, 8, 164, true)
-      text_sprite.text_align_centre = true
+      text_sprite.text_align = 2
       text_sprite.text_color = 15
       text_sprite.text = "Obelisk."
       obelisk.x = 96

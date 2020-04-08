@@ -22,10 +22,11 @@
 
 #include "common/scummsys.h"
 
-#if defined(DINGUX)
+#if (defined(GPH_DEVICE) || defined(DINGUX)) && defined(USE_SCALERS)
 
-#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
-#include "backends/events/dinguxsdl/dinguxsdl-events.h"
+#include "backends/graphics/downscalesdl/downscalesdl-graphics.h"
+#include "backends/events/sdl/sdl-events.h"
+#include "graphics/scaler/downscaler.h"
 #include "graphics/scaler/aspect.h"
 #include "common/mutex.h"
 #include "common/textconsole.h"
@@ -35,29 +36,23 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-#ifndef USE_SCALERS
-#define DownscaleAllByHalf 0
-#endif
-
-DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+DownscaleSdlGraphicsManager::DownscaleSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
 	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
-const OSystem::GraphicsMode *DINGUXSdlGraphicsManager::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *DownscaleSdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
-int DINGUXSdlGraphicsManager::getDefaultGraphicsMode() const {
+int DownscaleSdlGraphicsManager::getDefaultGraphicsMode() const {
 	return GFX_NORMAL;
 }
 
-int DINGUXSdlGraphicsManager::getGraphicsModeScale(int mode) const {
+int DownscaleSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	int scale;
 	switch (mode) {
 	case GFX_NORMAL:
-#ifdef USE_SCALERS
 	case GFX_HALF:
-#endif
 		scale = 1;
 		break;
 	default:
@@ -67,23 +62,21 @@ int DINGUXSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	return scale;
 }
 
-ScalerProc *DINGUXSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
+ScalerProc *DownscaleSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 	ScalerProc *newScalerProc = 0;
 	switch (_videoMode.mode) {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
 		break;
-#ifdef USE_SCALERS
 	case GFX_HALF:
 		newScalerProc = DownscaleAllByHalf;
 		break;
-#endif
 	}
 
 	return newScalerProc;
 }
 
-void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+void DownscaleSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
 	_gameScreenShakeXOffset = 0;
@@ -114,18 +107,16 @@ void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
 
-#ifndef GCW0
 	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
 		_window->toggleMouseGrab();
 	}
-#endif
 
 	_transactionDetails.sizeChanged = true;
 }
 
-void DINGUXSdlGraphicsManager::drawMouse() {
+void DownscaleSdlGraphicsManager::drawMouse() {
 	if (!_cursorVisible || !_mouseSurface || !_mouseCurState.w || !_mouseCurState.h) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
@@ -192,7 +183,7 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
-void DINGUXSdlGraphicsManager::undrawMouse() {
+void DownscaleSdlGraphicsManager::undrawMouse() {
 	const int x = _mouseBackup.x;
 	const int y = _mouseBackup.y;
 
@@ -210,7 +201,7 @@ void DINGUXSdlGraphicsManager::undrawMouse() {
 	}
 }
 
-void DINGUXSdlGraphicsManager::internUpdateScreen() {
+void DownscaleSdlGraphicsManager::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
 	ScalerProc *scalerProc;
@@ -293,6 +284,11 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 		_dirtyRectList[0].y = 0;
 		_dirtyRectList[0].w = width;
 		_dirtyRectList[0].h = height;
+
+#ifdef GPH_DEVICE
+		// HACK: Make sure the full hardware screen is wiped clean.
+		SDL_FillRect(_hwScreen, NULL, 0);
+#endif
 	}
 
 	// Only draw anything if necessary
@@ -409,7 +405,7 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 	_cursorNeedsRedraw = false;
 }
 
-void DINGUXSdlGraphicsManager::showOverlay() {
+void DownscaleSdlGraphicsManager::showOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
 		_cursorX /= 2;
 		_cursorY /= 2;
@@ -417,7 +413,7 @@ void DINGUXSdlGraphicsManager::showOverlay() {
 	SurfaceSdlGraphicsManager::showOverlay();
 }
 
-void DINGUXSdlGraphicsManager::hideOverlay() {
+void DownscaleSdlGraphicsManager::hideOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
 		_cursorX *= 2;
 		_cursorY *= 2;
@@ -425,7 +421,7 @@ void DINGUXSdlGraphicsManager::hideOverlay() {
 	SurfaceSdlGraphicsManager::hideOverlay();
 }
 
-bool DINGUXSdlGraphicsManager::loadGFXMode() {
+void DownscaleSdlGraphicsManager::setupHardwareSize() {
 	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
 
 	// Forcefully disable aspect ratio correction for games
@@ -435,14 +431,11 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 		_videoMode.aspectRatioCorrection = false;
 	}
 
-#ifndef GCW0
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
 		debug("GraphicsMode set to HALF");
-	} else
-#endif
-	{
+	} else {
 		setGraphicsMode(GFX_NORMAL);
 		debug("GraphicsMode set to NORMAL");
 	}
@@ -450,60 +443,15 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 	if ((_videoMode.mode == GFX_HALF) && !_overlayVisible) {
 		_videoMode.overlayWidth = _videoMode.screenWidth / 2;
 		_videoMode.overlayHeight = _videoMode.screenHeight / 2;
-		_videoMode.fullscreen = true;
+
+		_videoMode.hardwareWidth = _videoMode.screenWidth / 2;
+		_videoMode.hardwareHeight = _videoMode.screenHeight / 2;
 	} else {
-		_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-
-		if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
-			_videoMode.aspectRatioCorrection = false;
-
-		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-
-		if (_videoMode.aspectRatioCorrection) {
-			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
-			_videoMode.hardwareHeight = real2Aspect(_videoMode.hardwareHeight);
-		}
-	}
-
-	return SurfaceSdlGraphicsManager::loadGFXMode();
-}
-
-bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
-	return
-	    (f == OSystem::kFeatureAspectRatioCorrection) ||
-	    (f == OSystem::kFeatureCursorPalette);
-}
-
-void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		setAspectRatioCorrection(enable);
-		break;
-	case OSystem::kFeatureCursorPalette:
-		_cursorPaletteDisabled = !enable;
-		blitCursor();
-		break;
-	default:
-		break;
+		SurfaceSdlGraphicsManager::setupHardwareSize();
 	}
 }
 
-bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
-	assert(_transactionMode == kTransactionNone);
-
-	switch (f) {
-	case OSystem::kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
-	case OSystem::kFeatureCursorPalette:
-		return !_cursorPaletteDisabled;
-	default:
-		return false;
-	}
-}
-
-void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
+void DownscaleSdlGraphicsManager::warpMouse(int x, int y) {
 	if (_cursorX != x || _cursorY != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
 			x /= 2;
@@ -513,7 +461,7 @@ void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 	SurfaceSdlGraphicsManager::warpMouse(x, y);
 }
 
-void DINGUXSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+void DownscaleSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 	if (!_overlayVisible) {
 		if (_videoMode.mode == GFX_HALF) {
 			point.x *= 2;

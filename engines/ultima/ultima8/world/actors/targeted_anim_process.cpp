@@ -56,18 +56,18 @@ bool TargetedAnimProcess::init() {
 void TargetedAnimProcess::saveData(ODataSource *ods) {
 	ActorAnimProcess::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_x));
-	ods->write4(static_cast<uint32>(_y));
-	ods->write4(static_cast<uint32>(_z));
+	ods->writeUint32LE(static_cast<uint32>(_x));
+	ods->writeUint32LE(static_cast<uint32>(_y));
+	ods->writeUint32LE(static_cast<uint32>(_z));
 
 }
 
 bool TargetedAnimProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!ActorAnimProcess::loadData(ids, version)) return false;
 
-	_x = ids->read4();
-	_y = ids->read4();
-	_z = ids->read4();
+	_x = ids->readUint32LE();
+	_y = ids->readUint32LE();
+	_z = ids->readUint32LE();
 
 	return true;
 }

@@ -96,14 +96,13 @@ whitespace [ \t]
 ^{whitespace}+	{ count(); }
 [\t]+			{ count(); return ' '; }
 
-[#]{identifier}	{ count(); yylval.s = new Common::String(yytext); return SYMBOL; }	// D3
+[#]{identifier}	{ count(); yylval.s = new Common::String(yytext + 1); return SYMBOL; }	// D3, skip '#'
 
 after		{ count(); return tAFTER; }		// D3
 and			{ count(); return tAND; }
 before		{ count(); return tBEFORE; }	// D3
 char		{ count(); return tCHAR; }		// D3
 contains	{ count(); return tCONTAINS; }
-done		{ count(); return tDONE; }
 down		{ count(); return tDOWN; }
 if			{ count(); return tIF; }
 else[ \t]+if { count(); return tELSIF; }
@@ -129,9 +128,8 @@ end([ \t]+{identifier})?	{
 ^[ \t]*factory { count(); return tFACTORY; }
 exit		{ count(); return tEXIT; }
 global		{ count(); return tGLOBAL; }
-go[ \t]+to[ \t]+frame	{ count(); return tGO; }
-go[ \t]+to	{ count(); return tGO; }
-go			{ count(); return tGO; }
+go[ \t]+(to[ \t]+)?frame	{ count(); return tGO; }
+go[ \t]+(to)?	{ count(); return tGO; }
 instance	{ count(); return tINSTANCE; }
 intersects	{ count(); return tINTERSECTS; }
 into		{ count(); return tINTO; }
@@ -167,23 +165,6 @@ property	{ count(); return tPROPERTY; }	// D4
 put			{ count(); return tPUT; }
 repeat		{ count(); return checkImmediate(tREPEAT); }
 set			{ count(); return tSET; }
-sound[ \t]+(close|fadeIn|fadeOut|playFile|stop)	{
-		count();
-
-		const char *ptr = &yytext[6]; // Skip 'sound '
-		while (*ptr == ' ' || *ptr == '\t')
-			ptr++;
-
-		Common::String bltin = Common::String::format("sound-%s", ptr);
-
-		if (g_lingo->_builtins.contains(bltin)) {
-			yylval.s = new Common::String(bltin);
-			return BLTIN;
-		} else {
-			warning("LEXER: Unhandled 'sound %s'", ptr);
-			return LEXERROR;
-		}
-	}
 starts		{ count(); return tSTARTS; }
 tell		{ count(); return tTELL; }
 the[ \t]+sqrt[ \t]+of[ \t]+	{

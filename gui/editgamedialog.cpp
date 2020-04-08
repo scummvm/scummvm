@@ -105,15 +105,13 @@ EditGameDialog::EditGameDialog(const String &domain)
 	: OptionsDialog(domain, "GameOptions") {
 	EngineMan.upgradeTargetIfNecessary(domain);
 
-	// Retrieve all game specific options.
+	_engineOptions = nullptr;
 
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
 	const Plugin *plugin = nullptr;
 	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &plugin);
-	if (plugin) {
-		_engineOptions = plugin->get<MetaEngine>().getExtraGuiOptions(domain);
-	} else {
+	if (!plugin) {
 		warning("Plugin for target \"%s\" not found! Game specific settings might be missing", domain.c_str());
 	}
 
@@ -175,12 +173,21 @@ EditGameDialog::EditGameDialog(const String &domain)
 	}
 
 	//
-	// 2) The engine tab (shown only if there are custom engine options)
+	// 2) The engine tab (shown only if the engine implements one or there are custom engine options)
 	//
-	if (_engineOptions.size() > 0) {
-		tab->addTab(_("Engine"), "GameOptions_Engine");
 
-		addEngineControls(tab, "GameOptions_Engine.", _engineOptions);
+	if (plugin) {
+		int tabId = tab->addTab(_("Engine"), "GameOptions_Engine");
+
+		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		metaEngine.registerDefaultSettings(_domain);
+		_engineOptions = metaEngine.buildEngineOptionsWidget(tab, "GameOptions_Engine.Container", _domain);
+
+		if (_engineOptions) {
+			_engineOptions->setParentDialog(this);
+		} else {
+			tab->removeTab(tabId);
+		}
 	}
 
 	//
@@ -404,18 +411,8 @@ void EditGameDialog::open() {
 		_langPopUp->setEnabled(false);
 	}
 
-	// Set the state of engine-specific checkboxes
-	for (uint j = 0; j < _engineOptions.size(); ++j) {
-		// The default values for engine-specific checkboxes are not set when
-		// ScummVM starts, as this would require us to load and poll all of the
-		// engine plugins on startup. Thus, we set the state of each custom
-		// option checkbox to what is specified by the engine plugin, and
-		// update it only if a value has been set in the configuration of the
-		// currently selected game.
-		bool isChecked = _engineOptions[j].defaultState;
-		if (ConfMan.hasKey(_engineOptions[j].configOption, _domain))
-			isChecked = ConfMan.getBool(_engineOptions[j].configOption, _domain);
-		_engineCheckboxes[j]->setState(isChecked);
+	if (_engineOptions) {
+		_engineOptions->load();
 	}
 
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -459,9 +456,8 @@ void EditGameDialog::apply() {
 	else
 		ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
 
-	// Set the state of engine-specific checkboxes
-	for (uint i = 0; i < _engineOptions.size(); i++) {
-		ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);
+	if (_engineOptions) {
+		_engineOptions->save();
 	}
 
 	OptionsDialog::apply();

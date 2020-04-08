@@ -145,6 +145,8 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 
 	_curPressedButton = kNoAct;
 	_needRefresh = true;
+	_isPressed = false;
+
 }
 
 PredictiveDialog::~PredictiveDialog() {
@@ -196,9 +198,16 @@ void PredictiveDialog::handleKeyUp(Common::KeyState state) {
 		_button[_curPressedButton]->setUnpressedState();
 		processButton(_curPressedButton);
 	}
+
+	_isPressed = false;
 }
 
 void PredictiveDialog::handleKeyDown(Common::KeyState state) {
+	if (_isPressed) {
+		return;
+	}
+
+	_isPressed = true;
 	_curPressedButton = kNoAct;
 	_needRefresh = false;
 

@@ -37,6 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      45 - Sync stopAfterFading
  *      44 - GK2+SCI3 audio resource locks
  *      43 - stop saving SCI3 mustSetViewVisible array
  *      42 - SCI3 robots and VM objects
@@ -69,7 +70,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 44,
+	CURRENT_SAVEGAME_VERSION = 45,
 	MINIMUM_SAVEGAME_VERSION = 14
 #ifdef ENABLE_SCI32
 	,

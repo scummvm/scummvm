@@ -635,38 +635,38 @@ void ActorAnimProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
 	uint8 ff = _firstFrame ? 1 : 0;
-	ods->write1(ff);
+	ods->writeByte(ff);
 	uint8 ab = _animAborted ? 1 : 0;
-	ods->write1(ab);
+	ods->writeByte(ab);
 	uint8 attacked = _attackedSomething ? 1 : 0;
-	ods->write1(attacked);
-	ods->write1(static_cast<uint8>(_dir));
-	ods->write2(static_cast<uint16>(_action));
-	ods->write2(static_cast<uint16>(_steps));
-	ods->write2(static_cast<uint16>(_repeatCounter));
-	ods->write2(static_cast<uint16>(_currentStep));
+	ods->writeByte(attacked);
+	ods->writeByte(static_cast<uint8>(_dir));
+	ods->writeUint16LE(static_cast<uint16>(_action));
+	ods->writeUint16LE(static_cast<uint16>(_steps));
+	ods->writeUint16LE(static_cast<uint16>(_repeatCounter));
+	ods->writeUint16LE(static_cast<uint16>(_currentStep));
 
 	if (_tracker) {
-		ods->write1(1);
+		ods->writeByte(1);
 		_tracker->save(ods);
 	} else
-		ods->write1(0);
+		ods->writeByte(0);
 }
 
 bool ActorAnimProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_firstFrame = (ids->read1() != 0);
-	_animAborted = (ids->read1() != 0);
-	_attackedSomething = (ids->read1() != 0);
-	_dir = ids->read1();
-	_action = static_cast<Animation::Sequence>(ids->read2());
-	_steps = ids->read2();
-	_repeatCounter = ids->read2();
-	_currentStep = ids->read2();
+	_firstFrame = (ids->readByte() != 0);
+	_animAborted = (ids->readByte() != 0);
+	_attackedSomething = (ids->readByte() != 0);
+	_dir = ids->readByte();
+	_action = static_cast<Animation::Sequence>(ids->readUint16LE());
+	_steps = ids->readUint16LE();
+	_repeatCounter = ids->readUint16LE();
+	_currentStep = ids->readUint16LE();
 
 	assert(_tracker == nullptr);
-	if (ids->read1() != 0) {
+	if (ids->readByte() != 0) {
 		_tracker = new AnimationTracker();
 		if (!_tracker->load(ids, version))
 			return false;

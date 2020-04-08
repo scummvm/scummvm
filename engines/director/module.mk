@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	sound.o \
 	sprite.o \
 	stxt.o \
+	transitions.o \
 	util.o \
 	lingo/lingo-gr.o \
 	lingo/lingo.o \
@@ -31,7 +32,7 @@ MODULE_OBJS = \
 
 director-grammar:
 	flex engines/director/lingo/lingo-lex.l
-	bison -dv engines/director/lingo/lingo-gr.y
+	`brew --prefix bison`/bin/bison -dv engines/director/lingo/lingo-gr.y
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DIRECTOR), DYNAMIC_PLUGIN)

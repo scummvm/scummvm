@@ -20,22 +20,36 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SAMSUNGTV_H
-#define BACKENDS_GRAPHICS_SAMSUNGTV_H
-
-#if defined(SAMSUNGTV)
+#ifndef BACKENDS_GRAPHICS_SDL_DOWNSCALE_H
+#define BACKENDS_GRAPHICS_SDL_DOWNSCALE_H
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
-class SamsungTVSdlGraphicsManager : public SurfaceSdlGraphicsManager {
-public:
-	SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
-
-	bool hasFeature(OSystem::Feature f) const override;
-	void setFeatureState(OSystem::Feature f, bool enable) override;
-	bool getFeatureState(OSystem::Feature f) const override;
+enum {
+	GFX_HALF = 12
 };
 
-#endif
+class DownscaleSdlGraphicsManager : public SurfaceSdlGraphicsManager {
+public:
+	DownscaleSdlGraphicsManager(SdlEventSource *boss, SdlWindow *window);
 
-#endif
+	int getDefaultGraphicsMode() const override;
+
+	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	int getGraphicsModeScale(int mode) const override;
+	ScalerProc *getGraphicsScalerProc(int mode) const override;
+	void internUpdateScreen() override;
+	void showOverlay() override;
+	void hideOverlay() override;
+	void drawMouse() override;
+	void undrawMouse() override;
+	void warpMouse(int x, int y) override;
+
+	virtual void transformMouseCoordinates(Common::Point &point);
+
+protected:
+	void setupHardwareSize() override;
+};
+
+#endif /* BACKENDS_GRAPHICS_SDL_DOWNSCALE_H */

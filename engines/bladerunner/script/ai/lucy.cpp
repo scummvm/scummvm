@@ -890,7 +890,12 @@ void AIScriptLucy::voightKampffTest() {
 
 	Player_Loses_Control();
 	if (Actor_Clue_Query(kActorMcCoy, kClueVKLucyReplicant)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 6865, 13);
+#else
+		// don't repeat the result, just delay
+		Delay(250);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorLucy, 1140, 14);
 		Actor_Says(kActorMcCoy, 6865, 14);
 		Actor_Says(kActorLucy, 1150, 16);

@@ -8,3 +8,19 @@ set a to [1, 2, 3]
 put a
 
 set gList = [point(70, 190), point(217, 66), point(364, 185)]
+
+set b to [4, 5, 6, 7]
+set res to a + b
+set res to a - b
+set res to a * b
+set res to b / a
+set res to b mod a
+set res to -a
+
+set floats to [4.0, 5.0, 6.0, 7.0]
+set strings to ["4", "5", "6", "7"]
+
+set res to a + floats
+set res to a + strings
+set res to a + 1
+set res to 1 + b

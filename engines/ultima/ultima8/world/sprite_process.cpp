@@ -114,33 +114,33 @@ uint32 SpriteProcess::I_createSprite(const uint8 *args, unsigned int argsize) {
 void SpriteProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_shape));
-	ods->write4(static_cast<uint32>(_frame));
-	ods->write4(static_cast<uint32>(_firstFrame));
-	ods->write4(static_cast<uint32>(_lastFrame));
-	ods->write4(static_cast<uint32>(_repeats));
-	ods->write4(static_cast<uint32>(_delay));
-	ods->write4(static_cast<uint32>(_x));
-	ods->write4(static_cast<uint32>(_y));
-	ods->write4(static_cast<uint32>(_z));
-	ods->write4(static_cast<uint32>(_delayCounter));
-	ods->write1(_initialized ? 1 : 0);
+	ods->writeUint32LE(static_cast<uint32>(_shape));
+	ods->writeUint32LE(static_cast<uint32>(_frame));
+	ods->writeUint32LE(static_cast<uint32>(_firstFrame));
+	ods->writeUint32LE(static_cast<uint32>(_lastFrame));
+	ods->writeUint32LE(static_cast<uint32>(_repeats));
+	ods->writeUint32LE(static_cast<uint32>(_delay));
+	ods->writeUint32LE(static_cast<uint32>(_x));
+	ods->writeUint32LE(static_cast<uint32>(_y));
+	ods->writeUint32LE(static_cast<uint32>(_z));
+	ods->writeUint32LE(static_cast<uint32>(_delayCounter));
+	ods->writeByte(_initialized ? 1 : 0);
 }
 
 bool SpriteProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_shape = static_cast<int>(ids->read4());
-	_frame = static_cast<int>(ids->read4());
-	_firstFrame = static_cast<int>(ids->read4());
-	_lastFrame = static_cast<int>(ids->read4());
-	_repeats = static_cast<int>(ids->read4());
-	_delay = static_cast<int>(ids->read4());
-	_x = static_cast<int>(ids->read4());
-	_y = static_cast<int>(ids->read4());
-	_z = static_cast<int>(ids->read4());
-	_delayCounter = static_cast<int>(ids->read4());
-	_initialized = (ids->read1() != 0);
+	_shape = static_cast<int>(ids->readUint32LE());
+	_frame = static_cast<int>(ids->readUint32LE());
+	_firstFrame = static_cast<int>(ids->readUint32LE());
+	_lastFrame = static_cast<int>(ids->readUint32LE());
+	_repeats = static_cast<int>(ids->readUint32LE());
+	_delay = static_cast<int>(ids->readUint32LE());
+	_x = static_cast<int>(ids->readUint32LE());
+	_y = static_cast<int>(ids->readUint32LE());
+	_z = static_cast<int>(ids->readUint32LE());
+	_delayCounter = static_cast<int>(ids->readUint32LE());
+	_initialized = (ids->readByte() != 0);
 
 	return true;
 }

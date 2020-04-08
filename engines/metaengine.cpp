@@ -30,6 +30,8 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "engines/dialogs.h"
+
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/managed_surface.h"
@@ -336,6 +338,25 @@ SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 	return saveList;
 }
 
+void MetaEngine::registerDefaultSettings(const Common::String &) const {
+	// Note that as we don't pass the target to getExtraGuiOptions
+	//  we get all the options, even those not relevant for the current
+	//  game. This is necessary because some engines unconditionally
+	//  access the configuration.
+	const ExtraGuiOptions engineOptions = getExtraGuiOptions("");
+	for (uint i = 0; i < engineOptions.size(); i++) {
+		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
+	}
+}
+
+GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);
+	if (engineOptions.empty()) {
+		return nullptr;
+	}
+
+	return new GUI::ExtraGuiOptionsWidget(boss, name, target, engineOptions);
+}
 
 void MetaEngine::removeSaveState(const char *target, int slot) const {
 	if (!hasFeature(kSavesUseExtendedFormat))

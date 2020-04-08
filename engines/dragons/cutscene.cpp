@@ -53,7 +53,7 @@ void CutScene::scene1() {
 	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
-	//fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->clearFlags(ENGINE_FLAG_10);
 
 	_vm->_inventory->setActorFlag400();
@@ -103,7 +103,7 @@ void CutScene::scene1() {
 							_actor_80072dec = _vm->_actorManager->loadActor(0xd5, 0, 0x2d6, 0xc6, 3); //load humans
 							_actor_80072df0 = _vm->_actorManager->loadActor(0xd3, 2, 0x87, 199, 3);
 							_vm->waitForFramesAllowSkip(4);
-							// call_fade_related_1f();
+							_vm->fadeFromBlack();
 							if (fun_8003dab8(0x52d6, 0, 0, 0x701, 1) != 2) {
 								// TODO callMaybeResetData();
 								//playSoundFromTxtIndex(0x530c);
@@ -127,7 +127,7 @@ void CutScene::scene1() {
 												fun_8003d8e8(0xd6, 0, 0x37a, 0x280);
 												_actor_80072dec = _vm->_actorManager->loadActor(0xd5, 4, 0x2d6, 0xc6, 3);
 												_vm->waitForFramesAllowSkip(4);
-												// call_fade_related_1f();
+												_vm->fadeFromBlack();
 												if (fun_8003dab8(0x5780, 0x14, 0, 0xc01, 1) != 2) {
 													_actor_80063514 = _actor_80063514 | 0x40;
 													fadeScreenAndResetActor(_actor_80072de8);
@@ -147,7 +147,7 @@ void CutScene::scene1() {
 																fun_8003d8e8(0xd6, 0, 0x37a, 0x280);
 																_actor_80072dec = _vm->_actorManager->loadActor(0xd5, 0, 0x2d6, 0xc6, 3);
 																_vm->waitForFramesAllowSkip(4);
-																// call_fade_related_1f();
+																_vm->fadeFromBlack();
 																//playSoundFromTxtIndex(0x5afc);
 																if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 3, 0, 0x5afc, 0x3c01) != 2) {
 																	fadeScreenAndResetActor(_actor_80072de8);
@@ -170,7 +170,7 @@ void CutScene::scene1() {
 																				fun_8003d8e8(0xd3, 2, 0x28d, 0x250);
 																				_actor_80072dec = _vm->_actorManager->loadActor(0xd7, 0, 0x348, 199, 3);
 																				_vm->waitForFramesAllowSkip(4); // close up of king and flame
-																				//call_fade_related_1f();
+																				_vm->fadeFromBlack();
 																				//playSoundFromTxtIndex(0x5ef2);
 																				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x5ef2, 0x3e01) != 2) {
 																					fadeScreenAndResetActor(_actor_80072de8);
@@ -210,7 +210,7 @@ void CutScene::scene1() {
 																									// EnableVSyncEvent();
 																									_vm->waitForFramesAllowSkip(0x3b);
 																									_vm->clearFlags(ENGINE_FLAG_20000);
-																									// fade_related_calls_with_1f();
+																									_vm->fadeToBlack();
 																									// DisableVSyncEvent();
 																									_vm->_scene->getScaleLayer()->clearAll();
 																									_vm->_scene->getScaleLayer()->setValue(0, 0, 17);
@@ -256,7 +256,7 @@ void CutScene::scene1() {
 																									_actor_80072df8->_priorityLayer = 3;
 
 																									_vm->waitForFramesAllowSkip(0xe);
-																									// call_fade_related_1f();
+																									_vm->fadeFromBlack();
 																									_actor_80072df0->startWalk(0xe8, 0xa8, 2);
 																									_actor_80072df0->waitForWalkToFinish();
 																									_actor_80072de8->startWalk(0x97, 0x37, 2);
@@ -305,7 +305,7 @@ void CutScene::scene1() {
 		}
 	}
 	_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
-	// fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->clearFlags(ENGINE_FLAG_20000);
 	// DisableVSyncEvent();
 	//file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
@@ -324,7 +324,7 @@ void CutScene::scene1() {
 
 //fadeScreenAndResetActor
 void CutScene::fadeScreenAndResetActor(Actor *actor) {
-	// TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	//DisableVSyncEvent();
 	actor->reset_maybe();
 	//EnableVSyncEvent();
@@ -334,11 +334,11 @@ void CutScene::fadeScreenAndResetActor(Actor *actor) {
 void CutScene::closeUpShotOnActor(uint16 resourceId, uint16 sequenceId, int16 x, uint32 param_4) {
 	fun_8003d8e8(resourceId, sequenceId, x, param_4);
 	_vm->waitForFrames(5);
-	// TODO call_fade_related_1f();
+	_vm->fadeFromBlack();
 }
 
 void CutScene::fun_8003d8e8(uint16 resourceId, uint16 sequenceId, int16 x, uint32 param_4) {
-	// fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->_actorManager->clearActorFlags(2);
 	//DisableVSyncEvent();
 	_actor_80072de8 = _vm->_actorManager->loadActor(resourceId, sequenceId, x, 199, 3);
@@ -348,13 +348,13 @@ void CutScene::fun_8003d8e8(uint16 resourceId, uint16 sequenceId, int16 x, uint3
 
 void CutScene::wideAngleEveryoneAtTable() {
 	fun_8003d388();
-	// call_fade_related_1f();
+	_vm->fadeFromBlack();
 }
 
 void CutScene::fun_8003d388() {
 	uint sequenceId;
 
-	// fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->_actorManager->clearActorFlags(2);
 	if ((_actor_80063514 & 0x80) == 0) {
 		_actor_80072de8 = _vm->_actorManager->loadActor(0x7e, 0x16, 0x40, 0xa0, 1);
@@ -410,7 +410,7 @@ void CutScene::fun_8003d388() {
 
 
 void CutScene::closeUpKnightsAtTable() {
-	//fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->_actorManager->clearActorFlags(2);
 	_actor_80072de8 = _vm->_actorManager->loadActor(0x7d, 0, 2, 199, 1);
 	_actor_80072dec = _vm->_actorManager->loadActor(0x81, 4, 2, 199, 1);
@@ -419,7 +419,7 @@ void CutScene::closeUpKnightsAtTable() {
 	_actor_80072df8 = _vm->_actorManager->loadActor(0x81, 2, 2, 199, 1);
 	changeBackgroundPosition(1, 0);
 	_vm->waitForFrames(0xf);
-	//call_fade_related_1f();
+	_vm->fadeFromBlack();
 
 }
 
@@ -498,19 +498,19 @@ void CutScene::diamondScene() {
 		actorId->updateSequence(3);
 		if (!actorId_01->actorSetSequenceAndWaitAllowSkip(0x18)) {
 			_vm->waitForFramesAllowSkip(0x2c);
-			//TODO fade_related_calls_with_1f();
+			_vm->fadeToBlack();
 			memcpy(palette, _vm->_scene->getPalette(), 512);
 			_vm->_screen->loadPalette(0, actorId_00->_actorResource->getPalette());
 			_vm->_scene->_camera.x = 0x140;
-			//TODO call_fade_related_1f();
+			_vm->fadeFromBlack();
 			if (!actorId_00->actorSetSequenceAndWaitAllowSkip(0)) {
 				// TODO is this needed playSoundFromTxtIndex(0x42A66);
 				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_00, 1, 2, 0x42a66, 0x3c01) != 2) {
 					_vm->waitForFramesAllowSkip(0x13);
-					//TODO fade_related_calls_with_1f();
+					_vm->fadeToBlack();
 					_vm->_screen->loadPalette(0, palette);
 					_vm->_scene->_camera.x = 0;
-					//TODO call_fade_related_1f();
+					_vm->fadeFromBlack();
 					actorId_01->updateSequence(0x19);
 					_vm->waitForFramesAllowSkip(0xf);
 					actorId->updateSequence(4);
@@ -544,7 +544,7 @@ void CutScene::knightsSavedBackAtCastle() {
 	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	isFlag0x10Set = _vm->isFlagSet(ENGINE_FLAG_10);
-	//TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->clearFlags(ENGINE_FLAG_10);
 	_vm->_inventory->setActorFlag400();
 	_vm->_cursor->setActorFlag400();
@@ -617,7 +617,7 @@ void CutScene::knightsSavedBackAtCastle() {
 			}
 		}
 	}
-	// fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	//DisableVSyncEvent();
 //	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
 	//EnableVSyncEvent();
@@ -650,7 +650,7 @@ void CutScene::flameReturnsCutScene() {
 	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	engineFlag10Set = _vm->isFlagSet(ENGINE_FLAG_10);
-	//fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->clearFlags(ENGINE_FLAG_10);
 	_vm->_cursor->setActorFlag400();
 	_vm->_inventory->setActorFlag400();
@@ -672,7 +672,7 @@ void CutScene::flameReturnsCutScene() {
 	_flameActor->_walkSpeed = 0x10000;
 	_actor_80072de8->setFlag(ACTOR_FLAG_800);
 	_flameActor->setFlag(ACTOR_FLAG_800);
-	//	call_fade_related_1f();
+	_vm->fadeFromBlack();
 	_vm->setFlags(ENGINE_FLAG_20000);
 	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8ab2, 0x2e01) != 2) {
 		_actor_80072de8->updateSequence(0x1e);
@@ -704,7 +704,7 @@ void CutScene::flameReturnsCutScene() {
 			}
 		}
 	}
-//	fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 //	DisableVSyncEvent();
 //	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
 //	EnableVSyncEvent();
@@ -726,7 +726,7 @@ void CutScene::knightsSavedAgain() {
 	_vm->_dragonINIResource->setFlickerRecord(nullptr);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	engineFlag10Set = _vm->isFlagSet(ENGINE_FLAG_10);
-	//fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 
 	_vm->clearFlags(ENGINE_FLAG_10);
 	_vm->_cursor->setActorFlag400();
@@ -784,7 +784,7 @@ void CutScene::knightsSavedAgain() {
 			}
 		}
 	}
-	//fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 //	DisableVSyncEvent();
 //	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
 //	EnableVSyncEvent();
@@ -828,27 +828,27 @@ void CutScene::tournamentCutScene() {
 	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C6E8);
 	_vm->setVsyncUpdateFunction(nullptr);
 	_vm->setFlags(ENGINE_FLAG_20000);
-	// fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	Actor *actor = _vm->_dragonINIResource->getRecord(0x02BE)->actor;
 	_vm->_screen->loadPalette(0, actor->_actorResource->getPalette());
 	_vm->_scene->_camera.x = 0;
 	_vm->playOrStopSound(0);
-//	call_fade_related_1f();
+	_vm->fadeFromBlack();
 	_vm->waitForFrames(300);
 	actor->setFlag(ACTOR_FLAG_1000);
 	actor->waitUntilFlag8And4AreSet();
 	_vm->waitForFrames(0x3c);
-//	fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
 	_vm->playOrStopSound(0x4000);
 	_vm->_scene->_camera.x = 0x3c0;
-//	call_fade_related_1f();
+	_vm->fadeFromBlack();
 	_vm->_talk->loadText(0x4C814, dialogText, 1000);
 	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, 0x4C814);
 	_vm->_talk->loadText(0x4C852, dialogText, 1000);
 	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C852);
 	_vm->setFlags(ENGINE_FLAG_20000);
-//	fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 }
 
 

@@ -30,15 +30,15 @@ namespace Ultima {
 namespace Ultima8 {
 
 void FrameID::save(ODataSource *ods) {
-	ods->write2(_flexId);
-	ods->write4(_shapeNum);
-	ods->write4(_frameNum);
+	ods->writeUint16LE(_flexId);
+	ods->writeUint32LE(_shapeNum);
+	ods->writeUint32LE(_frameNum);
 }
 
 bool FrameID::load(IDataSource *ids) {
-	_flexId = ids->read2();
-	_shapeNum = ids->read4();
-	_frameNum = ids->read4();
+	_flexId = ids->readUint16LE();
+	_shapeNum = ids->readUint32LE();
+	_frameNum = ids->readUint32LE();
 	return true;
 }
 

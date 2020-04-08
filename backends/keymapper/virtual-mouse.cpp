@@ -141,6 +141,8 @@ bool VirtualMouse::notifyEvent(const Event &event) {
 	case kCustomActionVirtualMouseSlow:
 		_slowModifier = 0.9f * (1.f - event.joystick.position / (float)JOYAXIS_MAX) + 0.1f;
 		return true;
+	default:
+		break;
 	}
 
 	return false;

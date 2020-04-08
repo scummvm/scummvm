@@ -423,7 +423,8 @@ bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {
 	if (!avatar->canReach(item, 128)) return false;  // CONSTANT!
 
 	// get item offset
-	int32 itemx, itemy;
+	int32 itemx = 0;
+	int32 itemy = 0;
 	GetLocationOfItem(item->getObjId(), itemx, itemy);
 	Mouse::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
 

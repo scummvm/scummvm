@@ -25,6 +25,10 @@
 
 namespace Director {
 
+Common::String preprocessReturn(Common::String in);
+Common::String preprocessPlay(Common::String in);
+Common::String preprocessSound(Common::String in);
+
 bool isspec(char c) {
 	return strchr("-+*/%%^:,()><&[]=", c) != NULL;
 }
@@ -161,6 +165,8 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 		debugC(2, kDebugLingoParse, "line: %d                         '%s'", iflevel, line.c_str());
 
 		res1 = preprocessReturn(res1);
+		res1 = preprocessPlay(res1);
+		res1 = preprocessSound(res1);
 
 		res += res1;
 
@@ -335,7 +341,11 @@ const char *strcasestr(const char *s, const char *find) {
 }
 #endif
 
-Common::String Lingo::preprocessReturn(Common::String in) {
+// "hello" & return && "world" -> "hello" & scummvm_return && "world"
+//
+// This is to let the grammar not confuse RETURN constant with
+// return command
+Common::String preprocessReturn(Common::String in) {
 	Common::String res, prev, next;
 	const char *ptr = in.c_str();
 	const char *beg = ptr;
@@ -365,6 +375,76 @@ Common::String Lingo::preprocessReturn(Common::String in) {
 
 	if (in.size() != res.size())
 		debugC(2, kDebugLingoParse, "RETURN: in: %s\nout: %s", in.c_str(), res.c_str());
+
+	return res;
+}
+
+// play done -> play #done
+Common::String preprocessPlay(Common::String in) {
+	Common::String res, next;
+	const char *ptr = in.c_str();
+	const char *beg = ptr;
+
+	while ((ptr = strcasestr(beg, "play")) != NULL) {
+		ptr += 5; // end of 'play'
+		res += Common::String(beg, ptr);
+
+		next = nexttok(ptr);
+
+		debugC(2, kDebugLingoParse, "PLAY: nexttok: %s", next.c_str());
+
+		if (next.equalsIgnoreCase("done")) {
+			res += '#'; // Turn it into SYMBOL
+		}
+
+		res += *ptr++; // We advance one character, so 'one' is left
+		beg = ptr;
+	}
+
+	res += Common::String(beg);
+
+	if (in.size() != res.size())
+		debugC(2, kDebugLingoParse, "PLAY: in: %s\nout: %s", in.c_str(), res.c_str());
+
+	return res;
+}
+
+// sound fadeIn 5, 10 -> sound #fadeIn, 5, 10
+Common::String preprocessSound(Common::String in) {
+	Common::String res, next;
+	const char *ptr = in.c_str();
+	const char *beg = ptr;
+
+	while ((ptr = strcasestr(beg, "sound")) != NULL) {
+		ptr += 6; // end of 'sound'
+		res += Common::String(beg, ptr);
+
+		next = nexttok(ptr);
+
+		debugC(2, kDebugLingoParse, "SOUND: nexttok: %s", next.c_str());
+
+		bool modified = false;
+
+		if (next.equalsIgnoreCase("close") ||
+				next.equalsIgnoreCase("fadeIn") ||
+				next.equalsIgnoreCase("fadeOut") ||
+				next.equalsIgnoreCase("playFile") ||
+				next.equalsIgnoreCase("stop")) {
+			res += '#'; // Turn it into SYMBOL
+			modified = true;
+		}
+
+		res += next;
+		if (modified)
+			res += ',';
+		ptr += next.size();
+		beg = ptr;
+	}
+
+	res += Common::String(beg);
+
+	if (in.size() != res.size())
+		debugC(2, kDebugLingoParse, "SOUND: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }

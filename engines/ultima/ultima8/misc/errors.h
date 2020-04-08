@@ -46,25 +46,25 @@ struct ECode {
 		return _error == 0;
 	}
 
-	ECode &operator = (int32 &_e) {
+	ECode &operator = (const int32 &_e) {
 		_error = _e;
 		return (*this);
 	}
 
-	ECode &operator = (ECode &_e) {
+	ECode &operator = (const ECode &_e) {
 		_error = _e._error;
 		return (*this);
 	}
 
-	bool operator != (int32 &_e) {
+	bool operator != (const int32 &_e) const {
 		return _error != _e;
 	}
 
-	friend bool operator != (int32 &_e, ECode &_e2) {
+	friend bool operator != (const int32 &_e, const ECode &_e2) {
 		return _e2._error != _e;
 	}
 
-	bool operator == (int32 &_e) {
+	bool operator == (const int32 &_e) const {
 		return _error == _e;
 	}
 

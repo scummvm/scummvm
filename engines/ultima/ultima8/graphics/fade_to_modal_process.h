@@ -20,17 +20,43 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SYMBIAN_SDL_H
-#define BACKENDS_GRAPHICS_SYMBIAN_SDL_H
+#ifndef ULTIMA8_GRAPHICS_FADETOMODALPROCESS_H
+#define ULTIMA8_GRAPHICS_FADETOMODALPROCESS_H
 
-#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/gumps/modal_gump.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
-class SymbianSdlGraphicsManager : public SurfaceSdlGraphicsManager {
+namespace Ultima {
+namespace Ultima8 {
+
+class PaletteFaderProcess;
+
+class FadeToModalProcess : public Process {
+
+	enum FadeToModalState {
+		FS_OpenFadeOut,
+		FS_ShowGump,
+		FS_CloseFadeIn,
+		FS_Finshed
+	} _nextState;
+
+	ModalGump * _modal;
+	PaletteFaderProcess * _fader;
+
 public:
-	SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
+	// p_dynamic_class stuff
+	ENABLE_RUNTIME_CLASSTYPE()
+	FadeToModalProcess(ModalGump *modal);
+	~FadeToModalProcess(void) override;
 
-public:
-	virtual bool hasFeature(OSystem::Feature f) const override;
+	void onWakeUp() override;
+
+	void run() override;
+
 };
+
+} // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

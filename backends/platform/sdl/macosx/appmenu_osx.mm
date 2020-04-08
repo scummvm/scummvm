@@ -137,6 +137,10 @@ NSString *constructNSStringFromCString(const char *rawCString, CFStringEncoding 
 }
 
 static NSMenu *addMenu(const char *title, CFStringEncoding encoding, NSString *key, SEL setAs) {
+	if (setAs && ![NSApp respondsToSelector:setAs]) {
+		return nil;
+	}
+
 	NSString *str = constructNSStringFromCString(title, encoding);
 	NSMenu *menu = [[NSMenu alloc] initWithTitle:str];
 
@@ -178,10 +182,6 @@ void releaseMenu() {
 }
 
 void replaceApplicationMenuItems() {
-	if (!delegate) {
-		delegate = [[ScummVMMenuHandler alloc] init];
-	}
-
 	// We cannot use [[NSApp mainMenu] removeAllItems] as removeAllItems was added in OS X 10.6
 	// So remove the SDL generated menus one by one instead.
 	while ([[NSApp mainMenu] numberOfItems] > 0) {
@@ -200,30 +200,38 @@ void replaceApplicationMenuItems() {
 #endif
 
 	NSMenu *appleMenu = addMenu("ScummVM", kCFStringEncodingASCII, @"", @selector(setAppleMenu:));
-	addMenuItem(_("About ScummVM"), stringEncoding, nil, @selector(orderFrontStandardAboutPanel:), @"", appleMenu);
-	[appleMenu addItem:[NSMenuItem separatorItem]];
-	addMenuItem(_("Hide ScummVM"), stringEncoding, nil, @selector(hide:), @"h", appleMenu);
-	addMenuItem(_("Hide Others"), stringEncoding, nil, @selector(hideOtherApplications:), @"h", appleMenu, (NSEventModifierFlagOption|NSEventModifierFlagCommand));
-	addMenuItem(_("Show All"), stringEncoding, nil, @selector(unhideAllApplications:), @"", appleMenu);
-	[appleMenu addItem:[NSMenuItem separatorItem]];
-	addMenuItem(_("Quit ScummVM"), stringEncoding, nil, @selector(terminate:), @"q", appleMenu);
+	if (appleMenu) {
+		addMenuItem(_("About ScummVM"), stringEncoding, nil, @selector(orderFrontStandardAboutPanel:), @"", appleMenu);
+		[appleMenu addItem:[NSMenuItem separatorItem]];
+		addMenuItem(_("Hide ScummVM"), stringEncoding, nil, @selector(hide:), @"h", appleMenu);
+		addMenuItem(_("Hide Others"), stringEncoding, nil, @selector(hideOtherApplications:), @"h", appleMenu, (NSEventModifierFlagOption|NSEventModifierFlagCommand));
+		addMenuItem(_("Show All"), stringEncoding, nil, @selector(unhideAllApplications:), @"", appleMenu);
+		[appleMenu addItem:[NSMenuItem separatorItem]];
+		addMenuItem(_("Quit ScummVM"), stringEncoding, nil, @selector(terminate:), @"q", appleMenu);
+	}
 
 	NSMenu *windowMenu = addMenu(_("Window"), stringEncoding, @"", @selector(setWindowsMenu:));
-	addMenuItem(_("Minimize"), stringEncoding, nil, @selector(performMiniaturize:), @"m", windowMenu);
+	if (windowMenu) {
+		addMenuItem(_("Minimize"), stringEncoding, nil, @selector(performMiniaturize:), @"m", windowMenu);
+	}
 
 	NSMenu *helpMenu = addMenu(_("Help"), stringEncoding, @"", @selector(setHelpMenu:));
-	addMenuItem(_("User Manual"), stringEncoding, delegate, @selector(openUserManual), @"", helpMenu);
-	[helpMenu addItem:[NSMenuItem separatorItem]];
-	addMenuItem(_("General Information"), stringEncoding, delegate, @selector(openReadme), @"", helpMenu);
-	addMenuItem(_("What's New in ScummVM"), stringEncoding, delegate, @selector(openNews), @"", helpMenu);
-	[helpMenu addItem:[NSMenuItem separatorItem]];
-	addMenuItem(_("Credits"), stringEncoding, delegate, @selector(openCredits), @"", helpMenu);
-	addMenuItem(_("GPL License"), stringEncoding, delegate, @selector(openLicenseGPL), @"", helpMenu);
-	addMenuItem(_("LGPL License"), stringEncoding, delegate, @selector(openLicenseLGPL), @"", helpMenu);
-	addMenuItem(_("Freefont License"), stringEncoding, delegate, @selector(openLicenseFreefont), @"", helpMenu);
-	addMenuItem(_("OFL License"), stringEncoding, delegate, @selector(openLicenseOFL), @"", helpMenu);
-	addMenuItem(_("BSD License"), stringEncoding, delegate, @selector(openLicenseBSD), @"", helpMenu);
-
+	if (helpMenu) {
+		if (!delegate) {
+			delegate = [[ScummVMMenuHandler alloc] init];
+		}
+		addMenuItem(_("User Manual"), stringEncoding, delegate, @selector(openUserManual), @"", helpMenu);
+		[helpMenu addItem:[NSMenuItem separatorItem]];
+		addMenuItem(_("General Information"), stringEncoding, delegate, @selector(openReadme), @"", helpMenu);
+		addMenuItem(_("What's New in ScummVM"), stringEncoding, delegate, @selector(openNews), @"", helpMenu);
+		[helpMenu addItem:[NSMenuItem separatorItem]];
+		addMenuItem(_("Credits"), stringEncoding, delegate, @selector(openCredits), @"", helpMenu);
+		addMenuItem(_("GPL License"), stringEncoding, delegate, @selector(openLicenseGPL), @"", helpMenu);
+		addMenuItem(_("LGPL License"), stringEncoding, delegate, @selector(openLicenseLGPL), @"", helpMenu);
+		addMenuItem(_("Freefont License"), stringEncoding, delegate, @selector(openLicenseFreefont), @"", helpMenu);
+		addMenuItem(_("OFL License"), stringEncoding, delegate, @selector(openLicenseOFL), @"", helpMenu);
+		addMenuItem(_("BSD License"), stringEncoding, delegate, @selector(openLicenseBSD), @"", helpMenu);
+	}
 
 	[appleMenu release];
 	[windowMenu release];

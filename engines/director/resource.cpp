@@ -61,8 +61,6 @@ void DirectorEngine::loadInitialMovie(const Common::String movie) {
 Archive *DirectorEngine::openMainArchive(const Common::String movie) {
 	debug(1, "openMainArchive(\"%s\")", movie.c_str());
 
-	delete _mainArchive;
-
 	_mainArchive = createArchive();
 
 	if (!_mainArchive->openFile(movie)) {
@@ -76,11 +74,6 @@ Archive *DirectorEngine::openMainArchive(const Common::String movie) {
 	return _mainArchive;
 }
 
-void DirectorEngine::cleanupMainArchive() {
-	delete _mainArchive;
-	delete _macBinary;
-}
-
 void DirectorEngine::loadEXE(const Common::String movie) {
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(movie);
 	if (!exeStream)
@@ -89,7 +82,7 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	_lingo->processEvent(kEventStart);
 
 	uint32 initialTag = exeStream->readUint32LE();
-	if (initialTag == MKTAG('R', 'I', 'F', 'X')) {
+	if (initialTag == MKTAG('R', 'I', 'F', 'X') || initialTag == MKTAG('X', 'F', 'I', 'R')) {
 		// we've encountered a movie saved from Director, not a projector.
 		loadEXERIFX(exeStream, 0);
 	} else if (initialTag == MKTAG('R', 'I', 'F', 'F') || initialTag == MKTAG('F', 'F', 'I', 'R')) { // This is just a normal movie
@@ -281,6 +274,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 			return;
 	}
 
+	Common::SeekableSubReadStreamEndian *r;
+
 	clearSharedCast();
 
 	Archive *sharedCast = createArchive();
@@ -307,11 +302,13 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		_wm->_fontMan->loadFonts(filename);
 	}
 
-	_sharedScore->loadConfig(*sharedCast->getResource(MKTAG('V','W','C','F'), 1024));
+	_sharedScore->loadConfig(*(r = sharedCast->getResource(MKTAG('V','W','C','F'), 1024)));
+	delete r;
 
 	if (getVersion() < 4) {
 		_sharedScore->_castIDoffset = sharedCast->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
-		_sharedScore->loadCastDataVWCR(*sharedCast->getResource(MKTAG('V','W','C','R'), _sharedScore->_castIDoffset));
+		_sharedScore->loadCastDataVWCR(*(r = sharedCast->getResource(MKTAG('V','W','C','R'), _sharedScore->_castIDoffset)));
+		delete r;
 	}
 
 	// Try to load script context
@@ -321,7 +318,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
 
 			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
-				_sharedScore->loadLingoContext(*sharedCast->getResource(MKTAG('L','c','t','x'), *iterator));
+				_sharedScore->loadLingoContext(*(r = sharedCast->getResource(MKTAG('L','c','t','x'), *iterator)));
+				delete r;
 			}
 		}
 	}
@@ -336,7 +334,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 				maxLnam = MAX(maxLnam, (int)*iterator);
 			}
 			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
-			_sharedScore->loadLingoNames(*sharedCast->getResource(MKTAG('L','n','a','m'), maxLnam));
+			_sharedScore->loadLingoNames(*(r = sharedCast->getResource(MKTAG('L','n','a','m'), maxLnam)));
+			delete r;
 		}
 	}
 
@@ -344,8 +343,10 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (vwci.size() > 0) {
 		debug(0, "****** Loading %d CastInfo resources", vwci.size());
 
-		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
-			_sharedScore->loadCastInfo(*sharedCast->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator), *iterator);
+		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator) {
+			_sharedScore->loadCastInfo(*(r = sharedCast->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator)), *iterator);
+			delete r;
+		}
 	}
 
 	Common::Array<uint16> cast = sharedCast->getResourceIDList(MKTAG('C','A','S','t'));

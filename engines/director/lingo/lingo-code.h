@@ -29,11 +29,18 @@ namespace LC {
 	void c_xpop();
 	void c_printtop();
 
+	Datum mapBinaryOp(Datum (*func)(Datum, Datum), Datum d1, Datum d2);
+	Datum addData(Datum d1, Datum d2);
 	void c_add();
+	Datum subData(Datum d1, Datum d2);
 	void c_sub();
+	Datum mulData(Datum d1, Datum d2);
 	void c_mul();
+	Datum divData(Datum d1, Datum d2);
 	void c_div();
+	Datum modData(Datum d1, Datum d2);
 	void c_mod();
+	Datum negateData(Datum d1);
 	void c_negate();
 
 	void c_and();
@@ -120,7 +127,6 @@ namespace LC {
 	void c_property();
 
 	void c_play();
-	void c_playdone();
 
 	void c_open();
 	void c_hilite();

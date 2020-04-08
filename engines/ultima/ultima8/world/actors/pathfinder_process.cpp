@@ -248,35 +248,35 @@ void PathfinderProcess::run() {
 void PathfinderProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write2(_targetItem);
-	ods->write2(static_cast<uint16>(_targetX));
-	ods->write2(static_cast<uint16>(_targetY));
-	ods->write2(static_cast<uint16>(_targetZ));
-	ods->write1(_hitMode ? 1 : 0);
-	ods->write2(static_cast<uint16>(_currentStep));
+	ods->writeUint16LE(_targetItem);
+	ods->writeUint16LE(static_cast<uint16>(_targetX));
+	ods->writeUint16LE(static_cast<uint16>(_targetY));
+	ods->writeUint16LE(static_cast<uint16>(_targetZ));
+	ods->writeByte(_hitMode ? 1 : 0);
+	ods->writeUint16LE(static_cast<uint16>(_currentStep));
 
-	ods->write2(static_cast<uint16>(_path.size()));
+	ods->writeUint16LE(static_cast<uint16>(_path.size()));
 	for (unsigned int i = 0; i < _path.size(); ++i) {
-		ods->write2(static_cast<uint16>(_path[i]._action));
-		ods->write2(static_cast<uint16>(_path[i]._direction));
+		ods->writeUint16LE(static_cast<uint16>(_path[i]._action));
+		ods->writeUint16LE(static_cast<uint16>(_path[i]._direction));
 	}
 }
 
 bool PathfinderProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	_targetItem = ids->read2();
-	_targetX = ids->read2();
-	_targetY = ids->read2();
-	_targetZ = ids->read2();
-	_hitMode = (ids->read1() != 0);
-	_currentStep = ids->read2();
+	_targetItem = ids->readUint16LE();
+	_targetX = ids->readUint16LE();
+	_targetY = ids->readUint16LE();
+	_targetZ = ids->readUint16LE();
+	_hitMode = (ids->readByte() != 0);
+	_currentStep = ids->readUint16LE();
 
-	unsigned int pathsize = ids->read2();
+	unsigned int pathsize = ids->readUint16LE();
 	_path.resize(pathsize);
 	for (unsigned int i = 0; i < pathsize; ++i) {
-		_path[i]._action = static_cast<Animation::Sequence>(ids->read2());
-		_path[i]._direction = ids->read2();
+		_path[i]._action = static_cast<Animation::Sequence>(ids->readUint16LE());
+		_path[i]._direction = ids->readUint16LE();
 	}
 
 	return true;

@@ -66,11 +66,7 @@ ContainerGump::~ContainerGump() {
 }
 
 void ContainerGump::InitGump(Gump *newparent, bool take_focus) {
-	ShapeFrame *sf = _shape->getFrame(_frameNum);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 
 	// Wait with ItemRelativeGump initialization until we calculated our size.
 	ItemRelativeGump::InitGump(newparent, take_focus);
@@ -181,9 +177,9 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 
 		int32 itemx, itemy;
 		getItemCoords(item, itemx, itemy);
-		Shape *s = item->getShapeObject();
+		const Shape *s = item->getShapeObject();
 		assert(s);
-		ShapeFrame *frame = s->getFrame(item->getFrame());
+		const ShapeFrame *frame = s->getFrame(item->getFrame());
 
 		if (frame->hasPoint(mx - itemx, my - itemy)) {
 			// found it
@@ -407,9 +403,9 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 	_draggingX = mx - _itemArea.x - dox;
 	_draggingY = my - _itemArea.y - doy;
 
-	Shape *sh = item->getShapeObject();
+	const Shape *sh = item->getShapeObject();
 	assert(sh);
-	ShapeFrame *fr = sh->getFrame(_draggingFrame);
+	const ShapeFrame *fr = sh->getFrame(_draggingFrame);
 	assert(fr);
 
 	if (_draggingX - fr->_xoff < 0 ||
@@ -505,7 +501,6 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 
 			// combined, so delete item
 			item->destroy();
-			item = nullptr;
 			return;
 		}
 	}
@@ -542,19 +537,19 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 void ContainerGump::saveData(ODataSource *ods) {
 	ItemRelativeGump::saveData(ods);
 
-	ods->write4(static_cast<uint32>(_itemArea.x));
-	ods->write4(static_cast<uint32>(_itemArea.y));
-	ods->write4(static_cast<uint32>(_itemArea.w));
-	ods->write4(static_cast<uint32>(_itemArea.h));
+	ods->writeUint32LE(static_cast<uint32>(_itemArea.x));
+	ods->writeUint32LE(static_cast<uint32>(_itemArea.y));
+	ods->writeUint32LE(static_cast<uint32>(_itemArea.w));
+	ods->writeUint32LE(static_cast<uint32>(_itemArea.h));
 }
 
 bool ContainerGump::loadData(IDataSource *ids, uint32 version) {
 	if (!ItemRelativeGump::loadData(ids, version)) return false;
 
-	int32 iax = static_cast<int32>(ids->read4());
-	int32 iay = static_cast<int32>(ids->read4());
-	int32 iaw = static_cast<int32>(ids->read4());
-	int32 iah = static_cast<int32>(ids->read4());
+	int32 iax = static_cast<int32>(ids->readUint32LE());
+	int32 iay = static_cast<int32>(ids->readUint32LE());
+	int32 iaw = static_cast<int32>(ids->readUint32LE());
+	int32 iah = static_cast<int32>(ids->readUint32LE());
 	_itemArea.Set(iax, iay, iaw, iah);
 
 	return true;

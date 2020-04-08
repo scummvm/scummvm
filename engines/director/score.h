@@ -28,6 +28,7 @@
 namespace Graphics {
 	class ManagedSurface;
 	class Font;
+	class MacWindow;
 }
 
 namespace Common {
@@ -89,6 +90,7 @@ public:
 	Sprite *getSpriteById(uint16 id);
 	void setSpriteCasts();
 	void loadSpriteImages(bool isSharedCast);
+	void loadSpriteSounds(bool isSharedCast);
 	void copyCastStxts();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
 
@@ -134,6 +136,7 @@ public:
 	Graphics::ManagedSurface *_surface;
 	Graphics::ManagedSurface *_trailSurface;
 	Graphics::ManagedSurface *_backSurface;
+	Graphics::ManagedSurface *_backSurface2;
 	Graphics::Font *_font;
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
@@ -151,6 +154,8 @@ public:
 
 	int _numChannelsDisplayed;
 
+	Graphics::MacWindow *_window;
+
 private:
 	uint16 _versionMinor;
 	uint16 _versionMajor;
@@ -163,6 +168,7 @@ private:
 	uint16 _castArrayStart;
 	uint16 _currentFrame;
 	uint16 _nextFrame;
+	uint16 _framesRan; // used by kDebugFewFramesOnly
 	int _currentLabel;
 	uint32 _flags;
 	uint16 _castArrayEnd;

@@ -361,6 +361,7 @@ MODULE_OBJS := \
 	ultima8/graphics/anim_dat.o \
 	ultima8/graphics/base_soft_render_surface.o \
 	ultima8/graphics/frame_id.o \
+	ultima8/graphics/fade_to_modal_process.o \
 	ultima8/graphics/gump_shape_archive.o \
 	ultima8/graphics/inverter_process.o \
 	ultima8/graphics/main_shape_archive.o \
@@ -368,6 +369,7 @@ MODULE_OBJS := \
 	ultima8/graphics/palette_fader_process.o \
 	ultima8/graphics/palette_manager.o \
 	ultima8/graphics/point_scaler.o \
+	ultima8/graphics/raw_shape_frame.o \
 	ultima8/graphics/render_surface.o \
 	ultima8/graphics/shape.o \
 	ultima8/graphics/shape_archive.o \
@@ -445,7 +447,6 @@ MODULE_OBJS := \
 	ultima8/misc/encoding.o \
 	ultima8/misc/id_man.o \
 	ultima8/misc/istring.o \
-	ultima8/misc/md5.o \
 	ultima8/misc/pent_include.o \
 	ultima8/misc/util.o \
 	ultima8/usecode/bit_set.o \

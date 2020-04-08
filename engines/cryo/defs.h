@@ -305,7 +305,8 @@ enum PersonFlags {
 };
 }
 
-#pragma pack(push, 1)
+#include "common/pack-start.h"
+
 struct perso_t {
 	uint16  _roomNum;    // room this person currently in
 	uint16  _actionId;   // TODO: checkme
@@ -596,7 +597,7 @@ struct global_t {
 	uint16  _party;
 	uint16  _partyOutside;
 	uint16  _metPersonsMask2;
-	uint16  _var1C;    //TODO: write-only?	
+	uint16  _var1C;    //TODO: write-only?
 	uint16  _phaseActionsCount;
 	uint16  _curAreaFlags;
 	uint16  _curItemsMask;
@@ -756,7 +757,8 @@ public:
 	uint16    _count;
 	PakHeaderItem* _files;
 };
-#pragma pack(pop)
+
+#include "common/pack-end.h"
 
 struct Citadel {
 	int16 _id;

@@ -56,8 +56,8 @@ struct Box {
 
 	// Check to see if a point is within the Box
 	bool    InBox(int px, int py, int pz) const {
-		return (px >= (_x - _xd) && py >= (_y - _yd) && pz >= _z &&
-		        px < _x && py < _y && pz < (_z + _zd));
+		return (px > (_x - _xd) && py > (_y - _yd) && pz >= _z &&
+		        px <= _x && py <= _y && pz < (_z + _zd));
 	}
 
 	// Move the Box (Relative)

@@ -70,7 +70,7 @@ void AnimDat::load(IDataSource *ds) {
 
 	for (unsigned int shape = 0; shape < _anims.size(); shape++) {
 		ds->seek(4 * shape);
-		uint32 offset = ds->read4();
+		uint32 offset = ds->readUint32LE();
 
 		if (offset == 0) {
 			_anims[shape] = nullptr;
@@ -84,7 +84,7 @@ void AnimDat::load(IDataSource *ds) {
 
 		for (unsigned int action = 0; action < actioncount; action++) {
 			ds->seek(offset + action * 4);
-			uint32 actionoffset = ds->read4();
+			uint32 actionoffset = ds->readUint32LE();
 
 			if (actionoffset == 0) {
 				a->_actions[action] = 0;
@@ -97,11 +97,11 @@ void AnimDat::load(IDataSource *ds) {
 			a->_actions[action]->_action = action;
 
 			ds->seek(actionoffset);
-			uint32 actionsize = ds->read1();
+			uint32 actionsize = ds->readByte();
 			a->_actions[action]->_size = actionsize;
-			a->_actions[action]->_flags = ds->read1();
-			a->_actions[action]->_frameRepeat = ds->read1();
-			a->_actions[action]->_flags |= ds->read1() << 8;
+			a->_actions[action]->_flags = ds->readByte();
+			a->_actions[action]->_frameRepeat = ds->readByte();
+			a->_actions[action]->_flags |= ds->readByte() << 8;
 
 			unsigned int dirCount = 8;
 			if (GAME_IS_CRUSADER &&
@@ -115,26 +115,26 @@ void AnimDat::load(IDataSource *ds) {
 
 				for (unsigned int j = 0; j < actionsize; j++) {
 					if (GAME_IS_U8) {
-						f._frame = ds->read1(); // & 0x7FF;
-						uint8 x = ds->read1();
+						f._frame = ds->readByte(); // & 0x7FF;
+						uint8 x = ds->readByte();
 						f._frame += (x & 0x7) << 8;
 						f._deltaZ = ds->readXS(1);
-						f._sfx = ds->read1();
+						f._sfx = ds->readByte();
 						f._deltaDir = ds->readXS(1);
-						f._flags = ds->read1();
+						f._flags = ds->readByte();
 						f._flags += (x & 0xF8) << 8;
 					} else if (GAME_IS_CRUSADER) {
 						// byte 0: low byte of frame
-						f._frame = ds->read1();
+						f._frame = ds->readByte();
 						// byte 1: low nibble part of frame
-						uint8 x = ds->read1();
+						uint8 x = ds->readByte();
 						f._frame += (x & 0xF) << 8;
 						// byte 2, 3: unknown; byte 3 might contain flags
 						ds->skip(2);
 						// byte 4: deltadir (signed)
 						f._deltaDir = ds->readXS(1);
 						// byte 5: flags?
-						f._flags = ds->read1();
+						f._flags = ds->readByte();
 						// byte 6, 7: unknown
 						ds->skip(2);
 

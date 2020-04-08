@@ -366,8 +366,7 @@ bool Actor::setEquip(Item *item, bool checkwghtvol) {
 
 	// now check 'equipment slots'
 	// we can have one item of each equipment type, plus one backpack
-	Std::list<Item *>::iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
+	for (Std::list<Item *>::const_iterator iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if ((*iter)->getObjId() == item->getObjId()) continue;
 
 		uint32 cet = (*iter)->getShapeInfo()->_equipType;
@@ -1076,37 +1075,37 @@ void Actor::dumpInfo() const {
 
 void Actor::saveData(ODataSource *ods) {
 	Container::saveData(ods);
-	ods->write2(_strength);
-	ods->write2(_dexterity);
-	ods->write2(_intelligence);
-	ods->write2(_hitPoints);
-	ods->write2(_mana);
-	ods->write2(_alignment);
-	ods->write2(_enemyAlignment);
-	ods->write2(_lastAnim);
-	ods->write2(_animFrame);
-	ods->write2(_direction);
-	ods->write4(_fallStart);
-	ods->write4(_actorFlags);
-	ods->write1(_unk0C);
+	ods->writeUint16LE(_strength);
+	ods->writeUint16LE(_dexterity);
+	ods->writeUint16LE(_intelligence);
+	ods->writeUint16LE(_hitPoints);
+	ods->writeUint16LE(_mana);
+	ods->writeUint16LE(_alignment);
+	ods->writeUint16LE(_enemyAlignment);
+	ods->writeUint16LE(_lastAnim);
+	ods->writeUint16LE(_animFrame);
+	ods->writeUint16LE(_direction);
+	ods->writeUint32LE(_fallStart);
+	ods->writeUint32LE(_actorFlags);
+	ods->writeByte(_unk0C);
 }
 
 bool Actor::loadData(IDataSource *ids, uint32 version) {
 	if (!Container::loadData(ids, version)) return false;
 
-	_strength = static_cast<int16>(ids->read2());
-	_dexterity = static_cast<int16>(ids->read2());
-	_intelligence = static_cast<int16>(ids->read2());
-	_hitPoints = ids->read2();
-	_mana = static_cast<int16>(ids->read2());
-	_alignment = ids->read2();
-	_enemyAlignment = ids->read2();
-	_lastAnim = static_cast<Animation::Sequence>(ids->read2());
-	_animFrame = ids->read2();
-	_direction = ids->read2();
-	_fallStart = ids->read4();
-	_actorFlags = ids->read4();
-	_unk0C = ids->read1();
+	_strength = static_cast<int16>(ids->readUint16LE());
+	_dexterity = static_cast<int16>(ids->readUint16LE());
+	_intelligence = static_cast<int16>(ids->readUint16LE());
+	_hitPoints = ids->readUint16LE();
+	_mana = static_cast<int16>(ids->readUint16LE());
+	_alignment = ids->readUint16LE();
+	_enemyAlignment = ids->readUint16LE();
+	_lastAnim = static_cast<Animation::Sequence>(ids->readUint16LE());
+	_animFrame = ids->readUint16LE();
+	_direction = ids->readUint16LE();
+	_fallStart = ids->readUint32LE();
+	_actorFlags = ids->readUint32LE();
+	_unk0C = ids->readByte();
 
 	return true;
 }

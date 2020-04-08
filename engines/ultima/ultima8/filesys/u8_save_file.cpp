@@ -31,9 +31,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveFile, NamedArchiveFile)
 
 
-U8SaveFile::U8SaveFile(IDataSource *ds_) {
-	_ds = ds_;
-	_count = 0;
+U8SaveFile::U8SaveFile(IDataSource *ds_) : _ds(ds_), _count(0) {
 	_valid = isU8SaveFile(_ds);
 
 	if (_valid)
@@ -56,21 +54,21 @@ bool U8SaveFile::isU8SaveFile(IDataSource *_ds) {
 
 bool U8SaveFile::readMetadata() {
 	_ds->seek(0x18);
-	_count = _ds->read2();
+	_count = _ds->readUint16LE();
 
 	_offsets.resize(_count);
 	_sizes.resize(_count);
 
 	for (unsigned int i = 0; i < _count; ++i) {
-		uint32 namelen = _ds->read4();
+		uint32 namelen = _ds->readUint32LE();
 		char *buf = new char[namelen];
 		_ds->read(buf, static_cast<int32>(namelen));
 		Std::string filename = buf;
 		_indices[filename] = i;
 		storeIndexedName(filename);
 		delete[] buf;
-		_sizes[i] = _ds->read4();
-		_offsets[i] = _ds->getPos();
+		_sizes[i] = _ds->readUint32LE();
+		_offsets[i] = _ds->pos();
 		_ds->skip(_sizes[i]); // skip data
 	}
 

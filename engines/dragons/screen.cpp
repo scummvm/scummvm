@@ -446,10 +446,10 @@ int16 Screen::addFlatQuad(int16 x0, int16 y0, int16 x1, int16 y1, int16 x3, int1
 			_flatQuads[i].points[0].y = y0;
 			_flatQuads[i].points[1].x = x1;
 			_flatQuads[i].points[1].y = y1;
-			_flatQuads[i].points[2].x = x3;
-			_flatQuads[i].points[2].y = y3;
-			_flatQuads[i].points[3].x = x2;
-			_flatQuads[i].points[3].y = y2;
+			_flatQuads[i].points[2].x = x2;
+			_flatQuads[i].points[2].y = y2;
+			_flatQuads[i].points[3].x = x3;
+			_flatQuads[i].points[3].y = y3;
 			_flatQuads[i].colour = colour;
 			_flatQuads[i].priorityLayer = priorityLayer;
 			return i;
@@ -464,7 +464,7 @@ void Screen::drawFlatQuads(uint16 priorityLayer) {
 		if (_flatQuads[i].flags & 1u && _flatQuads[i].priorityLayer == priorityLayer) {
 			//TODO need to support semitrans mode.
 			//TODO check if we need to support non-rectangular quads.
-			fillRect(_flatQuads[i].colour, Common::Rect(_flatQuads[i].points[0].x, _flatQuads[i].points[0].y, _flatQuads[i].points[2].x + 1, _flatQuads[i].points[2].y + 1));
+			fillRect(_flatQuads[i].colour, Common::Rect(_flatQuads[i].points[0].x, _flatQuads[i].points[0].y, _flatQuads[i].points[3].x + 1, _flatQuads[i].points[3].y + 1));
 		}
 	}
 }

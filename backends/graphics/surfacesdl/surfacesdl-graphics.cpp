@@ -194,12 +194,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 	_scalerType = 0;
 
-#ifndef __SYMBIAN32__
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
-#else
-	_videoMode.fullscreen = true;
-#endif
-
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.stretchMode = STRETCH_FIT;
@@ -902,10 +897,7 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	height = bestH;
 }
 
-bool SurfaceSdlGraphicsManager::loadGFXMode() {
-	_forceRedraw = true;
-
-#if !defined(__MAEMO__) && !defined(DINGUX) && !defined(GPH_DEVICE)
+void SurfaceSdlGraphicsManager::setupHardwareSize() {
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
@@ -919,12 +911,12 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
 		_videoMode.hardwareHeight = real2Aspect(_videoMode.hardwareHeight);
 	}
+}
 
-// On GPH devices ALL the _videoMode.hardware... are setup in GPHGraphicsManager::loadGFXMode()
-#elif !defined(GPH_DEVICE)
-	_videoMode.hardwareWidth = _videoMode.overlayWidth;
-	_videoMode.hardwareHeight = _videoMode.overlayHeight;
-#endif
+bool SurfaceSdlGraphicsManager::loadGFXMode() {
+	_forceRedraw = true;
+
+	setupHardwareSize();
 
 	//
 	// Create the surface that contains the 8 bit game data
@@ -1496,6 +1488,9 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) c
 
 void SurfaceSdlGraphicsManager::setFullscreenMode(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
+
+	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode))
+		return;
 
 	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable)
 		return;

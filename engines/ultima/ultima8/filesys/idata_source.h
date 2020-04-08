@@ -35,66 +35,34 @@ public:
 	IDataSource() {}
 	virtual ~IDataSource() {}
 
-	virtual uint8 read1() = 0;
-	virtual uint16 read2() = 0;
+	virtual uint8 readByte() = 0;
+	virtual uint16 readUint16LE() = 0;
 	virtual uint16 read2high() = 0;
 	virtual uint32 read3() = 0;
-	virtual uint32 read4() = 0;
+	virtual uint32 readUint32LE() = 0;
 	virtual uint32 read4high() = 0;
 	virtual int32 read(void *str, int32 num_bytes) = 0;
 
 	uint32 readX(uint32 num_bytes) {
 		assert(num_bytes > 0 && num_bytes <= 4);
-		if (num_bytes == 1) return read1();
-		else if (num_bytes == 2) return read2();
+		if (num_bytes == 1) return readByte();
+		else if (num_bytes == 2) return readUint16LE();
 		else if (num_bytes == 3) return read3();
-		else return read4();
+		else return readUint32LE();
 	}
 
 	int32 readXS(uint32 num_bytes) {
 		assert(num_bytes > 0 && num_bytes <= 4);
-		if (num_bytes == 1) return static_cast<int8>(read1());
-		else if (num_bytes == 2) return static_cast<int16>(read2());
+		if (num_bytes == 1) return static_cast<int8>(readByte());
+		else if (num_bytes == 2) return static_cast<int16>(readUint16LE());
 		else if (num_bytes == 3) return (((static_cast<int32>(read3())) << 8) >> 8);
-		else return static_cast<int32>(read4());
-	}
-
-	/* FIXME: Dubious conversion between float and int */
-	float readf() {
-#if 1
-		union {
-			uint32  i;
-			float   f;
-		} int_float;
-		int_float.i = read4();
-		return int_float.f;
-#else
-		uint32 i = read4();
-		uint32 mantissa = i & 0x3FFFFF;
-		int32 exponent = ((i >> 23) & 0xFF);
-
-		// Zero
-		if (!exponent && !mantissa)
-			return 0.0F;
-		// Infinity and NaN (don't handle them)
-		else if (exponent == 0xFF)
-			return 0.0F;
-		// Normalized - Add the leading one
-		else if (exponent)
-			mantissa |= 0x400000;
-		// Denormalized - Set the exponent to 1
-		else
-			exponent = 1;
-
-		float f = Std::ldexp(mantissa / 8388608.0, exponent - 127);
-		return (i >> 31) ? -f : f;
-#endif
+		else return static_cast<int32>(readUint32LE());
 	}
 
 	void readline(Std::string &str) {
 		str.clear();
-		while (!eof()) {
-			char character =  static_cast<char>(read1());
+		while (!eos()) {
+			char character =  static_cast<char>(readByte());
 
 			if (character == '\r') continue;    // Skip cr
 			else if (character == '\n') break;  // break on line feed
@@ -105,9 +73,9 @@ public:
 
 	virtual void seek(uint32 pos) = 0;
 	virtual void skip(int32 delta) = 0;
-	virtual uint32 getSize() const = 0;
-	virtual uint32 getPos() const = 0;
-	virtual bool eof() const = 0;
+	virtual uint32 size() const = 0;
+	virtual uint32 pos() const = 0;
+	virtual bool eos() const = 0;
 
 	virtual Common::SeekableReadStream *GetRawStream() {
 		return nullptr;
@@ -120,8 +88,7 @@ private:
 	Common::SeekableReadStream *_in;
 
 public:
-	IFileDataSource(Common::SeekableReadStream *data_stream) {
-		_in = data_stream;
+	IFileDataSource(Common::SeekableReadStream *data_stream) : _in(data_stream) {
 	}
 
 	~IFileDataSource() override {
@@ -133,12 +100,12 @@ public:
 	}
 
 	//  Read a byte value
-	uint8 read1() override {
+	uint8 readByte() override {
 		return static_cast<uint8>(_in->readByte());
 	}
 
 	//  Read a 2-byte value, lsb first.
-	uint16 read2() override {
+	uint16 readUint16LE() override {
 		return _in->readUint16LE();
 	}
 
@@ -157,7 +124,7 @@ public:
 	}
 
 	//  Read a 4-byte long value, lsb first.
-	uint32 read4() override {
+	uint32 readUint32LE() override {
 		return _in->readUint32LE();
 	}
 
@@ -178,15 +145,15 @@ public:
 		_in->seek(pos, SEEK_CUR);
 	}
 
-	uint32 getSize() const override {
+	uint32 size() const override {
 		return _in->size();
 	}
 
-	uint32 getPos() const override {
+	uint32 pos() const override {
 		return _in->pos();
 	}
 
-	bool eof() const override {
+	bool eos() const override {
 		return _in->eos();
 	}
 
@@ -204,12 +171,10 @@ protected:
 
 public:
 	IBufferDataSource(const void *data, unsigned int len, bool is_text = false,
-	                  bool delete_data = false) {
+	                  bool delete_data = false) : _size(len), _freeBuffer(delete_data) {
 		assert(!is_text);
 		assert(data != nullptr || len == 0);
 		_buf = _bufPtr = static_cast<const uint8 *>(data);
-		_size = len;
-		_freeBuffer = delete_data;
 	}
 
 	virtual void load(const void *data, unsigned int len, bool is_text = false,
@@ -233,13 +198,13 @@ public:
 		_buf = _bufPtr = nullptr;
 	}
 
-	uint8 read1() override {
+	uint8 readByte() override {
 		uint8 b0;
 		b0 = *_bufPtr++;
 		return (b0);
 	}
 
-	uint16 read2() override {
+	uint16 readUint16LE() override {
 		uint8 b0, b1;
 		b0 = *_bufPtr++;
 		b1 = *_bufPtr++;
@@ -261,7 +226,7 @@ public:
 		return (b0 | (b1 << 8) | (b2 << 16));
 	}
 
-	uint32 read4() override {
+	uint32 readUint32LE() override {
 		uint8 b0, b1, b2, b3;
 		b0 = *_bufPtr++;
 		b1 = *_bufPtr++;
@@ -297,15 +262,15 @@ public:
 		_bufPtr += delta;
 	}
 
-	uint32 getSize() const override {
+	uint32 size() const override {
 		return _size;
 	}
 
-	uint32 getPos() const override {
+	uint32 pos() const override {
 		return static_cast<uint32>(_bufPtr - _buf);
 	}
 
-	bool eof() const override {
+	bool eos() const override {
 		return (static_cast<uint32>(_bufPtr - _buf)) >= _size;
 	}
 };

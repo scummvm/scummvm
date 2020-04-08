@@ -26,6 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/ad/ad_waypoint_group.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_game.h"
@@ -33,7 +34,6 @@
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include <limits.h>
 
 namespace Wintermute {
 
@@ -44,7 +44,7 @@ AdWaypointGroup::AdWaypointGroup(BaseGame *inGame) : BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
 	_lastMimicScale = -1;
-	_lastMimicX = _lastMimicY = INT_MIN;
+	_lastMimicX = _lastMimicY = -INT_MAX_VALUE;
 }
 
 

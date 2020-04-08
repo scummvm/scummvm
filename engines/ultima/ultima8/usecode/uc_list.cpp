@@ -117,15 +117,15 @@ void UCList::removeString(uint16 s, bool nodel) {
 }
 
 void UCList::save(ODataSource *ods) {
-	ods->write4(_elementSize);
-	ods->write4(_size);
+	ods->writeUint32LE(_elementSize);
+	ods->writeUint32LE(_size);
 	ods->write(&(_elements[0]), _size * _elementSize);
 }
 
 
 bool UCList::load(IDataSource *ids, uint32 version) {
-	_elementSize = ids->read4();
-	_size = ids->read4();
+	_elementSize = ids->readUint32LE();
+	_size = ids->readUint32LE();
 	_elements.resize(_size * _elementSize);
 	ids->read(&(_elements[0]), _size * _elementSize);
 

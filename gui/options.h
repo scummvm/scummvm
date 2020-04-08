@@ -61,8 +61,6 @@ class RadiobuttonGroup;
 class RadiobuttonWidget;
 
 class OptionsDialog : public Dialog {
-	typedef Common::Array<CheckboxWidget *> CheckboxWidgetList;
-
 public:
 	OptionsDialog(const Common::String &domain, int x, int y, int w, int h);
 	OptionsDialog(const Common::String &domain, const Common::String &name);
@@ -75,6 +73,7 @@ public:
 	void close() override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleTickle() override;
+	void handleOtherEvent(const Common::Event &event) override;
 
 	const Common::String& getDomain() const { return _domain; }
 
@@ -104,7 +103,6 @@ protected:
 	// The default value is the launcher's non-scaled talkspeed value. When SCUMM uses the widget,
 	// it uses its own scale
 	void addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal = 255);
-	void addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOptions &engineOptions);
 
 	void setGraphicSettingsState(bool enabled);
 	void setShaderSettingsState(bool enabled);
@@ -242,11 +240,6 @@ protected:
 	//
 	Common::String _guioptions;
 	Common::String _guioptionsString;
-
-	//
-	// Engine-specific controls
-	//
-	CheckboxWidgetList _engineCheckboxes;
 };
 
 

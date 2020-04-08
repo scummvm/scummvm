@@ -30,6 +30,7 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
+#include "engines/dialogs.h"
 #include "graphics/scaler.h"
 #include "gui/saveload.h"
 #include "gui/message.h"
@@ -72,10 +73,10 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_rnd = nullptr;
 	_scriptMan = nullptr;
 	_saveLoad = nullptr;
-	_optionsDialog = nullptr;
 	_card = nullptr;
 	_inventory = nullptr;
 	_lastSaveTime = 0;
+	_currentLanguage = getLanguage();
 
 	_menuSavedCard = -1;
 	_menuSavedStack = -1;
@@ -106,7 +107,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _extrasFile;
 	delete _saveLoad;
 	delete _scriptMan;
-	delete _optionsDialog;
 	delete _inventory;
 	delete _rnd;
 
@@ -120,10 +120,6 @@ Common::Error MohawkEngine_Riven::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
-	ConfMan.registerDefault("zip_mode", false);
-	ConfMan.registerDefault("water_effects", true);
-	ConfMan.registerDefault("transition_mode", kRivenTransitionModeFastest);
-
 	// Let's try to open the installer file (it holds extras.mhk)
 	// Though, we set a low priority to prefer the extracted version
 	if (_installerArchive.open("arcriven.z"))
@@ -134,7 +130,6 @@ Common::Error MohawkEngine_Riven::run() {
 	_sound = new RivenSoundManager(this);
 	setDebugger(new RivenConsole(this));
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
-	_optionsDialog = new RivenOptionsDialog();
 	_scriptMan = new RivenScriptManager(this);
 	_inventory = new RivenInventory(this);
 
@@ -149,6 +144,7 @@ Common::Error MohawkEngine_Riven::run() {
 		_cursor = new MacCursorManager("Riven");
 
 	initVars();
+	applyGameSettings();
 
 	// Check the user has copied all the required datafiles
 	if (!checkDatafiles()) {
@@ -175,15 +171,12 @@ Common::Error MohawkEngine_Riven::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
-	// Set the transition speed
-	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
-
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
 	_cursor->showCursor();
 
 	// Let's begin, shall we?
-	if (getFeatures() & GF_DEMO) {
+	if (isGameVariant(GF_DEMO)) {
 		// Start the demo off with the videos
 		changeToStack(kStackAspit);
 		changeToCard(6);
@@ -270,23 +263,25 @@ void MohawkEngine_Riven::processInput() {
 				runOptionsDialog();
 				break;
 			case kRivenActionOpenMainMenu:
-				if (getFeatures() & GF_DEMO) {
+				if (isGameVariant(GF_DEMO)) {
 					// Return to the main menu in the demo
 					if (_stack->getId() != kStackAspit)
 						changeToStack(kStackAspit);
 					changeToCard(1);
-				} else if (!_scriptMan->hasQueuedScripts() && getFeatures() & GF_25TH) {
+				} else if (!_scriptMan->hasQueuedScripts() && isGameVariant(GF_25TH)) {
 					// Check if we haven't jumped to menu
 					if (_menuSavedStack == -1) {
 						goToMainMenu();
 					} else {
 						resumeFromMainMenu();
 					}
+				} else if (!_scriptMan->hasQueuedScripts()) {
+					openMainMenuDialog();
 				}
 				break;
 			case kRivenActionPlayIntroVideos:
 				// Play the intro videos in the demo
-				if (getFeatures() & GF_DEMO) {
+				if (isGameVariant(GF_DEMO)) {
 					if (_stack->getId() != kStackAspit)
 						changeToStack(kStackAspit);
 					changeToCard(6);
@@ -371,17 +366,6 @@ void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
 	}
 }
 
-uint32 MohawkEngine_Riven::sanitizeTransitionMode(uint32 mode) {
-	if (mode != kRivenTransitionModeDisabled
-	    && mode != kRivenTransitionModeFastest
-	    && mode != kRivenTransitionModeNormal
-	    && mode != kRivenTransitionModeBest) {
-		return kRivenTransitionModeFastest;
-	}
-
-	return mode;
-}
-
 // Stack/Card-Related Functions
 
 void MohawkEngine_Riven::changeToStack(uint16 stackId) {
@@ -402,15 +386,13 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	_gfx->clearCache();
 
 	// Clear the old stack files out
-	for (uint32 i = 0; i < _mhk.size(); i++)
-		delete _mhk[i];
-	_mhk.clear();
+	closeAllArchives();
 
 	// Get the prefix character for the destination stack
 	char prefix = RivenStacks::getName(stackId)[0];
 
 	// Load the localization override file if any
-	if (getFeatures() & GF_LANGUAGE_FILES) {
+	if (isGameVariant(GF_25TH)) {
 		loadLanguageDatafile(prefix, stackId);
 	}
 
@@ -436,6 +418,17 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	// Set the mouse position to the correct value so the mouse
 	// cursor can be computed accurately when loading a card.
 	_stack->onMouseMove(getEventManager()->getMousePos());
+}
+
+void MohawkEngine_Riven::reloadCurrentCard() {
+	assert(_stack && _card);
+
+	uint16 cardId = _card->getId();
+
+	closeAllArchives();
+
+	changeToStack(_stack->getId());
+	changeToCard(cardId);
 }
 
 const char **MohawkEngine_Riven::listExpectedDatafiles() const {
@@ -474,9 +467,9 @@ const char **MohawkEngine_Riven::listExpectedDatafiles() const {
 	};
 
 	const char **datafiles;
-	if (getFeatures() & GF_DEMO) {
+	if (isGameVariant(GF_DEMO)) {
 		datafiles = datafilesDemo;
-	} else if (getFeatures() & GF_DVD) {
+	} else if (isGameVariant(GF_DVD)) {
 		datafiles = datafilesDVD;
 	} else {
 		datafiles = datafilesCD;
@@ -514,13 +507,43 @@ bool MohawkEngine_Riven::checkDatafiles() {
 	return false;
 }
 
+const RivenLanguage *MohawkEngine_Riven::listLanguages() {
+	static const RivenLanguage languages[] = {
+	    { Common::EN_ANY,   "english"  },
+	    { Common::FR_FRA,   "french"   },
+	    { Common::DE_DEU,   "german"   },
+	    { Common::IT_ITA,   "italian"  },
+	    { Common::JA_JPN,   "japanese" },
+	    { Common::PL_POL,   "polish"   },
+	    { Common::RU_RUS,   "russian"  },
+	    { Common::ES_ESP,   "spanish"  },
+	    { Common::UNK_LANG, nullptr    }
+	};
+	return languages;
+}
+
+const RivenLanguage *MohawkEngine_Riven::getLanguageDesc(Common::Language language) {
+	const RivenLanguage *languages = listLanguages();
+
+	while (languages->language != Common::UNK_LANG) {
+		if (languages->language == language) {
+			return languages;
+		}
+
+		languages++;
+	}
+
+	return nullptr;
+}
+
 void MohawkEngine_Riven::loadLanguageDatafile(char prefix, uint16 stackId) {
-	Common::String language = getDatafileLanguageName("a_data_");
-	if (language.empty()) {
+	Common::Language language = getLanguage();
+	const RivenLanguage *languageDesc = getLanguageDesc(language);
+	if (!languageDesc) {
 		return;
 	}
 
-	Common::String languageDatafile = Common::String::format("%c_data_%s.mhk", prefix, language.c_str());
+	Common::String languageDatafile = Common::String::format("%c_data_%s.mhk", prefix, languageDesc->archiveSuffix);
 
 	MohawkArchive *mhk = new MohawkArchive();
 	if (mhk->openFile(languageDatafile)) {
@@ -601,7 +624,7 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 	// on different cards).
 	_gfx->clearCache();
 
-	if (!(getFeatures() & GF_DEMO)) {
+	if (!isGameVariant(GF_DEMO)) {
 		for (byte i = 0; i < ARRAYSIZE(rivenSpecialChange); i++)
 			if (_stack->getId() == rivenSpecialChange[i].startStack && dest == _stack->getCardStackId(
 					rivenSpecialChange[i].startCardRMAP)) {
@@ -658,10 +681,9 @@ void MohawkEngine_Riven::startNewGame() {
 
 	_vars.clear();
 	initVars();
+	applyGameSettings();
 
 	_zipModeData.clear();
-
-	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 
 	setTotalPlayTime(0);
 }
@@ -736,6 +758,21 @@ Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &
 	return error;
 }
 
+Common::Language MohawkEngine_Riven::getLanguage() const {
+	Common::Language language = MohawkEngine::getLanguage();
+
+	// The language can be changed at run time in the 25th anniversary edition
+	if (language == Common::UNK_LANG) {
+		language = Common::parseLanguage(ConfMan.get("language"));
+	}
+
+	if (language == Common::UNK_LANG) {
+		language = Common::EN_ANY;
+	}
+
+	return language;
+}
+
 void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::String &desc) {
 	assert(slot >= 0 && !desc.empty());
 
@@ -776,7 +813,7 @@ bool MohawkEngine_Riven::isZipVisitedCard(const Common::String &hotspotName) con
 }
 
 bool MohawkEngine_Riven::canLoadGameStateCurrently() {
-	if (getFeatures() & GF_DEMO) {
+	if (isGameVariant(GF_DEMO)) {
 		return false;
 	}
 
@@ -800,54 +837,67 @@ void MohawkEngine_Riven::setGameEnded() {
 }
 
 void MohawkEngine_Riven::runOptionsDialog() {
-	if (isGameStarted()) {
-		_optionsDialog->setZipMode(_vars["azip"] != 0);
-		_optionsDialog->setWaterEffect(_vars["waterenabled"] != 0);
-		_optionsDialog->setTransitions(_vars["transitionmode"]);
-	} else {
-		_optionsDialog->setZipMode(ConfMan.getBool("zip_mode"));
-		_optionsDialog->setWaterEffect(ConfMan.getBool("water_effects"));
-
-		uint32 transitions = ConfMan.getInt("transition_mode");
-		_optionsDialog->setTransitions(sanitizeTransitionMode(transitions));
+	GUI::ConfigDialog dlg;
+	if (runDialog(dlg)) {
+		syncSoundSettings();
+		applyGameSettings();
 	}
+}
 
-	if (runDialog(*_optionsDialog) > 0) {
-		if (isGameStarted()) {
-			_vars["azip"] = _optionsDialog->getZipMode() ? 1 : 0;
-			_vars["waterenabled"] = _optionsDialog->getWaterEffect() ? 1 : 0;
-			_vars["transitionmode"] = _optionsDialog->getTransitions();
-		} else {
-			ConfMan.setBool("zip_mode", _optionsDialog->getZipMode());
-			ConfMan.setBool("water_effects", _optionsDialog->getWaterEffect());
-			ConfMan.setInt("transition_mode", _optionsDialog->getTransitions());
-			ConfMan.flushToDisk();
-		}
+void MohawkEngine_Riven::applyGameSettings() {
+	int transitions = ConfMan.getInt("transition_mode");
+	RivenTransitionMode transitionsMode = RivenGraphics::sanitizeTransitionMode(transitions);
+
+	_vars["transitionmode"] = transitionsMode;
+	_vars["azip"]           = ConfMan.getBool("zip_mode");
+	_vars["waterenabled"]   = ConfMan.getBool("water_effects");
+
+	_gfx->setTransitionMode(transitionsMode);
+
+	Common::Language newLanguage = getLanguage();
+	if (_stack && newLanguage != _currentLanguage) {
+		_gfx->loadMenuFont();
+		reloadCurrentCard();
 	}
+	_currentLanguage = newLanguage;
 
-	if (hasGameEnded()) {
-		// Attempt to autosave before exiting
-		saveAutosaveIfEnabled();
+	if (_card) {
+		_card->initializeZipMode();
 	}
+}
 
-	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
-	_card->initializeZipMode();
+bool MohawkEngine_Riven::isInteractive() const {
+	return !_scriptMan->hasQueuedScripts() && !hasGameEnded();
+}
+
+void MohawkEngine_Riven::registerDefaultSettings() {
+	ConfMan.registerDefault("zip_mode", false);
+	ConfMan.registerDefault("water_effects", true);
+	ConfMan.registerDefault("transition_mode", kRivenTransitionModeFastest);
 }
 
 Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	using namespace Common;
 
+	String guiOptions = ConfMan.get("guioptions", target);
+	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
+	bool isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
+
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven", "Riven");
 
 	Action *act;
 
-	if (checkGameGUIOption(GAMEOPTION_25TH, ConfMan.get("guioptions", target))) {
-		act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));
-		act->setCustomEngineActionEvent(kRivenActionOpenMainMenu);
+	act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));
+	act->setCustomEngineActionEvent(kRivenActionOpenMainMenu);
+	act->addDefaultInputMapping("JOY_X");
+	if (is25th) {
 		act->addDefaultInputMapping("ESCAPE");
-		act->addDefaultInputMapping("JOY_X");
-		engineKeyMap->addAction(act);
+	} else if (isDemo) {
+		act->addDefaultInputMapping("C+r");
+	} else {
+		act->addDefaultInputMapping("F5");
 	}
+	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setCustomEngineActionEvent(kRivenActionSkip);
@@ -873,7 +923,9 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 
 	act = new Action(kStandardActionOpenSettings, _("Show options menu"));
 	act->setCustomEngineActionEvent(kRivenActionOpenOptionsDialog);
-	act->addDefaultInputMapping("F5");
+	if (is25th) {
+		act->addDefaultInputMapping("F5");
+	}
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionPause, _("Pause"));
@@ -923,12 +975,7 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("PAGEDOWN");
 	engineKeyMap->addAction(act);
 
-	if (checkGameGUIOption(GAMEOPTION_DEMO, ConfMan.get("guioptions", target))) {
-		act = new Action(kStandardActionOpenMainMenu, _("Return to main menu"));
-		act->setCustomEngineActionEvent(kRivenActionOpenMainMenu);
-		act->addDefaultInputMapping("C+r");
-		engineKeyMap->addAction(act);
-
+	if (isDemo) {
 		act = new Action("INTV", _("Play intro videos"));
 		act->setCustomEngineActionEvent(kRivenActionPlayIntroVideos);
 		act->addDefaultInputMapping("C+p");

@@ -108,9 +108,10 @@ struct Datum {	/* interpreter stack type */
 	Datum(double val) { u.f = val; type = FLOAT; }
 	Datum(Common::String *val) { u.s = val; type = STRING; }
 
-	double toFloat();
-	int toInt();
-	Common::String *toString();
+	double makeFloat();
+	int makeInt();
+	Common::String *makeString(bool printonly = false);
+	Common::String getPrintable() { return *makeString(true); }
 
 	const char *type2str(bool isk = false);
 };
@@ -168,6 +169,7 @@ public:
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
 
 	void initBuiltIns();
+	void cleanupBuiltins();
 	void initFuncs();
 	void initBytecode();
 
@@ -177,7 +179,6 @@ public:
 	Common::String codePreprocessor(const char *s, bool simple = false);
 
 private:
-	Common::String preprocessReturn(Common::String in);
 	const char *findNextDefinition(const char *s);
 
 	// lingo-events.cpp
@@ -208,6 +209,7 @@ public:
 	Symbol *define(Common::String &s, int nargs, ScriptData *code);
 	Symbol *define(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1, bool removeCode = true);
 	void processIf(int elselabel, int endlabel, int finalElse);
+	int castIdFetch(Datum &var);
 	void varAssign(Datum &var, Datum &value);
 	Datum varFetch(Datum &var);
 
@@ -315,7 +317,6 @@ public:
 	Common::Array<int> _labelstack;
 
 	SymbolHash _builtins;
-	Common::HashMap<Common::String, bool> _twoWordBuiltins;
 	Common::HashMap<uint32, Symbol *> _handlers;
 
 	int _linenumber;

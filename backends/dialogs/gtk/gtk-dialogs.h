@@ -20,17 +20,19 @@
  *
  */
 
-#ifndef ULTIMA8_MISC_MD5_H
-#define ULTIMA8_MISC_MD5_H
+#ifndef BACKEND_GTK_DIALOGS_H
+#define BACKEND_GTK_DIALOGS_H
 
-namespace Ultima {
-namespace Ultima8 {
+#if defined(POSIX) && defined(USE_SYSDIALOGS) && defined(USE_GTK)
 
-class IDataSource;
+#include "common/fs.h"
+#include "common/dialogs.h"
 
-bool md5_file(IDataSource *input, uint8 digest[16], uint32 length = 0);
-
-} // End of namespace Ultima8
-} // End of namespace Ultima
+class GtkDialogManager : public Common::DialogManager {
+public:
+	virtual DialogResult showFileBrowser(const char *title, Common::FSNode &choice, bool isDirBrowser);
+};
 
 #endif
+
+#endif // BACKEND_GTK_DIALOGS_H
