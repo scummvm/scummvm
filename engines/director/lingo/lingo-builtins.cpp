@@ -91,8 +91,8 @@ static struct BuiltinProto {
 	{ "getPropAt",		LB::b_getPropAt,	2, 2, true,  4, FBLTIN },	//			D4 f
 	{ "list",			LB::b_list,			-1, 0, true, 4, FBLTIN },	//			D4 f
 	{ "listP",			LB::b_listP,		1, 1, true,  4, FBLTIN },	//			D4 f
-	{ "max",			LB::b_max,			1, 1, true,  4, FBLTIN },	//			D4 f
-	{ "min",			LB::b_min,			1, 1, true,  4, FBLTIN },	//			D4 f
+	{ "max",			LB::b_max,			-1,0, true,  4, FBLTIN },	//			D4 f
+	{ "min",			LB::b_min,			-1,0, true,  4, FBLTIN },	//			D4 f
 	{ "setaProp",		LB::b_setaProp,		3, 3, false, 4, BLTIN },	//			D4 c
 	{ "setAt",			LB::b_setAt,		3, 3, false, 4, BLTIN },	//			D4 c
 	{ "setProp",		LB::b_setProp,		3, 3, false, 4, BLTIN },	//			D4 c
@@ -717,13 +717,69 @@ void LB::b_listP(int nargs) {
 }
 
 void LB::b_max(int nargs) {
-	g_lingo->printSTUBWithArglist("b_max", nargs);
-	g_lingo->dropStack(nargs);
+	Datum max;
+	max.type = INT;
+	max.u.i = 0;
+
+	if (nargs == 1) {
+		Datum d = g_lingo->pop();
+		if (d.type == ARRAY) {
+			uint arrsize = d.u.farr->size();
+			for (uint i = 0; i < arrsize; i++) {
+				Datum item = d.u.farr->operator[](i);
+				if (i == 0 || item.compareTo(max) > 0) {
+					max = item;
+				}
+			}
+		} else {
+			max = d;
+		}
+	} else if (nargs > 0) {
+		for (int i = 0; i < nargs; i++) {
+			Datum d = g_lingo->_stack[g_lingo->_stack.size() - nargs + i];
+			if (d.type == ARRAY) {
+				warning("b_max: undefined behavior: array mixed with other args");
+			}
+			if (i == 0 || d.compareTo(max) > 0) {
+				max = d;
+			}
+		}
+		g_lingo->dropStack(nargs);
+	}
+	g_lingo->push(max);
 }
 
 void LB::b_min(int nargs) {
-	g_lingo->printSTUBWithArglist("b_min", nargs);
-	g_lingo->dropStack(nargs);
+	Datum min;
+	min.type = INT;
+	min.u.i = 0;
+
+	if (nargs == 1) {
+		Datum d = g_lingo->pop();
+		if (d.type == ARRAY) {
+			uint arrsize = d.u.farr->size();
+			for (uint i = 0; i < arrsize; i++) {
+				Datum item = d.u.farr->operator[](i);
+				if (i == 0 || item.compareTo(min) < 0) {
+					min = item;
+				}
+			}
+		} else {
+			min = d;
+		}
+	} else if (nargs > 0) {
+		for (int i = 0; i < nargs; i++) {
+			Datum d = g_lingo->_stack[g_lingo->_stack.size() - nargs + i];
+			if (d.type == ARRAY) {
+				warning("b_min: undefined behavior: array mixed with other args");
+			}
+			if (i == 0 || d.compareTo(min) < 0) {
+				min = d;
+			}
+		}
+		g_lingo->dropStack(nargs);
+	}
+	g_lingo->push(min);
 }
 
 void LB::b_setaProp(int nargs) {
