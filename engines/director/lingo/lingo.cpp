@@ -576,6 +576,35 @@ const char *Datum::type2str(bool isk) {
 	}
 }
 
+int Datum::compareTo(Datum d) {
+	if (type == STRING && d.type == STRING) {
+		return u.s->compareTo(*d.u.s);
+	} else if (g_lingo->alignTypes(*this, d) == FLOAT) {
+		if (u.f < d.u.f) {
+			return -1;
+		} else if (u.f == d.u.f) {
+			return 0;
+		} else {
+			return 1;
+		}
+	} else {
+		if (u.i < d.u.i) {
+			return -1;
+		} else if (u.i == d.u.i) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}
+}
+
+int Datum::compareToIgnoreCase(Datum d) {
+	if (type == STRING && d.type == STRING) {
+		return u.s->compareToIgnoreCase(*d.u.s);
+	}
+	return compareTo(d);
+}
+
 void Lingo::parseMenu(const char *code) {
 	warning("STUB: parseMenu");
 }
