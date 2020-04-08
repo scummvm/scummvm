@@ -213,19 +213,6 @@ static void handleMouseMotionEvent(const Common::Event &event) {
 		g_screen->setCursor(MC_DEFAULT);
 }
 
-static void handleActiveEvent(const Common::Event &event, updateScreenCallback updateScreen) {
-#ifdef TODO
-	if (event.active.state & SDL_APPACTIVE) {
-		// application was previously iconified and is now being restored
-		if (event.active.gain) {
-			if (updateScreen)
-				(*updateScreen)();
-			g_screen->update();
-		}
-	}
-#endif
-}
-
 static void handleMouseButtonDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
 	int button = 0;
 	if (event.type == Common::EVENT_MBUTTONDOWN)
@@ -281,18 +268,6 @@ static void handleKeyDownEvent(const Common::Event &event, Controller *controlle
 		g_screen->update();
 	}
 
-}
-
-static uint32 sleepTimerCallback(uint32 interval, void *) {
-#ifdef TODO
-	Common::Event stopEvent;
-	stopEvent.type = SDL_USEREVENT;
-	stopEvent.user.code = 1;
-	stopEvent.user.data1 = 0;
-	stopEvent.user.data2 = 0;
-	SDL_PushEvent(&stopEvent);
-#endif
-	return 0;
 }
 
 void EventHandler::sleep(unsigned int msec) {
