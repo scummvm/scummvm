@@ -149,6 +149,7 @@ MODULE_OBJS := \
 	ultima4/events/controller.o \
 	ultima4/events/event.o \
 	ultima4/events/event_scummvm.o \
+	ultima4/events/timed_event_mgr.o \
 	ultima4/filesys/filesystem.o \
 	ultima4/filesys/rle.o \
 	ultima4/filesys/savegame.o \

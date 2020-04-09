@@ -36,7 +36,6 @@ using namespace Std;
 
 bool EventHandler::_controllerDone = false;
 bool EventHandler::_ended = false;
-unsigned int TimedEventMgr::_instances = 0;
 
 EventHandler *EventHandler::_instance = NULL;
 EventHandler *EventHandler::getInstance() {
@@ -113,90 +112,6 @@ void EventHandler::setController(Controller *c) {
 	pushController(c);
 }
 
-
-/* TimedEvent functions */
-TimedEvent::TimedEvent(TimedEvent::Callback cb, int i, void *d) :
-	_callback(cb),
-	_data(d),
-	_interval(i),
-	_current(0) {
-}
-
-TimedEvent::Callback TimedEvent::getCallback() const    {
-	return _callback;
-}
-
-void *TimedEvent::getData()                             {
-	return _data;
-}
-
-void TimedEvent::tick() {
-	if (++_current >= _interval) {
-		(*_callback)(_data);
-		_current = 0;
-	}
-}
-
-bool TimedEventMgr::isLocked() const {
-	return _locked;
-}
-
-void TimedEventMgr::add(TimedEvent::Callback theCallback, int interval, void *data) {
-	_events.push_back(new TimedEvent(theCallback, interval, data));
-}
-
-TimedEventMgr::List::iterator TimedEventMgr::remove(List::iterator i) {
-	if (isLocked()) {
-		_deferredRemovals.push_back(*i);
-		return i;
-	} else {
-		delete *i;
-		return _events.erase(i);
-	}
-}
-
-void TimedEventMgr::remove(TimedEvent *event) {
-	List::iterator i;
-	for (i = _events.begin(); i != _events.end(); i++) {
-		if ((*i) == event) {
-			remove(i);
-			break;
-		}
-	}
-}
-
-void TimedEventMgr::remove(TimedEvent::Callback theCallback, void *data) {
-	List::iterator i;
-	for (i = _events.begin(); i != _events.end(); i++) {
-		if ((*i)->getCallback() == theCallback && (*i)->getData() == data) {
-			remove(i);
-			break;
-		}
-	}
-}
-
-void TimedEventMgr::tick() {
-	List::iterator i;
-	lock();
-
-	for (i = _events.begin(); i != _events.end(); i++)
-		(*i)->tick();
-
-	unlock();
-
-	// Remove events that have been deferred for removal
-	for (i = _deferredRemovals.begin(); i != _deferredRemovals.end(); i++)
-		_events.remove(*i);
-}
-
-void TimedEventMgr::lock()      {
-	_locked = true;
-}
-
-void TimedEventMgr::unlock()    {
-	_locked = false;
-}
-
 void EventHandler::pushMouseAreaSet(const MouseArea *mouseAreas) {
 	_mouseAreaSets.push_front(mouseAreas);
 }
@@ -212,6 +127,8 @@ const MouseArea *EventHandler::getMouseAreaSet() const {
 	else
 		return NULL;
 }
+
+/*-------------------------------------------------------------------*/
 
 ReadStringController::ReadStringController(int maxlen, int screenX, int screenY, const Common::String &accepted_chars) {
 	_maxLen = maxlen;
@@ -310,6 +227,8 @@ int ReadIntController::getInt() const {
 	return static_cast<int>(strtol(_value.c_str(), NULL, 10));
 }
 
+/*-------------------------------------------------------------------*/
+
 ReadChoiceController::ReadChoiceController(const Common::String &choices) {
 	_choices = choices;
 }
@@ -342,6 +261,8 @@ char ReadChoiceController::get(const Common::String &choices, EventHandler *eh) 
 	return ctrl.waitFor();
 }
 
+/*-------------------------------------------------------------------*/
+
 ReadDirController::ReadDirController() {
 	_value = DIR_NONE;
 }
@@ -369,6 +290,8 @@ bool ReadDirController::keyPressed(int key) {
 
 	return false;
 }
+
+/*-------------------------------------------------------------------*/
 
 WaitController::WaitController(unsigned int c) : Controller(), _cycles(c), _current(0) {}
 
