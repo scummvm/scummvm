@@ -20,13 +20,7 @@
  *
  */
 
-#ifdef USE_COMMON_LUA
 #include "common/lua/lauxlib.h"
-#else
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "common/scummsys.h"
-#include "ultima/nuvie/lua/lauxlib.h"
-#endif
 
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/nuvie_defs.h"

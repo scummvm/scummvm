@@ -23,11 +23,7 @@
 #ifndef NUVIE_SCRIPT_SCRIPT_ACTOR_H
 #define NUVIE_SCRIPT_SCRIPT_ACTOR_H
 
-#ifdef USE_COMMON_LUA
 #include "common/lua/lua.h"
-#else
-#include "ultima/nuvie/lua/lua.h"
-#endif
 
 namespace Ultima {
 namespace Nuvie {

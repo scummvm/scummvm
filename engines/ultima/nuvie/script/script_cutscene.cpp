@@ -20,13 +20,7 @@
  *
  */
 
-#ifdef USE_COMMON_LUA
 #include "common/lua/lauxlib.h"
-#else
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "common/scummsys.h"
-#include "ultima/nuvie/lua/lauxlib.h"
-#endif
 
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -995,7 +989,7 @@ static int nscript_input_poll(lua_State *L) {
 		poll_mouse_motion = false;
 	else
 		poll_mouse_motion = lua_toboolean(L, 1);
-	
+
 	while (Events::get()->pollEvent(event)) {
 		//FIXME do something here.
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();

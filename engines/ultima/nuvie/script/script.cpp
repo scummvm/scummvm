@@ -20,17 +20,9 @@
  *
  */
 
-#ifdef USE_COMMON_LUA
 #include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
 #include "common/lua/lualib.h"
-#else
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "common/scummsys.h"
-#include "ultima/nuvie/lua/lua.h"
-#include "ultima/nuvie/lua/lauxlib.h"
-#include "ultima/nuvie/lua/lualib.h"
-#endif
 
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
@@ -472,11 +464,7 @@ uint8 ScriptThread::resume_with_nil() {
 
 uint8 ScriptThread::resume(int narg) {
 	const char *s;
-#ifdef USE_COMMON_LUA
 	int ret = lua_resume(L, /*NULL,*/ narg);
-#else
-	int ret = lua_resume(L, NULL, narg);
-#endif
 
 	state = NUVIE_SCRIPT_ERROR;
 
@@ -1550,11 +1538,7 @@ uint16 Script::call_get_tile_to_object_mapping(uint16 tile_n) {
 	lua_pushnumber(L, (lua_Number)tile_n);
 	call_function("get_tile_to_object_mapping", 1, 1);
 
-#ifdef USE_COMMON_LUA
 	return ((uint)lua_tonumber(L, -1));
-#else
-	return (lua_tounsigned(L, -1));
-#endif
 }
 
 bool Script::call_is_tile_object(uint16 obj_n) {
