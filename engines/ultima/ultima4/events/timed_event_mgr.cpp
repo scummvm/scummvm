@@ -21,48 +21,24 @@
  */
 
 #include "ultima/ultima4/events/timed_event_mgr.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-unsigned int TimedEventMgr::_instances = 0;
+TimedEventMgr::TimedEventMgr(int baseInterval) :
+		_baseInterval(baseInterval), _lastTickTime(0), _locked(false) {
+}
 
-TimedEventMgr::TimedEventMgr(int i) : _baseInterval(i), _locked(false) {
-	/* start the SDL timer */
-#ifdef TODO
-	if (instances == 0) {
-		if (u4_SDL_InitSubSystem(SDL_INIT_TIMER) < 0)
-			errorFatal("unable to init SDL: %s", SDL_GetError());
+void TimedEventMgr::poll() {
+	uint32 time = g_system->getMillis();
+	if (time >= (_lastTickTime + _baseInterval)) {
+		_lastTickTime = time;
+		tick();
+
+		g_screen->update();
 	}
-
-	id = static_cast<void *>(SDL_AddTimer(i, &TimedEventMgr::callback, this));
-#endif
-	_instances++;
-}
-
-TimedEventMgr::~TimedEventMgr() {
-#ifdef TODO
-	SDL_RemoveTimer(static_cast<SDL_TimerID>(id));
-	id = NULL;
-
-	if (instances == 1)
-		u4_SDL_QuitSubSystem(SDL_INIT_TIMER);
-#endif
-	if (_instances > 0)
-		_instances--;
-}
-
-unsigned int TimedEventMgr::callback(unsigned int interval, void *param) {
-#ifdef TODO
-	Common::Event event;
-
-	event.type = SDL_USEREVENT;
-	event.user.code = 0;
-	event.user.data1 = param;
-	event.user.data2 = NULL;
-	SDL_PushEvent(&event);
-#endif
-	return interval;
 }
 
 void TimedEventMgr::reset(unsigned int interval) {
