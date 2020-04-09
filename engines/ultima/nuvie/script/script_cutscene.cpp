@@ -123,6 +123,8 @@ static int nscript_input_poll(lua_State *L);
 
 static int nscript_config_set(lua_State *L);
 
+static int nscript_engine_should_quit(lua_State *L);
+
 void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundManager *sm) {
 	cutScene = new ScriptCutscene(gui, cfg, sm);
 
@@ -239,6 +241,9 @@ void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundMana
 
 	lua_pushcfunction(L, nscript_config_set);
 	lua_setglobal(L, "config_set");
+
+	lua_pushcfunction(L, nscript_engine_should_quit);
+	lua_setglobal(L, "engine_should_quit");
 }
 
 bool nscript_new_image_var(lua_State *L, CSImage *image) {
@@ -1042,6 +1047,11 @@ static int nscript_input_poll(lua_State *L) {
 			lua_pushinteger(L, key.keycode);
 			return 1;
 		}
+		if (event.type == Common::EVENT_QUIT) {
+			lua_pushinteger(L, 'Q');
+			return 1;
+		}
+
 		if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
 			lua_pushinteger(L, 0);
 			return 1;
@@ -1067,6 +1077,12 @@ static int nscript_config_set(lua_State *L) {
 	}
 
 	return 0;
+}
+
+static int nscript_engine_should_quit(lua_State *L) {
+	int x = g_engine->shouldQuit();
+	lua_pushinteger(L, x);
+	return 1;
 }
 
 ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : GUI_Widget(NULL) {
