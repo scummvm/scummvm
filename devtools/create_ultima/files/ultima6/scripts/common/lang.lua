@@ -9,7 +9,7 @@ function lang_init(lang_type)
    if lang_type ~= "intro" then
       lang_type = "game"
    end
-   
+
    lang_en = nuvie_load(string.lower(game_type).."/lang/en/"..lang_type..".lua")
 
    if lang_en == nil then
@@ -17,7 +17,7 @@ function lang_init(lang_type)
    else
       lang_en = lang_en()
    end
-   
+
    if lang_selected ~= "en" then
        lang = nuvie_load(string.lower(game_type).."/lang/"..lang_selected.."/"..lang_type..".lua")
        if lang == nil then

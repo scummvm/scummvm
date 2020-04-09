@@ -20,4 +20,3 @@ end
 
 obj = nil
 magic_no_effect()
- 

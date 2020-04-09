@@ -8,7 +8,7 @@ DIR_EAST      = 1
 DIR_SOUTH     = 2
 DIR_WEST      = 3
 DIR_NORTHEAST = 4
-DIR_SOUTHEAST = 5 
+DIR_SOUTHEAST = 5
 DIR_SOUTHWEST = 6
 DIR_NORTHWEST = 7
 DIR_NONE      = 8
@@ -55,7 +55,7 @@ function get_direction(prompt)
 	if prompt ~= nil then
 		print(prompt)
 	end
-	
+
 	local dir = coroutine.yield("dir")
 
 	return dir
@@ -83,7 +83,7 @@ function direction_string(dir)
 		if dir == DIR_WEST then return "west" end
 		if dir == DIR_NORTHWEST then return "northwest" end
 	end
-	
+
 	return "unknown"
 end
 
@@ -98,7 +98,7 @@ local dir_rev_tbl =
    [DIR_WEST] = DIR_EAST,
    [DIR_NORTHWEST] = DIR_SOUTHEAST
 }
-   
+
 function direction_reverse(dir) return dir_rev_tbl[dir] end
 
 local g_dir_offset_tbl =
@@ -122,7 +122,7 @@ function abs(val)
    if val < 0 then
       return -val
    end
-   
+
    return val
 end
 
@@ -139,7 +139,7 @@ end
 
 function play_midgame_sequence(seq_num)
    local ui_style = game_get_ui_style()
-   
+
    canvas_show()
    canvas_hide_all_sprites()
    canvas_set_opacity(0xff);
@@ -148,10 +148,10 @@ function play_midgame_sequence(seq_num)
 
    local bg = sprite_new(nil, 8, 16, true)
    local avatar = sprite_new(nil, 8, 16, false)
-   
+
    local text_sprite
    --local text_sprite_bg
-      
+
    if ui_style == UI_STYLE_ORIG then
       canvas_set_solid_bg(false)
    else
@@ -172,9 +172,9 @@ function play_midgame_sequence(seq_num)
    local midgame_data = midgame_load("midgame"..string.format("%x", seq_num)..".lzc")
    local i = 0
    local data = midgame_data[i]
-   
 
-      
+
+
    while data ~= nil do
       bg.image = data.images[0]
       if data.images[1] ~= nil then
@@ -184,7 +184,7 @@ function play_midgame_sequence(seq_num)
       else
          avatar.visible = false
       end
-      
+
       local j = 0
       local text = data.text[j]
       while text ~= nil do
@@ -223,17 +223,17 @@ end
 
 function get_wrapped_dist(pt1, pt2)
    local diff
-   
+
    if pt2 >= pt1 then
       diff = pt2 - pt1
    else
       diff = pt1 - pt2
    end
-   
+
    if diff > 512 then
       diff = 1024 - diff
    end
-   
+
    return diff
 end
 
@@ -244,7 +244,7 @@ function get_anim_index_for_tile(tile_number)
          return i
       end
    end
-   
+
    return nil
 end
 
@@ -265,9 +265,9 @@ function altcode_242_set_actor_talk_flag()
    print(" is "..value_str..".\n")
    print("New value? ")
    value = input_select_integer(nil, true)
-   
+
    value_str = "off"
-   
+
    if value == 1 or value == "o" then
       value_str = "on"
       Actor.set_talk_flag(actor, bit)
@@ -286,13 +286,13 @@ function altcode_250_create_object()
    if tmp_obj ~= nil and tmp_obj.tile_num - obj.tile_num > 1 then
       print("\nFrame:0x")
       input = input_select(nil, true)
-      obj.frame_n = tonumber(input, 16) 
+      obj.frame_n = tonumber(input, 16)
    end
-   
+
    print("\nQual:0x")
    input = input_select(nil, true)
    obj.quality = tonumber(input, 16)
-   
+
    if obj.stackable or create_object_needs_quan(obj_n) then
       print("\nQuan:0x")
       input = input_select(nil, true)
@@ -395,5 +395,3 @@ lua_file();
 lang_init("game")
 
 lua_file = nuvie_load("common/actor.lua"); lua_file();
-
-

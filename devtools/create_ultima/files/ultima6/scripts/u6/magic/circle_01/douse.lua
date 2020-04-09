@@ -19,4 +19,3 @@ if obj.obj_n == 122 or --candle
 end
 
 return magic_no_effect()
-

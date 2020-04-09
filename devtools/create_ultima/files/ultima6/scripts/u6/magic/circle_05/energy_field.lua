@@ -12,4 +12,3 @@ if map_can_put_obj(loc) and map_is_water(loc.x,loc.y,loc.z) == false then
 else
 	magic_not_possible()
 end
-

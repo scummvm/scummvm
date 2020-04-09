@@ -156,7 +156,7 @@ end
 function worktype_9D_stoker_wait_for_coal(actor)
    local coal
    coal = map_get_obj(actor.x, actor.y+1, actor.z, 447) --OBJ_HUGE_LUMP_OF_COAL
-   
+
    if coal ~= nil then
       while coal ~= nil do
          Obj.removeFromEngine(coal)
@@ -164,7 +164,7 @@ function worktype_9D_stoker_wait_for_coal(actor)
       end
       actor.wt = 0x9E
    end
-   
+
 end
 
 function worktype_9E_stoker_walk_to_furnace(actor)
@@ -173,7 +173,7 @@ function worktype_9E_stoker_walk_to_furnace(actor)
       if furnace == nil then
          furnace = map_get_obj(actor.x+1, actor.y-1, actor.z, 233)
       end
-      
+
       if furnace ~= nil then
          if Actor.get_talk_flag(0x72, 2) == false then
             activate_power_system()
@@ -221,7 +221,7 @@ function stoker_blocked(stoker)
    if map_is_on_screen(stoker.x, stoker.y, stoker.z) then
       printl("STOKERS_PATH_IS_BLOCKED")
       play_md_sfx(0)
-   end  
+   end
 end
 
 function worktype_9C_stoker_return_to_conveyor_belt(actor)
@@ -252,9 +252,8 @@ function perform_worktype(actor)
       local func = worktype_tbl[actor.wt]
       func(actor)
    end
-   
+
    if mpts == actor.mpts then
       subtract_movement_pts(actor, 10)
    end
 end
-

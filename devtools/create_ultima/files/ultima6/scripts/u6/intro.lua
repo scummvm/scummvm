@@ -31,7 +31,7 @@ local function wait_for_input()
 				break
 			end
 	end
-	
+
 	return input
 end
 
@@ -43,7 +43,7 @@ local function should_exit(input)
 	if input ~=nil and input == 27 then
 		return true
 	end
-	
+
 	return false
 end
 
@@ -57,7 +57,7 @@ local function fade_out()
 			break
 		end
 	end
-	
+
 	return false
 end
 
@@ -68,7 +68,7 @@ local function fade_out_sprite(sprite, speed)
 	else
 		speed = -3
 	end
-	
+
 	for i=0xff,0,speed do
 		sprite.opacity = i
 		canvas_update()
@@ -132,17 +132,17 @@ local function display_clock()
 	local t = os.date("*t")
 	local hour = t.hour
 	local minute = t.min
-	
+
 	if hour > 12 then
 		hour = hour - 12
 	end
-	
+
 	if hour < 10 then
 		g_clock_tbl["h1"].image = g_img_tbl[12]
 	else
 		g_clock_tbl["h1"].image = g_img_tbl[3]
 	end
-	
+
 	if hour >= 10 then
 		hour = hour - 10
 	end
@@ -151,7 +151,7 @@ local function display_clock()
 
 	g_clock_tbl["m1"].image = g_img_tbl[math.floor(minute / 10) + 2]
 	g_clock_tbl["m2"].image = g_img_tbl[(minute % 10) + 2]
-		
+
 end
 
 g_lounge_tbl = {}
@@ -177,9 +177,9 @@ local function load_lounge()
 	end
 
 	g_lounge_tbl["finger"] = sprite_new(g_img_tbl[0xe], 143, 91, true)
-	
+
 	g_lounge_tbl["tv_static"] = image_new(57,37)
-	
+
 	load_clock()
 end
 
@@ -243,9 +243,9 @@ local function display_tv()
 	for i=1,5 do
 		g_lounge_tbl["tv"][i].visible = false
 	end
-	
+
 	g_lounge_tbl.finger.visible = false
-	
+
 	while should_exit == false do
 		local item = g_tv_programs[g_tv_cur_program][g_tv_cur_pos]
 		if item < 0x80 then
@@ -305,7 +305,7 @@ local function display_tv()
 				display_tv_sprite(s_idx, g_tv_pledge_image)
 				s_idx = s_idx + 1
 			end
-			
+
 			if g_tv_pledge_counter == 16 then
 				if g_tv_pledge_image == 37 then
 					g_tv_pledge_image = 38
@@ -322,12 +322,12 @@ local function display_tv()
 		elseif item == 0x8b then
 			canvas_rotate_palette(0xe0, 5)
 		end
-		
+
 		g_tv_cur_pos = g_tv_cur_pos + 1
 		if g_tv_programs[g_tv_cur_program][g_tv_cur_pos] == nil then
 			g_tv_cur_program = g_tv_cur_program + 1
 			g_tv_cur_pos = 1
-			
+
 			if g_tv_programs[g_tv_cur_program] == nil then
 				g_tv_cur_program = 1
 			end
@@ -400,11 +400,11 @@ local function lounge_sequence()
 		canvas_update()
 		input = input_poll()
 	end
-	
+
 	if should_exit(input) then
 		return false
 	end
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	x, y = image_print(scroll_img, "You have traded the Avatar's life of peril and adventure ", 7, 310, 7, 8, 0x3e)
 	x, y = image_print(scroll_img, "for the lonely serenity of a world at peace. But ", 7, 310, x, y, 0x3e)
@@ -422,7 +422,7 @@ local function lounge_sequence()
 		canvas_update()
 		input = input_poll()
 	end
-	
+
 	if should_exit(input) then
 		return false
 	end
@@ -453,10 +453,10 @@ local function lounge_sequence()
 	if should_exit(input) then
 		return false
 	end
-	
+
 	hide_lounge()
 	scroll.visible = false
-	
+
 	return true
 end
 
@@ -464,25 +464,25 @@ g_window_tbl = {}
 local function load_window()
 	local rand = math.random
 	g_window_tbl["cloud_x"] = -400
-	
+
 	g_window_tbl["sky"] = sprite_new(g_img_tbl[1], 0, 0, true)
 	g_window_tbl["cloud1"] = sprite_new(g_img_tbl[0], g_window_tbl["cloud_x"], -5, true)
 	g_window_tbl["cloud2"] = sprite_new(g_img_tbl[0], g_window_tbl["cloud_x"], -5, true)
 	g_window_tbl["clouds"] = {}
-	
+
 	local i
 	for i=1,5 do
 		table.insert(g_window_tbl["clouds"], sprite_new(g_img_tbl[rand(2,3)], rand(0,320) - 260, rand(0, 30), true))
 	end
-	
+
 	g_window_tbl["lightning"] = sprite_new(nil, 0, 0, false)
 	g_window_tbl["ground"] = sprite_new(g_img_tbl[10], 0, 0x4c, true)
 	g_window_tbl["trees"] = sprite_new(g_img_tbl[8], 0, 0, true)
 
 	g_window_tbl["strike"] = sprite_new(g_img_tbl[rand(19,23)], 158, 114, false)
-	
 
-	
+
+
 	--FIXME rain here.
 	local rain = {}
 	local i
@@ -490,17 +490,17 @@ local function load_window()
 		rain[i] = sprite_new(g_img_tbl[math.random(4,7)], math.random(0,320), math.random(0,200), false)
 	end
 	g_window_tbl["rain"] = rain
-	
-	g_window_tbl["frame"] = sprite_new(g_img_tbl[28], 0, 0, true)	
+
+	g_window_tbl["frame"] = sprite_new(g_img_tbl[28], 0, 0, true)
 	g_window_tbl["window"] = sprite_new(g_img_tbl[26], 0x39, 0, true)
 	g_window_tbl["door_left"] = sprite_new(g_img_tbl[24], 320, 0, true)
 	g_window_tbl["door_right"] = sprite_new(g_img_tbl[25], 573, 0, true)
-		
+
 	g_window_tbl["flash"] = 0
 	g_window_tbl["drops"] = 0
 	g_window_tbl["rain_delay"] = 20
 	g_window_tbl["lightning_counter"] = 0
-	
+
 end
 
 local function hide_window()
@@ -545,7 +545,7 @@ local function display_window()
 			cloud.x = rand(0, 320) - 320
 			cloud.y = rand(0, 30)
 		end
-		
+
 		cloud.x = cloud.x + 2
 	end
 
@@ -553,10 +553,10 @@ local function display_window()
 	if g_window_tbl["cloud_x"] == 320 then
 		g_window_tbl["cloud_x"] = 0
 	end
-	
+
 	g_window_tbl["cloud1"].x = g_window_tbl["cloud_x"]
 	g_window_tbl["cloud2"].x = g_window_tbl["cloud_x"] - 320
-	
+
 	if rand(0, 6) == 0 and g_window_tbl["lightning_counter"] == 0 then --fixme var_1a, var_14
 		g_window_tbl["lightning_counter"] = rand(1, 4)
 		g_window_tbl["lightning"].image = g_img_tbl[rand(11,18)]
@@ -579,11 +579,11 @@ local function display_window()
 		canvas_set_palette_entry(0x5a, 0x14,0x8c,0x74)
 		canvas_set_palette_entry(0x5c, 0x0c,0x74,0x68)
 	end
-	
+
 	if rand(0,1) == 0 then
 		g_window_tbl["strike"].image = g_img_tbl[rand(19,23)]
 	end
-	
+
 	if g_window_tbl["flash"] > 0 then
 		g_window_tbl["flash"] = g_window_tbl["flash"] - 1
 	else
@@ -609,7 +609,7 @@ local function display_window()
 			g_window_tbl["drops"] = i + 1
 		end
 	end
-	
+
 	for i = 0,g_window_tbl["drops"] do
 
 		if rain[i].visible == true then
@@ -625,7 +625,7 @@ local function display_window()
 			rain[i].x = rand(0,320)
 		end
 	end
-	
+
 	if g_window_tbl["lightning_counter"] > 0 then
 		g_window_tbl["lightning_counter"] = g_window_tbl["lightning_counter"] - 1
 	end
@@ -633,7 +633,7 @@ end
 
 local function window_update()
 	local input = input_poll()
-	
+
 	while input == nil do
 		display_window()
 		canvas_update()
@@ -649,11 +649,11 @@ end
 
 local function window_sequence()
 	load_images("intro_2.shp")
-	
+
 	load_window()
-	
+
 	canvas_set_palette("palettes.int", 2)
-	
+
 	local i = 0
 	local input
 	while i < 20 do
@@ -663,25 +663,25 @@ local function window_sequence()
 		if should_exit(input) then
 			return false
 		end
-		
+
 		i = i + 1
 		canvas_update()
 	end
-	
+
 	local scroll_img = image_load("blocks.shp", 1)
 	local scroll = sprite_new(scroll_img, 1, 0x98, true)
-	
+
 	local x, y = image_print(scroll_img, "...and in moments, the storm is upon you.", 8, 312, 36, 14, 0x3e)
 
 	if window_update() == true then
 		return false
 	end
-	
+
 	scroll_img = image_load("blocks.shp", 1)
 	x, y = image_print(scroll_img, "Tongues of lightning lash the sky, conducting an unceasing ", 8, 310, 8, 10, 0x3e)
 	image_print(scroll_img, "crescendo of thunder....", 8, 310, x, y, 0x3e)
 	scroll.image = scroll_img
-	
+
 	if window_update() == true then
 		return false
 	end
@@ -690,18 +690,18 @@ local function window_sequence()
 	x, y = image_print(scroll_img, "In a cataclysm of sound and light, a bolt of searing ", 8, 310, 8, 10, 0x3e)
 	image_print(scroll_img, "blue fire strikes the earth!", 8, 310, x, y, 0x3e)
 	scroll.image = scroll_img
-	
+
 	g_window_tbl["strike"].visible = true
-		
+
 	if window_update() == true then
 		return false
 	end
-	
+
 	scroll_img = image_load("blocks.shp", 1)
 	x, y = image_print(scroll_img, "Lightning among the stones!", 8, 310, 73, 10, 0x3e)
 	image_print(scroll_img, "Is this a sign from distant Britannia?", 8, 310, 41, 18, 0x3e)
 	scroll.image = scroll_img
-		
+
 	--scroll window.
 	i = 0
 	while i < 320 do
@@ -712,9 +712,9 @@ local function window_sequence()
 		if should_exit(input) then
 			return false
 		end
-	
+
 		canvas_update()
-	
+
 		g_window_tbl["window"].x = g_window_tbl["window"].x - 2
 		g_window_tbl["frame"].x = g_window_tbl["frame"].x - 2
 		g_window_tbl["door_left"].x = g_window_tbl["door_left"].x - 2
@@ -724,25 +724,25 @@ local function window_sequence()
 			g_window_tbl["strike"].visible = false
 		end
 	end
-	
+
 	if window_update() == true then
 		return false
 	end
-	
+
 	scroll.visible = false
 	i = 0
 	while i < 68 do
-	
+
 		display_window()
 		canvas_update()
 		input = input_poll()
 		if should_exit(input) then
 			return false
 		end
-	
+
 		canvas_update()
 		input = input_poll()
-	
+
 		g_window_tbl["door_left"].x = g_window_tbl["door_left"].x - 1
 		g_window_tbl["door_right"].x = g_window_tbl["door_right"].x + 1
 		i = i + 1
@@ -760,7 +760,7 @@ local function window_sequence()
 	end
 
 	scroll.visible = false
-	
+
 end
 
 local function stones_rotate_palette()
@@ -804,7 +804,7 @@ local function stones_shake_moongate()
 			break
 		end
 	end
-	
+
 	return should_exit(input)
 end
 
@@ -836,22 +836,22 @@ local function stones_sequence()
 	x, y = image_print(scroll_img, "in the air. In a frozen moment of lightning-struck ", 7, 303, x, y, 0x3e)
 	x, y = image_print(scroll_img, "daylight, you glimpse a tiny obsidian stone in the ", 7, 303, x, y, 0x3e)
 	x, y = image_print(scroll_img, "midst of the circle!", 7, 303, x, y, 0x3e)
-	
+
 	fade_in()
 
 	if stones_update() == true then
 		return false
 	end
-	
+
 	g_stones_tbl["stone_cover"].visible = true
 	g_stones_tbl["hand"].visible = true
-	
+
 	scroll_img = image_load("blocks.shp", 0)
 	image_print(scroll_img, "Wondering, you pick it up....", 8, 234, 0x2a, 8, 0x3e)
 	scroll.image = scroll_img
 	scroll.x = 0x21
 	scroll.y = 0x1e
-	
+
 	local i
 	for i=0xc7,0x54,-2  do
 		--		display_stones()
@@ -866,18 +866,18 @@ local function stones_sequence()
 	if stones_update() == true then
 		return false
 	end
-	
+
 	g_stones_tbl["bg"].image = g_img_tbl[5]
 	g_stones_tbl["stone_cover"].visible = false
 	g_stones_tbl["gate_cover"].visible = true
-	
+
 	scroll_img = image_load("blocks.shp", 1)
 	x, y = image_print(scroll_img, "...and from the heart of the stones, a softly glowing door ", 7, 303, 7, 10, 0x3e)
 	image_print(scroll_img, "ascends in silence!", 7, 303, x, y, 0x3e)
 	scroll.image = scroll_img
 	scroll.x = 0x1
 	scroll.y = 0xa0
-	
+
 	g_stones_tbl["moon_gate"].visible = true
 
 	for i=0x64,0x5,-1  do
@@ -901,18 +901,18 @@ local function stones_sequence()
 			return false
 		end
 	end
-	
+
 	g_stones_tbl["hand"].visible = false
-	
+
 	if stones_update() == true then
 		return false
 	end
-	
+
 	g_stones_tbl["hand"].image = g_img_tbl[6]
 	g_stones_tbl["hand"].x = 0x9b
 	g_stones_tbl["hand"].visible = true
 	scroll.visible = false
-	
+
 	for i=0xc7,0x44,-2  do
 		stones_rotate_palette()
 		g_stones_tbl["hand"].y = i
@@ -925,7 +925,7 @@ local function stones_sequence()
 			return false
 		end
 	end
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	x, y = image_print(scroll_img, "Exultant memories wash over you as you clutch the stone. ", 7, 303, 7, 8, 0x3e)
 	x, y = image_print(scroll_img, "When last you saw an orb such as this, it was cast down ", 7, 303, x, y, 0x3e)
@@ -934,13 +934,13 @@ local function stones_sequence()
 	scroll.x = 0x1
 	scroll.y = 0x98
 	scroll.visible = true
-	
+
 	if stones_update() == true then
 		return false
 	end
-	
+
 	scroll.visible = false
-	
+
 	for i=0x44,0xc7,2  do
 		stones_rotate_palette()
 		g_stones_tbl["hand"].y = i
@@ -953,50 +953,50 @@ local function stones_sequence()
 			return false
 		end
 	end
-	
+
 	g_stones_tbl["hand"].visible = false
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	image_print(scroll_img, "But your joy soon gives way to apprehension.", 7, 303, 16, 8, 0x3e)
 	image_print(scroll_img, "The gate to Britannia has always been blue...", 7, 303, 18, 24, 0x3e)
 	image_print(scroll_img, "as blue as the morning sky.", 7, 303, 76, 32, 0x3e)
 	scroll.image = scroll_img
 	scroll.visible = true
-		
+
 	if stones_update() == true then
 		return false
 	end
-	
+
 	scroll_img = image_load("blocks.shp", 1)
 	x,y = image_print(scroll_img, "Abruptly, the portal quivers and begins to sink ", 7, 303, 7, 10, 0x3e)
 	image_print(scroll_img, "into the ground.  Its crimson light wanes!", 7, 303, x, y, 0x3e)
 	scroll.image = scroll_img
 	scroll.x = 0x1
 	scroll.y = 0xa0
-	
+
 	if stones_shake_moongate() == true then
 		return false
 	end
-	
+
 	scroll_img = image_load("blocks.shp", 1)
 	x,y = image_print(scroll_img, "Desperation makes the decision an easy one.", 7, 303, 22, 14, 0x3e)
 	scroll.image = scroll_img
 	scroll.x = 0x1
 	scroll.y = 0xa0
-		
+
 	if stones_shake_moongate() == true then
 		return false
 	end
-	
+
 	scroll.visible = false
-	
+
 	g_stones_tbl["avatar"].visible = true
-	
+
 	canvas_set_palette_entry(0x19, 0, 0, 0)
-		
+
 	for i=0,19,1 do
 		g_stones_tbl["avatar"].image = g_img_tbl[7+i]
-		
+
 		local j
 		for j=0,4 do
 			canvas_update()
@@ -1004,7 +1004,7 @@ local function stones_sequence()
 			g_stones_tbl["moon_gate"].x = 0x7c + math.random(0, 1)
 			g_stones_tbl["moon_gate"].y = 5 + math.random(0, 3)
 		end
-						
+
 		g_stones_tbl["avatar"].y = g_stones_tbl["avatar"].y - 3
 
 		local input = input_poll()
@@ -1012,16 +1012,16 @@ local function stones_sequence()
 			return false
 		end
 	end
-	
-	
+
+
 	for i=0xff,0,-3 do
 		canvas_update()
 		stones_rotate_palette()
 		g_stones_tbl["moon_gate"].x = 0x7c + math.random(0, 1)
 		g_stones_tbl["moon_gate"].y = 5 + math.random(0, 3)
-		
+
 		g_stones_tbl["avatar"].opacity = i
-	
+
 		local input = input_poll()
 		if input ~= nil and should_exit(input) then
 			return false
@@ -1029,9 +1029,9 @@ local function stones_sequence()
 	end
 
 	canvas_set_palette_entry(0x19, 0x74, 0x74, 0x74)
-	
+
 	g_stones_tbl["moon_gate"].x = 0x7c
-	
+
 	for i=0x5,0x64,1  do
 		stones_rotate_palette()
 		g_stones_tbl["moon_gate"].y = i
@@ -1046,7 +1046,7 @@ local function stones_sequence()
 	g_stones_tbl["moon_gate"].visible = false
 	g_stones_tbl["gate_cover"].visible = false
 	g_stones_tbl["stone_cover"].visible = true
-	
+
 	if stones_update() == true then
 		return false
 	end
@@ -1112,7 +1112,7 @@ background.visible = false
 
 
 if lounge_sequence() == false then
-	return 
+	return
 end
 
 if window_sequence() == false then
@@ -1142,7 +1142,7 @@ local function gypsy_ab_select(question)
 	2, 2, 3, 3, 3, 3, 4, 4,
 	4, 5, 5, 6,
 	}
-	
+
 	local b_lookup_tbl = {
 	1, 2, 3, 4, 5, 6, 7, 2,
 	3, 4, 5, 6, 7, 3, 4, 5,
@@ -1229,7 +1229,7 @@ local gypsy_question_text = {
 	0x6E, 0x74, 0x79, 0x7D, 0x80, 0x82, -1, 0x84,
 	0x6F, 0x75, 0x7A, 0x7E, 0x81, 0x83, 0x84, -1,
 	}
-	
+
 	g_str = 0xf
 	g_dex = 0xf
 	g_int = 0xf
@@ -1239,27 +1239,27 @@ local gypsy_question_text = {
 local function shuffle_question_tbl(shuffle_len)
 	local random = math.random
 	local c = random(0, (shuffle_len * shuffle_len)-1) + shuffle_len
-	
+
 	for i=0,c,1 do
 		local j = random(1, shuffle_len)
 		local k = random(1, shuffle_len)
-	
+
 		local tmp = g_question_tbl[j]
-	
+
 		g_question_tbl[j] = g_question_tbl[k]
 		g_question_tbl[k] = tmp
 	end
-	
+
 end
 
-local function gypsy_start_pouring(vial_num, vial_level)	
-	local pour_img_tbl = 
+local function gypsy_start_pouring(vial_num, vial_level)
+	local pour_img_tbl =
 	{
 	 0x2B, 0x43, 0x56, 0x6B, 0x24, 0x74, 0x19, 0x2C,
 	 0x2C, 0x44, 0x57, 0x6C, 0x23, 0x73, 0x18, 0x2B,
 	 0x2E, 0x45, 0x58, 0x6D, 0x22, 0x72, 0x17, 0x2A,
 	}
-	
+
 	if vial_level <= 3 and vial_level > 0 then
 		g_gypsy_tbl["pour"].visible = true
 		local img1 = pour_img_tbl[(3 - vial_level) * 8 + vial_num]
@@ -1269,30 +1269,30 @@ local function gypsy_start_pouring(vial_num, vial_level)
 		else
 			img1 = img1 + 0x42
 		end
-		
+
 		g_gypsy_tbl["pour"].image = g_gypsy_img_tbl[img1]
-		
+
 		local pour_y_tbl = {0x32, 0x37, 0x40}
 		g_gypsy_tbl["pour"].y = pour_y_tbl[3 - vial_level + 1] - 20
-		
+
 		local pour_x_tbl =
 		{
 		 0x92, 0x92, 0x92, 0x92, 0x0A9, 0x0A9, 0x0A9, 0x0A9,
 		 0x91, 0x91, 0x91, 0x91, 0x0A9, 0x0A9, 0x0A9, 0x0A9,
 		 0x94, 0x94, 0x94, 0x94, 0x0AA, 0x0AA, 0x0AA, 0x0AA,
 		}
-		
+
 		g_gypsy_tbl["pour"].x = pour_x_tbl[(3 - vial_level) * 8 + vial_num]
 	end
-	
+
 	g_gypsy_tbl["jar_level"] = g_gypsy_tbl["jar_level"] + 1
-	
+
 	g_gypsy_tbl["jar_liquid"].visible = true
 	g_gypsy_tbl["jar_liquid"].image = g_gypsy_img_tbl[8 + g_gypsy_tbl["jar_level"]]
 	g_gypsy_tbl["jar_liquid"].y = g_gypsy_tbl["jar_liquid"].y - 1
 
 	local vial_colors = {239, 14, 231, 103, 228, 5, 15, 219}
-	
+
 	image_bubble_effect_add_color(vial_colors[vial_num])
 	g_gypsy_tbl["bubble_counter"] = 0
 
@@ -1305,16 +1305,16 @@ end
 local function gypsy_vial_anim_liquid(img_num, vial_num, vial_level, hand_x, hand_y)
 
 	--io.stderr:write(img_num..", "..vial_num..", "..vial_level..", "..hand_x..", "..hand_y.."\n")
-	
+
 	if vial_level == 3 then
 		vial_level = 2
 	end
-	
+
 	if vial_level <= 0 then
 		g_gypsy_tbl["vial_liquid"][vial_num].visible = false
 		return
 	end
-	
+
 	local si = 0
 	if img_num == 0xf then return end
 
@@ -1352,7 +1352,7 @@ local function gypsy_vial_anim_liquid(img_num, vial_num, vial_level, hand_x, han
 
 	end
 
-	local vial_liquid_tbl = { 
+	local vial_liquid_tbl = {
 	0x3A, 0x4F, 0x64, 0x7C, 0x28, 0x7E, 0x20, 0x34,
 	0x36, 0x4B, 0x60, 0x76, 0x26, 0x78, 0x1C, 0x30,
 	0x36, 0x4B, 0x60, 0x76, 0x26, 0x78, 0x1C, 0x30,
@@ -1368,23 +1368,23 @@ local function gypsy_vial_anim_liquid(img_num, vial_num, vial_level, hand_x, han
 	}
 
 	local img_offset
-	
+
 	if vial_num > 6 and si ~= 3 then
 		img_offset = 9
 	else
 		img_offset = 0x42
 	end
-	
+
 	--io.stderr:write("si ="..si.."\n")
-	
+
 	if vial_level > 0 and vial_level < 3 then
 		--vial_liquid_tbl[vial_level * 2 + si * 24 + vial_num] + img_offset
 		local img_idx = vial_liquid_tbl[(vial_level-1) * 8 + si * 24 + vial_num]
 		g_gypsy_tbl["vial_liquid"][vial_num].image = g_gypsy_img_tbl[img_idx + img_offset]
-		
+
 		local hand_y_tbl = {0x1B, 0x13, 0x13, 0x16, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0B, 0x0B, 0x0B}
 		g_gypsy_tbl["vial_liquid"][vial_num].y = hand_y + hand_y_tbl[si * 3 + vial_level] - 20
-		
+
 		local hand_x_tbl =
 		{
 		0x4, 0x4, 0x4, 0x4, 0x14, 0x14, 0x14, 0x14,
@@ -1400,12 +1400,12 @@ local function gypsy_vial_anim_liquid(img_num, vial_num, vial_level, hand_x, han
 		0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3,
 		0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3,
 		}
-		
+
 		local hand_x_tbl1 = {10, 10, 10, 10, -13, -13, -13, -13}
 
 		g_gypsy_tbl["vial_liquid"][vial_num].x = hand_x + hand_x_tbl[si * 24 + (vial_level-1) * 8 + vial_num] + hand_x_tbl1[vial_num]
 	end
-	
+
 end
 
 local function gypsy_vial_anim(vial)
@@ -1414,31 +1414,31 @@ local function gypsy_vial_anim(vial)
 	local vial_img_off = {2, 5, 8, 0xB, 0x18, 0x1B, 0x1E, 0x21}
 
 	local vial_x_offset = {41, 62, 83, 104, 200, 221, 242, 263}
-	
+
 	local idx
-	
+
 	--g_gypsy_tbl["vial"][vial].visible = false
 	--g_gypsy_tbl["vial_liquid"][vial].visible = false
-	
-	
+
+
 	local arm_img_tbl = {0, 0, 0, 0, 5, 5, 5, 5}
 	local arm_img_tbl1 = {1, 1, 1, 1, 4, 4, 4, 4}
 	local arm_img_tbl2 = {2, 2, 2, 2, 3, 3, 3, 3}
-	
+
 	local hand_img_tbl = {12, 12, 12, 12, 13, 13, 13, 13}
 	local hand_img_tbl1 = {9, 9, 9, 9, 17, 17, 17, 17}
 	local hand_img_tbl2 = {10, 10, 10, 10, 18, 18, 18, 18}
 	local hand_img_tbl3 = {16, 16, 16, 16, 46, 46, 46, 46}
 	local hand_img_tbl4 = {15, 15, 15, 15, 37, 37, 37, 37}
-	
+
 	local arm_x_offset = {93, 93, 93, 93, 172, 172, 172, 172}
-	
+
 	local hand_x_offset = {29, 50, 71, 92, 202, 223, 244, 264}
 	local hand_x_offset1 = {107, 107, 107, 107, 170, 170, 170, 170}
 	local hand_x_offset2 = {109, 109, 109, 109, 168, 168, 168, 168}
 	local hand_x_offset3 = {112, 112, 112, 112, 165, 165, 165, 165}
 	local hand_x_offset4 = {10, 10, 10, 10, -13, -13, -13, -13}
-	
+
 	local hand_img_num
 	local should_update
 	for idx=0,16 do
@@ -1482,13 +1482,13 @@ local function gypsy_vial_anim(vial)
 			g_gypsy_tbl["hand"].image = g_gypsy_img_tbl[9 + hand_img_num]
 			g_gypsy_tbl["hand"].x = hand_x_offset[vial]
 			g_gypsy_tbl["hand"].y = 25
-			
+
 		elseif idx == 4 or idx == 12 then
 			--
 			g_gypsy_tbl["arm"].image = g_gypsy_img_tbl[1 + arm_img_tbl2[vial]]
 			g_gypsy_tbl["arm"].x = arm_x_offset[vial]
 			g_gypsy_tbl["arm"].y = 21
-		
+
 			hand_img_num = hand_img_tbl1[vial]
 			g_gypsy_tbl["hand"].image = g_gypsy_img_tbl[9 + hand_img_num]
 			g_gypsy_tbl["hand"].x = hand_x_offset1[vial]
@@ -1499,19 +1499,19 @@ local function gypsy_vial_anim(vial)
 			g_gypsy_tbl["arm"].image = g_gypsy_img_tbl[1 + arm_img_tbl2[vial]]
 			g_gypsy_tbl["arm"].x = arm_x_offset[vial]
 			g_gypsy_tbl["arm"].y = 21
-		
+
 			hand_img_num = hand_img_tbl2[vial]
 			g_gypsy_tbl["hand"].image = g_gypsy_img_tbl[9 + hand_img_num]
 			g_gypsy_tbl["hand"].x = hand_x_offset1[vial]
 			g_gypsy_tbl["hand"].y = 20
-		
+
 			if idx == 11 then
 				vial_level[vial] = vial_level[vial] - 1
 				if vial_level[vial] == 2 then
 					gypsy_stop_pouring()
 				end
 			end
-			
+
 			if vial_level[vial] == 3 then
 				gypsy_start_pouring(vial, vial_level[vial])
 			end
@@ -1523,12 +1523,12 @@ local function gypsy_vial_anim(vial)
 			g_gypsy_tbl["arm"].image = g_gypsy_img_tbl[1 + arm_img_tbl2[vial]]
 			g_gypsy_tbl["arm"].x = arm_x_offset[vial]
 			g_gypsy_tbl["arm"].y = 21
-		
+
 			hand_img_num = hand_img_tbl3[vial]
 			g_gypsy_tbl["hand"].image = g_gypsy_img_tbl[9 + hand_img_num]
 			g_gypsy_tbl["hand"].x = hand_x_offset2[vial]
 			g_gypsy_tbl["hand"].y = 21
-			
+
 			if vial_level[vial] == 2 then
 				if idx == 6 then
 					gypsy_start_pouring(vial, vial_level[vial])
@@ -1544,12 +1544,12 @@ local function gypsy_vial_anim(vial)
 			g_gypsy_tbl["arm"].image = g_gypsy_img_tbl[1 + arm_img_tbl2[vial]]
 			g_gypsy_tbl["arm"].x = arm_x_offset[vial]
 			g_gypsy_tbl["arm"].y = 21
-		
+
 			hand_img_num = hand_img_tbl4[vial]
 			g_gypsy_tbl["hand"].image = g_gypsy_img_tbl[9 + hand_img_num]
 			g_gypsy_tbl["hand"].x = hand_x_offset3[vial]
 			g_gypsy_tbl["hand"].y = 13
-			
+
 			if vial_level[vial] == 1 then
 				if idx == 7 then
 					gypsy_start_pouring(vial, vial_level[vial])
@@ -1563,13 +1563,13 @@ local function gypsy_vial_anim(vial)
 		--if idx > 3 and idx < 9 or idx > 8 and idx < 13 then
 		--	g_gypsy_tbl["hand"].x = g_gypsy_tbl["hand"].x - hand_x_offset4[vial]
 		--end
-		
+
 		--io.stderr:write("idx ="..idx.."\n")
 		if should_update == true then
 			gypsy_vial_anim_liquid(hand_img_num, vial, vial_level[vial], g_gypsy_tbl["hand"].x - hand_x_offset4[vial], g_gypsy_tbl["hand"].y + 20)
-		
+
 			--g_gypsy_tbl["hand"].x = g_gypsy_tbl["hand"].x + hand_x_offset4[vial]
-		
+
 			local j
 			for j = 1,8 do
 				if g_gypsy_tbl["jar_level"] > 0 then
@@ -1579,7 +1579,7 @@ local function gypsy_vial_anim(vial)
 				input_poll()
 			end
 		end
-	--[[						
+	--[[
 		local j
 		for j = 1,8 do
 			local img = g_gypsy_tbl["jar_liquid"].image
@@ -1593,41 +1593,41 @@ local function gypsy_vial_anim(vial)
 	end
 
 	g_gypsy_tbl["hand"].visible = false
-	
-	--io.stderr:write("vial #"..vial.." level="..vial_level[vial].."\n")
-	
 
-	
+	--io.stderr:write("vial #"..vial.." level="..vial_level[vial].."\n")
+
+
+
 	g_gypsy_tbl["hand"].visible = false
 	g_gypsy_tbl["arm"].visible = false
-			
+
 	g_gypsy_tbl["vial"][vial].visible = true
 	--g_gypsy_tbl["vial_liquid"][vial].visible = true
 end
 
 local function gypsy_ask_questions(num_questions, scroll)
-	
+
 	local strength_adjustment_tbl = { 0, 0, 2, 0, 1, 1, 1, 0 }
-	local dex_adjustment_tbl = { 0, 2, 0, 1, 1, 0, 1, 0 } 
+	local dex_adjustment_tbl = { 0, 2, 0, 1, 1, 0, 1, 0 }
 	local int_adjustment_tbl = { 2, 0, 0, 1, 0, 1, 1, 0 }
-	
+
 	for i=0,num_questions-1,1 do
 		local q = gypsy_questions[g_question_tbl[i*2+1]*8 + g_question_tbl[i*2+2] + 1]
-	
+
 		local scroll_img = image_load("blocks.shp", 3)
 		scroll.image = scroll_img
 		image_print(scroll_img, gypsy_question_text[q - 104], 7, 303, 8, 9, 0x3e)
-	
+
 		local vial = gypsy_ab_select(q)
-	
+
 		gypsy_vial_anim(vial)
-		
+
 		g_str = g_str + strength_adjustment_tbl[vial]
 		g_dex = g_dex + dex_adjustment_tbl[vial]
 		g_int = g_int + int_adjustment_tbl[vial]
-	
+
 		g_question_tbl[i+1] = vial-1
-	
+
 		--io.stderr:write(q.." "..vial.."("..g_str..","..g_dex..","..g_int..")\n")
 	end
 end
@@ -1707,11 +1707,11 @@ g_keycode_tbl =
 }
 local function create_character()
 	music_play("create.m")
-	
+
 	local bubbles = sprite_new(image_new(100,100, 0), 110, 30, false)
 	local bg = sprite_new(image_load("vellum1.shp", 0), 0x10, 0x50, true)
 	image_print(bg.image, "By what name shalt thou be called?", 7, 303, 36, 24, 0x48)
-	
+
 	local name = sprite_new(nil, 0x34, 0x78, true)
 	name.text = ""
 	local char_index = 0
@@ -1793,9 +1793,9 @@ local function create_character()
 			input = nil
 		end
 	end
-	
+
 	name.x = 0x10 + (284 - canvas_string_length(name.text)) / 2
-	
+
 	image_print(bg.image, "And art thou Male, or Female?", 7, 303, 52, 56, 0x48)
 	local gender_sprite = sprite_new(nil, 154, 152, true)
 	gender_sprite.text = ""
@@ -1829,23 +1829,23 @@ local function create_character()
 			elseif input == 13 and gender_sprite.text ~= "" then --return
 				break;
 			end
-			
+
 			input = nil
 		end
 	end
 	gender_sprite.visible = false
 	load_images("vellum1.shp")
 	bg.image = g_img_tbl[0]
-	
+
 	name.y = 0x59
-	
+
 	image_draw_line(bg.image, 14, 19, 277, 19, 0x48)
-	
-	local new_sex = sprite_new(g_img_tbl[3], 0x5e, 0x70, true)	
+
+	local new_sex = sprite_new(g_img_tbl[3], 0x5e, 0x70, true)
 	local new_portrait = sprite_new(g_img_tbl[0x12], 0x3e, 0x81, true)
 	local continue = sprite_new(g_img_tbl[0x10], 0x56, 0x92, true)
 	local esc_abort = sprite_new(g_img_tbl[4], 0x50, 0xa3, true)
-	
+
 	local montage_img_tbl = image_load_all("montage.shp")
 	local portrait_num = 0
 	local avatar = sprite_new(montage_img_tbl[gender*6+portrait_num], 0xc3, 0x76, true)
@@ -1884,7 +1884,7 @@ local function create_character()
 				else
 					portrait_num = portrait_num + 1
 				end
-				
+
 				avatar.image = montage_img_tbl[gender*6+portrait_num]
 			elseif input == 115 or input == 83 or (input == 13 and button_index == 0) then
 				if gender == 0 then
@@ -1966,23 +1966,23 @@ local function create_character()
 	mouse_cursor_visible(false)
 	fade_out()
 	canvas_hide_all_sprites()
-	
+
 	canvas_set_palette("palettes.int", 4)
 	local woods_img_tbl = image_load_all("woods.shp")
 	local woods = sprite_new(woods_img_tbl[0], 0, 0, true)
 	local woods1 = sprite_new(woods_img_tbl[1], 0x140, 0, true)
-	
+
 	fade_in()
-	
+
 	local scroll_img = image_load("blocks.shp", 1)
 	local scroll = sprite_new(scroll_img, 1, 0xa0, true)
-	
+
 	local x, y = image_print(scroll_img, "\"Welcome, O Seeker!\127", 7, 303, 96, 14, 0x3e)
-	
+
 	wait_for_input()
-	
+
 	scroll.visible = false
-	
+
 	input = nil
 	for i=0,0xbd,2 do
 		woods.x = woods.x - 2
@@ -1993,17 +1993,17 @@ local function create_character()
 			break
 		end
 	end
-	
+
 	woods.x = -190
 	woods1.x = 130
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	scroll.x = 1
 	scroll.y = 0x98
 	image_print(scroll_img, "A lonely stroll along an unfamiliar forest path brings you upon a curious gypsy wagon, its exotic colors dappled in the summer shade.", 7, 303, 8, 12, 0x3e)
 	scroll.image = scroll_img
 	scroll.visible = true
-		
+
 	wait_for_input()
 
 	scroll_img = image_load("blocks.shp", 2)
@@ -2012,22 +2012,22 @@ local function create_character()
 	image_print(scroll_img, "A woman's voice rings out with friendship, beckoning you into across the wagon's threshold and, as it happens, into another life....", 7, 303, 8, 12, 0x3e)
 	scroll.image = scroll_img
 	scroll.visible = true
-	
+
 	wait_for_input()
-	
+
 	scroll.visible = false
-	
+
 	fade_out()
 	canvas_hide_all_sprites()
 	canvas_set_palette("palettes.int", 5)
-	
+
 	g_gypsy_img_tbl = image_load_all("gypsy.shp")
-	
+
 	bg.image = g_gypsy_img_tbl[0]
 	bg.x = 0
 	bg.y = -20
 	bg.visible = true
-	
+
 	g_gypsy_tbl = {}
 	g_gypsy_tbl["arm"] = sprite_new(nil, 0, 0, false)
 	g_gypsy_tbl["pour"] = sprite_new(nil, 0, 0, false)
@@ -2039,16 +2039,16 @@ local function create_character()
 	g_gypsy_tbl["jar_liquid"].clip_y = 0
 	g_gypsy_tbl["jar_liquid"].clip_w = 320
 	g_gypsy_tbl["jar_liquid"].clip_h = 0x6d
-	
-	g_gypsy_tbl["jar"] = sprite_new(g_gypsy_img_tbl[16], 0x8e, 0x38, true)	
-	 	
+
+	g_gypsy_tbl["jar"] = sprite_new(g_gypsy_img_tbl[16], 0x8e, 0x38, true)
+
 	g_gypsy_tbl["bubble_counter"] = 0
 
 	g_gypsy_tbl["vial_level"] = {3,3,3,3,3,3,3,3}
 	local vial_level = g_gypsy_tbl["vial_level"]
-	
+
 	local vial_img_off = {2, 5, 8, 0xB, 0x18, 0x1B, 0x1E, 0x21}
-	
+
 	g_gypsy_tbl["vial_liquid"] = {
 		sprite_new(g_gypsy_img_tbl[0x42 + vial_img_off[1] + vial_level[1] - 3], 44, 0x4d, true),
 		sprite_new(g_gypsy_img_tbl[0x42 + vial_img_off[2] + vial_level[2] - 3], 65, 0x4d, true),
@@ -2059,9 +2059,9 @@ local function create_character()
 		sprite_new(g_gypsy_img_tbl[0x42 + vial_img_off[7] + vial_level[7] - 3], 245, 0x4d, true),
 		sprite_new(g_gypsy_img_tbl[0x42 + vial_img_off[8] + vial_level[8] - 3], 266, 0x4d, true),
 	}
-	
+
 	g_gypsy_tbl["hand"] = sprite_new(nil, 0, 0, false)
-		
+
 	g_gypsy_tbl["vial"] = {
 		sprite_new(g_gypsy_img_tbl[20], 41, 0x42, true),
 		sprite_new(g_gypsy_img_tbl[20], 62, 0x42, true),
@@ -2072,25 +2072,25 @@ local function create_character()
 		sprite_new(g_gypsy_img_tbl[23], 242, 0x42, true),
 		sprite_new(g_gypsy_img_tbl[23], 263, 0x42, true),
 	}
-	
+
 	fade_in()
-	
+
 	scroll.x = 1
 	scroll.y = 0x7c
 	scroll.visible = true
-		
+
 	local scroll_img = image_load("blocks.shp", 3)
 	scroll.image = scroll_img
 	x, y = image_print(scroll_img, "\"At last thou hast come to fulfill thy destiny,\127 the gypsy says. She smiles, as if in great relief.", 7, 303, 8, 19, 0x3e)
 	image_print(scroll_img, "\"Sit before me now, and I shall pour the light of Virtue into the shadows of thy future.\127", 7, 303, 8, y+16, 0x3e)
-	
+
 	wait_for_input()
-	
+
 	scroll_img = image_load("blocks.shp", 3)
 	scroll.image = scroll_img
 	x, y = image_print(scroll_img, "On a wooden table eight bottles stand, a rainbow of bubbling liquids.", 7, 303, 8, 19, 0x3e)
 	image_print(scroll_img, "\"Behold the Virtues of the Avatar,\127 the woman says. \"Let us begin the casting!\127", 7, 303, 8, y+16, 0x3e)
-	
+
 	wait_for_input()
 	canvas_set_palette_entry(19, 200, 200, 200) -- fix mouse cursor
 	canvas_set_palette_entry(27, 68, 68, 68) -- fix mouse cursor
@@ -2105,28 +2105,28 @@ local function create_character()
 	g_str = 0xf
 	g_dex = 0xf
 	g_int = 0xf
-	
 
-	
+
+
 	shuffle_question_tbl(8)
 	gypsy_ask_questions(4, scroll)
 
 	shuffle_question_tbl(4)
-	
+
 	gypsy_ask_questions(2, scroll)
 	gypsy_ask_questions(1, scroll)
-	
+
 	a_button.visible = false
 	b_button.visible = false
 	g_ab_highlight.visible = false
 	mouse_cursor_visible(false)
-	
+
 	scroll_img = image_load("blocks.shp", 3)
 	scroll.image = scroll_img
 	image_print(scroll_img, "\"The path of the Avatar lies beneath thy feet, worthy "..name.text..",\127 the gypsy intones. With a mysterious smile, she passes you the flask of shimmering liquids. \"Drink of these waters and go forth among our people, who shall receive thee in joy!\127", 7, 303, 8, 16, 0x3e)
-	
+
 	-- wait_for_input()
-	
+
 	input = nil
 	while input == nil do
 		gypsy_update_bubbles(g_gypsy_tbl["jar_liquid"].image)
@@ -2138,11 +2138,11 @@ local function create_character()
 	end
 
 	fade_out()
-	
+
 	canvas_hide_all_sprites()
 	canvas_set_palette("palettes.int", 6)
-	
-	
+
+
 	--local big_flask = sprite_new(g_gypsy_img_tbl[198], 0, 0, true)
 	bubbles.visible = true
 	bg.x = 0
@@ -2151,7 +2151,7 @@ local function create_character()
 	bg.image = g_gypsy_img_tbl[198]
 	g_gypsy_tbl["bubble_counter"] = 0
 	gypsy_update_bubbles(bubbles.image)
-	
+
 	fade_in()
 
 	scroll_img = image_load("blocks.shp", 2)
@@ -2160,7 +2160,7 @@ local function create_character()
 	scroll.y = 0x98
 	scroll.visible = true
 	image_print(scroll_img, "As you drink from the flask, vertigo overwhelms you. A soothing mist obscures the gypsy's face, and you sink without fear into an untroubled sleep.", 7, 303, 8, 8, 0x3e)
-	
+
 	--wait_for_input()
 
 	input = nil
@@ -2172,60 +2172,60 @@ local function create_character()
 			break
 		end
 	end
-	
+
 	scroll.visible = false
-		
+
 	canvas_set_bg_color(0x75)
 	fade_out()
-	
+
 	bubbles.visible = false
-	
+
 	bg.image = g_gypsy_img_tbl[199]
 	bg.x = 0
 	bg.y = 0
 	bg.visible = true
-		
+
 	scroll.visible = false
-	
+
 	fade_in()
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	scroll.image = scroll_img
 	scroll.visible = true
 	image_print(scroll_img, "You wake in a different time, upon another world's shore. Though the Avatar's quests bring you both triumph and tragedy, never do you stray from the path of the Eight Virtues.", 7, 303, 8, 8, 0x3e)
 
 	wait_for_input()
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	scroll.image = scroll_img
 	scroll.visible = true
 	image_print(scroll_img, "The sagas of Ultima IV and Ultima V chronicle your perilous travels, and your name and your deeds are written forever among Britannia's legends....", 7, 303, 8, 8, 0x3e)
-	
+
 	wait_for_input()
 
 	scroll_img = image_load("blocks.shp", 2)
 	scroll.image = scroll_img
 	scroll.visible = true
 	image_print(scroll_img, "Finally, tempered by your struggles against the enemies of Virtue, you are proven ready to answer the epic challenge of Ultima VI!", 7, 303, 8, 12, 0x3e)
-	
+
 	wait_for_input()
 	scroll.visible = false
-	
+
 	canvas_set_bg_color(0)
 	fade_out()
-	
+
 	config_set("config/newgame", true)
-	
+
 	config_set("config/newgamedata/name", name.text)
 	config_set("config/newgamedata/gender", gender)
 	config_set("config/newgamedata/portrait", portrait_num)
 	config_set("config/newgamedata/str", g_str)
 	config_set("config/newgamedata/dex", g_dex)
 	config_set("config/newgamedata/int", g_int)
-	
+
 	g_gypsy_img_tbl = nil
 	g_gypsy_tbl = nil
-	
+
 	return true
 end
 
@@ -2238,7 +2238,7 @@ end
 local function acknowledgements()
 
 	local bg = sprite_new(image_load("vellum1.shp", 0), 0x10, 0x50, true)
-	
+
 	ack_header(bg.image)
 
 	image_print(bg.image, "Produced by", 7, 303, 106, 32, 0xC)
@@ -2246,63 +2246,63 @@ local function acknowledgements()
 
 	image_print(bg.image, "Executive Producer", 7, 303, 82, 56, 0xC)
 	image_print(bg.image, "Dallas Snell", 7, 303, 106, 64, 0x48)
-	
+
 	image_print(bg.image, "Programming", 7, 303, 104, 80, 0xC)
 	image_print(bg.image, "Cheryl Chen    John Miles", 7, 303, 67, 88, 0x48)
 	image_print(bg.image, "Herman Miller    Gary Scott Smith", 7, 303, 40, 96, 0x48)
-	
+
 	fade_in_sprite(bg)
 	local input
-		
+
 	wait_for_input()
-		
+
 	bg.image = image_load("vellum1.shp", 0)
-	
+
 	ack_header(bg.image)
-	
+
 	image_print(bg.image, "Writing", 7, 303, 120, 47, 0xC)
 	image_print(bg.image, "Stephen Beeman    Dr. Cat    \39Manda Dee", 7, 303, 25, 55, 0x48)
 	image_print(bg.image, "Richard Garriott    Greg Malone", 7, 303, 46, 63, 0x48)
 	image_print(bg.image, "John Miles    Herman Miller", 7, 303, 61, 71, 0x48)
 	image_print(bg.image, "Todd Porter    Warren Spector", 7, 303, 50, 79, 0x48)
-							
+
 	wait_for_input()
-	
+
 	bg.image = image_load("vellum1.shp", 0)
-	
+
 	ack_header(bg.image)
-	
+
 	image_print(bg.image, "Art", 7, 303, 132, 31, 0xC)
 	image_print(bg.image, "Keith Berdak    Daniel Bourbonnais", 7, 303, 37, 39, 0x48)
 	image_print(bg.image, "Jeff Dee    \39Manda Dee", 7, 303, 75, 47, 0x48)
 	image_print(bg.image, "Glen Johnson    Denis Loubet", 7, 303, 56, 55, 0x48)
-		
+
 	image_print(bg.image, "Music", 7, 303, 126, 71, 0xC)
 	image_print(bg.image, "Ken Arnold    Iolo Fitzowen", 7, 303, 61, 79, 0x48)
 	image_print(bg.image, "Herman Miller    Todd Porter", 7, 303, 56, 87, 0x48)
-	
+
 	wait_for_input()
-	
+
 	bg.image = image_load("vellum1.shp", 0)
-	
+
 	ack_header(bg.image)
-		
+
 	image_print(bg.image, "Quality Assurance", 7, 303, 87, 31, 0xC)
 	image_print(bg.image, "Paul Malone    Mike Romero", 7, 303, 62, 39, 0x48)
 	image_print(bg.image, "", 7, 303, 49, 47, 0x48)
-	
+
 	image_print(bg.image, "Additional Support", 7, 303, 84, 63, 0xC)
 	image_print(bg.image, "Michelle Caddel    Melanie Fleming", 7, 303, 39, 71, 0x48)
 	image_print(bg.image, "Alan Gardner    Jeff Hillhouse", 7, 303, 51, 79, 0x48)
 	image_print(bg.image, "Sherry Hunter    Steve Muchow", 7, 303, 49, 87, 0x48)
 	image_print(bg.image, "Cheryl Neeld", 7, 303, 104, 95, 0x48)
-			
+
 	wait_for_input()
-						
+
 	fade_out_sprite(bg, 4)
-	
+
 	bg.visible = false
-	
+
 	return true
 end
 
@@ -2311,17 +2311,17 @@ local function intro_sway_gargs(sprite, idx, angry_flag)
 	if math.random(0, 3) == 0 then
 		return idx
 	end
-	
+
 	local movement_tbl = {1,1,1, -1,-1,-1,  -1,-1,-1,  1, 1, 1}
-	
+
 	if idx == 12 then
 		idx = 1
 	else
 		idx = idx + 1
 	end
-	
+
 	sprite.x = sprite.x + movement_tbl[idx]
-	
+
 	return idx
 end
 
@@ -2345,14 +2345,14 @@ local function intro_wait()
 		intro_exit()
 		return false
 	end
-		
+
 	return true
 end
 
 local function intro()
 	local input
 	local intro_img_tbl = image_load_all("intro.shp")
-	
+
 	local bg = sprite_new(intro_img_tbl[6], 0, 0, true)
 	local moongate = sprite_new(intro_img_tbl[7], 0x78, 0x3a, false)
 	local gargs_left = sprite_new(intro_img_tbl[3], -84, 0x6d, true)
@@ -2363,46 +2363,46 @@ local function intro()
 	local shamino = sprite_new(intro_img_tbl[2], 0x44, 0x7a, false)
 	local dupre = sprite_new(intro_img_tbl[0], -0x20, 0x7a, false)
 
-	local avatar = sprite_new(intro_img_tbl[9], 0x31, 0x44, false)	
+	local avatar = sprite_new(intro_img_tbl[9], 0x31, 0x44, false)
 	local alter = sprite_new(intro_img_tbl[5], 0, 0x70, true)
 	local ropes = sprite_new(intro_img_tbl[12], 0xd2, 0x84, false)
-			
+
 	canvas_set_palette("palettes.int", 7)
 	music_play("intro.m")
-					
+
 	fade_in()
-	
+
 	local scroll_img = image_load("blocks.shp", 2)
 	local scroll = sprite_new(scroll_img, 1, 0x98, true)
-	
+
 	image_print(scroll_img, "Dazed, you emerge from the portal to find yourself standing on a desolate plain. Nearby rests a massive rune-struck altar, shrouded in moonlit fog.", 7, 308, 8, 8, 0x3e)
 
 	if should_exit(wait_for_input()) == true then intro_exit() return end
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	scroll.image = scroll_img
 	image_print(scroll_img, "At first the plain is still. Then a hundred voices raise a slow, deathlike song, drawing closer and closer with each passing moment. You are seized by an urge to run...", 7, 308, 8, 8, 0x3e)
 
 	if intro_wait() == false then return end
-	
+
 	local l_move_tbl_x = {1, 1, 0, 1, 1, 1}
 	local l_move_tbl_y = {0, 0, -1, 0, 0, -1}
 
 	local r_move_tbl_x = {-1, -1, -1, -1, -1, -1}
 	local r_move_tbl_y = {-1, -1, 0, -1, -1, -1}
-	
+
 	scroll.visible = false
-	
+
 	local i
 	for i=0,95,1 do
 		gargs_left.x = gargs_left.x + l_move_tbl_x[(i%6)+1]
 		gargs_left.y = gargs_left.y + l_move_tbl_y[(i%6)+1]
-		
+
 		if i > 23 then
 			gargs_right.x = gargs_right.x + r_move_tbl_x[(i%6)+1] * 2
 			gargs_right.y = gargs_right.y + r_move_tbl_y[(i%6)+1] * 2
 		end
-		
+
 		input = input_poll()
 		if input ~= nil then
 			if should_exit(input) ==  true then
@@ -2414,13 +2414,13 @@ local function intro()
 			gargs_left.y = 77
 			gargs_right.x = 182
 			gargs_right.y = 79
-			
+
 			break
 		end
 		canvas_update()
 		canvas_update()
 	end
-	
+
 	scroll_img = image_load("blocks.shp", 0)
 	scroll.image = scroll_img
 	scroll.x = 0x21
@@ -2429,13 +2429,13 @@ local function intro()
 	image_print(scroll_img, "...but you have no place to go.", 7, 308, 35, 8, 0x3e)
 
 	if intro_wait() == false then return end
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	scroll.image = scroll_img
 	scroll.x = 0x1
 	scroll.y = 0x98
 	image_print(scroll_img, "Before you can offer a protest to the creatures who surround you, scaly claws grasp your body.", 7, 308, 8, 12, 0x3e)
-	
+
 	if intro_wait() == false then return end
 
 	scroll_img = image_load("blocks.shp", 1)
@@ -2443,19 +2443,19 @@ local function intro()
 	scroll.x = 0x1
 	scroll.y = 0xa0
 	image_print(scroll_img, "With unearthly strength, the monsters bind you to the altar stone!", 7, 308, 11, 10, 0x3e)
-	
+
 	avatar.visible = true
 	ropes.visible = true
-		
+
 	if intro_wait() == false then return end
-	
+
 	gargs_left.y = gargs_left.y + 4
 	gargs_right.y = gargs_right.y + 4
 	scroll.visible = false
-	
+
 	garg_body.visible = true
 	garg_head.visible = true
-	
+
 	for i=0,22,1 do
 		garg_body.x = garg_body.x - 3
 		garg_body.y = garg_body.y - 3
@@ -2494,12 +2494,12 @@ local function intro()
 			canvas_update()
 		end
 	end
-	
+
 	garg_body.x = 144
 	garg_body.y = 30
 	garg_head.x = 222
 	garg_head.y = 44
-		
+
 	scroll_img = image_load("blocks.shp", 1)
 	scroll.image = scroll_img
 	scroll.x = 0x1
@@ -2524,7 +2524,7 @@ local function intro()
 			end
 		canvas_update()
 	end
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	scroll.image = scroll_img
 	scroll.x = 0x1
@@ -2573,7 +2573,7 @@ local function intro()
 	scroll.x = 0x1
 	scroll.y = 0xa0
 	image_print(scroll_img, "You close your eyes. A dying scream, certainly your own, curdles the air.", 80, 228, 16, 10, 0x3e)
-	
+
 	moongate.visible = true
 	g_pal_counter = 0
 
@@ -2591,7 +2591,7 @@ local function intro()
 			break
 		end
 	end
-	
+
 	input = nil
 	while input == nil do
 		moongate_rotate_palette()
@@ -2605,59 +2605,59 @@ local function intro()
 			break
 		end
 	end
-	
+
 	for i=0xff,0,-3 do
 		moongate_rotate_palette()
 		canvas_set_opacity(i)
 		canvas_update()
 		input_poll()
 	end
-	
+
 	canvas_hide_all_sprites()
-	
+
 	scroll_img = image_load("blocks.shp", 1)
 	scroll.image = scroll_img
 	scroll.x = 0x1
 	scroll.y = 0x50
 	scroll.visible = true
 	image_print(scroll_img, "Catcalls, the dagger, a scream, Death....", 7, 308, 39, 14, 0x3e)
-	
+
 	fade_in()
-	
+
 	if intro_wait() == false then return end
 
 	fade_out()
-	
+
 	scroll_img = image_load("blocks.shp", 1)
 	scroll.image = scroll_img
 	image_print(scroll_img, "Pandemonium. Shrieks of rage, of terror.", 7, 308, 34, 14, 0x3e)
-		
+
 	fade_in()
-	
+
 	if intro_wait() == false then return end
 
 	fade_out()
-	
+
 	scroll_img = image_load("blocks.shp", 1)
 	scroll.image = scroll_img
 	image_print(scroll_img, "From the inevitable, an impossibility emerges.", 7, 308, 16, 14, 0x3e)
-	
+
 	fade_in()
-	
+
 	if intro_wait() == false then return end
-	
+
 	fade_out()
-	
+
 	scroll_img = image_load("blocks.shp", 1)
 	scroll.image = scroll_img
 	image_print(scroll_img, "You are still alive.", 7, 308, 101, 14, 0x3e)
-		
+
 	fade_in()
-		
+
 	if intro_wait() == false then return end
-	
+
 	fade_out()
-	
+
 	bg.visible = true
 	moongate.visible = true
 	gargs_left.visible = true
@@ -2669,7 +2669,7 @@ local function intro()
 	ropes.visible = true
 
 	scroll.visible = false
-	
+
 	for i=0,0xff,3 do
 		left_idx = intro_sway_gargs(gargs_left, left_idx, false)
 		right_idx = intro_sway_gargs(gargs_right, right_idx, false)
@@ -2678,7 +2678,7 @@ local function intro()
 		canvas_update()
 		input_poll()
 	end
-	
+
 	garg_head.image = intro_img_tbl[10]
 
 	scroll_img = image_load("blocks.shp", 2)
@@ -2687,7 +2687,7 @@ local function intro()
 	scroll.y = 0x98
 	scroll.visible = true
 	image_print(scroll_img, "Silent red light fills the darkness. There is the wooden clack of a crossbow, and a violet- fletched rose blooms in the priest\39s barren forehead.", 7, 308, 8, 8, 0x3e)
-	
+
 	input = nil
 	while input == nil do
 		left_idx = intro_sway_gargs(gargs_left, left_idx, false)
@@ -2705,18 +2705,18 @@ local function intro()
 	end
 
 	scroll.visible = false
-	
+
 	for i=0,42,1 do
 		left_idx = intro_sway_gargs(gargs_left, left_idx, false)
 		right_idx = intro_sway_gargs(gargs_right, right_idx, false)
 		moongate_rotate_palette()
-	
+
 		local x =  math.random(-1, 2)
 		garg_body.x = garg_body.x + x
 		garg_body.y = garg_body.y + 3
 		garg_head.x = garg_head.x + x
 		garg_head.y = garg_head.y + 3
-	
+
 		input = input_poll()
 		if input ~= nil then
 			if should_exit(input) ==  true then
@@ -2732,34 +2732,34 @@ local function intro()
 
 	garg_body.visible = false
 	garg_head.visible = false
-	
+
 	iolo.visible = true
 	dupre.visible = true
 	shamino.visible = true
-	
+
 	for i=0,82,1 do
 		left_idx = intro_sway_gargs(gargs_left, left_idx, false)
 		right_idx = intro_sway_gargs(gargs_right, right_idx, false)
 		moongate_rotate_palette()
-		
+
 
 		if i > 33 then
 			dupre.x = dupre.x + 2
 		else
 			dupre.x = dupre.x + 1
 		end
-		
+
 		dupre.y = dupre.y - 1
-		
+
 		if i > 13 then
 			if i > 36 then
 				shamino.x = shamino.x + 2
 			else
 				shamino.x = shamino.x + 1
-			end	
+			end
 			shamino.y = shamino.y - 1
 		end
-		
+
 		if i > 10 then
 			iolo.x = iolo.x + 1
 			if i > 14 then
@@ -2768,7 +2768,7 @@ local function intro()
 				iolo.y = iolo.y - 1
 			end
 		end
-		
+
 		input = input_poll()
 		if input ~= nil then
 			if should_exit(input) ==  true then
@@ -2785,14 +2785,14 @@ local function intro()
 		end
 		canvas_update()
 	end
-	
+
 	scroll_img = image_load("blocks.shp", 2)
 	scroll.image = scroll_img
 	scroll.x = 0x1
 	scroll.y = 0x98
 	scroll.visible = true
 	image_print(scroll_img, "Friendly faces vault from a newborn moongate, while a rain of quarrels holds the furious mob at bay. The knight Dupre\39s sword flashes twice in the darkness, slicing away your bonds!", 7, 308, 8, 8, 0x3e)
-		
+
 	input = nil
 	while input == nil do
 		left_idx = intro_sway_gargs(gargs_left, left_idx, false)
@@ -2811,7 +2811,7 @@ local function intro()
 
 	scroll.visible = false
 	ropes.visible = false
-	
+
 	for i=0,82,1 do
 		left_idx = intro_sway_gargs(gargs_left, left_idx, false)
 		right_idx = intro_sway_gargs(gargs_right, right_idx, false)
@@ -2826,7 +2826,7 @@ local function intro()
 
 		iolo.x = iolo.x - 1
 		iolo.y = iolo.y + 2
-		
+
 		avatar.y = avatar.y + 1
 
 		input = input_poll()
@@ -2848,7 +2848,7 @@ local function intro()
 	scroll.image = scroll_img
 	scroll.visible = true
 	image_print(scroll_img, "\"Quickly, old friend! To the gate!\127 Accompanied by the swordsman Shamino and a grinning, crossbow-wielding Iolo the Bard, Dupre thrusts a spare sword into your hand.", 7, 308, 8, 8, 0x3e)
-		
+
 	input = nil
 	while input == nil do
 		left_idx = intro_sway_gargs(gargs_left, left_idx, false)
@@ -2868,7 +2868,7 @@ local function intro()
 	scroll_img = image_load("blocks.shp", 2)
 	scroll.image = scroll_img
 	image_print(scroll_img, "Snatching the fallen priest\39s book, Iolo dives into the redness with Shamino at his heels. The howling throng surges forward, all of one terrible mind.", 7, 308, 8, 8, 0x3e)
-	
+
 	input = nil
 	while input == nil do
 		left_idx = intro_sway_gargs(gargs_left, left_idx, false)
@@ -2953,7 +2953,7 @@ local function intro()
 	end
 
 	scroll.visible = false
-		
+
 	intro_exit()
 end
 
@@ -2973,7 +2973,7 @@ g_menu_pal =
 g_menu_pal_idx = { 14, 33, 34, 35, 36 }
 local function main_menu_set_pal(idx)
 	local i
-	
+
 	for i = 1,5,1 do
 		local colour = g_menu_pal[5+(i-1)-idx]
 		canvas_set_palette_entry(g_menu_pal_idx[i], colour[1], colour[2], colour[3])
@@ -2987,20 +2987,20 @@ local function main_menu_load()
 
 	music_play("ultima.m")
 	g_menu = {}
-	
+
 	canvas_set_palette("palettes.int", 0)
-		
+
 	local title_img_tbl = image_load_all("titles.shp")
 	g_menu["title"] = sprite_new(title_img_tbl[0], 0x13, 0, true)
 	g_menu["subtitle"] = sprite_new(title_img_tbl[1], 0x3b, 0x2f, false)
 
 	g_menu["menu"] = sprite_new(image_load("mainmenu.shp", 0), 0x31, 0x53, false)
-	
+
 	fade_in()
-	
+
 	g_menu["subtitle"].visible = true
 	g_menu["menu"].visible = true
-	
+
 	fade_in_sprite(g_menu["menu"])
 	mouse_cursor_visible(true)
 end
@@ -3051,7 +3051,7 @@ local function main_menu()
 	g_menu["title"].visible = true
 	g_menu["subtitle"].visible = true
 	g_menu["menu"].visible = true
-	
+
 	local input
 
 	while true do

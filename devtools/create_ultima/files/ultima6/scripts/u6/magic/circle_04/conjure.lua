@@ -10,7 +10,7 @@ local obj_n = 0
 
 if i <= 3 then
 	obj_n = 0x173 --troll
-elseif i <= 6 then 
+elseif i <= 6 then
 	obj_n = 0x156 --giant rat
 elseif i <= 9 then
 	obj_n = 0x169 --giant spider

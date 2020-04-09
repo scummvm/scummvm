@@ -10,5 +10,3 @@ if ret == 2 then
 elseif ret == 1 then
 	magic_failed()
 end
-
-

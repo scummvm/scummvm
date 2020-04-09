@@ -22,7 +22,7 @@ for x = x - 5,loc_x + 5 do
 				local actor_base = actor_tbl[actor.obj_n]
 				if actor_base == nil or actor_base[13] == 0 then -- 13 is immune to tremor
 					local exp = actor_hit(actor, random(1, 0x1e))
-					if exp ~= 0 then         
+					if exp ~= 0 then
 						caster.exp = caster.exp + exp
 					end
 
@@ -37,4 +37,3 @@ for x = x - 5,loc_x + 5 do
 end
 
 print("\nSuccess\n")
-

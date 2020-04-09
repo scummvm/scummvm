@@ -19,7 +19,7 @@ function use_door(obj, actor)
       printl("BLOCKED")
       return
    end
-	
+
    obj.frame_n = bit32.bxor(obj.frame_n, 2)
 
 end
@@ -79,7 +79,7 @@ function use_hammer_on_oxium_geode(obj, target_obj, actor)
          Actor.inv_add_obj(actor, oxium)
       end
    end
-   
+
 end
 
 function use_prybar_on_hatch(obj, target_obj, actor)
@@ -88,20 +88,20 @@ function use_prybar_on_hatch(obj, target_obj, actor)
 		printfl("IS_NOT_STRONG_ENOUGH", actor.name)
 		return
 	end
-	
+
 	local tesla = Actor.get(16)
 	if Actor.get_talk_flag(tesla, 4) == false then
 		Actor.set_talk_flag(tesla, 2)
 		Actor.talk(tesla)
 	else
 		play_midgame_sequence(1)
-		
+
 		Actor.set_talk_flag(tesla, 5)
 		target_obj.obj_n = 428
 		target_obj.frame_n = 0;
 		target_obj.x = target_obj.x + 1
 		target_obj.y = target_obj.y + 1
-		
+
 		local blood = Actor.get(18)
 		Actor.set_talk_flag(blood, 3)
 		Actor.set_talk_flag(blood, 6)
@@ -117,10 +117,10 @@ function use_sextant(obj, actor)
 
 	local lat_str = "N"
 	local long_str = "W"
-	
+
 	local lat = math.modf(((actor.y - 512) * 240) / 1024)
 	local long = math.modf(((actor.x - 512) * 360) / 1024)
-	
+
 	if lat > 0 then
 		lat_str = "S"
 	else
@@ -128,7 +128,7 @@ function use_sextant(obj, actor)
 			lat_str = " "
 		end
 	end
-	
+
 	if long == 180 or long == -180 or long == 0 then
 		long_str = " "
 	else
@@ -136,7 +136,7 @@ function use_sextant(obj, actor)
 			long_str = "E"
 		end
 	end
-	
+
 	lat = math.abs(lat)
 	long = 180 - math.abs(long)
 	printl("YOU_ARE_SOMEWHERE_NEAR")
@@ -149,11 +149,11 @@ function use_berry(obj, actor)
       printl("A_MECHANICAL_PERSON_CANT_EAT_BERRIES")
       return
    end
-   
+
    play_md_sfx(0x32)
    local berry_type = obj.obj_n - 73 --OBJ_BERRY
    local first_berry = true
-   
+
    if (berry_type == 0 and actor_is_affected_by_purple_berries(actor_num))
       or (berry_type == 1 and actor_is_affected_by_green_berries(actor_num))
       or (berry_type == 2 and actor_is_affected_by_brown_berries(actor_num)) then
@@ -178,7 +178,7 @@ function use_berry(obj, actor)
       local counter = actor_get_blue_berry_counter()
       actor_set_blue_berry_counter(counter + math.random(1, 2))
    end
-   
+
    if obj.qty == 1 then
       Obj.removeFromEngine(obj)
    else
@@ -221,7 +221,7 @@ function get_pile_obj_num(map_tile)
 		return 256 --OBJ_CHUNK_OF_ICE
 	end
 
-	return 0 --CANNOT DIG HERE 
+	return 0 --CANNOT DIG HERE
 end
 
 function get_free_location_around_actor(actor)
@@ -231,7 +231,7 @@ function get_free_location_around_actor(actor)
 	local i
 
 	pos.z = actor.z
-	
+
 	for i=1,8 do
 		pos.x = actor.x + x_tbl[i]
 		pos.y = actor.y + y_tbl[i]
@@ -239,7 +239,7 @@ function get_free_location_around_actor(actor)
 			return pos
 		end
 	end
-	
+
 	return nil
 end
 
@@ -249,28 +249,28 @@ function use_tool_on_ground(obj, target_obj, actor, target_x, target_y, target_z
 		printl("THE_GROUND_IS_NOT_CLEAR_FOR_DIGGING")
 		return
 	end
-		
+
 	local map_tile = map_get_tile_num(target_x, target_y, target_z)
-	
+
 	local pile_obj_num = get_pile_obj_num(map_tile)
-	
+
 	if pile_obj_num == 0 then
 		printl("IT_HAS_NO_EFFECT")
 		return
 	end
 
 	local hole_obj_num = 257
-	
+
 	if pile_obj_num == 256 then
 		hole_obj_num = 255
 	end
-	
+
 	local hole = Obj.new(hole_obj_num)
 	hole.temporary = true
 	Obj.moveToMap(hole, target_x, target_y, target_z)
 
 	local loc = get_free_location_around_actor(actor)
-	
+
 	if loc ~= nil then
 		local pile = Obj.new(pile_obj_num)
 		pile.temporary = true
@@ -327,7 +327,7 @@ function use_shovel_on_ore_to_container(obj, target_obj, to_obj, actor)
          return false
       end
    end
-   
+
    return true
 end
 
@@ -337,11 +337,11 @@ function use_shovel_to_unload_container(obj, target_obj, to_obj, actor)
       play_md_sfx(5)
       return
    end
-   
+
    local ore = Obj.new(get_obj_num_from_ore_quality(target_obj.quality))
-   
+
    --FIXME if to_obj == nil do something
-   
+
    local success_flag = false
    if to_obj.obj_n == 268 or to_obj.obj_n == 410 then --OBJ_MARTIAN_WHEEL_BARROW
       success_flag = use_shovel_on_ore_to_container(obj, ore, to_obj, actor)
@@ -352,7 +352,7 @@ function use_shovel_to_unload_container(obj, target_obj, to_obj, actor)
    else
       --FIXME need to implement burying logic
    end
-   
+
    if success_flag then
       target_obj.qty = target_obj.qty - 1
       if target_obj.obj_n == 410 then --OBJ_RAIL_CAR
@@ -360,14 +360,14 @@ function use_shovel_to_unload_container(obj, target_obj, to_obj, actor)
             target_obj.frame_n = target_obj.frame_n - 2
          end
       end
-   end 
+   end
 end
 
 function use_shovel_on_ore_to_furnace(obj, target_obj, to_obj, actor)
    local obj_n = target_obj.obj_n
-   
+
    play_md_sfx(0x1b)
-   
+
    Obj.removeFromEngine(target_obj)
    if obj_n == 444 then --OBJ_PILE_OF_COAL
       if to_obj.frame_n < 4 then
@@ -376,7 +376,7 @@ function use_shovel_on_ore_to_furnace(obj, target_obj, to_obj, actor)
    else
       printl("IT_HAS_NO_EFFECT")
    end
-   
+
    return true
 end
 
@@ -462,7 +462,7 @@ function update_conveyor_belt(can_stop)
       return
    end
    local player_loc = player_get_location()
-   
+
    if player_loc.z ~= 5 then
       return
    end
@@ -473,9 +473,9 @@ function update_conveyor_belt(can_stop)
    local x = 0x3c
    local y = 0x63
    local z = 5
-   
+
    local conveyor = map_get_obj(x, y, z, 188) --OBJ_CONVEYOR_BELT
-   
+
    while conveyor ~= nil do
       if conveyor.frame_n == 2 then
          local seam = map_get_obj(x, y, z, 189) --OBJ_CONVEYOR_BELT1
@@ -490,7 +490,7 @@ function update_conveyor_belt(can_stop)
          end
          conveyor.qty = conveyor.qty - 1
       end
-      
+
       local seam = map_get_obj(x, y, z, 189) --OBJ_CONVEYOR_BELT1
       if seam ~= nil then
          seam.x = seam.x + 1
@@ -510,8 +510,8 @@ function update_conveyor_belt(can_stop)
       x = x - 1
       conveyor = map_get_obj(x, y, z, 188) --OBJ_CONVEYOR_BELT
    end
-   
-   
+
+
    if can_stop and Actor.get_talk_flag(0x71, 3) then
       if math.random(0, 6) == 0 then
          printl("THE_CONVEYOR_BELT_STOPS")
@@ -520,24 +520,24 @@ function update_conveyor_belt(can_stop)
          shutdown_power_update_tiles()
       end
    end
-   
-   
+
+
 end
 
 function midgame_cutscene_2()
    play_midgame_sequence(2)
-   
+
    for tower in find_obj(0, 201) do --OBJ_TOWER_TOP
       if tower.x >= 0x3d0 and tower.x <= 0x3f0 and tower.y >= 0x1d0 and tower.y <= 0x1e7 then
          tower.frame_n = 4 + (tower.frame_n % 4)
       end
    end
-   
+
    for cable in find_obj(0, 214) do --OBJ_POWER_CABLE
       if cable.x >= 0x3d0 and cable.x <= 0x3f0 and cable.y >= 0x1d0 and cable.y <= 0x1e7 then
          cable.obj_n = 215
       end
-   end   
+   end
 end
 
 function use_fixed_belt_on_bare_rollers(obj, target_obj, actor)
@@ -550,12 +550,12 @@ function use_fixed_belt_on_bare_rollers(obj, target_obj, actor)
       end
       rollers = map_get_obj(rollers.x-1,rollers.y,rollers.z, rollers.obj_n)
    end
-   
+
    if start_obj == nil then
       printl("OOOPS_THESE_ROLLERS_CAN_NEVER_BE_FIXED")
       return
    end
-   
+
    rollers = start_obj
    local i = 4
    while rollers ~= nil do
@@ -569,7 +569,7 @@ function use_fixed_belt_on_bare_rollers(obj, target_obj, actor)
       end
       rollers = map_get_obj(rollers.x+1,rollers.y,rollers.z, 192) --OBJ_BARE_ROLLERS
    end
-   
+
    Obj.removeFromEngine(obj)
    Actor.set_talk_flag(0x72, 2)
 end
@@ -581,7 +581,7 @@ function use_ruby_slippers(obj, actor)
       Actor.inv_ready_obj(actor, obj)
       return
    end
-   
+
    if obj.quality == 2 then
       printl("YOU_MAY_USE_THE_RUBY_SLIPPERS_TO_GO_HOME")
       local input = input_select("yn", false)
@@ -607,7 +607,7 @@ function foes_are_nearby()
          end
       end
    end
-   
+
    return false
 end
 
@@ -640,7 +640,7 @@ function is_actor_able_to_talk_to_player(actor)
          return true
       end
    end
-   
+
    return false
 end
 
@@ -661,7 +661,7 @@ function rest_level_up_actor(actor)
    if actor.actor_num > 15 then
       return
    end
-   
+
    local exp_level_tbl = {
    [0] = 0,
    [1] = 100,
@@ -677,18 +677,18 @@ function rest_level_up_actor(actor)
    if actor.exp <= exp_level_tbl[actor.level] then
       return
    end
-   
+
    actor.level = actor.level + 1
-   
+
    local max_hp = actor_get_max_hp(actor)
    if actor.hp + 30 > max_hp then
       actor.hp = max_hp
    else
       actor.hp = actor.hp + 30
    end
-   
+
    Actor.show_portrait(actor)
-   
+
    local obj_n = actor.obj_n
    local gender = math.random(0,1)
    if obj_n == 342 or obj_n == 343 or obj_n == 345 or (obj_n >= 347 and obj_n <= 353) then
@@ -696,12 +696,12 @@ function rest_level_up_actor(actor)
    elseif obj_n == 344 or obj_n == 346 or (obj_n >= 354 and obj_n <= 357) then
       gender = 1
    end
-   
+
    local gender_pronoun = "He"
    if gender == 1 then
       gender_pronoun = "She"
    end
-   
+
    printfl("HAS_A_DREAM", actor.name)
    printfl("SEES_THREE_STONE_OBELISKS", gender_pronoun)
    printfl("FEELS_DRAWN_TO_ONE_OF_THE_OBELISKS", gender_pronoun)
@@ -709,7 +709,7 @@ function rest_level_up_actor(actor)
    printl("WHICH_BHS")
 
    local answer = input_select("bhs", false)
-   
+
    if answer == "B" then
       if actor.int < 30 then
          actor.int = actor.int + 1
@@ -717,13 +717,13 @@ function rest_level_up_actor(actor)
    elseif answer == "H" then
       if actor.dex < 30 then
          actor.dex = actor.dex + 1
-      end   
+      end
    elseif answer == "S" then
       if actor.str < 30 then
          actor.str = actor.str + 1
-      end  
+      end
    end
-   
+
 end
 
 function use_tent(obj, actor)
@@ -738,9 +738,9 @@ function use_tent(obj, actor)
      play_md_sfx(5)
      return
   end
-  
+
    local tent_loc = {}
-  
+
    if obj.on_map then
       tent_loc.x = obj.x
       tent_loc.y = obj.y
@@ -748,9 +748,9 @@ function use_tent(obj, actor)
    else
       tent_loc = player_get_location()
    end
-   
+
    local x, y
-   
+
    for y = tent_loc.y - 2, tent_loc.y do
       for x = tent_loc.x - 1, tent_loc.x + 1 do
          local map_obj = map_get_obj(x,y,tent_loc.z)
@@ -773,16 +773,16 @@ function use_tent(obj, actor)
          end
       end
    end
-   
+
    printl("REST")
-   
+
    if party_is_in_combat_mode() then
       print(" - ")
       printl("NOT_WHILE_IN_COMBAT_MODE")
       play_md_sfx(5)
       return
    end
-   
+
    if foes_are_nearby() then
       printl("NOT_WHILE_FOES_ARE_NEAR")
       play_md_sfx(5)
@@ -794,8 +794,8 @@ function use_tent(obj, actor)
       printfl("IS_TOO_NEAR_TO_SETUP_CAMP", npc.name)
       play_md_sfx(5)
       return
-   end   
-   
+   end
+
    --poison check
 
    local actor
@@ -806,7 +806,7 @@ function use_tent(obj, actor)
          printfl("IS_POISONED", actor.name)
       end
    end
-   
+
    if poisoned then
       printl("DO_YOU_REALLY_WANT_TO_SLEEP")
       local answer = input_select("yn", false)
@@ -820,7 +820,7 @@ function use_tent(obj, actor)
       local actor_num = actor.actor_num
       local green = actor_is_affected_by_green_berries(actor_num)
       local brown = actor_is_affected_by_brown_berries(actor_num)
-      
+
       if brown or green then
          party_is_using_berries = true
          if brown and green then
@@ -828,29 +828,29 @@ function use_tent(obj, actor)
          elseif brown then
             printfl("COMPLAINS_OF_TOO_MUCH_LIGHT", actor.name)
          else --green
-            printfl("COMPLAINS_OF_INANIMATE_THINGS_TALKING", actor.name)            
-         end  
+            printfl("COMPLAINS_OF_INANIMATE_THINGS_TALKING", actor.name)
+         end
       end
-      
+
    end
-   
+
    if party_is_using_berries then
       if party_get_size() == 1 then
          printl("YOU_CANT_SLEEP")
       else
          printl("NOBODY_CAN_SLEEP")
       end
-      
+
       return
    end
-   
+
    local player = Actor.get_player_actor()
    player.x = tent_loc.x
    player.y = tent_loc.y
-   
+
    local tent = Obj.new(134, 3)
    Obj.moveToMap(tent, player.x, player.y-1, player.z)
-   
+
    tent = Obj.new(134, 5)
    Obj.moveToMap(tent, player.x+1, player.y-1, player.z)
 
@@ -862,19 +862,19 @@ function use_tent(obj, actor)
 
    tent = Obj.new(134, 8)
    Obj.moveToMap(tent, player.x, player.y, player.z)
-            
+
    party_move(player.x, player.y, player.z)
-   
+
    script_wait(500)
-   
+
    party_hide_all()
-   
+
    tent.frame_n = 7
-   
+
    local hour = clock_get_hour()
    local time
    local hours_to_rest
-   
+
    if hour < 7 or hour > 16 then
       time = i18n("SUNRISE")
       if hour < 7 then
@@ -886,27 +886,27 @@ function use_tent(obj, actor)
       time = i18n("SUNSET")
       hours_to_rest = 18 - hour
    end
-   
+
    printfl("REST_UNTIL", time)
    local answer = input_select("yn", false)
-   
+
    if answer == "N" or answer == "n" then
       printl("HOW_MANY_HOURS")
       hours_to_rest = input_select_integer("0123456789", true)
    end
-   
+
    g_party_is_warm = true
-   
+
    if g_hours_till_next_healing == 0 and hours_to_rest > 4 then
       rest_heal_party(hours_to_rest)
       g_hours_till_next_healing = 6
    end
-   
+
    local can_level_up = false
    if hours_to_rest * 3 > party_get_size() then
       can_level_up = true
    end
-   
+
    local i
    for i=0,hours_to_rest*3-1 do
       advance_time(20)
@@ -937,15 +937,15 @@ function use_tent(obj, actor)
 
    tent.frame_n = 8 --Open the tent flap
    party_show_all()
-         
+
    party_move(player.x, player.y + 1, player.z)
 
    script_wait(500)
-   
+
    --remove tent from map
    local z = player.z
    for tent in find_obj(z, 134) do
-      if tent ~= nil and 
+      if tent ~= nil and
       ((tent.x == tent_loc.x and tent.y == tent_loc.y-1) or
        (tent.x == wrap_coord(tent_loc.x+1,z) and tent.y == tent_loc.y-1) or
        (tent.x == wrap_coord(tent_loc.x-1,z) and tent.y == tent_loc.y) or
@@ -964,16 +964,16 @@ function use_red_berry(obj, actor)
       printl("THAT_WOULD_BE_A_WASTE_OUTSIDE_OF_COMBAT")
       return
    end
-   
+
    if actor.frenzy == false then
       printfl("ENTERS_A_BATTLE_FRENZY", actor.name)
       play_md_sfx(0x32)
    end
-   
+
    actor.frenzy = true
-   
+
    local qty = obj.qty
-   
+
    if qty > 1 then
       obj.qty = qty - 1
    else
@@ -991,13 +991,13 @@ end
 
 function use_gong(obj, target_obj, actor)
    printl("GONG")
-   play_md_sfx(0xf) 
+   play_md_sfx(0xf)
 end
 
 function use_musical_instrument(obj, actor)
 
    local obj_n = obj.obj_n
-   
+
    if obj_n == 280 then --OBJ_CYMBALS
       printl("CHING")
       play_md_sfx(0x36)
@@ -1027,7 +1027,7 @@ function use_wrench_on_switchbar(obj, target_obj, actor)
             printl("THE_SWITCH_IS_FASTENED")
             play_md_sfx(0x1f)
             return
-         end   
+         end
       end
       printl("THIS_SWITCH_CANNOT_BE_FIXED")
       play_md_sfx(0x5)
@@ -1043,7 +1043,7 @@ function use_wrench_on_drill(obj, target_obj, actor)
    if target_obj.on_map then
       drill_cart = map_get_obj(target_obj.x, target_obj.y, target_obj.z, 439)
    end
-   
+
    if drill_cart ~= nil then
       local drill = Obj.new(441,1) --assembled drill
       Obj.moveToMap(drill, target_obj.x, target_obj.y, target_obj.z)
@@ -1061,7 +1061,7 @@ function use_wrench_on_panel(obj, target_obj, actor)
       printl("IT_HAS_NO_EFFECT")
       return
    end
-   
+
    local quality = target_obj.quality
    local panel_qty = target_obj.qty
    if quality == 0 then
@@ -1096,7 +1096,7 @@ function use_wrench_on_panel(obj, target_obj, actor)
          end
       end
    end
-   
+
 end
 
 function use_oxium_bin(obj, actor)
@@ -1104,10 +1104,10 @@ function use_oxium_bin(obj, actor)
       printl("BLOCKED")
       return
    end
-   
+
    local oxium = Obj.new(131) --OBJ_BLOB_OF_OXIUM
    oxium.qty = 20
-   
+
    if Actor.can_carry_obj(actor, oxium) then
       Actor.inv_add_obj(actor, oxium, STACK_OBJECT_QTY)
       printl("YOU_GET_TWO_HANDFULS_OF_OXIUM_FROM_THE_BIN")
@@ -1135,7 +1135,7 @@ function use_pliers_on_spool_to_tower(obj, target_obj, to_obj, actor)
       printl("THE_CABLE_DOES_NOT_NEED_REPLACEMENT")
       return
    end
-   
+
    if actor_is_holding_obj(actor, 38) == false then --OBJ_RUBBER_GLOVES
       Actor.hit(actor, math.random(0, math.floor(actor.max_hp/2)))
       local spector = Actor.get(2)
@@ -1158,7 +1158,7 @@ function use_pliers_on_spool_to_tower(obj, target_obj, to_obj, actor)
          Obj.removeFromEngine(obj)
       end
    end
-   
+
 end
 
 function use_gate(obj, actor)
@@ -1179,8 +1179,8 @@ function use_gate(obj, actor)
    elseif frame_n == 6 or frame_n == 7 then
       obj.frame_n = 5
    end
-   
-   
+
+
 end
 
 function use_switch_bar(obj, actor)
@@ -1189,20 +1189,20 @@ function use_switch_bar(obj, actor)
    else
       obj.frame_n = 0
    end
-   
+
    if obj.on_map == false or map_get_obj(obj.x-1,obj.y-1,obj.z, 413) == nil then
       printl("IT_HAS_NO_EFFECT")
       return
    end
-   
+
    if obj.quality == 1 then
       printl("IT_TURNS_LOOSELY")
       return
    end
-   
+
    local turntable = map_get_obj(obj.x-1,obj.y-1,obj.z, 413)
    turntable.frame_n = obj.frame_n
-   
+
    local railcar = map_get_obj(obj.x-1,obj.y-1,obj.z, 410)
    if railcar ~= nil then
       railcar.frame_n = railcar.frame_n - (railcar.frame_n % 2)
@@ -1318,11 +1318,11 @@ end
 function use_assembled_drill(obj, actor)
 
    play_md_sfx(0x10)
-   
+
    local x = obj.x
    local y = obj.y
    local z = obj.z
-   
+
    if obj.frame_n == 1 then
       x = x - 1
    elseif obj.frame_n == 3 then
@@ -1332,7 +1332,7 @@ function use_assembled_drill(obj, actor)
    else
       x = x + 1
    end
-   
+
    local target_obj
    for obj in objs_at_loc(x, y, z) do
       if obj.obj_n == 445 --OBJ_IRON_ORE
@@ -1342,13 +1342,13 @@ function use_assembled_drill(obj, actor)
          break
       end
    end
-   
+
    if target_obj == nil then
       target_obj = map_get_obj(x, y, z, 213, true)
    end
-   
+
    local drilled_matterial
-   
+
    if target_obj == nil then
       if can_drill_at_loc(x, y, z) == true then
          drilled_matterial = 442 --OBJ_PILE_OF_ROCKS
@@ -1366,7 +1366,7 @@ function use_assembled_drill(obj, actor)
    elseif target_obj.obj_n == 446 then --OBJ_VEIN_OF_COAL
       drilled_matterial = 444 --OBJ_PILE_OF_COAL
    end
-   
+
    if drilled_matterial ~= nil then
       local spoil_location = get_free_location_around_drill(obj)
       if spoil_location ~= nil then
@@ -1376,19 +1376,19 @@ function use_assembled_drill(obj, actor)
          printl("THERE_IS_NO_ROOM_LEFT_FOR_THE_ORE")
       end
    end
-   
+
    if target_obj then
       if target_obj.quality > 1 then
          target_obj.quality = target_obj.quality - 1
       else
          Obj.removeFromEngine(target_obj)
-      end  
+      end
    end
-   
+
    if drilled_matterial == nil then
       Obj.removeFromEngine(target_obj)
    end
-   
+
 end
 
 function get_free_location_around_drill(drill)
@@ -1398,7 +1398,7 @@ function get_free_location_around_drill(drill)
    local i
 
    pos.z = drill.z
-   
+
    for i=1,8 do
       pos.x = drill.x + x_tbl[i]
       pos.y = drill.y + y_tbl[i]
@@ -1409,7 +1409,7 @@ function get_free_location_around_drill(drill)
          end
       end
    end
-   
+
    return nil
 end
 
@@ -1419,8 +1419,8 @@ function get_ore_container_quality(ore_obj_num)
    if quality == nil then
       quality = 1
    end
-   
-   return quality   
+
+   return quality
 end
 
 function get_obj_num_from_ore_quality(ore_quality)
@@ -1437,11 +1437,11 @@ end
 
 function can_drill_at_loc(x,y,z)
    local tile_num = map_get_tile_num(x, y, z)
-   
+
    if tile_num >= 0xf0 and tile_num <= 0xfb then
       return true
    end
-   
+
    return false
 end
 
@@ -1961,8 +1961,8 @@ local usecode_table = {
 --OBJ_PICK
 [65]={[255]=use_misc_text,[257]=use_misc_text}, --hole in ice, hole
 --OBJ_SHOVEL
-[66]=use_shovel_on_tbl, 
---OBJ_HOE 
+[66]=use_shovel_on_tbl,
+--OBJ_HOE
 [67]={[255]=use_misc_text,[257]=use_misc_text}, --hole in ice, hole
 --OBJ_BERRY
 [73]=use_berry,
@@ -1975,7 +1975,7 @@ local usecode_table = {
 --OBJ_BERRY4
 [77]=use_red_berry,
 --OBJ_CLUMP_OF_ROUGE_BERRIES
-[78]=use_misc_text, 
+[78]=use_misc_text,
 [86]=use_container,
 [87]=use_container,
 --OBJ_MANUSCRIPT
@@ -2048,7 +2048,7 @@ local usecode_table = {
 [148]=use_reading_material,
 --OBJ_NOTE
 [151]=use_reading_material,
---OBJ_DOOR 
+--OBJ_DOOR
 [152]=use_door,
 [181]=use_gate,
 --OBJ_CAMERA
@@ -2168,7 +2168,7 @@ function ready_winged_shoes(obj, actor)
       bridge.temporary = false
       Obj.moveToMap(bridge, 0xc9, 0x9b, 2)
    end
-   
+
    return true
 end
 
@@ -2211,7 +2211,7 @@ function move_drill(obj, rel_x, rel_y)
   elseif rel_y > 0 then
       obj.frame_n = 5
   end
-    
+
   return true
 end
 
@@ -2219,7 +2219,7 @@ function move_wheelbarrow(obj, rel_x, rel_y)
   if rel_x ~= 0 and rel_y ~= 0 then
     return false
   end
-  
+
   if rel_x < 0 then
     obj.frame_n = 3
   elseif rel_x > 0 then
@@ -2229,7 +2229,7 @@ function move_wheelbarrow(obj, rel_x, rel_y)
   elseif rel_y > 0 then
       obj.frame_n = 2
   end
-  
+
   return true
 end
 
@@ -2253,13 +2253,13 @@ function move_rail_cart(obj, rel_x, rel_y)
    end
 
    move_car_obj(obj, rel_x, rel_y)
-   return false     
+   return false
 end
 
 function check_for_track(car, rel_x, rel_y)
    local x = car.x + rel_x
    local y = car.y + rel_y
-   
+
    for obj in objs_at_loc(x, y, car.z) do
    	if (obj.obj_n >= 412 and obj.obj_n <= 414) or obj.obj_n == 419 or obj.obj_n == 175 or obj.obj_n == 163 then --track object
 
@@ -2281,12 +2281,12 @@ function check_for_track(car, rel_x, rel_y)
    if map_get_obj(x, y, car.z, 412, true) then
       return true
    end
-      
+
    local tile_num = map_get_tile_num(x,y, car.z)
    if is_track_tile(tile_num) then
       return true
    end
-   
+
    return false
 end
 
@@ -2325,7 +2325,7 @@ function has_usecode(obj, usecode_type)
    elseif usecode_type == USE_EVENT_MOVE and usecode_move_obj_table[obj.obj_n] ~= nil then
       return true
    end
-   
+
    return false
 end
 
@@ -2335,11 +2335,11 @@ function use_obj_on_to(obj, target_obj, actor, use_to_tbl)
 		printl("NOTHING")
 		return
 	end
-	
+
 	local to_x, to_y = direction_get_loc(dir, actor.x, actor.y)
-	
+
 	local to_obj = map_get_obj(to_x, to_y, actor.z)
-	
+
 	if to_obj ~= nil then
 		print(to_obj.name.."\n\n")
 		local func = use_to_tbl[to_obj.obj_n]
@@ -2364,7 +2364,7 @@ function use_obj_on(obj, actor, use_on_tbl)
    if target_entity == nil then
       target_entity = map_get_obj(target_x, target_y, actor.z)
    end
-	
+
 	if target_entity ~= nil then
 		print(target_entity.name.."\n\n")
 		local on = use_on_tbl[target_entity.obj_n]
@@ -2444,7 +2444,7 @@ function ready_obj(obj, actor)
          return func(obj, actor)
       end
    end
-   
+
    return true
 end
 

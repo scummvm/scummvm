@@ -23,4 +23,3 @@ elseif obj.obj_n == 0x62 and (obj.frame_n == 1 or obj.frame_n == 2) then
 else
   magic_no_effect()
 end
-

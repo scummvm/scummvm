@@ -1,7 +1,7 @@
 ALIGNMENT_DEFAULT = 0
 ALIGNMENT_NEUTRAL = 1
 ALIGNMENT_EVIL    = 2
-ALIGNMENT_GOOD    = 3 
+ALIGNMENT_GOOD    = 3
 ALIGNMENT_CHAOTIC = 4
 
 HEAD   = 0
@@ -35,7 +35,7 @@ end
 function get_weapon_range(obj_n)
 
    local range = g_range_weapon_tbl[obj_n]
-   
+
    if range == nil then
       return 1
    end
@@ -48,13 +48,13 @@ function actor_randomise_stat(base_stat)
    if tmp == 0 then
       return base_stat
    end
-   
+
    return math.random(0, tmp) + math.random(0, tmp)  + base_stat - tmp
 end
 
 function actor_is_holding_obj(actor, obj_n)
    local hand
-   
+
    hand = Actor.inv_get_readied_obj_n(actor, HAND)
    if hand == obj_n then
       return true
@@ -63,8 +63,8 @@ function actor_is_holding_obj(actor, obj_n)
    if hand == obj_n then
       return true
    end
-   
-   return false   
+
+   return false
 end
 
 function actor_has_free_arm(actor)

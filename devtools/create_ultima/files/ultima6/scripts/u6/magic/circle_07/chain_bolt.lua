@@ -6,7 +6,7 @@ if actor == nil then return end
 local random = math.random
 
 local exp = actor_hit(actor, random(1, 0x1e))
-if exp ~= 0 then         
+if exp ~= 0 then
 	caster.exp = caster.exp + exp
 end
 
@@ -47,20 +47,20 @@ for i=0,6 do
 			end
 		end
 	end
-	
+
 	if new_target == nil then
 		break
 	end
-	
+
 	projectile(0x188, actor.x, actor.y, new_target.x, new_target.y, 2, 0)
-	
+
 	actor = new_target
-	
+
 	local exp = actor_hit(actor, random(1, 0x1e))
-	if exp ~= 0 then         
+	if exp ~= 0 then
 	caster.exp = caster.exp + exp
 	end
-	
+
 	actor_yell_for_help(caster, actor, 1)
 	actor_hit_msg(actor)
 end

@@ -16,7 +16,7 @@ for i=1,0xff do
 
 		local target_x = actor.x
 		local target_y = actor.y
-	
+
 		if actor.z == player_z and target_x > player_x - 5 and target_x < player_x + 5 and target_y > player_y - 5 and target_y < player_y + 5 then
 			wing_strike_effect(actor)
 			foes_present = true
@@ -31,4 +31,3 @@ if foes_present == false then
 	print("\nNo foes.\n")
 	play_sfx(SFX_FAILURE)
 end
-

@@ -192,7 +192,7 @@ weapon_dmg_tbl = { --FIXME: all damage is made up
 [209] = 15, --lit torch
 --[212] = 1, --fishing pole (says bare handed)
 [240] = 30, --device (FIXME: explosive gas only hurts Myrmidex)
-[241] = 30 --activated device (FIXME: explosive gas only hurts Myrmidex) 
+[241] = 30 --activated device (FIXME: explosive gas only hurts Myrmidex)
 }
 
 armour_tbl = --FIXME: all armor value is made up
@@ -255,9 +255,9 @@ end
 function advance_time(num_turns)
 	--FIXME
 	local minute = clock_get_minute()
-	
+
 	clock_inc(num_turns)
-		
+
 	if minute + num_turns >= 60 then
 		update_actor_schedules()
 	end
@@ -273,7 +273,7 @@ function actor_get_obj(actor, obj) -- FIXME need to limit inventory slots
 		print("\nNot possible.")
 		return false
 	end
-	
+
 	if Actor.can_carry_obj_weight(actor, obj) == false then
 		print("\nThe total is too heavy.")
 		return false
@@ -289,4 +289,3 @@ end
 
 function player_post_move_action(did_move)
 end
-

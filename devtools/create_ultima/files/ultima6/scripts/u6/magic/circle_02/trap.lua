@@ -5,7 +5,7 @@ magic_casting_fade_effect()
 if obj == nil then magic_no_effect() return end
 
 fade_obj_blue(obj)
-  
+
 if (obj.obj_n >= 297 and obj.obj_n <= 300) or obj.obj_n == 98 then -- if door or chest
 
   -- find existing effect in obj container.

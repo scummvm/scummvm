@@ -13,7 +13,7 @@ function look_pocketwatch(obj)
    if am == false then
    time = "TIME_PM"
    end
-   
+
    printfl(time, hour, minute)
 end
 
@@ -28,7 +28,7 @@ function look_barrow(obj)
       printl("IT_IS_EMPTY")
       return
    end
-   
+
    local quality = obj.quality
    local material
    if quality == 1 then
@@ -40,7 +40,7 @@ function look_barrow(obj)
    elseif quality == 4 then
       material = i18n("COAL")
    end
-   
+
    if obj.qty == 1 then
       printfl("IT_HAS_1_LOAD_OF", material)
    else
@@ -51,10 +51,10 @@ end
 function get_lat_long_string(x, y)
    local lat_str = "N"
    local long_str = "W"
-   
+
    local lat = math.modf(((y - 512) * 240) / 1024)
    local long = math.modf(((x - 512) * 360) / 1024)
-   
+
    if lat > 0 then
       lat_str = "S"
    else
@@ -62,7 +62,7 @@ function get_lat_long_string(x, y)
          lat_str = " "
       end
    end
-   
+
    if long == 180 or long == -180 or long == 0 then
       long_str = " "
    else
@@ -70,10 +70,10 @@ function get_lat_long_string(x, y)
          long_str = "E"
       end
    end
-   
+
    lat = math.abs(lat)
    long = 180 - math.abs(long)
-   
+
    return lat..lat_str.." "..long..long_str
 end
 
@@ -132,7 +132,7 @@ end
 
 function look_sprayer_system(obj)
    local quality = obj.quality
-   
+
    if bit32.btest(quality, 1) then
       local actor = Actor.get(0x3e)
       if Actor.get_talk_flag(actor, 5) == true then
@@ -163,15 +163,15 @@ end
 
 function look_tracking_motor(obj)
    local quality = obj.quality
-   
+
    if bit32.btest(quality, 1) and obj.on_map == true then
       printl("IT_APPEARS_TO_BE_LOOSE")
    end
-   
+
    if bit32.btest(quality, 2) then
       printl("IT_APPEARS_TO_BE_BROKEN")
    end
-   
+
 end
 
 function look_panel(obj)
@@ -184,7 +184,7 @@ function look_panel(obj)
          printl("THESE_APPEAR_TO_BE_VALVE_CONTROLS")
       elseif frame_n == 2 then
          printl("THESE_APPEAR_TO_BE_ELECTRICAL_CONTROLS")
-      end    
+      end
    elseif qty == 4 then
       printl("IT_APPEARS_TO_CONTROL_A_DREAM_MACHINE")
    elseif qty == 5 then
@@ -192,16 +192,16 @@ function look_panel(obj)
    elseif qty == 6 then
       printl("IT_APPEARS_TO_CONTROL_THE_RUBY_LENS_SYSTEM")
    elseif qty == 7 then
-      printl("IT_APPEARS_TO_CONTROL_THE_CISTERN_VALVES")   
+      printl("IT_APPEARS_TO_CONTROL_THE_CISTERN_VALVES")
    else
       printl("YOU_CANNOT_DECIPHER_ITS_PURPOSE")
    end
-   
+
    local quality = obj.quality
    if bit32.btest(quality, 1) and obj.on_map == true then
       printl("THE_PANEL_IS_LOOSE")
    end
-   
+
    if bit32.btest(quality, 2) then
       printl("THE_PANEL_IS_BROKEN")
    end
@@ -220,9 +220,9 @@ function look_portable_sprayer(obj)
    if obj.quality == 0 then
       contents = tile_get_description(649)
    else
-      contents = tile_get_description(640)      
+      contents = tile_get_description(640)
    end
-   
+
    printfl("IT_IS_LOADED_WITH", contents)
    print_number_of_charges(obj.qty)
 end
@@ -237,7 +237,7 @@ function get_weapon_mode_string(obj)
    else
       mode = i18n("SHOTGUN")
    end
-   
+
    return mode
 end
 
@@ -264,11 +264,11 @@ function look_light_source(obj)
    local obj_n = obj.obj_n
    local qty = obj.qty
    local quality = obj.quality
-   
+
    if (obj_n == 109 or obj_n == 110) and qty > 1 then
       return
    end
-   
+
    if quality > 30 then
       printl("PLENTY_OF")
    elseif quality > 6 and quality <= 30 then
@@ -280,13 +280,13 @@ function look_light_source(obj)
    else
       printl("PLENTY_OF")
    end
-   
+
    if obj_n == 115 or obj_n == 117 or obj_n == 116 or obj_n == 118 then
       printl("FUEL")
    else
       printl("WICK")
    end
-   
+
 end
 
 function look_door(obj)
@@ -305,20 +305,20 @@ function look_obelisk(obj)
    if obj.quality == 0 then
       return
    end
-   
+
    local ui_style = game_get_ui_style()
-   
+
    canvas_show()
    canvas_hide_all_sprites()
    canvas_set_opacity(0xff);
    canvas_set_update_interval(25)
    canvas_rotate_game_palette(true)
-   
+
    local obelisk = sprite_new(nil, 184, 0, true)
-   
+
    local text_sprite
    --local text_sprite_bg
-   
+
    if ui_style == UI_STYLE_ORIG then
       canvas_set_solid_bg(false)
    else
@@ -329,9 +329,9 @@ function look_obelisk(obj)
       obelisk.x = 96
       obelisk.y = 41
    end
-   
+
    obelisk.image = image_load("mdream.lzc", obj.quality-1)
-   
+
    local input = nil
    while input == nil do
       canvas_update()
@@ -383,23 +383,23 @@ local look_usecode = {
 
 function look_obj(obj)
    printfl("YOU_SEE", obj.look_string);
-   
+
    --FIXME usecode look description should be lua code.
    if usecode_look(obj) then
       print("\n")
       return false
    end
-   
+
    print(".\n\n");
-   
+
    if look_usecode[obj.obj_n] ~= nil then
       look_usecode[obj.obj_n](obj)
       print("\n")
    end
-   
+
    if is_container_obj(obj.obj_n) then
       search(obj)
    end
-   
+
    return false
 end

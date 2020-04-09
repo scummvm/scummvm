@@ -1,6 +1,6 @@
 io.stderr:write("actor.lua get here\n")
 
---Worktypes      
+--Worktypes
 WT_NOTHING                = 0x0  --do nothing
 
 WT_FOLLOW                 = 0x1  --follow avatar (in party)
@@ -132,25 +132,25 @@ function actor_is_affected_by_purple_berries(actor_num)
    if actor_num < 16 and timer_get(actor_num*3) > 0 then
       return true
    end
-   
+
    return false
 end
 
 function actor_is_affected_by_green_berries(actor_num)
- 
+
    if actor_num < 16 and timer_get(actor_num*3+1) > 0 then
       return true
    end
-   
+
    return false
 end
 
 function actor_is_affected_by_brown_berries(actor_num)
- 
+
    if actor_num < 16 and timer_get(actor_num*3+2) > 0 then
       return true
    end
-   
+
    return false
 end
 
@@ -158,7 +158,7 @@ function actor_get_purple_berry_count(actor_num)
    if actor_num < 16 then
       return timer_get(actor_num*3)
    end
-   
+
    return 0
 end
 
@@ -166,7 +166,7 @@ function actor_get_green_berry_count(actor_num)
    if actor_num < 16 then
       return timer_get(actor_num*3+1)
    end
-   
+
    return 0
 end
 
@@ -174,7 +174,7 @@ function actor_get_brown_berry_count(actor_num)
    if actor_num < 16 then
       return timer_get(actor_num*3+2)
    end
-   
+
    return 0
 end
 
@@ -183,12 +183,12 @@ function actor_decrement_berry_counter(actor, berry_type)
    local count = timer_get(actor_num*3+berry_type)
    if count > 0 and math.random(1, actor_int_adj(actor) * 4) == 1 then
       timer_set(actor_num*3+berry_type, count - 1)
-      if (actor_num == 0 and g_in_dream_mode) or 
+      if (actor_num == 0 and g_in_dream_mode) or
          (actor_num ~= 0 and g_in_dream_mode == false) then
          play_md_sfx(0x32)
          printl("A_PSYCHIC_POWER_FADES")
       end
-   end   
+   end
 end
 
 function actor_decrement_berry_counters(actor)
@@ -262,16 +262,16 @@ function actor_init(actor, alignment)
    actor.level = 1
    actor.align = ALIGNMENT_CHAOTIC
  end
- 
+
  if alignment ~= nil and alignment ~= ALIGNMENT_DEFAULT then
    actor.align = alignment
  end
-   
+
  actor.wt = 8
  actor.combat_mode = 8
  actor.mpts = actor.dex
  actor.exp = 0
-   
+
 end
 
 
@@ -660,15 +660,15 @@ function actor_move(actor, direction, flag)
    end
 
    local did_move = Actor.move(actor, x, y, z)
-   
+
    --FIXME need more logic here.
    --footprints, bots etc.
-      
+
    if did_move then
       subtract_map_movement_pts(actor)
       ----dgb("actor_move() did move actor("..actor.x..","..actor.y..")\n");
    end
-   
+
    return did_move
 end
 
@@ -751,7 +751,7 @@ end
 
 function avatar_falls_unconscious()
    printl("OVERCOME_BY_YOUR_WOUNDS_YOU_FALL_UNCONSCIOUS")
-   
+
    fade_out()
 
    local input
@@ -772,18 +772,18 @@ function avatar_falls_unconscious()
       location = i18n("THE_SPACE_CAPSULE")
       target={x=0x19d,y=0x278,z=0}
    end
-   
+
    printfl("YOU_AWAKEN_BACK_AT_FEELING_RESTORED", location)
 
    input_select(nil, true)
 
    party_resurrect_dead_members()
-   
+
    for actor in party_members() do
       actor.hp = actor.max_hp
       actor.mpts = actor_dex_adj(actor)
    end
-   
+
    party_move(target)
    local hour = clock_get_hour()
    local minutes = clock_get_minute()
@@ -793,15 +793,15 @@ function avatar_falls_unconscious()
    else
       hour = 24 - (hour + 1) + 7
    end
-   
+
    clock_inc(hour * 60 + minutes + math.random(0,59)) --advance time to between 7am and 8am on the next day
    update_watch_tile()
    advance_time(0)
-   
+
    party_update_leader()
    party_set_combat_mode(false)
    party_set_party_mode()
-   
+
    local blood = Actor.get(0x12)
    if blood.alive then
       Actor.set_talk_flag(blood, 5)
@@ -853,13 +853,13 @@ function party_update()
          revive_avatar()
       end
    end
-   
+
 end
 
 function actor_update_all()
    party_update()
    --pathfinding here.
-   
+
    local actor
    local selected_actor
    repeat
@@ -870,13 +870,13 @@ function actor_update_all()
          local player_loc = player_get_location()
          local var_C = (player_loc.x - 16) - (player_loc.x - 16) % 8
          local var_A = (player_loc.y - 16) - (player_loc.y - 16) % 8
-         
+
          for actor in party_members() do
             if actor.wt == WT_FOLLOW and actor.mpts < 0 then
                actor.mpts = 0
             end
          end
-         
+
          local player_z = player_loc.z
          for i=0,0xff do
             local actor = Actor.get(i)
@@ -908,7 +908,7 @@ function actor_update_all()
                            di = actor.mpts
                            dex_6 = dex_adjusted
                         end
-                        
+
                         if dex_adjusted <= actor.mpts then
                            break
                         end
@@ -916,7 +916,7 @@ function actor_update_all()
                   end
             end
          end
-         
+
          if di <= 0 then
             for i=0,0xff do
                local actor = Actor.get(i)
@@ -929,7 +929,7 @@ function actor_update_all()
             end
             advance_time(1)
          end
-         
+
       until di > 0
 
       if selected_actor.wt ~= WT_PLAYER and selected_actor.wt ~= WT_FOLLOW then
@@ -941,15 +941,15 @@ function actor_update_all()
          end
       end
 
-   until selected_actor.obj_n ~= 0 and selected_actor.wt == WT_PLAYER    
+   until selected_actor.obj_n ~= 0 and selected_actor.wt == WT_PLAYER
 
    if selected_actor ~= nil then --swap player to next party member with 'command' combat worktype.
     local old_player = Actor.get_player_actor()
     player_set_actor(selected_actor)
     old_player.wt = WT_PLAYER --reset worktype to player as it gets changed to follow in Player::set_actor() :-(
    end
- 
-   
+
+
    display_prompt(true)
 end
 
@@ -1073,7 +1073,7 @@ function clothing_get_warmth_rating(obj)
    if rating == nil then
       rating = 0
    end
-   
+
    return rating
 end
 
@@ -1089,29 +1089,29 @@ function is_lit_lightsource(obj)
    if lit_lightsource_tbl[obj.obj_n] ~= nil then
       return true
    end
-   
+
    return false
 end
 
 function actor_str_adj(actor)
    local actor_num = actor.actor_num
    local str = actor.str
-   
+
    if actor.hypoxia then
       str = str - 3
    end
-   
+
    if actor_is_affected_by_purple_berries(actor_num) then
       str = str - 3
    end
-   
+
    if actor.frenzy then
       str = str + 3
       if str > 30 then
          str = 30
       end
    end
-   
+
    if str <= 3 then
       return 1
    end
@@ -1136,23 +1136,23 @@ function actor_dex_adj(actor)
          dex = 30
       end
    end
-   
+
    if actor.asleep then
       dex = 1
    end
-   
+
    return dex
 end
 
 function actor_int_adj(actor)
    local int = actor.int
-   
+
    if actor.hypoxia == true or (actor.frenzy and actor.actor_num ~= 1) then
       int = int - 3
    end
-   
+
    if int < 1 then int = 1 end
-   
+
    return int
 end
 
@@ -1216,11 +1216,11 @@ function actor_remove_charm(actor)
 
    actor.charmed = false;
    actor.align = actor.old_align
-   
+
    if actor.in_party then
       actor.align = ALIGNMENT_GOOD
    end
-   
+
    if party_is_in_combat_mode() then
       actor.wt = actor.combat_mode
    else
@@ -1239,7 +1239,7 @@ function advance_time(num_turns)
    --FIXME
    local rand = math.random
    local hour = clock_get_hour()
-   
+
    local quake = Actor.get_talk_flag(0x46, 3) --rasputin
 
    if quake then
@@ -1247,9 +1247,9 @@ function advance_time(num_turns)
          quake_start(1, 200)
       end
    end
-   
+
    local max_light = 0
-   
+
    local actor_num
    for actor_num=0,0xff do
       local actor = Actor.get(actor_num)
@@ -1267,13 +1267,13 @@ function advance_time(num_turns)
                      printfl("GASPS_FOR_AIR", actor.name)
                   end
                end
-  
+
                local warmth_rating = 0
                local obj
                for obj in actor_inventory(actor) do
                   if obj.readied then
                      warmth_rating = warmth_rating + clothing_get_warmth_rating(obj)
-                     
+
                      if is_lit_lightsource(obj) then
                         if rand(0, 1) == 1 then
                            if obj.quality <= num_turns then
@@ -1301,7 +1301,7 @@ function advance_time(num_turns)
                      end
                   end
                end
-               
+
                if g_party_is_warm or actor.z ~= 0 then
                   if actor.cold then
                      actor.cold = false
@@ -1309,7 +1309,7 @@ function advance_time(num_turns)
                   end
                else
                   local cold_status = 0
-                  
+
                   if hour <= 3 or hour >= 22 then
                      if warmth_rating >= 10 then
                         cold_status = 1
@@ -1321,11 +1321,11 @@ function advance_time(num_turns)
                         cold_status = 1
                      end
                   end
-                  
+
                   if actor_num == 6 then
                      cold_status = 0
                   end
-                  
+
                   if cold_status == 0 then
                      if actor.cold then
                         actor.cold = false
@@ -1355,9 +1355,9 @@ function advance_time(num_turns)
                   end
                end
 
-            end               
+            end
          end
-                  
+
          if num_turns ~= 0 then
             for i=1,num_turns do
                --FIXME what does  word_4E6FA do?
@@ -1366,7 +1366,7 @@ function advance_time(num_turns)
                if actor.frenzy and not party_is_in_combat_mode() then
                   actor.frenzy = false
                end
-               
+
                if actor.poisoned then
                   if rand(0, 25) == 0 then
                      actor.poisoned = false
@@ -1376,13 +1376,13 @@ function advance_time(num_turns)
                if actor.charmed and rand(0, 0x19) == 0 then
                   actor_remove_charm(actor)
                end
-               
+
                if actor.paralyzed then
                   if actor_num == 6 or (rand(0, 3) == 0 and actor.str >= rand(1, 0x1e)) then --FIXME used adjusted str
                      actor.paralyzed = false
                   end
                end
- 
+
                if actor.asleep and actor.wt ~= WT_SLEEP and (not g_party_is_warm or not actor.in_party) then
                   --FIXME check sub_2B0EC(actor.x,actor.y,actor.z)
                   if rand(0,0x14) == 0 then
@@ -1390,14 +1390,14 @@ function advance_time(num_turns)
                      --FIXME bit 3 set on 1af1 flags
                   end
                end
-               
+
                if actor.poisoned and actor_num ~= 6 and rand(0, 7) == 0 then
                   actor_hit(actor, 1)
                end
-               
+
                if actor_num < 8 then
                   actor_decrement_berry_counters(actor)
-                  
+
                   for obj in actor_inventory(actor, true) do
                      local obj_n = obj.obj_n
                      if obj_n == 160 and obj.frame_n > 1 then --OBJ_EMPTY_BUCKET with ice
@@ -1416,9 +1416,9 @@ function advance_time(num_turns)
                            actor.poisoned = true
                         end
                      end
-                  end                       
+                  end
                end
-               
+
             end
          end
 
@@ -1426,27 +1426,27 @@ function advance_time(num_turns)
          actor.hit_flag = false
       end
    end
-   
+
    local minute = clock_get_minute()
 
    clock_inc(num_turns)
 
    if minute + num_turns >= 60 then
-      
+
       update_watch_tile()
-      
+
       update_actor_schedules()
       if g_hours_till_next_healing > 0 then
          g_hours_till_next_healing = g_hours_till_next_healing - 1
       end
-      
+
       update_lamp_posts()
-      
+
       local blue_berry_counter = actor_get_blue_berry_counter()
       if blue_berry_counter > 0 then
          actor_get_blue_berry_counter(blue_berry_counter - 1)
       end
-      
+
       if not g_party_is_warm and not g_in_dream_mode and Actor.get_talk_flag(0x10, 5) then
          for actor in party_members() do
             if actor.actor_num ~= 6 and not actor.asleep then
@@ -1481,7 +1481,7 @@ function advance_time(num_turns)
             end
          end
       end
-      
+
    end
 end
 
@@ -1499,7 +1499,7 @@ function subtract_movement_pts(actor, points)
    if points < 1 then
       points = 1
    end
-   
+
    actor.mpts = actor.mpts - points
 end
 
@@ -1513,7 +1513,7 @@ function actor_radiation_check(actor, obj)
          or Actor.inv_get_readied_obj_n(actor, ARM_2) == 136 then
          return
       end
-      
+
       actor.poisoned = true
       printl("OUCH_IT_IS_VERY_HOT")
    end
@@ -1591,11 +1591,11 @@ function actor_get_max_hp(actor)
    if actor.actor_num == 6 then
       return 0xf0
    end
-   
+
    if actor.in_party then
       return actor.str * 2 + actor.level * 24
    end
-   
+
    --FIXME return actor max hp from stat table.
    return 1;
 end
