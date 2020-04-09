@@ -81,15 +81,13 @@ public:
 	 * SDL subsystem if there are no other active TimedEventMgr
 	 * objects.
 	 */
-	~TimedEventMgr();
+	~TimedEventMgr() {}
 
-	/* Static functions */
 	/**
-	 * Adds an SDL timer event to the message queue.
+	 * Checks whether the frame time has expired, and if so,
+	 * triggers a tick
 	 */
-	static unsigned int callback(unsigned int interval, void *param);
-
-	/* Member functions */
+	void poll();
 
 	/**
 	 * Returns true if the event queue is locked (in use)
@@ -129,10 +127,8 @@ private:
 
 	/* Properties */
 protected:
-	/* Static properties */
-	static unsigned int _instances;
-
-	int _baseInterval;
+	uint32 _lastTickTime;
+	uint32 _baseInterval;
 	bool _locked;
 	List _events;
 	List _deferredRemovals;

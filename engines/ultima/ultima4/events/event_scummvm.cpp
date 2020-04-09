@@ -139,8 +139,7 @@ KeyHandler *KeyHandlerController::getKeyHandler() {
 
 /*-------------------------------------------------------------------*/
 
-EventHandler::EventHandler() : _timer(settings._eventTimerGranularity), _updateScreen(NULL),
-		_lastTickTime(0) {
+EventHandler::EventHandler() : _timer(settings._eventTimerGranularity), _updateScreen(NULL)  {
 }
 
 static void handleMouseMotionEvent(const Common::Event &event) {
@@ -253,13 +252,8 @@ void EventHandler::run() {
 		// Brief delay
 		g_system->delayMillis(10);
 
-		// Check for frame expiry
-		uint32 time = g_system->getMillis();
-		if (time >= (_lastTickTime + FRAME_TIME)) {
-			_lastTickTime = time;
-			eventHandler->getTimer()->tick();
-			g_screen->update();
-		}
+		// Poll the timer manager
+		_timer.poll();
 	}
 }
 
