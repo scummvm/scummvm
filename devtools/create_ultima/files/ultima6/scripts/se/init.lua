@@ -4,7 +4,7 @@ local lua_file = nil
 lua_file = nuvie_load("common/common.lua"); lua_file();
 
 function dbg(msg_string)
-	io.stderr:write(msg_string)
+	--io.stderr:write(msg_string)
 end
 
 function load_game()
@@ -181,7 +181,7 @@ if type(actor_load) == "function" then
 	actor_load()
 else
 	if type(actor_load) == "string" then
-		io.stderr:write(actor_load);
+		--io.stderr:write(actor_load);
 	end
 end
 

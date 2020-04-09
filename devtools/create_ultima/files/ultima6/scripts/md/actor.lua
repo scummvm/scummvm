@@ -1,4 +1,4 @@
-io.stderr:write("actor.lua get here\n")
+--io.stderr:write("actor.lua get here\n")
 
 --Worktypes
 WT_NOTHING                = 0x0  --do nothing

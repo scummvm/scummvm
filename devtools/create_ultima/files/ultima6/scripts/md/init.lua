@@ -13,7 +13,7 @@ OBJLIST_OFFSET_BERRY_COUNTERS           = 0x1d2f
 OBJLIST_OFFSET_DREAM_STAGE              = 0x1d53
 
 function dbg(msg_string)
-   io.stderr:write(msg_string)
+   --io.stderr:write(msg_string)
 end
 
 g_hours_till_next_healing = 0
@@ -420,7 +420,7 @@ if type(actor_load) == "function" then
    actor_load()
 else
    if type(actor_load) == "string" then
-      io.stderr:write(actor_load);
+      --io.stderr:write(actor_load);
    end
 end
 
