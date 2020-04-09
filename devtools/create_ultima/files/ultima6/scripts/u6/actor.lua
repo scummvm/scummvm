@@ -1,4 +1,4 @@
-io.stderr:write("actor.lua get here\n")
+--io.stderr:write("actor.lua get here\n")
 
 
 --Worktypes      
@@ -1802,7 +1802,7 @@ local s = debug.getinfo(2).name
 if s == nil then
 	s = "Unk"
 end
-io.stderr:write(s .. ":" .. line.."\n")
+--io.stderr:write(s .. ":" .. line.."\n")
 end
 
    debug.sethook(trace, "l")
@@ -3718,4 +3718,4 @@ function actor_avatar_death()
 	fade_in()
 end
 
-io.stderr:write("actor.lua loaded\n")
+--io.stderr:write("actor.lua loaded\n")

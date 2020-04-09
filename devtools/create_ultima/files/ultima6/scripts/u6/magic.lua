@@ -1,4 +1,4 @@
-io.stderr:write("Magic init\n");
+--io.stderr:write("Magic init\n");
 magic_syllable_tbl = {a = "An", b = "Bet", c = "Corp", d = "Des", e = "Ex", f = "Flam", g = "Grav", h = "Hur",
                       i = "In", j = "Jux", k = "Kal", l = "Lor", m = "Mani", n = "Nox", o = "Ort", p = "Por",
                       q = "Quas", r = "Rel", s = "Sanct", t = "Tym", u = "Uus", v = "Vas", w = "Wis", x = "Xen",
@@ -21,7 +21,7 @@ end
 run_magic_script = function(invocation)
 	local spell_num = magic_invocations[invocation]
     if spell_num == nil then
-      io.stderr:write("No magic script found for invocation \"" .. invocation .. "\"\n");
+      --io.stderr:write("No magic script found for invocation \"" .. invocation .. "\"\n");
       return
     end
 
@@ -84,7 +84,7 @@ magic_init = function(name, invocation, reagents, circle, num, script)
     magic[spell_num+1] = spell
     magic_invocations[string.lower(invocation)] = spell_num
 
-    io.stderr:write("Init Magic: " .. name .. " I: " .. invocation .. "\n")
+    --io.stderr:write("Init Magic: " .. name .. " I: " .. invocation .. "\n")
 end
 
 function select_location_with_prompt(prompt)
