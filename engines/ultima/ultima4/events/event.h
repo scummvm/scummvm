@@ -27,6 +27,7 @@
 #include "common/list.h"
 #include "common/str.h"
 #include "ultima/ultima4/events/controller.h"
+#include "ultima/ultima4/events/timed_event_mgr.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/shared/std/containers.h"
 
@@ -232,36 +233,6 @@ private:
 	unsigned int _current;
 };
 
-/**
- * A class for handling timed events.
- */
-class TimedEvent {
-public:
-	/* Typedefs */
-	typedef Common::List<TimedEvent *> List;
-	typedef void (*Callback)(void *);
-
-	/* Constructors */
-	TimedEvent(Callback callback, int interval, void *data = NULL);
-
-	/* Member functions */
-	Callback getCallback() const;
-	void *getData();
-
-	/**
-	 * Advances the timed event forward a tick.
-	 * When (current >= interval), then it executes its callback function.
-	 */
-	void tick();
-
-	/* Properties */
-protected:
-	Callback _callback;
-	void *_data;
-	int _interval;
-	int _current;
-};
-
 #if defined(IOS)
 #ifndef __OBJC__
 typedef void *TimedManagerHelper;
@@ -271,91 +242,6 @@ typedef void *UIEvent;
 @class UIEvent;
 #endif
 #endif
-
-
-/**
- * A class for managing timed events
- */
-class TimedEventMgr {
-public:
-	/* Typedefs */
-	typedef TimedEvent::List List;
-
-	/* Constructors */
-	/**
-	 * Constructs a timed event manager object.
-	 * Adds a timer callback to the SDL subsystem, which
-	 * will drive all of the timed events that this object
-	 * controls.
-	 */
-	TimedEventMgr(int baseInterval);
-
-	/**
-	 * Destructs a timed event manager object.
-	 * It removes the callback timer and un-initializes the
-	 * SDL subsystem if there are no other active TimedEventMgr
-	 * objects.
-	 */
-	~TimedEventMgr();
-
-	/* Static functions */
-	/**
-	 * Adds an SDL timer event to the message queue.
-	 */
-	static unsigned int callback(unsigned int interval, void *param);
-
-	/* Member functions */
-
-	/**
-	 * Returns true if the event queue is locked (in use)
-	 */
-	bool isLocked() const;
-
-	/**
-	 * Adds a timed event to the event queue.
-	 */
-	void add(TimedEvent::Callback theCallback, int interval, void *data = NULL);
-
-	/**
-	 * Removes a timed event from the event queue.
-	 */
-	List::iterator remove(List::iterator i);
-	void remove(TimedEvent *event);
-	void remove(TimedEvent::Callback theCallback, void *data = NULL);
-
-	/**
-	 * Runs each of the callback functions of the TimedEvents associated with this manager.
-	 */
-	void tick();
-	void stop();
-	void start();
-
-	/**
-	 * Re-initializes the timer manager to a new timer granularity
-	 */
-	void reset(unsigned int interval);     /**< Re-initializes the event manager to a new base interval */
-#if defined(IOS)
-	bool hasActiveTimer() const;
-#endif
-
-private:
-	void lock();                /**< Locks the event list */
-	void unlock();              /**< Unlocks the event list */
-
-	/* Properties */
-protected:
-	/* Static properties */
-	static unsigned int _instances;
-
-	void *_id;
-	int _baseInterval;
-	bool _locked;
-	List _events;
-	List _deferredRemovals;
-#if defined(IOS)
-	TimedManagerHelper *m_helper;
-#endif
-};
 
 typedef void(*updateScreenCallback)(void);
 /**

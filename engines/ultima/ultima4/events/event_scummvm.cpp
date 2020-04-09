@@ -137,65 +137,7 @@ KeyHandler *KeyHandlerController::getKeyHandler() {
 	return _handler;
 }
 
-TimedEventMgr::TimedEventMgr(int i) : _baseInterval(i), _id(nullptr), _locked(false) {
-	/* start the SDL timer */
-#ifdef TODO
-	if (instances == 0) {
-		if (u4_SDL_InitSubSystem(SDL_INIT_TIMER) < 0)
-			errorFatal("unable to init SDL: %s", SDL_GetError());
-	}
-
-	id = static_cast<void *>(SDL_AddTimer(i, &TimedEventMgr::callback, this));
-#endif
-	_instances++;
-}
-
-TimedEventMgr::~TimedEventMgr() {
-#ifdef TODO
-	SDL_RemoveTimer(static_cast<SDL_TimerID>(id));
-	id = NULL;
-
-	if (instances == 1)
-		u4_SDL_QuitSubSystem(SDL_INIT_TIMER);
-#endif
-	if (_instances > 0)
-		_instances--;
-}
-
-unsigned int TimedEventMgr::callback(unsigned int interval, void *param) {
-#ifdef TODO
-	Common::Event event;
-
-	event.type = SDL_USEREVENT;
-	event.user.code = 0;
-	event.user.data1 = param;
-	event.user.data2 = NULL;
-	SDL_PushEvent(&event);
-#endif
-	return interval;
-}
-
-void TimedEventMgr::reset(unsigned int interval) {
-	_baseInterval = interval;
-	stop();
-	start();
-}
-
-void TimedEventMgr::stop() {
-#ifdef TODO
-	if (id) {
-		SDL_RemoveTimer(static_cast<SDL_TimerID>(id));
-		id = NULL;
-	}
-#endif
-}
-
-void TimedEventMgr::start() {
-#ifdef TODO
-	if (!id)
-		id = static_cast<void *>(SDL_AddTimer(baseInterval, &TimedEventMgr::callback, this));
-#endif
-}
+/*-------------------------------------------------------------------*/
 
 EventHandler::EventHandler() : _timer(settings._eventTimerGranularity), _updateScreen(NULL),
 		_lastTickTime(0) {
