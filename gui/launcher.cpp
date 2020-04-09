@@ -190,6 +190,7 @@ void LauncherDialog::build() {
 	// Add list with game titles
 	_list = new ListWidget(this, "Launcher.GameList", nullptr, kListSearchCmd);
 	_list->setEditable(false);
+	_list->enableDictionarySelect(true);
 	_list->setNumberingMode(kListNumberingOff);
 
 	// Populate the list
@@ -292,7 +293,7 @@ void LauncherDialog::updateListing() {
 			// Insert the game into the launcher list
 			int pos = 0, size = l.size();
 
-			while (pos < size && (scumm_stricmp(description.c_str(), l[pos].c_str()) > 0))
+			while (pos < size && (scumm_compareDictionary(description.c_str(), l[pos].c_str()) > 0))
 				pos++;
 
 			color = ThemeEngine::kFontColorNormal;
