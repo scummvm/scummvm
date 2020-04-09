@@ -2981,12 +2981,13 @@ local function main_menu_set_pal(idx)
 end
 
 local function main_menu_load()
+	g_menu = {}
+
 	if engine_should_quit() == 1 then
 		return
 	end
 
 	music_play("ultima.m")
-	g_menu = {}
 
 	canvas_set_palette("palettes.int", 0)
 
