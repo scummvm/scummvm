@@ -895,6 +895,15 @@ int String::compareToIgnoreCase(const char *x) const {
 	return scumm_stricmp(c_str(), x);
 }
 
+int String::compareDictionary(const String &x) const {
+	return compareDictionary(x.c_str());
+}
+
+int String::compareDictionary(const char *x) const {
+	assert(x != nullptr);
+	return scumm_compareDictionary(c_str(), x);
+}
+
 #pragma mark -
 
 String operator+(const String &x, const String &y) {
@@ -1282,6 +1291,20 @@ int scumm_strnicmp(const char *s1, const char *s2, uint n) {
 		l2 = tolower(l2);
 	} while (l1 == l2 && l1 != 0);
 	return l1 - l2;
+}
+
+const char *scumm_skipArticle(const char *s1) {
+	int o1 = 0;
+	if (!scumm_strnicmp(s1, "the ", 4))
+		o1 = 4;
+	else if (!scumm_strnicmp(s1, "a ", 2))
+		o1 = 2;
+
+	return &s1[o1];
+}
+
+int scumm_compareDictionary(const char *s1, const char *s2) {
+	return scumm_stricmp(scumm_skipArticle(s1), scumm_skipArticle(s2));
 }
 
 //  Portable implementation of strdup.
