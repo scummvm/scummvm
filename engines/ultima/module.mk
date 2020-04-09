@@ -291,39 +291,6 @@ MODULE_OBJS := \
 	nuvie/views/sun_moon_strip_widget.o \
 	nuvie/views/vew.o \
 	nuvie/views/view_manager.o \
-	nuvie/lua/lapi.o \
-	nuvie/lua/lauxlib.o \
-	nuvie/lua/lbaselib.o \
-	nuvie/lua/lbitlib.o \
-	nuvie/lua/lcode.o \
-	nuvie/lua/lcorolib.o \
-	nuvie/lua/lctype.o \
-	nuvie/lua/ldblib.o \
-	nuvie/lua/ldebug.o \
-	nuvie/lua/ldo.o \
-	nuvie/lua/ldump.o \
-	nuvie/lua/lfunc.o \
-	nuvie/lua/lgc.o \
-	nuvie/lua/linit.o \
-	nuvie/lua/liolib.o \
-	nuvie/lua/llex.o \
-	nuvie/lua/lmathlib.o \
-	nuvie/lua/lmem.o \
-	nuvie/lua/loadlib.o \
-	nuvie/lua/lobject.o \
-	nuvie/lua/lopcodes.o \
-	nuvie/lua/loslib.o \
-	nuvie/lua/lparser.o \
-	nuvie/lua/lstate.o \
-	nuvie/lua/lstring.o \
-	nuvie/lua/lstrlib.o \
-	nuvie/lua/ltable.o \
-	nuvie/lua/ltablib.o \
-	nuvie/lua/ltm.o \
-	nuvie/lua/lundump.o \
-	nuvie/lua/lvm.o \
-	nuvie/lua/lzio.o \
-	nuvie/lua/scummvm_file.o \
 	ultima8/meta_engine.o \
 	ultima8/ultima8.o \
 	ultima8/audio/audio_channel.o \
