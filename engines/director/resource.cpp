@@ -179,6 +179,9 @@ void DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
 	stream->readUint32LE(); // graphics DLL offset
 	stream->readUint32LE(); // sound DLL offset
 	/* uint32 rifxOffsetAlt = */ stream->readUint32LE(); // equivalent to rifxOffset
+	uint32 flags = stream->readUint32LE();
+
+	warning("PJ93 projector flags: %08x", flags);
 
 	loadEXERIFX(stream, rifxOffset);
 }
@@ -190,14 +193,17 @@ void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 		error("Invalid projector tag found in v5 EXE [%s]", tag2str(ver));
 
 	uint32 rifxOffset = stream->readUint32LE();
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	/* uint16 screenWidth = */ stream->readUint16LE();
-	/* uint16 screenHeight = */ stream->readUint16LE();
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	/* uint32 fontMapOffset = */ stream->readUint32LE();
+	uint32 pflags = stream->readUint32LE();
+	uint32 flags = stream->readUint32LE();
+	stream->readUint16LE();	// x
+	stream->readUint16LE(); // y
+	stream->readUint16LE(); // screenWidth
+	stream->readUint16LE(); // screenHeight
+	stream->readUint32LE(); // number of components
+	stream->readUint32LE(); // number of driver files
+	stream->readUint32LE(); // fontMapOffset
+
+	warning("PJ95 projector pflags: %08x  flags: %08x", pflags, flags);
 
 	loadEXERIFX(stream, rifxOffset);
 }
