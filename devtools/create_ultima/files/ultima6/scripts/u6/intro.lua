@@ -10,7 +10,11 @@ local function poll_for_esc()
 	if input ~= nil and input == 27 then
 		return true
 	end
-	
+
+	if engine_should_quit() == 1 then
+		return true
+	end
+
 	return false
 end
 
@@ -22,12 +26,20 @@ local function wait_for_input()
 			if input ~= nil then
 				break
 			end
+
+			if engine_should_quit() == 1 then
+				break
+			end
 	end
 	
 	return input
 end
 
 local function should_exit(input)
+	if engine_should_quit() == 1 then
+		return true
+	end
+
 	if input ~=nil and input == 27 then
 		return true
 	end
@@ -40,6 +52,10 @@ local function fade_out()
 	for i=0xff,0,-3 do
 		canvas_set_opacity(i)
 		canvas_update()
+
+		if engine_should_quit() == 1 then
+			break
+		end
 	end
 	
 	return false
@@ -56,6 +72,10 @@ local function fade_out_sprite(sprite, speed)
 	for i=0xff,0,speed do
 		sprite.opacity = i
 		canvas_update()
+
+		if engine_should_quit() == 1 then
+			break
+		end
 	end
 
 	return false
@@ -66,6 +86,10 @@ local function fade_in()
 	for i=0x0,0xff,3 do
 		canvas_set_opacity(i)
 		canvas_update()
+
+		if engine_should_quit() == 1 then
+			break
+		end
 	end
 
 	return false
@@ -82,6 +106,10 @@ local function fade_in_sprite(sprite, speed)
 	for i=0,0xff,speed do
 		sprite.opacity = i
 		canvas_update()
+
+		if engine_should_quit() == 1 then
+			break
+		end
 	end
 
 	return false
@@ -2953,6 +2981,10 @@ local function main_menu_set_pal(idx)
 end
 
 local function main_menu_load()
+	if engine_should_quit() == 1 then
+		return
+	end
+
 	music_play("ultima.m")
 	g_menu = {}
 	
@@ -3025,6 +3057,11 @@ local function main_menu()
 	while true do
 		canvas_update()
 		input = input_poll(true)
+
+		if engine_should_quit() == 1 then
+			return "Q"
+		end
+
 		if input ~= nil then
 			if input == 113 then     --q quit
 				return "Q"

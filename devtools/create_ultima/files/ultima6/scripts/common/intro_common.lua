@@ -61,11 +61,21 @@ function poll_for_input()
       end
    end
 
+   if engine_should_quit() == 1 then
+	   g_should_exit = true
+   end
+
    return input
 end
 
 function poll_for_key_or_button(cycles)
    local input
+
+   if engine_should_quit() == 1 then
+	   g_should_exit = true
+	   return true
+   end
+
    if cycles == nil then
       input = input_poll()
       if input ~= nil then
@@ -84,6 +94,10 @@ function poll_for_key_or_button(cycles)
             end
             return true
          end
+         if engine_should_quit() == 1 then
+            g_should_exit = true
+            return true
+         end
          canvas_update()
       end
    end
@@ -97,11 +111,17 @@ function poll_for_esc(cycles)
       if input ~= nil and input == SDLK_ESCAPE then
          return true
       end
+      if engine_should_quit() == 1 then
+         return true
+      end
    else
       local i
       for i=0,cycles,1 do
          local input = input_poll()
          if input ~= nil and input == SDLK_ESCAPE then
+            return true
+         end
+         if engine_should_quit() == 1 then
             return true
          end
          canvas_update()
@@ -119,6 +139,10 @@ function fade_in(speed)
    for i=0x0,0xff,speed do
       canvas_set_opacity(i)
       canvas_update()
+
+      if engine_should_quit() == 1 then
+         return false
+      end
    end
 
    return false
@@ -133,6 +157,10 @@ function fade_out(speed)
    for i=0xff,0,-speed do
       canvas_set_opacity(i)
       canvas_update()
+
+      if engine_should_quit() == 1 then
+         return false
+      end
    end
 
    return false
