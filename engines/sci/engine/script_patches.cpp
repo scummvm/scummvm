@@ -11319,6 +11319,32 @@ static const uint16 qfg3PatchJohariManuMapBugs[] = {
 	PATCH_END
 };
 
+// The NRS fan-patch, which is included with the GOG release, has a script bug
+//  which errors when angering the Guardian in room 770. This can be triggered
+//  by taking a second gem. The patch changes ego's moveSpeed from 0 to 2 in the
+//  script kickHimOut but it also mistakenly changes another 0 to 2 in the same
+//  line of code. Ego:setMotion(0) becomes Ego:setMotion(2) and errors because
+//  Actor:setMotion expects an object when passed anything other than 0.
+//
+// We fix this by reverting the accidental setMotion patch.
+//
+// Applies to: Any version with NRS patches 770.HEP/SCR, such as GOG
+// Responsible method: kickHimOut:changeState(0)
+// Fixes bug: #11411
+static const uint16 qfg3SignatureNrsAngerGuardian[] = {
+	0x38, SIG_MAGICDWORD,               // pushi setMotion
+	      SIG_SELECTOR16(setMotion),
+	0x78,                               // push1
+	0x7a,                               // push2
+	SIG_END
+};
+
+static const uint16 qfg3PatchNrsAngerGuardian[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x76,                               // push0
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
@@ -11337,6 +11363,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds3,         qfg3PatchRoom750Bounds3 },
 	{  true,    29, "icon bar crash when using chest",                    1, qfg3SignatureChestIconBar,           qfg3PatchChestIconBar },
 	{  true,   170, "johari/manu map crash and message bugs",             2, qfg3SignatureJohariManuMapBugs,      qfg3PatchJohariManuMapBugs },
+	{  true,   770, "NRS: anger guardian crash",                          1, qfg3SignatureNrsAngerGuardian,       qfg3PatchNrsAngerGuardian },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
