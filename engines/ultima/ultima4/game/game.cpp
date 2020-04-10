@@ -2469,12 +2469,12 @@ bool talkAt(const Coords &coords) {
 	}
 
 	Conversation conv;
-	conv.script->addProvider("party", g_context->_party);
-	conv.script->addProvider("context", g_context);
+	conv._script->addProvider("party", g_context->_party);
+	conv._script->addProvider("context", g_context);
 
-	conv.state = Conversation::INTRO;
-	conv.reply = talker->getConversationText(&conv, "");
-	conv.playerInput.clear();
+	conv._state = Conversation::INTRO;
+	conv._reply = talker->getConversationText(&conv, "");
+	conv._playerInput.clear();
 	talkRunConversation(conv, talker, false);
 
 	return true;
@@ -2484,15 +2484,15 @@ bool talkAt(const Coords &coords) {
  * Executes the current conversation until it is done.
  */
 void talkRunConversation(Conversation &conv, Person *talker, bool showPrompt) {
-	while (conv.state != Conversation::DONE) {
+	while (conv._state != Conversation::DONE) {
 		// TODO: instead of calculating linesused again, cache the
 		// result in person.cpp somewhere.
-		int linesused = linecount(conv.reply.front(), TEXT_AREA_W);
-		screenMessage("%s", conv.reply.front().c_str());
-		conv.reply.pop_front();
+		int linesused = linecount(conv._reply.front(), TEXT_AREA_W);
+		screenMessage("%s", conv._reply.front().c_str());
+		conv._reply.pop_front();
 
 		/* if all chunks haven't been shown, wait for a key and process next chunk*/
-		int size = conv.reply.size();
+		int size = conv._reply.size();
 		if (size > 0) {
 #ifdef IOS
 			U4IOS::IOSConversationChoiceHelper continueDialog;
@@ -2503,19 +2503,19 @@ void talkRunConversation(Conversation &conv, Person *talker, bool showPrompt) {
 		}
 
 		/* otherwise, clear current reply and proceed based on conversation state */
-		conv.reply.clear();
+		conv._reply.clear();
 
 		/* they're attacking you! */
-		if (conv.state == Conversation::ATTACK) {
-			conv.state = Conversation::DONE;
+		if (conv._state == Conversation::ATTACK) {
+			conv._state = Conversation::DONE;
 			talker->setMovementBehavior(MOVEMENT_ATTACK_AVATAR);
 		}
 
-		if (conv.state == Conversation::DONE)
+		if (conv._state == Conversation::DONE)
 			break;
 
 		/* When Lord British heals the party */
-		else if (conv.state == Conversation::FULLHEAL) {
+		else if (conv._state == Conversation::FULLHEAL) {
 			int i;
 
 			for (i = 0; i < g_context->_party->size(); i++) {
@@ -2524,12 +2524,12 @@ void talkRunConversation(Conversation &conv, Person *talker, bool showPrompt) {
 			}
 			gameSpellEffect('r', -1, SOUND_MAGIC); // same spell effect as 'r'esurrect
 
-			conv.state = Conversation::TALK;
+			conv._state = Conversation::TALK;
 		}
 		/* When Lord British checks and advances each party member's level */
-		else if (conv.state == Conversation::ADVANCELEVELS) {
+		else if (conv._state == Conversation::ADVANCELEVELS) {
 			gameLordBritishCheckLevels();
-			conv.state = Conversation::TALK;
+			conv._state = Conversation::TALK;
 		}
 
 		if (showPrompt) {
@@ -2550,12 +2550,12 @@ void talkRunConversation(Conversation &conv, Person *talker, bool showPrompt) {
 		int maxlen;
 		switch (conv.getInputRequired(&maxlen)) {
 		case Conversation::INPUT_STRING: {
-			conv.playerInput = gameGetInput(maxlen);
+			conv._playerInput = gameGetInput(maxlen);
 #ifdef IOS
 			screenMessage("%s", conv.playerInput.c_str()); // Since we put this in a different window, we need to show it again.
 #endif
-			conv.reply = talker->getConversationText(&conv, conv.playerInput.c_str());
-			conv.playerInput.clear();
+			conv._reply = talker->getConversationText(&conv, conv._playerInput.c_str());
+			conv._playerInput.clear();
 			showPrompt = true;
 			break;
 		}
@@ -2571,20 +2571,20 @@ void talkRunConversation(Conversation &conv, Person *talker, bool showPrompt) {
 			message[0] = choice;
 			message[1] = '\0';
 
-			conv.reply = talker->getConversationText(&conv, message);
-			conv.playerInput.clear();
+			conv._reply = talker->getConversationText(&conv, message);
+			conv._playerInput.clear();
 
 			showPrompt = true;
 			break;
 		}
 
 		case Conversation::INPUT_NONE:
-			conv.state = Conversation::DONE;
+			conv._state = Conversation::DONE;
 			break;
 		}
 	}
-	if (conv.reply.size() > 0)
-		screenMessage("%s", conv.reply.front().c_str());
+	if (conv._reply.size() > 0)
+		screenMessage("%s", conv._reply.front().c_str());
 }
 
 /**

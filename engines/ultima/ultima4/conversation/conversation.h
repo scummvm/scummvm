@@ -83,8 +83,8 @@ public:
 	void release();
 
 private:
-	int references;
-	Std::vector<ResponsePart> parts;
+	int _references;
+	Std::vector<ResponsePart> _parts;
 };
 
 /**
@@ -128,8 +128,8 @@ public:
 		Response *getResponse(bool yes);
 
 	private:
-		Common::String text;
-		Response *yesresp, *noresp;
+		Common::String _text;
+		Response *_yesResp, *_noResp;
 	};
 
 	/**
@@ -149,15 +149,15 @@ public:
 		 * Accessor methods
 		 */
 		const Common::String &getKeyword()  {
-			return keyword;
+			return _keyword;
 		}
 		Response *getResponse()     {
-			return response;
+			return _response;
 		}
 
 	private:
-		Common::String keyword;
-		Response *response;
+		Common::String _keyword;
+		Response *_response;
 	};
 
 	/**
@@ -296,14 +296,14 @@ public:
 	static const unsigned int BUFFERLEN;    /**< The default maxixum length of input */
 
 public:
-	State state;                /**< The state of the conversation */
-	Common::String playerInput;         /**< A Common::String holding the text the player inputs */
-	Common::List<Common::String> reply;         /**< What the talker says */
-	class Script *script;       /**< A script that this person follows during the conversation (may be NULL) */
-	Dialogue::Question *question; /**< The current question the player is being asked */
-	int quant;                  /**< For vendor transactions */
-	int player;                 /**< For vendor transactions */
-	int price;                  /**< For vendor transactions */
+	State _state;                /**< The state of the conversation */
+	Common::String _playerInput;         /**< A Common::String holding the text the player inputs */
+	Common::List<Common::String> _reply;         /**< What the talker says */
+	class Script *_script;       /**< A script that this person follows during the conversation (may be NULL) */
+	Dialogue::Question *_question; /**< The current question the player is being asked */
+	int _quant;                  /**< For vendor transactions */
+	int _player;                 /**< For vendor transactions */
+	int _price;                  /**< For vendor transactions */
 };
 
 } // End of namespace Ultima4

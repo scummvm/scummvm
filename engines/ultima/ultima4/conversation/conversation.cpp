@@ -42,34 +42,34 @@ const ResponsePart ResponsePart::STOPMUSIC("<STOPMUSIC>", "", true);
 const ResponsePart ResponsePart::HAWKWIND("<HAWKWIND>", "", true);
 const unsigned int Conversation::BUFFERLEN = 16;
 
-Response::Response(const Common::String &response) : references(0) {
+Response::Response(const Common::String &response) : _references(0) {
 	add(response);
 }
 
 void Response::add(const ResponsePart &part) {
-	parts.push_back(part);
+	_parts.push_back(part);
 }
 
 const Std::vector<ResponsePart> &Response::getParts() const {
-	return parts;
+	return _parts;
 }
 
 Response::operator Common::String() const {
 	Common::String result;
-	for (Std::vector<ResponsePart>::const_iterator i = parts.begin(); i != parts.end(); i++) {
+	for (Std::vector<ResponsePart>::const_iterator i = _parts.begin(); i != _parts.end(); i++) {
 		result += *i;
 	}
 	return result;
 }
 
 Response *Response::addref() {
-	references++;
+	_references++;
 	return this;
 }
 
 void Response::release() {
-	references--;
-	if (references <= 0)
+	_references--;
+	if (_references <= 0)
 		delete this;
 }
 
@@ -112,16 +112,16 @@ const Std::vector<ResponsePart> &DynamicResponse::getParts() const {
  * Dialogue::Question class
  */
 Dialogue::Question::Question(const Common::String &txt, Response *yes, Response *no) :
-	text(txt), yesresp(yes->addref()), noresp(no->addref()) {}
+	_text(txt), _yesResp(yes->addref()), _noResp(no->addref()) {}
 
 Common::String Dialogue::Question::getText() {
-	return text;
+	return _text;
 }
 
 Response *Dialogue::Question::getResponse(bool yes) {
 	if (yes)
-		return yesresp;
-	return noresp;
+		return _yesResp;
+	return _noResp;
 }
 
 
@@ -129,30 +129,30 @@ Response *Dialogue::Question::getResponse(bool yes) {
  * Dialogue::Keyword class
  */
 Dialogue::Keyword::Keyword(const Common::String &kw, Response *resp) :
-	keyword(kw), response(resp->addref()) {
-	trim(keyword);
-	lowercase(keyword);
+	_keyword(kw), _response(resp->addref()) {
+	trim(_keyword);
+	lowercase(_keyword);
 }
 
 Dialogue::Keyword::Keyword(const Common::String &kw, const Common::String &resp) :
-	keyword(kw), response((new Response(resp))->addref()) {
-	trim(keyword);
-	lowercase(keyword);
+	_keyword(kw), _response((new Response(resp))->addref()) {
+	trim(_keyword);
+	lowercase(_keyword);
 }
 
 Dialogue::Keyword::~Keyword() {
-	response->release();
+	_response->release();
 }
 
 bool Dialogue::Keyword::operator==(const Common::String &kw) const {
 	// minimum 4-character "guessing"
-	int testLen = (keyword.size() < 4) ? keyword.size() : 4;
+	int testLen = (_keyword.size() < 4) ? _keyword.size() : 4;
 
 	// exception: empty keyword only matches empty Common::String (alias for 'bye')
 	if (testLen == 0 && kw.size() > 0)
 		return false;
 
-	if (scumm_strnicmp(kw.c_str(), keyword.c_str(), testLen) == 0)
+	if (scumm_strnicmp(kw.c_str(), _keyword.c_str(), testLen) == 0)
 		return true;
 	return false;
 }
@@ -230,7 +230,7 @@ Common::String Dialogue::dump(const Common::String &arg) {
  * Conversation class
  */
 
-Conversation::Conversation() : state(INTRO), script(new Script()) {
+Conversation::Conversation() : _state(INTRO), _script(new Script()) {
 #ifdef IOS
 	U4IOS::incrementConversationCount();
 #endif
@@ -241,11 +241,11 @@ Conversation::~Conversation() {
 #ifdef IOS
 	U4IOS::decrementConversationCount();
 #endif
-	delete script;
+	delete _script;
 }
 
 Conversation::InputType Conversation::getInputRequired(int *bufferlen) {
-	switch (state) {
+	switch (_state) {
 	case BUY_QUANTITY:
 	case SELL_QUANTITY: {
 		*bufferlen = 2;
@@ -286,7 +286,7 @@ Conversation::InputType Conversation::getInputRequired(int *bufferlen) {
 		return INPUT_NONE;
 	}
 
-	error("invalid state: %d", state);
+	error("invalid state: %d", _state);
 	return INPUT_NONE;
 }
 

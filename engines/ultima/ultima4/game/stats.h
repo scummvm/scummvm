@@ -65,7 +65,8 @@ enum StatsView {
 	MIX_REAGENTS
 };
 
-class StatsArea : public Observer<Aura *>, public Observer<Party *, PartyEvent &>, public Observer<Menu *, MenuEvent &>, public Observable<StatsArea *, Common::String> {
+class StatsArea : public Observer<Aura *>, public Observer<Party *, PartyEvent &>,
+		public Observer<Menu *, MenuEvent &>, public Observable<StatsArea *, Common::String> {
 public:
 	StatsArea();
 
@@ -86,14 +87,15 @@ public:
 	/**
 	 * Update the stats (ztats) box on the upper right of the screen.
 	 */
-	void update(bool avatarOnly = false);
+	virtual void update(bool avatarOnly = false);
 	virtual void update(Aura *aura);
 	virtual void update(Party *party, PartyEvent &event)    {
-		update(); /* do a full update */
+		update(); // do a full update
 	}
 	virtual void update(Menu *menu, MenuEvent &event)       {
-		update(); /* do a full update */
+		update(); // do a full update
 	}
+
 	void highlightPlayer(int player);
 
 	/**

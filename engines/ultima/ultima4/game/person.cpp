@@ -162,12 +162,12 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 		static const Common::String ids[] = {
 			"Weapons", "Armor", "Food", "Tavern", "Reagents", "Healer", "Inn", "Guild", "Stable"
 		};
-		Script *script = cnv->script;
+		Script *script = cnv->_script;
 
 		/**
 		 * We aren't currently running a script, load the appropriate one!
 		 */
-		if (cnv->state == Conversation::INTRO) {
+		if (cnv->_state == Conversation::INTRO) {
 			// unload the previous script if it wasn't already unloaded
 			if (script->getState() != Script::STATE_UNLOADED)
 				script->unload();
@@ -248,7 +248,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 
 		// Unload the script
 		script->unload();
-		cnv->state = Conversation::DONE;
+		cnv->_state = Conversation::DONE;
 	}
 
 	/*
@@ -257,7 +257,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 	else {
 		text = "\n\n\n";
 
-		switch (cnv->state) {
+		switch (cnv->_state) {
 		case Conversation::INTRO:
 			text = getIntro(cnv);
 			break;
@@ -267,7 +267,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 			break;
 
 		case Conversation::CONFIRMATION:
-			ASSERT(_npcType == NPC_LORD_BRITISH, "invalid state: %d", cnv->state);
+			ASSERT(_npcType == NPC_LORD_BRITISH, "invalid state: %d", cnv->_state);
 			text += lordBritishGetQuestionResponse(cnv, inquiry);
 			break;
 
@@ -288,7 +288,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 			break;
 
 		default:
-			error("invalid state: %d", cnv->state);
+			error("invalid state: %d", cnv->_state);
 		}
 	}
 
@@ -300,13 +300,13 @@ Common::String Person::getPrompt(Conversation *cnv) {
 		return "";
 
 	Common::String prompt;
-	if (cnv->state == Conversation::ASK)
+	if (cnv->_state == Conversation::ASK)
 		prompt = getQuestion(cnv);
-	else if (cnv->state == Conversation::GIVEBEGGAR)
+	else if (cnv->_state == Conversation::GIVEBEGGAR)
 		prompt = "How much? ";
-	else if (cnv->state == Conversation::CONFIRMATION)
+	else if (cnv->_state == Conversation::CONFIRMATION)
 		prompt = "\n\nHe asks: Art thou well?";
-	else if (cnv->state != Conversation::ASKYESNO)
+	else if (cnv->_state != Conversation::ASKYESNO)
 		prompt = _dialogue->getPrompt();
 
 	return prompt;
@@ -314,9 +314,9 @@ Common::String Person::getPrompt(Conversation *cnv) {
 
 const char *Person::getChoices(Conversation *cnv) {
 	if (isVendor())
-		return cnv->script->getChoices().c_str();
+		return cnv->_script->getChoices().c_str();
 
-	switch (cnv->state) {
+	switch (cnv->_state) {
 	case Conversation::CONFIRMATION:
 	case Conversation::CONTINUEQUESTION:
 		return "ny\015 \033";
@@ -325,7 +325,7 @@ const char *Person::getChoices(Conversation *cnv) {
 		return "012345678\015 \033";
 
 	default:
-		error("invalid state: %d", cnv->state);
+		error("invalid state: %d", cnv->_state);
 	}
 
 	return NULL;
@@ -333,7 +333,7 @@ const char *Person::getChoices(Conversation *cnv) {
 
 Common::String Person::getIntro(Conversation *cnv) {
 	if (_npcType == NPC_EMPTY) {
-		cnv->state = Conversation::DONE;
+		cnv->_state = Conversation::DONE;
 		return Common::String("Funny, no\nresponse!\n");
 	}
 
@@ -345,7 +345,7 @@ Common::String Person::getIntro(Conversation *cnv) {
 	else
 		intro = _dialogue->getLongIntro();
 
-	cnv->state = Conversation::TALK;
+	cnv->_state = Conversation::TALK;
 	Common::String text = processResponse(cnv, intro);
 
 	return text;
@@ -369,20 +369,20 @@ Common::String Person::processResponse(Conversation *cnv, Response *response) {
 
 void Person::runCommand(Conversation *cnv, const ResponsePart &command) {
 	if (command == ResponsePart::ASK) {
-		cnv->question = _dialogue->getQuestion();
-		cnv->state = Conversation::ASK;
+		cnv->_question = _dialogue->getQuestion();
+		cnv->_state = Conversation::ASK;
 	} else if (command == ResponsePart::END) {
-		cnv->state = Conversation::DONE;
+		cnv->_state = Conversation::DONE;
 	} else if (command == ResponsePart::ATTACK) {
-		cnv->state = Conversation::ATTACK;
+		cnv->_state = Conversation::ATTACK;
 	} else if (command == ResponsePart::BRAGGED) {
 		g_context->_party->adjustKarma(KA_BRAGGED);
 	} else if (command == ResponsePart::HUMBLE) {
 		g_context->_party->adjustKarma(KA_HUMBLE);
 	} else if (command == ResponsePart::ADVANCELEVELS) {
-		cnv->state = Conversation::ADVANCELEVELS;
+		cnv->_state = Conversation::ADVANCELEVELS;
 	} else if (command == ResponsePart::HEALCONFIRM) {
-		cnv->state = Conversation::CONFIRMATION;
+		cnv->_state = Conversation::CONFIRMATION;
 	} else if (command == ResponsePart::STARTMUSIC_LB) {
 		musicMgr->lordBritish();
 	} else if (command == ResponsePart::STARTMUSIC_HW) {
@@ -414,7 +414,7 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
 
 	if (_npcType == NPC_TALKER_BEGGAR && scumm_strnicmp(inquiry, "give", 4) == 0) {
 		reply.clear();
-		cnv->state = Conversation::GIVEBEGGAR;
+		cnv->_state = Conversation::GIVEBEGGAR;
 	}
 
 	else if (scumm_strnicmp(inquiry, "join", 4) == 0 &&
@@ -424,7 +424,7 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
 		if (join == JOIN_SUCCEEDED) {
 			reply += "I am honored to join thee!";
 			g_context->_location->_map->removeObject(this);
-			cnv->state = Conversation::DONE;
+			cnv->_state = Conversation::DONE;
 		} else {
 			reply += "Thou art not ";
 			reply += (join == JOIN_NOT_VIRTUOUS) ? getVirtueAdjective(v) : "experienced";
@@ -463,22 +463,22 @@ Common::String Person::talkerGetQuestionResponse(Conversation *cnv, const char *
 	}
 
 	if (!valid) {
-		cnv->state = Conversation::ASKYESNO;
+		cnv->_state = Conversation::ASKYESNO;
 		return "Yes or no!";
 	}
 
-	cnv->state = Conversation::TALK;
-	return "\n" + processResponse(cnv, cnv->question->getResponse(yes));
+	cnv->_state = Conversation::TALK;
+	return "\n" + processResponse(cnv, cnv->_question->getResponse(yes));
 }
 
 Common::String Person::beggarGetQuantityResponse(Conversation *cnv, const char *response) {
 	Common::String reply;
 
-	cnv->quant = (int) strtol(response, NULL, 10);
-	cnv->state = Conversation::TALK;
+	cnv->_quant = (int) strtol(response, NULL, 10);
+	cnv->_state = Conversation::TALK;
 
-	if (cnv->quant > 0) {
-		if (g_context->_party->donate(cnv->quant)) {
+	if (cnv->_quant > 0) {
+		if (g_context->_party->donate(cnv->_quant)) {
 			reply = "\n";
 			reply += _dialogue->getPronoun();
 			reply += " says: Oh Thank thee! I shall never forget thy kindness!\n";
@@ -495,7 +495,7 @@ Common::String Person::beggarGetQuantityResponse(Conversation *cnv, const char *
 Common::String Person::lordBritishGetQuestionResponse(Conversation *cnv, const char *answer) {
 	Common::String reply;
 
-	cnv->state = Conversation::TALK;
+	cnv->_state = Conversation::TALK;
 
 	if (tolower(answer[0]) == 'y') {
 		reply = "Y\n\nHe says: That is good.\n";
@@ -503,7 +503,7 @@ Common::String Person::lordBritishGetQuestionResponse(Conversation *cnv, const c
 
 	else if (tolower(answer[0]) == 'n') {
 		reply = "N\n\nHe says: Let me heal thy wounds!\n";
-		cnv->state = Conversation::FULLHEAL;
+		cnv->_state = Conversation::FULLHEAL;
 	}
 
 	else
@@ -513,7 +513,7 @@ Common::String Person::lordBritishGetQuestionResponse(Conversation *cnv, const c
 }
 
 Common::String Person::getQuestion(Conversation *cnv) {
-	return "\n" + cnv->question->getText() + "\n\nYou say: ";
+	return "\n" + cnv->_question->getText() + "\n\nYou say: ";
 }
 
 /**
