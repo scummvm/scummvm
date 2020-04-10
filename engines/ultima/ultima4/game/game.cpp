@@ -81,7 +81,7 @@ void gameAdvanceLevel(PartyMember *player);
 void gameInnHandler(void);
 void gameLostEighth(Virtue virtue);
 void gamePartyStarving(void);
-time_t gameTimeSinceLastCommand(void);
+uint32 gameTimeSinceLastCommand(void);
 
 /* spell functions */
 void gameCastSpell(unsigned int spell, int caster, int param);
@@ -2844,7 +2844,7 @@ void gameFixupObjects(Map *map) {
 	}
 }
 
-time_t gameTimeSinceLastCommand() {
+uint32 gameTimeSinceLastCommand() {
 	return (g_system->getMillis() - g_context->_lastCommandTime) / 1000;
 }
 
