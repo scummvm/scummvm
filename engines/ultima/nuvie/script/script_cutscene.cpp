@@ -1239,8 +1239,6 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 
 	config_get_path(config, filename, path);
 
-
-
 	Std::vector<Std::vector<CSImage *> > v;
 	U6Lzw lzw;
 
@@ -1289,6 +1287,8 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 				v.push_back(v1);
 			}
 		}
+
+		lib_n.close();
 	}
 
 	if (buf)
