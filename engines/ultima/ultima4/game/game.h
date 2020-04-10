@@ -63,7 +63,7 @@ public:
 	bool keyPressed(int key) override;
 
 	int getPlayer();
-	int waitFor();
+	int waitFor() override;
 };
 
 /**
