@@ -36,7 +36,7 @@ struct RGBA;
 /**
  * The interface for tile animation transformations.
  */
-class  TileAnimTransform {
+class TileAnimTransform {
 public:
 	static TileAnimTransform *create(const ConfigElement &config);
 
@@ -63,8 +63,8 @@ private:
 class TileAnimInvertTransform : public TileAnimTransform {
 public:
 	TileAnimInvertTransform(int xp, int yp, int width, int height);
-	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
-	virtual bool drawsTile() const;
+	void draw(Image *dest, Tile *tile, MapTile &mapTile) override;
+	bool drawsTile() const override;
 
 private:
 	int x, y, w, h;
@@ -78,8 +78,8 @@ private:
 class TileAnimPixelTransform : public TileAnimTransform {
 public:
 	TileAnimPixelTransform(int xp, int yp);
-	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
-	virtual bool drawsTile() const;
+	void draw(Image *dest, Tile *tile, MapTile &mapTile) override;
+	bool drawsTile() const override;
 
 	int x, y;
 	Std::vector<RGBA *> _colors;
@@ -92,8 +92,8 @@ public:
 class TileAnimScrollTransform : public TileAnimTransform {
 public:
 	TileAnimScrollTransform(int increment);
-	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
-	virtual bool drawsTile() const;
+	void draw(Image *dest, Tile *tile, MapTile &mapTile) override;
+	bool drawsTile() const override;
 private:
 	int _increment, _current, _lastOffset;
 };
@@ -106,12 +106,12 @@ class TileAnimFrameTransform : public TileAnimTransform {
 public:
 	TileAnimFrameTransform() : _currentFrame(0) {
 	}
-	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
+	void draw(Image *dest, Tile *tile, MapTile &mapTile) override;
 
 	/**
 	 * Advance the frame by one and draw it!
 	 */
-	virtual bool drawsTile() const;
+	bool drawsTile() const override;
 protected:
 	int _currentFrame;
 };
@@ -124,8 +124,8 @@ protected:
 class TileAnimPixelColorTransform : public TileAnimTransform {
 public:
 	TileAnimPixelColorTransform(int xp, int yp, int width, int height);
-	virtual void draw(Image *dest, Tile *tile, MapTile &mapTile);
-	virtual bool drawsTile() const;
+	void draw(Image *dest, Tile *tile, MapTile &mapTile) override;
+	bool drawsTile() const override;
 
 	int x, y, w, h;
 	RGBA *_start, *_end;
@@ -170,7 +170,7 @@ public:
 	 * A context which depends on the tile's current frame for animation
 	 */
 	TileAnimFrameContext(int frame);
-	virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
+	bool isInContext(Tile *t, MapTile &mapTile, Direction d) override;
 
 private:
 	int _frame;
@@ -185,7 +185,7 @@ public:
 	 * An animation context which changes the animation based on the player's current facing direction
 	 */
 	TileAnimPlayerDirContext(Direction dir);
-	virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d);
+	bool isInContext(Tile *t, MapTile &mapTile, Direction d) override;
 
 private:
 	Direction _dir;

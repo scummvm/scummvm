@@ -40,7 +40,7 @@ public:
 	/**
 	 * Loads in the PNG with the libpng library.
 	 */
-	virtual Image *load(U4FILE *file, int width, int height, int bpp);
+	Image *load(U4FILE *file, int width, int height, int bpp) override;
 };
 
 } // End of namespace Ultima4

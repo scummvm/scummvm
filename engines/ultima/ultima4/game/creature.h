@@ -169,135 +169,135 @@ public:
 	void load(const ConfigElement &conf);
 
 	// Accessor methods
-	virtual Common::String getName() const              {
+	virtual Common::String getName() const {
 		return _name;
 	}
-	virtual const Common::String &getHitTile() const    {
+	virtual const Common::String &getHitTile() const {
 		return _rangedHitTile;
 	}
-	virtual const Common::String &getMissTile() const   {
+	virtual const Common::String &getMissTile() const {
 		return _rangedMissTile;
 	}
-	CreatureId getId() const                    {
+	CreatureId getId() const {
 		return _id;
 	}
-	CreatureId getLeader() const                {
+	CreatureId getLeader() const {
 		return _leader;
 	}
-	virtual int getHp() const                   {
+	virtual int getHp() const {
 		return _hp;
 	}
-	virtual int getXp() const                   {
+	virtual int getXp() const {
 		return _xp;
 	}
 	virtual const Common::String &getWorldrangedtile() const {
 		return _worldRangedTile;
 	}
-	SlowedType getSlowedType() const            {
+	SlowedType getSlowedType() const {
 		return _slowedType;
 	}
-	int getEncounterSize() const                {
+	int getEncounterSize() const {
 		return _encounterSize;
 	}
-	unsigned char getResists() const            {
+	unsigned char getResists() const {
 		return _resists;
 	}
 
 	// Setters
-	void setName(Common::String s)                      {
+	void setName(Common::String s) {
 		_name = s;
 	}
-	void setHitTile(const Common::String &t)            {
+	void setHitTile(const Common::String &t) {
 		_rangedHitTile = t;
 	}
-	void setMissTile(const Common::String &t)           {
+	void setMissTile(const Common::String &t) {
 		_rangedMissTile = t;
 	}
-	virtual void setHp(int points)              {
+	virtual void setHp(int points) {
 		_hp = points;
 	}
 
 	// Query methods
-	bool isGood() const                 {
+	bool isGood() const {
 		return _mAttr & MATTR_GOOD;
 	}
-	bool isEvil() const                 {
+	bool isEvil() const {
 		return !isGood();
 	}
-	bool isUndead() const               {
+	bool isUndead() const {
 		return _mAttr & MATTR_UNDEAD;
 	}
-	bool leavesChest() const            {
+	bool leavesChest() const {
 		return !isAquatic() && !(_mAttr & MATTR_NOCHEST);
 	}
-	bool isAquatic() const              {
+	bool isAquatic() const {
 		return _mAttr & MATTR_WATER;
 	}
-	bool wanders() const                {
+	bool wanders() const {
 		return _movementAttr & MATTR_WANDERS;
 	}
-	bool isStationary() const           {
+	bool isStationary() const {
 		return _movementAttr & MATTR_STATIONARY;
 	}
-	bool flies() const                  {
+	bool flies() const {
 		return _movementAttr & MATTR_FLIES;
 	}
-	bool teleports() const              {
+	bool teleports() const {
 		return _movementAttr & MATTR_TELEPORT;
 	}
-	bool swims() const                  {
+	bool swims() const {
 		return _movementAttr & MATTR_SWIMS;
 	}
-	bool sails() const                  {
+	bool sails() const {
 		return _movementAttr & MATTR_SAILS;
 	}
-	bool walks() const                  {
+	bool walks() const {
 		return !(flies() || swims() || sails());
 	}
-	bool divides() const                {
+	bool divides() const {
 		return _mAttr & MATTR_DIVIDES;
 	}
-	bool spawnsOnDeath() const          {
+	bool spawnsOnDeath() const {
 		return _mAttr & MATTR_SPAWNSONDEATH;
 	}
-	bool canMoveOntoCreatures() const   {
+	bool canMoveOntoCreatures() const {
 		return _movementAttr & MATTR_CANMOVECREATURES;
 	}
-	bool canMoveOntoPlayer() const      {
+	bool canMoveOntoPlayer() const {
 		return _movementAttr & MATTR_CANMOVEAVATAR;
 	}
 	bool isAttackable() const;
-	bool willAttack() const             {
+	bool willAttack() const {
 		return !(_mAttr & MATTR_NOATTACK);
 	}
-	bool stealsGold() const             {
+	bool stealsGold() const {
 		return _mAttr & MATTR_STEALGOLD;
 	}
-	bool stealsFood() const             {
+	bool stealsFood() const {
 		return _mAttr & MATTR_STEALFOOD;
 	}
-	bool negates() const                {
+	bool negates() const {
 		return _mAttr & MATTR_NEGATE;
 	}
-	bool camouflages() const            {
+	bool camouflages() const {
 		return _mAttr & MATTR_CAMOUFLAGE;
 	}
-	bool ambushes() const               {
+	bool ambushes() const {
 		return _mAttr & MATTR_AMBUSHES;
 	}
-	bool isIncorporeal() const          {
+	bool isIncorporeal() const {
 		return _mAttr & MATTR_INCORPOREAL;
 	}
-	bool hasRandomRanged() const        {
+	bool hasRandomRanged() const {
 		return _mAttr & MATTR_RANDOMRANGED;
 	}
-	bool leavesTile() const             {
+	bool leavesTile() const {
 		return _leavesTile;
 	}
-	bool castsSleep() const             {
+	bool castsSleep() const {
 		return _mAttr & MATTR_CASTS_SLEEP;
 	}
-	bool isForceOfNature() const        {
+	bool isForceOfNature() const {
 		return _mAttr & MATTR_FORCE_OF_NATURE;
 	}
 	int getDamage() const;

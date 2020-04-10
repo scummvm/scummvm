@@ -60,7 +60,7 @@ class ReadPlayerController : public ReadChoiceController {
 public:
 	ReadPlayerController();
 	~ReadPlayerController();
-	virtual bool keyPressed(int key);
+	bool keyPressed(int key) override;
 
 	int getPlayer();
 	int waitFor();
@@ -73,7 +73,7 @@ public:
 class AlphaActionController : public WaitableController<int> {
 public:
 	AlphaActionController(char letter, const Common::String &p) : _lastValidLetter(letter), _prompt(p) {}
-	bool keyPressed(int key);
+	bool keyPressed(int key) override;
 
 	static int get(char lastValidLetter, const Common::String &prompt, EventHandler *eh = NULL);
 
@@ -87,7 +87,7 @@ private:
  */
 class ZtatsController : public WaitableController<void *> {
 public:
-	bool keyPressed(int key);
+	bool keyPressed(int key) override;
 };
 
 class TurnCompleter {
@@ -114,12 +114,12 @@ public:
 	 * The main key handler for the game.  Interpretes each key as a
 	 * command - 'a' for attack, 't' for talk, etc.
 	 */
-	virtual bool keyPressed(int key);
+	bool keyPressed(int key) override;
 
 	/**
 	 * This function is called every quarter second.
 	 */
-	virtual void timerFired();
+	void timerFired() override;
 
 	/* main game functions */
 	void init();
@@ -139,17 +139,17 @@ public:
 	 * tasks like adjusting the party's food, incrementing the number of
 	 * moves, etc.
 	 */
-	virtual void finishTurn();
+	void finishTurn() override;
 
 	/**
 	 * Provide feedback to user after a party event happens.
 	 */
-	virtual void update(Party *party, PartyEvent &event);
+	void update(Party *party, PartyEvent &event) override;
 
 	/**
 	 * Provide feedback to user after a movement event happens.
 	 */
-	virtual void update(Location *location, MoveEvent &event);
+	void update(Location *location, MoveEvent &event) override;
 
 	/**
 	 * Initializes the moon state according to the savegame file. This method of

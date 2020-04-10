@@ -97,7 +97,7 @@ public:
 	/**
 	 * Loads a combat map from the 'con' file
 	 */
-	virtual bool load(Map *map);
+	bool load(Map *map) override;
 };
 
 class DngMapLoader : public MapLoader {
@@ -107,7 +107,7 @@ public:
 	/**
 	 * Loads a dungeon map from the 'dng' file
 	 */
-	virtual bool load(Map *map);
+	bool load(Map *map) override;
 
 private:
 	/**
@@ -122,7 +122,7 @@ public:
 	/**
 	 * Loads the world map data in from the 'world' file.
 	 */
-	virtual bool load(Map *map);
+	bool load(Map *map) override;
 };
 
 } // End of namespace Ultima4

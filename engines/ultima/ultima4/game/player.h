@@ -116,26 +116,26 @@ public:
 	/**
 	 * Used to translate script values into something useful
 	 */
-	virtual Common::String translate(Std::vector<Common::String> &parts);
+	Common::String translate(Std::vector<Common::String> &parts) override;
 
 	// Accessor methods
-	virtual int getHp() const;
-	int getMaxHp() const   {
+	int getHp() const override;
+	int getMaxHp() const {
 		return _player->_hpMax;
 	}
-	int getExp() const     {
+	int getExp() const {
 		return _player->_xp;
 	}
-	int getStr() const     {
+	int getStr() const {
 		return _player->_str;
 	}
-	int getDex() const     {
+	int getDex() const {
 		return _player->_dex;
 	}
-	int getInt() const     {
+	int getInt() const {
 		return _player->_intel;
 	}
-	int getMp() const      {
+	int getMp() const {
 		return _player->_mp;
 	}
 
@@ -147,10 +147,10 @@ public:
 
 	const Weapon *getWeapon() const;
 	const Armor *getArmor() const;
-	virtual Common::String getName() const;
+	Common::String getName() const override;
 	SexType getSex() const;
 	ClassType getClass() const;
-	virtual CreatureStatus getState() const;
+	CreatureStatus getState() const override;
 
 	/**
 	 * Determine what level a character has.
@@ -166,7 +166,7 @@ public:
 	/**
 	 * Adds a status effect to the player
 	 */
-	virtual void addStatus(StatusType status);
+	void addStatus(StatusType status) override;
 
 	/**
 	 * Adjusts the player's mp by 'pts'
@@ -196,9 +196,9 @@ public:
 	/**
 	 * Remove status effects from the party member
 	 */
-	virtual void removeStatus(StatusType status);
+	void removeStatus(StatusType status) override;
 
-	virtual void setHp(int hp);
+	void setHp(int hp) override;
 	void setMp(int mp);
 	EquipError setArmor(const Armor *a);
 	EquipError setWeapon(const Weapon *w);
@@ -211,10 +211,10 @@ public:
 	 * there anything special about being killed by a party member in U5?)  Also
 	 * keeps interface consistent for virtual base function Creature::applydamage()
 	 */
-	virtual bool applyDamage(int damage, bool byplayer = false);
-	virtual int getAttackBonus() const;
-	virtual int getDefense() const;
-	virtual bool dealDamage(Creature *m, int damage);
+	bool applyDamage(int damage, bool byplayer = false) override;
+	int getAttackBonus() const override;
+	int getDefense() const override;
+	bool dealDamage(Creature *m, int damage) override;
 
 	/**
 	 * Calculate damage for an attack.
@@ -225,13 +225,13 @@ public:
 	 * Returns the tile that will be displayed when the party
 	 * member's attack hits
 	 */
-	virtual const Common::String &getHitTile() const;
+	const Common::String &getHitTile() const override;
 
 	/**
 	 * Returns the tile that will be displayed when the party
 	 * member's attack fails
 	 */
-	virtual const Common::String &getMissTile() const;
+	const Common::String &getMissTile() const override;
 	bool isDead();
 	bool isDisabled();
 
@@ -250,7 +250,7 @@ public:
 	/**
 	 * Wakes up the party member
 	 */
-	virtual void wakeUp();
+	void wakeUp() override;
 
 protected:
 	static MapTile tileForClass(int klass);
@@ -297,7 +297,7 @@ public:
 	void notifyOfChange(PartyMember *partyMember = 0, PartyEvent::Type = PartyEvent::GENERIC);
 
 	// Used to translate script values into something useful
-	virtual Common::String translate(Std::vector<Common::String> &parts);
+	Common::String translate(Std::vector<Common::String> &parts) override;
 
 	void adjustFood(int food);
 	void adjustGold(int gold);

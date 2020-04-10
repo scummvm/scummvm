@@ -100,8 +100,8 @@ public:
 
 	BoolMenuItem *setValueStrings(const Common::String &onString, const Common::String &offString);
 
-	virtual void activate(MenuEvent &event);
-	virtual Common::String getText() const;
+	void activate(MenuEvent &event) override;
+	Common::String getText() const override;
 
 protected:
 	bool *_val;
@@ -116,8 +116,8 @@ class StringMenuItem : public MenuItem {
 public:
 	StringMenuItem(Common::String text, short xp, short yp, int shortcutKey, Common::String *val, const Std::vector<Common::String> &validSettings);
 
-	virtual void activate(MenuEvent &event);
-	virtual Common::String getText() const;
+	void activate(MenuEvent &event) override;
+	Common::String getText() const override;
 
 protected:
 	Common::String *_val;
@@ -132,8 +132,8 @@ class IntMenuItem : public MenuItem {
 public:
 	IntMenuItem(Common::String text, short xp, short yp, int shortcutKey, int *val, int min, int max, int increment, menuOutputType output = MENU_OUTPUT_INT);
 
-	virtual void activate(MenuEvent &event);
-	virtual Common::String getText() const;
+	void activate(MenuEvent &event) override;
+	Common::String getText() const override;
 
 protected:
 	int *_val;

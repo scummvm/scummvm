@@ -33,9 +33,9 @@ namespace Ultima4 {
 class CampController : public CombatController {
 public:
 	CampController();
-	virtual void init(Creature *m);
-	virtual void begin();
-	virtual void end(bool adjustKarma);
+	void init(Creature *m) override;
+	void begin() override;
+	void end(bool adjustKarma) override;
 
 private:
 	bool heal();
@@ -45,15 +45,13 @@ class InnController : public CombatController {
 public:
 	InnController();
 
-	virtual void begin();
-	virtual void awardLoot();
-
+	void begin() override;
+	void awardLoot() override;
 
 private:
 	bool heal();
 	void maybeMeetIsaac();
 	void maybeAmbush();
-
 };
 
 } // End of namespace Ultima4

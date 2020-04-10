@@ -66,17 +66,17 @@ public:
 	virtual ~CombatController();
 
 	// Accessor Methods
-	bool          isCombatController() const {
+	bool isCombatController() const {
 		return true;
 	}
-	bool          isCamping() const;
-	bool          isWinOrLose() const;
-	Direction     getExitDir() const;
+	bool isCamping() const;
+	bool isWinOrLose() const;
+	Direction getExitDir() const;
 	unsigned char getFocus() const;
-	CombatMap    *getMap() const;
-	Creature     *getCreature() const;
+	CombatMap *getMap() const;
+	Creature *getCreature() const;
 	PartyMemberVector *getParty();
-	PartyMember  *getCurrentPlayer();
+	PartyMember *getCurrentPlayer();
 
 	void setExitDir(Direction d);
 	void setCreature(Creature *);
@@ -168,15 +168,15 @@ public:
 	static void doScreenAnimationsWhilePausing(int timeFactor);
 
 	// Key handlers
-	virtual bool keyPressed(int key);
+	bool keyPressed(int key) override;
 
-	virtual void finishTurn();
+	void finishTurn() override;
 
 	/**
 	 * Move a party member during combat and display the appropriate messages
 	 */
 	void movePartyMember(MoveEvent &event);
-	virtual void update(Party *party, PartyEvent &event);
+	void update(Party *party, PartyEvent &event) override;
 
 	// Properties
 protected:

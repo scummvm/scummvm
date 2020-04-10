@@ -166,7 +166,7 @@ public:
 	 * Returns the object at the given (x,y,z) coords, if one exists.
 	 * Otherwise, returns NULL.
 	 */
-	class Object *objectAt(const Coords &coords);
+	Object *objectAt(const Coords &coords);
 
 	/**
 	 * Returns the portal for the correspoding action(s) given.

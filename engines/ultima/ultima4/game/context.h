@@ -76,7 +76,7 @@ public:
 	/**
 	 * Provides scripts with information
 	 */
-	virtual Common::String translate(Std::vector<Common::String> &parts) {
+	Common::String translate(Std::vector<Common::String> &parts) override {
 		if (parts.size() == 1) {
 			if (parts[0] == "wind")
 				return getDirectionName(static_cast<Direction>(_windDirection));

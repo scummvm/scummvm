@@ -97,7 +97,7 @@ public:
 	DynamicResponse(Response * (*generator)(const DynamicResponse *), const Common::String &param = "");
 	virtual ~DynamicResponse();
 
-	virtual const Std::vector<ResponsePart> &getParts() const;
+	const Std::vector<ResponsePart> &getParts() const override;
 
 	const Common::String &getParam() const {
 		return _param;

@@ -88,11 +88,11 @@ public:
 	 * Update the stats (ztats) box on the upper right of the screen.
 	 */
 	virtual void update(bool avatarOnly = false);
-	virtual void update(Aura *aura);
-	virtual void update(Party *party, PartyEvent &event)    {
+	void update(Aura *aura) override;
+	void update(Party *party, PartyEvent &event) override {
 		update(); // do a full update
 	}
-	virtual void update(Menu *menu, MenuEvent &event)       {
+	void update(Menu *menu, MenuEvent &event) override {
 		update(); // do a full update
 	}
 
@@ -178,7 +178,7 @@ public:
 	/**
 	 * Handles spell mixing for the Ultima V-style menu-system
 	 */
-	bool keyPressed(int key);
+	bool keyPressed(int key) override;
 
 private:
 	Ingredients *_ingredients;

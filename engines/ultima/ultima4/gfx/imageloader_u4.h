@@ -41,7 +41,7 @@ public:
 	/**
 	 * Loads in the raw image and apply the standard U4 16 or 256 color palette.
 	 */
-	virtual Image *load(U4FILE *file, int width, int height, int bpp);
+	Image *load(U4FILE *file, int width, int height, int bpp) override;
 };
 
 /**
@@ -52,7 +52,7 @@ public:
  */
 class U4RleImageLoader : public ImageLoader {
 public:
-	virtual Image *load(U4FILE *file, int width, int height, int bpp);
+	Image *load(U4FILE *file, int width, int height, int bpp) override;
 };
 
 /**
@@ -63,7 +63,7 @@ public:
  */
 class U4LzwImageLoader : public ImageLoader {
 public:
-	virtual Image *load(U4FILE *file, int width, int height, int bpp);
+	Image *load(U4FILE *file, int width, int height, int bpp) override;
 };
 
 class U4PaletteLoader {

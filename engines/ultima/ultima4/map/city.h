@@ -49,7 +49,7 @@ public:
 	/**
 	 * Returns the name of the city
 	 */
-	virtual Common::String getName();
+	Common::String getName() override;
 
 	/**
 	 * Adds a person object to the map

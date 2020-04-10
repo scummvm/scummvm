@@ -61,7 +61,7 @@ public:
 
 	bool canConverse() const;
 	bool isVendor() const;
-	virtual Common::String getName() const;
+	Common::String getName() const override;
 	void goToStartLocation();
 	void setDialogue(Dialogue *d);
 	MapCoords &getStart() {

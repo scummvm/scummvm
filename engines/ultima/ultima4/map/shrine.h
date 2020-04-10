@@ -37,12 +37,12 @@ public:
 	Shrine();
 
 	// Methods
-	virtual Common::String  getName();
-	Virtue          getVirtue() const;
-	Common::String          getMantra() const;
+	Common::String  getName() override;
+	Virtue getVirtue() const;
+	Common::String getMantra() const;
 
-	void            setVirtue(Virtue v);
-	void            setMantra(Common::String mantra);
+	void setVirtue(Virtue v);
+	void setMantra(Common::String mantra);
 
 	/**
 	 * Enter the shrine

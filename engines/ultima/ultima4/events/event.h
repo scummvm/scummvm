@@ -144,7 +144,7 @@ public:
 	KeyHandlerController(KeyHandler *handler);
 	~KeyHandlerController();
 
-	virtual bool keyPressed(int key);
+	bool keyPressed(int key) override;
 	KeyHandler *getKeyHandler();
 
 private:
@@ -164,7 +164,7 @@ public:
 	 */
 	ReadStringController(int maxlen, int screenX, int screenY, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
 	ReadStringController(int maxlen, TextView *view, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
-	virtual bool keyPressed(int key);
+	bool keyPressed(int key) override;
 
 	static Common::String get(int maxlen, int screenX, int screenY, EventHandler *eh = NULL);
 	static Common::String get(int maxlen, TextView *view, EventHandler *eh = NULL);
@@ -198,7 +198,7 @@ public:
 class ReadChoiceController : public WaitableController<int> {
 public:
 	ReadChoiceController(const Common::String &choices);
-	virtual bool keyPressed(int key);
+	bool keyPressed(int key) override;
 
 	static char get(const Common::String &choices, EventHandler *eh = NULL);
 
@@ -212,7 +212,7 @@ protected:
 class ReadDirController : public WaitableController<Direction> {
 public:
 	ReadDirController();
-	virtual bool keyPressed(int key);
+	bool keyPressed(int key) override;
 };
 
 /**
@@ -222,8 +222,8 @@ public:
 class WaitController : public Controller {
 public:
 	WaitController(unsigned int cycles);
-	virtual bool keyPressed(int key);
-	virtual void timerFired();
+	bool keyPressed(int key) override;
+	void timerFired() override;
 
 	void wait();
 	void setCycles(int c);

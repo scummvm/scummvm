@@ -59,63 +59,63 @@ public:
 	virtual ~Object() {}
 
 	// Methods
-	MapTile &getTile()                      {
+	MapTile &getTile() {
 		return _tile;
 	}
-	MapTile &getPrevTile()                  {
+	MapTile &getPrevTile() {
 		return _prevTile;
 	}
-	const Coords &getCoords() const         {
+	const Coords &getCoords() const {
 		return _coords;
 	}
-	const Coords &getPrevCoords() const     {
+	const Coords &getPrevCoords() const {
 		return _prevCoords;
 	}
 	ObjectMovementBehavior getMovementBehavior() const {
 		return _movementBehavior;
 	}
-	Type getType() const					{
+	Type getType() const {
 		return _objType;
 	}
-	bool hasFocus() const                   {
+	bool hasFocus() const {
 		return _focused;
 	}
-	bool isVisible() const                  {
+	bool isVisible() const {
 		return _visible;
 	}
-	bool isAnimated() const                 {
+	bool isAnimated() const {
 		return _animated;
 	}
 
-	void setTile(MapTile t)                 {
+	void setTile(MapTile t) {
 		_tile = t;
 	}
-	void setTile(Tile *t)                   {
+	void setTile(Tile *t) {
 		_tile = t->getId();
 	}
-	void setPrevTile(MapTile t)             {
+	void setPrevTile(MapTile t) {
 		_prevTile = t;
 	}
-	void setCoords(Coords c)                {
+	void setCoords(Coords c) {
 		_prevCoords = _coords;
 		_coords = c;
 	}
-	void setPrevCoords(Coords c)            {
+	void setPrevCoords(Coords c) {
 		_prevCoords = c;
 	}
-	void setMovementBehavior(ObjectMovementBehavior b)          {
+	void setMovementBehavior(ObjectMovementBehavior b) {
 		_movementBehavior = b;
 	}
-	void setType(Type t)                    {
+	void setType(Type t) {
 		_objType = t;
 	}
-	void setFocus(bool f = true)            {
+	void setFocus(bool f = true) {
 		_focused = f;
 	}
-	void setVisible(bool v = true)          {
+	void setVisible(bool v = true) {
 		_visible = v;
 	}
-	void setAnimated(bool a = true)         {
+	void setAnimated(bool a = true) {
 		_animated = a;
 	}
 

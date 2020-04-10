@@ -92,7 +92,7 @@ public:
 	/**
 	 * Returns the name of the dungeon
 	 */
-	virtual Common::String getName();
+	Common::String getName() override;
 
 	/**
 	 * Returns the dungeon token associated with the given dungeon tile
