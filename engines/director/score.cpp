@@ -376,7 +376,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 			if (w > 0 && h > 0) {
 				if (_vm->getVersion() < 6) {
-					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch);
+					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch, _vm->getPalette());
 				} else {
 					img = new Image::BitmapDecoder();
 				}

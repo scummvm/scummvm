@@ -650,7 +650,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : _sprites[i]->_width;
 			Common::Rect drawRect(x, y, x + width, y + height);
 			addDrawRect(i, drawRect);
-			inkBasedBlit(surface, *(bc->_surface), ink, drawRect);
+			inkBasedBlit(surface, *(bc->_surface), ink, drawRect, i);
 		}
 	}
 }
@@ -671,9 +671,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	byte backColor = sp->_backColor;
 	int lineSize = sp->_thickness & 0x3;
 
-	// D3 Shared Cast Members don't have these values specified, they're provided when you add
-	// them to the score in each movie.
-	if (_vm->getVersion() > 3 && spriteType == kCastMemberSprite) {
+	if (_vm->getVersion() >= 3 && spriteType == kCastMemberSprite) {
 		if (!sp->_cast) {
 			warning("Frame::renderShape(): kCastMemberSprite has no cast defined");
 			return;
@@ -698,10 +696,12 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 				default:
 					break;
 				}
-				foreColor = sc->_fgCol;
-				backColor = sc->_bgCol;
-				lineSize = sc->_lineThickness;
-				ink = sc->_ink;
+				if (_vm->getVersion() > 3) {
+					foreColor = sc->_fgCol;
+					backColor = sc->_bgCol;
+					lineSize = sc->_lineThickness;
+					ink = sc->_ink;
+				}
 				// shapes should be rendered with transparency by default
 				if (ink == kInkTypeCopy) {
 					ink = kInkTypeTransparent;
@@ -778,7 +778,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	}
 
 	addDrawRect(spriteId, shapeRect);
-	inkBasedBlit(surface, tmpSurface, ink, shapeRect);
+	inkBasedBlit(surface, tmpSurface, ink, shapeRect, spriteId);
 
 }
 
@@ -1025,10 +1025,10 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId)
 		ink = kInkTypeReverse;
 
-	inkBasedBlit(surface, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height));
+	inkBasedBlit(surface, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height), spriteId);
 }
 
-void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect) {
+void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId) {
 	// drawRect could be bigger than the spriteSurface. Clip it
 	Common::Rect t(spriteSurface.w, spriteSurface.h);
 	t.moveTo(drawRect.left, drawRect.top);
@@ -1052,7 +1052,7 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 		drawGhostSprite(targetSurface, spriteSurface, drawRect);
 		break;
 	case kInkTypeReverse:
-		drawReverseSprite(targetSurface, spriteSurface, drawRect);
+		drawReverseSprite(targetSurface, spriteSurface, drawRect, spriteId);
 		break;
 	default:
 		warning("Frame::inkBasedBlit(): Unhandled ink type %d", ink);
@@ -1103,7 +1103,7 @@ void Frame::drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	}
 }
 
-void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
+void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect, uint16 spriteId) {
 	Common::Rect srcRect(sprite.w, sprite.h);
 
 	if (!target.clip(srcRect, drawRect))
@@ -1113,14 +1113,37 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 	for (int ii = 0; ii < srcRect.height(); ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
+		byte srcColor = *src;
 
 		for (int j = 0; j < srcRect.width(); j++) {
-			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0)) {
-				if (*src != skipColor) {
-					*dst ^= _vm->transformColor(*src);
+			if (_sprites[spriteId]->_cast->_type == kCastShape)
+				srcColor = 0x0;
+			else
+				srcColor = *src;
+			uint16 targetSprite = getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii));
+			if ((targetSprite != 0)) {
+				// TODO: This entire reverse colour attempt needs a lot more testing on
+				// a lot more colour depths.
+				if (srcColor != skipColor) {
+					if (_sprites[targetSprite]->_cast->_type != kCastBitmap) {
+						if (*dst == 0 || *dst == 255) {
+							*dst = _vm->transformColor(*dst);
+						} else if (srcColor == 255 || srcColor == 0) {
+							*dst = _vm->transformColor(*dst - 40);
+						} else {
+							*dst = _vm->transformColor(*src - 40);
+						}
+					} else {
+						if (*dst == 0 && _vm->getVersion() == 3 &&
+							((BitmapCast*)_sprites[spriteId]->_cast)->_bitsPerPixel > 1) {
+							*dst = _vm->transformColor(*src - 40);
+						} else {
+							*dst ^= _vm->transformColor(srcColor);
+						}
+					}
 				}
-			} else if (*src != skipColor) {
-				*dst = *src;
+			} else if (srcColor != skipColor) {
+				*dst = _vm->transformColor(srcColor);
 			}
 			src++;
 			dst++;
