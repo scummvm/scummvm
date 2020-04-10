@@ -658,6 +658,7 @@ protected:
 	void closeDoor(int block);
 
 	void addLevelMap(int level);
+	bool hasLevelMap(int level) const;
 	uint32 countMaps() const;
 	uint32 countArrows() const;
 
@@ -729,6 +730,7 @@ protected:
 
 	// Gui
 	virtual void gui_drawPlayField(bool refresh);
+	virtual void gui_setupPlayFieldHelperPages();
 	void gui_restorePlayField();
 	void gui_drawAllCharPortraitsWithStats();
 	void gui_drawCharPortraitWithStats(int index);
@@ -785,7 +787,7 @@ protected:
 	int clickedSceneSpecial(Button *button);
 	int clickedSpellbookAbort(Button *button);
 	int clickedSpellbookScroll(Button *button);
-	int clickedUnk(Button *button);
+	int clickedButtonReturnIndex(Button *button);
 
 	void gui_processCharPortraitClick(int index);
 	void gui_processWeaponSlotClickLeft(int charIndex, int slotIndex);

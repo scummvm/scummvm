@@ -163,7 +163,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 				strcpy(_scriptParaString, Common::String::format("%d", va_arg(args, int)).c_str());
 				_tempString2 = _scriptParaString;
 			} else if (a == 's') {
-				_tempString2 = va_arg(args, char *);
+				_tempString2 = va_arg(args, char*);
 			} else {
 				break;
 			}
@@ -578,7 +578,7 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 	vsnprintf(_dialogueBuffer, kEoBTextBufferSize - 1, str, args);
 	va_end(args);
 
-	displayText(_dialogueBuffer);
+	displayText(_dialogueBuffer, textColor);
 
 	if (_vm->game() != GI_EOB1)
 		_textDimData[_screen->curDimIndex()].color1 = tc;

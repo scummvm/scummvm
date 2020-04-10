@@ -252,14 +252,14 @@ void Screen_EoB::sega_copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 lineHe
 }
 
 void Screen_EoB::sega_drawTextBox(int pW, int pH, int x, int y, int w, int h, uint8 color1, uint8 color2) {
-	sega_drawClippedLine(_textRenderBuffer, 26, 5, x, y, w, 1, color1);
-	sega_drawClippedLine(_textRenderBuffer, 26, 5, x, y + h - 1, w, 1, color1);
-	sega_drawClippedLine(_textRenderBuffer, 26, 5, x, y, 1, h, color1);
-	sega_drawClippedLine(_textRenderBuffer, 26, 5, x + w - 1, y, 1, h, color1);
-	sega_drawClippedLine(_textRenderBuffer, 26, 5, x + 1, y + 1, w - 2, 1, color2);
-	sega_drawClippedLine(_textRenderBuffer, 26, 5, x + 1, y + h - 2, w - 2, 1, color2);
-	sega_drawClippedLine(_textRenderBuffer, 26, 5, x + 1, y + 1, 1, h - 2, color2);
-	sega_drawClippedLine(_textRenderBuffer, 26, 5, x + w - 2, y + 1, 1, h - 2, color2);
+	sega_drawClippedLine(26, 5, x, y, w, 1, color1);
+	sega_drawClippedLine(26, 5, x, y + h - 1, w, 1, color1);
+	sega_drawClippedLine(26, 5, x, y, 1, h, color1);
+	sega_drawClippedLine(26, 5, x + w - 1, y, 1, h, color1);
+	sega_drawClippedLine(26, 5, x + 1, y + 1, w - 2, 1, color2);
+	sega_drawClippedLine(26, 5, x + 1, y + h - 2, w - 2, 1, color2);
+	sega_drawClippedLine(26, 5, x + 1, y + 1, 1, h - 2, color2);
+	sega_drawClippedLine(26, 5, x + w - 2, y + 1, 1, h - 2, color2);
 }
 
 void Screen_EoB::sega_loadTextBufferToVRAM(uint16 srcOffset, uint16 addr, int size) {
@@ -303,7 +303,8 @@ void Screen_EoB::sega_gfxScale(uint8 *out, uint16 w, uint16 h, uint16 pitch, con
 	}
 }
 
-void Screen_EoB::sega_drawClippedLine(uint8 *dst, int pW, int pH, int x, int y, int w, int h, uint8 color) {
+void Screen_EoB::sega_drawClippedLine(int pW, int pH, int x, int y, int w, int h, uint8 color) {
+	uint8 *dst = _textRenderBuffer;
 	uint8 p = (x & 1) ? 0x0F : 0xF0;
 	color &= p;
 	p = ~p;

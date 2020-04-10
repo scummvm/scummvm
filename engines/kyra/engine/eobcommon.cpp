@@ -2621,10 +2621,14 @@ void EoBCoreEngine::addLevelMap(int level) {
 	_levelMaps |= (1 << (level - 1));
 }
 
+bool EoBCoreEngine::hasLevelMap(int level) const {
+	return _levelMaps & (1 << (level - 1));
+}
+
 uint32 EoBCoreEngine::countMaps() const {
 	uint32 res = 0;
-	for (int i = 0; i < 12; ++i) {
-		if (_levelMaps & (1 << i))
+	for (int i = 1; i < 13; ++i) {
+		if (hasLevelMap(i))
 			res++;
 	}
 	return res;

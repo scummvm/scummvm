@@ -185,21 +185,29 @@ private:
 	uint8 *_shakeBackBuffer1;
 	uint8 *_shakeBackBuffer2;
 
+	// Map
+	const char *const *_mapStrings1;
+	const char *const *_mapStrings2;
+	const char *const *_mapStrings3;
+
 	// Resource
 	SegaCDResource *_sres;
 
 	// GUI
 	void gui_drawPlayField(bool refresh) override;
+	void gui_setupPlayFieldHelperPages() override;
 	void gui_drawWeaponSlotStatus(int x, int y, int status) override;
 	void gui_printInventoryDigits(int x, int y, int val) override;
 	void gui_drawCharacterStatsPage() override;
 	void gui_displayMap() override;
+	void gui_updateAnimations() override;
 
 	void makeNameShapes() override;
 	void makeFaceShapes() override;
 	void printStatsString(const char *str, int x, int y);
-
-	void gui_updateAnimations() override;
+	void drawMapButton(const char *str, int x, int y);
+	void drawMapPage(int level);
+	void drawMapSpots(int level, int animState);
 
 	const KyraRpgGUISettings *guiSettings() const override;
 	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }

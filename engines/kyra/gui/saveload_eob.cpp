@@ -48,7 +48,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, DisposeAfterUse::YES);
 	_loading = true;
 
-	if (slot != -1 && _flags.gameID != Common::kPlatformSegaCD)
+	if (slot != -1)
 		_screen->fadeToBlack(10);
 
 	enableSysTimer(2);

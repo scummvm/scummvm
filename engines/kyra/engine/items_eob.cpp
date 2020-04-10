@@ -41,9 +41,6 @@ void EoBCoreEngine::loadItemDefs() {
 	for (int i = 0; i < 600; i++)
 		_items[i].block = -1;
 
-	if (_flags.platform == Common::kPlatformSegaCD)
-		_items[498].block = _items[499].block = -2;
-
 	for (int i = 0; i < _numItems; i++) {
 		_items[i].nameUnid = s->readByte();
 		_items[i].nameId = s->readByte();
@@ -54,8 +51,34 @@ void EoBCoreEngine::loadItemDefs() {
 		_items[i].block = s->readSint16();
 		_items[i].next = s->readSint16();
 		_items[i].prev = s->readSint16();
-		_items[i].level = s->readSByte();
+		_items[i].level = s->readByte();
 		_items[i].value = s->readSByte();
+	}
+
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		_items[498].block = _items[499].block = -2;
+
+		int temp = 0;
+		const uint8 *pos = _staticres->loadRawData(kEoB1MapLevelData, temp);
+
+		for (int i = _numItems; i < _numItems + temp / 14; i++) {
+			_items[i].nameUnid = *pos++;
+			_items[i].nameId = *pos++;
+			_items[i].flags = *pos++;
+			_items[i].icon = (int8)*pos++;
+			_items[i].type = (int8)*pos++;
+			_items[i].pos = (int8)*pos++;
+			_items[i].block = (int16)READ_BE_UINT16(pos);
+			pos += 2;
+			_items[i].next = (int16)READ_BE_UINT16(pos);
+			pos += 2;
+			_items[i].prev = (int16)READ_BE_UINT16(pos);
+			pos += 2;
+			_items[i].level = *pos++;
+			_items[i].value = (int8)*pos++;
+		}
+		_numItems += (temp / 14);
+		_items[22].nameUnid = _items[27].nameUnid = _items[28].nameUnid = _items[29].nameUnid = _items[29].nameUnid = 96;
 	}
 
 	if (_itemNamesStatic) {

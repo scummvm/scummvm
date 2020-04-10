@@ -66,6 +66,7 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_compassAnimSwitch = _compassAnimDone = false;
 	_redGrid = _charTilesTable = 0;
 	_compassData = 0;
+	_mapStrings1 = _mapStrings2 = _mapStrings3 = 0;
 
 	_seqPlayer = 0;
 	_sres = 0;
@@ -275,8 +276,6 @@ void EoBEngine::startupNew() {
 	_screen->selectPC98Palette(0, _screen->getPalette(0));
 	if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->sega_selectPalette(4, 0);
-		_screen->sega_selectPalette(6, 1);
-		_screen->sega_selectPalette(8, 2);
 		_screen->sega_selectPalette(7, 3);
 		makeNameShapes();
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
@@ -300,8 +299,6 @@ void EoBEngine::startupLoad() {
 
 	if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->sega_selectPalette(4, 0);
-		_screen->sega_selectPalette(6, 1);
-		_screen->sega_selectPalette(8, 2);
 		_screen->sega_selectPalette(7, 3);
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
 		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);

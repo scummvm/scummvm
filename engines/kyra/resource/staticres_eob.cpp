@@ -669,7 +669,11 @@ void EoBCoreEngine::initButtonData() {
 		{ 116, 117, 0x1100, 320, 200, 1, 1, 2 },
 		{ 7, 0, 0x1100, 158, 121, 15, 10, 5 },
 		{ 0, 0, 0x1100, 146, 168, 32, 10, 0 },
-		{ 0, 0, 0x1100, 296, 56, 16, 16, 27 }
+		{ 0, 0, 0x1100, 296, 56, 16, 16, 27 },
+
+		{ 0, 0, 0x1100, 248, 152, 64, 14, -1 },
+		{ 0, 0, 0x1100, 248, 168, 64, 14, 1 },
+		{ 110, 0, 0x1100, 248, 184, 64, 14, 2 }
 	};
 
 	_buttonDefs = new EoBGuiButtonDef[ARRAYSIZE(buttonDefs)];
@@ -799,6 +803,7 @@ void EoBCoreEngine::initButtonData() {
 	EOB_CBI(1, 61);
 	EOB_CBN(1, clickedSpellbookScroll);
 	EOB_CBI(1, 21);
+	EOB_CBN(3, clickedButtonReturnIndex);
 #undef EOB_CBI
 #undef EOB_CBN
 }
@@ -1307,6 +1312,9 @@ void EoBEngine::initStaticResource() {
 	_invPattern = _staticres->loadRawDataBe16(kEoB1PatternTable3, temp);
 	_statsPattern = _staticres->loadRawDataBe16(kEoB1PatternTable4, temp);
 	_charTilesTable = _staticres->loadRawData(kEoB1CharTilesTable, temp);
+	_mapStrings1 = _staticres->loadStrings(kEoB1MapStrings1, temp);
+	_mapStrings2 = _staticres->loadStrings(kEoB1MapStrings2, temp);
+	_mapStrings3 = _staticres->loadStrings(kEoB1MapStrings3, temp);
 
 	// Build offset tables for door shapes encoding
 	if (_flags.platform == Common::kPlatformSegaCD) {

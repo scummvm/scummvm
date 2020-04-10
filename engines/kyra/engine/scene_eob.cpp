@@ -95,8 +95,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 		_levelBlockProperties[0x035C].assignedObjects = 0x0E8D;
 
 	loadVcnData(gfxFile.c_str(), _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[level - 1]] : 0);
-	if (_flags.platform != Common::kPlatformSegaCD)
-		_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
+	gui_setupPlayFieldHelperPages();		
 	if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1)
 		_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
 

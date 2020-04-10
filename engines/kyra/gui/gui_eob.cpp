@@ -61,7 +61,7 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 	if (!_loading)
 		_screen->updateScreen();
 
-	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
+	gui_setupPlayFieldHelperPages();
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (_flags.gameID == GI_EOB1) {
@@ -71,6 +71,10 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 			_screen->getPalette(7).copy(_screen->getPalette(1), 0, 32);
 		}
 	}
+}
+
+void EoBCoreEngine::gui_setupPlayFieldHelperPages() {
+	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
 }
 
 void EoBCoreEngine::gui_restorePlayField() {
@@ -377,7 +381,7 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 			col = guiSettings()->colors.guiColorDarkRed;
 
 		if (_flags.platform == Common::kPlatformSegaCD)
-			col = (bgCur < 12) ? guiSettings()->colors.guiColorDarkRed : (bgCur < 24 ? guiSettings()->colors.guiColorYellow : guiSettings()->colors.guiColorDarkGreen);
+			col = (bgCur * 40 / bgMax) < 12 ? guiSettings()->colors.guiColorDarkRed : ((bgCur * 40 / bgMax) < 24 ? guiSettings()->colors.guiColorYellow : guiSettings()->colors.guiColorDarkGreen);
 		else if (!_currentControlMode)
 			_screen->printText(_characterGuiStringsHp[0], x - 13, y - 1, guiSettings()->colors.guiColorBlack, 0);
 
@@ -813,7 +817,7 @@ void EoBCoreEngine::gui_initButton(int index, int, int, int) {
 	Button *b = 0;
 	int cnt = 1;
 
-	if (_flags.gameID == GI_EOB1 && !(_flags.platform == Common::kPlatformSegaCD && index == 95) && index > 92)
+	if (_flags.gameID == GI_EOB1 && !(_flags.platform == Common::kPlatformSegaCD && index >= 95) && index > 92)
 		return;
 
 	if (_activeButtons) {
@@ -925,6 +929,17 @@ int EoBCoreEngine::clickedSceneDropPickupItem(Button *button) {
 		d = getQueuedItem((Item *)&_levelBlockProperties[block].drawObjects, d, -1);
 		if (!d)
 			return 1;
+
+		if (_items[d].nameUnid == 97) {
+			_items[d].block = -1;
+			addLevelMap(_items[d].value);
+			snd_playSoundEffect(0x101C);
+			_txt->printMessage(_warningStrings[3], 0x55);
+			if (_currentControlMode == 1)
+				gui_drawCharPortraitWithStats(_updateCharNum);
+			d = 0;
+		}
+
 		setHandItem(d);
 		runLevelScript(block, 8);
 	}
@@ -1186,6 +1201,7 @@ int EoBCoreEngine::clickedUpArrow(Button *button) {
 		notifyBlockNotPassable();
 	} else {
 		moveParty(b);
+		increaseStepsCounter();
 		_sceneDefaultUpdate = 1;
 	}
 
@@ -1199,6 +1215,7 @@ int EoBCoreEngine::clickedDownArrow(Button *button) {
 		notifyBlockNotPassable();
 	} else {
 		moveParty(b);
+		increaseStepsCounter();
 		_sceneDefaultUpdate = 1;
 	}
 
@@ -1212,6 +1229,7 @@ int EoBCoreEngine::clickedLeftArrow(Button *button) {
 		notifyBlockNotPassable();
 	} else {
 		moveParty(b);
+		increaseStepsCounter();
 		_sceneDefaultUpdate = 1;
 	}
 
@@ -1225,6 +1243,7 @@ int EoBCoreEngine::clickedRightArrow(Button *button) {
 		notifyBlockNotPassable();
 	} else {
 		moveParty(b);
+		increaseStepsCounter();
 		_sceneDefaultUpdate = 1;
 	}
 
@@ -1300,7 +1319,7 @@ int EoBCoreEngine::clickedSpellbookScroll(Button *button) {
 	return button->index;
 }
 
-int EoBCoreEngine::clickedUnk(Button *button) {
+int EoBCoreEngine::clickedButtonReturnIndex(Button *button) {
 	return button->index;
 }
 

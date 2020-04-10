@@ -37,7 +37,7 @@ TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) :
 TextDisplayer_SegaCD::~TextDisplayer_SegaCD() {
 }
 
-void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int textColor, int shadowColor, bool noScreenUpdate) {
+void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int textColor, int shadowColor, int pitchW, int pitchH, bool screenUpdate) {
 	const ScreenDim *s = &_dimTable[_curDim];
 	if (x == -1)
 		x = s->sx;
@@ -47,18 +47,22 @@ void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int 
 		textColor = s->unk8;
 	if (shadowColor == -1)
 		shadowColor = 0;
+	if (pitchW == -1)
+		pitchW = s->w;
+	if (pitchH == -1)
+		pitchH = s->h;
 
-	_screen->setTextMarginRight(s->w);
-	_screen->printShadedText(str, x, y, textColor, 0, shadowColor, s->w >> 3);
+	_screen->setTextMarginRight(pitchW);
+	_screen->printShadedText(str, x, y, textColor, 0, shadowColor, pitchW >> 3);
 
-	if (noScreenUpdate)
+	if (!screenUpdate)
 		return;
 
 	if (s->unkE) {
-		for (int i = 0; i < s->h >> 3; ++i)
-			_screen->sega_loadTextBufferToVRAM(i * (s->w >> 3), (s->unkC & 0x7FF) << 5, (s->w * s->h) >> 1);
+		for (int i = 0; i < pitchH >> 3; ++i)
+			_screen->sega_loadTextBufferToVRAM(i * (pitchW >> 3), (s->unkC & 0x7FF) << 5, (pitchW * pitchH) >> 1);
 	} else {
-		_screen->sega_loadTextBufferToVRAM(0, (s->unkC & 0x7FF) << 5, (s->w * s->h) >> 1);
+		_screen->sega_loadTextBufferToVRAM(0, (s->unkC & 0x7FF) << 5, (pitchW * pitchH) >> 1);
 	}	
 }
 
@@ -77,6 +81,14 @@ void TextDisplayer_SegaCD::displayText(char *str, ...) {
 	char tmp[3] = "  ";
 	int posX = _curPosX;
 	bool updated = false;
+
+	va_list args;
+	va_start(args, str);
+	int tc = va_arg(args, int);
+	va_end(args);
+
+	if (tc != -1)
+		SWAP(_textColor, tc);
 
 	for (const char *pos = str; *pos; updated = false) {
 		uint8 cmd = fetchCharacter(tmp, pos);
@@ -118,6 +130,9 @@ void TextDisplayer_SegaCD::displayText(char *str, ...) {
 
 	if (!updated)
 		printShadowedText("", _curPosX, _curPosY, _textColor);
+
+	if (tc != -1)
+		SWAP(_textColor, tc);
 
 	_renderer->render(Screen_EoB::kSegaRenderPage);
 	_screen->setFontStyles(Screen::FID_8_FNT, cs);
