@@ -160,7 +160,7 @@ RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, Dispos
 		}
 
 		uint32 seekPos = pos + length;
-		if (seekPos < stream->size()) {
+		if (seekPos < (uint32)stream->size()) {
 			seekPos += (length & 1); // ensure we're word-aligned
 		}
 		stream->seek(seekPos);
