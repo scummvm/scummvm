@@ -537,9 +537,6 @@ Common::String *Datum::makeString(bool printonly) {
 	if (printonly)
 		return s;
 
-	if (type == STRING)
-		delete u.s;
-
 	u.s = s;
 	type = STRING;
 
