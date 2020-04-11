@@ -40,15 +40,36 @@ private:
 	void print(const char *fmt, ...);
 
 	/**
+	 * Collision detection on/off
+	 */
+	bool cmdCollisions(int argc, const char **argv);
+
+	/**
+	 * All equipement
+	 */
+	bool cmdEquipment(int argc, const char **argv);
+
+	/**
 	 * Moongate teleportation
 	 */
 	bool cmdGate(int argc, const char **argv);
+
+	/**
+	 * Go to any specified location by name
+	 */
+	bool cmdGoto(int argc, const char **argv);
 
 	/**
 	 * Moon phase
 	 */
 	bool cmdMoon(int argc, const char **argv);
 
+	/**
+	 * Full stats
+	 */
+	bool cmdStats(int argc, const char **argv);
+public:
+	bool _collisionOverride;
 public:
 	Debugger();
 	~Debugger() override;

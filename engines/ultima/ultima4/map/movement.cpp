@@ -32,12 +32,11 @@
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/map/tile.h"
+#include "ultima/ultima4/core/debugger.h"
 #include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {
-
-bool collisionOverride = false;
 
 /**
  * Attempt to move the avatar in the given direction.  User event
@@ -85,7 +84,7 @@ void moveAvatar(MoveEvent &event) {
 		return;
 	}
 
-	if (!collisionOverride && !g_context->_party->isFlying()) {
+	if (!g_debugger->_collisionOverride && !g_context->_party->isFlying()) {
 		int movementMask = g_context->_location->_map->getValidMoves(g_context->_location->_coords, g_context->_party->getTransport());
 		/* See if movement was blocked */
 		if (!DIR_IN_MASK(event._dir, movementMask)) {
@@ -161,7 +160,7 @@ void moveAvatarInDungeon(MoveEvent &event) {
 		return;
 	}
 
-	if (!collisionOverride) {
+	if (!g_debugger->_collisionOverride) {
 		int movementMask = g_context->_location->_map->getValidMoves(g_context->_location->_coords, g_context->_party->getTransport());
 
 		if (advancing && !tile->getTileType()->canWalkOn(DIR_ADVANCE))

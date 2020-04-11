@@ -68,8 +68,6 @@ void movePartyMember(MoveEvent &event);
 bool slowedByTile(const Tile *tile);
 bool slowedByWind(int direction);
 
-extern bool collisionOverride;
-
 } // End of namespace Ultima4
 } // End of namespace Ultima
 

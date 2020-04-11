@@ -24,7 +24,10 @@
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/moongate.h"
+#include "ultima/ultima4/game/portal.h"
+#include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
@@ -34,9 +37,14 @@ Debugger *g_debugger;
 
 Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
+	_collisionOverride = false;
 
+	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
+	registerCmd("equipment", WRAP_METHOD(Debugger, cmdEquipment));
 	registerCmd("gate", WRAP_METHOD(Debugger, cmdGate));
+	registerCmd("goto", WRAP_METHOD(Debugger, cmdGoto));
 	registerCmd("moon", WRAP_METHOD(Debugger, cmdMoon));
+	registerCmd("stats", WRAP_METHOD(Debugger, cmdStats));
 }
 
 Debugger::~Debugger() {
@@ -55,6 +63,32 @@ void Debugger::print(const char *fmt, ...) {
 	} else {
 		screenMessage("%s\n", str.c_str());
 	}
+}
+
+bool Debugger::cmdCollisions(int argc, const char **argv) {
+	_collisionOverride = !_collisionOverride;
+	print("Collision detection %s",
+		_collisionOverride ? "off" : "on");
+
+	return isActive();
+}
+
+bool Debugger::cmdEquipment(int argc, const char **argv) {
+	int i;
+
+	for (i = ARMR_NONE + 1; i < ARMR_MAX; ++i)
+		g_ultima->_saveGame->_armor[i] = 8;
+
+	for (i = WEAP_HANDS + 1; i < WEAP_MAX; ++i) {
+		const Weapon *weapon = Weapon::get(static_cast<WeaponType>(i));
+		if (weapon->loseWhenUsed() || weapon->loseWhenRanged())
+			g_ultima->_saveGame->_weapons[i] = 99;
+		else
+			g_ultima->_saveGame->_weapons[i] = 8;
+	}
+	
+	print("All equipment given");
+	return isActive();
 }
 
 bool Debugger::cmdGate(int argc, const char **argv) {
@@ -81,6 +115,58 @@ bool Debugger::cmdGate(int argc, const char **argv) {
 	return isActive();
 }
 
+bool Debugger::cmdGoto(int argc, const char **argv) {
+	Common::String dest;
+
+	if (argc == 2) {
+		dest = argv[1];
+	} else if (isActive()) {
+		print("teleport <destination name>");
+		return true;
+	} else {
+		screenMessage("Goto: ");
+		dest = gameGetInput(32);
+		screenMessage("\n");
+	}
+
+	dest.toLowercase();
+
+	bool found = false;
+	for (unsigned p = 0; p < g_context->_location->_map->_portals.size(); p++) {
+		MapId destid = g_context->_location->_map->_portals[p]->_destid;
+		Common::String destNameLower = mapMgr->get(destid)->getName();
+		destNameLower.toLowercase();
+
+		if (destNameLower.find(dest) != Common::String::npos) {
+			screenMessage("\n%s\n", mapMgr->get(destid)->getName().c_str());
+			g_context->_location->_coords = g_context->_location->_map->_portals[p]->_coords;
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		MapCoords coords = g_context->_location->_map->getLabel(dest);
+		if (coords != MapCoords::nowhere) {
+			print("%s", dest.c_str());
+			g_context->_location->_coords = coords;
+			found = true;
+		}
+	}
+
+	if (found) {
+		g_game->finishTurn();
+		return false;
+	} else {
+		if (isActive())
+			print("Can't find %s", dest.c_str());
+		else
+			print("Can't find\n%s", dest.c_str());
+
+		return isActive();
+	}
+}
+
 bool Debugger::cmdMoon(int argc, const char **argv) {
 	int moonNum;
 
@@ -99,6 +185,23 @@ bool Debugger::cmdMoon(int argc, const char **argv) {
 	g_game->finishTurn();
 
 	print("Moons advanced");
+	return isActive();
+}
+
+bool Debugger::cmdStats(int argc, const char **argv) {
+	for (int i = 0; i < g_ultima->_saveGame->_members; i++) {
+		g_ultima->_saveGame->_players[i]._str = 50;
+		g_ultima->_saveGame->_players[i]._dex = 50;
+		g_ultima->_saveGame->_players[i]._intel = 50;
+
+		if (g_ultima->_saveGame->_players[i]._hpMax < 800) {
+			g_ultima->_saveGame->_players[i]._xp = 9999;
+			g_ultima->_saveGame->_players[i]._hpMax = 800;
+			g_ultima->_saveGame->_players[i]._hp = 800;
+		}
+	}
+
+	print("Full Stats given");
 	return isActive();
 }
 
