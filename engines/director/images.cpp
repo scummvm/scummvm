@@ -168,12 +168,10 @@ void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, ui
 			} else if (red == 0 && blue == 0 && green == 0) {
 				*((byte*)surfacePointer) = 0;
 			} else {
-				for (byte p = 0; p < _paletteColorCount; p++)
-				{
+				for (byte p = 0; p < _paletteColorCount; p++) {
 					if (_palette[p * 3 + 0] == red &&
 						_palette[p * 3 + 1] == green &&
-						_palette[p * 3 + 2] == blue)
-					{
+						_palette[p * 3 + 2] == blue) {
 						*((byte*)surfacePointer) = p;
 					}
 				}
