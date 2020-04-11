@@ -147,13 +147,10 @@ ReadStringController::ReadStringController(int maxlen, TextView *view, const Com
 }
 
 bool ReadStringController::keyPressed(int key) {
-	int valid = true,
-	    len = _value.size();
+	int valid = true, len = _value.size();
 	size_t pos = Common::String::npos;
 
-#ifdef TODO
 	if (key < U4_ALT)
-#endif
 		pos = _accepted.findFirstOf(key);
 
 	if (pos != Common::String::npos) {

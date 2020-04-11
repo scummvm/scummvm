@@ -46,17 +46,17 @@ namespace Ultima4 {
 #define U4_ESC          27
 #define U4_ENTER        13
 #define U4_ALT          128
-#define U4_KEYPAD_ENTER 271
+#define U4_KEYPAD_ENTER Common::KEYCODE_KP_ENTER
 #define U4_META         323
 #define U4_FKEY         282
-#define U4_RIGHT_SHIFT  303
-#define U4_LEFT_SHIFT   304
-#define U4_RIGHT_CTRL   305
-#define U4_LEFT_CTRL    306
-#define U4_RIGHT_ALT    307
-#define U4_LEFT_ALT     308
-#define U4_RIGHT_META   309
-#define U4_LEFT_META    310
+#define U4_RIGHT_SHIFT  Common::KEYCODE_RSHIFT
+#define U4_LEFT_SHIFT   Common::KEYCODE_LSHIFT
+#define U4_RIGHT_CTRL   Common::KEYCODE_RCTRL
+#define U4_LEFT_CTRL    Common::KEYCODE_LCTRL
+#define U4_RIGHT_ALT    Common::KEYCODE_RALT
+#define U4_LEFT_ALT     Common::KEYCODE_LALT
+#define U4_RIGHT_META   Common::KEYCODE_RMETA
+#define U4_LEFT_META    Common::KEYCODE_LMETA
 
 struct MouseArea;
 class EventHandler;

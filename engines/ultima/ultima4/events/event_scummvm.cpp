@@ -176,14 +176,8 @@ static void handleMouseButtonDownEvent(const Common::Event &event, Controller *c
 }
 
 static void handleKeyDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
-	int processed;
-	int key = event.kbd.keycode;
-
-	if (event.kbd.flags & Common::KBD_ALT)
-		key += U4_ALT;
-
-	if (event.kbd.flags & Common::KBD_META)
-		key += U4_META;
+	int key;
+	bool processed;
 
 	if (event.kbd.keycode == Common::KEYCODE_UP)
 		key = U4_UP;
@@ -196,6 +190,17 @@ static void handleKeyDownEvent(const Common::Event &event, Controller *controlle
 	else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE ||
 	         event.kbd.keycode == Common::KEYCODE_DELETE)
 		key = U4_BACKSPACE;
+	else {
+		key = event.kbd.ascii;
+		if (!key)
+			return;
+
+		if (event.kbd.flags & Common::KBD_ALT)
+			key += U4_ALT;
+
+		if (event.kbd.flags & Common::KBD_META)
+			key += U4_META;
+	}
 
 	debug(1, "key event: sym = %d, mod = %d; translated = %d",
 		    event.kbd.keycode,  event.kbd.flags,  key);
@@ -208,7 +213,6 @@ static void handleKeyDownEvent(const Common::Event &event, Controller *controlle
 			(*updateScreen)();
 		g_screen->update();
 	}
-
 }
 
 void EventHandler::sleep(unsigned int msec) {
