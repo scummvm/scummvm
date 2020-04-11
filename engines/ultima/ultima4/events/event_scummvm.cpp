@@ -216,8 +216,6 @@ void EventHandler::sleep(unsigned int msec) {
 }
 
 void EventHandler::run() {
-	const int FRAME_TIME = 1000 / settings._gameCyclesPerSecond;
-
 	if (_updateScreen)
 		(*_updateScreen)();
 	g_screen->update();

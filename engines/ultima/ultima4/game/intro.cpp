@@ -1318,7 +1318,7 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 
 	saveGame->_players[0]._class = static_cast<ClassType>(_questionTree[14]);
 
-	ASSERT(saveGame->_players[0]._class < 8, "bad class: %d", saveGame->_players[0]._class);
+	ASSERT((int)saveGame->_players[0]._class < 8, "bad class: %d", saveGame->_players[0]._class);
 
 	saveGame->_players[0]._weapon = initValuesForClass[saveGame->_players[0]._class].weapon;
 	saveGame->_players[0].armor = initValuesForClass[saveGame->_players[0]._class].armor;

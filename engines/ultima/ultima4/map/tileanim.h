@@ -51,9 +51,6 @@ public:
 
 	// Properties
 	int _random;
-
-private:
-	bool _replaces;
 };
 
 /**

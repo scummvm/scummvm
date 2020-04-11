@@ -88,13 +88,10 @@ public:
 	 * Update the stats (ztats) box on the upper right of the screen.
 	 */
 	virtual void update(bool avatarOnly = false);
+	void update(Aura *observable, NoArg *arg) override;
 	void update(Aura *aura) override;
-	void update(Party *party, PartyEvent &event) override {
-		update(); // do a full update
-	}
-	void update(Menu *menu, MenuEvent &event) override {
-		update(); // do a full update
-	}
+	void update(Party *party, PartyEvent &event) override;
+	void update(Menu *menu, MenuEvent &event) override;
 
 	void highlightPlayer(int player);
 

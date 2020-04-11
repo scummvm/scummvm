@@ -66,9 +66,10 @@ public:
 	virtual ~CombatController();
 
 	// Accessor Methods
-	bool isCombatController() const {
+	bool isCombatController() const override {
 		return true;
 	}
+
 	bool isCamping() const;
 	bool isWinOrLose() const;
 	Direction getExitDir() const;

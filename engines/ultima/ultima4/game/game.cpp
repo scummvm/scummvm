@@ -2603,12 +2603,12 @@ void wearArmor(int player) {
 
 	g_context->_stats->setView(STATS_ARMOR);
 	screenMessage("Armour: ");
-	ArmorType armor = (ArmorType) AlphaActionController::get(ARMR_MAX + 'a' - 1, "Armour: ");
+	int armor = AlphaActionController::get(ARMR_MAX + 'a' - 1, "Armour: ");
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 	if (armor == -1)
 		return;
 
-	const Armor *a = Armor::get(armor);
+	const Armor *a = Armor::get((ArmorType)armor);
 	PartyMember *p = g_context->_party->member(player);
 
 	if (!a) {

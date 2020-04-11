@@ -136,6 +136,10 @@ void StatsArea::update(bool avatarOnly) {
 	redraw();
 }
 
+void StatsArea::update(Aura *observable, NoArg *arg) {
+	Observer<Aura *>::update(observable, arg);
+}
+
 void StatsArea::update(Aura *aura) {
 	unsigned char mask = 0xff;
 	for (int i = 0; i < VIRT_MAX; i++) {
@@ -165,6 +169,14 @@ void StatsArea::update(Aura *aura) {
 	}
 
 	_summary.update();
+}
+
+void StatsArea::update(Party *party, PartyEvent &event) {
+	update();	// Do a full update
+}
+
+void StatsArea::update(Menu *menu, MenuEvent &event) {
+	update();	// Do a full update
 }
 
 void StatsArea::highlightPlayer(int player) {
