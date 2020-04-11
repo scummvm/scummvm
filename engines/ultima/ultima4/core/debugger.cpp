@@ -20,42 +20,23 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
-
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "ultima/ultima4/core/debugger.h"
+#include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima4 {
 
-class UltimaEngine;
+Debugger *g_debugger;
 
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
-	/**
-	 * Converts a string to an integer
-	 */
-	int strToInt(const char *s);
-public:
-	Debugger();
-    ~Debugger() override {}
+Debugger::Debugger() : Shared::Debugger() {
+	g_debugger = this;
 
-	/**
-	 * Executes the given command
-	 */
-	void executeCommand(const Common::String &cmd);
+//	registerCmd("quit", WRAP_METHOD(Debugger, cmdQuit));
+}
 
-	/**
-	 * Executes the given command
-	 */
-	void executeCommand(int argc, const char **argv);
-};
+Debugger::~Debugger() {
+	g_debugger = nullptr;
+}
 
-} // End of namespace Shared
+} // End of namespace Ultima4
 } // End of namespace Ultima
-
-#endif

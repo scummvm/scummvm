@@ -143,6 +143,7 @@ MODULE_OBJS := \
 	ultima4/core/lzw/lzw.o \
 	ultima4/core/lzw/u4decode.o \
 	ultima4/core/config.o \
+	ultima4/core/debugger.o \
 	ultima4/core/error.o \
 	ultima4/core/settings.o \
 	ultima4/core/utils.o \
@@ -209,6 +210,7 @@ MODULE_OBJS := \
 	ultima4/sound/music.o \
 	ultima4/sound/sound.o \
 	ultima4/sound/sound_scummvm.o \
+	ultima4/meta_engine.o \
 	ultima4/ultima4.o \
 	nuvie/meta_engine.o \
 	nuvie/nuvie.o \

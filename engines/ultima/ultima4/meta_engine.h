@@ -20,42 +20,44 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
+#ifndef ULTIMA4_META_ENGINE
+#define ULTIMA4_META_ENGINE
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "backends/keymapper/keymapper.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima4 {
 
-class UltimaEngine;
+enum KeybindingAction {
+	ACTION_NORTH, ACTION_SOUTH, ACTION_EAST, ACTION_WEST,
 
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
-	/**
-	 * Converts a string to an integer
-	 */
-	int strToInt(const char *s);
-public:
-	Debugger();
-    ~Debugger() override {}
-
-	/**
-	 * Executes the given command
-	 */
-	void executeCommand(const Common::String &cmd);
-
-	/**
-	 * Executes the given command
-	 */
-	void executeCommand(int argc, const char **argv);
+	ACTION_NONE
 };
 
-} // End of namespace Shared
+class MetaEngine {
+private:
+	/**
+	 * Get the method to execute
+	 */
+	static Common::String getMethod(KeybindingAction keyAction);
+public:
+	/**
+	 * Initialize keymaps
+	 */
+	static Common::KeymapArray initKeymaps();
+
+	/**
+	 * Execute an engine keymap press action
+	 */
+	static void pressAction(KeybindingAction keyAction);
+
+	/**
+	 * Enables/disables the keymaps when not waiting for an in-game action
+	 */
+	static void setKeybindingsActive(bool isActive);
+};
+
+} // End of namespace Ultima4
 } // End of namespace Ultima
 
 #endif

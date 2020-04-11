@@ -20,51 +20,28 @@
  *
  */
 
+#ifndef ULTIMA4_CORE_DEBUGGER_H
+#define ULTIMA4_CORE_DEBUGGER_H
+
 #include "ultima/shared/engine/debugger.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/early/game.h"
-#include "ultima/shared/maps/map.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima4 {
 
-Debugger::Debugger() : GUI::Debugger() {
-}
+/**
+ * Debugger base class
+ */
+class Debugger : public Shared::Debugger {
+private:
+//	bool cmdQuit(int argc, const char **argv);
+public:
+	Debugger();
+	~Debugger() override;
+};
 
-int Debugger::strToInt(const char *s) {
-	if (!*s)
-		// No string at all
-		return 0;
-	else if (toupper(s[strlen(s) - 1]) != 'H')
-		// Standard decimal string
-		return atoi(s);
+extern Debugger *g_debugger;
 
-	// Hexadecimal string
-	uint tmp = 0;
-	int read = sscanf(s, "%xh", &tmp);
-	if (read < 1)
-		error("strToInt failed on string \"%s\"", s);
-	return (int)tmp;
-}
-
-void Debugger::executeCommand(const Common::String &cmd) {
-
-}
-
-void Debugger::executeCommand(int argc, const char **argv) {
-	if (argc <= 0)
-		return;
-
-	bool keepRunning = false;
-	if (!handleCommand(argc, argv, keepRunning)) {
-		debugPrintf("Unknown command - %s\n", argv[0]);
-		keepRunning = true;
-	}
-
-	// If any message occurred, then we need to ensure the debugger is opened if it isn't already
-	if (keepRunning)
-		attach();
-}
-
-} // End of namespace Shared
+} // End of namespace Ultima4
 } // End of namespace Ultima
+
+#endif

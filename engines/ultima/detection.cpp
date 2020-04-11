@@ -30,6 +30,7 @@
 #include "common/translation.h"
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/meta_engine.h"
 #include "ultima/nuvie/meta_engine.h"
 #include "ultima/nuvie/nuvie.h"
 #include "ultima/ultima8/ultima8.h"
@@ -117,6 +118,8 @@ SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
 
 Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = getGameId(target);
+	if (gameId == "ultima4")
+		return Ultima::Ultima4::MetaEngine::initKeymaps();
 	if (gameId == "ultima8")
 		return Ultima::Ultima8::MetaEngine::initKeymaps();
 
