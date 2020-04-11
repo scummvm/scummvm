@@ -24,5 +24,6 @@ echo ">>> Creating final APK"
 # Now copy the ARMv7 one into the ARM64 tree and build the final package from there
 [ ! -d build ] && ln -s build-arm64-v8a build
 export ANDROID_VERSIONCODE=$((40000 + ${TRAVIS_BUILD_NUMBER:-0}))
-install -C -D -m 644 build-armeabi-v7a/libresidualvm.so build/android/jni/armeabi-v7a/libresidualvm.so
+mkdir -p build/android/jni/armeabi-v7a
+install -C -m 644 build-armeabi-v7a/libresidualvm.so build/android/jni/armeabi-v7a/libresidualvm.so
 TERM=dumb make -C build androidrelease ABI=arm64-v8a

@@ -353,6 +353,7 @@ void OSystem_Android::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
+	ConfMan.set("browser_lastpath", ConfMan.get("path"));
 
 	if (ConfMan.hasKey("touchpad_mouse_mode"))
 		_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");

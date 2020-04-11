@@ -1805,7 +1805,7 @@ android)
 		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
 		exit 1
 	fi
-	ndk_version=$(sed -En -e 's/^Pkg.Revision\s*=\s*([0-9a-f]+).*/\1/p' "$ANDROID_NDK/source.properties")
+	ndk_version=$(sed -En -e 's/^Pkg.Revision *= *([0-9a-f]+).*/\1/p' "$ANDROID_NDK/source.properties")
 	if [ -z "$ndk_version" -o "$ndk_version" -lt 18 ]; then
 		echo "Need Android NDK r18 or later to compile! Found version '$ndk_version'"
 		exit 1
