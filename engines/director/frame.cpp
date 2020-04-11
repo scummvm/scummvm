@@ -25,6 +25,7 @@
 
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/maceditabletext.h"
 #include "graphics/primitives.h"
 
 #include "director/director.h"
@@ -871,9 +872,11 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textRect) {
 	TextCast *textCast = (TextCast*)_sprites[spriteId]->_cast;
+	Score *score = _vm->getCurrentScore();
+	Sprite *sprite = _sprites[spriteId];
 
-	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
-	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
+	int x = sprite->_startPoint.x; // +rectLeft;
+	int y = sprite->_startPoint.y; // +rectTop;
 	int height = textCast->_initialRect.height(); //_sprites[spriteId]->_height;
 	int width;
 
@@ -896,6 +899,13 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (width == 0 || height == 0) {
 		warning("Frame::renderText(): Requested to draw on an empty surface: %d x %d", width, height);
 		return;
+	}
+
+	if (sprite->_editable) {
+		if (!sprite->_widget) {
+			sprite->_widget = new Graphics::MacEditableText(score->_window, x, y, width, height, g_director->_wm, "", nullptr, sprite->_foreColor, sprite->_backColor);
+			warning("Created MacEditableText");
+		}
 	}
 
 	debugC(3, kDebugText, "renderText: sprite: %d x: %d y: %d w: %d h: %d fontId: '%d' text: '%s'", spriteId, x, y, width, height, textCast->_fontId, Common::toPrintable(textCast->_ftext).c_str());
@@ -954,9 +964,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		if (width % 2 != 0)
 			x++;
 
-		if (_sprites[spriteId]->_spriteType != kCastMemberSprite) {
+		if (sprite->_spriteType != kCastMemberSprite) {
 			y += 2;
-			switch (_sprites[spriteId]->_spriteType) {
+			switch (sprite->_spriteType) {
 			case kCheckboxSprite:
 				textX += 16;
 				break;
@@ -1002,7 +1012,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	}
 
 	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
-	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), _vm->getCurrentScore()->getStageColor());
+	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), score->getStageColor());
 
 	if (textRect == NULL && boxShadow > 0) {
 		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);
@@ -1021,9 +1031,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY), 0xff);
 
-	InkType ink = _sprites[spriteId]->_ink;
+	InkType ink = sprite->_ink;
 
-	if (spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId)
+	if (spriteId == score->_currentMouseDownSpriteId)
 		ink = kInkTypeReverse;
 
 	inkBasedBlit(surface, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height), spriteId);

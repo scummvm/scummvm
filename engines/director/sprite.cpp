@@ -55,6 +55,7 @@ Sprite::Sprite() {
 	_type = kInactiveSprite;
 
 	_cast = nullptr;
+	_widget = nullptr;
 
 	_blend = 0;
 	_thickness = 0;
