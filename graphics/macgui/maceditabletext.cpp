@@ -45,7 +45,7 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacEditableText::MacEditableText( MacWidget *parent,int x, int y, int w, int h, MacWindowManager *wm, Common::U32String s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
+MacEditableText::MacEditableText(MacWidget *parent,int x, int y, int w, int h, MacWindowManager *wm, Common::U32String s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
 		MacWidget(parent, x, y, w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
 
 	_maxWidth = maxWidth;

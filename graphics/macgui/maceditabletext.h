@@ -87,6 +87,9 @@ public:
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 
+	void setActive(bool active) {}
+	bool hasAllFocus() { return false; }
+
 private:
 	void init();
 	bool isCutAllowed();
