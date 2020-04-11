@@ -183,18 +183,18 @@ void idMan::clearID(uint16 id) {
 	assert(!_first || _last);
 }
 
-void idMan::save(ODataSource *ods) {
-	ods->writeUint16LE(_begin);
-	ods->writeUint16LE(_end);
-	ods->writeUint16LE(_maxEnd);
-	ods->writeUint16LE(_startCount);
-	ods->writeUint16LE(_usedCount);
+void idMan::save(Common::WriteStream *ws) {
+	ws->writeUint16LE(_begin);
+	ws->writeUint16LE(_end);
+	ws->writeUint16LE(_maxEnd);
+	ws->writeUint16LE(_startCount);
+	ws->writeUint16LE(_usedCount);
 	uint16 cur = _first;
 	while (cur) {
-		ods->writeUint16LE(cur);
+		ws->writeUint16LE(cur);
 		cur = _ids[cur];
 	}
-	ods->writeUint16LE(0); // terminator
+	ws->writeUint16LE(0); // terminator
 }
 
 bool idMan::load(IDataSource *ds, uint32 version) {

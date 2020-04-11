@@ -292,7 +292,7 @@ public:
 	};
 
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	int16 _strength;
 	int16 _dexterity;

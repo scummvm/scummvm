@@ -200,7 +200,7 @@ public:
 	// Set the entire map as being 'fast'
 	void setWholeMapFast();
 
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ws);
 	bool load(IDataSource *ids, uint32 version);
 
 	INTRINSIC(I_canExistAt);

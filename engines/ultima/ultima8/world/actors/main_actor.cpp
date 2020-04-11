@@ -393,17 +393,17 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	if (frame_ == 0) shape_ = 0;
 }
 
-void MainActor::saveData(ODataSource *ods) {
-	Actor::saveData(ods);
+void MainActor::saveData(Common::WriteStream *ws) {
+	Actor::saveData(ws);
 	uint8 jt = _justTeleported ? 1 : 0;
-	ods->writeByte(jt);
-	ods->writeUint32LE(_accumStr);
-	ods->writeUint32LE(_accumDex);
-	ods->writeUint32LE(_accumInt);
+	ws->writeByte(jt);
+	ws->writeUint32LE(_accumStr);
+	ws->writeUint32LE(_accumDex);
+	ws->writeUint32LE(_accumInt);
 	uint8 namelength = static_cast<uint8>(_name.size());
-	ods->writeByte(namelength);
+	ws->writeByte(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		ods->writeByte(static_cast<uint8>(_name[i]));
+		ws->writeByte(static_cast<uint8>(_name[i]));
 
 }
 

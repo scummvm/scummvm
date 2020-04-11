@@ -81,8 +81,8 @@ void AvatarDeathProcess::run() {
 	terminate();
 }
 
-void AvatarDeathProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void AvatarDeathProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 }
 
 bool AvatarDeathProcess::loadData(IDataSource *ids, uint32 version) {

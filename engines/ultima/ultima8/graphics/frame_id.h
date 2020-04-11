@@ -41,7 +41,7 @@ struct FrameID {
 		: _flexId(flex), _shapeNum(shape), _frameNum(frame) {
 	}
 
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ws);
 	bool load(IDataSource *ids);
 };
 

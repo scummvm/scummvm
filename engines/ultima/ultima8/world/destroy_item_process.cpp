@@ -77,8 +77,8 @@ void DestroyItemProcess::run() {
 	// NOTE: we're terminated here because this process belongs to the item
 }
 
-void DestroyItemProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void DestroyItemProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 }
 
 bool DestroyItemProcess::loadData(IDataSource *ids, uint32 version) {

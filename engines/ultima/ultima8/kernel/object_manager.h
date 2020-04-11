@@ -64,7 +64,7 @@ public:
 	void objectStats();
 	void objectTypes();
 
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ws);
 	bool load(IDataSource *ids, uint32 version);
 
 	Object *loadObject(IDataSource *ids, uint32 version);

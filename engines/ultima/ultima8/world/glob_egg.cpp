@@ -79,8 +79,8 @@ void GlobEgg::enterFastArea() {
 	Item::enterFastArea();
 }
 
-void GlobEgg::saveData(ODataSource *ods) {
-	Item::saveData(ods);
+void GlobEgg::saveData(Common::WriteStream *ws) {
+	Item::saveData(ws);
 }
 
 bool GlobEgg::loadData(IDataSource *ids, uint32 version) {

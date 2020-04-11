@@ -63,19 +63,19 @@ void CreateItemProcess::run() {
 	terminate();
 }
 
-void CreateItemProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void CreateItemProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(_shape);
-	ods->writeUint32LE(_frame);
-	ods->writeUint16LE(_quality);
-	ods->writeUint16LE(_flags);
-	ods->writeUint16LE(_npcNum);
-	ods->writeUint16LE(_mapNum);
-	ods->writeUint32LE(_extendedFlags);
-	ods->writeUint32LE(static_cast<uint32>(_x));
-	ods->writeUint32LE(static_cast<uint32>(_y));
-	ods->writeUint32LE(static_cast<uint32>(_z));
+	ws->writeUint32LE(_shape);
+	ws->writeUint32LE(_frame);
+	ws->writeUint16LE(_quality);
+	ws->writeUint16LE(_flags);
+	ws->writeUint16LE(_npcNum);
+	ws->writeUint16LE(_mapNum);
+	ws->writeUint32LE(_extendedFlags);
+	ws->writeUint32LE(static_cast<uint32>(_x));
+	ws->writeUint32LE(static_cast<uint32>(_y));
+	ws->writeUint32LE(static_cast<uint32>(_z));
 }
 
 bool CreateItemProcess::loadData(IDataSource *ids, uint32 version) {

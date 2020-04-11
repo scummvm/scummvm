@@ -59,11 +59,11 @@ void Egg::leaveFastArea() {
 	Item::leaveFastArea();
 }
 
-void Egg::saveData(ODataSource *ods) {
-	Item::saveData(ods);
+void Egg::saveData(Common::WriteStream *ws) {
+	Item::saveData(ws);
 
 	uint8 h = _hatched ? 1 :  0;
-	ods->writeByte(h);
+	ws->writeByte(h);
 }
 
 bool Egg::loadData(IDataSource *ids, uint32 version) {

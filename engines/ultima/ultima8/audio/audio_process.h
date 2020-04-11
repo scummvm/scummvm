@@ -119,7 +119,7 @@ public:
 	bool loadData(IDataSource *ids, uint32 version);
 
 private:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 	uint32 _paused;
 
 	//! play the next speech sample for the text in this SampleInfo

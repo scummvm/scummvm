@@ -53,11 +53,11 @@ void TeleportToEggProcess::run() {
 	terminate();
 }
 
-void TeleportToEggProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void TeleportToEggProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_mapNum));
-	ods->writeUint32LE(static_cast<uint32>(_teleportId));
+	ws->writeUint32LE(static_cast<uint32>(_mapNum));
+	ws->writeUint32LE(static_cast<uint32>(_teleportId));
 }
 
 bool TeleportToEggProcess::loadData(IDataSource *ids, uint32 version) {

@@ -279,7 +279,7 @@ bool ShapeViewerGump::loadData(IDataSource *ids) {
 	return false;
 }
 
-void ShapeViewerGump::saveData(ODataSource *ods) {
+void ShapeViewerGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 

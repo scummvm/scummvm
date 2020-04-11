@@ -29,10 +29,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
-void FrameID::save(ODataSource *ods) {
-	ods->writeUint16LE(_flexId);
-	ods->writeUint32LE(_shapeNum);
-	ods->writeUint32LE(_frameNum);
+void FrameID::save(Common::WriteStream *ws) {
+	ws->writeUint16LE(_flexId);
+	ws->writeUint32LE(_shapeNum);
+	ws->writeUint32LE(_frameNum);
 }
 
 bool FrameID::load(IDataSource *ids) {

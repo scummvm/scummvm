@@ -346,13 +346,13 @@ void GravityProcess::dumpInfo() const {
 }
 
 
-void GravityProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void GravityProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_gravity));
-	ods->writeUint32LE(static_cast<uint32>(_xSpeed));
-	ods->writeUint32LE(static_cast<uint32>(_ySpeed));
-	ods->writeUint32LE(static_cast<uint32>(_zSpeed));
+	ws->writeUint32LE(static_cast<uint32>(_gravity));
+	ws->writeUint32LE(static_cast<uint32>(_xSpeed));
+	ws->writeUint32LE(static_cast<uint32>(_ySpeed));
+	ws->writeUint32LE(static_cast<uint32>(_zSpeed));
 }
 
 bool GravityProcess::loadData(IDataSource *ids, uint32 version) {

@@ -45,7 +45,7 @@ public:
 	bool startInitialUsecode(int saveSlot) override;
 
 	//! write game-specific savegame info (avatar stats, equipment, ...)
-	void writeSaveInfo(ODataSource *ods) override;
+	void writeSaveInfo(Common::WriteStream *ws) override;
 
 	ProcId playIntroMovie(bool fade) override;
 	ProcId playEndgameMovie(bool fade) override;

@@ -122,7 +122,7 @@ uint32 ReadableGump::I_readPlaque(const uint8 *args, unsigned int /*argsize*/) {
 	return gump->GetNotifyProcess()->getPid();
 }
 
-void ReadableGump::saveData(ODataSource *ods) {
+void ReadableGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 }
 

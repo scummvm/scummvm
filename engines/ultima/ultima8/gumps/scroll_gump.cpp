@@ -98,7 +98,7 @@ uint32 ScrollGump::I_readScroll(const uint8 *args, unsigned int /*argsize*/) {
 	return gump->GetNotifyProcess()->getPid();
 }
 
-void ScrollGump::saveData(ODataSource *ods) {
+void ScrollGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 

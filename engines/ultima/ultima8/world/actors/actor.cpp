@@ -1073,21 +1073,21 @@ void Actor::dumpInfo() const {
 	     << Std::dec << Std::endl;
 }
 
-void Actor::saveData(ODataSource *ods) {
-	Container::saveData(ods);
-	ods->writeUint16LE(_strength);
-	ods->writeUint16LE(_dexterity);
-	ods->writeUint16LE(_intelligence);
-	ods->writeUint16LE(_hitPoints);
-	ods->writeUint16LE(_mana);
-	ods->writeUint16LE(_alignment);
-	ods->writeUint16LE(_enemyAlignment);
-	ods->writeUint16LE(_lastAnim);
-	ods->writeUint16LE(_animFrame);
-	ods->writeUint16LE(_direction);
-	ods->writeUint32LE(_fallStart);
-	ods->writeUint32LE(_actorFlags);
-	ods->writeByte(_unk0C);
+void Actor::saveData(Common::WriteStream *ws) {
+	Container::saveData(ws);
+	ws->writeUint16LE(_strength);
+	ws->writeUint16LE(_dexterity);
+	ws->writeUint16LE(_intelligence);
+	ws->writeUint16LE(_hitPoints);
+	ws->writeUint16LE(_mana);
+	ws->writeUint16LE(_alignment);
+	ws->writeUint16LE(_enemyAlignment);
+	ws->writeUint16LE(_lastAnim);
+	ws->writeUint16LE(_animFrame);
+	ws->writeUint16LE(_direction);
+	ws->writeUint32LE(_fallStart);
+	ws->writeUint32LE(_actorFlags);
+	ws->writeByte(_unk0C);
 }
 
 bool Actor::loadData(IDataSource *ids, uint32 version) {

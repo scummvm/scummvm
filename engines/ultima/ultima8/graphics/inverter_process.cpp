@@ -76,10 +76,10 @@ void InverterProcess::run() {
 	}
 }
 
-void InverterProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void InverterProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint16LE(static_cast<uint16>(_targetState));
+	ws->writeUint16LE(static_cast<uint16>(_targetState));
 }
 
 bool InverterProcess::loadData(IDataSource *ids, uint32 version) {

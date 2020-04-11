@@ -107,7 +107,7 @@ public:
 
 
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	void useInventoryItem(uint32 shapenum);
 

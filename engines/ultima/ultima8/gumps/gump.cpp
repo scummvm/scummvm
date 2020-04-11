@@ -781,35 +781,35 @@ bool Gump::mustSave(bool toplevel) const {
 	return true;
 }
 
-void Gump::saveData(ODataSource *ods) {
-	Object::saveData(ods);
+void Gump::saveData(Common::WriteStream *ws) {
+	Object::saveData(ws);
 
-	ods->writeUint16LE(_owner);
-	ods->writeUint32LE(static_cast<uint32>(_x));
-	ods->writeUint32LE(static_cast<uint32>(_y));
-	ods->writeUint32LE(static_cast<uint32>(_dims.x));
-	ods->writeUint32LE(static_cast<uint32>(_dims.y));
-	ods->writeUint32LE(static_cast<uint32>(_dims.w));
-	ods->writeUint32LE(static_cast<uint32>(_dims.h));
-	ods->writeUint32LE(_flags);
-	ods->writeUint32LE(static_cast<uint32>(_layer));
-	ods->writeUint32LE(static_cast<uint32>(_index));
+	ws->writeUint16LE(_owner);
+	ws->writeUint32LE(static_cast<uint32>(_x));
+	ws->writeUint32LE(static_cast<uint32>(_y));
+	ws->writeUint32LE(static_cast<uint32>(_dims.x));
+	ws->writeUint32LE(static_cast<uint32>(_dims.y));
+	ws->writeUint32LE(static_cast<uint32>(_dims.w));
+	ws->writeUint32LE(static_cast<uint32>(_dims.h));
+	ws->writeUint32LE(_flags);
+	ws->writeUint32LE(static_cast<uint32>(_layer));
+	ws->writeUint32LE(static_cast<uint32>(_index));
 
 	uint16 flex = 0;
 	uint32 shapenum = 0;
 	if (_shape) {
 		_shape->getShapeId(flex, shapenum);
 	}
-	ods->writeUint16LE(flex);
-	ods->writeUint32LE(shapenum);
+	ws->writeUint16LE(flex);
+	ws->writeUint32LE(shapenum);
 
-	ods->writeUint32LE(_frameNum);
+	ws->writeUint32LE(_frameNum);
 	if (_focusChild)
-		ods->writeUint16LE(_focusChild->getObjId());
+		ws->writeUint16LE(_focusChild->getObjId());
 	else
-		ods->writeUint16LE(0);
-	ods->writeUint16LE(_notifier);
-	ods->writeUint32LE(_processResult);
+		ws->writeUint16LE(0);
+	ws->writeUint16LE(_notifier);
+	ws->writeUint32LE(_processResult);
 
 	unsigned int childcount = 0;
 	Std::list<Gump *>::iterator it;
@@ -819,11 +819,11 @@ void Gump::saveData(ODataSource *ods) {
 	}
 
 	// write children:
-	ods->writeUint32LE(childcount);
+	ws->writeUint32LE(childcount);
 	for (it = _children.begin(); it != _children.end(); ++it) {
 		if (!(*it)->mustSave(false)) continue;
 
-		(*it)->save(ods);
+		(*it)->save(ws);
 	}
 }
 

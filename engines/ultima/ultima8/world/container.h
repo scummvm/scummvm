@@ -115,7 +115,7 @@ public:
 
 protected:
 	//! save Container data
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	Std::list<Item *> _contents;
 };

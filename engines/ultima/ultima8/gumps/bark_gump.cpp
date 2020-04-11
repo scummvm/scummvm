@@ -178,16 +178,16 @@ Gump *BarkGump::OnMouseDown(int button, int32 mx, int32 my) {
 	return this;
 }
 
-void BarkGump::saveData(ODataSource *ods) {
-	ItemRelativeGump::saveData(ods);
+void BarkGump::saveData(Common::WriteStream *ws) {
+	ItemRelativeGump::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_counter));
-	ods->writeUint16LE(_textWidget);
-	ods->writeUint32LE(_speechShapeNum);
-	ods->writeUint32LE(_speechLength);
-	ods->writeUint32LE(_totalTextHeight);
-	ods->writeUint32LE(static_cast<uint32>(_barked.size()));
-	ods->write(_barked.c_str(), _barked.size());
+	ws->writeUint32LE(static_cast<uint32>(_counter));
+	ws->writeUint16LE(_textWidget);
+	ws->writeUint32LE(_speechShapeNum);
+	ws->writeUint32LE(_speechLength);
+	ws->writeUint32LE(_totalTextHeight);
+	ws->writeUint32LE(static_cast<uint32>(_barked.size()));
+	ws->write(_barked.c_str(), _barked.size());
 }
 
 bool BarkGump::loadData(IDataSource *ids, uint32 version) {

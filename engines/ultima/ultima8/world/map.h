@@ -48,7 +48,7 @@ public:
 		return _fixedItems.size() == 0 && _dynamicItems.size() == 0;
 	}
 
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ods);
 	bool load(IDataSource *ids, uint32 version);
 
 private:

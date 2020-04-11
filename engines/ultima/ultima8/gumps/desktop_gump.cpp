@@ -111,7 +111,7 @@ void DesktopGump::RenderSurfaceChanged() {
 	Gump::RenderSurfaceChanged();
 }
 
-void DesktopGump::saveData(ODataSource *ods) {
+void DesktopGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save DesktopGump");
 }
 

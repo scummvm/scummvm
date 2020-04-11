@@ -60,7 +60,7 @@ public:
 	virtual void dumpInfo() const;
 
 	//! save this object
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ws);
 
 	//! Spawn a usecode function on this object
 	//! \param classid The usecode class to run
@@ -76,10 +76,10 @@ public:
 
 protected:
 	//! write the Object savegame header (mainly consisting of the classname)
-	void writeObjectHeader(ODataSource *ods) const;
+	void writeObjectHeader(Common::WriteStream *ws) const;
 
 	//! save the actual Object data
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(Common::WriteStream *ws);
 
 	ObjId _objId;
 };

@@ -75,7 +75,7 @@ public:
 	INTRINSIC(I_setEggId);
 
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	bool _hatched;
 };

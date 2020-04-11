@@ -77,8 +77,8 @@ void AvatarGravityProcess::run() {
 }
 
 
-void AvatarGravityProcess::saveData(ODataSource *ods) {
-	GravityProcess::saveData(ods);
+void AvatarGravityProcess::saveData(Common::WriteStream *ws) {
+	GravityProcess::saveData(ws);
 }
 
 bool AvatarGravityProcess::loadData(IDataSource *ids, uint32 version) {

@@ -211,9 +211,9 @@ void ObjectManager::allow64kObjects() {
 }
 
 
-void ObjectManager::save(ODataSource *ods) {
-	_objIDs->save(ods);
-	_actorIDs->save(ods);
+void ObjectManager::save(Common::WriteStream *ws) {
+	_objIDs->save(ws);
+	_actorIDs->save(ws);
 
 	for (unsigned int i = 0; i < _objects.size(); ++i) {
 		Object *object = _objects[i];
@@ -229,10 +229,10 @@ void ObjectManager::save(ODataSource *ods) {
 		// FIXME: This leaks _objIDs. See comment in ObjectManager::load().
 		if (gump && !gump->mustSave(true)) continue;
 
-		object->save(ods);
+		object->save(ws);
 	}
 
-	ods->writeUint16LE(0);
+	ws->writeUint16LE(0);
 }
 
 

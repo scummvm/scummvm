@@ -115,9 +115,9 @@ void BitSet::setBits(unsigned int pos, unsigned int n, uint32 bits) {
 	_data[lastbyte] |= (bits >> shift) & lastmask;
 }
 
-void BitSet::save(ODataSource *ods) {
-	ods->writeUint32LE(_size);
-	ods->write(_data, _bytes);
+void BitSet::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_size);
+	ws->write(_data, _bytes);
 }
 
 bool BitSet::load(IDataSource *ids, uint32 version) {

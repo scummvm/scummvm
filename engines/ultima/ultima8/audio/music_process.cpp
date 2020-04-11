@@ -227,12 +227,12 @@ void MusicProcess::run() {
 	}
 }
 
-void MusicProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void MusicProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_trackState._wanted));
-	ods->writeUint32LE(static_cast<uint32>(_trackState._lastRequest));
-	ods->writeUint32LE(static_cast<uint32>(_trackState._queued));
+	ws->writeUint32LE(static_cast<uint32>(_trackState._wanted));
+	ws->writeUint32LE(static_cast<uint32>(_trackState._lastRequest));
+	ws->writeUint32LE(static_cast<uint32>(_trackState._queued));
 }
 
 bool MusicProcess::loadData(IDataSource *ids, uint32 version) {

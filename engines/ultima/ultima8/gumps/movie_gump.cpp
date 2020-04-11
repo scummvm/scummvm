@@ -116,7 +116,7 @@ bool MovieGump::loadData(IDataSource *ids) {
 	return false;
 }
 
-void MovieGump::saveData(ODataSource *ods) {
+void MovieGump::saveData(Common::WriteStream *ws) {
 
 }
 

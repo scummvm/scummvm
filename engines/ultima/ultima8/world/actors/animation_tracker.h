@@ -108,7 +108,7 @@ public:
 	}
 
 	bool load(IDataSource *ids, uint32 version);
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ods);
 
 private:
 	enum Mode {

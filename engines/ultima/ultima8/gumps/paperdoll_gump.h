@@ -65,7 +65,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	//! Paint the stats
 	void PaintStats(RenderSurface *, int32 lerp_factor);

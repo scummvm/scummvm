@@ -104,10 +104,10 @@ void LoiterProcess::run() {
 	}
 }
 
-void LoiterProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void LoiterProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(_count);
+	ws->writeUint32LE(_count);
 }
 
 bool LoiterProcess::loadData(IDataSource *ids, uint32 version) {

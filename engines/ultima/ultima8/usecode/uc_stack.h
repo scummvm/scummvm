@@ -173,7 +173,7 @@ public:
 
 #ifdef USE_DYNAMIC_UCSTACK
 #define UCStack DynamicUCStack
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ods);
 	bool load(IDataSource *ids, uint32 version);
 #endif
 };
@@ -185,7 +185,7 @@ public:
 	UCStack() : BaseUCStack(0x1000, _bufArray) { }
 	~UCStack() override { }
 
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ods);
 	bool load(IDataSource *ids, uint32 version);
 };
 #endif

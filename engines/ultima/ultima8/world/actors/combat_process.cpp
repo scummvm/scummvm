@@ -329,12 +329,12 @@ void CombatProcess::dumpInfo() const {
 	pout << "Target: " << _target << Std::endl;
 }
 
-void CombatProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void CombatProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint16LE(_target);
-	ods->writeUint16LE(_fixedTarget);
-	ods->writeByte(static_cast<uint8>(_combatMode));
+	ws->writeUint16LE(_target);
+	ws->writeUint16LE(_fixedTarget);
+	ws->writeByte(static_cast<uint8>(_combatMode));
 }
 
 bool CombatProcess::loadData(IDataSource *ids, uint32 version) {

@@ -71,24 +71,24 @@ ProcId Object::callUsecode(uint16 classid, uint16 offset,
 }
 
 
-void Object::save(ODataSource *ods) {
-	writeObjectHeader(ods);
-	saveData(ods); // virtual
+void Object::save(Common::WriteStream *ws) {
+	writeObjectHeader(ws);
+	saveData(ws); // virtual
 }
 
-void Object::writeObjectHeader(ODataSource *ods) const {
+void Object::writeObjectHeader(Common::WriteStream *ws) const {
 	const char *cname = GetClassType()._className; // note: virtual
 	uint16 clen = strlen(cname);
 
-	ods->writeUint16LE(clen);
-	ods->write(cname, clen);
+	ws->writeUint16LE(clen);
+	ws->write(cname, clen);
 }
 
-void Object::saveData(ODataSource *ods) {
+void Object::saveData(Common::WriteStream *ws) {
 	// note: Object is unversioned. If we ever want to version it,
 	// increase the global savegame version
 
-	ods->writeUint16LE(_objId);
+	ws->writeUint16LE(_objId);
 }
 
 bool Object::loadData(IDataSource *ids, uint32 version) {

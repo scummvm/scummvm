@@ -76,8 +76,8 @@ void ActorBarkNotifyProcess::run() {
 	waitFor(delaypid);
 }
 
-void ActorBarkNotifyProcess::saveData(ODataSource *ods) {
-	GumpNotifyProcess::saveData(ods);
+void ActorBarkNotifyProcess::saveData(Common::WriteStream *ws) {
+	GumpNotifyProcess::saveData(ws);
 }
 
 bool ActorBarkNotifyProcess::loadData(IDataSource *ids, uint32 version) {

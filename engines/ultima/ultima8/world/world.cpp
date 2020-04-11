@@ -336,13 +336,13 @@ void World::worldStats() const {
 	}
 }
 
-void World::save(ODataSource *ods) {
-	ods->writeUint32LE(_currentMap->getNum());
+void World::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_currentMap->getNum());
 
-	ods->writeUint16LE(_currentMap->_eggHatcher);
+	ws->writeUint16LE(_currentMap->_eggHatcher);
 
 	uint16 es = static_cast<uint16>(_ethereal.size());
-	ods->writeUint32LE(es);
+	ws->writeUint32LE(es);
 
 	// empty stack and refill it again
 	uint16 *e = new uint16[es];
@@ -354,7 +354,7 @@ void World::save(ODataSource *ods) {
 	}
 
 	for (i = 0; i < es; ++i) {
-		ods->writeUint16LE(e[i]);
+		ws->writeUint16LE(e[i]);
 	}
 	delete[] e;
 }
@@ -374,10 +374,10 @@ bool World::load(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-void World::saveMaps(ODataSource *ods) {
-	ods->writeUint32LE(static_cast<uint32>(_maps.size()));
+void World::saveMaps(Common::WriteStream *ws) {
+	ws->writeUint32LE(static_cast<uint32>(_maps.size()));
 	for (unsigned int i = 0; i < _maps.size(); ++i) {
-		_maps[i]->save(ods);
+		_maps[i]->save(ws);
 	}
 }
 

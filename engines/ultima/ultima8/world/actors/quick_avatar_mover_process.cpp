@@ -158,10 +158,10 @@ void QuickAvatarMoverProcess::startMover(int x, int y, int z, int dir) {
 	}
 }
 
-void QuickAvatarMoverProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void QuickAvatarMoverProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(_dir);
+	ws->writeUint32LE(_dir);
 	// don't save more information. We plan to terminate upon load
 }
 

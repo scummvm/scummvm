@@ -179,7 +179,7 @@ void ButtonWidget::OnMouseLeft() {
 	}
 }
 
-void ButtonWidget::saveData(ODataSource *ods) {
+void ButtonWidget::saveData(Common::WriteStream *ws) {
 	// HACK ALERT
 	int w = 0, h = 0;
 	if (_textWidget != 0) {
@@ -189,7 +189,7 @@ void ButtonWidget::saveData(ODataSource *ods) {
 		_dims.h = _origH;
 	}
 
-	Gump::saveData(ods);
+	Gump::saveData(ws);
 
 	// HACK ALERT
 	if (_textWidget != 0) {
@@ -202,23 +202,23 @@ void ButtonWidget::saveData(ODataSource *ods) {
 	if (_shapeUp) {
 		_shapeUp->getShapeId(flex, shapenum);
 	}
-	ods->writeUint16LE(flex);
-	ods->writeUint32LE(shapenum);
-	ods->writeUint32LE(_frameNumUp);
+	ws->writeUint16LE(flex);
+	ws->writeUint32LE(shapenum);
+	ws->writeUint32LE(_frameNumUp);
 
 	flex = 0;
 	shapenum = 0;
 	if (_shapeDown) {
 		_shapeDown->getShapeId(flex, shapenum);
 	}
-	ods->writeUint16LE(flex);
-	ods->writeUint32LE(shapenum);
-	ods->writeUint32LE(_frameNumDown);
-	ods->writeUint16LE(_textWidget);
-	ods->writeUint32LE(_mouseOverBlendCol);
+	ws->writeUint16LE(flex);
+	ws->writeUint32LE(shapenum);
+	ws->writeUint32LE(_frameNumDown);
+	ws->writeUint16LE(_textWidget);
+	ws->writeUint32LE(_mouseOverBlendCol);
 
 	uint8 m = (_mouseOver ? 1 : 0);
-	ods->writeByte(m);
+	ws->writeByte(m);
 }
 
 bool ButtonWidget::loadData(IDataSource *ids, uint32 version) {

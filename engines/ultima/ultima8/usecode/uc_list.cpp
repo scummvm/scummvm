@@ -116,10 +116,10 @@ void UCList::removeString(uint16 s, bool nodel) {
 	}
 }
 
-void UCList::save(ODataSource *ods) {
-	ods->writeUint32LE(_elementSize);
-	ods->writeUint32LE(_size);
-	ods->write(&(_elements[0]), _size * _elementSize);
+void UCList::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_elementSize);
+	ws->writeUint32LE(_size);
+	ws->write(&(_elements[0]), _size * _elementSize);
 }
 
 

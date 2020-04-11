@@ -305,12 +305,12 @@ void Container::dumpInfo() const {
 	     << ", total weight: " << getTotalWeight() << Std::endl;
 }
 
-void Container::saveData(ODataSource *ods) {
-	Item::saveData(ods);
-	ods->writeUint32LE(static_cast<uint32>(_contents.size()));
+void Container::saveData(Common::WriteStream *ws) {
+	Item::saveData(ws);
+	ws->writeUint32LE(static_cast<uint32>(_contents.size()));
 	Std::list<Item *>::iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		(*iter)->save(ods);
+		(*iter)->save(ws);
 	}
 }
 

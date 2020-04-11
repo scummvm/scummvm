@@ -1758,25 +1758,25 @@ bool Item::canMergeWith(Item *other) {
 }
 
 
-void Item::saveData(ODataSource *ods) {
-	Object::saveData(ods);
-	ods->writeUint16LE(static_cast<uint16>(_extendedFlags));
-	ods->writeUint16LE(_flags);
-	ods->writeUint16LE(static_cast<uint16>(_shape));
-	ods->writeUint16LE(static_cast<uint16>(_frame));
-	ods->writeUint16LE(static_cast<uint16>(_x));
-	ods->writeUint16LE(static_cast<uint16>(_y));
-	ods->writeUint16LE(static_cast<uint16>(_z));
-	ods->writeUint16LE(_quality);
-	ods->writeUint16LE(_npcNum);
-	ods->writeUint16LE(_mapNum);
+void Item::saveData(Common::WriteStream *ws) {
+	Object::saveData(ws);
+	ws->writeUint16LE(static_cast<uint16>(_extendedFlags));
+	ws->writeUint16LE(_flags);
+	ws->writeUint16LE(static_cast<uint16>(_shape));
+	ws->writeUint16LE(static_cast<uint16>(_frame));
+	ws->writeUint16LE(static_cast<uint16>(_x));
+	ws->writeUint16LE(static_cast<uint16>(_y));
+	ws->writeUint16LE(static_cast<uint16>(_z));
+	ws->writeUint16LE(_quality);
+	ws->writeUint16LE(_npcNum);
+	ws->writeUint16LE(_mapNum);
 	if (getObjId() != 0xFFFF) {
 		// these only make sense in currently loaded items
-		ods->writeUint16LE(_gump);
-		ods->writeUint16LE(_gravityPid);
+		ws->writeUint16LE(_gump);
+		ws->writeUint16LE(_gravityPid);
 	}
 	if ((_flags & FLG_ETHEREAL) && (_flags & (FLG_CONTAINED | FLG_EQUIPPED)))
-		ods->writeUint16LE(_parent);
+		ws->writeUint16LE(_parent);
 }
 
 bool Item::loadData(IDataSource *ids, uint32 version) {

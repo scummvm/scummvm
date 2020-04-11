@@ -171,8 +171,8 @@ void ItemRelativeGump::Move(int32 x, int32 y) {
 	_y += y;
 }
 
-void ItemRelativeGump::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void ItemRelativeGump::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 }
 
 bool ItemRelativeGump::loadData(IDataSource *ids, uint32 version) {

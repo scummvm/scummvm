@@ -910,24 +910,24 @@ void Ultima8Engine::handleDelayedEvents() {
 
 }
 
-void Ultima8Engine::writeSaveInfo(ODataSource *ods) {
+void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {
 	TimeDate timeInfo;
 	g_system->getTimeAndDate(timeInfo);
 
-	ods->writeUint16LE(static_cast<uint16>(timeInfo.tm_year + 1900));
-	ods->writeByte(static_cast<uint8>(timeInfo.tm_mon + 1));
-	ods->writeByte(static_cast<uint8>(timeInfo.tm_mday));
-	ods->writeByte(static_cast<uint8>(timeInfo.tm_hour));
-	ods->writeByte(static_cast<uint8>(timeInfo.tm_min));
-	ods->writeByte(static_cast<uint8>(timeInfo.tm_sec));
-	ods->writeUint32LE(_saveCount);
-	ods->writeUint32LE(getGameTimeInSeconds());
+	ws->writeUint16LE(static_cast<uint16>(timeInfo.tm_year + 1900));
+	ws->writeByte(static_cast<uint8>(timeInfo.tm_mon + 1));
+	ws->writeByte(static_cast<uint8>(timeInfo.tm_mday));
+	ws->writeByte(static_cast<uint8>(timeInfo.tm_hour));
+	ws->writeByte(static_cast<uint8>(timeInfo.tm_min));
+	ws->writeByte(static_cast<uint8>(timeInfo.tm_sec));
+	ws->writeUint32LE(_saveCount);
+	ws->writeUint32LE(getGameTimeInSeconds());
 
 	uint8 c = (_hasCheated ? 1 : 0);
-	ods->writeByte(c);
+	ws->writeByte(c);
 
 	// write _game-specific info
-	_game->writeSaveInfo(ods);
+	_game->writeSaveInfo(ws);
 }
 
 bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
@@ -1377,24 +1377,24 @@ uint32 Ultima8Engine::getGameTimeInSeconds() {
 }
 
 
-void Ultima8Engine::save(ODataSource *ods) {
+void Ultima8Engine::save(Common::WriteStream *ws) {
 	uint8 s = (_avatarInStasis ? 1 : 0);
-	ods->writeByte(s);
+	ws->writeByte(s);
 
 	int32 absoluteTime = Kernel::get_instance()->getFrameNum() + _timeOffset;
-	ods->writeUint32LE(static_cast<uint32>(absoluteTime));
-	ods->writeUint16LE(_avatarMoverProcess->getPid());
+	ws->writeUint32LE(static_cast<uint32>(absoluteTime));
+	ws->writeUint16LE(_avatarMoverProcess->getPid());
 
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	for (int i = 0; i < 12; i++) ods->writeUint16LE(pal->_matrix[i]);
-	ods->writeUint16LE(pal->_transform);
+	for (int i = 0; i < 12; i++) ws->writeUint16LE(pal->_matrix[i]);
+	ws->writeUint16LE(pal->_transform);
 
-	ods->writeUint16LE(static_cast<uint16>(_inversion));
+	ws->writeUint16LE(static_cast<uint16>(_inversion));
 
-	ods->writeUint32LE(_saveCount);
+	ws->writeUint32LE(_saveCount);
 
 	uint8 c = (_hasCheated ? 1 : 0);
-	ods->writeByte(c);
+	ws->writeByte(c);
 }
 
 bool Ultima8Engine::load(IDataSource *ids, uint32 version) {

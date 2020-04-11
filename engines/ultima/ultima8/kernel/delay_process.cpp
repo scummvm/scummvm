@@ -59,9 +59,9 @@ bool DelayProcess::loadData(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-void DelayProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
-	ods->writeUint32LE(static_cast<uint32>(_count));
+void DelayProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
+	ws->writeUint32LE(static_cast<uint32>(_count));
 }
 
 } // End of namespace Ultima8

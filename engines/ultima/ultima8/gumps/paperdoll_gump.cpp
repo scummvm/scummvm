@@ -409,10 +409,10 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 }
 
 
-void PaperdollGump::saveData(ODataSource *ods) {
-	ContainerGump::saveData(ods);
+void PaperdollGump::saveData(Common::WriteStream *ws) {
+	ContainerGump::saveData(ws);
 
-	ods->writeUint16LE(_statButtonId);
+	ws->writeUint16LE(_statButtonId);
 }
 
 bool PaperdollGump::loadData(IDataSource *ids, uint32 version) {

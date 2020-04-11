@@ -109,7 +109,7 @@ uint32 TargetGump::I_target(const uint8 * /*args*/, unsigned int /*argsize*/) {
 
 
 
-void TargetGump::saveData(ODataSource *ods) {
+void TargetGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 

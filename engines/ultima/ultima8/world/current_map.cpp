@@ -1268,10 +1268,10 @@ void CurrentMap::setWholeMapFast() {
 	}
 }
 
-void CurrentMap::save(ODataSource *ods) {
+void CurrentMap::save(Common::WriteStream *ws) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS / 32; ++j) {
-			ods->writeUint32LE(_fast[i][j]);
+			ws->writeUint32LE(_fast[i][j]);
 		}
 	}
 }

@@ -87,7 +87,7 @@ public:
 	void        RenderSurfaceChanged() override;
 
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	bool _displayDragging;
 	uint32 _draggingShape;

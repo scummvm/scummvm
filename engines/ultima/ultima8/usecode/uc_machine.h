@@ -76,9 +76,9 @@ public:
 	bool assignPointer(uint32 ptr, const uint8 *data, uint32 size);
 	bool dereferencePointer(uint32 ptr, uint8 *data, uint32 size);
 
-	void saveGlobals(ODataSource *ods);
-	void saveStrings(ODataSource *ods);
-	void saveLists(ODataSource *ods);
+	void saveGlobals(Common::WriteStream *ws);
+	void saveStrings(Common::WriteStream *ws);
+	void saveLists(Common::WriteStream *ws);
 
 	bool loadGlobals(IDataSource *ids, uint32 version);
 	bool loadStrings(IDataSource *ids, uint32 version);

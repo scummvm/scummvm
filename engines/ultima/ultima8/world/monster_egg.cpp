@@ -90,8 +90,8 @@ uint16 MonsterEgg::hatch() {
 	return objID;
 }
 
-void MonsterEgg::saveData(ODataSource *ods) {
-	Item::saveData(ods);
+void MonsterEgg::saveData(Common::WriteStream *ws) {
+	Item::saveData(ws);
 }
 
 bool MonsterEgg::loadData(IDataSource *ids, uint32 version) {

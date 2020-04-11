@@ -81,8 +81,8 @@ void ResurrectionProcess::run() {
 		terminate();
 }
 
-void ResurrectionProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void ResurrectionProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 }
 
 bool ResurrectionProcess::loadData(IDataSource *ids, uint32 version) {

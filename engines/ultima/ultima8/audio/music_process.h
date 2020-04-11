@@ -59,7 +59,7 @@ public:
 	};
 
 private:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	//! Play a music track
 	//! \param track The track number to play. Pass 0 to stop music

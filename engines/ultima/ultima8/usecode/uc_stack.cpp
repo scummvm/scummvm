@@ -28,11 +28,11 @@
 namespace Ultima {
 namespace Ultima8 {
 
-void UCStack::save(ODataSource *ods) {
-	ods->writeUint32LE(_size);
-	ods->writeUint32LE(getSP());
+void UCStack::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_size);
+	ws->writeUint32LE(getSP());
 
-	ods->write(_bufPtr, stacksize());
+	ws->write(_bufPtr, stacksize());
 }
 
 bool UCStack::load(IDataSource *ids, uint32 version) {

@@ -269,22 +269,22 @@ uint16 CameraProcess::FindRoof(int32 factor) {
 	return roofid;
 }
 
-void CameraProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void CameraProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_sx));
-	ods->writeUint32LE(static_cast<uint32>(_sy));
-	ods->writeUint32LE(static_cast<uint32>(_sz));
-	ods->writeUint32LE(static_cast<uint32>(_ex));
-	ods->writeUint32LE(static_cast<uint32>(_ey));
-	ods->writeUint32LE(static_cast<uint32>(_ez));
-	ods->writeUint32LE(static_cast<uint32>(_time));
-	ods->writeUint32LE(static_cast<uint32>(_elapsed));
-	ods->writeUint16LE(_itemNum);
-	ods->writeUint32LE(_lastFrameNum);
-	ods->writeUint32LE(static_cast<uint32>(_earthquake));
-	ods->writeUint32LE(static_cast<uint32>(_eqX));
-	ods->writeUint32LE(static_cast<uint32>(_eqY));
+	ws->writeUint32LE(static_cast<uint32>(_sx));
+	ws->writeUint32LE(static_cast<uint32>(_sy));
+	ws->writeUint32LE(static_cast<uint32>(_sz));
+	ws->writeUint32LE(static_cast<uint32>(_ex));
+	ws->writeUint32LE(static_cast<uint32>(_ey));
+	ws->writeUint32LE(static_cast<uint32>(_ez));
+	ws->writeUint32LE(static_cast<uint32>(_time));
+	ws->writeUint32LE(static_cast<uint32>(_elapsed));
+	ws->writeUint16LE(_itemNum);
+	ws->writeUint32LE(_lastFrameNum);
+	ws->writeUint32LE(static_cast<uint32>(_earthquake));
+	ws->writeUint32LE(static_cast<uint32>(_eqX));
+	ws->writeUint32LE(static_cast<uint32>(_eqY));
 }
 
 bool CameraProcess::loadData(IDataSource *ids, uint32 version) {

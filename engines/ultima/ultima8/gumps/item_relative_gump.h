@@ -55,7 +55,7 @@ public:
 
 	bool                loadData(IDataSource *ids, uint32 version);
 protected:
-	void        saveData(ODataSource *ods) override;
+	void        saveData(Common::WriteStream *ws) override;
 
 	virtual void        GetItemLocation(int32 lerp_factor);
 

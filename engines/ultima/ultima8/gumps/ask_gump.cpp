@@ -117,10 +117,10 @@ void AskGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-void AskGump::saveData(ODataSource *ods) {
-	ItemRelativeGump::saveData(ods);
+void AskGump::saveData(Common::WriteStream *ws) {
+	ItemRelativeGump::saveData(ws);
 
-	_answers->save(ods);
+	_answers->save(ws);
 }
 
 bool AskGump::loadData(IDataSource *ids, uint32 version) {

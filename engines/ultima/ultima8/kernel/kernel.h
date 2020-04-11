@@ -98,7 +98,7 @@ public:
 	void kernelStats();
 	void processTypes();
 
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ws);
 	bool load(IDataSource *ids, uint32 version);
 
 	void pause() {

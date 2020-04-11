@@ -146,7 +146,7 @@ bool QuitGump::loadData(IDataSource *ids) {
 	return true;
 }
 
-void QuitGump::saveData(ODataSource *ods) {
+void QuitGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 

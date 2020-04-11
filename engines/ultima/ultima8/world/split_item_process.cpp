@@ -90,10 +90,10 @@ void SplitItemProcess::run() {
 		terminate();
 }
 
-void SplitItemProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void SplitItemProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint16LE(_target);
+	ws->writeUint16LE(_target);
 }
 
 bool SplitItemProcess::loadData(IDataSource *ids, uint32 version) {

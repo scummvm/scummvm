@@ -214,19 +214,19 @@ Gump *TextWidget::OnMouseMotion(int32 mx, int32 my) {
 }
 
 
-void TextWidget::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void TextWidget::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 
-	ods->writeByte(_gameFont ? 1 : 0);
-	ods->writeUint32LE(static_cast<uint32>(_fontNum));
-	ods->writeUint32LE(_blendColour);
-	ods->writeUint32LE(static_cast<uint32>(_currentStart));
-	ods->writeUint32LE(static_cast<uint32>(_currentEnd));
-	ods->writeUint32LE(static_cast<uint32>(_targetWidth));
-	ods->writeUint32LE(static_cast<uint32>(_targetHeight));
-	ods->writeUint16LE(static_cast<uint16>(_textAlign));
-	ods->writeUint32LE(_text.size());
-	ods->write(_text.c_str(), _text.size());
+	ws->writeByte(_gameFont ? 1 : 0);
+	ws->writeUint32LE(static_cast<uint32>(_fontNum));
+	ws->writeUint32LE(_blendColour);
+	ws->writeUint32LE(static_cast<uint32>(_currentStart));
+	ws->writeUint32LE(static_cast<uint32>(_currentEnd));
+	ws->writeUint32LE(static_cast<uint32>(_targetWidth));
+	ws->writeUint32LE(static_cast<uint32>(_targetHeight));
+	ws->writeUint16LE(static_cast<uint16>(_textAlign));
+	ws->writeUint32LE(_text.size());
+	ws->write(_text.c_str(), _text.size());
 }
 
 bool TextWidget::loadData(IDataSource *ids, uint32 version) {

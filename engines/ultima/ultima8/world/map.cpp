@@ -278,12 +278,12 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 }
 
 
-void Map::save(ODataSource *ods) {
-	ods->writeUint32LE(static_cast<uint32>(_dynamicItems.size()));
+void Map::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(static_cast<uint32>(_dynamicItems.size()));
 
 	Std::list<Item *>::iterator iter;
 	for (iter = _dynamicItems.begin(); iter != _dynamicItems.end(); ++iter) {
-		(*iter)->save(ods);
+		(*iter)->save(ws);
 	}
 }
 

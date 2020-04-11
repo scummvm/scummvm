@@ -126,8 +126,8 @@ void MiniStatsGump::OnMouseDouble(int button, int32 mx, int32 my) {
 	Close();
 }
 
-void MiniStatsGump::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void MiniStatsGump::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 }
 
 bool MiniStatsGump::loadData(IDataSource *ids, uint32 version) {

@@ -74,10 +74,10 @@ void GumpNotifyProcess::dumpInfo() const {
 	pout << " gump: " << _gump << Std::endl;
 }
 
-void GumpNotifyProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void GumpNotifyProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint16LE(_gump);
+	ws->writeUint16LE(_gump);
 }
 
 bool GumpNotifyProcess::loadData(IDataSource *ids, uint32 version) {

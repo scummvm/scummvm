@@ -85,7 +85,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 private:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	int32 _sx, _sy, _sz;
 	int32 _ex, _ey, _ez;

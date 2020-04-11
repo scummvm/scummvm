@@ -80,11 +80,11 @@ void SchedulerProcess::run() {
 	}
 }
 
-void SchedulerProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void SchedulerProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(_lastRun);
-	ods->writeUint16LE(_nextActor);
+	ws->writeUint32LE(_lastRun);
+	ws->writeUint16LE(_nextActor);
 }
 
 bool SchedulerProcess::loadData(IDataSource *ids, uint32 version) {

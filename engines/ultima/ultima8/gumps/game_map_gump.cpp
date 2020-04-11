@@ -577,7 +577,7 @@ void GameMapGump::RenderSurfaceChanged() {
 	Gump::RenderSurfaceChanged();
 }
 
-void GameMapGump::saveData(ODataSource *ods) {
+void GameMapGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save GameMapGump");
 }
 

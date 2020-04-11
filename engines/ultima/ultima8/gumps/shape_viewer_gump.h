@@ -53,7 +53,7 @@ public:
 
 	bool loadData(IDataSource *ids);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	Std::vector<Std::pair<Std::string, ShapeArchive *> > _flexes;
 	unsigned int _curFlex;

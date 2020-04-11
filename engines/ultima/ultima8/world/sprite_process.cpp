@@ -111,20 +111,20 @@ uint32 SpriteProcess::I_createSprite(const uint8 *args, unsigned int argsize) {
 	return Kernel::get_instance()->addProcess(p);
 }
 
-void SpriteProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void SpriteProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_shape));
-	ods->writeUint32LE(static_cast<uint32>(_frame));
-	ods->writeUint32LE(static_cast<uint32>(_firstFrame));
-	ods->writeUint32LE(static_cast<uint32>(_lastFrame));
-	ods->writeUint32LE(static_cast<uint32>(_repeats));
-	ods->writeUint32LE(static_cast<uint32>(_delay));
-	ods->writeUint32LE(static_cast<uint32>(_x));
-	ods->writeUint32LE(static_cast<uint32>(_y));
-	ods->writeUint32LE(static_cast<uint32>(_z));
-	ods->writeUint32LE(static_cast<uint32>(_delayCounter));
-	ods->writeByte(_initialized ? 1 : 0);
+	ws->writeUint32LE(static_cast<uint32>(_shape));
+	ws->writeUint32LE(static_cast<uint32>(_frame));
+	ws->writeUint32LE(static_cast<uint32>(_firstFrame));
+	ws->writeUint32LE(static_cast<uint32>(_lastFrame));
+	ws->writeUint32LE(static_cast<uint32>(_repeats));
+	ws->writeUint32LE(static_cast<uint32>(_delay));
+	ws->writeUint32LE(static_cast<uint32>(_x));
+	ws->writeUint32LE(static_cast<uint32>(_y));
+	ws->writeUint32LE(static_cast<uint32>(_z));
+	ws->writeUint32LE(static_cast<uint32>(_delayCounter));
+	ws->writeByte(_initialized ? 1 : 0);
 }
 
 bool SpriteProcess::loadData(IDataSource *ids, uint32 version) {

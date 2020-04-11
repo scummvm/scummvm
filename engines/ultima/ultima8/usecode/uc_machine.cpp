@@ -2231,30 +2231,30 @@ void UCMachine::usecodeStats() const {
 #endif
 }
 
-void UCMachine::saveGlobals(ODataSource *ods) {
-	_globals->save(ods);
+void UCMachine::saveGlobals(Common::WriteStream *ws) {
+	_globals->save(ws);
 }
 
-void UCMachine::saveStrings(ODataSource *ods) {
-	_stringIDs->save(ods);
-	ods->writeUint32LE(static_cast<uint32>(_stringHeap.size()));
+void UCMachine::saveStrings(Common::WriteStream *ws) {
+	_stringIDs->save(ws);
+	ws->writeUint32LE(static_cast<uint32>(_stringHeap.size()));
 
 	Std::map<uint16, Std::string>::iterator iter;
 	for (iter = _stringHeap.begin(); iter != _stringHeap.end(); ++iter) {
-		ods->writeUint16LE((*iter)._key);
-		ods->writeUint32LE((*iter)._value.size());
-		ods->write((*iter)._value.c_str(), (*iter)._value.size());
+		ws->writeUint16LE((*iter)._key);
+		ws->writeUint32LE((*iter)._value.size());
+		ws->write((*iter)._value.c_str(), (*iter)._value.size());
 	}
 }
 
-void UCMachine::saveLists(ODataSource *ods) {
-	_listIDs->save(ods);
-	ods->writeUint32LE(_listHeap.size());
+void UCMachine::saveLists(Common::WriteStream *ws) {
+	_listIDs->save(ws);
+	ws->writeUint32LE(_listHeap.size());
 
 	Std::map<uint16, UCList *>::iterator iter;
 	for (iter = _listHeap.begin(); iter != _listHeap.end(); ++iter) {
-		ods->writeUint16LE((*iter)._key);
-		(*iter)._value->save(ods);
+		ws->writeUint16LE((*iter)._key);
+		(*iter)._value->save(ws);
 	}
 }
 

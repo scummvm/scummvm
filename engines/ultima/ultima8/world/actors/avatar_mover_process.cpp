@@ -818,12 +818,12 @@ void AvatarMoverProcess::OnMouseUp(int button) {
 }
 
 
-void AvatarMoverProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void AvatarMoverProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(_lastAttack);
-	ods->writeUint32LE(_idleTime);
-	ods->writeUint16LE(static_cast<uint8>(_lastHeadShakeAnim));
+	ws->writeUint32LE(_lastAttack);
+	ws->writeUint32LE(_idleTime);
+	ws->writeUint16LE(static_cast<uint8>(_lastHeadShakeAnim));
 }
 
 bool AvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {

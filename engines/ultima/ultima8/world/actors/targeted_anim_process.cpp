@@ -53,12 +53,12 @@ bool TargetedAnimProcess::init() {
 }
 
 
-void TargetedAnimProcess::saveData(ODataSource *ods) {
-	ActorAnimProcess::saveData(ods);
+void TargetedAnimProcess::saveData(Common::WriteStream *ws) {
+	ActorAnimProcess::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_x));
-	ods->writeUint32LE(static_cast<uint32>(_y));
-	ods->writeUint32LE(static_cast<uint32>(_z));
+	ws->writeUint32LE(static_cast<uint32>(_x));
+	ws->writeUint32LE(static_cast<uint32>(_y));
+	ws->writeUint32LE(static_cast<uint32>(_z));
 
 }
 

@@ -111,10 +111,10 @@ void StartU8Process::run() {
 	terminate();
 }
 
-void StartU8Process::saveData(ODataSource *ods) {
+void StartU8Process::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN();
 
-	Process::saveData(ods);
+	Process::saveData(ws);
 }
 
 bool StartU8Process::loadData(IDataSource *ids, uint32 version) {

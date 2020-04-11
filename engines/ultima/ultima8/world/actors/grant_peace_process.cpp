@@ -218,11 +218,11 @@ uint32 GrantPeaceProcess::I_castGrantPeace(const uint8 *args,
 	return 0;
 }
 
-void GrantPeaceProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void GrantPeaceProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
 	uint8 ht = _haveTarget ? 1 : 0;
-	ods->writeByte(ht);
+	ws->writeByte(ht);
 }
 
 bool GrantPeaceProcess::loadData(IDataSource *ids, uint32 version) {

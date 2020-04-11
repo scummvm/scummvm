@@ -65,8 +65,8 @@ void ClearFeignDeathProcess::run() {
 	terminate();
 }
 
-void ClearFeignDeathProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void ClearFeignDeathProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 }
 
 bool ClearFeignDeathProcess::loadData(IDataSource *ids, uint32 version) {

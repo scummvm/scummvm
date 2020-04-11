@@ -160,7 +160,7 @@ bool PagedGump::loadData(IDataSource *ids) {
 	return false;
 }
 
-void PagedGump::saveData(ODataSource *ods) {
+void PagedGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 

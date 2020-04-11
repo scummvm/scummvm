@@ -54,10 +54,10 @@ void MainMenuProcess::run() {
 	terminate();
 }
 
-void MainMenuProcess::saveData(ODataSource *ods) {
+void MainMenuProcess::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN();
 
-	Process::saveData(ods);
+	Process::saveData(ws);
 }
 
 bool MainMenuProcess::loadData(IDataSource *ids, uint32 version) {

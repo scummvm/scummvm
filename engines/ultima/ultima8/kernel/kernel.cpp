@@ -321,12 +321,12 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 	}
 }
 
-void Kernel::save(ODataSource *ods) {
-	ods->writeUint32LE(_frameNum);
-	_pIDs->save(ods);
-	ods->writeUint32LE(_processes.size());
+void Kernel::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_frameNum);
+	_pIDs->save(ws);
+	ws->writeUint32LE(_processes.size());
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		(*it)->save(ods);
+		(*it)->save(ws);
 	}
 }
 

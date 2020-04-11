@@ -72,7 +72,7 @@ struct GameInfo {
 
 	bool match(GameInfo &other, bool ignoreMD5 = false) const;
 
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ws);
 	bool load(IDataSource *ids, uint32 /* version */);
 };
 

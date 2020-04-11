@@ -240,41 +240,41 @@ void U8Game::playQuotes() {
 }
 
 
-void U8Game::writeSaveInfo(ODataSource *ods) {
+void U8Game::writeSaveInfo(Common::WriteStream *ws) {
 	MainActor *av = getMainActor();
 	int32 x, y, z;
 
 	const Std::string &avname = av->getName();
 	const uint8 namelength = static_cast<uint8>(avname.size());
-	ods->writeByte(namelength);
+	ws->writeByte(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		ods->writeByte(static_cast<uint8>(avname[i]));
+		ws->writeByte(static_cast<uint8>(avname[i]));
 
 	av->getLocation(x, y, z);
-	ods->writeUint16LE(av->getMapNum());
-	ods->writeUint32LE(static_cast<uint32>(x));
-	ods->writeUint32LE(static_cast<uint32>(y));
-	ods->writeUint32LE(static_cast<uint32>(z));
+	ws->writeUint16LE(av->getMapNum());
+	ws->writeUint32LE(static_cast<uint32>(x));
+	ws->writeUint32LE(static_cast<uint32>(y));
+	ws->writeUint32LE(static_cast<uint32>(z));
 
-	ods->writeUint16LE(av->getStr());
-	ods->writeUint16LE(av->getInt());
-	ods->writeUint16LE(av->getDex());
-	ods->writeUint16LE(av->getHP());
-	ods->writeUint16LE(av->getMaxHP());
-	ods->writeUint16LE(av->getMana());
-	ods->writeUint16LE(av->getMaxMana());
-	ods->writeUint16LE(av->getArmourClass());
-	ods->writeUint16LE(av->getTotalWeight());
+	ws->writeUint16LE(av->getStr());
+	ws->writeUint16LE(av->getInt());
+	ws->writeUint16LE(av->getDex());
+	ws->writeUint16LE(av->getHP());
+	ws->writeUint16LE(av->getMaxHP());
+	ws->writeUint16LE(av->getMana());
+	ws->writeUint16LE(av->getMaxMana());
+	ws->writeUint16LE(av->getArmourClass());
+	ws->writeUint16LE(av->getTotalWeight());
 
 	for (unsigned int i = 1; i <= 6; i++) {
 		uint16 objid = av->getEquip(i);
 		Item *item = getItem(objid);
 		if (item) {
-			ods->writeUint32LE(item->getShape());
-			ods->writeUint32LE(item->getFrame());
+			ws->writeUint32LE(item->getShape());
+			ws->writeUint32LE(item->getFrame());
 		} else {
-			ods->writeUint32LE(0);
-			ods->writeUint32LE(0);
+			ws->writeUint32LE(0);
+			ws->writeUint32LE(0);
 		}
 	}
 }

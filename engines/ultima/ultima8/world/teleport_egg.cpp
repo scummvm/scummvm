@@ -53,8 +53,8 @@ uint16 TeleportEgg::hatch() {
 	return 0;
 }
 
-void TeleportEgg::saveData(ODataSource *ods) {
-	Egg::saveData(ods);
+void TeleportEgg::saveData(Common::WriteStream *ws) {
+	Egg::saveData(ws);
 }
 
 bool TeleportEgg::loadData(IDataSource *ids, uint32 version) {

@@ -55,7 +55,7 @@ public:
 
 	bool loadData(IDataSource *ids);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 	int _leftOff, _rightOff, _topOff, _gumpShape;
 	Std::vector<Gump *> _gumps;
 	Gump *_nextButton;

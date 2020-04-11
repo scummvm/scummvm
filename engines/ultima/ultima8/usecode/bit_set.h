@@ -51,7 +51,7 @@ public:
 	//! \param bits the value to set
 	void setBits(unsigned int pos, unsigned int n, uint32 bits);
 
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ws);
 	bool load(IDataSource *ids, uint32 version);
 
 private:

@@ -143,10 +143,10 @@ private:
 
 private:
 	//! write savegame info (time, ..., game-specifics)
-	void writeSaveInfo(ODataSource *ods);
+	void writeSaveInfo(Common::WriteStream *ws);
 
 	//! save CoreApp/Ultima8Engine data
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ws);
 
 	//! load CoreApp/Ultima8Engine data
 	bool load(IDataSource *ids, uint32 version);

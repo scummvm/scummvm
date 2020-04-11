@@ -245,20 +245,20 @@ void PathfinderProcess::run() {
 	waitFor(animpid);
 }
 
-void PathfinderProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void PathfinderProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint16LE(_targetItem);
-	ods->writeUint16LE(static_cast<uint16>(_targetX));
-	ods->writeUint16LE(static_cast<uint16>(_targetY));
-	ods->writeUint16LE(static_cast<uint16>(_targetZ));
-	ods->writeByte(_hitMode ? 1 : 0);
-	ods->writeUint16LE(static_cast<uint16>(_currentStep));
+	ws->writeUint16LE(_targetItem);
+	ws->writeUint16LE(static_cast<uint16>(_targetX));
+	ws->writeUint16LE(static_cast<uint16>(_targetY));
+	ws->writeUint16LE(static_cast<uint16>(_targetZ));
+	ws->writeByte(_hitMode ? 1 : 0);
+	ws->writeUint16LE(static_cast<uint16>(_currentStep));
 
-	ods->writeUint16LE(static_cast<uint16>(_path.size()));
+	ws->writeUint16LE(static_cast<uint16>(_path.size()));
 	for (unsigned int i = 0; i < _path.size(); ++i) {
-		ods->writeUint16LE(static_cast<uint16>(_path[i]._action));
-		ods->writeUint16LE(static_cast<uint16>(_path[i]._direction));
+		ws->writeUint16LE(static_cast<uint16>(_path[i]._action));
+		ws->writeUint16LE(static_cast<uint16>(_path[i]._direction));
 	}
 }
 

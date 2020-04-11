@@ -631,26 +631,26 @@ void ActorAnimProcess::dumpInfo() const {
 	pout << "_action: " << _action << ", _dir: " << _dir << Std::endl;
 }
 
-void ActorAnimProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void ActorAnimProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
 	uint8 ff = _firstFrame ? 1 : 0;
-	ods->writeByte(ff);
+	ws->writeByte(ff);
 	uint8 ab = _animAborted ? 1 : 0;
-	ods->writeByte(ab);
+	ws->writeByte(ab);
 	uint8 attacked = _attackedSomething ? 1 : 0;
-	ods->writeByte(attacked);
-	ods->writeByte(static_cast<uint8>(_dir));
-	ods->writeUint16LE(static_cast<uint16>(_action));
-	ods->writeUint16LE(static_cast<uint16>(_steps));
-	ods->writeUint16LE(static_cast<uint16>(_repeatCounter));
-	ods->writeUint16LE(static_cast<uint16>(_currentStep));
+	ws->writeByte(attacked);
+	ws->writeByte(static_cast<uint8>(_dir));
+	ws->writeUint16LE(static_cast<uint16>(_action));
+	ws->writeUint16LE(static_cast<uint16>(_steps));
+	ws->writeUint16LE(static_cast<uint16>(_repeatCounter));
+	ws->writeUint16LE(static_cast<uint16>(_currentStep));
 
 	if (_tracker) {
-		ods->writeByte(1);
-		_tracker->save(ods);
+		ws->writeByte(1);
+		_tracker->save(ws);
 	} else
-		ods->writeByte(0);
+		ws->writeByte(0);
 }
 
 bool ActorAnimProcess::loadData(IDataSource *ids, uint32 version) {

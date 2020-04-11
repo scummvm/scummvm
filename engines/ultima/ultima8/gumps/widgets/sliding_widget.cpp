@@ -59,8 +59,8 @@ uint16 SlidingWidget::TraceObjId(int32 mx, int32 my) {
 		return 0;
 }
 
-void SlidingWidget::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void SlidingWidget::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 }
 
 bool SlidingWidget::loadData(IDataSource *ids, uint32 version) {

@@ -74,10 +74,10 @@ void AmbushProcess::run() {
 	terminate();
 }
 
-void AmbushProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void AmbushProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(_delayCount);
+	ws->writeUint32LE(_delayCount);
 }
 
 bool AmbushProcess::loadData(IDataSource *ids, uint32 version) {

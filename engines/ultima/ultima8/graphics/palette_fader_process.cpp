@@ -98,17 +98,17 @@ void PaletteFaderProcess::run() {
 	if (!_counter--) terminate();
 }
 
-void PaletteFaderProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void PaletteFaderProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_priority));
-	ods->writeUint32LE(static_cast<uint32>(_counter));
-	ods->writeUint32LE(static_cast<uint32>(_maxCounter));
+	ws->writeUint32LE(static_cast<uint32>(_priority));
+	ws->writeUint32LE(static_cast<uint32>(_counter));
+	ws->writeUint32LE(static_cast<uint32>(_maxCounter));
 	unsigned int i;
 	for (i = 0; i < 12; ++i)
-		ods->writeUint16LE(_oldMatrix[i]);
+		ws->writeUint16LE(_oldMatrix[i]);
 	for (i = 0; i < 12; ++i)
-		ods->writeUint16LE(_newMatrix[i]);
+		ws->writeUint16LE(_newMatrix[i]);
 }
 
 bool PaletteFaderProcess::loadData(IDataSource *ids, uint32 version) {

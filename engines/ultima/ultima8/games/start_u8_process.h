@@ -37,7 +37,7 @@ protected:
 	bool _skipStart;
 	int _saveSlot;
 
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 public:
 	StartU8Process(int saveSlot = -1);
 

@@ -557,7 +557,7 @@ protected:
 	ProcId _gravityPid;      // Item's GravityTracker (or 0)
 
 	//! save the actual Item data
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 private:
 

@@ -157,23 +157,23 @@ bool AudioProcess::continueSpeech(SampleInfo &si) {
 }
 
 
-void AudioProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void AudioProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeByte(static_cast<uint8>(_sampleInfo.size()));
+	ws->writeByte(static_cast<uint8>(_sampleInfo.size()));
 
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		ods->writeUint16LE(it->_sfxNum);
-		ods->writeUint16LE(it->_priority);
-		ods->writeUint16LE(it->_objId);
-		ods->writeUint16LE(it->_loops);
-		ods->writeUint32LE(it->_pitchShift);
-		ods->writeUint16LE(it->_volume);
+		ws->writeUint16LE(it->_sfxNum);
+		ws->writeUint16LE(it->_priority);
+		ws->writeUint16LE(it->_objId);
+		ws->writeUint16LE(it->_loops);
+		ws->writeUint32LE(it->_pitchShift);
+		ws->writeUint16LE(it->_volume);
 
 		if (it->_sfxNum == -1) { // Speech
-			ods->writeUint32LE(static_cast<uint32>(it->_barked.size()));
-			ods->write(it->_barked.c_str(), static_cast<uint32>(it->_barked.size()));
+			ws->writeUint32LE(static_cast<uint32>(it->_barked.size()));
+			ws->write(it->_barked.c_str(), static_cast<uint32>(it->_barked.size()));
 		}
 	}
 }

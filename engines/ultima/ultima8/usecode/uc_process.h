@@ -62,7 +62,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	void load(uint16 classid_, uint16 offset_, uint32 this_ptr = 0,
 	          int thissize = 0, const uint8 *args = 0, int argsize = 0);

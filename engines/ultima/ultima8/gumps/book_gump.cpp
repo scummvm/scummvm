@@ -110,7 +110,7 @@ uint32 BookGump::I_readBook(const uint8 *args, unsigned int /*argsize*/) {
 	return gump->GetNotifyProcess()->getPid();
 }
 
-void BookGump::saveData(ODataSource *ods) {
+void BookGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 

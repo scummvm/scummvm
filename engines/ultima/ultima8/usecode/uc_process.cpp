@@ -160,20 +160,20 @@ void UCProcess::dumpInfo() const {
 	}
 }
 
-void UCProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void UCProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint16LE(_bp);
-	ods->writeUint16LE(_classId);
-	ods->writeUint16LE(_ip);
-	ods->writeUint32LE(_temp32);
-	ods->writeUint32LE(static_cast<uint32>(_freeOnTerminate.size()));
+	ws->writeUint16LE(_bp);
+	ws->writeUint16LE(_classId);
+	ws->writeUint16LE(_ip);
+	ws->writeUint32LE(_temp32);
+	ws->writeUint32LE(static_cast<uint32>(_freeOnTerminate.size()));
 	Std::list<Std::pair<uint16, int> >::iterator iter;
 	for (iter = _freeOnTerminate.begin(); iter != _freeOnTerminate.end(); ++iter) {
-		ods->writeUint16LE(iter->first);
-		ods->writeUint32LE(static_cast<uint32>(iter->second));
+		ws->writeUint16LE(iter->first);
+		ws->writeUint32LE(static_cast<uint32>(iter->second));
 	}
-	_stack.save(ods);
+	_stack.save(ws);
 }
 
 bool UCProcess::loadData(IDataSource *ids, uint32 version) {

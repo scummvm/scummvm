@@ -129,13 +129,13 @@ public:
 	void worldStats() const;
 
 	//! save the Maps in World.
-	void saveMaps(ODataSource *ods);
+	void saveMaps(Common::WriteStream *ws);
 
 	//! load Maps
 	bool loadMaps(IDataSource *ids, uint32 version);
 
 	//! save the rest of the World data (ethereal items, current map number).
-	void save(ODataSource *ods);
+	void save(Common::WriteStream *ws);
 
 	//! load World data
 	bool load(IDataSource *ids, uint32 version);

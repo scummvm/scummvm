@@ -559,51 +559,51 @@ void AnimationTracker::getSpeed(int32 &dx, int32 &dy, int32 &dz) const {
 }
 
 
-void AnimationTracker::save(ODataSource *ods) {
-	ods->writeUint32LE(_startFrame);
-	ods->writeUint32LE(_endFrame);
+void AnimationTracker::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_startFrame);
+	ws->writeUint32LE(_endFrame);
 	uint8 ff = _firstFrame ? 1 : 0;
-	ods->writeByte(ff);
-	ods->writeUint32LE(_currentFrame);
+	ws->writeByte(ff);
+	ws->writeUint32LE(_currentFrame);
 
-	ods->writeUint16LE(_actor);
-	ods->writeByte(static_cast<uint8>(_dir));
+	ws->writeUint16LE(_actor);
+	ws->writeByte(static_cast<uint8>(_dir));
 
 	if (_animAction) {
-		ods->writeUint32LE(_animAction->_shapeNum);
-		ods->writeUint32LE(_animAction->_action);
+		ws->writeUint32LE(_animAction->_shapeNum);
+		ws->writeUint32LE(_animAction->_action);
 	} else {
-		ods->writeUint32LE(0);
-		ods->writeUint32LE(0);
+		ws->writeUint32LE(0);
+		ws->writeUint32LE(0);
 	}
 
-	ods->writeUint32LE(static_cast<uint32>(_prevX));
-	ods->writeUint32LE(static_cast<uint32>(_prevY));
-	ods->writeUint32LE(static_cast<uint32>(_prevZ));
-	ods->writeUint32LE(static_cast<uint32>(_x));
-	ods->writeUint32LE(static_cast<uint32>(_y));
-	ods->writeUint32LE(static_cast<uint32>(_z));
+	ws->writeUint32LE(static_cast<uint32>(_prevX));
+	ws->writeUint32LE(static_cast<uint32>(_prevY));
+	ws->writeUint32LE(static_cast<uint32>(_prevZ));
+	ws->writeUint32LE(static_cast<uint32>(_x));
+	ws->writeUint32LE(static_cast<uint32>(_y));
+	ws->writeUint32LE(static_cast<uint32>(_z));
 
-	ods->writeUint16LE(static_cast<uint16>(_mode));
+	ws->writeUint16LE(static_cast<uint16>(_mode));
 	if (_mode == TargetMode) {
-		ods->writeUint32LE(static_cast<uint32>(_targetDx));
-		ods->writeUint32LE(static_cast<uint32>(_targetDy));
-		ods->writeUint32LE(static_cast<uint32>(_targetDz));
-		ods->writeUint32LE(static_cast<uint32>(_targetOffGroundLeft));
+		ws->writeUint32LE(static_cast<uint32>(_targetDx));
+		ws->writeUint32LE(static_cast<uint32>(_targetDy));
+		ws->writeUint32LE(static_cast<uint32>(_targetDz));
+		ws->writeUint32LE(static_cast<uint32>(_targetOffGroundLeft));
 	}
 	uint8 fs = _firstStep ? 1 : 0;
-	ods->writeByte(fs);
+	ws->writeByte(fs);
 	uint8 fl = _flipped ? 1 : 0;
-	ods->writeByte(fl);
-	ods->writeUint32LE(_shapeFrame);
+	ws->writeByte(fl);
+	ws->writeUint32LE(_shapeFrame);
 
 	uint8 flag = _done ? 1 : 0;
-	ods->writeByte(flag);
+	ws->writeByte(flag);
 	flag = _blocked ? 1 : 0;
-	ods->writeByte(flag);
+	ws->writeByte(flag);
 	flag = _unsupported ? 1 : 0;
-	ods->writeByte(flag);
-	ods->writeUint16LE(_hitObject);
+	ws->writeByte(flag);
+	ws->writeUint16LE(_hitObject);
 }
 
 bool AnimationTracker::load(IDataSource *ids, uint32 version) {

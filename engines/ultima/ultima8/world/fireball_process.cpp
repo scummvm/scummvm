@@ -203,16 +203,16 @@ uint32 FireballProcess::I_TonysBalls(const uint8 *args,
 	return 0;
 }
 
-void FireballProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void FireballProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_xSpeed));
-	ods->writeUint32LE(static_cast<uint32>(_ySpeed));
-	ods->writeUint16LE(_target);
-	ods->writeUint16LE(_tail[0]);
-	ods->writeUint16LE(_tail[1]);
-	ods->writeUint16LE(_tail[2]);
-	ods->writeUint16LE(_age);
+	ws->writeUint32LE(static_cast<uint32>(_xSpeed));
+	ws->writeUint32LE(static_cast<uint32>(_ySpeed));
+	ws->writeUint16LE(_target);
+	ws->writeUint16LE(_tail[0]);
+	ws->writeUint16LE(_tail[1]);
+	ws->writeUint16LE(_tail[2]);
+	ws->writeUint16LE(_age);
 }
 
 bool FireballProcess::loadData(IDataSource *ids, uint32 version) {

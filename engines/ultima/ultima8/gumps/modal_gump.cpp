@@ -98,7 +98,7 @@ Gump *ModalGump::OnMouseDown(int button, int32 mx, int32 my) {
 }
 
 
-void ModalGump::saveData(ODataSource *ods) {
+void ModalGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 

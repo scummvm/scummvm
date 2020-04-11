@@ -167,7 +167,7 @@ ProcId MessageBoxGump::Show(Std::string _title, Std::string _message, uint32 tit
 	return gump->GetNotifyProcess()->getPid();
 }
 
-void MessageBoxGump::saveData(ODataSource *ods) {
+void MessageBoxGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 }
 

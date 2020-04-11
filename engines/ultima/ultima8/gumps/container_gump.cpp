@@ -534,13 +534,13 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 	}
 }
 
-void ContainerGump::saveData(ODataSource *ods) {
-	ItemRelativeGump::saveData(ods);
+void ContainerGump::saveData(Common::WriteStream *ws) {
+	ItemRelativeGump::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_itemArea.x));
-	ods->writeUint32LE(static_cast<uint32>(_itemArea.y));
-	ods->writeUint32LE(static_cast<uint32>(_itemArea.w));
-	ods->writeUint32LE(static_cast<uint32>(_itemArea.h));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.x));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.y));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.w));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.h));
 }
 
 bool ContainerGump::loadData(IDataSource *ids, uint32 version) {

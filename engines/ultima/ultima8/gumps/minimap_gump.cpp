@@ -195,8 +195,8 @@ uint32 MiniMapGump::sampleAtPoint(int x, int y, CurrentMap *currentmap) {
 	}
 }
 
-void MiniMapGump::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void MiniMapGump::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 }
 
 bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
