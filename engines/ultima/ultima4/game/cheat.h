@@ -37,13 +37,6 @@ public:
 	bool keyPressed(int key);
 
 private:
-	/**
-	 * Summons a creature given by 'creatureName'. This can either be given
-	 * as the creature's name, or the creature's id.  Once it finds the
-	 * creature to be summoned, it calls gameSpawnCreature() to spawn it.
-	 */
-	void summonCreature(const Common::String &name);
-
 	GameController *_game;
 };
 

@@ -23,6 +23,7 @@
 #ifndef ULTIMA4_CORE_DEBUGGER_H
 #define ULTIMA4_CORE_DEBUGGER_H
 
+#include "ultima/ultima4/core/types.h"
 #include "ultima/shared/engine/debugger.h"
 
 namespace Ultima {
@@ -33,6 +34,8 @@ namespace Ultima4 {
  */
 class Debugger : public Shared::Debugger {
 private:
+	MapTile _horse, _ship, _balloon;
+private:
 	/**
 	 * Prints a message to the console if it's active, or to the
 	 * game screen if not
@@ -40,14 +43,31 @@ private:
 	void print(const char *fmt, ...);
 
 	/**
+	 * Summons a creature given by 'creatureName'. This can either be given
+	 * as the creature's name, or the creature's id.  Once it finds the
+	 * creature to be summoned, it calls gameSpawnCreature() to spawn it.
+	 */
+	void summonCreature(const Common::String &name);
+private:
+	/**
 	 * Collision detection on/off
 	 */
 	bool cmdCollisions(int argc, const char **argv);
 
 	/**
+	 * Have all the companions join the party
+	 */
+	bool cmdCompanions(int argc, const char **argv);
+
+	/**
 	 * All equipement
 	 */
 	bool cmdEquipment(int argc, const char **argv);
+
+	/**
+	 * Exit the current location
+	 */
+	bool cmdExit(int argc, const char **argv);
 
 	/**
 	 * Moongate teleportation
@@ -60,14 +80,80 @@ private:
 	bool cmdGoto(int argc, const char **argv);
 
 	/**
+	 * Grant karma
+	 */
+	bool cmdKarma(int argc, const char **argv);
+
+	/**
+	 * Give all the items
+	 */
+	bool cmdItems(int argc, const char **argv);
+
+	/**
+	 * Displays the current location
+	 */
+	bool cmdLocation(int argc, const char **argv);
+
+	/**
+	 * Give all the mixtures
+	 */
+	bool cmdMixtures(int argc, const char **argv);
+
+	/**
 	 * Moon phase
 	 */
 	bool cmdMoon(int argc, const char **argv);
 
 	/**
+	 * Toggle opacity
+	 */
+	bool cmdOpacity(int argc, const char **argv);
+
+	/**
+	 * Peer
+	 */
+	bool cmdPeer(int argc, const char **argv);
+
+	/**
+	 * Give all the reagents
+	 */
+	bool cmdReagents(int argc, const char **argv);
+
+	/**
 	 * Full stats
 	 */
 	bool cmdStats(int argc, const char **argv);
+
+	/**
+	 * Summons a creature to fight
+	 */
+	bool cmdSummon(int argc, const char **argv);
+
+	/**
+	 * Creates a given transport
+	 */
+	bool cmdTransport(int argc, const char **argv);
+
+	/**
+	 * Move up a floor
+	 */
+	bool cmdUp(int argc, const char **argv);
+
+	/**
+	 * Move down a floor
+	 */
+	bool cmdDown(int argc, const char **argv);
+
+	/**
+	 * Gives full virtue, or increments a specific virtue
+	 */
+	bool cmdVirtue(int argc, const char **argv);
+
+	/**
+	 * Set wind direction or locks the direction
+	 */
+	bool cmdWind(int argc, const char **argv);
+
 public:
 	bool _collisionOverride;
 public:
