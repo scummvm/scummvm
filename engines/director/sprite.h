@@ -60,7 +60,6 @@ enum MainChannelsPosition {
 class Sprite {
 public:
 	Sprite();
-	Sprite(const Sprite &sprite);
 	~Sprite();
 
 	uint16 getPattern();
