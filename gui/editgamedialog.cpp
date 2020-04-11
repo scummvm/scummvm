@@ -584,6 +584,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			}
 			ConfMan.renameGameDomain(_domain, newDomain);
 			_domain = newDomain;
+			if (_engineOptions) {
+				_engineOptions->setDomain(newDomain);
+			}
 		}
 	}
 	// fall through

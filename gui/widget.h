@@ -471,6 +471,7 @@ public:
 	virtual bool save() = 0;
 
 	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
+	void setDomain(const Common::String &domain) { _domain = domain; }
 
 protected:
 	enum {
@@ -495,7 +496,7 @@ protected:
 	 */
 	virtual void defineLayout(ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {}
 
-	const Common::String _domain;
+	Common::String _domain;
 	const Common::String _dialogLayout;
 
 	Dialog *_parentDialog;
