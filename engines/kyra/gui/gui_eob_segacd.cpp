@@ -41,7 +41,7 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 
 	_screen->sega_fadeToBlack(_loading ? 0 : 1);
 	_screen->sega_selectPalette(6, 1);
-	_screen->sega_selectPalette(8, 2);
+	_screen->sega_selectPalette(7, 3);
 
 	// transposeScreenOutputY(8);
 	_txt->clearDim(0);
@@ -239,7 +239,7 @@ void EoBEngine::gui_displayMap() {
 	_screen->sega_clearTextBuffer(0);
 
 	_screen->sega_clearTextBuffer(0);
-	_txt->printShadowedText(_mapStrings2[_currentLevel - 1], 0, 0, 0xFF, 0, 64, 16, false);
+	_txt->printShadowedText(_mapStrings2[_currentLevel - 1], 0, 0, 0xFF, 0, 64, 16, 0, false);
 	_screen->sega_loadTextBufferToVRAM(0, 0x7C20, 512);
 	r->fillRectWithTiles(0, 31, 16, 8, 2, 0x63E1, true);
 
@@ -438,14 +438,14 @@ void EoBEngine::drawMapButton(const char *str, int x, int y) {
 	_screen->sega_drawClippedLine(8, 9, x, y, 64, 14, 0x99);
 	_screen->sega_drawClippedLine(8, 9, x, y + 1, 63, 13, 0xBB);
 	_screen->sega_drawClippedLine(8, 9, x + 1, y + 1, 62, 12, 0xAA);
-	_txt->printShadowedText(str, x + 14, y + 1, 0xFF, 0xCC, 64, 72, false);
+	_txt->printShadowedText(str, x + 14, y + 1, 0xFF, 0xCC, 64, 72, 0, false);
 }
 
 void EoBEngine::drawMapPage(int level) {
 	int temp = 0;
 	_screen->sega_clearTextBuffer(0);
 	int cs = _screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat | Font::kStyleNarrow1);
-	_txt->printShadowedText(_mapStrings3[level - 1], 0, 0, 0xCC, 0, 48, 16, false);
+	_txt->printShadowedText(_mapStrings3[level - 1], 0, 0, 0xCC, 0, 48, 16, 0, false);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_loadTextBufferToVRAM(0, 0x7920, 384);
 	SegaRenderer *r = _screen->sega_getRenderer();

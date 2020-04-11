@@ -276,7 +276,7 @@ void EoBEngine::startupNew() {
 	_screen->selectPC98Palette(0, _screen->getPalette(0));
 	if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->sega_selectPalette(4, 0);
-		_screen->sega_selectPalette(7, 3);
+		_screen->sega_selectPalette(8, 2);
 		makeNameShapes();
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
 		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
@@ -299,7 +299,7 @@ void EoBEngine::startupLoad() {
 
 	if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->sega_selectPalette(4, 0);
-		_screen->sega_selectPalette(7, 3);
+		_screen->sega_selectPalette(8, 2);
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
 		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
 		_txt->clearDim(0);
@@ -956,6 +956,79 @@ void EoBEngine::snd_updateLevelScore() {
 
 	_levelCurTrack = track;
 	snd_playSong(track);
+}
+
+void EoBEngine::displayParchment(int id) {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::displayParchment(id);
+		return;
+	}
+
+	if (id < 46 || id > 50)
+		return;
+
+	uint32 startTime = _system->getMillis();
+	disableSysTimer(2);
+
+	_screen->sega_fadeToBlack(2);
+
+	int temp = 0;
+	const char *const *strings = _staticres->loadStrings(kEoB1ParchmentStrings, temp);
+
+	_sceneShakeCountdown = 0;
+	for (int i = 0; i < 6; i++) {
+		if (!testCharacter(i, 1))
+			continue;
+		_characters[i].damageTaken = 0;
+		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = _characters[i].gfxUpdateCountdown = 0;
+		gui_drawCharPortraitWithStats(i);
+	}
+
+	SegaRenderer *r = _screen->sega_getRenderer();
+	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
+	r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
+	_screen->sega_getAnimator()->clearSprites();
+	_screen->sega_getAnimator()->update();
+	_screen->sega_selectPalette(54, 2);
+	int cs = _screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth | Font::kStyleNarrow2 : Font::kStyleForceTwoByte | Font::kStyleFat | Font::kStyleNarrow2);
+
+	snd_stopSound();
+	uint8 *data = _res->fileData("LT", 0);
+
+	int numPages = (id == 46) ? 3 : 1;
+	int curPage = (id == 46) ? 4 : id - 47;
+	for (int i = 0; i < numPages && !shouldQuit(); ++i) {
+		_screen->sega_copyToTextBuffer(data, 22464);
+		_txt->printShadowedText(strings[curPage++], 16, 16, 0x22, 0, 208, 216, 16, false);
+		_screen->sega_loadTextBufferToVRAM(0, 0x20, 22464);
+		r->fillRectWithTiles(0, 7, 0, 26, 27, 0x4001, true);
+		r->render(0);
+
+		_screen->sega_fadeToNeutral(1);
+
+		resetSkipFlag();
+		_allowSkip = true;
+		while (!(shouldQuit() || skipFlag()))
+			delay(20);
+		_allowSkip = false;
+		resetSkipFlag();
+
+		_screen->sega_fadeToBlack(1);
+	}
+
+	delete[] data;
+	_screen->setFontStyles(_screen->_currentFont, cs);
+	setLevelPalettes(_currentLevel);
+	gui_drawPlayField(true);
+	gui_drawAllCharPortraitsWithStats();
+	snd_playLevelScore();
+
+	enableSysTimer(2);
+	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
+}
+
+void EoBEngine::drawParchmentPage(int page) {
+	
 }
 
 bool EoBEngine::checkPartyStatusExtra() {

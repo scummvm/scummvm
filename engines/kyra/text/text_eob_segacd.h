@@ -37,7 +37,7 @@ public:
 	TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr);
 	virtual ~TextDisplayer_SegaCD();
 
-	void printShadowedText(const char *str, int x = -1, int y = -1, int textColor = -1, int shadowColor = -1, int pitchW = -1, int pitchH = -1, bool screenUpdate = true) override;
+	void printShadowedText(const char *str, int x = -1, int y = -1, int textColor = -1, int shadowColor = -1, int pitchW = -1, int pitchH = -1, int marginRight = 0, bool screenUpdate = true) override;
 	int clearDim(int dim) override;
 
 private:

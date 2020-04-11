@@ -251,6 +251,11 @@ void Screen_EoB::sega_copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 lineHe
 	}
 }
 
+void Screen_EoB::sega_copyToTextBuffer(const uint8 *src, uint16 size) {
+	assert(size <= _textRenderBufferSize);
+	memcpy(_textRenderBuffer, src, size);
+}
+
 void Screen_EoB::sega_drawTextBox(int pW, int pH, int x, int y, int w, int h, uint8 color1, uint8 color2) {
 	sega_drawClippedLine(26, 5, x, y, w, 1, color1);
 	sega_drawClippedLine(26, 5, x, y + h - 1, w, 1, color1);

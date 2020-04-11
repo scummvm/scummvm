@@ -37,7 +37,7 @@ TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) :
 TextDisplayer_SegaCD::~TextDisplayer_SegaCD() {
 }
 
-void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int textColor, int shadowColor, int pitchW, int pitchH, bool screenUpdate) {
+void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int textColor, int shadowColor, int pitchW, int pitchH, int marginRight, bool screenUpdate) {
 	const ScreenDim *s = &_dimTable[_curDim];
 	if (x == -1)
 		x = s->sx;
@@ -52,7 +52,7 @@ void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int 
 	if (pitchH == -1)
 		pitchH = s->h;
 
-	_screen->setTextMarginRight(pitchW);
+	_screen->setTextMarginRight(pitchW - marginRight);
 	_screen->printShadedText(str, x, y, textColor, 0, shadowColor, pitchW >> 3);
 
 	if (!screenUpdate)

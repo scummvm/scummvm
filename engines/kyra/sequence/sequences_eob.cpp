@@ -2575,7 +2575,7 @@ void EoBEngine::seq_segaFinalCredits() {
 					pos++;
 
 				_screen->setFontStyles(_screen->_currentFont, styles);
-				_txt->printShadowedText(pos, 120 - (_screen->getTextWidth(pos) >> 1), 0, 0xFF, 0xCC, -1, -1, false);
+				_txt->printShadowedText(pos, 120 - (_screen->getTextWidth(pos) >> 1), 0, 0xFF, 0xCC, -1, -1, 0, false);
 				curStr++;
 			}
 		} else {
@@ -2623,17 +2623,17 @@ void EoBEngine::seq_segaShowStats() {
 	int styles = _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
 	int cs = _screen->setFontStyles(_screen->_currentFont, styles);
 
-	_txt->printShadowedText(_finBonusStrings[2], 90, 8, 0xFF, 0x00, -1, -1, false);
+	_txt->printShadowedText(_finBonusStrings[2], 90, 8, 0xFF, 0x00, -1, -1, 0, false);
 
 	styles |= Font::kStyleNarrow2;
 	_screen->setFontStyles(_screen->_currentFont, styles);
 
-	_txt->printShadowedText(_finBonusStrings[3], 48, 28, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(_finBonusStrings[4], 48, 40, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(_finBonusStrings[5], 48, 52, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(_finBonusStrings[6], 48, 64, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(_finBonusStrings[7], 48, 76, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(_finBonusStrings[8], 48, 88, 0xFF, 0x00, -1, -1, false);
+	_txt->printShadowedText(_finBonusStrings[3], 48, 28, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(_finBonusStrings[4], 48, 40, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(_finBonusStrings[5], 48, 52, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(_finBonusStrings[6], 48, 64, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(_finBonusStrings[7], 48, 76, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(_finBonusStrings[8], 48, 88, 0xFF, 0x00, -1, -1, 0, false);
 
 	styles &= ~(Font::kStyleNarrow2);
 	_screen->setFontStyles(_screen->_currentFont, styles);
@@ -2646,12 +2646,12 @@ void EoBEngine::seq_segaShowStats() {
 			++specialSearches;
 	}
 
-	_txt->printShadowedText(Common::String::format("%u:%02u:%02u", _totalPlaySecs / 3600, _totalPlaySecs / 60, _totalPlaySecs).c_str(), 148, 28, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(Common::String::format("%u", _totalEnemiesKilled).c_str(), 148, 40, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(Common::String::format("%u", _totalSteps).c_str(), 148, 52, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(Common::String::format("%u(%u%%)", partyArrows, partyArrows * 100 / 26).c_str(), 148, 64, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(Common::String::format("%u(%u%%)", numMaps, numMaps * 100 / 12).c_str(), 148, 76, 0xFF, 0x00, -1, -1, false);
-	_txt->printShadowedText(Common::String::format("%u(%u%%)", specialSearches, specialSearches * 100 / 12).c_str(), 148, 88, 0xFF, 0x00, -1, -1, false);
+	_txt->printShadowedText(Common::String::format("%u:%02u:%02u", _totalPlaySecs / 3600, _totalPlaySecs / 60, _totalPlaySecs).c_str(), 148, 28, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(Common::String::format("%u", _totalEnemiesKilled).c_str(), 148, 40, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(Common::String::format("%u", _totalSteps).c_str(), 148, 52, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(Common::String::format("%u(%u%%)", partyArrows, partyArrows * 100 / 26).c_str(), 148, 64, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(Common::String::format("%u(%u%%)", numMaps, numMaps * 100 / 12).c_str(), 148, 76, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadowedText(Common::String::format("%u(%u%%)", specialSearches, specialSearches * 100 / 12).c_str(), 148, 88, 0xFF, 0x00, -1, -1, 0, false);
 
 	if (checkScriptFlags(0x1FFE)) {
 		const char pwgen[] = "A15BZFQ3CDXYEKNM279GHIUSJLR84P6T";
@@ -2665,9 +2665,9 @@ void EoBEngine::seq_segaShowStats() {
 		}
 		password[5] = pwgen[v];
 
-		_txt->printShadowedText(_finBonusStrings[0], 30, 108, 0x22, 0x00, -1, -1, false);
-		_txt->printShadowedText(_finBonusStrings[1], 30, 132, 0x22, 0x00, -1, -1, false);
-		_txt->printShadowedText(password, 140, 156, 0xFF, 0x00, -1, -1, false);
+		_txt->printShadowedText(_finBonusStrings[0], 30, 108, 0x22, 0x00, -1, -1, 0, false);
+		_txt->printShadowedText(_finBonusStrings[1], 30, 132, 0x22, 0x00, -1, -1, 0, false);
+		_txt->printShadowedText(password, 140, 156, 0xFF, 0x00, -1, -1, 0, false);
 	}
 
 	_screen->sega_loadTextBufferToVRAM(0, 32, 28160);
@@ -2682,7 +2682,7 @@ void EoBEngine::seq_segaShowStats() {
 	_screen->sega_fadeToNeutral(3);
 
 	resetSkipFlag();
-	_allowSkip = false;
+	_allowSkip = true;
 
 	while (!(shouldQuit() || skipFlag()))
 		delay(20);

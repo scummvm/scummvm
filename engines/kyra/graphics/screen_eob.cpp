@@ -258,13 +258,13 @@ void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, 
 }
 
 void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol, int pitch) {
-	if (_isSegaCD) {
+	if (_isSegaCD && shadowCol) {
 		printText(string, x + 1, y + 1, shadowCol, 0, pitch);
-	} else if (_vm->gameFlags().lang != Common::JA_JPN) {
+	} else if (!_isSegaCD && _vm->gameFlags().lang != Common::JA_JPN) {
 		printText(string, x - 1, y, shadowCol, col2);
 		printText(string, x, y + 1, shadowCol, 0);
 		printText(string, x - 1, y + 1, shadowCol, 0);
-	} else if (col2) {
+	} else if (!_isSegaCD && col2) {
 		fillRect(x, y, x + getTextWidth(string) - 1, y + getFontHeight() - 1, col2);
 	}
 

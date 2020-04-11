@@ -176,6 +176,8 @@ private:
 	int _levelCurTrack;
 
 	// Misc
+	void displayParchment(int id) override;
+	void drawParchmentPage(int page);
 	bool checkPartyStatusExtra() override;
 	int resurrectionSelectDialogue() override;
 	void healParty();

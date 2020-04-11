@@ -147,6 +147,7 @@ public:
 	void sega_clearTextBuffer(uint8 col);
 	void sega_clearTextBufferLine(uint16 y, uint16 lineHeight, uint16 pitch, uint8 col);
 	void sega_copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 lineHeight, uint16 pitch);
+	void sega_copyToTextBuffer(const uint8 *src, uint16 size);
 	void sega_drawTextBox(int pW, int pH, int x, int y, int w, int h, uint8 color1, uint8 color2);
 	void sega_loadTextBufferToVRAM(uint16 srcOffset, uint16 addr, int size);
 	void sega_gfxScale(uint8 *out, uint16 w, uint16 h, uint16 pitch, const uint8 *in, const uint16 *stampMap, const uint16 *traceVectors);

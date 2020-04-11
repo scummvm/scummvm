@@ -900,7 +900,7 @@ protected:
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) override;
 
-	void displayParchment(int id);
+	virtual void displayParchment(int id);
 	int countResurrectionCandidates();
 
 	void seq_portal();
