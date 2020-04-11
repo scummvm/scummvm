@@ -756,7 +756,7 @@ void IntroController::showStory() {
 
 	_questionArea.setCursorFollowsText(true);
 
-	for (int storyInd = 0; storyInd < 24; storyInd++) {
+	for (int storyInd = 0; storyInd < 24 && !g_ultima->shouldQuit(); storyInd++) {
 		if (storyInd == 0)
 			_backgroundArea.draw(BKGD_TREE);
 		else if (storyInd == 3)
