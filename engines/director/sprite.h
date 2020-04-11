@@ -89,7 +89,8 @@ public:
 	// TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect
 	// As i know, constrainted != 0 only if sprite moveable
 	byte _constraint;
-	byte _moveable;
+	bool _moveable;
+	bool _editable;
 	byte _backColor;
 	byte _foreColor;
 

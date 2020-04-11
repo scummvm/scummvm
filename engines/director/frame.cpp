@@ -348,12 +348,13 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 
 			sprite._colorcode = stream->readByte();
 			sprite._blendAmount = stream->readByte();
-			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 			sprite._thickness = stream->readByte();
 			stream->readByte();	// unused
 		}
 
 		sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
+		sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
+		sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 
 		if (sprite._inkData & 0x40)
 			sprite._trails = 1;

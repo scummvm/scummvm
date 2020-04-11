@@ -35,7 +35,8 @@ Sprite::Sprite() {
 	_height = 0;
 	_castId = 0;
 	_constraint = 0;
-	_moveable = 0;
+	_moveable = false;
+	_editable = false;
 	_castId = 0;
 	_castIndex = 0;
 	_backColor = 255;
@@ -95,6 +96,7 @@ Sprite::Sprite(const Sprite &sprite) {
 
 	_constraint = sprite._constraint;
 	_moveable = sprite._moveable;
+	_editable = sprite._editable;
 	_blend = sprite._blend;
 	_startTime = sprite._startTime;
 	_thickness = sprite._thickness;
