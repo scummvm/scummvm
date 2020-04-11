@@ -384,11 +384,11 @@ void Person::runCommand(Conversation *cnv, const ResponsePart &command) {
 	} else if (command == ResponsePart::HEALCONFIRM) {
 		cnv->_state = Conversation::CONFIRMATION;
 	} else if (command == ResponsePart::STARTMUSIC_LB) {
-		musicMgr->lordBritish();
+		g_music->lordBritish();
 	} else if (command == ResponsePart::STARTMUSIC_HW) {
-		musicMgr->hawkwind();
+		g_music->hawkwind();
 	} else if (command == ResponsePart::STOPMUSIC) {
-		musicMgr->play();
+		g_music->play();
 	} else if (command == ResponsePart::HAWKWIND) {
 		g_context->_party->adjustKarma(KA_HAWKWIND);
 	} else {

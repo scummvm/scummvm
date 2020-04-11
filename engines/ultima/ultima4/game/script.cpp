@@ -1279,18 +1279,18 @@ Script::ReturnCode Script::karma(Shared::XMLNode *script, Shared::XMLNode *curre
 
 Script::ReturnCode Script::music(Shared::XMLNode *script, Shared::XMLNode *current) {
 	if (current->getPropertyBool("reset"))
-		musicMgr->play();
+		g_music->play();
 	else {
 		Common::String type = getPropAsStr(current, "type");
 
 		if (current->getPropertyBool("play"))
-			musicMgr->play();
+			g_music->play();
 		if (current->getPropertyBool("stop"))
-			musicMgr->stop();
+			g_music->stop();
 		else if (type == "shopping")
-			musicMgr->shopping();
+			g_music->shopping();
 		else if (type == "camp")
-			musicMgr->camp();
+			g_music->camp();
 	}
 
 	return RET_OK;

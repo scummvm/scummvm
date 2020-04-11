@@ -767,7 +767,7 @@ static int spellXit(int unused) {
 	if (!g_context->_location->_map->isWorldMap()) {
 		screenMessage("Leaving...\n");
 		g_game->exitToParentMap();
-		musicMgr->play();
+		g_music->play();
 		return 1;
 	}
 	return 0;
@@ -793,7 +793,7 @@ static int spellYup(int unused) {
 	} else {
 		screenMessage("Leaving...\n");
 		g_game->exitToParentMap();
-		musicMgr->play();
+		g_music->play();
 		return 1;
 	}
 

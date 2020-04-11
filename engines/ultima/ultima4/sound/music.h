@@ -24,11 +24,11 @@
 #define ULTIMA4_MUSIC_H
 
 #include "ultima/shared/std/containers.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace Ultima {
 namespace Ultima4 {
-
-#define musicMgr   (Music::getInstance())
 
 #define CAMP_FADE_OUT_TIME          1000
 #define CAMP_FADE_IN_TIME           0
@@ -41,6 +41,8 @@ typedef _Mix_Music OSMusicMixer;
 
 class Music {
 public:
+	static bool _functional;
+
 	enum Type {
 		NONE,
 		OUTSIDE,
@@ -55,6 +57,15 @@ public:
 		MAX
 	};
 
+	/*
+	 * Properties
+	 */
+	Std::vector<Common::String> _filenames;
+	Type _introMid;
+	Type _current;
+	Audio::AudioStream *_playing;
+	Audio::SoundHandle _soundHandle;
+public:
 	/**
 	 * Initiliaze the music
 	 */
@@ -65,18 +76,10 @@ public:
 	 */
 	~Music();
 
-
-	/** Returns an instance of the Music class */
-	static Music *getInstance() {
-		if (!instance)
-			instance = new Music();
-		return instance;
-	}
-
-	/** Returns true if the mixer is playing any audio. */
-	static bool isPlaying() {
-		return getInstance()->isPlaying_sys();
-	}
+	/**
+	 * Returns true if the mixer is playing any audio
+	 */
+	static bool isPlaying();
 
 	/**
 	 * Ensures that the music is playing if it is supposed to be, or off
@@ -84,14 +87,16 @@ public:
 	 */
 	static void callback(void *);
 
-	void init() {}
-
 	/**
 	 * Main music loop
 	 */
 	void play();
+
+	/**
+	 * Stop playing music
+	 */
 	void stop()         {
-		on = false;    /**< Stop playing music */
+		_on = false;
 		stopMid();
 	}
 
@@ -104,21 +109,37 @@ public:
 	 * Fade in the music
 	 */
 	void fadeIn(int msecs, bool loadFromMap);
+
+	/**
+	 * Music when you talk to Lord British
+	 */
 	void lordBritish()  {
-		playMid(RULEBRIT);    /**< Music when you talk to Lord British */
+		playMid(RULEBRIT);
 	}
+
+	/**
+	 * Music when you talk to Hawkwind
+	 */
 	void hawkwind()     {
-		playMid(SHOPPING);    /**< Music when you talk to Hawkwind */
+		playMid(SHOPPING);    
 	}
+
+	/**
+	 * Music that plays while camping
+	 */
 	void camp()         {
-		fadeOut(1000);        /**< Music that plays while camping */
+		fadeOut(1000);
 	}
+
+	/**
+	 * Music when talking to a vendor
+	 */
 	void shopping()     {
-		playMid(SHOPPING);    /**< Music when talking to a vendor */
+		playMid(SHOPPING);
 	}
 	void intro() {
 #ifdef IOS
-		on = true; // Force iOS to turn this back on from going in the background.
+		_on = true; // Force iOS to turn this back on from going in the background.
 #endif
 		playMid(_introMid);
 	}
@@ -144,10 +165,6 @@ public:
 		setSoundVolume_sys(volume);
 	}
 
-
-	/*
-	 * Static variables
-	 */
 private:
 	void create_sys();
 	void destroy_sys();
@@ -169,12 +186,12 @@ private:
 	 */
 	bool isPlaying_sys();
 
-	static Music *instance;
-	static bool fading;
-	static bool on;
+	static Music *_instance;
+	static bool _fading;
+	static bool _on;
 
 
-	bool load_sys(const Common::String &pathname);
+	bool load_sys(const Common::String &pathName);
 
 	/**
 	 * Play a midi file
@@ -187,18 +204,9 @@ private:
 	void stopMid();
 
 	bool load(Type music);
-
-public:
-	static bool functional;
-
-	/*
-	 * Properties
-	 */
-	Std::vector<Common::String> _filenames;
-	Type _introMid;
-	Type _current;
-	OSMusicMixer *_playing;
 };
+
+extern Music *g_music;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

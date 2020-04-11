@@ -695,7 +695,7 @@ Common::String u4find_path(const Common::String &fname, Common::List<Common::Str
 }
 
 Common::String u4find_music(const Common::String &fname) {
-	return "data/music/" + fname;
+	return "data/mid/" + fname;
 }
 
 Common::String u4find_sound(const Common::String &fname) {

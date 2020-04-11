@@ -74,7 +74,7 @@ void deathStart(int delay) {
 		return;
 
 	// stop playing music
-	musicMgr->fadeOut(1000);
+	g_music->fadeOut(1000);
 
 	deathSequenceRunning = 1;
 	timerCount = 0;
@@ -133,7 +133,7 @@ void deathRevive() {
 	g_context->_aura->set();
 	g_context->_horseSpeed = 0;
 	g_context->_lastCommandTime = g_system->getMillis();
-	musicMgr->play();
+	g_music->play();
 
 	g_context->_party->reviveParty();
 

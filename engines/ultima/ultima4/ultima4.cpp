@@ -48,8 +48,8 @@ Ultima4Engine *g_ultima;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _config(nullptr),
-		_context(nullptr), _dialogueLoaders(nullptr), _game(nullptr), _imageLoaders(nullptr),
-		_saveGame(nullptr), _screen(nullptr) {
+		_context(nullptr), _dialogueLoaders(nullptr), _game(nullptr), _music(nullptr),
+		_imageLoaders(nullptr), _saveGame(nullptr), _screen(nullptr) {
 	g_ultima = this;
 	g_context = nullptr;
 	g_game = nullptr;
@@ -62,13 +62,14 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _dialogueLoaders;
 	delete _game;
 	delete _imageLoaders;
+	delete _music;
 	delete _saveGame;
 	delete _screen;
 
 	Tileset::unloadAll();
 	ImageMgr::destroy();
 
-	//delete musicMgr;
+	//delete g_music;
 	soundDelete();
 }
 
@@ -83,6 +84,7 @@ bool Ultima4Engine::initialize() {
 	_screen = new Screen();
 	_game = new GameController();
 	_imageLoaders = new ImageLoaders();
+	_music = new Music();
 	_saveGame = new SaveGame();
 
 	_screen->init();
@@ -104,8 +106,6 @@ void Ultima4Engine::startup() {
 		intro = new IntroController();
 		intro->init();
 		intro->preloadMap();
-
-		musicMgr->init();
 
 		eventHandler->pushController(intro);
 		eventHandler->run();

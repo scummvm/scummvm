@@ -320,7 +320,7 @@ bool IntroController::init() {
 #endif
 		_beastiesVisible = true;
 		_beastieOffset = 0;
-		musicMgr->intro();
+		g_music->intro();
 	} else {
 		// initialize the titles
 		initTitles();
@@ -424,7 +424,7 @@ bool IntroController::keyPressed(int key) {
 		case '7':
 		case '8':
 		case '9':
-			musicMgr->introSwitch(key - '0');
+			g_music->introSwitch(key - '0');
 			break;
 		default:
 			valid = false;
@@ -938,7 +938,7 @@ void IntroController::timerFired() {
 			// setup the map screen
 			_mode = INTRO_MAP;
 			_beastiesVisible = true;
-			musicMgr->intro();
+			g_music->intro();
 			updateScreen();
 		}
 
@@ -1088,21 +1088,21 @@ void IntroController::updateSoundMenu(MenuEvent &event) {
 
 		switch (event.getMenuItem()->getId()) {
 		case MI_SOUND_01:
-			musicMgr->setMusicVolume(settingsChanged._musicVol);
+			g_music->setMusicVolume(settingsChanged._musicVol);
 			break;
 		case MI_SOUND_02:
-			musicMgr->setSoundVolume(settingsChanged._soundVol);
+			g_music->setSoundVolume(settingsChanged._soundVol);
 			soundPlay(SOUND_FLEE);
 			break;
 		case USE_SETTINGS:
 			// save settings
 			settings.setData(settingsChanged);
 			settings.write();
-			musicMgr->intro();
+			g_music->intro();
 			break;
 		case CANCEL:
-			musicMgr->setMusicVolume(settings._musicVol);
-			musicMgr->setSoundVolume(settings._soundVol);
+			g_music->setMusicVolume(settings._musicVol);
+			g_music->setSoundVolume(settings._soundVol);
 			// discard settings
 			settingsChanged = settings;
 			break;
@@ -1942,7 +1942,7 @@ void IntroController::skipTitles() {
 #ifdef IOS
 void IntroController::tryTriggerIntroMusic() {
 	if (mode == INTRO_MAP)
-		musicMgr->intro();
+		g_music->intro();
 }
 #endif
 

@@ -21,19 +21,20 @@
  */
 
 #include "ultima/ultima4/game/cheat.h"
-#include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
-#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/portal.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/game/weapon.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/map.h"
+#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/game/weapon.h"
+#include "ultima/ultima4/sound/music.h"
 #include "common/debug.h"
 #include "common/events.h"
 
@@ -350,7 +351,7 @@ bool CheatMenuController::keyPressed(int key) {
 		screenMessage("\nX-it!\n");
 		if (!g_game->exitToParentMap())
 			screenMessage("Not Here!\n");
-		musicMgr->play();
+		g_music->play();
 		break;
 
 	case 'y':
@@ -360,7 +361,7 @@ bool CheatMenuController::keyPressed(int key) {
 		else {
 			screenMessage("Leaving...\n");
 			g_game->exitToParentMap();
-			musicMgr->play();
+			g_music->play();
 		}
 		break;
 
