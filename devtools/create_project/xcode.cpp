@@ -408,7 +408,7 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 #define DEF_LOCALLIB_STATIC_PATH(path,lib,absolute) properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
 
-#define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH("/usr/local/lib/" lib ".a", lib, true)
+#define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH(lib ".a", lib, false)
 
 
 /**
