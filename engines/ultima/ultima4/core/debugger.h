@@ -33,7 +33,16 @@ namespace Ultima4 {
  */
 class Debugger : public Shared::Debugger {
 private:
-//	bool cmdQuit(int argc, const char **argv);
+	/**
+	 * Prints a message to the console if it's active, or to the
+	 * game screen if not
+	 */
+	void print(const char *fmt, ...);
+
+	/**
+	 * Moongate
+	 */
+	bool cmdGate(int argc, const char **argv);
 public:
 	Debugger();
 	~Debugger() override;

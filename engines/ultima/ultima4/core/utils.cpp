@@ -41,7 +41,7 @@ void xu4_srandom() {
 }
 
 int xu4_random(int upperRange) {
-	return g_ultima->getRandomNumber(upperRange - 1);
+	return g_ultima->getRandomNumber(upperRange);
 }
 
 Common::String &trim(Common::String &val, const Common::String &chars_to_trim) {
