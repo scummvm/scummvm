@@ -40,9 +40,15 @@ private:
 	void print(const char *fmt, ...);
 
 	/**
-	 * Moongate
+	 * Moongate teleportation
 	 */
 	bool cmdGate(int argc, const char **argv);
+
+	/**
+	 * Moon phase
+	 */
+	bool cmdMoon(int argc, const char **argv);
+
 public:
 	Debugger();
 	~Debugger() override;

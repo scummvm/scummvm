@@ -36,6 +36,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
 
 	registerCmd("gate", WRAP_METHOD(Debugger, cmdGate));
+	registerCmd("moon", WRAP_METHOD(Debugger, cmdMoon));
 }
 
 Debugger::~Debugger() {
@@ -77,7 +78,28 @@ bool Debugger::cmdGate(int argc, const char **argv) {
 		}
 	}
 
-	return true;
+	return isActive();
+}
+
+bool Debugger::cmdMoon(int argc, const char **argv) {
+	int moonNum;
+
+	if (argc == 2) {
+		moonNum = strToInt(argv[1]);
+		if (moonNum < 0 || moonNum > 7) {
+			print("Invalid moon");
+			return true;
+		}
+	} else {
+		moonNum = (g_ultima->_saveGame->_trammelPhase + 1) & 7;
+	}
+
+	while (g_ultima->_saveGame->_trammelPhase != moonNum)
+		g_game->updateMoons(true);
+	g_game->finishTurn();
+
+	print("Moons advanced");
+	return isActive();
 }
 
 } // End of namespace Ultima4
