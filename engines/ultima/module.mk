@@ -157,7 +157,6 @@ MODULE_OBJS := \
 	ultima4/filesys/u4file.o \
 	ultima4/game/armor.o \
 	ultima4/game/aura.o \
-	ultima4/game/cheat.o \
 	ultima4/game/codex.o \
 	ultima4/game/context.o \
 	ultima4/game/creature.o \

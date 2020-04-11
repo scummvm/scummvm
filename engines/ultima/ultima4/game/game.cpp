@@ -31,7 +31,6 @@
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/armor.h"
-#include "ultima/ultima4/game/cheat.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/death.h"
 #include "ultima/ultima4/game/intro.h"
@@ -695,15 +694,6 @@ bool GameController::keyPressed(int key) {
 			if (settings._debug) {
 				screenMessage("Torch: %d\n", g_context->_party->getTorchDuration());
 				screenPrompt();
-			} else valid = false;
-			break;
-
-		case 3:                     /* ctrl-C */
-			if (settings._debug) {
-				screenMessage("Cmd (h = help):");
-				CheatMenuController cheatMenuController(this);
-				eventHandler->pushController(&cheatMenuController);
-				cheatMenuController.waitFor();
 			} else valid = false;
 			break;
 
