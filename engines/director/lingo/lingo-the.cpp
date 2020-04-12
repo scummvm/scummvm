@@ -442,6 +442,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
     d.type = INT;
     d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastKeyTime;
     break;
+  case kTheLastRoll:
+    d.type = INT;
+    d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastRollTime;
+    break;
 	default:
 		warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));
 		d.type = VOID;

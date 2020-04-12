@@ -79,6 +79,7 @@ Score::Score(DirectorEngine *vm) {
   _lastEventTime = _vm->getMacTicks();
   _lastKeyTime = _lastEventTime;
   _lastClickTime = _lastEventTime;
+  _lastRollTime = _lastEventTime;
 
 	// FIXME: TODO: Check whether the original truely does it
 	if (_vm->getVersion() <= 3) {
