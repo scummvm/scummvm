@@ -429,6 +429,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
   case kTheLastFrame:
     d.type = INT;
     d.u.i = _vm->getCurrentScore()->_frames.size() - 1;
+		break;
+  case kTheLastKey:
+    d.type = INT;
+    d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastKeyTime;
     break;
 	default:
 		warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));
