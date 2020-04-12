@@ -50,6 +50,8 @@ bool processQuitEvent(bool click) {
 	return false;
 }
 
+uint32 DirectorEngine::getMacTicks() { return g_system->getMillis() * 60 / 1000.; }
+
 void DirectorEngine::processEvents() {
 	Common::Event event;
 
