@@ -79,6 +79,7 @@ void DirectorEngine::processEvents() {
 
       case Common::EVENT_MOUSEMOVE:
         sc->_lastEventTime = g_director->getMacTicks();
+        sc->_lastRollTime =  sc->_lastEventTime;
         break;
 
 			case Common::EVENT_LBUTTONDOWN:
