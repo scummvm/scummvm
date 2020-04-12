@@ -144,6 +144,7 @@ MODULE_OBJS := \
 	ultima4/core/lzw/u4decode.o \
 	ultima4/core/config.o \
 	ultima4/core/debugger.o \
+	ultima4/core/debugger_actions.o \
 	ultima4/core/error.o \
 	ultima4/core/settings.o \
 	ultima4/core/utils.o \

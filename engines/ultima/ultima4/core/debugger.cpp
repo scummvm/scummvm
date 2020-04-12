@@ -43,6 +43,10 @@ Debugger::Debugger() : Shared::Debugger() {
 	_collisionOverride = false;
 
 	registerCmd("move", WRAP_METHOD(Debugger, cmdMove));
+	registerCmd("attack", WRAP_METHOD(Debugger, cmdAttack));
+	registerCmd("board", WRAP_METHOD(Debugger, cmdBoard));
+	registerCmd("cast", WRAP_METHOD(Debugger, cmdCastSpell));
+	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
@@ -83,78 +87,29 @@ void Debugger::print(const char *fmt, ...) {
 	Common::String str = Common::String::vformat(fmt, va);
 	va_end(va);
 
-	if (isActive()) {
-		debugPrintf("%s\n", str.c_str());
-	} else {
-		screenMessage("%s\n", str.c_str());
-	}
+	printN("%s\n", str.c_str());
 }
 
-void Debugger::summonCreature(const Common::String &name) {
-	const Creature *m = NULL;
-	Common::String creatureName = name;
+void Debugger::printN(const char *fmt, ...) {
+	// Format the string
+	va_list va;
+	va_start(va, fmt);
+	Common::String str = Common::String::vformat(fmt, va);
+	va_end(va);
 
-	creatureName.trim();
-	if (creatureName.empty()) {
-		print("\n");
-		return;
-	}
-
-	/* find the creature by its id and spawn it */
-	unsigned int id = atoi(creatureName.c_str());
-	if (id > 0)
-		m = creatureMgr->getById(id);
-
-	if (!m)
-		m = creatureMgr->getByName(creatureName);
-
-	if (m) {
-		if (gameSpawnCreature(m))
-			print("\n%s summoned!\n", m->getName().c_str());
-		else
-			print("\n\nNo place to put %s!\n\n", m->getName().c_str());
-
-		return;
-	}
-
-	print("\n%s not found\n", creatureName.c_str());
-}
-
-Direction Debugger::directionFromName(const Common::String &dirStr) {
-	Common::String dir = dirStr;
-	dir.toLowercase();
-
-	if (dir == "up" || dir == "north")
-		return DIR_NORTH;
-	else if (dir == "down" || dir == "south")
-		return DIR_SOUTH;
-	else if (dir == "right" || dir == "east")
-		return DIR_EAST;
-	else if (dir == "left" || dir == "west")
-		return DIR_WEST;
-
-	return DIR_NONE;
-}
-
-bool Debugger::destroyAt(const Coords &coords) {
-	Object *obj = g_context->_location->_map->objectAt(coords);
-
-	if (obj) {
-		if (isCreature(obj)) {
-			Creature *c = dynamic_cast<Creature *>(obj);
-			screenMessage("%s Destroyed!\n", c->getName().c_str());
-		} else {
-			Tile *t = g_context->_location->_map->_tileset->get(obj->getTile()._id);
-			screenMessage("%s Destroyed!\n", t->getName().c_str());
+	if (isDebuggerActive()) {
+		// Strip off any color special characters that aren't
+		// relevant for showing the text in the debugger
+		Common::String s;
+		for (Common::String::iterator it = str.begin(); it != str.end(); ++it) {
+			if (*it <= ' ' && *it != '\n')
+				s += *it;
 		}
 
-		g_context->_location->_map->removeObject(obj);
-		screenPrompt();
-
-		return true;
+		debugPrintf("%s", s.c_str());
+	} else {
+		screenMessage("%s", str.c_str());
 	}
-
-	return false;
 }
 
 
@@ -165,7 +120,7 @@ bool Debugger::cmdMove(int argc, const char **argv) {
 		dir = directionFromName(argv[1]);
 	} else {
 		print("move <direction>");
-		return isActive();
+		return isDebuggerActive();
 	}
 
 	Common::String priorMap = g_context->_location->_map->_fname;
@@ -188,6 +143,87 @@ bool Debugger::cmdMove(int argc, const char **argv) {
 	return false;
 }
 
+bool Debugger::cmdAttack(int argc, const char **argv) {
+	Direction dir;
+
+	if (argc != 2 && isDebuggerActive()) {
+		print("attack <direction>");
+		return true;
+	}
+
+	printN("Attack: ");
+	if (g_context->_party->isFlying()) {
+		screenMessage("\n%cDrift only!%c\n", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	if (argc == 2) {
+		dir = directionFromName(argv[1]);
+	} else {
+		dir = gameGetDirection();
+	}
+
+	if (dir == DIR_NONE) {
+		if (isDebuggerActive())
+			print("");
+		return isDebuggerActive();
+	}
+
+	Std::vector<Coords> path = gameGetDirectionalActionPath(
+		MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+		1, 1, NULL, true);
+	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
+		if (attackAt(*i))
+			return isDebuggerActive();
+	}
+
+	print("%cNothing to Attack!%c", FG_GREY, FG_WHITE);
+	g_game->finishTurn();
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdBoard(int argc, const char **argv) {
+	if (g_context->_transportContext != TRANSPORT_FOOT) {
+		print("Board: %cCan't!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	Object *obj = g_context->_location->_map->objectAt(g_context->_location->_coords);
+	if (!obj) {
+		print("%cBoard What?%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	const Tile *tile = obj->getTile().getTileType();
+	if (tile->isShip()) {
+		print("Board Frigate!");
+		if (g_context->_lastShip != obj)
+			g_context->_party->setShipHull(50);
+	} else if (tile->isHorse())
+		print("Mount Horse!");
+	else if (tile->isBalloon())
+		print("Board Balloon!");
+	else {
+		print("%cBoard What?%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	g_context->_party->setTransport(obj->getTile());
+	g_context->_location->_map->removeObject(obj);
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdCastSpell(int argc, const char **argv) {
+	// TODO
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdPass(int argc, const char **argv) {
+	print("Pass");
+	g_game->finishTurn();
+	return isDebuggerActive();
+}
+
 
 bool Debugger::cmd3d(int argc, const char **argv) {
 	if (g_context->_location->_context == CTX_DUNGEON) {
@@ -196,7 +232,7 @@ bool Debugger::cmd3d(int argc, const char **argv) {
 		print("Not here");
 	}
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdCollisions(int argc, const char **argv) {
@@ -204,7 +240,7 @@ bool Debugger::cmdCollisions(int argc, const char **argv) {
 	print("Collision detection %s",
 		_collisionOverride ? "off" : "on");
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdCompanions(int argc, const char **argv) {
@@ -218,7 +254,7 @@ bool Debugger::cmdCompanions(int argc, const char **argv) {
 
 	g_context->_stats->update();
 	print("Joined by companions");
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdDestroy(int argc, const char **argv) {
@@ -226,16 +262,16 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 
 	if (argc == 2) {
 		dir = directionFromName(argv[1]);
-	} else if (isActive()) {
+	} else if (isDebuggerActive()) {
 		print("destroy <direction>");
-		return isActive();
+		return isDebuggerActive();
 	} else {
 		screenMessage("Destroy Object\nDir: ");
 		dir = gameGetDirection();
 	}
 
 	if (dir == DIR_NONE)
-		return isActive();
+		return isDebuggerActive();
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir),
 		MASK_DIR_ALL, g_context->_location->_coords, 1, 1, NULL, true);
@@ -247,7 +283,7 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 	}
 
 	print("%cNothing there!%c\n", FG_GREY, FG_WHITE);
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdDungeon(int argc, const char **argv) {
@@ -272,7 +308,7 @@ bool Debugger::cmdDungeon(int argc, const char **argv) {
 				g_ultima->_saveGame->_orientation = DIR_SOUTH;
 			} else {
 				print("Invalid dungeon");
-				return isActive();
+				return isDebuggerActive();
 			}
 
 			g_game->finishTurn();
@@ -284,7 +320,7 @@ bool Debugger::cmdDungeon(int argc, const char **argv) {
 		print("Not here");
 	}
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdEquipment(int argc, const char **argv) {
@@ -302,7 +338,7 @@ bool Debugger::cmdEquipment(int argc, const char **argv) {
 	}
 
 	print("All equipment given");
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdExit(int argc, const char **argv) {
@@ -314,7 +350,7 @@ bool Debugger::cmdExit(int argc, const char **argv) {
 		print("Exited");
 	}
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdGate(int argc, const char **argv) {
@@ -323,7 +359,7 @@ bool Debugger::cmdGate(int argc, const char **argv) {
 	if (!g_context || !g_game || gateNum < 1 || gateNum > 8) {
 		print("Gate <1 to 8>");
 	} else {
-		if (!isActive())
+		if (!isDebuggerActive())
 			print("Gate %d!", gateNum);
 
 		if (g_context->_location->_map->isWorldMap()) {
@@ -338,7 +374,7 @@ bool Debugger::cmdGate(int argc, const char **argv) {
 		}
 	}
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdGoto(int argc, const char **argv) {
@@ -346,7 +382,7 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 
 	if (argc == 2) {
 		dest = argv[1];
-	} else if (isActive()) {
+	} else if (isDebuggerActive()) {
 		print("teleport <destination name>");
 		return true;
 	} else {
@@ -384,17 +420,17 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 		g_game->finishTurn();
 		return false;
 	} else {
-		if (isActive())
+		if (isDebuggerActive())
 			print("Can't find %s", dest.c_str());
 		else
 			print("Can't find\n%s", dest.c_str());
 
-		return isActive();
+		return isDebuggerActive();
 	}
 }
 
 bool Debugger::cmdHelp(int argc, const char **argv) {
-	if (!isActive()) {
+	if (!isDebuggerActive()) {
 		screenMessage("Help!\n");
 		screenPrompt();
 	}
@@ -423,7 +459,7 @@ bool Debugger::cmdItems(int argc, const char **argv) {
 
 	g_context->_stats->update();
 	print("All items given");
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdKarma(int argc, const char **argv) {
@@ -442,13 +478,13 @@ bool Debugger::cmdKarma(int argc, const char **argv) {
 		print("%s", line.c_str());
 	}
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdLocation(int argc, const char **argv) {
 	const MapCoords &pos = g_context->_location->_coords;
 
-	if (isActive()) {
+	if (isDebuggerActive()) {
 		if (g_context->_location->_map->isWorldMap())
 			print("Location: %s x: %d, y: %d",
 				"World Map", pos.x, pos.y);
@@ -464,7 +500,7 @@ bool Debugger::cmdLocation(int argc, const char **argv) {
 				g_context->_location->_map->getName().c_str(), pos.x, pos.y, pos.z);
 	}
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdMixtures(int argc, const char **argv) {
@@ -472,7 +508,7 @@ bool Debugger::cmdMixtures(int argc, const char **argv) {
 		g_ultima->_saveGame->_mixtures[i] = 99;
 
 	screenMessage("All mixtures given");
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdMoon(int argc, const char **argv) {
@@ -493,13 +529,13 @@ bool Debugger::cmdMoon(int argc, const char **argv) {
 	g_game->finishTurn();
 
 	print("Moons advanced");
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdOpacity(int argc, const char **argv) {
 	g_context->_opacity = !g_context->_opacity;
 	screenMessage("Opacity is %s", g_context->_opacity ? "on" : "off");
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdPeer(int argc, const char **argv) {
@@ -511,7 +547,7 @@ bool Debugger::cmdPeer(int argc, const char **argv) {
 		g_context->_location->_viewMode = VIEW_NORMAL;
 
 	print("Toggle view");
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdReagents(int argc, const char **argv) {
@@ -519,7 +555,7 @@ bool Debugger::cmdReagents(int argc, const char **argv) {
 		g_ultima->_saveGame->_reagents[i] = 99;
 
 	print("Reagents given");
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdStats(int argc, const char **argv) {
@@ -536,7 +572,7 @@ bool Debugger::cmdStats(int argc, const char **argv) {
 	}
 
 	print("Full Stats given");
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdSummon(int argc, const char **argv) {
@@ -544,7 +580,7 @@ bool Debugger::cmdSummon(int argc, const char **argv) {
 
 	if (argc == 2) {
 		creature = argv[1];
-	} else if (isActive()) {
+	} else if (isDebuggerActive()) {
 		print("summon <creature name>");
 		return true;
 	} else {
@@ -554,21 +590,21 @@ bool Debugger::cmdSummon(int argc, const char **argv) {
 	}
 
 	summonCreature(creature);
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdTorch(int argc, const char **argv) {
 	print("Torch: %d\n", g_context->_party->getTorchDuration());
-	if (!isActive())
+	if (!isDebuggerActive())
 		screenPrompt();
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdTransport(int argc, const char **argv) {
 	if (!g_context->_location->_map->isWorldMap()) {
 		print("Not here!");
-		return isActive();
+		return isDebuggerActive();
 	}
 
 	_horse = g_context->_location->_map->_tileset->getByName("horse")->getId();
@@ -583,9 +619,9 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 	char transport;
 	if (argc >= 2) {
 		transport = argv[1][0];
-	} else if (isActive()) {
+	} else if (isDebuggerActive()) {
 		print("transport <transport name>");
-		return isActive();
+		return isDebuggerActive();
 	} else {
 		transport = ReadChoiceController::get("shb \033\015");
 	}
@@ -602,7 +638,7 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 		break;
 	default:
 		print("Unknown transport");
-		return isActive();
+		return isDebuggerActive();
 	}
 
 	tile = g_context->_location->_map->_tileset->get(choice->getId());
@@ -610,7 +646,7 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 
 	if (argc == 3) {
 		dir = directionFromName(argv[2]);
-	} else if (isActive()) {
+	} else if (isDebuggerActive()) {
 		dir = DIR_NONE;
 	} else {
 		screenMessage("%s\n", tile->getName().c_str());
@@ -653,7 +689,7 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 		}
 	}
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdUp(int argc, const char **argv) {
@@ -667,7 +703,7 @@ bool Debugger::cmdUp(int argc, const char **argv) {
 		g_game->exitToParentMap();
 		g_music->play();
 
-		return isActive();
+		return isDebuggerActive();
 	}
 }
 
@@ -677,7 +713,7 @@ bool Debugger::cmdDown(int argc, const char **argv) {
 		return false;
 	} else {
 		print("Not here");
-		return isActive();
+		return isDebuggerActive();
 	}
 }
 
@@ -706,7 +742,7 @@ bool Debugger::cmdVirtue(int argc, const char **argv) {
 		}
 	}
 
-	return isActive();
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdWind(int argc, const char **argv) {
@@ -714,7 +750,7 @@ bool Debugger::cmdWind(int argc, const char **argv) {
 
 	if (argc == 2) {
 		windDir = argv[1];
-	} else if (isActive()) {
+	} else if (isDebuggerActive()) {
 		print("wind <direction or 'lock'>");
 		return true;
 	} else {
@@ -732,7 +768,7 @@ bool Debugger::cmdWind(int argc, const char **argv) {
 
 		if (dir == DIR_NONE) {
 			print("Unknown direction");
-			return isActive();
+			return isDebuggerActive();
 		} else {
 			g_context->_windDirection = dir;
 		}

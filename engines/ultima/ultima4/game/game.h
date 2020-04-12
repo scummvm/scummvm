@@ -110,6 +110,12 @@ public:
 	GameController();
 
 	/* controller functions */
+
+	/**
+	 * Keybinder actions
+	 */
+	void keybinder(KeybindingAction action) override;
+
 	/**
 	 * The main key handler for the game.  Interpretes each key as a
 	 * command - 'a' for attack, 't' for talk, etc.
@@ -233,9 +239,6 @@ void castSpell(int player = -1);
 void gameSpellEffect(int spell, int player, Sound sound);
 
 /* action functions */
-void destroy();
-void attack();
-void board();
 void fire();
 void getChest(int player = -1);
 void holeUp();

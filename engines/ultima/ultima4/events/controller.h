@@ -23,6 +23,8 @@
 #ifndef ULTIMA4_CONTROLLER_H
 #define ULTIMA4_CONTROLLER_H
 
+#include "ultima/ultima4/meta_engine.h"
+
 namespace Ultima {
 namespace Ultima4 {
 
@@ -56,8 +58,13 @@ public:
 	 */
 	static void timerCallback(void *data);
 
-	/* control methods subclasses may want to override */
+	/** control methods subclasses may want to override */
 	virtual bool keyPressed(int key) = 0;
+
+	/**
+	 * Handles keybinder actions
+	 */
+	virtual void keybinder(KeybindingAction action) {}
 
 	/**
 	 * The default timerFired handler for a controller.  By default,

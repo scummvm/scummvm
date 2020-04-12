@@ -264,10 +264,32 @@ ReadDirController::ReadDirController() {
 	_value = DIR_NONE;
 }
 
-bool ReadDirController::keyPressed(int key) {
-	Direction d = keyToDirection(key);
-	bool valid = (d != DIR_NONE);
+void ReadDirController::keybinder(KeybindingAction action) {
+	switch (action) {
+	case KEYBIND_UP:
+		_value = DIR_NORTH;
+		break;
+	case KEYBIND_DOWN:
+		_value = DIR_SOUTH;
+		break;
+	case KEYBIND_LEFT:
+		_value = DIR_WEST;
+		break;
+	case KEYBIND_RIGHT:
+		_value = DIR_EAST;
+		break;
+	case KEYBIND_PASS:
+		_value = DIR_NONE;
+		doneWaiting();
+		break;
+	default:
+		return;
+	}
 
+	doneWaiting();
+}
+
+bool ReadDirController::keyPressed(int key) {
 	switch (key) {
 	case Common::KEYCODE_ESCAPE:
 	case Common::KEYCODE_SPACE:
@@ -277,11 +299,6 @@ bool ReadDirController::keyPressed(int key) {
 		return true;
 
 	default:
-		if (valid) {
-			_value = d;
-			doneWaiting();
-			return true;
-		}
 		break;
 	}
 

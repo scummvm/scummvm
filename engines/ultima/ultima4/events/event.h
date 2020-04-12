@@ -212,7 +212,16 @@ protected:
 class ReadDirController : public WaitableController<Direction> {
 public:
 	ReadDirController();
+
+	/**
+	 * Key was pressed
+	 */
 	bool keyPressed(int key) override;
+
+	/**
+	 * Handles keybinder actions
+	 */
+	void keybinder(KeybindingAction action) override;
 };
 
 /**

@@ -25,6 +25,7 @@
 
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/core/debugger_actions.h"
 #include "ultima/shared/engine/debugger.h"
 
 namespace Ultima {
@@ -33,37 +34,58 @@ namespace Ultima4 {
 /**
  * Debugger base class
  */
-class Debugger : public Shared::Debugger {
+class Debugger : public Shared::Debugger, public DebuggerActions {
 private:
 	MapTile _horse, _ship, _balloon;
-private:
+protected:
+	/**
+	 * Returns true if the debugger is active
+	 */
+	bool isDebuggerActive() const override {
+		return isActive();
+	}
+
 	/**
 	 * Prints a message to the console if it's active, or to the
 	 * game screen if not
 	 */
-	void print(const char *fmt, ...);
+	virtual void print(const char *fmt, ...);
 
 	/**
-	 * Summons a creature given by 'creatureName'. This can either be given
-	 * as the creature's name, or the creature's id.  Once it finds the
-	 * creature to be summoned, it calls gameSpawnCreature() to spawn it.
+	 * Prints a message to the console if it's active, or to the
+	 * game screen if not, with no newline
 	 */
-	void summonCreature(const Common::String &name);
+	virtual void printN(const char *fmt, ...);
 
 	/**
-	 * Destroy object at a given co-ordinate
+	 * Gets the direction for an action
 	 */
-	bool destroyAt(const Coords &coords);
-
-	/**
-	 * Returns a direction from a given string
-	 */
-	Direction directionFromName(const Common::String &dirStr);
+	Direction getDirection(int argc, const char **argv);
 private:
 	/**
 	 * Move the avatar in a given direction
 	 */
 	bool cmdMove(int argc, const char **argv);
+
+	/**
+	 * Attack
+	 */
+	bool cmdAttack(int argc, const char **argv);
+
+	/**
+	 * Board transport
+	 */
+	bool cmdBoard(int argc, const char **argv);
+
+	/**
+	 * Cast spell
+	 */
+	bool cmdCastSpell(int argc, const char **argv);
+
+	/**
+	 * Pass turn
+	 */
+	bool cmdPass(int argc, const char **argv);
 
 private:
 	/**

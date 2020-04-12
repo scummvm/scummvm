@@ -39,16 +39,20 @@ struct KeybindingRecord {
 };
 
 static const KeybindingRecord KEYS[] = {
-	{ ACTION_NORTH, "UP", "Up", "move up", "UP", nullptr },
-	{ ACTION_SOUTH, "DOWN", "Down", "move down", "DOWN", nullptr },
-	{ ACTION_WEST, "LEFT", "Left", "move left", "LEFT", nullptr },
-	{ ACTION_EAST, "RIGHT", "Right", "move right", "RIGHT", nullptr },
+	{ KEYBIND_UP, "UP", "Up", "move up", "UP", nullptr },
+	{ KEYBIND_DOWN, "DOWN", "Down", "move down", "DOWN", nullptr },
+	{ KEYBIND_LEFT, "LEFT", "Left", "move left", "LEFT", nullptr },
+	{ KEYBIND_RIGHT, "RIGHT", "Right", "move right", "RIGHT", nullptr },
+	{ KEYBIND_ATTACK, "ATTACK", "Attack", "attack", "a", nullptr },
+	{ KEYBIND_BOARD, "BOARD", "Board", "board", "b", nullptr },
+	{ KEYBIND_CAST, "CAST", "Cast", "cast", "c", nullptr },
+	{ KEYBIND_PASS, "PASS", "Pass", "pass", "SPACE", nullptr },
 
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 

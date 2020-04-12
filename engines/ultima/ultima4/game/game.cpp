@@ -63,6 +63,7 @@
 #include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
+#include "ultima/ultima4/meta_engine.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -549,6 +550,10 @@ void gameCastSpell(unsigned int spell, int caster, int param) {
 	}
 }
 
+void GameController::keybinder(KeybindingAction action) {
+	MetaEngine::executeAction(action);
+}
+
 bool GameController::keyPressed(int key) {
 	bool valid = true;
 	int endTurn = 1;
@@ -683,14 +688,6 @@ bool GameController::keyPressed(int key) {
 			screenMessage("Sound: %d%s\n", g_music->increaseSoundVolume(), "%");
 			soundPlay(SOUND_FLEE);
 			endTurn = false;
-			break;
-
-		case 'a':
-			attack();
-			break;
-
-		case 'b':
-			board();
 			break;
 
 		case 'c':
@@ -1210,101 +1207,6 @@ bool ZtatsController::keyPressed(int key) {
 		return KeyHandler::defaultHandler(key, NULL);
 	}
 }
-
-void attack() {
-	screenMessage("Attack: ");
-
-	if (g_context->_party->isFlying()) {
-		screenMessage("\n%cDrift only!%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	Direction dir = gameGetDirection();
-
-	if (dir == DIR_NONE)
-		return;
-
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-	                           1, 1, NULL, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (attackAt(*i))
-			return;
-	}
-
-	screenMessage("%cNothing to Attack!%c\n", FG_GREY, FG_WHITE);
-}
-
-/**
- * Attempts to attack a creature at map coordinates x,y.  If no
- * creature is present at that point, zero is returned.
- */
-bool attackAt(const Coords &coords) {
-	Object *under;
-	const Tile *ground;
-	Creature *m;
-
-	m = dynamic_cast<Creature *>(g_context->_location->_map->objectAt(coords));
-	/* nothing attackable: move on to next tile */
-	if (m == NULL || !m->isAttackable())
-		return false;
-
-	/* attack successful */
-	/// TODO: CHEST: Make a user option to not make chests change battlefield
-	/// map (1 of 2)
-	ground = g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_GROUND_OBJECTS);
-	if (!ground->isChest()) {
-		ground = g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITHOUT_OBJECTS);
-		if ((under = g_context->_location->_map->objectAt(g_context->_location->_coords)) &&
-		        under->getTile().getTileType()->isShip())
-			ground = under->getTile().getTileType();
-	}
-
-	/* You're attacking a townsperson!  Alert the guards! */
-	if ((m->getType() == Object::PERSON) && (m->getMovementBehavior() != MOVEMENT_ATTACK_AVATAR))
-		g_context->_location->_map->alertGuards();
-
-	/* not good karma to be killing the innocent.  Bad avatar! */
-	if (m->isGood() || /* attacking a good creature */
-	        /* attacking a docile (although possibly evil) person in town */
-	        ((m->getType() == Object::PERSON) && (m->getMovementBehavior() != MOVEMENT_ATTACK_AVATAR)))
-		g_context->_party->adjustKarma(KA_ATTACKED_GOOD);
-
-	CombatController *cc = new CombatController(CombatMap::mapForTile(ground, g_context->_party->getTransport().getTileType(), m));
-	cc->init(m);
-	cc->begin();
-	return true;
-}
-
-void board() {
-	if (g_context->_transportContext != TRANSPORT_FOOT) {
-		screenMessage("Board: %cCan't!%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	Object *obj = g_context->_location->_map->objectAt(g_context->_location->_coords);
-	if (!obj) {
-		screenMessage("%cBoard What?%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	const Tile *tile = obj->getTile().getTileType();
-	if (tile->isShip()) {
-		screenMessage("Board Frigate!\n");
-		if (g_context->_lastShip != obj)
-			g_context->_party->setShipHull(50);
-	} else if (tile->isHorse())
-		screenMessage("Mount Horse!\n");
-	else if (tile->isBalloon())
-		screenMessage("Board Balloon!\n");
-	else {
-		screenMessage("%cBoard What?%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	g_context->_party->setTransport(obj->getTile());
-	g_context->_location->_map->removeObject(obj);
-}
-
 
 void castSpell(int player) {
 	if (player == -1) {
@@ -2545,7 +2447,7 @@ void GameController::timerFired() {
 			gameTimeSinceLastCommand() > 20) {
 
 			/* pass the turn, and redraw the text area so the prompt is shown */
-			controller->keyPressed(U4_SPACE);
+			MetaEngine::executeAction(KEYBIND_PASS);
 			screenRedrawTextArea(TEXT_AREA_X, TEXT_AREA_Y, TEXT_AREA_W, TEXT_AREA_H);
 		}
 	}

@@ -245,7 +245,7 @@ void EventHandler::run() {
 			continue;
 
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			MetaEngine::executeAction((KeybindingAction)event.customType);
+			getController()->keybinder((KeybindingAction)event.customType);
 			break;
 
 		case Common::EVENT_QUIT:
