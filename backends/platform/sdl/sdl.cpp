@@ -150,16 +150,6 @@ void OSystem_SDL::init() {
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
 
-	if (!_logger)
-		_logger = new Backends::Log::Log(this);
-
-	if (_logger) {
-		Common::WriteStream *logFile = createLogFile();
-		if (logFile)
-			_logger->open(logFile);
-	}
-
-
 	// Creates the early needed managers, if they don't exist yet
 	// (we check for this to allow subclasses to provide their own).
 	if (_mutexManager == 0)
@@ -188,6 +178,15 @@ bool OSystem_SDL::hasFeature(Feature f) {
 void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
+
+	if (!_logger)
+		_logger = new Backends::Log::Log(this);
+
+	if (_logger) {
+		Common::WriteStream *logFile = createLogFile();
+		if (logFile)
+			_logger->open(logFile);
+	}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const char *sdlDriverName = SDL_GetCurrentVideoDriver();
@@ -435,7 +434,11 @@ Common::WriteStream *OSystem_SDL::createLogFile() {
 	// of a failure, we know that no log file is open.
 	_logFilePath.clear();
 
-	Common::String logFile = getDefaultLogFileName();
+	Common::String logFile;
+	if (ConfMan.hasKey("logfile"))
+		logFile = ConfMan.get("logfile");
+	else
+		logFile = getDefaultLogFileName();
 	if (logFile.empty())
 		return nullptr;
 
