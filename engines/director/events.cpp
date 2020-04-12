@@ -129,6 +129,7 @@ void DirectorEngine::processEvents() {
 					debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
 				}
 
+        sc->_lastKeyTime = g_director->getMacTicks();
 				_lingo->processEvent(kEventKeyDown);
 				break;
 
