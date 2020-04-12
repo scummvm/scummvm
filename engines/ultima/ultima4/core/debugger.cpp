@@ -45,6 +45,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
 	registerCmd("companions", WRAP_METHOD(Debugger, cmdCompanions));
+	registerCmd("destroy", WRAP_METHOD(Debugger, cmdDestroy));
 	registerCmd("dungeon", WRAP_METHOD(Debugger, cmdDungeon));
 	registerCmd("equipment", WRAP_METHOD(Debugger, cmdEquipment));
 	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
@@ -133,6 +134,27 @@ Direction Debugger::directionFromName(const Common::String &dirStr) {
 	return DIR_NONE;
 }
 
+bool Debugger::destroyAt(const Coords &coords) {
+	Object *obj = g_context->_location->_map->objectAt(coords);
+
+	if (obj) {
+		if (isCreature(obj)) {
+			Creature *c = dynamic_cast<Creature *>(obj);
+			screenMessage("%s Destroyed!\n", c->getName().c_str());
+		} else {
+			Tile *t = g_context->_location->_map->_tileset->get(obj->getTile()._id);
+			screenMessage("%s Destroyed!\n", t->getName().c_str());
+		}
+
+		g_context->_location->_map->removeObject(obj);
+		screenPrompt();
+
+		return true;
+	}
+
+	return false;
+}
+
 
 bool Debugger::cmd3d(int argc, const char **argv) {
 	if (g_context->_location->_context == CTX_DUNGEON) {
@@ -163,6 +185,35 @@ bool Debugger::cmdCompanions(int argc, const char **argv) {
 
 	g_context->_stats->update();
 	print("Joined by companions");
+	return isActive();
+}
+
+bool Debugger::cmdDestroy(int argc, const char **argv) {
+	Direction dir;
+
+	if (argc == 2) {
+		dir = directionFromName(argv[1]);
+	} else if (isActive()) {
+		print("destroy <direction>");
+		return isActive();
+	} else {
+		screenMessage("Destroy Object\nDir: ");
+		dir = gameGetDirection();
+	}
+
+	if (dir == DIR_NONE)
+		return isActive();
+
+	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir),
+		MASK_DIR_ALL, g_context->_location->_coords, 1, 1, NULL, true);
+	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
+		if (destroyAt(*i)) {
+			g_game->finishTurn();
+			return false;
+		}
+	}
+
+	print("%cNothing there!%c\n", FG_GREY, FG_WHITE);
 	return isActive();
 }
 

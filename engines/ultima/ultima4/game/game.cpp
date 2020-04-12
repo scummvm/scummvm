@@ -99,7 +99,6 @@ void talkRunConversation(Conversation &conv, Person *talker, bool showPrompt);
 
 /* action functions */
 bool attackAt(const Coords &coords);
-bool destroyAt(const Coords &coords);
 bool getChestTrapHandler(int player);
 bool jimmyAt(const Coords &coords);
 bool openAt(const Coords &coords);
@@ -648,14 +647,7 @@ bool GameController::keyPressed(int key) {
 
 			endTurn = (retval & MOVE_END_TURN); /* let the movement handler decide to end the turn */
 		}
-
 		break;
-
-		case 4:                     /* ctrl-D */
-			if (settings._debug) {
-				destroy();
-			} else valid = false;
-			break;
 
 		case ' ':
 			screenMessage("Pass\n");
@@ -1238,45 +1230,6 @@ bool ZtatsController::keyPressed(int key) {
 	default:
 		return KeyHandler::defaultHandler(key, NULL);
 	}
-}
-
-void destroy() {
-	screenMessage("Destroy Object\nDir: ");
-
-	Direction dir = gameGetDirection();
-
-	if (dir == DIR_NONE)
-		return;
-
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL,
-	                           g_context->_location->_coords, 1, 1, NULL, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (destroyAt(*i))
-			return;
-	}
-
-	screenMessage("%cNothing there!%c\n", FG_GREY, FG_WHITE);
-}
-
-bool destroyAt(const Coords &coords) {
-	Object *obj = g_context->_location->_map->objectAt(coords);
-
-	if (obj) {
-		if (isCreature(obj)) {
-			Creature *c = dynamic_cast<Creature *>(obj);
-			screenMessage("%s Destroyed!\n", c->getName().c_str());
-		} else {
-			Tile *t = g_context->_location->_map->_tileset->get(obj->getTile()._id);
-			screenMessage("%s Destroyed!\n", t->getName().c_str());
-		}
-
-		g_context->_location->_map->removeObject(obj);
-		screenPrompt();
-
-		return true;
-	}
-
-	return false;
 }
 
 void attack() {

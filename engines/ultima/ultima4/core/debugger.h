@@ -23,6 +23,7 @@
 #ifndef ULTIMA4_CORE_DEBUGGER_H
 #define ULTIMA4_CORE_DEBUGGER_H
 
+#include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/shared/engine/debugger.h"
 
@@ -50,6 +51,11 @@ private:
 	void summonCreature(const Common::String &name);
 
 	/**
+	 * Destroy object at a given co-ordinate
+	 */
+	bool destroyAt(const Coords &coords);
+
+	/**
 	 * Returns a direction from a given string
 	 */
 	Direction directionFromName(const Common::String &dirStr);
@@ -68,6 +74,11 @@ private:
 	 * Have all the companions join the party
 	 */
 	bool cmdCompanions(int argc, const char **argv);
+
+	/**
+	 * Destroy an object
+	 */
+	bool cmdDestroy(int argc, const char **argv);
 
 	/**
 	 * Jumps to a given dungeon
