@@ -141,10 +141,10 @@ public:
 	Common::Rect _movieRect;
 	uint16 _currentMouseDownSpriteId;
 	bool _mouseIsDown;
-  uint32 _lastEventTime;
-  uint32 _lastRollTime;
-  uint32 _lastClickTime;
-  uint32 _lastKeyTime;
+	uint32 _lastEventTime;
+	uint32 _lastRollTime;
+	uint32 _lastClickTime;
+	uint32 _lastKeyTime;
 
 	bool _stopPlay;
 	uint32 _nextFrameTime;
