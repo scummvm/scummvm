@@ -717,13 +717,6 @@ bool GameController::keyPressed(int key) {
 			break;
 		}
 
-		case 'e':
-			if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_ENTER)) {
-				if (!g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_ENTER))
-					screenMessage("%cEnter what?%c\n", FG_GREY, FG_WHITE);
-			} else endTurn = 0; /* entering a portal doesn't end the turn */
-			break;
-
 		case 'f':
 			fire();
 			break;

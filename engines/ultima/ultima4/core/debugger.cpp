@@ -41,11 +41,13 @@ Debugger *g_debugger;
 Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
 	_collisionOverride = false;
+	_dontEndTurn = false;
 
 	registerCmd("move", WRAP_METHOD(Debugger, cmdMove));
 	registerCmd("attack", WRAP_METHOD(Debugger, cmdAttack));
 	registerCmd("board", WRAP_METHOD(Debugger, cmdBoard));
 	registerCmd("cast", WRAP_METHOD(Debugger, cmdCastSpell));
+	registerCmd("enter", WRAP_METHOD(Debugger, cmdEnter));
 	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
@@ -115,9 +117,12 @@ void Debugger::printN(const char *fmt, ...) {
 bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 	bool result = Shared::Debugger::handleCommand(argc, argv, keepRunning);
 
-	if (result && !isActive() && argv[0] != "move")
-		g_game->finishTurn();
+	if (result && !isActive()) {
+		if (!_dontEndTurn)
+			g_game->finishTurn();
+	}
 
+	_dontEndTurn = false;
 	return result;
 }
 
@@ -146,8 +151,8 @@ bool Debugger::cmdMove(int argc, const char **argv) {
 
 	// Let the movement handler decide to end the turn
 	bool endTurn = (retval & MOVE_END_TURN);
-	if (endTurn)
-		g_game->finishTurn();
+	if (!endTurn)
+		dontEndTurn();
 
 	return false;
 }
@@ -223,6 +228,17 @@ bool Debugger::cmdBoard(int argc, const char **argv) {
 
 bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	// TODO
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdEnter(int argc, const char **argv) {
+	if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_ENTER)) {
+		if (!g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_ENTER))
+			print("%cEnter what?%c\n", FG_GREY, FG_WHITE);
+	} else {
+		dontEndTurn();
+	}
+
 	return isDebuggerActive();
 }
 

@@ -37,6 +37,7 @@ namespace Ultima4 {
 class Debugger : public Shared::Debugger, public DebuggerActions {
 private:
 	MapTile _horse, _ship, _balloon;
+	bool _dontEndTurn;
 protected:
 	/**
 	 * Returns true if the debugger is active
@@ -68,6 +69,14 @@ protected:
 	 * Gets the direction for an action
 	 */
 	Direction getDirection(int argc, const char **argv);
+
+	/**
+	 * Used by methods so that when they're triggered by a keybinding
+	 * action, stops the turn from being finished when they're done
+	 */
+	void dontEndTurn() {
+		_dontEndTurn = true;
+	}
 private:
 	/**
 	 * Move the avatar in a given direction
@@ -88,6 +97,11 @@ private:
 	 * Cast spell
 	 */
 	bool cmdCastSpell(int argc, const char **argv);
+
+	/**
+	 * Enter location
+	 */
+	bool cmdEnter(int argc, const char **argv);
 
 	/**
 	 * Pass turn
