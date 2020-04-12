@@ -544,9 +544,14 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	return Common::kNoError;
 }
 
-void EoBCoreEngine::makeFaceShapes() {
+void EoBCoreEngine::makeFaceShapes(int charId) {
+	int first = 0;
+	int last = 5;
+	if (charId != -1)
+		first = last = charId;
+
 	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
-	for (int i = 0; i < 6; i++) {
+	for (int i = first; i <= last; i++) {
 		EoBCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait < 0)
 			continue;
@@ -554,7 +559,7 @@ void EoBCoreEngine::makeFaceShapes() {
 	}
 
 	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
-	for (int i = 0; i < 6; i++) {
+	for (int i = first; i <= last; i++) {
 		EoBCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait >= 0)
 			continue;

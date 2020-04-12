@@ -1257,13 +1257,11 @@ const uint8 *SegaCDFont::getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHei
 		charHeight = pitch = 12;
 		res = &_data[0x19A0 + 18 * c];
 	} else if (_style == 2) {
-		assert(c < 188);
-		charWidth = _widthTable3[c];
+		charWidth = (!_fixedWidth && (c < 188)) ? _widthTable3[c] : 12;
 		charHeight = pitch = 12;
 		res = &_data[0x3410 + 18 * c];
 	} else {
-		assert(c < 188);
-		charWidth = _widthTable2[c];
+		charWidth = (!_fixedWidth && (c < 188)) ? _widthTable2[c] : 12;
 		charHeight = 12;
 		pitch = 8;
 		res = &_data[0x800 + 12 * c];

@@ -846,7 +846,7 @@ protected:
 	void initDialogueSequence();
 	void restoreAfterDialogueSequence();
 	void drawSequenceBitmap(const char *file, int destRect, int x1, int y1, int flags);
-	int runDialogue(int dialogueTextId, int numStr, ...);
+	int runDialogue(int dialogueTextId, int numStr, int loopButtonId, ...);
 
 	char _dialogueLastBitmap[13];
 	int _moveCounter;
@@ -904,6 +904,7 @@ protected:
 	int countResurrectionCandidates();
 
 	void seq_portal();
+	virtual const uint8 **makePortalShapes();
 	bool seq_playSegaSequence(int id) { return true; }
 	bool checkPassword();
 
@@ -934,8 +935,8 @@ protected:
 
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
-	virtual void makeNameShapes() {}
-	virtual void makeFaceShapes();
+	virtual void makeNameShapes(int charId = -1) {}
+	virtual void makeFaceShapes(int charId = -1);
 	// Default parameters will import all present original save files and push them to the top of the save dialog.
 	bool importOriginalSaveFile(int destSlot, const char *sourceFile = 0);
 	Common::String readOriginalSaveFile(Common::String &file);

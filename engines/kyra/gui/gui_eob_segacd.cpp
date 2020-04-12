@@ -82,6 +82,16 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 	str = _sres->resStreamEndian(9);
 	r->loadStreamToVRAM(str, 0xA4A0, false);
 	delete str;
+	/*
+// CAMP MENU
+str = _sres->resStreamEndian(8);
+_screen->sega_getRenderer()->loadStreamToVRAM(str, 0x20, true);
+delete str;
+_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 15, 0);
+_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 22, 21, 0x4001, true);
+_screen->sega_getRenderer()->render(0);
+_screen->sega_selectPalette(40, 2, true);
+*/
 
 	gui_setupPlayFieldHelperPages();
 
@@ -110,6 +120,11 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 }
 
 void EoBEngine::gui_setupPlayFieldHelperPages() {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::gui_setupPlayFieldHelperPages();
+		return;
+	}
+
 	_txt->clearDim(0);
 	SegaRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 22, 0, 18, 21, 0);
@@ -203,12 +218,12 @@ void EoBEngine::gui_displayMap() {
 
 	_screen->sega_fadeToBlack(2);
 
-	_sceneShakeCountdown = 0;
+	gui_resetAnimations();
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))
 			continue;
 		_characters[i].damageTaken = 0;
-		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = _characters[i].gfxUpdateCountdown = 0;
+		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = 0;
 		gui_drawCharPortraitWithStats(i);
 	}
 
@@ -321,12 +336,12 @@ void EoBEngine::gui_updateAnimations() {
 			if (_compassAnimSwitch) {
 				_compassAnimPhase = (_compassAnimPhase + _compassAnimStep) & 0x0F;
 				_compassAnimDelayCounter = 6;
-				redrawCompass = true;
 				_compassAnimStep = -_compassAnimStep;
 				_compassAnimSwitch = false;
 			} else {
 				_compassAnimDone = _compassAnimSwitch = true;
 			}
+			redrawCompass = true;
 		}
 	}
 	if (redrawCompass) {
@@ -373,20 +388,36 @@ void EoBEngine::gui_updateAnimations() {
 		// All shapes except monsters and items
 		drawSceneShapes(0, 0xFF & ~0x2A);
 		_shapeShakeOffsetX = _shapeShakeOffsetY = 0;
-// Monsters and items
-drawSceneShapes(0, 0x2A);
+		// Monsters and items
+		drawSceneShapes(0, 0x2A);
 
-_screen->copyRegion(0, 0, 0, 0, 179, 123, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
-updScreen = true;
+		_screen->copyRegion(0, 0, 0, 0, 179, 123, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
+		updScreen = true;
 	}
 
 	if (updScreen)
 		_screen->updateScreen();
 }
 
-void EoBEngine::makeNameShapes() {
+void EoBEngine::gui_resetAnimations() {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return;
+
+	for (int i = 0; i < 6; ++i)
+		_characters[i].gfxUpdateCountdown = 1;
+	_sceneShakeCountdown = 1;
+	_compassAnimDelayCounter = _compassAnimSwitch = 0;
+	_compassAnimPhase = _compassAnimDest;
+}
+
+void EoBEngine::makeNameShapes(int charId) {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return;
+
+	int first = 0;
+	int last = 5;
+	if (charId != -1)
+		first = last = charId;
 
 	int cd = _txt->clearDim(4);
 	int cp = _screen->setCurPage(2);
@@ -394,7 +425,7 @@ void EoBEngine::makeNameShapes() {
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 30, 28, 0x600A, true);
 	_screen->sega_clearTextBuffer(0);
 
-	for (int i = 0; i < 6; ++i) {
+	for (int i = first; i <= last; ++i) {
 		if (!_characters[i].flags)
 			continue;
 		_txt->printShadowedText(_characters[i].name, 0, i << 4, 0xFF, 0xCC);
@@ -402,7 +433,7 @@ void EoBEngine::makeNameShapes() {
 
 	_screen->sega_getRenderer()->render(_screen->_curPage);
 
-	for (int i = 0; i < 6; ++i) {
+	for (int i = first; i <= last; ++i) {
 		if (!_characters[i].flags)
 			continue;
 		delete[] _characters[i].nameShape;
@@ -417,9 +448,19 @@ void EoBEngine::makeNameShapes() {
 	_txt->clearDim(cd);
 }
 
-void EoBEngine::makeFaceShapes() {
+void EoBEngine::makeFaceShapes(int charId) {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::makeFaceShapes();
+		return;
+	}
+
+	int first = 0;
+	int last = 5;
+	if (charId != -1)
+		first = last = charId;
+
 	uint8 *in = _res->fileData("FACE", 0);
-	for (int i = 0; i < 6; i++) {
+	for (int i = first; i <= last; i++) {
 		EoBCharacter *c = &_characters[i];
 		if (!c->flags)
 			continue;
@@ -444,7 +485,7 @@ void EoBEngine::drawMapButton(const char *str, int x, int y) {
 void EoBEngine::drawMapPage(int level) {
 	int temp = 0;
 	_screen->sega_clearTextBuffer(0);
-	int cs = _screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat | Font::kStyleNarrow1);
+	int cs = _screen->setFontStyles(_screen->_currentFont, (_flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat) | Font::kStyleNarrow1);
 	_txt->printShadowedText(_mapStrings3[level - 1], 0, 0, 0xCC, 0, 48, 16, 0, false);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_loadTextBufferToVRAM(0, 0x7920, 384);
@@ -479,6 +520,30 @@ void EoBEngine::drawMapSpots(int level, int animState) {
 		a->initSprite(1, (mX << 2) + 48, (mY << 2) + 56, animState ? 0x2002 : 0x2003, 0);
 	}
 	a->update();
+}
+
+void EoBEngine::drawDialogueButtons() {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		KyraRpgEngine::drawDialogueButtons();
+		return;
+	}
+
+	_screen->sega_clearTextBuffer(0);
+
+	for (int i = 0; i < _dialogueNumButtons; i++) {
+		int cs = _screen->setFontStyles(_screen->_currentFont, (_flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat) | Font::kStyleNarrow2);
+		if (_screen->getTextWidth(_dialogueButtonString[i]) > 90)
+			_screen->setFontStyles(_screen->_currentFont, (_flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat) | Font::kStyleNarrow1);
+		_screen->sega_drawClippedLine(38, 6, _dialogueButtonPosX[i], _dialogueButtonPosY[i], 90, 14, 0x99);
+		_screen->sega_drawClippedLine(38, 6, _dialogueButtonPosX[i], _dialogueButtonPosY[i] + 1, 89, 13, 0xBB);
+		_screen->sega_drawClippedLine(38, 6, _dialogueButtonPosX[i] + 1, _dialogueButtonPosY[i] + 1, 88, 12, 0xAA);
+		_txt->printShadowedText(_dialogueButtonString[i], _dialogueButtonPosX[i] + (_dialogueButtonWidth >> 1) - MIN<int>(_dialogueButtonWidth, _screen->getTextWidth(_dialogueButtonString[i])) / 2,
+			_dialogueButtonPosY[i] + 1, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0xEE, 304, 48, 0, false);
+		_screen->setFontStyles(_screen->_currentFont, cs);
+	}
+
+	_screen->sega_loadTextBufferToVRAM(0, 0xA380, 7296);
+	_screen->sega_getRenderer()->render(0);
 }
 
 } // End of namespace Kyra

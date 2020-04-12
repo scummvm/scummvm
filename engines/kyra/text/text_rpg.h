@@ -39,8 +39,8 @@ public:
 
 	void setupField(int dim, bool mode);
 
-	void printDialogueText(int stringId, const char *pageBreakString);
-	void printDialogueText(const char *str, bool wait = false);
+	virtual void printDialogueText(int stringId, const char *pageBreakString, const char *pageBreakString2 = 0);
+	virtual void printDialogueText(const char *str, bool wait = false);
 	void printMessage(const char *str, int textColor = -1, ...);
 	virtual void printShadowedText(const char *str, int x = -1, int y = -1, int textColor = -1, int shadowColor = -1, int pitchW = -1, int pitchH = -1, int marginRight = 0, bool screenUpdate = true) {}
 

@@ -214,6 +214,7 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 
 	loadAndConvertShapes(1, 0, _smallItemShapes, _numSmallItemShapes, 32, 24, 768);
 	loadAndConvertShapes(2, 0, _largeItemShapes, _numLargeItemShapes, 64, 24, 1472);
+	loadAndConvertShapes(3, 0, _sparkShapes, 3, 16, 16, 128);
 	loadAndConvertShapes(11, 0, _thrownItemShapes, _numThrownItemShapes, 32, 24, 768);
 	int offset1 = 0, offset2 = 0;
 	for (int i = 0; i < 3; ++i) {
@@ -230,16 +231,7 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	loadSpritesAndEncodeToShapes(5, 480, _weaponSlotShapes, 6, 32, 16);
 	loadSpritesAndEncodeToShapes(6, 0, _invSmallDigits, 32, 16, 8);
 
-	/*
-	// CAMP MENU
-	str = _sres->resStreamEndian(8);
-	_screen->sega_getRenderer()->loadStreamToVRAM(str, 0x20, true);
-	delete str;
-	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 15, 0);
-	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 22, 21, 0x4001, true);
-	_screen->sega_getRenderer()->render(0);
-	_screen->sega_selectPalette(40, 2, true);
-	*/
+
 
 	int cp = _screen->setCurPage(Screen_EoB::kSegaInitShapesPage);
 	for (int i = 0; i < 4; ++i)
@@ -366,23 +358,27 @@ void EoBEngine::encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY) {
 	delete[] shp;
 }
 
-#define DLG2(txt, buttonstr) (runDialogue(txt, 2, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1]) - 1)
-#define DLG3(txt, buttonstr) (runDialogue(txt, 3, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1], _npcStrings[buttonstr][2]) - 1)
-#define DLG2A3(cond, txt, buttonstr1, buttonstr2) ((cond) ? (DLG2(txt, buttonstr1) ? 2 : 0) : DLG3(txt, buttonstr2))
-#define TXT(txt) _txt->printDialogueText(txt, _moreStrings[0])
+#define DLG2(txt, buttonstr, repeat) ((_flags.platform == Common::kPlatformSegaCD && repeat ? runDialogue(txt, 3, 3, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1], _npcStrings[buttonstr][2]) : runDialogue(txt, 2, -1, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1])) - 1)
+#define DLG3(txt, buttonstr, repeat) ((_flags.platform == Common::kPlatformSegaCD && repeat ? runDialogue(txt, 4, 4, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1], _npcStrings[buttonstr][2], _npcStrings[buttonstr][3]) : runDialogue(txt, 3, -1, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1], _npcStrings[buttonstr][2])) - 1)
+#define DLG2A3(cond, txt, buttonstr1, buttonstr2) ((cond) ? (DLG2(txt, buttonstr1, 0) ? 2 : 0) : DLG3(txt, buttonstr2, 0))
+#define TXT(txt) _txt->printDialogueText(txt, _moreStrings[0], _flags.platform == Common::kPlatformSegaCD ? _moreStrings[1] : 0)
+#define TXTNB(txt) _txt->printDialogueText(txt, _flags.platform == Common::kPlatformSegaCD ? 0 : _moreStrings[0])
+#define JOIN(npc, txt_query, txt_conf, txt_deny) npcJoinDialogue(npc, txt_query, _flags.platform == Common::kPlatformSegaCD ? -1 : txt_conf, _flags.platform == Common::kPlatformSegaCD ? -1 : txt_deny)
 
 void EoBEngine::runNpcDialogue(int npcIndex) {
 	int r = 0;
 	int a = 0;
 	Item itm = 0;
+	seq_segaSetupSequence(0);
 
 	switch (npcIndex) {
 	case 0:
 		for (r = 1; r == 1;) {
-			gui_drawDialogueBox();
+			if (_flags.platform != Common::kPlatformSegaCD)
+				gui_drawDialogueBox();
 			r = DLG2A3(checkScriptFlags(0x2000), 8, 2, 1);
 			if (r == 1) {
-				TXT(1);
+				TXTNB(1);
 				setScriptFlags(0x2000);
 			} else if (r == 0) {
 				npcJoinDialogue(6, 12, 23, 2);
@@ -397,11 +393,11 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 				a = 13;
 			} else {
 				setScriptFlags(0x8000);
-				r = DLG2(3, 3);
+				r = DLG2(3, 3, 1);
 				a = 4;
 			}
 			if (!r)
-				r = DLG2(a, 4);
+				r = DLG2(a, 4, 1);
 
 			if (!r) {
 				for (a = 0; a < 6; a++)
@@ -409,9 +405,9 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 				createItemOnCurrentBlock(62);
 				setScriptFlags(0x10000);
 				TXT(6);
-				npcJoinDialogue(7, 7, 29, 30);
+				JOIN(7, 7, 29, 30);
 			} else {
-				TXT(5);
+				TXTNB(5);
 			}
 			r = 1;
 		}
@@ -423,7 +419,8 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 			}
 			if (a != 6) {
 				TXT(25);
-				TXT(26);
+				if (_flags.platform != Common::kPlatformSegaCD)
+					TXT(26);
 				setScriptFlags(0x80000);
 				r = 1;
 			}
@@ -440,15 +437,19 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 			}
 		}
 
-		if (!r)
-			_txt->printDialogueText(_npcStrings[0][0], true);
+		if (!r) {
+			if (_flags.platform == Common::kPlatformSegaCD)
+				TXTNB(44);
+			else
+				_txt->printDialogueText(_npcStrings[0][0], true);
+		}
 
 		break;
 
 	case 2:
 		if (checkScriptFlags(0x10000)) {
 			if (checkScriptFlags(0x20000)) {
-				TXT(11);
+				TXTNB(11);
 			} else {
 				r = DLG2A3(!countResurrectionCandidates(), 9, 5, 6);
 				if (r < 2) {
@@ -460,12 +461,12 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 				}
 			}
 		} else {
-			TXT(24);
+			TXTNB(24);
 		}
 		break;
 
 	case 3:
-		if (!DLG2(18, 7)) {
+		if (!DLG2(18, 7, 0)) {
 			setScriptFlags(0x8400000);
 			for (a = 0; a < 30; a++) {
 				if (_monsters[a].mode == 8)
@@ -480,7 +481,7 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 		break;
 
 	case 4:
-		r = DLG3(14, 8);
+		r = DLG3(14, 8, 1);
 		if (r == 0)
 			setScriptFlags(0x200000);
 		else if (r == 1)
@@ -489,8 +490,9 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 		break;
 
 	case 5:
-		if (!DLG2(16, 9)) {
-			TXT(17);
+		if (!DLG2(16, 9, 1)) {
+			if (_flags.platform != Common::kPlatformSegaCD)
+				TXT(17);
 			for (a = 0; a < 6; a++) {
 				for (r = 0; r < 2; r++) {
 					itm = _characters[a].inventory[r];
@@ -510,10 +512,10 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 		break;
 
 	case 7:
-		r = DLG3(22, 10);
-		if (r  < 2) {
+		r = DLG3(22, 10, 1);
+		if (r < 2) {
 			if (r == 0)
-				npcJoinDialogue(8, 27, 44, 45);
+				JOIN(8, 27, 44, 45);
 			else
 				TXT(31);
 			setScriptFlags(0x4000000);
@@ -523,8 +525,16 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 	default:
 		break;
 	}
+
+	seq_segaRestoreAfterSequence();
+	setLevelPalettes(_currentLevel);
+	_levelCurTrack = -1;
+	if (_flags.platform == Common::kPlatformSegaCD)
+		snd_playLevelScore();
 }
 
+#undef JOIN
+#undef TXTNB
 #undef TXT
 #undef DLG2
 #undef DLG3
@@ -975,12 +985,12 @@ void EoBEngine::displayParchment(int id) {
 	int temp = 0;
 	const char *const *strings = _staticres->loadStrings(kEoB1ParchmentStrings, temp);
 
-	_sceneShakeCountdown = 0;
+	gui_resetAnimations();
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))
 			continue;
 		_characters[i].damageTaken = 0;
-		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = _characters[i].gfxUpdateCountdown = 0;
+		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = 0;
 		gui_drawCharPortraitWithStats(i);
 	}
 
@@ -1027,25 +1037,137 @@ void EoBEngine::displayParchment(int id) {
 	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 }
 
-void EoBEngine::drawParchmentPage(int page) {
-	
+const uint8 **EoBEngine::makePortalShapes() {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		 return EoBCoreEngine::makePortalShapes();
+	}
+
+	gui_resetAnimations();
+	gui_updateAnimations();
+
+	snd_stopSound();
+	uint8 *data = _res->fileData("PORT", 0);
+	const uint8 *in = data;
+	const uint8 **shapes = new const uint8*[16];
+
+	for (int i = 0; i < 10; ++i) {
+		shapes[1 + i] = _screen->sega_convertShape(in, 24, 80, 2);
+		in += 960;
+	}
+
+	for (int i = 0; i < 5; ++i) {
+		shapes[11 + i] = _screen->sega_convertShape(in, 120, 24, 2);
+		in += 1440;
+	}
+
+	shapes[0] = _screen->sega_convertShape(in, 64, 80, 2);
+	in += 2560;
+
+	_screen->clearPage(2);
+	for (int i = 0; i < 10; ++i) {
+		uint8 *shp = _screen->sega_convertShape(in, 64, 80, 2);
+		_screen->drawShape(2, shp, (i % 5) << 6, (i / 5) * 77, 0);
+		in += 2560;
+	}
+
+	delete[] data;
+	return shapes;
 }
 
 bool EoBEngine::checkPartyStatusExtra() {
 	_screen->copyPage(0, Screen_EoB::kDefeatMsgBackupPage);
 	int cd = _screen->curDimIndex();
-	gui_drawBox(0, 121, 320, 80, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
-	_txt->setupField(9, false);
-	_txt->printMessage(_menuStringsDefeat[0]);
-	while (!shouldQuit()) {
-		removeInputTop();
-		if (checkInput(0, false, 0) & 0xFF)
-			break;
+
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		_screen->sega_fadeToBlack(4);
+
+		gui_resetAnimations();
+		gui_updateAnimations();
+		snd_stopSound();
+
+		Common::SeekableReadStreamEndian *in = _res->createEndianAwareReadStream("GO");
+		SegaRenderer *r = _screen->sega_getRenderer();
+		r->loadStreamToVRAM(in, 0x20);
+		delete in;
+
+		_screen->hideMouse();
+		_screen->sega_selectPalette(51, 0);
+		_screen->sega_selectPalette(52, 1);
+		_screen->sega_selectPalette(53, 2);
+		_screen->sega_selectPalette(7, 3);
+		r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
+		r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
+		r->fillRectWithTiles(0, 0, 3, 32, 16, 1, true);
+		r->fillRectWithTiles(0, 32, 3, 8, 16, 0x201, true);
+		r->fillRectWithTiles(1, 0, 3, 32, 16, 0x2281, true);
+		r->fillRectWithTiles(1, 32, 3, 8, 16, 0x2481, true);
+
+		int cs = _screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
+		_screen->sega_clearTextBuffer(0);
+		_txt->printShadowedText(_menuStringsDefeat[0], 12, 0, 0xff, 0xcc, 304, 48, 0, false);
+		_txt->printShadowedText(_menuStringsDefeat[1], 20, 16, 0xff, 0xcc, 304, 48, 0, false);
+		_txt->printShadowedText(_menuStringsDefeat[2], 20, 32, 0xff, 0xcc, 304, 48, 0, false);
+		_screen->setFontStyles(_screen->_currentFont, cs);
+		_screen->sega_loadTextBufferToVRAM(0, 0xA3A0, 7296);
+		r->fillRectWithTiles(0, 1, 20, 38, 6, 0x651D, true);
+		r->render(0);
+
+		snd_playSoundEffect(0x5086);
+
+		_screen->sega_paletteOps(0, 0, 5);
+		_screen->sega_paletteOps(1, 0, 5);
+		uint32 del = _system->getMillis() + 1333;
+		for (uint32 cur = _system->getMillis(); cur < del; cur = _system->getMillis()) {
+			_screen->sega_updatePaletteFaders(0);
+			_screen->sega_updatePaletteFaders(1);
+			delay(MIN<uint32>(8, del - cur));
+		}
+		_screen->sega_paletteOps(3, 0, 6);
+		del = _system->getMillis() + 1600;
+		for (uint32 cur = _system->getMillis(); cur < del; cur = _system->getMillis()) {
+			_screen->sega_updatePaletteFaders(3);
+			delay(MIN<uint32>(8, del - cur));
+		}
+
+		for (int i = 0; i < 7; ++i)
+			_screen->sega_getAnimator()->initSprite(i, 104 + (i << 4), 80, 0x4501 + (i << 2), 5);
+		_screen->sega_getAnimator()->update();
+		r->render(0);
+
+		_screen->sega_paletteOps(2, 0, 5);
+
+		resetSkipFlag();
+		_allowSkip = true;
+		while (!(shouldQuit() || skipFlag())) {
+			_screen->sega_updatePaletteFaders(2);
+			delay(8);
+		}
+		_allowSkip = false;
+		resetSkipFlag();
+
+		_screen->sega_fadeToBlack(4);
+		_screen->sega_getAnimator()->clearSprites();
+		_screen->sega_getAnimator()->update();
+
+		snd_playSoundEffect(0x5087);
+		_screen->showMouse();
+
+	} else {
+		gui_drawBox(0, 121, 320, 80, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
+		_txt->setupField(9, false);
+		_txt->printMessage(_menuStringsDefeat[0]);
+		while (!shouldQuit()) {
+			removeInputTop();
+			if (checkInput(0, false, 0) & 0xFF)
+				break;
+		}
 	}
+
 	_screen->copyPage(Screen_EoB::kDefeatMsgBackupPage, 0);
 	_eventList.clear();
 	_screen->setScreenDim(cd);
 	_txt->removePageBreakFlag();
+
 	return true;
 }
 
@@ -1053,13 +1175,29 @@ int EoBEngine::resurrectionSelectDialogue() {
 	gui_drawDialogueBox();
 	_txt->printDialogueText(_npcStrings[0][1]);
 
-	int r = _rrId[runDialogue(-1, 9, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
+	if (_flags.platform == Common::kPlatformSegaCD) {
+			resetSkipFlag();
+		_allowSkip = true;
+		while (!(shouldQuit() || skipFlag()))
+			delay(20);
+		_allowSkip = false;
+		resetSkipFlag();
+
+		_rrNames[_rrCount] = _abortStrings[0];
+		_rrId[_rrCount++] = 99;
+	}
+
+	int r = _rrId[runDialogue(-1, 9, -1, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
+
+	if (r == 99)
+		return 0;
 
 	if (r < 0) {
 		r = -r;
 		deletePartyItems(33, r);
 		_npcSequenceSub = r - 1;
-		drawNpcScene(2);
+		if (_flags.platform != Common::kPlatformSegaCD)
+			drawNpcScene(2);
 		npcJoinDialogue(_npcSequenceSub, 32 + (_npcSequenceSub << 1), -1, 33 + (_npcSequenceSub << 1));
 	} else {
 		_characters[r].hitPointsCur = _characters[r].hitPointsMax;

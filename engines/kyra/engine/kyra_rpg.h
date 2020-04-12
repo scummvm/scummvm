@@ -89,6 +89,8 @@ struct EoBFlyingObject {
 
 struct KyraRpgGUISettings {
 	struct DialogueButtons {
+		const uint16 *posX;
+		const uint8 *posY;
 		uint8 labelColor1;
 		uint8 labelColor2;
 		uint16 width;
@@ -393,7 +395,7 @@ protected:
 	static const uint8 _dropItemDirIndex[];
 
 	// text
-	void drawDialogueButtons();
+	virtual void drawDialogueButtons();
 	uint16 processDialogue();
 
 	TextDisplayer_rpg *_txt;
@@ -406,6 +408,7 @@ protected:
 	const char *_dialogueButtonString[9];
 	const uint16 *_dialogueButtonPosX;
 	const uint8 *_dialogueButtonPosY;
+	int16 _dialogueButtonXoffs;
 	int16 _dialogueButtonYoffs;
 	uint16 _dialogueButtonWidth;
 	int _dialogueNumButtons;
@@ -416,6 +419,9 @@ protected:
 	uint8 _dialogueButtonLabelColor2;
 
 	const char *const *_moreStrings;
+
+	static const uint16 _dlgButtonPosX_Def[14];
+	static const uint8 _dlgButtonPosY_Def[14];
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) override = 0;

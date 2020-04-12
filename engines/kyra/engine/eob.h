@@ -37,6 +37,7 @@ friend class EoBSeqPlayerCommon;
 friend class EoBIntroPlayer;
 friend class EoBPC98FinalePlayer;
 friend class EoBAmigaFinalePlayer;
+friend class TextDisplayer_SegaCD;
 friend class SegaSequencePlayer;
 public:
 	EoBEngine(OSystem *system, const GameFlags &flags);
@@ -98,7 +99,7 @@ private:
 
 	void seq_segaSetupSequence(int sequenceId);
 	void seq_segaRestoreAfterSequence();
-	bool seq_segaPlaySequence(int sequenceId, bool init = false);
+	bool seq_segaPlaySequence(int sequenceId, bool setupScreen = false);
 
 	const char *const *_finBonusStrings;
 	SegaSequencePlayer *_seqPlayer;
@@ -177,7 +178,7 @@ private:
 
 	// Misc
 	void displayParchment(int id) override;
-	void drawParchmentPage(int page);
+	const uint8 **makePortalShapes() override;
 	bool checkPartyStatusExtra() override;
 	int resurrectionSelectDialogue() override;
 	void healParty();
@@ -186,11 +187,6 @@ private:
 	int _sceneShakeOffsetY;
 	uint8 *_shakeBackBuffer1;
 	uint8 *_shakeBackBuffer2;
-
-	// Map
-	const char *const *_mapStrings1;
-	const char *const *_mapStrings2;
-	const char *const *_mapStrings3;
 
 	// Resource
 	SegaCDResource *_sres;
@@ -203,13 +199,15 @@ private:
 	void gui_drawCharacterStatsPage() override;
 	void gui_displayMap() override;
 	void gui_updateAnimations() override;
+	void gui_resetAnimations();
 
-	void makeNameShapes() override;
-	void makeFaceShapes() override;
+	void makeNameShapes(int charId = -1) override;
+	void makeFaceShapes(int charId = -1) override;
 	void printStatsString(const char *str, int x, int y);
 	void drawMapButton(const char *str, int x, int y);
 	void drawMapPage(int level);
 	void drawMapSpots(int level, int animState);
+	void drawDialogueButtons() override;
 
 	const KyraRpgGUISettings *guiSettings() const override;
 	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }
@@ -223,9 +221,11 @@ private:
 	bool _compassAnimDone;
 	uint8 *_compassData;
 
+	const char *const *_mapStrings1;
+	const char *const *_mapStrings2;
+	const char *const *_mapStrings3;
 	const uint8 **_invSmallDigits;
 	const uint8 **_weaponSlotShapes;
-
 	const uint16 *_addrTbl1;
 	const uint16 *_textFieldPattern;
 	const uint16 *_playFldPattern1;
@@ -244,6 +244,8 @@ private:
 	static const uint8 _egaDefaultPalette[];
 	static const uint8 _redGridTile[8];
 	static const int8 _sceneShakeOffsets[66];
+	static const uint16 _dlgButtonPosX_Sega[18];
+	static const uint8 _dlgButtonPosY_Sega[18];
 	bool _useMainMenuGUISettings;
 };
 

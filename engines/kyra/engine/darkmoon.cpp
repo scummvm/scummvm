@@ -169,7 +169,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 		gui_drawDialogueBox();
 
 		_txt->printDialogueText(4, 0);
-		int r = runDialogue(-1, 2, _npcStrings[0][0], _npcStrings[0][1]) - 1;
+		int r = runDialogue(-1, 2, -1, _npcStrings[0][0], _npcStrings[0][1]) - 1;
 
 		if (r == 0) {
 			snd_stopSound();
@@ -185,7 +185,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 		gui_drawDialogueBox();
 
 		_txt->printDialogueText(8, 0);
-		int r = runDialogue(-1, 2, _npcStrings[1][0], _npcStrings[1][1]) - 1;
+		int r = runDialogue(-1, 2, -1, _npcStrings[1][0], _npcStrings[1][1]) - 1;
 
 		if (r == 0) {
 			if (rollDice(1, 2, -1))
@@ -717,7 +717,7 @@ int DarkMoonEngine::resurrectionSelectDialogue() {
 	_rrNames[_rrCount] = _abortStrings[0];
 	_rrId[_rrCount++] = 99;
 
-	int r = _rrId[runDialogue(-1, 9, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
+	int r = _rrId[runDialogue(-1, 9, -1, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
 	if (r == 99)
 		return 0;
 
@@ -745,7 +745,7 @@ int DarkMoonEngine::charSelectDialogue() {
 
 	namesList[cnt++] = _abortStrings[0];
 
-	int r = runDialogue(-1, 7, namesList[0], namesList[1], namesList[2], namesList[3], namesList[4], namesList[5], namesList[6]) - 1;
+	int r = runDialogue(-1, 7, -1, namesList[0], namesList[1], namesList[2], namesList[3], namesList[4], namesList[5], namesList[6]) - 1;
 	if (r == cnt - 1)
 		return 99;
 

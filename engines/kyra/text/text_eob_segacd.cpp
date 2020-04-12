@@ -29,12 +29,41 @@
 
 namespace Kyra {
 
-TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) : TextDisplayer_rpg(engine, scr), _screen(scr), _renderer(scr->sega_getRenderer()),
+TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) : TextDisplayer_rpg(engine, scr), _engine(engine), _screen(scr), _renderer(scr->sega_getRenderer()),
 	_curDim(0), _textColor(0xFF), _curPosY(0), _curPosX(0) {
 	assert(_renderer);
 }
 
 TextDisplayer_SegaCD::~TextDisplayer_SegaCD() {
+}
+
+void TextDisplayer_SegaCD::printDialogueText(int id, const char *string1, const char *string2) {
+	if (string1 && string2) {
+		_engine->runDialogue(id, 2, 2, string1, string2);
+	} else {
+		_screen->hideMouse();
+		_engine->seq_segaPlaySequence(id);
+		_screen->showMouse();
+	}
+}
+
+void TextDisplayer_SegaCD::printDialogueText(const char *str, bool wait) {
+	int cs = _screen->setFontStyles(Screen::FID_8_FNT, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat | Font::kStyleForceTwoByte);
+	clearDim(_curDim);
+
+	if (wait) {
+		printShadowedText(str, 32, 12);
+		_engine->resetSkipFlag();
+		_renderer->render(0);
+		_screen->updateScreen();
+		_engine->delay(500);
+	} else {
+		printShadowedText(str, 0, 0);
+		_renderer->render(0);
+		_screen->updateScreen();
+	}
+
+	_screen->setFontStyles(Screen::FID_8_FNT, cs);
 }
 
 void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int textColor, int shadowColor, int pitchW, int pitchH, int marginRight, bool screenUpdate) {

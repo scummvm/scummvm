@@ -127,7 +127,10 @@ SegaSequencePlayer::~SegaSequencePlayer() {
 }
 
 bool SegaSequencePlayer::play(int id) {
+	_renderer->render(0);
 	_screen->sega_fadeToBlack(2);
+	_screen->clearPage(0);
+
 	_animator->clearSprites();
 	_scrollManager->setVScrollTimers(0, 1, 0, 0, 1, 0);
 	_scrollManager->setHScrollTimers(0, 1, 0, 0, 1, 0);
@@ -215,7 +218,7 @@ bool SegaSequencePlayer::play(int id) {
 	if (_vm->shouldQuit() || _vm->skipFlag()) {
 		if (!(_playingID == 55 || _playingID == 56))
 			_vm->snd_stopSound();
-		_screen->sega_fadeToBlack(5);
+		_screen->clearPage(0);
 	}
 
 	_scrollManager->setVScrollTimers(0, 1, 0, 0, 1, 0);
@@ -255,6 +258,7 @@ void SegaSequencePlayer::run(const uint8 *data) {
 			for (uint16 timeStamp2 = timeStamp; timeStamp2 == timeStamp; ) {
 				uint16 op = READ_BE_UINT16(data + 4);
 				_opcodes[op]->run(data + 6);
+				_screen->clearPage(0);
 
 				frameSize = READ_BE_UINT16(data);
 				data += (frameSize & ~1);

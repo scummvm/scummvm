@@ -114,7 +114,7 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(_dialogueButtonString, 0, 3 * sizeof(const char *));
 	_dialogueButtonPosX = 0;
 	_dialogueButtonPosY = 0;
-	_dialogueNumButtons = _dialogueButtonYoffs = _dialogueHighlightedButton = 0;
+	_dialogueNumButtons = _dialogueButtonXoffs = _dialogueButtonYoffs = _dialogueHighlightedButton = 0;
 	_currentControlMode = 0;
 	_specialSceneFlag = 0;
 	_updateCharNum = -1;
@@ -277,7 +277,7 @@ uint16 KyraRpgEngine::processDialogue() {
 	int res = 0;
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
-		int x = _dialogueButtonPosX[i];
+		int x = _dialogueButtonPosX[i] + _dialogueButtonXoffs;
 		int y = ((_flags.gameID == GI_LOL && _flags.use16ColorMode) ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
 		Common::Point p = getMousePos();
 		if (posWithinRect(p.x, p.y, x, y, x + _dialogueButtonWidth, y + guiSettings()->buttons.height)) {

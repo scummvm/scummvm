@@ -402,9 +402,8 @@ Common::Error EoBCoreEngine::init() {
 	if (!_staticres->init())
 		error("_staticres->init() failed");
 
-	// We start the respective sound driver even if "No Music" has
-	// been selected, because we don't have a null driver class (and
-	// don't really need one). We just disable the sound here.
+	// We start the respective sound driver even if "No Music" has been selected, because we
+	// don't have a null driver class (and don't really need one). We just disable the sound here.
 	MidiDriver::DeviceHandle dev = 0;
 	switch (_flags.platform) {
 	case Common::kPlatformDOS: {
@@ -1301,26 +1300,28 @@ void EoBCoreEngine::neutralizePoison(int character) {
 }
 
 void EoBCoreEngine::npcSequence(int npcIndex) {
-	_screen->loadShapeSetBitmap("OUTTAKE", 5, 3);
-	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		_screen->loadShapeSetBitmap("OUTTAKE", 5, 3);
+		_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
 
-	drawNpcScene(npcIndex);
+		drawNpcScene(npcIndex);
 
-	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
-	if (s) {
-		_screen->loadFileDataToPage(s, 5, 32000);
-	} else {
-		s = _res->createReadStream("TEXT.CPS");
-		if (s->readSint32BE() + 12 == s->size())
-			_screen->loadSpecialAmigaCPS("TEXT.CPS", 5, false);
-		else
-			_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
-	}		
-	delete s;
+		Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
+		if (s) {
+			_screen->loadFileDataToPage(s, 5, 32000);
+		} else {
+			s = _res->createReadStream("TEXT.CPS");
+			if (s->readSint32BE() + 12 == s->size())
+				_screen->loadSpecialAmigaCPS("TEXT.CPS", 5, false);
+			else
+				_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
+		}
+		delete s;
 
-	gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
-	_txt->setupField(9, true);
-	_txt->resetPageBreakString();
+		gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
+		_txt->setupField(9, true);
+		_txt->resetPageBreakString();
+	}
 
 	runNpcDialogue(npcIndex);
 
@@ -1341,24 +1342,19 @@ void EoBCoreEngine::initNpc(int npcIndex) {
 	delete[] c->faceShape;
 	memcpy(c, &_npcPreset[npcIndex], sizeof(EoBCharacter));
 	recalcArmorClass(i);
+	makeFaceShapes(i);
+	makeNameShapes(i);
 
 	for (i = 0; i < 25; i++) {
 		if (!c->inventory[i])
 			continue;
 		c->inventory[i] = duplicateItem(c->inventory[i]);
 	}
-
-	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
-	_screen->_curPage = 2;
-	c->faceShape = _screen->encodeShape(npcIndex << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true, _cgaMappingDefault);
-	_screen->_curPage = 0;
 }
 
 int EoBCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confirmJoinTextId, int noJoinTextId) {
 	gui_drawDialogueBox();
-	_txt->printDialogueText(queryJoinTextId, 0);
-
-	int r = runDialogue(-1, 2, _yesNoStrings[0], _yesNoStrings[1]) - 1;
+	int r = runDialogue(queryJoinTextId, _flags.platform == Common::kPlatformSegaCD ? 3 : 2, _flags.platform == Common::kPlatformSegaCD ? 3 : -1, _yesNoStrings[0], _yesNoStrings[1], _flags.platform == Common::kPlatformSegaCD ? _yesNoStrings[2] : 0) - 1;
 	if (r == 0) {
 		if (confirmJoinTextId == -1) {
 			Common::String tmp = Common::String::format(_npcJoinStrings[0], _npcPreset[npcIndex].name);
@@ -1370,7 +1366,7 @@ int EoBCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confir
 		if (prepareForNewPartyMember(33, npcIndex + 1))
 			initNpc(npcIndex);
 
-	} else if (r == 1) {
+	} else if (r == 1 && noJoinTextId != -1) {
 		_txt->printDialogueText(noJoinTextId, _okStrings[0]);
 	}
 
@@ -1389,8 +1385,17 @@ int EoBCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 		_screen->set16bitShadingLevel(4);
 		_txt->printDialogueText(_npcMaxStrings[0]);
 		_screen->set16bitShadingLevel(0);
-		int r = runDialogue(-1, 7, _characters[0].name, _characters[1].name, _characters[2].name, _characters[3].name,
-		                    _characters[4].name, _characters[5].name, _abortStrings[0]) - 1;
+
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			resetSkipFlag();
+			_allowSkip = true;
+			while (!(shouldQuit() || skipFlag()))
+				delay(20);
+			_allowSkip = false;
+			resetSkipFlag();
+		}
+
+		int r = runDialogue(-1, 7, -1, _characters[0].name, _characters[1].name, _characters[2].name, _characters[3].name, _characters[4].name, _characters[5].name, _abortStrings[0]) - 1;
 
 		if (r == 6)
 			return 0;
@@ -1527,15 +1532,13 @@ void EoBCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &a
 			_dialogueNumButtons = numStr = i;
 	}
 
-	static const uint16 prsX[] = { 59, 166, 4, 112, 220, 4, 112, 220, 4, 112, 220, 4, 112, 220 };
-	static const uint8 prsY[] = { 0, 0, 0, 0, 0, 12, 12, 12, 24, 24, 24, 36, 36, 36 };
-
 	const ScreenDim *dm = screen()->_curDim;
 	int yOffs = (_txt->lineCount() + 1) * _screen->getFontHeight() + dm->sy + 4;
 
-	_dialogueButtonPosX = &prsX[presetfirst];
-	_dialogueButtonPosY = &prsY[presetfirst];
-	_dialogueButtonYoffs = yOffs;
+	_dialogueButtonPosX = &guiSettings()->buttons.posX[presetfirst];
+	_dialogueButtonPosY = &guiSettings()->buttons.posY[presetfirst];
+	_dialogueButtonXoffs = (_flags.platform == Common::kPlatformSegaCD) ? 8 : 0;
+	_dialogueButtonYoffs = (_flags.platform == Common::kPlatformSegaCD) ? 160 : yOffs;
 
 	drawDialogueButtons();
 
@@ -1644,23 +1647,29 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	_screen->updateScreen();
 }
 
-int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, ...) {
-	if (dialogueTextId != -1)
-		txt()->printDialogueText(dialogueTextId, 0);
+int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, int loopButtonId, ...) {
+	int res;
+	do {
+		res = 0;
+		if (dialogueTextId != -1)
+			txt()->printDialogueText(dialogueTextId, 0);
 
-	va_list args;
-	va_start(args, numStr);
-	if (numStr > 2)
-		setupDialogueButtons(2, numStr, args);
-	else
-		setupDialogueButtons(0, numStr, args);
-	va_end(args);
+		va_list args;
+		va_start(args, loopButtonId);
+		if (_flags.platform == Common::kPlatformSegaCD && numStr > 3)
+			setupDialogueButtons(numStr == 4 ? 14 : 5, numStr, args);
+		else if (numStr > 2)
+			setupDialogueButtons(2, numStr, args);
+		else
+			setupDialogueButtons(0, numStr, args);
+		va_end(args);
 
-	int res = 0;
-	while (res == 0 && !shouldQuit())
-		res = processDialogue();
+		while (res == 0 && !shouldQuit())
+			res = processDialogue();
+	} while (res == loopButtonId && !shouldQuit());
 
-	gui_drawDialogueBox();
+	if (_flags.platform != Common::kPlatformSegaCD)
+		gui_drawDialogueBox();
 
 	return res;
 }
@@ -1874,72 +1883,84 @@ int EoBCoreEngine::countResurrectionCandidates() {
 }
 
 void EoBCoreEngine::seq_portal() {
-	uint8 *shapes1[5];
-	uint8 *shapes2[5];
-	uint8 *shapes3[5];
-	uint8 *shape0;
+	const uint8 **shapes = makePortalShapes();
+	assert(shapes);
 
-	_screen->loadShapeSetBitmap("PORTALA", 5, 3);
-
-	for (int i = 0; i < 5; i++) {
-		shapes1[i] = _screen->encodeShape(i * 3, 0, 3, 75, false, _cgaMappingDefault);
-		shapes2[i] = _screen->encodeShape(i * 3, 80, 3, 75, false, _cgaMappingDefault);
-		shapes3[i] = _screen->encodeShape(15, i * 18, 15, 18, false, _cgaMappingDefault);
-	}
-
-	shape0 = _screen->encodeShape(30, 0, 8, 77, false, _cgaMappingDefault);
-	_screen->loadEoBBitmap("PORTALB", _cgaMappingDefault, 5, 3, 2);
-
-	snd_playSoundEffect(33);
-	snd_playSoundEffect(19);
 	_screen->copyRegion(24, 0, 24, 0, 144, 104, 2, 5, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(24, 0, 24, 0, 144, 104, 0, 2, Screen::CR_NO_P_CHECK);
-	_screen->drawShape(2, shapes3[0], 28, 9, 0);
-	_screen->drawShape(2, shapes1[0], 34, 28, 0);
-	_screen->drawShape(2, shapes2[0], 120, 28, 0);
-	_screen->drawShape(2, shape0, 56, 27, 0);
-	_screen->crossFadeRegion(24, 0, 24, 0, 144, 104, 2, 0);
+	_screen->drawShape(2, shapes[11], 28, 9, 0);
+	_screen->drawShape(2, shapes[1], 34, 28, 0);
+	_screen->drawShape(2, shapes[6], 120, 28, 0);
+	_screen->drawShape(2, shapes[0], 56, 27, 0);
+
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		snd_playSoundEffect(19);
+		_screen->copyRegion(24, 0, 24, 0, 144, 104, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+	} else {
+		snd_playSoundEffect(33);
+		snd_playSoundEffect(19);
+		_screen->crossFadeRegion(24, 0, 24, 0, 144, 104, 2, 0);
+		delay(30 * _tickLength);
+	}
+
 	_screen->copyRegion(24, 0, 24, 0, 144, 104, 5, 2, Screen::CR_NO_P_CHECK);
-	delay(30 * _tickLength);
 
 	for (const int8 *pos = _portalSeq; *pos > -1 && !shouldQuit();) {
 		int s = *pos++;
-		_screen->drawShape(0, shapes3[s], 28, 9, 0);
-		_screen->drawShape(0, shapes1[s], 34, 28, 0);
-		_screen->drawShape(0, shapes2[s], 120, 28, 0);
+		_screen->drawShape(0, shapes[11 + s], 28, 9, 0);
+		_screen->drawShape(0, shapes[1 + s], 34, 28, 0);
+		_screen->drawShape(0, shapes[6 + s], 120, 28, 0);
 
-		if ((s == 1) && (pos >= _portalSeq + 3)) {
-			if (*(pos - 3) == 0) {
-				snd_playSoundEffect(24);
-				snd_playSoundEffect(86);
+		if (_flags.platform != Common::kPlatformSegaCD) {
+			if ((s == 1) && (pos >= _portalSeq + 3)) {
+				if (*(pos - 3) == 0) {
+					snd_playSoundEffect(24);
+					snd_playSoundEffect(86);
+				}
 			}
 		}
 
 		s = *pos++;
 		if (s == 0) {
-			_screen->drawShape(0, shape0, 56, 27, 0);
+			_screen->drawShape(0, shapes[0], 56, 27, 0);
 		} else {
 			s--;
 			_screen->copyRegion((s % 5) << 6, s / 5 * 77, 56, 27, 64, 77, 2, 0, Screen::CR_NO_P_CHECK);
 		}
 
-		if (s == 1)
-			snd_playSoundEffect(31);
-		else if (s == 3) {
-			if (*(pos - 2) == 3)
-				snd_playSoundEffect(90);
+		if (_flags.platform != Common::kPlatformSegaCD) {
+			if (s == 1)
+				snd_playSoundEffect(31);
+			else if (s == 3) {
+				if (*(pos - 2) == 3)
+					snd_playSoundEffect(90);
+			}
 		}
-
+	
 		_screen->updateScreen();
 		delay(2 * _tickLength);
 	}
+	
+	for (int i = 0; i < 16; i++)
+		delete[] shapes[i];
+	delete[] shapes;
+}
 
-	delete[] shape0;
+const uint8 **EoBCoreEngine::makePortalShapes() {
+	const uint8 **shapes = new const uint8*[16];
+	_screen->loadShapeSetBitmap("PORTALA", 5, 3);
+
 	for (int i = 0; i < 5; i++) {
-		delete[] shapes1[i];
-		delete[] shapes2[i];
-		delete[] shapes3[i];
+		shapes[1 + i] = _screen->encodeShape(i * 3, 0, 3, 75, false, _cgaMappingDefault);
+		shapes[6 + i] = _screen->encodeShape(i * 3, 80, 3, 75, false, _cgaMappingDefault);
+		shapes[11 + i] = _screen->encodeShape(15, i * 18, 15, 18, false, _cgaMappingDefault);
 	}
+
+	shapes[0] = _screen->encodeShape(30, 0, 8, 77, false, _cgaMappingDefault);
+	_screen->loadEoBBitmap("PORTALB", _cgaMappingDefault, 5, 3, 2);
+
+	return shapes;
 }
 
 bool EoBCoreEngine::checkPassword() {

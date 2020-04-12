@@ -241,6 +241,9 @@ int EoBCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	if (item < 0)
 		return 0;
 
+	if (slot == 27)
+		return 1;
+
 	if (slot == 17 && item && !itemUsableByCharacter(charIndex, item)) {
 		_txt->printMessage(_validateArmorString[0], -1, _characters[charIndex].name);
 		return 0;

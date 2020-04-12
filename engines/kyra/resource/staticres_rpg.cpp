@@ -78,6 +78,10 @@ const uint16 KyraRpgEngine::_vmpOffsetsDefault[9] = { 102, 97, 129, 117, 81, 159
 
 const uint16 KyraRpgEngine::_vmpOffsetsSegaCD[9] = { 0, 15, 20, 50, 62, 78, 158, 194, 386 };
 
+const uint16 KyraRpgEngine::_dlgButtonPosX_Def[14] = { 59, 166, 4, 112, 220, 4, 112, 220, 4, 112, 220, 4, 112, 220 };
+
+const uint8 KyraRpgEngine::_dlgButtonPosY_Def[14] = { 0, 0, 0, 0, 0, 12, 12, 12, 24, 24, 24, 36, 36, 36 };
+
 void KyraRpgEngine::initStaticResource() {
 	int temp;
 	_dscShapeX = (const int16 *)_staticres->loadRawDataBe16(kRpgCommonDscX, temp);

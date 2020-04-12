@@ -1582,7 +1582,7 @@ int EoBInfProcessor::oeob_dialogue(int8 *data) {
 		break;
 
 	case -40:
-		_dlgResult = _vm->runDialogue(READ_LE_UINT16(pos), READ_LE_UINT16(pos + 6) == 0xFFFF ? 2 : 3, getString(READ_LE_UINT16(pos + 2)), getString(READ_LE_UINT16(pos + 4)), getString(READ_LE_UINT16(pos + 6)));
+		_dlgResult = _vm->runDialogue(READ_LE_UINT16(pos), READ_LE_UINT16(pos + 6) == 0xFFFF ? 2 : 3, -1, getString(READ_LE_UINT16(pos + 2)), getString(READ_LE_UINT16(pos + 4)), getString(READ_LE_UINT16(pos + 6)));
 		pos += 8;
 		break;
 

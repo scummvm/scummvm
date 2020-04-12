@@ -2283,6 +2283,7 @@ void EoBEngine::seq_playFinale() {
 		EoBPC98FinalePlayer(this, _screen).start(_xdth);
 		return;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		_screen->hideMouse();
 		seq_segaPlaySequence(_xdth ? 55 : 56, true);
 		seq_segaFinalCredits();
 		seq_segaShowStats();
@@ -2332,44 +2333,76 @@ void EoBEngine::seq_playFinale() {
 }
 
 void EoBEngine::seq_xdeath() {
-	uint8 *shapes1[5];
+	uint8 *shapes1[4];
 	uint8 *shapes2;
+	memset(shapes1, 0, sizeof(shapes1));
 	_xdth = true;
+	_totalEnemiesKilled++;
 
-	_screen->loadShapeSetBitmap("XDEATH2", 5, 3);
-	for (int i = 0; i < 4; i++)
-		shapes1[i] = _screen->encodeShape(i / 2 * 14, i / 2 * 88, 14, 88, true, _cgaMappingDefault);
-	_screen->loadShapeSetBitmap("XDEATH3", 5, 3);
-	shapes2 = _screen->encodeShape(22, 0, 16, 95, true, _cgaMappingDefault);
-	_screen->loadEoBBitmap("XDEATH1", _cgaMappingDefault, 5, 3, -1);
-	_screen->convertPage(3, 2, _cgaMappingDefault);
-	_screen->setCurPage(0);
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		_screen->sega_selectPalette(57, 2, true);
+		snd_stopSound();
+		uint8 *in = _res->fileData("XD", 0);
+		_sceneShakeCountdown = 1;
 
-	for (int i = 0; i < 10; i++) {
-		if (i == 2)
-			snd_playSoundEffect(72);
-		else if (i == 4 || i == 6)
-			snd_playSoundEffect(54);
-		else
-			snd_playSoundEffect(34);
-
-		if (i < 6) {
-			_screen->copyRegion((i % 3) * 104, i / 3 * 88, 32, 10, 104, 88, 2, 0, Screen::CR_NO_P_CHECK);
-		} else {
-			snd_playSoundEffect(42);
-			_screen->drawShape(0, shapes1[i - 6], 32, 10, 0);
+		snd_playSoundEffect(0x502d);
+		for (int i = 0; i < 10 && !shouldQuit(); i++) {
+			uint32 del = _system->getMillis() + 4 * _tickLength;
+			shapes2 = _screen->sega_convertShape(in + 6144 + i * 4928, 112, 88, 2);
+			_screen->copyBlockToPage(2, 0, 0, 176, 120, _sceneWindowBuffer);
+			drawDecorations(13);
+			_screen->copyRegion(0, 0, 0, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->drawShape(0, shapes2, 32, 10, 0);
+			_screen->updateScreen();
+			updateAnimTimers();
+			delete[] shapes2;
+			for (uint32 cur = _system->getMillis(); cur < del; cur = _system->getMillis()) {
+				updateAnimTimers();
+				delay(MIN<uint32>(8, del - cur));
+			}
 		}
 
-		_screen->updateScreen();
-		delay(4 * _tickLength);
+		snd_playSoundEffect(0x500e);
+		shapes2 = _screen->sega_convertShape(in, 128, 96, 2);
+		delete[] in;
+
+	} else {
+		_screen->loadShapeSetBitmap("XDEATH2", 5, 3);
+		for (int i = 0; i < 4; i++)
+			shapes1[i] = _screen->encodeShape(i / 2 * 14, i / 2 * 88, 14, 88, true, _cgaMappingDefault);
+		_screen->loadShapeSetBitmap("XDEATH3", 5, 3);
+		shapes2 = _screen->encodeShape(22, 0, 16, 95, true, _cgaMappingDefault);
+		_screen->loadEoBBitmap("XDEATH1", _cgaMappingDefault, 5, 3, -1);
+		_screen->convertPage(3, 2, _cgaMappingDefault);
+		_screen->setCurPage(0);
+
+		for (int i = 0; i < 10 && !shouldQuit(); i++) {
+			if (i == 2)
+				snd_playSoundEffect(72);
+			else if (i == 4 || i == 6)
+				snd_playSoundEffect(54);
+			else
+				snd_playSoundEffect(34);
+
+			if (i < 6) {
+				_screen->copyRegion((i % 3) * 104, i / 3 * 88, 32, 10, 104, 88, 2, 0, Screen::CR_NO_P_CHECK);
+			} else {
+				snd_playSoundEffect(42);
+				_screen->drawShape(0, shapes1[i - 6], 32, 10, 0);
+			}
+
+			_screen->updateScreen();
+			delay(4 * _tickLength);
+		}
 	}
 
 	const ScreenDim *dm = _screen->getScreenDim(5);
 	_screen->modifyScreenDim(5, dm->sx, 8, dm->w, dm->h);
 	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 5, Screen::CR_NO_P_CHECK);
 
-	for (int i = 0; i < 19; i++) {
-		snd_playSoundEffect(119);
+	for (int i = 0; i < 19 && !shouldQuit(); i++) {
+		if (_flags.platform != Common::kPlatformSegaCD)
+			snd_playSoundEffect(119);
 		_screen->copyRegion(0, 0, 0, 0, 176, 120, 5, 2, Screen::CR_NO_P_CHECK);
 		_screen->drawShape(2, shapes2, 24, i * 5 - 90, 5);
 		_screen->copyRegion(0, 0, 0, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
@@ -2379,14 +2412,17 @@ void EoBEngine::seq_xdeath() {
 
 	_screen->modifyScreenDim(5, dm->sx, 0, dm->w, dm->h);
 
-	snd_playSoundEffect(5);
+	snd_playSoundEffect(_flags.platform == Common::kPlatformSegaCD ? 0x5002 : 5);
 	delay(60 * _tickLength);
 
 	for (int i = 0; i < 4; i++)
 		delete[] shapes1[i];
 	delete[] shapes2;
 
-	gui_drawPlayField(false);
+	if (_flags.platform == Common::kPlatformSegaCD)
+		_screen->sega_fadeToBlack(7);
+	else
+		gui_drawPlayField(false);
 	gui_drawAllCharPortraitsWithStats();
 }
 
@@ -2698,12 +2734,17 @@ void EoBEngine::seq_segaSetupSequence(int sequenceId) {
 	if (_flags.platform != Common::kPlatformSegaCD || sequenceId == -1)
 		return;
 
-	_screen->sega_fadeToBlack(1);
-	for (int i = 0; i < 6; i++) {
-		_characters[i].damageTaken = 0;
-		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = 0;
-		gui_drawCharPortraitWithStats(i);
+	if (sequenceId != 53 && sequenceId != 54) {
+		gui_resetAnimations();
+		for (int i = 0; i < 6; i++) {
+			_characters[i].damageTaken = 0;
+			_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = 0;
+			gui_drawCharPortraitWithStats(i);
+		}
 	}
+
+	_screen->sega_fadeToBlack(1);
+	_screen->clearPage(0);
 
 	// transposeScreenOutputY(0);
 	_screen->sega_getRenderer()->setupWindowPlane(0, (sequenceId == 53 || sequenceId == 54) ? 23 : 18, SegaRenderer::kWinToRight, SegaRenderer::kWinToBottom);
@@ -2713,6 +2754,9 @@ void EoBEngine::seq_segaSetupSequence(int sequenceId) {
 }
 
 void EoBEngine::seq_segaRestoreAfterSequence() {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return;
+
 	SegaRenderer *r = _screen->sega_getRenderer();
 	_screen->sega_fadeToBlack(1);
 	_screen->sega_getAnimator()->clearSprites();
@@ -2723,14 +2767,14 @@ void EoBEngine::seq_segaRestoreAfterSequence() {
 	_screen->clearPage(0);
 }
 
-bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool init) {
+bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return true;
 
 	_allowSkip = true;
 	resetSkipFlag();
 
-	if (init)
+	if (setupScreen)
 		seq_segaSetupSequence(sequenceId);
 
 	_allowSkip = false;
@@ -2739,7 +2783,9 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool init) {
 	if (!_seqPlayer->play(sequenceId))
 		return false;
 
-	seq_segaRestoreAfterSequence();
+	if (setupScreen)
+		seq_segaRestoreAfterSequence();
+
 	return true;
 }
 
