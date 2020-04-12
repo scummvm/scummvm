@@ -684,12 +684,13 @@ public:
 	int getChannelFilterMask(int hardwareMask, bool wantsRhythm);
 	byte getInitialVoiceCount(byte channel);
 	byte getSoundPriority() const { return _soundPriority; }
+	bool exists() const { return _resource != nullptr; }
 
 private:
 	SciVersion _soundVersion;
 	int _trackCount;
 	Track *_tracks;
-	Resource *_innerResource;
+	Resource *_resource;
 	ResourceManager *_resMan;
 	byte _soundPriority;
 };

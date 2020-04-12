@@ -707,29 +707,24 @@ bool ResourceManager::isGMTrackIncluded() {
 	Common::List<ResourceId>::iterator itr = resources.begin();
 	int firstSongId = itr->getNumber();
 
-	SoundResource *song1 = new SoundResource(firstSongId, this, soundVersion);
-	if (!song1) {
+	SoundResource song1(firstSongId, this, soundVersion);
+	if (!song1.exists()) {
 		warning("ResourceManager::isGMTrackIncluded: track 1 not found");
 		return false;
 	}
 
-	SoundResource::Track *gmTrack = song1->getTrackByType(0x07);
+	SoundResource::Track *gmTrack = song1.getTrackByType(0x07);
 	if (gmTrack)
 		result = true;
-
-	delete song1;
 
 	return result;
 }
 
-SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {
-	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), true);
-	int trackNr, channelNr;
-	if (!resource)
+SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : 
+	_resMan(resMan), _soundVersion(soundVersion), _trackCount(0), _tracks(nullptr), _soundPriority(0xFF) {
+	_resource = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), true);
+	if (!_resource)
 		return;
-
-	_innerResource = resource;
-	_soundPriority = 0xFF;
 
 	Channel *channel, *sampleChannel;
 
@@ -741,17 +736,17 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 		_tracks->type = 0; // Not used for SCI0
 		_tracks->channelCount = 1;
 		// Digital sample data included? -> Add an additional channel
-		if (resource->getUint8At(0) == 2)
+		if (_resource->getUint8At(0) == 2)
 			_tracks->channelCount++;
 		// header information that can be passed to the SCI0 sound driver
-		_tracks->header = resource->subspan(0, _soundVersion == SCI_VERSION_0_EARLY ? 0x11 : 0x21);
+		_tracks->header = _resource->subspan(0, _soundVersion == SCI_VERSION_0_EARLY ? 0x11 : 0x21);
 		_tracks->channels = new Channel[_tracks->channelCount];
 		channel = &_tracks->channels[0];
 		channel->flags |= 2; // don't remap (SCI0 doesn't have remapping)
 		if (_soundVersion == SCI_VERSION_0_EARLY) {
-			channel->data = resource->subspan(0x11);
+			channel->data = _resource->subspan(0x11);
 		} else {
-			channel->data = resource->subspan(0x21);
+			channel->data = _resource->subspan(0x21);
 		}
 		if (_tracks->channelCount == 2) {
 			// Digital sample data included
@@ -776,7 +771,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 			sampleChannel->data += 44; // Skip over header
 		}
 	} else if (_soundVersion >= SCI_VERSION_1_EARLY && _soundVersion <= SCI_VERSION_2_1_MIDDLE) {
-		SciSpan<const byte> data = *resource;
+		SciSpan<const byte> data = *_resource;
 		// Count # of tracks
 		_trackCount = 0;
 		while ((*data++) != 0xFF) {
@@ -786,11 +781,11 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 			++data;
 		}
 		_tracks = new Track[_trackCount];
-		data = *resource;
+		data = *_resource;
 
 		byte channelCount;
 
-		for (trackNr = 0; trackNr < _trackCount; trackNr++) {
+		for (int trackNr = 0; trackNr < _trackCount; trackNr++) {
 			// Track info starts with track type:BYTE
 			// Then the channel information gets appended Unknown:WORD, ChannelOffset:WORD, ChannelSize:WORD
 			// 0xFF:BYTE as terminator to end that track and begin with another track type
@@ -813,12 +808,12 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 			_tracks[trackNr].digitalSampleStart = 0;
 			_tracks[trackNr].digitalSampleEnd = 0;
 			if (_tracks[trackNr].type != 0xF0) { // Digital track marker - not supported currently
-				channelNr = 0;
+				int channelNr = 0;
 				while (channelCount--) {
 					channel = &_tracks[trackNr].channels[channelNr];
 					const uint16 dataOffset = data.getUint16LEAt(2);
 
-					if (dataOffset >= resource->size()) {
+					if (dataOffset >= _resource->size()) {
 						warning("Invalid offset inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
 						data += 6;
 						continue;
@@ -826,12 +821,12 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 					uint16 size = data.getUint16LEAt(4);
 
-					if ((uint32)dataOffset + size > resource->size()) {
+					if ((uint32)dataOffset + size > _resource->size()) {
 						warning("Invalid size inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
-						size = resource->size() - dataOffset;
+						size = _resource->size() - dataOffset;
 					}
 
-					channel->data = resource->subspan(dataOffset, size);
+					channel->data = _resource->subspan(dataOffset, size);
 
 					channel->curPos = 0;
 					channel->number = channel->data[0];
@@ -883,11 +878,15 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 }
 
 SoundResource::~SoundResource() {
-	for (int trackNr = 0; trackNr < _trackCount; trackNr++)
-		delete[] _tracks[trackNr].channels;
-	delete[] _tracks;
+	if (_tracks != nullptr) {
+		for (int trackNr = 0; trackNr < _trackCount; trackNr++)
+			delete[] _tracks[trackNr].channels;
+		delete[] _tracks;
+	}
 
-	_resMan->unlockResource(_innerResource);
+	if (_resource != nullptr) {
+		_resMan->unlockResource(_resource);
+	}
 }
 
 #if 0
@@ -922,7 +921,7 @@ SoundResource::Track *SoundResource::getDigitalTrack() {
 
 // Gets the filter mask for SCI0 sound resources
 int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
-	SciSpan<const byte> data = *_innerResource;
+	SciSpan<const byte> data = *_resource;
 	int channelMask = 0;
 
 	if (_soundVersion > SCI_VERSION_0_LATE)
@@ -990,7 +989,7 @@ byte SoundResource::getInitialVoiceCount(byte channel) {
 		return 0; // TODO
 
 	// Skip over digital sample flag
-	SciSpan<const byte> data = _innerResource->subspan(1);
+	SciSpan<const byte> data = _resource->subspan(1);
 
 	if (_soundVersion == SCI_VERSION_0_EARLY)
 		return data[channel] >> 4;

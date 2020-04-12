@@ -2705,24 +2705,22 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	SoundResource *soundRes = new SoundResource(number, _engine->getResMan(), _engine->_features->detectDoSoundType());
+	SoundResource soundRes(number, _engine->getResMan(), _engine->_features->detectDoSoundType());
 
-	if (!soundRes) {
+	if (!soundRes.exists()) {
 		debugPrintf("Not a sound resource!\n");
 		return true;
 	}
 
-	SoundResource::Track *track = soundRes->getDigitalTrack();
+	SoundResource::Track *track = soundRes.getDigitalTrack();
 	if (!track || track->digitalChannelNr == -1) {
 		debugPrintf("Valid song, but not a sample.\n");
-		delete soundRes;
 		return true;
 	}
 
 	debugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 			track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 
-	delete soundRes;
 	return true;
 }
 

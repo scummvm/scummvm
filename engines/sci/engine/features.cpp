@@ -718,7 +718,7 @@ bool GameFeatures::generalMidiOnly() {
 		}
 
 		SoundResource sound(13, g_sci->getResMan(), detectDoSoundType());
-		return (sound.getTrackByType(/* AdLib */ 0) == nullptr);
+		return (sound.exists() && sound.getTrackByType(/* AdLib */ 0) == nullptr);
 	}
 	default:
 		break;
