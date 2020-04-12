@@ -430,6 +430,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
     d.type = INT;
     d.u.i = _vm->getCurrentScore()->_frames.size() - 1;
 		break;
+  case kTheLastClick:
+    d.type = INT;
+    d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastClickTime;
+    break;
   case kTheLastKey:
     d.type = INT;
     d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastKeyTime;

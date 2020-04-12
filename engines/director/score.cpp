@@ -77,6 +77,7 @@ Score::Score(DirectorEngine *vm) {
 	_currentMouseDownSpriteId = 0;
 	_mouseIsDown = false;
   _lastKeyTime = _vm->getMacTicks();
+  _lastClickTime = _vm->getMacTicks();
 
 	// FIXME: TODO: Check whether the original truely does it
 	if (_vm->getVersion() <= 3) {
