@@ -651,45 +651,6 @@ bool GameController::keyPressed(int key) {
 
 		break;
 
-		case U4_FKEY:
-		case U4_FKEY+1:
-		case U4_FKEY+2:
-		case U4_FKEY+3:
-		case U4_FKEY+4:
-		case U4_FKEY+5:
-		case U4_FKEY+6:
-		case U4_FKEY+7:
-			/* teleport to dungeon entrances! */
-			if (settings._debug && (g_context->_location->_context & CTX_WORLDMAP) && (g_context->_transportContext & TRANSPORT_FOOT_OR_HORSE)) {
-				int portal = 16 + (key - U4_FKEY); /* find dungeon portal */
-				g_context->_location->_coords = g_context->_location->_map->_portals[portal]->_coords;
-			} else valid = false;
-			break;
-
-		case U4_FKEY+8:
-			if (settings._debug && (g_context->_location->_context & CTX_WORLDMAP)) {
-				setMap(mapMgr->get(MAP_DECEIT), 1, NULL);
-				g_context->_location->_coords = MapCoords(1, 0, 7);
-				g_ultima->_saveGame->_orientation = DIR_SOUTH;
-			} else valid = false;
-			break;
-
-		case U4_FKEY+9:
-			if (settings._debug && (g_context->_location->_context & CTX_WORLDMAP)) {
-				setMap(mapMgr->get(MAP_DESPISE), 1, NULL);
-				g_context->_location->_coords = MapCoords(3, 2, 7);
-				g_ultima->_saveGame->_orientation = DIR_SOUTH;
-			} else valid = false;
-			break;
-
-		case U4_FKEY+10:
-			if (settings._debug && (g_context->_location->_context & CTX_WORLDMAP)) {
-				setMap(mapMgr->get(MAP_DESTARD), 1, NULL);
-				g_context->_location->_coords = MapCoords(7, 6, 7);
-				g_ultima->_saveGame->_orientation = DIR_SOUTH;
-			} else valid = false;
-			break;
-
 		case U4_FKEY+11:
 			if (settings._debug) {
 				screenMessage("Torch: %d\n", g_context->_party->getTorchDuration());

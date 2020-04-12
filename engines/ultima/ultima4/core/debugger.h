@@ -65,6 +65,11 @@ private:
 	bool cmdCompanions(int argc, const char **argv);
 
 	/**
+	 * Jumps to a given dungeon
+	 */
+	bool cmdDungeon(int argc, const char **argv);
+
+	/**
 	 * All equipement
 	 */
 	bool cmdEquipment(int argc, const char **argv);

@@ -43,6 +43,7 @@ Debugger::Debugger() : Shared::Debugger() {
 
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
 	registerCmd("companions", WRAP_METHOD(Debugger, cmdCompanions));
+	registerCmd("dungeon", WRAP_METHOD(Debugger, cmdDungeon));
 	registerCmd("equipment", WRAP_METHOD(Debugger, cmdEquipment));
 	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("gate", WRAP_METHOD(Debugger, cmdGate));
@@ -151,6 +152,43 @@ bool Debugger::cmdCompanions(int argc, const char **argv) {
 	return isActive();
 }
 
+bool Debugger::cmdDungeon(int argc, const char **argv) {
+	if (g_context->_location->_context & CTX_WORLDMAP) {
+		if (argc == 2) {
+			int dungNum = strToInt(argv[1]);
+
+			if (dungNum >= 1 && dungNum <= 8) {
+				g_context->_location->_coords = g_context->_location->_map->_portals[dungNum - 1]->_coords;
+				return false;
+			} else if (dungNum == 9) {
+				g_game->setMap(mapMgr->get(MAP_DECEIT), 1, NULL);
+				g_context->_location->_coords = MapCoords(1, 0, 7);
+				g_ultima->_saveGame->_orientation = DIR_SOUTH;
+			} else if (dungNum == 10) {
+				g_game->setMap(mapMgr->get(MAP_DESPISE), 1, NULL);
+				g_context->_location->_coords = MapCoords(3, 2, 7);
+				g_ultima->_saveGame->_orientation = DIR_SOUTH;
+			} else if (dungNum == 11) {
+				g_game->setMap(mapMgr->get(MAP_DESTARD), 1, NULL);
+				g_context->_location->_coords = MapCoords(7, 6, 7);
+				g_ultima->_saveGame->_orientation = DIR_SOUTH;
+			} else {
+				print("Invalid dungeon");
+				return isActive();
+			}
+
+			g_game->finishTurn();
+			return false;
+		} else {
+			print("dungeon <number>");
+		}
+	} else {
+		print("Not here");
+	}
+
+	return isActive();
+}
+
 bool Debugger::cmdEquipment(int argc, const char **argv) {
 	int i;
 
@@ -173,6 +211,7 @@ bool Debugger::cmdExit(int argc, const char **argv) {
 	if (!g_game->exitToParentMap()) {
 		print("Not Here");
 	} else {
+		g_game->finishTurn();
 		g_music->play();
 		print("Exited");
 	}
