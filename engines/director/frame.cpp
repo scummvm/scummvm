@@ -571,7 +571,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			case kOvalSprite:
 			case kLineTopBottomSprite:
 			case kLineBottomTopSprite:
-			case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
+			case kOutlinedRectangleSprite:
 			case kOutlinedRoundedRectangleSprite:
 			case kOutlinedOvalSprite:
 			case kCastMemberSprite:
@@ -633,26 +633,8 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				warning("Frame::renderSprites(): No cast surface for sprite %d", i);
 				continue;
 			}
-			InkType ink;
-			if (i == _vm->getCurrentScore()->_currentMouseDownSpriteId)
-				ink = kInkTypeReverse;
-			else
-				ink = _sprites[i]->_ink;
 
-			BitmapCast *bc = (BitmapCast *)_sprites[i]->_cast;
-
-			int32 regX = bc->_regX;
-			int32 regY = bc->_regY;
-			int32 rectLeft = bc->_initialRect.left;
-			int32 rectTop = bc->_initialRect.top;
-
-			int x = _sprites[i]->_startPoint.x - regX + rectLeft;
-			int y = _sprites[i]->_startPoint.y - regY + rectTop;
-			int height = _sprites[i]->_height;
-			int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : _sprites[i]->_width;
-			Common::Rect drawRect(x, y, x + width, y + height);
-			addDrawRect(i, drawRect);
-			inkBasedBlit(surface, *(bc->_surface), ink, drawRect, i);
+			renderBitmap(surface, i);
 		}
 	}
 }
@@ -1037,6 +1019,31 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		ink = kInkTypeReverse;
 
 	inkBasedBlit(surface, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height), spriteId);
+}
+
+void Frame::renderBitmap(Graphics::ManagedSurface &surface, uint16 spriteId) {
+	InkType ink;
+	Sprite *sprite = _sprites[spriteId];
+
+	if (spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId)
+		ink = kInkTypeReverse;
+	else
+		ink = sprite->_ink;
+
+	BitmapCast *bc = (BitmapCast *)sprite->_cast;
+
+	int32 regX = bc->_regX;
+	int32 regY = bc->_regY;
+	int32 rectLeft = bc->_initialRect.left;
+	int32 rectTop = bc->_initialRect.top;
+
+	int x = sprite->_startPoint.x - regX + rectLeft;
+	int y = sprite->_startPoint.y - regY + rectTop;
+	int height = sprite->_height;
+	int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : sprite->_width;
+	Common::Rect drawRect(x, y, x + width, y + height);
+	addDrawRect(spriteId, drawRect);
+	inkBasedBlit(surface, *(bc->_surface), ink, drawRect, spriteId);
 }
 
 void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId) {
