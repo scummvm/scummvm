@@ -86,6 +86,7 @@ void DirectorEngine::processEvents() {
 				sc->_currentMouseDownSpriteId = spriteId;
 
 				sc->_mouseIsDown = true;
+        sc->_lastClickTime = g_director->getMacTicks();
 
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 				_lingo->processEvent(kEventMouseDown);
