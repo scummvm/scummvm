@@ -29,6 +29,7 @@
 #include "ultima/ultima4/game/stats.h"
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/ultima4.h"
 
@@ -41,6 +42,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
 	_collisionOverride = false;
 
+	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
 	registerCmd("companions", WRAP_METHOD(Debugger, cmdCompanions));
 	registerCmd("dungeon", WRAP_METHOD(Debugger, cmdDungeon));
@@ -48,6 +50,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("gate", WRAP_METHOD(Debugger, cmdGate));
 	registerCmd("goto", WRAP_METHOD(Debugger, cmdGoto));
+	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
 	registerCmd("items", WRAP_METHOD(Debugger, cmdItems));
 	registerCmd("karma", WRAP_METHOD(Debugger, cmdKarma));
 	registerCmd("location", WRAP_METHOD(Debugger, cmdLocation));
@@ -58,6 +61,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("reagents", WRAP_METHOD(Debugger, cmdReagents));
 	registerCmd("stats", WRAP_METHOD(Debugger, cmdStats));
 	registerCmd("summon", WRAP_METHOD(Debugger, cmdSummon));
+	registerCmd("torch", WRAP_METHOD(Debugger, cmdTorch));
 	registerCmd("transport", WRAP_METHOD(Debugger, cmdTransport));
 	registerCmd("up", WRAP_METHOD(Debugger, cmdUp));
 	registerCmd("down", WRAP_METHOD(Debugger, cmdDown));
@@ -129,6 +133,16 @@ Direction Debugger::directionFromName(const Common::String &dirStr) {
 	return DIR_NONE;
 }
 
+
+bool Debugger::cmd3d(int argc, const char **argv) {
+	if (g_context->_location->_context == CTX_DUNGEON) {
+		print("3-D view %s\n", DungeonViewer.toggle3DDungeonView() ? "on" : "off");
+	} else {
+		print("Not here");
+	}
+
+	return isActive();
+}
 
 bool Debugger::cmdCollisions(int argc, const char **argv) {
 	_collisionOverride = !_collisionOverride;
@@ -295,6 +309,22 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 	}
 }
 
+bool Debugger::cmdHelp(int argc, const char **argv) {
+	if (!isActive()) {
+		screenMessage("Help!\n");
+		screenPrompt();
+	}
+
+	/* Help! send me to Lord British (who conveniently is right around where you are)! */
+	g_game->setMap(mapMgr->get(100), 1, NULL);
+	g_context->_location->_coords.x = 19;
+	g_context->_location->_coords.y = 8;
+	g_context->_location->_coords.z = 0;
+	g_game->finishTurn();
+
+	return false;
+}
+
 bool Debugger::cmdItems(int argc, const char **argv) {
 	SaveGame &sg = *g_ultima->_saveGame;
 	sg._torches = 99;
@@ -440,6 +470,14 @@ bool Debugger::cmdSummon(int argc, const char **argv) {
 	}
 
 	summonCreature(creature);
+	return isActive();
+}
+
+bool Debugger::cmdTorch(int argc, const char **argv) {
+	print("Torch: %d\n", g_context->_party->getTorchDuration());
+	if (!isActive())
+		screenPrompt();
+
 	return isActive();
 }
 

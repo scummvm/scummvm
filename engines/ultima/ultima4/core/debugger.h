@@ -57,6 +57,11 @@ private:
 	/**
 	 * Collision detection on/off
 	 */
+	bool cmd3d(int argc, const char **argv);
+
+	/**
+	 * Collision detection on/off
+	 */
 	bool cmdCollisions(int argc, const char **argv);
 
 	/**
@@ -88,6 +93,11 @@ private:
 	 * Go to any specified location by name
 	 */
 	bool cmdGoto(int argc, const char **argv);
+
+	/**
+	 * Help.. sends the party to Lord British
+	 */
+	bool cmdHelp(int argc, const char **argv);
 
 	/**
 	 * Grant karma
@@ -138,6 +148,11 @@ private:
 	 * Summons a creature to fight
 	 */
 	bool cmdSummon(int argc, const char **argv);
+
+	/**
+	 * Returns the torch duration
+	 */
+	bool cmdTorch(int argc, const char **argv);
 
 	/**
 	 * Creates a given transport

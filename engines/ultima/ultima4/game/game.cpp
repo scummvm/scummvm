@@ -651,39 +651,11 @@ bool GameController::keyPressed(int key) {
 
 		break;
 
-		case U4_FKEY+11:
-			if (settings._debug) {
-				screenMessage("Torch: %d\n", g_context->_party->getTorchDuration());
-				screenPrompt();
-			} else valid = false;
-			break;
-
 		case 4:                     /* ctrl-D */
 			if (settings._debug) {
 				destroy();
 			} else valid = false;
 			break;
-
-		case 8:                     /* ctrl-H */
-			if (settings._debug) {
-				screenMessage("Help!\n");
-				screenPrompt();
-
-				/* Help! send me to Lord British (who conveniently is right around where you are)! */
-				setMap(mapMgr->get(100), 1, NULL);
-				g_context->_location->_coords.x = 19;
-				g_context->_location->_coords.y = 8;
-				g_context->_location->_coords.z = 0;
-			} else valid = false;
-			break;
-
-		case 22: {                  /* ctrl-V */
-			if (settings._debug && g_context->_location->_context == CTX_DUNGEON) {
-				screenMessage("3-D view %s\n", DungeonViewer.toggle3DDungeonView() ? "on" : "off");
-				endTurn = 0;
-			} else valid = false;
-		}
-		break;
 
 		case ' ':
 			screenMessage("Pass\n");
