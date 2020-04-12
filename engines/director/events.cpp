@@ -77,6 +77,10 @@ void DirectorEngine::processEvents() {
 				sc->_stopPlay = true;
 				break;
 
+      case Common::EVENT_MOUSEMOVE:
+        sc->_lastEventTime = g_director->getMacTicks();
+        break;
+
 			case Common::EVENT_LBUTTONDOWN:
 				pos = g_system->getEventManager()->getMousePos();
 
@@ -86,7 +90,8 @@ void DirectorEngine::processEvents() {
 				sc->_currentMouseDownSpriteId = spriteId;
 
 				sc->_mouseIsDown = true;
-        sc->_lastClickTime = g_director->getMacTicks();
+        sc->_lastEventTime = g_director->getMacTicks();
+        sc->_lastClickTime = sc->_lastEventTime;
 
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 				_lingo->processEvent(kEventMouseDown);
@@ -130,7 +135,8 @@ void DirectorEngine::processEvents() {
 					debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
 				}
 
-        sc->_lastKeyTime = g_director->getMacTicks();
+        sc->_lastEventTime = g_director->getMacTicks();
+        sc->_lastKeyTime = sc->_lastEventTime;
 				_lingo->processEvent(kEventKeyDown);
 				break;
 
