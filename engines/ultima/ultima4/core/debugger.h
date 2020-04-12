@@ -48,6 +48,11 @@ private:
 	 * creature to be summoned, it calls gameSpawnCreature() to spawn it.
 	 */
 	void summonCreature(const Common::String &name);
+
+	/**
+	 * Returns a direction from a given string
+	 */
+	Direction directionFromName(const Common::String &dirStr);
 private:
 	/**
 	 * Collision detection on/off

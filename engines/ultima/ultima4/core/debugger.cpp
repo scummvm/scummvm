@@ -37,10 +37,7 @@ namespace Ultima4 {
 
 Debugger *g_debugger;
 
-Debugger::Debugger() : Shared::Debugger(),
-	_horse(g_context->_location->_map->_tileset->getByName("horse")->getId()),
-	_ship(g_context->_location->_map->_tileset->getByName("ship")->getId()),
-	_balloon(g_context->_location->_map->_tileset->getByName("balloon")->getId()) {
+Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
 	_collisionOverride = false;
 
@@ -60,6 +57,7 @@ Debugger::Debugger() : Shared::Debugger(),
 	registerCmd("reagents", WRAP_METHOD(Debugger, cmdReagents));
 	registerCmd("stats", WRAP_METHOD(Debugger, cmdStats));
 	registerCmd("summon", WRAP_METHOD(Debugger, cmdSummon));
+	registerCmd("transport", WRAP_METHOD(Debugger, cmdTransport));
 	registerCmd("up", WRAP_METHOD(Debugger, cmdUp));
 	registerCmd("down", WRAP_METHOD(Debugger, cmdDown));
 	registerCmd("virtue", WRAP_METHOD(Debugger, cmdVirtue));
@@ -112,6 +110,22 @@ void Debugger::summonCreature(const Common::String &name) {
 	}
 
 	print("\n%s not found\n", creatureName.c_str());
+}
+
+Direction Debugger::directionFromName(const Common::String &dirStr) {
+	Common::String dir = dirStr;
+	dir.toLowercase();
+
+	if (dir == "up" || dir == "north")
+		return DIR_NORTH;
+	else if (dir == "down" || dir == "south")
+		return DIR_SOUTH;
+	else if (dir == "right" || dir == "east")
+		return DIR_EAST;
+	else if (dir == "left" || dir == "west")
+		return DIR_WEST;
+
+	return DIR_NONE;
 }
 
 
@@ -396,15 +410,17 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 		return isActive();
 	}
 
+	_horse = g_context->_location->_map->_tileset->getByName("horse")->getId();
+	_ship = g_context->_location->_map->_tileset->getByName("ship")->getId();
+	_balloon = g_context->_location->_map->_tileset->getByName("balloon")->getId();
+
 	MapCoords coords = g_context->_location->_coords;
 	MapTile *choice;
 	Tile *tile;
 
-	screenMessage("Create transport!\nWhich? ");
-
 	// Get the transport of choice
 	char transport;
-	if (argc == 2) {
+	if (argc >= 2) {
 		transport = argv[1][0];
 	} else if (isActive()) {
 		print("transport <transport name>");
@@ -428,45 +444,51 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 		return isActive();
 	}
 
-	if (choice) {
-		ReadDirController readDir;
-		tile = g_context->_location->_map->_tileset->get(choice->getId());
+	tile = g_context->_location->_map->_tileset->get(choice->getId());
+	Direction dir;
 
+	if (argc == 3) {
+		dir = directionFromName(argv[2]);
+	} else if (isActive()) {
+		dir = DIR_NONE;
+	} else {
 		screenMessage("%s\n", tile->getName().c_str());
 
 		// Get the direction in which to create the transport
+		ReadDirController readDir;
 		eventHandler->pushController(&readDir);
 
 		screenMessage("Dir: ");
-		coords.move(readDir.waitFor(), g_context->_location->_map);
-		if (coords != g_context->_location->_coords) {
-			bool ok = false;
-			MapTile *ground = g_context->_location->_map->tileAt(coords, WITHOUT_OBJECTS);
+		dir = readDir.waitFor();
+	}
 
-			screenMessage("%s\n", getDirectionName(readDir.getValue()));
+	coords.move(dir, g_context->_location->_map);
 
-			switch (transport) {
-			case 's':
-				ok = ground->getTileType()->isSailable();
-				break;
-			case 'h':
-				ok = ground->getTileType()->isWalkable();
-				break;
-			case 'b':
-				ok = ground->getTileType()->isWalkable();
-				break;
-			default:
-				break;
-			}
+	if (coords != g_context->_location->_coords) {
+		bool ok = false;
+		MapTile *ground = g_context->_location->_map->tileAt(coords, WITHOUT_OBJECTS);
 
-			if (choice && ok) {
-				g_context->_location->_map->addObject(*choice, *choice, coords);
-				print("%s created!", tile->getName().c_str());
-			} else if (!choice) {
-				print("Invalid transport!");
-			} else {
-				print("Can't place %s there!", tile->getName().c_str());
-			}
+		switch (transport) {
+		case 's':
+			ok = ground->getTileType()->isSailable();
+			break;
+		case 'h':
+			ok = ground->getTileType()->isWalkable();
+			break;
+		case 'b':
+			ok = ground->getTileType()->isWalkable();
+			break;
+		default:
+			break;
+		}
+
+		if (choice && ok) {
+			g_context->_location->_map->addObject(*choice, *choice, coords);
+			print("%s created!", tile->getName().c_str());
+		} else if (!choice) {
+			print("Invalid transport!");
+		} else {
+			print("Can't place %s there!", tile->getName().c_str());
 		}
 	}
 
@@ -544,17 +566,15 @@ bool Debugger::cmdWind(int argc, const char **argv) {
 		g_context->_windLock = !g_context->_windLock;
 		print("Wind direction is %slocked",
 			g_context->_windLock ? "" : "un");
-	} else if (windDir == "up" || windDir == "north") {
-		g_context->_windDirection = DIR_NORTH;
-	} else if (windDir == "down" || windDir == "south") {
-		g_context->_windDirection = DIR_SOUTH;
-	} else if (windDir == "right" || windDir == "east") {
-		g_context->_windDirection = DIR_EAST;
-	} else if (windDir == "left" || windDir == "west") {
-		g_context->_windDirection = DIR_WEST;
 	} else {
-		print("Unknown direction");
-		return isActive();
+		Direction dir = directionFromName(windDir);
+
+		if (dir == DIR_NONE) {
+			print("Unknown direction");
+			return isActive();
+		} else {
+			g_context->_windDirection = dir;
+		}
 	}
 
 	return false;
