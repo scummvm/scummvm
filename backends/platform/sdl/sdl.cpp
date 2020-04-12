@@ -85,6 +85,7 @@ OSystem_SDL::OSystem_SDL()
 	_logger(0),
 	_mixerManager(0),
 	_eventSource(0),
+	_eventSourceWrapper(nullptr),
 	_window(0) {
 }
 
@@ -106,6 +107,8 @@ OSystem_SDL::~OSystem_SDL() {
 	_window = 0;
 	delete _eventManager;
 	_eventManager = 0;
+	delete _eventSourceWrapper;
+	_eventSourceWrapper = nullptr;
 	delete _eventSource;
 	_eventSource = 0;
 	delete _audiocdManager;
@@ -198,16 +201,17 @@ void OSystem_SDL::initBackend() {
 
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
-	if (_eventSource == 0)
+	if (!_eventSource)
 		_eventSource = new SdlEventSource();
 
-	if (_eventManager == nullptr) {
-		DefaultEventManager *eventManager = new DefaultEventManager(_eventSource);
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
-		// SDL 1 does not generate its own keyboard repeat events.
-		eventManager->setGenerateKeyRepeatEvents(true);
+	// SDL 1 does not generate its own keyboard repeat events.
+	assert(!_eventSourceWrapper);
+	_eventSourceWrapper = makeKeyboardRepeatingEventSource(_eventSource);
 #endif
-		_eventManager = eventManager;
+
+	if (!_eventManager) {
+		_eventManager = new DefaultEventManager(_eventSourceWrapper ? _eventSourceWrapper : _eventSource);
 	}
 
 

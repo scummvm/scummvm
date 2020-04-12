@@ -536,6 +536,14 @@ protected:
 	EventDispatcher _dispatcher;
 };
 
+/**
+ * Wrap an event source so the key down events are repeated while
+ * keys are held down.
+ *
+ * Does not take ownership of the wrapped EventSource.
+ */
+EventSource *makeKeyboardRepeatingEventSource(EventSource *eventSource);
+
 } // End of namespace Common
 
 #endif

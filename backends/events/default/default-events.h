@@ -59,17 +59,6 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	bool _shouldRTL;
 	bool _confirmExitDialogActive;
 
-	// for continuous events (keyDown)
-	enum {
-		kKeyRepeatInitialDelay = 400,
-		kKeyRepeatSustainDelay = 100
-	};
-
-	bool _shouldGenerateKeyRepeatEvents;
-	Common::KeyState _currentKeyDown;
-	uint32 _keyRepeatTime;
-
-	void handleKeyRepeat();
 public:
 	DefaultEventManager(Common::EventSource *boss);
 	~DefaultEventManager();
@@ -91,17 +80,6 @@ public:
 
 	Common::Keymapper *getKeymapper() override { return _keymapper; }
 	Common::Keymap *getGlobalKeymap() override;
-
-	/**
-	 * Controls whether repeated key down events are generated while a key is pressed
-	 *
-	 * Backends that generate their own keyboard repeat events should disable this.
-	 *
-	 * @param generateKeyRepeatEvents
-	 */
-	void setGenerateKeyRepeatEvents(bool generateKeyRepeatEvents) {
-		_shouldGenerateKeyRepeatEvents = generateKeyRepeatEvents;
-	}
 };
 
 #endif

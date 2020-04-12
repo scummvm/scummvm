@@ -42,8 +42,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_modifierState(0),
 	_shouldQuit(false),
 	_shouldRTL(false),
-	_confirmExitDialogActive(false),
-	_shouldGenerateKeyRepeatEvents(false) {
+	_confirmExitDialogActive(false) {
 
 	assert(boss);
 
@@ -51,9 +50,6 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_dispatcher.registerSource(&_artificialEventSource, false);
 
 	_dispatcher.registerObserver(this, kEventManPriority, false);
-
-	// Reset key repeat
-	_keyRepeatTime = 0;
 
 #ifdef ENABLE_VKEYBD
 	_vk = nullptr;
@@ -88,10 +84,6 @@ void DefaultEventManager::init() {
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	_dispatcher.dispatch();
 
-	if (_shouldGenerateKeyRepeatEvents) {
-		handleKeyRepeat();
-	}
-
 	if (g_engine)
 		// Handle autosaves if enabled
 		g_engine->handleAutoSave();
@@ -116,7 +108,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			// key pressed. A better fix would be for engines to stop
 			// making invalid assumptions about ascii values.
 			event.kbd.ascii = Common::KEYCODE_BACKSPACE;
-			_currentKeyDown.ascii = Common::KEYCODE_BACKSPACE;
 		}
 		break;
 
@@ -233,45 +224,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	}
 
 	return forwardEvent;
-}
-
-void DefaultEventManager::handleKeyRepeat() {
-	uint32 time = g_system->getMillis(true);
-
-	if (!_eventQueue.empty()) {
-		// Peek in the event queue
-		const Common::Event &nextEvent = _eventQueue.front();
-
-		switch (nextEvent.type) {
-		case Common::EVENT_KEYDOWN:
-			// init continuous event stream
-			_currentKeyDown = nextEvent.kbd;
-			_keyRepeatTime = time + kKeyRepeatInitialDelay;
-			break;
-
-		case Common::EVENT_KEYUP:
-			if (nextEvent.kbd.keycode == _currentKeyDown.keycode) {
-				// Only stop firing events if it's the current key
-				_currentKeyDown.keycode = Common::KEYCODE_INVALID;
-			}
-			break;
-
-		default:
-			break;
-		}
-	} else {
-		// Check if event should be sent again (keydown)
-		if (_currentKeyDown.keycode != Common::KEYCODE_INVALID && _keyRepeatTime <= time) {
-			// fire event
-			Common::Event repeatEvent;
-			repeatEvent.type = Common::EVENT_KEYDOWN;
-			repeatEvent.kbdRepeat = true;
-			repeatEvent.kbd = _currentKeyDown;
-			_keyRepeatTime = time + kKeyRepeatSustainDelay;
-
-			_eventQueue.push(repeatEvent);
-		}
-	}
 }
 
 void DefaultEventManager::pushEvent(const Common::Event &event) {

@@ -117,6 +117,7 @@ protected:
 	 * The event source we use for obtaining SDL events.
 	 */
 	SdlEventSource *_eventSource;
+	Common::EventSource *_eventSourceWrapper;
 
 	/**
 	 * The SDL output window.
