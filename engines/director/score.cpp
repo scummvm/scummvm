@@ -76,8 +76,9 @@ Score::Score(DirectorEngine *vm) {
 	_soundManager = _vm->getSoundManager();
 	_currentMouseDownSpriteId = 0;
 	_mouseIsDown = false;
-  _lastKeyTime = _vm->getMacTicks();
-  _lastClickTime = _vm->getMacTicks();
+  _lastEventTime = _vm->getMacTicks();
+  _lastKeyTime = _lastEventTime;
+  _lastClickTime = _lastEventTime;
 
 	// FIXME: TODO: Check whether the original truely does it
 	if (_vm->getVersion() <= 3) {
