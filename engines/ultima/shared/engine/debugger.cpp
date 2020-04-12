@@ -47,8 +47,80 @@ int Debugger::strToInt(const char *s) {
 	return (int)tmp;
 }
 
-void Debugger::executeCommand(const Common::String &cmd) {
+void Debugger::splitString(const Common::String &str,
+		Common::StringArray &argv) {
+	// Clear the vector
+	argv.clear();
 
+	bool quoted = false;
+	Common::String::const_iterator it;
+	int ch;
+	Common::String arg;
+
+	for (it = str.begin(); it != str.end(); ++it) {
+		ch = *it;
+
+		// Toggle quoted string handling
+		if (ch == '\"') {
+			quoted = !quoted;
+			continue;
+		}
+
+		// Handle \\, \", \', \n, \r, \t
+		if (ch == '\\') {
+			Common::String::const_iterator next = it + 1;
+			if (next != str.end()) {
+				if (*next == '\\' || *next == '\"' || *next == '\'') {
+					ch = *next;
+					++it;
+				} else if (*next == 'n') {
+					ch = '\n';
+					++it;
+				} else if (*next == 'r') {
+					ch = '\r';
+					++it;
+				} else if (*next == 't') {
+					ch = '\t';
+					++it;
+				} else if (*next == ' ') {
+					ch = ' ';
+					++it;
+				}
+			}
+		}
+
+		// A space, a tab, line feed, carriage return
+		if (!quoted && (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')) {
+			// If we are not empty then we are at the end of the arg
+			// otherwise we will ignore the extra chars
+			if (!arg.empty()) {
+				argv.push_back(arg);
+				arg.clear();
+			}
+
+			continue;
+		}
+
+		// Add the charater to the string
+		arg += ch;
+	}
+
+	// Push any arg if it's left
+	if (!arg.empty())
+		argv.push_back(arg);
+}
+
+void Debugger::executeCommand(const Common::String &cmd) {
+	// Split up the command, and form a const char * array
+	Common::StringArray args;
+	splitString(cmd, args);
+
+	Common::Array<const char *> argv;
+	for (uint idx = 0; idx < args.size(); ++idx)
+		argv.push_back(args[idx].c_str());
+
+	// Execute the command
+	executeCommand(argv.size(), &argv[0]);
 }
 
 void Debugger::executeCommand(int argc, const char **argv) {

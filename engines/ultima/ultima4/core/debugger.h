@@ -61,6 +61,12 @@ private:
 	Direction directionFromName(const Common::String &dirStr);
 private:
 	/**
+	 * Move the avatar in a given direction
+	 */
+	bool cmdMove(int argc, const char **argv);
+
+private:
+	/**
 	 * Collision detection on/off
 	 */
 	bool cmd3d(int argc, const char **argv);

@@ -27,6 +27,7 @@
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/meta_engine.h"
 #include "common/debug.h"
 #include "common/system.h"
 
@@ -242,6 +243,10 @@ void EventHandler::run() {
 		case Common::EVENT_MOUSEMOVE:
 			handleMouseMotionEvent(event);
 			continue;
+
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			MetaEngine::executeAction((KeybindingAction)event.customType);
+			break;
 
 		case Common::EVENT_QUIT:
 			_ended = true;

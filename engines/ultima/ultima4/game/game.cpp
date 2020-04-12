@@ -628,27 +628,6 @@ bool GameController::keyPressed(int key) {
 		screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
 	else
 		switch (key) {
-
-		case U4_UP:
-		case U4_DOWN:
-		case U4_LEFT:
-		case U4_RIGHT: {
-			/* move the avatar */
-			Common::String previous_map = g_context->_location->_map->_fname;
-			MoveResult retval = g_context->_location->move(keyToDirection(key), true);
-
-			/* horse doubles speed (make sure we're on the same map as the previous move first) */
-			if (retval & (MOVE_SUCCEEDED | MOVE_SLOWED) &&
-			        (g_context->_transportContext == TRANSPORT_HORSE) && g_context->_horseSpeed) {
-				gameUpdateScreen(); /* to give it a smooth look of movement */
-				if (previous_map == g_context->_location->_map->_fname)
-					g_context->_location->move(keyToDirection(key), false);
-			}
-
-			endTurn = (retval & MOVE_END_TURN); /* let the movement handler decide to end the turn */
-		}
-		break;
-
 		case ' ':
 			screenMessage("Pass\n");
 			break;

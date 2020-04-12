@@ -40,6 +40,11 @@ protected:
 	 * Converts a string to an integer
 	 */
 	int strToInt(const char *s);
+
+	/**
+	 * Split up a command string into arg values
+	 */
+	void splitString(const Common::String &str, Common::StringArray &argv);
 public:
 	Debugger();
     ~Debugger() override {}

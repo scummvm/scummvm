@@ -47,9 +47,9 @@ public:
 	static Common::KeymapArray initKeymaps();
 
 	/**
-	 * Execute an engine keymap press action
+	 * Execute an engine keymap action
 	 */
-	static void pressAction(KeybindingAction keyAction);
+	static void executeAction(KeybindingAction keyAction);
 
 	/**
 	 * Enables/disables the keymaps when not waiting for an in-game action

@@ -39,11 +39,15 @@ struct KeybindingRecord {
 };
 
 static const KeybindingRecord KEYS[] = {
-	{ ACTION_NORTH, "NORTH", "North", "walk north", "up", nullptr },
-	{ ACTION_SOUTH, "SOUTH", "South", "walk south", "down", nullptr },
-	{ ACTION_EAST, "EAST", "East", "walk east", "right", nullptr },
-	{ ACTION_WEST, "WEST", "West", "walk west", "left", nullptr },
+	{ ACTION_NORTH, "UP", "Up", "move up", "UP", nullptr },
+	{ ACTION_SOUTH, "DOWN", "Down", "move down", "DOWN", nullptr },
+	{ ACTION_WEST, "LEFT", "Left", "move left", "LEFT", nullptr },
+	{ ACTION_EAST, "RIGHT", "Right", "move right", "RIGHT", nullptr },
 
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
+static const KeybindingRecord CHEAT_KEYS[] = {
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -86,16 +90,20 @@ void MetaEngine::setKeybindingsActive(bool isActive) {
 }
 
 
-void MetaEngine::pressAction(KeybindingAction keyAction) {
+void MetaEngine::executeAction(KeybindingAction keyAction) {
 	Common::String methodName = getMethod(keyAction);
 	if (!methodName.empty())
 		g_debugger->executeCommand(methodName);
 }
 
 Common::String MetaEngine::getMethod(KeybindingAction keyAction) {
-	for (const KeybindingRecord *r = KEYS; r->_id; ++r) {
-		if (r->_action == keyAction)
-			return r->_method;
+	const KeybindingRecord *KEY_ARRAYS[] = { KEYS, CHEAT_KEYS, nullptr };
+
+	for (const KeybindingRecord **arr = KEY_ARRAYS; *arr; ++arr) {
+		for (const KeybindingRecord *r = *arr; r->_id; ++r) {
+			if (r->_action == keyAction)
+				return r->_method;
+		}
 	}
 
 	return Common::String();

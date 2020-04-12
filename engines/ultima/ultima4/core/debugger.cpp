@@ -42,6 +42,8 @@ Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
 	_collisionOverride = false;
 
+	registerCmd("move", WRAP_METHOD(Debugger, cmdMove));
+
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
 	registerCmd("companions", WRAP_METHOD(Debugger, cmdCompanions));
@@ -151,6 +153,37 @@ bool Debugger::destroyAt(const Coords &coords) {
 
 		return true;
 	}
+
+	return false;
+}
+
+
+bool Debugger::cmdMove(int argc, const char **argv) {
+	Direction dir;
+
+	if (argc == 2) {
+		dir = directionFromName(argv[1]);
+	} else {
+		print("move <direction>");
+		return isActive();
+	}
+
+	Common::String priorMap = g_context->_location->_map->_fname;
+	MoveResult retval = g_context->_location->move(dir, true);
+
+	// horse doubles speed (make sure we're on the same map as the previous move first)
+	if (retval & (MOVE_SUCCEEDED | MOVE_SLOWED) &&
+		(g_context->_transportContext == TRANSPORT_HORSE) && g_context->_horseSpeed) {
+		// to give it a smooth look of movement
+		gameUpdateScreen();
+		if (priorMap == g_context->_location->_map->_fname)
+			g_context->_location->move(dir, false);
+	}
+
+	// Let the movement handler decide to end the turn
+	bool endTurn = (retval & MOVE_END_TURN);
+	if (endTurn)
+		g_game->finishTurn();
 
 	return false;
 }
