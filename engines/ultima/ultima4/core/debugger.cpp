@@ -112,6 +112,15 @@ void Debugger::printN(const char *fmt, ...) {
 	}
 }
 
+bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
+	bool result = Shared::Debugger::handleCommand(argc, argv, keepRunning);
+
+	if (result && !isActive() && argv[0] != "move")
+		g_game->finishTurn();
+
+	return result;
+}
+
 
 bool Debugger::cmdMove(int argc, const char **argv) {
 	Direction dir;
@@ -178,7 +187,6 @@ bool Debugger::cmdAttack(int argc, const char **argv) {
 	}
 
 	print("%cNothing to Attack!%c", FG_GREY, FG_WHITE);
-	g_game->finishTurn();
 	return isDebuggerActive();
 }
 
@@ -220,7 +228,6 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 
 bool Debugger::cmdPass(int argc, const char **argv) {
 	print("Pass");
-	g_game->finishTurn();
 	return isDebuggerActive();
 }
 
@@ -277,7 +284,6 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 		MASK_DIR_ALL, g_context->_location->_coords, 1, 1, NULL, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (destroyAt(*i)) {
-			g_game->finishTurn();
 			return false;
 		}
 	}
@@ -311,7 +317,6 @@ bool Debugger::cmdDungeon(int argc, const char **argv) {
 				return isDebuggerActive();
 			}
 
-			g_game->finishTurn();
 			return false;
 		} else {
 			print("dungeon <number>");
@@ -345,7 +350,6 @@ bool Debugger::cmdExit(int argc, const char **argv) {
 	if (!g_game->exitToParentMap()) {
 		print("Not Here");
 	} else {
-		g_game->finishTurn();
 		g_music->play();
 		print("Exited");
 	}
@@ -366,7 +370,6 @@ bool Debugger::cmdGate(int argc, const char **argv) {
 			const Coords *moongate = moongateGetGateCoordsForPhase(gateNum - 1);
 			if (moongate) {
 				g_context->_location->_coords = *moongate;
-				g_game->finishTurn();
 				return false;
 			}
 		} else {
@@ -417,7 +420,6 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 	}
 
 	if (found) {
-		g_game->finishTurn();
 		return false;
 	} else {
 		if (isDebuggerActive())
@@ -440,7 +442,6 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	g_context->_location->_coords.x = 19;
 	g_context->_location->_coords.y = 8;
 	g_context->_location->_coords.z = 0;
-	g_game->finishTurn();
 
 	return false;
 }
@@ -526,7 +527,6 @@ bool Debugger::cmdMoon(int argc, const char **argv) {
 
 	while (g_ultima->_saveGame->_trammelPhase != moonNum)
 		g_game->updateMoons(true);
-	g_game->finishTurn();
 
 	print("Moons advanced");
 	return isDebuggerActive();
@@ -695,7 +695,6 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 bool Debugger::cmdUp(int argc, const char **argv) {
 	if ((g_context->_location->_context & CTX_DUNGEON) && (g_context->_location->_coords.z > 0)) {
 		g_context->_location->_coords.z--;
-		g_game->finishTurn();
 
 		return false;
 	} else {

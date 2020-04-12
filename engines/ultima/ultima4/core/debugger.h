@@ -46,16 +46,23 @@ protected:
 	}
 
 	/**
+	 * Process the given command line.
+	 * Returns true if and only if argv[0] is a known command and was
+	 * handled, false otherwise.
+	 */
+	bool handleCommand(int argc, const char **argv, bool &keepRunning) override;
+
+	/**
 	 * Prints a message to the console if it's active, or to the
 	 * game screen if not
 	 */
-	virtual void print(const char *fmt, ...);
+	void print(const char *fmt, ...) override;
 
 	/**
 	 * Prints a message to the console if it's active, or to the
 	 * game screen if not, with no newline
 	 */
-	virtual void printN(const char *fmt, ...);
+	void printN(const char *fmt, ...) override;
 
 	/**
 	 * Gets the direction for an action
