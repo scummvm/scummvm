@@ -100,6 +100,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_draggingSprite = false;
 	_draggingSpriteId = 0;
+
+	_newMovieStarted = true;
 }
 
 DirectorEngine::~DirectorEngine() {
