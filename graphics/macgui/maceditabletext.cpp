@@ -71,6 +71,8 @@ void MacEditableText::init() {
 	_editable = true;
 	_selectable = true;
 
+	_menu = nullptr;
+
 	_cursorX = 0;
 	_cursorY = 0;
 	_cursorState = false;
@@ -167,8 +169,6 @@ bool MacEditableText::draw(ManagedSurface *g, bool forceRedraw) {
 
 	if (_selectedText.endY != -1)
 		drawSelection();
-
-	//_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
 
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
@@ -291,8 +291,6 @@ Common::U32String MacEditableText::cutSelection() {
 }
 
 bool MacEditableText::processEvent(Common::Event &event) {
-	WindowClick click = kBorderInner; //_parent->isInBorder(event.mouse.x, event.mouse.y);
-
 	if (event.type == Common::EVENT_KEYDOWN) {
 		if (!_editable)
 			return false;
@@ -341,73 +339,41 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		return true;
 	}
 
-	if (click == kBorderScrollUp || click == kBorderScrollDown) {
-		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			int consoleHeight = getDimensions().height();
-			int textFullSize = MacText::getTextHeight();
-			float scrollPos = (float)_scrollPos / textFullSize;
-			float scrollSize = (float)consoleHeight / textFullSize;
-
-			setScroll(scrollPos, scrollSize);
-
-			return true;
-		} else if (event.type == Common::EVENT_LBUTTONUP) {
-			switch (click) {
-			case kBorderScrollUp:
-				scroll(-1);
-				break;
-			case kBorderScrollDown:
-				scroll(1);
-				break;
-			default:
-				return false;
-			}
-
-			return true;
-		}
-
+	if (!_selectable)
 		return false;
-	}
 
-	if (click == kBorderInner) {
-		if (!_selectable)
-			return false;
+	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		startMarking(event.mouse.x, event.mouse.y);
 
-		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			startMarking(event.mouse.x, event.mouse.y);
+		return true;
+	} else if (event.type == Common::EVENT_LBUTTONUP && _menu) {
+		if (_inTextSelection) {
+			_inTextSelection = false;
 
-			return true;
-		} else if (event.type == Common::EVENT_LBUTTONUP && _menu) {
-			if (_inTextSelection) {
-				_inTextSelection = false;
+			if (_selectedText.endY == -1 ||
+					(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
+				_selectedText.startY = _selectedText.endY = -1;
+				_contentIsDirty = true;
+				_menu->enableCommand("Edit", "Copy", false);
+			} else {
+				_menu->enableCommand("Edit", "Copy", true);
 
-				if (_selectedText.endY == -1 ||
-						(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
-					_selectedText.startY = _selectedText.endY = -1;
-					_contentIsDirty = true;
-					_menu->enableCommand("Edit", "Copy", false);
-				} else {
-					_menu->enableCommand("Edit", "Copy", true);
+				bool cutAllowed = isCutAllowed();
 
-					bool cutAllowed = isCutAllowed();
-
-					_menu->enableCommand("Edit", "Cut", cutAllowed);
-					_menu->enableCommand("Edit", "Clear", cutAllowed);
-				}
-			}
-
-			return true;
-		} else if (event.type == Common::EVENT_MOUSEMOVE) {
-			if (_inTextSelection) {
-				updateTextSelection(event.mouse.x, event.mouse.y);
-				return true;
+				_menu->enableCommand("Edit", "Cut", cutAllowed);
+				_menu->enableCommand("Edit", "Clear", cutAllowed);
 			}
 		}
 
-		return false;
+		return true;
+	} else if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (_inTextSelection) {
+			updateTextSelection(event.mouse.x, event.mouse.y);
+			return true;
+		}
 	}
 
-	return _parent->processEvent(event);
+	return false;
 }
 
 void MacEditableText::scroll(int delta) {
