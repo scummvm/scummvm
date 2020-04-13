@@ -2073,7 +2073,10 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 				Common::String resourceName = _macResMan->getResName(tagArray[i], idArray[j]);
 
 				// Same as with audio36 above
-				if (!resourceName.empty() && resourceName[0] == '#')
+				if (!resourceName.empty() && 
+					(resourceName[0] == '#' || 
+					 resourceName[0] == 'S' || // Most SCI32 games
+					 resourceName[0] == 'T'))  // Torin syncs start with T or S
 					resId = convertPatchNameBase36(kResourceTypeSync36, resourceName);
 				else
 					resId = ResourceId(type, idArray[j]);
