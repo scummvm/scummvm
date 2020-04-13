@@ -87,11 +87,7 @@ uint32 gameTimeSinceLastCommand(void);
 /* spell functions */
 void gameCastSpell(unsigned int spell, int caster, int param);
 
-void mixReagents();
-bool mixReagentsForSpellU4(int spell);
-bool mixReagentsForSpellU5(int spell);
 void mixReagentsSuper();
-void newOrder();
 
 /* conversation functions */
 bool talkAt(const Coords &coords);
@@ -722,10 +718,6 @@ bool GameController::keyPressed(int key) {
 				} else
 					screenMessage("%cKlimb what?%c\n", FG_GREY, FG_WHITE);
 			}
-			break;
-
-		case 'n':
-			newOrder();
 			break;
 
 		case 'o':
@@ -1665,43 +1657,6 @@ void talk() {
 	}
 
 	screenMessage("Funny, no response!\n");
-}
-
-/**
- * Exchanges the position of two players in the party.  Prompts the
- * user for the player numbers.
- */
-void newOrder() {
-	screenMessage("New Order!\nExchange # ");
-
-	int player1 = gameGetPlayer(true, false);
-
-	if (player1 == -1)
-		return;
-
-	if (player1 == 0) {
-		screenMessage("%s, You must lead!\n", g_context->_party->member(0)->getName().c_str());
-		return;
-	}
-
-	screenMessage("    with # ");
-
-	int player2 = gameGetPlayer(true, false);
-
-	if (player2 == -1)
-		return;
-
-	if (player2 == 0) {
-		screenMessage("%s, You must lead!\n", g_context->_party->member(0)->getName().c_str());
-		return;
-	}
-
-	if (player1 == player2) {
-		screenMessage("%cWhat?%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	g_context->_party->swapPlayers(player1, player2);
 }
 
 /**

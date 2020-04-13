@@ -58,6 +58,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("jimmy", WRAP_METHOD(Debugger, cmdJimmy));
 	registerCmd("locate", WRAP_METHOD(Debugger, cmdLocate));
 	registerCmd("mix", WRAP_METHOD(Debugger, cmdMixReagents));
+	registerCmd("order", WRAP_METHOD(Debugger, cmdNewOrder));
 	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
@@ -473,11 +474,44 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdNewOrder(int argc, const char **argv) {
+	printN("New Order!\nExchange # ");
+
+	int player1 = gameGetPlayer(true, false);
+
+	if (player1 == -1)
+		return isDebuggerActive();
+
+	if (player1 == 0) {
+		print("%s, You must lead!", g_context->_party->member(0)->getName().c_str());
+		return isDebuggerActive();
+	}
+
+	printN("    with # ");
+
+	int player2 = gameGetPlayer(true, false);
+
+	if (player2 == -1)
+		return isDebuggerActive();
+
+	if (player2 == 0) {
+		print("%s, You must lead!", g_context->_party->member(0)->getName().c_str());
+		return isDebuggerActive();
+	}
+
+	if (player1 == player2) {
+		print("%cWhat?%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	g_context->_party->swapPlayers(player1, player2);
+	return isDebuggerActive();
+}
+
 bool Debugger::cmdPass(int argc, const char **argv) {
 	print("Pass");
 	return isDebuggerActive();
 }
-
 
 bool Debugger::cmd3d(int argc, const char **argv) {
 	if (g_context->_location->_context == CTX_DUNGEON) {
