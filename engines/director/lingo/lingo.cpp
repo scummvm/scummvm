@@ -53,6 +53,9 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;
+	_currentScriptContext = nullptr;
+	_currentScriptFunction = 0;
+
 	_currentEntityId = 0;
 	_pc = 0;
 	_returning = false;
