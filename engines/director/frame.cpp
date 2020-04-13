@@ -883,11 +883,22 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		return;
 	}
 
-	if (sprite->_editable) {
+	if (sprite->_editable && 0) {
 		if (!textCast->_widget) {
-			textCast->_widget = new Graphics::MacEditableText(score->_window, x, y, width, height, g_director->_wm, "", nullptr, sprite->_foreColor, sprite->_backColor);
+			textCast->_widget = new Graphics::MacEditableText(score->_window, x, y, width, height, g_director->_wm, "", new Graphics::MacFont(), sprite->_foreColor, sprite->_backColor);
 			warning("Created MacEditableText");
 		}
+
+		textCast->_widget->draw();
+
+		InkType ink = sprite->_ink;
+
+		if (spriteId == score->_currentMouseDownSpriteId)
+			ink = kInkTypeReverse;
+
+		inkBasedBlit(surface, textCast->_widget->getSurface()->rawSurface(), ink, Common::Rect(x, y, x + width, y + height), spriteId);
+
+		return;
 	}
 
 	debugC(3, kDebugText, "renderText: sprite: %d x: %d y: %d w: %d h: %d fontId: '%d' text: '%s'", spriteId, x, y, width, height, textCast->_fontId, Common::toPrintable(textCast->_ftext).c_str());
