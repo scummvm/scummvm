@@ -64,6 +64,8 @@ public:
 	virtual bool processEvent(Common::Event &event);
 
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(bool forceRedraw = false);
+	virtual void blit(ManagedSurface *g, Common::Rect &dest);
 
 	void setTextFont(const MacFont *macFont);
 	const MacFont *getTextFont();

@@ -148,7 +148,7 @@ const MacFont *MacEditableText::getTextFont() {
 	return _font;
 }
 
-bool MacEditableText::draw(ManagedSurface *g, bool forceRedraw) {
+bool MacEditableText::draw(bool forceRedraw) {
 	if (!_scrollbarIsDirty && !_contentIsDirty && !_cursorDirty && !_inputIsDirty && !forceRedraw)
 		return false;
 
@@ -174,9 +174,20 @@ bool MacEditableText::draw(ManagedSurface *g, bool forceRedraw) {
 	if (_selectedText.endY != -1)
 		drawSelection();
 
+	return true;
+}
+
+bool MacEditableText::draw(ManagedSurface *g, bool forceRedraw) {
+	if (!draw(forceRedraw))
+		return false;
+
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
 	return true;
+}
+
+void MacEditableText::blit(ManagedSurface *g, Common::Rect &dest) {
+	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), dest, kColorGreen2);
 }
 
 void MacEditableText::drawSelection() {

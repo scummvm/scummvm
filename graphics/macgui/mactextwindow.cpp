@@ -135,14 +135,14 @@ const MacFont *MacTextWindow::getTextWindowFont() {
 	return _font;
 }
 
-bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
+bool MacTextWindow::draw(bool forceRedraw) {
 	if (!_borderIsDirty && !_contentIsDirty && !_cursorDirty && !_inputIsDirty && !forceRedraw)
 		return false;
 
 	if (_borderIsDirty || forceRedraw) {
 		drawBorder();
 
-		_composeSurface.clear(_wm->_colorWhite);
+		_composeSurface->clear(_wm->_colorWhite);
 	}
 
 	if (_inputIsDirty || forceRedraw) {
@@ -153,19 +153,30 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	_contentIsDirty = false;
 
 	// Compose
-	_mactext->draw(&_composeSurface, 0, _scrollPos, _surface.w - 2, _scrollPos + _surface.h - 2, kConWOverlap - 2, kConWOverlap - 2);
+	_mactext->draw(_composeSurface, 0, _scrollPos, _surface.w - 2, _scrollPos + _surface.h - 2, kConWOverlap - 2, kConWOverlap - 2);
 
 	if (_cursorState)
-		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap - 2, _cursorY + kConHOverlap - 2));
+		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap - 2, _cursorY + kConHOverlap - 2));
 
 	if (_selectedText.endY != -1)
 		drawSelection();
 
-	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
-
-	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
+	_composeSurface->transBlitFrom(_borderSurface, kColorGreen);
 
 	return true;
+}
+
+bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
+	if (!draw(forceRedraw))
+		return false;
+
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
+
+	return true;
+}
+
+void MacTextWindow::blit(ManagedSurface *g, Common::Rect &dest) {
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
 }
 
 void MacTextWindow::drawSelection() {
@@ -217,7 +228,7 @@ void MacTextWindow::drawSelection() {
 			numLines--;
 		}
 
-		byte *ptr = (byte *)_composeSurface.getBasePtr(x1 + kConWOverlap - 2, y + kConWOverlap - 2);
+		byte *ptr = (byte *)_composeSurface->getBasePtr(x1 + kConWOverlap - 2, y + kConWOverlap - 2);
 
 		for (int x = x1; x < x2; x++, ptr++)
 			if (*ptr == _wm->_colorBlack)

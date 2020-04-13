@@ -58,6 +58,8 @@ public:
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
+	virtual bool draw(bool forceRedraw = false) = 0;
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) = 0;
 	virtual bool processEvent(Common::Event &event) = 0;
 	virtual bool hasAllFocus() = 0;
 
@@ -70,11 +72,15 @@ public:
 
 	void removeWidget(MacWidget *child, bool del = true);
 
+	Graphics::ManagedSurface *getSurface() { return _composeSurface; }
+
 protected:
 	bool _focusable;
 	bool _contentIsDirty;
 
 	Common::Rect _dims;
+
+	Graphics::ManagedSurface *_composeSurface;
 
 public:
 	MacWidget *_parent;

@@ -37,6 +37,8 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusab
 
 	if (parent)
 		parent->_children.push_back(this);
+
+	_composeSurface = nullptr;
 }
 
 MacWidget::~MacWidget() {

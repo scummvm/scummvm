@@ -218,6 +218,9 @@ public:
 	 */
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
 
+	virtual bool draw(bool forceRedraw = false);
+	virtual void blit(ManagedSurface *g, Common::Rect &dest);
+
 	/**
 	 * Mutator to change the active state of the window.
 	 * Most often called from the WM.
@@ -294,7 +297,6 @@ protected:
 
 protected:
 	ManagedSurface _borderSurface;
-	ManagedSurface _composeSurface;
 
 	bool _borderIsDirty;
 

@@ -70,7 +70,10 @@ public:
 
 	MacMenuSubMenu *getSubmenu(MacMenuSubMenu *submenu, int index);
 
-	bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(bool forceRedraw = false) { return false; }
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) {}
+
 	bool processEvent(Common::Event &event);
 
 	void enableCommand(int menunum, int action, bool state);
