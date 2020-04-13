@@ -1299,6 +1299,8 @@ const char *scumm_skipArticle(const char *s1) {
 		o1 = 4;
 	else if (!scumm_strnicmp(s1, "a ", 2))
 		o1 = 2;
+	else if (!scumm_strnicmp(s1, "an ", 3))
+		o1 = 3;
 
 	return &s1[o1];
 }
