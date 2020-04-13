@@ -134,6 +134,11 @@ private:
 	bool cmdLocate(int argc, const char **argv);
 
 	/**
+	 * Mix reagents
+	 */
+	bool cmdMixReagents(int argc, const char **argv);
+
+	/**
 	 * Pass turn
 	 */
 	bool cmdPass(int argc, const char **argv);

@@ -24,6 +24,7 @@
 #define ULTIMA4_CORE_DEBUGGER_ACTIONS_H
 
 #include "ultima/ultima4/core/coords.h"
+#include "ultima/ultima4/game/spell.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/shared/engine/debugger.h"
 
@@ -89,6 +90,18 @@ public:
 	 */
 	bool jimmyAt(const Coords &coords);
 
+	/**
+	 * Prompts for spell reagents to mix in the traditional Ultima IV
+	 * style.
+	 */
+	bool mixReagentsForSpellU4(int spell);
+
+	/**
+	 * Prompts for spell reagents to mix with an Ultima V-like menu.
+	 */
+	bool mixReagentsForSpellU5(int spell);
+
+	bool gameSpellMixHowMany(int spell, int num, Ingredients *ingredients);
 };
 
 } // End of namespace Ultima4

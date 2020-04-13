@@ -21,9 +21,11 @@
  */
 
 #include "ultima/ultima4/core/debugger_actions.h"
+#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/game/stats.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/textcolor.h"
 #include "ultima/ultima4/map/annotation.h"
@@ -208,6 +210,102 @@ bool DebuggerActions::jimmyAt(const Coords &coords) {
 		screenMessage("\nUnlocked!\n");
 	} else
 		screenMessage("%cNo keys left!%c\n", FG_GREY, FG_WHITE);
+
+	return true;
+}
+
+bool DebuggerActions::mixReagentsForSpellU4(int spell) {
+	Ingredients ingredients;
+
+	screenMessage("Reagent: ");
+
+	while (1) {
+		int choice = ReadChoiceController::get("abcdefgh\n\r \033");
+
+		// done selecting reagents? mix it up and prompt to mix
+		// another spell
+		if (choice == '\n' || choice == '\r' || choice == ' ') {
+			screenMessage("\n\nYou mix the Reagents, and...\n");
+
+			if (spellMix(spell, &ingredients))
+				screenMessage("Success!\n\n");
+			else
+				screenMessage("It Fizzles!\n\n");
+
+			return false;
+		}
+
+		// escape: put ingredients back and quit mixing
+		if (choice == '\033') {
+			ingredients.revert();
+			return true;
+		}
+
+		screenMessage("%c\n", toupper(choice));
+		if (!ingredients.addReagent((Reagent)(choice - 'a')))
+			screenMessage("%cNone Left!%c\n", FG_GREY, FG_WHITE);
+		screenMessage("Reagent: ");
+	}
+
+	return true;
+}
+
+bool DebuggerActions::mixReagentsForSpellU5(int spell) {
+	Ingredients ingredients;
+
+	screenDisableCursor();
+
+	g_context->_stats->getReagentsMenu()->reset(); // reset the menu, highlighting the first item
+	ReagentsMenuController getReagentsController(g_context->_stats->getReagentsMenu(), &ingredients, g_context->_stats->getMainArea());
+	eventHandler->pushController(&getReagentsController);
+	getReagentsController.waitFor();
+
+	g_context->_stats->getMainArea()->disableCursor();
+	screenEnableCursor();
+
+	printN("How many? ");
+
+	int howmany = ReadIntController::get(2, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
+	gameSpellMixHowMany(spell, howmany, &ingredients);
+
+	return true;
+}
+
+bool DebuggerActions::gameSpellMixHowMany(int spell, int num, Ingredients *ingredients) {
+	int i;
+
+	/* entered 0 mixtures, don't mix anything! */
+	if (num == 0) {
+		print("\nNone mixed!");
+		ingredients->revert();
+		return false;
+	}
+
+	/* if they ask for more than will give them 99, only use what they need */
+	if (num > 99 - g_ultima->_saveGame->_mixtures[spell]) {
+		num = 99 - g_ultima->_saveGame->_mixtures[spell];
+		print("\n%cOnly need %d!%c", FG_GREY, num, FG_WHITE);
+	}
+
+	print("\nMixing %d...", num);
+
+	/* see if there's enough reagents to make number of mixtures requested */
+	if (!ingredients->checkMultiple(num)) {
+		print("\n%cYou don't have enough reagents to mix %d spells!%c", FG_GREY, num, FG_WHITE);
+		ingredients->revert();
+		return false;
+	}
+
+	print("\nYou mix the Reagents, and...");
+	if (spellMix(spell, ingredients)) {
+		print("Success!\n");
+		/* mix the extra spells */
+		ingredients->multiply(num);
+		for (i = 0; i < num - 1; i++)
+			spellMix(spell, ingredients);
+	} else {
+		print("It Fizzles!\n");
+	}
 
 	return true;
 }

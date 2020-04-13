@@ -86,7 +86,6 @@ uint32 gameTimeSinceLastCommand(void);
 
 /* spell functions */
 void gameCastSpell(unsigned int spell, int caster, int param);
-bool gameSpellMixHowMany(int spell, int num, Ingredients *ingredients);
 
 void mixReagents();
 bool mixReagentsForSpellU4(int spell);
@@ -725,15 +724,6 @@ bool GameController::keyPressed(int key) {
 			}
 			break;
 
-		case 'm':
-			mixReagents();
-#ifdef IOS
-			// The iOS MixSpell dialog needs control of the event loop, so it is its
-			// job to complete the turn.
-			endTurn = false;
-#endif
-			break;
-
 		case 'n':
 			newOrder();
 			break;
@@ -1087,44 +1077,6 @@ Direction gameGetDirection() {
 		screenMessage("%s\n", getDirectionName(dir));
 		return dir;
 	}
-}
-
-bool gameSpellMixHowMany(int spell, int num, Ingredients *ingredients) {
-	int i;
-
-	/* entered 0 mixtures, don't mix anything! */
-	if (num == 0) {
-		screenMessage("\nNone mixed!\n");
-		ingredients->revert();
-		return false;
-	}
-
-	/* if they ask for more than will give them 99, only use what they need */
-	if (num > 99 - g_ultima->_saveGame->_mixtures[spell]) {
-		num = 99 - g_ultima->_saveGame->_mixtures[spell];
-		screenMessage("\n%cOnly need %d!%c\n", FG_GREY, num, FG_WHITE);
-	}
-
-	screenMessage("\nMixing %d...\n", num);
-
-	/* see if there's enough reagents to make number of mixtures requested */
-	if (!ingredients->checkMultiple(num)) {
-		screenMessage("\n%cYou don't have enough reagents to mix %d spells!%c\n", FG_GREY, num, FG_WHITE);
-		ingredients->revert();
-		return false;
-	}
-
-	screenMessage("\nYou mix the Reagents, and...\n");
-	if (spellMix(spell, ingredients)) {
-		screenMessage("Success!\n\n");
-		/* mix the extra spells */
-		ingredients->multiply(num);
-		for (i = 0; i < num - 1; i++)
-			spellMix(spell, ingredients);
-	} else
-		screenMessage("It Fizzles!\n\n");
-
-	return true;
 }
 
 bool ZtatsController::keyPressed(int key) {
@@ -1713,132 +1665,6 @@ void talk() {
 	}
 
 	screenMessage("Funny, no response!\n");
-}
-
-/**
- * Mixes reagents.  Prompts for a spell, then which reagents to
- * include in the mix.
- */
-void mixReagents() {
-
-	/*  uncomment this line to activate new spell mixing code */
-	//   return mixReagentsSuper();
-	bool done = false;
-
-	while (!done) {
-		screenMessage("Mix reagents\n");
-#ifdef IOS
-		U4IOS::beginMixSpellController();
-		return; // Just return, the dialog takes control from here.
-#endif
-
-		// Verify that there are reagents remaining in the inventory
-		bool found = false;
-		for (int i = 0; i < 8; i++) {
-			if (g_ultima->_saveGame->_reagents[i] > 0) {
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			screenMessage("%cNone Left!%c", FG_GREY, FG_WHITE);
-			done = true;
-		} else {
-			screenMessage("For Spell: ");
-			g_context->_stats->setView(STATS_MIXTURES);
-
-			int choice = ReadChoiceController::get("abcdefghijklmnopqrstuvwxyz \033\n\r");
-			if (choice == ' ' || choice == '\033' || choice == '\n' || choice == '\r')
-				break;
-
-			int spell = choice - 'a';
-			screenMessage("%s\n", spellGetName(spell));
-
-			// ensure the mixtures for the spell isn't already maxed out
-			if (g_ultima->_saveGame->_mixtures[spell] == 99) {
-				screenMessage("\n%cYou cannot mix any more of that spell!%c\n", FG_GREY, FG_WHITE);
-				break;
-			}
-
-			// Reset the reagent spell mix menu by removing
-			// the menu highlight from the current item, and
-			// hiding reagents that you don't have
-			g_context->_stats->resetReagentsMenu();
-
-			g_context->_stats->setView(MIX_REAGENTS);
-			if (settings._enhancements && settings._enhancementsOptions._u5spellMixing)
-				done = mixReagentsForSpellU5(spell);
-			else
-				done = mixReagentsForSpellU4(spell);
-		}
-	}
-
-	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
-	screenMessage("\n\n");
-}
-
-/**
- * Prompts for spell reagents to mix in the traditional Ultima IV
- * style.
- */
-bool mixReagentsForSpellU4(int spell) {
-	Ingredients ingredients;
-
-	screenMessage("Reagent: ");
-
-	while (1) {
-		int choice = ReadChoiceController::get("abcdefgh\n\r \033");
-
-		// done selecting reagents? mix it up and prompt to mix
-		// another spell
-		if (choice == '\n' || choice == '\r' || choice == ' ') {
-			screenMessage("\n\nYou mix the Reagents, and...\n");
-
-			if (spellMix(spell, &ingredients))
-				screenMessage("Success!\n\n");
-			else
-				screenMessage("It Fizzles!\n\n");
-
-			return false;
-		}
-
-		// escape: put ingredients back and quit mixing
-		if (choice == '\033') {
-			ingredients.revert();
-			return true;
-		}
-
-		screenMessage("%c\n", toupper(choice));
-		if (!ingredients.addReagent((Reagent)(choice - 'a')))
-			screenMessage("%cNone Left!%c\n", FG_GREY, FG_WHITE);
-		screenMessage("Reagent: ");
-	}
-
-	return true;
-}
-
-/**
- * Prompts for spell reagents to mix with an Ultima V-like menu.
- */
-bool mixReagentsForSpellU5(int spell) {
-	Ingredients ingredients;
-
-	screenDisableCursor();
-
-	g_context->_stats->getReagentsMenu()->reset(); // reset the menu, highlighting the first item
-	ReagentsMenuController getReagentsController(g_context->_stats->getReagentsMenu(), &ingredients, g_context->_stats->getMainArea());
-	eventHandler->pushController(&getReagentsController);
-	getReagentsController.waitFor();
-
-	g_context->_stats->getMainArea()->disableCursor();
-	screenEnableCursor();
-
-	screenMessage("How many? ");
-
-	int howmany = ReadIntController::get(2, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
-	gameSpellMixHowMany(spell, howmany, &ingredients);
-
-	return true;
 }
 
 /**

@@ -56,7 +56,8 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("hole", WRAP_METHOD(Debugger, cmdHoleUp));
 	registerCmd("ignite", WRAP_METHOD(Debugger, cmdIgnite));
 	registerCmd("jimmy", WRAP_METHOD(Debugger, cmdJimmy));
-
+	registerCmd("locate", WRAP_METHOD(Debugger, cmdLocate));
+	registerCmd("mix", WRAP_METHOD(Debugger, cmdMixReagents));
 	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
@@ -407,8 +408,67 @@ bool Debugger::cmdLocate(int argc, const char **argv) {
 		else
 			print("%cLocate position with what?%c", FG_GREY, FG_WHITE);
 	} else {
-		screenMessage("%cNot here!%c", FG_GREY, FG_WHITE);
+		print("%cNot here!%c", FG_GREY, FG_WHITE);
 	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdMixReagents(int argc, const char **argv) {
+	/*  uncomment this line to activate new spell mixing code */
+	//   return mixReagentsSuper();
+	bool done = false;
+
+	while (!done) {
+		print("Mix reagents");
+#ifdef IOS
+		U4IOS::beginMixSpellController();
+		return; // Just return, the dialog takes control from here.
+#endif
+
+		// Verify that there are reagents remaining in the inventory
+		bool found = false;
+		for (int i = 0; i < 8; i++) {
+			if (g_ultima->_saveGame->_reagents[i] > 0) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			printN("%cNone Left!%c", FG_GREY, FG_WHITE);
+			done = true;
+		} else {
+			printN("For Spell: ");
+			g_context->_stats->setView(STATS_MIXTURES);
+
+			int choice = ReadChoiceController::get("abcdefghijklmnopqrstuvwxyz \033\n\r");
+			if (choice == ' ' || choice == '\033' || choice == '\n' || choice == '\r')
+				break;
+
+			int spell = choice - 'a';
+			print("%s", spellGetName(spell));
+
+			// ensure the mixtures for the spell isn't already maxed out
+			if (g_ultima->_saveGame->_mixtures[spell] == 99) {
+				print("\n%cYou cannot mix any more of that spell!%c", FG_GREY, FG_WHITE);
+				break;
+			}
+
+			// Reset the reagent spell mix menu by removing
+			// the menu highlight from the current item, and
+			// hiding reagents that you don't have
+			g_context->_stats->resetReagentsMenu();
+
+			g_context->_stats->setView(MIX_REAGENTS);
+			if (settings._enhancements && settings._enhancementsOptions._u5spellMixing)
+				done = mixReagentsForSpellU5(spell);
+			else
+				done = mixReagentsForSpellU4(spell);
+		}
+	}
+
+	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
+	print("");
 
 	return isDebuggerActive();
 }
