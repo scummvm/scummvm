@@ -104,6 +104,31 @@ private:
 	bool cmdEnter(int argc, const char **argv);
 
 	/**
+	 * Fire
+	 */
+	bool cmdFire(int argc, const char **argv);
+
+	/**
+	 * Get chest
+	 */
+	bool cmdGet(int argc, const char **argv);
+
+	/**
+	 * Hole Up
+	 */
+	bool cmdHoleUp(int argc, const char **argv);
+
+	/**
+	 * Ignite Torch
+	 */
+	bool cmdIgnite(int argc, const char **argv);
+
+	/**
+	 * Jimmy lock
+	 */
+	bool cmdJimmy(int argc, const char **argv);
+
+	/**
 	 * Pass turn
 	 */
 	bool cmdPass(int argc, const char **argv);
@@ -244,6 +269,13 @@ public:
 public:
 	Debugger();
 	~Debugger() override;
+
+	/**
+	 * Gets a chest.
+	 * If the default -2 is used, it bypasses prompting for a
+	 * user. Otherwise, a non-negative player number is expected
+	 */
+	void getChest(int player = -2);
 };
 
 extern Debugger *g_debugger;

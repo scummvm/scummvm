@@ -76,6 +76,19 @@ public:
 	 * creature is present at that point, zero is returned.
 	 */
 	bool attackAt(const Coords &coords);
+
+	/**
+	 * Called by getChest() to handle possible traps on chests
+	 **/
+	bool getChestTrapHandler(int player);
+
+	/**
+	 * Attempts to jimmy a locked door at map coordinates x,y.  The locked
+	 * door is replaced by a permanent annotation of an unlocked door
+	 * tile.
+	 */
+	bool jimmyAt(const Coords &coords);
+
 };
 
 } // End of namespace Ultima4

@@ -21,25 +21,26 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/game/spell.h"
-#include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/map/combat.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/debugger.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/game.h"
-#include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/game/spell.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/combat.h"
+#include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/map.h"
+#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -658,7 +659,7 @@ static int spellNegate(int unused) {
 }
 
 static int spellOpen(int unused) {
-	getChest(-2);   // HACK: -2 will not prompt for opener
+	g_debugger->getChest();
 	return 1;
 }
 

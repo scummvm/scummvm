@@ -21,29 +21,30 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/map/combat.h"
-#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/core/debugger.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/death.h"
-#include "ultima/ultima4/map/dungeon.h"
-#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/item.h"
-#include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/mapmgr.h"
-#include "ultima/ultima4/map/movement.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/game/spell.h"
 #include "ultima/ultima4/game/stats.h"
-#include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/game/weapon.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/combat.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/map/movement.h"
+#include "ultima/ultima4/map/tileset.h"
 #include "ultima/shared/std/containers.h"
 #include "common/system.h"
 
@@ -923,7 +924,7 @@ bool CombatController::keyPressed(int key) {
 #endif
 	case 'g':
 		screenMessage("Get Chest!\n");
-		getChest(_focus);
+		g_debugger->getChest(_focus);
 		break;
 
 	case 'l':

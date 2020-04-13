@@ -21,10 +21,12 @@
  */
 
 #include "ultima/ultima4/core/debugger_actions.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/textcolor.h"
+#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/combat.h"
 
 namespace Ultima {
@@ -132,6 +134,82 @@ bool DebuggerActions::attackAt(const Coords &coords) {
 	cc->init(m);
 	cc->begin();
 	return false;
+}
+
+bool DebuggerActions::getChestTrapHandler(int player) {
+	TileEffect trapType;
+	int randNum = xu4_random(4);
+
+	/* Do we use u4dos's way of trap-determination, or the original intended way? */
+	int passTest = (settings._enhancements && settings._enhancementsOptions._c64chestTraps) ?
+		(xu4_random(2) == 0) : /* xu4-enhanced */
+		((randNum & 1) == 0); /* u4dos original way (only allows even numbers through, so only acid and poison show) */
+
+/* Chest is trapped! 50/50 chance */
+	if (passTest) {
+		/* Figure out which trap the chest has */
+		switch (randNum & xu4_random(4)) {
+		case 0:
+			trapType = EFFECT_FIRE;
+			break;   /* acid trap (56% chance - 9/16) */
+		case 1:
+			trapType = EFFECT_SLEEP;
+			break;  /* sleep trap (19% chance - 3/16) */
+		case 2:
+			trapType = EFFECT_POISON;
+			break; /* poison trap (19% chance - 3/16) */
+		case 3:
+			trapType = EFFECT_LAVA;
+			break;   /* bomb trap (6% chance - 1/16) */
+		default:
+			trapType = EFFECT_FIRE;
+			break;
+		}
+
+		/* apply the effects from the trap */
+		if (trapType == EFFECT_FIRE)
+			screenMessage("%cAcid%c Trap!\n", FG_RED, FG_WHITE);
+		else if (trapType == EFFECT_POISON)
+			screenMessage("%cPoison%c Trap!\n", FG_GREEN, FG_WHITE);
+		else if (trapType == EFFECT_SLEEP)
+			screenMessage("%cSleep%c Trap!\n", FG_PURPLE, FG_WHITE);
+		else if (trapType == EFFECT_LAVA)
+			screenMessage("%cBomb%c Trap!\n", FG_RED, FG_WHITE);
+
+		// player is < 0 during the 'O'pen spell (immune to traps)
+		//
+		// if the chest was opened by a PC, see if the trap was
+		// evaded by testing the PC's dex
+		//
+		if ((player >= 0) &&
+			(g_ultima->_saveGame->_players[player]._dex + 25 < xu4_random(100))) {
+			if (trapType == EFFECT_LAVA) /* bomb trap */
+				g_context->_party->applyEffect(trapType);
+			else g_context->_party->member(player)->applyEffect(trapType);
+		} else screenMessage("Evaded!\n");
+
+		return true;
+	}
+
+	return false;
+}
+
+bool DebuggerActions::jimmyAt(const Coords &coords) {
+	MapTile *tile = g_context->_location->_map->tileAt(coords, WITH_OBJECTS);
+
+	if (!tile->getTileType()->isLockedDoor())
+		return false;
+
+	if (g_ultima->_saveGame->_keys) {
+		Tile *door = g_context->_location->_map->_tileset->getByName("door");
+		ASSERT(door, "no door tile found in tileset");
+		g_ultima->_saveGame->_keys--;
+		g_context->_location->_map->_annotations->add(coords, door->getId());
+		screenMessage("\nUnlocked!\n");
+	} else
+		screenMessage("%cNo keys left!%c\n", FG_GREY, FG_WHITE);
+
+	return true;
 }
 
 } // End of namespace Ultima4

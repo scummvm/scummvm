@@ -47,6 +47,12 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_BOARD, "BOARD", "Board", "board", "b", nullptr },
 	{ KEYBIND_CAST, "CAST", "Cast", "cast", "c", nullptr },
 	{ KEYBIND_ENTER, "ENTER", "Enter", "enter", "e", nullptr },
+	{ KEYBIND_FIRE, "FIRE", "Fire", "fire", "f", nullptr },
+	{ KEYBIND_GET, "GET", "Get Chest", "get", "g", nullptr },
+	{ KEYBIND_HOLE_UP, "HOLE-UP", "Hole Up", "hole", "h", nullptr },
+	{ KEYBIND_JIMMY, "JIMMY", "Jimmy", "jimmy", "j", nullptr },
+	{ KEYBIND_IGNITE, "IGNITE", "Ignite", "ignite", "i", nullptr },
+
 	{ KEYBIND_PASS, "PASS", "Pass", "pass", "SPACE", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }

@@ -29,6 +29,9 @@
 #include "ultima/ultima4/game/stats.h"
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/camp.h"
+#include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/ultima4.h"
@@ -48,6 +51,12 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("board", WRAP_METHOD(Debugger, cmdBoard));
 	registerCmd("cast", WRAP_METHOD(Debugger, cmdCastSpell));
 	registerCmd("enter", WRAP_METHOD(Debugger, cmdEnter));
+	registerCmd("fire", WRAP_METHOD(Debugger, cmdFire));
+	registerCmd("get", WRAP_METHOD(Debugger, cmdGet));
+	registerCmd("hole", WRAP_METHOD(Debugger, cmdHoleUp));
+	registerCmd("ignite", WRAP_METHOD(Debugger, cmdIgnite));
+	registerCmd("jimmy", WRAP_METHOD(Debugger, cmdJimmy));
+
 	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
@@ -125,6 +134,14 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 	_dontEndTurn = false;
 	return result;
 }
+
+void Debugger::getChest(int player) {
+	Common::String param = Common::String::format("%d", player);
+	const char *argv[2] = { "get", param.c_str() };
+
+	cmdGet(2, argv);
+}
+
 
 
 bool Debugger::cmdMove(int argc, const char **argv) {
@@ -239,6 +256,144 @@ bool Debugger::cmdEnter(int argc, const char **argv) {
 		dontEndTurn();
 	}
 
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdFire(int argc, const char **argv) {
+	if (g_context->_transportContext != TRANSPORT_SHIP) {
+		print("%cFire What?%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	printN("Fire Cannon!\nDir: ");
+	Direction dir = gameGetDirection();
+
+	if (dir == DIR_NONE)
+		return isDebuggerActive();
+
+	// can only fire broadsides
+	int broadsidesDirs = dirGetBroadsidesDirs(g_context->_party->getDirection());
+	if (!DIR_IN_MASK(dir, broadsidesDirs)) {
+		print("%cBroadsides Only!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	// nothing (not even mountains!) can block cannonballs
+	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), broadsidesDirs, g_context->_location->_coords,
+		1, 3, NULL, false);
+	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
+		if (fireAt(*i, true))
+			return isDebuggerActive();
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdGet(int argc, const char **argv) {
+	int player = 1;
+	if (argc == 2)
+		player = strToInt(argv[1]);
+
+	print("Get Chest!");
+
+	if (g_context->_party->isFlying()) {
+		print("%cDrift only!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	// first check to see if a chest exists at the current location
+	// if one exists, prompt the player for the opener, if necessary
+	MapCoords coords;
+	g_context->_location->getCurrentPosition(&coords);
+	const Tile *tile = g_context->_location->_map->tileTypeAt(coords, WITH_GROUND_OBJECTS);
+
+	/* get the object for the chest, if it is indeed an object */
+	Object *obj = g_context->_location->_map->objectAt(coords);
+	if (obj && !obj->getTile().getTileType()->isChest())
+		obj = NULL;
+
+	if (tile->isChest() || obj) {
+		// if a spell was cast to open this chest,
+		// player will equal -2, otherwise player
+		// will default to -1 or the defult character
+		// number if one was earlier specified
+		if (player == -1) {
+			printN("Who opens? ");
+			player = gameGetPlayer(false, true);
+		}
+		if (player == -1)
+			return isDebuggerActive();
+
+		if (obj)
+			g_context->_location->_map->removeObject(obj);
+		else {
+			TileId newTile = g_context->_location->getReplacementTile(coords, tile);
+			g_context->_location->_map->_annotations->add(coords, newTile, false, true);
+		}
+
+		// see if the chest is trapped and handle it
+		getChestTrapHandler(player);
+
+		print("The Chest Holds: %d Gold", g_context->_party->getChest());
+
+		screenPrompt();
+
+		if (isCity(g_context->_location->_map) && obj == NULL)
+			g_context->_party->adjustKarma(KA_STOLE_CHEST);
+	} else {
+		print("%cNot Here!%c", FG_GREY, FG_WHITE);
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdHoleUp(int argc, const char **argv) {
+	print("Hole up & Camp!");
+
+	if (!(g_context->_location->_context & (CTX_WORLDMAP | CTX_DUNGEON))) {
+		print("%cNot here!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	if (g_context->_transportContext != TRANSPORT_FOOT) {
+		print("%cOnly on foot!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	CombatController *cc = new CampController();
+	cc->init(NULL);
+	cc->begin();
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdIgnite(int argc, const char **argv) {
+	print("Ignite torch!");
+	if (g_context->_location->_context == CTX_DUNGEON) {
+		if (!g_context->_party->lightTorch())
+			print("%cNone left!%c", FG_GREY, FG_WHITE);
+	} else {
+		print("%cNot here!%c", FG_GREY, FG_WHITE);
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdJimmy(int argc, const char **argv) {
+	screenMessage("Jimmy: ");
+	Direction dir = gameGetDirection();
+
+	if (dir == DIR_NONE)
+		return isDebuggerActive();
+
+	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+		1, 1, NULL, true);
+	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
+		if (jimmyAt(*i))
+			return isDebuggerActive();
+	}
+
+	print("%cJimmy what?%c", FG_GREY, FG_WHITE);
 	return isDebuggerActive();
 }
 

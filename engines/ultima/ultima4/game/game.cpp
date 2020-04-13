@@ -99,9 +99,6 @@ bool talkAt(const Coords &coords);
 void talkRunConversation(Conversation &conv, Person *talker, bool showPrompt);
 
 /* action functions */
-bool attackAt(const Coords &coords);
-bool getChestTrapHandler(int player);
-bool jimmyAt(const Coords &coords);
 bool openAt(const Coords &coords);
 void wearArmor(int player = -1);
 void ztatsFor(int player = -1);
@@ -717,30 +714,6 @@ bool GameController::keyPressed(int key) {
 			break;
 		}
 
-		case 'f':
-			fire();
-			break;
-
-		case 'g':
-			getChest();
-			break;
-
-		case 'h':
-			holeUp();
-			break;
-
-		case 'i':
-			screenMessage("Ignite torch!\n");
-			if (g_context->_location->_context == CTX_DUNGEON) {
-				if (!g_context->_party->lightTorch())
-					screenMessage("%cNone left!%c\n", FG_GREY, FG_WHITE);
-			} else screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
-			break;
-
-		case 'j':
-			jimmy();
-			break;
-
 		case 'k':
 			if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_KLIMB)) {
 				if (g_context->_transportContext == TRANSPORT_BALLOON) {
@@ -1336,34 +1309,6 @@ void castSpell(int player) {
 	}
 }
 
-void fire() {
-	if (g_context->_transportContext != TRANSPORT_SHIP) {
-		screenMessage("%cFire What?%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	screenMessage("Fire Cannon!\nDir: ");
-	Direction dir = gameGetDirection();
-
-	if (dir == DIR_NONE)
-		return;
-
-	// can only fire broadsides
-	int broadsidesDirs = dirGetBroadsidesDirs(g_context->_party->getDirection());
-	if (!DIR_IN_MASK(dir, broadsidesDirs)) {
-		screenMessage("%cBroadsides Only!%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	// nothing (not even mountains!) can block cannonballs
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), broadsidesDirs, g_context->_location->_coords,
-	                           1, 3, NULL, false);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (fireAt(*i, true))
-			return;
-	}
-}
-
 bool fireAt(const Coords &coords, bool originAvatar) {
 	bool validObject = false;
 	bool hitsAvatar = false;
@@ -1420,140 +1365,6 @@ bool fireAt(const Coords &coords, bool originAvatar) {
 	}
 
 	return objectHit;
-}
-
-/**
- * Get the chest at the current x,y of the current context for player 'player'
- */
-void getChest(int player) {
-	screenMessage("Get Chest!\n");
-
-	if (g_context->_party->isFlying()) {
-		screenMessage("%cDrift only!%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	// first check to see if a chest exists at the current location
-	// if one exists, prompt the player for the opener, if necessary
-	MapCoords coords;
-	g_context->_location->getCurrentPosition(&coords);
-	const Tile *tile = g_context->_location->_map->tileTypeAt(coords, WITH_GROUND_OBJECTS);
-
-	/* get the object for the chest, if it is indeed an object */
-	Object *obj = g_context->_location->_map->objectAt(coords);
-	if (obj && !obj->getTile().getTileType()->isChest())
-		obj = NULL;
-
-	if (tile->isChest() || obj) {
-		// if a spell was cast to open this chest,
-		// player will equal -2, otherwise player
-		// will default to -1 or the defult character
-		// number if one was earlier specified
-		if (player == -1) {
-			screenMessage("Who opens? ");
-			player = gameGetPlayer(false, true);
-		}
-		if (player == -1)
-			return;
-
-		if (obj)
-			g_context->_location->_map->removeObject(obj);
-		else {
-			TileId newTile = g_context->_location->getReplacementTile(coords, tile);
-			g_context->_location->_map->_annotations->add(coords, newTile, false , true);
-		}
-
-		// see if the chest is trapped and handle it
-		getChestTrapHandler(player);
-
-		screenMessage("The Chest Holds: %d Gold\n", g_context->_party->getChest());
-
-		screenPrompt();
-
-		if (isCity(g_context->_location->_map) && obj == NULL)
-			g_context->_party->adjustKarma(KA_STOLE_CHEST);
-	} else {
-		screenMessage("%cNot Here!%c\n", FG_GREY, FG_WHITE);
-	}
-}
-
-/**
- * Called by getChest() to handle possible traps on chests
- **/
-bool getChestTrapHandler(int player) {
-	TileEffect trapType;
-	int randNum = xu4_random(4);
-
-	/* Do we use u4dos's way of trap-determination, or the original intended way? */
-	int passTest = (settings._enhancements && settings._enhancementsOptions._c64chestTraps) ?
-	               (xu4_random(2) == 0) : /* xu4-enhanced */
-	               ((randNum & 1) == 0); /* u4dos original way (only allows even numbers through, so only acid and poison show) */
-
-	/* Chest is trapped! 50/50 chance */
-	if (passTest) {
-		/* Figure out which trap the chest has */
-		switch (randNum & xu4_random(4)) {
-		case 0:
-			trapType = EFFECT_FIRE;
-			break;   /* acid trap (56% chance - 9/16) */
-		case 1:
-			trapType = EFFECT_SLEEP;
-			break;  /* sleep trap (19% chance - 3/16) */
-		case 2:
-			trapType = EFFECT_POISON;
-			break; /* poison trap (19% chance - 3/16) */
-		case 3:
-			trapType = EFFECT_LAVA;
-			break;   /* bomb trap (6% chance - 1/16) */
-		default:
-			trapType = EFFECT_FIRE;
-			break;
-		}
-
-		/* apply the effects from the trap */
-		if (trapType == EFFECT_FIRE)
-			screenMessage("%cAcid%c Trap!\n", FG_RED, FG_WHITE);
-		else if (trapType == EFFECT_POISON)
-			screenMessage("%cPoison%c Trap!\n", FG_GREEN, FG_WHITE);
-		else if (trapType == EFFECT_SLEEP)
-			screenMessage("%cSleep%c Trap!\n", FG_PURPLE, FG_WHITE);
-		else if (trapType == EFFECT_LAVA)
-			screenMessage("%cBomb%c Trap!\n", FG_RED, FG_WHITE);
-
-		// player is < 0 during the 'O'pen spell (immune to traps)
-		//
-		// if the chest was opened by a PC, see if the trap was
-		// evaded by testing the PC's dex
-		//
-		if ((player >= 0) &&
-		        (g_ultima->_saveGame->_players[player]._dex + 25 < xu4_random(100))) {
-			if (trapType == EFFECT_LAVA) /* bomb trap */
-				g_context->_party->applyEffect(trapType);
-			else g_context->_party->member(player)->applyEffect(trapType);
-		} else screenMessage("Evaded!\n");
-
-		return true;
-	}
-
-	return false;
-}
-
-void holeUp() {
-	screenMessage("Hole up & Camp!\n");
-
-	if (!(g_context->_location->_context & (CTX_WORLDMAP | CTX_DUNGEON))) {
-		screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	if (g_context->_transportContext != TRANSPORT_FOOT) {
-		screenMessage("%cOnly on foot!%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	CombatController *cc = new CampController();
-	cc->init(NULL);
-	cc->begin();
 }
 
 void GameController::initMoons() {
@@ -1690,7 +1501,7 @@ void GameController::avatarMoved(MoveEvent &event) {
 					openAt(new_coords);
 					event._result = (MoveResult)(MOVE_SUCCEEDED | MOVE_END_TURN);
 				} else if (tile->getTileType()->isLockedDoor()) {
-					jimmyAt(new_coords);
+					g_debugger->jimmyAt(new_coords);
 					event._result = (MoveResult)(MOVE_SUCCEEDED | MOVE_END_TURN);
 				} /*else if (mapPersonAt(c->location->map, new_coords) != NULL) {
                     talkAtCoord(newx, newy, 1, NULL);
@@ -1780,46 +1591,6 @@ void GameController::avatarMovedInDungeon(MoveEvent &event) {
 			cc->begin();
 		}
 	}
-}
-
-void jimmy() {
-	screenMessage("Jimmy: ");
-	Direction dir = gameGetDirection();
-
-	if (dir == DIR_NONE)
-		return;
-
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-	                           1, 1, NULL, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (jimmyAt(*i))
-			return;
-	}
-
-	screenMessage("%cJimmy what?%c\n", FG_GREY, FG_WHITE);
-}
-
-/**
- * Attempts to jimmy a locked door at map coordinates x,y.  The locked
- * door is replaced by a permanent annotation of an unlocked door
- * tile.
- */
-bool jimmyAt(const Coords &coords) {
-	MapTile *tile = g_context->_location->_map->tileAt(coords, WITH_OBJECTS);
-
-	if (!tile->getTileType()->isLockedDoor())
-		return false;
-
-	if (g_ultima->_saveGame->_keys) {
-		Tile *door = g_context->_location->_map->_tileset->getByName("door");
-		ASSERT(door, "no door tile found in tileset");
-		g_ultima->_saveGame->_keys--;
-		g_context->_location->_map->_annotations->add(coords, door->getId());
-		screenMessage("\nUnlocked!\n");
-	} else
-		screenMessage("%cNo keys left!%c\n", FG_GREY, FG_WHITE);
-
-	return true;
 }
 
 void opendoor() {

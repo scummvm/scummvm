@@ -239,10 +239,6 @@ void castSpell(int player = -1);
 void gameSpellEffect(int spell, int player, Sound sound);
 
 /* action functions */
-void fire();
-void getChest(int player = -1);
-void holeUp();
-void jimmy();
 void opendoor();
 bool gamePeerCity(int city, void *data);
 void peer(bool useGem = true);
