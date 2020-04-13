@@ -218,6 +218,7 @@ void InnController::maybeMeetIsaac() {
 	//  }
 	if ((g_context->_location->_map->_id == 11) && (xu4_random(4) == 0)) {
 		City *city = dynamic_cast<City *>(g_context->_location->_map);
+		assert(city);
 
 		if (city->_extraDialogues.size() == 1 &&
 		        city->_extraDialogues[0]->getName() == "Isaac") {

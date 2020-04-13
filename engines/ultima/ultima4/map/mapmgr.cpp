@@ -192,12 +192,15 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "city") {
 			City *city = dynamic_cast<City *>(map);
+			assert(city);
 			initCityFromConf(*i, city);
 		} else if (i->getName() == "shrine") {
 			Shrine *shrine = dynamic_cast<Shrine *>(map);
+			assert(shrine);
 			initShrineFromConf(*i, shrine);
 		} else if (i->getName() == "dungeon") {
 			Dungeon *dungeon = dynamic_cast<Dungeon *>(map);
+			assert(dungeon);
 			initDungeonFromConf(*i, dungeon);
 		} else if (i->getName() == "portal")
 			map->_portals.push_back(initPortalFromConf(*i));

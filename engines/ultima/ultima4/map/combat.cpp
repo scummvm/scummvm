@@ -225,6 +225,7 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 			error("Invalid 'from' direction passed to initDungeonRoom()");
 		}
 
+		// TODO: Check for possible memory overrun below
 		for (i = 0; i < AREA_PLAYERS; i++) {
 			_map->player_start[i].x = *(party_x + (offset * AREA_PLAYERS * 2) + i);
 			_map->player_start[i].y = *(party_y + (offset * AREA_PLAYERS * 2) + i);

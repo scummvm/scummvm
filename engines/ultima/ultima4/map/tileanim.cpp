@@ -189,6 +189,7 @@ TileAnimPixelColorTransform::TileAnimPixelColorTransform(int xp, int yp, int wid
 	this->y = yp;
 	this->w = width;
 	this->h = height;
+	_start = _end = nullptr;
 }
 
 bool TileAnimPixelColorTransform::drawsTile() const {
