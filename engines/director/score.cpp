@@ -1523,7 +1523,7 @@ void Score::startLoop() {
 	_window->disableBorder();
 	_window->resize(_movieRect.width(), _movieRect.height());
 
-	_surface = _window->getSurface();
+	_surface = _window->getWindowSurface();
 	_trailSurface = new Graphics::ManagedSurface;
 	_backSurface = new Graphics::ManagedSurface;
 	_backSurface2 = new Graphics::ManagedSurface;

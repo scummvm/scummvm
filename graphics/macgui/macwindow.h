@@ -102,7 +102,7 @@ public:
 	 * Method to access the entire surface of the window (e.g. to draw an image).
 	 * @return A pointer to the entire surface of the window.
 	 */
-	ManagedSurface *getSurface() { return &_surface; }
+	ManagedSurface *getWindowSurface() { return &_surface; }
 
 	/**
 	 * Abstract method for indicating whether the window is active or inactive.
