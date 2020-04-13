@@ -23,10 +23,6 @@
 #ifndef DIRECTOR_SPRITE_H
 #define DIRECTOR_SPRITE_H
 
-namespace Graphics {
-class MacWidget;
-}
-
 namespace Director {
 
 class BitmapCast;
@@ -114,8 +110,6 @@ public:
 
 	// Using in text sprites
 	Common::String _editableText;
-
-	Graphics::MacWidget *_widget;
 };
 
 } // End of namespace Director

@@ -36,6 +36,8 @@ namespace Director {
 Cast::Cast() {
 	_type = kCastTypeNull;
 	_surface = nullptr;
+	_widget = nullptr;
+
 	_img = nullptr;
 
 	_modified = true;
