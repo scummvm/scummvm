@@ -725,18 +725,6 @@ bool GameController::keyPressed(int key) {
 			}
 			break;
 
-		case 'l':
-			/* can't use sextant in dungeon or in combat */
-			if (g_context->_location->_context & ~(CTX_DUNGEON | CTX_COMBAT)) {
-				if (g_ultima->_saveGame->_sextants >= 1)
-					screenMessage("Locate position\nwith sextant\n Latitude: %c'%c\"\nLongitude: %c'%c\"\n",
-					              g_context->_location->_coords.y / 16 + 'A', g_context->_location->_coords.y % 16 + 'A',
-					              g_context->_location->_coords.x / 16 + 'A', g_context->_location->_coords.x % 16 + 'A');
-				else
-					screenMessage("%cLocate position with what?%c\n", FG_GREY, FG_WHITE);
-			} else screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
-			break;
-
 		case 'm':
 			mixReagents();
 #ifdef IOS

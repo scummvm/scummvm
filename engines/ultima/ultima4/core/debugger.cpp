@@ -397,6 +397,22 @@ bool Debugger::cmdJimmy(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdLocate(int argc, const char **argv) {
+	// can't use sextant in dungeon or in combat
+	if (g_context->_location->_context & ~(CTX_DUNGEON | CTX_COMBAT)) {
+		if (g_ultima->_saveGame->_sextants >= 1)
+			print("Locate position\nwith sextant\n Latitude: %c'%c\"\nLongitude: %c'%c\"",
+				g_context->_location->_coords.y / 16 + 'A', g_context->_location->_coords.y % 16 + 'A',
+				g_context->_location->_coords.x / 16 + 'A', g_context->_location->_coords.x % 16 + 'A');
+		else
+			print("%cLocate position with what?%c", FG_GREY, FG_WHITE);
+	} else {
+		screenMessage("%cNot here!%c", FG_GREY, FG_WHITE);
+	}
+
+	return isDebuggerActive();
+}
+
 bool Debugger::cmdPass(int argc, const char **argv) {
 	print("Pass");
 	return isDebuggerActive();

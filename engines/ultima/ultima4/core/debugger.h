@@ -129,6 +129,11 @@ private:
 	bool cmdJimmy(int argc, const char **argv);
 
 	/**
+	 * Locate position
+	 */
+	bool cmdLocate(int argc, const char **argv);
+
+	/**
 	 * Pass turn
 	 */
 	bool cmdPass(int argc, const char **argv);

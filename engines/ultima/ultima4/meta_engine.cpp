@@ -52,6 +52,7 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_HOLE_UP, "HOLE-UP", "Hole Up", "hole", "h", nullptr },
 	{ KEYBIND_JIMMY, "JIMMY", "Jimmy", "jimmy", "j", nullptr },
 	{ KEYBIND_IGNITE, "IGNITE", "Ignite", "ignite", "i", nullptr },
+	{ KEYBIND_LOCATE, "LOCATE", "Locate Position", "locate", "l", nullptr },
 
 	{ KEYBIND_PASS, "PASS", "Pass", "pass", "SPACE", nullptr },
 
