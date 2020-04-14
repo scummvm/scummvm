@@ -63,6 +63,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("jimmy", WRAP_METHOD(Debugger, cmdJimmy));
 	registerCmd("locate", WRAP_METHOD(Debugger, cmdLocate));
 	registerCmd("mix", WRAP_METHOD(Debugger, cmdMixReagents));
+	registerCmd("musicToggle", WRAP_METHOD(Debugger, cmdMusicToggle));
 	registerCmd("open", WRAP_METHOD(Debugger, cmdOpenDoor));
 	registerCmd("order", WRAP_METHOD(Debugger, cmdNewOrder));
 	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
@@ -699,6 +700,16 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 	print("");
 
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdMusicToggle(int argc, const char **argv) {
+	if (g_music->toggle())
+		print("Volume On!");
+	else
+		print("Volume Off!");
+
+	dontEndTurn();
 	return isDebuggerActive();
 }
 

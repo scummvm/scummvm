@@ -659,14 +659,6 @@ bool GameController::keyPressed(int key) {
 			endTurn = false;
 			break;
 
-		case 'v':
-			if (g_music->toggle())
-				screenMessage("Volume On!\n");
-			else
-				screenMessage("Volume Off!\n");
-			endTurn = false;
-			break;
-
 		case 'c' + U4_ALT:
 			if (settings._debug && g_context->_location->_map->isWorldMap()) {
 				/* first teleport to the abyss */

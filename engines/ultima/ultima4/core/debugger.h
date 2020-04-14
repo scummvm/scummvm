@@ -154,6 +154,11 @@ private:
 	bool cmdMixReagents(int argc, const char **argv);
 
 	/**
+	 * Toggles music
+	 */
+	bool cmdMusicToggle(int argc, const char **argv);
+
+	/**
 	 * Exchanges the position of two players in the party.  Prompts the
 	 * user for the player numbers.
 	 */

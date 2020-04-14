@@ -66,6 +66,7 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_SEARCH, "SEARCH", "Search", "search", "s", nullptr },
 	{ KEYBIND_STATS, "STATS", "Stats", "stats", "z", nullptr },
 	{ KEYBIND_TALK, "TALK", "Talk", "talk", "t", nullptr },
+	{ KEYBIND_TOGGLE_MUSIC, "TOGGLE-MUSIC", "Toggle Music", "musicToggle", "v", nullptr },
 	{ KEYBIND_USE, "USE", "Use", "use", "u", nullptr },
 	{ KEYBIND_WEAR, "WEAR", "Wear Armor", "wear", "w", nullptr },
 	{ KEYBIND_YELL, "YELL", "Yell", "yell", "y", nullptr },
