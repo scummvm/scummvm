@@ -68,6 +68,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("ready", WRAP_METHOD(Debugger, cmdReadyWeapon));
 	registerCmd("search", WRAP_METHOD(Debugger, cmdSearch));
 	registerCmd("talk", WRAP_METHOD(Debugger, cmdTalk));
+	registerCmd("use", WRAP_METHOD(Debugger, cmdUse));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
@@ -846,6 +847,20 @@ bool Debugger::cmdTalk(int argc, const char **argv) {
 	}
 
 	print("Funny, no response!");
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdUse(int argc, const char **argv) {
+	print("Use which item:");
+
+	if (settings._enhancements) {
+		// a little xu4 enhancement: show items in inventory when prompted for an item to use
+		g_context->_stats->setView(STATS_ITEMS);
+	}
+#ifdef IOS
+	U4IOS::IOSConversationHelper::setIntroString("Use which item?");
+#endif
+	itemUse(gameGetInput().c_str());
 	return isDebuggerActive();
 }
 

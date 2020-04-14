@@ -63,6 +63,7 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_READY_WEAPON, "READY-WEAPON", "Ready Weapon", "ready", nullptr },
 	{ KEYBIND_SEARCH, "SEARCH", "Search", "search", "s", nullptr },
 	{ KEYBIND_TALK, "TALK", "Talk", "talk", "t", nullptr },
+	{ KEYBIND_USE, "USE", "Use", "use", "u", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };

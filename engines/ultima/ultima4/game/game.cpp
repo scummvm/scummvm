@@ -683,19 +683,6 @@ bool GameController::keyPressed(int key) {
 			break;
 		}
 
-		case 'u': {
-			screenMessage("Use which item:\n");
-			if (settings._enhancements) {
-				/* a little xu4 enhancement: show items in inventory when prompted for an item to use */
-				g_context->_stats->setView(STATS_ITEMS);
-			}
-#ifdef IOS
-			U4IOS::IOSConversationHelper::setIntroString("Use which item?");
-#endif
-			itemUse(gameGetInput().c_str());
-			break;
-		}
-
 		case 'v':
 			if (g_music->toggle())
 				screenMessage("Volume On!\n");

@@ -184,6 +184,12 @@ private:
 	 * Talk
 	 */
 	bool cmdTalk(int argc, const char **argv);
+
+	/**
+	 * Use
+	 */
+	bool cmdUse(int argc, const char **argv);
+
 private:
 	/**
 	 * Collision detection on/off
