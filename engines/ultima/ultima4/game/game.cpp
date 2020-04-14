@@ -94,7 +94,6 @@ bool talkAt(const Coords &coords);
 void talkRunConversation(Conversation &conv, Person *talker, bool showPrompt);
 
 /* action functions */
-bool openAt(const Coords &coords);
 void wearArmor(int player = -1);
 void ztatsFor(int player = -1);
 
@@ -718,10 +717,6 @@ bool GameController::keyPressed(int key) {
 				} else
 					screenMessage("%cKlimb what?%c\n", FG_GREY, FG_WHITE);
 			}
-			break;
-
-		case 'o':
-			opendoor();
 			break;
 
 		case 'p':
@@ -1430,7 +1425,7 @@ void GameController::avatarMoved(MoveEvent &event) {
 				tile = g_context->_location->_map->tileAt(new_coords, WITH_OBJECTS);
 
 				if (tile->getTileType()->isDoor()) {
-					openAt(new_coords);
+					g_debugger->openAt(new_coords);
 					event._result = (MoveResult)(MOVE_SUCCEEDED | MOVE_END_TURN);
 				} else if (tile->getTileType()->isLockedDoor()) {
 					g_debugger->jimmyAt(new_coords);
@@ -1523,56 +1518,6 @@ void GameController::avatarMovedInDungeon(MoveEvent &event) {
 			cc->begin();
 		}
 	}
-}
-
-void opendoor() {
-	///  XXX: Pressing "o" should close any open door.
-
-	screenMessage("Open: ");
-
-	if (g_context->_party->isFlying()) {
-		screenMessage("%cNot Here!%c\n", FG_GREY, FG_WHITE);
-		return;
-	}
-
-	Direction dir = gameGetDirection();
-
-	if (dir == DIR_NONE)
-		return;
-
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-	                           1, 1, NULL, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (openAt(*i))
-			return;
-	}
-
-	screenMessage("%cNot Here!%c\n", FG_GREY, FG_WHITE);
-}
-
-/**
- * Attempts to open a door at map coordinates x,y.  The door is
- * replaced by a temporary annotation of a floor tile for 4 turns.
- */
-bool openAt(const Coords &coords) {
-	const Tile *tile = g_context->_location->_map->tileTypeAt(coords, WITH_OBJECTS);
-
-	if (!tile->isDoor() &&
-	        !tile->isLockedDoor())
-		return false;
-
-	if (tile->isLockedDoor()) {
-		screenMessage("%cCan't!%c\n", FG_GREY, FG_WHITE);
-		return true;
-	}
-
-	Tile *floor = g_context->_location->_map->_tileset->getByName("brick_floor");
-	ASSERT(floor, "no floor tile found in tileset");
-	g_context->_location->_map->_annotations->add(coords, floor->getId(), false, true)->setTTL(4);
-
-	screenMessage("\nOpened!\n");
-
-	return true;
 }
 
 /**

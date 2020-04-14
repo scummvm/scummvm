@@ -58,8 +58,10 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("jimmy", WRAP_METHOD(Debugger, cmdJimmy));
 	registerCmd("locate", WRAP_METHOD(Debugger, cmdLocate));
 	registerCmd("mix", WRAP_METHOD(Debugger, cmdMixReagents));
+	registerCmd("open", WRAP_METHOD(Debugger, cmdOpenDoor));
 	registerCmd("order", WRAP_METHOD(Debugger, cmdNewOrder));
 	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
+	registerCmd("peer", WRAP_METHOD(Debugger, cmdPeer));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
@@ -77,7 +79,6 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("mixtures", WRAP_METHOD(Debugger, cmdMixtures));
 	registerCmd("moon", WRAP_METHOD(Debugger, cmdMoon));
 	registerCmd("opacity", WRAP_METHOD(Debugger, cmdOpacity));
-	registerCmd("peer", WRAP_METHOD(Debugger, cmdPeer));
 	registerCmd("reagents", WRAP_METHOD(Debugger, cmdReagents));
 	registerCmd("stats", WRAP_METHOD(Debugger, cmdStats));
 	registerCmd("summon", WRAP_METHOD(Debugger, cmdSummon));
@@ -424,7 +425,7 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 		print("Mix reagents");
 #ifdef IOS
 		U4IOS::beginMixSpellController();
-		return; // Just return, the dialog takes control from here.
+		return isDebuggerActive(); // Just return, the dialog takes control from here.
 #endif
 
 		// Verify that there are reagents remaining in the inventory
@@ -508,10 +509,49 @@ bool Debugger::cmdNewOrder(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdOpenDoor(int argc, const char **argv) {
+	///  XXX: Pressing "o" should close any open door.
+
+	printN("Open: ");
+
+	if (g_context->_party->isFlying()) {
+		print("%cNot Here!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	Direction dir = gameGetDirection();
+
+	if (dir == DIR_NONE)
+		return isDebuggerActive();
+
+	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+		1, 1, NULL, true);
+	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
+		if (openAt(*i))
+			return isDebuggerActive();
+	}
+
+	print("%cNot Here!%c", FG_GREY, FG_WHITE);
+
+}
+
 bool Debugger::cmdPass(int argc, const char **argv) {
 	print("Pass");
 	return isDebuggerActive();
 }
+
+bool Debugger::cmdPeer(int argc, const char **argv) {
+	if ((g_context->_location->_viewMode == VIEW_NORMAL) || (g_context->_location->_viewMode == VIEW_DUNGEON))
+		g_context->_location->_viewMode = VIEW_GEM;
+	else if (g_context->_location->_context == CTX_DUNGEON)
+		g_context->_location->_viewMode = VIEW_DUNGEON;
+	else
+		g_context->_location->_viewMode = VIEW_NORMAL;
+
+	print("Toggle view");
+	return isDebuggerActive();
+}
+
 
 bool Debugger::cmd3d(int argc, const char **argv) {
 	if (g_context->_location->_context == CTX_DUNGEON) {
@@ -816,18 +856,6 @@ bool Debugger::cmdMoon(int argc, const char **argv) {
 bool Debugger::cmdOpacity(int argc, const char **argv) {
 	g_context->_opacity = !g_context->_opacity;
 	screenMessage("Opacity is %s", g_context->_opacity ? "on" : "off");
-	return isDebuggerActive();
-}
-
-bool Debugger::cmdPeer(int argc, const char **argv) {
-	if ((g_context->_location->_viewMode == VIEW_NORMAL) || (g_context->_location->_viewMode == VIEW_DUNGEON))
-		g_context->_location->_viewMode = VIEW_GEM;
-	else if (g_context->_location->_context == CTX_DUNGEON)
-		g_context->_location->_viewMode = VIEW_DUNGEON;
-	else
-		g_context->_location->_viewMode = VIEW_NORMAL;
-
-	print("Toggle view");
 	return isDebuggerActive();
 }
 

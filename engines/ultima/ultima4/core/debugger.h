@@ -145,9 +145,19 @@ private:
 	bool cmdNewOrder(int argc, const char **argv);
 
 	/**
+	 * Open door
+	 */
+	bool cmdOpenDoor(int argc, const char **argv);
+
+	/**
 	 * Pass turn
 	 */
 	bool cmdPass(int argc, const char **argv);
+
+	/**
+	 * Peer
+	 */
+	bool cmdPeer(int argc, const char **argv);
 
 private:
 	/**
@@ -229,11 +239,6 @@ private:
 	 * Toggle opacity
 	 */
 	bool cmdOpacity(int argc, const char **argv);
-
-	/**
-	 * Peer
-	 */
-	bool cmdPeer(int argc, const char **argv);
 
 	/**
 	 * Give all the reagents

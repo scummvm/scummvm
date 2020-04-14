@@ -102,6 +102,12 @@ public:
 	bool mixReagentsForSpellU5(int spell);
 
 	bool gameSpellMixHowMany(int spell, int num, Ingredients *ingredients);
+
+	/**
+	 * Attempts to open a door at map coordinates x,y.  The door is
+	 * replaced by a temporary annotation of a floor tile for 4 turns.
+	 */
+	bool openAt(const Coords &coords);
 };
 
 } // End of namespace Ultima4

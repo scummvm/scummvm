@@ -310,5 +310,26 @@ bool DebuggerActions::gameSpellMixHowMany(int spell, int num, Ingredients *ingre
 	return true;
 }
 
+bool DebuggerActions::openAt(const Coords &coords) {
+	const Tile *tile = g_context->_location->_map->tileTypeAt(coords, WITH_OBJECTS);
+
+	if (!tile->isDoor() &&
+		!tile->isLockedDoor())
+		return false;
+
+	if (tile->isLockedDoor()) {
+		screenMessage("%cCan't!%c\n", FG_GREY, FG_WHITE);
+		return true;
+	}
+
+	Tile *floor = g_context->_location->_map->_tileset->getByName("brick_floor");
+	ASSERT(floor, "no floor tile found in tileset");
+	g_context->_location->_map->_annotations->add(coords, floor->getId(), false, true)->setTTL(4);
+
+	screenMessage("\nOpened!\n");
+
+	return true;
+}
+
 } // End of namespace Ultima4
 } // End of namespace Ultima

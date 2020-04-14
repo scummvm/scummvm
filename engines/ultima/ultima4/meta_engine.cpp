@@ -55,8 +55,9 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_LOCATE, "LOCATE", "Locate Position", "locate", "l", nullptr },
 	{ KEYBIND_MIX, "MIX", "Mix Reagents", "mix", "m", nullptr },
 	{ KEYBIND_NEW_ORDER, "NEW-ORDER", "New Order", "order", "n", nullptr },
-
+	{ KEYBIND_OPEN_DOOR, "OPEN-DOOR", "Open Door", "open", "o", nullptr },
 	{ KEYBIND_PASS, "PASS", "Pass", "pass", "SPACE", nullptr },
+	{ KEYBIND_PEER, "PEER", "Peer", "peer", "p", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
