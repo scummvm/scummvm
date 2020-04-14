@@ -36,6 +36,7 @@ Sprite::Sprite() {
 	_castId = 0;
 	_constraint = 0;
 	_moveable = false;
+	_puppet = false;
 	_editable = false;
 	_castId = 0;
 	_castIndex = 0;

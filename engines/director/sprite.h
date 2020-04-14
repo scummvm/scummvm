@@ -90,6 +90,7 @@ public:
 	byte _constraint;
 	bool _moveable;
 	bool _editable;
+	bool _puppet;
 	byte _backColor;
 	byte _foreColor;
 
