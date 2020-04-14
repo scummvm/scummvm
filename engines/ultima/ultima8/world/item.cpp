@@ -51,8 +51,6 @@
 #include "ultima/ultima8/world/world_point.h"
 #include "ultima/ultima8/world/gravity_process.h"
 #include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/gumps/slider_gump.h"

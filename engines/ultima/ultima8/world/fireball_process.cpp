@@ -31,8 +31,6 @@
 #include "ultima/ultima8/world/weapon_info.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/shared/std/misc.h"
 
 namespace Ultima {

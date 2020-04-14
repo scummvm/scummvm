@@ -33,9 +33,6 @@
 
 #include "ultima/ultima8/filesys/file_system.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 

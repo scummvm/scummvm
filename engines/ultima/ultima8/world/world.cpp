@@ -24,8 +24,6 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/filesys/flex_file.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/world/item_factory.h"
@@ -42,6 +40,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {

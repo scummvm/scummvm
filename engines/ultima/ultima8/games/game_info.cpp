@@ -23,9 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/games/game_info.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/misc/util.h"
 
 namespace Ultima {

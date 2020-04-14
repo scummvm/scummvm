@@ -28,8 +28,6 @@
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/main_actor.h"

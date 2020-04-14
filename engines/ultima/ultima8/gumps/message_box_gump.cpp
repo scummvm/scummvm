@@ -39,8 +39,6 @@
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
