@@ -890,6 +890,38 @@ bool Debugger::cmdSearch(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdSpeed(int argc, const char **argv) {
+	Common::String action = argv[1];
+	int old_cycles = settings._gameCyclesPerSecond;
+
+	if (action == "up") {
+		if (++settings._gameCyclesPerSecond > MAX_CYCLES_PER_SECOND)
+			settings._gameCyclesPerSecond = MAX_CYCLES_PER_SECOND;
+	} else if (action == "down") {
+		if (--settings._gameCyclesPerSecond == 0)
+			settings._gameCyclesPerSecond = 1;
+	} else if (action == "normal") {
+		settings._gameCyclesPerSecond = DEFAULT_CYCLES_PER_SECOND;
+	}
+
+	if (old_cycles != settings._gameCyclesPerSecond) {
+		settings._eventTimerGranularity = (1000 / settings._gameCyclesPerSecond);
+		eventHandler->getTimer()->reset(settings._eventTimerGranularity);
+
+		if (settings._gameCyclesPerSecond == DEFAULT_CYCLES_PER_SECOND)
+			print("Speed: Normal");
+		else if (action == "up")
+			print("Speed Up (%d)", settings._gameCyclesPerSecond);
+		else
+			print("Speed Down (%d)", settings._gameCyclesPerSecond);
+	} else if (settings._gameCyclesPerSecond == DEFAULT_CYCLES_PER_SECOND) {
+		print("Speed: Normal");
+	}
+
+	dontEndTurn();
+	return isDebuggerActive();
+}
+
 bool Debugger::cmdStats(int argc, const char **argv) {
 	int player = -1;
 	if (argc == 2)

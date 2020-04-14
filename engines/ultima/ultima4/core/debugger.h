@@ -196,6 +196,11 @@ private:
 	bool cmdSearch(int argc, const char **argv);
 
 	/**
+	 * Speed up, down, or normal
+	 */
+	bool cmdSpeed(int argc, const char **argv);
+
+	/**
 	 * Show character stats
 	 */
 	bool cmdStats(int argc, const char **argv);

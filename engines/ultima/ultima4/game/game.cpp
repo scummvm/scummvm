@@ -602,63 +602,6 @@ bool GameController::keyPressed(int key) {
 		screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
 	else
 		switch (key) {
-		case ' ':
-			screenMessage("Pass\n");
-			break;
-
-		case '+':
-		case '-':
-		case U4_KEYPAD_ENTER: {
-			int old_cycles = settings._gameCyclesPerSecond;
-			if (key == '+' && ++settings._gameCyclesPerSecond > MAX_CYCLES_PER_SECOND)
-				settings._gameCyclesPerSecond = MAX_CYCLES_PER_SECOND;
-			else if (key == '-' && --settings._gameCyclesPerSecond == 0)
-				settings._gameCyclesPerSecond = 1;
-			else if (key == U4_KEYPAD_ENTER)
-				settings._gameCyclesPerSecond = DEFAULT_CYCLES_PER_SECOND;
-
-			if (old_cycles != settings._gameCyclesPerSecond) {
-				settings._eventTimerGranularity = (1000 / settings._gameCyclesPerSecond);
-				eventHandler->getTimer()->reset(settings._eventTimerGranularity);
-
-				if (settings._gameCyclesPerSecond == DEFAULT_CYCLES_PER_SECOND)
-					screenMessage("Speed: Normal\n");
-				else if (key == '+')
-					screenMessage("Speed Up (%d)\n", settings._gameCyclesPerSecond);
-				else screenMessage("Speed Down (%d)\n", settings._gameCyclesPerSecond);
-			} else if (settings._gameCyclesPerSecond == DEFAULT_CYCLES_PER_SECOND)
-				screenMessage("Speed: Normal\n");
-		}
-
-		endTurn = false;
-		break;
-
-		/* handle music volume adjustments */
-		case ',':
-			// decrease the volume if possible
-			screenMessage("Music: %d%s\n", g_music->decreaseMusicVolume(), "%");
-			endTurn = false;
-			break;
-		case '.':
-			// increase the volume if possible
-			screenMessage("Music: %d%s\n", g_music->increaseMusicVolume(), "%");
-			endTurn = false;
-			break;
-
-		/* handle sound volume adjustments */
-		case '<':
-			// decrease the volume if possible
-			screenMessage("Sound: %d%s\n", g_music->decreaseSoundVolume(), "%");
-			soundPlay(SOUND_FLEE);
-			endTurn = false;
-			break;
-		case '>':
-			// increase the volume if possible
-			screenMessage("Sound: %d%s\n", g_music->increaseSoundVolume(), "%");
-			soundPlay(SOUND_FLEE);
-			endTurn = false;
-			break;
-
 		case 'c' + U4_ALT:
 			if (settings._debug && g_context->_location->_map->isWorldMap()) {
 				/* first teleport to the abyss */
