@@ -179,7 +179,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 }
 
 ProcId U8Game::playEndgameMovie(bool fade) {
-	Std::string filename = "@game/static/endgame.skf";
+	static const Std::string filename = "@game/static/endgame.skf";
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
 	if (!skf) {
@@ -221,7 +221,7 @@ void U8Game::playCredits() {
 }
 
 void U8Game::playQuotes() {
-	Std::string filename = "@game/static/quotes.dat";
+	static const Std::string filename = "@game/static/quotes.dat";
 
 	Common::SeekableReadStream *rs = FileSystem::get_instance()->ReadFile(filename);
 	if (!rs) {
@@ -229,7 +229,7 @@ void U8Game::playQuotes() {
 		     << filename << Std::endl;
 		return;
 	}
-	Std::string text = getCreditText(rs);
+	const Std::string text = getCreditText(rs);
 	delete rs;
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
