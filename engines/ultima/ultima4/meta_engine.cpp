@@ -46,6 +46,7 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_ATTACK, "ATTACK", "Attack", "attack", "a", nullptr },
 	{ KEYBIND_BOARD, "BOARD", "Board", "board", "b", nullptr },
 	{ KEYBIND_CAST, "CAST", "Cast", "cast", "c", nullptr },
+	{ KEYBIND_CLIMB, "CLIMB", "Climb", "climb", "k", nullptr },
 	{ KEYBIND_ENTER, "ENTER", "Enter", "enter", "e", nullptr },
 	{ KEYBIND_FIRE, "FIRE", "Fire", "fire", "f", nullptr },
 	{ KEYBIND_GET, "GET", "Get Chest", "get", "g", nullptr },
@@ -58,8 +59,9 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_OPEN_DOOR, "OPEN-DOOR", "Open Door", "open", "o", nullptr },
 	{ KEYBIND_PASS, "PASS", "Pass", "pass", "SPACE", nullptr },
 	{ KEYBIND_PEER, "PEER", "Peer", "peer", "p", nullptr },
+	{ KEYBIND_QUIT_SAVE, "QUIT-SAVE", "Quit and Save", "quitAndSave", "q", nullptr },
 
-	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {

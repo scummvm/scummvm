@@ -84,9 +84,6 @@ void gameLostEighth(Virtue virtue);
 void gamePartyStarving(void);
 uint32 gameTimeSinceLastCommand(void);
 
-/* spell functions */
-void gameCastSpell(unsigned int spell, int caster, int param);
-
 void mixReagentsSuper();
 
 /* conversation functions */
@@ -530,17 +527,6 @@ void gameSpellEffect(int spell, int player, Sound sound) {
 	}
 }
 
-void gameCastSpell(unsigned int spell, int caster, int param) {
-	SpellCastError spellError;
-	Common::String msg;
-
-	if (!spellCast(spell, caster, param, &spellError, true)) {
-		msg = spellGetErrorMessage(spell, spellError);
-		if (!msg.empty())
-			screenMessage("%s", msg.c_str());
-	}
-}
-
 void GameController::keybinder(KeybindingAction action) {
 	MetaEngine::executeAction(action);
 }
@@ -681,10 +667,6 @@ bool GameController::keyPressed(int key) {
 			endTurn = false;
 			break;
 
-		case 'c':
-			castSpell();
-			break;
-
 		case 'd': {
 			// unload the map for the second level of Lord British's Castle. The reason
 			// why is that Lord British's farewell is dependent on the number of party members.
@@ -707,32 +689,6 @@ bool GameController::keyPressed(int key) {
 			}
 			break;
 		}
-
-		case 'k':
-			if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_KLIMB)) {
-				if (g_context->_transportContext == TRANSPORT_BALLOON) {
-					g_ultima->_saveGame->_balloonState = 1;
-					g_context->_opacity = 0;
-					screenMessage("Klimb altitude\n");
-				} else
-					screenMessage("%cKlimb what?%c\n", FG_GREY, FG_WHITE);
-			}
-			break;
-
-		case 'p':
-			peer();
-			break;
-
-		case 'q':
-			screenMessage("Quit & Save...\n%d moves\n", g_ultima->_saveGame->_moves);
-			if (g_context->_location->_context & CTX_CAN_SAVE_GAME) {
-				if (g_ultima->saveGameDialog())
-					screenMessage("Press Alt-x to quit\n");
-			} else {
-				screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
-			}
-
-			break;
 
 		case 'r':
 			readyWeapon();
@@ -1101,140 +1057,6 @@ bool ZtatsController::keyPressed(int key) {
 	}
 }
 
-void castSpell(int player) {
-	if (player == -1) {
-		screenMessage("Cast Spell!\nPlayer: ");
-		player = gameGetPlayer(false, true);
-	}
-	if (player == -1)
-		return;
-
-	// get the spell to cast
-	g_context->_stats->setView(STATS_MIXTURES);
-	screenMessage("Spell: ");
-	// ### Put the iPad thing too.
-#ifdef IOS
-	U4IOS::IOSCastSpellHelper castSpellController;
-#endif
-	int spell = AlphaActionController::get('z', "Spell: ");
-	if (spell == -1)
-		return;
-
-	screenMessage("%s!\n", spellGetName(spell)); //Prints spell name at prompt
-
-	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
-
-	// if we can't really cast this spell, skip the extra parameters
-	if (spellCheckPrerequisites(spell, player) != CASTERR_NOERROR) {
-		gameCastSpell(spell, player, 0);
-		return;
-	}
-
-	// Get the final parameters for the spell
-	switch (spellGetParamType(spell)) {
-	case Spell::PARAM_NONE:
-		gameCastSpell(spell, player, 0);
-		break;
-	case Spell::PARAM_PHASE: {
-		screenMessage("To Phase: ");
-#ifdef IOS
-		U4IOS::IOSConversationChoiceHelper choiceController;
-		choiceController.fullSizeChoicePanel();
-		choiceController.updateGateSpellChoices();
-#endif
-		int choice = ReadChoiceController::get("12345678 \033\n");
-		if (choice < '1' || choice > '8')
-			screenMessage("None\n");
-		else {
-			screenMessage("\n");
-			gameCastSpell(spell, player, choice - '1');
-		}
-		break;
-	}
-	case Spell::PARAM_PLAYER: {
-		screenMessage("Who: ");
-		int subject = gameGetPlayer(true, false);
-		if (subject != -1)
-			gameCastSpell(spell, player, subject);
-		break;
-	}
-	case Spell::PARAM_DIR:
-		if (g_context->_location->_context == CTX_DUNGEON)
-			gameCastSpell(spell, player, g_ultima->_saveGame->_orientation);
-		else {
-			screenMessage("Dir: ");
-			Direction dir = gameGetDirection();
-			if (dir != DIR_NONE)
-				gameCastSpell(spell, player, (int) dir);
-		}
-		break;
-	case Spell::PARAM_TYPEDIR: {
-		screenMessage("Energy type? ");
-#ifdef IOS
-		U4IOS::IOSConversationChoiceHelper choiceController;
-		choiceController.fullSizeChoicePanel();
-		choiceController.updateEnergyFieldSpellChoices();
-#endif
-		EnergyFieldType fieldType = ENERGYFIELD_NONE;
-		char key = ReadChoiceController::get("flps \033\n\r");
-		switch (key) {
-		case 'f':
-			fieldType = ENERGYFIELD_FIRE;
-			break;
-		case 'l':
-			fieldType = ENERGYFIELD_LIGHTNING;
-			break;
-		case 'p':
-			fieldType = ENERGYFIELD_POISON;
-			break;
-		case 's':
-			fieldType = ENERGYFIELD_SLEEP;
-			break;
-		default:
-			break;
-		}
-
-		if (fieldType != ENERGYFIELD_NONE) {
-			screenMessage("\n");
-
-			Direction dir;
-			if (g_context->_location->_context == CTX_DUNGEON)
-				dir = (Direction)g_ultima->_saveGame->_orientation;
-			else {
-				screenMessage("Dir: ");
-				dir = gameGetDirection();
-			}
-
-			if (dir != DIR_NONE) {
-
-				/* Need to pack both dir and fieldType into param */
-				int param = fieldType << 4;
-				param |= (int) dir;
-
-				gameCastSpell(spell, player, param);
-			}
-		} else {
-			/* Invalid input here = spell failure */
-			screenMessage("Failed!\n");
-
-			/*
-			 * Confirmed both mixture loss and mp loss in this situation in the
-			 * original Ultima IV (at least, in the Amiga version.)
-			 */
-			//c->saveGame->_mixtures[castSpell]--;
-			g_context->_party->member(player)->adjustMp(-spellGetRequiredMP(spell));
-		}
-		break;
-	}
-	case Spell::PARAM_FROMDIR: {
-		screenMessage("From Dir: ");
-		Direction dir = gameGetDirection();
-		if (dir != DIR_NONE)
-			gameCastSpell(spell, player, (int) dir);
-		break;
-	}
-	}
-}
 
 bool fireAt(const Coords &coords, bool originAvatar) {
 	bool validObject = false;

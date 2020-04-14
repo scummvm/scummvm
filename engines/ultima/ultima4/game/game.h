@@ -235,7 +235,6 @@ void gameSetViewMode(ViewMode newMode);
 void gameUpdateScreen(void);
 
 /* spell functions */
-void castSpell(int player = -1);
 void gameSpellEffect(int spell, int player, Sound sound);
 
 /* action functions */

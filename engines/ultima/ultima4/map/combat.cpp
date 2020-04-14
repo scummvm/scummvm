@@ -917,7 +917,7 @@ bool CombatController::keyPressed(int key) {
 
 	case 'c':
 		screenMessage("Cast Spell!\n");
-		castSpell(_focus);
+		g_debugger->castSpell(_focus);
 		break;
 
 #ifdef IOS

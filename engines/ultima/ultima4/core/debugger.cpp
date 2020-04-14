@@ -50,6 +50,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("attack", WRAP_METHOD(Debugger, cmdAttack));
 	registerCmd("board", WRAP_METHOD(Debugger, cmdBoard));
 	registerCmd("cast", WRAP_METHOD(Debugger, cmdCastSpell));
+	registerCmd("climb", WRAP_METHOD(Debugger, cmdClimb));
 	registerCmd("enter", WRAP_METHOD(Debugger, cmdEnter));
 	registerCmd("fire", WRAP_METHOD(Debugger, cmdFire));
 	registerCmd("get", WRAP_METHOD(Debugger, cmdGet));
@@ -62,6 +63,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("order", WRAP_METHOD(Debugger, cmdNewOrder));
 	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
 	registerCmd("peer", WRAP_METHOD(Debugger, cmdPeer));
+	registerCmd("quitAndSave", WRAP_METHOD(Debugger, cmdQuitAndSave));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
@@ -144,6 +146,14 @@ void Debugger::getChest(int player) {
 
 	cmdGet(2, argv);
 }
+
+void Debugger::castSpell(int player) {
+	Common::String param = Common::String::format("%d", player);
+	const char *argv[2] = { "cast", param.c_str() };
+
+	cmdCastSpell(2, argv);
+}
+
 
 
 
@@ -247,7 +257,161 @@ bool Debugger::cmdBoard(int argc, const char **argv) {
 }
 
 bool Debugger::cmdCastSpell(int argc, const char **argv) {
-	// TODO
+	int player = -1;
+	if (argc == 2)
+		player = strToInt(argv[1]);
+
+	if (player == -1) {
+		printN("Cast Spell!\nPlayer: ");
+		player = gameGetPlayer(false, true);
+	}
+	if (player == -1)
+		return isDebuggerActive();
+
+	// get the spell to cast
+	g_context->_stats->setView(STATS_MIXTURES);
+	printN("Spell: ");
+	// ### Put the iPad thing too.
+#ifdef IOS
+	U4IOS::IOSCastSpellHelper castSpellController;
+#endif
+	int spell = AlphaActionController::get('z', "Spell: ");
+	if (spell == -1)
+		return isDebuggerActive();
+
+	screenMessage("%s!\n", spellGetName(spell)); //Prints spell name at prompt
+
+	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
+
+	// if we can't really cast this spell, skip the extra parameters
+	if (spellCheckPrerequisites(spell, player) != CASTERR_NOERROR) {
+		gameCastSpell(spell, player, 0);
+		return isDebuggerActive();
+	}
+
+	// Get the final parameters for the spell
+	switch (spellGetParamType(spell)) {
+	case Spell::PARAM_NONE:
+		gameCastSpell(spell, player, 0);
+		break;
+
+	case Spell::PARAM_PHASE: {
+		screenMessage("To Phase: ");
+#ifdef IOS
+		U4IOS::IOSConversationChoiceHelper choiceController;
+		choiceController.fullSizeChoicePanel();
+		choiceController.updateGateSpellChoices();
+#endif
+		int choice = ReadChoiceController::get("12345678 \033\n");
+		if (choice < '1' || choice > '8')
+			print("None");
+		else {
+			print("");
+			gameCastSpell(spell, player, choice - '1');
+		}
+		break;
+	}
+
+	case Spell::PARAM_PLAYER: {
+		printN("Who: ");
+		int subject = gameGetPlayer(true, false);
+		if (subject != -1)
+			gameCastSpell(spell, player, subject);
+		break;
+	}
+
+	case Spell::PARAM_DIR:
+		if (g_context->_location->_context == CTX_DUNGEON)
+			gameCastSpell(spell, player, g_ultima->_saveGame->_orientation);
+		else {
+			printN("Dir: ");
+			Direction dir = gameGetDirection();
+			if (dir != DIR_NONE)
+				gameCastSpell(spell, player, (int)dir);
+		}
+		break;
+
+	case Spell::PARAM_TYPEDIR: {
+		printN("Energy type? ");
+#ifdef IOS
+		U4IOS::IOSConversationChoiceHelper choiceController;
+		choiceController.fullSizeChoicePanel();
+		choiceController.updateEnergyFieldSpellChoices();
+#endif
+		EnergyFieldType fieldType = ENERGYFIELD_NONE;
+		char key = ReadChoiceController::get("flps \033\n\r");
+		switch (key) {
+		case 'f':
+			fieldType = ENERGYFIELD_FIRE;
+			break;
+		case 'l':
+			fieldType = ENERGYFIELD_LIGHTNING;
+			break;
+		case 'p':
+			fieldType = ENERGYFIELD_POISON;
+			break;
+		case 's':
+			fieldType = ENERGYFIELD_SLEEP;
+			break;
+		default:
+			break;
+		}
+
+		if (fieldType != ENERGYFIELD_NONE) {
+			print("");
+
+			Direction dir;
+			if (g_context->_location->_context == CTX_DUNGEON)
+				dir = (Direction)g_ultima->_saveGame->_orientation;
+			else {
+				printN("Dir: ");
+				dir = gameGetDirection();
+			}
+
+			if (dir != DIR_NONE) {
+
+				/* Need to pack both dir and fieldType into param */
+				int param = fieldType << 4;
+				param |= (int)dir;
+
+				gameCastSpell(spell, player, param);
+			}
+		} else {
+			/* Invalid input here = spell failure */
+			print("Failed!");
+
+			/*
+			 * Confirmed both mixture loss and mp loss in this situation in the
+			 * original Ultima IV (at least, in the Amiga version.)
+			 */
+			 //c->saveGame->_mixtures[castSpell]--;
+			g_context->_party->member(player)->adjustMp(-spellGetRequiredMP(spell));
+		}
+		break;
+	}
+
+	case Spell::PARAM_FROMDIR: {
+		printN("From Dir: ");
+		Direction dir = gameGetDirection();
+		if (dir != DIR_NONE)
+			gameCastSpell(spell, player, (int)dir);
+		break;
+	}
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdClimb(int argc, const char **argv) {
+	if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_KLIMB)) {
+		if (g_context->_transportContext == TRANSPORT_BALLOON) {
+				g_ultima->_saveGame->_balloonState = 1;
+				g_context->_opacity = 0;
+			print("Klimb altitude");
+		} else
+			print("%cKlimb what?%c", FG_GREY, FG_WHITE);
+	}
+
 	return isDebuggerActive();
 }
 
@@ -532,7 +696,7 @@ bool Debugger::cmdOpenDoor(int argc, const char **argv) {
 	}
 
 	print("%cNot Here!%c", FG_GREY, FG_WHITE);
-
+	return isDebuggerActive();
 }
 
 bool Debugger::cmdPass(int argc, const char **argv) {
@@ -549,6 +713,18 @@ bool Debugger::cmdPeer(int argc, const char **argv) {
 		g_context->_location->_viewMode = VIEW_NORMAL;
 
 	print("Toggle view");
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdQuitAndSave(int argc, const char **argv) {
+	print("Quit & Save...\n%d moves", g_ultima->_saveGame->_moves);
+	if (g_context->_location->_context & CTX_CAN_SAVE_GAME) {
+		if (g_ultima->saveGameDialog())
+			print("Press Alt-x to quit");
+	} else {
+		print("%cNot here!%c", FG_GREY, FG_WHITE);
+	}
+
 	return isDebuggerActive();
 }
 

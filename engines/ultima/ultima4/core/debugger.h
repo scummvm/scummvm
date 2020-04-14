@@ -99,6 +99,11 @@ private:
 	bool cmdCastSpell(int argc, const char **argv);
 
 	/**
+	 * Climb
+	 */
+	bool cmdClimb(int argc, const char **argv);
+
+	/**
 	 * Enter location
 	 */
 	bool cmdEnter(int argc, const char **argv);
@@ -158,6 +163,11 @@ private:
 	 * Peer
 	 */
 	bool cmdPeer(int argc, const char **argv);
+
+	/**
+	 * Save and quit
+	 */
+	bool cmdQuitAndSave(int argc, const char **argv);
 
 private:
 	/**
@@ -297,6 +307,11 @@ public:
 	 * user. Otherwise, a non-negative player number is expected
 	 */
 	void getChest(int player = -2);
+
+	/**
+	 * Cast a spell
+	 */
+	void castSpell(int player);
 };
 
 extern Debugger *g_debugger;

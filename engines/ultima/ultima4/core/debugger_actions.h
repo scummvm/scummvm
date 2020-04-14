@@ -108,6 +108,8 @@ public:
 	 * replaced by a temporary annotation of a floor tile for 4 turns.
 	 */
 	bool openAt(const Coords &coords);
+
+	void gameCastSpell(unsigned int spell, int caster, int param);
 };
 
 } // End of namespace Ultima4

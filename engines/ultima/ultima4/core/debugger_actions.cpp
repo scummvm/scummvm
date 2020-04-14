@@ -331,5 +331,16 @@ bool DebuggerActions::openAt(const Coords &coords) {
 	return true;
 }
 
+void DebuggerActions::gameCastSpell(unsigned int spell, int caster, int param) {
+	SpellCastError spellError;
+	Common::String msg;
+
+	if (!spellCast(spell, caster, param, &spellError, true)) {
+		msg = spellGetErrorMessage(spell, spellError);
+		if (!msg.empty())
+			screenMessage("%s", msg.c_str());
+	}
+}
+
 } // End of namespace Ultima4
 } // End of namespace Ultima
