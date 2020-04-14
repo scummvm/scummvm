@@ -47,6 +47,7 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_BOARD, "BOARD", "Board", "board", "b", nullptr },
 	{ KEYBIND_CAST, "CAST", "Cast", "cast", "c", nullptr },
 	{ KEYBIND_CLIMB, "CLIMB", "Climb", "climb", "k", nullptr },
+	{ KEYBIND_DESCEND, "DESCEND", "Descend", "descend", "d", nullptr },
 	{ KEYBIND_ENTER, "ENTER", "Enter", "enter", "e", nullptr },
 	{ KEYBIND_EXIT, "EXIT", "Exit", "exit", "x", nullptr },
 	{ KEYBIND_FIRE, "FIRE", "Fire", "fire", "f", nullptr },

@@ -104,6 +104,11 @@ private:
 	bool cmdClimb(int argc, const char **argv);
 
 	/**
+	 * Descend
+	 */
+	bool cmdDescend(int argc, const char **argv);
+
+	/**
 	 * Enter location
 	 */
 	bool cmdEnter(int argc, const char **argv);

@@ -659,29 +659,6 @@ bool GameController::keyPressed(int key) {
 			endTurn = false;
 			break;
 
-		case 'd': {
-			// unload the map for the second level of Lord British's Castle. The reason
-			// why is that Lord British's farewell is dependent on the number of party members.
-			// Instead of just redoing the dialog, it's a bit severe, but easier to unload the
-			// whole level.
-			bool cleanMap = (g_context->_party->size() == 1 && g_context->_location->_map->_id == 100);
-			if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_DESCEND)) {
-				if (g_context->_transportContext == TRANSPORT_BALLOON) {
-					screenMessage("Land Balloon\n");
-					if (!g_context->_party->isFlying())
-						screenMessage("%cAlready Landed!%c\n", FG_GREY, FG_WHITE);
-					else if (g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_OBJECTS)->canLandBalloon()) {
-						g_ultima->_saveGame->_balloonState = 0;
-						g_context->_opacity = 1;
-					} else screenMessage("%cNot Here!%c\n", FG_GREY, FG_WHITE);
-				} else screenMessage("%cDescend what?%c\n", FG_GREY, FG_WHITE);
-			} else {
-				if (cleanMap)
-					mapMgr->unloadMap(100);
-			}
-			break;
-		}
-
 		case 'v':
 			if (g_music->toggle())
 				screenMessage("Volume On!\n");

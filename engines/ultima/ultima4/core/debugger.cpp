@@ -431,6 +431,34 @@ bool Debugger::cmdClimb(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdDescend(int argc, const char **argv) {
+	// unload the map for the second level of Lord British's Castle. The reason
+	// why is that Lord British's farewell is dependent on the number of party members.
+	// Instead of just redoing the dialog, it's a bit severe, but easier to unload the
+	// whole level.
+	bool cleanMap = (g_context->_party->size() == 1 && g_context->_location->_map->_id == 100);
+	if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_DESCEND)) {
+		if (g_context->_transportContext == TRANSPORT_BALLOON) {
+			print("Land Balloon");
+			if (!g_context->_party->isFlying())
+				print("%cAlready Landed!%c", FG_GREY, FG_WHITE);
+			else if (g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_OBJECTS)->canLandBalloon()) {
+				g_ultima->_saveGame->_balloonState = 0;
+				g_context->_opacity = 1;
+			} else {
+				print("%cNot Here!%c", FG_GREY, FG_WHITE);
+			}
+		} else {
+			print("%cDescend what?%c", FG_GREY, FG_WHITE);
+		}
+	} else {
+		if (cleanMap)
+			mapMgr->unloadMap(100);
+	}
+
+	return isDebuggerActive();
+}
+
 bool Debugger::cmdEnter(int argc, const char **argv) {
 	if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_ENTER)) {
 		if (!g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_ENTER))
