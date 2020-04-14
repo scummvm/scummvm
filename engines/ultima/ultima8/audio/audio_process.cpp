@@ -33,6 +33,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/camera_process.h"
+#include "common/util.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -92,6 +93,10 @@ bool AudioProcess::calculateSoundVolume(ObjId objId, int16 &lVol, int16 &rVol) c
 
 	lVol = (dist * lbal) / 160;
 	rVol = (dist * rbal) / 160;
+
+	// Clip to expected range of 0-255
+	lVol = CLIP(lVol, (int16)0, (int16)255);
+	rVol = CLIP(rVol, (int16)0, (int16)255);
 
 	return true;
 }
@@ -193,8 +198,8 @@ bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
 			int16 lVol = 0;
 			int16 rVol = 0;
 			if (objId != 0) {
-				lVol = 256;
-				rVol = 256;
+				lVol = 255;
+				rVol = 255;
 			}
 			playSFX(sfxNum, priority, objId, loops, false, pitchShift, volume, lVol, rVol);
 		} else {                // Speech

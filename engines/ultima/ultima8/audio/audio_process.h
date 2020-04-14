@@ -96,7 +96,7 @@ public:
 	void setVolumeSFX(int sfxNum, uint8 volume);
 
 	bool playSpeech(const Std::string &barked, int shapenum, ObjId objId,
-					uint32 pitchShift = 0x10000, uint16 volume = 256);
+					uint32 pitchShift = 0x10000, uint16 volume = 255);
 	void stopSpeech(const Std::string &barked, int shapenum, ObjId objId);
 	bool isSpeechPlaying(const Std::string &barked, int shapenum);
 
@@ -106,7 +106,7 @@ public:
 	//! play a sample (without storing a SampleInfo)
 	//! returns channel sample is played on, or -1
 	int playSample(AudioSample *sample, int priority, int loops,
-				   uint32 pitchShift = 0x10000, int16 lVol = 256, int16 rVol = 256);
+				   uint32 pitchShift = 0x10000, int16 lVol = 255, int16 rVol = 255);
 
 	//! pause all currently playing samples
 	void pauseAllSamples();
