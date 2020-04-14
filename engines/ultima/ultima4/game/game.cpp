@@ -88,7 +88,6 @@ void mixReagentsSuper();
 
 /* action functions */
 void wearArmor(int player = -1);
-void ztatsFor(int player = -1);
 
 /* creature functions */
 void gameCreatureAttack(Creature *obj);
@@ -689,10 +688,6 @@ bool GameController::keyPressed(int key) {
 			else
 				screenMessage("Volume Off!\n");
 			endTurn = false;
-			break;
-
-		case 'z':
-			ztatsFor();
 			break;
 
 		case 'c' + U4_ALT:
@@ -1320,33 +1315,6 @@ void peer(bool useGem) {
 	screenEnableCursor();
 	g_context->_location->_viewMode = VIEW_NORMAL;
 	g_game->_paused = false;
-}
-
-
-/**
- * Called when the player selects a party member for ztats
- */
-void ztatsFor(int player) {
-	// get the player if not provided
-	if (player == -1) {
-		screenMessage("Ztats for: ");
-		player = gameGetPlayer(true, false);
-		if (player == -1)
-			return;
-	}
-
-	// Reset the reagent spell mix menu by removing
-	// the menu highlight from the current item, and
-	// hiding reagents that you don't have
-	g_context->_stats->resetReagentsMenu();
-
-	g_context->_stats->setView(StatsView(STATS_CHAR1 + player));
-#ifdef IOS
-	U4IOS::IOSHideActionKeysHelper hideExtraControls;
-#endif
-	ZtatsController ctrl;
-	eventHandler->pushController(&ctrl);
-	ctrl.waitFor();
 }
 
 void GameController::timerFired() {

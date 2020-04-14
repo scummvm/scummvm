@@ -186,6 +186,11 @@ private:
 	bool cmdSearch(int argc, const char **argv);
 
 	/**
+	 * Show character stats
+	 */
+	bool cmdStats(int argc, const char **argv);
+
+	/**
 	 * Talk
 	 */
 	bool cmdTalk(int argc, const char **argv);
@@ -234,6 +239,11 @@ private:
 	 * All equipement
 	 */
 	bool cmdEquipment(int argc, const char **argv);
+
+	/**
+	 * Full stats
+	 */
+	bool cmdFullStats(int argc, const char **argv);
 
 	/**
 	 * Moongate teleportation
@@ -289,11 +299,6 @@ private:
 	 * Give all the reagents
 	 */
 	bool cmdReagents(int argc, const char **argv);
-
-	/**
-	 * Full stats
-	 */
-	bool cmdStats(int argc, const char **argv);
 
 	/**
 	 * Summons a creature to fight

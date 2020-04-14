@@ -70,6 +70,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("quitAndSave", WRAP_METHOD(Debugger, cmdQuitAndSave));
 	registerCmd("ready", WRAP_METHOD(Debugger, cmdReadyWeapon));
 	registerCmd("search", WRAP_METHOD(Debugger, cmdSearch));
+	registerCmd("stats", WRAP_METHOD(Debugger, cmdStats));
 	registerCmd("talk", WRAP_METHOD(Debugger, cmdTalk));
 	registerCmd("use", WRAP_METHOD(Debugger, cmdUse));
 	registerCmd("wear", WRAP_METHOD(Debugger, cmdWearArmor));
@@ -82,6 +83,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("dungeon", WRAP_METHOD(Debugger, cmdDungeon));
 	registerCmd("equipment", WRAP_METHOD(Debugger, cmdEquipment));
 	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("fullstats", WRAP_METHOD(Debugger, cmdFullStats));
 	registerCmd("gate", WRAP_METHOD(Debugger, cmdGate));
 	registerCmd("goto", WRAP_METHOD(Debugger, cmdGoto));
 	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
@@ -92,7 +94,6 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("moon", WRAP_METHOD(Debugger, cmdMoon));
 	registerCmd("opacity", WRAP_METHOD(Debugger, cmdOpacity));
 	registerCmd("reagents", WRAP_METHOD(Debugger, cmdReagents));
-	registerCmd("stats", WRAP_METHOD(Debugger, cmdStats));
 	registerCmd("summon", WRAP_METHOD(Debugger, cmdSummon));
 	registerCmd("torch", WRAP_METHOD(Debugger, cmdTorch));
 	registerCmd("transport", WRAP_METHOD(Debugger, cmdTransport));
@@ -850,6 +851,35 @@ bool Debugger::cmdSearch(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdStats(int argc, const char **argv) {
+	int player = -1;
+	if (argc == 2)
+		player = strToInt(argv[1]);
+
+	// get the player if not provided
+	if (player == -1) {
+		printN("Ztats for: ");
+		player = gameGetPlayer(true, false);
+		if (player == -1)
+			return isDebuggerActive();
+	}
+
+	// Reset the reagent spell mix menu by removing
+	// the menu highlight from the current item, and
+	// hiding reagents that you don't have
+	g_context->_stats->resetReagentsMenu();
+
+	g_context->_stats->setView(StatsView(STATS_CHAR1 + player));
+#ifdef IOS
+	U4IOS::IOSHideActionKeysHelper hideExtraControls;
+#endif
+	ZtatsController ctrl;
+	eventHandler->pushController(&ctrl);
+	ctrl.waitFor();
+
+	return isDebuggerActive();
+}
+
 bool Debugger::cmdTalk(int argc, const char **argv) {
 	printN("Talk: ");
 
@@ -1262,7 +1292,7 @@ bool Debugger::cmdReagents(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
-bool Debugger::cmdStats(int argc, const char **argv) {
+bool Debugger::cmdFullStats(int argc, const char **argv) {
 	for (int i = 0; i < g_ultima->_saveGame->_members; i++) {
 		g_ultima->_saveGame->_players[i]._str = 50;
 		g_ultima->_saveGame->_players[i]._dex = 50;
