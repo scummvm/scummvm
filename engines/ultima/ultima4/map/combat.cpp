@@ -939,7 +939,7 @@ bool CombatController::keyPressed(int key) {
 		break;
 
 	case 'r':
-		readyWeapon(getFocus());
+		g_debugger->readyWeapon(getFocus());
 		break;
 
 	case 't':

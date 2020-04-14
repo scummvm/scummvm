@@ -169,6 +169,12 @@ private:
 	 */
 	bool cmdQuitAndSave(int argc, const char **argv);
 
+	/**
+	 * Readies a weapon for a player.  Prompts for the player and/or the
+	 * weapon if not provided.
+	 */
+	bool cmdReadyWeapon(int argc, const char **argv);
+
 private:
 	/**
 	 * Collision detection on/off
@@ -312,6 +318,11 @@ public:
 	 * Cast a spell
 	 */
 	void castSpell(int player);
+
+	/**
+	 * Ready a weapon
+	 */
+	void readyWeapon(int player);
 };
 
 extern Debugger *g_debugger;

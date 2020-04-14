@@ -60,8 +60,9 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_PASS, "PASS", "Pass", "pass", "SPACE", nullptr },
 	{ KEYBIND_PEER, "PEER", "Peer", "peer", "p", nullptr },
 	{ KEYBIND_QUIT_SAVE, "QUIT-SAVE", "Quit and Save", "quitAndSave", "q", nullptr },
+	{ KEYBIND_READY_WEAPON, "READY-WEAPON", "Ready Weapon", "ready", nullptr },
 
-{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {

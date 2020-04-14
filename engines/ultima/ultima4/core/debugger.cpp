@@ -64,6 +64,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
 	registerCmd("peer", WRAP_METHOD(Debugger, cmdPeer));
 	registerCmd("quitAndSave", WRAP_METHOD(Debugger, cmdQuitAndSave));
+	registerCmd("ready", WRAP_METHOD(Debugger, cmdReadyWeapon));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
@@ -154,7 +155,12 @@ void Debugger::castSpell(int player) {
 	cmdCastSpell(2, argv);
 }
 
+void Debugger::readyWeapon(int player) {
+	Common::String param = Common::String::format("%d", player);
+	const char *argv[2] = { "ready", param.c_str() };
 
+	cmdReadyWeapon(2, argv);
+}
 
 
 bool Debugger::cmdMove(int argc, const char **argv) {
@@ -723,6 +729,69 @@ bool Debugger::cmdQuitAndSave(int argc, const char **argv) {
 			print("Press Alt-x to quit");
 	} else {
 		print("%cNot here!%c", FG_GREY, FG_WHITE);
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
+	int player = -1;
+	if (argc == 2)
+		player = strToInt(argv[1]);
+
+	// get the player if not provided
+	if (player == -1) {
+		printN("Ready a weapon for: ");
+		player = gameGetPlayer(true, false);
+		if (player == -1)
+			return isDebuggerActive();
+	}
+
+	// get the weapon to use
+	g_context->_stats->setView(STATS_WEAPONS);
+	printN("Weapon: ");
+	WeaponType weapon = (WeaponType)AlphaActionController::get(WEAP_MAX + 'a' - 1, "Weapon: ");
+	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
+	if (weapon == -1)
+		return isDebuggerActive();
+
+	PartyMember *p = g_context->_party->member(player);
+	const Weapon *w = Weapon::get(weapon);
+
+
+	if (!w) {
+		print("");
+		return isDebuggerActive();
+	}
+	switch (p->setWeapon(w)) {
+	case EQUIP_SUCCEEDED:
+		print("%s", w->getName().c_str());
+		break;
+	case EQUIP_NONE_LEFT:
+		print("%cNone left!%c", FG_GREY, FG_WHITE);
+		break;
+	case EQUIP_CLASS_RESTRICTED:
+	{
+		Common::String indef_article;
+
+		switch (tolower(w->getName()[0])) {
+		case 'a':
+		case 'e':
+		case 'i':
+		case 'o':
+		case 'u':
+		case 'y':
+			indef_article = "an";
+			break;
+		default:
+			indef_article = "a";
+			break;
+		}
+
+		print("\n%cA %s may NOT use %s %s%c", FG_GREY, getClassName(p->getClass()),
+			indef_article.c_str(), w->getName().c_str(), FG_WHITE);
+		break;
+	}
 	}
 
 	return isDebuggerActive();

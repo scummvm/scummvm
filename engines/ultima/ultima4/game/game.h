@@ -238,13 +238,11 @@ void gameUpdateScreen(void);
 void gameSpellEffect(int spell, int player, Sound sound);
 
 /* action functions */
-void opendoor();
 bool gamePeerCity(int city, void *data);
 void peer(bool useGem = true);
 void talk();
 bool fireAt(const Coords &coords, bool originAvatar);
 Direction gameGetDirection();
-void readyWeapon(int player = -1);
 
 /* checking functions */
 void gameCheckHullIntegrity(void);

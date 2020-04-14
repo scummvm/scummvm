@@ -690,10 +690,6 @@ bool GameController::keyPressed(int key) {
 			break;
 		}
 
-		case 'r':
-			readyWeapon();
-			break;
-
 		case 's':
 			if (g_context->_location->_context == CTX_DUNGEON)
 				dungeonSearch();
@@ -1342,66 +1338,6 @@ void GameController::avatarMovedInDungeon(MoveEvent &event) {
 	}
 }
 
-/**
- * Readies a weapon for a player.  Prompts for the player and/or the
- * weapon if not provided.
- */
-void readyWeapon(int player) {
-
-	// get the player if not provided
-	if (player == -1) {
-		screenMessage("Ready a weapon for: ");
-		player = gameGetPlayer(true, false);
-		if (player == -1)
-			return;
-	}
-
-	// get the weapon to use
-	g_context->_stats->setView(STATS_WEAPONS);
-	screenMessage("Weapon: ");
-	WeaponType weapon = (WeaponType) AlphaActionController::get(WEAP_MAX + 'a' - 1, "Weapon: ");
-	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
-	if (weapon == -1)
-		return;
-
-	PartyMember *p = g_context->_party->member(player);
-	const Weapon *w = Weapon::get(weapon);
-
-
-	if (!w) {
-		screenMessage("\n");
-		return;
-	}
-	switch (p->setWeapon(w)) {
-	case EQUIP_SUCCEEDED:
-		screenMessage("%s\n", w->getName().c_str());
-		break;
-	case EQUIP_NONE_LEFT:
-		screenMessage("%cNone left!%c\n", FG_GREY, FG_WHITE);
-		break;
-	case EQUIP_CLASS_RESTRICTED: {
-		Common::String indef_article;
-
-		switch (tolower(w->getName()[0])) {
-		case 'a':
-		case 'e':
-		case 'i':
-		case 'o':
-		case 'u':
-		case 'y':
-			indef_article = "an";
-			break;
-		default:
-			indef_article = "a";
-			break;
-		}
-
-		screenMessage("\n%cA %s may NOT use %s %s%c\n", FG_GREY, getClassName(p->getClass()),
-		              indef_article.c_str(), w->getName().c_str(), FG_WHITE);
-		break;
-	}
-	}
-}
 
 void talk() {
 	screenMessage("Talk: ");
