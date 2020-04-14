@@ -691,20 +691,6 @@ bool GameController::keyPressed(int key) {
 			endTurn = false;
 			break;
 
-		case 'y':
-			screenMessage("Yell ");
-			if (g_context->_transportContext == TRANSPORT_HORSE) {
-				if (g_context->_horseSpeed == 0) {
-					screenMessage("Giddyup!\n");
-					g_context->_horseSpeed = 1;
-				} else {
-					screenMessage("Whoa!\n");
-					g_context->_horseSpeed = 0;
-				}
-			} else
-				screenMessage("%cWhat?%c\n", FG_GREY, FG_WHITE);
-			break;
-
 		case 'z':
 			ztatsFor();
 			break;

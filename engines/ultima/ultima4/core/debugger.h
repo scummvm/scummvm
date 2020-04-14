@@ -199,6 +199,11 @@ private:
 	 * Changes a player's armor
 	 */
 	bool cmdWearArmor(int argc, const char **argv);
+
+	/**
+	 * Yell
+	 */
+	bool cmdYell(int argc, const char **argv);
 private:
 	/**
 	 * Collision detection on/off

@@ -73,6 +73,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("talk", WRAP_METHOD(Debugger, cmdTalk));
 	registerCmd("use", WRAP_METHOD(Debugger, cmdUse));
 	registerCmd("wear", WRAP_METHOD(Debugger, cmdWearArmor));
+	registerCmd("yell", WRAP_METHOD(Debugger, cmdYell));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
@@ -924,6 +925,23 @@ bool Debugger::cmdWearArmor(int argc, const char **argv) {
 	case EQUIP_CLASS_RESTRICTED:
 		print("\n%cA %s may NOT use %s%c", FG_GREY, getClassName(p->getClass()), a->getName().c_str(), FG_WHITE);
 		break;
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdYell(int argc, const char **argv) {
+	printN("Yell ");
+	if (g_context->_transportContext == TRANSPORT_HORSE) {
+		if (g_context->_horseSpeed == 0) {
+			print("Giddyup!");
+			g_context->_horseSpeed = 1;
+		} else {
+			print("Whoa!");
+			g_context->_horseSpeed = 0;
+		}
+	} else {
+		print("%cWhat?%c", FG_GREY, FG_WHITE);
 	}
 
 	return isDebuggerActive();
