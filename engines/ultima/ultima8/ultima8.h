@@ -50,8 +50,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
-#define DEFAULT_SCREEN_WIDTH 640
-#define DEFAULT_SCREEN_HEIGHT 480
+#define DEFAULT_SCREEN_WIDTH 320
+#define DEFAULT_SCREEN_HEIGHT 200
 
 class Debugger;
 class Kernel;
