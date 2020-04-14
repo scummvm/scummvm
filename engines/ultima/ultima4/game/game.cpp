@@ -690,29 +690,6 @@ bool GameController::keyPressed(int key) {
 			break;
 		}
 
-		case 's':
-			if (g_context->_location->_context == CTX_DUNGEON)
-				dungeonSearch();
-			else if (g_context->_party->isFlying())
-				screenMessage("Searching...\n%cDrift only!%c\n", FG_GREY, FG_WHITE);
-			else {
-				screenMessage("Searching...\n");
-
-				const ItemLocation *item = itemAtLocation(g_context->_location->_map, g_context->_location->_coords);
-				if (item) {
-					if (*item->_isItemInInventory != NULL && (*item->_isItemInInventory)(item->_data))
-						screenMessage("%cNothing Here!%c\n", FG_GREY, FG_WHITE);
-					else {
-						if (item->_name)
-							screenMessage("You find...\n%s!\n", item->_name);
-						(*item->_putItemInInventory)(item->_data);
-					}
-				} else
-					screenMessage("%cNothing Here!%c\n", FG_GREY, FG_WHITE);
-			}
-
-			break;
-
 		case 't':
 			talk();
 			break;

@@ -23,6 +23,7 @@
 #include "ultima/ultima4/core/debugger.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/item.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
@@ -65,6 +66,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("peer", WRAP_METHOD(Debugger, cmdPeer));
 	registerCmd("quitAndSave", WRAP_METHOD(Debugger, cmdQuitAndSave));
 	registerCmd("ready", WRAP_METHOD(Debugger, cmdReadyWeapon));
+	registerCmd("search", WRAP_METHOD(Debugger, cmdSearch));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
@@ -792,6 +794,31 @@ bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
 			indef_article.c_str(), w->getName().c_str(), FG_WHITE);
 		break;
 	}
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdSearch(int argc, const char **argv) {
+	if (g_context->_location->_context == CTX_DUNGEON) {
+		dungeonSearch();
+	} else if (g_context->_party->isFlying()) {
+		print("Searching...\n%cDrift only!%c", FG_GREY, FG_WHITE);
+	} else {
+		print("Searching...");
+
+		const ItemLocation *item = itemAtLocation(g_context->_location->_map, g_context->_location->_coords);
+		if (item) {
+			if (*item->_isItemInInventory != NULL && (*item->_isItemInInventory)(item->_data))
+				print("%cNothing Here!%c", FG_GREY, FG_WHITE);
+			else {
+				if (item->_name)
+					print("You find...\n%s!", item->_name);
+				(*item->_putItemInInventory)(item->_data);
+			}
+		} else {
+			print("%cNothing Here!%c", FG_GREY, FG_WHITE);
+		}
 	}
 
 	return isDebuggerActive();

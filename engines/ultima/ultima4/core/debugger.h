@@ -175,6 +175,10 @@ private:
 	 */
 	bool cmdReadyWeapon(int argc, const char **argv);
 
+	/**
+	 * Search
+	 */
+	bool cmdSearch(int argc, const char **argv);
 private:
 	/**
 	 * Collision detection on/off
