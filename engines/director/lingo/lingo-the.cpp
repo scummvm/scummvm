@@ -567,6 +567,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kThePattern:
 		d.u.i = sprite->getPattern();
 		break;
+	case kThePuppet:
+		d.u.i = sprite->_puppet;
+		break;
 	case kTheRight:
 		d.u.i = sprite->_right;
 		break;
@@ -683,6 +686,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kThePattern:
 		sprite->setPattern(d.u.i);
+		break;
+	case kThePuppet:
+		sprite->_puppet = d.u.i;
 		break;
 	case kTheRight:
 		sprite->_right = d.u.i;
