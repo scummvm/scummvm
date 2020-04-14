@@ -48,6 +48,7 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_CAST, "CAST", "Cast", "cast", "c", nullptr },
 	{ KEYBIND_CLIMB, "CLIMB", "Climb", "climb", "k", nullptr },
 	{ KEYBIND_ENTER, "ENTER", "Enter", "enter", "e", nullptr },
+	{ KEYBIND_EXIT, "EXIT", "Exit", "exit", "x", nullptr },
 	{ KEYBIND_FIRE, "FIRE", "Fire", "fire", "f", nullptr },
 	{ KEYBIND_GET, "GET", "Get Chest", "get", "g", nullptr },
 	{ KEYBIND_HOLE_UP, "HOLE-UP", "Hole Up", "hole", "h", nullptr },
@@ -64,6 +65,7 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_SEARCH, "SEARCH", "Search", "search", "s", nullptr },
 	{ KEYBIND_TALK, "TALK", "Talk", "talk", "t", nullptr },
 	{ KEYBIND_USE, "USE", "Use", "use", "u", nullptr },
+	{ KEYBIND_WEAR, "WEAR", "Wear Armor", "wear", "w", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };

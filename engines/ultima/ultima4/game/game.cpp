@@ -691,25 +691,6 @@ bool GameController::keyPressed(int key) {
 			endTurn = false;
 			break;
 
-		case 'w':
-			wearArmor();
-			break;
-
-		case 'x':
-			if ((g_context->_transportContext != TRANSPORT_FOOT) && !g_context->_party->isFlying()) {
-				obj = g_context->_location->_map->addObject(g_context->_party->getTransport(), g_context->_party->getTransport(), g_context->_location->_coords);
-				if (g_context->_transportContext == TRANSPORT_SHIP)
-					g_context->_lastShip = obj;
-
-				Tile *avatar = g_context->_location->_map->_tileset->getByName("avatar");
-				ASSERT(avatar, "no avatar tile found in tileset");
-				g_context->_party->setTransport(avatar->getId());
-				g_context->_horseSpeed = 0;
-				screenMessage("X-it\n");
-			} else
-				screenMessage("%cX-it What?%c\n", FG_GREY, FG_WHITE);
-			break;
-
 		case 'y':
 			screenMessage("Yell ");
 			if (g_context->_transportContext == TRANSPORT_HORSE) {
@@ -1355,47 +1336,6 @@ void peer(bool useGem) {
 	g_game->_paused = false;
 }
 
-
-/**
- * Changes a player's armor.  Prompts for the player and/or the armor
- * type if not provided.
- */
-void wearArmor(int player) {
-
-	// get the player if not provided
-	if (player == -1) {
-		screenMessage("Wear Armour\nfor: ");
-		player = gameGetPlayer(true, false);
-		if (player == -1)
-			return;
-	}
-
-	g_context->_stats->setView(STATS_ARMOR);
-	screenMessage("Armour: ");
-	int armor = AlphaActionController::get(ARMR_MAX + 'a' - 1, "Armour: ");
-	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
-	if (armor == -1)
-		return;
-
-	const Armor *a = Armor::get((ArmorType)armor);
-	PartyMember *p = g_context->_party->member(player);
-
-	if (!a) {
-		screenMessage("\n");
-		return;
-	}
-	switch (p->setArmor(a)) {
-	case EQUIP_SUCCEEDED:
-		screenMessage("%s\n", a->getName().c_str());
-		break;
-	case EQUIP_NONE_LEFT:
-		screenMessage("%cNone left!%c\n", FG_GREY, FG_WHITE);
-		break;
-	case EQUIP_CLASS_RESTRICTED:
-		screenMessage("\n%cA %s may NOT use %s%c\n", FG_GREY, getClassName(p->getClass()), a->getName().c_str(), FG_WHITE);
-		break;
-	}
-}
 
 /**
  * Called when the player selects a party member for ztats

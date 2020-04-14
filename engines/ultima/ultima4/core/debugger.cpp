@@ -21,6 +21,8 @@
  */
 
 #include "ultima/ultima4/core/debugger.h"
+#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/item.h"
@@ -53,6 +55,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("cast", WRAP_METHOD(Debugger, cmdCastSpell));
 	registerCmd("climb", WRAP_METHOD(Debugger, cmdClimb));
 	registerCmd("enter", WRAP_METHOD(Debugger, cmdEnter));
+	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("fire", WRAP_METHOD(Debugger, cmdFire));
 	registerCmd("get", WRAP_METHOD(Debugger, cmdGet));
 	registerCmd("hole", WRAP_METHOD(Debugger, cmdHoleUp));
@@ -69,6 +72,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("search", WRAP_METHOD(Debugger, cmdSearch));
 	registerCmd("talk", WRAP_METHOD(Debugger, cmdTalk));
 	registerCmd("use", WRAP_METHOD(Debugger, cmdUse));
+	registerCmd("wear", WRAP_METHOD(Debugger, cmdWearArmor));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
@@ -431,6 +435,25 @@ bool Debugger::cmdEnter(int argc, const char **argv) {
 			print("%cEnter what?%c\n", FG_GREY, FG_WHITE);
 	} else {
 		dontEndTurn();
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdExit(int argc, const char **argv) {
+	if ((g_context->_transportContext != TRANSPORT_FOOT) && !g_context->_party->isFlying()) {
+		Object *obj = g_context->_location->_map->addObject(g_context->_party->getTransport(), g_context->_party->getTransport(), g_context->_location->_coords);
+		if (g_context->_transportContext == TRANSPORT_SHIP)
+			g_context->_lastShip = obj;
+
+		Tile *avatar = g_context->_location->_map->_tileset->getByName("avatar");
+		ASSERT(avatar, "no avatar tile found in tileset");
+
+		g_context->_party->setTransport(avatar->getId());
+		g_context->_horseSpeed = 0;
+		print("X-it");
+	} else {
+		print("%cX-it What?%c", FG_GREY, FG_WHITE);
 	}
 
 	return isDebuggerActive();
@@ -864,6 +887,48 @@ bool Debugger::cmdUse(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdWearArmor(int argc, const char **argv) {
+	int player = -1;
+	if (argc == 2)
+		player = strToInt(argv[1]);
+
+	// get the player if not provided
+	if (player == -1) {
+		printN("Wear Armour\nfor: ");
+		player = gameGetPlayer(true, false);
+		if (player == -1)
+			return isDebuggerActive();
+	}
+
+	g_context->_stats->setView(STATS_ARMOR);
+	printN("Armour: ");
+	int armor = AlphaActionController::get(ARMR_MAX + 'a' - 1, "Armour: ");
+	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
+	if (armor == -1)
+		return isDebuggerActive();
+
+	const Armor *a = Armor::get((ArmorType)armor);
+	PartyMember *p = g_context->_party->member(player);
+
+	if (!a) {
+		print("");
+		return isDebuggerActive();
+	}
+	switch (p->setArmor(a)) {
+	case EQUIP_SUCCEEDED:
+		print("%s", a->getName().c_str());
+		break;
+	case EQUIP_NONE_LEFT:
+		print("%cNone left!%c", FG_GREY, FG_WHITE);
+		break;
+	case EQUIP_CLASS_RESTRICTED:
+		print("\n%cA %s may NOT use %s%c", FG_GREY, getClassName(p->getClass()), a->getName().c_str(), FG_WHITE);
+		break;
+	}
+
+	return isDebuggerActive();
+}
+
 
 bool Debugger::cmd3d(int argc, const char **argv) {
 	if (g_context->_location->_context == CTX_DUNGEON) {
@@ -976,17 +1041,6 @@ bool Debugger::cmdEquipment(int argc, const char **argv) {
 	}
 
 	print("All equipment given");
-	return isDebuggerActive();
-}
-
-bool Debugger::cmdExit(int argc, const char **argv) {
-	if (!g_game->exitToParentMap()) {
-		print("Not Here");
-	} else {
-		g_music->play();
-		print("Exited");
-	}
-
 	return isDebuggerActive();
 }
 
@@ -1110,6 +1164,17 @@ bool Debugger::cmdKarma(int argc, const char **argv) {
 		else
 			line += "--";
 		print("%s", line.c_str());
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdLeave(int argc, const char **argv) {
+	if (!g_game->exitToParentMap()) {
+		print("Not Here");
+	} else {
+		g_music->play();
+		print("Exited");
 	}
 
 	return isDebuggerActive();

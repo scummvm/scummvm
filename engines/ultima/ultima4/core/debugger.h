@@ -109,6 +109,11 @@ private:
 	bool cmdEnter(int argc, const char **argv);
 
 	/**
+	 * Exit
+	 */
+	bool cmdExit(int argc, const char **argv);
+
+	/**
 	 * Fire
 	 */
 	bool cmdFire(int argc, const char **argv);
@@ -190,6 +195,10 @@ private:
 	 */
 	bool cmdUse(int argc, const char **argv);
 
+	/**
+	 * Changes a player's armor
+	 */
+	bool cmdWearArmor(int argc, const char **argv);
 private:
 	/**
 	 * Collision detection on/off
@@ -222,11 +231,6 @@ private:
 	bool cmdEquipment(int argc, const char **argv);
 
 	/**
-	 * Exit the current location
-	 */
-	bool cmdExit(int argc, const char **argv);
-
-	/**
 	 * Moongate teleportation
 	 */
 	bool cmdGate(int argc, const char **argv);
@@ -250,6 +254,11 @@ private:
 	 * Give all the items
 	 */
 	bool cmdItems(int argc, const char **argv);
+
+	/**
+	 * Leave the current location
+	 */
+	bool cmdLeave(int argc, const char **argv);
 
 	/**
 	 * Displays the current location
