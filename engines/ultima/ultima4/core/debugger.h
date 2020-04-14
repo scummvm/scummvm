@@ -179,6 +179,11 @@ private:
 	 * Search
 	 */
 	bool cmdSearch(int argc, const char **argv);
+
+	/**
+	 * Talk
+	 */
+	bool cmdTalk(int argc, const char **argv);
 private:
 	/**
 	 * Collision detection on/off

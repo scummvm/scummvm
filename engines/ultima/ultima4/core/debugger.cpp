@@ -67,6 +67,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("quitAndSave", WRAP_METHOD(Debugger, cmdQuitAndSave));
 	registerCmd("ready", WRAP_METHOD(Debugger, cmdReadyWeapon));
 	registerCmd("search", WRAP_METHOD(Debugger, cmdSearch));
+	registerCmd("talk", WRAP_METHOD(Debugger, cmdTalk));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
@@ -821,6 +822,30 @@ bool Debugger::cmdSearch(int argc, const char **argv) {
 		}
 	}
 
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdTalk(int argc, const char **argv) {
+	printN("Talk: ");
+
+	if (g_context->_party->isFlying()) {
+		print("%cDrift only!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	Direction dir = gameGetDirection();
+
+	if (dir == DIR_NONE)
+		return isDebuggerActive();
+
+	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+		1, 2, &Tile::canTalkOverTile, true);
+	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
+		if (talkAt(*i))
+			return isDebuggerActive();
+	}
+
+	print("Funny, no response!");
 	return isDebuggerActive();
 }
 

@@ -62,6 +62,7 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_QUIT_SAVE, "QUIT-SAVE", "Quit and Save", "quitAndSave", "q", nullptr },
 	{ KEYBIND_READY_WEAPON, "READY-WEAPON", "Ready Weapon", "ready", nullptr },
 	{ KEYBIND_SEARCH, "SEARCH", "Search", "search", "s", nullptr },
+	{ KEYBIND_TALK, "TALK", "Talk", "talk", "t", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };

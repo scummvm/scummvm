@@ -37,6 +37,16 @@ namespace Ultima4 {
  * different actions players can take in the game
  */
 class DebuggerActions {
+private:
+	/**
+	 * Executes the current conversation until it is done.
+	 */
+	void talkRunConversation(Conversation &conv, Person *talker, bool showPrompt);
+
+	/**
+	 * Check the levels of each party member while talking to Lord British
+	 */
+	void gameLordBritishCheckLevels();
 protected:
 	/**
 	 * Returns true if the debugger is active
@@ -110,6 +120,13 @@ public:
 	bool openAt(const Coords &coords);
 
 	void gameCastSpell(unsigned int spell, int caster, int param);
+
+
+	/**
+	 * Begins a conversation with the NPC at map coordinates x,y.  If no
+	 * NPC is present at that point, zero is returned.
+	 */
+	bool talkAt(const Coords &coords);
 };
 
 } // End of namespace Ultima4

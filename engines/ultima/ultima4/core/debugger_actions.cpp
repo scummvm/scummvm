@@ -23,12 +23,14 @@
 #include "ultima/ultima4/core/debugger_actions.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/stats.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/textcolor.h"
 #include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/map/combat.h"
 
 namespace Ultima {
@@ -340,6 +342,177 @@ void DebuggerActions::gameCastSpell(unsigned int spell, int caster, int param) {
 		if (!msg.empty())
 			screenMessage("%s", msg.c_str());
 	}
+}
+
+bool DebuggerActions::talkAt(const Coords &coords) {
+	extern int personIsVendor(const Person * person);
+	City *city;
+
+	/* can't have any conversations outside of town */
+	if (!isCity(g_context->_location->_map)) {
+		screenMessage("Funny, no response!\n");
+		return true;
+	}
+
+	city = dynamic_cast<City *>(g_context->_location->_map);
+	Person *talker = city->personAt(coords);
+
+	/* make sure we have someone we can talk with */
+	if (!talker || !talker->canConverse())
+		return false;
+
+	/* No response from alerted guards... does any monster both
+	   attack and talk besides Nate the Snake? */
+	if (talker->getMovementBehavior() == MOVEMENT_ATTACK_AVATAR &&
+		talker->getId() != PYTHON_ID)
+		return false;
+
+	/* if we're talking to Lord British and the avatar is dead, LB resurrects them! */
+	if (talker->getNpcType() == NPC_LORD_BRITISH &&
+		g_context->_party->member(0)->getStatus() == STAT_DEAD) {
+		screenMessage("%s, Thou shalt live again!\n", g_context->_party->member(0)->getName().c_str());
+
+		g_context->_party->member(0)->setStatus(STAT_GOOD);
+		g_context->_party->member(0)->heal(HT_FULLHEAL);
+		gameSpellEffect('r', -1, SOUND_LBHEAL);
+	}
+
+	Conversation conv;
+	conv._script->addProvider("party", g_context->_party);
+	conv._script->addProvider("context", g_context);
+
+	conv._state = Conversation::INTRO;
+	conv._reply = talker->getConversationText(&conv, "");
+	conv._playerInput.clear();
+	talkRunConversation(conv, talker, false);
+
+	return true;
+}
+
+void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bool showPrompt) {
+	while (conv._state != Conversation::DONE) {
+		// TODO: instead of calculating linesused again, cache the
+		// result in person.cpp somewhere.
+		int linesused = linecount(conv._reply.front(), TEXT_AREA_W);
+		screenMessage("%s", conv._reply.front().c_str());
+		conv._reply.pop_front();
+
+		/* if all chunks haven't been shown, wait for a key and process next chunk*/
+		int size = conv._reply.size();
+		if (size > 0) {
+#ifdef IOS
+			U4IOS::IOSConversationChoiceHelper continueDialog;
+			continueDialog.updateChoices(" ");
+#endif
+			ReadChoiceController::get("");
+			continue;
+		}
+
+		/* otherwise, clear current reply and proceed based on conversation state */
+		conv._reply.clear();
+
+		/* they're attacking you! */
+		if (conv._state == Conversation::ATTACK) {
+			conv._state = Conversation::DONE;
+			talker->setMovementBehavior(MOVEMENT_ATTACK_AVATAR);
+		}
+
+		if (conv._state == Conversation::DONE)
+			break;
+
+		/* When Lord British heals the party */
+		else if (conv._state == Conversation::FULLHEAL) {
+			int i;
+
+			for (i = 0; i < g_context->_party->size(); i++) {
+				g_context->_party->member(i)->heal(HT_CURE);        // cure the party
+				g_context->_party->member(i)->heal(HT_FULLHEAL);    // heal the party
+			}
+			gameSpellEffect('r', -1, SOUND_MAGIC); // same spell effect as 'r'esurrect
+
+			conv._state = Conversation::TALK;
+		}
+		/* When Lord British checks and advances each party member's level */
+		else if (conv._state == Conversation::ADVANCELEVELS) {
+			gameLordBritishCheckLevels();
+			conv._state = Conversation::TALK;
+		}
+
+		if (showPrompt) {
+			Common::String prompt = talker->getPrompt(&conv);
+			if (!prompt.empty()) {
+				if (linesused + linecount(prompt, TEXT_AREA_W) > TEXT_AREA_H) {
+#ifdef IOS
+					U4IOS::IOSConversationChoiceHelper continueDialog;
+					continueDialog.updateChoices(" ");
+#endif
+					ReadChoiceController::get("");
+				}
+
+				screenMessage("%s", prompt.c_str());
+			}
+		}
+
+		int maxlen;
+		switch (conv.getInputRequired(&maxlen)) {
+		case Conversation::INPUT_STRING:
+		{
+			conv._playerInput = gameGetInput(maxlen);
+#ifdef IOS
+			screenMessage("%s", conv.playerInput.c_str()); // Since we put this in a different window, we need to show it again.
+#endif
+			conv._reply = talker->getConversationText(&conv, conv._playerInput.c_str());
+			conv._playerInput.clear();
+			showPrompt = true;
+			break;
+		}
+		case Conversation::INPUT_CHARACTER:
+		{
+			char message[2];
+#ifdef IOS
+			U4IOS::IOSConversationChoiceHelper yesNoHelper;
+			yesNoHelper.updateChoices("yn ");
+#endif
+			int choice = ReadChoiceController::get("");
+
+
+			message[0] = choice;
+			message[1] = '\0';
+
+			conv._reply = talker->getConversationText(&conv, message);
+			conv._playerInput.clear();
+
+			showPrompt = true;
+			break;
+		}
+
+		case Conversation::INPUT_NONE:
+			conv._state = Conversation::DONE;
+			break;
+		}
+	}
+	if (conv._reply.size() > 0)
+		screenMessage("%s", conv._reply.front().c_str());
+}
+
+void DebuggerActions::gameLordBritishCheckLevels() {
+	bool advanced = false;
+
+	for (int i = 0; i < g_context->_party->size(); i++) {
+		PartyMember *player = g_context->_party->member(i);
+		if (player->getRealLevel() <
+			player->getMaxLevel())
+
+			// add an extra space to separate messages
+			if (!advanced) {
+				screenMessage("\n");
+				advanced = true;
+			}
+
+		player->advanceLevel();
+	}
+
+	screenMessage("\nWhat would thou\nask of me?\n");
 }
 
 } // End of namespace Ultima4
